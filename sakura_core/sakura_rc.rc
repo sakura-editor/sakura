@@ -2637,6 +2637,7 @@ BEGIN
     F_TAGJUMP_LIST          "ダイレクトタグジャンプ一覧"
     F_TAGS_MAKE             "タグファイルの作成"
     F_DIRECT_TAGJUMP        "ダイレクトタグジャンプ"
+    F_TAGJUMP_CLOSE         "閉じてタグジャンプ"
 END
 
 STRINGTABLE DISCARDABLE 

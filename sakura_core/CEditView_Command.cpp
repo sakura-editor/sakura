@@ -461,7 +461,8 @@ BOOL CEditView::HandleCommand(
 	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
 	case F_OUTLINE:			bRet = Command_FUNCLIST( (BOOL)lparam1 );break;	//アウトライン解析
-	case F_TAGJUMP:			Command_TAGJUMP();break;						/* タグジャンプ機能 */
+	case F_TAGJUMP:			Command_TAGJUMP((bool)lparam1);break;			/* タグジャンプ機能 */ //	Apr. 03, 2003 genta 引数追加
+	case F_TAGJUMP_CLOSE:	Command_TAGJUMP(true);break;					/* タグジャンプ(元ウィンドウclose) *///	Apr. 03, 2003 genta
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
 	case F_TAGS_MAKE:		Command_TagsMake();break;						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	case F_DIRECT_TAGJUMP:	Command_TagJumpByTagsFile();break;				/* ダイレクトタグジャンプ機能 */	//@@@ 2003.04.15 MIK
@@ -3116,7 +3117,10 @@ void CEditView::Command_CHAR( char cChar )
 		}
 		if( m_pcEditDoc->m_bGrepMode && m_pShareData->m_Common.m_bGTJW_RETURN ){
 			/* タグジャンプ機能 */
-			if ( Command_TAGJUMP() )
+			//@@@ 2002.01.14 YAZAKI CTRLキーを押してタグジャンプすると、閉じてタグジャンプ。
+			//	Apr. 03, 2003 genta Command_TAGJUMPから移植
+			/* CTRLキーが押されていたか */
+			if ( Command_TAGJUMP( ((SHORT)0x8000 & ::GetKeyState( VK_CONTROL )) != 0 ) )
 				return;
 		}else
 		if( m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent ){	/* オートインデント */
@@ -6394,8 +6398,13 @@ void CEditView::Command_ADDTAIL( const char* pszData, int nDataLen )
 
 
 
-/* タグジャンプ */
-bool CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
+/*! タグジャンプ
+
+	@param bClose [in] true:元ウィンドウを閉じる
+
+	@date 2003.04.03 genta 元ウィンドウを閉じるかどうかの引数を追加
+*/
+bool CEditView::Command_TAGJUMP( bool bClose )
 {
 	const char*	pLine;
 	int			nLineLen;
@@ -6516,7 +6525,8 @@ bool CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 		//	From Here Aug. 27, 2001 genta
 	}
 
-	if( false == TagJumpSub( szJumpToFile, nJumpToLine, nJumpToColm ) )	//@@@ 2003.04.13
+	//	Apr. 21, 2003 genta bClose追加
+	if( false == TagJumpSub( szJumpToFile, nJumpToLine, nJumpToColm, bClose ) )	//@@@ 2003.04.13
 		goto can_not_tagjump;
 
 	return true;
@@ -6716,10 +6726,13 @@ next_line:
 /*
 	指定ファイルの指定位置にタグジャンプする。
 
+	@param bClose [in] true: 元ウィンドウを閉じる / false: 元ウィンドウを閉じない
+
 	@author	MIK
 	@date	2003.04.13	新規作成
+	@date	2003.04.21 genta bClose追加
 */
-bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm )
+bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm, bool bClose )
 {
 	HWND	hwndOwner;
 	POINT	poCaret;
@@ -6734,8 +6747,9 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 		strcpy( szJumpToFile, szWork );
 	}
 
-	/* CTRLキーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) )
+	//	Apr. 2003 genta 閉じるかどうかは引数による
+	//	grep結果からEnterでジャンプするところにCtrl判定移動
+	if( bClose )
 	{
 		Command_WINCLOSE();	//	挑戦するだけ。
 	}

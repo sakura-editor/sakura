@@ -673,10 +673,12 @@ void ReplaceData_CEditView(
 //	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
 	BOOL Command_FUNCLIST( BOOL ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */
 // To Here 2001.12.03 hor
-	bool Command_TAGJUMP( void/*BOOL*/ );				/* タグジャンプ機能 */
+	// Apr. 03, 2003 genta 引数追加
+	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
 	void/*BOOL*/ Command_TAGJUMPBACK( void/*BOOL*/ );	/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFile( void );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
-	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn );	//@@@ 2003.04.13 MIK
+	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
+	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn, bool bClose = false );
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_Diff_Dialog( void );					/* DIFF差分表示ダイアログ */	//@@@ 2002.05.25 MIK
