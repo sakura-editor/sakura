@@ -1877,7 +1877,7 @@ bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
 			::MessageBeep( MB_ICONEXCLAMATION );
 			::MessageBox( hWnd, "BREGEXP.DLLが見つかりません。\r\n"
 				"正規表現を利用するにはBREGEXP.DLLが必要です。\r\n"
-				"入手方法はヘルプを参照してください",
+				"入手方法はヘルプを参照してください。",
 				"情報", MB_OK | MB_ICONEXCLAMATION );
 		}
 		return false;
