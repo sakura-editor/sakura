@@ -50,6 +50,7 @@
 #define IDB_PRINTER                     203
 #define IDD_EXTCMD                      215
 #define IDD_PROP_MACRO                  217
+#define IDD_PROP_REGEX                  219
 #define IDC_CURSOR_COPYARROW            220
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
@@ -230,6 +231,8 @@
 #define IDC_TREE1                       1140
 #define IDC_BUTTON_ADD                  1141
 #define IDC_BUTTON_INSERT               1142
+#define IDC_BUTTON_INS                  1142
+#define IDC_BUTTON_REGEX_INS            1142
 #define IDC_BUTTON_UP                   1143
 #define IDC_BUTTON_DOWN                 1144
 #define IDC_BUTTON_SAMEBKCOLOR          1144
@@ -449,15 +452,37 @@
 #define IDC_LABEL_LCPOS3                1393
 #define IDC_MACRO_REG                   1393
 #define IDC_COMBO_MACROID               1394
+#define IDC_BUTTON_TOP                  1394
+#define IDC_BUTTON_REGEX_TOP            1394
 #define IDC_MACRO_DEL                   1395
+#define IDC_BUTTON_LAST                 1395
+#define IDC_BUTTON_REGEX_LAST           1395
 #define IDC_MACROLIST                   1396
 #define IDC_MACRONAME                   1397
 #define IDC_EDIT_ABOUT                  1398
 #define IDC_CHECK_SplitterWndVScroll    1399
+#define IDC_BUTTON_UPD                  1399
+#define IDC_BUTTON_REGEX_UPD            1399
 #define IDC_CHK_WORD                    1400
+#define IDC_BUTTON_DEL                  1400
+#define IDC_BUTTON_REGEX_DEL            1400
 #define IDC_MACRODIR                    1401
 #define IDC_MACRODIRREF                 1402
 #define IDC_BUTTON_MENUNAME             1403
+#define IDC_EDIT_REGEX                  1404
+#define IDC_CHECK_REGEX                 1406
+#define IDC_LIST_REGEX                  1407
+#define IDC_COMBO_COLOR                 1408
+#define IDC_COMBO_REGEX_COLOR           1408
+#define IDC_LABEL_REGEX_COLOR           1409
+#define IDC_LABEL_REGEX_KEYWORD         1410
+#define IDC_BUTTON_REGEX_UP             1411
+#define IDC_BUTTON_REGEX_DOWN           1412
+#define IDC_BUTTON_REGEX_ADD            1413
+#define IDC_BUTTON_REGEX_IMPORT         1414
+#define IDC_BUTTON_REGEX_EXPORT         1415
+#define IDC_FRAME_REGEX                 1416
+#define IDC_LABEL_REGEX_VERSION         1417
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -494,9 +519,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        219
+#define _APS_NEXT_RESOURCE_VALUE        221
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1404
+#define _APS_NEXT_CONTROL_VALUE         1417
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -57,6 +57,7 @@ public:
 	BOOL DispatchEvent_p3( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	BOOL DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	static BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
+	BOOL DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
 
 
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
@@ -97,6 +98,13 @@ protected:
 
 	//	Sept. 10, 2000 JEPRO 次行を追加
 	void EnableTypesPropInput( HWND hwndDlg );	//	タイプ別設定のカラー設定のON/OFF
+
+	void SetData_Regex( HWND );	/* ダイアログデータの設定 正規表現キーワード */	//@@@ 2001.11.17 add MIK
+	int  GetData_Regex( HWND );	/* ダイアログデータの取得 正規表現キーワード */	//@@@ 2001.11.17 add MIK
+	BOOL Import_Regex( HWND );	//@@@ 2001.11.17 add MIK
+	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
+	static BOOL CALLBACK PropTypesRegex( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );	//@@@ 2001.11.17 add MIK
+	BOOL RegexKakomiCheck(const char *s);	//@@@ 2001.11.17 add MIK
 };
 
 

@@ -66,6 +66,16 @@ static char* colorIDXKeyName[] =
 	"SQT",
 	"WQT",
 	"URL",
+	"RK1",	//@@@ 2001.11.17 add MIK
+	"RK2",	//@@@ 2001.11.17 add MIK
+	"RK3",	//@@@ 2001.11.17 add MIK
+	"RK4",	//@@@ 2001.11.17 add MIK
+	"RK5",	//@@@ 2001.11.17 add MIK
+	"RK6",	//@@@ 2001.11.17 add MIK
+	"RK7",	//@@@ 2001.11.17 add MIK
+	"RK8",	//@@@ 2001.11.17 add MIK
+	"RK9",	//@@@ 2001.11.17 add MIK
+	"RKA",	//@@@ 2001.11.17 add MIK
 	"LAST"	// Not Used
 };
 
@@ -1747,6 +1757,46 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			}
 		}
 */
+
+//@@@ 2001.11.17 add start MIK
+		{	//正規表現キーワード
+			char	*p;
+			cProfile.IOProfileData( bRead, pszSecName, "bUseRegexKeyword", REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bUseRegexKeyword, 0 );/* 正規表現キーワード使用するか？ */
+			for(j = 0; j < 100; j++)
+			{
+				wsprintf( szKeyName, "RxKey[%03d]", j );
+				if( bRead )
+				{
+					m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword[0] = '\0';
+					m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
+					if( TRUE == cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 ) )
+					{
+						p = strchr(szKeyData, ',');
+						if( p )
+						{
+							*p = '\0';
+							m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex = atoi(szKeyData);
+							p++;
+							strcpy(m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword, p);
+							if( m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex < 0
+							 || m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST )
+							{
+								m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
+							}
+						}
+					}
+				}
+				else
+				{
+					wsprintf( szKeyData, "%d,%s",
+						m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex,
+						m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword);
+					cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 );
+				}
+			}
+		}
+//@@@ 2001.11.17 add end MIK
+
 
 //		/* 変更フラグ(タイプ別設定) のクリア */
 //		if( !bRead ){

@@ -613,8 +613,8 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 //	/* ダイアログデータの設定 p5 */
 //	SetData_p5( hwndDlg );
 //@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
-	//hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
-	//::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
+	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 //@@@ 2001.11.07 modify end MIK

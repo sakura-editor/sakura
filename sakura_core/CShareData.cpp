@@ -55,7 +55,7 @@ struct ARRHEAD {
 
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 15;
+const unsigned int uShareDataVersion = 16;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -1008,6 +1008,16 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"シングルクォーテーション文字列",	TRUE , FALSE, FALSE, RGB( 64, 128, 128 )	, RGB( 255, 251, 240 ),
 			"ダブルクォーテーション文字列",		TRUE , FALSE, FALSE, RGB( 128, 0, 64 )		, RGB( 255, 251, 240 ),
 			"URL",								TRUE , FALSE, TRUE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
+			"正規表現キーワード1",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード2",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード3",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード4",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード5",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード6",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード7",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード8",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード9",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"正規表現キーワード10",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
   		};
 //	To Here Sept. 18, 2000
 
@@ -1031,6 +1041,15 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[nIdx].m_nSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
 		m_pShareData->m_Types[nIdx].m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
+//@@@ 2001.11.17 add start MIK
+		for(i = 0; i < 100; i++)
+		{
+			m_pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = '\0';
+			m_pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
+		}
+		m_pShareData->m_Types[nIdx].m_bUseRegexKeyword = FALSE;
+//		m_pShareData->m_Types[nIdx].m_nRegexKeyMagicNumber = 1;
+//@@@ 2001.11.17 add end MIK
 
 		static char* pszTypeNameArr[] = {
 			"基本",
@@ -1208,7 +1227,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
 		m_pShareData->m_Types[10].m_nKeyWordSetIdx = 8;						/* キーワードセット */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-		m_pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+		m_pShareData->m_Types[10].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	//@@@ 2001.11.11 upd MIK
 
 		//From Here Oct. 31, 2000 JEPRO
 		/* TeX */

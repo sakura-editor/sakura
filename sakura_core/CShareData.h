@@ -61,7 +61,8 @@ enum maxdata{
 	MAX_DATETIMEFOREMAT_LEN		= 100,
 
 	MAX_CMDLEN					= 1024,
-	MAX_CMDARR					= 32
+	MAX_CMDARR					= 32,
+	MAX_REGEX_KEYWORD	= 100	//@@@ 2001.11.17 add MIK
 
 };
 
@@ -171,7 +172,17 @@ struct PRINTSETTING {
 #define COLORIDX_SSTRING		16	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
 #define COLORIDX_WSTRING		17	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
 #define COLORIDX_URL			18	/* URL */								//Dec. 4, 2000 shifted by MIK
-#define COLORIDX_LAST			19											//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
+#define COLORIDX_REGEX1			19	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX2			20	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX3			21	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX4			22	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX5			23	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX6			24	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX7			25	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX8			26	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX9			27	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_REGEX10		28	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
+#define COLORIDX_LAST			29											//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
 //#else
 //#define COLORIDX_LAST			18											//Dec. 4, 2000
 //#endif
@@ -201,6 +212,12 @@ struct ColorInfoIni {
 ///* Ver 0.3.5.0の設定データ構造体 */
 //#include "CShareData_0_3_5_0.h"
 
+//@@@ 2001.11.17 add start MIK
+struct RegexKeywordInfo {
+	char	m_szKeyword[100];	//正規表現キーワード
+	int	m_nColorIndex;		//色指定番号
+};
+//@@@ 2001.11.17 add end MIK
 
 
 
@@ -290,7 +307,11 @@ struct Types {
 	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */
 	//	2001/06/19 asa-o
 	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */
-
+//@@@ 2001.11.17 add start MIK
+	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
+	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
+	struct RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
+//@@@ 2001.11.17 add end MIK
 }; /* Types */
 
 //! マクロ情報

@@ -2099,10 +2099,6 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_CODECNV_SJIS2UTF7:		return 181;	/* SJIS→UTF-7コード変換 */
 	case F_BASE64DECODE:			return 54;	//Base64デコードして保存
 	case F_UUDECODE:				return 55;	//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
-//	case F_SPC_TOZENKAKU:			return -1;	/* 半角空白→全角空白 */	//@@@ 2001.11.08 add
-//	case F_SPC_TOHANKAKU:			return -1;	/* 全角空白→半角空白 */	//@@@ 2001.11.08 add
-//	case F_SPC2_TOZENKAKU:			return -1;	/* 半角空白2個→全角空白 */	//@@@ 2001.11.08 add
-//	case F_SPC2_TOHANKAKU:			return -1;	/* 全角空白→半角空白2個 */	//@@@ 2001.11.08 add
 
 
 	/* 検索系 */
@@ -2136,6 +2132,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TYPE_SCREEN:		return 74;	/* タイプ別設定『スクリーン』 */
 	case F_TYPE_COLOR:		return 75;	/* タイプ別設定『カラー』 */
 	case F_TYPE_HELPER:		return 197;	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
+	case F_TYPE_REGEX_KEYWORD:	return 203;	/* タイプ別設定『正規表現キーワード』 */	//@@@ 2001.11.17 add MIK
 	case F_OPTION_GENERAL:	return 81;	/* 共通設定『全般』 */
 	case F_OPTION_WINDOW:	return 146;	/* 共通設定『ウィンドウ』 */
 	case F_OPTION_EDIT:		return 144;	/* 共通設定『編集』 */

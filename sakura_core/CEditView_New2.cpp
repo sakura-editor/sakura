@@ -186,6 +186,31 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 //			}
 //		}
 		break;
+
+//@@@ 2001.11.17 add start MIK
+	default:	/* 正規表現キーワード */
+		if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 )
+		{
+			nColorIdx = nCOMMENTMODE - 1000;	//下駄を履かせているのをはずす
+			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
+			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
+			::SetTextColor( hdc, colText );
+			::SetBkColor( hdc, colBack );
+			if( NULL != m_hFontOld ){
+				::SelectObject( hdc, m_hFontOld );
+			}
+			/* フォントを選ぶ */
+			m_hFontOld = (HFONT)::SelectObject( hdc,
+				ChooseFontHandle(
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
+				)
+			);
+			return;
+		}
+		break;
+//@@@ 2001.11.17 add end MIK
+
 	}
 
 
