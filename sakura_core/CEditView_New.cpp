@@ -524,8 +524,9 @@ searchnext:;
 						SetCurrentColor( hdc, COLORIDX_SEARCH ); // 2002/03/13 novice
 					}else
 					if( bSearchStringMode
-					 && nSearchEnd == nPos
+					 && nSearchEnd <= nPos		//+ == では行頭文字の場合、nSearchEndも０であるために文字色の解除ができないバグを修正 2003.05.03 かろと
 					){
+						// 検索した文字列の終わりまできたら、文字色を標準に戻す処理
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 //							SetCurrentColor( hdc, 90 );
 							/* テキスト表示 */
