@@ -489,7 +489,7 @@ bool CShareData::Init( void )
 			//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
 			{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPHIST_NEXT, 0, 0, 0 },
 			//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
-			{ 'O', "O",0, 0, F_FILEOPEN, 0, F_WIN_OUTPUT, 0, 0, 0 },
+			{ 'O', "O",0, 0, F_FILEOPEN, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Ctrl+P に「印刷」, Shift+Ctrl+P に「印刷プレビュー」, Ctrl+Alt+P に「ページ設定」を追加
 			//Oct. 20, 2000 JEPRO	Alt+P に「移動履歴: 前へ」を追加
 			{ 'P', "P",0, 0, F_PRINT, F_PRINT_PREVIEW, F_JUMPHIST_PREV, 0, F_PRINT_PAGESETUP, 0 },
@@ -1216,6 +1216,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
 
 		/* アセンブラ */
+		//	2004.05.01 MIK/genta
+		m_pShareData->m_Types[7].m_cLineComment.CopyTo( 0, ";", -1 );		/* 行コメントデリミタ */
 		m_pShareData->m_Types[7].m_nDefaultOutline = OUTLINE_ASM;			/* アウトライン解析方法 */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
 		m_pShareData->m_Types[7].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
