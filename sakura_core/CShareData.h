@@ -680,7 +680,7 @@ public:
 	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
 	static void IO_ColorSet( CProfile* , bool , const char* , ColorInfo* );	/* 色設定 I/O */
 
-	int			m_nStdToolBarButtons;
+//	int			m_nStdToolBarButtons; 2004.03.30 Moca 未使用
 
 	//@@@ 2002.2.2 YAZAKI
 	//	Jun. 14, 2003 genta 引数追加．書式変更
