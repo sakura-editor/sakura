@@ -789,6 +789,8 @@ void ReplaceData_CEditView(
 		CEOL cEol, int bBold, COLORREF pColor );
 	//ƒ^ƒu–îˆó•`‰æŠÖ”	//@@@ 2003.03.26 MIK
 	void DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, int bBold, COLORREF pColor );
+	//	EOF•`‰æŠÖ”	//	2004.05.29 genta
+	int  DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, UINT fuOptions, const ColorInfo& EofColInfo );
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//Œ»İs‚ğ—š—ğ‚É’Ç‰Á‚·‚é
