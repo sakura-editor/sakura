@@ -696,8 +696,6 @@ void CDlgOpenFile::Create(
 */
 BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 {
-	DWORD	dwError;
-
 	TCHAR	szCurDir[_MAX_PATH];
 	bool	bGetCurDirSuc = false;
 	if( false == bSetCurDir ){
@@ -772,35 +770,8 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 		}
 		return TRUE;
 	}else{
-//		MYTRACE( "FALSE == GetOpenFileName( .... )\n" );
-		BOOL		bCancel;
-		const char*	pszError;
-		bCancel = FALSE;
-		dwError = ::CommDlgExtendedError();
-		switch( dwError ){
-		case CDERR_DIALOGFAILURE	: pszError = "CDERR_DIALOGFAILURE  "; break;
-		case CDERR_FINDRESFAILURE	: pszError = "CDERR_FINDRESFAILURE "; break;
-		case CDERR_NOHINSTANCE		: pszError = "CDERR_NOHINSTANCE    "; break;
-		case CDERR_INITIALIZATION	: pszError = "CDERR_INITIALIZATION "; break;
-		case CDERR_NOHOOK			: pszError = "CDERR_NOHOOK         "; break;
-		case CDERR_LOCKRESFAILURE	: pszError = "CDERR_LOCKRESFAILURE "; break;
-		case CDERR_NOTEMPLATE		: pszError = "CDERR_NOTEMPLATE     "; break;
-		case CDERR_LOADRESFAILURE	: pszError = "CDERR_LOADRESFAILURE "; break;
-		case CDERR_STRUCTSIZE		: pszError = "CDERR_STRUCTSIZE     "; break;
-		case CDERR_LOADSTRFAILURE	: pszError = "CDERR_LOADSTRFAILURE "; break;
-		case FNERR_BUFFERTOOSMALL	: pszError = "FNERR_BUFFERTOOSMALL "; break;
-		case CDERR_MEMALLOCFAILURE	: pszError = "CDERR_MEMALLOCFAILURE"; break;
-		case FNERR_INVALIDFILENAME	: pszError = "FNERR_INVALIDFILENAME"; break;
-		case CDERR_MEMLOCKFAILURE	: pszError = "CDERR_MEMLOCKFAILURE "; break;
-		case FNERR_SUBCLASSFAILURE	: pszError = "FNERR_SUBCLASSFAILURE"; break;
-		default: bCancel = TRUE; break;
-		}
-		if( !bCancel ){
-			::MessageBeep( MB_ICONSTOP );
-			::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				"ダイアログが開けません。\n\nエラー:%s\n%s", pszError, pszPath
-			);
-		}
+		//	May 29, 2004 genta 関数にまとめた
+		DlgOpenFail();
 		return FALSE;
 	}
 }
@@ -815,8 +786,6 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 */
 BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 {
-	DWORD	dwError;
-
 	TCHAR	szCurDir[_MAX_PATH];
 	bool	bGetCurDirSuc = false;
 	if( false == bSetCurDir ){
@@ -874,35 +843,8 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 		}
 		return TRUE;
 	}else{
-//		MYTRACE( "FALSE == GetSaveFileName( .... )\n" );
-		BOOL		bCancel;
-		const char*	pszError;
-		bCancel = FALSE;
-		dwError = ::CommDlgExtendedError();
-		switch( dwError ){
-		case CDERR_DIALOGFAILURE  : pszError = "CDERR_DIALOGFAILURE  "; break;
-		case CDERR_FINDRESFAILURE : pszError = "CDERR_FINDRESFAILURE "; break;
-		case CDERR_NOHINSTANCE    : pszError = "CDERR_NOHINSTANCE    "; break;
-		case CDERR_INITIALIZATION : pszError = "CDERR_INITIALIZATION "; break;
-		case CDERR_NOHOOK         : pszError = "CDERR_NOHOOK         "; break;
-		case CDERR_LOCKRESFAILURE : pszError = "CDERR_LOCKRESFAILURE "; break;
-		case CDERR_NOTEMPLATE     : pszError = "CDERR_NOTEMPLATE     "; break;
-		case CDERR_LOADRESFAILURE : pszError = "CDERR_LOADRESFAILURE "; break;
-		case CDERR_STRUCTSIZE     : pszError = "CDERR_STRUCTSIZE     "; break;
-		case CDERR_LOADSTRFAILURE : pszError = "CDERR_LOADSTRFAILURE "; break;
-		case FNERR_BUFFERTOOSMALL : pszError = "FNERR_BUFFERTOOSMALL "; break;
-		case CDERR_MEMALLOCFAILURE: pszError = "CDERR_MEMALLOCFAILURE"; break;
-		case FNERR_INVALIDFILENAME: pszError = "FNERR_INVALIDFILENAME"; break;
-		case CDERR_MEMLOCKFAILURE : pszError = "CDERR_MEMLOCKFAILURE "; break;
-		case FNERR_SUBCLASSFAILURE: pszError = "FNERR_SUBCLASSFAILURE"; break;
-		default: bCancel = TRUE; break;
-		}
-		if( !bCancel ){
-			::MessageBeep( MB_ICONSTOP );
-			::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				"ダイアログが開けません。\n\nエラー:%s", pszError
-			);
-		}
+		//	May 29, 2004 genta 関数にまとめた
+		DlgOpenFail();
 		return FALSE;
 	}
 }
@@ -919,7 +861,6 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 {
 	m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
-	DWORD	dwError;
 	int		i;
 
 	//	2003.05.12 MIK
@@ -1000,35 +941,8 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 		}
 		return TRUE;
 	}else{
-//		MYTRACE( "FALSE == GetOpenFileName( .... )\n" );
-		BOOL		bCancel;
-		const char*	pszError;
-		bCancel = FALSE;
-		dwError = ::CommDlgExtendedError();
-		switch( dwError ){
-		case CDERR_DIALOGFAILURE  : pszError = "CDERR_DIALOGFAILURE  "; break;
-		case CDERR_FINDRESFAILURE : pszError = "CDERR_FINDRESFAILURE "; break;
-		case CDERR_NOHINSTANCE    : pszError = "CDERR_NOHINSTANCE    "; break;
-		case CDERR_INITIALIZATION : pszError = "CDERR_INITIALIZATION "; break;
-		case CDERR_NOHOOK         : pszError = "CDERR_NOHOOK         "; break;
-		case CDERR_LOCKRESFAILURE : pszError = "CDERR_LOCKRESFAILURE "; break;
-		case CDERR_NOTEMPLATE     : pszError = "CDERR_NOTEMPLATE     "; break;
-		case CDERR_LOADRESFAILURE : pszError = "CDERR_LOADRESFAILURE "; break;
-		case CDERR_STRUCTSIZE     : pszError = "CDERR_STRUCTSIZE     "; break;
-		case CDERR_LOADSTRFAILURE : pszError = "CDERR_LOADSTRFAILURE "; break;
-		case FNERR_BUFFERTOOSMALL : pszError = "FNERR_BUFFERTOOSMALL "; break;
-		case CDERR_MEMALLOCFAILURE: pszError = "CDERR_MEMALLOCFAILURE"; break;
-		case FNERR_INVALIDFILENAME: pszError = "FNERR_INVALIDFILENAME"; break;
-		case CDERR_MEMLOCKFAILURE : pszError = "CDERR_MEMLOCKFAILURE "; break;
-		case FNERR_SUBCLASSFAILURE: pszError = "FNERR_SUBCLASSFAILURE"; break;
-		default: bCancel = TRUE; break;
-		}
-		if( !bCancel ){
-			::MessageBeep( MB_ICONSTOP );
-			::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				"ダイアログが開けません。\n\nエラー:%s", pszError
-			);
-		}
+		//	May 29, 2004 genta 関数にまとめた
+		DlgOpenFail();
 		return FALSE;
 	}
 }
@@ -1047,8 +961,6 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBom )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
-
-	DWORD	dwError;
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
@@ -1141,38 +1053,52 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 		}
 		return TRUE;
 	}else{
-//		MYTRACE( "FALSE == GetOpenFileName( .... )\n" );
-		BOOL		bCancel;
-		const char*	pszError;
-		bCancel = FALSE;
-		dwError = ::CommDlgExtendedError();
-		switch( dwError ){
-		case CDERR_DIALOGFAILURE  : pszError = "CDERR_DIALOGFAILURE  "; break;
-		case CDERR_FINDRESFAILURE : pszError = "CDERR_FINDRESFAILURE "; break;
-		case CDERR_NOHINSTANCE    : pszError = "CDERR_NOHINSTANCE    "; break;
-		case CDERR_INITIALIZATION : pszError = "CDERR_INITIALIZATION "; break;
-		case CDERR_NOHOOK         : pszError = "CDERR_NOHOOK         "; break;
-		case CDERR_LOCKRESFAILURE : pszError = "CDERR_LOCKRESFAILURE "; break;
-		case CDERR_NOTEMPLATE     : pszError = "CDERR_NOTEMPLATE     "; break;
-		case CDERR_LOADRESFAILURE : pszError = "CDERR_LOADRESFAILURE "; break;
-		case CDERR_STRUCTSIZE     : pszError = "CDERR_STRUCTSIZE     "; break;
-		case CDERR_LOADSTRFAILURE : pszError = "CDERR_LOADSTRFAILURE "; break;
-		case FNERR_BUFFERTOOSMALL : pszError = "FNERR_BUFFERTOOSMALL "; break;
-		case CDERR_MEMALLOCFAILURE: pszError = "CDERR_MEMALLOCFAILURE"; break;
-		case FNERR_INVALIDFILENAME: pszError = "FNERR_INVALIDFILENAME"; break;
-		case CDERR_MEMLOCKFAILURE : pszError = "CDERR_MEMLOCKFAILURE "; break;
-		case FNERR_SUBCLASSFAILURE: pszError = "FNERR_SUBCLASSFAILURE"; break;
-		default: bCancel = TRUE; break;
-		}
-		if( !bCancel ){
-			::MessageBeep( MB_ICONSTOP );
-			::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				"ダイアログが開けません。\n\nエラー:%s", pszError
-			);
-		}
+		//	May 29, 2004 genta 関数にまとめた
+		DlgOpenFail();
 		return FALSE;
 	}
 }
 
+/*! @brief コモンダイアログボックス失敗処理
+
+	コモンダイアログボックスからFALSEが返された場合に
+	エラー原因を調べてエラーならメッセージを出す．
+	
+	@author genta
+	@date 2004.05.29 genta 元々あった部分をまとめた
+*/
+void CDlgOpenFile::DlgOpenFail(void)
+{
+	const char*	pszError;
+	DWORD dwError = ::CommDlgExtendedError();
+	if( dwError == 0 ){
+		//	ユーザキャンセルによる
+		return;
+	}
+	
+	switch( dwError ){
+	case CDERR_DIALOGFAILURE  : pszError = "CDERR_DIALOGFAILURE  "; break;
+	case CDERR_FINDRESFAILURE : pszError = "CDERR_FINDRESFAILURE "; break;
+	case CDERR_NOHINSTANCE    : pszError = "CDERR_NOHINSTANCE    "; break;
+	case CDERR_INITIALIZATION : pszError = "CDERR_INITIALIZATION "; break;
+	case CDERR_NOHOOK         : pszError = "CDERR_NOHOOK         "; break;
+	case CDERR_LOCKRESFAILURE : pszError = "CDERR_LOCKRESFAILURE "; break;
+	case CDERR_NOTEMPLATE     : pszError = "CDERR_NOTEMPLATE     "; break;
+	case CDERR_LOADRESFAILURE : pszError = "CDERR_LOADRESFAILURE "; break;
+	case CDERR_STRUCTSIZE     : pszError = "CDERR_STRUCTSIZE     "; break;
+	case CDERR_LOADSTRFAILURE : pszError = "CDERR_LOADSTRFAILURE "; break;
+	case FNERR_BUFFERTOOSMALL : pszError = "FNERR_BUFFERTOOSMALL "; break;
+	case CDERR_MEMALLOCFAILURE: pszError = "CDERR_MEMALLOCFAILURE"; break;
+	case FNERR_INVALIDFILENAME: pszError = "FNERR_INVALIDFILENAME"; break;
+	case CDERR_MEMLOCKFAILURE : pszError = "CDERR_MEMLOCKFAILURE "; break;
+	case FNERR_SUBCLASSFAILURE: pszError = "FNERR_SUBCLASSFAILURE"; break;
+	default: pszError = "UNKNOWN_ERRORCODE"; break;
+	}
+
+	::MessageBeep( MB_ICONSTOP );
+	::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+		"ダイアログが開けません。\n\nエラー:%s", pszError
+	);
+}
 
 /*[EOF]*/

@@ -75,6 +75,9 @@ protected:
 	/*
 	||  À‘•ƒwƒ‹ƒpŠÖ”
 	*/
+
+	//	May 29, 2004 genta ƒGƒ‰[ˆ—‚ğ‚Ü‚Æ‚ß‚é (advised by MIK)
+	void	DlgOpenFail(void);
 };
 
 
