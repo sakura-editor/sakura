@@ -432,6 +432,8 @@ void CFileLoad::Buffering( void )
 	if( NULL == m_pReadBuf ){
 		int nBufSize;
 		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( m_nFileSize ):( gm_nBufSizeDef );
+		//	Borland C++では0バイトのmallocを獲得失敗と見なすため
+		//	最低1バイトは取得することで0バイトのファイルを開けるようにする
 		if( 0 >= nBufSize ){
 			nBufSize = 1; // Jun. 08, 2003  BCCのmalloc(0)がNULLを返す仕様に対処
 		}
