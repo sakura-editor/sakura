@@ -42,7 +42,7 @@ TYPE_NAME OlmArr[] = {
 	{ OUTLINE_PERL,		"Perl" },			//Sep. 8, 2000 genta
 	{ OUTLINE_ASM,		"アセンブラ" },
 	{ OUTLINE_VB,		"Visual Basic" },	// 2001/06/23 N.Nakatani
-	{ OUTLINE_WZTXT,	"階層付テキスト" },	// 2003.05.20 zenryaku 
+	{ OUTLINE_WZTXT,	"WZ階層付テキスト" },	// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
 	{ OUTLINE_HTML,		"HTML" },			// 2003.05.20 zenryaku
 	{ OUTLINE_TEX,		"TeX" },			// 2003.07.20 naoh
 	{ OUTLINE_TEXT,		"テキスト" }		//Jul. 08, 2001 JEPRO 常に最後尾におく
