@@ -307,6 +307,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 
+		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
 		SetData_Regex( hwndDlg );	/* ダイアログデータの設定 正規表現キーワード */
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
