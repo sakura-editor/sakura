@@ -2311,6 +2311,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			if( nRowNum > 0 ){
 				/* セパレータ */
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+				CShareData::getInstance()->TransformFileName_MakeCache();
 				for( i = 0; i < nRowNum; ++i ){
 					/* トレイからエディタへの編集ファイル名要求通知 */
 					::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
@@ -2342,7 +2343,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 							strcpy( szFile2, "(無題)" );
 						}else{
 							char buf[_MAX_PATH];
-							CShareData::getInstance()->GetTransformFileName( pfi->m_szPath, buf, _MAX_PATH );
+							CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
 							dupamp( buf, szFile2 );
 						}
 						wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
