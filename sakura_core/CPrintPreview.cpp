@@ -675,7 +675,9 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 	if( m_nAllPageNum <= m_nCurPageNum + 1 ){
 		//	最後のページのときは、次のページボタンをオフ。
 		//	Jul. 18, 2001 genta FocusのあるWindowをDisableにすると操作できなくなるのを回避
-		::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ));
+		//	Mar. 9, 2003 genta 1ページしか無いときは「前へ」ボタンもDisableされているので、
+		//	最後のページまで達したら「戻る」にフォーカスを移すように
+		::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDCANCEL ));
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ), FALSE );
 	}else{
 		//	次のページボタンをオン。
