@@ -1328,42 +1328,9 @@ void CEditView::ShowEditCaret( void )
 		}
 
 	}
-//	int		nDummy;
-//	if( m_nMyIndex == 0 ){
-//		nDummy = 0;
-//	}else
-//	if( m_nMyIndex == 1 ){
-//		nDummy = 1;
-//	}else
-//	if( m_nMyIndex == 2 ){
-//		nDummy = 2;
-//	}else
-//	if( m_nMyIndex == 3 ){
-//		nDummy = 3;
-//	}
 
 	hdc = ::GetDC( m_hWnd );
 	if( m_nCaretWidth == 0 ){	/* キャレットがなかった場合 */
-
-//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelecting() ){
-//			/* カーソル行アンダーラインの描画 */
-//			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
-//			hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//			m_nOldUnderLineY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight;
-//			::MoveToEx(
-//				hdc,
-//				m_nViewAlignLeft,
-//				m_nOldUnderLineY,
-//				NULL
-//			);
-//			::LineTo(
-//				hdc,
-//				m_nViewCx + m_nViewAlignLeft,
-//				m_nOldUnderLineY
-//			);
-//			::SelectObject( hdc, hPenOld );
-//			::DeleteObject( hPen );
-//		}
 
 		/* キャレットの作成 */
 		::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
@@ -1381,46 +1348,6 @@ void CEditView::ShowEditCaret( void )
 			/* 現在のキャレットを削除 */
 			::DestroyCaret();
 
-//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && -1 != m_nOldUnderLineY ){
-//				/* カーソル行アンダーラインの消去 */
-//				hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-//				hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//				::MoveToEx(
-//					hdc,
-//					m_nViewAlignLeft,
-//					m_nOldUnderLineY,
-//					NULL
-//				);
-//				::LineTo(
-//					hdc,
-//					m_nViewCx + m_nViewAlignLeft,
-//					m_nOldUnderLineY
-//				);
-//				::SelectObject( hdc, hPenOld );
-//				::DeleteObject( hPen );
-//				m_nOldUnderLineY = -1;
-//			}
-
-//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelecting() ){
-//				/* カーソル行アンダーラインの描画 */
-//				hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
-//				hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//				m_nOldUnderLineY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight;
-//				::MoveToEx(
-//					hdc,
-//					m_nViewAlignLeft,
-//					m_nOldUnderLineY,
-//					NULL
-//				);
-//				::LineTo(
-//					hdc,
-//					m_nViewCx + m_nViewAlignLeft,
-//					m_nOldUnderLineY
-//				);
-//				::SelectObject( hdc, hPenOld );
-//				::DeleteObject( hPen );
-//			}
-
 			/* キャレットの作成 */
 			::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
 			/* キャレットの位置を調整 */
@@ -1434,46 +1361,6 @@ void CEditView::ShowEditCaret( void )
 			/* キャレットはあるし、大きさも変わっていない場合 */
 			/* キャレットを隠す */
 			::HideCaret( m_hWnd );
-
-//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && -1 != m_nOldUnderLineY ){
-//				/* カーソル行アンダーラインの消去 */
-//				hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-//				hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//				::MoveToEx(
-//					hdc,
-//					m_nViewAlignLeft,
-//					m_nOldUnderLineY,
-//					NULL
-//				);
-//				::LineTo(
-//					hdc,
-//					m_nViewCx + m_nViewAlignLeft,
-//					m_nOldUnderLineY
-//				);
-//				::SelectObject( hdc, hPenOld );
-//				::DeleteObject( hPen );
-//				m_nOldUnderLineY = -1;
-//			}
-
-//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelecting() ){
-//				/* カーソル行アンダーラインの描画 */
-//				hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
-//				hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//				m_nOldUnderLineY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight;
-//				::MoveToEx(
-//					hdc,
-//					m_nViewAlignLeft,
-//					m_nOldUnderLineY,
-//					NULL
-//				);
-//				::LineTo(
-//					hdc,
-//					m_nViewCx + m_nViewAlignLeft,
-//					m_nOldUnderLineY
-//				);
-//				::SelectObject( hdc, hPenOld );
-//				::DeleteObject( hPen );
-//			}
 
 			/* キャレットの位置を調整 */
 			::SetCaretPos(
@@ -1561,6 +1448,9 @@ void CEditView::OnKillFocus( void )
 //		m_pcEditDoc->m_cHokanMgr.Hide();
 //		m_bHokan = FALSE;
 //	}
+	
+	//	非アクティブにしたときはカーソルオフ YAZAKI 2002/05/08
+	CaretUnderLineOFF(TRUE);
 
 	return;
 }
@@ -4230,57 +4120,7 @@ void CEditView::DisableSelectArea( BOOL bDraw )
 	m_nCaretPosX_Prev=m_nCaretPosX;
 
 	//	From Here Dec. 6, 2000 genta
-#if 0
-	//	フリーカーソルでない場合には行末より右にある
-	//	キャレットを適切な位置まで移動する．
-	if( ! m_pShareData->m_Common.m_bIsFreeCursorMode ){
-		int len, pos;
-		const char *line;
-
-
-		line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &len );
-		//	データがない＝EOFのみの行 i.e. Columnは常に0
-		if( line == NULL && m_nCaretPosX > 0){
-			MoveCursor( 0, m_nCaretPosY, bDraw );
-		}
-		else {
-			pos = LineIndexToColmn( line, m_nCaretPosY, len );	//	行末の桁位置を計算
-			if( m_nCaretPosX > pos ){
-				MoveCursor( pos, m_nCaretPosY, bDraw );
-			}
-		}
-//		char buf[30];
-//		wsprintf( buf, "X[%d] Y[%d], len[%d], pos[%d]", m_nCaretPosX, m_nCaretPosY, len, pos );
-//		::MessageBox( NULL, buf, "CEditView::DisableSelectArea", MB_OK );
-	}
-#endif
 	//	To Here Dec. 6, 2000 genta
-
-//	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
-//		/* カーソル行アンダーラインの描画 */
-//		HDC		hdc;
-//		HPEN	hPen;
-//		HPEN	hPenOld;
-//		hdc = ::GetDC( m_hWnd );
-//		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
-//		hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//		m_nOldUnderLineY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight;
-//		::MoveToEx(
-//			hdc,
-//			m_nViewAlignLeft,
-//			m_nOldUnderLineY,
-//			NULL
-//		);
-//		::LineTo(
-//			hdc,
-//			m_nViewCx + m_nViewAlignLeft,
-//			m_nOldUnderLineY
-//		);
-//		::SelectObject( hdc, hPenOld );
-//		::DeleteObject( hPen );
-//		::ReleaseDC( m_hWnd, hdc );
-//	}
-
 
 	/* カーソル行アンダーラインのON */
 	CaretUnderLineON( bDraw );
@@ -6023,6 +5863,15 @@ void CEditView::DrawCaretPosInfo( void )
 	const char *nNlTypeName = cNlType.GetName();
 	//	To Here
 
+	int nPosX, nPosY;
+	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		nPosX = m_nCaretPosX_PHY + 1;
+		nPosY = m_nCaretPosY_PHY + 1;
+	}
+	else {
+		nPosX = m_nCaretPosX + 1;
+		nPosY = m_nCaretPosY + 1;
+	}
 
 	/* ステータス情報を書き出す */
 	if( NULL == pCEditWnd->m_hwndStatusBar ){
@@ -6043,7 +5892,7 @@ void CEditView::DrawCaretPosInfo( void )
 			nIdxFrom = LineColmnToIndex( (const char *)pLine, nLineLen, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ){
 				/* szText */
-				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
 					nCharChars = CMemory::MemCharNext( (char *)pLine, nLineLen, (char *)&pLine[nIdxFrom] ) - (char *)&pLine[nIdxFrom];
@@ -6052,23 +5901,23 @@ void CEditView::DrawCaretPosInfo( void )
 				}
 				if( 1 == nCharChars ){
 					/* szText */
-					wsprintf( szText, "%s(%s)   [%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom], m_nCaretPosY + 1, m_nCaretPosX + 1 );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s)   [%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom], nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}else
 				if( 2 == nCharChars ){
 					/* szText */
-					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , m_nCaretPosY + 1, m_nCaretPosX + 1);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}else
 				if( 4 == nCharChars ){
 					/* szText */
-					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , m_nCaretPosY + 1, m_nCaretPosX + 1);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}else{
 					/* szText */
-					wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}
 			}
 		}else{
 			/* szText */
-			wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+			wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 		}
 		//	To Here
 		/* 文字列描画 */
@@ -6096,16 +5945,7 @@ void CEditView::DrawCaretPosInfo( void )
 		char	szText_1[64];
 		char	szText_2[64];
 		char	szText_5[64];
-		int nPosX, nPosY;
-		if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-			nPosX = m_nCaretPosX_PHY;
-			nPosY = m_nCaretPosY_PHY;
-		}
-		else {
-			nPosX = m_nCaretPosX;
-			nPosY = m_nCaretPosY;
-		}
-		wsprintf( szText_1, "%6d 行 %5d 桁", nPosY + 1, nPosX + 1 );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		wsprintf( szText_1, "%6d 行 %5d 桁", nPosY, nPosX );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		nCharChars = 0;
 		if( NULL != pLine ){
@@ -8297,31 +8137,13 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 }
 
 
+#if 0
 /* 現在、Enterなどで挿入する改行コードの種類を取得 */
 CEOL CEditView::GetCurrentInsertEOL( void )
 {
-#if 0
-	//	May 12, 2000 genta
-	CDocLine* pFirstlineinfo = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(0);
-	if( pFirstlineinfo != NULL ){
-		enumEOLType t = pFirstlineinfo->m_cEol;
-		if( t != EOL_NONE && t != EOL_UNKNOWN )
-			return t;
-	}
-	return EOL_CRLF;
-
-	CEditDoc::FileReadにてコードを設定するようにしたので，ここは削除．
-#endif
-#if 0
-	enumEOLType t = m_pcEditDoc->GetNewLineCode();
-	char buf[30];
-	wsprintf( buf, "EOL: %d", t );
-	::MessageBox( NULL, buf, "End of Line", MB_OK );
-	return t;
-#else
 	return m_pcEditDoc->GetNewLineCode();
-#endif
 }
+#endif
 
 //	From Here Jun. 30, 2001 GAE
 //////////////////////////////////////////////////////////////////////

@@ -901,7 +901,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Common.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
 		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_bAutoMIMEdecode = TRUE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 //		/* MRU 外部コマンド */
 //		m_pShareData->m_Common.m_MRU_ExtCmd.m_nExtCmdArrNum = 0;

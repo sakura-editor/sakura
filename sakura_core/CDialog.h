@@ -68,6 +68,7 @@ public:
 	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 //	virtual BOOL OnDbnDropDown( HWND hwndCtl, int wID ){return FALSE;}
 //	virtual BOOL OnDbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
+
 	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }

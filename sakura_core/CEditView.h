@@ -292,7 +292,7 @@ public: /* テスト用にアクセス属性を変更 */
 	*/
 	void GetCurrentTextForSearch( CMemory& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 protected:
-	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
+//	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
 	BOOL MyGetClipboardData( CMemory&, BOOL* );			/* クリップボードからデータを取得 */
 	BOOL MySetClipboardData( const char*, int, BOOL );	/* クリップボードにデータを設定 */
@@ -699,6 +699,8 @@ private:
 	//ATOK専用再変換のAPI
 	HMODULE m_hAtokModule;
 	BOOL (WINAPI *AT_ImmSetReconvertString)( HIMC , int ,PRECONVERTSTRING , DWORD  );
+	
+	bool	m_bUnderLineON;
 };
 
 

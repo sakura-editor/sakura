@@ -3235,7 +3235,8 @@ void  CEditDoc::SetActivePane( int nIndex )
 {
 	m_cEditViewArr[m_nActivePaneIndex].OnKillFocus();
 
-	m_nActivePaneIndex = nIndex;	/* アクティブなビュー */
+	/* アクティブなビューを切り替える */
+	m_nActivePaneIndex = nIndex;
 
 	m_cEditViewArr[m_nActivePaneIndex].OnSetFocus();
 
@@ -3257,12 +3258,13 @@ void  CEditDoc::SetActivePane( int nIndex )
 		m_cHokanMgr.ChangeView( (LPARAM)&m_cEditViewArr[m_nActivePaneIndex] );
 	}
 
-//	2001/06/20 Start by asa-o:	アクティブでないペインのカーソルアンダーバーを非表示
-	m_cEditViewArr[m_nActivePaneIndex].CaretUnderLineON(TRUE);
-	m_cEditViewArr[m_nActivePaneIndex^1].CaretUnderLineOFF(TRUE);
-	m_cEditViewArr[m_nActivePaneIndex^2].CaretUnderLineOFF(TRUE);
-	m_cEditViewArr[(m_nActivePaneIndex^2)^1].CaretUnderLineOFF(TRUE);
-//	2001/06/20 End
+	//	2002/05/08 YAZAKI OnKillFocus()とOnSetFocus()で、アンダーラインを制御するようにした。
+	//	2001/06/20 Start by asa-o:	アクティブでないペインのカーソルアンダーバーを非表示
+	//	m_cEditViewArr[m_nActivePaneIndex].CaretUnderLineON(TRUE);
+	//	m_cEditViewArr[m_nActivePaneIndex^1].CaretUnderLineOFF(TRUE);
+	//	m_cEditViewArr[m_nActivePaneIndex^2].CaretUnderLineOFF(TRUE);
+	//	m_cEditViewArr[(m_nActivePaneIndex^2)^1].CaretUnderLineOFF(TRUE);
+	//	2001/06/20 End
 
 	return;
 }

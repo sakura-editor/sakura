@@ -1936,7 +1936,7 @@ void CEditView::Command_WndScrollDown( void )
 	nCaretMarginY += 2;
 
 	if( m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - (nCaretMarginY + 1) ){
-		CaretUnderLineOFF(TRUE);
+		CaretUnderLineOFF( TRUE );
 	}
 
 	ScrollAtV(m_nViewTopLine - 1);
@@ -1964,7 +1964,7 @@ void CEditView::Command_WndScrollDown( void )
 		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
 
-	CaretUnderLineON(TRUE);
+	CaretUnderLineON( TRUE );
 }
 
 // テキストを１行上へスクロール

@@ -85,6 +85,8 @@ OBJS =\
 	$(SRCDIR)\CLayoutMgr_New.obj \
 	$(SRCDIR)\CLayoutMgr_New2.obj \
 	$(SRCDIR)\CMacro.obj \
+	$(SRCDIR)\CMacroFactory.obj \
+	$(SRCDIR)\CMacroManagerBase.obj \
 	$(SRCDIR)\CMarkMgr.obj \
 	$(SRCDIR)\CMemory.obj \
 	$(SRCDIR)\CMenuDrawer.obj \

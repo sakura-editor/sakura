@@ -292,6 +292,11 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		DispRuler( hdc );
 	}
 
+	if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
+		/* アクティブペインは、アンダーライン描画 */
+		CaretUnderLineON( TRUE );
+	}
+
 	/* メモリＤＣを利用した再描画の場合はメモリＤＣに描画した内容を画面へコピーする */
 	if( bUseMemoryDC ){
 		::BitBlt(
@@ -1695,40 +1700,11 @@ end_of_line:;
 	}
 
 end_of_func:;
+//	2002/05/08 YAZAKI アンダーラインの再描画は不要でした
 //	MYTRACE( "m_nOldUnderLineY=%d\n", m_nOldUnderLineY );
-	if( -1 != m_nOldUnderLineY ){
-		/* カーソル行アンダーラインのON */
-		CaretUnderLineON( TRUE );
-	}
-//	if( nLineNumOrg == m_nCaretPosY
-//	 && -1 != m_nOldUnderLineY
-//	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
-//	 && TypeDataPtr->m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp
-//	 && !IsTextSelected()
-//	){
-//		HDC			hdc;
-//		HPEN		hPen, hPenOld;
-//		hdc = ::GetDC( m_hWnd );
-//
-//		MYTRACE( "□カーソル行アンダーラインの描画\n" );
-//		/* カーソル行アンダーラインの描画 */
-//		hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
-//		hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//		m_nOldUnderLineY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( TypeDataPtr->m_nLineSpace + m_nCharHeight ) + m_nCharHeight;
-//		::MoveToEx(
-//			hdc,
-//			m_nViewAlignLeft,
-//			m_nOldUnderLineY,
-//			NULL
-//		);
-//		::LineTo(
-//			hdc,
-//			m_nViewCx + m_nViewAlignLeft,
-//			m_nOldUnderLineY
-//		);
-//		::SelectObject( hdc, hPenOld );
-//		::DeleteObject( hPen );
-//		::ReleaseDC( m_hWnd, hdc );
+//	if( -1 != m_nOldUnderLineY ){
+//		/* カーソル行アンダーラインのON */
+//		CaretUnderLineON( TRUE );
 //	}
 	return bEOF;
 }

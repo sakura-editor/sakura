@@ -14,8 +14,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgAbout;
-
 #ifndef _CDLGABOUT_H_
 #define _CDLGABOUT_H_
 
