@@ -109,13 +109,13 @@ public:
 	void Redraw( void );										// 2001/06/21 asa-o 再描画
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
-	DWORD DoGrep( CMemory*, CMemory*, CMemory*, BOOL, BOOL, BOOL, BOOL, BOOL, int );/* Grep実行 */
+	DWORD DoGrep( CMemory*, CMemory*, CMemory*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int );/* Grep実行 */
 	/* Grep実行 */
 //	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int* );
-	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int* );
+	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int* );
 	/* Grep実行 */
 //	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int*, const char*, CMemory& );
-	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int*, const char*, CMemory& );
+	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int*, const char*, CMemory& );
 	/* Grep実行 */
 	void CEditView::DoGrep_Thread(
 		DWORD	dwGrepParam
