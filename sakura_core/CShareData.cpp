@@ -137,8 +137,11 @@ struct ARRHEAD {
 
 	Version 52:
 	前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ追加	2004.10.03 genta
+
+	Version 53:
+	存在しないファイルを開こうとした場合に警告するフラグの追加	2004.10.09 genta
 */
-const unsigned int uShareDataVersion = 52;
+const unsigned int uShareDataVersion = 53;
 
 /*
 ||	Singleton風
@@ -922,6 +925,8 @@ bool CShareData::Init( void )
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
 		m_pShareData->m_Common.m_bQueryIfCodeChange = TRUE;
+		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
+		m_pShareData->m_Common.m_bAlertIfFileNotExist = FALSE;
 
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */

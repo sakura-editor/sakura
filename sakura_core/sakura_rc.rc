@@ -284,7 +284,7 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_nDropFileNumMax,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,179,102,9,
                     12
-    GROUPBOX        "ファイルオープン",IDC_STATIC,3,73,264,108,WS_GROUP
+    GROUPBOX        "ファイルオープン",IDC_STATIC,3,73,264,124,WS_GROUP
     LTEXT           "個までとする",IDC_LABEL_AUTOSAVE4,141,104,38,8,NOT 
                     WS_GROUP
     LTEXT           "←注：ドロップファイルは1つのみ有効",IDC_LANEL_NOTE,150,
@@ -301,6 +301,9 @@ BEGIN
     CONTROL         "前回と異なる文字コードのとき問い合わせを行う(&Q)",
                     IDC_CHECK_QueryIfCodeChange,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,163,223,13
+    CONTROL         "開こうとしたファイルが存在しないとき警告する(&E)",
+                    IDC_CHECK_AlertIfFileNotExist,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,179,223,10
 END
 
 IDD_ABOUT DIALOGEX 0, 0, 231, 203
