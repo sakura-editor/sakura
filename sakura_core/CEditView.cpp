@@ -6846,7 +6846,64 @@ cancel_return:;
 
 
 
+/*!	Grep結果を、pszWorkに格納する。
+	pszWorkは充分なメモリ領域を持っているコト
+*/
+void CEditView::SetGrepResult(
+	/* データ格納先 */
+	char*		pszWork, 
+	/* マッチしたファイルの情報 */
+	const char*		pszFullPath,	//	フルパス
+	char*		pszCodeName,		//	文字コード情報"[SJIS]"とか
+	/* マッチした行の情報 */
+	int			nLine,				//	マッチした行番号
+	int			nColm,				//	マッチした桁番号
+	char*		pCompareData,		//	行の文字列
+	int			nLineLen,			//	行の文字列の長さ
+	int			nEolCodeLen,		//	EOLの長さ
+	/* マッチした文字列の情報 */
+	const char*		pMatchData,		//	マッチした文字列
+	int			nMatchLen,			//	マッチした文字列の長さ
+	/* オプション */
+	BOOL		bGrepOutputLine,
+	int			nGrepOutputStyle
+)
+{
+	if( bGrepOutputLine ){
+	/* 該当行 */
+		int k = nLineLen - nEolCodeLen;
+		if( k > 1000 ){
+			k = 1000;
+		}
+		pCompareData[k] = '\0';
 
+		if( 1 == nGrepOutputStyle ){
+		/* ノーマル */
+			wsprintf( pszWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pCompareData );
+		}else
+		if( 2 == nGrepOutputStyle ){
+		/* WZ風 */
+			wsprintf( pszWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pCompareData );
+		}
+	}else{
+	/* 該当部分 */
+		char* pszHit;
+		//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+		pszHit = new char[ nMatchLen + 1 ];
+		memcpy( pszHit, pMatchData, nMatchLen );
+		pszHit[ nMatchLen ] = '\0';
+		//	To Here Jun. 27, 2001 genta
+		if( 1 == nGrepOutputStyle ){
+		/* ノーマル */
+			wsprintf( pszWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pszHit );
+		}else
+		if( 2 == nGrepOutputStyle ){
+		/* WZ風 */
+			wsprintf( pszWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pszHit );
+		}
+		delete [] pszHit;
+	}
+}
 
 
 /* Grep実行 */
@@ -6905,7 +6962,7 @@ int CEditView::DoGrepFile(
 //	enumEOLType nEOLType;
 	CEOL	cEol;
 	int		nEolCodeLen;
-	int		k;
+//	int		k;
 //	int		nLineNum;
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
@@ -7084,57 +7141,25 @@ int CEditView::DoGrepFile(
 			}
 		}
 
+		/* 正規表現検索 */
 		if( bGrepRegularExp ){
 			BREGEXP*	pRegexpData;	//	正規表現コンパイルデータ
-			int matchlen;	//	一致長格納用
 
 			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 			if( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
 
 				//	パターン発見
 				nColm = pRegexpData->startp[0] - pCompareData + 1;
-				matchlen = pRegexpData->endp[0] - pRegexpData->startp[0];
+				int matchlen = pRegexpData->endp[0] - pRegexpData->startp[0];
 
-//				if( nLineLen > sizeof( szLine ) - 10 ){
-//					nLineLen = sizeof( szLine ) - 10;
-//				}
-//				memcpy( szLine, pCompareData, nLineLen - 1 );
-//				szLine[nLineLen - 1] = '\0';
-
-				if( bGrepOutputLine ){
-				/* 該当行 */
-					k = nLineLen - nEolCodeLen;
-					if( k > 1000 ){
-						k = 1000;
-					}
-					pCompareData[k] = '\0';
-
-					if( 1 == nGrepOutputStyle ){
-					/* ノーマル */
-						wsprintf( szWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pCompareData );
-					}else
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						wsprintf( szWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pCompareData );
-					}
-				}else{
-				/* 該当部分 */
-					char* pszHit;
-					//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-					pszHit = new char[ matchlen + 1 ];
-					memcpy( pszHit, pRegexpData->startp[0], matchlen );
-					pszHit[ matchlen ] = '\0';
-					//	To Here Jun. 27, 2001 genta
-					if( 1 == nGrepOutputStyle ){
-					/* ノーマル */
-						wsprintf( szWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pszHit );
-					}else
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						wsprintf( szWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pszHit );
-					}
-					delete [] pszHit;
-				}
+				/* Grep結果を、szWorkに格納する */
+				SetGrepResult(
+					szWork,
+					pszFullPath, pszCodeName,
+					nLine, nColm, pCompareData, nLineLen, nEolCodeLen,
+					pRegexpData->startp[0], matchlen,
+					bGrepOutputLine, nGrepOutputStyle
+				);
 				if( 2 == nGrepOutputStyle ){
 				/* WZ風 */
 					if( !bOutFileName ){
@@ -7142,6 +7167,7 @@ int CEditView::DoGrepFile(
 						bOutFileName = TRUE;
 					}
 				}
+
 				cmemMessage.AppendSz( szWork );
 				++nHitCount;
 				++(*pnHitCount);
@@ -7149,58 +7175,86 @@ int CEditView::DoGrepFile(
 					::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 				}
 			}
-		}else{
+		}else
+		/* 単語のみ検索 */
+		if( bWordOnly ){
+			/*
+				2002/02/23 Norio Nakatani
+				単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
+				英単語やC/C++識別子などの検索条件ならヒットします。
+
+				2002/03/06 YAZAKI
+				Grepにも試験導入。
+				WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
+			*/
+			int nNextWordFrom = 0;
+			int nNextWordFrom2;
+			int nNextWordTo2;
+			while (1) {	//	ぐるぐるまわす。
+				if( TRUE ==
+					CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
+				){
+					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
+						const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更
+						/* 1==大文字小文字の区別 */
+						if( (FALSE == bGrepLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
+							(TRUE  == bGrepLoHiCase && 0 ==	  memcmp( &(pData[nNextWordFrom2]) , pszKey, nKeyKen ) )
+						){
+							/* Grep結果を、szWorkに格納する */
+							SetGrepResult(
+								szWork,
+								pszFullPath, pszCodeName,
+								nLine, nNextWordFrom2, pCompareData, nLineLen, nEolCodeLen,
+								pszKey, nKeyKen,
+								bGrepOutputLine, nGrepOutputStyle
+							);
+							if( 2 == nGrepOutputStyle ){
+							/* WZ風 */
+								if( !bOutFileName ){
+									cmemMessage.AppendSz( szWork0 );
+									bOutFileName = TRUE;
+								}
+							}
+
+							cmemMessage.AppendSz( szWork );
+							++nHitCount;
+							++(*pnHitCount);
+							//	May 22, 2000 genta
+							// if( 0 == ( (*pnHitCount) % 16 ) ){
+								::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+							// }
+						}
+					}
+					/* 現在位置の左右の単語の先頭位置を調べる */
+					if( !CDocLineMgr::SearchNextWordPosition( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom, FALSE ) ){
+						break;	//	次の単語が無い。
+					}
+				}
+				else {
+					//	単語が見つからなかった。
+					break;
+				}
+			}
+		}
+		else {
 			/* 文字列検索 */
 			if( NULL != ( pszRes = (char *)CDocLineMgr::SearchString(
 				(const unsigned char *)pCompareData, nLineLen,
 				0,
 				(const unsigned char *)pszKey, nKeyKen,
 				pnKey_CharCharsArr,
-//				pnKey_CharUsedArr,
 				bGrepLoHiCase
 			) ) ){
 				nColm = pszRes - pCompareData + 1;
 
-//				if( nLineLen > sizeof( szLine ) - 10 ){
-//					nLineLen = sizeof( szLine ) - 10;
-//				}
-//				memcpy( szLine, pCompareData, nLineLen - 1 );
-//				szLine[nLineLen - 1] = '\0';
-//				memcpy( szLine, pCompareData, nLineLen - nEolCodeLen );
-//				szLine[nLineLen - nEolCodeLen] = '\0';
-//				pCompareData = szLine;
-
-				if( bGrepOutputLine ){
-				/* 該当行 */
-					k = nLineLen - nEolCodeLen;
-					if( k > 1000 ){
-						k = 1000;
-					}
-					pCompareData[k] = '\0';
-					if( 1 == nGrepOutputStyle ){
-					/* ノーマル */
-						wsprintf( szWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pCompareData );
-					}else
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						wsprintf( szWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pCompareData );
-					}
-				}else{
-				/* 該当部分 */
-					char* pszHit;
-					pszHit = new char[nKeyKen + 1];
-					memcpy( pszHit, pszRes, nKeyKen );
-					pszHit[nKeyKen] = '\0';
-					if( 1 == nGrepOutputStyle ){
-					/* ノーマル */
-						wsprintf( szWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pszHit );
-					}else
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						wsprintf( szWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pszHit );
-					}
-					delete [] pszHit;
-				}
+				/* Grep結果を、szWorkに格納する */
+				SetGrepResult(
+					szWork,
+					pszFullPath, pszCodeName,
+					nLine, nColm, pCompareData, nLineLen, nEolCodeLen,
+					pszKey, nKeyKen,
+					bGrepOutputLine, nGrepOutputStyle
+				);
 				if( 2 == nGrepOutputStyle ){
 				/* WZ風 */
 					if( !bOutFileName ){
@@ -7208,6 +7262,7 @@ int CEditView::DoGrepFile(
 						bOutFileName = TRUE;
 					}
 				}
+
 				cmemMessage.AppendSz( szWork );
 				++nHitCount;
 				++(*pnHitCount);

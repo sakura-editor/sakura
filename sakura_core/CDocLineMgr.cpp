@@ -1599,12 +1599,65 @@ int	CDocLineMgr::WhereCurrentWord_2(
 
 
 
+/*!	次の単語の先頭を探す
+	pLine（長さ：nLineLen）の文字列から単語を探す。
+	探し始める位置はnIdxで指定。方向は後方に限定。単語の両端で止まらない（関係ないから）
+*/
+int CDocLineMgr::SearchNextWordPosition(
+	const char* pLine,
+	int			nLineLen,
+	int			nIdx,		//	桁数
+	int*		pnColmNew,	//	見つかった位置
+	BOOL		bStopsBothEnds	//	単語の両端で止まる
+)
+{
+	/* 文字種類が変わるまで後方へサーチ */
+	/* 空白とタブは無視する */
+
+	/* 現在位置の文字の種類を調べる */
+	int nCharKind = WhatKindOfChar( pLine, nLineLen, nIdx );
+
+	int nIdxNext = nIdx;
+	int nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
+	while( nCharChars > 0 ){
+		nIdxNext += nCharChars;
+		int nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
+		/* 空白とタブは無視する */
+		if( nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE ){
+			if ( bStopsBothEnds && nCharKind != nCharKindNext ){
+				*pnColmNew = nIdxNext;
+				return TRUE;
+			}
+			nCharKind = nCharKindNext;
+		}
+		else {
+			if( nCharKind == CK_MBC_NOVASU ){
+				if( nCharKindNext == CK_MBC_HIRA ||
+					nCharKindNext == CK_MBC_KATA ){
+					nCharKind = nCharKindNext;
+				}
+			}else
+			if( nCharKind == CK_MBC_HIRA ||
+				nCharKind == CK_MBC_KATA ){
+				if( nCharKindNext == CK_MBC_NOVASU ){
+					nCharKindNext = nCharKind;
+				}
+			}
+			if( nCharKind != nCharKindNext ){
+				*pnColmNew = nIdxNext;
+				return TRUE;
+			}
+		}
+		nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
+	}
+	return FALSE;
+}
 
 /* 現在位置の左右の単語の先頭位置を調べる */
 int CDocLineMgr::PrevOrNextWord(
 	int			nLineNum,	//	行数
 	int			nIdx,		//	桁数
-	int*		pnColmNew,	//	？
+	int*		pnColmNew,	//	見つかった位置
 	BOOL		bLEFT,		//	TRUE:前方（左）へ向かう。FALSE:後方（右）へ向かう。
 	BOOL		bStopsBothEnds	//	単語の両端で止まる
 )
@@ -1631,10 +1684,10 @@ int CDocLineMgr::PrevOrNextWord(
 	if( FALSE == bLEFT && ( pLine[nIdx] == CR || pLine[nIdx] == LF ) ){
 		return FALSE;
 	}
-	/* 現在位置の文字の種類を調べる */
-	nCharKind = WhatKindOfChar( pLine, nLineLen, nIdx );
 	/* 前の単語か？後ろの単語か？ */
 	if( bLEFT ){
+		/* 現在位置の文字の種類を調べる */
+		nCharKind = WhatKindOfChar( pLine, nLineLen, nIdx );
 		if( nIdx == 0 ){
 			return FALSE;
 		}
@@ -1682,40 +1735,7 @@ int CDocLineMgr::PrevOrNextWord(
 		}
 		*pnColmNew = nIdxNext;
 	}else{
-		/* 文字種類が変わるまで後方へサーチ */
-		/* 空白とタブは無視する */
-		nIdxNext = nIdx;
-		nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
-		while( nCharChars > 0 ){
-			nIdxNext += nCharChars;
-			nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
-			/* 空白とタブは無視する */
-			if( nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE ){
-				if ( bStopsBothEnds && nCharKind != nCharKindNext ){
-					break;
-				}
-				nCharKind = nCharKindNext;
-			}
-			else {
-				if( nCharKind == CK_MBC_NOVASU ){
-					if( nCharKindNext == CK_MBC_HIRA ||
-						nCharKindNext == CK_MBC_KATA ){
-						nCharKind = nCharKindNext;
-					}
-				}else
-				if( nCharKind == CK_MBC_HIRA ||
-					nCharKind == CK_MBC_KATA ){
-					if( nCharKindNext == CK_MBC_NOVASU ){
-						nCharKindNext = nCharKind;
-					}
-				}
-				if( nCharKind != nCharKindNext ){
-					break;
-				}
-			}
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
-		}
-		*pnColmNew = nIdxNext;
+		CDocLineMgr::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColmNew, bStopsBothEnds);
 	}
 	return TRUE;
 }
@@ -2278,7 +2298,7 @@ char* CDocLineMgr::SearchString(
 
 /* 現在位置の文字の種類を調べる */
 int	CDocLineMgr::WhatKindOfChar(
-		char*	pData,
+		const char*	pData,
 		int		pDataLen,
 		int		nIdx
 )
