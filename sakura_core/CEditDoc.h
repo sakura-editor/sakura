@@ -166,6 +166,8 @@ public:
 	void SetModified( BOOL flag, bool redraw){
 		SetModified( flag != FALSE, redraw );
 	}
+
+	void AddToMRU(void); // Mar. 30, 2003 genta
 	
 protected:
 	int				m_nSettingType;

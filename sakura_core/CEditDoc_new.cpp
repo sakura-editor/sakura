@@ -1052,4 +1052,24 @@ void CEditDoc::SetDocumentIcon(void)
 	m_pcEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 	m_pcEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 }
+
+/*!
+	カレントファイルをMRUに登録する。
+	ブックマークも一緒に登録する。
+
+	@date 2003.03.30 genta 作成
+
+*/
+void CEditDoc::AddToMRU(void)
+{
+	FileInfo	fi;
+	CMRU		cMRU;
+
+	SetFileInfo( &fi );
+	strcpy( fi.m_szMarkLines, m_cDocLineMgr.GetBookMarks() );
+
+	//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	cMRU.Add( &fi );
+}
+
 /*[EOF]*/

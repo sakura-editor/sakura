@@ -870,11 +870,8 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 
 	SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
 
-	SetFileInfo( &fi );
-
-	/* MRUリストへの登録 */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	cMRU.Add( &fi );
+	//	Mar. 30, 2003 genta サブルーチンにまとめた
+	AddToMRU();
 
 	/* 現在位置で無変更な状態になったことを通知 */
 	m_cOpeBuf.SetNoModified();
@@ -3793,21 +3790,11 @@ BOOL CEditDoc::OnFileClose( void )
 {
 	int			nRet;
 	int			nBool;
-	FileInfo	fi;
 	HWND		hwndMainFrame;
 	hwndMainFrame = ::GetParent( m_hWnd );
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRU		cMRU;
 
-	/* MRUリストの登録 */
-	SetFileInfo( &fi );
-
-	// 2002.01.16 hor ブックマーク記録
-	strcpy( fi.m_szMarkLines, m_cDocLineMgr.GetBookMarks() );
-
-	/* MRUリストへの登録 */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	cMRU.Add( &fi );
+	//	Mar. 30, 2003 genta サブルーチンにまとめた
+	AddToMRU();
 
 	if( m_bGrepRunning ){		/* Grep処理中 */
 		::MYMESSAGEBOX(
@@ -4097,6 +4084,9 @@ void CEditDoc::ReloadCurrentFile(
 	nCaretPosY = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY;
 
 	strcpy( szFilePath, GetFilePath() );
+
+	// Mar. 30, 2003 genta ブックマーク保存のためMRUへ登録
+	AddToMRU();
 
 	/* 既存データのクリア */
 	Init();
