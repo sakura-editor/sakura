@@ -1487,6 +1487,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case MYWM_ADDSTRING:
+//		MYTRACE( "MYWM_ADDSTRING[%s]\n", m_pShareData->m_szWork );
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, TRUE, (LPARAM)m_pShareData->m_szWork, (LPARAM)lstrlen( m_pShareData->m_szWork ), 0, 0 );
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
 //		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].Command_ADDTAIL(
@@ -3396,7 +3397,10 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		}
 		m_pShareData->m_hwndDebug = m_hWnd;
 		m_cEditDoc.m_bDebugMode = TRUE;
-		m_cEditDoc.m_bReadOnly = TRUE;		/* 読み取り専用モード */
+
+// 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
+//		m_cEditDoc.m_bReadOnly = TRUE;		/* 読み取り専用モード */
+		m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */ 
 		/* 親ウィンドウのタイトルを更新 */
 		m_cEditDoc.SetParentCaption();
 		return;
