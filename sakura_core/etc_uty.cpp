@@ -1485,6 +1485,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			  pLine[i] == '\n' ||
 			  pLine[i] == '\0' ||
 			  pLine[i] == '>'  ||
+			  pLine[i] == ':'  ||   //@@@ 2003/1/15/ matsumo (for gcc)
 			  pLine[i] == '"'
 			) &&
 			0 < strlen( szJumpToFile )
