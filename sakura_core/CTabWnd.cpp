@@ -525,9 +525,9 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			{
 				if( m_pShareData->m_pEditArr[ nIndex ].m_hWnd == m_hwndParent )
 				{
-					if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+					if( //TRUE  == m_pShareData->m_Common.m_bDispTabWnd	//2004.02.02
 					 //&& FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin
-					 && FALSE == ::IsWindowVisible( m_hwndParent ) )
+					 /*&&*/ FALSE == ::IsWindowVisible( m_hwndParent ) )
 					{
 						ShowHideWindow( m_hwndParent, TRUE );
 						ForceActiveWindow( m_hwndParent );
