@@ -90,6 +90,7 @@ private:
 	FavoriteInfoTag	p_favorite_info[8];
 
 	int		m_nCurrentTab;
+	char	m_szMsg[1024];
 
 };
 
