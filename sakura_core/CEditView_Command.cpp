@@ -802,7 +802,8 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 				it.addDelta();
 			}
 			nPosX += it.getColumn() - it.getColumnDelta();
-			if( it.getIndex() + it.getColumnDelta() > pcLayout->GetLengthWithEOL() ){
+			//	Oct. 18, 2002 YAZAKI
+			if( it.getIndex() >= pcLayout->GetLengthWithEOL() ){
 				nPosX = m_nCaretPosX - 1;
 			}
 		}
