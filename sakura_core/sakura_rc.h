@@ -356,6 +356,7 @@
 #define IDC_EDIT_BACKUP_3               1327
 #define IDC_MACROPATH                   1327
 #define IDC_RADIO_DIFF_DST2             1327
+#define IDC_EDIT_TAG_MAKE_CMDLINE       1327
 #define IDC_COMBO_m_szCommand           1328
 #define IDC_CHECK_GETSTDOUT             1329
 #define IDC_STATIC_CMD                  1330
@@ -499,6 +500,11 @@
 #define IDC_LIST_TAGJUMP                1468
 #define IDC_WINCAPTION_ACTIVE           1469
 #define IDC_WINCAPTION_INACTIVE         1470
+#define IDC_BUTTON_TAG_MAKE_REF         1471
+#define IDC_CHECK_TAG_MAKE_RECURSE      1472
+#define IDC_EDIT_TAG_MAKE_FOLDER        1473
+#define IDC_FRAME_SEARCH_MSG            1474
+#define IDC_CHECK_DIFF_EXEC_STATE       1475
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -533,7 +539,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1470
+#define _APS_NEXT_CONTROL_VALUE         1476
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
