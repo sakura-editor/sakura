@@ -53,7 +53,8 @@ class CEditView;
 #include "CTipWnd.h"
 #include "CDicMgr.h"
 #include "CHokanMgr.h"
-#include "CJre.h"
+//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+#include "CBregexp.h"
 #include "CDropTarget.h"
 #include "CMarkMgr.h"
 
@@ -110,12 +111,10 @@ public:
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 	DWORD DoGrep( CMemory*, CMemory*, CMemory*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int );/* Grep実行 */
-	/* Grep実行 */
-//	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int* );
-	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int* );
-	/* Grep実行 */
-//	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int*, const char*, CMemory& );
-	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int*, const char*, CMemory& );
+	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CBregexp*, int, int* );
+	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CBregexp*, int, int*, const char*, CMemory& );
 	/* Grep実行 */
 	void CEditView::DoGrep_Thread(
 		DWORD	dwGrepParam
@@ -145,7 +144,9 @@ public: /* テスト用にアクセス属性を変更 */
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
 
 	/* 単語検索の状態 */
-	CJre	m_CurSrch_CJre;
+	
+	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+	CBregexp	m_CurRegexp;			/*!< コンパイルデータ */
 	BOOL	m_bCurSrchKeyMark;			/* 検索文字列のマーク */
 	char	m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
 	int		m_bCurSrchRegularExp;		/* 検索／置換  1==正規表現 */

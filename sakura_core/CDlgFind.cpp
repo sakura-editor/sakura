@@ -28,7 +28,8 @@
 #include "CDlgFind.h"
 #include "funccode.h"
 #include "sakura_rc.h"
-#include "CJre.h"
+//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+#include "CBregexp.h"
 #include "CEditView.h"
 #include "etc_uty.h"    //Stonee, 2001/03/12
 
@@ -84,16 +85,9 @@ void CDlgFind::SetData( void )
 	/*****************************
 	*  初期化                    *
 	*****************************/
-	if( CJre::IsExist() ){	// jre.dllがあるかどうかを判定
-		CJre	cJre;
-		WORD	wJreVersion;
-		char	szMsg[256];
-		cJre.Init();
-		/* JRE32.DLLのバージョン */
-		wJreVersion = cJre.GetVersion();
-		::wsprintf( szMsg, "jre32.dll Ver%x.%x", wJreVersion / 0x100, wJreVersion % 0x100 );
-		::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, szMsg );
-	}
+	// Here Jun. 26, 2001 genta
+	// 正規表現ライブラリの差し替えに伴う処理の見直しによりjre.dll判定を削除
+
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT ), CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
@@ -124,12 +118,10 @@ void CDlgFind::SetData( void )
 	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
 
 	if( m_bRegularExp ){
-		/* CJreクラスの初期化 */
-		CJre	cJre;
-		cJre.Init();
-		if( FALSE == cJre.IsExist() ){
-			::MessageBeep( MB_ICONEXCLAMATION );
-			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+		//	From Here Jun. 26, 2001 genta 正規表現ライブラリの差し替え
+		//	ここではDLLをが無くても警告メッセージは表示しない
+		if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )){
+			//	To Here Jun. 26, 2001 genta
 			::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 		}else{
 			/* 英大文字と英小文字を区別する */
@@ -157,7 +149,7 @@ int CDlgFind::GetData( void )
 //	int			i;
 //	int			j;
 //	CMemory*	pcmWork;
-	CJre	cJre;
+	//	
 
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
@@ -186,22 +178,13 @@ int CDlgFind::GetData( void )
 
 	if( 0 < lstrlen( m_szText ) ){
 		/* 正規表現？ */
-		if( m_bRegularExp ){
-			/* CJreクラスの初期化 */
-			cJre.Init();
-			/* jre32.dllの存在チェック */
-			if( FALSE == cJre.IsExist() ){
-				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
-				return -1;
-			}
-			/* 検索パターンのコンパイル */
-			if( !cJre.Compile( m_szText ) ){
-				char	szMsg[512];
-				cJre.GetJreMessage( GJM_JPN, szMsg );
-				::MessageBox( m_hWnd, szMsg, "正規表現エラー情報", MB_OK | MB_ICONSTOP );
-				return -1;
-			}
+		// From Here Jun. 26, 2001 genta
+		//	正規表現ライブラリの差し替えに伴う処理の見直し
+		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true )){
+			return -1;
 		}
+		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
+		
 		/* 検索文字列 */
 		AddToSearchKeyArr( (const char*)m_szText );
 		if( FALSE == m_bModal ){
@@ -230,24 +213,13 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
 //		MYTRACE( "IDC_CHK_REGULAREXP ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
-			/* CJreクラスの初期化 */
-			CJre	cJre;
-			cJre.Init();
-			if( FALSE == CJre::IsExist() ){
-				/* JRE32.DLLのバージョン */
-				::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, "" );
-				::MessageBeep( MB_ICONEXCLAMATION );
-				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+			
+			// From Here Jun. 26, 2001 genta
+			//	正規表現ライブラリの差し替えに伴う処理の見直し
+			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true )){
 				::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 			}else{
-				CJre	cJre;
-				WORD	wJreVersion;
-				char	szMsg[256];
-				cJre.Init();
-				/* JRE32.DLLのバージョン */
-				wJreVersion = cJre.GetVersion();
-				wsprintf( szMsg, "jre32.dll Ver%x.%x", wJreVersion / 0x100, wJreVersion % 0x100 );
-				::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, szMsg );
+			// To Here Jun. 26, 2001 genta
 
 				/* 英大文字と英小文字を区別する */
 				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
@@ -256,7 +228,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				// 2001/06/23 Norio Nakatani
 				/* 単語単位で検索 */
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
-
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */

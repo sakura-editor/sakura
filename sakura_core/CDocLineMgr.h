@@ -34,7 +34,8 @@ class CDocLineMgr;
 #include "CDocLine.h"
 #include "CMemory.h"
 #include "cRunningTimer.h"
-#include "CJre.h"
+//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+#include "CBregexp.h"
 
 struct DocLineReplaceArg {
 	int			nDelLineFrom;			/* 削除範囲行  From 改行単位の行番号 0開始) */
@@ -77,7 +78,8 @@ public:
 
 	static int WhatKindOfChar( char*, int, int );	/* 現在位置の文字の種類を調べる */
 	int PrevOrNextWord( int , int , int* , int );	/* 現在位置の左右の単語の先頭位置を調べる */
-	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CJre* ); /* 単語検索 */
+	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CBregexp* ); /* 単語検索 */
 //	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int*, int ); /* 文字列検索 */
 	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int ); /* 文字列検索 */
 	static void CreateCharCharsArr( const unsigned char*, int, int** );	/* 検索条件の情報 */

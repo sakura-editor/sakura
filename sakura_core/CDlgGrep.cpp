@@ -30,7 +30,6 @@
 #include "CDlgGrep.h"
 #include "debug.h"
 
-#include "CJre.h"
 //#include "_global_fio.h"
 #include "etc_uty.h"
 #include "global.h"
@@ -172,26 +171,12 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
 //		MYTRACE( "IDC_CHK_REGULAREXP ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
-			/* CJreクラスの初期化 */
-			CJre	cJre;
-//			int		wJreVersion;
-			cJre.Init();
-			if( FALSE == CJre::IsExist() ){
-				/* JRE32.DLLのバージョン */
-				::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, "" );
-				::MessageBeep( MB_ICONEXCLAMATION );
-				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+			// From Here Jun. 26, 2001 genta
+			//	正規表現ライブラリの差し替えに伴う処理の見直し
+			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true )){
 				::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 			}else{
-				CJre	cJre;
-				WORD	wJreVersion;
-				char	szMsg[256];
-				cJre.Init();
-				/* JRE32.DLLのバージョン */
-				wJreVersion = cJre.GetVersion();
-				wsprintf( szMsg, "jre32.dll Ver%x.%x", wJreVersion / 0x100, wJreVersion % 0x100 );
-				::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, szMsg );
-
+				//	To Here Jun. 26, 2001 genta
 				/* 英大文字と英小文字を区別する */
 				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
@@ -258,18 +243,9 @@ void CDlgGrep::SetData( void )
 
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
-//From Here Feb. 9, 2001 JEPRO 追加
-	if( CJre::IsExist() ){	// jre.dllがあるかどうかを判定
-		CJre	cJre;
-		WORD	wJreVersion;
-		char	szMsg[256];
-		cJre.Init();
-		/* JRE32.DLLのバージョン */
-		wJreVersion = cJre.GetVersion();
-		::wsprintf( szMsg, "jre32.dll Ver%x.%x", wJreVersion / 0x100, wJreVersion % 0x100 );
-		::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, szMsg );
-	}
-//To Here Feb. 9, 2001
+	//	Jun. 26, 2001 genta
+	//	正規表現ライブラリの差し替えに伴う処理の見直し
+	CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false );
 
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
@@ -360,23 +336,13 @@ void CDlgGrep::SetData( void )
 	}
 
 	if( m_bRegularExp ){
-		/* CJreクラスの初期化 */
-		CJre	cJre;
-		cJre.Init();
-		if( FALSE == cJre.IsExist() ){
-			::MessageBeep( MB_ICONEXCLAMATION );
-			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+		// From Here Jun. 26, 2001 genta
+		//	正規表現ライブラリの差し替えに伴う処理の見直し
+		//	ここではDLLをが無くても警告メッセージは表示しない
+		if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )){
 			::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 		}else{
-//From Here Feb. 9, 2001 JEPRO コメントアウト
-//			/* JRE32.DLLのバージョン */
-//			WORD	wJreVersion;
-//			char	szMsg[256];
-//
-//			wJreVersion = cJre.GetVersion();
-//			wsprintf( szMsg, "jre32.dll Ver%x.%x", wJreVersion / 0x100, wJreVersion % 0x100 );
-//			::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, szMsg );
-//To Here Feb. 9, 2001
+		// To Here Jun. 26, 2001 genta
 			/* 英大文字と英小文字を区別する */
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
@@ -408,7 +374,6 @@ int CDlgGrep::GetData( void )
 	int			i;
 	int			j;
 	CMemory*	pcmWork;
-	CJre		cJre;
 
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
@@ -498,25 +463,12 @@ int CDlgGrep::GetData( void )
 
 	
 //	if( 0 < lstrlen( m_szText ) ){
-		/* 正規表現？ */
-		if( m_bRegularExp ){
-			/* CJreクラスの初期化 */
-			cJre.Init();
-			/* jre32.dllの存在チェック */
-			if( FALSE == cJre.IsExist() ){
-				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
-				return FALSE;
-			}
-			/* 検索パターンのコンパイル */
-			if( !cJre.Compile( m_szText ) ){
-				char*	pszMsg = new char[512];
-				cJre.GetJreMessage( GJM_JPN, pszMsg );
-				::MessageBox( m_hWnd, pszMsg, "正規表現エラー情報", MB_OK | MB_ICONEXCLAMATION );
-				delete [] pszMsg;
-				return FALSE;
-			}
+		// From Here Jun. 26, 2001 genta
+		//	正規表現ライブラリの差し替えに伴う処理の見直し
+		if( m_bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true )){
+			return FALSE;
 		}
-
+		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 		/* 検索文字列 */
 		if( 0 < lstrlen( m_szText ) ){
 			pcmWork = new CMemory( m_szText, lstrlen( m_szText ) );

@@ -41,7 +41,6 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
-#include "CJre.h"
 
 
 /* 現在の色を指定 */
@@ -478,18 +477,22 @@ BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int
 //	m_bCurSrchLoHiCase = m_pShareData->m_Common.m_bLoHiCase;	/* 検索／置換  1==英大文字小文字の区別 */
 //	m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
 
-	char*	pszRes;
+	//	From Here Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+	BREGEXP* result;
+
 	if( m_bCurSrchRegularExp ){
 		/* 行頭ではない? */
-		if( '^' == m_szCurSrchKey[0] && 0 != nPos ){
+		if((( m_szCurSrchKey[0] == '/' && '^' == m_szCurSrchKey[1] )
+			|| ( m_szCurSrchKey[0] == 'm' && '^' == m_szCurSrchKey[2] ))
+			&& 0 != nPos ){
 			return FALSE;
 		}
 
-
-		if( ( NULL != ( pszRes = (char *)m_CurSrch_CJre.GetMatchInfo( &pszData[nPos], nDataLen - nPos, 0 ) ) )
-		 && ( pszRes == &pszData[nPos] )
+		if( m_CurRegexp.GetMatchInfo( &pszData[nPos], nDataLen - nPos, 0, &result )
+		 && ( result->startp[0] == &pszData[nPos] )
 		){
-			*pnSearchEnd = nPos + m_CurSrch_CJre.m_jreData.nLength;
+			*pnSearchEnd = result->endp[0] - pszData;
+	//	To Here Jun. 26, 2001 genta
 			return TRUE;
 
 		}else{
