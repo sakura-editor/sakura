@@ -2709,9 +2709,9 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	hdc = ::GetDC( m_hWnd );
 
 	/* カーソル行アンダーラインのOFF */
-	if (IsTextSelected()) { //2002.02.27 Add By KK アンダーラインのちらつきを低減 - ここではテキスト選択時のみアンダーラインを消す。
+//	if (IsTextSelected()) { //2002.02.27 Add By KK アンダーラインのちらつきを低減 - ここではテキスト選択時のみアンダーラインを消す。
 		CaretUnderLineOFF( bDraw );
-	}
+//	}	2002/04/04 YAZAKI 半ページスクロール時にアンダーラインが残ったままスクロールしてしまう問題に対処。
 
 	if( m_bBeginSelect ){	/* 範囲選択中 */
 		nCaretMarginY = 0;
@@ -3072,6 +3072,12 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 					nCharChars = 1;
 				}
 				if( nPosX + nCharChars > nNewX ){
+					//From 2002.04.05 kanju マルチバイト文字の前もしくは後にキャレット挿入
+					//マルチバイト文字かつマルチバイト文字の後半部分（奇数）なら文字の後ろにキャレットを挿入
+					if ((nCharChars == 2) && ((nPosX + nCharChars - nNewX)&1)){
+							nPosX += nCharChars;
+					}
+					//To 2002.04.05 kanju
 					break;
 				}
 				i+= nCharChars;
@@ -3126,9 +3132,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 //	DWORD	nKeyBoardSpeed;
 	int			nCaretPosY_Old;
-	int			nUrlLine;	// URLの行(折り返し単位)
-	int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
-	int			nUrlLen;	// URLの長さ(バイト数)
 	CMemory		cmemCurText;
 	const char*	pLine;
 	int			nLineLen;
@@ -3319,7 +3322,7 @@ normal_action:;
 		}
 
 
-		/******* この時点で必ず TRUE == IsTextSelected() の状態になる ****:*/
+		/******* この時点で必ず true == IsTextSelected() の状態になる ****:*/
 		if( !IsTextSelected() ){
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 				"バグってる"
@@ -3461,6 +3464,9 @@ normal_action:;
 			/* URLがクリックされたら選択するか */
 			if( TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
 
+				int			nUrlLine;	// URLの行(折り返し単位)
+				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
+				int			nUrlLen;	// URLの長さ(バイト数)
 				/* カーソル位置にURLが有る場合のその範囲を調べる */
 				if( IsCurrentPositionURL(
 					m_nCaretPosX,	// カーソル位置X
@@ -3477,6 +3483,8 @@ normal_action:;
 					/* 選択範囲の変更 */
 //					m_nSelectLineBgn = nUrlLine;				/* 範囲選択開始行(原点) */
 //					m_nSelectColmBgn = nUrlIdxBgn;				/* 範囲選択開始桁(原点) */
+#if 0
+					2002/04/03 YAZAKI 不要な処理でした。
 					m_nSelectLineBgnFrom = nUrlLine;			/* 範囲選択開始行(原点) */
 					m_nSelectColmBgnFrom = nUrlIdxBgn;			/* 範囲選択開始桁(原点) */
 					m_nSelectLineBgnTo = nUrlLine;				/* 範囲選択開始行(原点) */
@@ -3486,23 +3494,27 @@ normal_action:;
 					m_nSelectColmFrom = nUrlIdxBgn;
 					m_nSelectLineTo = nUrlLine;
 					m_nSelectColmTo = nUrlIdxBgn + nUrlLen;
-
+#endif
 					/*
 					  カーソル位置変換
 					  物理位置(行頭からのバイト数、折り返し無し行位置)
 					  →レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+						2002/04/08 YAZAKI 少しでもわかりやすく。
 					*/
-					int	nX, nY;
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nSelectColmBgnFrom, m_nSelectLineBgnFrom, &nX, &nY );
-					m_nSelectLineBgnFrom = nY;		/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnFrom = nX;		/* 範囲選択開始桁(原点) */
-					m_nSelectLineFrom =	nY;
-					m_nSelectColmFrom  = nX;
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nSelectColmTo, m_nSelectLineTo, &nX, &nY );
-					m_nSelectLineTo = nY;
-					m_nSelectColmTo = nX;
-					m_nSelectLineBgnTo = nY;		/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnTo = nX;		/* 範囲選択開始桁(原点) */
+					int nColmFrom, nLineFrom, nColmTo, nLineTo;
+					m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nUrlIdxBgn          , nUrlLine, &nColmFrom, &nLineFrom );
+					m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nUrlIdxBgn + nUrlLen, nUrlLine, &nColmTo, &nLineTo );
+
+					m_nSelectLineBgnFrom = nLineFrom;		/* 範囲選択開始行(原点) */
+					m_nSelectColmBgnFrom = nColmFrom;		/* 範囲選択開始桁(原点) */
+					m_nSelectLineBgnTo = nLineTo;		/* 範囲選択開始行(原点) */
+					m_nSelectColmBgnTo = nColmTo;		/* 範囲選択開始桁(原点) */
+
+					m_nSelectLineFrom = nLineFrom;
+					m_nSelectColmFrom = nColmFrom;
+					m_nSelectLineTo = nLineTo;
+					m_nSelectColmTo = nColmTo;
+
 					/* 選択領域描画 */
 					DrawSelectArea();
 				}
@@ -3980,24 +3992,24 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					);
 //					MYTRACE( "nWorkF=%d nWorkT=%d\n", nWorkF, nWorkT );
 					if( -1 == nWorkF/* || 0 == nWorkF*/ ){
-						/* 現在のカーソル位置によって選択範囲を変更 */
+						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmFrom, nLineFrom );
 					}else
 					if( /*0 == nWorkT ||*/ 1 == nWorkT ){
-						/* 現在のカーソル位置によって選択範囲を変更 */
+						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
 					}else
 					if( nSelectLineFrom_Old == nSelectLineFrom
 					 && nSelectColmFrom_Old == nSelectColmFrom
 					){
-						/* 始点が無変更→前方に縮小された */
+						/* 始点が無変更＝前方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
 					}else
 					if( nSelectLineTo_Old == nSelectLineTo
 					 && nSelectColmTo_Old == nSelectColmTo
 					){
-						/* 終点が無変更→後方に縮小された */
+						/* 終点が無変更＝後方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmFrom, nLineFrom );
 					}
@@ -4224,6 +4236,16 @@ void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY 
 	m_nSelectLineToOld = m_nSelectLineTo;		/* 範囲選択終了行 */
 	m_nSelectColmToOld = m_nSelectColmTo;		/* 範囲選択終了桁 */
 
+	//	2002/04/08 YAZAKI コードの重複を排除
+	ChangeSelectAreaByCurrentCursorTEST(
+		nCaretPosX,
+		nCaretPosY, 
+		m_nSelectLineFrom,
+		m_nSelectColmFrom,
+		m_nSelectLineTo,
+		m_nSelectColmTo
+	);
+#if 0
 	if( m_nSelectLineBgnFrom == m_nSelectLineBgnTo /* 範囲選択開始行(原点) */
 	 && m_nSelectColmBgnFrom == m_nSelectColmBgnTo ){
 		if( nCaretPosY == m_nSelectLineBgnFrom
@@ -4270,6 +4292,7 @@ void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY 
 			m_nSelectColmTo = nCaretPosX;
 		}
 	}
+#endif
 	/* 選択領域の描画 */
 	DrawSelectArea();
 	return;
@@ -5777,9 +5800,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 		::GetParent( m_hwndParent )/*m_hWnd*/,
 		NULL
 	);
-//	::DestroyMenu( hMenuTop );
 	::DestroyMenu( hMenu );
-//	MYTRACE( "nId=%d\n", nId );
 	return nId;
 }
 
@@ -5823,6 +5844,8 @@ void CEditView::DrawCaretPosInfo( void )
 		"UTF-8",
 		"UTF-7"
 	};
+#if 0
+	2002/04/08 YAZAKI コードの重複を削除
 	char*			pCodeNameArr2[] = {
 		"SJIS",
 		"JIS ",
@@ -5831,6 +5854,7 @@ void CEditView::DrawCaretPosInfo( void )
 		"UTF-8",
 		"UTF-7"
 	};
+#endif
 	int	nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
 
 	hwndFrame = ::GetParent( m_hwndParent );
@@ -5866,7 +5890,6 @@ void CEditView::DrawCaretPosInfo( void )
 			nIdxFrom = LineColmnToIndex( (const char *)pLine, nLineLen, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ){
 				/* szText */
-//				wsprintf( szText, "%s(%s)       %6d 行、%d桁          ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );
 				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
@@ -5876,32 +5899,26 @@ void CEditView::DrawCaretPosInfo( void )
 				}
 				if( 1 == nCharChars ){
 					/* szText */
-//					wsprintf( szText, "%s(%s)   [%02x]%6d 行、%d桁          ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom], m_nCaretPosY + 1, m_nCaretPosX + 1 );
 					wsprintf( szText, "%s(%s)   [%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom], m_nCaretPosY + 1, m_nCaretPosX + 1 );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}else
 				if( 2 == nCharChars ){
 					/* szText */
-//					wsprintf( szText, "%s(%s) [%02x%02x]%6d 行、%d桁          ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , m_nCaretPosY + 1, m_nCaretPosX + 1);
 					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , m_nCaretPosY + 1, m_nCaretPosX + 1);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}else
 				if( 4 == nCharChars ){
 					/* szText */
-//					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d 行、%d桁          ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , m_nCaretPosY + 1, m_nCaretPosX + 1);
 					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , m_nCaretPosY + 1, m_nCaretPosX + 1);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}else{
 					/* szText */
-//					wsprintf( szText, "%s(%s)       %6d 行、%d桁          ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );
 					wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}
 			}
 		}else{
 			/* szText */
-//			wsprintf( szText, "%s(%s)       %6d 行、%d桁          ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );
 			wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, m_nCaretPosY + 1, m_nCaretPosX + 1 );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 		}
 		//	To Here
 		/* 文字列描画 */
-//		nStrLen = 35;
 		nStrLen = 30;	//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 		rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - 5;
 		rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
@@ -5923,20 +5940,9 @@ void CEditView::DrawCaretPosInfo( void )
 		::ReleaseDC( hwndFrame, hdc );
 	}else{
 		/* ステータスバーに状態を書き出す */
-//		char	szText_0[64];
 		char	szText_1[64];
 		char	szText_2[64];
-//		char	szText_3[64];
-//		char	szText_4[64];
 		char	szText_5[64];
-//		wsprintf( szText_0, "Y.%d X.%d  L.%d.%d  C.%d.%d",
-//			m_nCaretPosY_PHY, m_nCaretPosX_PHY,
-//			m_nSelectLineFrom,
-//			m_nSelectLineTo,
-//			m_nSelectColmFrom,
-//			m_nSelectColmTo
-//		);
-//		wsprintf( szText_1, "%8d 行 %5d 桁", m_nCaretPosY + 1, m_nCaretPosX + 1 );
 		wsprintf( szText_1, "%6d 行 %5d 桁", m_nCaretPosY + 1, m_nCaretPosX + 1 );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		nCharChars = 0;
@@ -5970,29 +5976,6 @@ void CEditView::DrawCaretPosInfo( void )
 		}else{
 			strcpy( szText_5, "上書" );
 		}
-//		::GetClientRect( pCEditWnd->m_hwndStatusBar, &rc );
-//		int			nStArr[7];
-//		const char*	pszLabel[6] = { "", szText_1, szText_2, pCodeNameArr2[m_pcEditDoc->m_nCharCode], "REC", szText_5 };
-//		int			nStArrNum = 6;
-//		int			nAllWidth;
-//		SIZE		sz;
-//		HDC			hdc;
-//		int			i;
-//		TEXTMETRIC	tm;
-//		nAllWidth = rc.right - rc.left;
-//		hdc = ::GetDC( pCEditWnd->m_hwndStatusBar );
-//		nStArr[nStArrNum - 1] = nAllWidth;
-//		if( pCEditWnd->m_nWinSizeType != SIZE_MAXIMIZED ){	/* サイズ変更のタイプ */
-//			nStArr[nStArrNum - 1] -= 16;
-//		}
-////		::GetTextMetrics( hdc, &tm );
-//		for( i = nStArrNum - 1; i > 0; i-- ){
-////			sz.cx = tm.tmMaxCharWidth * lstrlen( pszLabel[i] )  / 2;
-//			::GetTextExtentPoint32( hdc, pszLabel[i], lstrlen( pszLabel[i] ), &sz );
-//			nStArr[i - 1] = nStArr[i] - ( sz.cx + ::GetSystemMetrics( SM_CXEDGE ) );
-//		}
-//		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETPARTS, nStArrNum, (LPARAM) (LPINT)nStArr );
-//		::ReleaseDC( pCEditWnd->m_hwndStatusBar, hdc );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 1 | 0, (LPARAM) (LPINT)szText_1 );
 		//	May 12, 2000 genta
@@ -6001,7 +5984,7 @@ void CEditView::DrawCaretPosInfo( void )
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 2 | 0, (LPARAM) (LPINT)nNlTypeName );
 		//	To Here
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_2 );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)pCodeNameArr2[m_pcEditDoc->m_nCharCode] );
+		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)gm_pszCodeNameArr_1[m_pcEditDoc->m_nCharCode] );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)"" );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_5 );
 	}
@@ -7340,7 +7323,7 @@ int CEditView::IsCurrentPositionSelected(
 	int		nCaretPosY		// カーソル位置Y
 )
 {
-	if( FALSE == IsTextSelected() ){	/* テキストが選択されているか */
+	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		return -1;
 	}
 	RECT	rcSel;
@@ -7441,7 +7424,7 @@ int CEditView::IsCurrentPositionSelectedTEST(
 	int		nSelectColmTo
 )
 {
-	if( FALSE == IsTextSelected() ){	/* テキストが選択されているか */
+	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		return -1;
 	}
 //	RECT	rcSel;

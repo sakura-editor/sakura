@@ -836,21 +836,33 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 	}
 
 	nRetVal = TRUE;
-	HFILE hFile;
-// Oct 6, 2000 ao
-/* ファイル出力にstream を使うようにする */
-	// 改行コードを勝手に制御されない様、バイナリモードで開く
-	FILE *sFile=fopen(pszPath,"wb"); /*add*/
+
+	//<< 2002/03/25 Azumaiya
+	// ファイル属性を取得する。
+	//  CREATE_ALWAYS フラグを使って、隠し属性が付いたファイルを開くときには、
+	// 明確に属性を指定してやらないと開けなかったので、属性を取得するようにした。
+	DWORD dwFileAttribute;
+	dwFileAttribute = ::GetFileAttributes(pszPath);
+	if ( dwFileAttribute == (DWORD)-1 )
+	{
+		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;
+	}
 
 	///* ファイルを書き込み用にオープンする */
-//-	hFile = _lopen( pszPath, OF_WRITE );
-//-	if( HFILE_ERROR == hFile ){
-//-	}else{
-//-		_lclose( hFile );
-//-	}
-//-	hFile = _lcreat(pszPath, 0);
-//-	if( HFILE_ERROR == hFile ){
-	if( !sFile ){ /*add*/
+	//  標準のファイル関数だと、隠し属性の付いたファイルを書き込みで開くことができ
+	// なかったので、CreateFile を使用。
+	HANDLE hFile;
+	hFile = ::CreateFile(
+						pszPath,			// 開くファイル名
+						GENERIC_WRITE,		// 書き込みモードで開く。
+						0,					// 共有しない。
+						NULL,				// ハンドルを継承しない。
+						CREATE_ALWAYS,		// 常にサイズ 0 のファイルを開く。
+						dwFileAttribute,	// ファイル属性。
+						NULL				// テンプレートファイルを使わない。
+						);
+	if ( hFile == INVALID_HANDLE_VALUE )
+	{
 //		MYTRACE( "file create error %s\n", pszPath );
 		::MYMESSAGEBOX(
 			hWndParent,
@@ -863,10 +875,14 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		goto _RETURN_;
 	}
 
+	//  この変数は本当はいらないのだが、書き込んだバイト数を受け取る変数が無いといけないので、
+	// 一応宣言だけはしています。ですが、中に入っている値は使いません。
+	DWORD dwWriteSize;
 	switch( nCharCode ){
 	case CODE_UNICODE:
 //-		if( HFILE_ERROR == _lwrite( hFile, "\xff\xfe", 2 ) ){
-		if( fwrite( "\xff\xfe", sizeof( char ), 2, sFile ) < 2 ){ /* add */
+		if ( ::WriteFile( hFile, "\xff\xfe", 2 * sizeof(char), &dwWriteSize, NULL ) == 0 )
+		{
 //			MYTRACE( "file write error %s\n", pszPath );
 			nRetVal = FALSE;
 			goto _CLOSEFILE_;
@@ -874,12 +890,10 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		break;
 	}
 
-	nLineNumber = 0;
 //	pLine = GetFirstLinrStr( &nLineLen );
-	pCDocLine = m_pDocLineTop;
 
-//	while( NULL != pLine ){
-	while( NULL != pCDocLine ){
+	for( nLineNumber = 0, pCDocLine = m_pDocLineTop; NULL != pCDocLine; pCDocLine = pCDocLine->m_pNext)
+	{
 		++nLineNumber;
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 
@@ -918,22 +932,27 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 				/* SJIS→Unicodeコード変換 */
 				cmemBuf.SJISToUnicode();
 				break;
+
 			case CODE_UTF8:	/* UTF-8 */
 				/* SJIS→UTF-8コード変換 */
 				cmemBuf.SJISToUTF8();
 				break;
+
 			case CODE_UTF7:	/* UTF-7 */
 				/* SJIS→UTF-7コード変換 */
 				cmemBuf.SJISToUTF7();
 				break;
+
 			case CODE_EUC:
 				/* SJIS→EUCコード変換 */
 				cmemBuf.SJISToEUC();
 				break;
+
 			case CODE_JIS:
 				/* SJIS→JISコード変換 */
 				cmemBuf.SJIStoJIS();
 				break;
+
 			case CODE_SJIS:
 			default:
 				break;
@@ -955,6 +974,7 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 //			case CODE_EUC:
 //				cmemBuf.Append( gm_pszEolDataArr[EOL_LF], LEN_EOL_LF );
 //				break;
+
 			default:
 				//	From Here Feb. 8, 2001 genta 改行コード変換処理を追加
 				if( cEol == EOL_NONE ){
@@ -972,38 +992,35 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 				//	To Here Feb. 8, 2001 genta
 			}
 		}
-		if( 0 < cmemBuf.GetLength() ){
+
+		nWriteLen = cmemBuf.GetLength();
+		if( 0 < nWriteLen ){
 //-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
-			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
-					< (size_t)cmemBuf.GetLength() ){ /* add */
+//			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
+//					< (size_t)cmemBuf.GetLength() ){ /* add */
+			if ( ::WriteFile( hFile, cmemBuf.GetPtr(), nWriteLen * sizeof(char), &dwWriteSize, NULL ) == 0 )
+			{
 //				MYTRACE( "file write error %s\n", pszPath );
 				nRetVal = FALSE;
 				goto _CLOSEFILE_;
 			}
 		}
-
-
-//		pLine = GetNextLinrStr( &nLineLen );
-		pCDocLine = pCDocLine->m_pNext;
 	}
 _CLOSEFILE_:;
 //-	_lclose( hFile );
-	fflush( sFile );/* add */
-	fclose( sFile );/* add */
 // Oct 6, 2000 ao end
 /* ファイル出力に関する変更はここまで。
 	この後変更後のファイル情報を開くためにファイルアクセスしているが、ここまで無理に変更する必要はないでしょう。*/
 
 	/* 更新後のファイル時刻の取得 */
-	hFile = _lopen( pszPath, OF_READ );
-	if( HFILE_ERROR != hFile ){
-
-		FILETIME	FileTime;
-		SYSTEMTIME	systimeL;
-		if( ::GetFileTime( (HANDLE)hFile, NULL, NULL, &FileTime ) ){
-			*pFileTime = FileTime;
-			::FileTimeToLocalFileTime( &FileTime, &FileTime );
-			::FileTimeToSystemTime( &FileTime, &systimeL );
+	{
+		// 渡されたポインタを直に扱うようにする。
+		// なんか、こうしないと、正確な反映ができなかったようなので・・・。
+//		SYSTEMTIME	systimeL;
+		if( ::GetFileTime( (HANDLE)hFile, NULL, NULL, pFileTime ) ){
+			::FileTimeToLocalFileTime( pFileTime, pFileTime );
+			// 取得したシステム日時を使ってない？
+//			::FileTimeToSystemTime( pFileTime, &systimeL );
 //			MYTRACE( "Last Update: %d/%d/%d %02d:%02d:%02d\n",
 //				systimeL.wYear,
 //				systimeL.wMonth,
@@ -1016,7 +1033,8 @@ _CLOSEFILE_:;
 //			MYTRACE( "GetFileTime() error.\n" );
 		}
 	}
-	_lclose( hFile );
+	::CloseHandle(hFile);
+	//>> 2002/03/25 Azumaiya
 
 
 _RETURN_:;
@@ -1030,8 +1048,6 @@ _RETURN_:;
 
 	/* 行変更状態をすべてリセット */
 	ResetAllModifyFlag();
-//		FALSE	/* 変更回数を0にするかどうか */
-//	);
 
 	return nRetVal;
 }
@@ -1980,7 +1996,7 @@ int CDocLineMgr::SearchWord(
 					);
 					if( NULL != pszRes ){
 						nHitPos = pszRes - pLine;
-						nIdxPos = pszRes - pLine + 1;
+						nIdxPos = CMemory::MemCharNext(pLine, nLineLen, pszRes) - pLine;	//	Azumaiya前方検索で選択範囲がおかしくなることがあるバグ修正
 						if( nHitPos >= nHitTo ){
 							if( -1 != nHitPosOld ){
 								*pnLineNum = nLinePos;							/* マッチ行 */
@@ -2311,7 +2327,9 @@ int	CDocLineMgr::WhatKindOfChar(
 
 	}else
 	if( nCharChars == 2 ){	/* 全角文字 */
-		wChar =  (WORD)(unsigned char)(pData[nIdx + 1]) | (((WORD)(unsigned char)(pData[nIdx])) << 8);
+		//<< 2002/03/28 Azumaiya
+		// 判定条件部分の比較回数を少なくして最適化。
+		wChar =  MAKEWORD(pData[nIdx + 1], pData[nIdx]);
 //		MYTRACE( "wChar=%0xh\n", wChar );
 		if( wChar == (WORD)0x8140 ){
 			return CK_MBC_SPACE;	/* 2バイトのスペース */
@@ -2319,33 +2337,49 @@ int	CDocLineMgr::WhatKindOfChar(
 		if( wChar == (WORD)0x815B ){
 			return CK_MBC_NOVASU;	/* 伸ばす記号 0x815B<=c<=0x815B 'ー' */
 		}
-		if( wChar == (WORD)0x8151 ||								/* 0x8151<=c<=0x8151 全角アンダースコア */
-			(wChar >= (WORD)0x824F && wChar <= (WORD)0x8258 ) ||	/* 0x824F<=c<=0x8258 全角数字 */
-			(wChar >= (WORD)0x8260 && wChar <= (WORD)0x8279 ) ||	/* 0x8260<=c<=0x8279 全角英大文字 */
-			(wChar >= (WORD)0x8281 && wChar <= (WORD)0x829a )		/* 0x8281<=c<=0x829a 全角英小文字 */
-		){
+//		if( wChar == (WORD)0x8151 ||								/* 0x8151<=c<=0x8151 全角アンダースコア */
+//			(wChar >= (WORD)0x824F && wChar <= (WORD)0x8258 ) ||	/* 0x824F<=c<=0x8258 全角数字 */
+//			(wChar >= (WORD)0x8260 && wChar <= (WORD)0x8279 ) ||	/* 0x8260<=c<=0x8279 全角英大文字 */
+//			(wChar >= (WORD)0x8281 && wChar <= (WORD)0x829a )		/* 0x8281<=c<=0x829a 全角英小文字 */
+//		){
+		if (
+			(WORD)wChar == 0x8151 ||			/* 0x8151<=c<=0x8151 全角アンダースコア */
+			(WORD)(wChar - 0x824F) <= 0x09 ||	/* 0x824F<=c<=0x8258 全角数字 */
+			(WORD)(wChar - 0x8260) <= 0x19 ||	/* 0x8260<=c<=0x8279 全角英大文字 */
+			(WORD)(wChar - 0x8281) <= 0x19 		/* 0x8281<=c<=0x829a 全角英小文字 */
+		   ){
 			return CK_MBC_CSYM;	/* 2バイトの英字、アンダースコア、数字のいずれか */
 		}
-		if( wChar >= (WORD)0x8140 && wChar <= (WORD)0x81FD ){
+//		if( wChar >= (WORD)0x8140 && wChar <= (WORD)0x81FD ){
+		if( (WORD)(wChar - 0x8140) <= 0xBD ){ /* 0x8140<=c<=0x81FD 2バイトの記号 */
 			return CK_MBC_KIGO;	/* 2バイトの記号 */
 		}
-		if( wChar >= (WORD)0x829F && wChar <= (WORD)0x82F1 ){
+//		if( wChar >= (WORD)0x829F && wChar <= (WORD)0x82F1 ){
+		if( (WORD)(wChar - 0x829F) <= 0x52 ){	/* 0x829F<=c<=0x82F1 2バイトのひらがな */
 			return CK_MBC_HIRA;	/* 2バイトのひらがな */
 		}
-		if( wChar >= (WORD)0x8340 && wChar <= (WORD)0x8396 ){
+//		if( wChar >= (WORD)0x8340 && wChar <= (WORD)0x8396 ){
+		if( (WORD)(wChar - 0x8340) <= 0x56 ){	/* 0x8340<=c<=0x8396 2バイトのカタカナ */
 			return CK_MBC_KATA;	/* 2バイトのカタカナ */
 		}
-		if( wChar >= (WORD)0x839F && wChar <= (WORD)0x83D6 ){
+//		if( wChar >= (WORD)0x839F && wChar <= (WORD)0x83D6 ){
+		if( (WORD)(wChar - 0x839F) <= 0x37 ){	/* 0x839F<=c<=0x83D6 2バイトのギリシャ文字 */
 			return CK_MBC_GIRI;	/* 2バイトのギリシャ文字 */
 		}
-		if( ( wChar >= (WORD)0x8440 && wChar <= (WORD)0x8460 ) ||	/* 0x8440<=c<=0x8460 全角ロシア文字大文字 */
-			( wChar >= (WORD)0x8470 && wChar <= (WORD)0x8491 ) ){	/* 0x8470<=c<=0x8491 全角ロシア文字小文字 */
+//		if( ( wChar >= (WORD)0x8440 && wChar <= (WORD)0x8460 ) ||	/* 0x8440<=c<=0x8460 全角ロシア文字大文字 */
+//			( wChar >= (WORD)0x8470 && wChar <= (WORD)0x8491 ) ){	/* 0x8470<=c<=0x8491 全角ロシア文字小文字 */
+		if(
+			(WORD)(wChar - 0x8440) <= 0x20 ||	/* 0x8440<=c<=0x8460 全角ロシア文字大文字 */
+			(WORD)(wChar - 0x8470) <= 0x21		/* 0x8470<=c<=0x8491 全角ロシア文字小文字 */
+		   ){
 			return CK_MBC_ROS;	/* 2バイトのロシア文字: */
 		}
-		if( wChar >= (WORD)0x849F && wChar <= (WORD)0x879C ){
+//		if( wChar >= (WORD)0x849F && wChar <= (WORD)0x879C ){
+		if( (WORD)(wChar - 0x849F) <= 0x02FD ){	/* 0x849F<=c<=0x879C 2バイトの特殊記号 */
 			return CK_MBC_SKIGO;	/* 2バイトの特殊記号 */
 		}
 		return CK_MBC_ETC;	/* 2バイトのその他(漢字など) */
+		//>> 2002/03/28 Azumaiya
 	}else{
 		return CK_NULL;	/* NULL 0x0<=c<=0x0 */
 	}

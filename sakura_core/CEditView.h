@@ -89,7 +89,8 @@ public:
 	{
 		// ジャンプ回数を減らして、一気に判定。
 		// すべてを or 演算した後に、ビット反転して最上位ビット(符号フラグ)を返す。
-		return ~(m_nSelectLineFrom|m_nSelectLineTo|m_nSelectColmFrom|m_nSelectColmTo) >> 31;
+		/* すなわち、いずれかがひとつでも-1(0xFFFF)なら、FALSEを返す？ */
+		return ~((DWORD)(m_nSelectLineFrom|m_nSelectLineTo|m_nSelectColmFrom|m_nSelectColmTo)) >> 31;
 	};
 	BOOL IsTextSelecting( void )	/* テキストの選択中か */
 	{
@@ -583,7 +584,7 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_NEXT( BOOL, HWND, const char* );/* 次を検索 */
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
-	void Command_REPLACE( void );						/* 置換(実行) */
+	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL( void );					/* すべて置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */

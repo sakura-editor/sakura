@@ -465,7 +465,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		if( 0 < GetData() ){
 			/* 置換 */
 			//@@@ 2002.2.2 YAZAKI 置換コマンドをCEditViewに新設
-			pcEditView->HandleCommand( F_REPLACE, TRUE, 0, 0, 0, 0 );
+			//@@@ 2002/04/08 YAZAKI 親ウィンドウのハンドルを渡すように変更。
+			pcEditView->HandleCommand( F_REPLACE, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 			/* 再描画 */
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{

@@ -407,7 +407,7 @@ BOOL CEditView::HandleCommand(
 		}
 		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
 		break;
-	case F_REPLACE:				Command_REPLACE();break;			//置換実行 @@@ 2002.2.2 YAZAKI
+	case F_REPLACE:				Command_REPLACE( (HWND)lparam1 );break;			//置換実行 @@@ 2002.2.2 YAZAKI
 	case F_REPLACE_ALL:			Command_REPLACE_ALL();break;		//すべて置換実行 2002.2.8 hor
 	case F_SEARCH_CLEARMARK:	Command_SEARCH_CLEARMARK();break;	//検索マークのクリア
 	case F_GREP_DIALOG:	//Grepダイアログの表示
@@ -694,12 +694,12 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 		RECT			rcSel;
 		const CLayout*	pcLayout;
 		if( bSelect ){
-			if( FALSE == IsTextSelected() ){	/* テキストが選択されているか */
+			if( !IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在のカーソル位置から選択を開始する */
 				BeginSelectArea();
 			}
 		}else{
-			if( TRUE == IsTextSelected() ){	/* テキストが選択されているか */
+			if( IsTextSelected() ){	/* テキストが選択されているか */
 				/* 矩形範囲選択中か */
 				if( m_bBeginBoxSelect ){
 					/* 2点を対角とする矩形を求める */
@@ -1176,11 +1176,14 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 	int				i;
 	int				nCharChars;
 	const CLayout*	pcLayout;
+#if 0
+	2002/4/4 YAZAKI EOFを含む行の行番号表示位置から、上にドラッグすると選択範囲がおかしくなるバグ修正
 	/* 現在行のデータを取得 */
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 	if( NULL == pLine ){
 		return;
 	}
+#endif
 	if( !bIgnoreCurrentSelection ){
 		if( bSelect ){
 			if( !IsTextSelected() ){	/* テキストが選択されているか */
@@ -1193,6 +1196,11 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 				DisableSelectArea( TRUE );
 			}
 		}
+	}
+	/* 現在行のデータを取得 */
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
+	if( NULL == pLine ){
+		return;
 	}
 	nPosX = 0;
 	nCharChars = 0;
@@ -1728,7 +1736,7 @@ void CEditView::Command_WordDeleteToEnd( void )
 	}
 	/* 単語の右端に移動 */
 	CEditView::Command_WORDRIGHT( TRUE );
-	if( FALSE == IsTextSelected() ){
+	if( !IsTextSelected() ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
@@ -1781,7 +1789,7 @@ void CEditView::Command_WordDeleteToStart( void )
 	}
 	/* 単語の左端に移動 */
 	CEditView::Command_WORDLEFT( TRUE );
-	if( FALSE == IsTextSelected() ){
+	if( !IsTextSelected() ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
@@ -8013,21 +8021,25 @@ void CEditView::Command_REPLACE_DIALOG( void )
 }
 
 /*! 置換実行
+	
+	@date 2002/04/08 親ウィンドウを指定するように変更。
 */
-void CEditView::Command_REPLACE( void )
+void CEditView::Command_REPLACE( HWND hwndParent )
 {
+	if ( hwndParent == NULL ){	//	親ウィンドウが指定されていなければ、CEditViewが親。
+		hwndParent = m_hWnd;
+	}
 	//2002.02.10 hor
 	int nPaste			=	m_pcEditDoc->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	=	m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
 	int	bRegularExp		=	m_pShareData->m_Common.m_bRegularExp;
-	int nFlag = 0x00;
-	nFlag |= m_pShareData->m_Common.m_bLoHiCase ? 0x01 : 0x00;
+	int nFlag			=	m_pShareData->m_Common.m_bLoHiCase ? 0x01 : 0x00;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste()){
-		::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
-		::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
-		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
+		::MYMESSAGEBOX( hwndParent, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+		::CheckDlgButton( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_CHK_PASTE, FALSE );
+		::EnableWindow( ::GetDlgItem( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
 		return;	//	失敗return;
 	}
 
@@ -8057,8 +8069,7 @@ void CEditView::Command_REPLACE( void )
 	DisableSelectArea( TRUE );
 
 	/* 次を検索 */
-//	HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
-	Command_SEARCH_NEXT( TRUE, 0, 0 );
+	Command_SEARCH_NEXT( TRUE, hwndParent, 0 );
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
@@ -8136,11 +8147,10 @@ void CEditView::Command_REPLACE( void )
 		// To Here 2001.12.03 hor
 		/* 次を検索 */
 	//	HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
-		Command_SEARCH_NEXT( TRUE, 0, (const char*)"最後まで置換しました。" );
+		Command_SEARCH_NEXT( TRUE, hwndParent, (const char*)"最後まで置換しました。" );
 	}
 }
 
-#pragma comment(lib, "winmm.lib")
 /*! すべて置換実行
 */
 void CEditView::Command_REPLACE_ALL( void )
@@ -8343,11 +8353,6 @@ void CEditView::Command_REPLACE_ALL( void )
 	}
 
 	/* テキストが選択されているか */
-#ifdef _REPLACE_ALL_
-	// かかった時間を計るためのデバッグ用コード
-	DWORD dwStartTime = ::timeGetTime();
-#endif // _REPLACE_ALL_
-//	DWORD dwProgressTime = ::timeGetTime();
 	for(;IsTextSelected();)
 	{
 		/* キャンセルされたか */
@@ -8366,9 +8371,7 @@ void CEditView::Command_REPLACE_ALL( void )
 		if( 0 == (nReplaceNum & 0x7F ) )
 		// 時間ごとに進歩状況描画だと時間取得分遅くなると思うが、そちらの方が自然だと思うので・・・。
 		// と思ったけど、逆にこちらの方が自然ではないので、やめる。
-//		if ( ::timeGetTime() - dwProgressTime >= 50 )
 		{
-//			dwProgressTime = ::timeGetTime();
 			nNewPos = m_nSelectLineFrom >> nShiftCount;
 			::PostMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
 			_itoa( nReplaceNum, szLabel, 10 );
@@ -8602,13 +8605,6 @@ void CEditView::Command_REPLACE_ALL( void )
 		/* 次を検索 */
 		Command_SEARCH_NEXT( bDisplayUpdate, 0, 0 );
 	}
-#ifdef _REPLACE_ALL_
-	// かかった時間を計るためのデバッグ用コード。
-	DWORD dwEndTime = ::timeGetTime();
-	char szDebug[16];
-	_itoa(dwEndTime - dwStartTime, szDebug, 10);
-	::MessageBox(NULL, szDebug, "test", MB_OK);
-#endif // _REPLACE_ALL_
 
 	if( 0 < nAllLineNum )
 	{
@@ -9114,7 +9110,9 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 	}
 	po.x = 0;
 	po.y = 0;
-	::ClientToScreen( m_hWnd, &po );
+	//2002/04/08 YAZAKI カスタムメニューもマウスカーソルの位置に表示するように変更。
+	::GetCursorPos( &po );
+	po.y -= 4;
 	nId = ::TrackPopupMenu(
 		hMenu,
 		TPM_TOPALIGN
@@ -9976,14 +9974,15 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
-//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
-	if (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == m_nViewColNum){
+	//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
+	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
+	if (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
 		//	最大値に
 		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = 10240;
 	}
 	else {
 		//	現在のウィンドウ幅
-		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
+		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	}
 //	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
 
