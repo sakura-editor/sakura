@@ -1894,7 +1894,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 		break;
 	}
 	if( NULL != pszData ){
-		delete pszData;
+		delete [] pszData;
 		pszData = NULL;
 	}
 	return;

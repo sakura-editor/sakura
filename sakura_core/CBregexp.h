@@ -8,6 +8,7 @@
 	@date Jun. 10, 2001
 	@date Jan. 05, 2002 genta コメント追加
 	@date 2002/2/1 hor
+	@date Jul. 25, 2002 genta 行頭条件の考慮を追加
 
 	$Revision$
 */
@@ -129,6 +130,7 @@ protected:
 			BRegfree( m_sRep );
 			m_sRep = NULL;
 		}
+		m_bTop = false;	//	Jul, 25, 2002 genta
 	}
 
 private:
@@ -139,6 +141,10 @@ private:
 
 	//	メンバ変数
 	BREGEXP*	m_sRep;	//!< コンパイル構造体
+	/*! true: 行頭制約あり, false: 行頭制約なし
+		@date 2002.07.25 genta
+	*/
+	bool		m_bTop;
 	char		m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
 };
 
