@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
-	Copyright (C) 2002, YAZAKI, hor, aroka
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -491,6 +491,7 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 		// それ以外のOSのときはOS標準を使用する
 		m_uMSIMEReconvertMsg = 0;
 		m_uATOKReconvertMsg = 0 ;
+		m_hAtokModule = 0;	//@@@ 2002.04.14 MIK
 	}
 	// to here  2002.04.10 minfu
 	
@@ -1246,8 +1247,8 @@ void CEditView::ShowEditCaret( void )
 {
 	const char*		pLine;
 	int				nLineLen;
-	int				nCaretWidth;
-	int				nCaretHeight;
+	int				nCaretWidth = 0;
+	int				nCaretHeight = 0;
 	int				nIdxFrom;
 	int				nCharChars;
 	HDC				hdc;
@@ -7274,6 +7275,7 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCurLine, &nLineLen );
 	if( NULL == pLine ){
 //		return 0;
+		nIdxTo = 0;
 	}else{
 		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
 		nIdxTo = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );

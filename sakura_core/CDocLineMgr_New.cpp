@@ -71,8 +71,8 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	CEOL cEOLType;
 	CEOL cEOLTypeNext;
 	CDlgCancel*	pCDlgCancel = NULL;
-	HWND		hwndCancel;
-	HWND		hwndProgress;
+	HWND		hwndCancel = NULL;	//	‰Šú‰»
+	HWND		hwndProgress = NULL;	//	‰Šú‰»
 
 	pArg->nNewLine = pArg->nDelLineFrom;
 	pArg->nNewPos =  pArg->nDelPosFrom;

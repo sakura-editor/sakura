@@ -53,6 +53,8 @@ const DWORD p_helpids[] = {	//12500
 	IDC_SPIN_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//12577,
 	IDC_CHECK_PS_KINSOKUHEAD,		HIDC_PS_CHECK_KINSOKUHEAD,	//行頭禁則	//@@@ 2002.04.09 MIK
 	IDC_CHECK_PS_KINSOKUTAIL,		HIDC_PS_CHECK_KINSOKUTAIL,	//行末禁則	//@@@ 2002.04.09 MIK
+	IDC_CHECK_PS_KINSOKURET,		HIDC_PS_CHECK_KINSOKURET,	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+	IDC_CHECK_PS_KINSOKUKUTO,		HIDC_PS_CHECK_KINSOKUKUTO,	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -586,6 +588,18 @@ int CDlgPrintSetting::GetData( void )
 	}else{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = FALSE;
 	}
+	//改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKURET ) ){
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = TRUE;
+	}else{
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = FALSE;
+	}
+	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUKUTO ) ){
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = TRUE;
+	}else{
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = FALSE;
+	}
 
 	return TRUE;
 }
@@ -687,6 +701,18 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL, BST_CHECKED );
 	}else{
 		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL, BST_UNCHECKED );
+	}
+	// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet ){
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKURET, BST_CHECKED );
+	}else{
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKURET, BST_UNCHECKED );
+	}
+	// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto ){
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUKUTO, BST_CHECKED );
+	}else{
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUKUTO, BST_UNCHECKED );
 	}
 
 	return;

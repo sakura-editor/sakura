@@ -625,6 +625,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			//Л╓Се	//@@@ 2002.04.09 MIK
 			wsprintf( szKeyName, "PS[%02d].bKinsokuHead", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuHead, 0 );
 			wsprintf( szKeyName, "PS[%02d].bKinsokuTail", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuTail, 0 );
+			wsprintf( szKeyName, "PS[%02d].bKinsokuRet",  i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuRet,  0 );	//@@@ 2002.04.13 MIK
+			wsprintf( szKeyName, "PS[%02d].bKinsokuKuto", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuKuto, 0 );	//@@@ 2002.04.17 MIK
 
 		}
 	}// Print
@@ -779,6 +781,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		/* Л╓Се */
 		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuHead"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuHead, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuTail"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuTail, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuRet"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuRet,  0 );	//@@@ 2002.04.13 MIK
+		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuKuto"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuKuto, 0 );	//@@@ 2002.04.17 MIK
 		cProfile.IOProfileData( bRead, pszSecName, "szKinsokuHead"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKinsokuHead, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szKinsokuTail"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKinsokuTail, 0 );
 

@@ -88,5 +88,27 @@ int CDllHandler::DeinitDll(void)
 	return 0;
 }
 
+/*!
+	テーブルで与えられたエントリポインタアドレスを入れる場所に
+	対応する文字列から調べたエントリポインタを設定する。
+	
+	@param table [in] 名前とアドレスの対応表。最後は{NULL,0}で終わること。
+	@retval true 全てのアドレスが設定された。
+	@retval false アドレスの取得に失敗した関数があった。
+*/
+bool CDllHandler::RegisterEntries(const ImportTable table[])
+{
+	int i;
+	for (i=0; table[i].proc!=NULL; i++) 
+	{
+		FARPROC proc;
+		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == NULL) 
+		{
+			return false;
+		}
+		*((FARPROC*)table[i].proc) = proc;
+	}
+	return true;
+}
 
 /*[EOF]*/

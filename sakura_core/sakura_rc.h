@@ -330,8 +330,12 @@
 #define IDC_CHECK_KINSOKUTAIL           1263
 #define IDC_STATIC_PAGENUM              1264
 #define IDC_CHECK_PS_KINSOKUHEAD        1264
+#define IDC_CHECK_KINSOKURET            1264
 #define IDC_STATIC_ZOOM                 1265
 #define IDC_CHECK_PS_KINSOKUTAIL        1265
+#define IDC_CHECK_KINSOKUKUTO           1265
+#define IDC_CHECK_PS_KINSOKURET         1266
+#define IDC_CHECK_PS_KINSOKUKUTO        1267
 #define IDC_EDIT_HEAD1                  1270
 #define IDC_STATIC_PRNDEV               1271
 #define IDC_STATIC_PAPER                1272

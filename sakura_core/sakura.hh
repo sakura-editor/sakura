@@ -9,6 +9,7 @@
 #define HLP000112	112 //最新バージョンのダウンロード
 #define HLP000009	9 //リリース履歴
 #define HLP000133	133 //メニュー項目のヘルプ
+#define HLP000011	11 //通常選択
 #define HLP000012	12 //行選択
 #define HLP000013	13 //単語選択
 #define HLP000014	14 //矩形選択のやり方
@@ -161,7 +162,7 @@
 #define HLP000127	127 //キーマクロの保存
 #define HLP000128	128 //キーマクロの読み込み
 #define HLP000126	126 //キーマクロの実行
-//#define HLP000202	202 //登録済みマクロ
+#define HLP000202	202 //登録済みマクロ
 #define HLP000103	103 //外部コマンド実行
 #define HLP000186	186 //カスタムメニュー
 #define HLP000195	195 //右クリックメニュー
@@ -200,6 +201,42 @@
 #define HLP000109	109 //コマンドラインオプション
 //#define HLP000155	155 //色設定ファイルの仕様について
 #define HLP000204	204 //マクロについて
+
+#define HLP000217	217 //選択
+#define HLP000218	218 //再変換
+#define HLP000219	219 //折り返し位置に改行をつけてコピー
+#define HLP000220	220 //カーソル上移動（2行ごと）
+#define HLP000221	221 //カーソル下移動（2行ごと）
+#define HLP000222	222 //単語の左端に移動
+#define HLP000223	223 //単語の右端に移動
+#define HLP000224	224 //行頭に移動（折り返し単位）
+#define HLP000225	225 //行末に移動（折り返し単位）
+#define HLP000226	226 //1ページアップ
+#define HLP000227	227 //1ページダウン
+#define HLP000228	228 //ファイルの先頭に移動
+#define HLP000229	229 //ファイルの最後に移動
+#define HLP000230	230 //カーソル行をウィンドウ中央へ
+#define HLP000231	231 //移動履歴：前へ
+#define HLP000232	232 //移動履歴：次へ
+#define HLP000233	233 //範囲選択開始	
+#define HLP000234	234 //（選択）カーソル上移動（2行ごと）
+#define HLP000235	235 //（選択）カーソル下移動（2行ごと）
+#define HLP000236	236 //（選択）単語の左端に移動
+#define HLP000237	237 //（選択）単語の右端に移動
+#define HLP000238	238 //（選択）行頭に移動（折り返し単位）
+#define HLP000239	239 //（選択）行末に移動（折り返し単位）
+#define HLP000240	240 //（選択）1ページアップ
+#define HLP000241	241 //（選択）1ページダウン
+#define HLP000242	242 //（選択）ファイルの先頭に移動
+#define HLP000243	243 //（選択）ファイルの最後に移動
+#define HLP000244	244 //矩形範囲選択開始
+#define HLP000215	215 //全角英数→半角英数
+#define HLP000245	245 //半ページアップ
+#define HLP000246	246 //半ページダウン
+#define HLP000247	247 //（選択）半ページアップ
+#define HLP000248	248 //（選択）半ページダウン
+#define HLP000249	249 //読み取り専用
+#define HLP000250	250 //単語について
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
@@ -358,6 +395,8 @@
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
 #define HIDC_CHECK_KINSOKUTAIL					11313 //行頭禁則	//@@@ 2002.04.08 MIK
+#define HIDC_CHECK_KINSOKURET					11314 //改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+#define HIDC_CHECK_KINSOKUKUTO					11315 //句読点をぶら下げる	//@@@ 2002.04.17 MIK
 #define HIDC_COMBO_TABSPACE						11330 //TAB幅
 #define HIDC_COMBO_IMESWITCH					11331 //IMEのON/OFF状態
 #define HIDC_COMBO_IMESTATE						11332 //IMEの入力モード
@@ -554,6 +593,8 @@
 #define HIDC_PS_EDIT_MARGINRX	12518	//余白右
 #define HIDC_PS_CHECK_KINSOKUHEAD	12519	//行頭禁則	//@@@ 2002.04.09 MIK
 #define HIDC_PS_CHECK_KINSOKUTAIL	12520	//行末禁則	//@@@ 2002.04.09 MIK
+#define HIDC_PS_CHECK_KINSOKURET	12521	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+#define HIDC_PS_CHECK_KINSOKUKUTO	12522	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
 
 //プロパティ
 #define HIDOK_PROP				12600	//

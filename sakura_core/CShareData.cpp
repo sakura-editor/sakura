@@ -56,8 +56,16 @@ struct ARRHEAD {
 	Version 28:
 	PRINTSETTINGに、m_bPrintKinsokuHead、m_bPrintKinsokuTailを追加 2002.04.09 MIK
 	Typesに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
+
+	Version 29:
+	PRINTSETTINGに、m_bPrintKinsokuRetを追加 2002.04.13 MIK
+	Typesに、m_bKinsokuRetを追加 2002.04.13 MIK
+
+	Version 30:
+	PRINTSETTINGに、m_bPrintKinsokuKutoを追加 2002.04.17 MIK
+	Typesに、m_bKinsokuKutoを追加 2002.04.17 MIK
 */
-const unsigned int uShareDataVersion = 28;
+const unsigned int uShareDataVersion = 30;
 
 /*
 ||	Singleton風
@@ -1148,6 +1156,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			m_pShareData->m_Types[nIdx].m_szOutlineRuleFilename[0] = '\0';	//Dec. 4, 2000 MIK
 			m_pShareData->m_Types[nIdx].m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 			m_pShareData->m_Types[nIdx].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
+			m_pShareData->m_Types[nIdx].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+			m_pShareData->m_Types[nIdx].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 			strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuHead, "" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 			strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 		}
@@ -1183,7 +1193,10 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[1].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
 		m_pShareData->m_Types[1].m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 		m_pShareData->m_Types[1].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
-		strcpy( m_pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕ぁぃぅぇぉっゃゅょゎ゛゜ゝゞァィゥェォッャュョヮヵヶ・ーヽヾ！％），．：；？］｝｡｣､･ｧｨｩｪｫｬｭｮｯｰﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		m_pShareData->m_Types[1].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		m_pShareData->m_Types[1].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+//		strcpy( m_pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕ぁぃぅぇぉっゃゅょゎ゛゜ゝゞァィゥェォッャュョヮヵヶ・ーヽヾ！％），．：；？］｝｡｣､･ｧｨｩｪｫｬｭｮｯｰﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		strcpy( m_pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK
 		strcpy( m_pShareData->m_Types[1].m_szKinsokuTail, "$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 
 

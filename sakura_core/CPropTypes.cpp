@@ -118,6 +118,8 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_SPIN_LINESPACE,				HIDC_EDIT_LINESPACE,
 	IDC_CHECK_KINSOKUHEAD,			HIDC_CHECK_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
 	IDC_CHECK_KINSOKUTAIL,			HIDC_CHECK_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
+	IDC_CHECK_KINSOKURET,			HIDC_CHECK_KINSOKURET,		//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+	IDC_CHECK_KINSOKUKUTO,			HIDC_CHECK_KINSOKUKUTO,		//句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	IDC_EDIT_KINSOKUHEAD,			HIDC_EDIT_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
 	IDC_EDIT_KINSOKUTAIL,			HIDC_EDIT_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
 //	IDC_STATIC,						-1,
@@ -835,21 +837,21 @@ BOOL CPropTypes::DispatchEvent_p1(
 				}
 				return TRUE;
 
-			case IDC_CHECK_KINSOKUHEAD:	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ){
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), TRUE );
-				}else{
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), FALSE );
-				}
-				return TRUE;
+//			case IDC_CHECK_KINSOKUHEAD:	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+//				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ){
+//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), TRUE );
+//				}else{
+//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), FALSE );
+//				}
+//				return TRUE;
 
-			case IDC_CHECK_KINSOKUTAIL:	/* 行末禁則 */	//@@@ 2002.04.08 MIK
-				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ){
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), TRUE );
-				}else{
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
-				}
-				return TRUE;
+//			case IDC_CHECK_KINSOKUTAIL:	/* 行末禁則 */	//@@@ 2002.04.08 MIK
+//				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ){
+//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), TRUE );
+//				}else{
+//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
+//				}
+//				return TRUE;
 			}
 		}
 		break;
@@ -1127,20 +1129,22 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	{	//@@@ 2002.04.08 MIK start
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUHEAD, m_Types.m_bKinsokuHead ? TRUE : FALSE );
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUTAIL, m_Types.m_bKinsokuTail ? TRUE : FALSE );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKURET,  m_Types.m_bKinsokuRet  ? TRUE : FALSE );	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUKUTO, m_Types.m_bKinsokuKuto ? TRUE : FALSE );	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Types.m_szKinsokuHead) - 1 ), 0 );
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Types.m_szKinsokuTail) - 1 ), 0 );
 		::SetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead );
 		::SetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail );
-		if( m_Types.m_bKinsokuHead ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), TRUE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), FALSE );
-		}
-		if( m_Types.m_bKinsokuTail ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), TRUE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
-		}
+//		if( m_Types.m_bKinsokuHead ){
+//			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), TRUE );
+//		}else{
+//			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), FALSE );
+//		}
+//		if( m_Types.m_bKinsokuTail ){
+//			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), TRUE );
+//		}else{
+//			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
+//		}
 	}	//@@@ 2002.04.08 MIK end
 
 	return;
@@ -1260,6 +1264,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	{	//@@@ 2002.04.08 MIK start
 		m_Types.m_bKinsokuHead = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ? TRUE : FALSE;
 		m_Types.m_bKinsokuTail = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ? TRUE : FALSE;
+		m_Types.m_bKinsokuRet  = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKURET  ) ? TRUE : FALSE;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		m_Types.m_bKinsokuKuto = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUKUTO ) ? TRUE : FALSE;	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 		::GetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, sizeof( m_Types.m_szKinsokuHead ) );
 		::GetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, sizeof( m_Types.m_szKinsokuTail ) );
 	}	//@@@ 2002.04.08 MIK end

@@ -213,8 +213,8 @@ BOOL CEditView::HandleCommand(
 	case F_PRINT_PREVIEW:		Command_PRINT_PREVIEW();break;			/* 印刷プレビュー */
 	case F_PRINT_PAGESETUP:		Command_PRINT_PAGESETUP();break;		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
 	case F_OPEN_HfromtoC:		bRet = Command_OPEN_HfromtoC( (BOOL)lparam1 );break;	/* 同名のC/C++ヘッダ(ソース)を開く */	//Feb. 7, 2001 JEPRO 追加
-	case F_OPEN_HHPP:			bRet = Command_OPEN_HHPP( (BOOL)lparam1 );break;		/* 同名のC/C++ヘッダファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
-	case F_OPEN_CCPP:			bRet = Command_OPEN_CCPP( (BOOL)lparam1 );break;		/* 同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	case F_OPEN_HHPP:			bRet = Command_OPEN_HHPP( (BOOL)lparam1, TRUE );break;		/* 同名のC/C++ヘッダファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	case F_OPEN_CCPP:			bRet = Command_OPEN_CCPP( (BOOL)lparam1, TRUE );break;		/* 同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	case F_ACTIVATE_SQLPLUS:	Command_ACTIVATE_SQLPLUS();break;		/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:									/* Oracle SQL*Plusで実行 */
 		/* 再帰処理対策 */
@@ -354,7 +354,7 @@ BOOL CEditView::HandleCommand(
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
 	case F_COPY:					Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
 	case F_COPY_ADDCRLF:			Command_COPY( FALSE, TRUE );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
-	case F_COPY_CRLF:				Command_COPY( FALSE, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_CRLF:				Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE();break;					//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, (BOOL)lparam2 );break;/* テキストを貼り付け */
@@ -939,8 +939,10 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 			}
 		}
 		if( nPosX >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-			nPosX = 0;
-			++nPosY;
+			if( ! m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet ){	//改行文字をぶらさげ	//@@@ 2002.04.17 MIK
+				nPosX = 0;
+				++nPosY;
+			}
 		}
 		MoveCursor( nPosX, nPosY, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
@@ -1839,6 +1841,10 @@ void CEditView::Command_WordCut( void )
 	//現在位置の単語選択
 	Command_SELECTWORD();
 	/* 切り取り(選択範囲をクリップボードにコピーして削除) */
+	if ( !IsTextSelected() ){
+		//	単語選択で選択できなかったら、次の文字を選ぶことに挑戦。
+		Command_RIGHT( TRUE, FALSE, FALSE );
+	}
 	Command_CUT();
 	return;
 }
@@ -4107,6 +4113,7 @@ end_of_func:;
 //	if( FALSE == bFound ){
 // To Here 2002.01.26 hor
 		::MessageBeep( MB_ICONHAND );
+		ShowEditCaret();
 		if( bRedraw	&&
 			m_pShareData->m_Common.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
 		){
@@ -7256,7 +7263,7 @@ void/*BOOL*/ CEditView::Command_TAGJUMPBACK( void/*BOOL bCheckOnly*/ )
 
 /* C/C++ヘッダファイル オープン機能 */		//Feb. 10, 2001 jepro	説明を「インクルードファイル」から変更
 //BOOL CEditView::Command_OPENINCLUDEFILE( BOOL bCheckOnly )
-BOOL CEditView::Command_OPEN_HHPP( BOOL bCheckOnly )
+BOOL CEditView::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 //From Here Feb. 7, 2001 JEPRO 追加
 	static char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
@@ -7286,7 +7293,7 @@ BOOL CEditView::Command_OPEN_HHPP( BOOL bCheckOnly )
 			goto open_h;
 		}
 	}
-	if( !bCheckOnly ){
+	if( bBeepWhenMiss ){
 		::MessageBeep( MB_ICONHAND );
 	}
 	return FALSE;
@@ -7320,7 +7327,7 @@ open_h:;
 		if( -1 == _access( (const char *)szPath, 0 ) ){
 			if( i < hdr_extno - 1 )
 				continue;
-			if( !bCheckOnly ){
+			if( bBeepWhenMiss ){
 				::MessageBeep( MB_ICONHAND );
 			}
 			return FALSE;
@@ -7389,7 +7396,7 @@ open_h:;
 
 /* C/C++ソースファイル オープン機能 */
 //BOOL CEditView::Command_OPENCCPP( BOOL bCheckOnly )	//Feb. 10, 2001 JEPRO	コマンド名を若干変更
-BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly )
+BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 //From Here Feb. 7, 2001 JEPRO 追加
 	static char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
@@ -7417,7 +7424,7 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly )
 			goto open_c;
 		}
 	}
-	if( !bCheckOnly ){
+	if( bBeepWhenMiss ){
 		::MessageBeep( MB_ICONHAND );
 	}
 	return FALSE;
@@ -7457,7 +7464,7 @@ open_c:;
 		if( -1 == _access( (const char *)szPath, 0 ) ){
 			if( i < src_extno - 1 )
 				continue;
-			if( !bCheckOnly ){
+			if( bBeepWhenMiss ){
 				::MessageBeep( MB_ICONHAND );
 			}
 			return FALSE;
@@ -7527,8 +7534,10 @@ open_c:;
 /* C/C++ヘッダファイルまたはソースファイル オープン機能 */
 BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 {
-	if ( Command_OPEN_HHPP( bCheckOnly ) )	return TRUE;
-	return Command_OPEN_CCPP( bCheckOnly );
+	if ( Command_OPEN_HHPP( bCheckOnly, FALSE ) )	return TRUE;
+	if ( Command_OPEN_CCPP( bCheckOnly, FALSE ) )	return TRUE;
+	::MessageBeep( MB_ICONHAND );
+	return FALSE;
 
 #if 0
 2002/03/24 YAZAKI コードの重複を削減

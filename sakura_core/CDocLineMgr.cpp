@@ -464,7 +464,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	nRetVal = TRUE;
 	nEOF = FALSE;
 	bBinaryAlerted = FALSE;
-	HGLOBAL	hgRead;
+	HGLOBAL	hgRead = NULL;	//	goto _RETURN_;で飛んだ先で困るかもしれないので、初期化。
 
 	/* 既存データのクリア */
 	Empty();
@@ -837,32 +837,38 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 
 	nRetVal = TRUE;
 
-	//<< 2002/03/25 Azumaiya
+	//<< 2002/04/13 Azumaiya
+	//  WriteFile を直に使ってしまうと、書き込み速度が劇的に遅くなるので、やはり、
+	// WriteFile をラッピングしてある標準関数に戻す。
 	// ファイル属性を取得する。
-	//  CREATE_ALWAYS フラグを使って、隠し属性が付いたファイルを開くときには、
-	// 明確に属性を指定してやらないと開けなかったので、属性を取得するようにした。
 	DWORD dwFileAttribute;
 	dwFileAttribute = ::GetFileAttributes(pszPath);
-	if ( dwFileAttribute == (DWORD)-1 )
+	if ( dwFileAttribute != (DWORD)-1 )
 	{
-		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;
+		// 読取専用属性だけ残す(ノーマル属性が付いていたらそれも残す)。
+		BOOL bRes = ::SetFileAttributes(pszPath, dwFileAttribute & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_NORMAL));
 	}
+	else
+	{
+		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;	//@@@ 2002.04.15 MIK
+	}
+	//>> 2002/04/13 Azumaiya
 
 	///* ファイルを書き込み用にオープンする */
-	//  標準のファイル関数だと、隠し属性の付いたファイルを書き込みで開くことができ
-	// なかったので、CreateFile を使用。
-	HANDLE hFile;
-	hFile = ::CreateFile(
-						pszPath,			// 開くファイル名
-						GENERIC_WRITE,		// 書き込みモードで開く。
-						0,					// 共有しない。
-						NULL,				// ハンドルを継承しない。
-						CREATE_ALWAYS,		// 常にサイズ 0 のファイルを開く。
-						dwFileAttribute,	// ファイル属性。
-						NULL				// テンプレートファイルを使わない。
-						);
-	if ( hFile == INVALID_HANDLE_VALUE )
-	{
+// Oct 6, 2000 ao
+/* ファイル出力にstream を使うようにする */
+	// 改行コードを勝手に制御されない様、バイナリモードで開く
+	FILE *sFile= fopen(pszPath,"wb"); /*add*/
+
+	///* ファイルを書き込み用にオープンする */
+//-	hFile = _lopen( pszPath, OF_WRITE );
+//-	if( HFILE_ERROR == hFile ){
+//-	}else{
+//-		_lclose( hFile );
+//-	}
+//-	hFile = _lcreat(pszPath, 0);
+//-	if( HFILE_ERROR == hFile ){
+	if( !sFile ){ /*add*/
 //		MYTRACE( "file create error %s\n", pszPath );
 		::MYMESSAGEBOX(
 			hWndParent,
@@ -872,17 +878,20 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 			pszPath
 		 );
 		nRetVal = FALSE;
+		//<< 2002/04/13 Azumaiya
+		if ( dwFileAttribute != (DWORD)-1 )
+		{
+			// ファイル属性を元に戻す。
+			::SetFileAttributes(pszPath, dwFileAttribute);
+		}
+		//>> 2002/04/13 Azumaiya
 		goto _RETURN_;
 	}
 
-	//  この変数は本当はいらないのだが、書き込んだバイト数を受け取る変数が無いといけないので、
-	// 一応宣言だけはしています。ですが、中に入っている値は使いません。
-	DWORD dwWriteSize;
 	switch( nCharCode ){
 	case CODE_UNICODE:
 //-		if( HFILE_ERROR == _lwrite( hFile, "\xff\xfe", 2 ) ){
-		if ( ::WriteFile( hFile, "\xff\xfe", 2 * sizeof(char), &dwWriteSize, NULL ) == 0 )
-		{
+		if( fwrite( "\xff\xfe", sizeof( char ), 2, sFile ) < 2 ){ /* add */
 //			MYTRACE( "file write error %s\n", pszPath );
 			nRetVal = FALSE;
 			goto _CLOSEFILE_;
@@ -890,10 +899,12 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		break;
 	}
 
+	nLineNumber = 0;
 //	pLine = GetFirstLinrStr( &nLineLen );
+	pCDocLine = m_pDocLineTop;
 
-	for( nLineNumber = 0, pCDocLine = m_pDocLineTop; NULL != pCDocLine; pCDocLine = pCDocLine->m_pNext)
-	{
+//	while( NULL != pLine ){
+	while( NULL != pCDocLine ){
 		++nLineNumber;
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 
@@ -932,27 +943,22 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 				/* SJIS→Unicodeコード変換 */
 				cmemBuf.SJISToUnicode();
 				break;
-
 			case CODE_UTF8:	/* UTF-8 */
 				/* SJIS→UTF-8コード変換 */
 				cmemBuf.SJISToUTF8();
 				break;
-
 			case CODE_UTF7:	/* UTF-7 */
 				/* SJIS→UTF-7コード変換 */
 				cmemBuf.SJISToUTF7();
 				break;
-
 			case CODE_EUC:
 				/* SJIS→EUCコード変換 */
 				cmemBuf.SJISToEUC();
 				break;
-
 			case CODE_JIS:
 				/* SJIS→JISコード変換 */
 				cmemBuf.SJIStoJIS();
 				break;
-
 			case CODE_SJIS:
 			default:
 				break;
@@ -974,7 +980,6 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 //			case CODE_EUC:
 //				cmemBuf.Append( gm_pszEolDataArr[EOL_LF], LEN_EOL_LF );
 //				break;
-
 			default:
 				//	From Here Feb. 8, 2001 genta 改行コード変換処理を追加
 				if( cEol == EOL_NONE ){
@@ -992,49 +997,32 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 				//	To Here Feb. 8, 2001 genta
 			}
 		}
-
-		nWriteLen = cmemBuf.GetLength();
-		if( 0 < nWriteLen ){
+		if( 0 < cmemBuf.GetLength() ){
 //-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
-//			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
-//					< (size_t)cmemBuf.GetLength() ){ /* add */
-			if ( ::WriteFile( hFile, cmemBuf.GetPtr(), nWriteLen * sizeof(char), &dwWriteSize, NULL ) == 0 )
-			{
+			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
+					< (size_t)cmemBuf.GetLength() ){ /* add */
 //				MYTRACE( "file write error %s\n", pszPath );
 				nRetVal = FALSE;
 				goto _CLOSEFILE_;
 			}
 		}
+
+
+//		pLine = GetNextLinrStr( &nLineLen );
+		pCDocLine = pCDocLine->m_pNext;
 	}
 _CLOSEFILE_:;
 //-	_lclose( hFile );
+	fflush( sFile );/* add */
+	fclose( sFile );/* add */
+	//<< 2002/04/13 Azumaiya
+	// ファイル属性を元に戻す。
+	::SetFileAttributes(pszPath, dwFileAttribute);
+	//>> 2002/04/13 Azumaiya
+
 // Oct 6, 2000 ao end
 /* ファイル出力に関する変更はここまで。
 	この後変更後のファイル情報を開くためにファイルアクセスしているが、ここまで無理に変更する必要はないでしょう。*/
-
-	/* 更新後のファイル時刻の取得 */
-//	{
-		// 渡されたポインタを直に扱うようにする。
-		// なんか、こうしないと、正確な反映ができなかったようなので・・・。
-//		SYSTEMTIME	systimeL;
-//		if( ::GetFileTime( (HANDLE)hFile, NULL, NULL, pFileTime ) ){
-//			::FileTimeToLocalFileTime( pFileTime, pFileTime );	//@@@ 2002.04.09 delete MIK
-			// 取得したシステム日時を使ってない？
-//			::FileTimeToSystemTime( pFileTime, &systimeL );
-//			MYTRACE( "Last Update: %d/%d/%d %02d:%02d:%02d\n",
-//				systimeL.wYear,
-//				systimeL.wMonth,
-//				systimeL.wDay,
-//				systimeL.wHour,
-//				systimeL.wMinute,
-//				systimeL.wSecond
-//			);
-//		}else{
-//			MYTRACE( "GetFileTime() error.\n" );
-//		}
-//	}
-	::CloseHandle(hFile);
-	//>> 2002/03/25 Azumaiya
 
 	/* 更新後のファイル時刻の取得
 	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
@@ -1046,6 +1034,7 @@ _CLOSEFILE_:;
 	{
 		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;
 	}
+	HANDLE hFile;
 	hFile = ::CreateFile(
 						pszPath,			// 開くファイル名
 						GENERIC_READ,		// 読み込みモードで開く。

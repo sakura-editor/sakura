@@ -1016,8 +1016,8 @@ LRESULT CEditApp::DispatchEvent(
 								}
 							}
 							if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
-								char*	pszCodeNameCur;
-								char*	pszCodeNameNew;
+								char*	pszCodeNameCur = "";
+								char*	pszCodeNameNew = "";
 								switch( pfi->m_nCharCode ){
 								case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 								case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
@@ -1193,8 +1193,8 @@ LRESULT CEditApp::DispatchEvent(
 									}
 								}
 								if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
-									char*	pszCodeNameCur;
-									char*	pszCodeNameNew;
+									char*	pszCodeNameCur = "";
+									char*	pszCodeNameNew = "";
 									switch( pfi->m_nCharCode ){
 									case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//	Sept. 1, 2000 jepro 'シフト'を'S'に変更
 									case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;

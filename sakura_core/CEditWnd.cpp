@@ -2977,7 +2977,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 
 //	case F_COPY:					/* コピー */
 //	case F_CUT:						/* 切り取り */
-	case F_DELETE:					/* 削除 */
+//	case F_DELETE:					/* 削除 */ 2002/04/17 YAZAKI
 	case F_TOLOWER:					/* 英大文字→英小文字 */
 	case F_TOUPPER:					/* 英小文字→英大文字 */
 	case F_TOHANKAKU:				/* 全角→半角 */
@@ -3121,11 +3121,12 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 /* 機能IDに対応するヘルプコンテキスト番号を返す */
 // Modified by Stonee, 2001/02/23
 // etc_uty.cpp内に中身を移動
+/*	2002/04/17 YAZAKI コメントアウト
 int CEditWnd::FuncID_To_HelpContextID( int nFuncID )
 {
 	return ::FuncID_To_HelpContextID(nFuncID);
 }
-
+*/
 
 /* メニューアイテムに対応するヘルプを表示 */
 void CEditWnd::OnHelp_MenuItem( HWND hwndParent, int nFuncID )

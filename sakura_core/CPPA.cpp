@@ -51,6 +51,10 @@ CPPA::CPPA()
 
 CPPA::~CPPA()
 {
+	//	Apr. 15, 2002 genta cleanup処理追加
+	if( IsAvailable()){
+		DeinitDll();
+	}
 }
 
 
@@ -79,14 +83,11 @@ CPPA::GetDllName( char* str )
 int CPPA::InitDll()
 {
 	/* PPA.DLLが持っている関数を準備 */
-	//	アドレス取得
-	struct ImportTable 
-	{
-		void* proc;
-		const char* name;
-	};
 
-	ImportTable table[] = 
+	//	Apr. 15, 2002 genta constを付けた
+	//	アドレスの入れ場所はオブジェクトに依存するので
+	//	static配列にはできない。
+	const ImportTable table[] = 
 	{
 		{ &m_fnExecute,		"Execute" },
 		{ &m_fnSetDeclare,	"SetDeclare" },
@@ -132,23 +133,17 @@ int CPPA::InitDll()
 		{ NULL, 0 }
 	};
 
-	int i;
-	for (i=0; table[i].proc!=NULL; i++) 
-	{
-		FARPROC proc;
-		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == NULL) 
-		{
-//			Free();
-			return 1;
-		}
-		*((FARPROC*)table[i].proc) = proc;
-	}
+	//	Apr. 15, 2002 genta
+	//	CDllHandlerの共通関数化した
+	if( ! RegisterEntries(table) )
+		return 1;
 
 	SetStrFunc((void*)CPPA::stdStrFunc);
 	SetProc((void*)CPPA::stdProc);
 
 	/* SAKURAエディタ用独自関数を準備 */
 
+	int i;
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
 		CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) + 30 ];	//	30文字分プラス

@@ -623,6 +623,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 		FALSE,	/* ダブルクォーテーション文字列を表示する */
 		m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
 		m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+		m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuTail		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	);
