@@ -7021,6 +7021,25 @@ bool CEditView::Command_TagsMake( void )
 					{
 						continue;
 					}
+					// 2003.11.09 じゅうじ
+					//	正常終了の時はメッセージが出力されないので
+					//	何か出力されたらエラーメッセージと見なす．
+					else {
+						//終了処理
+						CloseHandle( hStdOutWrite );
+						CloseHandle( hStdOutRead  );
+						if( pi.hProcess ) CloseHandle( pi.hProcess );
+						if( pi.hThread  ) CloseHandle( pi.hThread  );
+
+						cDlgCancel.CloseDialog( TRUE );
+
+						work[ read_cnt ] = '\0';	// Nov. 15, 2003 genta 表示用に0終端する
+						::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+						"\"tags\" はタグファイルではないため上書き出来ません。\n"
+						"タグ作成コマンド実行は失敗しました。\n\n%s", work ); // 2003.11.09 じゅうじ
+
+						return true;
+					}
 				}
 			}
 			Sleep(0);
