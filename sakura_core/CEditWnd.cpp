@@ -1457,17 +1457,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				char	szHelp[_MAX_PATH + 1];
 				/* ヘルプファイルのフルパスを返す */
 				::GetHelpFilePath( szHelp );
-			//From Here Jan. 13, 2001 JEPRO HELP_FINDERでは前回アクティブだったトピックの検索のタブになってしまう
-			//一方 HELP_CONTENTS (あるいは HELP＿INDEX) だと目次ページが出てくる。それもいいが...
-			//	::WinHelp( m_hWnd, szHelp, HELP_FINDER, 0 );
-			//	::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );	//[目次]タブの表示
-			//To Here Jan. 13, 2001
-			// From Here 2001.12.03 hor
-			//	WinNT 4 ではなにも表示されなかったのでエラーの場合は HELP_CONTENTS 表示するように変更
-				if( ::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" ) == 0){
-					::WinHelp( m_hWnd, szHelp, HELP_CONTENTS , 0 );	//[目次]タブの表示
-				}
-			// To Here 2001.12.03 hor
+				ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
 			}
 			break;
 //		case IDM_HELP_SEARCH:
@@ -1877,6 +1867,12 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BROWSE						, "ブラウズ(&B)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			if ( m_cEditDoc.m_bReadOnly ){
+				nWork = MF_BYPOSITION | MF_STRING | MF_CHECKED;
+			}else{
+				nWork = MF_BYPOSITION | MF_STRING;
+			}
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, nWork, F_READONLY										, "読み取り専用(&O)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_PROPERTY_FILE				, "ファイルのプロパティ(&R)" );		//Nov. 7, 2000 jepro キャプションに'ファイルの'を追加
 //			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SENDMAIL					, "メール送信(&E)..." );
 
@@ -3017,6 +3013,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:						//ブラウズ
+	case F_READONLY:					//読み取り専用
 	case F_PROPERTY_FILE:
 		/* 現在編集中のファイルのパス名をクリップボードにコピーできるか */
 //		if( 0 < lstrlen( pcEditDoc->m_szFilePath ) ){

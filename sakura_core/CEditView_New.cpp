@@ -130,6 +130,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		::DeleteObject( hBrush );
 	}
 	
+	/* s”Ô†‚Ì•\Ž¦ */
 	//	From Here Sep. 7, 2001 genta
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){ 
 		rc.left = 0;
@@ -139,7 +140,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK );
 		::FillRect( hdc, &rc, hBrush );
 		::DeleteObject( hBrush );
-	}	
+	}
 	//	To Here Sep. 7, 2001 genta
 
 	::SetBkMode( hdc, TRANSPARENT );

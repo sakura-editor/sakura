@@ -26,6 +26,7 @@
 #include "sakura.hh"	//YAZAKI, 2001/12/11
 #include "CEol.h"// 2002/2/3 aroka
 #include "CBregexp.h"// 2002/2/3 aroka
+#include "COsVersionInfo.h"
 
 //	CShareDataへ移動
 /* 日付をフォーマット */
@@ -626,49 +627,6 @@ void GetAppVersionInfo(
 
 }
 
-
-
-
-/* Windowsバージョンのチェック */
-BOOL CheckWindowsVersion( const char* pszAppName )
-{
-	OSVERSIONINFO	osvi;
-	memset( (void *)&osvi, 0, sizeof( osvi ) );
-	osvi.dwOSVersionInfoSize = sizeof( osvi );
-	if( ::GetVersionEx( &osvi ) ){
-		if( osvi.dwMajorVersion < 4 ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, pszAppName,
-				"このアプリケーションを実行するには、\nWindows95以上 または WindowsNT4.0以上のOSが必要です。\nアプリケーションを終了します。"
-			);
-			return FALSE;
-		}
-	}else{
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, pszAppName,
-			"OSのバージョンが取得できません。\nアプリケーションを終了します。"
-		);
-		return FALSE;
-	}
-	return TRUE;
-}
-
-// From Here Jul. 5, 2001 shoji masami
-/*! NTプラットフォームかどうか調べる
-
-	@retval TRUE NT platform
-	@retval FALSE non-NT platform
-*/
-bool CheckWindowsVersionNT( void )
-{
-	OSVERSIONINFO osVer;
-	osVer.dwOSVersionInfoSize = sizeof(osVer);
-	GetVersionEx(&osVer);
-
-	if (osVer.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		return true;	// NT系
-
-	return false;		// それ以外
-}
-// To Here Jul. 5, 2001 shoji masami
 
 
 
@@ -2462,4 +2420,21 @@ int cescape(const char* org, char* buf, char cesc, char cwith)
 	*out = '\0';
 	return out - buf;
 }
+
+/*	ヘルプの目次を表示
+	目次タブを表示。問題があるバージョンでは、目次ページを表示。
+*/
+void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
+{
+	COsVersionInfo cOsVer;
+	if ( cOsVer.HasWinHelpContentsProblem() ){
+		/* 目次ページを表示する */
+		::WinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );
+		return;
+	}
+	/* 目次タブを表示する */
+	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );
+	return;
+}
+
 /*[EOF]*/

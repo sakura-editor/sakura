@@ -558,7 +558,7 @@ void CDocLineMgr::MarkSearchWord(
 					( TRUE  == bLoHiCase && 0 ==   memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
 					pDocLine->SetBookMark(true);
 				}else
-				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE ) ){
+				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE, FALSE) ){
 					continue;
 				}
 			}

@@ -86,6 +86,7 @@ public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
 	BOOL			m_bModal;		/* モーダル ダイアログか */
+	int				m_nShowCmd;		//	最大化/最小化
 	int				m_nWidth;
 	int				m_nHeight;
 	int				m_xPos;

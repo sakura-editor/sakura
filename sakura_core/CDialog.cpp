@@ -58,6 +58,7 @@ CDialog::CDialog()
 	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
 	m_lParam = NULL;
+	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
 	m_yPos = -1;
 	m_nWidth = -1;
@@ -144,6 +145,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* ダイアログデータの設定 */
 	SetData();
 
+#if 0
 	/* ダイアログのサイズ、位置の再現 */
 	if( -1 != m_xPos && -1 != m_yPos ){
 		::SetWindowPos( m_hWnd, NULL, m_xPos, m_yPos, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
@@ -154,12 +156,36 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( -1 != m_nWidth && -1 != m_nHeight ){
 		::SetWindowPos( m_hWnd, NULL, 0, 0, m_nWidth, m_nHeight, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 	}
+#endif
+
+	if( -1 != m_xPos && -1 != m_yPos ){
+		/* ウィンドウ位置・サイズを再現 */
+		WINDOWPLACEMENT cWindowPlacement;
+		cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
+		cWindowPlacement.showCmd = m_nShowCmd;	//	最大化・最小化
+		cWindowPlacement.rcNormalPosition.left = m_xPos;
+		cWindowPlacement.rcNormalPosition.top = m_yPos;
+		cWindowPlacement.rcNormalPosition.right = m_nWidth + m_xPos;
+		cWindowPlacement.rcNormalPosition.bottom = m_nHeight + m_yPos;
+		::SetWindowPlacement( m_hWnd, &cWindowPlacement );
+	}
 	m_bInited = TRUE;
 	return TRUE;
 }
 
 BOOL CDialog::OnDestroy( void )
 {
+	/* ウィンドウ位置・サイズを記憶 */
+	WINDOWPLACEMENT cWindowPlacement;
+	cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
+	::GetWindowPlacement( m_hWnd, &cWindowPlacement );
+	m_nShowCmd = cWindowPlacement.showCmd;	//	最大化・最小化
+	m_xPos = cWindowPlacement.rcNormalPosition.left;
+	m_yPos = cWindowPlacement.rcNormalPosition.top;
+	m_nWidth = cWindowPlacement.rcNormalPosition.right - cWindowPlacement.rcNormalPosition.left;
+	m_nHeight = cWindowPlacement.rcNormalPosition.bottom - cWindowPlacement.rcNormalPosition.top;
+	
+	/* 破棄 */
 	if( NULL != m_hwndSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
@@ -187,6 +213,7 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 {
 	RECT	rc;
 	::GetWindowRect( m_hWnd, &rc );
+
 	/* ダイアログのサイズの記憶 */
 	m_nWidth = rc.right - rc.left;
 	m_nHeight = rc.bottom - rc.top;
@@ -214,6 +241,12 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 		SWP_NOOWNERZORDER | SWP_NOZORDER
 		);
 
+		//	SizeBox問題テスト
+		if( wParam == SIZE_MAXIMIZED ){
+			::ShowWindow( m_hwndSizeBox, SW_HIDE );
+		}else{
+			::ShowWindow( m_hwndSizeBox, SW_SHOW );
+		}
 		::InvalidateRect( m_hwndSizeBox, NULL, TRUE );
 	}
 	return FALSE;
@@ -227,24 +260,13 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 	if( FALSE == m_bInited ){
 		return TRUE;
 	}
-//	WINDOWPLACEMENT	wpl;
 	RECT	rc;
-//	wpl.length = sizeof( WINDOWPLACEMENT );
-//	::GetWindowPlacement( m_hWnd, &wpl );
-//	m_xPos = wpl.rcNormalPosition.left;
-//	m_yPos = wpl.rcNormalPosition.top;
-//#ifdef _DEBUG
-//		MYTRACE( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
-//#endif
 	::GetWindowRect( m_hWnd, &rc );
 	m_xPos = rc.left;
 	m_yPos = rc.top;
 #ifdef _DEBUG
 		MYTRACE( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 #endif
-
-//	m_xPos = (int)(short) LOWORD( lParam );	// horizontal position
-//	m_yPos = (int)(short) HIWORD( lParam );	// vertical position
 	return TRUE;
 
 }

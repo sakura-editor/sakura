@@ -60,6 +60,7 @@
 #define IDC_CHECK_INDENT                1009
 #define IDC_CHK_REGULAREXP              1010
 #define IDC_CHECK_INDENT_WSPACE         1011
+#define IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD 1012
 #define IDC_CHECK4                      1013
 #define IDC_CHECK_GTJW_RETURN           1013
 #define IDC_CHECK_FREECARET             1014

@@ -41,7 +41,7 @@
 #include "CSplitBoxWnd.h"///
 #include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
 #include "CMarkMgr.h"///
-
+#include "COsVersionInfo.h"
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -1437,6 +1437,14 @@ void CEditView::ShowEditCaret( void )
 			::ShowCaret( m_hWnd );
 		}
 	}
+
+	//2002.02.27 Add By KK アンダーラインのちらつきを低減
+	if (m_nOldUnderLineY != m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight) {
+		//アンダーラインの描画位置が、前回のアンダーライン描画位置と異なっていたら、アンダーラインを描き直す。
+		CaretUnderLineOFF(TRUE);
+		CaretUnderLineON(TRUE);
+	}
+
 	m_nCaretWidth = nCaretWidth;
 	m_nCaretHeight = nCaretHeight;	/* キャレットの高さ */
 	SetIMECompFormPos();
@@ -2605,6 +2613,7 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
 		}
+		m_bRedrawRuler = true;
 		return TRUE;
 	}else{
 		return FALSE;
@@ -2704,7 +2713,9 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	hdc = ::GetDC( m_hWnd );
 
 	/* カーソル行アンダーラインのOFF */
-	CaretUnderLineOFF( bDraw );
+	if (IsTextSelected()) { //2002.02.27 Add By KK アンダーラインのちらつきを低減 - ここではテキスト選択時のみアンダーラインを消す。
+		CaretUnderLineOFF( bDraw );
+	}
 
 	if( m_bBeginSelect ){	/* 範囲選択中 */
 		nCaretMarginY = 0;
@@ -2889,7 +2900,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	}
 
 	/* カーソル行アンダーラインのON */
-	CaretUnderLineON( bDraw );
+	//CaretUnderLineON( bDraw ); //2002.02.27 Del By KK アンダーラインのちらつきを低減
 	if( bDraw ){
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
@@ -8232,13 +8243,10 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		// command(9x) か cmd(NT) を呼び出す
 
 		//OSバージョン取得
-		OSVERSIONINFO	vi;
-		ZeroMemory( &vi, sizeof(OSVERSIONINFO) );
-		vi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx( &vi );
+		COsVersionInfo cOsVer;
 		//コマンドライン文字列作成
 		wsprintf( cmdline, "%s %s%s",
-				( vi.dwPlatformId == VER_PLATFORM_WIN32_NT ? "cmd.exe" : "command.com" ),
+				( cOsVer.IsWin32NT() ? "cmd.exe" : "command.com" ),
 				( bGetStdout ? "/C " : "/K " ), pszCmd );
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 					CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {

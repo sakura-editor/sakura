@@ -283,6 +283,14 @@ LRESULT CPrintPreview::OnSize( WPARAM wParam, LPARAM lParam )
 	m_pParentWnd->m_bDragMode = TRUE;
 	OnMouseMove( 0, MAKELONG( 0, 0 ) );
 	m_pParentWnd->m_bDragMode = FALSE;
+	//	SizeBox–â‘èƒeƒXƒg
+	if( NULL != m_hwndSizeBox ){
+		if( wParam == SIZE_MAXIMIZED ){
+			::ShowWindow( m_hwndSizeBox, SW_HIDE );
+		}else{
+			::ShowWindow( m_hwndSizeBox, SW_SHOW );
+		}
+	}
 	::InvalidateRect( m_pParentWnd->m_hWnd, NULL, TRUE );
 	return 0L;
 }

@@ -191,6 +191,7 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nVal, FALSE );
 			return TRUE;
 		}
+		break;
 //****	To Here Sept. 21, 2000
 //	From Here Sept. 9, 2000 JEPRO
 	case WM_COMMAND:

@@ -347,6 +347,7 @@ protected:
 	void Command_ACTIVATE_SQLPLUS( void );		/* Oracle SQL*Plusをアクティブ表示 */
 	void Command_PLSQL_COMPILE_ON_SQLPLUS( void );/* Oracle SQL*Plusで実行 */
 	void Command_BROWSE( void );				/* ブラウズ */
+	void Command_READONLY( void );				/* 読み取り専用 */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 

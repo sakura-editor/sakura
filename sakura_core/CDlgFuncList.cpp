@@ -1065,7 +1065,6 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「アウトライン解析」のヘルプ */
 		//Apr. 5, 2001 JEPRO 修正漏れを追加 (Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした)
-//		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 64 );
 		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_OUTLINE) );
 		return TRUE;
 	case IDOK:

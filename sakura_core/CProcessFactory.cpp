@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "etc_uty.h"
 #include <tchar.h>
+#include "COsVersionInfo.h"
 
 class CProcess;
 
@@ -72,12 +73,24 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 bool CProcessFactory::IsValidVersion()
 {
 	/* Windowsバージョンのチェック */
-	if( FALSE == CheckWindowsVersion( GSTR_APPNAME ) ){
+	COsVersionInfo	cOsVer;
+	if( cOsVer.GetVersion() ){
+		if( !cOsVer.OsIsEnableVersion() ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"このアプリケーションを実行するには、\nWindows95以上 または WindowsNT4.0以上のOSが必要です。\nアプリケーションを終了します。"
+			);
+			return false;
+		}
+	}else{
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+			"OSのバージョンが取得できません。\nアプリケーションを終了します。"
+		);
 		return false;
 	}
+
 	/* システムリソースのチェック */
 	// Jul. 5, 2001 shoji masami NTではリソースチェックを行わない
-	if( !CheckWindowsVersionNT() ){
+	if( !cOsVer.IsWin32NT() ){
 		if( !CheckSystemResources( GSTR_APPNAME ) ){
 			return false;
 		}
