@@ -99,8 +99,12 @@ struct ARRHEAD {
 
 	Version 40:
 	ファイル名簡易表記関連を追加． 2002/12/08～2003/01/15 Moca
+
+	Version 41:
+	Typesのm_szTabViewStringサイズ拡張
+	m_nWindowSizeX/Y m_nWindowOriginX/Y追加 2003.01.26 aroka
 */
-const unsigned int uShareDataVersion = 40;
+const unsigned int uShareDataVersion = 41;
 
 /*
 ||	Singleton風
@@ -254,43 +258,6 @@ bool CShareData::Init( void )
 			YAZAKI.
 		*/
 		CPrint::Initialize();	//	初期化命令。
-#if 0
-		i = 0;
-		wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceHan, "ＭＳ 明朝" );				/* 印刷フォント */
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceZen, "ＭＳ 明朝" );				/* 印刷フォント */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintFontWidth = 12;  								/* 印刷フォント幅(1/10mm単位) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintFontHeight = m_pShareData->m_PrintSettingArr[i].m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintDansuu = 1;			/* 段組の段数 */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintDanSpace = 70; 		/* 段と段の隙間(1/10mm) */
-		m_pShareData->m_PrintSettingArr[i].m_bPrintWordWrap = TRUE;		/* 英文ワードラップする */
-		m_pShareData->m_PrintSettingArr[i].m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintMarginBY = 200;		/* 印刷用紙マージン 下(1/10mm単位) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintMarginLX = 200;		/* 印刷用紙マージン 左(1/10mm単位) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintMarginRX = 100;		/* 印刷用紙マージン 右(1/10mm単位) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;	/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
-		m_pShareData->m_PrintSettingArr[i].m_nPrintPaperSize = DMPAPER_A4;	/* 用紙サイズ */
-		/* プリンタ設定 DEVMODE用 */
-		m_cPrint.GetDefaultPrinterInfo( &(m_pShareData->m_PrintSettingArr[i].m_mdmDevMode) );
-		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[0] = TRUE;
-		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[1] = FALSE;
-		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[2] = FALSE;
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0], "$f" );
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[1], "" );
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[2], "" );
-		m_pShareData->m_PrintSettingArr[i].m_bFooterUse[0] = TRUE;
-		m_pShareData->m_PrintSettingArr[i].m_bFooterUse[1] = FALSE;
-		m_pShareData->m_PrintSettingArr[i].m_bFooterUse[2] = FALSE;
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "" );
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "- $p -" );
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[2], "" );
-		for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
-			m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-			wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
-		}
-#endif
 
 //キーワード：デフォルトキー割り当て
 /********************/
@@ -583,33 +550,9 @@ bool CShareData::Init( void )
 		);
 		// ai 02/05/21 Add E
 
-//		/* LOGFONTの初期化 */
-//		memset( &m_pShareData->m_Common.m_lf, 0, sizeof( LOGFONT ) );
-//		m_pShareData->m_Common.m_lf.lfHeight			= -19;
-//		m_pShareData->m_Common.m_lf.lfWidth				= 0;
-//		m_pShareData->m_Common.m_lf.lfEscapement		= 0;
-//		m_pShareData->m_Common.m_lf.lfOrientation		= 0;
-//		m_pShareData->m_Common.m_lf.lfWeight			= 400;
-//		m_pShareData->m_Common.m_lf.lfItalic			= 0;
-//		m_pShareData->m_Common.m_lf.lfUnderline			= 0;
-//		m_pShareData->m_Common.m_lf.lfStrikeOut			= 0;
-//		m_pShareData->m_Common.m_lf.lfCharSet			= 128;
-//		m_pShareData->m_Common.m_lf.lfOutPrecision		= 1;
-//		m_pShareData->m_Common.m_lf.lfClipPrecision		= 2;
-//		m_pShareData->m_Common.m_lf.lfQuality			= 1;
-//		m_pShareData->m_Common.m_lf.lfPitchAndFamily	= 1;
-//		strcpy( m_pShareData->m_Common.m_lf.lfFaceName, "FixedSys" );
 //	To Here Sept. 19,2000
 
 		m_pShareData->m_Common.m_bFontIs_FIXED_PITCH = TRUE;				/* 現在のフォントは固定幅フォントである */
-
-
-
-//		m_pShareData->m_Common.m_lfPrintFont = m_pShareData->m_Common.m_lf;	/* 印刷用フォント */
-//		m_pShareData->m_Common.m_lfPrintFont.lfHeight = -400;				/* 0.01mm単位 */
-
-//		/* プリンタ設定 DEVMODE用 */
-//		CPrint::GetDefaultPrinterInfo( &(m_pShareData->m_Common.m_mdmDevMode ) );
 
 
 
@@ -643,8 +586,6 @@ bool CShareData::Init( void )
 
 		m_pShareData->m_Common.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
 
-//		m_pShareData->m_Common.m_bEnableLineISlog = TRUE;		/* ★廃止★行番号種別  物理行／論理行 */
-
 		m_pShareData->m_Common.m_bRegularExp = 0;				/* 1==正規表現 */
 		m_pShareData->m_Common.m_bLoHiCase = 0;					/* 1==英大文字小文字の区別 */
 		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
@@ -657,11 +598,6 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
 		m_pShareData->m_Common.m_nRepeatedScrollLineNum = 3;	/* キーリピート時のスクロール行数 */
 		m_pShareData->m_Common.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
-
-//		strcpy( m_pShareData->m_Common.m_szEMailUserName, "");		/* メールユーザー名 */
-//		strcpy( m_pShareData->m_Common.m_szEMailUserAddress, "");	/* メールアドレス */
-//		strcpy( m_pShareData->m_Common.m_szSMTPServer, "");			/* SMTPホスト名・アドレス */
-//		m_pShareData->m_Common.m_nSMTPPort = 25;					/* SMTPポート番号(通常は25) */
 
 		m_pShareData->m_Common.m_bAddCRLFWhenCopy = FALSE;		/* 折り返し行に改行を付けてコピー */
 		m_pShareData->m_Common.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
@@ -789,36 +725,6 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = 'A';
 		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = 0;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '\0';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_TOLOWER;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = 'L';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_TOUPPER;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = 'U';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_TOHANKAKU;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '\0';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_TOZENKAKUHIRA;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '\0';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_TOZENKAKUKATA;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '\0';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = 0;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '\0';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_OPTION_TYPE;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '1';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_OPTION;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '2';
-//		n++;
-//		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_FONT;
-//		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '3';
-//		n++;
 
 		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = '\0';
@@ -872,13 +778,6 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
-//		strcpy( m_pShareData->m_Common.m_szHokanFile, "" );			/* 入力補完 単語ファイル */
-//		m_pShareData->m_Common.m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
-//		strcpy( m_pShareData->m_Common.m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
-		// 2002/09/20 Moca m_nGrepCharSetを追加したので削除
-//		m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect = FALSE;	/* Grep: 文字コード自動判別 */
-		// 2001/06/19 asa-o タイプ別に移動したので削除
-//		m_pShareData->m_Common.m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
 		m_pShareData->m_Common.m_bSaveWindowSize = TRUE;			/* ウィンドウサイズ継承 */
 		m_pShareData->m_Common.m_nWinSizeType = SIZE_RESTORED;
 		m_pShareData->m_Common.m_nWinSizeCX = CW_USEDEFAULT;
@@ -902,7 +801,6 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
-//		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 		/* 1999.11.15 */
 		m_pShareData->m_Common.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
 		m_pShareData->m_Common.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
@@ -964,12 +862,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//	Nov. 12, 2000 genta
 		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
-//		/* MRU 外部コマンド */
-//		m_pShareData->m_Common.m_MRU_ExtCmd.m_nExtCmdArrNum = 0;
-//		for( i = 0; i < MAX_EXTCMDMRUNUM; i++ ){
-//			/* 初期化 */
-//			m_pShareData->m_Common.m_MRU_ExtCmd.m_ExtCmdArr[i].Init();
-//		}
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */
 			m_pShareData->m_szCmdArr[i][0] = '\0';
@@ -1133,7 +1025,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"txt,log,1st,err,ps",
 			"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,dsw,dsp,dep,mak,hm",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
 				//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
-//			"html,htm,shtml",
 			"html,htm,shtml,plg",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
 			"sql,plsql",
 			"cbl,cpy,pco,cob",	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
@@ -1186,7 +1077,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 //		nIdx = 0;
 		/* テキスト */
 		//From Here Sept. 20, 2000 JEPRO テキストの規定値を80→120に変更(不具合一覧.txtがある程度読みやすい桁数)
-//		m_pShareData->m_Types[1].m_nMaxLineSize = 80;					/* 折り返し文字数 */
 		m_pShareData->m_Types[1].m_nMaxLineSize = 120;					/* 折り返し文字数 */
 		//To Here Sept. 20, 2000
 		m_pShareData->m_Types[1].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
@@ -3705,7 +3595,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//	Macro登録の初期化
 		MacroRec *mptr = m_pShareData->m_MacroTable;
 		for( i = 0; i < MAX_CUSTMACRO; ++i, ++mptr ){
-		//	mptr->m_bEnabled = FALSE;	// Oct 4. 2001 deleted by genta
 			mptr->m_szName[0] = '\0';
 			mptr->m_szFile[0] = '\0';
 			mptr->m_bReloadWhenExecute = FALSE;
@@ -3980,15 +3869,11 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 	if( 0 ==  GetEditorWindowsNum() ){
 		return FALSE;
 	}
-	//	Oct. 11, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
-	//	my_icmp に変更したため不要に
-//	setlocale ( LC_ALL, "C" );
 	
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
-//			pfi = (FileInfo*)m_pShareData->m_szWork;
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 			/* 同一パスのファイルが既に開かれているか */
 			if( 0 == _stricmp( pfi->m_szPath, pszPath ) ){
@@ -4177,23 +4062,6 @@ int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort )
 			nRowNum = k;
 		}
 
-//		LRESULT	lSuccrss;
-//		DWORD	dwResult;
-//		for( i = 0; i < nRowNum; ++i ){
-//			(*ppEditNode)[i].m_szGrepKey[0] = '\0';
-//			lSuccrss = ::SendMessageTimeout(
-//				(*ppEditNode)[i].m_hWnd, MYWM_AREYOUGREP, 0, 0,
-//				SMTO_ABORTIFHUNG | SMTO_NORMAL,
-//				3000,
-//				&dwResult
-//			);
-//			if( !lSuccrss ){
-//				(*ppEditNode)[i].m_bIsGrep = -1;				/* Grepのウィンドウか */
-//			}else{
-//				(*ppEditNode)[i].m_bIsGrep = (BOOL)dwResult;	/* Grepのウィンドウか */
-//				strcpy( (*ppEditNode)[i].m_szGrepKey, m_szWork );
-//			}
-//		}
 		delete [] phWndArr;
 	}
 	return nRowNum;
