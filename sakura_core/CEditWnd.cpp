@@ -3811,7 +3811,8 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 		else if( (TCHAR)msg->wParam == VK_TAB )	//タブキー
 		{
 			//フォーカスを移動
-			::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+			//	2004.10.27 MIK IME表示位置のずれ修正
+			::SetFocus( m_hWnd  );
 		}
 	}
 
