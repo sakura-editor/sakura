@@ -98,16 +98,6 @@ CEditDoc::CEditDoc() :
 	m_ofn.nFilterIndex = 3;
 	GetCurrentDirectory( _MAX_PATH, m_szInitialDir );	/* 「開く」での初期ディレクトリ */
 	strcpy( m_szDefaultWildCard, "*.*" );				/* 「開く」での最初のワイルドカード */
-	/* CHOOSEFONTの初期化 */
-	memset( &m_cf, 0, sizeof( CHOOSEFONT ) );
-	m_cf.lStructSize = sizeof( m_cf );
-	m_cf.hwndOwner = m_hWnd;
-	m_cf.hDC = NULL;
-	m_cf.lpLogFont = &(m_pShareData->m_Common.m_lf);
-	m_cf.Flags = CF_FIXEDPITCHONLY | CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-//#ifdef _DEBUG
-//	m_cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-//#endif
 
 
 	/* レイアウト管理情報の初期化 */
@@ -275,9 +265,20 @@ BOOL CEditDoc::IsTextSelected( void )
 
 BOOL CEditDoc::SelectFont( LOGFONT* plf )
 {
-	m_cf.hwndOwner = m_hWnd;
-	m_cf.lpLogFont = plf;
-	if( TRUE != ChooseFont( &m_cf ) ){
+	// 2004.02.16 Moca CHOOSEFONTをメンバから外す
+	CHOOSEFONT cf;
+	/* CHOOSEFONTの初期化 */
+	::ZeroMemory( &cf, sizeof( CHOOSEFONT ) );
+	cf.lStructSize = sizeof( cf );
+	cf.hwndOwner = m_hWnd;
+	cf.hDC = NULL;
+//	cf.lpLogFont = &(m_pShareData->m_Common.m_lf);
+	cf.Flags = CF_FIXEDPITCHONLY | CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+//#ifdef _DEBUG
+//	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+//#endif
+	cf.lpLogFont = plf;
+	if( FALSE == ChooseFont( &cf ) ){
 #ifdef _DEBUG
 		DWORD nErr;
 		nErr = CommDlgExtendedError();
