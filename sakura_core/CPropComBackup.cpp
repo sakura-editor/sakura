@@ -4,6 +4,29 @@
 
 #include "etc_uty.h"
 
+//@@@ 2001.02.04 Start by MIK: Popup Help
+const DWORD p_helpids[] = {	//10000
+	IDC_BUTTON_BACKUP_FOLDER_REF,	10000,	//バックアップフォルダ参照
+	IDC_CHECK_BACKUP,				10010,	//バックアップの作成
+	IDC_CHECK_BACKUP_YEAR,			10011,	//バックアップファイル名（西暦年）
+	IDC_CHECK_BACKUP_MONTH,			10012,	//バックアップファイル名（月）
+	IDC_CHECK_BACKUP_DAY,			10013,	//バックアップファイル名（日）
+	IDC_CHECK_BACKUP_HOUR,			10014,	//バックアップファイル名（時）
+	IDC_CHECK_BACKUP_MIN,			10015,	//バックアップファイル名（分）
+	IDC_CHECK_BACKUP_SEC,			10016,	//バックアップファイル名（秒）
+	IDC_CHECK_BACKUPDIALOG,			10017,	//作成前に確認
+	IDC_CHECK_BACKUPFOLDER,			10018,	//指定フォルダに作成
+	IDC_EDIT_BACKUPFOLDER,			10040,	//保存フォルダ名
+	IDC_EDIT_BACKUP_3,				10041,	//世代数
+	IDC_RADIO_BACKUP_TYPE1,			10060,	//バックアップの種類（拡張子）
+	IDC_RADIO_BACKUP_TYPE2,			10061,	//バックアップの種類（連番）
+	IDC_RADIO_BACKUP_TYPE3,			10062,	//バックアップの種類（日付・時刻）
+	IDC_SPIN_BACKUP_GENS,			-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+//@@@ 2001.02.04 End
+
 
 
 /* メッセージ処理 */
@@ -120,6 +143,18 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 			}
 		}
 		break;
+
+//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//@@@ 2001.02.04 End
+
 	}
 	return FALSE;
 }

@@ -1,13 +1,12 @@
 //	$Id$
 /************************************************************************
-
 	CEditDoc.h
 	Copyright (C) 1998-2000, Norio Nakatani
 
-    UPDATE:
-    CREATE: 1998/3/13  新規作成
-
+	UPDATE:
+	CREATE: 1998/3/13  新規作成
 ************************************************************************/
+
 class CEditDoc;
 
 #ifndef _CEDITDOC_H_
@@ -80,7 +79,8 @@ public:
 	int GetActivePane( void );	/* アクティブなペインを取得 */
 	BOOL SelectFont( LOGFONT* );
 	BOOL FileRead( /*const*/ char* , BOOL*, int, BOOL, BOOL );	/* ファイルを開く */
-	BOOL FileWrite( const char* );
+	//	Feb. 9, 2001 genta 引数追加
+	BOOL FileWrite( const char*, enumEOLType cEolType = EOL_NONE );
 	bool SaveFile(bool force_rename);	//	ファイルの保存（に伴ういろいろ）
 	BOOL MakeBackUp( void );	/* バックアップの作成 */
 	void SetParentCaption( BOOL = FALSE );	/* 親ウィンドウのタイトルを更新 */
@@ -91,7 +91,7 @@ public:
 	BOOL OpenFileDialog( HWND, const char*, char*, int*, BOOL* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
 	void SetReferer( HWND , int, int );	/* タグジャンプ元など参照元の情報を保持する */
-	BOOL SaveFileDialog( char*, int* );	/* 「ファイル名を付けて保存」ダイアログ */
+	BOOL SaveFileDialog( char*, int*, CEOL* pcEol = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
 	void ReloadCurrentFile( BOOL, BOOL );/* 同一ファイルの再オープン */
@@ -99,7 +99,7 @@ public:
 	//	May 15, 2000 genta
 	CEOL  GetNewLineCode() const { return m_cNewLineCode; }
 	void  SetNewLineCode(const CEOL& t){ m_cNewLineCode = t; }
-	
+
 	//	Aug. 14, 2000 genta
 	bool IsModificationForbidden( int nCommand );
 
@@ -113,9 +113,38 @@ public:
 	//	Nov. 20, 2000 genta
 	void SetImeMode(int mode);	//	IME状態の設定
 
+	//	Nov. 29, 2000 From Here	genta
+	//	設定の一時変更時に拡張子による強制的な設定変更を無効にする
+	void LockDocumentType(void){ m_nSettingTypeLocked = true; }
+	void UnlockDocumentType(void){ m_nSettingTypeLocked = false; }
+	bool GetDocumentLockState(void){ return m_nSettingTypeLocked; }
+	//	Nov. 29, 2000 To Here
+	//	Nov. 23, 2000 From Here	genta
+	//	文書種別情報の設定，取得Interface
+	void SetDocumentType(int type, bool force)	//	文書種別の設定
+	{
+		if( (!m_nSettingTypeLocked) || force ){
+			m_nSettingType = type;
+			UnlockDocumentType();
+		}
+	}
+	int GetDocumentType(void) const	//	文書種別の読み出し
+	{
+		return m_nSettingType;
+	}
+	Types& GetDocumentAttribute(void) const	//	設定された文書情報への参照を返す
+	{
+		return m_pShareData->m_Types[m_nSettingType];
+	}
+	//	Nov. 23, 2000 To Here
+
+
 protected:
+	int				m_nSettingType;
+	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態
+
 public: /* テスト用にアクセス属性を変更 */
-	/* 補完 */
+	/* 入力補完 */
 	CHokanMgr		m_cHokanMgr;
 	BOOL			m_bGrepRunning;				/* Grep処理中 */
 	BOOL			m_bPrintPreviewMode;		/* 印刷プレビューモードか */
@@ -131,24 +160,23 @@ public: /* テスト用にアクセス属性を変更 */
 	CEOL 			m_cNewLineCode;		//	Enter押下時に挿入する改行コード種別
 
 
-	BOOL			m_bReadOnly;				/* 読み取り専用モード */ 
-	BOOL			m_bDebugMode;				/* デバッグモニタモード */ 
+	BOOL			m_bReadOnly;				/* 読み取り専用モード */
+	BOOL			m_bDebugMode;				/* デバッグモニタモード */
 	BOOL			m_bGrepMode;				/* Grepモードか */
 	char			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
 	HWND			m_hWnd;						/* 編集ウィンドウハンドル */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */
-	void			MakeFuncList_C( CFuncInfoArr* );	/* C/C++関数リスト作成 */
+	void			MakeFuncList_C( CFuncInfoArr* );		/* C/C++関数リスト作成 */
 	void 			MakeFuncList_PLSQL( CFuncInfoArr* );	/* PL/SQL関数リスト作成 */
-	void 			MakeTopicList_txt( CFuncInfoArr* );	/* テキスト・トピックリスト作成 */
-	void			MakeFuncList_Java( CFuncInfoArr* );	/* Java関数リスト作成 */
+	void 			MakeTopicList_txt( CFuncInfoArr* );		/* テキスト・トピックリスト作成 */
+	void			MakeFuncList_Java( CFuncInfoArr* );		/* Java関数リスト作成 */
 	void			MakeTopicList_cobol( CFuncInfoArr* );	/* COBOL アウトライン解析 */
-	void			MakeTopicList_asm( CFuncInfoArr* );	/* アセンブラ アウトライン解析 */
-	//	Sep. 8, 2000 genta
-	void			MakeFuncList_Perl( CFuncInfoArr* );	/* Perl関数リスト作成 */
+	void			MakeTopicList_asm( CFuncInfoArr* );		/* アセンブラ アウトライン解析 */
+	void			MakeFuncList_Perl( CFuncInfoArr* );		/* Perl関数リスト作成 */	//	Sep. 8, 2000 genta
 
 
 	CSplitterWnd	m_cSplitterWnd;				/* 分割フレーム */
-	CEditView	m_cEditViewArr[4];	/* ビュー */
+	CEditView		m_cEditViewArr[4];			/* ビュー */
 	int				m_nActivePaneIndex;			/* アクティブなビュー */
 //	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */
 	CDlgFind		m_cDlgFind;					/* 「検索」ダイアログ */
@@ -166,13 +194,12 @@ public: /* テスト用にアクセス属性を変更 */
 
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
-	int				m_nSettingType;
 
 	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
-	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ	*/
+	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAME	m_ofn;							/* 「ファイルを開く」ダイアログ用構造体 */
 	CHOOSEFONT		m_cf;				/* フォント選択ダイアログ用 */
 
@@ -184,8 +211,8 @@ public: /* テスト用にアクセス属性を変更 */
 	HFILE			m_hLockedFile;			/* ロックしているファイルのハンドル */
 
 	HWND			m_hwndReferer;	/* 参照元ウィンドウ */
-	int				m_nRefererX;	/* 参照元　行頭からのバイト位置桁 */	
-	int				m_nRefererLine;	/* 参照元行　折り返し無しの物理行位置 */
+	int				m_nRefererX;	/* 参照元 行頭からのバイト位置桁 */
+	int				m_nRefererLine;	/* 参照元行 折り返し無しの物理行位置 */
 
 //	CDlgTest*		m_pcDlgTest;
 
@@ -201,5 +228,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITDOC_H_ */
+
 
 /*[EOF]*/

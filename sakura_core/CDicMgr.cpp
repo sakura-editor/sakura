@@ -1,20 +1,16 @@
 //	$Id$
 /************************************************************************
-
 	CDicMgr.cpp
-
-　　これは、ダミーのスタブモジュールです
-
-
-    UPDATE:
-    CREATE: 1998/11/05  新規作成
+	これは、ダミーのスタブモジュールです
 	Copyright (C) 1998-2000, Norio Nakatani
+
+	UPDATE:
+	CREATE: 1998/11/05  新規作成
 ************************************************************************/
+
 #include "CDicMgr.h"
 #include <stdio.h>
 #include "CRunningTimer.h"
-
-
 
 
 CDicMgr::CDicMgr()
@@ -33,7 +29,7 @@ CDicMgr::~CDicMgr()
 
 
 
-/* 
+/*
 ||   キーワードの検索
 ||
 ||   最初に見つかったキーワードの意味を返す
@@ -79,7 +75,7 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 							pszWork[i] == '\n' ){
 							pszWork[i] = '\0';
 							break;
-						}   
+						}
 					}
 					*ppcmemMean = new CMemory;
 //					(*ppcmemMean)->SetData( pszWork, lstrlen(pszWork) );
@@ -99,19 +95,19 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 
 
 
-/* 
-||   補完キーワードの検索
+/*
+||   入力補完キーワードの検索
 ||
 ||   ・見つかった候補をすべて返す(改行で区切って返す)
 ||   ・指定された候補の最大数を超えると処理を中断する
 ||   ・見つかった数を返す
 ||
 */
-int CDicMgr::HokanSearch( 
+int CDicMgr::HokanSearch(
 			const char* pszKey,
 			BOOL		bHokanLoHiCase,	/*英大文字小文字を同一視する*/
-			CMemory**	ppcmemKouho, 
-			int			nMaxKouho,	//Max候補数(0==無制限) 
+			CMemory**	ppcmemKouho,
+			int			nMaxKouho,	//Max候補数(0==無制限)
 			const char* pszKeyWordFile
 )
 {
@@ -120,7 +116,7 @@ int CDicMgr::HokanSearch(
 	int		nKeyLen;
 	int		nKouhoNum;
 	int		nRet;
-	if( 0 >= lstrlen( pszKeyWordFile	) ){
+	if( 0 >= lstrlen( pszKeyWordFile ) ){
 		return 0;
 	}
 	pFile = fopen( pszKeyWordFile, "r" );
@@ -140,7 +136,7 @@ int CDicMgr::HokanSearch(
 		if( szLine[nKeyLen] == '\r' || szLine[nKeyLen] == '\n' ){
 			continue;
 		}
-		if( bHokanLoHiCase ){	/*英大文字小文字を同一視する*/
+		if( bHokanLoHiCase ){	/* 英大文字小文字を同一視する */
 			nRet = memicmp( pszKey, szLine, nKeyLen );
 		}else{
 			nRet = memcmp( pszKey, szLine, nKeyLen );

@@ -91,7 +91,11 @@ public:
 	/*
 	|| 更新系
 	*/
-	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
+//#else
+//	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
+//#endif
 	void DeleteData_CLayoutMgr( int , int , int, int *, int *, int *, CMemory&, BOOL, BOOL, BOOL );	/* 行内文字削除 */
 	void InsertData_CLayoutMgr( int, int, const char*, int, int*, int*, int*, int*, BOOL, BOOL, BOOL );	/* 文字列挿入 */
 
@@ -160,6 +164,10 @@ protected:
 	char*			m_pszLineComment2;			/* 行コメントデリミタ2 */
 	char*			m_pszBlockCommentFrom;		/* ブロックコメントデリミタ(From) */
 	char*			m_pszBlockCommentTo;		/* ブロックコメントデリミタ(To) */
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	char*			m_pszBlockCommentFrom2;		/* ブロックコメントデリミタ(From) */
+	char*			m_pszBlockCommentTo2;		/* ブロックコメントデリミタ(To) */
+//#endif
 	int				m_nStringType;				/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
 
 	int				m_nPrevReferLine;

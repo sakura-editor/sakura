@@ -48,6 +48,7 @@
 #define IDB_OPENED                      201
 #define IDB_OPENED_THIS                 202
 #define IDB_PRINTER                     203
+#define IDD_EXTCMD                      215
 #define IDC_CURSOR_COPYARROW            220
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
@@ -56,6 +57,7 @@
 #define IDI_ICON_HANA                   232
 #define IDI_ICON_MOJI                   233
 #define IDI_ICON_GREP                   240
+#define IDC_HIDE                        1000
 #define IDC_CHK_LOHICASE                1006
 #define IDC_CHECK_DISPLINE              1007
 #define IDC_CHECK_INDENT                1009
@@ -78,6 +80,7 @@
 #define IDC_EDIT_LINESPACE              1037
 #define IDC_SPIN_LINESPACE              1038
 #define IDC_SPIN_REPEATEDSCROLLLINENUM  1039
+#define IDC_EDIT_TABVIEWSTRING          1039
 #define IDC_COMBO_TABSPACE              1050
 #define IDC_BUTTON_TEXTCOLOR            1056
 #define IDC_BUTTON_BACKCOLOR            1060
@@ -149,6 +152,7 @@
 #define IDC_BUTTON_DELKEYWORD           1087
 #define IDC_EDIT_EXTHTMLHELP            1087
 #define IDC_EDIT_TFORM                  1087
+#define IDC_EDIT_BLOCKCOMMENT_FROM2     1087
 #define IDC_CHECK_BACKUP_MONTH          1088
 #define IDC_BUTTON3                     1088
 #define IDC_BUTTON_INSERTSEPARATOR      1088
@@ -192,6 +196,7 @@
 #define IDC_LIST_FUNC                   1112
 #define IDC_EDIT_SMTPSERVER2            1112
 #define IDC_EDIT_MARGINRX               1112
+#define IDC_EDIT_BLOCKCOMMENT_TO2       1112
 #define IDC_COMBO_FUNCKIND              1113
 #define IDC_EDIT_SMTPPORT2              1113
 #define IDC_EDIT_DANSPACE               1113
@@ -228,6 +233,7 @@
 #define IDC_BUTTON_SAMETEXTCOLOR        1145
 #define IDC_COMBO_CODE                  1146
 #define IDC_RADIO_CARETTYPE0            1147
+#define IDC_COMBO_EOL                   1147
 #define IDC_BUTTON_COPY                 1149
 #define IDC_RADIO_ESCAPETYPE_1          1150
 #define IDC_RADIO_ESCAPETYPE_2          1151
@@ -246,6 +252,7 @@
 #define IDC_BUTTON_EDITKEYWORD          1177
 #define IDC_BUTTON_DELSET               1178
 #define IDC_COMBO_SET                   1179
+#define IDC_COMBO_SET2                  1180
 #define IDC_LIST_KEYWORD                1181
 #define IDC_SPIN_MAX_MRU_FILE           1184
 #define IDC_SPIN_MAX_MRU_FOLDER         1185
@@ -420,15 +427,13 @@
 #define IDC_STATIC_URL_ORG              1380
 #define IDC_CHECK_AutoMIMEDecode        1381
 #define IDC_EDIT_MENUNAME               1382
+#define IDC_BUTTON_TEMPCHANGE           1384
+#define IDC_STATIC_EOL                  1385
+#define IDC_BUTTON_JUMP                 1388
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
-#define IDM_EXITALL                     4041
-#define IDM_HELP_SEARCH                 4044
-#define IDM_HELP_CONTENTS               4045
-#define IDM_ABOUT                       4046
 #define IDM_POPLAST                     4047
-#define IDM_TEST_CREATEKEYBINDLIST      4050
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_AUTHOR_MAIL                 4055
 #define IDM_POPLAST2                    4064
@@ -451,14 +456,15 @@
 #define IDD_PROP_BACKUP                 5112
 #define IDD_OPERATIONRUNNING            5113
 #define IDD_PROP_KEYBIND1               5114
+#define IDC_EXECINFO                    -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        215
+#define _APS_NEXT_RESOURCE_VALUE        216
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1384
+#define _APS_NEXT_CONTROL_VALUE         1389
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -190,6 +190,31 @@ void CLayoutMgr::DoLayout(
 							++i;
 						}
 					}
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+				}else
+				if( NULL != m_pszBlockCommentFrom2 &&	/* ブロックコメントデリミタ(From) */
+					NULL != m_pszBlockCommentTo2 &&		/* ブロックコメントデリミタ(To) */
+					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ(From) */
+					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom2, (int)strlen( m_pszBlockCommentFrom2 ) )
+				){
+					nCOMMENTMODE = 20;	/* ブロックコメントである */
+					/* この物理行にブロックコメントの終端があるか */
+					int i;
+					nCOMMENTEND = nLineLen;
+					for( i = nPos + (int)strlen( m_pszBlockCommentFrom2 ); i <= nLineLen - (int)strlen( m_pszBlockCommentTo2 ); ++i ){
+						nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+						if( 0 == nCharChars_2 ){
+							nCharChars_2 = 1;
+						}
+						if( 0 == memicmp( &pLine[i], m_pszBlockCommentTo2, (int)strlen( m_pszBlockCommentTo2 )	) ){
+							nCOMMENTEND = i + (int)strlen( m_pszBlockCommentTo2 );
+							break;
+						}
+						if( 2 == nCharChars_2 ){
+							++i;
+						}
+					}
+//#endif
 				}else
 				if( pLine[nPos] == '\'' &&
 					bDispSSTRING  /* シングルクォーテーション文字列を表示する */
@@ -290,6 +315,32 @@ void CLayoutMgr::DoLayout(
 					goto SEARCH_START;
 				}
 				break;
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+			case 20:	/* ブロックコメントである */					
+				if( 0 == nCOMMENTEND ){
+					/* この物理行にブロックコメントの終端があるか */
+					int i;
+					nCOMMENTEND = nLineLen;
+					for( i = nPos/* + (int)strlen( m_pszBlockCommentFrom2 )*/; i <= nLineLen - (int)strlen( m_pszBlockCommentTo2 ); ++i ){
+						nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+						if( 0 == nCharChars_2 ){
+							nCharChars_2 = 1;
+						}
+						if( 0 == memicmp( &pLine[i], m_pszBlockCommentTo2, (int)strlen( m_pszBlockCommentTo2 )	) ){
+							nCOMMENTEND = i + (int)strlen( m_pszBlockCommentTo2 );
+							break;
+						}
+						if( 2 == nCharChars_2 ){
+							++i;
+						}
+					}
+				}else
+				if( nPos == nCOMMENTEND ){
+					nCOMMENTMODE = 0;
+					goto SEARCH_START;
+				}
+				break;
+//#endif
 			case 3:	/* シングルクォーテーション文字列である */
 				if( 0 == nCOMMENTEND ){
 					/* シングルクォーテーション文字列の終端があるか */
@@ -740,6 +791,31 @@ int CLayoutMgr::DoLayout3_New(
 							++i;
 						}
 					}
+//#ifdef	COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+				}else
+				if( NULL != m_pszBlockCommentFrom2 &&	/* ブロックコメントデリミタ(From) */
+					NULL != m_pszBlockCommentTo2 &&		/* ブロックコメントデリミタ(To) */
+					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ(From) */
+					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom2, (int)strlen( m_pszBlockCommentFrom2 ) )
+				){
+					nCOMMENTMODE = 20;	/* ブロックコメントである */
+					/* この物理行にブロックコメントの終端があるか */
+					int i;
+					nCOMMENTEND = nLineLen;
+					for( i = nPos + (int)strlen( m_pszBlockCommentFrom2 ); i <= nLineLen - (int)strlen( m_pszBlockCommentTo2 ); ++i ){
+						nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+						if( 0 == nCharChars_2 ){
+							nCharChars_2 = 1;
+						}
+						if( 0 == memicmp( &pLine[i], m_pszBlockCommentTo2, (int)strlen( m_pszBlockCommentTo2 )	) ){
+							nCOMMENTEND = i + (int)strlen( m_pszBlockCommentTo2 );
+							break;
+						}
+						if( 2 == nCharChars_2 ){
+							++i;
+						}
+					}
+//#endif
 				}else
 				if( pLine[nPos] == '\'' &&
 					bDispSSTRING  /* シングルクォーテーション文字列を表示する */
@@ -840,6 +916,32 @@ int CLayoutMgr::DoLayout3_New(
 					goto SEARCH_START;
 				}
 				break;
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+			case 20:	/* ブロックコメントである */					
+				if( 0 == nCOMMENTEND ){
+					/* この物理行にブロックコメントの終端があるか */
+					int i;
+					nCOMMENTEND = nLineLen;
+					for( i = nPos/* + (int)strlen( m_pszBlockCommentFrom2 )*/; i <= nLineLen - (int)strlen( m_pszBlockCommentTo2 ); ++i ){
+						nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+						if( 0 == nCharChars_2 ){
+							nCharChars_2 = 1;
+						}
+						if( 0 == memicmp( &pLine[i], m_pszBlockCommentTo2, (int)strlen( m_pszBlockCommentTo2 )	) ){
+							nCOMMENTEND = i + (int)strlen( m_pszBlockCommentTo2 );
+							break;
+						}
+						if( 2 == nCharChars_2 ){
+							++i;
+						}
+					}
+				}else
+				if( nPos == nCOMMENTEND ){
+					nCOMMENTMODE = 0;
+					goto SEARCH_START;
+				}
+				break;
+//#endif
 			case 3:	/* シングルクォーテーション文字列である */
 				if( 0 == nCOMMENTEND ){
 					/* シングルクォーテーション文字列の終端があるか */

@@ -1,9 +1,9 @@
 //	$Id$
-/*********************************
-CDropTarget.h
+/************************************************************************
+	CDropTarget.h
 	Copyright (C) 1998-2000, Norio Nakatani
+************************************************************************/
 
-*********************************/
 class CDropTarget;
 class CYbInterfaceBase;
 class COleLibrary;
@@ -16,11 +16,13 @@ class COleLibrary;
 #include "debug.h"
 #include "CEditView.h"
 
+// 何か問題があれば↓この行をコメントアウトしてください		//Feb. 26, 2001, fixed by yebisuya sugoroku
+#define ENABLED_YEBISUYA_ADDITION
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class COleLibrary 
+class COleLibrary
 {
 	friend class CYbInterfaceBase;
 private:
@@ -42,7 +44,7 @@ private:
 protected:
 	CYbInterfaceBase();
 	~CYbInterfaceBase();
-	static HRESULT QueryInterfaceImpl(IUnknown*, REFIID, REFIID, void** );
+	static HRESULT QueryInterfaceImpl( IUnknown*, REFIID, REFIID, void** );
 };
 
 
@@ -53,17 +55,16 @@ private:
 	static REFIID m_owniid;
 public:
 	CYbInterfaceImpl(){AddRef();}
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppvObj)
-	{return QueryInterfaceImpl(this, m_owniid, riid, ppvObj);}
-	STDMETHOD_(ULONG, AddRef)(void)
+	STDMETHOD( QueryInterface )( REFIID riid, void** ppvObj )
+	{return QueryInterfaceImpl( this, m_owniid, riid, ppvObj );}
+	STDMETHOD_( ULONG, AddRef )( void )
 	{return 1;}
-	STDMETHOD_(ULONG, Release)(void)
+	STDMETHOD_( ULONG, Release )( void )
 	{return 0;}
 };
 
 
-
-class CDropTarget : public CYbInterfaceImpl<IDropTarget>
+class CDropTarget : public CYbInterfaceImpl<IDropTarget> 
 {
 public:
 	/*
@@ -79,12 +80,12 @@ public:
 	CEditView*		m_pCEditView;
 //	void*			m_pCEditView;
 	//	static REFIID	m_owniid;
-	BOOL Register_DropTarget( HWND );
-	BOOL Revoke_DropTarget( void );
-	STDMETHODIMP DragEnter(LPDATAOBJECT, DWORD, POINTL , LPDWORD );
-	STDMETHODIMP DragOver(DWORD, POINTL, LPDWORD );
-	STDMETHODIMP DragLeave( void );
-	STDMETHODIMP Drop(LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	BOOL			Register_DropTarget( HWND );
+	BOOL			Revoke_DropTarget( void );
+	STDMETHODIMP	DragEnter( LPDATAOBJECT, DWORD, POINTL , LPDWORD );
+	STDMETHODIMP	DragOver( DWORD, POINTL, LPDWORD );
+	STDMETHODIMP	DragLeave( void );
+	STDMETHODIMP	Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -96,37 +97,47 @@ class CDropSource : public CYbInterfaceImpl<IDropSource> {
 private:
 	BOOL m_bLeft;
 public:
-	CDropSource(BOOL bLeft):m_bLeft(bLeft){}
+	CDropSource( BOOL bLeft ):m_bLeft( bLeft ){}
 
-	STDMETHOD(QueryContinueDrag)(BOOL bEscapePressed, DWORD dwKeyState);
-	STDMETHOD(GiveFeedback)(DWORD dropEffect);
+	STDMETHOD( QueryContinueDrag )( BOOL bEscapePressed, DWORD dwKeyState );
+	STDMETHOD( GiveFeedback )( DWORD dropEffect );
 };
-
 
 
 class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
 	CLIPFORMAT m_cfFormat;
-	HGLOBAL m_hData;
+#ifdef ENABLED_YEBISUYA_ADDITION
+	LPBYTE	data;
+	int		size;
+#else
+	HGLOBAL	m_hData;
+#endif
 public:
-	CDataObject(LPCTSTR lpszText):m_cfFormat(0), m_hData(NULL){SetText(lpszText);}
-	~CDataObject(){SetText(NULL);}
-	void SetText(LPCTSTR lpszText);
-	DWORD DragDrop(BOOL bLeft, DWORD dwEffects);
+	CDataObject (LPCTSTR lpszText ):m_cfFormat( 0 ),
+#ifdef ENABLED_YEBISUYA_ADDITION
+	data( NULL ), size( 0 )
+#else
+	m_hData( NULL )
+#endif
+	{SetText( lpszText );}
+	~CDataObject(){SetText( NULL );}
+	void	SetText( LPCTSTR lpszText );
+	DWORD	DragDrop( BOOL bLeft, DWORD dwEffects );
 
-	STDMETHOD(GetData)(LPFORMATETC, LPSTGMEDIUM);
-	STDMETHOD(GetDataHere)(LPFORMATETC, LPSTGMEDIUM);
-	STDMETHOD(QueryGetData)(LPFORMATETC);
-	STDMETHOD(GetCanonicalFormatEtc)(LPFORMATETC, LPFORMATETC);
-	STDMETHOD(SetData)(LPFORMATETC, LPSTGMEDIUM, BOOL);
-	STDMETHOD(EnumFormatEtc)(DWORD, LPENUMFORMATETC*);
-	STDMETHOD(DAdvise)(LPFORMATETC, DWORD, LPADVISESINK, LPDWORD);
-	STDMETHOD(DUnadvise)(DWORD);
-	STDMETHOD(EnumDAdvise)(LPENUMSTATDATA*);
+	STDMETHOD( GetData )( LPFORMATETC, LPSTGMEDIUM );
+	STDMETHOD( GetDataHere )( LPFORMATETC, LPSTGMEDIUM );
+	STDMETHOD( QueryGetData )( LPFORMATETC );
+	STDMETHOD( GetCanonicalFormatEtc )( LPFORMATETC, LPFORMATETC );
+	STDMETHOD( SetData )( LPFORMATETC, LPSTGMEDIUM, BOOL );
+	STDMETHOD( EnumFormatEtc )( DWORD, LPENUMFORMATETC* );
+	STDMETHOD( DAdvise )( LPFORMATETC, DWORD, LPADVISESINK, LPDWORD );
+	STDMETHOD( DUnadvise )( DWORD );
+	STDMETHOD( EnumDAdvise )( LPENUMSTATDATA* );
 };
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITDROPTARGET_H_ */
 
-/*[EOF]*/
 
+/*[EOF]*/

@@ -13,6 +13,7 @@
 #include "CEditDoc.h"
 //#include "CEditView.h"	// Oct. 10, 2000 JEPRO added	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は必要？
 #include "global.h"
+#include "funccode.h"		// Stonee, 2001/03/12
 
 CDlgCompare::CDlgCompare()
 {
@@ -23,13 +24,13 @@ CDlgCompare::CDlgCompare()
 
 
 /* モーダルダイアログの表示 */
-int CDlgCompare::DoModal( 
-	HINSTANCE	hInstance, 
-	HWND		hwndParent, 
-	LPARAM		lParam,  
-	const char*	pszPath, 
+int CDlgCompare::DoModal(
+	HINSTANCE	hInstance,
+	HWND		hwndParent,
+	LPARAM		lParam,
+	const char*	pszPath,
 	BOOL		bIsModified,
-	char*		pszComparePath, 
+	char*		pszComparePath,
 	HWND*		phwndCompareWnd
 )
 {
@@ -46,12 +47,13 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「内容比較」のヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 116 );
+		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );
 		return TRUE;
 //	From Here Oct. 10, 2000 JEPRO added  Ref. code はCDlgFind.cpp の OnBnClicked
 //	チェックボックスをボタン化してCDlgCompare.cppに直接書き込んでみたが失敗
 //	ダイアログのボタンは下に不可視化しておいてあります。
-//	以下の追加コードは全部消して結構ですから誰か作って下さい。水平スクロールも入れてくれるとなおうれしいです。
+//	以下の追加コードは全部消して結構ですから誰か作ってください。水平スクロールも入れてくれるとなおうれしいです。
 //	case IDC_BUTTON1:	/* 上下に表示 */
 //		/* ダイアログデータの取得 */
 //		return TRUE;
@@ -113,28 +115,28 @@ void CDlgCompare::SetData( void )
 				continue;
 			}
 			wsprintf( szMenu, "%s %s",
-				(0 < lstrlen(pfi->m_szPath))?pfi->m_szPath:"(無題)", 
+				(0 < lstrlen(pfi->m_szPath))?pfi->m_szPath:"(無題)",
 				pfi->m_bIsModified ? "*":" "
 			);
 			if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
 				switch( pfi->m_nCharCode ){
 				case CODE_JIS:	/* JIS */
-					strcat( szMenu, "　[JIS]" );
+					strcat( szMenu, "  [JIS]" );
 					break;
 				case CODE_EUC:	/* EUC */
-					strcat( szMenu, "　[EUC]" );
+					strcat( szMenu, "  [EUC]" );
 					break;
 				case CODE_UNICODE:	/* Unicode */
-					strcat( szMenu, "　[Unicode]" );
+					strcat( szMenu, "  [Unicode]" );
 					break;
 				case CODE_UTF8:	/* UTF-8 */
-					strcat( szMenu, "　[UTF-8]" );
+					strcat( szMenu, "  [UTF-8]" );
 					break;
 				case CODE_UTF7:	/* UTF-7 */
-					strcat( szMenu, "　[UTF-7]" );
+					strcat( szMenu, "  [UTF-7]" );
 					break;
 				}
-			}					
+			}
 			nItem = ::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)(char*)szMenu );
 			::SendMessage( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].m_hWnd );
 		}
@@ -142,7 +144,7 @@ void CDlgCompare::SetData( void )
 	}
 	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
 	char	szWork[512];
-	wsprintf( szWork, "%s %s", 
+	wsprintf( szWork, "%s %s",
 		(0 < lstrlen( m_pszPath )?m_pszPath:"(無題)" ),
 		m_bIsModified?"*":""
 	);
@@ -157,7 +159,7 @@ void CDlgCompare::SetData( void )
 
 
 /* ダイアログデータの取得 */
-/* 　TRUE==正常　 FALSE==入力エラー  */
+/* TRUE==正常  FALSE==入力エラー */
 int CDlgCompare::GetData( void )
 {
 	HWND			hwndList;
@@ -180,5 +182,6 @@ int CDlgCompare::GetData( void )
 	
 	return TRUE;
 }
+
 
 /*[EOF]*/

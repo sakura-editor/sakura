@@ -1,11 +1,10 @@
 //	$Id$
 /************************************************************************
-        CEditView_New2.cpp
+	CEditView_New2.cpp
 	Copyright (C) 1998-2000, Norio Nakatani
 
-        CREATE: 1998/12/8
+	CREATE: 1998/12/8
 ************************************************************************/
-
 
 //#include <stdio.h>
 #include <stdlib.h>
@@ -41,156 +40,169 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 	switch( nCOMMENTMODE ){
 	case 0:
 		nColorIdx = COLORIDX_TEXT;
-//		colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT;	/* テキスト色 */ 
-//		colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_TEXT].m_colBACK;	/* 背景色 */     
+//		colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT;	/* テキスト色 */
+//		colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK;	/* 背景色 */
 //		::SetTextColor( hdc, colText );
 //		::SetBkColor( hdc, colBack );
 //		if( NULL != m_hFontOld ){
 //			::SelectObject( hdc, m_hFontOld );
 //			m_hFontOld = NULL;
 //		}
-		
+
 		break;
-	case 1:	/* 行コメントである */					
-	case 2:	/* ブロックコメントである */					
+	case 1:	/* 行コメントである */
+	case 2:	/* ブロックコメントである */
+//#ifdef	COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	case 20:	/* ブロックコメントである */	//@@@ 2001.03.10 by MIK
+//#endif
 		nColorIdx = COLORIDX_COMMENT;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp ){	/* コメントを表示する */
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_COMMENT].m_colTEXT;	/* コメント色 */                     
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_COMMENT].m_colBACK;	/* コメント背景の色 */               
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp ){	/* コメントを表示する */
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_COMMENT].m_colTEXT;	/* コメント色 */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_COMMENT].m_colBACK;	/* コメント背景の色 */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_COMMENT].m_bFatFont ){	/* 太字か */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_COMMENT].m_bFatFont ){	/* 太字か */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
 	case 3:	/* シングルクォーテーション文字列である */
 		nColorIdx = COLORIDX_SSTRING;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp ){	/* シングルクォーテーション文字列を表示する */
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_colTEXT;	/* シングルクォーテーション文字列色 */
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_colBACK;	/* シングルクォーテーション文字列背景の色 */
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp ){	/* シングルクォーテーション文字列を表示する */
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_colTEXT;	/* シングルクォーテーション文字列色 */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_colBACK;	/* シングルクォーテーション文字列背景の色 */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_bFatFont ){	/* 太字か */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bFatFont ){	/* 太字か */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
-	case 4:	/* ダブルクォーテーション文字列である */					
+	case 4:	/* ダブルクォーテーション文字列である */
 		nColorIdx = COLORIDX_WSTRING;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){	/* ダブルクォーテーション文字列を表示する */
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_colTEXT;	/* ダブルクォーテーション文字列色 */
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_colBACK;	/* ダブルクォーテーション文字列背景の色 */
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){	/* ダブルクォーテーション文字列を表示する */
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_colTEXT;	/* ダブルクォーテーション文字列色 */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_colBACK;	/* ダブルクォーテーション文字列背景の色 */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_bFatFont ){	/* 太字か */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bFatFont ){	/* 太字か */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
-	case 5:	/* キーワード（登録単語）文字列である */					
+	case 5:	/* キーワード（登録単語）文字列である */
 		nColorIdx = COLORIDX_KEYWORD;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_KEYWORD].m_bDisp ){
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_KEYWORD].m_colTEXT;	/* 強調キーワードの色 */   
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_KEYWORD].m_colBACK;	/* 強調キーワード背景の色 */
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_KEYWORD].m_bDisp ){
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_KEYWORD].m_colTEXT;	/* 強調キーワードの色 */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_KEYWORD].m_colBACK;	/* 強調キーワード背景の色 */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_KEYWORD].m_bFatFont ){	/* 太字か */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_KEYWORD].m_bFatFont ){	/* 太字か */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
-	case 6:	/* コントロールコードである */					
+	case 6:	/* コントロールコードである */
 		nColorIdx = COLORIDX_CTRLCODE;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp ){
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_CTRLCODE].m_colTEXT;	/* コントロールコードの色 */   
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_CTRLCODE].m_colBACK;	/* コントロールコードの背景色 */
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp ){
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_colTEXT;	/* コントロールコードの色 */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_colBACK;	/* コントロールコードの背景色 */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_CTRLCODE].m_bFatFont ){	/* 太字か */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_bFatFont ){	/* 太字か */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
-	case 80:	/* URLである */					
+//@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
+//#ifdef COMPILE_COLOR_DIGIT
+	case 9:	/* 半角数値である */
+		nColorIdx = COLORIDX_DIGIT;
+		break;
+//#endif
+//@@@ 2001.02.17 End by MIK: 半角数値を強調表示
+	case 50:	/* キーワード2（登録単語）文字列である */	//MIK
+		nColorIdx = COLORIDX_KEYWORD2;						//MIK
+		break;												//MIK
+	case 80:	/* URLである */
 		nColorIdx = COLORIDX_URL;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_URL].m_bDisp ){
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_URL].m_colTEXT;	/* URL */   
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_URL].m_colBACK;	/* URL */
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp ){
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_colTEXT;	/* URL */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_colBACK;	/* URL */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_URL].m_bFatFont ){	/* URL */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bFatFont ){	/* URL */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
-	case 90:	/* 検索文字列である */					
+	case 90:	/* 検索文字列である */
 		nColorIdx = COLORIDX_SEARCH;
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
-//			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SEARCH].m_colTEXT;	/* URL */   
-//			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SEARCH].m_colBACK;	/* URL */
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
+//			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SEARCH].m_colTEXT;	/* URL */
+//			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SEARCH].m_colBACK;	/* URL */
 //			::SetTextColor( hdc, colText );
 //			::SetBkColor( hdc, colBack );
-//			if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SEARCH].m_bFatFont ){	/* URL */
+//			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SEARCH].m_bFatFont ){	/* URL */
 //				if( NULL != m_hFontOld ){
-//					::SelectObject( hdc, m_hFontOld );		
+//					::SelectObject( hdc, m_hFontOld );
 //				}
-//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//				m_hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //			}
 //		}
 		break;
 	}
 
-	
-	
-	
-	
+
+
+
+
 	if( -1 != nColorIdx ){
-		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIdx].m_bDisp ){
-			colText = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIdx].m_colTEXT;
-			colBack = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIdx].m_colBACK;
+		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bDisp ){
+			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
+			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
 			::SetTextColor( hdc, colText );
 			::SetBkColor( hdc, colBack );
 			if( NULL != m_hFontOld ){
-				::SelectObject( hdc, m_hFontOld );		
+				::SelectObject( hdc, m_hFontOld );
 			}
 			/* フォントを選ぶ */
-			m_hFontOld = (HFONT)::SelectObject( hdc, 
-				ChooseFontHandle( 
-					m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIdx].m_bFatFont, 
-					m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIdx].m_bUnderLine 
-				) 
+			m_hFontOld = (HFONT)::SelectObject( hdc,
+				ChooseFontHandle(
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
+				)
 			);
 		}
 	}
-	
+
 	return;
 }
 
 
 /* 行番号表示 */
-void CEditView::DispLineNumber( 
+void CEditView::DispLineNumber(
 		HDC						hdc,
-		const CLayout*			pcLayout, 
-		int						nLineNum, 
+		const CLayout*			pcLayout,
+		int						nLineNum,
 		int						y
 )
 {
@@ -199,8 +211,8 @@ void CEditView::DispLineNumber(
 	COLORREF		colTextColorOld;
 	COLORREF		colBkColorOld;
 	char			szLineNum[18];
-	int				nLineHeight = m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace;
-	int				nCharWidth = m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace;
+	int				nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+	int				nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
 	int				nLineCols;
 	UINT			fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 	HPEN			hPen, hPenOld;
@@ -212,8 +224,8 @@ void CEditView::DispLineNumber(
 //		pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( pcLayout->m_nLinePhysical );
 		pCDocLine = pcLayout->m_pCDocLine;
 
-		if( TRUE == m_pcEditDoc->m_bIsModified /* ドキュメントが無変更の状態か */
-		 && TRUE == pCDocLine->m_bModify ){	/* 変更フラグ */
+		if( TRUE == m_pcEditDoc->m_bIsModified	/* ドキュメントが無変更の状態か */
+		 && TRUE == pCDocLine->m_bModify ){		/* 変更フラグ */
 //			if( 0 == pCDocLine->m_nModifyCount ){	/* 変更回数 */
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 //			}
@@ -226,10 +238,10 @@ void CEditView::DispLineNumber(
 		}
 	}
 
-//	if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_bDispLINE ){	/* 行番号表示／非表示 */
-	if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[/*nColorIndex*/COLORIDX_GYOU].m_bDisp ){	/* 行番号表示／非表示 */
+//	if( m_pcEditDoc->GetDocumentAttribute().m_bDispLINE ){	/* 行番号表示／非表示 */
+	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[/*nColorIndex*/COLORIDX_GYOU].m_bDisp ){	/* 行番号表示／非表示 */
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_bLineNumIsCRLF ){
+		if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
 			/* 論理行番号表示モード */
 			if( NULL == pcLayout || 0 != pcLayout->m_nOffset ){
 				strcpy( szLineNum, " " );
@@ -241,22 +253,22 @@ void CEditView::DispLineNumber(
 			_itoa( nLineNum + 1, szLineNum, 10 );
 		}
 		nLineCols = lstrlen( szLineNum );
-		
-		colTextColorOld = ::SetTextColor( hdc, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex].m_colTEXT );	/* 行番号の色 */
-		colBkColorOld = ::SetBkColor( hdc, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex].m_colBACK );	/* 行番号背景の色 */
 
-		HFONT	hFontOld;	
+		colTextColorOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );	/* 行番号の色 */
+		colBkColorOld = ::SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colBACK );		/* 行番号背景の色 */
+
+		HFONT	hFontOld;
 		/* フォントを選ぶ */
-		hFontOld = (HFONT)::SelectObject( hdc, 
-			ChooseFontHandle( 
-				m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex].m_bFatFont, 
-				m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex].m_bUnderLine 
-			) 
+		hFontOld = (HFONT)::SelectObject( hdc,
+			ChooseFontHandle(
+				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bFatFont,
+				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bUnderLine
+			)
 		);
-//		if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex].m_bFatFont ){	/* 太字か */
-//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );		
+//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bFatFont ){	/* 太字か */
+//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
 //		}else{
-//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );		
+//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
 //		}
 		/* 余白を埋める */
 		rcClip.left = m_nViewAlignLeft - 3;
@@ -266,18 +278,18 @@ void CEditView::DispLineNumber(
 		::ExtTextOut( hdc,
 			(m_nViewAlignLeftCols - nLineCols - 1) * ( nCharWidth ),
 			y, fuOptions,
-			&rcClip, " ", 1, m_pnDx 
+			&rcClip, " ", 1, m_pnDx
 		);
 
-		
+
 //		/* 行番号のテキストを表示 */
-//		m_pShareData->m_Types[nIdx].m_nLineTermType = 1;			/* 行番号区切り　0=なし 1=縦線 2=任意 */
+//		m_pShareData->m_Types[nIdx].m_nLineTermType = 1;			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 //		m_pShareData->m_Types[nIdx].m_cLineTermChar = ':';			/* 行番号区切り文字 */
 
-		/* 行番号区切り　0=なし 1=縦線 2=任意 */
-		if( 2 == m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineTermType ){
+		/* 行番号区切り 0=なし 1=縦線 2=任意 */
+		if( 2 == m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
 			char szLineTerm[2];
-			wsprintf( szLineTerm, "%c", m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_cLineTermChar );	/* 行番号区切り文字 */
+			wsprintf( szLineTerm, "%c", m_pcEditDoc->GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
 			strcat( szLineNum, szLineTerm );
 		}
 		rcClip.left = 0;
@@ -287,16 +299,16 @@ void CEditView::DispLineNumber(
 		::ExtTextOut( hdc,
 			(m_nViewAlignLeftCols - nLineCols - 1) * ( nCharWidth ),
 			y, fuOptions,
-			&rcClip, szLineNum, lstrlen( szLineNum ), m_pnDx 
+			&rcClip, szLineNum, lstrlen( szLineNum ), m_pnDx
 		);
 
-		
-//		hPen = ::CreatePen( PS_SOLID, 0, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_colorGYOU );
+
+//		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_colorGYOU );
 
 
-		/* 行番号区切り　0=なし 1=縦線 2=任意 */
-		if( 1 == m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineTermType ){
-			hPen = ::CreatePen( PS_SOLID, 0, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex].m_colTEXT );
+		/* 行番号区切り 0=なし 1=縦線 2=任意 */
+		if( 1 == m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
+			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
 			hPenOld = (HPEN)::SelectObject( hdc, hPen );
 			::MoveToEx( hdc, m_nViewAlignLeft - 4, y, NULL );
 			::LineTo( hdc, m_nViewAlignLeft - 4, y + nLineHeight );
@@ -309,10 +321,10 @@ void CEditView::DispLineNumber(
 //		colBkColorOld = ::SetBkColor( hdc, RGB( 255, 0, 0 ) );
 
 
-		
-		
-		
-		
+
+
+
+
 //		::SetBkColor( hdc, colBkColorOld );
 
 
@@ -322,8 +334,8 @@ void CEditView::DispLineNumber(
 		rcClip.right = m_nViewAlignLeft;
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
-//		hBrush = ::CreateSolidBrush( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_colorBACK );
-		hBrush = ::CreateSolidBrush( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[nColorIndex/*COLORIDX_TEXT*/].m_colBACK );
+//		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_colorBACK );
+		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex/*COLORIDX_TEXT*/].m_colBACK );
 		::FillRect( hdc, &rcClip, hBrush );
 		::DeleteObject( hBrush );
 	}
@@ -340,8 +352,8 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 		return 0;
 	}
 	RECT	rcClip;
-	int		nLineHeight = m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace;
-	int		nCharWidth = m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace;
+	int		nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+	int		nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
 	UINT	fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 	rcClip.left = x;
 	rcClip.right = rcClip.left + ( nCharWidth ) * nLength;
@@ -350,7 +362,7 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 		rcClip.left = m_nViewAlignLeft;
 	}
 	if( rcClip.left < rcClip.right
-	 && rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft 
+	 && rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft
 	 && rcClip.top >= m_nViewAlignTop
 	){
 		rcClip.bottom = y + nLineHeight;
@@ -379,14 +391,14 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 //	HPEN		hPenOld;
 	HBRUSH		hBrush;
 	HBRUSH		hBrushOld;
-	int			nLineHeight = m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace;
-	int			nCharWidth = m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace;
-	HRGN		hrgnDraw; 
+	int			nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+	int			nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
+	HRGN		hrgnDraw;
 
 	/* 選択範囲内の行かな */
 //	if( IsTextSelected() ){
 		if( nLineNum >= m_nSelectLineFrom && nLineNum <= m_nSelectLineTo ){
-			if(	m_bBeginBoxSelect){		/* 矩形範囲選択中 */
+			if( m_bBeginBoxSelect){		/* 矩形範囲選択中 */
 				nSelectFrom = m_nSelectColmFrom;
 				nSelectTo   = m_nSelectColmTo;
 			}else{
@@ -394,7 +406,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 						nSelectFrom = m_nSelectColmFrom;
 						nSelectTo   = m_nSelectColmTo;
 				}else{
-					if( nLineNum == m_nSelectLineFrom	){
+					if( nLineNum == m_nSelectLineFrom ){
 						nSelectFrom = m_nSelectColmFrom;
 						nSelectTo   = nX;
 					}else
@@ -407,10 +419,10 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 					}
 				}
 			}
-			if(	nSelectFrom < m_nViewLeftCol ){
+			if( nSelectFrom < m_nViewLeftCol ){
 				nSelectFrom = m_nViewLeftCol;
 			}
-			if(	nSelectTo < m_nViewLeftCol ){
+			if( nSelectTo < m_nViewLeftCol ){
 				nSelectTo = m_nViewLeftCol;
 			}
 			rcClip.left   = x + nSelectFrom * ( nCharWidth );
@@ -438,7 +450,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 
 
 /* 現在位置が検索文字列に該当するか */
-BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int* pnSearchEnd  )
+BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int* pnSearchEnd )
 {
 	int		nKeyLength;
 
@@ -454,14 +466,14 @@ BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int
 		if( '^' == m_szCurSrchKey[0] && 0 != nPos ){
 			return FALSE;
 		}
-		
-		
-		if( ( NULL != ( pszRes = (char *)m_CurSrch_CJre.GetMatchInfo( &pszData[nPos], nDataLen - nPos, 0 ) ) ) 
+
+
+		if( ( NULL != ( pszRes = (char *)m_CurSrch_CJre.GetMatchInfo( &pszData[nPos], nDataLen - nPos, 0 ) ) )
 		 && ( pszRes == &pszData[nPos] )
 		){
 			*pnSearchEnd = nPos + m_CurSrch_CJre.m_jreData.nLength;
 			return TRUE;
-  
+
 		}else{
 			return FALSE;
 		}
@@ -488,25 +500,25 @@ BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int
 
 
 
-/* ルーラー描画 */
+/*! ルーラー描画 */
 void CEditView::DispRuler( HDC hdc )
 {
 
-#ifdef _DEBUG	
+#ifdef _DEBUG
 //	if( 0 != m_pShareData->m_Common.m_nRulerType ){	/* ルーラーのタイプ */
 //		DispRulerEx( hdc );
 //		return;
 //	}
 #endif
 
-	
+
 	if( !m_bDrawSWITCH ){
 		return;
 	}
-	if( !m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		return;	
+	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
+		return;
 	}
-	
+
 	/* 描画処理 */
 	HBRUSH		hBrush;
 	HBRUSH		hBrushOld;
@@ -527,18 +539,17 @@ void CEditView::DispRuler( HDC hdc )
 	int			nToX;
 	/* ルーラーとテキストの間の余白 */
 /**
-	hBrush = ::CreateSolidBrush( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-	rc.left = 0;	
-	rc.top = m_nViewAlignTop - m_nTopYohaku;	
-	rc.right = m_nViewAlignLeft + m_nViewCx;	
-	rc.bottom = m_nViewAlignTop;	
+	hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+	rc.left = 0;
+	rc.top = m_nViewAlignTop - m_nTopYohaku;
+	rc.right = m_nViewAlignLeft + m_nViewCx;
+	rc.bottom = m_nViewAlignTop;
 	::FillRect( hdc, &rc, hBrush );
 	::DeleteObject( hBrush );
 **/
 
 
 	/* LOGFONTの初期化 */
-/* LOGFONTの初期化 */
 	memset( &lf, 0, sizeof(LOGFONT) );
 	lf.lfHeight         = -12;
 	lf.lfWidth          = 5/*0*/;
@@ -558,25 +569,25 @@ void CEditView::DispRuler( HDC hdc )
 	hFontOld = (HFONT)::SelectObject( hdc, hFont );
 	::SetBkMode( hdc, TRANSPARENT );
 
-	hBrush = ::CreateSolidBrush( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
-	rc.left = 0;	
-	rc.top = 0;	
-	rc.right = m_nViewAlignLeft + m_nViewCx;	
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku;	
+	hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
+	rc.left = 0;
+	rc.top = 0;
+	rc.right = m_nViewAlignLeft + m_nViewCx;
+	rc.bottom = m_nViewAlignTop - m_nTopYohaku;
 	::FillRect( hdc, &rc, hBrush );
 	::DeleteObject( hBrush );
 
 	nX = m_nViewAlignLeft;
 	nY = m_nViewAlignTop - m_nTopYohaku - 2;
 
-	hPen = ::CreatePen( PS_SOLID, 0, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
-	colTextOld = ::SetTextColor( hdc, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );  
+	colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 
-	
+
 	nToX = m_nViewAlignLeft + m_nViewCx;
-	
-	nToX = m_nViewAlignLeft + (m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace );
+
+	nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	if( nToX > m_nViewAlignLeft + m_nViewCx ){
 		nToX = m_nViewAlignLeft + m_nViewCx;
 	}
@@ -584,13 +595,13 @@ void CEditView::DispRuler( HDC hdc )
 	::MoveToEx( hdc, m_nViewAlignLeft, nY + 1, NULL );
 	::LineTo( hdc, nToX/*m_nViewAlignLeft + m_nViewCx*/, nY + 1 );
 
-	
-	for( i = m_nViewLeftCol; 
-		i <= m_nViewLeftCol + m_nViewColNum + 1 
-	 && i <= m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize; 
-		i++ 
+
+	for( i = m_nViewLeftCol;
+		i <= m_nViewLeftCol + m_nViewColNum + 1
+	 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		i++
 	){
-		if( i == m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize ){
+		if( i == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
 			::MoveToEx( hdc, nX, nY, NULL );
 			::LineTo( hdc, nX, 0/*nY - 8*/ );
 		}
@@ -607,9 +618,9 @@ void CEditView::DispRuler( HDC hdc )
 			::MoveToEx( hdc, nX, nY, NULL );
 			::LineTo( hdc, nX, nY - 3 );
 		}
-		nX += ( m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace );
+		nX += ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	}
-	::SetTextColor( hdc, colTextOld );  
+	::SetTextColor( hdc, colTextOld );
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
 
@@ -621,11 +632,11 @@ void CEditView::DispRuler( HDC hdc )
 		}else{
 			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
 		}
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace ) + 1;	
-		rc.top = 0;	
+		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		rc.top = 0;
 		//	Aug. 18, 2000 あお
-		rc.right = rc.left + m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace - 1;	
-		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;	
+		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 		nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
 		hRgn = ::CreateRectRgnIndirect( &rc );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -636,15 +647,15 @@ void CEditView::DispRuler( HDC hdc )
 		::DeleteObject( hBrush );
 		::SetROP2( hdc, nROP_Old );
 	}
-/***	
-	rc.left = 0;	
-	rc.top = 0;	
-	rc.right = m_nViewAlignLeft + m_nViewCx;	
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku;	
-	CSplitBoxWnd::Draw3dRect( 
-		hdc, 
-		rc.left, rc.top, rc.right, rc.bottom, 
-		::GetSysColor( COLOR_3DHILIGHT ), 
+/***
+	rc.left = 0;
+	rc.top = 0;
+	rc.right = m_nViewAlignLeft + m_nViewCx;
+	rc.bottom = m_nViewAlignTop - m_nTopYohaku;
+	CSplitBoxWnd::Draw3dRect(
+		hdc,
+		rc.left, rc.top, rc.right, rc.bottom,
+		::GetSysColor( COLOR_3DHILIGHT ),
 		::GetSysColor( COLOR_3DSHADOW )
 	);
 ***/
@@ -654,13 +665,55 @@ void CEditView::DispRuler( HDC hdc )
 }
 
 //======================================================================
+//@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
+//! 全角括弧の対応表
+const struct ZENKAKKO_T{
+	char *sStr;
+	char *eStr;
+} zenkakkoarr[] = {
+	"【", "】",
+	"『", "』",
+	"「", "」",
+	"＜", "＞",
+	"≪", "≫",
+	"《", "》",
+	"（", "）",
+	"〈", "〉",
+	"｛", "｝",
+	"〔", "〕",
+	"［", "］",
+	"“", "”",
+	"〝", "〟",
+	NULL, NULL	//終端識別
+};
+//@@@ 全角文字の対括弧: End
 //	Jun. 16, 2000 genta
-//
-//	PosX, PosY: 検索開始点のレイアウト座標
-//	NewX, NewY: 移動先のレイアウト座標
-//
-//	戻り値: true : 成功 / false : 失敗
-//
+/*!
+	@brief 対括弧の検索
+	
+	カーソル位置の括弧に対応する括弧を探す。カーソル位置が括弧でない場合は
+	カーソルの後ろの文字が括弧かどうかを調べる。
+	
+	カーソルの前後いずれもが括弧でない場合は何もしない。
+	
+	括弧が半角か全角か、及び始まりか終わりかによってこれに続く4つの関数に
+	制御を移す。
+
+	@param LayoutX [in] 検索開始点の物理座標X
+	@param LayoutY [in] 検索開始点の物理座標Y
+	@param NewX [out] 移動先のレイアウト座標X
+	@param NewY [out] 移動先のレイアウト座標Y
+	@param upChar [in] 括弧の始まりの文字
+	@param dnChar [in] 括弧を閉じる文字列
+
+	@retval true 成功
+	@retval false 失敗
+
+	@author genta
+	@date Jun. 16, 2000 genta
+	@date Feb. 03, 2001 MIK 全角括弧に対応
+
+*/
 bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY )
 {
 	int len;	//	行の長さ
@@ -672,7 +725,7 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY )
 
 	//	Jun. 19, 2000 genta
 	if( cline == NULL )	//	最後の行に本文がない場合
-		return false;	
+		return false;
 //	PosX = LineColmnToIndex( cline, len, PosX );	不要
 
 	nCharSize = CMemory::MemCharNext( cline, len, cline + PosX ) - cline - PosX;
@@ -693,6 +746,23 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY )
 		case '}':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '{', '}' );
 		case '>':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '<', '>' );
 		}
+//@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
+	}else if( nCharSize == 2 ){	// 2バイト文字
+		int i;
+		const struct ZENKAKKO_T *p;
+		p = zenkakkoarr;
+		for(i = 0; p->sStr != NULL; i++, p++)
+		{
+			if(strncmp(p->sStr, &cline[PosX], 2) == 0)
+			{
+				return SearchBracketForward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr );
+			}
+			else if(strncmp(p->eStr, &cline[PosX], 2) == 0)
+			{
+				return SearchBracketBackward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr );
+			}
+		}
+//@@@ 2001.02.03 End: 全角文字の対括弧
 	}
 
 	//	括弧が見つからなかったら，カーソルの直前の文字を調べる
@@ -721,24 +791,52 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY )
 		case '}':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '{', '}' );
 		case '>':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '<', '>' );
 		}
+//@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
+	}else if( nCharSize == 2 ){	// 2バイト文字
+		int i;
+		const struct ZENKAKKO_T *p;
+		PosX = bPos - cline;
+		p = zenkakkoarr;
+		for( i = 0; p->sStr != NULL; i++, p++ )
+		{
+			if( strncmp(p->sStr, &cline[PosX], 2) == 0 )
+			{
+				return SearchBracketForward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr );
+			}
+			else if( strncmp(p->eStr, &cline[PosX], 2) == 0 )
+			{
+				return SearchBracketBackward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr );
+			}
+		}
+//@@@ 2001.02.03 End: 全角文字の対括弧
 	}
 	return false;
 }
 
-//	LayoutX, LayoutY: 検索開始点の物理座標
-//	NewX, NewY: 移動先のレイアウト座標
-//
-//	戻り値: true : 成功 / false : 失敗
-//
+/*!
+	@brief 半角対括弧の検索:順方向
+
+	@author genta
+
+	@param LayoutX [in] 検索開始点の物理座標X
+	@param LayoutY [in] 検索開始点の物理座標Y
+	@param NewX [out] 移動先のレイアウト座標X
+	@param NewY [out] 移動先のレイアウト座標Y
+	@param upChar [in] 括弧の始まりの文字
+	@param dnChar [in] 括弧を閉じる文字列
+
+	@retval true 成功
+	@retval false 失敗
+*/
 bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 									int upChar, int dnChar )
 {
 	CDocLine* ci;
 
-	int len;
-	const char *cPos, *nPos;
-	char *cline, *lineend;
-	int level = 0;
+	int			len;
+	const char	*cPos, *nPos;
+	char		*cline, *lineend;
+	int			level = 0;
 
 //	char buf[50];	Debug用
 
@@ -784,20 +882,30 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 	return false;
 }
 
-//	LayoutX, LayoutY: 検索開始点の物理座標
-//	NewX, NewY: 移動先のレイアウト座標
-//
-//	戻り値: true : 成功 / false : 失敗
-//
+/*!
+	@brief 半角対括弧の検索:逆方向
+
+	@author genta
+
+	@param LayoutX [in] 検索開始点の物理座標X
+	@param LayoutY [in] 検索開始点の物理座標Y
+	@param NewX [out] 移動先のレイアウト座標X
+	@param NewY [out] 移動先のレイアウト座標Y
+	@param upChar [in] 括弧の始まりの文字
+	@param dnChar [in] 括弧を閉じる文字列
+
+	@retval true 成功
+	@retval false 失敗
+*/
 bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 									int dnChar, int upChar )
 {
 	CDocLine* ci;
 
-	int len;
-	const char *cPos, *pPos;
-	char *cline, *lineend;
-	int level = 1;
+	int			len;
+	const char	*cPos, *pPos;
+	char		*cline, *lineend;
+	int			level = 1;
 
 //	char buf[50];	Debug用
 
@@ -842,10 +950,149 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 	return false;
 }
 
-//	現在のカーソル行位置を履歴に登録する
-//
-//
-void CEditView::AddCurrentLineToHistory(void)
+//@@@ 2001.02.03 Start by MIK:
+/*!
+	@brief 全角対括弧の検索:順方向
+
+	@author MIK
+
+	@param LayoutX [in] 検索開始点の物理座標X
+	@param LayoutY [in] 検索開始点の物理座標Y
+	@param NewX [out] 移動先のレイアウト座標X
+	@param NewY [out] 移動先のレイアウト座標Y
+	@param upChar [in] 括弧の始まりの文字へのポインタ
+	@param dnChar [in] 括弧を閉じる文字列へのポインタ
+
+	@retval true 成功
+	@retval false 失敗
+*/
+bool CEditView::SearchBracketForward2( int   PosX,   int   PosY,
+									   int*  NewX,   int*  NewY,
+									   char* upChar, char* dnChar )
+{
+	CDocLine* ci;
+
+	int len;
+	const char *cPos, *nPos;
+	char *cline, *lineend;
+	int level = 0;
+
+	//	初期位置の設定
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( PosY );
+	cline = ci->m_pLine->GetPtr( &len );
+	lineend = cline + len;
+	cPos = cline + PosX;
+
+	do {
+		while( cPos < lineend ){
+			nPos = CMemory::MemCharNext( cline, len, cPos );
+			if( nPos - cPos != 2 ){
+				//	skip
+				cPos = nPos;
+				continue;
+			}
+			if( strncmp(upChar, cPos, 2) == 0 ){
+				++level;
+			}
+			else if( strncmp(dnChar, cPos, 2) == 0 ){
+				--level;
+			}
+
+			if( level == 0 ){	//	見つかった！
+				PosX = cPos - cline;
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, NewX, NewY );
+				return true;
+			}
+			cPos = nPos;	//	次の文字へ
+		}
+
+		//	次の行へ
+		++PosY;
+		ci = ci->m_pNext;	//	次のアイテム
+		if( ci == NULL )
+			break;	//	終わりに達した
+
+		cline = ci->m_pLine->GetPtr( &len );
+		cPos = cline;
+		lineend = cline + len;
+	}while( cline != NULL );
+
+	return false;
+}
+//@@@ 2001.02.03 End
+
+//@@@ 2001.02.03 Start by MIK:
+/*!
+	@brief 全角対括弧の検索:逆方向
+	
+	@author MIK
+	
+	@param LayoutX [in] 検索開始点の物理座標X
+	@param LayoutY [in] 検索開始点の物理座標Y
+	@param NewX [out] 移動先のレイアウト座標X
+	@param NewY [out] 移動先のレイアウト座標Y
+	@param upChar [in] 括弧の始まりの文字へのポインタ
+	@param dnChar [in] 括弧を閉じる文字列へのポインタ
+
+	@retval true 成功
+	@retval false 失敗
+*/
+bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
+									    int*  NewX,   int*  NewY,
+									    char* dnChar, char* upChar )
+{
+	CDocLine* ci;
+
+	int len;
+	const char *cPos, *pPos;
+	char *cline, *lineend;
+	int level = 1;
+
+	//	初期位置の設定
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( PosY );
+	cline = ci->m_pLine->GetPtr( &len );
+	lineend = cline + len;
+	cPos = cline + PosX;
+
+	do {
+		while( cPos > cline ){
+			pPos = CMemory::MemCharPrev( cline, len, cPos );
+			if( cPos - pPos != 2 ){
+				//	skip
+				cPos = pPos;
+				continue;
+			}
+			if( strncmp(upChar, pPos, 2) == 0 ){
+				++level;
+			}
+			else if( strncmp(dnChar, pPos, 2) == 0 ){
+				--level;
+			}
+
+			if( level == 0 ){	//	見つかった！
+				PosX = pPos - cline;
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, NewX, NewY );
+				return true;
+			}
+			cPos = pPos;	//	次の文字へ
+		}
+
+		//	次の行へ
+		--PosY;
+		ci = ci->m_pPrev;	//	次のアイテム
+		if( ci == NULL )
+			break;	//	終わりに達した
+
+		cline = ci->m_pLine->GetPtr( &len );
+		cPos = cline + len;
+	}while( cline != NULL );
+
+	return false;
+}
+//@@@ 2001.02.03 End
+
+//!	現在のカーソル行位置を履歴に登録する
+void CEditView::AddCurrentLineToHistory( void )
 {
 	int PosX, PosY;	//	物理位置（改行単位の計算）
 
@@ -853,10 +1100,7 @@ void CEditView::AddCurrentLineToHistory(void)
 
 	CMarkMgr::CMark m( PosX, PosY );
 	m_cHistory->Add( m );
-	
-//	char buf[256];
-//	wsprintf( buf, "Line: %d, Ext: %d",m.GetLine(),m.GetExtra());
-//	::MessageBox( NULL, buf, "Mark Add", MB_OK );
+
 }
 
 /* [EOF] */

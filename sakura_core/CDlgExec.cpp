@@ -3,14 +3,20 @@
 	CDlgExec.cpp
 	Copyright (C) 1998-2000, Norio Nakatani
 ************************************************************************/
+
 #include "CDlgExec.h"
-//#include "funccode.h"
+#include "funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "sakura_rc.h"
+#include "etc_uty.h"	//Stonee, 2001/03/12
+#include <windows.h>		//Mar. 28, 2001 JEPRO (一応入れたが不要？)
+#include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
+#include <commctrl.h>		//Mar. 28, 2001 JEPRO
+#include "CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
 
 CDlgExec::CDlgExec()
 {
-	m_szCommand[0] = '\0';		/* コマンドライン */
-	m_bGetStdout = TRUE;	// 標準出力を得る
+	m_szCommand[0] = '\0';	/* コマンドライン */
+	m_bGetStdout = FALSE/*TRUE*/;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更
 
 	return;
 }
@@ -78,7 +84,7 @@ int CDlgExec::GetData( void )
 //	From Here Sept. 12, 2000 jeprotest
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
 //	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
-//	To Here Sept. 12, 2000 　うまくいかないので元に戻してある
+//	To Here Sept. 12, 2000 うまくいかないので元に戻してある
 		 m_bGetStdout = TRUE;
 	}else{
 		 m_bGetStdout = FALSE;
@@ -105,8 +111,35 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	//	To Here Sept. 12, 2000 うまくいかないので元に戻してある
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 103 );
+		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECCOMMAND) );
 		break;
+
+	//From Here Mar. 28, 2001 JEPRO
+	case IDC_BUTTON_REFERENCE:	/* ファイル名の「参照...」ボタン */
+		{
+			CDlgOpenFile	cDlgOpenFile;
+			char*			pszMRU = NULL;;
+			char*			pszOPENFOLDER = NULL;;
+			char			szPath[_MAX_PATH + 1];
+			strcpy( szPath, m_szCommand );
+			/* ファイルオープンダイアログの初期化 */
+			cDlgOpenFile.Create(
+				m_hInstance,
+				m_hWnd,
+				"*.com;*.exe;*.bat",
+				m_szCommand,
+				(const char **)&pszMRU,
+				(const char **)&pszOPENFOLDER
+			);
+			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+				strcpy( m_szCommand, szPath );
+				::SetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand );
+			}
+		}
+		return TRUE;
+	//To Here Mar. 28, 2001
+
 	case IDOK:			/* 下検索 */
 		/* ダイアログデータの取得 */
 		GetData();
@@ -121,4 +154,3 @@ BOOL CDlgExec::OnBnClicked( int wID )
 
 
 /*[EOF]*/
-

@@ -1,23 +1,19 @@
 //	$Id$
 /************************************************************************
-
 	CDlgDebug.cpp
 	Copyright (C) 1998-2000, Norio Nakatani
-
-
 ************************************************************************/
+
 //#include <stdio.h>
 #include "sakura_rc.h"
 #include "CDlgDebug.h"
 
-
-
 /* ダイアログプロシージャ */
 BOOL CALLBACK CDlgDebug_Proc(
-    HWND hwndDlg,	// handle to dialog box
-    UINT uMsg,	// message
-    WPARAM wParam,	// first message parameter
-    LPARAM lParam 	// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam 		// second message parameter
 )
 {
 	CDlgDebug* pCDlgDebug;
@@ -44,8 +40,8 @@ BOOL CALLBACK CDlgDebug_Proc(
 CDlgDebug::CDlgDebug()
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = NULL;		/* オーナーウィンドウのハンドル */
-	m_hWnd  = NULL;		/* このダイアログのハンドル */
+	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
+	m_hWnd = NULL;			/* このダイアログのハンドル */
 
 	return;
 }
@@ -65,12 +61,10 @@ CDlgDebug::~CDlgDebug()
 
 
 
-
-
 /* モーダルダイアログの表示 */
 int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, CMemory& cmemDebugInfo )
 {
-	m_hInstance = hInstance;		/* アプリケーションインスタンスのハンドル */
+	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_cmemDebugInfo = cmemDebugInfo;
 
@@ -88,7 +82,7 @@ int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, CMemory& cmemDebug
 /* ダイアログのメッセージ処理 */
 BOOL CDlgDebug::DispatchEvent(
     HWND hwndDlg,	// handle to dialog box
-    UINT uMsg,	// message
+    UINT uMsg,		// message
     WPARAM wParam,	// first message parameter
     LPARAM lParam 	// second message parameter
 )
@@ -108,9 +102,9 @@ BOOL CDlgDebug::DispatchEvent(
 
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		wNotifyCode	= HIWORD( wParam );	/* 通知コード */
+		wID			= LOWORD( wParam );	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
@@ -125,12 +119,6 @@ BOOL CDlgDebug::DispatchEvent(
 	}
 	return FALSE;
 }
-
-
-
-
-
-
 
 
 /*[EOF]*/

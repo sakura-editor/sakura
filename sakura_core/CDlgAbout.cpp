@@ -3,7 +3,7 @@
 
 	CDlgAbout.cpp
 
-    バージョン情報ダイアログ
+	バージョン情報ダイアログ
 	Copyright (C) 1998-2000, Norio Nakatani
 
 ************************************************************************/
@@ -52,12 +52,12 @@ BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPara
 		result = TRUE;
 		break;
 	case WM_CTLCOLORSTATIC:
-		if( nCursorState == 1 && 
+		if( nCursorState == 1 &&
 			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR )){
 			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
 			result = (BOOL)(HBRUSH)GetStockObject(NULL_BRUSH);
 		}
-		else if( nCursorState == 2 && 
+		else if( nCursorState == 2 &&
 			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG )){
 			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
 			result = (BOOL)(HBRUSH)GetStockObject(NULL_BRUSH);
@@ -71,8 +71,8 @@ BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPara
 			//	Web Browserの起動
 			{
 				char buf[512];
-				::GetWindowText( ::GetDlgItem(hWnd, LOWORD(wParam)), buf, 512);
-				ShellExecute(hWnd,NULL,buf,NULL,NULL,SW_SHOWNORMAL);
+				::GetWindowText( ::GetDlgItem( hWnd, LOWORD( wParam ) ), buf, 512 );
+				ShellExecute( hWnd, NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			}
 			result = TRUE;
 		}
@@ -97,13 +97,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	WIN32_FIND_DATA	wfd;
 	SYSTEMTIME		systimeL;
 	/* この実行ファイルの情報 */
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof(szFile) );
+	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
 	::FindFirstFile( szFile, &wfd );
 	::FileTimeToLocalFileTime( &wfd.ftLastWriteTime, &wfd.ftLastWriteTime );
 	::FileTimeToSystemTime( &wfd.ftLastWriteTime, &systimeL );
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
-	wsprintf( szMsg, "UR %d.%d.%d.%d",
+	wsprintf( szMsg, "UR%d.%d.%d.%d",
 		HIWORD( m_pShareData->m_dwProductVersionMS ),
 		LOWORD( m_pShareData->m_dwProductVersionMS ),
 		HIWORD( m_pShareData->m_dwProductVersionLS ),
@@ -134,16 +134,18 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_CONTACT:
-		/* 「作者連絡先」のヘルプ */
+		/* 「原作者連絡先」のヘルプ */	//Jan. 12, 2001 jepro `作者'の前に`原'を付けた
 		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 8 );
 		return TRUE;
-	case IDC_BUTTON_DOWNLOAD:
-		/* 「最新バージョンのダウンロード」のヘルプ  */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 112 );
-		return TRUE;
+//Jan. 12, 2001 JEPRO UR1.2.20.2 (Nov. 7, 2000) から以下のボタンは削除されているのでコメントアウトした
+//	case IDC_BUTTON_DOWNLOAD:
+//		/* 「最新バージョンのダウンロード」のヘルプ  */
+//		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 112 );
+//		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
 }
+
 
 /*[EOF]*/

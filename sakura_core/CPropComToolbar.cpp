@@ -4,12 +4,33 @@
 #include "CPropCommon.h"
 
 
+//@@@ 2001.02.04 Start by MIK: Popup Help
+const DWORD p_helpids[] = {	//11000
+	IDC_BUTTON_DELETE,				11000,	//ツールバーから機能削除
+	IDC_BUTTON_INSERTSEPARATOR,		11001,	//セパレータ挿入
+	IDC_BUTTON_INSERT,				11002,	//ツールバーへ機能挿入
+	IDC_BUTTON_ADD,					11003,	//ツールバーへ機能追加
+	IDC_BUTTON_UP,					11004,	//ツールバーの機能を上へ移動
+	IDC_BUTTON_DOWN,				11005,	//ツールバーの機能を下へ移動
+	IDC_CHECK_TOOLBARISFLAT,		11010,	//フラットなボタン
+	IDC_COMBO_FUNCKIND,				11030,	//機能の種別
+	IDC_LIST_FUNC,					11040,	//機能一覧
+	IDC_LIST_RES,					11041,	//ツールバー一覧
+	IDC_LABEL_MENUFUNCKIND,			-1,
+	IDC_LABEL_MENUFUNC,				-1,
+	IDC_LABEL_TOOLBAR,				-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+//@@@ 2001.02.04 End
+
+
 /* p6 メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p6(
-    HWND	hwndDlg,	// handle to dialog box
-    UINT	uMsg,	// message
-    WPARAM	wParam,	// first message parameter
-    LPARAM	lParam 	// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam 		// second message parameter
 )
 {
 	WORD				wNotifyCode;
@@ -65,11 +86,11 @@ BOOL CPropCommon::DispatchEvent_p6(
 
 	case WM_DRAWITEM:
 		idCtrl = (UINT) wParam;	/* コントロールのID	*/
-		pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報	*/
+		pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報 */
 		switch( idCtrl ){
 		case IDC_LIST_RES:	/* ツールバーボタン結果リスト */
 		case IDC_LIST_FUNC:	/* ボタン一覧リスト */
-			DrawToolBarItemList( pDis );	/* ツールバーボタンリストのアイテム描画  */
+			DrawToolBarItemList( pDis );	/* ツールバーボタンリストのアイテム描画 */
 			return TRUE;
 		}
 		return TRUE;
@@ -91,9 +112,9 @@ BOOL CPropCommon::DispatchEvent_p6(
 		break;
 
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl = (HWND) lParam;	/* コントロールのハンドル */
+		wNotifyCode = HIWORD( wParam );	/* 通知コード */
+		wID = LOWORD( wParam );			/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl = (HWND) lParam;		/* コントロールのハンドル */
 
 		if( hwndResList == hwndCtl ){
 			switch( wNotifyCode ){
@@ -101,18 +122,18 @@ BOOL CPropCommon::DispatchEvent_p6(
 				return TRUE;
 			}
 		}else
-		if( hwndCombo == hwndCtl){
+		if( hwndCombo == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
 //				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 
 				::SendMessage( hwndFuncList, LB_RESETCONTENT, 0, 0 );
-//				nNum = ::SendMessage( hwndFuncList, LB_GETCOUNT	, 0, 0 );
+//				nNum = ::SendMessage( hwndFuncList, LB_GETCOUNT, 0, 0 );
 //				for( i = 0; i < nNum; ++i ){
 //					::SendMessage( hwndFuncList, LB_DELETESTRING, 0, 0 );
 //				}
-				/* 機能一覧に文字列をセット(リストボックス)*/
+				/* 機能一覧に文字列をセット (リストボックス) */
 				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIndex2]; ++i ){
 					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
 						if( m_cShareData.m_tbMyButton[j].idCommand == (nsFuncCode::ppnFuncListArr[nIndex2])[i] ){
@@ -122,7 +143,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 //jepro note: 次行不要???
 					if( j < m_cShareData.m_nMyButtonNum ){
 
-//						/* ツールバーボタンの情報をセット(リストボックス)*/
+//						/* ツールバーボタンの情報をセット (リストボックス) */
 //						for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
 							lResult = ::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)j );
 							lResult = ::SendMessage( hwndFuncList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
@@ -164,7 +185,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 					i = ::SendMessage( hwndResList, LB_DELETESTRING, nIndex1, 0 );
 					if( i == LB_ERR ){
 						break;
-					} 
+					}
 					if( nIndex1 >= i ){
 						if( i == 0 ){
 							i = ::SendMessage( hwndResList, LB_SETCURSEL, 0, 0 );
@@ -250,13 +271,13 @@ BOOL CPropCommon::DispatchEvent_p6(
 		nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 		nIndex2 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
 		i = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
-		if( LB_ERR == nIndex1	){
+		if( LB_ERR == nIndex1 ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
 		}else{
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
-			if( nIndex1	<= 0 ){
+			if( nIndex1 <= 0 ){
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
 			}else{
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), TRUE );
@@ -282,6 +303,18 @@ BOOL CPropCommon::DispatchEvent_p6(
 	case WM_DESTROY:
 		::KillTimer( hwndDlg, 1 );
 		break;
+
+//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//@@@ 2001.02.04 End
+
 	}
 	return FALSE;
 }
@@ -340,10 +373,10 @@ void CPropCommon::SetData_p6( HWND hwndDlg )
 /* ダイアログデータの取得 p6 */
 int CPropCommon::GetData_p6( HWND hwndDlg )
 {
-	HWND		hwndResList;
-	int			i;
-	int			j;
-	int			k;
+	HWND	hwndResList;
+	int		i;
+	int		j;
+	int		k;
 
 	m_nPageNum = ID_PAGENUM_TOOLBAR;
 
@@ -371,5 +404,4 @@ int CPropCommon::GetData_p6( HWND hwndDlg )
 }
 
 
-
-
+/*[EOF]*/

@@ -157,7 +157,7 @@ void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/) ;
 
 	//	Oct. 12, 2000 genta
 	CImageListMgr	m_cIcons;	//	Image List
-	
+
 	/*
 	|| ŽÀ‘•ƒwƒ‹ƒpŒn
 	*/

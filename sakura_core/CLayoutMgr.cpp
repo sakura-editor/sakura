@@ -37,6 +37,10 @@ CLayoutMgr::CLayoutMgr()
 	m_pszLineComment2 = NULL;			/* 行コメントデリミタ2 */
 	m_pszBlockCommentFrom = NULL;		/* ブロックコメントデリミタ(From) */
 	m_pszBlockCommentTo = NULL;			/* ブロックコメントデリミタ(To) */
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	m_pszBlockCommentFrom2 = NULL;		/* ブロックコメントデリミタ(From) */
+	m_pszBlockCommentTo2 = NULL;		/* ブロックコメントデリミタ(To) */
+//#endif
 	Init();
 	return;
 }
@@ -65,6 +69,16 @@ CLayoutMgr::~CLayoutMgr()
 		delete [] m_pszBlockCommentTo;
 		m_pszBlockCommentTo = NULL;
 	}
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ(From) */
+		delete [] m_pszBlockCommentFrom2;
+		m_pszBlockCommentFrom2 = NULL;
+	}
+	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ(To) */
+		delete [] m_pszBlockCommentTo2;
+		m_pszBlockCommentTo2 = NULL;
+	}
+//#endif
 	return;
 }
 
@@ -80,6 +94,10 @@ void CLayoutMgr::SetLayoutInfo(
 	char*	pszLineComment2,		/* 行コメントデリミタ2 */
 	char*	pszBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 	char*	pszBlockCommentTo,		/* ブロックコメントデリミタ(To) */
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
+	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ(To) */
+//#endif
 	int		nStringType,			/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
 	int		bDoRayout, 
 	HWND	hwndProgress,
@@ -133,6 +151,28 @@ void CLayoutMgr::SetLayoutInfo(
 		m_pszBlockCommentTo = new char[nStrLen + 1];
 		strcpy( m_pszBlockCommentTo, pszBlockCommentTo );
 	}
+
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ(From) */
+		delete [] m_pszBlockCommentFrom2;
+		m_pszBlockCommentFrom2 = NULL;
+	}
+	nStrLen = strlen( pszBlockCommentFrom2 );
+	if( 0 < nStrLen ){
+		m_pszBlockCommentFrom2 = new char[nStrLen + 1];
+		strcpy( m_pszBlockCommentFrom2, pszBlockCommentFrom2 );
+	}
+
+	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ(To) */
+		delete [] m_pszBlockCommentTo2;
+		m_pszBlockCommentTo2 = NULL;
+	}
+	nStrLen = strlen( pszBlockCommentTo2 );
+	if( 0 < nStrLen ){
+		m_pszBlockCommentTo2 = new char[nStrLen + 1];
+		strcpy( m_pszBlockCommentTo2, pszBlockCommentTo2 );
+	}
+//#endif
 
 	if( bDoRayout ){
 		DoLayout( hwndProgress, bDispSSTRING, bDispWSTRING );

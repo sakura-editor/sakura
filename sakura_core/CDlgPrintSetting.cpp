@@ -9,6 +9,8 @@
 //#include "sakura_rc.h"
 #include "CDlgPrintSetting.h"
 #include "CDlgInput1.h"
+#include "funccode.h"		// Stonee, 2001/03/12
+#include "etc_uty.h"		// Stonee, 2001/03/12
 
 #define IDT_PRINTSETTING 1467
 
@@ -157,7 +159,8 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「印刷ページ設定」のヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 122 );
+		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
 		strcpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
