@@ -2492,10 +2492,11 @@ void CEditApp::ParseCommandLine(
 	bDebugMode = FALSE;
 	bNoWindow = FALSE;
 
-	fi.m_nViewTopLine = 0;				/* 表示域の一番上の行(0開始) */
-	fi.m_nViewLeftCol = 0;				/* 表示域の一番左の桁(0開始) */
-	fi.m_nX = 0;						/* カーソル 物理位置(行頭からのバイト数) */
-	fi.m_nY = 0;						/* カーソル 物理位置(折り返し無し行位置) */
+	//	Oct. 19, 2001 genta 初期値を-1にして，指定有り/無しを判別可能にしてみた
+	fi.m_nViewTopLine = -1;				/* 表示域の一番上の行(0開始) */
+	fi.m_nViewLeftCol = -1;				/* 表示域の一番左の桁(0開始) */
+	fi.m_nX = -1;						/* カーソル 物理位置(行頭からのバイト数) */
+	fi.m_nY = -1;						/* カーソル 物理位置(折り返し無し行位置) */
 	fi.m_bIsModified = 0;				/* 変更フラグ */
 	fi.m_nCharCode = CODE_AUTODETECT;	/* 文字コード種別 *//* 文字コード自動判別 */
 	fi.m_szPath[0] = '\0';				/* ファイル名 */

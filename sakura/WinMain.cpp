@@ -303,6 +303,21 @@ RestartForEditor:
 			HWND hwndOwner;
 			/* 指定ファイルが開かれているか調べる */
 			if( TRUE == m_cShareData.IsPathOpened( fi.m_szPath, &hwndOwner ) ){
+				//	From Here Oct. 19, 2001 genta
+				//	カーソル位置が引数に指定されていたら指定位置にジャンプ
+				if( fi.m_nY >= 0 ){	//	行の指定があるか
+					POINT& pt = *(POINT*)m_pShareData->m_szWork;
+					if( fi.m_nX < 0 ){
+						//	桁の指定が無い場合
+						::SendMessage( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
+					}
+					else {
+						pt.x = fi.m_nX;
+					}
+					pt.y = fi.m_nY;
+					::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
+				}
+				//	To Here Oct. 19, 2001 genta
 				/* アクティブにする */
 				ActivateFrameWindow( hwndOwner );
 				return 0;
@@ -358,7 +373,10 @@ RestartForEditor:
 				//	Nov. 6, 2000 genta
 				//	キャレット位置の復元のため
 				//	オプション指定がないときは画面移動を行わないようにする
-				if( ( 0 <= fi.m_nViewTopLine || 0 <= fi.m_nViewLeftCol ) && fi.m_nViewTopLine < pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
+				//	Oct. 19, 2001 genta
+				//	未設定＝-1になるようにしたので，安全のため両者が指定されたときだけ
+				//	移動するようにする． || → &&
+				if( ( 0 <= fi.m_nViewTopLine && 0 <= fi.m_nViewLeftCol ) && fi.m_nViewTopLine < pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
 					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewTopLine = fi.m_nViewTopLine;
 					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewLeftCol = fi.m_nViewLeftCol;
 				}
@@ -368,7 +386,9 @@ RestartForEditor:
 				//	m_nCaretPosX_Prevの用途は不明だが，何も設定しないのはまずいのでとりあえず 0
 				pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
 				//	オプション指定がないときはカーソル位置設定を行わないようにする
-				if( fi.m_nX > 0 || fi.m_nY > 0 ){
+				//	Oct. 19, 2001 genta
+				//	0も位置としては有効な値なので判定に含めなくてはならない
+				if( 0 <= fi.m_nX || 0 <= fi.m_nY ){
 					/*
 					  カーソル位置変換
 					  物理位置(行頭からのバイト数、折り返し無し行位置)
