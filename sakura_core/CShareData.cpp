@@ -107,8 +107,11 @@ struct ARRHEAD {
 
 	Version 42:
 	Typesに独自TABマークフラグ追加 2003.03.28 MIK
+
+	Version 43:
+	最近使ったファイル・フォルダにお気に入りを追加 2003.04.08 MIK
 */
-const unsigned int uShareDataVersion = 42;
+const unsigned int uShareDataVersion = 43;
 
 /*
 ||	Singleton風
@@ -220,21 +223,26 @@ bool CShareData::Init( void )
 		m_pShareData->m_nSEARCHKEYArrNum = 0;
 		for( i = 0; i < MAX_SEARCHKEY; ++i ){
 			strcpy( m_pShareData->m_szSEARCHKEYArr[i], "" );
+			//m_pShareData->m_bSEARCHKEYArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nREPLACEKEYArrNum = 0;
 		for( i = 0; i < MAX_REPLACEKEY; ++i ){
 			strcpy( m_pShareData->m_szREPLACEKEYArr[i], "" );
+			//m_pShareData->m_bREPLACEKEYArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nGREPFILEArrNum = 0;
 		for( i = 0; i < MAX_GREPFILE; ++i ){
 			strcpy( m_pShareData->m_szGREPFILEArr[i], "" );
+			//m_pShareData->m_bGREPFILEArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nGREPFILEArrNum = 1;
 		strcpy( m_pShareData->m_szGREPFILEArr[0], "*.*" );
+		//m_pShareData->m_bSEARCHKEYArrFavorite[0] = true;	//お気に入り	//@@@ 2003.04.08 MIK
 
 		m_pShareData->m_nGREPFOLDERArrNum = 0;
 		for( i = 0; i < MAX_GREPFOLDER; ++i ){
 			strcpy( m_pShareData->m_szGREPFOLDERArr[i], "" );
+			//m_pShareData->m_bGREPFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		strcpy( m_pShareData->m_szMACROFOLDER, szExeFolder );	/* マクロ用フォルダ */
 		strcpy( m_pShareData->m_szIMPORTFOLDER, szExeFolder );	/* 設定インポート用フォルダ */
@@ -869,6 +877,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */
 			m_pShareData->m_szCmdArr[i][0] = '\0';
+			//m_pShareData->m_bCmdArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nCmdArrNum = 0;
 
@@ -988,6 +997,16 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[nIdx].m_nSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
 		m_pShareData->m_Types[nIdx].m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
+		m_pShareData->m_Types[nIdx].m_szOutlineRuleFilename[0] = '\0';	//Dec. 4, 2000 MIK
+		m_pShareData->m_Types[nIdx].m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		m_pShareData->m_Types[nIdx].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		m_pShareData->m_Types[nIdx].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		m_pShareData->m_Types[nIdx].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+		strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuHead, "" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+
+		m_pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
+
 //@@@ 2001.11.17 add start MIK
 		for(i = 0; i < 100; i++)
 		{
@@ -1057,16 +1076,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			m_pShareData->m_Types[nIdx].m_nIdx = nIdx;
 			strcpy( m_pShareData->m_Types[nIdx].m_szTypeName, pszTypeNameArr[nIdx] );	/* タイプ属性：名称 */
 			strcpy( m_pShareData->m_Types[nIdx].m_szTypeExts, pszTypeExts[nIdx] );		/* タイプ属性：拡張子リスト */
-			m_pShareData->m_Types[nIdx].m_nKeyWordSetIdx2 = -1;	//Dec. 4, 2000 MIK
-			m_pShareData->m_Types[nIdx].m_szOutlineRuleFilename[0] = '\0';	//Dec. 4, 2000 MIK
-			m_pShareData->m_Types[nIdx].m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-			m_pShareData->m_Types[nIdx].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
-			m_pShareData->m_Types[nIdx].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-			m_pShareData->m_Types[nIdx].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-			strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuHead, "" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-			strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
-
-			m_pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 		}
 
 
@@ -4163,6 +4172,7 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 */
 void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 {
+/*
 	CMemory	pcmWork( pszSearchKey, lstrlen( pszSearchKey ) );
 	int		i;
 	int		j;
@@ -4185,6 +4195,13 @@ void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 		}
 	}
 	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork.GetPtr() );
+*/
+	CRecent	cRecentSearchKey;
+
+	cRecentSearchKey.EasyCreate( RECENT_FOR_SEARCH );
+	cRecentSearchKey.AppendItem( pszSearchKey );
+	cRecentSearchKey.Terminate();
+
 	return;
 }
 
@@ -4193,6 +4210,7 @@ void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 */
 void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 {
+/*
 	CMemory pcmWork( pszReplaceKey, lstrlen( pszReplaceKey ) );
 	int		i;
 	int		j;
@@ -4215,6 +4233,14 @@ void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 		}
 	}
 	strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork.GetPtr() );
+*/
+	CRecent	cRecentReplaceKey;
+
+	cRecentReplaceKey.EasyCreate( RECENT_FOR_REPLACE );
+	cRecentReplaceKey.AppendItem( pszReplaceKey );
+	cRecentReplaceKey.Terminate();
+
+	return;
 }
 
 /*!	m_szGREPFILEArrにpszGrepFileを追加する
@@ -4222,6 +4248,7 @@ void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 */
 void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 {
+/*
 	CMemory pcmWork( pszGrepFile, lstrlen( pszGrepFile ) );
 	int		i;
 	int		j;
@@ -4244,6 +4271,14 @@ void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 		}
 	}
 	strcpy( m_pShareData->m_szGREPFILEArr[0], pcmWork.GetPtr() );
+*/
+	CRecent	cRecentGrepFile;
+
+	cRecentGrepFile.EasyCreate( RECENT_FOR_GREP_FILE );
+	cRecentGrepFile.AppendItem( pszGrepFile );
+	cRecentGrepFile.Terminate();
+
+	return;
 }
 
 /*!	m_nGREPFOLDERArrNumにpszGrepFolderを追加する
@@ -4251,6 +4286,7 @@ void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 */
 void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
 {
+/*
 	CMemory pcmWork( pszGrepFolder, lstrlen( pszGrepFolder ) );
 	int		i;
 	int		j;
@@ -4273,6 +4309,14 @@ void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
 		}
 	}
 	strcpy( m_pShareData->m_szGREPFOLDERArr[0], pcmWork.GetPtr() );
+*/
+	CRecent	cRecentGrepFolder;
+
+	cRecentGrepFolder.EasyCreate( RECENT_FOR_GREP_FOLDER );
+	cRecentGrepFolder.AppendItem( pszGrepFolder );
+	cRecentGrepFolder.Terminate();
+
+	return;
 }
 
 /*!	外部Winヘルプが設定されているか確認。

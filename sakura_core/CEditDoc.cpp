@@ -847,6 +847,8 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 		bRet = FALSE;
 		goto end_of_func;
 	}
+	/* 行変更状態をすべてリセット */
+	m_cDocLineMgr.ResetAllModifyFlag();
 	
 #if 0
 	/* ロングファイル名を取得する。（上書き保存のときのみ） */

@@ -10,6 +10,7 @@
 	Copyright (C) 2000-2001, genta, jepro
 	Copyright (C) 2001, mik, hor
 	Copyright (C) 2002, YAZAKI, genta, aroka, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1982,6 +1983,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OUTLINE			, "アウトライン解析(&L)..." );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMP			, "タグジャンプ(&T)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMPBACK		, "タグジャンプバック(&B)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGS_MAKE		, "タグファイルの作成" );	//@@@ 2003.04.13 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIRECT_TAGJUMP	, "ダイレクトタグジャンプ" );	//@@@ 2003.04.13 MIK
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HOKAN			, "入力補完(&/)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
@@ -2052,6 +2055,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION_TYPE		, "タイプ別設定(&Y)..." );		//Sept. 13, 2000 JEPRO アクセスキー変更(S→Y)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION			, "共通設定(&C)..." );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FONT			, "フォント設定(&F)..." );		//Sept. 17, 2000 jepro キャプションに「設定」を追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, "お気に入りの設定(&O)..." );	//お気に入り	//@@@ 2003.04.08 MIK
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
 			if( m_cEditDoc.GetDocumentAttribute().m_nMaxLineSize == m_cEditDoc.ActiveView().m_nViewColNum ){
@@ -2626,8 +2630,8 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		if( ! pcEditDoc->m_cDocLineMgr.IsDiffUse() ) return FALSE;
 		return TRUE;
 	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
-		if( pcEditDoc->IsModified() ) return FALSE;
-		if( ! pcEditDoc->IsFilePathAvailable() ) return FALSE;
+		//if( pcEditDoc->IsModified() ) return FALSE;
+		//if( ! pcEditDoc->IsFilePathAvailable() ) return FALSE;
 		return TRUE;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
@@ -2770,7 +2774,14 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 			return FALSE;
 	case F_JUMPHIST_SET:	//	現在位置を移動履歴に登録
 		return TRUE;
-
+	case F_DIRECT_TAGJUMP:	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
+	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
+		if( pcEditDoc->IsFilePathAvailable() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+		
 	}
 	return TRUE;
 }

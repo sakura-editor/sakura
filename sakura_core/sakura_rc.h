@@ -43,6 +43,9 @@
 #define IDC_CURSOR_RVARROW              223
 #define IDD_FILEUPDATEQUERY             225
 #define IDD_PROP_FNAME                  226
+#define IDD_FAVORITE                    227
+#define IDD_TAGJUMPLIST                 228
+#define IDD_TAG_MAKE                    229
 #define IDI_ICON_STD                    230
 #define IDI_ICON_DEBUG                  231
 #define IDI_ICON_GREP                   240
@@ -482,6 +485,18 @@
 #define IDC_LIST_FNAME                  1454
 #define IDC_EDIT_FNAME_FROM             1455
 #define IDC_CHECK_TAB_ARROW             1456
+#define IDC_TAB_FAVORITE                1457
+#define IDC_LIST_FAVORITE_FILE          1458
+#define IDC_LIST_FAVORITE_FOLDER        1459
+#define IDC_LIST_FAVORITE_GREP_FILE     1460
+#define IDC_LIST_FAVORITE_GREP_FOLDER   1461
+#define IDC_LIST_FAVORITE_REPLACE       1462
+#define IDC_LIST_FAVORITE_SEARCH        1463
+#define IDC_LIST_FAVORITE_CMD           1464
+#define IDC_BUTTON_CLEAR                1465
+#define IDC_SLIDER_VIEW                 1466
+#define IDC_BUTTON_VIEW                 1467
+#define IDC_LIST_TAGJUMP                1468
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -514,9 +529,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        227
+#define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1457
+#define _APS_NEXT_CONTROL_VALUE         1469
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

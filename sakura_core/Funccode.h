@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -244,6 +245,9 @@
 #define F_OUTLINE			30930	//アウトライン解析
 #define F_TAGJUMP			30940	//タグジャンプ機能
 #define F_TAGJUMPBACK		30941	//タグジャンプバック機能
+#define	F_TAGJUMP_LIST		30942	//タグジャンプリスト	//@@@ 2003.04.13 MIK
+#define	F_TAGS_MAKE			30943	//タグファイルの作成	//@@@ 2003.04.13 MIK
+#define	F_DIRECT_TAGJUMP	30944	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
 #define F_COMPARE			30950	//ファイル内容比較
 #define F_BRACKETPAIR		30960	//対括弧の検索
 #define F_BOOKMARK_SET		30970	//ブックマーク設定・解除
@@ -270,6 +274,7 @@
 #define F_TYPE_LIST			31110	/* タイプ別設定一覧 */
 #define F_OPTION_TYPE		31111	/* タイプ別設定 */
 #define F_OPTION			31112	/* 共通設定 */
+#define	F_FAVORITE			31113	//お気に入りの設定	//@@@ 2003.04.08 MIK
 
 //From here 設定ダイアログ用の機能番号を用意  Stonee, 2001/05/18
 #define F_TYPE_SCREEN		31115	/* タイプ別設定『スクリーン』 */

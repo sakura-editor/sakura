@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, jepro, genta, みつ
 	Copyright (C) 2001, Misaka, asa-o, novice, hor, YAZAKI
 	Copyright (C) 2002, hor, YAZAKI, genta, aroka, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -51,6 +52,10 @@
 #include "CDlgCancel.h"// 2002/2/8 hor
 #include "CPrintPreview.h"
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "CDlgCancel.h"
+#include "CDlgTagJumpList.h"
+#include "COsVersionInfo.h"
+#include "my_icmp.h"
 
 /* コマンドコードによる処理振り分け */
 BOOL CEditView::HandleCommand(
@@ -458,6 +463,8 @@ BOOL CEditView::HandleCommand(
 	case F_OUTLINE:			bRet = Command_FUNCLIST( (BOOL)lparam1 );break;	//アウトライン解析
 	case F_TAGJUMP:			Command_TAGJUMP();break;						/* タグジャンプ機能 */
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
+	case F_TAGS_MAKE:		Command_TagsMake();break;						//タグファイルの作成	//@@@ 2003.04.13 MIK
+	case F_DIRECT_TAGJUMP:	Command_TagJumpByTagsFile();break;				/* ダイレクトタグジャンプ機能 */	//@@@ 2003.04.15 MIK
 	case F_COMPARE:			Command_COMPARE();break;						/* ファイル内容比較 */
 	case F_DIFF_DIALOG:		Command_Diff_Dialog();break;					/* DIFF差分表示(ダイアログ) */	//@@@ 2002.05.25 MIK
 	case F_DIFF:			Command_Diff( (const char*)lparam1, (const char*)lparam2, (int)lparam3 );break;		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
@@ -488,6 +495,7 @@ BOOL CEditView::HandleCommand(
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	Command_WRAPWINDOWWIDTH();break;/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	case F_FAVORITE:		Command_Favorite();break;		//お気に入り	//@@@ 2003.04.08 MIK
 
 	/* マクロ系 */
 	case F_RECKEYMACRO:		Command_RECKEYMACRO();break;	/* キーマクロの記録開始／終了 */
@@ -6394,8 +6402,8 @@ bool CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 	int			nJumpToLine;
 	int			nJumpToColm;
 	char		szJumpToFile[1024];
-	HWND		hwndOwner;
-	POINT		poCaret;
+//	HWND		hwndOwner;
+//	POINT		poCaret;
 	int			nPathLen;
 	int			nBgn;
 	memset( szJumpToFile, 0, sizeof(szJumpToFile) );
@@ -6500,81 +6508,26 @@ bool CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 				;
 		}
 		if( szJumpToFile[0] == '\0' )
-			goto can_not_tagjump;
+		{
+			if( false == Command_TagJumpByTagsFile() )	//@@@ 2003.04.13
+				goto can_not_tagjump;
+			return true;
+		}
 		//	From Here Aug. 27, 2001 genta
 	}
-	char szWork[MAX_PATH];
-	/* ロングファイル名を取得する */
-	if( TRUE == ::GetLongFileName( szJumpToFile, szWork ) ){
-		strcpy( szJumpToFile, szWork );
-	}
-//@@@ 2002.01.14 YAZAKI CTRLキーを押してタグジャンプすると、閉じてタグジャンプ。
-	/* CTRLキーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
-		Command_WINCLOSE();	//	挑戦するだけ。
-	}
-	/* 指定ファイルが開かれているか調べる */
-	/* 開かれている場合は開いているウィンドウのハンドルも返す */
-	/* ファイルを開いているか */
-	if( CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) ){
-		/* カーソルを移動させる */
-		poCaret.x = nJumpToColm - 1;
-		poCaret.y = nJumpToLine - 1;
-		memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
-		::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
-		/* アクティブにする */
-		ActivateFrameWindow( hwndOwner );
-	}else{
-		/* 新しく開く */
-		FileInfo	inf;
-		bool		bSuccess;
 
-		strcpy( inf.m_szPath, szJumpToFile );
-		inf.m_nX = nJumpToColm - 1;
-		inf.m_nY = nJumpToLine - 1;
-		inf.m_nViewLeftCol = inf.m_nViewTopLine = -1;
-		inf.m_nCharCode = CODE_AUTODETECT;
+	if( false == TagJumpSub( szJumpToFile, nJumpToLine, nJumpToColm ) )	//@@@ 2003.04.13
+		goto can_not_tagjump;
 
-		bSuccess = CEditApp::OpenNewEditor2(
-			m_hInstance,
-			m_pShareData->m_hwndTray,
-			&inf,
-			FALSE,	/* 読み取り専用か */
-			true	//	同期モードで開く
-		);
-
-		if( !bSuccess )	//	ファイルが開けなかった
-			return false;
-
-		//	Apr. 23, 2001 genta
-		//	hwndOwnerに値が入らなくなってしまったために
-		//	Tag Jump Backが動作しなくなっていたのを修正
-		if( FALSE == CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
-			return false;
-	}
-	/*
-	カーソル位置変換
-	レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	→
-	物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-//	POINT	poCaret;
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-		m_nCaretPosX,
-		m_nCaretPosY,
-		(int*)&poCaret.x,
-		(int*)&poCaret.y
-	);
-	/* タグジャンプ元通知 */
-	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
-	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
 	return true;
+
 can_not_tagjump:;
 can_not_tagjump_end:;
 //@@@ YAZAKI 2001.12.31 うるさい。
 //	::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 //		"タグジャンプできません。\n[%s]", szJumpToFile
 //	);
+	SendStatusMessage("タグジャンプできません");	//@@@ 2003.04.13
 	return false;
 }
 
@@ -6610,6 +6563,434 @@ void/*BOOL*/ CEditView::Command_TAGJUMPBACK( void/*BOOL bCheckOnly*/ )
 		::SendMessage( hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 	}
 	return;
+}
+
+/*
+	ダイレクトタグジャンプ
+
+	@author	MIK
+	@date	2003.04.13	新規作成
+*/
+bool CEditView::Command_TagJumpByTagsFile( void )
+{
+#define	TAG_FILENAME	"tags"
+
+	CMemory	cmemKey;
+	int		i, j;
+	char	szCurrentPath[1024];	//カレントフォルダ
+	char	szTagFile[1024];		//タグファイル
+	char	szLineData[1024];		//行バッファ
+	char	s[5][1024];
+	int		n2;
+	int		nRet;
+	int		nMatch;						//一致数
+	CDlgTagJumpList	cDlgTagJumpList;	//タグジャンプリスト
+	FILE	*fp;
+	bool	bNoTag = true;
+	int		nLoop;
+
+//	nLoop = m_pShareData->m_Common.m_nTagDepth;
+	nLoop = 0;
+	if( nLoop <  0 ) nLoop =  0;
+	if( nLoop > 10 ) nLoop = 10;
+
+	//現在カーソル位置のキーを取得する。
+	GetCurrentTextForSearch( cmemKey );
+	if( 0 == cmemKey.GetLength() ) return false;	//キーがないなら終わり
+
+	for( j = 0; j < 2; j++ )
+	{
+		//パス名のみ取り出す。
+		if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
+		strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
+		cDlgTagJumpList.SetFileName( szCurrentPath );
+		szCurrentPath[ strlen( szCurrentPath ) - strlen( m_pcEditDoc->GetFileName() ) ] = '\0';
+
+		for( i = 0; i <= nLoop; i++ )
+		{
+			//タグファイル名を作成する。
+			wsprintf( szTagFile, "%s%s", szCurrentPath, TAG_FILENAME );
+
+			//タグファイルを開く。
+			fp = fopen( szTagFile, "r" );
+			if( fp )
+			{
+				bNoTag = false;
+				nMatch = 0;
+				while( fgets( szLineData, sizeof( szLineData ), fp ) )
+				{
+					if( szLineData[0] <= '!' ) goto next_line;	//コメントならスキップ
+					//chop( szLineData );
+
+					s[0][0] = s[1][0] = s[2][0] = s[3][0] = s[4][0] = '\0';
+					n2 = 0;
+					nRet = sscanf( szLineData, 
+						"%s\t%s\t%d;\"\t%s\t%s",	//tagsフォーマット
+						s[0], s[1], &n2, s[3], s[4]
+						);
+					if( nRet < 4 ) goto next_line;
+					if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
+
+					if( 0 != strcmp( s[0], cmemKey.GetPtr() ) ) goto next_line;
+
+					cDlgTagJumpList.AddParam( s[0], s[1], n2, s[3], s[4] );
+					nMatch++;
+					continue;
+
+next_line:
+					if( nMatch ) break;
+				}
+
+				//ファイルを閉じる。
+				fclose( fp );
+
+				//複数あれば選択してもらう。
+				if( nMatch > 1 )
+				{
+					if( ! cDlgTagJumpList.DoModal( m_hInstance, m_hWnd, (LPARAM)0 ) ) 
+					{
+						nMatch = 0;
+						return true;	//キャンセル
+					}
+				}
+
+				//タグジャンプする。
+				if( nMatch > 0 )
+				{
+					if( false == cDlgTagJumpList.GetSelectedParam( s[0], s[1], &n2, s[3], s[4] ) )
+					{
+						return false;
+					}
+
+					/*
+					 * s[0] キー
+					 * s[1] ファイル名
+					 * n2   行番号
+					 * s[3] タイプ
+					 * s[4] コメント
+					 */
+
+					//完全パス名を作成する。
+					char	*p;
+					p = s[1];
+					if( p[0] == '\\' )	//ドライブなし絶対パスか？
+					{
+						if( p[1] == '\\\\' )	//ネットワークパスか？
+						{
+							strcpy( szTagFile, p );	//何も加工しない。
+						}
+						else
+						{
+							//ドライブ加工したほうがよい？
+							strcpy( szTagFile, p );	//何も加工しない。
+						}
+					}
+					else if( isalpha( p[0] ) && p[1] == ':' )	//絶対パスか？
+					{
+						strcpy( szTagFile, p );	//何も加工しない。
+					}
+					else
+					{
+						wsprintf( szTagFile, "%s%s", szCurrentPath, p );
+					}
+
+					return TagJumpSub( szTagFile, n2, 0 );
+				}
+			}	//fp
+
+			//カレントパスを1階層上へ。
+			strcat( szCurrentPath, "..\\" );
+		}
+
+		if( false == bNoTag ) break;	//タグファイルはあったのでこれ以上はしない。
+
+		bNoTag = false;	//これ以上は試さない。
+		//tagsファイルを作成してみる。
+		//if( false == Command_TagsMake() ) break;
+		break;	//自動生成はしない。
+	}
+
+	return false;
+}
+
+/*
+	指定ファイルの指定位置にタグジャンプする。
+
+	@author	MIK
+	@date	2003.04.13	新規作成
+*/
+bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm )
+{
+	HWND	hwndOwner;
+	POINT	poCaret;
+	char	szJumpToFile[1024];
+	char	szWork[1024];
+
+	strcpy( szJumpToFile, pszFileName );
+
+	/* ロングファイル名を取得する */
+	if( TRUE == ::GetLongFileName( szJumpToFile, szWork ) )
+	{
+		strcpy( szJumpToFile, szWork );
+	}
+
+	/* CTRLキーが押されていたか */
+	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) )
+	{
+		Command_WINCLOSE();	//	挑戦するだけ。
+	}
+
+	/* 指定ファイルが開かれているか調べる */
+	/* 開かれている場合は開いているウィンドウのハンドルも返す */
+	/* ファイルを開いているか */
+	if( CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
+	{
+		/* カーソルを移動させる */
+		poCaret.x = nJumpToColm - 1;
+		poCaret.y = nJumpToLine - 1;
+		memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
+		::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
+
+		/* アクティブにする */
+		ActivateFrameWindow( hwndOwner );
+	}
+	else
+	{
+		/* 新しく開く */
+		FileInfo	inf;
+		bool		bSuccess;
+
+		strcpy( inf.m_szPath, szJumpToFile );
+		inf.m_nX           = nJumpToColm - 1;
+		inf.m_nY           = nJumpToLine - 1;
+		inf.m_nViewLeftCol = inf.m_nViewTopLine = -1;
+		inf.m_nCharCode    = CODE_AUTODETECT;
+
+		bSuccess = CEditApp::OpenNewEditor2(
+			m_hInstance,
+			m_pShareData->m_hwndTray,
+			&inf,
+			FALSE,	/* 読み取り専用か */
+			true	//	同期モードで開く
+		);
+
+		if( ! bSuccess )	//	ファイルが開けなかった
+			return false;
+
+		//	Apr. 23, 2001 genta
+		//	hwndOwnerに値が入らなくなってしまったために
+		//	Tag Jump Backが動作しなくなっていたのを修正
+		if( FALSE == CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
+			return false;
+	}
+
+	/*
+	カーソル位置変換
+	レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+	→
+	物理位置(行頭からのバイト数、折り返し無し行位置)
+	*/
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_nCaretPosX,
+		m_nCaretPosY,
+		(int*)&poCaret.x,
+		(int*)&poCaret.y
+	);
+
+	/* タグジャンプ元通知 */
+	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
+	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
+
+	return true;
+}
+
+/*
+	タグファイルを作成する。
+
+	@author	MIK
+	@date	2003.04.13	新規作成
+*/
+bool CEditView::Command_TagsMake( void )
+{
+#define	CTAGS_COMMAND	"ctags.exe"
+//#define	CTAGS_OPTIONS	"--excmd=n -R *"	//オプション
+#define	CTAGS_OPTIONS	"--excmd=n *"	//オプション
+
+	{
+		char	*msg;
+		if( -1 == ::GetFileAttributes( TAG_FILENAME ) ) 
+			msg = "ダイレクトタグジャンプ用のタグファイルを作成しますか？";
+		else
+			msg = "タグファイルは存在します。\n\nダイレクトタグジャンプ用のタグファイルを再作成しますか？";
+		
+		int	nRet;
+		nRet = MYMESSAGEBOX(
+			m_hWnd,
+			MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
+			"タグファイルの作成",
+			msg
+			);
+		if( IDYES != nRet ) return false; 
+	}
+
+	char	cmdline[1024];
+	/* exeのあるフォルダ */
+	char	szPath[_MAX_PATH + 1];
+	char	szExeFolder[_MAX_PATH + 1];
+	::GetModuleFileName(
+		::GetModuleHandle( NULL ),
+		szPath, sizeof( szPath )
+	);
+	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
+
+	//ctags.exeの存在チェック
+	wsprintf( cmdline, "%s\\%s", szExeFolder, CTAGS_COMMAND );
+	if( -1 == ::GetFileAttributes( cmdline ) )
+	{
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			_T( "タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。" ) );
+		return false;
+	}
+
+	HANDLE	hStdOutWrite, hStdOutRead;
+	CDlgCancel	cDlgCancel;
+	CWaitCursor	cWaitCursor( m_hWnd );
+
+	PROCESS_INFORMATION	pi;
+	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
+
+	//子プロセスの標準出力と接続するパイプを作成
+	SECURITY_ATTRIBUTES	sa;
+	ZeroMemory( &sa, sizeof(SECURITY_ATTRIBUTES) );
+	sa.nLength              = sizeof(SECURITY_ATTRIBUTES);
+	sa.bInheritHandle       = TRUE;
+	sa.lpSecurityDescriptor = NULL;
+	hStdOutRead = hStdOutWrite = 0;
+	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE )
+	{
+		//エラー
+		return false;
+	}
+
+	//継承不能にする
+	DuplicateHandle( GetCurrentProcess(), hStdOutRead,
+				GetCurrentProcess(), NULL,
+				0, FALSE, DUPLICATE_SAME_ACCESS );
+
+	//CreateProcessに渡すSTARTUPINFOを作成
+	STARTUPINFO	sui;
+	ZeroMemory( &sui, sizeof(STARTUPINFO) );
+	sui.cb          = sizeof(STARTUPINFO);
+	sui.dwFlags     = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+	sui.wShowWindow = SW_HIDE;
+	sui.hStdInput   = GetStdHandle( STD_INPUT_HANDLE );
+	sui.hStdOutput  = hStdOutWrite;
+	sui.hStdError   = hStdOutWrite;
+
+	//	To Here Dec. 28, 2002 MIK
+
+	//OSバージョン取得
+	COsVersionInfo cOsVer;
+	//コマンドライン文字列作成(MAX:1024)
+	if (cOsVer.IsWin32NT())
+	{
+		wsprintf( cmdline, "cmd.exe /C \"\"%s\\%s\" %s\"",
+				szExeFolder,	//sakura.exeパス
+				CTAGS_COMMAND,	//ctags.exe
+				CTAGS_OPTIONS	//ctagsオプション
+			);
+	}
+	else
+	{
+		wsprintf( cmdline, "command.com /C \"%s\\%s\" %s",
+				szExeFolder,	//sakura.exeパス
+				CTAGS_COMMAND,	//ctags.exe
+				CTAGS_OPTIONS	//ctagsオプション
+			);
+	}
+
+	//コマンドライン実行
+	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
+			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
+	{
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			"タグ作成コマンド実行は失敗しました。\n\n%s", cmdline );
+		goto finish;
+	}
+
+	{
+		DWORD	read_cnt;
+		DWORD	new_cnt;
+		char	work[1024];
+		bool	bLoopFlag = true;
+
+		//中断ダイアログ表示
+		HWND	hwndCancel;
+		HWND	hwndMsg;
+		hwndCancel = cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
+		hwndMsg = ::GetDlgItem( hwndCancel, IDC_STATIC_CMD );
+		::SendMessage( hwndMsg, WM_SETTEXT, 0, (LPARAM)"タグファイルを作成中です。" );
+
+		//実行結果の取り込み
+		do {
+			//処理中のユーザー操作を可能にする
+			if( !::BlockingHook( cDlgCancel.m_hWnd ) )
+			{
+				break;
+			}
+
+			//中断ボタン押下チェック
+			if( cDlgCancel.IsCanceled() )
+			{
+				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
+				::TerminateProcess( pi.hProcess, 0 );
+				break;
+			}
+
+			//プロセスが終了していないか確認
+			if( WaitForSingleObject( pi.hProcess, 0 ) == WAIT_OBJECT_0 )
+			{
+				//終了していればループフラグをFALSEとする
+				//ただしループの終了条件は プロセス終了 && パイプが空
+				bLoopFlag = FALSE;
+			}
+
+			new_cnt = 0;
+			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) )	//パイプの中の読み出し待機中の文字数を取得
+			{
+				if( new_cnt > 0 )												//待機中のものがある
+				{
+					if( new_cnt >= sizeof(work) - 2 )							//パイプから読み出す量を調整
+					{
+						new_cnt = sizeof(work) - 2;
+					}
+					ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					if( read_cnt == 0 )
+					{
+						continue;
+					}
+				}
+			}
+			Sleep(0);
+		} while( bLoopFlag || new_cnt > 0 );
+
+	}
+
+
+finish:
+	//終了処理
+	CloseHandle( hStdOutWrite );
+	CloseHandle( hStdOutRead  );
+	if( pi.hProcess ) CloseHandle( pi.hProcess );
+	if( pi.hThread  ) CloseHandle( pi.hThread  );
+
+	cDlgCancel.CloseDialog( TRUE );
+	::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+		"タグファイルの作成が終了しました。" );
+
+	return true;
 }
 
 
@@ -7451,9 +7832,18 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
+		int save_nSelectColmFrom;
+		int save_nSelectLineFrom;
+		int save_nSelectColmTo  ;
+		int save_nSelectLineTo  ;
+
 		// From Here 2001.12.03 hor
 		int colTmp, linTmp;
 		if(nReplaceTarget==1){	//挿入位置へ移動
+			save_nSelectColmFrom = m_nSelectColmFrom;
+			save_nSelectLineFrom = m_nSelectLineFrom;
+			save_nSelectColmTo   = m_nSelectColmTo;
+			save_nSelectLineTo   = m_nSelectLineTo;
 			colTmp = m_nSelectColmTo - m_nSelectColmFrom;
 			linTmp = m_nSelectLineTo - m_nSelectLineFrom;
 			m_nSelectColmFrom=-1;
@@ -7479,12 +7869,23 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					m_nSelectLineTo++;
 				}
 			}
+			save_nSelectColmFrom = m_nSelectColmFrom;
+			save_nSelectLineFrom = m_nSelectLineFrom;
+			save_nSelectColmTo   = m_nSelectColmTo;
+			save_nSelectLineTo   = m_nSelectLineTo;
 			m_nCaretPosX = m_nSelectColmTo;
 			m_nCaretPosY = m_nSelectLineTo;
 			m_nSelectColmFrom=-1;
 			m_nSelectLineFrom=-1;
 			m_nSelectColmTo	 =-1;
 			m_nSelectLineTo	 =-1;
+		}
+		else
+		{
+			save_nSelectColmFrom = m_nSelectColmFrom;
+			save_nSelectLineFrom = m_nSelectLineFrom;
+			save_nSelectColmTo   = m_nSelectColmTo;
+			save_nSelectLineTo   = m_nSelectLineTo;
 		}
 		/* コマンドコードによる処理振り分け */
 		/* テキストを貼り付け */
@@ -7503,9 +7904,22 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					return;	//	失敗return;
 				}
 
+#define	SWAP_VAR(a,b)	{ int x; x = a; a = b; b = x; }
+				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
+				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
+				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
+				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
+
 				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
 					::MessageBeep( MB_ICONHAND );
 				}
+
+				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
+				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
+				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
+				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
+#undef	SWAP_VAR
+
 				// 変換後の文字列を別の引数にしました 2002.01.26 hor
 				if( cRegexp.Replace( m_pShareData->m_szSEARCHKEYArr[0], m_pShareData->m_szREPLACEKEYArr[0], cmemory.GetPtr(), cmemory.GetLength(),&RegRepOut, nFlag) ){ // 2002/2/10 aroka CMemory変更
 				//	HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
@@ -9592,6 +10006,7 @@ void CEditView::Command_EXECCOMMAND( const char *cmd_string )
 
 void CEditView::AddToCmdArr( const char* szCmd )
 {
+/*
 //	CMemory*	pcmWork;
 	int			i;
 	int			j;
@@ -9619,6 +10034,13 @@ void CEditView::AddToCmdArr( const char* szCmd )
 	strcpy( m_pShareData->m_szCmdArr[0], szCmd );
 //	delete pcmWork;
 //	pcmWork = NULL;
+*/
+	CRecent	cRecentCmd;
+
+	cRecentCmd.EasyCreate( RECENT_FOR_CMD );
+	cRecentCmd.AppendItem( szCmd );
+	cRecentCmd.Terminate();
+
 	return;
 }
 

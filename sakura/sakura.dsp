@@ -149,6 +149,10 @@ SOURCE=..\sakura_core\CDlgExec.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgFavorite.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgFileUpdateQuery.cpp
 # End Source File
 # Begin Source File
@@ -190,6 +194,10 @@ SOURCE=..\sakura_core\CDlgProperty.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgReplace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgTagJumpList.cpp
 # End Source File
 # Begin Source File
 
@@ -477,6 +485,10 @@ SOURCE=..\sakura_core\CPropTypesRegex.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CRecent.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CRegexKeyword.cpp
 # End Source File
 # Begin Source File
@@ -617,6 +629,10 @@ SOURCE=..\sakura_core\CDlgExec.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgFavorite.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgFileUpdateQuery.h
 # End Source File
 # Begin Source File
@@ -658,6 +674,10 @@ SOURCE=..\sakura_core\CDlgProperty.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgReplace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgTagJumpList.h
 # End Source File
 # Begin Source File
 
@@ -854,6 +874,10 @@ SOURCE=..\sakura_core\CPropCommon.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CPropTypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecent.h
 # End Source File
 # Begin Source File
 

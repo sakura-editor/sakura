@@ -471,6 +471,8 @@ struct Common {
 	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
 	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
 
+//	int					m_nTagDepth;	//ダイレクトタグジャンプ階層
+
 }; /* Common */
 
 //! 共有データ領域
@@ -498,23 +500,29 @@ struct DLLSHAREDATA {
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;
 	FileInfo			m_fiMRUArr[MAX_MRU];
+	bool				m_bMRUArrFavorite[MAX_MRU];	//お気に入り	//@@@ 2003.04.08 MIK
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUFolderを経由してください。
 	int					m_nOPENFOLDERArrNum;
 	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
+	bool				m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
 	int					m_nTransformFileNameArrNum;
 	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
-	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//お気に入り	//@@@ 2003.04.08 MIK
 
 	int					m_nSEARCHKEYArrNum;
 	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
+//	bool				m_bSEARCHKEYArrFavorite[MAX_SEARCHKEY];	//お気に入り	//@@@ 2003.04.08 MIK
 	int					m_nREPLACEKEYArrNum;
 	char				m_szREPLACEKEYArr[MAX_REPLACEKEY][_MAX_PATH];
+//	bool				m_bREPLACEKEYArrFavorite[MAX_REPLACEKEY];	//お気に入り	//@@@ 2003.04.08 MIK
 	int					m_nGREPFILEArrNum;
 	char				m_szGREPFILEArr[MAX_GREPFILE][_MAX_PATH];
+//	bool				m_bGREPFILEArrFavorite[MAX_GREPFILE];	//お気に入り	//@@@ 2003.04.08 MIK
 	int					m_nGREPFOLDERArrNum;
 	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
+//	bool				m_bGREPFOLDERArrFavorite[MAX_GREPFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
 	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
 	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
@@ -525,6 +533,7 @@ struct DLLSHAREDATA {
 //	MRU_ExtCmd			m_MRU_ExtCmd;	/* MRU 外部コマンド */
 	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
 	int					m_nCmdArrNum;
+//	bool				m_bCmdArrFavorite[MAX_CMDARR];	//お気に入り	//@@@ 2003.04.08 MIK
 
 
 	/**** 共通設定 ****/

@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -60,7 +61,8 @@ public:
 	||  Attributes & Operations
 	*/
 	void ResetContents( void );
-	void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE );	/* メニュー項目を追加 */
+	//void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE );	/* メニュー項目を追加 */
+	void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE, int = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK
 	int MeasureItem( int, int* );	/* メニューアイテムの描画サイズを計算 */
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	int Find( int nFuncID );

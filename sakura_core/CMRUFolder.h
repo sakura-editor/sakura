@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 1998-2001, YAZAKI
+	Copyright (C) 2003, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,6 +34,7 @@ class CMRUFolder;
 #define _CMRUFOLDER_H_
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include "CRecent.h"
 
 enum MRUFolder_maxdata{
 	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
@@ -62,6 +64,9 @@ protected:
 
 	//	共有メモリアクセス用。
 	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
+
+private:
+	CRecent	m_cRecent;	//お気に入り	//@@@ 2003.04.08 MIK
 };
 
 #endif

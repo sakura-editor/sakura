@@ -675,6 +675,9 @@ void ReplaceData_CEditView(
 // To Here 2001.12.03 hor
 	bool Command_TAGJUMP( void/*BOOL*/ );				/* タグジャンプ機能 */
 	void/*BOOL*/ Command_TAGJUMPBACK( void/*BOOL*/ );	/* タグジャンプバック機能 */
+	bool Command_TagJumpByTagsFile( void );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
+	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn );	//@@@ 2003.04.13 MIK
+	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_Diff_Dialog( void );					/* DIFF差分表示ダイアログ */	//@@@ 2002.05.25 MIK
 	void Command_Diff( const char*, const char*, int );	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
@@ -703,6 +706,7 @@ void ReplaceData_CEditView(
 	void Command_OPTION( void );			/* 共通設定 */
 	void Command_FONT( void );				/* フォント設定 */
 	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	void Command_Favorite( void );	//お気に入り	//@@@ 2003.04.08 MIK
 
 	/* マクロ系 */
 	void Command_RECKEYMACRO( void );	/* キーマクロの記録開始／終了 */
@@ -765,7 +769,7 @@ void ReplaceData_CEditView(
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
 
 	void AnalyzeDiffInfo( char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-//	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
+	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
 
 // 2002/07/22 novice
 	void ShowCaret_( HWND hwnd );

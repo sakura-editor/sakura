@@ -148,6 +148,9 @@
 #define HLP000064	64 //アウトライン解析
 #define HLP000065	65 //タグジャンプ
 #define HLP000066	66 //タグジャンプバック
+#define HLP000278	278 //タグジャンプ一覧
+#define HLP000280	280 //タグファイルの作成
+#define HLP000281	281 //ダイレクトタグジャンプ
 #define HLP000111	111 //入力補完
 #define HLP000116	116 //ファイル内容比較
 #define HLP000183	183 //対括弧の検索
@@ -181,7 +184,8 @@
 #define HLP000086	86 //共通設定 『強調キーワード』プロパティ
 #define HLP000088	88 //共通設定 『支援』プロパティ
 #define HLP000201	201 //共通設定 『マクロ』プロパティ
-#define HLP000266	266 //共通設定『ファイル名表示』タブ
+#define HLP000277	277 //共通設定『ファイル名表示』タブ
+#define HLP000279	279 //お気に入りの設定
 #define HLP000071	71 //フォント設定
 #define HLP000184	184 //現在のウィンドウ幅で折り返し
 #define HLP000125	125 //キーマクロの記録開始／終了
@@ -227,15 +231,24 @@
 #define HLP000109	109 //コマンドラインオプション
 //#define HLP000155	155 //色設定ファイルの仕様について
 #define HLP000204	204 //マクロについて
+#define HLP000266	266 //拡張子
+#define HLP000267	267 //キーボードマクロ
+#define HLP000268	268 //PPA/WSH専用マクロ関数
+#define HLP000269	269 //WSHマクロ
+#define HLP000270	270 //記載例
+#define HLP000271	271 //文字コードセットのエンコードについて
+#define HLP000272	272 //メタ文字列の仕様
 
 #define HLP000217	217 //選択
 #define HLP000218	218 //再変換
 #define HLP000219	219 //折り返し位置に改行をつけてコピー
-#define HLP000233	233 //範囲選択開始	
+#define HLP000233	233 //範囲選択開始
 #define HLP000234	234 //（選択）カーソル上移動（2行ごと）
 #define HLP000235	235 //（選択）カーソル下移動（2行ごと）
 #define HLP000236	236 //（選択）単語の左端に移動
 #define HLP000237	237 //（選択）単語の右端に移動
+#define HLP000273	273 //（選択）前の段落に移動
+#define HLP000274	274 //（選択）次の段落に移動
 #define HLP000238	238 //（選択）行頭に移動（折り返し単位）
 #define HLP000239	239 //（選択）行末に移動（折り返し単位）
 #define HLP000240	240 //（選択）1ページアップ
@@ -247,6 +260,8 @@
 #define HLP000246	246 //半ページダウン
 #define HLP000247	247 //（選択）半ページアップ
 #define HLP000248	248 //（選択）半ページダウン
+#define HLP000275	275 //開く（ドロップダウン）
+#define HLP000276	276 //検索（ボックス）
 #define HLP000249	249 //読み取り専用
 #define HLP000250	250 //単語について
 #define HLP000251	251	//DIFF差分表示
@@ -343,7 +358,7 @@
 //#define HIDC_BUTTON_KEYWORDHELPFILE_REF			10601 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_BUTTON_OPENHELP1					10602 //外部ヘルプファイル参照
 #define HIDC_BUTTON_OPENEXTHTMLHELP				10603 //外部HTMLファイル参照
-#define HIDC_BUTTON_KEYWORDHELPFONT				11604 //キーワードヘルプのフォント
+#define HIDC_BUTTON_KEYWORDHELPFONT				11611 //キーワードヘルプのフォント	//重複回避
 #define HIDC_CHECK_USEHOKAN						10610 //逐次入力補完
 //#define HIDC_CHECK_HOKANLOHICASE				10611 //入力補完の英大文字小文字			//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_CHECK_m_bHokanKey_RETURN			10612 //候補決定キー（Enter）
@@ -708,5 +723,26 @@
 #define HIDC_BUTTON_FNAME_DOWN		13409	// 下へ
 #define HIDC_BUTTON_FNAME_LAST		13410	// 最終
 //#define HIDC_CHECK_FNAME,	13411	// ファイル名を簡易表示する
+
+//お気に入りの設定	//@@@ 2003.04.08 MIK
+//#define	HIDC_FAVORITE_DIALOG		13500	//ダイアログ用
+#define	HIDC_FAVORITE_IDOK			13501
+#define	HIDC_FAVORITE_IDCANCEL		13502
+#define	HIDC_BUTTON_FAVORITE_HELP	13503
+#define	HIDC_TAB_FAVORITE			13510
+#define	HIDC_LIST_FAVORITE_FILE		13511
+#define	HIDC_LIST_FAVORITE_FOLDER	13512
+#define	HIDC_LIST_FAVORITE_SEARCH	13513
+#define	HIDC_LIST_FAVORITE_REPLACE	13514
+#define	HIDC_LIST_FAVORITE_GREPFILE	13515
+#define	HIDC_LIST_FAVORITE_GREPFOLDER	13516
+#define	HIDC_LIST_FAVORITE_CMD		13517
+
+//タグジャンプリスト
+#define	HIDC_LIST_TAGJUMPLIST		13600
+#define	HIDC_TAGJUMPLIST_IDOK		13601
+#define	HIDC_TAGJUMPLIST_IDCANCEL	13602
+#define	HIDC_BUTTON_TAGJUMPLIST_HELP	13603
+
 
 #define HIDC_STATIC								19999 //不明

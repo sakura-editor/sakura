@@ -2119,6 +2119,9 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_OUTLINE:				return HLP000064;	//アウトライン解析
 	case F_TAGJUMP:				return HLP000065;	//タグジャンプ機能
 	case F_TAGJUMPBACK:			return HLP000066;	//タグジャンプバック機能
+	case F_TAGS_MAKE:			return HLP000280;	//タグファイルの作成	//@@@ 2003.04.13 MIK
+	case F_TAGJUMP_LIST:		return HLP000281;	//タグジャンプ一覧	//@@@ 2003.04.17 MIK
+	case F_DIRECT_TAGJUMP:		return HLP000281;	//ダイレクトタグジャンプ	//@@@ 2003.04.17 MIK
 	case F_COMPARE:				return HLP000116;	//ファイル内容比較
 	case F_DIFF_DIALOG:			return HLP000251;	//DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
 //	case F_DIFF:				return HLP000251;	//DIFF差分表示	//@@@ 2002.05.25 MIK
@@ -2164,10 +2167,10 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_OPTION_HELPER:	return HLP000088;	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
 	case F_OPTION_MACRO:	return HLP000201;	/* 共通設定『マクロ』 */	//@@@ 2002.01.02
-	case F_OPTION_FNAME:	return HLP000266;	/* 共通設定 『全般』プロパティ */	// 2002.12.09 Moca Add
+	case F_OPTION_FNAME:	return HLP000277;	/* 共通設定 『全般』プロパティ */	// 2002.12.09 Moca Add	//重複回避
 	case F_FONT:			return HLP000071;	/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正
-
+	case F_FAVORITE:		return HLP000279;	/* お気に入りの設定 */	//@@@ 2003.04.08 MIK
 
 	/* マクロ */
 	case F_RECKEYMACRO:		return HLP000125;	/* キーマクロ記録開始／終了 */

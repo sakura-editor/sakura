@@ -9,6 +9,7 @@
 #define HIDC_BUTTON_ASSIGN              0x93f304fa    // IDD_PROP_KEYBIND
 #define HIDC_BUTTON_BACKCOLOR           0x93f20424    // IDD_PROP_COLOR
 #define HIDC_BUTTON_BACKUP_FOLDER_REF   0x93f8043f    // IDD_PROP_BACKUP
+#define HIDC_BUTTON_CLEAR               0x80e305b9    // IDD_FAVORITE
 #define HIDC_BUTTON_CLEAR_MRU_FILE      0x806b04a3    // IDD_PROP1P1
 #define HIDC_BUTTON_CLEAR_MRU_FOLDER    0x806b03f8    // IDD_PROP1P1
 #define HIDC_BUTTON_CONTACT             0x807304b7    // IDD_ABOUT
@@ -266,6 +267,13 @@
 #define HIDC_LIST_COLORS                0x93f204bb    // IDD_PROP_COLOR
 #define HIDC_LIST_CTRLCODE              0x93fc059e    // IDD_CTRLCODE
 #define HIDC_LIST_DIFF_FILES            0x93fb059d    // IDD_DIFF
+#define HIDC_LIST_FAVORITE_CMD          0x80e305b8    // IDD_FAVORITE
+#define HIDC_LIST_FAVORITE_FILE         0x80e305b2    // IDD_FAVORITE
+#define HIDC_LIST_FAVORITE_FOLDER       0x80e305b3    // IDD_FAVORITE
+#define HIDC_LIST_FAVORITE_GREP_FILE    0x80e305b4    // IDD_FAVORITE
+#define HIDC_LIST_FAVORITE_GREP_FOLDER  0x80e305b5    // IDD_FAVORITE
+#define HIDC_LIST_FAVORITE_REPLACE      0x80e305b6    // IDD_FAVORITE
+#define HIDC_LIST_FAVORITE_SEARCH       0x80e305b7    // IDD_FAVORITE
 #define HIDC_LIST_FILES                 0x80a804c7    // IDD_COMPARE
 #define HIDC_LIST_FUNC                  0x93ef0458    // IDD_PROP_CUSTMENU
 #define HIDC_LIST_KEY                   0x93f3045a    // IDD_PROP_KEYBIND
@@ -330,6 +338,7 @@
 #define HIDC_STATIC_DIFF_SRC            0x93fb0594    // IDD_DIFF
 #define HIDC_STATIC_JRE32VER            0x806d0429    // IDD_FIND
 #define HIDC_STATIC_MSG                 0x809a046a    // IDD_INPUT1
+#define HIDC_TAB_FAVORITE               0x80e305b1    // IDD_FAVORITE
 #define HIDC_TREE1                      0x807a0474    // IDD_FUNCLIST
 #define HIDOK                           0x80730001    // IDD_ABOUT
 #define HIDOK2                          0x80a80003    // IDD_COMPARE

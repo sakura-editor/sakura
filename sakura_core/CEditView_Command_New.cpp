@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, asa-o, hor
 	Copyright (C) 2002, YAZAKI, hor, genta. aroka, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -30,6 +31,7 @@
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
+#include "CDlgFavorite.h"	//お気に入り	//@@@ 2003.04.08 MIK
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -2751,6 +2753,23 @@ void CEditView::Command_JUMP_SRCHSTARTPOS(void)
 //		SendStatusMessage( "検索開始位置がありません" );
 		::MessageBeep( MB_ICONHAND );
 	}
+	return;
+}
+
+/*!	お気に入りの設定(ダイアログ)
+	@author	MIK
+	@date	2003/04/07
+*/
+void CEditView::Command_Favorite( void )
+{
+	CDlgFavorite	cDlgFavorite;
+
+	//ダイアログを表示する
+	if( FALSE == cDlgFavorite.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc ) )
+	{
+		return;
+	}
+
 	return;
 }
 

@@ -132,6 +132,21 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			strcat( szKeyName, "szMark" );
 			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
 				(char*)/*&*/pfiWork->m_szMarkLines, sizeof( pfiWork->m_szMarkLines ));
+			
+			//お気に入り	//@@@ 2003.04.08 MIK
+			strcpy( szKeyName, szKeyNameTop );
+			strcat( szKeyName, "bFavorite" );
+			int nFavorite = (int)false;
+			if( bRead )
+			{
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&nFavorite, 0 );
+				m_pShareData->m_bMRUArrFavorite[i] = nFavorite ? true : false;
+			}
+			else
+			{
+				nFavorite = (int)m_pShareData->m_bMRUArrFavorite[i];
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&nFavorite, 0 );
+			}
 		}
 		//@@@ 2001.12.26 YAZAKI 残りのm_fiMRUArrを初期化。
 		if ( bRead ){
@@ -145,6 +160,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			strcpy( fiInit.m_szMarkLines, "" );	// 2002.01.16 hor
 			for( ; i < MAX_MRU; ++i){
 				m_pShareData->m_fiMRUArr[i] = fiInit;
+				m_pShareData->m_bMRUArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 			}
 		}
 
@@ -155,10 +171,25 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
 				(char*)/*&*/m_pShareData->m_szOPENFOLDERArr[i],
 				sizeof( m_pShareData->m_szOPENFOLDERArr[0] ));
+
+			//お気に入り	//@@@ 2003.04.08 MIK
+			strcat( szKeyName, ".bFavorite" );
+			int nFavorite = (int)false;
+			if( bRead )
+			{
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&nFavorite, 0 );
+				m_pShareData->m_bOPENFOLDERArrFavorite[i] = nFavorite ? true : false;
+			}
+			else
+			{
+				nFavorite = (int)m_pShareData->m_bOPENFOLDERArrFavorite[i];
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&nFavorite, 0 );
+			}
 		}
 		if ( bRead ){
 			for (; i< MAX_OPENFOLDER; ++i){
 				strcpy( m_pShareData->m_szOPENFOLDERArr[i], "" );
+				m_pShareData->m_bOPENFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 			}
 		}
 	}//	MRU
