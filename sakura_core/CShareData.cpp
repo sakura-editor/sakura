@@ -1100,8 +1100,12 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		};
 		static char* pszTypeExts[] = {
 			"",
-			"txt,doc,1st,err,ps",	//Nov. 15, 2000 JEPRO PostScriptファイルも読めるようにする //Jan. 12, 2001 JEPRO readme.1st も読めるようにする //Feb. 12, 2001 JEPRO .err エラーメッセージ
-//			"c,cpp,cxx,h",
+			//Nov. 15, 2000 JEPRO PostScriptファイルも読めるようにする
+			//Jan. 12, 2001 JEPRO readme.1st も読めるようにする
+			//Feb. 12, 2001 JEPRO .err エラーメッセージ
+			//Nov.  6, 2002 genta docはMS Wordに譲ってここからは外す（関連づけ防止のため）
+			//Nov.  6, 2002 genta log を追加
+			"txt,log,1st,err,ps",
 			"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,dsw,dsp,dep,mak,hm",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
 				//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
 //			"html,htm,shtml",
