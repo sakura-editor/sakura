@@ -24,16 +24,6 @@ class CDocLine;
 #include "CEOL.h"
 #include "CMemory.h"
 
-#ifndef TRUE
-	#define TRUE 1
-#endif
-#ifndef FALSE
-	#define FALSE 0
-#endif
-
-#ifndef NULL
-	#define NULL 0
-#endif
 
 //@@@ 2002.05.25 MIK
 #define	MARK_DIFF_APPEND	1	//’Ç‰Á

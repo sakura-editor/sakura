@@ -286,6 +286,23 @@ SAKURA_CORE_API extern const char* const colorIDXKeyName[];
 #define IDC_SPIN_nRulerHeight_MIN	2
 #define IDC_SPIN_nRulerHeight_MAX	32
 
+// novice 2002/09/14
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef NULL
+#define NULL 0
+#endif
+
+#ifndef BOOL
+#define BOOL	int
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */
 

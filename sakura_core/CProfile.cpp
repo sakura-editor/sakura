@@ -19,9 +19,6 @@
 #include "CMemory.h" // 2002/2/3 aroka
 #include "CEol.h" // 2002/2/3 aroka
 
-#ifndef CRLF
-	#define CRLF			"\015\012"
-#endif
 
 CProfile::CProfile()
 {

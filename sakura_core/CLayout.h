@@ -19,16 +19,6 @@ class CLayout;
 #define _CLAYOUT_H_
 
 
-#ifndef TRUE
-	#define TRUE 1
-#endif
-#ifndef FALSE
-	#define FALSE 0
-#endif
-
-#ifndef NULL
-	#define NULL 0
-#endif
 
 //#include "CDocLine.h"
 #include "CEol.h"// 2002/2/10 aroka

@@ -35,16 +35,7 @@ class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 
-#ifndef TRUE
-	#define TRUE 1
-#endif
-#ifndef FALSE
-	#define FALSE 0
-#endif
 
-#ifndef NULL
-	#define NULL 0
-#endif
 
 
 struct LayoutReplaceArg {
