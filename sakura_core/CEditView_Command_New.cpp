@@ -28,6 +28,7 @@
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
+#include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -866,9 +867,6 @@ void CEditView::Command_UNDO( void )
 				pcMem = new CMemory;
 
 				/* 選択範囲の変更 */
-//				m_nSelectLineBgn = pcOpe->m_nCaretPosY_Before;	/* 範囲選択開始行(原点) */
-//				m_nSelectColmBgn = pcOpe->m_nCaretPosX_Before;	/* 範囲選択開始桁(原点) */
-
 				m_nSelectLineBgnFrom = nCaretPosY_Before;	/* 範囲選択開始行(原点) */
 				m_nSelectColmBgnFrom = nCaretPosX_Before;	/* 範囲選択開始桁(原点) */
 				m_nSelectLineBgnTo = m_nSelectLineBgnFrom;		/* 範囲選択開始行(原点) */
@@ -901,8 +899,6 @@ void CEditView::Command_UNDO( void )
 
 
 				/* 選択範囲の変更 */
-//				m_nSelectLineBgn = -1;	/* 範囲選択開始行(原点) */
-//				m_nSelectColmBgn = -1;	/* 範囲選択開始桁(原点) */
 				m_nSelectLineBgnFrom = -1;	/* 範囲選択開始行(原点) */
 				m_nSelectColmBgnFrom = -1;	/* 範囲選択開始桁(原点) */
 				m_nSelectLineBgnTo = -1;	/* 範囲選択開始行(原点) */
@@ -1960,7 +1956,7 @@ void CEditView::Command_WndScrollDown( void )
 	nCaretMarginY += 2;
 
 	if( m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - (nCaretMarginY + 1) ){
-		CaretUnderLineOFF( TRUE );
+		m_cUnderLine.CaretUnderLineOFF( TRUE );
 	}
 
 	ScrollAtV(m_nViewTopLine - 1);
@@ -1988,7 +1984,7 @@ void CEditView::Command_WndScrollDown( void )
 		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
 
-	CaretUnderLineON( TRUE );
+	m_cUnderLine.CaretUnderLineON( TRUE );
 }
 
 // テキストを１行上へスクロール
@@ -2001,7 +1997,7 @@ void CEditView::Command_WndScrollUp(void)
 		nCaretMarginY = 1;
 
 	if( m_nCaretPosY < m_nViewTopLine + (nCaretMarginY + 1) ){
-		CaretUnderLineOFF( TRUE );
+		m_cUnderLine.CaretUnderLineOFF( TRUE );
 	}
 
 	ScrollAtV( m_nViewTopLine + 1 );
@@ -2025,7 +2021,7 @@ void CEditView::Command_WndScrollUp(void)
 		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
 
-	CaretUnderLineON( TRUE );
+	m_cUnderLine.CaretUnderLineON( TRUE );
 }
 
 // 2001/06/20 End

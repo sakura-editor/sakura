@@ -24,6 +24,7 @@
 #include "funccode.h"		// Stonee, 2001/03/12
 //#include "CDlgCancel.h"/// 2002/2/3 aroka	// 2002/2/8 hor コメント
 #include "CLayout.h"/// 2002/2/3 aroka
+#include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 
 //置換 CDlgReplace.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

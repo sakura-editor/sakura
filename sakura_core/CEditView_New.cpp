@@ -294,7 +294,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 	if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
 		/* アクティブペインは、アンダーライン描画 */
-		CaretUnderLineON( TRUE );
+		m_cUnderLine.CaretUnderLineON( TRUE );
 	}
 
 	/* メモリＤＣを利用した再描画の場合はメモリＤＣに描画した内容を画面へコピーする */

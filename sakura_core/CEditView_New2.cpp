@@ -707,7 +707,7 @@ void CEditView::DispRuler( HDC hdc )
 
 		/* LOGFONT‚Ì‰Šú‰» */
 		memset( &lf, 0, sizeof(LOGFONT) );
-		lf.lfHeight			= -12;
+		lf.lfHeight			= 1 - m_pShareData->m_Common.m_nRulerHeight;	//	2002/05/13 ai
 		lf.lfWidth			= 5/*0*/;
 		lf.lfEscapement		= 0;
 		lf.lfOrientation	= 0;

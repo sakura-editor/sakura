@@ -381,15 +381,7 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	m_bBeginBoxSelect = FALSE;	/* 矩形範囲選択中 */
 	m_bBeginLineSelect = FALSE;	/* 行単位選択中 */
 	m_bBeginWordSelect = FALSE;	/* 単語単位選択中 */
-//	m_nSelectLineBgn = 0;		/* 範囲選択開始行(原点) */
-//	m_nSelectColmBgn = 0;		/* 範囲選択開始桁(原点) */
-//	m_nSelectLineFrom = 0;		/* 範囲選択開始行 */
-//	m_nSelectColmFrom = 0;		/* 範囲選択開始桁 */
-//	m_nSelectLineTo = 0;		/* 範囲選択終了行 */
-//	m_nSelectColmTo = 0;		/* 範囲選択終了桁 */
 
-//	m_nSelectLineBgn = -1;		/* 範囲選択開始行(原点) */
-//	m_nSelectColmBgn = -1;		/* 範囲選択開始桁(原点) */
 	m_nSelectLineBgnFrom = -1;	/* 範囲選択開始行(原点) */
 	m_nSelectColmBgnFrom = -1;	/* 範囲選択開始桁(原点) */
 	m_nSelectLineBgnTo = -1;	/* 範囲選択開始行(原点) */
@@ -752,6 +744,8 @@ BOOL CEditView::Create(
 		);
 	}
 
+	/* アンダーライン */
+	m_cUnderLine.SetView( this );
 	return TRUE;
 }
 
@@ -2061,8 +2055,6 @@ void CEditView::TraceRgn( HRGN hrgn )
 /* 選択領域の描画 */
 void CEditView::DrawSelectArea( void )
 {
-	/* カーソル行アンダーラインのOFF */
-//	CaretUnderLineOFF( TRUE );	YAZAKI
 	if( !m_bDrawSWITCH ){
 		return;
 	}
@@ -2367,7 +2359,7 @@ void CEditView::DrawSelectAreaLine(
 //	::Rectangle( hdc, rcClip.left, rcClip.top, rcClip.right + 1, rcClip.bottom + 1 );
 	//	必要なときだけ。
 	if ( rcClip.right != rcClip.left ){
-		CaretUnderLineOFF( TRUE );	//	YAZAKI
+		m_cUnderLine.CaretUnderLineOFF( TRUE );	//	YAZAKI
 
 		HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
 		::PaintRgn( hdc, hrgnDraw );
@@ -2548,7 +2540,9 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 			ps.rcPaint.top = 0;
 			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //			OnKillFocus();
+			m_cUnderLine.Lock();
 			OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+			m_cUnderLine.UnLock();
 //			OnSetFocus();
 //			DispRuler( hdc );
 			ShowEditCaret();
@@ -2655,7 +2649,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 
 	/* カーソル行アンダーラインのOFF */
 //	if (IsTextSelected()) { //2002.02.27 Add By KK アンダーラインのちらつきを低減 - ここではテキスト選択時のみアンダーラインを消す。
-		CaretUnderLineOFF( bDraw );	//	YAZAKI
+		m_cUnderLine.CaretUnderLineOFF( bDraw );	//	YAZAKI
 //	}	2002/04/04 YAZAKI 半ページスクロール時にアンダーラインが残ったままスクロールしてしまう問題に対処。
 
 	if( m_bBeginSelect ){	/* 範囲選択中 */
@@ -2850,7 +2844,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 		DispRuler( hdc );
 
 		/* アンダーラインの再描画 */
-		CaretUnderLineON(TRUE);
+		m_cUnderLine.CaretUnderLineON(TRUE);
 
 		/* キャレットの行桁位置を表示する */
 		DrawCaretPosInfo();
@@ -3025,7 +3019,8 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 				if( nPosX + nCharChars > nNewX ){
 					//From 2002.04.05 kanju マルチバイト文字の前もしくは後にキャレット挿入
 					//マルチバイト文字かつマルチバイト文字の後半部分（奇数）なら文字の後ろにキャレットを挿入
-					if ((nCharChars == 2) && ((nPosX + nCharChars - nNewX)&1)){
+					//2002.05.13 YAZAKI 行の先頭にマルチバイト文字があったときの問題に対処。
+					if (nNewX >= 0 && (nCharChars == 2) && ((nPosX + nCharChars - nNewX)&1)){
 							nPosX += nCharChars;
 					}
 					//To 2002.04.05 kanju
@@ -3194,6 +3189,8 @@ normal_action:;
 		::HideCaret( m_hWnd );
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea( );
+		m_cUnderLine.CaretUnderLineOFF( TRUE );
+		m_cUnderLine.Lock();
 		if( xPos < m_nViewAlignLeft ){
 			/* カーソル下移動 */
 			Command_DOWN( TRUE, FALSE );
@@ -3433,8 +3430,6 @@ normal_action:;
 					DisableSelectArea( TRUE );
 
 					/* 選択範囲の変更 */
-//					m_nSelectLineBgn = nUrlLine;				/* 範囲選択開始行(原点) */
-//					m_nSelectColmBgn = nUrlIdxBgn;				/* 範囲選択開始桁(原点) */
 #if 0
 					2002/04/03 YAZAKI 不要な処理でした。
 					m_nSelectLineBgnFrom = nUrlLine;			/* 範囲選択開始行(原点) */
@@ -4056,9 +4051,6 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 /* 現在のカーソル位置から選択を開始する */
 void CEditView::BeginSelectArea( void )
 {
-//	m_nSelectLineBgn = m_nCaretPosY;	/* 範囲選択開始行(原点) */
-//	m_nSelectColmBgn = m_nCaretPosX;	/* 範囲選択開始桁(原点) */
-
 	m_nSelectLineBgnFrom = m_nCaretPosY;/* 範囲選択開始行(原点) */
 	m_nSelectColmBgnFrom = m_nCaretPosX;/* 範囲選択開始桁(原点) */
 	m_nSelectLineBgnTo = m_nCaretPosY;	/* 範囲選択開始行(原点) */
@@ -4111,7 +4103,7 @@ void CEditView::DisableSelectArea( BOOL bDraw )
 	//	To Here Dec. 6, 2000 genta
 
 	/* カーソル行アンダーラインのON */
-	CaretUnderLineON( bDraw );
+	m_cUnderLine.CaretUnderLineON( bDraw );
 	return;
 }
 
@@ -4293,6 +4285,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 				DisableSelectArea( TRUE );
 			}
 //		}
+		m_cUnderLine.UnLock();
 	}
 	return;
 }
@@ -5994,8 +5987,8 @@ void CEditView::OnChangeSetting( void )
 
 	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 		/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;									/* 表示域の上端座標 */
+
 	/* ルーラー表示 */
-//	if( m_pShareData->m_Common.m_bRulerDisp ){
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
 	}
@@ -6040,7 +6033,7 @@ void CEditView::OnChangeSetting( void )
 	/* フォントの変更 */
 	SetFont();
 
-	/* カーソル移動 */
+	/* フォントが変わっているかもしれないので、カーソル移動 */
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
 
 	/* スクロールバーの状態を更新する */
@@ -6049,7 +6042,6 @@ void CEditView::OnChangeSetting( void )
 	/* ウィンドウサイズの変更処理 */
 	::GetClientRect( m_hWnd, &rc );
 	OnSize( rc.right, rc.bottom );
-
 
 	/* 再描画 */
 	::InvalidateRect( m_hWnd, NULL, TRUE );
@@ -6146,8 +6138,6 @@ void CEditView::CopyViewStatus( CEditView* pView )
 	pView->m_bBeginSelect			= m_bBeginSelect;		/* 範囲選択中 */
 	pView->m_bBeginBoxSelect		= m_bBeginBoxSelect;	/* 矩形範囲選択中 */
 
-//	pView->m_nSelectLineBgn			= m_nSelectLineBgn;		/* 範囲選択開始行(原点) */
-//	pView->m_nSelectColmBgn			= m_nSelectColmBgn;		/* 範囲選択開始桁(原点) */
 	pView->m_nSelectLineBgnFrom		= m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
 	pView->m_nSelectColmBgnFrom		= m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
 	pView->m_nSelectLineBgnTo		= m_nSelectLineBgnTo;	/* 範囲選択開始行(原点) */
@@ -6599,7 +6589,7 @@ DWORD CEditView::DoGrep(
 	m_bDrawSWITCH = TRUE;
 
 	/* フォーカス移動時の再描画 */
-//	RedrawAll();
+	RedrawAll();
 
 	return nHitCount;
 }
@@ -7859,8 +7849,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 					MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
 				}else{
 					bBeginBoxSelect_Old = m_bBeginBoxSelect;
-//					nSelectLineBgn_Old	= m_nSelectLineBgn;			/* 範囲選択開始行(原点) */
-//					nSelectColBgn_Old	= m_nSelectColmBgn;			/* 範囲選択開始桁(原点) */
 
 					nSelectLineBgnFrom_Old	= m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
 					nSelectColBgnFrom_Old	= m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
@@ -7899,8 +7887,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				}else{
 					/* 移動モード & 後ろに移動*/
 					m_bBeginBoxSelect = bBeginBoxSelect_Old;
-//					m_nSelectLineBgn = nSelectLineBgn_Old;			/* 範囲選択開始行(原点) */
-//					m_nSelectColmBgn = nSelectColBgn_Old;			/* 範囲選択開始桁(原点) */
 					m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
 					m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
 					m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
@@ -7996,9 +7982,6 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen );
 				nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
 				/* 選択範囲の変更 */
-//				m_nSelectLineBgn = nLineFrom;		/* 範囲選択開始行(原点) */
-//				m_nSelectColmBgn = nColmFrom;		/* 範囲選択開始桁(原点) */
-
 				m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
 				m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
 				m_nSelectLineBgnTo = nLineTo;		/* 範囲選択開始行(原点) */
@@ -8033,6 +8016,22 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 
 }
 
+
+/* カーソル行アンダーラインのON */
+void CCaretUnderLine::CaretUnderLineON( BOOL bDraw )
+{
+	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
+	m_pcEditView->CaretUnderLineON( bDraw );
+}
+
+
+
+/* カーソル行アンダーラインのOFF */
+void CCaretUnderLine::CaretUnderLineOFF( BOOL bDraw )
+{
+	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
+	m_pcEditView->CaretUnderLineOFF( bDraw );
+}
 
 
 /* カーソル行アンダーラインのON */
@@ -8103,17 +8102,32 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 		){
 //			MYTRACE( "★カーソル行アンダーラインの消去\n" );
 			/* カーソル行アンダーラインの消去（無理やり） */
-			m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp = FALSE;
+#if 1
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = m_nViewAlignLeft;
 			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 			ps.rcPaint.top = m_nOldUnderLineY;
 			ps.rcPaint.bottom = m_nOldUnderLineY;
 			HDC hdc = ::GetDC( m_hWnd );
+			m_cUnderLine.Lock();
+			//	不本意ながら選択情報をバックアップ。
+			int nSelectLineFrom = m_nSelectLineFrom;
+			int nSelectLineTo = m_nSelectLineTo;
+			int nSelectColmFrom = m_nSelectColmFrom;
+			int nSelectColmTo = m_nSelectColmTo;
+			m_nSelectLineFrom = -1;
+			m_nSelectLineTo = -1;
+			m_nSelectColmFrom = -1;
+			m_nSelectColmTo = -1;
 			OnPaint( hdc, &ps, FALSE );
+			//	選択情報を復元
+			m_nSelectLineFrom = nSelectLineFrom;
+			m_nSelectLineTo = nSelectLineTo;
+			m_nSelectColmFrom = nSelectColmFrom;
+			m_nSelectColmTo = nSelectColmTo;
+			m_cUnderLine.UnLock();
 			ReleaseDC( m_hWnd, hdc );
-			m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp = TRUE;
-#if 0
+#else
 			HDC		hdc;
 			HPEN	hPen, hPenOld;
 			hdc = ::GetDC( m_hWnd );

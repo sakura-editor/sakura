@@ -13,8 +13,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CEditDoc;
-
 #ifndef _CEDITDOC_H_
 #define _CEDITDOC_H_
 
