@@ -482,19 +482,17 @@
 #define IDD_OPERATIONRUNNING            5113
 #define IDD_PROP_KEYBIND1               5114
 #define IDD_PROPTYPESP2                 5114
+#define IDS_STRING30815                 30815
 #define IDS_STRING31581                 31581
 #define IDC_EXECINFO                    -1
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        218
+#define _APS_NEXT_RESOURCE_VALUE        219
 #define _APS_NEXT_COMMAND_VALUE         4072
 #define _APS_NEXT_CONTROL_VALUE         1401
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
-
-
-/*[EOF]*/

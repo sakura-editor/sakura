@@ -358,6 +358,7 @@ BOOL CEditView::HandleCommand(
 	case F_TOLOWER:					Command_TOLOWER();break;				/* 英大文字→英小文字 */
 	case F_TOUPPER:					Command_TOUPPER();break;				/* 英小文字→英大文字 */
 	case F_TOHANKAKU:				Command_TOHANKAKU();break;				/* 全角→半角 */
+	case F_TOZENEI:					Command_TOZENEI();break;				/* 全角→半角 */					//July. 30, 2001 Misaka
 	case F_TOZENKAKUKATA:			Command_TOZENKAKUKATA();break;			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			Command_TOZENKAKUHIRA();break;			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA:	Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
@@ -4596,6 +4597,15 @@ void CEditView::Command_TOHANKAKU( void )
 	return;
 }
 
+
+
+/*! 半角英数→全角英数 */			//July. 30, 2001 Misaka
+void CEditView::Command_TOZENEI( void )
+{
+	/* 選択エリアのテキストを指定方法で変換 */
+	ConvSelectedArea( F_TOZENEI );
+	return;
+}
 
 
 

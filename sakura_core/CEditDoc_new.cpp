@@ -488,6 +488,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_TOLOWER:
 	case F_TOUPPER:
 	case F_TOHANKAKU:
+	case F_TOZENEI:					// 2001/07/30 Miasaka
 	case F_TOZENKAKUKATA:
 	case F_TOZENKAKUHIRA:
 	case F_HANKATATOZENKAKUKATA:

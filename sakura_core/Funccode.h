@@ -198,6 +198,7 @@
 #define F_TOZENKAKUHIRA			30812	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 #define F_HANKATATOZENKAKUKATA	30813	/* 半角カタカナ→全角カタカナ */
 #define F_HANKATATOZENKAKUHIRA	30814	/* 半角カタカナ→全角ひらがな */
+#define F_TOZENEI				30815	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 #define F_TABTOSPACE			30830	/* TAB→空白 */
 #define F_SPACETOTAB			30831	/* 空白→TAB *///#### Stonee, 2001/05/27
 #define F_CODECNV_AUTO2SJIS		30850	/* 自動判別→SJISコード変換 */
