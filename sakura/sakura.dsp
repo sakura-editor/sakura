@@ -937,6 +937,10 @@ SOURCE=..\sakura_core\mymessage.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\OleTypes.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\sakura_rc.h
 # End Source File
 # Begin Source File
