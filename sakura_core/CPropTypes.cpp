@@ -865,8 +865,9 @@ BOOL CPropTypes::DispatchEvent_p1(
 				return TRUE;
 
 			}
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
@@ -1445,8 +1446,9 @@ BOOL CPropTypes::DispatchEvent_p2(
 				}
 				return TRUE;
 			}
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
 //		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
@@ -2163,8 +2165,9 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 			//	To Here Sept. 10, 2000
 
 			}
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
@@ -2243,8 +2246,9 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 				m_nPageNum = 1;
 				return TRUE;
 			}
+			break;	/* default */
 		}
-		break;
+		break;	/* WM_NOTIFY */
 	case WM_DRAWITEM:
 		idCtrl = (UINT) wParam;				/* コントロールのID */
 		pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報 */
@@ -2258,6 +2262,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 			return TRUE;
 		case IDC_LIST_COLORS:		/* 色種別リスト */
 			DrawColorListItem( pDis );
+			return TRUE;
 		}
 		break;
 
@@ -2590,6 +2595,8 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 //	RECT		rc0,rc1,rc2;
 	RECT		rc1;
 	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
+
+	if( pDis == NULL || pDis->itemData == NULL ) return;
 
 //	rc0 = pDis->rcItem;
 	rc1 = pDis->rcItem;

@@ -64,9 +64,11 @@ public:
 //	void JIStoSJIS( bool base64decode = false);		/* E-Mail(JIS→SJIS)コード変換 */
 	void JIStoSJIS( bool base64decode = true);		/* E-Mail(JIS→SJIS)コード変換 */	//Jul. 15, 2001 JEPRO
 	void SJISToUnicode( void );	/* SJIS→Unicodeコード変換 */
+	void SJISToUnicodeBE( void );	/* SJIS→UnicodeBEコード変換 */
 	void SJISToEUC( void );		/* SJIS→EUCコード変換 */
 	void EUCToSJIS( void );		/* EUC→SJISコード変換 */
 	void UnicodeToSJIS( void );	/* Unicode→SJISコード変換 */
+	void UnicodeBEToSJIS( void );	/* UnicodeBE→SJISコード変換 */
 	void UTF8ToSJIS( void );	/* UTF-8→SJISコード変換 */
 	void UTF7ToSJIS( void );	/* UTF-7→SJISコード変換 */
 	void SJISToUTF8( void );	/* SJIS→UTF-8コード変換 */
@@ -75,6 +77,7 @@ public:
 	void UnicodeToUTF7( void );	/* Unicode→UTF-7コード変換 */
 	void TABToSPACE( int );	/* TAB→空白 */
 	void SPACEToTAB( int );	/* 空白→TAB */  //#### Stonee, 2001/05/27
+	void SwapHLByte( void ); /* Byteを交換する */
 
 	void BASE64Decode( void );	// Base64デコード
 	void UUDECODE( char* );		/* uudecode(デコード) */
@@ -99,6 +102,8 @@ public:
 	static int CheckKanjiCode_SJIS( const unsigned char*, int, int*, int* );
 	/* 日本語コードセット判別: Unicodeか？ */
 	static int CheckKanjiCode_UNICODE( const unsigned char*, int, int*, int* );
+	/* 日本語コードセット判別: UnicodeBEか？ */
+	static int CheckKanjiCode_UNICODEBE( const unsigned char*, int, int*, int* );
 	/* 日本語コードセット判別: JISか？ */
 	static int CMemory::CheckKanjiCode_JIS( const unsigned char*, int, int*, int* );
 	/* 日本語コードセット判別: UTF-8Sか？ */
@@ -106,6 +111,9 @@ public:
 	/* 日本語コードセット判別: UTF-7Sか？ */
 	static int CheckKanjiCode_UTF7( const unsigned char*, int, int*, int* );
 	static int IsZenHiraOrKata( unsigned short );
+	/* Unicode系BOMチェック */
+	static int IsUnicodeBom( const unsigned char*, int );
+
 
 	/*
 	|| 演算子

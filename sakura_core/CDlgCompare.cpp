@@ -148,6 +148,11 @@ void CDlgCompare::SetData( void )
 				(0 < lstrlen(pfi->m_szPath))?pfi->m_szPath:"(無題)",
 				pfi->m_bIsModified ? "*":" "
 			);
+			// gm_pszCodeNameArr_3 からコピーするように変更
+			if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+				strcat( szMenu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+			}
+#if 0
 			if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
 				switch( pfi->m_nCharCode ){
 				case CODE_JIS:	/* JIS */
@@ -167,6 +172,7 @@ void CDlgCompare::SetData( void )
 					break;
 				}
 			}
+#endif
 			nItem = ::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)(char*)szMenu );
 			::SendMessage( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].m_hWnd );
 		}

@@ -25,6 +25,19 @@ class CImageListMgr;// 2002/2/10 aroka
 
 //#define MAX_MENUPOS	10
 #define MAX_MENUITEMS	300
+
+//ツールバーの拡張	//@@@ 2002.06.15 MIK
+#define TBSTYLE_COMBOBOX	((BYTE)0x40)	//ツールバーにコンボボックス
+#ifndef TBSTYLE_DROPDOWN	//IE3以上
+	#define TBSTYLE_DROPDOWN	0x0008
+#endif
+#ifndef TB_SETEXTENDEDSTYLE	//IE4以上
+	#define TB_SETEXTENDEDSTYLE     (WM_USER + 84)  // For TBSTYLE_EX_*
+#endif
+#ifndef TBSTYLE_EX_DRAWDDARROWS	//IE4以上
+	#define TBSTYLE_EX_DRAWDDARROWS 0x00000001
+#endif
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/

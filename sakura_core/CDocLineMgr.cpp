@@ -113,6 +113,7 @@ void CDocLineMgr::Init()
 	m_nLines = 0;
 	m_nPrevReferLine = 0;
 	m_pCodePrevRefer = NULL;
+	m_bIsDiffUse = false;	/* DIFF使用中 */	//@@@ 2002.05.25 MIK
 	return;
 }
 
@@ -584,7 +585,16 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	nEOF = TRUE;
 
 	switch( nCharCode ){
+	case CODE_UTF8:
+		nReadSize = _lread( hFile, pBuf, 3 );
+		if( HFILE_ERROR == nReadSize ){
+//			MYTRACE( "file read error %s\n", pszPath );
+			nRetVal = FALSE;
+			goto _CLOSEFILE_;
+		}
+		break;
 	case CODE_UNICODE:
+	case CODE_UNICODEBE:
 		nReadSize = _lread( hFile, pBuf, 2 );
 		if( HFILE_ERROR == nReadSize ){
 //			MYTRACE( "file read error %s\n", pszPath );
@@ -592,6 +602,10 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 			goto _CLOSEFILE_;
 		}
 		break;
+	}
+	/* ファイルの先頭がBOM以外の場合はポインタを戻す */
+	if( nCharCode != CMemory::IsUnicodeBom( (const unsigned char*)pBuf, nFileLength ) ){
+		_llseek( hFile, 0, FILE_BEGIN );
 	}
 
 	nReadLength = 0;
@@ -624,6 +638,13 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* Unicode→SJISコード変換 */
 		cmemBuf.UnicodeToSJIS();
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
+		nReadSize = cmemBuf.GetLength();
+		break;
+	case CODE_UNICODEBE:
+		cmemBuf.SetData( pBuf, nReadSize );
+		/* UnicodeBE→SJISコード変換 */
+		cmemBuf.UnicodeBEToSJIS();
 		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;
@@ -920,6 +941,12 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 //			goto _CLOSEFILE_;
 //		}
 		break;
+	case CODE_UNICODEBE:
+		file.Write( "\xfe\xff", sizeof(char) * 2 );
+		break;
+//	case CODE_UTF8: // 2002.06.06 Moca 普通は付けないらしいのでコメントアウト
+//		file.Write( "\xff\xbb\xbf", sizeof(char) * 3 );
+//		break;
 	}
 
 	nLineNumber = 0;
@@ -982,6 +1009,10 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 				/* SJIS→JISコード変換 */
 				cmemBuf.SJIStoJIS();
 				break;
+			case CODE_UNICODEBE:
+				/* SJIS→UnicodeBEコード変換 */
+				cmemBuf.SJISToUnicodeBE();
+				break;
 			case CODE_SJIS:
 			default:
 				break;
@@ -991,16 +1022,19 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		if( EOL_NONE != pCDocLine->m_cEol ){
 
 // 2002/05/09 Frozen ここから
-			if(nCharCode==CODE_UNICODE)
-			{
-				if(cEol==EOL_NONE)
-					cmemBuf.Append(pCDocLine->m_cEol.GetUnicodeValue(),pCDocLine->m_cEol.GetLen()*sizeof(wchar_t));
+			if( nCharCode == CODE_UNICODE ){
+				if( cEol==EOL_NONE )
+					cmemBuf.Append( pCDocLine->m_cEol.GetUnicodeValue(), pCDocLine->m_cEol.GetLen()*sizeof(wchar_t));
 				else
-					cmemBuf.Append(cEol.GetUnicodeValue(),cEol.GetLen()*sizeof(wchar_t));
-			}
-			else
-			{
-				if(cEol==EOL_NONE)
+					cmemBuf.Append( cEol.GetUnicodeValue(), cEol.GetLen()*sizeof(wchar_t));
+			}else if( nCharCode == CODE_UNICODEBE ){
+				/* UnicodeBE の改行コード設定 Moca, 2002/05/26 */
+				if( cEol == EOL_NONE ) /*  */
+					cmemBuf.Append( pCDocLine->m_cEol.GetUnicodeBEValue(), pCDocLine->m_cEol.GetLen()*sizeof(wchar_t) );
+				else
+					cmemBuf.Append( cEol.GetUnicodeBEValue(), cEol.GetLen()*sizeof(wchar_t) );
+			}else{
+				if( cEol == EOL_NONE )
 					cmemBuf.Append(pCDocLine->m_cEol.GetValue(),pCDocLine->m_cEol.GetLen());
 				else
 					cmemBuf.Append(cEol.GetValue(),cEol.GetLen());

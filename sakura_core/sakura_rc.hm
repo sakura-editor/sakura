@@ -17,6 +17,7 @@
 #define HIDC_BUTTON_DELETE              0x93ef043f    // IDD_PROP_CUSTMENU
 #define HIDC_BUTTON_DELKEYWORD          0x8099043f    // IDD_PROP_KEYWORD
 #define HIDC_BUTTON_DELSET              0x8099049a    // IDD_PROP_KEYWORD
+#define HIDC_BUTTON_DIFF_DST            0x93fb0596    // IDD_DIFF
 #define HIDC_BUTTON_DOWN                0x93ef0478    // IDD_PROP_CUSTMENU
 #define HIDC_BUTTON_EDITKEYWORD         0x80990499    // IDD_PROP_KEYWORD
 #define HIDC_BUTTON_EDITSETTINGNAME     0x80ae04ef    // IDD_PRINTSETTING
@@ -30,6 +31,7 @@
 #define HIDC_BUTTON_JUMP                0x8076056c    // IDD_JUMP
 #define HIDC_BUTTON_KEYWORDHELPFILE_REF \
                                         0x93fa0441    // IDD_PROPTYPESP2
+#define HIDC_BUTTON_KEYWORDHELPFONT     0x93f1044a    // IDD_PROP_HELPER
 #define HIDC_BUTTON_OPENEXTHTMLHELP     0x93f10449    // IDD_PROP_HELPER
 #define HIDC_BUTTON_OPENHELP1           0x93f10448    // IDD_PROP_HELPER
 #define HIDC_BUTTON_REFERENCE           0x80b60517    // IDD_EXEC
@@ -75,6 +77,11 @@
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA \
                                         0x93f5050b    // IDD_PROP_EDIT
 #define HIDC_CHECK_CTRL                 0x93f3045b    // IDD_PROP_KEYBIND
+#define HIDC_CHECK_DIFF_OPT_BLINE       0x93fb059a    // IDD_DIFF
+#define HIDC_CHECK_DIFF_OPT_CASE        0x93fb0597    // IDD_DIFF
+#define HIDC_CHECK_DIFF_OPT_SPACE       0x93fb0598    // IDD_DIFF
+#define HIDC_CHECK_DIFF_OPT_SPCCHG      0x93fb0599    // IDD_DIFF
+#define HIDC_CHECK_DIFF_OPT_TABSPC      0x93fb059b    // IDD_DIFF
 #define HIDC_CHECK_DISP                 0x93f204bc    // IDD_PROP_COLOR
 #define HIDC_CHECK_DRAGDROP             0x93f50509    // IDD_PROP_EDIT
 #define HIDC_CHECK_DROPSOURCE           0x93f5050a    // IDD_PROP_EDIT
@@ -107,7 +114,7 @@
 #define HIDC_CHECK_LCPOS2               0x93f20435    // IDD_PROP_COLOR
 #define HIDC_CHECK_LCPOS3               0x93f20436    // IDD_PROP_COLOR
 #define HIDC_CHECK_LINENUMBER           0x80ae04ee    // IDD_PRINTSETTING
-#define HIDC_CHECK_NOTIFYNOTFOUND       0x806d04a8    // IDD_FIND
+#define HIDC_CHECK_NOTIFYNOTFOUND       0x93fb04a8    // IDD_DIFF
 #define HIDC_CHECK_PLSQL                0x80760434    // IDD_JUMP
 #define HIDC_CHECK_PS_KINSOKUHEAD       0x80ae04f0    // IDD_PRINTSETTING
 #define HIDC_CHECK_PS_KINSOKUKUTO       0x80ae04f3    // IDD_PRINTSETTING
@@ -118,7 +125,7 @@
                                         0x806b0479    // IDD_PROP1P1
 #define HIDC_CHECK_RestoreBookmarks     0x806e0566    // IDD_PROP_FILE
 #define HIDC_CHECK_RestoreCurPosition   0x806e055f    // IDD_PROP_FILE
-#define HIDC_CHECK_SEARCHALL            0x806d058b    // IDD_FIND
+#define HIDC_CHECK_SEARCHALL            0x93fb058b    // IDD_DIFF
 #define HIDC_CHECK_SHIFT                0x93f30434    // IDD_PROP_KEYBIND
 #define HIDC_CHECK_STAYTASKTRAY         0x806b0500    // IDD_PROP1P1
 #define HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH \
@@ -201,6 +208,7 @@
 #define HIDC_EDIT_DANSUU                0x80ae04ec    // IDD_PRINTSETTING
 #define HIDC_EDIT_DFORM                 0x93f0052b    // IDD_PROP_FORMAT
 #define HIDC_EDIT_DFORM_EX              0x93f00527    // IDD_PROP_FORMAT
+#define HIDC_EDIT_DIFF_DST              0x93fb0595    // IDD_DIFF
 #define HIDC_EDIT_EXTHELP1              0x93f1043e    // IDD_PROP_HELPER
 #define HIDC_EDIT_EXTHTMLHELP           0x93f1043f    // IDD_PROP_HELPER
 #define HIDC_EDIT_FONTWIDTH             0x80ae04eb    // IDD_PRINTSETTING
@@ -244,6 +252,7 @@
 #define HIDC_EDIT_nDropFileNumMax       0x806e0512    // IDD_PROP_FILE
 #define HIDC_EDIT_nRulerBottomSpace     0x93f40455    // IDD_PROP_WIN
 #define HIDC_EDIT_nRulerHeight          0x93f4050e    // IDD_PROP_WIN
+#define HIDC_FRAME_DIFF_FILE12          0x93fb059c    // IDD_DIFF
 #define HIDC_FRAME_REGEX                0x80db0588    // IDD_PROP_REGEX
 #define HIDC_HOTKEY_TRAYMENU            0x806b0506    // IDD_PROP1P1
 #define HIDC_LABEL_REGEX_COLOR          0x80db0581    // IDD_PROP_REGEX
@@ -252,6 +261,8 @@
 #define HIDC_LIST1                      0x807a0444    // IDD_FUNCLIST
 #define HIDC_LIST_ASSIGNEDKEYS          0x93f30469    // IDD_PROP_KEYBIND
 #define HIDC_LIST_COLORS                0x93f204bb    // IDD_PROP_COLOR
+#define HIDC_LIST_CTRLCODE              0x93fc059e    // IDD_CTRLCODE
+#define HIDC_LIST_DIFF_FILES            0x93fb059d    // IDD_DIFF
 #define HIDC_LIST_FILES                 0x80a804c7    // IDD_COMPARE
 #define HIDC_LIST_FUNC                  0x93ef0458    // IDD_PROP_CUSTMENU
 #define HIDC_LIST_KEY                   0x93f3045a    // IDD_PROP_KEYBIND
@@ -277,6 +288,10 @@
 #define HIDC_RADIO_CARETTYPE1           0x806b0436    // IDD_PROP1P1
 #define HIDC_RADIO_DFORM_0              0x93f00525    // IDD_PROP_FORMAT
 #define HIDC_RADIO_DFORM_1              0x93f00526    // IDD_PROP_FORMAT
+#define HIDC_RADIO_DIFF_DST1            0x93fb052e    // IDD_DIFF
+#define HIDC_RADIO_DIFF_DST2            0x93fb052f    // IDD_DIFF
+#define HIDC_RADIO_DIFF_FILE1           0x93fb052c    // IDD_DIFF
+#define HIDC_RADIO_DIFF_FILE2           0x93fb052d    // IDD_DIFF
 #define HIDC_RADIO_ESCAPETYPE_1         0x93f2047e    // IDD_PROP_COLOR
 #define HIDC_RADIO_ESCAPETYPE_2         0x93f2047f    // IDD_PROP_COLOR
 #define HIDC_RADIO_FROMTO               0x80c1052d    // IDD_PRINTPAGE
@@ -309,6 +324,7 @@
 #define HIDC_SPIN_MARGINTY              0x80ae04d4    // IDD_PRINTSETTING
 #define HIDC_SPIN_PLSQL_E1              0x807604a2    // IDD_JUMP
 #define HIDC_STATIC_COMPARESRC          0x80a804c8    // IDD_COMPARE
+#define HIDC_STATIC_DIFF_SRC            0x93fb0594    // IDD_DIFF
 #define HIDC_STATIC_JRE32VER            0x806d0429    // IDD_FIND
 #define HIDC_STATIC_MSG                 0x809a046a    // IDD_INPUT1
 #define HIDC_TREE1                      0x807a0474    // IDD_FUNCLIST

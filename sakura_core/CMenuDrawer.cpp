@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -137,8 +138,8 @@ CMenuDrawer::CMenuDrawer()
 /* 21 */		F_BROWSE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブラウズ
 /* 22 */		F_PROPERTY_FILE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルのプロパティ//Sept. 16, 2000 JEPRO mytool1.bmpにあった「ファイルのプロパティ」アイコンをIDB_MYTOOLにコピー
 /* 23 */		F_READONLY					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//読み取り専用
-/* 24 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 25 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 24 */		F_FILE_REOPEN_UNICODEBE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UnicodeBEで開き直す // Moca, 2002/05/26 追加
+/* 25 */		F_FILEOPEN_DROPDOWN			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く(ドロップダウン)
 /* 26 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 27 */		F_EXITALL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 /* 28 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -312,7 +313,7 @@ CMenuDrawer::CMenuDrawer()
 /* 挿入系(6段目残り8個: 185-192) */
 /* 185 */		F_INS_DATE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//日付挿入	//Nov. 5, 2000 JEPRO 追加
 /* 186 */		F_INS_TIME	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//時刻挿入	//Nov. 5, 2000 JEPRO 追加
-/* 187 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 187 */		F_CTRL_CODE_DIALOG	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 /* 188 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 189 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 190 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -343,7 +344,7 @@ CMenuDrawer::CMenuDrawer()
 /* 213 */		F_SPACETOTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//空白→TAB	//Jun. 01, 2001 JEPRO 追加
 /* 214 */		F_TOZENEI				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角英数→全角英数 //July. 30, 2001 Misaka 追加
 /* 215 */		F_TOHANEI				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全角英数→半角英数
-/* 216 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 216 */		F_CODECNV_UNICODEBE2SJIS/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UnicodeBE→SJISコード変換	//Moca, 2002/05/26
 /* 217 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 218 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 219 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -371,11 +372,11 @@ CMenuDrawer::CMenuDrawer()
 /* 239 */		F_BOOKMARK_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のブックマークへ		// 2001.12.03 hor
 /* 240 */		F_BOOKMARK_RESET	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブックマークの全解除		// 2001.12.03 hor
 /* 241 */		F_BOOKMARK_VIEW		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブックマークの一覧		// 2001.12.03 hor
-/* 242 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 243 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 244 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 245 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 246 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 242 */		F_DIFF_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//DIFF差分表示	//@@@ 2002.05.25 MIK
+/* 243 */		F_DIFF_NEXT			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の差分へ	//@@@ 2002.05.25 MIK
+/* 244 */		F_DIFF_PREV			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の差分へ	//@@@ 2002.05.25 MIK
+/* 245 */		F_DIFF_RESET		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//差分の全解除	//@@@ 2002.05.25 MIK
+/* 246 */		F_SEARCH_BOX		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//検索(ボックス)
 /* 247 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 248 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 249 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -532,14 +533,31 @@ CMenuDrawer::CMenuDrawer()
 
 };
 	int tbd_num = sizeof( tbd ) / sizeof( tbd[0] );
+	BYTE	style;	//@@@ 2002.06.15 MIK
+	
 	for( int i = 0; i < tbd_num; i++ ){
+		switch( tbd[i] )	//@@@ 2002.06.15 MIK
+		{
+		case F_FILEOPEN_DROPDOWN:
+			style = TBSTYLE_DROPDOWN;	//ドロップダウン
+			break;
+
+		case F_SEARCH_BOX:
+			style = TBSTYLE_COMBOBOX;	//コンボボックス
+			break;
+
+		default:
+			style = TBSTYLE_BUTTON;	//ボタン
+			break;
+		}
+
 		//	m_tbMyButton[0]にはセパレータが入っているため。
 		SetTBBUTTONVal(
 			&m_tbMyButton[i+1],
 			i,
 			tbd[i],				//	tbd[i].idCommand,
 			TBSTATE_ENABLED,	//	tbd[i].fsState,
-			TBSTYLE_BUTTON,		//	tbd[i].fsStyle,
+			style /*TBSTYLE_BUTTON*/,		//	tbd[i].fsStyle,
 			0,					//	tbd[i].dwData,
 			0					//	tbd[i].iString
 		);

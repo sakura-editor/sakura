@@ -455,7 +455,7 @@ struct Common {
 	int					m_nFileShareMode;				/* ファイルの排他制御モード */
 	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
-
+	LOGFONT				m_lf_kh;						/* キーワードヘルプのフォント情報 */		// ai 02/05/21 Add
 
 	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
 	int					m_nToolBarButtonIdxArr[MAX_TOOLBARBUTTONS];	/* ツールバーボタン構造体 */
@@ -637,6 +637,8 @@ struct DLLSHAREDATA {
 	/* **** その他のダイアログ **** */
 	BOOL				m_bGetStdout;		/* 外部コマンド実行の「標準出力を得る」 */
 	BOOL				m_bLineNumIsCRLF;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+
+	int					m_nDiffFlgOpt;		/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 };
 
 

@@ -12,6 +12,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -72,6 +73,7 @@ public:
 
 private:
 	CMenuDrawer		m_CMenuDrawer;
+	bool			m_bUseTrayMenu;	//トレイメニュー表示中
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
 	char*			m_pszAppName;

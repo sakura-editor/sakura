@@ -16,7 +16,7 @@
 */
 
 #include "CTipWnd.h"
-
+#include "CShareData.h"
 
 
 /* CTipWndクラス デストラクタ */
@@ -24,11 +24,6 @@ CTipWnd::CTipWnd()
 {
 	strcat( m_szClassInheritances, "::CTipWnd" );
 	m_pszClassName = "CTipWnd";
-//	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
-//	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
-//	m_hWnd = NULL;			/* このダイアログのハンドル */
-//	m_hFont = NULL;;
-//	m_hFontOld = NULL;;
 	m_KeyWasHit = FALSE;	/* キーがヒットしたか */
 	return;
 }
@@ -38,21 +33,10 @@ CTipWnd::CTipWnd()
 /* CTipWndクラス デストラクタ */
 CTipWnd::~CTipWnd()
 {
-//	HDC			hdc;
-//	if( NULL != m_hWnd ){
-//		hdc = ::GetDC( m_hWnd );
-//		if( NULL != m_hFontOld ){
-//			::SelectObject( hdc, m_hFontOld );
-//			m_hFontOld = NULL;
-//		}
-		if( NULL != m_hFont ){
-			::DeleteObject( m_hFont );
-			m_hFont = NULL;
-		}
-//		::ReleaseDC( m_hWnd, hdc );
-//		::DestroyWindow( m_hWnd );
-//		m_hWnd = NULL;
-//	}
+	if( NULL != m_hFont ){
+		::DeleteObject( m_hFont );
+		m_hFont = NULL;
+	}
 	return;
 }
 
@@ -62,20 +46,10 @@ CTipWnd::~CTipWnd()
 void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 {
 
-	LOGFONT		lf;
-//	HDC			hdc;
-//	WNDCLASS	wc;
-//	ATOM		atom;
-
 	/* 初期化 */
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 
-//	/* 初期化 */
-//	Init(
-//		hInstance,	// handle to application instance
-//		hwndParent	 // handle to parent or owner window
-//	);
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
@@ -106,13 +80,8 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 		::DeleteObject( m_hFont );
 		m_hFont = NULL;
 	}
-	::SystemParametersInfo(
-		SPI_GETICONTITLELOGFONT,	// system parameter to query or set
-		sizeof(LOGFONT),	// depends on action to be taken
-		(PVOID)&lf,	// depends on action to be taken
-		NULL	// user profile update flag
-	);
-	m_hFont = ::CreateFontIndirect( &lf );
+
+	m_hFont = ::CreateFontIndirect( &(CShareData::getInstance()->GetShareData()->m_Common.m_lf_kh) );
 	return;
 }
 
@@ -120,46 +89,9 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 /* Tipを表示 */
 void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 {
-//	LOGFONT	lf;
 	HDC		hdc;
 	RECT	rc;
-//	HFONT	hFontOld;
-//	int		nHeight;
 	char*	pszInfo;
-
-
-
-
-//	/* Tipウィンドウの作成 */
-//	g_m_pcTipWnd = this;
-//	m_hWnd = CreateWindowEx(
-//		0
-//		| WS_EX_TOPMOST
-//		,	// extended window style
-//		m_pszClassName,			// pointer to registered class name
-//		m_pszClassName,			// pointer to window name
-//		0
-//		| WS_VISIBLE
-//		| WS_POPUP
-//		| WS_CLIPCHILDREN
-//		| WS_BORDER
-//		, // window style
-//		CW_USEDEFAULT,			// horizontal position of window
-//		0,						// vertical position of window
-//		CW_USEDEFAULT,			// window width
-//		0,						// window height
-//		/*NULL*/m_hwndParent,				// handle to parent or owner window
-//		NULL,					// handle to menu or child-window identifier
-//		m_hInstance,			// handle to application instance
-//		(LPVOID)this			// pointer to window-creation data
-//	);
-//	if( NULL == m_hWnd ){
-//		return;
-//	}
-
-
-
-
 
 	if( NULL != szText ){
 		m_cInfo.SetData( szText, strlen( szText ) );
@@ -167,7 +99,6 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 	pszInfo = m_cInfo.GetPtr();
 
 	hdc = ::GetDC( m_hWnd );
-//	hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 
 	// サイズを計算済み	2001/06/19 asa-o
 	if(pRect != NULL)
@@ -179,12 +110,6 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 		/* ウィンドウのサイズを決める */
 		ComputeWindowSize( hdc, m_hFont, pszInfo, &rc );
 	}
-
-//
-//	pszInfo = m_cInfo.GetPtr();
-//	nHeight = ::DrawText( hdc, pszInfo, strlen( pszInfo ), &rc,
-//		DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/ );
-//	::SelectObject( hdc, hFontOld );
 
 	::ReleaseDC( m_hWnd, hdc );
 
@@ -218,7 +143,6 @@ void CTipWnd::ComputeWindowSize(
 	nTextLength = strlen( pszText );
 	nBgn = 0;
 	for( i = 0; i <= nTextLength; ++i ){
-//		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, nTextLength, &pszText[i] );
 		nCharChars = CMemory::MemCharNext( (const char *)pszText, nTextLength, (const char *)&pszText[i] ) - (const char*)&pszText[i];
 		if( ( 1 == nCharChars && '\\' == pszText[i] && 'n' == pszText[i + 1]) || '\0' == pszText[i] ){
 			if( 0 < i - nBgn ){

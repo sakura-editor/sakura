@@ -459,6 +459,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_PASTE:
 	case F_INS_DATE:
 	case F_INS_TIME:
+	case F_CTRL_CODE_DIALOG:	//@@@ 2002.06.02 MIK
 	case F_INSTEXT:
 	case F_ADDTAIL:
 	case F_PASTEBOX:
@@ -468,6 +469,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_CODECNV_EMAIL:
 	case F_CODECNV_EUC2SJIS:
 	case F_CODECNV_UNICODE2SJIS:
+	case F_CODECNV_UNICODEBE2SJIS:
 	case F_CODECNV_SJIS2JIS:
 	case F_CODECNV_SJIS2EUC:
 	case F_CODECNV_UTF82SJIS:

@@ -133,9 +133,9 @@ BOOL CPropCommon::DispatchEvent_PROP_EDIT(
 				m_nPageNum = ID_PAGENUM_EDIT;	//Oct. 25, 2000 JEPRO ZENPAN1Å®ZENPAN Ç…ïœçX(éQè∆ÇµÇƒÇ¢ÇÈÇÃÇÕCPropCommon.cppÇÃÇ›ÇÃ1â”èä)
 				return TRUE;
 			}
-			break;
+//			break;	/* default */
 //		}
-		break;
+		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:

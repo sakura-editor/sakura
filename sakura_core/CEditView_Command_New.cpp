@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, asa-o, hor
-	Copyright (C) 2002, YAZAKI, hor, genta. aroka
+	Copyright (C) 2002, YAZAKI, hor, genta. aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -29,6 +29,7 @@
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -2811,5 +2812,24 @@ void CEditView::Command_Reconvert(void)
 	::ImmReleaseContext( m_hWnd, hIMC);
 }
 
+/*!	コントロールコードの入力(ダイアログ)
+	@author	MIK
+	@date	2002/06/02
+*/
+void CEditView::Command_CtrlCode_Dialog( void )
+{
+	CDlgCtrlCode	cDlgCtrlCode;
+
+	//コントロールコード入力ダイアログを表示する
+	if( FALSE == cDlgCtrlCode.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc ) )
+	{
+		return;
+	}
+
+	//コントロールコードを入力する
+	Command_CHAR( cDlgCtrlCode.m_nCode );
+
+	return;
+}
 
 /*[EOF]*/

@@ -158,9 +158,10 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 				OnFileDropdown_Macro( hwndDlg );
 				break;
 			}
+			break;	/* CBN_DROPDOWN */
 		}
 
-		break;
+		break;	/* WM_COMMAND */
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:
 		{

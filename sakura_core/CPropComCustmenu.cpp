@@ -222,6 +222,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 				::SendMessage( hwndCOMBO_MENU, CB_SETCURSEL, nIdx1, 0 );
 				return TRUE;
 			}
+			break;	/* BN_CLICKED */
 		}
 
 		if( hwndCOMBO_MENU == hwndCtl ){
@@ -267,6 +268,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 //				/* カスタムメニューの先頭の項目を選択（リストボックス）*/
 //				::SendMessage( hwndLIST_RES, LB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
 //	To Here Sept. 7, 2000
+				break;	/* CBN_SELCHANGE */
 			}
 		}else
 		if( hwndLIST_RES == hwndCtl ){
@@ -343,6 +345,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 //					sprintf( szKey, "%c", m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				}
 //				::SetWindowText( hwndEDIT_KEY, szKey );
+				break;	/* LBN_SELCHANGE */
 			}
 		}else
 		if( hwndCOMBO_FUNCKIND == hwndCtl ){

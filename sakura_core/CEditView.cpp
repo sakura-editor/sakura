@@ -1391,7 +1391,6 @@ void CEditView::OnSetFocus( void )
 //NG	::SetFocus( m_hwndParent );
 //NG	::SetFocus( m_hWnd );
 
-
 	ShowEditCaret();
 
 //	SetIMECompFormPos();	YAZAKI ShowEditCaretで作業済み
@@ -3022,7 +3021,8 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 			/* フリーカーソルモードか */
 			if( m_pShareData->m_Common.m_bIsFreeCursorMode
 			  || ( m_bBeginSelect && m_bBeginBoxSelect )	/* マウス範囲選択中 && 矩形範囲選択中 */
-			  || m_bDragMode /* OLE DropTarget */
+//			  || m_bDragMode /* OLE DropTarget */
+			  || ( m_bDragMode && m_bBeginBoxSelect ) /* OLE DropTarget && 矩形範囲選択中 */
 			){
 // From 2001.12.21 hor
 //				if( nNewY + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
@@ -3169,7 +3169,10 @@ normal_action:;
 //			}
 //		}
 		::SetCapture( m_hWnd );
-		::HideCaret( m_hWnd );
+		if (m_bCaretShowFlag == true){
+			::HideCaret( m_hWnd );
+			m_bCaretShowFlag = false;
+		}
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea( );
 		m_cUnderLine.CaretUnderLineOFF( TRUE );
@@ -3206,7 +3209,10 @@ normal_action:;
 		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
 		::SetCapture( m_hWnd );
-		::HideCaret( m_hWnd );
+		if (m_bCaretShowFlag == true){
+			::HideCaret( m_hWnd );
+			m_bCaretShowFlag = false;
+		}
 
 
 		/* 選択開始処理 */
@@ -3811,7 +3817,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			/* 行選択エリア? */
 			if( xPos < m_nViewAlignLeft || yPos < m_nViewAlignTop ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
-				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
+				if( yPos >= m_nViewAlignTop )
+					::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
+				else
+					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}else
 
 			if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
@@ -4255,6 +4264,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		/* マウス キャプチャを解放 */
 		::ReleaseCapture();
 		::ShowCaret( m_hWnd );
+		m_bCaretShowFlag = true;
 
 //		/* タイマー終了 */
 //		::KillTimer( m_hWnd, IDT_ROLLMOUSE );
@@ -4363,7 +4373,10 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		}
 	}
 	::SetCapture( m_hWnd );
-	::HideCaret( m_hWnd );
+	if (m_bCaretShowFlag == true){
+		::HideCaret( m_hWnd );
+		m_bCaretShowFlag = false;
+	}
 	if( IsTextSelected() ){
 		/* 常時選択範囲の範囲 */
 		m_nSelectLineBgnTo = m_nSelectLineTo;
@@ -5349,6 +5362,7 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	case F_CODECNV_EMAIL:		pCMemory->JIStoSJIS(); break;		/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:	pCMemory->EUCToSJIS(); break;		/* EUC→SJISコード変換 */
 	case F_CODECNV_UNICODE2SJIS:pCMemory->UnicodeToSJIS(); break;	/* Unicode→SJISコード変換 */
+	case F_CODECNV_UNICODEBE2SJIS: pCMemory->UnicodeBEToSJIS(); break;	/* UnicodeBE→SJISコード変換 */
 	case F_CODECNV_SJIS2JIS:	pCMemory->SJIStoJIS();break;		/* SJIS→JISコード変換 */
 	case F_CODECNV_SJIS2EUC: 	pCMemory->SJISToEUC();break;		/* SJIS→EUCコード変換 */
 	case F_CODECNV_UTF82SJIS:	pCMemory->UTF8ToSJIS();break;		/* UTF-8→SJISコード変換 */
@@ -5626,15 +5640,19 @@ int	CEditView::CreatePopUpMenu_R( void )
 	//						/* 辞書Tipを表示 */
 	//						m_cTipWnd.Show( po.x, po.y + m_nCharHeight, NULL );
 							pszWork = m_cTipWnd.m_cInfo.GetPtr();
+							// 2002.05.25 Moca &の考慮を追加 
+							char*	pszShortOut = new char[160 + 1];
 							if( 80 < lstrlen( pszWork ) ){
 								char*	pszShort = new char[80 + 1];
 								memcpy( pszShort, pszWork, 80 );
 								pszShort[80] = '\0';
-								::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, pszShort );
+								dupamp( (const char*)pszShort, pszShortOut );
 								delete [] pszShort;
 							}else{
-								::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, pszWork );
+								dupamp( (const char*)pszWork, pszShortOut );
 							}
+							::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, pszShortOut );
+							delete [] pszShortOut;
 							::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 						}
 						end_of_search:;
@@ -5697,6 +5715,7 @@ void CEditView::DrawCaretPosInfo( void )
 	int				nCharChars;
 	CEditWnd*		pCEditWnd;
 	const CLayout*	pcLayout;
+#if 0
 	char*			pCodeNameArr[] = {
 		"SJIS",
 		"JIS ",
@@ -5705,6 +5724,9 @@ void CEditView::DrawCaretPosInfo( void )
 		"UTF-8",
 		"UTF-7"
 	};
+#endif
+	// 2002.05.26 Moca  gm_pszCodeNameArr_2 を使う
+	const char* pCodeName = gm_pszCodeNameArr_2[m_pcEditDoc->m_nCharCode];
 #if 0
 	2002/04/08 YAZAKI コードの重複を削除
 	char*			pCodeNameArr2[] = {
@@ -5716,7 +5738,7 @@ void CEditView::DrawCaretPosInfo( void )
 		"UTF-7"
 	};
 #endif
-	int	nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
+//	int	nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
 
 	hwndFrame = ::GetParent( m_hwndParent );
 	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
@@ -5778,32 +5800,34 @@ void CEditView::DrawCaretPosInfo( void )
 			nIdxFrom = LineColmnToIndex( (const char *)pLine, nLineLen, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ){
 				/* szText */
-				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
 					nCharChars = CMemory::MemCharNext( (char *)pLine, nLineLen, (char *)&pLine[nIdxFrom] ) - (char *)&pLine[nIdxFrom];
 				}else{
 					nCharChars = pcLayout->m_cEol.GetLen();
 				}
-				if( 1 == nCharChars ){
+				switch( nCharChars ){
+				case 1:
 					/* szText */
-					wsprintf( szText, "%s(%s)   [%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom], nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
-				}else
-				if( 2 == nCharChars ){
+					wsprintf( szText, "%s(%s)   [%02x]%6d：%d            ", pCodeName, nNlTypeName, pLine[nIdxFrom], nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					break;
+				case 2:
 					/* szText */
-					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
-				}else
-				if( 4 == nCharChars ){
+					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d            ", pCodeName, nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					break;
+				case 4:
 					/* szText */
-					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
-				}else{
+					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d            ", pCodeName, nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					break;
+				default:
 					/* szText */
-					wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}
 			}
 		}else{
 			/* szText */
-			wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeNameArr[m_pcEditDoc->m_nCharCode], nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+			wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 		}
 		//	To Here
 		/* 文字列描画 */
@@ -5829,8 +5853,8 @@ void CEditView::DrawCaretPosInfo( void )
 	}else{
 		/* ステータスバーに状態を書き出す */
 		char	szText_1[64];
-		char	szText_2[64];
-		char	szText_5[64];
+		char	szText_3[32]; // szText_2 => szTest_3 に変更 64バイトもいらない 2002.06.05 Moca 
+		char	szText_6[16]; // szText_5 => szTest_6 に変更 64バイトもいらない 2002.06.05 Moca
 		wsprintf( szText_1, "%6d 行 %5d 桁", nPosY, nPosX );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		nCharChars = 0;
@@ -5848,21 +5872,21 @@ void CEditView::DrawCaretPosInfo( void )
 		}
 
 		if( 1 == nCharChars ){
-			wsprintf( szText_2, "%02x  ", pLine[nIdxFrom] );
+			wsprintf( szText_3, "%02x  ", pLine[nIdxFrom] );
 		}else
 		if( 2 == nCharChars ){
-			wsprintf( szText_2, "%02x%02x", pLine[nIdxFrom],  pLine[nIdxFrom + 1] );
+			wsprintf( szText_3, "%02x%02x", pLine[nIdxFrom],  pLine[nIdxFrom + 1] );
 		}else
 		if( 4 == nCharChars ){
-			wsprintf( szText_2, "%02x%02x%02x%02x", pLine[nIdxFrom],  pLine[nIdxFrom + 1], pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] );
+			wsprintf( szText_3, "%02x%02x%02x%02x", pLine[nIdxFrom],  pLine[nIdxFrom + 1], pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] );
 		}else{
-			wsprintf( szText_2, "    " );
+			wsprintf( szText_3, "    " );
 		}
 
 		if( m_pShareData->m_Common.m_bIsINSMode ){
-			strcpy( szText_5, "挿入" );
+			strcpy( szText_6, "挿入" );
 		}else{
-			strcpy( szText_5, "上書" );
+			strcpy( szText_6, "上書" );
 		}
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 1 | 0, (LPARAM) (LPINT)szText_1 );
@@ -5871,10 +5895,10 @@ void CEditView::DrawCaretPosInfo( void )
 		//	From Here
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 2 | 0, (LPARAM) (LPINT)nNlTypeName );
 		//	To Here
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_2 );
+		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_3 );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)gm_pszCodeNameArr_1[m_pcEditDoc->m_nCharCode] );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)"" );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_5 );
+		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_6 );
 	}
 
 	return;
@@ -6793,6 +6817,7 @@ int CEditView::DoGrepFile(
 		||	EUC		2
 		||	Unicode	3
 		||	エラー	-1
+		||	詳細はenumCodeType(global.h) を参照
 		*/
 		nCharCode = CMemory::CheckKanjiCodeOfFile( pszFullPath );
 		if( -1 == nCharCode ){
@@ -6824,8 +6849,29 @@ int CEditView::DoGrepFile(
 	}
 	pBuf = (char*)::GlobalLock( hgRead );
 	nEOF = TRUE;
-	if( nCharCode == 3 ){ /* Unicode */
-		nReadSize = _lread( hFile, pBuf, 2);
+//	if( nCharCode == 3 ){ /* Unicode */
+// 		nReadSize = _lread( hFile, pBuf, 2);
+// 	}
+	switch( nCharCode ){
+	case CODE_UNICODE:
+	case CODE_UNICODEBE:
+		if( 2 <= nFileLength ){
+			nReadSize = _lread( hFile, pBuf, 2);
+			// もし(そのファイル形式の)BOMでない場合にはファイルの先頭へ戻る
+			if( nCharCode != CMemory::IsUnicodeBom( (const unsigned char *)pBuf, 2 ) ){
+				_llseek( hFile, 0, FILE_BEGIN );
+			}
+		}
+		break;
+	case CODE_UTF8:
+		if( 3 <= nFileLength ){
+			nReadSize = _lread( hFile, pBuf, 3);
+			if( nCharCode != CMemory::IsUnicodeBom( (const unsigned char *)pBuf, 3 ) ){
+				_llseek( hFile, 0, FILE_BEGIN );
+			}
+		}
+//		default:
+		break;
 	}
 	nReadLength = 0;
 	nBgn = 0;
@@ -6884,6 +6930,13 @@ int CEditView::DoGrepFile(
 		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;
+	case CODE_UNICODEBE /* UnicodeBE */:
+		cmemBuf.SetData( pBuf, nReadSize );
+		/* UnicodeBE→SJISコード変換 */
+		cmemBuf.UnicodeBEToSJIS();
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
+		nReadSize = cmemBuf.GetLength();
+		break;
 	case CODE_SJIS /* SJIS */:
 	default:
 		break;
@@ -6896,17 +6949,17 @@ int CEditView::DoGrepFile(
 	if( 0 == nKeyKen ){
 		if( 1 == nGrepOutputStyle ){
 		/* ノーマル */
-			wsprintf( szWork0, "%s %s\r\n", pszFullPath, pszCodeName );
+			wsprintf( szWork0, "%s%s\r\n", pszFullPath, pszCodeName );
 		}else{
 		/* WZ風 */
-			wsprintf( szWork0, "■\"%s\" %s\r\n", pszFullPath, pszCodeName );
+			wsprintf( szWork0, "■\"%s\"%s\r\n", pszFullPath, pszCodeName );
 		}
 		cmemMessage.AppendSz( szWork0 );
 		++(*pnHitCount);
 		::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 		return 1;
 	}
-	wsprintf( szWork0, "■\"%s\" %s\r\n", pszFullPath, pszCodeName );
+	wsprintf( szWork0, "■\"%s\"%s\r\n", pszFullPath, pszCodeName );
 
 
 	nBgn = 0;

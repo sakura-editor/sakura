@@ -222,6 +222,7 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 			/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 			return DispatchEvent_WM_APP( hwnd, msg, wp, lp );
 		}
+		break;	/* default */
 	}
 	return CallDefWndProc( hwnd, msg, wp, lp );
 }

@@ -159,6 +159,7 @@ UINT APIENTRY OFNHookProc(
 		CODE_JIS,
 		CODE_EUC,
 		CODE_UNICODE,
+		CODE_UNICODEBE,		// Moca, 2002/05/26
 		CODE_UTF8,
 		CODE_UTF7
 	};
@@ -168,6 +169,7 @@ UINT APIENTRY OFNHookProc(
 		"JIS",
 		"EUC",
 		"Unicode",
+		"UnicodeBE",		// Moca, 2002/05/26
 		"UTF-8",
 		"UTF-7"
 	};
@@ -438,6 +440,8 @@ UINT APIENTRY OFNHookProc(
 
 //			MYTRACE( "•¶ŽšƒR[ƒh  lRes=%d\n", lRes );
 //			MYTRACE( "pofn->hdr.code=CDN_FILEOK        \n" );break;
+			break;	/* CDN_FILEOK */
+
 		case CDN_FOLDERCHANGE  :
 //			MYTRACE( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
 			lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, sizeof( szFolder ), (long)(char*)szFolder );
@@ -491,8 +495,9 @@ UINT APIENTRY OFNHookProc(
 				}
 				break;
 			}
+			break;	/* CBN_SELCHANGE */
 		}
-		break;
+		break;	/* WM_COMMAND */
 
 	//@@@ 2002.01.08 add start
 	case WM_HELP:

@@ -260,8 +260,9 @@ BOOL CPropCommon::DispatchEvent_p9(
 //				return TRUE;
 //
 			}
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
@@ -284,7 +285,7 @@ BOOL CPropCommon::DispatchEvent_p9(
 				m_nPageNum = ID_PAGENUM_FORMAT;
 				return TRUE;
 			}
-			break;
+//			break;	/* default */
 //		}
 
 //		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
@@ -292,7 +293,7 @@ BOOL CPropCommon::DispatchEvent_p9(
 //		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code );
 //		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos );
 //		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
-		break;
+		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:

@@ -11,7 +11,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
-	Copyright (C) 2002, aroka
+	Copyright (C) 2002, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -102,6 +102,12 @@ public:
 	int SearchBookMark( int , int , int* ); /* ブックマーク検索 */
 // To Here 2001.12.03 hor
 
+	//@@@ 2002.05.25 MIK
+	void ResetAllDiffMark( void );			/* 差分表示の全解除 */
+	int SearchDiffMark( int , int , int* ); /* 差分検索 */
+	void SetDiffMarkRange( int nMode, int nStartLine, int nEndLine );	/* 差分範囲の登録 */
+	bool IsDiffUse( void ) const { return m_bIsDiffUse; }	/* DIFF使用中 */
+
 // From Here 2002.01.16 hor
 	void MarkSearchWord( const char* , int , int , int , CBregexp* ); /* 検索条件に該当する行にブックマークをセットする */
 	void SetBookMarks( char* ); /* 物理行番号のリストからまとめて行マーク */
@@ -177,6 +183,7 @@ public:
 	int GetLines() const { return m_nLines; }
 	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }
 	CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }
+
 private:
 
 	/*
@@ -188,6 +195,7 @@ private:
 	int			m_nLines;		/* 全行数 */
 	int			m_nPrevReferLine;
 	CDocLine*	m_pCodePrevRefer;
+	bool		m_bIsDiffUse;	/* DIFF差分表示実施中 */	//@@@ 2002.05.25 MIK
 protected:
 
 	/*

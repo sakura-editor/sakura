@@ -54,6 +54,16 @@ const wchar_t* CEOL::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 	L"\x0d"				// EOL_CR
 };
 
+/*! 行終端子のデータの配列(UnicodeBE版) 2000.05.30 Moca */
+const wchar_t* CEOL::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
+	L"",
+	L"",				// EOL_CRLF_UNICODE（これは使用しないでください）
+	(const wchar_t*)"\x00\x0d\x00\x0a\x00",		// EOL_CRLF
+	(const wchar_t*)"\x00\x0a\x00\x0d\x00",		// EOL_LFCR
+	(const wchar_t*)"\x00\x0a\x00",			// EOL_LF
+	(const wchar_t*)"\x00\x0d\x00"				// EOL_CR
+};
+
 /*! 行終端子のデータ長の配列 */
 const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 	LEN_EOL_NONE			,	// == 0

@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -27,10 +28,12 @@
 #define F_FILESAVEAS				30106	//名前を付けて保存
 #define F_FILECLOSE					30105	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 #define F_FILECLOSE_OPEN			30107	//閉じて開く
+#define F_FILEOPEN_DROPDOWN			30108	//開く(ドロップダウン)
 #define F_FILE_REOPEN_SJIS			30111	//SJISで開き直す
 #define F_FILE_REOPEN_JIS			30112	//JISで開き直す
 #define F_FILE_REOPEN_EUC			30113	//EUCで開き直す
 #define F_FILE_REOPEN_UNICODE		30114	//Unicodeで開き直す
+#define F_FILE_REOPEN_UNICODEBE		30117	//UnicodeBEで開き直す
 #define F_FILE_REOPEN_UTF8			30115	//UTF-8で開き直す
 #define F_FILE_REOPEN_UTF7			30116	//UTF-7で開き直す
 #define F_PRINT						30150	//印刷
@@ -190,6 +193,7 @@
 /* 挿入系 */
 #define F_INS_DATE				30790	//日付挿入
 #define F_INS_TIME				30791	//時刻挿入
+#define F_CTRL_CODE_DIALOG		30792	//コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 
 
 /* 変換系 */
@@ -208,6 +212,7 @@
 #define F_CODECNV_EMAIL			30851	//E-Mail(JIS→SJIS)コード変換
 #define F_CODECNV_EUC2SJIS		30852	//EUC→SJISコード変換
 #define F_CODECNV_UNICODE2SJIS	30853	//Unicode→SJISコード変換
+#define F_CODECNV_UNICODEBE2SJIS 30856	/*Unicode→SJISコード変換*/
 #define F_CODECNV_UTF82SJIS		30854	/* UTF-8→SJISコード変換 */
 #define F_CODECNV_UTF72SJIS		30855	/* UTF-7→SJISコード変換 */
 #define F_CODECNV_SJIS2JIS		30860	/* SJIS→JISコード変換 */
@@ -226,6 +231,7 @@
 #define F_REPLACE			30906	//置換(実行)
 #define F_REPLACE_ALL		30907	//すべて置換(実行)
 #define F_SEARCH_CLEARMARK	30905	//検索マークのクリア
+#define F_SEARCH_BOX		30908	//検索(ボックス)	//@@@ 2002.06.15 MIK
 #define F_GREP_DIALOG		30910	//Grep
 #define F_GREP				30911	//Grep
 #define F_JUMP_DIALOG		30920	//指定行へジャンプ
@@ -241,6 +247,11 @@
 #define F_BOOKMARK_RESET	30973	//ブックマークの全解除
 #define F_BOOKMARK_VIEW		30974	//ブックマークの一覧
 #define F_BOOKMARK_PATTERN	30975	//パターンに一致する行をマーク
+#define F_DIFF_DIALOG		30976	//DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+#define F_DIFF				30977	//DIFF差分表示	//@@@ 2002.05.25 MIK
+#define F_DIFF_NEXT			30978	//次の差分へ	//@@@ 2002.05.25 MIK
+#define F_DIFF_PREV			30979	//前の差分へ	//@@@ 2002.05.25 MIK
+#define F_DIFF_RESET		30980	//差分の全解除	//@@@ 2002.05.25 MIK
 
 /* モード切り替え系 */
 #define F_CHGMOD_INS		31001	//挿入／上書きモード切り替え

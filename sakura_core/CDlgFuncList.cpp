@@ -1462,6 +1462,7 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	switch( nFuncCode ){
 	case F_REDRAW:
 		nFuncCode=(m_nListType==OUTLINE_BOOKMARK)?F_BOOKMARK_VIEW:F_OUTLINE;
+		/*FALLTHROUGH*/
 	case F_OUTLINE:
 	case F_BOOKMARK_VIEW:
 		pcEditView=(CEditView*)m_lParam;

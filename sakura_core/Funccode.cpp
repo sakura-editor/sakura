@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -58,6 +59,7 @@ const int nsFuncCode::nFuncKindNum = sizeof(nsFuncCode::ppszFuncKind) / sizeof(n
 const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	F_FILENEW			,	//新規作成
 	F_FILEOPEN			,	//開く
+	F_FILEOPEN_DROPDOWN	,	//開く(ドロップダウン)
 	F_FILESAVE			,	//上書き保存
 	F_FILESAVEAS_DIALOG	,	//名前を付けて保存
 	F_FILECLOSE			,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -67,6 +69,7 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_FILE_REOPEN_JIS		,//JISで開き直す
 	F_FILE_REOPEN_EUC		,//EUCで開き直す
 	F_FILE_REOPEN_UNICODE	,//Unicodeで開き直す
+	F_FILE_REOPEN_UNICODEBE	,//UnicodeBEで開き直す
 	F_FILE_REOPEN_UTF8		,//UTF-8で開き直す
 	F_FILE_REOPEN_UTF7		,//UTF-7で開き直す
 	F_PRINT				,	//印刷
@@ -229,7 +232,8 @@ const int nFincList_Clip_Num = sizeof( pnFuncList_Clip ) / sizeof( pnFuncList_Cl
 /* 挿入系 */
 const int pnFuncList_Insert[] = {
 	F_INS_DATE				,	// 日付挿入
-	F_INS_TIME					// 時刻挿入
+	F_INS_TIME				,	// 時刻挿入
+	F_CTRL_CODE_DIALOG			//コントロールコードの入力
 };
 const int nFincList_Insert_Num = sizeof( pnFuncList_Insert ) / sizeof( pnFuncList_Insert[0] );
 
@@ -251,6 +255,7 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_CODECNV_EMAIL			,	//E-Mail(JIS→SJIS)コード変換
 	F_CODECNV_EUC2SJIS		,	//EUC→SJISコード変換
 	F_CODECNV_UNICODE2SJIS	,	//Unicode→SJISコード変換
+	F_CODECNV_UNICODEBE2SJIS	,	//Unicode→SJISコード変換
 	F_CODECNV_UTF82SJIS		,	/* UTF-8→SJISコード変換 */
 	F_CODECNV_UTF72SJIS		,	/* UTF-7→SJISコード変換 */
 	F_CODECNV_SJIS2JIS		,	/* SJIS→JISコード変換 */
@@ -268,6 +273,7 @@ const int nFincList_Convert_Num = sizeof( pnFuncList_Convert ) / sizeof( pnFuncL
 /* 検索系 */
 const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 	F_SEARCH_DIALOG		,	//検索(単語検索ダイアログ)
+	F_SEARCH_BOX		,	//検索(ボックス)
 	F_SEARCH_NEXT		,	//次を検索	//Sept. 16, 2000 JEPRO "次"を"前"の前に移動
 	F_SEARCH_PREV		,	//前を検索
 	F_REPLACE_DIALOG	,	//置換
@@ -278,6 +284,10 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_TAGJUMP			,	//タグジャンプ機能
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
 	F_COMPARE			,	//ファイル内容比較
+	F_DIFF_DIALOG		,	//DIFF差分表示(ダイアログ)
+	F_DIFF_NEXT			,	//次の差分へ
+	F_DIFF_PREV			,	//前の差分へ
+	F_DIFF_RESET		,	//差分の全解除
 	F_BRACKETPAIR		,	//対括弧の検索
 	F_BOOKMARK_SET		,	//ブックマーク設定・解除
 	F_BOOKMARK_NEXT		,	//次のブックマークへ

@@ -1497,7 +1497,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 //			pData = GetLineStr( nCaretPosY, &nDataLen );
 //			pData = pLayout->m_pLine + pLayout->m_nOffset;
 			pData = pLayout->m_pCDocLine->m_pLine->GetPtr() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory•ÏX
-			nDataLen = pLayout->GetLengthWithoutEOL();	//	2002/06/01 MIK
+			nDataLen = pLayout->m_nLength;
 
 			for( i = 0; i < nDataLen; ++i ){
 				if( pLayout->m_nOffset + i >= nX ){

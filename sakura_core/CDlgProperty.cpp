@@ -18,6 +18,7 @@
 #include "CEditDoc.h"
 #include "etc_uty.h"
 #include "funccode.h"		// Stonee, 2001/03/12
+#include "global.h"		// Moca, 2002/05/26
 
 // プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -67,6 +68,9 @@ void CDlgProperty::SetData( void )
 	CMemory			cmemProp;
 //	char*			pWork;
 	char			szWork[100];
+
+//	gm_pszCodeNameArr_1[] を参照するように変更 Moca, 2002/05/26
+#if 0
 	char*			pCodeNameArr[] = {
 		"SJIS",
 		"JIS",
@@ -75,7 +79,9 @@ void CDlgProperty::SetData( void )
 		"UTF-8",
 		"UTF-7"
 	};
-	int				nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
+#endif
+//	1回も使われていない Moca
+//	int				nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
 	HANDLE			nFind;
 	WIN32_FIND_DATA	wfd;
 	SYSTEMTIME		systimeL;
@@ -92,7 +98,7 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendSz( "\r\n" );
 
 	cmemProp.AppendSz( "文字コード  " );
-	cmemProp.AppendSz( pCodeNameArr[pCEditDoc->m_nCharCode] );
+	cmemProp.AppendSz( gm_pszCodeNameArr_1[pCEditDoc->m_nCharCode] );
 	cmemProp.AppendSz( "\r\n" );
 
 	wsprintf( szWork, "行数  %d行\r\n", pCEditDoc->m_cDocLineMgr.GetLineCount() );
@@ -220,6 +226,7 @@ void CDlgProperty::SetData( void )
 	int		nEUCMojiNum, nEUCCodeNum;
 	int		nSJISMojiNum, nSJISCodeNum;
 	int		nUNICODEMojiNum, nUNICODECodeNum;
+	int		nUNICODEBEMojiNum, nUNICODEBECodeNum;
 	int		nJISMojiNum, nJISCodeNum;
 	int		nUTF8MojiNum, nUTF8CodeNum;
 	int		nUTF7MojiNum, nUTF7CodeNum;
@@ -257,6 +264,18 @@ void CDlgProperty::SetData( void )
 			wsprintf( szWork, "Unicodeコード検査：文字数%d  Unicode特有文字数%d (%d%%)\r\n", nUNICODEMojiNum, nUNICODECodeNum, nUNICODECodeNum*100/nUNICODEMojiNum );
 		}else{
 			wsprintf( szWork, "Unicodeコード検査：文字数%d  Unicode特有文字数%d (0%%)\r\n", nUNICODEMojiNum, nUNICODECodeNum );
+		}
+		cmemProp.AppendSz( szWork );
+	}
+	/*
+	||ファイルの日本語コードセット判別: UnicodeBEか？
+	|| エラーの場合、FALSEを返す
+	*/
+	if( CMemory::CheckKanjiCode_UNICODEBE( pBuf, nBufLen, &nUNICODEBEMojiNum, &nUNICODEBECodeNum ) ){
+		if( nUNICODEBECodeNum!=0 && nUNICODEBEMojiNum != 0 ){
+			wsprintf( szWork, "UnicodeBEコード検査：文字数%d  UnicodeBE特有文字数%d (%d%%)\r\n", nUNICODEBEMojiNum, nUNICODEBECodeNum, nUNICODEBECodeNum*100/nUNICODEBEMojiNum );
+		}else{
+			wsprintf( szWork, "UnicodeBEコード検査：文字数%d  UnicodeBE特有文字数%d (0%%)\r\n", nUNICODEBEMojiNum, nUNICODEBECodeNum );
 		}
 		cmemProp.AppendSz( szWork );
 	}

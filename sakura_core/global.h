@@ -128,6 +128,7 @@ SAKURA_CORE_API enum enumCodeType {
 	CODE_UNICODE,			/* Unicode */
 	CODE_UTF8,				/* UTF-8 */
 	CODE_UTF7,				/* UTF-7 */
+	CODE_UNICODEBE,			/* Unicode BigEndian */
 	CODE_CODEMAX,
 	CODE_AUTODETECT	= 99	/* 文字コード自動判別 */
 };
@@ -260,13 +261,16 @@ SAKURA_CORE_API enum enumColorIndexType {
 	COLORIDX_REGEX8		= 27,	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
 	COLORIDX_REGEX9		= 28,	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
 	COLORIDX_REGEX10	= 29,	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_DIFF_APPEND = 30,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_CHANGE = 31,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_DELETE = 32,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
 
 	//カラーの最後
-	COLORIDX_LAST		= 30,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
+	COLORIDX_LAST		= 33,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
 
 	//カラー表示制御用
-	COLORIDX_BLOCK1		= 31,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */
-	COLORIDX_BLOCK2		= 32	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */
+	COLORIDX_BLOCK1		= 34,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */
+	COLORIDX_BLOCK2		= 35	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */
 
 	//1000-1099 : カラー表示制御用(正規表現キーワード)
 };

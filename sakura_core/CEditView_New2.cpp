@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, mik, asa-o
 	Copyright (C) 2001, hor, MIK 
-	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2002, YAZAKI, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -294,6 +294,29 @@ void CEditView::DispLineNumber(
 		}
 	}
 
+	int type = pCDocLine->IsDiffMarked();
+	{	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
+		if( type )
+		{
+			switch( type )
+			{
+			case MARK_DIFF_APPEND:	//追加
+				if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_DIFF_APPEND].m_bDisp )
+					nColorIndex = COLORIDX_DIFF_APPEND;
+				break;
+			case MARK_DIFF_CHANGE:	//変更
+				if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_DIFF_CHANGE].m_bDisp )
+					nColorIndex = COLORIDX_DIFF_CHANGE;
+				break;
+			case MARK_DIFF_DELETE:	//削除
+			case MARK_DIFF_DEL_EX:	//削除
+				if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_DIFF_DELETE].m_bDisp )
+					nColorIndex = COLORIDX_DIFF_DELETE;
+				break;
+			}
+		}
+	}
+
 //	if( m_pcEditDoc->GetDocumentAttribute().m_bDispLINE ){	/* 行番号表示／非表示 */
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[/*nColorIndex*/COLORIDX_GYOU].m_bDisp ){	/* 行番号表示／非表示 */
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
@@ -408,6 +431,52 @@ void CEditView::DispLineNumber(
 	}
 // To Here 2001.12.03 hor
 
+	if( type )	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
+	{
+		int	cy = y + nLineHeight / 2;
+
+		hPen = ::CreatePen( PS_SOLID, 1, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
+		hPenOld = (HPEN)::SelectObject( hdc, hPen );
+
+		switch( type )
+		{
+		case MARK_DIFF_APPEND:	//追加
+			::MoveToEx( hdc, 3, cy, NULL );
+			::LineTo( hdc, 6, cy );
+			::MoveToEx( hdc, 4, cy - 2, NULL );
+			::LineTo( hdc, 4, cy + 3 );
+			break;
+
+		case MARK_DIFF_CHANGE:	//変更
+			::MoveToEx( hdc, 3, cy - 4, NULL );
+			::LineTo( hdc, 3, cy );
+			::MoveToEx( hdc, 3, cy + 2, NULL );
+			::LineTo( hdc, 3, cy + 3 );
+			break;
+
+		case MARK_DIFF_DELETE:	//削除
+			cy -= 3;
+			::MoveToEx( hdc, 3, cy, NULL );
+			::LineTo( hdc, 5, cy );
+			::LineTo( hdc, 3, cy + 2 );
+			::LineTo( hdc, 3, cy );
+			::LineTo( hdc, 7, cy + 4 );
+			break;
+		
+		case MARK_DIFF_DEL_EX:	//削除(EOF)
+			cy += 3;
+			::MoveToEx( hdc, 3, cy, NULL );
+			::LineTo( hdc, 5, cy );
+			::LineTo( hdc, 3, cy - 2 );
+			::LineTo( hdc, 3, cy );
+			::LineTo( hdc, 7, cy - 4 );
+			break;
+		}
+
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+	}
+	
 	return;
 }
 
@@ -1329,6 +1398,48 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
 	return false;
 }
 //	2001/06/18 End
+
+#if 0
+/*!	コントロールコードを "^@" 表示する。
+	0x00 - 0x1f は "^@" - "^_" で表示する。
+	0x7f は "^?" で表示する。
+	その他は "・" で表示する。
+*/
+int CEditView::DispCtrlCode( HDC hdc, int x, int y, const unsigned char* pData, int nLength )
+{
+	int		i, x1, y1;
+	unsigned char	c;
+	HPEN	hPen, hPenOld;
+
+	x1 = m_nCharWidth / 3;
+	y1 = m_nCharHeight / 5;
+
+	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_colTEXT );
+	hPenOld = (HPEN)::SelectObject( hdc, hPen );
+
+	for( i = 0; i < nLength; i++, pData++ )
+	{
+		if     ( (*pData) <= 0x1f ) c = '@' + (*pData);
+		else if( (*pData) == 0x7f ) c = '?';
+		else                        c = '･';
+
+		//文字を表示する
+		DispText( hdc, x, y, &c, 1 );
+
+		//制御文字を示す記号を描画する
+		::MoveToEx( hdc, x, y + y1, NULL );
+		::LineTo( hdc, x + x1, y );
+		::LineTo( hdc, x + x1 * 2, y + y1 );
+
+		x += m_nCharWidth;
+	}
+
+	::SelectObject( hdc, hPenOld );
+	::DeleteObject( hPen );
+
+	return nLength;
+}
+#endif
 
 
 /*[EOF]*/

@@ -291,6 +291,51 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHelp"					, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szExtHelp, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHtmlHelp"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szExtHtmlHelp, 0 );
 
+		// ai 02/05/23 Add S
+		{// Keword Help Font
+			pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
+			if( bRead ){
+				if( TRUE == cProfile.IOProfileData( bRead, pszSecName, "khlf", REGCNV_SZ2SZ, (char*)szKeyData, 0 ) ){
+					sscanf( szKeyData, pszForm,
+						&m_pShareData->m_Common.m_lf_kh.lfHeight,
+						&m_pShareData->m_Common.m_lf_kh.lfWidth,
+						&m_pShareData->m_Common.m_lf_kh.lfEscapement,
+						&m_pShareData->m_Common.m_lf_kh.lfOrientation,
+						&m_pShareData->m_Common.m_lf_kh.lfWeight,
+						&m_pShareData->m_Common.m_lf_kh.lfItalic,
+						&m_pShareData->m_Common.m_lf_kh.lfUnderline,
+						&m_pShareData->m_Common.m_lf_kh.lfStrikeOut,
+						&m_pShareData->m_Common.m_lf_kh.lfCharSet,
+						&m_pShareData->m_Common.m_lf_kh.lfOutPrecision,
+						&m_pShareData->m_Common.m_lf_kh.lfClipPrecision,
+						&m_pShareData->m_Common.m_lf_kh.lfQuality,
+						&m_pShareData->m_Common.m_lf_kh.lfPitchAndFamily
+					);
+				}
+			}else{
+				wsprintf( szKeyData, pszForm,
+					m_pShareData->m_Common.m_lf_kh.lfHeight,
+					m_pShareData->m_Common.m_lf_kh.lfWidth,
+					m_pShareData->m_Common.m_lf_kh.lfEscapement,
+					m_pShareData->m_Common.m_lf_kh.lfOrientation,
+					m_pShareData->m_Common.m_lf_kh.lfWeight,
+					m_pShareData->m_Common.m_lf_kh.lfItalic,
+					m_pShareData->m_Common.m_lf_kh.lfUnderline,
+					m_pShareData->m_Common.m_lf_kh.lfStrikeOut,
+					m_pShareData->m_Common.m_lf_kh.lfCharSet,
+					m_pShareData->m_Common.m_lf_kh.lfOutPrecision,
+					m_pShareData->m_Common.m_lf_kh.lfClipPrecision,
+					m_pShareData->m_Common.m_lf_kh.lfQuality,
+					m_pShareData->m_Common.m_lf_kh.lfPitchAndFamily
+				);
+				cProfile.IOProfileData( bRead, pszSecName, "khlf", REGCNV_SZ2SZ, (char*)szKeyData, 0 );
+			}
+
+			cProfile.IOProfileData( bRead, pszSecName, "khlfFaceName"			, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_lf_kh.lfFaceName, 0 );
+
+		}// Keword Help Font
+		// ai 02/05/23 Add S
+
 
 		cProfile.IOProfileData( bRead, pszSecName, "nMRUArrNum_MAX"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nMRUArrNum_MAX, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nOPENFOLDERArrNum_MAX"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX, 0 );
@@ -469,7 +514,6 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 		cProfile.IOProfileData( bRead, pszSecName, "bFontIs_FIXED_PITCH", REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bFontIs_FIXED_PITCH, 0 );
 	}//	Font
-
 
 	/* キー割り当て */
 	{
@@ -843,6 +887,9 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 	cProfile.IOProfileData( bRead, pszSecName, "bGetStdout"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_bGetStdout, 0 );
 	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 	cProfile.IOProfileData( bRead, pszSecName, "bLineNumIsCRLF"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_bLineNumIsCRLF, 0 );
+
+	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
+	cProfile.IOProfileData( bRead, pszSecName, "nDiffFlgOpt"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_nDiffFlgOpt, 0 );
 	
 	if( !bRead ){
 		cProfile.WriteProfile( szIniFileName, " sakura.ini テキストエディタ設定ファイル" );

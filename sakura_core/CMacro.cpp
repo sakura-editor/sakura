@@ -21,6 +21,7 @@
 #include "CSMacroMgr.h" //2002/2/10 aroka
 #include "etc_uty.h" //2002/2/10 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "debug.h"
 
 CMacro::CMacro( int nFuncID )
 {
@@ -312,10 +313,11 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			break;
 		}
 		return;
-	}
 #if 0
+		}
 	}
 #endif
+	}
 	wsprintf( szLine, "CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n" );
 	_lwrite( hFile, szLine, strlen( szLine ) );
 }
@@ -328,18 +330,31 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 */
 void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize )
 {
+	const char EXEC_ERROR_TITLE[] = "Macro実行エラー";
 	switch (Index) 
 	{
 	case F_CHAR:		//	文字入力。数値は文字コード
 	case F_IME_CHAR:	//	日本語入力
+		//	Jun. 16, 2002 genta
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"挿入すべき文字コードが指定されていません．" ));
+			break;
+		}
+		/* NO BREAK */
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動：未実装）
 		//	一つ目の引数が数値。
-		pcEditView->HandleCommand( Index, FALSE, atoi(Argument[0]), 0, 0, 0 );
+		pcEditView->HandleCommand( Index, FALSE, (Argument[0] != NULL ? atoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
 	case F_INSTEXT:		//	テキスト挿入
 	case F_ADDTAIL:		//	この操作はキーボード操作では存在しないので保存することができない？
 		//	一つ目の引数が文字列。
 		//	ただし2つ目の引数は文字数。
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"挿入すべき文字列が指定されていません．" ));
+			break;
+		}
 		{
 			int len = strlen(Argument[0]);
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], len, 0, 0 );	//	標準
@@ -355,9 +370,14 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x02	PL/SQLコンパイルエラー行を処理する
 		//		未定義	テキストの□行目をブロックの1行目とする
 		//		未定義	検出されたPL/SQLパッケージのブロックから選択
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"ジャンプ先行番号が指定されていません．" ));
+			break;
+		}
 		{
 			pcEditView->m_pcEditDoc->m_cDlgJump.m_nLineNum = atoi(Argument[0]);	//ジャンプ先
-			LPARAM lFlag = atoi(Argument[1]);
+			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 1; // デフォルト1
 			pcEditView->m_pShareData->m_bLineNumIsCRLF = lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準
@@ -365,6 +385,12 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		break;
 	/*	一つ目の引数は文字列、二つ目の引数は数値	*/
 	case F_BOOKMARK_PATTERN:	//2002.02.08 hor
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"マーク行のパターンが指定されていません．" ));
+			break;
+		}
+		/* NO BREAK */
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		//	Argument[0]を検索。オプションはArgument[1]に。
@@ -388,7 +414,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			}
 			//	設定値バックアップ
 			//	マクロパラメータ→設定値変換
-			LPARAM lFlag = atoi(Argument[1]);
+			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 0;
 			pcEditView->m_pShareData->m_Common.m_bWordOnly			= lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bLoHiCase			= lFlag & 0x02 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bRegularExp		= lFlag & 0x04 ? 1 : 0;
@@ -406,8 +432,13 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//	Argument[1]:
 		//		次の数値の和。
 		//		0x01	標準出力を得る
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"外部コマンドが指定されていません．" ));
+			break;
+		}
 		{
-			LPARAM lFlag = atoi(Argument[1]);
+			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 0;
 			pcEditView->m_pShareData->m_bGetStdout = lFlag & 0x01 ? 1 : 0;
 		//	pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)atoi(Argument[1]), 0, 0);
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
@@ -436,6 +467,16 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x200	見つかった文字列の後に追加
 		//		**********************************
 		//	各値をShareDataに設定してコマンドを発行し、ShareDataの値を元に戻す。
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"置換元パターンが指定されていません．" ));
+			break;
+		}
+		if( Argument[1] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"置換先パターンが指定されていません．" ));
+			break;
+		}
 		{
 //			if( 0 < lstrlen( Argument[0] ) ){
 				/* 正規表現 */
@@ -450,7 +491,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				/* 検索文字列 */
 				CShareData::getInstance()->AddToReplaceKeyArr( (const char*)Argument[1] );
 //			}
-			LPARAM lFlag = atoi(Argument[2]);
+			LPARAM lFlag = Argument[2] != NULL ? atoi(Argument[2]) : 0;
 			pcEditView->m_pShareData->m_Common.m_bWordOnly			= lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bLoHiCase			= lFlag & 0x02 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bRegularExp		= lFlag & 0x04 ? 1 : 0;
@@ -491,6 +532,21 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x00	ノーマル
 		//		0x40	ファイル毎
 		//		**********************************
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"GREPパターンが指定されていません．" ));
+			break;
+		}
+		if( Argument[1] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"ファイル種別が指定されていません．" ));
+			break;
+		}
+		if( Argument[2] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"検索先フォルダが指定されていません．" ));
+			break;
+		}
 		{
 			//	常に外部ウィンドウに。
 			/*======= Grepの実行 =============*/
@@ -503,7 +559,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			CMemory cmWork2;	cmWork2.SetDataSz( Argument[1] );	cmWork2.Replace_j( "\"", "\"\"" );	//	ファイル名
 			CMemory cmWork3;	cmWork3.SetDataSz( Argument[2] );	cmWork3.Replace_j( "\"", "\"\"" );	//	フォルダ名
 
-			LPARAM lFlag = atoi(Argument[3]);
+			LPARAM lFlag = Argument[3] != NULL ? atoi(Argument[3]) : 5;
 			/*
 			|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
 			*/
@@ -550,12 +606,22 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		break;
 	case F_FILEOPEN:
 		//	Argument[0]を開く。
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"読み込みファイル名が指定されていません．" ));
+			break;
+		}
 		{
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
 	case F_FILESAVEAS:
 		//	Argument[0]を別名で保存。
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"保存ファイル名が指定されていません．" ));
+			break;
+		}
 		{
 			/* デフォルト値 */
 			int nCharCode = 0;

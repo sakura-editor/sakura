@@ -66,7 +66,9 @@ class CSMacroMgr
 {
 	//	データの型宣言
 	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
-	CKeyMacroMgr* m_cKeyMacro;						//	標準の（保存ができる）キーマクロも管理
+	//	Jun. 16, 2002 genta
+	//	キーマクロに標準マクロ以外のマクロを読み込めるように
+	CMacroManagerBase* m_pKeyMacro;	//	標準の（保存ができる）キーマクロも管理
 
 public:
 
@@ -128,8 +130,15 @@ public:
 	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* 機能ID→関数名，機能名日本語 */
 	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
+	
+	//	Jun. 16, 2002 genta
+	static const MacroFuncInfo* GetFuncInfoByID( int );
+	
+	BOOL IsSaveOk(void);
+
 private:
 	DLLSHAREDATA*	m_pShareData;
+	CMacroManagerBase** Idx2Ptr(int idx);
 
 public:
 	static MacroFuncInfo	m_MacroFuncInfoArr[];

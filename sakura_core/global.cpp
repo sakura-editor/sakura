@@ -29,7 +29,8 @@ const char* gm_pszCodeNameArr_1[] = {
 	"EUC",				/* EUC */
 	"Unicode",			/* Unicode */
 	"UTF-8",			/* UTF-8 */
-	"UTF-7"				/* UTF-7 */
+	"UTF-7",			/* UTF-7 */
+	"UniBE"				/* Unicode BigEndian */
 };
 
 const char* gm_pszCodeNameArr_2[] = {
@@ -38,16 +39,18 @@ const char* gm_pszCodeNameArr_2[] = {
 	"EUC",				/* EUC */
 	"Uni",				/* Unicode */
 	"UTF-8",			/* UTF-8 */
-	"UTF-7"				/* UTF-7 */
+	"UTF-7",			/* UTF-7 */
+	"UniBE"				/* Unicode BigEndian */
 };
 
 const char* gm_pszCodeNameArr_3[] = {
-	"[SJIS]",			/* SJIS */
-	"[JIS]",			/* JIS */
-	"[EUC]",			/* EUC */
-	"[Unicode]",		/* Unicode */
-	"[UTF-8]",			/* UTF-8 */
-	"[UTF-7]"			/* UTF-7 */
+	"  [SJIS]",			/* SJIS */
+	"  [JIS]",			/* JIS */
+	"  [EUC]",			/* EUC */
+	"  [Unicode]",		/* Unicode */
+	"  [UTF-8]",		/* UTF-8 */
+	"  [UTF-7]",		/* UTF-7 */
+	"  [UniBE]"			/* Unicode BigEndian */
 };
 
 /*! 選択領域描画用パラメータ */
@@ -129,6 +132,9 @@ const char* const colorIDXKeyName[] =
 	"RK8",	//@@@ 2001.11.17 add MIK
 	"RK9",	//@@@ 2001.11.17 add MIK
 	"RKA",	//@@@ 2001.11.17 add MIK
+	"DFA",	//DIFF追加	//@@@ 2002.06.01 MIK
+	"DFC",	//DIFF変更	//@@@ 2002.06.01 MIK
+	"DFD",	//DIFF削除	//@@@ 2002.06.01 MIK
 	"LAST"	// Not Used
 };
 

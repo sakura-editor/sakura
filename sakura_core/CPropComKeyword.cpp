@@ -363,9 +363,10 @@ BOOL CPropCommon::DispatchEvent_p7(
 					p7_Export_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
 				}
+				break;	/* BN_CLICKED */
 			}
 		}
-		break;
+		break;	/* WM_COMMAND */
 
 	case WM_TIMER:
 		nIndex1 = ListView_GetNextItem( hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED );

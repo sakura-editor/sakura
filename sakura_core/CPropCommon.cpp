@@ -743,8 +743,9 @@ BOOL CPropCommon::DispatchEvent_p1(
 				return TRUE;
 
 			}
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
