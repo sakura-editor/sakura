@@ -358,7 +358,7 @@ int CEditView::DispLineNew(
 	HBRUSH					hBrush;
 	COLORREF				colTextColorOld;
 	COLORREF				colBkColorOld;
-	static char*			pszEOF = "[ПIЦЛ]";
+	static char*			pszEOF = "[EOF]";
 //#ifndef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 // //	static char*			pszTAB = ">       ";
 // //	static char*			pszTAB = ">еееееее";
