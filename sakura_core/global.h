@@ -303,8 +303,13 @@ SAKURA_CORE_API extern const char* const colorIDXKeyName[];
 
 /*!< 設定値の上限・下限 */
 //	ルーラの高さ
-#define IDC_SPIN_nRulerHeight_MIN	2
-#define IDC_SPIN_nRulerHeight_MAX	32
+const int IDC_SPIN_nRulerHeight_MIN = 2;
+const int IDC_SPIN_nRulerHeight_MAX = 32;
+
+// Feb. 18, 2003 genta 最大値の定数化と値変更
+const int LINESPACE_MAX = 128;
+const int COLUMNSPACE_MAX = 64;
+
 
 // novice 2002/09/14
 #ifndef TRUE
