@@ -41,7 +41,6 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
-#include "CJre.h"
 
 /*! フォントを選ぶ
 	@param bFat TRUEで太字

@@ -47,7 +47,6 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
-#include "CJre.h"
 
 #ifdef _DEBUG
 //★★★テスト用非公開機能★★★
