@@ -269,7 +269,8 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	m_hwndTab = ::CreateWindow(
 		WC_TABCONTROL,
 		_T(""),
-		WS_CHILD | WS_VISIBLE,
+		//	2004.05.22 MIK 消えるTAB対策でWS_CLIPSIBLINGS追加
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
 		CW_USEDEFAULT,
 		0,
 		100,
@@ -518,12 +519,23 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		nIndex = FindTabIndexByHWND( (HWND)lParam );
 		if( -1 != nIndex )
 		{
-			TabCtrl_DeleteItem( m_hwndTab, nIndex );
+			//	2004.05.22 MIK
+			//	TABがすべて消えるのを防ぐため，
+			//	Active Tabを削除する前にフォーカスを外す
+			int nIndexOld = nIndex;
 
 			//次のウインドウが自分ならアクティブに
 			nIndex = GetFirstOpenedWindow();
 			if( -1 != nIndex )
 			{
+				//	2004.05.22 MIK
+				//	TABがすべて消えるのを防ぐため，
+				//	対象Active Tabだったら
+				//	削除前にフォーカスをはずす
+				TabCtrl_SetCurSel( m_hwndTab, nIndex );
+				TabCtrl_SetCurFocus( m_hwndTab, nIndex );
+				//TabCtrl_HighlightItem( m_hwndTab, nIndex, TRUE );
+
 				if( m_pShareData->m_pEditArr[ nIndex ].m_hWnd == m_hwndParent )
 				{
 					if( //TRUE  == m_pShareData->m_Common.m_bDispTabWnd	//2004.02.02
@@ -535,6 +547,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 					}
 				}
 			}
+			TabCtrl_DeleteItem( m_hwndTab, nIndexOld  );
 		}
 		break;
 
