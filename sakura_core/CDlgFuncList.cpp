@@ -3,6 +3,7 @@
 	アウトライン解析ダイアログボックス
 	
 	@author Norio Nakatani
+	@date 2001/06/23 N.Nakatani Visual Basicのアウトライン解析
 	$Revision$
 */
 /*
@@ -193,6 +194,9 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		case OUTLINE_PERL:	//	Sep. 8, 2000 genta
 			::SetWindowText( m_hWnd, "Perl関数一覧" );
 			break;
+		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for VisualBasic
+			::SetWindowText( m_hWnd, "VisualBasic　アウトライン" );
+			break;
 //		case OUTLINE_COBOL:
 //			::SetWindowText( m_hWnd, "COBOLアウトライン" );
 //			break;
@@ -247,36 +251,24 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			ListView_SetItem( hwndList, &item);
 
 			item.mask = LVIF_TEXT;
-			if( 1 == pcFuncInfo->m_nInfo ){
-				item.pszText = "宣言";
-			}else
-			if( 10 == pcFuncInfo->m_nInfo ){
-				item.pszText = "関数宣言";
-			}else
-			if( 20 == pcFuncInfo->m_nInfo ){
-				item.pszText = "プロシージャ宣言";
-			}else
-			if( 11 == pcFuncInfo->m_nInfo ){
-				item.pszText = "関数";
-			}else
-			if( 21 == pcFuncInfo->m_nInfo ){
-				item.pszText = "プロシージャ";
-			}else
-			if( 31 == pcFuncInfo->m_nInfo ){
-				item.pszText = "■パッケージ仕様部";
-			}else
-			if( 41 == pcFuncInfo->m_nInfo ){
-				item.pszText = "■パッケージ本体部";
-			}else
-			if( 50 == pcFuncInfo->m_nInfo ){
-				item.pszText = "PROC";
-			}else
-			if( 51 == pcFuncInfo->m_nInfo ){
-				item.pszText = "ラベル";
-			}else
-			if( 52 == pcFuncInfo->m_nInfo ){
-				item.pszText = "ENDP";
-			}else{
+			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = "宣言";}else
+			if( 10 == pcFuncInfo->m_nInfo ){item.pszText = "関数宣言";}else
+			if( 20 == pcFuncInfo->m_nInfo ){item.pszText = "プロシージャ宣言";}else
+			if( 11 == pcFuncInfo->m_nInfo ){item.pszText = "関数";}else
+			if( 21 == pcFuncInfo->m_nInfo ){item.pszText = "プロシージャ";}else
+			if( 31 == pcFuncInfo->m_nInfo ){item.pszText = "■パッケージ仕様部";}else
+			if( 41 == pcFuncInfo->m_nInfo ){item.pszText = "■パッケージ本体部";}else
+			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = "PROC";}else
+			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = "ラベル";}else
+			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = "ENDP";}else{
+			
+			// 2001/06/23 N.Nakatani for VisualBasic
+			//	Jun. 26, 2001 genta 半角かな→全角に
+			if( 60 == pcFuncInfo->m_nInfo ){item.pszText = "ステートメント宣言";}else
+			if( 61 == pcFuncInfo->m_nInfo ){item.pszText = "関数宣言";}else
+			if( 62 == pcFuncInfo->m_nInfo ){item.pszText = "ステートメント";}else
+			if( 63 == pcFuncInfo->m_nInfo ){item.pszText = "関数";}else
+
 				item.pszText = "";
 			}
 			item.iItem = i;
