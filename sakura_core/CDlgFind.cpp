@@ -4,6 +4,7 @@
 	
 	@author Norio Nakatani
 	@date	1998/12/12 再作成
+	@date 2001/06/23 N.Nakatani　単語単位で検索する機能を実装
 	$Revision$
 */
 /*
@@ -111,8 +112,11 @@ void CDlgFind::SetData( void )
 	}
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
-//	/* 一致する単語のみ検索する */
-//	::CheckDlgButton( m_hWnd, IDC_CHK_WORDONLY, m_bWordOnly );
+
+	// 2001/06/23 Norio Nakatani
+	/* 単語単位で検索 */
+	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
+
 	/* 正規表現 */
 	::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, m_bRegularExp );
 
@@ -131,6 +135,10 @@ void CDlgFind::SetData( void )
 			/* 英大文字と英小文字を区別する */
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+
+			// 2001/06/23 Norio Nakatani
+			/* 単語単位で検索 */
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 		}
 	}
 	/* 検索ダイアログを自動的に閉じる */
@@ -153,8 +161,12 @@ int CDlgFind::GetData( void )
 
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
-//	/* 一致する単語のみ検索する */
-//	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORDONLY );
+
+	// 2001/06/23 Norio Nakatani
+	/* 単語単位で検索 */
+	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
+
+	/* 一致する単語のみ検索する */
 	/* 正規表現 */
 	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
 
@@ -240,11 +252,21 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				/* 英大文字と英小文字を区別する */
 				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+
+				// 2001/06/23 Norio Nakatani
+				/* 単語単位で検索 */
+				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
+
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
+
+			// 2001/06/23 Norio Nakatani
+			/* 単語単位で検索 */
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
+
 		}
 		break;
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
