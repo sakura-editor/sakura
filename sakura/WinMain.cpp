@@ -3,7 +3,8 @@
 	Entry Point
 	
 	@author Norio Nakatani
-	@date	1998/3/13 作成
+	@date	1998/03/13 作成
+	@date	2001/06/26 genta ワード単位のGrepのためのコマンドライン処理追加
 	$Revision$
 */
 /*
@@ -153,6 +154,7 @@ int WINAPI WinMain(
 	BOOL			bGrepRegularExp;
 	BOOL			bGrepKanjiCode_AutoDetect;
 	BOOL			bGrepOutputLine;
+	BOOL			bGrepWordOnly;	//	Jun. 25, 2001 genta
 	int				nGrepOutputStyle;
 	BOOL			bDebugMode;
 	BOOL			bNoWindow;
@@ -203,6 +205,7 @@ int WINAPI WinMain(
 		&bGrepRegularExp,
 		&bGrepKanjiCode_AutoDetect,
 		&bGrepOutputLine,
+		&bGrepWordOnly,	//	Jun. 25, 2001 genta
 		&nGrepOutputStyle,
 		&bDebugMode,
 		&bNoWindow,
@@ -335,6 +338,7 @@ int WINAPI WinMain(
 				bGrepRegularExp,
 				bGrepKanjiCode_AutoDetect,
 				bGrepOutputLine,
+				bGrepWordOnly,	//	Jun. 26, 2001 genta
 				nGrepOutputStyle
 			);
 		}else{

@@ -4,6 +4,7 @@
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
+	@date 2001/06/03 N.Nakatani grep単語単位で検索を実装するときのためにコマンドラインオプションの処理追加 
 	$Revision$
 */
 /*
@@ -122,7 +123,9 @@ void CEditApp::DoGrep()
 					if( cDlgGrep.m_bGrepOutputLine ){		/* 行を出力するか該当部分だけ出力するか */
 						strcat( pOpt, "P" );
 					}
-
+					if( cDlgGrep.m_bWordOnly ){				/* 単語単位で探す */
+						strcat( pOpt, "W" );
+					}
 					if( 1 == cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
 						strcat( pOpt, "1" );
 					}
@@ -2428,6 +2431,7 @@ void CEditApp::ParseCommandLine(
 	BOOL*		pbGrepRegularExp,
 	BOOL*		pbGrepKanjiCode_AutoDetect,
 	BOOL*		pbGrepOutputLine,
+	BOOL*		pbGrepWordOnly,
 	int	*		pnGrepOutputStyle,
 	BOOL*		pbDebugMode,
 	BOOL*		pbNoWindow,	//!< [out] TRUE: 編集Windowを開かない
@@ -2444,6 +2448,7 @@ void CEditApp::ParseCommandLine(
 	BOOL			bGrepRegularExp;
 	BOOL			bGrepKanjiCode_AutoDetect;
 	BOOL			bGrepOutputLine;
+	BOOL			bGrepWordOnly;
 	int				nGrepOutputStyle;
 	BOOL			bDebugMode;
 	BOOL			bNoWindow;
@@ -2469,6 +2474,7 @@ void CEditApp::ParseCommandLine(
 	bGrepRegularExp = FALSE;
 	bGrepKanjiCode_AutoDetect = FALSE;
 	bGrepOutputLine = FALSE;
+	bGrepWordOnly = FALSE;
 	nGrepOutputStyle = 1;
 	bDebugMode = FALSE;
 	bNoWindow = FALSE;
@@ -2607,6 +2613,8 @@ void CEditApp::ParseCommandLine(
 						bGrepKanjiCode_AutoDetect = TRUE;	break;
 					case 'P':	/* 行を出力するか該当部分だけ出力するか */
 						bGrepOutputLine = TRUE;	break;
+					case 'W':	/* 単語単位で探す */
+						bGrepWordOnly = TRUE;	break;
 					case '1':	/* Grep: 出力形式 */
 						nGrepOutputStyle = 1;	break;
 					case '2':	/* Grep: 出力形式 */
@@ -2648,6 +2656,7 @@ void CEditApp::ParseCommandLine(
 	*pbGrepRegularExp			= bGrepRegularExp;
 	*pbGrepKanjiCode_AutoDetect = bGrepKanjiCode_AutoDetect;
 	*pbGrepOutputLine			= bGrepOutputLine;
+	*pbGrepWordOnly				= bGrepWordOnly;
 	*pnGrepOutputStyle			= nGrepOutputStyle;
 	*pbDebugMode				= bDebugMode;
 	*pbNoWindow					= bNoWindow;
