@@ -15,7 +15,7 @@ RFLAGS=-dDS_SETFOREGROUND=0x200L -I\Borland\bcc55\include
 !ifdef DEBUG
 OPTFLAGS=-Od -v -y -D_DEBUG
 !else
-OPTFLAGS=-5 -O1 -Octv -DNDEBUG
+OPTFLAGS=-5 -O1 -Octv -DNDEBUG -w-8004  -w-8057
 !ifdef TRACE
 OPTFLAGS=-v $(OPTFLAGS)
 !endif
