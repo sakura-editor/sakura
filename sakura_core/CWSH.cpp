@@ -203,7 +203,8 @@ public:
 #ifdef TEST
 		wcout << L"GetItemInfo:" << pstrName << endl;
 #endif
-		if(lstrcmpiW(pstrName, L"Editor") == 0)
+		//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
+		if(_wcsicmp(pstrName, L"Editor") == 0)
 		{
 			if(dwReturnMask & SCRIPTINFO_IUNKNOWN)
 			{
@@ -261,7 +262,8 @@ public:
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
 			{
 				wchar_t *Message = new wchar_t[SysStringLen(Info.bstrDescription) + 128];
-				wsprintfW(Message, L"[Line %d] %ls", Line + 1, Info.bstrDescription);
+				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[swprintf]に修正
+				swprintf(Message, L"[Line %d] %ls", Line + 1, Info.bstrDescription);
 				SysReAllocString(&Info.bstrDescription, Message);
 				delete[] Message;
 			}
@@ -407,7 +409,8 @@ HRESULT STDMETHODCALLTYPE CInterfaceObject::GetIDsOfNames(
 #endif
 		for(unsigned J = 0; J < m_Methods.size(); ++J)
 		{
-			if(lstrcmpiW(rgszNames[I], m_Methods[J].Name) == 0)
+			//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
+			if(_wcsicmp(rgszNames[I], m_Methods[J].Name) == 0)
 			{
 				rgdispid[I] = J;
 				goto Found;
@@ -429,7 +432,8 @@ void CInterfaceObject::AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, 
 	Info->Desc.invkind = INVOKE_FUNC;
 	Info->Desc.cParams = ArgumentCount + 1; //戻り値の分
 	Info->Desc.lprgelemdescParam = Info->Arguments;
-	lstrcpyW(Info->Name, Name);
+	//	Nov. 10, 2003 FILE Win9Xでは、[lstrcpyW]が無効のため、[wcscpy]に修正
+	wcscpy(Info->Name, Name);
 	Info->Method = Method;
 	Info->ID = ID;
 	for(int I = 0; I < ArgumentCount; ++I)
@@ -668,8 +672,9 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, char const* Path)
 			m_Source = WideBuffer;
 			Result = TRUE;
 		}
-		delete Buffer;
-		delete WideBuffer;
+		//	Nov. 10, 2003 FILE 配列の破棄なので、[括弧]を追加
+		delete [] Buffer;
+		delete [] WideBuffer;
 		CloseHandle(File);
 	}
 	return Result;
