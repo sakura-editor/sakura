@@ -178,12 +178,20 @@ BOOL CDialog::OnDestroy( void )
 	/* ウィンドウ位置・サイズを記憶 */
 	WINDOWPLACEMENT cWindowPlacement;
 	cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
-	::GetWindowPlacement( m_hWnd, &cWindowPlacement );
-	m_nShowCmd = cWindowPlacement.showCmd;	//	最大化・最小化
-	m_xPos = cWindowPlacement.rcNormalPosition.left;
-	m_yPos = cWindowPlacement.rcNormalPosition.top;
-	m_nWidth = cWindowPlacement.rcNormalPosition.right - cWindowPlacement.rcNormalPosition.left;
-	m_nHeight = cWindowPlacement.rcNormalPosition.bottom - cWindowPlacement.rcNormalPosition.top;
+	if (::GetWindowPlacement( m_hWnd, &cWindowPlacement )){
+		m_nShowCmd = cWindowPlacement.showCmd;	//	最大化・最小化
+		m_xPos = cWindowPlacement.rcNormalPosition.left;
+		m_yPos = cWindowPlacement.rcNormalPosition.top;
+		m_nWidth = cWindowPlacement.rcNormalPosition.right - cWindowPlacement.rcNormalPosition.left;
+		m_nHeight = cWindowPlacement.rcNormalPosition.bottom - cWindowPlacement.rcNormalPosition.top;
+	}
+	else {
+		m_nShowCmd = SW_SHOW;
+		m_xPos = -1;
+		m_yPos = -1;
+		m_nWidth = -1;
+		m_nHeight = -1;
+	}
 	
 	/* 破棄 */
 	if( NULL != m_hwndSizeBox ){

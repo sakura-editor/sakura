@@ -287,6 +287,13 @@ LRESULT CPrintPreview::OnSize( WPARAM wParam, LPARAM lParam )
 	if( NULL != m_hwndSizeBox ){
 		if( wParam == SIZE_MAXIMIZED ){
 			::ShowWindow( m_hwndSizeBox, SW_HIDE );
+		}else
+		if( wParam == SIZE_RESTORED ){
+			if( ::IsZoomed( m_pParentWnd->m_hWnd ) ){
+				::ShowWindow( m_hwndSizeBox, SW_HIDE );
+			}else{
+				::ShowWindow( m_hwndSizeBox, SW_SHOW );
+			}
 		}else{
 			::ShowWindow( m_hwndSizeBox, SW_SHOW );
 		}
