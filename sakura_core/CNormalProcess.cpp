@@ -129,6 +129,11 @@ bool CNormalProcess::Initialize()
 			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr(), szWork ) ){
 				gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
 			}
+			// 2003.06.23 Moca GREP実行前にMutexを開放
+			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
+			m_hWnd = hWnd;
+			::ReleaseMutex( hMutex );
+			::CloseHandle( hMutex );
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
@@ -141,6 +146,7 @@ bool CNormalProcess::Initialize()
 				gi.bGrepWordOnly,	//	Jun. 26, 2001 genta
 				gi.nGrepOutputStyle
 			);
+			return true; // 2003.06.23 Moca
 		}else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
 			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetPtr() );
@@ -153,12 +159,18 @@ bool CNormalProcess::Initialize()
 			m_pShareData->m_Common.m_bGrepOutputLine = gi.bGrepOutputLine;
 			m_pShareData->m_Common.m_bWordOnly = gi.bGrepWordOnly;
 			m_pShareData->m_Common.m_nGrepOutputStyle = gi.nGrepOutputStyle;
+			// 2003.06.23 Moca GREPダイアログ表示前にMutexを開放
+			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
+			m_hWnd = hWnd;
+			::ReleaseMutex( hMutex );
+			::CloseHandle( hMutex );
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
 			if( FALSE != nRet ){
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
 			}
+			return true; // 2003.06.23 Moca
 		}
 	}else{
 		if( 0 < (int)strlen( fi.m_szPath ) ){
