@@ -7269,10 +7269,15 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 // 2003.06.28 Moca コメントとして残っていたコードを削除
 }
 
+/*!	@brief 重ねて表示
 
-
-//@@@2002.01.08 YAZAKI 「左右に並べて表示」すると、裏で最大化されているエクスプローラが「元の大きさ」になるバグ修正。
-//重ねて表示
+	@date 2002.01.08 YAZAKI 「左右に並べて表示」すると、
+		裏で最大化されているエクスプローラが「元の大きさ」になるバグ修正。
+	@date 2003.06.12 MIK タブウインドウ時は動作しないように
+	@date 2004.03.19 crayonzen カレントウィンドウを最後に配置．
+		ウィンドウが多い場合に2周目以降は右にずらして配置．
+	@date 2004.03.20 genta Z-Orderの上から順に並べていくように．(SetWindowPosを利用)
+*/
 void CEditView::Command_CASCADE( void )
 {
 	int i;
@@ -7286,40 +7291,114 @@ void CEditView::Command_CASCADE( void )
 	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
 
 	if( nRowNum > 0 ){
-		HWND*	phwndArr = new HWND[nRowNum];
-		int		count = 0;
-		//	デスクトップサイズを得る
-		RECT	rcDesktop;
-		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		struct WNDARR {
+			HWND	hWnd;
+			int		newX;
+			int		newY;
+		};
+
+		WNDARR*	pWndArr = new WNDARR[nRowNum];
+		int		count = 0;	//	処理対象ウィンドウカウント
+		// Mar. 20, 2004 genta 現在のウィンドウを末尾に持っていくのに使う
+		int		current_win_index = -1;
+
+		// -----------------------------------------
+		//	ウィンドウ(ハンドル)リストの作成
+		// -----------------------------------------
+
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
 				continue;
 			}
-			phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			//	Mar. 20, 2004 genta
+			//	現在のウィンドウを末尾に持っていくためここではスキップ
+			if( pEditNodeArr[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+				current_win_index = i;
+				continue;
+			}
+			pWndArr[count].hWnd = pEditNodeArr[i].m_hWnd;
 			count++;
 		}
+
+		//	Mar. 20, 2004 genta
+		//	現在のウィンドウを末尾に挿入 inspired by crayonzen
+		if( current_win_index >= 0 ){
+			pWndArr[count].hWnd = pEditNodeArr[current_win_index].m_hWnd;
+			count++;
+		}
+
+		//	デスクトップサイズを得る
+		RECT	rcDesktop;
+		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		
 		int width = (rcDesktop.right - rcDesktop.left ) * 4 / 5; // Mar. 9, 2003 genta 整数演算のみにする
 		int height = (rcDesktop.bottom - rcDesktop.top ) * 4 / 5;
 		int w_delta = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXSIZE);
 		int h_delta = ::GetSystemMetrics(SM_CYSIZEFRAME) + ::GetSystemMetrics(SM_CYSIZE);
-		int w_offset = 0;
-		int h_offset = 0;
+		int w_offset = rcDesktop.left; //Mar. 19, 2004 crayonzen 絶対値だとエクスプローラーのウィンドウに重なるので
+		int h_offset = rcDesktop.top; //初期値をデスクトップ内に収める。
+
+		// -----------------------------------------
+		//	座標計算
+		//
+		//	Mar. 19, 2004 crayonzen
+		//		左上をデスクトップ領域に合わせる(タスクバーが上・左にある場合のため)．
+		//		ウィンドウが右下からはみ出たら左上に戻るが，
+		//		2周目以降は開始位置を右にずらしてアイコンが見えるようにする．
+		//
+		//	Mar. 20, 2004 genta ここでは計算値を保管するだけでウィンドウの再配置は行わない
+		// -----------------------------------------
+
+		int roundtrip = 0; //２度目の描画以降で使用するカウント
+		int sw_offset = w_delta; //右スライドの幅
+
 		for(i = 0; i < count; ++i ){
 			if (w_offset + width > rcDesktop.right || h_offset + height > rcDesktop.bottom){
-				w_offset = 0;
-				h_offset = 0;
+				++roundtrip;
+				if ((rcDesktop.right - rcDesktop.left) - sw_offset * roundtrip < width){
+					//	これ以上右にずらせないときはしょうがないから左上に戻る
+					roundtrip = 0;
+				}
+				//	ウィンドウ領域の左上にセット
+				//	craonzen 初期値修正(２度目以降の描画で少しづつスライド)
+				w_offset = rcDesktop.left + sw_offset * roundtrip;
+				h_offset = rcDesktop.top;
 			}
-			::SetWindowPos(
-				phwndArr[i], HWND_TOP,
-				w_offset, h_offset,
-				width, height,
-				0
-			);
+			
+			pWndArr[i].newX = w_offset;
+			pWndArr[i].newY = h_offset;
+
 			w_offset += w_delta;
 			h_offset += h_delta;
 		}
 
-		delete [] phwndArr;
+		// -----------------------------------------
+		//	ウィンドウ配置
+		//
+		//	Mar. 20, 2004 genta APIを素直に使ってZ-Orderの上から下の順で並べる．
+		// -----------------------------------------
+
+		// まずカレントを最前面に
+		i = count - 1;
+		
+		::SetWindowPos(
+			pWndArr[i].hWnd, HWND_TOP,
+			pWndArr[i].newX, pWndArr[i].newY,
+			width, height,
+			0
+		);
+
+		// 残りを1つずつ下に入れていく
+		while( --i >= 0 ){
+			::SetWindowPos(
+				pWndArr[i].hWnd, pWndArr[i + 1].hWnd,
+				pWndArr[i].newX, pWndArr[i].newY,
+				width, height,
+				SWP_NOACTIVATE
+			);
+		}
+
+		delete [] pWndArr;
 		delete [] pEditNodeArr;
 	}
 	return;
@@ -7425,7 +7504,7 @@ void CEditView::Command_TILE_V( void )
 			::ShowWindow( phwndArr[i], SW_RESTORE );
 			::SetWindowPos(
 				phwndArr[i], 0,
-				rcDesktop.left, height * i,
+				rcDesktop.left, rcDesktop.top + height * i, //Mar. 19, 2004 crayonzen 上端調整
 				rcDesktop.right - rcDesktop.left, height,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
