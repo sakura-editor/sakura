@@ -169,51 +169,43 @@ BOOL CheckEXT( const char* pszPath, const char* pszExt )
 	}
 }
 
+/*!
+	空白を含むファイル名を考慮したトークンの分割
+	
+	先頭にある連続した区切り文字は無視する．
+	
+	@param pBuffer [in] 文字列バッファ(終端があること)
+	@param nLen [in] 文字列の長さ
+	@param pnOffset [in/out] オフセット
+	@param pDelimiter [in] 区切り文字
+	@return トークン
 
-
-
-char* my_strtok( char* pszStr, int nStrLen, int* pnPos, const char* pszDelemitor )
+	@date 2004.02.15 みく 最適化
+*/
+TCHAR* my_strtok( TCHAR* pBuffer, int nLen, int* pnOffset, const TCHAR* pDelimiter )
 {
-	int		i;
-	int		bComment = FALSE;
-	i = *pnPos;
-	while( i < nStrLen ){
-		if( NULL == strchr( pszDelemitor, pszStr[i] ) ){
-			break;
-		}
-		++i;
-	}
-	if( i >= nStrLen ){
-		return NULL;
-	}
-	int		nBgn = i;
-	while( i < nStrLen ){
-		if( bComment ){
-			if( '\"' == pszStr[i] ){
-				if( i + 1 < nStrLen ){
-					if( '\"' != pszStr[i + 1] ){
-						bComment = FALSE;
-						goto last_of_loop;
-					}else{
-						++i;
-					}
+	int i = *pnOffset;
+	TCHAR* p;
+
+	do {
+		bool bFlag = false;	//ダブルコーテーションの中か？
+		if( i >= nLen ) return NULL;
+		p = &pBuffer[i];
+		for( ; i < nLen; i++ )
+		{
+			if( pBuffer[i] == _T('"') ) bFlag = ! bFlag;
+			if( ! bFlag )
+			{
+				if( _tcschr( pDelimiter, pBuffer[i] ) )
+				{
+					pBuffer[i++] = _T('\0');
+					break;
 				}
 			}
-		}else{
-			if( '\"' == pszStr[i] ){
-				bComment = TRUE;
-				goto last_of_loop;
-			}
-			if( NULL != strchr( pszDelemitor, pszStr[i] ) ){
-				break;
-			}
 		}
-last_of_loop:;
-		++i;
-	}
-	pszStr[i] = '\0';
-	*pnPos = i + 1;
-	return &pszStr[nBgn];
+		*pnOffset = i;
+	} while( ! *p );	//空のトークンなら次を探す
+	return p;
 }
 
 
