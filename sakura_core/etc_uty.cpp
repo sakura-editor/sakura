@@ -168,7 +168,7 @@ BOOL CheckEXT( const char* pszPath, const char* pszExt )
 
 
 
-char* my_strtok( char* pszStr, int nStrLen, int* pnPos, char* pszDelemitor )
+char* my_strtok( char* pszStr, int nStrLen, int* pnPos, const char* pszDelemitor )
 {
 	int		i;
 	int		bComment = FALSE;
