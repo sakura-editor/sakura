@@ -721,7 +721,7 @@ BOOL CEditView::Create(
 
 	SetFont();
 	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+//	AdjustScrollBars();
 
 	if( bShow ){
 		ShowWindow( m_hWnd, SW_SHOW );
@@ -1246,7 +1246,7 @@ void CEditView::ShowEditCaret( void )
 	int				nCaretHeight = 0;
 	int				nIdxFrom;
 	int				nCharChars;
-	HDC				hdc;
+//	HDC				hdc;
 //	const CLayout*	pcLayout;
 //	HPEN			hPen, hPenOld;
 
@@ -1324,7 +1324,9 @@ void CEditView::ShowEditCaret( void )
 
 	}
 
+#if 0
 	hdc = ::GetDC( m_hWnd );
+#endif
 	if( m_nCaretWidth == 0 ){
 		/* キャレットがなかった場合 */
 		/* キャレットの作成 */
@@ -2626,6 +2628,7 @@ void CEditView::AdjustScrollBars( void )
 || 必要に応じて縦/横スクロールもする
 || 垂直スクロールをした場合はその行数を返す（正／負）
 ||
+	@date 2001/10/20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
 */
 int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int nCaretMarginRate )
 {
@@ -2688,15 +2691,6 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	}
 
 	m_nViewLeftCol -= nScrollColNum;
-//	if( 0 > m_nViewLeftCol ){
-//		m_nViewLeftCol = 0;
-//	}
-
-//#ifdef _DEBUG
-//	if( m_nMyIndex == 0 ){
-//		MYTRACE( "★★m_nViewLeftCol=%d\n", m_nViewLeftCol );
-//	}
-//#endif
 
 	/* 垂直スクロール量（行数）の算出 */
 	if( nWk_CaretPosY < m_nViewTopLine + ( nCaretMarginY ) ){
@@ -2723,12 +2717,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 		if( abs( nScrollColNum ) >= m_nViewColNum ||
 			abs( nScrollRowNum ) >= m_nViewRowNum ){
 			m_nViewTopLine -= nScrollRowNum;
-			//	2001/10/20 deleted by novice
-//			if( bDraw ){
-				::InvalidateRect( m_hWnd, NULL, TRUE );
-//				/* スクロールバーの状態を更新する */
-//				AdjustScrollBars();
-//			}
+			::InvalidateRect( m_hWnd, NULL, TRUE );
 		}else
 		if( nScrollRowNum != 0 || nScrollColNum != 0 ){
 			rcScrol.left = 0;
@@ -2775,13 +2764,6 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 				rcClip2.bottom = m_nViewCy + m_nViewAlignTop;
 			}
 			if( m_bDrawSWITCH ){
-//				::ScrollWindow(
-//					m_hWnd,		/* スクロールするウィンドウのハンドル */
-//					nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),	/* 水平スクロール量 */
-//					nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ),	/* 垂直スクロール量 */
-//					&rcScrol,	/* スクロール長方形の構造体のアドレス */
-//					NULL		/* クリッピング長方形の構造体のアドレス */
-//				);
 				::ScrollWindowEx(
 					m_hWnd,
 					nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),	/* 水平スクロール量 */
@@ -2802,12 +2784,8 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 				}
 				if( nScrollColNum != 0 ){
 					::InvalidateRect( m_hWnd, &rcClip2, TRUE );
-	 			}
-//				::UpdateWindow( m_hWnd );
+				}
 			}
-			//	2001/10/20 moved by novice
-//			/* スクロールバーの状態を更新する */
-//			AdjustScrollBars();
 		}
 
 		/* スクロールバーの状態を更新する */
@@ -4574,9 +4552,6 @@ void CEditView::ScrollAtV( int nPos )
 	int			nScrollRowNum;
 	RECT		rcScrol;
 	RECT		rcClip;
-//	RECT		rcClip2;
-//	PAINTSTRUCT ps;
-//	HDC			hdc;
 	if( nPos < 0 ){
 		nPos = 0;
 	}else
@@ -4587,7 +4562,7 @@ void CEditView::ScrollAtV( int nPos )
 		}
 	}
 	if( m_nViewTopLine == nPos ){
-		return;
+		return;	//	スクロール無し。
 	}
 	/* 垂直スクロール量（行数）の算出 */
 	nScrollRowNum = m_nViewTopLine - nPos;
@@ -4595,14 +4570,8 @@ void CEditView::ScrollAtV( int nPos )
 	/* スクロール */
 	if( abs( nScrollRowNum ) >= m_nViewRowNum ){
 		m_nViewTopLine = nPos;
-//		if( bDraw ){
-			::InvalidateRect( m_hWnd, NULL, TRUE );
-//			/* スクロールバーの状態を更新する */
-//			AdjustScrollBars();
-//		}
+		::InvalidateRect( m_hWnd, NULL, TRUE );
 	}else{
-//	}else
-//	if( nScrollRowNum != 0 || nScrollColNum != 0 ){
 		rcScrol.left = 0;
 		rcScrol.right = m_nViewCx + m_nViewAlignLeft;
 		rcScrol.top = m_nViewAlignTop;
@@ -4629,31 +4598,7 @@ void CEditView::ScrollAtV( int nPos )
 				nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
 			rcClip.bottom = m_nViewCy + m_nViewAlignTop;
 		}
-//		if( nScrollColNum > 0 ){
-//			rcScrol.left = m_nViewAlignLeft;
-//			rcScrol.right =
-//				m_nViewCx + m_nViewAlignLeft - nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-//			rcClip2.left = m_nViewAlignLeft;
-//			rcClip2.right = m_nViewAlignLeft + nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-//			rcClip2.top = m_nViewAlignTop;
-//			rcClip2.bottom = m_nViewCy + m_nViewAlignTop;
-//		}else
-//		if( nScrollColNum < 0 ){
-//			rcScrol.left = m_nViewAlignLeft - nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-//			rcClip2.left =
-//				m_nViewCx + m_nViewAlignLeft + nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-//			rcClip2.right = m_nViewCx + m_nViewAlignLeft;
-//			rcClip2.top = m_nViewAlignTop;
-//			rcClip2.bottom = m_nViewCy + m_nViewAlignTop;
-//		}
 		if( m_bDrawSWITCH ){
-//			::ScrollWindow(
-//				m_hWnd,	/* スクロールするウィンドウのハンドル */
-//				0/*nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )*/,	/* 水平スクロール量 */
-//				nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ),		/* 垂直スクロール量 */
-//				&rcScrol,	/* スクロール長方形の構造体のアドレス */
-//				NULL		/* クリッピング長方形の構造体のアドレス */
-//			);
 			::ScrollWindowEx(
 				m_hWnd,
 				0,	/* 水平スクロール量 */
@@ -4666,16 +4611,6 @@ void CEditView::ScrollAtV( int nPos )
 		}
 	}
 
-//	/* 再描画 */
-//	hdc = ::GetDC( m_hWnd );
-//	ps.rcPaint.left = 0;
-//	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-//	ps.rcPaint.top = 0;
-//	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-//	OnKillFocus();
-//	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
-//	OnSetFocus();
-//	::ReleaseDC( m_hWnd, hdc );
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
 
@@ -4693,10 +4628,7 @@ void CEditView::ScrollAtH( int nPos )
 {
 	int			nScrollColNum;
 	RECT		rcScrol;
-//	RECT		rcClip;
 	RECT		rcClip2;
-//	PAINTSTRUCT ps;
-//	HDC			hdc;
 	if( nPos < 0 ){
 		nPos = 0;
 	}else
@@ -4709,50 +4641,15 @@ void CEditView::ScrollAtH( int nPos )
 	/* 水平スクロール量（文字数）の算出 */
 	nScrollColNum = m_nViewLeftCol - nPos;
 
-//	m_nViewLeftCol = nPos;
-//#ifdef _DEBUG
-//		if( m_nMyIndex == 2 ){
-//			MYTRACE( "%s(%d): m_nMyIndex == 2 m_nViewLeftCol = %d\n", __FILE__, __LINE__, m_nViewLeftCol );
-//		}
-//#endif
 	/* スクロール */
 	if( abs( nScrollColNum ) >= m_nViewColNum /*|| abs( nScrollRowNum ) >= m_nViewRowNum*/ ){
-//		m_nViewTopLine -= nScrollRowNum;
 		m_nViewLeftCol = nPos;
-//		if( bDraw ){
-			::InvalidateRect( m_hWnd, NULL, TRUE );
-//			/* スクロールバーの状態を更新する */
-//			AdjustScrollBars();
-//		}
+		::InvalidateRect( m_hWnd, NULL, TRUE );
 	}else{
-//	}else
-//	if( nScrollRowNum != 0 || nScrollColNum != 0 ){
 		rcScrol.left = 0;
 		rcScrol.right = m_nViewCx + m_nViewAlignLeft;
 		rcScrol.top = m_nViewAlignTop;
 		rcScrol.bottom = m_nViewCy + m_nViewAlignTop;
-//		if( nScrollRowNum > 0 ){
-//			rcScrol.bottom =
-//				m_nViewCy + m_nViewAlignTop -
-//				nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-//			m_nViewTopLine -= nScrollRowNum;
-//			rcClip.left = 0;
-//			rcClip.right = m_nViewCx + m_nViewAlignLeft;
-//			rcClip.top = m_nViewAlignTop;
-//			rcClip.bottom =
-//				m_nViewAlignTop + nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-//		}else
-//		if( nScrollRowNum < 0 ){
-//			rcScrol.top =
-//				m_nViewAlignTop - nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-//			m_nViewTopLine -= nScrollRowNum;
-//			rcClip.left = 0;
-//			rcClip.right = m_nViewCx + m_nViewAlignLeft;
-//			rcClip.top =
-//				m_nViewCy + m_nViewAlignTop +
-//				nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-//			rcClip.bottom = m_nViewCy + m_nViewAlignTop;
-//		}
 		if( nScrollColNum > 0 ){
 			rcScrol.left = m_nViewAlignLeft;
 			rcScrol.right =
@@ -4772,13 +4669,6 @@ void CEditView::ScrollAtH( int nPos )
 		}
 		m_nViewLeftCol = nPos;
 		if( m_bDrawSWITCH ){
-//			::ScrollWindow(
-//				m_hWnd,	/* スクロールするウィンドウのハンドル */
-//				nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),		/* 水平スクロール量 */
-//				0/*nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight )*/,	/* 垂直スクロール量 */
-//				&rcScrol,	/* スクロール長方形の構造体のアドレス */
-//				NULL		/* クリッピング長方形の構造体のアドレス */
-//			);
 			::ScrollWindowEx(
 				m_hWnd,
 				nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),		/* 水平スクロール量 */
@@ -4790,24 +4680,16 @@ void CEditView::ScrollAtH( int nPos )
 			::UpdateWindow( m_hWnd );
 		}
 	}
-//	/* 再描画 */
-//	hdc = ::GetDC( m_hWnd );
-//	ps.rcPaint.left = 0;
-//	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-//	ps.rcPaint.top = 0;
-//	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-//	OnKillFocus();
-//	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
-//	OnSetFocus();
-//	::ReleaseDC( m_hWnd, hdc );
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
 
 	/* キャレットの表示・更新 */
 	ShowEditCaret();
 
-
-
+	/* ルーラー再描画 */
+	HDC hdc = ::GetDC( m_hWnd );
+	DispRuler( hdc );
+	::ReleaseDC( m_hWnd, hdc );
 	return;
 }
 
@@ -6052,7 +5934,10 @@ void CEditView::OnChangeSetting( void )
 
 
 
-/* フォーカス移動時の再描画 */
+/* フォーカス移動時の再描画
+
+	@date 2001/06/21 asa-o 「スクロールバーの状態を更新する」「カーソル移動」削除
+*/
 void CEditView::RedrawAll( void )
 {
 	HDC			hdc;
@@ -6062,25 +5947,11 @@ void CEditView::RedrawAll( void )
 
 //	OnKillFocus();
 
-//	ps.rcPaint.left = 0;
-//	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-//	ps.rcPaint.top = 0;
-//	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 	::GetClientRect( m_hWnd, &ps.rcPaint );
-//	ps.rcPaint.right -= ps.rcPaint.left;
-//	ps.rcPaint.bottom -= ps.rcPaint.top;
-//	ps.rcPaint.left = 0;
-//	ps.rcPaint.top = 0;
 
 	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
 //	OnSetFocus();
 	::ReleaseDC( m_hWnd, hdc );
-
-//	2001/06/21 asa-o 削除
-	/* スクロールバーの状態を更新する */
-//	AdjustScrollBars();
-	/* カーソル移動 */
-//	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
 
 	/* キャレットの表示 */
 	ShowEditCaret();
