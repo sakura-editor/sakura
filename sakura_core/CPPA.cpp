@@ -202,12 +202,11 @@ void CPPA::GetDeclarations( MacroFuncInfo& cMacroFuncInfo )
 	if ( i > 0 ){	//	ˆø”‚ª‚ ‚Á‚½‚Æ‚«
 		int j;
 		char szArgument[80];
-		szArgument[0] = '\0';
-		for (j=0; j<i; j++){
+		// 2002.12.06 Moca Œ´ˆö•s–¾‚¾‚ªCstrcat‚ªVC6Pro‚Å‚¤‚Ü‚­“®‚©‚È‚©‚Á‚½‚½‚ßCstrcpy‚É‚µ‚Ä‚İ‚½‚ç“®‚¢‚½
+		strcpy( szArgument, szArguments[0] );
+		for ( j=1; j<i; j++){
+			strcat( szArgument, "; " );
 			strcat( szArgument, szArguments[j] );
-			if ( j < i-1 ){
-				strcat( szArgument, "; " );
-			}
 		}
 		sprintf( szBuffer, "%s S_%s(%s)%s; index %d;",
 			szType,
