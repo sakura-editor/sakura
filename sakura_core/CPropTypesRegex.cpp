@@ -8,6 +8,7 @@
 */
 /*
 	Copyright (C) 2001, MIK
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -117,7 +118,7 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 	char		szPath[_MAX_PATH + 1];
 	int		i, j, k;
 	char		szInitDir[_MAX_PATH + 1];
-	CProfile	cProfile;
+//	CProfile	cProfile;
 	FILE		*fp;
 	struct RegexKeywordInfo	pRegexKey[MAX_REGEX_KEYWORD];
 	char	buff[1024];
@@ -170,14 +171,24 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 			 && RegexKakomiCheck(p) == TRUE )	//囲みがある
 			{
 				//色指定名に対応する番号を探す
-				for(k = 0; k < COLORIDX_LAST; k++)
+				k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
+				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
 				{
-					if( strcmp(m_Types.m_ColorInfoArr[k].m_szName, &buff[11]) == 0 )
+					pRegexKey[j].m_nColorIndex = k;
+					strcpy(pRegexKey[j].m_szKeyword, p);
+					j++;
+				}
+				else
+				{	/* 日本語名からインデックス番号に変換する */
+					for(k = 0; k < COLORIDX_LAST; k++)
 					{
-						pRegexKey[j].m_nColorIndex = k;
-						strcpy(pRegexKey[j].m_szKeyword, p);
-						j++;
-						break;
+						if( strcmp(m_Types.m_ColorInfoArr[k].m_szName, &buff[11]) == 0 )
+						{
+							pRegexKey[j].m_nColorIndex = k;
+							strcpy(pRegexKey[j].m_szKeyword, p);
+							j++;
+							break;
+						}
 					}
 				}
 			}
@@ -213,9 +224,9 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 	char*		pszMRU = NULL;;
 	char*		pszOPENFOLDER = NULL;;
 	char		szPath[_MAX_PATH + 1];
-	int		i, j;
+	int		i, j, k;
 	char		szInitDir[_MAX_PATH + 1];
-	CProfile	cProfile;
+//	CProfile	cProfile;
 	FILE		*fp;
 	char	szKeyWord[256], szColorIndex[256];
 	HWND	hwndList;
@@ -255,7 +266,18 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 		ListView_GetItemText(hwndList, i, 0, szKeyWord, sizeof(szKeyWord));
 		memset(szColorIndex, 0, sizeof(szColorIndex));
 		ListView_GetItemText(hwndList, i, 1, szColorIndex, sizeof(szColorIndex));
-		fprintf(fp, "RxKey[%03d]=%s,%s\n", i, szColorIndex, szKeyWord);
+
+		const char* p = szColorIndex;
+		for(k = 0; k < COLORIDX_LAST; k++)
+		{
+			if( strcmp( m_Types.m_ColorInfoArr[k].m_szName, szColorIndex ) == 0 )
+			{
+				p = GetColorNameByIndex(k);
+				break;
+			}
+		}
+		//fprintf(fp, "RxKey[%03d]=%s,%s\n", i, szColorIndex, szKeyWord);
+		fprintf(fp, "RxKey[%03d]=%s,%s\n", i, p, szKeyWord);
 	}
 
 	fclose(fp);

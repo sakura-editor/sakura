@@ -2034,6 +2034,37 @@ void CMemory::Replace( char* pszFrom, char* pszTo )
 
 
 
+/* 文字列置換（日本語考慮版） */
+void CMemory::Replace_j( char* pszFrom, char* pszTo )
+{
+	CMemory		cmemWork;
+	int			nFromLen = strlen( pszFrom );
+	int			nToLen = strlen( pszTo );
+	int			nBgnOld = 0;
+	int			nBgn = 0;
+	while( nBgn <= m_nDataLen - nFromLen ){
+		if( 0 == memcmp( &m_pData[nBgn], pszFrom, nFromLen ) ){
+			if( 0  < nBgn - nBgnOld ){
+				cmemWork.Append( &m_pData[nBgnOld], nBgn - nBgnOld );
+			}
+			cmemWork.Append( pszTo, nToLen );
+			nBgn = nBgn + nFromLen;
+			nBgnOld = nBgn;
+		}else{
+			unsigned char c = (unsigned char)m_pData[nBgn];
+			if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ) nBgn++;
+			nBgn++;
+		}
+	}
+	if( 0  < m_nDataLen - nBgnOld ){
+		cmemWork.Append( &m_pData[nBgnOld], m_nDataLen - nBgnOld );
+	}
+	SetData( &cmemWork );
+	return;
+}
+
+
+
 /* 等しい内容か */
 int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 {

@@ -852,6 +852,18 @@ BOOL CPropTypes::DispatchEvent_p1(
 //					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
 //				}
 //				return TRUE;
+
+				case IDC_CHECK_INDENT:	/* オートインデント */
+//				MYTRACE( "IDC_CHECK_INDENT\n" );
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
+					/* 日本語空白もインデント */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), TRUE );
+				}else{
+					/* 日本語空白もインデント */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
+				}
+				return TRUE;
+
 			}
 		}
 		break;
@@ -1080,6 +1092,16 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 	}
 
+	/* インデント */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Types.m_bAutoIndent );
+
+	/* 日本語空白もインデント */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
+
+	if( !m_Types.m_bAutoIndent ){
+		/* 日本語空白もインデント */
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
+	}
 
 	/* スマートインデント種別 */
 //	HWND	hwndCombo;
@@ -1239,6 +1261,12 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 		m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
 	}
+
+	/* インデント */
+	m_Types.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
+
+	/* 日本語空白もインデント */
+	m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
 
 	/* スマートインデント種別 */
 //	HWND	hwndCombo;

@@ -28,6 +28,7 @@ class CLayoutMgr;
 //#include "CMemory.h"// 2002/2/10 aroka
 // //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 //#include "CBregexp.h"// 2002/2/10 aroka
+#include "CShareData.h"
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
 class CDocLineMgr;// 2002/2/10 aroka
@@ -105,9 +106,13 @@ public:
 	/*
 	|| 更新系
 	*/
-//	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
-//	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
-	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, char*, char* ); /* レイアウト情報の変更 */	//@@@ 2002.04.13 MIK 禁則,改行文字をぶら下げる,句読点ぶらさげを追加
+	/* レイアウト情報の変更
+		@date Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
+		@date 2002.04.13 MIK 禁則,改行文字をぶら下げる,句読点ぶらさげを追加
+		@date 2002/04/27 YAZAKI Typesを渡すように変更。
+	*/
+	void SetLayoutInfo( int, HWND, Types& refType );
+	
 	/* 行内文字削除 */
 	void DeleteData_CLayoutMgr(
 		int			nLineNum,

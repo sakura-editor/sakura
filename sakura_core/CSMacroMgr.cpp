@@ -19,291 +19,290 @@
 #include "CSMacroMgr.h"
 #include "CEditView.h"
 #include "CPPAMacroMgr.h"
-#include "CPPA.h"
+#include "CMacroFactory.h"
+#include <stdio.h>
+#include <assert.h> // 試験用
 
-CSMacroMgr::MacroFuncInfoNotCommand CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
+MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {
-	{F_GETFILENAME, "function S_GetFilename: string;", NULL},
+	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //新規作成
 	//	終端
-	{0, NULL, NULL}
+	{0,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
+MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
 {
 //	機能ID			関数名			引数				作業用バッファ
 
 	/* ファイル操作系 */
-	{F_FILENEW,						"S_FileNew",			"",					NULL}, //新規作成
-	{F_FILEOPEN,					"S_FileOpen",			"(str: string)",	NULL}, //開く
-	{F_FILESAVE,					"S_FileSave",			"",					NULL}, //上書き保存
-	{F_FILESAVEAS,					"S_FileSaveAs",			"(str: string; charcode, eolcode: Integer)",	NULL}, //名前を付けて保存
-	{F_FILECLOSE,					"S_FileClose",			"",					NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
-	{F_FILECLOSE_OPEN,				"S_FileCloseOpen",		"",					NULL}, //閉じて開く
-	{F_FILE_REOPEN_SJIS,			"S_FileReopenSJIS",		"",					NULL}, //SJISで開き直す
-	{F_FILE_REOPEN_JIS,				"S_FileReopenJIS",		"",					NULL}, //JISで開き直す
-	{F_FILE_REOPEN_EUC,				"S_FileReopenEUC",		"",					NULL}, //EUCで開き直す
-	{F_FILE_REOPEN_UNICODE,			"S_FileReopenUNICODE",	"",					NULL}, //Unicodeで開き直す
-	{F_FILE_REOPEN_UTF8,			"S_FileReopenUTF8",		"",					NULL}, //UTF-8で開き直す
-	{F_FILE_REOPEN_UTF7,			"S_FileReopenUTF7",		"",					NULL}, //UTF-7で開き直す
-	{F_PRINT,						"S_Print",				"",					NULL}, //印刷
-//	{F_PRINT_DIALOG,				"S_PrintDialog",		"",					NULL}, //印刷ダイアログ
-	{F_PRINT_PREVIEW,				"S_PrintPreview",		"",					NULL}, //印刷プレビュー
-	{F_PRINT_PAGESETUP,				"S_PrintPageSetup",		"",					NULL}, //印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	{F_OPEN_HfromtoC,				"S_OpenHfromtoC",		"",					NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-	{F_OPEN_HHPP,					"S_OpenHHpp",			"",					NULL}, //同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
-	{F_OPEN_CCPP,					"S_OpenCCpp",			"",					NULL}, //同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
-	{F_ACTIVATE_SQLPLUS,			"S_ActivateSQLPLUS",	"",					NULL}, /* Oracle SQL*Plusをアクティブ表示 */
-	{F_PLSQL_COMPILE_ON_SQLPLUS,	"S_ExecSQLPLUS",		"",					NULL}, /* Oracle SQL*Plusで実行 */
-	{F_BROWSE,						"S_Browse",				"",					NULL}, //ブラウズ
-	{F_READONLY,					"S_ReadOnly",			"",					NULL}, //読み取り専用
-	{F_PROPERTY_FILE,				"S_PropertyFile",		"",					NULL}, //ファイルのプロパティ
-	{F_EXITALL,						"S_ExitAll",			"",					NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+	{F_FILENEW,						"FileNew",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規作成
+	{F_FILEOPEN,					"FileOpen",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //開く
+	{F_FILESAVE,					"FileSave",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上書き保存
+	{F_FILESAVEAS,					"FileSaveAs",			{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //名前を付けて保存
+	{F_FILECLOSE,					"FileClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+	{F_FILECLOSE_OPEN,				"FileCloseOpen",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて開く
+	{F_FILE_REOPEN_SJIS,			"FileReopenSJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す
+	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
+	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
+	{F_FILE_REOPEN_UNICODE,			"FileReopenUNICODE",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicodeで開き直す
+	{F_FILE_REOPEN_UTF8,			"FileReopenUTF8",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8で開き直す
+	{F_FILE_REOPEN_UTF7,			"FileReopenUTF7",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7で開き直す
+	{F_PRINT,						"Print",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷
+//	{F_PRINT_DIALOG,				"PrintDialog",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ダイアログ
+	{F_PRINT_PREVIEW,				"PrintPreview",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷プレビュー
+	{F_PRINT_PAGESETUP,				"PrintPageSetup",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	{F_OPEN_HfromtoC,				"OpenHfromtoC",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+	{F_OPEN_HHPP,					"OpenHHpp",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	{F_OPEN_CCPP,					"OpenCCpp",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	{F_ACTIVATE_SQLPLUS,			"ActivateSQLPLUS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plusをアクティブ表示 */
+	{F_PLSQL_COMPILE_ON_SQLPLUS,	"ExecSQLPLUS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plusで実行 */
+	{F_BROWSE,						"Browse",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブラウズ
+	{F_READONLY,					"ReadOnly",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //読み取り専用
+	{F_PROPERTY_FILE,				"PropertyFile",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルのプロパティ
+	{F_EXITALL,						"ExitAll",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */
-	{F_CHAR,				"S_Char",				"(Val: integer)",	NULL}, //文字入力
-	{F_IME_CHAR,			"S_CharIme",			"",					NULL}, //全角文字入力
-	{F_UNDO,				"S_Undo",				"",					NULL}, //元に戻す(Undo)
-	{F_REDO,				"S_Redo",				"",					NULL}, //やり直し(Redo)
-	{F_DELETE,				"S_Delete",				"",					NULL}, //削除
-	{F_DELETE_BACK,			"S_DeleteBack",			"",					NULL}, //カーソル前を削除
-	{F_WordDeleteToStart,	"S_WordDeleteToStart",	"",					NULL}, //単語の左端まで削除
-	{F_WordDeleteToEnd,		"S_WordDeleteToEnd",	"",					NULL}, //単語の右端まで削除
-	{F_WordCut,				"S_WordCut",			"",					NULL}, //単語切り取り
-	{F_WordDelete,			"S_WordDelete",			"",					NULL}, //単語削除
-	{F_LineCutToStart,		"S_LineCutToStart",		"",					NULL}, //行頭まで切り取り(改行単位)
-	{F_LineCutToEnd,		"S_LineCutToEnd",		"",					NULL}, //行末まで切り取り(改行単位)
-	{F_LineDeleteToStart,	"S_LineDeleteToStart",	"",					NULL}, //行頭まで削除(改行単位)
-	{F_LineDeleteToEnd,		"S_LineDeleteToEnd",	"",					NULL}, //行末まで削除(改行単位)
-	{F_CUT_LINE,			"S_CutLine",			"",					NULL}, //行切り取り(折り返し単位)
-	{F_DELETE_LINE,			"S_DeleteLine",			"",					NULL}, //行削除(折り返し単位)
-	{F_DUPLICATELINE,		"S_DuplicateLine",		"",					NULL}, //行の二重化(折り返し単位)
-	{F_INDENT_TAB,			"S_IndentTab",			"",					NULL}, //TABインデント
-	{F_UNINDENT_TAB,		"S_UnindentTab",		"",					NULL}, //逆TABインデント
-	{F_INDENT_SPACE,		"S_IndentSpace",		"",					NULL}, //SPACEインデント
-	{F_UNINDENT_SPACE,		"S_UnindentSpace",		"",					NULL}, //逆SPACEインデント
-//	{F_WORDSREFERENCE,		"S_WordReference",		"",					NULL}, //単語リファレンス
-	{F_LTRIM,				"S_LTrim",				"",					NULL}, //左(先頭)の空白を削除 2001.12.03 hor
-	{F_RTRIM,				"S_RTrim",				"",					NULL}, //右(末尾)の空白を削除 2001.12.03 hor
-	{F_SORT_ASC,			"S_SortAsc",			"",					NULL}, //選択行の昇順ソート 2001.12.06 hor
-	{F_SORT_DESC,			"S_SortDesc",			"",					NULL}, //選択行の降順ソート 2001.12.06 hor
-	{F_MERGE,				"S_Merge",				"",					NULL}, //選択行のマージ 2001.12.06 hor
+	{F_CHAR,				"Char",					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字入力
+	{F_IME_CHAR,			"CharIme",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //全角文字入力
+	{F_UNDO,				"Undo",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //元に戻す(Undo)
+	{F_REDO,				"Redo",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //やり直し(Redo)
+	{F_DELETE,				"Delete",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //削除
+	{F_DELETE_BACK,			"DeleteBack",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル前を削除
+	{F_WordDeleteToStart,	"WordDeleteToStart",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の左端まで削除
+	{F_WordDeleteToEnd,		"WordDeleteToEnd",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の右端まで削除
+	{F_WordCut,				"WordCut",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語切り取り
+	{F_WordDelete,			"WordDelete",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語削除
+	{F_LineCutToStart,		"LineCutToStart",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行頭まで切り取り(改行単位)
+	{F_LineCutToEnd,		"LineCutToEnd",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行末まで切り取り(改行単位)
+	{F_LineDeleteToStart,	"LineDeleteToStart",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行頭まで削除(改行単位)
+	{F_LineDeleteToEnd,		"LineDeleteToEnd",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行末まで削除(改行単位)
+	{F_CUT_LINE,			"CutLine",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行切り取り(折り返し単位)
+	{F_DELETE_LINE,			"DeleteLine",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行削除(折り返し単位)
+	{F_DUPLICATELINE,		"DuplicateLine",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行の二重化(折り返し単位)
+	{F_INDENT_TAB,			"IndentTab",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //TABインデント
+	{F_UNINDENT_TAB,		"UnindentTab",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //逆TABインデント
+	{F_INDENT_SPACE,		"IndentSpace",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SPACEインデント
+	{F_UNINDENT_SPACE,		"UnindentSpace",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //逆SPACEインデント
+//	{F_WORDSREFERENCE,		"WordReference",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語リファレンス
+	{F_LTRIM,				"LTrim",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左(先頭)の空白を削除 2001.12.03 hor
+	{F_RTRIM,				"RTrim",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //右(末尾)の空白を削除 2001.12.03 hor
+	{F_SORT_ASC,			"SortAsc",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択行の昇順ソート 2001.12.06 hor
+	{F_SORT_DESC,			"SortDesc",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択行の降順ソート 2001.12.06 hor
+	{F_MERGE,				"Merge",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択行のマージ 2001.12.06 hor
 
 	/* カーソル移動系 */
-	{F_UP,					"S_Up",					"",					NULL}, //カーソル上移動
-	{F_DOWN,				"S_Down",				"",					NULL}, //カーソル下移動
-	{F_LEFT,				"S_Left",				"",					NULL}, //カーソル左移動
-	{F_RIGHT,				"S_Right",				"",					NULL}, //カーソル右移動
-	{F_UP2,					"S_Up2",				"",					NULL}, //カーソル上移動(２行ごと)
-	{F_DOWN2,				"S_Down2",				"",					NULL}, //カーソル下移動(２行ごと)
-	{F_WORDLEFT,			"S_WordLeft",			"",					NULL}, //単語の左端に移動
-	{F_WORDRIGHT,			"S_WordRight",			"",					NULL}, //単語の右端に移動
-	{F_GOLINETOP,			"S_GoLineTop",			"(flg: integer)",	NULL}, //行頭に移動(折り返し単位)
-	{F_GOLINEEND,			"S_GoLineEnd",			"",					NULL}, //行末に移動(折り返し単位)
-	{F_HalfPageUp,			"S_HalfPageUp",			"",					NULL}, //半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	{F_HalfPageDown,		"S_HalfPageDown",		"",					NULL}, //半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	{F_1PageUp,				"S_1PageUp",			"",					NULL}, //１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-	{F_1PageDown,			"S_1PageDown",			"",					NULL}, //１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-	{F_GOFILETOP,			"S_GoFileTop",			"",					NULL}, //ファイルの先頭に移動
-	{F_GOFILEEND,			"S_GoFileEnd",			"",					NULL}, //ファイルの最後に移動
-	{F_CURLINECENTER,		"S_CurLineCenter",		"",					NULL}, //カーソル行をウィンドウ中央へ
-	{F_JUMPPREV,			"S_MoveHistPrev",		"",					NULL}, //移動履歴: 前へ
-	{F_JUMPNEXT,			"S_MoveHistNext",		"",					NULL}, //移動履歴: 次へ
-	{F_WndScrollDown,		"S_F_WndScrollDown",	"",					NULL}, //テキストを１行下へスクロール	// 2001/06/20 asa-o
-	{F_WndScrollUp,			"S_F_WndScrollUp",		"",					NULL}, //テキストを１行上へスクロール	// 2001/06/20 asa-o
-	{F_GONEXTPARAGRAPH,		"S_GoNextParagraph",	"",					NULL}, //次の段落へ移動
-	{F_GOPREVPARAGRAPH,		"S_GoPrevParagraph",	"",					NULL}, //前の段落へ移動
+	{F_UP,					"Up",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル上移動
+	{F_DOWN,				"Down",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル下移動
+	{F_LEFT,				"Left",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル左移動
+	{F_RIGHT,				"Right",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル右移動
+	{F_UP2,					"Up2",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル上移動(２行ごと)
+	{F_DOWN2,				"Down2",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル下移動(２行ごと)
+	{F_WORDLEFT,			"WordLeft",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の左端に移動
+	{F_WORDRIGHT,			"WordRight",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の右端に移動
+	{F_GOLINETOP,			"GoLineTop",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行頭に移動(折り返し単位)
+	{F_GOLINEEND,			"GoLineEnd",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行末に移動(折り返し単位)
+	{F_HalfPageUp,			"HalfPageUp",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_HalfPageDown,		"HalfPageDown",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_1PageUp,				"1PageUp",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	{F_1PageDown,			"1PageDown",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	{F_GOFILETOP,			"GoFileTop",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの先頭に移動
+	{F_GOFILEEND,			"GoFileEnd",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの最後に移動
+	{F_CURLINECENTER,		"CurLineCenter",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル行をウィンドウ中央へ
+	{F_JUMPPREV,			"MoveHistPrev",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 前へ
+	{F_JUMPNEXT,			"MoveHistNext",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 次へ
+	{F_WndScrollDown,		"F_WndScrollDown",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行下へスクロール	// 2001/06/20 asa-o
+	{F_WndScrollUp,			"F_WndScrollUp",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行上へスクロール	// 2001/06/20 asa-o
+	{F_GONEXTPARAGRAPH,		"GoNextParagraph",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の段落へ移動
+	{F_GOPREVPARAGRAPH,		"GoPrevParagraph",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前の段落へ移動
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
-	{F_SELECTWORD,			"S_SelectWord",			"",					NULL}, //現在位置の単語選択
-	{F_SELECTALL,			"S_SelectAll",			"",					NULL}, //すべて選択
-	{F_BEGIN_SEL,			"S_BeginSelect",		"",					NULL}, //範囲選択開始 Mar. 5, 2001 genta 名称修正
-	{F_UP_SEL,				"S_Up_Sel",				"",					NULL}, //(範囲選択)カーソル上移動
-	{F_DOWN_SEL,			"S_Down_Sel",			"",					NULL}, //(範囲選択)カーソル下移動
-	{F_LEFT_SEL,			"S_Left_Sel",			"",					NULL}, //(範囲選択)カーソル左移動
-	{F_RIGHT_SEL,			"S_Right_Sel",			"",					NULL}, //(範囲選択)カーソル右移動
-	{F_UP2_SEL,				"S_Up2_Sel",			"",					NULL}, //(範囲選択)カーソル上移動(２行ごと)
-	{F_DOWN2_SEL,			"S_Down2_Sel",			"",					NULL}, //(範囲選択)カーソル下移動(２行ごと)
-	{F_WORDLEFT_SEL,		"S_WordLeft_Sel",		"",					NULL}, //(範囲選択)単語の左端に移動
-	{F_WORDRIGHT_SEL,		"S_WordRight_Sel",		"",					NULL}, //(範囲選択)単語の右端に移動
-	{F_GOLINETOP_SEL,		"S_GoLineTop_Sel",		"",					NULL}, //(範囲選択)行頭に移動(折り返し単位)
-	{F_GOLINEEND_SEL,		"S_GoLineEnd_Sel",		"",					NULL}, //(範囲選択)行末に移動(折り返し単位)
-	{F_HalfPageUp_Sel,		"S_HalfPageUp_Sel",		"",					NULL}, //(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	{F_HalfPageDown_Sel,	"S_HalfPageDown_Sel",	"",					NULL}, //(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	{F_1PageUp_Sel,			"S_1PageUp_Sel",		"",					NULL}, //(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-	{F_1PageDown_Sel,		"S_1PageDown_Sel",		"",					NULL}, //(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-	{F_GOFILETOP_SEL,		"S_GoFileTop_Sel",		"",					NULL}, //(範囲選択)ファイルの先頭に移動
-	{F_GOFILEEND_SEL,		"S_GoFileEnd_Sel",		"",					NULL}, //(範囲選択)ファイルの最後に移動
+	{F_SELECTWORD,			"SelectWord",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置の単語選択
+	{F_SELECTALL,			"SelectAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて選択
+	{F_BEGIN_SEL,			"BeginSelect",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //範囲選択開始 Mar. 5, 2001 genta 名称修正
+	{F_UP_SEL,				"Up_Sel",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル上移動
+	{F_DOWN_SEL,			"Down_Sel",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル下移動
+	{F_LEFT_SEL,			"Left_Sel",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル左移動
+	{F_RIGHT_SEL,			"Right_Sel",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル右移動
+	{F_UP2_SEL,				"Up2_Sel",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル上移動(２行ごと)
+	{F_DOWN2_SEL,			"Down2_Sel",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル下移動(２行ごと)
+	{F_WORDLEFT_SEL,		"WordLeft_Sel",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)単語の左端に移動
+	{F_WORDRIGHT_SEL,		"WordRight_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)単語の右端に移動
+	{F_GOLINETOP_SEL,		"GoLineTop_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)行頭に移動(折り返し単位)
+	{F_GOLINEEND_SEL,		"GoLineEnd_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)行末に移動(折り返し単位)
+	{F_HalfPageUp_Sel,		"HalfPageUp_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_HalfPageDown_Sel,	"HalfPageDown_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_1PageUp_Sel,			"1PageUp_Sel",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	{F_1PageDown_Sel,		"1PageDown_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	{F_GOFILETOP_SEL,		"GoFileTop_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)ファイルの先頭に移動
+	{F_GOFILEEND_SEL,		"GoFileEnd_Sel",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)ファイルの最後に移動
+	{F_GONEXTPARAGRAPH_SEL,	"GoNextParagraph_Sel",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の段落へ移動
+	{F_GOPREVPARAGRAPH_SEL,	"GoPrevParagraph_Sel",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前の段落へ移動
 
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
-	{F_BEGIN_BOX,			"S_BeginBoxSelect",		"",					NULL}, //矩形範囲選択開始
+	{F_BEGIN_BOX,			"BeginBoxSelect",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //矩形範囲選択開始
 
 	/* クリップボード系 */
-	{F_CUT,						"S_Cut",						"",					NULL}, //切り取り(選択範囲をクリップボードにコピーして削除)
-	{F_COPY,					"S_Copy",						"",					NULL}, //コピー(選択範囲をクリップボードにコピー)
-	{F_PASTE,					"S_Paste",						"",					NULL}, //貼り付け(クリップボードから貼り付け)
-	{F_COPY_ADDCRLF,			"S_CopyAddCRLF",				"",					NULL}, //折り返し位置に改行をつけてコピー
-	{F_COPY_CRLF,				"S_CopyCRLF",					"",					NULL}, //CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
-	{F_PASTEBOX,				"S_PasteBox",					"",					NULL}, //矩形貼り付け(クリップボードから矩形貼り付け)
-	{F_INSTEXT,					"S_InsText",					"(str: string)",	NULL}, // テキストを貼り付け
-	{F_ADDTAIL,					"S_AddTail",					"(str: string)",	NULL}, // 最後にテキストを追加
-	{F_COPYLINES,				"S_CopyLines",					"",					NULL}, //選択範囲内全行コピー
-	{F_COPYLINESASPASSAGE,		"S_CopyLinesAsPassage",			"",					NULL}, //選択範囲内全行引用符付きコピー
-	{F_COPYLINESWITHLINENUMBER,	"S_CopyLinesWithLineNumber",	"",					NULL}, //選択範囲内全行行番号付きコピー
-	{F_COPYPATH,				"S_CopyPath",					"",					NULL}, //このファイルのパス名をクリップボードにコピー
-	{F_COPYFNAME,				"S_CopyFilename",				"",					NULL}, //このファイル名をクリップボードにコピー // 2002/2/3 aroka
-	{F_COPYTAG,					"S_CopyTag",					"",					NULL}, //このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
-	{F_CREATEKEYBINDLIST,		"S_CopyKeyBindList",			"",					NULL}, //キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加 //Dec. 25, 2000 復活
+	{F_CUT,						"Cut",						{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //切り取り(選択範囲をクリップボードにコピーして削除)
+	{F_COPY,					"Copy",						{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コピー(選択範囲をクリップボードにコピー)
+	{F_PASTE,					"Paste",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //貼り付け(クリップボードから貼り付け)
+	{F_COPY_ADDCRLF,			"CopyAddCRLF",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //折り返し位置に改行をつけてコピー
+	{F_COPY_CRLF,				"CopyCRLF",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
+	{F_PASTEBOX,				"PasteBox",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //矩形貼り付け(クリップボードから矩形貼り付け)
+	{F_INSTEXT,					"InsText",					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // テキストを貼り付け
+	{F_ADDTAIL,					"AddTail",					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 最後にテキストを追加
+	{F_COPYLINES,				"CopyLines",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行コピー
+	{F_COPYLINESASPASSAGE,		"CopyLinesAsPassage",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行引用符付きコピー
+	{F_COPYLINESWITHLINENUMBER,	"CopyLinesWithLineNumber",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行行番号付きコピー
+	{F_COPYPATH,				"CopyPath",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのパス名をクリップボードにコピー
+	{F_COPYFNAME,				"CopyFilename",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイル名をクリップボードにコピー // 2002/2/3 aroka
+	{F_COPYTAG,					"CopyTag",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
+	{F_CREATEKEYBINDLIST,		"CopyKeyBindList",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加 //Dec. 25, 2000 復活
 
 	/* 挿入系 */
-	{F_INS_DATE,				"S_InsertDate",				"",			NULL}, // 日付挿入
-	{F_INS_TIME,				"S_InsertTime",				"",			NULL}, // 時刻挿入
+	{F_INS_DATE,				"InsertDate",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 日付挿入
+	{F_INS_TIME,				"InsertTime",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 時刻挿入
 
 	/* 変換系 */
-	{F_TOLOWER,		 			"S_ToLower",				"",			NULL}, //英大文字→英小文字
-	{F_TOUPPER,		 			"S_ToUpper",				"",			NULL}, //英小文字→英大文字
-	{F_TOHANKAKU,		 		"S_ToHankaku",				"",			NULL}, /* 全角→半角 */
-	{F_TOZENEI,		 			"S_ToZenEi",				"",			NULL}, /* 半角英数→全角英数 */			//July. 30, 2001 Misaka
-	{F_TOHANEI,		 			"S_ToHanEi",				"",			NULL}, /* 全角英数→半角英数 */
-	{F_TOZENKAKUKATA,	 		"S_ToZenKata",				"",			NULL}, /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
-	{F_TOZENKAKUHIRA,	 		"S_ToZenHira",				"",			NULL}, /* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	{F_HANKATATOZENKAKUKATA,	"S_HanKataToZenKata",		"",			NULL}, /* 半角カタカナ→全角カタカナ */
-	{F_HANKATATOZENKAKUHIRA,	"S_HanKataToZenHira",		"",			NULL}, /* 半角カタカナ→全角ひらがな */
-	{F_TABTOSPACE,				"S_TABToSPACE",				"",			NULL}, /* TAB→空白 */
-	{F_SPACETOTAB,				"S_SPACEToTAB",				"",			NULL}, /* 空白→TAB */ //#### Stonee, 2001/05/27
-	{F_CODECNV_AUTO2SJIS,		"S_AutoToSJIS",				"",			NULL}, /* 自動判別→SJISコード変換 */
-	{F_CODECNV_EMAIL,			"S_JIStoSJIS",				"",			NULL}, //E-Mail(JIS→SJIS)コード変換
-	{F_CODECNV_EUC2SJIS,		"S_EUCtoSJIS",				"",			NULL}, //EUC→SJISコード変換
-	{F_CODECNV_UNICODE2SJIS,	"S_CodeCnvUNICODEtoJIS",	"",			NULL}, //Unicode→SJISコード変換
-	{F_CODECNV_UTF82SJIS,		"S_UTF8toSJIS",				"",			NULL}, /* UTF-8→SJISコード変換 */
-	{F_CODECNV_UTF72SJIS,		"S_UTF7toSJIS",				"",			NULL}, /* UTF-7→SJISコード変換 */
-	{F_CODECNV_SJIS2JIS,		"S_SJIStoJIS",				"",			NULL}, /* SJIS→JISコード変換 */
-	{F_CODECNV_SJIS2EUC,		"S_SJIStoEUC",				"",			NULL}, /* SJIS→EUCコード変換 */
-	{F_CODECNV_SJIS2UTF8,		"S_SJIStoUTF8",				"",			NULL}, /* SJIS→UTF-8コード変換 */
-	{F_CODECNV_SJIS2UTF7,		"S_SJIStoUTF7",				"",			NULL}, /* SJIS→UTF-7コード変換 */
-	{F_BASE64DECODE,	 		"S_Base64Decode",			"",			NULL}, //Base64デコードして保存
-	{F_UUDECODE,		 		"S_Uudecode",				"",			NULL}, //uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+	{F_TOLOWER,		 			"ToLower",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英大文字→英小文字
+	{F_TOUPPER,		 			"ToUpper",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英小文字→英大文字
+	{F_TOHANKAKU,		 		"ToHankaku",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角→半角 */
+	{F_TOZENEI,		 			"ToZenEi",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	{F_TOHANEI,		 			"ToHanEi",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角英数→半角英数 */
+	{F_TOZENKAKUKATA,	 		"ToZenKata",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
+	{F_TOZENKAKUHIRA,	 		"ToZenHira",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+	{F_HANKATATOZENKAKUKATA,	"HanKataToZenKata",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角カタカナ */
+	{F_HANKATATOZENKAKUHIRA,	"HanKataToZenHira",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角ひらがな */
+	{F_TABTOSPACE,				"TABToSPACE",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* TAB→空白 */
+	{F_SPACETOTAB,				"SPACEToTAB",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 空白→TAB */ //#### Stonee, 2001/05/27
+	{F_CODECNV_AUTO2SJIS,		"AutoToSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 自動判別→SJISコード変換 */
+	{F_CODECNV_EMAIL,			"JIStoSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //E-Mail(JIS→SJIS)コード変換
+	{F_CODECNV_EUC2SJIS,		"EUCtoSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUC→SJISコード変換
+	{F_CODECNV_UNICODE2SJIS,	"CodeCnvUNICODEtoJIS",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicode→SJISコード変換
+	{F_CODECNV_UTF82SJIS,		"UTF8toSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-8→SJISコード変換 */
+	{F_CODECNV_UTF72SJIS,		"UTF7toSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-7→SJISコード変換 */
+	{F_CODECNV_SJIS2JIS,		"SJIStoJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→JISコード変換 */
+	{F_CODECNV_SJIS2EUC,		"SJIStoEUC",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→EUCコード変換 */
+	{F_CODECNV_SJIS2UTF8,		"SJIStoUTF8",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→UTF-8コード変換 */
+	{F_CODECNV_SJIS2UTF7,		"SJIStoUTF7",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→UTF-7コード変換 */
+	{F_BASE64DECODE,	 		"Base64Decode",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Base64デコードして保存
+	{F_UUDECODE,		 		"Uudecode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
 
 	/* 検索系 */
-	{F_SEARCH_DIALOG,			"S_SearchDialog",			"",			NULL}, //検索(単語検索ダイアログ)
-	{F_SEARCH_NEXT,				"S_SearchNext",				"(str: String; flg: Integer)",			NULL}, //次を検索
-	{F_SEARCH_PREV,				"S_SearchPrev",				"(str: String; flg: Integer)",			NULL}, //前を検索
-	{F_REPLACE_DIALOG,			"S_ReplaceDialog",			"",			NULL}, //置換(置換ダイアログ)
-	{F_REPLACE,					"S_Replace",				"(before, after: String; flg: Integer)",	NULL}, //置換(実行)
-	{F_REPLACE_ALL,				"S_ReplaceAll",				"(before, after: String; flg: Integer)",	NULL}, //すべて置換(実行)
-	{F_SEARCH_CLEARMARK,		"S_SearchClearMark",		"",			NULL}, //検索マークのクリア
-	{F_GREP,					"S_Grep",					"(str, file, folder: String; flg: Integer)",			NULL}, //Grep
-	{F_JUMP,					"S_Jump",					"(line, flg: Integer)",			NULL}, //指定行ヘジャンプ
-	{F_OUTLINE,					"S_Outline",				"",			NULL}, //アウトライン解析
-	{F_TAGJUMP,					"S_TagJump",				"",			NULL}, //タグジャンプ機能
-	{F_TAGJUMPBACK,				"S_TagJumpBack",			"",			NULL}, //タグジャンプバック機能
-	{F_COMPARE,					"S_Compare",				"",			NULL}, //ファイル内容比較
-	{F_BRACKETPAIR,				"S_BracketPair",			"",			NULL}, //対括弧の検索
+	{F_SEARCH_DIALOG,			"SearchDialog",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索(単語検索ダイアログ)
+	{F_SEARCH_NEXT,				"SearchNext",		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次を検索
+	{F_SEARCH_PREV,				"SearchPrev",		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前を検索
+	{F_REPLACE_DIALOG,			"ReplaceDialog",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //置換(置換ダイアログ)
+	{F_REPLACE,					"Replace",			{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //置換(実行)
+	{F_REPLACE_ALL,				"ReplaceAll",		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //すべて置換(実行)
+	{F_SEARCH_CLEARMARK,		"SearchClearMark",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索マークのクリア
+	{F_GREP,					"Grep",				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	NULL}, //Grep
+	{F_JUMP,					"Jump",				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //指定行ヘジャンプ
+	{F_OUTLINE,					"Outline",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトライン解析
+	{F_TAGJUMP,					"TagJump",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプ機能
+	{F_TAGJUMPBACK,				"TagJumpBack",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプバック機能
+	{F_COMPARE,					"Compare",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイル内容比較
+	{F_BRACKETPAIR,				"BracketPair",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //対括弧の検索
 // From Here 2001.12.03 hor
-	{F_BOOKMARK_SET,			"S_BookmarkSet",			"",			NULL}, //ブックマーク設定・解除
-	{F_BOOKMARK_NEXT,			"S_BookmarkNext",			"",			NULL}, //次のブックマークへ
-	{F_BOOKMARK_PREV,			"S_BookmarkPrev",			"",			NULL}, //前のブックマークへ
-	{F_BOOKMARK_RESET,			"S_BookmarkReset",			"",			NULL}, //ブックマークの全解除
-	{F_BOOKMARK_VIEW,			"S_BookmarkView",			"",			NULL}, //ブックマークの一覧
+	{F_BOOKMARK_SET,			"BookmarkSet",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマーク設定・解除
+	{F_BOOKMARK_NEXT,			"BookmarkNext",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のブックマークへ
+	{F_BOOKMARK_PREV,			"BookmarkPrev",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のブックマークへ
+	{F_BOOKMARK_RESET,			"BookmarkReset",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマークの全解除
+	{F_BOOKMARK_VIEW,			"BookmarkView",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマークの一覧
 // To Here 2001.12.03 hor
-	{F_BOOKMARK_PATTERN,		"S_BookmarkPattern",		"(str: String; flg: Integer)",	NULL}, // 2002.01.16 hor 指定パターンに一致する行をマーク
+	{F_BOOKMARK_PATTERN,		"BookmarkPattern",	{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 2002.01.16 hor 指定パターンに一致する行をマーク
 
 	/* モード切り替え系 */
-	{F_CHGMOD_INS,				"S_ChgmodINS",				"",			NULL}, //挿入／上書きモード切り替え
-	{F_CANCEL_MODE,				"S_CancelMode",				"",			NULL}, //各種モードの取り消し
+	{F_CHGMOD_INS,				"ChgmodINS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //挿入／上書きモード切り替え
+	{F_CANCEL_MODE,				"CancelMode",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //各種モードの取り消し
 
 	/* 設定系 */
-	{F_SHOWTOOLBAR,				"S_ShowToolbar",			"",			NULL}, /* ツールバーの表示 */
-	{F_SHOWFUNCKEY,				"S_ShowFunckey",			"",			NULL}, /* ファンクションキーの表示 */
-	{F_SHOWSTATUSBAR,			"S_ShowStatusbar",			"",			NULL}, /* ステータスバーの表示 */
-	{F_TYPE_LIST,				"S_TypeList",				"",			NULL}, /* タイプ別設定一覧 */
-	{F_OPTION_TYPE,				"S_OptionType",				"",			NULL}, /* タイプ別設定 */
-	{F_OPTION,					"S_OptionCommon",			"",			NULL}, /* 共通設定 */
-	{F_FONT,					"S_SelectFont",				"",			NULL}, /* フォント設定 */
-	{F_WRAPWINDOWWIDTH,			"S_WrapWindowWidth",		"",			NULL}, /* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	{F_SHOWTOOLBAR,				"ShowToolbar",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ツールバーの表示 */
+	{F_SHOWFUNCKEY,				"ShowFunckey",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ファンクションキーの表示 */
+	{F_SHOWSTATUSBAR,			"ShowStatusbar",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ステータスバーの表示 */
+	{F_TYPE_LIST,				"TypeList",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定一覧 */
+	{F_OPTION_TYPE,				"OptionType",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定 */
+	{F_OPTION,					"OptionCommon",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定 */
+	{F_FONT,					"SelectFont",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* フォント設定 */
+	{F_WRAPWINDOWWIDTH,			"WrapWindowWidth",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 
 	//	Oct. 9, 2001 genta 追加
-	{F_EXECCOMMAND,				"S_ExecCommand",			"(str: String; flg: Integer)",	NULL}, /* 外部コマンド実行 */
+	{F_EXECCOMMAND,				"ExecCommand",		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部コマンド実行 */
 
 	/* カスタムメニュー */
-	{F_MENU_RBUTTON,			"S_RMenu",					"",			NULL}, /* 右クリックメニュー */
-	{F_CUSTMENU_1,				"S_CustMenu1",				"",			NULL}, /* カスタムメニュー1 */
-	{F_CUSTMENU_2,				"S_CustMenu2",				"",			NULL}, /* カスタムメニュー2 */
-	{F_CUSTMENU_3,				"S_CustMenu3",				"",			NULL}, /* カスタムメニュー3 */
-	{F_CUSTMENU_4,				"S_CustMenu4",				"",			NULL}, /* カスタムメニュー4 */
-	{F_CUSTMENU_5,				"S_CustMenu5",				"",			NULL}, /* カスタムメニュー5 */
-	{F_CUSTMENU_6,				"S_CustMenu6",				"",			NULL}, /* カスタムメニュー6 */
-	{F_CUSTMENU_7,				"S_CustMenu7",				"",			NULL}, /* カスタムメニュー7 */
-	{F_CUSTMENU_8,				"S_CustMenu8",				"",			NULL}, /* カスタムメニュー8 */
-	{F_CUSTMENU_9,				"S_CustMenu9",				"",			NULL}, /* カスタムメニュー9 */
-	{F_CUSTMENU_10,				"S_CustMenu10",				"",			NULL}, /* カスタムメニュー10 */
-	{F_CUSTMENU_11,				"S_CustMenu11",				"",			NULL}, /* カスタムメニュー11 */
-	{F_CUSTMENU_12,				"S_CustMenu12",				"",			NULL}, /* カスタムメニュー12 */
-	{F_CUSTMENU_13,				"S_CustMenu13",				"",			NULL}, /* カスタムメニュー13 */
-	{F_CUSTMENU_14,				"S_CustMenu14",				"",			NULL}, /* カスタムメニュー14 */
-	{F_CUSTMENU_15,				"S_CustMenu15",				"",			NULL}, /* カスタムメニュー15 */
-	{F_CUSTMENU_16,				"S_CustMenu16",				"",			NULL}, /* カスタムメニュー16 */
-	{F_CUSTMENU_17,				"S_CustMenu17", 			"",			NULL}, /* カスタムメニュー17 */
-	{F_CUSTMENU_18,				"S_CustMenu18",				"",			NULL}, /* カスタムメニュー18 */
-	{F_CUSTMENU_19,				"S_CustMenu19",				"",			NULL}, /* カスタムメニュー19 */
-	{F_CUSTMENU_20,				"S_CustMenu20",				"",			NULL}, /* カスタムメニュー20 */
-	{F_CUSTMENU_21,				"S_CustMenu21",				"",			NULL}, /* カスタムメニュー21 */
-	{F_CUSTMENU_22,				"S_CustMenu22",				"",			NULL}, /* カスタムメニュー22 */
-	{F_CUSTMENU_23,				"S_CustMenu23",				"",			NULL}, /* カスタムメニュー23 */
-	{F_CUSTMENU_24,				"S_CustMenu24",				"",			NULL}, /* カスタムメニュー24 */
+	{F_MENU_RBUTTON,			"RMenu",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 右クリックメニュー */
+	{F_CUSTMENU_1,				"CustMenu1",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー1 */
+	{F_CUSTMENU_2,				"CustMenu2",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー2 */
+	{F_CUSTMENU_3,				"CustMenu3",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー3 */
+	{F_CUSTMENU_4,				"CustMenu4",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー4 */
+	{F_CUSTMENU_5,				"CustMenu5",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー5 */
+	{F_CUSTMENU_6,				"CustMenu6",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー6 */
+	{F_CUSTMENU_7,				"CustMenu7",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー7 */
+	{F_CUSTMENU_8,				"CustMenu8",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー8 */
+	{F_CUSTMENU_9,				"CustMenu9",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー9 */
+	{F_CUSTMENU_10,				"CustMenu10",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー10 */
+	{F_CUSTMENU_11,				"CustMenu11",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー11 */
+	{F_CUSTMENU_12,				"CustMenu12",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー12 */
+	{F_CUSTMENU_13,				"CustMenu13",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー13 */
+	{F_CUSTMENU_14,				"CustMenu14",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー14 */
+	{F_CUSTMENU_15,				"CustMenu15",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー15 */
+	{F_CUSTMENU_16,				"CustMenu16",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー16 */
+	{F_CUSTMENU_17,				"CustMenu17", 		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー17 */
+	{F_CUSTMENU_18,				"CustMenu18",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー18 */
+	{F_CUSTMENU_19,				"CustMenu19",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー19 */
+	{F_CUSTMENU_20,				"CustMenu20",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー20 */
+	{F_CUSTMENU_21,				"CustMenu21",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー21 */
+	{F_CUSTMENU_22,				"CustMenu22",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー22 */
+	{F_CUSTMENU_23,				"CustMenu23",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー23 */
+	{F_CUSTMENU_24,				"CustMenu24",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー24 */
 
 	/* ウィンドウ系 */
-	{F_SPLIT_V,					"S_SplitWinV",				"",			NULL}, //上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
-	{F_SPLIT_H,					"S_SplitWinH",				"",			NULL}, //左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
-	{F_SPLIT_VH,				"S_SplitWinVH",				"",			NULL}, //縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
-	{F_WINCLOSE,				"S_WinClose",				"",			NULL}, //ウィンドウを閉じる
-	{F_WIN_CLOSEALL,			"S_WinCloseAll",			"",			NULL}, //すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
-	{F_CASCADE,					"S_CascadeWin",				"",			NULL}, //重ねて表示
-	{F_TILE_V,					"S_TileWinV",				"",			NULL}, //上下に並べて表示
-	{F_TILE_H,					"S_TileWinH",				"",			NULL}, //左右に並べて表示
-	{F_NEXTWINDOW,				"S_NextWindow",				"",			NULL}, //次のウィンドウ
-	{F_PREVWINDOW,				"S_PrevWindow",				"",			NULL}, //前のウィンドウ
-	{F_MAXIMIZE_V,				"S_MaximizeV",				"",			NULL}, //縦方向に最大化
-	{F_MAXIMIZE_H,				"S_MaximizeH",				"",			NULL}, //横方向に最大化 //2001.02.10 by MIK
-	{F_MINIMIZE_ALL,			"S_MinimizeAll",			"",			NULL}, //すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
-	{F_REDRAW,					"S_ReDraw",					"",			NULL}, //再描画
-	{F_WIN_OUTPUT,				"S_ActivateWinOutput",		"",			NULL}, //アウトプットウィンドウ表示
+	{F_SPLIT_V,					"SplitWinV",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
+	{F_SPLIT_H,					"SplitWinH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
+	{F_SPLIT_VH,				"SplitWinVH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+	{F_WINCLOSE,				"WinClose",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ウィンドウを閉じる
+	{F_WIN_CLOSEALL,			"WinCloseAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+	{F_CASCADE,					"CascadeWin",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //重ねて表示
+	{F_TILE_V,					"TileWinV",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上下に並べて表示
+	{F_TILE_H,					"TileWinH",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左右に並べて表示
+	{F_NEXTWINDOW,				"NextWindow",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のウィンドウ
+	{F_PREVWINDOW,				"PrevWindow",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のウィンドウ
+	{F_MAXIMIZE_V,				"MaximizeV",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //縦方向に最大化
+	{F_MAXIMIZE_H,				"MaximizeH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //横方向に最大化 //2001.02.10 by MIK
+	{F_MINIMIZE_ALL,			"MinimizeAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+	{F_REDRAW,					"ReDraw",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //再描画
+	{F_WIN_OUTPUT,				"ActivateWinOutput",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトプットウィンドウ表示
 
 	/* 支援 */
-	{F_HOKAN,					"S_Complete",				"",			NULL}, /* 入力補完 */	//Oct. 15, 2000 JEPRO 入ってなかったので英名を付けて入れてみた
-	{F_HELP_CONTENTS,			"S_HelpContents",			"",			NULL}, /* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
-	{F_HELP_SEARCH,				"S_HelpSearch",				"",			NULL}, /* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
-	{F_MENU_ALLFUNC,			"S_CommandList",			"",			NULL}, /* コマンド一覧 */
-	{F_EXTHELP1,				"S_ExtHelp1",				"",			NULL}, /* 外部ヘルプ１ */
-	{F_EXTHTMLHELP,				"S_ExtHtmlHelp",			"",			NULL}, /* 外部HTMLヘルプ */
-	{F_ABOUT,					"S_About",					"",			NULL}, /* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
+	{F_HOKAN,					"Complete",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 入力補完 */	//Oct. 15, 2000 JEPRO 入ってなかったので英名を付けて入れてみた
+	{F_HELP_CONTENTS,			"HelpContents",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
+	{F_HELP_SEARCH,				"HelpSearch",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
+	{F_MENU_ALLFUNC,			"CommandList",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* コマンド一覧 */
+	{F_EXTHELP1,				"ExtHelp1",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部ヘルプ１ */
+	{F_EXTHTMLHELP,				"ExtHtmlHelp",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部HTMLヘルプ */
+	{F_ABOUT,					"About",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	//	終端
-	{0,	NULL, NULL, NULL}
+	{0,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 //int	CSMacroMgr::m_nMacroFuncInfoArrNum = sizeof( CSMacroMgr::m_MacroFuncInfoArr ) / sizeof( CSMacroMgr::m_MacroFuncInfoArr[0] );
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+/*!
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2002.04.29 genta オブジェクトの実体は実行時まで生成しない。
+*/
 CSMacroMgr::CSMacroMgr()
 {
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	
-	if ( CPPAMacroMgr::m_cPPA.Init() ){
-		//	PPA.DLLアリ
-		int i;
-		for (i=0; i<MAX_CUSTMACRO; i++){
-			m_cSavedKeyMacro[i] = new CPPAMacroMgr;
-		}
-		m_cKeyMacro = new CPPAMacroMgr;
+	CPPAMacroMgr::declare();
+	CKeyMacroMgr::declare();
+	
+	int i;
+	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){
+		m_cSavedKeyMacro[i] = NULL;
 	}
-	else {
-		//	PPA.DLLナシ
-		int i;
-		for (i=0; i<MAX_CUSTMACRO; i++){
-			m_cSavedKeyMacro[i] = new CKeyMacroMgr;
-		}
-		m_cKeyMacro = new CKeyMacroMgr;
-	}
+	m_cKeyMacro = new CKeyMacroMgr;
 }
 
 CSMacroMgr::~CSMacroMgr()
@@ -319,12 +318,14 @@ CSMacroMgr::~CSMacroMgr()
 	delete m_cKeyMacro;
 }
 
-/* キーマクロのバッファをクリアする */
+/*! キーマクロのバッファをクリアする */
 void CSMacroMgr::ClearAll( void )
 {
 	int i;
 	for (i = 0; i < MAX_CUSTMACRO; i++){
-		m_cSavedKeyMacro[i]->ClearAll();
+		//	Apr. 29, 2002 genta
+		delete m_cSavedKeyMacro[i];
+		m_cSavedKeyMacro[i] = NULL;
 	}
 	m_cKeyMacro->ClearAll();
 }
@@ -338,12 +339,13 @@ void CSMacroMgr::ClearAll( void )
 */
 int CSMacroMgr::Append( int idx, /*CSMacroMgr::Macro1& mbuf, */ int nFuncID, LPARAM lParam1, CEditView* pcEditView )
 {
+	assert( idx == STAND_KEYMACRO );
 	if (idx == STAND_KEYMACRO){
 		m_cKeyMacro->Append( nFuncID, lParam1, pcEditView );
 	}
-	else {
-		m_cSavedKeyMacro[idx]->Append( nFuncID, lParam1, pcEditView );
-	}
+//	else {
+		//m_cSavedKeyMacro[idx]->Append( nFuncID, lParam1, pcEditView );
+//	}
 	return TRUE;
 }
 
@@ -367,7 +369,8 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 		return FALSE;
 
 	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
-	if( !m_cSavedKeyMacro[idx]->IsReady() || CShareData::getInstance()->BeReloadWhenExecuteMacro( idx )){
+	//	Apr. 29, 2002 genta
+	if( m_cSavedKeyMacro[idx] == NULL || CShareData::getInstance()->BeReloadWhenExecuteMacro( idx )){
 		//	CShareDataから、マクロファイル名を取得
 		char* p = CShareData::getInstance()->GetMacroFilename( idx );
 		if ( p == NULL){
@@ -376,7 +379,6 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 		char ptr[_MAX_PATH * 2];
 		strcpy(ptr, p);
 
-		Clear( idx );	//	一度クリアしてから読み込む（念のため）
 		if( !Load( idx, hInstance, ptr ) )
 			return FALSE;
 	}
@@ -400,7 +402,20 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 		return m_cKeyMacro->LoadKeyMacro(hInstance, pszPath );
 	}
 	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
-		m_cSavedKeyMacro[idx]->ClearAll();
+		const char *ext = strrchr( pszPath, '.');
+		const char *chk = strrchr( ext, '\\' );
+		if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
+							//	\が漢字の2バイト目の場合も拡張子ではない。
+			ext = NULL;
+		}
+		if(ext != NULL){
+			++ext;
+		}
+		//	ファイルの1行目を取得
+		delete m_cSavedKeyMacro[idx];
+		m_cSavedKeyMacro[idx] = CMacroFactory::Instance()->Create(ext);
+		if( m_cSavedKeyMacro[idx] == NULL )
+			return FALSE;
 		return m_cSavedKeyMacro[idx]->LoadKeyMacro(hInstance, pszPath );
 	}
 	return FALSE;
@@ -415,12 +430,13 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 */
 BOOL CSMacroMgr::Save( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstance, const char* pszPath )
 {
+	assert( idx == STAND_KEYMACRO );
 	if ( idx == STAND_KEYMACRO ){
 		return m_cKeyMacro->SaveKeyMacro(hInstance, pszPath );
 	}
-	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
-		return m_cSavedKeyMacro[idx]->SaveKeyMacro(hInstance, pszPath );
-	}
+//	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
+//		return m_cSavedKeyMacro[idx]->SaveKeyMacro(hInstance, pszPath );
+//	}
 	return FALSE;
 }
 
@@ -430,7 +446,9 @@ void CSMacroMgr::Clear( int idx )
 		m_cKeyMacro->ClearAll();
 	}
 	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
-		m_cSavedKeyMacro[idx]->ClearAll();
+		//	Apr. 29, 2002 genta
+		delete m_cSavedKeyMacro[idx];
+		m_cSavedKeyMacro[idx] = NULL;
 	}
 }
 
@@ -459,13 +477,18 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 	return NULL;
 }
 
-/* 関数名（S_xxxx）→機能ID，機能名日本語 */
+/*!
+	関数名（S_xxxx）→機能ID，機能名日本語
+*/
 int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName, char* pszFuncNameJapanese )
 {
 	int		i;
 	int		nFuncID;
+	char szBuffer[1024] = "S_";
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
-		if( 0 == strcmp( pszFuncName, m_MacroFuncInfoArr[i].m_pszFuncName ) ){
+		strcpy( &szBuffer[2], m_MacroFuncInfoArr[i].m_pszFuncName );	//	S_付きを用意。
+		if( 0 == strcmp( pszFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )
+		||  0 == strcmp( pszFuncName, szBuffer ) ){
 			nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
 			::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			return nFuncID;

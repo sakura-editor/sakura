@@ -33,6 +33,7 @@
 #ifndef _DLL_CPPA_H_
 #define _DLL_CPPA_H_
 
+#include "CSMacroMgr.h"
 #include "CDllHandler.h"
 #include "stdio.h"
 
@@ -58,6 +59,8 @@ public:
 
 	//! PPAメッセージを取得する
 	const char* GetLastMessage(void) const { return m_szMsg; }
+
+	void GetDeclarations( MacroFuncInfo& cMacroFuncInfo );
 
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加

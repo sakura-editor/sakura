@@ -67,8 +67,11 @@ struct ARRHEAD {
 
 	Version 31:
 	Commonに、m_bStopsBothEndsWhenSearchParagraphを追加 2002/04/26 YAZAKI
+
+	Version 32:
+	CommonからTypesへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
 */
-const unsigned int uShareDataVersion = 31;
+const unsigned int uShareDataVersion = 32;
 
 /*
 ||	Singleton風
@@ -572,8 +575,10 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
 		m_pShareData->m_Common.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
 		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
+#if 0
 		m_pShareData->m_Common.m_bAutoIndent = TRUE;			/* オートインデント */
 		m_pShareData->m_Common.m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
+#endif
 		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
@@ -955,6 +960,10 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[nIdx].m_szExtHelp[0] = '\0';
 		m_pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = '\0';
 		m_pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = TRUE;
+
+		m_pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
+		m_pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
+
 /**
 		static const char* ppszTypeName[] = {
 			"テキスト",							// CI[00]
@@ -1039,6 +1048,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"行番号",							TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
 			"行番号(変更行)",					TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
 			"TAB記号",							TRUE , FALSE, FALSE, RGB( 128, 128, 128 )	, RGB( 255, 251, 240 ),	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更
+			"半角空白"		,					FALSE , FALSE, FALSE , RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2002.04.28 Add by KK
 			"日本語空白",						TRUE , FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ),
 			"コントロールコード",				TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 251, 240 ),
 			"改行記号",							TRUE , FALSE, FALSE, RGB( 0, 128, 255 )		, RGB( 255, 251, 240 ),
@@ -1067,7 +1077,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"正規表現キーワード8",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
 			"正規表現キーワード9",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
 			"正規表現キーワード10",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-  		};
+		};
 //	To Here Sept. 18, 2000
 
 
@@ -3798,42 +3808,6 @@ void CShareData::SetKeyNameArrVal(
 	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
 	return;
  }
-
-
-
-#if 0
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-/* TBBUTTON構造体にデータをセット */
-void CShareData::SetTBBUTTONVal(
-	TBBUTTON*	ptb,
-	int			iBitmap,
-	int			idCommand,
-	BYTE		fsState,
-	BYTE		fsStyle,
-	DWORD		dwData,
-	int			iString
-)
-{
-/*
-typedef struct _TBBUTTON {
-	int iBitmap;	// ボタン イメージの 0 から始まるインデックス
-	int idCommand;	// ボタンが押されたときに送られるコマンド
-	BYTE fsState;	// ボタンの状態--以下を参照
-	BYTE fsStyle;	// ボタン スタイル--以下を参照
-	DWORD dwData;	// アプリケーション-定義された値
-	int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
-} TBBUTTON;
-*/
-
- 	ptb->iBitmap	= iBitmap;
- 	ptb->idCommand	= idCommand;
- 	ptb->fsState	= fsState;
- 	ptb->fsStyle	= fsStyle;
- 	ptb->dwData		= dwData;
- 	ptb->iString	= iString;
-	return;
- }
-#endif
 
 
 

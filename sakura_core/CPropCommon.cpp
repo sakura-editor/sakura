@@ -697,7 +697,8 @@ BOOL CPropCommon::DispatchEvent_p1(
 			//	}
 				return TRUE;
 
-			case IDC_CHECK_INDENT:	/* オートインデント */
+#if 0
+				case IDC_CHECK_INDENT:	/* オートインデント */
 //				MYTRACE( "IDC_CHECK_INDENT\n" );
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
 					/* 日本語空白もインデント */
@@ -707,7 +708,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
 				}
 				return TRUE;
-
+#endif
 			case IDC_BUTTON_CLEAR_MRU_FILE:
 				/* ファイルの履歴をクリア */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
@@ -941,6 +942,7 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* フリーカーソルモード */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_bIsFreeCursorMode );
 
+#if 0
 	/* インデント */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Common.m_bAutoIndent );
 
@@ -951,6 +953,7 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 		/* 日本語空白もインデント */
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
 	}
+#endif
 
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, m_Common.m_bStopsBothEndsWhenSearchWord );
@@ -1089,12 +1092,13 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	/* フリーカーソルモード */
 	m_Common.m_bIsFreeCursorMode = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FREECARET );
 
+#if 0
 	/* インデント */
 	m_Common.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
 
 	/* 日本語空白もインデント */
 	m_Common.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
-
+#endif
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	m_Common.m_bStopsBothEndsWhenSearchWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD );
 

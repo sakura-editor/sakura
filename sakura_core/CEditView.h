@@ -239,14 +239,15 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nOldCaretWidth;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK
 	bool	m_bRedrawRuler;		// ルーラー全体を描き直す時 = true      2002.02.25 Add By KK
 
-	/* キー状態 */
+	/* 選択状態 */
 	int		m_bSelectingLock;		/* 選択状態のロック */
 	int		m_bBeginSelect;			/* 範囲選択中 */
 	int		m_bBeginBoxSelect;		/* 矩形範囲選択中 */
 	int		m_bBeginLineSelect;		/* 行単位選択中 */
 	int		m_bBeginWordSelect;		/* 単語単位選択中 */
-//	int		m_nSelectLineBgn;		/* 範囲選択開始行(原点) */
-//	int		m_nSelectColmBgn;		/* 範囲選択開始桁(原点) */
+	/* 選択範囲を保持するための変数群
+		これらはすべて折り返し行と、折り返し桁を保持している。
+	*/
 	int		m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
 	int		m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
 	int		m_nSelectLineBgnTo;		/* 範囲選択開始行(原点) */
@@ -490,7 +491,7 @@ protected:
 	void Command_GOPREVPARAGRAPH( int bSelect );	// 前の段落へ戻る
 
 	/* 選択系 */
-	void Command_SELECTWORD( void );		/* 現在位置の単語選択 */
+	bool Command_SELECTWORD( void );		/* 現在位置の単語選択 */
 	void Command_SELECTALL( void );			/* すべて選択 */
 	void Command_BEGIN_SELECT( void );		/* 範囲選択開始 */
 
@@ -604,7 +605,7 @@ void ReplaceData_CEditView(
 //	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
 	BOOL Command_FUNCLIST( BOOL ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */
 // To Here 2001.12.03 hor
-	void /*BOOL*/ Command_TAGJUMP( void/*BOOL*/ );		/* タグジャンプ機能 */
+	bool Command_TAGJUMP( void/*BOOL*/ );				/* タグジャンプ機能 */
 	void/*BOOL*/ Command_TAGJUMPBACK( void/*BOOL*/ );	/* タグジャンプバック機能 */
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_BRACKETPAIR( void );					/* 対括弧の検索 */

@@ -23,50 +23,10 @@
 #include "global.h"
 #include "CRunningTimer.h"
 #include "CProfile.h"
+#include "etc_uty.h"
 
 #define STR_COLORDATA_HEAD3		" テキストエディタ色設定 Ver3"	//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 
-/*!
-  iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
-  配列の順番は共有メモリ中のデータの順番と一致している。
-
-  @note 数値による内部的対応はCShareData.hで行っているので参照のこと。(Mar. 7, 2001 jepro)
-*/
-static char* colorIDXKeyName[] =
-{
-	"TXT",
-	"RUL",
-	"UND",
-	"LNO",
-	"MOD",
-	"TAB",
-	"ZEN",
-	"CTL",
-	"EOL",
-	"RAP",
-	"EOF",
-//#ifdef COMPILE_COLOR_DIGIT
-	"NUM",	//@@@ 2001.02.17 by MIK 半角数値の強調
-//#endif
-	"FND",
-	"KW1",
-	"KW2",
-	"CMT",
-	"SQT",
-	"WQT",
-	"URL",
-	"RK1",	//@@@ 2001.11.17 add MIK
-	"RK2",	//@@@ 2001.11.17 add MIK
-	"RK3",	//@@@ 2001.11.17 add MIK
-	"RK4",	//@@@ 2001.11.17 add MIK
-	"RK5",	//@@@ 2001.11.17 add MIK
-	"RK6",	//@@@ 2001.11.17 add MIK
-	"RK7",	//@@@ 2001.11.17 add MIK
-	"RK8",	//@@@ 2001.11.17 add MIK
-	"RK9",	//@@@ 2001.11.17 add MIK
-	"RKA",	//@@@ 2001.11.17 add MIK
-	"LAST"	// Not Used
-};
 
 
 //	CShareData_new2.cppと統合
@@ -265,8 +225,10 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "nCaretType"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nCaretType, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bIsINSMode"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bIsINSMode, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bIsFreeCursorMode"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bIsFreeCursorMode, 0 );
+#if 0
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent_ZENSPACE, 0 );
+#endif
 		cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchWord"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchParagraph"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph, 0 );
 		//	Oct. 27, 2000 genta
@@ -734,6 +696,9 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHtmlHelp"		, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szExtHtmlHelp, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bHtmlHelpIsSingle"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bHokanLoHiCase, 0 );
 
+		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bAutoIndent, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bAutoIndent_ZENSPACE, 0 );
+
 		/* 色設定 I/O */
 		IO_ColorSet( &cProfile, bRead, pszSecName, m_pShareData->m_Types[i].m_ColorInfoArr  );
 
@@ -755,7 +720,9 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 						if( p )
 						{
 							*p = '\0';
-							m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex = atoi(szKeyData);
+							m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName(szKeyData);	//@@@ 2002.04.30
+							if( m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex == -1 )	//名前でない
+								m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex = atoi(szKeyData);
 							p++;
 							strcpy(m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword, p);
 							if( m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex < 0
@@ -770,8 +737,11 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 				// 2002.02.08 hor 未定義値を無視
 				if(lstrlen(m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword))
 				{
-					wsprintf( szKeyData, "%d,%s",
-						m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex,
+					//wsprintf( szKeyData, "%d,%s",
+					//	m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex,
+					//	m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword);
+					wsprintf( szKeyData, "%s,%s",
+						GetColorNameByIndex( m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex ),
 						m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword);
 					cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 );
 				}

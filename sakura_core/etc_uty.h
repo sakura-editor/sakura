@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001-2002, genta
 	Copyright (C) 2001, shoji masami, Stonee, MIK
-	Copyright (C) 2002, aroka, hor
+	Copyright (C) 2002, aroka, hor, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -84,6 +84,7 @@ SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD da
 SAKURA_CORE_API DWORD NetConnect ( const char strNetWorkPass[] );
 
 SAKURA_CORE_API int cescape(const char* org, char* out, char cesc, char cwith);
+SAKURA_CORE_API int cescape_j(const char* org, char* out, char cesc, char cwith);
 
 /* ヘルプの目次を表示 */
 SAKURA_CORE_API void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
@@ -96,6 +97,11 @@ SAKURA_CORE_API void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
 inline void dupamp(const char* org, char* out)
 {	cescape( org, out, '&', '&' ); }
 ///////////////////////////////////////////////////////////////////////
+
+/* カラー名＜＞インデックス番号の変換 */	//@@@ 2002.04.30
+SAKURA_CORE_API int GetColorIndexByName( const char *name );
+SAKURA_CORE_API const char* GetColorNameByIndex( int index );
+
 #endif /* _ETC_UTY_H_ */
 
 

@@ -605,28 +605,48 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pLayoutMgr_Print->Create( &m_pParentWnd->m_cEditDoc.m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
+//	Types& ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
+	Types ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
+	ref.m_nMaxLineSize = 		m_bPreview_EnableColms;
+	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
+	ref.m_nTabSpace =			m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nTabSpace;
+	strcpy( ref.m_szLineComment,	"");		/* 行コメントデリミタ */
+	strcpy( ref.m_szLineComment2,	"");		/* 行コメントデリミタ2 */
+	strcpy( ref.m_szLineComment3,	"");		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+	strcpy( ref.m_szBlockCommentFrom,	"");		/* ブロックコメントデリミタ(From) */
+	strcpy( ref.m_szBlockCommentTo,		"");		/* ブロックコメントデリミタ(To) */
+	strcpy( ref.m_szBlockCommentFrom2,	"");		/* ブロックコメントデリミタ2(From) */
+	strcpy( ref.m_szBlockCommentTo2,	"");		/* ブロックコメントデリミタ2(To) */
+	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	ref.m_bKinsokuHead = m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
+	ref.m_bKinsokuTail = m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	ref.m_bKinsokuKuto = m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	m_pLayoutMgr_Print->SetLayoutInfo(
-		m_bPreview_EnableColms,
-		m_pPrintSetting->m_bPrintWordWrap,	/* 英文ワードラップをする */
-		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nTabSpace,
-		"",		/* 行コメントデリミタ */
-		"",		/* 行コメントデリミタ2 */
-		"",		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-		"",		/* ブロックコメントデリミタ(From) */
-		"",		/* ブロックコメントデリミタ(To) */
-		"",		/* ブロックコメントデリミタ2(From) */
-		"",		/* ブロックコメントデリミタ2(To) */
-		0,		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+//		m_bPreview_EnableColms,
+//		m_pPrintSetting->m_bPrintWordWrap,	/* 英文ワードラップをする */
+//		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nTabSpace,
+//		"",		/* 行コメントデリミタ */
+//		"",		/* 行コメントデリミタ2 */
+//		"",		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+//		"",		/* ブロックコメントデリミタ(From) */
+//		"",		/* ブロックコメントデリミタ(To) */
+//		"",		/* ブロックコメントデリミタ2(From) */
+//		"",		/* ブロックコメントデリミタ2(To) */
+//		0,		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,	
 		NULL,	
-		FALSE,	/* シングルクォーテーション文字列を表示する */
-		FALSE,	/* ダブルクォーテーション文字列を表示する */
-		m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
-		m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
-		m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-		m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuTail		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
+//		FALSE,	/* シングルクォーテーション文字列を表示する */
+//		FALSE,	/* ダブルクォーテーション文字列を表示する */
+//		m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
+//		m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+//		m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+//		m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+//		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+//		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuTail,	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
+		ref
 	);
 	m_nAllPageNum = m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu );		/* 全ページ数 */
 	if( 0 < m_pLayoutMgr_Print->GetLineCount() % ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ) ){

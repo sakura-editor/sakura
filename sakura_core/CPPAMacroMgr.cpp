@@ -13,11 +13,12 @@
 #include "CPPAMacroMgr.h"
 #include "CPPA.h"
 #include "CMemory.h"
+#include "CMacroFactory.h"
+#include <string.h>
 
 CPPA CPPAMacroMgr::m_cPPA;
 
 CPPAMacroMgr::CPPAMacroMgr()
-: CKeyMacroMgr()
 {
 }
 
@@ -41,7 +42,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 {
 	FILE* hFile = fopen( pszPath, "r" );
 	if( NULL == hFile ){
-		m_nReady = FALSE;
+		m_nReady = false;
 		return FALSE;
 	}
 
@@ -57,9 +58,31 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 
 	m_cBuffer.SetData( &cmemWork );	//	m_cBufferにコピー
 
-	m_nReady = TRUE;
+	m_nReady = true;
 	return TRUE;
 }
 
+//	From Here Apr. 29, 2002 genta
+/*!
+	@brief Factory
+
+	拡張子は特に使わない。
+*/
+CMacroManagerBase* CPPAMacroMgr::Creator(const char*)
+{
+	return new CPPAMacroMgr;
+}
+
+/*!	CPPAMacroManagerの登録
+
+	PPAが利用できないときは何もしない。
+*/
+void CPPAMacroMgr::declare (void)
+{
+	if( m_cPPA.Init() ){
+		CMacroFactory::Instance()->Register("ppa", Creator);
+	}
+}
+//	To Here Apr. 29, 2002 genta
 
 /*[EOF]*/

@@ -146,18 +146,86 @@ int CPPA::InitDll()
 	int i;
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
-		CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) + 30 ];	//	30文字分プラス
-		sprintf(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData, "%s index %d;", CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName, CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID );
+		CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) + 256 ];	//	256文字分プラス
+		GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i] );	//	m_pszDataを作成する
 		SetDefProc(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData);
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
-		CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName) + strlen(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncParam) + 30 ];	//	30文字分プラス
-		sprintf(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData, "procedure %s%s; index %d;", CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName, CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncParam, CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID);
+		CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName) + 256 ];	//	256文字分プラス
+		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i] );	//	m_pszDataを作成する
 		SetDefProc(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData);
 	}
 	return 0; 
+}
+
+void CPPA::GetDeclarations( MacroFuncInfo& cMacroFuncInfo )
+{
+	char szBuffer[1024];	//	最長1024でどうだ？
+
+	char szType[20];			//	procedure/function用バッファ
+	char szReturn[20];			//	戻り値型用バッファ
+	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
+		strcpy( szType, "procedure" );
+		szReturn[0] = '\0';
+	}
+	else {
+		strcpy( szType, "function" );
+		if (cMacroFuncInfo.m_varResult == VT_BSTR){
+			strcpy( szReturn, ": string" );
+		}
+		else {
+			szReturn[0] = '\0';
+		}
+	}
+	
+	char szArguments[4][20];	//	引数用バッファ
+	int i;
+	for (i=0; i<4; i++){
+		if ( cMacroFuncInfo.m_varArguments[i] == VT_EMPTY ){
+			break;
+		}
+		if ( cMacroFuncInfo.m_varArguments[i] == VT_BSTR ){
+			strcpy( szArguments[i], "s0: string" );
+			szArguments[i][1] = '0' + i;
+		}
+		else if ( cMacroFuncInfo.m_varArguments[i] == VT_I4 ){
+			strcpy( szArguments[i], "i0: Integer" );
+			szArguments[i][1] = '0' + i;
+		}
+		else {
+			strcpy( szArguments[i], "u0: Unknown" );
+		}
+	}
+	if ( i > 0 ){	//	引数があったとき
+		int j;
+		char szArgument[80];
+		szArgument[0] = '\0';
+		for (j=0; j<i; j++){
+			strcat( szArgument, szArguments[j] );
+			if ( j < i-1 ){
+				strcat( szArgument, "; " );
+			}
+		}
+		sprintf( szBuffer, "%s S_%s(%s)%s; index %d;",
+			szType,
+			cMacroFuncInfo.m_pszFuncName,
+			szArgument,
+			szReturn,
+			cMacroFuncInfo.m_nFuncID
+		);
+	}
+	else {
+		sprintf( szBuffer, "%s S_%s%s; index %d;",
+			szType,
+			cMacroFuncInfo.m_pszFuncName,
+			szReturn,
+			cMacroFuncInfo.m_nFuncID
+		);
+	}
+	cMacroFuncInfo.m_pszData = new char [ lstrlen( szBuffer ) + 1 ];
+	strcpy( cMacroFuncInfo.m_pszData, szBuffer );
 }
 
 /*!	
