@@ -70,8 +70,10 @@ public:
 		@param x [in] 描画するX座標
 		@param y [in] 描画するY座標
 		@param fstyle [in] 描画スタイル
+		
+		@date 2003.09.06 genta 背景の透過処理に伴い背景色指定削除
 	*/
-	bool Draw(int index, HDC dc, int x, int y, int fstyle, COLORREF colBkColor) const	//	描画
+	bool Draw(int index, HDC dc, int x, int y, int fstyle ) const	//	描画
 	;
 	
 	//! アイコン数を返す
@@ -109,11 +111,11 @@ protected:
 	HBITMAP m_hIconBitmap;
 
 	//	オリジナルテキストエディタからの描画関数
+	//	2003.08.27 Moca 背景を透過処理するので背景色の指定は不要に
 	void MyBitBlt( HDC drawdc, int nXDest, int nYDest, 
-		int nWidth, int nHeight, HBITMAP bmp, int nXSrc, int nYSrc,
-		COLORREF colBkColor ) const;
+		int nWidth, int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
 	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF colBkColor) const;
+                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
 
 };
 

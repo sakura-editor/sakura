@@ -417,9 +417,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 
 		if( 0 != tbb.idCommand ){
 			/* ƒrƒbƒgƒ}ƒbƒv‚Ì•\Ž¦ ŠDF‚ð“§–¾•`‰æ */
-			//	Aug. 30, 2003 genta ”wŒiF‚ðˆø”‚É’Ç‰Á
-			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2,
-				ILD_NORMAL, ::GetSysColor( COLOR_WINDOW ));
+			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
 #if 0//////////////////////////////////
 			/* Ä•`‰æ—pƒRƒ“ƒpƒ`ƒuƒ‹‚c‚b */
 			hdcCompatDC = ::CreateCompatibleDC( pDis->hDC );

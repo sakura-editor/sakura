@@ -160,6 +160,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 
 	@author Nakatani
 	@date 2003.07.21 genta 以前のCMenuDrawerより移転復活
+	@date 2003.08.27 Moca 背景は透過処理に変更し、colBkColorを削除
 */
 void CImageListMgr::MyBitBlt(
 	HDC drawdc, 
@@ -169,8 +170,7 @@ void CImageListMgr::MyBitBlt(
 	int nHeight, 
 	HBITMAP bmp, 
 	int nXSrc, 
-	int nYSrc,
-	COLORREF colBkColor //描画先の背景色
+	int nYSrc
 ) const
 {
 	COLORREF colToTransParent = m_cTrans;	/* BMPの中の透明にする色 */
@@ -196,14 +196,16 @@ void CImageListMgr::MyBitBlt(
 	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
 
 	// build a mask
-	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
+//	2003.09.04 Moca bmpMaskとbmpの転送する大きさが同じなので不要
+//	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
 	SetBkColor( hdcMem, colToTransParent );
 	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
 
 	/* マスク描画(透明にしない部分だけ黒く描画) */
-	::SetBkColor( drawdc, colBkColor/*::GetSysColor( COLOR_MENU )*/ );
+	::SetBkColor( drawdc, RGB( 255, 255, 255 ) /* colBkColor */ ); // 2003.08.27 Moca 作画方法変更
 	::SetTextColor( drawdc, RGB( 0, 0, 0 ) );
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
+	// 2003.08.27 Moca 作画方法変更
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCAND /* SRCCOPY */ ); 
 
 	/* ビットマップ描画(透明にする色を黒くしてマスクとOR描画) */
 	::SetBkColor( hdcMem2, colToTransParent/*RGB( 0, 0, 0 )*/ );
@@ -228,18 +230,16 @@ void CImageListMgr::MyBitBlt(
 	@author Nakatani
 	
 	@date 2003.07.21 genta 以前のCMenuDrawerより移転復活
-	@date 2003.08.30 genta 背景色を指定する引数を追加
+	@date 2003.08.27 Moca 背景色は透過処理する
 */
 void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF colBkColor) const
+                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc) const
 {
-	HBRUSH brShadow, brHilight;
 	HDC		hdcMask;
 	HBITMAP	bmpMask;
 	HBITMAP	bmpMaskOld;
 	HDC		hdcMem;
 	HBITMAP	bmpMemOld;
-	HBRUSH pOldBrush;
 	HDC		hdcMem2;
 	HBITMAP bmpMem2;
 	HBITMAP bmpMem2Old;
@@ -262,7 +262,8 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
 
 	// build a mask
-	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
+	//	2003.09.04 Moca bmpMaskとbmpの転送する大きさが同じなので不要
+	//PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
 	SetBkColor( hdcMem, colToTransParent );
 	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
 	SetBkColor( hdcMem, RGB( 255, 255, 255 ) );
@@ -270,27 +271,26 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 
 	// Copy the image from the toolbar into the memory DC
 	// and draw it (grayed) back into the toolbar.
-	//	Aug. 30, 2003 genta 背景色を引数でもらうように
-	FillSolidRect( hdcMem2, 0,0, nWidth, nHeight, colBkColor );
     //SK: Looks better on the old shell
-	SetBkColor( hdcMem2, RGB(0, 0, 0));
-	SetTextColor( hdcMem2, RGB(255, 255, 255));
-	brHilight = CreateSolidBrush(GetSysColor(COLOR_BTNHILIGHT));
-	brShadow = CreateSolidBrush(GetSysColor(COLOR_BTNSHADOW));
-	pOldBrush = (HBRUSH)SelectObject( hdcMem2, brHilight);
-	BitBlt( hdcMem2, 0,0, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L);
-	BitBlt( drawdc, nXDest+1,nYDest+1,nWidth, nHeight, hdcMem2,0,0,SRCCOPY);
-
-	BitBlt( hdcMem2, 1,1, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L);
-	SelectObject( hdcMem2, brShadow);
-	BitBlt( hdcMem2, 0,0, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L);
-	BitBlt( drawdc, nXDest,nYDest,nWidth, nHeight, hdcMem2,0,0,SRCCOPY);
+	// 2003.08.29 Moca 作画方法を変更
+	COLORREF coltxOld = ::SetTextColor( drawdc, RGB(0, 0, 0) );
+	COLORREF colbkOld = ::SetBkColor( drawdc, RGB(255, 255, 255) );
+	::SetBkColor( hdcMem2, RGB(0, 0, 0));
+	::SetTextColor( hdcMem2, ::GetSysColor( COLOR_BTNHILIGHT ) );
+	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
+	::BitBlt( drawdc, nXDest+1, nYDest+1, nWidth, nHeight, hdcMask, 0, 0, SRCAND );
+	::BitBlt( drawdc, nXDest+1, nYDest+1, nWidth, nHeight, hdcMem2, 0, 0, SRCPAINT);
+	::SetTextColor( hdcMem2, ::GetSysColor( COLOR_BTNSHADOW ) );
+	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCAND );
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMem2, 0, 0, SRCPAINT);
+	::SetTextColor( drawdc, coltxOld );
+	::SetBkColor( drawdc, colbkOld );
 
 	// reset DCs
 	SelectObject( hdcMask, bmpMaskOld);
 	DeleteDC( hdcMask );
 
-	SelectObject( hdcMem2, pOldBrush);
 	SelectObject( hdcMem, bmpMemOld);
 	DeleteDC( hdcMem );
 
@@ -300,8 +300,6 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	::DeleteDC( hdcMem2 );
 
 	DeleteObject( bmpMask );
-	DeleteObject( brHilight );
-	DeleteObject( brShadow );
 	return;
 
 }
@@ -321,19 +319,20 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	
 	@date 2003.07.21 genta 独自描画ルーチンを使う
 	@date 2003.08.30 genta 背景色を指定する引数を追加
+	@date 2003.09.06 genta Mocaさんの背景色透過処理に伴い，背景色引数削除
 */
-bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle, COLORREF bgColor ) const
+bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 {
 	if( m_hIconBitmap == NULL )
 		return false;
 	
 	if( fstyle == ILD_MASK ){
-		DitherBlt2( dc, x, y, cx() - 1, cy() - 1, m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), bgColor );
+		DitherBlt2( dc, x, y, cx(), cy(), m_hIconBitmap,
+		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
 	}
 	else {
-		MyBitBlt( dc, x, y, cx() - 1, cy() - 1, m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), bgColor );
+		MyBitBlt( dc, x, y, cx(), cy(), m_hIconBitmap,
+		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
 	}
 	return true;
 }
