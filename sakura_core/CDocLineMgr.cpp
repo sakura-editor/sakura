@@ -1147,7 +1147,10 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	bool		bBookMarkNext;	// 2001.12.03 hor 挿入によるマーク行の制御
 
 	*pnNewLine = nLine;	/* 挿入された部分の次の位置の行 */
-	*pnNewPos  = 0;		/* 挿入された部分の次の位置のデータ位置 */
+	//	Jan. 25, 2004 genta
+	//	挿入文字列長が0の場合に最後までpnNewPosが設定されないので
+	//	初期値として0ではなく開始位置と同じ値を入れておく．
+	*pnNewPos  = nInsPos;		/* 挿入された部分の次の位置のデータ位置 */
 
 	/* 挿入データを行終端で区切った行数カウンタ */
 	nCount = 0;
