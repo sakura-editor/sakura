@@ -202,7 +202,9 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 
 	MENUITEMINFO mii;
 	memset( &mii, 0, sizeof( MENUITEMINFO ) );
-	mii.cbSize = sizeof( MENUITEMINFO );
+	//	Aug. 31, 2001 genta
+	//mii.cbSize = sizeof( MENUITEMINFO ); // 本当はこちらの書き方が正しいが，
+	mii.cbSize = 44; // サイズが大きいとWin95で動かないので，Win95が納得する値を決め打ち
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = 0;
 	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW;
