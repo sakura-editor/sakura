@@ -697,6 +697,7 @@ void ReplaceData_CEditView(
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
+	void Command_CHGMOD_EOL( enumEOLType );	/* 入力する改行コードを設定 2003.06.23 moca */
 	void Command_CANCEL_MODE( void );	/* 各種モードの取り消し */
 
 	/* 設定系 */

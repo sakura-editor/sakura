@@ -486,6 +486,13 @@ BOOL CEditView::HandleCommand(
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		Command_CHGMOD_INS();break;		//挿入／上書きモード切り替え
+	// From Here 2003.06.23 Moca
+	// F_CHGMOD_EOL_xxx はマクロに記録されないが、F_CHGMOD_EOLはマクロに記録されるので、マクロ関数を統合できるという手はず
+	case F_CHGMOD_EOL_CRLF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CRLF, 0, 0, 0 );break;	//入力する改行コードをCRLFに設定
+	case F_CHGMOD_EOL_LF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_LF, 0, 0, 0 );break;	//入力する改行コードをLFに設定
+	case F_CHGMOD_EOL_CR:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CR, 0, 0, 0 );break;	//入力する改行コードをCRに設定
+	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (enumEOLType)lparam1 );	//入力する改行コードを設定
+	// To Here 2003.06.23 Moca
 	case F_CANCEL_MODE:		Command_CANCEL_MODE();break;	//各種モードの取り消し
 
 	/* 設定系 */

@@ -338,6 +338,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	{
 	case F_CHAR:		//	文字入力。数値は文字コード
 	case F_IME_CHAR:	//	日本語入力
+	case F_CHGMOD_EOL:	//	入力改行コード指定。enumEOLTypeの数値を指定。2003.06.23 Moca
 		//	Jun. 16, 2002 genta
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
