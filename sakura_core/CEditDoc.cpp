@@ -550,24 +550,6 @@ BOOL CEditDoc::FileRead(
 				if( -1 < m_nCharCode && m_nCharCode < CODE_CODEMAX ){
 					pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
 				}
-#if 0
-				switch( fi.m_nCharCode ){
-				case CODE_SJIS:		/* SJIS */		pszCodeName = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-				case CODE_JIS:		/* JIS */		pszCodeName = "JIS";break;
-				case CODE_EUC:		/* EUC */		pszCodeName = "EUC";break;
-				case CODE_UNICODE:	/* Unicode */	pszCodeName = "Unicode";break;
-				case CODE_UTF8:		/* UTF-8 */		pszCodeName = "UTF-8";break;
-				case CODE_UTF7:		/* UTF-7 */		pszCodeName = "UTF-7";break;
-				}
-				switch( m_nCharCode ){
-				case CODE_SJIS:		/* SJIS */		pszCodeNameNew = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-				case CODE_JIS:		/* JIS */		pszCodeNameNew = "JIS";break;
-				case CODE_EUC:		/* EUC */		pszCodeNameNew = "EUC";break;
-				case CODE_UNICODE:	/* Unicode */	pszCodeNameNew = "Unicode";break;
-				case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
-				case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
-				}
-#endif
 				if( pszCodeName != NULL ){
 					::MessageBeep( MB_ICONQUESTION );
 					nRet = MYMESSAGEBOX(
@@ -921,6 +903,7 @@ BOOL CEditDoc::OpenFileDialog(
 	ActivateFrameWindow( hwndParent );
 
 	const char*	pszDefFolder;
+	char*	pszCurDir = NULL;
 	char**	ppszMRU;
 	char**	ppszOPENFOLDER;
 	BOOL	bRet;
@@ -949,6 +932,15 @@ BOOL CEditDoc::OpenFileDialog(
 			pszDefFolder = GetFilePath();
 		}else if( ppszMRU[0] != NULL && ppszMRU[0][0] != '\0' ){ // Sep. 9, 2002 genta
 			pszDefFolder = ppszMRU[0];
+		}else{ // 2002.10.25 Moca
+			int nCurDir;
+			pszCurDir = new char[_MAX_PATH];
+			nCurDir = ::GetCurrentDirectory( _MAX_PATH, pszCurDir );
+			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
+				pszDefFolder = "";
+			}else{
+				pszDefFolder = pszCurDir;
+			}
 		}
 	}
 	/* ファイルオープンダイアログの初期化 */
@@ -965,6 +957,7 @@ BOOL CEditDoc::OpenFileDialog(
 
 	delete [] ppszMRU;
 	delete [] ppszOPENFOLDER;
+	delete [] pszCurDir;
 	return bRet;
 }
 
@@ -1235,14 +1228,11 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 	}else{
 
 		if( IsFilePathAvailable() && (::IsIconic( hwnd ) || bKillFocus ) ){
-			char szFname[_MAX_FNAME];
-			char szExt[_MAX_EXT];
-			_splitpath( GetFilePath(), NULL, NULL, szFname, szExt );
 			//Oct. 11, 2000 jepro note： アクティブでない時のタイトル表示
 			wsprintf(
 				pszCap,
-				"%s%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
-				szFname, szExt,
+				"%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+				GetFileName(),
 				IsModified() ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
 				HIWORD( m_pShareData->m_dwProductVersionMS ),
@@ -3889,14 +3879,9 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			} 
 			else {
-				r = GetFilePath() + strlen( GetFilePath() );
-				
-				//	後ろから区切りを探す
-				for( --r; r >= GetFilePath() && *r != '\\' ; --r )
-					;
-				//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
+				r = GetFileName(); // 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
-				for( ++r ; *r != '\0' && q < q_max; ++r, ++q )
+				for( ; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;
 				++p;
@@ -3912,21 +3897,18 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			else {
 				//	ポインタを末尾に
 				const char *dot_position, *end_of_path;
-				end_of_path = dot_position = r =
-					GetFilePath() + strlen( GetFilePath() );
-				
-				//	後ろから区切りを探す
-				for( --r ; r >= GetFilePath() && *r != '\\' ; --r )
-					;
+				r = GetFileName(); // 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
+				end_of_path = dot_position =
+					r + strlen( r );
+				//	後ろから.を探す
 				for( --dot_position ; dot_position > r && *dot_position != '.'
 					; --dot_position )
 					;
 				//	rと同じ場所まで行ってしまった⇔.が無かった
 				if( dot_position == r )
 					dot_position = end_of_path;
-				//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
-				for( ++r ; r < dot_position && q < q_max; ++r, ++q )
+				for( ; r < dot_position && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;
 				++p;

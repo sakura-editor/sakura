@@ -23,6 +23,7 @@
 #include "CDocLine.h"// 2002/2/10 aroka
 #include "CEditWnd.h"
 #include "Debug.h"
+#include "etc_uty.h"
 
 
 /* Java関数リスト作成 */
@@ -1005,6 +1006,27 @@ void CEditDoc::SetFilePath(const char* szFile)
 {
 	strcpy( m_szFilePath, szFile );
 	SetDocumentIcon();
+}
+
+/*! ファイル名(パスなし)を取得する
+	@autor Moca
+	@data 2002.10.13
+*/
+const char * CEditDoc::GetFileName( void ) const
+{
+	const char *p, *pszName;
+	pszName = p = GetFilePath();
+	while( *p != '\0'  ){
+		if( _IS_SJIS_1( (unsigned char)*p ) && _IS_SJIS_2( (unsigned char)p[1] ) ){
+			p+=2;
+		}else if( *p == '\\' ){
+			pszName = p + 1;
+			p++;
+		}else{
+			p++;
+		}
+	}
+	return pszName;
 }
 
 /*!

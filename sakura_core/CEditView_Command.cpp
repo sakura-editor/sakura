@@ -4143,24 +4143,6 @@ void CEditView::Command_FILEOPEN( const char *filename )
 			if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
 				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
 			}
-#if 0
-			switch( pfi->m_nCharCode ){
-			case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//	Sept. 27, 2000 jepro 'シフト'を'S'に変更
-			case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
-			case CODE_EUC:		/* EUC */		pszCodeNameCur = "EUC";break;
-			case CODE_UNICODE:	/* Unicode */	pszCodeNameCur = "Unicode";break;
-			case CODE_UTF8:	/* UTF-8 */			pszCodeNameCur = "UTF-8";break;
-			case CODE_UTF7:	/* UTF-7 */			pszCodeNameCur = "UTF-7";break;
-			}
-			switch( nCharCode ){
-			case CODE_SJIS:		/* SJIS */		pszCodeNameNew = "SJIS";break;	//	Sept. 27, 2000 jepro 'シフト'を'S'に変更
-			case CODE_JIS:		/* JIS */		pszCodeNameNew = "JIS";break;
-			case CODE_EUC:		/* EUC */		pszCodeNameNew = "EUC";break;
-			case CODE_UNICODE:	/* Unicode */	pszCodeNameNew = "Unicode";break;
-			case CODE_UTF8:	/* UTF-8 */			pszCodeNameNew = "UTF-8";break;
-			case CODE_UTF7:	/* UTF-7 */			pszCodeNameNew = "UTF-7";break;
-			}
-#endif
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 				"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
 				pszPath, pszCodeNameCur, pszCodeNameNew
@@ -4324,12 +4306,9 @@ void CEditView::Command_COPYFILENAME( void )
 {
 	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* クリップボードにデータを設定 */
-		char szFname[_MAX_FNAME];
-		char szExt[_MAX_EXT];
-		char szFilename[_MAX_FNAME];
-		_splitpath( m_pcEditDoc->GetFilePath(), NULL, NULL, szFname, szExt );
-		wsprintf( szFilename, "%s%s", szFname, szExt );
-		MySetClipboardData( szFilename, lstrlen( szFilename ), FALSE );
+		const char *pszFile;
+		pszFile = m_pcEditDoc->GetFileName();
+		MySetClipboardData( pszFile , lstrlen( pszFile ), FALSE );
 	}else{
 		::MessageBeep( MB_ICONHAND );
 	}

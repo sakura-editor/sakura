@@ -62,6 +62,7 @@ CFileLoad::CFileLoad( void ) : m_cmemLine()
 	m_CharCode		= 0;
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
+	m_nMode			= 0;
 
 	m_nLineIndex	= -1;
 
@@ -69,7 +70,6 @@ CFileLoad::CFileLoad( void ) : m_cmemLine()
 	m_nReadDataLen    = 0;
 	m_nReadBufSize    = 0;
 	m_nReadBufOffSet  = 0;
-	m_nReadBufSumSize = 0;
 }
 
 /*! デストラクタ */
@@ -133,6 +133,7 @@ void CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 	}
 	m_CharCode = CharCode;
 	m_nFlag = nFlag;
+	m_nMode = 1;
 
 	SeekBegin();
 	Buffering();
@@ -156,6 +157,7 @@ void CFileLoad::FileClose( void )
 	m_CharCode		=  0;
 	m_nFlag 		=  0;
 	m_nReadLength	=  0;
+	m_nMode			=  0;
 	m_nLineIndex	= -1;
 }
 
@@ -219,7 +221,7 @@ const char* CFileLoad::ReadLine(
 	while( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen,
 		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
 			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
-			if( m_nReadDataLen <= m_nReadBufOffSet && m_nReadBufSumSize < m_nFileDataLen ){
+			if( m_nReadDataLen <= m_nReadBufOffSet && 1 == m_nMode ){
 				m_cmemLine.Append( pLine, nBufLineLen );
 				m_nReadBufOffSet -= nEolLen;
 				// バッファロード   File -> ReadBuf
@@ -294,29 +296,26 @@ const wchar_t* CFileLoad::ReadLineW(
 	const char	*pLine;
 	int			nRetVal = 1;
 	int			nBufLineLen;
-	int			nOffSet;
 	int			nEolLen;
 
 	// 行データクリア。本当はバッファは開放したくない
 	m_cmemLine.SetDataSz( "" );
 
 	// 1行取り出し ReadBuf -> m_memLine
-	while( 1 ){
-		nOffSet = m_nReadBufOffSet;
-		if( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen, &nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
+	//	Oct. 19, 2002 genta while条件を整理
+	while( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen,
+		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
 			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
-			if( m_nReadDataLen <= m_nReadBufOffSet && m_nReadBufSumSize < m_nFileDataLen ){
+			if( m_nReadDataLen <= m_nReadBufOffSet && 1 == m_nMode ){
 				m_cmemLine.Append( pLine, nBufLineLen );
 				m_nReadBufOffSet -= nEolLen;
 				// バッファロード   File -> ReadBuf
 				Buffering();
-				continue;
 			}else{
 				m_cmemLine.Append( pLine, nBufLineLen );
 				break;
 			}
 		}
-		break;
 	}
 
 	m_nReadLength += ( nBufLineLen = m_cmemLine.GetLength() );
@@ -409,8 +408,10 @@ void CFileLoad::Buffering( void )
 	}
 	// ファイルの読み込み
 	ReadSize = Read( &m_pReadBuf[m_nReadDataLen], m_nReadBufSize - m_nReadDataLen );
+	if( 0 == ReadSize ){
+		m_nMode = 2;	// ファイルなどの終わりに達したらしい
+	}
 	m_nReadDataLen += ReadSize;
-	m_nReadBufSumSize += ReadSize;
 }
 
 /*!
@@ -425,7 +426,6 @@ void CFileLoad::ReadBufEmpty( void )
 	m_nReadDataLen    = 0;
 	m_nReadBufSize    = 0;
 	m_nReadBufOffSet  = 0;
-	m_nReadBufSumSize = 0;
 }
 
 /*!
@@ -474,7 +474,7 @@ void CFileLoad::SetReadBufAlloc( int nNewSize ){
 */
 int CFileLoad::GetPercent( void ){
 	int nRet;
-	if( 0 == m_nFileDataLen ){
+	if( 0 == m_nFileDataLen || m_nReadLength > m_nFileDataLen ){
 		nRet = 100;
 	}else if(  0x10000 > m_nFileDataLen ){
 		nRet = m_nReadLength * 100 / m_nFileDataLen ;

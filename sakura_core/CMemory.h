@@ -188,6 +188,7 @@ protected: // 2002/2/10 aroka アクセス権変更
 	int StrSJIStoJIS( CMemory*, unsigned char*, int );	/* SJIS→JISで新メモリ確保 */
 	long MemSJIStoJIS( unsigned char*, long );	/* SJIS→JIS変換 */
 	static int IsBASE64Char( char );	/* 文字がBaseE64のデータか */
+	static int IsUTF7Direct( wchar_t ); /* Unicode文字がUTF7で直接エンコードできるか */ // 2002.10.25 Moca
 	//	Oct. 3, 2002 genta
 	static unsigned short _mbcjmstojis_ex( unsigned char* pszSrc );
 
