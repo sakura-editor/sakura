@@ -63,9 +63,7 @@ public:
 
 	void Init( void );
 	bool ReadProfile( const TCHAR* );
-	bool ReadProfileSection( const TCHAR*, const TCHAR* );
 	bool WriteProfile( const TCHAR*, const TCHAR* );
-	bool WriteProfileSection( const TCHAR*, const TCHAR*, const TCHAR* );
 
 	bool IOProfileData( const bool&, const TCHAR*, const TCHAR*, bool& );
 	bool IOProfileData( const bool&, const TCHAR*, const TCHAR*, int& );
@@ -80,7 +78,8 @@ protected:
 	bool GetProfileData( const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >&, std::basic_string< TCHAR >& );
 	bool SetProfileData( const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >& );
 	
-	bool ReadFile( const std::basic_string< TCHAR >&, std::vector< std::basic_string< TCHAR > >& );
+	bool WriteFile( const std::basic_string< TCHAR >&, std::vector< std::basic_string< TCHAR > >& );
+	void ReadOneline( const std::basic_string< TCHAR >& line );
 
 	// メンバ変数
 	std::basic_string< TCHAR > m_strProfileName;//!< 最後に読み書きしたファイル名
