@@ -26,7 +26,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Cbregexp.h"
+#include "CBregexp.h"
 //#include "CMemory.h"
 
 CBregexp::CBregexp() : m_sRep( NULL )
@@ -132,7 +132,7 @@ bool CBregexp::Compile(const char* szPattern)
 	
 
 */
-bool CBregexp::GetMatchInfo(char* target, int len, int nStart, BREGEXP**rep)
+bool CBregexp::GetMatchInfo(const char* target, int len, int nStart, BREGEXP**rep)
 {
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
 	if((!IsAvailable()) || m_sRep == NULL ){
