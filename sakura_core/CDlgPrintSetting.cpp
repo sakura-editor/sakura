@@ -890,7 +890,7 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	int				nEnableColmns;		/* 行あたりの文字数 */
 	int				nEnableLines;		/* 縦方向の行数 */
 //	int				nEnableLinesAll;	/* ページあたりの行数 */
-	DEVMODE			dmDummy;
+	MYDEVMODE		dmDummy;			// 2003.05.18 かろと 型変更
 	int				nPaperAllWidth;		/* 用紙幅 */
 	int				nPaperAllHeight;	/* 用紙高さ */
 	PRINTSETTING*	pPS;

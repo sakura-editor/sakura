@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, かろと
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,93 +24,86 @@
 
 CPrint::CPrint( void )
 {
+	m_hDevMode	= NULL;
+	m_hDevNames	= NULL;
 	return;
 }
 
 CPrint::~CPrint( void )
 {
+	// メモリ割り当て済みならば、解放する
+	// 2003.05.18 かろと
+	if ( m_hDevMode != NULL ) {
+		::GlobalFree( m_hDevMode );
+	}
+	if ( m_hDevNames != NULL ) {
+		::GlobalFree( m_hDevNames );
+	}
+	m_hDevMode	= NULL;
+	m_hDevNames	= NULL;
 	return;
 }
 
 
 
-/* デフォルトのプリンタ情報を取得 */
-BOOL CPrint::GetDefaultPrinter( PRINTDLG* pPRINTDLG )
+/*! @brief プリンタダイアログを表示して、プリンタを選択する
+** 
+** @param pPD			[i/o]	プリンタダイアログ構造体
+** @param pMYDEVMODE 	[i/o] 	印刷設定
+
+	@author かろと
+	@date 2003.
+*/
+BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 {
-	//
-	// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
-	// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
-	//
-	memset ( (void *)pPRINTDLG, 0, sizeof(PRINTDLG) );
-	pPRINTDLG->lStructSize	= sizeof(PRINTDLG);
-	pPRINTDLG->hwndOwner	= NULL;
-	pPRINTDLG->Flags		= PD_RETURNDEFAULT;
-	pPRINTDLG->hInstance	= NULL;
-	return ::PrintDlg( pPRINTDLG );
-}
-
-
-/* デフォルトのプリンタ情報を取得 */
-BOOL CPrint::GetPrinter( PRINTDLG* pPRINTDLG )
-{
-	//
-	// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
-	// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
-	//
-	memset ( (void *)pPRINTDLG, 0, sizeof(PRINTDLG) );
-	pPRINTDLG->lStructSize	= sizeof(PRINTDLG);
-	return ::PrintDlg( pPRINTDLG );
-}
-
-
-/* デフォルトのプリンタ設定 MYDEVMODE を取得 */
-BOOL CPrint::GetPrinterInfo( MYDEVMODE* pMYDEVMODE )
-{
-	PRINTDLG	pd;
 	DEVMODE*	pDEVMODE;
 	DEVNAMES*	pDEVNAMES;		/* プリンタ設定 DEVNAMES用*/
 
-	/* 初期化 */
-	memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
+	// デフォルトプリンタが選択されていなければ、選択する
+	if ( m_hDevMode == NULL ) {
+		if ( FALSE == GetDefaultPrinter( pMYDEVMODE ) ) {
+			return FALSE;
+		}
+	}
 
-	/* デフォルトのプリンタ情報を取得 */
-	if( FALSE == GetPrinter( &pd ) ){
-		pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
+	//
+	//  現在のプリンタ設定の必要部分を変更
+	//
+	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
+	pDEVMODE->dmOrientation			= pMYDEVMODE->dmOrientation;
+	pDEVMODE->dmPaperSize			= pMYDEVMODE->dmPaperSize;
+	pDEVMODE->dmPaperLength			= pMYDEVMODE->dmPaperLength;
+	pDEVMODE->dmPaperWidth			= pMYDEVMODE->dmPaperWidth;
+	// PrintDlg()でReAllocされる事を考えて、呼び出す前にUnlock
+	::GlobalUnlock( m_hDevMode );
+
+	/* プリンタダイアログを表示して、プリンタを選択 */
+	pPD->lStructSize = sizeof(PRINTDLG);
+	pPD->hDevMode = m_hDevMode;
+	pPD->hDevNames = m_hDevNames;
+	if( FALSE == ::PrintDlg( pPD ) ){
+		// プリンタを変更しなかった
 		return FALSE;
 	}
-	pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
 
-	pDEVMODE = (DEVMODE*)::GlobalLock( pd.hDevMode );
-	pDEVNAMES = (DEVNAMES*)::GlobalLock( pd.hDevNames );
+	m_hDevMode = pPD->hDevMode;
+	m_hDevNames = pPD->hDevNames;
+
+	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
+	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	strcpy( pMYDEVMODE->m_szPrinterDriverName, (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );	/* プリンタドライバ名 */
 	strcpy( pMYDEVMODE->m_szPrinterDeviceName, (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );	/* プリンタデバイス名 */
 	strcpy( pMYDEVMODE->m_szPrinterOutputName, (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );	/* プリンタポート名 */
 
-	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH | DM_SCALE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY | DM_COLOR | DM_DUPLEX |
-		DM_YRESOLUTION | DM_TTOPTION | DM_COLLATE | DM_FORMNAME | DM_LOGPIXELS |
-		DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFLAGS |
-		DM_DISPLAYFREQUENCY;
+	// プリンタから得られた、dmFieldsは変更しない
+	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
+	// pMYDEVMODEは、コピーしたものだけセットする
+	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH;
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
 	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
-	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
-	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
-	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
-	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
-	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
-	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
-	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
-	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
-	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
-	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
-	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
-	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
-	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
-	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
-	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency ;
-	strcpy( (char *)pMYDEVMODE->dmFormName, (char *)pDEVMODE->dmFormName );
 
 #ifdef _DEBUG
 	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );
@@ -118,59 +112,61 @@ BOOL CPrint::GetPrinterInfo( MYDEVMODE* pMYDEVMODE )
 	MYTRACE( "デフォルトのプリンタか=[%d]\n", pDEVNAMES->wDefault );
 #endif
 
-	::GlobalUnlock( pd.hDevMode );
-	::GlobalUnlock( pd.hDevNames );
+	::GlobalUnlock( m_hDevMode );
+	::GlobalUnlock( m_hDevNames );
 	return TRUE;
 }
 
-/* デフォルトのプリンタ設定 MYDEVMODE を取得 */
-BOOL CPrint::GetDefaultPrinterInfo( MYDEVMODE* pMYDEVMODE )
+
+/*! @brief デフォルトのプリンタを取得し、MYDEVMODE に設定 
+** 
+** @param pMYDEVMODE 	[out] 	印刷設定
+*/
+BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 {
 	PRINTDLG	pd;
 	DEVMODE*	pDEVMODE;
 	DEVNAMES*	pDEVNAMES;		/* プリンタ設定 DEVNAMES用*/
 
-	/* 初期化 */
-	memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
+	// すでに DEVMODEを取得済みなら、何もしない
+	if (m_hDevMode != NULL) {
+		return TRUE;
+	}
 
-	/* デフォルトのプリンタ情報を取得 */
-	if( FALSE == GetDefaultPrinter( &pd ) ){
+	//
+	// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
+	// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
+	//
+	memset ( &pd, 0, sizeof(PRINTDLG) );
+	pd.lStructSize	= sizeof(PRINTDLG);
+	pd.Flags		= PD_RETURNDEFAULT;
+	if( FALSE == ::PrintDlg( &pd ) ){
 		pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
 		return FALSE;
 	}
 	pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
 
-	pDEVMODE = (DEVMODE*)::GlobalLock( pd.hDevMode );
-	pDEVNAMES = (DEVNAMES*)::GlobalLock( pd.hDevNames );
+	/* 初期化 */
+	memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
+	m_hDevMode = pd.hDevMode;
+	m_hDevNames = pd.hDevNames;
+
+	// MYDEVMODEへのコピー
+	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
+	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	strcpy( pMYDEVMODE->m_szPrinterDriverName, (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );	/* プリンタドライバ名 */
 	strcpy( pMYDEVMODE->m_szPrinterDeviceName, (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );	/* プリンタデバイス名 */
 	strcpy( pMYDEVMODE->m_szPrinterOutputName, (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );	/* プリンタポート名 */
 
-	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH | DM_SCALE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY | DM_COLOR | DM_DUPLEX |
-		DM_YRESOLUTION | DM_TTOPTION | DM_COLLATE | DM_FORMNAME | DM_LOGPIXELS |
-		DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFLAGS |
-		DM_DISPLAYFREQUENCY;
+	// プリンタから得られた、dmFieldsは変更しない
+	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
+	// pMYDEVMODEは、コピーしたものだけセットする
+	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH;
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
 	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
-	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
-	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
-	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
-	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
-	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
-	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
-	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
-	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
-	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
-	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
-	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
-	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
-	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
-	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
-	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency ;
-	strcpy( (char *)pMYDEVMODE->dmFormName, (char *)pDEVMODE->dmFormName );
 
 #ifdef _DEBUG
 	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );
@@ -179,117 +175,48 @@ BOOL CPrint::GetDefaultPrinterInfo( MYDEVMODE* pMYDEVMODE )
 	MYTRACE( "デフォルトのプリンタか=[%d]\n", pDEVNAMES->wDefault );
 #endif
 
-	::GlobalUnlock( pd.hDevMode );
-	::GlobalUnlock( pd.hDevNames );
+	::GlobalUnlock( m_hDevMode );
+	::GlobalUnlock( m_hDevNames );
 	return TRUE;
 }
 
-
-/* 印刷/プレビューに必要な情報を取得 */
-BOOL CPrint::GetPrintMetrics(
+/*! 
+** @brief プリンタをオープンし、hDCを作成する
+*/
+HDC CPrint::CreateDC(
 	MYDEVMODE*	pMYDEVMODE,
-//	LOGFONT*	pLOGFONT,
-//	int			nMarginTY,			/* マージン 上 */
-//	int			nMarginBY,			/* マージン 下 */
-//	int			nMarginLX,			/* マージン 左 */
-//	int			nMarginRX,			/* マージン 右 */
-//	int			nLineSpacing,		/* 行間 文字の高さに対する割合 */
-
-	int*		pnPaperAllWidth,	/* 用紙幅 */
-	int*		pnPaperAllHeight,	/* 用紙高さ */
-	int*		pnPaperWidth,		/* 用紙印刷可能幅 */
-	int*		pnPaperHeight,		/* 用紙印刷可能高さ */
-	int*		pnPaperOffsetLeft,	/* 用紙余白左端 */
-	int*		pnPaperOffsetTop,	/* 用紙余白上端 */
-//	int*		pnCharWidth,	/* 文字幅 */
-//	int*		pnCharHeight,	/* 文字高さ */
-//	int*		pnAllChars,		/* 横方向に印字可能な桁数 */
-//	int*		pnAllLines,		/* 縦方向に印字可能な行数 */
 	char*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
-	BOOL		bRet;
-	HDC			hdc;
-//	HFONT		hFont, hFontOld;
-	HANDLE		hPrinter;
-	HGLOBAL		hgDEVMODE;
+	HDC			hdc = NULL;
+	HANDLE		hPrinter = NULL;
 	DEVMODE*	pDEVMODE;
-	int			nDEVMODE_Size;
-//	TEXTMETRIC	tm;
-	bRet = TRUE;
+
+	// プリンタが選択されていなければ、NULLを返す
+	if ( m_hDevMode == NULL ) {
+		return NULL;
+	}
+
 	//
 	// OpenPrinter()で、デバイス名でプリンタハンドルを取得
 	//
 	if( FALSE == ::OpenPrinter(
-		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		&hPrinter,	/* プリンタハンドルのポインタ */
+		pMYDEVMODE->m_szPrinterDeviceName,		/* プリンタデバイス名 */
+		&hPrinter,					/* プリンタハンドルのポインタ */
 		(PRINTER_DEFAULTS*)NULL
 	) ){
 		wsprintf( pszErrMsg,
 			"OpenPrinter()に失敗。\nプリンタデバイス名=[%s]",
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
-		bRet = FALSE;
 		goto end_of_func;
 	}
-	//
-	//DocumentProperties()でDEVMODE構造体に必要なメモリサイズを取得
-	//（DEVMODE構造体はプリンタドライバごとに追加エリアのサイズが異なる）
-	// 必要なサイズのメモリを確保し、ロックする
-	//
-	if( 0 > ( nDEVMODE_Size = ::DocumentProperties(
-		NULL,
-		hPrinter,
-		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		NULL,
-		NULL,
-		0
-	) ) ){
-		wsprintf( pszErrMsg,
-			"DocumentProperties()に失敗。\nプリンタデバイス名=[%s]",
-			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
-		);
-		bRet = FALSE;
-		goto end_of_func;
-	}
-	hgDEVMODE = ::GlobalAlloc( GHND, nDEVMODE_Size );
-	pDEVMODE = (DEVMODE*)::GlobalLock( hgDEVMODE );
-	//
-	//DocumentProperties()で現在のプリンタ設定をDEVMODE構造体に取得
-	//
-	::DocumentProperties(
-		NULL,
-		hPrinter,
-		pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */,
-		pDEVMODE,
-		NULL,
-		DM_OUT_BUFFER
-	);
 
-	//
-	//  現在のプリンタ設定の必要部分を変更
-	//
-	pDEVMODE->dmFields				|= pMYDEVMODE->dmFields;
+	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
 	pDEVMODE->dmOrientation			= pMYDEVMODE->dmOrientation;
 	pDEVMODE->dmPaperSize			= pMYDEVMODE->dmPaperSize;
 	pDEVMODE->dmPaperLength			= pMYDEVMODE->dmPaperLength;
 	pDEVMODE->dmPaperWidth			= pMYDEVMODE->dmPaperWidth;
-	pDEVMODE->dmScale				= pMYDEVMODE->dmScale;
-	pDEVMODE->dmCopies				= pMYDEVMODE->dmCopies;
-	pDEVMODE->dmDefaultSource		= pMYDEVMODE->dmDefaultSource;
-	pDEVMODE->dmPrintQuality		= pMYDEVMODE->dmPrintQuality;
-	pDEVMODE->dmColor				= pMYDEVMODE->dmColor;
-	pDEVMODE->dmDuplex				= pMYDEVMODE->dmDuplex;
-	pDEVMODE->dmYResolution			= pMYDEVMODE->dmYResolution;
-	pDEVMODE->dmTTOption			= pMYDEVMODE->dmTTOption;
-	pDEVMODE->dmCollate				= pMYDEVMODE->dmCollate;
-	pDEVMODE->dmLogPixels			= pMYDEVMODE->dmLogPixels;
-	pDEVMODE->dmBitsPerPel			= pMYDEVMODE->dmBitsPerPel;
-	pDEVMODE->dmPelsWidth			= pMYDEVMODE->dmPelsWidth;
-	pDEVMODE->dmPelsHeight			= pMYDEVMODE->dmPelsHeight;
-	pDEVMODE->dmDisplayFlags		= pMYDEVMODE->dmDisplayFlags;
-	pDEVMODE->dmDisplayFrequency	= pMYDEVMODE->dmDisplayFrequency ;
-	strcpy( (char *)pDEVMODE->dmFormName, (char *)pMYDEVMODE->dmFormName );
 
 	//
 	//DocumentProperties()でアプリケーション独自のプリンタ設定に変更する
@@ -310,39 +237,63 @@ BOOL CPrint::GetPrintMetrics(
 		pDEVMODE
 	);
 
-	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH | DM_SCALE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY | DM_COLOR | DM_DUPLEX |
-		DM_YRESOLUTION | DM_TTOPTION | DM_COLLATE | DM_FORMNAME | DM_LOGPIXELS |
-		DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFLAGS |
-		DM_DISPLAYFREQUENCY;
+	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH;
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
 	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
-	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
-	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
-	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
-	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
-	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
-	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
-	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
-	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
-	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
-	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
-	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
-	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
-	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
-	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
-	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency ;
-	strcpy( (char *)pMYDEVMODE->dmFormName, (char *)pDEVMODE->dmFormName );
 
-	::GlobalUnlock( hgDEVMODE );
-	::GlobalFree( hgDEVMODE );
+	::GlobalUnlock( m_hDevMode );
+
+end_of_func:;
+	if (hPrinter != NULL) {
+		::ClosePrinter( hPrinter );
+	}
+
+	return hdc;
+}
+
+
+/* 印刷/プレビューに必要な情報を取得 */
+BOOL CPrint::GetPrintMetrics(
+	MYDEVMODE*	pMYDEVMODE,
+	int*		pnPaperAllWidth,	/* 用紙幅 */
+	int*		pnPaperAllHeight,	/* 用紙高さ */
+	int*		pnPaperWidth,		/* 用紙印刷可能幅 */
+	int*		pnPaperHeight,		/* 用紙印刷可能高さ */
+	int*		pnPaperOffsetLeft,	/* 用紙余白左端 */
+	int*		pnPaperOffsetTop,	/* 用紙余白上端 */
+	char*		pszErrMsg		/* エラーメッセージ格納場所 */
+)
+{
+	BOOL		bRet;
+	HDC			hdc;
+	bRet = TRUE;
+
+	/* 現在の設定で、用紙の幅、高さを確定し、CreateDCに渡す */
+	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
+		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
+		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
+
+		bRet = TRUE;
+	}
+
+	// pMYDEVMODEを使って、hdcを取得
+	if ( NULL == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
+		bRet = FALSE;
+		goto end_of_func;
+	}
+
+	/* CreateDC実行によって得られた実際のプリンタの用紙の幅、高さを取得 */
+	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
+		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
+		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
+
+		bRet = TRUE;
+	}
 
 	/* マッピング モードの設定 */
-//	::SetMapMode( hdc, MM_LOMETRIC );	//MM_LOMETRIC	それぞれの論理単位は 0.1 mm にマップされます。
-	::SetMapMode( hdc, MM_LOMETRIC );	//MM_HIMETRIC	それぞれの論理単位は 0.01 mm にマップされます。
-
-
+	::SetMapMode( hdc, MM_LOMETRIC );	//MM_LOMETRIC	それぞれの論理単位は 0.1 mm にマップされます。
 
 	/* 最小左マージンと最小上マージンを取得(1mm単位) */
 	POINT	po;
@@ -355,10 +306,6 @@ BOOL CPrint::GetPrintMetrics(
 		*pnPaperOffsetTop = 0;	/* 用紙余白上端 */
 	}
 
-
-//	hFont = ::CreateFontIndirect( pLOGFONT );
-//	hFontOld = ::SelectObject( hdc, hFont );
-
 	/* 用紙の印刷可能な幅、高さ */
 	po.x = ::GetDeviceCaps( hdc, HORZRES );	/* 用紙印刷可能幅←物理ディスプレイの幅 (mm 単位) */
 	po.y = ::GetDeviceCaps( hdc, VERTRES );	/* 用紙印刷可能高さ←物理ディスプレイの高さ (mm 単位)  */
@@ -366,26 +313,7 @@ BOOL CPrint::GetPrintMetrics(
 	*pnPaperWidth = abs( po.x );
 	*pnPaperHeight = abs( po.y );
 
-	/* 用紙の幅、高さ */
-	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pDEVMODE ) ){
-		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
-		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
-
-//		bRet = FALSE;
-		bRet = TRUE;
-	}
-
-
-
-//	::GetTextMetrics( hdc, &tm );
-//	*pnCharWidth = abs( tm.tmAveCharWidth );	/* 文字幅 */
-//	*pnCharHeight = abs( tm.tmHeight + tm.tmExternalLeading );	/* 文字高さ */
-
-
-//	::SelectObject( hdc, hFontOld );
-//	::DeleteObject( hFont );
 	::DeleteDC( hdc );
-	::ClosePrinter( hPrinter );
 
 end_of_func:;
 
@@ -398,7 +326,7 @@ end_of_func:;
 BOOL CPrint::GetPaperSize(
 	int*		pnPaperAllWidth,
 	int*		pnPaperAllHeight,
-	DEVMODE*	pDEVMODE
+	MYDEVMODE*	pDEVMODE
 )
 {
 	int	nWork;
@@ -582,10 +510,16 @@ BOOL CPrint::GetPaperSize(
 	if(pDEVMODE->dmFields & DM_PAPERLENGTH && 0 != pDEVMODE->dmPaperLength ){
 		/* pDEVMODE->dmPaperLengthは1/10mm単位である */
 		*pnPaperAllHeight = pDEVMODE->dmPaperLength/* * 10*/;
+	} else {
+		pDEVMODE->dmPaperLength = *pnPaperAllHeight;
+		pDEVMODE->dmFields |= DM_PAPERLENGTH;
 	}
 	if(pDEVMODE->dmFields & DM_PAPERWIDTH && 0 != pDEVMODE->dmPaperWidth ){
 		/* pDEVMODE->dmPaperWidthは1/10mm単位である */
 		*pnPaperAllWidth = pDEVMODE->dmPaperWidth/* * 10*/;
+	} else {
+		pDEVMODE->dmPaperWidth = *pnPaperAllWidth;
+		pDEVMODE->dmFields |= DM_PAPERWIDTH;
 	}
 	/* 用紙の方向 */
 	if( DMORIENT_LANDSCAPE == pDEVMODE->dmOrientation ){
@@ -606,142 +540,24 @@ BOOL CPrint::GetPaperSize(
 BOOL CPrint::PrintOpen(
 	char*		pszJobName,
 	MYDEVMODE*	pMYDEVMODE,
-	HANDLE*		phPrinter,
 	HDC*		phdc,
 	char*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
 	HDC			hdc;
-	HANDLE		hPrinter;
-	HGLOBAL		hgDEVMODE;
-	DEVMODE*	pDEVMODE;
-	int			nDEVMODE_Size;
 	DOCINFO		di;
 	bRet = TRUE;
+	// 
+	// hdcを取得
 	//
-	//OpenPrinter()で、デバイス名でプリンタハンドルを取得
-	//
-	if( FALSE == ::OpenPrinter(
-		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		&hPrinter,	/* プリンタハンドルのポインタ */
-		(PRINTER_DEFAULTS*)NULL
-	) ){
-		wsprintf( pszErrMsg,
-			"OpenPrinter()に失敗。\nプリンタデバイス名=[%s]",
-			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
-		);
+	if ( NULL == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
 		bRet = FALSE;
 		goto end_of_func;
 	}
-	//
-	//DocumentProperties()でDEVMODE構造体に必要なメモリサイズを取得
-	//（DEVMODE構造体はプリンタドライバごとに追加エリアのサイズが異なる）
-	//必要なサイズのメモリを確保し、ロックする
-	//
-	if( 0 > ( nDEVMODE_Size = ::DocumentProperties(
-		NULL,
-		hPrinter,
-		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		NULL,
-		NULL,
-		0
-	) ) ){
-		wsprintf( pszErrMsg,
-			"DocumentProperties()に失敗。\nプリンタデバイス名=[%s]",
-			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
-		);
-		bRet = FALSE;
-		goto end_of_func;
-	}
-	hgDEVMODE = ::GlobalAlloc( GHND, nDEVMODE_Size );
-	pDEVMODE = (DEVMODE*)::GlobalLock( hgDEVMODE );
-	//
-	//DocumentProperties()で現在のプリンタ設定をDEVMODE構造体に取得
-	//
-	::DocumentProperties(
-		NULL,
-		hPrinter,
-		pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */,
-		pDEVMODE,
-		NULL,
-		DM_OUT_BUFFER
-	);
-
-	//
-	//  現在のプリンタ設定の必要部分を変更
-	//
-	pDEVMODE->dmFields				|= pMYDEVMODE->dmFields;
-// From Here 2001.12.03 hor
-//
-// 印刷で紙を横向きに指定しても縦方向に印刷される ・・・ の修正
-//
-//	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
-//	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
-//	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
-//	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
-//	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
-//	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
-//	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
-//	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
-//	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
-//	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
-//	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
-//	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
-//	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
-//	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
-//	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
-//	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
-//	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
-//	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
-//	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency;
-	pDEVMODE->dmOrientation			= pMYDEVMODE->dmOrientation;
-	pDEVMODE->dmPaperSize			= pMYDEVMODE->dmPaperSize;
-	pDEVMODE->dmPaperLength			= pMYDEVMODE->dmPaperLength;
-	pDEVMODE->dmPaperWidth			= pMYDEVMODE->dmPaperWidth;
-	pDEVMODE->dmScale				= pMYDEVMODE->dmScale;
-	pDEVMODE->dmCopies				= pMYDEVMODE->dmCopies;
-	pDEVMODE->dmDefaultSource		= pMYDEVMODE->dmDefaultSource;
-	pDEVMODE->dmPrintQuality		= pMYDEVMODE->dmPrintQuality;
-	pDEVMODE->dmColor				= pMYDEVMODE->dmColor;
-	pDEVMODE->dmDuplex				= pMYDEVMODE->dmDuplex;
-	pDEVMODE->dmYResolution			= pMYDEVMODE->dmYResolution;
-	pDEVMODE->dmTTOption			= pMYDEVMODE->dmTTOption;
-	pDEVMODE->dmCollate				= pMYDEVMODE->dmCollate;
-	pDEVMODE->dmLogPixels			= pMYDEVMODE->dmLogPixels;
-	pDEVMODE->dmBitsPerPel			= pMYDEVMODE->dmBitsPerPel;
-	pDEVMODE->dmPelsWidth			= pMYDEVMODE->dmPelsWidth;
-	pDEVMODE->dmPelsHeight			= pMYDEVMODE->dmPelsHeight;
-	pDEVMODE->dmDisplayFlags		= pMYDEVMODE->dmDisplayFlags;
-	pDEVMODE->dmDisplayFrequency	= pMYDEVMODE->dmDisplayFrequency;
-// To Here 2001.12.03 hor
-	strcpy( (char *)pDEVMODE->dmFormName, (char *)pMYDEVMODE->dmFormName );
-
-	//
-	//DocumentProperties()でアプリケーション独自のプリンタ設定に変更する
-	//
-	::DocumentProperties(
-		NULL,
-		hPrinter,
-		pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */,
-		pDEVMODE,
-		pDEVMODE,
-		DM_OUT_BUFFER | DM_IN_BUFFER
-	);
-	/* 指定デバイスに対するデバイス コンテキストを作成します。 */
-	hdc = ::CreateDC(
-		(LPCTSTR)pMYDEVMODE->m_szPrinterDriverName,	/* プリンタドライバ名 */
-		(LPCTSTR)pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		(LPCTSTR)pMYDEVMODE->m_szPrinterOutputName,	/* プリンタポート名 */
-		pDEVMODE
-	);
-	::GlobalUnlock( hgDEVMODE );
-	::GlobalFree( hgDEVMODE );
 
 	/* マッピング モードの設定 */
-	::SetMapMode( hdc, MM_LOMETRIC );	//MM_HIMETRIC		それぞれの論理単位は、0.01 mm にマップされます。
-//	::SetMapMode( hdc, MM_ANISOTROPIC ); //MM_ANISOTROPIC	論理単位は、任意にスケーリングされた軸上の任意の単位にマップされます。
-
+	::SetMapMode( hdc, MM_LOMETRIC );	//MM_LOMETRIC		それぞれの論理単位は、0.1 mm にマップされます。
 
 	//
 	//  印刷ジョブ開始
@@ -761,7 +577,6 @@ BOOL CPrint::PrintOpen(
 		goto end_of_func;
 	}
 
-	*phPrinter = hPrinter;
 	*phdc = hdc;
 
 end_of_func:;
@@ -789,14 +604,12 @@ void CPrint::PrintEndPage( HDC hdc )
 
 
 /* 印刷 ジョブ終了 */
-void CPrint::PrintClose( HANDLE hPrinter, HDC hdc )
+void CPrint::PrintClose( HDC hdc )
 {
 	::EndDoc( hdc );
 	::DeleteDC( hdc );
-	::ClosePrinter( hPrinter );
 }
 
-/*[EOF]*/
 
 
 

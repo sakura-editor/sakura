@@ -110,7 +110,7 @@ public:
 	||	アクセサ
 	*/
 	void SetPrintSetting( PRINTSETTING* pPrintSetting ){ m_pPrintSetting = pPrintSetting; }
-	BOOL GetDefaultPrinterInfo(){ return m_cPrint.GetDefaultPrinterInfo( &m_pPrintSetting->m_mdmDevMode ); };
+	BOOL GetDefaultPrinterInfo(){ return m_cPrint.GetDefaultPrinter( &m_pPrintSetting->m_mdmDevMode ); };
 	int  GetCurPageNum(){ return m_nCurPageNum; }	/* 現在のページ */
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
@@ -175,7 +175,8 @@ protected:
 	class CLayoutMgr*	m_pLayoutMgr_Print;	/* 印刷用のレイアウト管理情報 */
 
 	int				m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
-	CPrint			m_cPrint;
+	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
+	static CPrint	m_cPrint;		//!< 現在のプリンタ情報
 };
 
 #endif
