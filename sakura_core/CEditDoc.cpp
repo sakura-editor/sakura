@@ -4304,7 +4304,8 @@ void CEditDoc::CheckFileTimeStamp( void )
 				break;
 			}
 			lWork = ::CompareFileTime( &m_FileTime, &FileTimeNow );
-			if( -1 == lWork ){
+			//	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
+			if( 0 != lWork ){
 				bUpdate = TRUE;
 //				MYTRACE( "★更新されています★★★★★★★★★★★\n" );
 				m_FileTime = FileTimeNow;
