@@ -871,7 +871,7 @@ BEGIN
     CONTROL         "ビューアを複数起動しない(&N)",
                     IDC_CHECK_HTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,105,101,10,0,HIDC_CHECK_HTMLHELPISSINGLE
-    GROUPBOX        "キーワーヘルプ",IDC_STATIC,3,123,264,33,WS_GROUP
+    GROUPBOX        "キーワードヘルプ",IDC_STATIC,3,123,264,33,WS_GROUP
     PUSHBUTTON      "フォント(&F)",IDC_BUTTON_KEYWORDHELPFONT,212,136,51,14,
                     0,0,HIDC_BUTTON_KEYWORDHELPFONT
 END
@@ -2089,7 +2089,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,3,0,0
- PRODUCTVERSION 1,3,2,4
+ PRODUCTVERSION 1,3,2,5
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2113,7 +2113,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.3.2.4\0"
+            VALUE "ProductVersion", "1.3.2.5\0"
         END
     END
     BLOCK "VarFileInfo"

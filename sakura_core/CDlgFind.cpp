@@ -75,6 +75,9 @@ HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				/* 1==英大文字小文字の区別 */
 	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				/* 1==単語のみ検索 */
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
+	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	/* 検索開始時のカーソル位置退避	02/07/28 ai */
+	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	/* 検索開始時のカーソル位置退避	02/07/28 ai */
+	((CEditView*)lParam)->m_bSearch = TRUE;							/* 検索開始位置の登録有無		02/07/28 ai */
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, lParam, SW_SHOW );
 }
 
@@ -272,13 +275,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 1 );
 			}else{
-				// 02/06/26 ai Start
-				// 検索開始位置を退避
-				int x, y;
-				x = pcEditView->m_nCaretPosX_PHY;
-				y = pcEditView->m_nCaretPosY_PHY;
-				pcEditView->m_bSearch = FALSE;
-				//  02/06/26 ai End
 
 				/* 前を検索 */
 				pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
@@ -286,8 +282,11 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
 				if( TRUE == pcEditView->m_bSearch ){
-					pcEditView->m_nSrchStartPosX_PHY = x;
-					pcEditView->m_nSrchStartPosY_PHY = y;
+					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
+					pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
+					pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+					pcEditView->m_bSearch = FALSE;
+					// 02/07/28 ai end
 				}//  02/06/26 ai End
 
 //				/* 再描画 */
@@ -319,13 +318,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 2 );
 			}else{
-				// 02/06/26 ai Start
-				// 検索開始位置を退避
-				int x, y;
-				x = pcEditView->m_nCaretPosX_PHY;
-				y = pcEditView->m_nCaretPosY_PHY;
-				pcEditView->m_bSearch = FALSE;
-				//  02/06/26 ai End
 
 				/* 次を検索 */
 				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
@@ -333,8 +325,11 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
 				if( TRUE == pcEditView->m_bSearch ){
-					pcEditView->m_nSrchStartPosX_PHY = x;
-					pcEditView->m_nSrchStartPosY_PHY = y;
+					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
+					pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
+					pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+					pcEditView->m_bSearch = FALSE;
+					// 02/07/28 ai end
 				}//  02/06/26 ai End
 
 //				/* 再描画 */

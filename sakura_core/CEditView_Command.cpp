@@ -1525,9 +1525,9 @@ try_again:;
 
 
 /*!	選択範囲をクリップボードにコピー
-	bIgnoreLockAndDisable：選択範囲を解除するか？
-	bAddCRLFWhenCopy：折り返し位置に改行コードを挿入するか？
-	neweol：コピーするときのEOL。
+	@param bIgnoreLockAndDisable [in] 選択範囲を解除するか？
+	@param bAddCRLFWhenCopy [in] 折り返し位置に改行コードを挿入するか？
+	@param neweol [in] コピーするときのEOL。
 */
 void CEditView::Command_COPY(
 	int bIgnoreLockAndDisable,
@@ -3779,7 +3779,6 @@ re_do:;							//	hor
 		MoveCursor( nColmFrom, nLineFrom, bReDraw );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		bFound = TRUE;
-		m_bSearch = TRUE;	// 02/06/26 ai
 	}else{
 		/* フォーカス移動時の再描画 */
 //		RedrawAll();	hor コメント化
@@ -4021,7 +4020,6 @@ re_do:;
 		MoveCursor( nColmFrom, nLineFrom, bRedraw );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		bFound = TRUE;
-		m_bSearch = TRUE;	// 02/06/26 ai
 	}else{
 //		/* フォーカス移動時の再描画 */
 //		RedrawAll();
@@ -6305,12 +6303,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		}
 		// To Here 2001.12.03 hor
 
-//		nIdxFrom = 0; 2001/09/24
-//		nIdxTo = 0;
-//		for( nLineNum = rcSel.bottom; nLineNum >= rcSel.top - 1; nLineNum-- ){
 		for( nLineNum = rcSel.top; nLineNum < rcSel.bottom + 1; nLineNum++ ){
-//			nDelPosNext = nIdxFrom;
-//			nDelLenNext	= nIdxTo - nIdxFrom;
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -6488,21 +6481,9 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
-//			pcOpe->m_nCaretPosX_Before = m_nCaretPosX;	/* 操作前のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_Before = m_nCaretPosY;	/* 操作前のキャレット位置Ｙ */
-//			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//				pcOpe->m_nCaretPosX_Before,
-//				pcOpe->m_nCaretPosY_Before,
-//				&pcOpe->m_nCaretPosX_PHY_Before,
-//				&pcOpe->m_nCaretPosY_PHY_Before
-//			);
 			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;				/* 操作前のキャレット位置Ｘ */
 			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;				/* 操作前のキャレット位置Ｙ */
 
-//			pcOpe->m_nCaretPosX_After = m_nCaretPosX;						/* 操作後のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_After = m_nCaretPosY;						/* 操作後のキャレット位置Ｙ */
-//			pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;				/* 操作後のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;				/* 操作後のキャレット位置Ｙ */
 			pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
 			pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
 			/* 操作の追加 */
@@ -6526,8 +6507,6 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		/* 現在の選択範囲を非選択状態に戻す */
 		DisableSelectArea( FALSE );
 
-//		const CLayout* pcLayout;
-//		for( i = nSelectLineToOld - 1; i >= nSelectLineFromOld; i-- ){ 2001/09/24
 		for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( i, &nLineLen );
 			if( NULL == pLine ){
@@ -7813,7 +7792,16 @@ void CEditView::Command_TILE_H( void )
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
 				continue;
 			}
-			phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			//	From Here Jul. 28, 2002 genta
+			//	現在のウィンドウを先頭に持ってくる
+			if( pEditNodeArr[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+				phwndArr[count] = phwndArr[0];
+				phwndArr[0] = m_pcEditDoc->m_hwndParent;
+			}
+			else {
+				phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			}
+			//	To Here Jul. 28, 2002 genta
 			count++;
 		}
 		int width = (rcDesktop.right - rcDesktop.left ) / count;
@@ -7855,7 +7843,16 @@ void CEditView::Command_TILE_V( void )
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
 				continue;
 			}
-			phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			//	From Here Jul. 28, 2002 genta
+			//	現在のウィンドウを先頭に持ってくる
+			if( pEditNodeArr[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+				phwndArr[count] = phwndArr[0];
+				phwndArr[0] = m_pcEditDoc->m_hwndParent;
+			}
+			else {
+				phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			}
+			//	To Here Jul. 28, 2002 genta
 			count++;
 		}
 		int height = (rcDesktop.bottom - rcDesktop.top ) / count;
@@ -8771,11 +8768,14 @@ void CEditView::Command_CURLINECENTER( void )
 {
 	int		nViewTopLine;
 	nViewTopLine = m_nCaretPosY - ( m_nViewRowNum / 2 );
-	if( 0 <= nViewTopLine ){
-		m_nViewTopLine = nViewTopLine;
-		/* フォーカス移動時の再描画 */
-		RedrawAll();
-	}
+
+	// sui 02/08/09
+	if( 0 > nViewTopLine )	nViewTopLine = 0;
+	m_nViewTopLine = nViewTopLine;
+	/* フォーカス移動時の再描画 */
+	RedrawAll();
+	// sui 02/08/09
+
 // From Here 2001.12.03 hor
 	if( m_pShareData->m_Common.m_bSplitterWndVScroll ){	// 垂直スクロールの同期をとる
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];

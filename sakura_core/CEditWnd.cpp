@@ -4109,24 +4109,13 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
 				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
 
-				// 02/06/26 ai Start
-				// 検索開始位置を退避
-				int x, y;
-				x = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX_PHY;
-				y = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY_PHY;
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSearch = FALSE;
-				//  02/06/26 ai End
+				// 検索開始時のカーソル位置登録条件を変更 02/07/28 ai start
+				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosX_PHY = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX_PHY;
+				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosY_PHY = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY_PHY;
+				// 02/07/28 ai end
 
 				//次を検索
 				OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
-
-				// 02/06/26 ai Start
-				// 検索開始位置を登録
-				if( TRUE == m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSearch )
-				{
-					m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosX_PHY = x;
-					m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosY_PHY = y;
-				}//  02/06/26 ai End
 			}
 		}
 		else if( (TCHAR)msg->wParam == VK_TAB )	//タブキー
