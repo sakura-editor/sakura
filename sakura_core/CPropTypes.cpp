@@ -70,6 +70,19 @@ TYPE_NAME ImeSwitchArr[] = {
 };
 const int nImeSwitchArrNum = sizeof( ImeSwitchArr ) / sizeof( ImeSwitchArr[0] );
 
+/*!	2行目以降のインデント方法
+
+	@sa CLayoutMgr::SetLayoutInfo()
+	@date Oct. 1, 2002 genta 
+*/
+TYPE_NAME IndentTypeArr[] = {
+	{ 0, "なし" },
+	{ 1, "tx2x" },
+	{ 2, "前行先頭" },
+};
+const int nIndentTypeArrNum = sizeof( IndentTypeArr ) / sizeof( IndentTypeArr[0] );
+
+
 //	行コメントに関する情報
 struct {
 	int nEditID;
@@ -1151,6 +1164,19 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	}
 	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 
+	/* 折り返しは2行目以降を字下げ表示 */
+	//	Oct. 1, 2002 genta コンボボックスに変更
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
+	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	nSelPos = 0;
+	for( i = 0; i < nIndentTypeArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)IndentTypeArr[i].pszName );
+		if( IndentTypeArr[i].nMethod == m_Types.m_nIndentLayout ){	/* 折り返しインデント種別 */
+			nSelPos = i;
+		}
+	}
+	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
 	//	From Here Nov. 20, 2000 genta
 	//	IME入力モード
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
@@ -1317,6 +1343,12 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 	m_Types.m_nSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+
+	/* 折り返しは2行目以降を字下げ表示 */
+	//	Oct. 1, 2002 genta コンボボックスに変更
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
+	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+	m_Types.m_nIndentLayout = IndentTypeArr[nSelPos].nMethod;	/* 折り返し部インデント種別 */
 
 	//	From Here Nov. 20, 2000 genta	IME状態
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );

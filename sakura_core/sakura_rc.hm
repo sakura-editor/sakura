@@ -162,7 +162,6 @@
 #define HIDC_CHECK_m_bHokanKey_TAB      0x93f10522    // IDD_PROP_HELPER
 #define HIDC_CHK_DEFAULTFOLDER          0x80840463    // IDD_GREP
 #define HIDC_CHK_FROMTHISTEXT           0x80840434    // IDD_GREP
-#define HIDC_CHK_KANJICODEAUTODETECT    0x808404c1    // IDD_GREP
 #define HIDC_CHK_LOHICASE               0x806d03ee    // IDD_FIND
 #define HIDC_CHK_PASTE                  0x8089058a    // IDD_REPLACE
 #define HIDC_CHK_REGULAREXP             0x806d03f2    // IDD_FIND
@@ -177,6 +176,7 @@
 #define HIDC_COMBO_FUNCKIND             0x93ef0459    // IDD_PROP_CUSTMENU
 #define HIDC_COMBO_IMESTATE             0x93ed0517    // IDD_PROPTYPESP1
 #define HIDC_COMBO_IMESWITCH            0x93ed0518    // IDD_PROPTYPESP1
+#define HIDC_COMBO_INDENTLAYOUT         0x93ed03f2    // IDD_PROPTYPESP1
 #define HIDC_COMBO_MACROID              0x80d90572    // IDD_PROP_MACRO
 #define HIDC_COMBO_MENU                 0x93ef04a4    // IDD_PROP_CUSTMENU
 #define HIDC_COMBO_MRU                  0xffff048f    // "IDD_FILEOPEN"
@@ -190,7 +190,6 @@
 #define HIDC_COMBO_SET2                 0x93f2049c    // IDD_PROP_COLOR
 #define HIDC_COMBO_SETTINGNAME          0x80ae045f    // IDD_PRINTSETTING
 #define HIDC_COMBO_SMARTINDENT          0x93ed0516    // IDD_PROPTYPESP1
-#define HIDC_EDIT_TABSPACE              0x93ed041a    // IDD_PROPTYPESP1
 #define HIDC_COMBO_TEXT                 0x806d03fd    // IDD_FIND
 #define HIDC_COMBO_TEXT2                0x808903fe    // IDD_REPLACE
 #define HIDC_COMBO_m_szCommand          0x80b60530    // IDD_EXEC
@@ -241,6 +240,7 @@
 #define HIDC_EDIT_REGEX                 0x80db057c    // IDD_PROP_REGEX
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM \
                                         0x806b044a    // IDD_PROP1P1
+#define HIDC_EDIT_TABSPACE              0x93ed041a    // IDD_PROPTYPESP1
 #define HIDC_EDIT_TABVIEWSTRING         0x93ed040f    // IDD_PROPTYPESP1
 #define HIDC_EDIT_TFORM                 0x93f0043f    // IDD_PROP_FORMAT
 #define HIDC_EDIT_TFORM_EX              0x93f0052a    // IDD_PROP_FORMAT

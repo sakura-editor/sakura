@@ -917,21 +917,6 @@ BOOL CPropCommon::DispatchEvent_p1(
 void CPropCommon::SetData_p1( HWND hwndDlg )
 {
 	BOOL	bRet;
-//	static	int	nTabArr[] = { 2, 4, 8 };							//Nov. 3, 2000 JEPRO これは殺し忘れでしょう。(TAB設定はタイプ別設定に移動されている)
-//	static	int	nTabArrNum = sizeof(nTabArr) / sizeof(nTabArr[0]);	//Nov. 3, 2000 JEPRO これも殺し忘れでしょう。(TAB設定はタイプ別設定に移動されている)
-//	int		i, j;
-//	char	szWork[32];
-
-
-//	/* 折り返し文字数 */
-//	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, m_Common.m_nMAXLINELEN, FALSE );
-
-//	/* 文字の隙間 */
-//	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Common.m_nCHARSPACE, FALSE );
-
-//	/* 行の隙間 */
-//	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Common.m_nLINESPACE, FALSE );
-
 
 	/* カーソルのタイプ 0=win 1=dos  */
 	if( 0 == m_Common.GetCaretType() ){
@@ -946,36 +931,11 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* フリーカーソルモード */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_bIsFreeCursorMode );
 
-#if 0
-	/* インデント */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Common.m_bAutoIndent );
-
-	/* 日本語空白もインデント */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Common.m_bAutoIndent_ZENSPACE );
-
-	if( !m_Common.m_bAutoIndent ){
-		/* 日本語空白もインデント */
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
-	}
-#endif
-
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, m_Common.m_bStopsBothEndsWhenSearchWord );
 
 	/* 段落単位で移動するときに、段落の両端で止まるか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH, m_Common.m_bStopsBothEndsWhenSearchParagraph );
-
-//	/* TAB幅 */
-//	j = 0;
-//	for( i = 0; i < nTabArrNum; ++i ){
-//		sprintf( szWork, "%d", nTabArr[i] );
-//		::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szWork );
-///		if( m_Common.m_nTABSPACE == nTabArr[i] ){
-//			j = i;
-//		}
-//	}
-//	::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_SETCURSEL, (WPARAM)j, 0 );
-
 
 	/* 終了時の確認をする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_EXITCONFIRM, m_Common.m_bExitConfirm );
@@ -986,47 +946,11 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* キーリピート時のスクロールを滑らかにするか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_nRepeatedScroll_Smooth );
 
-
-//	/* 折り返し行に改行を付けてコピー */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY, m_Common.m_bAddCRLFWhenCopy );
-
-
-//	/* Grepモード: エンターキーでタグジャンプ */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_bGTJW_RETURN );
-//
-//	/* Grepモード: ダブルクリックでタグジャンプ  */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_bGTJW_LDBLCLK );
-
 	/* ファイルの履歴MAX */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_nMRUArrNum_MAX, FALSE );
 
 	/* フォルダの履歴MAX */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, m_Common.m_nOPENFOLDERArrNum_MAX, FALSE );
-
-
-
-//	/* 次回ウィンドウを開いたときツールバーを表示する */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTOOLBAR, m_Common.m_bDispTOOLBAR );
-//
-//	/* 次回ウィンドウを開いたときファンクションキーを表示する */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_DispFUNCKEYWND, m_Common.m_bDispFUNCKEYWND );
-//
-//	/* ファンクションキー表示位置／0:上 1:下 */
-//	if( 0 == m_Common.m_nFUNCKEYWND_Place ){
-//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, TRUE );
-//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, FALSE );
-//	}else{
-//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, FALSE );
-//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, TRUE );
-//	}
-//
-//	/* 次回ウィンドウを開いたときステータスバーを表示する */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
-//
-//	/* ウィンドウサイズ継承 */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_WINSIZE, m_Common.m_bSaveWindowSize );
-
-
 
 	/* タスクトレイを使う */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, m_Common.m_bUseTaskTray );
@@ -1044,7 +968,6 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* タスクトレイ左クリックメニューのショートカット */
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), HKM_SETHOTKEY, MAKEWORD( m_Common.m_wTrayMenuHotKeyCode, m_Common.m_wTrayMenuHotKeyMods ), 0 );
 
-
 	return;
 }
 
@@ -1055,36 +978,6 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 /* ダイアログデータの取得 p1 */
 int CPropCommon::GetData_p1( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_ZENPAN;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
-
-//	/* 折り返し文字数 */
-//	m_Common.m_nMAXLINELEN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
-//	if( m_Common.m_nMAXLINELEN < 10 ){
-//		m_Common.m_nMAXLINELEN = 10;
-//	}
-//	if( m_Common.m_nMAXLINELEN > 10240 ){
-//		m_Common.m_nMAXLINELEN = 10240;
-//	}
-
-//	/* 文字の隙間 */
-//	m_Common.m_nCHARSPACE = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
-//	if( m_Common.m_nCHARSPACE < 0 ){
-//		m_Common.m_nCHARSPACE = 0;
-///	}
-//	if( m_Common.m_nCHARSPACE > 16 ){
-//		m_Common.m_nCHARSPACE = 16;
-//	}
-
-	/* 行の隙間 */
-//	m_Common.m_nLINESPACE = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
-//	if( m_Common.m_nLINESPACE < 0 ){
-//		m_Common.m_nLINESPACE = 0;
-//	}
-//	if( m_Common.m_nLINESPACE > 16 ){
-//		m_Common.m_nLINESPACE = 16;
-//	}
-
 	/* カーソルのタイプ 0=win 1=dos  */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_CARETTYPE0 ) ){
 		m_Common.SetCaretType(0);
@@ -1096,22 +989,11 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	/* フリーカーソルモード */
 	m_Common.m_bIsFreeCursorMode = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FREECARET );
 
-#if 0
-	/* インデント */
-	m_Common.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
-
-	/* 日本語空白もインデント */
-	m_Common.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
-#endif
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	m_Common.m_bStopsBothEndsWhenSearchWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD );
 
 	/* 段落単位で移動するときに、段落の両端で止まるか */
 	m_Common.m_bStopsBothEndsWhenSearchParagraph = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH );
-
-//	/* TAB幅 */
-//	m_Common.m_nTABSPACE = ::GetDlgItemInt( hwndDlg, IDC_COMBO_TABSPACE, NULL, FALSE );
-
 
 	/* 終了時の確認をする */
 	m_Common.m_bExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXITCONFIRM );
@@ -1127,16 +1009,6 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 
 	/* キーリピート時のスクロールを滑らかにするか */
 	m_Common.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH );
-
-
-//	/* 折り返し行に改行を付けてコピー */
-//	m_Common.m_bAddCRLFWhenCopy = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY );
-
-//	/* Grepモード: エンターキーでタグジャンプ */
-//	m_Common.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
-//
-//	/* Grepモード: ダブルクリックでタグジャンプ  */
-//	m_Common.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
 	/* ファイルの履歴MAX */
 	m_Common.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
@@ -1157,26 +1029,6 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 		m_Common.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER;
 	}
 
-//	/* ファンクションキー表示位置／0:上 1:下 */
-//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1 ) ){
-//		m_Common.m_nFUNCKEYWND_Place = 0;
-//	}
-//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2) ){
-//		m_Common.m_nFUNCKEYWND_Place = 1;
-//	}
-//
-//	/* 次回ウィンドウを開いたときツールバーを表示する */
-//	m_Common.m_bDispTOOLBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTOOLBAR );
-//
-//	/* 次回ウィンドウを開いたときファンクションキーを表示する */
-//	m_Common.m_bDispFUNCKEYWND = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND );
-//
-//	/* 次回ウィンドウを開いたときステータスバーを表示する */
-//	m_Common.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );
-//
-//	/* ウィンドウサイズ継承 */
-//	m_Common.m_bSaveWindowSize = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WINSIZE );
-//
 	/* タスクトレイを使う */
 	m_Common.m_bUseTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON );
 //@@@ YAZAKI 2001.12.31 m_bUseTaskTrayに引きづられるように。

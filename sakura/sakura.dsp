@@ -773,6 +773,10 @@ SOURCE=..\sakura_core\CMemory.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CMemoryIterator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CMenuDrawer.h
 # End Source File
 # Begin Source File

@@ -107,29 +107,8 @@ CEditDoc::CEditDoc() :
 	/* レイアウト情報の変更 */
 	Types& ref = GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(
-//		ref.m_nMaxLineSize,
-//		ref.m_bWordWrap,			/* 英文ワードラップをする */
-//		ref.m_nTabSpace,
-//		ref.m_szLineComment,		/* 行コメントデリミタ */
-//		ref.m_szLineComment2,		/* 行コメントデリミタ2 */
-//		ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-//		ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-//		ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-//		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-//		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
-//#endif
-//		ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,
 		NULL,/*hwndProgress*/
-//		ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-//		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
-//		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-//		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
-//		ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-//		ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-//		ref.m_szKinsokuTail,		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 		ref
 	);
 //	MYTRACE( "CEditDoc::CEditDoc()おわり\n" );
@@ -698,29 +677,8 @@ BOOL CEditDoc::FileRead(
 	{
 		Types& ref = GetDocumentAttribute();
 		m_cLayoutMgr.SetLayoutInfo(
-//			ref.m_nMaxLineSize,
-//			ref.m_bWordWrap,			/* 英文ワードラップをする */
-//			ref.m_nTabSpace,
-//			ref.m_szLineComment,		/* 行コメントデリミタ */
-//			ref.m_szLineComment2,		/* 行コメントデリミタ2 */
-//			ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-//			ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-//			ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-//			ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-//			ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
-//#endif
-//			ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 			TRUE,
 			hwndProgress,
-//			ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-//			ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
-//			ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-//			ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
-//			ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-//			ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//			ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-//			ref.m_szKinsokuTail,		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 			ref
 		);
 	}
@@ -3427,29 +3385,8 @@ void CEditDoc::OnChangeSetting( void )
 	/* レイアウト情報の作成 */
 	Types& ref = GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(
-//		ref.m_nMaxLineSize,
-//		ref.m_bWordWrap,			/* 英文ワードラップをする */
-//		ref.m_nTabSpace,
-//		ref.m_szLineComment,		/* 行コメントデリミタ */
-//		ref.m_szLineComment2,		/* 行コメントデリミタ2 */
-//		ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-//		ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-//		ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-//		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-//		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
-//#endif
-//		ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,
 		hwndProgress,
-//		ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-//		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
-//		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-//		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
-//		ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-//		ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-//		ref.m_szKinsokuTail,		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 		ref
 	); /* レイアウト情報の変更 */
 
@@ -3679,33 +3616,11 @@ void CEditDoc::Init( void )
 	SetDocumentType( doctype, true );
 
 	/* レイアウト管理情報の初期化 */
-	//	m_cLayoutMgr.Create( &m_cDocLineMgr, GetDocumentAttribute().m_nMaxLineSize, GetDocumentAttribute().m_nTabSpace ) ;
 	/* レイアウト情報の変更 */
 	Types& ref = GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(
-//		ref.m_nMaxLineSize,
-//		ref.m_bWordWrap,			/* 英文ワードラップをする */
-//		ref.m_nTabSpace,
-//		ref.m_szLineComment,		/* 行コメントデリミタ */
-//		ref.m_szLineComment2,		/* 行コメントデリミタ2 */
-//		ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-//		ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-//		ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-//		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-//		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
-//#endif
-//		ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,
 		NULL,/*hwndProgress*/
-//		ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-//		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
-//		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-//		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
-//		ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-//		ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-//		ref.m_szKinsokuTail,		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 		ref
 	);
 

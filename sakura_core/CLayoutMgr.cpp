@@ -35,7 +35,8 @@
 || コンストラクタ
 */
 CLayoutMgr::CLayoutMgr()
-: m_cLineComment(), m_cBlockComment()
+: m_cLineComment(), m_cBlockComment(),
+	getIndentOffset( getIndentOffset_Normal )	//	Oct. 1, 2002 genta
 {
 	m_pcDocLineMgr = NULL;
 	m_nMaxLineSize = 0;
@@ -98,29 +99,8 @@ CLayoutMgr::~CLayoutMgr()
 || レイアウト情報の変更
 */
 void CLayoutMgr::SetLayoutInfo(
-//	int		nMaxLineSize,			/* 折り返し文字数 */
-//	BOOL	bWordWrap,				/* 英文ワードラップをする */
-//	int		nTabSpace,				/* TAB文字スペース */
-//	char*	pszLineComment,			/* 行コメントデリミタ */
-//	char*	pszLineComment2,		/* 行コメントデリミタ2 */
-//	char*	pszLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-//	char*	pszBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-//	char*	pszBlockCommentTo,		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-//	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-//	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ2(To) */
-//#endif
-//	int		nStringType,			/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 	int		bDoRayout,
 	HWND	hwndProgress,
-//	BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-//	BOOL	bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
-//	BOOL	bKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
-//	BOOL	bKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
-//	BOOL	bKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-//	BOOL	bKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//	char*	pszKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-//	char*	pszKinsokuTail,	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	Types&	refType			/* タイプ別設定 */
 )
 {
@@ -132,6 +112,20 @@ void CLayoutMgr::SetLayoutInfo(
 	m_cLineComment = refType.m_cLineComment;	/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 	m_cBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
+	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
+	//	数が増えてきたらテーブルにすべき
+	switch ( refType.m_nIndentLayout ){	/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
+		case 1:	// やざきさんOriginal
+			getIndentOffset = getIndentOffset_Yazaki;
+			break;
+		case 2:
+			getIndentOffset = getIndentOffset_LeftSpace;
+			break;
+		default:
+			getIndentOffset = getIndentOffset_Normal;
+			break;
+	}
+	
 	{	//@@@ 2002.04.08 MIK start
 		unsigned char	*p, *q1, *q2, *k1, *k2;
 		int	length;
@@ -461,7 +455,7 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 /* CLayoutを作成する
 	@@@ 2002.09.23 YAZAKI
 */
-CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext )
+CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext, int nIndent )
 {
 	CLayout* pLayout = new CLayout;
 	pLayout->m_pCDocLine = pCDocLine;
@@ -470,6 +464,7 @@ CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, 
 	pLayout->m_nOffset = nOffset;
 	pLayout->m_nLength = nLength;
 	pLayout->m_nTypePrev = nTypePrev;
+	pLayout->m_nIndent = nIndent;
 
 	if( EOL_NONE == pCDocLine->m_cEol ){
 		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
@@ -891,12 +886,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	*pnInsLineNum = m_nLines - nAllLinesOld + nAddInsLineNum;
 
 	/* 論理位置→レイアウト位置変換 */
-	pLayout = (CLayout*)Search( nNewLine );
+	pLayout = Search( nNewLine );
 	XYLogicalToLayout( pLayout, nNewLine, nNewLine, nNewPos, pnNewLine, pnNewPos );
-
-//	MYTRACE( "nNewLine=%d nNewPos=%d \n", nNewLine, nNewPos );
-//	MYTRACE( "*pnNewLine=%d *pnNewPos=%d \n", *pnNewLine, *pnNewPos );
-
 	return;
 }
 
@@ -1162,8 +1153,6 @@ int CLayoutMgr::SearchWord(
 	if( nRetCode ){
 		/* 論理位置→レイアウト位置変換 */
 		nLogLine = *pnLineFrom;
-//		XYLogicalToLayout( pLayout, nLineNum, nLogLine, *pnIdxFrom, pnLineFrom, pnIdxFrom );
-//		XYLogicalToLayout( pLayout, nLineNum, nLogLine, *pnIdxTo,	pnLineTo,	pnIdxTo );
 		CaretPos_Phys2Log(
 			*pnIdxFrom,
 			nLogLine,
@@ -1194,9 +1183,6 @@ void CLayoutMgr::XYLogicalToLayout(
 		int*		pnLayIdx
 )
 {
-//#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::XYLogicalToLayout" );
-//#endif
 	CLayout*	pLayout;
 	int			nCurLayLine;
 	*pnLayLine = 0;
@@ -1369,7 +1355,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 		}
 		pLayout = pLayout->m_pNext;
 	}while( NULL != pLayout );
-	*pnCaretPosX = nCaretPosX;
+	*pnCaretPosX = nCaretPosX + (pLayout ? pLayout->GetIndent() : 0);
 	*pnCaretPosY = nCaretPosY;
 //#ifdef _DEBUG
 //	MYTRACE( "\t\tnCaretPosY - nY = %d\n", nCaretPosY - nY );
@@ -1395,7 +1381,7 @@ void CLayoutMgr::CaretPos_Log2Phys(
 //#endif
 	int				nX;
 //	int				nY;
-	const CLayout*	pLayout;
+	const CLayout*	pcLayout;
 	int				i;
 	const char*		pData;
 	int				nDataLen;
@@ -1410,13 +1396,11 @@ void CLayoutMgr::CaretPos_Log2Phys(
 		*pnY = m_nLines;
 		return;
 	}
-//	pLayout = GetLineData( nCaretPosY );
-	pLayout = Search( nCaretPosY );
-	if( NULL == pLayout ){
+	pcLayout = Search( nCaretPosY );
+	if( NULL == pcLayout ){
 		if( 0 < nCaretPosY ){
-//			pLayout = GetLineData( nCaretPosY - 1 );
-			pLayout = Search( nCaretPosY - 1 );
-			if( NULL == pLayout ){
+			pcLayout = Search( nCaretPosY - 1 );
+			if( NULL == pcLayout ){
 				*pnX = 0;
 				*pnY = m_pcDocLineMgr->GetLines(); // 2002/2/10 aroka CDocLineMgr変更
 				return;
@@ -1439,11 +1423,11 @@ void CLayoutMgr::CaretPos_Log2Phys(
 		*pnY = m_nLines;
 		return;
 	}else{
-		*pnY = pLayout->m_nLinePhysical;
+		*pnY = pcLayout->m_nLinePhysical;
 	}
 
 	pData = GetLineStr( nCaretPosY, &nDataLen );
-	nX = 0;
+	nX = pcLayout ? pcLayout->GetIndent() : 0;
 checkloop:;
 //	enumEOLType nEOLType;
 	for( i = 0; i < nDataLen; ++i ){
@@ -1474,7 +1458,7 @@ checkloop:;
 //		}
 		i += nCharChars - 1;
 	}
-	i += pLayout->m_nOffset;
+	i += pcLayout->m_nOffset;
 	*pnX = i;
 	return;
 }

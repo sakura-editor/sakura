@@ -308,8 +308,9 @@ struct Types {
 //@@@ 2001.11.17 add end MIK
 
 	//	2002/04/30 YAZAKI Commonから移動。
-	int					m_bAutoIndent;					/* オートインデント */
-	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	BOOL				m_bAutoIndent;					/* オートインデント */
+	BOOL				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
 	
 	//	Sep. 10, 2002 genta
 	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */

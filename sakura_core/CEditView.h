@@ -39,6 +39,7 @@ class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
+class CDocLine;
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -356,9 +357,11 @@ protected:
 	void TwoPointToRect( RECT*, int, int, int, int );			/* 2点を対角とする矩形を求める */
 	void DrawSelectArea( void );								/* 指定行の選択領域の描画 */
 	void DrawSelectAreaLine( HDC, int, int, int, int, int );	/* 指定行の選択領域の描画 */
-	int  LineColmnToIndex( const char*, int, int );				/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
-	int  LineColmnToIndex2( const char*, int, int, int* );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */
-	int  LineIndexToColmn( const char*, int, int );				/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
+	int  LineColmnToIndex( const CLayout* pcLayout, int nColumn );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */		// @@@ 2002.09.28 YAZAKI
+	int  LineColmnToIndex( const CDocLine* pcDocLine, int nColumn );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */		// @@@ 2002.09.28 YAZAKI
+	int  LineColmnToIndex2( const CLayout* pcLayout, int nColumn, int& pnLineAllColLen );	/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */		// @@@ 2002.09.28 YAZAKI
+	int  LineIndexToColmn( const CLayout* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
+	int  LineIndexToColmn( const CDocLine* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
 	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
 	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
