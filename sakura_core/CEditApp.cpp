@@ -53,7 +53,7 @@ void CEditApp::DoGrep()
 //	CDlgGrep	cDlgGrep;	// Jul. 2, 2001 genta
 	char*			pCmdLine;
 	char*			pOpt;
-  	int				nDataLen;
+//  	int				nDataLen;
 	int				nRet;
 	CMemory			cmWork1;
 	CMemory			cmWork2;
@@ -101,9 +101,9 @@ void CEditApp::DoGrep()
 	|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
 	*/
 	wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"" ,
-		cmWork1.GetPtr( &nDataLen ),
-		cmWork2.GetPtr( &nDataLen ),
-		cmWork3.GetPtr( &nDataLen )
+		cmWork1.GetPtr(),
+		cmWork2.GetPtr(),
+		cmWork3.GetPtr()
 	);
 
 	pOpt[0] = '\0';
@@ -188,7 +188,7 @@ LRESULT CALLBACK CEditAppWndProc(
 
 /////////////////////////////////////////////////////////////////////////////
 // CEditApp
-
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditApp::CEditApp() :
 	//	Apr. 24, 2001 genta
 	m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) ),
@@ -196,11 +196,7 @@ CEditApp::CEditApp() :
 	m_hInstance( NULL ),
 	m_hWnd( NULL )
 {
-//	m_hAccel		= NULL;
-//	m_nEditArrNum	= 0;
-//	m_pEditArr		= NULL;
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	if( m_pShareData->m_hAccel != NULL ){
 		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
@@ -900,7 +896,7 @@ LRESULT CEditApp::DispatchEvent(
 //						CMemory		cmemCurText;
 						/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 //						GetCurrentTextForSearch( cmemCurText );
-//						::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr( NULL ) );
+//						::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
 //						break;
 					}
 #endif
@@ -1358,19 +1354,19 @@ void CEditApp::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 
 
-/* 新規編集ウィンドウの追加 ver 0 */
-//	Oct. 24, 2000 genta
-//	WinExec -> CreateProcess．同期機能を付加
+/*!	新規編集ウィンドウの追加 ver 0
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date Oct. 24, 2000 genta WinExec -> CreateProcess．同期機能を付加
+*/
 bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPath, int nCharCode, BOOL bReadOnly, bool sync )
 {
-//	CShareData		cShareData;
 	DLLSHAREDATA*	pShareData;
 	char szCmdLineBuf[1024];	//	コマンドライン
 	char szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 	int nPos = 0;				//	コマンドライン構築用ポインタ
 
 	/* 共有データ構造体のアドレスを返す */
-//	cShareData.Init();
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
@@ -1472,90 +1468,17 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 }
 
 
-#if 0
-/* 新規編集ウィンドウの追加 ver 1 */
-//void CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* pfi, BOOL bReadOnly )
-{
-	UINT			nRet;
-	char*			pszCmdLine;
-	char*			pszMsg;
-	pszCmdLine = new char[1024];
-	char			szPath[_MAX_PATH + 3];
-	char			szEXE[MAX_PATH];
-	char*			pszReadOnly;
-	CShareData		cShareData;
-	DLLSHAREDATA*	pShareData;
+/*!	新規編集ウィンドウの追加 ver 2:
 
-	/* 共有データ構造体のアドレスを返す */
-	cShareData.Init();
-	pShareData = cShareData.GetShareData( NULL, NULL );
-
-	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
-		char szMsg[512];
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
-		return;
-	}
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, sizeof( szEXE ) );
-	strcpy( szPath, pfi->m_szPath );
-	if( strchr( szPath, ' ' ) ){
-		char	pszFile2[_MAX_PATH + 3];
-		wsprintf( pszFile2, "\"%s\"", szPath );
-		strcpy( szPath, pszFile2 );
-	}
-	if( bReadOnly ){
-		pszReadOnly = "-R";
-	}else{
-		pszReadOnly = "";
-	}
-	/* 行桁指定を1開始にした */
-	wsprintf( pszCmdLine, "%s %s -X=%d -Y=%d -VX=%d -VY=%d -CODE=%d %s",
-		szEXE,
-		szPath,
-		pfi->m_nX + 1,
-		pfi->m_nY + 1,
-		pfi->m_nViewLeftCol + 1,
-		pfi->m_nViewTopLine + 1,
-		pfi->m_nCharCode,
-		pszReadOnly
-	);
-
-//複数プロセス版
-	if( 31 >= ( nRet = ::WinExec( pszCmdLine, SW_SHOW ) ) ){
-		switch( nRet ){
-		case 0:						pszMsg = "システムにメモリまたはリソースが足りません。";break;
-		case ERROR_FILE_NOT_FOUND:	pszMsg = "指定されたファイルが見つかりませんでした。";break;
-		case ERROR_PATH_NOT_FOUND:	pszMsg = "指定されたパスが見つかりませんでした。";break;
-		case ERROR_BAD_FORMAT:		pszMsg = ".EXEファイルが無効です。";break;
-		default:					pszMsg = "原因不明です。";break;
-		}
-		::MYMESSAGEBOX(
-			hWndParent,
-			MB_OK | MB_ICONSTOP,
-			GSTR_APPNAME,
-			"\'%s\'\nプロセスの起動に失敗しました。\n%s",
-			szEXE,
-			pszMsg
-		);
-	}
-
-	delete [] pszCmdLine;
-	return;
-}
-#endif
-
-//	From Here Oct. 24, 2000 genta
-//	新規編集ウィンドウの追加 ver 2:
+	@date Oct. 24, 2000 genta create.
+*/
 bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* pfi, BOOL bReadOnly, bool sync )
 {
 	char			pszCmdLine[1024];
-//	CShareData		cShareData;
 	DLLSHAREDATA*	pShareData;
 	int				nPos = 0;		//	引数作成用ポインタ
 
 	/* 共有データ構造体のアドレスを返す */
-//	cShareData.Init();
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
@@ -1599,169 +1522,18 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* p
 //	To Here Oct. 24, 2000 genta
 
 
-//シングルプロセス版用
-//	/* 新規編集ウィンドウの追加 ver 2 */
-//	HWND CEditApp::OpenNewEditor3(
-//		HINSTANCE hInstance, HWND hWndParent, const char* pszCommandLine, BOOL bActivate )
-//	{
-//		/* システムリソースのチェック */
-//		if( FALSE == CheckSystemResources( GSTR_APPNAME ) ){
-//			return NULL;
-//		}
-//
-//		CShareData		m_cShareData;
-//		DLLSHAREDATA*	pShareData;
-//		CEditWnd*		pcEditWnd;
-//		HWND			hWnd;
-//		/* コマンドラインオプション */
-//		BOOL			bGrepMode;
-//		CMemory			cmGrepKey;
-//		CMemory			cmGrepFile;
-//		CMemory			cmGrepFolder;
-//		CMemory			cmWork;
-//		BOOL			bGrepSubFolder;
-//		BOOL			bGrepLoHiCase;
-//		BOOL			bGrepRegularExp;
-//		BOOL			bGrepKanjiCode_AutoDetect;
-//		BOOL			bGrepOutputLine;
-//		BOOL			bDebugMode;
-//		BOOL			bNoWindow;
-//		FileInfo		fi;
-//		BOOL			bReadOnly;
-//
-//		/* 共有データ構造体のアドレスを返す */
-//		m_cShareData.Init();
-//		pShareData = m_cShareData.GetShareData( NULL, NULL );
-//
-//		/* コマンドラインの解析 */
-//		ParseCommandLine(
-//			pszCommandLine,
-//			&bGrepMode,
-//			&cmGrepKey,
-//			&cmGrepFile,
-//			&cmGrepFolder,
-//			&bGrepSubFolder,
-//			&bGrepLoHiCase,
-//			&bGrepRegularExp,
-//			&bGrepKanjiCode_AutoDetect,
-//			&bGrepOutputLine,
-//			&bDebugMode,
-//			&bNoWindow,
-//			&fi,
-//			&bReadOnly
-//		);
-//
-//		/* コマンドラインで受け取ったファイルが開かれている場合は、*/
-//		/* その編集ウィンドウをアクティブにする */
-//		if( 0 < lstrlen( fi.m_szPath ) ){
-//			HWND hwndOwner;
-//			/* 指定ファイルが開かれているか調べる */
-//			if( TRUE == m_cShareData.IsPathOpened( fi.m_szPath, &hwndOwner ) ){
-//				if( bActivate ){
-//					/* アクティブにする */
-//					ActivateFrameWindow( hwndOwner );
-//				}
-//				return hwndOwner;
-//			}
-//		}
-//
-//		pcEditWnd = new CEditWnd;
-//		if( bDebugMode ){
-//			hWnd = pcEditWnd->Create( hInstance, pShareData->m_hwndTray, NULL, 0, FALSE );
-//
-//	#ifdef _DEBUG/////////////////////////////////////////////
-//			/* デバッグモニタモードに設定 */
-//			pcEditWnd->SetDebugModeON();
-//	#endif////////////////////////////////////////////////////
-//		}else
-//		if( bGrepMode ){
-//			hWnd = pcEditWnd->Create( hInstance, pShareData->m_hwndTray, NULL, 0, FALSE );
-//			/* アクティブにする */
-//			ActivateFrameWindow( hWnd );
-//			/* GREP */
-//			int			nHitCount;
-//			GrepParam	GP;
-//			GP.pCEditView				= (void*)&pcEditWnd->m_cEditDoc.m_cEditViewArr[0];
-//			GP.pszGrepKey				= cmGrepKey.GetPtr( NULL );
-//			GP.pszGrepFile				= cmGrepFile.GetPtr( NULL );
-//			GP.pszGrepFolder			= cmGrepFolder.GetPtr( NULL );
-//			GP.bGrepSubFolder			= bGrepSubFolder;
-//			GP.bGrepLoHiCase			= bGrepLoHiCase;
-//			GP.bGrepRegularExp			= bGrepRegularExp;
-//			GP.bKanjiCode_AutoDetect	= bGrepKanjiCode_AutoDetect;
-//			GP.bGrepOutputLine			= bGrepOutputLine;
-//
-//			/*nHitCount = */pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep_Thread( (DWORD)&GP );
-//	//		nHitCount = pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
-//	//			&cmGrepKey,
-//	//			&cmGrepFile,
-//	//			&cmGrepFolder,
-//	//			bGrepSubFolder,
-//	//			bGrepLoHiCase,
-//	//			bGrepRegularExp,
-//	//			bGrepKanjiCode_AutoDetect,
-//	//			bGrepOutputLine
-//	//		);
-//		}else{
-//			if( 0 < (int)lstrlen( fi.m_szPath ) ){
-//				hWnd = pcEditWnd->Create( hInstance, pShareData->m_hwndTray, fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */ );
-//				if( fi.m_nViewTopLine < pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewTopLine = fi.m_nViewTopLine;
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewLeftCol = fi.m_nViewLeftCol;
-//				}
-//				/*
-//				  カーソル位置変換
-//				  物理位置(行頭からのバイト数、折り返し無し行位置)
-//
-//				  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-//				*/
-//				int		nPosX;
-//				int		nPosY;
-//				pcEditWnd->m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
-//					fi.m_nX,
-//					fi.m_nY,
-//					&nPosX,
-//					&nPosY
-//				);
-//				if( nPosY < pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX = nPosX;
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = nPosX;
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosY = nPosY;
-//				}else{
-//					int i;
-//					i = pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() - 1;
-//					if( i < 0 ){
-//						i = 0;
-//					}
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX = 0;
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
-//					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosY = i;
-//				}
-//				pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
-//			}else{
-//				hWnd = pcEditWnd->Create( hInstance, pShareData->m_hwndTray, NULL, 0, FALSE );
-//			}
-//		}
-//		if( bActivate ){
-//			/* アクティブにする */
-//			ActivateFrameWindow( hWnd );
-//		}
-//		return hWnd;
-//	}
 
 
 
+/*!	サクラエディタの全終了
 
-
-/* サクラエディタの全終了 */
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 void CEditApp::TerminateApplication( void )
 {
-//	CShareData		cShareData;
 	DLLSHAREDATA*	pShareData;
-//	int				nSettingType;
 
 	/* 共有データ構造体のアドレスを返す */
-//	cShareData.Init();
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 現在の編集ウィンドウの数を調べる */
@@ -1787,26 +1559,15 @@ void CEditApp::TerminateApplication( void )
 
 
 
-/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
+/*!	すべてのウィンドウを閉じる
+	
+	@date Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 BOOL CEditApp::CloseAllEditor( void )
 {
-//	int				i;
-//	int				j;
-//	HWND*			phWndArr;
-//	DLLSHAREDATA*	pShareData;
-//	/* 共有データ構造体のアドレスを返す */
-//	pShareData = ::GetShareData();
-	CShareData		cShareData;
-//	DLLSHAREDATA*	pShareData;
-//	int				nSettingType;
-
-
-	/* 共有データ構造体のアドレスを返す */
-	cShareData.Init();
-//	pShareData = cShareData.GetShareData( NULL, NULL );
-
 	/* 全編集ウィンドウへ終了要求を出す */
-	if( !cShareData.RequestCloseAllEditor() ){
+	if( !CShareData::getInstance()->RequestCloseAllEditor() ){
 		return FALSE;
 	}else{
 		return TRUE;
@@ -1903,7 +1664,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 						LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
 						//	Jan. 19, 2002 genta
 						//	メニュー文字列の&を考慮
-						dupamp( cmemDes.GetPtr( NULL ), szMenu2 );
+						dupamp( cmemDes.GetPtr(), szMenu2 );
 //	From Here Oct. 4, 2000 JEPRO commented out & modified
 //		j >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
 						//	Jan. 19, 2002 genta
@@ -2067,338 +1828,5 @@ int	CEditApp::CreatePopUpMenu_R( void )
 //	MYTRACE( "nId=%d\n", nId );
 	return nId;
 }
-
-#if 0
-// 20020117 aroka CCommandLineクラスに移動
-/*!
-	コマンドラインのチェックを行って、オプション番号と
-	引数がある場合はその先頭アドレスを返す。
-	CEditApp::ParseCommandLine()で使われる。
-
-	@return オプションの番号。どれにも該当しないときは0を返す。
-
-	@author genta
-	@date Apr. 6, 2001
-*/
-int CEditApp::CheckCommandLine(
-	char*  str, //!< [in] 検証する文字列（先頭の-は含まない）
-	char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
-)
-{
-
-	/*!
-		コマンドラインオプション解析用構造体配列
-	*/
-	struct _CmdLineOpt {
-		const char *opt;	//!< オプション文字列
-		int len;	//!< オプションの文字列長（計算を省くため）
-		int value;	//!< 変換後の値
-	};
-
-	/*!
-		コマンドラインオプション
-		後ろに引数を取らないもの
-	*/
-	static const _CmdLineOpt _COptWoA[] = {
-		"CODE", 4, 1001,
-		"R", 1, 1002,
-		"NOWIN", 5, 1003,
-		"GREPMODE", 8, 1100,
-		"DEBUGMODE", 9, 1999,
-		NULL, 0, 0
-	};
-
-	/*!
-		コマンドラインオプション
-		後ろに引数を取るもの
-	*/
-	static const _CmdLineOpt _COptWithA[] = {
-		"X", 1, 1,
-		"Y", 1, 2,
-		"VX", 2, 3,
-		"VY", 2, 4,
-		"GKEY", 4, 101,
-		"GFILE", 5, 102,
-		"GFOLDER", 7, 103,
-		"GOPT", 4, 104,
-		NULL, 0, 0
-	};
-
-	const _CmdLineOpt *ptr;
-	int len = lstrlen( str );
-
-	//	引数がある場合を先に確認
-	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ ){
-		if( len >= ptr->len &&	//	長さが足りているか
-			//	オプション部分の長さチェック
-			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&
-			//	文字列の比較
-			memcmp( str, ptr->opt, ptr->len ) == 0 ){
-			*arg = str + ptr->len + 1;
-			return ptr->value;
-		}
-	}
-
-	//	引数がない場合
-	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ ){
-		if( len == ptr->len &&	//	長さチェック
-			//	文字列の比較
-			memcmp( str, ptr->opt, ptr->len ) == 0 ){
-			return ptr->value;
-		}
-	}
-	return 0;	//	該当無し
-}
-
-/*! コマンドラインの解析
-
-	WinMain()から呼び出される。
-*/
-void CEditApp::ParseCommandLine(
-	const char*	pszCmdLineSrc,	//!< [in]コマンドライン文字列
-	BOOL*		pbGrepMode,	//!< [out] TRUE: Grep Mode
-	CMemory*	pcmGrepKey,	//!< [out] GrepのKey
-	CMemory*	pcmGrepFile,
-	CMemory*	pcmGrepFolder,
-	BOOL*		pbGrepSubFolder,
-	BOOL*		pbGrepLoHiCase,
-	BOOL*		pbGrepRegularExp,
-	BOOL*		pbGrepKanjiCode_AutoDetect,
-	BOOL*		pbGrepOutputLine,
-	BOOL*		pbGrepWordOnly,
-	int	*		pnGrepOutputStyle,
-	BOOL*		pbDebugMode,
-	BOOL*		pbNoWindow,	//!< [out] TRUE: 編集Windowを開かない
-	FileInfo*	pfi,
-	BOOL*		pbReadOnly	//!< [out] TRUE: Read Only
-)
-{
-	BOOL			bGrepMode;
-	CMemory			cmGrepKey;
-	CMemory			cmGrepFile;
-	CMemory			cmGrepFolder;
-	BOOL			bGrepSubFolder;
-	BOOL			bGrepLoHiCase;
-	BOOL			bGrepRegularExp;
-	BOOL			bGrepKanjiCode_AutoDetect;
-	BOOL			bGrepOutputLine;
-	BOOL			bGrepWordOnly;
-	int				nGrepOutputStyle;
-	BOOL			bDebugMode;
-	BOOL			bNoWindow;
-	FileInfo		fi;
-	BOOL			bReadOnly;
-	char*			pszCmdLineWork;
-	int				nCmdLineWorkLen;
-	BOOL			bFind;
-//	WIN32_FIND_DATA	w32fd;
-//	HANDLE			hFind;
-	char			szPath[_MAX_PATH + 1];
-	int				i;
-	int				j;
-	int				nPos;
-	char*			pszToken;
-	CMemory			cmWork;
-	//const char*		pszOpt;
-	//int				nOptLen;
-
-	bGrepMode = FALSE;
-	bGrepSubFolder = FALSE;
-	bGrepLoHiCase = FALSE;
-	bGrepRegularExp = FALSE;
-	bGrepKanjiCode_AutoDetect = FALSE;
-	bGrepOutputLine = FALSE;
-	bGrepWordOnly = FALSE;
-	nGrepOutputStyle = 1;
-	bDebugMode = FALSE;
-	bNoWindow = FALSE;
-
-	//	Oct. 19, 2001 genta 初期値を-1にして，指定有り/無しを判別可能にしてみた
-	fi.m_nViewTopLine = -1;				/* 表示域の一番上の行(0開始) */
-	fi.m_nViewLeftCol = -1;				/* 表示域の一番左の桁(0開始) */
-	fi.m_nX = -1;						/* カーソル 物理位置(行頭からのバイト数) */
-	fi.m_nY = -1;						/* カーソル 物理位置(折り返し無し行位置) */
-	fi.m_bIsModified = 0;				/* 変更フラグ */
-	fi.m_nCharCode = CODE_AUTODETECT;	/* 文字コード種別 *//* 文字コード自動判別 */
-	fi.m_szPath[0] = '\0';				/* ファイル名 */
-	bReadOnly = FALSE;					/* 読み取り専用か */
-
-	//	May 30, 2000 genta
-	//	実行ファイル名をもとに漢字コードを固定する．
-	{
-		char	exename[512];
-		::GetModuleFileName( NULL, exename, 512 );
-
-		int		len = strlen( exename );
-
-		for( char *p = exename + len - 1; p > exename; p-- ){
-			if( *p == '.' ){
-				if( '0' <= p[-1] && p[-1] <= '5' )
-					fi.m_nCharCode = p[-1] - '0';
-				break;
-			}
-		}
-	}
-
-
-
-
-
-	bFind = FALSE;
-	if( pszCmdLineSrc[0] != '-' ){
-		memset( (char*)szPath, 0, sizeof( szPath ) );
-		i = 0;
-		j = 0;
-		for( ; i < sizeof( szPath ) - 1 && i <= (int)lstrlen(pszCmdLineSrc); ++i ){
-			if( pszCmdLineSrc[i] != ' ' && pszCmdLineSrc[i] != '\0' ){
-				szPath[j] = pszCmdLineSrc[i];
-				++j;
-				continue;
-			}
-			/* ファイルの存在と、ファイルかどうかをチェック */
-			if( -1 != _access( szPath, 0 ) ){
-//? 2000.01.18 システム属性のファイルが開けない問題
-//?				hFind = ::FindFirstFile( szPath, &w32fd );
-//?				::FindClose( hFind );
-//?				if( w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM ||
-//?					w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ){
-//?				}else{
-					bFind = TRUE;
-					break;
-//?				}
-			}
-			szPath[j] = pszCmdLineSrc[i];
-			++j;
-		}
-	}
-	if( bFind ){
-		strcpy( fi.m_szPath, szPath );	/* ファイル名 */
-		nPos = j + 1;
-	}else{
-		nPos = 0;
-	}
-	pszCmdLineWork = new char[lstrlen( pszCmdLineSrc ) + 1];
-	strcpy( pszCmdLineWork, pszCmdLineSrc );
-	nCmdLineWorkLen = lstrlen( pszCmdLineWork );
-	pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, " " );
-	while( pszToken != NULL ){
-		if( !bFind && pszToken[0] != '-' ){
-			if( pszToken[0] == '\"' ){
-				cmWork.SetData( &pszToken[1],  lstrlen( pszToken ) - 2 );
-				cmWork.Replace( "\"\"", "\"" );
-				strcpy( fi.m_szPath, cmWork.GetPtr( NULL/*&nDummy*/ ) );	/* ファイル名 */
-			}else{
-				strcpy( fi.m_szPath, pszToken );							/* ファイル名 */
-			}
-		}else{
-			++pszToken;	//	先頭の'-'はskip
-			char *arg;
-			switch( CheckCommandLine( pszToken, &arg ) ){
-			case 1: //	X
-				/* 行桁指定を1開始にした */
-				fi.m_nX = atoi( arg ) - 1;
-				break;
-			case 2:	//	Y
-				fi.m_nY = atoi( arg ) - 1;
-				break;
-			case 3:	// VX
-				/* 行桁指定を1開始にした */
-				fi.m_nViewLeftCol = atoi( arg ) - 1;
-				break;
-			case 4:	//	VY
-				/* 行桁指定を1開始にした */
-				fi.m_nViewTopLine = atoi( arg ) - 1;
-				break;
-			case 1001:	//	CODE
-				fi.m_nCharCode = atoi( arg );
-				break;
-			case 1002:	//	R
-				bReadOnly = TRUE;
-				break;
-			case 1003:	//	NOWIN
-				bNoWindow = TRUE;
-				break;
-			case 1100:	//	GREPMODE
-				bGrepMode = TRUE;
-				break;
-			case 101:	//	GKEY
-				//	前後の""を取り除く
-				cmGrepKey.SetData( arg + 1,  lstrlen( arg ) - 2 );
-				cmGrepKey.Replace( "\"\"", "\"" );
-				break;
-			case 102:	//	GFILE
-				//	前後の""を取り除く
-				cmGrepFile.SetData( arg + 1,  lstrlen( arg ) - 2 );
-				cmGrepFile.Replace( "\"\"", "\"" );
-				break;
-			case 103:	//	GFOLDER
-				cmGrepFolder.SetData( arg + 1,  lstrlen( arg ) - 2 );
-				cmGrepFolder.Replace( "\"\"", "\"" );
-				break;
-			case 104:	//	GOPT
-				for( ; *arg != '\0' ; ++arg ){
-					switch( *arg ){
-					case 'S':	/* サブフォルダからも検索する */
-						bGrepSubFolder = TRUE;	break;
-					case 'L':	/* 英大文字と英小文字を区別する */
-						bGrepLoHiCase = TRUE;	break;
-					case 'R':	/* 正規表現 */
-						bGrepRegularExp = TRUE;	break;
-					case 'K':	/* 文字コード自動判別 */
-						bGrepKanjiCode_AutoDetect = TRUE;	break;
-					case 'P':	/* 行を出力するか該当部分だけ出力するか */
-						bGrepOutputLine = TRUE;	break;
-					case 'W':	/* 単語単位で探す */
-						bGrepWordOnly = TRUE;	break;
-					case '1':	/* Grep: 出力形式 */
-						nGrepOutputStyle = 1;	break;
-					case '2':	/* Grep: 出力形式 */
-						nGrepOutputStyle = 2;	break;
-					}
-				}
-				break;
-			case 1999:
-				bDebugMode = TRUE;
-				break;
-			}
-		}
-		pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, " " );
-	}
-	delete [] pszCmdLineWork;
-
-	/* ファイル名 */
-	if( '\0' != fi.m_szPath[0] ){
-		/* ショートカット(.lnk)の解決 */
-		if( TRUE == ResolveShortcutLink( NULL, fi.m_szPath, szPath ) ){
-			strcpy( fi.m_szPath, szPath );
-		}
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( fi.m_szPath, szPath ) ){
-			strcpy( fi.m_szPath, szPath );
-		}
-
-		/* MRUから情報取得 */
-
-	}
-
-	/* 処理結果を格納 */
-	*pbGrepMode					= bGrepMode;
-	*pcmGrepKey					= cmGrepKey;
-	*pcmGrepFile				= cmGrepFile;
-	*pcmGrepFolder				= cmGrepFolder;
-	*pbGrepSubFolder			= bGrepSubFolder;
-	*pbGrepLoHiCase				= bGrepLoHiCase;
-	*pbGrepRegularExp			= bGrepRegularExp;
-	*pbGrepKanjiCode_AutoDetect = bGrepKanjiCode_AutoDetect;
-	*pbGrepOutputLine			= bGrepOutputLine;
-	*pbGrepWordOnly				= bGrepWordOnly;
-	*pnGrepOutputStyle			= nGrepOutputStyle;
-	*pbDebugMode				= bDebugMode;
-	*pbNoWindow					= bNoWindow;
-	*pfi						= fi;
-	*pbReadOnly					= bReadOnly;
-	return;
-}
-#endif //
 
 /*[EOF]*/

@@ -377,17 +377,7 @@ BOOL CALLBACK PropTypesP3_newProc(
 
 CPropTypes::CPropTypes()
 {
-//	int		i;
-//	long	lPathLen;
-
-//	m_hbmpToolButtons = NULL;
-
-//	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
-//	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
-
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
@@ -617,10 +607,6 @@ void CPropTypes::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 /* プロパティシートの作成 */
 int CPropTypes::DoPropertySheet( int nPageNum )
 {
-//	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
-//	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
-
 	int				nRet;
 	PROPSHEETPAGE	psp[16];
 	PROPSHEETHEADER	psh;

@@ -149,6 +149,8 @@ void CHokanMgr::Hide( void )
 /*!	初期化
 	pcmemHokanWord == NULLのとき、補完候補がひとつだったら、補完ウィンドウを表示しないで終了します。
 	Search()呼び出し元で確定処理を進めてください。
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 int CHokanMgr::Search(
 //	HFONT		hFont,
@@ -190,7 +192,7 @@ int CHokanMgr::Search(
 	if( 1 == m_nKouhoNum ){
 		if(pcmemHokanWord != NULL){
 			m_nCurKouhoIdx = -1;
-			pcmemHokanWord->SetDataSz(m_pcmemKouho->GetPtr(NULL));
+			pcmemHokanWord->SetDataSz(m_pcmemKouho->GetPtr());
 			return 1;
 		}
 	}
@@ -202,7 +204,6 @@ int CHokanMgr::Search(
 	int			i;
 
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 //	m_hFont = hFont;
@@ -239,7 +240,7 @@ int CHokanMgr::Search(
 	char*	pszWork;
 	char*	pszNext;
 	char*	pszTest;
-	pszWork = m_pcmemKouho->GetPtr( NULL );
+	pszWork = m_pcmemKouho->GetPtr();
 	for( i = 0; i < m_nKouhoNum; ++i ){
 		pszNext = strstr( pszWork, pszCR );
 		if( NULL == pszNext ){
@@ -380,7 +381,7 @@ void CHokanMgr::SetCurKouhoStr( void )
 	}
 	strcpy( szAdd, "" );
 //	sprintf( szAdd, " (%d/%d)", m_nCurKouhoIdx + 1, m_nKouhoNum );
-	pszWork = m_pcmemKouho->GetPtr( NULL );
+	pszWork = m_pcmemKouho->GetPtr();
 	for( i = 0; i <= m_nCurKouhoIdx; ++i ){
 		pszNext = strstr( pszWork, pszCR );
 		if( NULL == pszNext ){

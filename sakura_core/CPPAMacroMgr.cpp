@@ -30,7 +30,7 @@ CPPAMacroMgr::~CPPAMacroMgr()
 */
 void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
 {
-	m_cPPA.SetSource( m_cBuffer.GetPtr2() );
+	m_cPPA.SetSource( m_cBuffer.GetPtr() );
 	m_cPPA.Execute(pcEditView);
 }
 

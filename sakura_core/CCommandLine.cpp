@@ -18,13 +18,30 @@
 
 #include "CCommandLine.h"
 #include "CMemory.h"
-#include "CShareData.h"
+//#include "CShareData.h"	2002/03/24 YAZAKI
 #include "etc_uty.h"
 #include <tchar.h>
 #include <io.h>
 #include <string.h>
 
-CCommandLine* CCommandLine::_instance=0;
+CCommandLine* CCommandLine::_instance = NULL;
+
+/* コマンドラインオプション用定数 */
+#define CMDLINEOPT_CODE			1001
+#define CMDLINEOPT_R			1002
+#define CMDLINEOPT_NOWIN		1003
+#define CMDLINEOPT_GREPMODE		1100
+#define CMDLINEOPT_GREPDLG		1101
+#define CMDLINEOPT_DEBUGMODE	1999
+#define CMDLINEOPT_X			1
+#define CMDLINEOPT_Y			2
+#define CMDLINEOPT_VX			3
+#define CMDLINEOPT_VY			4
+#define CMDLINEOPT_TYPE			5
+#define CMDLINEOPT_GKEY			101
+#define CMDLINEOPT_GFILE		102
+#define CMDLINEOPT_GFOLDER		103
+#define CMDLINEOPT_GOPT			104
 
 /*!
 	コマンドラインのチェックを行って、オプション番号と
@@ -56,13 +73,13 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取らないもの
 	*/
 	static const _CmdLineOpt _COptWoA[] = {
-		"CODE", 4, 1001,
-		"R", 1, 1002,
-		"NOWIN", 5, 1003,
-		"GREPMODE", 8, 1100,
-		"GREPDLG", 7, 1101,
-		"DEBUGMODE", 9, 1999,
-		NULL, 0, 0
+		{"CODE", 4,			CMDLINEOPT_CODE},
+		{"R", 1,			CMDLINEOPT_R},
+		{"NOWIN", 5,		CMDLINEOPT_NOWIN},
+		{"GREPMODE", 8,		CMDLINEOPT_GREPMODE},
+		{"GREPDLG", 7,		CMDLINEOPT_GREPDLG},
+		{"DEBUGMODE", 9,	CMDLINEOPT_DEBUGMODE},
+		{NULL, 0, 0}
 	};
 
 	/*!
@@ -70,16 +87,16 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取るもの
 	*/
 	static const _CmdLineOpt _COptWithA[] = {
-		"X", 1, 1,
-		"Y", 1, 2,
-		"VX", 2, 3,
-		"VY", 2, 4,
-		"TYPE", 4, 5,	//!< タイプ別設定 Mar. 7, 2002 genta
-		"GKEY", 4, 101,
-		"GFILE", 5, 102,
-		"GFOLDER", 7, 103,
-		"GOPT", 4, 104,
-		NULL, 0, 0
+		{"X", 1,			CMDLINEOPT_X},
+		{"Y", 1,			CMDLINEOPT_Y},
+		{"VX", 2,			CMDLINEOPT_VX},
+		{"VY", 2,			CMDLINEOPT_VY},
+		{"TYPE", 4,			CMDLINEOPT_TYPE},	//!< タイプ別設定 Mar. 7, 2002 genta
+		{"GKEY", 4,			CMDLINEOPT_GKEY},
+		{"GFILE", 5,		CMDLINEOPT_GFILE},
+		{"GFOLDER", 7,		CMDLINEOPT_GFOLDER},
+		{"GOPT", 4,			CMDLINEOPT_GOPT},
+		{NULL, 0, 0}
 	};
 
 	const _CmdLineOpt *ptr;
@@ -252,7 +269,7 @@ void CCommandLine::ParseCommandLine(
 			if( pszToken[0] == '\"' ){
 				cmWork.SetData( &pszToken[1],  lstrlen( pszToken ) - 2 );
 				cmWork.Replace( "\"\"", "\"" );
-				strcpy( fi.m_szPath, cmWork.GetPtr( NULL/*&nDummy*/ ) );	/* ファイル名 */
+				strcpy( fi.m_szPath, cmWork.GetPtr() );	/* ファイル名 */
 			}else{
 				strcpy( fi.m_szPath, pszToken );							/* ファイル名 */
 			}
@@ -260,57 +277,57 @@ void CCommandLine::ParseCommandLine(
 			++pszToken;	//	先頭の'-'はskip
 			char *arg;
 			switch( CheckCommandLine( pszToken, &arg ) ){
-			case 1: //	X
+			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
 				fi.m_nX = atoi( arg ) - 1;
 				break;
-			case 2:	//	Y
+			case CMDLINEOPT_Y:	//	Y
 				fi.m_nY = atoi( arg ) - 1;
 				break;
-			case 3:	// VX
+			case CMDLINEOPT_VX:	// VX
 				/* 行桁指定を1開始にした */
 				fi.m_nViewLeftCol = atoi( arg ) - 1;
 				break;
-			case 4:	//	VY
+			case CMDLINEOPT_VY:	//	VY
 				/* 行桁指定を1開始にした */
 				fi.m_nViewTopLine = atoi( arg ) - 1;
 				break;
-			case 5:	//	T
+			case CMDLINEOPT_TYPE:	//	TYPE
 				//	Mar. 7, 2002 genta
 				//	ファイルタイプの強制指定
 				strncpy( fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
 				fi.m_szDocType[ MAX_DOCTYPE_LEN ]= '\0';
 				break;
-			case 1001:	//	CODE
+			case CMDLINEOPT_CODE:	//	CODE
 				fi.m_nCharCode = atoi( arg );
 				break;
-			case 1002:	//	R
+			case CMDLINEOPT_R:	//	R
 				bReadOnly = true;
 				break;
-			case 1003:	//	NOWIN
+			case CMDLINEOPT_NOWIN:	//	NOWIN
 				bNoWindow = true;
 				break;
-			case 1100:	//	GREPMODE
+			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				bGrepMode = true;
 				break;
-			case 1101:	//	GREPDLG
+			case CMDLINEOPT_GREPDLG:	//	GREPDLG
 				bGrepDlg = true;
 				break;
-			case 101:	//	GKEY
+			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
 				cmGrepKey.SetData( arg + 1,  lstrlen( arg ) - 2 );
 				cmGrepKey.Replace( "\"\"", "\"" );
 				break;
-			case 102:	//	GFILE
+			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
 				cmGrepFile.SetData( arg + 1,  lstrlen( arg ) - 2 );
 				cmGrepFile.Replace( "\"\"", "\"" );
 				break;
-			case 103:	//	GFOLDER
+			case CMDLINEOPT_GFOLDER:	//	GFOLDER
 				cmGrepFolder.SetData( arg + 1,  lstrlen( arg ) - 2 );
 				cmGrepFolder.Replace( "\"\"", "\"" );
 				break;
-			case 104:	//	GOPT
+			case CMDLINEOPT_GOPT:	//	GOPT
 				for( ; *arg != '\0' ; ++arg ){
 					switch( *arg ){
 					case 'S':	/* サブフォルダからも検索する */
@@ -332,7 +349,7 @@ void CCommandLine::ParseCommandLine(
 					}
 				}
 				break;
-			case 1999:
+			case CMDLINEOPT_DEBUGMODE:
 				bDebugMode = true;
 				break;
 			}

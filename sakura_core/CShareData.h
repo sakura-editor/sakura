@@ -777,7 +777,9 @@ public:
 	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 	void		AddToSearchKeyArr( const char* pszSearchKey );	//	m_szSEARCHKEYArrにpszSearchKeyを追加する
 	void		AddToReplaceKeyArr( const char* pszReplaceKey );	//	m_szREPLACEKEYArrにpszReplaceKeyを追加する
-	
+	void		AddToGrepFileArr( const char* pszGrepFile );		//	m_szGREPFILEArrにpszGrepFileを追加する
+	void		AddToGrepFolderArr( const char* pszGrepFolder );	//	m_nGREPFOLDERArrNumにpszGrepFolderを追加する
+
 	//@@@ 2002.2.3 YAZAKI
 	bool		ExtWinHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
 	char*		GetExtWinHelp( int nType = -1 );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。

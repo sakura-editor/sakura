@@ -123,7 +123,6 @@ public:
 //	operator const void*() const;
 	const char operator[](int nIndex) const;
 
-//	char* GetPtr( int* ) const;	/* データへのポインタと有効長を返す */
 	/* データへのポインタと長さ返す */
 	__forceinline char* GetPtr( int* pnLength ) const
 	{
@@ -133,7 +132,7 @@ public:
 		return (char*)m_pData;
 	}
 
-	__forceinline char* GetPtr2( void ) const
+	__forceinline char* GetPtr( void ) const
 	{
 		return (char*)m_pData;
 	}

@@ -607,7 +607,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* EUC→SJISコード変換 */
 		cmemBuf.EUCToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() );
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		bLFisOK = TRUE;
 		break;
@@ -615,28 +615,28 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* E-Mail(JIS→SJIS)コード変換 */
 		cmemBuf.JIStoSJIS( (nFlags & 1) == 1 );	//	Nov. 12, 2000 genta フラグ追加
-		memcpy( pBuf, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() );
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;
 	case CODE_UNICODE:
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* Unicode→SJISコード変換 */
 		cmemBuf.UnicodeToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() );
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;
 	case CODE_UTF8:	/* UTF-8 */
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* UTF-8→SJISコード変換 */
 		cmemBuf.UTF8ToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() );
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;
 	case CODE_UTF7:	/* UTF-7 */
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* UTF-7→SJISコード変換 */
 		cmemBuf.UTF7ToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() );
+		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;
 	case CODE_SJIS:
@@ -973,8 +973,8 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 			}
 		}
 		if( 0 < cmemBuf.GetLength() ){
-//-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() ) ){
-			if( fwrite( cmemBuf.GetPtr( NULL ), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
+//-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
+			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
 					< (size_t)cmemBuf.GetLength() ){ /* add */
 //				MYTRACE( "file write error %s\n", pszPath );
 				nRetVal = FALSE;
@@ -1046,8 +1046,9 @@ _RETURN_:;
 || データ変更によって影響のあった、変更前と変更後の行の範囲を返します
 || この情報をもとに、レイアウト情報などを更新してください。
 ||
+	@date 2002/03/24 YAZAKI bUndo削除
 */
-void CDocLineMgr::DeleteData(
+void CDocLineMgr::DeleteData_CDocLineMgr(
 			int			nLine,
 			int			nDelPos,
 			int			nDelLen,
@@ -1055,8 +1056,8 @@ void CDocLineMgr::DeleteData(
 			int*		pnModLineOldTo,		/* 影響のあった変更前の行(to) */
 			int*		pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
 			int*		pnDelLineOldNum,	/* 削除された行数 */
-			CMemory&	cmemDeleted,		/* 削除されたデータ */
-			int			bUndo				/* Undo操作かどうか */
+			CMemory&	cmemDeleted			/* 削除されたデータ */
+//			int			bUndo				/* Undo操作かどうか */
 )
 {
 #ifdef _DEBUG
@@ -1081,21 +1082,7 @@ void CDocLineMgr::DeleteData(
 	if( NULL == pDocLine ){
 		return;
 	}
-	/* Undo操作かどうか */
-//	if( bUndo ){
-//		pDocLine->m_nModifyCount--;				/* 変更回数 */
-//		if( 0 == pDocLine->m_nModifyCount ){	/* 変更回数 */
-//			pDocLine->m_bModify = FALSE;		/* 変更フラグ */
-//		}
-//		if( 0 > pDocLine->m_nModifyCount ){		/* 変更回数 */
-//			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-//				"CDocLineMgr::DeleteData()で変更カウンタが0以下になりました。バグじゃぁああ"
-//			);
-//		}
-//	}else{
-//		++pDocLine->m_nModifyCount;	/* 変更回数 */
-//		pDocLine->m_bModify = TRUE;	/* 変更フラグ */
-//	}
+
 	pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
 	pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
@@ -1221,7 +1208,10 @@ void CDocLineMgr::DeleteData(
 
 
 
-/* データの挿入 */
+/*!	データの挿入
+
+	@date 2002/03/24 YAZAKI bUndo削除
+*/
 void CDocLineMgr::InsertData_CDocLineMgr(
 			int			nLine,
 			int			nInsPos,
@@ -1229,8 +1219,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 			int			nInsDataLen,
 			int*		pnInsLineNum,	/* 挿入によって増えた行の数 */
 			int*		pnNewLine,		/* 挿入された部分の次の位置の行 */
-			int*		pnNewPos,		/* 挿入された部分の次の位置のデータ位置 */
-			int			bUndo			/* Undo操作かどうか */
+			int*		pnNewPos		/* 挿入された部分の次の位置のデータ位置 */
+//			int			bUndo			/* Undo操作かどうか */
 )
 {
 	CDocLine*	pDocLine;
@@ -1268,21 +1258,6 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		cEOLTypeNext.SetType( EOL_NONE );
 		bBookMarkNext=false;	// 2001.12.03 hor
 	}else{
-//		/* Undo操作かどうか */
-//		if( bUndo ){
-//			pDocLine->m_nModifyCount--;				/* 変更回数 */
-//			if( 0 == pDocLine->m_nModifyCount ){	/* 変更回数 */
-//				pDocLine->m_bModify = FALSE;		/* 変更フラグ */
-//			}
-//			if( 0 > pDocLine->m_nModifyCount ){		/* 変更回数 */
-//				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-//					"CDocLineMgr::InsertData()で変更カウンタが0以下になりました。バグじゃぁああ"
-//				);
-//			}
-//		}else{
-//			++pDocLine->m_nModifyCount;	/* 変更回数 */
-//			pDocLine->m_bModify = TRUE;	/* 変更フラグ */
-//		}
 		pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
 		pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
@@ -1859,7 +1834,7 @@ int CDocLineMgr::SearchWord(
 				pDocLine = pDocLine->m_pPrev;
 				nIdxPos = 0;
 				if( NULL != pDocLine ){
-//					nHitTo = lstrlen( pDocLine->m_pLine->GetPtr( NULL ) );
+//					nHitTo = lstrlen( pDocLine->m_pLine->GetPtr() );
 					nHitTo = pDocLine->m_pLine->GetLength();
 				}
 			}
@@ -1908,16 +1883,14 @@ int CDocLineMgr::SearchWord(
 			int nNextWordTo2;
 //			int bState;
 			int nWork;
-			CMemory cmemTest;
+//			CMemory cmemTest;
 			nNextWordFrom = nIdx;
 			while( NULL != pDocLine ){
 				if( TRUE == PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
 					nNextWordFrom = nWork;
-//					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , &cmemTest, NULL ) ){
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-//						MYTRACE( "[%d][%s]\n", nLinePos, cmemTest.GetPtr(NULL) );
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
-							const char* pData = pDocLine->m_pLine->GetPtr2();	// 2002/2/10 aroka CMemory変更
+							const char* pData = pDocLine->m_pLine->GetPtr();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
 							if( (FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 								(TRUE  == bLoHiCase && 0 ==	 memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
@@ -1956,7 +1929,7 @@ int CDocLineMgr::SearchWord(
 					WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
 				){
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
-						const char* pData = pDocLine->m_pLine->GetPtr2();	// 2002/2/10 aroka CMemory変更
+						const char* pData = pDocLine->m_pLine->GetPtr();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
 						if( (FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 							(TRUE  == bLoHiCase && 0 ==	  memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
@@ -2035,7 +2008,7 @@ int CDocLineMgr::SearchWord(
 				pDocLine = pDocLine->m_pPrev;
 				nIdxPos = 0;
 				if( NULL != pDocLine ){
-//					nHitTo = lstrlen( pDocLine->m_pLine->GetPtr( NULL ) );
+//					nHitTo = lstrlen( pDocLine->m_pLine->GetPtr() );
 					nHitTo = pDocLine->m_pLine->GetLength();
 				}
 			}
@@ -2406,7 +2379,7 @@ void CDocLineMgr::DUMP( void )
 
 //		MYTRACE( "\t[%s]\n", (char*)*(pDocLine->m_pLine) );
 		MYTRACE( "\tpDocLine->m_pLine->GetLength()=[%d]\n", pDocLine->m_pLine->GetLength() );
-		MYTRACE( "\t[%s]\n", pDocLine->m_pLine->GetPtr( NULL ) );
+		MYTRACE( "\t[%s]\n", pDocLine->m_pLine->GetPtr() );
 
 
 		pDocLine = pDocLineNext;

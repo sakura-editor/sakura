@@ -187,7 +187,7 @@ int CProfile::AddSection( const char* pszSectionName, int nSectionNameLen )
 		}
 		m_nSecNum++;
 		m_pSecNameArr[nCurrentSection] = new CMemory( pszSectionName, nSectionNameLen );
-//		MYTRACE( "š[%s]\n", m_pSecNameArr[nCurrentSection]->GetPtr( NULL ) );
+//		MYTRACE( "š[%s]\n", m_pSecNameArr[nCurrentSection]->GetPtr() );
 
 
 //		m_pSecNameArr[nCurrentSection]->SetData( pszSectionName, nSectionNameLen );
@@ -225,7 +225,7 @@ BOOL CProfile::AddSectionData(
 //		m_pDataNameArr[nCurrentSection][nCurrentIdx]->SetData( pszDataName, nDataNameLen );
 	}
 	m_pDataArr[nCurrentSection][nCurrentIdx]->SetData( pszData, nDataLen );
-//	MYTRACE( "    [%s]=[%s]\n", m_pDataNameArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+//	MYTRACE( "    [%s]=[%s]\n", m_pDataNameArr[nCurrentSection][nCurrentIdx]->GetPtr(), m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
 	return TRUE;
 }
 
@@ -372,37 +372,37 @@ BOOL CProfile::IOProfileData(
 //		}else{
 			switch( nRegCnvID ){
 			case REGCNV_INT2SZ:
-				*((int*)lpDataSrc) = atoi( m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+				*((int*)lpDataSrc) = atoi( m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
 //				*((int*)lpDataSrc) = atoi( szValueStr );
 				break;
 			case REGCNV_SZ2SZ:
 				if( cbDataSrc != 0 ){
-					strncpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), cbDataSrc );
+					strncpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), cbDataSrc );
 					//	––”ö‚É0‚ð•t‚¯‚é
 					((char*)lpDataSrc)[cbDataSrc - 1] = '\0';
 				}
 				else {
-					strcpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+					strcpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
 				}
 //				strcpy( (char *)lpDataSrc, szValueStr );
 				break;
 			case REG_MULTI_SZ:
-				memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), cbDataSrc );
+				memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), cbDataSrc );
 //				memcpy( lpDataSrc, szValueStr, cbDataSrc );
 				break;
 			case REGCNV_CHAR2SZ:
 				if( 0 == m_pDataArr[nCurrentSection][nCurrentIdx]->GetLength() ){
 					lpDataSrc[0] = '\0';
 				}else{
-					memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), 1 );
+					memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), 1 );
 				}
 //				lpDataSrc[1] = '\0';
 				break;
 			case REGCNV_WORD2SZ:
-				*((WORD*)lpDataSrc) = (WORD)atoi( m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+				*((WORD*)lpDataSrc) = (WORD)atoi( m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
 				break;
 			default:
-				memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), cbDataSrc );
+				memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), cbDataSrc );
 //				memcpy( lpDataSrc, szValueStr, cbDataSrc );
 				break;
 			}
@@ -439,7 +439,7 @@ BOOL CProfile::IOProfileData(
 				nDataLen = 1;
 			}
 			break;
-//			memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), 1 );
+//			memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), 1 );
 //			break;
 		case REGCNV_WORD2SZ:
 			nWork = (int)(*((WORD*)lpDataSrc));
@@ -513,10 +513,10 @@ void CProfile::DUMP( void )
 	MYTRACE( "m_szProfileName=%s\n", m_szProfileName );
 	MYTRACE( "========================================-\n" );
 	for( i = 0; i < m_nSecNum; ++i ){
-		MYTRACE( "\n¡m_pSecNameArr[%d]=%s\n", i, m_pSecNameArr[i]->GetPtr( NULL ) );
+		MYTRACE( "\n¡m_pSecNameArr[%d]=%s\n", i, m_pSecNameArr[i]->GetPtr() );
 		MYTRACE( "m_nSecDataNumArr[%d]=%d\n", i, m_nSecDataNumArr[i] );
 		for( j = 0; j < m_nSecDataNumArr[i]; ++j ){
-			MYTRACE( "E\tm_pDataNameArr[%d][%d]=%s\n", i, j, m_pDataNameArr[i][j]->GetPtr( NULL ) );
+			MYTRACE( "E\tm_pDataNameArr[%d][%d]=%s\n", i, j, m_pDataNameArr[i][j]->GetPtr() );
 		}
 	}
 #endif

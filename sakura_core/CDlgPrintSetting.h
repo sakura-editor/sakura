@@ -21,30 +21,22 @@ class CDlgPrintSetting;
 //#include <windows.h>
 //#include "CShareData.h"
 
-//! 印刷設定ダイアログ
+/*!	印刷設定ダイアログ
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 class CDlgPrintSetting : public CDialog
 {
 public:
 	/*
 	||  Constructors
 	*/
-//	CDlgPrintSetting();
-//	~CDlgPrintSetting();
-//	void Create( HINSTANCE, HWND );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations
 	*/
-//	BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
-//	int DoModal( int*, PRINTSETTING* );	/* モーダルダイアログの表示 */
 	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING* );	/* モーダルダイアログの表示 */
 
-//	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-//	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-//	HWND			m_hWnd;			/* このダイアログのハンドル */
-//	CShareData		m_cShareData;
-//	DLLSHAREDATA*	m_pShareData;
-//	char			m_szHelpFile[_MAX_PATH + 1];
 	int				m_nCurrentPrintSetting;
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
 

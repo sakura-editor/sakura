@@ -31,6 +31,8 @@ class CSplitterWnd;
 	@brief 分割線ウィンドウクラス
 	
 	４分割ウィンドウの管理と分割線の描画を行う。
+	
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CSplitterWnd : public CWnd
 {
@@ -45,7 +47,6 @@ private: // 2002/2/3 aroka
 	||  Attributes & Operations
 	*/
 	char*			m_pszClassName;			/* クラス名 */
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	void*			m_pCEditWnd;
 	int				m_nAllSplitRows;		/* 分割行数 */

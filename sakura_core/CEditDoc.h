@@ -52,6 +52,7 @@ class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
 
 //! 文書関連情報の管理
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class SAKURA_CORE_API CEditDoc
 {
 public:
@@ -233,7 +234,6 @@ public:
 	HINSTANCE		m_hInstance;		/* インスタンスハンドル */
 	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
 
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 //@@@ 2002.01.14 YAZAKI 不使用のため

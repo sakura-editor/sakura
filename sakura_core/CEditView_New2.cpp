@@ -538,12 +538,6 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 {
 	int		nKeyLength;
 
-//	m_bCurSrchKeyMark = TRUE;	/* ŒŸõ•¶Žš—ñ‚Ìƒ}[ƒN */
-//	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );	/* ŒŸõ•¶Žš—ñ */
-//	m_bCurSrchRegularExp = m_pShareData->m_Common.m_bRegularExp;	/* ŒŸõ^’uŠ·  1==³‹K•\Œ» */
-//	m_bCurSrchLoHiCase = m_pShareData->m_Common.m_bLoHiCase;	/* ŒŸõ^’uŠ·  1==‰p‘å•¶Žš¬•¶Žš‚Ì‹æ•Ê */
-//	m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* ŒŸõ^’uŠ·  1==’PŒê‚Ì‚ÝŒŸõ */
-
 	//	From Here Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
 	BREGEXP* result;
 	*pnSearchStart = nPos;	// 2002.02.08 hor
@@ -1288,10 +1282,10 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
 			}else{
 				m_cTipWnd.m_cKey = cmemCurText;
 				/* ŒŸõŽÀs */
-				if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
+				if( m_cDicMgr.Search( cmemCurText.GetPtr(), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
 					/* ŠY“–‚·‚éƒL[‚ª‚ ‚é */
 					m_cTipWnd.m_KeyWasHit = TRUE;
-					pszWork = pcmemRefText->GetPtr( NULL );
+					pszWork = pcmemRefText->GetPtr();
 //								m_cTipWnd.m_cInfo.SetData( pszWork, lstrlen( pszWork ) );
 					m_cTipWnd.m_cInfo.SetDataSz( pszWork );
 					delete pcmemRefText;

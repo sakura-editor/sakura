@@ -35,13 +35,13 @@
 	
 	@author aroka
 	@date 2002/01/07
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 bool CNormalProcess::Initialize()
 {
 	HANDLE			hMutex;
 	HWND			hWnd;
-//	CShareData		m_cShareData;
-//	DLLSHAREDATA*	m_pShareData;
 
 	/* プロセス初期化の目印 */
 	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
@@ -52,18 +52,6 @@ bool CNormalProcess::Initialize()
 	if ( CProcess::Initialize() == false ){
 		return false;
 	}
-#if 0
-	/* 共有データ構造体のアドレスを返す */
-	if( !m_cShareData.Init() ){
-		//	適切なデータを得られなかった
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR, GSTR_APPNAME,
-			_T("異なるバージョンのエディタを同時に起動することはできません。") );
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
-		return false;
-	}
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
-#endif
 
 	/* コマンドラインオプション */
 	bool			bReadOnly;
@@ -129,11 +117,11 @@ bool CNormalProcess::Initialize()
 	if( bGrepMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
 		/* GREP */
+		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
 		if( false == bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
-			CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
 			/* ロングファイル名を取得する */
-			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr2(), szWork ) ){
+			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr(), szWork ) ){
 				gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
 			}
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
@@ -149,7 +137,18 @@ bool CNormalProcess::Initialize()
 				gi.nGrepOutputStyle
 			);
 		}else{
-			//-GREPDLGでダイアログを出す。　引数は無視
+			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
+			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetPtr() );
+			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetPtr() );
+			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetPtr() );
+			m_pShareData->m_Common.m_bGrepSubFolder = gi.bGrepSubFolder;
+			m_pShareData->m_Common.m_bLoHiCase = gi.bGrepNoIgnoreCase;
+			m_pShareData->m_Common.m_bRegularExp = gi.bGrepRegularExp;
+			m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect = gi.bGrepKanjiCode_AutoDetect;
+			m_pShareData->m_Common.m_bGrepOutputLine = gi.bGrepOutputLine;
+			m_pShareData->m_Common.m_bWordOnly = gi.bGrepWordOnly;
+			m_pShareData->m_Common.m_nGrepOutputStyle = gi.nGrepOutputStyle;
+			
 			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, m_hWnd,  NULL);
 			if( FALSE != nRet ){
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);

@@ -30,6 +30,8 @@ class CImageListMgr;// 2002/2/10 aroka
 -----------------------------------------------------------------------*/
 /*!
 	@brief メニュー表示＆管理
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CMenuDrawer
 {
@@ -60,7 +62,6 @@ public:
 //						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
 
 
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 	HINSTANCE		m_hInstance;

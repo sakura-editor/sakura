@@ -22,6 +22,7 @@
 #include "CEditView.h"
 #include <tchar.h>
 
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd() :
 	m_pszClassName("SplitterWndClass"),	/* クラス名 */
 	m_nActivePane(0),					/* アクティブなペイン 0-3 */
@@ -36,7 +37,6 @@ CSplitterWnd::CSplitterWnd() :
 {
 	strcat( m_szClassInheritances, "::CSplitterWnd" );
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hcurOld = NULL;						/* もとのマウスカーソル */

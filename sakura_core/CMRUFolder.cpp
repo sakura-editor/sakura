@@ -17,19 +17,19 @@
 #include "CMRUFolder.h"
 #include "etc_uty.h"
 
-/*	コンストラクタ	*/
+/*!	コンストラクタ
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 CMRUFolder::CMRUFolder()
 {
 	//	初期化。
-//	m_pcShareData = new CShareData;
-//	m_pcShareData->Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 }
 
 /*	デストラクタ	*/
 CMRUFolder::~CMRUFolder()
 {
-//	delete m_pcShareData;	//	削除。
 }
 
 HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )

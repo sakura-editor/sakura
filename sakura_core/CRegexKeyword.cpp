@@ -39,14 +39,13 @@
 /*!	@brief コンストラクタ
 
 	BREGEXP.DLL 初期化、正規表現キーワード初期化を行う。
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 CRegexKeyword::CRegexKeyword()
 {
 	Init();
 	MYDBGMSG("CRegexKeyword")
-
-//	m_cShareData.Init();
-//	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
 	m_pTypes    = NULL;
 	m_nTypeIndex = -1;

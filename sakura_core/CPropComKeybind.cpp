@@ -145,7 +145,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 //	static HWND hwndLIST_KEYSFUNC;
 	static HWND hwndEDIT_KEYSFUNC;
 	CMemory**	ppcAssignedKeyList;
-	int			nLength;
+//	int			nLength;
 	int			nAssignedKeyNum;
 	const char*	cpszString;
 
@@ -343,7 +343,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				if( 0 < nAssignedKeyNum){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 						/* デバッグモニタに出力 */
-						cpszString = ppcAssignedKeyList[j]->GetPtr( &nLength );
+						cpszString = ppcAssignedKeyList[j]->GetPtr();
 						::SendMessage( hwndAssignedkeyList, LB_ADDSTRING, 0, (LPARAM)cpszString );
 						delete ppcAssignedKeyList[j];
 					}

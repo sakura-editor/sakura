@@ -41,6 +41,7 @@
 #define IDT_ROLLMOUSE	1
 
 //	May 12, 2000 genta 初期化方法変更
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditDoc::CEditDoc() :
 	m_cNewLineCode( EOL_CRLF ),		//	New Line Type
 	m_cSaveLineCode( EOL_NONE ),		//	保存時のLine Type
@@ -72,7 +73,6 @@ CEditDoc::CEditDoc() :
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
 	strcpy( m_szGrepKey, "" );
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
@@ -695,11 +695,6 @@ BOOL CEditDoc::FileRead(
 	SetImeMode( GetDocumentAttribute().m_nImeState );
 
 	if( bIsExistInMRU && m_pShareData->m_Common.GetRestoreCurPosition() ){
-//#ifdef _DEBUG
-//	if( FALSE == m_bDebugMode ){
-//		m_cShareData.TraceOut( "bIsExistInMRU==TRUE [%s] fi.m_nX=%d, fi.m_nY=%d\n", fi.m_szPath, fi.m_nX, fi.m_nY );
-//	}
-//#endif
 		/*
 		  カーソル位置変換
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -1261,7 +1256,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 		int			nDesLen;
 		const char*	pszDes;
 		LimitStringLengthB( m_szGrepKey, lstrlen( m_szGrepKey ), 64, cmemDes );
-		pszDes = cmemDes.GetPtr( NULL );
+		pszDes = cmemDes.GetPtr();
 		nDesLen = lstrlen( pszDes );
 //		wsprintf( pszCap, "【Grep】\"%s%s\" - %s",
 		wsprintf( pszCap, "%s%s - %s",
@@ -1457,6 +1452,20 @@ BOOL CEditDoc::MakeBackUp( void )
 		break;
 	}
 
+	//@@@ 2002.03.23 start ネットワーク・リムーバブルドライブの場合はごみ箱に放り込まない
+	bool dustflag = false;
+	if( m_pShareData->m_Common.m_bBackUpDustBox ){
+		if( szPath[0] == '\\' && szPath[1] == '\\' ) dustflag = true;
+		else if( isalpha(szPath[0]) ){
+			char	szDriveType[_MAX_DRIVE+1];	// "A:\"登録用
+			long	lngRet;
+			sprintf(szDriveType, "%c:\\", toupper(szPath[0]));
+			lngRet = GetDriveType( szDriveType );
+			if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE ) dustflag = true;
+		}
+	}
+	//@@@ 2002.03.23 end
+
 	if( m_pShareData->m_Common.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
 		::MessageBeep( MB_ICONQUESTION );
 //From Here Feb. 27, 2001 JEPROtest キャンセルもできるようにし、メッセージを追加した
@@ -1470,7 +1479,7 @@ BOOL CEditDoc::MakeBackUp( void )
 //		) ){
 //			return FALSE;
 //		}
-		if( m_pShareData->m_Common.m_bBackUpDustBox ){	//@@@ 2001.12.11 add start MIK
+		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
@@ -1574,7 +1583,7 @@ BOOL CEditDoc::MakeBackUp( void )
 	if( ::CopyFile( m_szFilePath, szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
-		if( m_pShareData->m_Common.m_bBackUpDustBox ){
+		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			char	szDustPath[_MAX_PATH+1];
 			strcpy(szDustPath, szPath);
 			szDustPath[strlen(szDustPath) + 1] = '\0';
@@ -3748,7 +3757,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				CMemory cmemCurText;
 				m_cEditViewArr[m_nActivePaneIndex].GetCurrentTextForSearch( cmemCurText );
-				for( r = cmemCurText.GetPtr( NULL ); *r != '\0' && q < q_max; ++r, ++q )
+				for( r = cmemCurText.GetPtr(); *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;
 				++p;

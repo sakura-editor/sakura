@@ -57,7 +57,10 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 }
 
 
-/* ダイアログデータの設定 */
+/*! ダイアログデータの設定
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 void CDlgProperty::SetData( void )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
@@ -75,10 +78,8 @@ void CDlgProperty::SetData( void )
 	int				nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
 	HANDLE			nFind;
 	WIN32_FIND_DATA	wfd;
-//	SYSTEMTIME		systimeU;
 	SYSTEMTIME		systimeL;
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	//	Aug. 16, 2000 genta	全角化
@@ -330,7 +331,7 @@ void CDlgProperty::SetData( void )
 	}
 end_of_CodeTest:;
 #endif //ifdef _DEBUG/////////////////////////////////////////////////////
-	::SetDlgItemText( m_hWnd, IDC_EDIT1, cmemProp.GetPtr( NULL ) );
+	::SetDlgItemText( m_hWnd, IDC_EDIT1, cmemProp.GetPtr() );
 
 	return;
 }

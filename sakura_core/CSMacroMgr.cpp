@@ -281,9 +281,9 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 };
 //int	CSMacroMgr::m_nMacroFuncInfoArrNum = sizeof( CSMacroMgr::m_MacroFuncInfoArr ) / sizeof( CSMacroMgr::m_MacroFuncInfoArr[0] );
 
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSMacroMgr::CSMacroMgr()
 {
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	
 	if ( CPPAMacroMgr::m_cPPA.Init() ){

@@ -94,7 +94,7 @@ BOOL CDlgInput1::DoModal( HINSTANCE hInstApp, HWND hwndParent, const char* pszTi
 		(DLGPROC)CDlgInput1Proc,
 		(LPARAM)this
 	);
-	strcpy( pszText, m_cmemText.GetPtr( NULL ) );
+	strcpy( pszText, m_cmemText.GetPtr() );
 	return bRet;
 }
 
@@ -119,7 +119,7 @@ BOOL CDlgInput1::DispatchEvent(
 
 		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), EM_LIMITTEXT, m_nMaxTextLen, 0 );	/* 入力サイズ上限 */
-		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetPtr( NULL ) );	/* テキスト */
+		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetPtr() );	/* テキスト */
 		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_MSG ), m_pszMessage );	/* メッセージ */
 
 		return TRUE;
@@ -133,7 +133,7 @@ BOOL CDlgInput1::DispatchEvent(
 			switch( wID ){
 			case IDOK:
 				m_cmemText.AllocBuffer( ::GetWindowTextLength( ::GetDlgItem( hwndDlg, IDC_EDIT1 ) ) );
-				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetPtr( NULL ), m_nMaxTextLen + 1 );	/* テキスト */
+				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetPtr(), m_nMaxTextLen + 1 );	/* テキスト */
 				::EndDialog( hwndDlg, TRUE );
 				return TRUE;
 			case IDCANCEL:

@@ -43,14 +43,14 @@ BOOL CALLBACK MyDialogProc(
 }
 
 
+/*!	コンストラクタ
 
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 CDialog::CDialog()
 {
 //	MYTRACE( "CDialog::CDialog()\n" );
 	/* 共有データ構造体のアドレスを返す */
-//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-//	m_cShareData.Init();
-//	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */

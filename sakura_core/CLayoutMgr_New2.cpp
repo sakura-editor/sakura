@@ -25,27 +25,7 @@
 
 /* 文字列置換 */
 void CLayoutMgr::ReplaceData_CLayoutMgr(
-		LayoutReplaceArg*	pArg
-#if 0
-		int			nDelLineFrom,			/* 削除範囲行  From レイアウト行番号 */
-		int			nDelColmFrom,			/* 削除範囲位置From レイアウト行桁位置 */
-		int			nDelLineTo,				/* 削除範囲行  To   レイアウト行番号 */
-		int			nDelColmTo,				/* 削除範囲位置To   レイアウト行桁位置 */
-		CMemory*	pcmemDeleted,			/* 削除されたデータ */
-		const char*	pInsData,				/* 挿入するデータ */
-		int			nInsDataLen,			/* 挿入するデータの長さ */
-
-		int*		pnAddLineNum,			/* 再描画ヒント レイアウト行の増減 */
-		int*		pnModLineFrom,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-		int*		pnModLineTo,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-
-		int*		pnNewLine,				/* 挿入された部分の次の位置の行(レイアウト行) */
-		int*		pnNewPos,				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
-
-		BOOL		bDispSSTRING,			/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING,			/* ダブルクォーテーション文字列を表示する */
-		BOOL		bUndo					/* Undo操作かどうか */
-#endif
+	LayoutReplaceArg*	pArg
 )
 {
 //	int nDeletedLineNum;	/* 削除した行の総数 */

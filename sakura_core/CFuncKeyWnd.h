@@ -23,6 +23,7 @@ class CFuncKeyWnd;
 class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class SAKURA_CORE_API CFuncKeyWnd : public CWnd
 {
 public:
@@ -41,7 +42,6 @@ public:
 	|| メンバ変数
 	*/
 	const char*		m_pszClassName;	/*!< クラス名 */
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	CEditDoc*		m_pCEditDoc;
 	HFONT			m_hFont;	/*!< 表示用フォント */

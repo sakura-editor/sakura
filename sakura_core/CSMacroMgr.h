@@ -48,6 +48,8 @@ class CEditView;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
+
+@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 -----------------------------------------------------------------------*/
 class CSMacroMgr
 {
@@ -116,7 +118,6 @@ public:
 	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
 private:
-//	CShareData	m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 public:

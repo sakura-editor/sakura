@@ -55,6 +55,8 @@ class CMenuDrawer;// 2002/2/10 aroka to here
 
 	1つのダイアログボックスに複数のプロパティページが入った構造に
 	なっており、Dialog procedureとEvent Dispatcherがページごとにある．
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CPropCommon
 {
@@ -80,7 +82,6 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hwndThis;		/* このダイアログのハンドル */
 	int				m_nPageNum;
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nSettingType;
 //	int				m_nActiveItem;
