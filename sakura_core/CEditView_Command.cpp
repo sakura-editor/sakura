@@ -745,7 +745,13 @@ int CEditView::Command_DOWN( int bSelect, BOOL bRepeat )
 
 
 
-/* カーソル左移動 */
+/*! @brief カーソル左移動
+
+	@date 2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正．
+			pcLayout == NULLかつキャレット位置が行頭以外の場合は
+			2つのifのどちらにも当てはまらないが，そのあとのMoveCursorにて適正な
+			位置に移動させられる．
+*/
 int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 {
 	int		nRepCount;
@@ -817,7 +823,9 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 				nRes = 0;
 				goto end_of_func;
 			}
-		}else{
+		}
+		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
+		else if( pcLayout ){
 			CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 			while( !it.end() ){
 				it.scanNext();
@@ -836,8 +844,14 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 		MoveCursor( nPosX, nPosY, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( bSelect ){
-			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( nPosX, nPosY );
+			/*	現在のカーソル位置によって選択範囲を変更．
+			
+				2004.04.02 Moca 
+				キャレット位置が不正だった場合にMoveCursorの移動結果が
+				引数で与えた座標とは異なることがあるため，
+				nPosX, nPosYの代わりに実際の移動結果を使うように．
+			*/
+			ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
 		}
 		nRes = 1;
 		goto end_of_func;
@@ -911,9 +925,8 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 //		2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に対応
 		/* 現在行のデータを取得 */
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
-		if( NULL == pcLayout ){
-			goto end_of_func;
-		}
+		//	2004.04.02 EOF以降にカーソルがあったときに右を押しても何も起きなかったのを、EOFに移動するように
+		if( pcLayout )
 		{
 			int nIndex = 0;
 			CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
@@ -972,29 +985,32 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 					}
 				}
 			}
-		}
-		if( nPosX >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-//			if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )
-			if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
-			 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
-			{
-				if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( nPosY, nPosX ) )	//@@@ 2002.04.18
+			//	キャレット位置が折り返し位置より右側だった場合の処理
+			if( nPosX >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+				if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
+				{
+					if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( nPosY, nPosX ) )	//@@@ 2002.04.18
+					{
+						nPosX = 0;
+						++nPosY;
+					}
+				}
+				else
 				{
 					nPosX = 0;
 					++nPosY;
 				}
 			}
-			else
-			{
-				nPosX = 0;
-				++nPosY;
-			}
+		}else{
+			// pcLayoutがNULLの場合はnPosX=0に調整
+			nPosX = 0;
 		}
 		MoveCursor( nPosX, nPosY, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( nPosX, nPosY );
+			ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
 		}
 
 end_of_func:;
