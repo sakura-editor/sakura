@@ -38,6 +38,7 @@
 	@date 2002/01/07
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2004.05.13 Moca CEditWnd::Create()に失敗した場合にfalseを返すように．
 */
 bool CNormalProcess::Initialize()
 {
@@ -121,6 +122,10 @@ bool CNormalProcess::Initialize()
 	}else
 	if( bGrepMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
+		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
+		if( NULL == hWnd ){
+			goto end_of_func;
+		}
 		/* GREP */
 		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
 		if( false == bGrepDlg ){
@@ -180,14 +185,20 @@ bool CNormalProcess::Initialize()
 			return true; // 2003.06.23 Moca
 		}
 	}else{
-		if( 0 < (int)strlen( fi.m_szPath ) ){
-			bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
+		// 2004.05.13 Moca さらにif分の中から前に移動
+		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
+		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
+		if( 0 < strlen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, 
 							fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 							fi.m_szDocType[0] == '\0' ? -1 :
 								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
 				 );
+			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
+			if( NULL == hWnd ){
+				goto end_of_func;
+			}
 			//	Nov. 6, 2000 genta
 			//	キャレット位置の復元のため
 			//	オプション指定がないときは画面移動を行わないようにする
@@ -249,15 +260,21 @@ bool CNormalProcess::Initialize()
 			}
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
 		}else{
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
+			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray,
+										NULL, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+										fi.m_szDocType[0] == '\0' ? -1 :
+										m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
+									);
 		}
 	}
 	MY_TRACETIME( cRunningTimer, "EditDoc->Create() End" );
 
+end_of_func:
 	m_hWnd = hWnd;
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
-	return true;
+	return hWnd ? true : false;
 }
 
 /*!
