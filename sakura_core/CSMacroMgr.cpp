@@ -293,7 +293,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_HELP_SEARCH,				"HelpSearch",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
 	{F_MENU_ALLFUNC,			"CommandList",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* コマンド一覧 */
 	{F_EXTHELP1,				"ExtHelp1",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部ヘルプ１ */
-	{F_EXTHTMLHELP,				"ExtHtmlHelp",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部HTMLヘルプ */
+	//	Jul. 5, 2002 genta 引数追加
+	{F_EXTHTMLHELP,				"ExtHtmlHelp",	{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部HTMLヘルプ */
 	{F_ABOUT,					"About",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	//	終端

@@ -517,6 +517,10 @@ SOURCE=..\sakura_core\my_icmp.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\MY_SP.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\sakura_rc.rc
 # End Source File
 # Begin Source File
@@ -866,6 +870,10 @@ SOURCE=..\sakura_core\Keycode.h
 # Begin Source File
 
 SOURCE=..\sakura_core\my_icmp.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\MY_SP.h
 # End Source File
 # Begin Source File
 

@@ -657,6 +657,10 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
+	// Jul. 5, 2002 genta
+	case F_EXTHTMLHELP:
+		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
+		break;
 	default:
 		//	ˆø”‚È‚µB
 		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	•W€

@@ -36,16 +36,12 @@ const DWORD p_helpids[] = {	//12900
 //	From Here Feb. 7, 2002 genta
 #if defined(__BORLANDC__)
 #  define COMPILER_TYPE "B"
+#elif defined(__GNUG__)
+#  define COMPILER_TYPE "G"
+#elif defined(_MSC_VER)
+#  define COMPILER_TYPE "V"
 #else
-#  if defined(__GNUG__)
-#    define COMPILER_TYPE "G"
-#  else
-#    if defined(_MSC_VER)
-#      define COMPILER_TYPE "V"
-#    else
-#      define COMPILER_TYPE "U"
-#    endif
-#  endif
+#  define COMPILER_TYPE "U"
 #endif
 //	To Here Feb. 7, 2002 genta
 

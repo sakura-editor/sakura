@@ -20,6 +20,7 @@
 #include "etc_uty.h"
 #include "global.h"
 #include "funccode.h"	//Stonee, 2001/05/18
+#include "MY_SP.h"	// Jun. 23, 2002 genta
 
 // オープンファイル CDlgOpenFile.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -602,7 +603,8 @@ void CDlgOpenFile::Create(
 	if( pszDefaultPath && 0 < lstrlen( pszDefaultPath ) ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		char szDrive[_MAX_DRIVE];
 		char szDir[_MAX_DIR];
-		_splitpath( pszDefaultPath, szDrive, szDir, NULL, NULL );
+		//	Jun. 23, 2002 genta
+		my_splitpath( pszDefaultPath, szDrive, szDir, NULL, NULL );
 		wsprintf( m_szInitialDir, "%s%s", szDrive, szDir );
 	}
 	m_ppszMRU = ppszMRU;
@@ -613,12 +615,15 @@ void CDlgOpenFile::Create(
 
 
 
-/*! 「開く」ダイアログ モーダルダイアログの表示 */
+/*! 「開く」ダイアログ モーダルダイアログの表示
+
+	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
+*/
 BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 {
 	DWORD	dwError;
 	int		i;
-	char	szWork[256];
+	char	szWork[512 + _MAX_PATH];
 	char	szFilter[1024];
 	char*	pszFilterArr[] = {
 			"ユーザー指定",	m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
@@ -647,11 +652,31 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
 //	m_ofn.nFilterIndex = 3;
+	// From Here Jun. 23, 2002 genta
+	// 「開く」での初期フォルダチェック強化
 	if( 0 == lstrlen( pszPath ) ){
 		m_ofn.lpstrFile = strcpy( pszPath, pszFilterArr[(m_ofn.nFilterIndex - 1) * 2 + 1]);
 	}else{
+		char szDrive[_MAX_DRIVE];
+		char szDir[_MAX_DIR];
+		char szName[_MAX_FNAME];
+		char szExt  [_MAX_EXT];
+
+		//	Jun. 23, 2002 Thanks to sui
+		my_splitpath( pszPath, szDrive, szDir, szName, szExt );
+		
+		//	指定されたファイルが存在しないとき szName == NULL
+		//	ファイルの場所にディレクトリを指定するとエラーになるので
+		//	ファイルが無い場合は全く指定しないことにする．
+		if( szName[0] == '\0' ){
+			pszPath[0] = '\0';
+		}
+		else {
+			wsprintf( pszPath, "%s%s%s%s", szDrive, szDir, szName, szExt );
+		}
 		m_ofn.lpstrFile = pszPath;
 	}
+	// To Here Jun. 23, 2002 genta
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrFileTitle = NULL;
 	m_ofn.nMaxFileTitle = 0;
@@ -699,7 +724,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 		if( !bCancel ){
 			::MessageBeep( MB_ICONSTOP );
 			::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				"ダイアログが開けません。\n\nエラー:%s", pszError
+				"ダイアログが開けません。\n\nエラー:%s\n%s", pszError, pszPath
 			);
 		}
 		return FALSE;

@@ -714,7 +714,8 @@ void ReplaceData_CEditView(
 	void Command_HELP_SEARCH( void );	/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO added
 	void Command_MENU_ALLFUNC( void );	/* コマンド一覧 */
 	void Command_EXTHELP1( void );		/* 外部ヘルプ１ */
-	void Command_EXTHTMLHELP( void );	/* 外部HTMLヘルプ */
+	//	Jul. 5, 2002 genta
+	void Command_EXTHTMLHELP( const char* helpfile = NULL, const char* kwd = NULL );	/* 外部HTMLヘルプ */
 	void Command_ABOUT( void );			/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
@@ -734,6 +735,10 @@ void ReplaceData_CEditView(
 
 	void AnalyzeDiffInfo( char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
 //	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
+
+// 2002/07/22 novice
+	void ShowCaret_( HWND hwnd );
+	void HideCaret_( HWND hwnd );
 
 private:
 	UINT	m_uMSIMEReconvertMsg;

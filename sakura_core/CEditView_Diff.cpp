@@ -239,14 +239,24 @@ void CEditView::Command_Diff(
 	//OSバージョン取得
 	COsVersionInfo cOsVer;
 	//コマンドライン文字列作成(MAX:1024)
-	wsprintf( cmdline, "%s /C \"%s\\%s\" %s \"%s\" \"%s\"",
-			( cOsVer.IsWin32NT() ? "cmd.exe" : "command.com" ),
-			szExeFolder,	//sakura.exeパス
-			"diff.exe",		//diff.exe
-			szOption,		//diffオプション
-			( nFlgFile12 ? pszFile2 : pszFile1 ),
-			( nFlgFile12 ? pszFile1 : pszFile2 )
-		);
+	if (cOsVer.IsWin32NT()){
+		wsprintf( cmdline, "cmd.exe /C \"\"%s\\%s\" %s \"%s\" \"%s\"\"",
+				szExeFolder,	//sakura.exeパス
+				"diff.exe",		//diff.exe
+				szOption,		//diffオプション
+				( nFlgFile12 ? pszFile2 : pszFile1 ),
+				( nFlgFile12 ? pszFile1 : pszFile2 )
+			);
+	}
+	else{
+		wsprintf( cmdline, "command.com /C \"%s\\%s\" %s \"%s\" \"%s\"",
+				szExeFolder,	//sakura.exeパス
+				"diff.exe",		//diff.exe
+				szOption,		//diffオプション
+				( nFlgFile12 ? pszFile2 : pszFile1 ),
+				( nFlgFile12 ? pszFile1 : pszFile2 )
+			);
+	}
 
 	//コマンドライン実行
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,

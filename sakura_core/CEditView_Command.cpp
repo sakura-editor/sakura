@@ -571,7 +571,9 @@ BOOL CEditView::HandleCommand(
 		}
 		Command_MENU_ALLFUNC();break;
 	case F_EXTHELP1:	Command_EXTHELP1();break;		/* 外部ヘルプ１ */
-	case F_EXTHTMLHELP:	Command_EXTHTMLHELP();break;	/* 外部HTMLヘルプ */
+	case F_EXTHTMLHELP:	/* 外部HTMLヘルプ */
+		//	Jul. 5, 2002 genta
+		Command_EXTHTMLHELP( (const char*)lparam1, (const char*)lparam2 ); break;
 	case F_ABOUT:	Command_ABOUT();break;				/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
@@ -5666,44 +5668,61 @@ retry:;
 
 
 
-/* 外部HTMLヘルプ */
-void CEditView::Command_EXTHTMLHELP( void )
+/*!
+	外部HTMLヘルプ
+	
+	@param helpfile [in] HTMLヘルプファイル名．NULLのときはタイプ別に設定されたファイル．
+	@param kwd [in] 検索キーワード．NULLのときはカーソル位置or選択されたワード
+	@date 2002.07.05 genta 任意のファイル・キーワードの指定ができるよう引数追加
+*/
+void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 {
 	HWND		hwndHtmlHelp;
 //	HWND		hwndHtmlHelpChild;
 	CMemory		cmemCurText;
 	int			nLen;
 
-retry:;
-	if( CShareData::getInstance()->ExtHTMLHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
-		::MessageBeep( MB_ICONHAND );
-//	From Here Sept. 15, 2000 JEPRO
-//		[Esc]キーと[x]ボタンでも中止できるように変更
-//		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-//	To Here Sept. 15, 2000
-			"外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?"
-		) ){
+	//	From Here Jul. 5, 2002 genta
+	const char *filename = NULL;
+	if ( helpfile == NULL || helpfile[0] == '\0' ){
+		while( !CShareData::getInstance()->ExtHTMLHelpIsSet( m_pcEditDoc->GetDocumentType()) ){
+			::MessageBeep( MB_ICONHAND );
+	//	From Here Sept. 15, 2000 JEPRO
+	//		[Esc]キーと[x]ボタンでも中止できるように変更
+	//		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+			if( IDYES != ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+	//	To Here Sept. 15, 2000
+				"外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?"
+			) ){
+				return;
+			}
 			/* 共通設定 プロパティシート */
 			if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHTMLHELP*/ ) ){
 				return;
 			}
-			goto retry;
 		}
-		//	Jun. 15, 2000 genta
-		else{
-			return;
-		}
+		filename = CShareData::getInstance()->GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() );
 	}
+	else {
+		filename = helpfile;
+	}
+	//	To Here Jul. 5, 2002 genta
 
-	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	GetCurrentTextForSearch( cmemCurText );
+	//	Jul. 5, 2002 genta
+	//	キーワードの外部指定を可能に
+	if( kwd != NULL && kwd[0] != '\0' ){
+		cmemCurText.SetDataSz( kwd );
+	}
+	else {
+		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+		GetCurrentTextForSearch( cmemCurText );
+	}
 
 	/* HtmlHelpビューアはひとつ */
 	if( CShareData::getInstance()->HTMLHelpIsSingle( m_pcEditDoc->GetDocumentType() ) ){
 //	if( m_pShareData->m_Common.m_bHtmlHelpIsSingle ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
-		strcpy( m_pShareData->m_szWork, CShareData::getInstance()->GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ) );
+		strcpy( m_pShareData->m_szWork, filename ); //	Jul. 5, 2002 genta
 		nLen = lstrlen( m_pShareData->m_szWork );
 		strcpy( &m_pShareData->m_szWork[nLen + 1], cmemCurText.GetPtr() );
 		hwndHtmlHelp = (HWND)::SendMessage( m_pShareData->m_hwndTray, MYWM_HTMLHELP, (WPARAM)::GetParent( m_hwndParent ), 0 );
@@ -5722,7 +5741,7 @@ retry:;
 		//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 		hwndHtmlHelp = OpenHtmlHelp(
 			NULL/*m_pShareData->m_hwndTray*/,
-			CShareData::getInstance()->GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ),
+			filename, //	Jul. 5, 2002 genta
 			HH_KEYWORD_LOOKUP,
 			(DWORD)&link
 		);
@@ -7799,6 +7818,8 @@ void CEditView::Command_TILE_H( void )
 		}
 		int width = (rcDesktop.right - rcDesktop.left ) / count;
 		for(i = 0; i < count; ++i ){
+			//	Jul. 21, 2002 genta
+			::ShowWindow( phwndArr[i], SW_RESTORE );
 			::SetWindowPos(
 				phwndArr[i], 0,
 				width * i, rcDesktop.top,
@@ -7839,6 +7860,8 @@ void CEditView::Command_TILE_V( void )
 		}
 		int height = (rcDesktop.bottom - rcDesktop.top ) / count;
 		for(i = 0; i < count; ++i ){
+			//	Jul. 21, 2002 genta
+			::ShowWindow( phwndArr[i], SW_RESTORE );
 			::SetWindowPos(
 				phwndArr[i], 0,
 				rcDesktop.left, height * i,
