@@ -1887,16 +1887,18 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 
 
 
-/*
-||	処理中のユーザー操作を可能にする
-||	ブロッキングフック(?)（メッセージ配送
+/*!
+	処理中のユーザー操作を可能にする
+	ブロッキングフック(?)（メッセージ配送
+
+	@date 2003.07.04 genta 一回の呼び出しで複数メッセージを処理するように
 */
 BOOL BlockingHook( HWND hwndDlgCancel )
 {
 		MSG		msg;
 		BOOL	ret;
-		ret = (BOOL)::PeekMessage( &msg, NULL, 0, 0, PM_REMOVE );
-		if( ret ){
+		//	Jun. 04, 2003 genta メッセージをあるだけ処理するように
+		while(( ret = (BOOL)::PeekMessage( &msg, NULL, 0, 0, PM_REMOVE )) != 0 ){
 			if ( msg.message == WM_QUIT ){
 				return FALSE;
 			}
