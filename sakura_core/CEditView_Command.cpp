@@ -3834,6 +3834,7 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 		}
 	}
 	nLineNum = m_nCaretPosY;
+	nLineLen = 0; // 2004.03.17 Moca NULL == pLineのとき、nLineLenが未設定になり落ちるバグ対策
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 // 2002.02.08 hor EOFのみの行からも次検索しても再検索可能に (2/2)
