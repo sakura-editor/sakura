@@ -603,7 +603,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_bPreview_EnableLines = ( m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginTY - m_pPrintSetting->m_nPrintMarginBY ) / ( m_pPrintSetting->m_nPrintFontHeight + ( m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100 ) ) - 4;	/* 印字可能行数/ページ */
 
 	/* 印刷用のレイアウト管理情報の初期化 */
-	m_pLayoutMgr_Print->Create( &m_pParentWnd->m_cEditDoc.m_cDocLineMgr );
+	m_pLayoutMgr_Print->Create( &m_pParentWnd->m_cEditDoc, &m_pParentWnd->m_cEditDoc.m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
 //	Types& ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();

@@ -259,9 +259,11 @@ void CLayoutMgr::SetLayoutInfo(
 || 行データ管理クラスのポインタを初期化します
 ||
 */
-void CLayoutMgr::Create( CDocLineMgr* pcDocLineMgr )
+void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
 {
 	Init();
+	//	Jun. 20, 2003 genta EditDocへのポインタ追加
+	m_pcEditDoc = pcEditDoc;
 	m_pcDocLineMgr = pcDocLineMgr;
 	return;
 }

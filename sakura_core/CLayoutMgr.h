@@ -31,7 +31,7 @@ class CLayout;// 2002/2/10 aroka
 class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
-
+class CEditDoc;// 2003/07/20 genta
 
 
 
@@ -69,7 +69,7 @@ public:
 	*/
 	CLayoutMgr();
 	~CLayoutMgr();
-	void Create( CDocLineMgr* );
+	void Create( CEditDoc*, CDocLineMgr* );
 	/*
 	||  参照系
 	*/
@@ -200,6 +200,10 @@ protected:
 
 	int				m_nPrevReferLine;
 	CLayout*		m_pLayoutPrevRefer;
+	//	Jul. 20, 2003 genta
+	//	タイプ別の設定を取得するためにCEditDocへの参照が必要
+	CEditDoc*		m_pcEditDoc;
+	
 	/*
 	|| 実装ヘルパ系
 	*/

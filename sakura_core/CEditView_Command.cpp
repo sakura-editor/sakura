@@ -184,7 +184,7 @@ BOOL CEditView::HandleCommand(
 			else {
 				//	一文字前にSJISの1バイト目が来ている
 				if( _IS_SJIS_2( (unsigned char)lparam1 )){
-					Command_IME_CHAR( ucSjis1 << 8 | lparam1 );
+					Command_IME_CHAR( (WORD)(ucSjis1 << 8 | lparam1 ));
 					ucSjis1 = 0;
 					break;
 				}
