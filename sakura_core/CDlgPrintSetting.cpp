@@ -121,7 +121,6 @@ BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 //	WORD			wID;
 //	HWND			hwndCtl;
 //	int				nRet;
-//	int				wJreVersion;
 //	int				nIndex;
 //	char*			pszWork;
 //	int				nWorkLine;

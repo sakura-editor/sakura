@@ -109,7 +109,6 @@ BOOL CDlgInput1::DispatchEvent(
 	WORD	wID;
 	HWND	hwndCtl;
 //	int		nRet;
-//	int		wJreVersion;
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 */
