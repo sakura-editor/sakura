@@ -644,7 +644,9 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		}
 		{
 			/* デフォルト値 */
-			int nCharCode = 0;
+			//	Sep. 11, 2004 genta 初期値を「変更しない」に
+			//	0だとSJIS指定となってしまうため
+			int nCharCode = CODE_AUTODETECT;
 			int nSaveLineCode = 0;
 			
 			if (Argument[1] != NULL){
@@ -654,7 +656,9 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				nSaveLineCode = atoi( Argument[2] );
 			}
 			// 文字コードセット
-			if( nCharCode != pcEditView->m_pcEditDoc->m_nCharCode ){
+			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
+			if(	0 <= nCharCode && nCharCode < CODE_CODEMAX &&
+				nCharCode != pcEditView->m_pcEditDoc->m_nCharCode ){
 				pcEditView->m_pcEditDoc->m_nCharCode = nCharCode;
 				//	From Here Jul. 26, 2003 ryoji BOM状態を初期化
 				switch( pcEditView->m_pcEditDoc->m_nCharCode ){
