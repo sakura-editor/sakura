@@ -37,7 +37,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 
 	/* ファイル操作系 */
 	F_FILENEW					, "FileNew",			//新規作成
-	F_FILEOPEN					, "FileOpen",			//ファイルを開く
+	F_FILEOPEN					, "FileOpen",			//開く
 	F_FILESAVE					, "FileSave",			//上書き保存
 	F_FILESAVEAS				, "FileSaveAs",			//名前を付けて保存
 	F_FILECLOSE					, "FileClose",			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -59,14 +59,14 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_PLSQL_COMPILE_ON_SQLPLUS	, "ExecSQLPLUS",		/* Oracle SQL*Plusで実行 */
 	F_BROWSE					, "Browse",				//ブラウズ
 	F_PROPERTY_FILE				, "PropertyFile",		//ファイルのプロパティ
-	F_EXITALL					, "ExitAll",			//テキストエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+	F_EXITALL					, "ExitAll",			//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */
 	F_CHAR						, "Char",				//文字入力
 	F_IME_CHAR					, "CharIme",			//全角文字入力
 	F_UNDO						, "Undo",				//元に戻す(Undo)
 	F_REDO						, "Redo",				//やり直し(Redo)
-	F_DELETE					, "Delete",				//カーソル位置を削除
+	F_DELETE					, "Delete",				//削除
 	F_DELETE_BACK				, "DeleteBack",			//カーソルの前を削除
 	F_WordDeleteToStart			, "WordDeleteToStart",	//単語の左端まで削除
 	F_WordDeleteToEnd			, "WordDeleteToEnd",	//単語の右端まで削除
@@ -336,7 +336,7 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	switch( nFuncID ){
 	/* ファイル操作系 */
 //	case F_FILENEW					://新規作成
-//	case F_FILEOPEN					://ファイルを開く
+//	case F_FILEOPEN					://開く
 //	case F_FILESAVE					://上書き保存
 //	case F_FILESAVEAS				://名前を付けて保存
 //	case F_FILECLOSE				://閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -358,14 +358,14 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 //	case F_PLSQL_COMPILE_ON_SQLPLUS	:/* Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
 ///	case F_BROWSE					://ブラウズ
 //	case F_PROPERTY_FILE			://ファイルのプロパティ
-//	case F_EXITALL					://テキストエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+//	case F_EXITALL					://サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */
 	case F_CHAR						://文字入力
 	case F_IME_CHAR					://全角文字入力
 	case F_UNDO						://元に戻す(Undo)
 	case F_REDO						://やり直し(Redo)
-	case F_DELETE					://カーソル位置を削除
+	case F_DELETE					://削除
 	case F_DELETE_BACK				://カーソルの前を削除
 	case F_WordDeleteToStart		://単語の左端まで削除
 	case F_WordDeleteToEnd			://単語の右端まで削除

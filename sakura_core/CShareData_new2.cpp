@@ -95,7 +95,7 @@ CShareData::CShareData()
 	TBUTTONDATA tbd[] = {
 /* ファイル操作系(1段目32個: 1-32) */
 /*  1 */		F_FILENEW					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//新規作成
-/*  2 */		F_FILEOPEN					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ファイルを開く
+/*  2 */		F_FILEOPEN					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//開く
 /*  3 */		F_FILESAVE					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//上書き保存
 /*  4 */		F_FILESAVEAS				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//名前を付けて保存	//Sept. 18, 2000 JEPRO 追加
 /*  5 */		F_FILECLOSE					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -120,7 +120,7 @@ CShareData::CShareData()
 /* 24 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 25 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 26 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
-/* 27 */		F_EXITALL					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	// テキストエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+/* 27 */		F_EXITALL					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	// サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 /* 28 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 29 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 30 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
@@ -130,7 +130,7 @@ CShareData::CShareData()
 /* 編集系(2段目32個: 32-64) */
 /* 33 */		F_UNDO				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//元に戻す(Undo)
 /* 34 */		F_REDO				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//やり直し(Redo)
-/* 35 */		F_DELETE			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//カーソル位置を削除
+/* 35 */		F_DELETE			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//削除
 /* 36 */		F_DELETE_BACK		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//カーソルの前を削除
 /* 37 */		F_WordDeleteToStart	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//単語の左端まで削除
 /* 38 */		F_WordDeleteToEnd	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//単語の右端まで削除

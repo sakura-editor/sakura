@@ -66,7 +66,7 @@ const int nsFuncCode::nFuncKindNum = sizeof(nsFuncCode::ppszFuncKind) / sizeof(n
 /* ファイル操作系 */
 const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	F_FILENEW			,	//新規作成
-	F_FILEOPEN			,	//ファイルを開く
+	F_FILEOPEN			,	//開く
 	F_FILESAVE			,	//上書き保存
 	F_FILESAVEAS		,	//名前を付けて保存
 	F_FILECLOSE			,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -89,7 +89,7 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_BROWSE			,	//ブラウズ
 	F_PROPERTY_FILE		,	/* ファイルのプロパティ */
 	F_WIN_CLOSEALL		,	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Oct.17,2000 コマンド本家は「ウィンドウ系」	//Feb. 18, 2001	JEPRO 上から移動した
-	F_EXITALL				//テキストエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 };
 const int nFincList_File_Num = sizeof( pnFuncList_File ) / sizeof( pnFuncList_File[0] );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
 
@@ -98,7 +98,7 @@ const int nFincList_File_Num = sizeof( pnFuncList_File ) / sizeof( pnFuncList_Fi
 const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 	F_UNDO				,	//元に戻す(Undo)
 	F_REDO				,	//やり直し(Redo)
-	F_DELETE			,	//カーソル位置を削除
+	F_DELETE			,	//削除
 	F_DELETE_BACK		,	//カーソルの前を削除
 	F_WordDeleteToStart	,	//単語の左端まで削除
 	F_WordDeleteToEnd	,	//単語の右端まで削除
