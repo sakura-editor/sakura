@@ -623,6 +623,44 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		Refresh();
 		break;
 
+	//Start 2004.07.14 Kazika 追加
+	//タブモード有効になった場合、まとめられる側のウィンドウは隠れる
+	case TWNT_MODE_ENABLE:
+		nIndex = FindTabIndexByHWND( (HWND)lParam );
+		if (-1 != nIndex)
+		{
+			if( (HWND)lParam == m_hwndParent )
+			{
+				//自分ならアクティブに
+				//ShowHideWindow( (HWND)lParam, TRUE );
+				//自分はもともとアクティブのはず……
+			}
+			else
+			{
+				//自分に用がなければ隠す。
+				ShowHideWindow( m_hwndParent, FALSE );
+			}
+			//TabCtrl_SetCurSel( m_hwndTab, nIndex );
+		}
+		break;
+	//End 2004.07.14 Kazika
+
+	//Start 2004.08.27 Kazika 追加
+	//タブモード無効になった場合、隠れていたウィンドウは表示状態となる
+	case TWNT_MODE_DISABLE:
+		nIndex = FindTabIndexByHWND( (HWND)lParam );
+		if (-1 != nIndex)
+		{
+			if( (HWND)lParam != m_hwndParent )
+			{
+				//表示状態とする(フォアグラウンドにはしない)
+				TabWnd_ActivateFrameWindow( m_hwndParent, false );
+			}
+			//TabCtrl_SetCurSel( m_hwndTab, nIndex );
+		}
+		break;
+	//End 2004.08.27 Kazika
+
 	default:
 		break;
 	}
@@ -789,25 +827,38 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	::AttachThreadInput( nId1, nId2, FALSE );
 }
 
-/* アクティブにする */
-void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd )
+/*!	アクティブにする
+
+	@param hwnd [in] 対象ウィンドウのウィンドウハンドル
+	@param bForeground [in] true: active and forground / false: active
+
+	@date 2004.08.27 Kazika 引数bForeground追加。bForegroundがfalseの場合はウィンドウをフォアグラウンドにしない。
+ */
+void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 {
-	if( ::IsIconic( hwnd ) )
+	if ( bForeground )
 	{
-		::ShowWindow( hwnd, SW_RESTORE );	// Nov. 7. 2003 MIK アイコン時は元のサイズに戻す
-		return;
-	}
-	else if( ::IsZoomed( hwnd ) )
-	{
-		::ShowWindow( hwnd, SW_MAXIMIZE );
+		if( ::IsIconic( hwnd ) )
+		{
+			::ShowWindow( hwnd, SW_RESTORE );	// Nov. 7. 2003 MIK アイコン時は元のサイズに戻す
+			return;
+		}
+		else if( ::IsZoomed( hwnd ) )
+		{
+			::ShowWindow( hwnd, SW_MAXIMIZE );
+		}
+		else
+		{
+			::ShowWindow( hwnd, SW_SHOW );
+		}
+
+		::SetForegroundWindow( hwnd );
+		::BringWindowToTop( hwnd );
 	}
 	else
 	{
-		::ShowWindow( hwnd, SW_SHOW );
+		::ShowWindow( hwnd, SW_SHOWNA );
 	}
-
-	::SetForegroundWindow( hwnd );
-	::BringWindowToTop( hwnd );
 
 	return;
 }

@@ -360,6 +360,7 @@
 #define F_CASCADE			31330	//重ねて表示
 #define F_TILE_V			31331	//上下に並べて表示
 #define F_TILE_H			31332	//左右に並べて表示
+#define F_BIND_WINDOW		31333	//結合して表示	2004.07.14 kazika
 #define F_NEXTWINDOW		31340	//次のウィンドウ
 #define F_PREVWINDOW		31341	//前のウィンドウ
 #define F_MAXIMIZE_V		31350	//縦方向に最大化

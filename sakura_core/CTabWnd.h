@@ -56,7 +56,7 @@ public:
 	void Close( void );					/*!< ウィンドウ クローズ */
 	void TabWindowNotify( WPARAM wParam, LPARAM lParam );
 	void ForceActiveWindow( HWND hwnd );
-	void TabWnd_ActivateFrameWindow( HWND hwnd );
+	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
 
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 

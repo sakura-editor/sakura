@@ -478,7 +478,7 @@ CMenuDrawer::CMenuDrawer()
 /* 333 */		F_MINIMIZE_ALL	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//すべて最小化					//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 /* 334 */		F_REDRAW		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//再描画						//Sept. 30, 2000 JEPRO 追加
 /* 335 */		F_WIN_OUTPUT	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//アウトプットウィンドウ表示	//Sept. 18, 2000 JEPRO 追加
-/* 336 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 336 */		F_BIND_WINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//結合して表示	2004.07.14 kazika / Design Oct. 1, 2004 genta
 /* 337 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 338 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 339 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー

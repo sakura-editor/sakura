@@ -356,6 +356,8 @@ SAKURA_CORE_API enum enumTabWndNotifyType {
 	TWNT_DEL		= 2,		//ウインドウ削除
 	TWNT_ORDER		= 3,		//ウインドウ順序変更
 	TWNT_FILE		= 4,		//ファイル名変更
+	TWNT_MODE_ENABLE= 5,		//タブモード有効化	//2004.07.14 Kazika 追加
+	TWNT_MODE_DISABLE= 6,		//タブモード無効化	//2004.08.27 Kazika 追加
 };
 
 /*! バーの表示・非表示 */

@@ -2443,6 +2443,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, "次のウィンドウ(&N)" );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW		, "結合して表示(&B)" );		//2004.07.14 Kazika 新規追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, "上下に並べて表示(&H)" );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, "左右に並べて表示(&T)" );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)
@@ -2859,7 +2860,11 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 		}else{
 			return FALSE;
 		}
+	//Start 2004.07.14 Kazika 追加
+	case F_BIND_WINDOW:	//
+		return ((pShareData->m_Common.m_bDispTabWnd) && !(pShareData->m_Common.m_bDispTabWndMultiWin));
 	}
+	//End 2004.07.14 Kazika
 
 	return FALSE;
 }
@@ -3107,12 +3112,12 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_TILE_H:
 	case F_TILE_V:
 	case F_CASCADE:
-		if( TRUE  == pShareData->m_Common.m_bDispTabWnd
-		 && FALSE == pShareData->m_Common.m_bDispTabWndMultiWin ){
-			return FALSE;
-		}else{
-			return TRUE;
-		}
+		//Start 2004.07.15 Kazika タブウィンド時も実行可能
+		return TRUE;
+		//End 2004.07.15 Kazika
+	case F_BIND_WINDOW:	//2004.07.14 Kazika 新規追加
+		//非タブモード時はウィンドウを結合して表示できない
+		return (pShareData->m_Common.m_bDispTabWnd);
 	}
 	return TRUE;
 }
