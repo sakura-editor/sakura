@@ -91,9 +91,14 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
 			//	このブロック内は従来の処理
 			//	リソースからBitmapを読み込む
-			hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
+			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
+			//hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
+			hRscbmp = (HBITMAP)::LoadImage( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ), IMAGE_BITMAP, 0, 0,
+				LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS  );
 			if( hRscbmp == NULL ){
-				nRetPos = 0;
+				//	Oct. 4, 2003 genta エラーコード追加
+				//	正常終了と同じコードだとdcFromを不正に解放してしまう
+				nRetPos = 2;
 				break;
 			}
 		}
@@ -121,7 +126,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 		}
 
 		m_cTrans = GetPixel( dcFrom, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
-
+		
 		//	2003.07.21 genta
 		//	ImageListへの登録部分は当然ばっさり削除
 		
@@ -142,10 +147,13 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 
 	//	後処理
 	switch( nRetPos ){
-
 	case 0:
+		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
+		//	アイコン描画変更時に過って削除されていた
+		SelectObject( dcFrom, hFOldbmp );
 	case 4:
 		DeleteDC( dcFrom );
+	case 2:
 	case 1:
 		//	2003.07.21 genta hRscbmpは m_hIconBitmap としてオブジェクトと
 		//	同じだけ保持されるので解放してはならない
