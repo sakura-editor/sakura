@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -69,6 +70,7 @@ public:
 
 	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
+	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 //	virtual BOOL OnNextDlgCtl( WPARAM wParam, LPARAM lParam ){ return 1; }

@@ -53,7 +53,7 @@ CDlgDiff::CDlgDiff()
 {
 	strcpy( m_szFile1, "" );
 	strcpy( m_szFile2, "" );
-	m_nDiffFlgFile12 = 1;
+	//m_nDiffFlgFile12 = 1;
 	m_nDiffFlgOpt    = 0;
 	m_bIsModified    = FALSE;
 	m_bIsModifiedDst = FALSE;
@@ -165,20 +165,19 @@ void CDlgDiff::SetData( void )
 	if( m_nDiffFlgOpt & 0x0010 ) ::CheckDlgButton( m_hWnd, IDC_CHECK_DIFF_OPT_TABSPC, TRUE );
 
 	//新旧ファイル
-	//m_nDiffFlgFile12 = m_pShareData->m_nDiffFlgFile12;
-	if( m_nDiffFlgFile12 )
-	{
-		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_FILE1, TRUE );
-		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_FILE2, FALSE );
-	}
-	else
+	if( m_nDiffFlgOpt & 0x0020 )
 	{
 		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_FILE1, FALSE );
 		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_FILE2, TRUE );
 	}
-	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_FRAME_DIFF_FILE12 ), FALSE );
-	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_FILE1 ), FALSE );
-	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_FILE2 ), FALSE );
+	else
+	{
+		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_FILE1, TRUE );
+		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_FILE2, FALSE );
+	}
+	//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_FRAME_DIFF_FILE12 ), FALSE );
+	//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_FILE1 ), FALSE );
+	//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_FILE2 ), FALSE );
 
 	/* 相手ファイルの選択 */
 	::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, TRUE );
@@ -293,13 +292,9 @@ int CDlgDiff::GetData( void )
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_DIFF_OPT_SPCCHG ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0004;
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_DIFF_OPT_BLINE  ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0008;
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_DIFF_OPT_TABSPC ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0010;
-	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
-
 	//ファイル新旧
-	//m_nDiffFlgFile12 = 1;
-	//if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_FILE1 ) ) m_DiffFlgFile12 = 1;
-	//if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_FILE2 ) ) m_DiffFlgFile12 = 0;
-	//m_pShareData->m_nDiffFlgFile12 = m_nDiffFlgFile12;
+	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_FILE2      ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0020;
+	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
 	//相手ファイル名
 	strcpy( m_szFile2, "" );

@@ -46,6 +46,7 @@ OBJS =\
 	$(SRCDIR)\CDlgDiff.obj \
 	$(SRCDIR)\CDlgDebug.obj \
 	$(SRCDIR)\CDlgExec.obj \
+	$(SRCDIR)\CDlgFavorite.obj \
 	$(SRCDIR)\CDlgFileUpdateQuery.obj \
 	$(SRCDIR)\CDlgFind.obj \
 	$(SRCDIR)\CDlgFuncList.obj \
@@ -57,6 +58,7 @@ OBJS =\
 	$(SRCDIR)\CDlgPrintSetting.obj \
 	$(SRCDIR)\CDlgProperty.obj \
 	$(SRCDIR)\CDlgReplace.obj \
+	$(SRCDIR)\CDlgTagJumpList.obj \
 	$(SRCDIR)\CDlgTypeList.obj \
 	$(SRCDIR)\CDllHandler.obj \
 	$(SRCDIR)\CDocLine.obj \
@@ -129,6 +131,7 @@ OBJS =\
 	$(SRCDIR)\CPropTypes.obj \
 	$(SRCDIR)\CPropTypesRegex.obj \
 	$(SRCDIR)\CRunningTimer.obj \
+	$(SRCDIR)\CRecent.obj \
 	$(SRCDIR)\CRegexKeyword.obj \
 	$(SRCDIR)\CShareData_new.obj \
 	$(SRCDIR)\CShareData.obj \

@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -288,6 +289,8 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_OUTLINE			,	//アウトライン解析
 	F_TAGJUMP			,	//タグジャンプ機能
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
+	F_TAGS_MAKE			,	//タグファイルの作成	//@@@ 2003.04.13 MIK
+	F_DIRECT_TAGJUMP	,	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
 	F_COMPARE			,	//ファイル内容比較
 	F_DIFF_DIALOG		,	//DIFF差分表示(ダイアログ)
 	F_DIFF_NEXT			,	//次の差分へ
@@ -321,7 +324,8 @@ const int pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 	F_OPTION			,	/* 共通設定 */
 	F_FONT				,	/* フォント設定 */
 	F_WRAPWINDOWWIDTH	,	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-	F_PRINT_PAGESETUP		//印刷ページ設定				//Sept. 14, 2000 JEPRO 「印刷のページレイアウトの設定」を「印刷ページ設定」に変更	//Oct. 17, 2000 コマンド本家は「ファイル操作系」
+	F_PRINT_PAGESETUP	,	//印刷ページ設定				//Sept. 14, 2000 JEPRO 「印刷のページレイアウトの設定」を「印刷ページ設定」に変更	//Oct. 17, 2000 コマンド本家は「ファイル操作系」
+	F_FAVORITE				//お気に入りの設定	//@@@ 2003.04.08 MIK
 };
 int		nFincList_Set_Num = sizeof( pnFuncList_Set ) / sizeof( pnFuncList_Set[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 

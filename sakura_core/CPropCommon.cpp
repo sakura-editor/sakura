@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, genta, MIK, hor, Stonee
 	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1097,6 +1098,12 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 		m_Common.m_nMRUArrNum_MAX = MAX_MRU;
 	}
 
+	{	//お気に入り	//@@@ 2003.04.09 MIK
+		CRecent	cRecentFile;
+		cRecentFile.EasyCreate( RECENT_FOR_FILE );
+		cRecentFile.UpdateView();
+		cRecentFile.Terminate();
+	}
 
 	/* フォルダの履歴MAX */
 	m_Common.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
@@ -1105,6 +1112,13 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	}
 	if( m_Common.m_nOPENFOLDERArrNum_MAX > MAX_OPENFOLDER ){
 		m_Common.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER;
+	}
+
+	{	//お気に入り	//@@@ 2003.04.09 MIK
+		CRecent	cRecentFolder;
+		cRecentFolder.EasyCreate( RECENT_FOR_FOLDER );
+		cRecentFolder.UpdateView();
+		cRecentFolder.Terminate();
 	}
 
 	/* タスクトレイを使う */

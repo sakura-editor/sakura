@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -326,6 +327,7 @@ BOOL CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_TIMER:		return OnTimer( wParam );
 	case WM_KEYDOWN:	return OnKeyDown( wParam, lParam );
 	case WM_KILLFOCUS:	return OnKillFocus( wParam, lParam );
+	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
 	case WM_VKEYTOITEM:	return OnVKeyToItem( wParam, lParam );
 	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
 //	case WM_NEXTDLGCTL:	return OnNextDlgCtl( wParam, lParam );

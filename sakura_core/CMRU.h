@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, YAZAKI
+	Copyright (C) 2003, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,6 +35,7 @@ class CMRU;
 #define _CMRU_H_
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include "CRecent.h"
 
 /*	MRUリストに関係するmaxdata	*/
 enum MRU_maxdata{
@@ -65,5 +67,9 @@ protected:
 	//	共有メモリアクセス用。
 	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
 	bool IsRemovableDrive( const char* pszDrive );
+
+private:
+	CRecent	m_cRecent;	//お気に入り	//@@@ 2003.04.08 MIK
+
 };
 #endif

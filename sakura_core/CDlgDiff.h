@@ -56,7 +56,7 @@ public:
 	BOOL	m_bIsModified;			/* 自ファイル更新中 */
 	BOOL	m_bIsModifiedDst;		/* 相手ファイル更新中 */
 	int		m_nDiffFlgOpt;			/* DIFFオプション */
-	int		m_nDiffFlgFile12;		/* 新旧ファイル */
+	//int		m_nDiffFlgFile12;		/* 新旧ファイル */
 	HWND	m_hWnd_Dst;				/* 相手ウインドウハンドル */
 
 protected:
