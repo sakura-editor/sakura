@@ -462,7 +462,7 @@ BOOL CEditView::HandleCommand(
 	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
 	case F_OUTLINE:			bRet = Command_FUNCLIST( (BOOL)lparam1 );break;	//アウトライン解析
-	case F_TAGJUMP:			Command_TAGJUMP((bool)lparam1);break;			/* タグジャンプ機能 */ //	Apr. 03, 2003 genta 引数追加
+	case F_TAGJUMP:			Command_TAGJUMP(lparam1 != 0);break;			/* タグジャンプ機能 */ //	Apr. 03, 2003 genta 引数追加
 	case F_TAGJUMP_CLOSE:	Command_TAGJUMP(true);break;					/* タグジャンプ(元ウィンドウclose) *///	Apr. 03, 2003 genta
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
 	case F_TAGS_MAKE:		Command_TagsMake();break;						//タグファイルの作成	//@@@ 2003.04.13 MIK
@@ -2092,6 +2092,18 @@ void CEditView::Command_CUT_LINE( void )
 	Command_DELETE();
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
 	if( NULL != pcLayout ){
+		// 2003-04-30 かろと
+		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
+		// フリーカーソルモードでない場合は、カーソル位置を調整する
+		if( !m_pShareData->m_Common.m_bIsFreeCursorMode ) {
+			int nIndex;
+			nIndex = LineColmnToIndex2( pcLayout, nCaretPosX_OLD, nCaretPosX_OLD );
+			if (nCaretPosX_OLD > 0) {
+				nCaretPosX_OLD--;
+			} else {
+				nCaretPosX_OLD = LineIndexToColmn( pcLayout, nIndex );
+			}
+		}
 		/* 操作前の位置へカーソルを移動 */
 		MoveCursor( nCaretPosX_OLD, nCaretPosY_OLD, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
@@ -2145,6 +2157,18 @@ void CEditView::Command_DELETE_LINE( void )
 	Command_DELETE();
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
 	if( NULL != pcLayout ){
+		// 2003-04-30 かろと
+		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
+		// フリーカーソルモードでない場合は、カーソル位置を調整する
+		if( !m_pShareData->m_Common.m_bIsFreeCursorMode ) {
+			int nIndex;
+			nIndex = LineColmnToIndex2( pcLayout, nCaretPosX_OLD, nCaretPosX_OLD );
+			if (nCaretPosX_OLD > 0) {
+				nCaretPosX_OLD--;
+			} else {
+				nCaretPosX_OLD = LineIndexToColmn( pcLayout, nIndex );
+			}
+		}
 		/* 操作前の位置へカーソルを移動 */
 		MoveCursor( nCaretPosX_OLD, nCaretPosY_OLD, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
@@ -3645,6 +3669,8 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	nLineNum = m_nCaretPosY;
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
 	if( NULL == pcLayout ){
+		// pcLayoutはNULLとなるのは、[EOF]から前検索した場合
+		// １行前に移動する処理
 		nLineNum--;
 		if( nLineNum < 0 ){
 			goto end_of_func;
@@ -3653,12 +3679,15 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		if( NULL == pcLayout ){
 			goto end_of_func;
 		}
-		/* カーソル左移動 */
-		Command_LEFT( FALSE, FALSE );
+	//		/* カーソル左移動 */
+	//		Command_LEFT( FALSE, FALSE );
+			// カーソル左移動はやめて nIdxは行の長さとしないと[EOF]から改行を前検索した時に最後の改行を検索できない 2003.05.04 かろと
+			CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+			nIdx = pCLayout->m_pCDocLine->m_pLine->GetLength() + 1;		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
+	} else {
+		/* 指定された桁に対応する行のデータ内の位置を調べる */
+		nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
 	}
-	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
-
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
 	if(!ChangeCurRegexp())return;
@@ -3774,7 +3803,10 @@ end_of_func:;
 
 
 
-/* 次を検索 */
+/*! 次を検索
+
+	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理見直し．
+*/
 void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* pszNotFoundMessage )
 {
 
@@ -3809,6 +3841,9 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 	BOOL		bRedo = FALSE;			//	hor
 	int			nLineNumOld,nIdxOld;	//	hor
 	const CLayout* pcLayout;
+	bool b0Match = false;		//!< 長さ０でマッチしているか？フラグ by かろと
+	int nLineLen;
+	const char *pLine;
 
 	nLineFrom = m_nCaretPosY;
 	nColmFrom = m_nCaretPosX;
@@ -3821,6 +3856,7 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 		goto end_of_func;
 	}
 
+	// 検索開始位置を調整
 	bFlag1 = FALSE;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 矩形範囲選択中でない & 選択状態のロック */
@@ -3840,37 +3876,52 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 				( m_nSelectLineBgnFrom == m_nCaretPosY && m_nSelectColmBgnFrom >= m_nCaretPosX )
 			){
 				/* カーソル移動 */
-			// 2002.02.16 hor 簡素化
-			//	MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, bRedraw );
 				m_nCaretPosX=m_nSelectColmFrom;
 				m_nCaretPosY=m_nSelectLineFrom;
+				if (m_nSelectColmTo == m_nSelectColmFrom && m_nSelectLineTo == m_nSelectLineFrom) {
+					// 現在、長さ０でマッチしている場合は１文字進める(無限マッチ対策) by かろと
+					b0Match = true;
+				}
 				bFlag1 = TRUE;
 			}else{
 				/* カーソル移動 */
-			// 2002.02.16 hor 簡素化
-			//	MoveCursor( m_nSelectColmTo, m_nSelectLineTo, bRedraw );
 				m_nCaretPosX=m_nSelectColmTo;
 				m_nCaretPosY=m_nSelectLineTo;
+				if (m_nSelectColmTo == m_nSelectColmFrom && m_nSelectLineTo == m_nSelectLineFrom) {
+					// 現在、長さ０でマッチしている場合は１文字進める(無限マッチ対策) by かろと
+					b0Match = true;
+				}
 			}
 
 //			/* 現在の選択範囲を非選択状態に戻す */
 //			DisableSelectArea( bRedraw );
 		}else{
 			/* カーソル移動 */
-		// 2002.02.16 hor 簡素化
-		//	MoveCursor( m_nSelectColmTo, m_nSelectLineTo, bRedraw );
 			m_nCaretPosX=m_nSelectColmTo;
 			m_nCaretPosY=m_nSelectLineTo;
+			if (m_nSelectColmTo == m_nSelectColmFrom && m_nSelectLineTo == m_nSelectLineFrom) {
+				// 現在、長さ０でマッチしている場合は１文字進める(無限マッチ対策) by かろと
+				b0Match = true;
+			}
 
 			/* 現在の選択範囲を非選択状態に戻す */
 			DisableSelectArea( bRedraw );
 		}
 	}
 	nLineNum = m_nCaretPosY;
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 // 2002.02.08 hor EOFのみの行からも次検索しても再検索可能に (2/2)
 	nIdx = pcLayout ? LineColmnToIndex( pcLayout, m_nCaretPosX ) : 0;
+	if( b0Match ) {
+		// 現在、長さ０でマッチしている場合は物理行で１文字進める(無限マッチ対策)
+		if( nIdx < nLineLen ) {
+			nIdx += (CMemory::MemCharNext(pLine, nLineLen, pLine+nIdx) - (pLine+nIdx) == 2 ? 2 : 1);
+		} else {
+			// 念のため行末は別処理
+			++nIdx;
+		}
+	}
 
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
@@ -7826,6 +7877,7 @@ void CEditView::Command_REPLACE_DIALOG( void )
 /*! 置換実行
 	
 	@date 2002/04/08 親ウィンドウを指定するように変更。
+	@date 2003.05.17 かろと 長さ０マッチの無限置換回避など
 */
 void CEditView::Command_REPLACE( HWND hwndParent )
 {
@@ -7948,21 +8000,42 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					return;	//	失敗return;
 				}
 
+				if (save_nSelectLineFrom == save_nSelectLineTo && save_nSelectColmFrom == save_nSelectColmTo) {
+					// 長さ０マッチで無限置換しないように、長さ１文字分増やして置き換える
+					m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineTo;
+					m_nSelectColmFrom = m_nSelectColmTo = save_nSelectColmTo;
+					int nLineLen;
+					int nIdx;
+					const CLayout* pcLayout;
+					const char* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(m_nSelectLineTo, &nLineLen, &pcLayout);
+					nIdx = LineColmnToIndex( pcLayout, m_nSelectColmTo );
+					if( nIdx < nLineLen ) {
+						nIdx += (CMemory::MemCharNext(pLine, nLineLen, pLine+nIdx) - (pLine+nIdx) == 2 ? 2 : 1);
+					} else {
+						++nIdx;
+					}
+					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdx );
+					if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
+						::MessageBeep( MB_ICONHAND );
+					}
+					// 注意！nReplaceTargetが挿入位置、追加位置であっても、m_nSelectXXXXは元に戻さない。
+				} else {
 #define	SWAP_VAR(a,b)	{ int x; x = a; a = b; b = x; }
-				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
-				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
-				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
-				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
+					SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
+					SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
+					SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
+					SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
 
-				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
-					::MessageBeep( MB_ICONHAND );
-				}
+					if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
+						::MessageBeep( MB_ICONHAND );
+					}
 
-				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
-				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
-				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
-				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
+					SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
+					SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
+					SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
+					SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
 #undef	SWAP_VAR
+				}
 
 				// 変換後の文字列を別の引数にしました 2002.01.26 hor
 				if( cRegexp.Replace( m_pShareData->m_szSEARCHKEYArr[0], m_pShareData->m_szREPLACEKEYArr[0], cmemory.GetPtr(), cmemory.GetLength(),&RegRepOut, nFlag) ){ // 2002/2/10 aroka CMemory変更
@@ -7981,6 +8054,10 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			m_nCaretPosY+=linTmp;
 		}
 		// To Here 2001.12.03 hor
+		/* 最後まで置換した時にOK押すまで置換前の状態が表示されるので、
+		** 置換後、次を検索する前に書き直す 2003.05.17 かろと
+		*/
+		Redraw();
 		/* 次を検索 */
 	//	HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
 		Command_SEARCH_NEXT( TRUE, hwndParent, (const char*)"最後まで置換しました。" );
@@ -7988,6 +8065,8 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 }
 
 /*! すべて置換実行
+
+	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理など見直し
 */
 void CEditView::Command_REPLACE_ALL( void )
 {
@@ -8188,6 +8267,10 @@ void CEditView::Command_REPLACE_ALL( void )
 		cRegexp.CompileReplace(m_pShareData->m_szSEARCHKEYArr[0], szREPLACEKEY, nFlag);
 	}
 
+	int save_nSelectColmFrom;
+	int save_nSelectLineFrom;
+	int save_nSelectColmTo  ;
+	int save_nSelectLineTo  ;
 	/* テキストが選択されているか */
 	for(;IsTextSelected();)
 	{
@@ -8279,6 +8362,10 @@ void CEditView::Command_REPLACE_ALL( void )
 
 		if( nReplaceTarget == 1 )	//挿入位置セット
 		{
+			save_nSelectColmFrom = m_nSelectColmFrom;
+			save_nSelectLineFrom = m_nSelectLineFrom;
+			save_nSelectColmTo   = m_nSelectColmTo;
+			save_nSelectLineTo   = m_nSelectLineTo;
 			colTmp = m_nSelectColmTo - m_nSelectColmFrom;
 			linTmp = m_nSelectLineTo - m_nSelectLineFrom;
 			m_nSelectColmFrom=-1;
@@ -8321,10 +8408,19 @@ void CEditView::Command_REPLACE_ALL( void )
 				m_nCaretPosX = m_nSelectColmTo;
 				m_nCaretPosY = m_nSelectLineTo;
 			}
+			save_nSelectColmFrom = m_nSelectColmFrom;
+			save_nSelectLineFrom = m_nSelectLineFrom;
+			save_nSelectColmTo   = m_nSelectColmTo;
+			save_nSelectLineTo   = m_nSelectLineTo;
 			m_nSelectColmFrom=-1;
 			m_nSelectLineFrom=-1;
 			m_nSelectColmTo	 =-1;
 			m_nSelectLineTo	 =-1;
+		} else {
+			save_nSelectColmFrom = m_nSelectColmFrom;
+			save_nSelectLineFrom = m_nSelectLineFrom;
+			save_nSelectColmTo   = m_nSelectColmTo;
+			save_nSelectLineTo   = m_nSelectLineTo;
 		}
 
 		/* コマンドコードによる処理振り分け */
@@ -8334,17 +8430,11 @@ void CEditView::Command_REPLACE_ALL( void )
 //			Command_PASTE();
 			if ( bColmnSelect == FALSE )
 			{
-				// 本当は Command_INSTEXT を使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
-				ReplaceData_CEditView(
-								m_nSelectLineFrom,		/* 範囲選択開始行 */
-								m_nSelectColmFrom,		/* 範囲選択開始桁 */
-								m_nSelectLineTo,		/* 範囲選択終了行 */
-								m_nSelectColmTo,		/* 範囲選択終了桁 */
-								NULL,					/* 削除されたデータのコピー(NULL可能) */
-								szREPLACEKEY,			/* 挿入するデータ */
-								nREPLACEKEY,			/* 挿入するデータの長さ */
-								bDisplayUpdate
-								);
+				/* 本当は Command_INSTEXT を使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
+				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため
+				**   直接たたくのやめた。2003.05.18 by かろと
+				*/
+				Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
 			}
 			else
 			{
@@ -8356,42 +8446,65 @@ void CEditView::Command_REPLACE_ALL( void )
 		// 2002/01/19 novice 正規表現による文字列置換
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
 		{
-			if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, bAddCRLFWhenCopy ) )
-			{
-				::MessageBeep( MB_ICONHAND );
+			//	From Here 2003.05.18 かろと
+			if (save_nSelectLineFrom == save_nSelectLineTo && save_nSelectColmFrom == save_nSelectColmTo) {
+				// 長さ０マッチで無限置換しないように、長さ１文字分増やして置き換える
+				m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineTo;
+				m_nSelectColmFrom = m_nSelectColmTo = save_nSelectColmTo;
+				int nLineLen;
+				int nIdx;
+				const char* pLine = rLayoutMgr.GetLineStr(m_nSelectLineTo, &nLineLen, &pcLayout);
+				nIdx = LineColmnToIndex( pcLayout, m_nSelectColmTo );
+				if (nIdx < nLineLen) {
+					nIdx += (CMemory::MemCharNext(pLine, nLineLen, pLine+nIdx) - (pLine+nIdx) == 2 ? 2 : 1);
+				} else {
+					++nIdx;
+				}
+				m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdx );
+				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, bAddCRLFWhenCopy ) ){
+					::MessageBeep( MB_ICONHAND );
+				}
+				// 注意！nReplaceTargetが挿入位置、追加位置であっても、m_nSelectXXXXは元に戻さない。
+			} else {
+#define	SWAP_VAR(a,b)	{ int x; x = a; a = b; b = x; }
+				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
+				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
+				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
+				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
+
+				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, bAddCRLFWhenCopy ) ){
+					::MessageBeep( MB_ICONHAND );
+				}
+
+				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
+				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
+				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
+				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
+#undef	SWAP_VAR
 			}
+			//	To Here 2003.05.18 かろと
 
 			if( cRegexp.GetReplaceInfo(cmemory.GetPtr(), cmemory.GetLength(), &szREPLACEKEY, &nREPLACEKEY) )
 			{
-//				Command_INSTEXT( bDisplayUpdate, (const char*)RegRepOut, TRUE );
-				// 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
-				ReplaceData_CEditView(
-								m_nSelectLineFrom,		/* 範囲選択開始行 */
-								m_nSelectColmFrom,		/* 範囲選択開始桁 */
-								m_nSelectLineTo,		/* 範囲選択終了行 */
-								m_nSelectColmTo,		/* 範囲選択終了桁 */
-								NULL,					/* 削除されたデータのコピー(NULL可能) */
-								szREPLACEKEY,			/* 挿入するデータ */
-								nREPLACEKEY,			/* 挿入するデータの長さ */
-								bDisplayUpdate
-								);
+				/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
+				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18
+				*/
+				Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
 				delete [] szREPLACEKEY;
+			} else {
+				// 通常ここに来るのは、バグがあるに違いない
+				// 例えば、cRegexp.m_sRepがNULLになると GetReplaceInfo()には失敗するが、
+				// Command_SEARCH_NEXT()には成功してループから抜け出せなくなる。
+				// 念のため、この場合はループから脱出 2003.05.02 かろと
+				break;		// break for loop
 			}
 		}
 		else
 		{
-//			Command_INSTEXT( bDisplayUpdate, szREPLACEKEY, TRUE );
-			// 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
-			ReplaceData_CEditView(
-							m_nSelectLineFrom,		/* 範囲選択開始行 */
-							m_nSelectColmFrom,		/* 範囲選択開始桁 */
-							m_nSelectLineTo,		/* 範囲選択終了行 */
-							m_nSelectColmTo,		/* 範囲選択終了桁 */
-							NULL,					/* 削除されたデータのコピー(NULL可能) */
-							szREPLACEKEY,			/* 挿入するデータ */
-							nREPLACEKEY,			/* 挿入するデータの長さ */
-							bDisplayUpdate
-							);
+			/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
+			** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18 かろと
+			*/
+			Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
 		}
 
 		// 挿入後の位置調整
@@ -9530,54 +9643,11 @@ void CEditView::Command_SHOWFUNCKEY( void )
 /* 印刷 */
 void CEditView::Command_PRINT( void )
 {
-//@@@ 2002.01.14 YAZAKI 何もしないで未実装と表示するように。
-#if 0
-	PRINTDLG	pd;
-//	HWND		hwnd;
-
-//	PRINTDLG	pd;
-	/* 初期化 */
-
-	/* デフォルトのプリンタ情報を取得 */
-	if( FALSE == CPrint::GetDefaultPrinter( &pd ) ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
-			"印刷する前に、プリンタをインストールしてください。\n"
-		);
-		return;
-	}
-	::GlobalUnlock( pd.hDevMode );
-	::GlobalUnlock( pd.hDevNames );
-	::GlobalFree( pd.hDevMode );
-	::GlobalFree( pd.hDevNames );
-
-
-	// Initialize PRINTDLG
-	ZeroMemory( &pd, sizeof( PRINTDLG ) );
-	pd.lStructSize	= sizeof(PRINTDLG);
-	pd.hwndOwner	= m_hWnd;
-	pd.hDevMode		= NULL;		// Don't forget to free or store hDevMode.
-	pd.hDevNames	= NULL;		// Don't forget to free or store hDevNames.
-	pd.Flags		= PD_USEDEVMODECOPIESANDCOLLATE | PD_RETURNDC | PD_NOPAGENUMS | PD_NOSELECTION;
-	pd.nCopies		= 1;
-	pd.nFromPage	= 0xFFFF;
-	pd.nToPage		= 0xFFFF;
-	pd.nMinPage		= 1;
-	pd.nMaxPage		= 0xFFFF;
-
-	if( PrintDlg( &pd ) == TRUE ){
-		// GDI calls to render output.
-		// Delete DC when done.
-		DeleteDC(pd.hDC);
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
-//			"開発中。印刷プレビューから印刷してください。\n"
-			"未実装です。 印刷プレビューから印刷してください。\n"	//Jan. 15, 2001 jepro 「開発」してないのでメッセージ変更
-		);
-	}
-#endif
+	// 使っていない処理を削除 2003.05.04 かろと
 	Command_PRINT_PREVIEW();
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	/* 印刷プレビューモードのオン/オフ */
+	/* 印刷実行 */
 	pCEditWnd->m_pPrintPreview->OnPrint();
 }
 
