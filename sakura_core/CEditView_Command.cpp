@@ -2568,7 +2568,9 @@ void CEditView::Command_PASTEBOX( void )
 					}
 #endif
 				}
-//			}
+#if 0
+			}
+#endif
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 //				pcOpe->m_nCaretPosX_After = nNewPos/*m_nCaretPosX*/;	/* 操作後のキャレット位置Ｘ */
 //				pcOpe->m_nCaretPosY_After = nNewLine/*m_nCaretPosY*/;	/* 操作後のキャレット位置Ｙ */

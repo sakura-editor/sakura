@@ -167,12 +167,13 @@ CPropCommon::~CPropCommon()
 
 
 /* 初期化 */
-void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons, CFuncLookup* lookup )
+void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pMacro )
 {
 	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pcIcons = cIcons;
-	m_pcLookup = lookup;	//	機能名・番号resolveクラス．
+	m_pcSMacro = pMacro;
+	m_cLookup.Init( m_hInstance, m_pcSMacro, &m_Common );	//	機能名・番号resolveクラス．
 
 	return;
 }
@@ -439,15 +440,12 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		if( 0 == tbb.idCommand ){
 //			nLength = strlen( strcpy( szFuncName, "セパレータ"	) );
 //			nLength = strlen( strcpy( szFuncName, "---------------------" ) );
-			nLength = strlen( strcpy( szFuncName, "───────────" ) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータ
-		}else{
-			nLength = ::LoadString( m_hInstance, tbb.idCommand, szFuncName, sizeof( szFuncName ) );
+			nLength = strlen( strcpy( szLabel, "───────────" ) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータ
+		//	From Here Oct. 15, 2001 genta
+		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, sizeof( szLabel ) )){
+			wsprintf( szLabel, "%s", "-- UNKNOWN --" );
 		}
-		if( 0 < nLength ){
-			wsprintf( szLabel, "%s", szFuncName );
-		}else{
-			wsprintf( szLabel, "%s", "????????" );
-		}
+		//	To Here Oct. 15, 2001 genta
 
 		/* アイテムが選択されている */
 		if( pDis->itemState & ODS_SELECTED ){

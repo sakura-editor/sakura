@@ -199,12 +199,12 @@ BOOL CEditDoc::Create(
 
 
 	//	Oct. 2, 2001 genta
-	m_cFuncLookup.Init( m_hInstance, m_pcSMacroMgr );
+	m_cFuncLookup.Init( m_hInstance, m_pcSMacroMgr, &m_pShareData->m_Common );
 
 	/* 設定プロパティシートの初期化１ */
 //@@	m_cProp1.Create( m_hInstance, m_hWnd );
 	//	Sep. 29, 2001 genta マクロクラスを渡すように
-	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, &m_cFuncLookup );
+	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr );
 	m_cPropTypes.Create( m_hInstance, m_hWnd );
 
 	/* 入力補完ウィンドウ作成 */
@@ -722,7 +722,7 @@ BOOL CEditDoc::FileRead(
 		SetNewLineCode( EOL_CRLF );
 		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLineInfo( 0 );
 		if( pFirstlineinfo != NULL ){
-			enumEOLType t = pFirstlineinfo->m_cEol;
+			enumEOLType t = (enumEOLType)pFirstlineinfo->m_cEol;
 			if( t != EOL_NONE && t != EOL_UNKNOWN )
 				SetNewLineCode( t );
 		}

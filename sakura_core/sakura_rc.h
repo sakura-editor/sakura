@@ -412,6 +412,7 @@
 #define IDC_LABEL_MENUCHOICE            1348
 #define IDC_LABEL_MENUKEYCHANGE         1349
 #define IDC_LABEL_TOOLBAR               1350
+#define IDC_LABEL_MENUNAME              1350
 #define IDC_LABEL_KEYKIND               1351
 #define IDC_LABEL_FUNCtoKEY             1352
 #define IDC_LABEL_KEYtoFUNC             1353
@@ -456,6 +457,7 @@
 #define IDC_CHK_WORD                    1400
 #define IDC_MACRODIR                    1401
 #define IDC_MACRODIRREF                 1402
+#define IDC_BUTTON_MENUNAME             1403
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -494,7 +496,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        219
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1403
+#define _APS_NEXT_CONTROL_VALUE         1404
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

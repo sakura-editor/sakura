@@ -81,7 +81,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 	int					nIndex1;
 	int					nIndex2;
 //	int					nIndex3;
-//	int					nNum;
+	int					nNum;
 	int					i;
 	int					j;
 	static char			pszLabel[256];
@@ -169,9 +169,13 @@ BOOL CPropCommon::DispatchEvent_p6(
 //					::SendMessage( hwndFuncList, LB_DELETESTRING, 0, 0 );
 //				}
 				/* 機能一覧に文字列をセット (リストボックス) */
-				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIndex2]; ++i ){
+				//	From Here Oct. 15, 2001 genta Lookupを使うように変更
+				nNum = m_cLookup.GetItemCount( nIndex2 );
+				for( i = 0; i < nNum; ++i ){
+					nIndex1 = m_cLookup.Pos2FuncCode( nIndex2, i );
 					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
-						if( m_cShareData.m_tbMyButton[j].idCommand == (nsFuncCode::ppnFuncListArr[nIndex2])[i] ){
+						if( m_cShareData.m_tbMyButton[j].idCommand == nIndex1 ){
+				//	To Here Oct. 15, 2001 genta Lookupを使うように変更
 							break;
 						}
 					}
@@ -370,9 +374,11 @@ void CPropCommon::SetData_p6( HWND hwndDlg )
 
 	/* 機能種別一覧に文字列をセット(コンボボックス) */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
-	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
-	}
+	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 15, 2001 genta
+//	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
+//		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
+//	}
+	
 	/* 種別の先頭の項目を選択(コンボボックス) */
 	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 	::PostMessage( hwndCombo, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );

@@ -27,7 +27,6 @@ class CPropCommon;
 
 #ifndef _CPROP1_H_
 #define _CPROP1_H_
-
 #include <windows.h>
 #include "CShareData.h"
 #include "CMemory.h"
@@ -72,7 +71,7 @@ public:
 	CPropCommon();
 	~CPropCommon();
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
-	void Create( HINSTANCE, HWND, CImageListMgr*, CFuncLookup* );	/* 初期化 */
+	void Create( HINSTANCE, HWND, CImageListMgr*, CSMacroMgr* );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations
@@ -95,7 +94,10 @@ public:
 	CImageListMgr*	m_pcIcons;	//	Image List
 	
 	//	Oct. 2, 2001 genta 外部マクロ追加に伴う，対応部分の別クラス化
-	CFuncLookup*		m_pcLookup;
+	//	Oct. 15, 2001 genta Lookupはダイアログボックス内で別インスタンスを作るように
+	//	(検索対象として，設定用common領域を指すようにするため．)
+	CFuncLookup			m_cLookup;
+	CSMacroMgr*			m_pcSMacro;
 
 	/*
 	|| ダイアログデータ

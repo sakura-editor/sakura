@@ -1337,7 +1337,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		pszSecName = "CustMenu";
 		for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 			wsprintf( szKeyName, "szCMN[%02d]", i );
-			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szCustMenuNameArr[i], 0 );
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szCustMenuNameArr[i], MAX_CUSTOM_MENU_NAME_LEN + 1 );	//	Oct. 15, 2001 genta Å‘å’·Žw’è
 			wsprintf( szKeyName, "nCMIN[%02d]", i );
 			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nCustMenuItemNumArr[i], 0 );
 	//		for( j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){

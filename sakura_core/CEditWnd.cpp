@@ -1175,7 +1175,6 @@ LRESULT CEditWnd::DispatchEvent(
 		if ( lParam & GCS_RESULTSTR ) {
 			/* メッセージの配送 */
 			return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
-			return 0;
 		}else{
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
@@ -1232,11 +1231,18 @@ LRESULT CEditWnd::DispatchEvent(
 				int			j;
 				char*		pszKey;
 				int			nKeyLen;
-				strcpy( szLabel, "" );
-				if( 0 < ::LoadString( m_hInstance, lptip->hdr.idFrom, szWork, sizeof( szWork ) - 1 ) ){
-//					cmemWork.Append( szWork, lstrlen( szWork ) );
-					strcat( szLabel, szWork );
+
+				// From Here Oct. 15, 2001 genta
+				// 機能文字列の取得にLookupを使うように変更
+//				strcpy( szLabel, "" );
+				if( !m_cEditDoc.m_cFuncLookup.Funccode2Name( lptip->hdr.idFrom, szLabel, 1024 )){
+					szLabel[0] = '\0';
 				}
+//				if( 0 < ::LoadString( m_hInstance, lptip->hdr.idFrom, szWork, sizeof( szWork ) - 1 ) ){
+//					cmemWork.Append( szWork, lstrlen( szWork ) );
+//					strcat( szLabel, szWork );
+//				}
+				// To Here Oct. 15, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(
 					m_hInstance, m_pShareData->m_nKeyNameArrNum,
@@ -2079,6 +2085,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu );
 					j++;
 					if( m_cShareData.IsPathOpened( m_pShareData->m_fiMRUArr[i].m_szPath, &hwndDummy ) ){
+							//	Oct. 15, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
+							//	IsPathOpenedでセットされているので省略 setlocale ( LC_ALL, "C" );
 						if( 0 != _stricmp( m_cEditDoc.m_szFilePath, m_pShareData->m_fiMRUArr[i].m_szPath ) ){
 							::SetMenuItemBitmaps( hMenuPopUp, IDM_SELMRU + i, MF_BYCOMMAND | MF_CHECKED, NULL, m_hbmpOPENED );
 							::CheckMenuItem( hMenuPopUp, IDM_SELMRU + i, MF_BYCOMMAND | MF_CHECKED );
@@ -2607,12 +2615,12 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			}
 			
 			//	From Here Sep. 14, 2001 genta
-			//「カスタムメニュー」ポップアップ
+			//「登録済みマクロ」ポップアップ
 			hMenuPopUp = ::CreateMenu();
 			
 			for( i = 0; i < MAX_CUSTMACRO; ++i ){
 				MacroRec *mp = &m_pShareData->m_MacroTable[i];
-				if( mp->IsEnabled() && mp->m_szFile[0] ){
+				if( mp->IsEnabled() ){
 					if(  mp->m_szName[0] ){
 						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + i, mp->m_szName );
 					}
@@ -2637,6 +2645,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 			//「カスタムメニュー」ポップアップ
 			hMenuPopUp = ::CreateMenu();
+#if 0
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_MENU_RBUTTON, "右クリックメニュー(&R)" );	//Oct. 20, 2000 JEPRO 追加
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUSTMENU_1 , "カスタムメニュー&1 " );		//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUSTMENU_2 , "カスタムメニュー&2 " );		//Sept. 13, 2000 JEPRO アクセスキー付与
@@ -2664,6 +2673,19 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUSTMENU_22, "カスタムメニュー22(&M)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUSTMENU_23, "カスタムメニュー23(&N)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUSTMENU_24, "カスタムメニュー24(&O)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
+#endif
+			//	右クリックメニュー
+			if( m_pShareData->m_Common.m_nCustMenuItemNumArr[0] > 0 ){
+				 m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING,
+				 	F_MENU_RBUTTON, m_pShareData->m_Common.m_szCustMenuNameArr[0] );
+			}
+			//	カスタムメニュー
+			for( i = 1; i < MAX_CUSTOM_MENU; ++i ){
+				if( m_pShareData->m_Common.m_nCustMenuItemNumArr[i] > 0 ){
+					 m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING,
+					 	F_CUSTMENU_BASE + i, m_pShareData->m_Common.m_szCustMenuNameArr[i] );
+				}
+			}
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "カスタムメニュー(&U)" );
 

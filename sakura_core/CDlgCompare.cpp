@@ -119,6 +119,9 @@ void CDlgCompare::SetData( void )
 
 	hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_FILES );
 
+	//	Oct. 15, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
+	setlocale ( LC_ALL, "C" );
+
 	/* 現在開いている編集窓のリストをメニューにする */
 	nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){

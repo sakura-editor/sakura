@@ -308,6 +308,7 @@
 #define F_CUSTMENU_23		31523	/* カスタムメニュー23 */
 #define F_CUSTMENU_24		31524	/* カスタムメニュー24 */
 
+#define F_CUSTMENU_BASE		31500	/* カスタムメニュー基準番号 */
 
 /* ウィンドウ系 */
 #define F_SPLIT_V			31310	//上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
