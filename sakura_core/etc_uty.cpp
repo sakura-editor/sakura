@@ -775,6 +775,8 @@ BOOL IsURL( const char* pszText, int nTextLen, int* pnUrlLen )
 			 || '\t' == pszText[i]
 			 || '\0' == pszText[i]
 			 || ')'  == pszText[i]
+			 || '}'  == pszText[i]		//Stonee, 2001/06/24  URL‚Ì‹æØ‚è”»’è‚ğC³
+			 || '{'  == pszText[i]		//Stonee, 2001/06/24
 			){
 				break;
 			}
