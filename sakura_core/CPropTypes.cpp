@@ -50,7 +50,7 @@ TYPE_NAME OlmArr[] = {
 	{ OUTLINE_PERL,	"Perl" },		//	Sep. 8, 2000 genta
 	{ OUTLINE_ASM,	"アセンブラ" },
 	{ OUTLINE_TEXT,	"テキスト" },
-	{ OUTLINE_VB,	"VisualBasic" } // 2001/06/23 N.Nakatani
+	{ OUTLINE_VB,	"Visual Basic" } // 2001/06/23 N.Nakatani
 };
 const int	nOlmArrNum = sizeof( OlmArr ) / sizeof( OlmArr[0] );
 
@@ -1162,9 +1162,9 @@ BOOL CPropTypes::DispatchEvent_p2(
 //			return 0L;
 //		default:
 			switch( pNMHDR->code ){
-//			case PSN_HELP:
-//				OnHelp( hwndDlg, IDD_PROP_HELPER );
-//				return TRUE;
+			case PSN_HELP:	//Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
+				OnHelp( hwndDlg, IDD_PROPTYPESP2 );
+				return TRUE;
 			case PSN_KILLACTIVE:
 //				MYTRACE( "p10 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p2 */
@@ -2891,6 +2891,10 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 //	case IDD_PROP1P3:
 	case IDD_PROP_COLOR:
 		nContextID = ::FuncID_To_HelpContextID(F_TYPE_COLOR);
+		break;
+//	Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
+		case IDD_PROPTYPESP2:
+		nContextID = ::FuncID_To_HelpContextID(F_TYPE_HELPER);
 		break;
 	default:
 		nContextID = -1;
