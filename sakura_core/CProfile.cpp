@@ -11,6 +11,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#include <stdio.h>
 #include "CProfile.h"
 #include "debug.h"
 #include "global.h"
@@ -18,7 +19,6 @@
 #include "CKeyWordSetMgr.h"
 #include "CMemory.h" // 2002/2/3 aroka
 #include "CEol.h" // 2002/2/3 aroka
-
 
 CProfile::CProfile()
 {
@@ -227,58 +227,57 @@ BOOL CProfile::AddSectionData(
 }
 
 
+/*! Profileのファイルへの書き出し
 
+	@date 2003.02.12 Mr.Nak fprintfを使うように
+*/
 BOOL CProfile::WriteProfile( const char* pszProfileName, const char* pszComment )
 {
 	int		i;
 	int		j;
 //	char	szLine[102400];
-	HFILE	hFile;
+	FILE*	pFile;
 	char*	pData;
 	int		nDataLen;
 	if( NULL != pszProfileName ){
 		strcpy( m_szProfileName, pszProfileName );
 	}
 
-	hFile = _lcreat( m_szProfileName, 0 );
-	if( HFILE_ERROR == hFile ){
+	pFile = _tfopen( m_szProfileName, _T("wb") );
+	if( NULL == pFile ){
 		::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			"ファイルを作成できませんでした。\n\n%s", m_szProfileName
 		);
 		return FALSE;
 	}
 	/* コメント書き込み */
-	_lwrite( hFile, "//", 2 );
-	_lwrite( hFile, pszComment, strlen( pszComment ) );
-	_lwrite( hFile, "\r\n", 2 );
-	_lwrite( hFile, "\r\n", 2 );
+	fwrite( "//", 1, 2, pFile );
+	fwrite( pszComment, 1, strlen( pszComment ), pFile );
+	fwrite( "\r\n", 1, 2, pFile );
+	fwrite( "\r\n", 1, 2, pFile );
 
 
 	for( i = 0; i < m_nSecNum; ++i ){
 		if( 0 < i ){
-			_lwrite( hFile, "\r\n", 2 );
+			fwrite( "\r\n", 1, 2, pFile );
 		}
-		_lwrite( hFile, "[", 1 );
+		fwrite( "[", 1, 1, pFile );
 		pData = m_pSecNameArr[i]->GetPtr( &nDataLen );
-		_lwrite( hFile, pData, nDataLen );
-		_lwrite( hFile, "]\r\n", 3 );
+		fwrite( pData, 1, nDataLen, pFile );
+		fwrite( "]\r\n", 1, 3, pFile );
 		for( j = 0; j < m_nSecDataNumArr[i]; ++j ){
 			pData = m_pDataNameArr[i][j]->GetPtr( &nDataLen );
-			_lwrite( hFile, pData, nDataLen );
-			_lwrite( hFile, "=", 1 );
+			fwrite( pData, 1, nDataLen, pFile );
+			fwrite( "=", 1, 1, pFile );
 			pData = m_pDataArr[i][j]->GetPtr( &nDataLen );
-			_lwrite( hFile, pData, nDataLen );
-			_lwrite( hFile, "\r\n", 2 );
+			fwrite( pData, 1, nDataLen, pFile );
+			fwrite( "\r\n", 1, 2, pFile );
 		}
 	}
-	_lwrite( hFile, "\r\n", 2 );
-	_lclose( hFile );
+	fwrite( "\r\n", 1, 2 ,pFile );
+	fclose( pFile );
 	return TRUE;
 }
-
-
-
-
 
 /*!
 	1要素のINIファイルからの読み込みとINIファイルからの書き出し。
