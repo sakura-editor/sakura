@@ -35,11 +35,12 @@ CLayoutMgr::CLayoutMgr()
 	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
 	m_pszLineComment = NULL;			/* 行コメントデリミタ */
 	m_pszLineComment2 = NULL;			/* 行コメントデリミタ2 */
+	m_pszLineComment3 = NULL;			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 	m_pszBlockCommentFrom = NULL;		/* ブロックコメントデリミタ(From) */
 	m_pszBlockCommentTo = NULL;			/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	m_pszBlockCommentFrom2 = NULL;		/* ブロックコメントデリミタ(From) */
-	m_pszBlockCommentTo2 = NULL;		/* ブロックコメントデリミタ(To) */
+	m_pszBlockCommentFrom2 = NULL;		/* ブロックコメントデリミタ2(From) */
+	m_pszBlockCommentTo2 = NULL;		/* ブロックコメントデリミタ2(To) */
 //#endif
 	Init();
 	return;
@@ -61,6 +62,10 @@ CLayoutMgr::~CLayoutMgr()
 		delete [] m_pszLineComment2;
 		m_pszLineComment2 = NULL;
 	}
+	if( NULL != m_pszLineComment3 ){	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+		delete [] m_pszLineComment3;
+		m_pszLineComment3 = NULL;
+	}
 	if( NULL != m_pszBlockCommentFrom ){	/* ブロックコメントデリミタ(From) */
 		delete [] m_pszBlockCommentFrom;
 		m_pszBlockCommentFrom = NULL;
@@ -70,11 +75,11 @@ CLayoutMgr::~CLayoutMgr()
 		m_pszBlockCommentTo = NULL;
 	}
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ(From) */
+	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ2(From) */
 		delete [] m_pszBlockCommentFrom2;
 		m_pszBlockCommentFrom2 = NULL;
 	}
-	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ(To) */
+	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ2(To) */
 		delete [] m_pszBlockCommentTo2;
 		m_pszBlockCommentTo2 = NULL;
 	}
@@ -92,11 +97,12 @@ void CLayoutMgr::SetLayoutInfo(
 	int		nTabSpace,				/* TAB文字スペース */
 	char*	pszLineComment,			/* 行コメントデリミタ */
 	char*	pszLineComment2,		/* 行コメントデリミタ2 */
+	char*	pszLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 	char*	pszBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 	char*	pszBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
-	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ(To) */
+	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ2(To) */
 //#endif
 	int		nStringType,			/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
 	int		bDoRayout, 
@@ -131,6 +137,16 @@ void CLayoutMgr::SetLayoutInfo(
 		strcpy( m_pszLineComment2, pszLineComment2 );
 	}
 	
+	if( NULL != m_pszLineComment3 ){	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+		delete [] m_pszLineComment3;
+		m_pszLineComment3 = NULL;
+	}
+	nStrLen = strlen( pszLineComment3 );
+	if( 0 < nStrLen ){
+		m_pszLineComment3 = new char[nStrLen + 1];
+		strcpy( m_pszLineComment3, pszLineComment3 );
+	}
+	
 
 	if( NULL != m_pszBlockCommentFrom ){	/* ブロックコメントデリミタ(From) */
 		delete [] m_pszBlockCommentFrom;
@@ -153,7 +169,7 @@ void CLayoutMgr::SetLayoutInfo(
 	}
 
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ(From) */
+	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ2(From) */
 		delete [] m_pszBlockCommentFrom2;
 		m_pszBlockCommentFrom2 = NULL;
 	}
@@ -163,7 +179,7 @@ void CLayoutMgr::SetLayoutInfo(
 		strcpy( m_pszBlockCommentFrom2, pszBlockCommentFrom2 );
 	}
 
-	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ(To) */
+	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ2(To) */
 		delete [] m_pszBlockCommentTo2;
 		m_pszBlockCommentTo2 = NULL;
 	}

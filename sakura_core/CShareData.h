@@ -232,15 +232,26 @@ struct Types {
 //	COLORREF			m_colorUNDERLINE;				/* カーソル行アンダーラインの色 */
 	char				m_szLineComment[16];			/* 行コメントデリミタ */
 	char				m_szLineComment2[16];			/* 行コメントデリミタ2 */
+	char				m_szLineComment3[16];			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+
+//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
+/*
+	BOOL				m_bSpecifyLineCommentPos;		//< 行コメント1の開始位置を指定する
+	BOOL				m_bSpecifyLineCommentPos2;		//< 行コメント2の開始位置を指定する
+	BOOL				m_bSpecifyLineCommentPos3;		//< 行コメント3の開始位置を指定する
+*/
+//	To Here Jun. 01, 2001
+
 	//	May. 12, 2001 genta
 	int					m_nLineCommentPos;				//< 行コメント1の開始位置(負数は指定無し)
 	int					m_nLineCommentPos2;				//< 行コメント2の開始位置(負数は指定無し)
+	int					m_nLineCommentPos3;				//< 行コメント3の開始位置(負数は指定無し)	//Jun. 01, 2001 JEPRO 追加
 	
 	char				m_szBlockCommentFrom[16];		/* ブロックコメントデリミタ(From) */
 	char				m_szBlockCommentTo[16];			/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char				m_szBlockCommentFrom2[16];		/* ブロックコメントデリミタ(From) */ //@@@ 2001.03.10 by MIK
-	char				m_szBlockCommentTo2[16];		/* ブロックコメントデリミタ(To) */ //@@@ 2001.03.10 by MIK
+	char				m_szBlockCommentFrom2[16];		/* ブロックコメントデリミタ2(From) */ //@@@ 2001.03.10 by MIK
+	char				m_szBlockCommentTo2[16];		/* ブロックコメントデリミタ2(To) */ //@@@ 2001.03.10 by MIK
 //#endif
 	int					m_nStringType;					/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	char				m_szIndentChars[64];			/* その他のインデント対象文字 */

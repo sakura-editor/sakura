@@ -829,6 +829,8 @@ BOOL CShareData::ShareData_IO( BOOL bRead )
 		MY_RegVal_IO( bRead, hkReg, "szLineComment"			, REGCNV_SZ2SZ, (BYTE *)/*&*/m_pShareData->m_Types[i].m_szLineComment, 0 );
 //		strcpy( szKeyName, "szLineComment2" );
 		MY_RegVal_IO( bRead, hkReg, "szLineComment2"		, REGCNV_SZ2SZ, (BYTE *)/*&*/m_pShareData->m_Types[i].m_szLineComment2, 0 );
+//		strcpy( szKeyName, "szLineComment3" );
+		MY_RegVal_IO( bRead, hkReg, "szLineComment3"		, REGCNV_SZ2SZ, (BYTE *)/*&*/m_pShareData->m_Types[i].m_szLineComment3, 0 );	//Jun. 01, 2001 JEPRO ’Ç‰Á
 //		strcpy( szKeyName, "szBlockCommentFrom" );
 		MY_RegVal_IO( bRead, hkReg, "szBlockCommentFrom"	, REGCNV_SZ2SZ, (BYTE *)/*&*/m_pShareData->m_Types[i].m_szBlockCommentFrom, 0 );
 //		strcpy( szKeyName, "szBlockCommentTo" );
@@ -1656,6 +1658,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "szLineComment"		, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szLineComment, 0 );
 //		strcpy( szKeyName, "szLineComment2" );
 		cProfile.IOProfileData( bRead, pszSecName, "szLineComment2"		, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szLineComment2, 0 );
+//		strcpy( szKeyName, "szLineComment3" );
+		cProfile.IOProfileData( bRead, pszSecName, "szLineComment3"		, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szLineComment3, 0 );	//Jun. 01, 2001 JEPRO ’Ç‰Á
 //		strcpy( szKeyName, "szBlockCommentFrom" );
 		cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentFrom"	, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szBlockCommentFrom, 0 );
 //		strcpy( szKeyName, "szBlockCommentTo" );
@@ -1670,6 +1674,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		//	From here May 12, 2001 genta
 		cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nLineCommentPos, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn2"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nLineCommentPos2, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn3"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nLineCommentPos3, 0 );	//Jun. 01, 2001 JEPRO ’Ç‰Á
 		//	To here May 12, 2001 genta
 
 		cProfile.IOProfileData( bRead, pszSecName, "szIndentChars"		, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szIndentChars, 0 );

@@ -852,16 +852,23 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 		strcpy( m_pShareData->m_Types[nIdx].m_szTabViewString, "^       " );	/* TAB表示文字列 */
 //#endif
-		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment, "" );		/* 行コメントデリミタ */
+		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment,  "" );		/* 行コメントデリミタ */
 		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment2, "" );		/* 行コメントデリミタ2 */
+		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment3, "" );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentFrom, "" );	/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentTo, "" );	/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentFrom2, "" );	/* ブロックコメントデリミタ(From) */
-		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentTo2, "" );	/* ブロックコメントデリミタ(To) */
+		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentFrom2, "" );/* ブロックコメントデリミタ2(From) */
+		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentTo2, "" );	/* ブロックコメントデリミタ2(To) */
 //#endif
-		m_pShareData->m_Types[nIdx].m_nLineCommentPos = -1;				/* 行コメント1桁位置*/
-		m_pShareData->m_Types[nIdx].m_nLineCommentPos2 = -1;			/* 行コメント2桁位置*/
+//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
+//		m_pShareData->m_Types[nIdx].m_bSpecifyLineCommentPos  = FALSE;	/* 行コメント1 桁位置を指定しない*/	//Jun. 01, 2001 JEPRO 追加
+//		m_pShareData->m_Types[nIdx].m_bSpecifyLineCommentPos2 = FALSE;	/* 行コメント2 桁位置を指定しない*/	//Jun. 01, 2001 JEPRO 追加
+//		m_pShareData->m_Types[nIdx].m_bSpecifyLineCommentPos3 = FALSE;	/* 行コメント3 桁位置を指定しない*/	//Jun. 01, 2001 JEPRO 追加
+//	To Here Jun. 01, 2001
+		m_pShareData->m_Types[nIdx].m_nLineCommentPos = -1;				/* 行コメント1 桁位置 */
+		m_pShareData->m_Types[nIdx].m_nLineCommentPos2 = -1;			/* 行コメント2 桁位置 */
+		m_pShareData->m_Types[nIdx].m_nLineCommentPos3 = -1;			/* 行コメント3 桁位置 */	//Jun. 01, 2001 JEPRO 追加
 		m_pShareData->m_Types[nIdx].m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[nIdx].m_szIndentChars, "" );		/* その他のインデント対象文字 */
 
@@ -1020,7 +1027,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 //			"html,htm,shtml",
 			"html,htm,shtml,plg",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
 			"sql,plsql",
-			"cbl,cpy",
+			"cbl,cpy,pco,cob",	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
 			"java,jav",
 			"asm",
 			"awk",
@@ -1107,10 +1114,13 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[4].m_nDefaultOutline = OUTLINE_PLSQL;			/* アウトライン解析方法 */
 
 		/* COBOL */
-		strcpy( m_pShareData->m_Types[5].m_szLineComment, "      *" );		/* 行コメントデリミタ */
-		strcpy( m_pShareData->m_Types[5].m_szLineComment2, "" );			/* 行コメントデリミタ2 */
+//		strcpy( m_pShareData->m_Types[5].m_szLineComment, "      *" );		/* 行コメントデリミタ */
+		strcpy( m_pShareData->m_Types[5].m_szLineComment, "*" );			/* 行コメントデリミタ */	//Jun. 02, 2001 JEPRO 修正
+		strcpy( m_pShareData->m_Types[5].m_szLineComment2, "D" );			/* 行コメントデリミタ2 */	//Jun. 04, 2001 JEPRO 追加
 		strcpy( m_pShareData->m_Types[5].m_szBlockCommentFrom, "" );		/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[5].m_szBlockCommentTo, "" );			/* ブロックコメントデリミタ(To) */
+		m_pShareData->m_Types[5].m_nLineCommentPos = 6;						/* 行コメント1 桁位置 */	//Jun. 02, 2001 JEPRO 追加
+		m_pShareData->m_Types[5].m_nLineCommentPos2 = 6;					/* 行コメント2 桁位置 */	//Jun. 04, 2001 JEPRO 追加
 		m_pShareData->m_Types[5].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[5].m_szIndentChars, "*" );			/* その他のインデント対象文字 */
 		m_pShareData->m_Types[5].m_nKeyWordSetIdx = 1;						/* キーワードセット */
@@ -1149,8 +1159,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[10].m_szBlockCommentFrom, "{" );		/* ブロックコメントデリミタ(From) */	//Nov. 5, 2000 JEPRO 追加
 		strcpy( m_pShareData->m_Types[10].m_szBlockCommentTo, "}" );		/* ブロックコメントデリミタ(To) */		//Nov. 5, 2000 JEPRO 追加
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-		strcpy( m_pShareData->m_Types[10].m_szBlockCommentFrom2, "(*" );	/* ブロックコメントデリミタ(From) */
-		strcpy( m_pShareData->m_Types[10].m_szBlockCommentTo2, "*)" );		/* ブロックコメントデリミタ(To) */
+		strcpy( m_pShareData->m_Types[10].m_szBlockCommentFrom2, "(*" );	/* ブロックコメントデリミタ2(From) */
+		strcpy( m_pShareData->m_Types[10].m_szBlockCommentTo2, "*)" );		/* ブロックコメントデリミタ2(To) */
 //#endif
 		m_pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
 		m_pShareData->m_Types[10].m_nKeyWordSetIdx = 5;						/* キーワードセット */
@@ -1161,8 +1171,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		/* TeX */
 		strcpy( m_pShareData->m_Types[11].m_szLineComment, "%" );			/* 行コメントデリミタ */
 		m_pShareData->m_Types[11].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[11].m_nKeyWordSetIdx  = 9;					/* キーワード1セット */
-		m_pShareData->m_Types[11].m_nKeyWordSetIdx2 = 10;					/* キーワード2セット */	//Jan. 19, 2001 JEPRO
+		m_pShareData->m_Types[11].m_nKeyWordSetIdx  = 9;					/* キーワードセット */
+		m_pShareData->m_Types[11].m_nKeyWordSetIdx2 = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
 		//シングルクォーテーション文字列を色分け表示しない
 		m_pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 		//ダブルクォーテーション文字列を色分け表示しない

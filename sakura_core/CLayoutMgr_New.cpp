@@ -164,6 +164,10 @@ void CLayoutMgr::DoLayout(
 					( NULL != m_pszLineComment2 &&	/* 行コメントデリミタ2 */
 					  nPos <= nLineLen - (int)strlen( m_pszLineComment2 ) &&	/* 行コメントデリミタ2 */
 					  0 == memicmp( &pLine[nPos], m_pszLineComment2, (int)strlen( m_pszLineComment2 ) )
+					) ||	//Jun. 01, 2001 JEPRO 3つ目を追加
+					( NULL != m_pszLineComment3 &&	/* 行コメントデリミタ3 */
+					  nPos <= nLineLen - (int)strlen( m_pszLineComment3 ) &&	/* 行コメントデリミタ3 */
+					  0 == memicmp( &pLine[nPos], m_pszLineComment3, (int)strlen( m_pszLineComment3 ) )
 					)
 				){
 					nCOMMENTMODE = 1;	/* 行コメントである */
@@ -192,9 +196,9 @@ void CLayoutMgr::DoLayout(
 					}
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 				}else
-				if( NULL != m_pszBlockCommentFrom2 &&	/* ブロックコメントデリミタ(From) */
-					NULL != m_pszBlockCommentTo2 &&		/* ブロックコメントデリミタ(To) */
-					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ(From) */
+				if( NULL != m_pszBlockCommentFrom2 &&	/* ブロックコメントデリミタ2(From) */
+					NULL != m_pszBlockCommentTo2 &&		/* ブロックコメントデリミタ2(To) */
+					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ2(From) */
 					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom2, (int)strlen( m_pszBlockCommentFrom2 ) )
 				){
 					nCOMMENTMODE = 20;	/* ブロックコメントである */
@@ -765,6 +769,10 @@ int CLayoutMgr::DoLayout3_New(
 					( NULL != m_pszLineComment2 &&	/* 行コメントデリミタ2 */
 					  nPos <= nLineLen - (int)strlen( m_pszLineComment2 ) &&	/* 行コメントデリミタ2 */
 					  0 == memicmp( &pLine[nPos], m_pszLineComment2, (int)strlen( m_pszLineComment2 ) )
+					) ||	//Jun. 01, 2001 JEPRO 3つ目を追加
+					( NULL != m_pszLineComment3 &&	/* 行コメントデリミタ3 */
+					  nPos <= nLineLen - (int)strlen( m_pszLineComment3 ) &&	/* 行コメントデリミタ3 */
+					  0 == memicmp( &pLine[nPos], m_pszLineComment3, (int)strlen( m_pszLineComment3 ) )
 					)
 				){
 					nCOMMENTMODE = 1;	/* 行コメントである */
@@ -793,9 +801,9 @@ int CLayoutMgr::DoLayout3_New(
 					}
 //#ifdef	COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 				}else
-				if( NULL != m_pszBlockCommentFrom2 &&	/* ブロックコメントデリミタ(From) */
-					NULL != m_pszBlockCommentTo2 &&		/* ブロックコメントデリミタ(To) */
-					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ(From) */
+				if( NULL != m_pszBlockCommentFrom2 &&	/* ブロックコメントデリミタ2(From) */
+					NULL != m_pszBlockCommentTo2 &&		/* ブロックコメントデリミタ2(To) */
+					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ2(From) */
 					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom2, (int)strlen( m_pszBlockCommentFrom2 ) )
 				){
 					nCOMMENTMODE = 20;	/* ブロックコメントである */

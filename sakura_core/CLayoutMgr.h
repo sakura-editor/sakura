@@ -92,7 +92,7 @@ public:
 	|| 更新系
 	*/
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
+	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO　char* (行コメントデリミタ3用)を1つ追加
 //#else
 //	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
 //#endif
@@ -162,11 +162,12 @@ protected:
 	int				m_nTabSpace;				/* TAB文字スペース */
 	char*			m_pszLineComment;			/* 行コメントデリミタ */
 	char*			m_pszLineComment2;			/* 行コメントデリミタ2 */
+	char*			m_pszLineComment3;			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 	char*			m_pszBlockCommentFrom;		/* ブロックコメントデリミタ(From) */
 	char*			m_pszBlockCommentTo;		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char*			m_pszBlockCommentFrom2;		/* ブロックコメントデリミタ(From) */
-	char*			m_pszBlockCommentTo2;		/* ブロックコメントデリミタ(To) */
+	char*			m_pszBlockCommentFrom2;		/* ブロックコメントデリミタ2(From) */
+	char*			m_pszBlockCommentTo2;		/* ブロックコメントデリミタ2(To) */
 //#endif
 	int				m_nStringType;				/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
 

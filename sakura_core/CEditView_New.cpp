@@ -641,11 +641,11 @@ searchnext:;
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 					}else
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
-						NULL != TypeDataPtr->m_szBlockCommentFrom2 &&	/* ブロックコメントデリミタ(From) */
+						NULL != TypeDataPtr->m_szBlockCommentFrom2 &&	/* ブロックコメントデリミタ2(From) */
 						'\0' != TypeDataPtr->m_szBlockCommentFrom2[0] &&
-						NULL != TypeDataPtr->m_szBlockCommentTo2 &&		/* ブロックコメントデリミタ(To) */
+						NULL != TypeDataPtr->m_szBlockCommentTo2 &&		/* ブロックコメントデリミタ2(To) */
 						'\0' != TypeDataPtr->m_szBlockCommentTo2[0]  &&
-						nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ(From) */
+						nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ2(From) */
 						0 == memicmp( &pLine[nPos], TypeDataPtr->m_szBlockCommentFrom2, (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 ) )
 					) ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
