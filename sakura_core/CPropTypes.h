@@ -53,6 +53,7 @@ public:
 	*/
 	int DoPropertySheet( int );	/* プロパティシートの作成 */
 	BOOL DispatchEvent_p1( HWND, UINT, WPARAM, LPARAM );	/* p1 メッセージ処理 */
+	BOOL DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );	/* p2 メッセージ処理 支援タブ */ // 2001/06/14 asa-o
 	BOOL DispatchEvent_p3( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	BOOL DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	static BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
@@ -81,6 +82,11 @@ protected:
 	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */
 	void SetData_p1( HWND );	/* ダイアログデータの設定 p1 */
 	int  GetData_p1( HWND );	/* ダイアログデータの取得 p1 */
+
+	// 2001/06/14 asa-o
+	void SetData_p2( HWND );	/* ダイアログデータの設定 p2 支援タブ */
+	int  GetData_p2( HWND );	/* ダイアログデータの取得 p2 支援タブ */
+
 	void SetData_p3( HWND );	/* ダイアログデータの設定 p3 */
 	int  GetData_p3( HWND );	/* ダイアログデータの取得 p3 */
 	void SetData_p3_new( HWND );	/* ダイアログデータの設定 p3 */

@@ -1551,7 +1551,8 @@ void CEditView::Command_DELETE_BACK( void )
 				m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
 				cmemData.GetPtr( NULL ),
 //t				(void*)this,
-				m_pShareData->m_Common.m_szHokanFile
+//				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
+				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
 			) ){
 				m_bHokan = TRUE;
 			}else{
@@ -2969,7 +2970,8 @@ void CEditView::Command_CHAR( char cChar )
 				m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
 				cmemData.GetPtr( NULL ),
 //t				(void*)this,
-				m_pShareData->m_Common.m_szHokanFile
+//				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
+				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
 			) ){
 				m_bHokan = TRUE;
 			}else{
@@ -3104,7 +3106,8 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 				m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
 				cmemData.GetPtr( NULL ),
 //t				(void*)this,
-				m_pShareData->m_Common.m_szHokanFile
+//				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
+				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
 			) ){
 				m_bHokan = TRUE;
 			}else{
@@ -7935,7 +7938,8 @@ void CEditView::Command_HOKAN( void )
 	POINT		poWin;
 
 retry:;
-	if( 0 == strlen( m_pShareData->m_Common.m_szHokanFile ) ){
+//	if( 0 == strlen( m_pShareData->m_Common.m_szHokanFile ) ){	// 2001/06/14 asa-o 参照データ変更
+	if( 0 == strlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile ) ){
 		::MessageBeep( MB_ICONHAND );
 //	From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -7944,10 +7948,16 @@ retry:;
 //	To Here Sept. 15, 2000
 			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
 		) ){
+//	2001/06/14 Start by asa-o: 開くプロパティシートをタイプ別に変更
 			/* 共通設定 プロパティシート */
-			if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_HOKANFILE*/ ) ){
+//			if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_HOKANFILE*/ ) ){
+//				return;
+//			}
+			/* タイプ別設定 プロパティシート */
+			if( !m_pcEditDoc->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
 				return;
 			}
+//	2001/06/14 End
 			goto retry;
 		}
 	}
@@ -7974,7 +7984,8 @@ retry:;
 			m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
 			cmemData.GetPtr( NULL ),
 //t			(void*)this,
-			m_pShareData->m_Common.m_szHokanFile
+//			m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
+			m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
 		) ){
 			m_bHokan = TRUE;
 		}else{

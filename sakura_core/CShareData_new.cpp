@@ -1222,10 +1222,12 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "nFUNCKEYWND_Place"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nFUNCKEYWND_Place, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szMidashiKigou"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szMidashiKigou, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szInyouKigou"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szInyouKigou, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "bUseKeyWordHelp"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseKeyWordHelp, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "szKeyWordHelpFile"			, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szKeyWordHelpFile, 0 );
+
+		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
+//		cProfile.IOProfileData( bRead, pszSecName, "bUseKeyWordHelp"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseKeyWordHelp, 0 );
+//		cProfile.IOProfileData( bRead, pszSecName, "szKeyWordHelpFile"			, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szKeyWordHelpFile, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bUseHokan"					, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseHokan, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "szHokanFile"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szHokanFile, 0 );
+//		cProfile.IOProfileData( bRead, pszSecName, "szHokanFile"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szHokanFile, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepKanjiCode_AutoDetect"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bHokanLoHiCase"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bHokanLoHiCase, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bSaveWindowSize"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bSaveWindowSize, 0 );
@@ -1646,8 +1648,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		}
 		/* 行間のすきま */
 		if( !bRead ){
-			if( m_pShareData->m_Types[i].m_nLineSpace < 1 ){
-				m_pShareData->m_Types[i].m_nLineSpace = 1;
+			if( m_pShareData->m_Types[i].m_nLineSpace < /* 1 */ 0 ){
+				m_pShareData->m_Types[i].m_nLineSpace = /* 1 */ 0;
 			}
 			if( m_pShareData->m_Types[i].m_nLineSpace > 16 ){
 				m_pShareData->m_Types[i].m_nLineSpace = 16;
@@ -1655,9 +1657,9 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		}
 		cProfile.IOProfileData( bRead, pszSecName, "nLineSpace", REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nLineSpace, 0 );
 		if( bRead ){
-			if( m_pShareData->m_Types[i].m_nLineSpace < 1 ){
-				m_pShareData->m_Types[i].m_nLineSpace = 1;
-			}
+			if( m_pShareData->m_Types[i].m_nLineSpace < /* 1 */ 0 ){
+				m_pShareData->m_Types[i].m_nLineSpace = /* 1 */ 0;
+			} 
 			if( m_pShareData->m_Types[i].m_nLineSpace > 16 ){
 				m_pShareData->m_Types[i].m_nLineSpace = 16;
 			}
@@ -1704,9 +1706,15 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		//	Nov. 20, 2000 genta
 		cProfile.IOProfileData( bRead, pszSecName, "nImeState"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nImeState, 0 );	//	IME制御
 
+		//	2001/06/14 Start By asa-o: タイプ別の補完ファイルとキーワードヘルプ
+		cProfile.IOProfileData( bRead, pszSecName, "szHokanFile"		, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szHokanFile, 0 );		//	補完ファイル
+		cProfile.IOProfileData( bRead, pszSecName, "bUseKeyWordHelp"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bUseKeyWordHelp, 0 );	//	キーワードヘルプを使用する
+		cProfile.IOProfileData( bRead, pszSecName, "szKeyWordHelpFile"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKeyWordHelpFile, 0 );	//	キーワードヘルプ 辞書ファイル
+		//	2001/06/14 End
 
 		/* 色設定 I/O */
 		IO_ColorSet( &cProfile, bRead, pszSecName, m_pShareData->m_Types[i].m_ColorInfoArr  );
+
 /*
 		for( j = 0; j < m_pShareData->m_Types[i].m_nColorInfoArrNum; ++j ){
 			static const char* pszForm = "%d,%d,%06x,%06x";
