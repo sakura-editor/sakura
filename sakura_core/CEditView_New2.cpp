@@ -903,11 +903,11 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	}
 
 	// 02/09/18 ai Start
-	if( 0 == ( (int)(*mode) & 2 ) ){
+	if( 0 == ( *mode & 2 ) ){
 		/* カーソルの前方を調べない場合 */
 		return false;
 	}
-	(int)(*mode) |= 4;
+	*mode |= 4;
 	// 02/09/18 ai End
 
 	//	括弧が見つからなかったら，カーソルの直前の文字を調べる
@@ -1027,7 +1027,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
 		{	// 表示領域外を調べないモードで表示領域の終端の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
@@ -1116,7 +1116,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
 		{	// 表示領域外を調べないモードで表示領域の先頭の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
@@ -1201,7 +1201,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
 		{	// 表示領域外を調べないモードで表示領域の終端の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
@@ -1288,7 +1288,7 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
 		{	// 表示領域外を調べないモードで表示領域の先頭の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
