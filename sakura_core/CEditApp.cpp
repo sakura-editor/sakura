@@ -337,9 +337,11 @@ bool CEditApp::CreateTrayIcon( HWND hWnd )
 		/* タスクトレイのアイコンを作る */
 		if( TRUE == m_pShareData->m_Common.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 #ifdef _DEBUG
-			hIcon =	::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
+//			hIcon =	::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
+			hIcon=(HICON)::LoadImage(m_hInstance,MAKEINTRESOURCE(IDI_ICON_DEBUG),IMAGE_ICON,16,16,0);	//Jul. 02, 2001 JEPRO
 #else
-			hIcon =	::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
+//			hIcon =	::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
+			hIcon=(HICON)::LoadImage(m_hInstance,MAKEINTRESOURCE(IDI_ICON_STD),IMAGE_ICON,16,16,0);	//Jul. 02, 2001 JEPRO
 #endif
 //From Here Jan. 12, 2001 JEPRO トレイアイコンにポイントするとバージョンno.が表示されるように修正
 //			TrayMessage( m_hWnd, NIM_ADD, 0,  hIcon, GSTR_APPNAME );
@@ -580,11 +582,13 @@ LRESULT CEditApp::DispatchEvent(
 //				::BringWindowToTop( hwndHtmlHelp );
 //			}
 
-			hwndHtmlHelp = ::HtmlHelp(
+			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+			hwndHtmlHelp = OpenHtmlHelp(
 				/*hwnd*/NULL/*hwndFrame*//*m_pShareData->m_hwndTray*/,
 				szHtmlHelpFile,
 				HH_DISPLAY_TOPIC,
-				(DWORD)0
+				(DWORD)0,
+				true
 			);
 
 			link.cbStruct		= sizeof(HH_AKLINK);
@@ -615,11 +619,13 @@ LRESULT CEditApp::DispatchEvent(
 //				::AttachThreadInput( ::GetCurrentThreadId(), dwTID, FALSE );
 //			}
 
-			hwndHtmlHelp = ::HtmlHelp(
+			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+			hwndHtmlHelp = OpenHtmlHelp(
 				/*hwnd*/NULL/*hwndFrame*//*m_pShareData->m_hwndTray*/,
 				szHtmlHelpFile,
 				HH_KEYWORD_LOOKUP,
-				(DWORD)&link
+				(DWORD)&link,
+				false
 			);
 			delete [] pszKey;
 		}
@@ -909,7 +915,7 @@ LRESULT CEditApp::DispatchEvent(
 					break;
 //				case IDM_EXITALL:
 				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
-					/* テキストエディタの全終了 */
+					/* サクラエディタの全終了 */
 					CEditApp::TerminateApplication();
 					break;
 				}
@@ -1084,7 +1090,7 @@ LRESULT CEditApp::DispatchEvent(
 					break;
 //				case IDM_EXITALL:
 				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
-					/* テキストエディタの全終了 */
+					/* サクラエディタの全終了 */
 					CEditApp::TerminateApplication();
 					break;
 				default:
@@ -1789,7 +1795,7 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* p
 
 
 
-/* テキストエディタの全終了 */
+/* サクラエディタの全終了 */
 void CEditApp::TerminateApplication( void )
 {
 	CShareData		cShareData;
