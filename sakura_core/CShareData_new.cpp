@@ -755,8 +755,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			if( m_pShareData->m_Types[i].m_nLineSpace < /* 1 */ 0 ){
 				m_pShareData->m_Types[i].m_nLineSpace = /* 1 */ 0;
 			}
-			if( m_pShareData->m_Types[i].m_nLineSpace > 16 ){
-				m_pShareData->m_Types[i].m_nLineSpace = 16;
+			if( m_pShareData->m_Types[i].m_nLineSpace > LINESPACE_MAX ){ // Feb. 18, 2003 genta Å‘å’l‚Ì’è”‰»
+				m_pShareData->m_Types[i].m_nLineSpace = LINESPACE_MAX;
 			}
 		}
 		cProfile.IOProfileData( bRead, pszSecName, "nLineSpace", REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nLineSpace, 0 );

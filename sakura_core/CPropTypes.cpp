@@ -931,8 +931,8 @@ BOOL CPropTypes::DispatchEvent_p1(
 			if( nVal < 0 ){
 				nVal = 0;
 			}
-			if( nVal > 16 ){
-				nVal = 16;
+			if( nVal > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
+				nVal = COLUMNSPACE_MAX;
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nVal, FALSE );
 			return TRUE;
@@ -954,8 +954,8 @@ BOOL CPropTypes::DispatchEvent_p1(
 				nVal = 0;
 			}
 //	To Here  Oct. 8, 2000
-			if( nVal > 16 ){
-				nVal = 16;
+			if( nVal > LINESPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
+				nVal = LINESPACE_MAX;
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nVal, FALSE );
 			return TRUE;
@@ -1270,8 +1270,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	if( m_Types.m_nColmSpace < 0 ){
 		m_Types.m_nColmSpace = 0;
 	}
-	if( m_Types.m_nColmSpace > 16 ){
-		m_Types.m_nColmSpace = 16;
+	if( m_Types.m_nColmSpace > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
+		m_Types.m_nColmSpace = COLUMNSPACE_MAX;
 	}
 
 	/* 行の隙間 */
@@ -1284,8 +1284,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		m_Types.m_nLineSpace = 0;
 	}
 //	To Here  Oct. 8, 2000
-	if( m_Types.m_nLineSpace > 16 ){
-		m_Types.m_nLineSpace = 16;
+	if( m_Types.m_nLineSpace > LINESPACE_MAX ){	// Feb. 18, 2003 genta 最大値の定数化
+		m_Types.m_nLineSpace = LINESPACE_MAX;
 	}
 
 	/* その他のインデント対象文字 */
