@@ -108,9 +108,4 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 	return TRUE;
 }
 
-int CPropCommon::InitDlg_PROP_Macro( HWND hwndDlg )
-{
-	
-}
-
 /*[EOF]*/
