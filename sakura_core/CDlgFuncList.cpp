@@ -98,6 +98,7 @@ CDlgFuncList::CDlgFuncList()
 	m_nSortCol = 0;				/* ソートする列番号 */
 	m_bLineNumIsCRLF = FALSE;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
+	m_nSortType = 0;
 	return;
 }
 
@@ -388,6 +389,22 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	}else{
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), SW_HIDE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), FALSE );
+	}
+	// 2002/11/1 frozen 項目のソート基準を設定するコンボボックスはブックマーク一覧の以外の時に表示する
+	// Nov. 5, 2002 genta ツリー表示の時だけソート基準コンボボックスを表示
+	if( m_nViewType == 1 ){
+		HWND hWnd_Combo_Sort = ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType );
+		::EnableWindow( hWnd_Combo_Sort , TRUE );
+		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
+		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("デフォルト")));
+		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("アルファベット順")));
+		::SendMessage( hWnd_Combo_Sort , CB_SETCURSEL, m_nSortType, 0L);
+		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_SHOW );
+	}
+	else {
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), FALSE );
+		::ShowWindow( GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), SW_HIDE );
+		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_HIDE );
 	}
 
 	return;
@@ -732,13 +749,12 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				//	追加文字列を全角にしたのでメモリもそれだけ必要
 				//	6 == strlen( "クラス" ), 1 == strlen( '\0' )
 
-				// 2002/10/28 frozen
+				// 2002/10/30 frozen
 				// bAddClass == true の場合の仕様変更
 				// 既存の項目は　「(クラス名)(半角スペース一個)(追加文字列)」
 				// となっているとみなし、szClassArr[k] が 「クラス名」と一致すれば、それを親ノードに設定。
-				// ただし、一致する項目が複数ある場合は最後の項目を親ノードにする。
+				// ただし、一致する項目が複数ある場合は最初の項目を親ノードにする。
 				// 一致しない場合は「(クラス名)(半角スペース一個)クラス」のノードを作成する。
-				HTREEITEM htiClass_match = NULL;
 				size_t nClassNameLen = strlen( szClassArr[k] );
 				for( ; NULL != htiClass ; htiClass = TreeView_GetNextSibling( hwndTree, htiClass ))
 				{
@@ -751,24 +767,23 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						if( 0 == strncmp( szClassArr[k],szLabel,nClassNameLen) )
 						{
 							if(sizeof(szLabel) < (nClassNameLen +1) )
-								htiClass_match = htiClass; // バッファ不足では無条件にマッチする
+								break;// バッファ不足では無条件にマッチする
 							else
 							{
 								if(bAddClass)
 								{
 									if(szLabel[nClassNameLen]==' ')
-										htiClass_match = htiClass;
+										break;
 								}
 								else
 								{
 									if(szLabel[nClassNameLen]=='\0')
-										htiClass_match = htiClass;
+										break;
 								}
 							}
 						}
 					}
 				}
-				htiClass = htiClass_match;
 //				pClassName = new char[ lstrlen( szClassArr[k] ) + 1 + 6 ];
 //				strcpy( pClassName, szClassArr[k] );
 //				if( bAddClass ){
@@ -789,16 +804,26 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				/* クラス名のアイテムが登録されていないので登録 */
 				if( NULL == htiClass ){
 					// 2002/10/28 frozen 上からここへ移動
-					pClassName = new char[ lstrlen( szClassArr[k] ) + 1 + 7 ]; // 2002/10/28 frozen 半角スペースの分追加して1+7に。
+					pClassName = new char[ lstrlen( szClassArr[k] ) + 1 + 9 ]; // 2002/10/28 frozen +9は追加する文字列の最大長（" 名前空間"が最大）
 					strcpy( pClassName, szClassArr[k] );
+
+					tvis.item.lParam = -1;
 					if( bAddClass )
-						strcat( pClassName, " クラス");// 2002/10/28 frozen 半角スペースを追加
+					{
+						if( pcFuncInfo->m_nInfo == 7 )
+						{
+							strcat( pClassName, " 名前空間" );
+							tvis.item.lParam = i;
+						}
+						else
+							strcat( pClassName, " クラス" );
+					}
 
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = TVI_LAST;
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
 					tvis.item.pszText = pClassName;
-					tvis.item.lParam = -1;
+
 					htiClass = TreeView_InsertItem( hwndTree, &tvis );
 					//	Jan. 04, 2001 genta
 					//	不要になったらさっさと削除
@@ -838,22 +863,19 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				htiClass = htiGlobal;
 			}
 		}
-		
-		pFuncName = new char[ strlen(pWork) + 1 + 9 ];	// 9 は追加する文字列の最大長 (" 名前空間")
+		pFuncName = new char[ strlen(pWork) + 1 + 7 ];	// +6 は追加する文字列の最大長
 		strcpy( pFuncName, pWork );
 
 		// 2002/10/27 frozen 追加文字列の種類を増やした
 		switch(pcFuncInfo->m_nInfo)
-		{
+		{// case 4以上の各追加文字列の最初にある半角スペースを省略することはできない。
 		case 1: strcat( pFuncName, "(宣言)" );break;
 		case 3: strcat( pFuncName, " クラス" );break;
 		case 4: strcat( pFuncName, " 構造体" );break;
 		case 5: strcat( pFuncName, " 列挙体" );break;
 		case 6: strcat( pFuncName, " 共用体" );break;
-		case 7: strcat( pFuncName, " 名前空間" );break;
+//		case 7: strcat( pFuncName, " 名前空間" );break;
 		};
-//		if( 1 == pcFuncInfo->m_nInfo ){
-//			strcat( pFuncName, "(宣言)" );
 //		}
 		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
 		tvis.hParent = htiClass;
@@ -1421,7 +1443,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		IDCANCEL,
 		IDC_BUTTON_HELP,
 		IDC_LIST1,
-		IDC_TREE1
+		IDC_TREE1// IDC_TREE1はIDC_LIST1の後でなければならない
 	};
 	int		nControls = sizeof( Controls ) / sizeof( Controls[0] );
 	int		fwSizeType;
@@ -1437,6 +1459,8 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	nWidth = LOWORD(lParam);	// width of client area
 	nHeight = HIWORD(lParam);	// height of client area
 
+	int nHeight_LIST1;	///< 2002/11/1 frozen　IDC_LIST1 の以前の高さ
+
 	nWork = 48;
 	for ( i = 0; i < nControls; ++i ){
 		hwndCtrl = ::GetDlgItem( m_hWnd, Controls[i] );
@@ -1451,22 +1475,71 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		::ScreenToClient( m_hWnd, &po );
 		rc.right = po.x;
 		rc.bottom  = po.y;
-		if( Controls[i] >= IDC_CHECK_bAutoCloseDlgFuncList ){
+		if( Controls[i] >= IDC_CHECK_bAutoCloseDlgFuncList){
 			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 31 /*- nWork*//*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		}else
-		if( Controls[i] != IDC_LIST1
-		 && Controls[i] != IDC_TREE1
-		){
+// 2002/11/1 fozen ここから
+		if( Controls[i] == IDC_LIST1){
+			nHeight_LIST1 = rc.bottom - rc.top;
+			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5/*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+		}else if(Controls[i] == IDC_TREE1){
+			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5 + (rc.bottom -rc.top) - nHeight_LIST1 /*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+//		if( Controls[i] != IDC_LIST1
+//		 && Controls[i] != IDC_TREE1
+//		){
+		}else{
 			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 6/*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 //			::InvalidateRect( hwndCtrl, NULL, TRUE );
-		}else{
-			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5/*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		}
+//		if( 
+//		}else{
+//			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5/*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+//		}
+// 2002/11/1 fozen ここまで
 		::InvalidateRect( hwndCtrl, NULL, TRUE );
 	}
 	return TRUE;
 }
+int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	if( lParam1< lParam2 )
+		return -1;
+	if( lParam1 > lParam2 )
+		return 1;
+	else
+		return 0;
+}
+BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
+{
+	int nSelect = ::SendMessage(hwndCtl,CB_GETCURSEL, 0, 0L);
+	switch(wID)
+	{
+	case IDC_COMBO_nSortType:
+		if( m_nSortType != nSelect )
+		{
+			m_nSortType = nSelect;
+			SortTree(::GetDlgItem( m_hWnd , IDC_TREE1),TVI_ROOT);
+		}
+		return TRUE;
+	};
+	return FALSE;
 
+}
+void  CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
+{
+	if( m_nSortType == 1 )
+		TreeView_SortChildren(hWndTree,htiParent,TRUE);
+	else
+	{
+		TVSORTCB sort;
+		sort.hParent =  htiParent;
+		sort.lpfnCompare = Compare_by_ItemData;
+		sort.lParam = 0;
+		TreeView_SortChildrenCB(hWndTree , &sort , TRUE);
+	}
+	for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem ))
+		SortTree(hWndTree,htiItem);
+}
 
 
 
