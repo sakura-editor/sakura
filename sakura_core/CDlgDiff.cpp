@@ -133,6 +133,15 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_DIFF_DST ), FALSE );
 		//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_DIFF_DST ), FALSE );
 		//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES ), TRUE );
+		{
+			//	Aug. 9, 2003 genta
+			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
+			HWND hwndList = GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES );
+			if( ::SendMessage( hwndList, LB_GETCURSEL, 0, 0 ) == LB_ERR )
+			{
+				::SendMessage( hwndList, LB_SETCURSEL, 0 /*先頭アイテム*/, 0 );
+			}
+		}
 		return TRUE;
 
 	case IDC_RADIO_DIFF_FILE1:
