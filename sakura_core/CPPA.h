@@ -51,7 +51,7 @@ public:
 			sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
 			return m_szMsg;
 		}
-		return NULL;
+		return "";
 	}
 
 	//! PPAメッセージを取得する

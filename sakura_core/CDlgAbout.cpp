@@ -14,11 +14,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "CDlgAbout.h"
-//#include <windows.h>
-//#include <stdio.h>
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
-//#include "debug.h"
-//#include "etc_uty.h"
+
+#include "CBREGEXP.h"
+#include "CPPA.h"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -33,10 +32,6 @@ const DWORD p_helpids[] = {	//12900
 //	IDC_STATIC,				-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
-
-//	Nov. 7, 2000 genta URLとして表示する文字列
-//const char orgURL[] = "http://hp.vector.co.jp/authors/VA016528/";
-//const char urURL[] = "http://sakura-editor.sourceforge.net/";
 
 //	From Here Feb. 7, 2002 genta
 #if defined(__BORLANDC__)
@@ -172,7 +167,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( desclen > 0 ){
 		::SetDlgItemText( m_hWnd, IDC_EDIT_ABOUT, szMsg );
 	}
-
 	//	To Here Jun. 8, 2001 genta
 
 	/* 基底クラスメンバ */

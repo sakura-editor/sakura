@@ -4144,10 +4144,15 @@ BOOL CEditView::Command_FILESAVE( void )
 		return TRUE;
 	}
 
-	if( m_pcEditDoc->SaveFile( m_pcEditDoc->m_szFilePath ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
-		/* キャレットの行桁位置を表示する */
-		DrawCaretPosInfo();
-		return TRUE;
+	if( m_pcEditDoc->m_szFilePath[0] == '\0' ){
+		Command_FILESAVEAS_DIALOG();
+	}
+	else {
+		if( m_pcEditDoc->SaveFile( m_pcEditDoc->m_szFilePath ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
+			/* キャレットの行桁位置を表示する */
+			DrawCaretPosInfo();
+			return TRUE;
+		}
 	}
 	return FALSE;
 }
@@ -4521,7 +4526,9 @@ void CEditView::Command_FONT( void )
 	hwndFrame = ::GetParent( m_hwndParent );
 
 	/* フォント設定ダイアログ */
-	if( m_pcEditDoc->SelectFont( &(m_pShareData->m_Common.m_lf) ) ){
+	LOGFONT cLogfont = m_pShareData->m_Common.m_lf;
+	if( m_pcEditDoc->SelectFont( &cLogfont )  ){
+		m_pShareData->m_Common.m_lf = cLogfont;
 
 //		/* 変更フラグ フォント */
 //		m_pShareData->m_bFontModify = TRUE;
@@ -5304,7 +5311,7 @@ void CEditView::Command_HELP_CONTENTS( void )
 
 // From Here 2001.12.03 hor
 //	WinNT 4 ではなにも表示されなかったのでエラーの場合は HELP_CONTENTS 表示するように変更
-	if( ::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" )){
+	if( ::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" ) == 0){
 		::WinHelp( m_hWnd, szHelp, HELP_CONTENTS , 0 );	//[目次]タブの表示
 	}
 // To Here 2001.12.03 hor

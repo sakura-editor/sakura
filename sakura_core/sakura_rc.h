@@ -499,6 +499,7 @@
 #define IDC_BUTTON_TYPEOPENHELP         1422
 #define IDC_BUTTON_TYPEOPENEXTHTMLHELP  1423
 #define IDC_CHECK_TYPEHTMLHELPISSINGLE  1424
+#define IDC_LIST_USEDLL                 1425
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
@@ -535,7 +536,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        221
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1425
+#define _APS_NEXT_CONTROL_VALUE         1426
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -585,6 +585,67 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 	return FALSE;
 }
 
+/*! 
+	ルーラーのキャレットを再描画	2002.02.25 Add By KK
+	@param hdc [in] デバイスコンテキスト
+	DispRulerの内容を元に作成
+*/
+inline void CEditView::DrawRulerCaret( HDC hdc )
+{
+	HBRUSH		hBrush;
+	HBRUSH		hBrushOld;
+	HRGN		hRgn;
+	RECT		rc;
+	int			nROP_Old;
+
+	if( m_nViewLeftCol <= m_nCaretPosX
+	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
+	){
+		if (m_nOldCaretPosX == m_nCaretPosX && m_nCaretWidth == m_nOldCaretWidth) {
+			//前描画した位置画同じ かつ ルーラーのキャレット幅が同じ 
+			return;
+		}
+
+		rc.left = m_nViewAlignLeft + ( m_nOldCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+		rc.top = 0;
+		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
+
+		//元位置をクリア m_nOldCaretWidth
+		if( 0 == m_nOldCaretWidth ){
+			hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
+		}else{
+			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
+		}
+		nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
+		hRgn = ::CreateRectRgnIndirect( &rc );
+		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
+		::PaintRgn( hdc, hRgn );
+		::DeleteObject( hRgn );
+		::SelectObject( hdc, hBrushOld );
+		::DeleteObject( hBrush );
+
+		if( 0 == m_nCaretWidth ){
+			hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
+		}else{
+			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
+		}
+
+		//新しい位置で描画
+		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+
+		hRgn = ::CreateRectRgnIndirect( &rc );
+		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
+		::SelectObject( hdc, hBrush );
+		::PaintRgn( hdc, hRgn );
+
+		::SelectObject( hdc, hBrushOld );
+		::DeleteObject( hRgn );
+		::DeleteObject( hBrush );
+		::SetROP2( hdc, nROP_Old );
+	}
+}
 
 
 
@@ -607,148 +668,140 @@ void CEditView::DispRuler( HDC hdc )
 		return;
 	}
 
-	/* 描画処理 */
-	HBRUSH		hBrush;
-	HBRUSH		hBrushOld;
-	HRGN		hRgn;
-	RECT		rc;
-	int			i;
-	int			nX;
-	int			nY;
-	LOGFONT		lf;
-	HFONT		hFont;
-	HFONT		hFontOld;
-	char		szColm[32];
-//	SIZE		size;
-	HPEN		hPen;
-	HPEN		hPenOld;
-	int			nROP_Old;
-	COLORREF	colTextOld;
-	int			nToX;
-	/* ルーラーとテキストの間の余白 */
-/**
-	hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-	rc.left = 0;
-	rc.top = m_nViewAlignTop - m_nTopYohaku;
-	rc.right = m_nViewAlignLeft + m_nViewCx;
-	rc.bottom = m_nViewAlignTop;
-	::FillRect( hdc, &rc, hBrush );
-	::DeleteObject( hBrush );
-**/
-
-
-	/* LOGFONTの初期化 */
-	memset( &lf, 0, sizeof(LOGFONT) );
-	lf.lfHeight			= -12;
-	lf.lfWidth			= 5/*0*/;
-	lf.lfEscapement		= 0;
-	lf.lfOrientation	= 0;
-	lf.lfWeight			= 400;
-	lf.lfItalic			= 0;
-	lf.lfUnderline		= 0;
-	lf.lfStrikeOut		= 0;
-	lf.lfCharSet		= 0;
-	lf.lfOutPrecision	= 3;
-	lf.lfClipPrecision	= 2;
-	lf.lfQuality		= 1;
-	lf.lfPitchAndFamily	= 34;
-	strcpy( lf.lfFaceName, "Arial" );
-	hFont = ::CreateFontIndirect( &lf );
-	hFontOld = (HFONT)::SelectObject( hdc, hFont );
-	::SetBkMode( hdc, TRANSPARENT );
-
-	hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
-	rc.left = 0;
-	rc.top = 0;
-	rc.right = m_nViewAlignLeft + m_nViewCx;
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku;
-	::FillRect( hdc, &rc, hBrush );
-	::DeleteObject( hBrush );
-
-	nX = m_nViewAlignLeft;
-	nY = m_nViewAlignTop - m_nTopYohaku - 2;
-
-	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
-	hPenOld = (HPEN)::SelectObject( hdc, hPen );
-	colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
-
-
-	nToX = m_nViewAlignLeft + m_nViewCx;
-
-	nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	if( nToX > m_nViewAlignLeft + m_nViewCx ){
-		nToX = m_nViewAlignLeft + m_nViewCx;
+	// 2002.02.25 Add By KK ルーラー全体を描き直す必要がない場合は、ルーラ上のキャレットのみ描きなおす 
+	if ( !m_bRedrawRuler ) {
+		DrawRulerCaret( hdc );
 	}
+	else {
+		/* 描画処理 */
+		HBRUSH		hBrush;
+		HBRUSH		hBrushOld;
+		HRGN		hRgn;
+		RECT		rc;
+		int			i;
+		int			nX;
+		int			nY;
+		LOGFONT		lf;
+		HFONT		hFont;
+ 		HFONT		hFontOld;
+		char		szColm[32];
 
-	::MoveToEx( hdc, m_nViewAlignLeft, nY + 1, NULL );
-	::LineTo( hdc, nToX/*m_nViewAlignLeft + m_nViewCx*/, nY + 1 );
+		HPEN		hPen;
+		HPEN		hPenOld;
+		int			nROP_Old;
+		COLORREF	colTextOld;
+		int			nToX;
 
+		/* LOGFONTの初期化 */
+		memset( &lf, 0, sizeof(LOGFONT) );
+		lf.lfHeight			= -12;
+		lf.lfWidth			= 5/*0*/;
+		lf.lfEscapement		= 0;
+		lf.lfOrientation	= 0;
+		lf.lfWeight			= 400;
+		lf.lfItalic			= 0;
+		lf.lfUnderline		= 0;
+		lf.lfStrikeOut		= 0;
+		lf.lfCharSet		= 0;
+		lf.lfOutPrecision	= 3;
+		lf.lfClipPrecision	= 2;
+		lf.lfQuality		= 1;
+		lf.lfPitchAndFamily	= 34;
+		strcpy( lf.lfFaceName, "Arial" );
+		hFont = ::CreateFontIndirect( &lf );
+		hFontOld = (HFONT)::SelectObject( hdc, hFont );
+		::SetBkMode( hdc, TRANSPARENT );
 
-	for( i = m_nViewLeftCol;
-		i <= m_nViewLeftCol + m_nViewColNum + 1
-	 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
-		i++
-	){
-		if( i == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-			::MoveToEx( hdc, nX, nY, NULL );
-			::LineTo( hdc, nX, 0/*nY - 8*/ );
-		}
-		if( 0 == ( (i) % 10 ) ){
-			::MoveToEx( hdc, nX, nY, NULL );
-			::LineTo( hdc, nX, 0/*nY - 8*/ );
-			itoa( (i) / 10, szColm, 10 );
-			::TextOut( hdc, nX + 2 + 0, -1 + 0, szColm, lstrlen( szColm ) );
-		}else
-		if( 0 == ( (i) % 5 ) ){
-			::MoveToEx( hdc, nX, nY, NULL );
-			::LineTo( hdc, nX, nY - 6 );
-		}else{
-			::MoveToEx( hdc, nX, nY, NULL );
-			::LineTo( hdc, nX, nY - 3 );
-		}
-		nX += ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	}
-	::SetTextColor( hdc, colTextOld );
-	::SelectObject( hdc, hPenOld );
-	::DeleteObject( hPen );
-
-	if( m_nViewLeftCol <= m_nCaretPosX
-	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
-	){
-		if( 0 == m_nCaretWidth ){
-			hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
-		}else{
-			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
-		}
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
+		rc.left = 0;
 		rc.top = 0;
-		//	Aug. 18, 2000 あお
-		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
-		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
-		nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
-		hRgn = ::CreateRectRgnIndirect( &rc );
-		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
-		::PaintRgn( hdc, hRgn );
-		::SelectObject( hdc, hBrushOld );
-		::DeleteObject( hRgn );
-//		::FillRect( hdc, &rc, hBrush );
+		rc.right = m_nViewAlignLeft + m_nViewCx;
+		rc.bottom = m_nViewAlignTop - m_nTopYohaku;
+		::FillRect( hdc, &rc, hBrush );
 		::DeleteObject( hBrush );
-		::SetROP2( hdc, nROP_Old );
+
+		nX = m_nViewAlignLeft;
+		nY = m_nViewAlignTop - m_nTopYohaku - 2;
+
+		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+		hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+
+
+		nToX = m_nViewAlignLeft + m_nViewCx;
+
+		nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		if( nToX > m_nViewAlignLeft + m_nViewCx ){
+			nToX = m_nViewAlignLeft + m_nViewCx;
+		}
+		::MoveToEx( hdc, m_nViewAlignLeft, nY + 1, NULL );
+		::LineTo( hdc, nToX/*m_nViewAlignLeft + m_nViewCx*/, nY + 1 );
+
+
+		for( i = m_nViewLeftCol;
+			i <= m_nViewLeftCol + m_nViewColNum + 1
+		 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+			i++
+		){
+			if( i == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+				::MoveToEx( hdc, nX, nY, NULL );
+				::LineTo( hdc, nX, 0/*nY - 8*/ );
+			}
+			if( 0 == ( (i) % 10 ) ){
+				::MoveToEx( hdc, nX, nY, NULL );
+				::LineTo( hdc, nX, 0/*nY - 8*/ );
+				itoa( (i) / 10, szColm, 10 );
+				::TextOut( hdc, nX + 2 + 0, -1 + 0, szColm, lstrlen( szColm ) );
+			}else
+			if( 0 == ( (i) % 5 ) ){
+				::MoveToEx( hdc, nX, nY, NULL );
+				::LineTo( hdc, nX, nY - 6 );
+			}else{
+				::MoveToEx( hdc, nX, nY, NULL );
+				::LineTo( hdc, nX, nY - 3 );
+			}
+			nX += ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		}
+		::SetTextColor( hdc, colTextOld );
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+
+		/* キャレット描画（現在の位置に描画するだけ。古い位置はすでに消されている） */
+		if( m_nViewLeftCol <= m_nCaretPosX
+		 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
+		){
+			//	Aug. 18, 2000 あお
+			rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+			rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+			rc.top = 0;
+			rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
+
+			if( 0 == m_nCaretWidth ){
+				hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
+			}else{
+				hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
+			}
+			nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
+			hRgn = ::CreateRectRgnIndirect( &rc );
+			hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
+			::PaintRgn( hdc, hRgn );
+
+			::SelectObject( hdc, hBrushOld );
+			::DeleteObject( hRgn );
+			::DeleteObject( hBrush );
+			::SetROP2( hdc, nROP_Old );
+		}
+
+		::SelectObject( hdc, hFontOld );
+		::DeleteObject( hFont );
+
+		m_bRedrawRuler = false;	//m_bRedrawRuler = true で指定されるまで、ルーラのキャレットのみを再描画 2002.02.25 Add By KK
 	}
-/***
-	rc.left = 0;
-	rc.top = 0;
-	rc.right = m_nViewAlignLeft + m_nViewCx;
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku;
-	CSplitBoxWnd::Draw3dRect(
-		hdc,
-		rc.left, rc.top, rc.right, rc.bottom,
-		::GetSysColor( COLOR_3DHILIGHT ),
-		::GetSysColor( COLOR_3DSHADOW )
-	);
-***/
-	::SelectObject( hdc, hFontOld );
-	::DeleteObject( hFont );
+
+	//描画したルーラーのキャレット位置・幅を保存 2002.02.25 Add By KK
+	m_nOldCaretPosX = m_nCaretPosX;
+	m_nOldCaretWidth = m_nCaretWidth ;
+
 	return;
 }
 
