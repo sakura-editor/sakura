@@ -487,6 +487,7 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	}
 	// to here  2002.04.10 minfu
 	
+	m_bCaretShowFlag = false;
 	return;
 }
 
@@ -648,7 +649,7 @@ BOOL CEditView::Create(
 		(LPVOID) NULL						/* pointer not needed */
 	);
 	si.cbSize = sizeof( si );
-	si.fMask = SIF_ALL;
+	si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 	si.nMin  = 0;
 	si.nMax  = 29;
 	si.nPage = 10;
@@ -675,7 +676,7 @@ BOOL CEditView::Create(
 			(LPVOID) NULL						/* pointer not needed */
 		);
 		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL;
+		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
 		si.nMax  = 29;
 		si.nPage = 10;
@@ -1342,17 +1343,21 @@ void CEditView::ShowEditCaret( void )
 		}else{
 			/* キャレットはあるし、大きさも変わっていない場合 */
 			/* キャレットを隠す */
-			::HideCaret( m_hWnd );
-
+			if (m_bCaretShowFlag == true){
+				::HideCaret( m_hWnd );
+				m_bCaretShowFlag = false;
+			}
 		}
 	}
 	/* キャレットの位置を調整 */
-	::SetCaretPos(
-		m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
-		m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight
-	);
-	/* キャレットの表示 */
-	::ShowCaret( m_hWnd );
+	int nPosX = m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	int nPosY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight;
+	::SetCaretPos( nPosX, nPosY );
+	if ( m_nViewAlignLeft <= nPosX && m_nViewAlignTop <= nPosY ){
+		/* キャレットの表示 */
+		::ShowCaret( m_hWnd );
+		m_bCaretShowFlag = true;
+	}
 
 	m_nCaretWidth = nCaretWidth;
 	m_nCaretHeight = nCaretHeight;	/* キャレットの高さ */
@@ -1389,7 +1394,7 @@ void CEditView::OnSetFocus( void )
 
 	ShowEditCaret();
 
-	SetIMECompFormPos();
+//	SetIMECompFormPos();	YAZAKI ShowEditCaretで作業済み
 	SetIMECompFormFont();
 
 	/* ルーラのカーソルをグレーから黒に変更する */
@@ -2584,7 +2589,7 @@ void CEditView::AdjustScrollBars( void )
 			++nVScrollRate;
 		}
 		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL;
+		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
 		si.nMax  = nAllLines / nVScrollRate - 1;	/* 全行数 */
 		si.nPage = m_nViewRowNum / nVScrollRate;	/* 表示域の行数 */
@@ -2595,7 +2600,7 @@ void CEditView::AdjustScrollBars( void )
 	}
 	if( NULL != m_hwndHScrollBar ){
 		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL;
+		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 
 //@@		::GetScrollInfo( m_hwndHScrollBar, SB_CTL, &si );
 //@@		if( si.nMax == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - 1
@@ -2604,8 +2609,8 @@ void CEditView::AdjustScrollBars( void )
 //@@	   /*&& si.nTrackPos == 1*/ ){
 //@@		}else{
 			/* 水平スクロールバー */
-			si.cbSize = sizeof( si );
-			si.fMask = SIF_ALL;
+//			si.cbSize = sizeof( si );
+//			si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 			si.nMin  = 0;
 			si.nMax  = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - 1;	/* 折り返し文字数 */
 			si.nPage = m_nViewColNum;		/* 表示域の桁数 */
@@ -5728,7 +5733,25 @@ void CEditView::DrawCaretPosInfo( void )
 
 	int nPosX, nPosY;
 	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		nPosX = m_nCaretPosX_PHY + 1;
+		if (pcLayout && pcLayout->m_nOffset){
+			char* pLine = pcLayout->m_pCDocLine->GetPtr();
+			int nLineLen = m_nCaretPosX_PHY;	//	 - pcLayout->m_nOffset;
+			nPosX = 0;
+			int i;
+			for( i = 0; i < nLineLen; ++i ){
+				int nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+				if ( nCharChars == 1 && pLine[i] == TAB ){
+					nPosX += m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+				}
+				else {
+					nPosX += nCharChars;
+				}
+			}
+			nPosX ++;	//	補正
+		}
+		else {
+			nPosX = m_nCaretPosX + 1;
+		}
 		nPosY = m_nCaretPosY_PHY + 1;
 	}
 	else {

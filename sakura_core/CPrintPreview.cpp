@@ -1124,7 +1124,7 @@ void CPrintPreview::InitPreviewScrollBar( void )
 	if( NULL != m_hwndVScrollBar ){
 		/* 垂直スクロールバー */
 		si.cbSize = sizeof( SCROLLINFO );
-		si.fMask = SIF_ALL;
+		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
 		if( m_nPreview_ViewHeight <= cy - nToolBarHeight ){
 			si.nMax  = cy - nToolBarHeight;			/* 全幅 */
@@ -1144,10 +1144,10 @@ void CPrintPreview::InitPreviewScrollBar( void )
 	/* 印刷プレビュー 水平スクロールバーウィンドウハンドル */
 	if( NULL != m_hwndHScrollBar ){
 		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL;
+		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		/* 水平スクロールバー */
-		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL;
+//		si.cbSize = sizeof( si );
+//		si.fMask = SIF_ALL;
 		si.nMin  = 0;
 		if( m_nPreview_ViewWidth <= cx ){
 			si.nMax  = cx;							/* 全幅 */
@@ -1392,7 +1392,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	);
 	SCROLLINFO	si;
 	si.cbSize = sizeof( si );
-	si.fMask = SIF_ALL;
+	si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 	si.nMin	 = 0;
 	si.nMax	 = 29;
 	si.nPage = 10;
@@ -1417,7 +1417,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		(LPVOID) NULL						/* pointer not needed			*/
 	);
 	si.cbSize = sizeof( si );
-	si.fMask = SIF_ALL;
+	si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 	si.nMin	 = 0;
 	si.nMax	 = 29;
 	si.nPage = 10;

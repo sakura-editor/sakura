@@ -47,6 +47,8 @@
 #include "CDocLine.h"// 2002/2/10 aroka ヘッダ整理
 #include "CMemory.h"// 2002/2/10 aroka
 
+#include "CFileWrite.h" //2000/05/22 Frozen
+
 
 
 /* 文字種類識別子 */
@@ -837,28 +839,40 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 
 	nRetVal = TRUE;
 
-	//<< 2002/04/13 Azumaiya
-	//  WriteFile を直に使ってしまうと、書き込み速度が劇的に遅くなるので、やはり、
-	// WriteFile をラッピングしてある標準関数に戻す。
-	// ファイル属性を取得する。
-	DWORD dwFileAttribute;
-	dwFileAttribute = ::GetFileAttributes(pszPath);
-	if ( dwFileAttribute != (DWORD)-1 )
-	{
-		// 読取専用属性だけ残す(ノーマル属性が付いていたらそれも残す)。
-		BOOL bRes = ::SetFileAttributes(pszPath, dwFileAttribute & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_NORMAL));
-	}
-	else
-	{
-		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;	//@@@ 2002.04.15 MIK
-	}
-	//>> 2002/04/13 Azumaiya
+// 2002/05/22 Frozen　ここから削除（CFileWrite_Cのコンストラクタへ移動）----
+// CFileWriteクラスで代用
+//
+//	//<< 2002/04/13 Azumaiya
+//	//  WriteFile を直に使ってしまうと、書き込み速度が劇的に遅くなるので、やはり、
+//	// WriteFile をラッピングしてある標準関数に戻す。
+//	// ファイル属性を取得する。
+//	DWORD dwFileAttribute;
+//	dwFileAttribute = ::GetFileAttributes(pszPath);
+//	if ( dwFileAttribute != (DWORD)-1 )
+//	{
+//		// 読取専用属性だけ残す(ノーマル属性が付いていたらそれも残す)。
+//		BOOL bRes = ::SetFileAttributes(pszPath, dwFileAttribute & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_NORMAL));
+//	}
+//	else
+//	{
+//		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;	//@@@ 2002.04.15 MIK
+//	}
+//	//>> 2002/04/13 Azumaiya
+//
+//
+//
+//	///* ファイルを書き込み用にオープンする */
+//// Oct 6, 2000 ao
+///* ファイル出力にstream を使うようにする */
+//	// 改行コードを勝手に制御されない様、バイナリモードで開く
+//	FILE *sFile= fopen(pszPath,"wb"); /*add*/
+//
+//	2002/05/22 Frozen ここまで削除-----------------------------
 
-	///* ファイルを書き込み用にオープンする */
-// Oct 6, 2000 ao
-/* ファイル出力にstream を使うようにする */
-	// 改行コードを勝手に制御されない様、バイナリモードで開く
-	FILE *sFile= fopen(pszPath,"wb"); /*add*/
+	try
+	{
+	{//この括弧に対応する閉じ括弧でfileのデストラクタが呼び出され、ファイルが閉じられます。 
+		CFileWrite file(pszPath);// 2002/05/22 Frozen
 
 	///* ファイルを書き込み用にオープンする */
 //-	hFile = _lopen( pszPath, OF_WRITE );
@@ -868,34 +882,43 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 //-	}
 //-	hFile = _lcreat(pszPath, 0);
 //-	if( HFILE_ERROR == hFile ){
-	if( !sFile ){ /*add*/
-//		MYTRACE( "file create error %s\n", pszPath );
-		::MYMESSAGEBOX(
-			hWndParent,
-			MB_OK | MB_ICONSTOP,
-			GSTR_APPNAME,
-			"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
-			pszPath
-		 );
-		nRetVal = FALSE;
-		//<< 2002/04/13 Azumaiya
-		if ( dwFileAttribute != (DWORD)-1 )
-		{
-			// ファイル属性を元に戻す。
-			::SetFileAttributes(pszPath, dwFileAttribute);
-		}
-		//>> 2002/04/13 Azumaiya
-		goto _RETURN_;
-	}
+
+
+
+//	2002/05/22 Frozen ファイルのオープンに失敗した場合は例外が起きるようにしたためここから削除----
+//	代わりにここにかかれている文の一部をcatch節へ移動
+//
+//	if( !sFile ){ /*add*/
+////		MYTRACE( "file create error %s\n", pszPath );
+//		::MYMESSAGEBOX(
+//			hWndParent,
+//			MB_OK | MB_ICONSTOP,
+//			GSTR_APPNAME,
+//			"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
+//			pszPath
+//		 );
+//		nRetVal = FALSE;
+//		//<< 2002/04/13 Azumaiya
+//		if ( dwFileAttribute != (DWORD)-1 )
+//		{
+//			// ファイル属性を元に戻す。
+//			::SetFileAttributes(pszPath, dwFileAttribute);
+//		}
+//		//>> 2002/04/13 Azumaiya
+//		goto _RETURN_;
+//	}
+//
+//　2002/05/22 Frozen ここまで削除
 
 	switch( nCharCode ){
 	case CODE_UNICODE:
-//-		if( HFILE_ERROR == _lwrite( hFile, "\xff\xfe", 2 ) ){
-		if( fwrite( "\xff\xfe", sizeof( char ), 2, sFile ) < 2 ){ /* add */
-//			MYTRACE( "file write error %s\n", pszPath );
-			nRetVal = FALSE;
-			goto _CLOSEFILE_;
-		}
+		file.Write("\xff\xfe",sizeof(char)*2);// 2002/05/22 breakの次の}までをこの一行で置き換え
+////-		if( HFILE_ERROR == _lwrite( hFile, "\xff\xfe", 2 ) ){
+//		if( fwrite( "\xff\xfe", sizeof( char ), 2, sFile ) < 2 ){ /* add */
+////			MYTRACE( "file write error %s\n", pszPath );
+//			nRetVal = FALSE;
+//			goto _CLOSEFILE_;
+//		}
 		break;
 	}
 
@@ -1019,39 +1042,48 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 // 2002/05/09 Frozen ここまで削除
 
 		}
-		if( 0 < cmemBuf.GetLength() ){
-//-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
-			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
-					< (size_t)cmemBuf.GetLength() ){ /* add */
-//				MYTRACE( "file write error %s\n", pszPath );
-				nRetVal = FALSE;
-				goto _CLOSEFILE_;
-			}
-		}
+		if( 0 < cmemBuf.GetLength() )//{
+			file.Write(cmemBuf.GetPtr(),sizeof(char)*cmemBuf.GetLength());//2002/05/22 Frozen gotoの次の}までをこの一行で置き換え
+////-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
+//			if( fwrite( cmemBuf.GetPtr(), sizeof( char ), cmemBuf. GetLength(), sFile ) /* add */
+//					< (size_t)cmemBuf.GetLength() ){ /* add */
+////				MYTRACE( "file write error %s\n", pszPath );
+//				nRetVal = FALSE;
+//				goto _CLOSEFILE_;
+//			}
+//		}
 
 
 //		pLine = GetNextLinrStr( &nLineLen );
 		pCDocLine = pCDocLine->m_pNext;
-	}
-_CLOSEFILE_:;
-//-	_lclose( hFile );
-	fflush( sFile );/* add */
-	fclose( sFile );/* add */
-	//<< 2002/04/13 Azumaiya
-	// ファイル属性を元に戻す。
-	::SetFileAttributes(pszPath, dwFileAttribute);
-	//>> 2002/04/13 Azumaiya
 
+	}
+	}//この括弧でCFileWriteのデストラクタが呼び出され、ファイルが閉じられます。
+
+// 2002/05/22 Frozen ここから削除（同様の処理はCFileWriteのデストラクタで代わりに行っています）------
+//
+//_CLOSEFILE_:;
+////-	_lclose( hFile );
+//	fflush( sFile );/* add */
+//	fclose( sFile );/* add */
+//	//<< 2002/04/13 Azumaiya
+//	// ファイル属性を元に戻す。
+//	::SetFileAttributes(pszPath, dwFileAttribute);
+//	//>> 2002/04/13 Azumaiya
+//
 // Oct 6, 2000 ao end
 /* ファイル出力に関する変更はここまで。
 	この後変更後のファイル情報を開くためにファイルアクセスしているが、ここまで無理に変更する必要はないでしょう。*/
+
+// 2002/05/22 Frozen　ここまで削除---------------------------------------------------------
+
 
 	/* 更新後のファイル時刻の取得
 	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
 	 * されないことがある。しかたがないのでいったんクローズして再オープ
 	 * ンして時刻を取得する。
 	 */
-	dwFileAttribute = ::GetFileAttributes(pszPath);
+	DWORD dwFileAttribute = ::GetFileAttributes(pszPath);
 	if ( dwFileAttribute == (DWORD)-1 )
 	{
 		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;
@@ -1072,8 +1104,23 @@ _CLOSEFILE_:;
 		::CloseHandle(hFile);
 	}
 
+	}
+	catch(CError_FileOpen)
+	{
+		::MYMESSAGEBOX(
+			hWndParent,
+			MB_OK | MB_ICONSTOP,
+			GSTR_APPNAME,
+			"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
+			pszPath);
+		nRetVal = FALSE;
+	}
+	catch(CError_FileWrite)
+	{
+		nRetVal = FALSE;
+	}
 
-_RETURN_:;
+//_RETURN_:; 2002/05/22 Frozen 削除（例外処理を使用するのでgoto用のラベルは使用しない）
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 		/* 処理中のユーザー操作を可能にする */

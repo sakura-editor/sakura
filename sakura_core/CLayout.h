@@ -48,9 +48,9 @@ public:
 	void DUMP( void );
 	
 	/* m_nOffsetで補正したあとの文字列を得る */
-	char*	GetPtr(){	return m_pCDocLine->m_pLine->GetPtr() + m_nOffset;	};
-	int		GetLengthWithEOL(){	return m_nLength;	};	//	ただしEOLは常に1文字とカウント？？
-	int		GetLengthWithoutEOL(){	return m_nLength - (m_cEol.GetLen() ? 1 : 0);	};
+	char*	GetPtr() const {	return m_pCDocLine->m_pLine->GetPtr() + m_nOffset;	};
+	int		GetLengthWithEOL() const {	return m_nLength;	};	//	ただしEOLは常に1文字とカウント？？
+	int		GetLengthWithoutEOL() const {	return m_nLength - (m_cEol.GetLen() ? 1 : 0);	};
 
 public:
 	CLayout*		m_pPrev;

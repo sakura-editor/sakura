@@ -193,7 +193,9 @@ public: /* テスト用にアクセス属性を変更 */
 	int				m_nCharCode;				/* 文字コード種別 */
 
 	//	May 15, 2000 genta
+protected:
 	CEOL 			m_cNewLineCode;				//	Enter押下時に挿入する改行コード種別
+public:
 	CEOL			m_cSaveLineCode;			//	保存時の改行コード種別（EOL_NONE:変換なし）
 
 

@@ -365,6 +365,9 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		return 0;
 	}
 
+	if( GetActiveWindow() != m_hwndParent ) {	//	2002/06/02 MIK
+		return 0;
+	}
 
 	int			nIdx;
 //	int			nFuncId;

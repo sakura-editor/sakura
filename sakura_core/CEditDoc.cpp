@@ -755,8 +755,10 @@ BOOL CEditDoc::FileRead(
 		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLineInfo( 0 );
 		if( pFirstlineinfo != NULL ){
 			enumEOLType t = (enumEOLType)pFirstlineinfo->m_cEol;
-			if( t != EOL_NONE && t != EOL_UNKNOWN )
+			if( t != EOL_NONE && t != EOL_UNKNOWN ){
 				SetNewLineCode( t );
+				m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+			}
 		}
 	}
 
