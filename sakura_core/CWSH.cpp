@@ -532,6 +532,40 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 			Result->bstrVal = SysAllocString(FileName);
 		}
 		break;
+	//	From Here Oct. 19, 2002 genta
+	case F_GETSELECTED:
+		if(Result != NULL)
+		{
+			CMemory cMem;
+			View->GetCurrentTextForSearch( cMem );
+			wchar_t* buf = new wchar_t[ cMem.GetLength() + 1 ];
+			if( MultiByteToWideChar(CP_ACP, 0, cMem.GetPtr(), cMem.GetLength() + 1,
+				buf, cMem.GetLength() + 1 ) == 0 ){
+				switch( GetLastError()){
+				case ERROR_INSUFFICIENT_BUFFER:
+					::MessageBox( NULL, "ERROR_INSUFFICIENT_BUFFER", "WSH: GetSelectedString", MB_OK );
+					break;
+				case ERROR_INVALID_FLAGS:
+					::MessageBox( NULL, "ERROR_INVALID_FLAGS", "WSH: GetSelectedString", MB_OK );
+					break;
+				case ERROR_INVALID_PARAMETER:
+					::MessageBox( NULL, "ERROR_INVALID_PARAMETER", "WSH: GetSelectedString", MB_OK );
+					break;
+				case ERROR_NO_UNICODE_TRANSLATION:
+					::MessageBox( NULL, "ERROR_NO_UNICODE_TRANSLATION", "WSH: GetSelectedString", MB_OK );
+					break;
+				default:
+					::MessageBox( NULL, "Other", "WSH: GetSelectedString", MB_OK );
+					break;
+				}
+			}
+
+			Result->vt = VT_BSTR;
+			Result->bstrVal = SysAllocString(buf);
+			delete [] buf;
+		}
+		break;
+	//	To Here Oct. 19, 2002 genta
 	default:
 		int ArgCount = Arguments->cArgs;
 		if(ArgCount > 4) ArgCount = 4;

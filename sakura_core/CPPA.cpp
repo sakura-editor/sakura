@@ -265,6 +265,7 @@ void __stdcall CPPA::stdStrFunc(
 	char** ResultValue)
 {
 	NEVER_USED_PARAM(FuncName);
+	static CMemory cMem;
 
 	*Err_CD = 0;
 	switch ( Index ){
@@ -272,5 +273,12 @@ void __stdcall CPPA::stdStrFunc(
 		strcpy(g_ResultStr, m_pcEditView->m_pcEditDoc->GetFilePath());
 		*ResultValue = g_ResultStr;
 		break;
+
+	//	From Here Oct. 19, 2002 genta
+	case F_GETSELECTED:	
+		m_pcEditView->GetCurrentTextForSearch( cMem );
+		*ResultValue = cMem.GetPtr();
+		break;
+	//	To Here Oct. 19, 2002 genta
 	}
 }
