@@ -67,6 +67,7 @@ protected:
 	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTree();					/* ツリーコントロールの初期化：汎用品 */
+	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 
 	// 2002/11/1 frozen 
 	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ツリービューの項目をソートする（ソート基準はm_nSortTypeを使用）

@@ -704,6 +704,12 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 //!	Visual Basic関数リスト作成（簡易版）
 /*!
 	Visual Basicのコードから単純にユーザー定義の関数やステートメントを取り出す動作を行う。
+
+    Jul 10, 2003 little YOSHI  細かく解析するように変更
+                               すべてのキーワードは自動的に成形されるので、大文字小文字は完全に一致する。
+                               フォームやモジュールだけではなく、クラスにも対応。
+							   ただし、Constの「,」で連続宣言には未対応
+	Jul. 21, 2003 genta キーワードの大文字・小文字を同一視するようにした
 */
 void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -721,11 +727,23 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	int			nFuncLine;
 	int			nFuncId;
 	int			nParseCnt = 0;
+	bool		bClass;			// クラスモジュールフラグ
+	bool		bProcedure;		// プロシージャフラグ（プロシージャ内ではTrue）
+
+	// 調べるファイルがクラスモジュールのときはType、Constの挙動が異なるのでフラグを立てる
+	bClass	= false;
+	int filelen = strlen(GetFilePath());
+	if ( 4 < filelen ) {
+		if ( 0 == _stricmp((GetFilePath() + filelen - 4), ".cls") ) {
+			bClass	= true;
+		}
+	}
 
 	szWordPrev[0] = '\0';
 	szWord[nWordIdx] = '\0';
 	nMode = 0;
 	pLine = NULL;
+	bProcedure	= false;
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		if( NULL != pLine ){
 			if( '_' != pLine[nLineLen-1]){
@@ -733,6 +751,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			}
 		}
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
+		nFuncId = 0;
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -759,28 +778,119 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nWordIdx += (nCharChars);
 					}
 				}else{
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Function" )
-					 && 0 != _stricmp( szWordPrev, "End" )
-					){
-						if( 0 == _stricmp( szWordPrev, "Declare" ) ){
-							nFuncId = 61;
-						}else{
-							nFuncId = 63;
-						}
-						nParseCnt = 1;
-						nFuncLine = nLineCount + 1;
-
+					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Public") ) {
+						// パブリック宣言を見つけた！
+						nFuncId |= 0x10;
 					}else
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Sub" )
-					 && 0 != _stricmp( szWordPrev, "End" )
-					){
-						if( 0 == _stricmp( szWordPrev, "Declare" ) ){
-							nFuncId = 60;
-						}else{
-							nFuncId = 62;
+					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Private") ) {
+						// プライベート宣言を見つけた！
+						nFuncId |= 0x20;
+					}else
+					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Friend") ) {
+						// フレンド宣言を見つけた！
+						nFuncId |= 0x30;
+					}else
+					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Static") ) {
+						// スタティック宣言を見つけた！
+						nFuncId |= 0x100;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Function" ) ){
+						if ( 0 == stricmp( szWordPrev, "End" ) ){
+							// プロシージャフラグをクリア
+							bProcedure	= false;
+						}else
+						if( 0 != stricmp( szWordPrev, "Exit" ) ){
+							if( 0 == stricmp( szWordPrev, "Declare" ) ){
+								nFuncId |= 0x200;	// DLL参照宣言
+							}else{
+								bProcedure	= true;	// プロシージャフラグをセット
+							}
+							nFuncId |= 0x01;		// 関数
+							nParseCnt = 1;
+							nFuncLine = nLineCount + 1;
 						}
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Sub" ) ){
+						if ( 0 == stricmp( szWordPrev, "End" ) ){
+							// プロシージャフラグをクリア
+							bProcedure	= false;
+						}else
+						if( 0 != stricmp( szWordPrev, "Exit" ) ){
+							if( 0 == stricmp( szWordPrev, "Declare" ) ){
+								nFuncId |= 0x200;	// DLL参照宣言
+							}else{
+								bProcedure	= true;	// プロシージャフラグをセット
+							}
+							nFuncId |= 0x02;		// 関数
+							nParseCnt = 1;
+							nFuncLine = nLineCount + 1;
+						}
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Get" )
+					 && 0 == stricmp( szWordPrev, "Property" )
+					){
+						bProcedure	= true;	// プロシージャフラグをセット
+						nFuncId	|= 0x03;		// プロパティ取得
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Let" )
+					 && 0 == stricmp( szWordPrev, "Property" )
+					){
+						bProcedure	= true;	// プロシージャフラグをセット
+						nFuncId |= 0x04;		// プロパティ設定
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Set" )
+					 && 0 == stricmp( szWordPrev, "Property" )
+					){
+						bProcedure	= true;	// プロシージャフラグをセット
+						nFuncId |= 0x05;		// プロパティ参照
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Const" )
+					 && 0 != stricmp( szWordPrev, "#" )
+					){
+						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
+							// クラスモジュールでは強制的にPrivate
+							// プロシージャ内では強制的にPrivate
+							// Publicの指定がないとき、デフォルトでPrivateになる
+							nFuncId &= 0x0f2f;
+							nFuncId	|= 0x20;
+						}
+						nFuncId	|= 0x06;		// 定数
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Enum" )
+					){
+						nFuncId	|= 0x207;		// 列挙型宣言
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Type" )
+					){
+						if ( bClass ) {
+							// クラスモジュールでは強制的にPrivate
+							nFuncId &= 0x0f2f;
+							nFuncId	|= 0x20;
+						}
+						nFuncId	|= 0x208;		// ユーザ定義型宣言
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Event" )
+					){
+						nFuncId	|= 0x209;		// イベント宣言
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 0 == nParseCnt && 0 == stricmp( szWord, "Property" )
+					 && 0 == stricmp( szWordPrev, "End")
+					){
+						bProcedure	= false;	// プロシージャフラグをクリア
 					}else
 					if( 1 == nParseCnt ){
 						strcpy( szFuncName, szWord );
@@ -794,6 +904,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						m_cLayoutMgr.CaretPos_Phys2Log(	0, nFuncLine - 1, &nPosX, &nPosY );
 						pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1 , szFuncName, nFuncId );
 						nParseCnt = 0;
+						nFuncId	= 0;	// Jul 10, 2003  little YOSHI  論理和を使用するため、必ず初期化
 					}
 
 					strcpy( szWordPrev, szWord );
@@ -806,6 +917,8 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			}else
 			/* 記号列読み込み中 */
 			if( 2 == nMode ){
+				// Jul 10, 2003  little YOSHI
+				// 「#Const」と「Const」を区別するために、「#」も識別するように変更
 				if( '_' == pLine[i] ||
 					'~' == pLine[i] ||
 					('a' <= pLine[i] &&	pLine[i] <= 'z' )||
@@ -822,7 +935,8 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					';' == pLine[i]	||
 					'\'' == pLine[i] ||
 					'/' == pLine[i]	||
-					'-' == pLine[i]
+					'-' == pLine[i] ||
+					'#' == pLine[i]
 				){
 					strcpy( szWordPrev, szWord );
 					nWordIdx = 0;
