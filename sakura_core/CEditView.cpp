@@ -4315,7 +4315,19 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 			strcat( pszWork, pszURL );
 			pszOPEN = pszWork;
 		}else{
-			pszOPEN = pszURL;
+			if( _tcsnicmp( pszURL, _T("ttp://"), 6 ) == 0 ){	//—}Ž~URL
+				pszWork = new TCHAR[ _tcslen( pszURL ) + 1 + 1 ];
+				_tcscpy( pszWork, _T("h") );
+				_tcscat( pszWork, pszURL );
+				pszOPEN = pszWork;
+			}else if( _tcsnicmp( pszURL, _T("tp://"), 5 ) == 0 ){	//—}Ž~URL
+				pszWork = new TCHAR[ _tcslen( pszURL ) + 2 + 1 ];
+				_tcscpy( pszWork, _T("ht") );
+				_tcscat( pszWork, pszURL );
+				pszOPEN = pszWork;
+			}else{
+				pszOPEN = pszURL;
+			}
 		}
 		::ShellExecute( NULL, "open", pszOPEN, NULL, NULL, SW_SHOW );
 		delete [] pszURL;

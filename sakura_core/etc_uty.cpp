@@ -698,8 +698,10 @@ BOOL IsURL( const char *pszLine, int nLineLen, int *pnMatchLen )
 		"nntp://",		7,	false, /* 8 */
 		"prospero://",	11,	false, /* 9 */
 		"telnet://",	9,	false, /* 10 */
-		"wais://",		7,	false, /* 11 */
-		"{",			0,	false  /* 12 */  /* '{' is 'z'+1 : terminate */
+		"tp://",		5,	false, /* 11 */	//2004.02.02
+		"ttp://",		6,	false, /* 12 */	//2004.02.02
+		"wais://",		7,	false, /* 13 */
+		"{",			0,	false  /* 14 */  /* '{' is 'z'+1 : terminate */
 	};
 
 /* テーブルの保守性を高めるための定義 */
@@ -710,7 +712,7 @@ BOOL IsURL( const char *pszLine, int nLineLen, int *pnMatchLen )
 	const char urN = 7;
 	const char urP = 9;
 	const char urT = 10;
-	const char urW = 11;
+	const char urW = 13;	//2004.02.02
 
 	static const char	url_char[] = {
 	  /* +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F */
