@@ -283,18 +283,18 @@ void CCommandLine::ParseCommandLine(
 			switch( CheckCommandLine( pszToken, &arg ) ){
 			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
-				fi.m_nX = atoi( arg ) - 1;
+				fi.m_nX = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_Y:	//	Y
-				fi.m_nY = atoi( arg ) - 1;
+				fi.m_nY = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_VX:	// VX
 				/* 行桁指定を1開始にした */
-				fi.m_nViewLeftCol = atoi( arg ) - 1;
+				fi.m_nViewLeftCol = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_VY:	//	VY
 				/* 行桁指定を1開始にした */
-				fi.m_nViewTopLine = atoi( arg ) - 1;
+				fi.m_nViewTopLine = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
 				//	Mar. 7, 2002 genta
@@ -303,7 +303,7 @@ void CCommandLine::ParseCommandLine(
 				fi.m_szDocType[ MAX_DOCTYPE_LEN ]= '\0';
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
-				fi.m_nCharCode = atoi( arg );
+				fi.m_nCharCode = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_R:	//	R
 				bReadOnly = true;
@@ -356,7 +356,7 @@ void CCommandLine::ParseCommandLine(
 				break;
 			// 2002/09/21 Moca Grepでの文字コードセット 追加
 			case CMDLINEOPT_GCODE:
-				nGrepCharSet = atoi( arg );	break;
+				nGrepCharSet = AtoiOptionInt( arg );	break;
 			case CMDLINEOPT_DEBUGMODE:
 				bDebugMode = true;
 				break;
@@ -439,5 +439,4 @@ CCommandLine::CCommandLine(LPSTR cmd) :
 		&m_bReadOnly
 	);
 }
-
 /*[EOF]*/

@@ -61,6 +61,15 @@ private:
 	CCommandLine();
 	CCommandLine(LPSTR cmd);
 
+	/*!
+		ˆø—p•„‚ÅˆÍ‚Ü‚ê‚Ä‚¢‚é”’l‚ğ”F¯‚·‚é‚æ‚¤‚É‚·‚é
+		@date 2002.12.05 genta
+	*/
+	static int AtoiOptionInt(const char* arg){
+		return ( arg[0] == '"' || arg[0] == '\'' ) ?
+			atoi( arg + 1 ) : atoi( arg );
+	}
+
 // member accessor method
 public:
 	bool IsNoWindow() const {return m_bNoWindow;};
