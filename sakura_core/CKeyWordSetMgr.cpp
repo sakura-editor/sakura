@@ -301,7 +301,7 @@ void CKeyWordSetMgr::SortKeyWord( int nIdx )
 		qsort( &m_szKeyWordArr[nIdx],
 				m_nKeyWordNumArr[nIdx],
 				sizeof(m_szKeyWordArr[nIdx][0]),
-				(int (__cdecl *)(const void *, const void *))stricmp
+				(int (__cdecl *)(const void *, const void *))my_stricmp	//Dec. 24, 2002 Moca
 			);
 	}
 
