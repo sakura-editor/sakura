@@ -2065,6 +2065,12 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 			case IDC_RADIO_LINETERMTYPE0: /* 行番号区切り 0=なし 1=縦線 2=任意 */
 			case IDC_RADIO_LINETERMTYPE1:
 			case IDC_RADIO_LINETERMTYPE2:
+			//	From Here Jun. 6, 2001 genta
+			//	行コメント開始桁指定のON/OFF
+			case IDC_CHECK_LCPOS:
+			case IDC_CHECK_LCPOS2:
+			case IDC_CHECK_LCPOS3:
+			//	To Here Jun. 6, 2001 genta
 				EnableTypesPropInput( hwndDlg );
 				return TRUE;
 			//	To Here Sept. 10, 2000
@@ -2203,21 +2209,6 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2 )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentFrom2 ) - 1 ), 0 );
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2 )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentTo2 ) - 1 ), 0 );
 //#endif
-
-//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
-/*
-	::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, m_Types.m_bSpecifyLineCommentPos );
-	if( BST_CHECKED == m_Types.m_bSpecifyLineCommentPos ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
-	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
-	}
-*/
-//	To Here Jun. 01, 2001
 
 	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT			, m_Types.m_szLineComment );		/* 行コメントデリミタ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2		, m_Types.m_szLineComment2 );		/* 行コメントデリミタ2 */
@@ -2374,16 +2365,6 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 
 //	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
 /*
-	::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, m_Types.m_bSpecifyLineCommentPos );
-	if( BST_CHECKED == m_Types.m_bSpecifyLineCommentPos ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
-	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
-	}
 */
 //	To Here Jun. 01, 2001
 
@@ -2696,6 +2677,34 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LINETERMCHAR ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), FALSE );
 	}
+	
+	//	From Here Jun. 6, 2001 genta
+	//	行コメント開始桁位置入力ボックスのEnable/Disable設定
+	//	1つ目
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS )){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
+	}
+	//	2つ目
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS2 )){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS2 ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum2 ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS2 ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum2 ), FALSE );
+	}
+	//	3つ目
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 )){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS3 ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum3 ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS3 ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum3 ), FALSE );
+	}
+	//	To Here Jun. 6, 2001 genta
 }
 //	To Here Sept. 10, 2000
 

@@ -234,14 +234,6 @@ struct Types {
 	char				m_szLineComment2[16];			/* 行コメントデリミタ2 */
 	char				m_szLineComment3[16];			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 
-//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
-/*
-	BOOL				m_bSpecifyLineCommentPos;		//< 行コメント1の開始位置を指定する
-	BOOL				m_bSpecifyLineCommentPos2;		//< 行コメント2の開始位置を指定する
-	BOOL				m_bSpecifyLineCommentPos3;		//< 行コメント3の開始位置を指定する
-*/
-//	To Here Jun. 01, 2001
-
 	//	May. 12, 2001 genta
 	int					m_nLineCommentPos;				//< 行コメント1の開始位置(負数は指定無し)
 	int					m_nLineCommentPos2;				//< 行コメント2の開始位置(負数は指定無し)
