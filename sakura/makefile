@@ -121,7 +121,6 @@ OBJS =\
 	$(SRCDIR)\CRegexKeyword.obj \
 	$(SRCDIR)\CShareData_new.obj \
 	$(SRCDIR)\CShareData.obj \
-	$(SRCDIR)\CShareData_new2.obj \
 	$(SRCDIR)\CSMacroMgr.obj \
 	$(SRCDIR)\CSplitBoxWnd.obj \
 	$(SRCDIR)\CSplitterWnd.obj \
