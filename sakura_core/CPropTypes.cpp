@@ -100,7 +100,7 @@ char* MakeRGBStr( DWORD dwRGB, char* pszText )
 #include "sakura.hh"
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
-	IDC_COMBO_TABSPACE,				HIDC_COMBO_TABSPACE,		//TAB幅
+	IDC_EDIT_TABSPACE,				HIDC_EDIT_TABSPACE,			//TAB幅 // Sep. 19, 2002 genta
 	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IMEのON/OFF状態
 	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEの入力モード
 	IDC_COMBO_SMARTINDENT,			HIDC_COMBO_SMARTINDENT,		//スマートインデント
@@ -175,7 +175,7 @@ static const DWORD p_helpids3[] = {	//11500
 #else
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				11310,	//英文ワードラップ
-	IDC_COMBO_TABSPACE,				11330,	//TAB幅
+	IDC_EDIT_TABSPACE,				11330,	//TAB幅
 	IDC_COMBO_IMESWITCH,			11331,	//IMEのON/OFF状態
 	IDC_COMBO_IMESTATE,				11332,	//IMEの入力モード
 	IDC_COMBO_SMARTINDENT,			11333,	//スマートインデント
@@ -953,6 +953,25 @@ BOOL CPropTypes::DispatchEvent_p1(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nVal, FALSE );
 			return TRUE;
+		case IDC_SPIN_TABSPACE:
+			//	Sep. 22, 2002 genta
+			/* TAB幅 */
+//			MYTRACE( "IDC_SPIN_CHARSPACE\n" );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 1 ){
+				nVal = 1;
+			}
+			if( nVal > 64 ){
+				nVal = 64;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, nVal, FALSE );
+			return TRUE;
 
 		default:
 			switch( pNMHDR->code ){
@@ -1018,8 +1037,8 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	BOOL	bRet;
 	static	int	nTabArr[] = { 2, 3, 4, 6, 8 };
 	static	int	nTabArrNum = sizeof( nTabArr ) / sizeof( nTabArr[0] );
-	int			i, j;
-	char		szWork[32];
+	int			i;
+	//char		szWork[32];
 
 	/* タイプ属性：名称 */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );
@@ -1037,16 +1056,17 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, FALSE );
 
 	/* TAB幅 */
-	j = 0;
-	for( i = 0; i < nTabArrNum; ++i ){
-		wsprintf( szWork, "%d", nTabArr[i] );
-		::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szWork );
-		if( m_Types.m_nTabSpace == nTabArr[i] ){
-			j = i;
-		}
-	}
-	::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_SETCURSEL, (WPARAM)j, 0 );
-
+	//	Sep. 22, 2002 genta
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, m_Types.m_nTabSpace, FALSE );
+	//j = 0;
+	//for( i = 0; i < nTabArrNum; ++i ){
+	//	wsprintf( szWork, "%d", nTabArr[i] );
+	//	::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szWork );
+	//	if( m_Types.m_nTabSpace == nTabArr[i] ){
+	//		j = i;
+	//	}
+	//}
+	//::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_SETCURSEL, (WPARAM)j, 0 );
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	/* TAB表示文字列 */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );
@@ -1235,7 +1255,13 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, sizeof( m_Types.m_szIndentChars ) - 1 );
 
 	/* TAB幅 */
-	m_Types.m_nTabSpace = ::GetDlgItemInt( hwndDlg, IDC_COMBO_TABSPACE, NULL, FALSE );
+	m_Types.m_nTabSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
+	if( m_Types.m_nTabSpace < 1 ){
+		m_Types.m_nTabSpace = 1;
+	}
+	if( m_Types.m_nTabSpace > 64 ){
+		m_Types.m_nTabSpace = 64;
+	}
 
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	/* TAB表示文字列 */

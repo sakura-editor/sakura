@@ -404,7 +404,7 @@
 #define HIDC_CHECK_KINSOKUTAIL					11313 //行頭禁則	//@@@ 2002.04.08 MIK
 #define HIDC_CHECK_KINSOKURET					11314 //改行文字をぶら下げる	//@@@ 2002.04.14 MIK
 #define HIDC_CHECK_KINSOKUKUTO					11315 //句読点をぶら下げる	//@@@ 2002.04.17 MIK
-#define HIDC_COMBO_TABSPACE						11330 //TAB幅
+#define HIDC_EDIT_TABSPACE						11330 //TAB幅
 #define HIDC_COMBO_IMESWITCH					11331 //IMEのON/OFF状態
 #define HIDC_COMBO_IMESTATE						11332 //IMEの入力モード
 #define HIDC_COMBO_SMARTINDENT					11333 //スマートインデント

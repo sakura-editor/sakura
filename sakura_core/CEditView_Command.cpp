@@ -761,7 +761,8 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 				}
 				nPosX = 0;
 				nCharChars = 0;
-				int nTabSpace = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace; // 2002/2/8 aroka
+				//	Sep. 23, 2002 genta LayoutMgrの値を使う
+				int nTabSpace = m_pcEditDoc->m_cLayoutMgr.GetTabSpace(); // 2002/2/8 aroka
 				for( i = 0; i < nLineLen; ){
 					nPosX += nCharChars;
 					if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
@@ -791,7 +792,8 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 				nLineLen = 0;
 			}
 			nPosX = 0;
-			int nTabSpace = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace; // 2002/2/8 aroka
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			int nTabSpace = m_pcEditDoc->m_cLayoutMgr.GetTabSpace(); // 2002/2/8 aroka
 			for( i = 0; i < nLineLen; ){
 				if( pLine[i] == TAB ){
 					nCharChars = nTabSpace - ( nPosX % nTabSpace ); // 2002/2/8 aroka
@@ -897,7 +899,8 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 		}
 		nPosX = 0;
 		{
-			int nTabSpace = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace; // 2002/2/8 aroka
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			int nTabSpace = m_pcEditDoc->m_cLayoutMgr.GetTabSpace(); // 2002/2/8 aroka
 			for( i = 0; i < nLineLen; ){
 				if( nPosX > m_nCaretPosX ){
 					break;
@@ -1262,8 +1265,8 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 			break;
 		}
 		if( pLine[i] == TAB ){
-			nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
-			 - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 			++i;
 		}else{
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -6170,7 +6173,8 @@ void CEditView::Command_INDENT_TAB( void )
 		return;
 	}
 	int		nCol	=	0;
-	int		nTab	=	m_pcEditDoc->GetDocumentAttribute().m_nTabSpace;
+	//	Sep. 23, 2002 genta LayoutMgrの値を使う
+	int		nTab	=	m_pcEditDoc->m_cLayoutMgr.GetTabSpace();
 	int		nSpace	=	0;
 
 	//インデント開始位置の取得
@@ -6192,13 +6196,15 @@ void CEditView::Command_INDENT_TAB( void )
 			m_nSelectLineTo,		/* 範囲選択終了行 */
 			m_nSelectColmTo,		/* 範囲選択終了桁 */
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
-			"        ",				/* 挿入するデータ */
+			// Sep. 22, 2002 genta TABの最大幅を64に拡張
+			"                                                                ",				/* 挿入するデータ */
 			nSpace,					/* 挿入するデータの長さ */
 			TRUE
 		);
 		return;
 	}
-	Command_INDENT( "        " , nSpace , TRUE);
+	// Sep. 22, 2002 genta TABの最大幅を64に拡張
+	Command_INDENT( "                                                                " , nSpace , TRUE);
 
 }
 // To Here 2001.12.03 hor
@@ -6720,16 +6726,14 @@ void CEditView::Command_UNINDENT( char cChar )
 						if( SPACE != pLine[i] ){
 							break;
 						}
-//						if( i >= m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - 1 ){
-						if( i >= m_pcEditDoc->GetDocumentAttribute().m_nTabSpace ){
+						//	Sep. 23, 2002 genta LayoutMgrの値を使う
+						if( i >= m_pcEditDoc->m_cLayoutMgr.GetTabSpace() ){
 							break;
 						}
 					}
-//					if( i < m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - 1 ){
 					if( 0 == i ){
 						continue;
 					}
-//					nDelLen = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace;
 					nDelLen = i;
 				}
 			}else{

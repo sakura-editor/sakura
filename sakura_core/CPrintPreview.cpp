@@ -609,7 +609,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	Types ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
 	ref.m_nMaxLineSize = 		m_bPreview_EnableColms;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
-	ref.m_nTabSpace =			m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nTabSpace;
+	//	Sep. 23, 2002 genta LayoutMgrの値を使う
+	ref.m_nTabSpace =			m_pParentWnd->m_cEditDoc.m_cLayoutMgr.GetTabSpace();
 	strcpy( ref.m_szLineComment,	"");		/* 行コメントデリミタ */
 	strcpy( ref.m_szLineComment2,	"");		/* 行コメントデリミタ2 */
 	strcpy( ref.m_szLineComment3,	"");		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
@@ -625,27 +626,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	ref.m_bKinsokuKuto = m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	m_pLayoutMgr_Print->SetLayoutInfo(
-//		m_bPreview_EnableColms,
-//		m_pPrintSetting->m_bPrintWordWrap,	/* 英文ワードラップをする */
-//		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nTabSpace,
-//		"",		/* 行コメントデリミタ */
-//		"",		/* 行コメントデリミタ2 */
-//		"",		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-//		"",		/* ブロックコメントデリミタ(From) */
-//		"",		/* ブロックコメントデリミタ(To) */
-//		"",		/* ブロックコメントデリミタ2(From) */
-//		"",		/* ブロックコメントデリミタ2(To) */
-//		0,		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,	
 		NULL,	
-//		FALSE,	/* シングルクォーテーション文字列を表示する */
-//		FALSE,	/* ダブルクォーテーション文字列を表示する */
-//		m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
-//		m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
-//		m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-//		m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-//		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuTail,	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 		ref
 	);
 	m_nAllPageNum = m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu );		/* 全ページ数 */
@@ -1200,7 +1182,8 @@ void CPrintPreview::Print_DrawLine(
 	int			nPosX = 0;	//	TABを展開した後のバイト数で、テキストの何バイト目まで描画したか？
 	int			nBgn = 0;	//	TABを展開する前のバイト数で、pLineの何バイト目まで描画したか？
 	int			i;			//	pLineの何文字目をスキャン？
-	int			nTabSpace = m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nTabSpace;	//	TAB幅
+	//	Sep. 23, 2002 genta LayoutMgrの値を使う
+	int			nTabSpace = m_pParentWnd->m_cEditDoc.m_cLayoutMgr.GetTabSpace();
 
 	for( i = 0; i < nLineLen; ++i ){
 		nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];

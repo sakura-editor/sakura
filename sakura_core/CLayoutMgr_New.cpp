@@ -635,7 +635,8 @@ void CLayoutMgr::DoLayout(
 				break;
 			}
 			if( pLine[nPos] == TAB ){
-				nCharChars = m_nTabSpace - ( nPosX % m_nTabSpace );
+				//	Sep. 23, 2002 genta ‚¹‚Á‚©‚­ì‚Á‚½‚Ì‚ÅŠÖ”‚ðŽg‚¤
+				nCharChars = GetActualTabSpace( nPosX );
 				if( nPosX + nCharChars > m_nMaxLineSize ){
 					AddLineBottom( pCDocLine, /*pLine,*/nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -1526,7 +1527,8 @@ int CLayoutMgr::DoLayout3_New(
 
 
 			if( pLine[nPos] == TAB ){
-				nCharChars = m_nTabSpace - ( nPosX % m_nTabSpace );
+				//	Sep. 23, 2002 genta ‚¹‚Á‚©‚­ì‚Á‚½‚Ì‚ÅŠÖ”‚ðŽg‚¤
+				nCharChars = GetActualTabSpace( nPosX );
 				if( nPosX + nCharChars > m_nMaxLineSize ){
 					pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
 					nCOMMENTMODE_Prev = nCOMMENTMODE;

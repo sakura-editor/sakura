@@ -81,7 +81,9 @@
 #define IDC_SPIN_LINESPACE              1038
 #define IDC_SPIN_REPEATEDSCROLLLINENUM  1039
 #define IDC_EDIT_TABVIEWSTRING          1039
-#define IDC_COMBO_TABSPACE              1050
+#define IDC_SPIN_LINESPACE2             1040
+#define IDC_SPIN_TABSPACE               1040
+#define IDC_EDIT_TABSPACE               1050
 #define IDC_BUTTON_TEXTCOLOR            1056
 #define IDC_BUTTON_BACKCOLOR            1060
 #define IDC_BUTTON_CRLFCOLOR            1061

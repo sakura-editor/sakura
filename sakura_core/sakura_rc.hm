@@ -190,7 +190,7 @@
 #define HIDC_COMBO_SET2                 0x93f2049c    // IDD_PROP_COLOR
 #define HIDC_COMBO_SETTINGNAME          0x80ae045f    // IDD_PRINTSETTING
 #define HIDC_COMBO_SMARTINDENT          0x93ed0516    // IDD_PROPTYPESP1
-#define HIDC_COMBO_TABSPACE             0x93ed041a    // IDD_PROPTYPESP1
+#define HIDC_EDIT_TABSPACE              0x93ed041a    // IDD_PROPTYPESP1
 #define HIDC_COMBO_TEXT                 0x806d03fd    // IDD_FIND
 #define HIDC_COMBO_TEXT2                0x808903fe    // IDD_REPLACE
 #define HIDC_COMBO_m_szCommand          0x80b60530    // IDD_EXEC

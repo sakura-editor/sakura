@@ -132,10 +132,12 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	
 	/* 行番号の表示 */
 	//	From Here Sep. 7, 2001 genta
-	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){ 
+	//	Sep. 23, 2002 genta 行番号非表示でも行番号色の帯があるので隙間を埋める
+	if( m_nTopYohaku ){ 
 		rc.left = 0;
 		rc.top = m_nViewAlignTop - m_nTopYohaku;
-		rc.right = m_nViewAlignLeft;
+		//	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
+		rc.right = m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace;
 		rc.bottom = m_nViewAlignTop;
 		hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK );
 		::FillRect( hdc, &rc, hBrush );
@@ -1213,9 +1215,12 @@ searchnext:;
 					if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 						/* テキスト表示 */
 						nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
+						//	Sep. 22, 2002 genta 共通式のくくりだし
+						//	Sep. 23, 2002 genta LayoutMgrの値を使う
+						int tabDispWidth = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nX );
 						/* タブ記号を表示する */
 						rcClip2.left = x + nX * ( nCharWidth );
-						rcClip2.right = rcClip2.left + ( nCharWidth ) * ( TypeDataPtr->m_nTabSpace - ( nX % TypeDataPtr->m_nTabSpace ) );
+						rcClip2.right = rcClip2.left + ( nCharWidth ) * tabDispWidth;
 						if( rcClip2.left < m_nViewAlignLeft ){
 							rcClip2.left = m_nViewAlignLeft;
 						}
@@ -1241,18 +1246,12 @@ searchnext:;
 										TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bUnderLine
 									)
 								);
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
+								
+								//@@@ 2001.03.16 by MIK
 								::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
 									&rcClip2, /*pszTAB*/ TypeDataPtr->m_szTabViewString,
-									( TypeDataPtr->m_nTabSpace - ( nX % TypeDataPtr->m_nTabSpace ) ),
+									tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
 									 m_pnDx );
-//#else
-//								::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
-//									&rcClip2, pszTAB,
-//									( TypeDataPtr->m_nTabSpace - ( nX % TypeDataPtr->m_nTabSpace ) ),
-//									 m_pnDx );
-//#endif
-
 								::SelectObject( hdc, hFontOld );
 								::SetTextColor( hdc, colTextColorOld );
 								::SetBkColor( hdc, colBkColorOld );
@@ -1263,14 +1262,14 @@ searchnext:;
 								}
 								::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
 									&rcClip2, pszSPACES,
-									( TypeDataPtr->m_nTabSpace - ( nX % TypeDataPtr->m_nTabSpace ) ),
+									tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
 									 m_pnDx );
 								if( bSearchStringMode ){
 									::SetBkColor( hdc, colBkColorOld );
 								}
 							}
 						}
-						nX += ( TypeDataPtr->m_nTabSpace - ( nX % TypeDataPtr->m_nTabSpace ) ) ;
+						nX += tabDispWidth ;//	Sep. 22, 2002 genta
 					}
 					nBgn = nPos + 1;
 					nCharChars = 1;

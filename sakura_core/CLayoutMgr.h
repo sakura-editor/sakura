@@ -83,6 +83,17 @@ public:
 //	const CLayout* GetLineData( int );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	CLayout* Search( int );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	int WhereCurrentWord( int , int , int* , int* , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+	//	Sep. 23, 2002 genta
+	/*! タブ幅の取得
+		@return タブ幅
+	 */
+	int GetTabSpace(void) const { return m_nTabSpace; }
+	/*! 次のTAB位置までの幅
+		@param pos [in] 現在の位置
+		@return 次のTAB位置までの文字数．1～TAB幅
+	 */
+	int GetActualTabSpace(int pos) const { return m_nTabSpace - pos % m_nTabSpace; }
+	
 protected:
 	int PrevOrNextWord( int, int, int*, int*, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
 public:

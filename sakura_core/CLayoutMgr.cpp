@@ -1504,7 +1504,8 @@ void CLayoutMgr::CaretPos_Phys2Log(
 					break;
 				}
 				if( pData[i] ==	TAB ){
-					nCharChars = m_nTabSpace - ( nCaretPosX % m_nTabSpace );
+					// Sep. 23, 2002 genta メンバー関数を使うように
+					nCharChars = GetActualTabSpace( nCaretPosX );
 				}else{
 					nCharChars = CMemory::MemCharNext( pData, nDataLen, &pData[i] ) - &pData[i];
 				}
@@ -1619,7 +1620,8 @@ checkloop:;
 //	enumEOLType nEOLType;
 	for( i = 0; i < nDataLen; ++i ){
 		if( pData[i] ==	TAB ){
-			nCharChars = m_nTabSpace - ( nX % m_nTabSpace );
+			// Sep. 23, 2002 genta メンバー関数を使うように
+			nCharChars = GetActualTabSpace( nX );
 //		}else
 //		if( pData[i] == '\r' || pData[i] == '\n' ){
 //			/* 行終端子の種類を調べる */
