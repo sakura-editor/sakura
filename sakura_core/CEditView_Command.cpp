@@ -9534,6 +9534,7 @@ void CEditView::Command_SHOWFUNCKEY( void )
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 
+	SetIMECompFormPos();	//	2004/05/18 MIK 変換位置がずれるバグ修正
 	//全ウインドウに変更を通知する。
 	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_FUNCKEY, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
 
@@ -9565,6 +9566,8 @@ void CEditView::Command_SHOWTAB( void )
 
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+
+	SetIMECompFormPos();	//	2004/05/18 MIK 変換位置がずれるバグ修正
 
 	//全ウインドウに変更を通知する。
 	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TAB, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
