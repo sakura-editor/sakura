@@ -19,7 +19,7 @@ class CPrint;
 #define _CPRINT_H_
 
 #include <windows.h>
-#include "debug.h"
+//#include "debug.h" 2002/2/10 aroka
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */
