@@ -8695,7 +8695,13 @@ void CEditView::DrawBracketPair( bool bDraw )
 					nColorIndex = COLORIDX_BRACKET_PAIR;
 				}else{
 					if( IsBracket( pLine, OutputX, m_nCharSize ) ){
-						nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
+						// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+						//nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
+						if( i == 0 ){
+							nColorIndex = GetColorIndex( hdc, pcLayout, m_nBracketCaretPosX_PHY );
+						}else{
+							nColorIndex = GetColorIndex( hdc, pcLayout, m_nBracketPairPosX_PHY );
+						}
 					}else{
 						SetBracketPairPos( false );
 						//::MessageBeep( MB_ICONSTOP );
@@ -8808,8 +8814,8 @@ int CEditView::GetColorIndex(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
-		pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
+		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 		nCOMMENTEND = 0;
 		pcLayout2 = pcLayout;
@@ -8840,7 +8846,7 @@ int CEditView::GetColorIndex(
 		}
 		//@@@ 2001.11.17 add end MIK
 
-		while( nPos < nCol ){	// 02/12/18 ai
+		while( nPos <= nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
 
 			nBgn = nPos;
 			nLineBgn = nBgn;
@@ -9347,7 +9353,7 @@ searchnext:;
 				}
 				nPos+= nCharChars;
 			} //end of while( nPos - nLineBgn < pcLayout2->m_nLength ){
-			if( nPos >= nCol ){	// 02/12/18 ai
+			if( nPos > nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
 				break;
 			}
 		}
