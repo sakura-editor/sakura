@@ -58,6 +58,7 @@ protected:
 	BOOL OnBnClicked( int );
 	BOOL OnNotify( WPARAM, LPARAM );
 	BOOL OnSize( WPARAM, LPARAM );
+	BOOL OnCbnSelChange( HWND hwndCtl, int wID ); // 2002/11/1 frozen
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
 
@@ -68,6 +69,9 @@ protected:
 	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTree();					/* ツリーコントロールの初期化：汎用品 */
+
+	// 2002/11/1 frozen 
+	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ツリービューの項目をソートする（ソート基準はm_nSortTypeを使用）
 #if 0
 2002.04.01 YAZAKI SetTreeTxt()、SetTreeTxtNest()は廃止。GetTreeTextNextはもともと使用されていなかった。
 	void SetTreeTxt( HWND );	/* ツリーコントロールの初期化：テキストトピックツリー */
@@ -92,6 +96,12 @@ private:
 	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 1/4
 	// (無理矢理なのでどなたか修正お願いします)
 	bool m_bWaitTreeProcess;
+
+	// 2002/11/1 fozen
+	//! ツリービューをソートする基準
+	// 0 デフォルト(ノードに関連づけれられた値順)
+	// 1 アルファベット順
+	int m_nSortType;	
 };
 
 

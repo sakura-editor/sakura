@@ -217,6 +217,7 @@
 #define IDC_CHECK_ADDCRLFWHENCOPY       1116
 #define IDC_COMBO1                      1118
 #define IDC_COMBO_FILE                  1118
+#define IDC_COMBO_nSortType             1118
 #define IDC_COMBO_FOLDER                1119
 #define IDC_COMBO_SETTINGNAME           1119
 #define IDC_COMBO_PAPER                 1120
@@ -536,6 +537,7 @@
 #define IDC_CHECK_DIFF_OPT_CASE         1431
 #define IDC_CHECK_DIFF_OPT_SPACE        1432
 #define IDC_CHECK_DIFF_OPT_SPCCHG       1433
+#define IDC_STATIC_nSortType            1433
 #define IDC_CHECK_DIFF_OPT_BLINE        1434
 #define IDC_CHECK_DIFF_OPT_TABSPC       1435
 #define IDC_FRAME_FILE12                1436
@@ -579,9 +581,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        224
+#define _APS_NEXT_RESOURCE_VALUE        225
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1433
+#define _APS_NEXT_CONTROL_VALUE         1434
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -37,6 +37,7 @@
 #include "CMarkMgr.h"///
 #include "CDocLine.h" /// 2002/2/3 aroka
 #include "CPrintPreview.h"
+#include <assert.h> /// 2002/11/2 frozen
 
 #define IDT_ROLLMOUSE	1
 
@@ -1749,44 +1750,10 @@ bool C_IsOperator( char* szStr, int nLen	)
 }
 //	To Here Apr. 1, 2001 genta
 
-
 /*!
 	@brief C/C++関数リスト作成
 
-	@par FuncIdの値の意味
-	10の位で目的別に使い分けている．C/C++用は10位が0
-	- 1: 宣言
-	- 2: 通常の関数 (追加文字列無し)
-	- 3: クラス("クラス")
-	- 4: 構造体 ("構造体")
-	- 5: 列挙体("列挙体")
-	- 6: 共用体("共用体")
-	- 7: 名前空間("名前空間")
-
-	@param pcFuncInfoArr [out] 関数一覧を返すためのクラス。
-	ここに関数のリストを登録する。
-*/
-/*
-void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
-{
-	// 2002/10/28 frozen 関数全体を大幅に書き換え
-	
-	
-	const char*	pLine;		//!< 現在の行の文字列へのポインタ
-	int			nLineLen;	//!< 現在の行の文字列の長さ
-	int			nLineCount;	//!< 現在の行数
-	int			i;			//!< 現在の文字の位置（横方向）
-	
-	int			nNestLevel_global	= 0;	//!< 関数外の{}のレベル
-	int			nNestLevel_func		= 0;	//!< 関数内の{}のレベル
-	int			nNestLevel_param	= 0;	//!< ()のレベル（関数の宣言、定義のパラメータリスト内でのみカウントする）
-	
-}
-*/
-
-
-/*!
-	@brief C/C++関数リスト作成
+	@param bVisibleMemberFunc クラス、構造体定義内のメンバ関数の宣言をアウトライン解析結果に登録する場合はtrue
 
 	@par MODE一覧
 	- 0	通常
@@ -1811,7 +1778,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 	@param pcFuncInfoArr [out] 関数一覧を返すためのクラス。
 	ここに関数のリストを登録する。
 */
-void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
+void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberFunc )
 {
 	const char*	pLine;
 	int			nLineLen;
@@ -1824,6 +1791,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 	int			nNestLevel_func   = 0;	//	nNestLevel_func 関数の定義、および関数内の	{}のレベル
 //	int			nNestLevel2;		//	nNestLevel2	()に対する位置 // 2002/10/27 frozen nNastLevel_fparamとnMode2のM2_FUNC_NAME_ENDで代用
 	int			nNestLevel_fparam = 0;	// ()のレベル
+	int			nNestPoint_class = 0; // 外側から何番目の{がクラスの定義を囲む{か？ (一番外側なら1、0なら無し。bVisibleMemberFuncがfalseの時のみ有効。trueでは常に0)
 	// 2002/10/27 frozen　ここまで
 
 	int			nCharChars;			//	多バイト文字を読み飛ばすためのもの
@@ -1951,6 +1919,21 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 						nMode = 999;
 						continue;
 					}else{
+						if( pLine[i] == ':')
+						{
+							if(nMode2 == M2_NAMESPACE_SAVE)
+							{
+								if(szWord[0]!='\0')
+									strcpy( szItemName, szWord );
+								nMode2 = M2_NAMESPACE_END;
+							}
+							else if( nMode2 == M2_TEMPLATE_SAVE)
+							{
+								strncat( szItemName, szWord, nItemNameLenMax - strlen(szItemName) );
+								szItemName[ nItemNameLenMax - 1 ] = '\0';
+								nMode2 = M2_NAMESPACE_END;
+							}
+						}
 						szWord[nWordIdx] = pLine[i];
 						szWord[nWordIdx + 1] = '\0';
 					}
@@ -2179,10 +2162,11 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
 							nNestLevel_global < nNamespaceNestMax &&
-							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = strlen(szItemName)) + 2) < nNamespaceLenMax)
+							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = strlen(szItemName)) + 10 + 1) < nNamespaceLenMax)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
-					// +2は追加する文字列の最大長(追加する文字列は"::"が最長)
+					// +10は追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
+					// +1は終端NUL文字
 					{
 						strcpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
 						if( nMode2 == M2_FUNC_NAME_END )
@@ -2191,6 +2175,15 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 						{
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
+							if( nItemFuncId == 7)
+								strcpy(&szNamespace[nNamespaceLen[nNestLevel_global]],"::定義位置");
+							else
+							{
+								szNamespace[nNamespaceLen[nNestLevel_global]] = '\0';
+								szNamespace[nNamespaceLen[nNestLevel_global]+1] = ':';
+								if(bVisibleMemberFunc == false && nNestPoint_class == 0)
+									nNestPoint_class = nNestLevel_global;
+							}
 						}
 						/*
 						  カーソル位置変換
@@ -2210,7 +2203,6 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 						if( nMode2 != M2_FUNC_NAME_END )
 						{
 							szNamespace[nNamespaceLen[nNestLevel_global]] = ':';
-							szNamespace[nNamespaceLen[nNestLevel_global]+1] = ':';
 							nNamespaceLen[nNestLevel_global] += 2;
 						}
 					}
@@ -2239,7 +2231,11 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 					if(nNestLevel_func == 0)
 					{
 						if(nNestLevel_global!=0)
+						{
+							if(nNestLevel_global == nNestPoint_class)
+								nNestPoint_class = 0;
 							--nNestLevel_global;
+						}
 					}
 					else
 						--nNestLevel_func;
@@ -2315,7 +2311,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 					if(
 						nMode2 == M2_FUNC_NAME_END &&
 						nNestLevel_global < nNamespaceNestMax &&
-						(nNamespaceLen[nNestLevel_global] + strlen(szItemName)) < nNamespaceLenMax)
+						(nNamespaceLen[nNestLevel_global] + strlen(szItemName)) < nNamespaceLenMax &&
+						nNestPoint_class == 0)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
 					{
@@ -2416,7 +2413,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 									strcpy( szItemName, szWord );
 								nMode2 = M2_NAMESPACE_END;
 							}
-							else if(nMode2 == M2_TEMPLATE_SAVE)
+							else if( nMode2 == M2_TEMPLATE_SAVE)
 							{
 								strncat( szItemName, szWord, nItemNameLenMax - strlen(szItemName) );
 								szItemName[ nItemNameLenMax - 1 ] = '\0';

@@ -217,7 +217,7 @@ public:
 	HWND			m_hWnd;						/* 編集ウィンドウハンドル（CSplitterWndが管理） */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */
 public:
-	void			MakeFuncList_C( CFuncInfoArr* );		/* C/C++関数リスト作成 */
+	void			MakeFuncList_C( CFuncInfoArr*,bool bVisibleMemberFunc = true );		/* C/C++関数リスト作成 */
 	void 			MakeFuncList_PLSQL( CFuncInfoArr* );	/* PL/SQL関数リスト作成 */
 	void 			MakeTopicList_txt( CFuncInfoArr* );		/* テキスト・トピックリスト作成 */
 	void			MakeFuncList_Java( CFuncInfoArr* );		/* Java関数リスト作成 */
