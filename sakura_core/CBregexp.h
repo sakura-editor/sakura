@@ -75,7 +75,7 @@ public:
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
 	bool Compile(const char *szPattern);
-	bool GetMatchInfo(char*target, int len, int nStart, BREGEXP**rep);
+	bool GetMatchInfo(const char*target, int len, int nStart, BREGEXP**rep);
 	
 	//! BREGEXPメッセージを取得する
 	const char* GetLastMessage(void) const { return m_szMsg; }
@@ -101,7 +101,16 @@ protected:
 	BREGEXP_BRegexpVersion BRegexpVersion;
 	
 	//!	コンパイルバッファを解放する
-	void ReleaseCompileBuffer(void){ if( m_sRep ) BRegfree( m_sRep ); }
+	/*!
+		m_sRepをBRegfree()に渡して解放する．解放後はNULLにセットする．
+		元々NULLなら何もしない
+	*/
+	void ReleaseCompileBuffer(void){
+		if( m_sRep ){
+			BRegfree( m_sRep );
+			m_sRep = NULL;
+		}
+	}
 
 private:
 	//	内部関数
