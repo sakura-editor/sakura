@@ -52,10 +52,14 @@ CLayoutMgr::CLayoutMgr()
 //#endif
 	m_bKinsokuHead = FALSE;		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_bKinsokuTail = FALSE;		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_bKinsokuRet  = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	m_bKinsokuKuto = FALSE;		/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	m_pszKinsokuHead_1 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuHead_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_1 = NULL;	/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuKuto_1 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+	m_pszKinsokuKuto_2 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 
 	Init();
 	return;
@@ -115,6 +119,14 @@ CLayoutMgr::~CLayoutMgr()
 		delete [] m_pszKinsokuTail_2;
 		m_pszKinsokuTail_2 = NULL;
 	}
+	if( NULL != m_pszKinsokuKuto_1 ){	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+		delete [] m_pszKinsokuKuto_1;
+		m_pszKinsokuKuto_1 = NULL;
+	}
+	if( NULL != m_pszKinsokuKuto_2 ){	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+		delete [] m_pszKinsokuKuto_2;
+		m_pszKinsokuKuto_2 = NULL;
+	}
 
 	return;
 }
@@ -143,6 +155,8 @@ void CLayoutMgr::SetLayoutInfo(
 	BOOL	bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
 	BOOL	bKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
 	BOOL	bKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+	BOOL	bKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	BOOL	bKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	char*	pszKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 	char*	pszKinsokuTail	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 )
@@ -227,8 +241,31 @@ void CLayoutMgr::SetLayoutInfo(
 //#endif
 
 	{	//@@@ 2002.04.08 MIK start
-		unsigned char	*p, *q1, *q2;
+		unsigned char	*p, *q1, *q2, *k1, *k2;
 		int	length;
+
+		//句読点のぶらさげ
+		m_bKinsokuKuto = bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+		if( NULL != m_pszKinsokuKuto_1 )
+		{
+			delete [] m_pszKinsokuKuto_1;
+			m_pszKinsokuKuto_1 = NULL;
+		}
+		if( NULL != m_pszKinsokuKuto_2 )
+		{
+			delete [] m_pszKinsokuKuto_2;
+			m_pszKinsokuKuto_2 = NULL;
+		}
+		//length = strlen( pszKinsokuHead ) + 1;
+		//	Kuto_2="。、，．", Kuto_1="｡､,."
+		length = 16;	//これだけあれば十分
+		m_pszKinsokuKuto_1 = new char[ length ];
+		m_pszKinsokuKuto_2 = new char[ length ];
+		k1 = (unsigned char *)m_pszKinsokuKuto_1;
+		k2 = (unsigned char *)m_pszKinsokuKuto_2;
+		memset( (void *)k1, 0, length );
+		memset( (void *)k2, 0, length );
+		//データ部は行頭禁則処理で設定する。
 
 		//行頭禁則文字の1,2バイト文字を分けて管理する。
 		m_bKinsokuHead = bKinsokuHead;
@@ -253,14 +290,31 @@ void CLayoutMgr::SetLayoutInfo(
 		{
 			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
 			{
-				*q2 = *p; q2++; p++;
-				*q2 = *p; q2++;
-				*q2 = 0;
+				if( IsKutoTen( *p, *(p+1) ) )	//句読点は別管理
+				{
+					*k2 = *p; k2++; p++;
+					*k2 = *p; k2++;
+					*k2 = 0;
+				}
+				else
+				{
+					*q2 = *p; q2++; p++;
+					*q2 = *p; q2++;
+					*q2 = 0;
+				}
 			}
 			else
 			{
-				*q1 = *p; q1++;
-				*q1 = 0;
+				if( IsKutoTen( *p, 0 ) )	//句読点は別管理
+				{
+					*k1 = *p; k1++;
+					*k1 = 0;
+				}
+				else
+				{
+					*q1 = *p; q1++;
+					*q1 = 0;
+				}
 			}
 		}
 
@@ -297,6 +351,9 @@ void CLayoutMgr::SetLayoutInfo(
 				*q1 = 0;
 			}
 		}
+
+		m_bKinsokuRet = bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+
 	}	//@@@ 2002.04.08 MIK end
 
 	if( bDoRayout ){

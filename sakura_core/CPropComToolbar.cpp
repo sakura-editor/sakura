@@ -73,6 +73,76 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_TOOLBAR(
 }
 //	To Here Jun. 2, 2001 genta
 
+//	From Here Apr. 13, 2002 genta
+/*!
+	Owner Draw List Boxに指定の値を挿入する (Windows XPの問題回避用)
+	
+	Windows XP + manifestの時にLB_INSERTSTRINGが値0を受け付けないので
+	とりあえず0以外の値を入れてから0に設定し直して回避する。
+	1回目の挿入は0でなければ何でもいいはず。
+	
+	@param hWnd [in] リストボックスのウィンドウハンドル
+	@param index [in] 挿入位置
+	@param value [in] 挿入する値
+	@return 挿入位置。エラーの時はLB_ERRまたはLB_ERRSPACE
+	
+	@date 2002.04.13 genta 
+*/
+int Listbox_INSERTDATA(
+	HWND hWnd,              //!< handle to destination window 
+	int index,          //!< item index
+	int value
+)
+{
+	int nIndex1 = ::SendMessage( hWnd, LB_INSERTSTRING, index, 1 );
+	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			_T("Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"), index, nIndex1 );
+		return nIndex1;
+	}
+	else if( ::SendMessage( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			_T("Toolbar Dialog: INS: 値の設定に失敗しました。:%d"), nIndex1 );
+		return LB_ERR;
+	}
+	return nIndex1;
+}
+
+//	From Here Apr. 13, 2002 genta
+/*!
+	Owner Draw List Boxに指定の値を追加する (Windows XPの問題回避用)
+	
+	Windows XP + manifestの時にLB_ADDSTRINGが値0を受け付けないので
+	とりあえず0以外の値を入れてから0に設定し直して回避する。
+	1回目の挿入は0でなければ何でもいいはず。
+	
+	@param hWnd [in] リストボックスのウィンドウハンドル
+	@param index [in] 挿入位置
+	@param value [in] 挿入する値
+	@return 挿入位置。エラーの時はLB_ERRまたはLB_ERRSPACE
+	
+	@date 2002.04.13 genta 
+*/
+int Listbox_ADDDATA(
+	HWND hWnd,              //!< handle to destination window 
+	int index,          //!< item index
+	int value
+)
+{
+	int nIndex1 = ::SendMessage( hWnd, LB_ADDSTRING, index, 1 );
+	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			_T("Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"), index, nIndex1 );
+		return nIndex1;
+	}
+	else if( ::SendMessage( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			_T("Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"), nIndex1 );
+		return LB_ERR;
+	}
+	return nIndex1;
+}
+
 /* p6 メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p6(
 	HWND	hwndDlg,	// handle to dialog box
@@ -206,7 +276,12 @@ BOOL CPropCommon::DispatchEvent_p6(
 
 //						/* ツールバーボタンの情報をセット (リストボックス) */
 //						for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
-							lResult = ::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)j );
+							//	From Here Apr. 13, 2002 genta
+							lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)j );
+							if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
+								break;
+							}
+							//	To Here Apr. 13, 2002 genta
 							lResult = ::SendMessage( hwndFuncList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 //						}
 					}
@@ -231,10 +306,12 @@ BOOL CPropCommon::DispatchEvent_p6(
 //						break;
 						nIndex1 = 0;
 					}
-					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1, 0 );
+					//	From Here Apr. 13, 2002 genta
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, 0 );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
 					}
+					//	To Here Apr. 13, 2002 genta
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
@@ -269,10 +346,12 @@ BOOL CPropCommon::DispatchEvent_p6(
 						break;
 					}
 					i = ::SendMessage( hwndFuncList, LB_GETITEMDATA, nIndex2, 0 );
-					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1, i );
+					//	From Here Apr. 13, 2002 genta
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
 					}
+					//	To Here Apr. 13, 2002 genta
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1 + 1, 0 );
 					break;
 
@@ -284,10 +363,15 @@ BOOL CPropCommon::DispatchEvent_p6(
 						break;
 					}
 					i = ::SendMessage( hwndFuncList, LB_GETITEMDATA, nIndex2, 0 );
-					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1, i );
+					//	From Here Apr. 13, 2002 genta
+					//	ここでは i != 0 だとは思うけど、一応保険です。
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
 						break;
 					}
+					//	To Here Apr. 13, 2002 genta
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
@@ -302,7 +386,14 @@ BOOL CPropCommon::DispatchEvent_p6(
 					if( j == LB_ERR ){
 						break;
 					}
-					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1 - 1, i );
+					//	From Here Apr. 13, 2002 genta
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 - 1, i );
+					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						break;
+					}
+					//	To Here Apr. 13, 2002 genta
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
@@ -318,8 +409,15 @@ BOOL CPropCommon::DispatchEvent_p6(
 					if( j == LB_ERR ){
 						break;
 					}
-					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1 + 1, i );
+					//	From Here Apr. 13, 2002 genta
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 + 1, i );
+					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						break;
+					}
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					//	To Here Apr. 13, 2002 genta
 					break;
 				}
 
@@ -427,7 +525,12 @@ void CPropCommon::SetData_p6( HWND hwndDlg )
 
 	/* ツールバーボタンの情報をセット(リストボックス)*/
 	for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
-		lResult = ::SendMessage( hwndResList, LB_ADDSTRING, 0, (LPARAM)m_Common.m_nToolBarButtonIdxArr[i] );
+		//	From Here Apr. 13, 2002 genta
+		lResult = ::Listbox_ADDDATA( hwndResList, 0, (LPARAM)m_Common.m_nToolBarButtonIdxArr[i] );
+		if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
+			break;
+		}
+		//	To Here Apr. 13, 2002 genta
 		lResult = ::SendMessage( hwndResList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 	}
 //	/* ツールバーの先頭の項目を選択(リストボックス)*/

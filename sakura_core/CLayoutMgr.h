@@ -106,7 +106,7 @@ public:
 	*/
 //	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
 //	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
-	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL, BOOL, BOOL, char*, char* ); /* レイアウト情報の変更 */	//@@@ 2002.04.08 MIK 禁則を追加
+	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, char*, char* ); /* レイアウト情報の変更 */	//@@@ 2002.04.13 MIK 禁則,改行文字をぶら下げる,句読点ぶらさげを追加
 	/* 行内文字削除 */
 	void DeleteData_CLayoutMgr(
 		int			nLineNum,
@@ -175,10 +175,14 @@ protected:
 	BOOL			m_bWordWrap;				/* 英文ワードラップをする */
 	BOOL			m_bKinsokuHead;				/* 行頭禁則をする */	//@@@ 2002.04.08 MIK
 	BOOL			m_bKinsokuTail;				/* 行末禁則をする */	//@@@ 2002.04.08 MIK
+	BOOL			m_bKinsokuRet;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	BOOL			m_bKinsokuKuto;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	char*			m_pszKinsokuHead_1;			/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 	char*			m_pszKinsokuHead_2;			/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 	char*			m_pszKinsokuTail_1;			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	char*			m_pszKinsokuTail_2;			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuKuto_1;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
+	char*			m_pszKinsokuKuto_2;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	int				m_nTabSpace;				/* TAB文字スペース */
 	char*			m_pszLineComment;			/* 行コメントデリミタ */
 	char*			m_pszLineComment2;			/* 行コメントデリミタ2 */
@@ -205,6 +209,8 @@ public:
 private:
 	bool IsKinsokuHead( const char *pLine, int length );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 	bool IsKinsokuTail( const char *pLine, int length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
+	bool IsKutoTen( unsigned char c1, unsigned char c2 );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
+	bool IsKinsokuKuto( const char *pLine, int length );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
 };
 
 

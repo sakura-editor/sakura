@@ -36,6 +36,7 @@
 #include "memory.h"
 #include "stdlib.h"
 #include <Shlobj.h>
+#include "etc_uty.h" // 2002/04/14 novice
 
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help
@@ -422,6 +423,8 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 {
 
+// 2002/04/14 novice
+#if 0
 	LPMALLOC pMalloc;
 	BROWSEINFO bi;
 	TCHAR szDir[MAX_PATH + 1]; // 追加する\\用に1足した
@@ -468,8 +471,26 @@ void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 
 	// Shell のアロケータを開放
 	pMalloc->Release();
+#endif
+	TCHAR szDir[MAX_PATH + 1]; // 追加する\\用に1足した
+
+	/* 検索フォルダ */
+	::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
+
+	if( SelectDir( hwndDlg, "Macroディレクトリの選択", szDir, szDir ) ){
+		//	末尾に\\マークを追加する．
+		int pos = strlen( szDir );
+		if( szDir[ pos - 1 ] != '\\' ){
+			szDir[ pos ] = '\\';
+			szDir[ pos + 1 ] = '\0';
+		}
+
+		::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
+	}
 }
 
+// 2002/04/14 novice
+#if 0
 /*!
 	フォルダ選択ダイアログボックス用Callback関数
 
@@ -488,6 +509,8 @@ int CALLBACK CPropCommon::DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam
 	}
 	return 0;
 }
+#endif
+
 /*!
 	マクロファイル指定用コンボボックスのドロップダウンリストが開かれるときに，
 	指定ディレクトリのファイル一覧から候補を生成する．

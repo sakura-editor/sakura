@@ -17,6 +17,7 @@
 #include "debug.h"
 #include "CSplitBoxWnd.h"
 #include "CEditWnd.h"
+#include "etc_uty.h"
 
 //	Jan. 29, 2002 genta
 //	Win95/NTが納得するsizeof( MENUITEMINFO )
@@ -824,7 +825,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	mii.cch = sizeof( szText ) - 1;
 	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, (MENUITEMINFO*)&mii )
 	 && NULL == mii.hSubMenu
-	 && 0 == CEditWnd::FuncID_To_HelpContextID( lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
+	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
 		//@@@ 2001.12.21 YAZAKI
 		if( lpdis->itemState & ODS_SELECTED ){

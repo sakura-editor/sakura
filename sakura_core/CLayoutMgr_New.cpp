@@ -75,6 +75,7 @@ void CLayoutMgr::DoLayout(
 	int			nWordLen;
 	int			nAllLineNum;
 	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
+	int			nCharChars3;	//@@@ 2002.04.17 MIK
 
 
 // 2002/03/13 novice
@@ -171,8 +172,8 @@ void CLayoutMgr::DoLayout(
 			}
 
 			//@@@ 2002.04.07 MIK start
-			/* 行頭禁則 */
-			if( m_bKinsokuHead )
+			/* 句読点のぶらさげ */
+			if( m_bKinsokuKuto && (m_nMaxLineSize - nPosX < 2) )
 			{
 				bKinsokuFlag = false;
 				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
@@ -192,9 +193,68 @@ void CLayoutMgr::DoLayout(
 					break;
 				}
 
-				if( bKinsokuFlag && IsKinsokuHead( &pLine[nPos], nCharChars2 ) )
+				if( bKinsokuFlag && IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
 				{
-					nPos += nCharChars2; //nPosX += nCharChars2;
+					nPos += nCharChars2; nPosX += nCharChars2;
+					if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					{
+						AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+						nCOMMENTMODE_Prev = nCOMMENTMODE;
+						nBgn = nPos;
+						nPosX = 0;
+					}
+				}
+			}
+			/* 行頭禁則 */
+			if( m_bKinsokuHead && (m_nMaxLineSize - nPosX < 4) && nPosX )
+			{
+				bKinsokuFlag = false;
+				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				nCharChars3 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2];
+				switch( m_nMaxLineSize - nPosX )
+				{
+				//    321012  ↓マジックナンバー
+				// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
+				// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
+				// 2  "る）": 22 "）"で折り返しのとき
+				// 2  "る)" : 21 ")"で折り返しのとき
+				// 1   "Z）": 12 "）"で折り返しのとき
+				// 1   "Z)" : 11 ")"で折り返しのとき
+				//↑何文字前か？
+				// ※ただし、"るZ"部分が禁則なら処理しない。
+				case 3:	// 3文字前
+					if( nCharChars2 == 2 && nCharChars3 == 2 )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				case 2:	// 2文字前
+					if( 2 == nCharChars2 /*&& nCharChars3 > 0*/ )
+					{
+						bKinsokuFlag = true;
+					}
+					else if( nCharChars2 == 1 )
+					{
+						if( nCharChars3 == 2 )
+						{
+							bKinsokuFlag = true;
+						}
+					}
+					break;
+				case 1:	// 1文字前
+					if( nCharChars2 == 1 /*&& nCharChars3 > 0*/ )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				}
+
+				if( bKinsokuFlag
+				 && IsKinsokuHead( &pLine[nPos+nCharChars2], nCharChars3 )
+				 && ! IsKinsokuHead( &pLine[nPos], nCharChars2 )	//1文字前が行頭禁則でない
+				 && ! IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )	//句読点でない
+				{
+					//nPos += nCharChars2; nPosX += nCharChars2;
 					AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					nBgn = nPos;
@@ -202,8 +262,8 @@ void CLayoutMgr::DoLayout(
 				}
 			}
 			/* 行末禁則 */
-			if( m_bKinsokuTail )
-			{
+			if( m_bKinsokuTail && (m_nMaxLineSize - nPosX < 4) && nPosX )
+			{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 				bKinsokuFlag = false;
 				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 				switch( m_nMaxLineSize - nPosX )
@@ -530,13 +590,17 @@ void CLayoutMgr::DoLayout(
 				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 				if( 0 == nCharChars ){
 					nCharChars = 1;
+					break;	//@@@ 2002.04.16 MIK
 				}
 				if( nPosX + nCharChars > m_nMaxLineSize ){
-					AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-					nCOMMENTMODE_Prev = nCOMMENTMODE;
-					nBgn = nPos;
-					nPosX = 0;
-					continue;
+					if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) ) )	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+					{	//@@@ 2002.04.14 MIK
+						AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+						nCOMMENTMODE_Prev = nCOMMENTMODE;
+						nBgn = nPos;
+						nPosX = 0;
+						continue;
+					}	//@@@ 2002.04.14 MIK
 				}
 				nPos+= nCharChars;
 				nPosX += nCharChars;
@@ -735,6 +799,7 @@ int CLayoutMgr::DoLayout3_New(
 	int			nWordBgn;
 	int			nWordLen;
 	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
+	int			nCharChars3;	//@@@ 2002.04.17 MIK
 
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
@@ -856,8 +921,8 @@ int CLayoutMgr::DoLayout3_New(
 			}
 
 			//@@@ 2002.04.07 MIK start
-			/* 行頭禁則 */
-			if( m_bKinsokuHead )
+			/* 句読点のぶらさげ */
+			if( m_bKinsokuKuto && (m_nMaxLineSize - nPosX < 2) )
 			{
 				bKinsokuFlag = false;
 				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
@@ -877,9 +942,96 @@ int CLayoutMgr::DoLayout3_New(
 					break;
 				}
 
-				if( bKinsokuFlag && IsKinsokuHead( &pLine[nPos], nCharChars2 ) )
+				if( bKinsokuFlag && IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
 				{
-					nPos += nCharChars2; //nPosX += nCharChars2;
+					nPos += nCharChars2; nPosX += nCharChars2;
+					if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					{
+						pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+						nCOMMENTMODE_Prev = nCOMMENTMODE;
+						if( bAdd ){
+							CLayout*	pLayoutWork;
+							pLayoutWork = pLayoutNext;
+							pLayoutNext = pLayoutNext->m_pNext;
+							pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
+							if( NULL != pLayoutNext ){
+								pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
+							}else{
+								m_pLayoutBot = pLayoutWork->m_pPrev;
+							}
+
+#ifdef _DEBUG
+							if( m_pLayoutPrevRefer == pLayoutWork ){
+								MYTRACE( "バグバグ\n" );
+							}
+#endif
+							delete pLayoutWork;
+							m_nLines--;
+
+							(*pnExtInsLineNum)++;
+						}
+
+						nBgn = nPos;
+						nPosX = 0;
+						if( ( nDelLogicalLineFrom == nCurLine &&
+							  nDelLogicalColFrom < nPos ) ||
+							( nDelLogicalLineFrom < nCurLine )
+						){
+							(nModifyLayoutLinesNew)++;;
+						}
+					}
+				}
+			}
+			/* 行頭禁則 */
+			if( m_bKinsokuHead && (m_nMaxLineSize - nPosX < 4) && nPosX )
+			{
+				bKinsokuFlag = false;
+				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				nCharChars3 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2];
+				switch( m_nMaxLineSize - nPosX )
+				{
+				//    321012  ↓マジックナンバー
+				// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
+				// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
+				// 2  "る）": 22 "）"で折り返しのとき
+				// 2  "る)" : 21 ")"で折り返しのとき
+				// 1   "Z）": 12 "）"で折り返しのとき
+				// 1   "Z)" : 11 ")"で折り返しのとき
+				//↑何文字前か？
+				// ※ただし、"るZ"部分が禁則なら処理しない。
+				case 3:	// 3文字前
+					if( nCharChars2 == 2 && nCharChars3 == 2 )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				case 2:	// 2文字前
+					if( 2 == nCharChars2 /*&& nCharChars3 > 0*/ )
+					{
+						bKinsokuFlag = true;
+					}
+					else if( nCharChars2 == 1 )
+					{
+						if( nCharChars3 == 2 )
+						{
+							bKinsokuFlag = true;
+						}
+					}
+					break;
+				case 1:	// 1文字前
+					if( nCharChars2 == 1 /*&& nCharChars3 > 0*/ )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				}
+
+				if( bKinsokuFlag
+				 && IsKinsokuHead( &pLine[nPos+nCharChars2], nCharChars3 )
+				 && ! IsKinsokuHead( &pLine[nPos], nCharChars2 )	//1文字前が行頭禁則でない
+				 && ! IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )	//句読点でない
+				{
+					//nPos += nCharChars2; nPosX += nCharChars2;
 					pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					if( bAdd ){
@@ -915,8 +1067,8 @@ int CLayoutMgr::DoLayout3_New(
 				}
 			}
 			/* 行末禁則 */
-			if( m_bKinsokuTail )
-			{
+			if( m_bKinsokuTail && (m_nMaxLineSize - nPosX < 4) && nPosX )
+			{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 				bKinsokuFlag = false;
 				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 				switch( m_nMaxLineSize - nPosX )
@@ -1297,41 +1449,44 @@ int CLayoutMgr::DoLayout3_New(
 				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 				if( 0 == nCharChars ){
 					nCharChars = 1;
-//					break;
+					break;	//@@@ 2002.04.16 MIK
 				}
 				if( nPosX + nCharChars > m_nMaxLineSize ){
-					pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-					nCOMMENTMODE_Prev = nCOMMENTMODE;
-					if( bAdd ){
-						CLayout*	pLayoutWork;
-						pLayoutWork = pLayoutNext;
-						pLayoutNext = pLayoutNext->m_pNext;
-						pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
-						if( NULL != pLayoutNext ){
-							pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
-						}else{
-							m_pLayoutBot = pLayoutWork->m_pPrev;
-						}
+					if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					{	//@@@ 2002.04.14 MIK
+						pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+						nCOMMENTMODE_Prev = nCOMMENTMODE;
+						if( bAdd ){
+							CLayout*	pLayoutWork;
+							pLayoutWork = pLayoutNext;
+							pLayoutNext = pLayoutNext->m_pNext;
+							pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
+							if( NULL != pLayoutNext ){
+								pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
+							}else{
+								m_pLayoutBot = pLayoutWork->m_pPrev;
+							}
 #ifdef _DEBUG
-						if( m_pLayoutPrevRefer == pLayoutWork ){
-							MYTRACE( "バグバグ\n" );
-						}
+							if( m_pLayoutPrevRefer == pLayoutWork ){
+								MYTRACE( "バグバグ\n" );
+							}
 #endif
-						delete pLayoutWork;
-						m_nLines--;
+							delete pLayoutWork;
+							m_nLines--;
 
-						(*pnExtInsLineNum)++;
-					}
+							(*pnExtInsLineNum)++;
+						}
 
-					nBgn = nPos;
-					nPosX = 0;
-					if( ( nDelLogicalLineFrom == nCurLine &&
-						  nDelLogicalColFrom < nPos ) ||
-						( nDelLogicalLineFrom < nCurLine )
-					){
-						(nModifyLayoutLinesNew)++;;
+						nBgn = nPos;
+						nPosX = 0;
+						if( ( nDelLogicalLineFrom == nCurLine &&
+							  nDelLogicalColFrom < nPos ) ||
+							( nDelLogicalLineFrom < nCurLine )
+						){
+							(nModifyLayoutLinesNew)++;;
+						}
+						continue;
 					}
-					continue;
 				}
 				nPos+= nCharChars;
 			}
@@ -1463,5 +1618,46 @@ bool CLayoutMgr::IsKinsokuTail( const char *pLine, int length )
 	return false;
 }
 
+bool CLayoutMgr::IsKutoTen( unsigned char c1, unsigned char c2 )
+{
+	static const char	*KUTOTEN_1 = "｡､,.";
+	static const char	*KUTOTEN_2 = "。、，．";
+	unsigned const char	*p;
+
+	if( c2 )	//全角
+	{
+		for( p = (const unsigned char *)KUTOTEN_2; *p; p += 2 )
+		{
+			if( *p == c1 && *(p + 1) == c2 ) return true;
+		}
+	}
+	else		//半角
+	{
+		for( p = (const unsigned char *)KUTOTEN_1; *p; p++ )
+		{
+			if( *p == c1 ) return true;
+		}
+	}
+
+	return false;
+}
+
+bool CLayoutMgr::IsKinsokuKuto( const char *pLine, int length )
+{
+	const unsigned char	*p;
+	
+	if(      length == 1 ) p = (const unsigned char *)m_pszKinsokuKuto_1;
+	else if( length == 2 ) p = (const unsigned char *)m_pszKinsokuKuto_2;
+	else return false;
+	
+	if( ! p ) return false;
+
+	for( ; *p; p += length )
+	{
+		if( memcmp( pLine, p, length ) == 0 ) return true;
+	}
+
+	return false;
+}
 
 /*[EOF]*/

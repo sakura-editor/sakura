@@ -120,6 +120,8 @@ CEditDoc::CEditDoc() :
 		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 		ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	);
@@ -690,6 +692,8 @@ BOOL CEditDoc::FileRead(
 			ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 			ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 			ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+			ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+			ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 			ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 			ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 		);
@@ -1711,6 +1715,9 @@ void CEditDoc::DoFileLock( void )
 			break;
 		case OF_SHARE_DENY_WRITE:	/* 書き */
 			pszMode = "書き込み禁止モード";
+			break;
+		default:
+			pszMode = "未定義のモード（問題があります）";
 			break;
 		}
 		::MessageBeep( MB_ICONEXCLAMATION );
@@ -3437,6 +3444,8 @@ void CEditDoc::OnChangeSetting( void )
 		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 		ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	); /* レイアウト情報の変更 */
@@ -3708,6 +3717,8 @@ void CEditDoc::Init( void )
 		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_bKinsokuRet,			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		ref.m_bKinsokuKuto,			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 		ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	);

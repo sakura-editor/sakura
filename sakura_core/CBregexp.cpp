@@ -69,6 +69,24 @@ CBregexp::GetDllName( char* str )
 */
 int CBregexp::InitDll()
 {
+	//	Apr. 15, 2002 genta
+	//	CPPA.cpp を参考に設定を配列化した
+	
+	const ImportTable table[] = {
+		{ &BMatch,		"BMatch" },
+		{ &BSubst,		"BSubst" },
+		{ &BTrans,		"BTrans" },
+		{ &BSplit,		"BSplit" },
+		{ &BRegfree, 	"BRegfree" },
+		{ &BRegexpVersion,	"BRegexpVersion" },
+		{ NULL, 0 }
+	};
+	
+	if( ! RegisterEntries( table )){
+		return 1;
+	}
+	
+#if 0
 	//	アドレス取得
 	if( (BMatch = (BREGEXP_BMatch)GetProcAddress( GetInstance(), "BMatch" )) == NULL )
 		return 1;
@@ -82,6 +100,7 @@ int CBregexp::InitDll()
 		return 1;
 	if( (BRegexpVersion = (BREGEXP_BRegexpVersion)GetProcAddress( GetInstance(), "BRegexpVersion" )) == NULL )
 		return 1;
+#endif
 
 	return 0;
 }

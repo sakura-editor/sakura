@@ -36,6 +36,11 @@
 #include "global.h"
 
 //! DLLの動的なLoad/Unloadを行うためのクラス
+/*!
+	@author genta
+	@date Jun. 10, 2001
+	@date Apr. 15, 2002 genta RegisterEntriesの追加。
+*/
 class SAKURA_CORE_API CDllHandler {
 public:
 	CDllHandler();
@@ -75,6 +80,18 @@ public:
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
 protected:
+
+	/*!
+		アドレスとエントリ名の対応表。RegisterEntriesで使われる。
+		@author YAZAKI
+		@date 2002.01.26
+	*/
+	struct ImportTable 
+	{
+		void* proc;
+		const char* name;
+	};
+
 	//!	DLLの初期化
 	/*!
 		DLLのロードに成功した直後に呼び出される．エントリポイントの
@@ -95,6 +112,19 @@ protected:
 		@retval other 異常終了．値の意味は自由に設定して良い．
 
 		@note 0以外を返したときはDLLのUnloadは行われない．
+		@par 注意
+		デストラクタからFreeLibrary及びDeinitDllが呼び出されたときは
+		ポリモーフィズムが行われないためにサブクラスのDeinitDllが呼び出されない。
+		そのため、サブクラスのデストラクタではDeinitDllを明示的に呼び出す必要がある。
+		
+		FreeLibraryがデストラクタ以外から呼び出される場合はDeinitDllは仮想関数として
+		サブクラスのものが呼び出され、デストラクタは当然呼び出されないので
+		DeinitDllそのものは必要である。
+		
+		デストラクタからDeinitDllを呼ぶときは、初期化されているという保証がないので
+		呼び出し前にIsAvailableによる確認を必ず行うこと。
+		
+		@date 2002.04.15 genta 注意書き追加
 	*/
 	virtual int DeinitDll(void);
 	//! DLLファイル名の取得
@@ -102,6 +132,8 @@ protected:
 		@date Jul. 5, 2001 genta 引数追加。パスの指定などに使える
 	*/
 	virtual char* GetDllName(char*) = 0;
+	
+	bool RegisterEntries(const ImportTable table[]);
 
 private:
 	HINSTANCE m_hInstance;

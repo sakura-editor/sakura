@@ -111,7 +111,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	/* 削除した範囲の直前のレイアウト情報のポインタを返す */
 
 	int nAllLinesOld = m_nLines;
-	int	nModifyLayoutLinesOld;
+	int	nModifyLayoutLinesOld = 0;
 	CLayout* pLayoutPrev;
 	int nWork;
 	nWork = __max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );

@@ -1930,6 +1930,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_ACTIVATE_SQLPLUS:	return HLP000132;			/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	return HLP000027;	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:				return HLP000121;			//ブラウズ
+	case F_READONLY:			return HLP000249;			//読み取り専用
 	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
 
 //	case IDM_EXITALL:			return 28;			//テキストエディタの全終了
@@ -1956,6 +1957,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_UNINDENT_TAB:				return HLP000113;	//逆TABインデント
 	case F_INDENT_SPACE:				return HLP000114;	//SPACEインデント
 	case F_UNINDENT_SPACE:				return HLP000114;	//逆SPACEインデント
+	case F_RECONVERT:					return HLP000218;	//再変換
 //	case ORDSREFERENCE:					return ;	//単語リファレンス
 
 
@@ -1964,23 +1966,23 @@ int FuncID_To_HelpContextID( int nFuncID )
 //	case F_DOWN:			return ;	//カーソル下移動
 //	case F_LEFT:			return ;	//カーソル左移動
 //	case F_RIGHT:			return ;	//カーソル右移動
-//	case F_UP2:				return ;	//カーソル上移動(２行ごと)
-//	case F_DOWN2:			return ;	//カーソル下移動(２行ごと)
-//	case F_WORDLEFT:		return ;	//単語の左端に移動
-//	case F_WORDRIGHT:		return ;	//単語の右端に移動
-//	case F_GOLINETOP:		return ;	//行頭に移動(折り返し単位)
-//	case F_GOLINEEND:		return ;	//行末に移動(折り返し単位)
+	case F_UP2:				return HLP000220;	//カーソル上移動(２行ごと)
+	case F_DOWN2:			return HLP000221;	//カーソル下移動(２行ごと)
+	case F_WORDLEFT:		return HLP000222;	//単語の左端に移動
+	case F_WORDRIGHT:		return HLP000223;	//単語の右端に移動
+	case F_GOLINETOP:		return HLP000224;	//行頭に移動(折り返し単位)
+	case F_GOLINEEND:		return HLP000225;	//行末に移動(折り返し単位)
 //	case F_ROLLDOWN:		return ;	//スクロールダウン
 //	case F_ROLLUP:			return ;	//スクロールアップ
-//	case F_HalfPageUp:		return ;	//半ページアップ	//Oct. 17, 2000 JEPRO 以下「１ページダウン」まで追加
-//	case F_HalfPageDown:	return ;	//半ページダウン
-//	case F_1PageUp:			return ;	//１ページアップ
-//	case F_1PageDown:		return ;	//１ページダウン
-//	case F_GOFILETOP:		return ;	//ファイルの先頭に移動
-//	case F_GOFILEEND:		return ;	//ファイルの最後に移動
-//	case F_CURLINECENTER:	return ;	//カーソル行をウィンドウ中央へ
-//	case F_JUMPPREV:		return ;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
-//	case F_JUMPNEXT:		return ;	//移動履歴: 次へ
+	case F_HalfPageUp:		return HLP000245;	//半ページアップ	//Oct. 17, 2000 JEPRO 以下「１ページダウン」まで追加
+	case F_HalfPageDown:	return HLP000246;	//半ページダウン
+	case F_1PageUp:			return HLP000226;	//１ページアップ
+	case F_1PageDown:		return HLP000227;	//１ページダウン
+	case F_GOFILETOP:		return HLP000228;	//ファイルの先頭に移動
+	case F_GOFILEEND:		return HLP000229;	//ファイルの最後に移動
+	case F_CURLINECENTER:	return HLP000230;	//カーソル行をウィンドウ中央へ
+	case F_JUMPPREV:		return HLP000231;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
+	case F_JUMPNEXT:		return HLP000232;	//移動履歴: 次へ
 	case F_WndScrollDown:	return HLP000198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
 	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
 
@@ -1988,30 +1990,30 @@ int FuncID_To_HelpContextID( int nFuncID )
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
 	case F_SELECTALL:		return HLP000044;	//すべて選択
-//	case F_BEGIN_SEL:		return ;	//範囲選択開始
+	case F_BEGIN_SEL:		return HLP000233;	//範囲選択開始
 //	case F_UP_SEL:			return ;	//(範囲選択)カーソル上移動
 //	case F_DOWN_SEL:		return ;	//(範囲選択)カーソル下移動
 //	case F_LEFT_SEL:		return ;	//(範囲選択)カーソル左移動
 //	case F_RIGHT_SEL:		return ;	//(範囲選択)カーソル右移動
-//	case F_UP2_SEL:			return ;	//(範囲選択)カーソル上移動(２行ごと)
-//	case F_DOWN2_SEL:		return ;	//(範囲選択)カーソル下移動(２行ごと)
-//	case F_WORDLEFT_SEL:	return ;	//(範囲選択)単語の左端に移動
-//	case F_WORDRIGHT_SEL:	return ;	//(範囲選択)単語の右端に移動
-//	case F_GOLINETOP_SEL:	return ;	//(範囲選択)行頭に移動(折り返し単位)
-//	case F_GOLINEEND_SEL:	return ;	//(範囲選択)行末に移動(折り返し単位)
+	case F_UP2_SEL:			return HLP000234;	//(範囲選択)カーソル上移動(２行ごと)
+	case F_DOWN2_SEL:		return HLP000235;	//(範囲選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_SEL:	return HLP000236;	//(範囲選択)単語の左端に移動
+	case F_WORDRIGHT_SEL:	return HLP000237;	//(範囲選択)単語の右端に移動
+	case F_GOLINETOP_SEL:	return HLP000238;	//(範囲選択)行頭に移動(折り返し単位)
+	case F_GOLINEEND_SEL:	return HLP000239;	//(範囲選択)行末に移動(折り返し単位)
 //	case F_ROLLDOWN_SEL:	return ;	//(範囲選択)スクロールダウン
 //	case F_ROLLUP_SEL:		return ;	//(範囲選択)スクロールアップ
-//	case F_HalfPageUp_Sel:	return ;	//(範囲選択)半ページアップ		//Oct. 17, 2000 JEPRO 以下「１ページダウン」まで追加
-//	case F_HalfPageDown_Sel:return ;	//(範囲選択)半ページダウン
-//	case F_1PageUp_Sel:		return ;	//(範囲選択)１ページアップ
-//	case F_1PageDown_Sel:	return ;	//(範囲選択)１ページダウン
-//	case F_GOFILETOP_SEL:	return ;	//(範囲選択)ファイルの先頭に移動
-//	case F_GOFILEEND_SEL:	return ;	//(範囲選択)ファイルの最後に移動
+	case F_HalfPageUp_Sel:	return HLP000247;	//(範囲選択)半ページアップ		//Oct. 17, 2000 JEPRO 以下「１ページダウン」まで追加
+	case F_HalfPageDown_Sel:return HLP000248;	//(範囲選択)半ページダウン
+	case F_1PageUp_Sel:		return HLP000240;	//(範囲選択)１ページアップ
+	case F_1PageDown_Sel:	return HLP000241;	//(範囲選択)１ページダウン
+	case F_GOFILETOP_SEL:	return HLP000242;	//(範囲選択)ファイルの先頭に移動
+	case F_GOFILEEND_SEL:	return HLP000243;	//(範囲選択)ファイルの最後に移動
 
 
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 //	case F_BOXSELALL:		return ;	//矩形ですべて選択
-//	case F_BEGIN_BOX:		return ;	//矩形範囲選択開始
+	case F_BEGIN_BOX:		return HLP000244;	//矩形範囲選択開始
 /*
 	case F_UP_BOX:			return ;	//(矩形選択)カーソル上移動	//Oct. 17, 2000 JEPRO 以下「ファイルの最後に移動」まで追加
 	case F_DOWN_BOX:		return ;	//(矩形選択)カーソル下移動
@@ -2030,12 +2032,17 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_GOFILETOP_BOX:	return ;	//(矩形選択)ファイルの先頭に移動
 	case F_GOFILEEND_BOX:	return ;	//(矩形選択)ファイルの最後に移動
 */
-
+	/* 整形系 2002/04/17 YAZAKI */
+	case F_LTRIM:		return HLP000210;	//左(先頭)の空白を削除
+	case F_RTRIM:		return HLP000211;	//右(末尾)の空白を削除
+	case F_SORT_ASC:	return HLP000212;	//選択行の昇順ソート
+	case F_SORT_DESC:	return HLP000213;	//選択行の降順ソート
+	case F_MERGE:		return HLP000214;	//選択行のマージ
 
 	/* クリップボード系 */
 	case F_CUT:				return HLP000034;			//切り取り(選択範囲をクリップボードにコピーして削除)
 	case F_COPY:			return HLP000035;			//コピー(選択範囲をクリップボードにコピー)
-//	case F_COPY_ADDCRLF:	return HLPxxxxxx;			//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF:	return HLP000219;			//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	case F_COPY_CRLF:		return HLP000163;			//CRLF改行でコピー(選択範囲をクリップボードにコピー)	//Feb. 23, 2001 JEPRO 抜けていたので追加
 	case F_PASTE:			return HLP000039;			//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:		return HLP000040;			//矩形貼り付け(クリップボードから矩形貼り付け)
@@ -2094,7 +2101,11 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TAGJUMPBACK:			return HLP000066;	//タグジャンプバック機能
 	case F_COMPARE:				return HLP000116;	//ファイル内容比較
 	case F_BRACKETPAIR:			return HLP000183;	//対括弧の検索	//Oct. 17, 2000 JEPRO 追加
-
+	case F_BOOKMARK_SET:		return HLP000205;	//ブックマーク設定・解除
+	case F_BOOKMARK_NEXT:		return HLP000206;	//次のブックマークへ
+	case F_BOOKMARK_PREV:		return HLP000207;	//前のブックマークへ
+	case F_BOOKMARK_RESET:		return HLP000208;	//ブックマークの全解除
+	case F_BOOKMARK_VIEW:		return HLP000209;	//ブックマークの一覧
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		return HLP000046;	//挿入／上書きモード切り替え

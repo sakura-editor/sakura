@@ -165,8 +165,10 @@ void CEditView::InsertData_CEditView(
 		*pnNewPos = LineIndexToColmn( pLine2, nLineLen2, *pnNewPos );
 	}
 	if( *pnNewPos >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-		*pnNewPos = 0;
-		(*pnNewLine)++;
+		if( ! m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet ){	//@@@ 2002.04.16 MIK
+			*pnNewPos = 0;
+			(*pnNewLine)++;
+		}	//@@@ 2002.04.16 MIK
 	}
 
 //	MYTRACE( "nModifyLayoutLinesOld=%d nInsLineNum=%d *pnNewLine=%d *pnNewPos=%d\n", nModifyLayoutLinesOld, nInsLineNum, *pnNewLine, *pnNewPos );
