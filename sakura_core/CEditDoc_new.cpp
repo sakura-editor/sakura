@@ -689,9 +689,9 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 
 
 //	From Here June 23, 2001 N.Nakatani
-//!	VisualBasic関数リスト作成（簡易版）
+//!	Visual Basic関数リスト作成（簡易版）
 /*!
-	VisualBasicのコードから単純にユーザー定義の関数やステートメントを取り出す動作を行う。
+	Visual Basicのコードから単純にユーザー定義の関数やステートメントを取り出す動作を行う。
 */
 void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 {

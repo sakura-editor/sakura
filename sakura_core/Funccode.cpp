@@ -99,7 +99,7 @@ const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edi
 	F_UNDO				,	//元に戻す(Undo)
 	F_REDO				,	//やり直し(Redo)
 	F_DELETE			,	//削除
-	F_DELETE_BACK		,	//カーソルの前を削除
+	F_DELETE_BACK		,	//カーソル前を削除
 	F_WordDeleteToStart	,	//単語の左端まで削除
 	F_WordDeleteToEnd	,	//単語の右端まで削除
 	F_WordCut			,	//単語切り取り

@@ -228,7 +228,7 @@ BOOL CEditView::HandleCommand(
 	case F_UNDO:				Command_UNDO();break;				/* 元に戻す(Undo) */
 	case F_REDO:				Command_REDO();break;				/* やり直し(Redo) */
 	case F_DELETE:				Command_DELETE(); break;			//削除
-	case F_DELETE_BACK:			Command_DELETE_BACK(); break;		//カーソルの前を削除
+	case F_DELETE_BACK:			Command_DELETE_BACK(); break;		//カーソル前を削除
 	case F_WordDeleteToStart:	Command_WordDeleteToStart(); break;	//単語の左端まで削除
 	case F_WordDeleteToEnd:		Command_WordDeleteToEnd(); break;	//単語の右端まで削除
 	case F_WordDelete:			Command_WordDelete(); break;		//単語削除
@@ -1485,7 +1485,7 @@ void CEditView::Command_DELETE( void )
 
 
 
-//カーソルの前を削除
+//カーソル前を削除
 void CEditView::Command_DELETE_BACK( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
@@ -5248,7 +5248,7 @@ retry:;
 		link.pszMsgTitle = NULL;
 		link.pszWindow = NULL;
 		link.fIndexOnFail = TRUE;
-		
+
 		//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 		hwndHtmlHelp = OpenHtmlHelp(
 			NULL/*m_pShareData->m_hwndTray*/,
