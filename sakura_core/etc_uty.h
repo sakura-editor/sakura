@@ -10,6 +10,7 @@
 	Copyright (C) 2001-2002, genta
 	Copyright (C) 2001, shoji masami, Stonee, MIK
 	Copyright (C) 2002, aroka, hor, MIK
+	Copyright (C) 2003, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -110,6 +111,7 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
 //	Apr. 30, 2003 genta
+//	ディレクトリの深さを調べる
 int CalcDirectoryDepth(const char* path);
 
 // Oct. 5, 2002 genta CMemory.cppより移動
