@@ -55,11 +55,6 @@
 #define ESC_ASCII	"\x01b(B"
 #define ESC_8BIT	"\x01b(I"
 
-#define TAB_SPACE	"  "
-
-#define MEME_B_HEAD	"=?ISO-2022-JP?B?"
-#define MEME_X_FOOT	"?="
-
 #define MIME_BASE64	1
 #define MIME_QUOTED	2
 
@@ -204,12 +199,11 @@ const CMemory& CMemory::operator += ( const CMemory& cMemory )
 
 const CMemory& CMemory::operator += ( char ch )
 {
-	char*	pszStr = new char[sizeof(ch) + 1];
-	memcpy( pszStr, &ch, sizeof(ch) );
-	pszStr[sizeof(ch)] = '\0';
+	char szChar[2];
+	szChar[0] = ch;
+	szChar[1] = '\0';
 	AllocBuffer( m_nDataLen + sizeof( ch ) );
-	AddData( pszStr, strlen( pszStr ) );
-	delete [] pszStr;
+	AddData( szChar, sizeof( ch ) );
 	return *this;
 }
 
@@ -314,7 +308,8 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 //	#define CHAR_8BITCODE	1	/* 8ビットコード(半角カタカナなど) */
 //	#define CHAR_ZENKAKU	2	/* 全角文字 */
 
-	pcmemDes->SetData( "", strlen("") );
+	pcmemDes->SetDataSz( "" );
+	pcmemDes->AllocBuffer( nSrcLen );
 //	bSJISKAN  = FALSE;
 	nWorkBgn = 0;
 	for( i = 0;; i++ ){
@@ -454,8 +449,6 @@ void CMemory::JIStoSJIS( bool bMIMEdecode )
 {
 	int				i;
 	int				j;
-	BOOL			bJISKAN = FALSE;
-	BOOL			b8BITCODE = FALSE;
 	unsigned char*	pszDes;
 	unsigned char*	pszSrc = (unsigned char*)m_pData;
 	long			nSrcLen = m_nDataLen;
@@ -464,150 +457,159 @@ void CMemory::JIStoSJIS( bool bMIMEdecode )
 	long			nWorkBgn;
 	long			nWorkLen;
 	unsigned char*	pszWork;
+
+	int				nISOCode = CHAR_ASCII;
+	int				nOldISOCode = nISOCode;
+	BOOL			bFindESCSeq = FALSE;
+	int				nESCSeqLen  = - 1; // エスケープシーケンス長 - 1
+
 	pszDes = new unsigned char [nSrcLen + 1];
 	memset( pszDes, 0, nSrcLen + 1 );
 	j = 0;
-	for( i = 0; i < nSrcLen; i++ ){
-		if( bMIMEdecode && i <= nSrcLen - 16 ){
-			if( 0 == _memicmp( "=?ISO-2022-JP?B?", &pszSrc[i], 16 ) ){
-				nMEME_Selected = MIME_BASE64;
-				bMIME = TRUE;
-				i += 15;
-				nWorkBgn = i + 1;
-				continue;
-			}
-			if( 0 == _memicmp( "=?ISO-2022-JP?Q?", &pszSrc[i], 16 ) ){
-				nMEME_Selected = MIME_QUOTED;
-				bMIME = TRUE;
-				i += 15;
-				nWorkBgn = i + 1;
-				continue;
-			}
-		}
-		if( bMIME == TRUE ){
-			if( i <= nSrcLen - 2  &&
-				0 == memcmp( "?=", &pszSrc[i], 2 ) ){
-				nWorkLen = i - nWorkBgn;
-				pszWork = new unsigned char [nWorkLen + 1];
-				memset( pszWork, 0, nWorkLen + 1 );
-				memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-				switch( nMEME_Selected ){
-				  case MIME_BASE64:
-					// Base64デコード
-					nWorkLen = MemBASE64_Decode(pszWork, nWorkLen);
-					break;
-				  case MIME_QUOTED:
-					// Quoted-Printableデコード
-					nWorkLen = QuotedPrintable_Decode( (char*)pszWork, nWorkLen );
-					break;
+	if( false != bMIMEdecode ){
+		for( i = 0; i < nSrcLen; i++ ){
+			if( i <= nSrcLen - 16 && '=' == pszSrc[i] ){
+				if( 0 == _memicmp( "=?ISO-2022-JP?B?", &pszSrc[i], 16 ) ){
+					nMEME_Selected = MIME_BASE64;
+					bMIME = TRUE;
+					i += 15;
+					nWorkBgn = i + 1;
+					continue;
 				}
-				memcpy( &pszDes[j], pszWork, nWorkLen );
-				bMIME = FALSE;
-				j += nWorkLen;
-				++i;
-				delete [] pszWork;
-				continue;
-			}else{
-				continue;
+				if( 0 == _memicmp( "=?ISO-2022-JP?Q?", &pszSrc[i], 16 ) ){
+					nMEME_Selected = MIME_QUOTED;
+					bMIME = TRUE;
+					i += 15;
+					nWorkBgn = i + 1;
+					continue;
+				}
 			}
+			if( bMIME == TRUE ){
+				if( i <= nSrcLen - 2  &&
+					0 == memcmp( "?=", &pszSrc[i], 2 ) ){
+					nWorkLen = i - nWorkBgn;
+					pszWork = new unsigned char [nWorkLen + 1];
+//					memset( pszWork, 0, nWorkLen + 1 );
+					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
+					pszWork[nWorkLen] = '\0';
+					switch( nMEME_Selected ){
+					  case MIME_BASE64:
+						// Base64デコード
+						nWorkLen = MemBASE64_Decode(pszWork, nWorkLen);
+						break;
+					  case MIME_QUOTED:
+						// Quoted-Printableデコード
+						nWorkLen = QuotedPrintable_Decode( (char*)pszWork, nWorkLen );
+						break;
+					}
+					memcpy( &pszDes[j], pszWork, nWorkLen );
+					bMIME = FALSE;
+					j += nWorkLen;
+					++i;
+					delete [] pszWork;
+					continue;
+				}else{
+					continue;
+				}
+			}
+			pszDes[j] = pszSrc[i];
+			j++;
 		}
-		pszDes[j] = pszSrc[i];
-		j++;
-	}
-	if( bMIME ){
-		nWorkLen = i - nWorkBgn;
-		memcpy( &pszDes[j], &pszSrc[nWorkBgn], nWorkLen );
-		j += nWorkLen;
+		if( bMIME ){
+			nWorkBgn -= 16; // MIMEヘッダをそのままコピー
+			nWorkLen = i - nWorkBgn;
+			memcpy( &pszDes[j], &pszSrc[nWorkBgn], nWorkLen );
+			j += nWorkLen;
+		}
+
+		// 非ASCIIテキスト対応メッセージヘッダのMIMEコード
+		memcpy( (char *)pszSrc, (const char *)pszDes, j );
+
+		nSrcLen = j;
 	}
 
-/*****
-	// 非ASCIIテキスト対応メッセージヘッダのMIMEコード
-*****/
-	pszDes[j] = 0;
-	strcpy( (char *)pszSrc, (const char *)pszDes );
-
-	nSrcLen = j;
+	nWorkBgn = 0;
 	j = 0;
 	for( i = 0; i < nSrcLen; i++ ){
 		if( i <= nSrcLen - 3		&&
 			pszSrc[i + 0] == 0x1b	&&
 			pszSrc[i + 1] == '$'	&&
 		   (pszSrc[i + 2] == 'B' || pszSrc[i + 2] == '@') ){
-			b8BITCODE = FALSE;
-			bJISKAN = TRUE;
-			i += 2;
-			nWorkBgn = i + 1;
-			continue;
-		}
+
+			bFindESCSeq = TRUE;
+			nOldISOCode = nISOCode;
+			nISOCode = CHAR_ZENKAKU;
+			nESCSeqLen = 2;
+		}else
 		if( i <= nSrcLen - 3		&&
 			pszSrc[i + 0] == 0x1b	&&
 			pszSrc[i + 1] == '('	&&
 			pszSrc[i + 2] == 'I' ){
-			if( bJISKAN == TRUE && 0 < i - nWorkBgn ){
-				nWorkLen = i - nWorkBgn;
-				pszWork = new unsigned char [nWorkLen + 1];
-				memset( pszWork, 0, nWorkLen + 1 );
-				memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-				// JIS→SJIS変換
-				nWorkLen = MemJIStoSJIS( (unsigned char*)pszWork, nWorkLen );
-				memcpy( &pszDes[j], pszWork, nWorkLen );
-				bJISKAN = FALSE;
-				j += nWorkLen;
-//				i += 2;
-				delete [] pszWork;
-//				continue;
-			}
-			b8BITCODE = TRUE;
-			i += 2;
-			continue;
-		}
+
+			bFindESCSeq = TRUE;
+			nOldISOCode = nISOCode;
+			nISOCode = CHAR_8BITCODE;
+			nESCSeqLen = 2;
+		}else
 		if( i <= nSrcLen - 3		&&
 			pszSrc[i + 0] == 0x1b	&&
 			pszSrc[i + 1] == '('	&&
 		   (pszSrc[i + 2] == 'B' || pszSrc[i + 2] == 'J') ){
-			b8BITCODE = FALSE;
-			if( bJISKAN == TRUE ){
-				nWorkLen = i - nWorkBgn;
-				pszWork = new unsigned char [nWorkLen + 1];
-				memset( pszWork, 0, nWorkLen + 1 );
-				memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-				// JIS→SJIS変換
-				nWorkLen = MemJIStoSJIS( (unsigned char*)pszWork, nWorkLen );
-				memcpy( &pszDes[j], pszWork, nWorkLen );
-				bJISKAN = FALSE;
-				j += nWorkLen;
-				i += 2;
-				delete [] pszWork;
-				continue;
-			}else
-			if( b8BITCODE ){
-				b8BITCODE = FALSE;
-				i += 2;
-				continue;
-			}else{
-				i += 2;
-				continue;
-			}
-		}else{
-			if( b8BITCODE ){
-				pszDes[j] = (unsigned char)0x80 | pszSrc[i];
-				j++;
-			}else{
-				if( bJISKAN == TRUE ){
-					continue;
-				}else{
-					pszDes[j] = pszSrc[i];
-					j++;
+			
+			bFindESCSeq = TRUE;
+			nOldISOCode = nISOCode;
+			nISOCode = CHAR_ASCII;
+			nESCSeqLen = 2;
+		}
+		// else{}
+
+		if( bFindESCSeq ){
+			if( 0 < i - nWorkBgn ){
+				if( CHAR_ZENKAKU == nOldISOCode ){
+					nWorkLen = i - nWorkBgn;
+					pszWork = new unsigned char [nWorkLen + 1];
+					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
+					pszWork[nWorkLen] = '\0';
+					// JIS→SJIS変換
+					nWorkLen = MemJIStoSJIS( (unsigned char*)pszWork, nWorkLen );
+					memcpy( &pszDes[j], pszWork, nWorkLen );
+					j += nWorkLen;
+					delete [] pszWork;
 				}
 			}
+			i += nESCSeqLen;
+			nWorkBgn = i + 1;
+			bFindESCSeq = FALSE;
+			continue;
+		}else
+		if( CHAR_ASCII == nISOCode ){
+			pszDes[j] = pszSrc[i];
+			j++;
+			continue;
+		}else
+		if( CHAR_8BITCODE == nISOCode ){
+			pszDes[j] = (unsigned char)0x80 | pszSrc[i];
+			j++;
+			continue;
 		}
 	}
-	pszDes[j] = 0;
-	strcpy( (char *)pszSrc, (const char *)pszDes );
-	m_nDataLen = j;
+
+	// ESCSeqがASCIIに戻らなかったときに，データを失わないように
+	if( CHAR_ZENKAKU == nISOCode ){
+		if( 0 < i - nWorkBgn ){
+			nWorkBgn -= nESCSeqLen + 1; // ESCSeqも残しておきたい
+			nWorkLen = i - nWorkBgn;
+			memcpy( &pszDes[j], &pszSrc[nWorkBgn], nWorkLen );
+			j += nWorkLen;
+		}
+	}
+
+	memcpy( pszSrc, pszDes, j );
+ 	m_nDataLen = j;
 	delete [] pszDes;
 	return;
 }
+
 
 
 
@@ -653,7 +655,8 @@ int CMemory::IsBASE64Char( char cData )
 #endif
 }
 
-
+// BASE64 => エンコード後
+// 4文字  => 3文字
 
 // Base64デコード
 long CMemory::MemBASE64_Decode( unsigned char* pszSrc, long nSrcLen )
@@ -1030,7 +1033,7 @@ void CMemory::EUCToSJIS( void )
 	unsigned int	sCode;
 
 	while( nPtr < nBufLen ){
-		if( (unsigned char)pBuf[nPtr] == (unsigned char)0x8e ){
+		if( (unsigned char)pBuf[nPtr] == (unsigned char)0x8e && nPtr < nBufLen - 1 ){
 			/* 半角カタカナ */
 			pszDes[nPtrDes] = pBuf[nPtr + 1];
 			nPtrDes++;
@@ -2353,7 +2356,7 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 	hgData = NULL;
 	hFile = _lopen( pszFile, OF_READ );
 	if( HFILE_ERROR == hFile ){
-		return FALSE;
+		return -1;
 	}
 	nBufLen = _llseek( hFile, 0, FILE_END );
 	_llseek( hFile, 0, FILE_BEGIN );
@@ -2369,7 +2372,7 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 	hgData = ::GlobalAlloc( GHND, nBufLen + 1 );
 	if( NULL == hgData ){
 		_lclose( hFile );
-		return FALSE;
+		return -1;
 	}
 	pBuf = (const unsigned char*)::GlobalLock( hgData );
 	_lread( hFile, (void *)pBuf, nBufLen );
@@ -2421,57 +2424,32 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 #if 0
 	/*
 	||日本語コードセット判別: Unicodeか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UNICODE( pBuf, nBufLen, &nUNICODEMojiNum, &nUNICODECodeNum ) ){
+	CMemory::CheckKanjiCode_UNICODE( pBuf, nBufLen, &nUNICODEMojiNum, &nUNICODECodeNum );
 		if( 0 < nUNICODEMojiNum && nUNICODEMojiNum == nUNICODECodeNum ){
 			return CODE_UNICODE; /* Unicode */
 		}
-	}else{
-		return -1;
-	}
 #endif
 	/*
 	||日本語コードセット判別: EUCか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_EUC( pBuf, nBufLen, &nEUCMojiNum, &nEUCCodeNum ) ){
-	}else{
-		return -1;
-	}
+	CMemory::CheckKanjiCode_EUC( pBuf, nBufLen, &nEUCMojiNum, &nEUCCodeNum );
 	/*
 	||日本語コードセット判別: SJISか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_SJIS( pBuf, nBufLen, &nSJISMojiNum, &nSJISCodeNum ) ){
-	}else{
-		return -1;
-	}
+	CMemory::CheckKanjiCode_SJIS( pBuf, nBufLen, &nSJISMojiNum, &nSJISCodeNum );
 	/*
 	||日本語コードセット判別: JISか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_JIS( pBuf, nBufLen, &nJISMojiNum, &nJISCodeNum ) ){
-	}else{
-		return -1;
-	}
-
+	CMemory::CheckKanjiCode_JIS( pBuf, nBufLen, &nJISMojiNum, &nJISCodeNum );
 	/*
 	||日本語コードセット判別: UTF-8か？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UTF8( pBuf, nBufLen, &nUTF8MojiNum, &nUTF8CodeNum ) ){
-	}else{
-		return -1;
-	}
+	CMemory::CheckKanjiCode_UTF8( pBuf, nBufLen, &nUTF8MojiNum, &nUTF8CodeNum );
 	/*
 	||日本語コードセット判別: UTF-7か？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UTF7( pBuf, nBufLen, &nUTF7MojiNum, &nUTF7CodeNum ) ){
-	}else{
-		return -1;
-	}
+	CMemory::CheckKanjiCode_UTF7( pBuf, nBufLen, &nUTF7MojiNum, &nUTF7CodeNum );
 
 	if( nEUCCodeNum > 0
 	 && nEUCCodeNum >= nSJISCodeNum
@@ -2523,13 +2501,8 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 */
 int CMemory::CheckKanjiCode_UNICODE( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUNICODECodeNum )
 {
-//	LONG			lFileSize;
-//	HGLOBAL			hgData;
-//	unsigned char*	pBuf;
-//	int				nPtr;
 	int				nMojiNum;
 	int				nUNICODECodeNum;
-//	HFILE			hFile;
 
 	*pnMojiNum = 0;
 	*pnUNICODECodeNum = 0;
@@ -2610,10 +2583,6 @@ int CMemory::CheckKanjiCode_UNICODEBE( const unsigned char* pBuf, int nBufLen, i
 */
 int CMemory::CheckKanjiCode_EUC( const unsigned char* pBuf, int nBufLen, int*	pnMojiNum, int* pnEUCCodeNum )
 {
-//	HFILE			hFile;
-//	LONG			lFileSize;
-//	HGLOBAL			hgData;
-//	char*			pBuf;
 	int				nPtr;
 	int				nMojiNum;
 	int				nEUCCodeNum;
@@ -2695,10 +2664,6 @@ int CMemory::CheckKanjiCode_EUC( const unsigned char* pBuf, int nBufLen, int*	pn
 */
 int CMemory::CheckKanjiCode_SJIS( const unsigned char* pBuf, int nBufLen, int*	pnMojiNum, int* pnSJISCodeNum )
 {
-//	HFILE			hFile;
-//	LONG			lFileSize;
-//	HGLOBAL			hgData;
-//	unsigned char*	pBuf;
 	int				nPtr;
 	int				nMojiNum;
 	int				nSJISCodeNum;
@@ -2782,10 +2747,6 @@ int CMemory::CheckKanjiCode_SJIS( const unsigned char* pBuf, int nBufLen, int*	p
 int CMemory::CheckKanjiCode_JIS( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnJISCodeNum )
 
 {
-//	HFILE			hFile;
-//	LONG			lFileSize;
-//	HGLOBAL			hgData;
-//	char*			pBuf;
 //	int				nPtr;
 	int				nMojiNum;
 	int				nJISCodeNum;
@@ -2882,10 +2843,6 @@ int CMemory::CheckKanjiCode_JIS( const unsigned char* pBuf, int nBufLen, int* pn
 */
 int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUTF8CodeNum )
 {
-//	HFILE			hFile;
-//	LONG			lFileSize;
-//	HGLOBAL			hgData;
-//	char*			pBuf;
 	int				nMojiNum;
 	int				nUTF8CodeNum;
 	int				i;
@@ -2955,9 +2912,6 @@ int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* p
 */
 int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUTF7CodeNum )
 {
-//	HFILE		hFile;
-//	HGLOBAL		hgData;
-//	char*		pBuf;
 	int			nMojiNum;
 	int			nUTF7CodeNum;
 	int			i;
@@ -3501,15 +3455,6 @@ void CMemory::Append( CMemory* pcmemData )
 	AllocBuffer( m_nDataLen + nDataLen );
 	AddData( pData, nDataLen );
 }
-
-
-//void CMemory::Init( void )
-//{
-//	m_nDataBufSize = 0;
-//	m_pData = NULL;
-//	m_nDataLen = 0;
-//	return;
-//}
 
 void CMemory::Empty( void )
 {
