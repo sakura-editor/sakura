@@ -27,8 +27,16 @@ CFileWrite::CFileWrite(const TCHAR* pszPath)
 		}
 	}
 	m_hFile=::_tfopen(pszPath,_T("wb"));
-	if(m_hFile==NULL)
+	if(m_hFile==NULL){
+		// Mar. 30, 2003 genta
+		// コンストラクタでthrowするとデストラクタのSetFileAttributeとfreeが
+		// 呼ばれないので、ここで対処
+		if(m_ChangeAttribute)
+			::SetFileAttributes(m_pszPath,m_dwFileAttribute);
+		if(m_pszPath)
+			::free(m_pszPath);
 		throw CError_FileOpen();
+	}
 }
 CFileWrite::~CFileWrite()
 {
