@@ -3894,10 +3894,10 @@ BOOL CShareData::AddEditWndList( HWND hWnd )
 
 	/* ウィンドウ連番 */
 
-	if( 0 == ::GetWindowLong( hWnd, 4 ) )
+	if( 0 == ::GetWindowLongPtr( hWnd, sizeof(LONG_PTR) ) )
 	{
 		m_pShareData->m_nSequences++;
-		::SetWindowLong( hWnd, 4, (LONG)m_pShareData->m_nSequences );
+		::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_nSequences );
 
 		//連番を更新する。
 		MyEditNode.m_nIndex = m_pShareData->m_nSequences;
@@ -4194,10 +4194,10 @@ int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort )
 //				nMin = 99999;
 //				for( i = 0; i < j; ++i ){
 //					if( phWndArr[i] != NULL &&
-//						nMin > ::GetWindowLong( phWndArr[i], 4 )
+//						nMin > ::GetWindowLongPtr( phWndArr[i], sizeof(LONG_PTR) )
 //					){
 //						nMinIdx = i;
-//						nMin = ::GetWindowLong( phWndArr[i], 4 );
+//						nMin = ::GetWindowLongPtr( phWndArr[i], sizeof(LONG_PTR) );
 //					}
 //				}
 //				if( nMinIdx != 99999 ){

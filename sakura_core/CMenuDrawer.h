@@ -107,7 +107,7 @@ protected:
 	int GetData( void );	/* ダイアログデータの取得 */
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD, int );	/* TBBUTTON構造体にデータをセット */
+	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD_PTR, INT_PTR );	/* TBBUTTON構造体にデータをセット */
 };
 
 

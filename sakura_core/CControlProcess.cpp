@@ -31,7 +31,7 @@
 /*!
 	@brief コントロールプロセス終了ダイアログ用プロシージャ
 */
-BOOL CALLBACK CControlProcess::ExitingDlgProc(
+INT_PTR CALLBACK CControlProcess::ExitingDlgProc(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter

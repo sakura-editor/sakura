@@ -75,7 +75,7 @@ int CDlgDiff::DoModal(
 	strcpy( m_szFile1, pszPath );
 	m_bIsModified = bIsModified;
 
-	return CDialog::DoModal( hInstance, hwndParent, IDD_DIFF, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_DIFF, lParam );
 }
 
 BOOL CDlgDiff::OnBnClicked( int wID )

@@ -83,7 +83,8 @@ LRESULT CALLBACK CEditWndProc(
 )
 {
 	CEditWnd* pSEWnd;
-	pSEWnd = ( CEditWnd* )::GetWindowLong( hwnd, GWL_USERDATA );
+	// Modified by KEITA for WIN64 2003.9.6
+	pSEWnd = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( NULL != pSEWnd ){
 		return pSEWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	}
@@ -99,12 +100,13 @@ LRESULT CALLBACK CEditWndProc(
 VOID CALLBACK CEditWndTimerProc(
 	HWND hwnd,		// handle of window for timer messages
 	UINT uMsg,		// WM_TIMER message
-	UINT idEvent,	// timer identifier
+	UINT_PTR idEvent,	// timer identifier
 	DWORD dwTime 	// current system time
 )
 {
 	CEditWnd*	pCEdit;
-	pCEdit = ( CEditWnd* )::GetWindowLong( hwnd, GWL_USERDATA );
+	// Modified by KEITA for WIN64 2003.9.6
+	pCEdit = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( NULL != pCEdit ){
 		pCEdit->OnTimer( hwnd, uMsg, idEvent, dwTime );
 	}
@@ -112,10 +114,11 @@ VOID CALLBACK CEditWndTimerProc(
 }
 
 //by 鬼(2)
-void CALLBACK SysMenuTimer(HWND Wnd, UINT Msg, UINT Event, DWORD Time)
+void CALLBACK SysMenuTimer(HWND Wnd, UINT Msg, UINT_PTR Event, DWORD Time)
 {
 	CEditWnd *WndObj;
-	WndObj = (CEditWnd*)GetWindowLong(Wnd, GWL_USERDATA);
+	// Modified by KEITA for WIN64 2003.9.6
+	WndObj = (CEditWnd*)GetWindowLongPtr(Wnd, GWLP_USERDATA);
 	if(WndObj != NULL)
 		WndObj->OnSysMenuTimer();
 
@@ -323,7 +326,8 @@ HWND CEditWnd::Create(
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
 
 	if( NULL != m_hWnd ){
-		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)this );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
 
 		/* 再描画用コンパチブルＤＣ */
 		HDC hdc = ::GetDC( m_hWnd );
@@ -589,6 +593,7 @@ void CEditWnd::CreateToolBar( void )
 	nFlag = 0;
 
 	/* ツールバーウィンドウの作成 */
+	::InitCommonControls();
 	m_hwndToolBar = ::CreateWindowEx(
 		0,
 		TOOLBARCLASSNAME,
@@ -702,7 +707,7 @@ void CEditWnd::CreateToolBar( void )
 							m_fontSearchBox = ::CreateFontIndirect( &lf );
 							if( m_fontSearchBox )
 							{
-								::SendMessage( m_hwndSearchBox, WM_SETFONT, (UINT_PTR)m_fontSearchBox, MAKELONG (TRUE, 0) );
+								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_fontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
 							//入力長制限
@@ -742,7 +747,7 @@ void CEditWnd::CreateToolBar( void )
 		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
 			uToolType |= (TBSTYLE_FLAT);
-			::SetWindowLong(m_hwndToolBar, GWL_STYLE, (LONG)uToolType);
+			::SetWindowLong(m_hwndToolBar, GWL_STYLE, uToolType);
 			::InvalidateRect(m_hwndToolBar, NULL, TRUE);
 		}
 	}
@@ -1490,7 +1495,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				char	szHelp[_MAX_PATH + 1];
 				/* ヘルプファイルのフルパスを返す */
 				::GetHelpFilePath( szHelp );
-				::WinHelp( m_hWnd, szHelp, HELP_KEY, (unsigned long)"" );
+				::WinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );
 			}
 			break;
 		case F_ABOUT:	//Dec. 25, 2000 JEPRO F_に変更
@@ -2613,7 +2618,8 @@ void CEditWnd::OnTimer(
 int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 {
 	CEditWnd* pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( pcEditDoc->m_hwndParent, GWL_USERDATA );
+	// Modified by KEITA for WIN64 2003.9.6
+	pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( pcEditDoc->m_hwndParent, GWLP_USERDATA );
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
 	switch( nId ){
 	case F_FILE_REOPEN_SJIS:

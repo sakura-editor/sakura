@@ -157,7 +157,7 @@ int CDlgTagJumpList::DoModal(
 	LPARAM		lParam
 )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_TAGJUMPLIST, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TAGJUMPLIST, lParam );
 }
 
 /* ダイアログデータの設定 */

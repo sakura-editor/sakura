@@ -44,12 +44,12 @@ public:
 	||  Attributes & Operations
 	*/
 	int DoPropertySheet( int );	/* プロパティシートの作成 */
-	BOOL DispatchEvent_p1( HWND, UINT, WPARAM, LPARAM );	/* p1 メッセージ処理 */
-	BOOL DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );	/* p2 メッセージ処理 支援タブ */ // 2001/06/14 asa-o
-	BOOL DispatchEvent_p3( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
-	BOOL DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
+	INT_PTR DispatchEvent_p1( HWND, UINT, WPARAM, LPARAM );	/* p1 メッセージ処理 */
+	INT_PTR DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );	/* p2 メッセージ処理 支援タブ */ // 2001/06/14 asa-o
+	INT_PTR DispatchEvent_p3( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
+	INT_PTR DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	static BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
-	BOOL DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
+	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
 
 
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
@@ -94,7 +94,7 @@ protected:
 	int  GetData_Regex( HWND );	/* ダイアログデータの取得 正規表現キーワード */	//@@@ 2001.11.17 add MIK
 	BOOL Import_Regex( HWND );	//@@@ 2001.11.17 add MIK
 	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
-	static BOOL CALLBACK PropTypesRegex( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );	//@@@ 2001.11.17 add MIK
+	static INT_PTR CALLBACK PropTypesRegex( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );	//@@@ 2001.11.17 add MIK
 	BOOL RegexKakomiCheck(const char *s);	//@@@ 2001.11.17 add MIK
 };
 

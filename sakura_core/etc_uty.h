@@ -80,7 +80,7 @@ SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = 
 SAKURA_CORE_API bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor’Ç‰Á
 SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
-SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data,bool msgflag = true);
+SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD_PTR data,bool msgflag = true);
 SAKURA_CORE_API DWORD NetConnect ( const char strNetWorkPass[] );
 
 SAKURA_CORE_API int cescape(const char* org, char* out, char cesc, char cwith);

@@ -50,7 +50,7 @@ CDlgExec::CDlgExec()
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	m_szCommand[0] = '\0';	/* コマンドライン */
-	return CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
 
 

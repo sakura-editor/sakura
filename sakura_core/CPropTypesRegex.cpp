@@ -58,7 +58,7 @@ static const DWORD p_helpids[] = {	//11600
 
 
 /* 正規表現キーワード ダイアログプロシージャ */
-BOOL CALLBACK CPropTypes::PropTypesRegex(
+INT_PTR CALLBACK CPropTypes::PropTypesRegex(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -76,7 +76,8 @@ BOOL CALLBACK CPropTypes::PropTypesRegex(
 		}
 		break;
 	default:
-		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return pCPropTypes->DispatchEvent_Regex( hwndDlg, uMsg, wParam, lParam );
 		}
@@ -257,7 +258,7 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 }
 
 /* 正規表現キーワード メッセージ処理 */
-BOOL CPropTypes::DispatchEvent_Regex(
+INT_PTR CPropTypes::DispatchEvent_Regex(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -280,7 +281,8 @@ BOOL CPropTypes::DispatchEvent_Regex(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* カラム追加 */
 		//ListView_DeleteColumn( hwndList, 1 );
@@ -778,7 +780,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -786,7 +788,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 
 	}
@@ -799,7 +801,7 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	HWND		hwndWork;
 	int		i, nItem, j, k;
 	LV_ITEM		lvi;
-	long		lngStyle;
+	DWORD		dwStyle;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_RegexKeywordArr[0].m_szKeyword ) - 1 ), (LPARAM)0 );
@@ -836,9 +838,9 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 
 	/* 行選択 */
-	lngStyle = ::SendMessage( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
-	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	dwStyle = (DWORD)::SendMessage( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	dwStyle |= LVS_EX_FULLROWSELECT;
+	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dwStyle );
 
 	/* データ表示 */
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)

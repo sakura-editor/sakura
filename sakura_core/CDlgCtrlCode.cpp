@@ -108,7 +108,7 @@ int CDlgCtrlCode::DoModal(
 	LPARAM		lParam
 )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_CTRLCODE, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_CTRLCODE, lParam );
 }
 
 /* ダイアログデータの設定 */

@@ -89,7 +89,7 @@ static const char *p_time_form[] = {
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CALLBACK CPropCommon::DlgProc_PROP_FORMAT(
+INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FORMAT(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	return DlgProc( DispatchEvent_p9, hwndDlg, uMsg, wParam, lParam );
@@ -125,7 +125,7 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 
 
 /* p9 メッセージ処理 */
-BOOL CPropCommon::DispatchEvent_p9(
+INT_PTR CPropCommon::DispatchEvent_p9(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -144,7 +144,8 @@ BOOL CPropCommon::DispatchEvent_p9(
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p9 */
 		SetData_p9( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		ChangeDateExample( hwndDlg );
 		ChangeTimeExample( hwndDlg );
@@ -299,7 +300,7 @@ BOOL CPropCommon::DispatchEvent_p9(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -309,7 +310,7 @@ BOOL CPropCommon::DispatchEvent_p9(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 //@@@ 2001.12.22 End
 

@@ -23,7 +23,7 @@ CDlgCancel::CDlgCancel()
 int CDlgCancel::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */
-	return CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, NULL );
 }
 /* モードレスダイアログの表示 */
 HWND CDlgCancel::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )

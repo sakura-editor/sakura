@@ -15,7 +15,7 @@
 #include "CDlgDebug.h"
 
 /* ダイアログプロシージャ */
-BOOL CALLBACK CDlgDebug_Proc(
+INT_PTR CALLBACK CDlgDebug_Proc(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -32,7 +32,8 @@ BOOL CALLBACK CDlgDebug_Proc(
 			return FALSE;
 		}
 	default:
-		pCDlgDebug = ( CDlgDebug* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCDlgDebug = ( CDlgDebug* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCDlgDebug ){
 			return pCDlgDebug->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -74,7 +75,7 @@ int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, CMemory& cmemDebug
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_cmemDebugInfo = cmemDebugInfo;
 
-	return ::DialogBoxParam(
+	return (int)::DialogBoxParam(
 		m_hInstance,
 		MAKEINTRESOURCE( IDD_DEBUG ),
 		m_hwndParent,
@@ -86,7 +87,7 @@ int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, CMemory& cmemDebug
 
 
 /* ダイアログのメッセージ処理 */
-BOOL CDlgDebug::DispatchEvent(
+INT_PTR CDlgDebug::DispatchEvent(
     HWND hwndDlg,	// handle to dialog box
     UINT uMsg,		// message
     WPARAM wParam,	// first message parameter
@@ -101,7 +102,8 @@ BOOL CDlgDebug::DispatchEvent(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		m_hWnd = hwndDlg;
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		::SetDlgItemText( hwndDlg, IDC_EDIT_DEBUG, m_cmemDebugInfo.GetPtr() );
 

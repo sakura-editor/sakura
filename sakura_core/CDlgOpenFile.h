@@ -49,7 +49,7 @@ public:
 	//	Jul. 26, 2003 ryoji BOM用引数追加
 	BOOL DoModalSaveDlg( char* , int*, CEOL*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
-	BOOL DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+//	INT_PTR DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */

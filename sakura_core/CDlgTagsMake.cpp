@@ -70,7 +70,7 @@ int CDlgTagsMake::DoModal(
 {
 	strcpy( m_szPath, pszPath );
 
-	return CDialog::DoModal( hInstance, hwndParent, IDD_TAG_MAKE, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TAG_MAKE, lParam );
 }
 
 BOOL CDlgTagsMake::OnBnClicked( int wID )

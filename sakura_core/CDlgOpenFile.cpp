@@ -55,7 +55,7 @@ BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 
 
 /*
-|| 	開くダイアログのフックプロシージャ
+|| 	開くダイアログのサブクラスプロシージャ
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
@@ -118,7 +118,10 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 /*!
 	開くダイアログのフックプロシージャ
 */
-UINT APIENTRY OFNHookProc(
+// Modified by KEITA for WIN64 2003.9.6
+// APIENTRY -> CALLBACK Moca 2003.09.09
+//UINT APIENTRY OFNHookProc(
+UINT_PTR CALLBACK OFNHookProc(
 	HWND hdlg,		// handle to child dialog window
 	UINT uiMsg,		// message identifier
 	WPARAM wParam,	// message parameter
@@ -172,7 +175,7 @@ UINT APIENTRY OFNHookProc(
 		"LF (UNIX)",
 		"CR (Mac)",
 	};
-	int nEolNameArrNum = sizeof( pEolNameArr ) / sizeof( pEolNameArr[0] );
+	int nEolNameArrNum = (int) (sizeof( pEolNameArr ) / sizeof( pEolNameArr[0] ) );
 //	To Here	Feb. 9, 2001 genta
 	int	Controls[nControls] = {
 		stc3, stc2,		// The two label controls
@@ -215,7 +218,8 @@ UINT APIENTRY OFNHookProc(
 //To Here jeorotest
 
 		// Save off the long pointer to the OPENFILENAME structure.
-		::SetWindowLong(hdlg, DWL_USER, lParam);
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr(hdlg, DWLP_USER, lParam);
 		pOf = (OPENFILENAME*)lParam;
 		pcDlgOpenFile = (CDlgOpenFile*)pOf->lCustData;
 
@@ -278,7 +282,8 @@ UINT APIENTRY OFNHookProc(
 		//	To Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
 
 		/* Explorerスタイルの「開く」ダイアログをフック */
-		m_wpOpenDialogProc = (WNDPROC) ::SetWindowLong( hwndOpenDlg, GWL_WNDPROC, (LONG) OFNHookProcMain );
+		// Modified by KEITA for WIN64 2003.9.6
+		m_wpOpenDialogProc = (WNDPROC) ::SetWindowLongPtr( hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR) OFNHookProcMain );
 
 //		/* Explorerスタイルの「開く」ダイアログのスタイル */
 //		lStyle = ::GetWindowLong( hwndOpenDlg, GWL_STYLE );
@@ -382,7 +387,7 @@ UINT APIENTRY OFNHookProc(
 		::SetWindowPos( hwndComboOPENFOLDER, 0, rc.left, rc.top, rc.right - rc.left + 100, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 
 
-//		::SetWindowLong( hwndOpenDlg, DWL_USER, (LONG)pcDlgOpenFile );
+//		::SetWindowLong( hwndOpenDlg, DWLP_USER, (LONG)pcDlgOpenFile );
 
 		/* サイズボックス */
 //		m_hwndSizeBox = ::CreateWindowEx(
@@ -425,7 +430,8 @@ UINT APIENTRY OFNHookProc(
 
 	case WM_DESTROY:
 		/* フック解除 */
-		::SetWindowLong( hwndOpenDlg, GWL_WNDPROC, (LONG) m_wpOpenDialogProc );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR) m_wpOpenDialogProc );
 		return FALSE;
 
 	case WM_NOTIFY:
@@ -464,7 +470,7 @@ UINT APIENTRY OFNHookProc(
 
 		case CDN_FOLDERCHANGE  :
 //			MYTRACE( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
-			lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, sizeof( szFolder ), (long)(char*)szFolder );
+			lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, sizeof( szFolder ), (LPARAM)szFolder );
 //			MYTRACE( "\tlRes=%d\tszFolder=[%s]\n", lRes, szFolder );
 
 			break;
@@ -486,7 +492,7 @@ UINT APIENTRY OFNHookProc(
 			 	pOf->lpstrDefExt = NULL;
 				break;
 			}
-			::SendMessage( hwndOpenDlg, CDM_SETDEFEXT, 0, (long)pOf->lpstrDefExt );
+			::SendMessage( hwndOpenDlg, CDM_SETDEFEXT, 0, (LPARAM)pOf->lpstrDefExt );
 			break;
 		}
 
@@ -547,13 +553,13 @@ UINT APIENTRY OFNHookProc(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hdlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hdlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 	//@@@ 2002.01.08 add end
 
@@ -756,7 +762,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
 	m_ofn.lpstrDefExt = NULL;
-	m_ofn.lCustData = (DWORD)this;
+	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 	if( ::GetOpenFileName( &m_ofn ) ){
@@ -858,7 +864,7 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
 	m_ofn.lpstrDefExt = NULL;
-	m_ofn.lCustData = (DWORD)this;
+	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 	if( ::GetSaveFileName( &m_ofn ) ){
@@ -959,7 +965,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
 	m_ofn.lpstrDefExt = NULL;
-	m_ofn.lCustData = (DWORD)this;
+	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 //	m_ofn.lpTemplateName = MAKEINTRESOURCE( 149 );
@@ -1080,7 +1086,7 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
 	m_ofn.lpstrDefExt = NULL;
-	m_ofn.lCustData = (DWORD)this;
+	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 

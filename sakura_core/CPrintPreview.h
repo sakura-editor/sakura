@@ -63,13 +63,13 @@ public:
 	
 	//	PrintPreviewバーのメッセージ処理。
 	//	まずPrintPreviewBar_DlgProcにメッセージが届き、DispatchEvent_PPBに転送する仕組み
-	static BOOL CALLBACK PrintPreviewBar_DlgProc(
+	static INT_PTR CALLBACK PrintPreviewBar_DlgProc(
 		HWND	hwndDlg,	// handle to dialog box
 		UINT	uMsg,		// message
 		WPARAM	wParam,		// first message parameter
 		LPARAM	lParam		// second message parameter
 	);
-	BOOL DispatchEvent_PPB(
+	INT_PTR DispatchEvent_PPB(
 		HWND	hwndDlg,	// handle to dialog box
 		UINT	uMsg,		// message
 		WPARAM	wParam,		// first message parameter

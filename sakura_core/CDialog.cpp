@@ -17,7 +17,7 @@
 #include "debug.h"/// 2002/2/10 aroka ヘッダ整理
 
 /* ダイアログプロシージャ */
-BOOL CALLBACK MyDialogProc(
+INT_PTR CALLBACK MyDialogProc(
 	HWND hwndDlg,	// handle to dialog box
 	UINT uMsg,		// message
 	WPARAM wParam,	// first message parameter
@@ -34,7 +34,8 @@ BOOL CALLBACK MyDialogProc(
 			return FALSE;
 		}
 	default:
-		pCDialog = ( CDialog* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCDialog = ( CDialog* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCDialog ){
 			return pCDialog->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -83,7 +84,7 @@ CDialog::~CDialog()
 	@param hInstance [in] アプリケーションインスタンスのハンドル
 	@param hwndParent [in] オーナーウィンドウのハンドル
 */
-int CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam )
+INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam )
 {
 	m_bInited = FALSE;
 	m_bModal = TRUE;
@@ -142,7 +143,8 @@ void CDialog::CloseDialog( int nModalRetVal )
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	m_hWnd = hwndDlg;
-	::SetWindowLong( m_hWnd, DWL_USER, (LONG)lParam );
+	// Modified by KEITA for WIN64 2003.9.6
+	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
 	/* ダイアログデータの設定 */
 	SetData();
 
@@ -307,7 +309,7 @@ void CDialog::CreateSizeBox( void )
 
 
 /* ダイアログのメッセージ処理 */
-BOOL CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 //#ifdef _DEBUG
 //	MYTRACE( "CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
@@ -366,13 +368,13 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 {
 	HELPINFO *p = (HELPINFO *)lParam;
-	::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)GetHelpIdTable() );
+	::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );
 	return TRUE;
 }
 
 BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
 {
-	::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)GetHelpIdTable() );
+	::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );
 	return TRUE;
 }
 

@@ -54,13 +54,13 @@ static const DWORD p_helpids[] = {	//13400
 
 
 
-BOOL CALLBACK CPropCommon::DlgProc_PROP_FILENAME(
+INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FILENAME(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	return DlgProc(DispatchEvent_PROP_FILENAME, hwndDlg, uMsg, wParam, lParam );
 }
 
-BOOL CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 
 	HWND	hListView;
@@ -76,7 +76,8 @@ BOOL CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM w
 			LV_COLUMN	col;
 			hListView = GetDlgItem( hwndDlg, IDC_LIST_FNAME );
 
-			::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+			// Modified by KEITA for WIN64 2003.9.6
+			::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 			::GetWindowRect( hListView, &rc );
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
@@ -245,7 +246,7 @@ BOOL CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM w
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 //@@@ 2001.02.04 End
@@ -253,7 +254,7 @@ BOOL CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM w
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 //@@@ 2001.12.22 End
 

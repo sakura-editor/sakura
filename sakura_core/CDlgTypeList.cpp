@@ -37,7 +37,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingT
 {
 	int	nRet;
 	m_nSettingType = *pnSettingType;
-	nRet = CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
+	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
 	if( -1 == nRet ){
 		return FALSE;
 	}else{

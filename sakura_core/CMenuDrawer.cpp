@@ -731,8 +731,12 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 	MENUITEMINFO mii;
 	memset( &mii, 0, sizeof( MENUITEMINFO ) );
 	//	Aug. 31, 2001 genta
+#ifdef _WIN64
+	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
+#else
 	//mii.cbSize = sizeof( MENUITEMINFO ); // 本当はこちらの書き方が正しいが，
 	mii.cbSize = SIZEOF_MENUITEMINFO; // サイズが大きいとWin95で動かないので，Win95が納得する値を決め打ち
+#endif
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = 0;
 	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW;
@@ -749,8 +753,8 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 	mii.hSubMenu = (nFlag&MF_POPUP)?((HMENU)nFuncId):NULL;
 	mii.hbmpChecked = NULL;
 	mii.hbmpUnchecked = NULL;
-	mii.dwItemData = (DWORD)this;
-	mii.dwTypeData = (LPTSTR)szLabel;
+	mii.dwItemData = (ULONG_PTR)this;
+	mii.dwTypeData = szLabel;
 	mii.cch = 0;
 
 	// メニュー内の指定された位置に、新しいメニュー項目を挿入します。
@@ -848,7 +852,11 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	MENUITEMINFO mii;
 	// メニュー項目に関する情報を取得します。
 	memset( &mii, 0, sizeof( MENUITEMINFO ) );
+#ifdef _WIN64
+	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
+#else
 	mii.cbSize = SIZEOF_MENUITEMINFO; // Jan. 29, 2002 genta
+#endif
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = MFT_STRING;
 	strcpy( szText, "--unknown--" );
@@ -1106,8 +1114,12 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		char	szText[1024];
 		// メニュー項目に関する情報を取得します。
 		memset( &mii, 0, sizeof( MENUITEMINFO ) );
+#ifdef _WIN64
+	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
+#else
 		// Jan. 29, 2002 gentaWinNT4でアクセラレータが効かないのが直るはず
 		mii.cbSize = SIZEOF_MENUITEMINFO;
+#endif
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
 		strcpy( szText, "--unknown--" );
@@ -1157,11 +1169,11 @@ void CMenuDrawer::SetTBBUTTONVal(
 	int			idCommand,
 	BYTE		fsState,
 	BYTE		fsStyle,
-	DWORD		dwData,
-	int			iString
+	DWORD_PTR	dwData,
+	INT_PTR		iString
 )
 {
-/*
+	/*
 typedef struct _TBBUTTON {
 	int iBitmap;	// ボタン イメージの 0 から始まるインデックス
 	int idCommand;	// ボタンが押されたときに送られるコマンド

@@ -84,7 +84,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 
 	lstrcpy( m_szCurrentFilePath, pszCurrentFilePath );
 
-	return CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
 }
 
 //	/* モードレスダイアログの表示 */

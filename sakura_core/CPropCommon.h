@@ -133,33 +133,33 @@ protected:
 	//	ここから以下 Macroまで配置の見直しとstatic methodの追加
 
 	//! 汎用ダイアログプロシージャ
-	static BOOL DlgProc(
-		BOOL (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
+	static INT_PTR DlgProc(
+		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 	//==============================================================
 	//!	全般ページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_GENERAL(
+	static INT_PTR CALLBACK DlgProc_PROP_GENERAL(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	BOOL DispatchEvent_p1( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p1( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p1( HWND );	/* ダイアログデータの設定 p1 */
 	int  GetData_p1( HWND );	/* ダイアログデータの取得 p1 */
 
 	//==============================================================
 	//!	ファイルページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_FILE(
+	static INT_PTR CALLBACK DlgProc_PROP_FILE(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for File page
-	BOOL DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p2( HWND );	/* ダイアログデータの設定 p2 */
 	int  GetData_p2( HWND );	/* ダイアログデータの取得 p2 */
 
 	//==============================================================
 	//!	キー割り当てページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_KEYBIND(
+	static INT_PTR CALLBACK DlgProc_PROP_KEYBIND(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Key Bind page
-	BOOL DispatchEvent_p5( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p5( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p5( HWND );	/* ダイアログデータの設定 p5 */
 	int  GetData_p5( HWND );	/* ダイアログデータの取得 p5 */
 	void p5_ChangeKeyList( HWND ); /* p5: キーリストをチェックボックスの状態に合わせて更新する*/
@@ -168,19 +168,19 @@ protected:
 
 	//==============================================================
 	//!	ツールバーページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_TOOLBAR(
+	static INT_PTR CALLBACK DlgProc_PROP_TOOLBAR(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Toolbar page
-	BOOL DispatchEvent_p6( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p6( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p6( HWND );	/* ダイアログデータの設定 p6 */
 	int  GetData_p6( HWND );	/* ダイアログデータの取得 p6 */
 
 	//==============================================================
 	//!	キーワードページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_KEYWORD(
+	static INT_PTR CALLBACK DlgProc_PROP_KEYWORD(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Keyword page
-	BOOL DispatchEvent_p7( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p7( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p7( HWND );	/* ダイアログデータの設定 p7 */
 	void SetData_p7_KeyWordSet( HWND , int );	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	int  GetData_p7( HWND );	/* ダイアログデータの取得 p7 */
@@ -188,19 +188,19 @@ protected:
 
 	//==============================================================
 	//!	カスタムメニューページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_CUSTMENU(
+	static INT_PTR CALLBACK DlgProc_PROP_CUSTMENU(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Custom Menu page
-	BOOL DispatchEvent_p8( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p8( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p8( HWND );	/* ダイアログデータの設定 p8 */
 	int  GetData_p8( HWND );	/* ダイアログデータの取得 p8 */
 
 	//==============================================================
 	//!	書式ページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_FORMAT(
+	static INT_PTR CALLBACK DlgProc_PROP_FORMAT(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Format page
-	BOOL DispatchEvent_p9( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p9( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p9( HWND );	/* ダイアログデータの設定 p9 */
 	int  GetData_p9( HWND );	/* ダイアログデータの取得 p9 */
 	void ChangeDateExample( HWND hwndDlg );
@@ -208,65 +208,65 @@ protected:
 
 	//==============================================================
 	//!	支援ページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_HELPER(
+	static INT_PTR CALLBACK DlgProc_PROP_HELPER(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Custom Menu page
-	BOOL DispatchEvent_p10( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_p10( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p10( HWND );
 	int  GetData_p10( HWND );
 
 	//==============================================================
 	//!	バックアップページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_BACKUP(
+	static INT_PTR CALLBACK DlgProc_PROP_BACKUP(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Backup page
-	BOOL DispatchEvent_PROP_BACKUP( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_BACKUP( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_BACKUP( HWND );
 	int GetData_PROP_BACKUP( HWND );
 
 	//==============================================================
 	//!	ウィンドウページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_WIN(
+	static INT_PTR CALLBACK DlgProc_PROP_WIN(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Window page
-	BOOL DispatchEvent_PROP_WIN( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_WIN( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_WIN( HWND );
 	int GetData_PROP_WIN( HWND );
 
 	//==============================================================
 	//!	クリッカブルURLページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_URL(
+	static INT_PTR CALLBACK DlgProc_PROP_URL(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for clickable URL page
-	BOOL DispatchEvent_PROP_URL( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_URL( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_URL( HWND );
 	int GetData_PROP_URL( HWND );
 
 	//==============================================================
 	//!	編集ページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_EDIT(
+	static INT_PTR CALLBACK DlgProc_PROP_EDIT(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for edit page
-	BOOL DispatchEvent_PROP_EDIT( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_EDIT( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_EDIT( HWND );
 	int GetData_PROP_EDIT( HWND );
 
 	//==============================================================
 	//!	GREPページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_GREP(
+	static INT_PTR CALLBACK DlgProc_PROP_GREP(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Grep page
-	BOOL DispatchEvent_PROP_GREP( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_GREP( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_GREP( HWND );
 	int GetData_PROP_GREP( HWND );
 
 	//	From Here Jun. 2, 2001 genta
 	//==============================================================
 	//!	マクロページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_MACRO(
+	static INT_PTR CALLBACK DlgProc_PROP_MACRO(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Macro page
-	BOOL DispatchEvent_PROP_Macro( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_Macro( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_Macro( HWND );//!<ダイアログデータの設定 Macro
 	int GetData_PROP_Macro( HWND );//!<ダイアログデータの取得 Macro
 	void InitDialog_PROP_Macro( HWND hwndDlg );//!< Macroページの初期化
@@ -279,10 +279,10 @@ protected:
 
 	//==============================================================
 	//!	ファイル名表示ページのDialog Procedure
-	static BOOL CALLBACK DlgProc_PROP_FILENAME(
+	static INT_PTR CALLBACK DlgProc_PROP_FILENAME(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for FileName page
-	BOOL DispatchEvent_PROP_FILENAME( HWND, UINT, WPARAM, LPARAM );
+	INT_PTR DispatchEvent_PROP_FILENAME( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_FILENAME( HWND );
 	int  GetData_PROP_FILENAME( HWND );
 	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListViewのアイテムを設定

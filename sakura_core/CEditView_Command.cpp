@@ -5277,7 +5277,7 @@ void CEditView::Command_HELP_SEARCH( void )
 	char	szHelp[_MAX_PATH + 1];
 	/* ヘルプファイルのフルパスを返す */
 	::GetHelpFilePath( szHelp );
-	::WinHelp( m_hWnd, szHelp, HELP_KEY, (unsigned long)"" );
+	::WinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );
 	return;
 }
 //To Here Nov. 25, 2000
@@ -5397,10 +5397,10 @@ retry:;
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		char path[_MAX_PATH];
 		GetExecutableDir( path, helpfile );
-		::WinHelp( m_hwndParent, path, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
+		::WinHelp( m_hwndParent, path, HELP_KEY, (ULONG_PTR)(char*)cmemCurText.GetPtr() );
 		return;
 	}
-	::WinHelp( m_hwndParent, helpfile , HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
+	::WinHelp( m_hwndParent, helpfile , HELP_KEY, (ULONG_PTR)(char*)cmemCurText.GetPtr() );
 	return;
 }
 
@@ -5491,7 +5491,7 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 				NULL/*m_pShareData->m_hwndTray*/,
 				path, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
-				(DWORD)&link
+				(DWORD_PTR)&link
 			);
 		}else{
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
@@ -5499,7 +5499,7 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 				NULL/*m_pShareData->m_hwndTray*/,
 				filename, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
-				(DWORD)&link
+				(DWORD_PTR)&link
 			);
 		}
 	}
@@ -8531,7 +8531,10 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	int			i;
 	BOOL		bSPACE;
 	BOOL		bResult;
-	DWORD		dwResult;
+// Modified by KEITA for WIN64 2003.9.6
+//	DWORD		dwResult;
+	ULONG_PTR	dwResult;
+
 	hwndSQLPLUS = ::FindWindow( "SqlplusWClass", "Oracle SQL*Plus" );
 	if( NULL == hwndSQLPLUS ){
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -9290,7 +9293,7 @@ end_of_compare:;
 //	CEditWnd*	pCEditWnd;
 //	RECT		rc;
 //	hwndFrame = ::GetParent( m_hwndParent );
-//	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+//	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWLP_USERDATA );
 //	if( NULL == pCEditWnd->m_hwndToolBar ){
 //		/* メニューバー作成 */
 //		pCEditWnd->CreateToolBar();

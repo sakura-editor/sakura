@@ -181,7 +181,7 @@ int CDlgFavorite::DoModal(
 	LPARAM		lParam
 )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_FAVORITE, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_FAVORITE, lParam );
 }
 
 /* ダイアログデータの設定 */

@@ -54,7 +54,8 @@ LRESULT CALLBACK TabWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 {
 	CTabWnd	*pcTabWnd;
 
-	pcTabWnd = (CTabWnd*)::GetWindowLong( hwnd, GWL_USERDATA );
+	// Modified by KEITA for WIN64 2003.9.6
+	pcTabWnd = (CTabWnd*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 
 	if( pcTabWnd )
 	{
@@ -253,15 +254,16 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		);
 	if( m_hwndTab )
 	{
-		::SetWindowLong( m_hwndTab, GWL_USERDATA, (LONG)this );
-		gm_pOldWndProc = (WNDPROC)::SetWindowLong( m_hwndTab, GWL_WNDPROC, (LONG)TabWndProc );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( m_hwndTab, GWLP_USERDATA, (LONG_PTR) this );
+		gm_pOldWndProc = (WNDPROC)::SetWindowLongPtr( m_hwndTab, GWLP_WNDPROC, (LONG_PTR) TabWndProc );
 
 		//スタイルを変更する。
-		int	lngStyle;
-		lngStyle = ::GetWindowLong( m_hwndTab, GWL_STYLE );
+		UINT lngStyle;
+		lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
 		lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
 		lngStyle |= TCS_TABS | TCS_SINGLELINE;
-		::SetWindowLong( m_hwndTab, GWL_STYLE, lngStyle );
+		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
 
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
@@ -342,11 +344,13 @@ void CTabWnd::Close( void )
 	{
 		if( gm_pOldWndProc )
 		{
-			::SetWindowLong( m_hwndTab, GWL_WNDPROC, (LONG)gm_pOldWndProc );
+			// Modified by KEITA for WIN64 2003.9.6
+			::SetWindowLongPtr( m_hwndTab, GWLP_WNDPROC, (LONG_PTR)gm_pOldWndProc );
 			gm_pOldWndProc = NULL;
 		}
 		
-		::SetWindowLong( m_hwndTab, GWL_USERDATA, (LONG)NULL );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( m_hwndTab, GWLP_USERDATA, (LONG_PTR)NULL );
 
 		if( m_hwndToolTip )
 		{
