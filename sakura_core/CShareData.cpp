@@ -56,7 +56,7 @@ struct ARRHEAD {
 	
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 10;
+const unsigned int uShareDataVersion = 11;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､ 
@@ -757,9 +757,11 @@ bool CShareData::Init( void )
 		/* 引用符 */
 		strcpy( m_pShareData->m_Common.m_szInyouKigou, "> " );		/* 引用符 */
 		m_pShareData->m_Common.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
-		strcpy( m_pShareData->m_Common.m_szHokanFile, "" );			/* 入力補完 単語ファイル */
-		m_pShareData->m_Common.m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
-		strcpy( m_pShareData->m_Common.m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
+
+		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
+//		strcpy( m_pShareData->m_Common.m_szHokanFile, "" );			/* 入力補完 単語ファイル */
+//		m_pShareData->m_Common.m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
+//		strcpy( m_pShareData->m_Common.m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
 		m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect = FALSE;	/* Grep: 文字コード自動判別 */
 		m_pShareData->m_Common.m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
 		m_pShareData->m_Common.m_bSaveWindowSize = TRUE;			/* ウィンドウサイズ継承 */
@@ -884,6 +886,12 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[nIdx].m_szIndentChars, "" );		/* その他のインデント対象文字 */
 
 		m_pShareData->m_Types[nIdx].m_nColorInfoArrNum = COLORIDX_LAST;
+
+		// 2001/06/14 Start by asa-o
+		strcpy( m_pShareData->m_Types[nIdx].m_szHokanFile, "" );		/* 入力補完 単語ファイル */
+		m_pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
+		strcpy( m_pShareData->m_Types[nIdx].m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
+		// 2001/06/14 End
 
 /**
 		static const char* ppszTypeName[] = {

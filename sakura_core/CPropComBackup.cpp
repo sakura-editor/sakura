@@ -214,9 +214,14 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 	switch( m_Common.GetBackupType()){
 	case 2:
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE2, 1 );
+		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1, 1 );	// 付加する日付のタイプ(現時刻)
 		break;
 	case 3:
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE3, 1 );
+		break;
+	case 4:
+		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE2, 1 );
+		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2, 1 );	// 付加する日付のタイプ(前回の保存時刻)
 		break;
 	case 1:
 	default:
@@ -278,7 +283,14 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 		m_Common.SetBackupType(1);
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE2 ) ){
-		m_Common.SetBackupType(2);
+		// 2001/06/05 Start by asa-o: 日付のタイプ
+		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ) ){
+			m_Common.SetBackupType(2);	// 現時刻
+		}
+		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ) ){
+			m_Common.SetBackupType(4);	// 前回の保存時刻
+		}
+		// 2001/06/05 End
 	}
 
 	//	Aug. 16, 2000 genta
@@ -353,6 +365,8 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), TRUE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), TRUE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), TRUE );
 		}else{
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), FALSE );
@@ -360,6 +374,8 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
 		}
 		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ) ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_3 ), TRUE );
@@ -401,6 +417,8 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_4 ), FALSE );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKUP_FOLDER_REF ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
 	}
 }
 //	To Here Aug. 16, 2000 genta

@@ -3590,7 +3590,9 @@ VOID CEditView::OnTimer(
 		}
 	}
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
-		if( m_pShareData->m_Common.m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+		//	2001/06/14 asa-o 参照するデータの変更
+//		if( m_pShareData->m_Common.m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+		if( m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
 			if( m_nCaretWidth > 0 ){ //フォーカスがあるとき
 				/* ウィンドウ内にマウスカーソルがあるか？ */
 				GetCursorPos( &po );
@@ -3629,7 +3631,9 @@ VOID CEditView::OnTimer(
 						}else{
 							m_cTipWnd.m_cKey = cmemCurText;
 							/* 検索実行 */
-							if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pShareData->m_Common.m_szKeyWordHelpFile ) ){
+							//	2001/06/14 asa-o 参照するデータの変更
+//							if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pShareData->m_Common.m_szKeyWordHelpFile ) ){
+							if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
 								/* 該当するキーがある */
 								m_cTipWnd.m_KeyWasHit = TRUE;
 								pszWork = pcmemRefText->GetPtr( NULL );
@@ -5515,7 +5519,9 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
-		if( m_pShareData->m_Common.m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+		//	2001/06/14 asa-o 参照するデータの変更
+//		if( m_pShareData->m_Common.m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+		if( m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp ){
 			if( m_nCaretWidth > 0 ){					//フォーカスがあるとき
 				/* ウィンドウ内にマウスカーソルがあるか？ */
 				GetCursorPos( &po );
@@ -5552,7 +5558,9 @@ int	CEditView::CreatePopUpMenu_R( void )
 							}else{
 								m_cTipWnd.m_cKey = cmemCurText;
 								/* 検索実行 */
-								if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pShareData->m_Common.m_szKeyWordHelpFile ) ){
+								//	2001/06/14 asa-o 参照するデータの変更
+	//							if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pShareData->m_Common.m_szKeyWordHelpFile ) ){
+								if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
 									/* 該当するキーがある */
 									m_cTipWnd.m_KeyWasHit = TRUE;
 									pszWork = pcmemRefText->GetPtr( NULL );

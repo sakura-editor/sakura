@@ -196,6 +196,35 @@ BOOL CALLBACK PropTypesP1Proc(
 	}
 }
 
+/* p2 ダイアログプロシージャ */
+BOOL CALLBACK PropTypesP2Proc(
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam 		// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropTypes* pCPropTypes;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropTypes = ( CPropTypes* )(pPsp->lParam);
+		if( NULL != pCPropTypes ){
+			return pCPropTypes->DispatchEvent_p2( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropTypes ){
+			return pCPropTypes->DispatchEvent_p2( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
 
 
 
@@ -554,6 +583,20 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].lParam = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
 	nIdx++;
+
+	// 2001/06/14 Start by asa-o: タイプ別設定に支援タブ追加
+	memset( &psp[nIdx], 0, sizeof( PROPSHEETPAGE ) );
+	psp[nIdx].dwSize = sizeof( PROPSHEETPAGE );
+	psp[nIdx].dwFlags = PSP_USETITLE | PSP_HASHELP;
+	psp[nIdx].hInstance = m_hInstance;
+	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROPTYPESP2 );
+	psp[nIdx].pszIcon = NULL;
+	psp[nIdx].pfnDlgProc = (DLGPROC)PropTypesP2Proc;
+	psp[nIdx].pszTitle = "支援";
+	psp[nIdx].lParam = (LPARAM)this;
+	psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+	// 2001/06/14 End
 
 	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
 	psh.dwSize = sizeof( PROPSHEETHEADER );
@@ -1005,6 +1048,183 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 
 
+// 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
+
+/* p2 メッセージ処理 */
+BOOL CPropTypes::DispatchEvent_p2(
+	HWND		hwndDlg,	// handle to dialog box
+	UINT		uMsg,		// message
+	WPARAM		wParam,		// first message parameter
+	LPARAM		lParam 		// second message parameter
+)
+{
+	WORD		wNotifyCode;
+	WORD		wID;
+	HWND		hwndCtl;
+	NMHDR*		pNMHDR;
+	NM_UPDOWN*	pMNUD;
+	int			idCtrl;
+//	int			nVal;
+
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		/* ダイアログデータの設定 p2 */
+		SetData_p2( hwndDlg );
+		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+
+		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
+		/* 入力補完 単語ファイル */
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
+		/* キーワードヘルプ 辞書ファイル */
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
+
+		return TRUE;
+	case WM_COMMAND:
+		wNotifyCode = HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+		switch( wNotifyCode ){
+		/* ボタン／チェックボックスがクリックされた */
+		case BN_CLICKED:
+			/* ダイアログデータの取得 p2 */
+			GetData_p2( hwndDlg );
+			switch( wID ){
+			case IDC_BUTTON_HOKANFILE_REF:	/* 入力補完 単語ファイルの「参照...」ボタン */
+				{
+					CDlgOpenFile	cDlgOpenFile;
+					char*			pszMRU = NULL;;
+					char*			pszOPENFOLDER = NULL;;
+					char			szPath[_MAX_PATH + 1];
+					strcpy( szPath, m_Types.m_szHokanFile );
+					/* ファイルオープンダイアログの初期化 */
+					cDlgOpenFile.Create(
+						m_hInstance,
+						hwndDlg,
+						"*.*",
+						m_Types.m_szHokanFile,
+						(const char **)&pszMRU,
+						(const char **)&pszOPENFOLDER
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						strcpy( m_Types.m_szHokanFile, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
+					}
+				}
+				return TRUE;
+
+			//	From Here Sept. 12, 2000 JEPRO
+			case IDC_CHECK_USEKEYWORDHELP:	/* キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする */
+				::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Types.m_bUseKeyWordHelp );
+				if( BST_CHECKED == m_Types.m_bUseKeyWordHelp ){
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), TRUE );
+				}else{
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), FALSE );
+				}
+				return TRUE;
+			//	To Here Sept. 12, 2000
+
+			case IDC_BUTTON_KEYWORDHELPFILE_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
+				{
+					CDlgOpenFile	cDlgOpenFile;
+					char*			pszMRU = NULL;;
+					char*			pszOPENFOLDER = NULL;;
+					char			szPath[_MAX_PATH + 1];
+					strcpy( szPath, m_Types.m_szKeyWordHelpFile );
+					/* ファイルオープンダイアログの初期化 */
+					cDlgOpenFile.Create(
+						m_hInstance,
+						hwndDlg,
+						"*.*",
+						m_Types.m_szKeyWordHelpFile,
+						(const char **)&pszMRU,
+						(const char **)&pszOPENFOLDER
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						strcpy( m_Types.m_szKeyWordHelpFile, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile );
+					}
+				}
+				return TRUE;
+			}
+		}
+		break;
+	case WM_NOTIFY:
+		idCtrl = (int)wParam;
+		pNMHDR = (NMHDR*)lParam;
+		pMNUD  = (NM_UPDOWN*)lParam;
+//		switch( idCtrl ){
+//		case ???????:
+//			return 0L;
+//		default:
+			switch( pNMHDR->code ){
+//			case PSN_HELP:
+//				OnHelp( hwndDlg, IDD_PROP_HELPER );
+//				return TRUE;
+			case PSN_KILLACTIVE:
+//				MYTRACE( "p10 PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 p2 */
+				GetData_p2( hwndDlg );
+				return TRUE;
+			}
+			break;
+//		}
+
+		break;
+
+
+	}
+	return FALSE;
+
+}
+
+/* ダイアログデータの設定 p2 */
+void CPropTypes::SetData_p2( HWND hwndDlg )
+{
+	/* 入力補完用単語ファイル */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
+
+	/* キーワードヘルプを使用する  */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Types.m_bUseKeyWordHelp );
+//	From Here Sept. 12, 2000 JEPRO キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする
+	if( BST_CHECKED == m_Types.m_bUseKeyWordHelp ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), FALSE );
+	}
+//	To Here Sept. 12, 2000
+
+	/* キーワードヘルプ 辞書ファイル */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile );
+
+	return;
+}
+
+/* ダイアログデータの取得 p2 */
+int CPropTypes::GetData_p2( HWND hwndDlg )
+{
+	m_nPageNum = 2;
+
+	/* 入力補完 単語ファイル */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, MAX_PATH - 1 );
+
+	/* キーワードヘルプを使用する */
+	m_Types.m_bUseKeyWordHelp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEKEYWORDHELP );
+
+	/* キーワードヘルプ 辞書ファイル */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile, MAX_PATH - 1 );
+
+	return TRUE;
+}
+
+// 2001/06/13 End
 
 
 
@@ -2377,6 +2597,7 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 {
 	int		nIdx;
 	HWND	hwndWork;
+
 	m_nPageNum = 1;
 
 

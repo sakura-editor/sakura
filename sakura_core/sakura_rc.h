@@ -382,9 +382,11 @@
 #define IDC_RADIO1                      1324
 #define IDC_RADIO_ALL                   1324
 #define IDC_RADIO_PORTLAIT              1324
+#define IDC_RADIO_BACKUP_DATETYPE1      1324
 #define IDC_RADIO2                      1325
 #define IDC_RADIO_FROMTO                1325
 #define IDC_RADIO_LANDSCAPE             1325
+#define IDC_RADIO_BACKUP_DATETYPE2      1325
 #define IDC_RADIO3                      1326
 #define IDC_EDIT2                       1327
 #define IDC_EDIT_BACKUP_3               1327
@@ -476,6 +478,7 @@
 #define IDD_PROP_BACKUP                 5112
 #define IDD_OPERATIONRUNNING            5113
 #define IDD_PROP_KEYBIND1               5114
+#define IDD_PROPTYPESP2                 5114
 #define IDS_STRING31581                 31581
 #define IDC_EXECINFO                    -1
 

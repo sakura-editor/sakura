@@ -1568,6 +1568,44 @@ BOOL CEditDoc::MakeBackUp( void )
 		strftime( szTime, sizeof( szTime ) - 1, szForm, today );
 		wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
 		break;
+//	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
+	case 4:	//	日付，時刻
+		{
+			HANDLE		hFile;
+			FILETIME	LastWriteTime,
+						LocalTime;
+			SYSTEMTIME	SystemTime;
+
+			hFile = ::CreateFile(m_szFilePath,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+			::GetFileTime(hFile,NULL,NULL,&LastWriteTime);			// ファイルのタイプスタンプを取得(更新日時のみ)
+			CloseHandle(hFile);
+			::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
+			::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
+
+			strcpy( szTime, "" );
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
+				wsprintf(szTime,"%d",SystemTime.wYear);
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
+				wsprintf(szTime,"%s%02d",szTime,SystemTime.wMonth);
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
+				wsprintf(szTime,"%s%02d",szTime,SystemTime.wDay);
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
+				wsprintf(szTime,"%s%02d",szTime,SystemTime.wHour);
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
+				wsprintf(szTime,"%s%02d",szTime,SystemTime.wMinute);
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
+				wsprintf(szTime,"%s%02d",szTime,SystemTime.wSecond);
+			}
+			wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
+		}
+		break;
+// 2001/06/12 End
+
 	case 3: //	?xx : xx = 00~99, ?は任意の文字
 		//	Aug. 15, 2000 genta
 		//	ここでは作成するバックアップファイル名のみ生成する．

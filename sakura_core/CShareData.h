@@ -282,6 +282,11 @@ struct Types {
 	int					m_nSmartIndent;					/* スマートインデント種別 */
 	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
 
+	//	2001/06/14 asa-o 補完とキーワードヘルプのタイプ別設定
+	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */
+	int					m_bUseKeyWordHelp;				/* キーワードヘルプを使用する */
+	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */
+
 }; /* Types */
 
 //	Aug. 15, 2000 genta
@@ -414,10 +419,10 @@ struct Common {
 	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 	char				m_szMidashiKigou[256];			/* 見出し記号 */
 	char				m_szInyouKigou[32];				/* 引用符 */
-	int					m_bUseKeyWordHelp;				/* キーワードヘルプを使用する */
-	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */
+//	int					m_bUseKeyWordHelp;				/* キーワードヘルプを使用する */	// 2001/06/14 asa-o タイプ別に変更したので削除
+//	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */	// 2001/06/14 asa-o タイプ別に変更したので削除
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
-	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */
+//	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */			// 2001/06/14 asa-o タイプ別に変更したので削除
 	BOOL				m_bGrepKanjiCode_AutoDetect;	/* Grep: 文字コード自動判別 */
 	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */
 //	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
