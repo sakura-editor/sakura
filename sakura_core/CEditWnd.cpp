@@ -1161,10 +1161,7 @@ LRESULT CEditWnd::DispatchEvent(
 //			::SuspendThread();
 //		}
 
-
-		return 0L;
-
-
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_SIZE:
 //		MYTRACE( "WM_SIZE\n" );
