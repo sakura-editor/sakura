@@ -184,9 +184,18 @@ void CLayoutMgr::SetLayoutInfo(
 			{
 				if( IsKutoTen( *p, *(p+1) ) )	//句読点は別管理
 				{
-					*k2 = *p; k2++; p++;
-					*k2 = *p; k2++;
-					*k2 = 0;
+					unsigned char	*r;
+					// 2004.11.12 Moca 重複していたら登録しない
+					for( r = (unsigned char *)m_pszKinsokuKuto_2; r < k2; r+=2 ){
+						if( *r == *p && *(r + 1) == *(p + 1) ){
+							break;
+						}
+					}
+					if( r == k2 ){
+						*k2 = *p; k2++; p++;
+						*k2 = *p; k2++;
+						*k2 = 0;
+					}
 				}
 				else
 				{
@@ -199,8 +208,18 @@ void CLayoutMgr::SetLayoutInfo(
 			{
 				if( IsKutoTen( *p, 0 ) )	//句読点は別管理
 				{
-					*k1 = *p; k1++;
-					*k1 = 0;
+					// Dec.23, 2004 genta チェックすべき点が誤っていたので移動
+					unsigned char	*r;
+					// 2004.11.12 Moca 重複していたら登録しない
+					for( r = (unsigned char *)m_pszKinsokuKuto_1; r < k1; r++ ){
+						if( *r == *p ){
+							break;
+						}
+					}
+					if( r == k1 ){
+						*k1 = *p; k1++;
+						*k1 = 0;
+					}
 				}
 				else
 				{
