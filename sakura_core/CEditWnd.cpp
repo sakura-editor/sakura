@@ -1173,6 +1173,14 @@ LRESULT CEditWnd::DispatchEvent(
 				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, (HWND)0 );
 			}
 			return FALSE;
+		//	From Here Jul. 21, 2003 genta
+		case NM_CUSTOMDRAW:
+			if( pnmh->hwndFrom == m_hwndToolBar ){
+				//	ツールバーのOwner Draw
+				return ToolBarOwnerDraw( (LPNMCUSTOMDRAW)pnmh );
+			}
+			break;
+		//	To Here Jul. 21, 2003 genta
 		}
 		return 0L;
 	case WM_COMMAND:
@@ -3994,6 +4002,58 @@ void CEditWnd::TabWnd_SucceedWindowPlacement( HWND hwndSrc, HWND hwndDst )
 	}
 
 	return;
+}
+/*!	@brief ToolBarのOwnerDraw
+
+	@param pnmh [in] Owner Draw情報
+
+	@note Common Control V4.71以降はNMTBCUSTOMDRAWを送ってくるが，
+	Common Control V4.70はLPNMCUSTOMDRAWしか送ってこないので
+	安全のため小さい方に合わせて処理を行う．
+	
+	@author genta
+	@date 2003.07.21 作成
+
+*/
+LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
+{
+	switch( pnmh->dwDrawStage ){
+	case CDDS_PREPAINT:
+		//	描画開始前
+		//	アイテムを自前で描画する旨を通知する
+		return CDRF_NOTIFYITEMDRAW;
+	
+	case CDDS_ITEMPREPAINT:
+		//	面倒くさいので，枠はToolbarに描いてもらう
+		//	アイコンが登録されていないので中身は何も描かれない
+		return CDRF_NOTIFYPOSTPAINT;
+	
+	case CDDS_ITEMPOSTPAINT:
+		{
+			//	描画
+			//	pnmh->dwItemSpec はコマンド番号なので，アイコン番号に変更する必要がある]
+			int nIconId = -1;
+			for( int i = 1; i < m_CMenuDrawer.m_nMyButtonNum; i++ ){
+				if( m_CMenuDrawer.m_tbMyButton[i].idCommand == pnmh->dwItemSpec ){
+					nIconId = m_CMenuDrawer.m_tbMyButton[i].iBitmap;
+					break;
+				}
+			}
+
+			//	もしもアイコンがなかったら
+			if( nIconId < 0 ){
+				nIconId = 348; // なんとなく(i)アイコン
+			}
+
+			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + 2, pnmh->rc.top + 2,
+				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
+			);
+		}
+		break;
+	default:
+		break;
+	}
+	return CDRF_DODEFAULT;
 }
 
 /*[EOF]*/

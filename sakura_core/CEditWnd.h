@@ -192,6 +192,9 @@ private:
 	HFONT	m_fontSearchBox;
 	void	ProcSearchBox( MSG* );	//検索(ボックス)
 	int		m_nCurrentFocus;
+	
+	//	Jul. 21, 2003 genta ToolBarのOwner Draw
+	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
 
 	//	Dec. 4, 2002 genta
 	//	メニューバーへのメッセージ表示機能をCEditWndより移管
