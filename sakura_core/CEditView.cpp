@@ -7389,7 +7389,8 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	MYTRACE( "CEditView::DragEnter()\n" );
 #endif
 
-	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読みとり専用のファイルにはドロップさせない
 	}else{
 		return E_INVALIDARG;
 	}
