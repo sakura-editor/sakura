@@ -59,6 +59,7 @@ OBJS =\
 	$(SRCDIR)\CDlgProperty.obj \
 	$(SRCDIR)\CDlgReplace.obj \
 	$(SRCDIR)\CDlgTagJumpList.obj \
+	$(SRCDIR)\CDlgTagsMake.obj \
 	$(SRCDIR)\CDlgTypeList.obj \
 	$(SRCDIR)\CDllHandler.obj \
 	$(SRCDIR)\CDocLine.obj \
@@ -77,6 +78,7 @@ OBJS =\
 	$(SRCDIR)\CEditView_New3.obj \
 	$(SRCDIR)\CEditWnd.obj \
 	$(SRCDIR)\CEol.obj \
+	$(SRCDIR)\CFileExt.obj \
 	$(SRCDIR)\CFileWrite.obj \
 	$(SRCDIR)\CFileLoad.obj \
 	$(SRCDIR)\CFuncInfo.obj \

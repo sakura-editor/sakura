@@ -201,6 +201,10 @@ SOURCE=..\sakura_core\CDlgTagJumpList.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgTagsMake.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgTypeList.cpp
 # End Source File
 # Begin Source File
@@ -270,6 +274,10 @@ SOURCE=..\sakura_core\CEditWnd.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\CEol.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CFileExt.cpp
 # End Source File
 # Begin Source File
 
@@ -681,6 +689,10 @@ SOURCE=..\sakura_core\CDlgTagJumpList.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgTagsMake.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgTypeList.h
 # End Source File
 # Begin Source File
@@ -718,6 +730,10 @@ SOURCE=..\sakura_core\CEditWnd.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CEol.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CFileExt.h
 # End Source File
 # Begin Source File
 
