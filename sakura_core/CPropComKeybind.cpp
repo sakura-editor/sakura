@@ -157,8 +157,8 @@ BOOL CPropCommon::DispatchEvent_p5(
 //	int			nNum;
 	int			nFuncCode;
 	static char pszLabel[256];
-	static char	szKeyState[64];
-	int			nIndexTop;
+//	static char	szKeyState[64];
+//	int			nIndexTop;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -276,6 +276,9 @@ BOOL CPropCommon::DispatchEvent_p5(
 		){
 			switch( wNotifyCode ){
 			case BN_CLICKED:
+				p5_ChangeKeyList( hwndDlg );
+// 別関数へ
+#if 0
 				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndexTop = ::SendMessage( hwndKeyList, LB_GETTOPINDEX, 0, 0 );
 				strcpy( szKeyState, "" );
@@ -301,6 +304,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				::SendMessage( hwndKeyList, LB_SETCURSEL, nIndex, 0 );
 				::SendMessage( hwndKeyList, LB_SETTOPINDEX, nIndexTop, 0 );
 				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+#endif
 				return TRUE;
 			}
 		}else
@@ -420,6 +424,9 @@ BOOL CPropCommon::DispatchEvent_p5(
 								if( i & _ALT )   ::CheckDlgButton( hwndDlg, IDC_CHECK_ALT,   BST_CHECKED );  //チェック
 								else             ::CheckDlgButton( hwndDlg, IDC_CHECK_ALT,   BST_UNCHECKED );  //チェックをはずす
 								::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+
+								// キー一覧の文字列も変更
+								p5_ChangeKeyList( hwndDlg );
 								break;
 							}
 						}
@@ -494,8 +501,42 @@ int CPropCommon::GetData_p5( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_KEYBOARD;
 	return TRUE;
 }
-
-
+/*! p5: キーリストをチェックボックスの状態に合わせて更新する */
+void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
+	HWND	hwndKeyList;
+	int 	nIndex;
+	int 	nIndexTop;
+	int 	i;
+	char	pszLabel[256];
+	char	szKeyState[64];
+	
+	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
+	nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
+	nIndexTop = ::SendMessage( hwndKeyList, LB_GETTOPINDEX, 0, 0 );
+	strcpy( szKeyState, "" );
+	i = 0;
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
+		i |= _SHIFT;
+		strcat( szKeyState, "Shift+" );
+	}
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
+		i |= _CTRL;
+		strcat( szKeyState, "Ctrl+" );
+	}
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
+		i |= _ALT;
+		strcat( szKeyState, "Alt+" );
+	}
+	/* キー一覧に文字列をセット（リストボックス）*/
+	::SendMessage( hwndKeyList, LB_RESETCONTENT, 0, 0 );
+	for( i = 0; i < m_nKeyNameArrNum; ++i ){
+		wsprintf( pszLabel, "%s%s", szKeyState, m_pKeyNameArr[i].m_szKeyName );
+		::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
+	}
+	::SendMessage( hwndKeyList, LB_SETCURSEL, nIndex, 0 );
+	::SendMessage( hwndKeyList, LB_SETTOPINDEX, nIndexTop, 0 );
+	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+}
 
 /* p5:キー割り当て設定をインポートする */
 void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )

@@ -34,6 +34,7 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_EDIT_nRulerHeight,			HIDC_EDIT_nRulerHeight,			//ルーラー
 	IDC_RADIO_FUNCKEYWND_PLACE1,	HIDC_RADIO_FUNCKEYWND_PLACE1,	//ファンクションキー表示位置
 	IDC_RADIO_FUNCKEYWND_PLACE2,	HIDC_RADIO_FUNCKEYWND_PLACE2,	//ファンクションキー表示位置
+	IDC_EDIT_FUNCKEYWND_GROUPNUM,	HIDC_EDIT_FUNCKEYWND_GROUPNUM,	//ファンクションキーのグループボタン数
 	IDC_SPIN_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,
 	IDC_SPIN_nRulerHeight,			HIDC_EDIT_nRulerHeight,
 //	IDC_STATIC,						-1,
@@ -53,6 +54,7 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_EDIT_nRulerHeight,			11241,	//ルーラー
 	IDC_RADIO_FUNCKEYWND_PLACE1,	11260,	//ファンクションキー表示位置
 	IDC_RADIO_FUNCKEYWND_PLACE2,	11261,	//ファンクションキー表示位置
+	IDC_EDIT_FUNCKEYWND_GROUPNUM,	11262,	//ファンクションキーのグループボタン数
 	IDC_SPIN_nRulerBottomSpace,		-1,
 	IDC_SPIN_nRulerHeight,			-1,
 //	IDC_STATIC,						-1,
@@ -208,6 +210,22 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nVal, FALSE );
 			return TRUE;
+		case IDC_SPIN_FUNCKEYWND_GROUPNUM:
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 1 ){
+				nVal = 1;
+			}
+			if( nVal > 12 ){
+				nVal = 12;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, nVal, FALSE );
+			return TRUE;
 		}
 		break;
 //****	To Here Sept. 21, 2000
@@ -271,6 +289,8 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, FALSE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, TRUE );
 	}
+	// 2002/11/04 Moca ファンクションキーのグループボタン数
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, m_Common.m_nFUNCKEYWND_GroupNum, FALSE );
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
@@ -336,6 +356,16 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2) ){
 		m_Common.m_nFUNCKEYWND_Place = 1;
 	}
+
+	// 2002/11/04 Moca ファンクションキーのグループボタン数
+	m_Common.m_nFUNCKEYWND_GroupNum = ::GetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, NULL, FALSE );
+	if( m_Common.m_nFUNCKEYWND_GroupNum < 1 ){
+		m_Common.m_nFUNCKEYWND_GroupNum = 1;
+	}
+	if( m_Common.m_nFUNCKEYWND_GroupNum > 12 ){
+		m_Common.m_nFUNCKEYWND_GroupNum = 12;
+	}
+
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	m_Common.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );

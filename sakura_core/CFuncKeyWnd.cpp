@@ -62,7 +62,9 @@ CFuncKeyWnd::CFuncKeyWnd()
 	for( i = 0; i < sizeof(	m_szFuncNameArr ) / sizeof(	m_szFuncNameArr[0] ); ++i ){
 		strcpy( m_szFuncNameArr[i], "" );
 	}
-	m_nButtonGroupNum = 4;
+//	2002.11.04 Moca Open()側で設定
+//	m_nButtonGroupNum = 4;
+
 	for( i = 0; i < sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] ); ++i ){
 		m_hwndButtonArr[i] = NULL;
 	}
@@ -124,6 +126,12 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	m_bSizeBox = bSizeBox;
 	m_hwndSizeBox = NULL;
 	m_nCurrentKeyState = -1;
+
+	// 2002.11.04 Moca 変更できるように
+	m_nButtonGroupNum = m_pShareData->m_Common.m_nFUNCKEYWND_GroupNum;
+	if( 1 > m_nButtonGroupNum || 12 < m_nButtonGroupNum ){
+		m_nButtonGroupNum = 4;
+	}
 
 /*
 	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
@@ -222,6 +230,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		}
 	}
 	::InvalidateRect( m_hWnd, NULL, TRUE );
+
 	return m_hWnd;
 }
 
@@ -481,7 +490,8 @@ int CFuncKeyWnd::CalcButtonSize( void )
 	nButtonNum = sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] );
 
 	if( NULL == m_hwndSizeBox ){
-		return ( rc.right - rc.left - nButtonNum - ( nButtonNum / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
+//		return ( rc.right - rc.left - nButtonNum - ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
+		nCxVScroll = 0;
 	}else{
 		/* サイズボックスの位置、サイズ変更 */
 		nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
@@ -491,8 +501,9 @@ int CFuncKeyWnd::CalcButtonSize( void )
 		::MoveWindow( m_hwndSizeBox,  rc.right - rc.left - nCxVScroll, rc.bottom - rc.top - nCyHScroll, nCxVScroll, nCyHScroll, TRUE );
 //		::MoveWindow( m_hwndSizeBox,  0, 0, nCxVScroll, nCyHScroll, TRUE );
 
-		return ( rc.right - rc.left - nCxVScroll - nButtonNum - ( nButtonNum / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
+//		return ( rc.right - rc.left - nCxVScroll = - nButtonNum -  ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 	}
+	return ( rc.right - rc.left - nCxVScroll - nButtonNum -  ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 
 }
 

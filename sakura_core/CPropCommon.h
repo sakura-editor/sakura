@@ -120,7 +120,7 @@ protected:
 	void OnHelp( HWND, int );	/* ヘルプ */
 	int	SearchIntArr( int , int* , int );
 	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
-	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */
+//	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */ // 2002.11.09 Moca 未使用
 	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
 
 	//	Jun. 2, 2001 genta
@@ -159,6 +159,7 @@ protected:
 	BOOL DispatchEvent_p5( HWND, UINT, WPARAM, LPARAM );
 	void SetData_p5( HWND );	/* ダイアログデータの設定 p5 */
 	int  GetData_p5( HWND );	/* ダイアログデータの取得 p5 */
+	void p5_ChangeKeyList( HWND ); /* p5: キーリストをチェックボックスの状態に合わせて更新する*/
 	void p5_Import_KeySetting( HWND );	/* p5:キー割り当て設定をインポートする */
 	void p5_Export_KeySetting( HWND );	/* p5:キー割り当て設定をエクスポートする */
 

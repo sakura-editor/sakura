@@ -391,9 +391,9 @@ BEGIN
     CONTROL         "空行を無視する(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,255,65,10,0,
                     HIDC_CHECK_bMarkUpBlankLineEnable
-    COMBOBOX        IDC_COMBO_nSortType,25,5,90,65,CBS_DROPDOWNLIST | 
+    LTEXT           "順序(&S)",IDC_STATIC_nSortType,7,7,23,8
+    COMBOBOX        IDC_COMBO_nSortType,34,5,94,65,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "順序",IDC_STATIC_nSortType,7,7,15,8
 END
 
 IDD_GREP DIALOGEX 0, 0, 302, 143
@@ -632,7 +632,7 @@ BEGIN
                     12
     LTEXT           "ドット",IDC_STATIC,105,77,15,8
     RTEXT           "TAB幅(&T)",IDC_STATIC,28,92,30,8,NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_TABSPACE,61,90,40,13,ES_AUTOHSCROLL,0,
+    EDITTEXT        IDC_EDIT_TABSPACE,61,90,40,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_TABSPACE
     CONTROL         "Spin3",IDC_SPIN_TABSPACE,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,118,91,7,
@@ -887,16 +887,15 @@ BEGIN
                     0,0,HIDC_BUTTON_KEYWORDHELPFONT
 END
 
-IDD_PROP_COLOR DIALOGEX 0, 0, 270, 213
+IDD_PROP_COLOR DIALOGEX 0, 0, 271, 219
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     GROUPBOX        "色指定(&L)",IDC_STATIC,3,3,138,192,WS_GROUP
-    LISTBOX         IDC_LIST_COLORS,5,13,133,134,LBS_OWNERDRAWFIXED | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_GROUP | 
-                    WS_TABSTOP,0,HIDC_LIST_COLORS
+    LISTBOX         IDC_LIST_COLORS,5,13,133,135,LBS_OWNERDRAWFIXED | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP,0,HIDC_LIST_COLORS
     CONTROL         "色分け/表示(&D)",IDC_CHECK_DISP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,150,56,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,150,56,10,0,
                     HIDC_CHECK_DISP
     CONTROL         "太字(&B)",IDC_CHECK_FAT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,66,150,33,10,0,HIDC_CHECK_FAT
@@ -1245,20 +1244,12 @@ BEGIN
     CONTROL         "ウィンドウサイズ継承(&Z)",IDC_CHECK_WINSIZE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,63,85,10,0,
                     HIDC_CHECK_WINSIZE
-    CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,101,33,30,10,
-                    0,HIDC_RADIO_FUNCKEYWND_PLACE1
-    CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
-                    BS_AUTORADIOBUTTON,130,33,30,10,0,
-                    HIDC_RADIO_FUNCKEYWND_PLACE2
     CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,179,18,84,10,0,
                     HIDC_CHECK_bScrollBarHorz
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,179,33,82,10,0,
                     HIDC_CHECK_bMenuIcon
-    GROUPBOX        "位置",IDC_GROUP_FUNCKEYWND_POSITION,97,23,65,23,
-                    WS_GROUP
     GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,80,WS_GROUP
     LTEXT           "ルーラーの高さ(&E)",IDC_STATIC,7,99,55,8
     EDITTEXT        IDC_EDIT_nRulerHeight,96,97,28,12,ES_AUTOHSCROLL,0,
@@ -1274,7 +1265,6 @@ BEGIN
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,112,6,
                     12
     LTEXT           "ドット",IDC_STATIC,126,114,15,8
-    GROUPBOX        "",IDC_STATIC,3,88,264,57
     LTEXT           "行番号とテキストの隙間(&L)",IDC_STATIC,7,129,79,8
     EDITTEXT        IDC_EDIT_nLineNumberRightSpace,96,127,28,12,
                     ES_AUTOHSCROLL,0,HIDC_EDIT_nLineNumberRightSpace
@@ -1282,6 +1272,23 @@ BEGIN
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,127,6,
                     12
     LTEXT           "ドット",IDC_STATIC,126,129,15,8
+    GROUPBOX        "",IDC_STATIC,3,88,143,57
+    CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,167,109,30,10,
+                    0,HIDC_RADIO_FUNCKEYWND_PLACE1
+    CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
+                    BS_AUTORADIOBUTTON,197,109,30,10,0,
+                    HIDC_RADIO_FUNCKEYWND_PLACE2
+    GROUPBOX        "位置",IDC_GROUP_FUNCKEYWND_POSITION,165,100,65,23,
+                    WS_GROUP
+    LTEXT           "グループボタン数(&G)",IDC_STATIC,166,129,62,10
+    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,231,127,28,12,
+                    ES_AUTOHSCROLL | ES_NUMBER,0,
+                    HIDC_EDIT_FUNCKEYWND_GROUPNUM
+    CONTROL         "Spin1",IDC_SPIN_FUNCKEYWND_GROUPNUM,"msctls_updown32",
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,260,127,9,
+                    12
+    GROUPBOX        "ファンクションキー",IDC_STATIC,160,88,107,57
     CONTROL         "垂直スクロールの同期をとる(&V)",
                     IDC_CHECK_SplitterWndVScroll,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,163,107,10
@@ -1695,7 +1702,7 @@ BEGIN
     CONTROL         "新ファイル(&N)",IDC_RADIO_DIFF_FILE1,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,122,205,56,10,0,
                     HIDC_RADIO_DIFF_FILE1
-    CONTROL         "旧ファイル(&O)",IDC_RADIO_DIFF_FILE2,"Button",
+    CONTROL         "旧ファイル(&D)",IDC_RADIO_DIFF_FILE2,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,185,205,55,10,0,
                     HIDC_RADIO_DIFF_FILE2
     CONTROL         "見つからないときにメッセージを表示(&M)",
@@ -1882,9 +1889,9 @@ BEGIN
     IDD_PROP_COLOR, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 263
+        RIGHTMARGIN, 264
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 212
     END
 
     IDD_COMPARE, DIALOG

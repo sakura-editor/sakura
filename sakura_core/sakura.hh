@@ -278,6 +278,8 @@
 #define HIDC_RADIO_BACKUP_TYPE1					10060 //バックアップの種類（拡張子）
 #define HIDC_RADIO_BACKUP_TYPE3					10061 //バックアップの種類（日付・時刻）
 #define HIDC_RADIO_BACKUP_TYPE2					10062 //バックアップの種類（連番）
+#define HIDC_RADIO_BACKUP_TYPE2NEWHID			10061 //バックアップの種類（日付・時刻）// 2002.11.09 Moca ヘルプ・ソースのコメントがTYPE2と逆だったため名称変更しヘルプファイルにIDを合わせた
+#define HIDC_RADIO_BACKUP_TYPE3NEWHID			10062 //バックアップの種類（連番）// 2002.11.09 Moca ヘルプ・ソースのコメントがTYPE3と逆だったため名称変更しヘルプファイルにIDを合わせた
 #define HIDC_RADIO_BACKUP_DATETYPE1				10063 //付加する日時の種類（作成日時）//Jul. 05, 2001 JEPRO 追加
 #define HIDC_RADIO_BACKUP_DATETYPE2				10064 //付加する日時の種類（更新日時）//Jul. 05, 2001 JEPRO 追加
 #define HIDC_BUTTON_DELETE						10100 //メニューから機能削除
@@ -398,6 +400,7 @@
 #define HIDC_EDIT_nRulerHeight					11241 //ルーラー（高さ）
 #define HIDC_RADIO_FUNCKEYWND_PLACE1			11260 //ファンクションキー表示位置（上）
 #define HIDC_RADIO_FUNCKEYWND_PLACE2			11261 //ファンクションキー表示位置（下）
+#define HIDC_EDIT_FUNCKEYWND_GROUPNUM			11262 //ファンクションキーのグループボタン数
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK

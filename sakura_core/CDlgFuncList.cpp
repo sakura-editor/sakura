@@ -396,10 +396,15 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		HWND hWnd_Combo_Sort = ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType );
 		::EnableWindow( hWnd_Combo_Sort , TRUE );
 		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
+		::SendMessage( hWnd_Combo_Sort , CB_RESETCONTENT, 0, 0 ); // 2002.11.10 Moca 追加
 		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("デフォルト")));
 		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("アルファベット順")));
 		::SendMessage( hWnd_Combo_Sort , CB_SETCURSEL, m_nSortType, 0L);
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_SHOW );
+		// 2002.11.10 Moca 追加 ソートする
+		if( 1 == m_nSortType ){
+			SortTree(::GetDlgItem( m_hWnd , IDC_TREE1),TVI_ROOT);
+		}
 	}
 	else {
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), FALSE );
@@ -455,7 +460,8 @@ int CDlgFuncList::GetData( void )
 			tvi.pszText = szLabel;
 			tvi.cchTextMax = sizeof( szLabel );
 			if( TreeView_GetItem( hwndTree, &tvi ) ){
-				if( -1 != tvi.lParam ){
+				// lParamが-1以下は pcFuncInfoArrには含まれない項目
+				if( 0 <= tvi.lParam ){
 					pcFuncInfo = m_pcFuncInfoArr->GetAt( tvi.lParam );
 					nLineTo = pcFuncInfo->m_nFuncLineCRLF;
 				}
@@ -678,6 +684,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	HTREEITEM		htiSelected;
 	TV_ITEM			tvi;
 	int				nClassNest;
+	int				nDummylParam = -64000;	// 2002.11.10 Moca クラス名のダミーlParam ソートのため
 	char			szClassArr[16][64];	// Jan. 04, 2001 genta クラス名エリアの拡大
 
 	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
@@ -817,6 +824,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						}
 						else
 							strcat( pClassName, " クラス" );
+							tvis.item.lParam = nDummylParam;
+							nDummylParam++;
 					}
 
 					tvis.hParent = htiParent;
@@ -857,8 +866,10 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					tvg.hInsertAfter = TVI_LAST;
 					tvg.item.mask = TVIF_TEXT | TVIF_PARAM;
 					tvg.item.pszText = "グローバル";
-					tvg.item.lParam = -1;
+//					tvg.item.lParam = -1;
+					tvg.item.lParam = nDummylParam;
 					htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
+					nDummylParam++;
 				}
 				htiClass = htiGlobal;
 			}
@@ -976,6 +987,7 @@ void CDlgFuncList::GetTreeTextNext(
 /*! 汎用ツリーコントロールの初期化：CFuncInfo::m_nDepthを利用して親子を設定
 
 	@date 2002.04.01 YAZAKI
+	@date 2002.11.10 Moca 階層の制限をなくした
 */
 void CDlgFuncList::SetTree()
 {
@@ -985,8 +997,10 @@ void CDlgFuncList::SetTree()
 	int i;
 	int nFuncInfoArrNum = m_pcFuncInfoArr->GetNum();
 	int nStackPointer = 0;
-	HTREEITEM hParentStack[32];	//	32レベルの深さまで対応。
-	hParentStack[ nStackPointer ] = TVI_ROOT;
+	int nStackDepth = 32; // phParentStack の確保している数
+	HTREEITEM* phParentStack;
+	phParentStack = (HTREEITEM*)malloc( nStackDepth * sizeof( HTREEITEM ) );
+	phParentStack[ nStackPointer ] = TVI_ROOT;
 
 	for (i = 0; i < nFuncInfoArrNum; i++){
 		CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
@@ -996,7 +1010,7 @@ void CDlgFuncList::SetTree()
 		*/
 		HTREEITEM hItem;
 		TV_INSERTSTRUCT cTVInsertStruct;
-		cTVInsertStruct.hParent = hParentStack[ nStackPointer ];
+		cTVInsertStruct.hParent = phParentStack[ nStackPointer ];
 		cTVInsertStruct.hInsertAfter = TVI_LAST;	//	必ず最後に追加。
 		cTVInsertStruct.item.mask = TVIF_TEXT | TVIF_PARAM;
 		cTVInsertStruct.item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
@@ -1008,11 +1022,23 @@ void CDlgFuncList::SetTree()
 			//	レベルが変わりました!!
 			//	※が、2段階深くなることは考慮していないので注意。
 			//	　もちろん、2段階以上浅くなることは考慮済み。
+
+			// 2002.11.10 Moca 追加 確保したサイズでは足りなくなった。再確保
+			if( nStackDepth <= pcFuncInfo->m_nDepth + 1 ){
+				nStackDepth = pcFuncInfo->m_nDepth + 4; // 多めに確保しておく
+				HTREEITEM* phTi;
+				phTi = (HTREEITEM*)realloc( phParentStack, nStackDepth * sizeof( HTREEITEM ) );
+				if( NULL != phTi ){
+					phParentStack = phTi;
+				}else{
+					goto end_of_func;
+				}
+			}
 			nStackPointer = pcFuncInfo->m_nDepth;
-			cTVInsertStruct.hParent = hParentStack[ nStackPointer ];
+			cTVInsertStruct.hParent = phParentStack[ nStackPointer ];
 		}
 		hItem = TreeView_InsertItem( hwndTree, &cTVInsertStruct );
-		hParentStack[ nStackPointer+1 ] = hItem;
+		phParentStack[ nStackPointer+1 ] = hItem;
 
 		/*	pcFuncInfoに登録されている行数を確認して、選択するアイテムを考える
 		*/
@@ -1028,12 +1054,17 @@ void CDlgFuncList::SetTree()
 		m_cmemClipText.AppendSz( (const char *)pcFuncInfo->m_cmemFuncName.GetPtr() );
 		m_cmemClipText.AppendSz( (const char *)"\r\n" );
 	}
+
+end_of_func:;
+
 	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
 
 	if( NULL != hItemSelected ){
 		/* 現在カーソル位置のメソッドを選択状態にする */
 		TreeView_SelectItem( hwndTree, hItemSelected );
 	}
+
+	free( phParentStack );
 }
 
 #if 0
@@ -1605,9 +1636,11 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	case F_BOOKMARK_VIEW:
 		pcEditView=(CEditView*)m_lParam;
 		pcEditView->HandleCommand( nFuncCode, TRUE, TRUE, 0, 0, 0 );
-		m_nListType=(nFuncCode==F_BOOKMARK_VIEW)?OUTLINE_BOOKMARK:pcEditView->m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
-		m_nCurLine=pcEditView->m_nCaretPosY + 1;
-		SetData();
+
+		// 2002.11.11 Moca CEditView::HandleCommand→Readrawと回ってくるため更新しなくてよい
+//		m_nListType=(nFuncCode==F_BOOKMARK_VIEW)?OUTLINE_BOOKMARK:pcEditView->m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
+//		m_nCurLine=pcEditView->m_nCaretPosY + 1;
+//		SetData(); 
 		break;
 	case F_BOOKMARK_SET:
 		OnJump( false );

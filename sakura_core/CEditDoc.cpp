@@ -2821,6 +2821,8 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 /*!	テキスト・トピックリスト作成
 	
 	@date 2002.04.01 YAZAKI CDlgFuncList::SetText()を使用するように改訂。
+	@date 2002.11.03 Moca 階層が最大値を超えるとバッファオーバーランするのを修正
+		最大値以上は追加せずに無視する
 */
 void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -2838,12 +2840,13 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	pszStarts = m_pShareData->m_Common.m_szMidashiKigou; 	/* 見出し記号 */
 	nStartsLen = lstrlen( pszStarts );
 
-	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
-		（256文字まで同じだったら同じものとして扱います）
+	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
+		（32文字まで同じだったら同じものとして扱います）
 	*/
+	const int nMaxStack = 32;	//	ネストの最深
 	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	char pszStack[32][256];
-	char szTitle[256];			//	一時領域
+	char pszStack[nMaxStack][32];
+	char szTitle[32];			//	一時領域
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		pLine = (const unsigned char *)m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		if( NULL == pLine ){
@@ -2898,11 +2901,11 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 				strcpy( szTitle, "０" );
 			}
 			/* ①～⑳ */
-			if( pLine[0] == 0x87 && ( pLine[1] >= 0x40 && pLine[1] <= 0x53 ) ){
+			else if( pLine[0] == 0x87 && ( pLine[1] >= 0x40 && pLine[1] <= 0x53 ) ){
 				strcpy( szTitle, "①" );
 			}
 			/* Ⅰ～Ⅹ */
-			if( pLine[0] == 0x87 && ( pLine[1] >= 0x54 && pLine[1] <= 0x5d ) ){
+			else if( pLine[0] == 0x87 && ( pLine[1] >= 0x54 && pLine[1] <= 0x5d ) ){
 				strcpy( szTitle, "Ⅰ" );
 			}
 		}
@@ -2935,6 +2938,8 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		);
 		/* nDepthを計算 */
 		int k;
+		BOOL bAppend;
+		bAppend = TRUE;
 		for ( k = 0; k < nDepth; k++ ){
 			int nResult = strcmp( pszStack[k], szTitle );
 			if ( nResult == 0 ){
@@ -2946,13 +2951,20 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			//	ので、同じレベルに合わせてAppendData.
 			nDepth = k;
 		}
-		else {
+		else if( nMaxStack > k ){
 			//	いままでに同じ見出しが存在しなかった。
 			//	ので、pszStackにコピーしてAppendData.
 			strcpy(pszStack[nDepth], szTitle);
+		}else{
+			// 2002.11.03 Moca 最大値を超えるとバッファオーバーラン
+			// nDepth = nMaxStack;
+			bAppend = FALSE;
 		}
-		pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
-		nDepth++;
+		
+		if( FALSE != bAppend ){
+			pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
+			nDepth++;
+		}
 		delete [] pszText;
 
 	}
@@ -2973,25 +2985,26 @@ struct oneRule {
 /*! ルールファイルを読み込み、ルール構造体の配列を作成する
 
 	@date 2002.04.01 YAZAKI
+	@date 2002.11.03 Moca 引数nMaxCountを追加。バッファ長チェックをするように変更
 */
-int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule )
+int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule, int nMaxCount )
 {
 	long	i;
-	/* Test.outlineruleに決め打ち */
 	FILE*	pFile = fopen( pszFilename, "r" );
 	if( NULL == pFile ){
 		return 0;
 	}
 	char	szLine[10240];
-	char*	pszDelimit = " /// ";
-	char*	pszKeySeps = ",\0";
+	const char*	pszDelimit = " /// ";
+	const char*	pszKeySeps = ",\0";
 	char*	pszWork;
+	int nDelimitLen = strlen( pszDelimit );
 	int nCount = 0;
-	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
+	while( NULL != fgets( szLine, sizeof(szLine), pFile ) && nCount < nMaxCount ){
 		pszWork = strstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != ';' ){
 			*pszWork = '\0';
-			pszWork += lstrlen( pszDelimit );
+			pszWork += nDelimitLen;
 
 			/* 最初のトークンを取得します。 */
 			char* pszToken = strtok( szLine, pszKeySeps );
@@ -3004,8 +3017,10 @@ int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule )
 						break;
 					}
 				}
-				strcpy( pcOneRule[nCount].szMatch, pszToken );
-				strcpy( pcOneRule[nCount].szGroupName, pszWork );
+				strncpy( pcOneRule[nCount].szMatch, pszToken, 255 );
+				strncpy( pcOneRule[nCount].szGroupName, pszWork, 255 );
+				pcOneRule[nCount].szMatch[255] = '\0';
+				pcOneRule[nCount].szGroupName[255] = '\0';
 				pcOneRule[nCount].nLength = strlen(pcOneRule[nCount].szMatch);
 				nCount++;
 				pszToken = strtok( NULL, pszKeySeps );
@@ -3019,6 +3034,8 @@ int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule )
 /*! ルールファイルを元に、トピックリストを作成
 
 	@date 2002.04.01 YAZAKI
+	@date 2002.11.03 Moca ネストの深さが最大値を超えるとバッファオーバーランするのを修正
+		最大値以上は追加せずに無視する
 */
 void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -3031,7 +3048,7 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 
 	/* ルールファイルの内容をバッファに読み込む */
 	oneRule test[1024];	//	1024個許可。
-	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test);
+	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test, 1024 );
 	if ( nCount < 1 ){
 		return;
 	}
@@ -3039,8 +3056,9 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
 		（256文字まで同じだったら同じものとして扱います）
 	*/
+	const int nMaxStack = 32;	//	ネストの最深
 	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	char pszStack[32][256];
+	char pszStack[nMaxStack][256];
 	char szTitle[256];			//	一時領域
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		pLine = (const unsigned char *)m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
@@ -3075,10 +3093,12 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		pszText = new char[nLineLen + 1];
 		memcpy( pszText, (const char *)&pLine[i], nLineLen );
 		pszText[nLineLen] = '\0';
-		for( i = 0; i < (int)lstrlen(pszText); ++i ){
+		int nTextLen = lstrlen( pszText );
+		for( i = 0; i < nTextLen; ++i ){
 			if( pszText[i] == CR ||
 				pszText[i] == LF ){
 				pszText[i] = '\0';
+				break;
 			}
 		}
 		/*
@@ -3097,6 +3117,8 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		);
 		/* nDepthを計算 */
 		int k;
+		BOOL bAppend;
+		bAppend = TRUE;
 		for ( k = 0; k < nDepth; k++ ){
 			int nResult = strcmp( pszStack[k], szTitle );
 			if ( nResult == 0 ){
@@ -3108,13 +3130,20 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 			//	ので、同じレベルに合わせてAppendData.
 			nDepth = k;
 		}
-		else {
+		else if( nMaxStack> k ){
 			//	いままでに同じ見出しが存在しなかった。
 			//	ので、pszStackにコピーしてAppendData.
 			strcpy(pszStack[nDepth], szTitle);
+		}else{
+			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する
+			// nDepth = nMaxStack;
+			bAppend = FALSE;
 		}
-		pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
-		nDepth++;
+		
+		if( FALSE != bAppend ){
+			pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
+			nDepth++;
+		}
 		delete [] pszText;
 
 	}

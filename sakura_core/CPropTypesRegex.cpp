@@ -440,7 +440,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 				}
 				//挿入するキー情報を取得する。
 				memset(szColorIndex, 0, sizeof(szColorIndex));
-				::GetDlgItemText( hwndDlg, IDC_COMBO_COLOR, szColorIndex, sizeof(szColorIndex) );
+				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
 				if( strcmp(szColorIndex, "カーソル行アンダーライン") == 0 )
 				{
 					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "カーソル行アンダーラインは指定できません。");
@@ -509,7 +509,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 				}
 				//追加するキー情報を取得する。
 				memset(szColorIndex, 0, sizeof(szColorIndex));
-				::GetDlgItemText( hwndDlg, IDC_COMBO_COLOR, szColorIndex, sizeof(szColorIndex) );
+				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
 				if( strcmp(szColorIndex, "カーソル行アンダーライン") == 0 )
 				{
 					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "カーソル行アンダーラインは指定できません。");
@@ -581,7 +581,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 				}
 				//追加するキー情報を取得する。
 				memset(szColorIndex, 0, sizeof(szColorIndex));
-				::GetDlgItemText( hwndDlg, IDC_COMBO_COLOR, szColorIndex, sizeof(szColorIndex) );
+				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
 				if( strcmp(szColorIndex, "カーソル行アンダーライン") == 0 )
 				{
 					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "カーソル行アンダーラインは指定できません。");
@@ -779,7 +779,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
 				::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
-				hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_COLOR );
+				hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 				for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 				{
 					//if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") != 0)

@@ -1508,7 +1508,7 @@ void CMemory::UTF7ToSJIS( void )
 /*!
 	Unicodeの文字がUTF-7で直接エンコードできるか調べる
 	@author Moca
-	@data 2002.10.25 新規作成
+	@date 2002.10.25 新規作成
 
 	TAB SP CR LF は 直接エンコード可能
 	基本セット
@@ -1539,7 +1539,7 @@ int CMemory::IsUTF7Direct( wchar_t wc ){
 
 
 /*! コード変換 Unicode→UTF-7
-	@data 2002.10.25 Moca UTF-7で直接エンコードできる文字をRFCに合わせて制限した
+	@date 2002.10.25 Moca UTF-7で直接エンコードできる文字をRFCに合わせて制限した
 */
 void CMemory::UnicodeToUTF7( void )
 {
