@@ -70,7 +70,7 @@ static const DWORD p_helpids[] = {	//01310
 INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FILE(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( DispatchEvent_p2, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( &CPropCommon::DispatchEvent_p2, hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 

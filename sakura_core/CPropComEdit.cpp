@@ -52,7 +52,7 @@ static const DWORD p_helpids[] = {	//10210
 INT_PTR CALLBACK CPropCommon::DlgProc_PROP_EDIT(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( DispatchEvent_PROP_EDIT, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( &CPropCommon::DispatchEvent_PROP_EDIT, hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 

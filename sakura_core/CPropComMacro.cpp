@@ -77,7 +77,7 @@ static const DWORD p_helpids[] = {	//11700
 INT_PTR CALLBACK CPropCommon::DlgProc_PROP_MACRO(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc(DispatchEvent_PROP_Macro, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc(&CPropCommon::DispatchEvent_PROP_Macro, hwndDlg, uMsg, wParam, lParam );
 }
 
 /*! Macroページのメッセージ処理
