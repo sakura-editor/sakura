@@ -23,11 +23,6 @@ class CLayoutMgr;
 
 #include <windows.h>// 2002/2/10 aroka
 #include "global.h"// 2002/2/10 aroka
-//#include "CLayout.h"// 2002/2/10 aroka
-//#include "CDocLineMgr.h"// 2002/2/10 aroka
-//#include "CMemory.h"// 2002/2/10 aroka
-// //	Jun. 26, 2001 genta	ê≥ãKï\åªÉâÉCÉuÉâÉäÇÃç∑Çµë÷Ç¶
-//#include "CBregexp.h"// 2002/2/10 aroka
 #include "CShareData.h"
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI

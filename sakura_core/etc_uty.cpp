@@ -15,7 +15,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <io.h>
 #include "etc_uty.h"
 #include "debug.h"

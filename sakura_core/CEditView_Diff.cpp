@@ -21,7 +21,6 @@
 #include "sakura_rc.h"
 #include "etc_uty.h"
 #include "global.h"
-//#include "CDlgCancel.h"
 #include "CDlgDiff.h"
 #include "CEditDoc.h"
 #include "CEditView.h"

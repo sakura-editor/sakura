@@ -29,8 +29,6 @@
 #include "CWaitCursor.h"
 #include "CSplitterWnd.h"
 //@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ÍCSMacroMgr‚É“ˆê
-//#include "CMacro.h"
-//#include "CKeyMacroMgr.h"
 #include "CSMacroMgr.h"
 #include "etc_uty.h"
 #include "CDlgTypeList.h"

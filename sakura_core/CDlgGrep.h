@@ -20,8 +20,6 @@ class CDlgGrep;
 #define _CDLGGREP_H_
 
 #include "CDialog.h"
-//#include <windows.h>
-//#include "CShareData.h"
 
 //! GREPダイアログボックス
 class SAKURA_CORE_API CDlgGrep : public CDialog

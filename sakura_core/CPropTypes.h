@@ -21,8 +21,6 @@ class CPropTypes;
 
 #include <windows.h>
 #include "CShareData.h"
-//#include "CMemory.h" // 2002/2/10 aroka
-//#include "CKeyBind.h"// 2002/2/10 aroka
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

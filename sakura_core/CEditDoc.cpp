@@ -20,7 +20,6 @@
 #include <io.h>
 #include "CEditDoc.h"
 #include "debug.h"
-//#include "keycode.h"
 #include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"

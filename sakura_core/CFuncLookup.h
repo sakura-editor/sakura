@@ -37,7 +37,6 @@
 #include <windows.h>
 #include "global.h"
 #include "Funccode.h"
-//#include "CSMacroMgr.h"// 2002/2/10 aroka
 class CSMacroMgr;// 2002/2/10 aroka
 struct Common;// 2002/2/10 aroka
 

@@ -33,8 +33,6 @@
 // Oct 6, 2000 ao
 #include <stdio.h>
 #include <io.h>
-//#include <string.h>
-//#include <memory.h>
 //	Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
 #include "CBregexp.h"
 #include <commctrl.h>

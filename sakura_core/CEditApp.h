@@ -28,8 +28,6 @@ class CEditApp;
 
 
 #include <windows.h>
-//#include "CEditWnd.h"
-//#include "CKeyBind.h"
 #include "CShareData.h"
 #include "CMenuDrawer.h"
 #include "CDlgGrep.h" // 2002/2/10 aroka

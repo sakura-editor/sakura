@@ -19,11 +19,9 @@
 #include "etc_uty.h"
 #include "debug.h"
 #include "CEditDoc.h"
-//#include "CEditView.h"	// Oct. 10, 2000 JEPRO added	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は必要？
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "mymessage.h"
-//#include <locale.h>	// 2002/2/10 aroka
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

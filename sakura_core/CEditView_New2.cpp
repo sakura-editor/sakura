@@ -21,12 +21,9 @@
 #include <io.h>
 #include "CEditView.h"
 #include "debug.h"
-//#include "keycode.h"
 #include "funccode.h"
-//#include "CRunningTimer.h" 2002/2/10 aroka
 #include "charcode.h"
 #include "mymessage.h"
-//#include "CWaitCursor.h"
 #include "CEditWnd.h"
 #include "CShareData.h"
 #include "CDlgCancel.h"

@@ -13,7 +13,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include <stdio.h>
-//#include "sakura_rc.h"
 #include "CDlgPrintSetting.h"
 #include "CDlgInput1.h"
 #include "funccode.h"		// Stonee, 2001/03/12

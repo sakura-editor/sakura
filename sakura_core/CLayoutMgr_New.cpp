@@ -24,7 +24,6 @@
 #include "CDocLine.h"/// 2002/2/10 aroka
 #include "CDocLineMgr.h"// 2002/2/10 aroka
 #include "CMemory.h"/// 2002/2/10 aroka
-//#include "CShareData.h" // 2002/03/13 novice	@@@ 2002.09.29 YAZAKI
 #include "CMemoryIterator.h"
 
 //レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK

@@ -18,8 +18,6 @@ class CDlgPrintSetting;
 #define _CDLGPRINTSETTING_H_
 
 #include "CDialog.h"
-//#include <windows.h>
-//#include "CShareData.h"
 
 /*!	印刷設定ダイアログ
 

@@ -19,7 +19,6 @@ class CMacro;
 #define _CMACRO_H_
 
 #include <windows.h>
-//#include "CEditView.h" 2002/2/10 aroka
 class CEditView;
 
 /*! @brief キーボードマクロの1コマンド

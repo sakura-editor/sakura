@@ -15,18 +15,15 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
 #include "CEditView.h"
 #include "debug.h"
-//#include "keycode.h" 2002/2/10 aroka
 #include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
-//#include "CWaitCursor.h" 2002/2/10 aroka
 #include "CEditWnd.h"
 #include "CShareData.h"
 #include "CDlgCancel.h"
@@ -36,7 +33,6 @@
 #include "my_icmp.h"	//@@@ 2002.01.13 add
 #include "Clayout.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
-// #include <locale.h>
 
 /*! フォントを選ぶ
 	@param bFat TRUEで太字

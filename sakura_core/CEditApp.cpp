@@ -22,9 +22,7 @@
 #define ID_HOTKEY_TRAYMENU	0x1234
 
 #include <windows.h>
-//#include <stdio.h>
 #include <io.h>
-//#include <ras.h>
 #include "debug.h"
 #include "CEditApp.h"
 #include "CEditView.h"		//Nov. 21, 2000 JEPROtest
