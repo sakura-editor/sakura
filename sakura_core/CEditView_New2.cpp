@@ -790,6 +790,20 @@ const struct ZENKAKKO_T{
 	NULL, NULL	//終端識別
 };
 //@@@ 全角文字の対括弧: End
+//@@@ 2003.01.06 Start by ai: 半角文字の対括弧
+//! 半角括弧の対応表
+const struct HANKAKKO_T{
+	char *sStr;
+	char *eStr;
+} hankakkoarr[] = {
+	"(", ")",
+	"[", "]",
+	"{", "}",
+	"<", ">",
+	"｢", "｣",
+	NULL, NULL	//終端識別
+};
+//@@@ 半角文字の対括弧: End
 //	Jun. 16, 2000 genta
 /*!
 	@brief 対括弧の検索
@@ -836,23 +850,22 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	m_nCharSize = nCharSize;	// 02/09/18 対括弧の文字サイズ設定 ai
 
 	if( nCharSize == 1 ){	//	1バイト文字
-//		char buf[] = "Bracket:  Forward";
-//		buf[8] = cline[ PosX ];
-//		::MessageBox( NULL, buf, "Bracket", MB_OK );
-
-		switch( cline[ PosX ] ){
-		case '(':	return SearchBracketForward( PosX, PosY, NewX, NewY, '(', ')', mode );	// modeの追加 02/09/19 ai
-		case '[':	return SearchBracketForward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
-		case '{':	return SearchBracketForward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
-		case '<':	return SearchBracketForward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
-		case '｢':	return SearchBracketForward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
-
-		case ')':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '(', ')', mode );	// modeの追加 02/09/19 ai
-		case ']':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
-		case '}':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
-		case '>':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
-		case '｣':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
+		// 03/01/06 ai Start
+		int i;
+		const struct HANKAKKO_T *p;
+		p = hankakkoarr;
+		for( i = 0; p->sStr != NULL; i++, p++ )
+		{
+			if( strncmp(p->sStr, &cline[PosX], 1) == 0 )
+			{
+				return SearchBracketForward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+			}
+			else if( strncmp(p->eStr, &cline[PosX], 1) == 0 )
+			{
+				return SearchBracketBackward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+			}
 		}
+		// 03/01/06 ai End
 //@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
 	}else if( nCharSize == 2 ){	// 2バイト文字
 		int i;
@@ -890,25 +903,23 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	nCharSize = cline + PosX - bPos;
 	m_nCharSize = nCharSize;	// 02/10/01 対括弧の文字サイズ設定 ai
 	if( nCharSize == 1 ){	//	1バイト文字
+		// 03/01/06 ai Start
+		int i;
+		const struct HANKAKKO_T *p;
 		PosX = bPos - cline;
-
-//		char buf[] = "Bracket:  Back";
-//		buf[8] = cline[ PosX ];
-//		::MessageBox( NULL, buf, "Bracket", MB_OK );
-
-		switch( cline[ PosX ] ){
-		case '(':	return SearchBracketForward( PosX, PosY, NewX, NewY, '(', ')', mode );	// modeの追加 02/09/19 ai
-		case '[':	return SearchBracketForward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
-		case '{':	return SearchBracketForward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
-		case '<':	return SearchBracketForward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
-		case '｢':	return SearchBracketForward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
-
-		case ')':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '(', ')', mode );	// modeの追加 02/09/19 ai
-		case ']':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
-		case '}':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
-		case '>':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
-		case '｣':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
+		p = hankakkoarr;
+		for( i = 0; p->sStr != NULL; i++, p++ )
+		{
+			if( strncmp(p->sStr, &cline[PosX], 1) == 0 )
+			{
+				return SearchBracketForward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+			}
+			else if( strncmp(p->eStr, &cline[PosX], 1) == 0 )
+			{
+				return SearchBracketBackward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+			}
 		}
+		// 03/01/06 ai End
 //@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
 	}else if( nCharSize == 2 ){	// 2バイト文字
 		int i;
@@ -950,7 +961,7 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	@retval false 失敗
 */
 bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
-									int upChar, int dnChar, int* mode )
+									char* upChar, char* dnChar, int* mode )	// 03/01/08 ai
 {
 	CDocLine* ci;
 
@@ -978,8 +989,13 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 				cPos = nPos;
 				continue;
 			}
-			if( *cPos == upChar )		++level;
-			else if( *cPos == dnChar )	--level;
+			// 03/01/08 ai Start
+			if( strncmp(upChar, cPos, 1) == 0 ){
+				++level;
+			}
+			else if( strncmp(dnChar, cPos, 1) == 0 ){
+				--level;
+			}// 03/01/08 ai End
 
 			if( level == 0 ){	//	見つかった！
 				PosX = cPos - cline;
@@ -1034,7 +1050,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 	@retval false 失敗
 */
 bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
-									int dnChar, int upChar, int* mode )
+									char* dnChar, char* upChar, int* mode )
 {
 	CDocLine* ci;
 
@@ -1062,8 +1078,13 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 				cPos = pPos;
 				continue;
 			}
-			if( *pPos == upChar )		++level;
-			else if( *pPos == dnChar )	--level;
+			// 03/01/08 ai Start
+			if( strncmp(upChar, pPos, 1) == 0 ){
+				++level;
+			}
+			else if( strncmp(dnChar, pPos, 1) == 0 ){
+				--level;
+			}// 03/01/08 ai End
 
 			if( level == 0 ){	//	見つかった！
 				PosX = pPos - cline;
@@ -1270,6 +1291,57 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 	return false;
 }
 //@@@ 2001.02.03 End
+
+//@@@ 2003.01.09 Start by ai:
+/*!
+	@brief 括弧判定
+
+	@author ai
+
+	@param pLine [in] 
+	@param x
+	@param size
+
+	@retval true 括弧
+	@retval false 非括弧
+*/
+bool CEditView::IsBracket( const char *pLine, int x, int size )
+{
+	int	i;
+	if( size == 1 ){
+		const struct HANKAKKO_T *p;
+		p = hankakkoarr;
+		for( i = 0; p->sStr != NULL; i++, p++ )
+		{
+			if( strncmp( p->sStr, &pLine[x], 1 ) == 0 )
+			{
+				return true;
+			}
+			else if( strncmp( p->eStr, &pLine[x], 1 ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+	else if( size == 2 ) {
+		const struct ZENKAKKO_T *p;
+		p = zenkakkoarr;
+		for( i = 0; p->sStr != NULL; i++, p++ )
+		{
+			if( strncmp( p->sStr, &pLine[x], 2 ) == 0 )
+			{
+				return true;
+			}
+			else if( strncmp( p->eStr, &pLine[x], 2 ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+//@@@ 2003.01.09 End
 
 //!	現在のカーソル行位置を履歴に登録する
 void CEditView::AddCurrentLineToHistory( void )
