@@ -768,6 +768,13 @@ protected:
 	TCHAR m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 	int m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 
+	//	Jan. 30, 2005 genta èâä˙âªä÷êîÇÃï™äÑ
+	void InitKeyword(DLLSHAREDATA*);
+	void InitKeyAssign(DLLSHAREDATA*);
+	void InitToolButtons(DLLSHAREDATA*);
+	void InitTypeConfig(DLLSHAREDATA*);
+	void InitPopupMenu(DLLSHAREDATA*);
+	
 };
 
 
