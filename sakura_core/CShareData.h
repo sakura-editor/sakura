@@ -53,6 +53,8 @@ enum maxdata{
 	MAX_CUSTOM_MENU_ITEMS		=  48,
 	MAX_PRINTSETTINGARR			=   8,
 
+	//	From Here Sep. 14, 2001 genta
+	MACRONAME_MAX				= 64,
 	MAX_EXTCMDLEN				= 1024,
 	MAX_EXTCMDMRUNUM			= 32,
 
@@ -290,9 +292,6 @@ struct Types {
 	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */
 
 }; /* Types */
-
-//	From Here Sep. 14, 2001 genta
-const int MACRONAME_MAX = 64;
 
 //! マクロ情報
 struct MacroRec {

@@ -186,6 +186,21 @@ BOOL CPropCommon::DispatchEvent_p8(
 				/* p8:カスタムメニュー設定をエクスポートする */
 				p8_Export_CustMenuSetting( hwndDlg );
 				return TRUE;
+			case IDC_BUTTON_MENUNAME:
+				//	メニュー文字列の設定
+				nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+				if( LB_ERR == nIdx1 ){
+					break;
+				}
+				::GetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME,
+					m_Common.m_szCustMenuNameArr[nIdx1], MAX_CUSTOM_MENU_NAME_LEN );
+				//	Combo Boxも変更 削除＆再登録
+				::SendMessage( hwndCOMBO_MENU, CB_DELETESTRING, nIdx1, 0 );
+				::SendMessage( hwndCOMBO_MENU, CB_INSERTSTRING, nIdx1,
+					(LPARAM)m_Common.m_szCustMenuNameArr[nIdx1] );
+				// 削除すると選択が解除されるので，元に戻す
+				::SendMessage( hwndCOMBO_MENU, CB_SETCURSEL, nIdx1, 0 );
+				return TRUE;
 			}
 		}
 
@@ -205,7 +220,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 						strcpy( szLabel2, " ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 					}else{
 						//	Oct. 3, 2001 genta
-						m_pcLookup->Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
+						m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
 			//			::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
 						/* キー */
 						if( '\0' == m_Common.m_nCustMenuItemKeyArr[nIdx1][i] ){
@@ -224,6 +239,9 @@ BOOL CPropCommon::DispatchEvent_p8(
 			//		::SetWindowText( hwndEDIT_KEY, szKey );
 					::SendMessage( hwndLIST_RES, LB_ADDSTRING, 0, (LPARAM)szLabel2 );
 				}
+				//	Oct. 15, 2001 genta メニュー名を設定
+				::SetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_szCustMenuNameArr[nIdx1] );
+				
 //	From Here Sept. 7, 2000 JEPRO わかりにくいので選択しないようにコメントアウトに変更
 //	(実際にはここでは選択されていないようなのでコメントアウトしなくても同じ。選択されているのはSetData_p8()の方)
 //				/* カスタムメニューの先頭の項目を選択（リストボックス）*/
@@ -254,7 +272,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 					return TRUE;
 				}
 				//	Oct. 3, 2001 genta
-				m_pcLookup->Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+				m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 				//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 //				if( ( szKey[0] == '\0' ) || ( '0' <= szKey[0] && szKey[0] <= '9' ) || ( 'A' <= szKey[0] && szKey[0] <= 'Z' ) ){
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = szKey[0];
@@ -313,7 +331,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 //	Oct. 14, 2000 jepro note: ここのforブロックで実際にリストを書いているようである
 				// Oct. 3, 2001 genta
 				// 専用ルーチンに置き換え
-				m_pcLookup->SetListItem( hwndLIST_FUNC, nIdx3 );
+				m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
 #if 0
 				::SendMessage( hwndLIST_FUNC, LB_RESETCONTENT, 0, 0 );
 				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIdx3]; ++i ){
@@ -450,7 +468,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 						m_Common.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
 					//	Oct. 3, 2001 genta
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 );
+					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
 //					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = nsFuncCode::ppnFuncListArr[nIdx3][nIdx4];
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
@@ -494,7 +512,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 						break;
 					}
 					//	Oct. 3, 2001 genta
-					if( m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 ) == 0 )
+					if( m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0 )
 						break;
 //					if( 0 == nsFuncCode::ppnFuncListArr[nIdx3][nIdx4] ){
 //						break;
@@ -503,7 +521,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 					::SendMessage( hwndLIST_FUNC, LB_GETTEXT, nIdx4, (LPARAM)szLabel );
 
 					//	Oct. 3, 2001 genta
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 );
+					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
 //					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = nsFuncCode::ppnFuncListArr[nIdx3][nIdx4];
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nNum2] = '\0';
 					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
@@ -619,7 +637,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 		}
 		if( LB_ERR != nIdx3 && LB_ERR != nIdx4 &&
 		 	//0 == nsFuncCode::ppnFuncListArr[nIdx3][nIdx4]
-		 	m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 ) == 0
+		 	m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0
 		){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
@@ -679,7 +697,7 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
-	m_pcLookup->SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
+	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
 #if 0
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
@@ -718,7 +736,7 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 			strcpy( szLabel, " ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 		}else{
 			//	Oct. 3, 2001 genta
-			m_pcLookup->Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
 			//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
 		}
 		/* キー */
@@ -736,6 +754,10 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 //		::SetWindowText( hwndEDIT_KEY, szKey );
 		::SendMessage( hwndLIST_RES, LB_ADDSTRING, 0, (LPARAM)szLabel2 );
 	}
+	
+	//	Oct. 15, 2001 genta メニュー名を設定
+	::SetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_szCustMenuNameArr[0] );
+	
 //	/* カスタムメニューの先頭の項目を選択（リストボックス）*/	//Oct. 8, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 	::SendMessage( hwndLIST_RES, LB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
 	return;

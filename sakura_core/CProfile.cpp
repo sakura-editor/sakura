@@ -385,6 +385,8 @@ BOOL CProfile::IOProfileData(
 			case REGCNV_SZ2SZ:
 				if( cbDataSrc != 0 ){
 					strncpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), cbDataSrc );
+					//	––”ö‚É0‚ð•t‚¯‚é
+					((char*)lpDataSrc)[cbDataSrc - 1] = '\0';
 				}
 				else {
 					strcpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );

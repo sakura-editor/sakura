@@ -201,7 +201,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				nIndex3 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
-				nFuncCode = m_pcLookup->Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
+				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
 //				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
@@ -288,7 +288,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				}
 				nFuncCode = m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
 				// Oct. 2, 2001 genta
-				if( m_pcLookup->Funccode2Name( nFuncCode, pszLabel, 255 )){
+				if( m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 )){
 //				if( 0 < ::LoadString( m_hInstance, nFuncCode, pszLabel, 255 )  ){	//}
 					::SetWindowText( hwndEDIT_KEYSFUNC, pszLabel );
 				}else{
@@ -303,7 +303,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				nIndex3 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
-				nFuncCode = m_pcLookup->Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
+				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
 //				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum =  CKeyBind::GetKeyStrList( m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr, &ppcAssignedKeyList, nFuncCode );	/* 機能に対応するキー名の取得(複数) */
@@ -327,7 +327,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 //				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				/* 機能一覧に文字列をセット（リストボックス）*/
-				m_pcLookup->SetListItem( hwndFuncList, nIndex2 );	//	Oct. 2, 2001 genta
+				m_cLookup.SetListItem( hwndFuncList, nIndex2 );	//	Oct. 2, 2001 genta
 #if 0
 				::SendMessage( hwndFuncList, LB_RESETCONTENT, 0, 0 );
 				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIndex2]; ++i ){
@@ -376,7 +376,7 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 	/* 機能種別一覧に文字列をセット（コンボボックス）*/
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
-	m_pcLookup->SetCategory2Combo( hwndCombo );	//	Oct. 2, 2001 genta
+	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 2, 2001 genta
 #if 0
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
