@@ -148,26 +148,44 @@ int CPPA::InitDll()
 	/* SAKURAエディタ用独自関数を準備 */
 
 	int i;
+	
+	//	Jun. 16, 2003 genta 一時作業エリア
+	char buf[1024];
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
-		CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) + 256 ];	//	256文字分プラス
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i] );	//	m_pszDataを作成する
-		SetDefProc(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData);
+		//	2003.06.08 Moca メモリーリークの修正
+		//	2003.06.16 genta バッファを外から与えるように
+		//	関数登録用文字列を作成する
+		GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i], buf );
+		SetDefProc( buf );
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
-		CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName) + 256 ];	//	256文字分プラス
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i] );	//	m_pszDataを作成する
-		SetDefProc(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData);
+		//	2003.06.08 Moca メモリーリークの修正
+		//	2003.06.16 genta バッファを外から与えるように
+		//	関数登録用文字列を作成する
+		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
+		SetDefProc( buf );
 	}
 	return 0; 
 }
 
-void CPPA::GetDeclarations( MacroFuncInfo& cMacroFuncInfo )
-{
-	char szBuffer[1024];	//	最長1024でどうだ？
+/*! PPAに関数を登録するための文字列を作成する
 
+	@param cMacroFuncInfo [in]	マクロデータ
+	@param szBuffer [out]		生成した文字列を入れるバッファへのポインタ
+
+	@note バッファサイズは 9 + 3 + メソッド名の長さ + 13 * 4 + 9 + 5 は最低必要
+
+	@date 2003.06.01 Moca
+				スタティックメンバに変更
+				cMacroFuncInfo.m_pszDataを書き換えないように変更
+
+	@date 2003.06.16 genta 無駄なnew/deleteを避けるためバッファを外から与えるように
+*/
+char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer )
+{
 	char szType[20];			//	procedure/function用バッファ
 	char szReturn[20];			//	戻り値型用バッファ
 	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
@@ -230,23 +248,17 @@ void CPPA::GetDeclarations( MacroFuncInfo& cMacroFuncInfo )
 			cMacroFuncInfo.m_nFuncID
 		);
 	}
-	cMacroFuncInfo.m_pszData = new char [ lstrlen( szBuffer ) + 1 ];
-	strcpy( cMacroFuncInfo.m_pszData, szBuffer );
+	//	Jun. 01, 2003 Moca / Jun. 16, 2003 genta
+	return szBuffer;
 }
 
 /*!	
 */
 int CPPA::DeinitDll( void )
 {
-	int i;
-	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++){
-		if (CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData)
-			delete CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData;
-	}
-	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
-		if (CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData)
-			delete CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData;
-	}
+	// Jun. 01, 2003 Moca m_pszDataを使わなくなったため，
+	//	CSMacroMgr::m_MacroFuncInfoArr[i].m_pszDataの後始末を削除
+
 	return 0;
 }
 
