@@ -764,7 +764,7 @@ LRESULT CEditApp::DispatchEvent(
 			switch (lParam){
 //キーワード：トレイ右クリックメニュー設定
 //	From Here Oct. 12, 2000 JEPRO 左右とも同一処理になっていたのを別々に処理するように変更
-			case WM_RBUTTONDOWN:
+			case WM_RBUTTONUP:	// Dec. 24, 2002 towest UPに変更
 				::SetActiveWindow( m_hWnd );
 				::SetForegroundWindow( m_hWnd );
 				/* ポップアップメニュー(トレイ右ボタン) */
@@ -907,7 +907,7 @@ LRESULT CEditApp::DispatchEvent(
 				return 0L;
 //	To Here Oct. 12, 2000
 
-			case WM_LBUTTONDOWN:
+			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPに変更
 //				MYTRACE( "WM_LBUTTONDOWN\n" );
 				::SetActiveWindow( m_hWnd );
 				::SetForegroundWindow( m_hWnd );
