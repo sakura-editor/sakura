@@ -4160,31 +4160,45 @@ void CEditDoc::SetImeMode( int mode )
 
 /*!	$xの展開
 
+	特殊文字は以下の通り
+	@li $  $自身
+	@li F  開いているファイルのフルパス。名前がなければ(無題)。
+	@li f  開いているファイルの名前（ファイル名+拡張子のみ）
+	@li g  開いているファイルの名前（拡張子除く）
+	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
+	@li C  現在選択中のテキスト
+	@li x  現在の物理桁位置(先頭からのバイト数1開始)
+	@li y  現在の物理行位置(1開始)
+	@li d  現在の日付(共通設定の日付書式)
+	@li t  現在の時刻(共通設定の時刻書式)
+	@li p  現在のページ
+	@li P  総ページ
+	@li D  ファイルのタイムスタンプ(共通設定の日付書式)
+	@li T  ファイルのタイムスタンプ(共通設定の時刻書式)
+	
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
 {
 	const char *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
 	char *q, *q_max;
-	for( p = pszSource, q = pszBuffer, q_max = pszBuffer + nBufferLen; *p != '\0' && q < q_max; ++p, ++q){
+	for( p = pszSource, q = pszBuffer, q_max = pszBuffer + nBufferLen; *p != '\0' && q < q_max;){
 		if( *p != '$' ){
-			*q = *p;
+			*q++ = *p++;
 			continue;
 		}
-		switch( p[1] ){
+		switch( *(++p) ){
 		case '$':	//	 $$ -> $
-			*q = *p;
-			++p;
+			*q++ = *p++;
 			break;
 		case 'F':	//	開いているファイルの名前（フルパス）
 			if ( !IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
-				q += 6 - 1;
+				q += 6;
 				++p;
 			} 
 			else {
 				for( r = GetFilePath(); *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q; // genta
 				++p;
 			}
 			break;
@@ -4194,7 +4208,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			//	ポインタを末尾に
 			if ( ! IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
-				q += 6 - 1;
+				q += 6;
 				++p;
 			} 
 			else {
@@ -4202,7 +4216,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
 				for( ; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4210,7 +4223,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			//	From Here Sep. 16, 2002 genta
 			if ( ! IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
-				q += 6 - 1;
+				q += 6;
 				++p;
 			} 
 			else {
@@ -4229,7 +4242,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
 				for( ; r < dot_position && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4238,7 +4250,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			// Oct. 28, 2001 genta
 			if ( !IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
-				q += 6 - 1;
+				q += 6;
 				++p;
 			} 
 			else {
@@ -4249,7 +4261,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 					else
 						*q = *r;
 				}
-				--q;
 				++p;
 			}
 			break;
@@ -4260,7 +4271,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				m_cEditViewArr[m_nActivePaneIndex].GetCurrentTextForSearch( cmemCurText );
 				for( r = cmemCurText.GetPtr(); *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 		//	To Here Jan. 15, 2002 hor
@@ -4272,7 +4282,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				_itot( m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_PHY + 1, szText, 10 );
 				for( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4282,7 +4291,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				_itot( m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY_PHY + 1, szText, 10 );
 				for( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4295,7 +4303,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4307,7 +4314,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4319,13 +4325,11 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 					itoa(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
 					for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 						*q = *r;
-					--q;
 					++p;
 				}
 				else {
 					for ( r = "(印刷プレビューでのみ使用できます)"; *r != '\0' && q < q_max; ++r, ++q )
 						*q = *r;
-					--q;
 					++p;
 				}
 			}
@@ -4338,13 +4342,11 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 					itoa(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
 					for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 						*q = *r;
-					--q;
 					++p;
 				}
 				else {
 					for ( r = "(印刷プレビューでのみ使用できます)"; *r != '\0' && q < q_max; ++r, ++q )
 						*q = *r;
-					--q;
 					++p;
 				}
 			}
@@ -4359,13 +4361,11 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				CShareData::getInstance()->MyGetDateFormat( systimeL, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			else {
 				for ( r = "(保存されていません)"; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
@@ -4379,21 +4379,151 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				CShareData::getInstance()->MyGetTimeFormat( systimeL, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			else {
 				for ( r = "(保存されていません)"; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
-				--q;
 				++p;
 			}
 			break;
+			//	Mar. 31, 2003 genta
+			//	条件分岐
+			//	${cond:string1$:string2$:string3$}
+			//	
+		case '{':	// 条件分岐
+			{
+				int cond;
+				cond = ExParam_Evaluate( p + 1 );
+				while( *p != '?' && *p != '\0' )
+					++p;
+				if( *p == '\0' )
+					break;
+				p = ExParam_SkipCond( p + 1, cond );
+			}
+			break;
+		case ':':	// 条件分岐の中間
+			//	条件分岐の末尾までSKIP
+			p = ExParam_SkipCond( p + 1, -1 );
+			break;
+		case '}':	// 条件分岐の末尾
+			//	特にすることはない
+			++p;
+			break;
 		default:
-			*q = *p;
+			*q++ = '$';
+			*q++ = *p++;
 			break;
 		}
 	}
 	*q = '\0';
 }
+
+/*! @brief 処理の読み飛ばし
+
+	条件分岐の構文 ${cond:A0$:A1$:A2$:..$} において，
+	指定した番号に対応する位置の先頭へのポインタを返す．
+	指定番号に対応する物が無ければ$}の次のポインタを返す．
+
+	${が登場した場合にはネストと考えて$}まで読み飛ばす．
+
+	@param pszSource [in] スキャンを開始する文字列の先頭．cond:の次のアドレスを渡す．
+	@param part [in] 移動する番号＝読み飛ばす$:の数．-1を与えると最後まで読み飛ばす．
+
+	@return 移動後のポインタ．該当領域の先頭かあるいは$}の直後．
+
+	@author genta
+	@date 2003.03.31 genta 作成
+*/
+const char* CEditDoc::ExParam_SkipCond(const char* pszSource, int part)
+{
+	if( part == 0 )
+		return pszSource;
+	
+	int nest = 0;	// 入れ子のレベル
+	bool next = true;	// 継続フラグ
+	const char *p;
+	for( p = pszSource; next && *p != '\0'; ++p ) {
+		if( *p == '$' && p[1] != '\0' ){ // $が末尾なら無視
+			switch( *(++p)){
+			case '{':	// 入れ子の開始
+				++nest;
+				break;
+			case '}':
+				if( nest == 0 ){
+					//	終了ポイントに達した
+					next = false; 
+				}
+				else {
+					//	ネストレベルを下げる
+					--nest;
+				}
+				break;
+			case ':':
+				if( nest == 0 && --part == 0){ // 入れ子でない場合のみ
+					//	目的のポイント
+					next = false;
+				}
+				break;
+			}
+		}
+	}
+	return p;
+}
+
+/*!	@brief 条件の評価
+
+	@param pCond [in] 条件種別先頭．'?'までを条件と見なして評価する
+	@return 評価の値
+
+	@note
+	ポインタの読み飛ばし作業は行わないので，'?'までの読み飛ばしは
+	呼び出し側で別途行う必要がある．
+
+	@author genta
+	@date 2003.03.31 genta 作成
+
+*/
+int CEditDoc::ExParam_Evaluate( const char* pCond )
+{
+	switch( *pCond ){
+	case 'R': // 読みとり専用
+		if( m_bReadOnly ){	/* 読み取り専用モード */
+			return 0;
+		}else
+		if( 0 != m_nFileShareModeOld && /* ファイルの排他制御モード */
+			NULL == m_hLockedFile		/* ロックしていない */
+		){
+			return 1;
+		}else{
+			return 2;
+		}
+	case 'g': // Grepモード/Output Mode
+		if( m_bGrepMode ){
+			return 0;
+		}else if( m_bDebugMode ){
+			return 1;
+		}else {
+			return 2;
+		}
+	case 'M': // キーボードマクロの記録中
+		if( TRUE == m_pShareData->m_bRecordingKeyMacro &&
+		m_pShareData->m_hwndRecordingKeyMacro == m_hwndParent ){ /* ウィンドウ */
+			return 0;
+		}else {
+			return 1;
+		}
+	case 'U': // 更新
+		if( IsModified()){
+			return 0;
+		}
+		else {
+			return 1;
+		}
+	default:
+		return 0;
+	}
+	return 0;
+}
+
 /*[EOF]*/
