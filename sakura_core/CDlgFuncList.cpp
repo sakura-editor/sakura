@@ -41,6 +41,7 @@ const DWORD p_helpids[] = {	//12200
 	IDC_TREE1,						HIDC_FL_TREE1,			//トピックツリー
 	IDC_CHECK_bFunclistSetFocusOnJump	,HIDC_FL_CHECK_bFunclistSetFocusOnJump,	//ジャンプでフォーカス移動する
 	IDC_CHECK_bMarkUpBlankLineEnable	,HIDC_FL_CHECK_bMarkUpBlankLineEnable,	//空行を無視する
+	IDC_COMBO_nSortType,			HIDC_COMBO_nSortType,	//順序
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK

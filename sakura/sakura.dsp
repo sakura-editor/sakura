@@ -425,6 +425,10 @@ SOURCE=..\sakura_core\CPropComFile.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CPropComFileName.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CPropComFormat.cpp
 # End Source File
 # Begin Source File
@@ -922,6 +926,10 @@ SOURCE=..\sakura_core\my_icmp.h
 # Begin Source File
 
 SOURCE=..\sakura_core\MY_SP.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\my_tchar.h
 # End Source File
 # Begin Source File
 

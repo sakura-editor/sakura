@@ -214,7 +214,6 @@
 #define HIDC_EDIT_FROM                  0x80c10535    // IDD_PRINTPAGE
 #define HIDC_EDIT_FUNCKEYWND_GROUPNUM   0x93f4059a    // IDD_PROP_WIN
 #define HIDC_EDIT_HOKANFILE             0x93fa04b1    // IDD_PROPTYPESP2
-#define HIDC_EDIT_INDENTCHARS           0x93ed0456    // IDD_PROPTYPESP1
 #define HIDC_EDIT_INYOUKIGOU            0x93f004aa    // IDD_PROP_FORMAT
 #define HIDC_EDIT_KEYSFUNC              0x93f304f9    // IDD_PROP_KEYBIND
 #define HIDC_EDIT_KEYWORDHELPFILE       0x93fa0440    // IDD_PROPTYPESP2
@@ -275,7 +274,7 @@
 #define HIDC_LIST_TYPES                 0x80930481    // IDD_TYPELIST
 #define HIDC_MACRODIR                   0x80d90579    // IDD_PROP_MACRO
 #define HIDC_MACRODIRREF                0x80d9057a    // IDD_PROP_MACRO
-#define HIDC_MACROLIST                  0x80d90574    // IDD_PROP_MACRO
+#define HIDC_MACROLIST                  0x80e20574    // IDD_PROP_MACRO
 #define HIDC_MACRONAME                  0x80d90575    // IDD_PROP_MACRO
 #define HIDC_MACROPATH                  0x80d9052f    // IDD_PROP_MACRO
 #define HIDC_MACRO_REG                  0x80d90571    // IDD_PROP_MACRO

@@ -51,6 +51,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	char	szMemu[300];			//	メニューキャプション
 	int		createdMenuItem = 0;	//	すでに作成されたメニューの数。
 	int		i;
+	CShareData::getInstance()->TransformFileName_MakeCash();
 
 	//	空メニューを作る
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
@@ -66,9 +67,11 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		}
 		
 		/* MRUリストの中にある開かれていないファイル */
+		
+		CShareData::getInstance()->GetTransformFileNameFast( m_pShareData->m_fiMRUArr[i].m_szPath, szMemu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
-		dupamp( m_pShareData->m_fiMRUArr[i].m_szPath, szFile2 );
+		dupamp( szMemu, szFile2 );
 		
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
 		wsprintf( szMemu, "&%c %s", (createdMenuItem < 10) ? ('0' + createdMenuItem) : ('A' + createdMenuItem - 10), szFile2 );
@@ -79,27 +82,6 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 				 m_pShareData->m_fiMRUArr[i].m_nCharCode  < CODE_CODEMAX ){
 			strcat( szMemu, gm_pszCodeNameArr_3[ m_pShareData->m_fiMRUArr[i].m_nCharCode ] );
 		}
-#if 0
-		switch( m_pShareData->m_fiMRUArr[i].m_nCharCode ){
-			case CODE_JIS:		/* JIS */
-				strcat( szMemu, "  [JIS]" );
-				break;
-			case CODE_EUC:		/* EUC */
-				strcat( szMemu, "  [EUC]" );
-				break;
-			case CODE_UNICODE:	/* Unicode */
-				strcat( szMemu, "  [Unicode]" );
-				break;
-			case CODE_UTF8:		/* UTF-8 */
-				strcat( szMemu, "  [UTF-8]" );
-				break;
-			case CODE_UTF7:		/* UTF-7 */
-				strcat( szMemu, "  [UTF-7]" );
-				break;
-			case 0:
-				break;
-		}
-#endif
 
 		//	メニューに追加。
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu );

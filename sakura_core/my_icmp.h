@@ -123,10 +123,10 @@ SAKURA_CORE_API MY_INLINE int my_toupper( int c );
 SAKURA_CORE_API MY_INLINE int my_tolower( int c );
 SAKURA_CORE_API MY_INLINE int my_iskanji1( int c );
 SAKURA_CORE_API MY_INLINE int my_iskanji2( int c );
-SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
-SAKURA_CORE_API int my_memicmp( const void *m1, const void *m2, unsigned int n );
-SAKURA_CORE_API int my_stricmp( const char *s1, const char *s2 );
-SAKURA_CORE_API int my_strnicmp( const char *s1, const char *s2, size_t n );
+SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
+SAKURA_CORE_API int __cdecl my_memicmp( const void *m1, const void *m2, unsigned int n );
+SAKURA_CORE_API int __cdecl my_stricmp( const char *s1, const char *s2 );
+SAKURA_CORE_API int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n );
 #ifdef MY_ICMP_MBS
 SAKURA_CORE_API MY_INLINE int my_mbtoupper2( int c );
 SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c );

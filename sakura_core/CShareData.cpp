@@ -23,6 +23,7 @@
 #include "etc_uty.h"
 #include "CRunningTimer.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
+#include "my_tchar.h" // 2003/01/06 Moca
 
 struct ARRHEAD {
 	int		nLength;
@@ -95,8 +96,11 @@ struct ARRHEAD {
 
 	Version 39:
 	Commonにm_nFUNCKEYWND_GroupNumを追加． 2002/11/04 Moca
+
+	Version 40:
+	ファイル名簡易表記関連を追加． 2002/12/08～2003/01/15 Moca
 */
-const unsigned int uShareDataVersion = 39;
+const unsigned int uShareDataVersion = 40;
 
 /*
 ||	Singleton風
@@ -227,6 +231,24 @@ bool CShareData::Init( void )
 		strcpy( m_pShareData->m_szMACROFOLDER, szExeFolder );	/* マクロ用フォルダ */
 		strcpy( m_pShareData->m_szIMPORTFOLDER, szExeFolder );	/* 設定インポート用フォルダ */
 
+		for( i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
+			strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
+			strcpy( m_pShareData->m_szTransformFileNameTo[i], "" );
+		}
+		strcpy( m_pShareData->m_szTransformFileNameFrom[0], "%DeskTop%\\" );
+		strcpy( m_pShareData->m_szTransformFileNameTo[0], "デスクトップ\\" );
+		strcpy( m_pShareData->m_szTransformFileNameFrom[1], "%Personal%\\" );
+		strcpy( m_pShareData->m_szTransformFileNameTo[1], "マイドキュメント\\" );
+		strcpy( m_pShareData->m_szTransformFileNameFrom[2], "%Cache%\\Content.IE5\\" );
+		strcpy( m_pShareData->m_szTransformFileNameTo[2], "IEキャッシュ\\" );
+		strcpy( m_pShareData->m_szTransformFileNameFrom[3], "%TEMP%\\" );
+		strcpy( m_pShareData->m_szTransformFileNameTo[3],   "TEMP\\" );
+		strcpy( m_pShareData->m_szTransformFileNameFrom[4], "%Common DeskTop%\\" );
+		strcpy( m_pShareData->m_szTransformFileNameTo[4],   "共有デスクトップ\\" );
+		strcpy( m_pShareData->m_szTransformFileNameFrom[5], "%Common Documents%\\" );
+		strcpy( m_pShareData->m_szTransformFileNameTo[5], "共有ドキュメント\\" );
+		m_pShareData->m_nTransformFileNameArrNum = 6;
+		
 		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
 			必要になるまで遅らせるために、CPrintに、CShareDataを操作する権限を与える。
 			YAZAKI.
@@ -4497,5 +4519,337 @@ const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int
 	::GetTimeFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
 	return pszDest;
 }
+
+
+
+/*!	共有データの設定に従ってパスを縮小表記に変換する
+	@param pszSrc   [in]  ファイル名
+	@param pszDest  [out] 変換後のファイル名の格納先
+	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
+	@date 2002.11.27 Moca 新規作成
+*/
+LPTSTR CShareData::GetTransformFileName( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen )
+{
+	int i;
+	TCHAR pszBuf[ _MAX_PATH + 8 ];
+	TCHAR szFrom[ _MAX_PATH ];
+	bool  bTransform = false;
+
+#ifdef _DEBUG
+	if( _MAX_PATH + 8 < nDestLen ){
+		nDestLen = _MAX_PATH + 8;
+	}
+#endif
+	_tcsncpy( pszBuf, pszSrc, _MAX_PATH + 7 );
+	pszBuf[_MAX_PATH + 7] = '\0';
+	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
+		if( '\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
+			if( ExpandMetaToFolder( m_pShareData->m_szTransformFileNameFrom[i], szFrom, _MAX_PATH ) ){
+				GetFilePathFormat( pszBuf, pszDest, nDestLen, szFrom, m_pShareData->m_szTransformFileNameTo[i] );
+				_tcscpy( pszBuf, pszDest );
+				bTransform = true;
+			}
+		}
+	}
+	if( !bTransform ){
+		_tcsncpy( pszDest, pszBuf, nDestLen - 1 ); // 1回も変換しないときのために
+		pszDest[nDestLen - 1] = '\0';
+	}
+	return pszDest;
+}
+
+
+/*!	共有データの設定に従ってパスを縮小表記に変換する
+	@param pszSrc   [in]  ファイル名
+	@param pszDest  [out] 変換後のファイル名の格納先
+	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
+	@date 2003.01.27 Moca 新規作成
+	@note 連続して呼び出す場合のため、展開済みメタ文字列をキャッシュして高速化している。
+*/
+LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen )
+{
+	int i;
+	TCHAR szBuf[_MAX_PATH + 1];
+
+	if( -1 == m_nTransformFileNameCount ){
+		TransformFileName_MakeCash();
+	}
+
+	if( 0 < m_nTransformFileNameCount ){
+		GetFilePathFormat( pszSrc, pszDest, nDestLen,
+			m_szTransformFileNameFromExp[0],
+			m_pShareData->m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]] );
+		for( i = 1; i < m_nTransformFileNameCount; i++ ){
+			_tcscpy( szBuf, pszDest );
+			GetFilePathFormat( szBuf, pszDest, nDestLen,
+				m_szTransformFileNameFromExp[i],
+				m_pShareData->m_szTransformFileNameTo[m_nTransformFileNameOrgId[i]] );
+		}
+	}else{
+		// 変換する必要がない コピーだけする
+		_tcsncpy( pszDest, pszSrc, nDestLen - 1 );
+		pszDest[nDestLen - 1] = '\0';
+	}
+	return pszDest;
+}
+
+
+/*!	展開済みメタ文字列のキャッシュを作成・更新する
+	@retval 有効な展開済み置換前文字列の数
+	@date 2003.01.27 Moca 新規作成
+*/
+int CShareData::TransformFileName_MakeCash( void ){
+	int i;
+	int nCount = 0;
+	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
+		if( '\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
+			if( ExpandMetaToFolder( m_pShareData->m_szTransformFileNameFrom[i],
+			 m_szTransformFileNameFromExp[nCount], _MAX_PATH ) ){
+				// m_szTransformFileNameToとm_szTransformFileNameFromExpの番号がずれることがあるので記録しておく
+				m_nTransformFileNameOrgId[nCount] = i;
+				nCount++;
+			}
+		}
+	}
+	m_nTransformFileNameCount = nCount;
+	return nCount;
+}
+
+
+/*!	ファイル・フォルダ名を置換して、簡易表示名を取得する
+	@param pszSrc   [in]  ファイル名
+	@param pszDest  [out] 変換後のファイル名の格納先
+	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ
+	@param pszFrom  [in]  置換前文字列
+	@param pszTo    [in]  置換後文字列
+	@date 2002.11.27 Moca 新規作成
+	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
+*/
+LPCTSTR CShareData::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen, LPCTSTR pszFrom, LPCTSTR pszTo )
+{
+	int i, j;
+	int nSrcLen;
+	int nFromLen, nToLen;
+	int nCopy;
+
+	nSrcLen  = _tcslen( pszSrc );
+	nFromLen = _tcslen( pszFrom );
+	nToLen   = _tcslen( pszTo );
+
+	nDestLen--;
+
+	for( i = 0, j = 0; i < nSrcLen && j < nDestLen; i++ ){
+#if defined(_MBCS)
+		if( 0 == strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
+#else
+		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
+#endif
+		{
+			nCopy = min( nToLen, nDestLen - j );
+			memcpy( &pszDest[j], pszTo, nCopy * sizeof( TCHAR ) );
+			j += nCopy;
+			i += nFromLen - 1;
+		}else{
+#if defined(_MBCS)
+// SJIS 専用処理
+			if( _IS_SJIS_1( (unsigned char)pszSrc[i] ) && i + 1 < nSrcLen && _IS_SJIS_2( (unsigned char)pszSrc[i + 1] ) ){
+				if( j + 1 < nDestLen ){
+					pszDest[j] = pszSrc[i];
+					j++;
+					i++;
+				}else{
+					// SJISの先行バイトだけコピーされるのを防ぐ
+					break;// goto end_of_func;
+				}
+			}
+#endif
+			pszDest[j] = pszSrc[i];
+			j++;
+		}
+	}
+// end_of_func:;
+	pszDest[j] = '\0';
+	return pszDest;
+}
+
+
+/*!	%MYDOC%などのパラメータ指定を実際のパス名に変換する
+
+	@param pszSrc  [in]  変換前文字列
+	@param pszDes  [out] 変換後文字列
+	@param nDesLen [in]  pszDesのNULLを含むTCHAR単位の長さ
+	@retval true  正常に変換できた
+	@retval false バッファが足りなかった，またはエラー。pszDesは不定
+	@date 2002.11.27 Moca 作成開始
+*/
+bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen )
+{
+	LPCTSTR ps;
+	LPTSTR  pd, pd_end;
+	LPTSTR  pStr;
+
+#define _USE_META_ALIAS
+#ifdef _USE_META_ALIAS
+	struct MetaAlias{
+		LPTSTR szAlias;
+		int nLenth;
+		LPTSTR szOrig;
+	};
+	static const MetaAlias AliasList[] = {
+		{  _T("COMDESKTOP"), 10, _T("Common Desktop") },
+		{  _T("COMMUSIC"), 8, _T("CommonMusic") },
+		{  _T("COMVIDEO"), 8, _T("CommonVideo") },
+		{  _T("MYMUSIC"),  7, _T("My Music") },
+		{  _T("MYVIDEO"),  7, _T("Video") },
+		{  _T("COMPICT"),  7, _T("CommonPictures") },
+		{  _T("MYPICT"),   6, _T("My Pictures") },
+		{  _T("COMDOC"),   6, _T("Common Documents") },
+		{  _T("MYDOC"),    5, _T("Personal") },
+		{ NULL, 0 , NULL }
+	};
+#endif
+
+	pd_end = pszDes + ( nDesLen - 1 );
+	for( ps = pszSrc, pd = pszDes; '\0' != *ps; ps++ ){
+		if( pd_end <= pd ){
+			if( pd_end == pd ){
+				*pd = '\0';
+			}
+			return false;
+		}
+
+		if( '%' != *ps ){
+			*pd = *ps;
+			pd++;
+			continue;
+		}
+
+		// %% は %
+		if( '%' == ps[1] ){
+			*pd = '%';
+			pd++;
+			ps++;
+			continue;
+		}
+
+		if( '\0' != ps[1] ){
+			TCHAR szMeta[_MAX_PATH];
+			TCHAR szPath[_MAX_PATH + 1];
+			int   nMetaLen;
+			int   nPathLen;
+			bool  bFolderPath;
+			ps++;
+			// %SAKURA%
+			if( 0 == my_tcsnicmp( _T("SAKURA%"), ps, 7 ) ){
+				// exeのあるフォルダ
+				GetExecutableDir( szPath );
+				nMetaLen = 6;
+			// メタ文字列っぽい
+			}else if( NULL != (pStr = _tcschr( (LPTSTR)ps, '%' ) )){
+				nMetaLen = pStr - ps;
+				if( nMetaLen < _MAX_PATH ){
+					_tmemcpy( szMeta, ps, nMetaLen );
+					szMeta[nMetaLen] = '\0';
+				}else{
+					*pd = '\0';
+					return false;
+				}
+#ifdef _USE_META_ALIAS
+				// メタ文字列がエイリアス名なら書き換える
+				const MetaAlias* pAlias;
+				for( pAlias = &AliasList[0]; nMetaLen < pAlias->nLenth; pAlias++ )
+					; // 読み飛ばす
+				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
+					if( 0 == my_tcsicmp( pAlias->szAlias, szMeta ) ){
+						_tcscpy( szMeta, pAlias->szOrig );
+						break;
+					}
+				}
+#endif
+				// 直接レジストリで調べる
+				szPath[0] = '\0';
+				bFolderPath = ReadRegistry( HKEY_CURRENT_USER,
+					_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
+					szMeta, szPath, sizeof( szPath ) );
+				if( false == bFolderPath || '\0' == szPath[0] ){
+					bFolderPath = ReadRegistry( HKEY_LOCAL_MACHINE,
+						_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
+						szMeta, szPath, sizeof( szPath ) );
+				}
+				if( false == bFolderPath || '\0' == szPath[0] ){
+					pStr = _tgetenv( szMeta );
+					// 環境変数
+					if( NULL != pStr ){
+						nPathLen = _tcslen( pStr );
+						if( nPathLen < _MAX_PATH ){
+							_tcscpy( szPath, pStr );
+						}else{
+							*pd = '\0';
+							return false;
+						}
+					}
+					// 未定義のメタ文字列は 入力された%...%を，そのまま文字として処理する
+					else if(  pd + ( nMetaLen + 2 ) < pd_end ){
+						*pd = '%';
+						_tmemcpy( &pd[1], ps, nMetaLen );
+						pd[nMetaLen + 1] = '%';
+						pd += nMetaLen + 2;
+						ps += nMetaLen;
+						continue;
+					}else{
+						*pd = '\0';
+						return false;
+					}
+				}
+			}else{
+				// %...%の終わりの%がない とりあえず，%をコピー
+				*pd = '%';
+				pd++;
+				ps--; // 先にps++してしまったので戻す
+				continue;
+			}
+
+			// ロングファイル名にする
+			nPathLen = _tcslen( szPath );
+			pStr = szPath;
+			if( nPathLen < _MAX_PATH && 0 != nPathLen ){
+				if( FALSE != GetLongFileName( szPath, szMeta ) ){
+					pStr = szMeta;
+				}
+			}
+
+			// 最後のフォルダ区切り記号を削除する
+			// [A:\]などのルートであっても削除
+			for(nPathLen = 0; pStr[nPathLen] != '\0'; nPathLen++ ){
+#ifdef _MBCS
+				if( _IS_SJIS_1( (unsigned char)pStr[nPathLen] ) && _IS_SJIS_2( (unsigned char)pStr[nPathLen + 1] ) ){
+					// SJIS読み飛ばし
+					nPathLen++; // 2003/01/17 sui
+				}else
+#endif
+				if( '\\' == pStr[nPathLen] && '\0' == pStr[nPathLen + 1] ){
+					pStr[nPathLen] = '\0';
+					break;
+				}
+			}
+
+			if( pd + nPathLen < pd_end && 0 != nPathLen ){
+				_tmemcpy( pd, pStr, nPathLen );
+				pd += nPathLen;
+				ps += nMetaLen;
+			}else{
+				*pd = '\0';
+				return false;
+			}
+		}else{
+			// 最後の文字が%だった
+			*pd = *ps;
+			pd++;
+		}
+	}
+	*pd = '\0';
+	return true;
+}
+
 
 /*[EOF]*/

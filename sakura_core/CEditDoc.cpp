@@ -1021,47 +1021,17 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 {
 	int		i;
 //	BOOL	bModify;
-	m_cPropCommon.m_Common = m_pShareData->m_Common;
-	m_cPropCommon.m_nKeyNameArrNum = m_pShareData->m_nKeyNameArrNum;
-	for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
-		m_cPropCommon.m_pKeyNameArr[i] = m_pShareData->m_pKeyNameArr[i];
-	}
-	m_cPropCommon.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
-
-	//2002/04/25 YAZAKI Types全体を保持する必要はない。
-	for( i = 0; i < MAX_TYPES; ++i ){
-		m_cPropCommon.m_Types_nKeyWordSetIdx[i] = m_pShareData->m_Types[i].m_nKeyWordSetIdx;
-		m_cPropCommon.m_Types_nKeyWordSetIdx2[i] = m_pShareData->m_Types[i].m_nKeyWordSetIdx2;
-	}
-	/* マクロ関係
-	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	*/
-	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_cPropCommon.m_MacroTable[i] = m_pShareData->m_MacroTable[i];
-	}
-	strcpy(m_cPropCommon.m_szMACROFOLDER, m_pShareData->m_szMACROFOLDER);
-
+	
+	// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
+	// 共通設定の一時設定領域にSharaDataをコピーする
+	m_cPropCommon.InitData();
+	
 	/* プロパティシートの作成 */
 	if( m_cPropCommon.DoPropertySheet( nPageNum/*, nActiveItem*/ ) ){
-		for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
-			m_pShareData->m_pKeyNameArr[i] = m_cPropCommon.m_pKeyNameArr[i];
-		}
-		m_pShareData->m_CKeyWordSetMgr = m_cPropCommon.m_CKeyWordSetMgr;
 
-		m_pShareData->m_Common = m_cPropCommon.m_Common;
-
-		for( i = 0; i < MAX_TYPES; ++i ){
-			//2002/04/25 YAZAKI Types全体を保持する必要はない。
-			/* 変更された設定値のコピー */
-			m_pShareData->m_Types[i].m_nKeyWordSetIdx = m_cPropCommon.m_Types_nKeyWordSetIdx[i];
-			m_pShareData->m_Types[i].m_nKeyWordSetIdx2 = m_cPropCommon.m_Types_nKeyWordSetIdx2[i];
-		}
-
-		/* マクロ関係 */
-		for( i = 0; i < MAX_CUSTMACRO; ++i ){
-			m_pShareData->m_MacroTable[i] = m_cPropCommon.m_MacroTable[i];
-		}
-		strcpy(m_pShareData->m_szMACROFOLDER, m_cPropCommon.m_szMACROFOLDER);
+		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
+		// ShareData に 設定を適用・コピーする
+		m_cPropCommon.ApplyData();
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
@@ -1247,12 +1217,12 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 				pszKeyMacroRecking
 			);
 		}else{
-
+			TCHAR szFileName[_MAX_PATH + 1];
 			//Oct. 11, 2000 jepro note： アクティブな時のタイトル表示
 			wsprintf(
 				pszCap,
 				"%s%s - %s %d.%d.%d.%d %s%s",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
-				IsFilePathAvailable() ? GetFilePath() : "（無題）",
+				IsFilePathAvailable() ? CShareData::getInstance()->GetTransformFileName( GetFilePath(), szFileName, _MAX_PATH ) : "（無題）",
 				IsModified() ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
 				HIWORD( m_pShareData->m_dwProductVersionMS ),

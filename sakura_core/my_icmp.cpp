@@ -170,7 +170,7 @@ SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c )
 	@retval 0	一致
 	@date 2002.11.29 Moca 0以外の時の戻り値を，「元の値の差」から「大文字としたときの差」に変更
  */
-SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
+SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
 {
 	unsigned int	i;
 	unsigned char	*p1, *p2;
@@ -293,7 +293,7 @@ SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned i
 	比較を行っている。
 	ここでは日本語に対応した memicmp を実装する。
 */
-SAKURA_CORE_API int my_memicmp( const void *m1, const void *m2, unsigned int n )
+SAKURA_CORE_API int __cdecl my_memicmp( const void *m1, const void *m2, unsigned int n )
 {
 	return my_internal_icmp( (const char*)m1, (const char*)m2, n, 1, false );
 }
@@ -306,7 +306,7 @@ SAKURA_CORE_API int my_memicmp( const void *m1, const void *m2, unsigned int n )
 
 	@retval 0	一致
  */
-SAKURA_CORE_API int my_stricmp( const char *s1, const char *s2 )
+SAKURA_CORE_API int __cdecl my_stricmp( const char *s1, const char *s2 )
 {
 	/* チェックする文字数をuint最大に設定する */
 	//return my_internal_icmp( s1, s2, (unsigned int)(~0), 0, true );
@@ -322,7 +322,7 @@ SAKURA_CORE_API int my_stricmp( const char *s1, const char *s2 )
 
 	@retval 0	一致
  */
-SAKURA_CORE_API int my_strnicmp( const char *s1, const char *s2, size_t n )
+SAKURA_CORE_API int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n )
 {
 	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }

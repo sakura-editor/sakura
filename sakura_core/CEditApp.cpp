@@ -1566,6 +1566,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	m_bUseTrayMenu = true;
 
 	m_CMenuDrawer.ResetContents();
+	CShareData::getInstance()->TransformFileName_MakeCash();
 
 	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
 	hMenu = ::GetSubMenu( hMenuTop, 0 );
@@ -1644,9 +1645,12 @@ int	CEditApp::CreatePopUpMenu_L( void )
 							szMenu2, ( (int)lstrlen( pfi->m_szGrepKey ) > cmemDes.GetLength() ) ? "…":""
 						);
 					}else{
+						char szFileName[_MAX_PATH];
+						// 2003/01/27 Moca ファイル名の簡易表示
+						CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
 						//	Jan. 19, 2002 genta
 						//	メニュー文字列の&を考慮
-						dupamp( pfi->m_szPath, szMenu2 );
+						dupamp( szFileName, szMenu2 );
 						wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
 							(0 < lstrlen( szMenu2 ))? szMenu2:"（無題）",
 							pfi->m_bIsModified ? "*":" "
@@ -1656,27 +1660,6 @@ int	CEditApp::CreatePopUpMenu_L( void )
 						if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
 							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
 						}
-#if 0
-						if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
-							switch( pfi->m_nCharCode ){
-							case CODE_JIS:		/* JIS */
-								strcat( szMemu, "  [JIS]" );
-								break;
-							case CODE_EUC:		/* EUC */
-								strcat( szMemu, "  [EUC]" );
-								break;
-							case CODE_UNICODE:	/* Unicode */
-								strcat( szMemu, "  [Unicode]" );
-								break;
-							case CODE_UTF8:		/* UTF-8 */
-								strcat( szMemu, "  [UTF-8]" );
-								break;
-							case CODE_UTF7:		/* UTF-7 */
-								strcat( szMemu, "  [UTF-7]" );
-								break;
-							}
-						}
-#endif
 					}
 
 //				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );

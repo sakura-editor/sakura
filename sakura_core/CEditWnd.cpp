@@ -1122,8 +1122,8 @@ LRESULT CEditWnd::DispatchEvent(
 		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
 		switch( lpmis->CtlType ){
 		case ODT_MENU:	/* オーナー描画メニュー */
-			CMenuDrawer* pCMenuDrawer;
-			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
+//			CMenuDrawer* pCMenuDrawer;
+//			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
 
 
 //			MYTRACE( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
@@ -2619,22 +2619,13 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 #endif
 //-----> To Here Commented out
 //<----- From Here Added
-						char	szFile2[_MAX_PATH + 3];	//	'+1'かな？ ようわからんので多めにしとこ。わかる人修正報告ください！
-						if( 0 == lstrlen( pfi->m_szPath ) ){
+						char	szFile2[_MAX_PATH * 2];
+						if( '\0' == pfi->m_szPath[0] ){
 							strcpy( szFile2, "(無題)" );
 						}else{
-							char	*p;
-							strcpy( szFile2, pfi->m_szPath );
-							if( (p = strchr( szFile2, '&' )) != NULL ){
-								char	buf[_MAX_PATH + 3];	//	'+1'かな？ ようわからんので多めにしとこ。わかる人修正報告ください！
-								do {
-									*p = '\0';
-									strcpy( buf, p + strlen("&") );
-									strcat( szFile2, "&&" );
-									strcat( szFile2, buf );
-									p = strchr( p + strlen("&&"), '&' );
-								} while ( p != NULL );
-							}
+							char buf[_MAX_PATH];
+							CShareData::getInstance()->GetTransformFileName( pfi->m_szPath, buf, _MAX_PATH );
+							dupamp( buf, szFile2 );
 						}
 						wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
 							szFile2,
@@ -2644,31 +2635,11 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 //		To Here Jan. 23, 2001
 
 //	To Here Oct. 4, 2000
+						// SJIS以外の文字コードの種別を表示する
 						// gm_pszCodeNameArr_3 からコピーするように変更
 						if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
 							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
 						}
-#if 0
-						if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
-							switch( pfi->m_nCharCode ){
-							case CODE_JIS:		/* JIS */
-								strcat( szMemu, "  [JIS]" );
-								break;
-							case CODE_EUC:		/* EUC */
-								strcat( szMemu, "  [EUC]" );
-								break;
-							case CODE_UNICODE:	/* Unicode */
-								strcat( szMemu, "  [Unicode]" );
-								break;
-							case CODE_UTF8:		/* UTF-8 */
-								strcat( szMemu, "  [UTF-8]" );
-								break;
-							case CODE_UTF7:		/* UTF-7 */
-								strcat( szMemu, "  [UTF-7]" );
-								break;
-							}
-						}
-#endif
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu );
 					if( m_hWnd == pEditNodeArr[i].m_hWnd ){

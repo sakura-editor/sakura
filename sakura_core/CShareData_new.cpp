@@ -36,6 +36,7 @@ CShareData::CShareData()
 	m_hFileMap   = NULL;
 	m_pShareData = NULL;
 //@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®
+	m_nTransformFileNameCount = -1;
 	return;
 }
 
@@ -227,6 +228,33 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 				(char*)/*&*/m_pShareData->m_szCmdArr[i], sizeof( m_pShareData->m_szCmdArr[0] ));
 		}
 	}//	Cmd
+
+	{//	Nickname
+		pszSecName = "Nickname";
+		cProfile.IOProfileData( bRead, pszSecName, "ArrNum", REGCNV_INT2SZ, (char*)&m_pShareData->m_nTransformFileNameArrNum, 0 );
+		for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; ++i ){
+			wsprintf( szKeyName, "From%02d", i );
+			if( i >= m_pShareData->m_nTransformFileNameArrNum ){
+				strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
+			}
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
+				(char*)/*&*/m_pShareData->m_szTransformFileNameFrom[i], sizeof( m_pShareData->m_szTransformFileNameFrom[0] ));
+
+			wsprintf( szKeyName, "To%02d", i );
+			if( i >= m_pShareData->m_nTransformFileNameArrNum ){
+				strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
+			}
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
+				(char*)/*&*/m_pShareData->m_szTransformFileNameTo[i], sizeof( m_pShareData->m_szTransformFileNameTo[0] ));
+		}
+		// “Ç‚İ‚İCc‚è‚ğNULL‚ÅÄ‰Šú‰»
+		if( bRead ){
+			for( ; i < MAX_TRANSFORM_FILENAME; i++ ){
+				m_pShareData->m_szTransformFileNameFrom[i][0] = '\0';
+				m_pShareData->m_szTransformFileNameTo[i][0]   = '\0';
+			}
+		}
+	}//	Nickname
 
 	/* ‹¤’Êİ’è */
 	{
