@@ -1961,7 +1961,7 @@ void CEditView::Command_WndScrollUp(void)
 
 // From Here 2001.12.03 hor
 
-// ブックマークの設定・解除
+//! ブックマークの設定・解除を行う(トグル動作)
 void CEditView::Command_BOOKMARK_SET(void)
 {
 	CDocLine*	pCDocLine;
@@ -1987,7 +1987,7 @@ void CEditView::Command_BOOKMARK_SET(void)
 
 
 
-// 次のブックマークを探す
+//! 次のブックマークを探し，見つかったら移動する
 void CEditView::Command_BOOKMARK_NEXT(void)
 {
 	CDocLine*	pCDocLine;
@@ -2016,7 +2016,7 @@ void CEditView::Command_BOOKMARK_NEXT(void)
 
 
 
-// 前のブックマークを探す
+//! 前のブックマークを探し，見つかったら移動する．
 void CEditView::Command_BOOKMARK_PREV(void)
 {
 	CDocLine*	pCDocLine;
@@ -2045,7 +2045,7 @@ void CEditView::Command_BOOKMARK_PREV(void)
 
 
 
-// ブックマークをクリアする
+//! ブックマークをクリアする
 void CEditView::Command_BOOKMARK_RESET(void)
 {
 	m_pcEditDoc->m_cDocLineMgr.ResetAllBookMark();
@@ -2054,9 +2054,15 @@ void CEditView::Command_BOOKMARK_RESET(void)
 }
 
 
-// TRIM Step1
-//   非選択時はカレント行を選択して ConvSelectedArea → ConvMemory へ
-void CEditView::Command_TRIM( BOOL bLeft )	//bLeft:TRUE=LTrim,FALSE=RTrim
+/*! TRIM Step1
+
+	非選択時はカレント行を選択して ConvSelectedArea → ConvMemory へ
+	
+	@param bLeft [in] FALSE: 右TRIM / それ以外: 左TRIM
+	@author hor
+	@date 2001.12.03 hor 新規作成
+*/
+void CEditView::Command_TRIM( BOOL bLeft )
 {
 	if(!IsTextSelected()){	//	非選択時は行選択に変更
 		m_nSelectLineFrom = m_nCaretPosY;
@@ -2072,9 +2078,13 @@ void CEditView::Command_TRIM( BOOL bLeft )	//bLeft:TRUE=LTrim,FALSE=RTrim
 	return;
 }
 
-// TRIM Step2
-//   ConvMemory から 戻ってきた後の処理
-//     CMemory.cppのなかに置かないほうが良いかなと思ってこちらに置きました。
+/*! TRIM Step2
+	ConvMemory から 戻ってきた後の処理．
+	CMemory.cppのなかに置かないほうが良いかなと思ってこちらに置きました．
+	
+	@author hor
+	@date 2001.12.03 hor 新規作成
+*/
 void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 {
 	const char*	pLine;
@@ -2156,18 +2166,25 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	return;
 }
 
-// SORT
-//  物理行をソートします
-//    非選択時は何も実行しません
-//    矩形選択時は、その範囲をキーにして物理行をソートします
-//  とりあえず改行コードを含むデータをソートしているので、
-//    ファイルの最終行はソート対象外にしています
+/*!	物理行のソートに使う構造体*/
 typedef struct _SORTTABLE {
 	string sKey1;
 	string sKey2;
 } SORTDATA, *SORTTABLE;
-BOOL SortByKeyAsc (SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1<pst2->sKey1);}
-BOOL SortByKeyDesc(SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1>pst2->sKey1);}
+/*!	物理行のソートに使う関数(昇順) */
+bool SortByKeyAsc (SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1<pst2->sKey1);}
+/*!	物理行のソートに使う関数(降順) */
+bool SortByKeyDesc(SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1>pst2->sKey1);}
+
+/*!	@brief 物理行のソート
+
+	非選択時は何も実行しない．矩形選択時は、その範囲をキーにして物理行をソート．
+	
+	@note とりあえず改行コードを含むデータをソートしているので、
+	ファイルの最終行はソート対象外にしています
+	@author hor
+	@date 2001.12.03 hor 新規作成
+*/
 void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 {
 	int			nLFO , nSelectLineFromOld;	/* 範囲選択開始行 */
@@ -2183,7 +2200,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	int			i,j;
 	CMemory		cmemBuf;
 	char*		pszData=NULL;
-	vector<SORTTABLE> sta;
+	std::vector<SORTTABLE> sta;
 	COpe*		pcOpe = NULL;
 
 	if( !IsTextSelected() ){			/* テキストが選択されているか */
@@ -2239,7 +2256,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			nColmTo   = LineColmnToIndex( pLine, nLineLen, nCT );
 			if(nColmTo<nLineLen){
 				j=nColmTo-nColmFrom;
-				pszData=new char[j];
+				pszData=new char[j+1];	// Dec. 19, 2001 genta 1バイト不足していたよ
 				memcpy( pszData, &pLine[nColmFrom], j );
 				pszData[j]='\0';
 				pst->sKey1=pszData;
@@ -2255,9 +2272,9 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	}
 	if( NULL != pszData ) delete [] pszData;
 	if(bAsc){
-		stable_sort(sta.begin(), sta.end(), SortByKeyAsc);
+		std::stable_sort(sta.begin(), sta.end(), SortByKeyAsc);
 	}else{
-		stable_sort(sta.begin(), sta.end(), SortByKeyDesc);
+		std::stable_sort(sta.begin(), sta.end(), SortByKeyDesc);
 	}
 	cmemBuf.SetDataSz( "" );
 	j=(int)sta.size();
@@ -2318,11 +2335,18 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 }
 
 
-// MARGE
-//  物理行をマージします
-//    矩形選択時はなにも実行しません
-//  とりあえず改行コードを含むデータを比較しているので、
-//    ファイルの最終行はソート対象外にしています
+/*! @brief 物理行のマージ
+
+	連続する物理行で内容が同一の物を1行にまとめます．
+	
+	矩形選択時はなにも実行しません．
+	
+	@note 改行コードを含むデータを比較しているので、
+	ファイルの最終行はソート対象外にしています
+	
+	@author hor
+	@date 2001.12.03 hor 新規作成
+*/
 void CEditView::Command_MARGE(void)
 {
 	int			nSelectLineFromOld;	/* 範囲選択開始行 */
