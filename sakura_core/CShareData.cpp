@@ -146,9 +146,13 @@ struct ARRHEAD {
 
 	Version 55:
 	マウス中ボタン対応 2004/10/11 novice
+
+	Version 56:
+	インクリメンタルサーチ(Migemo path用) 2004/10/13 isearch
+	
 */
 
-const unsigned int uShareDataVersion = 55;
+const unsigned int uShareDataVersion = 56;
 
 /*
 ||	Singleton風
@@ -654,6 +658,9 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
 		m_pShareData->m_Common.m_szExtHelp[0] = '\0';			/* 外部ヘルプ１ */
 		m_pShareData->m_Common.m_szExtHtmlHelp[0] = '\0';		/* 外部HTMLヘルプ */
+		
+		m_pShareData->m_Common.m_szMigemoDll[0] = '\0';			/* migemo dll */
+		m_pShareData->m_Common.m_szMigemoDict[0] = '\0';		/* migemo dict */
 
 		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
 

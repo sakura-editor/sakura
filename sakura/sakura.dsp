@@ -253,6 +253,18 @@ SOURCE=..\sakura_core\CEditView.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CEditView_Cmdgrep.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CEditView_CmdHokan.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CEditView_Cmdisrch.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CEditView_Command.cpp
 # End Source File
 # Begin Source File
@@ -378,6 +390,10 @@ SOURCE=..\sakura_core\CMemory.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\CMenuDrawer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CMigemo.cpp
 # End Source File
 # Begin Source File
 
@@ -849,6 +865,10 @@ SOURCE=..\sakura_core\CMenuDrawer.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CMigemo.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CMRU.h
 # End Source File
 # Begin Source File
@@ -1034,6 +1054,14 @@ SOURCE=..\resource\cursor_copy.cur
 # Begin Source File
 
 SOURCE=..\resource\cursor_hand.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_isb.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_isf.cur
 # End Source File
 # Begin Source File
 

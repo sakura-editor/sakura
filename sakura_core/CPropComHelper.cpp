@@ -259,8 +259,45 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					}
 				}
 				return TRUE;
-			}
 			// ai 02/05/21 Add E
+			case IDC_BUTTON_OPENMDLL:	/* MIGEMODLL場所指定「参照...」ボタン */
+				{
+					CDlgOpenFile	cDlgOpenFile;
+					char			szPath[_MAX_PATH + 1];
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+					if( _IS_REL_PATH( m_Common.m_szMigemoDll ) ){
+						GetExecutableDir( szPath, m_Common.m_szMigemoDll );
+					}else{
+						strcpy( szPath, m_Common.m_szMigemoDll );
+					}
+					/* ファイルオープンダイアログの初期化 */
+					cDlgOpenFile.Create(
+						m_hInstance,
+						hwndDlg,
+						"*.dll",
+						szPath
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						strcpy( m_Common.m_szMigemoDll, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_szMigemoDll );
+					}
+				}
+				return TRUE;
+			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */
+				{
+					char	szFolder[MAX_PATH];
+					/* 検索フォルダ */
+					::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, szFolder, _MAX_PATH - 1 );
+					if( 0 == lstrlen( szFolder ) ){
+						::GetCurrentDirectory( sizeof( szFolder ), szFolder );
+					}
+					if( SelectDir( hwndDlg, "検索するフォルダを選んでください", szFolder, szFolder ) ){
+						strcpy( m_Common.m_szMigemoDict, szFolder );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_szMigemoDict );
+					}
+				}			
+				return TRUE;
+			}
 			break;	/* BN_CLICKED */
 		}
 		break;	/* WM_COMMAND */
@@ -365,6 +402,10 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT, m_Common.m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
 //	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE, m_Common.m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
 
+	//migemo dict 
+	::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_szMigemoDll);
+	::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_szMigemoDict);
+
 	return;
 }
 
@@ -410,6 +451,10 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 	m_Common.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
 	m_Common.m_bHokanKey_RIGHT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
 //	m_Common.m_bHokanKey_SPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
+
+	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_szMigemoDll, sizeof( m_Common.m_szMigemoDll ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_szMigemoDict, sizeof( m_Common.m_szMigemoDict ));
+
 
 	return TRUE;
 }

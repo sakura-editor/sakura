@@ -303,7 +303,13 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_BOOKMARK_NEXT		,	//次のブックマークへ
 	F_BOOKMARK_PREV		,	//前のブックマークへ
 	F_BOOKMARK_RESET	,	//ブックマークの全解除
-	F_BOOKMARK_VIEW			//ブックマークの一覧
+	F_BOOKMARK_VIEW		,	//ブックマークの一覧
+	F_ISEARCH_NEXT	    ,   //前方インクリメンタルサーチ //2004.10.13 isearch
+	F_ISEARCH_PREV		,	//後方インクリメンタルサーチ //2004.10.13 isearch
+	F_ISEARCH_REGEXP_NEXT,	//前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+	F_ISEARCH_REGEXP_PREV,	//後方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+	F_ISEARCH_MIGEMO_NEXT,	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+	F_ISEARCH_MIGEMO_PREV	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 };
 const int nFincList_Search_Num = sizeof( pnFuncList_Search ) / sizeof( pnFuncList_Search[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 

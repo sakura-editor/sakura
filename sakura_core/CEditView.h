@@ -30,6 +30,7 @@
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "CEOL.h"
+
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
 class CMemory;///
 class COpe;///
@@ -41,6 +42,7 @@ class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CDocLine;
+class CMigemo;	// 2004.09.14 isearch
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -194,6 +196,9 @@ public:
 	//	Aug. 25, 2002 genta protected->publicに移動
 	void ShowEditCaret( void );									/* キャレットの表示・更新 */
 	int HokanSearchByFile( const char*, BOOL, CMemory**, int, int ); // 2003.06.25 Moca
+
+	//	Jan. 10, 2005 インクリメンタルサーチ
+	bool IsISearchEnabled(int nCommand) const;
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
@@ -698,6 +703,9 @@ void ReplaceData_CEditView(
 	void Command_REPLACE_ALL( void );					/* すべて置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_JUMP_SRCHSTARTPOS( void );				/* 検索開始位置へ戻る */	// 02/06/26 ai
+
+	//	Jan. 10, 2005 genta HandleCommandからgrep関連処理を分離
+	void TranslateCommand_grep( int&, BOOL&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
@@ -727,6 +735,10 @@ void ReplaceData_CEditView(
 	void Command_BOOKMARK_RESET( void );				/* ブックマークの全解除 */
 // To Here 2001.12.03 hor
 	void Command_BOOKMARK_PATTERN( void );				// 2002.01.16 hor 指定パターンに一致する行をマーク
+
+//2004.10.13 インクリメンタルサーチ関係
+	void TranslateCommand_isearch( int&, BOOL&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
+	bool ProcessCommand_isearch( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
@@ -779,6 +791,10 @@ void ReplaceData_CEditView(
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
 
 	/* 支援 */
+	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
+	void PreprocessCommand_hokan( int nCommand );
+	void PostprocessCommand_hokan(void);
+
 	void ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided );	//	補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void Command_HOKAN( void );			/* 入力補完 */
 	void Command_HELP_CONTENTS( void );	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO added
@@ -831,6 +847,29 @@ private:
 	
 	bool	m_bUnderLineON;
 	bool	m_bCaretShowFlag;
+
+	/* インクリメンタルサーチ */ 
+	//2004.10.24 isearch migemo
+	CMigemo* m_pcmigemo;
+	void ISearchEnter( int mode  ,int direction);
+	void ISearchExit();
+	void ISearchExec(WORD wChar);
+	void ISearchExec(const char* pszText);
+	void ISearchExec(bool bNext);
+	void ISearchBack(void) ;
+	void ISearchWordMake(void);
+	void ISearchSetStatusMsg(CMemory* msg) const;
+	char* m_pszMigemoWord;
+	int m_nISearchDirection;
+	int m_nISearchMode;
+	bool m_bISearchWrap;
+	int m_nISearchX1History[256];
+	int m_nISearchY1History[256];
+	int m_nISearchX2History[256];
+	int m_nISearchY2History[256];
+	bool m_bISearchFlagHistory[256];
+	int m_nISearchHistoryCount;
+	bool m_bISearchFirst;
 };
 
 

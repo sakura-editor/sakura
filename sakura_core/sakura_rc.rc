@@ -900,6 +900,17 @@ BEGIN
     GROUPBOX        "キーワードヘルプ",IDC_STATIC,3,123,264,33,WS_GROUP
     PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_KEYWORDHELPFONT,212,136,51,14,
                     0,0,HIDC_BUTTON_KEYWORDHELPFONT
+    LTEXT           "DLL(&M)",IDC_STATIC,7,172,22,8
+    EDITTEXT        IDC_EDIT_MIGEMO_DLL,32,170,212,12,ES_AUTOHSCROLL | 
+                    WS_GROUP,0,HIDC_EDIT_MIGEMO_DLL
+    PUSHBUTTON      "(&3)...",IDC_BUTTON_OPENMDLL,247,169,16,14,0,0,
+                    HIDC_BUTTON_OPENMDLL
+    LTEXT           "辞書(&I)",IDC_STATIC,7,188,21,8
+    EDITTEXT        IDC_EDIT_MIGEMO_DICT,32,187,212,12,ES_AUTOHSCROLL,0,
+                    HIDC_EDIT_MIGEMO_DICT
+    PUSHBUTTON      "(&4)...",IDC_BUTTON_OPENMDICT,247,187,16,14,0,0,
+                    HIDC_BUTTON_OPENMDICT
+    GROUPBOX        "migemo設定",IDC_STATIC,3,159,264,47,WS_GROUP
 END
 
 IDD_PROP_COLOR DIALOGEX 0, 0, 271, 219
@@ -2420,6 +2431,8 @@ IDC_CURSOR_COPYARROW    CURSOR  DISCARDABLE     "../resource/cursor_copy.cur"
 IDC_CURSOR_HAND         CURSOR  DISCARDABLE     "../resource/cursor_hand.cur"
 IDC_CURSOR_MOVEARROW    CURSOR  DISCARDABLE     "../resource/cursor_move.cur"
 IDC_CURSOR_RVARROW      CURSOR  DISCARDABLE     "../resource/cursor_rvarrow.cur"
+IDC_CURSOR_ISEARCH_F    CURSOR  DISCARDABLE     "../resource/cursor_isf.cur"
+IDC_CURSOR_ISEARCH_B    CURSOR  DISCARDABLE     "../resource/cursor_isb.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2760,6 +2773,12 @@ BEGIN
     F_DIFF_NEXT             "次の差分へ"
     F_DIFF_PREV             "前の差分へ"
     F_DIFF_RESET            "差分表示の全解除"
+    F_ISEARCH_NEXT          "前方インクリメンタルサーチ"
+    F_ISEARCH_PREV          "後方インクリメンタルサーチ"
+    F_ISEARCH_REGEXP_NEXT   "正規表現前方インクリメンタルサーチ"
+    F_ISEARCH_REGEXP_PREV   "正規表現後方インクリメンタルサーチ"
+    F_ISEARCH_MIGEMO_NEXT   "MIGEMO前方インクリメンタルサーチ"
+    F_ISEARCH_MIGEMO_PREV   "MIGEMO後方インクリメンタルサーチ"
 END
 
 STRINGTABLE DISCARDABLE 

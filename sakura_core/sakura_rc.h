@@ -49,6 +49,8 @@
 #define IDI_ICON_STD                    230
 #define IDI_ICON_DEBUG                  231
 #define IDI_ICON_GREP                   240
+#define IDC_CURSOR_ISEARCH_F            241
+#define IDC_CURSOR_ISEARCH_B            242
 #define IDC_HIDE                        1000
 #define IDC_CHK_LOHICASE                1006
 #define IDC_CHECK_INDENT                1009
@@ -126,8 +128,10 @@
 #define IDC_BUTTON_INSERTSEPARATOR      1088
 #define IDC_EDIT_KEYWORDHELPFILE        1088
 #define IDC_BUTTON_ZOOMUP               1088
+#define IDC_EDIT_MIGEMO_DLL             1088
 #define IDC_CHECK_BACKUP_DAY            1089
 #define IDC_BUTTON_KEYWORDHELPFILE_REF  1089
+#define IDC_EDIT_MIGEMO_DICT            1089
 #define IDC_RADIO_BACKUP_TYPE3          1090
 #define IDC_CHECK_AUTOSAVE              1091
 #define IDC_CHECK_BACKUP_DUSTBOX        1091
@@ -139,6 +143,9 @@
 #define IDC_EDIT_REPEATEDSCROLLLINENUM  1098
 #define IDC_BUTTON_KEYWORDHELPFONT      1098
 #define IDC_BUTTON_HELP                 1099
+#define IDC_BUTTON_OPENMDLL             1099
+#define IDC_BUTTON_OPENHELP3            1100
+#define IDC_BUTTON_OPENMDICT            1100
 #define IDC_EDIT_TO                     1105
 #define IDC_EDIT_BLOCKCOMMENT_TO        1109
 #define IDC_EDIT_TYPEEXTS               1109
@@ -530,6 +537,7 @@
 #define IDC_SPIN_SY                     1489
 #define IDC_COMBO_WINTYPE               1490
 #define IDC_BUTTON_WINSIZE              1491
+#define IDC_HOTKEY1                     1493
 #define IDC_CHECK_QueryIfCodeChange     1492
 #define IDC_CHECK_AlertIfFileNotExist   1493
 #define IDD_PROP_TOOLBAR                1539
@@ -538,6 +546,7 @@
 #define IDS_AUTHOR_MAIL                 4055
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDM_POPLAST2                    4064
+#define ID_IS4072                       4072
 #define IDD_PROPTYPESP1                 5101
 #define IDD_PROP1P8                     5103
 #define IDD_PROP_CUSTMENU               5103
@@ -565,9 +574,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        232
-#define _APS_NEXT_COMMAND_VALUE         4072
+#define _APS_NEXT_RESOURCE_VALUE        243
+#define _APS_NEXT_COMMAND_VALUE         4073
 #define _APS_NEXT_CONTROL_VALUE         1494
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

@@ -263,6 +263,13 @@
 #define F_DIFF_NEXT			30978	//次の差分へ	//@@@ 2002.05.25 MIK
 #define F_DIFF_PREV			30979	//前の差分へ	//@@@ 2002.05.25 MIK
 #define F_DIFF_RESET		30980	//差分の全解除	//@@@ 2002.05.25 MIK
+#define F_ISEARCH_NEXT	    30981	//前方インクリメンタルサーチ //2004.10.13 isearch
+#define F_ISEARCH_PREV		30982	//後方インクリメンタルサーチ //2004.10.13 isearch
+#define F_ISEARCH_REGEXP_NEXT   30983  //前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+#define F_ISEARCH_REGEXP_PREV   30984  //後方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+#define F_ISEARCH_MIGEMO_NEXT   30985  //前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+#define F_ISEARCH_MIGEMO_PREV   30986  //後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+
 
 /* モード切り替え系 */
 #define F_CHGMOD_INS		31001	//挿入／上書きモード切り替え
@@ -398,6 +405,11 @@
 #define F_EXPANDPARAMETER 40003 // 2003-02-21 鬼 コマンドラインパラメータ展開
 #define F_GETLINESTR      40004 // 指定行論理データを取得する 2003.06.25 Moca
 #define F_GETLINECOUNT    40005 // 論理行数を取得する 2003.06.25 Moca
+
+//	2005.01.10 genta ISearch用補助コード
+#define F_ISEARCH_ADD_CHAR	0x10001	//	Incremental Searchへ1文字へ追加
+#define F_ISEARCH_ADD_STR	0x10002	//	Incremental Searchへ文字列へ追加
+#define F_ISEARCH_DEL_BACK	0x10003	//	Incremental Searchの末尾から1文字削除
 
 /* 機能一覧に関するデータ宣言 */
 namespace nsFuncCode{

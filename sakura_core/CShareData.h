@@ -524,6 +524,10 @@ struct Common {
 	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];
 	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];
 
+	//2004.10.28
+	char				m_szMigemoDll[_MAX_PATH];		/* migemo dll */
+	char				m_szMigemoDict[_MAX_PATH];		/* migemo dict */
+
 //	int					m_nTagDepth;	//ダイレクトタグジャンプ階層
 
 }; /* Common */
