@@ -73,10 +73,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		return;
 	}
 	/* キャレットを隠す */
-	if (m_bCaretShowFlag == true){
-		::HideCaret( m_hWnd );
-		m_bCaretShowFlag = false;
-	}
+	HideCaret_( m_hWnd ); // 2002/07/22 novice
 
 	//	May 9, 2000 genta
 	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
@@ -315,8 +312,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		);
 	}
 	/* キャレットを現在位置に表示します */
-	::ShowCaret( m_hWnd );
-	m_bCaretShowFlag = true;
+	ShowCaret_( m_hWnd ); // 2002/07/22 novice
 	return;
 }
 

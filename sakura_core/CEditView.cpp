@@ -490,7 +490,8 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	}
 	// to here  2002.04.10 minfu
 	
-	m_bCaretShowFlag = false;
+// 2002/07/22 novice
+//	m_bCaretShowFlag = false;
 	return;
 }
 
@@ -1335,6 +1336,7 @@ void CEditView::ShowEditCaret( void )
 		/* キャレットがなかった場合 */
 		/* キャレットの作成 */
 		::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
+		m_bCaretShowFlag = false; // 2002/07/22 novice
 	}else{
 		if( m_nCaretWidth != nCaretWidth || m_nCaretHeight != nCaretHeight ){
 			/* キャレットはあるが、大きさが変わった場合 */
@@ -1343,13 +1345,11 @@ void CEditView::ShowEditCaret( void )
 
 			/* キャレットの作成 */
 			::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
+			m_bCaretShowFlag = false; // 2002/07/22 novice
 		}else{
 			/* キャレットはあるし、大きさも変わっていない場合 */
 			/* キャレットを隠す */
-			if (m_bCaretShowFlag == true){
-				::HideCaret( m_hWnd );
-				m_bCaretShowFlag = false;
-			}
+			HideCaret_( m_hWnd ); // 2002/07/22 novice
 		}
 	}
 	/* キャレットの位置を調整 */
@@ -1358,8 +1358,7 @@ void CEditView::ShowEditCaret( void )
 	::SetCaretPos( nPosX, nPosY );
 	if ( m_nViewAlignLeft <= nPosX && m_nViewAlignTop <= nPosY ){
 		/* キャレットの表示 */
-		::ShowCaret( m_hWnd );
-		m_bCaretShowFlag = true;
+		ShowCaret_( m_hWnd ); // 2002/07/22 novice
 	}
 
 	m_nCaretWidth = nCaretWidth;
@@ -3172,10 +3171,7 @@ normal_action:;
 //			}
 //		}
 		::SetCapture( m_hWnd );
-		if (m_bCaretShowFlag == true){
-			::HideCaret( m_hWnd );
-			m_bCaretShowFlag = false;
-		}
+		HideCaret_( m_hWnd ); // 2002/07/22 novice
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea( );
 		m_cUnderLine.CaretUnderLineOFF( TRUE );
@@ -3212,10 +3208,7 @@ normal_action:;
 		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
 		::SetCapture( m_hWnd );
-		if (m_bCaretShowFlag == true){
-			::HideCaret( m_hWnd );
-			m_bCaretShowFlag = false;
-		}
+		HideCaret_( m_hWnd ); // 2002/07/22 novice
 
 
 		/* 選択開始処理 */
@@ -4266,8 +4259,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	if( m_bBeginSelect ){	/* 範囲選択中 */
 		/* マウス キャプチャを解放 */
 		::ReleaseCapture();
-		::ShowCaret( m_hWnd );
-		m_bCaretShowFlag = true;
+		ShowCaret_( m_hWnd ); // 2002/07/22 novice
 
 //		/* タイマー終了 */
 //		::KillTimer( m_hWnd, IDT_ROLLMOUSE );
@@ -4376,10 +4368,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		}
 	}
 	::SetCapture( m_hWnd );
-	if (m_bCaretShowFlag == true){
-		::HideCaret( m_hWnd );
-		m_bCaretShowFlag = false;
-	}
+	HideCaret_( m_hWnd ); // 2002/07/22 novice
 	if( IsTextSelected() ){
 		/* 常時選択範囲の範囲 */
 		m_nSelectLineBgnTo = m_nSelectLineTo;
@@ -8616,6 +8605,31 @@ LRESULT CEditView::SetSelectionFromReonvert(PRECONVERTSTRING pReconv, bool bUnic
 
 	return 1;
 
+}
+
+
+// 2002/07/22 novice
+/*!
+	キャレットの表示
+*/
+void CEditView::ShowCaret_( HWND hwnd )
+{
+	if ( m_bCaretShowFlag == false ){
+		::ShowCaret( hwnd );
+		m_bCaretShowFlag = true;
+	}
+}
+
+
+/*!
+	キャレットの非表示
+*/
+void CEditView::HideCaret_( HWND hwnd )
+{
+	if ( m_bCaretShowFlag == true ){
+		::HideCaret( hwnd );
+		m_bCaretShowFlag = false;
+	}
 }
 
 /*[EOF]*/

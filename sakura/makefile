@@ -8,7 +8,7 @@
 #
 
 ## CPP Options
-CPPFLAGS=-I..\sakura_core  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x300 -M
+CPPFLAGS=-I..\sakura_core  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -M
 RFLAGS=-dDS_SETFOREGROUND=0x200L
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 
@@ -139,6 +139,7 @@ OBJS =\
 	$(SRCDIR)\Funccode.obj \
 	$(SRCDIR)\global.obj \
 	$(SRCDIR)\my_icmp.obj \
+	$(SRCDIR)\MY_SP.obj \
 	$(SRCDIR)\StdAfx.obj \
 	$(SRCDIR)\WinMain.obj \
 
@@ -167,6 +168,9 @@ $(SRCDIR)\sakurabc.rc : $(SRCDIR)\sakura_rc.rc
 
 
 .cpp.obj :
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) -o$@ -c $<
+
+.c.obj :
 	$(CC) $(CPPFLAGS) $(OPTFLAGS) -o$@ -c $<
 
 cleanall : clean
