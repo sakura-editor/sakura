@@ -1547,7 +1547,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						/* ファイルが開かれていない */
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&
-							!m_cEditDoc.IsFilePathAvailable()		/* 現在編集中のファイルのパス */
+							!m_cEditDoc.IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
+							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */
 						){
 							/* ファイル読み込み */
 							m_cEditDoc.FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
@@ -2340,7 +2341,8 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				}else{
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&	//	Jan. 22, 2002 genta
-							!m_cEditDoc.IsFilePathAvailable()	/* 現在編集中のファイルのパス */
+							!m_cEditDoc.IsFilePathAvailable() &&	/* 現在編集中のファイルのパス */
+							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */  // 2003.06.13 Add
 						){
 								/* ファイル読み込み */
 								m_cEditDoc.FileRead(
