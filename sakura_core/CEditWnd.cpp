@@ -42,6 +42,7 @@
 #include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "CCommandLine.h" /// 2003/1/26 aroka
 #include "CSMacroMgr.h" // Jun. 16, 2002 genta
+#include "COsVersioninfo.h"	// Sep. 6, 2003 genta
 #include "CRunningTimer.h"
 
 
@@ -3921,7 +3922,10 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
 	rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
 	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
-	::SetBkColor( hdc, ::GetSysColor( COLOR_MENU ) );
+	//	Sep. 6, 2003 genta Windows XP(Luna)ÇÃèÍçáÇ…ÇÕCOLOR_MENUBARÇégÇÌÇ»Ç≠ÇƒÇÕÇ»ÇÁÇ»Ç¢
+	COLORREF bkColor =
+		::GetSysColor( COsVersionInfo().IsLuna() ? COLOR_MENUBAR : COLOR_MENU );
+	::SetBkColor( hdc, bkColor );
 	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWnd, hdc );

@@ -88,6 +88,18 @@ public:
 	}
 #endif
 
+	/*! Luna GUI‚ªŽg‚¦‚é‚©’²‚×‚é
+
+		@retval TRUE Luna is available (Windows XP or later)
+		@retval FALSE Luna is not available 
+
+		@date 2003.09.06 genta
+	*/
+	BOOL IsLuna(){
+		return (m_cOsVersionInfo.dwMajorVersion >= 5 &&
+			m_cOsVersionInfo.dwMinorVersion >= 1 );
+	}
+
 protected:
 	BOOL m_bSuccess;
 	OSVERSIONINFO m_cOsVersionInfo;
