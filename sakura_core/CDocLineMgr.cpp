@@ -181,12 +181,19 @@ CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 	if( 0 == m_nLines ){
 		return NULL;
 	}
-	if( nLine >= m_nLines ){
+	// 2004.03.28 Moca nLineが負の場合のチェックを追加
+	if( 0 > nLine || nLine >= m_nLines ){
 		return NULL;
 	}
-	if( m_pCodePrevRefer == NULL ){
-		MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLineInfo() 	m_pCodePrevRefer == NULL" );
-
+	// 2004.03.28 Moca m_pCodePrevReferより、Top,Botのほうが近い場合は、そちらを利用する
+	int nPrevToLineNumDiff = abs( m_nPrevReferLine - nLine );
+	if( m_pCodePrevRefer == NULL
+	  || nLine < nPrevToLineNumDiff
+	  || m_nLines - nLine < nPrevToLineNumDiff
+	){
+		if( m_pCodePrevRefer == NULL ){
+			MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLineInfo() 	m_pCodePrevRefer == NULL" );
+		}
 
 
 
