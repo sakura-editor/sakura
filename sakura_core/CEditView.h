@@ -145,7 +145,7 @@ public:
 	void Redraw( void );										// 2001/06/21 asa-o 再描画
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
-	DWORD DoGrep( CMemory*, CMemory*, CMemory*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int );	/* Grep実行 */
+	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int );	/* Grep実行 */
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int, CBregexp*, int, int* );
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
@@ -608,7 +608,7 @@ protected:
 	void Command_PASTEBOX( void );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
-	void Command_PASTEBOX(char *szPaste, int nPasteSize);
+	void Command_PASTEBOX( const char *szPaste, int nPasteSize );
 	//>> 2002/03/29 Azumaiya
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
 	//void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
@@ -796,8 +796,8 @@ void ReplaceData_CEditView(
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
 
-	void AnalyzeDiffInfo( char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
+	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
+	BOOL MakeDiffTmpFile( const char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
 
 	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const char* [], const char* [], int, int, const char* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 

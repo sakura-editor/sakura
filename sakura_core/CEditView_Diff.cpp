@@ -468,7 +468,7 @@ finish:
 	@date	2002/05/25
 */
 void CEditView::AnalyzeDiffInfo( 
-	char	*pszDiffInfo,
+	const char	*pszDiffInfo,
 	int		nFlgFile12 )
 {
 	/*
@@ -481,7 +481,7 @@ void CEditView::AnalyzeDiffInfo(
 	 * s1,e1 mode s2,e2
 	 * êÊì™ÇÃèÍçá0ÇÃéüçsÇ∆Ç»ÇÈÇ±Ç∆Ç‡Ç†ÇÈ
 	 */
-	char	*q;
+	const char	*q;
 	int		s1, e1, s2, e2;
 	char	mode;
 
@@ -704,7 +704,7 @@ void CEditView::Command_Diff_Reset( void )
 	@author	MIK
 	@date	2002/05/26
 */
-BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
+BOOL CEditView::MakeDiffTmpFile( const char* filename, HWND hWnd )
 {
 	const char*	pLineData;
 	int		nLineLen;
