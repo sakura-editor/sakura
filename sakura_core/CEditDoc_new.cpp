@@ -22,6 +22,7 @@
 #include "CFuncInfoArr.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
 #include "CEditWnd.h"
+#include "Debug.h"
 
 
 /* Javaä÷êîÉäÉXÉgçÏê¨ */
@@ -350,7 +351,10 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							nNestLevel2Arr[nClassNestArrNum - 1] = 0;
 						}
 					}else{
-						if( pLine2[k] == '{' || __iscsym( pLine2[k] ) ){
+						//	Oct. 10, 2002 genta
+						//	abscract Ç…Ç‡ëŒâû
+						if( pLine2[k] == '{' || pLine2[k] == ';' ||
+							__iscsym( pLine2[k] ) ){
 							if( 0 < nClassNestArrNum ){
 								if( 1 == nNestLevel2Arr[nClassNestArrNum - 1] ){
 									nNestLevel2Arr[nClassNestArrNum - 1] = 2;
