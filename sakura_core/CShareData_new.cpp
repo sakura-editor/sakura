@@ -11,6 +11,7 @@
 	Copyright (C) 2001, Stonee, jepro, mik, asa-o, YAZAKI
 	Copyright (C) 2002, YAZAKI, hor, aroka, MIK
 	Copyright (C) 2003, MIK
+	Copyright (C) 2004, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1083,6 +1084,17 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		/* CTAGS */	//@@@ 2003.05.12 MIK
 		cProfile.IOProfileData( bRead, pszSecName, "nTagsOpt"		, m_pShareData->m_nTagsOpt );
 		cProfile.IOProfileData( bRead, pszSecName, "szTagsCmdLine"	, m_pShareData->m_szTagsCmdLine, sizeof( m_pShareData->m_szTagsCmdLine ) );
+
+		//	MIK バージョン情報（書き込みのみ）
+		if( ! bRead ){
+			TCHAR	iniVer[256];
+			wsprintf( iniVer, _T("%d.%d.%d.%d"), 
+						HIWORD( m_pShareData->m_dwProductVersionMS ),
+						LOWORD( m_pShareData->m_dwProductVersionMS ),
+						HIWORD( m_pShareData->m_dwProductVersionLS ),
+						LOWORD( m_pShareData->m_dwProductVersionLS ) );
+			cProfile.IOProfileData( bRead, pszSecName, _T("szVersion")	, iniVer, sizeof( iniVer ) );
+		}
 	}
 
 	if( !bRead ){
