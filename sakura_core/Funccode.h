@@ -31,6 +31,8 @@
 #define F_FILECLOSE_OPEN			30107	//閉じて開く
 #define F_FILEOPEN_DROPDOWN			30108	//開く(ドロップダウン)
 #define F_FILESAVECLOSE				30109	//保存して閉じる Feb. 28, 2004 genta
+#define F_FILESAVEALL				30120	//上書き保存 //	Jan. 24, 2005 genta
+#define F_FILESAVE_QUIET			30121	//上書き保存(限定動作) //	Jan. 24, 2005 genta
 //	Dec. 4, 2002 genta
 #define F_FILE_REOPEN				30119	//現在と同じ文字コードでで開き直す
 #define F_FILE_REOPEN_SJIS			30111	//SJISで開き直す

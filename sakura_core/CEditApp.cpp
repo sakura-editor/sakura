@@ -1053,6 +1053,10 @@ LRESULT CEditApp::DispatchEvent(
 					/* Grep */
 					DoGrep();  //Stonee, 2001/03/21  Grepを別関数に
 					break;
+				case F_FILESAVEALL:	// Jan. 24, 2005 genta 全て上書き保存
+					CShareData::getInstance()->PostMessageToAllEditors(
+						WM_COMMAND, MAKELONG( F_FILESAVE_QUIET, 0 ), (LPARAM)0, NULL);
+					break;
 				case F_WIN_CLOSEALL:	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
 					/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 					CEditApp::CloseAllEditor();
@@ -1694,6 +1698,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	}
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, "すべて上書き保存(&Z)", FALSE );	// Jan. 24, 2005 genta
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL, "すべてのウィンドウを閉じる(&Q)", FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)
 
 
@@ -1756,6 +1761,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	}
 	if( j == 0 ){
 		::EnableMenuItem( hMenu, F_WIN_CLOSEALL, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+		::EnableMenuItem( hMenu, F_FILESAVEALL, MF_BYCOMMAND | MF_GRAYED );	// Jan. 24, 2005 genta
 	}
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
@@ -1891,5 +1897,4 @@ int	CEditApp::CreatePopUpMenu_R( void )
 
 	return nId;
 }
-
 /*[EOF]*/
