@@ -8207,7 +8207,8 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					//読み出した文字列をチェックする
 					// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
 					//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
-					for( j=0; j<(int)read_cnt/*-1*/; j++ ) {
+					//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
+					for( j=0; j<(int)read_cnt - 1; j++ ) {
 						if( IsKanji1(work[j]) ) {
 							j++;
 						} else {
@@ -8218,6 +8219,20 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 							}
 						}
 					}
+					//	From Here Jan. 28, 2004 Moca
+					//	改行コードが分割されるのを防ぐ
+					if( j == read_cnt - 1 ){
+						if( IsKanji1(work[j]) ) {
+							j = read_cnt + 1; // ぴったり出力できないことを主張
+						}else if( work[j] == '\r' || work[j] == '\n' ) {
+							// CRLF,LFCRの一部ではない改行が末尾にある
+							// 次の読み込みで、CRLF,LFCRの一部になる可能性がある
+							j = read_cnt + 1;
+						}else{
+							j = read_cnt;
+						}
+					}
+					//	To Here Jan. 28, 2004 Moca
 					if( j == (int)read_cnt ) {	//ぴったり出力できる場合
 						work[read_cnt] = 0;
 						CShareData::getInstance()->TraceOut( "%s", work );
@@ -8484,9 +8499,14 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		pReconv->dwTargetStrLen = dwCompStrLen;
 		pReconv->dwTargetStrOffset = dwCompStrOffset;
 		
-		CopyMemory( (void *)(pReconv + 1), (void *)pszReconv , nReconvLenWithNull );
-		*((char *)(pReconv + 1) + nReconvLenWithNull - 1 ) = 0;
-		
+		// 2004.01.28 Moca ヌル終端の修正
+		if( bUnicode ){
+			CopyMemory( (void *)(pReconv + 1), (void *)pszReconv , nReconvLenWithNull - sizeof(wchar_t) );
+			*((wchar_t *)(pReconv + 1) + nReconvLenWithNull - sizeof(wchar_t) ) = L'\0';
+		}else{
+			CopyMemory( (void *)(pReconv + 1), (void *)pszReconv , nReconvLenWithNull - 1 );
+			*((char *)(pReconv + 1) + nReconvLenWithNull - 1 ) = '\0';
+		}
 	}
 	
 	// 再変換情報の保存
