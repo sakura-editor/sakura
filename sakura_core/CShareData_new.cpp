@@ -400,10 +400,14 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bUseHokan"					, m_pShareData->m_Common.m_bUseHokan );
 		// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
 		// 2001/06/19 asa-o タイプ別に移動したので削除：1行
-		cProfile.IOProfileData( bRead, pszSecName, "bSaveWindowSize"			, m_pShareData->m_Common.m_bSaveWindowSize );
+		cProfile.IOProfileData( bRead, pszSecName, "bSaveWindowSize"			, m_pShareData->m_Common.m_nSaveWindowSize );
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeType"				, m_pShareData->m_Common.m_nWinSizeType );
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeCX"					, m_pShareData->m_Common.m_nWinSizeCX );
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeCY"					, m_pShareData->m_Common.m_nWinSizeCY );
+		// 2004.03.30 Moca *nWinPos*を追加
+		cProfile.IOProfileData( bRead, pszSecName, "nSaveWindowPos"			, m_pShareData->m_Common.m_nSaveWindowPos );
+		cProfile.IOProfileData( bRead, pszSecName, "nWinPosX"				, m_pShareData->m_Common.m_nWinPosX );
+		cProfile.IOProfileData( bRead, pszSecName, "nWinPosY"				, m_pShareData->m_Common.m_nWinPosY );
 		cProfile.IOProfileData( bRead, pszSecName, "bTaskTrayUse"				, m_pShareData->m_Common.m_bUseTaskTray );
 		cProfile.IOProfileData( bRead, pszSecName, "bTaskTrayStay"				, m_pShareData->m_Common.m_bStayTaskTray );
 //@@@ 2002.01.08 YAZAKI タスクトレイを「使わない」にしても常駐がチェックが残っていると再起動で「使う・常駐」になるバグ修正

@@ -209,6 +209,10 @@ SOURCE=..\sakura_core\CDlgTypeList.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgWinSize.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDllHandler.cpp
 # End Source File
 # Begin Source File
@@ -702,6 +706,10 @@ SOURCE=..\sakura_core\CDlgTagsMake.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgTypeList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgWinSize.h
 # End Source File
 # Begin Source File
 

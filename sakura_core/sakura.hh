@@ -271,6 +271,7 @@
 #define HLP000252	252	//次の差分へ
 #define HLP000253	253	//前の差分へ
 #define HLP000254	254	//差分表示の全解除
+#define HLP000286	286	//ウィンドウの位置と大きさ
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
@@ -429,7 +430,6 @@
 #define HIDC_CHECK_DispTOOLBAR					11212 //ツールバー表示
 #define HIDC_CHECK_bScrollBarHorz				11213 //水平スクロールバー
 #define HIDC_CHECK_bMenuIcon					11214 //アイコン付きメニュー
-#define HIDC_CHECK_WINSIZE						11215 //ウィンドウサイズ継承
 #define HIDC_CHECK_SplitterWndVScroll			11216 //垂直スクロールの同期
 #define HIDC_CHECK_SplitterWndHScroll			11217 //水平スクロールの同期
 #define HIDC_CHECK_DispTabWnd					11218 //タブウインドウ表示	//@@@ 2003.05.31 MIK
@@ -443,6 +443,7 @@
 #define HIDC_RADIO_FUNCKEYWND_PLACE1			11260 //ファンクションキー表示位置（上）
 #define HIDC_RADIO_FUNCKEYWND_PLACE2			11261 //ファンクションキー表示位置（下）
 #define HIDC_EDIT_FUNCKEYWND_GROUPNUM			11262 //ファンクションキーのグループボタン数
+#define	HIDC_BUTTON_WINSIZE						11263 //位置と大きさの設定
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
@@ -762,5 +763,20 @@
 #define	HIDC_TAG_MAKE_IDOK			13705
 #define	HIDC_TAG_MAKE_IDCANCEL		13706
 #define	HIDC_BUTTON_TAG_MAKE_HELP	13707
+
+//ウィンドウの位置と大きさ	2004.05.13 Moca
+#define	HIDC_EDIT_WX			13801
+#define	HIDC_EDIT_WY			13802
+#define	HIDC_EDIT_SX			13803
+#define	HIDC_EDIT_SY			13804
+#define	HIDC_CHECK_WINPOS		13805
+#define	HIDC_RADIO_WINSIZE_DEF	13806
+#define	HIDC_RADIO_WINSIZE_SAVE	13807
+#define	HIDC_RADIO_WINSIZE_SET	13808
+#define	HIDC_RADIO_WINPOS_DEF	13809
+#define	HIDC_RADIO_WINPOS_SAVE	13810
+#define	HIDC_RADIO_WINPOS_SET	13811
+#define	HIDC_COMBO_WINTYPE		13812
+
 
 #define HIDC_STATIC								19999 //不明

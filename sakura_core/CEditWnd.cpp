@@ -254,7 +254,8 @@ HWND CEditWnd::Create(
 
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
-	if( m_pShareData->m_Common.m_bSaveWindowSize ){
+	//	2004.05.13 Moca m_Common.m_nSaveWindowSizeをBOOLからenumに変えたため
+	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowSize ){
 		nWinCX = m_pShareData->m_Common.m_nWinSizeCX;
 		nWinCY = m_pShareData->m_Common.m_nWinSizeCY;
 	}else{
@@ -276,10 +277,19 @@ HWND CEditWnd::Create(
 	int nWinOX, nWinOY;
 	nWinOX = CW_USEDEFAULT;
 	nWinOY = 0;
-	if( fi.m_nWindowOriginX >= 0 ){
+	// ウィンドウ位置固定
+	//	2004.05.13 Moca 保存したウィンドウ位置を使う場合は共有メモリからセット
+	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowPos ){
+		nWinOX =  m_pShareData->m_Common.m_nWinPosX;
+		nWinOY =  m_pShareData->m_Common.m_nWinPosY;
+	}
+
+	//	2004.05.13 Moca マルチディスプレイでは負の値も有効なので，
+	//	未設定の判定方法を変更．(負の値→CW_USEDEFAULT)
+	if( fi.m_nWindowOriginX != CW_USEDEFAULT ){
 		nWinOX = fi.m_nWindowOriginX;
 	}
-	if( fi.m_nWindowOriginY >= 0 ){
+	if( fi.m_nWindowOriginY != CW_USEDEFAULT ){
 		nWinOY = fi.m_nWindowOriginY;
 	}
 
@@ -325,11 +335,17 @@ HWND CEditWnd::Create(
 	);
 	m_hWnd = hWnd;
 
+	// 2004.05.13 Moca ウィンドウ作成失敗。終了
+	if( NULL == hWnd ){
+		return NULL;
+	}
+
+
 	m_cIcons.Create( m_hInstance, m_hWnd );	//	CreateImage List
 
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
 
-	if( NULL != m_hWnd ){
+//	if( NULL != m_hWnd ){
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
 
@@ -338,7 +354,7 @@ HWND CEditWnd::Create(
 		m_hdcCompatDC = ::CreateCompatibleDC( hdc );
 		::ReleaseDC( m_hWnd, hdc );
 
-	}
+//	}
 
 	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* 次回ウィンドウを開いたときツールバーを表示する */
  		/* ツールバー作成 */
@@ -450,16 +466,21 @@ HWND CEditWnd::Create(
 		);
 
 		/* ウィンドウサイズ継承 */
-		if( m_pShareData->m_Common.m_bSaveWindowSize &&
+		if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowSize &&
 			m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED ){
 			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+		}else
+		// 2004.05.14 Moca ウィンドウサイズを直接指定する場合は、最小化表示を受け入れる
+		if( WINSIZEMODE_SET == m_pShareData->m_Common.m_nSaveWindowSize &&
+			m_pShareData->m_Common.m_nWinSizeType == SIZE_MINIMIZED ){
+			::ShowWindow( m_hWnd, SW_SHOWMINIMIZED );
 		}else{
 			::ShowWindow( m_hWnd, SW_SHOW );
 		}
 	}
 	//To Here @@@ 2003.06.13 MIK
 
-	if( NULL != m_hWnd ){
+//	if( NULL != m_hWnd ){
 		/* ドロップされたファイルを受け入れる */
 		::DragAcceptFiles( m_hWnd, TRUE );
 		/* 編集ウィンドウリストへの登録 */
@@ -478,7 +499,7 @@ HWND CEditWnd::Create(
 				"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
 			);
 		}
-	}
+//	}
 	::InvalidateRect( m_hWnd, NULL, TRUE );
 	if( NULL != pszPath ){
 		char*	pszPathNew = new char[_MAX_PATH];
@@ -1078,6 +1099,16 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_MOVE:
 		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
 		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+		// From Here 2004.05.13 Moca ウィンドウ位置継承
+		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
+		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowPos ){
+			if( SW_MAXIMIZE != m_pShareData->m_TabWndWndpl.showCmd &&
+			    SW_SHOWMINIMIZED != m_pShareData->m_TabWndWndpl.showCmd ){
+				m_pShareData->m_Common.m_nWinPosX = m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
+				m_pShareData->m_Common.m_nWinPosY = m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
+			}
+		}
+		// To Here 2004.05.13 Moca ウィンドウ位置継承
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	//To here 2003.05.31 MIK
 /*
@@ -3226,7 +3257,8 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 
 	/* ウィンドウサイズ継承 */
 	if( wParam != SIZE_MINIMIZED &&						/* 最小化は継承しない */
-		m_pShareData->m_Common.m_bSaveWindowSize		/* ウィンドウサイズ継承をするか */
+		//	2004.05.13 Moca m_nSaveWindowSizeの解釈追加のため
+		WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowSize		/* ウィンドウサイズ継承をするか */
 	){
 		if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
 			if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ){

@@ -1250,21 +1250,20 @@ BEGIN
     CONTROL         "ステータスバー表示(&S)",IDC_CHECK_DispSTATUSBAR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,37,83,10,0,
                     HIDC_CHECK_DispSTATUSBAR
+    CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,176,11,85,10,0,
+                    HIDC_CHECK_bScrollBarHorz
+    CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,176,24,85,10,0,
+                    HIDC_CHECK_bMenuIcon
     CONTROL         "タブ表示",IDC_CHECK_DispTabWnd,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,102,13,41,10,0,HIDC_CHECK_DispTabWnd
+                    WS_TABSTOP,102,11,41,10,0,HIDC_CHECK_DispTabWnd
     CONTROL         "まとめない",IDC_CHECK_DispTabWndMultiWin,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,111,25,47,10,0,
                     HIDC_CHECK_DispTabWndMultiWin
-    CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,171,13,84,10,0,
-                    HIDC_CHECK_bScrollBarHorz
-    CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,171,25,82,10,0,
-                    HIDC_CHECK_bMenuIcon
-    CONTROL         "ウィンドウサイズ継承(&Z)",IDC_CHECK_WINSIZE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,171,37,85,10,0,
-                    HIDC_CHECK_WINSIZE
-    GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,48,WS_GROUP
+    PUSHBUTTON      "位置と大きさの設定(&W)...",IDC_BUTTON_WINSIZE,181,35,79,
+                    14
+    GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,49,WS_GROUP
     LTEXT           "ルーラーの高さ(&E)",IDC_STATIC,7,63,55,8
     EDITTEXT        IDC_EDIT_nRulerHeight,96,61,28,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_nRulerHeight
@@ -1288,20 +1287,18 @@ BEGIN
     LTEXT           "ドット",IDC_STATIC,126,93,15,8
     GROUPBOX        "",IDC_STATIC,3,52,143,57
     CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,167,73,30,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,192,76,30,10,
                     0,HIDC_RADIO_FUNCKEYWND_PLACE1
     CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
-                    BS_AUTORADIOBUTTON,197,73,30,10,0,
+                    BS_AUTORADIOBUTTON,224,76,30,10,0,
                     HIDC_RADIO_FUNCKEYWND_PLACE2
-    GROUPBOX        "位置",IDC_GROUP_FUNCKEYWND_POSITION,165,64,65,23,
-                    WS_GROUP
     LTEXT           "グループボタン数(&G)",IDC_STATIC,166,93,62,10
     EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,231,91,28,12,ES_AUTOHSCROLL | 
                     ES_NUMBER,0,HIDC_EDIT_FUNCKEYWND_GROUPNUM
     CONTROL         "Spin1",IDC_SPIN_FUNCKEYWND_GROUPNUM,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,260,91,7,
                     12
-    GROUPBOX        "ファンクションキー",IDC_STATIC,160,52,107,57
+    GROUPBOX        "ファンクションキー",IDC_STATIC,160,60,107,49
     CONTROL         "垂直スクロールの同期をとる(&V)",
                     IDC_CHECK_SplitterWndVScroll,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,122,107,10
@@ -1324,6 +1321,7 @@ BEGIN
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE,64,189,47,10
     GROUPBOX        "タイトルバー",IDC_STATIC,3,138,264,63
     LTEXT           "タブ",IDC_STATIC,7,182,50,10
+    LTEXT           "位置",IDC_STATIC,167,76,19,10
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 270, 213
@@ -1889,6 +1887,51 @@ BEGIN
                     HIDC_BUTTON_HELP
 END
 
+IDD_WINPOSSIZE DIALOG DISCARDABLE  0, 0, 177, 159
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "ウィンドウの位置と大きさ"
+FONT 9, "ＭＳ Ｐゴシック"
+BEGIN
+    CONTROL         "指定しない(&D)",IDC_RADIO_WINPOS_DEF,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,19,57,10
+    CONTROL         "継承する(&I)",IDC_RADIO_WINPOS_SAVE,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,15,32,49,10
+    CONTROL         "直接指定(&S)",IDC_RADIO_WINPOS_SET,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,15,45,52,10
+    LTEXT           "X座標(&X)",IDC_STATIC,81,29,30,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_WX,115,25,33,14,ES_RIGHT | ES_NUMBER | WS_GROUP
+    CONTROL         "Spin1",IDC_SPIN_WX,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    UDS_NOTHOUSANDS,148,25,10,14
+    LTEXT           "Y座標(&Y)",IDC_STATIC,81,43,30,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_WY,115,41,33,14,ES_RIGHT | ES_NUMBER | WS_GROUP
+    CONTROL         "Spin1",IDC_SPIN_WY,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    UDS_NOTHOUSANDS,148,41,10,14
+    CONTROL         "指定しない(&E)",IDC_RADIO_WINSIZE_DEF,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,79,56,10
+    CONTROL         "継承する(&N)",IDC_RADIO_WINSIZE_SAVE,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,15,91,51,10
+    CONTROL         "直接指定(&T)",IDC_RADIO_WINSIZE_SET,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,15,103,52,10
+    COMBOBOX        IDC_COMBO_WINTYPE,84,74,64,52,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "幅(&W)",IDC_STATIC,84,94,27,8
+    EDITTEXT        IDC_EDIT_SX,115,91,33,14,ES_RIGHT | ES_NUMBER
+    CONTROL         "Spin1",IDC_SPIN_SX,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    UDS_NOTHOUSANDS,148,90,10,14
+    LTEXT           "高さ(&G)",IDC_STATIC,84,110,27,8
+    EDITTEXT        IDC_EDIT_SY,115,108,33,14,ES_RIGHT | ES_NUMBER
+    CONTROL         "Spin1",IDC_SPIN_SY,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    UDS_NOTHOUSANDS,148,108,10,14
+    DEFPUSHBUTTON   "閉じる(&C)",IDOK,26,138,50,14,WS_GROUP
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,110,137,54,15,WS_GROUP
+    GROUPBOX        "起動時の位置",IDC_STATIC,7,7,163,52
+    GROUPBOX        "大きさ",IDC_STATIC,7,66,163,63
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2268,6 +2311,14 @@ BEGIN
         RIGHTMARGIN, 226
         TOPMARGIN, 7
         BOTTOMMARGIN, 78
+    END
+
+    IDD_WINPOSSIZE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 170
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 152
     END
 END
 #endif    // APSTUDIO_INVOKED

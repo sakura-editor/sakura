@@ -285,7 +285,6 @@
 #define IDC_EDIT_HEAD1                  1270
 #define IDC_STATIC_PRNDEV               1271
 #define IDC_STATIC_PAPER                1272
-#define IDC_CHECK_WINSIZE               1272
 #define IDC_EDIT_KEYSFUNC               1273
 #define IDC_BUTTON_ASSIGN               1274
 #define IDC_EDIT_HEAD2                  1275
@@ -359,9 +358,13 @@
 #define IDC_MACROPATH                   1327
 #define IDC_RADIO_DIFF_DST2             1327
 #define IDC_EDIT_TAG_MAKE_CMDLINE       1327
+#define IDC_EDIT_WX                     1327
 #define IDC_COMBO_m_szCommand           1328
+#define IDC_EDIT_WY                     1328
 #define IDC_CHECK_GETSTDOUT             1329
+#define IDC_EDIT_SX                     1329
 #define IDC_STATIC_CMD                  1330
+#define IDC_EDIT_SY                     1330
 #define IDC_STATIC_JOBNAME              1331
 #define IDC_STATIC_PROGRESS             1332
 #define IDC_EDIT_FROM                   1333
@@ -514,6 +517,18 @@
 #define IDC_CHECK_REALTIMEVIEW          1477
 #define IDC_CHECK_BOM                   1478
 #define IDC_CHECH_GREPREALTIME          1479
+#define IDC_RADIO_WINSIZE_DEF           1480
+#define IDC_RADIO_WINSIZE_SAVE          1481
+#define IDC_RADIO_WINSIZE_SET           1482
+#define IDC_SPIN_WX                     1483
+#define IDC_SPIN_WY                     1484
+#define IDC_RADIO_WINPOS_DEF            1485
+#define IDC_RADIO_WINPOS_SAVE           1486
+#define IDC_RADIO_WINPOS_SET            1487
+#define IDC_SPIN_SX                     1488
+#define IDC_SPIN_SY                     1489
+#define IDC_COMBO_WINTYPE               1490
+#define IDC_BUTTON_WINSIZE              1491
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -540,15 +555,16 @@
 #define IDD_PROPTYPESP2                 5114
 #define IDD_DIFF                        5115
 #define IDD_CTRLCODE                    5116
+#define IDD_WINPOSSIZE                  5117
 #define IDC_EXECINFO                    -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        230
+#define _APS_NEXT_RESOURCE_VALUE        232
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1479
+#define _APS_NEXT_CONTROL_VALUE         1492
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

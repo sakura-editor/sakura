@@ -146,7 +146,6 @@
 #define HIDC_CHECK_UNDERLINE            0x93f2043d    // IDD_PROP_COLOR
 #define HIDC_CHECK_USEKEYWORDHELP       0x93fa04b2    // IDD_PROPTYPESP2
 #define HIDC_CHECK_USETRAYICON          0x806b04ff    // IDD_PROP1P1
-#define HIDC_CHECK_WINSIZE              0x93f404f8    // IDD_PROP_WIN
 #define HIDC_CHECK_WORDWRAP             0x80ae04ed    // IDD_PRINTSETTING
 #define HIDC_CHECK_bAutoCloseDlgFind    0x806d0518    // IDD_FIND
 #define HIDC_CHECK_bAutoCloseDlgFuncList \
