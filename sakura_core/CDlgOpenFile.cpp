@@ -154,36 +154,16 @@ UINT APIENTRY OFNHookProc(
 	int						fwSizeType;
 	int						nWidth;
 	int						nHeight;
-	int						nCodeValueArr[] = {
-		CODE_AUTODETECT,	/* 文字コード自動判別 */
-		CODE_SJIS,
-		CODE_JIS,
-		CODE_EUC,
-		CODE_UNICODE,
-		CODE_UNICODEBE,		// Moca, 2002/05/26
-		CODE_UTF8,
-		CODE_UTF7
-	};
-	char*					pCodeNameArr[] = {
-		"自動選択",
-		"SJIS",
-		"JIS",
-		"EUC",
-		"Unicode",
-		"UnicodeBE",		// Moca, 2002/05/26
-		"UTF-8",
-		"UTF-7"
-	};
-	int nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
+
 	//	From Here	Feb. 9, 2001 genta
-	int						nEolValueArr[] = {
+	const int			nEolValueArr[] = {
 		EOL_NONE,
 		EOL_CRLF,
 		EOL_LF,
 		EOL_CR,
 	};
 	//	文字列はResource内に入れる
-	char*					pEolNameArr[] = {
+	const char*	const	pEolNameArr[] = {
 		"変換なし",
 		"CR+LF",
 		"LF (UNIX)",
@@ -292,10 +272,10 @@ UINT APIENTRY OFNHookProc(
 		}else{
 			i = 0;
 		}
-		for( /*i = 0*/; i < nCodeNameArrNum; ++i ){
-			nIdx = ::SendMessage( hwndComboCODES, CB_ADDSTRING, 0, (LPARAM)pCodeNameArr[i] );
-			::SendMessage( hwndComboCODES, CB_SETITEMDATA, nIdx, nCodeValueArr[i] );
-			if( nCodeValueArr[i] == pcDlgOpenFile->m_nCharCode ){
+		for( /*i = 0*/; i < gm_nCodeComboNameArrNum; ++i ){
+			nIdx = ::SendMessage( hwndComboCODES, CB_ADDSTRING, 0, (LPARAM)gm_pszCodeComboNameArr[i] );
+			::SendMessage( hwndComboCODES, CB_SETITEMDATA, nIdx, gm_nCodeComboValueArr[i] );
+			if( gm_nCodeComboValueArr[i] == pcDlgOpenFile->m_nCharCode ){
 				nIdxSel = nIdx;
 			}
 		}

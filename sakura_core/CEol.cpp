@@ -37,7 +37,6 @@
 /*! 行終端子のデータの配列 */
 const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"",
-	"\x0d\x0\x0a\x0",	// EOL_CRLF_UNICODE
 	"\x0d\x0a",			// EOL_CRLF
 	"\x0a\x0d",			// EOL_LFCR
 	"\x0a",				// EOL_LF
@@ -47,7 +46,6 @@ const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 /*! 行終端子のデータの配列(Unicode版) 2000/05/09 Frozen */
 const wchar_t* CEOL::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 	L"",
-	L"",				// EOL_CRLF_UNICODE（これは使用しないでください）
 	L"\x0d\x0a",		// EOL_CRLF
 	L"\x0a\x0d",		// EOL_LFCR
 	L"\x0a",			// EOL_LF
@@ -57,17 +55,15 @@ const wchar_t* CEOL::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 /*! 行終端子のデータの配列(UnicodeBE版) 2000.05.30 Moca */
 const wchar_t* CEOL::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
 	L"",
-	L"",				// EOL_CRLF_UNICODE（これは使用しないでください）
 	(const wchar_t*)"\x00\x0d\x00\x0a\x00",		// EOL_CRLF
 	(const wchar_t*)"\x00\x0a\x00\x0d\x00",		// EOL_LFCR
-	(const wchar_t*)"\x00\x0a\x00",			// EOL_LF
+	(const wchar_t*)"\x00\x0a\x00",				// EOL_LF
 	(const wchar_t*)"\x00\x0d\x00"				// EOL_CR
 };
 
 /*! 行終端子のデータ長の配列 */
 const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 	LEN_EOL_NONE			,	// == 0
-	LEN_EOL_CRLF_UNICODE	,	// == 4
 	LEN_EOL_CRLF			,	// == 2
 	LEN_EOL_LFCR			,	// == 2
 	LEN_EOL_LF				,	// == 1
@@ -80,7 +76,6 @@ const char* CEOL::gm_pszEolNameArr[EOL_TYPE_NUM] = {
 	//	May 12, 2000 genta
 	//	文字幅の都合上“無”を漢字に
 	"改行無",
-	"CR0LF0",
 	"CRLF",
 	"LFCR",
 	"LF",
@@ -139,7 +134,7 @@ enumEOLType CEOL::GetEOLTypeUni( const wchar_t* pszData, int nDataLen )
 	/* 改行コードの長さを調べる */
 	for( i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == memcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] )
+		 && 0 == memcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) )
 		){
 			return gm_pnEolTypeArr[i];
 		}
@@ -159,7 +154,7 @@ enumEOLType CEOL::GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 	/* 改行コードの長さを調べる */
 	for( i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == memcmp( pszData, gm_pszEolUnicodeBEDataArr[i], gm_pnEolLenArr[i] )
+		 && 0 == memcmp( pszData, gm_pszEolUnicodeBEDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) )
 		){
 			return gm_pnEolTypeArr[i];
 		}

@@ -99,12 +99,13 @@ void CEditApp::DoGrep()
 	cmWork3.Replace( "\"", "\"\"" );
 
 	/*
-	|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
+	|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	*/
-	wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"" ,
+	wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
 		cmWork1.GetPtr(),
 		cmWork2.GetPtr(),
-		cmWork3.GetPtr()
+		cmWork3.GetPtr(),
+		m_cDlgGrep.m_nGrepCharSet
 	);
 
 	pOpt[0] = '\0';
@@ -118,9 +119,10 @@ void CEditApp::DoGrep()
 	if( m_cDlgGrep.m_bRegularExp ){			/* 正規表現 */
 		strcat( pOpt, "R" );
 	}
-	if( m_cDlgGrep.m_bKanjiCode_AutoDetect ){	/* 文字コード自動判別 */
-		strcat( pOpt, "K" );
-	}
+//	2002/09/20 Moca 文字コードセットオプションに統合
+//	if( m_cDlgGrep.m_bKanjiCode_AutoDetect ){	/* 文字コード自動判別 */
+//		strcat( pOpt, "K" );
+//	}
 	if( m_cDlgGrep.m_bGrepOutputLine ){		/* 行を出力するか該当部分だけ出力するか */
 		strcat( pOpt, "P" );
 	}
@@ -452,51 +454,25 @@ LRESULT CEditApp::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
-//	HMENU			hMenuTop;
-//	HMENU			hMenu;
-//	POINT			po;
 	int				nId;
 //	int				i;
 //	int				j;
-//	HGLOBAL			hgData;
-//	char*			pData;
-//	char			szMemu[300];
 	HWND			hwndWork;
 	//static CDlgGrep	cDlgGrep;  //Stonee, 2001/03/21 Grepを多重起動したときエラーになるのでGrep部分を別関数にした
-	//char*			pCmdLine;
-	//char*			pOpt;
-	CMemory			cmWork1;
-	CMemory			cmWork2;
-	CMemory			cmWork3;
-	//int				nDataLen;
-	//int				nRet;
 	LPHELPINFO		lphi;
 //	HWND			hwndExitingDlg;
 
 //	CEditWnd*	pCEditWnd_Test;
-//	int			i;
 //	char*		pszCmdLine;
 	int			nRowNum;
 	EditNode*	pEditNodeArr;
 //	HWND		hwndNew;
 	static HWND	hwndHtmlHelp;
-//	HWND		hwndHtmlHelpChild;
 
-
-
-	int				idHotKey;
-	UINT			fuModifiers;
-	UINT			uVirtKey;
 	static WORD		wHotKeyMods;
 	static WORD		wHotKeyCode;
-	HWND			hwndFocused;
-	char			szClassName[100];
-	char			szText[256];
 //	UINT				idCtl;	/* コントロールのID */
-	MEASUREITEMSTRUCT*	lpmis;
-//	char				szLabel[1024];
-//	LPMEASUREITEMSTRUCT	lpmis;	/* 項目サイズ情報 */
-//	char*				pszwork;
+	LPMEASUREITEMSTRUCT	lpmis;	/* 項目サイズ情報 */
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
 	int					nItemWidth;
 	int					nItemHeight;
@@ -538,23 +514,27 @@ LRESULT CEditApp::DispatchEvent(
 
 	/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 	case WM_HOTKEY:
-		idHotKey = (int) wParam;				// identifier of hot key
-		fuModifiers = (UINT) LOWORD(lParam);	// key-modifier flags
-		uVirtKey = (UINT) HIWORD(lParam);		// virtual-key code
+		{
+			int		idHotKey = (int) wParam;				// identifier of hot key
+			UINT	fuModifiers = (UINT) LOWORD(lParam);	// key-modifier flags
+			UINT	uVirtKey = (UINT) HIWORD(lParam);		// virtual-key code
+			char	szClassName[100];
+			char	szText[256];
 
-		hwndFocused = ::GetForegroundWindow();
-		szClassName[0] = '\0';
-		::GetClassName( hwndFocused, szClassName, sizeof( szClassName ) - 1 );
-		::GetWindowText( hwndFocused, szText, sizeof( szText ) - 1 );
-		if( 0 == strcmp( szText, "共通設定" ) ){
-			return -1;
-		}
+			hwndWork = ::GetForegroundWindow();
+			szClassName[0] = '\0';
+			::GetClassName( hwndWork, szClassName, sizeof( szClassName ) - 1 );
+			::GetWindowText( hwndWork, szText, sizeof( szText ) - 1 );
+			if( 0 == strcmp( szText, "共通設定" ) ){
+				return -1;
+			}
 
-		if( ID_HOTKEY_TRAYMENU == idHotKey
-		 &&	( wHotKeyMods )  == fuModifiers
-		 && wHotKeyCode == uVirtKey
-		){
-			::PostMessage( m_hWnd, MYWM_NOTIFYICON, 0, WM_LBUTTONDOWN );
+			if( ID_HOTKEY_TRAYMENU == idHotKey
+			 &&	( wHotKeyMods )  == fuModifiers
+			 && wHotKeyCode == uVirtKey
+			){
+				::PostMessage( m_hWnd, MYWM_NOTIFYICON, 0, WM_LBUTTONDOWN );
+			}
 		}
 		return 0;
 
@@ -811,31 +791,31 @@ LRESULT CEditApp::DispatchEvent(
 //						}
 					}
 					break;
-				case F_OPTION:
+//				case F_OPTION:
 					/* 共通設定 */
-					{
+//					{
 						/* 設定プロパティシート テスト用 */
 //						m_pcEditDoc->bOpenPropertySheet( -1/*, -1*/ );
-					}
-					break;
-				case F_OPTION_TYPE:
+//					}
+//					break;
+//				case F_OPTION_TYPE:
 					/* タイプ別設定 */
-					{
+//					{
 //						CEditDoc::OpenPropertySheetTypes( -1, m_nSettingType );
-					}
-					break;
-				case F_TYPE_LIST:
+//					}
+//					break;
+//				case F_TYPE_LIST:
 					/* タイプ別設定一覧 */
-					{
+//					{
 //						CDlgTypeList	cDlgTypeList;
 //						int				nSettingType;
 //						nSettingType = m_pcEditDoc->m_nSettingType;
 //						if( cDlgTypeList.DoModal( m_hInstance, m_hWnd, &nSettingType ) ){
-							/* タイプ別設定 */
+//							/* タイプ別設定 */
 //							m_pcEditDoc->OpenPropertySheetTypes( -1, nSettingType );
 //						}
-					}
-					break;
+//					}
+//					break;
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
 					{
@@ -1028,24 +1008,6 @@ LRESULT CEditApp::DispatchEvent(
 								if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
 									pszCodeNameNew = (char *)gm_pszCodeNameArr_1[nCharCode];
 								}
-#if 0
-								switch( pfi->m_nCharCode ){
-								case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-								case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
-								case CODE_EUC:		/* EUC */		pszCodeNameCur = "EUC";break;
-								case CODE_UNICODE:	/* Unicode */	pszCodeNameCur = "Unicode";break;
-								case CODE_UTF8:		/* UTF-8 */		pszCodeNameCur = "UTF-8";break;
-								case CODE_UTF7:		/* UTF-7 */		pszCodeNameCur = "UTF-7";break;
-								}
-								switch( nCharCode ){
-								case CODE_SJIS:		/* SJIS */		pszCodeNameNew = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-								case CODE_JIS:		/* JIS */		pszCodeNameNew = "JIS";break;
-								case CODE_EUC:		/* EUC */		pszCodeNameNew = "EUC";break;
-								case CODE_UNICODE:	/* Unicode */	pszCodeNameNew = "Unicode";break;
-								case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
-								case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
-								}
-#endif
 								::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 									"%s\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてからでないと開けません。\n\n現在の文字コードセット＝%s\n新しい文字コードセット＝%s",
 									szPath, pszCodeNameCur, pszCodeNameNew
@@ -1214,24 +1176,6 @@ LRESULT CEditApp::DispatchEvent(
 									if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
 										pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
 									}
-#if 0
-									switch( pfi->m_nCharCode ){
-									case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//	Sept. 1, 2000 jepro 'シフト'を'S'に変更
-									case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
-									case CODE_EUC:		/* EUC */		pszCodeNameCur = "EUC";break;
-									case CODE_UNICODE:	/* Unicode */	pszCodeNameCur = "Unicode";break;
-									case CODE_UTF8:		/* UTF-8 */		pszCodeNameCur = "UTF-8";break;
-									case CODE_UTF7:		/* UTF-7 */		pszCodeNameCur = "UTF-7";break;
-									}
-									switch( nCharCode ){
-									case CODE_SJIS:		/* SJIS */		pszCodeNameNew = "SJIS";break;	//	Sept. 1, 2000 jepro 'シフト'を'S'に変更
-									case CODE_JIS:		/* JIS */		pszCodeNameNew = "JIS";break;
-									case CODE_EUC:		/* EUC */		pszCodeNameNew = "EUC";break;
-									case CODE_UNICODE:	/* Unicode */	pszCodeNameNew = "Unicode";break;
-									case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
-									case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
-									}
-#endif
 									::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 										"%s\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてからでないと開けません。\n\n現在の文字コードセット＝%s\n新しい文字コードセット＝%s",
 										szPath, pszCodeNameCur, pszCodeNameNew

@@ -124,9 +124,11 @@ struct GrepInfo {
 	bool		bGrepSubFolder;		/*!< サブフォルダを検索する */
 	bool		bGrepNoIgnoreCase;	/*!< 大文字と小文字を区別する */
 	bool		bGrepRegularExp;	/*!< 正規表現を使用する */
-	bool		bGrepKanjiCode_AutoDetect;	//!< 漢字コードの自動判別 */
+//	2002/09/21 Moca 文字コードセット選択に変更＆統合
+//	bool		bGrepKanjiCode_AutoDetect;	//!< 漢字コードの自動判別 */
 	bool		bGrepOutputLine;	/*!< 結果出力で該当行を出力する */
 	int			nGrepOutputStyle;	/*!< 結果出力形式 */
+	int			nGrepCharSet;		/*!< 文字コードセット */
 };
 
 
@@ -438,6 +440,7 @@ struct Common {
 	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
 	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
 	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
+	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
 
 	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
 	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
@@ -484,7 +487,7 @@ struct Common {
 //	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */	// 2001/06/14 asa-o タイプ別に変更したので削除
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
 //	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */			// 2001/06/14 asa-o タイプ別に変更したので削除
-	BOOL				m_bGrepKanjiCode_AutoDetect;	/* Grep: 文字コード自動判別 */
+//	BOOL				m_bGrepKanjiCode_AutoDetect;	/* Grep: 文字コード自動判別 */		// 2002/09/20 Moca 文字コードセット指定に統合
 //	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */	// 2001/06/19 asa-o タイプ別に変更したので削除
 //	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
 	BOOL				m_bSaveWindowSize;				/* ウィンドウサイズ継承 */

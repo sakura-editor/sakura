@@ -39,7 +39,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_CHK_FROMTHISTEXT,			//このファイルから
 	IDC_CHK_LOHICASE,				HIDC_GREP_CHK_LOHICASE,				//大文字小文字
 	IDC_CHK_REGULAREXP,				HIDC_GREP_CHK_REGULAREXP,			//正規表現
-	IDC_CHK_KANJICODEAUTODETECT,	HIDC_GREP_CHK_KANJICODEAUTODETECT,	//文字コードセット自動判別
+	IDC_COMBO_CHARSET,				HIDC_GREP_COMBO_CHARSET,			//文字コードセット
 	IDC_COMBO_TEXT,					HIDC_GREP_COMBO_TEXT,				//条件
 	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ファイル
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダ
@@ -59,7 +59,7 @@ CDlgGrep::CDlgGrep()
 	m_bFromThisText = FALSE;			/* この編集中のテキストから検索する */
 	m_bLoHiCase = FALSE;				/* 英大文字と英小文字を区別する */
 	m_bRegularExp = FALSE;				/* 正規表現 */
-	m_bKanjiCode_AutoDetect = FALSE;	/* 文字コード自動判別 */
+	m_nGrepCharSet = CODE_SJIS;			/* 文字コードセット */
 	m_bGrepOutputLine = TRUE;			/* 行を出力するか該当部分だけ出力するか */
 	m_nGrepOutputStyle = 1;				/* Grep: 出力形式 */
 
@@ -76,7 +76,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 {
 	m_bSubFolder = m_pShareData->m_Common.m_bGrepSubFolder;							/* Grep: サブフォルダも検索 */
 	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;							/* 1==正規表現 */
-	m_bKanjiCode_AutoDetect = m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect;	/* 文字コード自動判別 */
+	m_nGrepCharSet = m_pShareData->m_Common.m_nGrepCharSet;							/* 文字コードセット */
 	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								/* 1==大文字小文字の区別 */
 	m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					/* Grep: 出力形式 */
@@ -94,7 +94,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 //	{
 //		m_bSubFolder = m_pShareData->m_Common.m_bGrepSubFolder;							/* Grep: サブフォルダも検索 */
 //		m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;							/* 1==正規表現 */
-//		m_bKanjiCode_AutoDetect = m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect;	/* 文字コード自動判別 */
+//		m_nGrepCharSet = m_pShareData->m_Common.m_nGrepCharSet;							/* 文字コードセット */
 //		m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								/* 1==英大文字小文字の区別 */
 //		m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 //		m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					/* Grep: 出力形式 */
@@ -117,6 +117,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_FILE ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
+//	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 
 	/* ダイアログのアイコン */
 //	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
@@ -133,6 +134,13 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 //	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)NULL );
 //	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
+	// 2002/09/22 Moca Add
+	int i;
+	/* 文字コードセット選択コンボボックス初期化 */
+	for( i = 0; i < gm_nCodeComboNameArrNum; ++i ){
+		int idx = ::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET ), CB_ADDSTRING,   0, (LPARAM)gm_pszCodeComboNameArr[i] );
+		::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET ), CB_SETITEMDATA, idx, gm_nCodeComboValueArr[i] );
+	}
 
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
@@ -340,8 +348,22 @@ void CDlgGrep::SetData( void )
 
 
 	/* 文字コード自動判別 */
-	::CheckDlgButton( m_hWnd, IDC_CHK_KANJICODEAUTODETECT, m_bKanjiCode_AutoDetect );
+//	::CheckDlgButton( m_hWnd, IDC_CHK_KANJICODEAUTODETECT, m_bKanjiCode_AutoDetect );
 
+	// 2002/09/22 Moca Add
+	/* 文字コードセット */
+	{
+		int		nIdx, nCurIdx, nCharSet;
+		HWND	hWndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET );
+		nCurIdx = ::SendMessage( hWndCombo , CB_GETCURSEL, 0, 0 );
+		for( nIdx = 0; nIdx < gm_nCodeComboNameArrNum; nIdx++ ){
+			nCharSet = ::SendMessage( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
+			if( nCharSet == m_nGrepCharSet ){
+				nCurIdx = nIdx;
+			}
+		}
+		::SendMessage( hWndCombo, CB_SETCURSEL, (WPARAM)nCurIdx, 0 );
+	}
 
 	/* 行を出力するか該当部分だけ出力するか */
 	if( m_bGrepOutputLine ){
@@ -425,7 +447,15 @@ int CDlgGrep::GetData( void )
 	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
 
 	/* 文字コード自動判別 */
-	m_bKanjiCode_AutoDetect = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_KANJICODEAUTODETECT );
+//	m_bKanjiCode_AutoDetect = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_KANJICODEAUTODETECT );
+
+	/* 文字コードセット */
+	{
+		int		nIdx;
+		HWND	hWndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET );
+		nIdx = ::SendMessage( hWndCombo, CB_GETCURSEL, 0, 0 );
+		m_nGrepCharSet = ::SendMessage( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
+	}
 
 
 	/* 行を出力するか該当部分だけ出力するか */
@@ -449,7 +479,7 @@ int CDlgGrep::GetData( void )
 	::GetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, m_szFolder, _MAX_PATH - 1 );
 
 	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;							/* 1==正規表現 */
-	m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect = m_bKanjiCode_AutoDetect;	/* 文字コード自動判別 */
+	m_pShareData->m_Common.m_nGrepCharSet = m_nGrepCharSet;								/* 文字コード自動判別 */
 	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;								/* 1==英大文字小文字の区別 */
 	m_pShareData->m_Common.m_bGrepOutputLine = m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 	m_pShareData->m_Common.m_nGrepOutputStyle = m_nGrepOutputStyle;					/* Grep: 出力形式 */

@@ -27,7 +27,6 @@
 CCommandLine* CCommandLine::_instance = NULL;
 
 /* コマンドラインオプション用定数 */
-#define CMDLINEOPT_CODE			1001
 #define CMDLINEOPT_R			1002
 #define CMDLINEOPT_NOWIN		1003
 #define CMDLINEOPT_GREPMODE		1100
@@ -38,11 +37,12 @@ CCommandLine* CCommandLine::_instance = NULL;
 #define CMDLINEOPT_VX			3
 #define CMDLINEOPT_VY			4
 #define CMDLINEOPT_TYPE			5
+#define CMDLINEOPT_CODE			6
 #define CMDLINEOPT_GKEY			101
 #define CMDLINEOPT_GFILE		102
 #define CMDLINEOPT_GFOLDER		103
 #define CMDLINEOPT_GOPT			104
-
+#define CMDLINEOPT_GCODE		105
 /*!
 	コマンドラインのチェックを行って、オプション番号と
 	引数がある場合はその先頭アドレスを返す。
@@ -73,7 +73,6 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取らないもの
 	*/
 	static const _CmdLineOpt _COptWoA[] = {
-		{"CODE", 4,			CMDLINEOPT_CODE},
 		{"R", 1,			CMDLINEOPT_R},
 		{"NOWIN", 5,		CMDLINEOPT_NOWIN},
 		{"GREPMODE", 8,		CMDLINEOPT_GREPMODE},
@@ -91,11 +90,13 @@ int CCommandLine::CheckCommandLine(
 		{"Y", 1,			CMDLINEOPT_Y},
 		{"VX", 2,			CMDLINEOPT_VX},
 		{"VY", 2,			CMDLINEOPT_VY},
+		{"CODE", 4,			CMDLINEOPT_CODE},	// 2002/09/20 Moca _COptWoAから移動
 		{"TYPE", 4,			CMDLINEOPT_TYPE},	//!< タイプ別設定 Mar. 7, 2002 genta
 		{"GKEY", 4,			CMDLINEOPT_GKEY},
 		{"GFILE", 5,		CMDLINEOPT_GFILE},
 		{"GFOLDER", 7,		CMDLINEOPT_GFOLDER},
 		{"GOPT", 4,			CMDLINEOPT_GOPT},
+		{"GCODE", 5,		CMDLINEOPT_GCODE},	// 2002/09/21 Moca 追加
 		{NULL, 0, 0}
 	};
 
@@ -143,7 +144,7 @@ void CCommandLine::ParseCommandLine(
 	bool*		pbGrepSubFolder,
 	bool*		pbGrepLoHiCase,
 	bool*		pbGrepRegularExp,
-	bool*		pbGrepKanjiCode_AutoDetect,
+	int*		pnGrepCharSet,
 	bool*		pbGrepOutputLine,
 	bool*		pbGrepWordOnly,
 	int	*		pnGrepOutputStyle,
@@ -161,10 +162,10 @@ void CCommandLine::ParseCommandLine(
 	bool			bGrepSubFolder;
 	bool			bGrepLoHiCase;
 	bool			bGrepRegularExp;
-	bool			bGrepKanjiCode_AutoDetect;
 	bool			bGrepOutputLine;
 	bool			bGrepWordOnly;
 	int				nGrepOutputStyle;
+	int				nGrepCharSet;
 	bool			bDebugMode;
 	bool			bNoWindow;
 	FileInfo		fi;
@@ -185,13 +186,14 @@ void CCommandLine::ParseCommandLine(
 
 	bGrepMode = false;
 	bGrepDlg = false;
+
 	bGrepSubFolder = false;
 	bGrepLoHiCase = false;
 	bGrepRegularExp = false;
-	bGrepKanjiCode_AutoDetect = false;
 	bGrepOutputLine = false;
 	bGrepWordOnly = false;
 	nGrepOutputStyle = 1;
+	nGrepCharSet = CODE_SJIS;
 	bDebugMode = false;
 	bNoWindow = false;
 
@@ -337,7 +339,8 @@ void CCommandLine::ParseCommandLine(
 					case 'R':	/* 正規表現 */
 						bGrepRegularExp = true;	break;
 					case 'K':	/* 文字コード自動判別 */
-						bGrepKanjiCode_AutoDetect = true;	break;
+						// 2002/09/21 Moca 互換性保持のための処理
+						nGrepCharSet = CODE_AUTODETECT;	break;
 					case 'P':	/* 行を出力するか該当部分だけ出力するか */
 						bGrepOutputLine = true;	break;
 					case 'W':	/* 単語単位で探す */
@@ -349,6 +352,9 @@ void CCommandLine::ParseCommandLine(
 					}
 				}
 				break;
+			// 2002/09/21 Moca Grepでの文字コードセット 追加
+			case CMDLINEOPT_GCODE:
+				nGrepCharSet = atoi( arg );	break;
 			case CMDLINEOPT_DEBUGMODE:
 				bDebugMode = true;
 				break;
@@ -382,10 +388,11 @@ void CCommandLine::ParseCommandLine(
 	*pbGrepSubFolder			= bGrepSubFolder;
 	*pbGrepLoHiCase				= bGrepLoHiCase;
 	*pbGrepRegularExp			= bGrepRegularExp;
-	*pbGrepKanjiCode_AutoDetect = bGrepKanjiCode_AutoDetect;
+	*pnGrepCharSet				= nGrepCharSet;
 	*pbGrepOutputLine			= bGrepOutputLine;
 	*pbGrepWordOnly				= bGrepWordOnly;
 	*pnGrepOutputStyle			= nGrepOutputStyle;
+
 	*pbDebugMode				= bDebugMode;
 	*pbNoWindow					= bNoWindow;
 	*pfi						= fi;
@@ -420,7 +427,7 @@ CCommandLine::CCommandLine(LPSTR cmd) :
 		&m_gi.bGrepSubFolder,
 		&m_gi.bGrepNoIgnoreCase,
 		&m_gi.bGrepRegularExp,
-		&m_gi.bGrepKanjiCode_AutoDetect,
+		&m_gi.nGrepCharSet,		//  2002/09/20 Moca
 		&m_gi.bGrepOutputLine,
 		&m_gi.bGrepWordOnly,	//	Jun. 25, 2001 genta
 		&m_gi.nGrepOutputStyle,

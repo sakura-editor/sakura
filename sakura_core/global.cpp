@@ -53,6 +53,30 @@ const char* gm_pszCodeNameArr_3[] = {
 	"  [UniBE]"			/* Unicode BigEndian */
 };
 
+const int gm_nCodeComboValueArr[] = {
+	CODE_AUTODETECT,	/* 文字コード自動判別 */
+	CODE_SJIS,
+	CODE_JIS,
+	CODE_EUC,
+	CODE_UNICODE,
+	CODE_UNICODEBE,
+	CODE_UTF8,
+	CODE_UTF7
+};
+const char* const	gm_pszCodeComboNameArr[] = {
+	"自動選択",
+	"SJIS",
+	"JIS",
+	"EUC",
+	"Unicode",
+	"UnicodeBE",
+	"UTF-8",
+	"UTF-7"
+};
+
+const int gm_nCodeComboNameArrNum = sizeof( gm_nCodeComboValueArr ) / sizeof( gm_nCodeComboValueArr[0] );
+
+
 /*! 選択領域描画用パラメータ */
 const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
@@ -60,7 +84,6 @@ const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 /*! 行終端子の配列 */
 const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_NONE			,	// == 0
-	EOL_CRLF_UNICODE	,	// == 4
 	EOL_CRLF			,	// == 2
 	EOL_LFCR			,	// == 2
 	EOL_LF				,	// == 1

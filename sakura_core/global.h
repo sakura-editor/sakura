@@ -137,6 +137,11 @@ SAKURA_CORE_API extern const char* gm_pszCodeNameArr_1[];
 SAKURA_CORE_API extern const char* gm_pszCodeNameArr_2[];
 SAKURA_CORE_API extern const char* gm_pszCodeNameArr_3[];
 
+/* コンボボックス用 自動判別を含む配列 */
+SAKURA_CORE_API extern const int gm_nCodeComboValueArr[];
+SAKURA_CORE_API extern const char* const gm_pszCodeComboNameArr[];
+SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
+
 //const char* GetCodeTypeName( enumCodeType nCodeTYpe )
 //{
 //	const char* pszCodeTypeNameArr[] = {
@@ -168,10 +173,10 @@ SAKURA_CORE_API enum enumOutlineType {
 	OUTLINE_UNKNOWN	= 99
 };
 
+// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
 SAKURA_CORE_API enum enumEOLType {
 	EOL_NONE,
-	EOL_CRLF_UNICODE,
 	EOL_CRLF,
 	EOL_LFCR,
 	EOL_LF,
@@ -183,7 +188,6 @@ SAKURA_CORE_API enum enumEOLType {
 /* 行終端子のデータ長 */
 SAKURA_CORE_API enum enumEOLLen {
 	LEN_EOL_NONE			= 0,
-	LEN_EOL_CRLF_UNICODE	= 4,
 	LEN_EOL_CRLF			= 2,
 	LEN_EOL_LFCR			= 2,
 	LEN_EOL_LF				= 1,
@@ -192,7 +196,7 @@ SAKURA_CORE_API enum enumEOLLen {
 };
 
 
-#define EOL_TYPE_NUM	6
+#define EOL_TYPE_NUM	5
 
 /* 行終端子の配列 */
 SAKURA_CORE_API extern const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM];

@@ -6191,7 +6191,7 @@ DWORD CEditView::DoGrep(
 	BOOL		bGrepSubFolder,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
-	BOOL		bKanjiCode_AutoDetect,
+	int			nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle
@@ -6242,7 +6242,7 @@ DWORD CEditView::DoGrep(
 //	BOOL				bGrepSubFolder;
 //	BOOL				bGrepLoHiCase;
 //	BOOL				bGrepRegularExp;
-//	BOOL				bKanjiCode_AutoDetect;
+//	int					nGrepCharSet;
 //	BOOL				bGrepOutputLine;
 
 //	pGrepParam				= (GrepParam*)dwGrepParam;
@@ -6254,7 +6254,7 @@ DWORD CEditView::DoGrep(
 //	bGrepSubFolder			= pGrepParam->bGrepSubFolder;
 //	bGrepLoHiCase			= pGrepParam->bGrepLoHiCase;
 //	bGrepRegularExp			= pGrepParam->bGrepRegularExp;
-//	bKanjiCode_AutoDetect	= pGrepParam->bKanjiCode_AutoDetect;
+//	nGrepCharSet			= pGrepParam->nGrepCharSet;
 //	bGrepOutputLine			= pGrepParam->bGrepOutputLine;
 
 	m_bDoing_UndoRedo		= TRUE;
@@ -6409,8 +6409,12 @@ DWORD CEditView::DoGrep(
 		cmemMessage.AppendSz( "    (正規表現)\r\n" );
 	}
 
-	if( bKanjiCode_AutoDetect ){
+	if( CODE_AUTODETECT == nGrepCharSet ){
 		cmemMessage.AppendSz( "    (文字コードセットの自動判別)\r\n" );
+	}else if( 0 <= nGrepCharSet && nGrepCharSet < CODE_CODEMAX ){
+		cmemMessage.AppendSz( "    (文字コードセット：" );
+		cmemMessage.AppendSz( gm_pszCodeNameArr_1[nGrepCharSet] );
+		cmemMessage.AppendSz( ")\r\n" );
 	}
 
 	if( bGrepOutputLine ){
@@ -6468,7 +6472,7 @@ DWORD CEditView::DoGrep(
 		pnKey_CharCharsArr,
 //		pnKey_CharUsedArr,
 		szFile, szPath, bGrepSubFolder, bGrepLoHiCase,
-		bGrepRegularExp, bKanjiCode_AutoDetect,
+		bGrepRegularExp, nGrepCharSet,
 		bGrepOutputLine, bWordOnly, nGrepOutputStyle, &cRegexp, 0, &nHitCount
 	) ){
 		wsprintf( szPath, "中断しました。\r\n", nHitCount );
@@ -6542,7 +6546,7 @@ int CEditView::DoGrepTree(
 	BOOL		bGrepSubFolder,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
-	BOOL		bKanjiCode_AutoDetect,
+	int			nGrepCharSet,
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle,
@@ -6608,7 +6612,7 @@ int CEditView::DoGrepTree(
 //						pnKey_CharUsedArr,
 						pszFile, szPath2,
 						bGrepSubFolder, bGrepLoHiCase,
-						bGrepRegularExp, bKanjiCode_AutoDetect,
+						bGrepRegularExp, nGrepCharSet,
 						bGrepOutputLine, bWordOnly, nGrepOutputStyle, pRegexp, nNest + 1, pnHitCount
 					) ){
 						goto cancel_return;
@@ -6651,7 +6655,7 @@ int CEditView::DoGrepTree(
 					w32fd.cFileName, szPath2,
 //					pszFile, szPath2,
 					bGrepSubFolder, bGrepLoHiCase,
-					bGrepRegularExp, bKanjiCode_AutoDetect,
+					bGrepRegularExp, nGrepCharSet,
 					bGrepOutputLine, bWordOnly, nGrepOutputStyle,
 					pRegexp, nNest, pnHitCount, szPath2, cmemMessage
 				);
@@ -6791,7 +6795,7 @@ int CEditView::DoGrepFile(
 	BOOL		bGrepSubFolder,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
-	BOOL		bKanjiCode_AutoDetect,
+	int			nGrepCharSet,
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle,
@@ -6827,9 +6831,9 @@ int CEditView::DoGrepFile(
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
 
-	nCharCode = 0;
+	nCharCode = nGrepCharSet;
 	pszCodeName = "";
-	if( bKanjiCode_AutoDetect ){
+	if( CODE_AUTODETECT == nGrepCharSet ){
 		/*
 		|| ファイルの日本語コードセット判別
 		||

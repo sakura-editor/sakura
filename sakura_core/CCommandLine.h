@@ -43,7 +43,7 @@ private:
 		bool*		pbGrepSubFolder,
 		bool*		pbGrepLoHiCase,
 		bool*		pbGrepRegularExp,
-		bool*		pbGrepKanjiCode_AutoDetect,
+		int *		pnGrepCharSet,
 		bool*		pbGrepOutputLine,
 		bool*		pbGrepWordOnly,
 		int	*		pnGrepOutputStyle,

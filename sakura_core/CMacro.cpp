@@ -121,9 +121,10 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 			//			この編集中のテキストから検索する(0x02.未実装)
 			lFlag |= pcEditView->m_pShareData->m_Common.m_bLoHiCase						? 0x04 : 0x00;
 			lFlag |= pcEditView->m_pShareData->m_Common.m_bRegularExp					? 0x08 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect		? 0x10 : 0x00;
+			lFlag |= (pcEditView->m_pShareData->m_Common.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
 			lFlag |= pcEditView->m_pShareData->m_Common.m_bGrepOutputLine				? 0x20 : 0x00;
 			lFlag |= (pcEditView->m_pShareData->m_Common.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= pcEditView->m_pShareData->m_Common.m_nGrepCharSet << 8;
 			AddParam( lFlag );
 		}
 		break;
@@ -532,6 +533,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x00	ノーマル
 		//		0x40	ファイル毎
 		//		**********************************
+		//		0x0100 ～ 0xff00	文字コードセット番号 * 0x100
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T(	"GREPパターンが指定されていません．" ));
@@ -554,19 +556,33 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			char	pCmdLine[1024];
 			char	pOpt[64];
 //			int		nDataLen;
+			int		nCharSet;
 
 			CMemory cmWork1;	cmWork1.SetDataSz( Argument[0] );	cmWork1.Replace_j( "\"", "\"\"" );	//	検索文字列
 			CMemory cmWork2;	cmWork2.SetDataSz( Argument[1] );	cmWork2.Replace_j( "\"", "\"\"" );	//	ファイル名
 			CMemory cmWork3;	cmWork3.SetDataSz( Argument[2] );	cmWork3.Replace_j( "\"", "\"\"" );	//	フォルダ名
 
 			LPARAM lFlag = Argument[3] != NULL ? atoi(Argument[3]) : 5;
+
+			// 2002/09/21 Moca 文字コードセット
+			{
+				nCharSet = CODE_SJIS;
+				if( lFlag & 0x10 ){	// 文字コード自動判別(下位互換用)
+					nCharSet = CODE_AUTODETECT;
+				}
+				int nCode = (lFlag >> 8) & 0xff; // 下から 7-15 ビット目(0開始)を使う
+				if( ( 0 < nCode && nCode < CODE_CODEMAX ) || CODE_AUTODETECT == nCode ){
+					nCharSet = nCode;
+				}
+			}
 			/*
-			|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
+			|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 			*/
-			wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"",
+			wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
 				cmWork1.GetPtr(),
 				cmWork2.GetPtr(),
-				cmWork3.GetPtr()
+				cmWork3.GetPtr(),
+				nCharSet
 			);
 
 			pOpt[0] = '\0';
@@ -582,9 +598,10 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			if( lFlag & 0x08 ){	/* 正規表現 */
 				strcat( pOpt, "R" );
 			}
-			if( lFlag & 0x10 ){	/* 文字コード自動判別 */
-				strcat( pOpt, "K" );
-			}
+//			2002/09/21 Moca -GCODE に統合
+//			if( lFlag & 0x10 ){	/* 文字コード自動判別 */
+//				strcat( pOpt, "K" );
+//			}
 			if( lFlag & 0x20 ){	/* 行を出力するか該当部分だけ出力するか */
 				strcat( pOpt, "P" );
 			}

@@ -6927,7 +6927,7 @@ void CEditView::Command_GREP( void )
 			m_pcEditDoc->m_cDlgGrep.m_bSubFolder,
 			m_pcEditDoc->m_cDlgGrep.m_bLoHiCase,
 			m_pcEditDoc->m_cDlgGrep.m_bRegularExp,
-			m_pcEditDoc->m_cDlgGrep.m_bKanjiCode_AutoDetect,
+			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet,
 			m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine,
 			m_pcEditDoc->m_cDlgGrep.m_bWordOnly,
 			m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle
@@ -6942,12 +6942,13 @@ void CEditView::Command_GREP( void )
 		cmWork2.Replace( "\"", "\"\"" );
 		cmWork3.Replace( "\"", "\"\"" );
 		/*
-		|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
+		|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 		*/
-		wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"",
+		wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
 			cmWork1.GetPtr(),
 			cmWork2.GetPtr(),
-			cmWork3.GetPtr()
+			cmWork3.GetPtr(),
+			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet
 		);
 		pOpt[0] = '\0';
 		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder ){	/* サブフォルダからも検索する */
@@ -6965,9 +6966,10 @@ void CEditView::Command_GREP( void )
 		if( m_pcEditDoc->m_cDlgGrep.m_bRegularExp ){	/* 正規表現 */
 			strcat( pOpt, "R" );
 		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bKanjiCode_AutoDetect ){	/* 文字コード自動判別 */
-			strcat( pOpt, "K" );
-		}
+//	2002/09/20 Moca 文字コードセットオプションに統合
+//		if( m_pcEditDoc->m_cDlgGrep.m_KanjiCode_AutoDetect ){	/* 文字コード自動判別 */
+//			strcat( pOpt, "K" );
+//		}
 		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine ){	/* 行を出力するか該当部分だけ出力するか */
 			strcat( pOpt, "P" );
 		}
