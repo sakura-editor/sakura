@@ -86,7 +86,8 @@ CFileLoad::~CFileLoad( void )
 /*!
 	ファイルを開く
 	@param pFileName [in] ファイル名
-	@param CharCode  [in] ファイルの文字コード
+	@param CharCode  [in] ファイルの文字コード．AUTODETECTは指定不可．
+		予め漢字コードの判定はすませておく．
 	@param nFlag [in] 文字コードのオプション
 */
 void CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
@@ -133,7 +134,7 @@ void CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 	m_CharCode = CharCode;
 	m_nFlag = nFlag;
 
-	SeekBigin();
+	SeekBegin();
 	Buffering();
 //	m_cmemLine.AllocBuffer( 256 );
 }
@@ -162,7 +163,7 @@ void CFileLoad::FileClose( void )
 	ファイルの先頭にポインタを移動する
 	BOMはここで読み飛ばす
 */
-void CFileLoad::SeekBigin( void )
+void CFileLoad::SeekBegin( void )
 {
 	DWORD	ReadSize = 0;
 	char	Buf[4];
@@ -214,21 +215,19 @@ const char* CFileLoad::ReadLine(
 	m_cmemLine.SetData( "", 0 );
 
 	// 1行取り出し ReadBuf -> m_memLine
-	while( 1 ){
-		if( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen, &nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
+	//	Oct. 19, 2002 genta while条件を整理
+	while( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen,
+		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
 			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
 			if( m_nReadDataLen <= m_nReadBufOffSet && m_nReadBufSumSize < m_nFileDataLen ){
 				m_cmemLine.Append( pLine, nBufLineLen );
 				m_nReadBufOffSet -= nEolLen;
 				// バッファロード   File -> ReadBuf
 				Buffering();
-				continue;
 			}else{
 				m_cmemLine.Append( pLine, nBufLineLen );
 				break;
 			}
-		}
-		break;
 	}
 
 	m_nReadLength += ( nBufLineLen = m_cmemLine.GetLength() );

@@ -416,8 +416,31 @@ BOOL CEditDoc::FileRead(
 
 	}
 
-
-
+	//	From Here Oct. 19, 2002 genta
+	//	読み込みアクセス権が無い場合には漢字コード判定でファイルを
+	//	開けないので文字コード判別エラーと出てしまう．
+	//	より適切なメッセージを出すため，読めないファイルは
+	//	事前に判定・排除する
+	//
+	//	_accessではロックされたファイルの状態を取得できないので
+	//	実際にファイルを開いて確認する
+	if( bFileIsExist){
+		HANDLE hTest = 	CreateFile( pszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_READ,
+			NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
+		if( hTest == INVALID_HANDLE_VALUE ){
+			// 読み込みアクセス権がない
+			::MYMESSAGEBOX(
+				m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				_T("\'%s\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
+				pszPath
+			 );
+			return FALSE;
+		}
+		else {
+			CloseHandle( hTest );
+		}
+	}
+	//	To Here Oct. 19, 2002 genta
 
 	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL != pCEditWnd ){
