@@ -56,6 +56,10 @@ public:
 	int			m_bRegularExp;	/* 正規表現 */
 	BOOL		m_bKanjiCode_AutoDetect;	/* 文字コード自動判別 */
 	BOOL		m_bGrepOutputLine;	/* 行を出力するか該当部分だけ出力するか */
+
+	//2001/06/23 N.Nakatani add
+	BOOL		m_bWordOnly;	/* 単語単位で検索 */
+
 	int			m_nGrepOutputStyle;				/* Grep: 出力形式 */
 	char		m_szText[_MAX_PATH + 1];	/* 検索文字列 */
 	char		m_szFile[_MAX_PATH + 1];	/* 検索ファイル */
