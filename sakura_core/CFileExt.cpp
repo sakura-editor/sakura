@@ -155,7 +155,7 @@ bool CFileExt::ConvertTypesExtToDlgExt( const char *pszSrcExt, char *pszDstExt )
 		token = strtok( NULL, " ;," );
 		if( token ) strcat( pszDstExt, ";" );
 	}
-
+	free( p );	// 2003.05.20 MIK ƒƒ‚ƒŠ‰ğ•ú˜R‚ê
 	return true;
 }
 
