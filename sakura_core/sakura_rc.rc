@@ -301,25 +301,27 @@ STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "バージョン情報"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,90,178,50,14,0,0,HIDOK
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
                     30,7,42,8
     LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,79,7,60,8,NOT WS_GROUP
-    LTEXT           "Copyright (C) 1998-2003  by Norio Nakatani && Collaborators",
-                    IDC_STATIC,40,33,182,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
-    DEFPUSHBUTTON   "&OK",IDOK,90,178,50,14,0,0,HIDOK
+    LTEXT           "Copyright (C) 1998-2003  by Norio Nakatani && Collaborators",
+                    IDC_STATIC,40,33,182,8,NOT WS_GROUP
     PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,166,7,59,14,0,0,
                     HIDC_BUTTON_CONTACT
-    LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,12,60,66,
-                    8
-    LTEXT           "http://sakura-editor.sourceforge.net/",
-                    IDC_STATIC_URL_UR,80,60,109,8,SS_NOTIFY
+    LTEXT           "原作者ホームページ:",IDC_STATIC,12,48,61,8,NOT WS_GROUP
     LTEXT           "http://hp.vector.co.jp/authors/VA016528/",
-                    IDC_STATIC_URL_ORG,80,48,123,8,SS_NOTIFY
-    LTEXT           "原作者ホームページ:",IDC_STATIC,12,48,61,8
-    EDITTEXT        IDC_EDIT_ABOUT,5,70,220,104,ES_MULTILINE | ES_READONLY | 
+                    IDC_STATIC_URL_ORG,80,48,126,9,SS_NOTIFY | NOT WS_GROUP | 
+                    WS_TABSTOP
+    LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,12,60,66,
+                    8,NOT WS_GROUP
+    LTEXT           "http://sakura-editor.sourceforge.net/",
+                    IDC_STATIC_URL_UR,80,60,112,9,SS_NOTIFY | NOT WS_GROUP | 
+                    WS_TABSTOP
+    EDITTEXT        IDC_EDIT_ABOUT,5,73,220,101,ES_MULTILINE | ES_READONLY | 
                     ES_WANTRETURN | WS_DISABLED | WS_VSCROLL,0,
                     HIDC_EDIT_ABOUT
 END

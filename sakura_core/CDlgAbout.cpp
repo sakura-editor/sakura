@@ -56,58 +56,9 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	INT_PTR result;
 	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
 	switch( wMsg ){
-	case WM_SETCURSOR:
-		//	カーソルがコントロール上に来た
-		if( (HWND)wParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR ) ){
-			if( nCursorState != 1 ){
-				nCursorState = 1;
-				//	再描画させる必要がある
-				::InvalidateRect( (HWND)wParam, NULL, TRUE );
-			}
-		}
-		else if( (HWND)wParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG ) ){
-			if( nCursorState != 2 ){
-				nCursorState = 2;
-				//	再描画させる必要がある
-				::InvalidateRect( (HWND)wParam, NULL, TRUE );
-			}
-		}
-		else {
-			if( nCursorState != 0 ){
-				nCursorState = 0;
-				//	再描画させる必要がある
-				::InvalidateRect( GetDlgItem(hWnd, IDC_STATIC_URL_UR ), NULL, TRUE );
-				::InvalidateRect( GetDlgItem(hWnd, IDC_STATIC_URL_ORG ), NULL, TRUE );
-			}
-		}
-		result = TRUE;
-		break;
+	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORSTATIC:
-		if( nCursorState == 1 &&
-			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR ) ){
-			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
-			result = (INT_PTR)(HBRUSH)GetStockObject(NULL_BRUSH);
-		}
-		else if( nCursorState == 2 &&
-			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG ) ){
-			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
-			result = (INT_PTR)(HBRUSH)GetStockObject(NULL_BRUSH);
-		}
-		break;
-	case WM_COMMAND:
-		//	CDialog標準では拾えない部分
-		switch( LOWORD(wParam) ){
-		case IDC_STATIC_URL_UR:
-		case IDC_STATIC_URL_ORG:
-			//	Web Browserの起動
-			{
-				char buf[512];
-				::GetWindowText( ::GetDlgItem( hWnd, LOWORD( wParam ) ), buf, 512 );
-				ShellExecute( hWnd, NULL, buf, NULL, NULL, SW_SHOWNORMAL );
-			}
-			result = TRUE;
-		}
-		break;
+		return (INT_PTR)GetStockObject( WHITE_BRUSH );
 	}
 	return result;
 }
@@ -163,9 +114,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	::SetDlgItemText( m_hWnd, IDC_STATIC_UPDATE, szMsg );
 
-	//	Nov. 7, 2000 genta カーソル位置の情報を保持
-	nCursorState = 0;
-
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
 	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, sizeof( szMsg ) );
@@ -184,6 +132,10 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
+	// URLウィンドウをサブクラス化する
+	m_UrlUrWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_UR ) );
+	m_UrlOrgWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_ORG ) );
+
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );
 }
@@ -196,6 +148,15 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 		/* 「原作者連絡先」のヘルプ */	//Jan. 12, 2001 jepro `作者'の前に`原'を付けた
 		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 8 );
 		return TRUE;
+	case IDC_STATIC_URL_UR:
+	case IDC_STATIC_URL_ORG:
+		//	Web Browserの起動
+		{
+			char buf[512];
+			::GetWindowText( ::GetDlgItem( m_hWnd, wID ), buf, 512 );
+			ShellExecute( m_hWnd, NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			return TRUE;
+		}
 //Jan. 12, 2001 JEPRO UR1.2.20.2 (Nov. 7, 2000) から以下のボタンは削除されているのでコメントアウトした
 //	case IDC_BUTTON_DOWNLOAD:
 //		/* 「最新バージョンのダウンロード」のヘルプ  */
@@ -210,6 +171,156 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 LPVOID CDlgAbout::GetHelpIdTable(void)
 {
 	return (LPVOID)p_helpids;
+}
+
+BOOL CUrlWnd::SubclassWindow( HWND hWnd )
+{
+	// STATICウィンドウをサブクラス化する
+	// 元のSTATICは WS_TABSTOP, SS_NOTIFY スタイルのものを使用すること
+	if( m_hWnd != NULL )
+		return FALSE;
+	if( !IsWindow( hWnd ) )
+		return FALSE;
+
+	// サブクラス化を実行する
+	LONG_PTR lptr;
+	SetLastError( 0 );
+	lptr = SetWindowLongPtr( hWnd, GWLP_USERDATA, (LONG_PTR)this );
+	if( lptr == 0 && GetLastError() != 0 )
+		return FALSE;
+	m_pOldProc = (WNDPROC)SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)UrlWndProc );
+	if( m_pOldProc == NULL )
+		return FALSE;
+	m_hWnd = hWnd;
+
+	// 下線付きフォントに変更する
+	HFONT hFont;
+	LOGFONT lf;
+	hFont = (HFONT)SendMessage( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
+	GetObject( hFont, sizeof(lf), &lf );
+	lf.lfUnderline = TRUE;
+	m_hFont = CreateFontIndirect( &lf );
+	if(m_hFont != NULL)
+		SendMessage( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
+
+	return TRUE;
+}
+
+LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	CUrlWnd* pUrlWnd = (CUrlWnd*)GetWindowLongPtr( hWnd, GWLP_USERDATA );
+
+	HDC hdc;
+	POINT pt;
+	RECT rc;
+
+	switch ( msg ) {
+	case WM_SETCURSOR:
+		// カーソル形状変更
+		HCURSOR hCursor;
+		hCursor = LoadCursor( GetModuleHandle( NULL ), MAKEINTRESOURCE( IDC_CURSOR_HAND ) );
+		SetCursor( hCursor );
+		return (LRESULT)0;
+	case WM_LBUTTONDOWN:
+		// キーボードフォーカスを自分に当てる
+		SendMessage( GetParent(hWnd), WM_NEXTDLGCTL, (WPARAM)hWnd, (LPARAM)1 );
+		break;
+	case WM_SETFOCUS:
+	case WM_KILLFOCUS:
+		// 再描画
+		InvalidateRect( hWnd, NULL, TRUE );
+		UpdateWindow( hWnd );
+		break;
+	case WM_GETDLGCODE:
+		// デフォルトプッシュボタンのように振舞う（Enterキーの有効化）
+		// 方向キーは無効化（IEのバージョン情報ダイアログと同様）
+		return DLGC_DEFPUSHBUTTON | DLGC_WANTARROWS;
+	case WM_MOUSEMOVE:
+		// カーソルがウィンドウ内に入ったらタイマー起動
+		// ウィンドウ外に出たらタイマー削除
+		// 各タイミングで再描画
+		BOOL bHilighted;
+		pt.x = LOWORD( lParam );
+		pt.y = HIWORD( lParam );
+		GetClientRect( hWnd, &rc );
+		bHilighted = PtInRect( &rc, pt );
+		if( bHilighted != pUrlWnd->m_bHilighted ){
+			pUrlWnd->m_bHilighted = bHilighted;
+			InvalidateRect( hWnd, NULL, TRUE );
+			if( pUrlWnd->m_bHilighted )
+				SetTimer( hWnd, 1, 200, NULL );
+			else
+				KillTimer( hWnd, 1 );
+		}
+		break;
+	case WM_TIMER:
+		// カーソルがウィンドウ外にある場合にも WM_MOUSEMOVE を送る
+		GetCursorPos( &pt );
+		ScreenToClient( hWnd, &pt );
+		GetClientRect( hWnd, &rc );
+		if( !PtInRect( &rc, pt ) )
+			SendMessage( hWnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
+		break;
+	case WM_PAINT:
+		// ウィンドウの描画
+		PAINTSTRUCT ps;
+		HFONT hFont;
+		HFONT hOldFont;
+		TCHAR szText[512];
+
+		hdc = BeginPaint( hWnd, &ps );
+
+		// 現在のクライアント矩形、テキスト、フォントを取得する
+		GetClientRect( hWnd, &rc );
+		GetWindowText( hWnd, szText, 512 );
+		hFont = (HFONT)SendMessage( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
+
+		// テキスト描画
+		SetBkMode( hdc, TRANSPARENT );
+		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
+		hOldFont = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
+		TextOut( hdc, 2, 0, szText, lstrlen( szText ) );
+		SelectObject( hdc, (HGDIOBJ)hOldFont );
+
+		// フォーカス枠描画
+		if( GetFocus() == hWnd )
+			DrawFocusRect( hdc, &rc );
+
+		EndPaint( hWnd, &ps );
+		return (LRESULT)0;
+	case WM_ERASEBKGND:
+		hdc = (HDC)wParam;
+		GetClientRect( hWnd, &rc );
+
+		// 背景描画
+		if( pUrlWnd->m_bHilighted ){
+			// ハイライト時背景描画
+			SetBkColor( hdc, RGB( 0xff, 0xff, 0 ) );
+			ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+		}else{
+			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
+			HBRUSH hbr;
+			HBRUSH hbrOld;
+			hbr = (HBRUSH)SendMessage( GetParent( hWnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd );
+			hbrOld = (HBRUSH)SelectObject( hdc, hbr );
+			FillRect( hdc, &rc, hbr );
+			SelectObject( hdc, hbrOld );
+		}
+		return (LRESULT)1;
+	case WM_DESTROY:
+		// 後始末
+		KillTimer( hWnd, 1 );
+		SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)pUrlWnd->m_pOldProc );
+		if( pUrlWnd->m_hFont != NULL )
+			DeleteObject( pUrlWnd->m_hFont );
+		pUrlWnd->m_hWnd = NULL;
+		pUrlWnd->m_hFont = NULL;
+		pUrlWnd->m_bHilighted = FALSE;
+		pUrlWnd->m_pOldProc = NULL;
+		return (LRESULT)0;
+	}
+
+	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
 }
 //@@@ 2002.01.18 add end
 
