@@ -3,6 +3,7 @@
 	置換ダイアログ
 	
 	@author Norio Nakatani
+	@date 2001/06/23 N.Nakatani　単語単位で検索する機能を実装
 	$Revision$
 */
 /*
@@ -89,8 +90,11 @@ void CDlgReplace::SetData( void )
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
-//	/* 一致する単語のみ検索する */
-//	::CheckDlgButton( m_hWnd, IDC_CHK_WORDONLY, m_bWordOnly );
+	
+	// 2001/06/23 N.Nakatani 
+	/* 単語単位で探す */
+	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
+
 	/* 正規表現 */
 	::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, m_bRegularExp );
 
@@ -113,6 +117,11 @@ void CDlgReplace::SetData( void )
 			/* 英大文字と英小文字を区別する */
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+
+			// 2001/06/23 N.Nakatani 
+			/* 単語単位で探す */
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
+
 		}
 	}
 	/* 検索／置換  見つからないときメッセージを表示 */
@@ -139,8 +148,11 @@ int CDlgReplace::GetData( void )
 
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
-//	/* 一致する単語のみ検索する */
-//	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORDONLY );
+
+	// 2001/06/23 N.Nakatani 
+	/* 単語単位で探す */
+	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
+
 	/* 正規表現 */
 	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
 	/* 選択範囲内置換 */
@@ -327,11 +339,21 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				/* 英大文字と英小文字を区別する */
 				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+
+				// 2001/06/23 N.Nakatani 
+				/* 単語単位で探す */
+				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
+
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
+
+			// 2001/06/23 N.Nakatani 
+			/* 単語単位で探す */
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
+
 		}
 		return TRUE;;
 //	case IDOK:			/* 下検索 */

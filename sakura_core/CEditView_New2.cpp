@@ -497,9 +497,25 @@ BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int
 		}
 	}else{
 		nKeyLength = lstrlen( m_szCurSrchKey );		/* 検索条件 */
+
+		// 2001/06/23 単語単位の検索のために追加
+		if( m_pShareData->m_Common.m_bWordOnly ){	/* 検索／置換  1==単語のみ検索 */
+			/* 現在位置の単語の範囲を調べる */
+			/* 現在位置の単語の範囲を調べる */
+			int nIdxFrom, nIdxTo;
+			if( false == CDocLineMgr::WhereCurrentWord_2( pszData, nDataLen, nPos, &nIdxFrom, &nIdxTo, NULL, NULL ) ){
+				return FALSE;
+			}
+			if( nPos != nIdxFrom || nKeyLength != nIdxTo - nIdxFrom ){
+				return FALSE;
+			}
+		}
+
+		//検索条件が未定義　または　検索条件の長さより調べるデータが短いときはヒットしない
 		if( 0 == nKeyLength || nKeyLength > nDataLen - nPos ){
 			return FALSE;
 		}
+		//英大文字小文字の区別をするかどうか
 		if( m_bCurSrchLoHiCase ){	/* 1==英大文字小文字の区別 */
 			if( 0 == memcmp( &pszData[nPos], m_szCurSrchKey, nKeyLength ) ){
 				*pnSearchEnd = nPos + nKeyLength;
