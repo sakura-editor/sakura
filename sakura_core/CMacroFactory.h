@@ -59,7 +59,9 @@ public:
 	typedef CMacroManagerBase* (*Creator)(const char*);
 
 	bool RegisterCreator( Creator );
-	bool RegisterExt( const char*, Creator );
+	// Jan. 31, 2004 genta
+	// バイナリサイズ削減のためm_mMacroExtsを削除
+	//bool RegisterExt( const char*, Creator );
 	bool Unregister( Creator );
 
 	CMacroManagerBase* Create(const char*);
@@ -70,10 +72,14 @@ private:
 	CMacroFactory();
 	std::string Ext2Key(const char *ext);
 
-	typedef std::map<std::string, Creator> MacroTypeRep;
+	// Jan. 31, 2004 genta
+	// バイナリサイズ削減のため拡張子保持用mapを削除
+	//	typedef std::map<std::string, Creator> MacroTypeRep;
 	typedef std::list<Creator> MacroEngineRep;
 
-	MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
+	// Jan. 31, 2004 genta
+	// バイナリサイズ削減のため
+	//MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
 	/*!
 		Creatorリスト
 		@date 2002.08.25 genta 追加
