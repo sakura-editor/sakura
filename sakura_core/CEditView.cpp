@@ -6233,6 +6233,7 @@ DWORD CEditView::DoGrep(
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
+	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_bGrepRealTimeView );	// 2003.06.23 Moca
 
 	pszWork = pcmGrepKey->GetPtr();
 	strcpy( szKey, pszWork );
@@ -6387,8 +6388,9 @@ DWORD CEditView::DoGrep(
 	}
 
 	/* 表示処理ON/OFF */
-	m_bDrawSWITCH = FALSE;
-
+	// 2003.06.23 Moca 共通設定で変更できるように
+//	m_bDrawSWITCH = FALSE;
+	m_bDrawSWITCH = m_pShareData->m_Common.m_bGrepRealTimeView;
 
 
 	if( -1 == DoGrepTree(
@@ -6458,7 +6460,11 @@ DWORD CEditView::DoGrep(
 
 
 
-/* Grep実行 */
+/*! Grep実行 
+
+	@date 2003.06.23 Moca サブフォルダ→ファイルだったのをファイル→サブフォルダの順に変更
+	@date 2003.06.23 Moca ファイル名から""を取り除くように
+*/
 int CEditView::DoGrepTree(
 	CDlgCancel* pcDlgCancel,
 	HWND		hwndCancel,
@@ -6493,7 +6499,7 @@ int CEditView::DoGrepTree(
 	CMemory			cmemMessage;
 	int				nHitCountOld;
 	char*			pszWork;
-	int				nWork;
+	int				nWork = 0;
 	WIN32_FIND_DATA	w32fd;
 	nHitCountOld = -100;
 //	MSG msg;
@@ -6501,8 +6507,100 @@ int CEditView::DoGrepTree(
 
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, pszPath );
 
+	// ファイル検索
 	strcpy( szFile, pszFile );
 	nFileLen = lstrlen( szFile );
+	//	2003.06.23 Moca ファイルをサブフォルダより優先して検索するため，
+	//	サブフォルダの処理を下の方へ移動
+	
+	nPos = 0;
+	pszToken = my_strtok( szFile, nFileLen, &nPos, " ;," );
+	while( NULL != pszToken ){
+		// 2003.06.23 Moca "file name.txt"のようにエスケープされていた場合の考慮
+		// ファイル名には"は含まれないから取り除く
+		{
+			strcpy( szPath, pszPath );
+			int i = strlen( szPath );
+			for(; '\0' != *pszToken; ++pszToken ){
+				if( '\"' != *pszToken ){
+					szPath[i] = *pszToken;
+					++i;
+				}
+			}
+			szPath[i] = '\0';
+		}
+//		strcat( szPath, pszToken );
+		
+		hFind = ::FindFirstFile( szPath, &w32fd );
+		if( INVALID_HANDLE_VALUE == hFind ){
+			goto last_of_this_loop;
+		}
+		do{
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
+				goto cancel_return;
+			}
+			/* 中断ボタン押下チェック */
+			if( pcDlgCancel->IsCanceled() ){
+				goto cancel_return;
+			}
+			/* 表示設定をチェック */
+			m_bDrawSWITCH = ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW );
+
+			if( (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){
+			}else{
+//				::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, szPath2 );
+				::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, w32fd.cFileName );
+
+				wsprintf( szPath2, "%s%s", pszPath, w32fd.cFileName );
+				/* ファイル内の検索 */
+				nRet = DoGrepFile(
+					pcDlgCancel, hwndCancel, pszKey,
+					pnKey_CharCharsArr,
+//					pnKey_CharUsedArr,
+					w32fd.cFileName, szPath2,
+//					pszFile, szPath2,
+					bGrepSubFolder, bGrepLoHiCase,
+					bGrepRegularExp, nGrepCharSet,
+					bGrepOutputLine, bWordOnly, nGrepOutputStyle,
+					pRegexp, nNest, pnHitCount, szPath2, cmemMessage
+				);
+//				::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				// 2003.06.23 Moca リアルタイム表示のときは早めに表示
+				if( m_bDrawSWITCH ){
+					if( '\0' != pszKey[0] ){
+						// データ検索のときファイルの合計が最大10MBを超えたら表示
+						nWork += ( w32fd.nFileSizeLow + 1023 ) / 1024;
+					}
+					if( *pnHitCount - nHitCountOld && 
+						( *pnHitCount < 20 || 10000 < nWork ) ){
+						nHitCountOld = -100; // 即表示
+					}
+				}
+				if( *pnHitCount - nHitCountOld  >= 10 ){
+					/* 結果出力 */
+					pszWork = cmemMessage.GetPtr( &nWork );
+					if( 0 < nWork ){
+						Command_ADDTAIL( pszWork, nWork );
+						Command_GOFILEEND( FALSE );
+						/* 結果格納エリアをクリア */
+						cmemMessage.SetDataSz( "" );
+						nWork = 0;
+					}
+					nHitCountOld = *pnHitCount;
+				}
+				if( -1 == nRet ){
+					goto cancel_return;
+				}
+			}
+		}while( TRUE == ::FindNextFile( hFind, &w32fd ) );
+		::FindClose( hFind );
+last_of_this_loop:;
+		pszToken = my_strtok( szFile, nFileLen, &nPos, " ;," );
+	}
+	// 2003.06.23 Moca サブフォルダ→ファイルだったのをファイル→サブフォルダの
+	//	順に変更するため上から移動してきた
+	// サブフォルダを調べる
 	if( TRUE == bGrepSubFolder ){
 		strcpy( szPath, pszPath );
 		strcat( szPath, "*.*" );
@@ -6518,6 +6616,9 @@ int CEditView::DoGrepTree(
 				if( pcDlgCancel->IsCanceled() ){
 					goto cancel_return;
 				}
+				/* 表示設定をチェック */
+				m_bDrawSWITCH = ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW );
+
 				if( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY &&
 					0 != strcmp( w32fd.cFileName, "." ) &&
 					0 != strcmp( w32fd.cFileName, ".." )
@@ -6546,63 +6647,6 @@ int CEditView::DoGrepTree(
 			}while( TRUE == ::FindNextFile( hFind, &w32fd ) );
 			::FindClose( hFind );
 		}
-	}
-	nPos = 0;
-	pszToken = my_strtok( szFile, nFileLen, &nPos, " ;," );
-	while( NULL != pszToken ){
-		strcpy( szPath, pszPath );
-		strcat( szPath, pszToken );
-		hFind = ::FindFirstFile( szPath, &w32fd );
-		if( INVALID_HANDLE_VALUE == hFind ){
-			goto last_of_this_loop;
-		}
-		do{
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
-				goto cancel_return;
-			}
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				goto cancel_return;
-			}
-			if( (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){
-			}else{
-//				::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, szPath2 );
-				::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, w32fd.cFileName );
-
-				wsprintf( szPath2, "%s%s", pszPath, w32fd.cFileName );
-				/* ファイル内の検索 */
-				nRet = DoGrepFile(
-					pcDlgCancel, hwndCancel, pszKey,
-					pnKey_CharCharsArr,
-//					pnKey_CharUsedArr,
-					w32fd.cFileName, szPath2,
-//					pszFile, szPath2,
-					bGrepSubFolder, bGrepLoHiCase,
-					bGrepRegularExp, nGrepCharSet,
-					bGrepOutputLine, bWordOnly, nGrepOutputStyle,
-					pRegexp, nNest, pnHitCount, szPath2, cmemMessage
-				);
-//				::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				if( *pnHitCount - nHitCountOld  >= 10 ){
-					/* 結果出力 */
-					pszWork = cmemMessage.GetPtr( &nWork );
-					if( 0 < nWork ){
-						Command_ADDTAIL( pszWork, nWork );
-						Command_GOFILEEND( FALSE );
-						/* 結果格納エリアをクリア */
-						cmemMessage.SetDataSz( "" );
-					}
-					nHitCountOld = *pnHitCount;
-				}
-				if( -1 == nRet ){
-					goto cancel_return;
-				}
-			}
-		}while( TRUE == ::FindNextFile( hFind, &w32fd ) );
-		::FindClose( hFind );
-last_of_this_loop:;
-		pszToken = my_strtok( szFile, nFileLen, &nPos, " ;," );
 	}
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
 	/* 結果出力 */
@@ -6829,6 +6873,8 @@ int CEditView::DoGrepFile(
 			if( pcDlgCancel->IsCanceled() ){
 				return -1;
 			}
+			//	2003.06.23 Moca 表示設定をチェック
+			m_bDrawSWITCH = ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW );
 			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
 			if( 5000000 < cfl.GetFileSize() ){
 				int nPercent = cfl.GetPercent();
