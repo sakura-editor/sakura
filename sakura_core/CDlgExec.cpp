@@ -35,7 +35,7 @@
 CDlgExec::CDlgExec()
 {
 	m_szCommand[0] = '\0';	/* コマンドライン */
-	m_bGetStdout = FALSE/*TRUE*/;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更
+	m_bGetStdout = /*FALSE*/TRUE;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更	//Jul. 03, 2001 JEPRO [得る]がデフォルトとなるように戻した
 
 	return;
 }
