@@ -57,9 +57,12 @@ void CEditView::TranslateCommand_isearch(
 		//以下の機能のとき、インクリメンタルサーチ中は検索文字入力として処理
 		case F_CHAR:
 		case F_IME_CHAR:
-		case F_INSTEXT:
 			nCommand = F_ISEARCH_ADD_CHAR;
 			break;
+		case F_INSTEXT:
+			nCommand = F_ISEARCH_ADD_STR;
+			break;
+
 		case F_INDENT_TAB:	// TABはインデントではなく単なるTAB文字と見なす
 		case F_UNINDENT_TAB:	// genta追加
 			nCommand = F_ISEARCH_ADD_CHAR;
