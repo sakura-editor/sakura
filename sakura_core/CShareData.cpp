@@ -1124,7 +1124,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"dpr,pas",
 			"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo",		//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
 			"cgi,pl,pm",			//Jul. 08, 2001 JEPRO 追加
-			"bas,frm,cls,ctl,pag",	//Jul. 09, 2001 JEPRO 追加
+			"bas,frm,cls,ctl,pag,dob,dsr",	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加
 			"rtf",					//Jul. 10, 2001 JEPRO 追加
 			"ini,inf,cnf,kwd,col",	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
 			"",						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
