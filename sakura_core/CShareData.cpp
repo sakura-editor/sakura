@@ -889,35 +889,9 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
 		m_pShareData->m_Common.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
 
-/***********
-書式指定子 意味
-d 年月日の日。先頭に 0 は付きません。
-dd 年月日の日。1 桁の場合、先頭に 0 が付きます。
-ddd 曜日。ロケールの LOCALE_SABBREVDAYNAME が使われます。
-dddd 曜日。ロケールの LOCALE_SDAYNAME が使われます。
-M 年月日の月。先頭に 0 は付きません。
-MM 年月日の月。1 桁の場合、先頭に 0 が付きます。
-MMM 年月日の月。ロケールの LOCALE_SABBREVMONTHNAME が使われます。
-MMMM 年月日の月。ロケールの LOCALE_SMONTHNAME が使われます。
-y 年月日の年。先頭に 0 は付きません。
-yy 年月日の年。1 桁の場合、先頭に 0 が付きます。
-yyyy 年月日の年。4 桁で表されます。
-gg 「平成」などの時代を示す文字列。ロケールの CAL_SERASTRING が使われます。日付がこの情報を持たないときは、無視されます。
-************/
-
-/***********
-書式指定子 意味
-h 12 時間制の時間。先頭に 0 は付きません。
-hh 12 時間制の時間。必要に応じて、先頭に 0 が付きます。
-H 24 時間制の時間。先頭に 0 は付きません。
-HH 24 時間制の時間。必要に応じて、先頭に 0 が付きます。
-m 分。先頭に 0 は付きません。
-mm 分。必要に応じて、先頭に 0 が付きます。
-s 秒。先頭に 0 は付きません。
-ss 秒。必要に応じて、先頭に 0 が付きます。
-t 時刻マーカー。「 A 」「 P 」など。
-tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
-************/
+		/*
+			書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
+		*/
 
 		m_pShareData->m_Common.m_nDateFormatType = 0;	//日付書式のタイプ
 		strcpy( m_pShareData->m_Common.m_szDateFormat, "yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
