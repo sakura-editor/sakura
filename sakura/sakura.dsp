@@ -97,6 +97,10 @@ SOURCE=..\sakura_core\CAutoSave.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CBlockComment.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CBregexp.cpp
 # End Source File
 # Begin Source File
@@ -318,6 +322,10 @@ SOURCE=..\sakura_core\CLayoutMgr_New.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\CLayoutMgr_New2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CLineComment.cpp
 # End Source File
 # Begin Source File
 
@@ -549,6 +557,10 @@ SOURCE=..\sakura_core\CAutoSave.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CBlockComment.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CBregexp.h
 # End Source File
 # Begin Source File
@@ -734,6 +746,10 @@ SOURCE=..\sakura_core\CLayout.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CLayoutMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CLineComment.h
 # End Source File
 # Begin Source File
 

@@ -350,7 +350,7 @@ protected:
 	void SetCurrentColor( HDC, int );							/* 現在の色を指定 */
 	void DispRuler( HDC );										/* ルーラー描画 */
 	void DrawRulerCaret( HDC hdc );								// ルーラーのキャレットのみ描画 2002.02.25 Add By KK
-	int	DispText( HDC, int, int, const unsigned char*, int );	/* テキスト表示 */
+	int	DispText( HDC, int, int, const char*, int );	/* テキスト表示 */	//@@@ 2002.09.22 YAZAKI
 	void DispTextSelected( HDC, int, int, int, int );			/* テキスト反転 */
 //	int	DispCtrlCode( HDC, int, int, const unsigned char*, int );	/* コントロールコード表示 */
 	void TwoPointToRect( RECT*, int, int, int, int );			/* 2点を対角とする矩形を求める */

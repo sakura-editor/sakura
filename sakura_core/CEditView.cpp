@@ -8681,7 +8681,7 @@ void CEditView::DrawBracketPair( void )
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 				nTop  = ( m_nCaretPosY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 				HideCaret_( m_hWnd );	// ƒLƒƒƒŒƒbƒg‚ªˆêuÁ‚¦‚é‚Ì‚ð–hŽ~
-				DispText( hdc, nLeft, nTop, (const unsigned char *)&pLine[OutputX], m_nCharSize );
+				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
 				ShowCaret_( m_hWnd );	// ƒLƒƒƒŒƒbƒg‚ªˆêuÁ‚¦‚é‚Ì‚ð–hŽ~
 			}
 
@@ -8692,7 +8692,7 @@ void CEditView::DrawBracketPair( void )
 				OutputX = LineColmnToIndex( pLine, nLineLen, nCol );
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 				nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-				DispText( hdc, nLeft, nTop, (const unsigned char *)&pLine[OutputX], m_nCharSize );
+				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
 			}
 
 			::SetTextColor( hdc, crTextOld );
