@@ -2592,6 +2592,13 @@ void CEditView::AdjustScrollBars( void )
 		si.nTrackPos = nVScrollRate;
 		::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
 		m_nVScrollRate = nVScrollRate;				/* 垂直スクロールバーの縮尺 */
+		
+		//	Nov. 16, 2002 genta
+		//	縦スクロールバーがDisableになったときは必ず全体が画面内に収まるように
+		//	スクロールさせる
+		if( m_nViewRowNum > nAllLines ){
+			ScrollAtV( 0 );
+		}
 	}
 	if( NULL != m_hwndHScrollBar ){
 		si.cbSize = sizeof( si );
