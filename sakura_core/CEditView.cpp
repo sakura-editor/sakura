@@ -5817,9 +5817,7 @@ void CEditView::DrawCaretPosInfo( void )
 		}else
 		if( 2 == nCharChars ){
 			wsprintf( szText_3, "%02x%02x", pLine[nIdxFrom],  pLine[nIdxFrom + 1] );
-		}else
-		if( 4 == nCharChars ){
-			wsprintf( szText_3, "%02x%02x%02x%02x", pLine[nIdxFrom],  pLine[nIdxFrom + 1], pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] );
+		// 2003.08.26 Moca CR0LF0îpé~Ç≈ 4 == nCharChars ÇçÌèú
 		}else{
 			wsprintf( szText_3, "    " );
 		}

@@ -926,7 +926,7 @@ LRESULT CEditWnd::DispatchEvent(
 		idCtl = (UINT) wParam;				/* コントロールのID */
 		lpdis = (DRAWITEMSTRUCT*) lParam;	/* 項目描画情報 */
 		if( IDW_STATUSBAR == idCtl ){
-			if( 4 == lpdis->itemID ){
+			if( 5 == lpdis->itemID ){ // 2003.08.26 Moca idがずれて作画されなかった
 				int	nColor;
 				if( m_pShareData->m_bRecordingKeyMacro	/* キーボードマクロの記録中 */
 				 && m_pShareData->m_hwndRecordingKeyMacro == m_hWnd	/* キーボードマクロを記録中のウィンドウ */
@@ -937,9 +937,14 @@ LRESULT CEditWnd::DispatchEvent(
 				}
 				::SetTextColor( lpdis->hDC, ::GetSysColor( nColor ) );
 				::SetBkMode( lpdis->hDC, TRANSPARENT );
-				::TextOut( lpdis->hDC, lpdis->rcItem.left, lpdis->rcItem.top + 2, "REC", lstrlen( "REC" ) );
+				
+				// 2003.08.26 Moca 上下中央位置に作画
+				TEXTMETRIC tm;
+				::GetTextMetrics( lpdis->hDC, &tm );
+				int y = ( lpdis->rcItem.bottom - lpdis->rcItem.top - tm.tmHeight + 1 ) / 2 + lpdis->rcItem.top;
+				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, "REC", lstrlen( "REC" ) );
 				if( COLOR_BTNTEXT == nColor ){
-					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, lpdis->rcItem.top + 2, "REC", lstrlen( "REC" ) );
+					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, "REC", lstrlen( "REC" ) );
 				}
 			}
 			return 0;
@@ -3196,7 +3201,8 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	2カラム目に改行コードの表示を挿入
 		//	From Here
 		int			nStArr[8];
-		const char*	pszLabel[7] = { "", "999999行 99999列", "RR0RR0","FFFFFFFF", "SJIS  ", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
+		// 2003.08.26 Moca CR0LF0廃止に従い、適当に調整
+		const char*	pszLabel[7] = { "", "99999行 9999列", "CRLF ", "FFFFFFFF", "SJIS  ", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
 		int			nStArrNum = 7;
 		//	To Here
 		int			nAllWidth;
@@ -3207,13 +3213,15 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		hdc = ::GetDC( m_hwndStatusBar );
 		nStArr[nStArrNum - 1] = nAllWidth;
 		if( wParam != SIZE_MAXIMIZED ){
-			nStArr[nStArrNum - 1] -= 16;
+			nStArr[nStArrNum - 1] -= 17; // 2003.08.26 Moca Lunaで「挿入」が「挿」になるので、16を17にした
 		}
 		for( i = nStArrNum - 1; i > 0; i-- ){
 			::GetTextExtentPoint32( hdc, pszLabel[i], lstrlen( pszLabel[i] ), &sz );
-			nStArr[i - 1] = nStArr[i] - ( sz.cx + ::GetSystemMetrics( SM_CXEDGE ) );
+			nStArr[i - 1] = nStArr[i] - ( sz.cx + ::GetSystemMetrics( SM_CXEDGE ) + 1 ); // 2003.08.26 Moca Luna向けに+1 してみる
 		}
-		nStArr[0] += 16;	//Nov. 2, 2000 JEPRO よくわからないがともかくここを増やしてみる
+		//Nov. 2, 2000 JEPRO よくわからないがともかくここを増やしてみる
+		// 2003.08.26 Moca pszLabel[1]を2文字削って不要に
+		// nStArr[0] += 16;
 
 		::SendMessage( m_hwndStatusBar, SB_SETPARTS, nStArrNum, (LPARAM) (LPINT)nStArr );
 		::ReleaseDC( m_hwndStatusBar, hdc );
