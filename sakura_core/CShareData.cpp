@@ -1043,6 +1043,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"DIFF差分表示(変更)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 			"DIFF差分表示(削除)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 			"対括弧の強調表示",			FALSE , TRUE,  FALSE, RGB( 128, 0, 0 )		, RGB( 255, 251, 240 ),	// 02/09/18 ai
+			"ブックマーク",				TRUE  , FALSE, FALSE, RGB( 255, 251, 240 )	, RGB( 0, 128, 192 ),	// 02/10/16 ai
 		};
 //	To Here Sept. 18, 2000
 

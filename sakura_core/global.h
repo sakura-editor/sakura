@@ -269,13 +269,14 @@ SAKURA_CORE_API enum enumColorIndexType {
 	COLORIDX_DIFF_CHANGE = 31,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
 	COLORIDX_DIFF_DELETE = 32,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
 	COLORIDX_BRACKET_PAIR = 33,	/* 対括弧 */	// 02/09/18 ai Add
+	COLORIDX_MARK		= 34,	/* ブックマーク */	// 02/10/16 ai Add
 
 	//カラーの最後
-	COLORIDX_LAST		= 34,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/09/18 ai Mod 33→34 */
+	COLORIDX_LAST		= 35,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/10/16 ai Mod 34→35 */
 
 	//カラー表示制御用
-	COLORIDX_BLOCK1		= 35,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/09/18 ai Mod 34→35 */
-	COLORIDX_BLOCK2		= 36	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/09/18 ai Mod 35→36 */
+	COLORIDX_BLOCK1		= 36,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */
+	COLORIDX_BLOCK2		= 37	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
 
 	//1000-1099 : カラー表示制御用(正規表現キーワード)
 };

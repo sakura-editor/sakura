@@ -159,6 +159,7 @@ const char* const colorIDXKeyName[] =
 	"DFC",	//DIFF変更	//@@@ 2002.06.01 MIK
 	"DFD",	//DIFF削除	//@@@ 2002.06.01 MIK
 	"BRC",	//対括弧	// 02/09/18 ai Add
+	"MRK",	//ブックマーク	// 02/10/16 ai Add
 	"LAST"	// Not Used
 };
 
