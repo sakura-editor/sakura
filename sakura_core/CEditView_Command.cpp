@@ -6032,13 +6032,12 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 void CEditView::Command_UNINDENT( char cChar )
 {
 	//	Aug. 9, 2003 genta
-	//	選択されていない場合に逆TABインデントした場合に
-	//	TABが入力されるのをやめる．
-	//	代わりに注意メッセージを出す
+	//	選択されていない場合に逆インデントした場合に
+	//	注意メッセージを出す
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		/* １バイト文字入力 */
-		//Command_CHAR( cChar );
-		SendStatusMessage("★逆TABインデントは選択してから");
+		Command_CHAR( cChar );	//	2003.10.09 zenryaku警告を出すが，動作は以前のままにする 
+		SendStatusMessage("★逆インデントは選択時のみ");
 		return;
 	}
 
