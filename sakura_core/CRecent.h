@@ -56,7 +56,8 @@ typedef enum {
 	RECENT_FOR_REPLACE     = 3,
 	RECENT_FOR_GREP_FILE   = 4,
 	RECENT_FOR_GREP_FOLDER = 5,
-	RECENT_FOR_CMD         = 6
+	RECENT_FOR_CMD         = 6,
+	RECENT_FOR_EDITNODE    = 7	//ウインドウリスト	@@@ 2003.05.31 MIK
 } enumRecentFor;	//型名追加	//@@@ 2003.05.12 MIK
 
 

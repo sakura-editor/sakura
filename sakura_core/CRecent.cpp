@@ -688,6 +688,20 @@ bool CRecent::EasyCreate( int nRecentType )
 			RECENT_CMP_STRCMP
 		);
 
+	//@@@ 2003.06.28 MIK 追加
+	case RECENT_FOR_EDITNODE:	//ウインドウリスト
+		return Create(
+			(char*)m_pShareData->m_pEditArr,
+			&m_pShareData->m_nEditArrNum,
+			NULL,
+			MAX_EDITWINDOWS,
+			NULL,
+			sizeof( m_pShareData->m_pEditArr[0] ),
+			(int)(&((EditNode*)0)->m_hWnd),
+			sizeof( ((EditNode*)0)->m_hWnd ),	//sizeof(HWND)
+			RECENT_CMP_MEMCMP
+		);
+
 	default:
 		return false;
 	}
