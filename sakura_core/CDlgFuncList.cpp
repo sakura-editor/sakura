@@ -1461,8 +1461,6 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 BOOL CDlgFuncList::OnBnClicked( int wID )
 {
-	HGLOBAL			hgClip;
-	char*			pszClip;
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「アウトライン解析」のヘルプ */
@@ -1479,15 +1477,9 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDC_BUTTON_COPY:
-		/* Windowsクリップボードにコピー */
-		hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, m_cmemClipText.GetLength() + 1 );
-		pszClip = (char*)::GlobalLock( hgClip );
-		memcpy( pszClip, m_cmemClipText.GetPtr(), m_cmemClipText.GetLength() + 1 );
-		::GlobalUnlock( hgClip );
-		::OpenClipboard( m_hWnd );
-		::EmptyClipboard();
-		::SetClipboardData( CF_OEMTEXT, hgClip );
-		::CloseClipboard();
+		// Windowsクリップボードにコピー 
+		// 2004.02.17 Moca 関数化
+		SetClipboardText( m_hWnd, m_cmemClipText.GetPtr(), m_cmemClipText.GetLength() );
 		return TRUE;
 	//2002.02.08 オプション切替後List/Treeにフォーカス移動
 	case IDC_CHECK_bAutoCloseDlgFuncList:
