@@ -138,8 +138,9 @@ bool CFileExt::ConvertTypesExtToDlgExt( const char *pszSrcExt, char *pszDstExt )
 	char	*token;
 	char	*p;
 
-	if( NULL == pszSrcExt ) return NULL;
-	if( NULL == pszDstExt ) return NULL;
+	//	2003.08.14 MIK NULL‚¶‚á‚È‚­‚Äfalse
+	if( NULL == pszSrcExt ) return false;
+	if( NULL == pszDstExt ) return false;
 
 	p = strdup( pszSrcExt );
 	strcpy( pszDstExt, "" );
