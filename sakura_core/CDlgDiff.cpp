@@ -45,6 +45,8 @@ const DWORD p_helpids[] = {	//13200
 	IDOK,						HIDC_DIFF_IDOK,
 	IDCANCEL,					HIDC_DIFF_IDCANCEL,
 	IDC_BUTTON_HELP,			HIDC_BUTTON_DIFF_HELP,
+	IDC_CHECK_DIFF_EXEC_STATE,	HIDC_CHECK_DIFF_EXEC_STATE,	//DIFF差分が見つからないときにメッセージを表示  2003.05.12 MIK
+//	IDC_FRAME_DIFF_SEARCH_MSG,	HIDC_FRAME_DIFF_SEARCH_MSG,
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -179,6 +181,9 @@ void CDlgDiff::SetData( void )
 	//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_FILE1 ), FALSE );
 	//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_FILE2 ), FALSE );
 
+	//DIFF差分が見つからないときにメッセージを表示 2003.05.12 MIK
+	if( m_nDiffFlgOpt & 0x0040 ) ::CheckDlgButton( m_hWnd, IDC_CHECK_DIFF_EXEC_STATE, TRUE );
+
 	/* 相手ファイルの選択 */
 	::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, TRUE );
 	::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST2, FALSE );
@@ -294,6 +299,8 @@ int CDlgDiff::GetData( void )
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_DIFF_OPT_TABSPC ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0010;
 	//ファイル新旧
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_FILE2      ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0020;
+	//DIFF差分が見つからないときにメッセージを表示 2003.05.12 MIK
+	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_DIFF_EXEC_STATE ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0040;
 	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
 	//相手ファイル名
