@@ -423,11 +423,7 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	}
 	m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
 
-	lf = m_pShareData->m_Common.m_lf;
-	lf.lfCharSet = SHIFTJIS_CHARSET;
-	lf.lfOutPrecision = 1;
-	strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
-	m_hFont_ZEN = CreateFontIndirect( &lf );
+	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 	m_bInMenuLoop = FALSE;				/* メニュー モーダル ループに入っています */
 //	MYTRACE( "CEditView::CEditView()おわり\n" );
@@ -475,7 +471,6 @@ CEditView::~CEditView()
 	DeleteObject( m_hFont_HAN_FAT );
 	DeleteObject( m_hFont_HAN_UL );
 	DeleteObject( m_hFont_HAN_FAT_UL );
-	DeleteObject( m_hFont_ZEN );
 
 	if( m_hWnd != NULL ){
 		DestroyWindow( m_hWnd );
@@ -5704,30 +5699,9 @@ void CEditView::DrawCaretPosInfo( void )
 	int				nCharChars;
 	CEditWnd*		pCEditWnd;
 	const CLayout*	pcLayout;
-#if 0
-	char*			pCodeNameArr[] = {
-		"SJIS",
-		"JIS ",
-		"EUC ",
-		"Uni ",
-		"UTF-8",
-		"UTF-7"
-	};
-#endif
 	// 2002.05.26 Moca  gm_pszCodeNameArr_2 を使う
 	const char* pCodeName = gm_pszCodeNameArr_2[m_pcEditDoc->m_nCharCode];
-#if 0
-	2002/04/08 YAZAKI コードの重複を削除
-	char*			pCodeNameArr2[] = {
-		"SJIS",
-		"JIS ",
-		"EUC ",
-		"Unicode",
-		"UTF-8",
-		"UTF-7"
-	};
-#endif
-//	int	nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
+//	2002/04/08 YAZAKI コードの重複を削除
 
 	hwndFrame = ::GetParent( m_hwndParent );
 	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
@@ -5918,12 +5892,6 @@ void CEditView::OnChangeSetting( void )
 	m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
 
 
-	::DeleteObject( m_hFont_ZEN );
-	lf = m_pShareData->m_Common.m_lf;
-	lf.lfCharSet = SHIFTJIS_CHARSET;
-	lf.lfOutPrecision = 1;
-	strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
-	m_hFont_ZEN = CreateFontIndirect( &lf );
 
 	/* フォントの変更 */
 	SetFont();
@@ -7414,10 +7382,15 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 	return FALSE;
 }
 
-/* クリップボードにデータを設定 */
+/* クリップボードにデータを設定
+	@date 2004.02.17 Moca エラーチェックするように
+ */
 BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect )
 {
-	HGLOBAL		hgClip;
+	HGLOBAL		hgClipText;
+	HGLOBAL		hgClipSakura;
+	HGLOBAL		hgClipMSDEVColm;
+
 	char*		pszClip;
 	UINT		uFormat;
 	/* Windowsクリップボードにコピー */
@@ -7425,51 +7398,68 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 		return FALSE;
 	}
 	::EmptyClipboard();
+	// ヌル終端までの長さ
+	int nNullTerminateLen = lstrlen( pszText );
 
 	/* テキスト形式のデータ */
-	hgClip = ::GlobalAlloc(
+	hgClipText = ::GlobalAlloc(
 		GMEM_MOVEABLE | GMEM_DDESHARE,
-		lstrlen( pszText ) + 1
+		nNullTerminateLen + 1
 	);
-	pszClip = (char*)::GlobalLock( hgClip );
-	lstrcpy( pszClip, pszText );
-	::GlobalUnlock( hgClip );
-	::SetClipboardData( CF_OEMTEXT, hgClip );
+	if( hgClipText ){
+		pszClip = (char*)::GlobalLock( hgClipText );
+		memcpy( pszClip, pszText, nNullTerminateLen );
+		pszClip[nNullTerminateLen] = '\0';
+		::GlobalUnlock( hgClipText );
+		::SetClipboardData( CF_OEMTEXT, hgClipText );
+	}
 
 	/* バイナリ形式のデータ
 		(int) 「データ」の長さ
 		「データ」
 	*/
 	UINT	uFormatSakuraClip;
-	uFormatSakuraClip = ::RegisterClipboardFormat( "SAKURAClip" );
+	uFormatSakuraClip = ::RegisterClipboardFormat( _T("SAKURAClip") );
 	if( 0 != uFormatSakuraClip ){
-		hgClip = ::GlobalAlloc(
+		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
 			nTextLen + sizeof( int ) + 1
 		);
-		pszClip = (char*)::GlobalLock( hgClip );
-		*((int*)pszClip) = nTextLen;
-		memcpy( pszClip + sizeof( int ), pszText, nTextLen );
-		::GlobalUnlock( hgClip );
-		::SetClipboardData( uFormatSakuraClip, hgClip );
+		if( hgClipSakura ){
+			pszClip = (char*)::GlobalLock( hgClipSakura );
+			*((int*)pszClip) = nTextLen;
+			memcpy( pszClip + sizeof( int ), pszText, nTextLen );
+			::GlobalUnlock( hgClipSakura );
+			::SetClipboardData( uFormatSakuraClip, hgClipSakura );
+		}
 	}
 
 
 	/* 矩形選択を示すダミーデータ */
 	if( bColmnSelect ){
-		uFormat = ::RegisterClipboardFormat( "MSDEVColumnSelect" );
+		uFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
 		if( 0 != uFormat ){
-			hgClip = ::GlobalAlloc(
+			hgClipMSDEVColm = ::GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
 				1
 			);
-			pszClip = (char*)::GlobalLock( hgClip );
-			pszClip[0] = '\0';
-			::GlobalUnlock( hgClip );
-			::SetClipboardData( uFormat, hgClip );
+			if( hgClipMSDEVColm ){
+				pszClip = (char*)::GlobalLock( hgClipMSDEVColm );
+				pszClip[0] = '\0';
+				::GlobalUnlock( hgClipMSDEVColm );
+				::SetClipboardData( uFormat, hgClipMSDEVColm );
+			}
 		}
 	}
 	::CloseClipboard();
+
+	if( bColmnSelect && !hgClipMSDEVColm ){
+		return FALSE;
+	}
+	
+	if( !hgClipText && !hgClipSakura ){
+		return FALSE;
+	}
 	return TRUE;
 }
 
