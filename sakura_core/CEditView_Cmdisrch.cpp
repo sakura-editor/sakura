@@ -207,6 +207,14 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 				}
 				break;
 		}
+		
+		//	Feb. 04, 2005 genta	検索開始位置を記録
+		//	インクリメンタルサーチ間でモードを切り替える場合には開始と見なさない
+		if( m_nISearchMode == 0 ){
+			m_nSrchStartPosX_PHY = m_nCaretPosX_PHY;
+			m_nSrchStartPosY_PHY = m_nCaretPosY_PHY;
+		}
+		
 		//m_szCurSrchKey[0] = '\0';
 		m_bCurSrchKeyMark = FALSE;
 		m_nISearchDirection = direction;
