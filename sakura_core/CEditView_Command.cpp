@@ -5813,8 +5813,10 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 
 		for( nLineNum = rcSel.top; nLineNum < rcSel.bottom + 1; nLineNum++ ){
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
-			const char* pLine = pcLayout->GetPtr();
-			if( NULL != pLine ){
+			//	Nov. 6, 2002 genta NULLチェック追加
+			//	これがないとEOF行を含む矩形選択中の文字列入力で落ちる
+			const char* pLine;
+			if( pcLayout != NULL && NULL != (pLine = pcLayout->GetPtr()) ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				nIdxFrom = LineColmnToIndex( pcLayout, rcSel.left );
 				nIdxTo = LineColmnToIndex( pcLayout, rcSel.right );
@@ -5837,7 +5839,8 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 				continue;
 			}
 
-			nPosX = LineIndexToColmn( pcLayout, nDelPos );
+			//	Nov. 6, 2002 genta pcLayoutがNULLの場合を考慮
+			nPosX = ( pcLayout == NULL ? 0 : LineIndexToColmn( pcLayout, nDelPos ));
 			nPosY = nLineNum;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
