@@ -3180,7 +3180,7 @@ normal_action:;
 		m_nMouseRollPosYOld = yPos;		/* マウス範囲選択前回位置(Y座標) */
 		/* 範囲選択開始 & マウスキャプチャー */
 		m_bBeginSelect = TRUE;			/* 範囲選択中 */
-		m_bBeginBoxSelect = TRUE;		/* 矩形範囲選択中でない */
+		m_bBeginBoxSelect = TRUE;		/* 矩形範囲選択中 */
 		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
 
@@ -5043,7 +5043,7 @@ void CEditView::CopySelectedAllLines(
 		m_nSelectColmFrom = 0;					/* 範囲選択開始桁 */
 		m_nSelectLineTo = rcSel.bottom + 1;		/* 範囲選択終了行 */
 		m_nSelectColmTo = 0;					/* 範囲選択終了桁 */
-		m_bBeginBoxSelect = FALSE;
+//		m_bBeginBoxSelect = FALSE;	2004.06.22 Moca 上のDisableSelectAreaでクリア済み
 	}else{
 		nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
 		nSelectColFromOld = 0;					/* 範囲選択開始桁 */
@@ -6164,9 +6164,9 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 
 /* Grep実行 */
 DWORD CEditView::DoGrep(
-	CMemory*	pcmGrepKey,
-	CMemory*	pcmGrepFile,
-	CMemory*	pcmGrepFolder,
+	const CMemory*	pcmGrepKey,
+	const CMemory*	pcmGrepFile,
+	const CMemory*	pcmGrepFolder,
 	BOOL		bGrepSubFolder,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
@@ -7803,7 +7803,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
 		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読みとり専用のファイルにはドロップさせない
 	}else{
-		return E_INVALIDARG;
+		return E_UNEXPECTED;	//	Moca E_INVALIDARGから変更
 	}
 
 	if( pDataObject == NULL || pdwEffect == NULL )
@@ -7828,7 +7828,9 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 		m_pcDropTarget->m_pDataObject = pDataObject;
 		/* Ctrl,ALT,キーが押されていたか */
-		if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
+		if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL )
+			|| FALSE == m_bDragSource	// Aug. 6, 2004 genta DragOver/Dropでは入っているがここだけ漏れていた
+		){
 			*pdwEffect = DROPEFFECT_COPY;
 		}else{
 			*pdwEffect = DROPEFFECT_MOVE;
@@ -8080,21 +8082,13 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				//	2004,05.14 Moca 引数に文字列長を追加
 				Command_INSTEXT( TRUE, cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE );
 			}else{
-
+				// 2004.07.12 Moca クリップボードを書き換えないように
+				// TRUE == bBoxSelected
+				// FALSE == m_bBeginBoxSelect
 				cmemClip.SetDataSz( "" );
-
-				/* クリップボードからデータを取得 */
-				BOOL	bBoxSelectOld;
-				MyGetClipboardData( cmemClip, &bBoxSelectOld );
-
-					/* クリップボードにデータを設定 */
-					MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), TRUE );
-
-					/* 貼り付け（クリップボードから貼り付け）*/
-					Command_PASTEBOX();
-
-				/* クリップボードにデータを設定 */
-				MySetClipboardData( cmemClip.GetPtr(), cmemClip.GetLength(), bBoxSelectOld );
+				/* 貼り付け（クリップボードから貼り付け）*/
+				Command_PASTEBOX( cmemBuf.GetPtr(), cmemBuf.GetLength() );
+				Redraw();
 			}
 			if( bMove ){
 				if( bMoveToPrev ){
@@ -8130,6 +8124,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			HandleCommand( F_INSTEXT, TRUE, (LPARAM)lpszSource, TRUE, 0, 0 );
 		}
 		::GlobalUnlock(hData);
+		// 2004.07.12 fotomo/もか メモリーリークの修正
+		if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
+			::GlobalFree(hData);
+		}
 	}else{
 #ifdef _DEBUG
 		MYTRACE( "FALSE == IsDataAvailable()\n" );
