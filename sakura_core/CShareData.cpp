@@ -1798,6 +1798,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 
 		static const char*	ppszKeyWordsJAVA[] = {
 			"abstract",
+			"assert",	// Mar. 8, 2003 genta
 			"boolean",
 			"break",
 			"byte",
@@ -1833,6 +1834,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"return",
 			"short",
 			"static",
+			"strictfp",	// Mar. 8, 2003 genta
 			"super",
 			"switch",
 			"synchronized",
