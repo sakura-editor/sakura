@@ -71,7 +71,7 @@ public:
 		@param y [in] 描画するY座標
 		@param fstyle [in] 描画スタイル
 	*/
-	bool Draw(int index, HDC dc, int x, int y, int fstyle) const	//	描画
+	bool Draw(int index, HDC dc, int x, int y, int fstyle, COLORREF colBkColor) const	//	描画
 	;
 	
 	//! アイコン数を返す
@@ -113,7 +113,7 @@ protected:
 		int nWidth, int nHeight, HBITMAP bmp, int nXSrc, int nYSrc,
 		COLORREF colBkColor ) const;
 	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc) const;
+                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF colBkColor) const;
 
 };
 

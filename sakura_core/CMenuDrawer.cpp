@@ -964,13 +964,14 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			COLORREF cOld;
 //			cOld = SetTextColor( hdc, GetSysColor(COLOR_3DSHADOW) );	//Oct. 24, 2000 これは標準ではRGB(128,128,128)と同じ
 			cOld = SetTextColor( hdc, RGB(132,132,132) );	//Oct. 24, 2000 JEPRO もう少し薄くした
+			//	Aug. 30, 2003 genta 背景色を引数に追加
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1,	//	X
 				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 				//lpdis->rcItem.top + 1,		//	Y
 				lpdis->rcItem.top + GetSystemMetrics(SM_CYMENU)/2 - 8,	//	Y
-				ILD_MASK
+				ILD_MASK, ::GetSysColor( COLOR_MENU )
 			);
 			SetTextColor( hdc, cOld );
 
@@ -984,13 +985,14 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}
 
 			/* 通常のアイコン */
+			//	Aug. 30, 2003 genta 背景色を引数に追加
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1 + 1,	//	X
 				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 				lpdis->rcItem.top + GetSystemMetrics(SM_CYMENU)/2 - 8,	//	Y
 				//lpdis->rcItem.top + 1,		//	Y
-				ILD_NORMAL
+				ILD_NORMAL, ::GetSysColor( COLOR_MENU )
 			);
 		}
 

@@ -4044,9 +4044,9 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			if( nIconId < 0 ){
 				nIconId = 348; // ‚È‚ñ‚Æ‚È‚­(i)ƒAƒCƒRƒ“
 			}
-
+			//	Aug. 30, 2003 genta ”wŒiF‚ðˆø”‚É’Ç‰Á
 			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + 2, pnmh->rc.top + 2,
-				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
+				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL, ::GetSysColor( COLOR_3DFACE )
 			);
 		}
 		break;
