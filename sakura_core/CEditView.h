@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, MIK, hor
 	Copyright (C) 2002, hor, YAZAKI, novice, aroka
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -749,6 +750,8 @@ void ReplaceData_CEditView(
 //		CEOL cEol, int bBold );
 	void DrawEOL(HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 		CEOL cEol, int bBold, COLORREF pColor );
+	//É^ÉuñÓàÛï`âÊä÷êî	//@@@ 2003.03.26 MIK
+	void DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, int bBold, COLORREF pColor );
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//åªç›çsÇóöóÇ…í«â¡Ç∑ÇÈ

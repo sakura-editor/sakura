@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, genta, MIK, hor, Stonee, asa-o
 	Copyright (C) 2002, YAZAKI, aroka, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -118,7 +119,6 @@ char* MakeRGBStr( DWORD dwRGB, char* pszText )
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
 #include "sakura.hh"
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
@@ -194,89 +194,6 @@ static const DWORD p_helpids3[] = {	//11500
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids1[] = {	//11300
-	IDC_CHECK_WORDWRAP,				11310,	//英文ワードラップ
-	IDC_EDIT_TABSPACE,				11330,	//TAB幅
-	IDC_COMBO_IMESWITCH,			11331,	//IMEのON/OFF状態
-	IDC_COMBO_IMESTATE,				11332,	//IMEの入力モード
-	IDC_COMBO_SMARTINDENT,			11333,	//スマートインデント
-	IDC_COMBO_OUTLINES,				11334,	//アウトライン解析方法
-	IDC_EDIT_TYPENAME,				11340,	//設定の名前
-	IDC_EDIT_TYPEEXTS,				11341,	//ファイル拡張子
-	IDC_EDIT_MAXLINELEN,			11342,	//折り返し桁数
-	IDC_EDIT_CHARSPACE,				11343,	//文字の間隔
-	IDC_EDIT_LINESPACE,				11344,	//行の間隔
-	IDC_EDIT_INDENTCHARS,			11345,	//その他のインデント対象文字
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	IDC_EDIT_TABVIEWSTRING,			11346,  //TAB表示文字列
-//#endif
-// From Here 2001.12.03 hor
-	IDC_CHECK_INS_SPACE,			11311,	//スペースの挿入
-// To Here 2001.12.03 hor
-	IDC_SPIN_MAXLINELEN,			-1,
-	IDC_SPIN_CHARSPACE,				-1,
-	IDC_SPIN_LINESPACE,				-1,
-	IDC_CHECK_KINSOKUHEAD,			11312,		//行頭禁則	//@@@ 2002.04.08 MIK
-	IDC_CHECK_KINSOKUTAIL,			11313,		//行末禁則	//@@@ 2002.04.08 MIK
-	IDC_EDIT_KINSOKUHEAD,			11347,		//行頭禁則	//@@@ 2002.04.08 MIK
-	IDC_EDIT_KINSOKUTAIL,			11348,		//行末禁則	//@@@ 2002.04.08 MIK
-//	IDC_STATIC,						-1,
-	0, 0
-};
-static const DWORD p_helpids2[] = {	//11400
-	IDC_BUTTON_TEXTCOLOR,			11400,	//文字色
-	IDC_BUTTON_BACKCOLOR,			11401,	//背景色
-	IDC_BUTTON_SAMETEXTCOLOR,		11402,	//文字色統一
-	IDC_BUTTON_SAMEBKCOLOR,			11403,	//背景色統一
-	IDC_BUTTON_IMPORT,				11404,	//インポート
-	IDC_BUTTON_EXPORT,				11405,	//エクスポート
-	IDC_CHECK_DISP,					11410,	//色分け表示
-	IDC_CHECK_FAT,					11411,	//太字
-	IDC_CHECK_UNDERLINE,			11412,	//下線
-	IDC_CHECK_LCPOS,				11413,	//桁指定１
-	IDC_CHECK_LCPOS2,				11414,	//桁指定２
-	IDC_COMBO_SET,					11430,	//強調キーワード１セット名
-	IDC_COMBO_SET2,					11431,	//強調キーワード２セット名
-	IDC_EDIT_BLOCKCOMMENT_FROM,		11440,	//ブロックコメント１開始
-	IDC_EDIT_BLOCKCOMMENT_TO,		11441,	//ブロックコメント１終了
-	IDC_EDIT_LINECOMMENT,			11442,	//行コメント１
-	IDC_EDIT_LINECOMMENT2,			11443,	//行コメント２
-	IDC_EDIT_LINECOMMENTPOS,		11444,	//桁数１
-	IDC_EDIT_LINECOMMENTPOS2,		11445,	//桁数２
-	IDC_EDIT_LINETERMCHAR,			11446,	//行番号区切り
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	IDC_EDIT_BLOCKCOMMENT_FROM2,	11447,	//ブロックコメント２開始
-	IDC_EDIT_BLOCKCOMMENT_TO2,		11448,	//ブロックコメント２終了
-//#endif
-	IDC_EDIT_LINECOMMENT3,			11449,	//行コメント３
-	IDC_LIST_COLORS,				11450,	//色指定
-	IDC_CHECK_LCPOS3,				11451,	//桁指定３
-	IDC_EDIT_LINECOMMENTPOS3,		11452,	//桁数３
-	IDC_RADIO_ESCAPETYPE_1,			11460,	//文字列エスケープ（C言語風）
-	IDC_RADIO_ESCAPETYPE_2,			11461,	//文字列エスケープ（PL/SQL風）
-	IDC_RADIO_LINENUM_LAYOUT,		11462,	//行番号の表示（折り返し単位）
-	IDC_RADIO_LINENUM_CRLF,			11463,	//行番号の表示（改行単位）
-	IDC_RADIO_LINETERMTYPE0,		11464,	//行番号区切り（なし）
-	IDC_RADIO_LINETERMTYPE1,		11465,	//行番号区切り（縦線）
-	IDC_RADIO_LINETERMTYPE2,		11466,	//行番号区切り（任意）
-//	IDC_STATIC,						-1,
-	0, 0
-};
-//@@@ 2001.02.04 End
-
-//From Here Jul. 05, 2001 JEPRO 追加
-static const DWORD p_helpids3[] = {	//11500
-	IDC_BUTTON_HOKANFILE_REF,		11500,	//入力補完 単語ファイル参照
-	IDC_BUTTON_KEYWORDHELPFILE_REF,	11501,	//キーワードヘルプファイル参照
-	IDC_CHECK_HOKANLOHICASE,		11510,	//入力補完の英大文字小文字
-	IDC_CHECK_USEKEYWORDHELP,		11511,	//キーワードヘルプ機能
-	IDC_EDIT_HOKANFILE,				11540,	//単語ファイル名
-	IDC_EDIT_KEYWORDHELPFILE,		11541,	//辞書ファイル名
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //To Here Jul. 05, 2001
 
 
@@ -1096,6 +1013,8 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );
 //#endif
 
+	//タブ矢印表示	//@@@ 2003.03.26 MIK
+	::CheckDlgButton( hwndDlg, IDC_CHECK_TAB_ARROW, m_Types.m_bTabArrow );
 // From Here 2001.12.03 hor
 	/* スペースの挿入 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );
@@ -1310,6 +1229,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	}
 //#endif
 
+	//タブ矢印表示	//@@@ 2003.03.26 MIK
+	m_Types.m_bTabArrow = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW );
 // 2001.12.03 hor
 	/* スペースの挿入 */
 	m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );

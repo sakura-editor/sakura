@@ -10,6 +10,7 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, Stonee, jepro, mik, asa-o, YAZAKI
 	Copyright (C) 2002, YAZAKI, hor, aroka, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -781,6 +782,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		(char*)/*&*/m_pShareData->m_Types[i].m_szTabViewString,
 		sizeof( m_pShareData->m_Types[i].m_szTabViewString ));
 //#endif
+		cProfile.IOProfileData( bRead, pszSecName, "bTabArrow"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bTabArrow, 0 );	//@@@ 2003.03.26 MIK
 		cProfile.IOProfileData( bRead, pszSecName, "bInsSpace"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bInsSpace, 0 );	// 2001.12.03 hor
 
 		// From Here Sep. 28, 2002 genta / YAZAKI

@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, mik
 	Copyright (C) 2001, hor
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1105,7 +1106,8 @@ searchnext:;
 							rcClip2.top = y;
 							rcClip2.bottom = y + nLineHeight;
 							/* TABを表示するか？ */
-							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bDisp ){
+							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bDisp
+							 && 0 == TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
 								if( bSearchStringMode ){
 									nColorIdx = COLORIDX_SEARCH;
 								}else{
@@ -1142,6 +1144,15 @@ searchnext:;
 									 m_pnDx );
 								if( bSearchStringMode ){
 									::SetBkColor( hdc, colBkColorOld );
+								}
+								
+								//タブ矢印表示	//@@@ 2003.03.26 MIK
+								if( TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bDisp
+								 && 0 != TypeDataPtr->m_bTabArrow )
+								{
+									DrawTabArrow( hdc, x + nX * ( nCharWidth ), y, m_nCharWidth, m_nCharHeight,
+										TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bFatFont,
+										TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_colTEXT );
 								}
 							}
 						}
@@ -1764,6 +1775,39 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 //		}
 		break;
 	}
+	::SelectObject( hdc, hPenOld );
+	::DeleteObject( hPen );
+}
+
+/*
+	タブ矢印描画関数
+*/
+void CEditView::DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, int bBold, COLORREF pColor )
+{
+	int sx, sy;	//	矢印の先頭
+	HANDLE	hPen;
+	HPEN	hPenOld;
+
+	hPen = ::CreatePen( PS_SOLID, 1, pColor );
+	hPenOld = (HPEN)::SelectObject( hdc, hPen );
+
+	nWidth--;
+	sx = nPosX + nWidth;
+	sy = nPosY + ( nHeight / 2 );
+	::MoveToEx( hdc, sx - nWidth, sy, NULL );	//	左へ
+	::LineTo(   hdc, sx, sy );					//	最後へ
+	::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4 );	//	最後から下へ
+	::MoveToEx( hdc, sx, sy, NULL);				//	最後へ戻り
+	::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );	//	最後から上へ
+	if ( bBold ) {
+		++sy;
+		::MoveToEx( hdc, sx - nWidth, sy, NULL );	//	左へ
+		::LineTo(   hdc, sx, sy );					//	最後へ
+		::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4 );	//	最後から下へ
+		::MoveToEx( hdc, sx, sy, NULL);				//	最後へ戻り
+		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );	//	最後から上へ
+	}
+
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
 }

@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -103,8 +104,11 @@ struct ARRHEAD {
 	Version 41:
 	Typesのm_szTabViewStringサイズ拡張
 	m_nWindowSizeX/Y m_nWindowOriginX/Y追加 2003.01.26 aroka
+
+	Version 42:
+	Typesに独自TABマークフラグ追加 2003.03.28 MIK
 */
-const unsigned int uShareDataVersion = 41;
+const unsigned int uShareDataVersion = 42;
 
 /*
 ||	Singleton風
@@ -882,6 +886,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 		strcpy( m_pShareData->m_Types[nIdx].m_szTabViewString, "^       " );	/* TAB表示文字列 */
 //#endif
+		m_pShareData->m_Types[nIdx].m_bTabArrow = FALSE;				/* タブ矢印表示 */	// 2001.12.03 hor
 		m_pShareData->m_Types[nIdx].m_bInsSpace = FALSE;				/* スペースの挿入 */	// 2001.12.03 hor
 		
 		//@@@ 2002.09.22 YAZAKI 以下、m_cLineCommentとm_cBlockCommentを使うように修正
