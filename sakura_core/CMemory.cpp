@@ -3000,9 +3000,20 @@ int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* p
 
 
 
-/*
-||日本語コードセット判別: UTF-7か？
-|| エラーの場合、FALSEを返す
+/*!	@brief 日本語コードセット判別: UTF-7か？
+
+	@param pBuf [in] 判定するデータへのポインタ
+	@param nBufLen [in] データサイズ
+	@param pnMojiNum [out] UTF-7に特有な文字の数
+	@param pnUTF7CodeNum [out] UTF7らしさ
+
+	@return エラーの場合、FALSEを返すことになっているが，必ずTRUEを返す．
+
+	@date 2001.04.01 genta +-の判定をUTF7らしさに加えないように
+	@date 2003.11.03 genta UTF7であり得ない文字として'=','\','~'を考慮するように．
+
+	@note 文字数のカウントが正確とは言えないが，とりあえず無視
+
 */
 int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUTF7CodeNum )
 {
@@ -3025,12 +3036,18 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 	nMojiNum = 0;
 	nUTF7CodeNum = 0;
 
+	//	Nov. 03, 2003 genta
+	//	積算値に関わらず絶対にUTF-7ではあり得ない
+	//	カウンタの0クリアではその後にUTF7らしき物が出てくるとカウンタが増加する
+	bool bNeverUtf7 = false;
+
 	setlocale( LC_ALL, "Japanese" );
 //	k = 0;
 	bBASE64 = FALSE;
 	for( i = 0; i < nBufLen; ++i ){
 		if( !bBASE64 ){
-			if( i < nBufLen - 1
+			// Nov. 03, 2003 最後に+があるとバッファオーバーフローするので2文字分余裕を見る
+			if( i < nBufLen - 2
 				&& '+' == pBuf[i]
 				&& '-' == pBuf[i + 1]
 				){
@@ -3045,6 +3062,10 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 				){
 				nBgn = i + 1;
 				bBASE64 = TRUE;
+			//	Nov. 03, 2003 genta =\~が入っていたらUTF-7ではあり得ない
+			}else if( pBuf[i] & 0x80 || pBuf[i] == '=' || pBuf[i] == '\\' || pBuf[i] == '~' ){
+				//	あり得ないフラグをたてる
+				bNeverUtf7 = true;
 			}else{
 //				k++;
 				nMojiNum++;
@@ -3089,17 +3110,20 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 			}else{
 				if( -1 == IsBASE64Char( pBuf[i] )  ){	/* 文字がBase64のデータか */
 					bBASE64 = FALSE;
-					//	Oct. 10, 2000 genta
-					if( pBuf[i] & 0x80 ){
-						//	8bitコードが入っていたらUTF-7ではあり得ないのでカウンタを0に戻す
-						nUTF7CodeNum = 0;
+					//	Oct. 10, 2000 genta 8bitコードが入っていたらUTF-7ではあり得ない
+					//	Nov. 03, 2003 genta =\~が入っていたらUTF-7ではあり得ない
+					if( pBuf[i] & 0x80 || pBuf[i] == '=' || pBuf[i] == '\\' || pBuf[i] == '~' ){
+						//	あり得ないフラグをたてる
+						bNeverUtf7 = true;
 					}
 				}
 			}
 		}
 	}
 	*pnMojiNum = nMojiNum;
-	*pnUTF7CodeNum = nUTF7CodeNum;
+
+	//	Nov. 03, 2003 あり得ないフラグがtrueなら必ず0
+	*pnUTF7CodeNum = bNeverUtf7 ? 0 : nUTF7CodeNum;
 	return TRUE;
 }
 
