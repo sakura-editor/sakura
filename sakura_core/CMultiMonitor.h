@@ -34,6 +34,7 @@
 #ifndef _SAKURA_MUTIMONITOR_H_
 #define _SAKURA_MUTIMONITOR_H_
 
+#include <multimon.h>
 #include "CDllHandler.h"
 
 /*!

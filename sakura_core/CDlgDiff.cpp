@@ -339,6 +339,10 @@ int CDlgDiff::GetData( void )
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
 		::GetDlgItemText( m_hWnd, IDC_EDIT_DIFF_DST, m_szFile2, sizeof( m_szFile2 ) );
+		//	2004.05.19 MIK 外部ファイルが指定されていない場合はキャンセル
+		//相手ファイルが指定されてなければキャンセル
+		if( m_szFile2[0] == '\0' ) ret = FALSE;
+
 	}
 	else if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_DST2 ) == BST_CHECKED )
 	{
@@ -383,7 +387,8 @@ int CDlgDiff::GetData( void )
 		m_pShareData->m_Common.m_bSearchAll = FALSE;
 
 	//相手ファイルが指定されてなければキャンセル
-	if( m_szFile2[0] == '\0' ) ret = FALSE;
+	//	2004.02.21 MIK 相手が無題だと比較できないので判定削除
+	//if( m_szFile2[0] == '\0' ) ret = FALSE;
 
 	return ret;
 }
