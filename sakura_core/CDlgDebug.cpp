@@ -121,7 +121,9 @@ BOOL CDlgDebug::DispatchEvent(
 				::EndDialog( hwndDlg, 0 );
 				return TRUE;
 			}
+			break;	/* BN_CLICKED */
 		}
+		break;	/* WM_COMMAND */
 	}
 	return FALSE;
 }

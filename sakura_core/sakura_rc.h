@@ -49,6 +49,7 @@
 #define IDC_CURSOR_COPYARROW            220
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
+#define IDC_CURSOR_RVARROW              223
 #define IDI_ICON_STD                    230
 #define IDI_ICON_DEBUG                  231
 #define IDI_ICON_HANA                   232
@@ -176,6 +177,7 @@
 #define IDC_BUTTON_OPENHELP1            1096
 #define IDC_BUTTON_OPENEXTHTMLHELP      1097
 #define IDC_EDIT_REPEATEDSCROLLLINENUM  1098
+#define IDC_BUTTON_KEYWORDHELPFONT      1098
 #define IDC_BUTTON_HELP                 1099
 #define IDC_EDIT4                       1105
 #define IDC_EDIT_TO                     1105
@@ -403,6 +405,7 @@
 #define IDC_RADIO_PORTLAIT              1324
 #define IDC_RADIO_BACKUP_DATETYPE1      1324
 #define IDC_RADIO_REPLACE               1324
+#define IDC_RADIO_DIFF_FILE1            1324
 #define IDC_RADIO_OUTLINEDEFAULT        1324
 #define IDC_RADIO2                      1325
 #define IDC_RADIO_FROMTO                1325
@@ -410,11 +413,14 @@
 #define IDC_RADIO_BACKUP_DATETYPE2      1325
 #define IDC_RADIO_INSERT                1325
 #define IDC_RADIO_OUTLINERULEFILE       1325
+#define IDC_RADIO_DIFF_FILE2            1325
 #define IDC_RADIO3                      1326
 #define IDC_RADIO_ADD                   1326
+#define IDC_RADIO_DIFF_DST1             1326
 #define IDC_EDIT2                       1327
 #define IDC_EDIT_BACKUP_3               1327
 #define IDC_MACROPATH                   1327
+#define IDC_RADIO_DIFF_DST2             1327
 #define IDC_COMBO_m_szCommand           1328
 #define IDC_CHECK_GETSTDOUT             1329
 #define IDC_STATIC_CMD                  1330
@@ -516,7 +522,20 @@
 #define IDC_EDIT_OUTLINERULEFILE        1426
 #define IDC_BUTTON_RULEFILE_REF         1427
 #define IDC_EDIT_KINSOKUHEAD            1428
+#define IDC_STATIC_DIFF_SRC             1428
 #define IDC_EDIT_KINSOKUTAIL            1429
+#define IDC_EDIT_DIFF_DST               1429
+#define IDC_BUTTON_DIFF_DST             1430
+#define IDC_CHECK_DIFF_OPT_CASE         1431
+#define IDC_CHECK_DIFF_OPT_SPACE        1432
+#define IDC_CHECK_DIFF_OPT_SPCCHG       1433
+#define IDC_CHECK_DIFF_OPT_BLINE        1434
+#define IDC_CHECK_DIFF_OPT_TABSPC       1435
+#define IDC_FRAME_FILE12                1436
+#define IDC_FRAME_DIFF_FILE12           1436
+#define IDC_LIST_DIFF_FILES             1437
+#define IDC_FRAME_DIFF_DST              1438
+#define IDC_LIST_CTRLCODE               1438
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
@@ -543,6 +562,8 @@
 #define IDD_OPERATIONRUNNING            5113
 #define IDD_PROP_KEYBIND1               5114
 #define IDD_PROPTYPESP2                 5114
+#define IDD_DIFF                        5115
+#define IDD_CTRLCODE                    5116
 #define IDS_STRING30815                 30815
 #define IDS_STRING31581                 31581
 #define IDC_EXECINFO                    -1
@@ -551,9 +572,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        221
+#define _APS_NEXT_RESOURCE_VALUE        224
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1428
+#define _APS_NEXT_CONTROL_VALUE         1439
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

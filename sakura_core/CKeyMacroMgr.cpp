@@ -155,13 +155,20 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	CMemory cmemWork;
 	CMacro* macro = NULL;
 
+	//	Jun. 16, 2002 genta
+	m_nReady = true;	//	エラーがあればfalseになる
+	static const char MACRO_ERROR_TITLE[] = "Macro読み込みエラー";
+
 	// 一行ずつ読みこみ、コメント行を排除した上で、macroコマンドを作成する。
 	char	szLine[10240];
-	while( NULL != fgets( szLine, sizeof(szLine), hFile ) ){
+	
+	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
+	for( ; NULL != fgets( szLine, sizeof(szLine), hFile ) ; ++line ){
 		int nLineLen = strlen( szLine );
 		// 先行する空白をスキップ
 		for( i = 0; i < nLineLen; ++i ){
-			if( szLine[i] != SPACE && szLine[i] != TAB ){
+			//	Jun. 16, 2002 genta '\r' 追加
+			if( szLine[i] != SPACE && szLine[i] != TAB && szLine[i] != '\r' ){
 				break;
 			}
 		}
@@ -171,6 +178,11 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		if( szLine[nBgn] == '/' && nBgn + 1 < nLineLen && szLine[nBgn + 1] == '/' ){
 			continue;
 		}
+		//	Jun. 16, 2002 genta 空行を無視する
+		if( szLine[nBgn] == '\n' || szLine[nBgn] == '\0' ){
+			continue;
+		}
+
 		// 関数名の取得
 		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
@@ -191,16 +203,38 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		nFuncID = CSMacroMgr::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
 		if( -1 != nFuncID ){
 			macro = new CMacro( nFuncID );
+			// Jun. 16, 2002 genta プロトタイプチェック用に追加
+			int nArgs;
+			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
 			//	Skip Space
-			while (szLine[i]) {
+			for(nArgs = 0; szLine[i] ; ++nArgs ) {
+				// Jun. 16, 2002 genta プロトタイプチェック
+				if( nArgs >= sizeof( mInfo->m_varArguments ) / sizeof( mInfo->m_varArguments[0] )){
+					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+						_T("Line %d: Column %d: 引数が多すぎます\n" ), line, i + 1 );
+					m_nReady = false;
+				}
+
 				while( szLine[i] == ' ' || szLine[i] == '\t' )
 					i++;
 
 				//@@@ 2002.2.2 YAZAKI PPA.DLLマクロにあわせて仕様変更。文字列は''で囲む。
-				if( '\'' == szLine[i] ){	//	'で始まったら文字列だよきっと。
+				//	Jun. 16, 2002 genta double quotationも許容する
+				if( '\'' == szLine[i] || '\"' == szLine[i]  ){	//	'で始まったら文字列だよきっと。
+					// Jun. 16, 2002 genta プロトタイプチェック
+					if( mInfo->m_varArguments[nArgs] != VT_BSTR ){
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+							_T("Line %d: Column %d\r\n"
+							"関数%sの%d番目の引数に文字列は置けません．" ), line, i + 1, szFuncName, nArgs + 1 );
+						m_nReady = false;
+						break;
+					}
+					int cQuote = szLine[i];
 					++i;
 					nBgn = i;	//	nBgnは引数の先頭の文字
-					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
+					//	Jun. 16, 2002 genta
+					//	行末の検出のため，ループ回数を1増やした
+					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
 						unsigned char c = (unsigned char)szLine[i];
 						if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ){
 							++i;
@@ -210,17 +244,40 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 							++i;
 							continue;
 						}
-						if( szLine[i] == '\'' ){	//	\'で終了。
+						if( szLine[i] == cQuote ){	//	始まりと同じquotationで終了。
 							nEnd = i;	//	nEndは終わりの次の文字（'）
 							break;
 						}
+						if( szLine[i] == '\0' ){	//	行末に来てしまった
+							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+								_T("Line %d:\r\n関数%sの%d番目の引数の終わりに%cがありません．" ),
+								line, szFuncName, nArgs + 1, cQuote);
+							m_nReady = false;
+							nEnd = i - 1;	//	nEndは終わりの次の文字（'）
+							break;
+						}
+					}
+					//	Jun. 16, 2002 genta
+					if( !m_nReady ){
+						break;
 					}
 					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
 					cmemWork.Replace( "\\\'", "\'" );
+
+					//	Jun. 16, 2002 genta double quotationもエスケープ解除
+					cmemWork.Replace( "\\\"", "\"" );
 					cmemWork.Replace( "\\\\", "\\" );
 					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
 				}
 				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
+					// Jun. 16, 2002 genta プロトタイプチェック
+					if( mInfo->m_varArguments[nArgs] != VT_I4 ){
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+							_T("Line %d: Column %d\r\n"
+							"関数%sの%d番目の引数に数値は置けません．" ), line, i + 1, szFuncName, nArgs + 1);
+						m_nReady = false;
+						break;
+					}
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
 						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// まだ数値
@@ -234,13 +291,25 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 						}
 					}
 					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
-					cmemWork.Replace( "\\\'", "\'" );
-					cmemWork.Replace( "\\\\", "\\" );
+					// Jun. 16, 2002 genta
+					//	数字の中にquotationは入っていないよ
+					//cmemWork.Replace( "\\\'", "\'" );
+					//cmemWork.Replace( "\\\\", "\\" );
 					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
+				}
+				//	Jun. 16, 2002 genta
+				else if( szLine[i] == ')' ){
+					//	引数無し
+					break;
 				}
 				else {
 					//	Parse Error:文法エラーっぽい。
+					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
+					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+						_T("Line %d: Column %d: Syntax Error\n" ), line, i );
+					m_nReady = false;
+					break;
 				}
 
 				for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
@@ -253,19 +322,28 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					break;
 				}
 			}
+			//	Jun. 16, 2002 genta
+			if( !m_nReady ){
+				//	どこかでエラーがあったらしい
+				delete macro;
+				break;
+			}
 			/* キーマクロのバッファにデータ追加 */
 			Append( macro );
 		}
 		else {
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				_T("%sは、存在しない関数です。詳しくはヘルプをご覧ください。\nマクロの実行を終了します。"), szFuncName );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
+				_T("Line %d: %sは存在しない関数です．\n" ), line, szFuncName );
+			//	Jun. 16, 2002 genta
+			m_nReady = false;
 			break;
 		}
 	}
 	fclose( hFile );
 
-	m_nReady = true;
-	return TRUE;
+	//	Jun. 16, 2002 genta
+	//	マクロ中にエラーがあったら異常終了できるようにする．
+	return m_nReady ? TRUE : FALSE;
 }
 
 //	From Here Apr. 29, 2002 genta

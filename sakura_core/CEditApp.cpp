@@ -13,6 +13,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, stonee, jepro, genta, aroka, hor
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -217,6 +218,8 @@ CEditApp::CEditApp() :
 //	#ifndef _DEBUG
 		m_pszAppName = GSTR_CEDITAPP;
 //	#endif
+
+	m_bUseTrayMenu = false;
 
 	return;
 }
@@ -1018,6 +1021,14 @@ LRESULT CEditApp::DispatchEvent(
 							if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
 								char*	pszCodeNameCur = "";
 								char*	pszCodeNameNew = "";
+								// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+								if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+									pszCodeNameCur = (char *)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+								}
+								if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
+									pszCodeNameNew = (char *)gm_pszCodeNameArr_1[nCharCode];
+								}
+#if 0
 								switch( pfi->m_nCharCode ){
 								case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 								case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
@@ -1034,6 +1045,7 @@ LRESULT CEditApp::DispatchEvent(
 								case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
 								case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
 								}
+#endif
 								::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 									"%s\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてからでないと開けません。\n\n現在の文字コードセット＝%s\n新しい文字コードセット＝%s",
 									szPath, pszCodeNameCur, pszCodeNameNew
@@ -1195,6 +1207,14 @@ LRESULT CEditApp::DispatchEvent(
 								if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
 									char*	pszCodeNameCur = "";
 									char*	pszCodeNameNew = "";
+									// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+									if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+										pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+									}
+									if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
+										pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+									}
+#if 0
 									switch( pfi->m_nCharCode ){
 									case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//	Sept. 1, 2000 jepro 'シフト'を'S'に変更
 									case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
@@ -1211,6 +1231,7 @@ LRESULT CEditApp::DispatchEvent(
 									case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
 									case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
 									}
+#endif
 									::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 										"%s\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてからでないと開けません。\n\n現在の文字コードセット＝%s\n新しい文字コードセット＝%s",
 										szPath, pszCodeNameCur, pszCodeNameNew
@@ -1332,6 +1353,7 @@ LRESULT CEditApp::DispatchEvent(
 					Explorerが再起動したときに送出される．*/
 				CreateTrayIcon( m_hWnd ) ;
 			}
+			break;	/* default */
 // >> by aroka
 	}
 	return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -1594,6 +1616,10 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	int			nMenuNum;
 	FileInfo*	pfi;
 
+	//本当はセマフォにしないとだめ
+	if( m_bUseTrayMenu ) return -1;
+	m_bUseTrayMenu = true;
+
 	m_CMenuDrawer.ResetContents();
 
 	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
@@ -1681,6 +1707,11 @@ int	CEditApp::CreatePopUpMenu_L( void )
 							pfi->m_bIsModified ? "*":" "
 						);
 //		To Here Oct. 4, 2000
+						// gm_pszCodeNameArr_3 からコピーするように変更
+						if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+						}
+#if 0
 						if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
 							switch( pfi->m_nCharCode ){
 							case CODE_JIS:		/* JIS */
@@ -1700,6 +1731,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 								break;
 							}
 						}
+#endif
 					}
 
 //				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );
@@ -1744,6 +1776,9 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
 //	MYTRACE( "nId=%d\n", nId );
+
+	m_bUseTrayMenu = false;
+
 	return nId;
 }
 
@@ -1760,6 +1795,10 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	POINT	po;
 	RECT	rc;
 	int		nMenuNum;
+
+	//本当はセマフォにしないとだめ
+	if( m_bUseTrayMenu ) return -1;
+	m_bUseTrayMenu = true;
 
 	m_CMenuDrawer.ResetContents();
 
@@ -1833,6 +1872,9 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
 //	MYTRACE( "nId=%d\n", nId );
+
+	m_bUseTrayMenu = false;
+
 	return nId;
 }
 

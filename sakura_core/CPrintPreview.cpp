@@ -1579,8 +1579,9 @@ BOOL CPrintPreview::DispatchEvent_PPB(
 				m_pParentWnd->PrintPreviewModeONOFF();
 				return TRUE;
 			}
-			break;
+			break;	/* BN_CLICKED */
 		}
+		break;	/* WM_COMMAND */
 	}
 	return FALSE;
 }

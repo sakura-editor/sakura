@@ -12,6 +12,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, aroka
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,6 +23,7 @@
 #include "CMacroFactory.h"
 #include <stdio.h>
 #include <assert.h> // 試験用
+#include "debug.h"
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {
@@ -45,6 +47,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
 	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
 	{F_FILE_REOPEN_UNICODE,			"FileReopenUNICODE",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicodeで開き直す
+	{F_FILE_REOPEN_UNICODEBE,		"FileReopenUNICODEBE",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UnicodeBEで開き直す
 	{F_FILE_REOPEN_UTF8,			"FileReopenUTF8",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8で開き直す
 	{F_FILE_REOPEN_UTF7,			"FileReopenUTF7",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7で開き直す
 	{F_PRINT,						"Print",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷
@@ -161,6 +164,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	/* 挿入系 */
 	{F_INS_DATE,				"InsertDate",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 日付挿入
 	{F_INS_TIME,				"InsertTime",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 時刻挿入
+	{F_CTRL_CODE_DIALOG,		"CtrlCodeDialog",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 
 	/* 変換系 */
 	{F_TOLOWER,		 			"ToLower",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英大文字→英小文字
@@ -177,7 +181,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_CODECNV_AUTO2SJIS,		"AutoToSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 自動判別→SJISコード変換 */
 	{F_CODECNV_EMAIL,			"JIStoSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //E-Mail(JIS→SJIS)コード変換
 	{F_CODECNV_EUC2SJIS,		"EUCtoSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUC→SJISコード変換
-	{F_CODECNV_UNICODE2SJIS,	"CodeCnvUNICODEtoJIS",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicode→SJISコード変換
+	{F_CODECNV_UNICODE2SJIS,	"CodeCnvUNICODEtoSJIS",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicode→SJISコード変換
+	{F_CODECNV_UNICODEBE2SJIS,	"CodeCnvUNICODEBEtoSJIS",{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // UnicodeBE→SJISコード変換
 	{F_CODECNV_UTF82SJIS,		"UTF8toSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-8→SJISコード変換 */
 	{F_CODECNV_UTF72SJIS,		"UTF7toSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-7→SJISコード変換 */
 	{F_CODECNV_SJIS2JIS,		"SJIStoJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→JISコード変換 */
@@ -202,6 +207,11 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_TAGJUMP,					"TagJump",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプ機能
 	{F_TAGJUMPBACK,				"TagJumpBack",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプバック機能
 	{F_COMPARE,					"Compare",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイル内容比較
+	{F_DIFF_DIALOG,				"DiffDialog",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+	{F_DIFF,					"Diff",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示				//@@@ 2002.05.25 MIK
+	{F_DIFF_NEXT,				"DiffNext",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(次へ)			//@@@ 2002.05.25 MIK
+	{F_DIFF_PREV,				"DiffPrev",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(前へ)			//@@@ 2002.05.25 MIK
+	{F_DIFF_RESET,				"DiffReset",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(全解除)		//@@@ 2002.05.25 MIK
 	{F_BRACKETPAIR,				"BracketPair",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //対括弧の検索
 // From Here 2001.12.03 hor
 	{F_BOOKMARK_SET,			"BookmarkSet",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマーク設定・解除
@@ -302,7 +312,8 @@ CSMacroMgr::CSMacroMgr()
 	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){
 		m_cSavedKeyMacro[i] = NULL;
 	}
-	m_cKeyMacro = new CKeyMacroMgr;
+	//	Jun. 16, 2002 genta
+	m_pKeyMacro = NULL;
 }
 
 CSMacroMgr::~CSMacroMgr()
@@ -310,12 +321,8 @@ CSMacroMgr::~CSMacroMgr()
 	//- 20011229 add by aroka
 	ClearAll();
 	
-	//	PPA.DLLアリナシ共通
-	int i;
-	for (i=0; i<MAX_CUSTMACRO; i++){
-		delete m_cSavedKeyMacro[i];
-	}
-	delete m_cKeyMacro;
+	//	Jun. 16, 2002 genta
+	//	ClearAllと同じ処理だったので削除
 }
 
 /*! キーマクロのバッファをクリアする */
@@ -327,7 +334,9 @@ void CSMacroMgr::ClearAll( void )
 		delete m_cSavedKeyMacro[i];
 		m_cSavedKeyMacro[i] = NULL;
 	}
-	m_cKeyMacro->ClearAll();
+	//	Jun. 16, 2002 genta
+	delete m_pKeyMacro;
+	m_pKeyMacro = NULL;
 }
 
 /*! @briefキーマクロのバッファにデータ追加
@@ -335,13 +344,24 @@ void CSMacroMgr::ClearAll( void )
 	@param nFuncID [in] 機能番号
 	@param lParam1 [in] パラメータ。
 	@param mbuf [in] 読み込み先マクロバッファ
+	
+	@date 2002.06.16 genta キーマクロの多種対応のため変更
 
 */
 int CSMacroMgr::Append( int idx, /*CSMacroMgr::Macro1& mbuf, */ int nFuncID, LPARAM lParam1, CEditView* pcEditView )
 {
 	assert( idx == STAND_KEYMACRO );
 	if (idx == STAND_KEYMACRO){
-		m_cKeyMacro->Append( nFuncID, lParam1, pcEditView );
+		CKeyMacroMgr* pKeyMacro = dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro );
+		if( pKeyMacro == NULL ){
+			//	1. 実体がまだ無い場合
+			//	2. CKeyMacroMgr以外の物が入っていた場合
+			//	いずれにしても再生成する．
+			delete m_pKeyMacro;
+			m_pKeyMacro = new CKeyMacroMgr;
+			pKeyMacro = dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro );
+		}
+		pKeyMacro->Append( nFuncID, lParam1, pcEditView );
 	}
 //	else {
 		//m_cSavedKeyMacro[idx]->Append( nFuncID, lParam1, pcEditView );
@@ -362,8 +382,15 @@ int CSMacroMgr::Append( int idx, /*CSMacroMgr::Macro1& mbuf, */ int nFuncID, LPA
 BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 {
 	if( idx == STAND_KEYMACRO ){
-		m_cKeyMacro->ExecKeyMacro( pcEditView );
-		return TRUE;	//	必ずTRUE？
+		//	Jun. 16, 2002 genta
+		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
+		if( m_pKeyMacro != NULL ){
+			m_pKeyMacro->ExecKeyMacro( pcEditView );
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	範囲チェック
 		return FALSE;
@@ -393,31 +420,46 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 	@param idx [in] 読み込み先マクロバッファ番号
 	@param pszPath [in] マクロファイル名
 
-	@author Norio Nakatani
+	読み込みに失敗したときはマクロバッファのオブジェクトは解放され，
+	NULLが設定される．
+
+	@author Norio Nakatani, YAZAKI, genta
 */
 BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstance, const char* pszPath )
 {
-	if ( idx == STAND_KEYMACRO ){
-		m_cKeyMacro->ClearAll();
-		return m_cKeyMacro->LoadKeyMacro(hInstance, pszPath );
+	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
+
+	if( ppMacro == NULL ){
+#ifdef _DEBUG
+	MYTRACE( "CSMacroMgr::Load() Out of range: idx=%d Path=%s\n", idx, pszPath);
+#endif
 	}
-	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
-		const char *ext = strrchr( pszPath, '.');
-		const char *chk = strrchr( ext, '\\' );
-		if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
-							//	\が漢字の2バイト目の場合も拡張子ではない。
-			ext = NULL;
-		}
-		if(ext != NULL){
-			++ext;
-		}
-		//	ファイルの1行目を取得
-		delete m_cSavedKeyMacro[idx];
-		m_cSavedKeyMacro[idx] = CMacroFactory::Instance()->Create(ext);
-		if( m_cSavedKeyMacro[idx] == NULL )
-			return FALSE;
-		return m_cSavedKeyMacro[idx]->LoadKeyMacro(hInstance, pszPath );
+	//	バッファクリア
+	delete *ppMacro;
+	*ppMacro = NULL;
+	
+	const char *ext = strrchr( pszPath, '.');
+	const char *chk = strrchr( ext, '\\' );
+	if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
+						//	\が漢字の2バイト目の場合も拡張子ではない。
+		ext = NULL;
 	}
+	if(ext != NULL){
+		++ext;
+	}
+	*ppMacro = CMacroFactory::Instance()->Create(ext);
+	if( *ppMacro == NULL )
+		return FALSE;
+	//	From Here Jun. 16, 2002 genta
+	//	読み込みエラー時はインスタンス削除
+	if( (*ppMacro)->LoadKeyMacro(hInstance, pszPath )){
+		return TRUE;
+	}
+	else {
+		delete *ppMacro;
+		*ppMacro = NULL;
+	}
+	//	To Here Jun. 16, 2002 genta
 	return FALSE;
 }
 
@@ -432,7 +474,10 @@ BOOL CSMacroMgr::Save( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 {
 	assert( idx == STAND_KEYMACRO );
 	if ( idx == STAND_KEYMACRO ){
-		return m_cKeyMacro->SaveKeyMacro(hInstance, pszPath );
+		CKeyMacroMgr* pKeyMacro = dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro );
+		if( pKeyMacro != NULL ){
+			return pKeyMacro->SaveKeyMacro(hInstance, pszPath );
+		}
 	}
 //	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
 //		return m_cSavedKeyMacro[idx]->SaveKeyMacro(hInstance, pszPath );
@@ -440,28 +485,65 @@ BOOL CSMacroMgr::Save( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 	return FALSE;
 }
 
+/*
+	指定されたマクロをクリアする
+	
+	@param idx [in] マクロ番号(0-), STAND_KEYMACROは標準キーマクロバッファを表す．
+*/
 void CSMacroMgr::Clear( int idx )
 {
-	if ( idx == STAND_KEYMACRO ){
-		m_cKeyMacro->ClearAll();
-	}
-	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
-		//	Apr. 29, 2002 genta
-		delete m_cSavedKeyMacro[idx];
-		m_cSavedKeyMacro[idx] = NULL;
+	CMacroManagerBase **ppMacro = Idx2Ptr( idx );
+	if( ppMacro != NULL ){
+		delete *ppMacro;
+		*ppMacro = NULL;
 	}
 }
 
 /*
 ||  Attributes & Operations
 */
-/* 機能ID→関数名，機能名日本語 */
+/*
+	指定されたIDに対応するMacroInfo構造体へのポインタを返す．
+	該当するIDに対応する構造体がなければNULLを返す．
+
+	@param nFuncID [in] 機能ID
+	@return 構造体へのポインタ．見つからなければNULL
+	
+	@date 2002.06.16 genta
+*/
+const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
+{
+	int i;
+	for( i = 0; i < sizeof( m_MacroFuncInfoArr ) / sizeof( m_MacroFuncInfoArr[0] ); ++i ){
+		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
+			return &m_MacroFuncInfoArr[i];
+		}
+	}
+	return NULL;
+}
+
+/*!
+	機能IDから関数名と機能名日本語を取得
+	
+	@param hInstance [in] リソース取得のためのInstance Handle
+	@param nFuncID [in] 機能番号
+	@param pszFuncName [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	@param pszFuncNameJapanese [out] 機能名日本語．この先には256バイトのメモリが必要．
+	@return 成功したときはpszFuncName．見つからなかったときはNULL．
+	
+	@note
+	それぞれ，文字列格納領域の指す先がNULLの時は文字列を格納しない．
+	ただし，pszFuncNameをNULLにしてしまうと戻り値が常にNULLになって
+	成功判定が行えなくなる．
+	
+	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
+*/
 char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFuncName, char* pszFuncNameJapanese )
 {
-	int		i;
-	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
-		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
-			strcpy( pszFuncName, m_MacroFuncInfoArr[i].m_pszFuncName );
+	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
+	if( MacroInfo != NULL ){
+		if( pszFuncName != NULL ){
+			strcpy( pszFuncName, MacroInfo->m_pszFuncName );
 			char *p = pszFuncName;
 			while (*p){
 				if (*p == '('){
@@ -470,27 +552,55 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 				}
 				*p++;
 			}
-			::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
-			return pszFuncName;
 		}
+		//	Jun. 16, 2002 genta NULLのときは何もしない．
+		if( pszFuncNameJapanese != NULL ){
+			::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+		}
+		return pszFuncName;
 	}
 	return NULL;
 }
 
 /*!
-	関数名（S_xxxx）→機能ID，機能名日本語
+	関数名（S_xxxx）から機能IDと機能名日本語を取得．
+	関数名はS_で始まる場合と始まらない場合の両方に対応．
+
+	@param hInstance [in] リソース取得のためのInstance Handle
+	@param pszFuncName [in] 関数名
+	@param pszFuncNameJapanese [out] 機能名日本語．この先には256バイトのメモリが必要．
+	@return 成功したときは機能番号．見つからなかったときは-1．
+	
+	@note
+	pszFuncNameJapanese の指す先がNULLの時は日本語名を格納しない．
+	
+	@date 2002.06.16 genta ループ内の文字列コピーを排除
 */
 int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName, char* pszFuncNameJapanese )
 {
 	int		i;
 	int		nFuncID;
+	//	Jun. 16, 2002 genta
+	const char *normalizedFuncName;
+	
+	//	S_で始まっているか
+	if( pszFuncName == NULL ){
+		return -1;
+	}
+	if( pszFuncName[0] == 'S' && pszFuncName[1] == '_' ){
+		normalizedFuncName = pszFuncName + 2;
+	}
+	else {
+		normalizedFuncName = pszFuncName;
+	}
+	
 	char szBuffer[1024] = "S_";
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
-		strcpy( &szBuffer[2], m_MacroFuncInfoArr[i].m_pszFuncName );	//	S_付きを用意。
-		if( 0 == strcmp( pszFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )
-		||  0 == strcmp( pszFuncName, szBuffer ) ){
+		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
 			nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
-			::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+			if( pszFuncNameJapanese != NULL ){
+				::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+			}
 			return nFuncID;
 		}
 	}
@@ -512,6 +622,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_FILE_REOPEN_JIS			://JISで開き直す
 //	case F_FILE_REOPEN_EUC			://EUCで開き直す
 //	case F_FILE_REOPEN_UNICODE		://Unicodeで開き直す
+//	case F_FILE_REOPEN_UNICODEBE	://UnicodeBEで開き直す
 //	case F_FILE_REOPEN_UTF8			://UTF-8で開き直す
 //	case F_FILE_REOPEN_UTF7			://UTF-7で開き直す
 //	case F_PRINT					://印刷
@@ -642,6 +753,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	/* 挿入系 */
 	case F_INS_DATE					:// 日付挿入
 	case F_INS_TIME					:// 時刻挿入
+//	case F_CTRL_CODE_DIALOG			://コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 
 	/* 変換系 */
 	case F_TOLOWER		 			://英大文字→英小文字
@@ -659,6 +771,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_CODECNV_EMAIL			://E-Mail(JIS→SJIS)コード変換
 	case F_CODECNV_EUC2SJIS			://EUC→SJISコード変換
 	case F_CODECNV_UNICODE2SJIS		://Unicode→SJISコード変換
+	case F_CODECNV_UNICODEBE2SJIS	://UnicodeBE→SJISコード変換
 	case F_CODECNV_UTF82SJIS		:/* UTF-8→SJISコード変換 */
 	case F_CODECNV_UTF72SJIS		:/* UTF-7→SJISコード変換 */
 	case F_CODECNV_SJIS2JIS			:/* SJIS→JISコード変換 */
@@ -682,6 +795,11 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_TAGJUMP					://タグジャンプ機能
 	case F_TAGJUMPBACK				://タグジャンプバック機能
 //	case F_COMPARE					://ファイル内容比較
+//	case F_DIFF_DIALOG				://DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+//	case F_DIFF						://DIFF差分表示				//@@@ 2002.05.25 MIK
+//	case F_DIFF_NEXT				://DIFF差分表示(次へ)		//@@@ 2002.05.25 MIK
+//	case F_DIFF_PREV				://DIFF差分表示(前へ)		//@@@ 2002.05.25 MIK
+//	case F_DIFF_RESET				://DIFF差分表示(全解除)		//@@@ 2002.05.25 MIK
 	case F_BRACKETPAIR				://対括弧の検索
 // From Here 2001.12.03 hor
 	case F_BOOKMARK_SET				://ブックマーク設定・解除
@@ -766,5 +884,40 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	}
 	return FALSE;
 
+}
+
+/*!
+	マクロ番号から対応するマクロオブジェクト格納位置へのポインタへの変換
+	
+	@param idx [in] マクロ番号(0-), STAND_KEYMACROは標準キーマクロバッファを表す．
+	@return オブジェクト位置へのポインタ．マクロ番号が不当な場合はNULL．
+*/
+CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
+{
+	//	Jun. 16, 2002 genta
+	//	キーマクロ以外のマクロを読み込めるように
+	if ( idx == STAND_KEYMACRO ){
+		return &m_pKeyMacro;
+	}
+	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
+		return &m_cSavedKeyMacro[idx];
+	}
+
+#ifdef _DEBUG
+	MYTRACE( "CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n", idx);
+#endif
+
+	return NULL;
+}
+
+/*!
+	キーボードマクロの保存が可能かどうか
+	
+	@retval TRUE 保存可能
+	@retval FALSE 保存不可
+*/
+BOOL CSMacroMgr::IsSaveOk(void)
+{
+	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? FALSE : TRUE;
 }
 /*[EOF]*/

@@ -527,6 +527,15 @@ BOOL CEditDoc::FileRead(
 			if( bConfirmCodeChange ){
 				char*	pszCodeName = NULL;
 				char*	pszCodeNameNew = NULL;
+
+				// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+				if( -1 < fi.m_nCharCode && fi.m_nCharCode < CODE_CODEMAX ){
+					pszCodeName = (char*)gm_pszCodeNameArr_1[fi.m_nCharCode];
+				}
+				if( -1 < m_nCharCode && m_nCharCode < CODE_CODEMAX ){
+					pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
+				}
+#if 0
 				switch( fi.m_nCharCode ){
 				case CODE_SJIS:		/* SJIS */		pszCodeName = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 				case CODE_JIS:		/* JIS */		pszCodeName = "JIS";break;
@@ -543,6 +552,7 @@ BOOL CEditDoc::FileRead(
 				case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
 				case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
 				}
+#endif
 				if( pszCodeName != NULL ){
 					::MessageBeep( MB_ICONQUESTION );
 					nRet = MYMESSAGEBOX(
@@ -1080,45 +1090,16 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 	/* プロパティシートの作成 */
 	if( m_cPropCommon.DoPropertySheet( nPageNum/*, nActiveItem*/ ) ){
-//		/* 変更されたか？ */
-//		if( 0 != memcmp( m_pShareData->m_pKeyNameArr, m_cPropCommon.m_pKeyNameArr, sizeof( m_pShareData->m_pKeyNameArr ) ) ){
-//			m_pShareData->m_bKeyBindModify = TRUE;	/* 変更フラグ キー割り当て */
-			for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
-//				if( 0 != memcmp( &m_cPropCommon.m_pKeyNameArr[i], &m_pShareData->m_pKeyNameArr[i], sizeof( m_cPropCommon.m_pKeyNameArr[i] ) ) ){
-					m_pShareData->m_pKeyNameArr[i] = m_cPropCommon.m_pKeyNameArr[i];
-//					m_pShareData->m_bKeyBindModifyArr[i] = TRUE;	/* 変更フラグ キー割り当て(キーごと) */
-//				}
-			}
-//		}
-//		/* 変更状況を調査 */
-//		bModify = m_pShareData->m_CKeyWordSetMgr.IsModify(
-//			m_cPropCommon.m_CKeyWordSetMgr,
-//			&m_pShareData->m_bKeyWordSetModifyArr[0]
-//		);
-//		if( bModify ){
-//			m_pShareData->m_bKeyWordSetModify = TRUE;
-			m_pShareData->m_CKeyWordSetMgr = m_cPropCommon.m_CKeyWordSetMgr;
-//		}
+		for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
+			m_pShareData->m_pKeyNameArr[i] = m_cPropCommon.m_pKeyNameArr[i];
+		}
+		m_pShareData->m_CKeyWordSetMgr = m_cPropCommon.m_CKeyWordSetMgr;
 
-//		/* 変更フラグ(共通設定の全体) のセット */
-//		if( 0 != memcmp( &m_pShareData->m_Common, &m_cPropCommon.m_Common, sizeof( Common ) ) ){
-//			/* 変更フラグ(共通設定の全体) のセット */
-//			m_pShareData->m_nCommonModify = TRUE;
-			m_pShareData->m_Common = m_cPropCommon.m_Common;
-//		}else{
-//		}
-
-//		/* 共通設定とキーワード設定が無変更の場合は、なにもしない */
-//		if( FALSE == m_pShareData->m_nCommonModify
-//		 && FALSE == m_pShareData->m_bKeyWordSetModify
-//		){
-//			return FALSE;
-//		}
+		m_pShareData->m_Common = m_cPropCommon.m_Common;
 
 		for( i = 0; i < MAX_TYPES; ++i ){
 			//2002/04/25 YAZAKI Types全体を保持する必要はない。
 			/* 変更された設定値のコピー */
-//			m_pShareData->m_Types[i] = m_cPropCommon.m_Types[i];
 			m_pShareData->m_Types[i].m_nKeyWordSetIdx = m_cPropCommon.m_Types_nKeyWordSetIdx[i];
 			m_pShareData->m_Types[i].m_nKeyWordSetIdx2 = m_cPropCommon.m_Types_nKeyWordSetIdx2[i];
 		}
@@ -1131,6 +1112,11 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+
+		/* フォントが変わった */
+		for( i = 0; i < 4; ++i ){
+			m_cEditViewArr[i].m_cTipWnd.ChangeFont( &(m_pShareData->m_Common.m_lf_kh) );
+		}
 
 		/* 設定変更を反映させる */
 		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */

@@ -343,6 +343,7 @@ protected:
 	void DrawRulerCaret( HDC hdc );								// ルーラーのキャレットのみ描画 2002.02.25 Add By KK
 	int	DispText( HDC, int, int, const unsigned char*, int );	/* テキスト表示 */
 	void DispTextSelected( HDC, int, int, int, int );			/* テキスト反転 */
+//	int	DispCtrlCode( HDC, int, int, const unsigned char*, int );	/* コントロールコード表示 */
 	void TwoPointToRect( RECT*, int, int, int, int );			/* 2点を対角とする矩形を求める */
 	void DrawSelectArea( void );								/* 指定行の選択領域の描画 */
 	void DrawSelectAreaLine( HDC, int, int, int, int, int );	/* 指定行の選択領域の描画 */
@@ -466,6 +467,7 @@ protected:
 	void Command_SORT(BOOL);				// 2001.12.06 hor
 	void Command_MERGE(void);				// 2001.12.06 hor
 	void Command_Reconvert(void);			/* メニューからの再変換対応 minfu 2002.04.09 */
+	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 
 	/* 指定位置の指定長データ削除 */
 	void CEditView::DeleteData2(
@@ -610,6 +612,7 @@ void ReplaceData_CEditView(
 	void Command_CODECNV_EMAIL( void );			/* E-Mail(JIS→SJIS)コード変換 */
 	void Command_CODECNV_EUC2SJIS( void );		/* EUC→SJISコード変換 */
 	void Command_CODECNV_UNICODE2SJIS( void );	/* Unicode→SJISコード変換 */
+	void Command_CODECNV_UNICODEBE2SJIS( void );	/* UnicodeBE→SJISコード変換 */
 	void Command_CODECNV_UTF82SJIS( void );		/* UTF-8→SJISコード変換 */
 	void Command_CODECNV_UTF72SJIS( void );		/* UTF-7→SJISコード変換 */
 	void Command_CODECNV_SJIS2JIS( void );		/* SJIS→JISコード変換 */
@@ -638,6 +641,11 @@ void ReplaceData_CEditView(
 	bool Command_TAGJUMP( void/*BOOL*/ );				/* タグジャンプ機能 */
 	void/*BOOL*/ Command_TAGJUMPBACK( void/*BOOL*/ );	/* タグジャンプバック機能 */
 	void Command_COMPARE( void );						/* ファイル内容比較 */
+	void Command_Diff_Dialog( void );					/* DIFF差分表示ダイアログ */	//@@@ 2002.05.25 MIK
+	void Command_Diff( const char*, const char*, int );	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+	void Command_Diff_Next( void );						/* 次の差分へ */	//@@@ 2002.05.25 MIK
+	void Command_Diff_Prev( void );						/* 前の差分へ */	//@@@ 2002.05.25 MIK
+	void Command_Diff_Reset( void );					/* 差分の全解除 */	//@@@ 2002.05.25 MIK
 	void Command_BRACKETPAIR( void );					/* 対括弧の検索 */
 // From Here 2001.12.03 hor
 	void Command_BOOKMARK_SET( void );					/* ブックマーク設定・解除 */
@@ -717,6 +725,9 @@ void ReplaceData_CEditView(
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
+
+	void AnalyzeDiffInfo( char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
+//	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
 
 private:
 	UINT	m_uMSIMEReconvertMsg;

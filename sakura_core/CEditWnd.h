@@ -75,6 +75,7 @@ public:
 	void OnCommand( WORD, WORD , HWND );
 
 	void CreateToolBar( void );			/* ツールバー作成 */
+	void DestroyToolBar( void );		/* ツールバー破棄 */
 	void CreateStatusBar( void );		/* ステータスバー作成 */
 	void DestroyStatusBar( void );		/* ステータスバー破棄 */
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューのバーはCPrintPreviewに移動
@@ -169,6 +170,13 @@ private:
 	LRESULT OnNcLButtonDown(WPARAM, LPARAM);
 	LRESULT OnNcLButtonUp(WPARAM, LPARAM);
 	LRESULT OnLButtonDblClk(WPARAM, LPARAM);
+
+	int	CreateFileDropDownMenu( HWND );	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
+	HWND	m_hwndSearchBox;
+	HFONT	m_fontSearchBox;
+	void	ProcSearchBox( MSG* );	//検索(ボックス)
+	int		m_nCurrentFocus;
+
 public:
 	void OnSysMenuTimer();
 };

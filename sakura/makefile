@@ -41,6 +41,8 @@ OBJS =\
 	$(SRCDIR)\CDlgAbout.obj \
 	$(SRCDIR)\CDlgCancel.obj \
 	$(SRCDIR)\CDlgCompare.obj \
+	$(SRCDIR)\CDlgCtrlCode.obj \
+	$(SRCDIR)\CDlgDiff.obj \
 	$(SRCDIR)\CDlgDebug.obj \
 	$(SRCDIR)\CDlgExec.obj \
 	$(SRCDIR)\CDlgFind.obj \
@@ -65,11 +67,13 @@ OBJS =\
 	$(SRCDIR)\CEditView.obj \
 	$(SRCDIR)\CEditView_Command.obj \
 	$(SRCDIR)\CEditView_Command_New.obj \
+	$(SRCDIR)\CEditView_Diff.obj \
 	$(SRCDIR)\CEditView_New.obj \
 	$(SRCDIR)\CEditView_New2.obj \
 	$(SRCDIR)\CEditView_New3.obj \
 	$(SRCDIR)\CEditWnd.obj \
 	$(SRCDIR)\CEol.obj \
+	$(SRCDIR)\CFileWrite.obj \
 	$(SRCDIR)\CFuncInfo.obj \
 	$(SRCDIR)\CFuncInfoArr.obj \
 	$(SRCDIR)\CFuncKeyWnd.obj \

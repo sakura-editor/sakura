@@ -50,6 +50,7 @@ class SAKURA_CORE_API CEOL
 {
 	static const char* gm_pszEolDataArr[EOL_TYPE_NUM];
 	static const wchar_t* gm_pszEolUnicodeDataArr[EOL_TYPE_NUM];
+	static const wchar_t* gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM];
 	static const int gm_pnEolLenArr[EOL_TYPE_NUM];
 	static const char* gm_pszEolNameArr[EOL_TYPE_NUM];
 public:
@@ -75,6 +76,8 @@ public:
 		{ return gm_pszEolDataArr[ m_enumEOLType ]; }	//!<	Œ»Ý‚ÌEOL•¶Žš—ñæ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ðŽæ“¾
 	const char* GetUnicodeValue() const
 		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeDataArr[m_enumEOLType]);}	//!<	Unicode”ÅGetValue	2002/5/9 Frozen
+	const char* GetUnicodeBEValue(void) const
+		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeBEDataArr[m_enumEOLType]); }	//!<	UnicodeBE”Å‚ÌGetValue 2002.05.30 Moca
 
 	//	—˜•Ö«Œüã‚Ì‚½‚ß‚ÌOverload
 	bool operator==( enumEOLType t ) const { return GetType() == t; }

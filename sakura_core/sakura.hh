@@ -32,6 +32,7 @@
 #define HLP000157	157 //JISで開き直す
 #define HLP000158	158 //EUCで開き直す
 #define HLP000159	159 //Unicodeで開き直す
+#define HLP000256	256 //UnicodeBEで開き直す
 #define HLP000160	160 //UTF-8で開き直す
 #define HLP000161	161 //UTF-7で開き直す
 #define HLP000162	162 //印刷
@@ -104,6 +105,7 @@
 #define HLP000052	52 //E-Mail(JIS→SJIS)コード変換
 #define HLP000053	53 //EUC→SJISコード変換
 #define HLP000179	179 //Unicode→SJISコード変換
+#define HLP000257	257 //UnicodeBE→SJISコード変換
 #define HLP000142	142 //UTF-8→SJISコード変換
 #define HLP000143	143 //UTF-7→SJISコード変換
 #define HLP000117	117 //SJIS→JISコード変換
@@ -237,6 +239,11 @@
 #define HLP000248	248 //（選択）半ページダウン
 #define HLP000249	249 //読み取り専用
 #define HLP000250	250 //単語について
+#define HLP000251	251	//DIFF差分表示(ダイアログ)
+#define HLP000252	252	//DIFF差分表示(次の差分へ)
+#define HLP000253	253	//DIFF差分表示(前の差分へ)
+#define HLP000254	254	//DIFF差分表示(差分表示の全解除)
+#define HLP000255	255	//コントロールコードの入力
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
@@ -639,5 +646,29 @@
 #define HIDC_OPENDLG_COMBO_MRU	13104	//最近のファイル
 #define HIDC_OPENDLG_COMBO_OPENFOLDER	13105	//最近のフォルダ
 #define HIDC_OPENDLG_COMBO_EOL	13106	//改行コード
+
+//DIFF差分表示
+#define HIDC_BUTTON_DIFF_DST		13200	// 相手ファイル参照
+#define HIDC_CHECK_DIFF_OPT_BLINE	13201	// 空白行無視
+#define HIDC_CHECK_DIFF_OPT_CASE	13202	// 大文字小文字同一視
+#define HIDC_CHECK_DIFF_OPT_SPACE	13203	// 空白無視
+#define HIDC_CHECK_DIFF_OPT_SPCCHG	13204	// 空白変更無視
+#define HIDC_CHECK_DIFF_OPT_TABSPC	13205	// TAB空白変換
+#define HIDC_EDIT_DIFF_DST			13206	// 相手作ファイル
+#define HIDC_RADIO_DIFF_FILE1		13207	// 編集中ファイルを新
+#define HIDC_RADIO_DIFF_FILE2		13208	// 編集中ファイルを旧
+#define HIDC_RADIO_DIFF_DST1		13209	// 外部ファイルを指定
+#define HIDC_RADIO_DIFF_DST2		13210	// 他の編集中ファイル
+#define HIDC_LIST_DIFF_FILES		13211	// 他の編集中ファイル
+#define HIDC_STATIC_DIFF_SRC		13212	// 自ファイル
+#define HIDC_DIFF_IDOK				13213	//OK
+#define HIDC_DIFF_IDCANCEL			13214	//キャンセル
+#define HIDC_BUTTON_DIFF_HELP		13215	//ヘルプ
+
+//コントロールコード
+#define HIDC_LIST_CTRLCODE			13300
+#define HIDC_CTRLCODE_IDOK			13301	//OK
+#define HIDC_CTRLCODE_IDCANCEL		13302	//キャンセル
+#define HIDC_BUTTON_CTRLCODE_HELP	13303	//ヘルプ
 
 #define HIDC_STATIC								19999 //不明

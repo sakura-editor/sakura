@@ -74,6 +74,11 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 
 		//	ファイル名のみ必要。
 		//	文字コード表記
+		if( 0 <  m_pShareData->m_fiMRUArr[i].m_nCharCode  &&
+				 m_pShareData->m_fiMRUArr[i].m_nCharCode  < CODE_CODEMAX ){
+			strcat( szMemu, gm_pszCodeNameArr_3[ m_pShareData->m_fiMRUArr[i].m_nCharCode ] );
+		}
+#if 0
 		switch( m_pShareData->m_fiMRUArr[i].m_nCharCode ){
 			case CODE_JIS:		/* JIS */
 				strcat( szMemu, "  [JIS]" );
@@ -93,7 +98,8 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 			case 0:
 				break;
 		}
-		
+#endif
+
 		//	メニューに追加。
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu );
 		createdMenuItem++;	//	作成したメニュー数+1
@@ -287,3 +293,5 @@ bool CMRU::IsRemovableDrive( const char* pszDrive )
 	}
 	return false;
 }
+
+/*EOF*/

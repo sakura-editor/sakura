@@ -857,12 +857,12 @@ BEGIN
                     HIDC_CHECK_m_bHokanKey_RIGHT
     GROUPBOX        "入力補完機能",IDC_STATIC,3,3,264,30,WS_GROUP
     LTEXT           "候補決定キー",IDC_STATIC,7,17,42,8
-    GROUPBOX        "外部ヘルプの設定(&L)",IDC_STATIC,3,38,264,32,WS_GROUP
+    GROUPBOX        "外部ヘルプの設定(&L)",IDC_STATIC,3,37,264,32,WS_GROUP
     EDITTEXT        IDC_EDIT_EXTHELP1,8,50,239,12,ES_AUTOHSCROLL | WS_GROUP,
                     0,HIDC_EDIT_EXTHELP1
     PUSHBUTTON      "(&1)...",IDC_BUTTON_OPENHELP1,247,49,16,14,0,0,
                     HIDC_BUTTON_OPENHELP1
-    GROUPBOX        "外部HTMLヘルプの設定(&P)",IDC_STATIC,3,77,264,45,
+    GROUPBOX        "外部HTMLヘルプの設定(&P)",IDC_STATIC,3,73,264,45,
                     WS_GROUP
     EDITTEXT        IDC_EDIT_EXTHTMLHELP,8,89,239,12,ES_AUTOHSCROLL | 
                     WS_GROUP,0,HIDC_EDIT_EXTHTMLHELP
@@ -871,6 +871,9 @@ BEGIN
     CONTROL         "ビューアを複数起動しない(&N)",
                     IDC_CHECK_HTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,105,101,10,0,HIDC_CHECK_HTMLHELPISSINGLE
+    GROUPBOX        "キーワーヘルプ",IDC_STATIC,3,123,264,33,WS_GROUP
+    PUSHBUTTON      "フォント(&F)",IDC_BUTTON_KEYWORDHELPFONT,212,136,51,14,
+                    0,0,HIDC_BUTTON_KEYWORDHELPFONT
 END
 
 IDD_PROP_COLOR DIALOGEX 0, 0, 270, 213
@@ -1155,7 +1158,7 @@ END
 IDD_PROP_KEYBIND DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "種別(&K)",IDC_LABEL_MENUFUNCKIND,27,4,23,8
     COMBOBOX        IDC_COMBO_FUNCKIND,51,2,70,170,CBS_DROPDOWNLIST | 
@@ -1629,6 +1632,81 @@ BEGIN
                     118,13,0,HIDC_CHECK_REGEX
 END
 
+IDD_DIFF DIALOGEX 0, 0, 263, 277
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "DIFF差分表示"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+BEGIN
+    LTEXT           "編集中のファイル",IDC_STATIC,7,7,52,8
+    LTEXT           "Static",IDC_STATIC_DIFF_SRC,7,18,249,23,SS_SUNKEN,0,
+                    HIDC_STATIC_DIFF_SRC
+    GROUPBOX        "比較するファイル",IDC_FRAME_DIFF_DST,7,47,249,138,
+                    WS_GROUP
+    EDITTEXT        IDC_EDIT_DIFF_DST,13,72,191,13,ES_AUTOHSCROLL,0,
+                    HIDC_EDIT_DIFF_DST
+    CONTROL         "外部ファイルを指定",IDC_RADIO_DIFF_DST1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,13,58,78,11,0,
+                    HIDC_RADIO_DIFF_DST1
+    PUSHBUTTON      "参照(&R)...",IDC_BUTTON_DIFF_DST,208,72,42,14,WS_GROUP,
+                    0,HIDC_BUTTON_DIFF_DST
+    CONTROL         "他の編集中のファイル",IDC_RADIO_DIFF_DST2,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,13,89,147,11,
+                    0,HIDC_RADIO_DIFF_DST2
+    LISTBOX         IDC_LIST_DIFF_FILES,13,102,236,77,LBS_SORT | 
+                    LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | 
+                    LBS_DISABLENOSCROLL | WS_VSCROLL | WS_HSCROLL | 
+                    WS_TABSTOP,0,HIDC_LIST_DIFF_FILES
+    CONTROL         "大文字小文字の同一視(&C)",IDC_CHECK_DIFF_OPT_CASE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,191,
+                    93,10,0,HIDC_CHECK_DIFF_OPT_CASE
+    CONTROL         "空白無視(&W)",IDC_CHECK_DIFF_OPT_SPACE,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,203,64,10,0,
+                    HIDC_CHECK_DIFF_OPT_SPACE
+    CONTROL         "空白変更無視(&B)",IDC_CHECK_DIFF_OPT_SPCCHG,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,216,73,10,0,
+                    HIDC_CHECK_DIFF_OPT_SPCCHG
+    CONTROL         "空白行無視(&L)",IDC_CHECK_DIFF_OPT_BLINE,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,229,74,10,0,
+                    HIDC_CHECK_DIFF_OPT_BLINE
+    CONTROL         "タブ空白変換(&T)",IDC_CHECK_DIFF_OPT_TABSPC,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,242,74,10,0,
+                    HIDC_CHECK_DIFF_OPT_TABSPC
+    GROUPBOX        "編集中ファイルが...",IDC_FRAME_DIFF_FILE12,116,194,126,
+                    26,WS_GROUP,0,HIDC_FRAME_DIFF_FILE12
+    CONTROL         "新ファイル(&N)",IDC_RADIO_DIFF_FILE1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,122,205,56,10,0,
+                    HIDC_RADIO_DIFF_FILE1
+    CONTROL         "旧ファイル(&O)",IDC_RADIO_DIFF_FILE2,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,185,205,55,10,0,
+                    HIDC_RADIO_DIFF_FILE2
+    CONTROL         "見つからないときにメッセージを表示(&M)",
+                    IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,115,226,130,10,0,HIDC_CHECK_NOTIFYNOTFOUND
+    CONTROL         "先頭（末尾）から再検索する(&Z)",IDC_CHECK_SEARCHALL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,239,130,10,0,
+                    HIDC_CHECK_SEARCHALL
+    DEFPUSHBUTTON   "&OK",IDOK,97,256,50,14,0,0,HIDOK
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,151,256,50,14,0,0,HIDCANCEL
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,206,256,50,14,0,0,
+                    HIDC_BUTTON_HELP
+END
+
+IDD_CTRLCODE DIALOGEX 0, 0, 179, 185
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "コントロールコード"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_LIST_CTRLCODE,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOSORTHEADER | 
+                    WS_BORDER | WS_TABSTOP,2,2,175,162,0,HIDC_LIST_CTRLCODE
+    DEFPUSHBUTTON   "&OK",IDOK,19,168,50,14,0,0,HIDOK
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,73,168,50,14,0,0,HIDCANCEL
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,127,168,50,14,0,0,
+                    HIDC_BUTTON_HELP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1953,6 +2031,22 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 204
     END
+
+    IDD_DIFF, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 256
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_CTRLCODE, DIALOG
+    BEGIN
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 177
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 182
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1995,7 +2089,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,3,0,0
- PRODUCTVERSION 1,3,1,5
+ PRODUCTVERSION 1,3,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2019,7 +2113,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.3.1.5\0"
+            VALUE "ProductVersion", "1.3.2.0\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2060,6 +2154,7 @@ IDI_ICON_GREP           ICON    DISCARDABLE     "../resource/icon_grep.ico"
 IDC_CURSOR_COPYARROW    CURSOR  DISCARDABLE     "../resource/cursor_copy.cur"
 IDC_CURSOR_HAND         CURSOR  DISCARDABLE     "../resource/cursor_hand.cur"
 IDC_CURSOR_MOVEARROW    CURSOR  DISCARDABLE     "../resource/cursor_move.cur"
+IDC_CURSOR_RVARROW      CURSOR  DISCARDABLE     "../resource/cursor_rvarrow.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2079,6 +2174,7 @@ BEGIN
     F_FILESAVEAS_DIALOG     "名前を付けて保存"
     F_FILECLOSE             "閉じて(無題)"
     F_FILECLOSE_OPEN        "閉じて開く..."
+    F_FILEOPEN_DROPDOWN     "開く... (ドロップダウン)"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
 END
 
@@ -2094,6 +2190,7 @@ BEGIN
     F_FILE_REOPEN_JIS       "JISで開き直す"
     F_FILE_REOPEN_EUC       "EUCで開き直す"
     F_FILE_REOPEN_UNICODE   "Unicodeで開き直す"
+    F_FILE_REOPEN_UNICODEBE "UnicodeBEで開き直す"
     F_FILE_REOPEN_UTF8      "UTF-8で開き直す"
     F_FILE_REOPEN_UTF7      "UTF-7で開き直す"
 END
@@ -2297,6 +2394,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_INS_DATE              "日付挿入"
     F_INS_TIME              "時刻挿入"
+    F_CTRL_CODE_DIALOG      "コントロールコード入力"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2324,6 +2422,7 @@ BEGIN
     F_CODECNV_EMAIL         "E-Mail(JIS→SJIS)コード変換"
     F_CODECNV_EUC2SJIS      "EUC→SJISコード変換"
     F_CODECNV_UNICODE2SJIS  "Unicode→SJISコード変換"
+    F_CODECNV_UNICODEBE2SJIS "UnicodeBE→SJISコード変換"
     F_CODECNV_UTF82SJIS     "UTF-8→SJISコード変換"
     F_CODECNV_UTF72SJIS     "UTF-7→SJISコード変換"
     F_CODECNV_SJIS2JIS      "SJIS→JISコード変換"
@@ -2350,6 +2449,7 @@ BEGIN
     F_REPLACE_DIALOG        "置換"
     F_SEARCH_CLEARMARK      "検索マークの切替え"
     F_REPLACE               "置換"
+    F_SEARCH_BOX            "検索 (ボックス)"
     F_GREP_DIALOG           "Grep"
     F_GREP                  "Grep"
 END
@@ -2370,6 +2470,15 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_COMPARE               "ファイル内容比較"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_DIFF_DIALOG           "DIFF差分表示"
+    F_DIFF                  "DIFF差分表示"
+    F_DIFF_NEXT             "次の差分へ"
+    F_DIFF_PREV             "前の差分へ"
+    F_DIFF_RESET            "差分表示の全解除"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2509,7 +2618,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_AUTHOR_PAGE         "http://hp.vector.co.jp/authors/VA016528/"
     IDS_AUTHOR_MAIL         "hippie@mcn.ne.jp"
-    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n無償で利用できますが，著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です。\r\nソースコードの利用に対する詳細なライセンスは現在検討中です．"
+    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n無償で利用できますが，著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\nソースコードの利用に対する詳細なライセンスは現在検討中です．"
 END
 
 #endif    // 日本語 resources

@@ -70,8 +70,13 @@ struct ARRHEAD {
 
 	Version 32:
 	CommonからTypesへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
+
+	Version 33:
+	Commonに、m_lf_khを追加 2002/05/21 ai
+	m_nDiffFlgOptを追加 2002.05.27 MIK
+	Types-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
 */
-const unsigned int uShareDataVersion = 32;
+const unsigned int uShareDataVersion = 33;
 
 /*
 ||	Singleton風
@@ -523,6 +528,15 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_lf.lfQuality			= 0x1;
 		m_pShareData->m_Common.m_lf.lfPitchAndFamily	= 0x31;
 		strcpy( m_pShareData->m_Common.m_lf.lfFaceName, "ＭＳ ゴシック" );
+
+		// キーワードヘルプのフォント ai 02/05/21 Add S
+		::SystemParametersInfo(
+			SPI_GETICONTITLELOGFONT,				// system parameter to query or set
+			sizeof(LOGFONT),						// depends on action to be taken
+			(PVOID)&m_pShareData->m_Common.m_lf_kh,	// depends on action to be taken
+			NULL									// user profile update flag
+		);
+		// ai 02/05/21 Add E
 
 //		/* LOGFONTの初期化 */
 //		memset( &m_pShareData->m_Common.m_lf, 0, sizeof( LOGFONT ) );
@@ -1077,6 +1091,9 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"正規表現キーワード8",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
 			"正規表現キーワード9",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
 			"正規表現キーワード10",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+			"DIFF差分表示(追加)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
+			"DIFF差分表示(変更)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
+			"DIFF差分表示(削除)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 		};
 //	To Here Sept. 18, 2000
 
@@ -3740,6 +3757,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 		m_pShareData->m_bGetStdout = TRUE;	/* 外部コマンド実行の「標準出力を得る」 */
 		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+
+		m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */

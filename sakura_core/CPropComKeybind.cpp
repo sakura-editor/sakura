@@ -268,6 +268,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndFuncList );
 				return TRUE;
 			}
+			break;	/* BN_CLICKED */
 		}
 		if( hwndCheckShift == hwndCtl
 		 || hwndCheckCtrl == hwndCtl

@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "..\sakura_core" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /O2 /I "..\sakura_core" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\sakura_core" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "..\sakura_core" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -129,7 +129,15 @@ SOURCE=..\sakura_core\CDlgCompare.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgCtrlCode.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgDebug.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgDiff.cpp
 # End Source File
 # Begin Source File
 
@@ -165,7 +173,7 @@ SOURCE=..\sakura_core\CDlgPrintPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\cdlgprintsetting.cpp
+SOURCE=..\sakura_core\CDlgPrintSetting.cpp
 # End Source File
 # Begin Source File
 
@@ -213,15 +221,19 @@ SOURCE=..\sakura_core\CEditDoc_new.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\ceditview.cpp
+SOURCE=..\sakura_core\CEditView.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\ceditview_command.cpp
+SOURCE=..\sakura_core\CEditView_Command.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\ceditview_command_new.cpp
+SOURCE=..\sakura_core\CEditView_Command_New.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CEditView_Diff.cpp
 # End Source File
 # Begin Source File
 
@@ -557,7 +569,15 @@ SOURCE=..\sakura_core\CDlgCompare.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgCtrlCode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgDebug.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgDiff.h
 # End Source File
 # Begin Source File
 
@@ -869,6 +889,10 @@ SOURCE=..\sakura_core\StdAfx.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
+SOURCE=..\resource\cursor1.cur
+# End Source File
+# Begin Source File
+
 SOURCE=..\resource\cursor_copy.cur
 # End Source File
 # Begin Source File
@@ -878,6 +902,10 @@ SOURCE=..\resource\cursor_hand.cur
 # Begin Source File
 
 SOURCE=..\resource\cursor_move.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_rvarrow.cur
 # End Source File
 # Begin Source File
 

@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, jepro
 	Copyright (C) 2001, mik, hor
-	Copyright (C) 2002, YAZAKI, genta, aroka
+	Copyright (C) 2002, YAZAKI, genta, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -39,6 +39,7 @@
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "CPrintPreview.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka
+#include "CSMacroMgr.h" // Jun. 16, 2002 genta
 
 
 #define IDT_TOOLBAR		456
@@ -155,6 +156,9 @@ CEditWnd::CEditWnd() :
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	m_pPrintPreview( NULL ),
 	m_pszAppName( GSTR_EDITWINDOWNAME ),
+	m_hwndSearchBox( NULL ),
+	m_fontSearchBox( NULL ),
+	m_nCurrentFocus( 0 ),
 //@@@ 2002.01.14 YAZAKI 不使用と思われるため
 #if 0
 	m_hbmpOPENED( NULL ),
@@ -593,10 +597,123 @@ void CEditWnd::CreateToolBar( void )
 		//	既に用意されているImage Listをアイコンとして登録
 		m_cIcons.SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
+		int count = 0;	//@@@ 2002.06.15 MIK
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
 			nIdx = m_pShareData->m_Common.m_nToolBarButtonIdxArr[i];
 			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
-			::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
+			//::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
+
+			//@@@ 2002.06.15 MIK start
+			switch( tbb.fsStyle )
+			{
+			case TBSTYLE_DROPDOWN:	//ドロップダウン
+				//拡張スタイルに設定
+				::SendMessage( m_hwndToolBar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS );
+				::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
+				count++;
+				break;
+
+			case TBSTYLE_COMBOBOX:	//コンボボックス
+				{
+					RECT			rc;
+					TBBUTTONINFO	tbi;
+					//HWND			my_hwnd;
+					TBBUTTON		my_tbb;
+					//int			width;
+					LOGFONT			lf;
+					//HFONT			my_font;
+					int				my_i;
+
+					switch( tbb.idCommand )
+					{
+					case F_SEARCH_BOX:
+						if( m_hwndSearchBox )
+						{
+							break;
+						}
+						
+						//セパレータ作る
+						memset( &my_tbb, 0, sizeof(my_tbb) );
+						my_tbb.fsStyle   = TBSTYLE_SEP;
+						my_tbb.idCommand = tbb.idCommand;	//同じIDにしておく
+						::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&my_tbb );
+						count++;
+
+						//サイズを設定する
+						tbi.cbSize = sizeof(tbi);
+						tbi.dwMask = TBIF_SIZE;
+						tbi.cx     = 160;	//ボックスの幅
+						::SendMessage( m_hwndToolBar, TB_SETBUTTONINFO, (WPARAM)(tbb.idCommand), (LPARAM)&tbi );
+
+						//サイズを取得する
+						rc.right = rc.left = rc.top = rc.bottom = 0;
+						::SendMessage( m_hwndToolBar, TB_GETITEMRECT, (WPARAM)(count-1), (LPARAM)&rc );
+
+						//コンボボックスを作る
+						m_hwndSearchBox = CreateWindow( "COMBOBOX", "Combo",
+								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
+								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
+								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
+								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, m_hInstance, NULL );
+						if( m_hwndSearchBox )
+						{
+							m_nCurrentFocus = 0;
+
+							memset( &lf, 0, sizeof(LOGFONT) );
+							lf.lfHeight			= 14;
+							lf.lfWidth			= 0;
+							lf.lfEscapement		= 0;
+							lf.lfOrientation	= 0;
+							lf.lfWeight			= FW_NORMAL;
+							lf.lfItalic			= FALSE;
+							lf.lfUnderline		= FALSE;
+							lf.lfStrikeOut		= FALSE;
+							lf.lfCharSet		= SHIFTJIS_CHARSET;
+							lf.lfOutPrecision	= OUT_DEFAULT_PRECIS;
+							lf.lfClipPrecision	= CLIP_DEFAULT_PRECIS;
+							lf.lfQuality		= DEFAULT_QUALITY;
+							lf.lfPitchAndFamily	= FF_MODERN | DEFAULT_PITCH;
+							//strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
+							strcpy( lf.lfFaceName, "ＭＳ Ｐゴシック" );
+							m_fontSearchBox = ::CreateFontIndirect( &lf );
+							if( m_fontSearchBox )
+							{
+								::SendMessage( m_hwndSearchBox, WM_SETFONT, (UINT_PTR)m_fontSearchBox, MAKELONG (TRUE, 0) );
+							}
+
+							//入力長制限
+							::SendMessage( m_hwndSearchBox, CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
+
+							//拡張インタフェース
+							//::SendMessage( m_hwndSearchBox, CB_SETEXTENDEDUI, (WPARAM)(BOOL)TRUE, 0 );
+
+							//検索ボックスを更新
+							::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
+							for( my_i = 0; my_i < m_pShareData->m_nSEARCHKEYArrNum; my_i++ )
+							{
+								::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[my_i] );
+							}
+							::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+						}
+						break;
+
+					default:
+						//width = 0;
+						//my_hwnd = NULL;
+						//my_font = NULL;
+						break;
+					}
+				}
+				break;
+
+			case TBSTYLE_BUTTON:	//ボタン
+			case TBSTYLE_SEP:		//セパレータ
+			default:
+				::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
+				count++;
+				break;
+			}
+			//@@@ 2002.06.15 MIK end
 		}
 		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
@@ -605,6 +722,31 @@ void CEditWnd::CreateToolBar( void )
 			::InvalidateRect(m_hwndToolBar, NULL, TRUE);
 		}
 	}
+	return;
+}
+
+void CEditWnd::DestroyToolBar( void )
+{
+	if( m_hwndToolBar )
+	{
+		if( m_hwndSearchBox )
+		{
+			if( m_fontSearchBox )
+			{
+				::DeleteObject( m_fontSearchBox );
+				m_fontSearchBox = NULL;
+			}
+
+			::DestroyWindow( m_hwndSearchBox );
+			m_hwndSearchBox = NULL;
+
+			m_nCurrentFocus = 0;
+		}
+
+		::DestroyWindow( m_hwndToolBar );
+		m_hwndToolBar = NULL;
+	}
+
 	return;
 }
 
@@ -728,13 +870,14 @@ void CEditWnd::MessageLoop( void )
 		}else
 		if( NULL != m_cEditDoc.m_cDlgGrep.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgGrep.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
 		}else
-		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
+		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「入力補完」 */
 		}else
-		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
-		}else
-		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
-		}else
-		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
+		if( NULL != m_hwndSearchBox && ::IsDialogMessage( m_hwndSearchBox, &msg ) ){	/* 「検索ボックス」 */
+			ProcSearchBox( &msg );
+//		}else
+//		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
+//		}else
+//		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
 		}else
 		{
 			if( NULL != m_pShareData->m_hAccel ){
@@ -959,7 +1102,7 @@ LRESULT CEditWnd::DispatchEvent(
 				return TRUE;
 			}
 		}
-//		return FALSE;
+		return FALSE;
 	case WM_MEASUREITEM:
 		idCtl = (UINT) wParam;					// control identifier
 		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
@@ -1106,6 +1249,18 @@ LRESULT CEditWnd::DispatchEvent(
 			m_pPrintPreview->SetFocusToPrintPreviewBar();
 		}
 
+		//検索ボックスを更新
+		if( m_hwndSearchBox )
+		{
+			int	i;
+			::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
+			for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; i++ )
+			{
+				::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+			}
+			::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+		}
+		
 		return lRes;
 
 
@@ -1158,6 +1313,14 @@ LRESULT CEditWnd::DispatchEvent(
 				lptip->lpszText	= szLabel;
 			}
 			break;
+
+		case TBN_DROPDOWN:
+			{
+				int	nId;
+				nId = CreateFileDropDownMenu( pnmh->hwndFrom );
+				if( nId != 0 ) OnCommand( (WORD)0 /*メニュー*/, (WORD)nId, (HWND)0 );
+			}
+			return FALSE;
 		}
 		return 0L;
 	case WM_COMMAND:
@@ -1257,8 +1420,9 @@ LRESULT CEditWnd::DispatchEvent(
 // Oct 10, 2000 ao
 /* 設定変更時、ツールバーを再作成するようにする */
 		if( NULL != m_hwndToolBar ){
-			::DestroyWindow(m_hwndToolBar );
-			m_hwndToolBar = NULL;
+			//::DestroyWindow(m_hwndToolBar );
+			//m_hwndToolBar = NULL;
+			DestroyToolBar();
 			CreateToolBar();
 #if 0
 			UINT	uToolType;
@@ -1655,8 +1819,9 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 //						pfi = (FileInfo*)m_pShareData->m_szWork;
 						pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
-						int nCharCodeNew;
+//						int nCharCodeNew; // if内(2行下)に移動 Moca. 2002/05/26
 						if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
+							int nCharCodeNew; 
 							/*
 							|| ファイルの日本語コードセット判別
 							||
@@ -1677,6 +1842,14 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
 							char*	pszCodeNameCur;
 							char*	pszCodeNameNew;
+							// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+							if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+								pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+							}
+							if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
+								pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+							}
+#if 0
 							switch( pfi->m_nCharCode ){
 							case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 							case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
@@ -1693,6 +1866,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 							case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
 							case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
 							}
+#endif
 							::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 								"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
 								pszPath, pszCodeNameCur, pszCodeNameNew
@@ -1730,6 +1904,10 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 //					return;
 				}
 			}else{
+				//ビューにフォーカスを移動しておく
+				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
+					::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+
 				/* コマンドコードによる処理振り分け */
 				m_cEditDoc.HandleCommand( wID );
 			}
@@ -1738,6 +1916,10 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		break;
 	/* アクセラレータからのメッセージ */
 	case 1:
+		//ビューにフォーカスを移動しておく
+		if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
+			::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+
 		nFuncCode = CKeyBind::GetFuncCode(
 			wID,
 			m_pShareData->m_nKeyNameArrNum,
@@ -1745,6 +1927,32 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		);
 //		MYTRACE( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
 		m_cEditDoc.HandleCommand( nFuncCode );
+		break;
+
+	case CBN_SETFOCUS:
+		if( NULL != m_hwndSearchBox && hwndCtl == m_hwndSearchBox )
+		{
+			m_nCurrentFocus = F_SEARCH_BOX;
+		}
+		break;
+
+	case CBN_KILLFOCUS:
+		if( NULL != m_hwndSearchBox && hwndCtl == m_hwndSearchBox )
+		{
+			m_nCurrentFocus = 0;
+
+			//フォーカスがはずれたときに検索キーにしてしまう。
+			//検索キーワードを取得
+			char	szText[_MAX_PATH];
+			memset( szText, 0, sizeof(szText) );
+			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
+			if( szText[0] )	//キー文字列がある
+			{
+				//検索キーを登録
+				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
+			}
+
+		}
 		break;
 
 	/* コントロールからのメッセージには通知コード */
@@ -1865,6 +2073,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_JIS, "&JISで開き直す" );			//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_EUC, "&EUCで開き直す" );			//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UNICODE, "&Unicodeで開き直す" );	//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UNICODEBE, "U&nicodeBEで開き直す" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UTF8, "UTF-&8で開き直す" );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UTF7, "UTF-&7で開き直す" );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp_2 , "文字コードセット(&H)" );//Oct. 11, 2000 JEPRO アクセスキー変更(M→H)
@@ -1963,6 +2172,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INS_DATE, "日付(&D)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INS_TIME, "時刻(&T)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CTRL_CODE_DIALOG, "コントロールコード(&C)" );
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "挿入(&I)" );
 
@@ -2124,6 +2334,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_EMAIL			, "E-Mail(JIS→SJIS)コード変換(&M)" );//Sept. 11, 2000 JEPRO キャプションに「E-Mail」を追加しアクセスキー変更(V→M:Mail)
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_EUC2SJIS		, "EUC→SJISコード変換(&W)" );		//Sept. 11, 2000 JEPRO アクセスキー変更(E→W:Work Station)
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UNICODE2SJIS	, "Unicode→SJISコード変換(&U)" );	//Sept. 11, 2000 JEPRO アクセスキー変更候補はI:shIft
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UNICODEBE2SJIS	, "UnicodeBE→SJISコード変換(&N)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UTF82SJIS		, "UTF-8→SJISコード変換(&T)" );	//Sept. 11, 2000 JEPRO アクセスキー付与(T:uTF/shifT)	//Oct. 6, 2000 簡潔表示にした
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UTF72SJIS		, "UTF-7→SJISコード変換(&F)" );	//Sept. 11, 2000 JEPRO アクセスキー付与(F:utF/shiFt)	//Oct. 6, 2000 簡潔表示にした
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
@@ -2163,6 +2374,10 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HOKAN			, "入力補完(&/)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COMPARE			, "ファイル内容比較(&@)..." );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_DIALOG		, "DIFF差分表示(&D)..." );	//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_NEXT		, "次の差分へ" );		//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_PREV		, "前の差分へ" );		//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_RESET		, "差分表示の全解除" );		//@@@ 2002.05.25 MIK
 //	From Here Sept. 1, 2000 JEPRO	対括弧の検索をメニューに追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BRACKETPAIR		, "対括弧の検索(&[)" );
@@ -2426,6 +2641,11 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 //		To Here Jan. 23, 2001
 
 //	To Here Oct. 4, 2000
+						// gm_pszCodeNameArr_3 からコピーするように変更
+						if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+						}
+#if 0
 						if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
 							switch( pfi->m_nCharCode ){
 							case CODE_JIS:		/* JIS */
@@ -2445,6 +2665,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 								break;
 							}
 						}
+#endif
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu );
 					if( m_hWnd == pEditNodeArr[i].m_hWnd ){
@@ -2723,6 +2944,12 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 		}else{
 			return FALSE;
 		}
+	case F_FILE_REOPEN_UNICODEBE:
+		if( CODE_UNICODEBE == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	case F_FILE_REOPEN_UTF8:
 		if( CODE_UTF8 == pcEditDoc->m_nCharCode ){
 			return TRUE;
@@ -2823,6 +3050,18 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 			return TRUE;
 		}
 	case F_SAVEKEYMACRO:	/* キーマクロの保存 */
+		//	Jun. 16, 2002 genta
+		//	キーマクロエンジン以外のマクロを読み込んでいるときは
+		//	実行はできるが保存はできない．
+		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}else{
+			return pcEditDoc->m_pcSMacroMgr->IsSaveOk();
+		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
@@ -2867,6 +3106,17 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		}else{
 			return FALSE;
 		}
+
+	case F_DIFF_NEXT:	/* 次の差分へ */	//@@@ 2002.05.25 MIK
+	case F_DIFF_PREV:	/* 前の差分へ */	//@@@ 2002.05.25 MIK
+	case F_DIFF_RESET:	/* 差分の全解除 */	//@@@ 2002.05.25 MIK
+		if( ! pcEditDoc->m_cDocLineMgr.IsDiffUse() ) return FALSE;
+		/*FALLTHROUGH*/
+	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+//	case F_DIFF:		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+		if( pcEditDoc->IsModified() ) return FALSE;
+		if( pcEditDoc->m_szFilePath[0] == '\0' ) return FALSE;
+		return TRUE;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
 		if( TRUE == pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
@@ -2941,7 +3191,8 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_CODECNV_AUTO2SJIS:		/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL:			/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:		/* EUC→SJISコード変換 */
-	case F_CODECNV_UNICODE2SJIS:	//Unicode→SJISコード変換
+	case F_CODECNV_UNICODE2SJIS:	/* Unicode→SJISコード変換 */
+	case F_CODECNV_UNICODEBE2SJIS:	/* UnicodeBE→SJISコード変換 */
 	case F_CODECNV_UTF82SJIS:		/* UTF-8→SJISコード変換 */
 	case F_CODECNV_UTF72SJIS:		/* UTF-7→SJISコード変換 */
 	case F_CODECNV_SJIS2JIS:		/* SJIS→JISコード変換 */
@@ -3751,6 +4002,113 @@ void CEditWnd::OnSysMenuTimer() //by 鬼(2)
 			SendMessage(m_hWnd, WM_SYSCOMMAND, Cmd, 0);
 	}
 	m_IconClicked = icNone;
+}
+
+/*! ドロップダウンメニュー(開く) */	//@@@ 2002.06.15 MIK
+int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
+{
+	int			nId;
+	HMENU		hMenu;
+	HMENU		hMenuPopUp;
+	POINT		po;
+	RECT		rc;
+
+	m_CMenuDrawer.ResetContents();
+
+	/* MRUリストのファイルのリストをメニューにする */
+	CMRU cMRU;
+	hMenu = cMRU.CreateMenu( &m_CMenuDrawer );
+	if( cMRU.Length() > 0 )
+	{
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	}
+
+	/* 最近使ったフォルダのメニューを作成 */
+	CMRUFolder cMRUFolder;
+	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
+	if ( cMRUFolder.Length() > 0 )
+	{
+		//	アクティブ
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "最近使ったフォルダ(&D)" );
+	}
+	else 
+	{
+		//	非アクティブ
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, "最近使ったフォルダ(&D)" );
+	}
+
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, "新規作成(&N)", FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, "開く(&O)...", FALSE );
+
+	po.x = 0;
+	po.y = 0;
+	::GetCursorPos( &po );
+
+	rc.left   = 0;
+	rc.right  = 0;
+	rc.top    = 0;
+	rc.bottom = 0;
+	::GetWindowRect( hwnd, &rc );
+	po.x = po.x /*rc.left*/;
+	po.y = rc.bottom - 2;
+
+	rc.left   = 0;
+	rc.right  = 0;
+	rc.top    = 0;
+	rc.bottom = 0;
+
+	nId = ::TrackPopupMenu(
+		hMenu,
+		TPM_TOPALIGN
+		| TPM_LEFTALIGN
+		| TPM_RETURNCMD
+		| TPM_LEFTBUTTON
+		,
+		po.x,
+		po.y,
+		0,
+		hwnd,
+		&rc
+	);
+
+	::DestroyMenu( hMenu );
+
+	return nId;
+}
+
+/*! 検索ボックスでの処理 */
+void CEditWnd::ProcSearchBox( MSG *msg )
+{
+	if( msg->message == WM_KEYDOWN /* && ::GetParent( msg->hwnd ) == m_hwndSearchBox */ )
+	{
+		if( (TCHAR)msg->wParam == VK_RETURN )  //リターンキー
+		{
+			//検索キーワードを取得
+			char	szText[_MAX_PATH];
+			memset( szText, 0, sizeof(szText) );
+			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
+			if( szText[0] )	//キー文字列がある
+			{
+				//検索キーを登録
+				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
+
+				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
+				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+
+				//次を検索
+				OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
+			}
+		}
+		else if( (TCHAR)msg->wParam == VK_TAB )	//タブキー
+		{
+			//フォーカスを移動
+			::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+		}
+	}
+
+	return;
 }
 
 /*[EOF]*/

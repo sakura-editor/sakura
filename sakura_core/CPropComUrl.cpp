@@ -86,9 +86,9 @@ BOOL CPropCommon::DispatchEvent_PROP_URL( HWND hwndDlg, UINT uMsg, WPARAM wParam
 				m_nPageNum = ID_PAGENUM_URL;
 				return TRUE;
 			}
-			break;
+//			break;	/* default */
 //		}
-		break;
+		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:

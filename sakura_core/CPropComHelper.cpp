@@ -232,9 +232,34 @@ BOOL CPropCommon::DispatchEvent_p10(
 					}
 				}
 				return TRUE;
+			// ai 02/05/21 Add S
+			case IDC_BUTTON_KEYWORDHELPFONT:	/* キーワードヘルプの「フォント」ボタン */
+				{
+					CHOOSEFONT		cf;
+					LOGFONT			lf;
+
+					/* LOGFONTの初期化 */
+					memcpy(&lf, &(m_Common.m_lf_kh), sizeof(LOGFONT));
+
+					/* CHOOSEFONTの初期化 */
+					memset(&cf, 0, sizeof(CHOOSEFONT));
+					cf.lStructSize = sizeof(cf);
+					cf.hwndOwner = hwndDlg;
+					cf.hDC = NULL;
+					cf.lpLogFont = &lf;
+//					cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_EFFECTS;
+					cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+					if(ChooseFont(&cf))
+					{
+						memcpy(&(m_Common.m_lf_kh), &lf, sizeof(LOGFONT));
+					}
+				}
+				return TRUE;
 			}
+			// ai 02/05/21 Add E
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
@@ -257,7 +282,7 @@ BOOL CPropCommon::DispatchEvent_p10(
 				m_nPageNum = ID_PAGENUM_HELPER;
 				return TRUE;
 			}
-			break;
+//			break;	/* default */
 //		}
 
 //		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
@@ -265,7 +290,7 @@ BOOL CPropCommon::DispatchEvent_p10(
 //		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code );
 //		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos );
 //		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
-		break;
+		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:

@@ -347,11 +347,12 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 
 	/* コンボボックス用メッセージ */
 	case CBN_SELCHANGE:	return OnCbnSelChange( hwndCtl, wID );
+//	case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
 //	case CBN_DROPDOWN:	return OnDbnDropDown( hwndCtl, wID );
 //	case CBN_CLOSEUP:	return OnDbnCloseUp( hwndCtl, wID );
 	case LBN_DBLCLK:	return OnLbnDblclk( wID );
 
-
+	case EN_CHANGE:		return OnEditChange( hwndCtl, wID );
 
 	/* ボタン／チェックボックスがクリックされた */
 	case BN_CLICKED:	return OnBnClicked( wID );

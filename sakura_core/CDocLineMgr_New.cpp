@@ -10,7 +10,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
-	Copyright (C) 2002, hor, aroka
+	Copyright (C) 2002, hor, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -645,6 +645,106 @@ char* CDocLineMgr::GetBookMarks( void )
 		pCDocLine = pCDocLine->m_pNext;
 	}
 	return ((char*)"%s",szText);
+}
+
+/*!	差分表示の全解除
+	@author	MIK
+	@date	2002.05.25
+*/
+void CDocLineMgr::ResetAllDiffMark( void )
+{
+	CDocLine* pDocLine;
+
+	pDocLine = m_pDocLineTop;
+	while( NULL != pDocLine )
+	{
+		pDocLine->SetDiffMark( 0 );
+		pDocLine = pDocLine->m_pNext;
+	}
+
+	m_bIsDiffUse = false;
+
+	return;
+}
+
+/*! 差分検索
+	@author	MIK
+	@date	2002.05.25
+*/
+int CDocLineMgr::SearchDiffMark(
+	int			nLineNum,		/* 検索開始行 */
+	int			bPrevOrNext,	/* 0==前方検索 1==後方検索 */
+	int*		pnLineNum 		/* マッチ行 */
+)
+{
+	CDocLine*	pDocLine;
+	int			nLinePos = nLineNum;
+
+	/* 0==前方検索 1==後方検索 */
+	if( 0 == bPrevOrNext )
+	{
+		nLinePos--;
+		pDocLine = GetLineInfo( nLinePos );
+		while( NULL != pDocLine )
+		{
+			if( pDocLine->IsDiffMarked() )
+			{
+				*pnLineNum = nLinePos;				/* マッチ行 */
+				return TRUE;
+			}
+			nLinePos--;
+			pDocLine = pDocLine->m_pPrev;
+		}
+	}
+	else
+	{
+		nLinePos++;
+		pDocLine = GetLineInfo( nLinePos );
+		while( NULL != pDocLine )
+		{
+			if( pDocLine->IsDiffMarked() )
+			{
+				*pnLineNum = nLinePos;				/* マッチ行 */
+				return TRUE;
+			}
+			nLinePos++;
+			pDocLine = pDocLine->m_pNext;
+		}
+	}
+	return FALSE;
+}
+
+/*!	差分情報を行範囲指定で登録する。
+	@author	MIK
+	@date	2002/05/25
+*/
+void CDocLineMgr::SetDiffMarkRange( int nMode, int nStartLine, int nEndLine )
+{
+	int	i;
+	int	nLines;
+	CDocLine	*pCDocLine;
+
+	m_bIsDiffUse = true;
+
+	if( nStartLine < 0 ) nStartLine = 0;
+
+	//最終行より後に削除行あり
+	nLines = GetLines();
+	if( nLines <= nEndLine )
+	{
+		nEndLine = nLines - 1;
+		pCDocLine = GetLineInfo( nEndLine );
+		if( NULL != pCDocLine ) pCDocLine->SetDiffMark( MARK_DIFF_DEL_EX );
+	}
+
+	//行範囲にマークをつける
+	for( i = nStartLine; i <= nEndLine; i++ )
+	{
+		pCDocLine = GetLineInfo( i );
+		if( NULL != pCDocLine ) pCDocLine->SetDiffMark( nMode );
+	}
+
+	return;
 }
 
 /*[EOF]*/

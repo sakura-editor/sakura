@@ -91,9 +91,9 @@ BOOL CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wPara
 				m_nPageNum = ID_PAGENUM_GREP;
 				return TRUE;
 			}
-			break;
+//			break;	/* default */
 //		}
-		break;
+		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:

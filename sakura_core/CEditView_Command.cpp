@@ -184,6 +184,7 @@ BOOL CEditView::HandleCommand(
 	case F_FILENEW:		Command_FILENEW();break;			/* 新規作成 */
 	//	Oct. 2, 2001 genta マクロ用機能拡張
 	case F_FILEOPEN:	Command_FILEOPEN((const char*)lparam1);break;			/* ファイルを開く */
+	case F_FILEOPEN_DROPDOWN:	Command_FILEOPEN((const char*)lparam1);break;			/* ファイルを開く(ドロップダウン) */	//@@@ 2002.06.15 MIK
 	case F_FILESAVE:	bRet = Command_FILESAVE();break;	/* 上書き保存 */
 	case F_FILESAVEAS_DIALOG:	bRet = Command_FILESAVEAS_DIALOG();break;	/* 名前を付けて保存 */
 	case F_FILESAVEAS:	bRet = Command_FILESAVEAS((const char*)lparam1);break;	/* 名前を付けて保存 */
@@ -207,6 +208,7 @@ BOOL CEditView::HandleCommand(
 	case F_FILE_REOPEN_JIS:		Command_FILE_REOPEN( CODE_JIS );break;		//JISで開き直す
 	case F_FILE_REOPEN_EUC:		Command_FILE_REOPEN( CODE_EUC );break;		//EUCで開き直す
 	case F_FILE_REOPEN_UNICODE:	Command_FILE_REOPEN( CODE_UNICODE );break;	//Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE: 	Command_FILE_REOPEN( CODE_UNICODEBE );break;	//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	Command_FILE_REOPEN( CODE_UTF8 );break;		//UTF-8で開き直す
 	case F_FILE_REOPEN_UTF7:	Command_FILE_REOPEN( CODE_UTF7 );break;		//UTF-7で開き直す
 	case F_PRINT:				Command_PRINT();break;					/* 印刷 */
@@ -374,6 +376,7 @@ BOOL CEditView::HandleCommand(
 	/* 挿入系 */
 	case F_INS_DATE:				Command_INS_DATE();break;	//日付挿入
 	case F_INS_TIME:				Command_INS_TIME();break;	//時刻挿入
+    case F_CTRL_CODE_DIALOG:		Command_CtrlCode_Dialog();break;	/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 
 	/* 変換 */
 	case F_TOLOWER:					Command_TOLOWER();break;				/* 英大文字→英小文字 */
@@ -391,6 +394,7 @@ BOOL CEditView::HandleCommand(
 	case F_CODECNV_EMAIL:			Command_CODECNV_EMAIL();break;			/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:		Command_CODECNV_EUC2SJIS();break;		/* EUC→SJISコード変換 */
 	case F_CODECNV_UNICODE2SJIS:	Command_CODECNV_UNICODE2SJIS();break;	/* Unicode→SJISコード変換 */
+	case F_CODECNV_UNICODEBE2SJIS:	Command_CODECNV_UNICODEBE2SJIS();break;	/* UnicodeBE→SJISコード変換 */
 	case F_CODECNV_UTF82SJIS:		Command_CODECNV_UTF82SJIS();break;		/* UTF-8→SJISコード変換 */
 	case F_CODECNV_UTF72SJIS:		Command_CODECNV_UTF72SJIS();break;		/* UTF-7→SJISコード変換 */
 	case F_CODECNV_SJIS2JIS:		Command_CODECNV_SJIS2JIS();break;		/* SJIS→JISコード変換 */
@@ -430,6 +434,11 @@ BOOL CEditView::HandleCommand(
 	case F_TAGJUMP:			Command_TAGJUMP();break;						/* タグジャンプ機能 */
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
 	case F_COMPARE:			Command_COMPARE();break;						/* ファイル内容比較 */
+	case F_DIFF_DIALOG:		Command_Diff_Dialog();break;					/* DIFF差分表示(ダイアログ) */	//@@@ 2002.05.25 MIK
+	case F_DIFF:			Command_Diff( (const char*)lparam1, (const char*)lparam2, (int)lparam3 );break;		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+	case F_DIFF_NEXT:		Command_Diff_Next();break;						/* DIFF差分表示(次へ) */		//@@@ 2002.05.25 MIK
+	case F_DIFF_PREV:		Command_Diff_Prev();break;						/* DIFF差分表示(前へ) */		//@@@ 2002.05.25 MIK
+	case F_DIFF_RESET:		Command_Diff_Reset();break;						/* DIFF差分表示(全解除) */		//@@@ 2002.05.25 MIK
 	case F_BRACKETPAIR:		Command_BRACKETPAIR();	break;					//対括弧の検索
 // From Here 2001.12.03 hor
 	case F_BOOKMARK_SET:	Command_BOOKMARK_SET();break;					/* ブックマーク設定・解除 */
@@ -4219,6 +4228,15 @@ void CEditView::Command_FILEOPEN( const char *filename )
 		if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
 			char*	pszCodeNameCur;
 			char*	pszCodeNameNew;
+
+			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+			if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+			}
+			if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
+				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+			}
+#if 0
 			switch( pfi->m_nCharCode ){
 			case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//	Sept. 27, 2000 jepro 'シフト'を'S'に変更
 			case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
@@ -4235,6 +4253,7 @@ void CEditView::Command_FILEOPEN( const char *filename )
 			case CODE_UTF8:	/* UTF-8 */			pszCodeNameNew = "UTF-8";break;
 			case CODE_UTF7:	/* UTF-7 */			pszCodeNameNew = "UTF-7";break;
 			}
+#endif
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 				"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
 				pszPath, pszCodeNameCur, pszCodeNameNew
@@ -5260,6 +5279,17 @@ void CEditView::Command_CODECNV_UNICODE2SJIS( void )
 
 
 
+/* UnicodeBE→SJISコード変換 */
+void CEditView::Command_CODECNV_UNICODEBE2SJIS( void )
+{
+	/* 選択エリアのテキストを指定方法で変換 */
+	ConvSelectedArea( F_CODECNV_UNICODEBE2SJIS );
+	return;
+}
+
+
+
+
 /* SJIS→JISコード変換 */
 void CEditView::Command_CODECNV_SJIS2JIS( void )
 {
@@ -5806,6 +5836,8 @@ void CEditView::Command_MENU_RBUTTON( void )
 	int			nLength;
 //	HGLOBAL		hgClip;
 //	char*		pszClip;
+	char*		pszWork;
+	int			i;
 	/* ポップアップメニュー(右クリック) */
 	nId = CreatePopUpMenu_R();
 	if( 0 == nId ){
@@ -5815,8 +5847,23 @@ void CEditView::Command_MENU_RBUTTON( void )
 	case IDM_COPYDICINFO:
 		pszStr = m_cTipWnd.m_cInfo.GetPtr( &nLength );
 
+		pszWork = (char*)malloc( nLength + 1);
+		memcpy( pszWork, pszStr, nLength );
+		pszWork[nLength] = '\0' ;
+		// 見た目と同じように、\n を CR+LFへ変換する
+		for( i = 0; i < nLength ; ++i){
+			if( pszWork[i] == '\\' && pszWork[i + 1] == 'n'){
+				pszWork[i] = '\x0d' ;
+				pszWork[i + 1] = '\x0a' ;
+			}
+		}
 		/* クリップボードにデータを設定 */
-		MySetClipboardData( pszStr, nLength, FALSE );
+		MySetClipboardData( pszWork, nLength, FALSE );
+		free( pszWork );
+
+//		pszStr = m_cTipWnd.m_cInfo.GetPtr( &nLength );
+//		/* クリップボードにデータを設定 */
+//		MySetClipboardData( pszStr, nLength, FALSE );
 
 //		/* Windowsクリップボードにコピー */
 //		hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, nLength + 1 );
@@ -9581,8 +9628,9 @@ void CEditView::Command_SHOWTOOLBAR( void )
 		pCEditWnd->CreateToolBar();
 		m_pShareData->m_Common.m_bDispTOOLBAR = TRUE;	/* 次回ウィンドウを開いたときツールバーを表示する */
 	}else{
-		::DestroyWindow( pCEditWnd->m_hwndToolBar );
-		pCEditWnd->m_hwndToolBar = NULL;
+		//::DestroyWindow( pCEditWnd->m_hwndToolBar );
+		pCEditWnd->DestroyToolBar();
+		//pCEditWnd->m_hwndToolBar = NULL;
 		m_pShareData->m_Common.m_bDispTOOLBAR = FALSE;	/* 次回ウィンドウを開いたときツールバーを表示しない */	//Sept. 9, 2000 jepro 「表示する」となっていたのを修正
 	}
 //	/* 変更フラグ(共通設定の全体) のセット */
@@ -9833,6 +9881,13 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	m_pShareData->m_bRecordingKeyMacro = FALSE;
 	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
+	//	Jun. 16, 2002 genta
+	if( !m_pcEditDoc->m_pcSMacroMgr->IsSaveOk() ){
+		//	保存不可
+		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			"保存可能なマクロがありません．キーボードマクロ以外は保存できません．" );
+	}
+
 	CDlgOpenFile	cDlgOpenFile;
 	char*			pszMRU = NULL;;
 	char*			pszOPENFOLDER = NULL;;
@@ -9934,7 +9989,7 @@ void CEditView::Command_LOADKEYMACRO( void )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		m_hWnd,
-		"*.mac",
+		"*.*",
 		szInitDir,
 		(const char **)&pszMRU,
 		(const char **)&pszOPENFOLDER

@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor, genta
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,11 +19,14 @@
 #include "CMemory.h"
 
 CDocLine::CDocLine()
-	: m_pPrev( NULL ), m_pNext( NULL ), m_pLine( NULL ),
-	m_bModify(true),
-	m_bBookMark(false)
+	: m_pPrev( NULL ), m_pNext( NULL ), m_pLine( NULL )
 {
+//	m_bMark.m_bAllMark  = 0;
+	m_bMark.m_bMarkArray.m_bModify   = 1;	//true
+	m_bMark.m_bMarkArray.m_bBookMark = 0;	//false
+	m_bMark.m_bMarkArray.m_bDiffMark = 0;
 }
+
 CDocLine::~CDocLine()
 {
 	//	deleteはNULLを単純に無視するのでNULL判定は不要
@@ -47,4 +51,5 @@ bool CDocLine::IsEmptyLine( void )
 	}
 	return true;	//	すべてスペースかタブだけだったらtrue。
 }
+
 /*[EOF]*/

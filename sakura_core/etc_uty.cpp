@@ -1916,6 +1916,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	/* ファイル操作系 */
 	case F_FILENEW:				return HLP000025;			//新規作成
 	case F_FILEOPEN:			return HLP000015;			//開く
+	case F_FILEOPEN_DROPDOWN:	return HLP000015;			//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 	case F_FILESAVE:			return HLP000020;			//上書き保存
 	case F_FILESAVEAS_DIALOG:	return HLP000021;			//名前を付けて保存
 	case F_FILECLOSE:			return HLP000017;			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -1924,6 +1925,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_FILE_REOPEN_JIS:		return HLP000157;			//JISで開き直す
 	case F_FILE_REOPEN_EUC:		return HLP000158;			//EUCで開き直す
 	case F_FILE_REOPEN_UNICODE:	return HLP000159;			//Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE:	return HLP000256;		//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	return HLP000160;			//UTF-8で開き直す
 	case F_FILE_REOPEN_UTF7:	return HLP000161;			//UTF-7で開き直す
 	case F_PRINT:				return HLP000162;			//印刷				//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -2066,6 +2068,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	/* 挿入系 */
 	case F_INS_DATE:				return HLP000164;	// 日付挿入
 	case F_INS_TIME:				return HLP000165;	// 時刻挿入
+	case F_CTRL_CODE_DIALOG:		return HLP000255;	/* コントロールコード入力 */
 
 
 	/* 変換系 */
@@ -2084,6 +2087,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_CODECNV_EMAIL:			return HLP000052;	//E-Mail(JIS→SJIS)コード変換
 	case F_CODECNV_EUC2SJIS:		return HLP000053;	//EUC→SJISコード変換
 	case F_CODECNV_UNICODE2SJIS:	return HLP000179;	//Unicode→SJISコード変換
+	case F_CODECNV_UNICODEBE2SJIS:	return HLP000257;	//UnicodeBE→SJISコード変換
 	case F_CODECNV_UTF82SJIS:		return HLP000142;	/* UTF-8→SJISコード変換 */
 	case F_CODECNV_UTF72SJIS:		return HLP000143; /* UTF-7→SJISコード変換 */
 	case F_CODECNV_SJIS2JIS:		return HLP000117;	/* SJIS→JISコード変換 */
@@ -2106,6 +2110,11 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TAGJUMP:				return HLP000065;	//タグジャンプ機能
 	case F_TAGJUMPBACK:			return HLP000066;	//タグジャンプバック機能
 	case F_COMPARE:				return HLP000116;	//ファイル内容比較
+	case F_DIFF_DIALOG:			return HLP000251;	//DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+//	case F_DIFF:				return HLP000251;	//DIFF差分表示	//@@@ 2002.05.25 MIK
+	case F_DIFF_NEXT:			return HLP000252;	//次の差分へ	//@@@ 2002.05.25 MIK
+	case F_DIFF_PREV:			return HLP000253;	//前の差分へ	//@@@ 2002.05.25 MIK
+	case F_DIFF_RESET:			return HLP000254;	//差分の全解除	//@@@ 2002.05.25 MIK
 	case F_BRACKETPAIR:			return HLP000183;	//対括弧の検索	//Oct. 17, 2000 JEPRO 追加
 	case F_BOOKMARK_SET:		return HLP000205;	//ブックマーク設定・解除
 	case F_BOOKMARK_NEXT:		return HLP000206;	//次のブックマークへ

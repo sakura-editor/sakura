@@ -41,14 +41,17 @@ public:
 	void Show( int, int, char*, RECT* pRect = NULL );	/* Tipを表示 */
 	void Hide( void );	/* Tipを消す */
 	void GetWindowSize(RECT* pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
-//	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+
+	void ChangeFont( LOGFONT* lf ){
+		if ( m_hFont ){
+			::DeleteObject( m_hFont );
+		}
+		m_hFont = ::CreateFontIndirect( lf );
+	};
+
 protected: // 2002/2/10 aroka アクセス権変更
 	char*		m_pszClassName;	/* Mutex作成用・ウィンドウクラス名 */
-//	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-//	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
-//	HWND		m_hWnd;			/* このダイアログのハンドル */
 	HFONT		m_hFont;
-//	HFONT		m_hFontOld;
 
 public:
 	CMemory		m_cKey;			/* キーの内容データ */

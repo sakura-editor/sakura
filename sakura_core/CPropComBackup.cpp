@@ -200,8 +200,9 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 				}
 				return TRUE;
 			}
+			break;	/* BN_CLICKED */
 		}
-		break;
+		break;	/* WM_COMMAND */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:
