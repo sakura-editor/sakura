@@ -560,15 +560,18 @@ searchnext:;
 				case 0:
 					//	Mar. 15, 2000 genta
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
+						//	行コメント1
 						(
 							NULL != TypeDataPtr->m_szLineComment &&									/* 行コメントデリミタ */
+							( TypeDataPtr->m_nLineCommentPos < 0 || nPos == TypeDataPtr->m_nLineCommentPos ) &&
 							0 < lstrlen( TypeDataPtr->m_szLineComment ) &&
 							nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szLineComment ) &&		/* 行コメントデリミタ */
 							0 == memicmp( &pLine[nPos], TypeDataPtr->m_szLineComment, (int)lstrlen( TypeDataPtr->m_szLineComment ) )
 						) ||
 						(
+						//	行コメント2
 							NULL != TypeDataPtr->m_szLineComment2 &&								/* 行コメントデリミタ2 */
-							0 < lstrlen( TypeDataPtr->m_szLineComment2 ) &&
+							( TypeDataPtr->m_nLineCommentPos2 < 0 || nPos == TypeDataPtr->m_nLineCommentPos2 ) &&							0 < lstrlen( TypeDataPtr->m_szLineComment2 ) &&
 							//	Mar. 15, 2000 genta for Fortran
 							(
 								TypeDataPtr->m_szLineComment2[0] == 'C' ?

@@ -231,6 +231,11 @@ struct Types {
 //	COLORREF			m_colorWSTRINGBACK;				/* ダブルクォーテーション文字列背景の色 */
 //	COLORREF			m_colorUNDERLINE;				/* カーソル行アンダーラインの色 */
 	char				m_szLineComment[16];			/* 行コメントデリミタ */
+	char				m_szLineComment2[16];			/* 行コメントデリミタ2 */
+	//	May. 12, 2001 genta
+	int					m_nLineCommentPos;				//< 行コメント1の開始位置(負数は指定無し)
+	int					m_nLineCommentPos2;				//< 行コメント2の開始位置(負数は指定無し)
+	
 	char				m_szBlockCommentFrom[16];		/* ブロックコメントデリミタ(From) */
 	char				m_szBlockCommentTo[16];			/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
@@ -250,7 +255,6 @@ struct Types {
 
 //	char				m_bUseLBCC;						/* 禁則処理を行うか */
 	BOOL				m_bWordWrap;					/* 英文ワードラップをする */
-	char				m_szLineComment2[16];			/* 行コメントデリミタ2 */
 
 	int					m_nCurrentPrintSetting;			/* 現在選択している印刷設定 */
 

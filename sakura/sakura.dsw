@@ -3,10 +3,14 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "sakura"=".\sakura.dsp" - Package Owner=<4>
+Project: "sakura"=.\sakura.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    sakura
+    ..
+    end source code control
 }}}
 
 Package=<4>
@@ -15,10 +19,14 @@ Package=<4>
 
 ###############################################################################
 
-Project: "sakura_core"="..\sakura_core\sakura_core.dsp" - Package Owner=<4>
+Project: "sakura_core"=..\sakura_core\sakura_core.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    sakura_core
+    ..\sakura_core
+    end source code control
 }}}
 
 Package=<4>

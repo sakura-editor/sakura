@@ -2151,6 +2151,28 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2 );	/* ブロックコメントデリミタ(From) */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2 );	/* ブロックコメントデリミタ(To) */
 //#endif
+	//	From Here May 12, 2001 genta
+	//	行コメントの開始桁位置設定
+	if( m_Types.m_nLineCommentPos >= 0 ){
+		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS1, TRUE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, m_Types.m_nLineCommentPos, FALSE );
+	}
+	else {
+		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS1, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, ~m_Types.m_nLineCommentPos, FALSE );
+	}
+
+	if( m_Types.m_nLineCommentPos2 >= 0 ){
+		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS2, TRUE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, m_Types.m_nLineCommentPos2, FALSE );
+	}
+	else {
+		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS2, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, ~m_Types.m_nLineCommentPos2, FALSE );
+	}
+
+
+	//	To Here May 12, 2001 genta
 
 	if( 0 == m_Types.m_nStringType ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, TRUE );
@@ -2263,6 +2285,30 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT			, m_Types.m_szLineComment		, sizeof( m_Types.m_szLineComment ) );		/* 行コメントデリミタ */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2		, m_Types.m_szLineComment2		, sizeof( m_Types.m_szLineComment2 ) );		/* 行コメントデリミタ2 */
+	//	From Here May 12, 2001 genta
+	//	コメントの開始桁位置の取得
+	int pos;
+	UINT en;
+	BOOL bTranslated;
+
+	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHK_LCPOS1 );
+	pos = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, &bTranslated, FALSE );
+	if( bTranslated != TRUE ){
+		en = 0;
+		pos = 0;
+	}
+	//	無効のときは1の補数で格納
+	m_Types.m_nLineCommentPos = en ? pos : ~pos;
+
+	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHK_LCPOS2 );
+	pos = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, &bTranslated, FALSE );
+	if( bTranslated != TRUE ){
+		en = 0;
+		pos = 0;
+	}
+	m_Types.m_nLineCommentPos2 = en ? pos : ~pos;
+
+	//	To Here May 12, 2001 genta 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_szBlockCommentFrom	, sizeof( m_Types.m_szBlockCommentFrom ) );	/* ブロックコメントデリミタ(From) */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_szBlockCommentTo	, sizeof( m_Types.m_szBlockCommentTo ) );	/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
