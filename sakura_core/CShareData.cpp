@@ -77,9 +77,12 @@ struct ARRHEAD {
 	Types-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
 
 	Version 34:
-	m_bUseDocumentIcon 追加． 2002.09.10 genta
+	Typesにm_bUseDocumentIcon 追加． 2002.09.10 genta
+	
+	Version 35:
+	Commonにm_nLineNumRightSpace 追加．2002.09.18 genta
 */
-const unsigned int uShareDataVersion = 34;
+const unsigned int uShareDataVersion = 35;
 
 /*
 ||	Singleton風
@@ -856,6 +859,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nRulerHeight = 13;					/* ルーラーの高さ */
 		m_pShareData->m_Common.m_nRulerBottomSpace = 0;				/* ルーラーとテキストの隙間 */
 		m_pShareData->m_Common.m_nRulerType = 0;					/* ルーラーのタイプ */
+		//	Sep. 18, 2002 genta
+		m_pShareData->m_Common.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */

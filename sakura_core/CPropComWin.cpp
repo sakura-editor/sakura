@@ -191,6 +191,23 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nVal, FALSE );
 			return TRUE;
+		case IDC_SPIN_nLineNumberRightSpace:
+			/* ルーラーとテキストの隙間 */
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 0 ){
+				nVal = 0;
+			}
+			if( nVal > 32 ){
+				nVal = 32;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, nVal, FALSE );
+			return TRUE;
 		}
 		break;
 //****	To Here Sept. 21, 2000
@@ -265,6 +282,8 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, m_Common.m_nRulerHeight, FALSE );
 	/* ルーラーとテキストの隙間 */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, m_Common.m_nRulerBottomSpace, FALSE );
+	//	Sep. 18. 2002 genta 行番号とテキストの隙間
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, m_Common.m_nLineNumRightSpace, FALSE );
 
 	/* ルーラーのタイプ */
 	if( 0 == m_Common.m_nRulerType ){
@@ -347,6 +366,15 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	}
 	if( m_Common.m_nRulerBottomSpace > 32 ){
 		m_Common.m_nRulerBottomSpace = 32;
+	}
+
+	//	Sep. 18. 2002 genta 行番号とテキストの隙間
+	m_Common.m_nLineNumRightSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, NULL, FALSE );
+	if( m_Common.m_nLineNumRightSpace < 0 ){
+		m_Common.m_nLineNumRightSpace = 0;
+	}
+	if( m_Common.m_nLineNumRightSpace > 32 ){
+		m_Common.m_nLineNumRightSpace = 32;
 	}
 
 	/* 水平スクロールバー */
