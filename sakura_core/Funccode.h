@@ -231,6 +231,7 @@
 #define F_REPLACE			30906	//置換(実行)
 #define F_REPLACE_ALL		30907	//すべて置換(実行)
 #define F_SEARCH_CLEARMARK	30905	//検索マークのクリア
+#define F_JUMP_SRCHSTARTPOS	30909	//検索開始位置へ戻る	// 02/06/26 ai
 #define F_SEARCH_BOX		30908	//検索(ボックス)	//@@@ 2002.06.15 MIK
 #define F_GREP_DIALOG		30910	//Grep
 #define F_GREP				30911	//Grep

@@ -143,6 +143,7 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_GOFILEEND			,	//ファイルの最後に移動
 	F_CURLINECENTER		,	//カーソル行をウィンドウ中央へ
 	F_JUMP_DIALOG		,	//指定行ヘジャンプ	//Sept. 17, 2000 JEPRO コマンド本家は「検索系」
+	F_JUMP_SRCHSTARTPOS	,	//検索開始位置へ戻る	// 02/06/26 ai コマンド本家は｢検索系｣
 	F_JUMPPREV			,	//移動履歴: 前へ
 	F_JUMPNEXT			,	//移動履歴: 次へ
 	F_WndScrollDown		,	//テキストを１行下へスクロール	// 2001/06/20 asa-o
@@ -278,6 +279,7 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_SEARCH_PREV		,	//前を検索
 	F_REPLACE_DIALOG	,	//置換
 	F_SEARCH_CLEARMARK	,	//検索マークのクリア
+	F_JUMP_SRCHSTARTPOS	,	//検索開始位置へ戻る	// 02/06/26 ai
 	F_GREP_DIALOG		,	//Grep
 	F_JUMP_DIALOG		,	//指定行ヘジャンプ
 	F_OUTLINE			,	//アウトライン解析

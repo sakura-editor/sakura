@@ -448,6 +448,7 @@ BOOL CEditView::HandleCommand(
 	case F_BOOKMARK_VIEW:	bRet = Command_FUNCLIST( (BOOL)lparam1 ,OUTLINE_BOOKMARK );break;	//アウトライン解析
 // To Here 2001.12.03 hor
 	case F_BOOKMARK_PATTERN:Command_BOOKMARK_PATTERN();break;				// 2002.01.16 hor 指定パターンに一致する行をマーク
+	case F_JUMP_SRCHSTARTPOS:	Command_JUMP_SRCHSTARTPOS();break;			// 検索開始位置へ戻る 02/06/26 ai
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		Command_CHGMOD_INS();break;		//挿入／上書きモード切り替え
@@ -3776,6 +3777,7 @@ re_do:;							//	hor
 		MoveCursor( nColmFrom, nLineFrom, bReDraw );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		bFound = TRUE;
+		m_bSearch = TRUE;	// 02/06/26 ai
 	}else{
 		/* フォーカス移動時の再描画 */
 //		RedrawAll();	hor コメント化
@@ -4017,6 +4019,7 @@ re_do:;
 		MoveCursor( nColmFrom, nLineFrom, bRedraw );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		bFound = TRUE;
+		m_bSearch = TRUE;	// 02/06/26 ai
 	}else{
 //		/* フォーカス移動時の再描画 */
 //		RedrawAll();

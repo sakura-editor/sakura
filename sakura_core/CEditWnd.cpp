@@ -2235,6 +2235,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CURLINECENTER, "カーソル行をウィンドウ中央へ(&C)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG, "指定行へジャンプ(&J)..." );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, "検索開始位置へ戻る(&I)" );	// 検索開始位置へ戻る 02/06/26 ai
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPPREV	, "移動履歴: 前へ(&P)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPNEXT	, "移動履歴: 次へ(&N)" );
@@ -2364,6 +2365,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_PREV		, "前を検索(&P)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REPLACE_DIALOG	, "置換(&R)..." );				//Oct. 7, 2000 JEPRO 下のセクションからここに移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_CLEARMARK, "検索マークの切替え(&C)" );	// "検索マークのクリア(&C)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, "検索開始位置へ戻る(&I)" );	// 検索開始位置へ戻る 02/06/26 ai
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG		, "&Grep..." );					//Oct. 7, 2000 JEPRO 下からここに移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG		, "指定行へジャンプ(&J)..." );	//Sept. 11, 2000 jepro キャプションに「 ジャンプ」を追加
@@ -3100,6 +3102,16 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 //		}
 // To Here 2001.12.03 hor
 
+	// 02/06/26 ai Start
+	case F_JUMP_SRCHSTARTPOS:	// 検索開始位置へ戻る
+		if( 0 <= pcEditDoc->m_cEditViewArr[pcEditDoc->m_nActivePaneIndex].m_nSrchStartPosX_PHY &&
+			0 <= pcEditDoc->m_cEditViewArr[pcEditDoc->m_nActivePaneIndex].m_nSrchStartPosY_PHY) {
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	// 02/06/26 ai End
+
 	case F_COMPARE:	/* ファイル内容比較 */
 		if( 2 <= pShareData->m_nEditArrNum ){
 			return TRUE;
@@ -3111,7 +3123,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_DIFF_PREV:	/* 前の差分へ */	//@@@ 2002.05.25 MIK
 	case F_DIFF_RESET:	/* 差分の全解除 */	//@@@ 2002.05.25 MIK
 		if( ! pcEditDoc->m_cDocLineMgr.IsDiffUse() ) return FALSE;
-		/*FALLTHROUGH*/
+		return TRUE;
 	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
 //	case F_DIFF:		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
 		if( pcEditDoc->IsModified() ) return FALSE;
@@ -4097,8 +4109,24 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
 				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
 
+				// 02/06/26 ai Start
+				// 検索開始位置を退避
+				int x, y;
+				x = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX_PHY;
+				y = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY_PHY;
+				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSearch = FALSE;
+				//  02/06/26 ai End
+
 				//次を検索
 				OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
+
+				// 02/06/26 ai Start
+				// 検索開始位置を登録
+				if( TRUE == m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSearch )
+				{
+					m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosX_PHY = x;
+					m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosY_PHY = y;
+				}//  02/06/26 ai End
 			}
 		}
 		else if( (TCHAR)msg->wParam == VK_TAB )	//タブキー

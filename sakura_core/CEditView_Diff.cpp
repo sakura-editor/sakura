@@ -28,6 +28,7 @@
 #include "CDocLine.h"
 #include "CDocLineMgr.h"
 #include "CWaitCursor.h"
+#include "COsVersionInfo.h"
 #include "debug.h"
 
 /*!	差分表示
@@ -235,8 +236,11 @@ void CEditView::Command_Diff(
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
 
+	//OSバージョン取得
+	COsVersionInfo cOsVer;
 	//コマンドライン文字列作成(MAX:1024)
-	wsprintf( cmdline, "%s\\%s %s \"%s\" \"%s\"",
+	wsprintf( cmdline, "%s /C \"%s\\%s %s \"%s\" \"%s\"\"",
+			( cOsVer.IsWin32NT() ? "cmd.exe" : "command.com" ),
 			szExeFolder,	//sakura.exeパス
 			"diff.exe",		//diff.exe
 			szOption,		//diffオプション

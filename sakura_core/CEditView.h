@@ -214,6 +214,11 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nCaretPosY;		/* ビュー上端からのカーソル行位置（０開始）*/
 	int		m_nCaretPosX_PHY;	/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
 	int		m_nCaretPosY_PHY;	/* カーソル位置  改行単位行の行番号（０開始）*/
+
+	int		m_nSrchStartPosX_PHY;	/* 検索開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
+	int		m_nSrchStartPosY_PHY;	/* 検索開始時のカーソル位置  改行単位行の行番号(0開始) */			// 02/06/26 ai
+	BOOL	m_bSearch;				/* 検索文字列が見つかったか */										// 02/06/26 ai
+
 	/*
 	||  メンバ変数
 	*/
@@ -630,6 +635,7 @@ void ReplaceData_CEditView(
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL( void );					/* すべて置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
+	void Command_JUMP_SRCHSTARTPOS( void );				/* 検索開始位置へ戻る */	// 02/06/26 ai
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */

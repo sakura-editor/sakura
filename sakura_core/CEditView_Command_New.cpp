@@ -2832,4 +2832,32 @@ void CEditView::Command_CtrlCode_Dialog( void )
 	return;
 }
 
+/*!	検索開始位置へ戻る
+	@author	ai
+	@date	02/06/26
+*/
+void CEditView::Command_JUMP_SRCHSTARTPOS(void)
+{
+	if( 0 <= m_nSrchStartPosX_PHY && 0 <= m_nSrchStartPosY_PHY )
+	{
+		int x, y;
+		/* 範囲選択中か */
+		if( IsTextSelected() ){	/* テキストが選択されているか */
+			/* 現在の選択範囲を非選択状態に戻す */
+			DisableSelectArea( TRUE );
+		}
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			m_nSrchStartPosX_PHY,
+			m_nSrchStartPosY_PHY,
+			&x, &y );
+		MoveCursor( x, y, TRUE );
+	}
+	else
+	{
+//		SendStatusMessage( "検索開始位置がありません" );
+		::MessageBeep( MB_ICONHAND );
+	}
+	return;
+}
+
 /*[EOF]*/

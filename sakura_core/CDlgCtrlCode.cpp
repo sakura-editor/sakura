@@ -278,20 +278,27 @@ BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 			{
 				HWND	hwndList;
 				NMKEY	*p = (NMKEY*)lParam;
-				int		i;
+				int		i, j;
 				unsigned int	c;
 				for( i = 0; i < p_ctrl_list_num; i++ )
 				{
 					c = p_ctrl_list[i].vKey;
 					if( c == (p->nVKey & 0xffff) )
 					{
-						hwndList = GetDlgItem( m_hWnd, IDC_LIST_CTRLCODE );
-						ListView_SetItemState( hwndList, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-						ListView_EnsureVisible( hwndList, i, FALSE );
+						for( j = 0; j < p_ctrl_list_num; j++ )
+						{
+							if( p_ctrl_list[i].code == p_ctrl_list[j].code )
+							{
+								hwndList = GetDlgItem( m_hWnd, IDC_LIST_CTRLCODE );
+								ListView_SetItemState( hwndList, j, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+								ListView_EnsureVisible( hwndList, j, FALSE );
 						
-						/* ダイアログデータの取得 */
-						::EndDialog( m_hWnd, GetData() );
-						return TRUE;
+								/* ダイアログデータの取得 */
+								::EndDialog( m_hWnd, GetData() );
+								return TRUE;
+							}
+						}
+						break;
 					}
 				}
 			}
