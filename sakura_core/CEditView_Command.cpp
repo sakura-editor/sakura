@@ -2456,13 +2456,13 @@ void CEditView::Command_PASTEBOX( void )
 	int				nBgn;
 	int				nPos;
 	int				nCount;
-	CMemory			cMem;
+//	CMemory			cMem;
 	int				nNewLine;		/* 挿入された部分の次の位置の行 */
 	int				nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
 	int				nCurXOld;
 	int				nCurYOld;
 	COpe*			pcOpe = NULL;
-	CWaitCursor 	cWaitCursor( m_hWnd );
+//	CWaitCursor 	cWaitCursor( m_hWnd );
 	BOOL			bAddLastCR;
 	int				nInsPosX;
 	const char*		pLine;
@@ -2512,6 +2512,8 @@ void CEditView::Command_PASTEBOX( void )
 				);
 			}
 			/* 現在位置にデータを挿入 */
+// 2001/10/02 deleted by novice
+#if 0
 			if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() <= nCurYOld + nCount ){
 				InsertData_CEditView(
 					nCurXOld,
@@ -2530,6 +2532,7 @@ void CEditView::Command_PASTEBOX( void )
 //					MYTRACE( "ins-1:[%s]\n", szTest );
 				}
 			}else{
+#endif
 				if( nPos - nBgn > 0 ){
 					InsertData_CEditView(
 						nCurXOld,
@@ -2541,14 +2544,17 @@ void CEditView::Command_PASTEBOX( void )
 						pcOpe,
 						TRUE
 					);
+// 2001/10/02 deleted by novice
+#if 0
 					{
 						char szTest[1024];
 						memcpy( szTest, &lptstr[nBgn], nPos - nBgn );
 						szTest[nPos - nBgn] = '\0';
 //						MYTRACE( "ins-2:[%s]\n", szTest );
 					}
+#endif
 				}
-			}
+//			}
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 //				pcOpe->m_nCaretPosX_After = nNewPos/*m_nCaretPosX*/;	/* 操作後のキャレット位置Ｘ */
 //				pcOpe->m_nCaretPosY_After = nNewLine/*m_nCaretPosY*/;	/* 操作後のキャレット位置Ｙ */
@@ -2574,25 +2580,28 @@ void CEditView::Command_PASTEBOX( void )
 			/* 行末に改行を付加するか？ */
 			/* カーソル行が最後の行かつ行末に改行が無く、挿入すべきデータがまだある場合 */
 			bAddLastCR = FALSE;
-			if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 == m_nCaretPosY ){
+//			if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 == m_nCaretPosY ){ 2001/10/02 deleted by novice
 				nLineLen = 0;
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nCaretPosY, &nLineLen, &pcLayout );
 				if( NULL != pLine && 1 <= nLineLen ){
 					if( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ){
 					}else{
 						/* 挿入すべきデータがまだあるか */
-						int nPosWork;
-						for( nPosWork = nPos; nPosWork < nstrlen; ++nPosWork ){
-							if( lptstr[nPosWork] == CR ||  lptstr[nPosWork] == LF ){
-							}else{
+//						int nPosWork; 2001/10/02 deleted by novice
+//						for( nPosWork = nPos; nPosWork < nstrlen; ++nPosWork ){
+//							if( lptstr[nPosWork] == CR ||  lptstr[nPosWork] == LF ){
+//							}else{
 								bAddLastCR = TRUE;
 								nInsPosX = LineIndexToColmn( pLine, nLineLen, nLineLen );
-								break;
-							}
-						}
+//								break;
+//							}
+//						}
 					}
+				}else{ // 2001/10/02 novice
+					bAddLastCR = TRUE;
+					nInsPosX = LineIndexToColmn( pLine, nLineLen, nLineLen );
 				}
-			}
+//			}
 			if( bAddLastCR ){
 //				MYTRACE( " カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -2615,8 +2624,10 @@ void CEditView::Command_PASTEBOX( void )
 				InsertData_CEditView(
 					nInsPosX,
 					m_nCaretPosY,
-					CRLF,
-					1,
+//					CRLF, 2001/10/02 novice
+//					1,
+					m_pcEditDoc->m_cNewLineCode.GetValue(),
+					m_pcEditDoc->m_cNewLineCode.GetLen(),
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
@@ -2659,6 +2670,8 @@ void CEditView::Command_PASTEBOX( void )
 			++nPos;
 		}
 	}
+// 2001/10/02 deleted by novice
+#if 0
 	if( nPos - nBgn > 0 ){
 		/* 現在位置にデータを挿入 */
 		cMem.SetData( &lptstr[nBgn], nPos - nBgn );
@@ -2722,6 +2735,7 @@ void CEditView::Command_PASTEBOX( void )
 		MoveCursor( nCurXOld, nCurYOld + nCount, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 	}
+#endif
 	/* 挿入データの先頭位置へカーソルを移動 */
 	MoveCursor( nCurXOld, nCurYOld, TRUE );
 	m_nCaretPosX_Prev = m_nCaretPosX;
