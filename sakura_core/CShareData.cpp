@@ -345,7 +345,10 @@ bool CShareData::Init(void)
 			//Sept. 14, 2000 JEPRO	Ctrl+. に「選択範囲内全行引用符付きコピー」を追加
 			{ 0x00be, ".",0, 0, F_COPYLINESASPASSAGE, 0, 0, 0, 0, 0 },
 			{ 0x00bf, "/",0, 0, F_HOKAN, 0, 0, 0, 0, 0 },
-			{ 0x00df, "_",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
+			//	Nov. 15, 2000 genta PC/ATキーボードに合わせてキーコードを変更
+			//	PC98救済のため，従来のキーコードに対応する項目を追加．
+			{ 0x00e2, "_",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
+			{ 0x00df, "_(PC-98)",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	長くて表示しきれない所がでてきてしまうのでアプリケーションキー→アプリキーに短縮
 			{ VK_APPS, "アプリキー",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
 		};
