@@ -164,7 +164,7 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 	if( NULL != szText ){
 		m_cInfo.SetData( szText, strlen( szText ) );
 	}
-	pszInfo = m_cInfo.GetPtr( NULL );
+	pszInfo = m_cInfo.GetPtr();
 
 	hdc = ::GetDC( m_hWnd );
 //	hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
@@ -181,7 +181,7 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 	}
 
 //
-//	pszInfo = m_cInfo.GetPtr( NULL );
+//	pszInfo = m_cInfo.GetPtr();
 //	nHeight = ::DrawText( hdc, pszInfo, strlen( pszInfo ), &rc,
 //		DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/ );
 //	::SelectObject( hdc, hFontOld );
@@ -359,23 +359,13 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 	PAINTSTRUCT	ps;
 	RECT		rc;
 	char*		pszText;
-	int			nTextLen;
-//	HFONT		hFontOld;
+//	int			nTextLen;
+
 	hdc = ::BeginPaint(	hwnd, &ps );
-	pszText = m_cInfo.GetPtr( &nTextLen );
+	pszText = m_cInfo.GetPtr();
 	::GetClientRect( hwnd, &rc );
 	/* ウィンドウのテキストを表示 */
 	DrawTipText( hdc, m_hFont, pszText );
-
-//	hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
-//
-//	pszText = m_cInfo.GetPtr( &nTextLen );
-//	::GetClientRect( hwnd, &rc );
-//	rc.left = 4;
-//	rc.top = 4;
-//	::DrawText( hdc, pszText, nTextLen, &rc,
-//		DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/ );
-//	::SelectObject( hdc, hFontOld );
 
 	::EndPaint(	hwnd, &ps );
 	return 0L;
@@ -392,7 +382,7 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 
 	hdc = ::GetDC( m_hWnd );
 
-	pszText = m_cInfo.GetPtr(NULL);
+	pszText = m_cInfo.GetPtr();
 
 	// ウィンドウのサイズを得る
 	ComputeWindowSize( hdc, m_hFont, pszText , pRect );

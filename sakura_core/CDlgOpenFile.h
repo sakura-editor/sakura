@@ -23,7 +23,10 @@ class CDlgOpenFile;
 #include "CEol.h"
 
 
-//! ファイルオープンダイアログボックス
+/*!	ファイルオープンダイアログボックス
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 class SAKURA_CORE_API CDlgOpenFile
 {
 public:
@@ -48,7 +51,6 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hWnd;			/* このダイアログのハンドル */
 
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 

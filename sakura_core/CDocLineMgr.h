@@ -123,7 +123,16 @@ public:
 	//	May 15, 2000 genta
 	void AddLineStrX( const char*, int, CEOL );	/* 末尾に行を追加 Ver1.5 */
 
-	void DeleteData( int , int , int , int* , int* , int* , int*, CMemory&, int );	/* データの削除 */
+	void DeleteData_CDocLineMgr(
+		int			nLine,
+		int			nDelPos,
+		int			nDelLen,
+		int*		pnModLineOldFrom,	/* 影響のあった変更前の行(from) */
+		int*		pnModLineOldTo,		/* 影響のあった変更前の行(to) */
+		int*		pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
+		int*		pnDelLineOldNum,	/* 削除された行数 */
+		CMemory&	cmemDeleted			/* 削除されたデータ */
+	);
 
 	/* 指定範囲のデータを置換(削除 & データを挿入)
 	  Fromを含む位置からToの直前を含むデータを削除する
@@ -148,8 +157,17 @@ public:
 	void DeleteNode( CDocLine* );/* 行オブジェクトの削除、リスト変更、行数-- */
 	void InsertNode( CDocLine*, CDocLine* );	/* 行オブジェクトの挿入、リスト変更、行数++ */
 
+	/* データの挿入 */
+	void InsertData_CDocLineMgr(
+		int			nLine,
+		int			nInsPos,
+		const char*	pInsData,
+		int			nInsDataLen,
+		int*		pnInsLineNum,	/* 挿入によって増えた行の数 */
+		int*		pnNewLine,		/* 挿入された部分の次の位置の行 */
+		int*		pnNewPos		/* 挿入された部分の次の位置のデータ位置 */
+	);
 
-	void InsertData_CDocLineMgr( int , int , const char* , int , int* , int* , int*, int );	/* データの挿入 */
 	//	Nov. 12, 2000 genta 引数追加
 	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag );
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)

@@ -838,7 +838,7 @@ void CMemory::BASE64Decode( void )
 		}
 		nBgn = nPos;
 	}
-	SetData( cmemBuf.GetPtr( NULL ), cmemBuf.m_nDataLen );
+	SetData( cmemBuf.GetPtr(), cmemBuf.m_nDataLen );
 	return;
 }
 
@@ -935,7 +935,7 @@ void CMemory::UUDECODE( char* pszFileName )
 			nBgn++;
 		}
 	}
-	SetData( cmemBuf.GetPtr( NULL ), cmemBuf.m_nDataLen );
+	SetData( cmemBuf.GetPtr(), cmemBuf.m_nDataLen );
 	return;
 }
 

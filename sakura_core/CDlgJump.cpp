@@ -234,7 +234,7 @@ void CDlgJump::SetData( void )
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ||
 			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 //			MYTRACE( "cFuncInfoArr.GetAt( i )->m_cmemFuncName=%s(%d)\n",
-//				(char*)(cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL ) ),
+//				(char*)(cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr() ),
 //				cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF
 //			);
 		}
@@ -243,12 +243,12 @@ void CDlgJump::SetData( void )
 			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				wsprintf( szText, "%d 行  %s  パッケージ仕様部",
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr()
 				);
 			}else{
 				wsprintf( szText, "%d 行  %s  パッケージ仕様部",
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr()
 				);
 			}
 			nIndex = ::SendMessage( hwndCtrl, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szText );
@@ -265,12 +265,12 @@ void CDlgJump::SetData( void )
 			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				wsprintf( szText, "%d 行  %s  パッケージ本体部",
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr()
 				);
 			}else{
 				wsprintf( szText, "%d 行  %s  パッケージ本体部",
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr()
 				);
 			}
 			nIndexCurSel = nIndex = ::SendMessage( hwndCtrl, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szText );

@@ -209,7 +209,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
 					cmemWork.Replace( "\\\'", "\'" );
 					cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetPtr( NULL ) );	//	引数を文字列として追加
+					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
 				}
 				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
 					nBgn = i;	//	nBgnは引数の先頭の文字
@@ -227,7 +227,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
 					cmemWork.Replace( "\\\'", "\'" );
 					cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetPtr( NULL ) );	//	引数を文字列として追加
+					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
 				}
 				else {
 					//	Parse Error:文法エラーっぽい。

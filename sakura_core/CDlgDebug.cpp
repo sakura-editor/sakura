@@ -104,7 +104,7 @@ BOOL CDlgDebug::DispatchEvent(
 		m_hWnd = hwndDlg;
 		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
 
-		::SetDlgItemText( hwndDlg, IDC_EDIT_DEBUG, m_cmemDebugInfo.GetPtr( NULL ) );
+		::SetDlgItemText( hwndDlg, IDC_EDIT_DEBUG, m_cmemDebugInfo.GetPtr() );
 
 		return TRUE;
 	case WM_COMMAND:

@@ -129,7 +129,7 @@ VOID CALLBACK CEditWndTimerProc(
 
 
 
-
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd() :
 	m_hWnd( NULL ),
 	m_bDragMode( FALSE ),
@@ -152,8 +152,6 @@ CEditWnd::CEditWnd() :
 {
 
 	/* 共有データ構造体のアドレスを返す */
-//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 //	MYTRACE( "CEditWnd::CEditWnd()おわり\n" );
@@ -861,7 +859,7 @@ LRESULT CEditWnd::DispatchEvent(
 //				}else{
 //					cmemWork = m_CMenuDrawer.m_cmemMenuItemStrArr[i];
 //					cmemWork.Replace( "&", "" );
-//					pszItemStr = cmemWork.GetPtr( NULL );
+//					pszItemStr = cmemWork.GetPtr();
 
 					/* 機能に対応するキー名の取得(複数) */
 					CMemory**	ppcAssignedKeyList;
@@ -878,15 +876,12 @@ LRESULT CEditWnd::DispatchEvent(
 							if( j > 0 ){
 								cmemWork.AppendSz( " , " );
 							}
-//							strcat( szLabel, "\n        " );
 							cmemWork.Append( ppcAssignedKeyList[j] );
-//							pszKey = ppcAssignedKeyList[j]->GetPtr( &nKeyLen );
-//							strcat( szLabel, pszKey );
 							delete ppcAssignedKeyList[j];
 						}
 						delete [] ppcAssignedKeyList;
 					}
-					pszItemStr = cmemWork.GetPtr( NULL );
+					pszItemStr = cmemWork.GetPtr();
 
 //				}
 //			}
@@ -1103,7 +1098,7 @@ LRESULT CEditWnd::DispatchEvent(
 				int			nAssignedKeyNum;
 				int			j;
 				char*		pszKey;
-				int			nKeyLen;
+//				int			nKeyLen;
 
 				// From Here Oct. 15, 2001 genta
 				// 機能文字列の取得にLookupを使うように変更
@@ -1125,8 +1120,7 @@ LRESULT CEditWnd::DispatchEvent(
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 //						cmemWork.Append( "\n        ", lstrlen( "\n        " ) );
 						strcat( szLabel, "\n        " );
-						pszKey = ppcAssignedKeyList[j]->GetPtr( &nKeyLen );
-//						cmemWork.Append( pszKey, nKeyLen );
+						pszKey = ppcAssignedKeyList[j]->GetPtr();
 						strcat( szLabel, pszKey );
 						delete ppcAssignedKeyList[j];
 					}
@@ -1135,7 +1129,7 @@ LRESULT CEditWnd::DispatchEvent(
 //				lptip->hinst = m_hInstance;
 //				lptip->lpszText	= MAKEINTRESOURCE( lptip->hdr.idFrom );
 				lptip->hinst = NULL;
-//				lptip->lpszText	= cmemWork.GetPtr( NULL );
+//				lptip->lpszText	= cmemWork.GetPtr();
 				lptip->lpszText	= szLabel;
 			}
 			break;
@@ -1456,7 +1450,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			/* Windowsクリップボードにコピー */
 			hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, cMemKeyList.GetLength() + 1 );
 			pszClip = (char*)::GlobalLock( hgClip );
-			memcpy( pszClip, cMemKeyList.GetPtr( NULL ), cMemKeyList.GetLength() + 1 );
+			memcpy( pszClip, cMemKeyList.GetPtr(), cMemKeyList.GetLength() + 1 );
 			::GlobalUnlock( hgClip );
 			::OpenClipboard( m_cEditDoc.m_hWnd );
 			::EmptyClipboard();
@@ -2405,7 +2399,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						int			nDesLen;
 						const char*	pszDes;
 						LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
-						pszDes = cmemDes.GetPtr( NULL );
+						pszDes = cmemDes.GetPtr();
 						nDesLen = lstrlen( pszDes );
 //	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
 //						wsprintf( szMemu, "&%d 【Grep】\"%s%s\"", ((i + 1) <= 9)? (i + 1):9,

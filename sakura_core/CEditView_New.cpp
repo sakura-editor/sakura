@@ -215,7 +215,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 				}
 
 				int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
-				const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr2() + pcLayout->m_nOffset;
+				const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
 			}
 		}
 #endif
@@ -428,7 +428,7 @@ int CEditView::DispLineNew(
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory•ÏX
 		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
-		pLine = (const unsigned char *)pcLayout->m_pCDocLine->m_pLine->GetPtr2() + pcLayout->m_nOffset;
+		pLine = (const unsigned char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
 
 //		pCDocLine = pcLayout->m_pCDocLine;
 //		if( NULL == pCDocLine ){

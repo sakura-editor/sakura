@@ -377,7 +377,7 @@ char* CKeyBind::GetMenuLabel(
 			strcat( pszLabel, "\t" );
 		}
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemList, nFuncId ) ){
-			strcat( pszLabel, cMemList.GetPtr( NULL ) );
+			strcat( pszLabel, cMemList.GetPtr() );
 		}
 	}
 	return pszLabel;

@@ -32,7 +32,10 @@ using namespace std; // 2002/2/3 aroka to here
 
 
 
-/* 現在位置にデータを挿入 Ver0  */
+/*!	現在位置にデータを挿入 Ver0
+
+	@date 2002/03/24 YAZAKI bUndo削除
+*/
 void CEditView::InsertData_CEditView(
 	int			nX,
 	int			nY,
@@ -41,8 +44,8 @@ void CEditView::InsertData_CEditView(
 	int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
 	int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
 	COpe*		pcOpe,				/* 編集操作要素 COpe */
-	BOOL		bRedraw,
-	BOOL		bUndo			/* Undo操作かどうか */
+	BOOL		bRedraw
+//	BOOL		bUndo			/* Undo操作かどうか */
 )
 {
 #ifdef _DEBUG
@@ -73,7 +76,7 @@ void CEditView::InsertData_CEditView(
 		nY = m_nCaretPosY;
 	}
 
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( nY, &nLineLen, &pcLayout );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nY, &nLineLen, &pcLayout );
 
 	nIdxFrom = 0;
 //	cMem.SetData( "", lstrlen( "" ) );
@@ -140,15 +143,14 @@ void CEditView::InsertData_CEditView(
 	m_pcEditDoc->m_cLayoutMgr.InsertData_CLayoutMgr(
 		nY,
 		nIdxFrom,
-		cMem.GetPtr( NULL ),
+		cMem.GetPtr(),
 		cMem.GetLength(),
 		&nModifyLayoutLinesOld,
 		&nInsLineNum,
 		pnNewLine,			/* 挿入された部分の次の位置の行 */
 		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
 		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
-		bUndo	/* Undo操作かどうか */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
 	);
 
 
@@ -271,7 +273,10 @@ void CEditView::InsertData_CEditView(
 }
 
 
-/* 指定位置の指定長データ削除 */
+/*!	指定位置の指定長データ削除
+
+	@date 2002/03/24 YAZAKI bUndo削除
+*/
 void CEditView::DeleteData2(
 	int			nCaretX,
 	int			nCaretY,
@@ -279,8 +284,8 @@ void CEditView::DeleteData2(
 	CMemory*	pcMem,
 	COpe*		pcOpe,		/* 編集操作要素 COpe */
 	BOOL		bRedraw,
-	BOOL		bRedraw2,
-	BOOL		bUndo			/* Undo操作かどうか */
+	BOOL		bRedraw2
+//	BOOL		bUndo			/* Undo操作かどうか */
 )
 {
 #ifdef _DEBUG
@@ -336,8 +341,7 @@ void CEditView::DeleteData2(
 		&nDeleteLayoutLines,
 		*pcMem,
 		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
-		bUndo	/* Undo操作かどうか */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
 	);
 
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
@@ -409,10 +413,13 @@ end_of_func:;
 
 
 
-//カーソル位置または選択エリアを削除
+/*!	カーソル位置または選択エリアを削除
+
+	@date 2002/03/24 YAZAKI bUndo削除
+*/
 void CEditView::DeleteData(
-				BOOL	bRedraw,
-				BOOL	bUndo	/* Undo操作かどうか */
+	BOOL	bRedraw
+//	BOOL	bUndo	/* Undo操作かどうか */
 )
 {
 #ifdef _DEBUG
@@ -427,9 +434,6 @@ void CEditView::DeleteData(
 	int			nCurIdx;
 	int			nNxtIdx;
 	int			nNxtPos;
-//	int			nModifyLayoutLinesOld;
-//	int			nModifyLayoutLinesNew;
-//	int			nDeleteLayoutLines;
 	PAINTSTRUCT ps;
 	HDC			hdc;
 	int			nIdxFrom;
@@ -438,28 +442,23 @@ void CEditView::DeleteData(
 	int			nDelLen;
 	int			nDelPosNext;
 	int			nDelLenNext;
-	CMemory		cmemBuf;
+//	CMemory		cmemBuf;
 	RECT		rcSel;
 	int			bLastLine;
 	CMemory*	pcMemDeleted;
 	COpe*		pcOpe = NULL;
-//	int			nPosX;
-//	int			nPosY;
-//	int			nPosXNext;
-//	int			nPosYNext;
 	int			nCaretPosXOld;
 	int			nCaretPosYOld;
-//	BOOL		bBoxSelected;
 	int			i;
 	const CLayout*	pcLayout;
 	int			nSelectColmFrom_Old;
 	int			nSelectLineFrom_Old;
+
 // hor IsTextSelected内に移動
 //	CWaitCursor cWaitCursor( m_hWnd );	// 2002.01.25 hor
 
 	nCaretPosXOld = m_nCaretPosX;
 	nCaretPosYOld = m_nCaretPosY;
-//	bBoxSelected = FALSE;
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
@@ -562,8 +561,7 @@ void CEditView::DeleteData(
 						pcMemDeleted,
 						pcOpe,				/* 編集操作要素 COpe */
 						FALSE/*bRedraw	2002.01.25 hor*/,
-						FALSE/*bRedraw*	2002.01.25 hor/,
-						bUndo	/* Undo操作かどうか */
+						FALSE/*bRedraw*	2002.01.25 hor*/
 					);
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -670,7 +668,7 @@ void CEditView::DeleteData(
 		}
 	}else{
 		/* 現在行のデータを取得 */
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nCaretPosY, &nLineLen, &pcLayout );
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 		if( NULL == pLine ){
 			goto end_of_func;
 //			return;
@@ -720,7 +718,7 @@ void CEditView::DeleteData(
 		if( m_nCaretPosY > m_pcEditDoc->m_cLayoutMgr.GetLineCount()	- 1	){
 			/* 現在行のデータを取得 */
 			const CLayout*	pcLayout;
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1, &nLineLen, &pcLayout );
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				goto end_of_func;
 //				return;
@@ -893,7 +891,7 @@ void CEditView::Command_UNDO( void )
 						nCaretPosY_Before,					/* 範囲選択終了行 */
 						nCaretPosX_Before,					/* 範囲選択終了桁 */
 						pcMem,								/* 削除されたデータのコピー(NULL可能) */
-						pcOpe->m_pcmemData->GetPtr( NULL ),	/* 挿入するデータ */
+						pcOpe->m_pcmemData->GetPtr(),	/* 挿入するデータ */
 						pcOpe->m_nDataLen,					/* 挿入するデータの長さ */
 						FALSE								/*再描画するか否か*/
 					);
@@ -901,7 +899,7 @@ void CEditView::Command_UNDO( void )
 //					InsertData_CEditView(
 //						nCaretPosX_Before,
 //						nCaretPosY_Before,
-//						pcOpe->m_pcmemData->GetPtr( NULL ),
+//						pcOpe->m_pcmemData->GetPtr(),
 //						pcOpe->m_nDataLen,
 //						&nNewLine,
 //						&nNewPos,
@@ -1057,7 +1055,7 @@ void CEditView::Command_REDO( void )
 						nCaretPosY_Before,					/* 範囲選択終了行 */
 						nCaretPosX_Before,					/* 範囲選択終了桁 */
 						NULL,								/* 削除されたデータのコピー(NULL可能) */
-						pcOpe->m_pcmemData->GetPtr( NULL ),	/* 挿入するデータ */
+						pcOpe->m_pcmemData->GetPtr(),	/* 挿入するデータ */
 						pcOpe->m_pcmemData->GetLength(),	/* 挿入するデータの長さ */
 						FALSE								/*再描画するか否か*/
 					);
@@ -1065,7 +1063,7 @@ void CEditView::Command_REDO( void )
 //					InsertData_CEditView(
 //						nCaretPosX_Before,
 //						nCaretPosY_Before,
-//						pcOpe->m_pcmemData->GetPtr( NULL ),
+//						pcOpe->m_pcmemData->GetPtr(),
 //						pcOpe->m_pcmemData->GetLength(),//*pcOpe->m_nDataLen,
 //						&nNewLine,
 //						&nNewPos,
@@ -1357,7 +1355,7 @@ void CEditView::ReplaceData_CEditView(
 //	LRArg.nNewPos = 0;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 	LRArg.bDispSSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;			/* シングルクォーテーション文字列を表示する */
 	LRArg.bDispWSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;			/* ダブルクォーテーション文字列を表示する */
-	LRArg.bUndo = m_bDoing_UndoRedo;					/* Undo操作かどうか */
+//	LRArg.bUndo = m_bDoing_UndoRedo;					/* Undo操作かどうか */
 	m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr(
 		&LRArg
 #if 0
@@ -2181,7 +2179,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	nBgn = 0;
 	nPosDes = 0;
 	/* 変換後に必要なバイト数を調べる */
-	while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr2(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
+	while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
 		}
@@ -2195,7 +2193,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	nPosDes = 0;
 	if( bLeft ){
 	// LTRIM
-		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr2(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
+		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				for( i = 0; i <= nLineLen; ++i ){
 					if( pLine[i] ==' ' ||
@@ -2218,7 +2216,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 		}
 	}else{
 	// RTRIM
-		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr2(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
+		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				for( j=nLineLen-1 ; j>=0 ; --j ){
 					if( pLine[j] ==' ' ||
@@ -2393,7 +2391,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		nSelectLineToOld,
 		nSelectColToOld,
 		NULL,					/* 削除されたデータのコピー(NULL可能) */
-		cmemBuf.GetPtr( NULL ),
+		cmemBuf.GetPtr(),
 		cmemBuf.GetLength(),
 		FALSE
 	);
@@ -2516,7 +2514,7 @@ void CEditView::Command_MERGE(void)
 		nSelectLineToOld,
 		nSelectColToOld,
 		NULL,					/* 削除されたデータのコピー(NULL可能) */
-		cmemBuf.GetPtr( NULL ),
+		cmemBuf.GetPtr(),
 		cmemBuf.GetLength(),
 		FALSE
 	);

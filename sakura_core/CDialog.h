@@ -34,6 +34,8 @@ class CDialog;
 	@brief ダイアログウィンドウを扱うクラス
 
 	ダイアログボックスを作るときにはここから継承させる．
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CDialog
 {
@@ -93,8 +95,6 @@ public:
 	int				m_yPos;
 //	void*			m_pcEditView;
 	char			m_szHelpFile[_MAX_PATH + 1];
-//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 

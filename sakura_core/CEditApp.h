@@ -38,6 +38,8 @@ class CEditApp;
 /*!
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
+	
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CEditApp
 {
@@ -60,38 +62,13 @@ public:
 
 	static bool OpenNewEditor( HINSTANCE, HWND, char*, int, BOOL, bool sync = false );		/* 新規編集ウィンドウの追加 ver 0 */
 	static bool OpenNewEditor2( HINSTANCE, HWND , FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
-//シングルプロセス版用
-//	static HWND OpenNewEditor3( HINSTANCE, HWND , const char*, BOOL );	/* 新規編集ウィンドウの追加 ver 2 */
 
 	static BOOL CloseAllEditor( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	static void TerminateApplication( void );	/* サクラエディタの全終了 */
-#if 0
-	/* コマンドラインの解析 */
-	static void CEditApp::ParseCommandLine(
-		const char*	pszCmdLineSrc,
-		BOOL*		pbGrepMode,
-		CMemory*	pcmGrepKey,
-		CMemory*	pcmGrepFile,
-		CMemory*	pcmGrepFolder,
-		BOOL*		pbGrepSubFolder,
-		BOOL*		pbGrepLoHiCase,
-		BOOL*		pbGrepRegularExp,
-		BOOL*		pbGrepKanjiCode_AutoDetect,
-		BOOL*		pbGrepOutputLine,
-		BOOL*		pbGrepWordOnly,
-		int	*		pnGrepOutputStyle,
-		BOOL*		pbDebugMode,
-		BOOL*		pbNoWindow,
-		FileInfo*	pfi,
-		BOOL*		pbReadOnly
-	);
-#endif
 
 	/*
 	|| メンバ変数
 	*/
-//	CKeyBind		m_CKeyBind;
-//	HACCEL			m_hAccel;
 
 private:
 	CMenuDrawer		m_CMenuDrawer;
@@ -100,9 +77,7 @@ private:
 	char*			m_pszAppName;
 	BOOL			m_bCreatedTrayIcon;	/*!< トレイにアイコンを作った */
 
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
-//	int				m_nSettingType;	未使用
 	CDlgGrep		m_cDlgGrep; // Jul. 2, 2001 genta
 
 	CImageListMgr	m_hIcons;

@@ -29,6 +29,8 @@ class CEditApp;
 	@brief コントロールプロセスクラス
 	
 	コントロールプロセスはCEditAppクラスのインスタンスを作る。
+	
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CControlProcess : public CProcess {
 public:
@@ -53,9 +55,6 @@ private:
 	HANDLE			m_hMutex;
 	HANDLE			m_hMutexCP;
 	CEditApp*		m_pcEditApp;
-//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-//	CShareData		m_cShareData;
-//	DLLSHAREDATA*	m_pShareData;
 };
 
 

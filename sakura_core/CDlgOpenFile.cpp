@@ -54,6 +54,8 @@ BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 
 /*
 || 	開くダイアログのフックプロシージャ
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -67,12 +69,10 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	WORD					wID;
 	HWND					hwndCtl;
 //	HWND					hwndFrame;
-//	static CShareData		cShareData;
 	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
-//		cShareData.Init();
 		pShareData = CShareData::getInstance()->GetShareData();
 		::GetWindowRect( hwnd, &pShareData->m_Common.m_rcOpenDialog );
 //		MYTRACE( "WM_MOVE 1\n" );
@@ -533,11 +533,8 @@ CDlgOpenFile::CDlgOpenFile()
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd = NULL;			/* このダイアログのハンドル */
-//	m_pShareData = NULL;
-//	m_cShareData = NULL;
 
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* OPENFILENAMEの初期化 */

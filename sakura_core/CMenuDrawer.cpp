@@ -35,10 +35,10 @@ void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 }
 
 
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CMenuDrawer::CMenuDrawer()
 {
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_nMenuItemNum = 0;
@@ -1013,7 +1013,7 @@ const char* CMenuDrawer::GetLabel( int nFuncID )
 	if( -1 == ( i = Find( nFuncID ) ) ){
 		return NULL;
 	}
-	return m_cmemMenuItemStrArr[i].GetPtr( NULL );
+	return m_cmemMenuItemStrArr[i].GetPtr();
 }
 
 char CMenuDrawer::GetAccelCharFromLabel( const char* pszLabel )

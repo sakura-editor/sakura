@@ -360,7 +360,7 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 #ifdef _DEBUG
 //	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::AddLineBottom" );
 #endif
-//	if( pLine != pCDocLine->m_pLine->GetPtr2() ){
+//	if( pLine != pCDocLine->m_pLine->GetPtr() ){
 //	if( pLine != pCDocLine->m_pLine->m_pData ){
 //		int		i;
 //		i = 1234;
@@ -370,7 +370,7 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 	{
 		if( NULL != pCDocLine ){
 			int nLineLen = pCDocLine->m_pLine->GetLength();
-			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr2();
+			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr();
 		}
 	}
 #endif
@@ -437,7 +437,7 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 	{
 		if( NULL != pCDocLine ){
 			int nLineLen = pCDocLine->m_pLine->GetLength();
-			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr(); // 2002/2/10 aroka CMemory変更
 		}
 	}
 #endif
@@ -517,28 +517,25 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 
 /*
 || 指定された物理行のデータへのポインタとその長さを返す Ver0
+
+	@date 2002/2/10 aroka CMemory変更
 */
 const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen )
 {
 	CLayout* pLayout;
-//	const char* pData;
-//	int nDataLen;
 	if( NULL == ( pLayout = Search( nLine )	) ){
 		return NULL;
 	}
-//	pData = m_pcDocLineMgr->GetLineStr( pLayout->m_nLinePhysical, &nDataLen );
 	*pnLineLen = pLayout->m_nLength;
-// 2002/2/10 aroka CMemory変更
-//	return pData + pLayout->m_nOffset;
-//	return pLayout->m_pLine + pLayout->m_nOffset;
-	return pLayout->m_pCDocLine->m_pLine->GetPtr2() + pLayout->m_nOffset;
+	return pLayout->m_pCDocLine->m_pLine->GetPtr() + pLayout->m_nOffset;
 }
 
-/*
-|| 指定された物理行のデータへのポインタとその長さを返す Ver1
+/*!	指定された物理行のデータへのポインタとその長さを返す Ver1
+	@date 2002/03/24 YAZAKI GetLineStr( int nLine, int* pnLineLen )と同じ動作に変更。
 */
-const char* CLayoutMgr::GetLineStr2( int nLine, int* pnLineLen, const CLayout** ppcLayoutDes )
+const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen, const CLayout** ppcLayoutDes )
 {
+#if 0
 	const CLayout* pLayout;
 	const char* pData;
 	int nDataLen;
@@ -550,11 +547,20 @@ const char* CLayoutMgr::GetLineStr2( int nLine, int* pnLineLen, const CLayout** 
 	*pnLineLen = pLayout->m_nLength;
 	*ppcLayoutDes = pLayout;
 	return pData + pLayout->m_nOffset;
+#endif
+	if( NULL == ( (*ppcLayoutDes) = Search( nLine )	) ){
+		return NULL;
+	}
+	*pnLineLen = (*ppcLayoutDes)->m_nLength;
+	return (*ppcLayoutDes)->m_pCDocLine->m_pLine->GetPtr() + (*ppcLayoutDes)->m_nOffset;
 }
 
 
 
-/* 行内文字削除 */
+/*!	行内文字削除
+
+	@date 2002/03/24 YAZAKI bUndo削除
+*/
 void CLayoutMgr::DeleteData_CLayoutMgr(
 		int			nLineNum,
 		int			nDelPos,
@@ -564,8 +570,8 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		int			*pnDeleteLayoutLines,
 		CMemory&	cmemDeleted,			/* 削除されたデータ */
 		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
-		BOOL		bUndo			/* Undo操作かどうか */
+		BOOL		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+//		BOOL		bUndo			/* Undo操作かどうか */
 )
 {
 #ifdef _DEBUG
@@ -614,10 +620,10 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	nCurrentLineType = pLayoutWork->m_nTypePrev;
 
 	/* テキストのデータを削除 */
-	m_pcDocLineMgr->DeleteData(
+	m_pcDocLineMgr->DeleteData_CDocLineMgr(
 		nDelStartLogicalLine, nDelStartLogicalPos,
 		nDelLen, &nModLineOldFrom, &nModLineOldTo,
-		&nDelLineOldFrom, &nDelLineOldNum, cmemDeleted, bUndo
+		&nDelLineOldFrom, &nDelLineOldNum, cmemDeleted
 	);
 
 //	DUMP();
@@ -695,7 +701,10 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 
 
 
-/* 文字列挿入 */
+/*!	文字列挿入
+
+	@date 2002/03/24 YAZAKI bUndo削除
+*/
 void CLayoutMgr::InsertData_CLayoutMgr(
 		int			nLineNum,
 		int			nInsPos,
@@ -706,9 +715,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
 		int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
 		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
-		BOOL		bUndo			/* Undo操作かどうか */
-
+		BOOL		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+//		BOOL		bUndo			/* Undo操作かどうか */
 )
 {
 	const char*	pLine;
@@ -797,8 +805,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nInsDataLen,
 		&nInsLineNum,
 		&nNewLine,
-		&nNewPos,
-		bUndo
+		&nNewPos
 	);
 //	MYTRACE( "nNewLine=%d nNewPos=%d \n", nNewLine, nNewPos );
 
@@ -1305,7 +1312,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 			nCaretPosX = 0;
 //			pData = GetLineStr( nCaretPosY, &nDataLen );
 //			pData = pLayout->m_pLine + pLayout->m_nOffset;
-			pData = pLayout->m_pCDocLine->m_pLine->GetPtr2() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
+			pData = pLayout->m_pCDocLine->m_pLine->GetPtr() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
 			nDataLen = pLayout->m_nLength;
 
 			for( i = 0; i < nDataLen; ++i ){

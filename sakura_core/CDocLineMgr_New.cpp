@@ -97,7 +97,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	/* 現在行の情報を得る */
 	pCDocLine = GetLineInfo( pArg->nDelLineFrom );
 	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
-		pLine = pCDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+		pLine = pCDocLine->m_pLine->GetPtr(); // 2002/2/10 aroka CMemory変更
 		nLineLen = pCDocLine->m_pLine->GetLength(); // 2002/2/10 aroka CMemory変更
 		pCDocLinePrev = pCDocLine->m_pPrev;
 		pCDocLineNext = pCDocLine->m_pNext;
@@ -132,9 +132,9 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 		}
 		/* 削除されたデータを保存 */
 		// 2002/2/10 aroka from here CMemory変更 念のため。
-		if( pLine != pCDocLine->m_pLine->GetPtr2() ){
+		if( pLine != pCDocLine->m_pLine->GetPtr() ){
 			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-				"CDocLineMgr::ReplaceData()\n\npLine != pCDocLine->m_pLine->GetPtr2() =%d\ni=%d\npArg->nDelLineTo=%d", pLine, i, pArg->nDelLineTo
+				"CDocLineMgr::ReplaceData()\n\npLine != pCDocLine->m_pLine->GetPtr() =%d\ni=%d\npArg->nDelLineTo=%d", pLine, i, pArg->nDelLineTo
 			);
 		}
 		// 2002/2/10 aroka to here CMemory変更
@@ -169,7 +169,7 @@ next_line:;
 	}
 	/* 後ろから処理していく */
 	for( ; i >= pArg->nDelLineFrom && NULL != pCDocLine; i-- ){
-		pLine = pCDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+		pLine = pCDocLine->m_pLine->GetPtr(); // 2002/2/10 aroka CMemory変更
 		nLineLen = pCDocLine->m_pLine->GetLength(); // 2002/2/10 aroka CMemory変更
 		pCDocLinePrev = pCDocLine->m_pPrev;
 		pCDocLineNext = pCDocLine->m_pNext;
@@ -225,7 +225,7 @@ next_line:;
 
 				/* 次の行のデータを最後に追加 */
 				// 2002/2/10 aroka 直接 CMemory を Append
-				//pLine2 = pCDocLineNext->m_pLine->GetPtr2();
+				//pLine2 = pCDocLineNext->m_pLine->GetPtr();
 				//nLineLen2 = pCDocLineNext->m_pLine->GetLength();
 				pCDocLine->m_pLine->Append( pCDocLineNext->m_pLine );
 				/* 次の行 行オブジェクトの削除 */
@@ -551,7 +551,7 @@ void CDocLineMgr::MarkSearchWord(
 		while( NULL != pDocLine ){
 			if(!pDocLine->IsBookMarked() &&
 				WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )) {
-				const char* pData = pDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+				const char* pData = pDocLine->m_pLine->GetPtr(); // 2002/2/10 aroka CMemory変更
 				
 				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
 				   (( FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||

@@ -3722,27 +3722,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 
 
 
-//	/*
-//	|| この実行ファイルのあるディレクトリを返します(例)"c:\\Program Files\\caspy\\"
-//	||
-//	*/
-//	long CShareData::GetModuleDir( char* pszDir, long nSize )
-//	{
-//		char	szDrive[_MAX_DRIVE];
-//		char	szDir[_MAX_DIR];
-//		::GetModuleFileName(
-//			::GetModuleHandle( NULL ),
-//			pszDir, nSize
-//		);
-//		_splitpath( pszDir, szDrive, szDir, NULL, NULL );
-//		strcpy( pszDir, szDrive );
-//		strcat( pszDir, szDir );
-//		return strlen( pszDir );
-//	}
-
-
-
-
 /* KEYDATA配列にデータをセット */
 void CShareData::SetKeyNameArrVal(
 	DLLSHAREDATA*	pShareData,
@@ -4344,7 +4323,7 @@ void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 			m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
 		}
 	}
-	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork.GetPtr( NULL ) );
+	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork.GetPtr() );
 	return;
 }
 
@@ -4374,7 +4353,65 @@ void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 			m_pShareData->m_nREPLACEKEYArrNum = MAX_REPLACEKEY;
 		}
 	}
-	strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork.GetPtr( NULL ) );
+	strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork.GetPtr() );
+}
+
+/*!	m_szGREPFILEArrにpszGrepFileを追加する
+	YAZAKI
+*/
+void CShareData::AddToGrepFileArr( const char* pszGrepFile )
+{
+	CMemory pcmWork( pszGrepFile, lstrlen( pszGrepFile ) );
+	int		i;
+	int		j;
+	for( i = 0; i < m_pShareData->m_nGREPFILEArrNum; ++i ){
+		if( 0 == strcmp( pszGrepFile, m_pShareData->m_szGREPFILEArr[i] ) ){
+			break;
+		}
+	}
+	if( i < m_pShareData->m_nGREPFILEArrNum ){
+		for( j = i; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
+		}
+	}else{
+		for( j = MAX_GREPFILE - 1; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
+		}
+		++m_pShareData->m_nGREPFILEArrNum;
+		if( m_pShareData->m_nGREPFILEArrNum > MAX_GREPFILE ){
+			m_pShareData->m_nGREPFILEArrNum = MAX_GREPFILE;
+		}
+	}
+	strcpy( m_pShareData->m_szGREPFILEArr[0], pcmWork.GetPtr() );
+}
+
+/*!	m_nGREPFOLDERArrNumにpszGrepFolderを追加する
+	YAZAKI
+*/
+void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
+{
+	CMemory pcmWork( pszGrepFolder, lstrlen( pszGrepFolder ) );
+	int		i;
+	int		j;
+	for( i = 0; i < m_pShareData->m_nGREPFOLDERArrNum; ++i ){
+		if( 0 == strcmp( pszGrepFolder, m_pShareData->m_szGREPFOLDERArr[i] ) ){
+			break;
+		}
+	}
+	if( i < m_pShareData->m_nGREPFOLDERArrNum ){
+		for( j = i; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
+		}
+	}else{
+		for( j = MAX_GREPFOLDER - 1; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
+		}
+		++m_pShareData->m_nGREPFOLDERArrNum;
+		if( m_pShareData->m_nGREPFOLDERArrNum > MAX_GREPFOLDER ){
+			m_pShareData->m_nGREPFOLDERArrNum = MAX_GREPFOLDER;
+		}
+	}
+	strcpy( m_pShareData->m_szGREPFOLDERArr[0], pcmWork.GetPtr() );
 }
 
 /*!	外部Winヘルプが設定されているか確認。

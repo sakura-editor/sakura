@@ -152,14 +152,13 @@ BOOL CPropCommon::DlgProc(
 }
 //	To Here Jun. 2, 2001 genta
 
-
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CPropCommon::CPropCommon()
 {
 //	int		i;
 //	long	lPathLen;
 
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
@@ -512,13 +511,14 @@ struct ComPropSheetInfo {
 //	To Here Jun. 2, 2001 genta
 
 //	キーワード：共通設定タブ順序(プロパティシート)
-/* プロパティシートの作成 */
+/*! プロパティシートの作成
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 {
 //	m_nActiveItem = nActiveItem;
 
 	/* 共有データ構造体のアドレスを返す */
-//	m_cShareData.Init();
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	int				nRet;

@@ -57,6 +57,8 @@ class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 	1つのCEditDocオブジェクトにつき、4つのCEditViweオブジェクトが割り当てられる。
 	ウィンドウメッセージの処理、コマンドメッセージの処理、
 	画面表示などを行う。
+	
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CEditView/* : public CDropTarget*/
 {
@@ -169,7 +171,6 @@ public: /* テスト用にアクセス属性を変更 */
 	HINSTANCE		m_hInstance;	/* インスタンスハンドル */
 	HWND			m_hwndParent;	/* 親ウィンドウハンドル */
 
-//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 
@@ -257,6 +258,7 @@ public: /* テスト用にアクセス属性を変更 */
 	//	Aug. 31, 2000 genta
 	CAutoMarkMgr	*m_cHistory;	//	Jump履歴
 	CRegexKeyword	*m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
+
 	/*
 	||  実装ヘルパ関数
 	*/
@@ -398,9 +400,28 @@ protected:
 	void Command_SORT(BOOL);				// 2001.12.06 hor
 	void Command_MERGE(void);				// 2001.12.06 hor
 
-	void DeleteData2( int, int, int, CMemory*, COpe*, BOOL, BOOL, BOOL = FALSE );/* 指定位置の指定長データ削除 */
-	void DeleteData( BOOL, BOOL = FALSE );/* 現在位置のデータ削除 */
-	void InsertData_CEditView( int, int, const char*, int, int*, int*, COpe*, BOOL, BOOL = FALSE );/* 現在位置にデータを挿入 */
+	/* 指定位置の指定長データ削除 */
+	void CEditView::DeleteData2(
+		int			nCaretX,
+		int			nCaretY,
+		int			nDelLen,
+		CMemory*	pcMem,
+		COpe*		pcOpe,		/* 編集操作要素 COpe */
+		BOOL		bRedraw,
+		BOOL		bRedraw2
+	);
+	void DeleteData( BOOL bRedraw );/* 現在位置のデータ削除 */
+	/* 現在位置にデータを挿入 */
+	void CEditView::InsertData_CEditView(
+		int			nX,
+		int			nY,
+		const char*	pData,
+		int			nDataLen,
+		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
+		int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
+		COpe*		pcOpe,				/* 編集操作要素 COpe */
+		BOOL		bRedraw
+	);
 	void SmartIndent_CPP( char );	/* C/C++スマートインデント処理 */
 
 	/* カーソル移動系 */
@@ -486,7 +507,6 @@ void ReplaceData_CEditView(
 //	int*		pnModLineTo,		/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 //	BOOL		bDispSSTRING,		/* シングルクォーテーション文字列を表示する */
 //	BOOL		bDispWSTRING,		/* ダブルクォーテーション文字列を表示する */
-//	BOOL		bUndo				/* Undo操作かどうか */
 //	int			nX,
 //	int			nY,
 //	const char*	pData,
@@ -495,7 +515,6 @@ void ReplaceData_CEditView(
 //	int*		pnNewPos,	/* 挿入された部分の次の位置のデータ位置 */
 //	COpe*		pcOpe,		/* 編集操作要素 COpe */
 	BOOL		bRedraw
-//	BOOL		bUndo		/* Undo操作かどうか */
 );
 
 	/* 挿入系 */

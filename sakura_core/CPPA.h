@@ -40,6 +40,8 @@
 	@brief PPA.DLL をサポートするクラス
 
 	DLLの動的ロードを行うため、DllHandlerを継承している。
+
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CPPA : public CDllHandler {
 public:
@@ -234,7 +236,6 @@ private:
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
 	static class CEditView*		m_pcEditView;
-//	static class CShareData*	m_cShareData;
 	static struct DLLSHAREDATA*	m_pShareData;
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];

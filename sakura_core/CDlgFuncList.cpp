@@ -61,7 +61,7 @@ int CALLBACK _CompareFunc_( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 		return -1;
 	}
 	if( 0 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
-		return strcmp( pcFuncInfo1->m_cmemFuncName.GetPtr( NULL ), pcFuncInfo2->m_cmemFuncName.GetPtr( NULL ) );
+		return strcmp( pcFuncInfo1->m_cmemFuncName.GetPtr(), pcFuncInfo2->m_cmemFuncName.GetPtr() );
 	}
 	if( 1 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
 		if( pcFuncInfo1->m_nFuncLineCRLF < pcFuncInfo2->m_nFuncLineCRLF ){
@@ -271,7 +271,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 			item.mask = LVIF_TEXT | LVIF_PARAM;
-			item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr( NULL );
+			item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
 			item.iItem = i;
 			item.iSubItem = 0;
 			item.lParam	= i;
@@ -320,7 +320,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 				wsprintf( szText, "%s(%d): %s(%s)\r\n",
 					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-					pcFuncInfo->m_cmemFuncName.GetPtr( NULL ),	/* 検出結果 */
+					pcFuncInfo->m_cmemFuncName.GetPtr(),	/* 検出結果 */
 					item.pszText								/* 検出結果の種類 */
 				);
 			}else{
@@ -328,7 +328,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 				wsprintf( szText, "%s(%d): %s\r\n",
 					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-					pcFuncInfo->m_cmemFuncName.GetPtr( NULL )	/* 検出結果 */
+					pcFuncInfo->m_cmemFuncName.GetPtr()	/* 検出結果 */
 				);
 			}
 			m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
@@ -483,7 +483,7 @@ void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
-		pWork = pcFuncInfo->m_cmemFuncName.GetPtr( NULL );
+		pWork = pcFuncInfo->m_cmemFuncName.GetPtr();
 
 		/* クラス名::メソッドの場合 */
 		if( NULL != ( pPos = strstr( pWork, "::" ) ) ){
@@ -532,7 +532,7 @@ void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 			wsprintf( szText, "%s(%d): %s\r\n",
 				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-				pcFuncInfo->m_cmemFuncName.GetPtr( NULL ) 	/* 検出結果 */
+				pcFuncInfo->m_cmemFuncName.GetPtr() 	/* 検出結果 */
 			);
 //			m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
 			m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
@@ -562,7 +562,7 @@ void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 				wsprintf( szText, "%s(%d): %s(宣言)\r\n",
 					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-					pcFuncInfo->m_cmemFuncName.GetPtr( NULL ) 	/* 検出結果 */
+					pcFuncInfo->m_cmemFuncName.GetPtr() 	/* 検出結果 */
 				);
 //				m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
 				m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
@@ -571,7 +571,7 @@ void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 				wsprintf( szText, "%s(%d): %s\r\n",
 					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-					pcFuncInfo->m_cmemFuncName.GetPtr( NULL ) 	/* 検出結果 */
+					pcFuncInfo->m_cmemFuncName.GetPtr() 	/* 検出結果 */
 				);
 //				m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
 				m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
@@ -663,7 +663,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	htiItemOld = NULL;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
-		pWork = pcFuncInfo->m_cmemFuncName.GetPtr( NULL );
+		pWork = pcFuncInfo->m_cmemFuncName.GetPtr();
 		/* クラス名::メソッドの場合 */
 		if( NULL != ( pPos = strstr( pWork, "::" ) ) ){
 			/* インナークラスのネストレベルを調べる */
@@ -795,7 +795,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		wsprintf( szText, "%s(%d): %s %s\r\n",
 			m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 			pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-			pcFuncInfo->m_cmemFuncName.GetPtr( NULL ), 	/* 検出結果 */
+			pcFuncInfo->m_cmemFuncName.GetPtr(), 	/* 検出結果 */
 			( 1 == pcFuncInfo->m_nInfo ? "(宣言)" : "" ) 	//	Jan. 04, 2001 genta C++で使用
 		);
 		m_cmemClipText.AppendSz( (const char *)szText ); /* クリップボードコピー用テキスト */
@@ -932,7 +932,7 @@ int CDlgFuncList::SetTreeTxtNest(
 	while( nBgn < nEnd ){
 		/* トピック情報取得 */
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( nBgn );
-		pWork = (unsigned char*)pcFuncInfo->m_cmemFuncName.GetPtr( NULL );
+		pWork = (unsigned char*)pcFuncInfo->m_cmemFuncName.GetPtr();
 		nCharChars = CMemory::MemCharNext( (char*)pWork, lstrlen( (char*)pWork ), (char*)pWork ) - (char*)pWork;
 
 		tvis.hParent = htiParent;
@@ -976,7 +976,7 @@ int CDlgFuncList::SetTreeTxtNest(
 		}
 		for( i = nBgn + 1; i < nEnd; ++i ){
 			pcFuncInfo2 = m_pcFuncInfoArr->GetAt( i );
-			pWork2 = (unsigned char*)pcFuncInfo2->m_cmemFuncName.GetPtr( NULL );
+			pWork2 = (unsigned char*)pcFuncInfo2->m_cmemFuncName.GetPtr();
 			nCharChars2 = CMemory::MemCharNext( (char*)pWork2, lstrlen( (char*)pWork2 ), (char*)pWork2 ) - (char*)pWork2;
 			if( nCharChars == nCharChars2 ){
 				if( nCharChars == 1 ){
@@ -1080,7 +1080,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		/* Windowsクリップボードにコピー */
 		hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, m_cmemClipText.GetLength() + 1 );
 		pszClip = (char*)::GlobalLock( hgClip );
-		memcpy( pszClip, m_cmemClipText.GetPtr( NULL ), m_cmemClipText.GetLength() + 1 );
+		memcpy( pszClip, m_cmemClipText.GetPtr(), m_cmemClipText.GetLength() + 1 );
 		::GlobalUnlock( hgClip );
 		::OpenClipboard( m_hWnd );
 		::EmptyClipboard();

@@ -240,7 +240,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			cmemWork.SetData( pText, nTextLen );
 			cmemWork.Replace( "\\", "\\\\" );
 			cmemWork.Replace( "\'", "\\\'" );
-			wsprintf( szLine, "%s(\'%s\');\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
+			wsprintf( szLine, "%s(\'%s\');\t// %s\r\n", szFuncName, cmemWork.GetPtr(), szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
@@ -255,7 +255,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			cmemWork.SetData( pText, nTextLen );
 			cmemWork.Replace( "\\", "\\\\" );
 			cmemWork.Replace( "\'", "\\\'" );
-			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
+			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_EXECCOMMAND:
@@ -265,7 +265,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			cmemWork.SetData( pText, nTextLen );
 			cmemWork.Replace( "\\", "\\\\" );
 			cmemWork.Replace( "\'", "\\\'" );
-			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
+			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_REPLACE:
@@ -279,7 +279,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 				CMemory cmemWork2(m_pParamTop->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pData));
 				cmemWork2.Replace( "\\", "\\\\" );
 				cmemWork2.Replace( "\'", "\\\'" );
-				wsprintf( szLine, "%s(\'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr2(), cmemWork2.GetPtr2(), m_pParamTop->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
+				wsprintf( szLine, "%s(\'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), cmemWork2.GetPtr(), m_pParamTop->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
 				_lwrite( hFile, szLine, strlen( szLine ) );
 			}
 			break;
@@ -297,7 +297,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 				CMemory cmemWork3(m_pParamTop->m_pNext->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pNext->m_pData));
 				cmemWork3.Replace( "\\", "\\\\" );
 				cmemWork3.Replace( "\'", "\\\'" );
-				wsprintf( szLine, "%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr2(), cmemWork2.GetPtr2(), cmemWork3.GetPtr2(), m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
+				wsprintf( szLine, "%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), cmemWork2.GetPtr(), cmemWork3.GetPtr(), m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
 				_lwrite( hFile, szLine, strlen( szLine ) );
 			}
 			break;
@@ -495,7 +495,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			/* Grep結果ウィンドウの表示 */
 			char	pCmdLine[1024];
 			char	pOpt[64];
-			int		nDataLen;
+//			int		nDataLen;
 			CMemory cmWork1;	cmWork1.SetDataSz( Argument[0] );	cmWork1.Replace( "\"", "\"\"" );	//	検索文字列
 			CMemory cmWork2;	cmWork2.SetDataSz( Argument[1] );	cmWork2.Replace( "\"", "\"\"" );	//	ファイル名
 			CMemory cmWork3;	cmWork3.SetDataSz( Argument[2] );	cmWork3.Replace( "\"", "\"\"" );	//	フォルダ名
@@ -505,9 +505,9 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
 			*/
 			wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"",
-				cmWork1.GetPtr( &nDataLen ),
-				cmWork2.GetPtr( &nDataLen ),
-				cmWork3.GetPtr( &nDataLen )
+				cmWork1.GetPtr(),
+				cmWork2.GetPtr(),
+				cmWork3.GetPtr()
 			);
 			pOpt[0] = '\0';
 			if( lFlag & 0x01 ){	/* サブフォルダからも検索する */
