@@ -216,7 +216,7 @@ HWND CEditWnd::Create(
 	BOOL		bOpened;
 	char szMsg[512];
 
-	if( m_pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
+	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
 		return NULL;
@@ -278,6 +278,21 @@ HWND CEditWnd::Create(
 	if( fi.m_nWindowOriginY >= 0 ){
 		nWinOY = fi.m_nWindowOriginY;
 	}
+
+	//From Here @@@ 2003.05.31 MIK
+	//タブウインドウの場合は現状値を指定
+	if( m_pShareData->m_Common.m_bDispTabWnd 
+	 && m_pShareData->m_TabWndWndpl.length
+	 && m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
+	{
+		nWinCX = m_pShareData->m_TabWndWndpl.rcNormalPosition.right
+			   - m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
+		nWinCY = m_pShareData->m_TabWndWndpl.rcNormalPosition.bottom
+			   - m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
+		nWinOX = m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
+		nWinOY = m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
+	}
+	//To Here @@@ 2003.05.31 MIK
 
 	hWnd = ::CreateWindowEx(
 		0 	// extended window style
@@ -342,6 +357,13 @@ HWND CEditWnd::Create(
 		m_CFuncKeyWnd.Open( hInstance, m_hWnd, &m_cEditDoc, bSizeBox );
 	}
 
+	//From Here 2003.05.31 MIK
+	//タブウインドウ
+	if( m_pShareData->m_Common.m_bDispTabWnd )
+	{
+		m_cTabWnd.Open( hInstance, m_hWnd );
+	}
+	//To Here 2003.05.31 MIK
 
 	if( FALSE == m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons/*, 1, 1, 0, 0*/ ) ){
 		::MessageBox(
@@ -350,6 +372,7 @@ HWND CEditWnd::Create(
 			MB_OK
 		);
 	}
+
 	/* デスクトップからはみ出さないようにする */
 	RECT	rcOrg;
 	RECT	rcDesktop;
@@ -388,20 +411,42 @@ HWND CEditWnd::Create(
 		//rcOrg.right = rcDesktop.right - 1;	//@@@ 2002.01.08
 		rcOrg.right = rcDesktop.right;	//@@@ 2002.01.08
 	}
-	::SetWindowPos(
-		m_hWnd, 0,
-		rcOrg.left, rcOrg.top,
-		rcOrg.right - rcOrg.left, rcOrg.bottom - rcOrg.top,
-		SWP_NOOWNERZORDER | SWP_NOZORDER
-	);
 
-	/* ウィンドウサイズ継承 */
-	if( m_pShareData->m_Common.m_bSaveWindowSize &&
-		m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED ){
-		::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
-	}else{
-		::ShowWindow( m_hWnd, SW_SHOW );
+	//From Here @@@ 2003.06.13 MIK
+	if( m_pShareData->m_Common.m_bDispTabWnd 
+	 && m_pShareData->m_TabWndWndpl.length
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		//タブウインドウ時は現状を維持
+		/* ウィンドウサイズ継承 */
+		if( m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED )
+		{
+			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+		}
+		else
+		{
+			::ShowWindow( m_hWnd, SW_SHOW );
+		}
 	}
+	else
+	{
+		::SetWindowPos(
+			m_hWnd, 0,
+			rcOrg.left, rcOrg.top,
+			rcOrg.right - rcOrg.left, rcOrg.bottom - rcOrg.top,
+			SWP_NOOWNERZORDER | SWP_NOZORDER
+		);
+
+		/* ウィンドウサイズ継承 */
+		if( m_pShareData->m_Common.m_bSaveWindowSize &&
+			m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED ){
+			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+		}else{
+			::ShowWindow( m_hWnd, SW_SHOW );
+		}
+	}
+	//To Here @@@ 2003.06.13 MIK
+
 	if( NULL != m_hWnd ){
 		/* ドロップされたファイルを受け入れる */
 		::DragAcceptFiles( m_hWnd, TRUE );
@@ -721,6 +766,9 @@ void CEditWnd::DestroyToolBar( void )
 
 		::DestroyWindow( m_hwndToolBar );
 		m_hwndToolBar = NULL;
+
+		//if( m_cTabWnd.m_hWnd ) ::UpdateWindow( m_cTabWnd.m_hWnd );
+		//if( m_CFuncKeyWnd.m_hWnd ) ::UpdateWindow( m_CFuncKeyWnd.m_hWnd );
 	}
 
 	return;
@@ -1000,6 +1048,29 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return OnSize( wParam, lParam );
 
+	//From here 2003.05.31 MIK
+	case WM_MOVE:
+		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+	//To here 2003.05.31 MIK
+/*
+	//From here 2003.06.25 MIK
+	case WM_SYSCOMMAND:
+		switch( wParam )
+		{
+		case SC_CLOSE:
+		//case SC_MOVE:
+		//case SC_SIZE:
+		//case SC_MINIMIZE:
+		//case SC_MAXIMIZE:
+			m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+			::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+			break;
+		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+	//To here 2003.06.25 MIK
+*/
 	case WM_IME_COMPOSITION:
 		if ( lParam & GCS_RESULTSTR ) {
 			/* メッセージの配送 */
@@ -1293,6 +1364,35 @@ LRESULT CEditWnd::DispatchEvent(
 		m_cEditDoc.SetReferer( (HWND)wParam, ppoCaret->x, ppoCaret->y );
 		return 0L;
 
+	//タブウインドウ	//@@@ 2003.05.31 MIK
+	case MYWM_TAB_WINDOW_NOTIFY:
+		m_cTabWnd.TabWindowNotify( wParam, lParam );
+		return 0L;
+
+/* 無限ループになるので削除
+	//バーの表示・非表示	//@@@ 2003.06.10 MIK
+	case MYWM_BAR_CHANGE_NOTIFY:
+		if( m_hWnd != (HWND)lParam )
+		{
+			switch( wParam )
+			{
+			case MYBCN_TOOLBAR:
+				m_cEditDoc.HandleCommand( F_SHOWTOOLBAR );
+				break;
+			case MYBCN_FUNCKEY:
+				m_cEditDoc.HandleCommand( F_SHOWFUNCKEY );
+				break;
+			case MYBCN_TAB:
+				m_cEditDoc.HandleCommand( F_SHOWTAB );
+				break;
+			case MYBCN_STATUSBAR:
+				m_cEditDoc.HandleCommand( F_SHOWSTATUSBAR );
+				break;
+			}
+		}
+		return 0L;
+*/
+
 	//by 鬼 (2) MYWM_CHECKSYSMENUDBLCLKは不要に, WM_LBUTTONDBLCLK追加
 	case WM_NCLBUTTONDOWN:
 		return OnNcLButtonDown(wParam, lParam);
@@ -1321,7 +1421,7 @@ int	CEditWnd::OnClose( void )
 {
 	/* ウィンドウをアクティブにする */
 	/* アクティブにする */
-	ActivateFrameWindow( m_hWnd );
+//	ActivateFrameWindow( m_hWnd );	//削除(必要ならOnFileClose内で)	@@@ 2003.06.25 MIK
 //	if( ::IsIconic( m_hWnd ) ){
 //		::ShowWindow( m_hWnd, SW_RESTORE );
 //	}else{
@@ -1416,6 +1516,9 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			if( wID - IDM_SELWINDOW >= 0 &&
 				wID - IDM_SELWINDOW < m_pShareData->m_nEditArrNum ){
 				hwndWork = m_pShareData->m_pEditArr[wID - IDM_SELWINDOW].m_hWnd;
+				
+				//TabWnd_SucceedWindowPlacement( m_hWnd, hwndWork );	//@@@ 2003.06.13 MIK
+				
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
 			}else
@@ -1432,6 +1535,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
+					//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
+				
 					/* アクティブにする */
 					ActivateFrameWindow( hWndOwner );
 					/* MRUリストへの登録 */
@@ -1539,6 +1644,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						if( 0 == strcmp( m_cEditDoc.GetFilePath(), pszPath ) ){
 							/* 何もしない */
 						}else{
+							//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
 							/* 開いているウィンドウをアクティブにする */
 							/* アクティブにする */
 							ActivateFrameWindow( hWndOwner );
@@ -1677,7 +1783,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE_OPEN	, "閉じて開く(&L)..." );
 			//	Dec. 4, 2002 genta
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN	, "開き直す(&W)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, "ウィンドウを閉じる(&C)" );	//Feb. 18, 2001	JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, "閉じる(&C)" );	//Feb. 18, 2001	JEPRO 追加
 
 			// 「文字コードセット」ポップアップメニュー
 			hMenuPopUp_2 = ::CreatePopupMenu();	// Jan. 29, 2002 genta
@@ -2026,6 +2132,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel );	//これのみ
 				pszLabel = "ファンクションキーを表示(&K)";		//これのみ表示
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel );	//これのみ
+				pszLabel = "タブを表示";		//これのみ表示	//@@@ 2003.06.10 MIK
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel );	//これのみ	//@@@ 2003.06.10 MIK
 				pszLabel = "ステータスバーを表示(&S)";			//これのみ表示
 //	To Here Sept.17, 2000 JEPRO
 //	From Here Oct. 28, 2000 JEPRO
@@ -2043,6 +2151,13 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					pszLabel = "表示中のファンクションキーを隠す(&K)";	//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
 				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel );	//これのみ
+				//@@@ 2003.06.10 MIK
+				if( NULL == m_cTabWnd.m_hWnd ){
+					pszLabel = "タブを表示";	//これのみ表示
+				}else{
+					pszLabel = "表示中のタブを隠す";
+				}
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel );	//これのみ
 				if( m_hwndStatusBar == NULL ){
 					pszLabel = "ステータスバーを表示(&S)";		//これのみ表示
 				}else{
@@ -2336,6 +2451,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 					/* アクティブにする */
+					//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
 					ActivateFrameWindow( hWndOwner );
 					/* MRUリストへの登録 */
 					CMRU cMRU;
@@ -2388,7 +2504,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 										goto end_of_drop_query;
 								}else{
 										/* 編集ウィンドウの上限チェック */
-										if( m_pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
+										if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 												char szMsg[512];
 												wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 												::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
@@ -2533,6 +2649,12 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 		}else{
 			return FALSE;
 		}
+	case F_SHOWTAB:	//@@@ 2003.06.10 MIK
+		if( pCEditWnd->m_cTabWnd.m_hWnd != NULL ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	case F_SHOWSTATUSBAR:
 		if( pCEditWnd->m_hwndStatusBar != NULL ){
 			return TRUE;
@@ -2666,7 +2788,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_FILENEW:	/* 新規作成 */
 	case F_GREP_DIALOG:	/* Grep */
 		/* 編集ウィンドウの上限チェック */
-		if( pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
+		if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 			return FALSE;
 		}else{
 			return TRUE;
@@ -2788,7 +2910,17 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		}else{
 			return FALSE;
 		}
-		
+	
+	//タブモード時はウインドウ並べ替え禁止です。	@@@ 2003.06.12 MIK
+	case F_TILE_H:
+	case F_TILE_V:
+	case F_CASCADE:
+		if( TRUE  == pShareData->m_Common.m_bDispTabWnd
+		 && FALSE == pShareData->m_Common.m_bDispTabWndMultiWin ){
+			return FALSE;
+		}else{
+			return TRUE;
+		}
 	}
 	return TRUE;
 }
@@ -2862,6 +2994,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_hwndToolBar, SW_SHOW );
 		::ShowWindow( m_hwndStatusBar, SW_SHOW );
 		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_SHOW );
+		::ShowWindow( m_cTabWnd.m_hWnd, SW_SHOW );	//@@@ 2003.06.25 MIK
 
 		::SetFocus( m_hWnd );
 
@@ -2884,6 +3017,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_hwndToolBar, SW_HIDE );
 		::ShowWindow( m_hwndStatusBar, SW_HIDE );
 		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_HIDE );
+		::ShowWindow( m_cTabWnd.m_hWnd, SW_HIDE );	//@@@ 2003.06.25 MIK
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		m_pPrintPreview = new CPrintPreview( this );
@@ -2927,6 +3061,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	int			nToolBarHeight;
 	int			nStatusBarHeight;
 	int			nFuncKeyWndHeight;
+	int			nTabWndHeight;	//タブウインドウ	//@@@ 2003.05.31 MIK
 	RECT		rc, rcClient;
 	int			nCxHScroll;
 	int			nCyHScroll;
@@ -2964,6 +3099,15 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
+	//From Here 2003.05.31 MIK
+	//ウインドウ情報を最新に更新する。
+	//if( 0 == m_pShareData->m_TabWndWndpl.length )
+	//{
+		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+	//}
+	//To Here 2003.05.31 MIK
+
 	m_nWinSizeType = wParam;	/* サイズ変更のタイプ */
 	nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
 	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
@@ -2983,6 +3127,16 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		::GetWindowRect( m_CFuncKeyWnd.m_hWnd, &rc );
 		nFuncKeyWndHeight = rc.bottom - rc.top;
 	}
+	//@@@ From Here 2003.05.31 MIK
+	//タブウインドウ
+	nTabWndHeight = 0;
+	if( NULL != m_cTabWnd.m_hWnd )
+	{
+		::SendMessage( m_cTabWnd.m_hWnd, WM_SIZE, wParam, lParam );
+		::GetWindowRect( m_cTabWnd.m_hWnd, &rc );
+		nTabWndHeight = rc.bottom - rc.top;
+	}
+	//@@@ To Here 2003.05.31 MIK
 	nStatusBarHeight = 0;
 	if( NULL != m_hwndStatusBar ){
 		::SendMessage( m_hwndStatusBar, WM_SIZE, wParam, lParam );
@@ -3019,17 +3173,33 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::GetClientRect( m_hWnd, &rcClient );
 
-	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-		m_cEditDoc.OnMove(
+	//@@@ From 2003.05.31 MIK
+	//タブウインドウ追加に伴い，ファンクションキー表示位置も調整
+
+	//タブウインドウ
+	if( m_cTabWnd.m_hWnd )
+	{
+		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+		{
+			::MoveWindow( m_cTabWnd.m_hWnd, 0, nToolBarHeight + nFuncKeyWndHeight, cx, nTabWndHeight, TRUE );
+		}
+		else
+		{
+			::MoveWindow( m_cTabWnd.m_hWnd, 0, nToolBarHeight, cx, nTabWndHeight, TRUE );
+		}
+	}
+
+	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+	{	/* ファンクションキー表示位置／0:上 1:下 */
+		::MoveWindow(
+			m_CFuncKeyWnd.m_hWnd,
 			0,
-			nToolBarHeight + nFuncKeyWndHeight,
+			nToolBarHeight,
 			cx,
-			cy - nToolBarHeight - nFuncKeyWndHeight - nStatusBarHeight
-		);
-		::MoveWindow( m_CFuncKeyWnd.m_hWnd, 0, nToolBarHeight, cx, nFuncKeyWndHeight, TRUE );
-	}else
-	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 1 ){	/* ファンクションキー表示位置／0:上 1:下 */
-		m_cEditDoc.OnMove( 0, nToolBarHeight, cx, cy - nToolBarHeight - nFuncKeyWndHeight - nStatusBarHeight );
+			nFuncKeyWndHeight, TRUE );
+	}
+	else if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 1 )
+	{	/* ファンクションキー表示位置／0:上 1:下 */
 		::MoveWindow(
 			m_CFuncKeyWnd.m_hWnd,
 			0,
@@ -3037,6 +3207,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 			cx,
 			nFuncKeyWndHeight, TRUE
 		);
+
 		BOOL	bSizeBox = TRUE;
 		if( NULL != m_hwndStatusBar ){
 			bSizeBox = FALSE;
@@ -3046,6 +3217,27 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		}
 		m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 	}
+
+	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+	{
+		m_cEditDoc.OnMove(
+			0,
+			nToolBarHeight + nFuncKeyWndHeight + nTabWndHeight,	//@@@ 2003.05.31 MIK
+			cx,
+			cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight	//@@@ 2003.05.31 MIK
+		);
+	}
+	else
+	{
+		m_cEditDoc.OnMove(
+			0,
+			nToolBarHeight + nTabWndHeight,
+			cx,
+			cy - nToolBarHeight - nTabWndHeight - nFuncKeyWndHeight - nStatusBarHeight	//@@@ 2003.05.31 MIK
+		);
+	}
+	//@@@ To 2003.05.31 MIK
+
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	if( !m_pPrintPreview ){
@@ -3705,4 +3897,61 @@ void CEditWnd::SendStatusMessage( const char* msg )
 		::SendMessage( m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
 	}
 }
+
+/*! ファイル名変更通知
+
+	@author MIK
+	@date 2003.05.31 新規作成
+*/
+void CEditWnd::ChangeFileNameNotify( const char *pszFile )
+{
+	CRecent	cRecentEditNode;
+	EditNode	*p;
+	int		nIndex;
+
+	if( NULL == pszFile ) pszFile = "";	//ガード
+
+	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+	nIndex = cRecentEditNode.FindItem( (const char*)&m_hWnd );
+	if( -1 != nIndex )
+	{
+		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
+		if( p )
+		{
+			int	size = sizeof( p->m_szPath ) - 1;
+			strncpy( p->m_szPath, pszFile, size );
+			p->m_szPath[ size ] = '\0';
+		}
+	}
+	cRecentEditNode.Terminate();
+
+	//ファイル名変更通知をブロードキャストする。
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_FILE, (LPARAM)m_hWnd, m_hWnd );
+
+	return;
+}
+
+/*! ウインドウ位置情報を継承する
+
+	@author MIK
+	@date 2003.05.31 新規作成
+*/
+void CEditWnd::TabWnd_SucceedWindowPlacement( HWND hwndSrc, HWND hwndDst )
+{
+	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		//ウインドウ情報を取得する。
+		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+		::GetWindowPlacement( hwndSrc, &(m_pShareData->m_TabWndWndpl) );
+
+//		if( SW_MINIMIZE == m_pShareData->m_TabWndWndpl.showCmd ) m_pShareData->m_TabWndWndpl.showCmd = SW_RESTORE;
+//		if( SW_HIDE     == m_pShareData->m_TabWndWndpl.showCmd ) m_pShareData->m_TabWndWndpl.showCmd = SW_SHOW;
+
+		::SetWindowPlacement( hwndDst, &(m_pShareData->m_TabWndWndpl) );
+	}
+
+	return;
+}
+
 /*[EOF]*/

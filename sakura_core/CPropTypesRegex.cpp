@@ -730,6 +730,10 @@ BOOL CPropTypes::DispatchEvent_Regex(
 			{
 				HWND	hwndCombo;
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
+				if( -1 == nIndex )	//削除、範囲外でクリック時反映されないバグ修正	//@@@ 2003.06.17 MIK
+				{
+					nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_FOCUSED );
+				}
 				if( -1 == nIndex )
 				{
 					/* 初期値を設定する */

@@ -272,6 +272,7 @@
 #define F_SHOWTOOLBAR		31100	/* ツールバーの表示 */
 #define F_SHOWFUNCKEY		31101	/* ファンクションキーの表示 */
 #define F_SHOWSTATUSBAR		31102	/* ステータスバーの表示 */
+#define F_SHOWTAB			31103	/* タブの表示 */	//@@@ 2003.06.10 MIK
 #define F_TYPE_LIST			31110	/* タイプ別設定一覧 */
 #define F_OPTION_TYPE		31111	/* タイプ別設定 */
 #define F_OPTION			31112	/* 共通設定 */

@@ -125,6 +125,7 @@ struct GrepInfo {
 struct EditNode {
 	int				m_nIndex;
 	HWND			m_hWnd;
+	char			m_szPath[_MAX_PATH];	/*!< タブウインドウ用：ファイル名 */	//@@@ 2003.05.31 MIK
 };
 
 //! 印刷設定
@@ -404,6 +405,11 @@ struct Common {
 	BOOL				m_bDispFUNCKEYWND;				/* 次回ウィンドウを開いたときファンクションキーを表示する */
 	int					m_nFUNCKEYWND_Place;			/* ファンクションキー表示位置／0:上 1:下 */
 	int					m_nFUNCKEYWND_GroupNum;			// 2002/11/04 Moca ファンクションキーのグループボタン数
+
+	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
+	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
+	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
+
 	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
@@ -501,8 +507,12 @@ struct DLLSHAREDATA {
 	HACCEL				m_hAccel;
 	LONG				m_nSequences;	/* ウィンドウ連番 */
 	/**** 共通作業域(保存する) ****/
-	short				m_nEditArrNum;
-	EditNode			m_pEditArr[MAX_EDITWINDOWS + 1];
+	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
+	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
+
+	//From Here 2003.05.31 MIK
+	WINDOWPLACEMENT		m_TabWndWndpl;					//タブウインドウ時のウインドウ情報
+	//To Here 2003.05.31 MIK
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;

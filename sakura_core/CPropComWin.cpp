@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, genta, MIK, asa-o
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -19,10 +20,11 @@
 #include "global.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispFUNCKEYWND,		HIDC_CHECK_DispFUNCKEYWND,		//ファンクションキー表示
+	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//タブウインドウ表示	//@@@ 2003.05.31 MIK
+	IDC_CHECK_DispTabWndMultiWin,	HIDC_CHECK_DispTabWndMultiWin,	//タブウインドウ表示	//@@@ 2003.05.31 MIK
 	IDC_CHECK_DispSTATUSBAR,		HIDC_CHECK_DispSTATUSBAR,		//ステータスバー表示
 	IDC_CHECK_DispTOOLBAR,			HIDC_CHECK_DispTOOLBAR,			//ツールバー表示
 	IDC_CHECK_bScrollBarHorz,		HIDC_CHECK_bScrollBarHorz,		//水平スクロールバー
@@ -40,30 +42,12 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_SPIN_nRulerHeight,			HIDC_EDIT_nRulerHeight,
 	IDC_SPIN_nLineNumberRightSpace,	HIDC_EDIT_nLineNumberRightSpace,
 	IDC_SPIN_FUNCKEYWND_GROUPNUM,	HIDC_EDIT_FUNCKEYWND_GROUPNUM,
+	IDC_WINCAPTION_ACTIVE,			HIDC_WINCAPTION_ACTIVE,			//アクティブ時	//@@@ 2003.06.15 MIK
+	IDC_WINCAPTION_INACTIVE,		HIDC_WINCAPTION_INACTIVE,		//非アクティブ時	//@@@ 2003.06.15 MIK
+	IDC_TABWND_CAPTION,				HIDC_TABWND_CAPTION,			//タブウインドウキャプション	//@@@ 2003.06.15 MIK
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//11200
-	IDC_CHECK_DispFUNCKEYWND,		11210,	//ファンクションキー表示
-	IDC_CHECK_DispSTATUSBAR,		11211,	//ステータスバー表示
-	IDC_CHECK_DispTOOLBAR,			11212,	//ツールバー表示
-	IDC_CHECK_bScrollBarHorz,		11213,	//水平スクロールバー
-	IDC_CHECK_bMenuIcon,			11214,	//アイコン付きメニュー
-	IDC_CHECK_WINSIZE,				11215,	//ウインドウサイズ継承
-	IDC_CHECK_SplitterWndVScroll,	11216,	//垂直スクロールの同期	//Jul. 05, 2001 JEPRO 追加
-	IDC_CHECK_SplitterWndHScroll,	11217,	//水平スクロールの同期	//Jul. 05, 2001 JEPRO 追加
-	IDC_EDIT_nRulerBottomSpace,		11240,	//ルーラー
-	IDC_EDIT_nRulerHeight,			11241,	//ルーラー
-	IDC_RADIO_FUNCKEYWND_PLACE1,	11260,	//ファンクションキー表示位置
-	IDC_RADIO_FUNCKEYWND_PLACE2,	11261,	//ファンクションキー表示位置
-	IDC_EDIT_FUNCKEYWND_GROUPNUM,	11262,	//ファンクションキーのグループボタン数
-	IDC_SPIN_nRulerBottomSpace,		-1,
-	IDC_SPIN_nRulerHeight,			-1,
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -245,6 +229,19 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 			case IDC_CHECK_DispFUNCKEYWND:
 				EnableWinPropInput( hwndDlg );
 				break;
+
+			//@@@ 2003.06.13 MIK
+			case IDC_CHECK_DispTabWnd:
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd ) )
+				{
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), TRUE );
+					//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), TRUE );
+				}
+				else
+				{
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
+					//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
+				}
 			}
 			break;
 		}
@@ -295,6 +292,19 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	// 2002/11/04 Moca ファンクションキーのグループボタン数
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, m_Common.m_nFUNCKEYWND_GroupNum, FALSE );
 
+	//From Here@@@ 2003.06.13 MIK
+	/* 次回ウィンドウを開いたときタブを表示する */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, m_Common.m_bDispTabWndMultiWin );	//@@@ 2003.05.31 MIK
+	if( FALSE == m_Common.m_bDispTabWnd )
+	{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
+		//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
+	}
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
+	::SetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption );
+	//To Here@@@ 2003.06.13 MIK
+
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
 
@@ -329,6 +339,8 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	//	2001/06/20 End
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szWindowCaptionActive   ) - 1 ), (LPARAM)0 );	//@@@ 2003.06.13 MIK
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szWindowCaptionInactive ) - 1 ), (LPARAM)0 );	//@@@ 2003.06.13 MIK
 	::SetDlgItemText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_szWindowCaptionActive );
 	::SetDlgItemText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_szWindowCaptionInactive );
 
@@ -372,6 +384,13 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	if( m_Common.m_nFUNCKEYWND_GroupNum > 12 ){
 		m_Common.m_nFUNCKEYWND_GroupNum = 12;
 	}
+
+	//From Here@@@ 2003.06.13 MIK
+	/* 次回ウィンドウを開いたときタブを表示する */
+	m_Common.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
+	m_Common.m_bDispTabWndMultiWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin );
+	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption, sizeof( m_Common.m_szTabWndCaption ) );
+	//To Here@@@ 2003.06.13 MIK
 
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */

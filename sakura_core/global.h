@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -298,6 +299,31 @@ SAKURA_CORE_API enum enumColorIndexType {
 };
 //	To Here Sept. 18, 2000
 
+
+
+//@@@ From Here 2003.05.31 MIK
+/*! タブウインドウ用メッセージサブコマンド */
+SAKURA_CORE_API enum enumTabWndNotifyType {
+	TWNT_REFRESH	= 0,		//再表示
+	TWNT_ADD		= 1,		//ウインドウ登録
+	TWNT_DEL		= 2,		//ウインドウ削除
+	TWNT_ORDER		= 3,		//ウインドウ順序変更
+	TWNT_FILE		= 4,		//ファイル名変更
+};
+
+/*! バーの表示・非表示 */
+SAKURA_CORE_API	enum enumBarChangeNotifyType {
+	MYBCN_TOOLBAR	= 0,		//ツールバー
+	MYBCN_FUNCKEY	= 1,		//ファンクションキー
+	MYBCN_TAB		= 2,		//タブ
+	MYBCN_STATUSBAR	= 3,		//ステータスバー
+};
+//@@@ To Here 2003.05.31 MIK
+
+//タブで使うカスタムメニューのインデックス	//@@@ 2003.06.13 MIK
+#define	CUSTMENU_INDEX_FOR_TABWND		24
+//右クリックメニューで使うカスタムメニューのインデックス	//@@@ 2003.06.13 MIK
+#define	CUSTMENU_INDEX_FOR_RBUTTONUP	0
 
 
 /*!< 色タイプ */

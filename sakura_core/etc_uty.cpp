@@ -1936,6 +1936,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_FILESAVEAS_DIALOG:	return HLP000021;			//名前を付けて保存
 	case F_FILECLOSE:			return HLP000017;			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	case F_FILECLOSE_OPEN:		return HLP000119;			//閉じて開く
+	case F_FILE_REOPEN:			return HLP000283;			//開き直す	//@@@ 2003.06.15 MIK
 	case F_FILE_REOPEN_SJIS:	return HLP000156;			//SJISで開き直す
 	case F_FILE_REOPEN_JIS:		return HLP000157;			//JISで開き直す
 	case F_FILE_REOPEN_EUC:		return HLP000158;			//EUCで開き直す
@@ -2024,6 +2025,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_DOWN2_SEL:		return HLP000235;	//(範囲選択)カーソル下移動(２行ごと)
 	case F_WORDLEFT_SEL:	return HLP000236;	//(範囲選択)単語の左端に移動
 	case F_WORDRIGHT_SEL:	return HLP000237;	//(範囲選択)単語の右端に移動
+	case F_GONEXTPARAGRAPH_SEL:	return HLP000273;	//(範囲選択)前の段落に移動	//@@@ 2003.06.15 MIK
+	case F_GOPREVPARAGRAPH_SEL:	return HLP000274;	//(範囲選択)前の段落に移動	//@@@ 2003.06.15 MIK
 	case F_GOLINETOP_SEL:	return HLP000238;	//(範囲選択)行頭に移動(折り返し単位)
 	case F_GOLINEEND_SEL:	return HLP000239;	//(範囲選択)行末に移動(折り返し単位)
 //	case F_ROLLDOWN_SEL:	return ;	//(範囲選択)スクロールダウン
@@ -2154,6 +2157,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	/* 設定系 */
 	case F_SHOWTOOLBAR:		return HLP000069;	/* ツールバーの表示 */
 	case F_SHOWFUNCKEY:		return HLP000070;	/* ファンクションキーの表示 */
+	case F_SHOWTAB:			return HLP000282;	/* タブの表示 */	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:	return HLP000134;	/* ステータスバーの表示 */
 	case F_TYPE_LIST:		return HLP000072;	/* タイプ別設定一覧 */
 	case F_OPTION_TYPE:		return HLP000073;	/* タイプ別設定 */

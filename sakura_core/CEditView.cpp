@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
 	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -5506,7 +5507,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 	pCEditWnd->m_CMenuDrawer.ResetContents();
 
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
-	nMenuIdx = 0;
+	nMenuIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;	//マジックナンバー排除	//@@@ 2003.06.13 MIK
 //	if( nMenuIdx < 0 || MAX_CUSTOM_MENU	<= nMenuIdx ){
 //		return 0;
 //	}

@@ -8,6 +8,7 @@
 */
 /*
 	Copyright (C) 2000-2001, Norio Nakatani
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -185,6 +186,7 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 
 	CALLH( WM_MEASUREITEM		, OnMeasureItem		);
 	CALLH( WM_MENUCHAR			, OnMenuChar		);
+	CALLH( WM_NOTIFY			, OnNotify			);	//@@@ 2003.05.31 MIK
 
 //	CALLH( WM_NCCREATE			, OnNcCreate		);
 	CALLH( WM_NCDESTROY			, OnNcDestroy		);

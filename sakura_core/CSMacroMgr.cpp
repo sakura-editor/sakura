@@ -244,6 +244,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	/* 設定系 */
 	{F_SHOWTOOLBAR,				"ShowToolbar",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ツールバーの表示 */
 	{F_SHOWFUNCKEY,				"ShowFunckey",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ファンクションキーの表示 */
+	{F_SHOWTAB,					"ShowTab",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タブの表示 */	//@@@ 2003.06.10 MIK
 	{F_SHOWSTATUSBAR,			"ShowStatusbar",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ステータスバーの表示 */
 	{F_TYPE_LIST,				"TypeList",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定一覧 */
 	{F_OPTION_TYPE,				"OptionType",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定 */
@@ -861,6 +862,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	/* 設定系 */
 //	case F_SHOWTOOLBAR				:/* ツールバーの表示 */
 //	case F_SHOWFUNCKEY				:/* ファンクションキーの表示 */
+//	case F_SHOWTAB					:/* タブの表示 */
 //	case F_SHOWSTATUSBAR			:/* ステータスバーの表示 */
 //	case F_TYPE_LIST				:/* タイプ別設定一覧 */
 //	case F_OPTION_TYPE				:/* タイプ別設定 */

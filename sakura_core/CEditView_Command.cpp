@@ -491,6 +491,7 @@ BOOL CEditView::HandleCommand(
 	/* 設定系 */
 	case F_SHOWTOOLBAR:		Command_SHOWTOOLBAR();break;	/* ツールバーの表示/非表示 */
 	case F_SHOWFUNCKEY:		Command_SHOWFUNCKEY();break;	/* ファンクションキーの表示/非表示 */
+	case F_SHOWTAB:			Command_SHOWTAB();break;		/* タブの表示/非表示 */	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:	Command_SHOWSTATUSBAR();break;	/* ステータスバーの表示/非表示 */
 	case F_TYPE_LIST:		Command_TYPE_LIST();break;		/* タイプ別設定一覧 */
 	case F_OPTION_TYPE:		Command_OPTION_TYPE();break;	/* タイプ別設定 */
@@ -6278,7 +6279,7 @@ void CEditView::Command_GREP( void )
 	CMemory		cmemCurText;
 
 	/* 編集ウィンドウの上限チェック */
-	if( m_pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
+	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		char szMsg[512];
 		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
@@ -7552,6 +7553,10 @@ void CEditView::Command_CASCADE( void )
 {
 	int i;
 
+	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin ) return;
+
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
 	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
@@ -7604,6 +7609,10 @@ void CEditView::Command_TILE_H( void )
 {
 	int i;
 
+	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin ) return;
+
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
 	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
@@ -7655,6 +7664,10 @@ void CEditView::Command_TILE_H( void )
 void CEditView::Command_TILE_V( void )
 {
 	int i;
+
+	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin ) return;
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
@@ -7763,8 +7776,20 @@ void CEditView::Command_MINIMIZE_ALL( void )
 		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
 	}
 	for( i = 0; i < j; ++i ){
-		if( CShareData::IsEditWnd( phWndArr[i] ) ){
-			::ShowWindow( phWndArr[i], SW_MINIMIZE );
+		if( CShareData::IsEditWnd( phWndArr[i] ) )
+		{
+			if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+			 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )	//@@@ 2003.06.13 MIK
+			{
+				if( ::IsWindowVisible( phWndArr[i] ) )
+					::ShowWindow( phWndArr[i], SW_MINIMIZE );
+				else
+					::ShowWindow( phWndArr[i], SW_HIDE );
+			}
+			else
+			{
+				::ShowWindow( phWndArr[i], SW_MINIMIZE );
+			}
 		}
 	}
 	delete [] phWndArr;
@@ -9389,6 +9414,7 @@ void CEditView::Command_COMPARE( void )
 	const char*	pLineDes;
 	int			nLineLenDes;
 	POINT*		ppoCaretDes;
+	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 //	cDlgCompare.Create( m_hInstance, m_hWnd, (void *)m_pcEditDoc );
 	/* 比較後、左右に並べて表示 */
 	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_bCompareAndTileHorz;
@@ -9401,6 +9427,18 @@ void CEditView::Command_COMPARE( void )
 	/* 比較後、左右に並べて表示 */
 	m_pShareData->m_Common.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 //	m_pShareData->m_Common.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
+
+	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		hwndMsgBox = m_hWnd;
+		m_pShareData->m_Common.m_bCompareAndTileHorz = FALSE;
+	}
+	else
+	{
+		hwndMsgBox = hwndCompareWnd;
+	}
 
 
 	/*
@@ -9495,11 +9533,13 @@ end_of_compare:;
 
 	//	2002/05/11 YAZAKI 親ウィンドウをうまく設定してみる。
 	if( FALSE == bDefferent ){
-		::MYMESSAGEBOX( hwndCompareWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+		//::MYMESSAGEBOX( hwndCompareWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+		::MYMESSAGEBOX( hwndMsgBox, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
 			"異なる箇所は見つかりませんでした。"
 		);
 	}else{
-		::MYMESSAGEBOX( hwndCompareWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+		//::MYMESSAGEBOX( hwndCompareWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+		::MYMESSAGEBOX( hwndMsgBox, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
 			"異なる箇所が見つかりました。"
 		);
 		/* カーソルを移動させる
@@ -9576,6 +9616,10 @@ void CEditView::Command_SHOWTOOLBAR( void )
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 	SetIMECompFormPos();	//	2002/05/30 YAZAKI ツールバーの表示/非表示を変更すると、変換位置がずれるバグ修正
+
+	//全ウインドウに変更を通知する。
+	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TOOLBAR, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
+
 	return;
 }
 
@@ -9603,6 +9647,10 @@ void CEditView::Command_SHOWSTATUSBAR( void )
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 	::RedrawWindow( pCEditWnd->m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );
+
+	//全ウインドウに変更を通知する。
+	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_STATUSBAR, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
+
 	return;
 }
 
@@ -9636,9 +9684,45 @@ void CEditView::Command_SHOWFUNCKEY( void )
 	m_pcEditDoc->m_cSplitterWnd.DoSplit( -1, -1 );
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+
+	//全ウインドウに変更を通知する。
+	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_FUNCKEY, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
+
 	return;
 }
 
+//@@@ From Here 2003.06.10 MIK
+/*! タブ(ウインドウ)の表示/非表示
+
+	@author MIK
+	@date 2003.06.10 新規作成
+ */
+void CEditView::Command_SHOWTAB( void )
+{
+	RECT		rc;
+	CEditWnd	*pCEditWnd;
+
+	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
+	if( NULL == pCEditWnd->m_cTabWnd.m_hWnd )
+	{
+		m_pShareData->m_Common.m_bDispTabWnd = TRUE;	/* 次回ウィンドウを開いたとき表示する */
+		pCEditWnd->m_cTabWnd.Open( m_hInstance, pCEditWnd->m_hWnd );
+	}
+	else
+	{
+		pCEditWnd->m_cTabWnd.Close();
+		m_pShareData->m_Common.m_bDispTabWnd = FALSE;	/* 次回ウィンドウを開いたとき表示しない */
+	}
+
+	::GetClientRect( pCEditWnd->m_hWnd, &rc );
+	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+
+	//全ウインドウに変更を通知する。
+	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TAB, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
+
+	return;
+}
+//@@@ To Here 2003.06.10 MIK
 
 
 

@@ -31,6 +31,7 @@
 #define HLP000021	21 //名前を付けて保存
 #define HLP000017	17 //閉じて(無題)
 #define HLP000119	119 //閉じて開く
+#define HLP000283	283 //開き直す	//@@@ 2003.06.15 MIK
 #define HLP000156	156 //SJISで開き直す
 #define HLP000157	157 //JISで開き直す
 #define HLP000158	158 //EUCで開き直す
@@ -162,6 +163,7 @@
 #define HLP000068	68 //「ツール(T)」メニューの一覧
 #define HLP000069	69 //ツールバーを表示(隠す)
 #define HLP000070	70 //ファンクションキーを表示(隠す)
+#define	HLP000282	282	//タブの表示／非表示	//@@@ 2003.06.10 MIK
 #define HLP000134	134 //ステータスバーを表示(隠す)
 #define HLP000072	72 //タイプ別設定一覧
 #define HLP000073	73 //タイプ別設定
@@ -239,7 +241,7 @@
 #define HLP000271	271 //文字コードセットのエンコードについて
 #define HLP000272	272 //メタ文字列の仕様
 
-#define HLP000217	217 //選択
+//#define HLP000217	217 //選択
 #define HLP000218	218 //再変換
 #define HLP000219	219 //折り返し位置に改行をつけてコピー
 #define HLP000233	233 //範囲選択開始
@@ -274,10 +276,11 @@
 #define HLP000301	301 //スマートインデント
 #define HLP000302	302 //色設定ファイル
 // note: 303 は 「このファイル名をコピー」が使用
-#define HLP000304	304 //メタ文字列の仕様
+//#define HLP000304	304 //メタ文字列の仕様 HLP000272
 
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
+#define HLP_UR010	3010 //変更履歴(-2003/05/25)
 #define HLP_UR009	3009 //変更履歴(-2002/12/27)
 #define HLP_UR008	3008 //変更履歴(-2002/04/27)
 #define HLP_UR007	3007 //変更履歴(-2002/02/11)
@@ -429,6 +432,11 @@
 #define HIDC_CHECK_WINSIZE						11215 //ウィンドウサイズ継承
 #define HIDC_CHECK_SplitterWndVScroll			11216 //垂直スクロールの同期
 #define HIDC_CHECK_SplitterWndHScroll			11217 //水平スクロールの同期
+#define HIDC_CHECK_DispTabWnd					11218 //タブウインドウ表示	//@@@ 2003.05.31 MIK
+#define HIDC_CHECK_DispTabWndMultiWin			11219 //タブウインドウ表示	//@@@ 2003.05.31 MIK
+#define HIDC_WINCAPTION_ACTIVE					11220 //ウインドアクティブ時ウキャプション	//@@@ 2003.06.15 MIK
+#define HIDC_WINCAPTION_INACTIVE				11221 //ウインドア非クティブ時ウキャプション	//@@@ 2003.06.15 MIK
+#define HIDC_TABWND_CAPTION						11222 //タブウインドウキャプション	//@@@ 2003.06.15 MIK
 #define HIDC_EDIT_nRulerBottomSpace				11240 //ルーラー（テキストとの隙間）
 #define HIDC_EDIT_nRulerHeight					11241 //ルーラー（高さ）
 #define HIDC_EDIT_nLineNumberRightSpace			11242 //行番号とテキストの隙間

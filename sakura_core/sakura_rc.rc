@@ -1242,15 +1242,20 @@ BEGIN
     CONTROL         "ステータスバー表示(&S)",IDC_CHECK_DispSTATUSBAR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,37,83,10,0,
                     HIDC_CHECK_DispSTATUSBAR
+    CONTROL         "タブ表示",IDC_CHECK_DispTabWnd,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,102,13,41,10,0,HIDC_CHECK_DispTabWnd
+    CONTROL         "まとめない",IDC_CHECK_DispTabWndMultiWin,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,111,25,47,10,0,
+                    HIDC_CHECK_DispTabWndMultiWin
     CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,171,13,84,10,0,
                     HIDC_CHECK_bScrollBarHorz
-    CONTROL         "ウィンドウサイズ継承(&Z)",IDC_CHECK_WINSIZE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,171,37,85,10,0,
-                    HIDC_CHECK_WINSIZE
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,171,25,82,10,0,
                     HIDC_CHECK_bMenuIcon
+    CONTROL         "ウィンドウサイズ継承(&Z)",IDC_CHECK_WINSIZE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,171,37,85,10,0,
+                    HIDC_CHECK_WINSIZE
     GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,48,WS_GROUP
     LTEXT           "ルーラーの高さ(&E)",IDC_STATIC,7,63,55,8
     EDITTEXT        IDC_EDIT_nRulerHeight,96,61,28,12,ES_AUTOHSCROLL,0,
@@ -1296,18 +1301,21 @@ BEGIN
                     IDC_CHECK_SplitterWndHScroll,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,120,122,107,10
     GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,112,264,24,WS_GROUP
+    LTEXT           "アクティブ時",IDC_STATIC,7,152,50,10
+    EDITTEXT        IDC_WINCAPTION_ACTIVE,60,149,201,14,ES_AUTOHSCROLL
+    LTEXT           "非アクティブ時",IDC_STATIC,7,165,50,10
+    EDITTEXT        IDC_WINCAPTION_INACTIVE,60,166,201,14,ES_AUTOHSCROLL
+    GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,4,180,264,22,
+                    NOT WS_VISIBLE | WS_GROUP
+    EDITTEXT        IDC_TABWND_CAPTION,60,183,201,14,ES_AUTOHSCROLL,0,
+                    HIDC_TABWND_CAPTION
     CONTROL         "スタイル-1",IDC_RADIO_nRulerType_0,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,8,189,47,
                     10
     CONTROL         "スタイル-2",IDC_RADIO_nRulerType_1,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE,64,189,47,10
-    GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,4,180,264,22,
-                    NOT WS_VISIBLE | WS_GROUP
-    GROUPBOX        "タイトルバー",IDC_STATIC,3,140,264,43
-    EDITTEXT        IDC_WINCAPTION_ACTIVE,60,149,201,14,ES_AUTOHSCROLL
-    LTEXT           "アクティブ時",IDC_STATIC,7,152,50,10
-    EDITTEXT        IDC_WINCAPTION_INACTIVE,60,166,201,14,ES_AUTOHSCROLL
-    LTEXT           "非アクティブ時",IDC_STATIC,7,165,50,10
+    GROUPBOX        "タイトルバー",IDC_STATIC,3,138,264,63
+    LTEXT           "タブ",IDC_STATIC,7,182,50,10
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 270, 213
@@ -2277,8 +2285,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,3,0,0
- PRODUCTVERSION 1,3,10,2
+ FILEVERSION 1,4,0,0
+ PRODUCTVERSION 1,4,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2302,7 +2310,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.3.10.2\0"
+            VALUE "ProductVersion", "1.4.0.0\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2381,7 +2389,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
-    F_WINCLOSE              "ウィンドウを閉じる"
+    F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
 END
 
@@ -2694,6 +2702,7 @@ BEGIN
     F_SHOWTOOLBAR           "ツールバーの表示／非表示"
     F_SHOWFUNCKEY           "ファンクションキーの表示／非表示"
     F_SHOWSTATUSBAR         "ステータスバーの表示／非表示"
+    F_SHOWTAB               "タブの表示／非表示"
 END
 
 STRINGTABLE DISCARDABLE 
