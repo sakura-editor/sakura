@@ -39,8 +39,10 @@ public:
 	||  Attributes & Operations
 	*/
 	void Create( HINSTANCE, HWND, const char*, const char*, const char**,const char** );
-	BOOL DoModal_GetOpenFileName( char* );	/* 開くダイアログ モーダルダイアログの表示 */
-	BOOL DoModal_GetSaveFileName( char* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	//	2002/08/21 moca	引数追加
+	BOOL DoModal_GetOpenFileName( char*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
+	//	2002/08/21 30,2002 moca	引数追加
+	BOOL DoModal_GetSaveFileName( char*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
 	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	BOOL DoModalSaveDlg( char* , int*, CEOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
