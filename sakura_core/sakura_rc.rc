@@ -1250,17 +1250,17 @@ BEGIN
     CONTROL         "ステータスバー表示(&S)",IDC_CHECK_DispSTATUSBAR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,37,83,10,0,
                     HIDC_CHECK_DispSTATUSBAR
+    CONTROL         "タブ表示",IDC_CHECK_DispTabWnd,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,102,11,41,10,0,HIDC_CHECK_DispTabWnd
+    CONTROL         "まとめない",IDC_CHECK_DispTabWndMultiWin,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,111,25,47,10,0,
+                    HIDC_CHECK_DispTabWndMultiWin
     CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,176,11,85,10,0,
                     HIDC_CHECK_bScrollBarHorz
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,176,24,85,10,0,
                     HIDC_CHECK_bMenuIcon
-    CONTROL         "タブ表示",IDC_CHECK_DispTabWnd,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,102,11,41,10,0,HIDC_CHECK_DispTabWnd
-    CONTROL         "まとめない",IDC_CHECK_DispTabWndMultiWin,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,111,25,47,10,0,
-                    HIDC_CHECK_DispTabWndMultiWin
     PUSHBUTTON      "位置と大きさの設定(&W)...",IDC_BUTTON_WINSIZE,181,35,79,
                     14
     GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,49,WS_GROUP
