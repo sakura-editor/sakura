@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	キー割り当てに関するクラス
+	@brief キー割り当てに関するクラス
 
 	@author Norio Nakatani
 	@date 1998/03/25 新規作成
@@ -10,19 +10,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "CKeyBind.h"
@@ -45,7 +34,7 @@ CKeyBind::~CKeyBind()
 
 
 
-/* Windows アクセラレータの作成 */
+/*! Windows アクセラレータの作成 */
 HACCEL CKeyBind::CreateAccerelator(
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr
@@ -107,8 +96,9 @@ HACCEL CKeyBind::CreateAccerelator(
 
 
 
-/* アクラセレータ識別子に対応するコマンド識別子を返す */
-/* 対応するアクラセレータ識別子がない場合または機能未割り当ての場合は0を返す */
+/*! アクラセレータ識別子に対応するコマンド識別子を返す．
+	対応するアクラセレータ識別子がない場合または機能未割り当ての場合は0を返す．
+*/
 int CKeyBind::GetFuncCode(
 		WORD		nAccelCmd,
 		int			nKeyNameArrNum,
@@ -246,7 +236,7 @@ int CKeyBind::CreateKeyBindList(
 
 
 
-/* 機能に対応するキー名の取得 */
+/*! 機能に対応するキー名の取得 */
 int CKeyBind::GetKeyStr(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
@@ -287,7 +277,7 @@ int CKeyBind::GetKeyStr(
 }
 
 
-/* 機能に対応するキー名の取得(複数) */
+/*! 機能に対応するキー名の取得(複数) */
 int CKeyBind::GetKeyStrList(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
@@ -350,7 +340,7 @@ int CKeyBind::GetKeyStrList(
 }
 
 
-/* メニューラベルの作成 */
+/*! メニューラベルの作成 */
 char* CKeyBind::GetMenuLabel(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,

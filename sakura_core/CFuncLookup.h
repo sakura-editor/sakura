@@ -1,5 +1,6 @@
 //	$Id$
 /*!	@file
+	@brief 表示用文字列等の取得
 
 	機能名，機能分類，機能番号などの変換．設定画面での表示用文字列を用意する．
 
@@ -39,6 +40,8 @@
 #include "CSMacroMgr.h"
 
 /*!
+	@brief 表示用文字列等の取得
+
 	機能，機能分類と位置，機能番号，文字列などの対応を集約する．
 */
 class SAKURA_CORE_API CFuncLookup {

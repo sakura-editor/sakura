@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	メニュー管理＆表示
+	@brief メニュー管理＆表示
 
 	@author Norio Nakatani
 	$Revision$
@@ -8,19 +8,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 #include "CMenuDrawer.h"
 #include "sakura_rc.h"
@@ -233,7 +222,7 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 
 
 
-/* メニューアイテム描画 */
+/*! メニューアイテム描画 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
 
@@ -520,7 +509,7 @@ char CMenuDrawer::GetAccelCharFromLabel( const char* pszLabel )
 
 
 
-/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
+/*! メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	TCHAR				chUser;
@@ -602,7 +591,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 
 
-/* ビットマップの表示 灰色を透明描画 */
+/*! ビットマップの表示 灰色を透明描画 */
 void CMenuDrawer::MyBitBlt(
 	HDC drawdc,
 	int nXDest,
@@ -670,7 +659,7 @@ void CMenuDrawer::MyBitBlt(
 
 
 
-/* メニューアイコンの淡色表示 */
+/*! メニューアイコンの淡色表示 */
 void CMenuDrawer::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc)
 {

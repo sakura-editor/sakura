@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	テキストの管理
+	@brief 行データの管理
 
 	@author Norio Nakatani
 	@date 1998/03/05  新規作成
@@ -10,20 +10,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, hor
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 /* for TRACE() of MFC */
@@ -1272,7 +1262,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		cmemPrevLine.SetDataSz( "" );
 		cmemNextLine.SetDataSz( "" );
 		cEOLTypeNext.SetType( EOL_NONE );
-		bBookMarkNext=FALSE;	// 2001.12.03 hor
+		bBookMarkNext=false;	// 2001.12.03 hor
 	}else{
 //		/* Undo操作かどうか */
 //		if( bUndo ){
@@ -1357,7 +1347,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 					if(nInsPos==0){
 						pDocLine->SetBookMark(false);
 					}else{
-						bBookMarkNext=FALSE;
+						bBookMarkNext=false;
 					}
 
 					pDocLine = pDocLine->m_pNext;

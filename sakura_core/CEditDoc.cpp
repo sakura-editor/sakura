@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	文書関連情報の管理
+	@brief 文書関連情報の管理
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
@@ -8,20 +8,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000-2001, genta, mik, jepro
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 
 //#include <stdio.h>
@@ -253,7 +243,7 @@ void CEditDoc::OnMove( int x, int y, int nWidth, int nHeight )
 
 
 
-/* テキストが選択されているか */
+/*! テキストが選択されているか */
 BOOL CEditDoc::IsTextSelected( void )
 {
 	return m_cEditViewArr[m_nActivePaneIndex].IsTextSelected();
@@ -343,13 +333,13 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 
 
 
-/* ファイルを開く */
+/*! ファイルを開く */
 BOOL CEditDoc::FileRead(
 	char*	pszPath,	//!< [in/out]
 	BOOL*	pbOpened,
-	int		nCharCode,			/* 文字コード自動判別 */
-	BOOL	bReadOnly,			/* 読み取り専用か */
-	BOOL	bConfirmCodeChange	/* 文字コード変更時の確認をするかどうか */
+	int		nCharCode,			/*!< [in] 文字コード自動判別 */
+	BOOL	bReadOnly,			/*!< [in] 読み取り専用か */
+	BOOL	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
 )
 {
 	int				i;
@@ -745,8 +735,15 @@ end_of_func:;
 }
 
 
-/* pszPath == NULLの時、名前を付けて保存 */
-//	Feb. 9, 2001 genta	改行コード用引数追加
+/*!	@brief ファイルの保存
+	
+	@param pszPath [in] 保存ファイル名
+	@param cEolType [in] 改行コード種別
+	
+	pszPath == NULLの時、名前を付けて保存
+	
+	@date Feb. 9, 2001 genta 改行コード用引数追加
+*/
 BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 {
 	BOOL		bRet;
@@ -1229,7 +1226,7 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 
 
 
-/* 共通設定 プロパティシート */
+/*! 共通設定 プロパティシート */
 BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 {
 	int		i;
@@ -1304,7 +1301,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 
 
-/* タイプ別設定 プロパティシート */
+/*! タイプ別設定 プロパティシート */
 BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 {
 	m_cPropTypes.m_Types = m_pShareData->m_Types[nSettingType];
@@ -1350,7 +1347,7 @@ BOOL CEditDoc::IsEnableUndo( void )
 
 
 
-/* Redo(やり直し)可能な状態か？ */
+/*! Redo(やり直し)可能な状態か？ */
 BOOL CEditDoc::IsEnableRedo( void )
 {
 	return m_cOpeBuf.IsEnableRedo();
@@ -1359,7 +1356,7 @@ BOOL CEditDoc::IsEnableRedo( void )
 
 
 
-/* クリップボードから貼り付け可能か？ */
+/*! クリップボードから貼り付け可能か？ */
 BOOL CEditDoc::IsEnablePaste( void )
 {
 	UINT uFormatSakuraClip;
@@ -1376,7 +1373,7 @@ BOOL CEditDoc::IsEnablePaste( void )
 
 
 
-/* 親ウィンドウのタイトルを更新 */
+/*! 親ウィンドウのタイトルを更新 */
 void CEditDoc::SetParentCaption( BOOL bKillFocus )
 {
 	if( NULL == m_hWnd ){
@@ -1505,7 +1502,13 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 
 
 
-/* バックアップの作成 */
+/*! バックアップの作成
+	@author genta
+	@date 2001.06.12 asa-o
+		ファイルの時刻を元にバックアップファイル名を作成する機能
+	@date 2001.12.11 MIK バックアップファイルをゴミ箱に入れる機能
+	
+*/
 BOOL CEditDoc::MakeBackUp( void )
 {
 	time_t	ltime;
@@ -2421,7 +2424,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-/* PL/SQL関数リスト作成 */
+/*! PL/SQL関数リスト作成 */
 void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 {
 	const char*	pLine;
@@ -2854,7 +2857,7 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-/* COBOL アウトライン解析 */
+/*! COBOL アウトライン解析 */
 void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 {
 	const unsigned char*	pLine;
@@ -2953,7 +2956,7 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-/* アセンブラ アウトライン解析 */
+/*! アセンブラ アウトライン解析 */
 void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 {
 	const char*	pLine;
@@ -3732,10 +3735,10 @@ void CEditDoc::CheckFileTimeStamp( void )
 
 
 
-/* 同一ファイルの再オープン */
+/*! 同一ファイルの再オープン */
 void CEditDoc::ReloadCurrentFile(
-	BOOL	nCharCode,		/* 文字コード種別 */
-	BOOL	bReadOnly		/* 読み取り専用モード */
+	BOOL	nCharCode,		/*!< [in] 文字コード種別 */
+	BOOL	bReadOnly		/*!< [in] 読み取り専用モード */
 )
 {
 	if( -1 == _access( m_szFilePath, 0 ) ){
@@ -3776,7 +3779,12 @@ void CEditDoc::ReloadCurrentFile(
 }
 
 //	From Here Nov. 20, 2000 genta
-//	IME状態の設定
+/*!	IME状態の設定
+	
+	@param mode [in] IMEのモード
+	
+	@date Nov 20, 2000 genta
+*/
 void CEditDoc::SetImeMode( int mode )
 {
 	DWORD	conv, sent;

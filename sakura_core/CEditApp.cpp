@@ -1,6 +1,9 @@
 //	$Id$
 /*!	@file
-	タスクトレイアイコンの管理
+	@brief 常駐部
+	
+	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
+	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
@@ -9,20 +12,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, stonee, jepro, genta, aroka, hor
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 
 #define ID_HOTKEY_TRAYMENU	0x1234
@@ -1864,7 +1857,7 @@ BOOL CEditApp::CloseAllEditor( void )
 
 
 
-/* ポップアップメニュー(トレイ左ボタン) */
+/*! ポップアップメニュー(トレイ左ボタン) */
 int	CEditApp::CreatePopUpMenu_L( void )
 {
 	int			i;
@@ -2274,7 +2267,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 //キーワード：トレイ右クリックメニュー順序
 //	Oct. 12, 2000 JEPRO ポップアップメニュー(トレイ左ボタン) を参考にして新たに追加した部分
 
-/* ポップアップメニュー(トレイ右ボタン) */
+/*! ポップアップメニュー(トレイ右ボタン) */
 int	CEditApp::CreatePopUpMenu_R( void )
 {
 	int		i;

@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	プロセス間共有データへのアクセス
+	@brief プロセス間共有データへのアクセス
 
 	@author Norio Nakatani
 	@date 1998/05/26  新規作成
@@ -9,19 +9,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 class CShareData;
@@ -84,16 +73,16 @@ enum maxdata{
 //	ExtCmd	m_ExtCmdArr[MAX_EXTCMDMRUNUM];
 //};
 
-/* ファイル情報 */
+//! ファイル情報
 struct FileInfo {
-	int		m_nViewTopLine;			/* 表示域の一番上の行(0開始) */
-	int		m_nViewLeftCol;			/* 表示域の一番左の桁(0開始) */
-	int		m_nX;					/* カーソル  物理位置(行頭からのバイト数) */
-	int		m_nY;					/* カーソル  物理位置(折り返し無し行位置) */
-	int		m_bIsModified;			/* 変更フラグ */
-	int		m_nCharCode;			/* 文字コード種別 */
-	char	m_szPath[_MAX_PATH];	/* ファイル名 */
-	BOOL	m_bIsGrep;				/* Grepのウィンドウか */
+	int		m_nViewTopLine;			/*!< 表示域の一番上の行(0開始) */
+	int		m_nViewLeftCol;			/*!< 表示域の一番左の桁(0開始) */
+	int		m_nX;					/*!< カーソル  物理位置(行頭からのバイト数) */
+	int		m_nY;					/*!< カーソル  物理位置(折り返し無し行位置) */
+	int		m_bIsModified;			/*!< 変更フラグ */
+	int		m_nCharCode;			/*!< 文字コード種別 */
+	char	m_szPath[_MAX_PATH];	/*!< ファイル名 */
+	BOOL	m_bIsGrep;				/*!< Grepのウィンドウか */
 	char	m_szGrepKey[1024];
 };
 
@@ -102,27 +91,28 @@ struct EditNode {
 	HWND			m_hWnd;
 };
 
+//! 印刷設定
 struct PRINTSETTING {
-	char			m_szPrintSettingName[32 + 1];		/* 印刷設定の名前 */
-//	char			m_szPrintFontFace[LF_FACESIZE];		/* 印刷フォント */
-	char			m_szPrintFontFaceHan[LF_FACESIZE];	/* 印刷フォント */
-	char			m_szPrintFontFaceZen[LF_FACESIZE];	/* 印刷フォント */
-	int				m_nPrintFontWidth;					/* 印刷フォント幅(1/10mm単位単位) */
-	int				m_nPrintFontHeight;					/* 印刷フォント高さ(1/10mm単位単位) */
-	int				m_nPrintDansuu;						/* 段組の段数 */
-	int				m_nPrintDanSpace;					/* 段と段の隙間(1/10mm単位) */
-	int				m_nPrintLineSpacing;				/* 印刷フォント行間 文字の高さに対する割合(%) */
-	int				m_nPrintMarginTY;					/* 印刷用紙マージン 上(mm単位) */
-	int				m_nPrintMarginBY;					/* 印刷用紙マージン 下(mm単位) */
-	int				m_nPrintMarginLX;					/* 印刷用紙マージン 左(mm単位) */
-	int				m_nPrintMarginRX;					/* 印刷用紙マージン 右(mm単位) */
-	int				m_nPrintPaperOrientation;			/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
-	int				m_nPrintPaperSize;					/* 用紙サイズ */
-	BOOL			m_bPrintWordWrap;					/* 英文ワードラップする */
-	BOOL			m_bPrintLineNumber;					/* 行番号を印刷する */
+	char			m_szPrintSettingName[32 + 1];		/*!< 印刷設定の名前 */
+//	char			m_szPrintFontFace[LF_FACESIZE];		/*!< 印刷フォント */
+	char			m_szPrintFontFaceHan[LF_FACESIZE];	/*!< 印刷フォント */
+	char			m_szPrintFontFaceZen[LF_FACESIZE];	/*!< 印刷フォント */
+	int				m_nPrintFontWidth;					/*!< 印刷フォント幅(1/10mm単位単位) */
+	int				m_nPrintFontHeight;					/*!< 印刷フォント高さ(1/10mm単位単位) */
+	int				m_nPrintDansuu;						/*!< 段組の段数 */
+	int				m_nPrintDanSpace;					/*!< 段と段の隙間(1/10mm単位) */
+	int				m_nPrintLineSpacing;				/*!< 印刷フォント行間 文字の高さに対する割合(%) */
+	int				m_nPrintMarginTY;					/*!< 印刷用紙マージン 上(mm単位) */
+	int				m_nPrintMarginBY;					/*!< 印刷用紙マージン 下(mm単位) */
+	int				m_nPrintMarginLX;					/*!< 印刷用紙マージン 左(mm単位) */
+	int				m_nPrintMarginRX;					/*!< 印刷用紙マージン 右(mm単位) */
+	int				m_nPrintPaperOrientation;			/*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
+	int				m_nPrintPaperSize;					/*!< 用紙サイズ */
+	BOOL			m_bPrintWordWrap;					/*!< 英文ワードラップする */
+	BOOL			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
 
-	MYDEVMODE		m_mdmDevMode;						/* プリンタ設定 DEVMODE用 */
+	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
 	BOOL			m_bHeaderUse[3];
 	char			m_szHeaderForm[3][100];
 	BOOL			m_bFooterUse[3];
@@ -188,7 +178,7 @@ struct PRINTSETTING {
 //#endif
 //	To Here Sept. 18, 2000
 
-/* 色設定 */
+//! 色設定
 struct ColorInfo {
 	int			m_nColorIdx;
 	BOOL		m_bDisp;			/* 色分け/表示 をする */
@@ -200,6 +190,7 @@ struct ColorInfo {
 	char		m_cReserved[60];
 };
 
+//! 色設定(保存用)
 struct ColorInfoIni {
 	const char*	m_pszName;			/* 色名 */
 	BOOL		m_bDisp;			/* 色分け/表示 をする */
@@ -220,17 +211,17 @@ struct RegexKeywordInfo {
 //@@@ 2001.11.17 add end MIK
 
 
-
+//! タイプ別設定
 struct Types {
 	int					m_nIdx;
-	char				m_szTypeName[64];				/* タイプ属性：名称 */
-	char				m_szTypeExts[64];				/* タイプ属性：拡張子リスト */
-	int					m_nMaxLineSize;					/* 折り返し文字数 */
-	int					m_nColmSpace;					/* 文字と文字の隙間 */
-	int					m_nLineSpace;					/* 行間のすきま */
-	int					m_nTabSpace;					/* TABの文字数 */
+	char				m_szTypeName[64];				/*!< タイプ属性：名称 */
+	char				m_szTypeExts[64];				/*!< タイプ属性：拡張子リスト */
+	int					m_nMaxLineSize;					/*!< 折り返し文字数 */
+	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
+	int					m_nLineSpace;					/*!< 行間のすきま */
+	int					m_nTabSpace;					/*!< TABの文字数 */
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	char				m_szTabViewString[9];			/* TAB表示文字列 */
+	char				m_szTabViewString[9];			/*!< TAB表示文字列 */
 //#endif
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
 //	int					m_bDispLINE;					/* 行番号表示／非表示 */
@@ -266,48 +257,48 @@ struct Types {
 //	COLORREF			m_colorWSTRING;					/* ダブルクォーテーション文字列色 */
 //	COLORREF			m_colorWSTRINGBACK;				/* ダブルクォーテーション文字列背景の色 */
 //	COLORREF			m_colorUNDERLINE;				/* カーソル行アンダーラインの色 */
-	char				m_szLineComment[16];			/* 行コメントデリミタ */
-	char				m_szLineComment2[16];			/* 行コメントデリミタ2 */
-	char				m_szLineComment3[16];			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+	char				m_szLineComment[16];			/*!< 行コメントデリミタ */
+	char				m_szLineComment2[16];			/*!< 行コメントデリミタ2 */
+	char				m_szLineComment3[16];			/*!< 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 
 	//	May. 12, 2001 genta
 	int					m_nLineCommentPos;				//< 行コメント1の開始位置(負数は指定無し)
 	int					m_nLineCommentPos2;				//< 行コメント2の開始位置(負数は指定無し)
 	int					m_nLineCommentPos3;				//< 行コメント3の開始位置(負数は指定無し)	//Jun. 01, 2001 JEPRO 追加
 
-	char				m_szBlockCommentFrom[16];		/* ブロックコメントデリミタ(From) */
-	char				m_szBlockCommentTo[16];			/* ブロックコメントデリミタ(To) */
+	char				m_szBlockCommentFrom[16];		/*!< ブロックコメントデリミタ(From) */
+	char				m_szBlockCommentTo[16];			/*!< ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char				m_szBlockCommentFrom2[16];		/* ブロックコメントデリミタ2(From) */ //@@@ 2001.03.10 by MIK
-	char				m_szBlockCommentTo2[16];		/* ブロックコメントデリミタ2(To) */ //@@@ 2001.03.10 by MIK
+	char				m_szBlockCommentFrom2[16];		/*!< ブロックコメントデリミタ2(From) */ //@@@ 2001.03.10 by MIK
+	char				m_szBlockCommentTo2[16];		/*!< ブロックコメントデリミタ2(To) */ //@@@ 2001.03.10 by MIK
 //#endif
-	int					m_nStringType;					/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	char				m_szIndentChars[64];			/* その他のインデント対象文字 */
-//	int					m_nKEYWORDCASE;					/* キーワードの英大文字小文字区別 */
+	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	char				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
+//	int					m_nKEYWORDCASE;					/*!< キーワードの英大文字小文字区別 */
 
-	int					m_nColorInfoArrNum;				/* 色設定配列の有効数 */
-	ColorInfo			m_ColorInfoArr[64];				/* 色設定配列 */
+	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
+	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
 
-	int					m_bLineNumIsCRLF;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	int					m_nLineTermType;				/* 行番号区切り  0=なし 1=縦線 2=任意 */
-	char				m_cLineTermChar;				/* 行番号区切り文字 */
+	int					m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
+	char				m_cLineTermChar;				/*!< 行番号区切り文字 */
 
-//	char				m_bUseLBCC;						/* 禁則処理を行うか */
-	BOOL				m_bWordWrap;					/* 英文ワードラップをする */
+//	char				m_bUseLBCC;						/*!< 禁則処理を行うか */
+	BOOL				m_bWordWrap;					/*!< 英文ワードラップをする */
 
-	int					m_nCurrentPrintSetting;			/* 現在選択している印刷設定 */
+	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 
-	int					m_nDefaultOutline;				/* アウトライン解析方法 */
+	int					m_nDefaultOutline;				/*!< アウトライン解析方法 */
 
-	int					m_nSmartIndent;					/* スマートインデント種別 */
+	int					m_nSmartIndent;					/*!< スマートインデント種別 */
 	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
 
 	//	2001/06/14 asa-o 補完とキーワードヘルプのタイプ別設定
-	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */
-	int					m_bUseKeyWordHelp;				/* キーワードヘルプを使用する */
-	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */
+	char				m_szHokanFile[_MAX_PATH];		/*!< 入力補完 単語ファイル */
+	int					m_bUseKeyWordHelp;				/*!< キーワードヘルプを使用する */
+	char				m_szKeyWordHelpFile[_MAX_PATH];	/*!< キーワードヘルプ 辞書ファイル */
 	//	2001/06/19 asa-o
-	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */
+	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
 //@@@ 2001.11.17 add start MIK
 	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
 	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
@@ -340,6 +331,7 @@ const int BKUP_SEC		= 1;
 //	Aug. 21, 2000 genta
 const int BKUP_AUTO		= 64;
 
+//! 共通設定
 struct Common {
 
 	//	Jul. 3, 2000 genta
@@ -529,12 +521,13 @@ struct Common {
 }; /* Common */
 
 
-
+//! 共有データ領域
 struct DLLSHAREDATA {
 	//	Oct. 27, 2000 genta
-	//	データ構造 Version
-	//	データ構造の異なるバージョンの同時起動を防ぐため
-	//	必ず先頭になくてはならない．
+	//!	データ構造 Version
+	/*	データ構造の異なるバージョンの同時起動を防ぐため
+		必ず先頭になくてはならない．
+	*/
 	unsigned int		m_vStructureVersion;
 	/* 共通作業域(保存しない) */
 	char				m_szWork[32000];

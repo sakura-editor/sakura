@@ -1,7 +1,7 @@
 // $Id$
 //
 /*!	@file
-	現在行のマークを管理する
+	@brief 現在行のマークを管理する
 
 	@author genta
 	$Revision$

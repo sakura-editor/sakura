@@ -1,5 +1,6 @@
 //	$Id$
 /*!	@file
+	@brief 表示用文字列等の取得
 
 	機能名，機能分類，機能番号などの変換．設定画面での表示用文字列を用意する．
 
@@ -31,23 +32,23 @@
 		   distribution.
 */
 
-/*!	@brief 分類中の位置に対応する機能番号を返す．
-
-	@param category [in] 分類番号 (0-)
-	@param position [in] 分類中のindex (0-)
-*/
-
 #include "CFuncLookup.h"
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;
 const int LUOFFSET_CUSTMENU = 1;
 
+//! 動的に内容が変わる分類の名前
 const char *DynCategory[] = {
 	"外部マクロ",
 	"カスタムメニュー"
 };
 
+/*!	@brief 分類中の位置に対応する機能番号を返す．
+
+	@param category [in] 分類番号 (0-)
+	@param position [in] 分類中のindex (0-)
+*/
 int CFuncLookup::Pos2FuncCode( int category, int position ) const
 {
 	if( category < nsFuncCode::nFuncKindNum ){
@@ -74,6 +75,9 @@ int CFuncLookup::Pos2FuncCode( int category, int position ) const
 	@param position [in] 分類中のindex (0-)
 	@param ptr [out] 文字列を格納するバッファの先頭
 	@param bufsize [in] 文字列を格納するバッファのサイズ
+
+	@retval true 名称の設定に成功
+	@retval false 失敗。文字列は格納されていない
 */
 bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsize ) const
 {
@@ -103,10 +107,9 @@ bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsi
 	return true;
 }
 
-/*!	@brief 分類中の位置に対応する機能名称を返す．
+/*!	@brief 機能番号に対応する機能名称を返す．
 
-	@param category [in] 分類番号 (0-)
-	@param position [in] 分類中のindex (0-)
+	@param funccode [in] 機能番号
 	@param ptr [out] 文字列を格納するバッファの先頭
 	@param bufsize [in] 文字列を格納するバッファのサイズ
 	
@@ -142,6 +145,12 @@ bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 	return true;
 }
 
+/*!	@brief 機能分類番号に対応する機能名称を返す．
+
+	@param category [in] 機能分類番号
+	
+	@return NULL 分類名称．取得に失敗したらNULL．
+*/
 const char* CFuncLookup::Category2Name( int category ) const
 {
 	if( category < nsFuncCode::nFuncKindNum ){
@@ -181,7 +190,7 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 /*!	@brief 指定された分類に属する機能リストをListBoxに登録する．
 	
 	@param hListBox [in(out)] 値を設定するリストボックス
-	@param category [in] 機能分類
+	@param category [in] 機能分類番号
 */
 void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 {
@@ -218,6 +227,11 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 	}
 }
 
+/*!
+	指定分類中の機能数を取得する．
+	
+	@param category [in] 機能分類番号
+*/
 int CFuncLookup::GetItemCount(int category) const
 {
 	if( category < nsFuncCode::nFuncKindNum ){

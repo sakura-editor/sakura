@@ -1,26 +1,16 @@
 //	$Id$
 /*!	@file
-	共通設定ダイアログボックス、「キーバインド」ページ
+	@brief 共通設定ダイアログボックス、「キーバインド」ページ
 
 	@author Norio Nakatani
 	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000-2001, genta, MIK, jepro
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 
 
@@ -34,11 +24,7 @@
 //	To Here Sept. 5, 2000
 #define STR_KEYDATA_HEAD      "テキストエディタ キー設定ファイル\x1a"
 
-// From Here 2001.12.03 hor
-//		Borland C++ Compiler 5.5 でエラーになったので￥をいれました
-//#define STR_KEYDATA_HEAD2     "// テキストエディタキー設定 Ver2"	//@@@ 2001.11.07 add MIK
-#define STR_KEYDATA_HEAD2     "\/\/ テキストエディタキー設定 Ver2"	//@@@ 2001.11.07 add MIK
-// To Here 2001.12.03 hor
+const char STR_KEYDATA_HEAD2[] = "// テキストエディタキー設定 Ver2";	//@@@ 2001.11.07 add MIK
 
 #define STR_SHIFT_PLUS        "Shift+"  //@@@ 2001.11.08 add MIK
 #define STR_CTRL_PLUS         "Ctrl+"  //@@@ 2001.11.08 add MIK

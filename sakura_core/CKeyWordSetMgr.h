@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	強調キーワード管理
+	@brief 強調キーワード管理
 
 	@author Norio Nakatani
 	$Revision$
@@ -8,19 +8,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 class CKeyWordSetMgr;
@@ -36,9 +25,7 @@ class CKeyWordSetMgr;
 #define		MAX_KEYWORDNUM	1000
 #define		MAX_KEYWORDLEN	100
 
-/*-----------------------------------------------------------------------
-クラスの宣言
------------------------------------------------------------------------*/
+//! 強調キーワード管理
 class SAKURA_CORE_API CKeyWordSetMgr
 {
 public:
@@ -71,10 +58,10 @@ public:
 	int		m_nCurrentKeyWordSetIdx;
 	int		m_nKeyWordSetNum;
 	char	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];
-	int		m_nKEYWORDCASEArr[MAX_SETNUM];	/* キーワードの英大文字小文字区別 */
+	int		m_nKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
 	int		m_nKeyWordNumArr[MAX_SETNUM];
 	char	m_szKeyWordArr[MAX_SETNUM][MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];
-	char	m_IsSorted[MAX_SETNUM];	/* ソートしたかどうかのフラグ */  //MIK
+	char	m_IsSorted[MAX_SETNUM];	/*!< ソートしたかどうかのフラグ */  //MIK
 protected:
 	/*
 	||  実装ヘルパ関数
