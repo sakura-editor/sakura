@@ -155,12 +155,13 @@ finish:;
 //									0	ファイル1(旧ファイル)
 //									1	ファイル2(新ファイル)
     @param  nFlgOpt     [in]    0b000000000
-                                      |||||+--- -i ignore-case         大文字小文字同一視
-                                      ||||+---- -w ignore-all-space    空白無視
-                                      |||+----- -b ignore-space-change 空白変更無視
-                                      ||+------ -B ignore-blank-lines  空行無視
-                                      |+------- -t expand-tabs         TAB-SPACE変換
-                                      +--------    (編集中のファイルが旧ファイル)
+                                    ||||||+--- -i ignore-case         大文字小文字同一視
+                                    |||||+---- -w ignore-all-space    空白無視
+                                    ||||+----- -b ignore-space-change 空白変更無視
+                                    |||+------ -B ignore-blank-lines  空行無視
+                                    ||+------- -t expand-tabs         TAB-SPACE変換
+                                    |+--------    (編集中のファイルが旧ファイル)
+                                    +---------    (DIFF差分がないときにメッセージ表示)
 	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
 	@author	MIK
 	@date	2002/05/25
@@ -404,6 +405,17 @@ void CEditView::Command_Diff(
 		{
 			szDiffData[nDiffLen] = '\0';
 			AnalyzeDiffInfo( szDiffData, nFlgFile12 );
+		}
+	}
+
+
+	//DIFF差分が見つからなかったときにメッセージ表示
+	if( nFlgOpt & 0x0040 )
+	{
+		if( false == m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
+		{
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"DIFF差分は見つかりませんでした。" );
 		}
 	}
 
