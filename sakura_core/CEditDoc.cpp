@@ -852,6 +852,10 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 		return FALSE;
 	}
 
+	//	Sep. 7, 2003 genta
+	//	保存が完了するまではファイル更新の通知を抑制する
+	WatchUpdate wuSave = m_eWatchUpdate;
+	m_eWatchUpdate = WU_NONE;
 
 	bRet = TRUE;
 
@@ -927,6 +931,10 @@ end_of_func:;
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
+	//	Sep. 7, 2003 genta
+	//	ファイル更新の通知を元に戻す
+	m_eWatchUpdate = wuSave;
+
 
 	return bRet;
 }
