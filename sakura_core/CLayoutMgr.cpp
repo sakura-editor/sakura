@@ -36,7 +36,7 @@
 */
 CLayoutMgr::CLayoutMgr()
 : m_cLineComment(), m_cBlockComment(),
-	//	2004.04.03 MIK
+	//	2004.04.03 Moca
 	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する
 	m_nMaxLineSize( 10 ),
 	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要

@@ -2682,7 +2682,7 @@ void CEditView::Command_JUMP_SRCHSTARTPOS(void)
 			m_nSrchStartPosY_PHY,
 			&x, &y );
 		MoveCursor( x, y, TRUE );
-		//	2004.04.03 MIK
+		//	2004.04.03 Moca
 		/*
 			検索開始位置に戻ったあとのカーソル上下移動で
 			戻る前の桁位置にカーソルが移動しないように．
