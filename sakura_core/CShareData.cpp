@@ -40,7 +40,7 @@ struct ARRHEAD {
 	
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 9;
+const unsigned int uShareDataVersion = 10;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､ 
@@ -861,11 +861,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentFrom2, "" );/* ブロックコメントデリミタ2(From) */
 		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentTo2, "" );	/* ブロックコメントデリミタ2(To) */
 //#endif
-//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
-//		m_pShareData->m_Types[nIdx].m_bSpecifyLineCommentPos  = FALSE;	/* 行コメント1 桁位置を指定しない*/	//Jun. 01, 2001 JEPRO 追加
-//		m_pShareData->m_Types[nIdx].m_bSpecifyLineCommentPos2 = FALSE;	/* 行コメント2 桁位置を指定しない*/	//Jun. 01, 2001 JEPRO 追加
-//		m_pShareData->m_Types[nIdx].m_bSpecifyLineCommentPos3 = FALSE;	/* 行コメント3 桁位置を指定しない*/	//Jun. 01, 2001 JEPRO 追加
-//	To Here Jun. 01, 2001
 		m_pShareData->m_Types[nIdx].m_nLineCommentPos = -1;				/* 行コメント1 桁位置 */
 		m_pShareData->m_Types[nIdx].m_nLineCommentPos2 = -1;			/* 行コメント2 桁位置 */
 		m_pShareData->m_Types[nIdx].m_nLineCommentPos3 = -1;			/* 行コメント3 桁位置 */	//Jun. 01, 2001 JEPRO 追加

@@ -574,12 +574,24 @@ searchnext:;
 							( TypeDataPtr->m_nLineCommentPos2 < 0 || nPos == TypeDataPtr->m_nLineCommentPos2 ) &&							0 < lstrlen( TypeDataPtr->m_szLineComment2 ) &&
 							//	Mar. 15, 2000 genta for Fortran
 							(
-								TypeDataPtr->m_szLineComment2[0] == 'C' ?
-								nPos == 0 ? ( pLine[0] == 'C' || pLine[0] == 'c' || pLine[0] == '*' ) : false
-								:
+							//	Jun. 6, 2001 genta
+							//	行コメントが3カ所桁位置指定付きでできるようになったので
+							//	Fortran専用機能は役割を終えた
+							//	TypeDataPtr->m_szLineComment2[0] == 'C' ?
+							//	nPos == 0 ? ( pLine[0] == 'C' || pLine[0] == 'c' || pLine[0] == '*' ) : false
+							//	:
 								nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szLineComment2 ) &&	/* 行コメントデリミタ2 */
 								0 == memicmp( &pLine[nPos], TypeDataPtr->m_szLineComment2, (int)lstrlen( TypeDataPtr->m_szLineComment2 ) )
 							)
+						//	From Here Jun. 6, 2001 genta 3つ目の行コメント色分けに対応
+						) ||
+						(
+							NULL != TypeDataPtr->m_szLineComment &&									/* 行コメントデリミタ */
+							( TypeDataPtr->m_nLineCommentPos3 < 0 || nPos == TypeDataPtr->m_nLineCommentPos3 ) &&
+							0 < lstrlen( TypeDataPtr->m_szLineComment3 ) &&
+							nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szLineComment3 ) &&		/* 行コメントデリミタ */
+							0 == memicmp( &pLine[nPos], TypeDataPtr->m_szLineComment3, (int)lstrlen( TypeDataPtr->m_szLineComment3 ) )
+						//	To Here Jun. 6, 2001 genta
 						)
 					) ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
