@@ -15,16 +15,15 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include <windows.h>
 #include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
 #include <windows.h>
 #include <mbstring.h>
 #include <ctype.h>
 #include <locale.h>
 #include "CMemory.h"
 #include "etc_uty.h"
+#include "CEol.h"// 2002/2/3 aroka
+
 
 //#ifdef _DEBUG
 #include "global.h"

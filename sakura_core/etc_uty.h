@@ -7,6 +7,9 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001-2002, genta
+	Copyright (C) 2001, shoji masami, Stonee, MIK
+	Copyright (C) 2002, aroka, hor
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,11 +20,14 @@
 
 #include <windows.h>
 #include "global.h"
-#include "CMemory.h"
+//#include "CMemory.h"// 2002/2/3 aroka ヘッダ軽量化
 #include <shlobj.h>
-#include "CEol.h"
-#include "CBregexp.h"	//	Jun. 26, 2001 genta
+//#include "CEol.h"// 2002/2/3 aroka ヘッダ軽量化
+//#include "CBregexp.h"	//	Jun. 26, 2001 genta  2002/2/3 aroka ヘッダ軽量化
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
+class CMemory;// 2002/2/3 aroka ヘッダ軽量化
+class CEOL;// 2002/2/3 aroka ヘッダ軽量化
+class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 
 SAKURA_CORE_API const char* MyGetDateFormat( char*, int, int, const char* );/* 日付をフォーマット */
 SAKURA_CORE_API const char* MyGetTimeFormat( char*, int, int, const char* );/* 時刻をフォーマット */
@@ -70,7 +76,7 @@ SAKURA_CORE_API int FuncID_To_HelpContextID( int nFuncID );	//Stonee, 2001/02/23
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
 SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
-SAKURA_CORE_API bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage );
+SAKURA_CORE_API bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
 SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
 SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data,bool msgflag = true);

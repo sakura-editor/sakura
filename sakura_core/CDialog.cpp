@@ -316,6 +316,8 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 
 	/* コンボボックス用メッセージ */
 	case CBN_SELCHANGE:	return OnCbnSelChange( hwndCtl, wID );
+//	case CBN_DROPDOWN:	return OnDbnDropDown( hwndCtl, wID );
+//	case CBN_CLOSEUP:	return OnDbnCloseUp( hwndCtl, wID );
 	case LBN_DBLCLK:	return OnLbnDblclk( wID );
 
 

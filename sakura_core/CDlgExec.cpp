@@ -138,7 +138,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECCOMMAND) );
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECCOMMAND_DIALOG) );
 		break;
 
 	//From Here Mar. 28, 2001 JEPRO

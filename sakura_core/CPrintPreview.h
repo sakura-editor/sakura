@@ -101,6 +101,12 @@ public:
 	void SetPrintSetting( PRINTSETTING* pPrintSetting ){ m_pPrintSetting = pPrintSetting; }
 	BOOL GetDefaultPrinterInfo(){ return CPrint::GetDefaultPrinterInfo( &m_pPrintSetting->m_mdmDevMode ); };
 
+	/*
+	||	ƒwƒbƒ_Eƒtƒbƒ^
+	*/
+	void SetHeader(char* pszWork[]);	//	&f‚È‚Ç‚ğ“o˜^
+	void SetFooter(char* pszWork[]);	//	&p/&P‚È‚Ç‚ğ“o˜^
+
 protected:
 	void SetPreviewFontHan( LOGFONT* lf );
 	void SetPreviewFontZen( LOGFONT* lf );

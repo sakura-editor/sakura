@@ -94,6 +94,8 @@ OBJS =\
 	$(SRCDIR)\COpe.obj \
 	$(SRCDIR)\COpeBlk.obj \
 	$(SRCDIR)\COpeBuf.obj \
+	$(SRCDIR)\CPPA.obj \
+	$(SRCDIR)\CPPAMacroMgr.obj \
 	$(SRCDIR)\CPrint.obj \
 	$(SRCDIR)\CPrintPreview.obj \
 	$(SRCDIR)\CProcess.obj \

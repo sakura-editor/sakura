@@ -23,7 +23,7 @@ class CShareData;
 #include "CKeyBind.h"
 #include "CKeyWordSetMgr.h"
 #include "CPrint.h"
-#include "CKeyMacroMgr.h"
+//#include "CKeyMacroMgr.h" @@@ 2002.2.2 YAZAKI
 #include "CProfile.h"
 
 //@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
@@ -115,6 +115,11 @@ struct EditNode {
 };
 
 //! 印刷設定
+#define POS_LEFT	0
+#define POS_CENTER	1
+#define POS_RIGHT	2
+#define HEADER_MAX	100
+#define FOOTER_MAX	HEADER_MAX
 struct PRINTSETTING {
 	char			m_szPrintSettingName[32 + 1];		/*!< 印刷設定の名前 */
 //	char			m_szPrintFontFace[LF_FACESIZE];		/*!< 印刷フォント */
@@ -136,10 +141,10 @@ struct PRINTSETTING {
 
 
 	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
-	BOOL			m_bHeaderUse[3];
-	char			m_szHeaderForm[3][100];
-	BOOL			m_bFooterUse[3];
-	char			m_szFooterForm[3][100];
+	BOOL			m_bHeaderUse[3];					/* ヘッダが使われているか？	*/
+	char			m_szHeaderForm[3][HEADER_MAX];		/* 0:左寄せヘッダ。1:中央寄せヘッダ。2:右寄せヘッダ。*/
+	BOOL			m_bFooterUse[3];					/* フッタが使われているか？	*/
+	char			m_szFooterForm[3][FOOTER_MAX];		/* 0:左寄せフッタ。1:中央寄せフッタ。2:右寄せフッタ。*/
 };
 
 // Stonee 注： 2000/01/12
@@ -322,6 +327,12 @@ struct Types {
 	char				m_szKeyWordHelpFile[_MAX_PATH];	/*!< キーワードヘルプ 辞書ファイル */
 	//	2001/06/19 asa-o
 	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
+
+	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
+	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
+	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
+	
+	
 //@@@ 2001.11.17 add start MIK
 	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
 	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
@@ -457,7 +468,7 @@ struct Common {
 	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
 	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	int					m_nFileShareMode;				/* ファイルの排他制御モード */
-	char				m_szExtHelp1[_MAX_PATH];		/* 外部ヘルプ１ */
+	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
 
 
@@ -515,7 +526,6 @@ struct Common {
 	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
 	int					m_nRulerType;				/* ルーラーのタイプ */
 
-
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
 	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
 	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 *
@@ -548,7 +558,6 @@ struct Common {
 
 
 }; /* Common */
-
 
 //! 共有データ領域
 struct DLLSHAREDATA {
@@ -724,6 +733,17 @@ public:
 //	int			m_nMyButtonNum;
 	int			m_nStdToolBarButtons;
 
+	//@@@ 2002.2.2 YAZAKI
+	char*		GetMacroFilename( int idx );	//	idxで指定したマクロファイル名（フルパス）を取得する
+	void		AddToSearchKeyArr( const char* pszSearchKey );	//	m_szSEARCHKEYArrにpszSearchKeyを追加する
+	void		AddToReplaceKeyArr( const char* pszReplaceKey );	//	m_szREPLACEKEYArrにpszReplaceKeyを追加する
+	
+	//@@@ 2002.2.3 YAZAKI
+	bool		ExtWinHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
+	char*		GetExtWinHelp( int nType = -1 );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
+	bool		ExtHTMLHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
+	char*		GetExtHTMLHelp( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
+	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 protected:
 	/*
 	||  実装ヘルパ関数

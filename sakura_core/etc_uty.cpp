@@ -8,7 +8,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
-	Copyright (C) 2001, shoji masami, stonee, MIK
+	Copyright (C) 2001, shoji masami, stonee, MIK, YAZAKI
+	Copyright (C) 2002, genta, aroka, hor
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,6 +24,8 @@
 
 #include "WINNETWK.H"	//Stonee, 2001/12/21
 #include "sakura.hh"	//YAZAKI, 2001/12/11
+#include "CEol.h"// 2002/2/3 aroka
+#include "CBregexp.h"// 2002/2/3 aroka
 
 /* 日付をフォーマット */
 const char* MyGetDateFormat( char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat )
@@ -712,6 +715,7 @@ void ActivateFrameWindow( HWND hwnd )
 	}
 	::ShowWindow( hwnd, SW_SHOW );
 	::SetForegroundWindow( hwnd );
+	::BringWindowToTop( hwnd );
 	return;
 }
 
@@ -2117,6 +2121,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_COPYLINESWITHLINENUMBER:	return HLP000038;	//選択範囲内全行行番号付きコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
+//	case F_COPYFNAME:		return xxxxxxxxx;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
 	case F_CREATEKEYBINDLIST:		return HLP000057;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 JEPRO 「リスト」を「一覧」に変更、IDM＿TESTをFに変更したがうまくいかないので殺してある	//Dec. 25, 2000 復活
 
@@ -2155,10 +2160,10 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_SEARCH_DIALOG:		return HLP000059;	//検索(単語検索ダイアログ)
 	case F_SEARCH_NEXT:			return HLP000061;	//次を検索
 	case F_SEARCH_PREV:			return HLP000060;	//前を検索
-	case F_REPLACE:				return HLP000062;	//置換(置換ダイアログ)
+	case F_REPLACE_DIALOG:		return HLP000062;	//置換(置換ダイアログ)
 	case F_SEARCH_CLEARMARK:	return HLP000136;	//検索マークのクリア
-	case F_GREP:				return HLP000067;	//Grep
-	case F_JUMP:				return HLP000063;	//指定行へジャンプ
+	case F_GREP_DIALOG:			return HLP000067;	//Grep
+	case F_JUMP_DIALOG:			return HLP000063;	//指定行へジャンプ
 	case F_OUTLINE:				return HLP000064;	//アウトライン解析
 	case F_TAGJUMP:				return HLP000065;	//タグジャンプ機能
 	case F_TAGJUMPBACK:			return HLP000066;	//タグジャンプバック機能
@@ -2209,7 +2214,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_EXECKEYMACRO:	return HLP000126;	/* キーマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	case F_EXECCMMAND:		return 103; /* 外部コマンド実行 */
-	case F_EXECCOMMAND:		return HLP000103; /* 外部コマンド実行 */
+	case F_EXECCOMMAND_DIALOG:	return HLP000103; /* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 
@@ -2343,18 +2348,19 @@ bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMessage )
 	@param szPattern [in] チェックする正規表現
 	@param hWnd [in] メッセージボックスの親ウィンドウ
 	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
+	@param nOption [in] 大文字と小文字を無視して比較するフラグ // 2002/2/1 hor追加
 
 	@retval true 正規表現は規則通り
 	@retval false 文法に誤りがある。または、ライブラリが使用できない。
 */
-bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage )
+bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption )
 {
 	CBregexp cRegexp;
 
 	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		return false;
 	}
-	if( !cRegexp.Compile( szPattern ) ){
+	if( !cRegexp.Compile( szPattern, nOption ) ){	// 2002/2/1 hor追加
 		if( bShowMessage ){
 			::MessageBox( hWnd, cRegexp.GetLastMessage(),
 				"正規表現エラー", MB_OK | MB_ICONEXCLAMATION );

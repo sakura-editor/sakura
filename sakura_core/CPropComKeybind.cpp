@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, MIK, jepro
+	Copyright (C) 2002, MIK, YAZAKI, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -17,7 +18,12 @@
 #include "CPropCommon.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
-#include "CMacro.h"	//@@@ 2001.11.08 add MIK
+//#include "CMacro.h"	//@@@ 2001.11.08 add MIK @@@ 2002.2.2 YAZAKI delete.
+///20020129
+#include "KeyCode.h"	/// 2002/2/3 aroka from here
+#include "CFuncInfo.h" ///
+#include "debug.h" ///
+#include <stdio.h>	/// 2002/2/3 aroka from here
 
 //	From Here Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(21→34)
 #define STR_KEYDATA_HEAD_LEN  34
@@ -586,7 +592,9 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 								break;
 							*q = '\0';
 							//機能名を数値に置き換える。(数値の機能名もあるかも)
-							n = CMacro::GetFuncInfoByName(m_hInstance, p, szFuncNameJapanese);
+							//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//							n = CMacro::GetFuncInfoByName(m_hInstance, p, szFuncNameJapanese);
+							n = CSMacroMgr::GetFuncInfoByName(m_hInstance, p, szFuncNameJapanese);
 							if( n == -1 )
 							{
 								if( *p >= '0' && *p <= '9' )
@@ -722,13 +730,13 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 
 			for(j = 0; j < 8; j++)
 			{
-				p = CMacro::GetFuncInfoByID(m_hInstance, m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
-				if( p )
-				{
+				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//				p = CMacro::GetFuncInfoByID(m_hInstance, m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
+				p = CSMacroMgr::GetFuncInfoByID(m_hInstance, m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
+				if( p ) {
 					fprintf(fp, ",%s", p);
 				}
-				else
-				{
+				else {
 					fprintf(fp, ",%d", m_pKeyNameArr[i].m_nFuncCodeArr[j]);
 				}
 			}

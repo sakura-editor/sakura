@@ -4,10 +4,13 @@
 
 	@author Norio Nakatani
 	$Revision$
+	
+	@date aroka 警告対策で変数除去
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, hor
+	Copyright (C) 2001, Stonee, Miasaka, hor
+	Copyright (C) 2002, hor, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,7 +29,6 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nLineCount;
 	int			i;
 	int			nNestLevel;
-//	int			nNestLevel2;
 	int			nCharChars;
 	char		szWordPrev[100];
 	char		szWord[100];
@@ -34,30 +36,24 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nMaxWordLeng = 70;
 	int			nMode;
 	char		szFuncName[80];
-	int			nFuncLine;
+	int			nFuncLine = 0;
 	int			nFuncId;
 	int			nFuncNum;
 	char		szClass[1024];
 
-//	int			nClassNest;
 	int			nClassNestArr[16];
 	int			nClassNestArrNum;
 	int			nNestLevel2Arr[16];
 
-	BOOL		bClassReading;
 	nNestLevel = 0;
 	szWordPrev[0] = '\0';
 	szWord[nWordIdx] = '\0';
 	nMode = 0;
-//	nNestLevel2 = 0;
 	nNestLevel2Arr[0] = 0;
 	nFuncNum = 0;
 	szClass[0] = '\0';
-	bClassReading = FALSE;
 	nClassNestArrNum = 0;
-//	for( nLineCount = 0; nLineCount <  m_cLayoutMgr.GetLineCount(); ++nLineCount ){
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-//		pLine = m_cLayoutMgr.GetLineStr( nLineCount, &nLineLen );
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
@@ -464,7 +460,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_INSTEXT:
 	case F_ADDTAIL:
 	case F_PASTEBOX:
-	case F_REPLACE:
+	case F_REPLACE_DIALOG:
 	case F_CODECNV_EMAIL:
 	case F_CODECNV_EUC2SJIS:
 	case F_CODECNV_UNICODE2SJIS:
@@ -691,7 +687,7 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 {
 	const char*	pLine;
-	int			nLineLen;
+	int			nLineLen = 0;//: 2002/2/3 aroka 警告対策：初期化
 	int			nLineCount;
 	int			i;
 	int			nCharChars;
@@ -703,14 +699,11 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	char		szFuncName[80];
 	int			nFuncLine;
 	int			nFuncId;
-	int			nFuncNum;
-	int			nFuncOrProc = 0;
 	int			nParseCnt = 0;
 
 	szWordPrev[0] = '\0';
 	szWord[nWordIdx] = '\0';
 	nMode = 0;
-	nFuncNum = 0;
 	pLine = NULL;
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		if( NULL != pLine ){
@@ -753,7 +746,6 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						}else{
 							nFuncId = 63;
 						}
-						nFuncOrProc = 1;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 
@@ -761,7 +753,6 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Sub" )
 					 && 0 != _stricmp( szWordPrev, "End" )
 					){
-						nFuncOrProc = 2;
 						if( 0 == _stricmp( szWordPrev, "Declare" ) ){
 							nFuncId = 60;
 						}else{
@@ -771,9 +762,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nFuncLine = nLineCount + 1;
 					}else
 					if( 1 == nParseCnt ){
-						++nParseCnt;
 						strcpy( szFuncName, szWord );
-						++nFuncNum;
 						/*
 						  カーソル位置変換
 						  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -891,7 +880,12 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 
 // From Here 2001.12.03 hor
-/*! ブックマークリスト作成（無理矢理！） */
+/*! ブックマークリスト作成（無理矢理！）
+
+	20020119 aroka
+	空行をマーク対象にするフラグ bMarkUpBlankLineEnable を導入しました。
+	どなたかプロパティで設定可能にしてくれませんか？
+*/
 void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 {
 	const char*	pLine;
@@ -899,6 +893,7 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	int		nLineCount;
 	int		i,j,nX,nY;
 	char*	pszText;
+	bool	bMarkUpBlankLineEnable = false;	//! 空行をマーク対象にするフラグ 20020119 aroka
 	int		nNewLineLen	= m_cNewLineCode.GetLen();
 	int		nLineLast	= m_cDocLineMgr.GetLineCount();
 
@@ -908,12 +903,12 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 		if( NULL == pLine ){
 			break;
 		}
-        // Jan, 16, 2001 hor
-        //  このコメントを外すと，空行がマーク対象外になる
-        //if( nLineLen<=nNewLineLen && nLineCount< nLineLast ){
-        //  continue;
-        //}
-		// LTrim
+		// Jan, 16, 2002 hor
+		if( bMarkUpBlankLineEnable ){// 20020119 aroka
+			if( nLineLen<=nNewLineLen && nLineCount< nLineLast ){
+			  continue;
+			}
+		}// LTrim
 		for( i = 0; i < nLineLen; ++i ){
 			if( pLine[i] == ' ' ||
 				pLine[i] == '\t'){
@@ -924,13 +919,13 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 			}
 			break;
 		}
-        // Jan, 16, 2001 hor
-        //  このコメントを外すと，スペースのみの行がマーク対象外になる
-        //if(( i >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
-        //   ( i >= nLineLen )) {
-        //  continue;
-        //}
-		// RTrim
+		
+		if( bMarkUpBlankLineEnable ){// 20020119 aroka
+			if(( i >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
+				( i >= nLineLen )) {
+				continue;
+			}
+		}// RTrim
 		for( j=nLineLen ; j>=i ; --j ){
 			if( pLine[j] == CR ||
 				pLine[j] == LF ||

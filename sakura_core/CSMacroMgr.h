@@ -43,13 +43,17 @@
 
 class CEditView;
 
+#define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）
+#define SAVED_KEYMACRO	0	//	保存されたマクロ
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
 class CSMacroMgr
 {
 	//	データの型宣言
-	CKeyMacroMgr m_cKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
+	CKeyMacroMgr* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
+	CKeyMacroMgr* m_cKeyMacro;						//	標準の（保存ができる）キーマクロも管理
 
 public:
 
@@ -62,10 +66,11 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+	void Clear( int idx );
 	void ClearAll( void );	/* キーマクロのバッファをクリアする */
 
 	/*! キーボードマクロの実行 */
-	BOOL Exec( HINSTANCE hInstance, CEditView* pViewClass, int idx );
+	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView );
 	
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
@@ -97,15 +102,32 @@ public:
 		m_pShareData->m_MacroTable[idx].m_szFile : NULL;
 	}
 
-protected:
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int num, HINSTANCE hInstance, const char* pszPath );
+	BOOL Load( int idx, HINSTANCE hInstance, const char* pszPath );
+	BOOL Save( int idx, HINSTANCE hInstance, const char* pszPath );
 	
 	/*! キーマクロのバッファにデータ追加 */
-	int Append( int num, int nFuncID, LPARAM lParam1 );
+	int Append( int idx, int nFuncID, LPARAM lParam1, CEditView* pcEditView );
 
+	/*
+	||  Attributes & Operations
+	*/
+	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* 機能ID→関数名，機能名日本語 */
+	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
+	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
 private:
 	DLLSHAREDATA*	m_pShareData;
+
+public:
+	//	関数名はCSMacroMgrが持つ
+	struct MacroFuncInfo {
+		int  	m_nFuncID;
+		char *	m_pszFuncName;
+		char *	m_pszFuncParam;
+		char *	m_pszData;
+	};
+
+	static MacroFuncInfo	m_MacroFuncInfoArr[];
 };
 
 

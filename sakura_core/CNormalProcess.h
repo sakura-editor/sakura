@@ -18,7 +18,6 @@
 
 #include "global.h"
 #include "CProcess.h"
-#include "CEditWnd.h"
 class CEditWnd;
 
 /*-----------------------------------------------------------------------
@@ -34,17 +33,15 @@ public:
 	CNormalProcess( HINSTANCE hInstance, LPSTR lpCmdLine ) : 
 		m_pcEditWnd( 0 ),
 		CProcess( hInstance, lpCmdLine ){}
-	virtual ~CNormalProcess(){
-		if( m_pcEditWnd ){
-			delete m_pcEditWnd;
-		}
-	};
+	virtual ~CNormalProcess(); // 2002/2/3 aroka
+
 protected:
 	CNormalProcess();
 	virtual bool Initialize();
 	virtual bool MainLoop();
 	virtual void Terminate();
 
+	HANDLE GetInitializeMutex() const; // 2002/2/8 aroka
 private:
 	CEditWnd*	m_pcEditWnd;
 };

@@ -173,6 +173,7 @@
 #define F_COPYLINESWITHLINENUMBER	30612	//選択範囲内全行行番号付きコピー
 #define F_COPYPATH					30620	//このファイルのパス名をクリップボードにコピー
 #define F_COPYTAG					30621	//このファイルのパス名とカーソル位置をコピー
+#define F_COPYFNAME					30622	//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //Sept. 16, 2000 JEPRO ショートカットキーがうまく働かないので次行は殺してある	//Dec. 25, 2000 復活
 #define F_CREATEKEYBINDLIST			30630	//キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO 上の行はIDM_TESTのままではうまくいかないのでFに変えて登録
 
@@ -211,10 +212,13 @@
 #define F_SEARCH_DIALOG		30901	//検索(単語検索ダイアログ)
 #define F_SEARCH_NEXT		30902	//次を検索
 #define F_SEARCH_PREV		30903	//前を検索
-#define F_REPLACE			30904	//置換(置換ダイアログ)
+#define F_REPLACE_DIALOG	30904	//置換(置換ダイアログ)
+#define F_REPLACE			30906	//置換(実行)
 #define F_SEARCH_CLEARMARK	30905	//検索マークのクリア
-#define F_GREP				30910	//Grep
-#define F_JUMP				30920	//指定行へジャンプ
+#define F_GREP_DIALOG		30910	//Grep
+#define F_GREP				30911	//Grep
+#define F_JUMP_DIALOG		30920	//指定行へジャンプ
+#define F_JUMP				30921	//指定行へジャンプ
 #define F_OUTLINE			30930	//アウトライン解析
 #define F_TAGJUMP			30940	//タグジャンプ機能
 #define F_TAGJUMPBACK		30941	//タグジャンプバック機能
@@ -272,7 +276,8 @@
 #define F_EXECKEYMACRO		31253	/* キーマクロの実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	#define F_EXECCMMAND		31270	/* 外部コマンド実行 */
-#define F_EXECCOMMAND		31270	/* 外部コマンド実行 */
+#define F_EXECCOMMAND_DIALOG	31270	/* 外部コマンド実行 */
+#define F_EXECCOMMAND		31271	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 //	Jul. 4, 2000 genta

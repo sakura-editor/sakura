@@ -293,7 +293,7 @@ CMenuDrawer::CMenuDrawer()
 /* 171 */		F_COPYPATH	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイルのパス名をコピー //added Oct. 22, 2000 JEPRO				//Nov. 5, 2000 JEPRO 追加
 /* 172 */		F_COPYTAG	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイルのパス名とカーソル位置をコピー //added Oct. 22, 2000 JEPRO	//Nov. 5, 2000 JEPRO 追加
 /* 173 */		F_CREATEKEYBINDLIST			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//キー割り当て一覧をコピー //added Oct. 22, 2000 JEPRO	//Dec. 25, 2000 JEPRO アイコン追加
-/* 174 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
+/* 174 */		F_COPYFNAME	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイル名をコピー //仮 2002/2/3 aroka
 /* 175 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 176 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 177 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
@@ -353,10 +353,10 @@ CMenuDrawer::CMenuDrawer()
 /* 225 */		F_SEARCH_DIALOG		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//検索(単語検索ダイアログ)
 /* 226 */		F_SEARCH_NEXT		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//次を検索
 /* 227 */		F_SEARCH_PREV		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//前を検索
-/* 228 */		F_REPLACE			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//置換	//Sept. 21, 2000 JEPRO 追加
+/* 228 */		F_REPLACE_DIALOG	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//置換	//Sept. 21, 2000 JEPRO 追加
 /* 229 */		F_SEARCH_CLEARMARK	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//検索マークのクリア
-/* 230 */		F_GREP				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//Grep
-/* 231 */		F_JUMP				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//指定行へジャンプ		//Sept. 21, 2000 JEPRO 追加
+/* 230 */		F_GREP_DIALOG		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//Grep
+/* 231 */		F_JUMP_DIALOG		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//指定行へジャンプ		//Sept. 21, 2000 JEPRO 追加
 /* 232 */		F_OUTLINE			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//アウトライン解析
 /* 233 */		F_TAGJUMP			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//タグジャンプ機能			//Sept. 21, 2000 JEPRO 追加
 /* 234 */		F_TAGJUMPBACK		, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//タグジャンプバック機能	//Sept. 21, 2000 JEPRO 追加
@@ -412,7 +412,7 @@ CMenuDrawer::CMenuDrawer()
 /* 278 */		F_SAVEKEYMACRO	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//キーマクロの保存		//Sept. 21, 2000 JEPRO 追加
 /* 279 */		F_LOADKEYMACRO	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//キーマクロの読み込み	//Sept. 21, 2000 JEPRO 追加
 /* 280 */		F_EXECKEYMACRO	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//キーマクロの実行		//Sept. 16, 2000 JEPRO 下から上に移動した
-/* 281 */		F_EXECCOMMAND	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//外部コマンド実行//Sept. 20, 2000 JEPRO 名称をCMMANDからCOMMANDに変更(EXECCMMAND→EXECCMMAND)
+/* 281 */		F_EXECCOMMAND_DIALOG	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//外部コマンド実行//Sept. 20, 2000 JEPRO 名称をCMMANDからCOMMANDに変更(EXECCMMAND→EXECCMMAND)
 /* 282 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 283 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 284 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
@@ -630,7 +630,9 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 
 
 //	*pnItemHeight = 20;
-	*pnItemHeight = 2 + 15 + 1;
+//	*pnItemHeight = 2 + 15 + 1;
+	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
+	*pnItemHeight = GetSystemMetrics(SM_CYMENU);
 
 	return rc.right - rc.left + 20 + 8;
 //	return m_nMaxTab + 16 + m_nMaxTabLen;
@@ -936,7 +938,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1,	//	X
-				lpdis->rcItem.top + 1,		//	Y
+				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
+				//lpdis->rcItem.top + 1,		//	Y
+				lpdis->rcItem.top + GetSystemMetrics(SM_CYMENU)/2 - 8,	//	Y
 				ILD_MASK
 			);
 			SetTextColor( hdc, cOld );
@@ -954,7 +958,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1 + 1,	//	X
-				lpdis->rcItem.top + 1,		//	Y
+				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
+				lpdis->rcItem.top + GetSystemMetrics(SM_CYMENU)/2 - 8,	//	Y
+				//lpdis->rcItem.top + 1,		//	Y
 				ILD_NORMAL
 			);
 		}

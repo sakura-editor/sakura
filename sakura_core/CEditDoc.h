@@ -254,7 +254,8 @@ public: /* テスト用にアクセス属性を変更 */
 	
 	//	Sep. 29, 2001 genta
 	CSMacroMgr*		m_pcSMacroMgr;	//!< マクロ
-	CKeyMacroMgr	m_CKeyMacroMgr;	//	キーボードマクロ @@@ 2002.1.24 YAZAKI DLLSHAREDATAから移動
+//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一。
+//	CKeyMacroMgr	m_CKeyMacroMgr;	//	キーボードマクロ @@@ 2002.1.24 YAZAKI DLLSHAREDATAから移動
 	//	Oct. 2, 2001 genta
 	CFuncLookup		m_cFuncLookup;	//!< 機能名，機能番号などのresolve
 
@@ -263,6 +264,7 @@ public: /* テスト用にアクセス属性を変更 */
 	/*
 	||  実装ヘルパ関数
 	*/
+	void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);	//	pszSourceを展開して、pszBufferにコピー。
 protected:
 	void DoFileLock( void );	/* ファイルの排他ロック */
 	void DoFileUnLock( void );	/* ファイルの排他ロック解除 */

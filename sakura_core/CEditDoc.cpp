@@ -9,18 +9,18 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, mik, jepro
+	Copyright (C) 2002, YAZAKI, hor, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
 #include "CEditDoc.h"
 #include "debug.h"
-#include "keycode.h"
+//#include "keycode.h"
 #include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
@@ -32,6 +32,10 @@
 #include "sakura_rc.h"
 #include "etc_uty.h"
 #include "global.h"
+#include "CFuncInfoArr.h" /// 2002/2/3 aroka
+#include "CSMacroMgr.h"///
+#include "CMarkMgr.h"///
+#include "CDocLine.h" /// 2002/2/3 aroka
 
 #define IDT_ROLLMOUSE	1
 
@@ -59,7 +63,7 @@ CEditDoc::CEditDoc() :
 	m_hInstance( NULL ),
 	m_hWnd( NULL ),
 	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
-	m_bIsModified( false )	/* 変更フラグ */ // Jun. 22, 2002 genta 型変更
+	m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 //	m_pcDlgTest = new CDlgTest;
 
@@ -3827,4 +3831,93 @@ void CEditDoc::SetImeMode( int mode )
 //	To Here Nov. 20, 2000 genta
 
 
+/*!	$xの展開
+
+*/
+void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
+{
+	const char *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
+	char *q, *q_max;
+	for( p = pszSource, q = pszBuffer, q_max = pszBuffer + nBufferLen; *p != '\0' && q < q_max; ++p, ++q){
+		if( *p != '$' ){
+			*q = *p;
+			continue;
+		}
+		switch( p[1] ){
+		case '$':	//	 $$ -> $
+			*q = *p;
+			++p;
+			break;
+		case 'F':
+			if (m_szFilePath[0] == '\0'){
+				memcpy(q, "(無題)", 6);
+				q += 6 - 1;
+				++p;
+			} 
+			else {
+				for( r = m_szFilePath; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q; // genta
+				++p;
+			}
+			break;
+		case 'f':	// Oct. 28, 2001 genta
+			//	ファイル名のみを渡すバージョン
+			//	ポインタを末尾に
+			if (m_szFilePath[0] == '\0'){
+				memcpy(q, "(無題)", 6);
+				q += 6 - 1;
+				++p;
+			} 
+			else {
+				r = m_szFilePath + strlen( m_szFilePath );
+				
+				//	後ろから区切りを探す
+				for( --r; r >= m_szFilePath && *r != '\\' ; --r )
+					;
+				//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
+				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
+				for( ++r ; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+		case '/':	// Oct. 28, 2001 genta
+			if (m_szFilePath[0] == '\0'){
+				memcpy(q, "(無題)", 6);
+				q += 6 - 1;
+				++p;
+			} 
+			else {
+				//	パスの区切りとして'/'を使うバージョン
+				for( r = m_szFilePath; *r != '\0' && q < q_max; ++r, ++q ){
+					if( *r == '\\' )
+						*q = '/';
+					else
+						*q = *r;
+				}
+				--q;
+				++p;
+			}
+			break;
+		//	From Here Jan. 15, 2002 hor
+		case 'C':	// CurText
+			{
+				CMemory cmemCurText;
+				m_cEditViewArr[m_nActivePaneIndex].GetCurrentTextForSearch( cmemCurText );
+				for( r = cmemCurText.GetPtr( NULL ); *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+		//	To Here Jan. 15, 2002 hor
+			break;
+		default:
+			*q = *p;
+			break;
+		}
+	}
+	*q = '\0';
+}
 /*[EOF]*/

@@ -8,7 +8,8 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, hor
+	Copyright (C) 2001, Stonee, JEPRO, genta, hor
+	Copyright (C) 2002, genta, MIK, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,7 +17,6 @@
 
 #include <windows.h>
 #include <commctrl.h>
-//#include <stdio.h>
 #include "sakura_rc.h"
 #include "CDlgFuncList.h"
 #include "etc_uty.h"
@@ -24,6 +24,8 @@
 #include "global.h"
 #include "CEditView.h"
 #include "funccode.h"		//Stonee, 2001/03/12
+#include "CFuncInfoArr.h"// 2002/2/3 aroka
+#include "mymessage.h"// 2002/2/3 aroka
 
 //アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -155,13 +157,20 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	RECT			rc;
 	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
 	hwndTree = ::GetDlgItem( m_hWnd, IDC_TREE1 );
+
+	//	共通部分の取り出し
+	::ShowWindow( hwndList, SW_HIDE );
+	::ShowWindow( hwndTree, SW_HIDE );
+	ListView_DeleteAllItems( hwndList );
+	TreeView_DeleteAllItems( hwndTree );
+
 	m_cmemClipText.SetDataSz( "" );	/* クリップボードコピー用テキスト */
 
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//	::DestroyWindow( hwndList );
-		::ShowWindow( hwndList, SW_HIDE );
+//		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：C++メソッドツリー */
 		//SetTreeCpp( m_hWnd );
@@ -173,7 +182,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//::DestroyWindow( hwndList );
-		::ShowWindow( hwndList, SW_HIDE );
+//		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：テキストトピックツリー */
 		SetTreeTxt( m_hWnd );
@@ -183,7 +192,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//	::DestroyWindow( hwndList );
-		::ShowWindow( hwndList, SW_HIDE );
+//		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：Javaメソッドツリー */
 		SetTreeJava( m_hWnd, TRUE );
@@ -193,7 +202,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//	::DestroyWindow( hwndList );
-		::ShowWindow( hwndList, SW_HIDE );
+//		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：COBOL アウトライン */
 		SetTreeJava( m_hWnd, FALSE );
@@ -202,7 +211,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 //	ブックマークの一覧を無理矢理つくる
 	}else
 	if( OUTLINE_BOOKMARK == m_nListType ){	/* ブックマークリスト */
-		::ShowWindow( hwndTree, SW_HIDE );
+//		::ShowWindow( hwndTree, SW_HIDE );
 		SetTreeBookMark( m_hWnd );
 		m_nViewType = 0;
 		::SetWindowText( m_hWnd, "ブックマーク" );
@@ -231,7 +240,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//::DestroyWindow( hwndTree );
-		::ShowWindow( hwndTree, SW_HIDE );
+//		::ShowWindow( hwndTree, SW_HIDE );
 		m_nViewType = 0;
 		::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
 		nFuncLineOld = 0;
@@ -329,6 +338,16 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	}
 	/* アウトライン ダイアログを自動的に閉じる */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList, m_pShareData->m_Common.m_bAutoCloseDlgFuncList );
+
+	//（IDC_LIST1もIDC_TREE1も常に存在していて、m_nViewTypeによって、どちらを表示するかを選んでいる）
+	if(m_nViewType){
+		::ShowWindow( hwndTree, SW_SHOW );
+		::SetFocus	( hwndTree );
+	}else{
+		::ShowWindow( hwndList, SW_SHOW );
+		::SetFocus	( hwndList );
+	}
+
 	return;
 }
 
@@ -1042,7 +1061,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 
 BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 {
-	int				idCtrl;
+//	int				idCtrl;
 	LPNMHDR			pnmh;
 	NM_LISTVIEW*	pnlv;
 	HWND			hwndList;
@@ -1051,7 +1070,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 //	int				nLineTo;
 	LV_COLUMN		col;
 
-	idCtrl = (int) wParam;
+//	idCtrl = (int) wParam;
 	pnmh = (LPNMHDR) lParam;
 	pnlv = (NM_LISTVIEW*)lParam;
 
@@ -1078,6 +1097,9 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 			switch( pnmtv->hdr.code ){
 			case NM_DBLCLK:
 				return OnJump();
+			case TVN_KEYDOWN:
+				Key2Command( ((LV_KEYDOWN *)lParam)->wVKey );
+				return TRUE;
 //			case NM_CLICK:
 //			case NM_KILLFOCUS:
 //			case NM_OUTOFMEMORY:
@@ -1168,6 +1190,9 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 			return TRUE;
 		case NM_DBLCLK:
 			return OnJump();
+		case LVN_KEYDOWN:
+			Key2Command( ((LV_KEYDOWN *)lParam)->wVKey );
+			return TRUE;
 		}
 	}
 	return FALSE;
@@ -1236,7 +1261,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 
 
 
-BOOL CDlgFuncList::OnJump( void )
+BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )
 {
 	int				nLineTo;
 	/* ダイアログデータの取得 */
@@ -1250,9 +1275,13 @@ BOOL CDlgFuncList::OnJump( void )
 			poCaret.y = nLineTo - 1;
 			memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
 			::SendMessage( ::GetParent( ::GetParent( m_hwndParent ) ), MYWM_SETCARETPOS, 0, 0 );
-			/* アウトライン ダイアログを自動的に閉じる */
-			if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
-				::DestroyWindow( m_hWnd );
+			if( bCheckAutoClose ){
+				/* アウトライン ダイアログを自動的に閉じる */
+				if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
+					::DestroyWindow( m_hWnd );
+				}else{
+					::SetFocus( m_hwndParent );
+				}
 			}
 		}
 	}
@@ -1359,4 +1388,41 @@ LPVOID CDlgFuncList::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
+/*!	キー操作をコマンドに変換するヘルパー関数
+	
+*/
+void CDlgFuncList::Key2Command(WORD KeyCode)
+{
+	CEditView*	pcEditView;
+	int nIdx, nFuncCode;	//	,bAutoClose;
+	m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
+	/* Ctrl,ALT,キーが押されていたか */
+	nIdx = 0;
+	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT	  ) ) nIdx |= _SHIFT;
+	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ) nIdx |= _CTRL;
+	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU    ) ) nIdx |= _ALT;
+	nFuncCode=CKeyBind::GetFuncCode(
+			((WORD)(((BYTE)(KeyCode)) | ((WORD)((BYTE)(nIdx))) << 8)),
+			m_pShareData->m_nKeyNameArrNum,
+			m_pShareData->m_pKeyNameArr
+	);
+	if( nFuncCode==F_REDRAW ){
+		nFuncCode=(m_nListType==OUTLINE_BOOKMARK)?F_BOOKMARK_VIEW:F_OUTLINE;
+	}
+	if( nFuncCode==F_OUTLINE || nFuncCode==F_BOOKMARK_VIEW ) {
+		pcEditView=(CEditView*)m_lParam;
+		pcEditView->HandleCommand( nFuncCode, TRUE, TRUE, 0, 0, 0 );
+		m_nListType=(nFuncCode==F_BOOKMARK_VIEW)?OUTLINE_BOOKMARK:pcEditView->m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
+		m_nCurLine=pcEditView->m_nCaretPosY + 1;
+		SetData();
+	}else
+	if( nFuncCode==F_BOOKMARK_SET ){
+		OnJump( false );
+		pcEditView=(CEditView*)m_lParam;
+		pcEditView->HandleCommand( nFuncCode, TRUE, 0, 0, 0, 0 );
+		if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
+			::DestroyWindow( m_hWnd );
+		}
+	}
+}
 /*[EOF]*/

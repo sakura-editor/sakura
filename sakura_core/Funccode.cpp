@@ -137,7 +137,7 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_GOFILETOP			,	//ファイルの先頭に移動
 	F_GOFILEEND			,	//ファイルの最後に移動
 	F_CURLINECENTER		,	//カーソル行をウィンドウ中央へ
-	F_JUMP				,	//指定行ヘジャンプ	//Sept. 17, 2000 JEPRO コマンド本家は「検索系」
+	F_JUMP_DIALOG		,	//指定行ヘジャンプ	//Sept. 17, 2000 JEPRO コマンド本家は「検索系」
 	F_JUMPPREV			,	//移動履歴: 前へ
 	F_JUMPNEXT			,	//移動履歴: 次へ
 	F_WndScrollDown		,	//テキストを１行下へスクロール	// 2001/06/20 asa-o
@@ -213,6 +213,7 @@ const int pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Cli
 	F_COPYLINESWITHLINENUMBER	,	//選択範囲内全行行番号付きコピー
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
+	F_COPYFNAME					,	//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
 const int nFincList_Clip_Num = sizeof( pnFuncList_Clip ) / sizeof( pnFuncList_Clip[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
@@ -261,10 +262,10 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_SEARCH_DIALOG		,	//検索(単語検索ダイアログ)
 	F_SEARCH_NEXT		,	//次を検索	//Sept. 16, 2000 JEPRO "次"を"前"の前に移動
 	F_SEARCH_PREV		,	//前を検索
-	F_REPLACE			,	//置換
+	F_REPLACE_DIALOG	,	//置換
 	F_SEARCH_CLEARMARK	,	//検索マークのクリア
-	F_GREP				,	//Grep
-	F_JUMP				,	//指定行ヘジャンプ
+	F_GREP_DIALOG		,	//Grep
+	F_JUMP_DIALOG		,	//指定行ヘジャンプ
 	F_OUTLINE			,	//アウトライン解析
 	F_TAGJUMP			,	//タグジャンプ機能
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
@@ -310,7 +311,7 @@ const int pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_M
 	F_EXECKEYMACRO	,	/* キーマクロの実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
-	F_EXECCOMMAND		/* 外部コマンド実行 */
+	F_EXECCOMMAND_DIALOG	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 };

@@ -194,19 +194,19 @@ BOOL CPropCommon::DispatchEvent_p10(
 					char*			pszMRU = NULL;;
 					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Common.m_szExtHelp1 );
+					strcpy( szPath, m_Common.m_szExtHelp );
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.hlp",
-						m_Common.m_szExtHelp1,
+						m_Common.m_szExtHelp,
 						(const char **)&pszMRU,
 						(const char **)&pszOPENFOLDER
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						strcpy( m_Common.m_szExtHelp1, szPath );
-						::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1 );
+						strcpy( m_Common.m_szExtHelp, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp );
 					}
 				}
 				return TRUE;
@@ -322,7 +322,7 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 //	2001/06/14 End
 
 	/* 外部ヘルプ１ */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1 );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp );
 
 	/* 外部HTMLヘルプ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp );
@@ -366,7 +366,7 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 //	2001/06/14 End
 
 	/* 外部ヘルプ１ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1, MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp, MAX_PATH - 1 );
 
 	/* 外部HTMLヘルプ */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp, MAX_PATH - 1 );

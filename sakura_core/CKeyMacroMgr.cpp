@@ -15,7 +15,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-//	#include <stdio.h>
+#include <stdio.h>
 //	#include <stdlib.h>
 //	#include <malloc.h>
 #include "CKeyMacroMgr.h"
@@ -25,12 +25,13 @@
 //	#include "etc_uty.h"
 //	#include "global.h"
 //	#include "CEditView.h"
+#include "CMemory.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
 	m_pTop = NULL;
 	m_pBot = NULL;
-	m_nKeyMacroDataArrNum = 0;
+//	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
 	m_nReady = FALSE;
 	return;
 }
@@ -53,7 +54,7 @@ void CKeyMacroMgr::ClearAll( void )
 		p = p->GetNext();
 		delete del_p;
 	}
-	m_nKeyMacroDataArrNum = 0;
+//	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
 	m_pTop = NULL;
 	m_pBot = NULL;
 	return;
@@ -62,11 +63,12 @@ void CKeyMacroMgr::ClearAll( void )
 
 /*! キーマクロのバッファにデータ追加
 	機能番号と、引数ひとつを追加版。
+	@@@2002.2.2 YAZAKI pcEditViewも渡すようにした。
 */
-void CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1 )
+void CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1, CEditView* pcEditView )
 {
 	CMacro* macro = new CMacro( nFuncID );
-	macro->AddLParam( lParam1 );
+	macro->AddLParam( lParam1, pcEditView );
 	Append(macro);
 }
 
@@ -83,7 +85,7 @@ void CKeyMacroMgr::Append( CMacro* macro )
 		m_pTop = macro;
 		m_pBot = m_pTop;
 	}
-	m_nKeyMacroDataArrNum++;
+//	m_nKeyMacroDataArrNum++;	2002.2.2 YAZAKI
 	return;
 }
 
@@ -179,7 +181,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		}
 
 		/* 関数名→機能ID，機能名日本語 */
-		nFuncID = CMacro::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
+		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//		nFuncID = CMacro::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
+		nFuncID = CSMacroMgr::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
 		if( -1 != nFuncID ){
 			macro = new CMacro( nFuncID );
 			//	Skip Space
@@ -187,7 +191,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 				while( szLine[i] == ' ' || szLine[i] == '\t' )
 					i++;
 
-				if( '\"' == szLine[i] ){	//	"で始まったら文字列だよきっと。
+				//@@@ 2002.2.2 YAZAKI PPA.DLLマクロにあわせて仕様変更。文字列は''で囲む。
+				if( '\'' == szLine[i] ){	//	'で始まったら文字列だよきっと。
 					++i;
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
@@ -195,20 +200,20 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 							++i;
 							continue;
 						}
-						if( szLine[i] == '\"' ){	//	\"で終了。
-							nEnd = i;	//	nEndは終わりの次の文字（"）
+						if( szLine[i] == '\'' ){	//	\'で終了。
+							nEnd = i;	//	nEndは終わりの次の文字（'）
 							break;
 						}
 					}
 					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
-					cmemWork.Replace( "\\\"", "\"" );
+					cmemWork.Replace( "\\\'", "\'" );
 					cmemWork.Replace( "\\\\", "\\" );
 					macro->AddParam( cmemWork.GetPtr( NULL ) );	//	引数を文字列として追加
 				}
 				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
-						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// エスケープのスキップ
+						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// まだ数値
 							++i;
 							continue;
 						}

@@ -45,7 +45,8 @@ public:
 
 
 protected:
-	void AddToSearchKeyArr( const char* );
+//@@@ 2002.2.2 YAZAKI CShareDataに移動
+//	void AddToSearchKeyArr( const char* );
 	/* オーバーライド? */
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetData( void );	/* ダイアログデータの設定 */

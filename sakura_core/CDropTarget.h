@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,9 +21,7 @@ class COleLibrary;
 #define _CEDITDROPTARGET_H_
 
 #include <windows.h>
-#include "CMemory.h"
-#include "debug.h"
-#include "CEditView.h"
+class CEditView;// 2002/2/3 aroka ヘッダ軽量化
 
 // 何か問題があれば↓この行をコメントアウトしてください		//Feb. 26, 2001, fixed by yebisuya sugoroku
 #define ENABLED_YEBISUYA_ADDITION
@@ -116,8 +115,8 @@ class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
 	CLIPFORMAT m_cfFormat;
 #ifdef ENABLED_YEBISUYA_ADDITION
-	LPBYTE	data;
-	int		size;
+	LPBYTE			data;
+	unsigned int	size;// 2002/2/3 aroka 警告対策：型変換
 #else
 	HGLOBAL	m_hData;
 #endif

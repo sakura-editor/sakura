@@ -1271,6 +1271,50 @@ BOOL CPropTypes::DispatchEvent_p2(
 					}
 				}
 				return TRUE;
+			case IDC_BUTTON_TYPEOPENHELP:	/* 外部ヘルプ１の「参照...」ボタン */
+				{
+					CDlgOpenFile	cDlgOpenFile;
+					char*			pszMRU = NULL;;
+					char*			pszOPENFOLDER = NULL;;
+					char			szPath[_MAX_PATH + 1];
+					strcpy( szPath, m_Types.m_szExtHelp );
+					/* ファイルオープンダイアログの初期化 */
+					cDlgOpenFile.Create(
+						m_hInstance,
+						hwndDlg,
+						"*.hlp",
+						m_Types.m_szExtHelp,
+						(const char **)&pszMRU,
+						(const char **)&pszOPENFOLDER
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						strcpy( m_Types.m_szExtHelp, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
+					}
+				}
+				return TRUE;
+			case IDC_BUTTON_TYPEOPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
+				{
+					CDlgOpenFile	cDlgOpenFile;
+					char*			pszMRU = NULL;;
+					char*			pszOPENFOLDER = NULL;;
+					char			szPath[_MAX_PATH + 1];
+					strcpy( szPath, m_Types.m_szExtHtmlHelp );
+					/* ファイルオープンダイアログの初期化 */
+					cDlgOpenFile.Create(
+						m_hInstance,
+						hwndDlg,
+						"*.chm;*.col",
+						m_Types.m_szExtHtmlHelp,
+						(const char **)&pszMRU,
+						(const char **)&pszOPENFOLDER
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						strcpy( m_Types.m_szExtHtmlHelp, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
+					}
+				}
+				return TRUE;
 			}
 		}
 		break;
@@ -1350,6 +1394,10 @@ void CPropTypes::SetData_p2( HWND hwndDlg )
 	/* キーワードヘルプ 辞書ファイル */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile );
 
+	//@@@ 2002.2.2 YAZAKI
+	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle );
 	return;
 }
 
@@ -1364,14 +1412,18 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
 
 	/* 入力補完 単語ファイル */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _MAX_PATH - 1 );
 
 	/* キーワードヘルプを使用する */
 	m_Types.m_bUseKeyWordHelp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEKEYWORDHELP );
 
 	/* キーワードヘルプ 辞書ファイル */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile, MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile, _MAX_PATH - 1 );
 
+	//@@@ 2002.2.2 YAZAKI
+	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _MAX_PATH - 1);
+	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _MAX_PATH - 1 );
+	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE );
 	return TRUE;
 }
 

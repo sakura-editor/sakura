@@ -8,20 +8,22 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, genta, Stonee, hor
+	Copyright (C) 2001, genta, Stonee, hor, YAZAKI
+	Copyright (C) 2002, MIK, hor, novice, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-//#include <stdio.h>
 #include "sakura_rc.h"
 #include "CDlgReplace.h"
 #include "debug.h"
 #include "CEditView.h"
 #include "etc_uty.h"
 #include "global.h"
-#include "CWaitCursor.h"
+//#include "CWaitCursor.h" // 2002/2/3 aroka
 #include "funccode.h"		// Stonee, 2001/03/12
+#include "CDlgCancel.h"/// 2002/2/3 aroka
+#include "CLayout.h"/// 2002/2/3 aroka
 
 //置換 CDlgReplace.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -132,8 +134,9 @@ void CDlgReplace::SetData( void )
 		&& m_bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
-		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+		//	正規表現のときも選択できるように。
+//		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+//		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
@@ -179,9 +182,9 @@ void CDlgReplace::SetData( void )
 /* 0==条件未入力  0より大きい==正常   0より小さい==入力エラー */
 int CDlgReplace::GetData( void )
 {
-	int			i;
-	int			j;
-	CMemory*	pcmWork;
+//	int			i;
+//	int			j;
+//	CMemory*	pcmWork;
 
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
@@ -218,12 +221,17 @@ int CDlgReplace::GetData( void )
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true ) ){
+		int nFlag = 0x00;
+		nFlag |= m_bLoHiCase ? 0x01 : 0x00;
+		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 
 		/* 検索文字列 */
+		//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
+		m_cShareData.AddToSearchKeyArr( m_szText );
+#if 0
 		pcmWork = new CMemory( m_szText, lstrlen( m_szText ) );
 		for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
 			if( 0 == strcmp( m_szText, m_pShareData->m_szSEARCHKEYArr[i] ) ){
@@ -245,8 +253,12 @@ int CDlgReplace::GetData( void )
 		}
 		strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork->GetPtr( NULL ) );
 		delete pcmWork;
+#endif
 
 		/* 置換後文字列 */
+		//@@@ 2002.2.2 YAZAKI CShareData.AddToReplaceKeyArr()追加に伴う変更
+		m_cShareData.AddToReplaceKeyArr( m_szText2 );
+#if 0
 		pcmWork = new CMemory( m_szText2, lstrlen( m_szText2 ) );
 		for( i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i ){
 			if( 0 == strcmp( m_szText2, m_pShareData->m_szREPLACEKEYArr[i] ) ){
@@ -268,7 +280,7 @@ int CDlgReplace::GetData( void )
 		}
 		strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork->GetPtr( NULL ) );
 		delete pcmWork;
-
+#endif
 		// From Here 2001.12.03 hor
 		// クリップボードから貼り付ける？
 		m_nPaste=IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE );
@@ -358,6 +370,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	const CLayout* pcLayout;
 	int			bLineOffset=FALSE;
 	int			bLineChecked=FALSE;
+//	char*		RegRepOut;
 
 	switch( wID ){
 	case IDC_CHK_PASTE:
@@ -397,7 +410,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「置換」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_REPLACE) );
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_REPLACE_DIALOG) );
 		return TRUE;
 //	case IDC_CHK_LOHICASE:	/* 大文字と小文字を区別する */
 //		MYTRACE( "IDC_CHK_LOHICASE\n" );
@@ -494,6 +507,10 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	case IDC_BUTTON_REPALCE:	/* 置換 */
 		if( 0 < GetData() ){
+			/* 置換 */
+			//@@@ 2002.2.2 YAZAKI 置換コマンドをCEditViewに新設
+			pcEditView->HandleCommand( F_REPLACE, TRUE, 0, 0, 0, 0 );
+#if 0
 			// From Here 2001.12.03 hor
 			if( m_nPaste && !pcEditView->m_pcEditDoc->IsEnablePaste()){
 				::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
@@ -583,7 +600,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 							::MessageBeep( MB_ICONHAND );
 						}
 						// 変換後の文字列を別の引数にしました 2002.01.26 hor
-						if( cRegexp.Replace( m_szText, m_szText2, cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut) ){
+						int nFlag = m_bLoHiCase ? 0x01 : 0x00;
+						if( cRegexp.Replace( m_szText, m_szText2, cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut, nFlag) ){
 							pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
 							delete [] RegRepOut;
 						}
@@ -600,6 +618,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				/* 次を検索 */
 				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
 			}
+#endif
 			/* 再描画 */
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
@@ -845,7 +864,9 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 							}
 
 							// 変換後の文字列を別の引数にしました 2002.01.26 hor
-							if( cRegexp.Replace( m_szText, m_szText2, cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut) ){
+							int nFlag = 0x00;
+							nFlag |= m_bLoHiCase ? 0x01 : 0x00;
+							if( cRegexp.Replace( m_szText, m_szText2, cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut, nFlag) ){
 								pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
 								delete [] RegRepOut;
 							}
