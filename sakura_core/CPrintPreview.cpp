@@ -812,10 +812,6 @@ void CPrintPreview::OnPrint( void )
 //		MYTRACE( "%s\n", szErrMsg );
 	}
 
-	/* マッピングモードの変更 */
-	::SetMapMode( hdc, MM_LOMETRIC );		//MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
-	::SetMapMode( hdc, MM_ANISOTROPIC );	//MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
-
 	/* 印刷用半角フォントと、印刷用全角フォントを作成 */
 	hFontHan = CreateFontIndirect( &m_lfPreviewHan );
 	hFontZen = CreateFontIndirect( &m_lfPreviewZen );
@@ -842,6 +838,20 @@ void CPrintPreview::OnPrint( void )
 
 		/* 印刷 ページ開始 */
 		m_cPrint.PrintStartPage( hdc );
+
+		//	From Here Jun. 26, 2003 かろと / おきた
+		//	Windows 95/98ではStartPage()関数の呼び出し時に、属性はリセットされて既定値へ戻ります．
+		//	このとき開発者は次のページの印刷を始める前にオブジェクトを選択し直し，
+		//	マッピングモードをもう一度設定しなければなりません
+		//	Windows NT/2000ではStartPageでも属性はリセットされません．
+		
+		/* マッピングモードの変更 */
+		::SetMapMode( hdc, MM_LOMETRIC );		//それぞれの論理単位は、0.1 mm にマップされます
+		::SetMapMode( hdc, MM_ANISOTROPIC );	//論理単位は、任意にスケーリングされた軸上の任意の単位にマップされます
+
+		// 現在のフォントを印刷用半角フォントに設定
+		::SelectObject( hdc, hFontHan );
+		//	To Here Jun. 26, 2003 かろと / おきた
 
 		/* ヘッダ印刷 */
 		DrawHeader( hdc, cRect, hFontZen );
