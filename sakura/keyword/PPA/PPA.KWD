@@ -1,0 +1,93 @@
+===============================================================================
+// PPA.DLL のヘルプより抜粋
+
+// 文
+begin
+end
+
+// 変数
+var
+Integer
+Real
+String
+
+// 定数
+True
+False
+nil
+
+// 制御構文
+if
+then
+else
+
+repeat
+until
+
+while
+do
+
+for
+to
+downto
+do
+
+case
+of
+
+// 演算子
+not
+div
+mod
+and
+shl
+shr
+or
+xor
+
+// =-=-= PPA ビルトイン手続き/関数 =-=-= //
+
+// 文字列処理ルーチン
+CompareStr
+Copy
+Delete
+Insert
+Length
+LowerCase
+Pos
+Trim
+TrimLeft
+TrimRight
+UpperCase
+
+// 数値処理ルーチン
+FloatToStr
+IntToStr
+StrToFloat
+StrToInt
+
+// 計算ルーチン
+Frac
+Int
+Round
+Trunc
+
+// ダイアログおよびメッセージルーチン
+InputBox
+MessageBox
+
+// システムルーチン
+Exec
+ProcessMessages
+Shell
+Sleep
+
+// フロー制御ルーチン
+Break
+Continue
+Exit
+
+// PPAルーチン
+IsDefine
+Pause
+
