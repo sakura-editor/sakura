@@ -6683,7 +6683,7 @@ cancel_return:;
 		最長で 本文1024 byte＋ファイル名 _MAX_PATH byte＋行・桁位置表示の長さが必要．
 
 	pWorkは充分なメモリ領域を持っているコト
-	@data 2002/08/29 Moca バイナリーデータに対応 pnWorkLen 追加
+	@date 2002/08/29 Moca バイナリーデータに対応 pnWorkLen 追加
 */
 void CEditView::SetGrepResult(
 	/* データ格納先 */

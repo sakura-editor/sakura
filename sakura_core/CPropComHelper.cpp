@@ -31,11 +31,11 @@
 static const DWORD p_helpids[] = {	//10600
 	IDC_BUTTON_OPENHELP1,			HIDC_BUTTON_OPENHELP1,			//外部ヘルプファイル参照
 	IDC_BUTTON_OPENEXTHTMLHELP,		HIDC_BUTTON_OPENEXTHTMLHELP,	//外部HTMLファイル参照
-	IDC_CHECK_USEHOKAN,				HIDC_CHECK_USEHOKAN,			//逐次入力補完
+//	IDC_CHECK_USEHOKAN,				HIDC_CHECK_USEHOKAN,			//逐次入力補完
 	IDC_CHECK_m_bHokanKey_RETURN,	HIDC_CHECK_m_bHokanKey_RETURN,	//候補決定キー（Enter）
 	IDC_CHECK_m_bHokanKey_TAB,		HIDC_CHECK_m_bHokanKey_TAB,		//候補決定キー（Tab）
 	IDC_CHECK_m_bHokanKey_RIGHT,	HIDC_CHECK_m_bHokanKey_RIGHT,	//候補決定キー（→）
-	IDC_CHECK_m_bHokanKey_SPACE,	HIDC_CHECK_m_bHokanKey_SPACE,	//候補決定キー（Space）
+//	IDC_CHECK_m_bHokanKey_SPACE,	HIDC_CHECK_m_bHokanKey_SPACE,	//候補決定キー（Space）
 	IDC_CHECK_HTMLHELPISSINGLE,		HIDC_CHECK_HTMLHELPISSINGLE,	//ビューアの複数起動
 	IDC_EDIT_EXTHELP1,				HIDC_EDIT_EXTHELP1,				//外部ヘルプファイル名
 	IDC_EDIT_EXTHTMLHELP,			HIDC_EDIT_EXTHTMLHELP,			//外部HTMLヘルプファイル名
@@ -48,12 +48,12 @@ static const DWORD p_helpids[] = {	//10600
 //	IDC_BUTTON_KEYWORDHELPFILE_REF,	10601,	//キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
 	IDC_BUTTON_OPENHELP1,			10602,	//外部ヘルプファイル参照
 	IDC_BUTTON_OPENEXTHTMLHELP,		10603,	//外部HTMLファイル参照
-	IDC_CHECK_USEHOKAN,				10610,	//逐次入力補完
+//	IDC_CHECK_USEHOKAN,				10610,	//逐次入力補完
 //	IDC_CHECK_HOKANLOHICASE,		10611,	//入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO タイプ別に移動
 	IDC_CHECK_m_bHokanKey_RETURN,	10612,	//候補決定キー（Enter）
 	IDC_CHECK_m_bHokanKey_TAB,		10613,	//候補決定キー（Tab）
 	IDC_CHECK_m_bHokanKey_RIGHT,	10614,	//候補決定キー（→）
-	IDC_CHECK_m_bHokanKey_SPACE,	10615,	//候補決定キー（Space）
+//	IDC_CHECK_m_bHokanKey_SPACE,	10615,	//候補決定キー（Space）
 //	IDC_CHECK_USEKEYWORDHELP,		10616,	//キーワードヘルプ機能			//Jul. 05, 2001 JEPRO タイプ別に移動
 	IDC_CHECK_HTMLHELPISSINGLE,		10617,	//ビューアの複数起動
 //	IDC_EDIT_HOKANFILE,				10640,	//単語ファイル名				//Jul. 05, 2001 JEPRO タイプ別に移動
@@ -318,7 +318,7 @@ BOOL CPropCommon::DispatchEvent_p10(
 void CPropCommon::SetData_p10( HWND hwndDlg )
 {
 	/*  入力補完機能を使用する */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_USEHOKAN, m_Common.m_bUseHokan );
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_USEHOKAN, m_Common.m_bUseHokan );
 
 //	2001/06/19 Start By:asa-o タイプ別設定に移動したので削除
 	/* 入力補完機能：英大文字小文字を同一視する */
@@ -359,7 +359,7 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN, m_Common.m_bHokanKey_RETURN );	//VK_RETURN 補完決定キーが有効/無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_TAB, m_Common.m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT, m_Common.m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
-	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE, m_Common.m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE, m_Common.m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
 
 	return;
 }
@@ -372,7 +372,7 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_HELPER;
 
 	/*  入力補完機能を使用する */
-	m_Common.m_bUseHokan = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEHOKAN );
+//	m_Common.m_bUseHokan = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEHOKAN );
 
 //	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
 	/* 入力補完機能：英大文字小文字を同一視する */
@@ -405,7 +405,7 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 	m_Common.m_bHokanKey_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN );//VK_RETURN 補完決定キーが有効/無効
 	m_Common.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
 	m_Common.m_bHokanKey_RIGHT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
-	m_Common.m_bHokanKey_SPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
+//	m_Common.m_bHokanKey_SPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
 
 	return TRUE;
 }

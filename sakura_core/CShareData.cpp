@@ -93,8 +93,11 @@ struct ARRHEAD {
 	Version 38:
 	Typesにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
 	2002.10.01 genta m_nIndentLayoutに名前変更
+
+	Version 39:
+	Commonにm_nFUNCKEYWND_GroupNumを追加． 2002/11/04 Moca
 */
-const unsigned int uShareDataVersion = 38;
+const unsigned int uShareDataVersion = 39;
 
 /*
 ||	Singleton風
@@ -706,6 +709,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bDispSTATUSBAR = TRUE;			/* 次回ウィンドウを開いたときステータスバーを表示する */
 		m_pShareData->m_Common.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
 		m_pShareData->m_Common.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
+		m_pShareData->m_Common.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 

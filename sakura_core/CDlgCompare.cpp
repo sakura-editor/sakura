@@ -177,6 +177,8 @@ void CDlgCompare::SetData( void )
 			::SendMessage( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].m_hWnd );
 		}
 		delete [] pEditNodeArr;
+		// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
+		::SendMessage( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)1000, 0 );
 	}
 	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
 	char	szWork[512];

@@ -9427,7 +9427,8 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 		// 検索オプション設定
 		m_pShareData->m_Common.m_bRegularExp=0;	//正規表現使わない
 		m_pShareData->m_Common.m_bWordOnly=0;	//単語で検索しない
-		m_bCurSrchKeyMark=TRUE;
+//		m_bCurSrchKeyMark=TRUE;
+		ChangeCurRegexp(); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 
 		// 再描画
 		RedrawAll();

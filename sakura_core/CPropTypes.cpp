@@ -2729,8 +2729,10 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 //	return;
 
 
-
-	if( 0 != strcmp( "カーソル行アンダーライン", pColorInfo->m_szName ) ){
+	// 2002/11/02 Moca 比較方法変更
+//	if( 0 != strcmp( "カーソル行アンダーライン", pColorInfo->m_szName ) )
+	if( COLORIDX_UNDERLINE != pColorInfo->m_nColorIdx )
+	{
 		/* 背景色 見本矩形 */
 		rc1 = pDis->rcItem;
 		rc1.left = rc1.right - 13;

@@ -229,8 +229,8 @@ BOOL CPropCommon::SelectColor( HWND hwndParent, COLORREF* pColor )
 }
 
 
-
-
+// 2002.11.09 Moca 未使用
+#if 0
 
 /* 色ボタンの描画 */
 void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
@@ -375,7 +375,7 @@ void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	return;
 }
 
-
+#endif
 
 
 

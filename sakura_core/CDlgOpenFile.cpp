@@ -599,7 +599,7 @@ void CDlgOpenFile::Create(
 
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
-	@data 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
+	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 */
 BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 {
@@ -731,7 +731,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 /*! 保存ダイアログ モーダルダイアログの表示
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
-	@data 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
+	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 */
 BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 {
