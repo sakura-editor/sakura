@@ -49,6 +49,7 @@
 #define IDB_OPENED_THIS                 202
 #define IDB_PRINTER                     203
 #define IDD_EXTCMD                      215
+#define IDD_PROP_MACRO                  217
 #define IDC_CURSOR_COPYARROW            220
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
@@ -390,6 +391,7 @@
 #define IDC_RADIO3                      1326
 #define IDC_EDIT2                       1327
 #define IDC_EDIT_BACKUP_3               1327
+#define IDC_MACROPATH                   1327
 #define IDC_COMBO_m_szCommand           1328
 #define IDC_CHECK_GETSTDOUT             1329
 #define IDC_STATIC_CMD                  1330
@@ -440,6 +442,12 @@
 #define IDC_BUTTON_JUMP                 1388
 #define IDC_CHK_LCPOS1                  1389
 #define IDC_SPIN_LCColNum1              1390
+#define IDC_MACRO_REF                   1392
+#define IDC_MACRO_REG                   1393
+#define IDC_COMBO_MACROID               1394
+#define IDC_MACRO_DEL                   1395
+#define IDC_MACROLIST                   1396
+#define IDC_MACRONAME                   1397
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -473,9 +481,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        216
+#define _APS_NEXT_RESOURCE_VALUE        218
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1391
+#define _APS_NEXT_CONTROL_VALUE         1398
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
