@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include "CPrint.h"
 #include "global.h"
+#include "debug.h" // 2002/2/10 aroka
 
 
 

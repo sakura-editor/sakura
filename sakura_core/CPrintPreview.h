@@ -16,6 +16,8 @@ class CPrintPreview;
 #ifndef _CPRINTPREVIEW_H_
 #define _CPRINTPREVIEW_H_
 #include "CShareData.h"
+#include "CPrint.h" // 2002/2/10 aroka
+#include <windows.h> // 2002/2/10 aroka
 
 class CPrintPreview {
 /* メンバ関数宣言 */
@@ -74,10 +76,17 @@ public:
 		LPARAM	lParam 		// second message parameter
 	);
 
+protected:
 	/*
-	||	描画
+	||	描画。
+	||	DrawXXXXX()は、現在のフォントを半角フォントに設定してから呼び出すこと。
+	||	また、DrawXXXXX()から抜けてきたときは、半角フォントに設定されていることを期待してよい。
+	||	フォントは、半角フォントと全角フォントしかないことも期待してよい。
 	*/
-	void DrawPageText( HDC, int, int, int, HFONT, class CDlgCancel* );
+	void DrawHeader( HDC hdc, RECT& rect, HFONT hFontZen );
+	void DrawPageText( HDC, int, int, int, HFONT hFontZen, class CDlgCancel* );
+	void DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen );
+
 	/* 印刷／プレビュー 行描画 */
 	void Print_DrawLine(
 		HDC			hdc,
@@ -87,6 +96,8 @@ public:
 		int			nLineLen,
 		HFONT		hFontZen
 	);
+
+public:
 	//	フォント列挙
 	static int CALLBACK MyEnumFontFamProc(
 		ENUMLOGFONT*	pelf,		// pointer to logical-font data
@@ -100,7 +111,10 @@ public:
 	*/
 	void SetPrintSetting( PRINTSETTING* pPrintSetting ){ m_pPrintSetting = pPrintSetting; }
 	BOOL GetDefaultPrinterInfo(){ return CPrint::GetDefaultPrinterInfo( &m_pPrintSetting->m_mdmDevMode ); };
+	int  GetCurPageNum(){ return m_nCurPageNum; }	/* 現在のページ */
+	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
+	
 	/*
 	||	ヘッダ・フッタ
 	*/

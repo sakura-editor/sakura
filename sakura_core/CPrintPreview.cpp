@@ -119,16 +119,19 @@ LRESULT CPrintPreview::OnPaint(
 	m_lfPreviewZen.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
 	strcpy( m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 
-	HFONT	hFont = CreateFontIndirect( &m_lfPreviewHan );
-	HFONT	hFontOld = (HFONT)::SelectObject( hdc, hFont );
+	/* 印刷用半角フォントと全角フォントを生成 */
+	HFONT	hFontHan = CreateFontIndirect( &m_lfPreviewHan );
 	HFONT	hFontZen = CreateFontIndirect( &m_lfPreviewZen );
+
+	/* 印刷用半角フォントに設定し、以前のフォントを保持 */
+	HFONT	hFontOld = (HFONT)::SelectObject( hdc, hFontHan );
 
 	/* 操作ウィンドウの下に物理座標原点を移動 */
 	POINT			poViewPortOld;
 	::SetViewportOrgEx( hdc, -1 * m_nPreviewHScrollPos, nToolBarHeight + m_nPreviewVScrollPos, &poViewPortOld );
 
 	/* 用紙の描画 */
-	int	nDirectY = -1;	//	なに？
+	int	nDirectY = -1;	//	Y座標の下をプラス方向にするため？
 	::Rectangle( hdc,
 		m_nPreview_ViewMarginLeft,
 		nDirectY * ( m_nPreview_ViewMarginTop ),
@@ -150,58 +153,14 @@ LRESULT CPrintPreview::OnPaint(
 
 	::SetTextColor( hdc, RGB( 0, 0, 0 ) );
 
-	HFONT	hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
+	RECT cRect;	/* 紙の大きさをあらわすRECT */
+	cRect.left   = m_nPreview_ViewMarginLeft +                             m_pPrintSetting->m_nPrintMarginLX + 5;
+	cRect.right  = m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth - (m_pPrintSetting->m_nPrintMarginRX + 5);
+	cRect.top    = nDirectY * ( m_nPreview_ViewMarginTop +                              m_pPrintSetting->m_nPrintMarginTY + 5);
+	cRect.bottom = nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + 5));
 
-	/*	ヘッダ	*/
-	const int nHeaderWorkLen = 1024;
-	char      szHeaderWork[1024 + 1];
-	
-	/* 左寄せ */
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
-	//	左寄せx座標
-	int nLeft = m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX + 5;
-	int nRight = m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth - m_pPrintSetting->m_nPrintMarginRX - 5;
-	int nTop = nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ) - 5;
-	::TextOut( hdc,
-		nLeft,
-		nTop,
-		szHeaderWork, lstrlen( szHeaderWork )
-	);
-
-	/* 中央寄せ */
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
-	::TextOut( hdc,
-		( nRight + nLeft - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
-		nTop,
-		szHeaderWork, lstrlen( szHeaderWork )
-	);
-	
-	/* 右寄せ */
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
-	::TextOut( hdc,
-		nRight - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth,
-		nTop,
-		szHeaderWork, lstrlen( szHeaderWork )
-	);
-
-#if 0
-	/* ファイル名の表示 */
-	char			szWork[260];
-	if( 0 == lstrlen( m_pParentWnd->m_cEditDoc.m_szFilePath ) ){	/* 現在編集中のファイルのパス */
-		strcpy( szWork, "(無題)" );
-	}else{
-		char	szFileName[_MAX_FNAME];
-		char	szExt[_MAX_EXT];
-		_splitpath( m_pParentWnd->m_cEditDoc.m_szFilePath, NULL, NULL, szFileName, szExt );
-		wsprintf( szWork, "%s%s", szFileName, szExt );
-	}
-	::TextOut( hdc,
-		m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX,
-		nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ),
-		szWork, lstrlen( szWork )
-	);
-#endif
-	::SelectObject( hdc, hFontZenOld );
+	/* ヘッダ */
+	DrawHeader( hdc, cRect, hFontZen );
 
 	/* 印刷/印刷プレビュー ページテキストの描画 */
 	DrawPageText(
@@ -213,51 +172,12 @@ LRESULT CPrintPreview::OnPaint(
 		NULL
 	);
 
-	/*	フッタ	*/
-	const int nFooterWorkLen = 1024;
-	char      szFooterWork[1024 + 1];
-	
-	/* 左寄せ */
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
-	//	左寄せx座標
-	int nBottom = nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY - m_pPrintSetting->m_nPrintFontHeight ) + 5;
-	::TextOut( hdc,
-		nLeft,
-		nBottom,
-		szFooterWork, lstrlen( szFooterWork )
-	);
+	DrawFooter( hdc, cRect, hFontZen );
 
-	/* 中央寄せ */
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
-	::TextOut( hdc,
-		( nRight + nLeft - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
-		nBottom,
-		szFooterWork, lstrlen( szFooterWork )
-	);
-	
-	/* 右寄せ */
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
-	::TextOut( hdc,
-		nRight - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth,
-		nBottom,
-		szFooterWork, lstrlen( szFooterWork )
-	);
-#if 0
-	/* ページ番号の表示 */
-	wsprintf( szWork, "- %d -", m_nCurPageNum + 1 );
-	::TextOut( hdc,
-		m_nPreview_ViewMarginLeft
-		+ m_nPreview_PaperWidth / 2
-		- ( 5 * 10 )
-		,
-		nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY - m_pPrintSetting->m_nPrintFontHeight/* - m_nPreview_PaperOffsetTop*/ ),
-		szWork, lstrlen( szWork )
-	);
-#endif
 	/* 印刷フォント解除 & 破棄 */
 	::SelectObject( hdc, hFontOld );
-	::DeleteObject( hFont );
 	::DeleteObject( hFontZen );
+	::DeleteObject( hFontHan );
 
 	/* マッピングモードの変更 */
 	::SetMapMode( hdc, nMapModeOld );
@@ -318,7 +238,7 @@ LRESULT CPrintPreview::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 
 	HDC			hdc = ::GetDC( m_pParentWnd->m_hWnd );
-	::SetMapMode(hdc, MM_LOMETRIC );
+	::SetMapMode( hdc, MM_LOMETRIC );
 	::SetMapMode( hdc, MM_ANISOTROPIC );
 
 	/* 出力倍率の変更 */
@@ -584,6 +504,9 @@ LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 void CPrintPreview::OnChangePrintSetting( void )
 {
 	HDC		hdc = ::GetDC( m_pParentWnd->m_hWnd );
+	::SetMapMode( hdc, MM_LOMETRIC ); //MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
+	::SetMapMode( hdc, MM_ANISOTROPIC );
+
 	::EnumFontFamilies(
 		hdc,
 		NULL,
@@ -695,8 +618,6 @@ void CPrintPreview::OnChangePrintSetting( void )
 	for( i = 0; i < ( sizeof( m_pnDx ) / sizeof( m_pnDx[0]) ); ++i ){
 		m_pnDx[i] = m_pPrintSetting->m_nPrintFontWidth;
 	}
-	::SetMapMode( hdc, MM_LOMETRIC ); //MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
-	::SetMapMode( hdc, MM_ANISOTROPIC );
 	/* WM_SIZE 処理 */
 	RECT	rc;
 	::GetClientRect( m_pParentWnd->m_hWnd, &rc );
@@ -804,18 +725,30 @@ void CPrintPreview::OnPrint( void )
 	char		szJobName[256 + 1];
 	char		szProgress[100];
 	char		szErrMsg[1024];
-	int			nDirectY;
-	HFONT		hFont, hFontOld;
+	int			nDirectY = -1;
 	int			i;
-	char		szWork[260];
-	HFONT		hFontZen, hFontZenOld;
-	int			nFrom;
-	int			nTo;
+	HFONT		hFontOld;	//	OnPrint以前のフォント
+	HFONT		hFontHan;	//	印刷用半角フォント
+	HFONT		hFontZen;	//	印刷用全角フォント
+
 	if( 0 == m_nAllPageNum ){
-		::MessageBeep( MB_ICONHAND );
+		::MYMESSAGEBOX( m_pParentWnd->m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+			"印刷するページがありません。"
+		);
 		return;
 	}
 
+	/* プリンタに渡すジョブ名を生成 */
+	if( 0 == lstrlen( m_pParentWnd->m_cEditDoc.m_szFilePath ) ){	/* 現在編集中のファイルのパス */
+		strcpy( szJobName, "無題" );
+	}else{
+		char	szFileName[_MAX_FNAME];
+		char	szExt[_MAX_EXT];
+		_splitpath( m_pParentWnd->m_cEditDoc.m_szFilePath, NULL, NULL, szFileName, szExt );
+		wsprintf( szJobName, "%s%s", szFileName, szExt );
+	}
+
+	/* 印刷範囲を指定するダイアログを作成 */
 	CDlgPrintPage cCDlgPrintPage;
 	cCDlgPrintPage.m_bAllPage = TRUE;
 	cCDlgPrintPage.m_nPageMin = 1;
@@ -825,24 +758,24 @@ void CPrintPreview::OnPrint( void )
 	if( FALSE == cCDlgPrintPage.DoModal( m_pParentWnd->m_hInstance, m_pParentWnd->m_hWnd, NULL ) ){
 		return;
 	}
+	// 印刷開始ページと、印刷ページ数を確認
+	int			nFrom;
+	int			nNum;
+	if( FALSE == cCDlgPrintPage.m_bAllPage ){
+		nFrom = cCDlgPrintPage.m_nPageFrom - 1;
+		nNum  = cCDlgPrintPage.m_nPageTo - nFrom;
+	}else{
+		nFrom = 0;
+		nNum  = m_nAllPageNum;
+	}
 
-
+	/* 印刷過程を表示して、キャンセルするためのダイアログを作成 */
 	CDlgCancel	cDlgPrinting;
 	cDlgPrinting.DoModeless( m_pParentWnd->m_hInstance, m_pParentWnd->m_hWnd, IDD_PRINTING );
-
-
-	if( 0 == lstrlen( m_pParentWnd->m_cEditDoc.m_szFilePath ) ){	/* 現在編集中のファイルのパス */
-		strcpy( szJobName, "無題" );
-	}else{
-		char	szFileName[_MAX_FNAME];
-		char	szExt[_MAX_EXT];
-		_splitpath( m_pParentWnd->m_cEditDoc.m_szFilePath, NULL, NULL, szFileName, szExt );
-		wsprintf( szJobName, "%s%s", szFileName, szExt );
-	}
 	::SetDlgItemText( cDlgPrinting.m_hWnd, IDC_STATIC_JOBNAME, szJobName );
+
+	/* 親ウィンドウを無効化 */
 	::EnableWindow( m_pParentWnd->m_hWnd, FALSE );
-
-
 
 	/* 印刷 ジョブ開始 */
 	if( FALSE == CPrint::PrintOpen(
@@ -855,73 +788,53 @@ void CPrintPreview::OnPrint( void )
 //		MYTRACE( "%s\n", szErrMsg );
 	}
 
-	hFont = CreateFontIndirect( &m_lfPreviewHan );
+	/* マッピングモードの変更 */
+	::SetMapMode( hdc, MM_LOMETRIC );		//MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
+	::SetMapMode( hdc, MM_ANISOTROPIC );	//MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
+
+	/* 印刷用半角フォントと、印刷用全角フォントを作成 */
+	hFontHan = CreateFontIndirect( &m_lfPreviewHan );
 	hFontZen = CreateFontIndirect( &m_lfPreviewZen );
 
-	if( FALSE == cCDlgPrintPage.m_bAllPage ){
-		nFrom = cCDlgPrintPage.m_nPageFrom;
-		nTo   = cCDlgPrintPage.m_nPageTo;
-	}else{
-		nFrom = 1;
-		nTo = m_nAllPageNum;
-	}
-	for( i = nFrom - 1; i < nTo; ++i ){
+	// 現在のフォントを印刷用半角フォントに設定＆以前のフォントを保持
+	hFontOld = (HFONT)::SelectObject( hdc, hFontHan );
+
+	/* 紙の大きさをあらわすRECTを設定 */
+	RECT cRect;
+	cRect.left   =                          m_pPrintSetting->m_nPrintMarginLX + 5;
+	cRect.right  = m_nPreview_PaperWidth - (m_pPrintSetting->m_nPrintMarginRX + 5);
+	cRect.top    = nDirectY * (                              m_pPrintSetting->m_nPrintMarginTY + 5 );
+	cRect.bottom = nDirectY * ( m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + 5) );
+
+	/* ヘッダ・フッタの$pを展開するために、m_nCurPageNumを保持 */
+	int nCurPageNumOld = m_nCurPageNum;
+	for( i = 0; i < nNum; ++i ){
+		m_nCurPageNum = nFrom + i;
+
+		/* 印刷過程を表示 */
 		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正
-		sprintf( szProgress, "%d/%d", i - (nFrom - 1) + 1/*i*/, nTo - (nFrom - 1)/*m_nAllPageNum*/ );
+		sprintf( szProgress, "%d/%d", i + 1, nNum );
 		::SetDlgItemText( cDlgPrinting.m_hWnd, IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */
 		CPrint::PrintStartPage( hdc );
 
-		/* マッピングモードの変更 */
-		::SetMapMode(hdc, MM_LOMETRIC );					//MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
-		::SetMapMode( hdc, MM_ANISOTROPIC/*MM_HIMETRIC*/ );	//MM_HIMETRIC それぞれの論理単位は、0.01 mm にマップされます
-		nDirectY = -1;
+		/* ヘッダ印刷 */
+		DrawHeader( hdc, cRect, hFontZen );
 
-		/* 印刷フォント設定 */
-		hFontOld = (HFONT)::SelectObject( hdc, hFont );
-		/* ファイル名の表示 */
-		if( 0 == lstrlen( m_pParentWnd->m_cEditDoc.m_szFilePath ) ){	/* 現在編集中のファイルのパス */
-			strcpy( szWork, "(無題)" );
-		}else{
-			char	szFileName[_MAX_FNAME];
-			char	szExt[_MAX_EXT];
-			_splitpath( m_pParentWnd->m_cEditDoc.m_szFilePath, NULL, NULL, szFileName, szExt );
-			wsprintf( szWork, "%s%s", szFileName, szExt );
-		}
-		hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
-		::TextOut( hdc,
-			m_pPrintSetting->m_nPrintMarginLX - m_nPreview_PaperOffsetLeft ,
-			nDirectY * ( m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop ),
-			szWork, lstrlen( szWork )
-		);
-		::SelectObject( hdc, hFontZenOld );
 		/* 印刷/印刷プレビュー ページテキストの描画 */
 		DrawPageText(
 			hdc,
 			m_pPrintSetting->m_nPrintMarginLX - m_nPreview_PaperOffsetLeft ,
 			m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop+ 2 * ( m_pPrintSetting->m_nPrintFontHeight + (m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100) ),
-			i,
+			nFrom + i,
 			hFontZen,
 			&cDlgPrinting
 		);
-		/* ページ番号の表示 */
-		wsprintf( szWork, "- %d -", i + 1 );
-		::TextOut( hdc,
-//			  m_pPrintSetting->m_nPrintMarginLX
-//			- m_nPreview_PaperOffsetLeft
-			+ m_nPreview_PaperWidth /* m_nPreview_PaperWidth */ / 2
-			- (5 * 10),
-			nDirectY * ( m_nPreview_PaperAllHeight /* m_nPreview_PaperAllHeight */ - m_nPreview_PaperOffsetTop /* m_nPreview_PaperOffsetTop */ - m_pPrintSetting->m_nPrintMarginBY - m_pPrintSetting->m_nPrintFontHeight/* - m_nPreview_PaperOffsetTop*/ ),
-//TEST			nDirectY * ( m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop ),
-			szWork, lstrlen( szWork )
-		);
-	//	for( i = 0; i < 10; ++i ){
-	//		::MoveToEx( hdc, 1000, nDirectY * ( 1000 * i ) , NULL );
-	//		::LineTo( hdc, 5000, nDirectY * ( 1000 * i ) );
-	//	}
-		/* 印刷フォント解除 */
-		::SelectObject( hdc, hFontOld );
+
+		/* フッタ印刷 */
+		DrawFooter( hdc, cRect, hFontZen );
+
 		/* 印刷 ページ終了 */
 		CPrint::PrintEndPage( hdc );
 
@@ -930,23 +843,100 @@ void CPrintPreview::OnPrint( void )
 			break;
 		}
 	}
-	sprintf( szProgress, "%d/%d", i - nFrom - 1/*i*/, nTo - nFrom + 1/*m_nAllPageNum*/ );
-	::SetDlgItemText( cDlgPrinting.m_hWnd, IDC_STATIC_PROGRESS, szProgress );
-
 	/* 印刷 ジョブ終了 */
 	CPrint::PrintClose( hPrinter, hdc );
 
-	::DeleteObject( hFontZen );
-	::DeleteObject( hFont );
+	//	印刷前のフォントに戻す
+	::SelectObject( hdc, hFontOld );
 
+	//	印刷用フォントを削除。
+	::DeleteObject( hFontZen );
+	::DeleteObject( hFontHan );
 
 	::EnableWindow( m_pParentWnd->m_hWnd, TRUE );
 	cDlgPrinting.CloseDialog( 0 );
 
+	m_nCurPageNum = nCurPageNumOld;
 	return;
 }
 
-/* 印刷/印刷プレビュー ページテキストの描画 */
+/*! 印刷/印刷プレビュー ヘッダの描画
+*/
+void CPrintPreview::DrawHeader( HDC hdc, RECT& rect, HFONT hFontZen )
+{
+	/*	ヘッダ	*/
+	const int nHeaderWorkLen = 1024;
+	char      szHeaderWork[1024 + 1];
+	
+	/* 左寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
+	Print_DrawLine( hdc,
+		rect.left,
+		rect.top,
+		szHeaderWork, lstrlen( szHeaderWork ),
+		hFontZen
+	);
+
+	/* 中央寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
+	Print_DrawLine( hdc,
+		( rect.right + rect.left - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
+		rect.top,
+		szHeaderWork, lstrlen( szHeaderWork ),
+		hFontZen
+	);
+	
+	/* 右寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
+	Print_DrawLine( hdc,
+		rect.right - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth,
+		rect.top,
+		szHeaderWork, lstrlen( szHeaderWork ),
+		hFontZen
+	);
+}
+
+/*! 印刷/印刷プレビュー フッタの描画
+*/
+void CPrintPreview::DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen )
+{
+	/*	フッタ	*/
+	const int nFooterWorkLen = 1024;
+	char      szFooterWork[1024 + 1];
+	
+	/* 左寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
+	//	左寄せx座標
+	Print_DrawLine( hdc,
+		rect.left,
+		rect.bottom - m_pPrintSetting->m_nPrintFontHeight,
+		szFooterWork, lstrlen( szFooterWork ),
+		hFontZen
+	);
+
+	/* 中央寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
+	Print_DrawLine( hdc,
+		( rect.right + rect.left - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
+		rect.bottom - m_pPrintSetting->m_nPrintFontHeight,
+		szFooterWork, lstrlen( szFooterWork ),
+		hFontZen
+	);
+	
+	/* 右寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
+	Print_DrawLine( hdc,
+		rect.right - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth,
+		rect.bottom - m_pPrintSetting->m_nPrintFontHeight,
+		szFooterWork, lstrlen( szFooterWork ),
+		hFontZen
+	);
+}
+
+/* 印刷/印刷プレビュー ページテキストの描画
+	DrawPageTextでは、行番号を（半角フォントで）印刷。
+	本文はPrint_DrawLineにお任せ
+*/
 void CPrintPreview::DrawPageText(
 	HDC				hdc,
 	int				nOffX,
@@ -956,26 +946,17 @@ void CPrintPreview::DrawPageText(
 	CDlgCancel*		pCDlgCancel
 )
 {
-	int				nDirectY;
+	int				nDirectY = -1;
 	int				nLineCols;
 	const char*		pLine;
 	int				nLineLen;
 	TEXTMETRIC		tm;
-	int				nAscent;
-	int				nAscentZen;
-	HFONT			hFontZenOld;
-
-	nDirectY = -1;
 
 	int				nLineHeight = m_pPrintSetting->m_nPrintFontHeight + ( m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100 );
 
-
+	/* 半角フォントの情報を取得＆半角フォントに設定 */
 	::GetTextMetrics( hdc, &tm );
-	nAscent = tm.tmAscent;
-	hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
-	::GetTextMetrics( hdc, &tm );
-	nAscentZen = tm.tmAscent;
-	::SelectObject( hdc, hFontZenOld );
+	int nAscentHan = tm.tmAscent;
 
 	int				nDan;	//	段数カウンタ
 	int				i;	//	行数カウンタ
@@ -987,7 +968,6 @@ void CPrintPreview::DrawPageText(
 					return;
 				}
 			}
-
 
 			/*	現在描画しようとしている行の物理行数（折り返しごとにカウントした行数）
 				関係するものは、
@@ -1031,7 +1011,7 @@ void CPrintPreview::DrawPageText(
 					* nDan +
 					m_nPreview_LineNumberColmns * m_pPrintSetting->m_nPrintFontWidth * (nDan) +
 					( m_nPreview_LineNumberColmns - nLineCols) * m_pPrintSetting->m_nPrintFontWidth,
-					nDirectY * ( nOffY + nLineHeight * i + ( m_pPrintSetting->m_nPrintFontHeight - nAscent ) ), 0, NULL,
+					nDirectY * ( nOffY + nLineHeight * i + ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ) ), 0, NULL,
 					szLineNum, nLineCols, m_pnDx
 				);
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
@@ -1161,24 +1141,18 @@ void CPrintPreview::Print_DrawLine(
 
 	int			nCharChars;
 	int			nPreviousChars = MODE_SINGLEBYTE;
-	HFONT		hFontZenOld;
 	TEXTMETRIC	tm;
-	int			nAscent;
-	int			nAscentZen;
+
+	/* 全角文字のアセント（文字高）を取得 */
+	HFONT	hFontHan = (HFONT)::SelectObject( hdc, hFontZen );
+	::GetTextMetrics( hdc, &tm );
+	int nAscentZen = tm.tmAscent;
 
 	/* 半角文字のアセント（文字高）を取得 */
 	//	半角文字用フォントが選択されていることを期待している。
+	::SelectObject( hdc, hFontHan );
 	::GetTextMetrics( hdc, &tm );
-	nAscent = tm.tmAscent;
-
-	/* 全角文字のアセント（文字高）を取得 */
-	hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
-	::GetTextMetrics( hdc, &tm );
-	nAscentZen = tm.tmAscent;
-
-	//	フォントを半角に戻しておく。
-	::SelectObject( hdc, hFontZenOld );
-
+	int nAscentHan = tm.tmAscent;
 
 	/*	pLineをスキャンして、半角文字は半角文字でまとめて、全角文字は全角文字でまとめて描画する。
 	*/
@@ -1201,7 +1175,7 @@ void CPrintPreview::Print_DrawLine(
 						::ExtTextOut(
 							hdc,
 							x + nPosX * m_pPrintSetting->m_nPrintFontWidth,
-							y - ( m_pPrintSetting->m_nPrintFontHeight - nAscent ),
+							y - ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ),
 							0,
 							NULL,
 							&pLine[nBgn], i - nBgn,
@@ -1217,7 +1191,7 @@ void CPrintPreview::Print_DrawLine(
 					2バイト文字の塊を描画。
 				*/
 				if( 0 < i - nBgn ){
-					hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
+					::SelectObject( hdc, hFontZen );
 					::ExtTextOut(
 						hdc,
 						x + nPosX * m_pPrintSetting->m_nPrintFontWidth,
@@ -1227,7 +1201,7 @@ void CPrintPreview::Print_DrawLine(
 						&pLine[nBgn], i - nBgn,
 						m_pnDx
 					);
-					::SelectObject( hdc, hFontZenOld );
+					::SelectObject( hdc, hFontHan );
 					nPosX += ( i - nBgn );
 				}
 				nBgn = i;
@@ -1237,13 +1211,13 @@ void CPrintPreview::Print_DrawLine(
 					nBgn = i + 1;
 				}
 			}
-		}else{	//	2バイト文字
+		}else{	//	1バイト文字
 			if( MODE_SINGLEBYTE == nPreviousChars ){
 				if( 0 < i - nBgn ){
 					::ExtTextOut(
 						hdc,
 						x + nPosX * m_pPrintSetting->m_nPrintFontWidth,
-						y - ( m_pPrintSetting->m_nPrintFontHeight - nAscent ),
+						y - ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ),
 						0,
 						NULL,
 						&pLine[nBgn], i - nBgn,
@@ -1260,7 +1234,7 @@ void CPrintPreview::Print_DrawLine(
 	
 	if( 0 < i - nBgn ){
 		if( MODE_DOUBLEBYTE == nPreviousChars ){	/*	2バイト文字描画	*/
-			hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
+			::SelectObject( hdc, hFontZen );
 			::ExtTextOut(
 				hdc,
 				x + nPosX * m_pPrintSetting->m_nPrintFontWidth,
@@ -1270,12 +1244,12 @@ void CPrintPreview::Print_DrawLine(
 				&pLine[nBgn], i - nBgn,
 				m_pnDx
 			);
-			::SelectObject( hdc, hFontZenOld );
+			::SelectObject( hdc, hFontHan );
 		}else{				/* 1バイト文字描画。フォントは標準で1バイト文字用。	*/
 			::ExtTextOut(
 				hdc,
 				x + nPosX * m_pPrintSetting->m_nPrintFontWidth,
-				y - ( m_pPrintSetting->m_nPrintFontHeight - nAscent ),
+				y - ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ),
 				0,
 				NULL,
 				&pLine[nBgn], i - nBgn,
