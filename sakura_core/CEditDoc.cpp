@@ -39,7 +39,8 @@
 CEditDoc::CEditDoc() :
 	m_cNewLineCode( EOL_CRLF ),		//	New Line Type
 	m_bGrepRunning( FALSE ),		/* Grep処理中 */
-	m_bPrintPreviewMode( FALSE ),	/* 印刷プレビューモードか */
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+//	m_bPrintPreviewMode( FALSE ),	/* 印刷プレビューモードか */
 	m_nCommandExecNum( 0 ),			/* コマンド実行回数 */
 	m_hwndReferer( NULL ),			/* 参照元ウィンドウ */
 	m_nRefererX( 0 ),				/* 参照元 行頭からのバイト位置桁 */
@@ -49,7 +50,8 @@ CEditDoc::CEditDoc() :
 	m_bGrepMode( FALSE ),			/* Grepモードか */
 	m_nCharCode( 0 ),				/* 文字コード種別 */
 	m_nActivePaneIndex( 0 ),
-	m_pcOpeBlk( NULL ),				/* 操作ブロック */
+//@@@ 2002.01.14 YAZAKI 不使用のため
+//	m_pcOpeBlk( NULL ),				/* 操作ブロック */
 	m_bDoing_UndoRedo( FALSE ),		/* アンドゥ・リドゥの実行中か */
 	m_nFileShareModeOld( 0 ),		/* ファイルの排他制御モード */
 	m_hLockedFile( NULL ),			/* ロックしているファイルのハンドル */
@@ -57,7 +59,7 @@ CEditDoc::CEditDoc() :
 	m_hInstance( NULL ),
 	m_hWnd( NULL ),
 	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
-	m_bIsModified( FALSE )			/* 変更フラグ */
+	m_bIsModified( false )	/* 変更フラグ */ // Jun. 22, 2002 genta 型変更
 {
 //	m_pcDlgTest = new CDlgTest;
 
@@ -120,6 +122,7 @@ CEditDoc::CEditDoc() :
 	//	Sep, 29, 2001 genta
 	//	マクロ
 	m_pcSMacroMgr = new CSMacroMgr;
+	//strcpy(m_pszCaption, "sakura");	//@@@	YAZAKI
 	return;
 }
 
@@ -194,7 +197,8 @@ BOOL CEditDoc::Create(
 	/* 設定プロパティシートの初期化１ */
 //@@	m_cProp1.Create( m_hInstance, m_hWnd );
 	//	Sep. 29, 2001 genta マクロクラスを渡すように
-	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr );
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr, &(pCEditWnd->m_CMenuDrawer) );
 	m_cPropTypes.Create( m_hInstance, m_hWnd );
 
 	/* 入力補完ウィンドウ作成 */
@@ -354,6 +358,9 @@ BOOL CEditDoc::FileRead(
 	BOOL			bFileIsExist;
 	m_bReadOnly = bReadOnly;	/* 読み取り専用モード */
 
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	CMRU			cMRU;
+
 	/* ファイルの存在チェック */
 	bFileIsExist = FALSE;
 	if( -1 == _access( pszPath, 0 ) ){
@@ -430,7 +437,8 @@ BOOL CEditDoc::FileRead(
 
 		*pbOpened = TRUE;
 		/* MRUリストへの登録 */
-		m_cShareData.AddMRUList( pfi );
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+		cMRU.Add( pfi );
 
 		bRet = FALSE;
 		goto end_of_func;
@@ -455,7 +463,8 @@ BOOL CEditDoc::FileRead(
 		m_nCharCode = nCharCode;
 
 	/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
-	if( m_cShareData.IsExistInMRUList( pszPath, &fi ) ){
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	if ( cMRU.GetFileInfo( pszPath, &fi ) ){
 		bIsExistInMRU = TRUE;
 
 //		m_cDlgJump.m_bPLSQL = fi.m_bPLSQL;			/* 行ジャンプが PL/SQLモードか */
@@ -705,6 +714,14 @@ BOOL CEditDoc::FileRead(
 				m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 		}
 	}
+	// 2002.01.16 hor ブックマーク復元
+	if( bIsExistInMRU ){
+		if( m_pShareData->m_Common.GetRestoreBookmarks() ){
+			m_cDocLineMgr.SetBookMarks(fi.m_szMarkLines);
+		}
+	}else{
+		strcpy(fi.m_szMarkLines,"");
+	}
 	SetFileInfo( &fi );
 
 	//	May 12, 2000 genta
@@ -721,7 +738,8 @@ BOOL CEditDoc::FileRead(
 	}
 
 	/* MRUリストへの登録 */
-	m_cShareData.AddMRUList( &fi );
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	cMRU.Add( &fi );
 
 end_of_func:;
 	if( NULL != hwndProgress ){
@@ -750,6 +768,8 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	FileInfo	fi;
 	HWND		hwndProgress;
 	int			i;
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	CMRU		cMRU;
 	//	Feb. 9, 2001 genta
 	CEOL	cEol( cEolType );
 
@@ -809,12 +829,13 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 
 		strcpy( m_szFilePath, pszPath ); /* 現在編集中のファイルのパス */
 
-		m_bIsModified = FALSE;	/* 変更フラグ */
+		SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
 
 		SetFileInfo( &fi );
 
 		/* MRUリストへの登録 */
-		m_cShareData.AddMRUList( &fi );
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+		cMRU.Add( &fi );
 	}else{
 		char szPath[_MAX_PATH + 1];
 
@@ -893,12 +914,13 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 			m_cEditViewArr[i].OnChangeSetting();
 		}
 
-		m_bIsModified = FALSE;	/* 変更フラグ */
+		SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
 
 		SetFileInfo( &fi );
 
 		/* MRUリストへの登録 */
-		m_cShareData.AddMRUList( &fi );
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+		cMRU.Add( &fi );
 	}
 
 	/* 現在位置で無変更な状態になったことを通知 */
@@ -939,50 +961,25 @@ BOOL CEditDoc::OpenFileDialog(
 	ActivateFrameWindow( hwndParent );
 	ActivateFrameWindow( hwndParent );
 
-	int		i;
-	int		j;
+//	int		i;
+//	int		j;
 	char**	ppszMRU;
 	char**	ppszOPENFOLDER;
 
 	/* MRUリストのファイルのリスト */
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	CMRU cMRU;
 	ppszMRU = NULL;
-	j = 0;
-	if( m_pShareData->m_nMRUArrNum > 0 ){
-		for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-			if( m_pShareData->m_Common.m_nMRUArrNum_MAX <= i ){
-				break;
-			}
-			++j;
-		}
-	}
-	ppszMRU = new char*[j + 1];
-	if( j > 0 ){
-		for( i = 0; i < j; ++i ){
-//			ppszMRU[i] = GetDocumentAttribute().m_szMRUArr[i];
-			ppszMRU[i] = m_pShareData->m_fiMRUArr[i].m_szPath;
-		}
-	}
-	ppszMRU[j] = NULL;
+	ppszMRU = new char*[ cMRU.Length() + 1 ];
+	cMRU.GetPathList(ppszMRU);
+
 
 	/* OPENFOLDERリストのファイルのリスト */
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+	CMRUFolder cMRUFolder;
 	ppszOPENFOLDER = NULL;
-	j = 0;
-	if( m_pShareData->m_nOPENFOLDERArrNum > 0 ){
-		for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
-			if( m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX <= i ){
-				break;
-			}
-			++j;
-		}
-	}
-	ppszOPENFOLDER = new char*[j + 1];
-	if( j > 0 ){
-		for( i = 0; i < j; ++i ){
-//			ppszOPENFOLDER[i] = GetDocumentAttribute().m_szOPENFOLDERArr[i];
-			ppszOPENFOLDER[i] = m_pShareData->m_szOPENFOLDERArr[i];
-		}
-	}
-	ppszOPENFOLDER[j] = NULL;
+	ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
+	cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 	/* ファイルオープンダイアログの初期化 */
 	if( 0 == lstrlen( m_szFilePath ) ){
@@ -991,7 +988,7 @@ BOOL CEditDoc::OpenFileDialog(
 				m_hInstance,
 				/*NULL*//*m_hWnd*/hwndParent,
 				m_szDefaultWildCard,
-				m_pShareData->m_fiMRUArr[0].m_szPath,
+				ppszMRU[0],
 				(const char **)ppszMRU,
 				(const char **)ppszOPENFOLDER
 			);
@@ -1073,56 +1070,30 @@ BOOL CEditDoc::OpenFileDialog(
 //	Feb. 9, 2001 genta	改行コードを示す引数追加
 BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 {
-	int		i;
-	int		j;
+//	int		i;
+//	int		j;
 	char**	ppszMRU;
 	char**	ppszOPENFOLDER;
 	BOOL	bret;
 
 	/* MRUリストのファイルのリスト */
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	CMRU cMRU;
 	ppszMRU = NULL;
-	j = 0;
-	if( m_pShareData->m_nMRUArrNum > 0 ){
-		for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-			if( m_pShareData->m_Common.m_nMRUArrNum_MAX <= i ){
-				break;
-			}
-			++j;
-		}
-	}
-	ppszMRU = new char*[j + 1];
-	if( j > 0 ){
-		for( i = 0; i < j; ++i ){
-//			ppszMRU[i] = GetDocumentAttribute().m_szMRUArr[i];
-			ppszMRU[i] = m_pShareData->m_fiMRUArr[i].m_szPath;
-		}
-	}
-	ppszMRU[j] = NULL;
+	ppszMRU = new char*[ cMRU.Length() + 1 ];
+	cMRU.GetPathList(ppszMRU);
 
 
 	/* OPENFOLDERリストのファイルのリスト */
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+	CMRUFolder cMRUFolder;
 	ppszOPENFOLDER = NULL;
-	j = 0;
-	if( m_pShareData->m_nOPENFOLDERArrNum > 0 ){
-		for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
-			if( m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX <= i ){
-				break;
-			}
-			++j;
-		}
-	}
-	ppszOPENFOLDER = new char*[j + 1];
-	if( j > 0 ){
-		for( i = 0; i < j; ++i ){
-//			ppszOPENFOLDER[i] = GetDocumentAttribute().m_szOPENFOLDERArr[i];
-			ppszOPENFOLDER[i] = m_pShareData->m_szOPENFOLDERArr[i];
-		}
-	}
-	ppszOPENFOLDER[j] = NULL;
+	ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
+	cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 	/* ファイル保存ダイアログの初期化 */
 	if( 0 == lstrlen( m_szFilePath ) ){
-		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, m_pShareData->m_fiMRUArr[0].m_szPath, (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
+		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, ppszMRU[0], (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 	}else{
 		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, m_szFilePath, (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 	}
@@ -1240,6 +1211,13 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	for( i = 0; i < MAX_TYPES; ++i ){
 		m_cPropCommon.m_Types[i] = m_pShareData->m_Types[i];
 	}
+	/* マクロ関係
+	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	*/
+	for( i = 0; i < MAX_CUSTMACRO; ++i ){
+		m_cPropCommon.m_MacroTable[i] = m_pShareData->m_MacroTable[i];
+	}
+	strcpy(m_cPropCommon.m_szMACROFOLDER, m_pShareData->m_szMACROFOLDER);
 
 	/* プロパティシートの作成 */
 	if( m_cPropCommon.DoPropertySheet( nPageNum/*, nActiveItem*/ ) ){
@@ -1287,6 +1265,13 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 //				m_pShareData->m_nTypesModifyArr[i] = TRUE;
 //			}
 		}
+
+		/* マクロ関係 */
+		for( i = 0; i < MAX_CUSTMACRO; ++i ){
+			m_pShareData->m_MacroTable[i] = m_cPropCommon.m_MacroTable[i];
+		}
+		strcpy(m_pShareData->m_szMACROFOLDER, m_cPropCommon.m_szMACROFOLDER);
+
 		/* アクセラレータテーブルの再作成 */
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
@@ -1373,7 +1358,10 @@ BOOL CEditDoc::IsEnablePaste( void )
 
 
 
-/*! 親ウィンドウのタイトルを更新 */
+/*! 親ウィンドウのタイトルを更新
+
+	@param bKillFocus [in] true: Activeの表示 / false: Inactiveの表示
+*/
 void CEditDoc::SetParentCaption( BOOL bKillFocus )
 {
 	if( NULL == m_hWnd ){
@@ -1437,10 +1425,6 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 			pszDes, ( (int)lstrlen( m_szGrepKey ) > nDesLen ) ? "・・・":"",
 			pszAppName
 		);
-//		wsprintf( pszCap, "Grep mode - %s",
-//			pszAppName
-//		 );
-		::SetWindowText( hwnd, pszCap );
 //#ifdef _DEBUG
 	}else
 	if( m_bDebugMode ){
@@ -1448,12 +1432,6 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 			pszAppName,
 			m_bReadOnly ? "（上書き禁止）" : ""	/* 読み取り専用モード */
 		 );
-		::SetWindowText( hwnd, pszCap );
-
-//		wsprintf( pszCap, "DEBUG MONITOR - %s",
-//			pszAppName
-//		 );
-//		::SetWindowText( hwnd, pszCap );
 //#endif
 	}else{
 
@@ -1466,7 +1444,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 				pszCap,
 				"%s%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 				szFname, szExt,
-				m_bIsModified ? "（更新）" : "",	/* 変更フラグ */
+				IsModified() ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
 				HIWORD( m_pShareData->m_dwProductVersionMS ),
 				LOWORD( m_pShareData->m_dwProductVersionMS ),
@@ -1475,7 +1453,6 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 				pszMode,	/* モード */
 				pszKeyMacroRecking
 			);
-			::SetWindowText( hwnd, pszCap );
 		}else{
 
 			//Oct. 11, 2000 jepro note： アクティブな時のタイトル表示
@@ -1483,7 +1460,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 				pszCap,
 				"%s%s - %s %d.%d.%d.%d %s%s",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
-				m_bIsModified ? "（更新）" : "",	/* 変更フラグ */
+				IsModified() ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
 				HIWORD( m_pShareData->m_dwProductVersionMS ),
 				LOWORD( m_pShareData->m_dwProductVersionMS ),
@@ -1492,10 +1469,13 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 				pszMode,	/* モード */
 				pszKeyMacroRecking
 			);
-			::SetWindowText( hwnd, pszCap );
 		}
 	}
 	// delete [] pszCap;
+	//if (strcmp( m_pszCaption, pszCap ) != 0){
+		::SetWindowText( hwnd, pszCap );
+	//	strcpy( m_pszCaption, pszCap );
+	//}
 	return;
 }
 
@@ -1949,7 +1929,7 @@ inline bool C_IsWordChar( char c ){
 	@param nLen 文字列の長さ。
 	本質的には不要であるが、高速化のために既にある値を利用する。
 */
-inline bool C_IsOperator( char* szStr, int nLen	)
+bool C_IsOperator( char* szStr, int nLen	)
 {
 	if( nLen >= 8 && szStr[ nLen - 1 ] == 'r' ){
 		if( nLen > 8 ?
@@ -3443,7 +3423,7 @@ void CEditDoc::SetFileInfo( FileInfo* pfi )
 	pfi->m_nY = nY;		/* カーソル 物理位置(折り返し無し行位置) */
 
 
-	pfi->m_bIsModified = m_bIsModified;			/* 変更フラグ */
+	pfi->m_bIsModified = IsModified() ? TRUE : FALSE;			/* 変更フラグ */
 	pfi->m_nCharCode = m_nCharCode;				/* 文字コード種別 */
 //	pfi->m_bPLSQL = m_cDlgJump.m_bPLSQL,		/* 行ジャンプが PL/SQLモードか */
 //	pfi->m_nPLSQL_E1 = m_cDlgJump.m_nPLSQL_E1;	/* 行ジャンプが PL/SQLモードのときの基点 */
@@ -3466,7 +3446,10 @@ void CEditDoc::SetReferer( HWND hwndReferer, int nRefererX, int nRefererLine )
 
 
 
-/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
+/*! ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行
+
+	@retval TRUE: 終了して良い / FALSE: 終了しない
+*/
 BOOL CEditDoc::OnFileClose( void )
 {
 	int			nRet;
@@ -3474,12 +3457,18 @@ BOOL CEditDoc::OnFileClose( void )
 	FileInfo	fi;
 	HWND		hwndMainFrame;
 	hwndMainFrame = ::GetParent( m_hWnd );
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	CMRU		cMRU;
 
 	/* MRUリストの登録 */
 	SetFileInfo( &fi );
 
+	// 2002.01.16 hor ブックマーク記録
+	strcpy( fi.m_szMarkLines, m_cDocLineMgr.GetBookMarks() );
+
 	/* MRUリストへの登録 */
-	m_cShareData.AddMRUList( &fi );
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	cMRU.Add( &fi );
 
 	if( m_bGrepRunning ){		/* Grep処理中 */
 		::MYMESSAGEBOX(
@@ -3493,7 +3482,7 @@ BOOL CEditDoc::OnFileClose( void )
 
 
 	/* テキストが変更されている場合 */
-	if( m_bIsModified
+	if( IsModified()
 	&& FALSE == m_bDebugMode	/* デバッグモニタモードのときは保存確認しない */
 //	&& FALSE == m_bReadOnly		/* 読み取り専用モード */
 	){
@@ -3568,16 +3557,28 @@ void CEditDoc::Init( void )
 	strcpy( m_szGrepKey, "" );
 	m_bGrepMode = FALSE;	/* Grepモード */
 
-	HICON	hIcon;
+//@@@ 2001.12.26 YAZAKI 大きいアイコンと小さいアイコンを別々にする。
+	HICON	hIconBig, hIconSmall;
 #ifdef _DEBUG
-	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
+	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
+	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ), IMAGE_ICON, 16, 16, 0);
 #else
-	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
+	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
+	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ), IMAGE_ICON, 16, 16, 0);
 #endif
-	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
-	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
-	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)NULL );
-	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
+	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
+	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
+
+//	HICON	hIcon;
+//#ifdef _DEBUG
+//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
+//#else
+//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
+//#endif
+//	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
+//	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
+//	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)NULL );
+//	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
 	/* ファイルの排他ロック解除 */
 	DoFileUnLock();
@@ -3632,7 +3633,7 @@ void CEditDoc::Init( void )
 
 
 	/* 変更フラグ */
-	m_bIsModified = FALSE;
+	SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
 	m_nCharCode = 0;
@@ -3714,7 +3715,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	if( IDYES != MYMESSAGEBOX( m_hwndParent, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
 		"%s\n\nこのファイルは外部のエディタ等で変更されています。%s",
 		m_szFilePath,
-		(m_bIsModified)?"\n再ロードを行うと変更が失われますがよろしいですか?":"再ロードしますか?"
+		(IsModified())?"\n再ロードを行うと変更が失われますがよろしいですか?":"再ロードしますか?"
 	) ){
 		return;
 	}

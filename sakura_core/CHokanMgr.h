@@ -89,6 +89,7 @@ protected:
 	/*
 	||  À‘•ƒwƒ‹ƒpŠÖ”
 	*/
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 };
 

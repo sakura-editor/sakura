@@ -157,10 +157,7 @@ void CEditView::InsertData_CEditView(
 
 	/* 状態遷移 */
 	if( FALSE == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-		if( bRedraw ){
-			SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-		}
+		m_pcEditDoc->SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
 
 	/* 再描画 */
@@ -440,7 +437,7 @@ void CEditView::DeleteData(
 	const CLayout*	pcLayout;
 	int			nSelectColmFrom_Old;
 	int			nSelectLineFrom_Old;
-
+	CWaitCursor cWaitCursor( m_hWnd );	// 2002.01.25 hor
 
 	nCaretPosXOld = m_nCaretPosX;
 	nCaretPosYOld = m_nCaretPosY;
@@ -474,6 +471,7 @@ void CEditView::DeleteData(
 
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
+			m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
 			bBoxSelected = TRUE;
 			nSelectColmFrom_Old = m_nSelectColmFrom;
 			nSelectLineFrom_Old = m_nSelectLineFrom;
@@ -544,8 +542,8 @@ void CEditView::DeleteData(
 						nDelLen,
 						pcMemDeleted,
 						pcOpe,				/* 編集操作要素 COpe */
-						bRedraw,
-						bRedraw,
+						FALSE/*bRedraw	2002.01.25 hor*/,
+						FALSE/*bRedraw*	2002.01.25 hor/,
 						bUndo	/* Undo操作かどうか */
 					);
 
@@ -572,6 +570,7 @@ void CEditView::DeleteData(
 					}
 				}
 			}
+			m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
 			if( DetectWidthOfLineNumberArea( TRUE ) ){
@@ -696,10 +695,7 @@ void CEditView::DeleteData(
 		);
 	}
 
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	if( bRedraw ){
-		SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-	}
+	m_pcEditDoc->SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 
 	if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() > 0 ){
 		if( m_nCaretPosY > m_pcEditDoc->m_cLayoutMgr.GetLineCount()	- 1	){
@@ -711,7 +707,7 @@ void CEditView::DeleteData(
 //				return;
 			}
 			/* 改行で終わっているか */
-			if( ( EOL_NONE != pcLayout->m_cEol.GetLen() ) ){
+			if( ( EOL_NONE != pcLayout->m_cEol ) ){
 				goto end_of_func;
 //				return;
 			}
@@ -767,8 +763,9 @@ void CEditView::Command_UNDO( void )
 	HDC			hdc;
 	PAINTSTRUCT	ps;
 	CWaitCursor cWaitCursor( m_hWnd );
-	BOOL		bUndo;	/* Undo操作かどうか */
-	bUndo = TRUE;	/* Undo操作かどうか */
+//@@@ 2002.01.03 YAZAKI 不使用のため
+//	BOOL		bUndo;	/* Undo操作かどうか */
+//	bUndo = TRUE;	/* Undo操作かどうか */
 
 	int			nCaretPosX_Before;
 	int			nCaretPosY_Before;
@@ -915,8 +912,8 @@ void CEditView::Command_UNDO( void )
 				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, FALSE );
 			}
 		}
-		m_pcEditDoc->m_bIsModified = bIsModified;	/* Undo後の変更フラグ */
-		SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
+		/* Undo後の変更フラグ */
+		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
 		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
@@ -1108,8 +1105,8 @@ void CEditView::Command_REDO( void )
 				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE );
 			}
 		}
-		m_pcEditDoc->m_bIsModified = bIsModified;	/* Redo後の変更フラグ */
-		SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
+		/* Redo後の変更フラグ */
+		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
 		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
@@ -1365,10 +1362,7 @@ void CEditView::ReplaceData_CEditView(
 	//	関数の末尾からここへ移動
 	/* 状態遷移 */
 	if( FALSE == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-		if( bRedraw ){
-			SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-		}
+		m_pcEditDoc->SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
 
 	/* 現在の選択範囲を非選択状態に戻す */
@@ -1981,7 +1975,9 @@ void CEditView::Command_BOOKMARK_SET(void)
 		pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY );
 		if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookMarked());
 	}
-	RedrawAll();
+	// 2002.01.16 hor 分割したビューも更新
+	for( int v = 0; v < 4; ++v ) if( m_pcEditDoc->m_nActivePaneIndex != v )m_pcEditDoc->m_cEditViewArr[v].Redraw();
+	Redraw();
 	return;
 }
 
@@ -1990,12 +1986,18 @@ void CEditView::Command_BOOKMARK_SET(void)
 //! 次のブックマークを探し，見つかったら移動する
 void CEditView::Command_BOOKMARK_NEXT(void)
 {
-	CDocLine*	pCDocLine;
+//	CDocLine*	pCDocLine;
 	int			nX=0;
 	int			nY;
-	int			nRet;
+//	int			nRet;
+	int			nYOld;				// hor
+	BOOL		bFound	=	FALSE;	// hor
+	BOOL		bRedo	=	TRUE;	// hor
 	nY=m_nCaretPosY_PHY;
+	nYOld=nY;						// hor
+re_do:;								// hor
 	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY,TRUE,&nY)){
+		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
 		if(m_bSelectingLock){
 			if(!IsTextSelected()) BeginSelectArea();
@@ -2006,11 +2008,25 @@ void CEditView::Command_BOOKMARK_NEXT(void)
 		if(m_bSelectingLock){
 			ChangeSelectAreaByCurrentCursor( nX, nY );
 		}
-		return;
 	}
-	if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-			"後方(↓) にブックマークが見つかりません。" );
+    // 2002.01.26 hor
+	if(m_pShareData->m_Common.m_bSearchAll){
+		if(!bFound	&&		// 見つからなかった
+			bRedo			// 最初の検索
+		){
+			nY=0;
+			bRedo=FALSE;
+			goto re_do;		// 先頭から再検索
+		}
+	}
+	if(bFound){
+		if(nYOld >= nY)SendStatusMessage("▼先頭から再検索しました");
+	}else{
+		SendStatusMessage("▽見つかりませんでした");
+		if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"後方(↓) にブックマークが見つかりません。" );
+	}
 	return;
 }
 
@@ -2019,12 +2035,18 @@ void CEditView::Command_BOOKMARK_NEXT(void)
 //! 前のブックマークを探し，見つかったら移動する．
 void CEditView::Command_BOOKMARK_PREV(void)
 {
-	CDocLine*	pCDocLine;
+//	CDocLine*	pCDocLine;
 	int			nX=0;
 	int			nY;
-	int			nRet;
+//	int			nRet;
+	int			nYOld;				// hor
+	BOOL		bFound	=	FALSE;	// hor
+	BOOL		bRedo	=	TRUE;	// hor
 	nY=m_nCaretPosY_PHY;
+	nYOld=nY;						// hor
+re_do:;								// hor
 	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY,FALSE,&nY)){
+		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
 		if(m_bSelectingLock){
 			if(!IsTextSelected()) BeginSelectArea();
@@ -2035,11 +2057,25 @@ void CEditView::Command_BOOKMARK_PREV(void)
 		if(m_bSelectingLock){
 			ChangeSelectAreaByCurrentCursor( nX, nY );
 		}
-		return;
 	}
-	if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-			"前方(↑) にブックマークが見つかりません。" );
+    // 2002.01.26 hor
+	if(m_pShareData->m_Common.m_bSearchAll){
+		if(!bFound	&&	// 見つからなかった
+			bRedo		// 最初の検索
+		){
+			nY=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
+			bRedo=FALSE;
+			goto re_do;	// 末尾から再検索
+		}
+	}
+	if(bFound){
+		if(nYOld <= nY)SendStatusMessage("▲末尾から再検索しました");
+	}else{
+		SendStatusMessage("△見つかりませんでした");
+		if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"前方(↑) にブックマークが見つかりません。" );
+	}
 	return;
 }
 
@@ -2049,9 +2085,46 @@ void CEditView::Command_BOOKMARK_PREV(void)
 void CEditView::Command_BOOKMARK_RESET(void)
 {
 	m_pcEditDoc->m_cDocLineMgr.ResetAllBookMark();
-	RedrawAll();
+	// 2002.01.16 hor 分割したビューも更新
+	for( int v = 0; v < 4; ++v ) if( m_pcEditDoc->m_nActivePaneIndex != v )m_pcEditDoc->m_cEditViewArr[v].Redraw();
+	Redraw();
 	return;
 }
+
+
+//指定パターンに一致する行をマーク 2002.01.16 hor
+void CEditView::Command_BOOKMARK_PATTERN(const char* Pattern)
+{
+	if(Pattern==NULL){
+		//検索or置換ダイアログから呼び出された
+		if(!ChangeCurRegexp())return;
+		m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
+			m_pShareData->m_szSEARCHKEYArr[0],		/* 検索条件 */
+			m_pShareData->m_Common.m_bRegularExp,	/* 1==正規表現 */
+			m_pShareData->m_Common.m_bLoHiCase,		/* 1==英大文字小文字の区別 */
+			m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
+			&m_CurRegexp							/* 正規表現コンパイルデータ */
+		);
+	}else{
+		//外部マクロから呼び出された (マクロの引数には正規表現が指定されているものとする)
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ) return;
+		m_CurRegexp.Compile( Pattern );
+		m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
+			Pattern,								/* 検索条件 */
+			1,										/* 1==正規表現 */
+			m_pShareData->m_Common.m_bLoHiCase,		/* 1==英大文字小文字の区別 */
+			m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
+			&m_CurRegexp							/* 正規表現コンパイルデータ */
+		);
+		//元の検索パターンをコンパイル
+		if(m_pShareData->m_Common.m_bRegularExp)m_CurRegexp.Compile( m_szCurSrchKey );
+	}
+	// 2002.01.16 hor 分割したビューも更新
+	for( int v = 0; v < 4; ++v ) if( m_pcEditDoc->m_nActivePaneIndex != v )m_pcEditDoc->m_cEditViewArr[v].Redraw();
+	Redraw();
+	return;
+}
+
 
 
 /*! TRIM Step1
@@ -2184,6 +2257,7 @@ bool SortByKeyDesc(SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1>pst2->sK
 	ファイルの最終行はソート対象外にしています
 	@author hor
 	@date 2001.12.03 hor 新規作成
+	@date 2001.12.21 hor 選択範囲の調整ロジックを訂正
 */
 void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 {
@@ -2208,9 +2282,10 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	}
 
 	if( m_bBeginBoxSelect ){
-		if( m_nSelectLineTo >= m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1 ) {
-			--m_nSelectLineTo;
-		}
+	// 2001.12.21 hor 間違い
+	//	if( m_nSelectLineTo >= m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1 ) {
+	//		--m_nSelectLineTo;
+	//	}
 		nLFO = m_nSelectLineFrom;
 		nCFO = m_nSelectColmFrom;
 		nLTO = m_nSelectLineTo;
@@ -2236,8 +2311,17 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		m_nSelectColmTo,m_nSelectLineTo,
 		&nSelectColToOld,&nSelectLineToOld
 	);
-	if( nSelectColToOld > 0 && nSelectLineToOld < m_pcEditDoc->m_cDocLineMgr.GetLineCount()-1 ) {
+	if( bBeginBoxSelectOld ){
 		++nSelectLineToOld;
+	}else{
+		// カーソル位置が行頭じゃない ＆ 選択範囲の終端に改行コードがある場合は
+		// その行も選択範囲に加える
+		if ( nSelectColToOld > 0 ) {
+			const CLayout* pcLayout=m_pcEditDoc->m_cLayoutMgr.Search(nSelectLineToOld);
+			if( NULL != pcLayout && EOL_NONE != pcLayout->m_cEol ){
+				++nSelectLineToOld;
+			}
+		}
 	}
 	nSelectColFromOld = 0;
 	nSelectColToOld = 0;
@@ -2346,8 +2430,9 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	
 	@author hor
 	@date 2001.12.03 hor 新規作成
+	@date 2001.12.21 hor 選択範囲の調整ロジックを訂正
 */
-void CEditView::Command_MARGE(void)
+void CEditView::Command_MERGE(void)
 {
 	int			nSelectLineFromOld;	/* 範囲選択開始行 */
 	int			nSelectColFromOld ; /* 範囲選択開始桁 */
@@ -2377,9 +2462,17 @@ void CEditView::Command_MARGE(void)
 		m_nSelectColmTo,m_nSelectLineTo,
 		&nSelectColToOld,&nSelectLineToOld
 	);
-	if( nSelectColToOld > 0 && nSelectLineToOld < m_pcEditDoc->m_cDocLineMgr.GetLineCount()-1 ) {
-		++nSelectLineToOld;
+
+	// 2001.12.21 hor
+	// カーソル位置が行頭じゃない ＆ 選択範囲の終端に改行コードがある場合は
+	// その行も選択範囲に加える
+	if ( nSelectColToOld > 0 ) {
+		const CLayout* pcLayout=m_pcEditDoc->m_cLayoutMgr.Search(nSelectLineToOld);
+		if( NULL != pcLayout && EOL_NONE != pcLayout->m_cEol ){
+			++nSelectLineToOld;
+		}
 	}
+
 	nSelectColFromOld = 0;
 	nSelectColToOld = 0;
 

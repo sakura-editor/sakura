@@ -14,6 +14,19 @@
 #include "CDlgPrintPage.h"
 #include "sakura_rc.h"
 
+// 印刷 CDlgPrintPage.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12400
+	IDOK,							HIDOK_PP,				//OK
+	IDCANCEL,						HIDCANCEL_PP,			//キャンセル
+	IDC_EDIT_FROM,					HIDC_PP_EDIT_FROM,		//ページから
+	IDC_EDIT_TO,					HIDC_PP_EDIT_TO,		//ページまで
+	IDC_RADIO_ALL,					HIDC_PP_RADIO_ALL,		//すべて
+	IDC_RADIO_FROMTO,				HIDC_PP_RADIO_FROMTO,	//指定
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 CDlgPrintPage::CDlgPrintPage()
 {
 	return;
@@ -137,5 +150,11 @@ BOOL CDlgPrintPage::OnBnClicked( int wID )
 	return FALSE;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgPrintPage::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

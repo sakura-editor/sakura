@@ -64,6 +64,9 @@ VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
 //	DWORD	dwGrepParam
 //);
 
+//@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
+int CEditView::m_pnDx[10240 + 10];
+
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {
 //	STGMEDIUM	stgMedium;
@@ -987,9 +990,9 @@ LRESULT CEditView::DispatchEvent(
 
 
 	case WM_PAINT:
-		hdc = BeginPaint( hwnd, &ps );
+		hdc = ::BeginPaint( hwnd, &ps );
 		OnPaint( hdc, &ps, FALSE );
-		EndPaint(hwnd, &ps);
+		::EndPaint(hwnd, &ps);
 		return 0L;
 
 	case WM_CLOSE:
@@ -1148,7 +1151,7 @@ void CEditView::OnSize( int cx, int cy )
 	::ReleaseDC( m_hWnd, hdc );
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	SetParentCaption();	//	[Q] genta 本当に必要？
 
 
 //	/* 現在のウィンドウ幅で折り返し */
@@ -2141,6 +2144,15 @@ void CEditView::DrawSelectArea( void )
 
 //	MYTRACE( "DrawSelectArea()  m_bBeginBoxSelect=%s\n", m_bBeginBoxSelect?"TRUE":"FALSE" );
 	if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
+		// 2001.12.21 hor 矩形エリアにEOFがある場合、RGN_XORで結合すると
+		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う
+		if((m_nViewTopLine+m_nViewRowNum+1>=m_pcEditDoc->m_cLayoutMgr.GetLineCount()) &&
+		   (m_nSelectLineTo+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ||
+			m_nSelectLineToOld+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) ) {
+			Redraw();
+			return;
+		}
+
 		hdc = ::GetDC( m_hWnd );
 		hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -3067,16 +3079,24 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 			}
 		}
 		if( i >= nLineLen ){
+// From 2001.12.21 hor フリーカーソルOFFでEOFのある行の直前がマウスで選択できないバグの修正
+			if( nNewY +1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
+				EOL_NONE == pcLayout->m_cEol.GetLen() ){
+				nPosX = LineIndexToColmn( pLine, nLineLen, nLineLen );
+			}else
+// To 2001.12.21 hor
 			/* フリーカーソルモードか */
 			if( m_pShareData->m_Common.m_bIsFreeCursorMode
 			  || ( m_bBeginSelect && m_bBeginBoxSelect )	/* マウス範囲選択中 && 矩形範囲選択中 */
 			  || m_bDragMode /* OLE DropTarget */
 			){
-				if( nNewY + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
-					pLine[ nLineLen - 1 ] != '\n' && pLine[ nLineLen - 1 ] != '\r'
-				){
-					nPosX = LineIndexToColmn( pLine, nLineLen, nLineLen );
-				}else{
+// From 2001.12.21 hor
+//				if( nNewY + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
+//					pLine[ nLineLen - 1 ] != '\n' && pLine[ nLineLen - 1 ] != '\r'
+//				){
+//					nPosX = LineIndexToColmn( pLine, nLineLen, nLineLen );
+//				}else{
+// To 2001.12.21 hor
 					nPosX = nNewX;
 					if( nPosX < 0 ){
 						nPosX = 0;
@@ -3084,7 +3104,7 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 					if( nPosX > m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){	/* 折り返し文字数 */
 						nPosX = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
 					}
-				}
+//				}
 			}
 		}
 		nScrollRowNum = MoveCursor( nPosX, nNewY, TRUE, 1000 );
@@ -3166,6 +3186,17 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 						if( IsTextSelected() ){	/* テキストが選択されているか */
 							/* 現在の選択範囲を非選択状態に戻す */
 							DisableSelectArea( TRUE );
+							
+//@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
+							/* カーソル移動。 */
+							if( yPos >= m_nViewAlignTop && yPos < m_nViewAlignTop  + m_nViewCy ){
+								if( xPos >= m_nViewAlignLeft && xPos < m_nViewAlignLeft + m_nViewCx ){
+									MoveCursorToPoint( xPos, yPos );
+								}else
+								if( xPos < m_nViewAlignLeft ){
+									MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
+								}
+							}
 						}
 					}
 				}
@@ -3407,8 +3438,14 @@ normal_action:;
 //			BeginSelectArea( );
 			m_bBeginLineSelect = TRUE;
 
-			/* カーソル下移動 */
-			Command_DOWN( TRUE, FALSE );
+			// 2001.12.21 hor EOFを含む行で行番号をクリックしても行選択してくれないバグの対策
+			if(m_nCaretPosY+1<m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
+				/* カーソル下移動 */
+				Command_DOWN( TRUE, FALSE );
+			}else{
+				/* カーソル行末移動 */
+				Command_GOLINEEND( TRUE, FALSE );
+			}
 			m_nSelectLineBgnTo = m_nSelectLineTo;	/* 範囲選択開始行(原点) */
 			m_nSelectColmBgnTo = m_nSelectColmTo;	/* 範囲選択開始桁(原点) */
 		}else{
@@ -3564,29 +3601,29 @@ void CEditView::OnRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	}
 	OnLBUTTONDOWN( fwKeys, xPos , yPos );
 	return;
-
-	int			nIdx;
-	int			nFuncID;
-	nIdx = 0;
-	/* Ctrl,ALT,キーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
-		nIdx |= _SHIFT;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
-		nIdx |= _CTRL;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
-		nIdx |= _ALT;
-	}
-	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[1].m_nFuncCodeArr[nIdx];
-	if( nFuncID != 0 ){
-		/* コマンドコードによる処理振り分け */
-		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
-	}
-//	/* 右クリックメニュー */
-//	Command_MENU_RBUTTON();
-	return;
+// 2001.12.21 hor 以下、実行されないのでコメントアウトします (行頭////はもともとコメント行です)
+//	int			nIdx;
+//	int			nFuncID;
+//	nIdx = 0;
+//	/* Ctrl,ALT,キーが押されていたか */
+//	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
+//		nIdx |= _SHIFT;
+//	}
+//	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
+//		nIdx |= _CTRL;
+//	}
+//	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
+//		nIdx |= _ALT;
+//	}
+//	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
+//	nFuncID = m_pShareData->m_pKeyNameArr[1].m_nFuncCodeArr[nIdx];
+//	if( nFuncID != 0 ){
+//		/* コマンドコードによる処理振り分け */
+//		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
+//	}
+////	/* 右クリックメニュー */
+////	Command_MENU_RBUTTON();
+//	return;
 }
 
 /* マウス右ボタン開放 */
@@ -3722,30 +3759,31 @@ VOID CEditView::OnTimer(
 		// 1999.12.18 クライアント領域内ではタイマー自動ドラッグ+ロールしない
 		return;
 
-//		rc.top += m_nViewAlignTop;
-		RECT rc2;
-		rc2 = rc;
-		rc2.bottom = rc.top + m_nViewAlignTop + ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-		if( PtInRect( &rc2, po )
-		 && 0 < m_nViewTopLine
-		){
-			OnMOUSEMOVE( 0, m_nMouseRollPosXOld, m_nMouseRollPosYOld );
-			return;
-		}
-		rc2 = rc;
-		rc2.top = rc.bottom - ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-		if( PtInRect( &rc2, po )
-			&& m_pcEditDoc->m_cLayoutMgr.GetLineCount() > m_nViewTopLine + m_nViewRowNum
-		){
-			OnMOUSEMOVE( 0, m_nMouseRollPosXOld, m_nMouseRollPosYOld );
-			return;
-		}
-
-//		rc.top += 48;
-//		rc.bottom -= 48;
-//		if( !PtInRect( &rc, po ) ){
+// 2001.12.21 hor 以下、実行されないのでコメントアウトします (行頭////はもともとコメント行です)
+////		rc.top += m_nViewAlignTop;
+//		RECT rc2;
+//		rc2 = rc;
+//		rc2.bottom = rc.top + m_nViewAlignTop + ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
+//		if( PtInRect( &rc2, po )
+//		 && 0 < m_nViewTopLine
+//		){
 //			OnMOUSEMOVE( 0, m_nMouseRollPosXOld, m_nMouseRollPosYOld );
+//			return;
 //		}
+//		rc2 = rc;
+//		rc2.top = rc.bottom - ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
+//		if( PtInRect( &rc2, po )
+//			&& m_pcEditDoc->m_cLayoutMgr.GetLineCount() > m_nViewTopLine + m_nViewRowNum
+//		){
+//			OnMOUSEMOVE( 0, m_nMouseRollPosXOld, m_nMouseRollPosYOld );
+//			return;
+//		}
+//
+////		rc.top += 48;
+////		rc.bottom -= 48;
+////		if( !PtInRect( &rc, po ) ){
+////			OnMOUSEMOVE( 0, m_nMouseRollPosXOld, m_nMouseRollPosYOld );
+////		}
 	}
 	return;
 }
@@ -4022,8 +4060,8 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		if( nRollLineNum < 1 ){
 			nRollLineNum = 1;
 		}
-		if( nRollLineNum > 10 ){
-			nRollLineNum = 10;
+		if( nRollLineNum > 30 ){	//@@@ YAZAKI 2001.12.31 10→30へ。
+			nRollLineNum = 30;
 		}
 	}
 	for( i = 0; i < nRollLineNum; ++i ){
@@ -5384,8 +5422,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	m_nSelectColmTo		= nSelectColToOld;		/* 範囲選択終了桁 */
 	m_bBeginBoxSelect	= bBeginBoxSelectOld;
 
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();					/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true);	/* 変更フラグ */
 
 	/* 再描画 */
 	//	::UpdateWindow();
@@ -5802,8 +5839,9 @@ void CEditView::DrawCaretPosInfo( void )
 	//	To Here
 
 
-	/* ステータスバーに状態を書き出す */
+	/* ステータス情報を書き出す */
 	if( NULL == pCEditWnd->m_hwndStatusBar ){
+		/* ウィンドウ右上に書き出す */
 		hdc = ::GetWindowDC( hwndFrame );
 		poFrame.x = 0;
 		poFrame.y = 0;
@@ -5876,11 +5914,20 @@ void CEditView::DrawCaretPosInfo( void )
 		::SelectObject( hdc, hFontOld );
 		::ReleaseDC( hwndFrame, hdc );
 	}else{
+		/* ステータスバーに状態を書き出す */
+//		char	szText_0[64];
 		char	szText_1[64];
 		char	szText_2[64];
 //		char	szText_3[64];
 //		char	szText_4[64];
 		char	szText_5[64];
+//		wsprintf( szText_0, "Y.%d X.%d  L.%d.%d  C.%d.%d",
+//			m_nCaretPosY_PHY, m_nCaretPosX_PHY,
+//			m_nSelectLineFrom,
+//			m_nSelectLineTo,
+//			m_nSelectColmFrom,
+//			m_nSelectColmTo
+//		);
 //		wsprintf( szText_1, "%8d 行 %5d 桁", m_nCaretPosY + 1, m_nCaretPosX + 1 );
 		wsprintf( szText_1, "%6d 行 %5d 桁", m_nCaretPosY + 1, m_nCaretPosX + 1 );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
@@ -6459,6 +6506,8 @@ DWORD CEditView::DoGrep(
 	pszWork = "\r\n\r\n";
 	cmemMessage.AppendSz( "\r\n\r\n" );
 	pszWork = cmemMessage.GetPtr( &nWork );
+//@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
+	int tmp_PosY_PHY = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( 0 < nWork ){
 		Command_ADDTAIL( pszWork, nWork );
 	}
@@ -6505,13 +6554,13 @@ DWORD CEditView::DoGrep(
 	}
 	wsprintf( szPath, "%d 個が検索されました。\r\n", nHitCount );
 	Command_ADDTAIL( szPath, lstrlen( szPath ) );
-	Command_GOFILEEND( FALSE );
-
+//	Command_GOFILEEND( FALSE );
 #ifdef _DEBUG
 	wsprintf( szPath, "処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
 	Command_ADDTAIL( szPath, lstrlen( szPath ) );
-	Command_GOFILEEND( FALSE );
+//	Command_GOFILEEND( FALSE );
 #endif
+	MoveCursor( 0, tmp_PosY_PHY, TRUE );	//	カーソルをGrep直前の位置に戻す
 
 	cDlgCancel.CloseDialog( 0 );
 
@@ -6534,7 +6583,7 @@ DWORD CEditView::DoGrep(
 
 	//	Apr. 13, 2001 genta
 	//	Grep実行後はファイルを変更無しの状態にする．
-	m_pcEditDoc->m_bIsModified = FALSE;
+	m_pcEditDoc->SetModified(false,false);
 
 	m_pcEditDoc->m_bGrepRunning = FALSE;
 	m_bDoing_UndoRedo = FALSE;
@@ -6642,6 +6691,7 @@ int CEditView::DoGrepTree(
 					) ){
 						goto cancel_return;
 					}
+					::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダから戻ってきたら...
 				}
 			}while( TRUE == ::FindNextFile( hFind, &w32fd ) );
 			::FindClose( hFind );
@@ -8189,7 +8239,8 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					}
 					//読み出した文字列をチェックする
 					// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
-					for( j=0; j<read_cnt-1; j++ ) {
+					//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
+					for( j=0; j<(int)read_cnt/*-1*/; j++ ) {
 						if( IsKanji1(work[j]) ) {
 							j++;
 						} else {
@@ -8200,7 +8251,7 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 							}
 						}
 					}
-					if( j == read_cnt ) {	//ぴったり出力できる場合
+					if( j == (int)read_cnt ) {	//ぴったり出力できる場合
 						work[read_cnt] = 0;
 						m_cShareData.TraceOut( "%s", work );
 						bufidx = 0;
@@ -8428,5 +8479,17 @@ finish:
 //}
 //
 
+//2002.01.26 hor
+//  検索／置換／ブックマーク検索後の状態をステータスバーに表示する
+void CEditView::SendStatusMessage( const char* msg ){
+	CEditWnd* pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ) , GWL_USERDATA );
+	if( NULL != pCEditWnd->m_hwndStatusBar ){
+		::SendMessage( 
+			pCEditWnd->m_hwndStatusBar,
+			SB_SETTEXT,
+			0 | SBT_NOBORDERS,
+			(LPARAM) (LPINT)msg );
+	}
+}
 
 /*[EOF]*/

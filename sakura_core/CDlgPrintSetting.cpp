@@ -18,6 +18,40 @@
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
 
+// 印刷設定 CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12500
+	IDC_BUTTON_EDITSETTINGNAME,		HIDC_PS_BUTTON_EDITSETTINGNAME,	//設定名変更
+	IDOK,							HIDOK_PS,					//OK
+	IDCANCEL,						HIDCANCEL_PS,				//キャンセル
+	IDC_BUTTON_HELP,				HIDC_PS_BUTTON_HELP,		//ヘルプ
+	IDC_CHECK_WORDWRAP,				HIDC_PS_CHECK_WORDWRAP,		//ワードラップ
+	IDC_CHECK_LINENUMBER,			HIDC_PS_CHECK_LINENUMBER,	//行番号
+	IDC_COMBO_FONT_HAN,				HIDC_PS_COMBO_FONT_HAN,		//半角フォント
+	IDC_COMBO_FONT_ZEN,				HIDC_PS_COMBO_FONT_ZEN,		//全角フォント
+	IDC_COMBO_SETTINGNAME,			HIDC_PS_COMBO_SETTINGNAME,	//ページ設定
+	IDC_COMBO_PAPER,				HIDC_PS_COMBO_PAPER,		//用紙サイズ
+	IDC_COMBO_PAPERORIENT,			HIDC_PS_COMBO_PAPERORIENT,	//用紙向き
+	IDC_EDIT_FONTWIDTH,				HIDC_PS_EDIT_FONTWIDTH,		//フォント幅
+	IDC_EDIT_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//行送り
+	IDC_EDIT_DANSUU,				HIDC_PS_EDIT_DANSUU,		//段数
+	IDC_EDIT_DANSPACE,				HIDC_PS_EDIT_DANSPACE,		//段の隙間
+	IDC_EDIT_MARGINTY,				HIDC_PS_EDIT_MARGINTY,		//余白上
+	IDC_EDIT_MARGINBY,				HIDC_PS_EDIT_MARGINBY,		//余白下
+	IDC_EDIT_MARGINLX,				HIDC_PS_EDIT_MARGINLX,		//余白左
+	IDC_EDIT_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//余白右
+	IDC_SPIN_FONTWIDTH,				HIDC_PS_EDIT_FONTWIDTH,		//12570,
+	IDC_SPIN_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//12571,
+	IDC_SPIN_DANSUU,				HIDC_PS_EDIT_DANSUU,		//12572,
+	IDC_SPIN_DANSPACE,				HIDC_PS_EDIT_DANSPACE,		//12573,
+	IDC_SPIN_MARGINTY,				HIDC_PS_EDIT_MARGINTY,		//12574,
+	IDC_SPIN_MARGINBY,				HIDC_PS_EDIT_MARGINBY,		//12575,
+	IDC_SPIN_MARGINLX,				HIDC_PS_EDIT_MARGINLX,		//12576,
+	IDC_SPIN_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//12577,
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 #define IDT_PRINTSETTING 1467
 
 int CALLBACK SetData_EnumFontFamProc(
@@ -232,7 +266,7 @@ void CDlgPrintSetting::SetData( void )
 		"B4 Envelope(250 x 353 mm)",
 		"B5 Envelope(176 x 250 mm)",
 		"B6 Envelope(176 x 125 mm)",
-		"Italy Envelope(110 x 230 mm)"
+		"Italy Envelope(110 x 230 mm)",
 		"Letter、8 1/2x11 inch",
 		"Legal、8 1/2x14 inch",
 		"C sheet、17x22 inch",
@@ -803,8 +837,10 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 		&nPaperAllHeight,
 		&dmDummy
 	) ){
-		nPaperAllWidth = 210 * 10;		/* 用紙幅 */
-		nPaperAllHeight = 297 * 10;		/* 用紙高さ */
+	// 2001.12.21 hor GetPaperSize失敗時はそのまま終了
+	//	nPaperAllWidth = 210 * 10;		/* 用紙幅 */
+	//	nPaperAllHeight = 297 * 10;		/* 用紙高さ */
+		return FALSE;
 	}
 	/* 行あたりの文字数(行番号込み) */
 	nEnableColmns =
@@ -825,5 +861,11 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	return TRUE;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgPrintSetting::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

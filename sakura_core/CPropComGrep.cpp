@@ -16,13 +16,24 @@
 #include "CPropCommon.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10500
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10500
+	IDC_CHECK_bGrepExitConfirm,		HIDC_CHECK_bGrepExitConfirm,	//GREPの保存確認
+	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//タグジャンプ（エンターキー）
+	IDC_CHECK_GTJW_LDBLCLK,			HIDC_CHECK_GTJW_LDBLCLK,		//タグジャンプ（ダブルクリック）
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10500
 	IDC_CHECK_bGrepExitConfirm,		10510,	//GREPの保存確認
 	IDC_CHECK_GTJW_RETURN,			10511,	//タグジャンプ（エンターキー）
 	IDC_CHECK_GTJW_LDBLCLK,			10512,	//タグジャンプ（ダブルクリック）
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -75,6 +86,10 @@ BOOL CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wPara
 				/* ダイアログデータの取得 p1 */
 				GetData_PROP_GREP( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_GREP;
+				return TRUE;
 			}
 			break;
 //		}
@@ -88,8 +103,15 @@ BOOL CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wPara
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -122,7 +144,8 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_GREP;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_GREP;
 
 	/* Grepモードで保存確認するか */
 	m_Common.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );

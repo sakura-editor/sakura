@@ -21,6 +21,21 @@
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 
+// ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12300
+	IDC_BUTTON1,					HIDC_CMP_BUTTON1,			//上下に表示
+	IDOK2,							HIDOK2_CMP,					//左右に表示
+	IDOK,							HIDOK_CMP,					//OK
+	IDCANCEL,						HIDCANCEL_CMP,				//キャンセル
+	IDC_BUTTON_HELP,				HIDC_CMP_BUTTON_HELP,		//ヘルプ
+	IDC_CHECK_TILE_H,				HIDC_CMP_CHECK_TILE_H,		//左右に表示
+	IDC_LIST_FILES,					HIDC_CMP_LIST_FILES,		//ファイル一覧
+	IDC_STATIC_COMPARESRC,			HIDC_CMP_STATIC_COMPARESRC,	//ソースファイル
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 CDlgCompare::CDlgCompare()
 {
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
@@ -120,7 +135,9 @@ void CDlgCompare::SetData( void )
 //			pfi = (FileInfo*)m_pShareData->m_szWork;
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
-			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
+//@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
+//			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
+			if (pEditNodeArr[i].m_hWnd == pCEditDoc->m_hwndParent){
 				continue;
 			}
 			wsprintf( szMenu, "%s %s",
@@ -192,5 +209,11 @@ int CDlgCompare::GetData( void )
 	return TRUE;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgCompare::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

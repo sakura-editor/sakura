@@ -73,7 +73,7 @@
 #define F_RTRIM				30281	//右(末尾)の空白を削除	2001.12.03 hor
 #define F_SORT_ASC			30282	//選択行の昇順ソート	2001.12.06 hor
 #define F_SORT_DESC			30283	//選択行の降順ソート	2001.12.06 hor
-#define F_MARGE				30284	//選択行のマージ		2001.12.06 hor
+#define F_MERGE				30284	//選択行のマージ		2001.12.06 hor
 
 
 /* カーソル移動系 */
@@ -225,7 +225,7 @@
 #define F_BOOKMARK_PREV		30972	//前のブックマークへ
 #define F_BOOKMARK_RESET	30973	//ブックマークの全解除
 #define F_BOOKMARK_VIEW		30974	//ブックマークの一覧
-
+#define F_BOOKMARK_PATTERN	30975	//パターンに一致する行をマーク
 
 /* モード切り替え系 */
 #define F_CHGMOD_INS		31001	//挿入／上書きモード切り替え
@@ -259,6 +259,7 @@
 #define F_OPTION_KEYWORD	32011	/* 共通設定『強調キーワード』 */
 #define F_OPTION_HELPER		32012	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
+#define F_OPTION_MACRO		32013	/* 共通設定『マクロ』 */
 
 #define F_FONT				31120	/* フォント設定 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更

@@ -247,7 +247,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 {
 	WNDCLASS	wc;
 //	HANDLE		hMutex;
-	HWND		hWnd;
+//	HWND		hWnd;
 //	MSG			msg;
 	ATOM		atom;
 //	char		szMutexName[260];
@@ -284,11 +284,16 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 		wc.lpszMenuName		= NULL;
 		wc.lpszClassName	= m_pszAppName;
 		atom = RegisterClass( &wc );
+		if( 0 == atom ){
+			::MessageBox( NULL, "CEditApp::Create()\nウィンドウクラスを登録できませんでした。",
+					GSTR_APPNAME, MB_OK | MB_ICONSTOP );
+		}
 //	}else{
 //		return NULL;
 //	}
 	g_m_pCEditApp = this;
-	hWnd = ::CreateWindow(
+
+	/*hWnd =*/ ::CreateWindow(
 		m_pszAppName,						// pointer to registered class name
 //		pszTitle,							// pointer to registered class name	//Nov. 12, 2000 JEPROtestnow トレイにバージョンが表示されなくなってしまったので修正してみたが失敗
 		m_pszAppName,						// pointer to window name
@@ -407,10 +412,8 @@ void CEditApp::MessageLoop( void )
 //			::DispatchMessage( &msg );
 //		}
 //	}
-	return;
+//	return;
 }
-
-
 
 
 
@@ -490,7 +493,7 @@ LRESULT CEditApp::DispatchEvent(
 	HWND			hwndFocused;
 	char			szClassName[100];
 	char			szText[256];
-	UINT				idCtl;	/* コントロールのID */
+//	UINT				idCtl;	/* コントロールのID */
 	MEASUREITEMSTRUCT*	lpmis;
 //	char				szLabel[1024];
 //	LPMEASUREITEMSTRUCT	lpmis;	/* 項目サイズ情報 */
@@ -504,7 +507,7 @@ LRESULT CEditApp::DispatchEvent(
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 		return m_CMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
 	case WM_DRAWITEM:
-		idCtl = (UINT) wParam;				/* コントロールのID */
+//		idCtl = (UINT) wParam;				/* コントロールのID */
 		lpdis = (DRAWITEMSTRUCT*) lParam;	/* 項目描画情報 */
 		switch( lpdis->CtlType ){
 		case ODT_MENU:	/* オーナー描画メニュー */
@@ -514,7 +517,7 @@ LRESULT CEditApp::DispatchEvent(
 		}
 		return FALSE;
 	case WM_MEASUREITEM:
-		idCtl = (UINT) wParam;					// control identifier
+//		idCtl = (UINT) wParam;					// control identifier
 		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
 		switch( lpmis->CtlType ){
 		case ODT_MENU:	/* オーナー描画メニュー */
@@ -563,8 +566,6 @@ LRESULT CEditApp::DispatchEvent(
 			int			nLen;
 			int			nLenKey;
 			char*		pszKey;
-			HWND		hwndFrame;
-			hwndFrame = (HWND)wParam;
 			strcpy( szHtmlHelpFile, m_pShareData->m_szWork );
 			nLen = lstrlen( szHtmlHelpFile );
 			nLenKey = lstrlen( &m_pShareData->m_szWork[nLen + 1] );
@@ -874,6 +875,19 @@ LRESULT CEditApp::DispatchEvent(
 //						CEditView::Command_EXTHELP1();
 //					}
 //					break;
+					do{
+						if( 0 != strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
+							break;
+						}else
+						{
+							::MessageBeep( MB_ICONHAND );
+						}
+					}while(IDYES == ::MYMESSAGEBOX( 
+							NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST,
+							GSTR_APPNAME,
+							"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
+					);/*do-while*/
+#if 0
 					{
 					retry:;
 						if( 0 == strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
@@ -892,12 +906,13 @@ LRESULT CEditApp::DispatchEvent(
 							}
 						}
 
-						CMemory		cmemCurText;
+//						CMemory		cmemCurText;
 						/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 //						GetCurrentTextForSearch( cmemCurText );
 //						::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr( NULL ) );
-						break;
+//						break;
 					}
+#endif
 					break;
 				case F_EXTHTMLHELP:
 					/* 外部HTMLヘルプ */
@@ -945,52 +960,24 @@ LRESULT CEditApp::DispatchEvent(
 						BOOL			bReadOnly;
 						HWND			hWndOwner;
 						FileInfo*		pfi;
-						int				i;
-						int				j;
+//						int				i;
+//						int				j;
 						char**			ppszMRU;
 						char**			ppszOPENFOLDER;
 
 						/* MRUリストのファイルのリスト */
-						ppszMRU = NULL;
-						j = 0;
-						if( m_pShareData->m_nMRUArrNum > 0 ){
-							for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-								if( m_pShareData->m_Common.m_nMRUArrNum_MAX <= i ){
-									break;
-								}
-								++j;
-							}
-						}
-						ppszMRU = new char*[j + 1];
-						if( j > 0 ){
-							for( i = 0; i < j; ++i ){
-					//			ppszMRU[i] = m_pShareData->m_Types[m_nSettingType].m_szMRUArr[i];
-								ppszMRU[i] = m_pShareData->m_fiMRUArr[i].m_szPath;
-							}
-						}
-						ppszMRU[j] = NULL;
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUにすべて依頼する
+						CMRU cMRU;
+//						ppszMRU = NULL;
+						ppszMRU = new char*[ cMRU.Length() + 1 ];
+						cMRU.GetPathList(ppszMRU);
 
 						/* OPENFOLDERリストのファイルのリスト */
-						ppszOPENFOLDER = NULL;
-						j = 0;
-						if( m_pShareData->m_nOPENFOLDERArrNum > 0 ){
-							for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
-								if( m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX <= i ){
-									break;
-								}
-								++j;
-							}
-						}
-						ppszOPENFOLDER = new char*[j + 1];
-						if( j > 0 ){
-							for( i = 0; i < j; ++i ){
-					//			ppszOPENFOLDER[i] = m_pShareData->m_Types[m_nSettingType].m_szOPENFOLDERArr[i];
-								ppszOPENFOLDER[i] = m_pShareData->m_szOPENFOLDERArr[i];
-							}
-						}
-						ppszOPENFOLDER[j] = NULL;
-
-
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+						CMRUFolder cMRUFolder;
+//						ppszOPENFOLDER = NULL;
+						ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
+						cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 						/* ファイルオープンダイアログの初期化 */
 						strcpy( szPath, "" );
@@ -1000,7 +987,7 @@ LRESULT CEditApp::DispatchEvent(
 							m_hInstance,
 							NULL/*m_hWnd*/,
 							"*.*",
-							m_pShareData->m_fiMRUArr[0].m_szPath,
+							ppszMRU[0],//@@@ 2001.12.26 YAZAKI m_fiMRUArrにはアクセスしない
 							(const char **)ppszMRU,
 							(const char **)ppszOPENFOLDER
 						);
@@ -1121,20 +1108,24 @@ LRESULT CEditApp::DispatchEvent(
 //						}
 						/* 新しい編集ウィンドウを開く */
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+						CMRU cMRU;
+						FileInfo openFileInfo;
+						cMRU.GetFileInfo(nId - IDM_SELMRU, &openFileInfo);
+
 						if( m_pShareData->m_Common.GetRestoreCurPosition() ){
-							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &(m_pShareData->m_fiMRUArr[nId - IDM_SELMRU]), FALSE );
+							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &openFileInfo, FALSE );
 						}
 						else {
 							CEditApp::OpenNewEditor( m_hInstance, m_hWnd,
-								m_pShareData->m_fiMRUArr[nId - IDM_SELMRU].m_szPath,
-								m_pShareData->m_fiMRUArr[nId - IDM_SELMRU].m_nCharCode,
+								openFileInfo.m_szPath,
+								openFileInfo.m_nCharCode,
 								FALSE );
 
 						}
 						//	To Here Oct. 27, 2000 genta
 					}else
 					if( nId - IDM_SELOPENFOLDER  >= 0 &&
-//						nId - IDM_SELOPENFOLDER  < (( m_pShareData->m_nOPENFOLDERArrNum < m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX )?m_pShareData->m_nOPENFOLDERArrNum:m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX )
 						nId - IDM_SELOPENFOLDER  < 999
 					){
 						{
@@ -1145,50 +1136,26 @@ LRESULT CEditApp::DispatchEvent(
 							BOOL			bReadOnly;
 							HWND			hWndOwner;
 							FileInfo*		pfi;
-							int				i;
-							int				j;
+//							int				i;
+//							int				j;
 							char**			ppszMRU;
 							char**			ppszOPENFOLDER;
 
 							/* MRUリストのファイルのリスト */
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+							CMRU cMRU;
 							ppszMRU = NULL;
-							j = 0;
-							if( m_pShareData->m_nMRUArrNum > 0 ){
-								for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-									if( m_pShareData->m_Common.m_nMRUArrNum_MAX <= i ){
-										break;
-									}
-									++j;
-								}
-							}
-							ppszMRU = new char*[j + 1];
-							if( j > 0 ){
-								for( i = 0; i < j; ++i ){
-						//			ppszMRU[i] = m_pShareData->m_Types[m_nSettingType].m_szMRUArr[i];
-									ppszMRU[i] = m_pShareData->m_fiMRUArr[i].m_szPath;
-								}
-							}
-							ppszMRU[j] = NULL;
-
+							ppszMRU = new char*[ cMRU.Length() + 1 ];
+							cMRU.GetPathList(ppszMRU);
 							/* OPENFOLDERリストのファイルのリスト */
-							ppszOPENFOLDER = NULL;
-							j = 0;
-							if( m_pShareData->m_nOPENFOLDERArrNum > 0 ){
-								for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
-									if( m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX <= i ){
-										break;
-									}
-									++j;
-								}
-							}
-							ppszOPENFOLDER = new char*[j + 1];
-							if( j > 0 ){
-								for( i = 0; i < j; ++i ){
-						//			ppszOPENFOLDER[i] = m_pShareData->m_Types[m_nSettingType].m_szOPENFOLDERArr[i];
-									ppszOPENFOLDER[i] = m_pShareData->m_szOPENFOLDERArr[i];
-								}
-							}
-							ppszOPENFOLDER[j] = NULL;
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+							CMRUFolder cMRUFolder;
+//							ppszOPENFOLDER = NULL;
+							ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
+							cMRUFolder.GetPathList(ppszOPENFOLDER);
+
+							//Stonee, 2001/12/21 UNCであれば接続を試みる
+							NetConnect( cMRUFolder.GetPath( nId - IDM_SELOPENFOLDER ) );
 
 							/* ファイルオープンダイアログの初期化 */
 							strcpy( szPath, "" );
@@ -1198,7 +1165,7 @@ LRESULT CEditApp::DispatchEvent(
 								m_hInstance,
 								NULL/*m_hWnd*/,
 								"*.*",
-								m_pShareData->m_szOPENFOLDERArr[nId - IDM_SELOPENFOLDER],
+								ppszOPENFOLDER[ nId - IDM_SELOPENFOLDER ],
 								(const char **)ppszMRU,
 								(const char **)ppszOPENFOLDER
 							);
@@ -1217,7 +1184,6 @@ LRESULT CEditApp::DispatchEvent(
 							/* 指定ファイルが開かれているか調べる */
 							if( m_cShareData.IsPathOpened( szPath, &hWndOwner ) ){
 								::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-//								pfi = (FileInfo*)m_pShareData->m_szWork;
 								pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 								int nCharCodeNew;
@@ -1440,6 +1406,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 	if( bReadOnly ){
 		nPos += wsprintf( szCmdLineBuf + nPos, " -R" );
 	}		//To Here Feb. 26, 2001
+//: do error check nPos
 
 	//	DEBUG
 	//	::MessageBox( NULL, szCmdLineBuf, "OpenNewEditor", MB_OK );
@@ -1632,6 +1599,7 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* p
 		if( bReadOnly ){
 			nPos += wsprintf( pszCmdLine + nPos, " -R" );
 		}
+//: do error check nPos
 	}
 	//	::MessageBox( NULL, pszCmdLine, "OpenNewEditor", MB_OK );
 	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, CODE_AUTODETECT, bReadOnly, sync );
@@ -1838,13 +1806,13 @@ BOOL CEditApp::CloseAllEditor( void )
 //	/* 共有データ構造体のアドレスを返す */
 //	pShareData = ::GetShareData();
 	CShareData		cShareData;
-	DLLSHAREDATA*	pShareData;
+//	DLLSHAREDATA*	pShareData;
 //	int				nSettingType;
 
 
 	/* 共有データ構造体のアドレスを返す */
 	cShareData.Init();
-	pShareData = cShareData.GetShareData( NULL, NULL );
+//	pShareData = cShareData.GetShareData( NULL, NULL );
 
 	/* 全編集ウィンドウへ終了要求を出す */
 	if( !cShareData.RequestCloseAllEditor() ){
@@ -1866,10 +1834,11 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	HMENU		hMenuTop;
 	HMENU		hMenu;
 	HMENU		hMenuPopUp;
-	char		szMemu[300];
+	char		szMemu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
+	char		szMenu2[MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
-	HWND		hwndDummy;
+//	HWND		hwndDummy;
 	int			nMenuNum;
 	FileInfo*	pfi;
 
@@ -1889,153 +1858,33 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	/* MRUリストのファイルのリストをメニューにする */
-	j = 0;
-	if( m_pShareData->m_nMRUArrNum > 0 ){
-		for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-			/* 指定ファイルが開かれているか調べる */
-			if( m_cShareData.IsPathOpened( m_pShareData->m_fiMRUArr[i].m_szPath, &hwndDummy ) ){
-				continue;
-			}
-			j++;
-		}
-	}
-	if( j > 0 ){
-		hMenuPopUp = ::CreateMenu();
-		j = 0;
-		for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-			if( j >= m_pShareData->m_Common.m_nMRUArrNum_MAX )
-				break;
-
-			/* 指定ファイルが開かれているか調べる */
-			if( m_cShareData.IsPathOpened( m_pShareData->m_fiMRUArr[i].m_szPath, &hwndDummy ) ){
-				continue;
-			}
-
-//	From Here Oct. 4, 2000 JEPRO added, commented out & modified
-//		ファイル名やパス名に'&'が使われているときに履歴等でキチンと表示されない問題を修正(&を&&に置換するだけ)
-			char	szFile2[_MAX_PATH + 3];	//	'+1'かな？ ようわからんので多めにしとこ。わかる人修正報告ください！
-			char	*p;
-			strcpy( szFile2, m_pShareData->m_fiMRUArr[i].m_szPath );
-			if( (p = strchr( szFile2, '&' )) != NULL ){
-				char	buf[_MAX_PATH + 3];	//	'+1'かな？ ようわからんので多めにしとこ。わかる人修正報告ください！
-				do{
-					*p = '\0';
-					strcpy( buf, p + strlen( "&" ) );
-					strcat( szFile2, "&&" );
-					strcat( szFile2, buf );
-					p = strchr( p + strlen( "&&" ), '&' );
-				} while( p != NULL );
-			}
-
-//			if( j < 10 ){
-//				wsprintf( szMemu, "&%c %s", j + '0', m_pShareData->m_fiMRUArr[i].m_szPath );
-//			}
-//			else if( j < 10 + 26 ){
-//				wsprintf( szMemu, "&%c %s", j - 10 + 'A', m_pShareData->m_fiMRUArr[i].m_szPath );
-//			}else{
-//				wsprintf( szMemu, "  %s", m_pShareData->m_fiMRUArr[i].m_szPath );
-//			}
-//		修正の都合上作業変数で書くように変更
-//		j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
-			wsprintf( szMemu, "&%c %s", (j < 10)?('0' + j):('A' + j - 10), szFile2 );
-//		To Here Oct. 4, 2000
-			if( 0 != m_pShareData->m_fiMRUArr[i].m_nCharCode ){		/* 文字コード種別 */
-				switch( m_pShareData->m_fiMRUArr[i].m_nCharCode ){
-//	From Here Oct. 5, 2000 JEPRO commented out & modified
-//				case 1:
-//					strcat( szMemu, "  [JIS]" );
-//					break;
-//				case 2:
-//					strcat( szMemu, "  [EUC]" );
-//					break;
-//				case 3:
-//					strcat( szMemu, "  [Unicode]" );
-//					break;
-					case CODE_JIS:		/* JIS */
-						strcat( szMemu, "  [JIS]" );
-						break;
-					case CODE_EUC:		/* EUC */
-						strcat( szMemu, "  [EUC]" );
-						break;
-					case CODE_UNICODE:	/* Unicode */
-						strcat( szMemu, "  [Unicode]" );
-						break;
-					case CODE_UTF8:		/* UTF-8 */
-						strcat( szMemu, "  [UTF-8]" );
-						break;
-					case CODE_UTF7:		/* UTF-7 */
-						strcat( szMemu, "  [UTF-7]" );
-						break;
-//	To Here Oct. 5, 2000
-				}
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu );
-			j++;
-//			if( m_cShareData.IsPathOpened( m_pShareData->m_fiMRUArr[i].m_szPath, &hwndDummy ) ){
-//				if( 0 != _stricmp( m_cEditDoc.m_szFilePath, m_pShareData->m_fiMRUArr[i].m_szPath ) ){
-//					::SetMenuItemBitmaps( hMenuPopUp, IDM_SELMRU + i, MF_BYCOMMAND | MF_CHECKED, NULL, m_hbmpOPENED );
-//					::CheckMenuItem( hMenuPopUp, IDM_SELMRU + i, MF_BYCOMMAND | MF_CHECKED );
-//				}else{
-//					::SetMenuItemBitmaps( hMenuPopUp, IDM_SELMRU + i, MF_BYCOMMAND | MF_CHECKED, NULL, m_hbmpOPENED_THIS );
-//					::CheckMenuItem( hMenuPopUp, IDM_SELMRU + i, MF_BYCOMMAND | MF_CHECKED );
-//				}
-//			}
-		}
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	CMRU cMRU;
+	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
+	if ( cMRU.Length() > 0 ){
+		//	アクティブ
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "最近使ったファイル(&F)" );
-	}else{
-		hMenuPopUp = ::CreateMenu();
+	}
+	else {
+		//	非アクティブ
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , "最近使ったファイル(&F)" );
 	}
 
 	/* 最近使ったフォルダのメニューを作成 */
-	if( m_pShareData->m_nOPENFOLDERArrNum > 0 ){
-		hMenuPopUp = ::CreateMenu();
-		j = 0;
-		for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum ; ++i ){
-			if( j >= m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX )
-				break;
-
-//	From Here Oct. 4, 2000 JEPRO added, commented out & modified
-//		ファイル名やパス名に'&'が使われているときに履歴等でキチンと表示されない問題を修正(&を&&に置換するだけ)
-			char	szFolder2[_MAX_PATH + 3];	//	'+1'かな？ ようわからんので多めにしとこ。わかる人修正報告ください！
-			char	*p;
-			strcpy( szFolder2, m_pShareData->m_szOPENFOLDERArr[i] );
-			if( (p = strchr( szFolder2, '&' )) != NULL ){
-				char	buf[_MAX_PATH + 3];	//	'+1'かな？ ようわからんので多めにしとこ。わかる人修正報告ください！
-				do{
-					*p = '\0';
-					strcpy( buf, p + strlen("&") );
-					strcat( szFolder2, "&&" );
-					strcat( szFolder2, buf );
-					p = strchr( p + strlen( "&&" ), '&' );
-				} while( p != NULL );
-			}
-
-//			if( j < 10 ){
-//				wsprintf( szMemu, "&%c %s", j + '0', m_pShareData->m_szOPENFOLDERArr[i] );
-//			}
-//			else if( j < 10 + 26 ){
-//				wsprintf( szMemu, "&%c %s", j - 10 + 'A', m_pShareData->m_szOPENFOLDERArr[i] );
-//			}else{
-//				wsprintf( szMemu, "  %s", m_pShareData->m_szOPENFOLDERArr[i] );
-//			}
-//		修正の都合上作業変数で書くように変更
-//		j >= 10 + 26 の時の考慮を省いた(に近い)がフォルダの履歴MAXを36個にしてあるので事実上OKでしょう
-			wsprintf( szMemu, "&%c %s", (j < 10)?('0' + j):('A' + j - 10), szFolder2 );
-//		To Here Oct. 4, 2000
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu );
-			j++;
-		}
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "最近使ったフォルダ(&D)" );
-	}else{
-		hMenuPopUp = ::CreateMenu();
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , "最近使ったフォルダ(&D)" );
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+	CMRUFolder cMRUFolder;
+	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
+	if ( cMRUFolder.Length() > 0 ){
+		//	アクティブ
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "最近使ったフォルダ(&D)" );
 	}
-
+	else {
+		//	非アクティブ
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, "最近使ったフォルダ(&D)" );
+	}
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL, "すべてのウィンドウを閉じる(&Q)", FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)
-
 
 
 	/* 現在開いている編集窓のリストをメニューにする */
@@ -2045,10 +1894,6 @@ int	CEditApp::CreatePopUpMenu_L( void )
 			++j;
 		}
 	}
-//	::InsertMenu( hMenu, nMenuNum, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-//	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-
-	++nMenuNum;
 
 	if( j > 0 ){
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
@@ -2062,27 +1907,25 @@ int	CEditApp::CreatePopUpMenu_L( void )
 					if( pfi->m_bIsGrep ){
 						/* データを指定バイト数以内に切り詰める */
 						CMemory		cmemDes;
-						int			nDesLen;
-						const char*	pszDes;
+//						int			nDesLen;
+//						const char*	pszDes;
 						LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
-						pszDes = cmemDes.GetPtr( NULL );
-						nDesLen = lstrlen( pszDes );
+						//	Jan. 19, 2002 genta
+						//	メニュー文字列の&を考慮
+						dupamp( cmemDes.GetPtr( NULL ), szMenu2 );
 //	From Here Oct. 4, 2000 JEPRO commented out & modified
-//						wsprintf( szMemu, "&%d 【Grep】\"%s%s\"", ((i + 1) <= 9)? (i + 1):9,
-//							pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "・・・":""
-//						);
-//					}else{
-//						wsprintf( szMemu, "&%d %s %s", ((i + 1) <= 9)? (i + 1):9,
-//							(0 < lstrlen( pfi->m_szPath ))?pfi->m_szPath:"（無題）",
-//							pfi->m_bIsModified ? "*":" "
-//						);
 //		j >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
+						//	Jan. 19, 2002 genta
+						//	&の重複処理を追加したため継続判定を若干変更
 						wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
-							pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "・・・":""
+							szMenu2, ( (int)lstrlen( pfi->m_szGrepKey ) > cmemDes.GetLength() ) ? "…":""
 						);
 					}else{
+						//	Jan. 19, 2002 genta
+						//	メニュー文字列の&を考慮
+						dupamp( pfi->m_szPath, szMenu2 );
 						wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
-							(0 < lstrlen( pfi->m_szPath ))?pfi->m_szPath:"（無題）",
+							(0 < lstrlen( szMenu2 ))? szMenu2:"（無題）",
 							pfi->m_bIsModified ? "*":" "
 						);
 //		To Here Oct. 4, 2000
@@ -2106,42 +1949,12 @@ int	CEditApp::CreatePopUpMenu_L( void )
 							}
 						}
 					}
-//
-//				if( j <= 9 ){
-//					wsprintf( szMemu, "&%d %s %s", j,
-//						(0 < lstrlen( pfi->m_szPath ))?pfi->m_szPath:"（無題）",
-//						pfi->m_bIsModified ? "*":" " );
-//				}else{
-//					wsprintf( szMemu, "&%c %s %s", 'A' + j - 10,
-//						(0 < lstrlen( pfi->m_szPath ))?pfi->m_szPath:"（無題）",
-//						pfi->m_bIsModified ? "*":" " );
-//				}
-//				if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
-//					switch( pfi->m_nCharCode ){
-//					case 1:	/* JIS */
-//						strcat( szMemu, "  [JIS]" );
-//						break;
-//					case 2:	/* EUC */
-//						strcat( szMemu, "  [EUC]" );
-//						break;
-//					case 3:	/* Unicode */
-//						strcat( szMemu, "  [Unicode]" );
-//						break;
-//					}
-//				}
-
 
 //				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMemu, FALSE );
 				++j;
 			}
 		}
-		if( j > 0 ){
-//			::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_SEPARATOR, 0, NULL );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-			++nMenuNum;
-		}
-		nMenuNum += j;
 	}
 	if( j == 0 ){
 		::EnableMenuItem( hMenu, F_WIN_CLOSEALL, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
@@ -2181,88 +1994,6 @@ int	CEditApp::CreatePopUpMenu_L( void )
 //	MYTRACE( "nId=%d\n", nId );
 	return nId;
 }
-
-
-
-
-
-//	Oct. 12, 2000 JEPRO 下のコードを部分的に下手にいじるより全部コメントアウトして
-//	その下に新たに追加することにしたのでここは触らない！
-/* ポップアップメニュー(トレイ右ボタン) */
-//int	CEditApp::CreatePopUpMenu_R( void )
-//{
-//	int		i;
-//	int		j;
-//	int		nId;
-//	HMENU	hMenuTop;
-//	HMENU	hMenu;
-//	char	szMemu[300];
-//	POINT	po;
-//	RECT	rc;
-//
-////	m_CMenuDrawer.ResetContents();
-//
-//
-//	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );	//Oct. 12, 2000 jepro note: ここでリソースのMenuにある「トレイ左ボタンポップアップメニュー」を読み込んでいる
-//	hMenu = ::GetSubMenu( hMenuTop, 0 );
-//	if( m_pShareData->m_nMRUArrNum > 0 ){	//Oct. 12, 2000 jepro note: ここで最近使ったファイルのリストを作成している
-//		j = 0;
-//		::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_SEPARATOR, 0, NULL );
-//		for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-//			if( m_pShareData->m_Common.m_nMRUArrNum_MAX <= i ){
-//				break;
-//			}
-////	From Here Oct. 4, 2000 JEPRO commented out & modified
-////			if( j <= 9 ){
-////				wsprintf( szMemu, "&%d %s", j, m_pShareData->m_fiMRUArr[i].m_szPath );
-////			}else{
-////				wsprintf( szMemu, "&%c %s", 'A' + j - 10, m_pShareData->m_fiMRUArr[i].m_szPath );
-////			}
-////		j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
-//			wsprintf( szMemu, "&%c %s", (j < 10)?('0' + j):('A' + j - 10), m_pShareData->m_fiMRUArr[i].m_szPath );
-////	To Here Oct. 4, 2000
-//			::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );
-////			m_CMenuDrawer.MyAppendMenu(
-////				hMenu, MF_BYPOSITION | MF_STRING | MF_ENABLED,
-////				IDM_SELWINDOW + i , szMemu
-////			);
-//			++j;
-//		}
-//	}
-//	::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_SEPARATOR, 0, NULL );
-//	po.x = 0;
-//	po.y = 0;
-//	::GetCursorPos( &po );
-//	po.y -= 4;
-//
-//	rc.left = 0;
-//	rc.right = 0;
-//	rc.top = 0;
-//	rc.bottom = 0;
-//
-//	::SetForegroundWindow( m_hWnd );
-//	nId = ::TrackPopupMenu(
-//		hMenu,
-//		TPM_BOTTOMALIGN
-//		| TPM_RIGHTALIGN
-//		| TPM_RETURNCMD
-//		| TPM_LEFTBUTTON
-//		/*| TPM_RIGHTBUTTON*/
-//		,
-//		po.x,
-//		po.y,
-//		0,
-//		m_hWnd,
-//		&rc
-//	);
-//	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
-//	::DestroyMenu( hMenuTop );
-////	MYTRACE( "nId=%d\n", nId );
-//	return nId;
-//}
-
-
-
 
 //キーワード：トレイ右クリックメニュー順序
 //	Oct. 12, 2000 JEPRO ポップアップメニュー(トレイ左ボタン) を参考にして新たに追加した部分
@@ -2346,8 +2077,8 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	return nId;
 }
 
-
-
+#if 0
+// 20020117 aroka CCommandLineクラスに移動
 /*!
 	コマンドラインのチェックを行って、オプション番号と
 	引数がある場合はその先頭アドレスを返す。
@@ -2677,6 +2408,6 @@ void CEditApp::ParseCommandLine(
 	*pbReadOnly					= bReadOnly;
 	return;
 }
-
+#endif //
 
 /*[EOF]*/

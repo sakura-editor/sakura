@@ -298,6 +298,8 @@ BOOL CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_VKEYTOITEM:	return OnVKeyToItem( wParam, lParam );
 	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
 //	case WM_NEXTDLGCTL:	return OnNextDlgCtl( wParam, lParam );
+	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
+	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
 	}
 	return FALSE;
 }
@@ -324,5 +326,28 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
+//@@@ 2002.01.18 add start
+BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
+{
+	HELPINFO *p = (HELPINFO *)lParam;
+	::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)GetHelpIdTable() );
+	return TRUE;
+}
+
+BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
+{
+	::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)GetHelpIdTable() );
+	return TRUE;
+}
+
+const DWORD p_helpids[] = {
+	0, 0
+};
+
+LPVOID CDialog::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

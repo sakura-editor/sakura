@@ -26,6 +26,7 @@ class CPropCommon;
 #include "sakura_rc.h"
 #include "CSMacroMgr.h"
 #include "CFuncLookup.h"
+#include "CMenuDrawer.h"
 
 #define ID_PAGENUM_ZENPAN	0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
 #define ID_PAGENUM_WIN		1	//Oct. 25, 2000 JEPRO  5→ 1 に変更
@@ -61,7 +62,8 @@ public:
 	CPropCommon();
 	~CPropCommon();
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
-	void Create( HINSTANCE, HWND, CImageListMgr*, CSMacroMgr* );	/* 初期化 */
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	void Create( HINSTANCE, HWND, CImageListMgr*, CSMacroMgr* , CMenuDrawer* );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations
@@ -89,6 +91,7 @@ public:
 	CFuncLookup			m_cLookup;
 	CSMacroMgr*			m_pcSMacro;
 
+	CMenuDrawer*		m_pcMenuDrawer;
 	/*
 	|| ダイアログデータ
 	*/
@@ -99,7 +102,10 @@ public:
 
 	CKeyWordSetMgr	m_CKeyWordSetMgr;
 	Types			m_Types[MAX_TYPES];
-	
+//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
+	char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
+
 protected:
 	/*
 	||  実装ヘルパ関数

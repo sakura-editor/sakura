@@ -51,6 +51,7 @@ public:
 	int			m_nMaxTextLen;	/* 入力サイズ上限 */
 //	char*		m_pszText;		/* テキスト */
 	CMemory		m_cmemText;		/* テキスト */
+	char			m_szHelpFile[_MAX_PATH + 1];	//@@@ 2002.01.07 add
 protected:
 	/*
 	||  実装ヘルパ関数

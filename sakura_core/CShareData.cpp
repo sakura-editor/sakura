@@ -37,7 +37,7 @@ struct ARRHEAD {
 
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 18;
+const unsigned int uShareDataVersion = 21;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -114,7 +114,8 @@ bool CShareData::Init( void )
 			0
 		);
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
-		m_pShareData->m_CKeyMacroMgr.Clear();			/* キーワードマクロのバッファ */
+//		m_pShareData->m_CKeyMacroMgr.Clear();			/* キーワードマクロのバッファ */
+		strcpy(m_pShareData->m_szKeyMacroFileName, "");	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 		m_pShareData->m_dwProductVersionMS = 0L;
@@ -125,24 +126,13 @@ bool CShareData::Init( void )
 		m_pShareData->m_nSequences = 0;					/* ウィンドウ連番 */
 		m_pShareData->m_nEditArrNum = 0;
 		m_pShareData->m_Common.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
-		m_pShareData->m_nMRUArrNum = 0;
-		for( i = 0; i < MAX_MRU; ++i ){
-			m_pShareData->m_fiMRUArr[i].m_nViewTopLine = 0;
-			m_pShareData->m_fiMRUArr[i].m_nViewLeftCol = 0;
-//			m_pShareData->m_fiMRUArr[i].m_nCaretPosX = 0;
-//			m_pShareData->m_fiMRUArr[i].m_nCaretPosY = 0;
-			m_pShareData->m_fiMRUArr[i].m_nX = 0;
-			m_pShareData->m_fiMRUArr[i].m_nY = 0;
-			m_pShareData->m_fiMRUArr[i].m_bIsModified = 0;
-			m_pShareData->m_fiMRUArr[i].m_nCharCode = 0;
-			strcpy( m_pShareData->m_fiMRUArr[i].m_szPath, "" );
-		}
-
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+		CMRU cMRU;
+		cMRU.ClearAll();
 		m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX = 15;	/* フォルダの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
-		m_pShareData->m_nOPENFOLDERArrNum = 0;
-		for( i = 0; i < MAX_OPENFOLDER; ++i ){
-			strcpy( m_pShareData->m_szOPENFOLDERArr[i], "" );
-		}
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+		CMRUFolder cMRUFolder;
+		cMRUFolder.ClearAll();
 
 		m_pShareData->m_nSEARCHKEYArrNum = 0;
 		for( i = 0; i < MAX_SEARCHKEY; ++i ){
@@ -388,8 +378,8 @@ bool CShareData::Init( void )
 			//2001.12.03 hor Alt+L を「LTRIM」に割当
 			{ 'L', "L",0, 0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, 0, F_TOLOWER, F_TOUPPER },
 			//Jan. 16, 2001 JEPRO	Ctrl+M に「キーマクロの保存」を追加
-			//2001.12.06 hor Alt+M を「MARGE」に割当
-			{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MARGE, 0, 0, 0 },
+			//2001.12.06 hor Alt+M を「MERGE」に割当
+			{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MERGE, 0, 0, 0 },
 			//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
 			{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPNEXT, 0, 0, 0 },
 			//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
@@ -537,6 +527,8 @@ bool CShareData::Init( void )
 
 		//	Oct. 27, 2000 genta
 		m_pShareData->m_Common.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
+
+		m_pShareData->m_Common.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
 
 //		m_pShareData->m_Common.m_bEnableLineISlog = TRUE;		/* ★廃止★行番号種別  物理行／論理行 */
 
@@ -796,6 +788,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
 		::SetRect( &m_pShareData->m_Common.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
 		m_pShareData->m_Common.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
+		m_pShareData->m_Common.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
 		m_pShareData->m_Common.m_bScrollBarHorz = TRUE;				/* 水平スクロールバーを使う */
 		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
 		m_pShareData->m_Common.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
@@ -1118,7 +1111,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
 		m_pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
 
-		nIdx = 0;
+//		nIdx = 0;
 		/* テキスト */
 		strcpy( m_pShareData->m_Types[1].m_szLineComment, "" );			/* 行コメントデリミタ */
 		strcpy( m_pShareData->m_Types[1].m_szLineComment2, "" );		/* 行コメントデリミタ2 */
@@ -3656,8 +3649,10 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			mptr->m_szFile[0] = '\0';
 		}
 		//	To Here Sep. 14, 2001 genta
-		
 
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+		m_pShareData->m_bGetStdout = TRUE;	/* 外部コマンド実行の「標準出力を得る」 */
+		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
@@ -3742,7 +3737,7 @@ void CShareData::SetKeyNameArrVal(
 	short			nKeyCode,
 	char*			pszKeyName
  )
- {
+{
 	pShareData->m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
 	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
 	return;
@@ -3750,7 +3745,8 @@ void CShareData::SetKeyNameArrVal(
 
 
 
-
+#if 0
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 /* TBBUTTON構造体にデータをセット */
 void CShareData::SetTBBUTTONVal(
 	TBBUTTON*	ptb,
@@ -3781,7 +3777,7 @@ typedef struct _TBBUTTON {
  	ptb->iString	= iString;
 	return;
  }
-
+#endif
 
 
 
@@ -3905,146 +3901,6 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 	m_pShareData->m_nEditArrNum--;
 	return;
 }
-
-//!	MRUリストへの登録
-/*!
-	@param pfi [in] 追加するファイルの情報
-
-	該当ファイルがリムーバブルディスク上にある場合にはMRU Listへの登録は行わない。
-
-	@par History
-	2001.03.29 リムーバブルディスク上のファイルを登録しないようにした。(by みく)
-*/
-void CShareData::AddMRUList( FileInfo* pfi )
-{
-	if( 0 == strlen( pfi->m_szPath ) ){
-		return;
-	}
-	int		i;
-	int		j;
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-
-	_splitpath( pfi->m_szPath, szDrive, szDir, NULL, NULL );
-
-	//@@@ 2001.03.29 Start by MIK
-	char	szDriveType[_MAX_DRIVE+1];	// "A:\"
-	long	lngRet;
-	char	c;
-
-	c = szDrive[0];
-	if( c >= 'a' && c <= 'z' ){
-		c = c - ('a' - 'A');
-	}
-	if( c >= 'A' && c <= 'Z' ){
-		sprintf( szDriveType, "%c:\\", c );
-		lngRet = GetDriveType( szDriveType );
-		if( DRIVE_REMOVABLE	== lngRet
-		 || DRIVE_CDROM		== lngRet){
-			return;
-		}
-	}
-
-	char*	pszFolder = new char[_MAX_PATH + 1];
-	//@@@ 2001.03.29 End by MIK
-	strcpy( pszFolder, szDrive );
-	strcat( pszFolder, szDir );
-	if( 0 < strlen( pszFolder ) ){
-		/* 開いたフォルダ リストへの登録 */
-		AddOPENFOLDERList( pszFolder );
-	}
-	/* 同じPATHがある場合は先頭へ移動させる */
-	for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-		if( 0 == _stricmp( pfi->m_szPath, m_pShareData->m_fiMRUArr[i].m_szPath ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nMRUArrNum ){
-		for( j = i; j > 0; j-- ){
-			m_pShareData->m_fiMRUArr[j] = m_pShareData->m_fiMRUArr[j - 1];
-		}
-		m_pShareData->m_fiMRUArr[0] = *pfi;
-	}else{
-		for( j = MAX_MRU - 1; j > 0; j-- ){
-			m_pShareData->m_fiMRUArr[j] = m_pShareData->m_fiMRUArr[j - 1];
-		}
-		m_pShareData->m_fiMRUArr[0] = *pfi;
-		m_pShareData->m_nMRUArrNum++;
-		if( m_pShareData->m_nMRUArrNum > MAX_MRU ){
-			m_pShareData->m_nMRUArrNum = MAX_MRU;
-		}
-	}
-	delete [] pszFolder;
-	return;
-}
-
-
-
-
-
-/* 開いたフォルダ リストへの登録 */
-void CShareData::AddOPENFOLDERList( const char* pszFolder )
-{
-	if( 0 == strlen( pszFolder ) ){
-		return;
-	}
-
-	int		i;
-	int		j;
-	char*	pszWork = new char[_MAX_PATH + 1];
-	/* 同じPATHがある場合は先頭へ移動させる */
-	for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
-		if( 0 == _stricmp( pszFolder, m_pShareData->m_szOPENFOLDERArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nOPENFOLDERArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szOPENFOLDERArr[j], m_pShareData->m_szOPENFOLDERArr[j - 1] );
-		}
-		strcpy( m_pShareData->m_szOPENFOLDERArr[0], pszFolder );
-	}else{
-		for( j = MAX_OPENFOLDER - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szOPENFOLDERArr[j], m_pShareData->m_szOPENFOLDERArr[j - 1] );
-		}
-		strcpy( m_pShareData->m_szOPENFOLDERArr[0], pszFolder );
-		m_pShareData->m_nOPENFOLDERArrNum++;
-		if( m_pShareData->m_nOPENFOLDERArrNum > MAX_OPENFOLDER ){
-			m_pShareData->m_nOPENFOLDERArrNum = MAX_OPENFOLDER;
-		}
-	}
-	delete [] pszWork;
-	return;
-}
-
-
-/*!
-	指定された名前のファイルがMRUリストに存在するか調べる。存在するならばファイル情報を返す。
-
-	@param pszPath [in] 検索するファイル名
-	@param pfi [out] データが見つかったときにファイル情報を格納する領域。
-		呼び出し側で領域をあらかじめ用意する必要がある。
-	@retval TRUE  ファイルが見つかった。pfiにファイル情報が格納されている。
-	@retval FALSE 指定されたファイルはMRU Listに無い。
-*/
-BOOL CShareData::IsExistInMRUList( const char* pszPath, FileInfo* pfi )
-{
-	int		i;
-	for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-		if( 0 == _stricmp( pszPath, m_pShareData->m_fiMRUArr[i].m_szPath ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nMRUArrNum ){
-		*pfi = m_pShareData->m_fiMRUArr[i];
-		return TRUE;
-	}else{
-		return FALSE;
-	}
-}
-
-
-
 
 /* 共有データのロード */
 BOOL CShareData::LoadShareData( void )
@@ -4343,19 +4199,10 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	|| !IsEditWnd( m_pShareData->m_hwndDebug )
 	){
 		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE, true );
-#if 0
-		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
-		CRunningTimer wait_timer( NULL );
-		while( NULL == m_pShareData->m_hwndDebug && 5000 > wait_timer.Read() ){
-			Sleep(1);
-		}
-		Sleep(10);
-		if( NULL == m_pShareData->m_hwndDebug ){
-			return;
-		}
-#endif
+		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
+
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */
 		ActivateFrameWindow( m_pShareData->m_hwndDebug );
@@ -4368,142 +4215,14 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	return;
 }
 
-/*!
+/*
+	CShareData::CheckMRUandOPENFOLDERList
 	MRUとOPENFOLDERリストの存在チェックなど
 	存在しないファイルやフォルダはMRUやOPENFOLDERリストから削除する
 
 	@note 現在は使われていないようだ。
+	@par History
+	2001.12.26 削除した。（YAZAKI）
+	
 */
-void CShareData::CheckMRUandOPENFOLDERList( void )
-{
-	int		i;
-	int		j;
-	/* MRUリスト */
-	for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-		/* 存在チェック */
-		if( -1 == _access( m_pShareData->m_fiMRUArr[i].m_szPath, 0 ) ){
-			for( j = i + 1; j < m_pShareData->m_nMRUArrNum; ++j ){
-				m_pShareData->m_fiMRUArr[j - 1] = m_pShareData->m_fiMRUArr[j];
-			}
-			i--;
-			m_pShareData->m_nMRUArrNum--;
-		}
-	}
-	/* OPENFOLDERリスト */
-	for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
-		/* 存在チェック */
-		if( -1 == _access( m_pShareData->m_szOPENFOLDERArr[i], 0 ) ){
-			for( j = i + 1; j < m_pShareData->m_nOPENFOLDERArrNum; ++j ){
-				strcpy( m_pShareData->m_szOPENFOLDERArr[j - 1], m_pShareData->m_szOPENFOLDERArr[j] );
-			}
-			i--;
-			m_pShareData->m_nOPENFOLDERArrNum--;
-		}
-	}
-	return;
-}
-
-//	/* キー名称のセット */
-//	void CShareData::SetKeyNames( DLLSHAREDATA* pShareData )
-//	{
-//	int		i;
-//	i = 0;
-//	SetKeyNameArrVal( pShareData, i++, 0,"ダブルクリック" );
-//	SetKeyNameArrVal( pShareData, i++, 0,"右クリック" );
-//	/* ファンクションキー */
-//	SetKeyNameArrVal( pShareData, i++, VK_F1,"F1" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F2,"F2" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F3,"F3" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F4,"F4" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F5,"F5" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F6,"F6" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F7,"F7" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F8,"F8" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F9,"F9" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F10,"F10" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F11,"F11" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F12,"F12" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F13,"F13" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F14,"F14" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F15,"F15" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F16,"F16" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F17,"F17" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F18,"F18" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F19,"F19" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F20,"F20" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F21,"F21" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F22,"F22" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F23,"F23" );
-//	SetKeyNameArrVal( pShareData, i++, VK_F24,"F24" );
-//	/* 特殊キー */
-//	SetKeyNameArrVal( pShareData, i++, VK_TAB,"Tab" );
-//	SetKeyNameArrVal( pShareData, i++, VK_RETURN,"Enter" );
-//	SetKeyNameArrVal( pShareData, i++, VK_ESCAPE,"Esc" );
-//	SetKeyNameArrVal( pShareData, i++, VK_BACK,"BackSpace" );
-//	SetKeyNameArrVal( pShareData, i++, VK_INSERT,"Insert" );
-//	SetKeyNameArrVal( pShareData, i++, VK_DELETE,"Delete" );
-//	SetKeyNameArrVal( pShareData, i++, VK_HOME,"Home" );
-//	SetKeyNameArrVal( pShareData, i++, VK_END,"End(Help)" );
-//	SetKeyNameArrVal( pShareData, i++, VK_LEFT,"←" );
-//	SetKeyNameArrVal( pShareData, i++, VK_UP,"↑" );
-//	SetKeyNameArrVal( pShareData, i++, VK_RIGHT,"→" );
-//	SetKeyNameArrVal( pShareData, i++, VK_DOWN,"↓" );
-//	SetKeyNameArrVal( pShareData, i++, VK_PRIOR,"RollDown(PageUp)" );
-//	SetKeyNameArrVal( pShareData, i++, VK_NEXT,"RollUp(PageDown)" );
-//	SetKeyNameArrVal( pShareData, i++, VK_SPACE,"SpaceBar" );
-//	/* 数字 */
-//	SetKeyNameArrVal( pShareData, i++, '0', "0" );
-//	SetKeyNameArrVal( pShareData, i++, '1', "1" );
-//	SetKeyNameArrVal( pShareData, i++, '2', "2" );
-//	SetKeyNameArrVal( pShareData, i++, '3', "3" );
-//	SetKeyNameArrVal( pShareData, i++, '4', "4" );
-//	SetKeyNameArrVal( pShareData, i++, '5', "5" );
-//	SetKeyNameArrVal( pShareData, i++, '6', "6" );
-//	SetKeyNameArrVal( pShareData, i++, '7', "7" );
-//	SetKeyNameArrVal( pShareData, i++, '8', "8" );
-//	SetKeyNameArrVal( pShareData, i++, '9', "9" );
-//	/* アルファベット */
-//	SetKeyNameArrVal( pShareData, i++, 'A', "A" );
-//	SetKeyNameArrVal( pShareData, i++, 'B', "B" );
-//	SetKeyNameArrVal( pShareData, i++, 'C', "C" );
-//	SetKeyNameArrVal( pShareData, i++, 'D', "D" );
-//	SetKeyNameArrVal( pShareData, i++, 'E', "E" );
-//	SetKeyNameArrVal( pShareData, i++, 'F', "F" );
-//	SetKeyNameArrVal( pShareData, i++, 'G', "G" );
-//	SetKeyNameArrVal( pShareData, i++, 'H', "H" );
-//	SetKeyNameArrVal( pShareData, i++, 'I', "I" );
-//	SetKeyNameArrVal( pShareData, i++, 'J', "J" );
-//	SetKeyNameArrVal( pShareData, i++, 'K', "K" );
-//	SetKeyNameArrVal( pShareData, i++, 'L', "L" );
-//	SetKeyNameArrVal( pShareData, i++, 'M', "M" );
-//	SetKeyNameArrVal( pShareData, i++, 'N', "N" );
-//	SetKeyNameArrVal( pShareData, i++, 'O', "O" );
-//	SetKeyNameArrVal( pShareData, i++, 'P', "P" );
-//	SetKeyNameArrVal( pShareData, i++, 'Q', "Q" );
-//	SetKeyNameArrVal( pShareData, i++, 'R', "R" );
-//	SetKeyNameArrVal( pShareData, i++, 'S', "S" );
-//	SetKeyNameArrVal( pShareData, i++, 'T', "T" );
-//	SetKeyNameArrVal( pShareData, i++, 'U', "U" );
-//	SetKeyNameArrVal( pShareData, i++, 'V', "V" );
-//	SetKeyNameArrVal( pShareData, i++, 'W', "W" );
-//	SetKeyNameArrVal( pShareData, i++, 'X', "X" );
-//	SetKeyNameArrVal( pShareData, i++, 'Y', "Y" );
-//	SetKeyNameArrVal( pShareData, i++, 'Z', "Z" );
-//	/* 記号 */
-//	SetKeyNameArrVal( pShareData, i++, 0x00bd, "-" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00de, "^" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00dc, "\\" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00c0, "@" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00db, "[" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00bb, ";" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00ba, ":" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00dd, "]" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00bc, "," );
-//	SetKeyNameArrVal( pShareData, i++, 0x00be, "." );
-//	SetKeyNameArrVal( pShareData, i++, 0x00bf, "/" );
-//	SetKeyNameArrVal( pShareData, i++, 0x00df, "_" );
-//	return;
-//	}
-
-
 /*[EOF]*/

@@ -62,5 +62,15 @@ BOOL CDlgCancel::OnBnClicked( int wID )
 	return FALSE;
 }
 
+//@@@ 2002.01.18 add start
+const DWORD p_helpids[] = {
+	0, 0
+};
+
+LPVOID CDlgCancel::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

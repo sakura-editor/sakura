@@ -21,6 +21,24 @@
 #include "CEditDoc.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 
+// ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12800
+	IDC_BUTTON_JUMP,				HIDC_JUMP_BUTTON_JUMP,			//ジャンプ
+	IDCANCEL,						HIDCANCEL_JUMP,					//キャンセル
+	IDC_BUTTON_HELP,				HIDC_JUMP_BUTTON_HELP,			//ヘルプ
+	IDC_CHECK_PLSQL,				HIDC_JUMP_CHECK_PLSQL,			//PL/SQL
+	IDC_COMBO_PLSQLBLOCKS,			HIDC_JUMP_COMBO_PLSQLBLOCKS,	//
+	IDC_EDIT_LINENUM,				HIDC_JUMP_EDIT_LINENUM,			//行番号
+	IDC_EDIT_PLSQL_E1,				HIDC_JUMP_EDIT_PLSQL_E1,		//
+	IDC_RADIO_LINENUM_LAYOUT,		HIDC_JUMP_RADIO_LINENUM_LAYOUT,	//折り返し単位
+	IDC_RADIO_LINENUM_CRLF,			HIDC_JUMP_RADIO_LINENUM_CRLF,	//改行単位
+	IDC_SPIN_LINENUM,				HIDC_JUMP_EDIT_LINENUM,			//12870,	//
+	IDC_SPIN_PLSQL_E1,				HIDC_JUMP_EDIT_PLSQL_E1,		//12871,	//
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 CDlgJump::CDlgJump()
 {
 	m_nLineNum = 0;			/* 行番号 */
@@ -36,11 +54,13 @@ CDlgJump::CDlgJump()
 int CDlgJump::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
-	LPARAM		lParam,
-	BOOL		bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	LPARAM		lParam
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+//	BOOL		bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 )
 {
-	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+//	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	return CDialog::DoModal( hInstance, hwndParent, IDD_JUMP, lParam );
 }
 
@@ -123,7 +143,8 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_PLSQL_E1 ), TRUE );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_PLSQLBLOCKS ), TRUE );
-			m_bLineNumIsCRLF = TRUE;
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+			m_pShareData->m_bLineNumIsCRLF = TRUE;
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ), FALSE );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), FALSE );
 		}else{
@@ -137,7 +158,8 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), TRUE );
 		}
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if( m_bLineNumIsCRLF ){
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+		if( m_pShareData->m_bLineNumIsCRLF ){
 			::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_LAYOUT, FALSE );
 			::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_CRLF, TRUE );
 		}else{
@@ -212,7 +234,8 @@ void CDlgJump::SetData( void )
 //			);
 		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-			if( m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				wsprintf( szText, "%d 行  %s  パッケージ仕様部",
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )
@@ -224,7 +247,8 @@ void CDlgJump::SetData( void )
 				);
 			}
 			nIndex = ::SendMessage( hwndCtrl, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szText );
-			if( m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}else{
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
@@ -232,7 +256,8 @@ void CDlgJump::SetData( void )
 			nPLSQLBlockNum++;
 		}
 		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-			if( m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				wsprintf( szText, "%d 行  %s  パッケージ本体部",
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )
@@ -244,7 +269,8 @@ void CDlgJump::SetData( void )
 				);
 			}
 			nIndexCurSel = nIndex = ::SendMessage( hwndCtrl, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szText );
-			if( m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				nWorkLine = cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF;
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}else{
@@ -273,7 +299,8 @@ void CDlgJump::SetData( void )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_PLSQL_E1 ), TRUE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_PLSQLBLOCKS ), TRUE );
-		m_bLineNumIsCRLF = TRUE;
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+		m_pShareData->m_bLineNumIsCRLF = TRUE;
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ), FALSE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), FALSE );
 	}else{
@@ -287,7 +314,8 @@ void CDlgJump::SetData( void )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), TRUE );
 	}
 	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	if( m_bLineNumIsCRLF ){
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+	if( m_pShareData->m_bLineNumIsCRLF ){
 		::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_LAYOUT, FALSE );
 		::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_CRLF, TRUE );
 	}else{
@@ -307,10 +335,11 @@ int CDlgJump::GetData( void )
 	BOOL	pTranslated;
 
 	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ) ){
-		m_bLineNumIsCRLF = FALSE;
+		m_pShareData->m_bLineNumIsCRLF = FALSE;
 	}else{
-		m_bLineNumIsCRLF = TRUE;
+		m_pShareData->m_bLineNumIsCRLF = TRUE;
 	}
 
 	/* PL/SQLソースの有効行か */
@@ -333,5 +362,11 @@ int CDlgJump::GetData( void )
 	return TRUE;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgJump::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

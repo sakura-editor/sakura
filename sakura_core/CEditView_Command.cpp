@@ -92,7 +92,10 @@ BOOL CEditView::HandleCommand(
 		m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 //	}
 	/* 印刷プレビューモードか */
-	if( TRUE == m_pcEditDoc->m_bPrintPreviewMode &&
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+//	if( TRUE == m_pcEditDoc->m_bPrintPreviewMode &&
+	CEditWnd* pCEditWnd = ( CEditWnd* )::GetWindowLong( m_pcEditDoc->m_hwndParent, GWL_USERDATA );
+	if( pCEditWnd->m_pPrintPreview &&
 		F_PRINT_PREVIEW != nCommand
 	){
 		::MessageBeep( MB_ICONHAND );
@@ -111,7 +114,9 @@ BOOL CEditView::HandleCommand(
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		if( CMacro::CanFuncIsKeyMacro( nCommand ) ){
 			/* キーマクロのバッファにデータ追加 */
-			m_pShareData->m_CKeyMacroMgr.Append( nCommand, lparam1 );
+//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
+			m_pcEditDoc->m_CKeyMacroMgr.Append( nCommand, lparam1 );
+//			m_pShareData->m_CKeyMacroMgr.Append( nCommand, lparam1 );
 		}else{
 		}
 	}
@@ -277,7 +282,7 @@ BOOL CEditView::HandleCommand(
 	case F_RTRIM:					Command_TRIM(FALSE);break;			// 2001.12.03 hor
 	case F_SORT_ASC:				Command_SORT(TRUE);break;			// 2001.12.06 hor
 	case F_SORT_DESC:				Command_SORT(FALSE);break;			// 2001.12.06 hor
-	case F_MARGE:					Command_MARGE();break;				// 2001.12.06 hor
+	case F_MERGE:					Command_MERGE();break;				// 2001.12.06 hor
 
 	/* カーソル移動系 */
 	case F_IME_CHAR:		Command_IME_CHAR( (WORD)lparam1 ); break;					//全角文字入力
@@ -426,6 +431,7 @@ BOOL CEditView::HandleCommand(
 	case F_BOOKMARK_RESET:	Command_BOOKMARK_RESET();break;					/* ブックマークの全解除 */
 	case F_BOOKMARK_VIEW:	bRet = Command_FUNCLIST( (BOOL)lparam1 ,OUTLINE_BOOKMARK );break;	//アウトライン解析
 // To Here 2001.12.03 hor
+	case F_BOOKMARK_PATTERN:Command_BOOKMARK_PATTERN((const char*)lparam1);break;	// 2002.01.16 hor 指定パターンに一致する行をマーク
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		Command_CHGMOD_INS();break;		//挿入／上書きモード切り替え
@@ -892,7 +898,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 				)
 			 &&
 				/* 改行で終わっているか */
-				( EOL_NONE != pcLayout->m_cEol.GetLen() )
+				( EOL_NONE != pcLayout->m_cEol )
 	//			(pLine[ nLineLen - 1 ] == '\n' || pLine[ nLineLen - 1 ] == '\r')
 			){
 				/*-- フリーカーソルモードの場合 --*/
@@ -1211,7 +1217,7 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 	if( i >= nLineLen ){
 		if( m_nCaretPosY + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
 			/* 改行で終わっているか */
-			if( EOL_NONE != pcLayout->m_cEol.GetLen() ){
+			if( EOL_NONE != pcLayout->m_cEol ){
 //			if( pLine[ nLineLen - 1 ] == '\n' || pLine[ nLineLen - 1 ] == '\r' ){
 			}else{
 				nPosX += nCharChars;
@@ -1262,11 +1268,13 @@ void CEditView::Command_GOFILETOP( int bSelect )
 /* ファイルの最後に移動 */
 void CEditView::Command_GOFILEEND( int bSelect )
 {
-// 2001.12.13 hor
-// BOX選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正
+// 2001.12.13 hor BOX選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正
+	if( !bSelect && IsTextSelected() ) DisableSelectArea( TRUE );	// 2001.12.21 hor Add
 	AddCurrentLineToHistory();
 	Cursor_UPDOWN( m_pcEditDoc->m_cLayoutMgr.GetLineCount() , bSelect );
 	Command_DOWN( bSelect, TRUE );
+	Command_GOLINEEND( bSelect, TRUE );				// 2001.12.21 hor Add
+	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );	// 2001.12.21 hor Add
 	return;
 // 2001.12.13 hor 以下をコメント (////はもともとコメント)
 //	HDC			hdc;
@@ -1544,8 +1552,8 @@ void CEditView::Command_CUT( void )
 	}else{
 		bBeginBoxSelect = FALSE;
 	}
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
+	//SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
 
 
 	/* 選択範囲のデータを取得 */
@@ -1599,8 +1607,7 @@ void CEditView::Command_DELETE_BACK( void )
 	BOOL		bBool;
 	int			nPosX;
 	int			nPosY;
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();					/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 	if( IsTextSelected() ){				/* テキストが選択されているか */
 		DeleteData( TRUE );
 	}else{
@@ -2350,8 +2357,7 @@ void CEditView::Command_PASTE( void )
 //		Command_INDENT( szPaste, lstrlen( szPaste ) );
 		Command_INDENT( szPaste, i );
 	}else{
-		m_pcEditDoc->m_bIsModified = TRUE;				/* 変更フラグ */
-		SetParentCaption();								/* 親ウィンドウのタイトルを更新 */
+		m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 		if( !m_bDoing_UndoRedo ){						/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 //			pcOpe->m_nCaretPosX_Before = m_nCaretPosX;	/* 操作前のキャレット位置Ｘ */
@@ -2425,10 +2431,7 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 	BOOL			bBox;
 	int				i;
 
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	if( bRedraw ){
-		SetParentCaption();				/* 親ウィンドウのタイトルを更新 */
-	}
+	m_pcEditDoc->SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	if( bNoWaitCursor ){
 		pcWaitCursor = NULL;
 	}else{
@@ -2494,8 +2497,7 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 //		Command_INDENT( szPaste, lstrlen( szPaste ) );
 		Command_INDENT( pszText, i );
 	}else{
-		m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-		SetParentCaption();			/* 親ウィンドウのタイトルを更新 */
+		m_pcEditDoc->SetModified(true,true);	/* 変更フラグ */
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 //			pcOpe->m_nCaretPosX_Before = m_nCaretPosX;	/* 操作前のキャレット位置Ｘ */
@@ -2580,12 +2582,12 @@ void CEditView::Command_PASTEBOX( void )
 	lptstr = cmemClip.GetPtr( NULL );
 
 
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();					/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
+	m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
-		DeleteData( TRUE );
+		DeleteData( FALSE/*TRUE 2002.01.25 hor*/ );
 	}
 	nCurXOld = m_nCaretPosX;
 	nCurYOld = m_nCaretPosY;
@@ -2643,7 +2645,7 @@ void CEditView::Command_PASTEBOX( void )
 						&nNewLine,
 						&nNewPos,
 						pcOpe,
-						TRUE
+						FALSE/*TRUE 2002.01.25 hor*/
 					);
 // 2001/10/02 deleted by novice
 #if 0
@@ -2678,7 +2680,7 @@ void CEditView::Command_PASTEBOX( void )
 				m_pcOpeBlk->AppendOpe( pcOpe );
 			}
 			/* この行の挿入位置へカーソルを移動 */
-			MoveCursor( nCurXOld, nCurYOld + nCount, TRUE );
+			MoveCursor( nCurXOld, nCurYOld + nCount, FALSE/*TRUE 2002.01.25 hor*/ );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			/* 行末に改行を付加するか？ */
 			/* カーソル行が最後の行かつ行末に改行が無く、挿入すべきデータがまだある場合 */
@@ -2734,7 +2736,7 @@ void CEditView::Command_PASTEBOX( void )
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
-					TRUE
+					FALSE/*TRUE 2002.01.25 hor*/
 				);
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 //					pcOpe->m_nCaretPosX_After = nNewPos/*m_nCaretPosX*/;	/* 操作後のキャレット位置Ｘ */
@@ -2865,6 +2867,8 @@ void CEditView::Command_PASTEBOX( void )
 		/* 操作の追加 */
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}
+	m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
+	Redraw();			// 2002.01.25 hor
 	return;
 }
 
@@ -2895,8 +2899,7 @@ void CEditView::Command_CHAR( char cChar )
 	POINT			poWin;
 	const CLayout*	pcLayout;
 
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
 	/* 現在位置にデータを挿入 */
 	nPosX = -1;
@@ -3152,8 +3155,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		Command_CHAR( (char)((wChar&0xff00)>>8) );
 		return;
 	}
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
@@ -3311,6 +3313,46 @@ void CEditView::Command_SEARCH_DIALOG( void )
 }
 
 
+/* 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す) */
+/* 2002.01.16 hor 共通ロジックを関数にしただけ・・・ */
+BOOL CEditView::ChangeCurRegexp(void)
+{
+	BOOL	bChangeState;
+	if( FALSE == m_bCurSrchKeyMark
+	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] )
+	 || m_bCurSrchRegularExp != m_pShareData->m_Common.m_bRegularExp
+	 || m_bCurSrchLoHiCase != m_pShareData->m_Common.m_bLoHiCase
+	 || m_bCurSrchWordOnly != m_pShareData->m_Common.m_bWordOnly
+	){
+		bChangeState = TRUE;
+	}else{
+		bChangeState = FALSE;
+	}
+
+	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
+	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );/* 検索文字列 */
+	m_bCurSrchRegularExp = m_pShareData->m_Common.m_bRegularExp;/* 検索／置換  1==正規表現 */
+	m_bCurSrchLoHiCase = m_pShareData->m_Common.m_bLoHiCase;	/* 検索／置換  1==大文字小文字の区別 */
+	m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
+	/* 正規表現 */
+	if( m_bCurSrchRegularExp
+	 && bChangeState
+	){
+		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+			return FALSE;
+		}
+		/* 検索パターンのコンパイル */
+		m_CurRegexp.Compile( m_szCurSrchKey );
+	}
+
+	if( bChangeState ){
+		/* フォーカス移動時の再描画 */
+		RedrawAll();
+	}
+
+	return TRUE;
+}
 
 
 /* 前を検索 */
@@ -3338,6 +3380,9 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	BOOL		bSelectingLock_Old;
 //	BOOL		bFlag1;
 	BOOL		bFound = FALSE;
+	BOOL		bRedo = FALSE;			//	hor
+	int			nLineNumOld,nIdxOld;	//	hor
+
 	nLineFrom = m_nCaretPosY;
 	nColmFrom = m_nCaretPosX;
 	nLineTo = m_nCaretPosY;
@@ -3394,41 +3439,14 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
 
-	BOOL	bChangeState;
-	if( FALSE == m_bCurSrchKeyMark
-	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] )
-	 || m_bCurSrchRegularExp != m_pShareData->m_Common.m_bRegularExp
-	 || m_bCurSrchLoHiCase != m_pShareData->m_Common.m_bLoHiCase
-	 || m_bCurSrchWordOnly != m_pShareData->m_Common.m_bWordOnly
-	){
-		bChangeState = TRUE;
-	}else{
-		bChangeState = FALSE;
-	}
+	// 2002.01.16 hor
+	// 共通部分のくくりだし
+	if(!ChangeCurRegexp())return;
 
-	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
-	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );/* 検索文字列 */
-	m_bCurSrchRegularExp = m_pShareData->m_Common.m_bRegularExp;/* 検索／置換  1==正規表現 */
-	m_bCurSrchLoHiCase = m_pShareData->m_Common.m_bLoHiCase;	/* 検索／置換  1==大文字小文字の区別 */
-	m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
-	/* 正規表現 */
-	if( m_bCurSrchRegularExp
-	 && bChangeState
-	){
-		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
-			return;
-		}
-		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_szCurSrchKey );
-	}
-
-	if( bChangeState ){
-		/* フォーカス移動時の再描画 */
-		RedrawAll();
-	}
-
-
+	bRedo		=	TRUE;		//	hor
+	nLineNumOld	=	nLineNum;	//	hor
+	nIdxOld		=	nIdx;		//	hor
+re_do:;							//	hor
 	/* 現在位置より前の位置を検索する */
 	if( m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLineNum, 								/* 検索開始行 */
@@ -3445,7 +3463,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		&m_CurRegexp							/* 正規表現コンパイルデータ */
 	) ){
 		/* フォーカス移動時の再描画 */
-		RedrawAll();
+//		RedrawAll();	hor コメント化
 
 		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 //		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen );
@@ -3550,7 +3568,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		bFound = TRUE;
 	}else{
 		/* フォーカス移動時の再描画 */
-		RedrawAll();
+//		RedrawAll();	hor コメント化
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			DisableSelectArea( bReDraw );
@@ -3577,7 +3595,24 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		}
 	}
 end_of_func:;
-	if( FALSE == bFound ){
+// From Here 2002.01.26 hor 先頭（末尾）から再検索
+	if(m_pShareData->m_Common.m_bSearchAll){
+		if(!bFound	&&	// 見つからなかった
+			bRedo		// 最初の検索
+		){
+			nLineNum=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
+			nIdx=10240;
+			bRedo=FALSE;
+			goto re_do;	// 末尾から再検索
+		}
+	}
+	if(bFound){
+		if((nLineNumOld < nLineNum)||(nLineNumOld == nLineNum && nIdxOld < nIdx))
+			SendStatusMessage("▲末尾から再検索しました");
+	}else{
+		SendStatusMessage("△見つかりませんでした");
+//	if( FALSE == bFound ){
+// To Here 2002.01.26 hor
 		::MessageBeep( MB_ICONHAND );
 		if( bReDraw	&&
 			m_pShareData->m_Common.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
@@ -3632,6 +3667,8 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 	BOOL		bFlag1;
 	BOOL		bSelectingLock_Old;
 	BOOL		bFound = FALSE;
+	BOOL		bRedo = FALSE;			//	hor
+	int			nLineNumOld,nIdxOld;	//	hor
 
 	nLineFrom = m_nCaretPosY;
 	nColmFrom = m_nCaretPosX;
@@ -3690,41 +3727,13 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
 
+	// 2002.01.16 hor
+	// 共通部分のくくりだし
+	if(!ChangeCurRegexp())return;
 
-	BOOL	bChangeState;
-	if( FALSE == m_bCurSrchKeyMark
-	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] )
-	 || m_bCurSrchRegularExp != m_pShareData->m_Common.m_bRegularExp
-	 || m_bCurSrchLoHiCase != m_pShareData->m_Common.m_bLoHiCase
-	 || m_bCurSrchWordOnly != m_pShareData->m_Common.m_bWordOnly
-	){
-		bChangeState = TRUE;
-	}else{
-		bChangeState = FALSE;
-	}
-
-	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
-	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );/* 検索文字列 */
-	m_bCurSrchRegularExp = m_pShareData->m_Common.m_bRegularExp;/* 検索／置換  1==正規表現 */
-	m_bCurSrchLoHiCase = m_pShareData->m_Common.m_bLoHiCase;	/* 検索／置換  1==大文字小文字の区別 */
-	m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
-	/* 正規表現 */
-	if( m_bCurSrchRegularExp
-	 && bChangeState
-	){
-		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
-			return;
-		}
-		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_szCurSrchKey );
-	}
-	if( bChangeState ){
-		/* フォーカス移動時の再描画 */
-		RedrawAll();
-	}
-
-
+	bRedo		=	TRUE;		//	hor
+	nLineNumOld	=	nLineNum;	//	hor
+	nIdxOld		=	nIdx;		//	hor
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
 	if( m_pcEditDoc->m_cLayoutMgr.SearchWord(
@@ -3880,7 +3889,26 @@ re_do:;
 //	m_nCaretPosX_Prev = m_nCaretPosX;
 
 end_of_func:;
-	if( FALSE == bFound ){
+// From Here 2002.01.26 hor 先頭（末尾）から再検索
+	if(m_pShareData->m_Common.m_bSearchAll){
+		if(!bFound	&&		// 見つからなかった
+			bRedo	&&		// 最初の検索
+			m_bDrawSWITCH	// 全て置換の実行中じゃない
+		){
+			nLineNum=0;
+			nIdx=0;
+			bRedo=FALSE;
+			goto re_do;		// 先頭から再検索
+		}
+	}
+
+	if(bFound){
+		if((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx))
+			SendStatusMessage("▼先頭から再検索しました");
+	}else{
+		SendStatusMessage("▽見つかりませんでした");
+//	if( FALSE == bFound ){
+// To Here 2002.01.26 hor
 		::MessageBeep( MB_ICONHAND );
 		if( bRedraw	&&
 			m_pShareData->m_Common.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
@@ -3948,10 +3976,18 @@ void CEditView::Command_BEGIN_BOXSELECT( void )
 		return;
 	}
 
-	if( !IsTextSelected() ){	/* テキストが選択されているか */
-		/* 現在のカーソル位置から選択を開始する */
-		BeginSelectArea();
+//@@@ 2002.01.03 YAZAKI 範囲選択中にShift+F6を実行すると選択範囲がクリアされない問題に対処
+	if( IsTextSelected() ){	/* テキストが選択されているか */
+		/* 現在の選択範囲を非選択状態に戻す */
+		DisableSelectArea( TRUE );
 	}
+	/* 現在のカーソル位置から選択を開始する */
+	BeginSelectArea();
+//	if( !IsTextSelected() ){	/* テキストが選択されているか */
+//		/* 現在のカーソル位置から選択を開始する */
+//		BeginSelectArea();
+//	}
+	
 	m_bSelectingLock = TRUE;	/* 選択状態のロック */
 	m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
 	return;
@@ -4053,9 +4089,11 @@ void CEditView::Command_FILEOPEN( const char *filename )
 	}else{
 		/* ファイルが開かれていない */
 		/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-		if( !m_pcEditDoc->m_bIsModified &&
+//@@@ 2001.12.26 YAZAKI Grep結果で無い場合も含める。
+		if( !m_pcEditDoc->IsModified() &&
 //			0 == lstrlen( m_pcEditDoc->m_szFilePath )	/* 現在編集中のファイルのパス */
-			'\0' == m_pcEditDoc->m_szFilePath[0]		/* 現在編集中のファイルのパス */
+			'\0' == m_pcEditDoc->m_szFilePath[0] &&		/* 現在編集中のファイルのパス */
+			!m_pcEditDoc->m_bGrepMode					/* Grep結果ではない */
 		){
 			/* ファイル読み込み */
 			m_pcEditDoc->FileRead( pszPath, &bOpened, nCharCode, bReadOnly, TRUE );
@@ -4129,7 +4167,7 @@ BOOL CEditView::Command_FILESAVE( void )
 
 	/* 無変更でも上書きするか */
 	if( FALSE == m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite
-	 && FALSE == m_pcEditDoc->m_bIsModified	/* 変更フラグ */
+	 && FALSE == m_pcEditDoc->IsModified()	/* 変更フラグ */
 	 ){
 		::MessageBeep( MB_ICONHAND );
 		return TRUE;
@@ -4232,8 +4270,9 @@ void CEditView::Command_JUMP( void )
 //	int			nCharChars;
 //	m_pcEditDoc->m_cDlgJump.Create( m_hInstance, m_hWnd, (void *)m_pcEditDoc );
 	if( !m_pcEditDoc->m_cDlgJump.DoModal(
-		m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc,
-		m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+//		m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 //		&m_pcEditDoc->m_hwndActiveDialog						/* アクティブな子ダイアログ */
 	) ){
 //		::MessageBeep( MB_ICONHAND );	//Feb. 20, 2001 JEPRO [キャンセル]時に鳴る警告音の正体はこれ(コメントアウトにした)
@@ -4247,7 +4286,9 @@ void CEditView::Command_JUMP( void )
 	nLineNum = m_pcEditDoc->m_cDlgJump.m_nLineNum;
 	if( !m_pcEditDoc->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if( m_pcEditDoc->m_cDlgJump.m_bLineNumIsCRLF ){
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+//		if( m_pcEditDoc->m_cDlgJump.m_bLineNumIsCRLF ){
+		if( m_pShareData->m_bLineNumIsCRLF ){
 			if( 0 >= nLineNum ){
 				nLineNum = 1;
 			}
@@ -5887,15 +5928,15 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 	int			nSelectColToOld;	/* 範囲選択終了桁 */
 	const char*	pLine;
 	int			nLineLen;
-	CMemory*	pcMemDeleted;
+//	CMemory*	pcMemDeleted;
 	CMemory		cMem;
 	CWaitCursor cWaitCursor( m_hWnd );
 	COpe*		pcOpe = NULL;
 	int			nNewLine;			/* 挿入された部分の次の位置の行 */
 	int			nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
 	int			i;
-	HDC			hdc;
-	PAINTSTRUCT	ps;
+//	HDC			hdc;
+//	PAINTSTRUCT	ps;
 //	char		szWork[16];
 	CMemory		cmemBuf;
 	RECT		rcSel;
@@ -5913,8 +5954,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 	int*		pnKey_CharCharsArr;
 	pnKey_CharCharsArr = NULL;
 
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();					/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
 	if( !IsTextSelected() ){			/* テキストが選択されているか */
 //		/* 1バイト文字入力 */
@@ -5927,6 +5967,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		delete [] pszWork;
 		return;
 	}
+	m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
 	/* 矩形範囲選択中か */
 	if( m_bBeginBoxSelect ){
 		// From Here 2001.12.03 hor
@@ -5954,7 +5995,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			m_nSelectColmTo			/* 範囲選択終了桁 */
 		);
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( FALSE/*TRUE 2002.01.25 hor*/ );
 
 		// From Here 2001.12.03 hor
 		/* インデント時は空白行に書込まない */
@@ -6291,15 +6332,17 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 	}
 	/* 再描画 */
 	//	::UpdateWindow();
-	hdc = ::GetDC( m_hWnd );
-	ps.rcPaint.left = 0;
-	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-	ps.rcPaint.top = m_nViewAlignTop;
-	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-	OnKillFocus();
-	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-	OnSetFocus();
-	::ReleaseDC( m_hWnd, hdc );
+//	hdc = ::GetDC( m_hWnd );
+//	ps.rcPaint.left = 0;
+//	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
+//	ps.rcPaint.top = m_nViewAlignTop;
+//	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
+//	OnKillFocus();
+//	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+//	OnSetFocus();
+//	::ReleaseDC( m_hWnd, hdc );
+	m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
+	Redraw();			// 2002.01.25 hor
 	return;
 }
 
@@ -6324,11 +6367,11 @@ void CEditView::Command_UNINDENT( char cChar )
 	CMemory		cMem;
 	CWaitCursor cWaitCursor( m_hWnd );
 	COpe*		pcOpe = NULL;
-	int			nNewLine;			/* 挿入された部分の次の位置の行 */
-	int			nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
+//	int			nNewLine;			/* 挿入された部分の次の位置の行 */
+//	int			nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
 	int			i;
-	HDC			hdc;
-	PAINTSTRUCT	ps;
+//	HDC			hdc;
+//	PAINTSTRUCT	ps;
 	CMemory		cmemBuf;
 //	RECT		rcSel;
 //	int			nPosX;
@@ -6512,8 +6555,7 @@ void CEditView::Command_UNINDENT( char cChar )
 //		m_nSelectColmTo = nNewPos;				/* 範囲選択終了桁 */
 //		m_bBeginBoxSelect = TRUE;
 	}else{
-		m_pcEditDoc->m_bIsModified = TRUE;		/* 変更フラグ */
-		SetParentCaption();						/* 親ウィンドウのタイトルを更新 */
+		m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
 		nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
 		nSelectColFromOld = 0;					/* 範囲選択開始桁 */
@@ -6653,15 +6695,16 @@ void CEditView::Command_UNINDENT( char cChar )
 		// To Here 2001.12.03 hor
 	}
 	/* 再描画 */
-	hdc = ::GetDC( m_hWnd );
-	ps.rcPaint.left = 0;
-	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-	ps.rcPaint.top = m_nViewAlignTop;
-	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-	OnKillFocus();
-	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-	OnSetFocus();
-	::ReleaseDC( m_hWnd, hdc );
+//	hdc = ::GetDC( m_hWnd );
+//	ps.rcPaint.left = 0;
+//	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
+//	ps.rcPaint.top = m_nViewAlignTop;
+//	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
+//	OnKillFocus();
+//	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+//	OnSetFocus();
+//	::ReleaseDC( m_hWnd, hdc );
+	Redraw();	// 2002.01.25 hor
 	return;
 }
 
@@ -6707,7 +6750,7 @@ void CEditView::Command_GREP( void )
 	cmWork2.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFile );
 	cmWork3.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFolder );
 	/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-	if( !m_pcEditDoc->m_bIsModified &&
+	if( !m_pcEditDoc->IsModified() &&
 		0 == lstrlen( m_pcEditDoc->m_szFilePath )		/* 現在編集中のファイルのパス */
 	){
 		DoGrep(
@@ -6788,8 +6831,8 @@ void CEditView::Command_ADDTAIL( const char* pszData, int nDataLen )
 	int		nNewLine;					/* 挿入された部分の次の位置の行 */
 	int		nNewPos;					/* 挿入された部分の次の位置のデータ位置 */
 	COpe*	pcOpe = NULL;
-	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-	SetParentCaption();					/* 親ウィンドウのタイトルを更新 */
+
+	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 	/*ファイルの最後に移動 */
 	Command_GOFILEEND( FALSE );
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -6909,10 +6952,30 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 			}
 		}
 	}else{
-		//	From Here Aug. 27, 2001 genta
-		//	Borland 形式のメッセージからのTAG JUMP
+		//@@@ 2001.12.31 YAZAKI
 		const char *p = pLine;
 		const char *p_end = p + nLineLen;
+#if 0
+		//	Jan. 04, 2001 genta Directoryを対象外にしたので文字列には柔軟に対応
+		if ( 0 == memcmp( pLine, "警告 W", 6 ) ){
+			p += 6;
+			for( ; p < p_end && ( *p != ' ' ); ++p )
+				;
+		}else
+		if ( 0 == memcmp( pLine, "エラー E", 8) ){
+			p += 6;
+			for( ; p < p_end && ( *p != ' ' ); ++p )
+				;
+		}else
+		if ( 0 == memcmp( pLine, "致命的エラー F", 14) ){
+			p += 6;
+			for( ; p < p_end && ( *p != ' ' ); ++p )
+				;
+		}else{
+		}
+#endif
+		//	From Here Aug. 27, 2001 genta
+		//	Borland 形式のメッセージからのTAG JUMP
 		while( p < p_end ){
 			//	skip space
 			for( ; p < p_end && ( *p == ' ' || *p == '\t' || *p == '\n' ); ++p )
@@ -6926,6 +6989,8 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 				GetLineColm( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColm );
 				break;
 			}
+			//	Jan. 04, 2001 genta Directoryを対象外にしたので文字列には柔軟に対応
+			//	break;	//@@@ 2001.12.31 YAZAKI 「working ...」問題に対処
 			//	skip non-space
 			for( ; p < p_end && ( *p != ' ' && *p != '\t' ); ++p )
 				;
@@ -6938,6 +7003,11 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 	/* ロングファイル名を取得する */
 	if( TRUE == ::GetLongFileName( szJumpToFile, szWork ) ){
 		strcpy( szJumpToFile, szWork );
+	}
+//@@@ 2002.01.14 YAZAKI CTRLキーを押してタグジャンプすると、閉じてタグジャンプ。
+	/* CTRLキーが押されていたか */
+	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
+		Command_WINCLOSE();	//	挑戦するだけ。
 	}
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
@@ -7017,9 +7087,10 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 	return;
 can_not_tagjump:;
 can_not_tagjump_end:;
-	::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-		"タグジャンプできません。\n[%s]", szJumpToFile
-	);
+//@@@ YAZAKI 2001.12.31 うるさい。
+//	::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+//		"タグジャンプできません。\n[%s]", szJumpToFile
+//	);
 	return;
 }
 
@@ -7505,7 +7576,136 @@ open_hc:;
 
 
 
+//@@@2002.01.08 YAZAKI 「左右に並べて表示」すると、裏で最大化されているエクスプローラが「元の大きさ」になるバグ修正。
+//重ねて表示
+void CEditView::Command_CASCADE( void )
+{
+	int i;
 
+	/* 現在開いている編集窓のリストを取得する */
+	EditNode*	pEditNodeArr;
+	int			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+
+	if( nRowNum > 0 ){
+		HWND*	phwndArr = new HWND[nRowNum];
+		int		count = 0;
+		//	デスクトップサイズを得る
+		RECT	rcDesktop;
+		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		for( i = 0; i < nRowNum; ++i ){
+			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
+				continue;
+			}
+			phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			count++;
+		}
+		int width = (rcDesktop.right - rcDesktop.left ) * 0.8;
+		int height = (rcDesktop.bottom - rcDesktop.top ) * 0.8;
+		int w_delta = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXSIZE);
+		int h_delta = ::GetSystemMetrics(SM_CYSIZEFRAME) + ::GetSystemMetrics(SM_CYSIZE);
+		int w_offset = 0;
+		int h_offset = 0;
+		for(i = 0; i < count; ++i ){
+			if (w_offset + width > rcDesktop.right || h_offset + height > rcDesktop.bottom){
+				w_offset = 0;
+				h_offset = 0;
+			}
+			::SetWindowPos(
+				phwndArr[i], HWND_TOP,
+				w_offset, h_offset,
+				width, height,
+				0
+			);
+			w_offset += w_delta;
+			h_offset += h_delta;
+		}
+		delete [] phwndArr;
+		delete [] pEditNodeArr;
+	}
+	return;
+}
+
+
+
+
+//左右に並べて表示
+void CEditView::Command_TILE_H( void )
+{
+	int i;
+
+	/* 現在開いている編集窓のリストを取得する */
+	EditNode*	pEditNodeArr;
+	int			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+
+	if( nRowNum > 0 ){
+		HWND*	phwndArr = new HWND[nRowNum];
+		int		count = 0;
+		//	デスクトップサイズを得る
+		RECT	rcDesktop;
+		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		for( i = 0; i < nRowNum; ++i ){
+			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
+				continue;
+			}
+			phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			count++;
+		}
+		int width = (rcDesktop.right - rcDesktop.left ) / count;
+		for(i = 0; i < count; ++i ){
+			::SetWindowPos(
+				phwndArr[i], 0,
+				width * i, rcDesktop.top,
+				width, rcDesktop.bottom - rcDesktop.top,
+				SWP_NOOWNERZORDER | SWP_NOZORDER
+			);
+		}
+		delete [] phwndArr;
+		delete [] pEditNodeArr;
+	}
+	return;
+}
+
+
+
+
+//上下に並べて表示
+void CEditView::Command_TILE_V( void )
+{
+	int i;
+
+	/* 現在開いている編集窓のリストを取得する */
+	EditNode*	pEditNodeArr;
+	int			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+
+	if( nRowNum > 0 ){
+		HWND*	phwndArr = new HWND[nRowNum];
+		int		count = 0;
+		//	デスクトップサイズを得る
+		RECT	rcDesktop;
+		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		for( i = 0; i < nRowNum; ++i ){
+			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
+				continue;
+			}
+			phwndArr[count] = pEditNodeArr[i].m_hWnd;
+			count++;
+		}
+		int height = (rcDesktop.bottom - rcDesktop.top ) / count;
+		for(i = 0; i < count; ++i ){
+			::SetWindowPos(
+				phwndArr[i], 0,
+				rcDesktop.left, height * i,
+				rcDesktop.right - rcDesktop.left, height,
+				SWP_NOOWNERZORDER | SWP_NOZORDER
+			);
+		}
+		delete [] phwndArr;
+		delete [] pEditNodeArr;
+	}
+	return;
+}
+
+#if 0
 //重ねて表示
 void CEditView::Command_CASCADE( void )
 {
@@ -7583,7 +7783,7 @@ void CEditView::Command_TILE_V( void )
 	}
 	return;
 }
-
+#endif
 
 
 
@@ -7663,16 +7863,16 @@ void CEditView::Command_REPLACE( void )
 {
 //	int			nRet;
 	CMemory		cmemCurText;
-	const char*	pLine;
-	int			nLineLen;
-	int			nLineFrom;
-	int			nColmFrom;
-	int			nLineTo;
-	int			nColmTo;
-	int			nIdx;
-	int			i;
+//	const char*	pLine;
+//	int			nLineLen;
+//	int			nLineFrom;
+//	int			nColmFrom;
+//	int			nLineTo;
+//	int			nColmTo;
+//	int			nIdx;
+//	int			i;
 	BOOL		bSelected = FALSE;
-	const CLayout*	pcLayout;
+//	const CLayout*	pcLayout;
 
 // From Here 2001.12.03 hor
 //		1.検索文字列の所得ロジックをCommand_SEARCH_DIALOGと同じものに
@@ -7753,7 +7953,7 @@ void CEditView::Command_REPLACE( void )
 	}
 	/* 置換オプションの初期化 */
 	m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget=0;	/* 置換対象 */
-	m_pcEditDoc->m_cDlgReplace.m_nPaste=FALSE;		/* 張付ける？ */
+	m_pcEditDoc->m_cDlgReplace.m_nPaste=FALSE;		/* 貼り付ける？ */
 // To Here 2001.12.03 hor
 
 	/* 置換ダイアログの表示 */
@@ -7822,9 +8022,7 @@ void CEditView::Command_REPLACE( void )
 //		m_pcOpeBlk->AppendOpe( pcOpe );
 //	}
 //
-//	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-//	SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-//
+//	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta//
 //	return;
 //	}
 
@@ -7977,7 +8175,7 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		return;
 	}
 	/* テキストが変更されている場合 */
-	if( m_pcEditDoc->m_bIsModified ){
+	if( m_pcEditDoc->IsModified() ){
 		nRet = ::MYMESSAGEBOX(
 			m_hWnd,
 			MB_YESNOCANCEL | MB_ICONEXCLAMATION,
@@ -8410,8 +8608,9 @@ void CEditView::Command_COMPARE( void )
 	/* 比較後、左右に並べて表示 */
 	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_bCompareAndTileHorz;
 //	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_bCompareAndTileHorz;	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
-//	if( FALSE == cDlgCompare.DoModal( m_pcEditDoc->m_szFilePath, m_pcEditDoc->m_bIsModified, szPath, &hwndCompareWnd ) ){
-	if( FALSE == cDlgCompare.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc, m_pcEditDoc->m_szFilePath, m_pcEditDoc->m_bIsModified, szPath, &hwndCompareWnd ) ){
+//	if( FALSE == cDlgCompare.DoModal( m_pcEditDoc->m_szFilePath, m_pcEditDoc->IsModified(), szPath, &hwndCompareWnd ) ){
+	if( FALSE == cDlgCompare.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc, m_pcEditDoc->m_szFilePath,
+		m_pcEditDoc->IsModified(), szPath, &hwndCompareWnd ) ){
 		return;
 	}
 	/* 比較後、左右に並べて表示 */
@@ -8484,12 +8683,27 @@ end_of_compare:;
 		HWND* phwndArr = new HWND[2];
 		phwndArr[0] = ::GetParent( m_hwndParent );
 		phwndArr[1] = hwndCompareWnd;
-		for( int i = 0; i < 2; ++i ){
+		
+		int i;	// Jan. 28, 2002 genta ループ変数 intの宣言を前に出した．
+				// 互換性対策．forの()内で宣言すると古い規格と新しい規格で矛盾するので．
+		for( i = 0; i < 2; ++i ){
 			if( ::IsZoomed( phwndArr[i] ) ){
 				::ShowWindow( phwndArr[i], SW_RESTORE );
 			}
 		}
-		::TileWindows( NULL, MDITILE_VERTICAL, NULL, 2, phwndArr );
+		//	デスクトップサイズを得る 2002.1.24 YAZAKI
+		RECT	rcDesktop;
+		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		int width = (rcDesktop.right - rcDesktop.left ) / 2;
+		for( i = 1; i >= 0; i-- ){
+			::SetWindowPos(
+				phwndArr[i], 0,
+				width * i, rcDesktop.top,
+				width, rcDesktop.bottom - rcDesktop.top,
+				SWP_NOOWNERZORDER | SWP_NOZORDER
+			);
+		}
+//		::TileWindows( NULL, MDITILE_VERTICAL, NULL, 2, phwndArr );
 		delete [] phwndArr;
 	}
 //To Here Oct. 10, 2000
@@ -8644,6 +8858,8 @@ void CEditView::Command_SHOWFUNCKEY( void )
 /* 印刷 */
 void CEditView::Command_PRINT( void )
 {
+//@@@ 2002.01.14 YAZAKI 何もしないで未実装と表示するように。
+#if 0
 	PRINTDLG	pd;
 //	HWND		hwnd;
 
@@ -8680,13 +8896,14 @@ void CEditView::Command_PRINT( void )
 		// GDI calls to render output.
 		// Delete DC when done.
 		DeleteDC(pd.hDC);
-
+#endif
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
 //			"開発中。印刷プレビューから印刷してください。\n"
 			"未実装です。 印刷プレビューから印刷してください。\n"	//Jan. 15, 2001 jepro 「開発」してないのでメッセージ変更
 		);
-
+#if 0
 	}
+#endif
 }
 
 
@@ -8748,11 +8965,23 @@ void CEditView::Command_RECKEYMACRO( void )
 	if( m_pShareData->m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
 		m_pShareData->m_bRecordingKeyMacro = FALSE;
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
+		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
+		char szInitDir[MAX_PATH];
+		strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
+		strcat( szInitDir, "RecKey.mac");
+		strcpy( m_pShareData->m_szKeyMacroFileName, szInitDir );
+		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				"マクロファイルを作成できませんでした。\n\n%s", m_pShareData->m_szKeyMacroFileName
+			);
+		}
 	}else{
 		m_pShareData->m_bRecordingKeyMacro = TRUE;
 		m_pShareData->m_hwndRecordingKeyMacro = ::GetParent( m_hwndParent );;	/* キーボードマクロを記録中のウィンドウ */
 		/* キーマクロのバッファをクリアする */
-		m_pShareData->m_CKeyMacroMgr.Clear();
+//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
+		m_pcEditDoc->m_CKeyMacroMgr.ClearAll();
+//		m_pShareData->m_CKeyMacroMgr.Clear();
 	}
 	/* 親ウィンドウのタイトルを更新 */
 	SetParentCaption();
@@ -8798,7 +9027,13 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
 
 	/* キーボードマクロの保存 */
-	m_pShareData->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, m_hWnd, szPath );
+//@@@ 2002.1.24 YAZAKI
+	if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, szPath ) ){
+		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			"マクロファイルを作成できませんでした。\n\n%s", szPath
+		);
+	}
+//	m_pShareData->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, m_hWnd, szPath );
 	return;
 }
 
@@ -8808,6 +9043,10 @@ void CEditView::Command_SAVEKEYMACRO( void )
 /* キーマクロの実行 */
 void CEditView::Command_EXECKEYMACRO( void )
 {
+	//@@@ 2002.1.24 YAZAKI 記録中は終了してから実行
+	if (m_pShareData->m_bRecordingKeyMacro){
+		Command_RECKEYMACRO();
+	}
 	m_pShareData->m_bRecordingKeyMacro = FALSE;
 	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
@@ -8815,7 +9054,19 @@ void CEditView::Command_EXECKEYMACRO( void )
 	m_bExecutingKeyMacro = TRUE;
 
 	/* キーボードマクロの実行 */
-	m_pShareData->m_CKeyMacroMgr.ExecKeyMacro( (void*)this );
+	//@@@ 2002.1.24 YAZAKI
+	if ( m_pShareData->m_szKeyMacroFileName[0] ){
+		//	ファイルが保存されていたら
+		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				"ファイルを開けませんでした。\n\n%s", m_pShareData->m_szKeyMacroFileName
+			);
+		}
+		else {
+			m_pcEditDoc->m_CKeyMacroMgr.ExecKeyMacro( this );
+		}
+	}
+//	m_pShareData->m_CKeyMacroMgr.ExecKeyMacro( (void*)this );
 
 	/* キーボードマクロの実行中 */
 	m_bExecutingKeyMacro = FALSE;
@@ -8860,7 +9111,9 @@ void CEditView::Command_LOADKEYMACRO( void )
 	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
 
 	/* キーボードマクロの読み込み */
-	m_pShareData->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_hWnd, szPath );
+	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
+	strcpy(m_pShareData->m_szKeyMacroFileName, szPath);
+//	m_pShareData->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_hWnd, szPath );
 	return;
 }
 
@@ -8874,7 +9127,16 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
-	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
+//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
+	if (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == m_nViewColNum){
+		//	最大値に
+		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = 10240;
+	}
+	else {
+		//	現在のウィンドウ幅
+		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
+	}
+//	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
 
 	m_pcEditDoc->OnChangeSetting();	/* ビューに設定変更を反映させる */
 
@@ -8955,7 +9217,7 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 void CEditView::ReOpen_XXX( int nCharCode )
 {
 	if( -1 != _access( m_pcEditDoc->m_szFilePath, 0 )
-	 && m_pcEditDoc->m_bIsModified	/* 変更フラグ */
+	 && m_pcEditDoc->IsModified()	/* 変更フラグ */
 	){
 		if( IDOK != MYMESSAGEBOX( m_hWnd, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
 			"%s\n\nこのファイルは変更されています。\n再ロードを行うと変更が失われますが、よろしいですか?",
@@ -9124,6 +9386,18 @@ void CEditView::Command_EXECCOMMAND( const char *cmd )
 			--q;
 			++p;
 			break;
+		//	From Here Jan. 15, 2002 hor
+		case 'C':	// CurText
+			{
+				CMemory cmemCurText;
+				GetCurrentTextForSearch( cmemCurText );
+				for( r = cmemCurText.GetPtr( NULL ); *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+		//	To Here Jan. 15, 2002 hor
+			break;
 		default:
 			*q = *p;
 			break;
@@ -9134,7 +9408,8 @@ void CEditView::Command_EXECCOMMAND( const char *cmd )
 	//::MessageBox( m_hWnd, buf, "Command line", MB_OK );
 
 	// 子プロセスの標準出力をリダイレクトする
-	ExecCmd( buf, cDlgExec.m_bGetStdout );
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+	ExecCmd( buf, m_pShareData->m_bGetStdout );
 	//	To Here Aug. 21, 2001 genta
 	return;
 }

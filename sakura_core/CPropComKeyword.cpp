@@ -26,7 +26,24 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10800
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10800
+	IDC_BUTTON_ADDSET,				HIDC_BUTTON_ADDSET,			//キーワードセット追加
+	IDC_BUTTON_DELSET,				HIDC_BUTTON_DELSET,			//キーワードセット削除
+	IDC_BUTTON_ADDKEYWORD,			HIDC_BUTTON_ADDKEYWORD,		//キーワード追加
+	IDC_BUTTON_EDITKEYWORD,			HIDC_BUTTON_EDITKEYWORD,	//キーワード編集
+	IDC_BUTTON_DELKEYWORD,			HIDC_BUTTON_DELKEYWORD,		//キーワード削除
+	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT_KEYWORD,	//インポート
+	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT_KEYWORD,	//エクスポート
+	IDC_CHECK_KEYWORDCASE,			HIDC_CHECK_KEYWORDCASE,		//キーワードの英大文字小文字区別
+	IDC_COMBO_SET,					HIDC_COMBO_SET,				//強調キーワードセット名
+	IDC_LIST_KEYWORD,				HIDC_LIST_KEYWORD,			//キーワード一覧
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10800
 	IDC_BUTTON_ADDSET,				10800,	//キーワードセット追加
 	IDC_BUTTON_DELSET,				10801,	//キーワードセット削除
 	IDC_BUTTON_ADDKEYWORD,			10802,	//キーワード追加
@@ -40,6 +57,7 @@ const DWORD p_helpids[] = {	//10800
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -211,6 +229,10 @@ BOOL CPropCommon::DispatchEvent_p7(
 				/* ダイアログデータの取得 p7 */
 				GetData_p7( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_KEYWORD;
+				return TRUE;
 			}
 		}
 		break;
@@ -360,8 +382,15 @@ BOOL CPropCommon::DispatchEvent_p7(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -658,7 +687,8 @@ int CPropCommon::GetData_p7( HWND hwndDlg )
 //	int		j;
 //	int		k;
 
-	m_nPageNum = ID_PAGENUM_KEYWORD;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_KEYWORD;
 
 
 	return TRUE;

@@ -31,7 +31,8 @@ class CEditDoc;
 //@@#include "CProp1.h"
 #include "CShareData.h"
 #include "CFuncInfoArr.h"
-#include "CSplitBoxWnd.h"
+//@@@ 2002.01.14 YAZAKI 不要
+//#include "CSplitBoxWnd.h"
 #include "CEditView.h"
 #include "CSplitterWnd.h"
 #include "CDlgOpenFile.h"
@@ -148,24 +149,45 @@ public:
 	BOOL IsReadOnly( void ){ return m_bReadOnly; }
 	//! ReadOnly状態の設定
 	void SetReadOnly( BOOL flag){ m_bReadOnly = flag; }
+	
+	//	Jan. 22, 2002 genta Modified Flagの設定
+	void SetModified( bool flag, bool redraw);
+	/** ファイルが修正中かどうか
+		@retval true ファイルは修正されている
+		@retval false ファイルは修正されていない
+	*/
+	bool IsModified( void ) const { return m_bIsModified; }
+
+	//	Jan. 28, 2002 genta Modified Flagの設定 (暫定BOOL Version)
+	void SetModified( bool flag, BOOL redraw){
+		SetModified( flag, redraw != FALSE );
+	}
+	void SetModified( BOOL flag, bool redraw){
+		SetModified( flag != FALSE, redraw );
+	}
 
 
 protected:
 	int				m_nSettingType;
 	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態
+	//	Jan. 22, 2002 genta public -> protectedに移動
+	/*! 変更フラグ
+		@date 2002.01.22 genta public→protectedに移動．型をint→boolに．
+	*/
+	bool			m_bIsModified;
 
 public: /* テスト用にアクセス属性を変更 */
 	/* 入力補完 */
 	CHokanMgr		m_cHokanMgr;
 	BOOL			m_bGrepRunning;				/* Grep処理中 */
-	BOOL			m_bPrintPreviewMode;		/* 印刷プレビューモードか */
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+//	BOOL			m_bPrintPreviewMode;		/* 印刷プレビューモードか */
 	int				m_nCommandExecNum;			/* コマンド実行回数 */
 	char			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
 	FILETIME		m_FileTime;					/* ファイルの最終更新日付 */
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
 	int				m_nCharCode;				/* 文字コード種別 */
-	int				m_bIsModified;				/* 変更フラグ */
 
 	//	May 15, 2000 genta
 	CEOL 			m_cNewLineCode;		//	Enter押下時に挿入する改行コード種別
@@ -210,7 +232,8 @@ public: /* テスト用にアクセス属性を変更 */
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
-	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
+//@@@ 2002.01.14 YAZAKI 不使用のため
+//	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
@@ -231,6 +254,7 @@ public: /* テスト用にアクセス属性を変更 */
 	
 	//	Sep. 29, 2001 genta
 	CSMacroMgr*		m_pcSMacroMgr;	//!< マクロ
+	CKeyMacroMgr	m_CKeyMacroMgr;	//	キーボードマクロ @@@ 2002.1.24 YAZAKI DLLSHAREDATAから移動
 	//	Oct. 2, 2001 genta
 	CFuncLookup		m_cFuncLookup;	//!< 機能名，機能番号などのresolve
 
@@ -242,6 +266,7 @@ public: /* テスト用にアクセス属性を変更 */
 protected:
 	void DoFileLock( void );	/* ファイルの排他ロック */
 	void DoFileUnLock( void );	/* ファイルの排他ロック解除 */
+	//char			m_pszCaption[1024];	//@@@ YAZAKI
 };
 
 

@@ -3,128 +3,111 @@
 	@brief キーボードマクロ
 
 	@author Norio Nakatani
+
+	@date 20011229 aroka バグ修正、コメント追加
+	YAZAKI 組替え
 	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include "CMacro.h"
+//	#include <stdio.h>
+//	#include <stdlib.h>
+//	#include <malloc.h>
 #include "CKeyMacroMgr.h"
-#include "debug.h"
+#include "CMacro.h"
+//	#include "debug.h"
 #include "charcode.h"
-#include "etc_uty.h"
-#include "global.h"
-#include "CEditView.h"
+//	#include "etc_uty.h"
+//	#include "global.h"
+//	#include "CEditView.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
+	m_pTop = NULL;
+	m_pBot = NULL;
 	m_nKeyMacroDataArrNum = 0;
+	m_nReady = FALSE;
 	return;
 }
 
 CKeyMacroMgr::~CKeyMacroMgr()
 {
 	/* キーマクロのバッファをクリアする */
-	Clear();
+	ClearAll();
 	return;
 }
 
 
 /*! キーマクロのバッファをクリアする */
-void CKeyMacroMgr::Clear( void )
+void CKeyMacroMgr::ClearAll( void )
 {
+	CMacro* p = m_pTop;
+	CMacro* del_p;
+	while (p){
+		del_p = p;
+		p = p->GetNext();
+		delete del_p;
+	}
 	m_nKeyMacroDataArrNum = 0;
+	m_pTop = NULL;
+	m_pBot = NULL;
 	return;
 
 }
-/*! キーマクロのバッファにデータ追加 */
-int CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1 )
-{
-	if( m_nKeyMacroDataArrNum + 1 > MAX_KEYMACRONUM ){
-		return m_nKeyMacroDataArrNum;
-	}
 
-	switch( nFuncID ){
-	case F_INSTEXT:
-		m_pKeyMacroDataArr[m_nKeyMacroDataArrNum].m_nFuncID = nFuncID;
-		m_pKeyMacroDataArr[m_nKeyMacroDataArrNum].m_lParam1 = 0;
-		strcpy( m_szKeyMacroDataArr[m_nKeyMacroDataArrNum], (const char*)lParam1 );
-		break;
-	default:
-		m_pKeyMacroDataArr[m_nKeyMacroDataArrNum].m_nFuncID = nFuncID;
-		m_pKeyMacroDataArr[m_nKeyMacroDataArrNum].m_lParam1 = lParam1;
-		break;
+/*! キーマクロのバッファにデータ追加
+	機能番号と、引数ひとつを追加版。
+*/
+void CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1 )
+{
+	CMacro* macro = new CMacro( nFuncID );
+	macro->AddLParam( lParam1 );
+	Append(macro);
+}
+
+/*! キーマクロのバッファにデータ追加
+	CMacroを指定して追加する版
+*/
+void CKeyMacroMgr::Append( CMacro* macro )
+{
+	if (m_pTop){
+		m_pBot->SetNext(macro);
+		m_pBot = macro;
+	}
+	else {
+		m_pTop = macro;
+		m_pBot = m_pTop;
 	}
 	m_nKeyMacroDataArrNum++;
-
-	return m_nKeyMacroDataArrNum;
+	return;
 }
 
 
 
-
-/*! キーボードマクロの保存 */
-BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, HWND hwndParent, const char* pszPath )
+/*! キーボードマクロの保存
+	エラーメッセージは出しません。呼び出し側でよきにはからってください。
+*/
+BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const char* pszPath ) const
 {
-	int			i;
 	HFILE		hFile;
-	char		szFuncName[500];
-	char		szFuncNameJapanese[500];
 	char		szLine[1024];
-	int			nPos;
-	const char*	pText;
-	int			nTextLen;
 	CMemory		cmemWork;
 	hFile = _lcreat( pszPath, 0 );
 	if( HFILE_ERROR == hFile ){
-		::MYMESSAGEBOX(	hwndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを作成できませんでした。\n\n%s", pszPath
-		);
 		return FALSE;
 	}
 	strcpy( szLine, "//キーボードマクロのファイル\r\n" );
 	_lwrite( hFile, szLine, strlen( szLine ) );
-	for( i = 0; i < m_nKeyMacroDataArrNum; ++i ){
-		/* 機能ID→関数名，機能名日本語 */
-		if( NULL != CMacro::GetFuncInfoByID( hInstance, m_pKeyMacroDataArr[i].m_nFuncID, szFuncName, szFuncNameJapanese ) ){
-			switch( m_pKeyMacroDataArr[i].m_nFuncID ){
-			case F_INSTEXT:
-				nPos = 0;
-				/* 指定長以下のテキストに切り分ける */
-				while( NULL != ( pText = GetNextLimitedLengthText( m_szKeyMacroDataArr[i], strlen( m_szKeyMacroDataArr[i] ), 11/*MAX_STRLEN - 1*/, &nTextLen, &nPos ) ) ){
-					cmemWork.SetData( pText, nTextLen );
-					cmemWork.Replace( "\\\"", "\"" );
-					cmemWork.Replace( "\\\\", "\\" );
-					wsprintf( szLine, "%s(\"%s\");\t/* %s */\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
-					_lwrite( hFile, szLine, strlen( szLine ) );
-				}
+	CMacro* p = m_pTop;
 
-//				cmemWork = m_cmemKeyMacroDataArr[i];
-//				cmemWork.SetData( m_szKeyMacroDataArr[i], strlen( m_szKeyMacroDataArr[i] ) );
-//				cmemWork.Replace( "\\", "\\\\" );
-//				cmemWork.Replace( "\"", "\\\"" );
-//				sprintf( szLine, "%s(\"%s\");\t/* %s */\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
-				break;
-			default:
-				if( 0 == m_pKeyMacroDataArr[i].m_lParam1 ){
-					wsprintf( szLine, "%s();\t/* %s */\r\n", szFuncName, szFuncNameJapanese );
-				}else{
-					wsprintf( szLine, "%s(%d);\t/* %s */\r\n", szFuncName, m_pKeyMacroDataArr[i].m_lParam1, szFuncNameJapanese );
-				}
-				_lwrite( hFile, szLine, strlen( szLine ) );
-				break;
-			}
-
-		}else{
-			wsprintf( szLine, "CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n" );
-			_lwrite( hFile, szLine, strlen( szLine ) );
-		}
+	while (p){
+		p->Save( hInstance, hFile );
+		p = p->GetNext();
 	}
 	_lclose( hFile );
 	return TRUE;
@@ -132,62 +115,61 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 
 
 
-/*! キーボードマクロの実行 */
-BOOL CKeyMacroMgr::ExecKeyMacro( void* pViewClass )
+/*! キーボードマクロの実行
+	CMacroに委譲。
+*/
+void CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
 {
-	CEditView*	pCEditView = (CEditView*)pViewClass;
-	int			i;
-	for( i = 0; i < m_nKeyMacroDataArrNum; ++i ){
-		switch( m_pKeyMacroDataArr[i].m_nFuncID ){
-		case F_INSTEXT:
-			pCEditView->HandleCommand( m_pKeyMacroDataArr[i].m_nFuncID, TRUE, (LONG)m_szKeyMacroDataArr[i], 0, 0, 0 );
-			break;
-		default:
-			pCEditView->HandleCommand( m_pKeyMacroDataArr[i].m_nFuncID, TRUE, m_pKeyMacroDataArr[i].m_lParam1, 0, 0, 0 );
-			break;
-		}
+	CMacro* p = m_pTop;
+	while (p){
+		p->Exec(pcEditView);
+		p = p->GetNext();
 	}
-	return TRUE;
 }
 
-/*! キーボードマクロの読み込み */
-BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, HWND hwndParent, const char* pszPath )
+/*! キーボードマクロの読み込み
+	エラーメッセージは出しません。呼び出し側でよきにはからってください。
+*/
+BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 {
-	FILE*	pFile;
-	char	szLine[10240];
-	int		nLineLen;
-	char	szFuncName[100];
-	char	szlParam[100];
-	char	szFuncNameJapanese[256];
-	LPARAM	lParam1;
-	int		i;
-	int		nBgn;
-	int		nFuncID;
-	CMemory cmemWork;
-	pFile = fopen( pszPath, "r" );
-
 	/* キーマクロのバッファをクリアする */
-	Clear();
+	ClearAll();
 
-	if( NULL == pFile ){
-		::MYMESSAGEBOX(	hwndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", pszPath
-		);
+	FILE* hFile = fopen( pszPath, "r" );
+	if( NULL == hFile ){
+		m_nReady = FALSE;
 		return FALSE;
 	}
-	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
-		nLineLen = strlen( szLine );
+
+	char	szFuncName[100];
+	char	szFuncNameJapanese[256];
+	int		nFuncID;
+	int		i;
+	int		nBgn, nEnd;
+	CMemory cmemWork;
+	CMacro* macro = NULL;
+
+	// 一行ずつ読みこみ、コメント行を排除した上で、macroコマンドを作成する。
+	char	szLine[10240];
+	while( NULL != fgets( szLine, sizeof(szLine), hFile ) ){
+		int nLineLen = strlen( szLine );
+		// 先行する空白をスキップ
 		for( i = 0; i < nLineLen; ++i ){
 			if( szLine[i] != SPACE && szLine[i] != TAB ){
 				break;
 			}
 		}
 		nBgn = i;
-		if( i + 1 < nLineLen && szLine[i] == '/' && szLine[i + 1] == '/' ){
+		// コメント行の検出
+		//# パフォーマンス：'/'のときだけ２文字目をテスト
+		if( szLine[nBgn] == '/' && nBgn + 1 < nLineLen && szLine[nBgn + 1] == '/' ){
 			continue;
 		}
+		// 関数名の取得
+		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
-			if( szLine[i] == '(' ){
+			//# バッファオーバーランチェック
+			if( szLine[i] == '(' && (i - nBgn)< sizeof(szFuncName) ){
 				memcpy( szFuncName, &szLine[nBgn], i - nBgn );
 				szFuncName[i - nBgn] = '\0';
 				++i;
@@ -195,58 +177,70 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 				break;
 			}
 		}
-//		MYTRACE( "szFuncName=[%s]\n", szFuncName );
+
 		/* 関数名→機能ID，機能名日本語 */
 		nFuncID = CMacro::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
 		if( -1 != nFuncID ){
-			if( '\"' == szLine[i] ){
-				++i;
-				nBgn = i;
-				for( ; i < nLineLen; ++i ){
-					if( szLine[i] == '\\' ){
-						++i;
-						continue;
-					}
-					if( szLine[i] == '\"' ){
-						break;
-						break;
-					}
-				}
+			macro = new CMacro( nFuncID );
+			//	Skip Space
+			while (szLine[i]) {
+				while( szLine[i] == ' ' || szLine[i] == '\t' )
+					i++;
 
-				int			nPos;
-				const char*	pText;
-				int			nTextLen;
-				nPos = 0;
-				/* 指定長以下のテキストに切り分ける */
-				while( NULL != ( pText = GetNextLimitedLengthText( &szLine[nBgn], i - nBgn, 11/*MAX_STRLEN - 1*/, &nTextLen, &nPos ) ) ){
-					cmemWork.SetData( pText, nTextLen );
+				if( '\"' == szLine[i] ){	//	"で始まったら文字列だよきっと。
+					++i;
+					nBgn = i;	//	nBgnは引数の先頭の文字
+					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
+						if( szLine[i] == '\\' ){	// エスケープのスキップ
+							++i;
+							continue;
+						}
+						if( szLine[i] == '\"' ){	//	\"で終了。
+							nEnd = i;	//	nEndは終わりの次の文字（"）
+							break;
+						}
+					}
+					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
 					cmemWork.Replace( "\\\"", "\"" );
 					cmemWork.Replace( "\\\\", "\\" );
-					/* キーマクロのバッファにデータ追加 */
-					Append( nFuncID, (LPARAM)cmemWork.GetPtr( NULL ) );
+					macro->AddParam( cmemWork.GetPtr( NULL ) );	//	引数を文字列として追加
 				}
-//
-//				cmemWork.SetData( &szLine[nBgn], i - nBgn );
-//				cmemWork.Replace( "\\\"", "\"" );
-//				cmemWork.Replace( "\\\\", "\\" );
-//				/* キーマクロのバッファにデータ追加 */
-//				Append( nFuncID, (LPARAM)cmemWork.GetPtr( NULL ) );
-			}else{
-				for( ; i < nLineLen; ++i ){
-					if( szLine[i] == ')' ){
-						memcpy( szlParam, &szLine[nBgn], i - nBgn );
-						szlParam[i - nBgn] = '\0';
-						lParam1 = atoi( szlParam );
-						nBgn = i + 1;
+				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
+					nBgn = i;	//	nBgnは引数の先頭の文字
+					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
+						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// エスケープのスキップ
+							++i;
+							continue;
+						}
+						else {
+							nEnd = i;	//	終わりの次の文字（数字じゃない文字）
+							break;
+						}
+					}
+					macro->AddParam( atoi(&szLine[nBgn]) );	//	引数を数値として追加
+				}
+				else {
+					//	Parse Error:文法エラーっぽい。
+					nBgn = nEnd = i;
+				}
+
+				for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
+					if( szLine[i] == ')' || szLine[i] == ',' ){	//	,もしくは)を読み飛ばす
+						i++;
 						break;
 					}
 				}
-				/* キーマクロのバッファにデータ追加 */
-				Append( nFuncID, lParam1 );
+				if (szLine[i-1] == ')'){
+					break;
+				}
 			}
+			/* キーマクロのバッファにデータ追加 */
+			Append( macro );
 		}
 	}
-	fclose( pFile );
+	fclose( hFile );
+
+	m_nReady = TRUE;
 	return TRUE;
 }
 

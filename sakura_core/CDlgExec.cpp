@@ -21,10 +21,23 @@
 #include <commctrl.h>		//Mar. 28, 2001 JEPRO
 #include "CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
 
+//外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12100
+	IDC_BUTTON_REFERENCE,			HIDC_EXEC_BUTTON_REFERENCE,		//参照
+	IDOK,							HIDOK_EXEC,						//実行
+	IDCANCEL,						HIDCANCEL_EXEC,					//キャンセル
+	IDC_BUTTON_HELP,				HIDC_EXEC_BUTTON_HELP,			//ヘルプ
+	IDC_CHECK_GETSTDOUT,			HIDC_EXEC_CHECK_GETSTDOUT,		//標準出力を得る
+	IDC_COMBO_m_szCommand,			HIDC_EXEC_COMBO_m_szCommand,	//コマンド
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 CDlgExec::CDlgExec()
 {
 	m_szCommand[0] = '\0';	/* コマンドライン */
-	m_bGetStdout = /*FALSE*/TRUE;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更	//Jul. 03, 2001 JEPRO [得る]がデフォルトとなるように戻した
+//	m_bGetStdout = /*FALSE*/TRUE;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更	//Jul. 03, 2001 JEPRO [得る]がデフォルトとなるように戻した
 
 	return;
 }
@@ -60,7 +73,8 @@ void CDlgExec::SetData( void )
 
 	// 標準出力を得る
 //	From Here Sept. 12, 2000 jeprotest
-	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, m_bGetStdout?BST_CHECKED:BST_UNCHECKED );
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, m_pShareData->m_bGetStdout/*m_bGetStdout*/ ? BST_CHECKED : BST_UNCHECKED );
 //	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, TRUE );
 //	To Here Sept. 12, 2000 	うまくいかないので元に戻してある
 
@@ -93,9 +107,10 @@ int CDlgExec::GetData( void )
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
 //	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
 //	To Here Sept. 12, 2000 うまくいかないので元に戻してある
-		 m_bGetStdout = TRUE;
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+		 m_pShareData->m_bGetStdout = TRUE;
 	}else{
-		 m_bGetStdout = FALSE;
+		 m_pShareData->m_bGetStdout = FALSE;
 	}
 	return 1;
 }
@@ -109,12 +124,15 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	switch( wID ){
 	//	From Here Sept. 12, 2000 jeprotest
 	case IDC_CHECK_GETSTDOUT:
+//@@@ 2002.01.08 YAZAKI GetData()で取得するため
+#if 0
 //		if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
-			 m_bGetStdout = TRUE;
+			 m_pShareData->m_bGetStdout = TRUE;
 		}else{
-			 m_bGetStdout = FALSE;
+			 m_pShareData->m_bGetStdout = FALSE;
 		}
+#endif
 		break;
 	//	To Here Sept. 12, 2000 うまくいかないので元に戻してある
 	case IDC_BUTTON_HELP:
@@ -160,5 +178,11 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	return FALSE;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgExec::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

@@ -32,6 +32,7 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
+#include "my_icmp.h"	//@@@ 2002.01.13 add
 
 
 /* 現在の色を指定 */
@@ -257,13 +258,13 @@ void CEditView::DispLineNumber(
 //		pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( pcLayout->m_nLinePhysical );
 		pCDocLine = pcLayout->m_pCDocLine;
 
-		if( m_pcEditDoc->m_bIsModified	/* ドキュメントが無変更の状態か */
+		if( m_pcEditDoc->IsModified()	/* ドキュメントが無変更の状態か */
 		 && pCDocLine->IsModifyed() ){		/* 変更フラグ */
 //			if( 0 == pCDocLine->m_nModifyCount ){	/* 変更回数 */
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 //			}
 //		}else{
-//			if( /* FALSE == m_pcEditDoc->m_bIsModified && --*/ /* ドキュメントが無変更の状態か */
+//			if( /* FALSE == m_pcEditDoc->IsModified() && --*/ /* ドキュメントが無変更の状態か */
 //				0 < pCDocLine->m_nModifyCount	/* 変更回数 */
 //			){
 //				nColorIndex = COLORIDX_GYOU_MODSAVE;	/* 行番号（変更&保存済） */
@@ -412,12 +413,26 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 	 && rcClip.top >= m_nViewAlignTop
 	){
 		rcClip.bottom = y + nLineHeight;
-		if( rcClip.right - rcClip.left > 3000 ){
-			rcClip.right = rcClip.left + 3000;
-		}
-//		if( nLength > m_nViewColNum ){
-//		}
 		::ExtTextOut( hdc, x, y, fuOptions, &rcClip, (const char *)pData, nLength, m_pnDx );
+		//@@@	From Here 2002.01.30 YAZAKI ExtTextOutの制限回避
+		if( rcClip.right - rcClip.left > m_nViewCx ){
+			rcClip.right = rcClip.left + m_nViewCx;
+		}
+		int nBefore = 0;	//	ウィンドウの左にあふれた文字数
+		int nAfter = 0;		//	ウィンドウの右にあふれた文字数
+		if ( x < 0 ){
+			int nCharChars;
+		 
+			while (nBefore < ( 0 - x ) / nCharWidth - 1){
+				nCharChars = CMemory::MemCharNext( (const char *)pData, nLength, (const char *)&pData[nBefore] ) - (const char *)&pData[nBefore];
+				nBefore += nCharChars;
+			}
+		}
+		if ( rcClip.right < x + nCharWidth * nLength ){
+			//	-1してごまかす（うしろはいいよね？）
+			nAfter = (x + nCharWidth * nLength - rcClip.right) / nCharWidth - 1;
+		}
+		//@@@	To Here 2002.01.30 YAZAKI ExtTextOutの制限回避
 	}
 	return nLength;
 
@@ -496,7 +511,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 
 
 /* 現在位置が検索文字列に該当するか */
-BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int* pnSearchEnd )
+BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int* pnSearchEnd )
 {
 	int		nKeyLength;
 

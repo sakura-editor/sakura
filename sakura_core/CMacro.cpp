@@ -14,8 +14,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "CMacro.h"
 #include "funccode.h"
+#include "CMacro.h"
 
 struct MacroFuncInfo {
 	int		m_nFuncID;
@@ -62,7 +62,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_WordDeleteToStart			, "WordDeleteToStart",	//単語の左端まで削除
 	F_WordDeleteToEnd			, "WordDeleteToEnd",	//単語の右端まで削除
 	F_WordCut					, "WordCut",			//単語切り取り
-	F_WordDelete				, "WordDleete",			//単語削除
+	F_WordDelete				, "WordDelete",			//単語削除
 	F_LineCutToStart			, "LineCutToStart",		//行頭まで切り取り(改行単位)
 	F_LineCutToEnd				, "LineCutToEnd",		//行末まで切り取り(改行単位)
 	F_LineDeleteToStart			, "LineDeleteToStart",	//行頭まで削除(改行単位)
@@ -79,7 +79,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_RTRIM						, "RTrim",				// 2001.12.03 hor
 	F_SORT_ASC					, "SortAsc",			// 2001.12.06 hor
 	F_SORT_DESC					, "SortDesc",			// 2001.12.06 hor
-	F_MARGE						, "Marge",				// 2001.12.06 hor
+	F_MERGE						, "Merge",				// 2001.12.06 hor
 
 	/* カーソル移動系 */
 	F_UP						, "Up",				//カーソル上移動
@@ -144,7 +144,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_GOLINETOP_BOX				, "GoLineTop_Box",		//(矩形選択)行頭に移動(折り返し単位)
 	F_GOLINEEND_BOX				, "GoLineEnd_Box",		//(矩形選択)行末に移動(折り返し単位)
 	F_HalfPageUp_Box			, "HalfPageUp_Box",		//(矩形選択)半ページアップ
-	F_HalfPageDown_Box			, "HalfPAgeDown_Box",	//(矩形選択)半ページダウン
+	F_HalfPageDown_Box			, "HalfPageDown_Box",	//(矩形選択)半ページダウン
 	F_1PageUp_Box				, "1PageUp_Box",		//(矩形選択)１ページアップ
 	F_1PageDown_Box				, "1PageDown_Box",		//(矩形選択)１ページダウン
 	F_GOFILETOP_BOX				, "GoFileTop_Box",		//(矩形選択)ファイルの先頭に移動
@@ -215,6 +215,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_BOOKMARK_RESET			, "BookmarkReset",		//ブックマークの全解除
 	F_BOOKMARK_VIEW				, "BookmarkView",		//ブックマークの一覧
 // To Here 2001.12.03 hor
+	F_BOOKMARK_PATTERN			, "BookmarkPattern",	// 2002.01.16 hor 指定パターンに一致する行をマーク
 
 	/* モード切り替え系 */
 	F_CHGMOD_INS				, "ChgmodINS",		//挿入／上書きモード切り替え
@@ -292,30 +293,190 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 };
 int	m_nMacroFuncInfoArrNum = sizeof( m_MacroFuncInfoArr ) / sizeof( m_MacroFuncInfoArr[0] );
 
-
-
-CMacro::CMacro( void )
+CMacro::CMacro( int nFuncID )
 {
-	return;
+	m_nFuncID = nFuncID;
+	m_pNext = NULL;
+	m_pParamTop = m_pParamBot = NULL;
 }
-
 
 CMacro::~CMacro( void )
 {
+	CMacroParam* p = m_pParamTop;
+	CMacroParam* del_p;
+	while (p){
+		del_p = p;
+		p = p->m_pNext;
+		delete del_p->m_pData;
+		delete del_p;
+	}
 	return;
+}
+
+/*	引数の型振り分け
+	機能IDによって、期待する型は異なります。
+	そこで、引数の型を機能IDによって振り分けて、AddParamしましょう。
+	たとえば、F_INSTEXTの1つめ、2つめの引数は文字列、3つめの引数はintだったりするのも、ここでうまく振り分けられることを期待しています。
+*/
+void CMacro::AddLParam( LPARAM lParam )
+{
+	switch( m_nFuncID ){
+	case F_INSTEXT:
+	case F_FILEOPEN:
+	case F_BOOKMARK_PATTERN:	//2002.01.16
+	case F_EXECCOMMAND:
+		AddParam( (const char *)lParam );
+		break;
+	default:
+		AddParam( lParam );
+		break;
+	}
+}
+
+/*	引数に文字列を追加。
+*/
+void CMacro::AddParam( const char* szParam )
+{
+	CMacroParam* param = new CMacroParam;
+	param->m_pNext = NULL;
+
+	//	必要な領域を確保してコピー。
+	int nLen = strlen( szParam );
+	param->m_pData = new char[nLen + 1];
+	memcpy((char*)param->m_pData, szParam, nLen );
+	param->m_pData[nLen] = '\0';
+
+	//	リストの整合性を保つ
+	if (m_pParamTop){
+		m_pParamBot->m_pNext = param; 
+		m_pParamBot = param;
+	}
+	else {
+		m_pParamTop = param;
+		m_pParamBot = m_pParamTop;
+	}
+}
+
+/*	引数に数値を追加。
+*/
+void CMacro::AddParam( const int nParam )
+{
+	CMacroParam* param = new CMacroParam;
+	param->m_pNext = NULL;
+
+	//	必要な領域を確保してコピー。
+	param->m_pData = (char*)new int( nParam );
+
+	//	リストの整合性を保つ
+	if (m_pParamTop){
+		m_pParamBot->m_pNext = param; 
+		m_pParamBot = param;
+	}
+	else {
+		m_pParamTop = param;
+		m_pParamBot = m_pParamTop;
+	}
+}
+
+/*	コマンドを実行する（pcEditView->HandleCommandを発行する）
+	m_nFuncIDによって、引数の型を正確に渡してあげましょう。
+	
+	paramArrは何かのポインタ（アドレス）をLONGであらわした値になります。
+	引数がchar*のときは、paramArr[i]をそのままHandleCommandに渡してかまいません。
+	引数がintのときは、*((int*)paramArr[i])として渡しましょう。
+	
+	たとえば、F_INSTEXTの1つめ、2つめの引数は文字列、3つめの引数はint、4つめの引数が無し。だったりする場合は、次のようにしましょう。
+	pcEditView->HandleCommand( m_nFuncID, TRUE, paramArr[0], paramArr[1], *((int*)paramArr[2]), 0);
+*/
+void CMacro::Exec( CEditView* pcEditView )
+{
+	LPARAM paramArr[4] = {0, 0, 0, 0};	//	4つに限定。
+	
+	CMacroParam* p = m_pParamTop;
+	int i = 0;
+	for (i = 0; i < 4; i++) {
+		if (!p) break;	//	pが無ければbreak;
+		paramArr[i] = (LPARAM)p->m_pData;
+		p = p->m_pNext;
+	}
+	
+	switch( m_nFuncID ){
+	case F_INSTEXT:
+	case F_FILEOPEN:
+	case F_BOOKMARK_PATTERN:	//2002.01.16
+	case F_EXECCOMMAND:
+		pcEditView->HandleCommand( m_nFuncID, TRUE, paramArr[0], paramArr[1], paramArr[2], paramArr[3] );
+		break;
+	default:
+		pcEditView->HandleCommand( m_nFuncID, TRUE,( paramArr[0] ? *((int*)paramArr[0]) : 0 ), 0, 0, 0 );
+		break;
+	}
+
+	
+}
+
+/*	CMacroを再現するための情報をhFileに書き出します。
+
+	InsText("なんとか");
+	のように。
+*/
+void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
+{
+	char	szFuncNameJapanese[500];
+	int		nPos = 0;
+	int		nTextLen;
+	const char*	pText;
+	int		i;
+	char		szLine[1024];
+	const char*	szFuncName;
+	CMemory		cmemWork;
+	for( i = 0; i < m_nMacroFuncInfoArrNum; ++i ){
+		if( m_MacroFuncInfoArr[i].m_nFuncID == m_nFuncID ){
+			szFuncName = m_MacroFuncInfoArr[i].m_pszFuncName;
+			::LoadString( hInstance, m_nFuncID, szFuncNameJapanese, 255 );
+			switch ( m_nFuncID ){
+			case F_INSTEXT:
+			case F_FILEOPEN:
+			case F_BOOKMARK_PATTERN:	//2002.01.16
+			case F_EXECCOMMAND:
+				nPos = 0;
+				
+				//	引数ひとつ分だけ保存
+				pText = m_pParamTop->m_pData;
+				nTextLen = strlen(pText);
+				cmemWork.SetData( pText, nTextLen );
+				cmemWork.Replace( "\\\"", "\"" );
+				cmemWork.Replace( "\\\\", "\\" );
+				wsprintf( szLine, "%s(\"%s\");\t/* %s */\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
+				_lwrite( hFile, szLine, strlen( szLine ) );
+				break;
+			default:
+				if( 0 == m_pParamTop ){
+					wsprintf( szLine, "%s();\t/* %s */\r\n", szFuncName, szFuncNameJapanese );
+				}else{
+					wsprintf( szLine, "%s(%d);\t/* %s */\r\n", szFuncName, *m_pParamTop->m_pData, szFuncNameJapanese );
+				}
+				_lwrite( hFile, szLine, strlen( szLine ) );
+				break;
+			}
+			return;
+		}
+	}
+	wsprintf( szLine, "CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n" );
+	_lwrite( hFile, szLine, strlen( szLine ) );
 }
 
 /*
 ||  Attributes & Operations
 */
 /* 機能ID→関数名，機能名日本語 */
-char* CMacro::GetFuncInfoByID( HINSTANCE hInstance, int nFincID, char* pszFuncName, char* pszFuncNameJapanese )
+char* CMacro::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFuncName, char* pszFuncNameJapanese )
 {
 	int		i;
 	for( i = 0; i < m_nMacroFuncInfoArrNum; ++i ){
-		if( m_MacroFuncInfoArr[i].m_nFuncID == nFincID ){
+		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
 			strcpy( pszFuncName, m_MacroFuncInfoArr[i].m_pszFuncName );
-			::LoadString( hInstance, nFincID, pszFuncNameJapanese, 255 );
+			::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			return pszFuncName;
 		}
 	}
@@ -326,12 +487,12 @@ char* CMacro::GetFuncInfoByID( HINSTANCE hInstance, int nFincID, char* pszFuncNa
 int CMacro::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName, char* pszFuncNameJapanese )
 {
 	int		i;
-	int		nFincID;
+	int		nFuncID;
 	for( i = 0; i < m_nMacroFuncInfoArrNum; ++i ){
 		if( 0 == strcmp( pszFuncName, m_MacroFuncInfoArr[i].m_pszFuncName ) ){
-			nFincID = m_MacroFuncInfoArr[i].m_nFuncID;
-			::LoadString( hInstance, nFincID, pszFuncNameJapanese, 255 );
-			return nFincID;
+			nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
+			::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+			return nFuncID;
 		}
 	}
 	return -1;
@@ -393,7 +554,7 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_RTRIM					:// 2001.12.03 hor
 	case F_SORT_ASC					:// 2001.12.06 hor
 	case F_SORT_DESC				:// 2001.12.06 hor
-	case F_MARGE					:// 2001.12.06 hor
+	case F_MERGE					:// 2001.12.06 hor
 
 	/* カーソル移動系 */
 	case F_UP						://カーソル上移動

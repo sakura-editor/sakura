@@ -491,7 +491,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_RTRIM:		// 2001.12.03 hor
 	case F_SORT_ASC:	// 2001.12.11 hor
 	case F_SORT_DESC:	// 2001.12.11 hor
-	case F_MARGE:		// 2001.12.11 hor
+	case F_MERGE:		// 2001.12.11 hor
 //		::MessageBox( m_hWnd, "Operation is forbidden.", "DEBUG", MB_OK | MB_ICONEXCLAMATION );
 		return true;
 	}
@@ -509,7 +509,7 @@ void CEditDoc::CheckAutoSave(void)
 		//	上書き保存
 
 		bool en;
-		if( !m_bIsModified )	//	変更無しなら何もしない
+		if( !IsModified() )	//	変更無しなら何もしない
 			return;				//	ここでは，「無変更でも保存」は無視する
 
 		en = m_cAutoSave.IsEnabled();
@@ -536,12 +536,11 @@ bool CEditDoc::SaveFile(bool force_rename)
 	char *path = ( force_rename || m_szFilePath[0] == '\0' ) ? NULL : m_szFilePath;
 
 	if( FileWrite( path ) ){
-		m_bIsModified = FALSE;	/* 変更フラグ */
+		SetModified(false,true);	//	Jan. 22, 2002 genta
 
 		/* 現在位置で無変更な状態になったことを通知 */
 		m_cOpeBuf.SetNoModified();
 
-		SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
 		return true;
 	}
 	return false;
@@ -909,9 +908,11 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 		if( NULL == pLine ){
 			break;
 		}
-		if( nLineLen<=nNewLineLen && nLineCount< nLineLast ){
-			continue;
-		}
+        // Jan, 16, 2001 hor
+        //  このコメントを外すと，空行がマーク対象外になる
+        //if( nLineLen<=nNewLineLen && nLineCount< nLineLast ){
+        //  continue;
+        //}
 		// LTrim
 		for( i = 0; i < nLineLen; ++i ){
 			if( pLine[i] == ' ' ||
@@ -923,10 +924,12 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 			}
 			break;
 		}
-		if(( i >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
-		   ( i >= nLineLen )) {
-			continue;
-		}
+        // Jan, 16, 2001 hor
+        //  このコメントを外すと，スペースのみの行がマーク対象外になる
+        //if(( i >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
+        //   ( i >= nLineLen )) {
+        //  continue;
+        //}
 		// RTrim
 		for( j=nLineLen ; j>=i ; --j ){
 			if( pLine[j] == CR ||
@@ -953,5 +956,25 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 // To Here 2001.12.03 hor
+
+// From Here Jan. 22, 2002 genta
+/*! 変更フラグの設定
+
+	@param flag [in] 設定する値．true: 変更有り / false: 変更無し
+	@param redraw [in] true: タイトルの再描画を行う / false: 行わない
+	
+	@author genta
+	@date 2002.01.22 新規作成
+*/
+void CEditDoc::SetModified( bool flag, bool redraw)
+{
+	if( m_bIsModified == flag )	//	変更がなければ何もしない
+		return;
+
+	m_bIsModified = flag;
+	if( redraw )
+		SetParentCaption();
+}
+// From Here Jan. 22, 2002 genta
 
 /*[EOF]*/

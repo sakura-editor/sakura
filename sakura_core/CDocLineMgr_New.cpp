@@ -608,4 +608,143 @@ int CDocLineMgr::SearchBookMark(
 	}
 	return FALSE;
 }
+
+
+//! 検索条件に該当する行にブックマークをセットする
+/*
+	@date 2002.01.16 hor
+*/
+void CDocLineMgr::MarkSearchWord(
+	const char*	pszPattern,		/* 検索条件 */
+	int			bRegularExp,	/* 1==正規表現 */
+	int			bLoHiCase,		/* 1==英大文字小文字の区別 */
+	int			bWordOnly,		/* 1==単語のみ検索 */
+	CBregexp*	pRegexp			/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
+)
+{
+	CDocLine*	pDocLine;
+	const char*	pLine;
+	int			nLineLen;
+	char*		pszRes;
+	int*		pnKey_CharCharsArr;
+	int			nPatternLen = lstrlen( pszPattern );
+
+	/* 1==正規表現 */
+	if( bRegularExp ){
+		BREGEXP* pRegexpData;
+		pDocLine = GetLineInfo( 0 );
+		while( NULL != pDocLine ){
+			if(!pDocLine->IsBookMarked()){
+				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+				if( pRegexp->GetMatchInfo( pLine, nLineLen, 0, &pRegexpData ) ){
+					pDocLine->SetBookMark(true);
+				}
+			}
+			pDocLine = pDocLine->m_pNext;
+		}
+	}else
+	/* 1==単語のみ検索 */
+	if( bWordOnly ){
+		pDocLine = GetLineInfo( 0 );
+		int nLinePos = 0;
+		int nNextWordFrom = 0;
+		int nNextWordFrom2;
+		int nNextWordTo2;
+		while( NULL != pDocLine ){
+			if(!pDocLine->IsBookMarked() &&
+				WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )) {
+				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
+				   (( FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
+					( TRUE  == bLoHiCase && 0 ==   memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
+					pDocLine->SetBookMark(true);
+				}else
+				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE ) ){
+					continue;
+				}
+			}
+			/* 次の行を見に行く */
+			nLinePos++;
+			pDocLine = pDocLine->m_pNext;
+			nNextWordFrom = 0;
+		}
+	}else{
+		/* 検索条件の情報 */
+		pnKey_CharCharsArr = NULL;
+		CDocLineMgr::CreateCharCharsArr(
+			(const unsigned char *)pszPattern,
+			lstrlen( pszPattern ),
+			&pnKey_CharCharsArr
+		);
+		pDocLine = GetLineInfo( 0 );
+		while( NULL != pDocLine ){
+			if(!pDocLine->IsBookMarked()){
+				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+				pszRes = SearchString(
+					(const unsigned char *)pLine,
+					nLineLen,
+					0,
+					(const unsigned char *)pszPattern,
+					lstrlen( pszPattern ),
+					pnKey_CharCharsArr,
+					bLoHiCase
+				);
+				if( NULL != pszRes ){
+					pDocLine->SetBookMark(true);
+				}
+			}
+			pDocLine = pDocLine->m_pNext;
+		}
+		if( NULL != pnKey_CharCharsArr ){
+			delete [] pnKey_CharCharsArr;
+			pnKey_CharCharsArr = NULL;
+		}
+	}
+	return;
+
+}
+
+//! 物理行番号のリストからまとめて行マーク
+/*
+	@date 2002.01.16 hor
+*/
+void CDocLineMgr::SetBookMarks( char* pMarkLines )
+{
+	CDocLine*	pCDocLine;
+	char *p;
+	char delim[] = ", ";
+	p = pMarkLines;
+	while(strtok(p, delim) != NULL) {
+		while(strchr(delim, *p) != NULL)p++;
+		pCDocLine=GetLineInfo( atol(p) );
+		if(NULL!=pCDocLine)pCDocLine->SetBookMark(true);
+		p += strlen(p) + 1;
+	}
+	return;
+}
+
+
+//! 行マークされてる物理行番号のリストを作る
+/*
+	@date 2002.01.16 hor
+*/
+char* CDocLineMgr::GetBookMarks( void )
+{
+	CDocLine*	pCDocLine;
+	char szText[MAX_MARKLINES_LEN];	//2002.01.17
+	char szBuff[10];
+	int	nLinePos=0;
+	pCDocLine = GetLineInfo( nLinePos );
+	strcpy( szText, "" );
+	while( NULL != pCDocLine ){
+		if(pCDocLine->IsBookMarked()){
+			wsprintf( szBuff, "%d,",nLinePos );
+			if(lstrlen(szBuff)+lstrlen(szText)>MAX_MARKLINES_LEN)break;	//2002.01.17
+			strcat( szText, szBuff);
+		}
+		nLinePos++;
+		pCDocLine = pCDocLine->m_pNext;
+	}
+	return ((char*)"%s",szText);
+}
+
 /*[EOF]*/

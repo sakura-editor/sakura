@@ -17,7 +17,28 @@
 #include "CPropCommon.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//11200
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//11200
+	IDC_CHECK_DispFUNCKEYWND,		HIDC_CHECK_DispFUNCKEYWND,		//ファンクションキー表示
+	IDC_CHECK_DispSTATUSBAR,		HIDC_CHECK_DispSTATUSBAR,		//ステータスバー表示
+	IDC_CHECK_DispTOOLBAR,			HIDC_CHECK_DispTOOLBAR,			//ツールバー表示
+	IDC_CHECK_bScrollBarHorz,		HIDC_CHECK_bScrollBarHorz,		//水平スクロールバー
+	IDC_CHECK_bMenuIcon,			HIDC_CHECK_bMenuIcon,			//アイコン付きメニュー
+	IDC_CHECK_WINSIZE,				HIDC_CHECK_WINSIZE,				//ウインドウサイズ継承
+	IDC_CHECK_SplitterWndVScroll,	HIDC_CHECK_SplitterWndVScroll,	//垂直スクロールの同期	//Jul. 05, 2001 JEPRO 追加
+	IDC_CHECK_SplitterWndHScroll,	HIDC_CHECK_SplitterWndHScroll,	//水平スクロールの同期	//Jul. 05, 2001 JEPRO 追加
+	IDC_EDIT_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,	//ルーラー
+	IDC_EDIT_nRulerHeight,			HIDC_EDIT_nRulerHeight,			//ルーラー
+	IDC_RADIO_FUNCKEYWND_PLACE1,	HIDC_RADIO_FUNCKEYWND_PLACE1,	//ファンクションキー表示位置
+	IDC_RADIO_FUNCKEYWND_PLACE2,	HIDC_RADIO_FUNCKEYWND_PLACE2,	//ファンクションキー表示位置
+	IDC_SPIN_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,
+	IDC_SPIN_nRulerHeight,			HIDC_EDIT_nRulerHeight,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispFUNCKEYWND,		11210,	//ファンクションキー表示
 	IDC_CHECK_DispSTATUSBAR,		11211,	//ステータスバー表示
 	IDC_CHECK_DispTOOLBAR,			11212,	//ツールバー表示
@@ -35,6 +56,7 @@ const DWORD p_helpids[] = {	//11200
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -127,6 +149,10 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 				/* ダイアログデータの取得 p1 */
 				GetData_PROP_WIN( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_WIN;
+				return TRUE;
 			}
 			break;
 		case IDC_SPIN_nRulerHeight:
@@ -192,8 +218,15 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -265,7 +298,8 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_WIN;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_WIN;
 
 	/* 次回ウィンドウを開いたときツールバーを表示する */
 	m_Common.m_bDispTOOLBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTOOLBAR );

@@ -499,9 +499,11 @@ BOOL CPrint::GetPaperSize(
 			*pnPaperAllHeight = 3302;
 			break;
 		default:
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				"不明な用紙。処理できません。\nプログラムバグ。\n%s"
-			);
+		// 2001.12.21 hor マウスでクリックしたままリスト外に出るとここにくるけど、
+		//	異常ではないので FALSE を返すことにする
+		//	::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+		//	"不明な用紙。処理できません。\nプログラムバグ。\n%s"
+		//	);
 			return FALSE;
 		}
 	}

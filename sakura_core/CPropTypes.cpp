@@ -7,8 +7,10 @@
 	$Revision$
 */
 /*
-	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, hor
+	Copyright (C) 1998-2002, Norio Nakatani
+	Copyright (C) 2000-2001, jepro
+	Copyright (C) 2001, genta, MIK, hor, Stonee, asa-o
+	Copyright (C) 2002, YAZAKI, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -94,7 +96,78 @@ char* MakeRGBStr( DWORD dwRGB, char* pszText )
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids1[] = {	//11300
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids1[] = {	//11300
+	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
+	IDC_COMBO_TABSPACE,				HIDC_COMBO_TABSPACE,		//TAB幅
+	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IMEのON/OFF状態
+	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEの入力モード
+	IDC_COMBO_SMARTINDENT,			HIDC_COMBO_SMARTINDENT,		//スマートインデント
+	IDC_COMBO_OUTLINES,				HIDC_COMBO_OUTLINES,		//アウトライン解析方法
+	IDC_EDIT_TYPENAME,				HIDC_EDIT_TYPENAME,			//設定の名前
+	IDC_EDIT_TYPEEXTS,				HIDC_EDIT_TYPEEXTS,			//ファイル拡張子
+	IDC_EDIT_MAXLINELEN,			HIDC_EDIT_MAXLINELEN,		//折り返し桁数
+	IDC_EDIT_CHARSPACE,				HIDC_EDIT_CHARSPACE,		//文字の間隔
+	IDC_EDIT_LINESPACE,				HIDC_EDIT_LINESPACE,		//行の間隔
+	IDC_EDIT_INDENTCHARS,			HIDC_EDIT_INDENTCHARS,		//その他のインデント対象文字
+	IDC_EDIT_TABVIEWSTRING,			HIDC_EDIT_TABVIEWSTRING,	//TAB表示文字列
+	IDC_CHECK_INS_SPACE,			HIDC_CHECK_INS_SPACE,		//スペースの挿入
+	IDC_SPIN_MAXLINELEN,			HIDC_EDIT_MAXLINELEN,
+	IDC_SPIN_CHARSPACE,				HIDC_EDIT_CHARSPACE,
+	IDC_SPIN_LINESPACE,				HIDC_EDIT_LINESPACE,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+static const DWORD p_helpids2[] = {	//11400
+	IDC_BUTTON_TEXTCOLOR,			HIDC_BUTTON_TEXTCOLOR,			//文字色
+	IDC_BUTTON_BACKCOLOR,			HIDC_BUTTON_BACKCOLOR,			//背景色
+	IDC_BUTTON_SAMETEXTCOLOR,		HIDC_BUTTON_SAMETEXTCOLOR,		//文字色統一
+	IDC_BUTTON_SAMEBKCOLOR,			HIDC_BUTTON_SAMEBKCOLOR,		//背景色統一
+	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT_COLOR,		//インポート
+	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT_COLOR,		//エクスポート
+	IDC_CHECK_DISP,					HIDC_CHECK_DISP,				//色分け表示
+	IDC_CHECK_FAT,					HIDC_CHECK_FAT,					//太字
+	IDC_CHECK_UNDERLINE,			HIDC_CHECK_UNDERLINE,			//下線
+	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
+	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
+	IDC_COMBO_SET,					HIDC_COMBO_SET_COLOR,			//強調キーワード１セット名
+	IDC_COMBO_SET2,					HIDC_COMBO_SET2_COLOR,			//強調キーワード２セット名
+	IDC_EDIT_BLOCKCOMMENT_FROM,		HIDC_EDIT_BLOCKCOMMENT_FROM,	//ブロックコメント１開始
+	IDC_EDIT_BLOCKCOMMENT_TO,		HIDC_EDIT_BLOCKCOMMENT_TO,		//ブロックコメント１終了
+	IDC_EDIT_LINECOMMENT,			HIDC_EDIT_LINECOMMENT,			//行コメント１
+	IDC_EDIT_LINECOMMENT2,			HIDC_EDIT_LINECOMMENT2,			//行コメント２
+	IDC_EDIT_LINECOMMENTPOS,		HIDC_EDIT_LINECOMMENTPOS,		//桁数１
+	IDC_EDIT_LINECOMMENTPOS2,		HIDC_EDIT_LINECOMMENTPOS2,		//桁数２
+	IDC_EDIT_LINETERMCHAR,			HIDC_EDIT_LINETERMCHAR,			//行番号区切り
+	IDC_EDIT_BLOCKCOMMENT_FROM2,	HIDC_EDIT_BLOCKCOMMENT_FROM2,	//ブロックコメント２開始
+	IDC_EDIT_BLOCKCOMMENT_TO2,		HIDC_EDIT_BLOCKCOMMENT_TO2,		//ブロックコメント２終了
+	IDC_EDIT_LINECOMMENT3,			HIDC_EDIT_LINECOMMENT3,			//行コメント３
+	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
+	IDC_CHECK_LCPOS3,				HIDC_CHECK_LCPOS3,				//桁指定３
+	IDC_EDIT_LINECOMMENTPOS3,		HIDC_EDIT_LINECOMMENTPOS3,		//桁数３
+	IDC_RADIO_ESCAPETYPE_1,			HIDC_RADIO_ESCAPETYPE_1,		//文字列エスケープ（C言語風）
+	IDC_RADIO_ESCAPETYPE_2,			HIDC_RADIO_ESCAPETYPE_2,		//文字列エスケープ（PL/SQL風）
+	IDC_RADIO_LINENUM_LAYOUT,		HIDC_RADIO_LINENUM_LAYOUT,		//行番号の表示（折り返し単位）
+	IDC_RADIO_LINENUM_CRLF,			HIDC_RADIO_LINENUM_CRLF,		//行番号の表示（改行単位）
+	IDC_RADIO_LINETERMTYPE0,		HIDC_RADIO_LINETERMTYPE0,		//行番号区切り（なし）
+	IDC_RADIO_LINETERMTYPE1,		HIDC_RADIO_LINETERMTYPE1,		//行番号区切り（縦線）
+	IDC_RADIO_LINETERMTYPE2,		HIDC_RADIO_LINETERMTYPE2,		//行番号区切り（任意）
+//	IDC_STATIC,						-1,
+	0, 0
+};
+static const DWORD p_helpids3[] = {	//11500
+	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
+	IDC_BUTTON_KEYWORDHELPFILE_REF,	HIDC_BUTTON_KEYWORDHELPFILE_REF,	//キーワードヘルプファイル参照
+	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
+	IDC_CHECK_USEKEYWORDHELP,		HIDC_CHECK_USEKEYWORDHELP,			//キーワードヘルプ機能
+	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
+	IDC_EDIT_KEYWORDHELPFILE,		HIDC_EDIT_KEYWORDHELPFILE,			//辞書ファイル名
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				11310,	//英文ワードラップ
 	IDC_COMBO_TABSPACE,				11330,	//TAB幅
 	IDC_COMBO_IMESWITCH,			11331,	//IMEのON/OFF状態
@@ -119,7 +192,7 @@ const DWORD p_helpids1[] = {	//11300
 //	IDC_STATIC,						-1,
 	0, 0
 };
-const DWORD p_helpids2[] = {	//11400
+static const DWORD p_helpids2[] = {	//11400
 	IDC_BUTTON_TEXTCOLOR,			11400,	//文字色
 	IDC_BUTTON_BACKCOLOR,			11401,	//背景色
 	IDC_BUTTON_SAMETEXTCOLOR,		11402,	//文字色統一
@@ -161,7 +234,7 @@ const DWORD p_helpids2[] = {	//11400
 //@@@ 2001.02.04 End
 
 //From Here Jul. 05, 2001 JEPRO 追加
-const DWORD p_helpids3[] = {	//11500
+static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_HOKANFILE_REF,		11500,	//入力補完 単語ファイル参照
 	IDC_BUTTON_KEYWORDHELPFILE_REF,	11501,	//キーワードヘルプファイル参照
 	IDC_CHECK_HOKANLOHICASE,		11510,	//入力補完の英大文字小文字
@@ -171,6 +244,7 @@ const DWORD p_helpids3[] = {	//11500
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //To Here Jul. 05, 2001
 
 
@@ -631,14 +705,18 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psh.pszCaption = (LPSTR)"タイプ別設定";	// Sept. 8, 2000 jepro 単なる「設定」から変更
 	psh.nPages = nIdx;
 
+	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
 	if( -1 == nPageNum ){
 		psh.nStartPage = m_nPageNum;
+	}else
+	if( 0 > nPageNum ){			//- 20020106 aroka
+		psh.nStartPage = 0;
 	}else{
 		psh.nStartPage = nPageNum;
 	}
-	if( 0 > psh.nStartPage ){
-		psh.nStartPage = 0;
-	}
+//	if( 0 > psh.nStartPage ){	//- 20020106 aroka
+//		psh.nStartPage = 0;
+//	}
 	if( psh.nPages - 1 < psh.nStartPage ){
 		psh.nStartPage = psh.nPages - 1;
 	}
@@ -686,7 +764,7 @@ BOOL CPropTypes::DispatchEvent_p1(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
+//	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -718,7 +796,7 @@ BOOL CPropTypes::DispatchEvent_p1(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+//		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -836,6 +914,10 @@ BOOL CPropTypes::DispatchEvent_p1(
 //					}
 //				}
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = 0;
+				return TRUE;
 			}
 			break;
 		}
@@ -855,7 +937,7 @@ BOOL CPropTypes::DispatchEvent_p1(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+//		break;
 //@@@ 2001.02.04 End
 
 //@@@ 2001.11.17 add start MIK
@@ -995,7 +1077,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	int  i;
 //#endif
 
-	m_nPageNum = 0;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = 0;
 	/* タイプ属性：名称 */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, sizeof( m_Types.m_szTypeName ) );
 	/* タイプ属性：拡張子リスト */
@@ -1099,10 +1182,10 @@ BOOL CPropTypes::DispatchEvent_p2(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
+//	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
+//	NM_UPDOWN*	pMNUD;
+//	int			idCtrl;
 //	int			nVal;
 
 	switch( uMsg ){
@@ -1121,7 +1204,7 @@ BOOL CPropTypes::DispatchEvent_p2(
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+//		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -1192,9 +1275,9 @@ BOOL CPropTypes::DispatchEvent_p2(
 		}
 		break;
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
+//		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
+//		pMNUD  = (NM_UPDOWN*)lParam;
 //		switch( idCtrl ){
 //		case ???????:
 //			return 0L;
@@ -1208,8 +1291,12 @@ BOOL CPropTypes::DispatchEvent_p2(
 				/* ダイアログデータの取得 p2 */
 				GetData_p2( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = 2;
+				return TRUE;
 			}
-			break;
+//			break;
 //		}
 
 		break;
@@ -1222,7 +1309,7 @@ BOOL CPropTypes::DispatchEvent_p2(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+//		break;
 //To Here  Jul. 05, 2001
 
 //@@@ 2001.11.17 add start MIK
@@ -1269,7 +1356,8 @@ void CPropTypes::SetData_p2( HWND hwndDlg )
 /* ダイアログデータの取得 p2 */
 int CPropTypes::GetData_p2( HWND hwndDlg )
 {
-	m_nPageNum = 2;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = 2;
 
 //	2001/06/19	asa-o
 	/* 入力補完機能：英大文字小文字を同一視する */
@@ -2023,7 +2111,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 //	int			yPos;	// vertical position of cursor
 //	HWND		hwndLoseFocus;
 //	HWND		hwndGetFocus;
-	int			fwKeys;
+//	int			fwKeys;
 	int			xPos;
 	int			yPos;
 	int			nIndex;
@@ -2037,7 +2125,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONDBLCLK:
 	case WM_LBUTTONUP:
-		fwKeys = wParam;		// key flags
+//		fwKeys = wParam;		// key flags
 		xPos = LOWORD(lParam);	// horizontal position of cursor
 		yPos = HIWORD(lParam);	// vertical position of cursor
 //		nIndex = ::SendMessage( hwnd, LB_GETCURSEL, 0, 0 );
@@ -2453,6 +2541,10 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 				/* ダイアログデータの取得 p3 */
 				GetData_p3_new( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = 1;
+				return TRUE;
 			}
 		}
 		break;
@@ -2480,7 +2572,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+//		break;
 //@@@ 2001.02.04 End
 
 //@@@ 2001.11.17 add start MIK
@@ -2670,7 +2762,8 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	int		nIdx;
 	HWND	hwndWork;
 
-	m_nPageNum = 1;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = 1;
 
 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT		, m_Types.m_szLineComment	, sizeof( m_Types.m_szLineComment ) );		/* 行コメントデリミタ */
@@ -2797,12 +2890,13 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	HPEN		hPen;
 	HPEN		hPenOld;
 	ColorInfo*	pColorInfo;
-	RECT		rc0,rc1,rc2;
+//	RECT		rc0,rc1,rc2;
+	RECT		rc1;
 	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
 
-	rc0 = pDis->rcItem;
+//	rc0 = pDis->rcItem;
 	rc1 = pDis->rcItem;
-	rc2 = pDis->rcItem;
+//	rc2 = pDis->rcItem;
 
 	/* アイテムデータの取得 */
 	pColorInfo = (ColorInfo*)pDis->itemData;

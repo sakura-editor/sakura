@@ -8,7 +8,8 @@
 	@date Jun. 10, 2001
 */
 /*
-	Copyright (C) 2001, genta
+	Copyright (C) 2001-2002, genta
+	Copyright (C) 2002, hor
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,8 +32,13 @@
 		   distribution.
 */
 
+#include <stdio.h>
+#include <string.h>
 #include "CBregexp.h"
-//#include "CMemory.h"
+#include "etc_uty.h"
+
+const char BREGEXP_OPT_KI[]	= "ki";
+const char BREGEXP_OPT_K[]	= "k";
 
 CBregexp::CBregexp() : m_sRep( NULL )
 {
@@ -88,12 +94,11 @@ int CBregexp::DeinitDll( void )
 	JRE32のエミュレーション関数．空の文字列に対して検索を行うことにより
 	BREGEXP構造体の生成のみを行う．
 
-	検索文字列はperl形式 i.e. /pattern/option または m/pattern/option
-
-	@param str[in] 検索パターン
+	@param szPattern [in] 検索パターン
 
 	@retval true 成功
 	@retval false 失敗
+	
 */
 bool CBregexp::Compile( const char* szPattern )
 {
@@ -106,7 +111,18 @@ bool CBregexp::Compile( const char* szPattern )
 	//	BREGEXP構造体の解放
 	ReleaseCompileBuffer();
 
-	BMatch( szPattern, tmp, tmp+1, &m_sRep, m_szMsg );
+	//	Jan. 31, 2002 genta
+	//	/のエスケープ
+	//	メモリ確保．
+	char *szNPattern = new char[ strlen(szPattern) * 2 + 5 ];
+	szNPattern[0] = '/';
+	char *pEnd = szNPattern + 1 + cescape( szPattern, szNPattern + 1, '/', '\\' );
+	*pEnd = '/';
+	*++pEnd = 'k';
+	*++pEnd = '\0';
+
+	BMatch( szNPattern, tmp, tmp+1, &m_sRep, m_szMsg );
+	delete [] szNPattern;
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
@@ -156,29 +172,73 @@ bool CBregexp::GetMatchInfo( const char* target, int len, int nStart, BREGEXP**r
 	return false;
 }
 
-#if 0
+// 2002/01/19 novice
 /*!
-	@note この関数は未使用のため実装無し。
+	正規表現による文字列置換
 
-	@param str1[in] 文字列1
-	@param str2[in] 文字列2．無い場合はNULL．
-	@retval 利用可能な境界文字(01-FF)．エラーの場合は0を返す。
-
-	通常の正規表現からパターン文字列を生成するときの境界の選択を行う。
-	境界には任意の文字を使えるが、str1/str2に現れない文字を選ばなくてはならない。
-	2つ設定できるのは置換するときに置換前と置換後の両方に現れない文字列を選ぶため。
-
-	@par 選択方法
-	文字列を順に見て0x21から0x7Eの間の文字が出現したかどうかを記録しておく。
-	その後、使われていない文字の中でもっとも先頭にあるものを使う。
+	@param szPattern0 [in] マッチパターン
+	@param szPattern1 [in] 置換文字列
+	@param target [in] 置換対象データ
+	@param len [in] 置換対象データ長
+	@param out [out] 置換後文字列		// 2002.01.26 hor
+	@retval true 成功
+	@retval false 失敗
 
 */
-int CBregexp::ChooseBoundary( const char* str1, const char* str2 )
+bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *target, int len , char **out)
 {
-	return '/';
-	//	とりあえず何も無し
-}
-#endif
+	int result;
 
+	if( !IsAvailable() ){
+		return false;
+	}
+
+	ReleaseCompileBuffer();
+
+	//	From Here Feb. 01, 2002 genta
+	//	/のエスケープ
+	char *szNPattern = new char[ ( strlen( szPattern0 ) + strlen( szPattern1 )) * 2 + 5 ];
+	szNPattern[0] = 's';
+	szNPattern[1] = '/';
+	char *pEnd = szNPattern + 2;
+
+	pEnd = pEnd + cescape( szPattern0, pEnd, '/', '\\' );
+	*pEnd = '/';
+	++pEnd;
+
+	pEnd = pEnd + cescape( szPattern1, pEnd, '/', '\\' );
+	*pEnd = '/';
+	*++pEnd = 'k';
+	*++pEnd = 'm';
+	*++pEnd = '\0';
+	//	To Here Feb. 01, 2002 genta
+
+	result = BSubst( szNPattern, target, target + len, &m_sRep, m_szMsg );
+	delete [] szNPattern;
+
+	//	メッセージが空文字列でなければ何らかのエラー発生。
+	//	サンプルソース参照
+	if( m_szMsg[0] ){
+		return false;
+	}
+
+	if( result ){
+		if( m_sRep->outp != NULL && m_sRep->outp != '\0' ){
+//			strcpy( target, m_sRep->outp );
+			int i=lstrlen(m_sRep->outp);
+			*out = new char[i+1];
+			strcpy( *out, m_sRep->outp );
+			(*out)[i] = '\0';
+		}else{
+//			strcpy( target, "" );
+			*out = new char[1];
+			(*out)[0] = '\0';
+		}
+
+		return true;
+	}
+
+	return false;
+}
 
 /*[EOF]*/

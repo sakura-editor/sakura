@@ -6,6 +6,7 @@
 
 	@author genta
 	@date Jun. 10, 2001
+	@date Jan. 05, 2002 genta コメント追加
 	$Revision$
 */
 /*
@@ -74,7 +75,7 @@ public:
 	CBregexp();
 	virtual ~CBregexp();
 
-	char* GetVersion(){		//!< DLLのバージョン情報を取得
+	const char* GetVersion(){		//!< DLLのバージョン情報を取得
 		return IsAvailable() ? BRegexpVersion() : NULL;
 	}
 
@@ -82,6 +83,8 @@ public:
 	//!	検索パターンのコンパイル
 	bool Compile(const char *szPattern);
 	bool GetMatchInfo(const char*target, int len, int nStart, BREGEXP**rep);
+	// 2002.01.26 hor    置換後文字列を別引数に
+	bool Replace(const char* szPattern0, const char* szPattern1, char *target, int len, char **out);
 
 	//! BREGEXPメッセージを取得する
 	const char* GetLastMessage(void) const { return m_szMsg; }
@@ -98,7 +101,7 @@ protected:
 	typedef int (*BREGEXP_BTrans)(const char*,char *,char *,BREGEXP **,char *);
 	typedef int (*BREGEXP_BSplit)(const char*,char *,char *,int,BREGEXP **,char *);
 	typedef void (*BREGEXP_BRegfree)(BREGEXP*);
-	typedef char* (*BREGEXP_BRegexpVersion)(void);
+	typedef const char* (*BREGEXP_BRegexpVersion)(void);
 
 	BREGEXP_BMatch BMatch;
 	BREGEXP_BSubst BSubst;
@@ -154,6 +157,10 @@ private:
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。
 	@pararm msg [out] エラーメッセージ
 
+	@return 置換した文字列の数
+	
+	rxp->outpからrxp->outendpに置換後の文字列が格納される。
+
 */
 
 /*!	@fn	int CBregexp::BTrans(char* str,char *target,char *targetendp, BREGEXP **rxp,char *msg)
@@ -165,6 +172,10 @@ private:
 	@param targetendp [in] 検索対象領域末尾
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。
 	@pararm msg [out] エラーメッセージ
+
+	@return 変換した文字数
+
+	rxp->outpからrxp->outendpに変換後の文字列が格納される。
 
 */
 
@@ -179,6 +190,8 @@ private:
 	@pararm msg [out] エラーメッセージ
 	@param limit [in] 最大分割数。これを越えた分については分割は行われずに最終要素に入る。
 
+	@return 分割数
+
 */
 
 /*!	@fn void CBregexp::BRegfree(BREGEXP* rx)
@@ -186,18 +199,17 @@ private:
 	検索関数によって渡されたBREGEXP構造体の解放
 
 	@param rx [in] 解放する構造体
-
 */
 
-/*!	@fn char* CBregexp::BRegexpVersion(void)
+
+/*!	@fn const char* CBregexp::BRegexpVersion(void)
 
 	BREGEXP.DLLのバージョン番号を返す。
+	@return バージョン文字列へのポインタ。
 
 	@par Sample
 	Version: Bregexp.dll V1.1 Build 22 Apr 29 2000 21:13:19
 */
 
 #endif
-
-
 /*[EOF]*/

@@ -102,6 +102,14 @@ SOURCE=.\CBregexp.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CCommandLine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CControlProcess.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CDialog.cpp
 # End Source File
 # Begin Source File
@@ -310,6 +318,18 @@ SOURCE=.\CMenuDrawer.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CMRU.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CMRUFolder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CNormalProcess.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\COpe.cpp
 # End Source File
 # Begin Source File
@@ -323,6 +343,18 @@ SOURCE=.\COpeBuf.cpp
 # Begin Source File
 
 SOURCE=.\CPrint.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CPrintPreview.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CProcess.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CProcessFactory.cpp
 # End Source File
 # Begin Source File
 
@@ -450,12 +482,20 @@ SOURCE=.\Funccode.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\my_icmp.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sakura_core.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\WinMain.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -647,6 +687,14 @@ SOURCE=.\CMenuDrawer.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CMRU.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CMRUFolder.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\COpe.h
 # End Source File
 # Begin Source File
@@ -735,6 +783,10 @@ SOURCE=.\Keycode.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\my_icmp.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\mymessage.h
 # End Source File
 # Begin Source File
@@ -756,7 +808,7 @@ SOURCE=.\StdAfx.h
 # End Group
 # Begin Source File
 
-SOURCE=.\ReadMe.txt
+SOURCE="C:\Program Files\Microsoft Visual Studio\VC98\Lib\MPR.LIB"
 # End Source File
 # End Target
 # End Project

@@ -21,6 +21,20 @@
 #include "global.h"
 #include "funccode.h"	//Stonee, 2001/05/18
 
+// オープンファイル CDlgOpenFile.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//13100
+//	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
+//	IDCANCEL,				HIDCANCEL_OPENDLG,		//Winのヘルプで勝手に出てくる
+//	IDC_BUTTON_HELP,		HIDC_OPENDLG_BUTTON_HELP,		//ヘルプボタン
+	IDC_COMBO_CODE,			HIDC_OPENDLG_COMBO_CODE,		//文字コードセット
+	IDC_COMBO_MRU,			HIDC_OPENDLG_COMBO_MRU,			//最近のファイル
+	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダ
+	IDC_COMBO_EOL,			HIDC_OPENDLG_COMBO_EOL,			//改行コード
+//	IDC_STATIC,				-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 #ifndef OFN_ENABLESIZING
 	#define OFN_ENABLESIZING	0x00800000
 #endif
@@ -436,6 +450,20 @@ UINT APIENTRY OFNHookProc(
 //		case CDN_SHAREVIOLATION	:	MYTRACE( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
 //		case CDN_TYPECHANGE		:	MYTRACE( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
 //		default:					MYTRACE( "pofn->hdr.code=???\n" );break;
+		case CDN_TYPECHANGE:	//@@@ 2002.1.24 YAZAKI 名前を付けて保存するときに「テキストファイル（*.txt）」を選択したら、拡張子txtを補うように変更
+			switch (pOf->nFilterIndex){
+			case 1:
+			 	pOf->lpstrDefExt = NULL;
+				break;
+			case 2:
+			 	pOf->lpstrDefExt = "txt";
+				break;
+			case 3:
+			 	pOf->lpstrDefExt = NULL;
+				break;
+			}
+			::SendMessage( hwndOpenDlg, CDM_SETDEFEXT, 0, (long)pOf->lpstrDefExt );
+			break;
 		}
 
 //		MYTRACE( "=======================\n" );
@@ -465,6 +493,21 @@ UINT APIENTRY OFNHookProc(
 			}
 		}
 		break;
+
+	//@@@ 2002.01.08 add start
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hdlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+	//@@@ 2002.01.08 add end
+
 	default:
 		return FALSE;
 	}
