@@ -473,9 +473,11 @@ protected:
 	void Command_FILEOPEN( const char *filename = NULL,
 		int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
 	
-	BOOL Command_FILESAVE( bool warnbeep = true );	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加
+	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
+	BOOL Command_FILESAVE( bool warnbeep = true, bool askname = true );	
 	BOOL Command_FILESAVEAS_DIALOG();			/* 名前を付けて保存 */
 	BOOL Command_FILESAVEAS( const char *filename );			/* 名前を付けて保存 */
+	BOOL Command_FILESAVEALL( void );	/* 全て上書き保存 */ // Jan. 23, 2005 genta
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	/* 閉じて開く*/
 	// Mar. 30, 2003 genta 引数追加

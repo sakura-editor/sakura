@@ -63,6 +63,7 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_FILEOPEN_DROPDOWN	,	//開く(ドロップダウン)
 	F_FILESAVE			,	//上書き保存
 	F_FILESAVEAS_DIALOG	,	//名前を付けて保存
+	F_FILESAVEALL		,	//全て上書き保存	// Jan. 24, 2005 genta
 	F_FILECLOSE			,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	F_FILECLOSE_OPEN	,	//閉じて開く
 	F_WINCLOSE			,	//ウィンドウを閉じる	//Oct.17,2000 コマンド本家は「ウィンドウ系」	//Feb. 18, 2001	JEPRO 下から移動した

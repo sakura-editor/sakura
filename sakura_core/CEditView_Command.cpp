@@ -230,10 +230,12 @@ BOOL CEditView::HandleCommand(
 	case F_FILESAVE:	bRet = Command_FILESAVE();break;	/* 上書き保存 */
 	case F_FILESAVEAS_DIALOG:	bRet = Command_FILESAVEAS_DIALOG();break;	/* 名前を付けて保存 */
 	case F_FILESAVEAS:	bRet = Command_FILESAVEAS((const char*)lparam1);break;	/* 名前を付けて保存 */
+	case F_FILESAVEALL:	bRet = Command_FILESAVEALL();break;	/* 全ての編集ウィンドウで上書き保存 */ // Jan. 23, 2005 genta
+	case F_FILESAVE_QUIET:	bRet = Command_FILESAVE(false,false); break;	/* 静かに上書き保存 */ // Jan. 24, 2005 genta
 	case F_FILESAVECLOSE:
 		//	Feb. 28, 2004 genta 保存＆閉じる
 		//	保存が不要なら単に閉じる
-		if( Command_FILESAVE( false )){
+		if( Command_FILESAVE( false, true )){
 			Command_WINCLOSE();
 		}
 		break;
@@ -3841,8 +3843,17 @@ void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOO
 
 
 
-/* 上書き保存 */
-BOOL CEditView::Command_FILESAVE( bool warnbeep )
+/*! 上書き保存
+
+	F_FILESAVEALLとの組み合わせのみで使われるコマンド．
+	@param warnbeep [in] true: 保存不要 or 保存禁止のときに警告を出す
+	@param askname	[in] true: ファイル名未設定の時に入力を促す
+
+	@date 2004.02.28 genta 引数warnbeep追加
+	@date 2005.01.24 genta 引数askname追加
+
+*/
+BOOL CEditView::Command_FILESAVE( bool warnbeep, bool askname )
 {
 
 	/* 無変更でも上書きするか */
@@ -3858,6 +3869,9 @@ BOOL CEditView::Command_FILESAVE( bool warnbeep )
 	}
 
 	if( !m_pcEditDoc->IsFilePathAvailable() ){
+		if( ! askname ){
+			return FALSE;
+		}
 		//	Feb. 28, 2004 genta SAVEASの結果が正しく返されていなかった
 		//	次の処理と組み合わせるときに問題が生じる
 		return Command_FILESAVEAS_DIALOG();
@@ -3888,7 +3902,6 @@ BOOL CEditView::Command_FILESAVE( bool warnbeep )
 	}
 	return FALSE;
 }
-
 
 /* 名前を付けて保存ダイアログ */
 BOOL CEditView::Command_FILESAVEAS_DIALOG()
@@ -3945,7 +3958,21 @@ BOOL CEditView::Command_FILESAVEAS( const char *filename )
 	return FALSE;
 }
 
+/*!	全て上書き保存
 
+	編集中の全てのウィンドウで上書き保存を行う．
+	ただし，上書き保存の指示を出すのみで実行結果の確認は行わない．
+
+	上書き禁止及びファイル名未設定のウィンドウでは何も行わない．
+
+	@date 2005.01.24 genta 新規作成
+*/
+BOOL CEditView::Command_FILESAVEALL( void )
+{
+	CShareData::getInstance()->PostMessageToAllEditors(
+		WM_COMMAND, MAKELONG( F_FILESAVE_QUIET, 0 ), (LPARAM)0, NULL);
+	return TRUE;
+}
 
 
 /*!	現在編集中のファイル名をクリップボードにコピー
