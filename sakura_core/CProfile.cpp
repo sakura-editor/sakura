@@ -2,522 +2,663 @@
 /*!	@file
 	@brief INIファイル入出力
 
-	@author Norio Nakatani
+	@author D.S.Koba
 	$Revision$
+	@date 2003-10-21 D.S.Koba メンバ関数の名前と引数をそのままにしてメンバ変数，関数の中身を書き直し
+	@date 2004-01-10 D.S.Koba 返値をBOOLからboolへ変更。IOProfileDataを型別の関数に分け，引数を減らす
 */
 /*
-	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2003, D.S.Koba
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose, 
+	including commercial applications, and to alter it and redistribute it 
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such, 
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
-#include <stdio.h>
+
 #include "CProfile.h"
-#include "debug.h"
-#include "global.h"
-#include "etc_uty.h"
-#include "CKeyWordSetMgr.h"
-#include "CMemory.h" // 2002/2/3 aroka
-#include "CEol.h" // 2002/2/3 aroka
+#include "Debug.h"
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 
-CProfile::CProfile()
-{
-	int i;
-	int j;
-	m_szProfileName[0] = '\0';
-	m_nSecNum = 0;
-	for( i = 0; i < MAX_SECNUM; ++i ){
-		m_nSecDataNumArr[i] = 0;
-		m_pSecNameArr[i] = NULL;
-		for( j = 0; j < MAX_SECDATA; ++j ){
-			m_pDataNameArr[i][j] = NULL;
-			m_pDataArr[i][j] = NULL;
-		}
-	}
-	return;
-}
 
-CProfile::~CProfile()
-{
-	int i;
-	int j;
-	m_szProfileName[0] = '\0';
-	m_nSecNum = 0;
-	for( i = 0; i < MAX_SECNUM; ++i ){
-		m_nSecDataNumArr[i] = 0;
-
-		if( NULL != m_pSecNameArr[i] ){
-			delete m_pSecNameArr[i];
-			m_pSecNameArr[i] = NULL;
-		}
-		for( j = 0; j < MAX_SECDATA; ++j ){
-			if( NULL != m_pDataNameArr[i][j] ){
-				delete m_pDataNameArr[i][j];
-				m_pDataNameArr[i][j] = NULL;
-			}
-			if( NULL != m_pDataArr[i][j] ){
-				delete m_pDataArr[i][j];
-				m_pDataArr[i][j] = NULL;
-			}
-		}
-	}
-	return;
-}
-
+/*! Profileを初期化
+	
+	@date 2003-10-21 D.S.Koba STLで書き直す
+*/
 void CProfile::Init( void )
 {
-	int i;
-	m_szProfileName[0] = '\0';
-	m_nSecNum = 0;;
-	for( i = 0; i < MAX_SECNUM; ++i ){
-		m_nSecDataNumArr[i] = 0;
-	}
+	m_strProfileName = _T("");
+	m_ProfileData.clear();
+	return;
 }
 
-BOOL CProfile::ReadProfile( const char* pszProfileName )
+/*! Profileをファイルから読み出す
+	
+	@param pszProfileName [in] ファイル名
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2003-10-21 D.S.Koba STLで書き直す
+*/
+bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 {
-//	FILE*		pFile;
-	const char*	pLine;
-	int			nLineLen;
-	int			nCurrentSection = -1;
-//	int			nCharChars;
-	int			i;
-//	int			j;
-	HFILE		hFile;
-	HGLOBAL		hgRead;
-	int			nFileLength;
-	char*		pBuf;
-	int			nBgn;
-//	int			nPos;
-	CEOL		cEol;
-	strcpy( m_szProfileName, pszProfileName );
-	hFile = _lopen( pszProfileName, OF_READ );
-	if( HFILE_ERROR == hFile ){
-		return FALSE;
+	m_strProfileName = pszProfileName;
+	m_ProfileData.reserve( 34 );//高速化のためメモリ確保
+
+	// ファイル読み込み
+	std::vector< std::basic_string< TCHAR > > vecLine;
+	if( false == ReadFile( m_strProfileName, vecLine ) ) return false;
+
+	unsigned int idx;
+	VEC_STR_ITER iter;
+	VEC_STR_ITER enditer = vecLine.end();
+
+	// コメント削除
+	for( iter=vecLine.begin(); iter!=enditer; iter++ )
+	{
+		idx = iter->find( _T("//") );
+		if( iter->npos != idx )
+		{
+			iter->erase( idx );
+		}
 	}
-	/* ファイルサイズの取得 */
-	nFileLength = _llseek( hFile, 0, FILE_END );
-	_llseek( hFile, 0, FILE_BEGIN );
 
-	hgRead = ::GlobalAlloc( GHND, nFileLength );
-	pBuf = (char*)::GlobalLock( hgRead );
-
-	_lread( hFile, pBuf, nFileLength );
-	_lclose( hFile );
-
-	nBgn = 0;
-//	nLineCount = -1;
-	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
-//	while( NULL != ( pLine = GetNextLine( pBuf, nFileLength, &nLineLen, &nBgn, NULL, FALSE ) ) ){
-	while( NULL != ( pLine = GetNextLine( pBuf, nFileLength, &nLineLen, &nBgn, &cEol ) ) ){
-		if( 0 < nLineLen ){
-//			szLine = &pBuf[nBgn];
-			if( 2 < nLineLen &&
-				0 == memcmp( pLine, "//", 2 )
-			){
-				/* コメント行 */
-			}else{
-				if( '[' == pLine[0]
-				 && 1 < nLineLen
-				 && NULL != memchr( &pLine[1], ']', nLineLen - 1 )
-				){
-					nCurrentSection = AddSection( &pLine[1], nLineLen - 2 );
-				}else
-				if( -1 != nCurrentSection ){
-					for( i = 0; i < nLineLen; ++i ){
-						if( '=' == pLine[i] ){
-							AddSectionData( nCurrentSection, &pLine[0], i, &pLine[i + 1], nLineLen - i - 1 );
-							break;
-						}
-					}
+	try
+	{
+		for( iter=vecLine.begin(); iter!=enditer; iter++ )
+		{
+			// セクション取得
+			if( 0 == iter->find( _T("[") ) && iter->npos == iter->find( _T("=") ) )
+			{
+				// データを直接変更するので，以降セクション名とは分からなくなることに注意
+				iter->erase( iter->begin() );
+				iter->erase( --(iter->end()) );
+				Section Buffer;
+				Buffer.strSectionName = iter->data();
+				m_ProfileData.push_back( Buffer );
+			}
+			// エントリ取得
+			else if( 0 != m_ProfileData.size() )	//最初のセクション以前の行のエントリは無視
+			{
+				idx = iter->find( _T("=") );
+				if( iter->npos != idx )
+				{
+					m_ProfileData.back().Data.insert( PAIR_STR_STR( iter->substr(0,idx), iter->substr(idx+1) ) );
 				}
 			}
 		}
+	} //try
+	catch(...)
+	{
+		//iniファイルから情報読み取り失敗
+		return false;
 	}
-	::GlobalUnlock( hgRead );
-	::GlobalFree( hgRead );
-	return TRUE;
+    return true;
 }
 
+/*! Profileの特定のセクションをファイルから読み出す
+	
+	@param pszProfileName [in] ファイル名
+	@param pszSectionName [in] セクション名
 
-int CProfile::SearchSection( const char* pszSectionName, int nSectionNameLen )
-{
-	int			i;
-	int			nWork;
-	const char*	pszWork;
-	for( i = 0; i < m_nSecNum; ++i ){
-		pszWork = m_pSecNameArr[i]->GetPtr( &nWork );
-		if( nWork == nSectionNameLen &&
-			0 == memcmp( pszSectionName, pszWork, nWork )
-		){
-			return i;
-		}
-	}
-	return -1;
-}
+	@retval true  成功
+	@retval false 失敗
 
-int CProfile::SearchDataName( int nCurrentSection, const char* pszDataName, int nDataNameLen )
-{
-	int			i;
-	int			nWork;
-	const char*	pszWork;
-	for( i = 0; i < m_nSecDataNumArr[nCurrentSection]; ++i ){
-		pszWork = m_pDataNameArr[nCurrentSection][i]->GetPtr( &nWork );
-		if( nWork == nDataNameLen &&
-			0 == memcmp( pszDataName, pszWork, nWork )
-		){
-			return i;
-		}
-	}
-	return -1;
-
-}
-
-int CProfile::AddSection( const char* pszSectionName, int nSectionNameLen )
-{
-//	int			i;
-	int			nCurrentSection;
-	if( -1 == ( nCurrentSection = SearchSection( pszSectionName, nSectionNameLen ) ) ){
-		nCurrentSection = m_nSecNum;
-		if( nCurrentSection + 1 > MAX_SECNUM ){
-			return -1;
-		}
-		m_nSecNum++;
-		m_pSecNameArr[nCurrentSection] = new CMemory( pszSectionName, nSectionNameLen );
-//		MYTRACE( "★[%s]\n", m_pSecNameArr[nCurrentSection]->GetPtr() );
-
-
-//		m_pSecNameArr[nCurrentSection]->SetData( pszSectionName, nSectionNameLen );
-	}
-	return nCurrentSection;
-}
-
-
-
-
-BOOL CProfile::AddSectionData(
-	int			nCurrentSection,
-	const char*	pszDataName,
-	int			nDataNameLen,
-	const char*	pszData,
-	int			nDataLen
+	@date 2003-10-26 D.S.Koba ReadProfile()を元に作成
+*/
+bool CProfile::ReadProfileSection(
+	const TCHAR* pszProfileName,
+	const TCHAR* pszSectionName
 )
 {
-	int		nCurrentIdx;
-	if( 0 > nCurrentSection ||
-		m_nSecNum <= nCurrentSection ){
-		return FALSE;
-	}
-	if( -1 == ( nCurrentIdx = SearchDataName( nCurrentSection, pszDataName, nDataNameLen ) ) ){
-		nCurrentIdx = m_nSecDataNumArr[nCurrentSection];
-		if( nCurrentIdx + 1 > MAX_SECDATA ){
-//			MYTRACE( "★★★★nCurrentIdx + 1 > MAX_SECDATA\n  nCurrentIdx=%d, MAX_SECDATA=%d\n", nCurrentIdx, MAX_SECDATA );
-			return FALSE;
+	m_strProfileName = pszProfileName;
+
+	// ファイル読み込み
+	std::vector< std::basic_string< TCHAR > > vecLine;
+	if( false == ReadFile( m_strProfileName, vecLine ) ) return false;
+
+	unsigned int idx;
+	VEC_STR_ITER iter;
+	VEC_STR_ITER enditer = vecLine.end();
+
+	// コメント削除
+	for( iter=vecLine.begin(); iter!=enditer; iter++ )
+	{
+		idx = iter->find( _T("//") );
+		if( iter->npos != idx )
+		{
+			iter->erase( idx );
 		}
-		m_nSecDataNumArr[nCurrentSection]++;
-		m_pDataNameArr[nCurrentSection][nCurrentIdx] = new CMemory( pszDataName, nDataNameLen );
-
-
-		m_pDataArr[nCurrentSection][nCurrentIdx] = new CMemory;
-//		m_pDataNameArr[nCurrentSection][nCurrentIdx]->SetData( pszDataName, nDataNameLen );
 	}
-	m_pDataArr[nCurrentSection][nCurrentIdx]->SetData( pszData, nDataLen );
-//	MYTRACE( "    [%s]=[%s]\n", m_pDataNameArr[nCurrentSection][nCurrentIdx]->GetPtr(), m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
-	return TRUE;
+
+	std::basic_string< TCHAR > strSectionLine = _T("[");
+	strSectionLine += pszSectionName;
+	strSectionLine += _T("]");
+
+	//目的のセクションを取得
+	iter = std::find( vecLine.begin(), vecLine.end(), strSectionLine );
+	if( vecLine.end() == iter ) return false;
+	
+	Section Buffer;
+	Buffer.strSectionName = pszSectionName;
+	m_ProfileData.push_back( Buffer );
+
+	try
+	{
+		//エントリを取得
+		for( ++iter; iter!=enditer; iter++ )
+		{
+			//次のセクションに入ったらエントリ読み込み終了
+			if( 0 == iter->find( _T("[") ) && iter->npos == iter->find( _T("=") ) ) break;
+			idx = iter->find( _T("=") );
+			if( iter->npos != idx )
+			{
+				m_ProfileData.back().Data.insert( PAIR_STR_STR( iter->substr(0,idx), iter->substr(idx+1) ) );
+			}
+		}
+	}
+	catch(...)
+	{
+		//iniファイルから情報読み取り失敗
+		return false;
+	}
+	return true;
+}
+
+/*! ファイルを読み込む
+	
+	@param strFilename [in] ファイル名
+	@param vecLine [out] 文字列格納先
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2003-10-26 D.S.Koba ReadProfile()から分離
+*/
+inline bool CProfile::ReadFile(
+	const std::basic_string< TCHAR >& strFilename,
+	std::vector< std::basic_string< TCHAR > >& vecLine
+)
+{
+	std::basic_ifstream< TCHAR > ifs( strFilename.c_str() );
+	if(!ifs.is_open()) return false;
+	
+	std::basic_string< TCHAR > strBuffer;
+	try
+	{
+		for(;;)
+		{
+			std::getline( ifs, strBuffer );
+			vecLine.push_back( strBuffer );
+			if(ifs.eof()) break;
+		}
+	} //try
+	catch(...)
+	{
+		//ファイルの読み込み失敗
+		ifs.close();
+		return false;
+	}
+	ifs.close();
+	return true;
 }
 
 
-/*! Profileのファイルへの書き出し
+/*! Profileをファイルへ書き出す
+	
+	@param pszProfileName [in] ファイル名(NULL=最後に読み書きしたファイル)
+	@param pszComment [in] コメント文(NULL=コメント省略)
+
+	@retval true  成功
+	@retval false 失敗
 
 	@date 2003.02.12 Mr.Nak fprintfを使うように
+	@date 2003-10-21 D.S.Koba STLで書き直す
 */
-BOOL CProfile::WriteProfile( const char* pszProfileName, const char* pszComment )
-{
-	int		i;
-	int		j;
-//	char	szLine[102400];
-	FILE*	pFile;
-	char*	pData;
-	int		nDataLen;
-	if( NULL != pszProfileName ){
-		strcpy( m_szProfileName, pszProfileName );
-	}
-
-	pFile = _tfopen( m_szProfileName, _T("wb") );
-	if( NULL == pFile ){
-		::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			"ファイルを作成できませんでした。\n\n%s", m_szProfileName
-		);
-		return FALSE;
-	}
-	/* コメント書き込み */
-	fwrite( "//", 1, 2, pFile );
-	fwrite( pszComment, 1, strlen( pszComment ), pFile );
-	fwrite( "\r\n", 1, 2, pFile );
-	fwrite( "\r\n", 1, 2, pFile );
-
-
-	for( i = 0; i < m_nSecNum; ++i ){
-		if( 0 < i ){
-			fwrite( "\r\n", 1, 2, pFile );
-		}
-		fwrite( "[", 1, 1, pFile );
-		pData = m_pSecNameArr[i]->GetPtr( &nDataLen );
-		fwrite( pData, 1, nDataLen, pFile );
-		fwrite( "]\r\n", 1, 3, pFile );
-		for( j = 0; j < m_nSecDataNumArr[i]; ++j ){
-			pData = m_pDataNameArr[i][j]->GetPtr( &nDataLen );
-			fwrite( pData, 1, nDataLen, pFile );
-			fwrite( "=", 1, 1, pFile );
-			pData = m_pDataArr[i][j]->GetPtr( &nDataLen );
-			fwrite( pData, 1, nDataLen, pFile );
-			fwrite( "\r\n", 1, 2, pFile );
-		}
-	}
-	fwrite( "\r\n", 1, 2 ,pFile );
-	fclose( pFile );
-	return TRUE;
-}
-
-/*!
-	1要素のINIファイルからの読み込みとINIファイルからの書き出し。
-
-	引数 bRead によってRead/Write決まる。
-*/
-BOOL CProfile::IOProfileData(
-	BOOL		bRead,
-	const char* pszSectionName,
-//	int			nSentio
-	const char*	lpValueName,
-	int			nRegCnvID,
-	char*		lpDataSrc,
-	int			cbDataSrc
+bool CProfile::WriteProfile(
+	const TCHAR* pszProfileName,
+	const TCHAR* pszComment
 )
 {
-//	LONG			lRet;
-	DWORD			dwType;
-	const char*		pData;		// address of value data
-	DWORD			nDataLen;	// size of value data
-//	char			szValueStr[1024];
-	static char		szValueStr[MAX_SETNUM * MAX_KEYWORDNUM * ( MAX_KEYWORDLEN ) + 1];
-	int				nWork;
-	int*			pnWork;
-//	int*			pwWork;
-	int				nCurrentSection;
-	int				nCurrentIdx;
-#ifdef _DEBUG
-	if( NULL == lpDataSrc ){
-		MYTRACE( "MY_RegVal_IO() NULL == lpDataSrc\n" );
-	}
-#endif
-//	szValueStr[0] = '\0';
-	/* 「読み込み」 か 「書き込み」か */
-	if( bRead ){
-		/* 読み込み */
-//		switch( nRegCnvID ){
-//		case REGCNV_INT2SZ:
-//			dwType = REG_SZ;
-//			break;
-//		case REGCNV_SZ2SZ:
-//			dwType = REG_SZ;
-//			break;
-//		case REG_MULTI_SZ:
-//			dwType = REG_MULTI_SZ;
-//			break;
-//		default:
-//			dwType = REG_BINARY;
-//			break;
-//		}
-		nDataLen = sizeof( szValueStr ) - 1;
-		szValueStr[0] = '\0';
-
-		if( -1 != (nCurrentSection = SearchSection( pszSectionName, strlen( pszSectionName ) ) ) ){
-			if( -1 == ( nCurrentIdx = SearchDataName( nCurrentSection, lpValueName, strlen( lpValueName ) ) ) ){
-//				::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-//					"データが見つかりません。\n[%s]%s\n", pszSectionName, lpValueName
-//				);
-				return FALSE;
-			}
-		}else{
-//			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-//				"セクションが見つかりません。\n%s\n", pszSectionName
-//			);
-			return FALSE;
-		}
-//		return TRUE;
-
-//		lRet = ::RegQueryValueEx( hKey, lpValueName, NULL, &dwType, (unsigned char *)szValueStr, &nDataLen );
-//		if( ERROR_SUCCESS != lRet ){
-//			char*	pszMsgBuf;
-//			::FormatMessage(
-//				FORMAT_MESSAGE_ALLOCATE_BUFFER |
-//				FORMAT_MESSAGE_FROM_SYSTEM |
-//				FORMAT_MESSAGE_IGNORE_INSERTS,
-//				NULL,
-//				::GetLastError(),
-//				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
-//				(LPTSTR) &pszMsgBuf,
-//				0,
-//				NULL
-//			);
-//			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-//				"レジストリ項目 値の読み込み失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf
-//			);
-//			MYTRACE( "レジストリ項目 値の読み込み失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf );
-//			::LocalFree( pszMsgBuf );
-//		}else{
-			switch( nRegCnvID ){
-			case REGCNV_INT2SZ:
-				*((int*)lpDataSrc) = atoi( m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
-//				*((int*)lpDataSrc) = atoi( szValueStr );
-				break;
-			case REGCNV_SZ2SZ:
-				if( cbDataSrc != 0 ){
-					strncpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), cbDataSrc );
-					//	末尾に0を付ける
-					((char*)lpDataSrc)[cbDataSrc - 1] = '\0';
-				}
-				else {
-					strcpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
-				}
-//				strcpy( (char *)lpDataSrc, szValueStr );
-				break;
-			case REG_MULTI_SZ:
-				memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), cbDataSrc );
-//				memcpy( lpDataSrc, szValueStr, cbDataSrc );
-				break;
-			case REGCNV_CHAR2SZ:
-				if( 0 == m_pDataArr[nCurrentSection][nCurrentIdx]->GetLength() ){
-					lpDataSrc[0] = '\0';
-				}else{
-					memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), 1 );
-				}
-//				lpDataSrc[1] = '\0';
-				break;
-			case REGCNV_WORD2SZ:
-				*((WORD*)lpDataSrc) = (WORD)atoi( m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr() );
-				break;
-			default:
-				memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), cbDataSrc );
-//				memcpy( lpDataSrc, szValueStr, cbDataSrc );
-				break;
-			}
-			return TRUE;
-//		}
-//		return lRet;
-	}else{
-		/* 書き込み */
-		switch( nRegCnvID ){
-		case REGCNV_INT2SZ:
-			pnWork = (int*)lpDataSrc;
-//			sprintf( szValueStr, "%d", *pnWork );
-			itoa( *pnWork, szValueStr, 10 );
-			dwType = REG_SZ;
-			pData = szValueStr;
-			nDataLen = strlen( szValueStr );
-			break;
-		case REGCNV_SZ2SZ:
-			dwType = REG_SZ;
-			pData = lpDataSrc;
-			nDataLen = strlen( (const char*)lpDataSrc );
-			break;
-		case REG_MULTI_SZ:
-			dwType = REG_MULTI_SZ;
-			pData = lpDataSrc;
-			nDataLen = cbDataSrc;
-			break;
-		case REGCNV_CHAR2SZ:
-			if( '\0' == lpDataSrc[0] ){
-				pData = "";
-				nDataLen = 0;
-			}else{
-				pData = lpDataSrc;
-				nDataLen = 1;
-			}
-			break;
-//			memcpy( lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr(), 1 );
-//			break;
-		case REGCNV_WORD2SZ:
-			nWork = (int)(*((WORD*)lpDataSrc));
-//			sprintf( szValueStr, "%d", *pnWork );
-			itoa( nWork, szValueStr, 10 );
-			dwType = REG_SZ;
-			pData = szValueStr;
-			nDataLen = strlen( szValueStr );
-			break;
-
-		default:
-			dwType = REG_BINARY;
-			pData = lpDataSrc;
-			nDataLen = cbDataSrc;
-			break;
-		}
-
-		if( -1 != (nCurrentSection = AddSection( pszSectionName, strlen( pszSectionName ) ) ) ){
-			if( -1 == AddSectionData( nCurrentSection, lpValueName, strlen( lpValueName ), pData, nDataLen ) ){
-				::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-					"データが追加出来ません。\n[%s]%s\n", pszSectionName, lpValueName
-				);
-				return FALSE;
-			}
-		}else{
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-				"セクションが追加出来ません。\n%s\n", pszSectionName
-			);
-			return FALSE;
-		}
-		return TRUE;
-
-
-//		lRet = ::RegSetValueEx( hKey, lpValueName, 0, dwType, pData, nDataLen );
-//		if( ERROR_SUCCESS != lRet ){
-//			char*	pszMsgBuf;
-//			::FormatMessage(
-//				FORMAT_MESSAGE_ALLOCATE_BUFFER |
-//				FORMAT_MESSAGE_FROM_SYSTEM |
-//				FORMAT_MESSAGE_IGNORE_INSERTS,
-//				NULL,
-//				::GetLastError(),
-//				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
-//				(LPTSTR) &pszMsgBuf,
-//				0,
-//				NULL
-//			);
-//			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-//				"レジストリ項目 値の書き込み()失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf
-//			);
-//			MYTRACE( "レジストリ項目 値の書き込み()失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf );
-//			::LocalFree( pszMsgBuf );
-//		}
-//		return lRet;
+	if( NULL != pszProfileName )
+	{
+		m_strProfileName = pszProfileName;
 	}
 
+	std::basic_ofstream< TCHAR > ofs( m_strProfileName.c_str() );
+	if(!ofs.is_open()) return false;
+
+	// コメントを書き込む
+	if( NULL != pszComment )
+	{
+		ofs << "//" << pszComment << "\n" << std::endl;
+	}
+    
+	std::vector< Section >::iterator iter;
+	std::vector< Section >::iterator enditer = m_ProfileData.end();
+	MAP_STR_STR_ITER mapiter;
+	MAP_STR_STR_ITER mapenditer;
+	for( iter = m_ProfileData.begin(); iter != enditer; iter++ )
+	{
+		//セクション名を書き込む
+		ofs << "[" << iter->strSectionName << "]\n";
+		mapenditer = iter->Data.end();
+		for( mapiter = iter->Data.begin(); mapiter != mapenditer; mapiter++ )
+		{
+			//エントリを書き込む
+			ofs << mapiter->first << "=" << mapiter->second << "\n";
+		}
+		ofs << std::endl;
+	}
+	ofs.close();
+	return true;
+}
+
+/*! Profileの特定のセクションのファイルへの書き出し
+	
+	@param pszSectionName [in] セクション名
+	@param pszProfileName [in] ファイル名
+	@param pszComment [in] コメント文(NULL=コメント省略)
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2003-10-21 D.S.Koba WriteProfile()を元に作成
+*/
+bool CProfile::WriteProfileSection(
+	const TCHAR* pszSectionName,
+	const TCHAR* pszProfileName,
+	const TCHAR* pszComment
+)
+{  
+	std::vector< Section >::iterator iter;
+	std::vector< Section >::iterator enditer = m_ProfileData.end();
+	MAP_STR_STR_ITER mapiter;
+	MAP_STR_STR_ITER mapenditer;
+	for( iter = m_ProfileData.begin(); iter != enditer; iter++ )
+	{
+		//目的のセクションの場合
+		if( iter->strSectionName == pszSectionName )
+		{
+			std::basic_ofstream< TCHAR > ofs( pszProfileName );
+			if(!ofs.is_open()) return false;
+
+			// コメントを書き込む
+			if( NULL != pszComment )
+			{
+				ofs << "//" << pszComment << "\n" << std::endl;
+			}
+			//セクション名を書き込む
+			ofs << "[" << iter->strSectionName << "]\n";
+			mapenditer = iter->Data.end();
+			for( mapiter = iter->Data.begin(); mapiter != mapenditer; mapiter++ )
+			{
+				//エントリを書き込む
+				ofs << mapiter->first << "=" << mapiter->second << "\n";
+			}
+			ofs << std::endl;
+			ofs.close();
+			break;
+		}
+	}
+	if( enditer == iter ) return false;
+	return true;
 }
 
 
+/*! エントリ値(bool型)をProfileから読み込む，又はProfileへ書き込む
+	
+	@param bRead [in] モード(true=読み込み, false=書き込み)
+	@param pszSectionName [in] セクション名
+	@param pszEntryKey [in] エントリ名
+	@param pEntryValue [i/o] エントリ値
 
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2004-01-10 D.S.Koba エントリの型別に関数を分離
+*/
+bool CProfile::IOProfileData(
+	const bool&		bRead,
+	const TCHAR*	pszSectionName,
+	const TCHAR*	pszEntryKey,
+	bool&			pEntryValue
+)
+{
+	// 「読み込み」か「書き込み」か
+	if( bRead )
+	{
+		std::basic_string< TCHAR > strWork;
+		if( false == GetProfileData( pszSectionName, pszEntryKey, strWork ) ) return false;
+		if( strWork != _T("0") )	pEntryValue = true;
+		else						pEntryValue = false;
+		return true;
+	}
+	else
+	{
+		std::basic_string< TCHAR > strNewEntryValue;
+		if( pEntryValue == true )	strNewEntryValue = _T("1");
+		else						strNewEntryValue = _T("0");
+		return SetProfileData( pszSectionName, pszEntryKey, strNewEntryValue );
+	}
+}
+
+/*! エントリ値(int型)をProfileから読み込む，又はProfileへ書き込む
+	
+	@param bRead [in] モード(true=読み込み, false=書き込み)
+	@param pszSectionName [in] セクション名
+	@param pszEntryKey [in] エントリ名
+	@param pEntryValue [i/o] エントリ値
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2004-01-10 D.S.Koba エントリの型別に関数を分離
+*/
+bool CProfile::IOProfileData(
+	const bool&		bRead,
+	const TCHAR*	pszSectionName,
+	const TCHAR*	pszEntryKey,
+	int&			pEntryValue
+)
+{
+	// 「読み込み」か「書き込み」か
+	if( bRead )
+	{
+		std::basic_string< TCHAR > strWork;
+		if( false == GetProfileData( pszSectionName, pszEntryKey, strWork ) ) return false;
+		std::basic_stringstream< TCHAR > stream;
+		stream << strWork;
+		stream >> pEntryValue;
+		return true;
+	}
+	else
+	{
+		std::basic_string< TCHAR > strNewEntryValue;
+		std::basic_stringstream< TCHAR > stream;
+		stream << pEntryValue;
+		stream >> strNewEntryValue;
+		//strNewEntryValue = stream.str();
+		return SetProfileData( pszSectionName, pszEntryKey, strNewEntryValue );
+	}
+}
+
+/*! エントリ値(WORD型)をProfileから読み込む，又はProfileへ書き込む
+	
+	@param bRead [in] モード(true=読み込み, false=書き込み)
+	@param pszSectionName [in] セクション名
+	@param pszEntryKey [in] エントリ名
+	@param pEntryValue [i/o] エントリ値
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2004-01-10 D.S.Koba エントリの型別に関数を分離
+*/
+bool CProfile::IOProfileData(
+	const bool&		bRead,
+	const TCHAR*	pszSectionName,
+	const TCHAR*	pszEntryKey,
+	WORD&			pEntryValue
+)
+{
+	// 「読み込み」か「書き込み」か
+	if( bRead )
+	{
+		std::basic_string< TCHAR > strWork;
+		if( false == GetProfileData( pszSectionName, pszEntryKey, strWork ) ) return false;
+		std::basic_stringstream< TCHAR > stream;
+		stream << strWork;
+		stream >> pEntryValue;
+		return true;
+	}
+	else
+	{
+		std::basic_string< TCHAR > strNewEntryValue;
+		std::basic_stringstream< TCHAR > stream;
+		stream << pEntryValue;
+		stream >> strNewEntryValue;
+		//strNewEntryValue = stream.str();
+		return SetProfileData( pszSectionName, pszEntryKey, strNewEntryValue );
+	}
+}
+
+/*! エントリ値(TCHAR型)をProfileから読み込む，又はProfileへ書き込む
+	
+	@param bRead [in] モード(true=読み込み, false=書き込み)
+	@param pszSectionName [in] セクション名
+	@param pszEntryKey [in] エントリ名
+	@param pEntryValue [i/o] エントリ値
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2004-01-10 D.S.Koba エントリの型別に関数を分離
+*/
+bool CProfile::IOProfileData(
+	const bool&		bRead,
+	const TCHAR*	pszSectionName,
+	const TCHAR*	pszEntryKey,
+	TCHAR&			pEntryValue
+)
+{
+	// 「読み込み」か「書き込み」か
+	if( bRead )
+	{
+		std::basic_string< TCHAR > strWork;
+		if( false == GetProfileData( pszSectionName, pszEntryKey, strWork ) ) return false;
+		if( 0 == strWork.length() )	pEntryValue = _T('\0');
+		else						pEntryValue = strWork.at(0);
+		return true;
+	}
+	else
+	{
+		std::basic_string< TCHAR > strNewEntryValue;
+		if( _T('\0') == pEntryValue )	strNewEntryValue = _T("");
+		else							strNewEntryValue = pEntryValue;
+		return SetProfileData( pszSectionName, pszEntryKey, strNewEntryValue );
+	}
+}
+
+/*! エントリ値(NULL文字終端の文字列)をProfileから読み込む，又はProfileへ書き込む
+	
+	@param bRead [in] モード(true=読み込み, false=書き込み)
+	@param pszSectionName [in] セクション名
+	@param pszEntryKey [in] エントリ名
+	@param pEntryValue [i/o] エントリ値
+	@param nEntryValueSize [in] pEntryValueの確保メモリサイズ(読み込み時サイズが十分であることが明確なら 0 指定可。書き込み時は使用しない)
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2004-01-10 D.S.Koba エントリの型別に関数を分離
+*/
+bool CProfile::IOProfileData(
+	const bool&		bRead,
+	const TCHAR*	pszSectionName,
+	const TCHAR*	pszEntryKey,
+	TCHAR*			pEntryValue,
+	const int&		nEntryValueSize
+)
+{
+	// 「読み込み」か「書き込み」か
+	if( bRead )
+	{
+		std::basic_string< TCHAR > strWork;
+		if( false == GetProfileData( pszSectionName, pszEntryKey, strWork ) ) return false;
+		if( nEntryValueSize > static_cast<int>(strWork.length())
+			|| nEntryValueSize ==0 )
+		{
+			strWork.copy( pEntryValue, strWork.length() );
+			//copy()はNULL文字終端しないのでNULL文字追加
+			pEntryValue[strWork.length()] = _T('\0');
+		}
+		else
+		{
+			strWork.copy( pEntryValue, nEntryValueSize-1 );
+			//copy()はNULL文字終端しないのでNULL文字追加
+			pEntryValue[nEntryValueSize-1] = _T('\0');
+		}
+		return true;
+	}
+	else
+	{
+		return SetProfileData( pszSectionName, pszEntryKey, pEntryValue );
+	}
+}
+
+/*! エントリ値(std::basic_string<TCHAR>型)をProfileから読み込む，又はProfileへ書き込む
+	
+	@param bRead [in] モード(true=読み込み, false=書き込み)
+	@param strSectionName [in] セクション名
+	@param strEntryKey [in] エントリ名
+	@param strEntryValue [i/o] エントリ値
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2003-10-22 D.S.Koba 作成
+*/
+bool CProfile::IOProfileData(
+	const bool&							bRead,
+	const std::basic_string< TCHAR >&	strSectionName,
+	const std::basic_string< TCHAR >&	strEntryKey,
+	std::basic_string< TCHAR >&			strEntryValue
+)
+{
+	// 「読み込み」か「書き込み」か
+	if( bRead ) return GetProfileData( strSectionName, strEntryKey, strEntryValue );
+	else        return SetProfileData( strSectionName, strEntryKey, strEntryValue );
+}
+
+/*! エントリ値をProfileから読み込む
+	
+	@param strSectionName [in] セクション名
+	@param strEntryKey [in] エントリ名
+	@param strEntryValue [out] エントリ値
+
+	@retval true 成功
+	@retval false 失敗
+
+	@date 2003-10-22 D.S.Koba 作成
+*/
+inline bool CProfile::GetProfileData(
+	const std::basic_string< TCHAR >&	strSectionName,
+	const std::basic_string< TCHAR >&	strEntryKey,
+	std::basic_string< TCHAR >&			strEntryValue
+)
+{
+	std::basic_string< TCHAR > strWork;
+	std::vector< Section >::iterator iter;
+	std::vector< Section >::iterator enditer = m_ProfileData.end();
+	MAP_STR_STR_ITER mapiter;
+	for( iter = m_ProfileData.begin(); iter != enditer; iter++ )
+	{
+		if( iter->strSectionName == strSectionName )
+		{
+			mapiter = iter->Data.find( strEntryKey );
+			if( iter->Data.end() != mapiter )
+			{
+				strEntryValue = mapiter->second;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/*! エントリをProfileへ書き込む
+	
+	@param strSectionName [in] セクション名
+	@param strEntryKey [in] エントリ名
+	@param strEntryValue [in] エントリ値
+
+	@retval true  成功
+	@retval false 失敗(処理を入れていないのでfalseは返らない)
+
+	@date 2003-10-21 D.S.Koba 作成
+*/
+inline bool CProfile::SetProfileData(
+	const std::basic_string< TCHAR >&	strSectionName,
+	const std::basic_string< TCHAR >&	strEntryKey,
+	const std::basic_string< TCHAR >&	strEntryValue
+)
+{
+	std::vector< Section >::iterator iter;
+	std::vector< Section >::iterator enditer = m_ProfileData.end();
+	MAP_STR_STR_ITER mapiter;
+	MAP_STR_STR_ITER mapenditer;
+	for( iter = m_ProfileData.begin(); iter != enditer; iter++ )
+	{
+		if( iter->strSectionName == strSectionName )
+		{
+			//既存のセクションの場合
+			mapiter = iter->Data.find( strEntryKey );
+			if( iter->Data.end() != mapiter )
+			{
+				//既存のエントリの場合は値を上書き
+				mapiter->second = strEntryValue;
+				break;
+			}
+			else
+			{
+				//既存のエントリが見つからない場合は追加
+				iter->Data.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
+				break;
+			}
+		}
+	}
+	//既存のセクションではない場合，セクション及びエントリを追加
+	if( enditer == iter )
+	{
+		Section Buffer;
+		Buffer.strSectionName = strSectionName;
+		Buffer.Data.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
+		m_ProfileData.push_back( Buffer );
+	}
+	return true;
+}
 
 
 
 void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
-	int	i;
-	int	j;
-	MYTRACE( "\n\n\n========================================-\n" );
-	MYTRACE( "m_nSecNum=%d\n", m_nSecNum );
-	MYTRACE( "m_szProfileName=%s\n", m_szProfileName );
-	MYTRACE( "========================================-\n" );
-	for( i = 0; i < m_nSecNum; ++i ){
-		MYTRACE( "\n■m_pSecNameArr[%d]=%s\n", i, m_pSecNameArr[i]->GetPtr() );
-		MYTRACE( "m_nSecDataNumArr[%d]=%d\n", i, m_nSecDataNumArr[i] );
-		for( j = 0; j < m_nSecDataNumArr[i]; ++j ){
-			MYTRACE( "・\tm_pDataNameArr[%d][%d]=%s\n", i, j, m_pDataNameArr[i][j]->GetPtr() );
+	std::vector< Section >::iterator iter;
+	std::vector< Section >::iterator enditer = m_ProfileData.end();
+	MAP_STR_STR_ITER mapiter;
+	MAP_STR_STR_ITER mapenditer;
+	MYTRACE( "\n\nCProfile::DUMP()======================" );
+	for( iter = m_ProfileData.begin(); iter != enditer; iter++ )
+	{
+		MYTRACE( "\n■strSectionName=%s", iter->strSectionName.c_str() );
+		mapenditer = iter->Data.end();
+		for( mapiter = iter->Data.begin(); mapiter != mapenditer; mapiter++ )
+		{
+			MYTRACE( "\"%s\" = \"%s\"", mapiter->first.c_str(), mapiter->second.c_str() );
 		}
 	}
+	MYTRACE( "========================================\n" );
 #endif
 	return;
 }
-
 
 /*[EOF]*/

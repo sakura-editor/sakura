@@ -664,8 +664,8 @@ public:
 	void TraceOut( LPCTSTR lpFmt, ...);	/* デバッグモニタに出力 */
 	BOOL LoadShareData( void );	/* 共有データのロード */
 	void SaveShareData( void );	/* 共有データの保存 */
-	BOOL ShareData_IO_2( BOOL );	/* 共有データの保存 */
-	static void IO_ColorSet( CProfile* , BOOL , const char* , ColorInfo* );	/* 色設定 I/O */
+	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
+	static void IO_ColorSet( CProfile* , bool , const char* , ColorInfo* );	/* 色設定 I/O */
 
 	int			m_nStdToolBarButtons;
 
