@@ -35,6 +35,8 @@ class CProfile;
 #ifndef _CPROFILE_H_
 #define _CPROFILE_H_
 
+#pragma warning( disable : 4786 )
+
 #include <windows.h>
 #include <string>
 #include <vector>
