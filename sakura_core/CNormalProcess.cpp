@@ -24,6 +24,7 @@
 #include "etc_uty.h"
 #include "CEditWnd.h" // 2002/2/3 aroka
 #include "mymessage.h" // 2002/2/3 aroka
+#include "CDocLine.h" // 2003/03/28 MIK
 #include <tchar.h>
 #include "CRunningTimer.h"
 
@@ -203,6 +204,13 @@ bool CNormalProcess::Initialize()
 					&nPosY
 				);
 				if( nPosY < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
+					// From Here Mar. 28, 2003 MIK
+					//改行の真ん中にカーソルが来ないように。
+					CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLineInfo( nPosY );
+					if( pTmpDocLine ){
+						if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
+					}
+					// To Here Mar. 28, 2003 MIK
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = nPosX;
 				}else{

@@ -727,6 +727,13 @@ BOOL CEditDoc::FileRead(
 		}else{
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine = fi.m_nViewTopLine; // 2001/10/20 novice
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = fi.m_nViewLeftCol; // 2001/10/20 novice
+			// From Here Mar. 28, 2003 MIK
+			// 改行の真ん中にカーソルが来ないように。
+			CDocLine *pTmpDocLine = m_cDocLineMgr.GetLineInfo( nCaretPosY );
+			if( pTmpDocLine ){
+				if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nCaretPosX--;
+			}
+			// To Here Mar. 28, 2003 MIK
 			m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE );
 			m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev =
 				m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
