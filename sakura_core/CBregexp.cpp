@@ -118,7 +118,7 @@ bool CBregexp::Compile( const char* szPattern, int bOption )
 	//	Jan. 31, 2002 genta
 	//	/のエスケープ
 	//	メモリ確保．
-	char *szNPattern = new char[ strlen(szPattern) * 2 + 5 ];
+	char *szNPattern = new char[ strlen(szPattern) * 2 + 15 ];	//	15：「s///option」が余裕ではいるように。
 	szNPattern[0] = '/';
 	char *pEnd = szNPattern + 1 + cescape( szPattern, szNPattern + 1, '/', '\\' );
 	*pEnd = '/';
@@ -205,7 +205,7 @@ bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *ta
 
 	//	From Here Feb. 01, 2002 genta
 	//	/のエスケープ
-	char *szNPattern = new char[ ( strlen( szPattern0 ) + strlen( szPattern1 )) * 2 + 5 ];
+	char *szNPattern = new char[ ( strlen( szPattern0 ) + strlen( szPattern1 )) * 2 + 15 ];	//	15：「s///option」が余裕ではいるように。
 	szNPattern[0] = 's';
 	szNPattern[1] = '/';
 	char *pEnd = szNPattern + 2;
