@@ -167,7 +167,10 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			}
 			char	szWorkFolder[MAX_PATH];
 			char	szWorkFile[MAX_PATH];
-			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
+			// 2003.08.01 Moca ファイル名はスペースなどは区切り記号になるので、""で囲い、エスケープする
+			szWorkFile[0] = '"';
+			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
+			strcat( szWorkFile, "\"" ); // 2003.08.01 Moca
 			::SetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, szWorkFolder );
 			::SetDlgItemText( m_hWnd, IDC_COMBO_FILE, szWorkFile );
 		}
