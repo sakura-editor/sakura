@@ -2183,7 +2183,7 @@ int	CDocLineMgr::WhatKindOfChar(
 		if( __iscsym( pData[nIdx] ) ){
 			return CK_CSYM;	/* 半角の英字、アンダースコア、数字のいずれか */
 		}
-		if( pData[nIdx] >= (char)0xa1 && pData[nIdx] <= (char)0xfd ){
+		if( pData[nIdx] >= (char)0xa1 && pData[nIdx] <= (char)0xdf ){ // Mar. 30, 2003 genta fd->df
 			return CK_KATA;	/* 半角のカタカナ 0xA1<=c<=0xFD */
 		}
 		return CK_ETC;	/* 半角のその他 */
