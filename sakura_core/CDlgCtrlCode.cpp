@@ -93,7 +93,8 @@ struct ctrl_info_t {
 	//internal data
 	{ 0x1f, 0x00df, "US",  NULL }	//PC98 "_"
 };
-static const p_ctrl_list_num = sizeof(p_ctrl_list) / sizeof(struct ctrl_info_t);
+// Feb. 12, 2003 MIK long‚ª”²‚¯‚Ä‚¢‚½
+static const long p_ctrl_list_num = sizeof(p_ctrl_list) / sizeof(struct ctrl_info_t);
 
 CDlgCtrlCode::CDlgCtrlCode()
 {
