@@ -229,10 +229,6 @@ int CHokanMgr::Search(
 //	m_cmemCurWord.SetData( pszCurWord, lstrlen( pszCurWord ) );
 	m_cmemCurWord.SetDataSz( pszCurWord );
 
-	/* •¶š—ñ•`‰æ—p•¶š•”z—ñ */
-	for( i = 0; i < ( sizeof(m_pnDx) / sizeof(m_pnDx[0]) ); ++i ){
-		m_pnDx[i] = m_nColmWidth;
-	}
 
 	m_nCurKouhoIdx = 0;
 //	SetCurKouhoStr();
