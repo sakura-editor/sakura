@@ -104,6 +104,7 @@ public:
 	void PrintMenubarMessage( const char* msg );
 	//	Dec. 4, 2002 genta À‘Ì‚ğCEditView‚©‚çˆÚ“®
 	void SendStatusMessage( const char* msg );
+	void WindowTopMost( int ); // 2004.09.21 Moca
 
 //	void MyAppendMenu( HMENU, int, int, char* );	/* ƒƒjƒ…[€–Ú‚ğ’Ç‰Á */
 //#ifdef _DEBUG

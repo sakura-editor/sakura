@@ -30,6 +30,7 @@
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "CEditWnd.h"
 #include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "CDlgFavorite.h"	//お気に入り	//@@@ 2003.04.08 MIK
 
@@ -2722,5 +2723,12 @@ void CEditView::Command_CHGMOD_EOL( enumEOLType e ){
 	}
 }
 
+/*! 常に手前に表示
+	@date 2004.09.21 Moca
+*/
+void CEditView::Command_WINTOPMOST( LPARAM lparam )
+{
+	m_pcEditDoc->m_pcEditWnd->WindowTopMost( int(lparam) );
+}
 
 /*[EOF]*/

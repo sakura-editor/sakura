@@ -789,6 +789,7 @@ void ReplaceData_CEditView(
 	void Command_MINIMIZE_ALL( void );	/* すべて最小化 */
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
+	void Command_WINTOPMOST( LPARAM );		// 常に手前に表示 2004.09.21 Moca
 
 	/* 支援 */
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離

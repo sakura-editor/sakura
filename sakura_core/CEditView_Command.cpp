@@ -624,6 +624,7 @@ BOOL CEditView::HandleCommand(
 	case F_MINIMIZE_ALL:	Command_MINIMIZE_ALL();break;	/* すべて最小化 */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	case F_REDRAW:			Command_REDRAW();break;			/* 再描画 */
 	case F_WIN_OUTPUT:		Command_WIN_OUTPUT();break;		//アウトプットウィンドウ表示
+	case F_TOPMOST:			Command_WINTOPMOST( lparam1 );break;	//常に手前に表示 Moca
 
 	/* 支援 */
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完
