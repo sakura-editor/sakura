@@ -88,7 +88,10 @@ public:
 
 	BOOL OpenFileDialog( HWND, const char*, char*, int*, BOOL* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
+// 2004/06/21 novice タグジャンプ機能追加
+#if 0
 	void SetReferer( HWND , int, int );	/* タグジャンプ元など参照元の情報を保持する */
+#endif
 	//	Jul. 26, 2003 ryoji BOMオプション追加
 	BOOL SaveFileDialog( char*, int*, CEOL* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
@@ -269,9 +272,12 @@ public:
 	int				m_nFileShareModeOld;	/* ファイルの排他制御モード */
 	HFILE			m_hLockedFile;			/* ロックしているファイルのハンドル */
 
+// 2004/06/21 novice タグジャンプ機能追加
+#if 0
 	HWND			m_hwndReferer;	/* 参照元ウィンドウ */
 	int				m_nRefererX;	/* 参照元 行頭からのバイト位置桁 */
 	int				m_nRefererLine;	/* 参照元行 折り返し無しの物理行位置 */
+#endif
 	
 	//	Sep. 29, 2001 genta
 	CSMacroMgr*		m_pcSMacroMgr;	//!< マクロ

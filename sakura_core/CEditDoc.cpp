@@ -57,9 +57,12 @@ CEditDoc::CEditDoc() :
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	m_bPrintPreviewMode( FALSE ),	/* 印刷プレビューモードか */
 	m_nCommandExecNum( 0 ),			/* コマンド実行回数 */
+// 2004/06/21 novice タグジャンプ機能追加
+#if 0
 	m_hwndReferer( NULL ),			/* 参照元ウィンドウ */
 	m_nRefererX( 0 ),				/* 参照元 行頭からのバイト位置桁 */
 	m_nRefererLine( 0 ),			/* 参照元行 折り返し無しの物理行位置 */
+#endif
 	m_bReadOnly( FALSE ),			/* 読み取り専用モード */
 	m_bDebugMode( FALSE ),			/* デバッグモニタモード */
 	m_bGrepMode( FALSE ),			/* Grepモードか */
@@ -4052,6 +4055,8 @@ void CEditDoc::SetFileInfo( FileInfo* pfi )
 }
 
 
+// 2004/06/21 novice タグジャンプ機能追加
+#if 0
 /* タグジャンプ元など参照元の情報を保持する */
 void CEditDoc::SetReferer( HWND hwndReferer, int nRefererX, int nRefererLine )
 {
@@ -4060,6 +4065,7 @@ void CEditDoc::SetReferer( HWND hwndReferer, int nRefererX, int nRefererLine )
 	m_nRefererLine	= nRefererLine;	/* 参照元行  折り返し無しの物理行位置 */
 	return;
 }
+#endif
 
 
 
