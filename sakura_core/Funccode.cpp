@@ -144,8 +144,8 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_JUMP				,	//指定行ヘジャンプ	//Sept. 17, 2000 JEPRO コマンド本家は「検索系」
 	F_JUMPPREV			,	//移動履歴: 前へ
 	F_JUMPNEXT			,	//移動履歴: 次へ
-	F_WndScrollUp		,	//画面を上へ1行スクロール	// 2001/06/20 asa-o
-	F_WndScrollDown			//画面を下へ1行スクロール	// 2001/06/20 asa-o
+	F_WndScrollUp		,	//画面を上へ１行スクロール	// 2001/06/20 asa-o
+	F_WndScrollDown			//画面を下へ１行スクロール	// 2001/06/20 asa-o
 };
 const int nFincList_Move_Num = sizeof( pnFuncList_Move ) / sizeof( pnFuncList_Move[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
