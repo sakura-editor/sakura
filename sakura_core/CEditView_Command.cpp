@@ -7076,8 +7076,8 @@ void CEditView::Command_CASCADE( void )
 			phwndArr[count] = pEditNodeArr[i].m_hWnd;
 			count++;
 		}
-		int width = (rcDesktop.right - rcDesktop.left ) * 0.8;
-		int height = (rcDesktop.bottom - rcDesktop.top ) * 0.8;
+		int width = (rcDesktop.right - rcDesktop.left ) * 4 / 5; // Mar. 9, 2003 genta êÆêîââéZÇÃÇ›Ç…Ç∑ÇÈ
+		int height = (rcDesktop.bottom - rcDesktop.top ) * 4 / 5;
 		int w_delta = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXSIZE);
 		int h_delta = ::GetSystemMetrics(SM_CYSIZEFRAME) + ::GetSystemMetrics(SM_CYSIZE);
 		int w_offset = 0;
