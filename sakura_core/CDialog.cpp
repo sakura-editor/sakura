@@ -185,14 +185,6 @@ BOOL CDialog::OnDestroy( void )
 		m_nWidth = cWindowPlacement.rcNormalPosition.right - cWindowPlacement.rcNormalPosition.left;
 		m_nHeight = cWindowPlacement.rcNormalPosition.bottom - cWindowPlacement.rcNormalPosition.top;
 	}
-	else {
-		m_nShowCmd = SW_SHOW;
-		m_xPos = -1;
-		m_yPos = -1;
-		m_nWidth = -1;
-		m_nHeight = -1;
-	}
-	
 	/* ”jŠü */
 	if( NULL != m_hwndSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );

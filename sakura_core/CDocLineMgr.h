@@ -73,8 +73,16 @@ public:
 	// 2001/06/23 N.Nakatani WhereCurrentWord_2()追加 staticメンバ
 	static int WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 
-	static int WhatKindOfChar( char*, int, int );	/* 現在位置の文字の種類を調べる */
+	static int WhatKindOfChar( const char*, int, int );	/* 現在位置の文字の種類を調べる */
 	int PrevOrNextWord( int , int , int* , BOOL bLEFT, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
+	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
+	static int SearchNextWordPosition(
+		const char* pLine,
+		int			nLineLen,
+		int			nIdx,		//	桁数
+		int*		pnColmNew,	//	見つかった位置
+		BOOL		bStopsBothEnds	//	単語の両端で止まる
+	);
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CBregexp* ); /* 単語検索 */
 //	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int*, int ); /* 文字列検索 */

@@ -215,11 +215,11 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
 						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// まだ数値
-							++i;
+//							++i;
 							continue;
 						}
 						else {
-							nEnd = i - 1;	//	終わりの次の文字（数字の最後） 
+							nEnd = i;	//	数字の最後の文字
 							i--;
 							break;
 						}

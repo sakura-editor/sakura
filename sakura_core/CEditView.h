@@ -95,11 +95,27 @@ public:
 	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CBregexp*, int, int* );
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, BOOL, int, CBregexp*, int, int*, const char*, CMemory& );
-	/* Grep実行 */
-	void CEditView::DoGrep_Thread(
-		DWORD	dwGrepParam
+	/* Grep結果をpszWorkに格納 */
+	void SetGrepResult(
+		/* データ格納先 */
+		char*		pszWork, 
+		/* マッチしたファイルの情報 */
+		const char*		pszFullPath,	//	フルパス
+		char*		pszCodeName,	//	文字コード情報"[SJIS]"とか
+		/* マッチした行の情報 */
+		int			nLine,			//	マッチした行番号
+		int			nColm,			//	マッチした桁番号
+		char*		pCompareData,	//	行の文字列
+		int			nLineLen,		//	行の文字列の長さ
+		int			nEolCodeLen,	//	EOLの長さ
+		/* マッチした文字列の情報 */
+		const char*		pMatchData,		//	マッチした文字列
+		int			nMatchLen,		//	マッチした文字列の長さ
+		/* オプション */
+		BOOL		bGrepOutputLine,
+		int			nGrepOutputStyle
 	);
-
+	
 	//	Jun. 16, 2000 genta
 	bool  SearchBracket( int PosX, int PosY, int* NewX, int* NewY );	//	対括弧の検索
 	bool  SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,

@@ -2812,7 +2812,13 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 		}else{
 			return FALSE;
 		}
-
+	// Mar. 6, 2002 genta
+	case F_READONLY://読み取り専用
+		if( pcEditDoc->m_bReadOnly ){ /* 変更フラグ */
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	}
 	return FALSE;
 }

@@ -125,7 +125,7 @@ IDD_PROP1P1 DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     GROUPBOX        "カーソル",IDC_STATIC,3,3,140,84
     CONTROL         "フリーカーソル(&F)",IDC_CHECK_FREECARET,"Button",
@@ -398,7 +398,7 @@ IDD_GREP DIALOGEX 0, 0, 302, 143
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Grep条件入力"
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     LTEXT           "条件(&N)",IDC_STATIC,5,6,24,8
     COMBOBOX        IDC_COMBO_TEXT,40,4,256,120,CBS_DROPDOWN | 
@@ -417,8 +417,8 @@ BEGIN
     PUSHBUTTON      "現フォルダ(&U)",IDC_BUTTON_CURRENTFOLDER,247,49,49,14,
                     BS_MULTILINE,0,HIDC_BUTTON_CURRENTFOLDER
     CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
-                    BS_AUTOCHECKBOX | WS_DISABLED | WS_GROUP | WS_TABSTOP,5,
-                    52,73,10,0,HIDC_CHK_WORD
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,52,73,10,0,
+                    HIDC_CHK_WORD
     CONTROL         "サブフォルダからも検索する(&S)",IDC_CHK_SUBFOLDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,63,107,10,0,
                     HIDC_CHK_SUBFOLDER
@@ -1958,7 +1958,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,106,5
+ PRODUCTVERSION 1,2,106,6
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -1982,7 +1982,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.106.5\0"
+            VALUE "ProductVersion", "1.2.106.6\0"
         END
     END
     BLOCK "VarFileInfo"
