@@ -20,7 +20,6 @@
 #include "etc_uty.h"
 #include "CSMacroMgr.h" // 2002/2/10 aroka
 #include "KeyCode.h"	/// 2002/2/3 aroka from here
-#include "CFuncInfo.h" ///
 #include "debug.h" ///
 #include <stdio.h>	/// 2002/2/3 aroka from here
 
