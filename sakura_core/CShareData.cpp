@@ -150,9 +150,12 @@ struct ARRHEAD {
 	Version 56:
 	インクリメンタルサーチ(Migemo path用) 2004/10/13 isearch
 	
+	Version 57:
+	強調キーワード指定拡大 2005/01/13 MIK
+	
 */
 
-const unsigned int uShareDataVersion = 56;
+const unsigned int uShareDataVersion = 57;
 
 /*
 ||	Singleton風
