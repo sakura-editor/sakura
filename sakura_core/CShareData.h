@@ -66,7 +66,10 @@ enum maxdata{
 	MAX_DOCTYPE_LEN				= 7,
 	MAX_TRANSFORM_FILENAME		= 16,	/// 2002.11.24 Moca
 
-	MAX_CUSTMACRO				= 20,	// 登録できるマクロの数
+	/*! 登録できるマクロの数
+		@date 2005.01.30 genta 50に増やした
+	*/
+	MAX_CUSTMACRO				= 50,
 
 	// 2004/06/21 novice タグジャンプ機能追加
 	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
