@@ -49,8 +49,6 @@
 #include "CFileLoad.h" // 2002/08/30 Moca
 #include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
-#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
-
 /* •¶ŽšŽí—ÞŽ¯•ÊŽq */
 #define	CK_NULL			0	/*!< NULL 0x0<=c<=0x0 */
 #define	CK_TAB			1	/*!< ƒ^ƒu 0x9<=c<=0x9 */
