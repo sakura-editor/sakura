@@ -963,8 +963,9 @@ bool CShareData::Init( void )
 		m_pShareData->m_Types[nIdx].m_nColmSpace = 0;					/* 文字と文字の隙間 */
 		m_pShareData->m_Types[nIdx].m_nLineSpace = 1;					/* 行間のすきま */
 		m_pShareData->m_Types[nIdx].m_nTabSpace = 4;					/* TABの文字数 */
-		m_pShareData->m_Types[nIdx].m_nKeyWordSetIdx = -1;				/* キーワードセット */
-		m_pShareData->m_Types[nIdx].m_nKeyWordSetIdx2 = -1;				/* キーワードセット2 */	//Dec. 4, 2000, MIK
+		for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
+			m_pShareData->m_Types[nIdx].m_nKeyWordSetIdx[i] = -1;
+		}
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 		strcpy( m_pShareData->m_Types[nIdx].m_szTabViewString, "^       " );	/* TAB表示文字列 */
 //#endif
@@ -1029,6 +1030,14 @@ bool CShareData::Init( void )
 			"検索文字列",						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
 			"強調キーワード1",					TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
 			"強調キーワード2",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
+			"強調キーワード3",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
+			"強調キーワード4",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+			"強調キーワード5",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+			"強調キーワード6",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+			"強調キーワード7",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+			"強調キーワード8",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+			"強調キーワード9",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+			"強調キーワード10",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
 			"コメント",							TRUE , FALSE, FALSE, RGB( 0, 128, 0 )		, RGB( 255, 251, 240 ),
 		//Sept. 4, 2000 JEPRO シングルクォーテーション文字列に色を割り当てるが色分け表示はしない
 		//Oct. 17, 2000 JEPRO 色分け表示するように変更(最初のFALSE→TRUE)
@@ -1189,7 +1198,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Types[2].m_cLineComment.CopyTo( 0, "//", -1 );			/* 行コメントデリミタ */
 		m_pShareData->m_Types[2].m_cBlockComment.CopyTo( 0, "/*", "*/" );		/* ブロックコメントデリミタ */
 		m_pShareData->m_Types[2].m_cBlockComment.CopyTo( 1, "#if 0", "#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
-		m_pShareData->m_Types[2].m_nKeyWordSetIdx = 0;						/* キーワードセット */
+		m_pShareData->m_Types[2].m_nKeyWordSetIdx[0] = 0;						/* キーワードセット */
 		m_pShareData->m_Types[2].m_nDefaultOutline = OUTLINE_CPP;			/* アウトライン解析方法 */
 		m_pShareData->m_Types[2].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
@@ -1202,7 +1211,7 @@ bool CShareData::Init( void )
 		/* HTML */
 		m_pShareData->m_Types[3].m_cBlockComment.CopyTo( 0, "<!--", "-->" );	/* ブロックコメントデリミタ */
 		m_pShareData->m_Types[3].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-		m_pShareData->m_Types[3].m_nKeyWordSetIdx = 1;						/* キーワードセット */
+		m_pShareData->m_Types[3].m_nKeyWordSetIdx[0] = 1;						/* キーワードセット */
 
 		// nIdx = 3;
 		/* PL/SQL */
@@ -1210,7 +1219,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Types[4].m_cBlockComment.CopyTo( 0, "/*", "*/" );	/* ブロックコメントデリミタ */
 		m_pShareData->m_Types[4].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[4].m_szIndentChars, "|★" );			/* その他のインデント対象文字 */
-		m_pShareData->m_Types[4].m_nKeyWordSetIdx = 2;						/* キーワードセット */
+		m_pShareData->m_Types[4].m_nKeyWordSetIdx[0] = 2;						/* キーワードセット */
 		m_pShareData->m_Types[4].m_nDefaultOutline = OUTLINE_PLSQL;			/* アウトライン解析方法 */
 
 		/* COBOL */
@@ -1218,14 +1227,14 @@ bool CShareData::Init( void )
 		m_pShareData->m_Types[5].m_cLineComment.CopyTo( 1, "D", 6 );	//Jun. 04, 2001 JEPRO 追加
 		m_pShareData->m_Types[5].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[5].m_szIndentChars, "*" );			/* その他のインデント対象文字 */
-		m_pShareData->m_Types[5].m_nKeyWordSetIdx = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
+		m_pShareData->m_Types[5].m_nKeyWordSetIdx[0] = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
 		m_pShareData->m_Types[5].m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 
 
 		/* Java */
 		m_pShareData->m_Types[6].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */
 		m_pShareData->m_Types[6].m_cBlockComment.CopyTo( 0, "/*", "*/" );	/* ブロックコメントデリミタ */
-		m_pShareData->m_Types[6].m_nKeyWordSetIdx = 4;						/* キーワードセット */
+		m_pShareData->m_Types[6].m_nKeyWordSetIdx[0] = 4;						/* キーワードセット */
 		m_pShareData->m_Types[6].m_nDefaultOutline = OUTLINE_JAVA;			/* アウトライン解析方法 */
 		m_pShareData->m_Types[6].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
@@ -1243,19 +1252,19 @@ bool CShareData::Init( void )
 		/* awk */
 		m_pShareData->m_Types[8].m_cLineComment.CopyTo( 0, "#", -1 );		/* 行コメントデリミタ */
 		m_pShareData->m_Types[8].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[8].m_nKeyWordSetIdx = 6;						/* キーワードセット */
+		m_pShareData->m_Types[8].m_nKeyWordSetIdx[0] = 6;						/* キーワードセット */
 
 		/* MS-DOSバッチファイル */
 		m_pShareData->m_Types[9].m_cLineComment.CopyTo( 0, "REM ", -1 );	/* 行コメントデリミタ */
 		m_pShareData->m_Types[9].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[9].m_nKeyWordSetIdx = 7;						/* キーワードセット */
+		m_pShareData->m_Types[9].m_nKeyWordSetIdx[0] = 7;						/* キーワードセット */
 
 		/* Pascal */
 		m_pShareData->m_Types[10].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */		//Nov. 5, 2000 JEPRO 追加
 		m_pShareData->m_Types[10].m_cBlockComment.CopyTo( 0, "{", "}" );	/* ブロックコメントデリミタ */	//Nov. 5, 2000 JEPRO 追加
 		m_pShareData->m_Types[10].m_cBlockComment.CopyTo( 1, "(*", "*)" );	/* ブロックコメントデリミタ2 */	//@@@ 2001.03.10 by MIK
 		m_pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
-		m_pShareData->m_Types[10].m_nKeyWordSetIdx = 8;						/* キーワードセット */
+		m_pShareData->m_Types[10].m_nKeyWordSetIdx[0] = 8;						/* キーワードセット */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
 		m_pShareData->m_Types[10].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	//@@@ 2001.11.11 upd MIK
 
@@ -1263,8 +1272,8 @@ bool CShareData::Init( void )
 		/* TeX */
 		m_pShareData->m_Types[11].m_cLineComment.CopyTo( 0, "%", -1 );		/* 行コメントデリミタ */
 		m_pShareData->m_Types[11].m_nDefaultOutline = OUTLINE_TEX;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[11].m_nKeyWordSetIdx  = 9;					/* キーワードセット */
-		m_pShareData->m_Types[11].m_nKeyWordSetIdx2 = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
+		m_pShareData->m_Types[11].m_nKeyWordSetIdx[0]  = 9;					/* キーワードセット */
+		m_pShareData->m_Types[11].m_nKeyWordSetIdx[1] = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
 		//シングルクォーテーション文字列を色分け表示しない
 		m_pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 		//ダブルクォーテーション文字列を色分け表示しない
@@ -1277,8 +1286,8 @@ bool CShareData::Init( void )
 		/* Perl */
 		m_pShareData->m_Types[12].m_cLineComment.CopyTo( 0, "#", -1 );		/* 行コメントデリミタ */
 		m_pShareData->m_Types[12].m_nDefaultOutline = OUTLINE_PERL;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[12].m_nKeyWordSetIdx  = 11;					/* キーワードセット */
-		m_pShareData->m_Types[12].m_nKeyWordSetIdx2 = 12;					/* キーワードセット2 */
+		m_pShareData->m_Types[12].m_nKeyWordSetIdx[0]  = 11;					/* キーワードセット */
+		m_pShareData->m_Types[12].m_nKeyWordSetIdx[1] = 12;					/* キーワードセット2 */
 		m_pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
 		//To Here Jul. 08, 2001
 		//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
@@ -1288,8 +1297,8 @@ bool CShareData::Init( void )
 		/* Visual Basic */
 		m_pShareData->m_Types[13].m_cLineComment.CopyTo( 0, "'", -1 );		/* 行コメントデリミタ */
 		m_pShareData->m_Types[13].m_nDefaultOutline = OUTLINE_VB;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[13].m_nKeyWordSetIdx  = 13;					/* キーワードセット */
-		m_pShareData->m_Types[13].m_nKeyWordSetIdx2 = 14;					/* キーワードセット2 */
+		m_pShareData->m_Types[13].m_nKeyWordSetIdx[0]  = 13;					/* キーワードセット */
+		m_pShareData->m_Types[13].m_nKeyWordSetIdx[1] = 14;					/* キーワードセット2 */
 		m_pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
 		m_pShareData->m_Types[13].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		//シングルクォーテーション文字列を色分け表示しない
@@ -1297,7 +1306,7 @@ bool CShareData::Init( void )
 
 		/* リッチテキスト */
 		m_pShareData->m_Types[14].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-		m_pShareData->m_Types[14].m_nKeyWordSetIdx  = 15;					/* キーワードセット */
+		m_pShareData->m_Types[14].m_nKeyWordSetIdx[0]  = 15;					/* キーワードセット */
 		m_pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
 		m_pShareData->m_Types[14].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		//シングルクォーテーション文字列を色分け表示しない

@@ -760,6 +760,8 @@ BEGIN
                     WS_GROUP,0,HIDC_BUTTON_IMPORT
     PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,211,192,53,14,0,
                     0,HIDC_BUTTON_EXPORT
+    RTEXT           "(最大 100 文字   登録数 9999 / 9999 個)",
+                    IDC_STATIC_KEYWORD_COUNT,135,177,128,10
 END
 
 IDD_INPUT1 DIALOGEX 0, 0, 185, 55
@@ -944,9 +946,9 @@ BEGIN
     LTEXT           "強調キーワード&1",IDC_STATIC,142,5,50,8
     COMBOBOX        IDC_COMBO_SET,195,3,72,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_COMBO_SET
-    LTEXT           "強調キーワード&2",IDC_STATIC,143,22,50,8
-    COMBOBOX        IDC_COMBO_SET2,195,20,72,180,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_SET2
+    LTEXT           "強調キーワード2",IDC_STATIC,143,22,50,8,NOT WS_VISIBLE
+    COMBOBOX        IDC_COMBO_SET2,195,20,72,180,CBS_DROPDOWNLIST | NOT 
+                    WS_VISIBLE | WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_SET2
     LTEXT           "ブロック型(&F)",IDC_STATIC,150,50,40,8
     EDITTEXT        IDC_EDIT_BLOCKCOMMENT_FROM,192,48,27,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_BLOCKCOMMENT_FROM
@@ -1020,6 +1022,8 @@ BEGIN
     EDITTEXT        IDC_EDIT_LINETERMCHAR,249,192,15,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_LINETERMCHAR
     GROUPBOX        "行番号区切り",IDC_STATIC,214,138,52,73
+    PUSHBUTTON      "強調キーワード&2～10...",IDC_BUTTON_KEYWORD_SELECT,180,
+                    19,85,16
 END
 
 IDD_COMPARE DIALOGEX 0, 0, 365, 165
@@ -1948,6 +1952,45 @@ BEGIN
     GROUPBOX        "大きさ",IDC_STATIC,7,66,163,63
 END
 
+IDD_DIALOG_KEYWORD_SELECT DIALOG DISCARDABLE  0, 0, 177, 197
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "強調キーワードの設定"
+FONT 9, "ＭＳ Ｐゴシック"
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,31,176,50,14
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,91,176,50,14
+    LTEXT           "強調キーワード&1",IDC_STATIC,7,15,54,13
+    COMBOBOX        IDC_COMBO1,66,13,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&2",IDC_STATIC,7,31,54,13
+    COMBOBOX        IDC_COMBO2,66,29,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&3",IDC_STATIC,7,48,54,13
+    COMBOBOX        IDC_COMBO3,66,45,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&4",IDC_STATIC,7,63,54,13
+    COMBOBOX        IDC_COMBO4,66,61,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&5",IDC_STATIC,7,80,54,13
+    COMBOBOX        IDC_COMBO5,66,77,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&6",IDC_STATIC,7,95,54,13
+    COMBOBOX        IDC_COMBO6,66,93,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&7",IDC_STATIC,7,111,54,13
+    COMBOBOX        IDC_COMBO7,66,109,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&8",IDC_STATIC,7,126,54,13
+    COMBOBOX        IDC_COMBO8,66,125,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード&9",IDC_STATIC,7,143,54,13
+    COMBOBOX        IDC_COMBO9,66,141,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "強調キーワード1&0",IDC_STATIC,7,159,54,13
+    COMBOBOX        IDC_COMBO10,66,157,104,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2334,6 +2377,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 152
     END
+
+    IDD_DIALOG_KEYWORD_SELECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 170
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 190
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2453,6 +2504,7 @@ BEGIN
     F_FILECLOSE             "閉じて(無題)"
     F_FILECLOSE_OPEN        "閉じて開く..."
     F_FILEOPEN_DROPDOWN     "開く... (ドロップダウン)"
+    F_FILESAVECLOSE         "保存して閉じる"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
 END
 
@@ -2472,7 +2524,6 @@ BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
     F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
-    F_FILESAVECLOSE         "保存して閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2844,6 +2895,7 @@ BEGIN
     F_TILE_V                "上下に並べて表示"
     F_TILE_H                "左右に並べて表示"
     F_BIND_WINDOW           "結合して表示"
+    F_TOPMOST               "常に手前に表示"
     F_NEXTWINDOW            "次のウィンドウ"
     F_PREVWINDOW            "前のウィンドウ"
 END
@@ -2853,7 +2905,6 @@ BEGIN
     F_MAXIMIZE_V            "縦方向に最大化"
     F_MINIMIZE_ALL          "すべて最小化"
     F_MAXIMIZE_H            "横方向に最大化"
-    F_TOPMOST               "常に手前に表示"
 END
 
 STRINGTABLE DISCARDABLE 

@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -315,32 +316,40 @@ SAKURA_CORE_API enum enumColorIndexType {
 	COLORIDX_SEARCH		= 13,	/* 検索文字列 */
 	COLORIDX_KEYWORD1	= 14,	/* 強調キーワード1 */ // 2002/03/13 novice
 	COLORIDX_KEYWORD2	= 15,	/* 強調キーワード2 */ // 2002/03/13 novice	//MIK ADDED
-	COLORIDX_COMMENT	= 16,	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
-	COLORIDX_SSTRING	= 17,	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
-	COLORIDX_WSTRING	= 18,	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
-	COLORIDX_URL		= 19,	/* URL */								//Dec. 4, 2000 shifted by MIK
-	COLORIDX_REGEX1		= 20,	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX2		= 21,	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX3		= 22,	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX4		= 23,	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX5		= 24,	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX6		= 25,	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX7		= 26,	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX8		= 27,	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX9		= 28,	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX10	= 29,	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_DIFF_APPEND = 30,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
-	COLORIDX_DIFF_CHANGE = 31,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
-	COLORIDX_DIFF_DELETE = 32,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
-	COLORIDX_BRACKET_PAIR = 33,	/* 対括弧 */	// 02/09/18 ai Add
-	COLORIDX_MARK		= 34,	/* ブックマーク */	// 02/10/16 ai Add
+	COLORIDX_KEYWORD3   = 16,	/* 強調キーワード3 */ // 2005.01.13 MIK 3-10 added
+	COLORIDX_KEYWORD4   = 17,	/* 強調キーワード4 */
+	COLORIDX_KEYWORD5   = 18,	/* 強調キーワード5 */
+	COLORIDX_KEYWORD6   = 19,	/* 強調キーワード6 */
+	COLORIDX_KEYWORD7   = 20,	/* 強調キーワード7 */
+	COLORIDX_KEYWORD8   = 21,	/* 強調キーワード8 */
+	COLORIDX_KEYWORD9   = 22,	/* 強調キーワード9 */
+	COLORIDX_KEYWORD10  = 23,	/* 強調キーワード10 */
+	COLORIDX_COMMENT	= 24,	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
+	COLORIDX_SSTRING	= 25,	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
+	COLORIDX_WSTRING	= 26,	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
+	COLORIDX_URL		= 27,	/* URL */								//Dec. 4, 2000 shifted by MIK
+	COLORIDX_REGEX1		= 28,	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX2		= 29,	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX3		= 30,	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX4		= 31,	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX5		= 32,	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX6		= 33,	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX7		= 34,	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX8		= 35,	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX9		= 36,	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX10	= 37,	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_DIFF_APPEND = 38,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_CHANGE = 39,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_DELETE = 40,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_BRACKET_PAIR = 41,	/* 対括弧 */	// 02/09/18 ai Add
+	COLORIDX_MARK		= 42,	/* ブックマーク */	// 02/10/16 ai Add
 
 	//カラーの最後
-	COLORIDX_LAST		= 35,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/10/16 ai Mod 34→35 */
+	COLORIDX_LAST		= 43,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/10/16 ai Mod 34→35 */
 
 	//カラー表示制御用
-	COLORIDX_BLOCK1		= 36,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */
-	COLORIDX_BLOCK2		= 37	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
+	COLORIDX_BLOCK1		= 44,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */
+	COLORIDX_BLOCK2		= 45	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
 
 	//1000-1099 : カラー表示制御用(正規表現キーワード)
 };

@@ -12,6 +12,7 @@
 	Copyright (C) 2001, genta, MIK, hor, Stonee, asa-o
 	Copyright (C) 2002, YAZAKI, aroka, MIK
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, MIK, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,6 +24,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
+#include "CDlgKeywordSelect.h"
 #include "etc_uty.h"
 #include "global.h"
 #include "CProfile.h"
@@ -2212,6 +2214,28 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 				return TRUE;
 			//	To Here Sept. 10, 2000
 
+			//強調キーワードの選択
+			case IDC_BUTTON_KEYWORD_SELECT:
+				{
+					CDlgKeywordSelect cDlgKeywordSelect;
+					//強調キーワード1を取得する。
+					HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
+					int nIdx = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+					if( CB_ERR == nIdx || 0 == nIdx ){
+						m_nSet[ 0 ] = -1;
+					}else{
+						m_nSet[ 0 ] = nIdx - 1;
+					}
+					cDlgKeywordSelect.DoModal( ::GetModuleHandle(NULL), hwndDlg, m_nSet );
+					RearrangeKeywordSet( hwndDlg );	//	Jan. 23, 2005 genta キーワードセット再配置
+					//強調キーワード1を反映する。
+					if( -1 == m_nSet[ 0 ] ){
+						::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, 0 );
+					}else{
+						::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)m_nSet[ 0 ] + 1, 0 );
+					}
+				}
+				break;
 			}
 			break;	/* BN_CLICKED */
 		}
@@ -2416,35 +2440,19 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 		for( i = 0; i < m_pCKeyWordSetMgr->m_nKeyWordSetNum; ++i ){
 			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_pCKeyWordSetMgr->GetTypeName( i ) );
 		}
-		if( -1 == m_Types.m_nKeyWordSetIdx ){
+		if( -1 == m_Types.m_nKeyWordSetIdx[0] ){
 			/* セット名コンボボックスのデフォルト選択 */
 			::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)0, 0 );
 		}else{
 			/* セット名コンボボックスのデフォルト選択 */
-			::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_Types.m_nKeyWordSetIdx + 1, 0 );
+			::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_Types.m_nKeyWordSetIdx[0] + 1, 0 );
 		}
 	}
 
-	//MIK START 2000.12.01 second keyword
-	/* セット名コンボボックスの値セット */																		//MIK
-	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET2 );															//MIK
-	::SendMessage( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */							//MIK
-	/* 一行目は空白 */																							//MIK
-	::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)" " );											//MIK
-	//	Mar. 31, 2003 genta KeyWordSetMgrをポインタに
-	if( 0 < m_pCKeyWordSetMgr->m_nKeyWordSetNum ){																//MIK
-		for( i = 0; i < m_pCKeyWordSetMgr->m_nKeyWordSetNum; ++i ){												//MIK
-			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_pCKeyWordSetMgr->GetTypeName( i ) );	//MIK
-		}																										//MIK
-		if( -1 == m_Types.m_nKeyWordSetIdx2 ){																	//MIK
-			/* セット名コンボボックスのデフォルト選択 */														//MIK
-			::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)0, 0 );												//MIK
-		}else{																									//MIK
-			/* セット名コンボボックスのデフォルト選択 */														//MIK
-			::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_Types.m_nKeyWordSetIdx2 + 1, 0 );					//MIK
-		}																										//MIK
-	}																											//MIK
-	//MIK END
+	//強調キーワード1～10の設定
+	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
+		m_nSet[ i ] = m_Types.m_nKeyWordSetIdx[i];
+	}
 
 	/* 色をつける文字種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
@@ -2554,23 +2562,16 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	nIdx = ::SendMessage( hwndWork, CB_GETCURSEL, 0, 0 );
 	if( CB_ERR == nIdx ||
 		0 == nIdx ){
-		m_Types.m_nKeyWordSetIdx = -1;
+		m_Types.m_nKeyWordSetIdx[0] = -1;
 	}else{
-		m_Types.m_nKeyWordSetIdx = nIdx - 1;
+		m_Types.m_nKeyWordSetIdx[0] = nIdx - 1;
 
 	}
 
-	//MIK START 2000.12.01 second keyword
-	/* セット名コンボボックスの値セット */					//MIK
-	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET2 );		//MIK
-	nIdx = ::SendMessage( hwndWork, CB_GETCURSEL, 0, 0 );	//MIK
-	if( CB_ERR == nIdx ||									//MIK
-		0 == nIdx ){										//MIK
-		m_Types.m_nKeyWordSetIdx2 = -1;						//MIK
-	}else{													//MIK
-		m_Types.m_nKeyWordSetIdx2 = nIdx - 1;				//MIK
-	}														//MIK
-	//MIK END
+	//強調キーワード2～10の取得(1は別)
+	for( nIdx = 1; nIdx < MAX_KEYWORDSET_PER_TYPE; nIdx++ ){
+		m_Types.m_nKeyWordSetIdx[nIdx] = m_nSet[nIdx];
+	}
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE0 ) ){
@@ -2841,6 +2842,73 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 }
 //	To Here Sept. 10, 2000
 
+/*!	@brief キーワードセットの再配列
+
+	キーワードセットの色分けでは未指定のキーワードセット以降はチェックを省略する．
+	そのためセットの途中に未指定のものがある場合はそれ以降を前に詰めることで
+	指定された全てのキーワードセットが有効になるようにする．
+	その際，色分けの設定も同時に移動する．
+
+	m_nSet, m_Types.m_ColorInfoArr[]が変更される．
+
+	@param hwndDlg [in] ダイアログボックスのウィンドウハンドル
+
+	@author	genta 
+	@date	2005.01.23 genta new
+
+*/
+void CPropTypes::RearrangeKeywordSet( HWND hwndDlg )
+{
+	int i, j;
+	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
+		if( m_nSet[ i ] != -1 )
+			continue;
+
+		//	未設定の場合
+		for( j = i; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
+			if( m_nSet[ j ] != -1 ){
+				//	後ろに設定済み項目があった場合
+				m_nSet[ i ] = m_nSet[ j ];
+				m_nSet[ j ] = -1;
+
+				//	色設定を入れ替える
+				//	構造体ごと入れ替えると名前が変わってしまうので注意
+				ColorInfo colT;
+				ColorInfo &col1 = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + i ];
+				ColorInfo &col2   = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + j ];
+
+				colT.m_bDisp		= col1.m_bDisp;
+				colT.m_bFatFont		= col1.m_bFatFont;
+				colT.m_bUnderLine	= col1.m_bUnderLine;
+				colT.m_colTEXT		= col1.m_colTEXT;
+				colT.m_colBACK		= col1.m_colBACK;
+
+				col1.m_bDisp		= col2.m_bDisp;
+				col1.m_bFatFont		= col2.m_bFatFont;
+				col1.m_bUnderLine	= col2.m_bUnderLine;
+				col1.m_colTEXT		= col2.m_colTEXT;
+				col1.m_colBACK		= col2.m_colBACK;
+
+				col2.m_bDisp		= colT.m_bDisp;
+				col2.m_bFatFont		= colT.m_bFatFont;
+				col2.m_bUnderLine	= colT.m_bUnderLine;
+				col2.m_colTEXT		= colT.m_colTEXT;
+				col2.m_colBACK		= colT.m_colBACK;
+				
+				break;
+			}
+		}
+		if( j == MAX_KEYWORDSET_PER_TYPE ){
+			//	後ろには設定済み項目がなかった
+			break;
+		}
+	}
+	
+	//	リストボックス及び色設定ボタンを再描画
+	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
+	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
+	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_LIST_COLORS ), NULL, TRUE );
+}
 
 
 /*[EOF]*/

@@ -177,6 +177,10 @@ SOURCE=..\sakura_core\CDlgJump.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgKeywordSelect.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgOpenFile.cpp
 # End Source File
 # Begin Source File
@@ -694,6 +698,10 @@ SOURCE=..\sakura_core\CDlgInput1.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgJump.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgKeywordSelect.h
 # End Source File
 # Begin Source File
 

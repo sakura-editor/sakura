@@ -51,11 +51,12 @@ public:
 	static BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
 	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
 
-
+private:
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND		m_hwndThis;		/* このダイアログのハンドル */
 	int			m_nPageNum;
+
 	/*
 	|| ダイアログデータ
 	*/
@@ -65,6 +66,8 @@ public:
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;	// Mar. 31, 2003 genta メモリ削減のためポインタに
 	int				m_nCurrentColorType;		/* 現在選択されている色タイプ */
 	DLLSHAREDATA*	m_pShareData;
+	int		m_nSet[ MAX_KEYWORDSET_PER_TYPE ];	//	2005.01.13 MIK keyword set index
+
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -96,6 +99,14 @@ protected:
 	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
 	static INT_PTR CALLBACK PropTypesRegex( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );	//@@@ 2001.11.17 add MIK
 	BOOL RegexKakomiCheck(const char *s);	//@@@ 2001.11.17 add MIK
+
+	void RearrangeKeywordSet( HWND );	// Jan. 23, 2005 genta キーワードセット再配置
+
+public:
+	//	Jan. 23, 2005 genta
+	//	タイプ別設定データの設定・取得
+	void SetTypeData( const Types& t ){ m_Types = t; }
+	void GetTypeData( Types& t ) const { t = m_Types; }
 };
 
 

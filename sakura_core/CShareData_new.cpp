@@ -744,8 +744,8 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 					&m_pShareData->m_Types[i].m_nMaxLineSize,
 					&m_pShareData->m_Types[i].m_nColmSpace,
 					&m_pShareData->m_Types[i].m_nTabSpace,
-					&m_pShareData->m_Types[i].m_nKeyWordSetIdx,
-					&m_pShareData->m_Types[i].m_nKeyWordSetIdx2,	//MIK
+					&m_pShareData->m_Types[i].m_nKeyWordSetIdx[0],
+					&m_pShareData->m_Types[i].m_nKeyWordSetIdx[1],	//MIK
 					&m_pShareData->m_Types[i].m_nStringType,
 					&m_pShareData->m_Types[i].m_bLineNumIsCRLF,
 					&m_pShareData->m_Types[i].m_nLineTermType,
@@ -759,8 +759,8 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 				m_pShareData->m_Types[i].m_nMaxLineSize,
 				m_pShareData->m_Types[i].m_nColmSpace,
 				m_pShareData->m_Types[i].m_nTabSpace,
-				m_pShareData->m_Types[i].m_nKeyWordSetIdx,
-				m_pShareData->m_Types[i].m_nKeyWordSetIdx2,	//MIK
+				m_pShareData->m_Types[i].m_nKeyWordSetIdx[0],
+				m_pShareData->m_Types[i].m_nKeyWordSetIdx[1],	//MIK
 				m_pShareData->m_Types[i].m_nStringType,
 				m_pShareData->m_Types[i].m_bLineNumIsCRLF,
 				m_pShareData->m_Types[i].m_nLineTermType,
@@ -769,6 +769,16 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 			);
 			cProfile.IOProfileData( bRead, pszSecName, szKeyName, szKeyData, 0 );
 		}
+		// 2005.01.13 MIK Keywordset 3-10
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect3",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[2] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect4",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[3] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect5",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[4] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect6",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[5] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect7",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[6] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect8",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[7] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect9",  m_pShareData->m_Types[i].m_nKeyWordSetIdx[8] );
+		cProfile.IOProfileData( bRead, pszSecName, "nKeywordSelect10", m_pShareData->m_Types[i].m_nKeyWordSetIdx[9] );
+
 		/* sŠÔ‚Ì‚·‚«‚Ü */
 		if( !bRead ){
 			if( m_pShareData->m_Types[i].m_nLineSpace < /* 1 */ 0 ){

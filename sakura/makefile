@@ -53,6 +53,7 @@ OBJS =\
 	$(SRCDIR)\CDlgGrep.obj \
 	$(SRCDIR)\CDlgInput1.obj \
 	$(SRCDIR)\CDlgJump.obj \
+	$(SRCDIR)\CDlgKeywordSelect.obj \
 	$(SRCDIR)\CDlgOpenFile.obj \
 	$(SRCDIR)\CDlgPrintPage.obj \
 	$(SRCDIR)\CDlgPrintSetting.obj \

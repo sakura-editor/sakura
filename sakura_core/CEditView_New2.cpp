@@ -55,6 +55,14 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 	case COLORIDX_DIGIT:	/* 半角数値である */
 	case COLORIDX_KEYWORD1:	/* 強調キーワード1（登録単語）文字列である */
 	case COLORIDX_KEYWORD2:	/* 強調キーワード2（登録単語）文字列である */
+	case COLORIDX_KEYWORD3:	// 2005.01.13 MIK 強調キーワード3-10
+	case COLORIDX_KEYWORD4:
+	case COLORIDX_KEYWORD5:
+	case COLORIDX_KEYWORD6:
+	case COLORIDX_KEYWORD7:
+	case COLORIDX_KEYWORD8:
+	case COLORIDX_KEYWORD9:
+	case COLORIDX_KEYWORD10:
 	case COLORIDX_URL:	    /* URLである */
 	case COLORIDX_SEARCH:	/* 検索文字列である */
 	case COLORIDX_BRACKET_PAIR: /* 対括弧の強調表示である */	// 2002/12/18 ai
