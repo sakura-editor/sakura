@@ -293,20 +293,20 @@ BEGIN
                     WS_TABSTOP,8,149,214,10,0,HIDC_CHECK_AutoMIMEDecode
 END
 
-IDD_ABOUT DIALOGEX 0, 0, 230, 175
+IDD_ABOUT DIALOGEX 0, 0, 231, 203
 STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "バージョン情報"
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
                     30,7,42,8
     LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,79,7,60,8,NOT WS_GROUP
     LTEXT           "Copyright (C) 1998-2001  by Norio Nakatani && Collaborators",
-                    IDC_STATIC,38,33,182,8,NOT WS_GROUP
+                    IDC_STATIC,40,33,182,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
-    DEFPUSHBUTTON   "&OK",IDOK,90,158,50,14,0,0,HIDOK
+    DEFPUSHBUTTON   "&OK",IDOK,90,178,50,14,0,0,HIDOK
     PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,166,7,59,14,0,0,
                     HIDC_BUTTON_CONTACT
     LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,12,60,66,
@@ -316,7 +316,7 @@ BEGIN
     LTEXT           "http://hp.vector.co.jp/authors/VA016528/",
                     IDC_STATIC_URL_ORG,80,48,123,8,SS_NOTIFY
     LTEXT           "原作者ホームページ:",IDC_STATIC,12,48,61,8
-    EDITTEXT        IDC_EDIT_ABOUT,5,74,220,80,ES_MULTILINE | ES_READONLY | 
+    EDITTEXT        IDC_EDIT_ABOUT,5,70,220,104,ES_MULTILINE | ES_READONLY | 
                     ES_WANTRETURN | WS_DISABLED | WS_VSCROLL,0,
                     HIDC_EDIT_ABOUT
 END
@@ -1623,9 +1623,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 223
+        RIGHTMARGIN, 224
         TOPMARGIN, 7
-        BOTTOMMARGIN, 168
+        BOTTOMMARGIN, 196
     END
 
     IDD_JUMP, DIALOG
@@ -1954,7 +1954,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,106,2
+ PRODUCTVERSION 1,2,106,3
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -1978,7 +1978,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.106.2\0"
+            VALUE "ProductVersion", "1.2.106.3\0"
         END
     END
     BLOCK "VarFileInfo"

@@ -28,28 +28,12 @@ class CEditView;
 #define _CARETMARGINRATE 20
 
 #include <windows.h>
-///#include "CDropTarget.h" /// 2002/2/3 aroka ヘッダ軽量化
-///#include "CMemory.h"
-///#include "CDocLineMgr.h"
-///#include "CLayoutMgr.h"
-///#include "COpe.h"
-///#include "COpeBlk.h"
-///#include "COpeBuf.h"
-///#include "CDlgFind.h"
-///@@#include "CProp1.h"
 #include "CShareData.h"
-///#include "CFuncInfoArr.h"
-///#include "CSplitBoxWnd.h"
-///#include "CSplitterWnd.h"
-///#include "CDlgCancel.h"
 #include "CTipWnd.h"
 #include "CDicMgr.h"
 #include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
-///#include "CDropTarget.h"
-///#include "CMarkMgr.h"
-///#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
 class CMemory;///
 class COpe;///
@@ -61,21 +45,6 @@ class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
-#endif
-
-//@@@ 2002.01.09 YAZAKI 使われていないため
-#if 0
-struct GrepParam {
-	void*	pCEditView;
-	char*	pszGrepKey;
-	char*	pszGrepFile;
-	char*	pszGrepFolder;
-	BOOL	bGrepSubFolder;
-	BOOL	bGrepLoHiCase;
-	BOOL	bGrepRegularExp;
-	BOOL	bKanjiCode_AutoDetect;
-	BOOL	bGrepOutputLine;
-};
 #endif
 
 /*-----------------------------------------------------------------------
@@ -221,6 +190,11 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nCaretWidth;			/* キャレットの幅 */
 	int		m_nCaretHeight;			/* キャレットの高さ */
 	int		m_nOldUnderLineY;
+
+	int		m_nOldCaretPosX;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
+	int		m_nOldCaretWidth;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK
+	bool	m_bRedrawRuler;		// ルーラー全体を描き直す時 = true      2002.02.25 Add By KK
+
 	/* キー状態 */
 	int		m_bSelectingLock;		/* 選択状態のロック */
 	int		m_bBeginSelect;			/* 範囲選択中 */
@@ -292,7 +266,7 @@ protected:
 	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
 	void SetCurrentColor( HDC, int );							/* 現在の色を指定 */
 	void DispRuler( HDC );										/* ルーラー描画 */
-//	void DispRulerEx( HDC );									/* ルーラー描画 */
+	void DrawRulerCaret( HDC hdc );								// ルーラーのキャレットのみ描画 2002.02.25 Add By KK
 	int	DispText( HDC, int, int, const unsigned char*, int );	/* テキスト表示 */
 	void DispTextSelected( HDC, int, int, int, int );			/* テキスト反転 */
 	void TwoPointToRect( RECT*, int, int, int, int );			/* 2点を対角とする矩形を求める */

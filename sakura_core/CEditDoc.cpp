@@ -824,11 +824,13 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 		goto end_of_func;
 	}
 	
+#if 0
 	/* ロングファイル名を取得する。（上書き保存のときのみ） */
 	char szWork[MAX_PATH];
 	if( TRUE == ::GetLongFileName( m_szFilePath, szWork ) ){
 		strcpy( m_szFilePath, szWork );
 	}
+#endif
 
 	int	v;
 	for( v = 0; v < 4; ++v ){

@@ -394,11 +394,12 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr )
 	m_nViewAlignLeftCols = 0;	/* 行番号域の桁数 */
 	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;		/* 表示域の上端座標 */
+
 	/* ルーラー表示 */
-//	if( m_pShareData->m_Common.m_bRulerDisp ){
-//	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
-//	}
+	m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
+	m_nOldCaretPosX = 0;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
+	m_nOldCaretWidth = 0;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK
+	m_bRedrawRuler = true;	// ルーラー全体を描き直す時=true   2002.02.25 Add By KK
 	m_nViewCx = 0;				/* 表示域の幅 */
 	m_nViewCy = 0;				/* 表示域の高さ */
 	m_nViewColNum = 0;			/* 表示域の桁数 */
@@ -410,6 +411,7 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr )
 	m_hbmpCompatBMPOld = NULL;	/* 再描画用メモリＢＭＰ(OLD) */
 	m_nCharWidth = 10;			/* 半角文字の幅 */
 	m_nCharHeight = 18;			/* 文字の高さ */
+
 	/* フォント作成 */
 	m_hFont_HAN = CreateFontIndirect( &(m_pShareData->m_Common.m_lf) );
 
@@ -967,6 +969,7 @@ LRESULT CEditView::DispatchEvent(
 			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
 			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
 			pcEditView -> ScrollAtH( m_nViewLeftCol );
+			m_bRedrawRuler = true; //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
 			DispRuler( hdc );
 			::ReleaseDC( m_hWnd, hdc );
 		}
@@ -1553,17 +1556,14 @@ void CEditView::OnVScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
 /* 水平スクロールバーメッセージ処理 */
 void CEditView::OnHScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
 {
-//	int		i;
 	switch( nScrollCode ){
 	case SB_LINELEFT:
-//		for( i = 0; i < 2; ++i ){
-			ScrollAtH( m_nViewLeftCol - 4 );
-//		}
+		m_bRedrawRuler = true; // YAZAKI
+		ScrollAtH( m_nViewLeftCol - 4 );
 		break;
 	case SB_LINERIGHT:
-//		for( i = 0; i < 2; ++i ){
-			ScrollAtH( m_nViewLeftCol + 4 );
-//		}
+		m_bRedrawRuler = true; // YAZAKI
+		ScrollAtH( m_nViewLeftCol + 4 );
 		break;
 	case SB_PAGELEFT:
 		ScrollAtH( m_nViewLeftCol - m_nViewColNum );
@@ -1770,7 +1770,7 @@ HANDLE CEditView::ReadDibBitmapInfo ( int fh )
 	}
 	if( bf.bfOffBits != 0L )
 		_llseek( fh, off + bf.bfOffBits, SEEK_SET );
-	GlobalUnlock( hbi );
+ 	GlobalUnlock( hbi );
 	return hbi;
 }
 
@@ -2882,6 +2882,11 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 		&m_nCaretPosX_PHY,	/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
 		&m_nCaretPosY_PHY	/* カーソル位置 改行単位行の行番号(０開始) */
 	);
+	// 横スクロールが発生したら、ルーラー全体を再描画 2002.02.25 Add By KK
+	if (nScrollColNum != 0 ){
+		//次回DispRuler呼び出し時に再描画。（bDraw=falseのケースを考慮した。）
+		m_bRedrawRuler = true;
+	}
 
 	/* カーソル行アンダーラインのON */
 	CaretUnderLineON( bDraw );
@@ -2953,6 +2958,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
 			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
 			pcEditView -> ScrollAtH( m_nViewLeftCol );
+			m_bRedrawRuler = true; //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
 			DispRuler( hdc );
 			::ReleaseDC( m_hWnd, hdc );
 		}

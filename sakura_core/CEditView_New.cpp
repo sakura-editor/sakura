@@ -286,7 +286,10 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 
 	/* ƒ‹[ƒ‰[•`‰æ */
-	DispRuler( hdc );
+	if ( pPs->rcPaint.top < m_nViewAlignTop - m_nTopYohaku ) { // ƒ‹[ƒ‰[‚ªÄ•`‰æ”ÍˆÍ‚É‚ ‚é‚Æ‚«‚Ì‚ÝÄ•`‰æ‚·‚é 2002.02.25 Add By KK
+		m_bRedrawRuler = true; //2002.02.25 Add By KK ƒ‹[ƒ‰[‘S‘Ì‚ð•`‰æB
+		DispRuler( hdc );
+	}
 
 	/* ƒƒ‚ƒŠ‚c‚b‚ð—˜—p‚µ‚½Ä•`‰æ‚Ìê‡‚Íƒƒ‚ƒŠ‚c‚b‚É•`‰æ‚µ‚½“à—e‚ð‰æ–Ê‚ÖƒRƒs[‚·‚é */
 	if( bUseMemoryDC ){

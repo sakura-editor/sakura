@@ -79,7 +79,7 @@ public:
 	virtual ~CBregexp();
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得
-		return IsAvailable() ? BRegexpVersion() : NULL;
+		return IsAvailable() ? BRegexpVersion() : "";
 	}
 
 	//	CJreエミュレーション関数

@@ -532,9 +532,9 @@ void CEditDoc::ReloadAutoSaveParam(void)
 
 //	ファイルの保存機能をEditViewから移動
 //
-bool CEditDoc::SaveFile( const char* path )
+bool CEditDoc::SaveFile( const char* pszPath )
 {
-	if( FileWrite( path, m_cSaveLineCode ) ){
+	if( FileWrite( pszPath, m_cSaveLineCode ) ){
 		SetModified(false,true);	//	Jan. 22, 2002 genta
 
 		/* 現在位置で無変更な状態になったことを通知 */

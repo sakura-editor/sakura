@@ -202,7 +202,11 @@ void CEditView::InsertData_CEditView(
 	//			ps.rcPaint.left = m_nViewAlignLeft;
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine - 1);
+
+				// 2002.02.25 Mod By KK 次行 (nY - m_nViewTopLine - 1); => (nY - m_nViewTopLine);
+				//ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine - 1);
+				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine);
+
 				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * ( nModifyLayoutLinesOld + 1);
 				if( m_nViewAlignTop + m_nViewCy < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
@@ -929,12 +933,13 @@ void CEditView::Command_UNDO( void )
 				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, FALSE );
 			}
 		}
+		m_bDrawSWITCH = TRUE;	//	hor
+
 		/* Undo後の変更フラグ */
 		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
 		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
-		m_bDrawSWITCH = TRUE;	//	hor
 		/* 再描画 */
 		hdc = ::GetDC( m_hWnd );
 		ps.rcPaint.left = 0;
@@ -1410,8 +1415,9 @@ void CEditView::ReplaceData_CEditView(
 			if( 0 != LRArg.nAddLineNum ){
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine);
-				ps.rcPaint.top = 0/*m_nViewAlignTop*/;
+				//ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine); // 2002.02.25 Del By KK 次で上書きされているため未使用。
+				//ps.rcPaint.top = 0/*m_nViewAlignTop*/;			// 2002.02.25 Del By KK
+				ps.rcPaint.top = m_nViewAlignTop - m_nTopYohaku;	// ルーラーを範囲に含めない。2002.02.25 Add By KK
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 			}else{
 				ps.rcPaint.left = 0;
