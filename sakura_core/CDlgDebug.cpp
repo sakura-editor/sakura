@@ -109,7 +109,6 @@ BOOL CDlgDebug::DispatchEvent(
 	WORD	wID;
 	HWND	hwndCtl;
 //	int		nRet;
-//	int		wJreVersion;
 //	LONG	lStyle;
 	switch( uMsg ){
 	case WM_INITDIALOG:
