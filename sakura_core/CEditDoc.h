@@ -145,6 +145,7 @@ public:
 		if( (!m_nSettingTypeLocked) || force ){
 			m_nSettingType = type;
 			UnlockDocumentType();
+			m_pShareData->m_Types[m_nSettingType].m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
 		}
 	}
 	int GetDocumentType(void) const	//	•¶‘í•Ê‚Ì“Ç‚İo‚µ

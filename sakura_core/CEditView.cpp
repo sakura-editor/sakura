@@ -489,6 +489,9 @@ CEditView::~CEditView()
 	m_pcDropTarget = NULL;
 
 	delete m_cHistory;
+
+	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
+
 	return;
 }
 
@@ -509,6 +512,9 @@ BOOL CEditView::Create(
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
 	m_nMyIndex = nMyIndex;
+
+	m_cRegexKeyword = new CRegexKeyword;	//@@@ 2001.11.17 add MIK
+	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
 
 	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;								/* 表示域の上端座標 */

@@ -57,6 +57,7 @@ class CEditView;
 #include "CBregexp.h"
 #include "CDropTarget.h"
 #include "CMarkMgr.h"
+#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -252,6 +253,7 @@ public: /* テスト用にアクセス属性を変更 */
 	BOOL		m_bHokan;
 	//	Aug. 31, 2000 genta
 	CAutoMarkMgr	*m_cHistory;	//	Jump履歴
+	CRegexKeyword	*m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	/*
 	||  実装ヘルパ関数
 	*/
