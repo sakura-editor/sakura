@@ -322,7 +322,10 @@ void CEditView::Command_Diff(
 
 			//プロセスが終了していないか確認
 			// Jul. 04, 2003 genta CPUを100%使い果たすのを防ぐため 200msec休む
-			if( WaitForSingleObject( pi.hProcess, 200 ) == WAIT_OBJECT_0 )
+			// Jan. 23, 2004 genta
+			// 子プロセスの出力をどんどん受け取らないと子プロセスが
+			// 停止してしまうため，待ち時間を200msから20msに減らす
+			if( WaitForSingleObject( pi.hProcess, 20 ) == WAIT_OBJECT_0 )
 			{
 				//終了していればループフラグをFALSEとする
 				//ただしループの終了条件は プロセス終了 && パイプが空
@@ -330,9 +333,9 @@ void CEditView::Command_Diff(
 			}
 
 			new_cnt = 0;
-			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) )	//パイプの中の読み出し待機中の文字数を取得
+			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) )
 			{
-				if( new_cnt > 0 )												//待機中のものがある
+				while( new_cnt > 0 )												//待機中のものがある
 				{
 					if( new_cnt >= sizeof(work) - 2 )							//パイプから読み出す量を調整
 					{
@@ -341,7 +344,8 @@ void CEditView::Command_Diff(
 					ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					if( read_cnt == 0 )
 					{
-						continue;
+						// Jan. 23, 2004 genta while追加のため制御を変更
+						break;
 					}
 
 					//@@@ 2003.05.31 MIK
@@ -410,6 +414,14 @@ void CEditView::Command_Diff(
 							}
 						}
 					}
+					// Jan. 23, 2004 genta
+					// 子プロセスの出力をどんどん受け取らないと子プロセスが
+					// 停止してしまうため，バッファが空になるまでどんどん読み出す．
+					new_cnt = 0;
+					if( ! PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ){
+						break;
+					}
+					Sleep(0); // Jan. 23, 2004 genta タスクスイッチを促す
 				}
 			}
 		} while( bLoopFlag || new_cnt > 0 );

@@ -8149,7 +8149,10 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 			// Jun. 04, 2003 genta CPU消費を減らすために200msec待つ
 			// その間メッセージ処理が滞らないように待ち方をWaitForSingleObjectから
 			// MsgWaitForMultipleObjectに変更
-			switch( MsgWaitForMultipleObjects( 1, &pi.hProcess, FALSE, 200, QS_ALLEVENTS )){
+			// Jan. 23, 2004 genta
+			// 子プロセスの出力をどんどん受け取らないと子プロセスが
+			// 停止してしまうため，待ち時間を200msから20msに減らす
+			switch( MsgWaitForMultipleObjects( 1, &pi.hProcess, FALSE, 20, QS_ALLEVENTS )){
 				case WAIT_OBJECT_0:
 					//終了していればループフラグをFALSEとする
 					//ただしループの終了条件は プロセス終了 && パイプが空
@@ -8175,14 +8178,15 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 			}
 			new_cnt = 0;
 			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
-				if( new_cnt > 0 ) {												//待機中のものがある
+				while( new_cnt > 0 ) {												//待機中のものがある
 					if( new_cnt >= sizeof(work)-2 ) {							//パイプから読み出す量を調整
 						new_cnt = sizeof(work)-2;
 					}
 					ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
 					if( read_cnt == 0 ) {
-						continue;
+						// Jan. 23, 2004 genta while追加のため制御を変更
+						break;
 					}
 					//読み出した文字列をチェックする
 					// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
@@ -8209,9 +8213,16 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 						work[0] = tmp;
 						bufidx = 1;
 					}
+					// Jan. 23, 2004 genta
+					// 子プロセスの出力をどんどん受け取らないと子プロセスが
+					// 停止してしまうため，バッファが空になるまでどんどん読み出す．
+					new_cnt = 0;
+					if( ! PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ){
+						break;
+					}
+					Sleep(0);
 				}
 			}
-			Sleep(0);
 		} while( bLoopFlag || new_cnt > 0 );
 		
 		//	Jun. 04, 2003 genta	終了コードの取得と出力
