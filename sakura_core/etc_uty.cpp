@@ -1530,12 +1530,8 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			 pLine[i] == '*'	//	0x2A
 			) &&
 			/* 上の文字がSJIS2バイトコードの2バイト目でないことを、1つ前の文字がSJIS2バイトコードの1バイト目でないことで判断する */
-			( i > 0 &&
-				(
-				 (unsigned char)pLine[i - 1] < (unsigned char)0x81 ||
-				 ( (unsigned char)0x9F < (unsigned char)pLine[i - 1] && (unsigned char)pLine[i - 1] < (unsigned char)0xE0 ) ||
-				   (unsigned char)0xEF < (unsigned char)pLine[i - 1]
-				)
+			//	Oct. 5, 2002 genta
+			( i > 0 && ! _IS_SJIS_1( pLine[i - 1] )
 			) ){
 			goto can_not_tagjump;
 		}else{
@@ -2474,8 +2470,7 @@ int cescape_j(const char* org, char* buf, char cesc, char cwith)
 {
 	char *out = buf;
 	for( ; *org != '\0'; ++org, ++out ){
-		unsigned char c = (unsigned char)*org;
-		if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ){
+		if( _IS_SJIS_1( (unsigned char)*org ) ){
 			*out = *org;
 			++out; ++org;
 		}

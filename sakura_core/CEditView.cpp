@@ -886,7 +886,7 @@ LRESULT CEditView::DispatchEvent(
 		}
 	case WM_IME_CHAR:
 		if( FALSE == m_pShareData->m_Common.m_bIsINSMode ){ /* è„èëÇ´ÉÇÅ[ÉhÇ©ÅH */
-			HandleCommand( F_IME_CHAR, TRUE, (WORD)( (((WORD)wParam&0x00ff)<<8) | (((WORD)wParam&0xff00)>>8) ), 0, 0, 0 );
+			HandleCommand( F_IME_CHAR, TRUE, wParam, 0, 0, 0 );
 		}
 		return 0L;
 

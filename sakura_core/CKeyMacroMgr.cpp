@@ -24,7 +24,7 @@
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 #include "debug.h"
 #include "charcode.h"
-//	#include "etc_uty.h"
+#include "etc_uty.h" // Oct. 5, 2002 genta
 //	#include "global.h"
 //	#include "CEditView.h"
 #include "CMemory.h"
@@ -237,8 +237,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					//	Jun. 16, 2002 genta
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
-						unsigned char c = (unsigned char)szLine[i];
-						if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ){
+						if( _IS_SJIS_1( (unsigned char)szLine[i] ) ){
 							++i;
 							continue;
 						}

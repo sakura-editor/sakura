@@ -105,6 +105,22 @@ SAKURA_CORE_API const char* GetColorNameByIndex( int index );
 //	Sep. 10, 2002 genta CWSH.cppからの移動に伴う追加
 bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, unsigned BufferSize);
 
+// Oct. 5, 2002 genta CMemory.cppより移動
+/*! Shift_JIS の漢字の1バイト目？ の判定
+	@author SUI
+*/
+inline bool _IS_SJIS_1(unsigned int ch)
+{
+	return ( ( ch >=0x081 )&&( ch <=0x09F ) ) || ( ( ch >=0x0E0 )&&( ch <=0x0FC ) );
+}
+/*!  Shift_JIS の漢字の2バイト目？ の判定
+	@author SUI
+*/
+inline bool _IS_SJIS_2(unsigned int ch)
+{
+	return ( ( ch >=0x040 )&&( ch <=0x07E ) ) || ( ( ch >=0x080 )&&( ch <=0x0FC ) );
+}
+
 #endif /* _ETC_UTY_H_ */
 
 
