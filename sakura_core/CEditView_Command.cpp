@@ -4242,7 +4242,7 @@ BOOL CEditView::Command_FILESAVE( bool warnbeep )
 
 	/* 無変更でも上書きするか */
 	if( FALSE == m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite
-	 && FALSE == m_pcEditDoc->IsModified()	/* 変更フラグ */
+	 && !m_pcEditDoc->IsModified()	// 変更フラグ
 	 ){
 	 	//	Feb. 28, 2004 genta
 	 	//	保存不要でも警告音を出して欲しくない場合がある
@@ -8880,8 +8880,6 @@ void CEditView::Command_COPYLINESWITHLINENUMBER( void )
 void CEditView::Command_CREATEKEYBINDLIST( void )
 {
 	CMemory		cMemKeyList;
-	HGLOBAL		hgClip;
-	char*		pszClip;
 
 	CKeyBind::CreateKeyBindList(
 	m_hInstance,
@@ -8891,15 +8889,9 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 	&m_pcEditDoc->m_cFuncLookup	//	Oct. 31, 2001 genta 追加
 	 );
 
-	/* Windowsクリップボードにコピー */
-	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, cMemKeyList.GetLength() + 1 );
-	pszClip = (char*)::GlobalLock( hgClip );
-	memcpy( pszClip, cMemKeyList.GetPtr(), cMemKeyList.GetLength() + 1 );
-	::GlobalUnlock( hgClip );
-	::OpenClipboard( CEditView::m_pcEditDoc->m_hWnd );
-	::EmptyClipboard();
-	::SetClipboardData( CF_OEMTEXT, hgClip );
-	::CloseClipboard();
+	// Windowsクリップボードにコピー
+	//2004.02.17 Moca 関数化
+	SetClipboardText( m_pcEditDoc->m_hWnd, cMemKeyList.GetPtr(), cMemKeyList.GetLength() );
 	return;
 }
 
