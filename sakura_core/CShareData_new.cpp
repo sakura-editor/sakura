@@ -69,6 +69,16 @@ static char* colorIDXKeyName[] =
 };
 
 
+//	CShareData_new2.cppと統合
+CShareData::CShareData()
+{
+	m_pszAppName = GSTR_CSHAREDATA;
+	m_hFileMap   = NULL;
+	m_pShareData = NULL;
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
+	return;
+}
+
 // レジストリは使わない。
 // 未使用の２関数を削除 2002/2/3 aroka
 
@@ -410,6 +420,11 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			);
 			cProfile.IOProfileData( bRead, pszSecName, pszKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 );
 		}
+
+		//2002.02.08 aroka,hor
+		cProfile.IOProfileData( bRead, pszSecName, "bMarkUpBlankLineEnable"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bMarkUpBlankLineEnable, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bFunclistSetFocusOnJump"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bFunclistSetFocusOnJump, 0 );
+
 	}// Common
 	
 	/* ツールバー */
@@ -732,6 +747,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 					}
 				}
 				else
+				// 2002.02.08 hor 未定義値を無視
+				if(lstrlen(m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_szKeyword))
 				{
 					wsprintf( szKeyData, "%d,%s",
 						m_pShareData->m_Types[i].m_RegexKeywordArr[j].m_nColorIndex,
@@ -807,6 +824,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		
 		for( i = 0; i < MAX_CUSTMACRO; ++i ){
 			//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
+			// 2002.02.08 hor 未定義値を無視
+			if(!bRead&&!lstrlen(m_pShareData->m_MacroTable[i].m_szName)&&!lstrlen(m_pShareData->m_MacroTable[i].m_szFile))continue;
 			wsprintf( szKeyName, "Name[%03d]", i );
 			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
 				(char*)m_pShareData->m_MacroTable[i].m_szName, MACRONAME_MAX - 1 );
