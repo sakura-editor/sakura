@@ -2160,8 +2160,12 @@ void CEditView::DrawSelectArea( void )
 						nLastLen=0;
 					}
 					if(m_nSelectLineFrom>=nLastLine || m_nSelectLineTo>=nLastLine ||
-					   m_nSelectLineFromOld>=nLastLine || m_nSelectLineToOld>=nLastLine){
-						rcNew.left = m_nViewAlignLeft + ( m_nViewLeftCol + nLastLen ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+						m_nSelectLineFromOld>=nLastLine || m_nSelectLineToOld>=nLastLine){
+						//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
+						//	最終行にTABが入っていると反転範囲が不足する．
+						rcNew.left = m_nViewAlignLeft +
+							( m_nViewLeftCol + LineIndexToColmn( pcLayout, nLastLen ))
+							* ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 						rcNew.right = m_nViewAlignLeft + m_nViewCx;
 						rcNew.top = ( nLastLine - m_nViewTopLine) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 						rcNew.bottom = rcNew.top + ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
