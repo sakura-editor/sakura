@@ -1102,7 +1102,7 @@ void CDocLineMgr::DeleteData(
 //		++pDocLine->m_nModifyCount;	/* 変更回数 */
 //		pDocLine->m_bModify = TRUE;	/* 変更フラグ */
 //	}
-	pDocLine->m_bModify = TRUE;		/* 変更フラグ */
+	pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
 	pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 
@@ -1257,6 +1257,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	//enumEOLType nEOLType;
 	//enumEOLType nEOLTypeNext;
 
+	bool		bBookMarkNext;	// 2001.12.03 hor 挿入によるマーク行の制御
+
 	*pnNewLine = nLine;	/* 挿入された部分の次の位置の行 */
 	*pnNewPos  = 0;		/* 挿入された部分の次の位置のデータ位置 */
 
@@ -1270,6 +1272,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		cmemPrevLine.SetDataSz( "" );
 		cmemNextLine.SetDataSz( "" );
 		cEOLTypeNext.SetType( EOL_NONE );
+		bBookMarkNext=FALSE;	// 2001.12.03 hor
 	}else{
 //		/* Undo操作かどうか */
 //		if( bUndo ){
@@ -1286,13 +1289,14 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 //			++pDocLine->m_nModifyCount;	/* 変更回数 */
 //			pDocLine->m_bModify = TRUE;	/* 変更フラグ */
 //		}
-		pDocLine->m_bModify = TRUE;		/* 変更フラグ */
+		pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
 		pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 		cmemPrevLine.SetData( pLine, nInsPos );
 		cmemNextLine.SetData( &pLine[nInsPos], nLineLen - nInsPos );
 
 		cEOLTypeNext = pDocLine->m_cEol;
+		bBookMarkNext= pDocLine->IsBookMarked();	// 2001.12.03 hor
 	}
 	nBgn = 0;
 	nPos = 0;
@@ -1346,6 +1350,15 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 
 					pDocLine->m_cEol = cEOLType;						/* 改行コードの種類 */
 					// pDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLType];	/* 改行コードの長さ */
+
+					// 2001.12.13 hor
+					// 行頭で改行したら元の行のマークを新しい行に移動する
+					// それ以外なら元の行のマークを維持して新しい行にはマークを付けない
+					if(nInsPos==0){
+						pDocLine->SetBookMark(false);
+					}else{
+						bBookMarkNext=FALSE;
+					}
 
 					pDocLine = pDocLine->m_pNext;
 				}else{
@@ -1433,6 +1446,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
 				// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];	/* 改行コードの長さ */
+				pDocLineNew->SetBookMark(bBookMarkNext);	// 2001.12.03 hor ブックマークを復元
 
 
 				++m_nLines;
@@ -1796,6 +1810,15 @@ int CDocLineMgr::SearchWord(
 								break;
 							}
 						}
+					// From Here 2001.12.03 hor /^/ or /$/ で無限ループするのを回避
+						if( -1 != nHitPosOld && nHitPosOld==nHitPos ){
+							*pnLineNum = nLinePos;				/* マッチ行 */
+							*pnIdxFrom = nHitPosOld;			/* マッチ位置from */
+							*pnIdxTo = *pnIdxFrom + nHitLenOld;	/* マッチ位置to */
+							nRetVal = 1;
+							goto end_of_func;
+						}
+					// To Here 2001.12.03 hor
 					}else{
 						if( -1 != nHitPosOld ){
 							*pnLineNum = nLinePos;				/* マッチ行 */
@@ -2391,7 +2414,7 @@ void CDocLineMgr::ResetAllModifyFlag( void )
 	pDocLine = m_pDocLineTop;
 	while( NULL != pDocLine ){
 		pDocLineNext = pDocLine->m_pNext;
-		pDocLine->m_bModify = FALSE;		/* 変更フラグ */
+		pDocLine->SetModifyFlg(false);		/* 変更フラグ */
 //		if( bResetModifyCount ){			/* 変更回数を0にするかどうか */
 //			pDocLine->m_nModifyCount = 0;	/* 変更回数 */
 //		}

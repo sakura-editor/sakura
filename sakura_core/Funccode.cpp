@@ -115,7 +115,12 @@ const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edi
 	F_INDENT_TAB		,	//TABインデント
 	F_UNINDENT_TAB		,	//逆TABインデント
 	F_INDENT_SPACE		,	//SPACEインデント
-	F_UNINDENT_SPACE		//逆SPACEインデント
+	F_UNINDENT_SPACE	,	//逆SPACEインデント
+	F_LTRIM				,	//左(先頭)の空白を削除	2001.12.03 hor
+	F_RTRIM				,	//右(末尾)の空白を削除	2001.12.03 hor
+	F_SORT_ASC			,	//選択行の昇順ソート	2001.12.06 hor
+	F_SORT_DESC			,	//選択行の降順ソート	2001.12.06 hor
+	F_MARGE					//選択行のマージ		2001.12.06 hor
 //		F_WORDSREFERENCE		//単語リファレンス
 };
 const int nFincList_Edit_Num = sizeof( pnFuncList_Edit ) / sizeof( pnFuncList_Edit[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
@@ -274,7 +279,12 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_TAGJUMP			,	//タグジャンプ機能
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
 	F_COMPARE			,	//ファイル内容比較
-	F_BRACKETPAIR			//対括弧の検索
+	F_BRACKETPAIR		,	//対括弧の検索
+	F_BOOKMARK_SET		,	//ブックマーク設定・解除
+	F_BOOKMARK_NEXT		,	//次のブックマークへ
+	F_BOOKMARK_PREV		,	//前のブックマークへ
+	F_BOOKMARK_RESET	,	//ブックマークの全解除
+	F_BOOKMARK_VIEW			//ブックマークの一覧
 };
 const int nFincList_Search_Num = sizeof( pnFuncList_Search ) / sizeof( pnFuncList_Search[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 

@@ -1644,14 +1644,25 @@ BOOL CEditDoc::MakeBackUp( void )
 //		) ){
 //			return FALSE;
 //		}
-		nRet = ::MYMESSAGEBOX(
-			m_hWnd,
-			MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
-			"バックアップ作成の確認",
-			"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
-			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
-			szPath
-		);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
+		if( m_pShareData->m_Common.m_bBackUpDustBox ){	//@@@ 2001.12.11 add start MIK
+			nRet = ::MYMESSAGEBOX(
+				m_hWnd,
+				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
+				"バックアップ作成の確認",
+				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n作成したバックアップファイルをごみ箱に放り込みます。\n",
+				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+				szPath
+			);
+		}else{	//@@@ 2001.12.11 add end MIK
+			nRet = ::MYMESSAGEBOX(
+				m_hWnd,
+				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
+				"バックアップ作成の確認",
+				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
+				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+				szPath
+			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
+		}	//@@@ 2001.12.11 add MIK
 		if( IDNO == nRet ){
 			return FALSE;
 		}else if( IDCANCEL == nRet ){
@@ -1736,6 +1747,29 @@ BOOL CEditDoc::MakeBackUp( void )
 	/* バックアップの作成 */
 	if( ::CopyFile( m_szFilePath, szPath, FALSE ) ){
 		/* 正常終了 */
+		//@@@ 2001.12.11 start MIK
+		if( m_pShareData->m_Common.m_bBackUpDustBox ){
+			char	szDustPath[_MAX_PATH+1];
+			strcpy(szDustPath, szPath);
+			szDustPath[strlen(szDustPath) + 1] = '\0';
+			SHFILEOPSTRUCT	fos;
+			fos.hwnd   = m_hWnd;
+			fos.wFunc  = FO_DELETE;
+			fos.pFrom  = szDustPath;
+			fos.pTo    = NULL;
+			fos.fFlags = FOF_ALLOWUNDO | FOF_SIMPLEPROGRESS | FOF_NOCONFIRMATION;	//ダイアログなし
+			//fos.fFlags = FOF_ALLOWUNDO | FOF_FILESONLY;
+			//fos.fFlags = FOF_ALLOWUNDO;	//ダイアログが表示される。
+			fos.fAnyOperationsAborted = true; //false;
+			fos.hNameMappings = NULL;
+			fos.lpszProgressTitle = NULL; //"バックアップファイルをごみ箱に移動しています...";
+			if( ::SHFileOperation(&fos) == 0 ){
+				/* 正常終了 */
+			}else{
+				/* エラー終了 */
+			}
+		}
+		//@@@ 2001.12.11 end MIK
 	}else{
 		/* エラー終了 */
 	}

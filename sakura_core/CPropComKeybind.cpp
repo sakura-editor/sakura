@@ -33,7 +33,13 @@
 #define STR_KEYDATA_HEAD_LEN  34
 //	To Here Sept. 5, 2000
 #define STR_KEYDATA_HEAD      "テキストエディタ キー設定ファイル\x1a"
-#define STR_KEYDATA_HEAD2     "// テキストエディタキー設定 Ver2"	//@@@ 2001.11.07 add MIK
+
+// From Here 2001.12.03 hor
+//		Borland C++ Compiler 5.5 でエラーになったので￥をいれました
+//#define STR_KEYDATA_HEAD2     "// テキストエディタキー設定 Ver2"	//@@@ 2001.11.07 add MIK
+#define STR_KEYDATA_HEAD2     "\/\/ テキストエディタキー設定 Ver2"	//@@@ 2001.11.07 add MIK
+// To Here 2001.12.03 hor
+
 #define STR_SHIFT_PLUS        "Shift+"  //@@@ 2001.11.08 add MIK
 #define STR_CTRL_PLUS         "Ctrl+"  //@@@ 2001.11.08 add MIK
 #define STR_ALT_PLUS          "Alt+"  //@@@ 2001.11.08 add MIK

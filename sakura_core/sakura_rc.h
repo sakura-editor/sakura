@@ -169,6 +169,7 @@
 #define IDC_RADIO_BACKUP_TYPE3          1090
 #define IDC_CHECK2                      1091
 #define IDC_CHECK_AUTOSAVE              1091
+#define IDC_CHECK_BACKUP_DUSTBOX        1091
 #define IDC_LIST1                       1092
 #define IDC_CHECK_DispTOOLBAR           1092
 #define IDC_EDIT_BACKUPFOLDER2          1092
@@ -387,11 +388,14 @@
 #define IDC_RADIO_ALL                   1324
 #define IDC_RADIO_PORTLAIT              1324
 #define IDC_RADIO_BACKUP_DATETYPE1      1324
+#define IDC_RADIO_REPLACE               1324
 #define IDC_RADIO2                      1325
 #define IDC_RADIO_FROMTO                1325
 #define IDC_RADIO_LANDSCAPE             1325
 #define IDC_RADIO_BACKUP_DATETYPE2      1325
+#define IDC_RADIO_INSERT                1325
 #define IDC_RADIO3                      1326
+#define IDC_RADIO_ADD                   1326
 #define IDC_EDIT2                       1327
 #define IDC_EDIT_BACKUP_3               1327
 #define IDC_MACROPATH                   1327
@@ -483,6 +487,8 @@
 #define IDC_BUTTON_REGEX_EXPORT         1415
 #define IDC_FRAME_REGEX                 1416
 #define IDC_LABEL_REGEX_VERSION         1417
+#define IDC_CHECK_INS_SPACE             1417
+#define IDC_CHK_PASTE                   1418
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -521,7 +527,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        221
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1417
+#define _APS_NEXT_CONTROL_VALUE         1419
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

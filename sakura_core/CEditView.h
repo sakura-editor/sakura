@@ -381,9 +381,17 @@ protected:
 	void Command_DELETE_LINE( void );		/* 行削除(折り返し単位) */
 	void Command_DUPLICATELINE( void );		/* 行の二重化(折り返し単位) */
 	void Command_INDENT( char cChar );		/* インデント ver 1 */
-	void Command_INDENT( const char*, int );/* インデント ver0 */
+// From Here 2001.12.03 hor
+//	void Command_INDENT( const char*, int );/* インデント ver0 */
+	void Command_INDENT( const char*, int ,BOOL=FALSE );/* インデント ver0 */
+	void Command_INDENT_TAB( void );		/* インデント ver 2 */
+// To Here 2001.12.03 hor
 	void Command_UNINDENT( char cChar );	/* 逆インデント */
 	void Command_WORDSREFERENCE( void );	/* 単語リファレンス */
+	void Command_TRIM(BOOL);				// 2001.12.03 hor
+	void Command_TRIM2(CMemory*,BOOL);		// 2001.12.03 hor
+	void Command_SORT(BOOL);				// 2001.12.06 hor
+	void Command_MARGE(void);				// 2001.12.06 hor
 
 	void DeleteData2( int, int, int, CMemory*, COpe*, BOOL, BOOL, BOOL = FALSE );/* 指定位置の指定長データ削除 */
 	void DeleteData( BOOL, BOOL = FALSE );/* 現在位置のデータ削除 */
@@ -520,11 +528,20 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_GREP( void );							/* Grep */
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
-	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
+// From Here 2001.12.03 hor
+//	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
+	BOOL Command_FUNCLIST( BOOL ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */
+// To Here 2001.12.03 hor
 	void /*BOOL*/ Command_TAGJUMP( void/*BOOL*/ );		/* タグジャンプ機能 */
 	void/*BOOL*/ Command_TAGJUMPBACK( void/*BOOL*/ );	/* タグジャンプバック機能 */
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_BRACKETPAIR( void );					/* 対括弧の検索 */
+// From Here 2001.12.03 hor
+	void Command_BOOKMARK_SET( void );					/* ブックマーク設定・解除 */
+	void Command_BOOKMARK_NEXT( void );					/* 次のブックマークへ */
+	void Command_BOOKMARK_PREV( void );					/* 前のブックマークへ */
+	void Command_BOOKMARK_RESET( void );				/* ブックマークの全解除 */
+// To Here 2001.12.03 hor
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */

@@ -423,6 +423,7 @@ BOOL CShareData::ShareData_IO( BOOL bRead )
 //		MY_RegVal_IO( bRead, hkReg, "bBackUpType2_Opt4"		, REGCNV_INT2SZ, (BYTE *)&m_pShareData->m_Common.m_nBackUpType_Opt4, 0 );
 //		MY_RegVal_IO( bRead, hkReg, "bBackUpType2_Opt5"		, REGCNV_INT2SZ, (BYTE *)&m_pShareData->m_Common.m_nBackUpType_Opt5, 0 );
 //		MY_RegVal_IO( bRead, hkReg, "bBackUpType2_Opt6"		, REGCNV_INT2SZ, (BYTE *)&m_pShareData->m_Common.m_nBackUpType_Opt6, 0 );
+		MY_RegVal_IO( bRead, hkReg, "bBackUpDustBox"		, REGCNV_INT2SZ, (BYTE *)&m_pShareData->m_Common.m_bBackUpDustBox, 0 );	//@@@ 2001.12.11 add MIK
 		MY_RegVal_IO( bRead, hkReg, "nFileShareMode"		, REGCNV_INT2SZ, (BYTE *)&m_pShareData->m_Common.m_nFileShareMode, 0 );
 		MY_RegVal_IO( bRead, hkReg, "szExtHelp1"			, REGCNV_SZ2SZ, (BYTE *)/*&*/m_pShareData->m_Common.m_szExtHelp1, 0 );
 		MY_RegVal_IO( bRead, hkReg, "szExtHtmlHelp"			, REGCNV_SZ2SZ, (BYTE *)/*&*/m_pShareData->m_Common.m_szExtHtmlHelp, 0 );
@@ -1219,6 +1220,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 //		cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt4"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nBackUpType_Opt4, 0 );
 //		cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt5"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nBackUpType_Opt5, 0 );
 //		cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt6"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nBackUpType_Opt6, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bBackUpDustBox"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bBackUpDustBox, 0 );	//@@@ 2001.12.11 add MIK
 		cProfile.IOProfileData( bRead, pszSecName, "nFileShareMode"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nFileShareMode, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHelp1"					, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szExtHelp1, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHtmlHelp"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szExtHtmlHelp, 0 );
@@ -1689,6 +1691,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 //		strcpy( szKeyName, "szTabViewString" );
 		cProfile.IOProfileData( bRead, pszSecName, "szTabViewString"	, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szTabViewString, 0 );
 //#endif
+		cProfile.IOProfileData( bRead, pszSecName, "bInsSpace"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bInsSpace, 0 );	// 2001.12.03 hor
 //		strcpy( szKeyName, "szLineComment" );
 		cProfile.IOProfileData( bRead, pszSecName, "szLineComment"		, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Types[i].m_szLineComment, 0 );
 //		strcpy( szKeyName, "szLineComment2" );

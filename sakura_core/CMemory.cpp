@@ -3132,6 +3132,93 @@ void CMemory::SPACEToTAB( int nTabSpace )
 
 
 
+// From Here 2001.12.03 hor
+/* TRIM */
+void CMemory::TRIM( int nRight )
+{
+	const char*	pLine;
+	int			nLineLen;
+	char*		pDes;
+	int			nBgn;
+	int			i,j;
+	int			nPosDes;
+	CEOL		cEol;
+
+	nBgn = 0;
+	nPosDes = 0;
+	/* 変換後に必要なバイト数を調べる */
+	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+		if( 0 < nLineLen ){
+			nPosDes += nLineLen;
+		}
+		nPosDes += cEol.GetLen();
+	}
+	if( 0 >= nPosDes ){
+		return;
+	}
+	pDes = new char[nPosDes + 1];
+	nBgn = 0;
+	nPosDes = 0;
+	if( !nRight ){
+	// LTRIM
+		while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+			if( 0 < nLineLen ){
+				for( i = 0; i <= nLineLen; ++i ){
+					if( pLine[i] ==' ' ||
+						pLine[i] =='\t'){
+						continue;
+					}else if( (unsigned char)pLine[i] == (unsigned char)0x81 && (unsigned char)pLine[i + 1] == (unsigned char)0x40 ){
+						++i;
+						continue;
+					}else{
+						break;
+					}
+				}
+				if(nLineLen-i>0){
+					memcpy( &pDes[nPosDes], (const char *)&pLine[i], nLineLen );
+					nPosDes+=nLineLen-i;
+				}
+			}
+			memcpy( &pDes[nPosDes], cEol.GetValue(), cEol.GetLen() );
+			nPosDes += cEol.GetLen();
+		}
+	}else{
+	// RTRIM
+		while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+			if( 0 < nLineLen ){
+				for( j=nLineLen-1 ; j>=0 ; --j ){
+					if( pLine[j] ==' ' ||
+						pLine[j] =='\t'){
+						continue;
+					}else if( 0<j && (unsigned char)pLine[j-1] == (unsigned char)0x81 && (unsigned char)pLine[j] == (unsigned char)0x40 ){
+						--j;
+						continue;
+					}else{
+						++j;
+						break;
+					}
+				}
+				if(j>0){
+					memcpy( &pDes[nPosDes], (const char *)&pLine[0], j );
+					nPosDes+=j;
+				}
+			}
+			memcpy( &pDes[nPosDes], cEol.GetValue(), cEol.GetLen() );
+			nPosDes += cEol.GetLen();
+		}
+	}
+	pDes[nPosDes] = '\0';
+
+	SetData( pDes, nPosDes );
+	delete [] pDes;
+	pDes = NULL;
+	return;
+}
+// To Here 2001.12.03 hor
+
+
+
+
 
 //	/* バッファの先頭にデータを挿入する */
 //	void CMemory::InsertTop( const char* pData, int nDataLen )

@@ -608,25 +608,49 @@ BOOL CPrint::PrintOpen(
 	//  現在のプリンタ設定の必要部分を変更
 	//
 	pDEVMODE->dmFields				|= pMYDEVMODE->dmFields;
-	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
-	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
-	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
-	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
-	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
-	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
-	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
-	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
-	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
-	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
-	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
-	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
-	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
-	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
-	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
-	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
-	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
-	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
-	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency ;
+// From Here 2001.12.03 hor
+//
+// 印刷で紙を横向きに指定しても縦方向に印刷される ・・・ の修正
+//
+//	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
+//	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
+//	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
+//	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
+//	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
+//	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
+//	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
+//	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
+//	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
+//	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
+//	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
+//	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
+//	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
+//	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
+//	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
+//	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
+//	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
+//	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
+//	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency;
+	pDEVMODE->dmOrientation			= pMYDEVMODE->dmOrientation;
+	pDEVMODE->dmPaperSize			= pMYDEVMODE->dmPaperSize;
+	pDEVMODE->dmPaperLength			= pMYDEVMODE->dmPaperLength;
+	pDEVMODE->dmPaperWidth			= pMYDEVMODE->dmPaperWidth;
+	pDEVMODE->dmScale				= pMYDEVMODE->dmScale;
+	pDEVMODE->dmCopies				= pMYDEVMODE->dmCopies;
+	pDEVMODE->dmDefaultSource		= pMYDEVMODE->dmDefaultSource;
+	pDEVMODE->dmPrintQuality		= pMYDEVMODE->dmPrintQuality;
+	pDEVMODE->dmColor				= pMYDEVMODE->dmColor;
+	pDEVMODE->dmDuplex				= pMYDEVMODE->dmDuplex;
+	pDEVMODE->dmYResolution			= pMYDEVMODE->dmYResolution;
+	pDEVMODE->dmTTOption			= pMYDEVMODE->dmTTOption;
+	pDEVMODE->dmCollate				= pMYDEVMODE->dmCollate;
+	pDEVMODE->dmLogPixels			= pMYDEVMODE->dmLogPixels;
+	pDEVMODE->dmBitsPerPel			= pMYDEVMODE->dmBitsPerPel;
+	pDEVMODE->dmPelsWidth			= pMYDEVMODE->dmPelsWidth;
+	pDEVMODE->dmPelsHeight			= pMYDEVMODE->dmPelsHeight;
+	pDEVMODE->dmDisplayFlags		= pMYDEVMODE->dmDisplayFlags;
+	pDEVMODE->dmDisplayFrequency	= pMYDEVMODE->dmDisplayFrequency;
+// To Here 2001.12.03 hor
 	strcpy( (char *)pDEVMODE->dmFormName, (char *)pMYDEVMODE->dmFormName );
 
 	//

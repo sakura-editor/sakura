@@ -64,6 +64,18 @@ int CALLBACK _CompareFunc_( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 			return 1;
 		}
 	}
+	// From Here 2001.12.07 hor
+	if( 2 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
+		if( pcFuncInfo1->m_nInfo < pcFuncInfo2->m_nInfo ){
+			return -1;
+		}else
+		if( pcFuncInfo1->m_nInfo == pcFuncInfo2->m_nInfo ){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
+	// To Here 2001.12.07 hor
 	return -1;
 }
 
@@ -180,6 +192,15 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		/* ツリーコントロールの初期化：COBOL アウトライン */
 		SetTreeJava( m_hWnd, FALSE );
 		::SetWindowText( m_hWnd, "COBOL アウトライン" );
+// From Here 2001.12.03 hor
+//	ブックマークの一覧を無理矢理つくる
+	}else
+	if( OUTLINE_BOOKMARK == m_nListType ){	/* ブックマークリスト */
+		::ShowWindow( hwndTree, SW_HIDE );
+		SetTreeBookMark( m_hWnd );
+		m_nViewType = 0;
+		::SetWindowText( m_hWnd, "ブックマーク" );
+// To Here 2001.12.03 hor
 	}else{
 		switch( m_nListType ){
 		case OUTLINE_C:
@@ -1073,25 +1094,72 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 			m_nSortCol =  pnlv->iSubItem;
 			if( m_nSortCol == 0 ){
 				col.mask = LVCF_TEXT;
-				col.pszText = "関数名 *";
+			// From Here 2001.12.03 hor
+			//	col.pszText = "関数名 *";
+				if(OUTLINE_BOOKMARK == m_nListType){
+					col.pszText = "テキスト *";
+				}else{
+					col.pszText = "関数名 *";
+				}
+			// To Here 2001.12.03 hor
 				col.iSubItem = 0;
 				ListView_SetColumn( hwndList, 0, &col );
 				col.mask = LVCF_TEXT;
 				col.pszText = "行";
 				col.iSubItem = 0;
 				ListView_SetColumn( hwndList, 1, &col );
+			// From Here 2001.12.07 hor
+				col.mask = LVCF_TEXT;
+				col.pszText = "";
+				col.iSubItem = 0;
+				ListView_SetColumn( hwndList, 2, &col );
+			// To Here 2001.12.07 hor
 				ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
 			}else
 			if( m_nSortCol == 1 ){
 				col.mask = LVCF_TEXT;
-				col.pszText = "関数名";
+			// From Here 2001.12.03 hor
+			//	col.pszText = "関数名";
+				if(OUTLINE_BOOKMARK == m_nListType){
+					col.pszText = "テキスト";
+				}else{
+					col.pszText = "関数名";
+				}
+			// To Here 2001.12.03 hor
 				col.iSubItem = 0;
 				ListView_SetColumn( hwndList, 0, &col );
 				col.mask = LVCF_TEXT;
 				col.pszText = "行 *";
 				col.iSubItem = 0;
 				ListView_SetColumn( hwndList, 1, &col );
+			// From Here 2001.12.07 hor
+				col.mask = LVCF_TEXT;
+				col.pszText = "";
+				col.iSubItem = 0;
+				ListView_SetColumn( hwndList, 2, &col );
+			// To Here 2001.12.03 hor
 				ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
+			// From Here 2001.12.07 hor
+			}else
+			if( m_nSortCol == 2 ){
+				col.mask = LVCF_TEXT;
+				if(OUTLINE_BOOKMARK == m_nListType){
+					col.pszText = "テキスト";
+				}else{
+					col.pszText = "関数名";
+				}
+				col.iSubItem = 0;
+				ListView_SetColumn( hwndList, 0, &col );
+				col.mask = LVCF_TEXT;
+				col.pszText = "行";
+				col.iSubItem = 0;
+				ListView_SetColumn( hwndList, 1, &col );
+				col.mask = LVCF_TEXT;
+				col.pszText = "*";
+				col.iSubItem = 0;
+				ListView_SetColumn( hwndList, 2, &col );
+				ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
+			// To Here 2001.12.07 hor
 			}
 			return TRUE;
 		case NM_DBLCLK:
@@ -1186,6 +1254,99 @@ BOOL CDlgFuncList::OnJump( void )
 	}
 	return TRUE;
 }
+
+
+// From Here 2001.12.03 hor
+/* ブックマークリストの作成	*/
+void CDlgFuncList::SetTreeBookMark( HWND hwndDlg )
+{
+	int				i;
+	char			szText[2048];
+	CFuncInfo*		pcFuncInfo;
+	LV_ITEM			item;
+	LV_COLUMN		col;
+	HWND			hwndList;
+	HWND			hwndTree;
+	int				bSelected;
+	int				nFuncLineOld;
+	int				nSelectedLine;
+	RECT			rc;
+	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
+	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
+	nFuncLineOld = 0;
+	bSelected = FALSE;
+	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		if( !bSelected ){
+			if( i == 0 && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
+				bSelected = TRUE;
+				nSelectedLine = i;
+			}else
+			if( i > 0 && nFuncLineOld <= m_nCurLine && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
+				bSelected = TRUE;
+				nSelectedLine = i - 1;
+			}
+		}
+		nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+	}
+	if( 0 < m_pcFuncInfoArr->GetNum() && !bSelected ){
+		bSelected = TRUE;
+		nSelectedLine =  m_pcFuncInfoArr->GetNum() - 1;
+	}
+	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+		/* 現在の解析結果要素 */
+		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+
+		item.mask = LVIF_TEXT | LVIF_PARAM;
+		item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr( NULL );
+		item.iItem = i;
+		item.iSubItem = 0;
+		item.lParam	= i;
+		ListView_InsertItem( hwndList, &item);
+
+		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		if(m_bLineNumIsCRLF ){
+			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineCRLF );
+		}else{
+			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineLAYOUT );
+		}
+		item.mask = LVIF_TEXT;
+		item.pszText = szText;
+		item.iItem = i;
+		item.iSubItem = 1;
+		ListView_SetItem( hwndList, &item);
+
+		/* クリップボードにコピーするテキストを編集 */
+		wsprintf( szText, "%s(%d): %s\r\n",
+			m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
+			pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+			pcFuncInfo->m_cmemFuncName.GetPtr( NULL )	/* 検出結果 */
+		);
+		m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
+
+	}
+
+	if( bSelected ){
+		ListView_GetItemRect( hwndList, 0, &rc, LVIR_BOUNDS );
+		ListView_Scroll( hwndList, 0, nSelectedLine * ( rc.bottom - rc.top ) );
+		ListView_SetItemState( hwndList, nSelectedLine, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+	}
+	/* 列名変更 */
+	col.mask = LVCF_TEXT;
+	col.pszText = "テキスト";
+	col.iSubItem = 0;
+	ListView_SetColumn( hwndList, 0, &col );
+
+	/* 列の幅をデータに合わせて調整 */
+	ListView_SetColumnWidth( hwndList, 0, LVSCW_AUTOSIZE );
+	ListView_SetColumnWidth( hwndList, 1, LVSCW_AUTOSIZE );
+	ListView_SetColumnWidth( hwndList, 2, 0 );
+
+	/* アウトライン ダイアログを自動的に閉じる */
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList, m_pShareData->m_Common.m_bAutoCloseDlgFuncList );
+	return;
+}
+// To Here 2001.12.03 hor
 
 
 /*[EOF]*/

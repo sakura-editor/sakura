@@ -5313,6 +5313,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 //		/* 選択エリアを削除 */
 //		DeleteData( FALSE );
 
+		int nCaretPosYOLD=m_nCaretPosY;
+
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
 			m_nSelectLineFrom,		/* 範囲選択開始行 */
@@ -5322,8 +5324,34 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.m_pData,		/* 挿入するデータ */
 			cmemBuf.m_nDataLen,		/* 挿入するデータの長さ */
-			TRUE/*bRedraw*/
+			FALSE/*TRUEbRedraw*/
 		);
+
+		// From Here 2001.12.03 hor
+		//	選択エリアの復元
+		m_nSelectLineFrom	=	nSelectLineFromOld;	/* 範囲選択開始行 */
+		m_nSelectColmFrom	=	nSelectColFromOld;	/* 範囲選択開始桁 */
+		m_nSelectLineTo		=	m_nCaretPosY;		/* 範囲選択終了行 */
+		m_nSelectColmTo		=	m_nCaretPosX;		/* 範囲選択終了桁 */
+		if(nCaretPosYOLD==m_nSelectLineFrom) {
+			MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
+		}else{
+			MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
+		}
+		m_nCaretPosX_Prev = m_nCaretPosX;
+		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+			pcOpe = new COpe;
+			pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
+			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;				/* 操作前のキャレット位置Ｘ */
+			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;				/* 操作前のキャレット位置Ｙ */
+			pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
+			pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
+			/* 操作の追加 */
+			m_pcOpeBlk->AppendOpe( pcOpe );
+		}
+		RedrawAll();
+		// To Here 2001.12.03 hor
+
 		return;
 
 
@@ -5417,6 +5445,8 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 			m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
 		);
 		break;		/* 空白→TAB */
+	case F_LTRIM:	Command_TRIM2( pCMemory , TRUE  );break;	// 2001.12.03 hor
+	case F_RTRIM:	Command_TRIM2( pCMemory , FALSE );break;	// 2001.12.03 hor
 	}
 	return;
 

@@ -55,6 +55,8 @@ public:
 	int				m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
 	int				m_nSettingType;
 	BOOL			m_bSelected;	/* テキスト選択中か */
+	int				m_nReplaceTarget;	/* 置換対象 */	// 2001.12.03 hor
+	int				m_nPaste;			/* 張付け？ */	// 2001.12.03 hor
 protected:
 	/*
 	||  実装ヘルパ関数

@@ -55,7 +55,7 @@ struct ARRHEAD {
 
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 16;
+const unsigned int uShareDataVersion = 18;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -253,7 +253,10 @@ bool CShareData::Init( void )
 		//	{ VK_F1,"F1", F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, 0, 0, 0, 0, 0 },
 			{ VK_F1,"F1", F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, F_ABOUT, F_HELP_CONTENTS, F_HELP_SEARCH, 0, 0 },
 		//	To Here Sept. 14, 2000
-			{ VK_F2,"F2", 0, 0, 0, 0, 0, 0, 0, 0 },
+		// From Here 2001.12.03 hor F2にブックマーク関連を割当
+		//	{ VK_F2,"F2", 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ VK_F2,"F2", F_BOOKMARK_NEXT, F_BOOKMARK_PREV, F_BOOKMARK_SET, F_BOOKMARK_RESET, F_BOOKMARK_VIEW, 0, 0, 0 },
+		// To Here 2001.12.03 hor
 			//Sept. 21, 2000 JEPRO	Ctrl+F3 に「検索マークのクリア」を追加
 			{ VK_F3,"F3", F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Alt+F4 に「ウィンドウを閉じる」, Shift+Alt+F4 に「すべてのウィンドウを閉じる」を追加
@@ -331,10 +334,12 @@ bool CShareData::Init( void )
 //			{ VK_NEXT,"RollUp(PageDown)",F_ROLLUP, F_ROLLUP_SEL, 0, 0, 0, 0, 0, 0 },
 			//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページダウン」, 「(選択)１ページダウン」を追加
 			//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollUp→PgDn) //Oct. 10, 2000 JEPRO 名称変更
-			{ VK_NEXT,"PgDn(RollUp)",F_HalfPageDown, F_HalfPageDown_Sel, F_1PageDown, F_1PageDown_Sel, 0, 0, 0, 0 },
+			//2001.12.03 hor 1Page/HalfPage 入替え
+			{ VK_NEXT,"PgDn(RollUp)", F_1PageDown, F_1PageDown_Sel,F_HalfPageDown, F_HalfPageDown_Sel, 0, 0, 0, 0 },
 			//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページアップ」, 「(選択)１ページアップ」を追加
 			//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollDown→PgUp) //Oct. 10, 2000 JEPRO 名称変更
-			{ VK_PRIOR,"PgUp(RollDn)",F_HalfPageUp, F_HalfPageUp_Sel, F_1PageUp, F_1PageUp_Sel, 0, 0, 0, 0 },
+			//2001.12.03 hor 1Page/HalfPage 入替え
+			{ VK_PRIOR,"PgUp(RollDn)", F_1PageUp, F_1PageUp_Sel,F_HalfPageUp, F_HalfPageUp_Sel, 0, 0, 0, 0 },
 //			{ VK_SPACE,"SpaceBar",F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(SpaceBar→Space)
 			{ VK_SPACE,"Space",F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, 0, 0, 0, 0, 0 },
@@ -372,14 +377,16 @@ bool CShareData::Init( void )
 			//Jan. 13, 2001 JEPRO	Alt+9 に「カスタムメニュー9」, Shift+Alt+9 に「カスタムメニュー19」を追加
 			{ '9', "9",0, 0, 0, 0, F_CUSTMENU_9, F_CUSTMENU_19, 0, 0 },
 			/* アルファベット */
-			{ 'A', "A",0, 0, F_SELECTALL, 0, 0, 0, 0, 0 },
+			//2001.12.06 hor Alt+A を「SORT_ASC」に割当
+			{ 'A', "A",0, 0, F_SELECTALL, 0, F_SORT_ASC, 0, 0, 0 },
 			//Jan. 13, 2001 JEPRO	Ctrl+B に「ブラウズ」を追加
 			{ 'B', "B",0, 0, F_BROWSE, 0, 0, 0, 0, 0 },
 			//Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加
 			//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
 			{ 'C', "C",0, 0, F_COPY, F_OPEN_HfromtoC, 0, 0, 0, 0 },
 			//Jan. 16, 2001 JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加
-			{ 'D', "D",0, 0, F_WordCut, F_WordDelete, 0, 0, 0, 0 },
+			//2001.12.06 hor Alt+D を「SORT_DESC」に割当
+			{ 'D', "D",0, 0, F_WordCut, F_WordDelete, F_SORT_DESC, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加
 			//Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
 			{ 'E', "E",0, 0, F_CUT_LINE, F_DELETE_LINE, 0, 0, F_CASCADE, 0 },
@@ -396,9 +403,11 @@ bool CShareData::Init( void )
 			{ 'K', "K",0, 0, F_LineCutToEnd, F_LineDeleteToEnd, 0, 0, 0, 0 },
 			//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「英大文字→英小文字」, Shift+Ctrl+Alt+L に「英小文字→英大文字」を追加
 			//Jan. 16, 2001 Ctrl+L を「カーソル行をウィンドウ中央へ」→「キーマクロの読み込み」に変更し「カーソル行をウィンドウ中央へ」は Ctrl+H に移動
-			{ 'L', "L",0, 0, F_LOADKEYMACRO, F_EXECKEYMACRO, 0, 0, F_TOLOWER, F_TOUPPER },
+			//2001.12.03 hor Alt+L を「LTRIM」に割当
+			{ 'L', "L",0, 0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, 0, F_TOLOWER, F_TOUPPER },
 			//Jan. 16, 2001 JEPRO	Ctrl+M に「キーマクロの保存」を追加
-			{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, 0, 0, 0, 0 },
+			//2001.12.06 hor Alt+M を「MARGE」に割当
+			{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MARGE, 0, 0, 0 },
 			//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
 			{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPNEXT, 0, 0, 0 },
 			//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
@@ -408,7 +417,8 @@ bool CShareData::Init( void )
 			{ 'P', "P",0, 0, F_PRINT, F_PRINT_PREVIEW, F_JUMPPREV, 0, F_PRINT_PAGESETUP, 0 },
 			//Jan. 24, 2001	JEPRO	Ctrl+Q に「キー割り当て一覧をコピー」を追加
 			{ 'Q', "Q",0, 0, F_CREATEKEYBINDLIST, 0, 0, 0, 0, 0 },
-			{ 'R', "R",0, 0, F_REPLACE, 0, 0, 0, 0, 0 },
+			//2001.12.03 hor Alt+R を「RTRIM」に割当
+			{ 'R', "R",0, 0, F_REPLACE, 0, F_RTRIM, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
 			{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
@@ -533,6 +543,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
 		m_pShareData->m_Common.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
 		m_pShareData->m_Common.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
+		m_pShareData->m_Common.m_bBackUpDustBox = FALSE;	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 
 		m_pShareData->m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
 
@@ -880,6 +891,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 		strcpy( m_pShareData->m_Types[nIdx].m_szTabViewString, "^       " );	/* TAB表示文字列 */
 //#endif
+		m_pShareData->m_Types[nIdx].m_bInsSpace = FALSE;				/* スペースの挿入 */	// 2001.12.03 hor
 		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment,  "" );		/* 行コメントデリミタ */
 		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment2, "" );		/* 行コメントデリミタ2 */
 		strcpy( m_pShareData->m_Types[nIdx].m_szLineComment3, "" );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加

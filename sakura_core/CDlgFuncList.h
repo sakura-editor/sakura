@@ -76,6 +76,9 @@ protected:
 	int SetTreeTxtNest( HWND, HTREEITEM, int, int, HTREEITEM*, int );
 	void GetTreeTextNext( HWND, HTREEITEM, int );
 
+	// 2001.12.03 hor
+	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
+
 private:
 	//	May 18, 2001 genta
 	/*!
