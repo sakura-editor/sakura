@@ -188,7 +188,7 @@ BEGIN
                     WS_TABSTOP,155,178,74,10,0,HIDC_CHECK_EXITCONFIRM
 END
 
-IDD_FIND DIALOG DISCARDABLE  30, 0, 275, 79
+IDD_FIND DIALOG DISCARDABLE  30, 0, 275, 99
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "検索"
@@ -197,18 +197,20 @@ BEGIN
     LTEXT           "条件(&N)",IDC_STATIC,5,6,24,8
     COMBOBOX        IDC_COMBO_TEXT,30,4,185,150,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,25,73,11
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,10,25,
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,30,39,
                     119,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,38,50,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,30,51,50,10
     CONTROL         "見つからないときにメッセージを表示(&M)",
                     IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,10,51,130,10
+                    WS_TABSTOP,30,65,130,10
     CONTROL         "検索ダイアログを自動的に閉じる(&L)",
                     IDC_CHECK_bAutoCloseDlgFind,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,10,64,118,10
-    LTEXT           "",IDC_STATIC_JRE32VER,65,39,65,8
+                    WS_TABSTOP,30,77,118,10
+    LTEXT           "",IDC_STATIC_JRE32VER,85,53,65,8
     PUSHBUTTON      "上検索(&U)",IDC_BUTTON_SEARCHPREV,219,5,50,14,WS_GROUP
     DEFPUSHBUTTON   "下検索(&D)",IDC_BUTTON_SEARCHNEXT,219,21,50,14
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,219,44,50,14,WS_GROUP
@@ -424,7 +426,7 @@ BEGIN
     PUSHBUTTON      "&...",IDC_BUTTON1,261,129,9,12,WS_DISABLED
 END
 
-IDD_GREP DIALOG DISCARDABLE  0, 0, 310, 135
+IDD_GREP DIALOG DISCARDABLE  0, 0, 311, 141
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Grep条件入力"
 FONT 9, "ＭＳ Ｐゴシック"
@@ -439,21 +441,23 @@ BEGIN
     COMBOBOX        IDC_COMBO_FOLDER,40,34,256,120,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,296,34,9,12
+    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,56,73,11
     PUSHBUTTON      "現在のフォルダ(&U)",IDC_BUTTON_CURRENTFOLDER,245,49,60,
                     14,BS_MULTILINE
     CONTROL         "サブフォルダからも検索する(&S)",IDC_CHK_SUBFOLDER,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,10,55,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,70,
                     107,10
     CONTROL         "現在編集中のファイルから検索(&Q)",IDC_CHK_FROMTHISTEXT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,68,116,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,84,116,10
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,81,110,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,14,98,110,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,94,50,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,14,112,49,10
     CONTROL         "文字コードセット自動判別(&A)",
                     IDC_CHK_KANJICODEAUTODETECT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,10,107,99,10
-    LTEXT           "",IDC_STATIC_JRE32VER,65,95,65,8
+                    WS_TABSTOP,14,126,99,10
+    LTEXT           "123456",IDC_STATIC_JRE32VER,68,113,56,8
     CONTROL         "該当行(&L)",IDC_RADIO_OUTPUTLINE,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,140,63,45,10
     CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",
@@ -587,7 +591,7 @@ BEGIN
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,175,30,50,14
 END
 
-IDD_REPLACE DIALOG DISCARDABLE  30, 0, 279, 107
+IDD_REPLACE DIALOG DISCARDABLE  30, 0, 279, 127
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "置換"
 FONT 9, "ＭＳ Ｐゴシック"
@@ -598,32 +602,34 @@ BEGIN
     LTEXT           "置換後(&P)",IDC_STATIC,5,21,30,8,NOT WS_GROUP
     COMBOBOX        IDC_COMBO_TEXT2,36,19,185,150,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,40,75,8
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,10,40,
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,12,52,
                     110,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,53,50,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,12,66,50,10
     CONTROL         "見つからないときにメッセージを表示(&M)",
                     IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,10,66,130,10
+                    WS_TABSTOP,12,79,130,10
     CONTROL         "置換ダイアログを自動的に閉じる(&L)",
                     IDC_CHECK_bAutoCloseDlgReplace,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,10,79,118,10
-    LTEXT           "",IDC_STATIC_JRE32VER,65,54,65,8
+                    WS_TABSTOP,12,92,118,10
+    LTEXT           "XXXXXXXXX",IDC_STATIC_JRE32VER,64,67,65,8
     CONTROL         "選択範囲(&S)",IDC_RADIO_SELECTEDAREA,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,155,51,53,
                     10
     CONTROL         "ファイル全体(&O)",IDC_RADIO_ALLAREA,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE,155,62,62,10
-    GROUPBOX        "範囲",IDC_STATIC,150,38,70,40,NOT WS_VISIBLE | WS_GROUP
+    GROUPBOX        "範囲",IDC_STATIC,150,38,70,40,WS_GROUP
     PUSHBUTTON      "上検索(&U)",IDC_BUTTON_SEARCHPREV,225,5,50,14,WS_GROUP
     DEFPUSHBUTTON   "下検索(&D)",IDC_BUTTON_SEARCHNEXT,225,21,50,14
     PUSHBUTTON      "置換(&R)",IDC_BUTTON_REPALCE,225,37,50,14
     PUSHBUTTON      "すべて置換(&A)",IDC_BUTTON_REPALCEALL,225,53,50,14
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,225,72,50,14,WS_GROUP
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,225,88,50,14
-    LTEXT           "※置換後文字列には正規表現は使えません。",IDC_STATIC,5,
-                    94,150,8
+    LTEXT           "※置換後文字列には正規表現は使えません。",IDC_STATIC,4,
+                    108,150,8
 END
 
 IDD_PROP_TOOLBAR DIALOGEX 0, 0, 270, 213
@@ -1593,7 +1599,7 @@ BEGIN
     LTEXT           "印刷しています・・・・",IDC_STATIC,25,10,60,8
     LTEXT           "12/123頁",IDC_STATIC_PROGRESS,25,40,100,8
     LTEXT           "CEditView.cpp",IDC_STATIC_JOBNAME,25,20,115,20
-    CONTROL         176,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,10,
+    CONTROL         203,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,10,
                     8,9,10
 END
 
@@ -1716,7 +1722,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 268
         TOPMARGIN, 7
-        BOTTOMMARGIN, 72
+        BOTTOMMARGIN, 92
     END
 
     IDD_PROP_FILE, DIALOG
@@ -1770,9 +1776,9 @@ BEGIN
     IDD_GREP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 303
+        RIGHTMARGIN, 304
         TOPMARGIN, 7
-        BOTTOMMARGIN, 128
+        BOTTOMMARGIN, 134
     END
 
     IDD_GREPRUNNING, DIALOG
@@ -1796,7 +1802,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 272
         TOPMARGIN, 7
-        BOTTOMMARGIN, 100
+        BOTTOMMARGIN, 120
     END
 
     IDD_PROP_TOOLBAR, DIALOG

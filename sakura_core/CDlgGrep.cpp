@@ -63,6 +63,10 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								/* 1==大文字小文字の区別 */
 	m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					/* Grep: 出力形式 */
+	
+	//2001/06/23 N.Nakatani add
+	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;					/* 単語単位で検索 */
+
 	lstrcpy( m_szCurrentFilePath, pszCurrentFilePath );
 
 	return CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
@@ -191,11 +195,22 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 				/* 英大文字と英小文字を区別する */
 				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+
+				//2001/06/23 N.Nakatani
+				/* 単語単位で検索 */
+				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
+
+
+//2001/06/23 N.Nakatani
+//単語単位のgrepが実装されたらコメントをを外すと思います
+//			/* 単語単位で検索 */
+//			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
+		
 		}
 		return TRUE;
 
@@ -312,8 +327,14 @@ void CDlgGrep::SetData( void )
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
-//	/* 一致する単語のみ検索する */
-//	::CheckDlgButton( m_hWnd, IDC_CHK_WORDONLY, m_bWordOnly );
+
+	// 2001/06/23 N.Nakatani 現時点ではGrepでは単語単位の検索はサポートできていません
+	/* 一致する単語のみ検索する */
+//	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );	//オプションを無理やりオフにする
+	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, 0 );	//オプションを無理やりオフにする
+	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ) , false );	//チェックボックスを使用不可にすも
+
+
 	/* 正規表現 */
 	::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, m_bRegularExp );
 
@@ -359,6 +380,11 @@ void CDlgGrep::SetData( void )
 			/* 英大文字と英小文字を区別する */
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+
+			//2001/06/23 N.Nakatani
+			/* 単語単位で検索 */
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
+
 		}
 	}
 
@@ -395,8 +421,11 @@ int CDlgGrep::GetData( void )
 	m_bFromThisText = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_FROMTHISTEXT );
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
-//	/* 一致する単語のみ検索する */
-//	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORDONLY );
+
+	//2001/06/23 N.Nakatani
+	/* 単語単位で検索 */
+	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
+	
 	/* 正規表現 */
 	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
 
@@ -429,10 +458,8 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;								/* 1==英大文字小文字の区別 */
 	m_pShareData->m_Common.m_bGrepOutputLine = m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 	m_pShareData->m_Common.m_nGrepOutputStyle = m_nGrepOutputStyle;					/* Grep: 出力形式 */
-
-
-
-//	m_pShareData->m_bWordOnly = m_bWordOnly;		/* 1==単語のみ検索 */
+	//2001/06/23 N.Nakatani add
+	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;		/* 1==単語のみ検索 */
 
 
 //やめました
