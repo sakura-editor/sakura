@@ -10,7 +10,7 @@
 	Copyright (C) 2000-2001, genta, jepro
 	Copyright (C) 2001, mik, hor
 	Copyright (C) 2002, YAZAKI, genta, aroka, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2003, MIK, wmlhq, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -459,6 +459,8 @@ HWND CEditWnd::Create(
 			m_hWnd = hWnd = NULL;
 			return hWnd;
 		}
+		//	Aug. 29, 2003 wmlhq
+		m_nTimerCount = 0;
 		/* タイマーを起動 */
 		if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, (TIMERPROC)CEditWndTimerProc ) ){
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
@@ -1104,9 +1106,8 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_SETFOCUS:
 //		MYTRACE( "WM_SETFOCUS\n" );
 
-		/* ファイルのタイムスタンプのチェック処理 */
-		m_cEditDoc.CheckFileTimeStamp();
-
+		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
+		m_nTimerCount = 9;
 
 		/* 編集ウィンドウリストへの登録 */
 		CShareData::getInstance()->AddEditWndList( m_hWnd );
@@ -2562,8 +2563,9 @@ end_of_drop_query:;
 }
 
 
-/* タイマーの処理
-	@datey 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+/*! タイマーの処理
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
 */
 void CEditWnd::OnTimer(
 	HWND		hwnd,		// handle of window for timer messages
@@ -2572,12 +2574,12 @@ void CEditWnd::OnTimer(
 	DWORD		dwTime 		// current system time
 )
 {
-	static	int	nLoopCount = 0;
+	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
 	int			i;
 	TBBUTTON	tbb;
-	nLoopCount++;
-	if( 10 < nLoopCount ){
-		nLoopCount = 0;
+	m_nTimerCount++;
+	if( 10 < m_nTimerCount ){
+		m_nTimerCount = 0;
 	}
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
@@ -2597,7 +2599,8 @@ void CEditWnd::OnTimer(
 		}
 	}
 
-	if( nLoopCount == 0 ){
+	//	Aug. 29, 2003 wmlhq, ryoji
+	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
 		/* ファイルのタイムスタンプのチェック処理 */
 		m_cEditDoc.CheckFileTimeStamp() ;
 	}

@@ -203,6 +203,8 @@ private:
 	int			m_nCaretPosInfoCharHeight;	/*!< キャレットの行桁位置表示用フォントの高さ */
 	int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 
+	int m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
+
 public:
 	void OnSysMenuTimer();
 };
