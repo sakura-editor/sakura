@@ -98,8 +98,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 
 	// プリンタから得られた、dmFieldsは変更しない
 	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
-	// pMYDEVMODEは、コピーしたものだけセットする
-	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH;
+	// pMYDEVMODEは、コピーしたいbitで１のものだけセットする
+	// →プリンタから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタドライバでは、
+	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
+	pMYDEVMODE->dmFields = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
 	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
@@ -161,8 +163,10 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 
 	// プリンタから得られた、dmFieldsは変更しない
 	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
-	// pMYDEVMODEは、コピーしたものだけセットする
-	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH;
+	// pMYDEVMODEは、コピーしたいbitで１のものだけコピーする
+	// →プリンタから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタドライバでは、
+	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
+	pMYDEVMODE->dmFields = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
 	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
@@ -237,7 +241,10 @@ HDC CPrint::CreateDC(
 		pDEVMODE
 	);
 
-	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH;
+	// pMYDEVMODEは、コピーしたいbitで１のものだけコピーする
+	// →プリンタから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタドライバでは、
+	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
+	pMYDEVMODE->dmFields = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
 	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
