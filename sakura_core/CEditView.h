@@ -291,6 +291,10 @@ public: /* テスト用にアクセス属性を変更 */
 	||  実装ヘルパ関数
 	*/
 	void GetCurrentTextForSearch( CMemory& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+	void DestroyCaret( void ){	/* キャレットを破棄する（内部的にも破棄）*/
+		::DestroyCaret();
+		m_nCaretWidth = 0;
+	}
 protected:
 //	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
@@ -443,9 +447,9 @@ protected:
 		int			nCaretY,
 		int			nDelLen,
 		CMemory*	pcMem,
-		COpe*		pcOpe,		/* 編集操作要素 COpe */
-		BOOL		bRedraw,
-		BOOL		bRedraw2
+		COpe*		pcOpe		/* 編集操作要素 COpe */
+//		BOOL		bRedraw,
+//		BOOL		bRedraw2
 	);
 	void DeleteData( BOOL bRedraw );/* 現在位置のデータ削除 */
 	/* 現在位置にデータを挿入 */

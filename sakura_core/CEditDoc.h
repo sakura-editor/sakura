@@ -85,6 +85,8 @@ public:
 	BOOL HandleCommand( int );
 	void SetActivePane( int );	/* アクティブなペインを設定 */
 	int GetActivePane( void );	/* アクティブなペインを取得 */
+	void RedrawInactivePane( void );	/* 非アクティブなペインをRedrawする */
+	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 	BOOL SelectFont( LOGFONT* );
 	BOOL FileRead( /*const*/ char* , BOOL*, int, BOOL, BOOL );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
@@ -201,7 +203,7 @@ public: /* テスト用にアクセス属性を変更 */
 	BOOL			m_bDebugMode;				/* デバッグモニタモード */
 	BOOL			m_bGrepMode;				/* Grepモードか */
 	char			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
-	HWND			m_hWnd;						/* 編集ウィンドウハンドル */
+	HWND			m_hWnd;						/* 編集ウィンドウハンドル（CSplitterWndが管理） */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */
 public:
 	void			MakeFuncList_C( CFuncInfoArr* );		/* C/C++関数リスト作成 */
@@ -234,7 +236,7 @@ public:
 	*/
 	char*			m_pszAppName;		/* Mutex作成用・ウィンドウクラス名 */
 	HINSTANCE		m_hInstance;		/* インスタンスハンドル */
-	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
+	HWND			m_hwndParent;		/* 親ウィンドウ（CEditWndが管理）ハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 

@@ -192,6 +192,8 @@ void CEditView::InsertData_CEditView(
 
 	/* 再描画 */
 	/* 行番号表示に必要な幅を設定 */
+	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
+#if 0
 	if( DetectWidthOfLineNumberArea( bRedraw ) ){
 		::DestroyCaret();
 		m_nCaretWidth = 0;
@@ -200,6 +202,7 @@ void CEditView::InsertData_CEditView(
 				m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
 			}
 		}
+#endif
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 	}else{
@@ -243,9 +246,9 @@ void CEditView::InsertData_CEditView(
 				}
 			}
 			hdc = ::GetDC( m_hWnd );
-			OnKillFocus();
+//			OnKillFocus();
 			OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-			OnSetFocus();
+//			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
 		}
 	}
@@ -304,15 +307,16 @@ void CEditView::InsertData_CEditView(
 /*!	指定位置の指定長データ削除
 
 	@date 2002/03/24 YAZAKI bUndo削除
+	@date 2002/05/12 YAZAKI bRedraw, bRedraw2削除（常にFALSEだから）
 */
 void CEditView::DeleteData2(
 	int			nCaretX,
 	int			nCaretY,
 	int			nDelLen,
 	CMemory*	pcMem,
-	COpe*		pcOpe,		/* 編集操作要素 COpe */
-	BOOL		bRedraw,
-	BOOL		bRedraw2
+	COpe*		pcOpe		/* 編集操作要素 COpe */
+//	BOOL		bRedraw,
+//	BOOL		bRedraw2
 //	BOOL		bUndo			/* Undo操作かどうか */
 )
 {
@@ -326,8 +330,6 @@ void CEditView::DeleteData2(
 	int			nModifyLayoutLinesOld;
 	int			nModifyLayoutLinesNew;
 	int			nDeleteLayoutLines;
-	PAINTSTRUCT ps;
-	HDC			hdc;
 	int			bLastLine;
 
 	/* 最後の行にカーソルがあるかどうか */
@@ -377,7 +379,11 @@ void CEditView::DeleteData2(
 		pcOpe->m_pcmemData = pcMem;				/* 操作に関連するデータ */
 	}
 
+#if 0
+	YAZAKI bRedraw、bRedraw2削除。常にFALSEだったので
 	if( bRedraw2 ){
+		PAINTSTRUCT ps;
+		HDC			hdc;
 		/* 再描画 */
 		if( 0 < nDeleteLayoutLines ){
 			ps.rcPaint.left = 0;
@@ -421,6 +427,7 @@ void CEditView::DeleteData2(
 			}
 		}
 	}
+#endif
 	/* 選択エリアの先頭へカーソルを移動 */
 	MoveCursor( nCaretX, nCaretY, FALSE );
 	m_nCaretPosX_Prev = m_nCaretPosX;
@@ -587,9 +594,9 @@ void CEditView::DeleteData(
 						nLineNum + 1,
 						nDelLen,
 						pcMemDeleted,
-						pcOpe,				/* 編集操作要素 COpe */
-						FALSE/*bRedraw	2002.01.25 hor*/,
-						FALSE/*bRedraw*	2002.01.25 hor*/
+						pcOpe				/* 編集操作要素 COpe */
+//						FALSE/*bRedraw	2002.01.25 hor*/,
+//						FALSE/*bRedraw*	2002.01.25 hor*/
 					);
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -618,6 +625,7 @@ void CEditView::DeleteData(
 			m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
+#if 0
 			if( DetectWidthOfLineNumberArea( TRUE ) ){
 				for( i = 0; i < 4; ++i ){
 					::DestroyCaret();
@@ -626,24 +634,25 @@ void CEditView::DeleteData(
 						m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
 					}
 				}
+#endif
+			if ( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 				/* キャレットの表示・更新 */
 				ShowEditCaret();
 			}
 			if( bRedraw ){
 				/* スクロールバーの状態を更新する */
 				AdjustScrollBars();
-			}
-			if( bRedraw  ){
-			/* 再描画 */
+
+				/* 再描画 */
 				hdc = ::GetDC( m_hWnd );
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 	//			ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine);
 				ps.rcPaint.top = m_nViewAlignTop;
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-				OnKillFocus();
+//				OnKillFocus();
 				OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-				OnSetFocus();
+//				OnSetFocus();
 				::ReleaseDC( m_hWnd, hdc );
 			}
 			/* 選択エリアの先頭へカーソルを移動 */
@@ -972,11 +981,13 @@ void CEditView::Command_UNDO( void )
 		ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 		ps.rcPaint.top = m_nViewAlignTop;
 		ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-		OnKillFocus();
+//		OnKillFocus();
 		OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-		OnSetFocus();
+//		OnSetFocus();
+		DispRuler( hdc );
 		::ReleaseDC( m_hWnd, hdc );
 		/* 行番号表示に必要な幅を設定 */
+#if 0
 		if( DetectWidthOfLineNumberArea( TRUE ) ){
 			::DestroyCaret();
 			m_nCaretWidth = 0;
@@ -985,15 +996,20 @@ void CEditView::Command_UNDO( void )
 					m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
 				}
 			}
+#endif
+		if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
 
+		m_pcEditDoc->RedrawInactivePane();/* 他のペインの表示状態を更新 */
+#if 0
 	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^2].Redraw();
 		m_pcEditDoc->m_cEditViewArr[(m_nMyIndex^1)^2].Redraw();
 	//	2001/06/21 End
+#endif
 
 	}
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
@@ -1165,12 +1181,13 @@ void CEditView::Command_REDO( void )
 		ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 		ps.rcPaint.top = m_nViewAlignTop;
 		ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-		OnKillFocus();
+//		OnKillFocus();
 		OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-		OnSetFocus();
+//		OnSetFocus();
 		::ReleaseDC( m_hWnd, hdc );
 
 		/* 行番号表示に必要な幅を設定 */
+#if 0
 		if( DetectWidthOfLineNumberArea( TRUE ) ){
 			::DestroyCaret();
 			m_nCaretWidth = 0;
@@ -1179,16 +1196,20 @@ void CEditView::Command_REDO( void )
 					m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
 				}
 			}
+#endif
+		if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
 
+		m_pcEditDoc->RedrawInactivePane();/* 他のペインの表示状態を更新 */
+#if 0
 	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^2].Redraw();
 		m_pcEditDoc->m_cEditViewArr[(m_nMyIndex^1)^2].Redraw();
 	//	2001/06/21 End
-
+#endif
 	}
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
@@ -1418,6 +1439,7 @@ void CEditView::ReplaceData_CEditView(
 	DisableSelectArea( bRedraw );
 
 	/* 行番号表示に必要な幅を設定 */
+#if 0
 	if( DetectWidthOfLineNumberArea( bRedraw ) ){
 		::DestroyCaret();
 		m_nCaretWidth = 0;
@@ -1427,6 +1449,8 @@ void CEditView::ReplaceData_CEditView(
 				m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
 			}
 		}
+#endif
+	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 	}else{
@@ -1468,9 +1492,9 @@ void CEditView::ReplaceData_CEditView(
 				}
 
 			}
-			OnKillFocus();
+//			OnKillFocus();
 			OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-			OnSetFocus();
+//			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
 		}
 	}
@@ -2211,7 +2235,7 @@ void CEditView::Command_BOOKMARK_NEXT(void)
 	nY=m_nCaretPosY_PHY;
 	nYOld=nY;						// hor
 re_do:;								// hor
-	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY,TRUE,&nY)){
+	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, 1 /* 後方検索 */, &nY)){
 		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
 		if(m_bSelectingLock){
@@ -2260,7 +2284,7 @@ void CEditView::Command_BOOKMARK_PREV(void)
 	nY=m_nCaretPosY_PHY;
 	nYOld=nY;						// hor
 re_do:;								// hor
-	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY,FALSE,&nY)){
+	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, 0 /* 前方検索 */, &nY)){
 		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
 		if(m_bSelectingLock){

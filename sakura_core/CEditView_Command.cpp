@@ -575,13 +575,15 @@ BOOL CEditView::HandleCommand(
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
 
+			m_pcEditDoc->RedrawInactivePane();	//	他のペインの表示
+#if 0
 		//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
 			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^2].Redraw();
 			m_pcEditDoc->m_cEditViewArr[(m_nMyIndex^1)^2].Redraw();
 			DrawCaretPosInfo();
 		//	2001/06/21 End
-
+#endif
 		}else{
 			delete m_pcOpeBlk;
 		}
@@ -6770,9 +6772,9 @@ void CEditView::Command_UNINDENT( char cChar )
 				i/*nLineNum + 1*/,
 				nDelLen/*nLineLen*/,	// 2001.12.03 hor
 				pcMemDeleted,
-				pcOpe,				/* 編集操作要素 COpe */
-				FALSE,
-				FALSE
+				pcOpe				/* 編集操作要素 COpe */
+//				FALSE,
+//				FALSE
 			);
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
@@ -9576,17 +9578,20 @@ end_of_compare:;
 	}
 //To Here Oct. 10, 2000
 
+	//	2002/05/11 YAZAKI 親ウィンドウをうまく設定してみる。
 	if( FALSE == bDefferent ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+		::MYMESSAGEBOX( hwndCompareWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
 			"異なる箇所は見つかりませんでした。"
 		);
 	}else{
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+		::MYMESSAGEBOX( hwndCompareWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
 			"異なる箇所が見つかりました。"
 		);
-		/* カーソルを移動させる */
+		/* カーソルを移動させる
+			比較相手は、別プロセスなのでメッセージを飛ばす。
+		*/
 		memcpy( m_pShareData->m_szWork, (void*)&poDes, sizeof( poDes ) );
-		::SendMessage( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
+		::PostMessage( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
 		memcpy( m_pShareData->m_szWork, (void*)&poSrc, sizeof( poSrc ) );
@@ -9594,7 +9599,7 @@ end_of_compare:;
 	}
 	/* 開いているウィンドウをアクティブにする */
 	/* アクティブにする */
-	ActivateFrameWindow( hwndCompareWnd );
+//	ActivateFrameWindow( hwndCompareWnd );
 
 	/* 開いているウィンドウをアクティブにする */
 	/* アクティブにする */

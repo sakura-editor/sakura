@@ -194,10 +194,13 @@ BOOL CEditDoc::Create(
 	m_cEditViewArr[2].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 2, /*TRUE ,*/ FALSE );
 	m_cEditViewArr[3].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 3, /*TRUE ,*/ FALSE );
 
+#if 0
+	YAZAKI 不要な処理と思われる。
 	m_cEditViewArr[0].OnKillFocus();
 	m_cEditViewArr[1].OnKillFocus();
 	m_cEditViewArr[2].OnKillFocus();
 	m_cEditViewArr[3].OnKillFocus();
+#endif
 
 	m_cEditViewArr[0].OnSetFocus();
 
@@ -3234,6 +3237,7 @@ void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 void  CEditDoc::SetActivePane( int nIndex )
 {
 	m_cEditViewArr[m_nActivePaneIndex].OnKillFocus();
+	m_cEditViewArr[m_nActivePaneIndex].CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
 
 	/* アクティブなビューを切り替える */
 	m_nActivePaneIndex = nIndex;
@@ -3279,8 +3283,46 @@ int CEditDoc::GetActivePane( void )
 
 
 
+/* 非アクティブなペインをRedrawする */
+void CEditDoc::RedrawInactivePane(void)
+{
+	if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+		m_cEditViewArr[m_nActivePaneIndex^1].Redraw();
+	}
+	if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+		m_cEditViewArr[m_nActivePaneIndex^2].Redraw();
+		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			m_cEditViewArr[(m_nActivePaneIndex^1)^2].Redraw();
+		}
+	}
+}
 
-
+/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
+BOOL CEditDoc::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
+{
+	if ( m_cEditViewArr[m_nActivePaneIndex].DetectWidthOfLineNumberArea( bRedraw ) ){
+		/* ActivePaneで計算したら、再設定・再描画が必要と判明した */
+		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			m_cEditViewArr[m_nActivePaneIndex^1].DetectWidthOfLineNumberArea( bRedraw );
+		}
+		else {
+			//	表示されていないので再描画しない
+			m_cEditViewArr[m_nActivePaneIndex^1].DetectWidthOfLineNumberArea( FALSE );
+		}
+		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+			m_cEditViewArr[m_nActivePaneIndex^2].DetectWidthOfLineNumberArea( bRedraw );
+			if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+				m_cEditViewArr[(m_nActivePaneIndex^1)^2].DetectWidthOfLineNumberArea( bRedraw );
+			}
+		}
+		else {
+			m_cEditViewArr[m_nActivePaneIndex^2].DetectWidthOfLineNumberArea( FALSE );
+			m_cEditViewArr[(m_nActivePaneIndex^1)^2].DetectWidthOfLineNumberArea( FALSE );
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
 
 /* コマンドコードによる処理振り分け */
 BOOL CEditDoc::HandleCommand( int nCommand )
