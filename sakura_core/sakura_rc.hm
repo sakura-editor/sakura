@@ -55,6 +55,7 @@
 #define HIDC_BUTTON_SEARCHNEXT          0x806d0471    // IDD_FIND
 #define HIDC_BUTTON_SEARCHPREV          0x806d046f    // IDD_FIND
 #define HIDC_BUTTON_SETMARK             0x806d0472    // IDD_FIND
+#define HIDC_BUTTON_TAG_MAKE_REF        0x80e505bf    // IDD_TAG_MAKE
 #define HIDC_BUTTON_TEMPCHANGE          0x80930568    // IDD_TYPELIST
 #define HIDC_BUTTON_TEXTCOLOR           0x93f20420    // IDD_PROP_COLOR
 #define HIDC_BUTTON_TYPEOPENEXTHTMLHELP \
@@ -78,6 +79,7 @@
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA \
                                         0x93f5050b    // IDD_PROP_EDIT
 #define HIDC_CHECK_CTRL                 0x93f3045b    // IDD_PROP_KEYBIND
+#define HIDC_CHECK_DIFF_EXEC_STATE      0x93fb05c3    // IDD_DIFF
 #define HIDC_CHECK_DIFF_OPT_BLINE       0x93fb059a    // IDD_DIFF
 #define HIDC_CHECK_DIFF_OPT_CASE        0x93fb0597    // IDD_DIFF
 #define HIDC_CHECK_DIFF_OPT_SPACE       0x93fb0598    // IDD_DIFF
@@ -134,6 +136,7 @@
 #define HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD \
                                         0x806b03f4    // IDD_PROP1P1
 #define HIDC_CHECK_TAB_ARROW            0x93ed05b0    // IDD_PROPTYPESP1
+#define HIDC_CHECK_TAG_MAKE_RECURSE     0x80e505c0    // IDD_TAG_MAKE
 #define HIDC_CHECK_TILE_H               0x80a80510    // IDD_COMPARE
 #define HIDC_CHECK_TOOLBARISFLAT        0x86030434    // IDD_PROP_TOOLBAR
 #define HIDC_CHECK_TYPEHTMLHELPISSINGLE \
@@ -244,6 +247,8 @@
                                         0x806b044a    // IDD_PROP1P1
 #define HIDC_EDIT_TABSPACE              0x93ed041a    // IDD_PROPTYPESP1
 #define HIDC_EDIT_TABVIEWSTRING         0x93ed040f    // IDD_PROPTYPESP1
+#define HIDC_EDIT_TAG_MAKE_CMDLINE      0x80e5052f    // IDD_TAG_MAKE
+#define HIDC_EDIT_TAG_MAKE_FOLDER       0x80e505c1    // IDD_TAG_MAKE
 #define HIDC_EDIT_TFORM                 0x93f0043f    // IDD_PROP_FORMAT
 #define HIDC_EDIT_TFORM_EX              0x93f0052a    // IDD_PROP_FORMAT
 #define HIDC_EDIT_TO                    0x80c10451    // IDD_PRINTPAGE
@@ -280,6 +285,7 @@
 #define HIDC_LIST_KEYWORD               0x8099049d    // IDD_PROP_KEYWORD
 #define HIDC_LIST_REGEX                 0x80db057f    // IDD_PROP_REGEX
 #define HIDC_LIST_RES                   0x93ef0472    // IDD_PROP_CUSTMENU
+#define HIDC_LIST_TAGJUMP               0x80e405bc    // IDD_TAGJUMPLIST
 #define HIDC_LIST_TYPES                 0x80930481    // IDD_TYPELIST
 #define HIDC_MACRODIR                   0x80d90579    // IDD_PROP_MACRO
 #define HIDC_MACRODIRREF                0x80d9057a    // IDD_PROP_MACRO
