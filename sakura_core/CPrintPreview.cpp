@@ -816,10 +816,10 @@ void CPrintPreview::OnPrint( void )
 
 	/* 紙の大きさをあらわすRECTを設定 */
 	RECT cRect;
-	cRect.left   =                          m_pPrintSetting->m_nPrintMarginLX + 5;
-	cRect.right  = m_nPreview_PaperWidth - (m_pPrintSetting->m_nPrintMarginRX + 5);
-	cRect.top    = nDirectY * (                              m_pPrintSetting->m_nPrintMarginTY + 5 );
-	cRect.bottom = nDirectY * ( m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + 5) );
+	cRect.left   =                             m_pPrintSetting->m_nPrintMarginLX - m_nPreview_PaperOffsetLeft + 5;
+	cRect.right  = m_nPreview_PaperAllWidth - (m_pPrintSetting->m_nPrintMarginRX + m_nPreview_PaperOffsetLeft + 5);
+	cRect.top    = nDirectY * (                              m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop + 5 );
+	cRect.bottom = nDirectY * ( m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + m_nPreview_PaperOffsetTop + 5) );
 
 	/* ヘッダ・フッタの$pを展開するために、m_nCurPageNumを保持 */
 	int nCurPageNumOld = m_nCurPageNum;
