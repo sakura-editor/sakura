@@ -524,7 +524,9 @@ void CDocLineMgr::MarkSearchWord(
 	int			nLineLen;
 	char*		pszRes;
 	int*		pnKey_CharCharsArr;
-	int			nPatternLen = lstrlen( pszPattern );
+	//	Jun. 10, 2003 Moca
+	//	lstrlen‚ğ–ˆ‰ñŒÄ‚Î‚¸‚ÉnPatternLen‚ğg‚¤‚æ‚¤‚É‚·‚é
+	const int	nPatternLen = lstrlen( pszPattern );
 
 	/* 1==³‹K•\Œ» */
 	if( bRegularExp ){
@@ -571,7 +573,7 @@ void CDocLineMgr::MarkSearchWord(
 		pnKey_CharCharsArr = NULL;
 		CDocLineMgr::CreateCharCharsArr(
 			(const unsigned char *)pszPattern,
-			lstrlen( pszPattern ),
+			nPatternLen,
 			&pnKey_CharCharsArr
 		);
 		pDocLine = GetLineInfo( 0 );
@@ -583,7 +585,7 @@ void CDocLineMgr::MarkSearchWord(
 					nLineLen,
 					0,
 					(const unsigned char *)pszPattern,
-					lstrlen( pszPattern ),
+					nPatternLen,
 					pnKey_CharCharsArr,
 					bLoHiCase
 				);

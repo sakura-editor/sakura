@@ -1637,14 +1637,16 @@ int CDocLineMgr::SearchWord(
 	int			nHitLenOld;
 	int			nRetVal;
 	int*		pnKey_CharCharsArr;
-	int			nPatternLen = lstrlen( pszPattern );	//2001/06/23 N.Nakatani
+	//	Jun. 10, 2003 Moca
+	//	lstrlenを毎回呼ばずにnPatternLenを使うようにする
+	const int	nPatternLen = lstrlen( pszPattern );	//2001/06/23 N.Nakatani
 	pnKey_CharCharsArr = NULL;
 //	int*		pnKey_CharUsedArr;
 //	pnKey_CharUsedArr = NULL;
 	/* 検索条件の情報 */
 	CDocLineMgr::CreateCharCharsArr(
 		(const unsigned char *)pszPattern,
-		lstrlen( pszPattern ),
+		nPatternLen,
 		&pnKey_CharCharsArr
 	);
 //	/* 検索条件の情報(キー文字列の使用文字表)作成 */
@@ -1874,7 +1876,7 @@ int CDocLineMgr::SearchWord(
 						nLineLen,
 						nIdxPos,
 						(const unsigned char *)pszPattern,
-						lstrlen( pszPattern ),
+						nPatternLen,
 						pnKey_CharCharsArr,
 //						pnKey_CharUsedArr,
 						bLoHiCase
@@ -1886,7 +1888,7 @@ int CDocLineMgr::SearchWord(
 							if( -1 != nHitPosOld ){
 								*pnLineNum = nLinePos;							/* マッチ行 */
 								*pnIdxFrom = nHitPosOld;						/* マッチ位置from */
-								*pnIdxTo = *pnIdxFrom + lstrlen( pszPattern );	/* マッチ位置to */
+								*pnIdxTo = *pnIdxFrom + nPatternLen;			/* マッチ位置to */
 								nRetVal = 1;
 								goto end_of_func;
 							}else{
@@ -1897,7 +1899,7 @@ int CDocLineMgr::SearchWord(
 						if( -1 != nHitPosOld ){
 							*pnLineNum = nLinePos;							/* マッチ行 */
 							*pnIdxFrom = nHitPosOld;						/* マッチ位置from */
-							*pnIdxTo = *pnIdxFrom + lstrlen( pszPattern );	/* マッチ位置to */
+							*pnIdxTo = *pnIdxFrom + nPatternLen;			/* マッチ位置to */
 							nRetVal = 1;
 							goto end_of_func;
 						}else{
@@ -1926,7 +1928,7 @@ int CDocLineMgr::SearchWord(
 					nLineLen,
 					nIdxPos,
 					(const unsigned char *)pszPattern,
-					lstrlen( pszPattern ),
+					nPatternLen,
 					pnKey_CharCharsArr,
 //					pnKey_CharUsedArr,
 					bLoHiCase
@@ -1934,7 +1936,7 @@ int CDocLineMgr::SearchWord(
 				if( NULL != pszRes ){
 					*pnLineNum = nLinePos;							/* マッチ行 */
 					*pnIdxFrom = pszRes - pLine;					/* マッチ位置from */
-					*pnIdxTo = *pnIdxFrom + lstrlen( pszPattern );	/* マッチ位置to */
+					*pnIdxTo = *pnIdxFrom + nPatternLen;	/* マッチ位置to */
 					nRetVal = 1;
 					goto end_of_func;
 				}
