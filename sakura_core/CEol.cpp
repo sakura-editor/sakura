@@ -44,6 +44,16 @@ const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"\x0d"				// EOL_CR
 };
 
+/*! 行終端子のデータの配列(Unicode版) 2000/05/09 Frozen */
+const wchar_t* CEOL::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
+	L"",
+	L"",				// EOL_CRLF_UNICODE（これは使用しないでください）
+	L"\x0d\x0a",		// EOL_CRLF
+	L"\x0a\x0d",		// EOL_LFCR
+	L"\x0a",			// EOL_LF
+	L"\x0d"				// EOL_CR
+};
+
 /*! 行終端子のデータ長の配列 */
 const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 	LEN_EOL_NONE			,	// == 0

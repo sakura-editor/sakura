@@ -110,8 +110,9 @@ void CSplitterWnd::SetChildWndArr( HWND* pcEditViewArr )
 		m_ChildWndArr[v] = pcEditViewArr[v];				/* 子ウィンドウ配列 */
 	}
 
+	// 2002/05/11 YAZAKI 不要な処理と思われる
 	/* ウィンドウの分割 */
-	DoSplit( m_nHSplitPos, m_nVSplitPos );
+//	DoSplit( m_nHSplitPos, m_nVSplitPos );
 //	DoSplit( 0, 0 );
 	return;
 }
@@ -550,6 +551,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	if( m_ChildWndArr[nActivePane] != NULL ){
 		::PostMessage( m_ChildWndArr[nActivePane], MYWM_SETACTIVEPANE, 0, 0 );
 	}
+#if 0
 	if( NULL != pcViewArr[0] ){
 		pcViewArr[0]->RedrawAll();	/* フォーカス移動時の再描画 */
 	}
@@ -565,6 +567,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	if( NULL != pcViewArr[nActivePane] ){
 		pcViewArr[nActivePane]->RedrawAll();	/* フォーカス移動時の再描画 */
 	}
+#endif
 	return;
 }
 

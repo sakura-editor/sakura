@@ -751,6 +751,7 @@ BOOL CEditView::Create(
 			"CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
 		);
 	}
+
 	return TRUE;
 }
 
@@ -1330,48 +1331,39 @@ void CEditView::ShowEditCaret( void )
 	}
 
 	hdc = ::GetDC( m_hWnd );
-	if( m_nCaretWidth == 0 ){	/* キャレットがなかった場合 */
-
+	if( m_nCaretWidth == 0 ){
+		/* キャレットがなかった場合 */
 		/* キャレットの作成 */
 		::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
-		/* キャレットの位置を調整 */
-		::SetCaretPos(
-			m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
-			m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight
-		);
-		/* キャレットの表示 */
-		::ShowCaret( m_hWnd );
 	}else{
-		if( m_nCaretWidth != nCaretWidth || m_nCaretHeight != nCaretHeight ){	/* キャレットはあるが、大きさが変わった場合 */
-
-
+		if( m_nCaretWidth != nCaretWidth || m_nCaretHeight != nCaretHeight ){
+			/* キャレットはあるが、大きさが変わった場合 */
 			/* 現在のキャレットを削除 */
 			::DestroyCaret();
 
 			/* キャレットの作成 */
 			::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
-			/* キャレットの位置を調整 */
-			::SetCaretPos(
-				m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
-				m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight
-			);
-			/* キャレットの表示 */
-			::ShowCaret( m_hWnd );
 		}else{
 			/* キャレットはあるし、大きさも変わっていない場合 */
 			/* キャレットを隠す */
 			::HideCaret( m_hWnd );
 
-			/* キャレットの位置を調整 */
-			::SetCaretPos(
-				m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
-				m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight
-			);
-			/* キャレットの表示 */
-			::ShowCaret( m_hWnd );
 		}
 	}
+	/* キャレットの位置を調整 */
+	::SetCaretPos(
+		m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
+		m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight
+	);
+	/* キャレットの表示 */
+	::ShowCaret( m_hWnd );
 
+	m_nCaretWidth = nCaretWidth;
+	m_nCaretHeight = nCaretHeight;	/* キャレットの高さ */
+	SetIMECompFormPos();
+
+#if 0
+	2002/05/12 YAZAKI ShowEditCaretで仕事をしすぎ。
 	//2002.02.27 Add By KK アンダーラインのちらつきを低減
 	if (m_nOldUnderLineY != m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight) {
 		//アンダーラインの描画位置が、前回のアンダーライン描画位置と異なっていたら、アンダーラインを描き直す。
@@ -1379,14 +1371,10 @@ void CEditView::ShowEditCaret( void )
 		CaretUnderLineON(TRUE);
 	}
 
-	m_nCaretWidth = nCaretWidth;
-	m_nCaretHeight = nCaretHeight;	/* キャレットの高さ */
-	SetIMECompFormPos();
-
 	/* ルーラー描画 */
 	DispRuler( hdc );
 	::ReleaseDC( m_hWnd, hdc );
-
+#endif
 
 	return;
 }
@@ -1404,8 +1392,14 @@ void CEditView::OnSetFocus( void )
 
 
 	ShowEditCaret();
+
 	SetIMECompFormPos();
 	SetIMECompFormFont();
+
+	/* ルーラのカーソルをグレーから黒に変更する */
+	HDC hdc = ::GetDC( m_hWnd );
+	DispRuler( hdc );
+	::ReleaseDC( m_hWnd, hdc );
 
 	return;
 }
@@ -1417,17 +1411,11 @@ void CEditView::OnSetFocus( void )
 /* 入力フォーカスを失ったときの処理 */
 void CEditView::OnKillFocus( void )
 {
-//	if( m_nMyIndex == 0 && m_nCaretPosX == 0 && m_nCaretPosY == 0 ){
-//		MYTRACE( "OnKillFocus()\n" );
-//	}
-	HDC	hdc;
-
-
-	::DestroyCaret();
-	m_nCaretWidth = 0;
+	DestroyCaret();
 
 	/* ルーラー描画 */
-	hdc = ::GetDC( m_hWnd );
+	/* ルーラのカーソルを黒からグレーに変更する */
+	HDC	hdc = ::GetDC( m_hWnd );
 	DispRuler( hdc );
 	::ReleaseDC( m_hWnd, hdc );
 
@@ -1438,19 +1426,10 @@ void CEditView::OnKillFocus( void )
 		m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 	}
 
-
 	if( m_bHokan ){
 		m_pcEditDoc->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
-
-//	if( m_bHokan ){
-//		m_pcEditDoc->m_cHokanMgr.Hide();
-//		m_bHokan = FALSE;
-//	}
-	
-	//	非アクティブにしたときはカーソルオフ YAZAKI 2002/05/08
-	CaretUnderLineOFF(TRUE);
 
 	return;
 }
@@ -2493,11 +2472,12 @@ void CEditView::SetFont( void )
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWnd, hdc );
 	::InvalidateRect( m_hWnd, NULL, TRUE );
-	if( m_nCaretWidth == 0 ){	/* キャレットがなかった場合 */
-	}else{
-		OnKillFocus();
-		OnSetFocus();
-	}
+//	2002/05/12 YAZAKI 不要と思われたので。
+//	if( m_nCaretWidth == 0 ){	/* キャレットがなかった場合 */
+//	}else{
+//		OnKillFocus();
+//		OnSetFocus();
+//	}
 	return;
 }
 
@@ -2567,9 +2547,11 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 			ps.rcPaint.top = 0;
 			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-			OnKillFocus();
+//			OnKillFocus();
 			OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-			OnSetFocus();
+//			OnSetFocus();
+//			DispRuler( hdc );
+			ShowEditCaret();
 			::ReleaseDC( m_hWnd, hdc );
 		}
 		m_bRedrawRuler = true;
@@ -2673,7 +2655,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 
 	/* カーソル行アンダーラインのOFF */
 //	if (IsTextSelected()) { //2002.02.27 Add By KK アンダーラインのちらつきを低減 - ここではテキスト選択時のみアンダーラインを消す。
-		CaretUnderLineOFF( bDraw );
+		CaretUnderLineOFF( bDraw );	//	YAZAKI
 //	}	2002/04/04 YAZAKI 半ページスクロール時にアンダーラインが残ったままスクロールしてしまう問題に対処。
 
 	if( m_bBeginSelect ){	/* 範囲選択中 */
@@ -2827,7 +2809,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 				if( nScrollColNum != 0 ){
 					::InvalidateRect( m_hWnd, &rcClip2, TRUE );
 	 			}
-				::UpdateWindow( m_hWnd );
+//				::UpdateWindow( m_hWnd );
 			}
 			//	2001/10/20 moved by novice
 //			/* スクロールバーの状態を更新する */
@@ -2864,6 +2846,12 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 
+		/* ルーラの再描画 */
+		DispRuler( hdc );
+
+		/* アンダーラインの再描画 */
+		CaretUnderLineON(TRUE);
+
 		/* キャレットの行桁位置を表示する */
 		DrawCaretPosInfo();
 	}
@@ -2880,14 +2868,14 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	}
 	if(nScrollColNum != 0)
 	{
-		if( m_pShareData->m_Common.m_bSplitterWndHScroll )	// 水平スクロールの同期をとる
+		if( m_pShareData->m_Common.m_bSplitterWndHScroll && m_pcEditDoc->m_cSplitterWnd.GetAllSplitRows() == 2 )	// 水平スクロールの同期をとる
 		{
 			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
 			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
 			pcEditView -> ScrollAtH( m_nViewLeftCol );
 			m_bRedrawRuler = true; //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
 			DispRuler( hdc );
-			::ReleaseDC( m_hWnd, hdc );
+			::ReleaseDC( pcEditView->m_hWnd, hdc );
 		}
 	}
 //	2001/06/20 End
@@ -5143,9 +5131,9 @@ void CEditView::CopySelectedAllLines(
 	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 	ps.rcPaint.top = m_nViewAlignTop;
 	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-	OnKillFocus();
+//	OnKillFocus();
 	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-	OnSetFocus();
+//	OnSetFocus();
 	::ReleaseDC( m_hWnd, hdc );
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
@@ -5289,9 +5277,9 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					nPosY/*nLineNum + 1*/,
 					nDelLen,
 					pcMemDeleted,
-					pcOpe,		/* 編集操作要素 COpe */
-					FALSE,
-					FALSE
+					pcOpe		/* 編集操作要素 COpe */
+//					FALSE,
+//					FALSE
 				);
 				cmemBuf.SetData( pcMemDeleted );
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -6080,7 +6068,7 @@ void CEditView::RedrawAll( void )
 	/* 再描画 */
 	hdc = ::GetDC( m_hWnd );
 
-	OnKillFocus();
+//	OnKillFocus();
 
 //	ps.rcPaint.left = 0;
 //	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
@@ -6093,7 +6081,7 @@ void CEditView::RedrawAll( void )
 //	ps.rcPaint.top = 0;
 
 	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
-	OnSetFocus();
+//	OnSetFocus();
 	::ReleaseDC( m_hWnd, hdc );
 
 //	2001/06/21 asa-o 削除
@@ -6101,6 +6089,9 @@ void CEditView::RedrawAll( void )
 //	AdjustScrollBars();
 	/* カーソル移動 */
 //	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
+
+	/* キャレットの表示 */
+	ShowEditCaret();
 
 	/* キャレットの行桁位置を表示する */
 	DrawCaretPosInfo();
@@ -6146,8 +6137,9 @@ void CEditView::CopyViewStatus( CEditView* pView )
 	pView->m_nCaretPosX 			= m_nCaretPosX;			/* ビュー左端からのカーソル桁位置（０開始）*/
 	pView->m_nCaretPosX_Prev		= m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
 	pView->m_nCaretPosY				= m_nCaretPosY;			/* ビュー上端からのカーソル行位置（０開始）*/
-	pView->m_nCaretWidth			= m_nCaretWidth;		/* キャレットの幅 */
-	pView->m_nCaretHeight			= m_nCaretHeight;		/* キャレットの高さ */
+//	キャレットの幅・高さはコピーしない。2002/05/12 YAZAKI
+//	pView->m_nCaretWidth			= m_nCaretWidth;		/* キャレットの幅 */
+//	pView->m_nCaretHeight			= m_nCaretHeight;		/* キャレットの高さ */
 
 	/* キー状態 */
 	pView->m_bSelectingLock			= m_bSelectingLock;		/* 選択状態のロック */
@@ -6607,7 +6599,7 @@ DWORD CEditView::DoGrep(
 	m_bDrawSWITCH = TRUE;
 
 	/* フォーカス移動時の再描画 */
-	RedrawAll();
+//	RedrawAll();
 
 	return nHitCount;
 }
@@ -8110,7 +8102,18 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 		 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
 		){
 //			MYTRACE( "★カーソル行アンダーラインの消去\n" );
-			/* カーソル行アンダーラインの消去 */
+			/* カーソル行アンダーラインの消去（無理やり） */
+			m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp = FALSE;
+			PAINTSTRUCT ps;
+			ps.rcPaint.left = m_nViewAlignLeft;
+			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
+			ps.rcPaint.top = m_nOldUnderLineY;
+			ps.rcPaint.bottom = m_nOldUnderLineY;
+			HDC hdc = ::GetDC( m_hWnd );
+			OnPaint( hdc, &ps, FALSE );
+			ReleaseDC( m_hWnd, hdc );
+			m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp = TRUE;
+#if 0
 			HDC		hdc;
 			HPEN	hPen, hPenOld;
 			hdc = ::GetDC( m_hWnd );
@@ -8130,6 +8133,7 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 			::SelectObject( hdc, hPenOld );
 			::DeleteObject( hPen );
 			::ReleaseDC( m_hWnd, hdc );
+#endif
 		}
 		m_nOldUnderLineY = -1;
 	}

@@ -966,36 +966,58 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		}
 //		if( bCRLF ){
 		if( EOL_NONE != pCDocLine->m_cEol ){
-			/* 書き込み時の改行コード変換 */
-			switch( nCharCode ){
-			case CODE_UNICODE:
-				/* ASCII+SJIS→Unicode変換 */
-				//	May 15, 2000 genta
-				{
-					CEOL ue( EOL_CRLF_UNICODE );
-					cmemBuf.Append( ue.GetValue(), ue.GetLen() );
-				}
-				break;
-// 1999.12.20
-//			case CODE_EUC:
-//				cmemBuf.Append( gm_pszEolDataArr[EOL_LF], LEN_EOL_LF );
-//				break;
-			default:
-				//	From Here Feb. 8, 2001 genta 改行コード変換処理を追加
-				if( cEol == EOL_NONE ){
-// 1999.12.20
-//				/* 改行コードをCRLFに変換 */
-//				cmemBuf.Append( gm_pszEolDataArr[EOL_CRLF], LEN_EOL_CRLF );
-					/* 改行コードを変換しない */
-					cmemBuf.Append( pCDocLine->m_cEol.GetValue(), pCDocLine->m_cEol.GetLen() );
-					break;
-				}
-				else {
-					/* 改行コードを指定されたものに変換 */
-					cmemBuf.Append( cEol.GetValue(), cEol.GetLen() );
-				}
-				//	To Here Feb. 8, 2001 genta
+
+// 2002/05/09 Frozen ここから
+			if(nCharCode==CODE_UNICODE)
+			{
+				if(cEol==EOL_NONE)
+					cmemBuf.Append(pCDocLine->m_cEol.GetUnicodeValue(),pCDocLine->m_cEol.GetLen()*sizeof(wchar_t));
+				else
+					cmemBuf.Append(cEol.GetUnicodeValue(),cEol.GetLen()*sizeof(wchar_t));
 			}
+			else
+			{
+				if(cEol==EOL_NONE)
+					cmemBuf.Append(pCDocLine->m_cEol.GetValue(),pCDocLine->m_cEol.GetLen());
+				else
+					cmemBuf.Append(cEol.GetValue(),cEol.GetLen());
+			}
+// 2002/05/09 Frozen ここまで
+
+// 2002/05/09 Frozen ここから削除
+
+//			/* 書き込み時の改行コード変換 */
+//			switch( nCharCode ){
+//			case CODE_UNICODE:
+//				/* ASCII+SJIS→Unicode変換 */
+//				//	May 15, 2000 genta
+//				{
+//					CEOL ue( EOL_CRLF_UNICODE );
+//					cmemBuf.Append( ue.GetValue(), ue.GetLen() );
+//				}
+//				break;
+//// 1999.12.20
+////			case CODE_EUC:
+////				cmemBuf.Append( gm_pszEolDataArr[EOL_LF], LEN_EOL_LF );
+////				break;
+//			default:
+//				//	From Here Feb. 8, 2001 genta 改行コード変換処理を追加
+//				if( cEol == EOL_NONE ){
+//// 1999.12.20
+////				/* 改行コードをCRLFに変換 */
+////				cmemBuf.Append( gm_pszEolDataArr[EOL_CRLF], LEN_EOL_CRLF );
+//					/* 改行コードを変換しない */
+//					cmemBuf.Append( pCDocLine->m_cEol.GetValue(), pCDocLine->m_cEol.GetLen() );
+//					break;
+//				}
+//				else {
+//					/* 改行コードを指定されたものに変換 */
+//					cmemBuf.Append( cEol.GetValue(), cEol.GetLen() );
+//				}
+//				//	To Here Feb. 8, 2001 genta
+//			}
+// 2002/05/09 Frozen ここまで削除
+
 		}
 		if( 0 < cmemBuf.GetLength() ){
 //-			if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
