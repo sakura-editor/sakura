@@ -608,7 +608,9 @@ struct VS_VERSION_INFO_HEAD {
 	VS_FIXEDFILEINFO Value;
 };
 
-/* リソースから製品バージョンの取得 */
+/*! リソースから製品バージョンの取得
+	@date 2004.05.13 Moca 一度取得したらキャッシュする
+*/
 void GetAppVersionInfo(
 	HINSTANCE	hInstance,
 	int			nVersionResourceID,
@@ -622,12 +624,25 @@ void GetAppVersionInfo(
 	/* リソースから製品バージョンの取得 */
 	*pdwProductVersionMS = 0;
 	*pdwProductVersionLS = 0;
+	static bool bLoad = false;
+	static DWORD dwVersionMS = 0;
+	static DWORD dwVersionLS = 0;
+	if( hInstance == NULL && bLoad ){
+		*pdwProductVersionMS = dwVersionMS;
+		*pdwProductVersionLS = dwVersionLS;
+		return;
+	}
 	if( NULL != ( hRSRC = ::FindResource( hInstance, MAKEINTRESOURCE(nVersionResourceID), RT_VERSION ) )
 	 && NULL != ( hgRSRC = ::LoadResource( hInstance, hRSRC ) )
 	 && NULL != ( pVVIH = (VS_VERSION_INFO_HEAD*)::LockResource( hgRSRC ) )
 	){
 		*pdwProductVersionMS = pVVIH->Value.dwProductVersionMS;
 		*pdwProductVersionLS = pVVIH->Value.dwProductVersionLS;
+		dwVersionMS = pVVIH->Value.dwProductVersionMS;
+		dwVersionLS = pVVIH->Value.dwProductVersionLS;
+	}
+	if( hInstance == NULL ){
+		bLoad = true;
 	}
 	return;
 

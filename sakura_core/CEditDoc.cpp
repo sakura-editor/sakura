@@ -4657,11 +4657,15 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			// Version number
 			{
 				char buf[28]; // 6(符号含むWORDの最大長) * 4 + 4(固定部分)
+				//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
+				DWORD dwVersionMS, dwVersionLS;
+				GetAppVersionInfo( NULL, VS_VERSION_INFO,
+					&dwVersionMS, &dwVersionLS );
 				int len = sprintf( buf, "%d.%d.%d.%d",
-					HIWORD( m_pShareData->m_dwProductVersionMS ),
-					LOWORD( m_pShareData->m_dwProductVersionMS ),
-					HIWORD( m_pShareData->m_dwProductVersionLS ),
-					LOWORD( m_pShareData->m_dwProductVersionLS )
+					HIWORD( dwVersionMS ),
+					LOWORD( dwVersionMS ),
+					HIWORD( dwVersionLS ),
+					LOWORD( dwVersionLS )
 				);
 				q = strncpy_ex( q, q_max - q, buf, len );
 				++p;
