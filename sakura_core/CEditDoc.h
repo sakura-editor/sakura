@@ -110,6 +110,8 @@ public:
 
 	//	Aug. 31, 2000 genta
 	const CEditView& ActiveView(void) const { return m_cEditViewArr[m_nActivePaneIndex]; }
+	//	Nov. 20, 2000 genta
+	void SetImeMode(int mode);	//	IME状態の設定
 
 protected:
 public: /* テスト用にアクセス属性を変更 */

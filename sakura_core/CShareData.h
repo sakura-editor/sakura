@@ -243,6 +243,7 @@ struct Types {
 	int					m_nDefaultOutline;				/* アウトライン解析方法 */
 
 	int					m_nSmartIndent;					/* スマートインデント種別 */
+	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
 
 }; /* Types */
 

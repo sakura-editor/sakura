@@ -159,36 +159,36 @@ VOID CALLBACK CEditWndTimerProc(
 
 
 
-CEditWnd::CEditWnd()
+CEditWnd::CEditWnd() :
+	m_hWnd( NULL ),
+	m_bDragMode( FALSE ),
+	m_hwndParent( NULL ),
+	m_hwndToolBar( NULL ),
+	m_hwndStatusBar( NULL ),
+	m_hwndProgressBar( NULL ),
+	m_hdcCompatDC( NULL ),		/* 再描画用コンパチブルＤＣ */
+	m_hbmpCompatBMP( NULL ),		/* 再描画用メモリＢＭＰ */
+	m_hbmpCompatBMPOld( NULL ),	/* 再描画用メモリＢＭＰ(OLD) */
+
+	m_nPreview_Zoom( 100 ),	/* 印刷プレビュー倍率 */
+	m_nPreviewVScrollPos( 0 ),	
+	m_nPreviewHScrollPos( 0 ),	
+	m_nCurPageNum( 0 ),		/* 現在のページ */
+
+	m_pPrintSetting( NULL ),	/* 現在の印刷設定 */
+
+	m_hwndPrintPreviewBar( NULL ),	/* 印刷プレビュー　操作バー */
+	m_hwndVScrollBar( NULL ),	/* 印刷プレビュー　垂直スクロールバーウィンドウハンドル */
+	m_hwndHScrollBar( NULL ),	/* 印刷プレビュー　水平スクロールバーウィンドウハンドル */
+	m_hwndSizeBox( NULL ),	/* 印刷プレビュー　サイズボックスウィンドウハンドル */
+	m_pszAppName( GSTR_EDITWINDOWNAME ),
+	m_hbmpOPENED( NULL ),
+	m_hbmpOPENED_THIS( NULL )
 {
-	m_bDragMode = FALSE;
-	m_hWnd = NULL;
-//	m_hThread = NULL;
-	m_nPreview_Zoom = 100;	/* 印刷プレビュー倍率 */
-	m_nPreviewVScrollPos = 0;	
-	m_nPreviewHScrollPos = 0;	
-	m_nCurPageNum = 0;		/* 現在のページ */
 
-	m_pPrintSetting = NULL;	/* 現在の印刷設定 */
-	m_hdcCompatDC = NULL;		/* 再描画用コンパチブルＤＣ */
-	m_hbmpCompatBMP = NULL;		/* 再描画用メモリＢＭＰ */
-	m_hbmpCompatBMPOld = NULL;	/* 再描画用メモリＢＭＰ(OLD) */
-
-	m_hwndPrintPreviewBar = NULL;	/* 印刷プレビュー　操作バー */
-	m_hwndVScrollBar = NULL;	/* 印刷プレビュー　垂直スクロールバーウィンドウハンドル */
-	m_hwndHScrollBar = NULL;	/* 印刷プレビュー　水平スクロールバーウィンドウハンドル */
-	m_hwndSizeBox = NULL;		/* 印刷プレビュー　サイズボックスウィンドウハンドル */
-
-	m_hwndParent = NULL;
-	m_hwndToolBar = NULL;
-	m_hwndStatusBar = NULL;
-	m_hwndProgressBar = NULL;
 	/* 共有データ構造体のアドレスを返す */
 	m_cShareData.Init();
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
-	m_pszAppName = GSTR_EDITWINDOWNAME;
-	m_hbmpOPENED = NULL;
-	m_hbmpOPENED_THIS = NULL;
 	
 //	MYTRACE( "CEditWnd::CEditWnd()おわり\n" );
 	return;
@@ -335,9 +335,6 @@ HWND CEditWnd::Create(
 
 	}
 
-
-
-
 //	BOOL	bDispToolBar;
 //	bDispToolBar = TRUE;
 	if(	m_pShareData->m_Common.m_bDispTOOLBAR ){	/* 次回ウィンドウを開いたときツールバーを表示する */
@@ -454,8 +451,16 @@ HWND CEditWnd::Create(
 				delete [] pszPathNew;
 				return NULL;
 			}
+			else {
+				//	Nov. 20, 2000 genta
+				m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
+			}
 		}
 		delete [] pszPathNew;
+	}
+	else {
+		//	Nov. 20, 2000 genta
+		m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 	}
 	return m_hWnd;
 }
@@ -1277,7 +1282,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 		/* タイマーを削除 */
 		::KillTimer( m_hWnd, IDT_TOOLBAR );
-
+		
 		/* ドロップされたファイルを受け入れるのを解除 */
 		::DragAcceptFiles( hwnd, FALSE );
 		/* 編集ウィンドウリストからの削除 */
