@@ -90,7 +90,7 @@ static const DWORD p_helpids[] = {	//10700
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CALLBACK CPropCommon::DlgProc_PROP_KEYBIND(
+INT_PTR CALLBACK CPropCommon::DlgProc_PROP_KEYBIND(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	return DlgProc( DispatchEvent_p5, hwndDlg, uMsg, wParam, lParam );
@@ -120,7 +120,7 @@ LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 
 
 /* p5 メッセージ処理 */
-BOOL CPropCommon::DispatchEvent_p5(
+INT_PTR CPropCommon::DispatchEvent_p5(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -162,7 +162,8 @@ BOOL CPropCommon::DispatchEvent_p5(
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p5 */
 		SetData_p5( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* コントロールのハンドルを取得 */
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
@@ -441,7 +442,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -451,7 +452,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 //@@@ 2001.11.07 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 //@@@ 2001.11.07 End
 

@@ -508,7 +508,7 @@ LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 	int		i;
 	for( i = 0; i < 3; ++i ){
 		/* 印刷プレビュー 垂直スクロールバーメッセージ処理 WM_VSCROLL */
-		::PostMessage( m_pParentWnd->m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
+		::PostMessage( m_pParentWnd->m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (LPARAM)m_hwndVScrollBar );
 
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( NULL ) ){
@@ -1485,7 +1485,7 @@ void CPrintPreview::DestroyPrintPreviewControls( void )
 }
 
 /* ダイアログプロシージャ */
-BOOL CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
+INT_PTR CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 	HWND hwndDlg,	// handle to dialog box
 	UINT uMsg,		// message
 	WPARAM wParam,	// first message parameter
@@ -1495,10 +1495,12 @@ BOOL CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 	CPrintPreview* pCPrintPreview;
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		return TRUE;
 	default:
-		pCPrintPreview = ( CPrintPreview* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPrintPreview = ( CPrintPreview* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPrintPreview ){
 			return pCPrintPreview->DispatchEvent_PPB( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -1516,7 +1518,7 @@ void CPrintPreview::SetFocusToPrintPreviewBar( void )
 }
 
 /* 印刷プレビュー 操作バー ダイアログのメッセージ処理 */
-BOOL CPrintPreview::DispatchEvent_PPB(
+INT_PTR CPrintPreview::DispatchEvent_PPB(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
 	WPARAM				wParam,		// first message parameter
@@ -1534,7 +1536,8 @@ BOOL CPrintPreview::DispatchEvent_PPB(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		return TRUE;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */

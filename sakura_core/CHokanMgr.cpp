@@ -29,8 +29,9 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 //#ifdef _DEBUG
 //	MYTRACE( "HokanList_SubclassProc() uMsg == %xh\n", uMsg );
 //#endif
-	CDialog* pCDialog = ( CDialog* )::GetWindowLong( ::GetParent( hwnd ), DWL_USER );
-	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLong( ::GetParent( hwnd ), DWL_USER );
+	// Modified by KEITA for WIN64 2003.9.6
+	CDialog* pCDialog = ( CDialog* )::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
+	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
 //	WORD vkey;
 //	WORD nCaretPos;
 //	LPARAM hwndLB;
@@ -118,7 +119,8 @@ HWND CHokanMgr::DoModeless( HINSTANCE hInstance , HWND hwndParent, LPARAM lParam
 	hwndWork = CDialog::DoModeless( hInstance, hwndParent, IDD_HOKAN, lParam, SW_HIDE );
 	OnSize( 0, 0 );
 	/* リストをフック */
-	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLong( ::GetDlgItem( m_hWnd, IDC_LIST_WORDS ), GWL_WNDPROC, (LONG)HokanList_SubclassProc  );
+	// Modified by KEITA for WIN64 2003.9.6
+	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( ::GetDlgItem( m_hWnd, IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
 
 	::ShowWindow( m_hWnd, SW_HIDE );
 	return hwndWork;
@@ -599,7 +601,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}
-	::SendMessage( hwndList, LB_GETTEXT, nItem, (WPARAM)szLabel );
+	::SendMessage( hwndList, LB_GETTEXT, nItem, (LPARAM)szLabel );
 #if 0
 	/* スペースで候補決定の場合はスペースをつける */
 	if( VK_SPACE == nVKey ){
@@ -729,7 +731,7 @@ void CHokanMgr::ShowTip()
 	nItem = ::SendMessage( hwndCtrl, LB_GETCURSEL, 0, 0 );
 	if( LB_ERR == nItem )	return ;
 
-	::SendMessage( hwndCtrl, LB_GETTEXT, nItem, (WPARAM)szLabel );	// 選択中の単語を取得
+	::SendMessage( hwndCtrl, LB_GETTEXT, nItem, (LPARAM)szLabel );	// 選択中の単語を取得
 
 	pcEditView = (CEditView*)m_lParam;
 

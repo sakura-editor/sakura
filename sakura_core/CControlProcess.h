@@ -38,7 +38,7 @@ public:
 		CProcess( hInstance, lpCmdLine ),
 		m_pcEditApp( 0 ){}
 
-	static BOOL CALLBACK ExitingDlgProc(
+	static INT_PTR CALLBACK ExitingDlgProc(
 		HWND	hwndDlg,	// handle to dialog box
 		UINT	uMsg,		// message
 		WPARAM	wParam,		// first message parameter

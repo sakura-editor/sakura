@@ -30,7 +30,7 @@ LRESULT CALLBACK CFuncKeyWndProc(
 )
 {
 	CFuncKeyWnd*	pCFuncKeyWnd;
-	pCFuncKeyWnd = ( CFuncKeyWnd* )::GetWindowLong( hwnd, GWL_USERDATA );
+	pCFuncKeyWnd = ( CFuncKeyWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( NULL != pCFuncKeyWnd ){
 		return pCFuncKeyWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	}
@@ -545,7 +545,8 @@ void CFuncKeyWnd::CreateButtons( void )
 			nButtonHeight,		// button height
 			m_hWnd,		// parent window
 			NULL,		// No menu
-			(HINSTANCE) GetWindowLong(m_hWnd, GWL_HINSTANCE),
+			// Modified by KEITA for WIN64 2003.9.6
+			(HINSTANCE) GetWindowLongPtr(m_hWnd, GWLP_HINSTANCE),
 			NULL		// pointer not needed
 		);
 		/* フォント変更 */

@@ -110,7 +110,7 @@ int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CALLBACK CPropCommon::DlgProc_PROP_GENERAL(
+INT_PTR CALLBACK CPropCommon::DlgProc_PROP_GENERAL(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	return DlgProc( DispatchEvent_p1, hwndDlg, uMsg, wParam, lParam );
@@ -126,8 +126,8 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_GENERAL(
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CPropCommon::DlgProc(
-	BOOL (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
+INT_PTR CPropCommon::DlgProc(
+	INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 )
 {
@@ -143,7 +143,8 @@ BOOL CPropCommon::DlgProc(
 			return FALSE;
 		}
 	default:
-		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropCommon = ( CPropCommon* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropCommon ){
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -512,7 +513,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 struct ComPropSheetInfo {
 	const char* szTabname;	//!< TABの表示名
 	unsigned int resId;	//!< Property sheetに対応するDialog resource
-	BOOL (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);
+	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);
 		//!<  Dialog Procedure
 };
 //	To Here Jun. 2, 2001 genta
@@ -576,10 +577,14 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	To Here Jun. 2, 2001 genta
 
 	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
+#ifdef _WIN64
+	psh.dwSize = sizeof( psh );
+#else
 	//	Jun. 29, 2002 こおり
 	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
 	const size_t sizeof_old_PROPSHEETHEADER=40;
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
+#endif
 //	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 //	psh.dwFlags = /*PSH_USEICONID |*/ /*PSH_NOAPPLYNOW |*/ PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
 	psh.dwFlags = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
@@ -721,7 +726,7 @@ void CPropCommon::ApplyData( void )
 
 
 /* p1 メッセージ処理 */
-BOOL CPropCommon::DispatchEvent_p1(
+INT_PTR CPropCommon::DispatchEvent_p1(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -742,7 +747,8 @@ BOOL CPropCommon::DispatchEvent_p1(
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p1 */
 		SetData_p1( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 
@@ -975,7 +981,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -985,7 +991,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 //@@@ 2001.12.22 End
 

@@ -3412,8 +3412,8 @@ void CMemory::SwapHLByte( void ){
 		return;
 	}
 	// çÇë¨âªÇÃÇΩÇﬂ
-	if( (unsigned int)pBuf % 2 == 0){
-		if( (unsigned int)pBuf % 4 == 2 ){
+	if( (size_t)pBuf % 2 == 0){
+		if( (size_t)pBuf % 4 == 2 ){
 			ctemp = pBuf[0];
 			pBuf[0]  = pBuf[1];
 			pBuf[1]  = ctemp;

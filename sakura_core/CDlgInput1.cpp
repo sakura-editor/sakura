@@ -30,7 +30,7 @@ static const DWORD p_helpids[] = {	//13000
 
 
 /* ダイアログプロシージャ */
-BOOL CALLBACK CDlgInput1Proc(
+INT_PTR CALLBACK CDlgInput1Proc(
 	HWND hwndDlg,	// handle to dialog box
 	UINT uMsg,		// message
 	WPARAM wParam,	// first message parameter
@@ -47,7 +47,8 @@ BOOL CALLBACK CDlgInput1Proc(
 			return FALSE;
 		}
 	default:
-		pCDlgInput1 = ( CDlgInput1* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCDlgInput1 = ( CDlgInput1* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCDlgInput1 ){
 			return pCDlgInput1->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -86,11 +87,11 @@ BOOL CDlgInput1::DoModal( HINSTANCE hInstApp, HWND hwndParent, const char* pszTi
 	m_nMaxTextLen = nMaxTextLen;	/* 入力サイズ上限 */
 //	m_pszText = pszText;			/* テキスト */
 	m_cmemText.SetDataSz( pszText );
-	bRet = ::DialogBoxParam(
+	bRet = (BOOL)::DialogBoxParam(
 		m_hInstance,
 		MAKEINTRESOURCE( IDD_INPUT1 ),
 		m_hwndParent,
-		(DLGPROC)CDlgInput1Proc,
+		CDlgInput1Proc,
 		(LPARAM)this
 	);
 	strcpy( pszText, m_cmemText.GetPtr() );
@@ -100,7 +101,7 @@ BOOL CDlgInput1::DoModal( HINSTANCE hInstApp, HWND hwndParent, const char* pszTi
 
 
 /* ダイアログのメッセージ処理 */
-BOOL CDlgInput1::DispatchEvent(
+INT_PTR CDlgInput1::DispatchEvent(
 	HWND hwndDlg,	// handle to dialog box
 	UINT uMsg,		// message
 	WPARAM wParam,	// first message parameter
@@ -114,7 +115,8 @@ BOOL CDlgInput1::DispatchEvent(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 */
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), EM_LIMITTEXT, m_nMaxTextLen, 0 );	/* 入力サイズ上限 */
@@ -146,13 +148,13 @@ BOOL CDlgInput1::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 	//@@@ 2002.01.07 add end
 	}

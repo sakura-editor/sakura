@@ -177,7 +177,8 @@ LRESULT CALLBACK CEditAppWndProc(
 		pSApp = ( CEditApp* )g_m_pCEditApp;
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
-		pSApp = ( CEditApp* )::GetWindowLong( hwnd, GWL_USERDATA );
+		// Modified by KEITA for WIN64 2003.9.6
+		pSApp = ( CEditApp* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 		if( NULL != pSApp ){
 			return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 		}
@@ -337,7 +338,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 bool CEditApp::CreateTrayIcon( HWND hWnd )
 {
 	HICON hIcon;
-//		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)this );
+//		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG)this );
 		/* タスクトレイのアイコンを作る */
 		if( TRUE == m_pShareData->m_Common.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 			//	Dec. 02, 2002 genta
@@ -390,7 +391,7 @@ void CEditApp::MessageLoop( void )
 //		if( 0 != ::GetClassName( msg.hwnd, szClassName, sizeof(szClassName) - 1 ) ){
 //			if( 0 == strcmp( GSTR_EDITWINDOWNAME, szClassName ) ){
 //				bFromEditWnd = TRUE;
-//				pCEditWnd = ( CEditWnd* )::GetWindowLong( msg.hwnd, GWL_USERDATA );
+//				pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( msg.hwnd, GWLP_USERDATA );
 //			}
 //		}
 //		if( bFromEditWnd ){
@@ -563,7 +564,7 @@ LRESULT CEditApp::DispatchEvent(
 				/*hwnd*/NULL/*hwndFrame*//*m_pShareData->m_hwndTray*/,
 				szHtmlHelpFile,
 				HH_DISPLAY_TOPIC,
-				(DWORD)0,
+				(DWORD_PTR)0,
 				true
 			);
 
@@ -600,7 +601,7 @@ LRESULT CEditApp::DispatchEvent(
 				/*hwnd*/NULL/*hwndFrame*//*m_pShareData->m_hwndTray*/,
 				szHtmlHelpFile,
 				HH_KEYWORD_LOOKUP,
-				(DWORD)&link,
+				(DWORD_PTR)&link,
 				false
 			);
 			delete [] pszKey;
@@ -664,7 +665,8 @@ LRESULT CEditApp::DispatchEvent(
 	case WM_CREATE:
 		m_hWnd = hwnd;
 		hwndHtmlHelp = NULL;
-		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)this );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
 
 //		for( i = 0; i < 16; ++i ){
 //			HWND	hwndWork;
@@ -829,7 +831,7 @@ LRESULT CEditApp::DispatchEvent(
 						char	szHelp[_MAX_PATH + 1];
 						/* ヘルプファイルのフルパスを返す */
 						::GetHelpFilePath( szHelp );
-						::WinHelp( m_hWnd, szHelp, HELP_KEY, (unsigned long)"" );
+						::WinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );
 					}
 					break;
 //				case F_MENU_ALLFUNC:	//Jan. 12, 2001 JEPRO コマンド一覧は右クリックメニューから一応除外
@@ -877,7 +879,7 @@ LRESULT CEditApp::DispatchEvent(
 //						CMemory		cmemCurText;
 						/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 //						GetCurrentTextForSearch( cmemCurText );
-//						::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
+//						::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (ULONG_PTR)(char*)cmemCurText.GetPtr() );
 //						break;
 					}
 #endif

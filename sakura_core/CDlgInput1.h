@@ -40,7 +40,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */

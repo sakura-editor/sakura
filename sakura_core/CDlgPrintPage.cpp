@@ -39,7 +39,7 @@ CDlgPrintPage::CDlgPrintPage()
 /* モーダルダイアログの表示 */
 int CDlgPrintPage::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_PRINTPAGE, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTPAGE, lParam );
 }
 
 

@@ -2590,7 +2590,7 @@ void CEditView::Command_Reconvert(void)
 		// MSIME‚©‚Ç‚¤‚©
 		HWND hWnd = ImmGetDefaultIMEWnd(m_hWnd);
 		if (SendMessage(hWnd, m_uWM_MSIME_RECONVERTREQUEST, FID_RECONVERT_VERSION, 0)){
-			SendMessage(hWnd, m_uWM_MSIME_RECONVERTREQUEST, 0, (long)m_hWnd);
+			SendMessage(hWnd, m_uWM_MSIME_RECONVERTREQUEST, 0, (LPARAM)m_hWnd);
 			return ;
 		}
 		// ATOK‚ªŽg‚¦‚é‚©‚Ç‚¤‚©

@@ -51,9 +51,9 @@ const DWORD p_helpids[] = {	//12900
 /*!
 	標準以外のメッセージを捕捉する
 */
-BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
-	BOOL result;
+	INT_PTR result;
 	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
 	switch( wMsg ){
 	case WM_SETCURSOR:
@@ -86,12 +86,12 @@ BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPara
 		if( nCursorState == 1 &&
 			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR ) ){
 			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
-			result = (BOOL)(HBRUSH)GetStockObject(NULL_BRUSH);
+			result = (INT_PTR)(HBRUSH)GetStockObject(NULL_BRUSH);
 		}
 		else if( nCursorState == 2 &&
 			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG ) ){
 			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
-			result = (BOOL)(HBRUSH)GetStockObject(NULL_BRUSH);
+			result = (INT_PTR)(HBRUSH)GetStockObject(NULL_BRUSH);
 		}
 		break;
 	case WM_COMMAND:
@@ -116,7 +116,7 @@ BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPara
 /* モーダルダイアログの表示 */
 int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, NULL );
 }
 
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )

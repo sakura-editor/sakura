@@ -2406,7 +2406,7 @@ CHtmlHelp g_cHtmlHelp;
 	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
 */
 
-HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data, bool msgflag )
+HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD_PTR data, bool msgflag )
 {
 	if( g_cHtmlHelp.Init() ){
 		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
@@ -2554,7 +2554,7 @@ void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
 		return;
 	}
 	/* 目次タブを表示する */
-	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );
+	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );
 	return;
 }
 

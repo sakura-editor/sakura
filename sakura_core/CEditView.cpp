@@ -253,7 +253,7 @@ LRESULT CALLBACK EditViewWndProc(
 		pCEdit = ( CEditView* )g_m_pcEditView;
 		return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
-		pCEdit = ( CEditView* )::GetWindowLong( hwnd, 0 );
+		pCEdit = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
 		if( NULL != pCEdit ){
 			//	May 16, 2000 genta
 			//	From Here
@@ -283,7 +283,7 @@ VOID CALLBACK EditViewTimerProc(
 )
 {
 	CEditView*	pCEditView;
-	pCEditView = ( CEditView* )::GetWindowLong( hwnd, 0 );
+	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
 	if( NULL != pCEditView ){
 		pCEditView->OnTimer( hwnd, uMsg, idEvent, dwTime );
 	}
@@ -542,7 +542,7 @@ BOOL CEditView::Create(
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= (WNDPROC)EditViewWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= sizeof( LONG );
+	wc.cbWndExtra		= sizeof( LONG_PTR );
 	wc.hInstance		= m_hInstance;
 	wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_IBEAM )*/;
@@ -764,7 +764,7 @@ LRESULT CEditView::DispatchEvent(
 
 
 	case WM_CREATE:
-		::SetWindowLong( hwnd, 0, (LONG)this );
+		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );
 
 //		/* キーボードの現在のリピート間隔を取得 */
 //		int	nKeyBoardSpeed;

@@ -29,16 +29,18 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	CWnd* pCWnd;
 //	CREATESTRUCT* lpcs;
 	if( NULL != gm_pCWnd
-	 && NULL == ::GetWindowLong( hwnd, GWL_USERDATA )
+	 && NULL == ::GetWindowLongPtr( hwnd, GWLP_USERDATA ) // Modified by KEITA for WIN64 2003.9.6
 	){
 		pCWnd = gm_pCWnd;
 		/* クラスオブジェクトのポインタを拡張ウィンドウメモリに格納しておく */
-		::SetWindowLong( hwnd, GWL_USERDATA, (LONG)pCWnd );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwnd, GWLP_USERDATA, (LONG_PTR)pCWnd );
 		pCWnd->m_hWnd = hwnd;
 		gm_pCWnd = NULL;
 	}else{
 		/* クラスオブジェクトのポインタを拡張ウィンドウメモリから取り出す */
-		pCWnd = (CWnd*)::GetWindowLong( hwnd, GWL_USERDATA );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCWnd = (CWnd*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	}
 	if( NULL != pCWnd ){
 		/* クラスオブジェクトのポインタを使ってメッセージを配送する */
@@ -63,7 +65,8 @@ CWnd::~CWnd()
 {
 	if( ::IsWindow( m_hWnd ) ){
 		/* クラスオブジェクトのポインタをNULLにして拡張ウィンドウメモリに格納しておく */
-		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)NULL );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)NULL );
 		::DestroyWindow( m_hWnd );
 	}
 	m_hWnd = NULL;

@@ -33,7 +33,7 @@ const DWORD p_helpids[] = {	//12600
 /* モーダルダイアログの表示 */
 int CDlgProperty::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	return CDialog::DoModal( hInstance, hwndParent, IDD_PROPERTY_FILE, lParam );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROPERTY_FILE, lParam );
 }
 
 BOOL CDlgProperty::OnBnClicked( int wID )

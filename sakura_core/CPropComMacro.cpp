@@ -74,7 +74,7 @@ static const DWORD p_helpids[] = {	//11700
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CALLBACK CPropCommon::DlgProc_PROP_MACRO(
+INT_PTR CALLBACK CPropCommon::DlgProc_PROP_MACRO(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	return DlgProc(DispatchEvent_PROP_Macro, hwndDlg, uMsg, wParam, lParam );
@@ -86,7 +86,7 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_MACRO(
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
@@ -102,7 +102,8 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 		/* ダイアログデータの設定 p1 */
 		InitDialog_PROP_Macro( hwndDlg );
 		SetData_PROP_Macro( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_MacroTable[0].m_szName ) - 1 ), 0 );
@@ -187,7 +188,7 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -197,7 +198,7 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 //@@@ 2001.12.22 End
 

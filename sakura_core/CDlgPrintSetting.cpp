@@ -98,7 +98,7 @@ int CDlgPrintSetting::DoModal(
 		m_PrintSettingArr[i] = pPrintSettingArr[i];
 	}
 
-	nRet = CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, NULL );
+	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, NULL );
 //	nRet = ::DialogBoxParam(
 //		m_hInstance,
 //		MAKEINTRESOURCE( IDD_PRINTSETTING ),
@@ -894,7 +894,7 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	int				nPaperAllWidth;		/* ópéÜïù */
 	int				nPaperAllHeight;	/* ópéÜçÇÇ≥ */
 	PRINTSETTING*	pPS;
-	nTimer = wParam;
+	nTimer = (int)wParam;
 
 	if( nTimer != IDT_PRINTSETTING ){
 		return FALSE;

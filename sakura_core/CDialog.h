@@ -45,8 +45,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	virtual BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
-	int DoModal( HINSTANCE, HWND, int, LPARAM );	/* モーダルダイアログの表示 */
+	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	INT_PTR DoModal( HINSTANCE, HWND, int, LPARAM );	/* モーダルダイアログの表示 */
 	HWND DoModeless( HINSTANCE, HWND, int, LPARAM, int );	/* モードレスダイアログの表示 */
 	void CloseDialog( int );
 

@@ -57,7 +57,7 @@ static const DWORD p_helpids[] = {	//11200
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-BOOL CALLBACK CPropCommon::DlgProc_PROP_WIN(
+INT_PTR CALLBACK CPropCommon::DlgProc_PROP_WIN(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	return DlgProc( DispatchEvent_PROP_WIN, hwndDlg, uMsg, wParam, lParam );
@@ -66,7 +66,7 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_WIN(
 
 
 /* メッセージ処理 */
-BOOL CPropCommon::DispatchEvent_PROP_WIN(
+INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -95,7 +95,8 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p1 */
 		SetData_PROP_WIN( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* ルーラー高さ */
@@ -252,7 +253,7 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -262,7 +263,7 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
 		return TRUE;
 //@@@ 2001.12.22 End
 

@@ -203,7 +203,7 @@ static const DWORD p_helpids3[] = {	//11500
 
 
 /* p1 ダイアログプロシージャ */
-BOOL CALLBACK PropTypesP1Proc(
+INT_PTR CALLBACK PropTypesP1Proc(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -222,7 +222,8 @@ BOOL CALLBACK PropTypesP1Proc(
 			return FALSE;
 		}
 	default:
-		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return pCPropTypes->DispatchEvent_p1( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -232,7 +233,7 @@ BOOL CALLBACK PropTypesP1Proc(
 }
 
 /* p2 ダイアログプロシージャ */
-BOOL CALLBACK PropTypesP2Proc(
+INT_PTR CALLBACK PropTypesP2Proc(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -251,7 +252,8 @@ BOOL CALLBACK PropTypesP2Proc(
 			return FALSE;
 		}
 	default:
-		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return pCPropTypes->DispatchEvent_p2( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -285,7 +287,7 @@ BOOL CALLBACK PropTypesP2Proc(
 //			return FALSE;
 //		}
 //	default:
-//		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
+//		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 //		if( NULL != pCPropTypes ){
 //			return pCPropTypes->DispatchEvent_p3( hwndDlg, uMsg, wParam, lParam );
 //		}else{
@@ -297,7 +299,7 @@ BOOL CALLBACK PropTypesP2Proc(
 
 
 /* p3 ダイアログプロシージャ */
-BOOL CALLBACK PropTypesP3_newProc(
+INT_PTR CALLBACK PropTypesP3_newProc(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -316,7 +318,8 @@ BOOL CALLBACK PropTypesP3_newProc(
 			return FALSE;
 		}
 	default:
-		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return pCPropTypes->DispatchEvent_p3_new( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -636,10 +639,14 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	// 2001.11.17 add end MIK
 
 	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
+#ifdef _WIN64
+	psh.dwSize = sizeof( psh );
+#else
 	//	Jun. 29, 2002 こおり
 	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
 	const size_t sizeof_old_PROPSHEETHEADER=40;
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
+#endif
 // JEPROtest Sept. 30, 2000 タイプ別設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 //  psh.dwFlags = /*PSH_USEICONID |*/ /*PSH_NOAPPLYNOW |*/ PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
 	psh.dwFlags = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
@@ -699,7 +706,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 
 
 /* p1 メッセージ処理 */
-BOOL CPropTypes::DispatchEvent_p1(
+INT_PTR CPropTypes::DispatchEvent_p1(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -721,7 +728,8 @@ BOOL CPropTypes::DispatchEvent_p1(
 		m_hwndThis = hwndDlg;
 		/* ダイアログデータの設定 p1 */
 		SetData_p1( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), EM_LIMITTEXT, (WPARAM)( sizeof( m_Types.m_szTypeName ) - 1 ), 0 );
@@ -967,7 +975,7 @@ BOOL CPropTypes::DispatchEvent_p1(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids1 );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids1 );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -977,7 +985,7 @@ BOOL CPropTypes::DispatchEvent_p1(
 //@@@ 2001.11.17 add start MIK
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids1 );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids1 );
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 
@@ -1335,7 +1343,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
 /* p2 メッセージ処理 */
-BOOL CPropTypes::DispatchEvent_p2(
+INT_PTR CPropTypes::DispatchEvent_p2(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -1350,7 +1358,8 @@ BOOL CPropTypes::DispatchEvent_p2(
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p2 */
 		SetData_p2( hwndDlg );
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 入力補完 単語ファイル */
@@ -1504,7 +1513,7 @@ BOOL CPropTypes::DispatchEvent_p2(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids3 );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids3 );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -1514,7 +1523,7 @@ BOOL CPropTypes::DispatchEvent_p2(
 //@@@ 2001.11.17 add start MIK
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids3 );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids3 );
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 
@@ -1876,7 +1885,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		nItemNum = ::SendMessage( hwnd, LB_GETCOUNT, 0, 0 );
 		nIndex = -1;
 		for( i = 0; i < nItemNum; ++i ){
-			::SendMessage( hwnd, LB_GETITEMRECT, i, (LPARAM)(RECT*)&rcItem );
+			::SendMessage( hwnd, LB_GETITEMRECT, i, (LPARAM)&rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
 //				MYTRACE( "hit at i==%d\n", i );
 //				MYTRACE( "\n" );
@@ -1977,7 +1986,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 
 /* p3 メッセージ処理 */
-BOOL CPropTypes::DispatchEvent_p3_new(
+INT_PTR CPropTypes::DispatchEvent_p3_new(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
 	WPARAM				wParam,		// first message parameter
@@ -1998,7 +2007,8 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		hwndListColor = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
 
@@ -2010,7 +2020,8 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 
 
 		/* 色リストをフック */
-		m_wpColorListProc = (WNDPROC) ::SetWindowLong( hwndListColor, GWL_WNDPROC, (LONG)ColorList_SubclassProc );
+		// Modified by KEITA for WIN64 2003.9.6
+		m_wpColorListProc = (WNDPROC) ::SetWindowLongPtr( hwndListColor, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc );
 
 		return TRUE;
 
@@ -2308,7 +2319,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids2 );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids2 );
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -2318,7 +2329,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 //@@@ 2001.11.17 add start MIK
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids2 );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids2 );
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 

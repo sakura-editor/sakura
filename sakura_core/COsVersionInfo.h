@@ -62,7 +62,7 @@ public:
 		return (m_cOsVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT);
 	}
 
-	/*	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );
+	/*	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );
 		が使用できないバージョンなら、TRUE
 		使用できるバージョンなら、FALSE
 	*/
