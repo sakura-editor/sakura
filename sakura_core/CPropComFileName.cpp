@@ -416,11 +416,18 @@ int CPropCommon::MoveListViewItem_FILENAME( HWND hListView, int nIndex, int nInd
 	TCHAR szTo[_MAX_PATH];
 	int nCount = ListView_GetItemCount( hListView );
 
-	if( nIndex >= nCount - 1 ){
+	//	2004.03.24 dskoba
+	if( nIndex > nCount - 1 ){
 		nIndex = nCount - 1;
 	}
-	if( nIndex2 >= nCount - 1 ){
+	if( nIndex2 > nCount - 1 ){
 		nIndex2 = nCount - 1;
+	}
+	if( nIndex < 0 ){
+		nIndex = 0;
+	}
+	if( nIndex2 < 0 ){
+		nIndex2 = 0;
 	}
 	
 	if( nIndex == nIndex2 ){
