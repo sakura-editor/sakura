@@ -710,25 +710,29 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
                                フォームやモジュールだけではなく、クラスにも対応。
 							   ただし、Constの「,」で連続宣言には未対応
 	Jul. 21, 2003 genta キーワードの大文字・小文字を同一視するようにした
+	Aug  7, 2003 little YOSHI  ダブルクォーテーションで囲まれたテキストを無視するようにした
+	                           関数名などをVBの名前付け規則より255文字に拡張
 */
 void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 {
+	const int	nMaxWordLeng = 255;	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
 	const char*	pLine;
 	int			nLineLen = 0;//: 2002/2/3 aroka 警告対策：初期化
 	int			nLineCount;
 	int			i;
 	int			nCharChars;
-	char		szWordPrev[100];
-	char		szWord[100];
+	char		szWordPrev[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
+	char		szWord[256];		// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
 	int			nWordIdx = 0;
-	int			nMaxWordLeng = 70;
+//	int			nMaxWordLeng = 70;	// Aug 7, 2003 little YOSHI  定数に変更↑
 	int			nMode;
-	char		szFuncName[80];
+	char		szFuncName[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
 	int			nFuncLine;
 	int			nFuncId;
 	int			nParseCnt = 0;
 	bool		bClass;			// クラスモジュールフラグ
 	bool		bProcedure;		// プロシージャフラグ（プロシージャ内ではTrue）
+	bool		bDQuote;		// ダブルクォーテーションフラグ（ダブルクォーテーションがきたらTrue）
 
 	// 調べるファイルがクラスモジュールのときはType、Constの挙動が異なるのでフラグを立てる
 	bClass	= false;
@@ -752,6 +756,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 		}
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		nFuncId = 0;
+		bDQuote	= false;
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -777,6 +782,10 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						szWord[nWordIdx + nCharChars] = '\0';
 						nWordIdx += (nCharChars);
 					}
+				} else if (1 == nCharChars && '"' == pLine[i]) {
+					// Aug 7, 2003 little YOSHI  追加
+					// テキストの中は無視します。
+					nMode	= 3;
 				}else{
 					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Public") ) {
 						// パブリック宣言を見つけた！
@@ -944,6 +953,10 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					nMode = 0;
 					i--;
 					continue;
+				} else if (1 == nCharChars && '"' == pLine[i]) {
+					// Aug 7, 2003 little YOSHI  追加
+					// テキストの中は無視します。
+					nMode	= 3;
 				}else{
 					if( nWordIdx >= nMaxWordLeng ){
 						nMode = 999;
@@ -979,6 +992,10 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 				}else
 				if( i < nLineLen && '\'' == pLine[i] ){
 					break;
+				} else if (1 == nCharChars && '"' == pLine[i]) {
+					// Aug 7, 2003 little YOSHI  追加
+					// テキストの中は無視します。
+					nMode	= 3;
 				}else{
 					if( (1 == nCharChars && (
 						'_' == pLine[i] ||
@@ -1004,6 +1021,21 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 						nMode = 2;
 					}
+				}
+			} else
+			/* テキストが閉じるまで読み飛ばす */	// Aug 7, 2003 little YOSHI  追加
+			if (nMode == 3) {
+				// 連続するダブルクォーテーションは無視する
+				if (1 == nCharChars && '"' == pLine[i]) {
+					// ダブルクォーテーションが現れたらフラグを反転する
+					bDQuote	= !bDQuote;
+				} else if (bDQuote) {
+					// ダブルクォーテーションの次に
+					// ダブルクォーテーション以外の文字が現れたらノーマルモードに移行
+					--i;
+					nMode	= 0;
+					bDQuote	= false;
+					continue;
 				}
 			}
 			i += (nCharChars - 1);
