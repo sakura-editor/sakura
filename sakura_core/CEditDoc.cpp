@@ -4280,6 +4280,28 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 		//	To Here Jan. 15, 2002 hor
 			break;
+		//	From Here 2002/12/04 Moca
+		case 'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
+			{
+				char szText[11];
+				_itot( m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_PHY + 1, szText, 10 );
+				for( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+		case 'y':	//	現在の物理行位置(1開始)
+			{
+				char szText[11];
+				_itot( m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY_PHY + 1, szText, 10 );
+				for( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+		//	To Here 2002/12/04 Moca
 		case 'd':	//	共通設定の日付書式
 			{
 				char szText[1024];
