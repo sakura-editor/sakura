@@ -32,8 +32,10 @@
 現在はGPL実効前なのでご注意ください。
 
 ●制限事項
-このプログラムをコンパイルするためには (c) Microsoft Visual C++ 6.0とHTML Help
-Workshopが必要です。
+このプログラムをコンパイルするためには以下に示すソフトウェア群のうちいずれかが必要です．
+(a) Microsoft Visual C++ 6.0 + HTML Help Workshop
+(b) Microsoft Visual C++ 6.0 + 最新のPlatform SDK
+(c) Borland C++ Compiler 5.5.1
 
 ●免責
 このソフトウェアは無保証です。このソフトウェアの品質、速度、安全性に対する

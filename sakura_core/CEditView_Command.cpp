@@ -5690,8 +5690,8 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen )
 	int			nLineNum;
 	int			nDelPos;
 	int			nDelLen;
-	int			nDelPosNext;
-	int			nDelLenNext;
+//	int			nDelPosNext; 2001/09/24
+//	int			nDelLenNext;
 	const char*	pLine2;
 	int			nLineLen2;
 	int*		pnKey_CharCharsArr;
@@ -5724,11 +5724,12 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen )
 		/* 現在の選択範囲を非選択状態に戻す */
 		DisableSelectArea( TRUE );
 
-		nIdxFrom = 0;
-		nIdxTo = 0;
-		for( nLineNum = rcSel.bottom; nLineNum >= rcSel.top - 1; nLineNum-- ){
-			nDelPosNext = nIdxFrom;
-			nDelLenNext	= nIdxTo - nIdxFrom;
+//		nIdxFrom = 0; 2001/09/24
+//		nIdxTo = 0;
+//		for( nLineNum = rcSel.bottom; nLineNum >= rcSel.top - 1; nLineNum-- ){
+		for( nLineNum = rcSel.top; nLineNum < rcSel.bottom + 1; nLineNum++ ){
+//			nDelPosNext = nIdxFrom;
+//			nDelLenNext	= nIdxTo - nIdxFrom;
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -5745,18 +5746,22 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen )
 				nIdxFrom = 0;
 				nIdxTo = 0;
 			}
-			nDelPos = nDelPosNext;
-			nDelLen	= nDelLenNext;
-			if( nLineNum < rcSel.bottom ){
+//			nDelPos = nDelPosNext; 2001/09/24
+//			nDelLen	= nDelLenNext;
+			nDelPos = nIdxFrom;
+			nDelLen = nIdxTo - nIdxFrom;
+//			if( nLineNum < rcSel.bottom ){
 				/* TABやスペースインデントの時 */
 				if( 1 == nDataLen && ( ' ' == pData[0] || TAB == pData[0] ) ){
 					if( 0 == nDelLen ){
 						goto nextline;
 					}
 				}
-				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2 );
+//				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2 ); 2001/09/24
+				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen2 );
 				nPosX = LineIndexToColmn( pLine2, nLineLen2, nDelPos );
-				nPosY = nLineNum + 1;
+//				nPosY = nLineNum + 1; 2001/09/24
+				nPosY = nLineNum;
 				cmemBuf.SetData( pData, nDataLen );
 				if( 0 < nDelLen ){
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -5861,7 +5866,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen )
 					/* 操作の追加 */
 					m_pcOpeBlk->AppendOpe( pcOpe );
 				}
-			}
+//			} 2001/09/24
 			nextline:;
 		}
 		/* 挿入データの先頭位置へカーソルを移動 */
@@ -5927,7 +5932,8 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen )
 		DisableSelectArea( FALSE );
 
 		const CLayout* pcLayout;
-		for( i = nSelectLineToOld - 1; i >= nSelectLineFromOld; i-- ){
+//		for( i = nSelectLineToOld - 1; i >= nSelectLineFromOld; i-- ){ 2001/09/24
+		for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( i, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				continue;
@@ -6251,7 +6257,8 @@ void CEditView::Command_UNINDENT( char cChar )
 
 		const CLayout*	pcLayout;
 		int				nDelLen;
-		for( i = nSelectLineToOld - 1; i >= nSelectLineFromOld; i-- ){
+//		for( i = nSelectLineToOld - 1; i >= nSelectLineFromOld; i-- ){ 2001/09/24
+		for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( i, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				continue;
@@ -8717,6 +8724,7 @@ void CEditView::Command_EXECCOMMAND( void )
 		case 'F':
 			for( r = m_pcEditDoc->m_szFilePath; *r != '\0' && q < q_max; ++r, ++q )
 				*q = *r;
+			--q; // genta
 			++p;
 			break;
 		default:
