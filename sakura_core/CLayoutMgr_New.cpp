@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, MIK
 	Copyright (C) 2002, MIK
+	Copyright (C) 2004, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -36,9 +37,13 @@
 
 
 
-/*
-|| 	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
-||
+/*!
+	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
+
+	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
+		nPosXがインデントを含む幅を保持するように変更．nMaxLineSizeは
+		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
+
 */
 void CLayoutMgr::DoLayout(
 		HWND	hwndProgress,
@@ -53,7 +58,11 @@ void CLayoutMgr::DoLayout(
 	CDocLine*	pCDocLine;
 	const char* pLine;
 	int			nBgn;
+	//!	メモリ上の位置(offset)
 	int			nPos;
+	/*	表示上のX位置
+		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+	*/
 	int			nPosX;
 	int			nCharChars;
 	int			nCharChars2;
@@ -106,7 +115,13 @@ void CLayoutMgr::DoLayout(
 	nCOMMENTMODE = nCOMMENTMODE_Prev;
 	nCOMMENTEND = 0;
 	nAllLineNum = m_pcDocLineMgr->GetLineCount();
-//	while( NULL != pLine ){
+
+	/*
+		2004.03.28 Moca TAB計算を正しくするためにインデントを幅で調整することはしない
+		nMaxLineSizeは変更しないので，ここでm_nMaxLineSizeを設定する．
+	*/
+	nMaxLineSize = m_nMaxLineSize;
+
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		nPosX = 0;
@@ -125,7 +140,6 @@ void CLayoutMgr::DoLayout(
 
 		nIndent = 0;				//	インデント幅
 		pLayoutCalculated = NULL;	//	インデント幅計算済みのCLayout.
-		nMaxLineSize = m_nMaxLineSize;
 
 		while( nPos < nLineLen - nEol_1 ){
 			//	インデント幅の計算コストを下げるための方策
@@ -135,9 +149,8 @@ void CLayoutMgr::DoLayout(
 				//	計算
 				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
 				nIndent = (this->*getIndentOffset)( m_pLayoutBot );
-				nMaxLineSize = m_nMaxLineSize - nIndent;
-				//nMaxLineSize = getMaxLineSize( m_pLayoutBot );
-				//nIndent = m_nMaxLineSize - nMaxLineSize;
+				// 2004.03.28 Moca nMaxLineSizeを引く方法だと、タブ幅の計算が合わないので、nPosXの初期値をnIndentにする
+				//	nMaxLineSize = m_nMaxLineSize - nIndent;
 				
 				//	計算済み
 				pLayoutCalculated = m_pLayoutBot;
@@ -165,7 +178,9 @@ void CLayoutMgr::DoLayout(
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
-							nPosX = 0;
+							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+							nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+							pLayoutCalculated = m_pLayoutBot;
 						}
 					}
 					
@@ -213,7 +228,9 @@ void CLayoutMgr::DoLayout(
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
-							nPosX = 0;
+							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+							nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+							pLayoutCalculated = m_pLayoutBot;
 //?							continue;
 						}
 					}
@@ -260,7 +277,7 @@ void CLayoutMgr::DoLayout(
 				/* 行頭禁則 */
 				if( m_bKinsokuHead
 				 && (nMaxLineSize - nPosX < 4)
-				 && nPosX
+				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					bKinsokuFlag = false;
@@ -317,14 +334,16 @@ void CLayoutMgr::DoLayout(
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
-						nPosX = 0;
+						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+						nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+						pLayoutCalculated = m_pLayoutBot;
 					}
 				}
 
 				/* 行末禁則 */
 				if( m_bKinsokuTail
 				 && (nMaxLineSize - nPosX < 4)
-				 && nPosX
+				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 					bKinsokuFlag = false;
@@ -375,7 +394,9 @@ void CLayoutMgr::DoLayout(
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
-						nPosX = 0;
+						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+						nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+						pLayoutCalculated = m_pLayoutBot;
 					}
 				}
 				//@@@ 2002.04.08 MIK end
@@ -394,7 +415,9 @@ void CLayoutMgr::DoLayout(
 					m_nLineTypeBot = nCOMMENTMODE;
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					nBgn = nPos;
-					nPosX = 0;
+					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+					nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+					pLayoutCalculated = m_pLayoutBot;
 					continue;
 				}
 				nPosX += nCharChars;
@@ -415,7 +438,9 @@ void CLayoutMgr::DoLayout(
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
-							nPosX = 0;
+							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+							nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+							pLayoutCalculated = m_pLayoutBot;
 							continue;
 						}	//@@@ 2002.04.14 MIK
 					}
@@ -472,6 +497,14 @@ void CLayoutMgr::DoLayout(
 	指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする
 	
 	@date 2002.10.07 YAZAKI rename from "DoLayout3_New"
+	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
+		nPosXがインデントを含む幅を保持するように変更．nMaxLineSizeは
+		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
+
+	@note 2004.04.03 Moca
+		DoLayoutとは違ってレイアウト情報がリスト中間に挿入されるため，
+		挿入後にm_nLineTypeBotへコメントモードを指定してはならない
+		代わりに最終行のコメントモードを終了間際に確認している．
 */
 int CLayoutMgr::DoLayout_Range(
 			CLayout* pLayoutPrev,
@@ -490,7 +523,11 @@ int CLayoutMgr::DoLayout_Range(
 	CDocLine*	pCDocLine;
 	const char* pLine;
 	int			nBgn;
+	//!	メモリ上の位置(offset)
 	int			nPos;
+	/*	表示上のX位置
+		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+	*/
 	int			nPosX;
 	int			nCharChars;
 	int			nCharChars2;
@@ -508,7 +545,9 @@ int CLayoutMgr::DoLayout_Range(
 
 	int			nIndent;			//	インデント幅
 	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
-	int			nMaxLineSize;
+	
+	//	2004.04.09 genta 関数内では値が変化しないのでループの外に出す
+	int			nMaxLineSize= m_nMaxLineSize;
 
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
@@ -538,7 +577,6 @@ int CLayoutMgr::DoLayout_Range(
 
 	nModifyLayoutLinesNew = 0;
 
-//	while( NULL != pLine ){
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		nPosX = 0;
@@ -557,7 +595,6 @@ int CLayoutMgr::DoLayout_Range(
 
 		nIndent = 0;				//	インデント幅
 		pLayoutCalculated = pLayout;	//	インデント幅計算済みのCLayout.
-		nMaxLineSize = m_nMaxLineSize;
 
 		while( nPos < nLineLen - nEol_1 ){
 			//	インデント幅の計算コストを下げるための方策
@@ -566,10 +603,8 @@ int CLayoutMgr::DoLayout_Range(
 				//	計算
 				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
 				nIndent = (this->*getIndentOffset)( pLayout );
-				nMaxLineSize = m_nMaxLineSize - nIndent;
-				//nMaxLineSize = getMaxLineSize( pLayout );
-				//nIndent = m_nMaxLineSize - nMaxLineSize;
-
+				// 2004.03.28 Moca nMaxLineSizeを引く方法だと、タブ幅の計算が合わないので、nPosXの初期値をnIndentにする
+				//	nMaxLineSize = m_nMaxLineSize - nIndent;
 				//	計算済み
 				pLayoutCalculated = pLayout;
 			}
@@ -600,11 +635,12 @@ int CLayoutMgr::DoLayout_Range(
 							else {
 								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 							}
-							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 							nBgn = nPos;
-							nPosX = 0;
+							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+							nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+							pLayoutCalculated = pLayout;
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
 							){
@@ -624,11 +660,9 @@ int CLayoutMgr::DoLayout_Range(
 				if( m_bWordWrap	/* 英文ワードラップをする */
 				 && nKinsokuType == KINSOKU_TYPE_NONE )
 				{
-//				if( 0 == nWordLen ){
 					/* 英単語の先頭か */
 					if( nPos >= nBgn &&
 						nCharChars == 1 &&
-//						( pLine[nPos] == '#' || __iscsym( pLine[nPos] ) )
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
 						/* キーワード文字列の終端を探す */
@@ -661,11 +695,12 @@ int CLayoutMgr::DoLayout_Range(
 							else {
 								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 							}
-							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 							nBgn = nPos;
-							nPosX = 0;
+							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+							nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+							pLayoutCalculated = pLayout;
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
 							){
@@ -674,11 +709,6 @@ int CLayoutMgr::DoLayout_Range(
 //?							continue;
 						}
 					}
-//				}else{
-//					if( nPos == nWordBgn + nWordLen ){
-//						nWordLen = 0;
-//					}
-//				}
 				}
 
 				//@@@ 2002.04.07 MIK start
@@ -717,7 +747,7 @@ int CLayoutMgr::DoLayout_Range(
 				/* 行頭禁則 */
 				if( m_bKinsokuHead
 				 && (nMaxLineSize - nPosX < 4)
-				 && nPosX
+				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					bKinsokuFlag = false;
@@ -779,11 +809,12 @@ int CLayoutMgr::DoLayout_Range(
 						else {
 							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 						}
-						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 						nBgn = nPos;
-						nPosX = 0;
+						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+						nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+						pLayoutCalculated = pLayout;
 						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 							( nDelLogicalLineFrom < nCurLine )
 						){
@@ -795,7 +826,7 @@ int CLayoutMgr::DoLayout_Range(
 				/* 行末禁則 */
 				if( m_bKinsokuTail
 				 && (nMaxLineSize - nPosX < 4)
-				 && nPosX
+				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 					bKinsokuFlag = false;
@@ -851,11 +882,12 @@ int CLayoutMgr::DoLayout_Range(
 						else {
 							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 						}
-						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 						nBgn = nPos;
-						nPosX = 0;
+						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+						nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+						pLayoutCalculated = pLayout;
 						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 							( nDelLogicalLineFrom < nCurLine )
 						){
@@ -884,11 +916,12 @@ int CLayoutMgr::DoLayout_Range(
 					else {
 						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 					}
-					m_nLineTypeBot = nCOMMENTMODE;
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 					nBgn = nPos;
-					nPosX = 0;
+					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+					nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+					pLayoutCalculated = pLayout;
 					if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 						( nDelLogicalLineFrom < nCurLine )
 					){
@@ -917,11 +950,12 @@ int CLayoutMgr::DoLayout_Range(
 							else {
 								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 							}
-							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 							nBgn = nPos;
-							nPosX = 0;
+							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
+							nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+							pLayoutCalculated = pLayout;
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
 							){
@@ -950,7 +984,6 @@ int CLayoutMgr::DoLayout_Range(
 			else {
 				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 			}
-			m_nLineTypeBot = nCOMMENTMODE;
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 			if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
@@ -985,6 +1018,11 @@ int CLayoutMgr::DoLayout_Range(
 		nCOMMENTMODE = nCOMMENTMODE_Prev;
 		nCOMMENTEND = 0;
 
+	}
+
+	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
+	if( nCurLine == m_pcDocLineMgr->GetLineCount() ){
+		m_nLineTypeBot = nCOMMENTMODE_Prev;
 	}
 
 // 1999.12.22 レイアウト情報がなくなる訳ではないので
