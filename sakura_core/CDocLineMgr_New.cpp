@@ -629,7 +629,7 @@ void CDocLineMgr::SetBookMarks( char* pMarkLines )
 char* CDocLineMgr::GetBookMarks( void )
 {
 	CDocLine*	pCDocLine;
-	char szText[MAX_MARKLINES_LEN + 1];	//2002.01.17
+	static char szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta static‚É
 	char szBuff[10];
 	int	nLinePos=0;
 	pCDocLine = GetLineInfo( nLinePos );
@@ -643,7 +643,7 @@ char* CDocLineMgr::GetBookMarks( void )
 		nLinePos++;
 		pCDocLine = pCDocLine->m_pNext;
 	}
-	return ((char*)"%s",szText);
+	return szText; // Feb. 17, 2003 genta
 }
 
 /*!	·•ª•\¦‚Ì‘S‰ğœ
