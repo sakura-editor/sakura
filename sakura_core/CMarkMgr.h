@@ -105,7 +105,7 @@ public:
 	CMarkMgr() : m_nCurpos(0), m_nMaxitem(10){}
 	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
 
-	unsigned int Count(void) const { return (int)m_cMarkChain.size(); }	//!<	€–Ú”‚ð•Ô‚·
+	int Count(void) const { return (int)m_cMarkChain.size(); }	//!<	€–Ú”‚ð•Ô‚·
 	int GetMax(void) const { return m_nMaxitem; }	//!<	Å‘å€–Ú”‚ð•Ô‚·
 	void SetMax(int max);	//!<	Å‘å€–Ú”‚ðÝ’è
 

@@ -2519,7 +2519,7 @@ void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		//作業用にコピーを作成する。バイナリがあったらその後ろは知らない。
 		pTmpLine = _tcsdup( pLine );
 		if( pTmpLine == NULL ) break;
-		if( _tcslen( pTmpLine ) >= nLineLen ){	//バイナリを含んでいたら短くなるので...
+		if( _tcslen( pTmpLine ) >= (unsigned int)nLineLen ){	//バイナリを含んでいたら短くなるので...
 			pTmpLine[ nLineLen ] = _T('\0');	//指定長で切り詰め
 		}
 
