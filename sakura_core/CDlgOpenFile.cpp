@@ -339,14 +339,19 @@ UINT APIENTRY OFNHookProc(
 		hFont = (HFONT)::SendMessage( hdlg, WM_GETFONT, 0, 0 );
 
 		/* 最近開いたファイル コンボボックス初期値設定 */
-		for( i = 0; m_ppszMRU[i] != NULL; ++i ){
-			::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_ppszMRU[i] );
+		//	2003.06.22 Moca m_ppszMRU がNULLの場合を考慮する
+		if( NULL != m_ppszMRU ){
+			for( i = 0; m_ppszMRU[i] != NULL; ++i ){
+				::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_ppszMRU[i] );
+			}
 		}
 		::SetWindowPos( hwndComboMRU, 0, rc.left, rc.top, rc.right - rc.left + 100, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-
 		/* 最近開いたフォルダ コンボボックス初期値設定 */
-		for( i = 0; m_ppszOPENFOLDER[i] != NULL; ++i ){
-			::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_ppszOPENFOLDER[i] );
+		//	2003.06.22 Moca m_ppszOPENFOLDER がNULLの場合を考慮する
+		if( NULL != m_ppszOPENFOLDER ){
+			for( i = 0; m_ppszOPENFOLDER[i] != NULL; ++i ){
+				::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_ppszOPENFOLDER[i] );
+			}
 		}
 		::SetWindowPos( hwndComboOPENFOLDER, 0, rc.left, rc.top, rc.right - rc.left + 100, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 
@@ -560,8 +565,30 @@ CDlgOpenFile::~CDlgOpenFile()
 }
 
 
-
-
+#if 0
+/*! 初期化
+	DoModal_GetSaveFileName/DoModal_GetOpenFileName用
+	
+	@author Moca
+	@date 2003.06.23
+*/
+void CDlgOpenFile::Create(
+	HINSTANCE		hInstance,
+	HWND			hwndParent,
+	const char*		pszUserWildCard,
+	const char*		pszDefaultPath
+)
+{
+	Create(
+		hInstance,
+		hwndParent,
+		pszUserWildCard,
+		pszDefaultPath,
+		NULL,
+		NULL
+	);
+}
+#endif
 
 /* 初期化 */
 void CDlgOpenFile::Create(

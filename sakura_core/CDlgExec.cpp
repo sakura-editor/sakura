@@ -146,8 +146,6 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDC_BUTTON_REFERENCE:	/* ファイル名の「参照...」ボタン */
 		{
 			CDlgOpenFile	cDlgOpenFile;
-			char*			pszMRU = NULL;;
-			char*			pszOPENFOLDER = NULL;;
 			char			szPath[_MAX_PATH + 1];
 			strcpy( szPath, m_szCommand );
 			/* ファイルオープンダイアログの初期化 */
@@ -155,9 +153,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 				m_hInstance,
 				m_hWnd,
 				"*.com;*.exe;*.bat",
-				m_szCommand,
-				(const char **)&pszMRU,
-				(const char **)&pszOPENFOLDER
+				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 				strcpy( m_szCommand, szPath );

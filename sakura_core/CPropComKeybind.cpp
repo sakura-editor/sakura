@@ -541,8 +541,6 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
 //	char			szLine[1024];
@@ -561,9 +559,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		m_hInstance,
 		hwndDlg,
 		"*.key",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return;
@@ -698,8 +694,6 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 //	HFILE			hFile;	//@@@ 2001.11.07 del MIK
 //	char			szLine[1024];
@@ -716,9 +710,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		m_hInstance,
 		hwndDlg,
 		"*.key",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;

@@ -241,6 +241,8 @@ struct Types {
 
 	//	2001/06/14 asa-o 補完とキーワードヘルプのタイプ別設定
 	char				m_szHokanFile[_MAX_PATH];		/*!< 入力補完 単語ファイル */
+	//	2003.06.23 Moca ファイル内からの入力補完機能
+	int					m_bUseHokanByFile;				/*!< 入力補完 開いているファイル内から候補を探す */
 	int					m_bUseKeyWordHelp;				/*!< キーワードヘルプを使用する */
 	char				m_szKeyWordHelpFile[_MAX_PATH];	/*!< キーワードヘルプ 辞書ファイル */
 	//	2001/06/19 asa-o

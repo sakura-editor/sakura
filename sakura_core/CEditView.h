@@ -191,6 +191,7 @@ public:
 	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	//	Aug. 25, 2002 genta protected->publicに移動
 	void ShowEditCaret( void );									/* キャレットの表示・更新 */
+	int HokanSearchByFile( const char*, BOOL, CMemory**, int, int ); // 2003.06.25 Moca
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;

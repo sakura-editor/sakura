@@ -152,6 +152,23 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 }
 
 /*!
+	指定された行番号の文字列と改行コードを除く長さを取得
+	
+	@author Moca
+	@date 2003.06.22
+*/
+const char* CDocLineMgr::GetLineStrWithoutEOL( int nLine, int* pnLineLen )
+{
+	const CDocLine* pDocLine = GetLineInfo( nLine );
+	if( NULL == pDocLine ){
+		*pnLineLen = 0;
+		return NULL;
+	}
+	*pnLineLen = pDocLine->GetLengthWithoutEOL();
+	return pDocLine->m_pLine->GetPtr();
+}
+
+/*!
 	指定された番号の行へのポインタを返す
 
 	@param nLine [in] 行番号

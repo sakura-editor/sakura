@@ -503,6 +503,7 @@
 #define IDC_LIST_TAGJUMP                1468
 #define IDC_WINCAPTION_ACTIVE           1469
 #define IDC_WINCAPTION_INACTIVE         1470
+#define IDC_CHECK_HOKANBYFILE           1470
 #define IDC_BUTTON_TAG_MAKE_REF         1471
 #define IDC_TABWND_CAPTION              1471
 #define IDC_CHECK_TAG_MAKE_RECURSE      1472

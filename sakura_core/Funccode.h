@@ -395,6 +395,8 @@
 #define F_GETFILENAME     40001 /* 編集中のファイル名を取得する */
 #define F_GETSELECTED     40002 // Oct. 19, 2002 genta 選択範囲の取得
 #define F_EXPANDPARAMETER 40003 // 2003-02-21 鬼 コマンドラインパラメータ展開
+#define F_GETLINESTR      40004 // 指定行論理データを取得する 2003.06.25 Moca
+#define F_GETLINECOUNT    40005 // 論理行数を取得する 2003.06.25 Moca
 
 /* 機能一覧に関するデータ宣言 */
 namespace nsFuncCode{

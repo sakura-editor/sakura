@@ -69,6 +69,15 @@ struct Variant
 		Data.bstrVal = Source.Data; 
 		Source.Data = NULL; 
 	}
+
+	// 2003.06.25 Moca
+	// int‚ğ–ß‚è’l‚Æ‚µ‚Ä•Ô‚·ê‡‚É‘Î‰
+	int Receive(int i)
+	{
+		::VariantClear(&Data); 
+		Data.vt = VT_I4;
+		return Data.lVal = i;
+	}
 };
 /*
 #if sizeof(SysString) != 4

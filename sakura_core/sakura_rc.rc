@@ -1567,8 +1567,7 @@ BEGIN
     PUSHBUTTON      "設定(&A)",IDC_MACRO_REG,225,175,38,14,0,0,
                     HIDC_MACRO_REG
     LTEXT           "マクロ一覧",IDC_STATIC,4,9,36,10
-    EDITTEXT        IDC_MACRODIR,46,5,181,14,ES_AUTOHSCROLL | ES_READONLY,0,
-                    HIDC_MACRODIR
+    EDITTEXT        IDC_MACRODIR,46,5,181,14,ES_AUTOHSCROLL,0,HIDC_MACRODIR
     PUSHBUTTON      "参照(&R)",IDC_MACRODIRREF,228,5,34,12,0,0,
                     HIDC_MACRODIRREF
     CONTROL         "List1",IDC_MACROLIST,"SysListView32",LVS_REPORT | 
@@ -1592,7 +1591,7 @@ BEGIN
     PUSHBUTTON      "(&1)...",IDC_BUTTON_HOKANFILE_REF,247,14,16,14,0,0,
                     HIDC_BUTTON_HOKANFILE_REF
     CONTROL         "英大文字小文字を同一視する(&I)",IDC_CHECK_HOKANLOHICASE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,109,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,120,10,0,
                     HIDC_CHECK_HOKANLOHICASE
     GROUPBOX        "入力補完機能",IDC_STATIC,3,3,264,45,WS_GROUP
     CONTROL         "キーワードヘルプ機能を使う(&K)",
@@ -1621,6 +1620,9 @@ BEGIN
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,177,101,10,0,
                     HIDC_CHECK_TYPEHTMLHELPISSINGLE
+    CONTROL         "編集中のファイルから候補を探す(&F)",
+                    IDC_CHECK_HOKANBYFILE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,132,31,127,10
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 270, 213
@@ -2286,7 +2288,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,4,0,0
- PRODUCTVERSION 1,4,1,0
+ PRODUCTVERSION 1,4,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2310,12 +2312,12 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.4.1.0\0"
+            VALUE "ProductVersion", "1.4.2.0\0"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x411, 1200
+        VALUE "Transltion", 0x411, 1200
     END
 END
 

@@ -730,7 +730,7 @@ void CDocLineMgr::SetDiffMarkRange( int nMode, int nStartLine, int nEndLine )
 	if( nStartLine < 0 ) nStartLine = 0;
 
 	//ÅIs‚æ‚èŒã‚Éíœs‚ ‚è
-	nLines = GetLines();
+	nLines = GetLineCount();
 	if( nLines <= nEndLine )
 	{
 		nEndLine = nLines - 1;

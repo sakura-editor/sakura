@@ -192,18 +192,19 @@ BOOL CPropCommon::DispatchEvent_p10(
 			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Common.m_szExtHelp );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+					if( _IS_REL_PATH( m_Common.m_szExtHelp ) ){
+						GetExecutableDir( szPath, m_Common.m_szExtHelp );
+					}else{
+						strcpy( szPath, m_Common.m_szExtHelp );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.hlp",
-						m_Common.m_szExtHelp,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Common.m_szExtHelp, szPath );
@@ -214,18 +215,19 @@ BOOL CPropCommon::DispatchEvent_p10(
 			case IDC_BUTTON_OPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Common.m_szExtHtmlHelp );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+					if( _IS_REL_PATH( m_Common.m_szExtHtmlHelp ) ){
+						GetExecutableDir( szPath, m_Common.m_szExtHtmlHelp );
+					}else{
+						strcpy( szPath, m_Common.m_szExtHtmlHelp );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.chm;*.col",
-						m_Common.m_szExtHtmlHelp,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Common.m_szExtHtmlHelp, szPath );

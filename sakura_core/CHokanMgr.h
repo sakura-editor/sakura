@@ -21,7 +21,13 @@ class CHokanMgr;
 #include <windows.h>
 #include "CMemory.h"
 
-//! キーワード補完
+class CEditView;
+
+
+/*! @brief キーワード補完
+
+	@date 2003.06.25 Moca ファイル内からの補完機能を追加
+*/
 class SAKURA_CORE_API CHokanMgr : public CDialog
 {
 public:
@@ -34,7 +40,7 @@ public:
 	HWND DoModeless( HINSTANCE, HWND, LPARAM );/* モードレスダイアログの表示 */
 	void Hide( void );
 	/* 初期化 */
-	int CHokanMgr::Search(
+	int Search(
 	//	HFONT		hFont,
 		POINT*		ppoWin,
 		int			nWinHeight,
@@ -42,10 +48,11 @@ public:
 		const char*	pszCurWord,
 	//	void*		pcEditView,
 		const char* pszHokanFile,
-		int			bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+		BOOL		bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+		BOOL		bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
 		CMemory*	pcmemHokanWord = NULL	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	);
-	void SetCurKouhoStr( void );
+//	void SetCurKouhoStr( void );
 	BOOL DoHokan( int );
 	void ChangeView( LPARAM );/* モードレス時：対象となるビューの変更 */
 

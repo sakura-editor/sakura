@@ -38,7 +38,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void Create( HINSTANCE, HWND, const char*, const char*, const char**,const char** );
+	void Create( HINSTANCE, HWND, const char*, const char*, const char** = NULL,const char** = NULL);
+	//void Create( HINSTANCE, HWND, const char*, const char* );
 	//	2002/08/21 moca	引数追加
 	BOOL DoModal_GetOpenFileName( char*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
 	//	2002/08/21 30,2002 moca	引数追加
