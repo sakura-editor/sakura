@@ -857,11 +857,8 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 		int			nPosY = m_nCaretPosY;
 		RECT		rcSel;
 		const CLayout*	pcLayout;
-		/* 現在行のデータを取得 */
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
-		if( NULL == pcLayout ){
-			goto end_of_func;
-		}
+		// 2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に
+		// 対応するため、現在行のデータを取得を移動
 		if( !bIgnoreCurrentSelection ){
 			if( bSelect ){
 				if( !IsTextSelected() ){	/* テキストが選択されているか */
@@ -903,6 +900,12 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 					goto end_of_func;
 				}
 			}
+		}
+//		2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に対応
+		/* 現在行のデータを取得 */
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+		if( NULL == pcLayout ){
+			goto end_of_func;
 		}
 		{
 			int nIndex = 0;
@@ -7048,130 +7051,12 @@ finish:
 //BOOL CEditView::Command_OPENINCLUDEFILE( BOOL bCheckOnly )
 BOOL CEditView::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-//From Here Feb. 7, 2001 JEPRO 追加
-	static char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
-	static char* header_ext[] = { "h", "hpp", "hxx", "hh", "hp", "h++" };
-	int		src_extno = 6;
-	int		hdr_extno = 6;
-	int		i;
-	BOOL	bwantopen_h;
-//To Here Feb. 7, 2001
-
-	/* 編集中のファイルの拡張子を調べる */
-//Feb. 7, 2001 JEPRO 原作版をコメントアウト
-//	if( CheckEXT( m_pcEditDoc->GetFilePath(), "cpp" ) ||
-//		CheckEXT( m_pcEditDoc->GetFilePath(), "cxx" ) ||
-//		CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
-//	}else{
-//		if( !bCheckOnly ){
-//			::MessageBeep( MB_ICONHAND );
-//		}
-//		return FALSE;
-//	}
-
-//From Here Feb. 7, 2001 JEPRO 追加
-	for( i = 0; i < src_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), source_ext[i] ) ){
-			bwantopen_h = TRUE;
-			goto open_h;
-		}
-	}
-	if( bBeepWhenMiss ){
-		::MessageBeep( MB_ICONHAND );
-	}
-	return FALSE;
-
-open_h:;
-//To Here Feb. 7, 2001
-
-	char	szPath[_MAX_PATH];
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-	char	szFname[_MAX_FNAME];
-	char	szExt[_MAX_EXT];
-	HWND	hwndOwner;
-
-	_splitpath( m_pcEditDoc->GetFilePath(), szDrive, szDir, szFname, szExt );
-//Feb. 7, 2001 JEPRO 原作版をコメントアウト
-//	_makepath( szPath, szDrive, szDir, szFname, "h" );
-//	if( -1 == _access( (const char *)szPath, 0 ) ){
-//		if( !bCheckOnly ){
-//			::MessageBeep( MB_ICONHAND );
-//		}
-//		return FALSE;
-//	}
-//	if( bCheckOnly ){
-//		return TRUE;
-//	}
-
-//From Here Feb. 7, 2001 JEPRO 追加
-	for( i = 0; i < hdr_extno; i++ ){
-		_makepath( szPath, szDrive, szDir, szFname, header_ext[i] );
-		if( -1 == _access( (const char *)szPath, 0 ) ){
-			if( i < hdr_extno - 1 )
-				continue;
-			if( bBeepWhenMiss ){
-				::MessageBeep( MB_ICONHAND );
-			}
-			return FALSE;
-		}
-		break;
-	}
-	if( bCheckOnly ){
-		return TRUE;
-	}
-//To Here Feb. 7, 2001
-
-	/* 指定ファイルが開かれているか調べる */
-	/* 開かれている場合は開いているウィンドウのハンドルも返す */
-	/* ファイルを開いているか */
-	if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
-	}else{
-		/* 新しく開く */
-		char	szPath2[_MAX_PATH + 3];
-		if( strchr( szPath, ' ' ) ){
-			wsprintf( szPath2, "\"%s\"", szPath );
-		}else{
-			strcpy( szPath2, szPath );
-		}
-		/* 文字コードはこのファイルに合わせる */
-		CEditApp::OpenNewEditor(
-			m_hInstance,
-			m_pShareData->m_hwndTray,
-			szPath2,
-			m_pcEditDoc->m_nCharCode,
-			FALSE,	/* 読み取り専用か */
-			true
-		);
-		/* ファイルを開いているか */
-		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
-		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-//				"インクルードファイルのオープンに失敗しました。\n\n%s\n\n", szPath	//Feb. 10, 2001 jepro メッセージを若干変更
-				"ヘッダファイルのオープンに失敗しました。\n\n%s\n\n", szPath
-			);
-			return FALSE;
-		}
-	}
-	/* アクティブにする */
-	ActivateFrameWindow( hwndOwner );
-	/*
-	  カーソル位置変換
-	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	  →
-	  物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-	POINT	poCaret;
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-		m_nCaretPosX,
-		m_nCaretPosY,
-		(int*)&poCaret.x,
-		(int*)&poCaret.y
-	);
-	/* タグジャンプ元通知 */
-	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
-	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
-	return TRUE;
+	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
+	static const char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
+	static const char* header_ext[] = { "h", "hpp", "hxx", "hh", "hp", "h++" };
+	return OPEN_ExtFromtoExt( bCheckOnly, bBeepWhenMiss, source_ext, header_ext,
+		sizeof(source_ext) / sizeof(source_ext[0]), sizeof(header_ext) / sizeof(header_ext[0]),
+		"C/C++ヘッダファイルのオープンに失敗しました。" );
 }
 
 
@@ -7181,11 +7066,31 @@ open_h:;
 //BOOL CEditView::Command_OPENCCPP( BOOL bCheckOnly )	//Feb. 10, 2001 JEPRO	コマンド名を若干変更
 BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
+	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
+	static const char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
+	static const char* header_ext[] = { "h", "hpp", "hxx", "hh", "hp", "h++" };
+	return OPEN_ExtFromtoExt( bCheckOnly, bBeepWhenMiss, header_ext, source_ext,
+		sizeof(header_ext) / sizeof(header_ext[0]), sizeof(source_ext) / sizeof(source_ext[0]),
+		"C/C++ソースファイルのオープンに失敗しました。");
+}
+
+
+/*! 指定拡張子のファイルに対応するファイルを開く補助関数
+
+	@param bCheckOnly [in]		true: チェックのみ行ってファイルは開かない
+	@param bBeepWhenMiss [in]	true: ファイルを開けなかった場合に警告音を出す
+	@param file_ext [in]		処理対象とする拡張子
+	@param file_extno [in]		処理対象拡張子リストの要素数
+	@param open_ext [in]		開く対象とする拡張子
+	@param open_extno [in]		開く対象拡張子リストの要素数
+
+	@date 2003.06.28 Moca ヘッダ・ソースファイルオープン機能のコードを統合
+*/
+BOOL CEditView::OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
+	const char* file_ext[], const char* open_ext[], int file_extno, int open_extno,
+	const char* errmes )
+{
 //From Here Feb. 7, 2001 JEPRO 追加
-	static char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
-	static char* header_ext[] = { "h", "hpp", "hxx", "hh", "hp", "h++" };
-	int		src_extno = 6;
-	int		hdr_extno = 6;
 	int		i;
 	BOOL	bwantopen_c;
 //To Here Feb. 7, 2001
@@ -7201,8 +7106,8 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 //	}
 
 //From Here Feb. 7, 2001 JEPRO 追加
-	for( i = 0; i < hdr_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), header_ext[i] ) ){
+	for( i = 0; i < open_extno; i++ ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), open_ext[i] ) ){
 			bwantopen_c = TRUE;
 			goto open_c;
 		}
@@ -7242,10 +7147,10 @@ open_c:;
 //	}
 
 //From Here Feb. 7, 2001 JEPRO 追加
-	for( i = 0; i < src_extno; i++ ){
-		_makepath( szPath, szDrive, szDir, szFname, source_ext[i] );
+	for( i = 0; i < file_extno; i++ ){
+		_makepath( szPath, szDrive, szDir, szFname, file_ext[i] );
 		if( -1 == _access( (const char *)szPath, 0 ) ){
-			if( i < src_extno - 1 )
+			if( i < file_extno - 1 )
 				continue;
 			if( bBeepWhenMiss ){
 				::MessageBeep( MB_ICONHAND );
@@ -7284,7 +7189,7 @@ open_c:;
 		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-				"C/C++ソースファイルのオープンに失敗しました。\n\n%s\n\n", szPath
+				"%s\n\n%s\n\n", errmes, szPath
 			);
 			return FALSE;
 		}
@@ -7321,178 +7226,8 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 	if ( Command_OPEN_CCPP( bCheckOnly, FALSE ) )	return TRUE;
 	::MessageBeep( MB_ICONHAND );
 	return FALSE;
-
-#if 0
-2002/03/24 YAZAKI コードの重複を削減
-	static char* source_ext[] = { "c", "cpp", "cxx", "cc", "cp", "c++" };
-	static char* header_ext[] = { "h", "hpp", "hxx", "hh", "hp", "h++" };
-	int		src_extno = 6;
-	int		hdr_extno = 6;
-	int		i;
-	BOOL	bwantopen_h;
-
-	/* 編集中ファイルの拡張子を調べる */
-//Feb. 8, 2001 JEPRO VC++で使用される拡張子のみ対応(初期バージョンなのでコメントアウト)
-//	if( CheckEXT( m_pcEditDoc->GetFilePath(), "cpp" ) ||
-//		CheckEXT( m_pcEditDoc->GetFilePath(), "cxx" ) ||
-//		CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
-//		bopen_h = TRUE;
-//	}else if( CheckEXT( m_pcEditDoc->GetFilePath(), "h" ) ||
-//		CheckEXT( m_pcEditDoc->GetFilePath(), "hpp" ) ||
-//		CheckEXT( m_pcEditDoc->GetFilePath(), "hxx" ) ){
-//		bopen_h = FALSE;
-//	}else{
-//		if( !bCheckOnly ){
-//			::MessageBeep( MB_ICONHAND );
-//		}
-//		return FALSE;
-//	}
-
-	for( i = 0; i < src_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), source_ext[i] ) ){
-			bwantopen_h = TRUE;
-			goto open_hc;
-		}
-	}
-	for( i = 0; i < hdr_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), header_ext[i] ) ){
-			bwantopen_h = FALSE;
-			goto open_hc;
-		}
-	}
-	if( !bCheckOnly ){
-		::MessageBeep( MB_ICONHAND );
-	}
-	return FALSE;
-
-open_hc:;
-
-	char	szPath[_MAX_PATH];
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-	char	szFname[_MAX_FNAME];
-	char	szExt[_MAX_EXT];
-	HWND	hwndOwner;
-
-	_splitpath( m_pcEditDoc->GetFilePath(), szDrive, szDir, szFname, szExt );
-//Feb. 8, 2001 JEPRO VC++で使用される拡張子のみ対応(初期バージョンなのでコメントアウト)
-//	if( TRUE == bwantopen_h ){
-//		_makepath( szPath, szDrive, szDir, szFname, "h" );
-//		if( -1 == _access( (const char *)szPath, 0 ) ){
-//			_makepath( szPath, szDrive, szDir, szFname, "hpp" );
-//			if( -1 == _access( (const char *)szPath, 0 ) ){
-//				_makepath( szPath, szDrive, szDir, szFname, "hxx" );
-//				if( -1 == _access( (const char *)szPath, 0 ) ){
-//					if( !bCheckOnly ){
-//						::MessageBeep( MB_ICONHAND );
-//					}
-//					return FALSE;
-//				}
-//			}
-//		}
-//	}else{
-//		_makepath( szPath, szDrive, szDir, szFname, "c" );
-//		if( -1 == _access( (const char *)szPath, 0 ) ){
-//			_makepath( szPath, szDrive, szDir, szFname, "cpp" );
-//			if( -1 == _access( (const char *)szPath, 0 ) ){
-//				_makepath( szPath, szDrive, szDir, szFname, "cxx" );
-//				if( -1 == _access( (const char *)szPath, 0 ) ){
-//					if( !bCheckOnly ){
-//						::MessageBeep( MB_ICONHAND );
-//					}
-//					return FALSE;
-//				}
-//			}
-//		}
-//	}
-//	if( bCheckOnly ){
-//		return TRUE;
-//	}
-
-//From Here Feb. 10, 2001 JEPRO 追加
-	if( TRUE == bwantopen_h ){
-		for( i = 0; i < hdr_extno; i++ ){
-			_makepath( szPath, szDrive, szDir, szFname, header_ext[i] );
-			if( -1 == _access( (const char *)szPath, 0 ) ){
-				if( i < hdr_extno - 1 )
-					continue;
-				if( !bCheckOnly ){
-					::MessageBeep( MB_ICONHAND );
-				}
-				return FALSE;
-			}
-			break;
-		}
-	}else{
-		for( i = 0; i < src_extno; i++ ){
-			_makepath( szPath, szDrive, szDir, szFname, source_ext[i] );
-			if( -1 == _access( (const char *)szPath, 0 ) ){
-				if( i < src_extno - 1 )
-					continue;
-				if( !bCheckOnly ){
-					::MessageBeep( MB_ICONHAND );
-				}
-				return FALSE;
-			}
-			break;
-		}
-	}
-	if( bCheckOnly ){
-		return TRUE;
-	}
-//To Here Feb. 10, 2001
-
-	/* 指定ファイルが開かれているか調べる */
-	/* 開かれている場合は開いているウィンドウのハンドルも返す */
-	/* ファイルを開いているか */
-	if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
-	}else{
-		/* 新しく開く */
-		char	szPath2[_MAX_PATH + 3];
-		if( strchr( szPath, ' ' ) ){
-			wsprintf( szPath2, "\"%s\"", szPath );
-		}else{
-			strcpy( szPath2, szPath );
-		}
-		/* 文字コードはこのファイルに合わせる */
-		CEditApp::OpenNewEditor(
-			m_hInstance,
-			m_pShareData->m_hwndTray,
-			szPath2,
-			m_pcEditDoc->m_nCharCode,
-			FALSE,	/* 読み取り専用か */
-			true
-		);
-		/* ファイルを開いているか */
-		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
-		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-				(TRUE == bwantopen_h) ? "C/C++ヘッダファイルのオープンに失敗しました。\n\n%s\n\n"
-									:	"C/C++ソースファイルのオープンに失敗しました。\n\n%s\n\n", szPath
-			);
-			return FALSE;
-		}
-	}
-	/* アクティブにする */
-	ActivateFrameWindow( hwndOwner );
-	/*
-	  カーソル位置変換
-	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	  →
-	  物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-	POINT	poCaret;
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-		m_nCaretPosX,
-		m_nCaretPosY,
-		(int*)&poCaret.x,
-		(int*)&poCaret.y
-	);
-	/* タグジャンプ元通知 */
-	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
-	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
-	return TRUE;
-#endif
+// 2002/03/24 YAZAKI コードの重複を削減
+// 2003.06.28 Moca コメントとして残っていたコードを削除
 }
 
 

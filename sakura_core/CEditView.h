@@ -776,6 +776,8 @@ void ReplaceData_CEditView(
 	void AnalyzeDiffInfo( char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
 	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
 
+	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const char* [], const char* [], int, int, const char* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
+
 // 2002/07/22 novice
 	void ShowCaret_( HWND hwnd );
 	void HideCaret_( HWND hwnd );
