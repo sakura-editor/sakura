@@ -516,7 +516,7 @@ protected:
 	void Command_WORDLEFT( int );			/* 単語の左端に移動 */
 	void Command_WORDRIGHT( int );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
-	void Command_GOLINETOP( int, BOOL, int lparam = 0 );	/* 行頭に移動（折り返し単位） */
+	void Command_GOLINETOP( int bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
 	void Command_GOLINEEND( int, int );		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */

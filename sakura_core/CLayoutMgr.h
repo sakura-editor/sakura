@@ -166,7 +166,7 @@ protected:
 	void DoLayout( HWND, BOOL,BOOL );	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 //	void DoLayout( int, BOOL, HWND, BOOL, BOOL );	/* 新しい折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 //	int DoLayout3( CLayout* , int, int, int );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
-	int DoLayout3_New( CLayout* , /*CLayout* ,*/ int, int, int, int, int*, BOOL, BOOL );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	int DoLayout_Range( CLayout* , int, int, int, int, int*, BOOL, BOOL );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLayout* DeleteLayoutAsLogical( CLayout*, int, int , int, int, int, int* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , int );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
@@ -179,7 +179,8 @@ public:
 protected:
 	CLayout*		m_pLayoutTop;
 	CLayout*		m_pLayoutBot;
-//	CLayout*		m_pLayoutCurrent;			/* 順アクセス時の現在位置 */
+	//	2002.10.07 YAZAKI add
+	int				m_nLineTypeBot;	/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 	int				m_nLines;					/* 全物理行数 */
 	int				m_nMaxLineSize;				/* 折り返し文字数 */
 	BOOL			m_bWordWrap;				/* 英文ワードラップをする */
@@ -208,7 +209,7 @@ protected:
 	|| 実装ヘルパ系
 	*/
 	//@@@ 2002.09.23 YAZAKI
-	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext, int nIndent );
+	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nIndent );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
 	void AddLineBottom( CLayout* );
 public:
@@ -228,7 +229,7 @@ private:
 	
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	int getIndentOffset_Normal( CLayout* pLayoutPrev );
-	int getIndentOffset_Yazaki( CLayout* pLayoutPrev );
+	int getIndentOffset_Tx2x( CLayout* pLayoutPrev );
 	int getIndentOffset_LeftSpace( CLayout* pLayoutPrev );
 };
 

@@ -58,7 +58,7 @@ public:
 	/*! 行末かどうか
 		@return true: 行末, false: 行末ではない
 	 */
-	bool end(){
+	bool end() const {
 		return (m_nLineLen <= m_nIndex);
 	};
 	void scanNext(){	//	次の文字を確認して次の文字との差を求める
@@ -83,10 +83,13 @@ public:
 		m_nIndex += m_nIndex_Delta;
 	};	//	ポインタをずらす
 	
-	int getIndex(){	return m_nIndex;	};
-	int getColumn(){	return m_nColumn;	};
-	int getIndexDelta(){	return m_nIndex_Delta;	};
-	int getColumnDelta(){	return m_nColumn_Delta;	};
+	int getIndex() const {	return m_nIndex;	};
+	int getColumn() const {	return m_nColumn;	};
+	int getIndexDelta() const {	return m_nIndex_Delta;	};
+	int getColumnDelta() const {	return m_nColumn_Delta;	};
+
+	//	2002.10.07 YAZAKI
+	const char getCurrentChar(){	return m_pLine[m_nIndex];	};
 };
 
 
