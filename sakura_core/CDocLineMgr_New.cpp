@@ -37,9 +37,8 @@
 */
 void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::ReplaceData()" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReplaceData()" );
+
 	/* ‘}“ü‚É‚æ‚Á‚Ä‘‚¦‚½s‚Ì” */
 	pArg->nInsLineNum = 0;
 	/* íœ‚µ‚½s‚Ì‘” */

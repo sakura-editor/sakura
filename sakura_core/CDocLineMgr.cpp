@@ -162,10 +162,6 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 */
 CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 {
-//#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::GetLineInfo()" );
-//#endif
-
 	int nCounter;
 	CDocLine* pDocLine;
 	if( 0 == m_nLines ){
@@ -175,9 +171,8 @@ CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 		return NULL;
 	}
 	if( m_pCodePrevRefer == NULL ){
-#ifdef _DEBUG
-		CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::GetLineInfo() 	m_pCodePrevRefer == NULL" );
-#endif
+		MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLineInfo() 	m_pCodePrevRefer == NULL" );
+
 
 
 
@@ -453,7 +448,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 {
 #ifdef _DEBUG
 	MYTRACE( "pszPath=[%s]\n", pszPath );
-	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::ReadFile" );
+	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReadFile" );
 #endif
 	int			nRetVal = TRUE;
 	int			nLineNum = 0;

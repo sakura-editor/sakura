@@ -2240,7 +2240,7 @@ bool CEditView::Command_SELECTWORD( void )
 		m_nSelectColmTo = nColmTo;
 
 		/* 単語の先頭にカーソルを移動 */
-		MoveCursor( nColmFrom, nLineFrom, TRUE );
+		MoveCursor( nColmTo, nLineTo, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
 		/* 選択領域描画 */

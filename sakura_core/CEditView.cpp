@@ -3457,9 +3457,8 @@ BOOL CEditView::IsCurrentPositionURL(
 		char**	ppszURL			// URLŽó‚¯Žæ‚èæ(ŠÖ”“à‚Ånew‚·‚é)
 )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CEditView::IsCurrentPositionURL" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::IsCurrentPositionURL" );
+
 	const char*	pLine;
 //	const char*	pLineWork;
 	int			nLineLen;
@@ -4213,8 +4212,14 @@ void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 		){
 			nSelectLineFrom = m_nSelectLineBgnFrom;
 			nSelectColmFrom = m_nSelectColmBgnFrom;
-			nSelectLineTo = m_nSelectLineBgnTo;
-			nSelectColmTo = m_nSelectColmBgnTo;
+			if ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX == m_nSelectColmBgnFrom ){
+				nSelectLineTo = m_nSelectLineBgnTo;	//	m_nSelectLineBgnTo;
+				nSelectColmTo = m_nSelectColmBgnTo;	//	m_nSelectColmBgnTo;
+			}
+			else {
+				nSelectLineTo = nCaretPosY;	//	m_nSelectLineBgnTo;
+				nSelectColmTo = nCaretPosX;	//	m_nSelectColmBgnTo;
+			}
 		}else
 		if( !( nCaretPosY > m_nSelectLineBgnFrom || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX >= m_nSelectColmBgnFrom ) ) ){
 			/* íŽž‘I‘ð”ÍˆÍ‚Ì‘O•ûŒü */
@@ -6159,6 +6164,7 @@ DWORD CEditView::DoGrep(
 #ifdef _DEBUG
 	CRunningTimer cRunningTimer( "CEditView::DoGrep" );
 #endif
+
 	m_pcEditDoc->m_bGrepRunning = TRUE;
 
 

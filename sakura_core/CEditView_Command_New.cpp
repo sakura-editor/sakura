@@ -54,7 +54,7 @@ void CEditView::InsertData_CEditView(
 {
 #ifdef _DEBUG
 	gm_ProfileOutput = 1;
-	CRunningTimer*  pCRunningTimer = new CRunningTimer( (const char*)"CEditView::InsertData_CEditView()" );
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
 #endif
 	const char*	pLine;
 	int			nLineLen;
@@ -262,9 +262,6 @@ void CEditView::InsertData_CEditView(
 		pcOpe->m_pcmemData = NULL;				/* 操作に関連するデータ */
 	}
 #ifdef _DEBUG
-	delete pCRunningTimer;
-	pCRunningTimer = NULL;
-
 	gm_ProfileOutput = 0;
 #endif
 	return;
@@ -286,7 +283,7 @@ void CEditView::DeleteData2(
 {
 #ifdef _DEBUG
 	gm_ProfileOutput = 1;
-	CRunningTimer* pCRunningTimer = new CRunningTimer( (const char*)"CEditView::DeleteData(1)" );
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
 #endif
 	const char*	pLine;
 	int			nLineLen;
@@ -351,9 +348,6 @@ void CEditView::DeleteData2(
 
 end_of_func:;
 #ifdef _DEBUG
-	delete pCRunningTimer;
-	pCRunningTimer = NULL;
-
 	gm_ProfileOutput = 0;
 #endif
 	return;
@@ -375,7 +369,7 @@ void CEditView::DeleteData(
 {
 #ifdef _DEBUG
 	gm_ProfileOutput = 1;
-	CRunningTimer*  pCRunningTimer = new CRunningTimer( (const char*)"CEditView::DeleteData(2)" );
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(2)" );
 #endif
 	const char*	pLine;
 	int			nLineLen;
@@ -668,10 +662,8 @@ void CEditView::Command_UNDO( void )
 		return;
 	}
 
-#ifdef _DEBUG
-//	MYTRACE( "\n\n======================================\n" );
-	CRunningTimer cRunningTimer( (const char*)"CEditView::Command_UNDO()" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::Command_UNDO()" );
+
 	COpe*		pcOpe = NULL;
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
@@ -893,10 +885,8 @@ void CEditView::Command_REDO( void )
 	if( !m_pcEditDoc->IsEnableRedo() ){	/* Redo(やり直し)可能な状態か？ */
 		return;
 	}
-#ifdef _DEBUG
-//	MYTRACE( "\n\n======================================\n" );
-	CRunningTimer cRunningTimer( (const char*)"CEditView::Command_REDO()" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::Command_REDO()" );
+
 	COpe*		pcOpe = NULL;
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
@@ -1101,10 +1091,6 @@ void CEditView::ReplaceData_CEditView(
 //	BOOL		bUndo					/* Undo操作かどうか */
 )
 {
-//#ifdef _DEBUG
-//	gm_ProfileOutput = 1;
-//	CRunningTimer*  pCRunningTimer = new CRunningTimer( (const char*)"CEditView::ReplaceData_CEditView()" );
-//#endif
 	{
 		//	Jun 23, 2000 genta
 		//	変数名を書き換え忘れていたのを修正
@@ -1459,14 +1445,6 @@ void CEditView::ReplaceData_CEditView(
 	//	Jan. 30, 2001 genta
 	//	ファイル全体の更新フラグが立っていないと各行の更新状態が表示されないので
 	//	フラグ更新処理を再描画より前に移動する
-
-//#ifdef _DEBUG
-//	gm_ProfileOutput = 1;
-//	delete pCRunningTimer;
-//	pCRunningTimer = NULL;
-//
-//	gm_ProfileOutput = 0;
-//#endif
 	return;
 
 }

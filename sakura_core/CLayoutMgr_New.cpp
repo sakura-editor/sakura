@@ -46,9 +46,8 @@ void CLayoutMgr::DoLayout(
 		BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
 )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::DoLayout" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::DoLayout" );
+
 	int			nLineNum;
 	int			nLineLen;
 	CDocLine*	pCDocLine;
