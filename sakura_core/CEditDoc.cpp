@@ -3228,218 +3228,114 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 }
 
 
+/*! アセンブラ アウトライン解析
 
-
-/*! アセンブラ アウトライン解析 */
+	@author MIK
+	@date 2004.04.12 作り直し
+*/
 void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 {
-	const char*	pLine;
-	int			nLineLen;
-	int			nLineCount;
-	int			i;
-	int			nNestLevel;
-//	int			nNestLevel2;
-	int			nCharChars;
-	char		szWordPrev[100];
-	char		szWord[100];
-	int			nWordIdx = 0;
-	int			nMaxWordLeng = 70;
-	int			nMode;
-//	char		szFuncName[80];
-//	int			nFuncLine;
-	int			nFuncId;
-	int			nFuncNum;
-	char		szProcName[1024];
-	BOOL		bProcReading;
+	int nTotalLine;
 
-	nNestLevel = 0;
-	szWordPrev[0] = '\0';
-	szWord[nWordIdx] = '\0';
-	nMode = 0;
-	nFuncNum = 0;
-	szProcName[0] = '\0';
-	bProcReading = FALSE;
-	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
+	nTotalLine = m_cDocLineMgr.GetLineCount();
+
+	for( int nLineCount = 0; nLineCount < nTotalLine; nLineCount++ ){
+		const TCHAR* pLine;
+		int nLineLen;
+		TCHAR* pTmpLine;
+		int length;
+		int offset;
+#define MAX_ASM_TOKEN 2
+		TCHAR* token[MAX_ASM_TOKEN];
+		int j;
+		TCHAR* p;
+
+		//1行取得する。
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
-		for( i = 0; i < nLineLen; ++i ){
-			/* 1バイト文字だけを処理する */
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-			if( 1 < nCharChars ){
-				i += (nCharChars - 1);
-				continue;
-			}
+		if( pLine == NULL ) break;
 
-			/* エスケープシーケンスは常に取り除く */
-			if( '\\' == pLine[i] ){
-				++i;
-			}else
-			/* シングルクォーテーション文字列読み込み中 */
-			if( 20 == nMode ){
-				if( '\'' == pLine[i] ){
-					nMode = 0;
-					continue;
-				}else{
-				}
-			}else
-			/* ダブルクォーテーション文字列読み込み中 */
-			if( 21 == nMode ){
-				if( '"' == pLine[i] ){
-					nMode = 0;
-					continue;
-				}else{
-				}
-			}else
-			/* 単語読み込み中 */
-			if( 1 == nMode ){
-				if( '_' == pLine[i] ||
-					':' == pLine[i] ||
-					'~' == pLine[i] ||
-					('a' <= pLine[i] &&	pLine[i] <= 'z' )||
-					('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
-					('0' <= pLine[i] &&	pLine[i] <= '9' )||
-					'.' == pLine[i]
-				){
-					++nWordIdx;
-					if( nWordIdx >= nMaxWordLeng ){
-						nMode = 999;
-						continue;
-					}else{
-						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = '\0';
-					}
-				}else{
-					if( 0 == stricmp( "proc", szWord ) ){
-						strcpy( szProcName, szWordPrev );
-						bProcReading = TRUE;
-						nFuncId = 50;
-						++nFuncNum;
-						/*
-						  カーソル位置変換
-						  物理位置(行頭からのバイト数、折り返し無し行位置)
-						  →
-						  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-						*/
-						int		nPosX;
-						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(
-							0,
-							nLineCount/*nFuncLine - 1*/,
-							&nPosX,
-							&nPosY
-						);
-//						char szWork[256];
-						pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, szProcName, nFuncId );
-					}else
-					if( 0 == stricmp( "endp", szWord ) ){
-						nFuncId = 52;
-						++nFuncNum;
-						/*
-						  カーソル位置変換
-						  物理位置(行頭からのバイト数、折り返し無し行位置)
-						  →
-						  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-						*/
-						int		nPosX;
-						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(
-							0,
-							nLineCount/*nFuncLine - 1*/,
-							&nPosX,
-							&nPosY
-						);
-//						char szWork[256];
-						pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, szWordPrev, nFuncId );
+		//作業用にコピーを作成する。バイナリがあったらその後ろは知らない。
+		pTmpLine = _tcsdup( pLine );
+		if( pTmpLine == NULL ) break;
+		if( _tcslen( pTmpLine ) >= nLineLen ){	//バイナリを含んでいたら短くなるので...
+			pTmpLine[ nLineLen ] = _T('\0');	//指定長で切り詰め
+		}
 
-						strcpy( szProcName, "" );
-						bProcReading = FALSE;
-					}else{
-						/* ラベル */
-						if( 0 <= i - 1 && ':' == pLine[i - 1] ){
-							nFuncId = 51;
-							++nFuncNum;
-							/*
-							  カーソル位置変換
-							  物理位置(行頭からのバイト数、折り返し無し行位置)
-							  →
-							  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-							*/
-							int		nPosX;
-							int		nPosY;
-							m_cLayoutMgr.CaretPos_Phys2Log(
-								0,
-								nLineCount/*nFuncLine - 1*/,
-								&nPosX,
-								&nPosY
-							);
-	//						char szWork[256];
-							pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, szWord, nFuncId );
+		//行コメント削除
+		p = _tcsstr( pTmpLine, _T(";") );
+		if( p ) *p = _T('\0');
 
-						}
+		length = _tcslen( pTmpLine );
+		offset = 0;
 
-					}
-					strcpy( szWordPrev , szWord );
-
-					nMode = 0;
-					i--;
-					continue;
-				}
-			}else
-			/* 長過ぎる単語無視中 */
-			if( 999 == nMode ){
-				/* 空白やタブ記号等を飛ばす */
-				if( '\t' == pLine[i] ||
-					 ' ' == pLine[i] ||
-					  CR == pLine[i] ||
-					  LF == pLine[i]
-				){
-					nMode = 0;
-					continue;
-				}
-			}else
-			/* ノーマルモード */
-			if( 0 == nMode ){
-				/* 空白やタブ記号等を飛ばす */
-				if( '\t' == pLine[i] ||
-					 ' ' == pLine[i] ||
-					  CR == pLine[i] ||
-					  LF == pLine[i]
-				){
-					continue;
-				}else
-				/* ラインコメントの識別子がある場合、次の行の処理へ */
-				if( i < nLineLen - 1 && ';' == pLine[i] ){
-					break;
-				}else
-				if( '\'' == pLine[i] ){
-					nMode = 20;
-					continue;
-				}else
-				if( '"' == pLine[i] ){
-					nMode = 21;
-					continue;
-				}else{
-					if( '_' == pLine[i] ||
-						':' == pLine[i] ||
-						'~' == pLine[i] ||
-						('a' <= pLine[i] &&	pLine[i] <= 'z' )||
-						('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
-						('0' <= pLine[i] &&	pLine[i] <= '9' )||
-						'.' == pLine[i]
-					){
-						nWordIdx = 0;
-						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = '\0';
-						nMode = 1;
-					}else{
-						nMode = 0;
-					}
-				}
+		//トークンに分割
+		for( j = 0; j < MAX_ASM_TOKEN; j++ ) token[ j ] = NULL;
+		for( j = 0; j < MAX_ASM_TOKEN; j++ ){
+			token[ j ] = my_strtok( pTmpLine, length, &offset, _T(" \t\r\n") );
+			if( token[ j ] == NULL ) break;
+			//トークンに含まれるべき文字でないか？
+			if( _tcsstr( token[ j ], _T("\"")) != NULL
+			 || _tcsstr( token[ j ], _T("\\")) != NULL
+			 || _tcsstr( token[ j ], _T("'" )) != NULL ){
+				token[ j ] = NULL;
+				break;
 			}
 		}
+
+		if( token[ 0 ] != NULL ){	//トークンが1個以上ある
+			int nFuncId = -1;
+			TCHAR* entry_token = NULL;
+
+			length = _tcslen( token[ 0 ] );
+			if( length >= 2
+			 && token[ 0 ][ length - 1 ] == _T(':') ){	//ラベル
+				token[ 0 ][ length - 1 ] = _T('\0');
+				nFuncId = 51;
+				entry_token = token[ 0 ];
+			}else
+			if( token[ 1 ] != NULL ){	//トークンが2個以上ある
+				if( my_stricmp( token[ 1 ], _T("proc") ) == 0 ){	//関数
+					nFuncId = 50;
+					entry_token = token[ 0 ];
+				}else
+				if( my_stricmp( token[ 1 ], _T("endp") ) == 0 ){	//関数終了
+					nFuncId = 52;
+					entry_token = token[ 0 ];
+				//}else
+				//if( my_stricmp( token[ 1 ], _T("macro") ) == 0 ){	//マクロ
+				//	nFuncId = -1;
+				//	entry_token = token[ 0 ];
+				//}else
+				//if( my_stricmp( token[ 1 ], _T("struc") ) == 0 ){	//構造体
+				//	nFuncId = -1;
+				//	entry_token = token[ 0 ];
+				}
+			}
+
+			if( nFuncId >= 0 ){
+				/*
+				  カーソル位置変換
+				  物理位置(行頭からのバイト数、折り返し無し行位置)
+				  →
+				  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+				*/
+				int		nPosX;
+				int		nPosY;
+				m_cLayoutMgr.CaretPos_Phys2Log(
+					0,
+					nLineCount/*nFuncLine - 1*/,
+					&nPosX,
+					&nPosY
+				);
+				pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, entry_token, nFuncId );
+			}
+		}
+
+		free( pTmpLine );
 	}
+
 	return;
 }
-
 
 
 
@@ -3528,6 +3424,7 @@ void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 
 	@author zenryaku
 	@date 2003.05.20 zenryaku 新規作成
+	@date 2004.04.20 Moca コメント処理と、不明な終了タグを無視する処理を追加
 */
 void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 {
@@ -3538,6 +3435,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 	int						j;
 	int						k;
 	BOOL					bEndTag;
+	BOOL					bCommentTag = FALSE;
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
@@ -3555,6 +3453,17 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 		}
 		for(i=0;i<nLineLen-1;i++)
 		{
+			// 2004.04.20 Moca コメントを処理する
+			if( bCommentTag )
+			{
+				if( i < nLineLen - 4 && 0 == memcmp( "-->", pLine + i , 3 ) )
+				{
+					bCommentTag = FALSE;
+					i += 2;
+				}
+				continue;
+			}
+			// 2004.04.20 Moca To Here
 			if(pLine[i]!='<' || nDepth>=nMaxStack)
 			{
 				continue;
@@ -3577,11 +3486,19 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 			}
 			if(j==0)
 			{
+				// 2004.04.20 Moca From Here コメントを処理する
+				if( i < nLineLen - 3 && 0 == memcmp( "!--", pLine + i, 3 ) )
+				{
+					bCommentTag = TRUE;
+					i += 3;
+				}
+				// 2004.04.20 Moca To Here
 				continue;
 			}
 			szTitle[j]	=	'\0';
 			if(bEndTag)
 			{
+				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
 				// 終了タグ
 				while(nDepth>0)
 				{
@@ -3589,6 +3506,14 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 					if(!_stricmp(pszStack[nDepth],szTitle))
 					{
 						break;
+					}
+				}
+				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
+				if( nDepth == 0 )
+				{
+					if(_stricmp(pszStack[nDepth],szTitle))
+					{
+						nDepth = nDepthOrg;
 					}
 				}
 			}
