@@ -121,7 +121,18 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	rc.bottom = m_nViewAlignTop;
 	::FillRect( hdc, &rc, hBrush );
 	::DeleteObject( hBrush );
-
+	
+	//	From Here Sep. 7, 2001 genta
+	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){ 
+		rc.left = 0;
+		rc.top = m_nViewAlignTop - m_nTopYohaku;
+		rc.right = m_nViewAlignLeft;
+		rc.bottom = m_nViewAlignTop;
+		hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK );
+		::FillRect( hdc, &rc, hBrush );
+		::DeleteObject( hBrush );
+	}	
+	//	To Here Sep. 7, 2001 genta
 
 	::SetBkMode( hdc, TRANSPARENT );
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
