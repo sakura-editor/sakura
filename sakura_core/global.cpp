@@ -28,10 +28,8 @@
 
 
 #ifdef _DEBUG
-//	const char* GSTR_APPNAME = "テキストエディタ(デバッグバージョン)";
 	const char* GSTR_APPNAME = "sakura(デバッグ版)";
 #else
-//	const char* GSTR_APPNAME = "テキストエディタ";
 	const char* GSTR_APPNAME = "sakura";
 #endif
 
