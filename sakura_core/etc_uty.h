@@ -89,6 +89,8 @@ SAKURA_CORE_API int cescape_j(const char* org, char* out, char cesc, char cwith)
 /* ヘルプの目次を表示 */
 SAKURA_CORE_API void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
 
+SAKURA_CORE_API bool SetClipboardText( HWND, const char*, int );	//!クリープボードにText形式でコピーする
+
 /*!	&の二重化
 	メニューに含まれる&を&&に置き換える
 	@author genta
