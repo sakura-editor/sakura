@@ -2618,13 +2618,23 @@ void CEditView::AdjustScrollBars( void )
 
 
 
-/*
-||
-|| 行桁指定によるカーソル移動
-|| 必要に応じて縦/横スクロールもする
-|| 垂直スクロールをした場合はその行数を返す（正／負）
-||
+/*!	@brief 行桁指定によるカーソル移動
+
+	必要に応じて縦/横スクロールもする．
+	垂直スクロールをした場合はその行数を返す（正／負）．
+	
+	@param nWk_CaretPosX	[in] 移動先桁位置(0～)
+	@param nWk_CaretPosY	[in] 移動先行位置(0～)
+	@param bDraw			[in] TRUE: 再描画あり/ FALSE: 再描画無し
+	@param nCaretMarginRate	[in] 縦スクロール開始位置を決める値
+	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
+
+	@note 不正な位置が指定された場合には適切な座標値に
+		移動するため，引数で与えた座標と移動後の座標は
+		必ずしも一致しない．
+
 	@date 2001/10/20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
+	@date 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
 */
 int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int nCaretMarginRate )
 {
