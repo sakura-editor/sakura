@@ -87,6 +87,14 @@ void CLayoutMgr::DoLayout(
 	Empty();
 	Init();
 	nLineNum = 0;
+	
+	//	Nov. 16, 2002 genta
+	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
+	//	TABが折り返し幅以上の時はTAB=4としてしまう
+	//	折り返し幅の最小値=10なのでこの値は問題ない
+	if( m_nTabSpace >= m_nMaxLineSize ){
+		m_nTabSpace = 4;
+	}
 
 //	pLine = m_pcDocLineMgr->GetFirstLinrStr( &nLineLen );
 	pCDocLine = m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
