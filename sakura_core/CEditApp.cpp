@@ -475,6 +475,7 @@ LRESULT CEditApp::DispatchEvent(
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
 	int					nItemWidth;
 	int					nItemHeight;
+	static bool			bLDClick = false;	/* 左ダブルクリックをしたか 03/02/20 ai */
 
 	switch ( uMsg ){
 	case WM_MENUCHAR:
@@ -708,11 +709,6 @@ LRESULT CEditApp::DispatchEvent(
 			break;
 		}
 		return TRUE;
-//		case WM_LBUTTONDOWN:
-//			/* ポップアップメニュー(トレイ左ボタン) */
-//			nId = CreatePopUpMenu_L();
-//			MYTRACE( "nId = %d\n", nId );
-//			return 0L;
 		case WM_COMMAND:
 			OnCommand( HIWORD(wParam), LOWORD(wParam), (HWND) lParam );
 			return 0L;
@@ -907,8 +903,18 @@ LRESULT CEditApp::DispatchEvent(
 				return 0L;
 //	To Here Oct. 12, 2000
 
+			case WM_LBUTTONDOWN:
+				//	Mar. 29, 2003 genta 念のためフラグクリア
+				bLDClick = false;
+				return 0L;
 			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPに変更
 //				MYTRACE( "WM_LBUTTONDOWN\n" );
+				/* 03/02/20 左ダブルクリック後はメニューを表示しない ai Start */
+				if( bLDClick ){
+					bLDClick = false;
+					return 0L;
+				}
+				/* 03/02/20 ai End */
 				::SetActiveWindow( m_hWnd );
 				::SetForegroundWindow( m_hWnd );
 				/* ポップアップメニュー(トレイ左ボタン) */
@@ -1210,6 +1216,7 @@ LRESULT CEditApp::DispatchEvent(
 				return 0L;
 			case WM_LBUTTONDBLCLK:
 //				MYTRACE( "WM_LBUTTONDBLCLK\n" );
+				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
 				OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE );
 				return 0L;
