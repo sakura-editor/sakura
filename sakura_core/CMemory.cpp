@@ -3305,9 +3305,9 @@ void CMemory::SPACEToTAB( int nTabSpace )
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
-			nPosX = 0;
-			bSpace = FALSE;
-			nStartPos = 0;
+			nPosX = 0;	// 処理中のiに対応する表示桁位置
+			bSpace = FALSE;	//直前がスペースか
+			nStartPos = 0;	// スペースの先頭
 			for( i = 0; i < nLineLen; ++i ){
 				if( SPACE == pLine[i] || TAB == pLine[i] ){
 					if( bSpace == FALSE ){
@@ -3328,8 +3328,12 @@ void CMemory::SPACEToTAB( int nTabSpace )
 							for( j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++ ){
 								pDes[nPosDes] = TAB;
 								nPosDes++;
+								nStartPos += nTabSpace - ( nStartPos % nTabSpace );
 							}
-							for( j = 0; j < (nPosX % nTabSpace); j++ ){
+							//	2003.08.05 Moca
+							//	変換後にTABが1つも入らない場合にスペースを詰めすぎて
+							//	バッファをはみ出すのを修正
+							for( j = nStartPos; j < nPosX; j++ ){
 								pDes[nPosDes] = SPACE;
 								nPosDes++;
 							}
@@ -3354,8 +3358,12 @@ void CMemory::SPACEToTAB( int nTabSpace )
 					for( j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++ ){
 						pDes[nPosDes] = TAB;
 						nPosDes++;
+						nStartPos += nTabSpace - ( nStartPos % nTabSpace );
 					}
-					for( j = 0; j < nPosX % nTabSpace; j++ ){
+					//	2003.08.05 Moca
+					//	変換後にTABが1つも入らない場合にスペースを詰めすぎて
+					//	バッファをはみ出すのを修正
+					for( j = nStartPos; j < nPosX; j++ ){
 						pDes[nPosDes] = SPACE;
 						nPosDes++;
 					}
