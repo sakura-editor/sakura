@@ -1990,7 +1990,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,107,6
+ PRODUCTVERSION 1,2,107,7
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2014,7 +2014,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.107.6\0"
+            VALUE "ProductVersion", "1.2.107.7\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2148,6 +2148,8 @@ BEGIN
     F_JUMPNEXT              "移動履歴: 次へ"
     F_WndScrollDown         "テキストを１行下へスクロール"
     F_WndScrollUp           "テキストを１行上へスクロール"
+    F_GONEXTPARAGRAPH       "次の段落へ移動"
+    F_GOPREVPARAGRAPH       "前の段落へ移動"
 END
 
 STRINGTABLE DISCARDABLE 

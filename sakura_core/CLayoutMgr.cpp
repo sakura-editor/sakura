@@ -715,6 +715,25 @@ const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen, const CLayout** p
 	return (*ppcLayoutDes)->m_pCDocLine->m_pLine->GetPtr() + (*ppcLayoutDes)->m_nOffset;
 }
 
+/*
+|| 指定された位置が行末(改行文字の直前)かどうか調べる
+
+	@date 2002/4/18 MIK
+*/
+bool CLayoutMgr::IsEndOfLine( int nLine, int nPos )
+{
+	CLayout* pLayout;
+	int	nEolLen;
+	if( NULL == ( pLayout = Search( nLine )	) ){
+		return false;
+	}
+	nEolLen = pLayout->m_pCDocLine->m_cEol.GetLen();
+	if( (pLayout->m_nOffset + nPos == pLayout->m_pCDocLine->m_pLine->GetLength() - nEolLen)
+	 && nEolLen )
+		return true;
+	return false;
+}
+
 
 
 /*!	行内文字削除

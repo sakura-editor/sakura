@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta, みつ
 	Copyright (C) 2001, Misaka, asa-o, novice, hor, YAZAKI
-	Copyright (C) 2002, hor, YAZAKI, genta, aroka
+	Copyright (C) 2002, hor, YAZAKI, genta, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -203,12 +203,12 @@ BOOL CEditView::HandleCommand(
 		}
 		Command_FILECLOSE_OPEN();
 		break;
-	case F_FILE_REOPEN_SJIS:	Command_FILE_REOPEN_SJIS();break;		//SJISで開き直す
-	case F_FILE_REOPEN_JIS:		Command_FILE_REOPEN_JIS();break;		//JISで開き直す
-	case F_FILE_REOPEN_EUC:		Command_FILE_REOPEN_EUC();break;		//EUCで開き直す
-	case F_FILE_REOPEN_UNICODE:	Command_FILE_REOPEN_UNICODE();break;	//Unicodeで開き直す
-	case F_FILE_REOPEN_UTF8:	Command_FILE_REOPEN_UTF8();break;		//UTF-8で開き直す
-	case F_FILE_REOPEN_UTF7:	Command_FILE_REOPEN_UTF7();break;		//UTF-7で開き直す
+	case F_FILE_REOPEN_SJIS:	Command_FILE_REOPEN( CODE_SJIS );break;		//SJISで開き直す
+	case F_FILE_REOPEN_JIS:		Command_FILE_REOPEN( CODE_JIS );break;		//JISで開き直す
+	case F_FILE_REOPEN_EUC:		Command_FILE_REOPEN( CODE_EUC );break;		//EUCで開き直す
+	case F_FILE_REOPEN_UNICODE:	Command_FILE_REOPEN( CODE_UNICODE );break;	//Unicodeで開き直す
+	case F_FILE_REOPEN_UTF8:	Command_FILE_REOPEN( CODE_UTF8 );break;		//UTF-8で開き直す
+	case F_FILE_REOPEN_UTF7:	Command_FILE_REOPEN( CODE_UTF7 );break;		//UTF-7で開き直す
 	case F_PRINT:				Command_PRINT();break;					/* 印刷 */
 	case F_PRINT_PREVIEW:		Command_PRINT_PREVIEW();break;			/* 印刷プレビュー */
 	case F_PRINT_PAGESETUP:		Command_PRINT_PAGESETUP();break;		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -306,6 +306,8 @@ BOOL CEditView::HandleCommand(
 	case F_JUMPNEXT:		Command_JUMPNEXT(); break;									//移動履歴: 次へ
 	case F_WndScrollDown:	Command_WndScrollDown(); break;								//テキストを１行下へスクロール	// 2001/06/20 asa-o
 	case F_WndScrollUp:		Command_WndScrollUp(); break;								//テキストを１行上へスクロール	// 2001/06/20 asa-o
+	case F_GONEXTPARAGRAPH:	Command_GONEXTPARAGRAPH( m_bSelectingLock ); break;			//次の段落へ進む
+	case F_GOPREVPARAGRAPH:	Command_GOPREVPARAGRAPH( m_bSelectingLock ); break;			//前の段落へ戻る
 
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
@@ -939,7 +941,16 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 			}
 		}
 		if( nPosX >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-			if( ! m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet ){	//改行文字をぶらさげ	//@@@ 2002.04.17 MIK
+			if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )	//@@@ 2002.04.16 MIK
+			{
+				if( ! m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( nPosY, nPosX ) )	//@@@ 2002.04.18
+				{
+					nPosX = 0;
+					++nPosY;
+				}
+			}
+			else
+			{
 				nPosX = 0;
 				++nPosY;
 			}
@@ -1285,7 +1296,8 @@ void CEditView::Command_GOFILEEND( int bSelect )
 	AddCurrentLineToHistory();
 	Cursor_UPDOWN( m_pcEditDoc->m_cLayoutMgr.GetLineCount() , bSelect );
 	Command_DOWN( bSelect, TRUE );
-	Command_GOLINEEND( bSelect, TRUE );				// 2001.12.21 hor Add
+	if ( !m_bBeginBoxSelect )							// 2002/04/18 YAZAKI
+		Command_GOLINEEND( bSelect, TRUE );				// 2001.12.21 hor Add
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
 	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = m_nCaretPosX;
@@ -4109,11 +4121,12 @@ end_of_func:;
 		if((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx))
 			SendStatusMessage("▼先頭から再検索しました");
 	}else{
+		ShowEditCaret();	// 2002/04/18 YAZAKI
+		DrawCaretPosInfo();	// 2002/04/18 YAZAKI
 		SendStatusMessage("▽見つかりませんでした");
 //	if( FALSE == bFound ){
 // To Here 2002.01.26 hor
 		::MessageBeep( MB_ICONHAND );
-		ShowEditCaret();
 		if( bRedraw	&&
 			m_pShareData->m_Common.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
 		){
@@ -5402,6 +5415,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 
 	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && !nReLoad ){
 		/* アクティブにする */
+//		m_pcEditDoc->m_cDlgFuncList.m_nCurLine = m_nCaretPosY + 1;	// 2002/04/18 YAZAKI
 		m_pcEditDoc->m_cDlgFuncList.ChangeListType( nOutlineType );
 		ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
 		return TRUE;
@@ -9797,10 +9811,29 @@ void CEditView::Command_BROWSE( void )
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
-	char	szURL[MAX_PATH + 64];
-	wsprintf( szURL, "file://%s", m_pcEditDoc->m_szFilePath );
+//	char	szURL[MAX_PATH + 64];
+//	wsprintf( szURL, "%s", m_pcEditDoc->m_szFilePath );
 	/* URLを開く */
-	::ShellExecute( NULL, "open", szURL, NULL, NULL, SW_SHOW );
+//	::ShellExecuteEx( NULL, "open", szURL, NULL, NULL, SW_SHOW );
+
+    SHELLEXECUTEINFO info; 
+    info.cbSize =sizeof(SHELLEXECUTEINFO);
+    info.fMask = 0;
+    info.hwnd = NULL;
+    info.lpVerb = NULL;
+    info.lpFile = m_pcEditDoc->m_szFilePath;
+    info.lpParameters = NULL;
+    info.lpDirectory = NULL;
+    info.nShow = SW_SHOWNORMAL;
+    info.hInstApp = 0;
+    info.lpIDList = NULL;
+    info.lpClass = NULL;
+    info.hkeyClass = 0; 
+    info.dwHotKey = 0;
+    info.hIcon =0;
+
+	::ShellExecuteEx(&info);
+
 	return;
 }
 
@@ -10072,7 +10105,7 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 
 
 /* 再オープン */
-void CEditView::ReOpen_XXX( int nCharCode )
+void CEditView::Command_FILE_REOPEN( int nCharCode )
 {
 	if( -1 != _access( m_pcEditDoc->m_szFilePath, 0 )
 	 && m_pcEditDoc->IsModified()	/* 変更フラグ */
@@ -10093,52 +10126,6 @@ void CEditView::ReOpen_XXX( int nCharCode )
 	DrawCaretPosInfo();
 	return;
 
-}
-
-
-
-
-//SJISで開き直す
-void CEditView::Command_FILE_REOPEN_SJIS( void )
-{
-	/* 再オープン */
-	ReOpen_XXX( CODE_SJIS );
-	return;
-}
-//JISで開き直す
-void CEditView::Command_FILE_REOPEN_JIS( void )
-{
-	/* 再オープン */
-	ReOpen_XXX( CODE_JIS );
-	return;
-}
-//EUCで開き直す
-void CEditView::Command_FILE_REOPEN_EUC( void )
-{
-	/* 再オープン */
-	ReOpen_XXX( CODE_EUC );
-	return;
-}
-//Unicodeで開き直す
-void CEditView::Command_FILE_REOPEN_UNICODE( void )
-{
-	/* 再オープン */
-	ReOpen_XXX( CODE_UNICODE );
-	return;
-}
-//UTF-8で開き直す
-void CEditView::Command_FILE_REOPEN_UTF8( void )
-{
-	/* 再オープン */
-	ReOpen_XXX( CODE_UTF8 );
-	return;
-}
-//UTF-7で開き直す
-void CEditView::Command_FILE_REOPEN_UTF7( void )
-{
-	/* 再オープン */
-	ReOpen_XXX( CODE_UTF7 );
-	return;
 }
 
 

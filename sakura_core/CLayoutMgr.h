@@ -87,6 +87,7 @@ public:
 	int GetLineCount( void ) { return m_nLines; }	/* 全物理行数を返す */
 	const char* GetLineStr( int , int* );	/* 指定された物理行のデータへのポインタとその長さを返す */
 	const char* GetLineStr( int , int*, const CLayout** );	/* 指定された物理行のデータへのポインタとその長さを返す */
+	bool IsEndOfLine( int nLine, int nPos );	/* 指定位置が行末(改行文字の直前)か調べる */	//@@@ 2002.04.18 MIK
 //	const CLayout* GetLineData( int );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	CLayout* Search( int );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	int WhereCurrentWord( int , int , int* , int* , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */

@@ -157,29 +157,29 @@ BOOL CPropCommon::DispatchEvent_p7(
 			case LVN_BEGINLABELEDIT:
 #ifdef _DEBUG
 				MYTRACE( "LVN_BEGINLABELEDIT\n" );
-				MYTRACE( "	plvi->mask =[%xh]\n", plvi->mask );
-				MYTRACE( "	plvi->iItem =[%d]\n", plvi->iItem );
-				MYTRACE( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				MYTRACE( "	plvi->state =[%xf]\n", plvi->state );
-				MYTRACE( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				MYTRACE( "	plvi->pszText =[%s]\n", plvi->pszText );
-				MYTRACE( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				MYTRACE( "	plvi->iImage=[%d]\n", plvi->iImage );
-				MYTRACE( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+												MYTRACE( "	plvi->mask =[%xh]\n", plvi->mask );
+												MYTRACE( "	plvi->iItem =[%d]\n", plvi->iItem );
+												MYTRACE( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( "	plvi->state =[%xf]\n", plvi->state );
+												MYTRACE( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( "	plvi->pszText =[%s]\n", plvi->pszText );
+												MYTRACE( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( "	plvi->iImage=[%d]\n", plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
 				return TRUE;
 			case LVN_ENDLABELEDIT:
 #ifdef _DEBUG
 				MYTRACE( "LVN_ENDLABELEDIT\n" );
-				MYTRACE( "	plvi->mask =[%xh]\n", plvi->mask );
-				MYTRACE( "	plvi->iItem =[%d]\n", plvi->iItem );
-				MYTRACE( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				MYTRACE( "	plvi->state =[%xf]\n", plvi->state );
-				MYTRACE( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				MYTRACE( "	plvi->pszText =[%s]\n", plvi->pszText  );
-				MYTRACE( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				MYTRACE( "	plvi->iImage=[%d]\n", plvi->iImage );
-				MYTRACE( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+												MYTRACE( "	plvi->mask =[%xh]\n", plvi->mask );
+												MYTRACE( "	plvi->iItem =[%d]\n", plvi->iItem );
+												MYTRACE( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( "	plvi->state =[%xf]\n", plvi->state );
+												MYTRACE( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( "	plvi->pszText =[%s]\n", plvi->pszText  );
+												MYTRACE( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( "	plvi->iImage=[%d]\n", plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
 				if( NULL == plvi->pszText ){
 					return TRUE;

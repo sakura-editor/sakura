@@ -165,10 +165,19 @@ void CEditView::InsertData_CEditView(
 		*pnNewPos = LineIndexToColmn( pLine2, nLineLen2, *pnNewPos );
 	}
 	if( *pnNewPos >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-		if( ! m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet ){	//@@@ 2002.04.16 MIK
+		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )	//@@@ 2002.04.16 MIK
+		{
+			if( ! m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( *pnNewLine, *pnNewPos ) )	//@@@ 2002.04.18
+			{
+				*pnNewPos = 0;
+				(*pnNewLine)++;
+			}
+		}
+		else
+		{
 			*pnNewPos = 0;
 			(*pnNewLine)++;
-		}	//@@@ 2002.04.16 MIK
+		}
 	}
 
 //	MYTRACE( "nModifyLayoutLinesOld=%d nInsLineNum=%d *pnNewLine=%d *pnNewPos=%d\n", nModifyLayoutLinesOld, nInsLineNum, *pnNewLine, *pnNewPos );
@@ -212,6 +221,19 @@ void CEditView::InsertData_CEditView(
 				// 2002.02.25 Mod By KK 次行 (nY - m_nViewTopLine - 1); => (nY - m_nViewTopLine);
 				//ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine - 1);
 				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine);
+
+				//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
+				if( m_pcEditDoc->GetDocumentAttribute().m_bWordWrap
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuHead	//@@@ 2002.04.19 MIK
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuTail	//@@@ 2002.04.19 MIK
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.19 MIK
+				{
+					ps.rcPaint.top -= (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
+				}
+				if( ps.rcPaint.top < 0 ){
+					ps.rcPaint.top = 0;
+				}
 
 				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * ( nModifyLayoutLinesOld + 1);
 				if( m_nViewAlignTop + m_nViewCy < ps.rcPaint.bottom ){
@@ -1427,7 +1449,12 @@ void CEditView::ReplaceData_CEditView(
 
 				/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 				ps.rcPaint.top = m_nViewAlignTop + (LRArg.nModLineFrom - m_nViewTopLine)* (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
-				if( m_pcEditDoc->GetDocumentAttribute().m_bWordWrap ){
+				if( m_pcEditDoc->GetDocumentAttribute().m_bWordWrap
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuHead	//@@@ 2002.04.19 MIK
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuTail	//@@@ 2002.04.19 MIK
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
+				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.19 MIK
+				{
 					ps.rcPaint.top -= (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
 				}
 				if( ps.rcPaint.top < 0 ){
@@ -1979,6 +2006,56 @@ void CEditView::Command_WndScrollUp(void)
 
 
 
+/* 次の段落へ進む
+	2002/04/19
+*/
+void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
+{
+	CDocLine* pcDocLine;
+	int nCaretPointer = +1;
+	char* pLine;
+	int nLineLen;
+	int i;
+	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+		pLine = pcDocLine->m_pLine->GetPtr();
+		nLineLen = pcDocLine->m_pLine->GetLength() - pcDocLine->m_cEol.GetLen();
+		for ( i = 0; i < nLineLen; i++ ){
+			if (pLine[i] != ' ' && pLine[i] != '\t'){
+				break;	//	スペース、タブ以外の文字があったので移動続行。
+			}
+		}
+		if (i == nLineLen)	break;	//	すべてスペースかタブだけだったので移動終了。
+		nCaretPointer++;	//	次の行
+	};
+	//	EOFまで来たり、目的の場所まできたので移動終了。
+	Cursor_UPDOWN( nCaretPointer, bSelect );
+	return;
+}
+
+void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
+{
+	CDocLine* pcDocLine;
+	int nCaretPointer = -1;
+	char* pLine;
+	int nLineLen;
+	int i;
+	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+		pLine = pcDocLine->m_pLine->GetPtr();
+		nLineLen = pcDocLine->m_pLine->GetLength() - pcDocLine->m_cEol.GetLen();
+		for ( i = 0; i < nLineLen; i++ ){
+			if (pLine[i] != ' ' && pLine[i] != '\t'){
+				break;	//	スペース、タブ以外の文字があったので移動続行。
+			}
+		}
+		nCaretPointer--;	//	前の行
+		if (i == nLineLen)	break;	//	すべてスペースかタブだけだったので移動終了。
+	};
+	nCaretPointer++;	//	補正
+	//	EOFまで来たり、目的の場所まできたので移動終了。
+	Cursor_UPDOWN( nCaretPointer, bSelect );
+	return;
+}
+
 // From Here 2001.12.03 hor
 
 //! ブックマークの設定・解除を行う(トグル動作)
@@ -2149,17 +2226,20 @@ void CEditView::Command_BOOKMARK_PATTERN( void )
 */
 void CEditView::Command_TRIM( BOOL bLeft )
 {
+	bool bBeDisableSelectArea = false;
 	if(!IsTextSelected()){	//	非選択時は行選択に変更
 		m_nSelectLineFrom = m_nCaretPosY;
 		m_nSelectColmFrom = 0;
 		m_nSelectLineTo   = m_nCaretPosY;
 		m_nSelectColmTo   = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		bBeDisableSelectArea = true;
 	}
 	if(bLeft){
 		ConvSelectedArea( F_LTRIM );
 	}else{
 		ConvSelectedArea( F_RTRIM );
 	}
+	if (bBeDisableSelectArea) DisableSelectArea( TRUE );
 	return;
 }
 

@@ -594,7 +594,7 @@ void CDlgOpenFile::Create(
 		strcpy( m_szDefaultWildCard, pszUserWildCard );
 	}
 	/* 「開く」での初期フォルダ */
-	if( 0 < lstrlen( pszDefaultPath ) ){	//現在編集中のファイルのパス
+	if( pszDefaultPath && 0 < lstrlen( pszDefaultPath ) ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		char szDrive[_MAX_DRIVE];
 		char szDir[_MAX_DIR];
 		_splitpath( pszDefaultPath, szDrive, szDir, NULL, NULL );

@@ -357,6 +357,8 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	return FALSE;
 }
 
+
+
 //@@@ 2002.01.18 add start
 LPVOID CDlgFind::GetHelpIdTable(void)
 {

@@ -394,10 +394,13 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		OnSize( 0, 0, 0, 0 );
 
 		if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
+			/* 上下に分割したとき */
 			/* ペインの表示状態を他のビューにコピー */
 			if( NULL != pcViewArr[0] && NULL != pcViewArr[2] ){
 				pcViewArr[0]->CopyViewStatus( pcViewArr[2] );
 			}
+			// YAZAKI
+			pcViewArr[2]->m_nViewTopLine = pcViewArr[0]->m_nViewTopLine + pcViewArr[0]->m_nViewRowNum;
 		}else
 		if( nAllSplitRowsOld > 1 && nAllSplitColsOld == 1 ){
 		}else
@@ -427,7 +430,12 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 			}
 		}
 		if( m_nActivePane == 0 || m_nActivePane == 1 ){
-			nActivePane = 0;
+			if ( pcViewArr[2]->m_nViewTopLine < pcViewArr[2]->m_nCaretPosY ){
+				nActivePane = 2;
+			}
+			else {
+				nActivePane = 0;
+			}
 		}else{
 			nActivePane = 2;
 		}

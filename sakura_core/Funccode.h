@@ -107,7 +107,8 @@
 #define F_JUMPNEXT			30371	//移動履歴: 次へ
 #define F_WndScrollDown		30380	//テキストを１行下へスクロール	// 2001/06/20 asa-o
 #define F_WndScrollUp		30381	//テキストを１行上へスクロール	// 2001/06/20 asa-o
-
+#define F_GONEXTPARAGRAPH	30382	//次の段落へ
+#define F_GOPREVPARAGRAPH	30383	//前の段落へ
 
 /* 選択系 */
 #define F_SELECTWORD		30400	//現在位置の単語選択
