@@ -17,6 +17,7 @@
 #include "CEditView.h"
 #include "CEditDoc.h"
 #include "CEditApp.h"
+#include "charcode.h"
 
 /*!
 	コマンドコードの変換(grep mode時)
@@ -34,7 +35,9 @@ void CEditView::TranslateCommand_grep(
 		return;
 
 	if( nCommand == F_CHAR ){
-		if( m_pShareData->m_Common.m_bGTJW_RETURN ){
+		//	Jan. 23, 2005 genta 文字判定忘れ
+		if(( lparam1 == CR || lparam1 == LF ) &&
+			m_pShareData->m_Common.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
 			lparam1 = (((SHORT)0x8000 & ::GetKeyState( VK_CONTROL )) != 0 );
 		}
