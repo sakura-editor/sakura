@@ -2468,13 +2468,14 @@ int CEditView::DetectWidthOfLineNumberArea_calculate( void )
 	if( 0 < nAllLines ){
 		nWork = 100;
 		for( i = 3; i < 12; ++i ){
-			if( ( nWork - 1 ) / nAllLines >= 1 ){
+			if( nWork > nAllLines ){	// Oct. 18, 2003 genta ®‚ğ®—
 				break;
 			}
 			nWork *= 10;
 		}
 	}else{
-		i = 1;
+		//	2003.09.11 wmlhq s”Ô†‚ª1Œ…‚Ì‚Æ‚«‚Æ•‚ğ‡‚í‚¹‚é
+		i = 3;
 	}
 	return i;
 
