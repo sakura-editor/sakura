@@ -109,6 +109,7 @@ public:
 
 	//	Aug. 31, 2000 genta
 	const CEditView& ActiveView(void) const { return m_cEditViewArr[m_nActivePaneIndex]; }
+	CEditView& ActiveView(void) { return m_cEditViewArr[m_nActivePaneIndex]; }
 	//	Nov. 20, 2000 genta
 	void SetImeMode(int mode);	//	IMEèÛë‘ÇÃê›íË
 
