@@ -2498,7 +2498,7 @@ BEGIN
     F_FILECLOSE_OPEN        "閉じて開く..."
     F_FILEOPEN_DROPDOWN     "開く... (ドロップダウン)"
     F_FILESAVECLOSE         "保存して閉じる"
-    F_FILESAVEALL           "全て上書き保存"
+    F_FILESAVEALL           "すべて上書き保存"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
 END
 
