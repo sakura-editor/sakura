@@ -381,7 +381,9 @@ void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 
 
 
-/* ツールバーボタンリストのアイテム描画 */
+/* ツールバーボタンリストのアイテム描画
+	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
+*/
 void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
 	char		szLabel[256];
@@ -398,9 +400,10 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 //	HBITMAP		m_hbmpCompatBMPOld;
 
 
-	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+//	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+	hBrush = ::GetSysColorBrush( COLOR_WINDOW );
 	::FillRect( pDis->hDC, &pDis->rcItem, hBrush );
-	::DeleteObject( hBrush );
+//	::DeleteObject( hBrush );
 
 	rc  = pDis->rcItem;
 	rc0 = pDis->rcItem;
@@ -474,10 +477,12 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 
 		/* アイテムが選択されている */
 		if( pDis->itemState & ODS_SELECTED ){
-			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT ) );
+//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT ) );
+			hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
 		}else{
-			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+			hBrush = ::GetSysColorBrush( COLOR_WINDOW );
 			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_WINDOWTEXT ) );
 		}
 		rc1.left++;
@@ -485,7 +490,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		rc1.right--;
 		rc1.bottom--;
 		::FillRect( pDis->hDC, &rc1, hBrush );
-		::DeleteObject( hBrush );
+//		::DeleteObject( hBrush );
 
 		::SetBkMode( pDis->hDC, TRANSPARENT );
 		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, strlen( szLabel ) );

@@ -763,6 +763,7 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 
 /*! メニューアイテム描画
 	@date 2001.12.21 YAZAKI デバッグモードでもメニューを選択したらハイライト。
+	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
@@ -808,22 +809,24 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 
 
 	/* アイテム矩形塗りつぶし */
-	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_MENU ) );
+//	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_MENU ) );
+	hBrush = ::GetSysColorBrush( COLOR_MENU );
 	::FillRect( hdc, &lpdis->rcItem, hBrush );
-	::DeleteObject( hBrush );
+//	::DeleteObject( hBrush );
 
 
 	/* アイテムが選択されている */
 	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
-		hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT/*COLOR_3DHIGHLIGHT*/ ) );
+//		hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT/*COLOR_3DHIGHLIGHT*/ ) );
+		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 		rc1 = lpdis->rcItem;
 		if( -1 != m_nMenuItemBitmapIdxArr[nItemIndex] || lpdis->itemState & ODS_CHECKED ){
 			rc1.left += (nIndentLeft - 2);
 		}
 		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
-		::DeleteObject( hBrush );
+//		::DeleteObject( hBrush );
 
 		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
@@ -925,14 +928,15 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		/* アイテムが選択されていない場合は3D枠の中を明るく塗りつぶす */
 		if( lpdis->itemState & ODS_SELECTED ){
 		}else{
-			HBRUSH hbr = ::CreateSolidBrush( ::GetSysColor( COLOR_3DLIGHT ) );
 //			HBRUSH hbr = ::CreateSolidBrush( ::GetSysColor( COLOR_3DHILIGHT ) );
+//			HBRUSH hbr = ::CreateSolidBrush( ::GetSysColor( COLOR_3DLIGHT ) );
+			HBRUSH hbr = ::GetSysColorBrush( COLOR_3DLIGHT );
 			HBRUSH hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
 			RECT rc;
 			::SetRect( &rc, lpdis->rcItem.left + 1 + 1, lpdis->rcItem.top + 1, lpdis->rcItem.left + 1 + 1 + 16 + 2, lpdis->rcItem.top + 1+ 15 + 2 );
 			::FillRect( hdc, &rc, hbr );
 			::SelectObject( hdc, hbrOld );
-			::DeleteObject( hbr );
+//			::DeleteObject( hbr );
 		}
 	}
 
@@ -961,9 +965,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
 			/* 淡色アイコン */
-			COLORREF cOld;
+			// 2003.09.04 Moca SetTextColorする必要は無い
+//			COLORREF cOld;
 //			cOld = SetTextColor( hdc, GetSysColor(COLOR_3DSHADOW) );	//Oct. 24, 2000 これは標準ではRGB(128,128,128)と同じ
-			cOld = SetTextColor( hdc, RGB(132,132,132) );	//Oct. 24, 2000 JEPRO もう少し薄くした
+//			cOld = SetTextColor( hdc, RGB(132,132,132) );	//Oct. 24, 2000 JEPRO もう少し薄くした
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1,	//	X
@@ -972,9 +977,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				lpdis->rcItem.top + GetSystemMetrics(SM_CYMENU)/2 - 8,	//	Y
 				ILD_MASK
 			);
-			SetTextColor( hdc, cOld );
+//			SetTextColor( hdc, cOld );
 
 		}else{
+/*
 			COLORREF colBk;
 			if( lpdis->itemState & ODS_CHECKED && !( lpdis->itemState & ODS_SELECTED ) ){
 				colBk = ::GetSysColor( COLOR_3DLIGHT );
@@ -982,7 +988,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}else{
 				colBk = ::GetSysColor( COLOR_MENU );
 			}
-
+*/
 			/* 通常のアイコン */
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
