@@ -60,6 +60,15 @@ protected:
 	int SetTreeTxtNest( HWND, HTREEITEM, int, int, HTREEITEM*, int );
 	void GetTreeTextNext( HWND, HTREEITEM, int );
 
+private:
+	//	May 18, 2001 genta
+	/*!
+		@brief アウトライン解析種別
+		
+		0: List, 1: Tree
+	*/
+	int	m_nViewType;
+
 };
 
 

@@ -792,8 +792,13 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 
 		//	Aug. 16, 2000 genta
 		//	現在のファイル名を初期値で与えない
-		//	strcpy( szPath, m_szFilePath );
-		szPath[0] = '\0';
+		//	May 18, 2001 genta
+		//	現在のファイル名を与えないのは上書き禁止の時のみ
+		//	そうでない場合には現在のファイル名を初期値として設定する。
+		if( IsReadOnly() )
+			szPath[0] = '\0';
+		else
+			strcpy( szPath, m_szFilePath );
 
 		//	Feb. 9, 2001 genta
 		if( SaveFileDialog( szPath, &m_nCharCode, &cEol ) ){

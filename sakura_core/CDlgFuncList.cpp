@@ -122,25 +122,41 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	m_cmemClipText.SetDataSz( "" );	/* クリップボードコピー用テキスト */
 
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
-		::DestroyWindow( hwndList );
+		//	May 18, 2001 genta
+		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
+		//	::DestroyWindow( hwndList );
+		::ShowWindow( hwndList, SW_HIDE );
+		m_nViewType = 1;
 		/* ツリーコントロールの初期化：C++メソッドツリー */
 		SetTreeCpp( m_hWnd );
 		::SetWindowText( m_hWnd, "C++メソッドツリー" );
 	}else
 	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
-		::DestroyWindow( hwndList );
+		//	May 18, 2001 genta
+		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
+		//::DestroyWindow( hwndList );
+		::ShowWindow( hwndList, SW_HIDE );
+		m_nViewType = 1;
 		/* ツリーコントロールの初期化：テキストトピックツリー */
 		SetTreeTxt( m_hWnd );
 		::SetWindowText( m_hWnd, "テキスト トピックツリー" );
 	}else
 	if( OUTLINE_JAVA == m_nListType ){ /* Javaメソッドツリー */
-		::DestroyWindow( hwndList );
+		//	May 18, 2001 genta
+		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
+		//	::DestroyWindow( hwndList );
+		::ShowWindow( hwndList, SW_HIDE );
+		m_nViewType = 1;
 		/* ツリーコントロールの初期化：Javaメソッドツリー */
 		SetTreeJava( m_hWnd, TRUE );
 		::SetWindowText( m_hWnd, "Javaメソッドツリー" );
 	}else
 	if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
-		::DestroyWindow( hwndList );
+		//	May 18, 2001 genta
+		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
+		//	::DestroyWindow( hwndList );
+		::ShowWindow( hwndList, SW_HIDE );
+		m_nViewType = 1;
 		/* ツリーコントロールの初期化：COBOL アウトライン */
 		SetTreeJava( m_hWnd, FALSE );
 		::SetWindowText( m_hWnd, "COBOL アウトライン" );
@@ -162,7 +178,11 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 //			::SetWindowText( m_hWnd, "COBOLアウトライン" );
 //			break;
 		}
-		::DestroyWindow( hwndTree );
+		//	May 18, 2001 genta
+		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
+		//::DestroyWindow( hwndTree );
+		::ShowWindow( hwndTree, SW_HIDE );
+		m_nViewType = 0;
 		::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
 		nFuncLineOld = 0;
 		bSelected = FALSE;
@@ -296,7 +316,8 @@ int CDlgFuncList::GetData( void )
 
 	nLineTo = -1;
 	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
-	if( NULL != hwndList ){
+	if( m_nViewType == 0 ){
+		//	List
 		nItem = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 		if( -1 == nItem ){
 			return -1;
