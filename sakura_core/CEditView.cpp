@@ -2904,7 +2904,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 
 /*! 正しいカーソル位置を算出する(EOF以降のみ)
 	@param pnPosX [in/out] カーソルのレイアウト座標X
-	@param pnPosX [in/out] カーソルのレイアウト座標Y
+	@param pnPosY [in/out] カーソルのレイアウト座標Y
 	@retval	TRUE 座標を修正した
 	@retval	FALSE 座標は修正されなかった
 	@note	EOFの直前が改行でない場合は、その行に限りEOF以降にも移動可能
@@ -3651,7 +3651,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /*!
 	マウス中ボタンを押したときの処理
 
-	@param fwkeys [in] first message parameter
+	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
 	@date 2004.10.11 novice 新規作成
@@ -3676,7 +3676,7 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 /*!
 	マウス左サイドボタンを押したときの処理
 
-	@param fwkeys [in] first message parameter
+	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
 	@date 2004.10.10 novice 新規作成
@@ -3703,7 +3703,7 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 /*!
 	マウス右サイドボタン押したときの処理
 
-	@param fwkeys [in] first message parameter
+	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
 	@date 2004.10.10 novice 新規作成
@@ -4676,7 +4676,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	@param nPos [in] スクロール位置
 	@retval 実際にスクロールした行数 (正:下方向/負:上方向)
 
-	@data 2004.09.11 genta 行数を戻り値として返すように．(同期スクロール用)
+	@date 2004.09.11 genta 行数を戻り値として返すように．(同期スクロール用)
 */
 int CEditView::ScrollAtV( int nPos )
 {
@@ -4759,7 +4759,7 @@ int CEditView::ScrollAtV( int nPos )
 	@param nPos [in] スクロール位置
 	@retval 実際にスクロールした桁数 (正:右方向/負:左方向)
 
-	@data 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
+	@date 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
 */
 int CEditView::ScrollAtH( int nPos )
 {

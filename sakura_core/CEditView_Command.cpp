@@ -2459,7 +2459,7 @@ void CEditView::Command_PASTE( void )
 /*! テキストを貼り付け
 	@param pszText  [in] 貼り付ける文字列。
 	@param nTextLen [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
-	@date 2004.05.14 Moca '\0'を受け入れるように、引数に長さを追加
+	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
 */
 void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, int nTextLen, BOOL bNoWaitCursor )
 {
@@ -3771,7 +3771,7 @@ void CEditView::Command_FILENEW( void )
 /*! @brief ファイルを開く
 
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
-	@data 2004.10.09 genta 実装をCEditDocへ移動
+	@date 2004.10.09 genta 実装をCEditDocへ移動
 */
 void CEditView::Command_FILEOPEN( const char *filename, int nCharCode, BOOL bReadOnly )
 {
@@ -6683,6 +6683,7 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	@param file_extno [in]		処理対象拡張子リストの要素数
 	@param open_ext [in]		開く対象とする拡張子
 	@param open_extno [in]		開く対象拡張子リストの要素数
+	@param errmes [in]			ファイルを開けなかった場合に表示するエラーメッセージ
 
 	@date 2003.06.28 Moca ヘッダ・ソースファイルオープン機能のコードを統合
 */
@@ -9368,7 +9369,7 @@ void CEditView::Command_INS_TIME( void )
 
 
 /*! 外部コマンド実行ダイアログ表示
-	@@@2002.2.2 YAZAKI.
+	@date 2002.02.02 YAZAKI.
 */
 void CEditView::Command_EXECCOMMAND_DIALOG( const char *cmd )
 {

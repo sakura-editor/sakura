@@ -45,7 +45,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
 {
-//	機能ID			関数名			引数				作業用バッファ
+//	機能番号			関数名			引数				作業用バッファ
 
 	/* ファイル操作系 */
 	{F_FILENEW,						"FileNew",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規作成
@@ -502,6 +502,7 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 
 	@param idx [in] 読み込み先マクロバッファ番号
 	@param pszPath [in] マクロファイル名
+	@param hInstance [in] インスタンスハンドル
 
 	@author YAZAKI
 */
@@ -547,7 +548,7 @@ void CSMacroMgr::Clear( int idx )
 	指定されたIDに対応するMacroInfo構造体へのポインタを返す．
 	該当するIDに対応する構造体がなければNULLを返す．
 
-	@param nFuncID [in] 機能ID
+	@param nFuncID [in] 機能番号
 	@return 構造体へのポインタ．見つからなければNULL
 	
 	@date 2002.06.16 genta
@@ -572,7 +573,7 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 }
 
 /*!
-	機能IDから関数名と機能名日本語を取得
+	機能番号から関数名と機能名日本語を取得
 	
 	@param hInstance [in] リソース取得のためのInstance Handle
 	@param nFuncID [in] 機能番号
@@ -612,7 +613,7 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 }
 
 /*!
-	関数名（S_xxxx）から機能IDと機能名日本語を取得．
+	関数名（S_xxxx）から機能番号と機能名日本語を取得．
 	関数名はS_で始まる場合と始まらない場合の両方に対応．
 
 	@param hInstance [in] リソース取得のためのInstance Handle
