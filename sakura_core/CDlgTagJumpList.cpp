@@ -200,13 +200,8 @@ void CDlgTagJumpList::SetData( void )
 //		}
 	}
 
-	nIndex = SearchBestTag();
-	if( nIndex != -1 )
-	{
-		ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-		ListView_EnsureVisible( hwndList, nIndex, FALSE );
-	}
-
+	//	”‚ª‘½‚·‚¬‚éê‡‚ÍØ‚èÌ‚Ä‚½|‚ğ––”ö‚É‘}“ü
+	//	2003.05.12 MIK ƒJ[ƒ\ƒ‹ˆÊ’u‚É‘}“ü‚³‚ê‚Ä‚¢‚½‚Ì‚ğ––”ö‚É³‚µ‚­“ü‚é‚æ‚¤‚É
 	if( m_bOverflow )
 	{
 		lvi.mask     = LVIF_TEXT;
@@ -218,6 +213,13 @@ void CDlgTagJumpList::SetData( void )
 		ListView_SetItemText( hwndList, nIndex, 2, "" );
 		ListView_SetItemText( hwndList, nIndex, 3, "(‚±‚êˆÈ~‚ÍØ‚èÌ‚Ä‚Ü‚µ‚½)" );
 		ListView_SetItemText( hwndList, nIndex, 4, "" );
+	}
+
+	nIndex = SearchBestTag();
+	if( nIndex != -1 )
+	{
+		ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+		ListView_EnsureVisible( hwndList, nIndex, FALSE );
 	}
 
 	return;
