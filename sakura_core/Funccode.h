@@ -400,6 +400,7 @@
 //	メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能
 #define F_MENU_NOT_USED_FIRST 32768
 #define F_CHGMOD_EOL          32800		// 入力改行コード指定 2003.06.23 Moca
+#define F_SET_QUOTESTRING     32801		// 共通設定: 引用符の設定	2005.01.29 genta
 
 #define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 
