@@ -387,7 +387,6 @@ int CEditView::DispLineNew(
 	HBRUSH					hBrush;
 	COLORREF				colTextColorOld;
 	COLORREF				colBkColorOld;
-	static char*			pszEOF = "[EOF]";
 //#ifndef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 // //	static char*			pszTAB = ">       ";
 // //	static char*			pszTAB = ">･･･････";
@@ -1431,42 +1430,9 @@ searchnext:;
 			nX < TypeDataPtr->m_nMaxLineSize
 		){
 			if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
-
-				colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_colTEXT );	/* EOFの色 */
-				colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_colBACK );		/* EOF背景の色 */
-				rcClip.left = x + nX * ( nCharWidth );
-				rcClip.right = rcClip.left + ( nCharWidth ) * ( lstrlen( pszEOF ) );
-				if( rcClip.left < m_nViewAlignLeft ){
-					rcClip.left = m_nViewAlignLeft;
-				}
-				if( rcClip.left < rcClip.right &&
-					rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
-					rcClip.top = y;
-					rcClip.bottom = y + nLineHeight;
-
-					HFONT	hFontOld;
-					/* フォントを選ぶ */
-					hFontOld = (HFONT)::SelectObject( hdc,
-						ChooseFontHandle(
-							TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont,
-							TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bUnderLine
-						)
-					);
-//					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont ){	/* 太字か */
-//						hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
-//					}else{
-//						hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-//					}
-
-					::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
-						&rcClip, pszEOF, lstrlen( pszEOF ), m_pnDx );
-
-					::SelectObject( hdc, hFontOld );
-
-				}
-				nX += lstrlen( pszEOF );
-				::SetTextColor( hdc, colTextColorOld );
-				::SetBkColor( hdc, colBkColorOld );
+				//	May 29, 2004 genta (advised by MIK) 共通関数化
+				nX += DispEOF( hdc, x + nX * ( nCharWidth ), y, nCharWidth, nLineHeight, fuOptions,
+					TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
 			}
 			bEOF = TRUE;
 		}
@@ -1508,42 +1474,9 @@ end_of_line:;
 			if( nCount == 0 && m_nViewTopLine == 0 && nLineNum == 0 ){
 				/* EOF記号の表示 */
 				if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
-					colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_colTEXT );	/* EOFの色 */
-					colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_colBACK );		/* EOF背景の色 */
-					rcClip.left = /*m_nViewAlignLeft*/x;
-					rcClip.right = rcClip.left + ( nCharWidth ) * ( lstrlen( pszEOF ) );
-					if( rcClip.left < m_nViewAlignLeft ){
-						rcClip.left = m_nViewAlignLeft;
-					}
-					if( rcClip.left < rcClip.right &&
-						rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
-						rcClip.top = y;
-						rcClip.bottom = y + nLineHeight;
-
-						HFONT	hFontOld;
-						/* フォントを選ぶ */
-						hFontOld = (HFONT)::SelectObject( hdc,
-							ChooseFontHandle(
-								TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont,
-								TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bUnderLine
-							)
-						);
-//						if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont ){	/* 太字か */
-//							hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
-//						}else{
-//							hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-//						}
-
-						::ExtTextOut( hdc, x , y, fuOptions,
-							&rcClip, pszEOF, lstrlen( pszEOF ), m_pnDx );
-
-						::SelectObject( hdc, hFontOld );
-					}
-					nX += lstrlen( pszEOF );
-
-					::SetTextColor( hdc, colTextColorOld );
-					::SetBkColor( hdc, colBkColorOld );
-
+					//	May 29, 2004 genta (advised by MIK) 共通関数化
+					nX += DispEOF( hdc, x, y, nCharWidth, nLineHeight, fuOptions,
+						TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
 				}
 				y += nLineHeight;
 				bEOF = TRUE;
@@ -1559,41 +1492,9 @@ end_of_line:;
 					 ){
 						/* EOF記号の表示 */
 						if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
-							colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_colTEXT );	/* EOFの色 */
-							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_colBACK );		/* EOF背景の色 */
-							rcClip.left = /*m_nViewAlignLeft*/x;
-							rcClip.right = rcClip.left + ( nCharWidth ) * ( lstrlen( pszEOF ) );
-							if( rcClip.left < m_nViewAlignLeft ){
-								rcClip.left = m_nViewAlignLeft;
-							}
-							if( rcClip.left < rcClip.right &&
-								rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
-								rcClip.top = y;
-								rcClip.bottom = y + nLineHeight;
-
-								HFONT	hFontOld;
-								/* フォントを選ぶ */
-								hFontOld = (HFONT)::SelectObject( hdc,
-									ChooseFontHandle(
-										TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont,
-										TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bUnderLine
-									)
-								);
-//								if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont ){	/* 太字か */
-//									hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
-//								}else{
-//									hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-//								}
-
-								::ExtTextOut( hdc, x , y, fuOptions,
-									&rcClip, pszEOF, lstrlen( pszEOF ), m_pnDx );
-
-								::SelectObject( hdc, hFontOld );
-							}
-							nX += lstrlen( pszEOF );
-
-							::SetTextColor( hdc, colTextColorOld );
-							::SetBkColor( hdc, colBkColorOld );
+							//	May 29, 2004 genta (advised by MIK) 共通関数化
+							nX += DispEOF( hdc, x, y, nCharWidth, nLineHeight, fuOptions,
+								TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
 						}
 						y += nLineHeight;
 						bEOF = TRUE;
@@ -1830,5 +1731,62 @@ void CEditView::DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHe
 	::DeleteObject( hPen );
 }
 
+/*! EOF記号の描画
+
+	@param hdc	[in] 描画対象のDevice Context
+	@param x	[in] 表示座標x
+	@param y	[in] 表示座標y
+	@param nCharWidth	[in] 1文字の横幅(pixel)
+	@param fuOptions	[in] ExtTextOut()に渡す描画オプション
+	@param EofColInfo	[in] 描画に使う色情報
+
+  @date 2004.05.29 genta MIKさんのアドバイスにより関数にくくりだし
+*/
+int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, UINT fuOptions, const ColorInfo& EofColInfo )
+{
+	//	元の色を保存するため
+	COLORREF	colTextColorOld;
+	COLORREF	colBkColorOld;
+	RECT		rcClip;
+	const char	pszEOF[] = "[EOF]";
+	const int	szEOFlen = sizeof( pszEOF) - 1;
+
+	colTextColorOld = ::SetTextColor( hdc, EofColInfo.m_colTEXT );	/* EOFの色 */
+	colBkColorOld = ::SetBkColor( hdc, EofColInfo.m_colBACK );		/* EOF背景の色 */
+	rcClip.left = /*m_nViewAlignLeft*/x;
+	rcClip.right = rcClip.left + ( nCharWidth ) * szEOFlen;
+	if( rcClip.left < m_nViewAlignLeft ){
+		rcClip.left = m_nViewAlignLeft;
+	}
+	if( rcClip.left < rcClip.right &&
+		rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
+		rcClip.top = y;
+		rcClip.bottom = y + nLineHeight;
+
+		HFONT	hFontOld;
+		/* フォントを選ぶ */
+		hFontOld = (HFONT)::SelectObject( hdc,
+			ChooseFontHandle(
+				EofColInfo.m_bFatFont,
+				EofColInfo.m_bUnderLine
+			)
+		);
+//		if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont ){	/* 太字か */
+//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
+//		}else{
+//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
+//								}
+
+		::ExtTextOut( hdc, x , y, fuOptions,
+			&rcClip, pszEOF, szEOFlen, m_pnDx );
+
+		::SelectObject( hdc, hFontOld );
+	}
+
+	::SetTextColor( hdc, colTextColorOld );
+	::SetBkColor( hdc, colBkColorOld );
+	
+	return szEOFlen;
+}
 
 /*[EOF]*/
