@@ -37,6 +37,7 @@
 #include "CMarkMgr.h"///
 #include "CDocLine.h" /// 2002/2/3 aroka
 #include "CPrintPreview.h"
+#include "CDlgFileUpdateQuery.h"
 #include <assert.h> /// 2002/11/2 frozen
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 
@@ -71,6 +72,7 @@ CEditDoc::CEditDoc() :
 	m_pszAppName( "EditorClient" ),
 	m_hInstance( NULL ),
 	m_hWnd( NULL ),
+	m_eWatchUpdate( CEditDoc::WU_QUERY ),
 	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
 	m_nSettingType( 0 ),	// Sep. 11, 2002 genta
 	m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
@@ -3899,6 +3901,7 @@ void CEditDoc::Init( void )
 	m_bReadOnly = FALSE;	/* 読み取り専用モード */
 	strcpy( m_szGrepKey, "" );
 	m_bGrepMode = FALSE;	/* Grepモード */
+	m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法
 
 //	Sep. 10, 2002 genta
 //	アイコン設定はファイル名設定と一体化のためここからは削除
@@ -3985,6 +3988,8 @@ void CEditDoc::CheckFileTimeStamp( void )
 	BOOL		bUpdate;
 	bUpdate = FALSE;
 	if( m_pShareData->m_Common.m_bCheckFileTimeStamp	/* 更新の監視 */
+	 // Dec. 4, 2002 genta
+	 && m_eWatchUpdate != WU_NONE
 	 && m_pShareData->m_Common.m_nFileShareMode == 0	/* ファイルの排他制御モード */
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
 	 && hwndActive == m_hwndParent
@@ -3992,7 +3997,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && ( m_FileTime.dwLowDateTime != 0 || m_FileTime.dwHighDateTime != 0 ) 	/* 現在編集中のファイルのタイムスタンプ */
 
 	){
-		while( 1 ){
+		do {
 			/* ファイルスタンプをチェックする */
 //			MYTRACE( "ファイルスタンプをチェックする\n" );
 
@@ -4016,30 +4021,60 @@ void CEditDoc::CheckFileTimeStamp( void )
 //				MYTRACE( "★更新されています★★★★★★★★★★★\n" );
 				m_FileTime = FileTimeNow;
 			}
+		} while(0);
+	}
+
+	//	From Here Dec. 4, 2002 genta
+	if( bUpdate ){
+		switch( m_eWatchUpdate ){
+		case WU_NOTIFY:
+			{
+				char szText[40];
+				//	現在時刻の取得
+				SYSTEMTIME st;
+				FILETIME lft;
+				if( ::FileTimeToLocalFileTime( &m_FileTime, &lft ) &&
+					::FileTimeToSystemTime( &lft, &st )){
+					// nothing to do
+				}
+				else {
+					//	ファイル時刻の変換に失敗した場合は
+					//	現在時刻でごまかす
+					::GetLocalTime( &st );
+				}
+				wsprintf( szText, "★ファイル更新 %02d:%02d:%02d", st.wHour, st.wMinute, st.wSecond );
+				m_pcEditWnd->SendStatusMessage( szText );
+			}	
+			break;
+		default:
+			{
+				m_eWatchUpdate = WU_NONE; // 更新監視の抑制
+
+				CDlgFileUpdateQuery dlg( GetFilePath(), IsModified() );
+				int result = dlg.DoModal( m_hInstance, m_hWnd, IDD_FILEUPDATEQUERY, 0 );
+
+				switch( result ){
+				case 1:	// 再読込
+					/* 同一ファイルの再オープン */
+					ReloadCurrentFile( m_nCharCode, m_bReadOnly );
+					m_eWatchUpdate = WU_QUERY;
+					break;
+				case 2:	// 以後通知メッセージのみ
+					m_eWatchUpdate = WU_NOTIFY;
+					break;
+				case 3:	// 以後更新を監視しない
+					m_eWatchUpdate = WU_NONE;
+					break;
+				case 0:	// CLOSE
+				default:
+					m_eWatchUpdate = WU_QUERY;
+					break;
+				}
+			}
 			break;
 		}
 	}
-
-	if( !bUpdate ){
-		return;
-	}
-	if( IDYES != MYMESSAGEBOX( m_hwndParent, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
-		"%s\n\nこのファイルは外部のエディタ等で変更されています。%s",
-		GetFilePath(),
-		(IsModified())?"\n再ロードを行うと変更が失われますがよろしいですか?":"再ロードしますか?"
-	) ){
-		return;
-	}
-
-	int		nCharCode;				/* 文字コード種別 */
-	BOOL	bReadOnly;				/* 読み取り専用モード */
-	nCharCode = m_nCharCode;		/* 文字コード種別 */
-	bReadOnly = m_bReadOnly;		/* 読み取り専用モード */
-	/* 同一ファイルの再オープン */
-	ReloadCurrentFile(
-		nCharCode,		/* 文字コード種別 */
-		bReadOnly		/* 読み取り専用モード */
-	);
+	//	To Here Dec. 4, 2002 genta
 	return;
 }
 

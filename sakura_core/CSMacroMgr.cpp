@@ -50,6 +50,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_FILESAVEAS,					"FileSaveAs",			{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //名前を付けて保存
 	{F_FILECLOSE,					"FileClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	{F_FILECLOSE_OPEN,				"FileCloseOpen",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて開く
+	{F_FILE_REOPEN,					"FileReopen",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す	//Dec. 4, 2002 genta
 	{F_FILE_REOPEN_SJIS,			"FileReopenSJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す
 	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
 	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
@@ -643,13 +644,14 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_FILESAVEAS_DIALOG		://名前を付けて保存
 //	case F_FILECLOSE				://閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 //	case F_FILECLOSE_OPEN			://閉じて開く
-//	case F_FILE_REOPEN_SJIS			://SJISで開き直す
-//	case F_FILE_REOPEN_JIS			://JISで開き直す
-//	case F_FILE_REOPEN_EUC			://EUCで開き直す
-//	case F_FILE_REOPEN_UNICODE		://Unicodeで開き直す
-//	case F_FILE_REOPEN_UNICODEBE	://UnicodeBEで開き直す
-//	case F_FILE_REOPEN_UTF8			://UTF-8で開き直す
-//	case F_FILE_REOPEN_UTF7			://UTF-7で開き直す
+	case F_FILE_REOPEN				://開き直す	//Dec. 4, 2002 genta
+	case F_FILE_REOPEN_SJIS			://SJISで開き直す
+	case F_FILE_REOPEN_JIS			://JISで開き直す
+	case F_FILE_REOPEN_EUC			://EUCで開き直す
+	case F_FILE_REOPEN_UNICODE		://Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE	://UnicodeBEで開き直す
+	case F_FILE_REOPEN_UTF8			://UTF-8で開き直す
+	case F_FILE_REOPEN_UTF7			://UTF-7で開き直す
 //	case F_PRINT					://印刷
 //	case F_PRINT_DIALOG				://印刷ダイアログ
 //	case F_PRINT_PREVIEW			://印刷プレビュー

@@ -65,6 +65,7 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_FILECLOSE			,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	F_FILECLOSE_OPEN	,	//閉じて開く
 	F_WINCLOSE			,	//ウィンドウを閉じる	//Oct.17,2000 コマンド本家は「ウィンドウ系」	//Feb. 18, 2001	JEPRO 下から移動した
+	F_FILE_REOPEN		,	//開き直す	//Dec. 4, 2002 genta
 	F_FILE_REOPEN_SJIS		,//SJISで開き直す
 	F_FILE_REOPEN_JIS		,//JISで開き直す
 	F_FILE_REOPEN_EUC		,//EUCで開き直す

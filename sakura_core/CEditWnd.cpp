@@ -167,6 +167,9 @@ CEditWnd::CEditWnd() :
 #endif
 	m_IconClicked(icNone) //by 鬼(2)
 {
+	//	Dec. 4, 2002 genta
+	InitMenubarMessageFont();
+
 	// Sep. 10, 2002 genta
 	m_cEditDoc.m_pcEditWnd = this;
 	/* 共有データ構造体のアドレスを返す */
@@ -192,6 +195,10 @@ CEditWnd::~CEditWnd()
 		m_hbmpOPENED_THIS = NULL;
 	}
 #endif
+	//	Dec. 4, 2002 genta
+	/* キャレットの行桁位置表示用フォント */
+	::DeleteObject( m_hFontCaretPosInfo );
+
 	/* 再描画用メモリＢＭＰ */
 	if( m_hbmpCompatBMP != NULL ){
 		/* 再描画用メモリＢＭＰ(OLD) */
@@ -2048,6 +2055,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE		, "閉じて(無題) (&B)" );	//Oct. 17, 2000 jepro キャプションを「閉じる」から変更	//Feb. 18, 2001 JEPRO アクセスキー変更(C→B; Blankの意味)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE_OPEN	, "閉じて開く(&L)..." );
+			//	Dec. 4, 2002 genta
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN	, "開き直す(&W)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, "ウィンドウを閉じる(&C)" );	//Feb. 18, 2001	JEPRO 追加
 
 			// 「文字コードセット」ポップアップメニュー
@@ -4192,5 +4201,118 @@ bool CEditWnd::GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconS
 	//	標準のアイコンを返す
 	GetDefaultIcon( hIconBig, hIconSmall );
 	return false;
+}
+
+/*
+	@brief メニューバー表示用フォントの初期化
+	
+	メニューバー表示用フォントの初期化を行う．
+	
+	@date 2002.12.04 CEditViewのコンストラクタから移動
+*/
+void CEditWnd::InitMenubarMessageFont(void)
+{
+	TEXTMETRIC	tm;
+	LOGFONT		lf;
+	HDC			hdc;
+	HFONT		hFontOld;
+	int			i;
+
+	/* LOGFONTの初期化 */
+	memset( &lf, 0, sizeof( LOGFONT ) );
+	lf.lfHeight			= -12;
+	lf.lfWidth			= 0;
+	lf.lfEscapement		= 0;
+	lf.lfOrientation	= 0;
+	lf.lfWeight			= 400;
+	lf.lfItalic			= 0x0;
+	lf.lfUnderline		= 0x0;
+	lf.lfStrikeOut		= 0x0;
+	lf.lfCharSet		= 0x80;
+	lf.lfOutPrecision	= 0x3;
+	lf.lfClipPrecision	= 0x2;
+	lf.lfQuality		= 0x1;
+	lf.lfPitchAndFamily	= 0x31;
+	strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
+	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
+
+	hdc = ::GetDC( ::GetDesktopWindow() );
+	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+	::GetTextMetrics( hdc, &tm );
+	m_nCaretPosInfoCharWidth = tm.tmAveCharWidth;
+	m_nCaretPosInfoCharHeight = tm.tmHeight;
+	for( i = 0; i < ( sizeof( m_pnCaretPosInfoDx ) / sizeof( m_pnCaretPosInfoDx[0] ) ); ++i ){
+		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
+	}
+	::SelectObject( hdc, hFontOld );
+	::ReleaseDC( ::GetDesktopWindow(), hdc );
+}
+
+/*
+	@brief メニューバーにメッセージを表示する
+	
+	事前にメニューバー表示用フォントが初期化されていなくてはならない．
+	指定できる文字数は最大30バイト．それ以上の場合はうち切って表示する．
+	
+	@author genta
+	@date 2002.12.04
+*/
+void CEditWnd::PrintMenubarMessage( const char* msg )
+{
+	HDC		hdc;
+	POINT	po,poFrame;
+	RECT	rc,rcFrame;
+	HFONT	hFontOld;
+	int		nStrLen;
+	const int MAX_LEN = 30;
+	char	szText[MAX_LEN + 1];
+	
+	int len = strlen( msg );
+	strncpy( szText, msg, MAX_LEN );
+	
+	if( len < MAX_LEN ){
+		memset( szText + len, ' ', MAX_LEN - len );
+	}
+	szText[MAX_LEN] = '\0';
+	
+	hdc = ::GetWindowDC( m_hWnd );
+	poFrame.x = 0;
+	poFrame.y = 0;
+	::ClientToScreen( m_hWnd, &poFrame );
+	::GetWindowRect( m_hWnd, &rcFrame );
+	po.x = rcFrame.right - rcFrame.left;
+	po.y = poFrame.y - rcFrame.top;
+	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+	nStrLen = MAX_LEN;
+	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - 5;
+	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
+	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
+	rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
+	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
+	::SetBkColor( hdc, ::GetSysColor( COLOR_MENU ) );
+	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
+	::SelectObject( hdc, hFontOld );
+	::ReleaseDC( m_hWnd, hdc );
+}
+
+/*!
+	@brief メッセージの表示
+	
+	指定されたメッセージをステータスバーに表示する．
+	ステータスバーが非表示の場合はメニューバーの右端に表示する．
+	
+	@param msg [in] 表示するメッセージ
+	@date 2002.01.26 hor 新規作成
+	@date 2002.12.04 genta CEditViewより移動
+*/
+void CEditWnd::SendStatusMessage( const char* msg )
+{
+	if( NULL == m_hwndStatusBar ){
+		// メニューバーへ
+		PrintMenubarMessage( msg );
+	}else{
+		// ステータスバーへ
+		::SendMessage( m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
+	}
 }
 /*[EOF]*/

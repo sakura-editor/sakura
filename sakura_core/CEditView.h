@@ -243,10 +243,12 @@ public: /* テスト用にアクセス属性を変更 */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
 	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
-	HFONT			m_hFontCaretPosInfo;/* キャレットの行桁位置表示用フォント */
-	int				m_nCaretPosInfoCharWidth;
-	int				m_nCaretPosInfoCharHeight;
-	int				m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
+	//	Dec. 4, 2002 genta
+	//	メニューバーへのメッセージ表示機能はCEditWndへ移管
+	//HFONT			m_hFontCaretPosInfo;/* キャレットの行桁位置表示用フォント */
+	//int			m_nCaretPosInfoCharWidth;
+	//int			m_nCaretPosInfoCharHeight;
+	//int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
@@ -425,7 +427,7 @@ protected:
 	BOOL Command_FILESAVEAS( const char *filename );			/* 名前を付けて保存 */
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	void Command_FILECLOSE_OPEN( void );		/* 閉じて開く */
-	void Command_FILE_REOPEN( int );			/* 再オープン */
+	void Command_FILE_REOPEN( int, int );			/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 #if 0
 	2002/04/19 YAZAKI
 	void Command_FILE_REOPEN_SJIS( void );		/* SJISで開き直す */

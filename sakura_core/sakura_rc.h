@@ -41,6 +41,7 @@
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
 #define IDC_CURSOR_RVARROW              223
+#define IDD_FILEUPDATEQUERY             225
 #define IDI_ICON_STD                    230
 #define IDI_ICON_DEBUG                  231
 #define IDI_ICON_GREP                   240
@@ -454,12 +455,19 @@
 #define IDC_CHECK_DIFF_OPT_SPACE        1432
 #define IDC_CHECK_DIFF_OPT_SPCCHG       1433
 #define IDC_STATIC_nSortType            1433
+#define IDC_BTN_RELOAD                  1433
 #define IDC_CHECK_DIFF_OPT_BLINE        1434
 #define IDC_CHECK_DIFF_OPT_TABSPC       1435
+#define IDC_BTN_NOTIFYONLY              1435
 #define IDC_FRAME_DIFF_FILE12           1436
 #define IDC_LIST_DIFF_FILES             1437
+#define IDC_FILEUPDATEMSG               1437
 #define IDC_FRAME_DIFF_DST              1438
 #define IDC_LIST_CTRLCODE               1438
+#define IDC_BTN_NOSUPERVISION           1438
+#define IDC_BTN_CLOSE                   1439
+#define IDC_UPDATEDFILENAME             1440
+#define IDC_QUERYRELOADMSG              1441
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -492,9 +500,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        225
+#define _APS_NEXT_RESOURCE_VALUE        226
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1433
+#define _APS_NEXT_CONTROL_VALUE         1442
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

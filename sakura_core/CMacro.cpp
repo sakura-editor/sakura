@@ -678,6 +678,24 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	case F_EXTHTMLHELP:
 		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
 		break;
+	//	From Here Dec. 4, 2002 genta
+	case F_FILE_REOPEN				://開き直す
+	case F_FILE_REOPEN_SJIS			://SJISで開き直す
+	case F_FILE_REOPEN_JIS			://JISで開き直す
+	case F_FILE_REOPEN_EUC			://EUCで開き直す
+	case F_FILE_REOPEN_UNICODE		://Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE	://UnicodeBEで開き直す
+	case F_FILE_REOPEN_UTF8			://UTF-8で開き直す
+	case F_FILE_REOPEN_UTF7			://UTF-7で開き直す
+		{
+			int noconfirm = 0;
+			if (Argument[0] != NULL){
+				noconfirm = ( atoi( Argument[0] ) != 0 );
+			}
+			pcEditView->HandleCommand( Index, FALSE, noconfirm, 0, 0, 0 );
+		}
+		break;
+	//	To Here Dec. 4, 2002 genta
 	default:
 		//	引数なし。
 		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準

@@ -227,13 +227,14 @@ BOOL CEditView::HandleCommand(
 		}
 		Command_FILECLOSE_OPEN();
 		break;
-	case F_FILE_REOPEN_SJIS:	Command_FILE_REOPEN( CODE_SJIS );break;		//SJISで開き直す
-	case F_FILE_REOPEN_JIS:		Command_FILE_REOPEN( CODE_JIS );break;		//JISで開き直す
-	case F_FILE_REOPEN_EUC:		Command_FILE_REOPEN( CODE_EUC );break;		//EUCで開き直す
-	case F_FILE_REOPEN_UNICODE:	Command_FILE_REOPEN( CODE_UNICODE );break;	//Unicodeで開き直す
-	case F_FILE_REOPEN_UNICODEBE: 	Command_FILE_REOPEN( CODE_UNICODEBE );break;	//UnicodeBEで開き直す
-	case F_FILE_REOPEN_UTF8:	Command_FILE_REOPEN( CODE_UTF8 );break;		//UTF-8で開き直す
-	case F_FILE_REOPEN_UTF7:	Command_FILE_REOPEN( CODE_UTF7 );break;		//UTF-7で開き直す
+	case F_FILE_REOPEN:			Command_FILE_REOPEN( m_pcEditDoc->m_nCharCode, lparam1 );break;//	Dec. 4, 2002 genta
+	case F_FILE_REOPEN_SJIS:	Command_FILE_REOPEN( CODE_SJIS, lparam1 );break;		//SJISで開き直す
+	case F_FILE_REOPEN_JIS:		Command_FILE_REOPEN( CODE_JIS, lparam1 );break;		//JISで開き直す
+	case F_FILE_REOPEN_EUC:		Command_FILE_REOPEN( CODE_EUC, lparam1 );break;		//EUCで開き直す
+	case F_FILE_REOPEN_UNICODE:	Command_FILE_REOPEN( CODE_UNICODE, lparam1 );break;	//Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE: 	Command_FILE_REOPEN( CODE_UNICODEBE, lparam1 );break;	//UnicodeBEで開き直す
+	case F_FILE_REOPEN_UTF8:	Command_FILE_REOPEN( CODE_UTF8, lparam1 );break;		//UTF-8で開き直す
+	case F_FILE_REOPEN_UTF7:	Command_FILE_REOPEN( CODE_UTF7, lparam1 );break;		//UTF-7で開き直す
 	case F_PRINT:				Command_PRINT();break;					/* 印刷 */
 	case F_PRINT_PREVIEW:		Command_PRINT_PREVIEW();break;			/* 印刷プレビュー */
 	case F_PRINT_PAGESETUP:		Command_PRINT_PAGESETUP();break;		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -9448,10 +9449,15 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 
 
 
-/* 再オープン */
-void CEditView::Command_FILE_REOPEN( int nCharCode )
+/*! @brief ファイルの再オープン
+	
+	@param nCharCode [in] 開き直す際の文字コード
+	@param bNoConfirm [in] ファイルが更新された場合に確認を行うか．
+		0: 確認する, !0: 確認しない
+*/
+void CEditView::Command_FILE_REOPEN( int nCharCode, int bNoConfirm )
 {
-	if( -1 != _access( m_pcEditDoc->GetFilePath(), 0 )
+	if( bNoConfirm == 0 && (  -1 != _access( m_pcEditDoc->GetFilePath(), 0 ))
 	 && m_pcEditDoc->IsModified()	/* 変更フラグ */
 	){
 		if( IDOK != MYMESSAGEBOX( m_hWnd, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,

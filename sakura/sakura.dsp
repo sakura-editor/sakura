@@ -149,6 +149,10 @@ SOURCE=..\sakura_core\CDlgExec.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgFileUpdateQuery.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgFind.cpp
 # End Source File
 # Begin Source File
@@ -606,6 +610,10 @@ SOURCE=..\sakura_core\CDlgDiff.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgExec.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgFileUpdateQuery.h
 # End Source File
 # Begin Source File
 
