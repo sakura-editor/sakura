@@ -430,6 +430,7 @@ BOOL CEditView::HandleCommand(
 
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		Command_SEARCH_DIALOG();break;												//検索(単語検索ダイアログ)
+	case F_SEARCH_BOX:			Command_SEARCH_DIALOG();break;		// Jan. 13, 2003 MIK					//検索(単語検索ダイアログ)
 	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( bRedraw, (HWND)lparam1, (const char*)lparam2 );break;	//次を検索
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
 	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)

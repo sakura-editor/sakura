@@ -2103,6 +2103,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		return HLP000059;	//検索(単語検索ダイアログ)
+	case F_SEARCH_BOX:			return HLP000059;	//検索(ボックス) Jan. 13, 2003 MIK
 	case F_SEARCH_NEXT:			return HLP000061;	//次を検索
 	case F_SEARCH_PREV:			return HLP000060;	//前を検索
 	case F_REPLACE_DIALOG:		return HLP000062;	//置換(置換ダイアログ)
