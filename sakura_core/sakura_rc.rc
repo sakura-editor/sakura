@@ -741,7 +741,7 @@ BEGIN
                     WS_GROUP,0,HIDC_BUTTON_ADDSET
     PUSHBUTTON      "セット削除(&R)...",IDC_BUTTON_DELSET,217,5,50,14,0,0,
                     HIDC_BUTTON_DELSET
-    GROUPBOX        "強調キーワード(&K)",IDC_STATIC,3,20,264,190,WS_GROUP
+    GROUPBOX        "強調キーワード(&K)",IDC_STATIC,3,20,264,193,WS_GROUP
     CONTROL         "List5",IDC_LIST_KEYWORD,"SysListView32",LVS_LIST | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | 
                     LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | 
@@ -752,16 +752,17 @@ BEGIN
                     HIDC_BUTTON_EDITKEYWORD
     PUSHBUTTON      "削除(&D)",IDC_BUTTON_DELKEYWORD,92,178,40,14,0,0,
                     HIDC_BUTTON_DELKEYWORD
-    CONTROL         "キーワードの英大文字小文字区別(&C)",
-                    IDC_CHECK_KEYWORDCASE,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,196,125,10,0,
+    CONTROL         "英大文字小文字区別(&C)",IDC_CHECK_KEYWORDCASE,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,196,87,10,0,
                     HIDC_CHECK_KEYWORDCASE
-    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_IMPORT,156,192,53,14,
+    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_IMPORT,156,195,53,14,
                     WS_GROUP,0,HIDC_BUTTON_IMPORT
-    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,211,192,53,14,0,
+    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,211,195,53,14,0,
                     0,HIDC_BUTTON_EXPORT
     RTEXT           "(最大 100 文字   登録数 9999 / 9999 個)",
                     IDC_STATIC_KEYWORD_COUNT,135,177,128,10
+    PUSHBUTTON      "変更(&H)",IDC_BUTTON_KEYSETRENAME,122,3,27,15
+    PUSHBUTTON      "整理(&O)",IDC_BUTTON_KEYCLEAN,103,195,45,14
 END
 
 IDD_INPUT1 DIALOGEX 0, 0, 185, 55
@@ -2095,14 +2096,6 @@ BEGIN
         RIGHTMARGIN, 263
         TOPMARGIN, 7
         BOTTOMMARGIN, 220
-    END
-
-    IDD_PROP_KEYWORD, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 263
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 206
     END
 
     IDD_INPUT1, DIALOG

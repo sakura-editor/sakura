@@ -153,9 +153,11 @@ struct ARRHEAD {
 	Version 57:
 	強調キーワード指定拡大 2005/01/13 MIK
 	
+	Version 58:
+	強調キーワードセット可変長割り当て 2005/01/25 Moca
 */
 
-const unsigned int uShareDataVersion = 57;
+const unsigned int uShareDataVersion = 58;
 
 /*
 ||	Singleton風
@@ -1331,6 +1333,14 @@ bool CShareData::Init( void )
 		m_pShareData->m_Types[15].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
 		//To Here Nov. 9, 2000
 
+		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
+		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
+		strcpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
+			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -"
+			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
+		strcpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
+			"${w?$h$:アウトプット$:$f$}${U?(更新)$} -"
+			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
 
 		/* 強調キーワードのテストデータ */
 		m_pShareData->m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = 0;
@@ -1352,17 +1362,9 @@ bool CShareData::Init( void )
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Visual Basic2", FALSE );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "リッチテキスト", TRUE );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
-		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
-		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-		strcpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
-			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -"
-			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
-		strcpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
-			"${w?$h$:アウトプット$:$f$}${U?(更新)$} -"
-			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
 
 		/* ｎ番目のセットにキーワードを追加 */
-		static const char*	ppszKeyWordsCPP[] = {
+		static const char* const	ppszKeyWordsCPP[] = {
 			"#define",
 			"#elif",
 			"#else",
@@ -1375,12 +1377,12 @@ bool CShareData::Init( void )
 			"#line",
 			"#pragma",
 			"#undef",
-			"__declspec",
 			"__FILE__",
+			"__declspec",
 			"asm",
 			"auto",
-			"break",
 			"bool",
+			"break",
 			"case",
 			"catch",
 			"char",
@@ -1437,8 +1439,8 @@ bool CShareData::Init( void )
 			"template",
 			"this",
 			"throw",
-			"try",
 			"true",
+			"try",
 			"typedef",
 			"typeid",
 			"typename",
@@ -1452,13 +1454,11 @@ bool CShareData::Init( void )
 			"wchar_t",
 			"while"
 		};
-		static int nKeyWordsCPP_Num = sizeof( ppszKeyWordsCPP ) / sizeof( ppszKeyWordsCPP[0] );
-		for( i = 0; i < nKeyWordsCPP_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 0, ppszKeyWordsCPP[i] );
-		}
+		static const int nKeyWordsCPP_Num = sizeof( ppszKeyWordsCPP ) / sizeof( ppszKeyWordsCPP[0] );
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 0, nKeyWordsCPP_Num, ppszKeyWordsCPP );
 
 
-		static const char*	ppszKeyWordsHTML[] = {
+		static const char* const	ppszKeyWordsHTML[] = {
 			"_blank",
 			"_parent",
 			"_self",
@@ -1712,13 +1712,11 @@ bool CShareData::Init( void )
 			"WRAP",
 			"XMP"
 		};
-		static int nKeyWordsHTML_Num = sizeof( ppszKeyWordsHTML ) / sizeof( ppszKeyWordsHTML[0] );
-		for( i = 0; i < nKeyWordsHTML_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 1, ppszKeyWordsHTML[i] );
-		}
+		static const int nKeyWordsHTML_Num = sizeof( ppszKeyWordsHTML ) / sizeof( ppszKeyWordsHTML[0] );
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 1, nKeyWordsHTML_Num, ppszKeyWordsHTML );
 
 
-		static const char*	ppszKeyWordsPLSQL[] = {
+		static const char* const	ppszKeyWordsPLSQL[] = {
 			"AND",
 			"AS",
 			"BEGIN",
@@ -1800,14 +1798,12 @@ bool CShareData::Init( void )
 			"OTHERS",
 			"SQLCODE"
 		};
-		static int nKeyWordsPLSQL_Num = sizeof( ppszKeyWordsPLSQL ) / sizeof( ppszKeyWordsPLSQL[0] );
-		for( i = 0; i < nKeyWordsPLSQL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 2, ppszKeyWordsPLSQL[i] );
-		}
+		static const int nKeyWordsPLSQL_Num = sizeof( ppszKeyWordsPLSQL ) / sizeof( ppszKeyWordsPLSQL[0] );
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 2, nKeyWordsPLSQL_Num, ppszKeyWordsPLSQL );
 
 
 //Jul. 10, 2001 JEPRO 追加
-		static const char*	ppszKeyWordsCOBOL[] = {
+		static const char* const	ppszKeyWordsCOBOL[] = {
 			"ACCEPT",
 			"ADD",
 			"ADVANCING",
@@ -1911,10 +1907,8 @@ bool CShareData::Init( void )
 			"WRITTEN",
 			"ZERO"
 		};
-		static int nKeyWordsCOBOL_Num = sizeof( ppszKeyWordsCOBOL ) / sizeof( ppszKeyWordsCOBOL[0] );
-		for( i = 0; i < nKeyWordsCOBOL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 3, ppszKeyWordsCOBOL[i] );
-		}
+		static const int nKeyWordsCOBOL_Num = sizeof( ppszKeyWordsCOBOL ) / sizeof( ppszKeyWordsCOBOL[0] );
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 3, nKeyWordsCOBOL_Num, ppszKeyWordsCOBOL );
 
 
 		static const char*	ppszKeyWordsJAVA[] = {
@@ -1968,13 +1962,11 @@ bool CShareData::Init( void )
 			"volatile",
 			"while"
 		};
-		static int nKeyWordsJAVA_Num = sizeof( ppszKeyWordsJAVA ) / sizeof( ppszKeyWordsJAVA[0] );
-		for( i = 0; i < nKeyWordsJAVA_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 4, ppszKeyWordsJAVA[i] );
-		}
+		static const int nKeyWordsJAVA_Num = sizeof( ppszKeyWordsJAVA ) / sizeof( ppszKeyWordsJAVA[0] );
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 4, nKeyWordsJAVA_Num, ppszKeyWordsJAVA );
 
 
-		static const char*	ppszKeyWordsCORBA_IDL[] = {
+		static const char* const	ppszKeyWordsCORBA_IDL[] = {
 			"any",
 			"attribute",
 			"boolean",
@@ -2013,13 +2005,11 @@ bool CShareData::Init( void )
 			"wchar",
 			"wstring"
 		};
-		static int nKeyWordsCORBA_IDL_Num = sizeof( ppszKeyWordsCORBA_IDL ) / sizeof( ppszKeyWordsCORBA_IDL[0] );
-		for( i = 0; i < nKeyWordsCORBA_IDL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 5, ppszKeyWordsCORBA_IDL[i] );
-		}
+		static const int nKeyWordsCORBA_IDL_Num = sizeof( ppszKeyWordsCORBA_IDL ) / sizeof( ppszKeyWordsCORBA_IDL[0] );
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 5, nKeyWordsCORBA_IDL_Num, ppszKeyWordsCORBA_IDL );
 
 
-		static const char*	ppszKeyWordsAWK[] = {
+		static const char* const	ppszKeyWordsAWK[] = {
 			"BEGIN",
 			"END",
 			"next",
@@ -2108,9 +2098,7 @@ bool CShareData::Init( void )
 			"systime"
 		};
 		static int nKeyWordsAWK_Num = sizeof( ppszKeyWordsAWK ) / sizeof( ppszKeyWordsAWK[0] );
-		for( i = 0; i < nKeyWordsAWK_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 6, ppszKeyWordsAWK[i] );
-		}
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 6, nKeyWordsAWK_Num, ppszKeyWordsAWK );
 
 
 		static const char*	ppszKeyWordsBAT[] = {
@@ -2190,9 +2178,7 @@ bool CShareData::Init( void )
 			"CONFIG$"
 		};
 		static int nKeyWordsBAT_Num = sizeof( ppszKeyWordsBAT ) / sizeof( ppszKeyWordsBAT[0] );
-		for( i = 0; i < nKeyWordsBAT_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 7, ppszKeyWordsBAT[i] );
-		}
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 7, nKeyWordsBAT_Num, ppszKeyWordsBAT );
 
 
 		static const char*	ppszKeyWordsPASCAL[] = {
@@ -2268,9 +2254,7 @@ bool CShareData::Init( void )
 			"override"
 		};
 		static int nKeyWordsPASCAL_Num = sizeof( ppszKeyWordsPASCAL ) / sizeof( ppszKeyWordsPASCAL[0] );
-		for( i = 0; i < nKeyWordsPASCAL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 8, ppszKeyWordsPASCAL[i] );
-		}
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 8, nKeyWordsPASCAL_Num, ppszKeyWordsPASCAL );
 
 
 		static const char*	ppszKeyWordsTEX[] = {
@@ -2806,10 +2790,7 @@ bool CShareData::Init( void )
 //			"\\~",
 		};
 		static int nKeyWordsTEX_Num = sizeof( ppszKeyWordsTEX ) / sizeof( ppszKeyWordsTEX[0] );
-		for( i = 0; i < nKeyWordsTEX_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 9, ppszKeyWordsTEX[i] );
-		}
-
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 9, nKeyWordsTEX_Num, ppszKeyWordsTEX );
 
 //Jan. 19, 2001 JEPRO	TeX のキーワード2として新規追加 & 一部復活 --環境コマンドとオプション名が中心
 		static const char*	ppszKeyWordsTEX2[] = {
@@ -2935,9 +2916,7 @@ bool CShareData::Init( void )
 //			"zw"
 		};
 		static int nKeyWordsTEX2_Num = sizeof( ppszKeyWordsTEX2 ) / sizeof( ppszKeyWordsTEX2[0] );
-		for( i = 0; i < nKeyWordsTEX2_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 10, ppszKeyWordsTEX2[i] );
-		}
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 10, nKeyWordsTEX2_Num, ppszKeyWordsTEX2 );
 
 
 		static const char*	ppszKeyWordsPERL[] = {
@@ -3172,10 +3151,7 @@ bool CShareData::Init( void )
 			"write"
 		};
 		static int nKeyWordsPERL_Num = sizeof( ppszKeyWordsPERL ) / sizeof( ppszKeyWordsPERL[0] );
-		for( i = 0; i < nKeyWordsPERL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 11, ppszKeyWordsPERL[i] );
-		}
-
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 11, nKeyWordsPERL_Num, ppszKeyWordsPERL );
 
 		static const char*	ppszKeyWordsPERL2[] = {
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
@@ -3284,10 +3260,7 @@ bool CShareData::Init( void )
 			"$SIG"
 		};
 		static int nKeyWordsPERL2_Num = sizeof( ppszKeyWordsPERL2 ) / sizeof( ppszKeyWordsPERL2[0] );
-		for( i = 0; i < nKeyWordsPERL2_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 12, ppszKeyWordsPERL2[i] );
-		}
-
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 12, nKeyWordsPERL2_Num, ppszKeyWordsPERL2 );
 
 //Jul. 10, 2001 JEPRO 追加
 		static const char*	ppszKeyWordsVB[] = {
@@ -3414,10 +3387,7 @@ bool CShareData::Init( void )
 			//Structure
 		};
 		static int nKeyWordsVB_Num = sizeof( ppszKeyWordsVB ) / sizeof( ppszKeyWordsVB[0] );
-		for( i = 0; i < nKeyWordsVB_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 13, ppszKeyWordsVB[i] );
-		}
-
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 13, nKeyWordsVB_Num, ppszKeyWordsVB );
 
 //Jul. 10, 2001 JEPRO 追加
 		static const char*	ppszKeyWordsVB2[] = {
@@ -3618,9 +3588,7 @@ bool CShareData::Init( void )
 			"VarPtrStringArray"
 		};
 		static int nKeyWordsVB2_Num = sizeof( ppszKeyWordsVB2 ) / sizeof( ppszKeyWordsVB2[0] );
-		for( i = 0; i < nKeyWordsVB2_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 14, ppszKeyWordsVB2[i] );
-		}
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 14, nKeyWordsVB2_Num, ppszKeyWordsVB2 );
 
 
 //Jul. 10, 2001 JEPRO 追加
@@ -3710,9 +3678,7 @@ bool CShareData::Init( void )
 			"emr"
 		};
 		static int nKeyWordsRTF_Num = sizeof( ppszKeyWordsRTF ) / sizeof( ppszKeyWordsRTF[0] );
-		for( i = 0; i < nKeyWordsRTF_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 15, ppszKeyWordsRTF[i] );
-		}
+		m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( 15, nKeyWordsRTF_Num, ppszKeyWordsRTF );
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化

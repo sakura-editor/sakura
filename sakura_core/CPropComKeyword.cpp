@@ -328,15 +328,29 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					/* ダイアログデータの設定 p7 */
 					SetData_p7( hwndDlg );
 					return TRUE;
+				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
+					// モードレスダイアログの表示
+					strcpy( szKeyWord, m_CKeyWordSetMgr.GetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
+					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "セットの名称変更",
+							"セット名を入力してください。", MAX_SETNAMELEN, szKeyWord ) ){
+						return TRUE;
+					}
+					if( 0 < strlen( szKeyWord ) ){
+						m_CKeyWordSetMgr.SetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
+
+						// ダイアログデータの設定 p7
+						SetData_p7( hwndDlg );
+					}
+					return TRUE;
 				case IDC_CHECK_KEYWORDCASE:	/* キーワードの英大文字小文字区別 */
 //					m_CKeyWordSetMgr.m_nKEYWORDCASEArr[ m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
 					m_CKeyWordSetMgr.SetKeyWordCase(m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE ));			//MIK 2000.12.01 case sense
 					return TRUE;
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
 					/* ｎ番目のセットのキーワードの数を返す */
-					if( MAX_KEYWORDNUM <= m_CKeyWordSetMgr.GetKeyWordNum( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
+					if( !m_CKeyWordSetMgr.CanAddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
 						::MYMESSAGEBOX(	hwndDlg,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-							"ひとつのセットに登録できるキーワードは %d個までです。\n", MAX_KEYWORDNUM
+							"登録できるキーワード数が上限に達しています。\n"
 						);
 						return TRUE;
 					}
@@ -347,9 +361,10 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					if( 0 < strlen( szKeyWord ) ){
 						/* ｎ番目のセットにキーワードを追加 */
-						m_CKeyWordSetMgr.AddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
-						/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
-						SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+						if( 0 == m_CKeyWordSetMgr.AddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
+							// ダイアログデータの設定 p7 指定キーワードセットの設定
+							SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+						}
 					}
 					return TRUE;
 				case IDC_BUTTON_EDITKEYWORD:	/* キーワード編集 */
@@ -360,6 +375,11 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					/* p7:リスト中で選択されているキーワードを削除する */
 					p7_Delete_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
+				// From Here 2005.01.26 Moca
+				case IDC_BUTTON_KEYCLEAN:
+					p7_Clean_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
+					return TRUE;
+				// To Here 2005.01.26 Moca
 				case IDC_BUTTON_IMPORT:	/* インポート */
 					/* p7:リスト中のキーワードをインポートする */
 					p7_Import_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
@@ -492,6 +512,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	FILE*			pFile;
 	char			szLine[1024];
 	int				i;
+	bool			bAddError = false;
 
 	strcpy( szPath, "" );
 	/* ファイルオープンダイアログの初期化 */
@@ -524,11 +545,20 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 			}
 			if( 0 < (int)strlen( szLine ) ){
 				/* ｎ番目のセットにキーワードを追加 */
-				m_CKeyWordSetMgr.AddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine );
+				int nRetValue = m_CKeyWordSetMgr.AddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine );
+				if( 2 == nRetValue ){
+					bAddError = true;
+					break;
+				}
 			}
 		}
 	}
 	fclose( pFile );
+	if( bAddError ){
+		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			"キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。"
+		);
+	}
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	return;
@@ -595,6 +625,17 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 }
 
 
+//! キーワードを整頓する
+void CPropCommon::p7_Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
+{
+	if( IDYES == ::MessageBox( hwndDlg, "現在の設定では強調キーワードとして表示できないキーワードを削除しますか？",
+			GSTR_APPNAME, MB_YESNO | MB_ICONSTOP ) ){
+		if( m_CKeyWordSetMgr.CleanKeyWords( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
+		}
+		SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	}
+}
+
 /* ダイアログデータの設定 p7 */
 void CPropCommon::SetData_p7( HWND hwndDlg )
 {
@@ -641,8 +682,11 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADDKEYWORD ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), TRUE );
+		//	Jan. 29, 2005 genta キーワードセット切り替え直後はキーワードは未選択
+		//	そのため有効にしてすぐにタイマーで無効になる．
+		//	なのでここで無効にしておく．
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), TRUE );
 	}else{
@@ -672,9 +716,13 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 	/* ｎ番目のセットのキーワードの数を返す */
 	nNum = m_CKeyWordSetMgr.GetKeyWordNum( nIdx );
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
+
+	// 2005.01.25 Moca/genta リスト追加中は再描画を抑制してすばやく表示
+	::SendMessage( hwndList, WM_SETREDRAW, FALSE, 0 );
+
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		pszKeyWord =  m_CKeyWordSetMgr.GetKeyWord( nIdx, i );
+		pszKeyWord =  const_cast<char*>(m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
 
 		lvi.mask = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText = pszKeyWord;
@@ -685,6 +733,9 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 
 	}
 	m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
+
+	// 2005.01.25 Moca/genta リスト追加完了のため再描画許可
+	::SendMessage( hwndList, WM_SETREDRAW, TRUE, 0 );
 
 	//キーワード数を表示する。
 	DispKeywordCount( hwndDlg );
@@ -725,7 +776,12 @@ void CPropCommon::DispKeywordCount( HWND hwndDlg )
 	n = ListView_GetItemCount( hwndList );
 	if( n < 0 ) n = 0;
 
-	wsprintf( szCount, _T("(最大 %d 文字   登録数 %d / %d 個)"), MAX_KEYWORDLEN, n, MAX_KEYWORDNUM ); 
+	int		nAlloc;
+	nAlloc = m_CKeyWordSetMgr.GetAllocSize( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	nAlloc -= m_CKeyWordSetMgr.GetKeyWordNum( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	nAlloc += m_CKeyWordSetMgr.GetFreeSize();
+	
+	wsprintf( szCount, _T("(最大 %d 文字, 登録数 %d, 空き %d 個)"), MAX_KEYWORDLEN, n, nAlloc );
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
 }
 
