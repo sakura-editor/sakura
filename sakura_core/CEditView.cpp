@@ -1360,6 +1360,16 @@ void CEditView::OnSetFocus( void )
 //NG	::SetFocus( m_hwndParent );
 //NG	::SetFocus( m_hWnd );
 
+	// 2004.04.02 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
+	{
+		int nPosX = m_nCaretPosX;
+		int nPosY = m_nCaretPosY;
+		if( GetAdjustCursorPos( &nPosX, &nPosY ) ){
+			MoveCursor( nPosX, nPosY, FALSE );
+			m_nCaretPosX_Prev = m_nCaretPosX;
+		}
+	}
+
 	ShowEditCaret();
 
 //	SetIMECompFormPos();	YAZAKI ShowEditCaretで作業済み
@@ -2618,6 +2628,7 @@ void CEditView::AdjustScrollBars( void )
 */
 int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int nCaretMarginRate )
 {
+
 	/* スクロール処理 */
 	int		nScrollRowNum = 0;
 	int		nScrollColNum = 0;
@@ -2650,13 +2661,10 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 			nCaretMarginY = 1;
 		}
 	}
-	if( nWk_CaretPosY > m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
-		nWk_CaretPosY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1;
-		if( nWk_CaretPosY < 0 ){
-			nWk_CaretPosY = 0;
-		}
-	}
-
+	// 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
+	GetAdjustCursorPos( &nWk_CaretPosX, &nWk_CaretPosY );
+	
+	
 	/* 水平スクロール量（文字数）の算出 */
 	nScrollColNum = 0;
 	nScrollMarginRight = 4;
@@ -2849,7 +2857,50 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 
 }
 
-
+/*! 正しいカーソル位置を算出する(EOF以降のみ)
+	@param pnPosX [in/out] カーソルのレイアウト座標X
+	@param pnPosX [in/out] カーソルのレイアウト座標Y
+	@retval	TRUE 座標を修正した
+	@retval	FALSE 座標は修正されなかった
+	@note	EOFの直前が改行でない場合は、その行に限りEOF以降にも移動可能
+			EOFだけの行は、先頭位置のみ正しい。
+	@data 2004.04.02 Moca 関数化
+*/
+BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
+	// 2004.03.28 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
+	int nLayoutLineCount = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+	int nPosX2 = *pnPosX;
+	int nPosY2 = *pnPosY;
+	BOOL ret = FALSE;
+	if( nPosY2 >= nLayoutLineCount ){
+		if( 0 < nLayoutLineCount ){
+			nPosY2 = nLayoutLineCount - 1;
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nPosY2 );
+			if( pcLayout->m_cEol == EOL_NONE ){
+				nPosX2 = LineIndexToColmn( pcLayout, pcLayout->GetLength() );
+				// EOFだけ折り返されているか
+				if( nPosX2 >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+					nPosY2++;
+					nPosX2 = 0;
+				}
+			}else{
+				// EOFだけの行
+				nPosY2++;
+				nPosX2 = 0;
+			}
+		}else{
+			// 空のファイル
+			nPosX2 = 0;
+			nPosY2 = 0;
+		}
+		if( *pnPosX != nPosX2 || *pnPosY != nPosY2 ){
+			*pnPosX = nPosX2;
+			*pnPosY = nPosY2;
+			ret = TRUE;
+		}
+	}
+	return ret;
+}
 
 
 /* IME編集エリアの位置を変更 */
@@ -2934,22 +2985,7 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 	}
 	/* カーソルがテキスト最下端行にあるか */
 	if( nNewY >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
-		nNewY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1;
-		if( 0 > nNewY ){
-			nNewY = 0;
-		}
-		nLineLen = 0;
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
-		if( NULL == pLine ){
-			nNewX = nLineLen;
-		}else
-		/* 改行で終わっているか */
-		if( EOL_NONE != pcLayout->m_cEol.GetLen() ){
-			nNewX = 0;
-			++nNewY;
-		}else{
-			nNewX = LineIndexToColmn( pcLayout, nLineLen );
-		}
+		// 2004.04.03 Moca EOFより後ろの座標調整は、MoveCursor内でやってもらうので、削除
 		nScrollRowNum = MoveCursor( nNewX, nNewY, TRUE, 1000 );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 	}else
@@ -5901,6 +5937,7 @@ void CEditView::OnChangeSetting( void )
 
 	/* フォントが変わっているかもしれないので、カーソル移動 */
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
+
 
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
