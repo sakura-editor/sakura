@@ -8571,14 +8571,8 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	}
 	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
-		bSPACE = FALSE;
-		for( i = 0; i < (int)lstrlen( m_pcEditDoc->GetFilePath() ); ++i ){
-			if( (m_pcEditDoc->GetFilePath())[i] == ' ' ){
-				bSPACE = TRUE;
-				break;
-			}
-		}
-		if( bSPACE ){
+		//	2003.10.20 MIK コード簡略化
+		if( _tcschr( m_pcEditDoc->GetFilePath(), SPACE ) ? TRUE : FALSE ){
 			wsprintf( szPath, "@\"%s\"\r", m_pcEditDoc->GetFilePath() );
 		}else{
 			wsprintf( szPath, "@%s\r", m_pcEditDoc->GetFilePath() );
