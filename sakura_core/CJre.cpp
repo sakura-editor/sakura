@@ -1,5 +1,5 @@
 //#include "stdafx.h"
-//	Copyright (C) 1998-2000, Norio Nakatani
+
 #include "CJre.h"
 #include "debug.h"
 
