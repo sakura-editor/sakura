@@ -215,6 +215,13 @@ BOOL CEditView::HandleCommand(
 	case F_FILESAVE:	bRet = Command_FILESAVE();break;	/* 上書き保存 */
 	case F_FILESAVEAS_DIALOG:	bRet = Command_FILESAVEAS_DIALOG();break;	/* 名前を付けて保存 */
 	case F_FILESAVEAS:	bRet = Command_FILESAVEAS((const char*)lparam1);break;	/* 名前を付けて保存 */
+	case F_FILESAVECLOSE:
+		//	Feb. 28, 2004 genta 保存＆閉じる
+		//	保存が不要なら単に閉じる
+		if( Command_FILESAVE( false )){
+			Command_WINCLOSE();
+		}
+		break;
 	case F_FILECLOSE:										//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 		/* 再帰処理対策 */
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
@@ -4230,19 +4237,25 @@ void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOO
 
 
 /* 上書き保存 */
-BOOL CEditView::Command_FILESAVE( void )
+BOOL CEditView::Command_FILESAVE( bool warnbeep )
 {
 
 	/* 無変更でも上書きするか */
 	if( FALSE == m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite
 	 && FALSE == m_pcEditDoc->IsModified()	/* 変更フラグ */
 	 ){
-		::MessageBeep( MB_ICONHAND );
+	 	//	Feb. 28, 2004 genta
+	 	//	保存不要でも警告音を出して欲しくない場合がある
+	 	if( warnbeep ){
+			::MessageBeep( MB_ICONHAND );
+		}
 		return TRUE;
 	}
 
 	if( !m_pcEditDoc->IsFilePathAvailable() ){
-		Command_FILESAVEAS_DIALOG();
+		//	Feb. 28, 2004 genta SAVEASの結果が正しく返されていなかった
+		//	次の処理と組み合わせるときに問題が生じる
+		return Command_FILESAVEAS_DIALOG();
 	}
 	else {
 		if( m_pcEditDoc->SaveFile( m_pcEditDoc->GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存

@@ -2401,6 +2401,7 @@ BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
     F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
+    F_FILESAVECLOSE         "保存して閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
