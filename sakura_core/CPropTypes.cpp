@@ -167,6 +167,20 @@ const DWORD p_helpids2[] = {	//11400
 };
 //@@@ 2001.02.04 End
 
+//From Here Jul. 05, 2001 JEPRO 追加
+const DWORD p_helpids3[] = {	//11500
+	IDC_BUTTON_HOKANFILE_REF,		11500,	//入力補完 単語ファイル参照
+	IDC_BUTTON_KEYWORDHELPFILE_REF,	11501,	//キーワードヘルプファイル参照
+	IDC_CHECK_HOKANLOHICASE,		11510,	//入力補完の英大文字小文字
+	IDC_CHECK_USEKEYWORDHELP,		11511,	//キーワードヘルプ機能
+	IDC_EDIT_HOKANFILE,				11540,	//単語ファイル名
+	IDC_EDIT_KEYWORDHELPFILE,		11541,	//辞書ファイル名
+//	IDC_STATIC,						-1,
+	0, 0
+};
+//To Here Jul. 05, 2001
+
+
 
 /* p1 ダイアログプロシージャ */
 BOOL CALLBACK PropTypesP1Proc(
@@ -1176,16 +1190,25 @@ BOOL CPropTypes::DispatchEvent_p2(
 
 		break;
 
+//From Here Jul. 05, 2001 JEPRO: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids3 );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//To Here  Jul. 05, 2001
 
 	}
 	return FALSE;
-
 }
 
 /* ダイアログデータの設定 p2 */
 void CPropTypes::SetData_p2( HWND hwndDlg )
 {
-	/* 入力補完用単語ファイル */
+	/* 入力補完 単語ファイル */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
 
 //	2001/06/19 asa-o
