@@ -61,6 +61,7 @@ OBJS =\
 	$(SRCDIR)\CDlgTagJumpList.obj \
 	$(SRCDIR)\CDlgTagsMake.obj \
 	$(SRCDIR)\CDlgTypeList.obj \
+	$(SRCDIR)\CDlgWinSize.obj \
 	$(SRCDIR)\CDllHandler.obj \
 	$(SRCDIR)\CDocLine.obj \
 	$(SRCDIR)\CDocLineMgr.obj \
