@@ -155,9 +155,12 @@ struct ARRHEAD {
 	
 	Version 58:
 	強調キーワードセット可変長割り当て 2005/01/25 Moca
+
+	Version 59:
+	マクロ数を増やした 2005/01/30 genta
 */
 
-const unsigned int uShareDataVersion = 58;
+const unsigned int uShareDataVersion = 59;
 
 /*
 ||	Singleton風
