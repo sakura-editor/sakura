@@ -258,7 +258,9 @@ char* GetHelpFilePath( char* pszHelpFile, unsigned int nMaxLen )
 
 
 
-
+# if 0
+//	Aug. 18, 2002 genta
+//	GetLongFileNameから呼び出されなくなったので不要
 /* 相対パス→絶対パス */
 BOOL GetAbsolutePath( const char* pszFilePathSrc, char* pszFilePathDes, BOOL bChangeCurrentFolder )
 {
@@ -326,7 +328,7 @@ end_of_func:;
 	return bRet;
 
 }
-
+#endif
 
 
 
@@ -344,9 +346,14 @@ BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 //	int				nCharChars;
 //	int				nDriveOrg;
 	/* 相対パス→絶対パス */
-	if( FALSE == GetAbsolutePath( pszFilePathSrc, pszFilePathDes, TRUE ) ){
-		return FALSE;
-	}
+	//	Aug. 18, 2002 genta 削除
+	//	下で行っていることと機能が重複しているため．
+	//	ここで作られたpszFilePathDesは全く使われていないので
+	//	こちらを削除した．
+	//	GetAbsolutePathを使うのはここだけなので，GetAbsolutePathも不要なはず．
+	// if( FALSE == GetAbsolutePath( pszFilePathSrc, pszFilePathDes, TRUE) ){
+	//	return FALSE;
+	// }
 
 	ITEMIDLIST* pIDL;
 	/* パス名に対するアイテムＩＤリストを作成する */

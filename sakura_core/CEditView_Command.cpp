@@ -7764,6 +7764,7 @@ void CEditView::Command_CASCADE( void )
 			w_offset += w_delta;
 			h_offset += h_delta;
 		}
+
 		delete [] phwndArr;
 		delete [] pEditNodeArr;
 	}
@@ -7815,6 +7816,7 @@ void CEditView::Command_TILE_H( void )
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
 		}
+		::SetFocus( phwndArr[0] );	// Aug. 17, 2002 MIK
 		delete [] phwndArr;
 		delete [] pEditNodeArr;
 	}
@@ -7866,6 +7868,8 @@ void CEditView::Command_TILE_V( void )
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
 		}
+		::SetFocus( phwndArr[0] );	// Aug. 17, 2002 MIK
+
 		delete [] phwndArr;
 		delete [] pEditNodeArr;
 	}
