@@ -669,6 +669,24 @@ BOOL CheckWindowsVersion( const char* pszAppName )
 	return TRUE;
 }
 
+// From Here Jul. 5, 2001 shoji masami
+/*! NTプラットフォームかどうか調べる
+
+	@retval TRUE NT platform
+	@retval FALSE non-NT platform
+*/
+bool CheckWindowsVersionNT( void )
+{
+	OSVERSIONINFO osVer;
+	osVer.dwOSVersionInfoSize = sizeof(osVer);
+	GetVersionEx(&osVer);
+
+	if (osVer.dwPlatformId == VER_PLATFORM_WIN32_NT)
+		return true;	// NT系
+
+	return false;		// それ以外
+}
+// To Here Jul. 5, 2001 shoji masami
 
 
 
@@ -1565,7 +1583,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 	/* ファイル操作系 */
 	case F_FILENEW:				return 25;			//新規作成
-	case F_FILEOPEN:			return 15;			//ファイルを開く
+	case F_FILEOPEN:			return 15;			//開く
 	case F_FILESAVE:			return 20;			//上書き保存
 	case F_FILESAVEAS:			return 21;			//名前を付けて保存
 	case F_FILECLOSE:			return 17;			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -1588,14 +1606,14 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_PROPERTY_FILE:		return 22;			/* ファイルのプロパティ */
 
 //	case IDM_EXITALL:			return 28;			//テキストエディタの全終了
-	case F_EXITALL:			return 28;				//テキストエディタの全終了	//Dec. 26, 2000 JEPRO F_に変更
+	case F_EXITALL:			return 28;				//サクラエディタの全終了	//Dec. 26, 2000 JEPRO F_に変更
 
 
 	/* 編集系 */
 	case F_UNDO:						return 32;	//元に戻す(Undo)
 	case F_REDO:						return 33;	//やり直し(Redo)
-	case F_DELETE:						return 41;	//カーソル位置を削除
-	case F_DELETE_BACK:					return 42;	//カーソルの前を削除
+	case F_DELETE:						return 41;	//削除
+	case F_DELETE_BACK:					return 42;	//カーソル前を削除
 	case F_WordDeleteToStart:			return 166;	//単語の左端まで削除
 	case F_WordDeleteToEnd:				return 167;	//単語の右端まで削除
 	case F_WordCut:						return 169;	//単語切り取り
@@ -1715,7 +1733,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_HANKATATOZENKAKUKATA:	return 123;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	return 124;	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				return 182;	/* TAB→空白 */
-	//case F_SPACETOTAB:			return 182;	/* 空白→TAB */ //#### Stonee, 2001/05/27
+	case F_SPACETOTAB:				return 196;	/* 空白→TAB */ //#### Stonee, 2001/05/27	//Jul. 03, 2001 JEPRO 番号修正
 	case F_CODECNV_AUTO2SJIS:		return 178;	/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL:			return 52;	//E-Mail(JIS→SJIS)コード変換
 	case F_CODECNV_EUC2SJIS:		return 53;	//EUC→SJISコード変換
@@ -1760,6 +1778,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 //From here 設定ダイアログ用のhelpトピックIDを追加  Stonee, 2001/05/18
 	case F_TYPE_SCREEN:		return 74;	/* タイプ別設定『スクリーン』 */
 	case F_TYPE_COLOR:		return 75;	/* タイプ別設定『カラー』 */
+	case F_TYPE_HELPER:		return 197;	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
 	case F_OPTION_GENERAL:	return 81;	/* 共通設定『全般』 */
 	case F_OPTION_WINDOW:	return 146;	/* 共通設定『ウィンドウ』 */
 	case F_OPTION_EDIT:		return 144;	/* 共通設定『編集』 */
@@ -1775,7 +1794,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_OPTION_HELPER:	return 88;	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
 	case F_FONT:			return 71;	/* フォント設定 */
-	case F_WRAPWINDOWWIDTH:	return 73;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	case F_WRAPWINDOWWIDTH:	return 184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正
 
 
 	/* マクロ */
@@ -1940,5 +1959,48 @@ bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage )
 	return true;
 }
 //	To Here Jun. 26, 2001 genta
+
+
+//	From Here Jun. 26, 2001 genta
+/*!
+	HTML Helpコンポーネントのアクセスを提供する。
+	内部で保持すべきデータは特になく、至る所から使われるのでGlobal変数にするが、
+	直接のアクセスはOpenHtmlHelp()関数のみから行う。
+	他のファイルからはCHtmlHelpクラスは隠されている。
+*/
+CHtmlHelp g_cHtmlHelp;
+
+/*!
+	HTML Helpを開く
+	
+	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
+	
+	@param hWnd [in] 呼び出し元ウィンドウのウィンドウハンドル
+	@param szFile [in] HTML Helpのファイル名。
+				不等号に続けてウィンドウタイプ名を指定可能。
+	@param uCmd [in] HTML Help に渡すコマンド
+	@param data [in] コマンドに応じたデータ
+	@param msgflag [in] エラーメッセージを表示するか。省略時はtrue。
+	
+	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
+*/
+
+HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data, bool msgflag )
+{
+	if( g_cHtmlHelp.Init()){
+		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
+	}
+	if( msgflag ){
+		::MessageBox( hWnd, "HHCTRL.OCXが見つかりません。\r\n"
+			"HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n",
+			"情報", MB_OK | MB_ICONEXCLAMATION );
+	}
+	return NULL;
+}
+
+
+//	To Here Jun. 26, 2001 genta
+
+
 
 /* [EOF] */
