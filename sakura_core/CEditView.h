@@ -173,9 +173,9 @@ public:
 	//	Jun. 16, 2000 genta
 	bool  SearchBracket( int PosX, int PosY, int* NewX, int* NewY, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
 	bool  SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
-						int upChar, int dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
+						char* upChar, char* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
 	bool  SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
-						int dnChar, int upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
+						char* dnChar, char* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
 //@@@ 2001.02.03 Start by MIK: 全角の対括弧
 	bool  SearchBracketForward2( int PosX, int PosY, int* NewX, int* NewY,
 								 char* upChar, char* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
@@ -389,6 +389,7 @@ protected:
 	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
 	void DrawBracketPair( void );								/* 対括弧の強調表示 02/09/18 ai */
 	int GetColorIndex( HDC, const CLayout*, int );				/* 指定位置のColorIndexの取得 02/12/13 ai */
+	bool IsBracket( const char*, int, int );					/* 括弧判定 03/01/09 ai */
 public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
 protected:

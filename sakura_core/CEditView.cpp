@@ -8502,32 +8502,34 @@ void CEditView::DrawBracketPair( void )
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
 					OutputX = LineColmnToIndex( pcLayout, nCol );
-					nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
-					//char buf[256];
-					//wsprintf( buf, "nColorIndex = %d, pLine[%d] = '%c'", nColorIndex, OutputX, pLine[OutputX] );
-					//SendStatusMessage( buf );
-					//::SetBkMode( hdc, TRANSPARENT );
-					hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-					m_hFontOld = NULL;
-					crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-					crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
-
-					SetCurrentColor( hdc, nColorIndex );
-
-					nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-					nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
-
-					if( NULL != m_hFontOld ){
-						::SelectObject( hdc, m_hFontOld );
+					if( IsBracket( pLine, OutputX, m_nCharSize ) ) {
+						nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
+						//char buf[256];
+						//wsprintf( buf, "nColorIndex = %d, pLine[%d] = '%c'", nColorIndex, OutputX, pLine[OutputX] );
+						//SendStatusMessage( buf );
+						//::SetBkMode( hdc, TRANSPARENT );
+						hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
 						m_hFontOld = NULL;
-					}
-					::SetTextColor( hdc, crTextOld );
-					::SetBkColor( hdc, crBackOld );
-					::SelectObject( hdc, hFontOld );
+						crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+						crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
 
-					if( nLine == m_nCaretPosY ){
-						m_cUnderLine.CaretUnderLineON( TRUE );
+						SetCurrentColor( hdc, nColorIndex );
+
+						nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+						nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+						DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
+
+						if( NULL != m_hFontOld ){
+							::SelectObject( hdc, m_hFontOld );
+							m_hFontOld = NULL;
+						}
+						::SetTextColor( hdc, crTextOld );
+						::SetBkColor( hdc, crBackOld );
+						::SelectObject( hdc, hFontOld );
+
+						if( nLine == m_nCaretPosY ){
+							m_cUnderLine.CaretUnderLineON( TRUE );
+						}
 					}
 				}
 			}
@@ -8536,7 +8538,8 @@ void CEditView::DrawBracketPair( void )
 		m_nBracketPairPosY_PHY = -1;
 	}
 
-	if( IsTextSelected() || ( ( m_nBracketPairPosX_PHY != -1 ) && ( m_nBracketPairPosY_PHY != -1 ) ) )
+	if( IsTextSelected() || m_bBeginBoxSelect
+		|| ( ( m_nBracketPairPosX_PHY != -1 ) && ( m_nBracketPairPosY_PHY != -1 ) ) )
 	{	// 選択中又は、対括弧の強調表示が消去済みでない場合は強調表示をしない
 		::ReleaseDC( m_hWnd, hdc );
 		return;
