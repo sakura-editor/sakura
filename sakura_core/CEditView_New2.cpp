@@ -1416,7 +1416,8 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
 			// 辞書Tipのサイズを取得
 			m_cTipWnd.GetWindowSize(&rcTipWin);
 
-			::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+			//	May 01, 2004 genta マルチモニタ対応
+			::GetMonitorWorkRect( m_cTipWnd.m_hWnd, &rcDesktop );
 
 			// 右に入る
 			if(prcHokanWin->right + rcTipWin.right < rcDesktop.right){

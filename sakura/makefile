@@ -104,6 +104,7 @@ OBJS =\
 	$(SRCDIR)\CMenuDrawer.obj \
 	$(SRCDIR)\CMRU.obj \
 	$(SRCDIR)\CMRUFolder.obj \
+	$(SRCDIR)\CMultiMonitor.obj \
 	$(SRCDIR)\CNormalProcess.obj \
 	$(SRCDIR)\COpe.obj \
 	$(SRCDIR)\COpeBlk.obj \

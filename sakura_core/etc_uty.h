@@ -121,6 +121,9 @@ HFILE _lopen_absexe(LPCSTR fname, int mode); // 2003.06.23 Moca
 //	ディレクトリの深さを調べる
 int CalcDirectoryDepth(const char* path);
 
+//	May 01, 2004 genta マルチモニタ対応のデスクトップ領域取得
+bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop);
+
 // Oct. 5, 2002 genta CMemory.cppより移動
 /*! Shift_JIS の漢字の1バイト目？ の判定 */
 inline bool _IS_SJIS_1(unsigned int ch)
