@@ -4086,19 +4086,18 @@ void CEditView::Command_FILENEW( void )
 
 
 
-/* ファイルを開く */
-void CEditView::Command_FILEOPEN( const char *filename )
+/*! @brief ファイルを開く
+
+	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
+*/
+void CEditView::Command_FILEOPEN( const char *filename, int nCharCode, BOOL bReadOnly )
 {
 	char		pszPath[_MAX_PATH];
 	BOOL		bOpened;
-	int			nCharCode;
-	BOOL		bReadOnly;
 	FileInfo*	pfi;
 	HWND		hWndOwner;
 
 	/* 「ファイルを開く」ダイアログ */
-	nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-	bReadOnly = FALSE;
 	if( filename == NULL ){
 		pszPath[0] = '\0';
 		if( !m_pcEditDoc->OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
@@ -4207,13 +4206,28 @@ void CEditView::Command_FILECLOSE( void )
 
 
 
-/* 閉じて開く */
-void CEditView::Command_FILECLOSE_OPEN( void )
+/*! @brief 閉じて開く
+
+	@date 2003.03.30 genta 開くダイアログでキャンセルしたとき元のファイルが残るように。
+				ついでにFILEOPENと同じように引数を追加しておく
+*/
+void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOOL bReadOnly )
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
 	if( !m_pcEditDoc->OnFileClose() ){
 		return;
 	}
+
+	// Mar. 30, 2003 genta
+	char	pszPath[_MAX_PATH];
+
+	if( filename == NULL ){
+		pszPath[0] = '\0';
+		if( !m_pcEditDoc->OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+			return;
+		}
+	}
+
 	/* 既存データのクリア */
 	m_pcEditDoc->Init();
 
@@ -4224,7 +4238,8 @@ void CEditView::Command_FILECLOSE_OPEN( void )
 	SetParentCaption();
 
 	/* ファイルを開く */
-	Command_FILEOPEN();
+	// Mar. 30, 2003 genta
+	Command_FILEOPEN(( filename ? filename : pszPath ), nCharCode, bReadOnly );
 
 	return;
 }
