@@ -1,3 +1,4 @@
+//	$Id$
 /*!	@file
 	@brief PPA.DLLマクロ
 
@@ -23,8 +24,8 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-//! キーボードマクロ
-class CPPAMacroMgr : public CKeyMacroMgr
+//! PPAマクロ
+class CPPAMacroMgr: public CMacroManagerBase
 {
 public:
 	/*
@@ -40,6 +41,10 @@ public:
 	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);	/* キーボードマクロを読み込み、CMacroの列に変換 */
 
 	static class CPPA m_cPPA;
+
+	// Apr. 29, 2002 genta
+	static CMacroManagerBase* Creator(const char*);
+	static void declare(void);
 
 protected:
 	CMemory m_cBuffer;
