@@ -188,7 +188,7 @@ BEGIN
                     WS_TABSTOP,155,178,74,10,0,HIDC_CHECK_EXITCONFIRM
 END
 
-IDD_FIND DIALOG DISCARDABLE  30, 0, 275, 99
+IDD_FIND DIALOG DISCARDABLE  30, 0, 275, 93
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "検索"
@@ -198,19 +198,18 @@ BEGIN
     COMBOBOX        IDC_COMBO_TEXT,30,4,185,150,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,30,25,73,11
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,10,25,73,10
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,30,39,
-                    119,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,38,119,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,30,51,50,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,51,50,10
     CONTROL         "見つからないときにメッセージを表示(&M)",
                     IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,30,65,130,10
+                    WS_TABSTOP,10,64,130,10
     CONTROL         "検索ダイアログを自動的に閉じる(&L)",
                     IDC_CHECK_bAutoCloseDlgFind,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,30,77,118,10
-    LTEXT           "",IDC_STATIC_JRE32VER,85,53,65,8
+                    WS_TABSTOP,10,77,118,10
+    LTEXT           "",IDC_STATIC_JRE32VER,65,52,65,8
     PUSHBUTTON      "上検索(&U)",IDC_BUTTON_SEARCHPREV,219,5,50,14,WS_GROUP
     DEFPUSHBUTTON   "下検索(&D)",IDC_BUTTON_SEARCHNEXT,219,21,50,14
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,219,44,50,14,WS_GROUP
@@ -276,31 +275,30 @@ BEGIN
                     WS_TABSTOP,8,133,214,10,0,HIDC_CHECK_AutoMIMEDecode
 END
 
-IDD_ABOUT DIALOGEX 0, 0, 258, 177
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 230, 175
 STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "バージョン情報"
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,21,SS_NOTIFY
+    ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
-                    30,7,56,8
-    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,91,7,60,8,NOT WS_GROUP
+                    30,7,42,8
+    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,79,7,60,8,NOT WS_GROUP
     LTEXT           "Copyright (C) 1998-2001  by Norio Nakatani && Collaborators",
                     IDC_STATIC,38,33,182,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,97,8,NOT WS_GROUP
-    DEFPUSHBUTTON   "&OK",IDOK,93,156,50,14
-    PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,175,7,59,14
-    LTEXT           "Project Sakura Editor:",IDC_STATIC_URL_CAPTION,12,60,64,
+    DEFPUSHBUTTON   "&OK",IDOK,90,158,50,14
+    PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,166,7,59,14
+    LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,12,60,66,
                     8
     LTEXT           "http://sakura-editor.sourceforge.net/",
                     IDC_STATIC_URL_UR,80,60,109,8,SS_NOTIFY
     LTEXT           "http://hp.vector.co.jp/authors/VA016528/",
                     IDC_STATIC_URL_ORG,80,48,123,8,SS_NOTIFY
     LTEXT           "原作者ホームページ:",IDC_STATIC,12,48,61,8
-    EDITTEXT        IDC_EDIT_ABOUT,7,71,244,78,ES_MULTILINE | ES_AUTOVSCROLL | 
-                    ES_READONLY | ES_WANTRETURN | WS_VSCROLL,
-                    WS_EX_DLGMODALFRAME
+    EDITTEXT        IDC_EDIT_ABOUT,5,74,220,80,ES_MULTILINE | ES_READONLY | 
+                    ES_WANTRETURN | WS_DISABLED | WS_VSCROLL
 END
 
 IDD_JUMP DIALOG DISCARDABLE  0, 0, 245, 121
@@ -426,7 +424,7 @@ BEGIN
     PUSHBUTTON      "&...",IDC_BUTTON1,261,129,9,12,WS_DISABLED
 END
 
-IDD_GREP DIALOG DISCARDABLE  0, 0, 311, 141
+IDD_GREP DIALOG DISCARDABLE  0, 0, 311, 137
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Grep条件入力"
 FONT 9, "ＭＳ Ｐゴシック"
@@ -441,23 +439,23 @@ BEGIN
     COMBOBOX        IDC_COMBO_FOLDER,40,34,256,120,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,296,34,9,12
-    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
-                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,56,73,11
     PUSHBUTTON      "現在のフォルダ(&U)",IDC_BUTTON_CURRENTFOLDER,245,49,60,
                     14,BS_MULTILINE
+    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_GROUP | WS_TABSTOP,10,
+                    55,73,10
     CONTROL         "サブフォルダからも検索する(&S)",IDC_CHK_SUBFOLDER,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,70,
-                    107,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,68,107,10
     CONTROL         "現在編集中のファイルから検索(&Q)",IDC_CHK_FROMTHISTEXT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,84,116,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,81,116,10
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,14,98,110,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,94,110,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,14,112,49,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,107,50,10
     CONTROL         "文字コードセット自動判別(&A)",
                     IDC_CHK_KANJICODEAUTODETECT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,14,126,99,10
-    LTEXT           "123456",IDC_STATIC_JRE32VER,68,113,56,8
+                    WS_TABSTOP,10,120,99,10
+    LTEXT           "",IDC_STATIC_JRE32VER,65,108,65,8
     CONTROL         "該当行(&L)",IDC_RADIO_OUTPUTLINE,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,140,63,45,10
     CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",
@@ -591,7 +589,7 @@ BEGIN
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,175,30,50,14
 END
 
-IDD_REPLACE DIALOG DISCARDABLE  30, 0, 279, 127
+IDD_REPLACE DIALOG DISCARDABLE  30, 0, 279, 121
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "置換"
 FONT 9, "ＭＳ Ｐゴシック"
@@ -603,24 +601,22 @@ BEGIN
     COMBOBOX        IDC_COMBO_TEXT2,36,19,185,150,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,12,40,75,8
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,10,40,73,10
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_GROUP | WS_TABSTOP,12,52,
-                    110,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,53,110,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,12,66,50,10
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,10,66,50,10
     CONTROL         "見つからないときにメッセージを表示(&M)",
                     IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,12,79,130,10
+                    WS_TABSTOP,10,79,130,10
     CONTROL         "置換ダイアログを自動的に閉じる(&L)",
                     IDC_CHECK_bAutoCloseDlgReplace,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,12,92,118,10
-    LTEXT           "XXXXXXXXX",IDC_STATIC_JRE32VER,64,67,65,8
+                    WS_TABSTOP,10,92,118,10
+    LTEXT           "",IDC_STATIC_JRE32VER,65,67,65,8
     CONTROL         "選択範囲(&S)",IDC_RADIO_SELECTEDAREA,"Button",
-                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,155,51,53,
-                    10
+                    BS_AUTORADIOBUTTON | WS_GROUP,155,51,53,10
     CONTROL         "ファイル全体(&O)",IDC_RADIO_ALLAREA,"Button",
-                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,155,62,62,10
+                    BS_AUTORADIOBUTTON,155,62,62,10
     GROUPBOX        "範囲",IDC_STATIC,150,38,70,40,WS_GROUP
     PUSHBUTTON      "上検索(&U)",IDC_BUTTON_SEARCHPREV,225,5,50,14,WS_GROUP
     DEFPUSHBUTTON   "下検索(&D)",IDC_BUTTON_SEARCHNEXT,225,21,50,14
@@ -756,7 +752,7 @@ IDD_PROPTYPESP1 DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     LTEXT           "設定の名前(&N)",IDC_STATIC,5,6,44,8
     EDITTEXT        IDC_EDIT_TYPENAME,61,4,205,12,ES_AUTOHSCROLL,0,
@@ -978,39 +974,39 @@ IDD_PROP_HELPER DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "逐次入力補完(&C)",IDC_CHECK_USEHOKAN,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,11,19,66,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,16,66,10,0,
                     HIDC_CHECK_USEHOKAN
     CONTROL         "&Enter",IDC_CHECK_m_bHokanKey_RETURN,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,60,34,31,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,60,30,31,10,0,
                     HIDC_CHECK_m_bHokanKey_RETURN
     CONTROL         "&Tab",IDC_CHECK_m_bHokanKey_TAB,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,91,34,27,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,91,30,27,10,0,
                     HIDC_CHECK_m_bHokanKey_TAB
     CONTROL         "→(&R)",IDC_CHECK_m_bHokanKey_RIGHT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,118,34,32,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,118,30,32,10,0,
                     HIDC_CHECK_m_bHokanKey_RIGHT
     CONTROL         "&Space",IDC_CHECK_m_bHokanKey_SPACE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,150,34,34,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,150,30,34,10,0,
                     HIDC_CHECK_m_bHokanKey_SPACE
-    GROUPBOX        "入力補完機能",IDC_STATIC,3,7,264,41,WS_GROUP
-    LTEXT           "候補決定キー",IDC_STATIC,11,35,42,8
-    GROUPBOX        "外部ヘルプの設定(&L)",IDC_STATIC,3,56,264,32,WS_GROUP
-    EDITTEXT        IDC_EDIT_EXTHELP1,8,68,239,12,ES_AUTOHSCROLL | WS_GROUP,
+    GROUPBOX        "入力補完機能",IDC_STATIC,3,3,264,44,WS_GROUP
+    LTEXT           "候補決定キー",IDC_STATIC,8,31,42,8
+    GROUPBOX        "外部ヘルプの設定(&L)",IDC_STATIC,3,54,264,32,WS_GROUP
+    EDITTEXT        IDC_EDIT_EXTHELP1,8,66,239,12,ES_AUTOHSCROLL | WS_GROUP,
                     0,HIDC_EDIT_EXTHELP1
-    PUSHBUTTON      "(&1)...",IDC_BUTTON_OPENHELP1,247,67,16,14,0,0,
+    PUSHBUTTON      "(&1)...",IDC_BUTTON_OPENHELP1,247,65,16,14,0,0,
                     HIDC_BUTTON_OPENHELP1
-    GROUPBOX        "外部HTMLヘルプの設定(&P)",IDC_STATIC,3,95,264,45,
+    GROUPBOX        "外部HTMLヘルプの設定(&P)",IDC_STATIC,3,93,264,45,
                     WS_GROUP
-    EDITTEXT        IDC_EDIT_EXTHTMLHELP,8,107,239,12,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_EDIT_EXTHTMLHELP,8,105,239,12,ES_AUTOHSCROLL | 
                     WS_GROUP,0,HIDC_EDIT_EXTHTMLHELP
-    PUSHBUTTON      "(&2)...",IDC_BUTTON_OPENEXTHTMLHELP,247,106,16,14,0,0,
+    PUSHBUTTON      "(&2)...",IDC_BUTTON_OPENEXTHTMLHELP,247,104,16,14,0,0,
                     HIDC_BUTTON_OPENEXTHTMLHELP
     CONTROL         "ビューアを複数起動しない(&N)",
                     IDC_CHECK_HTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,123,101,10,0,HIDC_CHECK_HTMLHELPISSINGLE
+                    WS_TABSTOP,8,121,101,10,0,HIDC_CHECK_HTMLHELPISSINGLE
 END
 
 IDD_SETUP DIALOG DISCARDABLE  0, 0, 225, 127
@@ -1188,7 +1184,7 @@ BEGIN
     LTEXT           "999/999",IDC_STATIC_ZOOM,127,19,35,8
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,164,1,40,14
     PUSHBUTTON      "戻る(&Q)",IDCANCEL,164,16,40,14
-    CONTROL         176,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,211,
+    CONTROL         203,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,211,
                     3,9,10
     LTEXT           "Static",IDC_STATIC_PRNDEV,225,4,150,8
     LTEXT           "Static",IDC_STATIC_PAPER,225,19,150,8
@@ -1396,20 +1392,20 @@ BEGIN
                     12
     LTEXT           "ドット",IDC_STATIC,126,119,15,8
     GROUPBOX        "ルーラー",IDC_STATIC,3,88,264,50
+    CONTROL         "垂直スクロールの同期をとる(&V)",
+                    IDC_CHECK_SplitterWndVScroll,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,8,154,107,10
+    CONTROL         "水平スクロールの同期をとる(&H)",
+                    IDC_CHECK_SplitterWndHScroll,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,120,154,107,10
+    GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,141,264,30,WS_GROUP
     CONTROL         "スタイル-1",IDC_RADIO_nRulerType_0,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,8,189,47,
                     10
     CONTROL         "スタイル-2",IDC_RADIO_nRulerType_1,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE,64,189,47,10
     GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,3,174,264,35,
-                    NOT WS_VISIBLE
-    GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,141,264,30
-    CONTROL         "垂直スクロールの同期をとる",
-                    IDC_CHECK_SplitterWndVScroll,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,154,98,10
-    CONTROL         "水平スクロールの同期をとる",
-                    IDC_CHECK_SplitterWndHScroll,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,117,154,98,10
+                    NOT WS_VISIBLE | WS_GROUP
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 270, 213
@@ -1457,26 +1453,27 @@ IDD_PROP_GREP DIALOGEX 0, 0, 271, 101
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     GROUPBOX        "Grep",IDC_STATIC,3,3,264,35,WS_GROUP
     CONTROL         "Grepモードで保存確認する(&V)",
                     IDC_CHECK_bGrepExitConfirm,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,18,103,10,0,HIDC_CHECK_bGrepExitConfirm
-    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,43,264,50
     CONTROL         "エンターキーでタグジャンプ(&E)",IDC_CHECK_GTJW_RETURN,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,58,
                     104,10,0,HIDC_CHECK_GTJW_RETURN
     CONTROL         "ダブルクリックでタグジャンプ(&W)",
                     IDC_CHECK_GTJW_LDBLCLK,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,73,109,10,0,HIDC_CHECK_GTJW_LDBLCLK
+    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,43,264,50,
+                    WS_GROUP
 END
 
 IDD_PROP_BACKUP DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "保存時にバックアップを作成する(&K)",IDC_CHECK_BACKUP,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,18,
@@ -1509,24 +1506,24 @@ BEGIN
                     WS_TABSTOP,162,93,27,10,0,HIDC_CHECK_BACKUP_MIN
     CONTROL         "秒(&S)",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,195,93,27,10,0,HIDC_CHECK_BACKUP_SEC
+    CONTROL         "バックアップファイルを作成する時点での日時を使用(&E)",
+                    IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,22,107,175,10
+    CONTROL         "前回の保存時の日時(ファイルの更新日時)を使用(&U)",
+                    IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
+                    22,122,169,10
     CONTROL         "作成前に確認する(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,138,78,10,0,
                     HIDC_CHECK_BACKUPDIALOG
     CONTROL         "指定フォルダに作成する(&P)",IDC_CHECK_BACKUPFOLDER,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,153,
-                    96,10,0,HIDC_CHECK_BACKUPFOLDER
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,153,96,10,0,
+                    HIDC_CHECK_BACKUPFOLDER
     LTEXT           "フォルダ名(&F)",IDC_LABEL_BACKUP_4,10,169,40,8
     EDITTEXT        IDC_EDIT_BACKUPFOLDER,52,167,201,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_BACKUPFOLDER
     PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,253,167,9,12,0,0,
                     HIDC_BUTTON_BACKUP_FOLDER_REF
     GROUPBOX        "バックアップの作成",IDC_STATIC,3,3,264,189,WS_GROUP
-    CONTROL         "バックアップファイルを作成する時点での日時を使用",
-                    IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON,
-                    22,107,167,10
-    CONTROL         "前回の保存時(ファイルの更新日時)の日時を使用",
-                    IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
-                    22,121,159,10
 END
 
 IDD_OUTLINES DIALOG DISCARDABLE  0, 0, 187, 81
@@ -1676,28 +1673,28 @@ IDD_PROPTYPESP2 DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "単語ファイル(&W)",IDC_STATIC,8,36,47,8,NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_HOKANFILE,57,34,190,12,ES_AUTOHSCROLL | 
+    LTEXT           "単語ファイル(&W)",IDC_STATIC,8,17,47,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_HOKANFILE,57,15,190,12,ES_AUTOHSCROLL | 
                     WS_GROUP,0,HIDC_EDIT_HOKANFILE
-    PUSHBUTTON      "(&1)...",IDC_BUTTON_HOKANFILE_REF,247,33,16,14,0,0,
+    PUSHBUTTON      "(&1)...",IDC_BUTTON_HOKANFILE_REF,247,14,16,14,0,0,
                     HIDC_BUTTON_HOKANFILE_REF
-    GROUPBOX        "入力補完機能",IDC_STATIC,3,3,264,50,WS_GROUP
+    CONTROL         "英大文字小文字を同一視する(&I)",IDC_CHECK_HOKANLOHICASE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,109,10,0,
+                    HIDC_CHECK_HOKANLOHICASE
+    GROUPBOX        "入力補完機能",IDC_STATIC,3,3,264,45,WS_GROUP
     CONTROL         "キーワードヘルプ機能を使う(&K)",
                     IDC_CHECK_USEKEYWORDHELP,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,7,73,102,10,0,
+                    WS_GROUP | WS_TABSTOP,8,68,102,10,0,
                     HIDC_CHECK_USEKEYWORDHELP
-    LTEXT           "辞書ファイル(&D)",IDC_LABEL_KEYWORDHELPFILE,8,89,47,8,
+    LTEXT           "辞書ファイル(&D)",IDC_LABEL_KEYWORDHELPFILE,8,84,47,8,
                     NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_KEYWORDHELPFILE,57,87,190,12,ES_AUTOHSCROLL,0,
+    EDITTEXT        IDC_EDIT_KEYWORDHELPFILE,57,82,190,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_KEYWORDHELPFILE
-    PUSHBUTTON      "(&2)...",IDC_BUTTON_KEYWORDHELPFILE_REF,247,86,16,14,0,
+    PUSHBUTTON      "(&2)...",IDC_BUTTON_KEYWORDHELPFILE_REF,247,81,16,14,0,
                     0,HIDC_BUTTON_KEYWORDHELPFILE_REF
-    GROUPBOX        "キーワードヘルプ機能",IDC_STATIC,3,60,264,45
-    CONTROL         "英大文字小文字を同一視する(&I)",IDC_CHECK_HOKANLOHICASE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,18,109,10,0,
-                    HIDC_CHECK_HOKANLOHICASE
+    GROUPBOX        "キーワードヘルプ機能",IDC_STATIC,3,55,264,47
 END
 
 
@@ -1722,7 +1719,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 268
         TOPMARGIN, 7
-        BOTTOMMARGIN, 92
+        BOTTOMMARGIN, 86
     END
 
     IDD_PROP_FILE, DIALOG
@@ -1736,9 +1733,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 251
+        RIGHTMARGIN, 223
         TOPMARGIN, 7
-        BOTTOMMARGIN, 170
+        BOTTOMMARGIN, 168
     END
 
     IDD_JUMP, DIALOG
@@ -1778,7 +1775,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 304
         TOPMARGIN, 7
-        BOTTOMMARGIN, 134
+        BOTTOMMARGIN, 128
     END
 
     IDD_GREPRUNNING, DIALOG
@@ -1802,7 +1799,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 272
         TOPMARGIN, 7
-        BOTTOMMARGIN, 120
+        BOTTOMMARGIN, 115
     END
 
     IDD_PROP_TOOLBAR, DIALOG
@@ -2154,14 +2151,14 @@ BEGIN
         BLOCK "041104b0"
         BEGIN
             VALUE "Comments", "このソフトはフリーソフトです。\0"
-            VALUE "CompanyName", "Project: Sakura Editor\0"
-            VALUE "FileDescription", "テキストエディタ SAKURA\0"
+            VALUE "CompanyName", "Project: Sakura-Editor\0"
+            VALUE "FileDescription", "サクラエディタ\0"
             VALUE "FileVersion", "1.2\0"
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", "Copyright (C) Norio Nakatani & Collaborators\0"
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
-            VALUE "ProductName", "テキストエディタ SAKURA\0"
+            VALUE "ProductName", "サクラエディタ\0"
             VALUE "ProductVersion", "1.2.34.3\0"
         END
     END
@@ -2294,13 +2291,13 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_JUMPPREV              "移動履歴: 前へ"
     F_JUMPNEXT              "移動履歴: 次へ"
-    F_WndScrollUp           "画面を1行上にスクロール"
-    F_WndScrollDown         "画面を1行下にスクロール"
+    F_WndScrollUp           "画面を上へ１行スクロール"
+    F_WndScrollDown         "画面を下へ１行スクロール"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXITALL               "テキストエディタの全終了"
+    F_EXITALL               "サクラエディタの全終了"
     F_CHAR                  "文字入力"
     F_IME_CHAR              "全角文字入力"
 END
