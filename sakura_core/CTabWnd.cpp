@@ -588,6 +588,8 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			TCITEM	tcitem;
 			CRecent	cRecentEditNode;
 			TCHAR	szName[1024];
+			//	Jun. 19, 2004 genta
+			TCHAR		szName_amp[sizeof(szName)/sizeof(szName[0]) * 2];
 			EditNode	*p;
 
 			cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
@@ -596,15 +598,17 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			{
 				_tcsncpy( szName, p->m_szTabCaption, (sizeof( szName ) / sizeof( TCHAR )) );
 				szName[ (sizeof( szName ) / sizeof( TCHAR )) - 1 ] = _T('\0');
+				//	Jun. 19, 2004 genta &のエスケープ
+				dupamp( szName, szName_amp );
 			}
 			else
 			{
-				_tcscpy( szName, _T("(無題)") );
+				_tcscpy( szName_amp, _T("(無題)") );
 			}
 			cRecentEditNode.Terminate();
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
-			tcitem.pszText = szName;
+			tcitem.pszText = szName_amp;
 			tcitem.lParam  = (LPARAM)lParam;
 			TabCtrl_SetItem( m_hwndTab, nIndex, &tcitem );
 		}
@@ -662,13 +666,18 @@ int CTabWnd::FindTabIndexByHWND( HWND hWnd )
 	return -1;
 }
 
-/*! タブリストを再表示する */
+/*! タブリストを再表示する
+
+	@date 2004.06.19 genta &が含まれているファイル名が正しく表示されない
+*/
 void CTabWnd::Refresh( void )
 {
 	int			i;
 	int			nIndex;
 	TCITEM		tcitem;
 	TCHAR		szName[1024];
+	//	Jun. 19, 2004 genta
+	TCHAR		szName_amp[sizeof(szName)/sizeof(szName[0]) * 2];
 	EditNode	*p;
 	int			nCount;
 
@@ -688,14 +697,16 @@ void CTabWnd::Refresh( void )
 		{
 			_tcsncpy( szName, p[ i ].m_szTabCaption, (sizeof( szName ) / sizeof( TCHAR )) );
 			szName[ (sizeof( szName ) / sizeof( TCHAR )) - 1 ] = _T('\0');
+			//	Jun. 19, 2004 genta &のエスケープ
+			dupamp( szName, szName_amp );
 		}
 		else
 		{
-			_tcscpy( szName, _T("(無題)") );
+			_tcscpy( szName_amp, _T("(無題)") );
 		}
 
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
-		tcitem.pszText = szName;
+		tcitem.pszText = szName_amp;
 		tcitem.lParam  = (LPARAM)p[ i ].m_hWnd;
 		TabCtrl_InsertItem( m_hwndTab, i, &tcitem );
 	}
