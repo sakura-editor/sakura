@@ -26,11 +26,11 @@
 #include <io.h>
 #include "debug.h"
 #include "CEditApp.h"
-#include "CEditView.h"		//Nov. 21, 2000 JEPROtest
-#include "CEditDoc.h"		//Nov. 21, 2000 JEPROtest
+// #include "CEditView.h"		//Nov. 21, 2000 JEPROtest
+// #include "CEditDoc.h"		//Nov. 21, 2000 JEPROtest
 #include "CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
-#include "CDlgTypeList.h"	//Nov. 21, 2000 JEPROtest
+// #include "CDlgTypeList.h"	//Nov. 21, 2000 JEPROtest
 #include "sakura_rc.h"
 #include "mymessage.h"
 #include "CDlgOpenFile.h"
@@ -373,7 +373,13 @@ void CEditApp::MessageLoop( void )
 {
 //複数プロセス版
 	MSG	msg;
-	while ( m_hWnd != NULL && ::GetMessage(&msg, NULL, 0, 0 ) ){
+	int ret;
+	
+	//2004.02.17 Moca GetMessageのエラーチェック
+	while ( m_hWnd != NULL && (ret = ::GetMessage(&msg, NULL, 0, 0 )) ){
+		if( ret == -1 ){
+			break;
+		}
 		::TranslateMessage( &msg );
 		::DispatchMessage( &msg );
 	}
@@ -770,6 +776,7 @@ LRESULT CEditApp::DispatchEvent(
 				nId = CreatePopUpMenu_R();
 				switch( nId ){
 // Nov. 21, 2000 JEPROtestnow
+#if 0
 				case F_FONT:
 					/* フォント設定 */
 					{
@@ -816,6 +823,8 @@ LRESULT CEditApp::DispatchEvent(
 //						}
 //					}
 //					break;
+#endif
+
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
 					{
@@ -901,6 +910,8 @@ LRESULT CEditApp::DispatchEvent(
 				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
 					/* サクラエディタの全終了 */
 					CEditApp::TerminateApplication();
+					break;
+				default:
 					break;
 				}
 				return 0L;
@@ -1389,7 +1400,7 @@ void CEditApp::OnNewEditor(void)
 
 	@param hInstance [in]	インスタンスID (実は未使用)
 	@param hWndParent [in]	親ウィンドウハンドル．エラーメッセージ表示用
-	@param pszPath [in]		新規エディタで開くファイル名．NULLで新規エディタ作成．
+	@param pszPath [in]		新規エディタで開くファイル名とオプション．NULLで新規エディタ作成．
 	@param nCharCode [in]	新規エディタの文字コード
 	@param bReadOnly [in]	FALSEでなければ読みとり専用で開く
 	@param sync [in]		trueなら新規エディタの起動まで待機する
@@ -1652,7 +1663,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, "新規作成(&N)", FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, "開く(&O)...", FALSE );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, "&Grep...", FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, "Grep(&G)...", FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	/* MRUリストのファイルのリストをメニューにする */
