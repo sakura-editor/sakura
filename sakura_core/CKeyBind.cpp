@@ -126,7 +126,7 @@ int CKeyBind::GetFuncCode(
 /*!
 	@param hInstance [in] インスタンスハンドル
 	@param nKeyNameArrNum [in] 
-	@param nKeyNameArr [out] 
+	@param pKeyNameArr [out] 
 	@param cMemList
 	@param pcFuncLookup [in] 機能番号→名前の対応を取る
 

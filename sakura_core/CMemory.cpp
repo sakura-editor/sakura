@@ -3296,8 +3296,8 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 	@param nTabSpace TABの文字数
 	単独のスペースは変換しない
 
-	@Author Stonee
-	@Date 2001/5/27
+	@author Stonee
+	@date 2001/5/27
 */
 void CMemory::SPACEToTAB( int nTabSpace )
 {

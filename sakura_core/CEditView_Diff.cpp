@@ -151,9 +151,6 @@ finish:;
 /*!	差分表示
 	@param	pszFile1	[in]	旧ファイル名
 	@param	pszFile2	[in]	新ファイル名
-//	@param	nFlgFile12	[in]	編集中ファイルは...
-//									0	ファイル1(旧ファイル)
-//									1	ファイル2(新ファイル)
     @param  nFlgOpt     [in]    0b000000000
                                     ||||||+--- -i ignore-case         大文字小文字同一視
                                     |||||+---- -w ignore-all-space    空白無視
@@ -463,7 +460,7 @@ finish:
 }
 
 /*!	DIFF差分情報を解析しマーク登録
-	@param	pszFile2	[in]	新ファイル名
+	@param	pszDiffInfo	[in]	新ファイル名
 	@param	nFlgFile12	[in]	編集中ファイルは...
 									0	ファイル1(旧ファイル)
 									1	ファイル2(新ファイル)

@@ -429,7 +429,7 @@ bool CProfile::IOProfileData(
 	@param bRead [in] モード(true=読み込み, false=書き込み)
 	@param pszSectionName [in] セクション名
 	@param pszEntryKey [in] エントリ名
-	@param pEntryValue [i/o] エントリ値
+	@param EntryValue [i/o] エントリ値
 
 	@retval true  成功
 	@retval false 失敗

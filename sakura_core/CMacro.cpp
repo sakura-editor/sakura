@@ -726,7 +726,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	@param ID        [in] 関数番号
 	@param Arguments [in] 引数の配列
 	@param ArgSize   [in] 引数の数(Argument)
-	@VARIANT Result  [out] 結果の値を返す場所。戻り値がfalseのときは不定。
+	@param Result  [out] 結果の値を返す場所。戻り値がfalseのときは不定。
 	
 	@return true: 成功, false: 失敗
 
