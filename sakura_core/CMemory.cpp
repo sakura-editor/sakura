@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, mik, misaka, Stonee, hor
+	Copyright (C) 2002, Moca, sui
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -269,6 +270,63 @@ void CMemory::AddData( const char* pData, int nDataLen )
 	return;
 }
 
+/*! Shift_JIS ‚ÌŠ¿Žš‚Ì1ƒoƒCƒg–ÚH ‚Ì”»’è */
+inline bool _IS_SJIS_1(unsigned int ch){
+	return ( ( ch >=0x081 )&&( ch <=0x09F ) ) || ( ( ch >=0x0E0 )&&( ch <=0x0FC ) );
+}
+/*!  Shift_JIS ‚ÌŠ¿Žš‚Ì2ƒoƒCƒg–ÚH ‚Ì”»’è */
+inline bool _IS_SJIS_2(unsigned int ch){
+	return ( ( ch >=0x040 )&&( ch <=0x07E ) ) || ( ( ch >=0x080 )&&( ch <=0x0FC ) );
+}
+
+/*!
+	@brief Šg’£”Å SJIS¨JIS•ÏŠ·
+
+	SJISƒR[ƒh‚ðJIS‚É•ÏŠ·‚·‚éD‚»‚ÌÛCJIS‚É‘Î‰ž—Ìˆæ‚Ì‚È‚¢IBMŠg’£•¶Žš‚ð
+	NEC‘I’èIBMŠg’£•¶Žš‚É•ÏŠ·‚·‚éD
+
+	Shift_JIS fa40`fc4b ‚Ì”ÍˆÍ‚Ì•¶Žš‚Í 8754`879a ‚Ü‚½‚Í ed40`eefc ‚É
+	ŽUÝ‚·‚é•¶Žš‚É•ÏŠ·‚³‚ê‚½Œã‚ÉCJIS‚É•ÏŠ·‚³‚ê‚Ü‚·D
+	
+	@param pszSrc [in] •ÏŠ·‚·‚é•¶Žš—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^ (Shift JIS)
+	
+	@author ‚·‚¢
+	@date 2002.10.03 1•¶Žš‚Ì‚Ýˆµ‚¢C•ÏŠ·‚Ü‚Ås‚¤‚æ‚¤‚É•ÏX genta
+*/
+unsigned short CMemory::_mbcjmstojis_ex( unsigned char* pszSrc )
+{
+	unsigned int	tmpw;	/* © int ‚ª 16 bit ˆÈã‚Å‚ ‚éŽ–‚ðŠú‘Ò‚µ‚Ä‚¢‚Ü‚·B */
+	
+	if(	_IS_SJIS_1(* pszSrc    ) &&	/* Shift_JIS ‘SŠp•¶Žš‚Ì 1ƒoƒCƒg–Ú */
+		_IS_SJIS_2(*(pszSrc+1) )	/* Shift_JIS ‘SŠp•¶Žš‚Ì 2ƒoƒCƒg–Ú */
+	){	/* Shift_JIS‘SŠp•¶Žš‚Å‚ ‚é */
+		tmpw = ( ((unsigned int)*pszSrc) << 8 ) | ( (unsigned int)*(pszSrc + 1) );
+		if(
+			( *pszSrc == 0x0fa ) ||
+			( *pszSrc == 0x0fb ) ||
+			( ( *pszSrc == 0x0fc ) && ( *(pszSrc+1) <= 0x04b ) )
+		) {		/* fa40`fc4b ‚Ì•¶Žš‚Å‚ ‚éB */
+			/* •¶ŽšƒR[ƒh•ÏŠ·ˆ— */
+			if		  ( tmpw <= 0xfa49 ) {	tmpw -= 0x0b51;	}	/* fa40`fa49 ¨ eeef`eef8 iîï`îøj */
+			else	if( tmpw <= 0xfa53 ) {	tmpw -= 0x72f6;	}	/* fa4a`fa53 ¨ 8754`875d i‡T`‡]j */
+			else	if( tmpw <= 0xfa57 ) {	tmpw -= 0x0b5b;	}	/* fa54`fa57 ¨ eef9`eefc iîù ` îüj */
+			else	if( tmpw == 0xfa58 ) {	tmpw  = 0x878a;	}	/* ‡Š */
+			else	if( tmpw == 0xfa59 ) {	tmpw  = 0x8782;	}	/* ‡‚ */
+			else	if( tmpw == 0xfa5a ) {	tmpw  = 0x8784;	}	/* ‡„ */
+			else	if( tmpw == 0xfa5b ) {	tmpw  = 0x879a;	}	/* ‡š */
+			else	if( tmpw <= 0xfa7e ) {	tmpw -= 0x0d1c;	}	/* fa5c`fa7e ‚ÌŠ¿Žš */
+			else	if( tmpw <= 0xfa9b ) {	tmpw -= 0x0d1d;	}	/* fa80`fa9b ‚ÌŠ¿Žš */
+			else	if( tmpw <= 0xfafc ) {	tmpw -= 0x0d1c;	}	/* fa9c`fafc ‚ÌŠ¿Žš */
+			else	if( tmpw <= 0xfb5b ) {	tmpw -= 0x0d5f;	}	/* fb40`fb5b ‚ÌŠ¿Žš */
+			else	if( tmpw <= 0xfb7e ) {	tmpw -= 0x0d1c;	}	/* fb5c`fb7e ‚ÌŠ¿Žš */
+			else	if( tmpw <= 0xfb9b ) {	tmpw -= 0x0d1d;	}	/* fb80`fb9b ‚ÌŠ¿Žš */
+			else	if( tmpw <= 0xfbfc ) {	tmpw -= 0x0d1c;	}	/* fb9c`fbfc ‚ÌŠ¿Žš */
+			else{							tmpw -= 0x0d5f;	}	/* fc40`fc4b ‚ÌŠ¿Žš */
+		}
+		return (unsigned short) _mbcjmstojis( tmpw );
+	}
+	return 0;
+}
 
 
 /* ƒR[ƒh•ÏŠ· SJIS¨JIS */
@@ -422,11 +480,8 @@ long CMemory::MemSJIStoJIS( unsigned char* pszSrc, long nSrcLen )
 	memset( pszDes, 0, nSrcLen + 1 );
 	j = 0;
 	for( i = 0; i < nSrcLen - 1; i++ ){
-		sCode = (unsigned short)_mbcjmstojis(
-			(unsigned int)
-			(((unsigned short)pszSrc[i	  ] << 8) |
-			 ((unsigned short)pszSrc[i + 1]))
-		);
+		//	Oct. 3, 2002 genta IBMŠg’£•¶Žš‘Î‰ž
+		sCode = _mbcjmstojis_ex( pszSrc + i );
 		if( sCode != 0 ){
 			pszDes[j	] = (unsigned char)(sCode >> 8);
 			pszDes[j + 1] = (unsigned char)(sCode);
@@ -1103,11 +1158,8 @@ void CMemory::SJISToEUC( void )
 		}else
 		if( nCharChars == 2 ){
 			/* ‘SŠp•¶Žš */
-			sCode =	(unsigned short)_mbcjmstojis(
-				(unsigned int)
-				(((unsigned short)pBuf[i	] << 8) |
-				 ((unsigned short)pBuf[i + 1]))
-			);
+			//	Oct. 3, 2002 genta IBMŠg’£•¶Žš‘Î‰ž
+			sCode =	(unsigned short)_mbcjmstojis_ex( pBuf + i );
 			if(sCode != 0){
 				pDes[nDesIdx	] = (unsigned char)0x80 | (unsigned char)(sCode >> 8);
 				pDes[nDesIdx + 1] = (unsigned char)0x80 | (unsigned char)(sCode);
