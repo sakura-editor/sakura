@@ -92,11 +92,6 @@ CEditDoc::CEditDoc() :
 	//int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	//SetDocumentType( doctype, true );
 
-	/* OPENFILENAMEの初期化 */
-	memset( &m_ofn, 0, sizeof( OPENFILENAME ) );
-	m_ofn.lStructSize = sizeof( OPENFILENAME );
-	m_ofn.nFilterIndex = 3;
-	GetCurrentDirectory( _MAX_PATH, m_szInitialDir );	/* 「開く」での初期ディレクトリ */
 	strcpy( m_szDefaultWildCard, "*.*" );				/* 「開く」での最初のワイルドカード */
 
 
@@ -4033,13 +4028,15 @@ void CEditDoc::OnChangeSetting( void )
 			&nPosX,
 			&nPosY
 		);
-		if( nPosY >= m_cLayoutMgr.GetLineCount() ){
+		// 2004.04.03 Moca MoveCursor内でファイルの最後に移動するようにした
+//		if( nPosY >= m_cLayoutMgr.GetLineCount() ){
 			/*ファイルの最後に移動 */
 //			m_cEditViewArr[i].Command_GOFILEEND(FALSE);
-			m_cEditViewArr[i].HandleCommand( F_GOFILEEND, 0, 0, 0, 0, 0 );
-		}else{
+//			m_cEditViewArr[i].HandleCommand( F_GOFILEEND, 0, 0, 0, 0, 0 );
+//		}else{
 			m_cEditViewArr[i].MoveCursor( nPosX, nPosY, TRUE );
-		}
+			m_cEditViewArr[i].m_nCaretPosX_Prev = m_cEditViewArr[i].m_nCaretPosX;
+//		}
 	}
 }
 
@@ -4278,6 +4275,7 @@ void CEditDoc::InitAllView( void )
 
 		m_cEditViewArr[i].OnChangeSetting();
 		m_cEditViewArr[i].MoveCursor( 0, 0, TRUE );
+		m_cEditViewArr[i].m_nCaretPosX_Prev = 0;
 	}
 
 	return;
@@ -4441,6 +4439,8 @@ void CEditDoc::ReloadCurrentFile(
 	);
 
 	m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE );
+	m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
+
 }
 
 //	From Here Nov. 20, 2000 genta
