@@ -166,7 +166,7 @@ BOOL CEditView::HandleCommand(
 
 	switch( nCommand ){
 	case F_CHAR:	/* •¶š“ü—Í */
-		//	To Here Oct. 5, 2002 genta
+		//	From Here Oct. 5, 2002 genta
 		//	WM_CHAR‚Å‚­‚éŠ¿šƒR[ƒh‚ğó‚¯“ü‚ê‚é
 		{
 			static unsigned int ucSjis1 = 0;
