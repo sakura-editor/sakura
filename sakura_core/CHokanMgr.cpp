@@ -148,7 +148,9 @@ int CHokanMgr::Search(
 	int			nColmWidth,
 	const char*	pszCurWord,
 //	void*		pcEditView,
-	const char* pszHokanFile
+	const char* pszHokanFile,
+	int			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+	CMemory*	pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
 	/* 
@@ -164,7 +166,8 @@ int CHokanMgr::Search(
 	}
 	m_nKouhoNum = CDicMgr::HokanSearch( 
 		pszCurWord,
-		m_pShareData->m_Common.m_bHokanLoHiCase,	/* 入力補完機能：英大文字小文字を同一視する */
+//		m_pShareData->m_Common.m_bHokanLoHiCase,	/* 入力補完機能：英大文字小文字を同一視する */
+		bHokanLoHiCase,								// 引数からに変更	2001/06/19 asa-o
 		&m_pcmemKouho,
 		0, //Max候補数
 		pszHokanFile
@@ -173,8 +176,16 @@ int CHokanMgr::Search(
 		m_nCurKouhoIdx = -1;
 		return 0;
 	}
-	
-	
+
+//	2001/06/19 asa-o 候補が１つの場合補完ウィンドウは表示しない(逐次補完の場合は除く)
+	if( 1 == m_nKouhoNum ){
+		if(pcmemHokanWord != NULL){
+			m_nCurKouhoIdx = -1;
+			pcmemHokanWord->SetDataSz(m_pcmemKouho->GetPtr(NULL));
+			return 1;
+		}
+	}
+
 //	LOGFONT		lf;
 //	HDC			hdc;
 //	WNDCLASS	wc;
@@ -282,12 +293,37 @@ int CHokanMgr::Search(
 	/* 上に出すか下に出すか(広いほうに出す) */
 	if(	rcDesktop.bottom - nY > m_poWin.y ){
 		/* 下に出す */
-		m_nHeight = rcDesktop.bottom - nY;
+//		m_nHeight = rcDesktop.bottom - nY;
+		nCY = rcDesktop.bottom - nY;
 	}else{
 		/* 上に出す */
 		nY = rcDesktop.top;
 		nCY = m_poWin.y - 4 - rcDesktop.top;
 	}
+
+//	2001/06/19 Start by asa-o: 表示位置補正
+
+	// 右に入る
+	if(nX + nCX < rcDesktop.right ){
+		// そのまま
+	}else
+	// 左に入る
+	if(rcDesktop.left < nX - nCX + 8){
+		// 左に表示
+		nX -= nCX - 8;
+	}else{
+		// サイズを調整して右に表示
+		nCX = max(rcDesktop.right - nX , 100);	// 最低サイズを100くらいに
+	}
+
+//	2001/06/19 End
+
+//	2001/06/18 Start by asa-o: 補正後の位置・サイズを保存
+	m_poWin.x = nX;
+	m_poWin.y = nY;
+	m_nHeight = nCY;
+	m_nWidth = nCX;
+//	2001/06/18 End
 
 	/* はみ出すなら小さくする */
 //	if( rcDesktop.bottom < nY + nCY ){
@@ -307,6 +343,12 @@ int CHokanMgr::Search(
 	::SetFocus( m_hWnd );
 //	::SetFocus( ::GetDlgItem( m_hWnd, IDC_LIST_WORDS ) );
 //	::SetFocus( ::GetParent( ::GetParent( m_hwndParent ) ) );
+
+
+//	2001/06/18 asa-o:
+	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
+
+
 	return m_nKouhoNum;
 }
 
@@ -405,7 +447,13 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	::GetClientRect( m_hWnd, &rcDlg );
 	nWidth = rcDlg.right - rcDlg.left;  // width of client area 
 	nHeight = rcDlg.bottom - rcDlg.top; // height of client area 
-	
+
+//	2001/06/18 Start by asa-o: サイズ変更後の位置を保存
+	m_poWin.x = rcDlg.left - 4;
+	m_poWin.y = rcDlg.top - 3;
+	::ClientToScreen(m_hWnd,&m_poWin);
+//	2001/06/18 End
+
 	nWork = 48;
 	for ( i = 0; i < nControls; ++i ){
 		hwndCtrl = ::GetDlgItem( m_hWnd, Controls[i] );
@@ -432,6 +480,9 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 			);
 		}
 	}
+
+//	2001/06/18 asa-o:
+	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 
 	return TRUE;
 
@@ -476,7 +527,8 @@ BOOL CHokanMgr::OnKeyDown( WPARAM wParam, LPARAM lParam )
 
 BOOL CHokanMgr::OnCbnSelChange( HWND hwndCtl, int wID )
 {
-
+//	2001/06/18 asa-o:
+	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 	return TRUE;
 }
 
@@ -619,6 +671,51 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 //	DoHokan();
 //	return 0;
 //}
+
+
+//	2001/06/18 Start by asa-o: 補完ウィンドウで選択中の単語にキーワードヘルプを表示
+void CHokanMgr::ShowTip()
+{
+	INT			nItem,
+				nTopItem,
+				nItemHeight;
+	CHAR		szLabel[1024];
+	POINT		point;
+	CEditView*	pcEditView;
+	HWND		hwndCtrl;
+	RECT		rcHokanWin;
+
+	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_LIST_WORDS );
+
+	nItem = ::SendMessage( hwndCtrl, LB_GETCURSEL, 0, 0 );
+	if( LB_ERR == nItem )	return ;
+
+	::SendMessage(hwndCtrl,LB_GETTEXT,nItem,(WPARAM)szLabel);	// 選択中の単語を取得
+
+	pcEditView = (CEditView*)m_lParam;
+
+	// すでに辞書Tipが表示されていたら
+	if(pcEditView->m_dwTipTimer == 0)
+	{
+		// 辞書Tipを消す
+		pcEditView -> m_cTipWnd.Hide();
+		pcEditView -> m_dwTipTimer = ::GetTickCount();
+	}
+
+	// 表示する位置を決定
+	nTopItem = ::SendMessage(hwndCtrl,LB_GETTOPINDEX,0,0);
+	nItemHeight = ::SendMessage(hwndCtrl,LB_GETITEMHEIGHT,0,0);
+	point.x = m_poWin.x + m_nWidth;
+	point.y = m_poWin.y + 4 + (nItem - nTopItem) * nItemHeight;
+	// 2001/06/19 asa-o 選択中の単語が補完ウィンドウに表示されているなら辞書Tipを表示
+	if(point.y > m_poWin.y && point.y < m_poWin.y + m_nHeight)
+	{
+		::SetRect(&rcHokanWin , m_poWin.x , m_poWin.y , m_poWin.x + m_nWidth , m_poWin.y + m_nHeight);
+		if(!pcEditView -> ShowKeywordHelp(point,szLabel,&rcHokanWin))
+			pcEditView -> m_dwTipTimer = ::GetTickCount();	// 表示するべきキーワードヘルプが無い
+	}
+}
+//	2001/06/18 End
 
 
 /*[EOF]*/

@@ -286,6 +286,8 @@ struct Types {
 	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */
 	int					m_bUseKeyWordHelp;				/* キーワードヘルプを使用する */
 	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */
+	//	2001/06/19 asa-o
+	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */
 
 }; /* Types */
 
@@ -424,7 +426,7 @@ struct Common {
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
 //	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */			// 2001/06/14 asa-o タイプ別に変更したので削除
 	BOOL				m_bGrepKanjiCode_AutoDetect;	/* Grep: 文字コード自動判別 */
-	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */
+//	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */	// 2001/06/19 asa-o タイプ別に変更したので削除
 //	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
 	BOOL				m_bSaveWindowSize;				/* ウィンドウサイズ継承 */
 	int					m_nWinSizeType;

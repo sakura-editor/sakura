@@ -276,8 +276,9 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 	/*  入力補完機能を使用する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USEHOKAN, m_Common.m_bUseHokan );
 
+//	2001/06/19 Start By:asa-o タイプ別設定に移動したので削除
 	/* 入力補完機能：英大文字小文字を同一視する */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Common.m_bHokanLoHiCase );
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Common.m_bHokanLoHiCase );
 
 //	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
 	/* 入力補完用単語ファイル */
@@ -328,8 +329,9 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 	/*  入力補完機能を使用する */
 	m_Common.m_bUseHokan = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEHOKAN );
 
+//	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
 	/* 入力補完機能：英大文字小文字を同一視する */
-	m_Common.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
+//	m_Common.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
 
 //	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
 	/* 入力補完 単語ファイル */

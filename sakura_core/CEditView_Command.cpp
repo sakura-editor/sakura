@@ -1552,7 +1552,8 @@ void CEditView::Command_DELETE_BACK( void )
 				cmemData.GetPtr( NULL ),
 //t				(void*)this,
 //				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
+				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
+				m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase	// 2001/06/19 asa-o 英大文字小文字を同一視する
 			) ){
 				m_bHokan = TRUE;
 			}else{
@@ -2971,7 +2972,8 @@ void CEditView::Command_CHAR( char cChar )
 				cmemData.GetPtr( NULL ),
 //t				(void*)this,
 //				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
+				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
+				m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase	// 2001/06/19 asa-o 英大文字小文字を同一視する
 			) ){
 				m_bHokan = TRUE;
 			}else{
@@ -3107,7 +3109,8 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 				cmemData.GetPtr( NULL ),
 //t				(void*)this,
 //				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
+				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
+				m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase	// 2001/06/19 asa-o 英大文字小文字を同一視する
 			) ){
 				m_bHokan = TRUE;
 			}else{
@@ -7936,6 +7939,9 @@ void CEditView::Command_HOKAN( void )
 {
 	CMemory		cmemData;
 	POINT		poWin;
+	CMemory		cmemHokanWord;
+	int			nKouhoNum;
+	char*		pszKouhoWord;
 
 retry:;
 //	if( 0 == strlen( m_pShareData->m_Common.m_szHokanFile ) ){	// 2001/06/14 asa-o 参照データ変更
@@ -7977,7 +7983,8 @@ retry:;
 			cmemData.GetLength()
 			 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
 		);
-		if( 0 < m_pcEditDoc->m_cHokanMgr.Search(
+//		if( 1 < m_pcEditDoc->m_cHokanMgr.Search(
+		nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
 //t			m_hFont_HAN,
 			&poWin,
 			m_nCharHeight,
@@ -7985,9 +7992,25 @@ retry:;
 			cmemData.GetPtr( NULL ),
 //t			(void*)this,
 //			m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-			m_pcEditDoc->GetDocumentAttribute().m_szHokanFile
-		) ){
+			m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
+			// 2001/06/19 asa-o 英大文字小文字を同一視する
+			m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
+			&cmemHokanWord
+		);
+//		) ){
+		if(nKouhoNum > 1){
 			m_bHokan = TRUE;
+		}else
+		// 2001/06/19 asa-o 候補が1つのときはそれに確定する
+		if(nKouhoNum == 1){
+			if( m_bHokan ){
+				m_pcEditDoc->m_cHokanMgr.Hide();
+				m_bHokan = FALSE;
+			}
+			pszKouhoWord = cmemHokanWord.GetPtr(NULL);
+			pszKouhoWord[lstrlen(pszKouhoWord)-1] = '\0';
+			Command_WordDeleteToStart();
+			Command_INSTEXT( TRUE, (const char*)pszKouhoWord, TRUE );
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();

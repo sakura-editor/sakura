@@ -133,6 +133,10 @@ public:
 								  char* dnChar, char* upChar );
 //@@@ 2001.02.03 End
 
+//	2001/06/18 asa-o
+	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
+
+
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
 	BOOL			m_bDrawSWITCH;
