@@ -266,7 +266,8 @@ public: /* テスト用にアクセス属性を変更 */
 	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_FAT_UL;	/* 現在のフォントハンドル */
-	HFONT			m_hFont_ZEN;		/* 現在のフォントハンドル */
+//	2004.02.14 Moca m_hFont_ZENは、未使用につき削除
+//	HFONT			m_hFont_ZEN;		/* 現在のフォントハンドル */
 	HFONT			m_hFontOld;
 	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
 	/* 分割状態 */

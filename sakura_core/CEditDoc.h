@@ -257,7 +257,9 @@ public:
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
 	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAME	m_ofn;							/* 「ファイルを開く」ダイアログ用構造体 */
-	CHOOSEFONT		m_cf;				/* フォント選択ダイアログ用 */
+
+//	2004.02.16 Moca メンバから外す
+//	CHOOSEFONT		m_cf;				/* フォント選択ダイアログ用 */
 
 //@@	CProp1			m_cProp1;			/* 設定プロパティシート */
 	CPropCommon		m_cPropCommon;
