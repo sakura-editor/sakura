@@ -319,6 +319,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepDefaultFolder"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepDefaultFolder, 0 );
 		// 2002/09/21 Moca ’Ç‰Á
 		cProfile.IOProfileData( bRead, pszSecName, "nGrepCharSet"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nGrepCharSet, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bGrepRealTime"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepRealTimeView, 0 ); // 2003.06.16 Moca
 
 		cProfile.IOProfileData( bRead, pszSecName, "bGTJW_RETURN"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGTJW_RETURN, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGTJW_LDBLCLK"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGTJW_LDBLCLK, 0 );
