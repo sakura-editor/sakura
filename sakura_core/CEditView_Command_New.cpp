@@ -191,16 +191,6 @@ void CEditView::InsertData_CEditView(
 	/* 再描画 */
 	/* 行番号表示に必要な幅を設定 */
 	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
-#if 0
-	if( DetectWidthOfLineNumberArea( bRedraw ) ){
-		::DestroyCaret();
-		m_nCaretWidth = 0;
-		for( i = 0; i < 4; ++i ){
-			if( m_nMyIndex != i ){
-				m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-			}
-		}
-#endif
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 	}else{
@@ -511,16 +501,6 @@ void CEditView::DeleteData(
 			m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
-#if 0
-			if( DetectWidthOfLineNumberArea( TRUE ) ){
-				for( i = 0; i < 4; ++i ){
-					::DestroyCaret();
-					m_nCaretWidth = 0;
-					if( m_nMyIndex != i ){
-						m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-					}
-				}
-#endif
 			if ( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 				/* キャレットの表示・更新 */
 				ShowEditCaret();
@@ -844,16 +824,6 @@ void CEditView::Command_UNDO( void )
 		DispRuler( hdc );
 		::ReleaseDC( m_hWnd, hdc );
 		/* 行番号表示に必要な幅を設定 */
-#if 0
-		if( DetectWidthOfLineNumberArea( TRUE ) ){
-			::DestroyCaret();
-			m_nCaretWidth = 0;
-			for( i = 0; i < 4; ++i ){
-				if( m_nMyIndex != i ){
-					m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-				}
-			}
-#endif
 		if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
@@ -1044,16 +1014,6 @@ void CEditView::Command_REDO( void )
 		::ReleaseDC( m_hWnd, hdc );
 
 		/* 行番号表示に必要な幅を設定 */
-#if 0
-		if( DetectWidthOfLineNumberArea( TRUE ) ){
-			::DestroyCaret();
-			m_nCaretWidth = 0;
-			for( i = 0; i < 4; ++i ){
-				if( m_nMyIndex != i ){
-					m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-				}
-			}
-#endif
 		if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
@@ -1293,17 +1253,6 @@ void CEditView::ReplaceData_CEditView(
 	DisableSelectArea( bRedraw );
 
 	/* 行番号表示に必要な幅を設定 */
-#if 0
-	if( DetectWidthOfLineNumberArea( bRedraw ) ){
-		::DestroyCaret();
-		m_nCaretWidth = 0;
-		int i;
-		for( i = 0; i < 4; ++i ){
-			if( m_nMyIndex != i ){
-				m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-			}
-		}
-#endif
 	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
@@ -1434,20 +1383,6 @@ void CEditView::ReplaceData_CEditView(
 		/* 操作の追加 */
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}
-#if 0
-	/* 行番号表示に必要な幅を設定 */
-	if( DetectWidthOfLineNumberArea( TRUE ) ){
-		for( int i = 0; i < 4; ++i ){
-			::DestroyCaret();
-			m_nCaretWidth = 0;
-			if( m_nMyIndex != i ){
-				m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-			}
-		}
-		/* キャレットの表示・更新 */
-		ShowEditCaret();
-	}
-#endif
 	//	Jan. 30, 2001 genta
 	//	ファイル全体の更新フラグが立っていないと各行の更新状態が表示されないので
 	//	フラグ更新処理を再描画より前に移動する
@@ -2772,5 +2707,20 @@ void CEditView::Command_Favorite( void )
 
 	return;
 }
+
+/*! 入力する改行コードを設定
+
+	@author moca
+	@date 2003.06.23 新規作成
+*/
+void CEditView::Command_CHGMOD_EOL( enumEOLType e ){
+	if( EOL_NONE < e && e < EOL_CODEMAX  ){
+		m_pcEditDoc->SetNewLineCode( e );
+		// ステータスバーを更新するため
+		// キャレットの行桁位置を表示する関数を呼び出す
+		DrawCaretPosInfo();
+	}
+}
+
 
 /*[EOF]*/

@@ -2470,6 +2470,13 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_CHGMOD_EOL_CRLF       "入力改行コード指定(CRLF)"
+    F_CHGMOD_EOL_LF         "入力改行コード指定(LF)"
+    F_CHGMOD_EOL_CR         "入力改行コード指定(CR)"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     F_COPY_ADDCRLF          "折り返し位置に改行をつけてコピー"
     F_COPYLINES             "選択範囲内全行コピー"
     F_COPYLINESASPASSAGE    "選択範囲内全行引用符付きコピー"
@@ -2820,6 +2827,12 @@ BEGIN
     F_CUSTMENU_23           "カスタムメニュー23"
     F_CUSTMENU_24           "カスタムメニュー24"
 END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_CHGMOD_EOL            "入力改行コード指定"
+END
+
 
 STRINGTABLE DISCARDABLE 
 BEGIN

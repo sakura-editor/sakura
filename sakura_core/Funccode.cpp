@@ -310,6 +310,9 @@ const int nFincList_Search_Num = sizeof( pnFuncList_Search ) / sizeof( pnFuncLis
 /* モード切り替え系 */	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
 const int pnFuncList_Mode[] = {
 	F_CHGMOD_INS		,	//挿入／上書きモード切り替え
+	F_CHGMOD_EOL_CRLF	,	//入力改行コード指定(CRLF)	2003.06.23 Moca
+	F_CHGMOD_EOL_LF		,	//入力改行コード指定(LF)	2003.06.23 Moca
+	F_CHGMOD_EOL_CR		,	//入力改行コード指定(CR)	2003.06.23 Moca
 	F_CANCEL_MODE			//各種モードの取り消し
 };
 const int nFincList_Mode_Num = sizeof( pnFuncList_Mode ) / sizeof( pnFuncList_Mode[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)

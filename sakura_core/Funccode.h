@@ -265,8 +265,10 @@
 
 /* モード切り替え系 */
 #define F_CHGMOD_INS		31001	//挿入／上書きモード切り替え
+#define F_CHGMOD_EOL_CRLF	31081	//入力改行コード指定(CRLF)	// 2003.06.08 Moca
+#define F_CHGMOD_EOL_LF		31082	//入力改行コード指定(LF)	// 2003.06.08 Moca
+#define F_CHGMOD_EOL_CR		31083	//入力改行コード指定(CR)	// 2003.06.08 Moca
 #define F_CANCEL_MODE		31099	//各種モードの取り消し
-
 
 /* 設定系 */
 #define F_SHOWTOOLBAR		31100	/* ツールバーの表示 */
@@ -383,6 +385,10 @@
 
 //	Windows 95の制約により，WM_COMMANDで使う機能番号として32768以上の値を用いることができません．
 //	メニュー等で使われないマクロ専用のコマンドにはそれ以上の値を割り当てましょう．
+
+//	メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能
+#define F_MENU_NOT_USED_FIRST 32768
+#define F_CHGMOD_EOL          32800		// 入力改行コード指定 2003.06.23 Moca
 
 #define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 
