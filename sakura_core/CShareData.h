@@ -374,6 +374,7 @@ struct Common {
 	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
 	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
 	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
+	int					m_bGrepRealTimeView;			/* 2003.06.16 Moca Grep結果のリアルタイム表示 */
 
 	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
 	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
@@ -691,9 +692,9 @@ public:
 	
 	// 2002.11.24 Moca Add
 //	LPTSTR GetTransformFileList( LPCTSTR*, LPTSTR*, int );
-	LPTSTR GetTransformFileName( LPCTSTR, LPTSTR, int );
+//	LPTSTR GetTransformFileName( LPCTSTR, LPTSTR, int );
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );
-	int TransformFileName_MakeCash( void );
+	int TransformFileName_MakeCache( void );
 	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
 	static bool ExpandMetaToFolder( LPCTSTR, LPTSTR, int );
 
