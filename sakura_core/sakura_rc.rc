@@ -308,7 +308,7 @@ BEGIN
     LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,79,7,60,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
-    LTEXT           "Copyright (C) 1998-2003  by Norio Nakatani && Collaborators",
+    LTEXT           "Copyright (C) 1998-2004  by Norio Nakatani && Collaborators",
                     IDC_STATIC,40,33,182,8,NOT WS_GROUP
     PUSHBUTTON      "å¥çÏé“òAóçêÊ(&A)...",IDC_BUTTON_CONTACT,166,7,59,14,0,0,
                     HIDC_BUTTON_CONTACT
