@@ -3,6 +3,7 @@
 	デバッグ用関数
 
 	@author Norio Nakatani
+	@date 2001/06/23 N.Nakatani DebugOut()に微妙～な修正
 	$Revision$
 */
 /*
@@ -36,7 +37,7 @@
 //#endif
 
 
-
+//! 書式付きデバッガ出力
 void DebugOut( LPCTSTR lpFmt, ...)
 {
 //	CShareData cShareData;
@@ -48,6 +49,9 @@ void DebugOut( LPCTSTR lpFmt, ...)
 //	cShareData.TraceOut( lpFmt, argList );
 	wvsprintf( szText, lpFmt, argList );
 	OutputDebugString( szText );
+
+	::Sleep(1);	// Norio Nakatani, 2001/06/23　大量にトレースするときのために
+
 	va_end(argList);
 	return;
 }
@@ -56,6 +60,7 @@ void DebugOut( LPCTSTR lpFmt, ...)
 
 
 
+//! 書式付きメッセージボックス
 int DebugOutDialog(
 	HWND	hWndParent,
 	UINT	nStyle,
