@@ -3959,7 +3959,7 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 /* 共有データのロード */
 BOOL CShareData::LoadShareData( void )
 {
-	return ShareData_IO_2( TRUE );
+	return ShareData_IO_2( true );
 }
 
 
@@ -3968,7 +3968,7 @@ BOOL CShareData::LoadShareData( void )
 /* 共有データの保存 */
 void CShareData::SaveShareData( void )
 {
-	ShareData_IO_2( FALSE );
+	ShareData_IO_2( false );
 	return;
 }
 
