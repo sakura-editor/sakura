@@ -1458,6 +1458,7 @@ bool IsFileExists(const char* path, bool bFileOnly)
 	@date 2004.05.29 genta C:\からファイルCが切り出されるのを防止
 	@date 2004.11.13 genta/Moca ファイル名先頭の*?を考慮
 	@date 2005.01.10 genta 変数名変更 j -> cur_pos
+	@date 2005.01.23 genta 警告抑制のため，gotoをreturnに変更
 	
 */
 bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
@@ -1480,6 +1481,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 	}
 
 	//	#include <ファイル名>の考慮
+	//	#で始まるときは"または<まで読み飛ばす
 	if( i < nLineLen &&
 		'#' == pLine[i]
 	){
@@ -1492,8 +1494,10 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			}
 		}
 	}
+
+	//	この時点で既に行末に達していたらファイル名は見つからない
 	if( i >= nLineLen ){
-		goto can_not_tagjump;
+		return false;
 	}
 	*pnBgn = i;
 	int cur_pos = 0;
@@ -1535,7 +1539,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 //			pLine[i] == '|' ||
 //			pLine[i] == '*'
 //		){
-//			goto can_not_tagjump;
+//			return false;
 //		}
 //
 //		szJumpToFile[cur_pos] = pLine[i];
@@ -1556,7 +1560,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			//	Oct. 5, 2002 genta
 			//	2004.11.13 Moca/genta 先頭に上の文字がある場合の考慮を追加
 			( i == 0 || ( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] ))) ){
-			goto can_not_tagjump;
+			return false;
 		}else{
 		szJumpToFile[cur_pos] = pLine[i];
 		cur_pos++;
@@ -1582,7 +1586,6 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 //#endif
 	}
 
-	can_not_tagjump:;
 	return false;
 
 }
