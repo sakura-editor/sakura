@@ -1886,8 +1886,8 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 // 2001/06/20 Start by asa-o
 
-// 画面を上へ1行スクロール
-void CEditView::Command_WndScrollUp(void)
+// テキストを１行下へスクロール
+void CEditView::Command_WndScrollDown(void)
 {
 	if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - 4){
 		CaretUnderLineOFF(TRUE);
@@ -1915,8 +1915,8 @@ void CEditView::Command_WndScrollUp(void)
 	}
 }
 
-// 画面を下へ1行スクロール
-void CEditView::Command_WndScrollDown(void)
+// テキストを１行上へスクロール
+void CEditView::Command_WndScrollUp(void)
 {
 	if(m_nCaretPosY < m_nViewTopLine + 2){
 		CaretUnderLineOFF(TRUE);

@@ -289,8 +289,8 @@ BOOL CEditView::HandleCommand(
 	case F_CURLINECENTER:	Command_CURLINECENTER(); break;								/* カーソル行をウィンドウ中央へ */
 	case F_JUMPPREV:		Command_JUMPPREV(); break;									//移動履歴: 前へ
 	case F_JUMPNEXT:		Command_JUMPNEXT(); break;									//移動履歴: 次へ
-	case F_WndScrollUp:		Command_WndScrollUp(); break;								//画面を上へ1行スクロール	// 2001/06/20 asa-o
-	case F_WndScrollDown:	Command_WndScrollDown(); break;								//画面を下へ1行スクロール	// 2001/06/20 asa-o
+	case F_WndScrollDown:	Command_WndScrollDown(); break;								//テキストを１行下へスクロール	// 2001/06/20 asa-o
+	case F_WndScrollUp:		Command_WndScrollUp(); break;								//テキストを１行上へスクロール	// 2001/06/20 asa-o
 
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
@@ -4959,7 +4959,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly )
 	case OUTLINE_COBOL:		m_pcEditDoc->MakeTopicList_cobol( &cFuncInfoArr );break;
 	case OUTLINE_ASM:		m_pcEditDoc->MakeTopicList_asm( &cFuncInfoArr );break;
 	case OUTLINE_PERL:		m_pcEditDoc->MakeFuncList_Perl( &cFuncInfoArr );break;	//	Sep. 8, 2000 genta
-	case OUTLINE_VB:		m_pcEditDoc->MakeFuncList_VisualBasic( &cFuncInfoArr );break;	//	June. 23, 2001 N.Nakatani
+	case OUTLINE_VB:		m_pcEditDoc->MakeFuncList_VisualBasic( &cFuncInfoArr );break;	//	June 23, 2001 N.Nakatani
 	case OUTLINE_TEXT:
 	case OUTLINE_UNKNOWN:
 	default:
