@@ -208,7 +208,8 @@ int CHokanMgr::Search(
 	if( 1 == m_nKouhoNum ){
 		if(pcmemHokanWord != NULL){
 			m_nCurKouhoIdx = -1;
-			pcmemHokanWord->SetDataSz(m_pcmemKouho->GetPtr());
+			// 2004.05.14 Moca m_pcmemKouhoの末尾には改行コードがあり、それを削除してコピーするするように
+			pcmemHokanWord->SetData( m_pcmemKouho->GetPtr(), m_pcmemKouho->GetLength() - 1 );
 			return 1;
 		}
 	}
