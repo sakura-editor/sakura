@@ -222,12 +222,12 @@ BOOL CEditView::HandleCommand(
 		break;
 	case F_BROWSE:				Command_BROWSE();break;				/* ブラウズ */
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
-	case F_EXITALL:				Command_EXITALL();break;			/* テキストエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
+	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
 
 	/* 編集系 */
 	case F_UNDO:				Command_UNDO();break;				/* 元に戻す(Undo) */
 	case F_REDO:				Command_REDO();break;				/* やり直し(Redo) */
-	case F_DELETE:				Command_DELETE(); break;			//カーソル位置を削除
+	case F_DELETE:				Command_DELETE(); break;			//削除
 	case F_DELETE_BACK:			Command_DELETE_BACK(); break;		//カーソルの前を削除
 	case F_WordDeleteToStart:	Command_WordDeleteToStart(); break;	//単語の左端まで削除
 	case F_WordDeleteToEnd:		Command_WordDeleteToEnd(); break;	//単語の右端まで削除
@@ -5248,7 +5248,9 @@ retry:;
 		link.pszMsgTitle = NULL;
 		link.pszWindow = NULL;
 		link.fIndexOnFail = TRUE;
-		hwndHtmlHelp = ::HtmlHelp(
+		
+		//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+		hwndHtmlHelp = OpenHtmlHelp(
 			NULL/*m_pShareData->m_hwndTray*/,
 			m_pShareData->m_Common.m_szExtHtmlHelp,
 			HH_KEYWORD_LOOKUP,
@@ -5335,7 +5337,10 @@ retry:;
 //		::PostMessage( hwndHtmlHelp, WM_ACTIVATEAPP, TRUE, NULL );
 //	}
 
-	::BringWindowToTop( hwndHtmlHelp );
+	//	Jul. 6, 2001 genta hwndHtmlHelpのチェックを追加
+	if( hwndHtmlHelp != NULL ){
+		::BringWindowToTop( hwndHtmlHelp );
+	}
 
 	return;
 }
@@ -7416,7 +7421,16 @@ void CEditView::Command_REPLACE( void )
 	/* 置換ダイアログの表示 */
 //	nRet = m_pcEditDoc->m_cDlgReplace.DoModal( (LPARAM)this, bSelected );
 //	MYTRACE( "nRet=%d\n", nRet );
-	m_pcEditDoc->m_cDlgReplace.DoModeless( m_hInstance, m_hWnd/*::GetParent( m_hwndParent )*/, (LPARAM)this, bSelected );
+	//	From Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
+	if( !::IsWindow( m_pcEditDoc->m_cDlgReplace.m_hWnd )){
+		m_pcEditDoc->m_cDlgReplace.DoModeless( m_hInstance, m_hWnd/*::GetParent( m_hwndParent )*/, (LPARAM)this, bSelected );
+	}
+	else {
+			/* アクティブにする */
+		ActivateFrameWindow( m_pcEditDoc->m_cDlgReplace.m_hWnd );
+		::SetDlgItemText( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT, cmemCurText.GetPtr( NULL ) );
+	}
+	//	To Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	return;
 }
 
@@ -7740,7 +7754,7 @@ void CEditView::Command_PROPERTY_FILE( void )
 
 
 
-/* テキストエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
+/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 void CEditView::Command_EXITALL( void )
 {
 	CEditApp::TerminateApplication();
