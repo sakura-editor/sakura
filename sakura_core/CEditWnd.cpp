@@ -1153,6 +1153,57 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_NOTIFY:
 		idCtrl = (int) wParam;
 		pnmh = (LPNMHDR) lParam;
+		//	From Here Feb. 15, 2004 genta 
+		//	ステータスバーのダブルクリックでモード切替ができるようにする
+		if( m_hwndStatusBar && pnmh->hwndFrom == m_hwndStatusBar ){
+			if( pnmh->code == NM_DBLCLK ){
+				LPNMMOUSE mp = (LPNMMOUSE) lParam;
+				if( mp->dwItemSpec == 6 ){	//	上書き/挿入
+					m_cEditDoc.HandleCommand( F_CHGMOD_INS );
+				}
+				else if( mp->dwItemSpec == 5 ){	//	マクロの記録開始・終了
+					m_cEditDoc.HandleCommand( F_RECKEYMACRO );
+				}
+				else if( mp->dwItemSpec == 1 ){	//	桁位置→行番号ジャンプ
+					m_cEditDoc.HandleCommand( F_JUMP_DIALOG );
+				}
+			}
+			else if( pnmh->code == NM_RCLICK ){
+				LPNMMOUSE mp = (LPNMMOUSE) lParam;
+				if( mp->dwItemSpec == 2 ){	//	入力改行モード
+					m_CMenuDrawer.ResetContents();
+					HMENU hMenuPopUp = ::CreatePopupMenu();
+					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, 
+						"入力改行コード指定(&CRLF)" ); // 入力改行コード指定(CRLF)
+					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF,
+						"入力改行コード指定(&LF)" ); // 入力改行コード指定(LF)
+					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR,
+						"入力改行コード指定(C&R)" ); // 入力改行コード指定(CR)
+						
+					//	mp->ptはステータスバー内部の座標なので，スクリーン座標への変換が必要
+					POINT	po = mp->pt;
+					::ClientToScreen( m_hwndStatusBar, &po );
+					int nId = ::TrackPopupMenu(
+						hMenuPopUp,
+						TPM_CENTERALIGN
+						| TPM_BOTTOMALIGN
+						| TPM_RETURNCMD
+						| TPM_LEFTBUTTON
+						,
+						po.x,
+						po.y,
+						0,
+						m_hWnd,
+						NULL
+					);
+					::DestroyMenu( hMenuPopUp );
+					m_cEditDoc.HandleCommand( nId );
+				}
+			}
+			return 0L;
+		}
+		//	To Here Feb. 15, 2004 genta 
+
 		switch( pnmh->code ){
 		case TTN_NEEDTEXT:
 			lptip = (LPTOOLTIPTEXT)pnmh;
