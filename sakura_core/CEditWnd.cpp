@@ -624,10 +624,11 @@ void CEditWnd::CreateToolBar( void )
 						::SendMessage( m_hwndToolBar, TB_GETITEMRECT, (WPARAM)(count-1), (LPARAM)&rc );
 
 						//コンボボックスを作る
+						//	Mar. 8, 2003 genta 検索ボックスを1ドット下にずらした
 						m_hwndSearchBox = CreateWindow( "COMBOBOX", "Combo",
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
-								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
+								rc.left, rc.top + 1, rc.right - rc.left, (rc.bottom - rc.top) * 10,
 								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, m_hInstance, NULL );
 						if( m_hwndSearchBox )
 						{
