@@ -165,6 +165,13 @@ bool CNormalProcess::Initialize()
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			
+			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
+			//	引数の設定がBOXに反映されない
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetPtr() );		/* 検索文字列 */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetPtr() );		/* 検索ファイル */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetPtr() );	/* 検索フォルダ */
+
+			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
 			if( FALSE != nRet ){
