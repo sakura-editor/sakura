@@ -547,7 +547,9 @@
 #define IDC_COMBO3                      1496
 #define IDC_STATIC_KEYWORD_COUNT        1496
 #define IDC_COMBO4                      1497
+#define IDC_BUTTON_KEYSETRENAME         1497
 #define IDC_COMBO5                      1498
+#define IDC_BUTTON_KEYCLEAN             1498
 #define IDC_COMBO6                      1499
 #define IDC_COMBO7                      1500
 #define IDC_COMBO8                      1501
@@ -589,7 +591,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        244
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1497
+#define _APS_NEXT_CONTROL_VALUE         1499
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

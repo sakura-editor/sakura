@@ -62,8 +62,6 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 	FileInfo		fiInit;
 	FileInfo*		pfiWork;
 	int				nZero = 0;
-	int				nMemLen;
-	char*			pszMem;
 	char			szIniFileName[_MAX_PATH + 1];
 	CProfile		cProfile;
 	const char*		pszSecName;
@@ -1003,62 +1001,64 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 	/* 強調キーワード */
 	{
 		pszSecName = "KeyWords";
+		int nKeyWordSetNum = m_pShareData->m_CKeyWordSetMgr.m_nKeyWordSetNum;
+		bool bIOSuccess;
 		cProfile.IOProfileData( bRead, pszSecName, "nCurrentKeyWordSetIdx"	, m_pShareData->m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
-		cProfile.IOProfileData( bRead, pszSecName, "nKeyWordSetNum"			, m_pShareData->m_CKeyWordSetMgr.m_nKeyWordSetNum );
-
-
-		for( i = 0; i < m_pShareData->m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-			wsprintf( szKeyName, "szSN[%02d]", i );
-			cProfile.IOProfileData( bRead, pszSecName, szKeyName,
-				m_pShareData->m_CKeyWordSetMgr.m_szSetNameArr[i],
-				sizeof( m_pShareData->m_CKeyWordSetMgr.m_szSetNameArr[0] ));
-			wsprintf( szKeyName, "nCASE[%02d]", i );
-			cProfile.IOProfileData( bRead, pszSecName, szKeyName, m_pShareData->m_CKeyWordSetMgr.m_nKEYWORDCASEArr[i] );
-			wsprintf( szKeyName, "nKWN[%02d]", i );
-			cProfile.IOProfileData( bRead, pszSecName, szKeyName, m_pShareData->m_CKeyWordSetMgr.m_nKeyWordNumArr[i] );
-		}
+		bIOSuccess = cProfile.IOProfileData( bRead, pszSecName, "nKeyWordSetNum"			, nKeyWordSetNum );
 		if( bRead ){
-			pszMem = new char[MAX_SETNUM * MAX_KEYWORDNUM * ( MAX_KEYWORDLEN ) + 1];
-			for( i = 0; i < m_pShareData->m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-				wsprintf( szKeyName, "szKW[%02d].Size", i );
-				cProfile.IOProfileData( bRead, pszSecName, szKeyName, nMemLen );
-				wsprintf( szKeyName, "szKW[%02d]", i );
-				if( true == cProfile.IOProfileData( bRead, pszSecName, szKeyName, pszMem, nMemLen ) ){
-					const char* ptr = pszMem;
-					for( j = 0; j < m_pShareData->m_CKeyWordSetMgr.m_nKeyWordNumArr[i]; ++j ){
-						//	May 25, 2003 キーワードの区切りとして\0以外にTABを受け付けるようにする
-						const char* pTop = ptr;	// キーワードの先頭位置を保存
-						while( *ptr != '\t' && *ptr != '\0' )
-							++ptr;
-						int kwlen = ptr - pTop;
-						memcpy( m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j], pTop, kwlen );
-						m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j][kwlen] = '\0';
-						++ptr;						
-						// strcpy( m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j], &pszMem[nMemLen] );
-						// nMemLen += strlen( m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j] );
-						// nMemLen ++;
+			// nKeyWordSetNum が読み込めていれば、すべての情報がそろっていると仮定して処理を進める
+			if( bIOSuccess ){
+				// 2004.11.25 Moca キーワードセットの情報は、直接書き換えないで関数を利用する
+				// 初期設定されているため、先に削除しないと固定メモリの確保に失敗する可能性がある
+				int  nMemLen = MAX_KEYWORDNUM * ( MAX_KEYWORDLEN + 1 ) + 1;
+				char *pszMem = new char[nMemLen];
+				m_pShareData->m_CKeyWordSetMgr.ResetAllKeyWordSet();
+				for( i = 0; i < nKeyWordSetNum; ++i ){
+					int nKEYWORDCASE = 0;
+					int nKeyWordNum = 0;
+					wsprintf( szKeyName, "szSN[%02d]", i );
+					cProfile.IOProfileData( bRead, pszSecName, szKeyName, szKeyData, sizeof( szKeyData ));
+					wsprintf( szKeyName, "nCASE[%02d]", i );
+					cProfile.IOProfileData( bRead, pszSecName, szKeyName, nKEYWORDCASE );
+					wsprintf( szKeyName, "nKWN[%02d]", i );
+					cProfile.IOProfileData( bRead, pszSecName, szKeyName, nKeyWordNum );
+					m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( szKeyData, nKEYWORDCASE, nKeyWordNum );
+					// 2004.11.25 Moca szKW[%02d].Size の情報は利用する意味がない。
+//					wsprintf( szKeyName, "szKW[%02d].Size", i );
+//					cProfile.IOProfileData( bRead, pszSecName, szKeyName, nMemLen );
+					wsprintf( szKeyName, "szKW[%02d]", i );
+					if( true == cProfile.IOProfileData( bRead, pszSecName, szKeyName, pszMem, nMemLen ) ){
+						m_pShareData->m_CKeyWordSetMgr.SetKeyWordArr( i, nKeyWordNum, pszMem );
 					}
 				}
+				delete [] pszMem;
 			}
-			delete [] pszMem;
 		}else{
 			for( i = 0; i < m_pShareData->m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-				nMemLen = 0;
+				wsprintf( szKeyName, "szSN[%02d]", i );
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName,
+					m_pShareData->m_CKeyWordSetMgr.m_szSetNameArr[i],
+					sizeof( m_pShareData->m_CKeyWordSetMgr.m_szSetNameArr[0] ));
+				wsprintf( szKeyName, "nCASE[%02d]", i );
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName, m_pShareData->m_CKeyWordSetMgr.m_nKEYWORDCASEArr[i] );
+				wsprintf( szKeyName, "nKWN[%02d]", i );
+				cProfile.IOProfileData( bRead, pszSecName, szKeyName, m_pShareData->m_CKeyWordSetMgr.m_nKeyWordNumArr[i] );
+
+				int nMemLen = 0;
 				for( j = 0; j < m_pShareData->m_CKeyWordSetMgr.m_nKeyWordNumArr[i]; ++j ){
-					nMemLen += strlen( m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j] );
+					nMemLen += strlen( m_pShareData->m_CKeyWordSetMgr.GetKeyWord( i, j ) );
 					nMemLen ++;
 				}
 				nMemLen ++;
 				wsprintf( szKeyName, "szKW[%02d].Size", i );
 				cProfile.IOProfileData( bRead, pszSecName, szKeyName, nMemLen );
-				pszMem = new char[nMemLen + 1];	//	May 25, 2003 genta 区切りをTABに変更したので，最後の\0の分を追加
+				char* pszMem = new char[nMemLen + 1];	//	May 25, 2003 genta 区切りをTABに変更したので，最後の\0の分を追加
 				char* pMem = pszMem;
 				for( j = 0; j < m_pShareData->m_CKeyWordSetMgr.m_nKeyWordNumArr[i]; ++j ){
 					//	May 25, 2003 genta 区切りをTABに変更
-					int kwlen = strlen( m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j] );
-					memcpy( pMem, m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j], kwlen );
+					int kwlen = strlen( m_pShareData->m_CKeyWordSetMgr.GetKeyWord( i, j ) );
+					memcpy( pMem, m_pShareData->m_CKeyWordSetMgr.GetKeyWord( i, j ), kwlen );
 					pMem += kwlen;
-					//nMemLen &pszMem[nMemLen]+= strlen( m_pShareData->m_CKeyWordSetMgr.m_szKeyWordArr[i][j] );
 					*pMem++ = '\t';
 				}
 				*pMem = '\0';

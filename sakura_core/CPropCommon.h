@@ -300,6 +300,7 @@ protected:
 	void p7_Delete_List_KeyWord( HWND , HWND );	/* p7:リスト中で選択されているキーワードを削除する */
 	void p7_Import_List_KeyWord( HWND , HWND );	/* p7:リスト中のキーワードをインポートする */
 	void p7_Export_List_KeyWord( HWND , HWND );	/* p7:リスト中のキーワードをエクスポートする */
+	void p7_Clean_List_KeyWord( HWND , HWND );	//! p7:リスト中のキーワードを整理する 2005.01.26 Moca
 
 	void p8_Import_CustMenuSetting( HWND );	/* p8:カスタムメニュー設定をインポートする */
 	void p8_Export_CustMenuSetting( HWND );	/* p8:カスタムメニュー設定をエクスポートする */
