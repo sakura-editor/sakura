@@ -356,8 +356,11 @@ protected:
 	void AddToCmdArr( const char* );
 	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
-	LRESULT RequestedReconversion( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える minfu 2002.03.27 */
-	LRESULT RequestedReconversionW( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える for 95/NT 20020331 aroka */
+//  以下の二つはつかわなくなりました。 minfu 2002.04.10
+//	LRESULT RequestedReconversion( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える minfu 2002.03.27 */
+//	LRESULT RequestedReconversionW( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える for 95/NT 20020331 aroka */
+	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode);	/* 再変換用構造体を設定する 2002.04.09 minfu */
+	LRESULT SetSelectionFromReonvert(PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
 
 public: /* テスト用にアクセス属性を変更 */
 	/* IDropTarget実装 */
@@ -428,6 +431,7 @@ protected:
 	void Command_TRIM2(CMemory*,BOOL);		// 2001.12.03 hor
 	void Command_SORT(BOOL);				// 2001.12.06 hor
 	void Command_MERGE(void);				// 2001.12.06 hor
+	void Command_Reconvert(void);			/* メニューからの再変換対応 minfu 2002.04.09 */
 
 	/* 指定位置の指定長データ削除 */
 	void CEditView::DeleteData2(
@@ -681,6 +685,14 @@ void ReplaceData_CEditView(
 private:
 	UINT	m_uMSIMEReconvertMsg;
 	UINT	m_uATOKReconvertMsg;
+	UINT	m_uWM_MSIME_RECONVERTREQUEST;
+	
+	int		m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
+	int		m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
+
+	//ATOK専用再変換のAPI
+	HMODULE m_hAtokModule;
+	BOOL (WINAPI *AT_ImmSetReconvertString)( HIMC , int ,PRECONVERTSTRING , DWORD  );
 };
 
 

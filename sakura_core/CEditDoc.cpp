@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, mik, jepro
-	Copyright (C) 2002, YAZAKI, hor, genta, aroka
+	Copyright (C) 2002, YAZAKI, hor, genta, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -117,7 +117,11 @@ CEditDoc::CEditDoc() :
 		TRUE,
 		NULL,/*hwndProgress*/
 		ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
+		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+		ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	);
 //	MYTRACE( "CEditDoc::CEditDoc()おわり\n" );
 
@@ -683,7 +687,11 @@ BOOL CEditDoc::FileRead(
 			TRUE,
 			hwndProgress,
 			ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-			ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
+			ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+			ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+			ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+			ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+			ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 		);
 	}
 
@@ -3426,7 +3434,11 @@ void CEditDoc::OnChangeSetting( void )
 		TRUE,
 		hwndProgress,
 		ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
+		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+		ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	); /* レイアウト情報の変更 */
 
 	/* ビューに設定変更を反映させる */
@@ -3693,7 +3705,11 @@ void CEditDoc::Init( void )
 		TRUE,
 		NULL,/*hwndProgress*/
 		ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
+		ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+		ref.m_bKinsokuHead,			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_bKinsokuTail,			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		ref.m_szKinsokuHead,		/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+		ref.m_szKinsokuTail			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	);
 
 

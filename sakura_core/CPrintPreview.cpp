@@ -6,7 +6,7 @@
 	$Revision$
 */
 /*
-	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2002, YAZAKI, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -620,7 +620,11 @@ void CPrintPreview::OnChangePrintSetting( void )
 		TRUE,	
 		NULL,	
 		FALSE,	/* シングルクォーテーション文字列を表示する */
-		FALSE	/* ダブルクォーテーション文字列を表示する */
+		FALSE,	/* ダブルクォーテーション文字列を表示する */
+		m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
+		m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+		m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_szKinsokuTail		/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	);
 	m_nAllPageNum = m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu );		/* 全ページ数 */
 	if( 0 < m_pLayoutMgr_Print->GetLineCount() % ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ) ){

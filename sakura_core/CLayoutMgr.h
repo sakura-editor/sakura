@@ -10,6 +10,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -103,11 +104,9 @@ public:
 	/*
 	|| 更新系
 	*/
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
-//#else
 //	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
-//#endif
+//	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
+	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL, BOOL, BOOL, char*, char* ); /* レイアウト情報の変更 */	//@@@ 2002.04.08 MIK 禁則を追加
 	/* 行内文字削除 */
 	void DeleteData_CLayoutMgr(
 		int			nLineNum,
@@ -174,6 +173,12 @@ protected:
 	int				m_nLines;					/* 全物理行数 */
 	int				m_nMaxLineSize;				/* 折り返し文字数 */
 	BOOL			m_bWordWrap;				/* 英文ワードラップをする */
+	BOOL			m_bKinsokuHead;				/* 行頭禁則をする */	//@@@ 2002.04.08 MIK
+	BOOL			m_bKinsokuTail;				/* 行末禁則をする */	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuHead_1;			/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuHead_2;			/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuTail_1;			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuTail_2;			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 	int				m_nTabSpace;				/* TAB文字スペース */
 	char*			m_pszLineComment;			/* 行コメントデリミタ */
 	char*			m_pszLineComment2;			/* 行コメントデリミタ2 */
@@ -197,6 +202,9 @@ public:
 	void Init();
 	void Empty();
 
+private:
+	bool IsKinsokuHead( const char *pLine, int length );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
+	bool IsKinsokuTail( const char *pLine, int length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 };
 
 

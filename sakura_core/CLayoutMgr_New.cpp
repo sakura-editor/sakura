@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, MIK
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -73,6 +74,7 @@ void CLayoutMgr::DoLayout(
 	int			nWordBgn;
 	int			nWordLen;
 	int			nAllLineNum;
+	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
 
 
 // 2002/03/13 novice
@@ -167,6 +169,82 @@ void CLayoutMgr::DoLayout(
 					}
 				}
 			}
+
+			//@@@ 2002.04.07 MIK start
+			/* 行頭禁則 */
+			if( m_bKinsokuHead )
+			{
+				bKinsokuFlag = false;
+				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				switch( m_nMaxLineSize - nPosX )
+				{
+				case 1:	// 1文字前
+					if( nCharChars2 == 2 )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				case 0:	// 
+					if( nCharChars2 == 1 || nCharChars2 == 2 )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				}
+
+				if( bKinsokuFlag && IsKinsokuHead( &pLine[nPos], nCharChars2 ) )
+				{
+					nPos += nCharChars2; //nPosX += nCharChars2;
+					AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+					nCOMMENTMODE_Prev = nCOMMENTMODE;
+					nBgn = nPos;
+					nPosX = 0;
+				}
+			}
+			/* 行末禁則 */
+			if( m_bKinsokuTail )
+			{
+				bKinsokuFlag = false;
+				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				switch( m_nMaxLineSize - nPosX )
+				{
+				case 3:	// 3文字前
+					if( nCharChars2 == 2 )
+					{
+						if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
+						{
+							// "（あ": "あ"の2バイト目で折り返しのとき
+							bKinsokuFlag = true;
+						}
+					}
+					break;
+				case 2:	// 2文字前
+					if( nCharChars2 == 2 )
+					{
+						// "（あ": "あ"で折り返しのとき
+						bKinsokuFlag = true;
+					}
+					break;
+				case 1:	// 1文字前
+					if( nCharChars2 == 1 )
+					{
+						// "(あ": "あ"で折り返しのとき
+						bKinsokuFlag = true;
+					}
+					break;
+				}
+
+				if( bKinsokuFlag && IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
+				{
+					//nPos += nCharChars2; nPosX += nCharChars2;
+					AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+					nCOMMENTMODE_Prev = nCOMMENTMODE;
+					nBgn = nPos;
+					nPosX = 0;
+				}
+			}
+			//@@@ 2002.04.08 MIK end
+
 			switch( nCOMMENTMODE ){
 			case COLORIDX_TEXT: // 2002/03/13 novice
 				if( ( NULL != m_pszLineComment &&	/* 行コメントデリミタ */
@@ -656,6 +734,8 @@ int CLayoutMgr::DoLayout3_New(
 	int			bAdd = FALSE;
 	int			nWordBgn;
 	int			nWordLen;
+	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
+
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
 	if( 0 == nLineNum ){
@@ -774,6 +854,138 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}
 			}
+
+			//@@@ 2002.04.07 MIK start
+			/* 行頭禁則 */
+			if( m_bKinsokuHead )
+			{
+				bKinsokuFlag = false;
+				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				switch( m_nMaxLineSize - nPosX )
+				{
+				case 1:	// 1文字前
+					if( nCharChars2 == 2 )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				case 0:	// 
+					if( nCharChars2 == 1 || nCharChars2 == 2 )
+					{
+						bKinsokuFlag = true;
+					}
+					break;
+				}
+
+				if( bKinsokuFlag && IsKinsokuHead( &pLine[nPos], nCharChars2 ) )
+				{
+					nPos += nCharChars2; //nPosX += nCharChars2;
+					pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+					nCOMMENTMODE_Prev = nCOMMENTMODE;
+					if( bAdd ){
+						CLayout*	pLayoutWork;
+						pLayoutWork = pLayoutNext;
+						pLayoutNext = pLayoutNext->m_pNext;
+						pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
+						if( NULL != pLayoutNext ){
+							pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
+						}else{
+							m_pLayoutBot = pLayoutWork->m_pPrev;
+						}
+
+#ifdef _DEBUG
+						if( m_pLayoutPrevRefer == pLayoutWork ){
+							MYTRACE( "バグバグ\n" );
+						}
+#endif
+						delete pLayoutWork;
+						m_nLines--;
+
+						(*pnExtInsLineNum)++;
+					}
+
+					nBgn = nPos;
+					nPosX = 0;
+					if( ( nDelLogicalLineFrom == nCurLine &&
+						  nDelLogicalColFrom < nPos ) ||
+						( nDelLogicalLineFrom < nCurLine )
+					){
+						(nModifyLayoutLinesNew)++;;
+					}
+				}
+			}
+			/* 行末禁則 */
+			if( m_bKinsokuTail )
+			{
+				bKinsokuFlag = false;
+				nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				switch( m_nMaxLineSize - nPosX )
+				{
+				case 3:	// 3文字前
+					if( nCharChars2 == 2 )
+					{
+						if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
+						{
+							// "（あ": "あ"の2バイト目で折り返しのとき
+							bKinsokuFlag = true;
+						}
+					}
+					break;
+				case 2:	// 2文字前
+					if( nCharChars2 == 2 )
+					{
+						// "（あ": "あ"で折り返しのとき
+						bKinsokuFlag = true;
+					}
+					break;
+				case 1:	// 1文字前
+					if( nCharChars2 == 1 )
+					{
+						// "(あ": "あ"で折り返しのとき
+						bKinsokuFlag = true;
+					}
+					break;
+				}
+
+				if( bKinsokuFlag && IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
+				{
+					//nPos += nCharChars2; nPosX += nCharChars2;
+					pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+					nCOMMENTMODE_Prev = nCOMMENTMODE;
+					if( bAdd ){
+						CLayout*	pLayoutWork;
+						pLayoutWork = pLayoutNext;
+						pLayoutNext = pLayoutNext->m_pNext;
+						pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
+						if( NULL != pLayoutNext ){
+							pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
+						}else{
+							m_pLayoutBot = pLayoutWork->m_pPrev;
+						}
+
+#ifdef _DEBUG
+						if( m_pLayoutPrevRefer == pLayoutWork ){
+							MYTRACE( "バグバグ\n" );
+						}
+#endif
+						delete pLayoutWork;
+						m_nLines--;
+
+						(*pnExtInsLineNum)++;
+					}
+
+					nBgn = nPos;
+					nPosX = 0;
+					if( ( nDelLogicalLineFrom == nCurLine &&
+						  nDelLogicalColFrom < nPos ) ||
+						( nDelLogicalLineFrom < nCurLine )
+					){
+						(nModifyLayoutLinesNew)++;;
+					}
+				}
+			}
+			//@@@ 2002.04.08 MIK end
+
 			switch( nCOMMENTMODE ){
 			case COLORIDX_TEXT: // 2002/03/13 novice
 				if( ( NULL != m_pszLineComment &&	/* 行コメントデリミタ */
@@ -1213,6 +1425,42 @@ int CLayoutMgr::DoLayout3_New(
 //	m_pLayoutCurrent = NULL;
 
 	return nModifyLayoutLinesNew;
+}
+
+bool CLayoutMgr::IsKinsokuHead( const char *pLine, int length )
+{
+	const unsigned char	*p;
+
+	if(      length == 1 ) p = (const unsigned char *)m_pszKinsokuHead_1;
+	else if( length == 2 ) p = (const unsigned char *)m_pszKinsokuHead_2;
+	else return false;
+
+	if( ! p ) return false;
+
+	for( ; *p; p += length )
+	{
+		if( memcmp( pLine, p, length ) == 0 ) return true;
+	}
+
+	return false;
+}
+
+bool CLayoutMgr::IsKinsokuTail( const char *pLine, int length )
+{
+	const unsigned char	*p;
+	
+	if(      length == 1 ) p = (const unsigned char *)m_pszKinsokuTail_1;
+	else if( length == 2 ) p = (const unsigned char *)m_pszKinsokuTail_2;
+	else return false;
+	
+	if( ! p ) return false;
+
+	for( ; *p; p += length )
+	{
+		if( memcmp( pLine, p, length ) == 0 ) return true;
+	}
+
+	return false;
 }
 
 

@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -49,6 +50,13 @@ CLayoutMgr::CLayoutMgr()
 	m_pszBlockCommentFrom2 = NULL;		/* ブロックコメントデリミタ2(From) */
 	m_pszBlockCommentTo2 = NULL;		/* ブロックコメントデリミタ2(To) */
 //#endif
+	m_bKinsokuHead = FALSE;		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_bKinsokuTail = FALSE;		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuHead_1 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuHead_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_1 = NULL;	/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+
 	Init();
 	return;
 }
@@ -91,6 +99,23 @@ CLayoutMgr::~CLayoutMgr()
 		m_pszBlockCommentTo2 = NULL;
 	}
 //#endif
+	if( NULL != m_pszKinsokuHead_1 ){	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		delete [] m_pszKinsokuHead_1;
+		m_pszKinsokuHead_1 = NULL;
+	}
+	if( NULL != m_pszKinsokuHead_2 ){	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+		delete [] m_pszKinsokuHead_2;
+		m_pszKinsokuHead_2 = NULL;
+	}
+	if( NULL != m_pszKinsokuTail_1 ){	/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		delete [] m_pszKinsokuTail_1;
+		m_pszKinsokuTail_1 = NULL;
+	}
+	if( NULL != m_pszKinsokuTail_2 ){	/* 行末禁則 */	//@@@ 2002.04.08 MIK
+		delete [] m_pszKinsokuTail_2;
+		m_pszKinsokuTail_2 = NULL;
+	}
+
 	return;
 }
 
@@ -115,7 +140,11 @@ void CLayoutMgr::SetLayoutInfo(
 	int		bDoRayout,
 	HWND	hwndProgress,
 	BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-	BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+	BOOL	bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
+	BOOL	bKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
+	BOOL	bKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+	char*	pszKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+	char*	pszKinsokuTail	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
 )
 {
 	int		nStrLen;
@@ -197,9 +226,83 @@ void CLayoutMgr::SetLayoutInfo(
 	}
 //#endif
 
+	{	//@@@ 2002.04.08 MIK start
+		unsigned char	*p, *q1, *q2;
+		int	length;
+
+		//行頭禁則文字の1,2バイト文字を分けて管理する。
+		m_bKinsokuHead = bKinsokuHead;
+		if( NULL != m_pszKinsokuHead_1 )
+		{
+			delete [] m_pszKinsokuHead_1;
+			m_pszKinsokuHead_1 = NULL;
+		}
+		if( NULL != m_pszKinsokuHead_2 )
+		{
+			delete [] m_pszKinsokuHead_2;
+			m_pszKinsokuHead_2 = NULL;
+		}
+		length = strlen( pszKinsokuHead ) + 1;
+		m_pszKinsokuHead_1 = new char[ length ];
+		m_pszKinsokuHead_2 = new char[ length ];
+		q1 = (unsigned char *)m_pszKinsokuHead_1;
+		q2 = (unsigned char *)m_pszKinsokuHead_2;
+		memset( (void *)q1, 0, length );
+		memset( (void *)q2, 0, length );
+		for( p = (unsigned char *)pszKinsokuHead; *p; p++ )
+		{
+			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
+			{
+				*q2 = *p; q2++; p++;
+				*q2 = *p; q2++;
+				*q2 = 0;
+			}
+			else
+			{
+				*q1 = *p; q1++;
+				*q1 = 0;
+			}
+		}
+
+		//行末禁則文字の1,2バイト文字を分けて管理する。
+		m_bKinsokuTail = bKinsokuTail;
+		if( NULL != m_pszKinsokuTail_1 )
+		{
+			delete [] m_pszKinsokuTail_1;
+			m_pszKinsokuTail_1 = NULL;
+		}
+		if( NULL != m_pszKinsokuTail_2 )
+		{
+			delete [] m_pszKinsokuTail_2;
+			m_pszKinsokuTail_2 = NULL;
+		}
+		length = strlen( pszKinsokuTail ) + 1;
+		m_pszKinsokuTail_1 = new char[ length ];
+		m_pszKinsokuTail_2 = new char[ length ];
+		q1 = (unsigned char *)m_pszKinsokuTail_1;
+		q2 = (unsigned char *)m_pszKinsokuTail_2;
+		memset( (void *)q1, 0, length );
+		memset( (void *)q2, 0, length );
+		for( p = (unsigned char *)pszKinsokuTail; *p; p++ )
+		{
+			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
+			{
+				*q2 = *p; q2++; p++;
+				*q2 = *p; q2++;
+				*q2 = 0;
+			}
+			else
+			{
+				*q1 = *p; q1++;
+				*q1 = 0;
+			}
+		}
+	}	//@@@ 2002.04.08 MIK end
+
 	if( bDoRayout ){
 		DoLayout( hwndProgress, bDispSSTRING, bDispWSTRING );
 	}
+
 	return;
 }
 

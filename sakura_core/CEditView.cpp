@@ -42,6 +42,8 @@
 #include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
 #include "CMarkMgr.h"///
 #include "COsVersionInfo.h"
+#include "CDocLine.h"   // 2002.04.09 minfu
+
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -51,6 +53,12 @@
 #ifndef IMR_RECONVERTSTRING
 #define IMR_RECONVERTSTRING             0x0004
 #endif // IMR_RECONVERTSTRING
+
+/* 2002.04.09 minfu 再変換調整 */
+#ifndef IMR_CONFIRMRECONVERTSTRING
+#define IMR_CONFIRMRECONVERTSTRING             0x0005
+#endif // IMR_CONFIRMRECONVERTSTRING
+
 
 
 CEditView*	g_m_pcEditView;
@@ -282,10 +290,11 @@ VOID CALLBACK EditViewTimerProc(
 
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ),
+CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 // 20020331 aroka 再変換対応 for 95/NT
-	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
-	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
+// 2002.04.09 コンストラクタのなかに移動しました。 minfu
+//	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
+//	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 {
 	TEXTMETRIC	tm;
 	LOGFONT		lf;
@@ -461,6 +470,30 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ),
 	//	Aug. 31, 2000 genta
 	m_cHistory->SetMax( 30 );
 
+	// from here  2002.04.09 minfu OSによって再変換の方式を変える
+	//	YAZAKI COsVersionInfoのカプセル化は守りましょ。
+	COsVersionInfo	cOs;
+//	POSVERSIONINFO pOsVer;
+	
+//	pOsVer =  cOs.GetOsVersionInfo();
+	if( cOs.OsDoesNOTSupportReconvert() ){
+		// 95 or NTならば
+		m_uMSIMEReconvertMsg = ::RegisterWindowMessage( RWM_RECONVERT );
+		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
+		m_uWM_MSIME_RECONVERTREQUEST = ::RegisterWindowMessage("MSIMEReconvertRequest");
+		
+		m_hAtokModule = LoadLibrary("ATOK10WC.DLL");
+		AT_ImmSetReconvertString = NULL;
+		if ( NULL != m_hAtokModule ) {
+			AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");
+		}
+	}else{ 
+		// それ以外のOSのときはOS標準を使用する
+		m_uMSIMEReconvertMsg = 0;
+		m_uATOKReconvertMsg = 0 ;
+	}
+	// to here  2002.04.10 minfu
+	
 	return;
 }
 
@@ -497,7 +530,11 @@ CEditView::~CEditView()
 	delete m_cHistory;
 
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
-
+	
+	//再変換 2002.04.10 minfu
+	if(m_hAtokModule)
+		FreeLibrary(m_hAtokModule);
+	
 	return;
 }
 
@@ -1066,20 +1103,40 @@ LRESULT CEditView::DispatchEvent(
 
 	case MYWM_IME_REQUEST:  /* 再変換  by minfu 2002.03.27 */ // 20020331 aroka
 		
-		if( (wParam == IMR_RECONVERTSTRING) &&  IsTextSelected() && ( !m_bBeginBoxSelect) ){
-			// lParamにIMEが用意した再変換用構造体のポインタが入っている。
-			return RequestedReconversion((PRECONVERTSTRING)lParam);
+		//if( (wParam == IMR_RECONVERTSTRING) &&  IsTextSelected() && ( !m_bBeginBoxSelect) ){
+		//	// lParamにIMEが用意した再変換用構造体のポインタが入っている。
+		//	return RequestedReconversion((PRECONVERTSTRING)lParam);
+		//}
+		// 2002.04.09 switch case に変更  minfu 
+		switch ( wParam ){
+		case IMR_RECONVERTSTRING:
+			return SetReconvertStruct((PRECONVERTSTRING)lParam, false);
+			
+		case IMR_CONFIRMRECONVERTSTRING:
+			return SetSelectionFromReonvert((PRECONVERTSTRING)lParam, false);
+			
 		}
 		
 		return 0L;
 		
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
-		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
-			if( (wParam == IMR_RECONVERTSTRING) &&  IsTextSelected() && ( !m_bBeginBoxSelect) ){
-				// lParamにIMEが用意した再変換用構造体のポインタが入っている。
-				return RequestedReconversionW((PRECONVERTSTRING)lParam);
+		if( (m_uMSIMEReconvertMsg && (uMsg == m_uMSIMEReconvertMsg)) 
+			|| (m_uATOKReconvertMsg && (uMsg == m_uATOKReconvertMsg))){
+		// 2002.04.08 switch case に変更 minfu 
+			switch ( wParam ){
+			case IMR_RECONVERTSTRING:
+				return SetReconvertStruct((PRECONVERTSTRING)lParam, true);
+				
+			case IMR_CONFIRMRECONVERTSTRING:
+				return SetSelectionFromReonvert((PRECONVERTSTRING)lParam, true);
+				
 			}
+//		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
+//			if( (wParam == IMR_RECONVERTSTRING) &&  IsTextSelected() && ( !m_bBeginBoxSelect) ){
+//				// lParamにIMEが用意した再変換用構造体のポインタが入っている。
+//				return RequestedReconversionW((PRECONVERTSTRING)lParam);
+//			}
 			return 0L;
 		}
 // >> by aroka
@@ -8351,71 +8408,295 @@ void CEditView::SendStatusMessage( const char* msg ){
 	}
 }
 
-/*  IMEからの再変換要求に応える minfu 2002.03.27 */
-LRESULT CEditView::RequestedReconversion(PRECONVERTSTRING pReconv)
+// 使わなくなりました minfu 2002.04.10 
+///*  IMEからの再変換要求に応える minfu 2002.03.27 */
+//LRESULT CEditView::RequestedReconversion(PRECONVERTSTRING pReconv)
+//{
+//	CMemory cmemBuf;
+//	int nlen;
+//	
+//	/* 選択範囲のデータを取得 */
+//	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
+//		::MessageBeep( MB_ICONHAND );
+//		return 0L;
+//	}
+//	
+//	/* pReconv構造体に 値をセット */
+//	nlen =  cmemBuf.GetLength();
+//	if ( pReconv != NULL ) {    
+//		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen + 1;
+//		pReconv->dwVersion = 0;
+//		pReconv->dwStrLen = nlen ;
+//		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
+//		pReconv->dwCompStrLen = nlen;
+//		pReconv->dwCompStrOffset = 0;
+//		pReconv->dwTargetStrLen = nlen;
+//		pReconv->dwTargetStrOffset = 0 ;
+//		
+//		strncpy ( (char *)(pReconv + 1), cmemBuf.GetPtr( NULL ), nlen);
+//	
+//	}/* pReconv がNULLのときはサイズを返すのみ */
+//	
+//	/* RECONVERTSTRING構造体のサイズが戻り値 */
+//	return nlen + sizeof(RECONVERTSTRING);
+//
+//}
+//
+///*  IMEからの再変換要求に応える for 95/NT */ // 20020331 aroka
+//LRESULT CEditView::RequestedReconversionW(PRECONVERTSTRING pReconv)
+//{
+//	CMemory cmemBuf;
+//	int nlen;
+//	
+//	/* 選択範囲のデータを取得 */
+//	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
+//		::MessageBeep( MB_ICONHAND );
+//		return 0L;
+//	}
+//	
+//	/* cmemBuf を UNICODE に変換 */
+//	cmemBuf.SJISToUnicode();
+//	/* pReconv構造体に 値をセット */
+//	nlen =  cmemBuf.GetLength();
+//	if ( pReconv != NULL ) {
+//		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen  + sizeof(wchar_t);
+//		pReconv->dwVersion = 0;
+//		pReconv->dwStrLen = nlen/sizeof(wchar_t) ;
+//		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
+//		pReconv->dwCompStrLen = nlen/sizeof(wchar_t);
+//		pReconv->dwCompStrOffset = 0;
+//		pReconv->dwTargetStrLen = nlen/sizeof(wchar_t);
+//		pReconv->dwTargetStrOffset = 0 ;
+//		
+//		wcsncpy ( (wchar_t *)(pReconv + 1), (wchar_t *)cmemBuf.GetPtr(), nlen/sizeof(wchar_t) );
+//	
+//	}/* pReconv がNULLのときはサイズを返すのみ */
+//	
+//	/* RECONVERTSTRING構造体のサイズが戻り値 */
+//	return nlen + sizeof(RECONVERTSTRING);
+//
+//}
+
+//  2002.04.09 minfu from here
+/*再変換用 カーソル位置から前後200byteを取り出してRECONVERTSTRINGを埋める */
+/*  引数  pReconv RECONVERTSTRING構造体へのポインタ。                     */
+/*        bUnicode trueならばUNICODEで構造体を埋める                      */
+/*  戻り値   RECONVERTSTRINGのサイズ                                      */
+LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 {
-	CMemory cmemBuf;
-	int nlen;
+	const char	*pLine;
+	int 		nLineLen;
+	int			nCurrentLine /* , nCurrentColumn */ ;
+//	int			nCurLogicalLine;
 	
-	/* 選択範囲のデータを取得 */
-	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
-		::MessageBeep( MB_ICONHAND );
-		return 0L;
+	//行の中で再変換のAPIにわたすとする文字列の開始位置と長さ（考慮文字列）
+	int			nReconvIndex, nReconvLen, nReconvLenWithNull ;
+	
+	//行の中で再変換の注目する文節とする文字列の開始位置、終了位置、長さ（対象文字列）
+	int			nSelectedIndex, nSelectedEndIndex, nSelectedLen;
+	
+	int			nSelectColumnFrom /* , nSelectColumnTo */ ;
+	int			nSelectLineFrom, nSelectLineTo;
+	
+	DWORD		dwReconvTextLen;
+	DWORD		dwCompStrOffset, dwCompStrLen;
+	
+//	int			nCurrentIndex;
+	CMemory		cmemBuf1;
+	const char*		pszReconv;
+	CDocLine*	pcCurDocLine;
+	
+	m_nLastReconvIndex = -1;
+	m_nLastReconvLine  = -1;
+	
+	//矩形選択中は何もしない
+	if( m_bBeginBoxSelect )
+		return 0;
+	
+//	char sz[1024];
+	if( IsTextSelected() ){
+		//テキストが選択されているとき
+		nSelectColumnFrom = m_nSelectColmFrom;
+		nSelectLineFrom   = m_nSelectLineFrom;
+		
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(m_nSelectColmFrom, m_nSelectLineFrom, &nSelectedIndex, &nCurrentLine);
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(m_nSelectColmTo, m_nSelectLineTo, &nSelectedEndIndex, &nSelectLineTo);
+		
+		//選択範囲が複数行の時は
+		if (nSelectLineTo != nCurrentLine){
+			//行末までに制限
+			pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(nCurrentLine);
+			nSelectedEndIndex = pcCurDocLine->m_pLine->GetLength();
+		}
+		
+		nSelectedLen = nSelectedEndIndex - nSelectedIndex;
+		
+	}else{
+		//テキストが選択されていないとき
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(m_nCaretPosX ,m_nCaretPosY , &nSelectedIndex, &nCurrentLine);
+		nSelectedLen = 0;
 	}
 	
-	/* pReconv構造体に 値をセット */
-	nlen =  cmemBuf.GetLength();
-	if ( pReconv != NULL ) {    
-		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen + 1;
-		pReconv->dwVersion = 0;
-		pReconv->dwStrLen = nlen ;
-		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
-		pReconv->dwCompStrLen = nlen;
-		pReconv->dwCompStrOffset = 0;
-		pReconv->dwTargetStrLen = nlen;
-		pReconv->dwTargetStrOffset = 0 ;
+	pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(nCurrentLine);
+	
+	if (NULL == pcCurDocLine )
+		return 0;
+	
+	nLineLen = pcCurDocLine->m_pLine->GetLength() - pcCurDocLine->m_cEol.GetLen() ; //改行コードをのぞいた長さ
+	
+	if ( 0 == nLineLen )
+		return 0;
+	
+	pLine = pcCurDocLine->m_pLine->GetPtr();
+
+	//再変換考慮文字列開始
+	nReconvIndex = 0;
+	if ( nSelectedIndex > 200 ) {
+		const char* pszWork = pLine;
+		while( (nSelectedIndex - nReconvIndex) > 200 ){
+			pszWork = ::CharNext( pszWork);
+			nReconvIndex = pszWork - pLine ;
+		}
+	}
+	
+	//再変換考慮文字列終了
+	nReconvLen = nLineLen - nReconvIndex;
+	if ( (nReconvLen + nReconvIndex - nSelectedIndex) > 200 ){
+		const char* pszWork = pLine + nSelectedIndex;
+		nReconvLen = nSelectedIndex - nReconvIndex;
+		while( ( nReconvLen + nReconvIndex - nSelectedIndex) <= 200 ){
+			pszWork = ::CharNext( pszWork);
+			nReconvLen = pszWork - (pLine + nReconvIndex) ;
+		}
+	}
+	
+	//対象文字列の調整
+	if ( nSelectedIndex + nSelectedLen > nReconvIndex + nReconvLen ){
+		nSelectedLen = nReconvIndex + nReconvLen - nSelectedIndex;
+	}
+	
+	pszReconv =  pLine + nReconvIndex;
+	
+	if(bUnicode){
 		
-		strncpy ( (char *)(pReconv + 1), cmemBuf.GetPtr( NULL ), nlen);
+		//考慮文字列の開始から対象文字列の開始まで
+		if( nSelectedIndex - nReconvIndex > 0 ){
+			cmemBuf1.SetData(pszReconv, nSelectedIndex - nReconvIndex);
+			cmemBuf1.SJISToUnicode();
+			dwCompStrOffset = cmemBuf1.GetLength();  //Offset はbyte
+		}else{
+			dwCompStrOffset = 0;
+		}
+		
+		//対象文字列の開始から対象文字列の終了まで
+		if (nSelectedLen > 0 ){
+			cmemBuf1.SetData(pszReconv + nSelectedIndex, nSelectedLen);  
+			cmemBuf1.SJISToUnicode();
+			dwCompStrLen = cmemBuf1.GetLength() / sizeof(wchar_t);
+		}else{
+			dwCompStrLen = 0;
+		}
+		
+		//考慮文字列すべて
+		cmemBuf1.SetData(pszReconv , nReconvLen );
+		cmemBuf1.SJISToUnicode();
+		
+		dwReconvTextLen =  cmemBuf1.GetLength() / sizeof(wchar_t);
+		nReconvLenWithNull =  cmemBuf1.GetLength()  + sizeof(wchar_t);
+		
+		pszReconv = cmemBuf1.GetPtr();
+		
+	}else{
+		dwReconvTextLen = nReconvLen;
+		nReconvLenWithNull = nReconvLen + 1;
+		dwCompStrOffset = nSelectedIndex - nReconvIndex;
+		dwCompStrLen    = nSelectedLen;
+	}
 	
-	}/* pReconv がNULLのときはサイズを返すのみ */
+	if ( NULL != pReconv) {
+		//再変換構造体の設定
+		pReconv->dwSize = sizeof(RECONVERTSTRING) + nReconvLenWithNull ;
+		pReconv->dwVersion = 0;
+		pReconv->dwStrLen = dwReconvTextLen ;
+		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
+		pReconv->dwCompStrLen = dwCompStrLen;
+		pReconv->dwCompStrOffset = dwCompStrOffset;
+		pReconv->dwTargetStrLen = dwCompStrLen;
+		pReconv->dwTargetStrOffset = dwCompStrOffset;
+		
+		CopyMemory( (void *)(pReconv + 1), (void *)pszReconv , nReconvLenWithNull );
+		*((char *)(pReconv + 1) + nReconvLenWithNull - 1 ) = 0;
+		
+	}
 	
-	/* RECONVERTSTRING構造体のサイズが戻り値 */
-	return nlen + sizeof(RECONVERTSTRING);
+	// 再変換情報の保存
+	m_nLastReconvIndex = nReconvIndex;
+	m_nLastReconvLine  = nCurrentLine;
+	
+	return sizeof(RECONVERTSTRING) + nReconvLenWithNull;
 
 }
 
-/*  IMEからの再変換要求に応える for 95/NT */ // 20020331 aroka
-LRESULT CEditView::RequestedReconversionW(PRECONVERTSTRING pReconv)
-{
-	CMemory cmemBuf;
-	int nlen;
+/*再変換用 エディタ上の選択範囲を変更する 2002.04.09 minfu */
+LRESULT CEditView::SetSelectionFromReonvert(PRECONVERTSTRING pReconv, bool bUnicode){
 	
-	/* 選択範囲のデータを取得 */
-	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
-		::MessageBeep( MB_ICONHAND );
-		return 0L;
+	DWORD		dwOffset, dwLen;
+	CMemory		cmemBuf;
+//	char		sz[2000];
+	
+	// 再変換情報が保存されているか
+	if ( (m_nLastReconvIndex < 0) || (m_nLastReconvLine < 0))
+		return 0;
+
+	if ( IsTextSelected()) 
+		DisableSelectArea( TRUE );
+	
+	if (bUnicode){
+		
+		//考慮文字列の開始から対象文字列の開始まで
+		if( pReconv->dwCompStrOffset > 0){
+			cmemBuf.SetData((const char *)((const wchar_t *)(pReconv + 1)), 
+								pReconv->dwCompStrOffset ); 
+			cmemBuf.UnicodeToSJIS();
+			dwOffset = cmemBuf.GetLength();
+			
+		}else
+			dwOffset = 0;
+
+		//対象文字列の開始から対象文字列の終了まで
+		if( pReconv->dwCompStrLen > 0 ){
+			cmemBuf.SetData((const char *)(const wchar_t *)(pReconv + 1) + pReconv->dwCompStrOffset , 
+								pReconv->dwCompStrLen * sizeof(wchar_t)); 
+			cmemBuf.UnicodeToSJIS();
+			dwLen = cmemBuf.GetLength();
+			
+		}else
+			dwLen = 0;
+		
+	}else{
+		dwOffset = pReconv->dwCompStrOffset ;
+		dwLen =  pReconv->dwCompStrLen;
 	}
 	
-	/* cmemBuf を UNICODE に変換 */
-	cmemBuf.SJISToUnicode();
-	/* pReconv構造体に 値をセット */
-	nlen =  cmemBuf.GetLength();
-	if ( pReconv != NULL ) {
-		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen  + sizeof(wchar_t);
-		pReconv->dwVersion = 0;
-		pReconv->dwStrLen = nlen/sizeof(wchar_t) ;
-		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
-		pReconv->dwCompStrLen = nlen/sizeof(wchar_t);
-		pReconv->dwCompStrOffset = 0;
-		pReconv->dwTargetStrLen = nlen/sizeof(wchar_t);
-		pReconv->dwTargetStrOffset = 0 ;
-		
-		wcsncpy ( (wchar_t *)(pReconv + 1), (wchar_t *)cmemBuf.GetPtr(), nlen/sizeof(wchar_t) );
-	
-	}/* pReconv がNULLのときはサイズを返すのみ */
-	
-	/* RECONVERTSTRING構造体のサイズが戻り値 */
-	return nlen + sizeof(RECONVERTSTRING);
+	//選択開始の位置を取得
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(m_nLastReconvIndex + dwOffset 
+												, m_nLastReconvLine, &m_nSelectColmFrom, &m_nSelectLineFrom);
+	//選択終了の位置を取得
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(m_nLastReconvIndex + dwOffset + dwLen
+												, m_nLastReconvLine, &m_nSelectColmTo, &m_nSelectLineTo);
+
+	/* 単語の先頭にカーソルを移動 */
+	MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
+
+	//選択範囲再描画 
+	DrawSelectArea();
+
+	// 再変換情報の破棄
+	m_nLastReconvIndex = -1;
+	m_nLastReconvLine  = -1;
+
+	return 1;
 
 }
+
 /*[EOF]*/

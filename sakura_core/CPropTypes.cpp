@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2002, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, genta, MIK, hor, Stonee, asa-o
-	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2002, YAZAKI, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -116,6 +116,10 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_SPIN_MAXLINELEN,			HIDC_EDIT_MAXLINELEN,
 	IDC_SPIN_CHARSPACE,				HIDC_EDIT_CHARSPACE,
 	IDC_SPIN_LINESPACE,				HIDC_EDIT_LINESPACE,
+	IDC_CHECK_KINSOKUHEAD,			HIDC_CHECK_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
+	IDC_CHECK_KINSOKUTAIL,			HIDC_CHECK_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
+	IDC_EDIT_KINSOKUHEAD,			HIDC_EDIT_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
+	IDC_EDIT_KINSOKUTAIL,			HIDC_EDIT_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -184,11 +188,15 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_TABVIEWSTRING,			11346,  //TAB表示文字列
 //#endif
 // From Here 2001.12.03 hor
-	IDC_CHECK_INS_SPACE,			11347,	//スペースの挿入
+	IDC_CHECK_INS_SPACE,			11311,	//スペースの挿入
 // To Here 2001.12.03 hor
 	IDC_SPIN_MAXLINELEN,			-1,
 	IDC_SPIN_CHARSPACE,				-1,
 	IDC_SPIN_LINESPACE,				-1,
+	IDC_CHECK_KINSOKUHEAD,			11312,		//行頭禁則	//@@@ 2002.04.08 MIK
+	IDC_CHECK_KINSOKUTAIL,			11313,		//行末禁則	//@@@ 2002.04.08 MIK
+	IDC_EDIT_KINSOKUHEAD,			11347,		//行頭禁則	//@@@ 2002.04.08 MIK
+	IDC_EDIT_KINSOKUTAIL,			11348,		//行末禁則	//@@@ 2002.04.08 MIK
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -826,6 +834,22 @@ BOOL CPropTypes::DispatchEvent_p1(
 					}
 				}
 				return TRUE;
+
+			case IDC_CHECK_KINSOKUHEAD:	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ){
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), TRUE );
+				}else{
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), FALSE );
+				}
+				return TRUE;
+
+			case IDC_CHECK_KINSOKUTAIL:	/* 行末禁則 */	//@@@ 2002.04.08 MIK
+				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ){
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), TRUE );
+				}else{
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
+				}
+				return TRUE;
 			}
 		}
 		break;
@@ -1098,6 +1122,27 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 
 	/* 英文ワードラップをする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_WORDWRAP, m_Types.m_bWordWrap );
+
+	/* 禁則処理 */
+	{	//@@@ 2002.04.08 MIK start
+		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUHEAD, m_Types.m_bKinsokuHead ? TRUE : FALSE );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUTAIL, m_Types.m_bKinsokuTail ? TRUE : FALSE );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Types.m_szKinsokuHead) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Types.m_szKinsokuTail) - 1 ), 0 );
+		::SetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead );
+		::SetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail );
+		if( m_Types.m_bKinsokuHead ){
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), TRUE );
+		}else{
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), FALSE );
+		}
+		if( m_Types.m_bKinsokuTail ){
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), TRUE );
+		}else{
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
+		}
+	}	//@@@ 2002.04.08 MIK end
+
 	return;
 }
 
@@ -1210,6 +1255,14 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	/* 英文ワードラップをする */
 	m_Types.m_bWordWrap = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WORDWRAP );
+
+	/* 禁則処理 */
+	{	//@@@ 2002.04.08 MIK start
+		m_Types.m_bKinsokuHead = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ? TRUE : FALSE;
+		m_Types.m_bKinsokuTail = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ? TRUE : FALSE;
+		::GetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, sizeof( m_Types.m_szKinsokuHead ) );
+		::GetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, sizeof( m_Types.m_szKinsokuTail ) );
+	}	//@@@ 2002.04.08 MIK end
 
 	return TRUE;
 }

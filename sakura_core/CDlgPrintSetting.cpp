@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -50,6 +51,8 @@ const DWORD p_helpids[] = {	//12500
 	IDC_SPIN_MARGINBY,				HIDC_PS_EDIT_MARGINBY,		//12575,
 	IDC_SPIN_MARGINLX,				HIDC_PS_EDIT_MARGINLX,		//12576,
 	IDC_SPIN_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//12577,
+	IDC_CHECK_PS_KINSOKUHEAD,		HIDC_PS_CHECK_KINSOKUHEAD,	//行頭禁則	//@@@ 2002.04.09 MIK
+	IDC_CHECK_PS_KINSOKUTAIL,		HIDC_PS_CHECK_KINSOKUTAIL,	//行末禁則	//@@@ 2002.04.09 MIK
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -571,6 +574,19 @@ int CDlgPrintSetting::GetData( void )
 	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
 	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
+	//行頭禁則	//@@@ 2002.04.09 MIK
+	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUHEAD ) ){
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = TRUE;
+	}else{
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = FALSE;
+	}
+	//行末禁則	//@@@ 2002.04.09 MIK
+	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL ) ){
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = TRUE;
+	}else{
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -659,6 +675,20 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 			break;
 		}
 	}
+
+	// 行頭禁則	//@@@ 2002.04.09 MIK
+	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead ){
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUHEAD, BST_CHECKED );
+	}else{
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUHEAD, BST_UNCHECKED );
+	}
+	// 行末禁則	//@@@ 2002.04.09 MIK
+	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail ){
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL, BST_CHECKED );
+	}else{
+		::CheckDlgButton( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL, BST_UNCHECKED );
+	}
+
 	return;
 }
 

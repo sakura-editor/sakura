@@ -76,6 +76,7 @@
 #define F_SORT_ASC			30282	//選択行の昇順ソート	2001.12.06 hor
 #define F_SORT_DESC			30283	//選択行の降順ソート	2001.12.06 hor
 #define F_MERGE				30284	//選択行のマージ		2001.12.06 hor
+#define F_RECONVERT			30285	//メニューからの再変換対応 2002.04.09  minfu 
 
 
 /* カーソル移動系 */

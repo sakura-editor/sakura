@@ -69,6 +69,25 @@ public:
 	BOOL HasWinHelpContentsProblem(){
 		return ( IsWin32NT() && (m_cOsVersionInfo.dwMajorVersion <= 4));
 	}
+	
+	/*	再変換がOS標準で提供されていないか。
+		提供されていないなら、TRUE。
+		提供されているなら、FALSE。
+	
+		Windows95 or WindowsNTなら、TRUE（提供されていない）
+		それ以外のOSなら、FALSE（提供されている）
+	*/
+	BOOL OsDoesNOTSupportReconvert(){
+		return ((4 == m_cOsVersionInfo.dwMajorVersion) && ( 0 == m_cOsVersionInfo.dwMinorVersion ));
+	}
+#if 0
+	2002.04.11 YAZAKI カプセル化を守る。
+	// 2002.04.08 minfu OSVERSIONINFO構造体へのポインタを返す
+	POSVERSIONINFO GetOsVersionInfo(){
+		return &m_cOsVersionInfo;
+	}
+#endif
+
 protected:
 	BOOL m_bSuccess;
 	OSVERSIONINFO m_cOsVersionInfo;
