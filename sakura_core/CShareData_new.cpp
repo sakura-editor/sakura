@@ -817,43 +817,45 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		if( bRead ){
 			//	Block Comment
 			char buffer[2][ BLOCKCOMMENT_BUFFERSIZE ];
-			
+			//	2004.10.02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
+			//	ブロックコメントの始まりと終わり．行コメントの記号と桁位置
+			bool bRet1, bRet2;
 			buffer[0][0] = buffer[1][0] = '\0';
-			cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentFrom"	,
+			bRet1 = cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentFrom"	,
 				buffer[0], BLOCKCOMMENT_BUFFERSIZE );			
-			cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentTo"	,
+			bRet2 = cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentTo"	,
 				buffer[1], BLOCKCOMMENT_BUFFERSIZE );
-			m_pShareData->m_Types[i].m_cBlockComment.CopyTo( 0, buffer[0], buffer[1] );
+			if( bRet1 && bRet2 ) m_pShareData->m_Types[i].m_cBlockComment.CopyTo( 0, buffer[0], buffer[1] );
 
 			//@@@ 2001.03.10 by MIK
 			buffer[0][0] = buffer[1][0] = '\0';
-			cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentFrom2",
+			bRet1 = cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentFrom2",
 				buffer[0], BLOCKCOMMENT_BUFFERSIZE );
-			cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentTo2"	,
+			bRet2 = cProfile.IOProfileData( bRead, pszSecName, "szBlockCommentTo2"	,
 				buffer[1], BLOCKCOMMENT_BUFFERSIZE );
-			m_pShareData->m_Types[i].m_cBlockComment.CopyTo( 1, buffer[0], buffer[1] );
+			if( bRet1 && bRet2 ) m_pShareData->m_Types[i].m_cBlockComment.CopyTo( 1, buffer[0], buffer[1] );
 			
 			//	Line Comment
 			char lbuf[ COMMENT_DELIMITER_BUFFERSIZE ];
 			int  pos;
 
 			lbuf[0] = '\0'; pos = -1;
-			cProfile.IOProfileData( bRead, pszSecName, "szLineComment"		,
+			bRet1 = cProfile.IOProfileData( bRead, pszSecName, "szLineComment"		,
 				lbuf, COMMENT_DELIMITER_BUFFERSIZE );
-			cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn"	, pos );
-			m_pShareData->m_Types[i].m_cLineComment.CopyTo( 0, lbuf, pos );
+			bRet2 = cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn"	, pos );
+			if( bRet1 && bRet2 ) m_pShareData->m_Types[i].m_cLineComment.CopyTo( 0, lbuf, pos );
 
 			lbuf[0] = '\0'; pos = -1;
-			cProfile.IOProfileData( bRead, pszSecName, "szLineComment2"		,
+			bRet1 = cProfile.IOProfileData( bRead, pszSecName, "szLineComment2"		,
 				lbuf, COMMENT_DELIMITER_BUFFERSIZE );
-			cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn2", pos );
-			m_pShareData->m_Types[i].m_cLineComment.CopyTo( 1, lbuf, pos );
+			bRet2 = cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn2", pos );
+			if( bRet1 && bRet2 ) m_pShareData->m_Types[i].m_cLineComment.CopyTo( 1, lbuf, pos );
 
 			lbuf[0] = '\0'; pos = -1;
-			cProfile.IOProfileData( bRead, pszSecName, "szLineComment3"		,
+			bRet1 = cProfile.IOProfileData( bRead, pszSecName, "szLineComment3"		,
 				lbuf, COMMENT_DELIMITER_BUFFERSIZE );	//Jun. 01, 2001 JEPRO 追加
-			cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn3", pos );	//Jun. 01, 2001 JEPRO 追加
-			m_pShareData->m_Types[i].m_cLineComment.CopyTo( 2, lbuf, pos );
+			bRet2 = cProfile.IOProfileData( bRead, pszSecName, "nLineCommentColumn3", pos );	//Jun. 01, 2001 JEPRO 追加
+			if( bRet1 && bRet2 ) m_pShareData->m_Types[i].m_cLineComment.CopyTo( 2, lbuf, pos );
 		}
 		else { // write
 			//	Block Comment
