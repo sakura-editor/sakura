@@ -87,7 +87,6 @@ public:
 	POINT			m_poWin;
 	int				m_nWinHeight;
 	int				m_nColmWidth;
-	int				m_pnDx[256 + 1];		/* •¶š—ñ•`‰æ—p•¶š•”z—ñ */
 //	void*			m_pcEditView;
 	int				m_bTimerFlag;
 
