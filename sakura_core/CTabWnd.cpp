@@ -36,7 +36,8 @@
 #include "global.h"
 #include "mymessage.h"
 #include "etc_uty.h"
-#include "my_icmp.h"
+#include "charcode.h"
+#include "my_tchar.h"	//Unicode対応 Moca
 
 //#if(WINVER >= 0x0500)
 #ifndef	SPI_GETFOREGROUNDLOCKTIMEOUT
@@ -136,6 +137,7 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 					tcitem.lParam = (LPARAM)NULL;
 					if( TabCtrl_GetItem( m_hwndTab, lpnmtdi->hdr.idFrom, &tcitem ) )
 					{
+						/*
 						CRecent	cRecentEditNode;
 						EditNode	*p;
 						cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
@@ -146,9 +148,64 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 						}
 						else
 						{
-							strcpy( m_szTextAnsi, "(無題)" );
+							strcpy( m_szTextAnsi, _T("(無題)") );
 						}
 						cRecentEditNode.Terminate();
+						*/
+						FileInfo*	pfi;
+						::SendMessage( (HWND)tcitem.lParam, MYWM_GETFILEINFO, 0, 0 );
+						pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+#ifdef UNICODE	//Unicode対応 Moca
+						if( p && p->m_szPath[0] )
+						{
+							strcpy( m_szTextWide, p->m_szPath );
+						}
+						else if( pfi->m_bIsGrep )
+						{
+							strncpy( m_szTextWide, pfi->m_szGrepKey, sizeof( m_szTextWide ) );
+							m_szTextWide[ sizeof( m_szTextWide ) - 1 ] = '\0';
+						}
+						else if( pfi->m_bIsDebug )
+						{
+							strcpy( m_szTextWide, _T("(アウトプットウインドウ)") );
+						}
+						else
+						{
+							strcpy( m_szTextWide, _T("(無題)") );
+						}
+
+						if( TTN_GETDISPINFOA == lpnmtdi->hdr.code )
+						{
+							LPNMTTDISPINFOA	lpnmtdia = (LPNMTTDISPINFOA)lParam;
+							//memset( m_szTextWide, 0, sizeof( m_szTextWide ) );
+							m_szTextAnsi[ ::WideCharToMultiByte( CP_ACP, 0, m_szTextWide, -1, m_szTextAnsi, sizeof(m_szTextAnsi) - 1, 0, 0 ) ] = NUL;
+							lpnmtdia->hinst    = NULL;
+							lpnmtdia->lpszText = m_szTextAnsi;
+						}
+						else
+						{
+							lpnmtdi->hinst    = NULL;
+							lpnmtdi->lpszText = m_szTextWide;
+						}
+#else
+						if( pfi->m_szPath[0] )
+						{
+							strncpy( m_szTextAnsi, pfi->m_szPath, sizeof( m_szTextAnsi ) );
+							m_szTextAnsi[ sizeof( m_szTextAnsi ) - 1 ] = '\0';
+						}
+						else if( pfi->m_bIsGrep )
+						{
+							strncpy( m_szTextAnsi, pfi->m_szGrepKey, sizeof( m_szTextAnsi ) );
+							m_szTextAnsi[ sizeof( m_szTextAnsi ) - 1 ] = '\0';
+						}
+						else if( pfi->m_bIsDebug )
+						{
+							strcpy( m_szTextAnsi, _T("(アウトプットウインドウ)") );
+						}
+						else
+						{
+							strcpy( m_szTextAnsi, _T("(無題)") );
+						}
 
 						if( TTN_GETDISPINFOW == lpnmtdi->hdr.code )
 						{
@@ -164,7 +221,7 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 							lpnmtdi->hinst    = NULL;
 							lpnmtdi->lpszText = m_szTextAnsi;
 						}
-						
+#endif	//UNICODE
 						return 0L;
 					}
 				}
@@ -181,9 +238,9 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 
 CTabWnd::CTabWnd()
 {
-	strcat( m_szClassInheritances, "::CTabWnd" );
+	strcat( m_szClassInheritances, _T("::CTabWnd") );
 
-	m_pszClassName = "CTabWnd";
+	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
@@ -241,7 +298,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	//タブウインドウを作成する。
 	m_hwndTab = ::CreateWindow(
 		WC_TABCONTROL,
-		"",
+		_T(""),
 		WS_CHILD | WS_VISIBLE,
 		CW_USEDEFAULT,
 		0,
@@ -268,7 +325,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
 		LOGFONT	lf;
-		memset( &lf, 0, sizeof(LOGFONT) );
+		::ZeroMemory( &lf, sizeof(LOGFONT) );
 		lf.lfHeight			= -12;
 		lf.lfWidth			= 0;
 		lf.lfEscapement		= 0;
@@ -282,7 +339,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		lf.lfClipPrecision	= 0x2;
 		lf.lfQuality		= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		strcpy( lf.lfFaceName, "ＭＳ Ｐゴシック" );
+		strcpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
 		m_hFont = ::CreateFontIndirect( &lf );
 		
 		/* フォント変更 */
@@ -456,9 +513,9 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		{
 			TCITEM	tcitem;
 //X			CRecent	cRecentEditNode;
-			char	szName[1024];
-//X			char	szFile[1024];
-//X			char	szExt[1024];
+			TCHAR	szName[1024];
+//X			TCHAR	szFile[1024];
+//X			TCHAR	szExt[1024];
 //X			EditNode	*p;
 //X
 //Xウインドウ登録時はファイル名は未設定なので余計な処理を省く。
@@ -466,14 +523,14 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 //X			p = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&lParam ) );
 //X			if( p && p->m_szPath[0] )
 //X			{
-//X				strcpy( szFile, "" );
-//X				strcpy( szExt, "" );
+//X				strcpy( szFile, _T("") );
+//X				strcpy( szExt, _T("") );
 //X				_splitpath( p->m_szPath, NULL, NULL, szFile, szExt );
-//X				wsprintf( szName, "%s%s", szFile, szExt );
+//X				wsprintf( szName, _T("%s%s"), szFile, szExt );
 //X			}
 //X			else
 //X			{
-				strcpy( szName, "(無題)" );
+				strcpy( szName, _T("(無題)") );
 //X			}
 //X			cRecentEditNode.Terminate();
 
@@ -562,23 +619,25 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		{
 			TCITEM	tcitem;
 			CRecent	cRecentEditNode;
-			char	szName[1024];
-			char	szFile[1024];
-			char	szExt[1024];
+			TCHAR	szName[1024];
+			//TCHAR	szFile[1024];
+			//TCHAR	szExt[1024];
 			EditNode	*p;
 
 			cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 			p = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&lParam ) );
-			if( p && p->m_szPath[0] )
+			if( p && p->m_szTabCaption[0] )
 			{
-				strcpy( szFile, "" );
-				strcpy( szExt, "" );
-				_splitpath( p->m_szPath, NULL, NULL, szFile, szExt );
-				wsprintf( szName, "%s%s", szFile, szExt );
+				//strcpy( szFile, _T("") );
+				//strcpy( szExt, _T("") );
+				//_splitpath( p->m_szTabCaption, NULL, NULL, szFile, szExt );
+				//wsprintf( szName, _T("%s%s"), szFile, szExt );
+				strncpy( szName, p->m_szTabCaption, sizeof( szName ) );
+				szName[ sizeof( szName ) - 1 ] = '\0';
 			}
 			else
 			{
-				strcpy( szName, "(無題)" );
+				strcpy( szName, _T("(無題)") );
 			}
 			cRecentEditNode.Terminate();
 
@@ -644,9 +703,9 @@ void CTabWnd::Refresh( void )
 	int			i;
 	int			nIndex;
 	TCITEM		tcitem;
-	char		szName[1024];
-	char		szFile[1024];
-	char		szExt[1024];
+	TCHAR		szName[1024];
+	//TCHAR		szFile[1024];
+	//TCHAR		szExt[1024];
 	EditNode	*p;
 	int			nCount;
 
@@ -662,16 +721,18 @@ void CTabWnd::Refresh( void )
 	{
 		if( m_hwndParent == p[ i ].m_hWnd ) nIndex = i;
 
-		if( p[ i ].m_szPath[0] )
+		if( p[ i ].m_szTabCaption[0] )
 		{
-			strcpy( szFile, "" );
-			strcpy( szExt, "" );
-			_splitpath( p[ i ].m_szPath, NULL, NULL, szFile, szExt );
-			wsprintf( szName, "%s%s", szFile, szExt );
+			//strcpy( szFile, _T("") );
+			//strcpy( szExt, _T("") );
+			//_splitpath( p[ i ].m_szTabCaption, NULL, NULL, szFile, szExt );
+			//wsprintf( szName, _T("%s%s"), szFile, szExt );
+			strncpy( szName, p[ i ].m_szTabCaption, sizeof( szName ) );
+			szName[ sizeof( szName ) - 1 ] = '\0';
 		}
 		else
 		{
-			strcpy( szName, "(無題)" );
+			strcpy( szName, _T("(無題)") );
 		}
 
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
@@ -694,10 +755,10 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 {
 	if( NULL == hwnd ) return;
 
-	WINDOWPLACEMENT	wndpl;
+//	WINDOWPLACEMENT	wndpl;
 
-	wndpl.length = sizeof( wndpl );
-	if( FALSE == ::GetWindowPlacement( hwnd, &wndpl ) ) return;
+//	wndpl.length = sizeof( wndpl );
+//	if( FALSE == ::GetWindowPlacement( hwnd, &wndpl ) ) return;
 
 	if( bDisp )
 	{

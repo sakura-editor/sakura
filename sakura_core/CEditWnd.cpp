@@ -4000,9 +4000,9 @@ void CEditWnd::ChangeFileNameNotify( const char *pszFile )
 		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
 		if( p )
 		{
-			int	size = sizeof( p->m_szPath ) - 1;
-			strncpy( p->m_szPath, pszFile, size );
-			p->m_szPath[ size ] = '\0';
+			int	size = sizeof( p->m_szTabCaption ) - 1;
+			strncpy( p->m_szTabCaption, pszFile, size );
+			p->m_szTabCaption[ size ] = '\0';
 		}
 	}
 	cRecentEditNode.Terminate();

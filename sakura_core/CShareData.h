@@ -83,6 +83,7 @@ struct FileInfo {
 	int		m_nCharCode;			/*!< 文字コード種別 */
 	char	m_szPath[_MAX_PATH];	/*!< ファイル名 */
 	BOOL	m_bIsGrep;				/*!< Grepのウィンドウか */
+	BOOL	m_bIsDebug;				/*!< デバッグモードか(アウトプットウインドウ) */
 	char	m_szGrepKey[1024];
 	char	m_szMarkLines[MAX_MARKLINES_LEN + 1];	/*!< ブックマークの物理行リスト */
 	char	m_szDocType[MAX_DOCTYPE_LEN + 1];	/*!< 文書タイプ */
@@ -95,7 +96,7 @@ struct FileInfo {
 	// Constructor 確実に初期化するため
 	FileInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
 		m_nX( -1 ), m_nY( -1 ), m_bIsModified( 0 ),
-		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ),
+		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ), m_bIsDebug( FALSE ),
 		m_nWindowSizeX( -1 ), m_nWindowSizeY( -1 ),
 		m_nWindowOriginX( -1 ), m_nWindowOriginY( -1 )
 	{
@@ -125,7 +126,7 @@ struct GrepInfo {
 struct EditNode {
 	int				m_nIndex;
 	HWND			m_hWnd;
-	char			m_szPath[_MAX_PATH];	/*!< タブウインドウ用：ファイル名 */	//@@@ 2003.05.31 MIK
+	char			m_szTabCaption[_MAX_PATH];	/*!< タブウインドウ用：キャプション名 */	//@@@ 2003.05.31 MIK
 };
 
 //! 印刷設定
