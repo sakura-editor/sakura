@@ -170,16 +170,16 @@ public:
 	);
 	
 	//	Jun. 16, 2000 genta
-	bool  SearchBracket( int PosX, int PosY, int* NewX, int* NewY );	//	対括弧の検索
+	bool  SearchBracket( int PosX, int PosY, int* NewX, int* NewY, int mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
 	bool  SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
-						int upChar, int dnChar );	//	対括弧の前方検索
+						int upChar, int dnChar, int mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
 	bool  SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
-									int dnChar, int upChar );
+						int dnChar, int upChar, int mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
 //@@@ 2001.02.03 Start by MIK: 全角の対括弧
 	bool  SearchBracketForward2( int PosX, int PosY, int* NewX, int* NewY,
-								 char* upChar, char* dnChar );	//	対括弧の前方検索
+								 char* upChar, char* dnChar, int mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
 	bool  SearchBracketBackward2( int PosX, int PosY, int* NewX, int* NewY,
-								  char* dnChar, char* upChar );
+								  char* dnChar, char* upChar, int mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
 //@@@ 2001.02.03 End
 
 //	2001/06/18 asa-o
@@ -221,6 +221,7 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nSrchStartPosX_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
 	int		m_nSrchStartPosY_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行の行番号(0開始) */				// 02/06/26 ai
 	BOOL	m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
+	int		m_nCharSize;			/* 対括弧の文字サイズ */	// 02/09/18 ai 
 
 	/*
 	||  メンバ変数
@@ -378,6 +379,7 @@ protected:
 	void ScrollAtV( int );										/* 指定上端行位置へスクロール */
 	void ScrollAtH( int );										/* 指定左端桁位置へスクロール */
 	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
+	void DrawBracketPair( void );								/* 対括弧の強調表示 02/09/18 ai */
 public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
 protected:

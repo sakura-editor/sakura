@@ -1103,6 +1103,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"DIFF差分表示(追加)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 			"DIFF差分表示(変更)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 			"DIFF差分表示(削除)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
+			"対括弧の強調表示",			FALSE , TRUE,  FALSE, RGB( 128, 0, 0 )		, RGB( 255, 251, 240 ),	// 02/09/18 ai
 		};
 //	To Here Sept. 18, 2000
 
@@ -1255,6 +1256,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[2].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
 		m_pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+		//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
+		m_pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
 
 
 		/* HTML */
@@ -1300,6 +1303,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[6].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
 		m_pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+		//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
+		m_pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
 
 		/* アセンブラ */
 		m_pShareData->m_Types[7].m_nDefaultOutline = OUTLINE_ASM;			/* アウトライン解析方法 */
@@ -1352,6 +1357,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[12].m_nKeyWordSetIdx2 = 12;					/* キーワードセット2 */
 		m_pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
 		//To Here Jul. 08, 2001
+		//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
+		m_pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
 
 		//From Here Jul. 10, 2001 JEPRO
 		/* Visual Basic */

@@ -10298,7 +10298,7 @@ void CEditView::Command_BRACKETPAIR( void )
 {
 	int nLine, nCol;
 
-	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine ) ){
+	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, 1 ) ){	// mode:ƒJ[ƒ\ƒ‹‚ÌŒã‚ë‚ğ’²‚×‚é(‘ÎŠ‡ŒÊ‚ÌŒŸõ) 02/09/18 ai
 		MoveCursor( nCol, nLine, true );
 	}
 	else{

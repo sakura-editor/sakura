@@ -135,6 +135,7 @@ const char* const colorIDXKeyName[] =
 	"DFA",	//DIFF’Ç‰Á	//@@@ 2002.06.01 MIK
 	"DFC",	//DIFF•ÏX	//@@@ 2002.06.01 MIK
 	"DFD",	//DIFFíœ	//@@@ 2002.06.01 MIK
+	"BRC",	//‘ÎŠ‡ŒÊ	// 02/09/18 ai Add
 	"LAST"	// Not Used
 };
 
