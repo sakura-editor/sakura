@@ -4138,36 +4138,65 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	2001.12.26 削除した。（YAZAKI）
 	
 */
-/*!	idxで指定したマクロファイル名（フルパス）を取得する
-	idxは正確なものでなければならない。
-	YAZAKI
+/*!	idxで指定したマクロファイル名（フルパス）を取得する．
+
+	@param pszPath [in]	パス名の出力先．長さのみを知りたいときはNULLを入れる．
+	@param idx [in]		マクロ番号
+	@param nBufLen [in]	pszPathで指定されたバッファのバッファサイズ
+
+	@retval >0 : パス名の長さ．
+	@retval  0 : エラー，そのマクロは使えない，ファイル名が指定されていない．
+	@retval <0 : バッファ不足．必要なバッファサイズは -(戻り値)+1
+
+	@author YAZAKI
+	@date 2003.06.08 Moca ローカル変数へのポインタを返さないように仕様変更
+	@date 2003.06.14 genta 文字列長，ポインタのチェックを追加
+	
+	@note idxは正確なものでなければならない。(内部で正当性チェックを行っていない)
 */
-char* CShareData::GetMacroFilename( int idx )
+int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
 {
 	if( !m_pShareData->m_MacroTable[idx].IsEnabled() )
-		return NULL;
+		return 0;
 
-	char fbuf[_MAX_PATH * 2];
+//	char fbuf[_MAX_PATH * 2];
 	char *ptr = m_pShareData->m_MacroTable[idx].m_szFile;
 
-	if( ptr[0] == '\0' )	//	ファイル名が無い
-		return NULL;
-
-	if( ptr[0] == '\\' || ( ptr[1] == ':' && ptr[2] == '\\' )){	// 絶対パス
+	if( ptr[0] == '\0' ){	//	ファイル名が無い
+		if( pszPath != NULL ){
+			pszPath[0] = '\0';
+		}
+		return 0;
 	}
-	else if( m_pShareData->m_szMACROFOLDER[0] != '\0' ){	//	フォルダ指定あり
+
+	int nLen = strlen( pszPath );
+
+	if(( ptr[0] == '\\' || ( ptr[1] == ':' && ptr[2] == '\\' ))	// 絶対パス
+		|| m_pShareData->m_szMACROFOLDER[0] == '\0' ){	//	フォルダ指定なし
+		if( pszPath == NULL || nBufLen <= nLen ){
+			return -nLen;
+		}
+		strcpy( pszPath, ptr );
+		return nLen;
+	}
+	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
-		strcpy( fbuf, m_pShareData->m_szMACROFOLDER );
-		ptr = fbuf + strlen( fbuf );
-		//::MessageBox( pCEditView->m_hwndParent, ptr - 1, "CSMacroMgr::Exec/folder", MB_OK );
+		int nFlen = strlen( m_pShareData->m_szMACROFOLDER );
+		int nAllLen = nLen + nFlen
+			+ ( m_pShareData->m_szMACROFOLDER[ nFlen - 1 ] == '\\' ? 0 : 1 );
+		
+		if( pszPath == NULL || nBufLen <= nAllLen ){
+			return -nAllLen;
+		}
+		strcpy( pszPath, m_pShareData->m_szMACROFOLDER );
+		ptr = pszPath + nFlen;
 		if( ptr[-1] != '\\' ){
 			*ptr++ = '\\';
 		}
 		strcpy( ptr, m_pShareData->m_MacroTable[idx].m_szFile );
-		ptr = fbuf;
+		return nAllLen;
 	}
-	
-	return ptr;
+
 }
 
 /*!	idxで指定したマクロのm_bReloadWhenExecuteを取得する。
