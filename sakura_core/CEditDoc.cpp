@@ -766,7 +766,6 @@ BOOL CEditDoc::FileRead(
 
 	//	May 12, 2000 genta
 	//	改行コードの設定
-	//	May 12, 2000 genta
 	{
 		SetNewLineCode( EOL_CRLF );
 		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLineInfo( 0 );
@@ -774,7 +773,6 @@ BOOL CEditDoc::FileRead(
 			enumEOLType t = (enumEOLType)pFirstlineinfo->m_cEol;
 			if( t != EOL_NONE && t != EOL_UNKNOWN ){
 				SetNewLineCode( t );
-				m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
 			}
 		}
 	}
@@ -794,6 +792,9 @@ BOOL CEditDoc::FileRead(
 	}
 
 end_of_func:;
+	//	2004.05.13 Moca 改行コードの設定内からここに移動
+	m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
