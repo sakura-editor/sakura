@@ -1219,6 +1219,8 @@ LRESULT CEditApp::DispatchEvent(
 				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
 				OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE );
+				// Apr. 1, 2003 genta この後で表示されたメニューは閉じる
+				::PostMessage( m_hWnd, WM_CANCELMODE, 0, 0 );
 				return 0L;
 			case WM_RBUTTONDBLCLK:
 //				MYTRACE( "WM_RBUTTONDBLCLK\n" );
