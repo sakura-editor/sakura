@@ -123,7 +123,6 @@ const char *CFileExt::GetExtFilter( void )
 		strcat( m_szFilter, szWork );
 	}
 	strcat( m_szFilter, "|" );
-	i = strlen( m_szFilter );
 
 	//‹æØ‚è‚Í‚O‚È‚Ì‚Å’u‚«Š·‚¦‚éB
 	for( i = 0; m_szFilter[i] != '\0'; i++ )
