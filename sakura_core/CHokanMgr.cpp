@@ -47,10 +47,9 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 //		MYTRACE( "WM_KEYDOWN nVKey = %xh\n", nVKey );
 		/* キー操作を偽造しよう */
 		if (nVKey == VK_SPACE){	//	Space
-			int nIdx = 0;
-			if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT	  ) ) nIdx |= _SHIFT;
-			if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ) nIdx |= _CTRL;
-			if( (SHORT)0x8000 & ::GetKeyState( VK_MENU    ) ) nIdx |= _ALT;
+// novice 2004/10/10
+			/* Shift,Ctrl,Altキーが押されていたか */
+			int nIdx = getCtrlKeyState();
 			if (nIdx == _SHIFT){
 				//	Shift + Spaceで↑を偽造
 				wParam = VK_UP;

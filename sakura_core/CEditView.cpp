@@ -52,6 +52,16 @@
 	#define WM_MOUSEWHEEL	0x020A
 #endif
 
+// novice 2004/10/10 マウスサイドボタン対応
+#ifndef WM_XBUTTONDOWN
+	#define WM_XBUTTONDOWN   0x020B
+	#define WM_XBUTTONUP     0x020C
+	#define WM_XBUTTONDBLCLK 0x020D
+#endif
+#ifndef XBUTTON1
+	#define XBUTTON1 0x0001
+	#define XBUTTON2 0x0002
+#endif
 
 #ifndef IMR_RECONVERTSTRING
 #define IMR_RECONVERTSTRING             0x0004
@@ -936,6 +946,19 @@ LRESULT CEditView::DispatchEvent(
 	case WM_RBUTTONUP:
 //		MYTRACE( " WM_RBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnRBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+		return 0L;
+
+// novice 2004/10/10 マウスサイドボタン対応
+	case WM_XBUTTONDOWN:
+		switch ( HIWORD(wParam) ){
+		case XBUTTON1:
+			OnXLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		case XBUTTON2:
+			OnXRBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		}
+
 		return 0L;
 
 	case WM_VSCROLL:
@@ -3578,29 +3601,6 @@ void CEditView::OnRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	}
 	OnLBUTTONDOWN( fwKeys, xPos , yPos );
 	return;
-// 2001.12.21 hor 以下、実行されないのでコメントアウトします (行頭////はもともとコメント行です)
-//	int			nIdx;
-//	int			nFuncID;
-//	nIdx = 0;
-//	/* Ctrl,ALT,キーが押されていたか */
-//	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
-//		nIdx |= _SHIFT;
-//	}
-//	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
-//		nIdx |= _CTRL;
-//	}
-//	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
-//		nIdx |= _ALT;
-//	}
-//	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
-//	nFuncID = m_pShareData->m_pKeyNameArr[1].m_nFuncCodeArr[nIdx];
-//	if( nFuncID != 0 ){
-//		/* コマンドコードによる処理振り分け */
-//		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
-//	}
-////	/* 右クリックメニュー */
-////	Command_MENU_RBUTTON();
-//	return;
 }
 
 /* マウス右ボタン開放 */
@@ -3614,17 +3614,9 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	int		nIdx;
 	int		nFuncID;
-	nIdx = 0;
-	/* Ctrl,ALT,キーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
-		nIdx |= _SHIFT;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
-		nIdx |= _CTRL;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
-		nIdx |= _ALT;
-	}
+// novice 2004/10/10
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
 	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
 	nFuncID = m_pShareData->m_pKeyNameArr[1].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
@@ -3636,6 +3628,56 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	return;
 }
 
+
+// novice 2004/10/10 マウスサイドボタン対応
+/*!
+	マウス左サイドボタンを押したときの処理
+
+	@param fwkeys [in] first message parameter
+	@param xPos [in] マウスカーソルX座標
+	@param yPos [in] マウスカーソルY座標
+*/
+void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+{
+	int		nIdx;
+	int		nFuncID;
+
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
+	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
+	nFuncID = m_pShareData->m_pKeyNameArr[2].m_nFuncCodeArr[nIdx];
+	if( nFuncID != 0 ){
+		/* コマンドコードによる処理振り分け */
+		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
+	}
+
+	return;
+}
+
+
+/*!
+	マウス右サイドボタン押したときの処理
+
+	@param fwkeys [in] first message parameter
+	@param xPos [in] マウスカーソルX座標
+	@param yPos [in] マウスカーソルY座標
+*/
+void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+{
+	int		nIdx;
+	int		nFuncID;
+
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
+	/* マウス右サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
+	nFuncID = m_pShareData->m_pKeyNameArr[3].m_nFuncCodeArr[nIdx];
+	if( nFuncID != 0 ){
+		/* コマンドコードによる処理振り分け */
+		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
+	}
+
+	return;
+}
 
 
 VOID CEditView::OnTimer(
@@ -4383,18 +4425,9 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		return;
 	}
 
-
-	nIdx = 0;
-	/* Ctrl,ALT,キーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
-		nIdx |= _SHIFT;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
-		nIdx |= _CTRL;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
-		nIdx |= _ALT;
-	}
+// novice 2004/10/10
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
 	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[0]に入っている */
 	nFuncID = m_pShareData->m_pKeyNameArr[0].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){

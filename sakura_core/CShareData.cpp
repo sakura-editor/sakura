@@ -140,8 +140,12 @@ struct ARRHEAD {
 
 	Version 53:
 	存在しないファイルを開こうとした場合に警告するフラグの追加	2004.10.09 genta
+
+	Version 54:
+	マウスサイドボタン対応 2004/10/10 novice
 */
-const unsigned int uShareDataVersion = 53;
+
+const unsigned int uShareDataVersion = 54;
 
 /*
 ||	Singleton風
@@ -314,16 +318,16 @@ bool CShareData::Init( void )
 /* 共通設定の規定値 */
 /********************/
 		struct KEYDATAINIT {
-			short			nKeyCode;
-			char*			pszKeyName;
-			short			nFuncCode_0;
-			short			nFuncCode_1;
-			short			nFuncCode_2;
-			short			nFuncCode_3;
-			short			nFuncCode_4;
-			short			nFuncCode_5;
-			short			nFuncCode_6;
-			short			nFuncCode_7;
+			short			nKeyCode;		/*!< Key Code (0 for non-keybord button) */
+			char*			pszKeyName;		/*!< Key Name (for display) */
+			short			nFuncCode_0;	/*!<                      Key */
+			short			nFuncCode_1;	/*!< Shift +              Key */
+			short			nFuncCode_2;	/*!<         Ctrl +       Key */
+			short			nFuncCode_3;	/*!< Shift + Ctrl +       Key */
+			short			nFuncCode_4;	/*!<                Alt + Key */
+			short			nFuncCode_5;	/*!< Shift +        Alt + Key */
+			short			nFuncCode_6;	/*!<         Ctrl + Alt + Key */
+			short			nFuncCode_7;	/*!< Shift + Ctrl + Alt + Key */
 		};
 		static KEYDATAINIT	KeyDataInit[] = {
 		//Sept. 1, 2000 Jepro note: key binding
@@ -335,6 +339,9 @@ bool CShareData::Init( void )
 			{ 0, "ダブルクリック",F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD },
 		//Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
 			{ 0, "右クリック",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, 0, 0, 0, 0 },
+		// novice 2004/10/10 マウスサイドボタン対応
+			{ 0, "左サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, "右サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
 			/* ファンクションキー */
 		//	From Here Sept. 14, 2000 JEPRO
 		//	VK_F1,"F1", F_EXTHTMLHELP, 0, F_EXTHELP1, 0, 0, 0, 0, 0,

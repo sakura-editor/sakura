@@ -1831,11 +1831,9 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 {
 	CEditView*	pcEditView;
 	int nIdx, nFuncCode;
-	/* Ctrl,ALT,キーが押されていたか */
-	nIdx = 0;
-	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT	  ) ) nIdx |= _SHIFT;
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ) nIdx |= _CTRL;
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU    ) ) nIdx |= _ALT;
+// novice 2004/10/10
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
 	nFuncCode=CKeyBind::GetFuncCode(
 			((WORD)(((BYTE)(KeyCode)) | ((WORD)((BYTE)(nIdx))) << 8)),
 			m_pShareData->m_nKeyNameArrNum,

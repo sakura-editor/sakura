@@ -16,6 +16,7 @@
 #include "CEditWnd.h"
 #include "global.h"
 #include "KeyCode.h"// 2002/2/10 aroka
+#include "etc_uty.h" // novice 2004/10/10
 
 #define IDT_FUNCWND 1248
 #define TIMER_TIMEOUT 100
@@ -385,17 +386,9 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	int			nFuncCode;
 	int			nOffF1;
 
-	nIdx = 0;
-	/* ALTキーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
-		nIdx |= _SHIFT;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
-		nIdx |= _CTRL;
-	}
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
-		nIdx |= _ALT;
-	}
+// novice 2004/10/10
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
 	/* ALT,Shift,Ctrlキーの状態が変化したか */
 	if( nIdx != m_nCurrentKeyState ){
 		m_nTimerCount = TIMER_CHECKFUNCENABLE + 1;
