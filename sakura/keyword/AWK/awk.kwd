@@ -1,0 +1,112 @@
+// AWK( Japanized Gnu Awk (jgawk) 2.15.2 + 1.1(SJIS) ) キーワード定義ファイル
+// 拡張子 .AWK
+// 英大文字小文字を区別する
+
+// ***** 制御文 *****
+BEGIN
+END
+next
+exit
+
+func
+function
+return
+
+if
+else
+for
+in
+do
+while
+break
+continue
+
+// ***** システム変数 *****
+// ううっ、$ は強調表示されないのね。(;_;)
+$0
+$1
+$2
+$3
+$4
+$5
+$6
+$7
+$8
+$9
+$10
+$11
+$12
+$13
+$14
+$15
+$16
+$17
+$18
+$19
+
+FS
+OFS
+NF
+RS
+ORS
+NR
+FNR
+
+ARGV
+ARGC
+ARGIND
+FILENAME
+
+ENVIRON
+ERRNO
+
+OFMT
+CONVFMT
+FIELDWIDTHS
+IGNORECASE
+RLENGTH
+RSTART
+SUBSEP
+
+// ***** 組込関数 *****
+
+// 変数
+delete
+
+//文字列操作
+index
+jindex
+length
+jlength
+substr
+jsubstr
+match
+split
+sub
+gsub
+sprintf
+tolower
+toupper
+
+// 入出力
+print
+printf
+getline
+system
+close
+
+// 算術演算
+sin
+cos
+atan2
+exp
+log
+int
+sqrt
+srand
+rand
+
+// 時間
+strftime
+systime
+
