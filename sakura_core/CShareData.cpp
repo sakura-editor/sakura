@@ -307,18 +307,25 @@ bool CShareData::Init( void )
 			{ VK_INSERT,"Ins",F_CHGMOD_INS, F_PASTE, F_COPY, 0, 0, 0, 0, 0 },
 //			{ VK_DELETE,"Delete",F_DELETE, 0, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Delete→Del)
-			{ VK_DELETE,"Del",F_DELETE, 0, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
+			//Jun. 26, 2001 JEPRO	Shift+Del に「切り取り」を追加
+			{ VK_DELETE,"Del",F_DELETE, F_CUT, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
 			{ VK_HOME,"Home",F_GOLINETOP, F_GOLINETOP_SEL, F_GOFILETOP, F_GOFILETOP_SEL, 0, 0, 0, 0 },
 			{ VK_END,"End(Help)",F_GOLINEEND, F_GOLINEEND_SEL, F_GOFILEEND, F_GOFILEEND_SEL, 0, 0, 0, 0 },
 			{ VK_LEFT,"←",F_LEFT, F_LEFT_SEL/*F_GOLINETOP*/, F_WORDLEFT, F_WORDLEFT_SEL, F_BEGIN_BOX, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+↑に「縦方向に最大化」を追加
-			{ VK_UP,"↑",F_UP, F_UP_SEL, F_UP2, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
+//			{ VK_UP,"↑",F_UP, F_UP_SEL, F_UP2, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
+			//Jun. 26, 2001 JEPRO
+			//	Ctrl+↑に割り当てられていた「カーソル上移動(２行ごと)」を「画面を上へ１行スクロール」に変更
+			{ VK_UP,"↑",F_UP, F_UP_SEL, F_WndScrollUp, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
 			//2001.02.10 by MIK Shift+Ctrl+Alt+→に「横方向に最大化」を追加
 			{ VK_RIGHT,"→",F_RIGHT, F_RIGHT_SEL/*F_GOLINEEND*/, F_WORDRIGHT, F_WORDRIGHT_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_H },
 			//Sept. 14, 2000 JEPRO
 			//	Ctrl+↓に割り当てられていた「右クリックメニュー」を「カーソル下移動(２行ごと)」に変更
 			//	それに付随してさらに「右クリックメニュー」をCtrl＋Alt＋↓に変更
-			{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_DOWN2, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
+//			{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_DOWN2, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
+			//Jun. 26, 2001 JEPRO
+			//	Ctrl+↓に割り当てられていた「カーソル下移動(２行ごと)」を「画面を下へ１行スクロール」に変更
+			{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_WndScrollDown, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
 //			{ VK_PRIOR,"RollDown(PageUp)",F_ROLLDOWN, F_ROLLDOWN_SEL, 0, 0, 0, 0, 0, 0 },
 //			{ VK_NEXT,"RollUp(PageDown)",F_ROLLUP, F_ROLLUP_SEL, 0, 0, 0, 0, 0, 0 },
 			//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページダウン」, 「(選択)１ページダウン」を追加
