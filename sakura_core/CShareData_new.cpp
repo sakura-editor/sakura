@@ -460,6 +460,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bMenuIcon"					, m_pShareData->m_Common.m_bMenuIcon );//メニューにアイコンを表示する
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoMIMEdecode"			, m_pShareData->m_Common.m_bAutoMIMEdecode );//ファイル読み込み時にMIMEのdecodeを行うか
 		cProfile.IOProfileData( bRead, pszSecName, "bQueryIfCodeChange"			, m_pShareData->m_Common.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うか
+		cProfile.IOProfileData( bRead, pszSecName, "bAlertIfFileNotExist"		, m_pShareData->m_Common.m_bQueryIfCodeChange );// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 
 
 

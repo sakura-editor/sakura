@@ -531,6 +531,7 @@
 #define IDC_COMBO_WINTYPE               1490
 #define IDC_BUTTON_WINSIZE              1491
 #define IDC_CHECK_QueryIfCodeChange     1492
+#define IDC_CHECK_AlertIfFileNotExist   1493
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -566,7 +567,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        232
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1493
+#define _APS_NEXT_CONTROL_VALUE         1494
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

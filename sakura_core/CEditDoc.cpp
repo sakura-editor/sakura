@@ -678,24 +678,21 @@ BOOL CEditDoc::FileRead(
 
 	/* ファイルが存在しない */
 	if( FALSE == bFileIsExist ){
-//		::MessageBeep( MB_ICONINFORMATION );
 
-		//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
-		//	ここでステータスメッセージを使っても画面に表示されない．
-		//::MYMESSAGEBOX(
-		//	m_hwndParent,
-		//	MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-		//	GSTR_APPNAME,
-//			"\'%s\'\nファイルは存在しません。 ファイルを保存したときに、ディスク上にファイルが作成されます。",
-		//	"%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。",	//Mar. 24, 2001 jepro 若干修正
-		//	pszPath
-		//);
+		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように
+		if( m_pShareData->m_Common.GetAlertIfFileNotExist() ){
+			::MessageBeep( MB_ICONINFORMATION );
 
-//		::MessageBeep( MB_ICONHAND );
-//		::MYMESSAGEBOX( hwndParent, MB_OK | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
-//			"'%s'\nファイルが存在しません。",  pszPath
-//
-//		);
+			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
+			//	ここでステータスメッセージを使っても画面に表示されない．
+			::MYMESSAGEBOX(
+				m_hwndParent,
+				MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
+				GSTR_APPNAME,
+				"%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。",	//Mar. 24, 2001 jepro 若干修正
+				pszPath
+			);
+		}
 	}else{
 		/* ファイルを読む */
 		if( NULL != hwndProgress ){
