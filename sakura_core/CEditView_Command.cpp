@@ -54,6 +54,7 @@
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "CDlgCancel.h"
 #include "CDlgTagJumpList.h"
+#include "CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "COsVersionInfo.h"
 #include "my_icmp.h"
 
@@ -6580,14 +6581,14 @@ void/*BOOL*/ CEditView::Command_TAGJUMPBACK( void/*BOOL bCheckOnly*/ )
 
 	@author	MIK
 	@date	2003.04.13	新規作成
-	@date	2003.04.30 genta tags探索回数をファイル名から決定する
+	@date	2003.05.12	フォルダ階層も考慮して探す
 */
 bool CEditView::Command_TagJumpByTagsFile( void )
 {
 #define	TAG_FILENAME	"tags"
 
 	CMemory	cmemKey;
-	int		i, j;
+	int		i;
 	char	szCurrentPath[1024];	//カレントフォルダ
 	char	szTagFile[1024];		//タグファイル
 	char	szLineData[1024];		//行バッファ
@@ -6604,13 +6605,14 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 	GetCurrentTextForSearch( cmemKey );
 	if( 0 == cmemKey.GetLength() ) return false;	//キーがないなら終わり
 
-	// Apr. 30, 2003 genta
-	// 元々無効になっていた2回のループ(tags自動生成)を削除
 	if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
-	strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
 
 	// ファイル名に応じて探索回数を決定する
+	strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
 	nLoop = CalcDirectoryDepth( szCurrentPath );
+
+	if( nLoop <  0 ) nLoop =  0;
+	if( nLoop > (_MAX_PATH/2) ) nLoop = (_MAX_PATH/2);	//\A\B\C...のようなとき1フォルダで2文字消費するので...
 
 		//パス名のみ取り出す。
 		cDlgTagJumpList.SetFileName( szCurrentPath );
@@ -6815,16 +6817,40 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 
 	@author	MIK
 	@date	2003.04.13	新規作成
+	@date	2003.05.12	ダイアログ表示でフォルダ等を細かく指定できるようにした。
 */
 bool CEditView::Command_TagsMake( void )
 {
 #define	CTAGS_COMMAND	"ctags.exe"
-//#define	CTAGS_OPTIONS	"--excmd=n -R *"	//オプション
-#define	CTAGS_OPTIONS	"--excmd=n *"	//オプション
 
+	char	szTargetPath[1024 /*_MAX_PATH+1*/ ];
+	if( m_pcEditDoc->IsFilePathAvailable() )
+	{
+		strcpy( szTargetPath, m_pcEditDoc->GetFilePath() );
+		szTargetPath[ strlen( szTargetPath ) - strlen( m_pcEditDoc->GetFileName() ) ] = '\0';
+	}
+	else
+	{
+		char	szTmp[1024];
+		::GetModuleFileName(
+			::GetModuleHandle( NULL ),
+			szTmp, sizeof( szTmp )
+		);
+		/* ファイルのフルパスを、フォルダとファイル名に分割 */
+		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+		::SplitPath_FolderAndFile( szTmp, szTargetPath, NULL );
+	}
+
+	//ダイアログを表示する
+	CDlgTagsMake	cDlgTagsMake;
+	if( FALSE == cDlgTagsMake.DoModal( m_hInstance, m_hWnd, (LPARAM)0, szTargetPath ) ) return false;
+
+/*
 	{
 		char	*msg;
-		if( -1 == ::GetFileAttributes( TAG_FILENAME ) ) 
+		char	szTmp[1024];
+		wsprintf( szTmp, "%s%s", cDlgTagsMake.m_szPath, TAG_FILENAME );
+		if( -1 == ::GetFileAttributes( szTmp ) ) 
 			msg = "ダイレクトタグジャンプ用のタグファイルを作成しますか？";
 		else
 			msg = "タグファイルは存在します。\n\nダイレクトタグジャンプ用のタグファイルを再作成しますか？";
@@ -6838,6 +6864,7 @@ bool CEditView::Command_TagsMake( void )
 			);
 		if( IDYES != nRet ) return false; 
 	}
+*/
 
 	char	cmdline[1024];
 	/* exeのあるフォルダ */
@@ -6897,6 +6924,16 @@ bool CEditView::Command_TagsMake( void )
 
 	//	To Here Dec. 28, 2002 MIK
 
+	char	options[1024];
+	strcpy( options, "--excmd=n" );	//デフォルトのオプション
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) strcat( options, " -R" );	//サブフォルダも対象
+	if( strlen( cDlgTagsMake.m_szTagsCmdLine ) )	//個別指定のコマンドライン
+	{
+		strcat( options, " " );
+		strcat( options, cDlgTagsMake.m_szTagsCmdLine );
+	}
+	strcat( options, " *" );	//配下のすべてのファイル
+
 	//OSバージョン取得
 	COsVersionInfo cOsVer;
 	//コマンドライン文字列作成(MAX:1024)
@@ -6905,7 +6942,7 @@ bool CEditView::Command_TagsMake( void )
 		wsprintf( cmdline, "cmd.exe /C \"\"%s\\%s\" %s\"",
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
-				CTAGS_OPTIONS	//ctagsオプション
+				options			//ctagsオプション
 			);
 	}
 	else
@@ -6913,13 +6950,13 @@ bool CEditView::Command_TagsMake( void )
 		wsprintf( cmdline, "command.com /C \"%s\\%s\" %s",
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
-				CTAGS_OPTIONS	//ctagsオプション
+				options			//ctagsオプション
 			);
 	}
 
 	//コマンドライン実行
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
-			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
+			CREATE_NEW_CONSOLE, NULL, cDlgTagsMake.m_szPath, &sui, &pi ) == FALSE )
 	{
 		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 			"タグ作成コマンド実行は失敗しました。\n\n%s", cmdline );
@@ -6993,6 +7030,7 @@ finish:
 	if( pi.hThread  ) CloseHandle( pi.hThread  );
 
 	cDlgCancel.CloseDialog( TRUE );
+
 	::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 		"タグファイルの作成が終了しました。" );
 
