@@ -1857,4 +1857,88 @@ int FuncID_To_HelpContextID( int nFuncID )
 	}
 }
 
+//	From Here Jun. 26, 2001 genta
+/*!
+	与えられた正規表現ライブラリの初期化を行う．
+	メッセージフラグがONで初期化に失敗したときはメッセージを表示する．
+	
+	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
+			バージョン番号の設定が不要であればNULL。
+	@param pRegexp [in] チェックに利用するCBregexpクラスへの参照
+	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
+
+	@retval true 初期化成功
+	@retval false 初期化に失敗
+*/
+bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
+{
+	if( !rRegexp.Init()){
+		if( bShowMessage ){
+			::MessageBeep( MB_ICONEXCLAMATION );
+			::MessageBox( hWnd, "BREGEXP.DLLが見つかりません。\r\n"
+				"正規表現を利用するにはBREGEXP.DLLが必要です。\r\n"
+				"入手方法はヘルプを参照してください",
+				"情報", MB_OK | MB_ICONEXCLAMATION );
+		}
+		return false;
+	}
+	return true;
+}
+
+/*!
+	正規表現ライブラリの存在を確認し、あればバージョン情報を指定コンポーネントにセットする。
+	失敗した場合には空文字列をセットする。
+	
+	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
+			バージョン番号の設定が不要であればNULL。
+	@param nCmpId [in] バージョン文字列を設定するコンポーネントID
+	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
+	
+	@retval true バージョン番号の設定に成功
+	@retval false 正規表現ライブラリの初期化に失敗
+*/
+bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMessage )
+{
+	CBregexp cRegexp;
+	
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage )){
+		if( hWnd != NULL ){
+			::SetDlgItemText( hWnd, nCmpId, "");
+		}
+		return false;
+	}
+	if( hWnd != NULL ){
+		::SetDlgItemText( hWnd, nCmpId, cRegexp.GetVersion());
+	}
+	return true;
+}
+
+/*!
+	正規表現が規則に従っているかをチェックする。
+	
+	@param szPattern [in] チェックする正規表現
+	@param hWnd [in] メッセージボックスの親ウィンドウ
+	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
+	
+	@retval true 正規表現は規則通り
+	@retval false 文法に誤りがある。または、ライブラリが使用できない。
+*/
+bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage )
+{
+	CBregexp cRegexp;
+	
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage )){
+		return false;
+	}
+	if( !cRegexp.Compile( szPattern )){
+		if( bShowMessage ){
+			::MessageBox( hWnd, cRegexp.GetLastMessage(),
+				"正規表現エラー", MB_OK | MB_ICONEXCLAMATION );
+		}
+		return false;
+	}
+	return true;
+}
+//	To Here Jun. 26, 2001 genta
+
 /* [EOF] */
