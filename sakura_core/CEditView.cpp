@@ -348,6 +348,9 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	m_bSearch = FALSE;			/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
 	m_nBracketPairPosX_PHY = -1;/* 対括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 02/12/13 ai
 	m_nBracketPairPosY_PHY = -1;/* 対括弧の位置 改行単位行の行番号(0開始) */			// 02/12/13 ai
+	m_nBracketCaretPosX_PHY = -1;	/* 03/02/18 ai */
+	m_nBracketCaretPosY_PHY = -1;	/* 03/02/18 ai */
+	m_bDrawBracketPairFlag = FALSE;	/* 03/02/18 ai */
 	m_bDrawSelectArea = FALSE;	/* 選択範囲を描画したか */	// 02/12/13 ai
 
 	m_nCaretWidth = 0;			/* キャレットの幅 */
@@ -1371,6 +1374,10 @@ void CEditView::OnSetFocus( void )
 	DispRuler( hdc );
 	::ReleaseDC( m_hWnd, hdc );
 
+	// 03/02/18 対括弧の強調表示(描画) ai
+	m_bDrawBracketPairFlag = TRUE;
+	DrawBracketPair( true );
+
 	return;
 }
 
@@ -1381,6 +1388,10 @@ void CEditView::OnSetFocus( void )
 /* 入力フォーカスを失ったときの処理 */
 void CEditView::OnKillFocus( void )
 {
+	// 03/02/18 対括弧の強調表示(消去) ai
+	DrawBracketPair( false );
+	m_bDrawBracketPairFlag = FALSE;
+
 	DestroyCaret();
 
 	/* ルーラー描画 */
@@ -2826,11 +2837,11 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	}
 //	2001/06/20 End
 
-// 02/09/18 対括弧の強調表示 ai Start
-	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
-		DrawBracketPair();
-	}
-// 02/09/18 対括弧の強調表示 ai End
+// 02/09/18 対括弧の強調表示 ai Start	03/02/18 ai mod S
+	DrawBracketPair( false );
+	SetBracketPairPos( true );
+	DrawBracketPair( true );
+// 02/09/18 対括弧の強調表示 ai End		03/02/18 ai mod E
 
 	return nScrollRowNum;
 
@@ -8454,13 +8465,77 @@ void CEditView::HideCaret_( HWND hwnd )
 	}
 }
 
+/*!
+	@date 2003/02/18 ai
+	@para flag [in] モード(true:登録, false:解除)
+*/
+void CEditView::SetBracketPairPos( bool flag )
+{
+	int	nCol;
+	int	nLine;
+	int	mode;
+
+	// 03/03/06 ai すべて置換、すべて置換後のUndo&Redoがかなり遅い問題に対応
+	if( m_bDoing_UndoRedo || ( m_bDrawSWITCH == FALSE ) ){
+		return;
+	}
+
+	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
+		return;
+	}
+
+	// 対括弧の検索&登録
+	/*
+	bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
+	bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+	bit2(out) : 見つかった位置         0:後ろ      1:前
+	*/
+	mode = 2;
+
+	if( ( flag == true ) && !IsTextSelected() && ( m_bDrawSelectArea == FALSE )
+		&& ( m_bBeginBoxSelect == FALSE ) && SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) )
+	{
+		// 登録指定(flag=true)			&&
+		// テキストが選択されていない	&&
+		// 選択範囲を描画していない		&&
+		// 矩形範囲選択中でない			&&
+		// 対応する括弧が見つかった		場合
+		if ( ( nCol >= m_nViewLeftCol ) && ( nCol <= m_nViewLeftCol + m_nViewColNum )
+			&& ( nLine >= m_nViewTopLine ) && ( nLine <= m_nViewTopLine + m_nViewRowNum ) )
+		{
+			// 表示領域内の場合
+
+			// レイアウト位置から物理位置へ変換(強調表示位置を登録)
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( nCol, nLine, &m_nBracketPairPosX_PHY, &m_nBracketPairPosY_PHY );
+			m_nBracketCaretPosY_PHY = m_nCaretPosY_PHY;
+			if( 0 == ( mode & 4 ) ){
+				// カーソルの後方文字位置
+				m_nBracketCaretPosX_PHY = m_nCaretPosX_PHY;
+			}else{
+				// カーソルの前方文字位置
+				m_nBracketCaretPosX_PHY = m_nCaretPosX_PHY - m_nCharSize;
+			}
+			return;
+		}
+	}
+
+	// 括弧の強調表示位置情報初期化
+	m_nBracketPairPosX_PHY  = -1;
+	m_nBracketPairPosY_PHY  = -1;
+	m_nBracketCaretPosX_PHY = -1;
+	m_nBracketCaretPosY_PHY = -1;
+
+	return;
+}
 
 /*!
 	対括弧の強調表示
 	@date 2002/09/18 ai
+	@date 2003/02/18 ai 再描画対応の為大改造
 */
-void CEditView::DrawBracketPair( void )
+void CEditView::DrawBracketPair( bool bDraw )
 {
+	int			i;
 	const char*	pLine;
 	int			nLineLen;
 	int			nCol;
@@ -8468,154 +8543,105 @@ void CEditView::DrawBracketPair( void )
 	int			OutputX;
 	int			nLeft;
 	int			nTop;
-	int			mode;
 	HDC			hdc;
 	COLORREF	crBackOld;
 	COLORREF	crTextOld;
 	HFONT		hFontOld;
 
-	hdc = ::GetDC( m_hWnd );
-	Types *TypeDataPtr = &( m_pcEditDoc->GetDocumentAttribute() );
-
-	/**********************************/
-	/** 前回の対括弧の表示を元に戻す **/
-	/**********************************/
-	if( ( 0 <= m_nBracketPairPosX_PHY ) && ( 0 <= m_nBracketPairPosY_PHY ) )
-	{
-		// 物理位置からレイアウト位置へ変換
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nBracketPairPosX_PHY, m_nBracketPairPosY_PHY, &nCol, &nLine );
-
-		if ( ( nCol < m_nViewLeftCol ) || ( nCol > m_nViewLeftCol + m_nViewColNum )
-			|| ( nLine < m_nViewTopLine ) || ( nLine > m_nViewTopLine + m_nViewRowNum ) )
-		{
-			/* 表示領域外の場合はなにもしない */
-		}
-		else
-		{
-			if( ( m_bDrawSelectArea == FALSE )
-				|| ( ( m_bDrawSelectArea == TRUE ) && ( 0 != IsCurrentPositionSelected( nCol, nLine ) ) ) ){
-				/****************************/
-				/** 対括弧の強調表示の消去 **/
-				/****************************/
-				const CLayout* pcLayout;
-				int nColorIndex;
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen, &pcLayout );
-				if( NULL != pLine ){
-					OutputX = LineColmnToIndex( pcLayout, nCol );
-					if( IsBracket( pLine, OutputX, m_nCharSize ) ) {
-						nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
-						//char buf[256];
-						//wsprintf( buf, "nColorIndex = %d, pLine[%d] = '%c'", nColorIndex, OutputX, pLine[OutputX] );
-						//SendStatusMessage( buf );
-						//::SetBkMode( hdc, TRANSPARENT );
-						hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-						m_hFontOld = NULL;
-						crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-						crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
-
-						SetCurrentColor( hdc, nColorIndex );
-
-						nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-						nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-						DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
-
-						if( NULL != m_hFontOld ){
-							::SelectObject( hdc, m_hFontOld );
-							m_hFontOld = NULL;
-						}
-						::SetTextColor( hdc, crTextOld );
-						::SetBkColor( hdc, crBackOld );
-						::SelectObject( hdc, hFontOld );
-
-						if( nLine == m_nCaretPosY ){
-							m_cUnderLine.CaretUnderLineON( TRUE );
-						}
-					}
-				}
-			}
-		}
-		m_nBracketPairPosX_PHY = -1;
-		m_nBracketPairPosY_PHY = -1;
-	}
-
-	if( IsTextSelected() || m_bBeginBoxSelect
-		|| ( ( m_nBracketPairPosX_PHY != -1 ) && ( m_nBracketPairPosY_PHY != -1 ) ) )
-	{	// 選択中又は、対括弧の強調表示が消去済みでない場合は強調表示をしない
-		::ReleaseDC( m_hWnd, hdc );
+	// 03/03/06 ai すべて置換、すべて置換後のUndo&Redoがかなり遅い問題に対応
+	if( m_bDoing_UndoRedo || ( m_bDrawSWITCH == FALSE ) ){
 		return;
 	}
 
-	/*******************/
-	/** 対括弧の表示  **/
-	/*******************/
-	/*
-	bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
-	bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
-	bit2(out) : 見つかった位置         0:後ろ      1:前
-	*/
-	mode = 2;
-	// 対応する括弧が見つかった場合に対括弧の表示を行なう
-	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) )
-	{
-		if ( ( nCol < m_nViewLeftCol ) || ( nCol > m_nViewLeftCol + m_nViewColNum )
-			|| ( nLine < m_nViewTopLine ) || ( nLine > m_nViewTopLine + m_nViewRowNum ) )
-		{
-			/* 表示領域外の場合はなにもしない */
+	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
+		return;
+	}
+
+	// 括弧の強調表示位置が未登録の場合は終了
+	if( ( m_nBracketPairPosX_PHY  < 0 ) || ( m_nBracketPairPosY_PHY  < 0 )
+	 || ( m_nBracketCaretPosX_PHY < 0 ) || ( m_nBracketCaretPosY_PHY < 0 ) ){
+		return;
+	}
+
+	// 描画指定(bDraw=true)				かつ
+	// ( テキストが選択されている		又は
+	//   選択範囲を描画している			又は
+	//   矩形範囲選択中					又は
+	//   フォーカスを持っていない		又は
+	//   アクティブなペインではない )	場合は終了
+	if( bDraw
+	 &&( IsTextSelected() || ( m_bDrawSelectArea == TRUE ) || m_bBeginBoxSelect || ( m_bDrawBracketPairFlag == FALSE )
+	 || ( m_pcEditDoc->m_nActivePaneIndex != m_nMyIndex ) ) ){
+		return;
+	}
+
+	hdc = ::GetDC( m_hWnd );
+	Types *TypeDataPtr = &( m_pcEditDoc->GetDocumentAttribute() );
+
+	for( i = 0; i < 2; i++ )
+	{	// i=0:カーソル位置の括弧,i=1:対括弧
+		if( i == 0 ){
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nBracketCaretPosX_PHY, m_nBracketCaretPosY_PHY, &nCol, &nLine );
+		}else{
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nBracketPairPosX_PHY,  m_nBracketPairPosY_PHY,  &nCol, &nLine );
 		}
-		else
-		{
-			/**********************/
-			/** 対括弧の強調表示 **/
-			/**********************/
-			//::SetBkMode( hdc, TRANSPARENT );
-			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-			m_hFontOld = NULL;
-			crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-			crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
 
-			SetCurrentColor( hdc, COLORIDX_BRACKET_PAIR );
-
-			// 現在位置の括弧の強調表示
+		if ( ( nCol >= m_nViewLeftCol ) && ( nCol <= m_nViewLeftCol + m_nViewColNum )
+			&& ( nLine >= m_nViewTopLine ) && ( nLine <= m_nViewTopLine + m_nViewRowNum ) )
+		{	// 表示領域内の場合
+			if( ( bDraw == false ) && ( m_bDrawSelectArea == TRUE ) && ( 0 == IsCurrentPositionSelected( nCol, nLine ) ) )
+			{	// 選択範囲描画済みで消去対象の括弧が選択範囲内の場合
+				continue;
+			}
 			const CLayout* pcLayout;
-			int LogX, LogY;
-			if( 0 == ( mode & 4 ) )
-			{	// カーソルの後方文字位置
-				LogX = m_nCaretPosX;
-				LogY = m_nCaretPosY;
-			}
-			else
-			{	// カーソルの前方文字位置
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nCaretPosX_PHY - m_nCharSize, m_nCaretPosY_PHY, &LogX, &LogY );
-			}
-
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( LogY, &nLineLen, &pcLayout );
-			if( NULL != pLine ){
-				OutputX = LineColmnToIndex( pcLayout, LogX );
-				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + LogX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-				nTop  = ( LogY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-				HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
-				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
-				ShowCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
-			}
-
-			// 対括弧の強調表示
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen, &pcLayout );
 			if( NULL != pLine )
 			{
+				int nColorIndex;
 				OutputX = LineColmnToIndex( pcLayout, nCol );
+				if( bDraw )	{
+					nColorIndex = COLORIDX_BRACKET_PAIR;
+				}else{
+					if( IsBracket( pLine, OutputX, m_nCharSize ) ){
+						nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
+					}else{
+						SetBracketPairPos( false );
+						//::MessageBeep( MB_ICONSTOP );
+						break;
+					}
+				}
+				hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
+				m_hFontOld = NULL;
+				crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+				crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
+				SetCurrentColor( hdc, nColorIndex );
+
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 				nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
+
+				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
+				//             選択範囲内に反転表示されない部分がある問題の修正
+				if( /*bDraw &&*/ ( nCol == m_nCaretPosX ) && ( m_bCaretShowFlag == true ) ){
+					HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
+					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
+					ShowCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
+				}else{
+					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
+				}
+
+				if( NULL != m_hFontOld ){
+					::SelectObject( hdc, m_hFontOld );
+					m_hFontOld = NULL;
+				}
+				::SetTextColor( hdc, crTextOld );
+				::SetBkColor( hdc, crBackOld );
+				::SelectObject( hdc, hFontOld );
+
+				if( ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex )
+					&& ( ( nLine == m_nCaretPosY ) || ( nLine - 1 == m_nCaretPosY ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
+					m_cUnderLine.CaretUnderLineON( TRUE );
+				}
 			}
-
-			::SetTextColor( hdc, crTextOld );
-			::SetBkColor( hdc, crBackOld );
-			::SelectObject( hdc, hFontOld );
-
-			m_cUnderLine.CaretUnderLineON( TRUE );
-
-			// レイアウト位置から物理位置へ変換(強調表示位置を記憶)
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( nCol, nLine, &m_nBracketPairPosX_PHY, &m_nBracketPairPosY_PHY );
 		}
 	}
 
