@@ -243,10 +243,6 @@ void CDlgGrep::SetData( void )
 
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
-	//	Jun. 26, 2001 genta
-	//	正規表現ライブラリの差し替えに伴う処理の見直し
-	CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false );
-
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
@@ -311,9 +307,6 @@ void CDlgGrep::SetData( void )
 	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ) , false );	//チェックボックスを使用不可にすも
 
 
-	/* 正規表現 */
-	::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, m_bRegularExp );
-
 	/* 文字コード自動判別 */
 	::CheckDlgButton( m_hWnd, IDC_CHK_KANJICODEAUTODETECT, m_bKanjiCode_AutoDetect );
 
@@ -335,24 +328,25 @@ void CDlgGrep::SetData( void )
 		::CheckDlgButton( m_hWnd, IDC_RADIO_OUTPUTSTYLE1, TRUE );
 	}
 
-	if( m_bRegularExp ){
-		// From Here Jun. 26, 2001 genta
-		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		//	ここではDLLをが無くても警告メッセージは表示しない
-		if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )){
-			::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
-		}else{
-		// To Here Jun. 26, 2001 genta
-			/* 英大文字と英小文字を区別する */
-			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+	// From Here Jun. 29, 2001 genta
+	// 正規表現ライブラリの差し替えに伴う処理の見直し
+	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
+	// 無関係にCheckRegexpVersionを通過するようにした。
+	if( CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )
+		&& m_bRegularExp){
+		/* 英大文字と英小文字を区別する */
+		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
+		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
-			//2001/06/23 N.Nakatani
-			/* 単語単位で検索 */
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
-
-		}
+		// 2001/06/23 N.Nakatani 
+		/* 単語単位で探す */
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 	}
+	else {
+		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
+	}
+	// To Here Jun. 29, 2001 genta
 
 	if( 0 < lstrlen( m_szCurrentFilePath ) ){
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_FROMTHISTEXT ), TRUE );
