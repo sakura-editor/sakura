@@ -1105,7 +1105,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			//Nov.  6, 2002 genta docはMS Wordに譲ってここからは外す（関連づけ防止のため）
 			//Nov.  6, 2002 genta log を追加
 			"txt,log,1st,err,ps",
-			"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,dsw,dsp,dep,mak,hm",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
+			//	Jan. 24, 2004 genta 関連づけ上好ましくないのでdsw,dsp,dep,makははずす
+			"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
 				//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
 			"html,htm,shtml,plg",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
 			"sql,plsql",
