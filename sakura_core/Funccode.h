@@ -34,7 +34,7 @@
 
 /* ファイル操作系 */
 #define F_FILENEW					30101	//新規作成
-#define F_FILEOPEN					30102	//ファイルを開く
+#define F_FILEOPEN					30102	//開く
 #define F_FILESAVE					30103	//上書き保存
 #define F_FILESAVEAS				30104	//名前を付けて保存
 #define F_FILECLOSE					30105	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -56,7 +56,7 @@
 #define F_PLSQL_COMPILE_ON_SQLPLUS	30171	/* Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
 #define F_BROWSE					30180	//ブラウズ
 #define F_PROPERTY_FILE				30190	/* ファイルのプロパティ */
-#define F_EXITALL					30195	/* テキストエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
+#define F_EXITALL					30195	/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 
 
 /* 編集系 */
@@ -64,7 +64,7 @@
 #define F_IME_CHAR			30201	//全角文字入力
 #define F_UNDO				30210	//元に戻す(Undo)
 #define F_REDO				30211	//やり直し(Redo)
-#define F_DELETE			30221	//カーソル位置を削除
+#define F_DELETE			30221	//削除
 #define F_DELETE_BACK		30222	//カーソルの前を削除
 #define F_WordDeleteToStart	30230	//単語の左端まで削除
 #define F_WordDeleteToEnd	30231	//単語の右端まで削除
@@ -245,6 +245,7 @@
 //From here 設定ダイアログ用の機能番号を用意  Stonee, 2001/05/18
 #define F_TYPE_SCREEN		31115	/* タイプ別設定『スクリーン』 */
 #define F_TYPE_COLOR		31116	/* タイプ別設定『カラー』 */
+#define F_TYPE_HELPER		31117	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
 #define F_OPTION_GENERAL	32000	/* 共通設定『全般』 */
 #define F_OPTION_WINDOW		32001	/* 共通設定『ウィンドウ』 */
 #define F_OPTION_EDIT		32002	/* 共通設定『編集』 */
