@@ -21,6 +21,13 @@
 #include "CPPAMacroMgr.h"
 #include "CPPA.h"
 
+CSMacroMgr::MacroFuncInfoNotCommand CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
+{
+	{F_GETFILENAME, "function S_GetFilename: string;", NULL},
+	//	終端
+	{0, NULL, NULL}
+};
+
 CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
 {
 //	機能ID			関数名			引数				作業用バッファ

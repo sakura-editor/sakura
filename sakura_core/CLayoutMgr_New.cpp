@@ -23,6 +23,7 @@
 #include "CDocLine.h"/// 2002/2/10 aroka
 #include "CDocLineMgr.h"// 2002/2/10 aroka
 #include "CMemory.h"/// 2002/2/10 aroka
+#include "CShareData.h" // 2002/03/13 novice
 
 //	/*
 //	|| 	新しい折り返し文字数に合わせて全データのレイアウト情報を再生成します
@@ -74,8 +75,9 @@ void CLayoutMgr::DoLayout(
 	int			nAllLineNum;
 
 
-	nCOMMENTMODE = 0;
-	nCOMMENTMODE_Prev = 0;
+// 2002/03/13 novice
+	nCOMMENTMODE = COLORIDX_TEXT;
+	nCOMMENTMODE_Prev = COLORIDX_TEXT;
 
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
@@ -93,8 +95,9 @@ void CLayoutMgr::DoLayout(
 //	pLine = m_pcDocLineMgr->GetFirstLinrStr( &nLineLen );
 	pCDocLine = m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
 
-	if( nCOMMENTMODE_Prev == 1 ){	/* 行コメントである */
-		nCOMMENTMODE_Prev = 0;
+// 2002/03/13 novice
+	if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
+		nCOMMENTMODE_Prev = COLORIDX_TEXT;
 	}
 	nCOMMENTMODE = nCOMMENTMODE_Prev;
 	nCOMMENTEND = 0;
@@ -165,7 +168,7 @@ void CLayoutMgr::DoLayout(
 				}
 			}
 			switch( nCOMMENTMODE ){
-			case 0:
+			case COLORIDX_TEXT: // 2002/03/13 novice
 				if( ( NULL != m_pszLineComment &&	/* 行コメントデリミタ */
 					  nPos <= nLineLen - (int)strlen( m_pszLineComment ) &&	/* 行コメントデリミタ */
 					  0 == memicmp( &pLine[nPos], m_pszLineComment, (int)strlen( m_pszLineComment ) )
@@ -179,14 +182,14 @@ void CLayoutMgr::DoLayout(
 					  0 == memicmp( &pLine[nPos], m_pszLineComment3, (int)strlen( m_pszLineComment3 ) )
 					)
 				){
-					nCOMMENTMODE = 1;	/* 行コメントである */
+					nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 				}else
 				if( NULL != m_pszBlockCommentFrom &&	/* ブロックコメントデリミタ(From) */
 					NULL != m_pszBlockCommentTo &&		/* ブロックコメントデリミタ(To) */
 					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom ) &&	/* ブロックコメントデリミタ(From) */
 					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom, (int)strlen( m_pszBlockCommentFrom ) )
 				){
-					nCOMMENTMODE = 2;	/* ブロックコメントである */
+					nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -210,7 +213,7 @@ void CLayoutMgr::DoLayout(
 					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ2(From) */
 					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom2, (int)strlen( m_pszBlockCommentFrom2 ) )
 				){
-					nCOMMENTMODE = 20;	/* ブロックコメントである */
+					nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -232,7 +235,7 @@ void CLayoutMgr::DoLayout(
 				if( pLine[nPos] == '\'' &&
 					bDispSSTRING  /* シングルクォーテーション文字列を表示する */
 				){
-					nCOMMENTMODE = 3;	/* シングルクォーテーション文字列である */
+					nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 					/* シングルクォーテーション文字列の終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -268,7 +271,7 @@ void CLayoutMgr::DoLayout(
 				if( pLine[nPos] == '"' &&
 					bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
 				){
-					nCOMMENTMODE = 4;	/* ダブルクォーテーション文字列である */
+					nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 					/* ダブルクォーテーション文字列の終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -302,9 +305,9 @@ void CLayoutMgr::DoLayout(
 					}
 				}
 				break;
-			case 1:	/* 行コメントである */
+			case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
 				break;
-			case 2:	/* ブロックコメントである */
+			case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -324,12 +327,12 @@ void CLayoutMgr::DoLayout(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			case 20:	/* ブロックコメントである */
+			case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -349,12 +352,12 @@ void CLayoutMgr::DoLayout(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
 //#endif
-			case 3:	/* シングルクォーテーション文字列である */
+			case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* シングルクォーテーション文字列の終端があるか */
 					int i;
@@ -389,11 +392,11 @@ void CLayoutMgr::DoLayout(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
-			case 4:	/* ダブルクォーテーション文字列である */
+			case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* ダブルクォーテーション文字列の終端があるか */
 					int i;
@@ -428,7 +431,7 @@ void CLayoutMgr::DoLayout(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
@@ -462,8 +465,9 @@ void CLayoutMgr::DoLayout(
 			}
 		}
 		if( nPos - nBgn > 0 ){
-			if( nCOMMENTMODE == 1 ){	/* 行コメントである */
-				nCOMMENTMODE = 0;
+// 2002/03/13 novice
+			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
+				nCOMMENTMODE = COLORIDX_TEXT;
 			}
 			AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -478,8 +482,9 @@ void CLayoutMgr::DoLayout(
 		}
 //		pLine = m_pcDocLineMgr->GetNextLinrStr( &nLineLen );
 		pCDocLine = pCDocLine->m_pNext;;
-		if( nCOMMENTMODE_Prev == 1 ){	/* 行コメントである */
-			nCOMMENTMODE_Prev = 0;
+// 2002/03/13 novice
+		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
+			nCOMMENTMODE_Prev = COLORIDX_TEXT;
 		}
 		nCOMMENTMODE = nCOMMENTMODE_Prev;
 		nCOMMENTEND = 0;
@@ -770,7 +775,7 @@ int CLayoutMgr::DoLayout3_New(
 				}
 			}
 			switch( nCOMMENTMODE ){
-			case 0:
+			case COLORIDX_TEXT: // 2002/03/13 novice
 				if( ( NULL != m_pszLineComment &&	/* 行コメントデリミタ */
 					  nPos <= nLineLen - (int)strlen( m_pszLineComment ) &&	/* 行コメントデリミタ */
 					  0 == memicmp( &pLine[nPos], m_pszLineComment, (int)strlen( m_pszLineComment ) )
@@ -784,14 +789,14 @@ int CLayoutMgr::DoLayout3_New(
 					  0 == memicmp( &pLine[nPos], m_pszLineComment3, (int)strlen( m_pszLineComment3 ) )
 					)
 				){
-					nCOMMENTMODE = 1;	/* 行コメントである */
+					nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 				}else
 				if( NULL != m_pszBlockCommentFrom &&	/* ブロックコメントデリミタ(From) */
 					NULL != m_pszBlockCommentTo &&		/* ブロックコメントデリミタ(To) */
 					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom ) &&	/* ブロックコメントデリミタ(From) */
 					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom, (int)strlen( m_pszBlockCommentFrom ) )
 				){
-					nCOMMENTMODE = 2;	/* ブロックコメントである */
+					nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -815,7 +820,7 @@ int CLayoutMgr::DoLayout3_New(
 					nPos <= nLineLen - (int)strlen( m_pszBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ2(From) */
 					0 == memicmp( &pLine[nPos], m_pszBlockCommentFrom2, (int)strlen( m_pszBlockCommentFrom2 ) )
 				){
-					nCOMMENTMODE = 20;	/* ブロックコメントである */
+					nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -837,7 +842,7 @@ int CLayoutMgr::DoLayout3_New(
 				if( pLine[nPos] == '\'' &&
 					bDispSSTRING  /* シングルクォーテーション文字列を表示する */
 				){
-					nCOMMENTMODE = 3;	/* シングルクォーテーション文字列である */
+					nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 					/* シングルクォーテーション文字列の終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -873,7 +878,7 @@ int CLayoutMgr::DoLayout3_New(
 				if( pLine[nPos] == '"' &&
 					bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
 				){
-					nCOMMENTMODE = 4;	/* ダブルクォーテーション文字列である */
+					nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 					/* ダブルクォーテーション文字列の終端があるか */
 					int i;
 					nCOMMENTEND = nLineLen;
@@ -907,9 +912,9 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}
 				break;
-			case 1:	/* 行コメントである */
+			case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
 				break;
-			case 2:	/* ブロックコメントである */
+			case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -929,12 +934,12 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			case 20:	/* ブロックコメントである */
+			case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -954,12 +959,12 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
 //#endif
-			case 3:	/* シングルクォーテーション文字列である */
+			case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* シングルクォーテーション文字列の終端があるか */
 					int i;
@@ -994,11 +999,11 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
-			case 4:	/* ダブルクォーテーション文字列である */
+			case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 				if( 0 == nCOMMENTEND ){
 					/* ダブルクォーテーション文字列の終端があるか */
 					int i;
@@ -1033,7 +1038,7 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}else
 				if( nPos == nCOMMENTEND ){
-					nCOMMENTMODE = 0;
+					nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 					goto SEARCH_START;
 				}
 				break;
@@ -1122,8 +1127,9 @@ int CLayoutMgr::DoLayout3_New(
 			nPosX += nCharChars;
 		}
 		if( nPos - nBgn > 0 ){
-			if( nCOMMENTMODE == 1 ){	/* 行コメントである */
-				nCOMMENTMODE = 0;
+// 2002/03/13 novice
+			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
+				nCOMMENTMODE = COLORIDX_TEXT;
 			}
 			pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -1192,8 +1198,9 @@ int CLayoutMgr::DoLayout3_New(
 		}
 //		pLine = m_pcDocLineMgr->GetNextLinrStr( &nLineLen );
 		pCDocLine = pCDocLine->m_pNext;
-		if( nCOMMENTMODE_Prev == 1 ){	/* 行コメントである */
-			nCOMMENTMODE_Prev = 0;
+// 2002/03/13 novice
+		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
+			nCOMMENTMODE_Prev = COLORIDX_TEXT;
 		}
 		nCOMMENTMODE = nCOMMENTMODE_Prev;
 		nCOMMENTEND = 0;

@@ -130,10 +130,11 @@ BOOL CEditView::HandleCommand(
 	}
 	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
 
+	/* 補完ウィンドウが表示されているとき、特別な場合を除いてウィンドウを非表示にする */
 	if( m_bHokan ){
-		if( nCommand != F_HOKAN
-		 && nCommand != F_CHAR
-		 && nCommand != F_IME_CHAR
+		if( nCommand != F_HOKAN		//	補完開始・終了コマンド
+		 && nCommand != F_CHAR		//	文字入力
+		 && nCommand != F_IME_CHAR	//	漢字入力
 		 ){
 			m_pcEditDoc->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
@@ -3101,7 +3102,7 @@ void CEditView::Command_CHAR( char cChar )
 
 
 	/* 入力補完機能を使用する */
-	if( m_pShareData->m_Common.m_bUseHokan
+	if( m_pShareData->m_Common.m_bUseHokan	//	入力補完を継続するべき。
  	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
 	){
 		/* カーソル直前の単語を取得 */
@@ -3238,7 +3239,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 	}
 
 	/* 入力補完機能を使用する */
-	if( m_pShareData->m_Common.m_bUseHokan
+	if( m_pShareData->m_Common.m_bUseHokan	//	入力補完を継続するべき。
  	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
 	){
 
@@ -5159,7 +5160,10 @@ void CEditView::Command_CODECNV_AUTO2SJIS( void )
 
 
 
-/* アウトライン解析 */
+/*!	アウトライン解析
+	
+	2002/3/13 YAZAKI nOutlineTypeとnListTypeを統合。
+*/
 //BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly )	//	2001.12.03 hor ブックマーク用のフラグを追加
 BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 {
@@ -5169,10 +5173,17 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 
 	static CFuncInfoArr	cFuncInfoArr;
 //	int		nLine;
-	int		nListType;
+//	int		nListType;
+
+	//	2001.12.03 hor & 2002.3.13 YAZAKI
+	if( nOutlineType == OUTLINE_DEFAULT ){
+		/* タイプ別に設定されたアウトライン解析方法 */
+		nOutlineType = m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
+	}
 
 	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && !nReLoad ){
 		/* アクティブにする */
+		m_pcEditDoc->m_cDlgFuncList.ChangeListType( nOutlineType );
 		ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
 		return TRUE;
 	}
@@ -5180,22 +5191,13 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 	/* 解析結果データを空にする */
 	cFuncInfoArr.Empty();
 
-	//	2001.12.03 hor
-	if( nOutlineType==OUTLINE_DEFAULT ){
-		/* タイプ別に設定されたアウトライン解析方法 */
-		nListType = m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
-	}else{
-		/* 指定されたアウトライン解析方法 */
-		nListType = nOutlineType;
-	}
-
-	switch( nListType ){
+	switch( nOutlineType ){
 //	case OUTLINE_C:			m_pcEditDoc->MakeFuncList_C( &cFuncInfoArr );break;
 	case OUTLINE_CPP:
 		m_pcEditDoc->MakeFuncList_C( &cFuncInfoArr );
 		/* C言語標準保護委員会勧告特別処理実装箇所(嘘) */
 		if( CheckEXT( m_pcEditDoc->m_szFilePath, "c" ) ){
-			nListType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
+			nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
 		}
 		break;
 	case OUTLINE_PLSQL:		m_pcEditDoc->MakeFuncList_PLSQL( &cFuncInfoArr );break;
@@ -5263,7 +5265,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 				(LPARAM)this,
 				&cFuncInfoArr,
 				m_nCaretPosY + 1,
-				nListType,
+				nOutlineType,
 				m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 			);
 		}else{
@@ -9157,11 +9159,19 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	else {
 		m_bHokan = TRUE;
 	}
+	
+	//	失敗してたら、ビープ音を出して補完終了。
+	if ( !m_bHokan ){
+		::MessageBeep( MB_ICONHAND );
+		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
+	}
 }
 
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。
+	CEditView::m_bHokan： 現在補完ウィンドウが表示されているかを表すフラグ。
+	m_Common.m_bUseHokan：現在補完ウィンドウが表示されているべきか否かをあらわすフラグ。
 
     2001/06/19 asa-o 英大文字小文字を同一視する
                      候補が1つのときはそれに確定する
@@ -9171,13 +9181,9 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 */
 void CEditView::Command_HOKAN( void )
 {
-	if (m_pShareData->m_Common.m_bUseHokan == TRUE){
-		m_pShareData->m_Common.m_bUseHokan = FALSE;
-		DrawCaretPosInfo();	//	"補完"と"非"を書き換える
-		return;
+	if (m_pShareData->m_Common.m_bUseHokan == FALSE){
+		m_pShareData->m_Common.m_bUseHokan = TRUE;
 	}
-	m_pShareData->m_Common.m_bUseHokan = TRUE;	//	強制TRUE
-	DrawCaretPosInfo();	//	"補完"と"非"を書き換える
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	if( 0 == strlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile ) ){
@@ -9199,9 +9205,13 @@ retry:;
 		ShowHokanMgr( cmemData, TRUE );
 	}else{
 		::MessageBeep( MB_ICONHAND );
+		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;
 }
+
+
+
 #if 0
 /* 入力補完 */
 void CEditView::Command_HOKAN( void )

@@ -249,7 +249,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		}
 		else {
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				_T("%sは、存在しない関数です。詳しくはヘルプをご覧ください。"), szFuncName );
+				_T("%sは、存在しない関数です。詳しくはヘルプをご覧ください。\nマクロの実行を終了します。"), szFuncName );
+			break;
 		}
 	}
 	fclose( hFile );

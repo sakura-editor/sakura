@@ -229,6 +229,7 @@ public:
 
 private:
 	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
+	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 

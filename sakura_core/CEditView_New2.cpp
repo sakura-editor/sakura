@@ -50,6 +50,24 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 //	}
 	nColorIdx = -1;
 	switch( nCOMMENTMODE ){
+// 2002/03/13 novice
+	case COLORIDX_TEXT: /* テキスト */
+	case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */
+	case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */
+	case COLORIDX_CTRLCODE:	/* コントロールコードである */
+	case COLORIDX_DIGIT:	/* 半角数値である */
+	case COLORIDX_KEYWORD1:	/* 強調キーワード1（登録単語）文字列である */
+	case COLORIDX_KEYWORD2:	/* 強調キーワード2（登録単語）文字列である */
+	case COLORIDX_URL:	    /* URLである */
+	case COLORIDX_SEARCH:	/* 検索文字列である */
+		nColorIdx = nCOMMENTMODE;
+		break;
+	case COLORIDX_COMMENT:	/* 行コメントである */
+	case COLORIDX_BLOCK1:	/* ブロックコメント1である */
+	case COLORIDX_BLOCK2:	/* ブロックコメント2である */	//@@@ 2001.03.10 by MIK
+		nColorIdx = COLORIDX_COMMENT;
+		break;
+#if 0
 	case 0:
 		nColorIdx = COLORIDX_TEXT;
 //		colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT;	/* テキスト色 */
@@ -181,6 +199,7 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 //			}
 //		}
 		break;
+#endif
 
 //@@@ 2001.11.17 add start MIK
 	default:	/* 正規表現キーワード */

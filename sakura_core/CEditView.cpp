@@ -3303,7 +3303,13 @@ normal_action:;
 			}else{
 				return;
 			}
-		}else{
+		}
+		else
+		if( yPos < m_nViewAlignTop ){
+			//	ルーラクリック
+			return;
+		}
+		else {
 			return;
 		}
 
@@ -3913,7 +3919,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			}
 		}else{
 			/* 行選択エリア? */
-			if( xPos < m_nViewAlignLeft ){
+			if( xPos < m_nViewAlignLeft || yPos < m_nViewAlignTop ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
 				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}else
@@ -4569,7 +4575,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nPosX, nPosY );
 					}
-					nScrollLines = MoveCursor( nPosX, nPosY, TRUE );
+					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
 				}
 			}
 //	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
@@ -4661,7 +4667,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			}
 		}
 	}
-	nScrollLines = MoveCursor( nPosX, m_nCaretPosY + nMoveLines, TRUE );
+	nScrollLines = MoveCursor( nPosX, m_nCaretPosY + nMoveLines, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
 	if( bSelect ){
 //		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelected() && -1 != m_nOldUnderLineY ){
 //			HDC		hdc;

@@ -145,10 +145,19 @@ int CPPA::InitDll()
 		*((FARPROC*)table[i].proc) = proc;
 	}
 
+	SetStrFunc((void*)CPPA::stdStrFunc);
 	SetProc((void*)CPPA::stdProc);
 
 	/* SAKURAエディタ用独自関数を準備 */
 
+	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
+	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
+		CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) + 30 ];	//	30文字分プラス
+		sprintf(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData, "%s index %d;", CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName, CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID );
+		SetDefProc(CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData);
+	}
+
+	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
 		CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData = new char [ strlen(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName) + strlen(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncParam) + 30 ];	//	30文字分プラス
 		sprintf(CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData, "procedure %s%s; index %d;", CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName, CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncParam, CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID);
@@ -166,6 +175,10 @@ int CPPA::DeinitDll( void )
 		if (CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData)
 			delete CSMacroMgr::m_MacroFuncInfoArr[i].m_pszData;
 	}
+	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
+		if (CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData)
+			delete CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszData;
+	}
 	return 0;
 }
 
@@ -178,4 +191,23 @@ void __stdcall CPPA::stdProc(
 
 	*Err_CD = 0;
 	CMacro::HandleCommand( m_pcEditView, Index, Argument, ArgSize );
+}
+
+//----------------------------------------------------------------------
+static char g_ResultStr[4096];	//	作業用
+
+void __stdcall CPPA::stdStrFunc(
+	const char* FuncName, const int Index,
+	const char* Argument[], const int ArgSize, int* Err_CD,
+	char** ResultValue)
+{
+	NEVER_USED_PARAM(FuncName);
+
+	*Err_CD = 0;
+	switch ( Index ){
+	case F_GETFILENAME:	//	ファイル名を返す
+		strcpy(g_ResultStr, m_pcEditView->m_pcEditDoc->m_szFilePath);
+		*ResultValue = g_ResultStr;
+		break;
+	}
 }
