@@ -3228,6 +3228,13 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 			::GetTextExtentPoint32( hdc, pszLabel[i], lstrlen( pszLabel[i] ), &sz );
 			nStArr[i - 1] = nStArr[i] - ( sz.cx + ::GetSystemMetrics( SM_CXEDGE ) + 1 ); // 2003.08.26 Moca Luna向けに+1 してみる
 		}
+
+		//	Nov. 8, 2003 genta
+		//	初期状態ではすべての部分が「枠あり」だが，メッセージエリアは枠を描画しないようにしている
+		//	ため，初期化時の枠が変な風に残ってしまう．初期状態で枠を描画させなくするため，
+		//	最初に「枠無し」状態を設定した後でバーの分割を行う．
+		::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
+
 		//Nov. 2, 2000 JEPRO よくわからないがともかくここを増やしてみる
 		// 2003.08.26 Moca pszLabel[1]を2文字削って不要に
 		// nStArr[0] += 16;
