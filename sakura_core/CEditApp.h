@@ -59,7 +59,7 @@ public:
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
 
-	static bool OpenNewEditor( HINSTANCE, HWND, char*, int, BOOL, bool sync = false );		/* 新規編集ウィンドウの追加 ver 0 */
+	static bool OpenNewEditor( HINSTANCE, HWND, char*, int, BOOL, bool sync = false, const char* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
 	static bool OpenNewEditor2( HINSTANCE, HWND , FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
 
 	static BOOL CloseAllEditor( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
@@ -97,7 +97,7 @@ private:
 protected:
 	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const char* );	/*!< タスクトレイのアイコンに関する処理 */
 	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
-
+	void OnNewEditor( void ); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
 };
 

@@ -925,7 +925,7 @@ LRESULT CEditApp::DispatchEvent(
 				case F_FILENEW:	/* 新規作成 */
 //					MYTRACE( "F_FILENEW\n" );
 					/* 新規編集ウィンドウの追加 */
-					OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE );
+					OnNewEditor();
 					break;
 				case F_FILEOPEN:	/* 開く */
 //					MYTRACE( "F_FILEOPEN\n" );
@@ -1218,7 +1218,7 @@ LRESULT CEditApp::DispatchEvent(
 //				MYTRACE( "WM_LBUTTONDBLCLK\n" );
 				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
-				OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE );
+				OnNewEditor();
 				// Apr. 1, 2003 genta この後で表示されたメニューは閉じる
 				::PostMessage( m_hWnd, WM_CANCELMODE, 0, 0 );
 				return 0L;
@@ -1327,15 +1327,67 @@ void CEditApp::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	return;
 }
 
+/*!
+	@brief 新規ウィンドウを作成する
+	
+	タスクトレイからの新規作成の場合にはカレントディレクトリ＝
+	保存時のデフォルトディレクトリを最後に使われたディレクトリとする．
+	ただし最後に使われたディレクトリが存在しない場合は次に使われたディレクトリとし，
+	順次存在するディレクトリが見つかるまで履歴を順に試す．
+	
+	どの履歴も見つからなかった場合には現在のカレントディレクトリで作成する．
 
+	@author genta
+	@date 2003.05.30 新規作成
+*/
+void CEditApp::OnNewEditor(void)
+{
+
+	const char* szCurDir = NULL;
+
+	//	最近使ったフォルダを順番にたどる
+	CMRUFolder mrufolder;
+
+	int nCount = mrufolder.Length();
+	for( int i = 0; i < nCount ; i++ ){
+		const char* recentdir = mrufolder.GetPath( i );
+		DWORD attr = GetFileAttributes( recentdir );
+
+		if( attr != -1 ){
+			if(( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
+				szCurDir = recentdir;
+				break;
+			}
+			else {
+			//	::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
+			//		"Not directory: %d - %s", i, recentdir ? recentdir : NULL );
+			}
+		}
+		else {
+		//	::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
+		//		"Not found: %d - %s", i, recentdir ? recentdir : NULL );
+		}
+	}
+
+	OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, false, szCurDir );
+}
 
 
 /*!	新規編集ウィンドウの追加 ver 0
 
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-	@date Oct. 24, 2000 genta WinExec -> CreateProcess．同期機能を付加
+	@param hInstance [in]	インスタンスID (実は未使用)
+	@param hWndParent [in]	親ウィンドウハンドル．エラーメッセージ表示用
+	@param pszPath [in]		新規エディタで開くファイル名．NULLで新規エディタ作成．
+	@param nCharCode [in]	新規エディタの文字コード
+	@param bReadOnly [in]	FALSEでなければ読みとり専用で開く
+	@param sync [in]		trueなら新規エディタの起動まで待機する
+	@param szCurDir [in]	新規エディタのカレントディレクトリ
+
+	@date 2000.10.24 genta WinExec -> CreateProcess．同期機能を付加
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2003.05.30 genta 外部プロセス起動時のカレントディレクトリ指定を可能に．
 */
-bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPath, int nCharCode, BOOL bReadOnly, bool sync )
+bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPath, int nCharCode, BOOL bReadOnly, bool sync, const char* szCurDir )
 {
 	DLLSHAREDATA*	pShareData;
 	char szCmdLineBuf[1024];	//	コマンドライン
@@ -1394,8 +1446,9 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 	s.cbReserved2 = 0;
 	s.lpReserved2 = NULL;
 
+	//	May 30, 2003 genta カレントディレクトリ指定を可能に
 	if( CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,
-		CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &s, &p ) == 0 ){
+		CREATE_DEFAULT_ERROR_MODE, NULL, szCurDir, &s, &p ) == 0 ){
 		//	失敗
 		LPVOID pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
