@@ -81,7 +81,8 @@ public:
 	const char* GetLastMessage(void) const { return m_szMsg; }
 	
 protected:
-	virtual char* GetDllName(void);
+	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
+	virtual char* GetDllName(char*);
 	virtual int InitDll(void);
 	virtual int DeinitDll(void);
 

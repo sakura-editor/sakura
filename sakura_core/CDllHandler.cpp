@@ -40,14 +40,14 @@ CDllHandler::~CDllHandler()
 	}
 }
 
-int CDllHandler::LoadLibrary(void)
+int CDllHandler::LoadLibrary(char* str)
 {
 	if( IsAvailable()){
 		//	既に利用可能で有れば何もしない．
 		return 0;
 	}
 
-	char *name = GetDllName();
+	char *name = GetDllName(str);
 	if( name == NULL )	return -1;
 	
 	m_hInstance = ::LoadLibrary( name );
