@@ -5684,6 +5684,9 @@ void CEditView::SetParentCaption( BOOL bKillFocus )
 
 	@note ステータスバーの状態の並び方の変更はメッセージを受信する
 		CEditWnd::DispatchEvent()のWM_NOTIFYにも影響があることに注意
+	
+	@note ステータスバーの出力内容の変更はCEditWnd::OnSize()の
+		カラム幅計算に影響があることに注意
 */
 void CEditView::DrawCaretPosInfo( void )
 {
@@ -5797,7 +5800,7 @@ void CEditView::DrawCaretPosInfo( void )
 		char	szText_1[64];
 		char	szText_3[32]; // szText_2 => szTest_3 に変更 64バイトもいらない 2002.06.05 Moca 
 		char	szText_6[16]; // szText_5 => szTest_6 に変更 64バイトもいらない 2002.06.05 Moca
-		wsprintf( szText_1, "%6d 行 %5d 桁", nPosY, nPosX );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		wsprintf( szText_1, "%5d 行 %4d 桁", nPosY, nPosX );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		nCharChars = 0;
 		if( NULL != pLine ){
