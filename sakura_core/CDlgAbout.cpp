@@ -130,7 +130,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
-	::FindFirstFile( szFile, &wfd );
+	
+	//	2003.10.04 Moca ハンドルのクローズ忘れ
+	::ZeroMemory( &wfd, sizeof( wfd ));
+	HANDLE hFind = ::FindFirstFile( szFile, &wfd );
+	if( hFind != INVALID_HANDLE_VALUE ){
+		FindClose( hFind );
+	}
+	
 	::FileTimeToLocalFileTime( &wfd.ftLastWriteTime, &wfd.ftLastWriteTime );
 	::FileTimeToSystemTime( &wfd.ftLastWriteTime, &systimeL );
 	/* バージョン情報 */
