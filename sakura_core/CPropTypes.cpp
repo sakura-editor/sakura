@@ -108,7 +108,6 @@ WNDPROC	m_wpColorListProc;
 #define STR_COLORDATA_HEAD3		" テキストエディタ色設定 Ver3"		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 #define STR_COLORDATA_SECTION	"SakuraColor"
 
-#define BOOL2STR( b )			TRUE==(b)?"TRUE":"FALSE"
 char* MakeRGBStr( DWORD dwRGB, char* pszText )
 {
 	wsprintf( pszText, "RGB( %d, %d, %d )",
