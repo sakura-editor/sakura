@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, Stonee, JEPRO, genta, hor
 	Copyright (C) 2002, genta, MIK, aroka
+	Copyright (C) 2003, zenryaku
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -192,6 +193,16 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		SetTree();
 		::SetWindowText( m_hWnd, "ルールファイル" );
 	}else
+	if( OUTLINE_WZTXT == m_nListType ){ //@@@ 2003.05.20 zenryaku 階層付テキストアウトライン解析
+		m_nViewType = 1;
+		SetTree();
+		::SetWindowText( m_hWnd, "階層付テキスト" );
+	}else
+	if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
+		m_nViewType = 1;
+		SetTree();
+		::SetWindowText( m_hWnd, "HTML" );
+	}else
 	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
@@ -223,6 +234,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		SetTreeJava( m_hWnd, FALSE );
 		::SetWindowText( m_hWnd, "COBOL アウトライン" );
 	}else{
+		m_nViewType = 0;
 		switch( m_nListType ){
 		case OUTLINE_C:
 			::SetWindowText( m_hWnd, "C 関数一覧" );
@@ -255,7 +267,6 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//::DestroyWindow( hwndTree );
 //		::ShowWindow( hwndTree, SW_HIDE );
-		m_nViewType = 0;
 		::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
 		nFuncLineOld = 0;
 		bSelected = FALSE;

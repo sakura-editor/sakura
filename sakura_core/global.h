@@ -180,6 +180,8 @@ SAKURA_CORE_API enum enumOutlineType {
 	OUTLINE_ASM,
 	OUTLINE_PERL,	//	Sep. 8, 2000 genta
 	OUTLINE_VB,	//	June 23, 2001 N.Nakatani
+	OUTLINE_WZTXT,		// 2003.05.20 zenryaku 階層付テキストアウトライン解析
+	OUTLINE_HTML,		// 2003.05.20 zenryaku HTMLアウトライン解析
 	OUTLINE_FILE,		//	2002.04.01 YAZAKI ルールファイル用
 	OUTLINE_CODEMAX,
 	OUTLINE_BOOKMARK,	//	2001.12.03 hor
