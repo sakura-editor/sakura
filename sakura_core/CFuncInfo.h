@@ -20,12 +20,23 @@ class CFuncInfo;
 
 #include "CMemory.h"
 
+// CDlgFuncList::SetTree()用 m_Info
+//	2003.06.27 Moca
+#define FUNCINFO_NOCLIPTEXT 0x10000
+
+
 //! アウトライン解析  データ要素
 //@date 2002.04.01 YAZAKI 深さ導入
 class CFuncInfo {
 	public:
 		CFuncInfo( int, int, const char*, int );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
+
+		//! クリップボードに追加する要素か？
+		//	2003.06.27 Moca
+		inline bool IsAddClipText( void ){
+			return ( FUNCINFO_NOCLIPTEXT != ( m_nInfo & FUNCINFO_NOCLIPTEXT ) );
+		};
 
 //	private:
 		int			m_nFuncLineCRLF;	/*!< 関数のある行(CRLF単位) */
