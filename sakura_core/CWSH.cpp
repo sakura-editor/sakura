@@ -107,7 +107,13 @@ public:
 	    /* [out] */ DWORD __RPC_FAR *pdwHelpContext,
 	    /* [out] */ BSTR __RPC_FAR *pBstrHelpFile)
 	{
-		return E_NOTIMPL;
+		//	Feb. 08, 2004 genta
+		//	とりあえず全部NULLを返す (情報無し)
+		pBstrName = NULL;
+		pBstrDocString = NULL;
+		pdwHelpContext = NULL;
+		pBstrHelpFile = NULL;
+		return S_OK ;
 	}
 
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE GetDllEntry( 
@@ -706,6 +712,8 @@ void CWSHMacroManager::declare()
 	CMacroFactory::Instance()->RegisterCreator(Creator);
 }
 
+#if 0
+Feb. 08, 2003 使ってないのでとりあえずコメントアウト
 void CWSHMacroManager::EnumEngines(EngineCallback Proc)
 {
 	char FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
@@ -737,3 +745,4 @@ void CWSHMacroManager::EnumEngines(EngineCallback Proc)
 		}
 	}
 }
+#endif

@@ -19,6 +19,7 @@
 #include <stdio.h>
 //	#include <stdlib.h>
 //	#include <malloc.h>
+#include <string.h>
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
@@ -353,20 +354,27 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 /*!
 	Factory
 
-	引数に渡された拡張子は使わない。
+	@param ext [in] オブジェクト生成の判定に使う拡張子(小文字)
+
+	@date 2004-01-31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
+		そのため，過ったオブジェクト生成を行わないために拡張子チェックは必須．
 */
-CMacroManagerBase* CKeyMacroMgr::Creator(const char*)
+CMacroManagerBase* CKeyMacroMgr::Creator(const char* ext)
 {
-	return new CKeyMacroMgr;
+	if( strcmp( ext, "mac" ) == 0 ){
+		return new CKeyMacroMgr;
+	}
+	return NULL;
 }
 
 /*!	CKeyMacroManagerの登録
 
+	@date 2004.01.31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
 */
 void CKeyMacroMgr::declare (void)
 {
 	//	常に実行
-	CMacroFactory::Instance()->RegisterExt("mac", Creator);
+	CMacroFactory::Instance()->RegisterCreator( Creator );
 }
 //	To Here Apr. 29, 2002 genta
 
