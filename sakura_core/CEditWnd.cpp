@@ -3717,8 +3717,12 @@ LRESULT CEditWnd::OnNcLButtonUp(WPARAM wp, LPARAM lp)
 	}
 	else if(wp == HTSYSMENU)
 		Result = 0;
-	else
-		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONDOWN, wp, lp);
+	else{
+		//	2004.05.23 Moca メッセージミス修正
+		//	フレームのダブルクリック時後にウィンドウサイズ
+		//	変更モードなっていた
+		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONUP, wp, lp);
+	}
 
 	return Result;
 }
@@ -3735,8 +3739,10 @@ LRESULT CEditWnd::OnLButtonDblClk(WPARAM wp, LPARAM lp) //by 鬼(2)
 
 		Result = 0;
 	}
-	else
-		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONDOWN, wp, lp);
+	else {
+		//	2004.05.23 Moca メッセージミス修正
+		Result = DefWindowProc(m_hWnd, WM_LBUTTONDBLCLK, wp, lp);
+	}
 
 	return Result;
 }
