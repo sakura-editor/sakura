@@ -2363,11 +2363,6 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	m_nPageNum = 1;
 
 
-//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
-/*
-*/
-//	To Here Jun. 01, 2001
-
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT		, m_Types.m_szLineComment	, sizeof( m_Types.m_szLineComment ) );		/* 行コメントデリミタ */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2	, m_Types.m_szLineComment2	, sizeof( m_Types.m_szLineComment2 ) );		/* 行コメントデリミタ2 */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT3	, m_Types.m_szLineComment3	, sizeof( m_Types.m_szLineComment3 ) );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
@@ -2677,31 +2672,37 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LINETERMCHAR ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), FALSE );
 	}
-	
+
 	//	From Here Jun. 6, 2001 genta
 	//	行コメント開始桁位置入力ボックスのEnable/Disable設定
 	//	1つ目
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS )){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
 	}
 	//	2つ目
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS2 )){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS2 ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS2 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum2 ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS2 ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS2 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum2 ), FALSE );
 	}
 	//	3つ目
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 )){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS3 ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS3 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum3 ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS3 ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS3 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum3 ), FALSE );
 	}
 	//	To Here Jun. 6, 2001 genta
