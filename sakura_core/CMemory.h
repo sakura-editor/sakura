@@ -60,7 +60,7 @@ public:
 
 	void AUTOToSJIS( void );	/* 自動判別→SJISコード変換 */
 	void SJIStoJIS( void );		/* SJIS→JISコード変換 */
-	void JIStoSJIS( void );		/* E-Mail(JIS→SJIS)コード変換 */
+	void JIStoSJIS( bool base64decode = false);		/* E-Mail(JIS→SJIS)コード変換 */
 	void SJISToUnicode( void );	/* SJIS→Unicodeコード変換 */
 	void SJISToEUC( void );		/* SJIS→EUCコード変換 */
 	void EUCToSJIS( void );		/* EUC→SJISコード変換 */

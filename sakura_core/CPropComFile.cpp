@@ -159,6 +159,8 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.GetRestoreCurPosition() );
+	//	Nov. 12, 2000 genta	MIME Decodeフラグ
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.GetAutoMIMEdecode() );
 
 	EnableFilePropInput(hwndDlg);
 	return;
@@ -229,6 +231,8 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
 	m_Common.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
+	//	Nov. 12, 2000 genta	MIME Decodeフラグ
+	m_Common.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
 
 	return TRUE;
 }

@@ -245,7 +245,7 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_nDropFileNumMax,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,169,102,9,
                     12
-    GROUPBOX        "ファイルオープン",IDC_STATIC,3,73,264,63,WS_GROUP
+    GROUPBOX        "ファイルオープン",IDC_STATIC,3,73,264,75,WS_GROUP
     LTEXT           "個までとする",IDC_LABEL_AUTOSAVE4,131,104,38,8,NOT 
                     WS_GROUP
     LTEXT           "←注：ドロップファイルは1つのみ有効",IDC_LANEL_NOTE,150,
@@ -253,6 +253,9 @@ BEGIN
     CONTROL         "ファイルを開いたときにカーソル位置を復元する(&C)",
                     IDC_CHECK_RestoreCurPosition,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,118,162,10
+    CONTROL         "ファイルを開いたときにMIME Encodeされたヘッダをデコードする(&B)",
+                    IDC_CHECK_AutoMIMEDecode,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,131,207,10
 END
 
 IDD_ABOUT DIALOG DISCARDABLE  0, 0, 239, 105
@@ -1519,7 +1522,7 @@ BEGIN
 
     IDD_PROP_FILE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
+        LEFTMARGIN, 3
         RIGHTMARGIN, 263
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
@@ -1916,8 +1919,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,20,2
- PRODUCTVERSION 1,2,20,2
+ FILEVERSION 1,2,21,0
+ PRODUCTVERSION 1,2,21,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -1935,14 +1938,14 @@ BEGIN
             VALUE "Comments", "フリーソフトです。ご自由にお使い下さい。\0"
             VALUE "CompanyName", "Norio Nakatani\0"
             VALUE "FileDescription", "\0"
-            VALUE "FileVersion", "1.2.20.2\0"
+            VALUE "FileVersion", "1.2.21.0\0"
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", "Copyright (C) Norio Nakatani\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "テキストエディタ SAKURA\0"
-            VALUE "ProductVersion", "1.2.20.2\0"
+            VALUE "ProductVersion", "1.2.21.0\0"
             VALUE "SpecialBuild", "unofficial release 3\0"
         END
     END

@@ -453,7 +453,7 @@ long CMemory::MemSJIStoJIS( unsigned char* pszSrc, long nSrcLen)
 
 
 /* コード変換 　JIS→SJIS　*/
-void CMemory::JIStoSJIS( void )
+void CMemory::JIStoSJIS(bool bMIMEdecode)
 {
 	int				i;
 	int				j;
@@ -471,7 +471,7 @@ void CMemory::JIStoSJIS( void )
 	memset( pszDes, 0, nSrcLen + 1 );
 	j = 0;
 	for(i = 0; i < nSrcLen; i++){
-		if(i <= nSrcLen - 16){
+		if( bMIMEdecode && i <= nSrcLen - 16){
 			if(0 == _memicmp("=?ISO-2022-JP?B?", &pszSrc[i], 16) ){
 				nMEME_Selected = MIME_BASE64;
 				bMIME = TRUE;

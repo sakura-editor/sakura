@@ -299,15 +299,23 @@ struct Common {
 	
 	//	Oct. 27, 2000 genta
 	//	カーソル位置を復元するかどうか
-	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition; }
+	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition != 0; }
 	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; }
+	
+	//	Nov. 12, 2000 genta
+	//	ファイル読み込み時にMIMEのdecodeを行うか
+	bool	GetAutoMIMEdecode(void) const { return m_bAutoMIMEdecode != 0; }
+	void	SetAutoMIMEdecode(bool i){ m_bAutoMIMEdecode = i; }
+	
+	//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
+	//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
 
 	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
 	int					m_bIsINSMode;					/* 挿入／上書きモード */
 	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
 	int					m_bAutoIndent;					/* オートインデント */
 	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
-	bool				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
+	BOOL				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
 //	int					m_bEnableLineISlog;				/* ★廃止★行番号種別　物理行／論理行 */
 
 //	char				m_szEMailUserName[_MAX_PATH];	/* メールユーザー名 */
@@ -430,7 +438,7 @@ struct Common {
 	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];//時刻書式
 
 	BOOL				m_bMenuIcon;	/* メニューにアイコンを表示する */
-
+	BOOL				m_bAutoMIMEdecode;	//	ファイル読み込み時にMIMEのdecodeを行うか
 
 
 }; /* Common */

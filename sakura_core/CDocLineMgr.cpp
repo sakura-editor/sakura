@@ -403,7 +403,9 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEOL cEol )
 
 /* ファイルを読み込んで格納する（テスト用） */
 /* （注意）Windows用にコーディングしてある */
-int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime )
+//	nFlags:
+//		bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, int nFlags )
 {
 #ifdef _DEBUG
 	MYTRACE( "pszPath=[%s]\n", pszPath );
@@ -574,7 +576,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	case CODE_JIS:
 		cmemBuf.SetData( pBuf, nReadSize );
 		/* E-Mail(JIS→SJIS)コード変換 */
-		cmemBuf.JIStoSJIS();
+		cmemBuf.JIStoSJIS((nFlags & 1) == 1);	//	Nov. 12, 2000 genta フラグ追加
 		memcpy( pBuf, cmemBuf.GetPtr( NULL ), cmemBuf.GetLength() );
 		nReadSize = cmemBuf.GetLength();
 		break;

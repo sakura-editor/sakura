@@ -1193,6 +1193,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "szTimeFormat", REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szTimeFormat, 0 );//時刻書式
 
 		cProfile.IOProfileData( bRead, pszSecName, "bMenuIcon", REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bMenuIcon, 0 );//メニューにアイコンを表示する
+		cProfile.IOProfileData( bRead, pszSecName, "bAutoMIMEdecode", REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoMIMEdecode, 0 );//ファイル読み込み時にMIMEのdecodeを行うか
 
 
 

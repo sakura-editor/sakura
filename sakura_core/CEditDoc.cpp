@@ -570,15 +570,19 @@ BOOL CEditDoc::FileRead(
 //			return TRUE;
 //		}
 
+	//	Nov. 12, 2000 genta ロングファイル名の取得を前方に移動
+	char szWork[MAX_PATH];
+	/* ロングファイル名を取得する */
+	if( TRUE == ::GetLongFileName( pszPath, szWork ) ){
+		strcpy( m_szFilePath, szWork );
+	}
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = m_cShareData.GetShareData( m_szFilePath, &m_nSettingType );
+
 	/* ファイルが存在しない */
 	if( FALSE == bFileIsExist ){
 //		::MessageBeep( MB_ICONINFORMATION );
-
-		char szWork[MAX_PATH];
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( pszPath, szWork ) ){
-			strcpy( m_szFilePath, szWork );
-		}
 
 		::MYMESSAGEBOX(
 			m_hwndParent,
@@ -598,7 +602,8 @@ BOOL CEditDoc::FileRead(
 		if( NULL != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
-		if( FALSE == m_cDocLineMgr.ReadFile( m_szFilePath, m_hWnd, hwndProgress, m_nCharCode, &m_FileTime ) ){
+		if( FALSE == m_cDocLineMgr.ReadFile( m_szFilePath, m_hWnd, hwndProgress,
+			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode()) ){
 			strcpy( m_szFilePath, "" );
 			bRet = FALSE;
 			goto end_of_func;
@@ -607,16 +612,8 @@ BOOL CEditDoc::FileRead(
 //		m_cDocLineMgr.DUMP();
 //#endif
 
-		char szWork[MAX_PATH];
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( m_szFilePath, szWork ) ){
-			strcpy( m_szFilePath, szWork );
-		}
 	}
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = m_cShareData.GetShareData( m_szFilePath, &m_nSettingType );
-	
 	/* レイアウト情報の変更 */
 	m_cLayoutMgr.SetLayoutInfo(
 		m_pShareData->m_Types[m_nSettingType].m_nMaxLineSize,
