@@ -222,24 +222,29 @@ bool CNormalProcess::Initialize()
 					&nPosX,
 					&nPosY
 				);
-				if( nPosY < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
+				// 2004.04.03 Moca EOFだけの行で終わっていると、EOFの一つ上の行に移動してしまうバグ修正
+				// MoveCursorが補正するのである程度行わなくて良くなった
+//				if( nPosY < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() )
+				{
 					// From Here Mar. 28, 2003 MIK
 					//改行の真ん中にカーソルが来ないように。
-					CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLineInfo( nPosY );
+					const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLineInfo( nPosY );
 					if( pTmpDocLine ){
 						if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
 					}
 					// To Here Mar. 28, 2003 MIK
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
-					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = nPosX;
-				}else{
-					int		i;
-					i = m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() - 1;
-					if( i < 0 ){
-						i = 0;
-					}
-					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( 0, i, TRUE );
-					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
+					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
+						m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
+				// 2004.04.03 Moca 削除
+				// }else{
+				// 	int		i;
+				// 	i = m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() - 1;
+				// 	if( i < 0 ){
+				// 		i = 0;
+				// 	}
+				// 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( 0, i, TRUE );
+				// 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
 				}
 			}
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
