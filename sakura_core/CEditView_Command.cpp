@@ -399,7 +399,7 @@ BOOL CEditView::HandleCommand(
 	case F_COPY_CRLF:				Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE();break;					//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
-	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, (BOOL)lparam2 );break;/* テキストを貼り付け */
+	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, -1, (BOOL)lparam2 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
 	case F_ADDTAIL:					Command_ADDTAIL( (const char*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
@@ -444,7 +444,7 @@ BOOL CEditView::HandleCommand(
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		Command_SEARCH_DIALOG();break;												//検索(単語検索ダイアログ)
 	case F_SEARCH_BOX:			Command_SEARCH_DIALOG();break;		// Jan. 13, 2003 MIK					//検索(単語検索ダイアログ)
-	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( bRedraw, (HWND)lparam1, (const char*)lparam2 );break;	//次を検索
+	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( true, bRedraw, (HWND)lparam1, (const char*)lparam2 );break;	//次を検索
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
 	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)
 		/* 再帰処理対策 */
@@ -2453,8 +2453,12 @@ void CEditView::Command_PASTE( void )
 
 
 
-/* テキストを貼り付け ver1 */
-void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWaitCursor )
+/*! テキストを貼り付け
+	@param pszText  [in] 貼り付ける文字列。
+	@param nTextLen [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
+	@date 2004.05.14 Moca '\0'を受け入れるように、引数に長さを追加
+*/
+void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, int nTextLen, BOOL bNoWaitCursor )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
 		::MessageBeep( MB_ICONHAND );
@@ -2476,6 +2480,9 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 		pcWaitCursor = new CWaitCursor( m_hWnd );
 	}
 
+	if( nTextLen < 0 ){
+		nTextLen = lstrlen( pszText );
+	}
 
 ////////////////////デバッグ用テスト→→→→→
 //#ifdef _DEBUG
@@ -2498,7 +2505,14 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 	if( IsTextSelected() ){
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
-			i = strcspn(pszText, CRLF);
+			// i = strcspn(pszText, CRLF);
+			// 2004.05.14 Moca strcspnでは'\0'が扱えないので
+			for( i = 0; i < nTextLen; i++ ){
+				if( pszText[i] == CR 
+				 || pszText[i] == LF ){
+					break;
+				}
+			}
 			Command_INDENT( pszText, i );
 		}
 		else{
@@ -2510,7 +2524,7 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 				m_nSelectColmTo,		/* 範囲選択終了桁 */
 				NULL,					/* 削除されたデータのコピー(NULL可能) */
 				pszText,				/* 挿入するデータ */
-				strlen( pszText ),		/* 挿入するデータの長さ */
+				nTextLen,		/* 挿入するデータの長さ */
 				bRedraw
 			);
 #ifdef _DEBUG
@@ -2526,8 +2540,15 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
 		}
+		
+		//	Jun. 13, 2004 genta 不要なチェック？
+		if( nTextLen < 0 ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
+				_T("バグじゃないの？ @Command_INSTEXT") );
+			nTextLen = lstrlen( pszText );
+		}
 		/* 現在位置にデータを挿入 */
-		InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, pszText, lstrlen(pszText), &nNewLine, &nNewPos, pcOpe, TRUE );
+		InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, pszText, nTextLen, &nNewLine, &nNewPos, pcOpe, TRUE );
 		/* 挿入データの最後へカーソルを移動 */
 		MoveCursor( nNewPos, nNewLine, bRedraw/*TRUE 2002.02.16 hor */ );
 		m_nCaretPosX_Prev = m_nCaretPosX;
@@ -3589,7 +3610,6 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	nColmTo = m_nCaretPosX;
 //	bFlag1 = FALSE;
 	bSelecting = FALSE;
-//	if( 0 == lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) ){
 	if( '\0' == m_pShareData->m_szSEARCHKEYArr[0][0] ){
 		goto end_of_func;
 	}
@@ -3649,11 +3669,11 @@ re_do:;							//	hor
 	if( m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLineNum, 								/* 検索開始行 */
 		nIdx, 									/* 検索開始位置 */
-		m_pShareData->m_szSEARCHKEYArr[0],		/* 検索条件 */
+		m_szCurSrchKey,							/* 検索条件 */
 		FALSE,									/* 0==前方検索 1==後方検索 */
-		m_pShareData->m_Common.m_bRegularExp,	/* 1==正規表現 */
-		m_pShareData->m_Common.m_bLoHiCase,		/* 1==大文字小文字の区別 */
-		m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
+		m_bCurSrchRegularExp,					/* 1==正規表現 */
+		m_bCurSrchLoHiCase,						/* 1==大文字小文字の区別 */
+		m_bCurSrchWordOnly,						/* 1==単語のみ検索 */
 		&nLineFrom,								/* マッチレイアウト行from */
 		&nColmFrom, 							/* マッチレイアウト位置from */
 		&nLineTo, 								/* マッチレイアウト行to */
@@ -3742,7 +3762,7 @@ end_of_func:;
 			::MYMESSAGEBOX( hwndParent,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 //				"↑ 前方に、文字列 '%s' が見つかりません。",
 				"前方(↑) に文字列 '%s' が１つも見つかりません。",	//Jan. 25, 2001 jepro メッセージを若干変更
-				m_pShareData->m_szSEARCHKEYArr[0]
+				m_szCurSrchKey
 			);
 		}
 	}
@@ -3753,10 +3773,11 @@ end_of_func:;
 
 
 /*! 次を検索
-
+	@param bChangeCurRegexp 共有データの検索文字列を使う
 	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理見直し．
+	@date 2004.05.30 Moca bChangeCurRegexp=trueで従来通り。falseで、CEditViewの現在設定されている検索パターンを使う
 */
-void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* pszNotFoundMessage )
+void CEditView::Command_SEARCH_NEXT( bool bChangeCurRegexp, BOOL bRedraw, HWND hwndParent, const char* pszNotFoundMessage )
 {
 
 //#ifdef _DEBUG
@@ -3800,8 +3821,9 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 	nColmTo = m_nCaretPosX;
 
 	bSelecting = FALSE;
-//	if( 0 == lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) ){
-	if( '\0' == m_pShareData->m_szSEARCHKEYArr[0][0] ){
+	//	2004.05.30 Moca bChangeCurRegexpに応じて対象文字列を変える
+	if( bChangeCurRegexp  && '\0' == m_pShareData->m_szSEARCHKEYArr[0][0] 
+	 || !bChangeCurRegexp && '\0' == m_szCurSrchKey[0] ){
 		goto end_of_func;
 	}
 
@@ -3875,21 +3897,23 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
-	if(!ChangeCurRegexp())return;
+	// 2004.05.30 Moca CEditViewの現在設定されている検索パターンを使えるように
+	if(bChangeCurRegexp && !ChangeCurRegexp())return;
 
 	bRedo		=	TRUE;		//	hor
 	nLineNumOld	=	nLineNum;	//	hor
 	nIdxOld		=	nIdx;		//	hor
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
+	// 2004.05.30 Moca 引数をm_pShareDataからメンバ変数に変更。他のプロセス/スレッドに書き換えられてしまわないように。
 	if( m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLineNum, 								/* 検索開始行 */
 		nIdx, 									/* 検索開始位置 */
-		m_pShareData->m_szSEARCHKEYArr[0],		/* 検索条件 */
+		m_szCurSrchKey,							/* 検索条件 */
 		TRUE,									/* 0==前方検索 1==後方検索 */
-		m_pShareData->m_Common.m_bRegularExp,	/* 1==正規表現 */
-		m_pShareData->m_Common.m_bLoHiCase,		/* 1==英大文字小文字の区別 */
-		m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
+		m_bCurSrchRegularExp,					/* 1==正規表現 */
+		m_bCurSrchLoHiCase,						/* 1==英大文字小文字の区別 */
+		m_bCurSrchWordOnly,						/* 1==単語のみ検索 */
 		&nLineFrom,								/* マッチレイアウト行from */
 		&nColmFrom, 							/* マッチレイアウト位置from */
 		&nLineTo, 								/* マッチレイアウト行to */
@@ -3994,7 +4018,6 @@ end_of_func:;
 		ShowEditCaret();	// 2002/04/18 YAZAKI
 		DrawCaretPosInfo();	// 2002/04/18 YAZAKI
 		SendStatusMessage("▽見つかりませんでした");
-//	if( FALSE == bFound ){
 // To Here 2002.01.26 hor
 		::MessageBeep( MB_ICONHAND );
 		if( bRedraw	&&
@@ -4005,9 +4028,8 @@ end_of_func:;
 			}
 			if( NULL == pszNotFoundMessage ){
 				::MYMESSAGEBOX( hwndParent,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-//					"↓ 後方に、文字列 '%s' が見つかりません。",
 					"後方(↓) に文字列 '%s' が１つも見つかりません。",	//Jan. 25, 2001 jepro メッセージを若干変更
-					m_pShareData->m_szSEARCHKEYArr[0]
+					m_szCurSrchKey
 				);
 			}else{
 				::MYMESSAGEBOX( hwndParent, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
@@ -5867,8 +5889,8 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		pszWork = new char[nDataLen + 1];
 		memcpy( pszWork, pData, nDataLen );
 		pszWork[nDataLen] = '\0';
-		/* テキストを貼り付け ver0 */
-		Command_INSTEXT( TRUE, pszWork, FALSE );
+		// テキストを貼り付け 2004.05.14 Moca 長さを引数で与える
+		Command_INSTEXT( TRUE, pszWork, nDataLen, FALSE );
 		delete [] pszWork;
 		return;
 	}
@@ -7828,8 +7850,11 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	/* 現在の選択範囲を非選択状態に戻す */
 	DisableSelectArea( TRUE );
 
+	// 2004.06.01 Moca 検索中に、他のプロセスによってm_szREPLACEKEYArrが書き換えられても大丈夫なように
+	const CMemory	cMemRepKey( m_pShareData->m_szREPLACEKEYArr[0], _tcslen(m_pShareData->m_szREPLACEKEYArr[0]) );
+
 	/* 次を検索 */
-	Command_SEARCH_NEXT( TRUE, hwndParent, 0 );
+	Command_SEARCH_NEXT( true, TRUE, hwndParent, 0 );
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
@@ -7900,6 +7925,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				CMemory cmemory;
 				CBregexp cRegexp;
 				char*	RegRepOut;
+				int     nRegRepOutLen;
 
 				if( !InitRegexp( m_hWnd, cRegexp, true ) ){
 					return;	//	失敗return;
@@ -7943,14 +7969,16 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				}
 
 				// 変換後の文字列を別の引数にしました 2002.01.26 hor
-				if( cRegexp.Replace( m_pShareData->m_szSEARCHKEYArr[0], m_pShareData->m_szREPLACEKEYArr[0], cmemory.GetPtr(), cmemory.GetLength(),&RegRepOut, nFlag) ){ // 2002/2/10 aroka CMemory変更
+				//	2004.05.14 Moca 置換後の文字列の長さを受け取る
+				if( cRegexp.Replace( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey.GetPtr(),
+				    cmemory.GetPtr(), cmemory.GetLength(),&RegRepOut, &nRegRepOutLen, nFlag) ){ // 2002/2/10 aroka CMemory変更
 				//	HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
-					Command_INSTEXT( FALSE, (const char*)RegRepOut, TRUE );
+					Command_INSTEXT( FALSE, RegRepOut, nRegRepOutLen , TRUE );
 					delete [] RegRepOut;
 				}
 			}else{
 			//	HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
-				Command_INSTEXT( FALSE, (const char*)m_pShareData->m_szREPLACEKEYArr[0], TRUE );
+				Command_INSTEXT( FALSE, cMemRepKey.GetPtr(), cMemRepKey.GetLength(), TRUE );
 			}
 		}
 		// 挿入後の検索開始位置を調整
@@ -7965,7 +7993,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		Redraw();
 		/* 次を検索 */
 	//	HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
-		Command_SEARCH_NEXT( TRUE, hwndParent, (const char*)"最後まで置換しました。" );
+		Command_SEARCH_NEXT( true, TRUE, hwndParent, "最後まで置換しました。" );
 	}
 }
 
@@ -8094,17 +8122,16 @@ void CEditView::Command_REPLACE_ALL( void )
 	/* 現在の選択範囲を非選択状態に戻す */
 	DisableSelectArea( bDisplayUpdate );
 	/* 次を検索 */
-//	HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
-	Command_SEARCH_NEXT( bDisplayUpdate, 0, 0 );
+	Command_SEARCH_NEXT( true, bDisplayUpdate, 0, 0 );
 	// To Here 2001.12.03 hor
 
 	//<< 2002/03/26 Azumaiya
 	// 速く動かすことを最優先に組んでみました。
 	// ループの外で文字列の長さを特定できるので、一時変数化。
-	char *szREPLACEKEY;			// 置換先文字列。
-	int nREPLACEKEY;			// 置換先文字列の長さ。
+	char *szREPLACEKEY;			// 置換後文字列。
+	int nREPLACEKEY;			// 置換後文字列の長さ。
 	BOOL		bColmnSelect;	// 矩形貼り付けを行うかどうか。
-	CMemory		cmemClip;		// クリップボードのデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
+	CMemory		cmemClip;		// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
 
 	// クリップボードからのデータ貼り付けかどうか。
 	if( nPaste != 0 )
@@ -8139,15 +8166,18 @@ void CEditView::Command_REPLACE_ALL( void )
 		}
 
 		// データへのポインタとその長さを取得。
-		szREPLACEKEY = cmemClip.GetPtr(&nREPLACEKEY);
+//		szREPLACEKEY = cmemClip.GetPtr(&nREPLACEKEY);
 	}
 	else
 	{
 		// データへのポインタをセット。
-		szREPLACEKEY = m_pShareData->m_szREPLACEKEYArr[0];
+//		szREPLACEKEY = m_pShareData->m_szREPLACEKEYArr[0];
 		// 早速長さを取得。
-		nREPLACEKEY = strlen(szREPLACEKEY);
+//		nREPLACEKEY = strlen(szREPLACEKEY);
+		// 2004.05.14 Moca 全置換の途中で他のウィンドウで置換されるとまずいのでコピーする
+		cmemClip.SetDataSz( m_pShareData->m_szREPLACEKEYArr[0] );
 	}
+	szREPLACEKEY = cmemClip.GetPtr(&nREPLACEKEY);
 
 	// 取得にステップがかかりそうな変数などを、一時変数化する。
 	// とはいえ、これらの操作をすることによって得をするクロック数は合わせても 1 ループで数十だと思います。
@@ -8177,7 +8207,7 @@ void CEditView::Command_REPLACE_ALL( void )
 	int save_nSelectColmTo  ;
 	int save_nSelectLineTo  ;
 	/* テキストが選択されているか */
-	for(;IsTextSelected();)
+	while( IsTextSelected() )
 	{
 		/* キャンセルされたか */
 		if( bCANCEL )
@@ -8238,7 +8268,8 @@ void CEditView::Command_REPLACE_ALL( void )
 					//次の検索開始位置へシフト
 					m_nCaretPosX=colFrom;
 					m_nCaretPosY=linNext;
-					Command_SEARCH_NEXT( bDisplayUpdate, 0, 0 );
+					// 2004.05.30 Moca 現在の検索文字列を使って検索する
+					Command_SEARCH_NEXT( false, bDisplayUpdate, 0, 0 );
 					colDif=0;
 					continue;
 				}
@@ -8339,7 +8370,7 @@ void CEditView::Command_REPLACE_ALL( void )
 				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため
 				**   直接たたくのやめた。2003.05.18 by かろと
 				*/
-				Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
+				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
 			}
 			else
 			{
@@ -8394,7 +8425,7 @@ void CEditView::Command_REPLACE_ALL( void )
 				/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18
 				*/
-				Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
+				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
 				delete [] szREPLACEKEY;
 			} else {
 				// ---------------------
@@ -8413,7 +8444,7 @@ void CEditView::Command_REPLACE_ALL( void )
 			/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 			** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18 かろと
 			*/
-			Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
+			Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
 		}
 
 		// 挿入後の位置調整
@@ -8461,7 +8492,8 @@ void CEditView::Command_REPLACE_ALL( void )
 		++nReplaceNum;
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( bDisplayUpdate, 0, 0 );
+		// 2004.05.30 Moca 現在の検索文字列を使って検索する
+		Command_SEARCH_NEXT( false, bDisplayUpdate, 0, 0 );
 	}
 
 	if( 0 < nAllLineNum )
@@ -9062,7 +9094,6 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	/* 補完対象ワードリストを調べる */
 	CMemory		cmemHokanWord;
 	int			nKouhoNum;
-	char*		pszKouhoWord;
 	POINT		poWin;
 	/* 補完ウィンドウの表示位置を算出 */
 	poWin.x = m_nViewAlignLeft
@@ -9112,10 +9143,11 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 			m_pcEditDoc->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 		}
-		pszKouhoWord = cmemHokanWord.GetPtr();
-		pszKouhoWord[lstrlen(pszKouhoWord)-1] = '\0';
+		// 2004.05.14 Moca CHokanMgr::Search側で改行を削除するようにし、直接書き換えるのをやめた
+//		pszKouhoWord = cmemHokanWord.GetPtr( &nKouhoWordLen );
+//		pszKouhoWord[nKouhoWordLen] = '\0';
 		Command_WordDeleteToStart();
-		Command_INSTEXT( TRUE, (const char*)pszKouhoWord, TRUE );
+		Command_INSTEXT( TRUE, cmemHokanWord.GetPtr(), cmemHokanWord.GetLength(), TRUE );
 	}
 	else {
 		m_bHokan = TRUE;
@@ -10024,7 +10056,7 @@ void CEditView::Command_INS_DATE( void )
 	::GetLocalTime( &systime );
 	CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
 	/* テキストを貼り付け ver1 */
-	Command_INSTEXT( TRUE, szText, TRUE );
+	Command_INSTEXT( TRUE, szText, -1, TRUE );
 	return;
 }
 
@@ -10040,7 +10072,7 @@ void CEditView::Command_INS_TIME( void )
 	::GetLocalTime( &systime );
 	CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
 	/* テキストを貼り付け ver1 */
-	Command_INSTEXT( TRUE, szText, TRUE );
+	Command_INSTEXT( TRUE, szText, -1, TRUE );
 	return;
 }
 
