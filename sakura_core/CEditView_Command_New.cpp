@@ -1889,17 +1889,23 @@ void CEditView::SmartIndent_CPP( char cChar )
 // 画面を上へ1行スクロール
 void CEditView::Command_WndScrollUp(void)
 {
+	if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - 4){
+		CaretUnderLineOFF(TRUE);
+	}
+
 	ScrollAtV(m_nViewTopLine - 1);
+
 	// テキストが選択されていない
 	if(!IsTextSelected())
 	{
 		// カーソルが画面外に出た
 		if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - 3)
 		{
-			CaretUnderLineOFF(TRUE);
-			MoveCursor(m_nCaretPosX, m_nViewRowNum + m_nViewTopLine - 3, FALSE);
-			ShowEditCaret();
-			CaretUnderLineON(TRUE);
+			if(m_nCaretPosY > m_pcEditDoc->m_cDocLineMgr.GetLineCount() - 3)
+				Cursor_UPDOWN( (m_pcEditDoc->m_cDocLineMgr.GetLineCount() - 3) - m_nCaretPosY, FALSE);
+			else
+				Cursor_UPDOWN( -1, FALSE);
+			DrawCaretPosInfo();
 		}
 	}
 	if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
@@ -1912,17 +1918,23 @@ void CEditView::Command_WndScrollUp(void)
 // 画面を下へ1行スクロール
 void CEditView::Command_WndScrollDown(void)
 {
+	if(m_nCaretPosY < m_nViewTopLine + 2){
+		CaretUnderLineOFF(TRUE);
+	}
+
 	ScrollAtV(m_nViewTopLine + 1);
+
 	// テキストが選択されていない
 	if(!IsTextSelected())
 	{
 		// カーソルが画面外に出た
 		if(m_nCaretPosY < m_nViewTopLine + 1)
 		{
-			CaretUnderLineOFF(TRUE);
-			MoveCursor(m_nCaretPosX, m_nViewTopLine + 1, FALSE);
-			ShowEditCaret();
-			CaretUnderLineON(TRUE);
+			if(m_nViewTopLine == 1)
+				Cursor_UPDOWN( 2, FALSE);
+			else
+				Cursor_UPDOWN( 1, FALSE);
+			DrawCaretPosInfo();
 		}
 	}
 	if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
