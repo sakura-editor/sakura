@@ -482,11 +482,11 @@ bool CShareData::Init( void )
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+- に「上下に分割」を追加
 			// 2002.02.08 hor Ctrl+-にファイル名をコピーを追加
 			{ 0x00bd, "-",0, 0, F_COPYFNAME, F_SPLIT_V, 0, 0, 0, 0 },
-			{ 0x00de, "^",0, 0, F_COPYTAG, 0, 0, 0, 0, 0 },
+			{ 0x00de, "^(英語')",0, 0, F_COPYTAG, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ に「左右に分割」を追加
 			{ 0x00dc, "\\",0, 0, F_COPYPATH, F_SPLIT_H, 0, 0, 0, 0 },
 			//Sept. 20, 2000 JEPRO	Ctrl+@ に「ファイル内容比較」を追加  //Oct. 15, 2000 JEPRO「選択範囲内全行コピー」に変更
-			{ 0x00c0, "@",0, 0, F_COPYLINES, 0, 0, 0, 0, 0 },
+			{ 0x00c0, "@(英語`)",0, 0, F_COPYLINES, 0, 0, 0, 0, 0 },
 			//	Aug. 16, 2000 genta
 			//	反対向きの括弧にも括弧検索を追加
 			{ 0x00db, "[",0, 0, F_BRACKETPAIR, 0, 0, 0, 0, 0 },
