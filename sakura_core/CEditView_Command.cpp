@@ -7032,10 +7032,23 @@ bool CEditView::Command_TagsMake( void )
 
 		//実行結果の取り込み
 		do {
-			//処理中のユーザー操作を可能にする
-			if( !::BlockingHook( cDlgCancel.m_hWnd ) )
-			{
-				break;
+			// Jun. 04, 2003 genta CPU消費を減らすために200msec待つ
+			// その間メッセージ処理が滞らないように待ち方をWaitForSingleObjectから
+			// MsgWaitForMultipleObjectに変更
+			switch( MsgWaitForMultipleObjects( 1, &pi.hProcess, FALSE, 200, QS_ALLEVENTS )){
+				case WAIT_OBJECT_0:
+					//終了していればループフラグをFALSEとする
+					//ただしループの終了条件は プロセス終了 && パイプが空
+					bLoopFlag = FALSE;
+					break;
+				case WAIT_OBJECT_0 + 1:
+					//処理中のユーザー操作を可能にする
+					if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
+						break;
+					}
+					break;
+				default:
+					break;
 			}
 
 			//中断ボタン押下チェック
@@ -7044,14 +7057,6 @@ bool CEditView::Command_TagsMake( void )
 				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
 				::TerminateProcess( pi.hProcess, 0 );
 				break;
-			}
-
-			//プロセスが終了していないか確認
-			if( WaitForSingleObject( pi.hProcess, 0 ) == WAIT_OBJECT_0 )
-			{
-				//終了していればループフラグをFALSEとする
-				//ただしループの終了条件は プロセス終了 && パイプが空
-				bLoopFlag = FALSE;
 			}
 
 			new_cnt = 0;

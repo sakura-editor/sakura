@@ -8088,11 +8088,28 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		CShareData::getInstance()->TraceOut( "%s", "\r\n" );
 		CShareData::getInstance()->TraceOut( "%s", pszCmd );
 		CShareData::getInstance()->TraceOut( "%s", "\r\n" );
+		
+		
 		//実行結果の取り込み
 		do {
-			//処理中のユーザー操作を可能にする
-			if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
-				break;
+			//プロセスが終了していないか確認
+			// Jun. 04, 2003 genta CPU消費を減らすために200msec待つ
+			// その間メッセージ処理が滞らないように待ち方をWaitForSingleObjectから
+			// MsgWaitForMultipleObjectに変更
+			switch( MsgWaitForMultipleObjects( 1, &pi.hProcess, FALSE, 200, QS_ALLEVENTS )){
+				case WAIT_OBJECT_0:
+					//終了していればループフラグをFALSEとする
+					//ただしループの終了条件は プロセス終了 && パイプが空
+					bLoopFlag = FALSE;
+					break;
+				case WAIT_OBJECT_0 + 1:
+					//処理中のユーザー操作を可能にする
+					if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
+						break;
+					}
+					break;
+				default:
+					break;
 			}
 			//中断ボタン押下チェック
 			if( cDlgCancel.IsCanceled() ){
@@ -8102,12 +8119,6 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 				const char* pszText = "\r\n中断しました。\r\n";
 				CShareData::getInstance()->TraceOut( "%s", pszText );
 				break;
-			}
-			//プロセスが終了していないか確認
-			if( WaitForSingleObject( pi.hProcess, 0 ) == WAIT_OBJECT_0 ) {
-				//終了していればループフラグをFALSEとする
-				//ただしループの終了条件は プロセス終了 && パイプが空
-				bLoopFlag = FALSE;
 			}
 			new_cnt = 0;
 			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
@@ -8149,6 +8160,11 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 			}
 			Sleep(0);
 		} while( bLoopFlag || new_cnt > 0 );
+		
+		//	Jun. 04, 2003 genta	終了コードの取得と出力
+		DWORD result;
+		::GetExitCodeProcess( pi.hProcess, &result );
+		CShareData::getInstance()->TraceOut( "\r\n終了コード: %d\r\n", result );
 	}
 
 
