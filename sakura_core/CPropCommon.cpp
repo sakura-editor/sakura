@@ -1,0 +1,1656 @@
+//	$Id$
+/************************************************************************
+
+	CPropCommon.cpp
+	Copyright (C) 1998-2000, Norio Nakatani
+
+    UPDATE:
+    CREATE: 1998/12/24  新規作成
+
+
+************************************************************************/
+
+#include "sakura_rc.h"
+#include "CPropCommon.h"
+#include "debug.h"
+#include <windows.h>
+//#include <shlwapi.h>
+//#include <stdio.h>
+#include <commctrl.h>
+#include "CDlgOpenFile.h"
+#include "etc_uty.h"
+#include "global.h"
+#include "CDlgInput1.h"
+#include "CDlgDebug.h"
+#include "CSplitBoxWnd.h"
+#include "CMenuDrawer.h"
+
+
+
+
+
+
+int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
+{
+	int i;
+	for( i = 0; i < nArrNum; ++i ){
+		if( nKey == pnArr[i] ){
+			return i;
+		}
+	}
+	return -1;	
+}
+
+
+/* p1 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P1Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p1( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p1( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+
+
+/* p2 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P2Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p2( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p2( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+
+
+
+
+//	/* p4 ダイアログプロシージャ */
+//	BOOL CALLBACK Prop1P4Proc(
+//	    HWND hwndDlg,	// handle to dialog box
+//	    UINT uMsg,	// message
+//	    WPARAM wParam,	// first message parameter
+//	    LPARAM lParam 	// second message parameter
+//	)
+//	{
+//	PROPSHEETPAGE*	pPsp;
+//	CPropCommon* pCPropCommon;
+//	switch( uMsg ){
+//	case WM_INITDIALOG:
+//		pPsp = (PROPSHEETPAGE*)lParam;
+//		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+//		if( NULL != pCPropCommon ){
+//			return pCPropCommon->DispatchEvent_p4( hwndDlg, uMsg, wParam, pPsp->lParam );
+//		}else{
+//			return FALSE;
+//		}
+//	default:
+//		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+//		if( NULL != pCPropCommon ){
+//			return pCPropCommon->DispatchEvent_p4( hwndDlg, uMsg, wParam, lParam );
+//		}else{
+//			return FALSE;
+//		}
+//	}
+//	}
+
+
+
+/* p5 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P5Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p5( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p5( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+
+/* p6 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P6Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p6( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p6( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+/* p7 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P7Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p7( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p7( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+/* p8 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P8Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p8( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p8( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+/* p9 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P9Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p9( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p9( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+/* p10 ダイアログプロシージャ */
+BOOL CALLBACK Prop1P10Proc(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p10( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_p10( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+
+/* ダイアログプロシージャ */
+BOOL CALLBACK DlgProc_PROP_WIN(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_WIN( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_WIN( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+/* ダイアログプロシージャ */
+BOOL CALLBACK DlgProc_PROP_URL(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_URL( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_URL( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+/* ダイアログプロシージャ */
+BOOL CALLBACK DlgProc_PROP_EDIT(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_EDIT( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_EDIT( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+/* ダイアログプロシージャ */
+BOOL CALLBACK DlgProc_PROP_GREP(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_GREP( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_GREP( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+
+/* ダイアログプロシージャ */
+BOOL CALLBACK DlgProc_PROP_BACKUP(
+    HWND hwndDlg,	// handle to dialog box
+    UINT uMsg,	// message
+    WPARAM wParam,	// first message parameter
+    LPARAM lParam 	// second message parameter
+)
+{
+	PROPSHEETPAGE*	pPsp;
+	CPropCommon* pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pPsp = (PROPSHEETPAGE*)lParam;
+		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_BACKUP( hwndDlg, uMsg, wParam, pPsp->lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		pCPropCommon = ( CPropCommon* )::GetWindowLong( hwndDlg, DWL_USER );
+		if( NULL != pCPropCommon ){
+			return pCPropCommon->DispatchEvent_PROP_BACKUP( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
+
+
+CPropCommon::CPropCommon()
+{
+//	int		i;
+//	long	lPathLen;
+
+	/* 共有データ構造体のアドレスを返す */
+	m_cShareData.Init();
+	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+
+	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = NULL;		/* オーナーウィンドウのハンドル */
+	m_hwndThis  = NULL;		/* このダイアログのハンドル */
+	m_nPageNum = 0;
+
+	/* ヘルプファイルのフルパスを返す */
+	::GetHelpFilePath( m_szHelpFile );
+
+	return;
+}
+
+
+
+
+
+CPropCommon::~CPropCommon()
+{
+}
+
+
+
+
+
+/* 初期化 */
+void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons )
+{
+	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_pcIcons = cIcons;
+	return;
+}
+
+
+
+
+
+/* 色選択ダイアログ */
+BOOL CPropCommon::SelectColor( HWND hwndParent, COLORREF* pColor )
+{
+	int i;
+	CHOOSECOLOR cc;
+	DWORD dwCustColors[16] ;
+	for( i = 0; i < 16; i++	){
+		dwCustColors[i] = (DWORD)RGB( 255, 255, 255 );
+	}
+    cc.lStructSize = sizeof( cc );
+    cc.hwndOwner = hwndParent;
+    cc.hInstance = NULL;
+    cc.rgbResult = *pColor;
+    cc.lpCustColors = (LPDWORD) dwCustColors;
+    cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
+    cc.lCustData = NULL;
+    cc.lpfnHook = NULL;
+    cc.lpTemplateName = NULL;
+	if( FALSE == ::ChooseColor( &cc ) ){
+		return FALSE;
+	}
+	*pColor	= cc.rgbResult;
+	return TRUE;
+}
+
+
+
+
+
+/* 色ボタンの描画 */
+void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
+{
+#ifdef _DEBUG
+	MYTRACE( "pDis->itemAction = " );
+#endif
+	COLORREF	cBtnHiLight  = (COLORREF)::GetSysColor(COLOR_3DHILIGHT);
+	COLORREF	cBtnShadow   = (COLORREF)::GetSysColor(COLOR_3DSHADOW);
+	COLORREF	cBtnDkShadow = (COLORREF)::GetSysColor(COLOR_3DDKSHADOW);
+	COLORREF	cBtnFace     = (COLORREF)::GetSysColor(COLOR_3DFACE);
+	COLORREF	cRim; 
+	HBRUSH		hBrush;
+	HBRUSH		hBrushOld;
+	HPEN		hPen;
+	HPEN		hPenOld;
+	RECT		rc;
+	RECT		rcFocus;
+
+	/* ボタンの表面の色で塗りつぶす */
+	hBrush = ::CreateSolidBrush( cBtnFace );
+	::FillRect( pDis->hDC, &(pDis->rcItem), hBrush );
+	::DeleteObject( hBrush );
+
+	/* 枠の描画	*/
+	rcFocus = rc = pDis->rcItem;
+	rc.top += 4;
+	rc.left += 4;
+	rc.right -= 4;
+	rc.bottom -= 4;
+	rcFocus = rc;
+//	rc.right -= 11;
+
+	if( pDis->itemState & ODS_SELECTED ){
+		hPen = ::CreatePen( PS_SOLID, 0, cBtnDkShadow );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 2, NULL );
+		::LineTo( pDis->hDC, 0, 0 );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 1, 0 );
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
+
+		hPen = ::CreatePen( PS_SOLID, 0, cBtnShadow );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+		::MoveToEx( pDis->hDC, 1, pDis->rcItem.bottom - 3, NULL );
+		::LineTo( pDis->hDC, 1, 1 );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 2, 1 );
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
+
+		hPen = ::CreatePen( PS_SOLID, 0, cBtnHiLight );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 1, NULL );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 1, pDis->rcItem.bottom - 1 );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 1, -1 );
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
+
+		rc.top += 1;
+		rc.left += 1;
+		rc.right += 1;
+		rc.bottom += 1;
+
+		rcFocus.top += 1;
+		rcFocus.left += 1;
+		rcFocus.right += 1;
+		rcFocus.bottom += 1;
+
+	}else{
+		hPen = ::CreatePen( PS_SOLID, 0, cBtnHiLight );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 2, NULL );
+		::LineTo( pDis->hDC, 0, 0 );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 1, 0 );
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
+
+		hPen = ::CreatePen( PS_SOLID, 0, cBtnShadow );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+		::MoveToEx( pDis->hDC, 1, pDis->rcItem.bottom - 2, NULL );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 2, pDis->rcItem.bottom - 2 );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 2, 0 );
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
+
+		hPen = ::CreatePen( PS_SOLID, 0, cBtnDkShadow );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 1, NULL );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 1, pDis->rcItem.bottom - 1 );
+		::LineTo( pDis->hDC, pDis->rcItem.right - 1, -1 );
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
+	}
+	/* 指定色で塗りつぶす */
+	hBrush = ::CreateSolidBrush( cColor );
+	hBrushOld = (HBRUSH)::SelectObject( pDis->hDC, hBrush );
+	cRim = cBtnShadow;
+	hPen = ::CreatePen( PS_SOLID, 0, cRim );
+	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+	::RoundRect( pDis->hDC, rc.left, rc.top, rc.right, rc.bottom , 5, 5 );
+	::SelectObject( pDis->hDC, hPenOld );
+	::SelectObject( pDis->hDC, hBrushOld );
+	::DeleteObject( hPen );
+	::DeleteObject( hBrush );
+
+
+//	/* 区切り縦棒 */
+//	hPen = ::CreatePen( PS_SOLID, 0, cBtnShadow );
+//	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+//	::MoveToEx( pDis->hDC, rc.right + 3, rc.top, NULL );
+//	::LineTo( pDis->hDC, rc.right + 3, rc.bottom );
+//	::SelectObject( pDis->hDC, hPenOld );
+//	::DeleteObject( hPen );
+//
+//	hPen = ::CreatePen( PS_SOLID, 0, cBtnHiLight );
+//	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+//	::MoveToEx( pDis->hDC, rc.right + 4, rc.top, NULL );
+//	::LineTo( pDis->hDC, rc.right + 4, rc.bottom );
+//	::SelectObject( pDis->hDC, hPenOld );
+//	::DeleteObject( hPen );
+//
+//	/* ▼記号 */
+//	hPen = ::CreatePen( PS_SOLID, 0, cBtnDkShadow );
+//	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+//	::MoveToEx( pDis->hDC, rc.right + 6    , rc.top + 6, NULL );
+//	::LineTo(   pDis->hDC, rc.right + 6 + 5, rc.top + 6 );
+//	::MoveToEx( pDis->hDC, rc.right + 7    , rc.top + 7, NULL );
+//	::LineTo(   pDis->hDC, rc.right + 7 + 3, rc.top + 7 );
+//	::MoveToEx( pDis->hDC, rc.right + 8    , rc.top + 8, NULL );
+//	::LineTo(   pDis->hDC, rc.right + 8 + 1, rc.top + 8 );
+//	::SelectObject( pDis->hDC, hPenOld );
+//	::DeleteObject( hPen );
+
+	/* フォーカスの長方形 */
+	if( pDis->itemState & ODS_FOCUS ){
+		rcFocus.top -= 3;
+		rcFocus.left -= 3;
+		rcFocus.right += 2;
+		rcFocus.bottom += 2;
+		::DrawFocusRect( pDis->hDC, &rcFocus );
+	}
+	return;
+}
+
+
+
+
+
+
+/* ツールバーボタンリストのアイテム描画 */
+void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
+{
+	char		szLabel[256];
+	char		szFuncName[200];
+	TBBUTTON	tbb;
+	int			nLength;
+	HBRUSH		hBrush;
+	RECT		rc;
+	RECT		rc0;
+	RECT		rc1;
+	RECT		rc2;
+//	SIZE		sizDimension;
+//	HDC			hdcCompatDC;
+//	HBITMAP		m_hbmpCompatBMPOld;
+
+
+	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+	::FillRect( pDis->hDC, &pDis->rcItem, hBrush );
+	::DeleteObject( hBrush );
+
+	rc  = pDis->rcItem;
+	rc0 = pDis->rcItem;
+	rc0.left += 18;//20 //Oct. 18, 2000 JEPRO 行先頭のアイコンとそれに続くキャプションとの間を少し詰めた(20→18)
+	rc1 = rc0; 
+	rc2 = rc0; 
+
+	if( (int)pDis->itemID < 0 ){
+	}else{
+
+		tbb = m_cShareData.m_tbMyButton[pDis->itemData];
+
+		if( 0 != tbb.idCommand ){
+			/* ビットマップの表示 灰色を透明描画 */
+			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top  + 2, ILD_NORMAL);
+#if 0//////////////////////////////////
+			/* 再描画用コンパチブルＤＣ */
+			hdcCompatDC = ::CreateCompatibleDC( pDis->hDC );
+			/* ビットマップサイズ取得 */
+			::GetBitmapDimensionEx( m_hbmpToolButtons, &sizDimension );
+			/* ビットマップ選択 */
+			m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( hdcCompatDC, m_hbmpToolButtons );
+
+			/* ビットマップ描画 */
+			::BitBlt(
+				pDis->hDC,	// handle to destination device context 
+				rc.left + 2,	// x-coordinate of destination rectangle's upper-left corner
+				rc.top  + 2,	// x-coordinate of destination rectangle's upper-left corner
+				16,	// width of destination rectangle 
+//	Sept. 17, 2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更
+//				15,	// height of destination rectangle 
+				16,	// height of destination rectangle 
+				hdcCompatDC,	// handle to source device context 
+				16 * tbb.iBitmap,	// x-coordinate of source rectangle's upper-left corner  
+				0,	// y-coordinate of source rectangle's upper-left corner
+				SRCCOPY 	// raster operation code 
+			);
+//	Sept. 17,2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更する必要ある？
+//	とりあえずそのままで問題なさそうなので変更していない
+//	Sept. 21, 2000 JEPRO_16thdot やはり念のためここも変更してみた
+//			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 0, rc.top  + 0, 16 + 4, 15 + 4,
+//				::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
+//			);
+//			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 1, rc.top  + 1, 16 + 2, 15 + 2,
+//				::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
+//			);
+			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 0, rc.top  + 0, 16 + 4, 16 + 4,
+				::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
+			);
+			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 1, rc.top  + 1, 16 + 2, 16 + 2,
+				::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
+			);
+
+			::SelectObject( hdcCompatDC, m_hbmpCompatBMPOld );
+			::DeleteDC( hdcCompatDC );
+#endif //////////////////////////////////
+		}
+
+		if( 0 == tbb.idCommand ){
+//			nLength = strlen( strcpy( szFuncName, "セパレータ"	) );
+//			nLength = strlen( strcpy( szFuncName, "---------------------" ) );
+			nLength = strlen( strcpy( szFuncName, "───────────" ) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータ
+		}else{
+			nLength = ::LoadString( m_hInstance, tbb.idCommand, szFuncName, sizeof(szFuncName) );
+		}
+		if( 0 < nLength ){
+			wsprintf( szLabel, "%s", szFuncName );
+		}else{
+			wsprintf( szLabel, "%s", "????????" );
+		}
+
+		/* アイテムが選択されている */
+		if( pDis->itemState & ODS_SELECTED ){
+			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT ) );
+			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
+		}else{
+			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_WINDOWTEXT ) );
+		}	
+		rc1.left++;
+		rc1.top++;
+		rc1.right--;
+		rc1.bottom--;
+		::FillRect( pDis->hDC, &rc1, hBrush );
+		::DeleteObject( hBrush );
+
+		::SetBkMode( pDis->hDC, TRANSPARENT	);
+		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, strlen( szLabel ) );
+
+	}
+
+	/* アイテムにフォーカスがある */
+	if( pDis->itemState & ODS_FOCUS ){
+		::DrawFocusRect( pDis->hDC, &rc2 );
+	}
+	return;
+}
+
+
+
+
+
+
+//	キーワード：共通設定タブ順序(プロパティシート)
+/* プロパティシートの作成 */
+int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
+{
+//	m_nActiveItem = nActiveItem;
+	
+	/* 共有データ構造体のアドレスを返す */
+	m_cShareData.Init();
+	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+    
+	int				nRet;
+	PROPSHEETPAGE	psp[32];
+    PROPSHEETHEADER	psh;
+	int				nIdx;
+
+//	m_Common.m_nMAXLINELEN_org = m_Common.m_nMAXLINELEN;
+
+
+	nIdx = 0;
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+    psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP1P1 );
+    psp[nIdx].pszIcon = NULL/*MAKEINTRESOURCE(IDI_FONT)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P1Proc;
+ //   psp[nIdx].pszTitle = "全般1";
+    psp[nIdx].pszTitle = "全般";	//	Oct. 1, 2000 jepro "全般2"が既に"書式"にタイトル変更されているのでここも`1'を取った
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_WIN );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)DlgProc_PROP_WIN;
+    psp[nIdx].pszTitle = "ウィンドウ";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_EDIT );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)DlgProc_PROP_EDIT;
+    psp[nIdx].pszTitle = "編集";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_FILE );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P2Proc;
+    psp[nIdx].pszTitle = "ファイル";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_BACKUP );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)DlgProc_PROP_BACKUP;
+    psp[nIdx].pszTitle = "バックアップ";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+    psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_FORMAT );
+    psp[nIdx].pszIcon = NULL/*MAKEINTRESOURCE(IDI_FONT)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P9Proc;
+    psp[nIdx].pszTitle = "書式";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_URL );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)DlgProc_PROP_URL;
+    psp[nIdx].pszTitle = "クリッカブルURL";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_GREP );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)DlgProc_PROP_GREP;
+    psp[nIdx].pszTitle = "Grep";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+//  memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+//	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+//	psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+//	psp[nIdx].hInstance = m_hInstance;
+//	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP1P3 );
+//	psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+//	psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P3Proc;
+//	psp[nIdx].pszTitle = MAKEINTRESOURCE( IDS_PROP1P3 );
+//	psp[nIdx].lParam = (LPARAM)this;
+//	psp[nIdx].pfnCallback = NULL;
+//	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( /*IDD_PROP1P5*//*IDD_PROP1P5_NEW*/IDD_PROP_KEYBIND );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P5Proc;
+    psp[nIdx].pszTitle = "キー割り当て";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_CUSTMENU );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P8Proc;
+    psp[nIdx].pszTitle = "カスタムメニュー";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_TOOLBAR );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P6Proc;
+    psp[nIdx].pszTitle = "ツールバー";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_KEYWORD );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P7Proc;
+    psp[nIdx].pszTitle = "キーワード";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+    memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+	psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+    psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+    psp[nIdx].hInstance = m_hInstance;
+    psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_HELPER );
+    psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+    psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P10Proc;
+    psp[nIdx].pszTitle = "支援";
+    psp[nIdx].lParam = (LPARAM)this;
+    psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+
+//		memset( &psp[nIdx], 0, sizeof(PROPSHEETPAGE) );
+//		psp[nIdx].dwSize = sizeof(PROPSHEETPAGE);
+//		psp[nIdx].dwFlags = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
+//		psp[nIdx].hInstance = m_hInstance;
+//		psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_MAIL );
+//		psp[nIdx].pszIcon = NULL /*MAKEINTRESOURCE(IDI_BORDER)*/;
+//		psp[nIdx].pfnDlgProc = (DLGPROC)Prop1P4Proc;
+//		psp[nIdx].pszTitle = "メール";
+//		psp[nIdx].lParam = (LPARAM)this;
+//		psp[nIdx].pfnCallback = NULL;
+//		nIdx++;
+
+    memset( &psh, 0, sizeof(PROPSHEETHEADER) );
+	psh.dwSize = sizeof(PROPSHEETHEADER);
+// JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
+//  psh.dwFlags = /*PSH_USEICONID |*/ /*PSH_NOAPPLYNOW |*/ PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
+	psh.dwFlags = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
+    psh.hwndParent = m_hwndParent;
+    psh.hInstance = m_hInstance;
+    psh.pszIcon = NULL /*MAKEINTRESOURCE(IDI_CELL_PROPERTIES)*/;
+    psh.pszCaption = (LPSTR) "共通設定";
+    psh.nPages = nIdx;
+
+    
+	if( -1 == nPageNum ){
+		psh.nStartPage = m_nPageNum;
+    }else{
+		psh.nStartPage = nPageNum;
+	}
+	if( 0 > psh.nStartPage ){
+		psh.nStartPage = 0;
+	}
+	if( psh.nPages - 1 < psh.nStartPage ){
+		psh.nStartPage = psh.nPages - 1;
+	}
+
+	psh.ppsp = (LPCPROPSHEETPAGE)psp;
+    psh.pfnCallback = NULL;
+
+    nRet = ::PropertySheet( &psh );
+	if( -1 == nRet ){
+		char*	pszMsgBuf;
+		::FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+			FORMAT_MESSAGE_FROM_SYSTEM | 
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			::GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
+			(LPTSTR) &pszMsgBuf,
+			0,
+			NULL 
+		);
+		::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
+			"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%s\n", psh.nStartPage, pszMsgBuf
+		);
+		::LocalFree( pszMsgBuf );
+	}
+//	{
+//		CDlgDebug	cDlgDebug;
+//		CMemory		cmemDebugInfo;
+//		char		szText[1024];
+//  
+//		sprintf( szText, "aaaaaaaaa\r\nbbbbbbbbbbb\r\nccccccccccc\r\n" );
+//		cmemDebugInfo.Append( szText, strlen( szText ) );
+//		cDlgDebug.DoModal( m_hInstance, m_hwndParent, cmemDebugInfo );
+//	}
+    
+	return nRet;
+}
+
+
+
+
+
+/* p1 メッセージ処理 */
+BOOL CPropCommon::DispatchEvent_p1(
+    HWND	hwndDlg,	// handle to dialog box
+    UINT	uMsg,	// message
+    WPARAM	wParam,	// first message parameter
+    LPARAM	lParam 	// second message parameter
+)
+{
+	WORD		wNotifyCode;
+	WORD		wID;
+	HWND		hwndCtl;
+	NMHDR*		pNMHDR;
+	NM_UPDOWN*	pMNUD;
+	int			idCtrl;
+	int			nVal;
+//    LPDRAWITEMSTRUCT pDis;
+
+	switch( uMsg ){
+
+	case WM_INITDIALOG:
+		/* ダイアログデータの設定 p1 */
+		SetData_p1( hwndDlg );
+		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
+
+		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
+
+		return TRUE;
+	case WM_COMMAND:
+		wNotifyCode = HIWORD(wParam);	/* 通知コード */
+		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		switch( wNotifyCode ){
+		/* ボタン／チェックボックスがクリックされた */
+		case BN_CLICKED:
+			switch( wID ){
+//	/* タスクトレイを使う */
+//	m_Common.m_bUseTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON );
+//	/* タスクトレイに常駐 */
+//	m_Common.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
+
+			case IDC_CHECK_USETRAYICON:	/* タスクトレイを使う */
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+				}else{
+					::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+				}
+				return TRUE;
+				
+			case IDC_CHECK_STAYTASKTRAY:	/* タスクトレイに常駐 */
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY ) ){
+					::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, TRUE );	/* タスクトレイを使う */
+				}else{
+				}
+				return TRUE;
+
+			case IDC_CHECK_INDENT:	/* オートインデント */
+//				MYTRACE( "IDC_CHECK_INDENT\n" );
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
+					/* 日本語空白もインデント */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), TRUE );
+				}else{
+					/* 日本語空白もインデント */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
+				}
+				return TRUE;
+			
+			case IDC_BUTTON_CLEAR_MRU_FILE:
+				/* ファイルの履歴をクリア */
+				if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+					"最近使ったファイルの履歴を削除します。\nよろしいですか？\n" ) ){
+					return TRUE;
+				}
+				
+				m_pShareData->m_nMRUArrNum = 0;
+				::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+					"最近使ったファイルの履歴を削除しました。\n" 
+				);
+				return TRUE;
+			case IDC_BUTTON_CLEAR_MRU_FOLDER:
+				/* フォルダの履歴をクリア */
+				if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+					"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n" ) ){
+					return TRUE;
+				}
+				m_pShareData->m_nOPENFOLDERArrNum = 0;
+				::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+					"最近使ったフォルダの履歴を削除しました。\n" 
+				);
+				return TRUE;
+
+			}
+		}
+		break;
+	case WM_NOTIFY:
+		idCtrl = (int)wParam;
+		pNMHDR = (NMHDR*)lParam;
+		pMNUD  = (NM_UPDOWN*)lParam;
+		switch( idCtrl ){
+//		case IDC_SPIN_MAXLINELEN:
+//			/* 折り返し文字数 */
+//			MYTRACE( "IDC_SPIN_MAXLINELEN\n" );
+//			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
+//			if( pMNUD->iDelta < 0 ){
+//				++nVal;
+//			}else
+//			if( pMNUD->iDelta > 0 ){
+//				--nVal;
+//			}
+//			if( nVal < 10 ){
+//				nVal = 10;
+//			}
+//			if( nVal > 10240 ){
+//				nVal = 10240;
+//			}
+//			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nVal, FALSE );
+//			return TRUE;
+//		case IDC_SPIN_CHARSPACE:
+//			/* 文字の隙間 */
+//			MYTRACE( "IDC_SPIN_CHARSPACE\n" );
+//			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
+//			if( pMNUD->iDelta < 0 ){
+//				++nVal;
+//			}else
+//			if( pMNUD->iDelta > 0 ){
+//				--nVal;
+//			}
+//			if( nVal < 0 ){
+//				nVal = 0;
+//			}
+//			if( nVal > 16 ){
+//				nVal = 16;
+//			}
+//			::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nVal, FALSE );
+//			return TRUE;
+//		case IDC_SPIN_LINESPACE:
+//			/* 行の隙間 */
+//			MYTRACE( "IDC_SPIN_LINESPACE\n" );
+//			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
+//			if( pMNUD->iDelta < 0 ){
+//				++nVal;
+//			}else
+//			if( pMNUD->iDelta > 0 ){
+//				--nVal;
+//			}
+//			if( nVal < 0 ){
+//				nVal = 0;
+//			}
+//			if( nVal > 16 ){
+//				nVal = 16;
+//			}
+//			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nVal, FALSE );
+//			return TRUE;
+		case IDC_SPIN_REPEATEDSCROLLLINENUM:
+			/* キーリピート時のスクロール行数 */
+//			MYTRACE( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 1 ){
+				nVal = 1;
+			}
+			if( nVal > 10 ){
+				nVal = 10;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nVal, FALSE );
+			return TRUE;
+		case IDC_SPIN_MAX_MRU_FILE:
+			/* ファイルの履歴MAX */
+//			MYTRACE( "IDC_SPIN_MAX_MRU_FILE\n" );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 0 ){
+				nVal = 0;
+			}
+			if( nVal > MAX_MRU ){
+				nVal = MAX_MRU;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nVal, FALSE );
+			return TRUE;
+		case IDC_SPIN_MAX_MRU_FOLDER:
+			/* フォルダの履歴MAX */
+//			MYTRACE( "IDC_SPIN_MAX_MRU_FOLDER\n" );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 0 ){
+				nVal = 0;
+			}
+			if( nVal > MAX_OPENFOLDER ){
+				nVal = MAX_OPENFOLDER;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, nVal, FALSE );
+			return TRUE;
+		default:
+			switch( pNMHDR->code ){
+			case PSN_HELP:
+				OnHelp( hwndDlg, IDD_PROP1P1 );
+				return TRUE;
+			case PSN_KILLACTIVE:
+//				MYTRACE( "p1 PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 p1 */
+				GetData_p1( hwndDlg );
+				return TRUE;
+			}
+			break;
+		}
+
+//		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
+//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom   );
+//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code     );
+//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos      );
+//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta    );
+		break;
+	}
+	return FALSE;
+}
+
+
+
+
+
+/* ダイアログデータの設定 p1 */
+void CPropCommon::SetData_p1( HWND hwndDlg )
+{
+	BOOL	bRet;
+	static	int	nTabArr[] = { 2, 4, 8 };
+	static	int	nTabArrNum = sizeof(nTabArr) / sizeof(nTabArr[0]);
+//	int		i, j;
+//	char	szWork[32];
+
+
+//	/* 折り返し文字数 */
+//	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, m_Common.m_nMAXLINELEN, FALSE );
+
+//	/* 文字の隙間 */
+//	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Common.m_nCHARSPACE, FALSE );
+
+//	/* 行の隙間 */
+//	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Common.m_nLINESPACE, FALSE );
+
+
+	/* カーソルのタイプ 0=win 1=dos  */
+	if( 0 == m_Common.GetCaretType() ){
+		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE0, TRUE );
+		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE1, FALSE );
+	}else{
+		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE0, FALSE );
+		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE1, TRUE );
+	}
+
+
+	/* フリーカーソルモード */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_bIsFreeCursorMode );
+
+	/* インデント */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Common.m_bAutoIndent );
+
+	/* 日本語空白もインデント */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Common.m_bAutoIndent_ZENSPACE );
+
+	if( !m_Common.m_bAutoIndent ){
+		/* 日本語空白もインデント */
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
+	}
+
+//	/* TAB幅 */
+//	j = 0;
+//	for( i = 0; i < nTabArrNum; ++i ){
+//		sprintf( szWork, "%d", nTabArr[i] );
+//		::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szWork );
+///		if( m_Common.m_nTABSPACE == nTabArr[i] ){
+//			j = i;
+//		}
+//	}
+//	::SendDlgItemMessage( hwndDlg, IDC_COMBO_TABSPACE, CB_SETCURSEL, (WPARAM)j, 0 );
+
+
+	/* 終了時の確認をする */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_EXITCONFIRM, m_Common.m_bExitConfirm );
+
+	/* キーリピート時のスクロール行数 */
+	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, m_Common.m_nRepeatedScrollLineNum, FALSE );
+
+	/* キーリピート時のスクロールを滑らかにするか */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_nRepeatedScroll_Smooth );
+
+
+//	/* 折り返し行に改行を付けてコピー */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY, m_Common.m_bAddCRLFWhenCopy );
+
+
+//	/* Grepモード: エンターキーでタグジャンプ */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_bGTJW_RETURN );
+//
+//	/* Grepモード: ダブルクリックでタグジャンプ  */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_bGTJW_LDBLCLK );
+
+	/* ファイルの履歴MAX */
+	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_nMRUArrNum_MAX, FALSE );
+
+	/* フォルダの履歴MAX */
+	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, m_Common.m_nOPENFOLDERArrNum_MAX, FALSE );
+
+
+
+//	/* 次回ウィンドウを開いたときツールバーを表示する */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTOOLBAR, m_Common.m_bDispTOOLBAR );
+//
+//	/* 次回ウィンドウを開いたときファンクションキーを表示する */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_DispFUNCKEYWND, m_Common.m_bDispFUNCKEYWND );
+//
+//	/* ファンクションキー表示位置／0:上 1:下 */
+//	if( 0 == m_Common.m_nFUNCKEYWND_Place ){
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, TRUE );
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, FALSE );
+//	}else{
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, FALSE );
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, TRUE );
+//	}
+//
+//	/* 次回ウィンドウを開いたときステータスバーを表示する */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
+//
+//	/* ウィンドウサイズ継承 */
+//	::CheckDlgButton( hwndDlg, IDC_CHECK_WINSIZE, m_Common.m_bSaveWindowSize );
+
+
+
+	/* タスクトレイを使う */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, m_Common.m_bUseTaskTray );
+	if( m_Common.m_bUseTaskTray ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+	}
+	/* タスクトレイに常駐 */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, m_Common.m_bStayTaskTray );
+
+	/* タスクトレイメニューのショートカット */
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), HKM_SETHOTKEY, MAKEWORD(m_Common.m_wTrayMenuHotKeyCode, m_Common.m_wTrayMenuHotKeyMods), 0 );
+
+	
+	return;
+}
+
+
+
+
+
+/* ダイアログデータの取得 p1 */
+int CPropCommon::GetData_p1( HWND hwndDlg )
+{
+	m_nPageNum = ID_PAGENUM_ZENPAN;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+
+//	/* 折り返し文字数 */
+//	m_Common.m_nMAXLINELEN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
+//	if( m_Common.m_nMAXLINELEN < 10 ){
+//		m_Common.m_nMAXLINELEN = 10;
+//	}
+//	if( m_Common.m_nMAXLINELEN > 10240 ){
+//		m_Common.m_nMAXLINELEN = 10240;
+//	}
+  
+//	/* 文字の隙間 */
+//	m_Common.m_nCHARSPACE = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
+//	if( m_Common.m_nCHARSPACE < 0 ){
+//		m_Common.m_nCHARSPACE = 0;
+///	}
+//	if( m_Common.m_nCHARSPACE > 16 ){
+//		m_Common.m_nCHARSPACE = 16;
+//	}
+
+	/* 行の隙間 */
+//	m_Common.m_nLINESPACE = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
+//	if( m_Common.m_nLINESPACE < 0 ){
+//		m_Common.m_nLINESPACE = 0;
+//	}
+//	if( m_Common.m_nLINESPACE > 16 ){
+//		m_Common.m_nLINESPACE = 16;
+//	}
+
+	/* カーソルのタイプ 0=win 1=dos  */
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_CARETTYPE0 ) ){
+		m_Common.SetCaretType(0);
+	}
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_CARETTYPE1 ) ){
+		m_Common.SetCaretType(1);
+	}
+
+	/* フリーカーソルモード */
+	m_Common.m_bIsFreeCursorMode = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FREECARET );
+
+	/* インデント */
+	m_Common.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
+
+	/* 日本語空白もインデント */
+	m_Common.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+
+//	/* TAB幅 */
+//	m_Common.m_nTABSPACE = ::GetDlgItemInt( hwndDlg, IDC_COMBO_TABSPACE, NULL, FALSE );
+
+
+	/* 終了時の確認をする */
+	m_Common.m_bExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXITCONFIRM );
+
+	/* キーリピート時のスクロール行数 */
+	m_Common.m_nRepeatedScrollLineNum = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
+	if( m_Common.m_nRepeatedScrollLineNum < 1 ){
+		m_Common.m_nRepeatedScrollLineNum = 1;
+	}
+	if( m_Common.m_nRepeatedScrollLineNum > 10 ){
+		m_Common.m_nRepeatedScrollLineNum = 10;
+	}
+
+	/* キーリピート時のスクロールを滑らかにするか */
+	m_Common.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH );
+
+
+//	/* 折り返し行に改行を付けてコピー */
+//	m_Common.m_bAddCRLFWhenCopy = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY );
+
+//	/* Grepモード: エンターキーでタグジャンプ */
+//	m_Common.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
+//
+//	/* Grepモード: ダブルクリックでタグジャンプ  */
+//	m_Common.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
+
+	/* ファイルの履歴MAX */
+	m_Common.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
+	if( m_Common.m_nMRUArrNum_MAX < 0 ){
+		m_Common.m_nMRUArrNum_MAX = 0;
+	}
+	if( m_Common.m_nMRUArrNum_MAX > MAX_MRU ){
+		m_Common.m_nMRUArrNum_MAX = MAX_MRU;
+	}
+
+
+	/* フォルダの履歴MAX */
+	m_Common.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
+	if( m_Common.m_nOPENFOLDERArrNum_MAX < 0 ){
+		m_Common.m_nOPENFOLDERArrNum_MAX = 0;
+	}
+	if( m_Common.m_nOPENFOLDERArrNum_MAX > MAX_OPENFOLDER ){
+		m_Common.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER;
+	}
+
+//	/* ファンクションキー表示位置／0:上 1:下 */
+//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1 ) ){
+//		m_Common.m_nFUNCKEYWND_Place = 0;
+//	}
+//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2) ){
+//		m_Common.m_nFUNCKEYWND_Place = 1;
+//	}
+//
+//	/* 次回ウィンドウを開いたときツールバーを表示する */
+//	m_Common.m_bDispTOOLBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTOOLBAR );
+//	
+//	/* 次回ウィンドウを開いたときファンクションキーを表示する */
+//	m_Common.m_bDispFUNCKEYWND = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND );
+//
+//	/* 次回ウィンドウを開いたときステータスバーを表示する */
+//	m_Common.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );
+//
+//	/* ウィンドウサイズ継承 */
+//	m_Common.m_bSaveWindowSize = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WINSIZE );
+//
+	/* タスクトレイを使う */
+	m_Common.m_bUseTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON );
+	/* タスクトレイに常駐 */
+	m_Common.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
+
+	/* タスクトレイメニューのショートカット */
+	LRESULT	lResult; 
+	lResult = ::SendMessage( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), HKM_GETHOTKEY, 0, 0 );
+	m_Common.m_wTrayMenuHotKeyCode = LOBYTE( lResult );
+	m_Common.m_wTrayMenuHotKeyMods = HIBYTE( lResult );
+
+	return TRUE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ヘルプ */
+void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
+{
+	int		nContextID;
+	switch( nPageID ){
+	case IDD_PROP1P1:
+		nContextID = 81;
+		break;
+	case IDD_PROP_FORMAT:
+		nContextID = 82;
+		break;
+	case IDD_PROP_FILE:
+		nContextID = 83;
+		break;
+//	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
+//	変更は少し後の行(Sept. 9, 2000)で行っている
+//	case IDD_PROP1P5:
+//		nContextID = 84;
+//		break;
+	case IDD_PROP_TOOLBAR:
+		nContextID = 85;
+		break;
+	case IDD_PROP_KEYWORD:
+		nContextID = 86;
+		break;
+	case IDD_PROP_CUSTMENU:
+		nContextID = 87;
+		break;
+	case IDD_PROP_HELPER:
+		nContextID = 88;
+		break;
+
+	// From Here Sept. 9, 2000 JEPRO　共通設定のヘルプボタンが効かなくなっていた部分を以下の追加によって修正
+	case IDD_PROP_EDIT:
+		nContextID = 144;
+		break;
+	case IDD_PROP_BACKUP:
+		nContextID = 145;
+		break;
+	case IDD_PROP_WIN:
+		nContextID = 146;
+		break;
+	case IDD_PROP_URL:
+		nContextID = 147;
+		break;
+	case IDD_PROP_GREP:
+		nContextID = 148;
+		break;
+	case IDD_PROP_KEYBIND:
+		nContextID = 84;
+		break;
+	// To Here Sept. 9, 2000
+
+	default:
+		nContextID = -1;
+		break;
+	}
+	if( -1 != nContextID ){
+		::WinHelp( hwndParent, m_szHelpFile, HELP_CONTEXT, nContextID );
+	}
+	return;
+}
+
+
+
+
+
+
+
+
+/*[EOF]*/
