@@ -246,19 +246,30 @@ public:
 		return S_OK; 
 	};
 
+	//	Nov. 3, 2002 鬼
+	//	エラー行番号表示対応
 	virtual HRESULT STDMETHODCALLTYPE OnScriptError(
-	    /* [in] */ IActiveScriptError *pscripterror) 
+	  /* [in] */ IActiveScriptError *pscripterror)
 	{ 
 		EXCEPINFO Info;
 		if(pscripterror->GetExceptionInfo(&Info) == S_OK)
 		{
+			DWORD Context;
+			ULONG Line;
+			LONG Pos;
+			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
+			{
+				wchar_t *Message = new wchar_t[SysStringLen(Info.bstrDescription) + 128];
+				wsprintfW(Message, L"[Line %d] %ls", Line + 1, Info.bstrDescription);
+				SysReAllocString(&Info.bstrDescription, Message);
+				delete[] Message;
+			}
 			m_Client->Error(Info.bstrDescription, Info.bstrSource);
-			
 			SysFreeString(Info.bstrSource);
 			SysFreeString(Info.bstrDescription);
 			SysFreeString(Info.bstrHelpFile);
 		}
-		return S_OK; 
+		return S_OK;
 	};
 
 	virtual HRESULT STDMETHODCALLTYPE OnEnterScript() {
