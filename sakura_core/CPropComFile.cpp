@@ -286,6 +286,8 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.GetRestoreBookmarks() );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.GetAutoMIMEdecode() );
+	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
+	::CheckDlgButton( hwndDlg, IDC_CHECK_QueryIfCodeChange, m_Common.GetQueryIfCodeChange() );
 
 	EnableFilePropInput(hwndDlg);
 	return;
@@ -365,6 +367,8 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	m_Common.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
 	m_Common.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
+	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
+	m_Common.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
 
 	return TRUE;
 }

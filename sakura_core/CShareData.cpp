@@ -135,8 +135,10 @@ struct ARRHEAD {
 	Version 51:
 	タグジャンプ機能追加 2004/06/21 novice
 
+	Version 52:
+	前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ追加	2004.10.03 genta
 */
-const unsigned int uShareDataVersion = 51;
+const unsigned int uShareDataVersion = 52;
 
 /*
 ||	Singleton風
@@ -917,6 +919,9 @@ bool CShareData::Init( void )
 
 		//	Nov. 12, 2000 genta
 		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+
+		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
+		m_pShareData->m_Common.m_bQueryIfCodeChange = TRUE;
 
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */
