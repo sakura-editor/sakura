@@ -41,7 +41,13 @@ const DWORD p_helpids[] = {	//12900
 #elif defined(__GNUG__)
 #  define COMPILER_TYPE "G"
 #elif defined(_MSC_VER)
-#  define COMPILER_TYPE "V"
+#  if defined(_M_IA64)
+#    define COMPILER_TYPE "V_I64"
+#  elif defined(_M_AMD64)
+#    define COMPILER_TYPE "V_A64"
+#  else
+#    define COMPILER_TYPE "V"
+#  endif
 #else
 #  define COMPILER_TYPE "U"
 #endif
