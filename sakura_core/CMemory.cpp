@@ -1387,29 +1387,10 @@ void CMemory::UnicodeToUTF8( void )
 	return;
 }
 
-/*****:
-UTF-7
+/* コード変換 UTF-7→SJIS
 
-	メールにおいて Unicode を用いたいときに使います。メールは、7 bit 文字が前提の環境で用いられるので、
-	Unicode を UTF-7 によって 7bit 文字にエンコードするのです。
-
-	エンコード方法：
-		ASCII 文字と、space、タブ文字、CR、LF は直接エンコードします。
-		その他の Unicode 文字は、Base64 エンコードします。
-		ASCII文字と、Base64 エンコードされた Unicode を区別するために、+ と - を使います。 + が現れたら、
-		以後は Base64 部分。- が現れたら、あるいはBase64で使われない文字が現れたら以後は ASCII 部分。
-		Base64 部分の後ろの'-'はデコード時に取り除かれますが、それ以外の文字は取り除かれません。
-		(特殊ケース : + を文字として使いたいときは、+- と書きます。)
-
-	Unicode:
-		My name is サーブル !
-	UTF-7:
-		My name is +MLUw/DDWMOs- !
-
-	UTF-7 は1994/7月に RFC 1642 (現在は Obsolete)として規格化され、1997/5月に RFC 2152 として再規格化されました。
-***/
-
-/* コード変換 UTF-7→SJIS */
+	UTF-7についてはRFC 2152参照．
+*/
 void CMemory::UTF7ToSJIS( void )
 {
 	char*		pBuf = (char*)m_pData;
