@@ -328,6 +328,8 @@ CPropTypes::CPropTypes()
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
+	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
+	m_pCKeyWordSetMgr = &(m_pShareData->m_CKeyWordSetMgr);
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
@@ -808,6 +810,16 @@ BOOL CPropTypes::DispatchEvent_p1(
 				}
 				return TRUE;
 
+				case IDC_CHECK_TAB_ARROW:
+				// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW ) ){
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), FALSE );
+				}
+				else {
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), TRUE );
+				}
+				return TRUE;
+
 			}
 			break;	/* BN_CLICKED */
 		}
@@ -1015,6 +1027,13 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 
 	//タブ矢印表示	//@@@ 2003.03.26 MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TAB_ARROW, m_Types.m_bTabArrow );
+	// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
+	if( m_Types.m_bTabArrow ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), FALSE );
+	}
+	else {
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), TRUE );
+	}
 // From Here 2001.12.03 hor
 	/* スペースの挿入 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );
@@ -2362,9 +2381,10 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	::SendMessage( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */
 	/* 一行目は空白 */
 	::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)" " );
-	if( 0 < m_CKeyWordSetMgr.m_nKeyWordSetNum ){
-		for( i = 0; i < m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_CKeyWordSetMgr.GetTypeName( i ) );
+	//	Mar. 31, 2003 genta KeyWordSetMgrをポインタに
+	if( 0 < m_pCKeyWordSetMgr->m_nKeyWordSetNum ){
+		for( i = 0; i < m_pCKeyWordSetMgr->m_nKeyWordSetNum; ++i ){
+			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_pCKeyWordSetMgr->GetTypeName( i ) );
 		}
 		if( -1 == m_Types.m_nKeyWordSetIdx ){
 			/* セット名コンボボックスのデフォルト選択 */
@@ -2381,9 +2401,10 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	::SendMessage( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */							//MIK
 	/* 一行目は空白 */																							//MIK
 	::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)" " );											//MIK
-	if( 0 < m_CKeyWordSetMgr.m_nKeyWordSetNum ){																//MIK
-		for( i = 0; i < m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){												//MIK
-			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_CKeyWordSetMgr.GetTypeName( i ) );	//MIK
+	//	Mar. 31, 2003 genta KeyWordSetMgrをポインタに
+	if( 0 < m_pCKeyWordSetMgr->m_nKeyWordSetNum ){																//MIK
+		for( i = 0; i < m_pCKeyWordSetMgr->m_nKeyWordSetNum; ++i ){												//MIK
+			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_pCKeyWordSetMgr->GetTypeName( i ) );	//MIK
 		}																										//MIK
 		if( -1 == m_Types.m_nKeyWordSetIdx2 ){																	//MIK
 			/* セット名コンボボックスのデフォルト選択 */														//MIK
