@@ -396,17 +396,60 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			nIndex = TabCtrl_GetCurSel( hwndTab );
 			if( -1 != nIndex )
 			{
-				if( IDOK == ::MYMESSAGEBOX( m_hWnd, 
-					MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-					"最近使った%sの履歴を削除します。\n\nよろしいですか？\n",
-					p_favorite_info[nIndex].m_pszCaption ) )
+				int	nRet;
+				
+				if( p_favorite_info[nIndex].m_bHaveFavorite )
 				{
-					CRecent	*pRecent;
-					pRecent = p_favorite_info[nIndex].m_pRecent;
+					nRet = ::MYMESSAGEBOX( m_hWnd, 
+						MB_YESNOCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+						"最近使った%sの履歴を削除します。\n\nよろしいですか？\n\n"
+						"「はい」\tすべて削除します。\n"
+						"「いいえ」\tお気に入り以外を削除します。\n",
+						p_favorite_info[nIndex].m_pszCaption );
+				}
+				else
+				{
+					nRet = ::MYMESSAGEBOX( m_hWnd, 
+						MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+						"最近使った%sの履歴を削除します。\n\nよろしいですか？\n",
+						p_favorite_info[nIndex].m_pszCaption );
+				}
+				
+				CRecent	*pRecent;
+				pRecent = p_favorite_info[nIndex].m_pRecent;
+
+				switch( nRet )
+				{
+				case IDYES:
+				case IDOK:
 					if( pRecent ) pRecent->DeleteAllItem();
 					::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 						"最近使った%sの履歴を削除しました。",
 						p_favorite_info[nIndex].m_pszCaption );
+					break;
+					
+				case IDNO:
+					if( pRecent )
+					{
+						HWND hwndList = ::GetDlgItem( m_hWnd, p_favorite_info[nIndex].m_nId );
+						for( int i = pRecent->GetItemCount() - 1; i >= 0; i-- )
+						{
+							if( ! ListView_GetCheckState( hwndList, i ) ){
+								pRecent->DeleteItem( i );
+							}
+							else {
+								pRecent->SetFavorite( i );
+							}
+						}
+					}
+					::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+						"最近使った%sの履歴(お気に入り以外)を削除しました。",
+						p_favorite_info[nIndex].m_pszCaption );
+					break;
+					
+				case IDCANCEL:
+				default:
+					break;
 				}
 			}
 		}
