@@ -69,6 +69,8 @@
 	#include	<windows.h>	/* GetFileAttributes FILE_ATTRIBUTE_DIRECTORY */
 #endif
 
+#include "MY_SP.h" // Feb. 12, 2003 MIK ”²‚¯‚Ä‚¢‚½
+
 /* ============================================================================
 my_splitpath( const char *CommandLine, char *drive, char *dir, char *fname, char *ext );
 
