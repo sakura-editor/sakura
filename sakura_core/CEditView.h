@@ -370,12 +370,14 @@ protected:
 	void ScrollAtV( int );										/* 指定上端行位置へスクロール */
 	void ScrollAtH( int );										/* 指定左端桁位置へスクロール */
 	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
+public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
+protected:
 	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
 	void SetParentCaption( BOOL = FALSE );						/* 親ウィンドウのタイトルを更新 */
+public:
 	void DrawCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
-//	void Draw3dRect( HDC, int, int, int, int, COLORREF, COLORREF );
-//	void FillSolidRect( HDC, int, int, int, int, COLORREF );
+protected:
 	BOOL IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
@@ -729,6 +731,7 @@ private:
 	BOOL (WINAPI *AT_ImmSetReconvertString)( HIMC , int ,PRECONVERTSTRING , DWORD  );
 	
 	bool	m_bUnderLineON;
+	bool	m_bCaretShowFlag;
 };
 
 

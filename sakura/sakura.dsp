@@ -245,6 +245,10 @@ SOURCE=..\sakura_core\CEol.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CFileWrite.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CFuncInfo.cpp
 # End Source File
 # Begin Source File
@@ -525,7 +529,11 @@ SOURCE=..\sakura_core\CBregexp.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CBuffer.h
+SOURCE=..\sakura_core\CCommandLine.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CControlProcess.h
 # End Source File
 # Begin Source File
 
@@ -637,6 +645,10 @@ SOURCE=..\sakura_core\CEol.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CFileWrite.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CFuncInfo.h
 # End Source File
 # Begin Source File
@@ -693,6 +705,14 @@ SOURCE=..\sakura_core\CMacro.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CMacroFactory.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CMacroManagerBase.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CMarkMgr.h
 # End Source File
 # Begin Source File
@@ -713,6 +733,10 @@ SOURCE=..\sakura_core\CMRUFolder.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CNormalProcess.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\COpe.h
 # End Source File
 # Begin Source File
@@ -725,11 +749,31 @@ SOURCE=..\sakura_core\COpeBuf.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\COsVersionInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CPPA.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CPPAMacroMgr.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CPrint.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\sakura_core\CPrintPreview.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CProcess.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CProcessFactory.h
 # End Source File
 # Begin Source File
 
@@ -806,10 +850,6 @@ SOURCE=..\sakura_core\my_icmp.h
 # Begin Source File
 
 SOURCE=..\sakura_core\mymessage.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\sakura_core.h
 # End Source File
 # Begin Source File
 

@@ -626,6 +626,7 @@ int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
 		++nRepeat;
 		if( Cursor_UPDOWN( -1, bSelect ) && bRepeat ){
 			for( i = 0; i < m_pShareData->m_Common.m_nRepeatedScrollLineNum - 1; ++i ){		/* キーリピート時のスクロール行数 */
+				::UpdateWindow( m_hWnd );	//	YAZAKI
 				Cursor_UPDOWN( -1, bSelect );
 				++nRepeat;
 			}
@@ -669,6 +670,8 @@ int CEditView::Command_DOWN( int bSelect, BOOL bRepeat )
 		++nRepeat;
 		if( Cursor_UPDOWN( 1, bSelect ) && bRepeat ){
 			for( i = 0; i < m_pShareData->m_Common.m_nRepeatedScrollLineNum - 1; ++i ){	/* キーリピート時のスクロール行数 */
+				//	ここで再描画。
+				::UpdateWindow( m_hWnd );	//	YAZAKI
 				Cursor_UPDOWN( 1, bSelect );
 				++nRepeat;
 			}
@@ -2704,8 +2707,8 @@ void CEditView::Command_PASTEBOX(char *szPaste, int nPasteSize)
 				InsertData_CEditView(
 								nInsPosX,
 								m_nCaretPosY,
-								m_pcEditDoc->m_cNewLineCode.GetValue(),
-								m_pcEditDoc->m_cNewLineCode.GetLen(),
+								m_pcEditDoc->GetNewLineCode().GetValue(),
+								m_pcEditDoc->GetNewLineCode().GetLen(),
 								&nNewLine,
 								&nNewPos,
 								pcOpe,
@@ -2998,8 +3001,8 @@ void CEditView::Command_PASTEBOX( void )
 					m_nCaretPosY,
 //					CRLF, 2001/10/02 novice
 //					1,
-					m_pcEditDoc->m_cNewLineCode.GetValue(),
-					m_pcEditDoc->m_cNewLineCode.GetLen(),
+					m_pcEditDoc->GetNewLineCode().GetValue(),
+					m_pcEditDoc->GetNewLineCode().GetLen(),
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
@@ -9586,6 +9589,7 @@ void CEditView::Command_SHOWTOOLBAR( void )
 //	m_pShareData->m_nCommonModify = TRUE;
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+	SetIMECompFormPos();	//	2002/05/30 YAZAKI ツールバーの表示/非表示を変更すると、変換位置がずれるバグ修正
 	return;
 }
 

@@ -62,7 +62,7 @@ public:
 
 	bool		IsEmptyLine( void );	//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
 	int			GetLengthWithoutEOL( void ){ return m_pLine->GetLength() - m_cEol.GetLen(); }
-	char*		GetPtr( void )             { return m_pLine->GetPtr(); }
+	char*		GetPtr( void ) const              { return m_pLine->GetPtr(); }
 protected:
 	bool		m_bModify;					/*!< 変更フラグ */
 	bool		m_bBookMark;				/*!< ブックマーク */

@@ -468,6 +468,8 @@ HWND CEditWnd::Create(
 		//	Nov. 20, 2000 genta
 		m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 	}
+	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
+	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
 	return m_hWnd;
 }
 

@@ -502,21 +502,9 @@ void CEditView::DeleteData(
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
-//			pcOpe->m_nCaretPosX_Before = m_nCaretPosX;			/* 操作前のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_Before = m_nCaretPosY;			/* 操作前のキャレット位置Ｙ */
-//			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//				pcOpe->m_nCaretPosX_Before,
-//				pcOpe->m_nCaretPosY_Before,
-//				&pcOpe->m_nCaretPosX_PHY_Before,
-//				&pcOpe->m_nCaretPosY_PHY_Before
-//			);
 			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
 
-//			pcOpe->m_nCaretPosX_After = m_nCaretPosX;	/* 操作後のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_After = m_nCaretPosY;	/* 操作後のキャレット位置Ｙ */
-//			pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
 			pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
 			pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
 			/* 操作の追加 */
@@ -525,6 +513,8 @@ void CEditView::DeleteData(
 
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
+			m_pcEditDoc->SetModified(true,bRedraw);	//	2002/06/04 YAZAKI 矩形選択を削除したときに変更マークがつかない。
+
 			m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
 //			bBoxSelected = TRUE;	// 2002/2/3 aroka
 			nSelectColmFrom_Old = m_nSelectColmFrom;
@@ -570,14 +560,6 @@ void CEditView::DeleteData(
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 						pcOpe = new COpe;
 						pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2 );
-//						pcOpe->m_nCaretPosX_Before = LineIndexToColmn( pLine2, nLineLen2, nDelPos );	/* 操作前のキャレット位置Ｘ */
-//						pcOpe->m_nCaretPosY_Before = nLineNum + 1;	/* 操作前のキャレット位置Ｙ */
-//						m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//							pcOpe->m_nCaretPosX_Before,
-//							pcOpe->m_nCaretPosY_Before,
-//							&pcOpe->m_nCaretPosX_PHY_Before,
-//							&pcOpe->m_nCaretPosY_PHY_Before
-//						);
 						m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 							LineIndexToColmn( pLine2, nLineLen2, nDelPos ),
 							nLineNum + 1,
@@ -601,14 +583,6 @@ void CEditView::DeleteData(
 					);
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-//						pcOpe->m_nCaretPosX_After = rcSel.left;	/* 操作後のキャレット位置Ｘ */
-//						pcOpe->m_nCaretPosY_After = nLineNum + 1;	/* 操作後のキャレット位置Ｙ */
-//						m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//							pcOpe->m_nCaretPosX_After,
-//							pcOpe->m_nCaretPosY_After,
-//							&pcOpe->m_nCaretPosX_PHY_After,
-//							&pcOpe->m_nCaretPosY_PHY_After
-//						);
 						m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 							rcSel.left,
 							nLineNum + 1,
@@ -663,14 +637,6 @@ void CEditView::DeleteData(
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
 				pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
-//				pcOpe->m_nCaretPosX_Before = nCaretPosXOld;			/* 操作前のキャレット位置Ｘ */
-//				pcOpe->m_nCaretPosY_Before = nCaretPosYOld;			/* 操作前のキャレット位置Ｙ */
-//				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//					pcOpe->m_nCaretPosX_Before,
-//					pcOpe->m_nCaretPosY_Before,
-//					&pcOpe->m_nCaretPosX_PHY_Before,
-//					&pcOpe->m_nCaretPosY_PHY_Before
-//				);
 				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 					nCaretPosXOld,
 					nCaretPosYOld,
@@ -678,14 +644,6 @@ void CEditView::DeleteData(
 					&pcOpe->m_nCaretPosY_PHY_Before
 				);
 
-//				pcOpe->m_nCaretPosX_After = m_nCaretPosX;	/* 操作後のキャレット位置Ｘ */
-//				pcOpe->m_nCaretPosY_After = m_nCaretPosY;	/* 操作後のキャレット位置Ｙ */
-//				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//					pcOpe->m_nCaretPosX_After,
-//					pcOpe->m_nCaretPosY_After,
-//					&pcOpe->m_nCaretPosX_PHY_After,
-//					&pcOpe->m_nCaretPosY_PHY_After
-//				);
 				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
 				pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
 				/* 操作の追加 */
@@ -2249,7 +2207,7 @@ re_do:;								// hor
 		if(!bFound	&&		// 見つからなかった
 			bRedo			// 最初の検索
 		){
-			nY=0;
+			nY=-1;	//	2002/06/01 MIK
 			bRedo=FALSE;
 			goto re_do;		// 先頭から再検索
 		}
@@ -2298,7 +2256,7 @@ re_do:;								// hor
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
-			nY=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
+			nY=m_pcEditDoc->m_cLayoutMgr.GetLineCount();	//	2002/06/01 MIK
 			bRedo=FALSE;
 			goto re_do;	// 末尾から再検索
 		}
