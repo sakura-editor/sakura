@@ -40,7 +40,7 @@ struct ARRHEAD {
 	
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 8;
+const unsigned int uShareDataVersion = 9;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､ 
@@ -859,6 +859,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentFrom2, "" );	/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[nIdx].m_szBlockCommentTo2, "" );	/* ブロックコメントデリミタ(To) */
 //#endif
+		m_pShareData->m_Types[nIdx].m_nLineCommentPos = -1;				/* 行コメント1桁位置*/
+		m_pShareData->m_Types[nIdx].m_nLineCommentPos2 = -1;			/* 行コメント2桁位置*/
 		m_pShareData->m_Types[nIdx].m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[nIdx].m_szIndentChars, "" );		/* その他のインデント対象文字 */
 

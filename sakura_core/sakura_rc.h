@@ -114,6 +114,7 @@
 #define IDC_CHECK_TOOLBARISFLAT         1076
 #define IDC_BUTTON_SSTRINGBACKCOLOR     1077
 #define IDC_CHECK6                      1077
+#define IDC_CHK_LCPOS2                  1077
 #define IDC_RADIO_BACKUP_TYPE1          1078
 #define IDC_RADIO_OUTPUTMARKED          1078
 #define IDC_RADIO_ALLAREA               1078
@@ -298,8 +299,10 @@
 #define IDC_BUTTON_ZOOMDOWN             1228
 #define IDC_BUTTON_PRINTSETTING         1232
 #define IDC_EDIT3                       1234
+#define IDC_LINECOMMENTPOS1             1234
 #define IDC_EDIT5                       1235
 #define IDC_BUTTON_PREVPAGE             1235
+#define IDC_LINECOMMENTPOS2             1235
 #define IDC_SPIN_MARGINTY               1236
 #define IDC_SPIN_MARGINBY               1237
 #define IDC_SPIN_MARGINLX               1238
@@ -430,6 +433,7 @@
 #define IDC_BUTTON_TEMPCHANGE           1384
 #define IDC_STATIC_EOL                  1385
 #define IDC_BUTTON_JUMP                 1388
+#define IDC_CHK_LCPOS1                  1389
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -464,7 +468,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        216
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1389
+#define _APS_NEXT_CONTROL_VALUE         1390
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -28,8 +28,6 @@
 #define HIDC_BUTTON_SAMETEXTCOLOR       0x93f20479    // IDD_PROP_COLOR
 #define HIDC_BUTTON_TEXTCOLOR           0x93f20420    // IDD_PROP_COLOR
 #define HIDC_BUTTON_UP                  0x86030477    // IDD_PROP_TOOLBAR
-#define HIDC_CHECK1                     0x93f20434    // IDD_PROP_COLOR
-#define HIDC_CHECK6                     0x93f20435    // IDD_PROP_COLOR
 #define HIDC_CHECK_ADDCRLFWHENCOPY      0x93f5045c    // IDD_PROP_EDIT
 #define HIDC_CHECK_ALT                  0x93f30438    // IDD_PROP_KEYBIND
 #define HIDC_CHECK_BACKUP               0x93f80434    // IDD_PROP_BACKUP
@@ -77,11 +75,11 @@
 #define HIDC_CHECK_m_bHokanKey_RIGHT    0x93f10523    // IDD_PROP_HELPER
 #define HIDC_CHECK_m_bHokanKey_SPACE    0x93f10524    // IDD_PROP_HELPER
 #define HIDC_CHECK_m_bHokanKey_TAB      0x93f10522    // IDD_PROP_HELPER
+#define HIDC_CHK_LCPOS1                 0x93f2056d    // IDD_PROP_COLOR
+#define HIDC_CHK_LCPOS2                 0x93f20435    // IDD_PROP_COLOR
 #define HIDC_COMBO_FUNCKIND             0x93f30459    // IDD_PROP_KEYBIND
 #define HIDC_COMBO_SET                  0x93f2049b    // IDD_PROP_COLOR
 #define HIDC_COMBO_SET2                 0x93f2049c    // IDD_PROP_COLOR
-#define HIDC_EDIT3                      0x93f204d2    // IDD_PROP_COLOR
-#define HIDC_EDIT5                      0x93f204d3    // IDD_PROP_COLOR
 #define HIDC_EDIT_BACKUPFOLDER          0x93f8043e    // IDD_PROP_BACKUP
 #define HIDC_EDIT_BACKUP_3              0x93f8052f    // IDD_PROP_BACKUP
 #define HIDC_EDIT_BLOCKCOMMENT_FROM     0x93f2043e    // IDD_PROP_COLOR
@@ -110,6 +108,8 @@
 #define HIDC_EDIT_nRulerBottomSpace     0x93f40455    // IDD_PROP_WIN
 #define HIDC_EDIT_nRulerHeight          0x93f4050e    // IDD_PROP_WIN
 #define HIDC_HOTKEY_TRAYMENU            0x806b0506    // IDD_PROP1P1
+#define HIDC_LINECOMMENTPOS1            0x93f204d2    // IDD_PROP_COLOR
+#define HIDC_LINECOMMENTPOS2            0x93f204d3    // IDD_PROP_COLOR
 #define HIDC_LIST_ASSIGNEDKEYS          0x93f30469    // IDD_PROP_KEYBIND
 #define HIDC_LIST_COLORS                0x93f204bb    // IDD_PROP_COLOR
 #define HIDC_LIST_FUNC                  0x93f30458    // IDD_PROP_KEYBIND
