@@ -18,6 +18,7 @@
 #include "global.h"
 #include "stdio.h"
 #include "etc_uty.h"
+#include "my_icmp.h" // 2002/11/30 Moca 追加
 
 /*!	コンストラクタ
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。

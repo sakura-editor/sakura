@@ -45,6 +45,7 @@
 #include "CDocLine.h"   // 2002.04.09 minfu
 #include "CFileLoad.h" // 2002/08/30 Moca
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A

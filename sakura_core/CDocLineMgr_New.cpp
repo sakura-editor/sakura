@@ -29,7 +29,7 @@
 #include "CMemory.h"// 2002/2/10 aroka
 #include "CBregexp.h"// 2002/2/10 aroka
 #include "sakura_rc.h"// 2002/2/10 aroka
-
+#include "my_icmp.h" // 2002/11/30 Moca 追加
 
 /* 指定範囲のデータを置換(削除 & データを挿入)
   Fromを含む位置からToの直前を含むデータを削除する
