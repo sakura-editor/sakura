@@ -134,8 +134,8 @@ $(TOOLDIR)\mrc2brc.exe : $(TOOLDIR)\mrc2brc.obj $(TOOLDIR)\RcCvt.obj
 ## Editor includes sakura_core
 tall : $(SRCDIR)\sakurabc.rc sakura_rc.exe
 	brc32 $(RFLAGS) $** 
-	move /y sakura_rc.exe sakurabc.exe
-	move /y sakura_rc.map sakurabc.map
+	move /y sakura_rc.exe sakura.exe
+	move /y sakura_rc.map sakura.map
 
 
 sakura_rc.exe : WinMain.obj $(OBJS)
