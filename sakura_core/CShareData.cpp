@@ -1227,7 +1227,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//From Here Oct. 31, 2000 JEPRO
 		/* TeX */
 		m_pShareData->m_Types[11].m_cLineComment.CopyTo( 0, "%", -1 );		/* 行コメントデリミタ */
-		m_pShareData->m_Types[11].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
+		m_pShareData->m_Types[11].m_nDefaultOutline = OUTLINE_TEX;			/* アウトライン解析方法 */
 		m_pShareData->m_Types[11].m_nKeyWordSetIdx  = 9;					/* キーワードセット */
 		m_pShareData->m_Types[11].m_nKeyWordSetIdx2 = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
 		//シングルクォーテーション文字列を色分け表示しない

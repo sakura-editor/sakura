@@ -221,6 +221,7 @@ public:
 	void			MakeFuncList_VisualBasic( CFuncInfoArr* );/* Visual Basic関数リスト作成 */ //June 23, 2001 N.Nakatani
 	void			MakeTopicList_wztxt(CFuncInfoArr*);		/* 階層付きテキスト アウトライン解析 */ // 2003.05.20 zenryaku
 	void			MakeTopicList_html(CFuncInfoArr*);		/* HTML アウトライン解析 */ // 2003.05.20 zenryaku
+	void			MakeTopicList_tex(CFuncInfoArr*);		/* TeX アウトライン解析 */ // 2003.07.20 naoh
 	void			MakeFuncList_RuleFile( CFuncInfoArr* );	/* ルールファイルを使ってリスト作成 2002.04.01 YAZAKI */
 	int				ReadRuleFile( char* pszFilename, struct oneRule* pcOneRule, int nMaxCount );	/* ルールファイル読込 2002.04.01 YAZAKI */
 

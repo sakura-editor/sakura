@@ -203,6 +203,11 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		SetTree();
 		::SetWindowText( m_hWnd, "HTML" );
 	}else
+	if( OUTLINE_TEX == m_nListType ){ //@@@ 2003.07.20 naoh TeXアウトライン解析
+		m_nViewType = 1;
+		SetTree();
+		::SetWindowText( m_hWnd, "TeX" );
+	}else
 	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
