@@ -798,7 +798,14 @@ void CEditWnd::DestroyToolBar( void )
 void CEditWnd::MessageLoop( void )
 {
 	MSG	msg;
-	while ( NULL != m_hWnd && GetMessage( &msg, NULL, 0, 0 ) ){
+	int ret;
+	
+	//2004.02.17 Moca GetMessageのエラーチェック
+	while ( NULL != m_hWnd && ( ret = GetMessage( &msg, NULL, 0, 0 ) ) ){
+		if( ret == -1 ){
+			break;
+		}
+
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		if( m_pPrintPreview && NULL != m_pPrintPreview->GetPrintPreviewBarHANDLE() && ::IsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE(), &msg ) ){	/* 印刷プレビュー 操作バー */
 		}else
@@ -859,7 +866,6 @@ LRESULT CEditWnd::DispatchEvent(
 
 	UINT				idCtl;	/* コントロールのID */
 	MEASUREITEMSTRUCT*	lpmis;
-	char				szLabel[1024];
 	LPDRAWITEMSTRUCT	lpdis;	/* 項目描画情報 */
 	int					nItemWidth;
 	int					nItemHeight;
@@ -1213,6 +1219,8 @@ LRESULT CEditWnd::DispatchEvent(
 				int			nAssignedKeyNum;
 				int			j;
 				char*		pszKey;
+				char		szLabel[1024];
+
 
 				// From Here Oct. 15, 2001 genta
 				// 機能文字列の取得にLookupを使うように変更
@@ -1523,14 +1531,11 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
 //	MYTRACE( "CEditWnd::OnCommand()\n" );
 
-	static			CHOOSEFONT cf;
-	CMemory			cMemKeyList;
 	int				nFuncCode;
 	HWND			hwndWork;
 	BOOL			bOpened;
 	FileInfo*		pfi;
 	HWND			hWndOwner;
-	static char		szURL[1024];
 
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
@@ -1662,14 +1667,14 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				wID - IDM_SELOPENFOLDER < 999
 			){
 				{
-					char*		pszPath = new char[_MAX_PATH];
+					char		szPath[_MAX_PATH + 3];
 					BOOL		bOpened;
 					int			nCharCode;
 					BOOL		bReadOnly;
 					FileInfo*	pfi;
 					HWND		hWndOwner;
 
-					strcpy( pszPath, "" );
+					strcpy( szPath, "" );
 
 					//Stonee, 2001/12/21 UNCであれば接続を試みる
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
@@ -1679,11 +1684,11 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					/* 「ファイルを開く」ダイアログ */
 					nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 					bReadOnly = FALSE;
-					if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), pszPath, &nCharCode, &bReadOnly ) ){
+					if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
 						return;
 					}
 					/* 指定ファイルが開かれているか調べる */
-					if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
+					if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner ) ){
 						::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 						pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
@@ -1699,7 +1704,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 							||	Unicode	3
 							||	エラー	-1
 							*/
-							nCharCodeNew = CMemory::CheckKanjiCodeOfFile( pszPath );
+							nCharCodeNew = CMemory::CheckKanjiCodeOfFile( szPath );
 							if( -1 == nCharCodeNew ){
 
 							}else{
@@ -1718,11 +1723,11 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 							}
 							::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 								"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
-								pszPath, pszCodeNameCur, pszCodeNameNew
+								szPath, pszCodeNameCur, pszCodeNameNew
 							);
 						}
 						/* 自分が開いているか */
-						if( 0 == strcmp( m_cEditDoc.GetFilePath(), pszPath ) ){
+						if( 0 == strcmp( m_cEditDoc.GetFilePath(), szPath ) ){
 							/* 何もしない */
 						}else{
 							//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
@@ -1740,20 +1745,19 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */
 						){
 							/* ファイル読み込み */
-							m_cEditDoc.FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
+							m_cEditDoc.FileRead( szPath, &bOpened, nCharCode, bReadOnly,
 								TRUE	/* 文字コード変更時の確認をするかどうか */
 							);
 						}else{
-							if( strchr( pszPath, ' ' ) ){
+							if( strchr( szPath, ' ' ) ){
 								char	szFile2[_MAX_PATH + 3];
-								wsprintf( szFile2, "\"%s\"", pszPath );
-								strcpy( pszPath, szFile2 );
+								wsprintf( szFile2, "\"%s\"", szPath );
+								strcpy( szPath, szFile2 );
 							}
 							/* 新たな編集ウィンドウを起動 */
-							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
+							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly );
 						}
 					}
-					delete [] pszPath;
 				}
 			}else{
 				//ビューにフォーカスを移動しておく
@@ -2924,7 +2928,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 
 	case F_FILESAVE:	/* 上書き保存 */
 		if( !pcEditDoc->m_bReadOnly ){	/* 読み取り専用モード */
-			if( TRUE == pcEditDoc->IsModified() ){	/* 変更フラグ */
+			if( pcEditDoc->IsModified() ){	/* 変更フラグ */
 				return TRUE;
 			}else{
 				/* 無変更でも上書きするか */
