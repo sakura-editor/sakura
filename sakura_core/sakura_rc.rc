@@ -111,7 +111,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "すべてのウィンドウを閉じる(&Q)", F_WIN_CLOSEALL
-        MENUITEM "テキストエディタの全終了(&X)", F_EXITALL
+        MENUITEM "サクラエディタの全終了(&X)", F_EXITALL
     END
 END
 
@@ -1012,10 +1012,10 @@ END
 IDD_SETUP DIALOG DISCARDABLE  0, 0, 225, 127
 STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
-CAPTION "テキストエディタ セットアップ"
+CAPTION "サクラエディタ セットアップ"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "テキストエディタ x.x.x.x のセットアップを行います。",
+    LTEXT           "サクラエディタ x.x.x.x のセットアップを行います。",
                     IDC_STATIC_MESSAGE,5,5,147,8,NOT WS_GROUP
     ICON            IDI_ICON_STD,IDC_STATIC,5,25,20,20
     LTEXT           "旧バージョンの設定データが検出されました。\n旧バージョンの設定を引き継ぐことができます。\n設定を引き継ぐバージョンを選択してください。",
@@ -1508,10 +1508,10 @@ BEGIN
                     WS_TABSTOP,195,93,27,10,0,HIDC_CHECK_BACKUP_SEC
     CONTROL         "バックアップファイルを作成する時点での日時を使用(&E)",
                     IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP,22,107,175,10
+                    WS_GROUP,22,107,175,10,0,HIDC_RADIO_BACKUP_DATETYPE1
     CONTROL         "前回の保存時の日時(ファイルの更新日時)を使用(&U)",
                     IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
-                    22,122,169,10
+                    22,122,169,10,0,HIDC_RADIO_BACKUP_DATETYPE2
     CONTROL         "作成前に確認する(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,138,78,10,0,
                     HIDC_CHECK_BACKUPDIALOG
