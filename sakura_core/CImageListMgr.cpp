@@ -64,15 +64,15 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	nRetPos = 0;
 	do {
 		//	From Here 2001.7.1 GAE
-		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) toolbar.bmp から読めるように
+		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
 		char	szPath[_MAX_PATH], szExeDrive[_MAX_DRIVE], szExeDir[_MAX_DIR];
 		
 		// sakura.exe のパスを取得
 		::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
 		
-		// (sakuraディレクトリ)toolbar.bmp の文字列を作成
+		// (sakuraディレクトリ) my_icons.bmp の文字列を作成
 		_splitpath( szPath, szExeDrive, szExeDir, NULL, NULL );
-		wsprintf( szPath, "%s%s%s", szExeDrive, szExeDir, "toolbar.bmp" );
+		wsprintf( szPath, "%s%s%s", szExeDrive, szExeDir, "my_icons.bmp" );	//Jul.04, 2001 JEPRO toolbar.bmp→my_icons.bmp に名前変更
 		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 
