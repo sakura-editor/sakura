@@ -567,6 +567,12 @@ void CPrintPreview::OnChangePrintSetting( void )
 		m_nPreview_PaperHeight = 297 * 10;		/* 用紙印刷有効高さ */
 		m_nPreview_PaperOffsetLeft = 0;			/* 印刷可能位置左端 */
 		m_nPreview_PaperOffsetTop = 0;			/* 印刷可能位置上端 */
+		// DEVMODE構造体もA4縦で初期化 2003.07.03 かろと
+		m_pPrintSetting->m_mdmDevMode.dmPaperSize = DMPAPER_A4;
+		m_pPrintSetting->m_mdmDevMode.dmOrientation = DMORIENT_PORTRAIT;
+		m_pPrintSetting->m_mdmDevMode.dmPaperLength = m_nPreview_PaperHeight;
+		m_pPrintSetting->m_mdmDevMode.dmPaperWidth = m_nPreview_PaperWidth;
+		m_pPrintSetting->m_mdmDevMode.dmFields |= ( DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	}else{
 		if( m_pPrintSetting->m_nPrintPaperSize != m_pPrintSetting->m_mdmDevMode.dmPaperSize ){
 			char	szPaperNameOld[256];
@@ -581,9 +587,10 @@ void CPrintPreview::OnChangePrintSetting( void )
 				szPaperNameOld, szPaperNameNew
 			);
 		}
-		/* 現在のページ設定の、用紙サイズと用紙方向を反映させる */
-		m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
 	}
+	/* 現在のページ設定の、用紙サイズと用紙方向を反映させる(エラーでA4縦になった場合も考慮してif文の外へ移動 2003.07.03 かろと) */
+	m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
+	m_pPrintSetting->m_nPrintPaperOrientation = m_pPrintSetting->m_mdmDevMode.dmOrientation;	// 用紙方向の反映忘れを修正 2003/07/03 かろと
 
 	m_nPreview_ViewMarginLeft = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 	m_nPreview_ViewMarginTop = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
