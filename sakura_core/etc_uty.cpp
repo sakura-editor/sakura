@@ -1438,6 +1438,9 @@ bool IsFileExists(const char* path, bool bFileOnly)
 	@retval false ファイル名は見つからなかった
 	
 	@date 2002.01.04 genta ディレクトリを検査対象外にする機能を追加
+	@date 2003.01.15 matsumo gccのエラーメッセージ(:区切り)でもファイルを検出可能に
+	@date 2004.05.29 genta C:\からファイルCが切り出されるのを防止
+	
 */
 bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 {
@@ -1486,7 +1489,8 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			  pLine[i] == '\n' ||
 			  pLine[i] == '\0' ||
 			  pLine[i] == '>'  ||
-			  pLine[i] == ':'  ||   //@@@ 2003/1/15/ matsumo (for gcc)
+			  // May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
+			  ( j > 1 && pLine[i] == ':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
 			  pLine[i] == '"'
 			) &&
 			0 < strlen( szJumpToFile )
