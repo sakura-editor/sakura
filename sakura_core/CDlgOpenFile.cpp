@@ -20,6 +20,8 @@
 #include "global.h"
 #include "funccode.h"	//Stonee, 2001/05/18
 #include "MY_SP.h"	// Jun. 23, 2002 genta
+#include "CFileExt.h"
+#include "my_icmp.h"
 
 // オープンファイル CDlgOpenFile.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -599,19 +601,12 @@ void CDlgOpenFile::Create(
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
+	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
+		拡張子フィルタの管理をCFileExtクラスで行う。
 */
 BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 {
 	DWORD	dwError;
-	int		i;
-	char	szWork[512 + _MAX_PATH];
-	char	szFilter[1024];
-	char*	pszFilterArr[] = {
-			"ユーザー指定",	m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
-			"テキストファイル", "*.txt",
-			"すべてのファイル", "*.*"
-	};
-	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
 
 	TCHAR	szCurDir[_MAX_PATH];
 	bool	bGetCurDirSuc = false;
@@ -622,31 +617,25 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 			bGetCurDirSuc = true;
 		}
 	}
-	/* 拡張子フィルタの作成 */
-	strcpy( szFilter, "" );
-	for( i = 0; i < nFilterArrNum; i += 2 ){
-		wsprintf( szWork, "%s (%s)|%s|", pszFilterArr[i], pszFilterArr[i + 1], pszFilterArr[i + 1] );
-		strcat( szFilter, szWork );
-	}
-	strcat( szFilter, "|" );
-//	MYTRACE( "%s\n", szFilter );
-	for (i = 0; szFilter[i] != '\0'; i++){
-		if (szFilter[i] == '|' ){
-			szFilter[i] = '\0';
-		}
-	}
+
+	//	2003.05.12 MIK
+	CFileExt	cFileExt;
+	cFileExt.AppendExtRaw( "ユーザー指定",     m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( "テキストファイル", "*.txt" );
+	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
+
 	/* 構造体の初期化 */
 	m_ofn.lStructSize = sizeof( OPENFILENAME );
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
-	m_ofn.lpstrFilter = szFilter;
+	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
 //	m_ofn.nFilterIndex = 3;
 	// From Here Jun. 23, 2002 genta
 	// 「開く」での初期フォルダチェック強化
 	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, pszFilterArr[(m_ofn.nFilterIndex - 1) * 2 + 1]);
+		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
 	}else{
 		char szDrive[_MAX_DRIVE];
 		char szDir[_MAX_DIR];
@@ -731,19 +720,12 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
+	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
+		拡張子フィルタの管理をCFileExtクラスで行う。
 */
 BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 {
 	DWORD	dwError;
-	int		i;
-	char	szWork[256];
-	char	szFilter[1024];
-	char*	pszFilterArr[] = {
-			"ユーザー指定", m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
-			"テキストファイル",	"*.txt",
-			"すべてのファイル", "*.*"
-	};
-	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
 
 	TCHAR	szCurDir[_MAX_PATH];
 	bool	bGetCurDirSuc = false;
@@ -754,29 +736,23 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 			bGetCurDirSuc = true;
 		}
 	}
-	/* 拡張子フィルタの作成 */
-	strcpy( szFilter, "" );
-	for( i = 0; i < nFilterArrNum; i += 2 ){
-		wsprintf( szWork, "%s (%s)|%s|", pszFilterArr[i], pszFilterArr[i + 1], pszFilterArr[i + 1] );
-		strcat( szFilter, szWork );
-	}
-	strcat( szFilter, "|" );
-//	MYTRACE( "%s\n", szFilter );
-	for (i = 0; szFilter[i] != '\0'; i++){
-		if (szFilter[i] == '|' ){
-			szFilter[i] = '\0';
-		}
-	}
+
+	//	2003.05.12 MIK
+	CFileExt	cFileExt;
+	cFileExt.AppendExtRaw( "ユーザー指定",     m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( "テキストファイル", "*.txt" );
+	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
+
 	/* 構造体の初期化 */
 	m_ofn.lStructSize = sizeof( OPENFILENAME );
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
-	m_ofn.lpstrFilter = szFilter;
+	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
 //	m_ofn.nFilterIndex = 3;
 	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, pszFilterArr[(m_ofn.nFilterIndex - 1) * 2 + 1]);
+		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
 	}else{
 		m_ofn.lpstrFile = pszPath;
 	}
@@ -845,51 +821,36 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 
 
 
-/*! 「開く」ダイアログ モーダルダイアログの表示 */
+/*! 「開く」ダイアログ モーダルダイアログの表示
+	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
+		拡張子フィルタの管理をCFileExtクラスで行う。
+*/
 BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadOnly )
 {
 	m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
 	DWORD	dwError;
 	int		i;
-	char	szWork[256];
-	char	szFilter[1024];
-	char*	pszFilterArr[] = {
-//			"テキストファイル", "*.txt",
-			"すべてのファイル", "*.*",
-			"テキストファイル",	"*.txt",
-//			"ユーザー指定",		m_szDefaultWildCard,					//Jul. 09, 2001 JEPRO	これは使わない
-			"C/C++ファイル",	"*.c;*.cpp;*.cxx;*.h;*.rc",				//Jul. 08, 2001 JEPRO
-			"HTMLファイル",		"*.html;*.htm;*.shtml",					//Jul. 08, 2001 JEPRO
-			"Perlファイル",		"*.cgi;*.pl;*.pm",						//Jul. 08, 2001 JEPRO
-			"VBファイル",		"*.bas;*.frm;*.cls,*.ctl;*.pag",		//Jul. 08, 2001 JEPRO
-			"TeXファイル",		"*.tex;*.ltx;*.sty",					//Jul. 08, 2001 JEPRO
-			"Winヘルプ関連",	"*.rtf;*.cnt;*.hpj;*.hh;*.hm"			//Jul. 08, 2001 JEPRO
-	};
-	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
-	/* 拡張子フィルタの作成 */
-	strcpy( szFilter, "" );
-	for( i = 0; i < nFilterArrNum; i += 2 ){
-		wsprintf( szWork, "%s (%s)|%s|", pszFilterArr[i], pszFilterArr[i + 1], pszFilterArr[i + 1] );
-		strcat( szFilter, szWork );
+
+	//	2003.05.12 MIK
+	CFileExt	cFileExt;
+	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
+	cFileExt.AppendExtRaw( "テキストファイル", "*.txt" );
+	for( i = 0; i < MAX_TYPES; i++ )
+	{
+		cFileExt.AppendExt( m_pShareData->m_Types[i].m_szTypeName, m_pShareData->m_Types[i].m_szTypeExts );
 	}
-	strcat( szFilter, "|" );
-//	MYTRACE( "%s\n", szFilter );
-	for (i = 0; szFilter[i] != '\0'; i++){
-		if( szFilter[i] == '|' ){
-			szFilter[i] = '\0';
-		}
-	}
+
 	/* 構造体の初期化 */
 	m_ofn.lStructSize = sizeof( OPENFILENAME );
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
-	m_ofn.lpstrFilter = szFilter;
+	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
 //	m_ofn.nFilterIndex = 3;
 	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, pszFilterArr[(m_ofn.nFilterIndex - 1) * 2 + 1] );
+		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
 	}else{
 		m_ofn.lpstrFile = pszPath;
 	}
@@ -981,45 +942,32 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	}
 }
 
-/*! 保存ダイアログ モーダルダイアログの表示 */
+/*! 保存ダイアログ モーダルダイアログの表示
+	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
+		拡張子フィルタの管理をCFileExtクラスで行う。
+*/
 BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
 	DWORD	dwError;
-	int		i;
-	char	szWork[256];
-	char	szFilter[1024];
-	char*	pszFilterArr[] = {
-			"ユーザー指定", m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
-			"テキストファイル",	"*.txt",
-			"すべてのファイル", "*.*"
 
-	};
-	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
-	/* 拡張子フィルタの作成 */
-	strcpy( szFilter, "" );
-	for( i = 0; i < nFilterArrNum; i+=2 ){
-		wsprintf( szWork, "%s (%s)|%s|", pszFilterArr[i], pszFilterArr[i + 1], pszFilterArr[i + 1] );
-		strcat( szFilter, szWork );
-	}
-	strcat( szFilter, "|" );
-//	MYTRACE( "%s\n", szFilter );
-	for (i = 0; szFilter[i] != '\0'; i++){
-		if( szFilter[i] == '|' ){
-			szFilter[i] = '\0';
-		}
-	}
+	//	2003.05.12 MIK
+	CFileExt	cFileExt;
+	cFileExt.AppendExtRaw( "ユーザー指定",     m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( "テキストファイル", "*.txt" );
+	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
+
 	/* 構造体の初期化 */
 	m_ofn.lStructSize = sizeof( OPENFILENAME );
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
-	m_ofn.lpstrFilter = szFilter;
+	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
 //	m_ofn.nFilterIndex = 3;
 	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, pszFilterArr[(m_ofn.nFilterIndex - 1) * 2 + 1] );
+		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
 	}else{
 		m_ofn.lpstrFile = pszPath;
 	}
