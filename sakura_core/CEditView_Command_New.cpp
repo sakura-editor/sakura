@@ -1889,7 +1889,15 @@ void CEditView::SmartIndent_CPP( char cChar )
 // テキストを１行下へスクロール
 void CEditView::Command_WndScrollDown(void)
 {
-	if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - 4){
+	int	nCaretMarginY;
+
+	nCaretMarginY = m_nViewRowNum / _CARETMARGINRATE;
+	if(nCaretMarginY < 1)
+		nCaretMarginY = 1;
+
+	nCaretMarginY += 2;
+
+	if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - (nCaretMarginY + 1)){
 		CaretUnderLineOFF(TRUE);
 	}
 
@@ -1899,10 +1907,10 @@ void CEditView::Command_WndScrollDown(void)
 	if(!IsTextSelected())
 	{
 		// カーソルが画面外に出た
-		if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - 3)
+		if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - nCaretMarginY)
 		{
-			if(m_nCaretPosY > m_pcEditDoc->m_cDocLineMgr.GetLineCount() - 3)
-				Cursor_UPDOWN( (m_pcEditDoc->m_cDocLineMgr.GetLineCount() - 3) - m_nCaretPosY, FALSE);
+			if(m_nCaretPosY > m_pcEditDoc->m_cDocLineMgr.GetLineCount() - nCaretMarginY)
+				Cursor_UPDOWN( (m_pcEditDoc->m_cDocLineMgr.GetLineCount() - nCaretMarginY) - m_nCaretPosY, FALSE);
 			else
 				Cursor_UPDOWN( -1, FALSE);
 			DrawCaretPosInfo();
@@ -1913,12 +1921,20 @@ void CEditView::Command_WndScrollDown(void)
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
 		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
+
+	CaretUnderLineON(TRUE);
 }
 
 // テキストを１行上へスクロール
 void CEditView::Command_WndScrollUp(void)
 {
-	if(m_nCaretPosY < m_nViewTopLine + 2){
+	int	nCaretMarginY;
+
+	nCaretMarginY = m_nViewRowNum / _CARETMARGINRATE;
+	if(nCaretMarginY < 1)
+		nCaretMarginY = 1;
+
+	if(m_nCaretPosY < m_nViewTopLine + (nCaretMarginY + 1)){
 		CaretUnderLineOFF(TRUE);
 	}
 
@@ -1928,10 +1944,10 @@ void CEditView::Command_WndScrollUp(void)
 	if(!IsTextSelected())
 	{
 		// カーソルが画面外に出た
-		if(m_nCaretPosY < m_nViewTopLine + 1)
+		if(m_nCaretPosY < m_nViewTopLine + nCaretMarginY)
 		{
 			if(m_nViewTopLine == 1)
-				Cursor_UPDOWN( 2, FALSE);
+				Cursor_UPDOWN( nCaretMarginY + 1, FALSE);
 			else
 				Cursor_UPDOWN( 1, FALSE);
 			DrawCaretPosInfo();
@@ -1942,6 +1958,8 @@ void CEditView::Command_WndScrollUp(void)
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
 		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
+
+	CaretUnderLineON(TRUE);
 }
 
 // 2001/06/20 End
