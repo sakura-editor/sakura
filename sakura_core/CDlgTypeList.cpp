@@ -21,6 +21,18 @@
 #include "debug.h"
 #include "funccode.h"	//Stonee, 2001/03/12
 
+// タイプ別設定一覧 CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12700
+	IDC_BUTTON_TEMPCHANGE,	HIDC_TL_BUTTON_TEMPCHANGE,	//一時適用
+	IDOK,					HIDOK_TL,					//設定
+	IDCANCEL,				HIDCANCEL_TL,				//キャンセル
+	IDC_BUTTON_HELP,		HIDC_TL_BUTTON_HELP,		//ヘルプ
+	IDC_LIST_TYPES,			HIDC_TL_LIST_TYPES,			//リスト
+//	IDC_STATIC,				-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 /* モーダルダイアログの表示 */
 int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingType )
 {
@@ -101,5 +113,11 @@ void CDlgTypeList::SetData( void )
 	return;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgTypeList::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

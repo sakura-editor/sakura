@@ -35,7 +35,7 @@ RcCvt::~RcCvt()
 bool RcCvt::setErr(char*errstr)
 {
 	char *t;
-	char lcr = strlen(errstr)+2;
+	int lcr = strlen(errstr)+2;
 	if( strerr ){
 		t = (char*)realloc( strerr , strlen(strerr)+lcr+1 );
 	}else{
@@ -126,9 +126,12 @@ bool RcCvt::font(char*linestr)
 
 bool RcCvt::include(char*linestr)
 {
-	char *cp;
-	
 	if( strstr( linestr, "afxres.h" ) != NULL )
+	{
+		strcpy( linestr, "\n" );
+	}
+	//2002.01.10 ‚ ‚ë‚© ƒŠƒ\[ƒX‚ÌDlgs.h‚ðíœ
+	else if( strstr( linestr, "Dlgs.h" ) != NULL )	//2002.01.15 ‚ ‚ë‚© elsif -> else if
 	{
 		strcpy( linestr, "\n" );
 	}

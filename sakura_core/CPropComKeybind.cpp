@@ -31,7 +31,31 @@ const char STR_KEYDATA_HEAD2[] = "// テキストエディタキー設定 Ver2";	//@@@ 2001.
 #define STR_ALT_PLUS          "Alt+"  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10700
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10700
+	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT_KEYBIND,		//インポート
+	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT_KEYBIND,		//エクスポート
+	IDC_BUTTON_ASSIGN,				HIDC_BUTTON_ASSIGN,				//キー割り当て
+	IDC_BUTTON_RELEASE,				HIDC_BUTTON_RELEASE,			//キー解除
+	IDC_CHECK_SHIFT,				HIDC_CHECK_SHIFT,				//Shiftキー
+	IDC_CHECK_CTRL,					HIDC_CHECK_CTRL,				//Ctrlキー
+	IDC_CHECK_ALT,					HIDC_CHECK_ALT,					//Altキー
+	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND_KEYBIND,	//機能の種別
+	IDC_EDIT_KEYSFUNC,				HIDC_EDIT_KEYSFUNC,				//キーに割り当てられている機能
+	IDC_LIST_FUNC,					HIDC_LIST_FUNC_KEYBIND,			//機能一覧
+	IDC_LIST_KEY,					HIDC_LIST_KEY,					//キー一覧
+	IDC_LIST_ASSIGNEDKEYS,			HIDC_LIST_ASSIGNEDKEYS,			//機能に割り当てられているキー
+	IDC_LABEL_MENUFUNCKIND,			-1,
+	IDC_LABEL_MENUFUNC,				-1,
+	IDC_LABEL_KEYKIND,				-1,
+	IDC_LABEL_FUNCtoKEY,			-1,
+	IDC_LABEL_KEYtoFUNC,			-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10700
 	IDC_BUTTON_IMPORT,				10700,	//インポート
 	IDC_BUTTON_EXPORT,				10701,	//エクスポート
 	IDC_BUTTON_ASSIGN,				10702,	//キー割り当て
@@ -52,6 +76,7 @@ const DWORD p_helpids[] = {	//10700
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -172,6 +197,10 @@ BOOL CPropCommon::DispatchEvent_p5(
 //			MYTRACE( "p5 PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 p5 */
 			GetData_p5( hwndDlg );
+			return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+		case PSN_SETACTIVE:
+			m_nPageNum = ID_PAGENUM_KEYBOARD;
 			return TRUE;
 		}
 		break;
@@ -404,7 +433,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
 
 //@@@ 2001.11.07 Start by MIK: Context Menu Help
@@ -454,7 +483,8 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 /* ダイアログデータの取得 p5 */
 int CPropCommon::GetData_p5( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_KEYBOARD;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_KEYBOARD;
 	return TRUE;
 }
 

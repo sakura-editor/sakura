@@ -11,6 +11,11 @@
 #define SAKURA_CORE_API __declspec(dllimport)
 #endif
 
+#ifdef SAKURA_NO_DLL	//@@@ 2001.12.30 add MIK
+#undef SAKURA_CORE_API
+#define SAKURA_CORE_API
+#endif	//SAKURA_NO_DLL
+
 // このクラスは sakura_core.dll からエクスポートされます
 class SAKURA_CORE_API CSakura_core {
 public:

@@ -26,10 +26,14 @@ class CShareData;
 #include "CKeyMacroMgr.h"
 #include "CProfile.h"
 
+//@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
+#include "CMRU.h"
+#include "CMRUFolder.h"
+
 enum maxdata{
 	MAX_EDITWINDOWS				= 256,
-	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
-	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
+//	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
+//	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
 	MAX_SEARCHKEY				=  30,
 	MAX_REPLACEKEY				=  30,
 	MAX_GREPFILE				=  30,
@@ -51,8 +55,9 @@ enum maxdata{
 
 	MAX_CMDLEN					= 1024,
 	MAX_CMDARR					= 32,
-	MAX_REGEX_KEYWORD	= 100	//@@@ 2001.11.17 add MIK
+	MAX_REGEX_KEYWORD			= 100,	//@@@ 2001.11.17 add MIK
 
+	MAX_MARKLINES_LEN			= 1024	// 2002.01.18 hor
 };
 
 
@@ -84,7 +89,25 @@ struct FileInfo {
 	char	m_szPath[_MAX_PATH];	/*!< ファイル名 */
 	BOOL	m_bIsGrep;				/*!< Grepのウィンドウか */
 	char	m_szGrepKey[1024];
+	char	m_szMarkLines[MAX_MARKLINES_LEN];	/*!< ブックマークの物理行リスト */
 };
+
+/*!	検索オプション
+	20020118 aroka
+*/
+struct GrepInfo {
+	CMemory		cmGrepKey;			/*!< 検索キー */
+	CMemory		cmGrepFile;			/*!< 検索対象ファイル */
+	CMemory		cmGrepFolder;		/*!< 検索対象フォルダ */
+	bool		bGrepWordOnly;		/*!< 単語単位で探す */
+	bool		bGrepSubFolder;		/*!< サブフォルダを検索する */
+	bool		bGrepNoIgnoreCase;	/*!< 大文字と小文字を区別する */
+	bool		bGrepRegularExp;	/*!< 正規表現を使用する */
+	bool		bGrepKanjiCode_AutoDetect;	//!< 漢字コードの自動判別 */
+	bool		bGrepOutputLine;	/*!< 結果出力で該当行を出力する */
+	int			nGrepOutputStyle;	/*!< 結果出力形式 */
+};
+
 
 struct EditNode {
 	int				m_nIndex;
@@ -376,6 +399,10 @@ struct Common {
 	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition != 0; }
 	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; }
 
+	// 2002.01.16 hor ブックマークを復元するかどうか
+	bool	GetRestoreBookmarks(void) const { return m_bRestoreBookmarks != 0; }
+	void	SetRestoreBookmarks(bool i){ m_bRestoreBookmarks = i; }
+
 	//	Nov. 12, 2000 genta
 	//	ファイル読み込み時にMIMEのdecodeを行うか
 	bool	GetAutoMIMEdecode(void) const { return m_bAutoMIMEdecode != 0; }
@@ -390,6 +417,7 @@ struct Common {
 	int					m_bAutoIndent;					/* オートインデント */
 	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
 	BOOL				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
+	BOOL				m_bRestoreBookmarks;			// 2002.01.16 hor ブックマークを復元するかどうか
 //	int					m_bEnableLineISlog;				/* ★廃止★行番号種別  物理行／論理行 */
 
 //	char				m_szEMailUserName[_MAX_PATH];	/* メールユーザー名 */
@@ -501,6 +529,7 @@ struct Common {
 	BOOL				m_bScrollBarHorz;			/* 水平スクロールバーを使う */
 	BOOL				m_bAutoCloseDlgFuncList;	/* アウトライン ダイアログを自動的に閉じる */
 	BOOL				m_bAutoCloseDlgReplace;		/* 置換 ダイアログを自動的に閉じる */
+	BOOL				m_bSearchAll;				/* 先頭（末尾）から再検索 2002.01.26 hor */
 	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
 
 	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN	補完決定キーが有効/無効 */
@@ -542,10 +571,15 @@ struct DLLSHAREDATA {
 	/**** 共通作業域(保存する) ****/
 	short				m_nEditArrNum;
 	EditNode			m_pEditArr[MAX_EDITWINDOWS + 1];
+
+//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;
 	FileInfo			m_fiMRUArr[MAX_MRU];
+
+//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUFolderを経由してください。
 	int					m_nOPENFOLDERArrNum;
 	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
+
 	int					m_nSEARCHKEYArrNum;
 	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
 	int					m_nREPLACEKEYArrNum;
@@ -576,7 +610,7 @@ struct DLLSHAREDATA {
 	/* キー割り当て */
 //	BOOL				m_bKeyBindModify;			/* 変更フラグ キー割り当て */
 //	BOOL				m_bKeyBindModifyArr[100];	/* 変更フラグ キー割り当て(キーごと) */
-	short				m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
+	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
 	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
 
 	/**** 印刷ページ設定 ****/
@@ -594,9 +628,19 @@ struct DLLSHAREDATA {
 //	BOOL				m_nTypesModifyArr[MAX_TYPES];	/* 変更フラグ(タイプ別設定) */
 	Types				m_Types[MAX_TYPES];
 
-	CKeyMacroMgr		m_CKeyMacroMgr;				/* キーワードマクロのバッファ */
+	/*	@@@ 2002.1.24 YAZAKI
+		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
+		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
+	*/
+//	CKeyMacroMgr		m_CKeyMacroMgr;				/* キーワードマクロのバッファ */
 	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
 	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+	char				m_szKeyMacroFileName[MAX_PATH];	/* キーボードマクロのファイル名 */
+
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+	/* **** その他のダイアログ **** */
+	BOOL				m_bGetStdout;		/* 外部コマンド実行の「標準出力を得る」 */
+	BOOL				m_bLineNumIsCRLF;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
 
@@ -622,9 +666,10 @@ public:
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 
 //	void AddMRUList( const char* );								/* MRUリストへの登録 */
-	void AddMRUList( FileInfo*  );								/* MRUリストへの登録 */
-	void AddOPENFOLDERList( const char* );						/* 開いたフォルダリストへの登録 */
-	BOOL IsExistInMRUList( const char* , FileInfo*  );			/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
+//@@@ 2001.12.31 YAZAKI CMRU、CMRUFolderに移動した。
+//	void AddMRUList( FileInfo*  );								/* MRUリストへの登録 */
+//	void AddOPENFOLDERList( const char* );						/* 開いたフォルダリストへの登録 */
+//	BOOL IsExistInMRUList( const char* , FileInfo*  );			/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
 	BOOL RequestCloseAllEditor( void );							/* 全編集ウィンドウへ終了要求を出す */
 	BOOL IsPathOpened( const char*, HWND* );					/* 指定ファイルが開かれているか調べる */
 	int GetEditorWindowsNum( void );							/* 現在の編集ウィンドウの数を調べる */
@@ -632,7 +677,8 @@ public:
 	BOOL SendMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージを送るする */
 	int GetOpenedWindowArr( EditNode** , BOOL );				/* 現在開いている編集ウィンドウの配列を返す */
 	static BOOL IsEditWnd( HWND );								/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
-	static void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD, int );	/* TBBUTTON構造体にデータをセット */
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//	static void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD, int );	/* TBBUTTON構造体にデータをセット */
 	static void SetKeyNameArrVal(
 		DLLSHAREDATA*, int, short, char*,
 		short, short, short, short,
@@ -673,8 +719,9 @@ public:
 //	static BOOL LoadShareData_0_3_5_0( DLLSHAREDATA_0_3_5_0* );	/* Ver0.3.5.0用設定データのロード */
 //	void TakeOver_0_3_5_0( DLLSHAREDATA_0_3_5_0* );				/* Ver0.3.5.0用設定データを引き継ぐ */
 
-	TBBUTTON	m_tbMyButton[MAX_TOOLBARBUTTONS];	/* ツールバーのボタン */
-	int			m_nMyButtonNum;
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//	TBBUTTON	m_tbMyButton[MAX_TOOLBARBUTTONS];	/* ツールバーのボタン */
+//	int			m_nMyButtonNum;
 	int			m_nStdToolBarButtons;
 
 protected:
@@ -689,7 +736,8 @@ protected:
 	/* MRUとOPENFOLDERリストの存在チェックなど
 	存在しないファイルやフォルダはMRUやOPENFOLDERリストから削除する
 	 */
-	void CheckMRUandOPENFOLDERList( void );
+//@@@ 2002.01.03 YAZAKI CMRU、CMRUFolderに移動した。
+//	void CheckMRUandOPENFOLDERList( void );
 
 
 };

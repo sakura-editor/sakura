@@ -21,6 +21,8 @@ CShareData::CShareData()
 	m_pszAppName = GSTR_CSHAREDATA;
 	m_hFileMap   = NULL;
 	m_pShareData = NULL;
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+#if 0
 	/* ツールバーのボタン TBBUTTON構造体 */
 	/*
 	typedef struct _TBBUTTON {
@@ -142,7 +144,7 @@ CShareData::CShareData()
 /* 54 */		F_RTRIM				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//RTRIM		// 2001.12.03 hor
 /* 55 */		F_SORT_ASC			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//SORT_ASC	// 2001.12.06 hor
 /* 56 */		F_SORT_DESC			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//SORT_DES	// 2001.12.06 hor
-/* 57 */		F_MARGE				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//MARGE		// 2001.12.06 hor
+/* 57 */		F_MERGE				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//MERGE		// 2001.12.06 hor
 /* 58 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 59 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 60 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
@@ -513,6 +515,7 @@ CShareData::CShareData()
 		);
 	}
 	m_nMyButtonNum = tbd_num + 1;
+#endif
 	return;
 }
 

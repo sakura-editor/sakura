@@ -25,7 +25,31 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10100
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10100
+	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE,				//メニューから機能削除
+	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR,	//セパレータ挿入
+	IDC_BUTTON_INSERT,				HIDC_BUTTON_INSERT,				//メニューへ機能挿入
+	IDC_BUTTON_ADD,					HIDC_BUTTON_ADD,				//メニューへ機能追加
+	IDC_BUTTON_UP,					HIDC_BUTTON_UP,					//メニューの機能を上へ移動
+	IDC_BUTTON_DOWN,				HIDC_BUTTON_DOWN,				//メニューの機能を下へ移動
+	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT,				//インポート
+	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT,				//エクスポート
+	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND,			//機能の種別
+	IDC_COMBO_MENU,					HIDC_COMBO_MENU,				//メニューの種別
+	IDC_LIST_FUNC,					HIDC_LIST_FUNC,					//機能一覧
+	IDC_LIST_RES,					HIDC_LIST_RES,					//メニュー一覧
+//	IDC_LABEL_MENUFUNCKIND,			-1,
+//	IDC_LABEL_MENUCHOICE,			-1,
+//	IDC_LABEL_MENUFUNC,				-1,
+//	IDC_LABEL_MENU,					-1,
+//	IDC_LABEL_MENUKEYCHANGE,		-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10100
 	IDC_BUTTON_DELETE,				10100,	//メニューから機能削除
 	IDC_BUTTON_INSERTSEPARATOR,		10101,	//セパレータ挿入
 	IDC_BUTTON_INSERT,				10102,	//メニューへ機能挿入
@@ -46,6 +70,7 @@ const DWORD p_helpids[] = {	//10100
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -155,6 +180,10 @@ BOOL CPropCommon::DispatchEvent_p8(
 //			MYTRACE( "p8 PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 p8 */
 			GetData_p8( hwndDlg );
+			return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+		case PSN_SETACTIVE:
+			m_nPageNum = ID_PAGENUM_CUSTMENU;
 			return TRUE;
 		}
 		break;
@@ -266,7 +295,14 @@ BOOL CPropCommon::DispatchEvent_p8(
 				//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 //				if( ( szKey[0] == '\0' ) || ( '0' <= szKey[0] && szKey[0] <= '9' ) || ( 'A' <= szKey[0] && szKey[0] <= 'Z' ) ){
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = szKey[0];
-					wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+//@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
+//					wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+					if (m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
+						wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+					}
+					else {
+						wsprintf( szLabel2, "%s", szLabel );
+					}
 //				}else{
 //					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 //					sprintf( szLabel2, "%s", szLabel );
@@ -661,8 +697,15 @@ BOOL CPropCommon::DispatchEvent_p8(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -758,7 +801,8 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 /* ダイアログデータの取得 p8 */
 int CPropCommon::GetData_p8( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_CUSTMENU;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_CUSTMENU;
 
 	return TRUE;
 }

@@ -51,10 +51,11 @@ public:
 	const char* GetLabel( int nFuncID );
 	char GetAccelCharFromLabel( const char* pszLabel );
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	static void MyBitBlt( HDC drawdc, int nXDest, int nYDest, int nWidth,
-							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF, COLORREF);
-	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
-						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
+//@@@ 2002.01.03 YAZAKI 不使用のため
+//	static void MyBitBlt( HDC drawdc, int nXDest, int nYDest, int nWidth,
+//							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF, COLORREF);
+//	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
+//						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
 
 
 	CShareData		m_cShareData;
@@ -64,14 +65,20 @@ public:
 	HWND			m_hWndOwner;
 
 	int				m_nMenuItemNum;
+
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	TBBUTTON		m_tbMyButton[MAX_TOOLBARBUTTONS+1];	/* ツールバーのボタン +1はセパレータ */
+	int				m_nMyButtonNum;
+
 	int				m_nMenuItemBitmapIdxArr[MAX_MENUITEMS];
 	int				m_nMenuItemFuncArr[MAX_MENUITEMS];
 	CMemory			m_cmemMenuItemStrArr[MAX_MENUITEMS];
 	int				m_nMenuHeight;
 	HFONT			m_hFontMenu;
 	HFONT			m_hFontMenuUndelLine;
-	int				m_nMaxTab;
-	int				m_nMaxTabLen;
+//@@@ 2002.01.03 YAZAKI 不使用のため
+//	int				m_nMaxTab;
+//	int				m_nMaxTabLen;
 
 	//	Oct. 16, 2000 genta
 	CImageListMgr	*m_pcIcons;	//	Image List
@@ -81,6 +88,9 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	int GetData( void );	/* ダイアログデータの取得 */
+
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD, int );	/* TBBUTTON構造体にデータをセット */
 };
 
 

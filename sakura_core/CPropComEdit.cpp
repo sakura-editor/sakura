@@ -17,7 +17,19 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10210
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10210
+	IDC_CHECK_ADDCRLFWHENCOPY,			HIDC_CHECK_ADDCRLFWHENCOPY,				//折り返し行に改行を付けてコピー
+	IDC_CHECK_COPYnDISABLESELECTEDAREA,	HIDC_CHECK_COPYnDISABLESELECTEDAREA,	//コピーしたら選択解除
+	IDC_CHECK_DRAGDROP,					HIDC_CHECK_DRAGDROP,					//Drag&Drop編集する
+	IDC_CHECK_DROPSOURCE,				HIDC_CHECK_DROPSOURCE,					//ドロップ元にする
+	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//上書きモード
+//	IDC_STATIC,							-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_ADDCRLFWHENCOPY,			10210,	//折り返し行に改行を付けてコピー
 	IDC_CHECK_COPYnDISABLESELECTEDAREA,	10211,	//コピーしたら選択解除
 	IDC_CHECK_DRAGDROP,					10212,	//Drag&Drop編集する
@@ -26,6 +38,7 @@ const DWORD p_helpids[] = {	//10210
 //	IDC_STATIC,							-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -114,6 +127,10 @@ BOOL CPropCommon::DispatchEvent_PROP_EDIT(
 				/* ダイアログデータの取得 p1 */
 				GetData_PROP_EDIT( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_EDIT;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+				return TRUE;
 			}
 			break;
 //		}
@@ -127,8 +144,15 @@ BOOL CPropCommon::DispatchEvent_PROP_EDIT(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -177,7 +201,8 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_EDIT;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_EDIT;
 
 	/* ドラッグ & ドロップ編集 */
 	m_Common.m_bUseOLE_DragDrop = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP );

@@ -51,7 +51,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 
 //	Oct. 21, 2000 JEPRO ê›íË
 	const int MAX_X = 32;
-	const int MAX_Y = 11;
+	const int MAX_Y = 12;	//2002.01.17
 
 	//	ébíË
 //	const int MAX_X = 128;

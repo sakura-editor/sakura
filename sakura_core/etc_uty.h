@@ -32,7 +32,8 @@ SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int
 //SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, BOOL*, BOOL );/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
 SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, CEOL* );/* CR0LF0,CRLF,LFCR,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
 SAKURA_CORE_API void GetLineColm( const char*, int*, int* );
-SAKURA_CORE_API BOOL IsFilePath( const char*, int*, int* );
+SAKURA_CORE_API bool IsFilePath( const char*, int*, int*, bool = true );
+SAKURA_CORE_API bool IsFileExists(const char* path, bool bFileOnly = false);
 SAKURA_CORE_API BOOL IsURL( const char*, int, int* );/* w’èƒAƒhƒŒƒX‚ªURL‚Ìæ“ª‚È‚ç‚ÎTRUE‚Æ‚»‚Ì’·‚³‚ğ•Ô‚· */
 SAKURA_CORE_API BOOL IsMailAddress( const char*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚ÎANULLˆÈŠO‚ÆA‚»‚Ì’·‚³‚ğ•Ô‚· */
 //#ifdef COMPILE_COLOR_DIGIT
@@ -48,7 +49,7 @@ SAKURA_CORE_API void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* ƒŠƒ
 SAKURA_CORE_API void SplitPath_FolderAndFile( const char*, char*, char* );	/* ƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğAƒtƒHƒ‹ƒ_‚Æƒtƒ@ƒCƒ‹–¼‚É•ªŠ„ */
 SAKURA_CORE_API BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */
 SAKURA_CORE_API BOOL GetLongFileName( const char*, char* );	/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */
-SAKURA_CORE_API char* GetHelpFilePath( char* );	/* ƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚· */
+SAKURA_CORE_API char* GetHelpFilePath( char* , unsigned int nMaxLen = _MAX_PATH );	/* ƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚· */// 20020119 aroka
 SAKURA_CORE_API BOOL CheckEXT( const char*, const char* );	/* Šg’£q‚ğ’²‚×‚é */
 SAKURA_CORE_API char* my_strtok( char*, int, int*, char* );
 /* Shell InterfaceŒn(?) */
@@ -73,7 +74,17 @@ SAKURA_CORE_API bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool b
 SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
 SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data,bool msgflag = true);
+SAKURA_CORE_API DWORD NetConnect ( const char strNetWorkPass[] );
 
+SAKURA_CORE_API int cescape(const char* org, char* out, char cesc, char cwith);
+
+/*!	&‚Ì“ñd‰»
+	ƒƒjƒ…[‚ÉŠÜ‚Ü‚ê‚é&‚ğ&&‚É’u‚«Š·‚¦‚é
+	@author genta
+	@date 2002/01/30 cescape‚ÉŠg’£‚µC
+*/
+inline void dupamp(const char* org, char* out)
+{	cescape( org, out, '&', '&' ); }
 ///////////////////////////////////////////////////////////////////////
 #endif /* _ETC_UTY_H_ */
 

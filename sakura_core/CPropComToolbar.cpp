@@ -17,7 +17,27 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//11000
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//11000
+	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE_TOOLBAR,				//ツールバーから機能削除
+	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR_TOOLBAR,	//セパレータ挿入
+	IDC_BUTTON_INSERT,				HIDC_BUTTON_INSERT_TOOLBAR,				//ツールバーへ機能挿入
+	IDC_BUTTON_ADD,					HIDC_BUTTON_ADD_TOOLBAR,				//ツールバーへ機能追加
+	IDC_BUTTON_UP,					HIDC_BUTTON_UP_TOOLBAR,					//ツールバーの機能を上へ移動
+	IDC_BUTTON_DOWN,				HIDC_BUTTON_DOWN_TOOLBAR,				//ツールバーの機能を下へ移動
+	IDC_CHECK_TOOLBARISFLAT,		HIDC_CHECK_TOOLBARISFLAT,				//フラットなボタン
+	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND_TOOLBAR,			//機能の種別
+	IDC_LIST_FUNC,					HIDC_LIST_FUNC_TOOLBAR,					//機能一覧
+	IDC_LIST_RES,					HIDC_LIST_RES_TOOLBAR,					//ツールバー一覧
+	IDC_LABEL_MENUFUNCKIND,			-1,
+	IDC_LABEL_MENUFUNC,				-1,
+	IDC_LABEL_TOOLBAR,				-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//11000
 	IDC_BUTTON_DELETE,				11000,	//ツールバーから機能削除
 	IDC_BUTTON_INSERTSEPARATOR,		11001,	//セパレータ挿入
 	IDC_BUTTON_INSERT,				11002,	//ツールバーへ機能挿入
@@ -34,6 +54,7 @@ const DWORD p_helpids[] = {	//11000
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -133,6 +154,10 @@ BOOL CPropCommon::DispatchEvent_p6(
 			/* ダイアログデータの取得 p6 */
 			GetData_p6( hwndDlg );
 			return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+		case PSN_SETACTIVE:
+			m_nPageNum = ID_PAGENUM_TOOLBAR;
+			return TRUE;
 		}
 		break;
 
@@ -163,14 +188,19 @@ BOOL CPropCommon::DispatchEvent_p6(
 				nNum = m_cLookup.GetItemCount( nIndex2 );
 				for( i = 0; i < nNum; ++i ){
 					nIndex1 = m_cLookup.Pos2FuncCode( nIndex2, i );
-					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
-						if( m_cShareData.m_tbMyButton[j].idCommand == nIndex1 ){
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
+//						if( m_cShareData.m_tbMyButton[j].idCommand == nIndex1 ){
+					for( j = 0; j < m_pcMenuDrawer->m_nMyButtonNum; ++j ){
+						if( m_pcMenuDrawer->m_tbMyButton[j].idCommand == nIndex1 ){	//	jは、nIndex1で指定された機能コードを持つ
 				//	To Here Oct. 15, 2001 genta Lookupを使うように変更
 							break;
 						}
 					}
 //jepro note: 次行不要???
-					if( j < m_cShareData.m_nMyButtonNum ){
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//					if( j < m_cShareData.m_nMyButtonNum ){
+					if( j < m_pcMenuDrawer->m_nMyButtonNum ){
 
 //						/* ツールバーボタンの情報をセット (リストボックス) */
 //						for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
@@ -341,8 +371,15 @@ BOOL CPropCommon::DispatchEvent_p6(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -409,7 +446,8 @@ int CPropCommon::GetData_p6( HWND hwndDlg )
 	int		j;
 	int		k;
 
-	m_nPageNum = ID_PAGENUM_TOOLBAR;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_TOOLBAR;
 
 
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );

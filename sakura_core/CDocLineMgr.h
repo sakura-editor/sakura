@@ -88,6 +88,12 @@ public:
 	int SearchBookMark( int , int , int* ); /* ブックマーク検索 */
 // To Here 2001.12.03 hor
 
+// From Here 2002.01.16 hor
+	void MarkSearchWord( const char* , int , int , int , CBregexp* ); /* 検索条件に該当する行にブックマークをセットする */
+	void SetBookMarks( char* ); /* 物理行番号のリストからまとめて行マーク */
+	char* GetBookMarks( void ); /* 行マークされてる物理行番号のリストを作る */
+// To Here 2001.01.16 hor
+
 	/*
 	|| 更新系
 	*/

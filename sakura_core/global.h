@@ -17,6 +17,7 @@
 
 //////////////////////////////////////////////////////////////
 #include <windows.h>
+
 // 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。
 // この DLL 内のすべてのファイルはコマンドラインで定義された SAKURA_CORE_EXPORTS シンボル
 // でコンパイルされます。このシンボルはこの DLL が使用するどのプロジェクト上でも未定義でなけ
@@ -28,6 +29,11 @@
 #else
 #define SAKURA_CORE_API __declspec(dllimport)
 #endif
+
+#ifdef SAKURA_NO_DLL	//@@@ 2001.12.30 add MIK
+#undef SAKURA_CORE_API
+#define SAKURA_CORE_API
+#endif	//SAKURA_NO_DLL
 
 #if defined(__BORLANDC__)
 #define __forceinline
@@ -60,13 +66,18 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 	#endif
 #endif
 
+//20020108 aroka コントロールプロセスと起動処理のためにミューテックス名を追加
 #ifdef _DEBUG
 	#ifndef	GSTR_MUTEX_SAKURA
 	#define	GSTR_MUTEX_SAKURA "MutexSakuraEditor_DEBUG"
+	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP_DEBUG")
+	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit_DEBUG")
 	#endif
 #else
 	#ifndef	GSTR_MUTEX_SAKURA
 	#define	GSTR_MUTEX_SAKURA "MutexSakuraEditor"
+	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP")
+	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit")
 	#endif
 #endif
 

@@ -38,11 +38,34 @@
 #include <Shlobj.h>
 
 //! Popup Help用ID
-//@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10500
+//@@@ 2001.12.22 Start by MIK: Popup Help
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//11700
+	IDC_MACRODIRREF,	HIDC_MACRODIRREF,	//マクロディレクトリ参照
+	IDC_MACRO_REG,		HIDC_MACRO_REG,		//マクロ設定
+	IDC_COMBO_MACROID,	HIDC_COMBO_MACROID,	//ID
+	IDC_MACROPATH,		HIDC_MACROPATH,		//File
+	IDC_MACRONAME,		HIDC_MACRONAME,		//マクロ名
+	IDC_MACROLIST,		HIDC_MACROLIST,		//マクロリスト
+	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロ一覧
+//	IDC_STATIC,			-1,
 	0, 0
 };
-//@@@ 2001.02.04 End
+#else
+static const DWORD p_helpids[] = {	//11700
+	IDC_MACRODIRREF,	11700,	//参照
+	IDC_MACRO_REG,		11701,	//設定
+	IDC_COMBO_MACROID,	11730,	//ID
+	IDC_MACROPATH,		11731,	//パス
+	IDC_MACRONAME,		11740,	//マクロ名
+	IDC_MACROLIST,		11741,	//リスト
+	IDC_MACRODIR,		11750,	//マクロ一覧
+//	IDC_STATIC,			-1,
+	0, 0
+};
+#endif
+//@@@ 2001.12.22 End
 
 /*!
 	@param hwndDlg ダイアログボックスのWindow Handle
@@ -102,6 +125,10 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 				/* ダイアログデータの取得 p1 */
 				GetData_PROP_Macro( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_MACRO;
+				return TRUE;
 			}
 			break;
 		}
@@ -136,13 +163,20 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:
 		{
-		//	HELPINFO *p = (HELPINFO *)lParam;
-		//	::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -202,7 +236,8 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 
 int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_MACRO;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_MACRO;
 
 	int index;
 	LVITEM sItem;
@@ -216,7 +251,8 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
 		sItem.cchTextMax = MACRONAME_MAX - 1;
-		sItem.pszText = m_pShareData->m_MacroTable[index].m_szName;
+//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+		sItem.pszText = /*m_pShareData->*/m_MacroTable[index].m_szName;
 		ListView_GetItem( hListView, &sItem );
 
 		memset( &sItem, 0, sizeof( sItem ));
@@ -224,12 +260,14 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 2;
 		sItem.cchTextMax = _MAX_PATH;
-		sItem.pszText = m_pShareData->m_MacroTable[index].m_szFile;
+//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+		sItem.pszText = /*m_pShareData->*/m_MacroTable[index].m_szFile;
 		ListView_GetItem( hListView, &sItem );
 	}
 
 	//	マクロディレクトリ
-	::GetDlgItemText( hwndDlg, IDC_MACRODIR, m_pShareData->m_szMACROFOLDER, _MAX_PATH );
+//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	::GetDlgItemText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_szMACROFOLDER, _MAX_PATH );
 
 	return TRUE;
 }

@@ -41,6 +41,7 @@ protected:
 	BOOL OnLbnDblclk( int );
 	BOOL OnBnClicked( int );
 	void SetData();	/* ダイアログデータの設定 */
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 };
 

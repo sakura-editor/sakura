@@ -229,6 +229,7 @@
 #define IDC_BUTTON_SEARCHPREV           1135
 #define IDC_BUTTON_SEARCHNEXT           1137
 #define IDC_LIST_RES                    1138
+#define IDC_BUTTON_SETMARK              1138
 #define IDC_TREE1                       1140
 #define IDC_BUTTON_ADD                  1141
 #define IDC_BUTTON_INSERT               1142
@@ -445,6 +446,7 @@
 #define IDC_STATIC_URL_ORG              1380
 #define IDC_CHECK_AutoMIMEDecode        1381
 #define IDC_EDIT_MENUNAME               1382
+#define IDC_CHECK_RestoreBookmarks      1382
 #define IDC_BUTTON_TEMPCHANGE           1384
 #define IDC_STATIC_EOL                  1385
 #define IDC_BUTTON_JUMP                 1388
@@ -489,6 +491,7 @@
 #define IDC_LABEL_REGEX_VERSION         1417
 #define IDC_CHECK_INS_SPACE             1417
 #define IDC_CHK_PASTE                   1418
+#define IDC_CHECK_SEARCHALL             1419
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -527,7 +530,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        221
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1419
+#define _APS_NEXT_CONTROL_VALUE         1420
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

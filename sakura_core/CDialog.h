@@ -69,6 +69,9 @@ public:
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 //	virtual BOOL OnNextDlgCtl( WPARAM wParam, LPARAM lParam ){ return 1; }
+	virtual BOOL OnPopupHelp( WPARAM, LPARAM );	//@@@ 2002.01.18 add
+	virtual BOOL OnContextMenu( WPARAM, LPARAM );	//@@@ 2002.01.18 add
+	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 
 //	virtual BOOL OnLbnSelChange( HWND, int );

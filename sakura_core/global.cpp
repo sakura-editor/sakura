@@ -13,7 +13,6 @@
 */
 
 #include "global.h"
-#include <memory.h>
 
 
 #ifdef _DEBUG
@@ -53,7 +52,6 @@ const char* gm_pszCodeNameArr_3[] = {
 /*! 選択領域描画用パラメータ */
 const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
-
 
 /*! 行終端子の配列 */
 const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {

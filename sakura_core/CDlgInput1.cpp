@@ -17,6 +17,17 @@
 #include "CDlgInput1.h"
 #include "debug.h"
 
+// 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
+#include "etc_uty.h"
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//13000
+	IDOK,					HIDOK_DLG1,
+	IDCANCEL,				HIDCANCEL_DLG1,
+	IDC_EDIT1,				HIDC_DLG1_EDIT1,	//入力フィールド
+	IDC_STATIC_MSG,			HIDC_DLG1_EDIT1,	//メッセージ
+//	IDC_STATIC,				-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
 
 
 /* ダイアログプロシージャ */
@@ -50,6 +61,9 @@ BOOL CALLBACK CDlgInput1Proc(
 
 CDlgInput1::CDlgInput1()
 {
+	/* ヘルプファイルのフルパスを返す */
+	::GetHelpFilePath( m_szHelpFile );	//@@@ 2002.01.07 add
+
 	return;
 }
 
@@ -126,7 +140,22 @@ BOOL CDlgInput1::DispatchEvent(
 				::EndDialog( hwndDlg, FALSE );
 				return TRUE;
 			}
+			break;	//@@@ 2002.01.07 add
 		}
+		break;	//@@@ 2002.01.07 add
+	//@@@ 2002.01.07 add start
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+	//@@@ 2002.01.07 add end
 	}
 	return FALSE;
 }

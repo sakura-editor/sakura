@@ -54,6 +54,8 @@ class CEditView;
 #define IDM_COPYDICINFO 2000
 #endif
 
+//@@@ 2002.01.09 YAZAKI 使われていないため
+#if 0
 struct GrepParam {
 	void*	pCEditView;
 	char*	pszGrepKey;
@@ -65,6 +67,7 @@ struct GrepParam {
 	BOOL	bKanjiCode_AutoDetect;
 	BOOL	bGrepOutputLine;
 };
+#endif
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -72,7 +75,8 @@ struct GrepParam {
 /*!
 	@brief 文書ウィンドウの管理
 	
-	１つの文書ウィンドウにつき１つのCEditViewオブジェクトが割り当てられる。
+	1つの文書ウィンドウにつき1つのCEditDocオブジェクトが割り当てられ、
+	1つのCEditDocオブジェクトにつき、4つのCEditViweオブジェクトが割り当てられる。
 	ウィンドウメッセージの処理、コマンドメッセージの処理、
 	画面表示などを行う。
 */
@@ -134,6 +138,8 @@ public:
 //	2001/06/18 asa-o
 	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 
+// 2002/01/19 novice public属性に変更
+ 	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
@@ -153,7 +159,7 @@ public: /* テスト用にアクセス属性を変更 */
 
 	BOOL	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
 //	BOOL	m_bGrepRunning;
-	HANDLE	m_hThreadGrep;
+//	HANDLE	m_hThreadGrep;	@@@ 2002.01.03 YAZAKI 使用していないため
 	HWND	m_hWnd;				/* 編集ウィンドウハンドル */
 	int		m_nViewTopLine;		/* 表示域の一番上の行(0開始) */
 	int		m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
@@ -189,7 +195,8 @@ public: /* テスト用にアクセス属性を変更 */
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
-	int				m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
+//@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
+	static int		m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
 	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */
@@ -285,7 +292,6 @@ protected:
 	int  LineColmnToIndex( const char*, int, int );				/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
 	int  LineColmnToIndex2( const char*, int, int, int* );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */
 	int  LineIndexToColmn( const char*, int, int );				/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
 	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
@@ -316,11 +322,12 @@ protected:
 	BOOL IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
-	BOOL IsSeaechString( const char*, int, int, int* );			/* 現在位置が検索文字列に該当するか */
+	BOOL IsSearchString( const char*, int, int, int* );			/* 現在位置が検索文字列に該当するか */
 	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, BOOL ) ;							// 子プロセスの標準出力をリダイレクトする
 	void AddToCmdArr( const char* );
-
+	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
+	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
 
 public: /* テスト用にアクセス属性を変更 */
 	/* IDropTarget実装 */
@@ -388,7 +395,7 @@ protected:
 	void Command_TRIM(BOOL);				// 2001.12.03 hor
 	void Command_TRIM2(CMemory*,BOOL);		// 2001.12.03 hor
 	void Command_SORT(BOOL);				// 2001.12.06 hor
-	void Command_MARGE(void);				// 2001.12.06 hor
+	void Command_MERGE(void);				// 2001.12.06 hor
 
 	void DeleteData2( int, int, int, CMemory*, COpe*, BOOL, BOOL, BOOL = FALSE );/* 指定位置の指定長データ削除 */
 	void DeleteData( BOOL, BOOL = FALSE );/* 現在位置のデータ削除 */
@@ -539,6 +546,7 @@ void ReplaceData_CEditView(
 	void Command_BOOKMARK_PREV( void );					/* 前のブックマークへ */
 	void Command_BOOKMARK_RESET( void );				/* ブックマークの全解除 */
 // To Here 2001.12.03 hor
+	void Command_BOOKMARK_PATTERN(const char*);	// 2002.01.16 hor 指定パターンに一致する行をマーク
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
@@ -595,12 +603,16 @@ void ReplaceData_CEditView(
 	void Command_ABOUT( void );			/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
-	void Command_SENDMAIL( void );		/* メール送信 */
+//@@@ 2002.01.14 YAZAKI 不使用のため
+//	void Command_SENDMAIL( void );		/* メール送信 */
 
 	//	May 23, 2000 genta
 	//	画面描画補助関数
-	void DrawEOL(HDC hdc, HANDLE hPen, int nPosX, int nPosY, int nWidth, int nHeight,
-		CEOL cEol, int bBold );
+//@@@ 2001.12.21 YAZAKI 改行記号の書きかたが変だったので修正
+//	void DrawEOL(HDC hdc, HANDLE hPen, int nPosX, int nPosY, int nWidth, int nHeight,
+//		CEOL cEol, int bBold );
+	void DrawEOL(HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
+		CEOL cEol, int bBold, COLORREF pColor );
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する

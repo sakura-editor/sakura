@@ -1022,7 +1022,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			return FALSE;
 		}
 #ifdef _DEBUG
-		cProfile.DUMP();
+//@@@ 2001.12.26 YAZAKI デバッグ版が正常に起動しないため。
+//		cProfile.DUMP();
 #endif
 
 	}
@@ -1030,22 +1031,25 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 	pszSecName = "MRU";
 	cProfile.IOProfileData( bRead, pszSecName, "_MRU_Counts", REGCNV_INT2SZ, (char*)&m_pShareData->m_nMRUArrNum, 0 );
-	fiInit.m_nCharCode = 0;
-	fiInit.m_nViewLeftCol = 0;
-	fiInit.m_nViewTopLine = 0;
-	fiInit.m_nX = 0;
-	fiInit.m_nY = 0;
-	strcpy( fiInit.m_szPath, "" );
+//@@@ 2001.12.26 YAZAKI 少し後ろに移動。
+//	fiInit.m_nCharCode = 0;
+//	fiInit.m_nViewLeftCol = 0;
+//	fiInit.m_nViewTopLine = 0;
+//	fiInit.m_nX = 0;
+//	fiInit.m_nY = 0;
+//	strcpy( fiInit.m_szPath, "" );
 //	for( i = 0; i < MAX_MRU; ++i ){
 	char	szKeyNameTop[64];
 
 	for( i = 0; i < m_pShareData->m_nMRUArrNum; ++i ){
-		if( i < m_pShareData->m_nMRUArrNum ){
-			pfiWork = &m_pShareData->m_fiMRUArr[i];
-		}else{
-			m_pShareData->m_fiMRUArr[i] = fiInit;
-			pfiWork = &m_pShareData->m_fiMRUArr[i];
-		}
+//@@@ 2001.12.26 YAZAKI 無駄な処理を省く。
+//		if( i < m_pShareData->m_nMRUArrNum ){
+//			pfiWork = &m_pShareData->m_fiMRUArr[i];
+//		}else{
+//			m_pShareData->m_fiMRUArr[i] = fiInit;
+//			pfiWork = &m_pShareData->m_fiMRUArr[i];
+//		}
+		pfiWork = &m_pShareData->m_fiMRUArr[i];
 		wsprintf( szKeyNameTop, "MRU[%02d].", i );
 
 		strcpy( szKeyName, szKeyNameTop );
@@ -1066,16 +1070,42 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		strcpy( szKeyName, szKeyNameTop );
 		strcat( szKeyName, "szPath" );
 		cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/pfiWork->m_szPath, 0 );
+		// 2002.01.16 hor
+		strcpy( szKeyName, szKeyNameTop );
+		strcat( szKeyName, "szMark" );
+		cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/pfiWork->m_szMarkLines, 0 );
 	}
+//@@@ 2001.12.26 YAZAKI 残りのm_fiMRUArrを初期化。
+	if ( bRead ){
+		//	残りをfiInitで初期化しておく。
+		fiInit.m_nCharCode = 0;
+		fiInit.m_nViewLeftCol = 0;
+		fiInit.m_nViewTopLine = 0;
+		fiInit.m_nX = 0;
+		fiInit.m_nY = 0;
+		strcpy( fiInit.m_szPath, "" );
+		strcpy( fiInit.m_szMarkLines, "" );	// 2002.01.16 hor
+		for( ; i < MAX_MRU; ++i){
+			m_pShareData->m_fiMRUArr[i] = fiInit;
+		}
+	}
+
 	cProfile.IOProfileData( bRead, pszSecName, "_MRUFOLDER_Counts", REGCNV_INT2SZ, (char*)&m_pShareData->m_nOPENFOLDERArrNum, 0 );
 
 //	for( i = 0; i < MAX_OPENFOLDER; ++i ){
 	for( i = 0; i < m_pShareData->m_nOPENFOLDERArrNum; ++i ){
 		wsprintf( szKeyName, "MRUFOLDER[%02d]", i );
-		if( i >= m_pShareData->m_nOPENFOLDERArrNum ){
+//@@@ 2001.12.26 YAZAKI 無駄な処理を省く
+//		if( i >= m_pShareData->m_nOPENFOLDERArrNum ){
+//			strcpy( m_pShareData->m_szOPENFOLDERArr[i], "" );
+//		}
+		cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_szOPENFOLDERArr[i], 0 );
+	}
+//@@@ 2001.12.26 YAZAKI 残りのm_szOPENFOLDERArrを初期化
+	if ( bRead ){
+		for (; i< MAX_OPENFOLDER; ++i){
 			strcpy( m_pShareData->m_szOPENFOLDERArr[i], "" );
 		}
-		cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_szOPENFOLDERArr[i], 0 );
 	}
 
 
@@ -1160,6 +1190,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent_ZENSPACE, 0 );
 		//	Oct. 27, 2000 genta
 		cProfile.IOProfileData( bRead, pszSecName, "m_bRestoreCurPosition"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bRestoreCurPosition, 0 );
+		// 2002.01.16 hor
+		cProfile.IOProfileData( bRead, pszSecName, "m_bRestoreBookmarks"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bRestoreBookmarks, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bAddCRLFWhenCopy"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAddCRLFWhenCopy, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nRepeatedScrollLineNum"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nRepeatedScrollLineNum, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nRepeatedScroll_Smooth"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nRepeatedScroll_Smooth, 0 );
@@ -1168,6 +1200,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bSearchLoHiCase"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bLoHiCase, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bSearchWordOnly"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bWordOnly, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bSearchNOTIFYNOTFOUND"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bNOTIFYNOTFOUND, 0 );
+		// 2002.01.26 hor
+		cProfile.IOProfileData( bRead, pszSecName, "bSearchAll"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bSearchAll, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bSearchSelectedArea"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bSelectedArea, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepSubFolder"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepSubFolder, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepOutputLine"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepOutputLine, 0 );
@@ -1244,12 +1278,15 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeCY"					, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nWinSizeCY, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bTaskTrayUse"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseTaskTray, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bTaskTrayStay"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStayTaskTray, 0 );
+//@@@ 2002.01.08 YAZAKI タスクトレイを「使わない」にしても常駐がチェックが残っていると再起動で「使う・常駐」になるバグ修正
+#if 0
 		if( bRead ){
 			/* タスクトレイに常駐するときは、必ずタスクトレイアイコンを使う */
 			if( m_pShareData->m_Common.m_bStayTaskTray ){
 				m_pShareData->m_Common.m_bUseTaskTray = TRUE;
 			}
 		}
+#endif
 		cProfile.IOProfileData( bRead, pszSecName, "wTrayMenuHotKeyCode"		, REGCNV_WORD2SZ, (char*)&m_pShareData->m_Common.m_wTrayMenuHotKeyCode, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "wTrayMenuHotKeyMods"		, REGCNV_WORD2SZ, (char*)&m_pShareData->m_Common.m_wTrayMenuHotKeyMods, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bUseOLE_DragDrop"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseOLE_DragDrop, 0 );
@@ -1921,6 +1958,13 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 //	MYTRACE( "Iniファイル処理 7 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 //	cRunningTimer.Reset();
+
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+	/* **** その他のダイアログ **** */
+	/* 外部コマンド実行の「標準出力を得る」 */
+	cProfile.IOProfileData( bRead, pszSecName, "bGetStdout"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_bGetStdout, 0 );
+	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+	cProfile.IOProfileData( bRead, pszSecName, "bLineNumIsCRLF"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_bLineNumIsCRLF, 0 );
 
 	if( !bRead ){
 		cProfile.WriteProfile( szIniFileName, " sakura.ini テキストエディタ設定ファイル" );

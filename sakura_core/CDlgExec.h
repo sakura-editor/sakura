@@ -32,7 +32,8 @@ public:
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
 	char	m_szCommand[1024 + 1];	/* コマンドライン */
-	BOOL	m_bGetStdout;	// 標準出力を得る
+//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+//	BOOL	m_bGetStdout;	// 標準出力を得る
 
 
 protected:
@@ -40,6 +41,7 @@ protected:
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetData( void );	/* ダイアログデータの設定 */
 	BOOL OnBnClicked( int );
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 
 };

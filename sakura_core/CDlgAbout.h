@@ -35,6 +35,7 @@ public:
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 private:
 	int	 nCursorState;
 };

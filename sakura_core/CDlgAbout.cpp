@@ -20,6 +20,20 @@
 //#include "debug.h"
 //#include "etc_uty.h"
 
+// バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12900
+	IDC_BUTTON_CONTACT,		HIDC_ABOUT_BUTTON_CONTACT,
+	IDOK,					HIDOK_ABOUT,
+	IDC_EDIT_ABOUT,			HIDC_ABOUT_EDIT_ABOUT,
+//	IDC_STATIC_URL_UR,		12970,
+//	IDC_STATIC_URL_ORG,		12971,
+//	IDC_STATIC_UPDATE,		12972,
+//	IDC_STATIC_VER,			12973,
+//	IDC_STATIC,				-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 //	Nov. 7, 2000 genta URLとして表示する文字列
 //const char orgURL[] = "http://hp.vector.co.jp/authors/VA016528/";
 //const char urURL[] = "http://sakura-editor.sourceforge.net/";
@@ -166,5 +180,11 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgAbout::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

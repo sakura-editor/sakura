@@ -66,6 +66,7 @@ protected:
 
 	// 2001.12.03 hor
 	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 private:
 	//	May 18, 2001 genta

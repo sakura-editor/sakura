@@ -25,6 +25,20 @@
 #include "CEditView.h"
 #include "funccode.h"		//Stonee, 2001/03/12
 
+//アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12200
+	IDC_BUTTON_COPY,				HIDC_FL_BUTTON_COPY,	//コピー
+	IDOK,							HIDOK_FL,				//ジャンプ
+	IDCANCEL,						HIDCANCEL_FL,			//キャンセル
+	IDC_BUTTON_HELP,				HIDC_FL_BUTTON_HELP,	//ヘルプ
+	IDC_CHECK_bAutoCloseDlgFuncList,	HIDC_FL_CHECK_bAutoCloseDlgFuncList,	//自動的に閉じる
+	IDC_LIST1,						HIDC_FL_LIST1,			//トピックリスト
+	IDC_TREE1,						HIDC_FL_TREE1,			//トピックツリー
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 /*! ソート比較用プロシージャ */
 int CALLBACK _CompareFunc_( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 {
@@ -150,7 +164,9 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：C++メソッドツリー */
-		SetTreeCpp( m_hWnd );
+		//SetTreeCpp( m_hWnd );
+		//	Jan. 04, 2002 genta Java Method Treeに統合
+		SetTreeJava( m_hWnd, TRUE );
 		::SetWindowText( m_hWnd, "C++ メソッドツリー" );
 	}else
 	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
@@ -370,7 +386,8 @@ int CDlgFuncList::GetData( void )
 	return nLineTo;
 }
 
-
+#if 0
+Jan. 04, 2001 genta Java Treeに統合
 /*! ツリーコントロールの初期化：C++メソッドツリー */
 void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 {
@@ -551,10 +568,15 @@ void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 //	GetTreeTextNext( hwndTree, NULL, 0 );
 	return;
 }
+#endif
 
 
+/*! ツリーコントロールの初期化：Javaメソッドツリー
 
-/* ツリーコントロールの初期化：Javaメソッドツリー */
+	Java Method Treeの構築: 関数リストを元にTreeControlを初期化する。
+
+	@date 2002.01.04 genta C++ツリーを統合
+*/
 void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 {
 	int				i;
@@ -569,27 +591,20 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	char*			pPos;
 	char*			pClassName;
 	char*			pFuncName;
-	char			szLabel[32];
-//	HTREEITEM		htiGlobal;
+    char            szLabel[64+6];  // Jan. 07, 2001 genta クラス名エリアの拡大
+	HTREEITEM		htiGlobal = NULL;	// Jan. 04, 2001 genta C++と統合
 	HTREEITEM		htiClass;
 	HTREEITEM		htiItem;
 	HTREEITEM		htiItemOld;
 	HTREEITEM		htiSelected;
 	TV_ITEM			tvi;
 	int				nClassNest;
-	char			szClassArr[16][48];
-//	char			szText[2048];
+	char			szClassArr[16][64];	// Jan. 04, 2001 genta クラス名エリアの拡大
 
 	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
 
 	hwndTree = ::GetDlgItem( m_hWnd, IDC_TREE1 );
 
-//	tvis.hParent = TVI_ROOT;
-//	tvis.hInsertAfter = TVI_LAST;
-//	tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
-//	tvis.item.pszText = "グローバル";
-//	tvis.item.lParam = -1;
-//	htiGlobal = TreeView_InsertItem( hwndTree, &tvis );
 	nFuncLineOld = 0;
 	bSelected = FALSE;
 	htiItemOld = NULL;
@@ -608,9 +623,19 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			for( k = 0; k < nWorkLen; ++k ){
 				nCharChars = CMemory::MemCharNext( pWork, nWorkLen, &pWork[k] ) - &pWork[k];
 				if( 1 == nCharChars && ':' == pWork[k] ){
-					break;
+					//	Jan. 04, 2001 genta
+					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
+					if( k < nWorkLen - 1 && ':' == pWork[k+1] ){
+						memcpy( szClassArr[nClassNest], &pWork[m], k - m );
+						szClassArr[nClassNest][k - m] = '\0';
+						++nClassNest;
+						m = k + 2;
+						++k;
+					}
+					else 
+						break;
 				}
-				if( 1 == nCharChars && '\\' == pWork[k] ){
+				else if( 1 == nCharChars && '\\' == pWork[k] ){
 					memcpy( szClassArr[nClassNest], &pWork[m], k - m );
 					szClassArr[nClassNest][k - m] = '\0';
 					++nClassNest;
@@ -620,17 +645,22 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					++k;
 				}
 			}
+			//	Jan. 04, 2001 genta
+			//	::もクラス区切りとみなすので、最後の文字列は関数名として残しておく
+			/*
 			if( 0 < k - m ){
 				memcpy( szClassArr[nClassNest], &pWork[m], k - m );
 				szClassArr[nClassNest][k - m] = '\0';
 				++nClassNest;
 			}
+			*/
 //			for( k = 0; k < nClassNest; ++k ){
 //				MYTRACE( "%d [%s]\n", k, szClassArr[k] );
 //			}
 //			MYTRACE( "\n" );
-			pFuncName = new char[ lstrlen( pPos + lstrlen( "::" ) ) + 1 ];
-			strcpy( pFuncName, pPos + lstrlen( "::" ) );
+			//	Jan. 04, 2001 genta
+			//	関数先頭のセット(ツリー構築で使う)
+			pWork = pWork + m; // 2 == lstrlen( "::" );
 
 			/* クラス名のアイテムが登録されているか */
 			htiClass = TreeView_GetFirstVisible( hwndTree );
@@ -665,69 +695,59 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					tvis.item.lParam = -1;
 					htiClass = TreeView_InsertItem( hwndTree, &tvis );
 				}else{
-
+					//none
 				}
+				//	Jan. 04, 2001 genta
+				//	不要になったらさっさと削除
+				delete [] pClassName;
 				htiParent = htiClass;
-				if( k + 1 >= nClassNest ){
-					break;
-				}
+				//if( k + 1 >= nClassNest ){
+				//	break;
+				//}
 				htiClass = TreeView_GetChild( hwndTree, htiClass );
 			}
-			/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
-			tvis.hParent = htiClass;
-			tvis.hInsertAfter = TVI_LAST;
-			tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
-			tvis.item.pszText = pFuncName;
-			tvis.item.lParam = i;
-			htiItem = TreeView_InsertItem( hwndTree, &tvis );
-
-			/* クリップボードにコピーするテキストを編集 */
-			wsprintf( szText, "%s(%d): %s\r\n",
-				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-				pcFuncInfo->m_cmemFuncName.GetPtr( NULL ) 	/* 検出結果 */
-			);
-//			m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
-			m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
-//		}else{
-//			/* グローバル関数の場合 */
-//			pClassName = NULL;
-//			pFuncName = new char[ lstrlen( pWork ) + 1 ];
-//			strcpy( pFuncName, pWork );
-//
-//			strcpy( szText, pFuncName );
-//			/* 関数宣言か */
-//			if( 1 == pcFuncInfo->m_nInfo ){
-//				strcat( szText, "(宣言)" );
-//			}
-//
-//			/* グローバル関数のアイテムを登録 */
-//			tvis.hParent = htiGlobal;
-//			tvis.hInsertAfter = TVI_LAST;
-//			tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
-//			tvis.item.pszText = szText;
-//			tvis.item.lParam = i;
-//			htiItem = TreeView_InsertItem( hwndTree, &tvis );
-//
-//			/* 関数宣言か */
-//			if( 1 == pcFuncInfo->m_nInfo ){
-//				/* クリップボードにコピーするテキストを編集 */
-//				sprintf( szText, "%s(%d): %s(宣言)\r\n",
-//					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-//					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-//					pcFuncInfo->m_cmemFuncName.GetPtr( NULL ) 	/* 検出結果 */
-//				);
-//				m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
-//			}else{
-//				/* クリップボードにコピーするテキストを編集 */
-//				sprintf( szText, "%s(%d): %s\r\n",
-//					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-//					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-//					pcFuncInfo->m_cmemFuncName.GetPtr( NULL ) 	/* 検出結果 */
-//				);
-//				m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
-//			}
+			htiClass = htiParent;
+		}else{
+			//	Jan. 04, 2001 genta
+			//	Global空間の場合 (C++のみ)
+			if( htiGlobal == NULL ){
+				TV_INSERTSTRUCT	tvg;
+				
+				::ZeroMemory( &tvg, sizeof(tvg));
+				tvg.hParent = TVI_ROOT;
+				tvg.hInsertAfter = TVI_LAST;
+				tvg.item.mask = TVIF_TEXT | TVIF_PARAM;
+				tvg.item.pszText = "グローバル";
+				tvg.item.lParam = -1;
+				htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
+			}
+			htiClass = htiGlobal;
 		}
+		
+		pFuncName = new char[ strlen(pWork) + 1 + 6 ];	// 6 == strlen( "(宣言)" );
+		strcpy( pFuncName, pWork );
+		/* 関数宣言か (C++のみ) */
+		if( 1 == pcFuncInfo->m_nInfo ){
+			strcat( pFuncName, "(宣言)" );
+		}
+		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
+		tvis.hParent = htiClass;
+		tvis.hInsertAfter = TVI_LAST;
+		tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
+		tvis.item.pszText = pFuncName;
+		tvis.item.lParam = i;
+		htiItem = TreeView_InsertItem( hwndTree, &tvis );
+
+		/* クリップボードにコピーするテキストを編集 */
+		wsprintf( szText, "%s(%d): %s %s\r\n",
+			m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
+			pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+			pcFuncInfo->m_cmemFuncName.GetPtr( NULL ), 	/* 検出結果 */
+			( 1 == pcFuncInfo->m_nInfo ? "(宣言)" : "" ) 	//	Jan. 04, 2001 genta C++で使用
+		);
+		m_cmemClipText.AppendSz( (const char *)szText ); /* クリップボードコピー用テキスト */
+		delete [] pFuncName;
+
 		/* 現在カーソル位置のメソッドかどうか調べる */
 		if( !bSelected ){
 			if( i == 0 && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
@@ -742,16 +762,10 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			}
 		}
 		nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
-		if( NULL != pClassName ){
-			delete [] pClassName;
-			pClassName = NULL;
-		}
-		if( NULL != pFuncName ){
-			delete [] pFuncName;
-			pFuncName = NULL;
-		}
 		htiItemOld = htiItem;
-	}
+		//	Jan. 04, 2001 genta
+		//	deleteはその都度行うのでここでは不要
+		}
 	/* ソート、ノードの展開をする */
 //	TreeView_SortChildren( hwndTree, TVI_ROOT, 0 );
 	htiClass = TreeView_GetFirstVisible( hwndTree );
@@ -1256,7 +1270,7 @@ void CDlgFuncList::SetTreeBookMark( HWND hwndDlg )
 	LV_ITEM			item;
 	LV_COLUMN		col;
 	HWND			hwndList;
-	HWND			hwndTree;
+//	HWND			hwndTree;
 	int				bSelected;
 	int				nFuncLineOld;
 	int				nSelectedLine;
@@ -1338,5 +1352,11 @@ void CDlgFuncList::SetTreeBookMark( HWND hwndDlg )
 }
 // To Here 2001.12.03 hor
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgFuncList::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

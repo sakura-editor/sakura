@@ -60,6 +60,7 @@ protected:
 	BOOL OnNotify( WPARAM,  LPARAM );
 	BOOL OnCbnSelChange( HWND, int );
 	BOOL OnBnClicked( int );
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 
 	void OnChangeSettingType( BOOL );	/* İ’è‚Ìƒ^ƒCƒv‚ª•Ï‚í‚Á‚½ */

@@ -49,13 +49,14 @@ public:
 	int				m_nSettingType;
 	BOOL			m_bSelected;	/* テキスト選択中か */
 	int				m_nReplaceTarget;	/* 置換対象 */	// 2001.12.03 hor
-	int				m_nPaste;			/* 張付け？ */	// 2001.12.03 hor
+	int				m_nPaste;			/* 貼り付け？ */	// 2001.12.03 hor
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
+	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */

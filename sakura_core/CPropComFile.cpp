@@ -17,7 +17,28 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//01310
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//01310
+	IDC_CHECK_EXCVLUSIVE_NO,				HIDC_CHECK_EXCVLUSIVE_NO,				//ファイルの排他制御（排他制御しない）
+	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
+	IDC_CHECK_EXCVLUSIVE_WRITE,				HIDC_CHECK_EXCVLUSIVE_WRITE,			//ファイルの排他制御（上書き禁止）
+	IDC_CHECK_EXCVLUSIVE_READWRITE,			HIDC_CHECK_EXCVLUSIVE_READWRITE,		//ファイルお排他制御（読み書き禁止）
+	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	//無変更でも上書き
+	IDC_CHECK_AUTOSAVE,						HIDC_CHECK_AUTOSAVE,					//自動的に保存
+	IDC_CHECK_bDropFileAndClose,			HIDC_CHECK_bDropFileAndClose,			//閉じて開く
+	IDC_CHECK_RestoreCurPosition,			HIDC_CHECK_RestoreCurPosition,			//カーソル位置の復元
+	IDC_CHECK_AutoMIMEDecode,				HIDC_CHECK_AutoMIMEDecode,				//MIMEデコード
+	IDC_EDIT_AUTOBACKUP_INTERVAL,			HIDC_EDIT_AUTOBACKUP_INTERVAL,			//自動保存間隔
+	IDC_EDIT_nDropFileNumMax,				HIDC_EDIT_nDropFileNumMax,				//ファイルドロップ最大数
+	IDC_SPIN_AUTOBACKUP_INTERVAL,			HIDC_EDIT_AUTOBACKUP_INTERVAL,
+	IDC_SPIN_nDropFileNumMax,				HIDC_EDIT_nDropFileNumMax,
+	IDC_CHECK_RestoreBookmarks,				HIDC_CHECK_RestoreBookmarks,			// 2002.01.16 hor ブックマークの復元
+//	IDC_STATIC,								-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_EXCVLUSIVE_NO,				10310,	//ファイルの排他制御（排他制御しない）
 	IDC_CHECK_bCheckFileTimeStamp,			10311,	//更新の監視
 	IDC_CHECK_EXCVLUSIVE_WRITE,				10312,	//ファイルの排他制御（上書き禁止）
@@ -29,11 +50,13 @@ const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_AutoMIMEDecode,				10318,	//MIMEデコード
 	IDC_EDIT_AUTOBACKUP_INTERVAL,			10340,	//自動保存間隔
 	IDC_EDIT_nDropFileNumMax,				10341,	//ファイルドロップ最大数
+	IDC_CHECK_RestoreBookmarks				10342,	// 2002.01.16 hor ブックマークの復元
 	IDC_SPIN_AUTOBACKUP_INTERVAL,			-1,
 	IDC_SPIN_nDropFileNumMax,				-1,
 //	IDC_STATIC,								-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -110,6 +133,10 @@ BOOL CPropCommon::DispatchEvent_p2(
 				/* ダイアログデータの取得 p2 */
 				GetData_p2( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_FILE;
+				return TRUE;
 			}
 		break;
 		case IDC_SPIN_nDropFileNumMax:
@@ -131,7 +158,7 @@ BOOL CPropCommon::DispatchEvent_p2(
 			return TRUE;
 //@@@ 2001.03.21 Start by MIK
 			/*NOTREACHED*/
-			break;
+//			break;
 		case IDC_SPIN_AUTOBACKUP_INTERVAL:
 			/* バックアップ間隔 */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, NULL, FALSE );
@@ -150,7 +177,7 @@ BOOL CPropCommon::DispatchEvent_p2(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, nVal, FALSE );
 			return TRUE;
 			/*NOTREACHED*/
-			break;
+//			break;
 //@@@ 2001.03.21 End by MIK
 		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるのでWM_NOTIFYをコメントアウトにしその下に修正を置いた
@@ -183,8 +210,15 @@ BOOL CPropCommon::DispatchEvent_p2(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+//		break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -246,6 +280,8 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.GetRestoreCurPosition() );
+	// 2002.01.16 hor ブックマーク復元フラグ
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.GetRestoreBookmarks() );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.GetAutoMIMEdecode() );
 
@@ -264,7 +300,8 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 */
 int CPropCommon::GetData_p2( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_FILE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_FILE;
 
 	/* ファイルの排他制御モード */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){	/* 排他なし */
@@ -322,6 +359,8 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
 	m_Common.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
+	// 2002.01.16 hor ブックマーク復元フラグ
+	m_Common.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
 	m_Common.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
 

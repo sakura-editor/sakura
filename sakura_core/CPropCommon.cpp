@@ -7,9 +7,10 @@
 	$Revision$
 */
 /*
-	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 1998-2002, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
-	Copyright (C) 2001, genta, MIK, hor
+	Copyright (C) 2001, genta, MIK, hor, Stonee
+	Copyright (C) 2002, YAZAKI, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -32,7 +33,32 @@
 #include "funccode.h"	//Stonee, 2001/05/18
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10900
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10900
+	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//履歴をクリア（ファイル）
+	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//履歴をクリア（フォルダ）
+	IDC_CHECK_FREECARET,			HIDC_CHECK_FREECARET,				//フリーカーソル
+	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,					//自動インデント
+	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,			//全角空白もインデント
+	IDC_CHECK_USETRAYICON,			HIDC_CHECK_USETRAYICON,				//タスクトレイを使う
+	IDC_CHECK_STAYTASKTRAY,			HIDC_CHECK_STAYTASKTRAY,			//タスクトレイに常駐
+	IDC_CHECK_REPEATEDSCROLLSMOOTH,	HIDC_CHECK_REPEATEDSCROLLSMOOTH,	//少し滑らかにする
+	IDC_CHECK_EXITCONFIRM,			HIDC_CHECK_EXITCONFIRM,				//終了の確認
+	IDC_HOTKEY_TRAYMENU,			HIDC_HOTKEY_TRAYMENU,				//左クリックメニューのショートカットキー
+	IDC_EDIT_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,	//スクロール行数
+	IDC_EDIT_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,				//ファイル履歴の最大数
+	IDC_EDIT_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,			//フォルダ履歴の最大数
+	IDC_RADIO_CARETTYPE0,			HIDC_RADIO_CARETTYPE0,				//カーソル形状（Windows風）
+	IDC_RADIO_CARETTYPE1,			HIDC_RADIO_CARETTYPE1,				//カーソル形状（MS-DOS風）
+	IDC_SPIN_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,
+	IDC_SPIN_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,
+	IDC_SPIN_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10900
 	IDC_BUTTON_CLEAR_MRU_FILE,		10900,	//履歴をクリア（ファイル）
 	IDC_BUTTON_CLEAR_MRU_FOLDER,	10901,	//履歴をクリア（フォルダ）
 	IDC_CHECK_FREECARET,			10910,	//フリーカーソル
@@ -54,6 +80,7 @@ const DWORD p_helpids[] = {	//10900
 //	IDC_STATIC,						-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
 
 
@@ -158,13 +185,16 @@ CPropCommon::~CPropCommon()
 
 
 /* 初期化 */
-void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pMacro )
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pMacro, CMenuDrawer* pMenuDrawer )
 {
 	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pcIcons = cIcons;
 	m_pcSMacro = pMacro;
 	m_cLookup.Init( m_hInstance, m_pcSMacro, &m_Common );	//	機能名・番号resolveクラス．
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	m_pcMenuDrawer = pMenuDrawer;
 
 	return;
 }
@@ -354,7 +384,7 @@ void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
 	char		szLabel[256];
-	char		szFuncName[200];
+//	char		szFuncName[200];
 	TBBUTTON	tbb;
 	int			nLength;
 	HBRUSH		hBrush;
@@ -380,7 +410,9 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	if( (int)pDis->itemID < 0 ){
 	}else{
 
-		tbb = m_cShareData.m_tbMyButton[pDis->itemData];
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//		tbb = m_cShareData.m_tbMyButton[pDis->itemData];
+		tbb = m_pcMenuDrawer->m_tbMyButton[pDis->itemData];
 
 		if( 0 != tbb.idCommand ){
 			/* ビットマップの表示 灰色を透明描画 */
@@ -545,15 +577,18 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	psh.pszCaption = (LPSTR) "共通設定";
 	psh.nPages = nIdx;
 
-
+	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
 	if( -1 == nPageNum ){
 		psh.nStartPage = m_nPageNum;
+	}else
+	if( 0 > nPageNum ){			//- 20020106 aroka
+		psh.nStartPage = 0;
 	}else{
 		psh.nStartPage = nPageNum;
 	}
-	if( 0 > psh.nStartPage ){
-		psh.nStartPage = 0;
-	}
+//	if( 0 > psh.nStartPage ){	//- 20020106 aroka
+//		psh.nStartPage = 0;
+//	}
 	if( psh.nPages - 1 < psh.nStartPage ){
 		psh.nStartPage = psh.nPages - 1;
 	}
@@ -607,7 +642,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
+//	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -627,7 +662,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+//		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -640,23 +675,25 @@ BOOL CPropCommon::DispatchEvent_p1(
 			case IDC_CHECK_USETRAYICON:	/* タスクトレイを使う */
 			// From Here 2001.12.03 hor
 			//		操作しにくいって評判だったのでタスクトレイ関係のEnable制御をやめました
-			//	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
-			//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
-			//	}else{
+			//@@@ YAZAKI 2001.12.31 IDC_CHECKSTAYTASKTRAYのアクティブ、非アクティブのみ制御。
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+				}else{
 			//		::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
-			//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
-			//	}
-				if(!::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
-					::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
 				}
+			//	if(!::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
+			//		::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
+			//	}
 			// To Here 2001.12.03 hor
 				return TRUE;
 
 			case IDC_CHECK_STAYTASKTRAY:	/* タスクトレイに常駐 */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY ) ){
-					::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, TRUE );	/* タスクトレイを使う */
-				}else{
-				}
+			//@@@ YAZAKI 2001.12.31 制御しない。
+			//	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY ) ){
+			//		::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, TRUE );	/* タスクトレイを使う */
+			//	}else{
+			//	}
 				return TRUE;
 
 			case IDC_CHECK_INDENT:	/* オートインデント */
@@ -676,8 +713,12 @@ BOOL CPropCommon::DispatchEvent_p1(
 					"最近使ったファイルの履歴を削除します。\nよろしいですか？\n" ) ){
 					return TRUE;
 				}
-
-				m_pShareData->m_nMRUArrNum = 0;
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+//				m_pShareData->m_nMRUArrNum = 0;
+				{
+					CMRU cMRU;
+					cMRU.ClearAll();
+				}
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 					"最近使ったファイルの履歴を削除しました。\n"
 				);
@@ -688,7 +729,12 @@ BOOL CPropCommon::DispatchEvent_p1(
 					"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n" ) ){
 					return TRUE;
 				}
-				m_pShareData->m_nOPENFOLDERArrNum = 0;
+//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+//				m_pShareData->m_nOPENFOLDERArrNum = 0;
+				{
+					CMRUFolder cMRUFolder;	//	MRUリストの初期化。ラベル内だと問題あり？
+					cMRUFolder.ClearAll();
+				}
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 					"最近使ったフォルダの履歴を削除しました。\n"
 				);
@@ -820,6 +866,10 @@ BOOL CPropCommon::DispatchEvent_p1(
 				/* ダイアログデータの取得 p1 */
 				GetData_p1( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_ZENPAN;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+				return TRUE;
 			}
 			break;
 		}
@@ -839,8 +889,15 @@ BOOL CPropCommon::DispatchEvent_p1(
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+//		break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -960,11 +1017,12 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* タスクトレイを使う */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, m_Common.m_bUseTaskTray );
 // From Here 2001.12.03 hor
-//	if( m_Common.m_bUseTaskTray ){
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
-//	}else{
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
-//	}
+//@@@ YAZAKI 2001.12.31 ここは制御する。
+	if( m_Common.m_bUseTaskTray ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+	}
 // To Here 2001.12.03 hor
 	/* タスクトレイに常駐 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, m_Common.m_bStayTaskTray );
@@ -983,7 +1041,8 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 /* ダイアログデータの取得 p1 */
 int CPropCommon::GetData_p1( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_ZENPAN;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_ZENPAN;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
 
 //	/* 折り返し文字数 */
 //	m_Common.m_nMAXLINELEN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
@@ -1099,6 +1158,12 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 //
 	/* タスクトレイを使う */
 	m_Common.m_bUseTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON );
+//@@@ YAZAKI 2001.12.31 m_bUseTaskTrayに引きづられるように。
+	if( m_Common.m_bUseTaskTray ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+	}
 	/* タスクトレイに常駐 */
 	m_Common.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
 
@@ -1166,6 +1231,9 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_KEYBIND);
 		break;
 	// To Here Sept. 9, 2000
+	case IDD_PROP_MACRO:	//@@@ 2002.01.02
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_MACRO);
+		break;
 
 	default:
 		nContextID = -1;

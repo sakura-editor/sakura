@@ -19,6 +19,17 @@
 #include "etc_uty.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 
+// プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//12600
+	IDOK,					HIDOK_PROP,
+	IDCANCEL,				HIDCANCEL_PROP,
+	IDC_BUTTON_HELP,		HIDC_PROP_BUTTON_HELP,
+	IDC_EDIT1,				HIDC_PROP_EDIT1,
+//	IDC_STATIC,				-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 /* モーダルダイアログの表示 */
 int CDlgProperty::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
@@ -92,7 +103,7 @@ void CDlgProperty::SetData( void )
 	if( pCEditDoc->m_bReadOnly ){
 		cmemProp.AppendSz( "上書き禁止モードで開いています。\r\n" );
 	}
-	if( pCEditDoc->m_bIsModified ){
+	if( pCEditDoc->IsModified() ){
 		cmemProp.AppendSz( "変更されています。\r\n" );
 	}else{
 		cmemProp.AppendSz( "変更されていません。\r\n" );
@@ -324,5 +335,11 @@ end_of_CodeTest:;
 	return;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgProperty::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/

@@ -33,6 +33,7 @@
 #include "sakura_rc.h"
 #include "etc_uty.h"
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
+#include "my_icmp.h"	//@@@ 2002.01.13 add
 
 /*! フォントを選ぶ
 	@param bFat TRUEで太字
@@ -115,13 +116,16 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	}
 
 	/* ルーラーとテキストの間の余白 */
-	hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-	rc.left = 0;
-	rc.top = m_nViewAlignTop - m_nTopYohaku;
-	rc.right = m_nViewAlignLeft + m_nViewCx;
-	rc.bottom = m_nViewAlignTop;
-	::FillRect( hdc, &rc, hBrush );
-	::DeleteObject( hBrush );
+	//@@@ 2002.01.03 YAZAKI 余白が0のときは無駄でした。
+	if ( m_nTopYohaku ){
+		rc.left = 0;
+		rc.top = m_nViewAlignTop - m_nTopYohaku;
+		rc.right = m_nViewAlignLeft + m_nViewCx;
+		rc.bottom = m_nViewAlignTop;
+		hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+		::FillRect( hdc, &rc, hBrush );
+		::DeleteObject( hBrush );
+	}
 	
 	//	From Here Sep. 7, 2001 genta
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){ 
@@ -159,8 +163,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	}
 
 	int nMaxRollBackLineNum = 260 / TypeDataPtr->m_nMaxLineSize + 1;
-	int nRollBackLineNum;
-	nRollBackLineNum = 0;
+	int nRollBackLineNum = 0;
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
 	while( nRollBackLineNum < nMaxRollBackLineNum ){
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
@@ -330,6 +333,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
  	色指定SetCurrentColorを呼ぶときにCOLORIDX_*値を加算するので、
  	1000～COLORIDX_LASTまでは正規表現で使用する。
 
+	@date 2001.12.21 YAZAKI 改行記号の描きかたを変更
  */
 //@@@ 2001.02.17 End by MIK
 int CEditView::DispLineNew(
@@ -367,8 +371,9 @@ int CEditView::DispLineNew(
 	int						nLineHeight = m_nCharHeight + TypeDataPtr->m_nLineSpace;
 	int						nCharWidth = m_nCharWidth + TypeDataPtr->m_nColmSpace;
 	UINT					fuOptions = ETO_CLIPPED | ETO_OPAQUE;
-	HPEN					hPen;
-	HPEN					hPenOld;
+//@@@ 2001.12.21 YAZAKI
+//	HPEN					hPen;
+//	HPEN					hPenOld;
 	HBRUSH					hBrush;
 	COLORREF				colTextColorOld;
 	COLORREF				colBkColorOld;
@@ -490,7 +495,7 @@ int CEditView::DispLineNew(
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
 					if( !bSearchStringMode
-					 && IsSeaechString( (const char*)pLine, nLineLen, nPos, &nSearchEnd )
+					 && IsSearchString( (const char*)pLine, nLineLen, nPos, &nSearchEnd )
 					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -577,13 +582,16 @@ searchnext:;
 							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_CRLF].m_bDisp ){
 								nPosX = x + nX * ( nCharWidth );
 								nPosY = y;
-								hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
-								hPenOld = (HPEN)::SelectObject( hdc, hPen );
-								//	May 23, 2000 genta
-								DrawEOL(hdc, hPen, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
-									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont );
-								::SelectObject( hdc, hPenOld );
-								::DeleteObject( hPen );
+								//@@@ 2001.12.21 YAZAKI
+								//hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
+								//hPenOld = (HPEN)::SelectObject( hdc, hPen );
+								////	May 23, 2000 genta
+								//DrawEOL(hdc, hPen, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
+								//	pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont );
+								//::SelectObject( hdc, hPenOld );
+								//::DeleteObject( hPen );
+								DrawEOL(hdc, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
+									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
 							}
 						}
 						::SelectObject( hdc, hFontOld );
@@ -617,11 +625,12 @@ searchnext:;
 						}
 						/* 現在の色を指定 */
 						nBgn = nPos;
-						nCOMMENTMODE = 1000;	/* 色指定 */
+						//nCOMMENTMODE = 1000;	/* 色指定 */
+						nCOMMENTMODE = 1000 + nMatchColor;	/* 色指定 */	//@@@ 2002.01.04 upd
 						nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
 						if( !bSearchStringMode ){
-							//SetCurrentColor( hdc, nCOMMENTMODE );
-							SetCurrentColor( hdc, nCOMMENTMODE + nMatchColor );
+							SetCurrentColor( hdc, nCOMMENTMODE );	//@@@ 2002.01.04
+							//SetCurrentColor( hdc, nCOMMENTMODE + nMatchColor );	//@@@ 2002.01.04
 						}
 					}
 					else
@@ -959,7 +968,7 @@ searchnext:;
 				case 5:		/* キーワードモードである */
 				case 9:		/* 半角数値である */  //@@@ 2001.02.17 by MIK
 				case 50:	/* キーワード2モードである */	//MIK
-				case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK
+				//case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04 del
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -1157,6 +1166,23 @@ searchnext:;
 						goto SEARCH_START;
 					}
 					break;
+				default:	//@@@ 2002.01.04 add start
+					if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
+						if( nPos == nCOMMENTEND ){
+							if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
+								/* テキスト表示 */
+								nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
+							}
+							nBgn = nPos;
+							nCOMMENTMODE = 0;
+							/* 現在の色を指定 */
+							if( !bSearchStringMode ){
+								SetCurrentColor( hdc, nCOMMENTMODE );
+							}
+							goto SEARCH_START;
+						}
+					}
+					break;	//@@@ 2002.01.04 add end
 				}
 				if( pLine[nPos] == TAB ){
 					if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
@@ -1225,7 +1251,9 @@ searchnext:;
 					nCharChars = 1;
 				}else
 				if( pLine[nPos] == 0x81 && pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
-				 && nCOMMENTMODE != 1000 ){	//@@@ 2001.11.17 add MIK
+				// && nCOMMENTMODE != 1000 )	//@@@ 2002.01.04
+				 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
+				{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
 					if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 						/* テキスト表示 */
 						nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
@@ -1298,9 +1326,10 @@ searchnext:;
 					 && 6 != nCOMMENTMODE
 					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
 					 &&	(
-							( (unsigned char)0x0 <= pLine[nPos] && pLine[nPos] <= (unsigned char)0x1F ) ||
+								//	Jan. 23, 2002 genta 警告抑制
+							( /*(unsigned char)0x0 <= pLine[nPos] &&*/ pLine[nPos] <= (unsigned char)0x1F ) ||
 							( (unsigned char)'~' < pLine[nPos] && pLine[nPos] < (unsigned char)'｡' ) ||
-							( (unsigned char)'ﾟ' < pLine[nPos] && pLine[nPos] <= (unsigned char)0xff )
+							( (unsigned char)'ﾟ' < pLine[nPos] /*&& pLine[nPos] <= (unsigned char)0xff*/ )
 						)
 					 && pLine[nPos] != TAB && pLine[nPos] != CR && pLine[nPos] != LF
 					){
@@ -1322,9 +1351,10 @@ searchnext:;
 								break;
 							}
 							if( (
-								( (unsigned char)0x0 <= pLine[i] && pLine[i] <= (unsigned char)0x1F ) ||
+								//	Jan. 23, 2002 genta 警告抑制
+								( /*(unsigned char)0x0 <= pLine[i] &&*/ pLine[i] <= (unsigned char)0x1F ) ||
 									( (unsigned char)'~' < pLine[i] && pLine[i] < (unsigned char)'｡' ) ||
-									( (unsigned char)'ﾟ' < pLine[i] && pLine[i] <= (unsigned char)0xff )
+									( (unsigned char)'ﾟ' < pLine[i] /*&& pLine[i] <= (unsigned char)0xff*/ )
 								) &&
 								pLine[i] != TAB && pLine[i] != CR && pLine[i] != LF
 							){
@@ -1637,113 +1667,183 @@ end_of_func:;
 	行末の改行マークを改行コードによって書き分ける（メイン）
 
 	@param hdc Device Context Handle
-	@param hPen 描画に使うペン
 	@param nPosX 描画座標X
 	@param nPosY 描画座標Y
 	@param nWidth  描画エリアのサイズX
 	@param nHeight 描画エリアのサイズY
 	@param cEol 行末コード種別
 	@param bBold TRUE: 太字
+	@param pColor 色
 
 	@note bBoldがTRUEの時は横に1ドットずらして重ね書きを行うが、
 	あまり太く見えない。
+	
+	@date 2001.12.21 YAZAKI 改行記号の描きかたを変更。ペンはこの関数内で作るようにした。
+							矢印の先頭を、sx, syにして描画ルーチン書き直し。
 */
-void CEditView::DrawEOL( HDC hdc, HANDLE hPen, int nPosX, int nPosY, int nWidth, int nHeight, CEOL cEol, int bBold )
+void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, CEOL cEol, int bBold, COLORREF pColor )
 {
-	int sx, sy;
+	int sx, sy;	//	矢印の先頭
+	HANDLE	hPen;
+	HPEN	hPenOld;
+	hPen = ::CreatePen( PS_SOLID, 1, pColor );
+	hPenOld = (HPEN)::SelectObject( hdc, hPen );
+
 	switch( cEol.GetType() ){
-	case EOL_CRLF:
+	case EOL_CRLF:	//	下左矢印
+		sx = nPosX;
+		sy = nPosY + ( nHeight / 2);
+		::MoveToEx( hdc, sx + nWidth, sy - nHeight / 4, NULL );	//	上へ
+		::LineTo(   hdc, sx + nWidth, sy );			//	下へ
+		::LineTo(   hdc, sx, sy );					//	先頭へ
+		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
+		::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
+		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
+		if ( bBold ) {
+			::MoveToEx( hdc, sx + nWidth + 1, sy - nHeight / 4, NULL );	//	上へ（右へずらす）
+			++sy;
+			::LineTo( hdc, sx + nWidth + 1, sy );	//	右へ（右にひとつずれている）
+			::LineTo(   hdc, sx, sy );					//	先頭へ
+			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
+			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
+			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
+		}
+//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
+//		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
+//		::MoveToEx( hdc, sx, sy, NULL );
+//		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
+//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
+//		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
+//		if( bBold ){
+//			++sx;
+//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
+//			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
+//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
+//			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
+//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
+//			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
+//		}
+		break;
+	case EOL_LF:	//	左向き矢印
+		sx = nPosX;
+		sy = nPosY + ( nHeight / 2 );
+		::MoveToEx( hdc, sx + nWidth, sy, NULL );	//	右へ
+		::LineTo(   hdc, sx, sy );					//	先頭へ
+		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
+		::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
+		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
+		if ( bBold ) {
+			++sy;
+			::MoveToEx( hdc, sx + nWidth, sy, NULL );	//	右へ
+			::LineTo(   hdc, sx, sy );					//	先頭へ
+			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
+			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
+			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
+		}
+//		::MoveToEx( hdc, nPosX, sy, NULL );
+//		::LineTo(   hdc, nPosX + nWidth, sy );
+//		::MoveToEx( hdc, sx, sy, NULL );
+//		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
+//		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
+//		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
+//		if( bBold ){
+//			++sy;
+//			::MoveToEx( hdc, nPosX, sy, NULL );
+//			::LineTo(   hdc, nPosX + nWidth, sy );
+//			::MoveToEx( hdc, sx, sy, NULL );
+//			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
+//			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
+//			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
+//		}
+		break;
+	case EOL_CR:	//	下向き矢印
 		sx = nPosX + ( nWidth / 2 );
 		sy = nPosY + ( nHeight * 3 / 4 );
-		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-		::MoveToEx( hdc, sx, sy, NULL );
-		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
-		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
-		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
+		::MoveToEx( hdc, sx, nPosY + nHeight / 4 + 1, NULL );	//	上へ
+		::LineTo(   hdc, sx, sy );								//	上から下へ
+		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
+		::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
+		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		if( bBold ){
 			++sx;
-			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
-			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
-			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
+			::MoveToEx( hdc, sx, nPosY + nHeight / 4 + 1, NULL );
+			::LineTo(   hdc, sx, sy );								//	上から下へ
+			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
+			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
+			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		}
-		break;
-	case EOL_LF:
-		sx = nPosX;
-		sy = nPosY + ( nHeight / 2 );
-		::MoveToEx( hdc, nPosX, sy, NULL );
-		::LineTo(   hdc, nPosX + nWidth, sy );
-		::MoveToEx( hdc, sx, sy, NULL );
-		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
-		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
-		if( bBold ){
-			++sy;
-			::MoveToEx( hdc, nPosX, sy, NULL );
-			::LineTo(   hdc, nPosX + nWidth, sy );
-			::MoveToEx( hdc, sx, sy, NULL );
-			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
-			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
-		}
-		break;
-	case EOL_CR:
-#if 1
-		sx = nPosX + nWidth;
-		sy = nPosY + ( nHeight / 2 );
-		::MoveToEx( hdc, nPosX, sy, NULL );
-		::LineTo(   hdc, nPosX + nWidth, sy );
-		::MoveToEx( hdc, sx, sy, NULL );
-		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
-		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-		::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
-		if( bBold ){
-			++sy;
-			::MoveToEx( hdc, nPosX, sy, NULL );
-			::LineTo(   hdc, nPosX + nWidth, sy );
-			::MoveToEx( hdc, sx, sy, NULL );
-			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
-			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-			::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
-		}
-#else
-		sx = nPosX;
-		::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
-		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
-		::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
-		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
-		if( bBold ){
-			++sx;
-			::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
-			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
-			::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
-			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
-		}
-#endif
+//#if 1
+//		sx = nPosX + nWidth;
+//		sy = nPosY + ( nHeight / 2 );
+//		::MoveToEx( hdc, nPosX, sy, NULL );
+//		::LineTo(   hdc, nPosX + nWidth, sy );
+//		::MoveToEx( hdc, sx, sy, NULL );
+//		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
+//		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
+//		::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
+//		if( bBold ){
+//			++sy;
+//			::MoveToEx( hdc, nPosX, sy, NULL );
+//			::LineTo(   hdc, nPosX + nWidth, sy );
+//			::MoveToEx( hdc, sx, sy, NULL );
+//			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
+//			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
+//			::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
+//		}
+//#else
+//		sx = nPosX;
+//		::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
+//		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
+//		::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
+//		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
+//		if( bBold ){
+//			++sx;
+//			::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
+//			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
+//			::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
+//			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
+//		}
+//#endif
 		break;
 	case EOL_LFCR:
 		sx = nPosX + ( nWidth / 2 );
-		sy = nPosY + ( nHeight * 1 / 4 );
-		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-		::MoveToEx( hdc, sx, sy, NULL );
-		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-		::MoveToEx( hdc, sx, sy, NULL);
-		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
+		sy = nPosY + ( nHeight * 3 / 4 );
+		::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 1, NULL );	//	右上へ
+		::LineTo(   hdc, sx, nPosY + nHeight / 4 + 1 );			//	右から左へ
+		::LineTo(   hdc, sx, sy );								//	上から下へ
+		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
+		::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
+		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		if( bBold ){
+			::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 2, NULL );	//	右上へ
 			++sx;
-			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-			::MoveToEx( hdc, sx, sy, NULL );
-			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-			::MoveToEx( hdc, sx, sy, NULL);
-			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
+			::LineTo(   hdc, sx, nPosY + nHeight / 4 + 2 );			//	右から左へ
+			::LineTo(   hdc, sx, sy );								//	上から下へ
+			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
+			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
+			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		}
+//		sx = nPosX + ( nWidth / 2 );
+//		sy = nPosY + ( nHeight * 1 / 4 );
+//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
+//		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
+//		::MoveToEx( hdc, sx, sy, NULL );
+//		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
+//		::MoveToEx( hdc, sx, sy, NULL);
+//		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
+//		if( bBold ){
+//			++sx;
+//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
+//			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
+//			::MoveToEx( hdc, sx, sy, NULL );
+//			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
+//			::MoveToEx( hdc, sx, sy, NULL);
+//			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
+//		}
 		break;
 	}
+	::SelectObject( hdc, hPenOld );
+	::DeleteObject( hPen );
 }
 
 

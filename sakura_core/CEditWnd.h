@@ -4,10 +4,12 @@
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
+	@date 2002/01/14 YAZAKI PrintPreviewの分離
 	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001-2002, YAZAKI
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,6 +26,8 @@ class CEditWnd;
 #include "CFuncKeyWnd.h"
 #include "CMenuDrawer.h"
 #include "CImageListMgr.h"
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+#include "CPrintPreview.h"
 
 
 
@@ -45,7 +49,8 @@ public:
 
 
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
-	BOOL DispatchEvent_PPB( HWND, UINT, WPARAM, LPARAM );	/* 印刷プレビュー 操作バー ダイアログのメッセージ処理 */
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+//	BOOL DispatchEvent_PPB( HWND, UINT, WPARAM, LPARAM );	/* 印刷プレビュー 操作バー ダイアログのメッセージ処理 */
 
 	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
 
@@ -64,7 +69,7 @@ public:
 	void CreateToolBar( void );			/* ツールバー作成 */
 	void CreateStatusBar( void );		/* ステータスバー作成 */
 	void DestroyStatusBar( void );		/* ステータスバー破棄 */
-	void CreatePrintPreviewBar( void );	/* ツールバー作成 */
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューのバーはCPrintPreviewに移動
 
 	void InitMenu( HMENU, UINT, BOOL );
 //複数プロセス版
@@ -72,8 +77,8 @@ public:
 
 	int	OnClose( void );	/* 終了時の処理 */
 
-
-void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
+//@@@ 2002.01.14 YAZAKI 不使用のため
+//void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
 
 
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */
@@ -100,24 +105,23 @@ void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
     HWND			m_hwndToolBar;
 	HWND			m_hwndStatusBar;
 	HWND			m_hwndProgressBar;
-	HWND			m_hwndPrintPreviewBar;	/* 印刷プレビュー 操作バー */
-	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
-	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
-	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
+	//	変数を移動
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
-	HBITMAP			m_hbmpOPENED;
-	HBITMAP			m_hbmpOPENED_THIS;
+//@@@ 2002.01.14 YAZAKI 不使用のため
+//	HBITMAP			m_hbmpOPENED;
+//	HBITMAP			m_hbmpOPENED_THIS;
 	CFuncKeyWnd		m_CFuncKeyWnd;
 	CMenuDrawer		m_CMenuDrawer;
 	int				m_nWinSizeType;	/* サイズ変更のタイプ */
+	//	うまくやれば、以下はPrintPreviewへ行きそう。
 	BOOL			m_bDragMode;
 	int				m_nDragPosOrgX;
 	int				m_nDragPosOrgY;
-	BOOL			m_SCROLLBAR_HORZ;
-	BOOL			m_SCROLLBAR_VERT;
-
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
+	//	変数を移動
 //	HANDLE			m_hThread;
 
 //	int				m_nChildArrNum;
@@ -125,35 +129,11 @@ void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
 
 
 	/* 印刷プレビュー表示情報 */
-	int				m_nPreviewVScrollPos;	/* 印刷プレビュー：スクロール位置縦 */
-	int				m_nPreviewHScrollPos;	/* 印刷プレビュー：スクロール位置横 */
-	int				m_nPreview_Zoom;	/* 印刷プレビュー：倍率 */
-	int				m_nPreview_CurPage;	/* 印刷プレビュー：ページ */
-	int				m_nPreview_AllPageNum;	/* 印刷プレビュー：全ページ数 */
-	int				m_nPreview_ViewWidth;		/* 印刷プレビュー：ビュー幅(ピクセル) */
-	int				m_nPreview_ViewHeight;		/* 印刷プレビュー：ビュー高さ(ピクセル) */
-	int				m_nPreview_ViewMarginLeft;	/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
-	int				m_nPreview_ViewMarginTop;	/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
-	int				m_nPreview_PaperAllWidth;	/* 用紙幅(1/10mm単位) */
-	int				m_nPreview_PaperAllHeight;	/* 用紙高さ(1/10mm単位) */
-	int				m_nPreview_PaperWidth;	/* 用紙印刷有効幅(1/10mm単位) */
-	int				m_nPreview_PaperHeight;	/* 用紙印刷有効高さ(1/10mm単位) */
-	int				m_nPreview_PaperOffsetLeft;	/* 用紙余白左端(1/10mm単位) */
-	int				m_nPreview_PaperOffsetTop;	/* 用紙余白上端(1/10mm単位) */
-	int				m_nPreview_PaperOffsetRight;	/* 用紙余白右端(1/10mm単位) */
-	int				m_nPreview_PaperOffsetBottom;	/* 用紙余白下端(1/10mm単位) */
-	int				m_bPreview_EnableColms;	/* 印字可能桁数/ページ */
-	int				m_bPreview_EnableLines;	/* 印字可能行数/ページ */
-	int				m_nPreview_LineNumberColmns;	/* 行番号エリアの幅（文字数） */
-	int				m_nAllPageNum;	/* 全ページ数 */
-	int				m_nCurPageNum;	/* 現在のページ */
-
-	PRINTSETTING*	m_pPrintSetting;	/* 現在の印刷設定 */
-	LOGFONT			m_lfPreviewHan;	/* プレビュー用フォント */
-	LOGFONT			m_lfPreviewZen;	/* プレビュー用フォント */
-
-	CLayoutMgr		m_CLayoutMgr_Print;	/* 印刷用のレイアウト管理情報 */
-	int				m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
+	//	必要になったとき（プレビューコマンドを選んだとき）に生成し、必要なくなったら（プレビューコマンドを終了するときに）破棄すること。
+	CPrintPreview*	m_pPrintPreview;
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
+	//	変数を移動
+	//	うまくやれば、以下もPrintPreviewへ行きそう
 	HDC				m_hdcCompatDC;	/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
@@ -166,22 +146,9 @@ void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
 	*/
 protected:
 	void OnDropFiles( HDROP );	/* ファイルがドロップされた */
-	void InitPreviewScrollBar( void );	/* 印刷プレビュー スクロールバー初期化 */
-	void OnPreviewZoom( BOOL );	/* プレビュー拡大縮小 */
-	void OnPreviewGoPage( int );	/* プレビュー ページ指定 */
-	/* 印刷／プレビュー 行描画 */
-	void CEditWnd::Print_DrawLine(
-		HDC			hdc,
-		int			x,
-		int			y,
-		const char*	pLine,
-		int			nLineLen,
-		HFONT		hFontZen
-	);
-	/* 印刷/印刷プレビュー ページテキストの描画 */
-	void CEditWnd::DrawPageText( HDC, int, int, int, HFONT, CDlgCancel* );
-	void OnPrint( void );	/* 印刷実行 */
-	void OnChangePrintSetting( void );	/* 印刷設定の反映 */
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
+	//	メソッドを移動
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 public:
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
 

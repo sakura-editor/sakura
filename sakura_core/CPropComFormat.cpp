@@ -17,7 +17,24 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-const DWORD p_helpids[] = {	//10400
+#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//10400
+	IDC_EDIT_DFORM,						HIDC_EDIT_DFORM,		//日付書式
+	IDC_EDIT_TFORM,						HIDC_EDIT_TFORM,		//時刻書式
+	IDC_EDIT_DFORM_EX,					HIDC_EDIT_DFORM_EX,		//日付書式（表示例）
+	IDC_EDIT_TFORM_EX,					HIDC_EDIT_TFORM_EX,		//時刻書式（表示例）
+	IDC_EDIT_MIDASHIKIGOU,				HIDC_EDIT_MIDASHIKIGOU,	//見出し記号
+	IDC_EDIT_INYOUKIGOU,				HIDC_EDIT_INYOUKIGOU,	//引用符
+	IDC_RADIO_DFORM_0,					HIDC_RADIO_DFORM_0,		//日付書式（標準）
+	IDC_RADIO_DFORM_1,					HIDC_RADIO_DFORM_1,		//日付書式（カスタム）
+	IDC_RADIO_TFORM_0,					HIDC_RADIO_TFORM_0,		//時刻書式（標準）
+	IDC_RADIO_TFORM_1,					HIDC_RADIO_TFORM_1,		//時刻書式（カスタム）
+//	IDC_STATIC,							-1,
+	0, 0
+};
+#else
+static const DWORD p_helpids[] = {	//10400
 	IDC_EDIT_DFORM,						10440,	//日付書式
 	IDC_EDIT_TFORM,						10441,	//時刻書式
 	IDC_EDIT_DFORM_EX,					10442,	//日付書式（表示例）
@@ -31,7 +48,38 @@ const DWORD p_helpids[] = {	//10400
 //	IDC_STATIC,							-1,
 	0, 0
 };
+#endif
 //@@@ 2001.02.04 End
+
+//@@@ 2002.01.12 add start
+static const char *p_date_form[] = {
+	"yyyy'年'M'月'd'日'",
+	"yyyy'年'M'月'd'日('dddd')'",
+	"yyyy'年'MM'月'dd'日'",
+	"yyyy'年'M'月'd'日' dddd",
+	"yyyy'年'MM'月'dd'日' dddd",
+	"yyyy/MM/dd",
+	"yy/MM/dd",
+	"yy/M/d",
+	"yyyy/M/d",
+	"yy/MM/dd' ('ddd')'",
+	"yy/M/d' ('ddd')'",
+	"yyyy/MM/dd' ('ddd')'",
+	"yyyy/M/d' ('ddd')'",
+	"yyyy/M/d' ('ddd')'",
+	NULL
+};
+
+static const char *p_time_form[] = {
+	"hh:mm:ss",
+	"tthh'時'mm'分'ss'秒'",
+	"H:mm:ss",
+	"HH:mm:ss",
+	"tt h:mm:ss",
+	"tt hh:mm:ss",
+	NULL
+};
+//@@@ 2002.01.12 add end
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -226,6 +274,10 @@ BOOL CPropCommon::DispatchEvent_p9(
 				/* ダイアログデータの取得 p9 */
 				GetData_p9( hwndDlg );
 				return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			case PSN_SETACTIVE:
+				m_nPageNum = ID_PAGENUM_FORMAT;
+				return TRUE;
 			}
 			break;
 //		}
@@ -247,6 +299,13 @@ BOOL CPropCommon::DispatchEvent_p9(
 		/*NOTREACHED*/
 		break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.12.22 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.12.22 End
 
 	}
 	return FALSE;
@@ -306,7 +365,8 @@ void CPropCommon::SetData_p9( HWND hwndDlg )
 /* ダイアログデータの取得 p9 */
 int CPropCommon::GetData_p9( HWND hwndDlg )
 {
-	m_nPageNum = ID_PAGENUM_FORMAT;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	m_nPageNum = ID_PAGENUM_FORMAT;
 
 	/* 見出し記号 */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_szMidashiKigou, sizeof(m_Common.m_szMidashiKigou) );

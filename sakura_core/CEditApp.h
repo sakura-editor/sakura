@@ -63,6 +63,7 @@ public:
 
 	static BOOL CloseAllEditor( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	static void TerminateApplication( void );	/* サクラエディタの全終了 */
+#if 0
 	/* コマンドラインの解析 */
 	static void CEditApp::ParseCommandLine(
 		const char*	pszCmdLineSrc,
@@ -82,6 +83,7 @@ public:
 		FileInfo*	pfi,
 		BOOL*		pbReadOnly
 	);
+#endif
 
 	/*
 	|| メンバ変数
@@ -104,8 +106,10 @@ private:
 	CImageListMgr	m_hIcons;
 
 	void	DoGrep();	//Stonee, 2001/03/21
+#if 0
 	//	Apr. 6, 2001 genta コマンドラインオプションの解析
 	static int CheckCommandLine( char *str, char** arg );
+#endif
 	//	Apr. 24, 2001 genta
 	/*!	RegisterMessageで得られるMessage IDの保管場所 */
 	UINT	m_uCreateTaskBarMsg;

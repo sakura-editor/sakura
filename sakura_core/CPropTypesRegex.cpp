@@ -31,6 +31,31 @@
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 
 
+#if 1	//@@@ 2002.01.03 add start MIK
+#include "sakura.hh"
+static const DWORD p_helpids[] = {	//11600
+	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//インポート
+	IDC_BUTTON_REGEX_EXPORT,	HIDC_BUTTON_REGEX_EXPORT,	//エクスポート
+	IDC_BUTTON_REGEX_INS,		HIDC_BUTTON_REGEX_INS,		//挿入
+	IDC_BUTTON_REGEX_ADD,		HIDC_BUTTON_REGEX_ADD,		//追加
+	IDC_BUTTON_REGEX_UPD,		HIDC_BUTTON_REGEX_UPD,		//更新
+	IDC_BUTTON_REGEX_DEL,		HIDC_BUTTON_REGEX_DEL,		//削除
+	IDC_BUTTON_REGEX_TOP,		HIDC_BUTTON_REGEX_TOP,		//先頭
+	IDC_BUTTON_REGEX_LAST,		HIDC_BUTTON_REGEX_LAST,		//最終
+	IDC_BUTTON_REGEX_UP,		HIDC_BUTTON_REGEX_UP,		//上へ
+	IDC_BUTTON_REGEX_DOWN,		HIDC_BUTTON_REGEX_DOWN,		//下へ
+	IDC_CHECK_REGEX,			HIDC_CHECK_REGEX,			//正規表現キーワードを使用する
+	IDC_COMBO_REGEX_COLOR,		HIDC_COMBO_REGEX_COLOR,		//色
+	IDC_EDIT_REGEX,				HIDC_EDIT_REGEX,			//正規表現キーワード
+	IDC_LIST_REGEX,				HIDC_LIST_REGEX,			//リスト
+	IDC_LABEL_REGEX_KEYWORD,	HIDC_EDIT_REGEX,			
+	IDC_LABEL_REGEX_COLOR,		HIDC_COMBO_REGEX_COLOR,		
+	IDC_FRAME_REGEX,			HIDC_LIST_REGEX,			
+	IDC_LABEL_REGEX_VERSION,	HIDC_LABEL_REGEX_VERSION,	//バージョン
+//	IDC_STATIC,						-1,
+	0, 0
+};
+#else
 static const DWORD p_helpids4[] = {	//11600
 	IDC_BUTTON_REGEX_IMPORT,	11600,	//インポート
 	IDC_BUTTON_REGEX_EXPORT,	11601,	//エクスポート
@@ -53,7 +78,7 @@ static const DWORD p_helpids4[] = {	//11600
 //	IDC_STATIC,						-1,
 	0, 0
 };
-
+#endif
 
 
 /* 正規表現キーワード ダイアログプロシージャ */
@@ -695,6 +720,10 @@ BOOL CPropTypes::DispatchEvent_Regex(
 			/* ダイアログデータの取得 正規表現キーワード */
 			GetData_Regex( hwndDlg );
 			return TRUE;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+		case PSN_SETACTIVE:
+			m_nPageNum = 3;
+			return TRUE;
 		case LVN_ITEMCHANGED:
 			if( pNMHDR->hwndFrom == hwndList )
 			{
@@ -748,15 +777,15 @@ BOOL CPropTypes::DispatchEvent_Regex(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids4 );
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids4 );
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
 		return TRUE;
 
 	}
@@ -839,8 +868,9 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 	int	nIndex, i, j;
 	char	szKeyWord[256], szColorIndex[256];
 
-	//自分のページ番号
-	m_nPageNum = 3;
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+//	//自分のページ番号
+//	m_nPageNum = 3;
 
 	//使用する・使用しない
 	if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )

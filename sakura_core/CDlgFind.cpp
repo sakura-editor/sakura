@@ -23,6 +23,26 @@
 #include "CEditView.h"
 #include "etc_uty.h"	//Stonee, 2001/03/12
 
+//検索 CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura.hh"
+const DWORD p_helpids[] = {	//11800
+	IDC_BUTTON_SEARCHNEXT,			HIDC_FIND_BUTTON_SEARCHNEXT,		//次を検索
+	IDC_BUTTON_SEARCHPREV,			HIDC_FIND_BUTTON_SEARCHPREV,		//前を検索
+	IDCANCEL,						HIDCANCEL_FIND,						//キャンセル
+	IDC_BUTTON_HELP,				HIDC_FIND_BUTTON_HELP,				//ヘルプ
+	IDC_CHK_WORD,					HIDC_FIND_CHK_WORD,					//単語単位
+	IDC_CHK_LOHICASE,				HIDC_FIND_CHK_LOHICASE,				//大文字小文字
+	IDC_CHK_REGULAREXP,				HIDC_FIND_CHK_REGULAREXP,			//正規表現
+	IDC_CHECK_NOTIFYNOTFOUND,		HIDC_FIND_CHECK_NOTIFYNOTFOUND,		//見つからないときに通知
+	IDC_CHECK_bAutoCloseDlgFind,	HIDC_FIND_CHECK_bAutoCloseDlgFind,	//自動的に閉じる
+	IDC_COMBO_TEXT,					HIDC_FIND_COMBO_TEXT,				//検索文字列
+	IDC_STATIC_JRE32VER,			HIDC_FIND_STATIC_JRE32VER,			//正規表現バージョン
+	IDC_BUTTON_SETMARK,				HIDC_FIND_BUTTON_SETMARK,			//2002.01.16 hor 検索該当行をマーク
+	IDC_CHECK_SEARCHALL,			HIDC_FIND_CHECK_SEARCHALL,			//2002.01.26 hor 先頭（末尾）から再検索
+//	IDC_STATIC,						-1,
+	0, 0
+};	//@@@ 2002.01.07 add end MIK
+
 CDlgFind::CDlgFind()
 {
 //	MYTRACE( "CDlgFind::CDlgFind()\n" );
@@ -127,6 +147,9 @@ void CDlgFind::SetData( void )
 	/* 検索ダイアログを自動的に閉じる */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFind, m_pShareData->m_Common.m_bAutoCloseDlgFind );
 
+	/* 先頭（末尾）から再検索 2002.01.26 hor */
+	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_bSearchAll );
+
 	return;
 }
 
@@ -166,6 +189,9 @@ int CDlgFind::GetData( void )
 
 	/* 検索ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFind );
+
+	/* 先頭（末尾）から再検索 2002.01.26 hor */
+	m_pShareData->m_Common.m_bSearchAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL );
 
 	if( 0 < lstrlen( m_szText ) ){
 		/* 正規表現？ */
@@ -213,7 +239,9 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			// To Here Jun. 26, 2001 genta
 
 				/* 英大文字と英小文字を区別する */
-				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+				//	Jan. 31, 2002 genta
+				//	大文字・小文字の区別は正規表現の設定に関わらず保存する
+				//::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 				// 2001/06/23 Norio Nakatani
@@ -223,7 +251,9 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		}else{
 			/* 英大文字と英小文字を区別する */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
-			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
+			//	Jan. 31, 2002 genta
+			//	大文字・小文字の区別は正規表現の設定に関わらず保存する
+			//::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
 
 			// 2001/06/23 Norio Nakatani
 			/* 単語単位で検索 */
@@ -299,6 +329,22 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		}
 		return TRUE;
 //To Here Feb. 20, 2001
+	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
+		if( 0 < GetData() ){
+			if( m_bModal ){		/* モーダルダイアログか */
+				CloseDialog( 2 );
+			}else{
+				pcEditView->HandleCommand( F_BOOKMARK_PATTERN, NULL, 0, 0, 0, 0 );
+				/* 検索ダイアログを自動的に閉じる */
+				if( m_pShareData->m_Common.m_bAutoCloseDlgFind ){
+					CloseDialog( 0 );
+				}
+				else{
+				::SendMessage(m_hWnd,WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(m_hWnd,IDC_COMBO_TEXT ),TRUE);
+				}
+			}
+		}
+		return TRUE;
 	case IDCANCEL:
 		CloseDialog( 0 );
 		return TRUE;
@@ -338,5 +384,11 @@ void CDlgFind::AddToSearchKeyArr( const char* pszKey )
 	return;
 }
 
+//@@@ 2002.01.18 add start
+LPVOID CDlgFind::GetHelpIdTable(void)
+{
+	return (LPVOID)p_helpids;
+}
+//@@@ 2002.01.18 add end
 
 /*[EOF]*/
