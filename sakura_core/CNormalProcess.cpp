@@ -153,7 +153,8 @@ bool CNormalProcess::Initialize()
 			m_pShareData->m_Common.m_bWordOnly = gi.bGrepWordOnly;
 			m_pShareData->m_Common.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			
-			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, m_hWnd,  NULL);
+			// Feb. 23, 2003 Moca Owner window‚ª³‚µ‚­Žw’è‚³‚ê‚Ä‚¢‚È‚©‚Á‚½
+			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
 			if( FALSE != nRet ){
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
 			}
