@@ -129,6 +129,10 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 	/* Grepモードで保存確認するか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bGrepExitConfirm, m_Common.m_bGrepExitConfirm );
 
+	/* Grep結果のリアルタイム表示 */
+	::CheckDlgButton( hwndDlg, IDC_CHECH_GREPREALTIME, m_Common.m_bGrepRealTimeView );
+
+
 	/* Grepモード: エンターキーでタグジャンプ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_bGTJW_RETURN );
 
@@ -149,6 +153,9 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 
 	/* Grepモードで保存確認するか */
 	m_Common.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );
+
+	/* Grep結果のリアルタイム表示 */
+	m_Common.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECH_GREPREALTIME );
 
 	/* Grepモード: エンターキーでタグジャンプ */
 	m_Common.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );

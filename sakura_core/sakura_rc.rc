@@ -477,6 +477,8 @@ BEGIN
     LTEXT           "0",IDC_STATIC_HITCOUNT,76,5,44,8,NOT WS_GROUP,
                     WS_EX_RIGHT
     LTEXT           "件みつかりました。",IDC_STATIC,122,5,55,8,NOT WS_GROUP
+    CONTROL         "リアルタイム表示(&V)",IDC_CHECK_REALTIMEVIEW,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,149,59,72,14
 END
 
 IDD_REPLACE DIALOGEX 30, 0, 283, 133
@@ -1359,24 +1361,26 @@ BEGIN
     GROUPBOX        "クリッカブルURL",-1,3,3,264,35,WS_GROUP
 END
 
-IDD_PROP_GREP DIALOGEX 0, 0, 270, 101
+IDD_PROP_GREP DIALOGEX 0, 0, 271, 139
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Grep",IDC_STATIC,3,3,264,35,WS_GROUP
+    GROUPBOX        "Grep",IDC_STATIC,3,3,264,53,WS_GROUP
     CONTROL         "Grepモードで保存確認する(&V)",
                     IDC_CHECK_bGrepExitConfirm,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,18,103,10,0,HIDC_CHECK_bGrepExitConfirm
     CONTROL         "エンターキーでタグジャンプ(&E)",IDC_CHECK_GTJW_RETURN,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,58,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,78,
                     104,10,0,HIDC_CHECK_GTJW_RETURN
     CONTROL         "ダブルクリックでタグジャンプ(&W)",
                     IDC_CHECK_GTJW_LDBLCLK,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,73,109,10,0,HIDC_CHECK_GTJW_LDBLCLK
-    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,43,264,50,
+                    WS_TABSTOP,8,93,109,10,0,HIDC_CHECK_GTJW_LDBLCLK
+    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,63,264,50,
                     WS_GROUP
+    CONTROL         "リアルタイムで表示する(&R)",IDC_CHECH_GREPREALTIME,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,35,101,10
 END
 
 IDD_PROP_BACKUP DIALOGEX 0, 0, 270, 213
@@ -2116,9 +2120,9 @@ BEGIN
     IDD_PROP_GREP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 264
+        RIGHTMARGIN, 265
         TOPMARGIN, 7
-        BOTTOMMARGIN, 94
+        BOTTOMMARGIN, 132
     END
 
     IDD_PROP_BACKUP, DIALOG
