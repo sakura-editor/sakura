@@ -74,36 +74,24 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	BOOL GetDefaultPrinter( PRINTDLG* );		/* デフォルトのプリンタ情報を取得 */
-	BOOL GetDefaultPrinterInfo( MYDEVMODE* );	/* デフォルトのプリンタ設定 MYDEVMODE を取得 */
-	BOOL GetPrinter( PRINTDLG* );				/* プリンタ情報を取得 */
-	BOOL GetPrinterInfo( MYDEVMODE* );			/* プリンタ設定 MYDEVMODE を取得 */
+	BOOL GetDefaultPrinter( MYDEVMODE *pMYDEVMODE );		/* デフォルトのプリンタ情報を取得 */
+	BOOL PrintDlg( PRINTDLG *pd, MYDEVMODE *pMYDEVMODE );				/* プリンタ情報を取得 */
 	/* 印刷/プレビューに必要な情報を取得 */
 	BOOL GetPrintMetrics(
 		MYDEVMODE*	pMYDEVMODE,
-//		LOGFONT*	pLOGFONT,
-//		int			nMarginTY,			/* マージン 上 */
-//		int			nMarginBY,			/* マージン 下 */
-//		int			nMarginLX,			/* マージン 左 */
-//		int			nMarginRX,			/* マージン 右 */
-//		int			nLineSpacing,		/* 行間 文字の高さに対する割合 */
 		int*		pnPaperAllWidth,	/* 用紙幅 */
 		int*		pnPaperAllHeight,	/* 用紙高さ */
 		int*		pnPaperWidth,		/* 用紙印刷可能幅 */
 		int*		pnPaperHeight,		/* 用紙印刷可能高さ */
 		int*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 		int*		pnPaperOffsetTop,	/* 用紙余白上端 */
-//		int*		pnCharWidth,		/* 文字幅 */
-//		int*		pnCharHeight,		/* 文字高さ */
-//		int*		pnAllChars,			/* 横方向に印字可能な桁数 */
-//		int*		pnAllLines,			/* 縦方向に印字可能な行数 */
 		char*		pszErrMsg			/* エラーメッセージ格納場所 */
 	);
 	/* 用紙の幅、高さ */
 	static BOOL CPrint::GetPaperSize(
 		int*		pnPaperAllWidth,
 		int*		pnPaperAllHeight,
-		DEVMODE*	pDEVMODE
+		MYDEVMODE*	pDEVMODE
 	);
 
 
@@ -111,19 +99,26 @@ public:
 	BOOL PrintOpen(
 		char*		pszJobName,
 		MYDEVMODE*	pMYDEVMODE,
-		HANDLE*		phPrinter,
 		HDC*		phdc,
 		char*		pszErrMsg		/* エラーメッセージ格納場所 */
 	);
 	void PrintStartPage( HDC );	/* 印刷 ページ開始 */
 	void PrintEndPage( HDC );	/* 印刷 ページ終了 */
-	void PrintClose( HANDLE , HDC );	/* 印刷 ジョブ終了 */
+	void PrintClose( HDC );		/* 印刷 ジョブ終了 */ // 2003.05.02 かろと 不要なhPrinter削除
 	char* CPrint::GetPaperName( int , char* );	/* 用紙の名前を取得 */
 
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
+	// DC作成する(処理をまとめた) 2003.05.02 かろと
+	HDC CreateDC( MYDEVMODE *pMYDEVMODE, char *pszErrMsg);
+private:
+	/*
+	||  メンバ変数
+	*/
+	HGLOBAL	m_hDevMode;							//!< 現在プリンタのDEVMODEへのメモリハンドル
+	HGLOBAL	m_hDevNames;						//!< 現在プリンタのDEVNAMESへのメモリハンドル
 };
 
 

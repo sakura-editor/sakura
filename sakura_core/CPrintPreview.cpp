@@ -31,6 +31,8 @@
 #define		PAGE_RANGE_X	160		/* 水平方向の１回のページスクロール幅 */
 #define		PAGE_RANGE_Y	160		/* 垂直方向の１回のページスクロール幅 */
 
+CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンタ情報 2003.05.02 かろと
+
 /*! コンストラクタ
 	印刷プレビューを表示するために必要な情報を初期化、領域確保。
 	コントロールも作成する。
@@ -540,19 +542,11 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* 現在のページ設定の、用紙サイズと用紙方向を反映させる */
 	m_pPrintSetting->m_mdmDevMode.dmPaperSize = m_pPrintSetting->m_nPrintPaperSize;
 	m_pPrintSetting->m_mdmDevMode.dmOrientation = m_pPrintSetting->m_nPrintPaperOrientation;
+	// 用紙サイズ、用紙方向は変更したのでビットを立てる
 	m_pPrintSetting->m_mdmDevMode.dmFields |= ( DM_ORIENTATION | DM_PAPERSIZE );
-	if( m_pPrintSetting->m_mdmDevMode.dmFields & DM_PAPERLENGTH ){
-		m_pPrintSetting->m_mdmDevMode.dmFields &= (~DM_PAPERLENGTH );
-	}
-	if( m_pPrintSetting->m_mdmDevMode.dmFields & DM_PAPERWIDTH ){
-		m_pPrintSetting->m_mdmDevMode.dmFields &= (~DM_PAPERWIDTH);
-	}
-	if( m_pPrintSetting->m_mdmDevMode.dmFields & DM_PAPERLENGTH ){
-		m_pPrintSetting->m_mdmDevMode.dmFields &= (~DM_PAPERLENGTH );
-	}
-	if( m_pPrintSetting->m_mdmDevMode.dmFields & DM_PAPERWIDTH ){
-		m_pPrintSetting->m_mdmDevMode.dmFields &= (~DM_PAPERWIDTH);
-	}
+	// 用紙の長さ、幅は決まっていないので、ビットを下ろす
+	m_pPrintSetting->m_mdmDevMode.dmFields &= (~DM_PAPERLENGTH );
+	m_pPrintSetting->m_mdmDevMode.dmFields &= (~DM_PAPERWIDTH);
 
 	/* 印刷/プレビューに必要な情報を取得 */
 	char	szErrMsg[1024];
@@ -746,7 +740,6 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 
 void CPrintPreview::OnPrint( void )
 {
-	HANDLE		hPrinter;
 	HDC			hdc;
 	char		szJobName[256 + 1];
 	char		szProgress[100];
@@ -774,22 +767,28 @@ void CPrintPreview::OnPrint( void )
 		wsprintf( szJobName, "%s%s", szFileName, szExt );
 	}
 
-	/* 印刷範囲を指定するダイアログを作成 */
-	CDlgPrintPage cCDlgPrintPage;
-	cCDlgPrintPage.m_bAllPage = TRUE;
-	cCDlgPrintPage.m_nPageMin = 1;
-	cCDlgPrintPage.m_nPageMax = m_nAllPageNum;
-	cCDlgPrintPage.m_nPageFrom = 1;
-	cCDlgPrintPage.m_nPageTo = m_nAllPageNum;
-	if( FALSE == cCDlgPrintPage.DoModal( m_pParentWnd->m_hInstance, m_pParentWnd->m_hWnd, NULL ) ){
+	/* 印刷範囲を指定できるプリンタダイアログを作成 */
+	//	2003.05.02 かろと
+	PRINTDLG pd;
+	memset( &pd, 0, sizeof(PRINTDLG) );
+#ifndef _DEBUG
+// Debugモードで、hwndOwnerを指定すると、Win2000では落ちるので・・・
+	pd.hwndOwner = m_pParentWnd->m_hWnd;
+#endif
+	pd.nMinPage = 1;
+	pd.nMaxPage = m_nAllPageNum;
+	pd.nFromPage = 1;
+	pd.nToPage = m_nAllPageNum;
+	pd.Flags = PD_ALLPAGES | PD_NOSELECTION | PD_USEDEVMODECOPIESANDCOLLATE;
+	if (FALSE == m_cPrint.PrintDlg( &pd, &m_pPrintSetting->m_mdmDevMode )) {
 		return;
 	}
 	// 印刷開始ページと、印刷ページ数を確認
 	int			nFrom;
 	int			nNum;
-	if( FALSE == cCDlgPrintPage.m_bAllPage ){
-		nFrom = cCDlgPrintPage.m_nPageFrom - 1;
-		nNum  = cCDlgPrintPage.m_nPageTo - nFrom;
+	if( 0 != (pd.Flags & PD_PAGENUMS) ){	// 2003.05.02 かろと
+		nFrom = pd.nFromPage - 1;
+		nNum  = pd.nToPage - nFrom;
 	}else{
 		nFrom = 0;
 		nNum  = m_nAllPageNum;
@@ -807,7 +806,6 @@ void CPrintPreview::OnPrint( void )
 	if( FALSE == m_cPrint.PrintOpen(
 		szJobName,
 		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
-		&hPrinter,
 		&hdc,
 		szErrMsg						/* エラーメッセージ格納場所 */
 	) ){
@@ -869,11 +867,11 @@ void CPrintPreview::OnPrint( void )
 			break;
 		}
 	}
-	/* 印刷 ジョブ終了 */
-	m_cPrint.PrintClose( hPrinter, hdc );
-
-	//	印刷前のフォントに戻す
+	//	印刷前のフォントに戻す 2003.05.02 かろと hdc解放の前に処理順序を変更
 	::SelectObject( hdc, hFontOld );
+
+	/* 印刷 ジョブ終了 */
+	m_cPrint.PrintClose( hdc );
 
 	//	印刷用フォントを削除。
 	::DeleteObject( hFontZen );
@@ -883,6 +881,9 @@ void CPrintPreview::OnPrint( void )
 	cDlgPrinting.CloseDialog( 0 );
 
 	m_nCurPageNum = nCurPageNumOld;
+
+	// 印刷が終わったら、Previewから抜ける 2003.05.02 かろと
+	m_pParentWnd->PrintPreviewModeONOFF();
 	return;
 }
 
@@ -1527,7 +1528,22 @@ BOOL CPrintPreview::DispatchEvent_PPB(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_BUTTON_PRINTERSELECT:
-				m_cPrint.GetPrinterInfo( &m_pPrintSetting->m_mdmDevMode );
+				// From Here 2003.05.03 かろと
+				// PRINTDLGを初期化
+				PRINTDLG	pd;
+				memset( &pd, 0, sizeof(PRINTDLG) );
+				pd.Flags = PD_PRINTSETUP | PD_NONETWORKBUTTON;
+				pd.hwndOwner = m_pParentWnd->m_hWnd;
+				if (TRUE == m_cPrint.PrintDlg( &pd, &m_pPrintSetting->m_mdmDevMode )) {
+					// 用紙サイズと用紙方向を反映させる 2003.05.03 かろと
+					m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
+					m_pPrintSetting->m_nPrintPaperOrientation = m_pPrintSetting->m_mdmDevMode.dmOrientation;
+					/* 印刷プレビュー スクロールバー初期化 */
+					InitPreviewScrollBar();
+					OnChangePrintSetting();
+					::InvalidateRect( m_pParentWnd->m_hWnd, NULL, TRUE );
+				}
+				// To Here 2003.05.03 かろと
 				break;
 			case IDC_BUTTON_PRINTSETTING:
 				m_pParentWnd->OnPrintPageSetting();
