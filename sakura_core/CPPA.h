@@ -233,7 +233,7 @@ private:
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
 	static class CEditView*		m_pcEditView;
-	static class CShareData*	m_cShareData;
+//	static class CShareData*	m_cShareData;
 	static struct DLLSHAREDATA*	m_pShareData;
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];

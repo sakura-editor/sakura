@@ -43,6 +43,7 @@
 //	May 12, 2000 genta 初期化方法変更
 CEditDoc::CEditDoc() :
 	m_cNewLineCode( EOL_CRLF ),		//	New Line Type
+	m_cSaveLineCode( EOL_NONE ),		//	保存時のLine Type
 	m_bGrepRunning( FALSE ),		/* Grep処理中 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	m_bPrintPreviewMode( FALSE ),	/* 印刷プレビューモードか */
@@ -71,10 +72,10 @@ CEditDoc::CEditDoc() :
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
 	strcpy( m_szGrepKey, "" );
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
+//	m_cShareData.Init();
 
-	int doctype;
-	m_pShareData = m_cShareData.GetShareData( m_szFilePath, &doctype );
+	m_pShareData = CShareData::getInstance()->GetShareData();
+	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
 	SetDocumentType( doctype, true );
 
 	/* OPENFILENAMEの初期化 */
@@ -365,6 +366,8 @@ BOOL CEditDoc::FileRead(
 	BOOL			bIsExistInMRU;
 	int				nRet;
 	BOOL			bFileIsExist;
+	int				doctype;
+
 	m_bReadOnly = bReadOnly;	/* 読み取り専用モード */
 
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -436,7 +439,7 @@ BOOL CEditDoc::FileRead(
 	}
 
 	/* 指定ファイルが開かれているか調べる */
-	if( m_cShareData.IsPathOpened( pszPath, &hWndOwner ) ){
+	if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
 		::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 //		pfi = (FileInfo*)m_pShareData->m_szWork;
 		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
@@ -621,8 +624,8 @@ BOOL CEditDoc::FileRead(
 	}
 
 	/* 共有データ構造体のアドレスを返す */
-	int doctype;
-	m_pShareData = m_cShareData.GetShareData( m_szFilePath, &doctype );
+	m_pShareData = CShareData::getInstance()->GetShareData();
+	doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
 	SetDocumentType( doctype, true );
 
 	/* ファイルが存在しない */
@@ -767,7 +770,7 @@ end_of_func:;
 	@param pszPath [in] 保存ファイル名
 	@param cEolType [in] 改行コード種別
 	
-	pszPath == NULLの時、名前を付けて保存
+	pszPathはNULLであってはならない。
 	
 	@date Feb. 9, 2001 genta 改行コード用引数追加
 */
@@ -776,13 +779,12 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	BOOL		bRet;
 	FileInfo	fi;
 	HWND		hwndProgress;
-	int			i;
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	CMRU		cMRU;
 	//	Feb. 9, 2001 genta
 	CEOL	cEol( cEolType );
 
-	if( NULL != pszPath && m_bReadOnly ){	/* 読み取り専用モード */
+	if( m_bReadOnly ){	/* 読み取り専用モード */
 		::MessageBeep( MB_ICONHAND );
 		MYMESSAGEBOX(
 			m_hWnd,
@@ -812,125 +814,39 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	/* ファイルの排他ロック解除 */
 	DoFileUnLock();
 
-	if( NULL != pszPath ){
-		if( m_pShareData->m_Common.m_bBackUp ){	/* バックアップの作成 */
-			MakeBackUp();
-		}
-
-		CWaitCursor cWaitCursor( m_hWnd );
-		if( FALSE == m_cDocLineMgr.WriteFile( pszPath, m_hWnd, hwndProgress, m_nCharCode, &m_FileTime, EOL_NONE ) ){
-			bRet = FALSE;
-			goto end_of_func;
-		}
-		char szWork[MAX_PATH];
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( m_szFilePath, szWork ) ){
-			strcpy( m_szFilePath, szWork );
-		}
-
-		int	v;
-		for( v = 0; v < 4; ++v ){
-			if( m_nActivePaneIndex != v ){
-				m_cEditViewArr[v].RedrawAll();
-			}
-		}
-		m_cEditViewArr[m_nActivePaneIndex].RedrawAll();
-
-		strcpy( m_szFilePath, pszPath ); /* 現在編集中のファイルのパス */
-
-		SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
-
-		SetFileInfo( &fi );
-
-		/* MRUリストへの登録 */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-		cMRU.Add( &fi );
-	}else{
-		char szPath[_MAX_PATH + 1];
-
-		//	Aug. 16, 2000 genta
-		//	現在のファイル名を初期値で与えない
-		//	May 18, 2001 genta
-		//	現在のファイル名を与えないのは上書き禁止の時のみ
-		//	そうでない場合には現在のファイル名を初期値として設定する。
-		if( IsReadOnly() )
-			szPath[0] = '\0';
-		else
-			strcpy( szPath, m_szFilePath );
-
-		//	Feb. 9, 2001 genta
-		if( SaveFileDialog( szPath, &m_nCharCode, &cEol ) ){
-			if( m_pShareData->m_Common.m_bBackUp ){	/* バックアップの作成 */
-				MakeBackUp();
-			}
-
-			CWaitCursor cWaitCursor( m_hWnd );
-			if( FALSE == m_cDocLineMgr.WriteFile( szPath, m_hWnd, hwndProgress, m_nCharCode, &m_FileTime, cEol ) ){
-				bRet = FALSE;
-				goto end_of_func;
-			}
-
-			int		v;
-			for( v = 0; v < 4; ++v ){
-				if( m_nActivePaneIndex != v ){
-					m_cEditViewArr[v].RedrawAll();
-				}
-			}
-			m_cEditViewArr[m_nActivePaneIndex].RedrawAll();
-
-			strcpy( m_szFilePath, szPath ); /* 現在編集中のファイルのパス */
-			//	Feb. 9, 2001 genta
-			if( cEol != EOL_NONE ){
-				ReloadCurrentFile( CODE_AUTODETECT, FALSE );
-				return TRUE;
-				//	ファイルの制御などはFileReadで行われるはずなのでSKIP
-			}
-		}else{
-			bRet = FALSE;
-			goto end_of_func;
-		}
-		strcpy( m_szFilePath, szPath ); /* 現在編集中のファイルのパス */
-
-		/* 共有データ構造体のアドレスを返す */
-		int doctype;
-		m_pShareData = m_cShareData.GetShareData( m_szFilePath, &doctype );
-		SetDocumentType( doctype, false );
-
-		/* レイアウト情報の変更 */
-		Types& ref = GetDocumentAttribute();
-		m_cLayoutMgr.SetLayoutInfo(
-			ref.m_nMaxLineSize,
-			ref.m_bWordWrap,			/* 英文ワードラップをする */
-			ref.m_nTabSpace,
-			ref.m_szLineComment,		/* 行コメントデリミタ */
-			ref.m_szLineComment2,		/* 行コメントデリミタ2 */
-			ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-			ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-			ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-			ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
-//#endif
-			ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-			TRUE,
-			hwndProgress,
-			ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-			ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
-		);
-
-		/* 先頭へカーソルを移動 */
-		for( i = 0; i < 4; ++i ){
-			m_cEditViewArr[i].OnChangeSetting();
-		}
-
-		SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
-
-		SetFileInfo( &fi );
-
-		/* MRUリストへの登録 */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-		cMRU.Add( &fi );
+	if( m_pShareData->m_Common.m_bBackUp ){	/* バックアップの作成 */
+		MakeBackUp();
 	}
+
+	CWaitCursor cWaitCursor( m_hWnd );
+	if( FALSE == m_cDocLineMgr.WriteFile( pszPath, m_hWnd, hwndProgress, m_nCharCode, &m_FileTime, cEol ) ){
+		bRet = FALSE;
+		goto end_of_func;
+	}
+	
+	/* ロングファイル名を取得する。（上書き保存のときのみ） */
+	char szWork[MAX_PATH];
+	if( TRUE == ::GetLongFileName( m_szFilePath, szWork ) ){
+		strcpy( m_szFilePath, szWork );
+	}
+
+	int	v;
+	for( v = 0; v < 4; ++v ){
+		if( m_nActivePaneIndex != v ){
+			m_cEditViewArr[v].RedrawAll();
+		}
+	}
+	m_cEditViewArr[m_nActivePaneIndex].RedrawAll();
+
+	strcpy( m_szFilePath, pszPath ); /* 現在編集中のファイルのパス */
+
+	SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
+
+	SetFileInfo( &fi );
+
+	/* MRUリストへの登録 */
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	cMRU.Add( &fi );
 
 	/* 現在位置で無変更な状態になったことを通知 */
 	m_cOpeBuf.SetNoModified();
@@ -1075,131 +991,47 @@ BOOL CEditDoc::OpenFileDialog(
 //pszOpenFolder pszOpenFolder
 
 
-/* 「ファイル名を付けて保存」ダイアログ */
+/* 「ファイル名を付けて保存」ダイアログ
+
+	ファイル名をつけて保存ダイアログを表示して、
+	　pszPath：保存ファイル名
+	　pnCharCode：保存文字コードセット
+	　pcEol：保存改行コード
+	を取得する。
+*/
 //	Feb. 9, 2001 genta	改行コードを示す引数追加
 BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 {
-//	int		i;
-//	int		j;
-	char**	ppszMRU;
-	char**	ppszOPENFOLDER;
+	char**	ppszMRU;		//	最近のファイル
+	char**	ppszOPENFOLDER;	//	最近のフォルダ
 	BOOL	bret;
 
 	/* MRUリストのファイルのリスト */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	CMRU cMRU;
 	ppszMRU = NULL;
 	ppszMRU = new char*[ cMRU.Length() + 1 ];
 	cMRU.GetPathList(ppszMRU);
 
-
 	/* OPENFOLDERリストのファイルのリスト */
-//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 	CMRUFolder cMRUFolder;
 	ppszOPENFOLDER = NULL;
 	ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
 	cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 	/* ファイル保存ダイアログの初期化 */
+	/* ファイル名の無いファイルだったら、ppszMRU[0]をデフォルトファイル名として？ppszOPENFOLDERじゃない？ */
 	if( 0 == lstrlen( m_szFilePath ) ){
 		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, ppszMRU[0], (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 	}else{
 		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, m_szFilePath, (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 	}
-	if( m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol ) ){
-		bret = TRUE;
-	}else{
-		bret = FALSE;
-	}
+
+	/* ダイアログを表示 */
+	bret = m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol );
+
 	delete [] ppszMRU;
 	delete [] ppszOPENFOLDER;
 	return bret;
-
-
-//	DWORD			dwError;
-//	int				i;
-//	static char		szFilter[1024];
-//	static char		szWork[256];
-//	static char*	pszFilterArr[] =
-//	{
-//		"テキストファイル",	"*.txt",
-//		"すべてのファイル", "*.*",
-//		"ユーザー指定", m_szDefaultWildCard
-//	};
-//	int	nFilterArrNum = sizeof(pszFilterArr) / sizeof(pszFilterArr[0]);
-//	static char szDrive[_MAX_DRIVE];
-//	static char szDir[_MAX_DIR];
-//	static char szFNAME[_MAX_FNAME];
-//	static char szEXT[_MAX_EXT];
-//	static char szPATH[_MAX_PATH];
-//	strcpy( szPATH, "" );
-//
-//
-//	/* 拡張子フィルタの作成 */
-//	strcpy( szFilter, "" );
-//	for( i = 0; i < nFilterArrNum; i+=2 ){
-//		wsprintf( szWork, "%s (%s)|%s|", pszFilterArr[i], pszFilterArr[i + 1], pszFilterArr[i + 1] );
-//		strcat( szFilter, szWork );
-//	}
-//	strcat( szFilter, "|" );
-//	MYTRACE( "%s\n", szFilter );
-//	for (i = 0; szFilter[i] != '\0'; i++){
-//		if (szFilter[i] == '|' ){
-//			szFilter[i] = '\0';
-//		}
-//	}
-//	/* 「開く」での初期ディレクトリ */
-//	if( 0 < lstrlen( m_szFilePath ) ){	//現在編集中のファイルのパス
-//		_splitpath( m_szFilePath, szDrive, szDir, szFNAME, szEXT );
-//		wsprintf( m_szInitialDir, "%s%s", szDrive, szDir );
-//		wsprintf( szPATH, "%s%s", szFNAME, szEXT );
-//	}else{
-//
-//	}
-//	/* 構造体の初期化 */
-//	m_ofn.lStructSize = sizeof( OPENFILENAME );
-//	m_ofn.hwndOwner = m_hWnd;
-//	m_ofn.hInstance = m_hInstance;
-//	m_ofn.lpstrFilter = szFilter;
-//	m_ofn.lpstrCustomFilter = NULL;
-//	m_ofn.nMaxCustFilter = 0;
-//	//	m_ofn.nFilterIndex = 3;
-//	m_ofn.lpstrFile = strcpy( pszPath, szPATH );
-//	m_ofn.nMaxFile = _MAX_PATH;
-//	m_ofn.lpstrFileTitle = NULL;
-//	m_ofn.nMaxFileTitle = 0;
-//	m_ofn.lpstrInitialDir = m_szInitialDir;
-//	m_ofn.lpstrTitle = NULL;
-//	m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
-//	m_ofn.nFileOffset = 0;
-//	m_ofn.nFileExtension = 0;
-//	m_ofn.lpstrDefExt = NULL;
-//	m_ofn.lCustData = 0;
-//	m_ofn.lpfnHook = NULL;
-//	m_ofn.lpTemplateName = NULL;
-//	if( GetSaveFileName( &m_ofn ) ){
-//		return TRUE;
-//	}else{
-//		dwError = ::CommDlgExtendedError();
-//		switch( dwError ){
-//		case  CDERR_DIALOGFAILURE	: MYTRACE( "CDERR_DIALOGFAILURE  \n" ); break;
-//		case  CDERR_FINDRESFAILURE	: MYTRACE( "CDERR_FINDRESFAILURE \n" ); break;
-//		case  CDERR_NOHINSTANCE		: MYTRACE( "CDERR_NOHINSTANCE    \n" ); break;
-//		case  CDERR_INITIALIZATION	: MYTRACE( "CDERR_INITIALIZATION \n" ); break;
-//		case  CDERR_NOHOOK			: MYTRACE( "CDERR_NOHOOK         \n" ); break;
-//		case  CDERR_LOCKRESFAILURE	: MYTRACE( "CDERR_LOCKRESFAILURE \n" ); break;
-//		case  CDERR_NOTEMPLATE		: MYTRACE( "CDERR_NOTEMPLATE     \n" ); break;
-//		case  CDERR_LOADRESFAILURE	: MYTRACE( "CDERR_LOADRESFAILURE \n" ); break;
-//		case  CDERR_STRUCTSIZE		: MYTRACE( "CDERR_STRUCTSIZE     \n" ); break;
-//		case  CDERR_LOADSTRFAILURE	: MYTRACE( "CDERR_LOADSTRFAILURE \n" ); break;
-//		case  FNERR_BUFFERTOOSMALL	: MYTRACE( "FNERR_BUFFERTOOSMALL \n" ); break;
-//		case  CDERR_MEMALLOCFAILURE	: MYTRACE( "CDERR_MEMALLOCFAILURE\n" ); break;
-//		case  FNERR_INVALIDFILENAME	: MYTRACE( "FNERR_INVALIDFILENAME\n" ); break;
-//		case  CDERR_MEMLOCKFAILURE	: MYTRACE( "CDERR_MEMLOCKFAILURE \n" ); break;
-//		case  FNERR_SUBCLASSFAILURE	: MYTRACE( "FNERR_SUBCLASSFAILURE\n" ); break;
-//		}
-//		return FALSE;
-//	}
 }
 
 
@@ -1285,7 +1117,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* 設定変更を反映させる */
-		m_cShareData.SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
+		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
 
 		return TRUE;
 	}else{
@@ -1323,7 +1155,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* 設定変更を反映させる */
-		m_cShareData.SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
+		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
 
 		return TRUE;
 	}else{
@@ -3224,7 +3056,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			SetActivePane( nPane );
 		}else{
 			/* 現在開いている編集窓のリストを得る */
-			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if(  nRowNum > 0 ){
 				/* 自分のウィンドウを調べる */
 				for( i = 0; i < nRowNum; ++i ){
@@ -3262,7 +3094,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			SetActivePane( nPane );
 		}else{
 			/* 現在開いている編集窓のリストを得る */
-			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if(  nRowNum > 0 ){
 				/* 自分のウィンドウを調べる */
 				for( i = 0; i < nRowNum; ++i ){
@@ -3331,8 +3163,8 @@ void CEditDoc::OnChangeSetting( void )
 		DoFileLock();
 	}
 	/* 共有データ構造体のアドレスを返す */
-	int doctype;
-	m_pShareData = m_cShareData.GetShareData( m_szFilePath, &doctype );
+	m_pShareData = CShareData::getInstance()->GetShareData();
+	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
 	SetDocumentType( doctype, false );
 
 	/*
@@ -3518,7 +3350,7 @@ BOOL CEditDoc::OnFileClose( void )
 //				if( 0 < lstrlen( m_szFilePath ) ){
 //					nBool = HandleCommand( F_FILESAVE );
 //				}else{
-					nBool = HandleCommand( F_FILESAVEAS );
+					nBool = HandleCommand( F_FILESAVEAS_DIALOG );
 //				}
 				return nBool;
 			case IDNO:
@@ -3541,7 +3373,7 @@ BOOL CEditDoc::OnFileClose( void )
 				if( 0 < lstrlen( m_szFilePath ) ){
 					nBool = HandleCommand( F_FILESAVE );
 				}else{
-					nBool = HandleCommand( F_FILESAVEAS );
+					nBool = HandleCommand( F_FILESAVEAS_DIALOG );
 				}
 				return nBool;
 			case IDNO:
@@ -3560,7 +3392,7 @@ BOOL CEditDoc::OnFileClose( void )
 /* 既存データのクリア */
 void CEditDoc::Init( void )
 {
-	int types;
+//	int types;
 
 	m_bReadOnly = FALSE;	/* 読み取り専用モード */
 	strcpy( m_szGrepKey, "" );
@@ -3613,8 +3445,9 @@ void CEditDoc::Init( void )
 
 
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = m_cShareData.GetShareData( m_szFilePath, &types );
-	SetDocumentType( types, true );
+	m_pShareData = CShareData::getInstance()->GetShareData();
+	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
+	SetDocumentType( doctype, true );
 
 	/* レイアウト管理情報の初期化 */
 	//	m_cLayoutMgr.Create( &m_cDocLineMgr, GetDocumentAttribute().m_nMaxLineSize, GetDocumentAttribute().m_nTabSpace ) ;
@@ -3925,7 +3758,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				char szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
-				m_cShareData.MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
+				CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;
@@ -3937,7 +3770,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				char szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
-				m_cShareData.MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
+				CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;
@@ -3989,7 +3822,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				::FileTimeToLocalFileTime( &m_FileTime, &FileTime );
 				::FileTimeToSystemTime( &FileTime, &systimeL );
 				char szText[1024];
-				m_cShareData.MyGetDateFormat( systimeL, szText, sizeof( szText ) - 1 );
+				CShareData::getInstance()->MyGetDateFormat( systimeL, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;
@@ -4009,7 +3842,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				::FileTimeToLocalFileTime( &m_FileTime, &FileTime );
 				::FileTimeToSystemTime( &FileTime, &systimeL );
 				char szText[1024];
-				m_cShareData.MyGetTimeFormat( systimeL, szText, sizeof( szText ) - 1 );
+				CShareData::getInstance()->MyGetTimeFormat( systimeL, szText, sizeof( szText ) - 1 );
 				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q;

@@ -8,7 +8,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, aroka CProcessより分離
+	Copyright (C) 2002, aroka CProcessより分離, YAZAKI
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -49,11 +49,12 @@ BOOL CALLBACK CControlProcess::ExitingDlgProc(
 /*!
 	@brief コントロールプロセスを初期化する
 	
-	MutexCPを作成・ロックし、共有メモリを初期化する。
+	MutexCPを作成・ロックする。
 	CEditAppを作成する。
 	
 	@author aroka
 	@date 2002/01/07
+	@date 2002/02/17 YAZAKI 共有メモリを初期化するのはCProcessに移動。
 */
 bool CControlProcess::Initialize()
 {
@@ -82,20 +83,12 @@ bool CControlProcess::Initialize()
 		}
 	}
 	
-	/* 共有データ構造体のアドレスを返す */
-	if( !m_cShareData.Init() ){
+	/* 共有メモリを初期化 */
+	if ( CProcess::Initialize() == false ){
 		::ReleaseMutex( m_hMutexCP );
-		m_hMutexCP=0;
-		//	適切なデータを得られなかった
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
-			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
+		m_hMutexCP = NULL;
 		return false;
 	}
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
-
-	/* リソースから製品バージョンの取得 */
-	GetAppVersionInfo( m_hInstance, VS_VERSION_INFO,
-		&m_pShareData->m_dwProductVersionMS, &m_pShareData->m_dwProductVersionLS );
 
 	/* 共有データのロード */
 	if( FALSE == m_cShareData.LoadShareData() ){
@@ -108,7 +101,7 @@ bool CControlProcess::Initialize()
 
 	if( NULL == ( m_hWnd = m_pcEditApp->Create( m_hInstance ) ) ){
 		::ReleaseMutex( m_hMutexCP );
-		m_hMutexCP=0;
+		m_hMutexCP = NULL;
 		::MessageBeep( MB_ICONSTOP );
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
 			GSTR_APPNAME, _T("ウィンドウの作成に失敗しました。\n起動できません。") );

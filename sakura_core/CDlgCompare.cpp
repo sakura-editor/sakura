@@ -132,7 +132,7 @@ void CDlgCompare::SetData( void )
 //	setlocale ( LC_ALL, "C" );
 
 	/* 現在開いている編集窓のリストをメニューにする */
-	nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */

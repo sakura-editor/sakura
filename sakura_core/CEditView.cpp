@@ -338,8 +338,8 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr )
 	::ReleaseDC( ::GetDesktopWindow(), hdc );
 
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_bCommandRunning = FALSE;	/* コマンドの実行中 */
 	m_pcOpeBlk = NULL;			/* 操作ブロック */
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
@@ -2151,12 +2151,13 @@ void CEditView::DrawSelectArea( void )
 	if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
 		// 2001.12.21 hor 矩形エリアにEOFがある場合、RGN_XORで結合すると
 		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う
-		if((m_nViewTopLine+m_nViewRowNum+1>=m_pcEditDoc->m_cLayoutMgr.GetLineCount()) &&
-		   (m_nSelectLineTo+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ||
-			m_nSelectLineToOld+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) ) {
-			Redraw();
-			return;
-		}
+		// 2002.02.16 hor ちらつきを抑止するためEOF以降のエリアが反転したらもう一度反転して元に戻すことにする
+		//if((m_nViewTopLine+m_nViewRowNum+1>=m_pcEditDoc->m_cLayoutMgr.GetLineCount()) &&
+		//   (m_nSelectLineTo+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ||
+		//	m_nSelectLineToOld+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) ) {
+		//	Redraw();
+		//	return;
+		//}
 
 		hdc = ::GetDC( m_hWnd );
 		hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
@@ -2221,13 +2222,39 @@ void CEditView::DrawSelectArea( void )
 		rcNew.bottom	= ( rcNew.bottom + 1 - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 		hrgnNew = ::CreateRectRgnIndirect( &rcNew );
 
-		/* ::CombineRgn()の結果を受け取るために、適当なリージョンを作る */
-		hrgnDraw = ::CreateRectRgnIndirect( &rcNew );
-
 		if( rcNew.left <= rcNew.right ){
+			/* ::CombineRgn()の結果を受け取るために、適当なリージョンを作る */
+			hrgnDraw = ::CreateRectRgnIndirect( &rcNew );
+
 			/* 旧選択矩形と新選択矩形のリージョンを結合し､ 重なりあう部分だけを除去します */
 			if( NULLREGION != ::CombineRgn( hrgnDraw, hrgnOld, hrgnNew, RGN_XOR ) ){
 				::PaintRgn( hdc, hrgnDraw );
+
+				// 2002.02.16 hor
+				// 結合後のエリアにEOFが含まれる場合はEOF以降の部分を除去します
+				int  nLastLen;
+				int  nLastLine=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
+				const char* pLine;
+				const CLayout* pcLayout;
+				if(m_nViewTopLine+m_nViewRowNum+1>=nLastLine) {
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( nLastLine, &nLastLen ,&pcLayout);
+					if( NULL != pcLayout && EOL_NONE != pcLayout->m_cEol ){
+						nLastLine++;
+						nLastLen=0;
+					}
+					if(m_nSelectLineFrom>=nLastLine || m_nSelectLineTo>=nLastLine ||
+					   m_nSelectLineFromOld>=nLastLine || m_nSelectLineToOld>=nLastLine){
+						rcNew.left = m_nViewAlignLeft + ( m_nViewLeftCol + nLastLen ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+						rcNew.right = m_nViewAlignLeft + m_nViewCx;
+						rcNew.top = ( nLastLine - m_nViewTopLine) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+						rcNew.bottom = rcNew.top + ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+						hrgnNew = ::CreateRectRgnIndirect( &rcNew );
+						if( NULLREGION != ::CombineRgn( hrgnDraw, hrgnDraw, hrgnNew, RGN_AND ) ){
+							::PaintRgn( hdc, hrgnDraw );
+						}
+					}
+				}
+
 			}
 		}else{
 			hrgnDraw = hrgnOld;
@@ -4141,6 +4168,9 @@ void CEditView::DisableSelectArea( BOOL bDraw )
 	m_bBeginBoxSelect = FALSE;		/* 矩形範囲選択中 */
 	m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 	m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
+
+	// 2002.02.16 hor 直前のカーソル位置をリセット
+	m_nCaretPosX_Prev=m_nCaretPosX;
 
 	//	From Here Dec. 6, 2000 genta
 #if 0
@@ -8223,9 +8253,9 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		//中断ダイアログ表示
 		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
 		//実行したコマンドラインを表示
-		m_cShareData.TraceOut( "%s", "\r\n" );
-		m_cShareData.TraceOut( "%s", pszCmd );
-		m_cShareData.TraceOut( "%s", "\r\n" );
+		CShareData::getInstance()->TraceOut( "%s", "\r\n" );
+		CShareData::getInstance()->TraceOut( "%s", pszCmd );
+		CShareData::getInstance()->TraceOut( "%s", "\r\n" );
 		//実行結果の取り込み
 		do {
 			//処理中のユーザー操作を可能にする
@@ -8238,7 +8268,7 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 				::TerminateProcess( pi.hProcess, 0 );
 				//最後にテキストを追加
 				const char* pszText = "\r\n中断しました。\r\n";
-				m_cShareData.TraceOut( "%s", pszText );
+				CShareData::getInstance()->TraceOut( "%s", pszText );
 				break;
 			}
 			//プロセスが終了していないか確認
@@ -8274,12 +8304,12 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					}
 					if( j == (int)read_cnt ) {	//ぴったり出力できる場合
 						work[read_cnt] = 0;
-						m_cShareData.TraceOut( "%s", work );
+						CShareData::getInstance()->TraceOut( "%s", work );
 						bufidx = 0;
 					} else {
 						tmp = work[read_cnt-1];
 						work[read_cnt-1] = 0;
-						m_cShareData.TraceOut( "%s", work );
+						CShareData::getInstance()->TraceOut( "%s", work );
 						work[0] = tmp;
 						bufidx = 1;
 					}

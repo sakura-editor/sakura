@@ -184,7 +184,8 @@ BOOL CEditView::HandleCommand(
 	//	Oct. 2, 2001 genta マクロ用機能拡張
 	case F_FILEOPEN:	Command_FILEOPEN((const char*)lparam1);break;			/* ファイルを開く */
 	case F_FILESAVE:	bRet = Command_FILESAVE();break;	/* 上書き保存 */
-	case F_FILESAVEAS:	bRet = Command_FILESAVEAS();break;	/* 名前を付けて保存 */
+	case F_FILESAVEAS_DIALOG:	bRet = Command_FILESAVEAS_DIALOG();break;	/* 名前を付けて保存 */
+	case F_FILESAVEAS:	bRet = Command_FILESAVEAS((const char*)lparam1);break;	/* 名前を付けて保存 */
 	case F_FILECLOSE:										//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 		/* 再帰処理対策 */
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
@@ -1262,6 +1263,8 @@ void CEditView::Command_GOFILETOP( int bSelect )
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		ChangeSelectAreaByCurrentCursor( 0, 0 );
 	}
+	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
+	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = 0;
 	return;
 }
 
@@ -1278,6 +1281,8 @@ void CEditView::Command_GOFILEEND( int bSelect )
 	Command_DOWN( bSelect, TRUE );
 	Command_GOLINEEND( bSelect, TRUE );				// 2001.12.21 hor Add
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );	// 2001.12.21 hor Add
+	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
+	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = m_nCaretPosX;
 	return;
 // 2001.12.13 hor 以下をコメント (////はもともとコメント)
 //	HDC			hdc;
@@ -2518,7 +2523,7 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, BOOL bNoWait
 		InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, pszText, lstrlen(pszText), &nNewLine, &nNewPos, pcOpe, TRUE );
 //		::GlobalUnlock(hglb);
 		/* 挿入データの最後へカーソルを移動 */
-		MoveCursor( nNewPos, nNewLine, TRUE );
+		MoveCursor( nNewPos, nNewLine, bRedraw/*TRUE 2002.02.16 hor */ );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 //			pcOpe->m_nCaretPosX_After = m_nCaretPosX;	/* 操作後のキャレット位置Ｘ */
@@ -3707,18 +3712,27 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 				( m_nSelectLineBgnFrom == m_nCaretPosY && m_nSelectColmBgnFrom >= m_nCaretPosX )
 			){
 				/* カーソル移動 */
-				MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, bRedraw );
+			// 2002.02.16 hor 簡素化
+			//	MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, bRedraw );
+				m_nCaretPosX=m_nSelectColmFrom;
+				m_nCaretPosY=m_nSelectLineFrom;
 				bFlag1 = TRUE;
 			}else{
 				/* カーソル移動 */
-				MoveCursor( m_nSelectColmTo, m_nSelectLineTo, bRedraw );
+			// 2002.02.16 hor 簡素化
+			//	MoveCursor( m_nSelectColmTo, m_nSelectLineTo, bRedraw );
+				m_nCaretPosX=m_nSelectColmTo;
+				m_nCaretPosY=m_nSelectLineTo;
 			}
 
 //			/* 現在の選択範囲を非選択状態に戻す */
 //			DisableSelectArea( bRedraw );
 		}else{
 			/* カーソル移動 */
-			MoveCursor( m_nSelectColmTo, m_nSelectLineTo, bRedraw );
+		// 2002.02.16 hor 簡素化
+		//	MoveCursor( m_nSelectColmTo, m_nSelectLineTo, bRedraw );
+			m_nCaretPosX=m_nSelectColmTo;
+			m_nCaretPosY=m_nSelectLineTo;
 
 			/* 現在の選択範囲を非選択状態に戻す */
 			DisableSelectArea( bRedraw );
@@ -3805,61 +3819,9 @@ re_do:;
 
 		/* カーソル移動 */
 		//	Sep. 8, 2000 genta
-		AddCurrentLineToHistory();
+		if ( m_bDrawSWITCH ) AddCurrentLineToHistory();	// 2002.02.16 hor すべて置換のときは不要
 		MoveCursor( nColmFrom, nLineFrom, bRedraw );
 		m_nCaretPosX_Prev = m_nCaretPosX;
-#if 0
-		if( bSelecting ){
-			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
-			/* 選択範囲の変更 */
-//			m_nSelectLineBgn = nSelectLineBgn_Old;			/* 範囲選択開始行(原点) */
-//			m_nSelectColmBgn = nSelectColBgn_Old;			/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnTo = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-			m_nSelectLineFrom = nSelectLineFrom_Old;
-			m_nSelectColmFrom = nSelectColFrom_Old;
-			m_nSelectLineTo = nSelectLineTo_Old;
-			m_nSelectColmTo = nSelectColTo_Old;
-
-			if( ( nSelectLineFrom_Old <  nLineFrom ) ||
-				( nSelectLineFrom_Old == nLineFrom && nSelectColFrom_Old < nColmFrom ) ){
-				if( bFlag1 ){
-					m_nSelectLineFrom = nLineFrom;
-					m_nSelectColmFrom = nColmFrom;
-				}
-			}
-			if( ( nSelectLineTo_Old <  nLineTo ) ||
-				( nSelectLineTo_Old == nLineTo && nSelectColTo_Old < nColmTo ) ){
-				m_nSelectLineTo = nLineTo;
-				m_nSelectColmTo = nColmTo;
-			}
-			if( ( m_nSelectLineFrom >  m_nSelectLineBgn ) ||
-				( m_nSelectLineFrom == m_nSelectLineBgn && m_nSelectColmFrom > m_nSelectColmBgn ) ){
-				m_nSelectLineFrom = m_nSelectLineBgn;
-				m_nSelectColmFrom = m_nSelectColmBgn;
-			}
-			if( ( m_nSelectLineTo < m_nSelectLineBgn ) ||
-				( m_nSelectLineTo == m_nSelectLineBgn && m_nSelectColmTo < m_nSelectColmBgn )
-			){
-				m_nSelectLineBgn = m_nSelectLineTo;
-				m_nSelectColmBgn = m_nSelectColmTo;
-			}
-		}else{
-			/* 選択範囲の変更 */
-			m_nSelectLineBgn = nLineFrom;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgn = nColmFrom;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineFrom = nLineFrom;
-			m_nSelectColmFrom = nColmFrom;
-			m_nSelectLineTo = nLineTo;
-			m_nSelectColmTo = nColmTo;
-		}
-		if( bRedraw ){
-			/* 選択領域描画 */
-			DrawSelectArea();
-		}
-#endif
 		bFound = TRUE;
 	}else{
 //		/* フォーカス移動時の再描画 */
@@ -4039,7 +4001,7 @@ void CEditView::Command_FILEOPEN( const char *filename )
 		strncpy( pszPath, filename, _MAX_PATH - 1 );
 	}
 	/* 指定ファイルが開かれているか調べる */
-	if( m_cShareData.IsPathOpened( pszPath, &hWndOwner ) ){
+	if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
 		::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 //		pfi = (FileInfo*)m_pShareData->m_szWork;
 		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
@@ -4182,7 +4144,7 @@ BOOL CEditView::Command_FILESAVE( void )
 		return TRUE;
 	}
 
-	if( m_pcEditDoc->SaveFile( false ) ){
+	if( m_pcEditDoc->SaveFile( m_pcEditDoc->m_szFilePath ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
 		/* キャレットの行桁位置を表示する */
 		DrawCaretPosInfo();
 		return TRUE;
@@ -4191,14 +4153,40 @@ BOOL CEditView::Command_FILESAVE( void )
 }
 
 
-
-
-/* 名前を付けて保存 */
-BOOL CEditView::Command_FILESAVEAS( void )
+/* 名前を付けて保存ダイアログ */
+BOOL CEditView::Command_FILESAVEAS_DIALOG()
 {
-	if( m_pcEditDoc->SaveFile( true ) ){
+	//	Aug. 16, 2000 genta
+	//	現在のファイル名を初期値で与えない
+	//	May 18, 2001 genta
+	//	現在のファイル名を与えないのは上書き禁止の時のみ
+	//	そうでない場合には現在のファイル名を初期値として設定する。
+	char szPath[_MAX_PATH + 1];
+	if( m_pcEditDoc->IsReadOnly() )
+		szPath[0] = '\0';
+	else
+		strcpy( szPath, m_pcEditDoc->m_szFilePath );
+
+	//	Feb. 9, 2001 genta
+	if( m_pcEditDoc->SaveFileDialog( szPath, &m_pcEditDoc->m_nCharCode, &m_pcEditDoc->m_cSaveLineCode ) ){
+		Command_FILESAVEAS( szPath );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+/* 名前を付けて保存
+	filenameで保存。NULLは厳禁。
+*/
+BOOL CEditView::Command_FILESAVEAS( const char *filename )
+{
+	if( m_pcEditDoc->SaveFile( filename ) ){
 		/* キャレットの行桁位置を表示する */
 		DrawCaretPosInfo();
+		m_pcEditDoc->OnChangeSetting();	//	タイプ別設定の変更を指示。
+		//	再オープン
+		m_pcEditDoc->ReloadCurrentFile( CODE_AUTODETECT, FALSE );
 		return TRUE;
 	}
 	return FALSE;
@@ -4545,7 +4533,7 @@ void CEditView::Command_FONT( void )
 		}
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
-		m_cShareData.PostMessageToAllEditors(
+		CShareData::getInstance()->PostMessageToAllEditors(
 //		m_cShareData.SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0, (LPARAM)0, hwndFrame
@@ -5423,7 +5411,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 void CEditView::Command_EXTHELP1( void )
 {
 retry:;
-	if( m_cShareData.ExtWinHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
+	if( CShareData::getInstance()->ExtWinHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
 //	if( 0 == strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
 		::MessageBeep( MB_ICONHAND );
 //From Here Sept. 15, 2000 JEPRO
@@ -5448,7 +5436,7 @@ retry:;
 	CMemory		cmemCurText;
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	GetCurrentTextForSearch( cmemCurText );
-	::WinHelp( m_hwndParent, m_cShareData.GetExtWinHelp( m_pcEditDoc->GetDocumentType() ), HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr( NULL ) );
+	::WinHelp( m_hwndParent, CShareData::getInstance()->GetExtWinHelp( m_pcEditDoc->GetDocumentType() ), HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr( NULL ) );
 	return;
 }
 
@@ -5464,7 +5452,7 @@ void CEditView::Command_EXTHTMLHELP( void )
 	int			nLen;
 
 retry:;
-	if( m_cShareData.ExtHTMLHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
+	if( CShareData::getInstance()->ExtHTMLHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
 		::MessageBeep( MB_ICONHAND );
 //	From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -5489,10 +5477,10 @@ retry:;
 	GetCurrentTextForSearch( cmemCurText );
 
 	/* HtmlHelpビューアはひとつ */
-	if( m_cShareData.HTMLHelpIsSingle( m_pcEditDoc->GetDocumentType() ) ){
+	if( CShareData::getInstance()->HTMLHelpIsSingle( m_pcEditDoc->GetDocumentType() ) ){
 //	if( m_pShareData->m_Common.m_bHtmlHelpIsSingle ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
-		strcpy( m_pShareData->m_szWork, m_cShareData.GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ) );
+		strcpy( m_pShareData->m_szWork, CShareData::getInstance()->GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ) );
 		nLen = lstrlen( m_pShareData->m_szWork );
 		strcpy( &m_pShareData->m_szWork[nLen + 1], cmemCurText.GetPtr( NULL ) );
 		hwndHtmlHelp = (HWND)::SendMessage( m_pShareData->m_hwndTray, MYWM_HTMLHELP, (WPARAM)::GetParent( m_hwndParent ), 0 );
@@ -5511,7 +5499,7 @@ retry:;
 		//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 		hwndHtmlHelp = OpenHtmlHelp(
 			NULL/*m_pShareData->m_hwndTray*/,
-			m_cShareData.GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ),
+			CShareData::getInstance()->GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ),
 			HH_KEYWORD_LOOKUP,
 			(DWORD)&link
 		);
@@ -7091,7 +7079,7 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if( m_cShareData.IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) ){
+	if( CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) ){
 		/* カーソルを移動させる */
 		poCaret.x = nJumpToColm - 1;
 		poCaret.y = nJumpToLine - 1;
@@ -7144,7 +7132,7 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 		//	Apr. 23, 2001 genta
 		//	hwndOwnerに値が入らなくなってしまったために
 		//	Tag Jump Backが動作しなくなっていたのを修正
-		if( FALSE == m_cShareData.IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
+		if( FALSE == CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
 			return;
 	}
 	/*
@@ -7291,7 +7279,7 @@ open_h:;
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if( m_cShareData.IsPathOpened( (const char*)szPath, &hwndOwner ) ){
+	if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 	}else{
 		/* 新しく開く */
 		char	szPath2[_MAX_PATH + 3];
@@ -7310,7 +7298,7 @@ open_h:;
 			true
 		);
 		/* ファイルを開いているか */
-		if( m_cShareData.IsPathOpened( (const char*)szPath, &hwndOwner ) ){
+		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 //				"インクルードファイルのオープンに失敗しました。\n\n%s\n\n", szPath	//Feb. 10, 2001 jepro メッセージを若干変更
@@ -7428,7 +7416,7 @@ open_c:;
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if( m_cShareData.IsPathOpened( (const char*)szPath, &hwndOwner ) ){
+	if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 	}else{
 		/* 新しく開く */
 		char	szPath2[_MAX_PATH + 3];
@@ -7447,7 +7435,7 @@ open_c:;
 			true
 		);
 		/* ファイルを開いているか */
-		if( m_cShareData.IsPathOpened( (const char*)szPath, &hwndOwner ) ){
+		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 				"C/C++ソースファイルのオープンに失敗しました。\n\n%s\n\n", szPath
@@ -7604,7 +7592,7 @@ open_hc:;
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if( m_cShareData.IsPathOpened( (const char*)szPath, &hwndOwner ) ){
+	if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 	}else{
 		/* 新しく開く */
 		char	szPath2[_MAX_PATH + 3];
@@ -7623,7 +7611,7 @@ open_hc:;
 			true
 		);
 		/* ファイルを開いているか */
-		if( m_cShareData.IsPathOpened( (const char*)szPath, &hwndOwner ) ){
+		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 				(TRUE == bwantopen_h) ? "C/C++ヘッダファイルのオープンに失敗しました。\n\n%s\n\n"
@@ -7663,7 +7651,7 @@ void CEditView::Command_CASCADE( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -7714,7 +7702,7 @@ void CEditView::Command_TILE_H( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -7754,7 +7742,7 @@ void CEditView::Command_TILE_V( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -8764,7 +8752,7 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			if( 0 < lstrlen( m_pcEditDoc->m_szFilePath ) ){
 				nBool = HandleCommand( F_FILESAVE, TRUE, 0, 0, 0, 0 );
 			}else{
-				nBool = HandleCommand( F_FILESAVEAS, TRUE, 0, 0, 0, 0 );
+				nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
 			}
 			if( FALSE == nBool ){
 				return;
@@ -9732,7 +9720,7 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 	m_pcEditDoc->OnChangeSetting();	/* ビューに設定変更を反映させる */
 
 	/* 設定変更を反映させる */
-	m_cShareData.SendMessageToAllEditors(
+	CShareData::getInstance()->SendMessageToAllEditors(
 		MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, ::GetParent( m_hwndParent )
 	);	/* 全編集ウィンドウへメッセージをポストする */
 
@@ -9884,7 +9872,7 @@ void CEditView::Command_INS_DATE( void )
 	char szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	m_cShareData.MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
+	CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
 	/* テキストを貼り付け ver1 */
 	Command_INSTEXT( TRUE, szText, TRUE );
 	return;
@@ -9900,7 +9888,7 @@ void CEditView::Command_INS_TIME( void )
 	char szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	m_cShareData.MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
+	CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
 	/* テキストを貼り付け ver1 */
 	Command_INSTEXT( TRUE, szText, TRUE );
 	return;

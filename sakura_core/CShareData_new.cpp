@@ -72,7 +72,7 @@ static char* colorIDXKeyName[] =
 //	CShareData_new2.cpp‚Æ“‡
 CShareData::CShareData()
 {
-	m_pszAppName = GSTR_CSHAREDATA;
+//	m_pszAppName = GSTR_CSHAREDATA;
 	m_hFileMap   = NULL;
 	m_pShareData = NULL;
 //@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ðCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®
@@ -285,6 +285,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepSubFolder"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepSubFolder, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepOutputLine"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepOutputLine, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nGrepOutputStyle"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nGrepOutputStyle, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bGrepDefaultFolder"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepDefaultFolder, 0 );
 
 		cProfile.IOProfileData( bRead, pszSecName, "bGTJW_RETURN"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGTJW_RETURN, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGTJW_LDBLCLK"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGTJW_LDBLCLK, 0 );
@@ -610,6 +611,15 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			wsprintf( szKeyName, "PS[%02d].szDriver", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_PrintSettingArr[i].m_mdmDevMode.m_szPrinterDriverName, 0 );
 			wsprintf( szKeyName, "PS[%02d].szDevice", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_PrintSettingArr[i].m_mdmDevMode.m_szPrinterDeviceName, 0 );
 			wsprintf( szKeyName, "PS[%02d].szOutput", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_PrintSettingArr[i].m_mdmDevMode.m_szPrinterOutputName, 0 );
+
+			// 2002.02.16 hor ‚Æ‚è‚ ‚¦‚¸‹ŒÝ’è‚ð•ÏŠ·‚µ‚Æ‚­
+			if(0==strcmp(m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0],"&f") &&
+			   0==strcmp(m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0],"&C- &P -")
+			){
+				strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0], "$f" );
+				strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "" );
+				strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "- $p -" );
+			}
 		}
 	}// Print
 

@@ -489,6 +489,7 @@
 #define HIDC_GREP_RADIO_OUTPUTSTYLE1	12016	//結果出力形式：ノーマル
 #define HIDC_GREP_RADIO_OUTPUTSTYLE2	12017	//結果出力形式：ファイル毎
 #define HIDC_GREP_STATIC_JRE32VER		12018	//正規表現バージョン
+#define HIDC_GREP_CHK_DEFAULTFOLDER		12019	//フォルダの初期値をカレントフォルダにする
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照

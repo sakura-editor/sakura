@@ -184,7 +184,7 @@ public: /* テスト用にアクセス属性を変更 */
 	HINSTANCE		m_hInstance;	/* インスタンスハンドル */
 	HWND			m_hwndParent;	/* 親ウィンドウハンドル */
 
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 
@@ -353,7 +353,8 @@ protected:
 	// Oct. 2, 2001 genta マクロ用に機能拡張
 	void Command_FILEOPEN( const char *filename = NULL );		/* ファイルを開く */
 	BOOL Command_FILESAVE( void );				/* 上書き保存 */
-	BOOL Command_FILESAVEAS( void );			/* 名前を付けて保存 */
+	BOOL Command_FILESAVEAS_DIALOG();			/* 名前を付けて保存 */
+	BOOL Command_FILESAVEAS( const char *filename );			/* 名前を付けて保存 */
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	void Command_FILECLOSE_OPEN( void );		/* 閉じて開く */
 	void ReOpen_XXX( int );			/* 再オープン */

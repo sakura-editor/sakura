@@ -23,15 +23,15 @@
 CMRU::CMRU()
 {
 	//	初期化。
-	m_pcShareData = new CShareData;
-	m_pcShareData->Init();
-	m_pShareData = m_pcShareData->GetShareData( NULL, NULL );
+//	m_pcShareData = new CShareData;
+//	m_pcShareData->Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 }
 
 /*	デストラクタ	*/
 CMRU::~CMRU()
 {
-	delete m_pcShareData;	//	削除。
+//	delete m_pcShareData;	//	削除。
 }
 
 /*!

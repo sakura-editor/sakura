@@ -92,7 +92,8 @@ public:
 	int				m_yPos;
 //	void*			m_pcEditView;
 	char			m_szHelpFile[_MAX_PATH + 1];
-	CShareData		m_cShareData;
+//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 

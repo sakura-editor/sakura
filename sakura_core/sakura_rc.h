@@ -3,6 +3,7 @@
 // Used by sakura_rc.rc
 //
 #define IDOK2                           3
+#define IDC_BUTTON_PRINTERSELECT        3
 #define IDR_MENU1                       102
 #define IDD_PROP1P1                     107
 #define IDD_FIND                        109
@@ -15,27 +16,22 @@
 #define IDD_PROP1P3                     124
 #define IDD_SENDMAIL                    129
 #define IDD_PROP1P4                     130
-#define IDD_PROP_MAIL                   130
 #define IDD_PROP1P5                     131
 #define IDD_GREP                        132
 #define IDD_GREPRUNNING                 134
 #define IDD_SENDINGMAIL                 136
 #define IDD_REPLACE                     137
-#define IDD_WORDS                       140
 #define IDD_TYPELIST                    147
-#define IDD_TYPELIST_PROP               148
 #define IDD_PROPERTY_FILE               152
 #define IDD_PROP_KEYWORD                153
 #define IDD_INPUT1                      154
 #define IDD_REPLACERUNNING              160
-#define IDD_SETUP                       162
 #define IDD_COMPARE                     168
 #define IDD_PRINTPREVIEWBAR             170
 #define IDD_PRINTSETTING                174
 #define IDD_EXITING                     175
 #define IDD_DEBUG                       177
 #define IDD_KEYMACRO                    178
-#define IDD_OUTLINES                    181
 #define IDD_DIALOG6                     182
 #define IDD_EXEC                        182
 #define IDD_HOKAN                       186
@@ -48,7 +44,6 @@
 #define IDB_OPENED                      201
 #define IDB_OPENED_THIS                 202
 #define IDB_PRINTER                     203
-#define IDD_EXTCMD                      215
 #define IDD_PROP_MACRO                  217
 #define IDD_PROP_REGEX                  219
 #define IDC_CURSOR_COPYARROW            220
@@ -217,6 +212,7 @@
 #define IDC_BUTTON_FOLDER               1121
 #define IDC_CHK_SUBFOLDER               1122
 #define IDC_STATIC_CURPATH              1123
+#define IDC_CHK_DEFAULTFOLDER           1123
 #define IDC_STATIC_HITCOUNT             1124
 #define IDC_BUTTON_CAUTION              1126
 #define IDC_STATIC_VER                  1127
@@ -512,7 +508,6 @@
 #define IDM_POPLAST2                    4064
 #define ID_MENUITEM4071                 4071
 #define IDD_PROPTYPESP1                 5101
-#define IDD_ABOUT1                      5102
 #define IDD_PROP1P8                     5103
 #define IDD_PROP_CUSTMENU               5103
 #define IDD_PROP1P9                     5104

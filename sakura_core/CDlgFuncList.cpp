@@ -96,6 +96,7 @@ CDlgFuncList::CDlgFuncList()
 	m_nCurLine = 0;				/* 現在行 */
 	m_nSortCol = 0;				/* ソートする列番号 */
 	m_bLineNumIsCRLF = FALSE;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
 	return;
 }
 
@@ -314,12 +315,22 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			ListView_SetItem( hwndList, &item);
 
 			/* クリップボードにコピーするテキストを編集 */
-			wsprintf( szText, "%s(%d): %s(%s)\r\n",
-				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-				pcFuncInfo->m_cmemFuncName.GetPtr( NULL ),	/* 検出結果 */
-				item.pszText								/* 検出結果の種類 */
-			);
+			if(lstrlen(item.pszText)){
+				// 検出結果の種類(関数,,,)があるとき
+				wsprintf( szText, "%s(%d): %s(%s)\r\n",
+					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
+					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+					pcFuncInfo->m_cmemFuncName.GetPtr( NULL ),	/* 検出結果 */
+					item.pszText								/* 検出結果の種類 */
+				);
+			}else{
+				// 検出結果の種類(関数,,,)がないとき
+				wsprintf( szText, "%s(%d): %s\r\n",
+					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
+					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+					pcFuncInfo->m_cmemFuncName.GetPtr( NULL )	/* 検出結果 */
+				);
+			}
 			m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
 		}
 		//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
@@ -344,6 +355,13 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	/* アウトライン ジャンプしたらフォーカスを移す */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump, m_pShareData->m_Common.m_bFunclistSetFocusOnJump );
 
+	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
+	if(m_pShareData->m_Common.m_bAutoCloseDlgFuncList){
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
+	}
+
 	//2002.02.08 hor
 	//（IDC_LIST1もIDC_TREE1も常に存在していて、m_nViewTypeによって、どちらを表示するかを選んでいる）
 	if(m_nViewType){
@@ -356,9 +374,11 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	//2002.02.08 hor
 	//空行をどう扱うかのチェックボックスはブックマーク一覧のときだけ表示する
 	if(OUTLINE_BOOKMARK == m_nListType){
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), TRUE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), SW_SHOW );
 	}else{
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), SW_HIDE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), FALSE );
 	}
 
 	return;
@@ -1075,6 +1095,17 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
 		m_pShareData->m_Common.m_bMarkUpBlankLineEnable = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable );
 		m_pShareData->m_Common.m_bFunclistSetFocusOnJump = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump );
+		if(m_pShareData->m_Common.m_bAutoCloseDlgFuncList){
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
+		}else{
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
+		}
+		if(wID==IDC_CHECK_bMarkUpBlankLineEnable&&m_nListType==OUTLINE_BOOKMARK){
+			CEditView* pcEditView=(CEditView*)m_lParam;
+			pcEditView->HandleCommand( F_BOOKMARK_VIEW, TRUE, TRUE, 0, 0, 0 );
+			m_nCurLine=pcEditView->m_nCaretPosY + 1;
+			SetData();
+		}else
 		if(m_nViewType){
 			::SetFocus( ::GetDlgItem( m_hWnd, IDC_TREE1 ) );
 		}else{
@@ -1123,12 +1154,24 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 //		default:
 			switch( pnmtv->hdr.code ){
 			case NM_DBLCLK:
-				return OnJump();
+				// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 3/4
+				OnJump();
+				m_bWaitTreeProcess=true;
+				return TRUE;
+				//return OnJump();
 			case TVN_KEYDOWN:
 				Key2Command( ((LV_KEYDOWN *)lParam)->wVKey );
 				return TRUE;
 //			case NM_CLICK:
-//			case NM_KILLFOCUS:
+			case NM_KILLFOCUS:
+				// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 4/4
+				if(m_bWaitTreeProcess){
+					if(m_pShareData->m_Common.m_bFunclistSetFocusOnJump){
+						::SetFocus(m_hwndParent);
+					}
+					m_bWaitTreeProcess=false;
+				}
+				return TRUE;
 //			case NM_OUTOFMEMORY:
 //			case NM_RCLICK:
 //			case NM_RDBLCLK:
@@ -1272,7 +1315,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		rc.right = po.x;
 		rc.bottom  = po.y;
 		if( Controls[i] >= IDC_CHECK_bAutoCloseDlgFuncList ){
-			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 32 /*- nWork*//*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 31 /*- nWork*//*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		}else
 		if( Controls[i] != IDC_LIST1
 		 && Controls[i] != IDC_TREE1
@@ -1344,26 +1387,32 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 			m_pShareData->m_nKeyNameArrNum,
 			m_pShareData->m_pKeyNameArr
 	);
-	if( nFuncCode==F_REDRAW ){
+	switch( nFuncCode ){
+	case F_REDRAW:
 		nFuncCode=(m_nListType==OUTLINE_BOOKMARK)?F_BOOKMARK_VIEW:F_OUTLINE;
-	}
-	if( nFuncCode==F_OUTLINE || nFuncCode==F_BOOKMARK_VIEW ) {
+	case F_OUTLINE:
+	case F_BOOKMARK_VIEW:
 		pcEditView=(CEditView*)m_lParam;
 		pcEditView->HandleCommand( nFuncCode, TRUE, TRUE, 0, 0, 0 );
 		m_nListType=(nFuncCode==F_BOOKMARK_VIEW)?OUTLINE_BOOKMARK:pcEditView->m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
 		m_nCurLine=pcEditView->m_nCaretPosY + 1;
 		SetData();
-	}else
-	if( nFuncCode==F_BOOKMARK_SET ){
+		break;
+	case F_BOOKMARK_SET:
 		OnJump( false );
 		pcEditView=(CEditView*)m_lParam;
 		pcEditView->HandleCommand( nFuncCode, TRUE, 0, 0, 0, 0 );
-		if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
-			::DestroyWindow( m_hWnd );
-		}else
-		if( m_pShareData->m_Common.m_bFunclistSetFocusOnJump ){
-			::SetFocus( m_hwndParent );
-		}
+	//	if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
+	//		OnBnClicked( IDCANCEL );
+	//	}else
+	//	if( m_pShareData->m_Common.m_bFunclistSetFocusOnJump ){
+	//		::SetFocus( m_hwndParent );
+	//	}
+		break;
+	case F_COPY:
+	case F_CUT:
+		OnBnClicked( IDC_BUTTON_COPY );
+		break;
 	}
 }
 /*[EOF]*/

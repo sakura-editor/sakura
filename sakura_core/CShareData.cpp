@@ -39,7 +39,17 @@ struct ARRHEAD {
 
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 23;
+const unsigned int uShareDataVersion = 24;
+
+/*
+||	Singleton風
+*/
+CShareData* CShareData::_instance = NULL;
+
+CShareData* CShareData::getInstance()
+{
+	return _instance;
+}
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -69,13 +79,13 @@ CShareData::~CShareData()
 */
 bool CShareData::Init( void )
 {
+	if (CShareData::_instance == NULL)	//	Singleton風
+		CShareData::_instance = this;
+
 	int		i;
 	int		j;
 	char	szExeFolder[_MAX_PATH + 1];
 	char	szPath[_MAX_PATH + 1];
-//	int		nCharChars;
-//	char	szDrive[_MAX_DRIVE];
-//	char	szDir[_MAX_DIR];
 
 	/* exeのあるフォルダ */
 	::GetModuleFileName(
@@ -94,7 +104,7 @@ bool CShareData::Init( void )
 		PAGE_READWRITE | SEC_COMMIT,
 		0,
 		sizeof( DLLSHAREDATA ),
-		m_pszAppName
+		GSTR_CSHAREDATA
 	);
 	if( NULL == m_hFileMap ){
 		::MessageBox(
@@ -158,6 +168,12 @@ bool CShareData::Init( void )
 		strcpy( m_pShareData->m_szMACROFOLDER, szExeFolder );	/* マクロ用フォルダ */
 		strcpy( m_pShareData->m_szIMPORTFOLDER, szExeFolder );	/* 設定インポート用フォルダ */
 
+		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
+			必要になるまで遅らせるために、CPrintに、CShareDataを操作する権限を与える。
+			YAZAKI.
+		*/
+		CPrint::Initialize();	//	初期化命令。
+#if 0
 		i = 0;
 		wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
 		strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceHan, "ＭＳ 明朝" );				/* 印刷フォント */
@@ -176,7 +192,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_PrintSettingArr[i].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;	/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 		m_pShareData->m_PrintSettingArr[i].m_nPrintPaperSize = DMPAPER_A4;	/* 用紙サイズ */
 		/* プリンタ設定 DEVMODE用 */
-		CPrint::GetDefaultPrinterInfo( &(m_pShareData->m_PrintSettingArr[i].m_mdmDevMode) );
+		m_cPrint.GetDefaultPrinterInfo( &(m_pShareData->m_PrintSettingArr[i].m_mdmDevMode) );
 		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[0] = TRUE;
 		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[1] = FALSE;
 		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[2] = FALSE;
@@ -193,6 +209,8 @@ bool CShareData::Init( void )
 			m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
 			wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
 		}
+#endif
+
 //キーワード：デフォルトキー割り当て
 /********************/
 /* 共通設定の規定値 */
@@ -394,7 +412,7 @@ bool CShareData::Init( void )
 			//2001.12.03 hor Alt+R を「RTRIM」に割当
 			{ 'R', "R",0, 0, F_REPLACE_DIALOG, 0, F_RTRIM, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
-			{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS, 0, 0, 0, 0 },
+			{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS_DIALOG, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
 			//Jan. 21, 2001	JEPRO	Ctrl+T に「タグジャンプ」, Shift+Ctrl+T に「タグジャンプバック」を追加
 			{ 'T', "T",0, 0, F_TAGJUMP, F_TAGJUMPBACK, 0, 0, F_TILE_H, 0 },
@@ -557,6 +575,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
 		m_pShareData->m_Common.m_bGrepOutputLine = TRUE;		/* Grep: 行を出力するか該当部分だけ出力するか */
 		m_pShareData->m_Common.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
+		m_pShareData->m_Common.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
 
 		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
@@ -3790,49 +3809,35 @@ typedef struct _TBBUTTON {
 
 
 
-/* 共有データ構造体のアドレスを返す */
-DLLSHAREDATA* CShareData::GetShareData( const char* pszFilePath, int* pnSettingType )
+/*! ファイル名から、ドキュメントタイプ（数値）を取得する
+*/
+int CShareData::GetDocumentType( const char* pszFilePath )
 {
-
 	char	szExt[_MAX_EXT];
 	char	szText[256];
 	int		i;
 	char*	pszToken;
 	char*	pszSeps = " ;,";
-	BOOL	bFound;
-	if( NULL != pnSettingType ){
-		*pnSettingType = 0;
-		if( NULL != pszFilePath && 0 < (int)strlen( pszFilePath ) ){
-			_splitpath( pszFilePath, NULL, NULL, NULL, szExt );
-			if( szExt[0] == '.' ){
-				char	szExt2[_MAX_EXT];
-				strcpy( szExt2, szExt );
-				strcpy( szExt, &szExt2[1] );
-			}
 
-			bFound = FALSE;
-			for( i = 0; i < MAX_TYPES; ++i ){
-				strcpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
-				pszToken = strtok( szText, pszSeps );
-				while( NULL != pszToken ){
-					if( 0 == _stricmp( szExt, pszToken ) ){
-						bFound = TRUE;
-						break;
-					}
-					pszToken = strtok( NULL, pszSeps );
+	if( NULL != pszFilePath && 0 < (int)strlen( pszFilePath ) ){
+		_splitpath( pszFilePath, NULL, NULL, NULL, szExt );
+		if( szExt[0] == '.' ){
+			char	szExt2[_MAX_EXT];
+			strcpy( szExt2, szExt );
+			strcpy( szExt, &szExt2[1] );
+		}
+		for( i = 0; i < MAX_TYPES; ++i ){
+			strcpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
+			pszToken = strtok( szText, pszSeps );
+			while( NULL != pszToken ){
+				if( 0 == _stricmp( szExt, pszToken ) ){
+					return i;	//	番号
 				}
-				if( bFound ){
-					break;
-				}
-			}
-			if( i < MAX_TYPES ){
-				*pnSettingType = i;
-			}else{
-				*pnSettingType = 0;
+				pszToken = strtok( NULL, pszSeps );
 			}
 		}
 	}
-	return m_pShareData;
+	return 0;	//	ハズレ
 }
 
 

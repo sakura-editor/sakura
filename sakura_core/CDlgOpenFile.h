@@ -48,7 +48,7 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hWnd;			/* このダイアログのハンドル */
 
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 

@@ -454,6 +454,7 @@ struct Common {
 	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */
 	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
 	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
+	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
 
 	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
 	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
@@ -667,6 +668,15 @@ class SAKURA_CORE_API CShareData
 {
 public:
 	/*
+	||	Singleton風
+	*/
+	static CShareData* getInstance();
+
+protected:
+	static CShareData* _instance;
+
+public:
+	/*
 	||  Constructors
 	*/
 	CShareData();
@@ -676,7 +686,9 @@ public:
 	||  Attributes & Operations
 	*/
 	bool Init(void);	/* CShareDataクラスの初期化処理 */
-	DLLSHAREDATA* GetShareData( const char*, int* );			/* 共有データ構造体のアドレスを返す */
+//	DLLSHAREDATA* GetShareData( const char*, int* );			/* 共有データ構造体のアドレスを返す */
+	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
+	int GetDocumentType( const char* pszFilePath );				/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	BOOL AddEditWndList( HWND );								/* 編集ウィンドウの登録 */
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 
@@ -750,7 +762,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	const char*		m_pszAppName;
+//	const char*		m_pszAppName;
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
 

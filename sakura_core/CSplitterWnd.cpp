@@ -36,8 +36,8 @@ CSplitterWnd::CSplitterWnd() :
 {
 	strcat( m_szClassInheritances, "::CSplitterWnd" );
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hcurOld = NULL;						/* もとのマウスカーソル */
 

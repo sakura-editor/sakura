@@ -57,8 +57,8 @@ CFuncKeyWnd::CFuncKeyWnd()
 	m_pszClassName = "CFuncKeyWnd";
 	m_pCEditDoc = NULL;
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < sizeof(	m_szFuncNameArr ) / sizeof(	m_szFuncNameArr[0] ); ++i ){
 		strcpy( m_szFuncNameArr[i], "" );

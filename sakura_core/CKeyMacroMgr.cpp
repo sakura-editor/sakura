@@ -21,7 +21,7 @@
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
-//	#include "debug.h"
+#include "debug.h"
 #include "charcode.h"
 //	#include "etc_uty.h"
 //	#include "global.h"
@@ -219,11 +219,15 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 							continue;
 						}
 						else {
-							nEnd = i;	//	終わりの次の文字（数字じゃない文字）
+							nEnd = i - 1;	//	終わりの次の文字（数字の最後） 
+							i--;
 							break;
 						}
 					}
-					macro->AddParam( atoi(&szLine[nBgn]) );	//	引数を数値として追加
+					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
+					cmemWork.Replace( "\\\'", "\'" );
+					cmemWork.Replace( "\\\\", "\\" );
+					macro->AddParam( cmemWork.GetPtr( NULL ) );	//	引数を文字列として追加
 				}
 				else {
 					//	Parse Error:文法エラーっぽい。
@@ -242,6 +246,10 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 			}
 			/* キーマクロのバッファにデータ追加 */
 			Append( macro );
+		}
+		else {
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+				_T("%sは、存在しない関数です。詳しくはヘルプをご覧ください。"), szFuncName );
 		}
 	}
 	fclose( hFile );

@@ -382,57 +382,16 @@ BEGIN
     CONTROL         "自動的に閉じる(&D)",IDC_CHECK_bAutoCloseDlgFuncList,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,255,65,10,0,
                     HIDC_CHECK_bAutoCloseDlgFuncList
-    CONTROL         "空行を無視する(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,149,255,65,10,0,
-                    HIDC_CHECK_bMarkUpBlankLineEnable
     CONTROL         "フォーカスを移す(&F)",IDC_CHECK_bFunclistSetFocusOnJump,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,75,255,69,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,74,255,69,10,0,
                     HIDC_CHECK_bFunclistSetFocusOnJump
+    CONTROL         "空行を無視する(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,255,65,10,0,
+                    HIDC_CHECK_bMarkUpBlankLineEnable
 END
 
-IDD_PROP_MAIL DIALOG DISCARDABLE  0, 0, 281, 201
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    GROUPBOX        "メール",IDC_STATIC,5,5,270,158
-    LTEXT           "名前(&N)",IDC_STATIC,10,21,24,8
-    EDITTEXT        IDC_EDIT_EMAILUSERNAME,60,19,210,12,ES_AUTOHSCROLL
-    LTEXT           "メールアドレス(&E)",IDC_STATIC,10,41,47,8
-    EDITTEXT        IDC_EDIT_EMAILUSERADDRESS,60,39,210,12,ES_AUTOHSCROLL
-    LTEXT           "メール送信(&SMTP)サーバ",IDC_STATIC,10,60,76,8
-    EDITTEXT        IDC_EDIT_SMTPSERVER,10,70,125,12,ES_AUTOHSCROLL
-    LTEXT           "S&MTPポート番号(25)",IDC_STATIC,145,60,60,8
-    EDITTEXT        IDC_EDIT_SMTPPORT,145,70,25,12,ES_AUTOHSCROLL
-    LTEXT           "メール送信機能を利用するための設定です。\nメールアドレス、SMTPサーバのアドレス、ポート番号等が不明な場合は、ご加入のプロバイダか、所属組織のネットワーク管理者などにお問い合わせください。",
-                    IDC_STATIC,10,170,265,25
-    LTEXT           "メール受信(&POP3)サーバ",IDC_STATIC,10,85,75,8,
-                    WS_DISABLED
-    EDITTEXT        IDC_EDIT_SMTPSERVER2,10,95,125,12,ES_AUTOHSCROLL | 
-                    WS_DISABLED
-    LTEXT           "P&OP3ポート番号(110)",IDC_STATIC,145,85,71,8,
-                    WS_DISABLED
-    EDITTEXT        IDC_EDIT_SMTPPORT2,145,95,25,12,ES_AUTOHSCROLL | 
-                    WS_DISABLED
-    CONTROL         "受信したメールをサーバから削除(&R)",IDC_CHECK1,"Button",
-                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,10,145,122,10
-    LTEXT           "メール着信チェック間隔(&I)",IDC_STATIC,10,115,76,8,
-                    WS_DISABLED
-    EDITTEXT        IDC_EDIT4,95,114,40,12,ES_AUTOHSCROLL | WS_DISABLED
-    LTEXT           "分",IDC_STATIC,138,115,8,8,WS_DISABLED
-    CONTROL         "着信を知らせる(&T)",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | 
-                    WS_DISABLED | WS_TABSTOP,10,130,69,10
-    CONTROL         "ダイアログ(&D)",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | 
-                    WS_DISABLED | WS_TABSTOP,82,130,55,10
-    CONTROL         "サウンド(&U)",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | 
-                    WS_DISABLED | WS_TABSTOP,140,130,49,10
-    COMBOBOX        IDC_COMBO1,190,129,71,30,CBS_DROPDOWN | CBS_SORT | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "&...",IDC_BUTTON1,261,129,9,12,WS_DISABLED
-END
-
-IDD_GREP DIALOGEX 0, 0, 301, 147
-STYLE DS_MODALFRAME | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
+IDD_GREP DIALOGEX 0, 0, 302, 143
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Grep条件入力"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
@@ -455,71 +414,45 @@ BEGIN
                     BS_MULTILINE,0,HIDC_BUTTON_CURRENTFOLDER
     CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
                     BS_AUTOCHECKBOX | WS_DISABLED | WS_GROUP | WS_TABSTOP,5,
-                    55,73,10,0,HIDC_CHK_WORD
+                    52,73,10,0,HIDC_CHK_WORD
     CONTROL         "サブフォルダからも検索する(&S)",IDC_CHK_SUBFOLDER,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,68,107,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,63,107,10,0,
                     HIDC_CHK_SUBFOLDER
     CONTROL         "現在編集中のファイルから検索(&Q)",IDC_CHK_FROMTHISTEXT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,81,116,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,74,116,10,0,
                     HIDC_CHK_FROMTHISTEXT
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,94,110,10,0,
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,85,110,10,0,
                     HIDC_CHK_LOHICASE
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
-                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,107,50,10,0,
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,96,50,10,0,
                     HIDC_CHK_REGULAREXP
+    LTEXT           "",IDC_STATIC_JRE32VER,18,105,159,8,0,0,
+                    HIDC_STATIC_JRE32VER
     CONTROL         "文字コードセット自動判別(&A)",
                     IDC_CHK_KANJICODEAUTODETECT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,130,99,10,0,HIDC_CHK_KANJICODEAUTODETECT
-    LTEXT           "",IDC_STATIC_JRE32VER,18,118,159,8,0,0,
-                    HIDC_STATIC_JRE32VER
+                    WS_TABSTOP,5,116,99,10,0,HIDC_CHK_KANJICODEAUTODETECT
+    CONTROL         "フォルダの初期値をカレントフォルダにする(&D)",
+                    IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,127,164,10,0,HIDC_CHK_DEFAULTFOLDER
     CONTROL         "該当行(&L)",IDC_RADIO_OUTPUTLINE,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,74,45,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,73,45,10,
                     0,HIDC_RADIO_OUTPUTLINE
     CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",
-                    BS_AUTORADIOBUTTON,183,86,50,10,0,
+                    BS_AUTORADIOBUTTON,183,85,50,10,0,
                     HIDC_RADIO_OUTPUTMARKED
-    GROUPBOX        "結果出力",IDC_STATIC,178,64,63,35,WS_GROUP
+    GROUPBOX        "結果出力",IDC_STATIC,178,63,63,35,WS_GROUP
     CONTROL         "ノーマル(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,114,50,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,112,50,10,
                     0,HIDC_RADIO_OUTPUTSTYLE1
     CONTROL         "ファイル毎（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",
-                    BS_AUTORADIOBUTTON,183,126,55,10,0,
+                    BS_AUTORADIOBUTTON,183,124,55,10,0,
                     HIDC_RADIO_OUTPUTSTYLE2
-    GROUPBOX        "結果出力形式",IDC_STATIC,178,104,63,35,WS_GROUP
-    DEFPUSHBUTTON   "検索(&F)",IDOK,247,78,49,14,WS_GROUP,0,HIDOK
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,247,108,49,14,0,0,HIDCANCEL
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,247,125,49,14,0,0,
+    GROUPBOX        "結果出力形式",IDC_STATIC,178,102,63,35,WS_GROUP
+    DEFPUSHBUTTON   "検索(&F)",IDOK,247,76,49,14,WS_GROUP,0,HIDOK
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,247,106,49,14,0,0,HIDCANCEL
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,247,123,49,14,0,0,
                     HIDC_BUTTON_HELP
-END
-
-1537 DIALOG DISCARDABLE  36, 24, 264, 134
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Open"
-FONT 8, "Helv"
-BEGIN
-    LTEXT           "File &name:",1090,6,6,76,10
-    EDITTEXT        1152,6,16,90,12,ES_AUTOHSCROLL | ES_OEMCONVERT
-    LISTBOX         1120,6,32,90,68,LBS_SORT | LBS_OWNERDRAWFIXED | 
-                    LBS_HASSTRINGS | LBS_EXTENDEDSEL | LBS_DISABLENOSCROLL | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "&Directories:",-1,110,6,92,9
-    LTEXT           "",1088,110,16,92,9,SS_NOPREFIX
-    LISTBOX         1121,110,32,92,68,LBS_SORT | LBS_OWNERDRAWFIXED | 
-                    LBS_HASSTRINGS | LBS_DISABLENOSCROLL | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "List files of &type:",1089,6,102,90,9
-    COMBOBOX        1136,6,112,90,36,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | 
-                    WS_BORDER | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Dri&ves:",1091,110,102,92,9
-    COMBOBOX        1137,110,112,92,68,CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | 
-                    CBS_AUTOHSCROLL | CBS_SORT | CBS_HASSTRINGS | WS_BORDER | 
-                    WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,208,6,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,208,24,50,14,WS_GROUP
-    PUSHBUTTON      "&Help",1038,208,46,50,14,WS_GROUP
-    CONTROL         "&Read only",1040,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,208,68,50,12
 END
 
 IDD_GREPRUNNING DIALOGEX 0, 0, 293, 69
@@ -644,65 +577,6 @@ BEGIN
                     HIDC_BUTTON_DOWN
 END
 
-5100 DIALOGEX 0, 0, 49, 73
-STYLE DS_MODALFRAME | WS_POPUP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
-BEGIN
-    CONTROL         "",5101,"Button",BS_OWNERDRAW | WS_TABSTOP,1,1,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5102,"Button",BS_OWNERDRAW | WS_TABSTOP,13,1,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5103,"Button",BS_OWNERDRAW | WS_TABSTOP,25,1,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5104,"Button",BS_OWNERDRAW | WS_TABSTOP,37,1,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5105,"Button",BS_OWNERDRAW | WS_TABSTOP,1,12,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5106,"Button",BS_OWNERDRAW | WS_TABSTOP,13,12,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5107,"Button",BS_OWNERDRAW | WS_TABSTOP,25,12,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5108,"Button",BS_OWNERDRAW | WS_TABSTOP,37,12,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5109,"Button",BS_OWNERDRAW | WS_TABSTOP,1,24,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5110,"Button",BS_OWNERDRAW | WS_TABSTOP,13,24,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5111,"Button",BS_OWNERDRAW | WS_TABSTOP,25,24,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5112,"Button",BS_OWNERDRAW | WS_TABSTOP,37,24,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5113,"Button",BS_OWNERDRAW | WS_TABSTOP,1,36,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5114,"Button",BS_OWNERDRAW | WS_TABSTOP,13,36,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5115,"Button",BS_OWNERDRAW | WS_TABSTOP,25,36,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5116,"Button",BS_OWNERDRAW | WS_TABSTOP,37,36,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5117,"Button",BS_OWNERDRAW | WS_TABSTOP,1,48,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5118,"Button",BS_OWNERDRAW | WS_TABSTOP,13,48,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5119,"Button",BS_OWNERDRAW | WS_TABSTOP,25,48,11,10,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",5120,"Button",BS_OWNERDRAW | WS_TABSTOP,37,48,11,10,
-                    WS_EX_CLIENTEDGE
-    PUSHBUTTON      "Other...",5121,1,60,47,11
-END
-
-IDD_WORDS DIALOGEX 0, 0, 181, 246
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
-BEGIN
-    COMBOBOX        IDC_COMBO1,5,5,170,220,CBS_SIMPLE | CBS_SORT | 
-                    CBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP,
-                    WS_EX_CLIENTEDGE
-    DEFPUSHBUTTON   "&OK",IDOK,5,227,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,65,227,50,14
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,125,227,50,14
-END
-
 IDD_TYPELIST DIALOGEX 0, 0, 187, 187
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -719,19 +593,6 @@ BEGIN
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,130,50,50,14,0,0,HIDCANCEL
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,130,166,50,14,0,0,
                     HIDC_BUTTON_HELP
-END
-
-IDD_TYPELIST_PROP DIALOG DISCARDABLE  0, 0, 201, 59
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "属性"
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    LTEXT           "名前(&N)",IDC_STATIC,5,6,24,8
-    EDITTEXT        IDC_EDIT_NAME,37,4,158,12,ES_AUTOHSCROLL
-    LTEXT           "拡張子(&E)",IDC_STATIC,5,21,30,8
-    EDITTEXT        IDC_EDIT_EXT,37,19,80,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "&OK",IDOK,45,40,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,105,40,50,14
 END
 
 IDD_PROPTYPESP1 DIALOGEX 0, 0, 270, 213
@@ -808,23 +669,6 @@ BEGIN
     DEFPUSHBUTTON   "閉じる(&C)",IDOK,155,208,50,14,0,0,HIDOK
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,215,208,50,14,0,0,
                     HIDC_BUTTON_HELP
-END
-
-IDD_ABOUT1 DIALOG DISCARDABLE  30, 1, 354, 294
-STYLE DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | 
-    WS_THICKFRAME
-CAPTION "バージョン情報"
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    CTEXT           "テキストエディタ\nfor Windows95/98/NT4.0\n\nCopyright (C) by たけ",
-                    IDC_STATIC,30,10,120,35
-    ICON            IDI_ICON_STD,IDC_STATIC,7,15,18,20
-    DEFPUSHBUTTON   "OK",IDOK,60,110,30,14
-    PUSHBUTTON      "使用上の注意",IDC_BUTTON_CAUTION,5,110,46,14,NOT 
-                    WS_VISIBLE | WS_DISABLED
-    CTEXT           "Ver 0.0.0.0",IDC_STATIC_VER,30,50,120,55
-    EDITTEXT        IDC_EDIT_VER,157,0,195,290,ES_MULTILINE | ES_AUTOVSCROLL | 
-                    ES_AUTOHSCROLL | WS_VSCROLL | WS_HSCROLL
 END
 
 IDD_PROP_KEYWORD DIALOGEX 0, 0, 270, 213
@@ -1003,24 +847,6 @@ BEGIN
                     WS_TABSTOP,8,121,101,10,0,HIDC_CHECK_HTMLHELPISSINGLE
 END
 
-IDD_SETUP DIALOG DISCARDABLE  0, 0, 225, 127
-STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
-CAPTION "サクラエディタ セットアップ"
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    LTEXT           "サクラエディタ x.x.x.x のセットアップを行います。",
-                    IDC_STATIC_MESSAGE,5,5,147,8,NOT WS_GROUP
-    ICON            IDI_ICON_STD,IDC_STATIC,5,25,20,20
-    LTEXT           "旧バージョンの設定データが検出されました。\n旧バージョンの設定を引き継ぐことができます。\n設定を引き継ぐバージョンを選択してください。",
-                    IDC_STATIC,30,25,140,25,NOT WS_GROUP
-    LISTBOX         IDC_LIST_OLDVERSION,5,55,165,55,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "設定完了(&X)",IDOK,170,10,50,14
-    LTEXT           "このダイアログは、初回起動時のみ表示されます。",
-                    IDC_STATIC,5,115,147,8,NOT WS_GROUP
-END
-
 IDD_PROP_COLOR DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
@@ -1132,7 +958,7 @@ BEGIN
 END
 
 IDD_COMPARE DIALOGEX 0, 0, 365, 165
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "ファイル内容比較"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
@@ -1151,21 +977,10 @@ BEGIN
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,250,145,50,14,0,0,HIDCANCEL
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,310,145,50,14,0,0,
                     HIDC_BUTTON_HELP
-    PUSHBUTTON      "上下に表示(&V)",IDC_BUTTON1,130,145,50,14,WS_DISABLED | 
-                    WS_GROUP,0,HIDC_BUTTON1
-    PUSHBUTTON      "左右に表示(&T)",IDOK2,70,145,50,14,WS_DISABLED,0,HIDOK2
-END
-
-149 DIALOG FIXED IMPURE  36, 24, 232, 101
-STYLE DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    LTEXT           "",1119,0,0,230,65
-    CONTROL         "閲覧モードで開く(&B)",462,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,65,65,80,11
-    LTEXT           "文字コード'(&C):",-1,8,82,47,8
-    COMBOBOX        551,65,80,152,100,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | 
-                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "上下に表示(&V)",IDC_BUTTON1,130,145,50,14,NOT 
+                    WS_VISIBLE | WS_DISABLED | WS_GROUP,0,HIDC_BUTTON1
+    PUSHBUTTON      "左右に表示(&T)",IDOK2,70,145,50,14,NOT WS_VISIBLE | 
+                    WS_DISABLED,0,HIDOK2
 END
 
 IDD_PRINTPREVIEWBAR DIALOG DISCARDABLE  0, 0, 402, 32
@@ -1182,10 +997,11 @@ BEGIN
     LTEXT           "999/999",IDC_STATIC_ZOOM,127,19,35,8
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,164,1,40,14
     PUSHBUTTON      "戻る(&Q)",IDCANCEL,164,16,40,14
-    CONTROL         203,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,211,
+    CONTROL         203,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,238,
                     3,9,10
-    LTEXT           "Static",IDC_STATIC_PRNDEV,225,4,150,8
-    LTEXT           "Static",IDC_STATIC_PAPER,225,19,150,8
+    LTEXT           "Static",IDC_STATIC_PRNDEV,252,4,150,8
+    LTEXT           "Static",IDC_STATIC_PAPER,252,19,150,8
+    PUSHBUTTON      "プリンタ(&R)",IDC_BUTTON_PRINTERSELECT,207,16,40,14
 END
 
 IDD_PRINTSETTING DIALOGEX 0, 0, 235, 253
@@ -1193,7 +1009,7 @@ STYLE DS_MODALFRAME | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "印刷ページ設定"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "ページ設定(&1)",IDC_STATIC,11,9,42,8
     COMBOBOX        IDC_COMBO_SETTINGNAME,54,7,118,170,CBS_DROPDOWNLIST | 
@@ -1544,17 +1360,6 @@ BEGIN
     GROUPBOX        "バックアップの作成",IDC_STATIC,3,3,264,196,WS_GROUP
 END
 
-IDD_OUTLINES DIALOG DISCARDABLE  0, 0, 187, 81
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "アウトライン解析方法選択"
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    LISTBOX         IDC_LIST1,5,5,117,65,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "&OK",IDOK,130,7,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,130,24,50,14
-END
-
 IDD_EXEC DIALOGEX 30, 0, 274, 61
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CENTERMOUSE | 
     DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
@@ -1649,7 +1454,7 @@ IDD_FILEOPEN DIALOGEX 0, 0, 228, 125
 STYLE DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
-    LTEXT           "",1119,0,0,228,65
+    LTEXT           "",IDC_COMBO_FOLDER,0,0,228,65
     LTEXT           "文字コードセット(&C)",IDC_STATIC,8,69,57,8
     COMBOBOX        IDC_COMBO_CODE,67,67,50,126,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_CODE
@@ -1664,16 +1469,6 @@ BEGIN
     COMBOBOX        IDC_COMBO_OPENFOLDER,67,103,85,236,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP,0,
                     HIDC_COMBO_OPENFOLDER
-END
-
-IDD_EXTCMD DIALOG DISCARDABLE  0, 0, 219, 47
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
-CAPTION "外部コマンド実行"
-FONT 9, "ＭＳ Ｐゴシック"
-BEGIN
-    DEFPUSHBUTTON   "隠す(&H)",IDC_HIDE,108,26,50,14
-    PUSHBUTTON      "中断(&S)",IDCANCEL,160,26,50,14
-    LTEXT           "",IDC_EXECINFO,1,6,209,18
 END
 
 IDD_PROP_MACRO DIALOGEX 0, 0, 270, 213
@@ -1849,20 +1644,12 @@ BEGIN
         BOTTOMMARGIN, 283
     END
 
-    IDD_PROP_MAIL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 274
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 194
-    END
-
     IDD_GREP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 296
+        RIGHTMARGIN, 297
         TOPMARGIN, 7
-        BOTTOMMARGIN, 138
+        BOTTOMMARGIN, 136
     END
 
     IDD_GREPRUNNING, DIALOG
@@ -1885,34 +1672,12 @@ BEGIN
         RIGHTMARGIN, 269
     END
 
-    5100, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        TOPMARGIN, 7
-    END
-
-    IDD_WORDS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 174
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 239
-    END
-
     IDD_TYPELIST, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 180
         TOPMARGIN, 7
         BOTTOMMARGIN, 180
-    END
-
-    IDD_TYPELIST_PROP, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 194
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 52
     END
 
     IDD_PROPTYPESP1, DIALOG
@@ -1929,14 +1694,6 @@ BEGIN
         RIGHTMARGIN, 263
         TOPMARGIN, 7
         BOTTOMMARGIN, 220
-    END
-
-    IDD_ABOUT1, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 347
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 287
     END
 
     IDD_PROP_KEYWORD, DIALOG
@@ -1983,14 +1740,6 @@ BEGIN
         RIGHTMARGIN, 263
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
-    END
-
-    IDD_SETUP, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 218
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 120
     END
 
     IDD_PROP_COLOR, DIALOG
@@ -2089,14 +1838,6 @@ BEGIN
         BOTTOMMARGIN, 206
     END
 
-    IDD_OUTLINES, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 180
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 74
-    END
-
     IDD_EXEC, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2149,14 +1890,6 @@ BEGIN
     BEGIN
         RIGHTMARGIN, 220
         BOTTOMMARGIN, 120
-    END
-
-    IDD_EXTCMD, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 210
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 40
     END
 
     IDD_PROP_MACRO, DIALOG
@@ -2221,7 +1954,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,106,1
+ PRODUCTVERSION 1,2,106,2
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2245,7 +1978,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.106.1\0"
+            VALUE "ProductVersion", "1.2.106.2\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2276,7 +2009,6 @@ IDB_PRINTER             BITMAP  DISCARDABLE     "../resource/printer.bmp"
 // remains consistent on all systems.
 IDI_ICON_STD            ICON    DISCARDABLE     "../resource/icon_std.ico"
 IDI_ICON_DEBUG          ICON    DISCARDABLE     "../resource/icon_debug.ico"
-IDI_ICON_HANA           ICON    DISCARDABLE     "../resource/icon_hana.ico"
 IDI_ICON_GREP           ICON    DISCARDABLE     "../resource/icon_grep.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2303,7 +2035,7 @@ BEGIN
     F_FILENEW               "新規作成"
     F_FILEOPEN              "開く"
     F_FILESAVE              "上書き保存"
-    F_FILESAVEAS            "名前を付けて保存"
+    F_FILESAVEAS_DIALOG     "名前を付けて保存"
     F_FILECLOSE             "閉じて(無題)"
     F_FILECLOSE_OPEN        "閉じて開く"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"

@@ -244,8 +244,8 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
-			cmemWork.Replace( "\\\'", "\'" );
-			cmemWork.Replace( "\\\\", "\\" );
+			cmemWork.Replace( "\\", "\\\\" );
+			cmemWork.Replace( "\'", "\\\'" );
 			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
@@ -254,8 +254,8 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
-			cmemWork.Replace( "\\\'", "\'" );
-			cmemWork.Replace( "\\\\", "\\" );
+			cmemWork.Replace( "\\", "\\\\" );
+			cmemWork.Replace( "\'", "\\\'" );
 			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
@@ -264,12 +264,12 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
-			cmemWork.Replace( "\\\'", "\'" );
-			cmemWork.Replace( "\\\\", "\\" );
+			cmemWork.Replace( "\\", "\\\\" );
+			cmemWork.Replace( "\'", "\\\'" );
 			{
 				CMemory cmemWork2(m_pParamTop->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pData));
-				cmemWork2.Replace( "\\\'", "\'" );
-				cmemWork2.Replace( "\\\\", "\\" );
+				cmemWork2.Replace( "\\", "\\\\" );
+				cmemWork2.Replace( "\'", "\\\'" );
 				wsprintf( szLine, "%s(\'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr2(), cmemWork2.GetPtr2(), m_pParamTop->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
 				_lwrite( hFile, szLine, strlen( szLine ) );
 			}
@@ -278,16 +278,16 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
-			cmemWork.Replace( "\\\'", "\'" );
-			cmemWork.Replace( "\\\\", "\\" );
+			cmemWork.Replace( "\\", "\\\\" );
+			cmemWork.Replace( "\'", "\\\'" );
 			{
 				CMemory cmemWork2(m_pParamTop->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pData));
-				cmemWork2.Replace( "\\\'", "\'" );
-				cmemWork2.Replace( "\\\\", "\\" );
+				cmemWork2.Replace( "\\", "\\\\" );
+				cmemWork2.Replace( "\'", "\\\'" );
 
 				CMemory cmemWork3(m_pParamTop->m_pNext->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pNext->m_pData));
-				cmemWork3.Replace( "\\\'", "\'" );
-				cmemWork3.Replace( "\\\\", "\\" );
+				cmemWork3.Replace( "\\", "\\\\" );
+				cmemWork3.Replace( "\'", "\\\'" );
 				wsprintf( szLine, "%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr2(), cmemWork2.GetPtr2(), cmemWork3.GetPtr2(), m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
 				_lwrite( hFile, szLine, strlen( szLine ) );
 			}
@@ -325,7 +325,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//	一つ目の引数が数値。
 		pcEditView->HandleCommand( Index, FALSE, atoi(Argument[0]), 0, 0, 0 );
 		break;
-	case F_INSTEXT:			//	テキスト挿入
+	case F_INSTEXT:		//	テキスト挿入
 	case F_ADDTAIL:		//	この操作はキーボード操作では存在しないので保存することができない？
 		//	一つ目の引数が文字列。
 		//	ただし2つ目の引数は文字数。
@@ -373,7 +373,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				}
 
 				/* 検索文字列 */
-				pcEditView->m_cShareData.AddToSearchKeyArr( (const char*)Argument[0] );
+				CShareData::getInstance()->AddToSearchKeyArr( (const char*)Argument[0] );
 			}
 			//	設定値バックアップ
 			//	マクロパラメータ→設定値変換
@@ -433,11 +433,11 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				}
 
 				/* 検索文字列 */
-				pcEditView->m_cShareData.AddToSearchKeyArr( (const char*)Argument[0] );
+				CShareData::getInstance()->AddToSearchKeyArr( (const char*)Argument[0] );
 			}
 			if( 0 < lstrlen( Argument[1] ) ){
 				/* 検索文字列 */
-				pcEditView->m_cShareData.AddToReplaceKeyArr( (const char*)Argument[1] );
+				CShareData::getInstance()->AddToReplaceKeyArr( (const char*)Argument[1] );
 			}
 			LPARAM lFlag = atoi(Argument[2]);
 			pcEditView->m_pShareData->m_Common.m_bWordOnly			= lFlag & 0x01 ? 1 : 0;
@@ -533,6 +533,33 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			CEditApp::OpenNewEditor( pcEditView->m_hInstance, pcEditView->m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
+		}
+		break;
+	case F_FILEOPEN:
+		//	Argument[0]を開く。
+		{
+			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+		}
+		break;
+	case F_FILESAVEAS:
+		//	Argument[0]を開く。
+		{
+			pcEditView->m_pcEditDoc->m_nCharCode = atoi(Argument[1]);
+			switch (atoi(Argument[2])){
+			case 0:
+				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;
+				break;
+			case 1:
+				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_CRLF;
+				break;
+			case 2:
+				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_LF;
+				break;
+			case 3:
+				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_CR;
+				break;
+			}
+			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
 	default:

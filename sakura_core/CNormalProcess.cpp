@@ -40,8 +40,8 @@ bool CNormalProcess::Initialize()
 {
 	HANDLE			hMutex;
 	HWND			hWnd;
-	CShareData		m_cShareData;
-	DLLSHAREDATA*	m_pShareData;
+//	CShareData		m_cShareData;
+//	DLLSHAREDATA*	m_pShareData;
 
 	/* プロセス初期化の目印 */
 	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
@@ -49,6 +49,10 @@ bool CNormalProcess::Initialize()
 		return false;
 	}
 
+	if ( CProcess::Initialize() == false ){
+		return false;
+	}
+#if 0
 	/* 共有データ構造体のアドレスを返す */
 	if( !m_cShareData.Init() ){
 		//	適切なデータを得られなかった
@@ -59,6 +63,7 @@ bool CNormalProcess::Initialize()
 		return false;
 	}
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+#endif
 
 	/* コマンドラインオプション */
 	bool			bReadOnly;
@@ -81,7 +86,7 @@ bool CNormalProcess::Initialize()
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_nY >= 0 ){	//	行の指定があるか
-				POINT& pt = *(POINT*)m_pShareData->m_szWork;
+				POINT& pt = *(POINT*)CProcess::m_pShareData->m_szWork;
 				if( fi.m_nX < 0 ){
 					//	桁の指定が無い場合
 					::SendMessage( hwndOwner, MYWM_GETCARETPOS, 0, 0 );

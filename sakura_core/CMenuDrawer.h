@@ -60,7 +60,7 @@ public:
 //						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
 
 
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 	HINSTANCE		m_hInstance;

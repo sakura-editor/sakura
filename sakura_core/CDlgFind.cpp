@@ -209,7 +209,7 @@ int CDlgFind::GetData( void )
 
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareDataに移動
-		m_cShareData.AddToSearchKeyArr( (const char*)m_szText );
+		CShareData::getInstance()->AddToSearchKeyArr( (const char*)m_szText );
 		if( FALSE == m_bModal ){
 			/* ダイアログデータの設定 */
 			SetData();

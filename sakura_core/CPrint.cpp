@@ -18,7 +18,7 @@
 #include "CPrint.h"
 #include "global.h"
 #include "debug.h" // 2002/2/10 aroka
-
+#include "CShareData.h"
 
 
 CPrint::CPrint( void )
@@ -30,7 +30,6 @@ CPrint::~CPrint( void )
 {
 	return;
 }
-
 
 
 
@@ -50,7 +49,79 @@ BOOL CPrint::GetDefaultPrinter( PRINTDLG* pPRINTDLG )
 }
 
 
+/* デフォルトのプリンタ情報を取得 */
+BOOL CPrint::GetPrinter( PRINTDLG* pPRINTDLG )
+{
+	//
+	// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
+	// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
+	//
+	memset ( (void *)pPRINTDLG, 0, sizeof(PRINTDLG) );
+	pPRINTDLG->lStructSize	= sizeof(PRINTDLG);
+	return ::PrintDlg( pPRINTDLG );
+}
 
+
+/* デフォルトのプリンタ設定 MYDEVMODE を取得 */
+BOOL CPrint::GetPrinterInfo( MYDEVMODE* pMYDEVMODE )
+{
+	PRINTDLG	pd;
+	DEVMODE*	pDEVMODE;
+	DEVNAMES*	pDEVNAMES;		/* プリンタ設定 DEVNAMES用*/
+
+	/* 初期化 */
+	memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
+
+	/* デフォルトのプリンタ情報を取得 */
+	if( FALSE == GetPrinter( &pd ) ){
+		pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
+		return FALSE;
+	}
+	pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
+
+	pDEVMODE = (DEVMODE*)::GlobalLock( pd.hDevMode );
+	pDEVNAMES = (DEVNAMES*)::GlobalLock( pd.hDevNames );
+
+	strcpy( pMYDEVMODE->m_szPrinterDriverName, (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );	/* プリンタドライバ名 */
+	strcpy( pMYDEVMODE->m_szPrinterDeviceName, (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );	/* プリンタデバイス名 */
+	strcpy( pMYDEVMODE->m_szPrinterOutputName, (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );	/* プリンタポート名 */
+
+	pMYDEVMODE->dmFields = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH | DM_SCALE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY | DM_COLOR | DM_DUPLEX |
+		DM_YRESOLUTION | DM_TTOPTION | DM_COLLATE | DM_FORMNAME | DM_LOGPIXELS |
+		DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFLAGS |
+		DM_DISPLAYFREQUENCY;
+	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
+	pMYDEVMODE->dmPaperSize			= pDEVMODE->dmPaperSize;
+	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
+	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
+	pMYDEVMODE->dmScale				= pDEVMODE->dmScale;
+	pMYDEVMODE->dmCopies			= pDEVMODE->dmCopies;
+	pMYDEVMODE->dmDefaultSource		= pDEVMODE->dmDefaultSource;
+	pMYDEVMODE->dmPrintQuality		= pDEVMODE->dmPrintQuality;
+	pMYDEVMODE->dmColor				= pDEVMODE->dmColor;
+	pMYDEVMODE->dmDuplex			= pDEVMODE->dmDuplex;
+	pMYDEVMODE->dmYResolution		= pDEVMODE->dmYResolution;
+	pMYDEVMODE->dmTTOption			= pDEVMODE->dmTTOption;
+	pMYDEVMODE->dmCollate			= pDEVMODE->dmCollate;
+	pMYDEVMODE->dmLogPixels			= pDEVMODE->dmLogPixels;
+	pMYDEVMODE->dmBitsPerPel		= pDEVMODE->dmBitsPerPel;
+	pMYDEVMODE->dmPelsWidth			= pDEVMODE->dmPelsWidth;
+	pMYDEVMODE->dmPelsHeight		= pDEVMODE->dmPelsHeight;
+	pMYDEVMODE->dmDisplayFlags		= pDEVMODE->dmDisplayFlags;
+	pMYDEVMODE->dmDisplayFrequency  = pDEVMODE->dmDisplayFrequency ;
+	strcpy( (char *)pMYDEVMODE->dmFormName, (char *)pDEVMODE->dmFormName );
+
+#ifdef _DEBUG
+	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE( " (入力/出力) デバイス名=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE( "デフォルトのプリンタか=[%d]\n", pDEVNAMES->wDefault );
+#endif
+
+	::GlobalUnlock( pd.hDevMode );
+	::GlobalUnlock( pd.hDevNames );
+	return TRUE;
+}
 
 /* デフォルトのプリンタ設定 MYDEVMODE を取得 */
 BOOL CPrint::GetDefaultPrinterInfo( MYDEVMODE* pMYDEVMODE )
@@ -837,5 +908,46 @@ char* CPrint::GetPaperName( int nPaperSize, char* pszPaperName )
 
 }
 
+void CPrint::Initialize()
+{
+	/* 時間がかからないものだけ初期化 */
+	int i = 0;
+	DLLSHAREDATA*	m_pShareData = CShareData::getInstance()->GetShareData();
+	wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceHan, "ＭＳ 明朝" );				/* 印刷フォント */
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceZen, "ＭＳ 明朝" );				/* 印刷フォント */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintFontWidth = 12;  								/* 印刷フォント幅(1/10mm単位) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintFontHeight = m_pShareData->m_PrintSettingArr[i].m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintDansuu = 1;			/* 段組の段数 */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintDanSpace = 70; 		/* 段と段の隙間(1/10mm) */
+	m_pShareData->m_PrintSettingArr[i].m_bPrintWordWrap = TRUE;		/* 英文ワードラップする */
+	m_pShareData->m_PrintSettingArr[i].m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginBY = 200;		/* 印刷用紙マージン 下(1/10mm単位) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginLX = 200;		/* 印刷用紙マージン 左(1/10mm単位) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginRX = 100;		/* 印刷用紙マージン 右(1/10mm単位) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;	/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
+	m_pShareData->m_PrintSettingArr[i].m_nPrintPaperSize = DMPAPER_A4;	/* 用紙サイズ */
+	/* プリンタ設定 DEVMODE用 */
+	/* プリンタ設定を取得するのはコストがかかるので、後ほど */
+	//	m_cPrint.GetDefaultPrinterInfo( &(m_pShareData->m_PrintSettingArr[i].m_mdmDevMode) );
+	m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[0] = TRUE;
+	m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[1] = FALSE;
+	m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[2] = FALSE;
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0], "$f" );
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[1], "" );
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[2], "" );
+	m_pShareData->m_PrintSettingArr[i].m_bFooterUse[0] = TRUE;
+	m_pShareData->m_PrintSettingArr[i].m_bFooterUse[1] = FALSE;
+	m_pShareData->m_PrintSettingArr[i].m_bFooterUse[2] = FALSE;
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "" );
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "- $p -" );
+	strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[2], "" );
+	for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
+		m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
+		wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+	}
+}
 
 /*[EOF]*/

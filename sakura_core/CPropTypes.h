@@ -64,7 +64,7 @@ public:
 	Types			m_Types;
 	CKeyWordSetMgr	m_CKeyWordSetMgr;
 	int				m_nCurrentColorType;		/* 現在選択されている色タイプ */
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 protected:
 	/*
