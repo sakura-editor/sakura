@@ -1,4 +1,4 @@
-// Microsoft Developer Studio generated Help ID include file.
+// Microsoft Visual C++ generated Help ID include file.
 // Used by sakura_rc.rc
 //
 #define HIDCANCEL                       0x80a80002    // IDD_COMPARE
@@ -35,6 +35,8 @@
 #define HIDC_BUTTON_KEYWORDHELPFONT     0x93f1044a    // IDD_PROP_HELPER
 #define HIDC_BUTTON_OPENEXTHTMLHELP     0x93f10449    // IDD_PROP_HELPER
 #define HIDC_BUTTON_OPENHELP1           0x93f10448    // IDD_PROP_HELPER
+#define HIDC_BUTTON_OPENMDICT           0x93f1044c    // IDD_PROP_HELPER
+#define HIDC_BUTTON_OPENMDLL            0x93f1044b    // IDD_PROP_HELPER
 #define HIDC_BUTTON_REFERENCE           0x80b60517    // IDD_EXEC
 #define HIDC_BUTTON_REGEX_ADD           0x80db0585    // IDD_PROP_REGEX
 #define HIDC_BUTTON_REGEX_DEL           0x80db0578    // IDD_PROP_REGEX
@@ -243,6 +245,8 @@
 #define HIDC_EDIT_MAX_MRU_FILE          0x806b04a2    // IDD_PROP1P1
 #define HIDC_EDIT_MAX_MRU_FOLDER        0x806b0456    // IDD_PROP1P1
 #define HIDC_EDIT_MIDASHIKIGOU          0x93f004a9    // IDD_PROP_FORMAT
+#define HIDC_EDIT_MIGEMO_DICT           0x93f10441    // IDD_PROP_HELPER
+#define HIDC_EDIT_MIGEMO_DLL            0x93f10440    // IDD_PROP_HELPER
 #define HIDC_EDIT_PLSQL_E1              0x8076043e    // IDD_JUMP
 #define HIDC_EDIT_REGEX                 0x80db057c    // IDD_PROP_REGEX
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM \
@@ -301,7 +305,6 @@
 #define HIDC_RADIO_BACKUP_DATETYPE1     0x93f8052c    // IDD_PROP_BACKUP
 #define HIDC_RADIO_BACKUP_DATETYPE2     0x93f8052d    // IDD_PROP_BACKUP
 #define HIDC_RADIO_BACKUP_TYPE1         0x93f80436    // IDD_PROP_BACKUP
-#define HIDC_RADIO_BACKUP_TYPE2         0x93f80437    // IDD_PROP_BACKUP
 #define HIDC_RADIO_BACKUP_TYPE3         0x93f80442    // IDD_PROP_BACKUP
 #define HIDC_RADIO_CARETTYPE0           0x806b047b    // IDD_PROP1P1
 #define HIDC_RADIO_CARETTYPE1           0x806b0436    // IDD_PROP1P1

@@ -12,6 +12,7 @@
 	Copyright (C) 2001, Misaka, asa-o, novice, hor, YAZAKI
 	Copyright (C) 2002, hor, YAZAKI, genta, aroka, MIK
 	Copyright (C) 2003, MIK
+	Copyright (C) 2004, isearch
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -71,6 +72,40 @@ BOOL CEditView::HandleCommand(
 	BOOL	bRet = TRUE;
 	BOOL	bRepeat = FALSE;
 	int		nFuncID;
+
+	//	Oct. 30, 2004 genta
+	//	漢字の上下バイトが１つのWM_IME_CHARではなく別々のWM_CHARにて来る
+	//	ケースの取り扱いを処理先頭に移動．
+	//	* マクロで分離して記録されないように
+	//	* トラップした場合に2バイト目に反応してしまうのを防ぐ
+	//	From Here Oct. 5, 2002 genta
+	//	WM_CHARでくる漢字コードを受け入れる
+	if( nCommand == F_CHAR ){
+		// 厳密にはCEditViewのメンバーにすべきだが分離メッセージの救済はこれでも十分
+		static unsigned int ucSjis1 = 0;
+		if( ucSjis1 == 0 ){
+			if( _IS_SJIS_1( (unsigned char)lparam1 )){
+				ucSjis1 = lparam1;
+				return TRUE;
+			}
+		}
+		else {
+			//	一文字前にSJISの1バイト目が来ている
+			if( _IS_SJIS_2( (unsigned char)lparam1 )){
+				lparam1 = (ucSjis1 << 8 | lparam1 );
+				nCommand = F_IME_CHAR;
+			}
+			ucSjis1 = 0;
+		}
+	}
+	//	To Here Oct. 5, 2002 genta
+
+	// -------------------------------------
+	//	Jan. 10, 2005 genta
+	//	Call message translators
+	// -------------------------------------
+	TranslateCommand_grep( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
+	TranslateCommand_isearch( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 
 	//	Aug, 14. 2000 genta
 	if( m_pcEditDoc->IsModificationForbidden( nCommand ) ){
@@ -135,29 +170,31 @@ BOOL CEditView::HandleCommand(
 	}
 	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
 
-	/* 補完ウィンドウが表示されているとき、特別な場合を除いてウィンドウを非表示にする */
-	if( m_bHokan ){
-		if( nCommand != F_HOKAN		//	補完開始・終了コマンド
-		 && nCommand != F_CHAR		//	文字入力
-		 && nCommand != F_IME_CHAR	//	漢字入力
-		 ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
-			m_bHokan = FALSE;
-		}
-	}
+	// -------------------------------------
+	//	Jan. 10, 2005 genta
+	//	Call mode basis message handler
+	// -------------------------------------
+	PreprocessCommand_hokan(nCommand);
+	if( ProcessCommand_isearch( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 ))
+		return TRUE;
+
+	// -------------------------------------
+	//	Jan. 10, 2005 genta コメント
+	//	ここより前ではUndoバッファの準備ができていないので
+	//	文書の操作を行ってはいけない
 	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
-#if 0
-	if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-		return -1;
-	}
-	m_pcOpeBlk = new COpeBlk;
-#endif
 	if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 		
 	}
 	else {
 		m_pcOpeBlk = new COpeBlk;
 	}
+	
+	//	Jan. 10, 2005 genta コメント
+	//	ここより後ではswitchの後ろでUndoを正しく登録するため，
+	//	途中で処理の打ち切りを行ってはいけない
+	// -------------------------------------
+
 
 //	if( !m_pcEditDoc->m_bDebugMode ){
 //		char*		szCommandName[256];
@@ -171,28 +208,6 @@ BOOL CEditView::HandleCommand(
 
 	switch( nCommand ){
 	case F_CHAR:	/* 文字入力 */
-		//	From Here Oct. 5, 2002 genta
-		//	WM_CHARでくる漢字コードを受け入れる
-		{
-			static unsigned int ucSjis1 = 0;
-			if( ucSjis1 == 0 ){
-				if( _IS_SJIS_1( (unsigned char)lparam1 )){
-					ucSjis1 = lparam1;
-					break;
-				}
-			}
-			else {
-				//	一文字前にSJISの1バイト目が来ている
-				if( _IS_SJIS_2( (unsigned char)lparam1 )){
-					Command_IME_CHAR( (WORD)(ucSjis1 << 8 | lparam1 ));
-					ucSjis1 = 0;
-					break;
-				}
-				ucSjis1 = 0;
-			}
-			
-		}
-		//	To Here Oct. 5, 2002 genta
 		/* コントロールコード入力禁止 */
 		if(
 			( ( (unsigned char)0x0 <= (unsigned char)lparam1 && (unsigned char)lparam1 <= (unsigned char)0x1F ) ||
@@ -490,7 +505,7 @@ BOOL CEditView::HandleCommand(
 // To Here 2001.12.03 hor
 	case F_BOOKMARK_PATTERN:Command_BOOKMARK_PATTERN();break;				// 2002.01.16 hor 指定パターンに一致する行をマーク
 	case F_JUMP_SRCHSTARTPOS:	Command_JUMP_SRCHSTARTPOS();break;			// 検索開始位置へ戻る 02/06/26 ai
-
+	
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		Command_CHGMOD_INS();break;		//挿入／上書きモード切り替え
 	// From Here 2003.06.23 Moca
@@ -1732,22 +1747,7 @@ void CEditView::Command_DELETE_BACK( void )
 			m_pcEditDoc->SetModified(true,true);	//	May 29, 2004 genta
 		}
 	}
-	/* 入力補完機能を使用する */
-	if( m_pShareData->m_Common.m_bUseHokan
- 	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
-	){
-		CMemory	cmemData;
-
-		/* カーソル直前の単語を取得 */
-		if( 0 < GetLeftWord( &cmemData, 100 ) ){
-			ShowHokanMgr( cmemData, FALSE );
-		}else{
-			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
-				m_bHokan = FALSE;
-			}
-		}
-	}
+	PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
 	return;
 }
 
@@ -2853,14 +2853,6 @@ void CEditView::Command_CHAR( char cChar )
 		if( IsTextSelected() ){
 			DeleteData( TRUE );
 		}
-		if( m_pcEditDoc->m_bGrepMode && m_pShareData->m_Common.m_bGTJW_RETURN ){
-			/* タグジャンプ機能 */
-			//@@@ 2002.01.14 YAZAKI CTRLキーを押してタグジャンプすると、閉じてタグジャンプ。
-			//	Apr. 03, 2003 genta Command_TAGJUMPから移植
-			/* CTRLキーが押されていたか */
-			if ( Command_TAGJUMP( ((SHORT)0x8000 & ::GetKeyState( VK_CONTROL )) != 0 ) )
-				return;
-		}else
 		if( m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent ){	/* オートインデント */
 			const CLayout* pCLayout;
 			const char*		pLine;
@@ -3025,21 +3017,7 @@ void CEditView::Command_CHAR( char cChar )
 		SmartIndent_CPP( cChar );
 	}
 
-
-	/* 入力補完機能を使用する */
-	if( m_pShareData->m_Common.m_bUseHokan	//	入力補完を継続するべき。
- 	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
-	){
-		/* カーソル直前の単語を取得 */
-		if( 0 < GetLeftWord( &cmemData, 100 ) ){
-			ShowHokanMgr( cmemData, FALSE );
-		}else{
-			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
-				m_bHokan = FALSE;
-			}
-		}
-	}
+	PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
 	return;
 }
 
@@ -3146,21 +3124,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}
 
-	/* 入力補完機能を使用する */
-	if( m_pShareData->m_Common.m_bUseHokan	//	入力補完を継続するべき。
- 	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
-	){
-
-		/* カーソル直前の単語を取得 */
-		if( 0 < GetLeftWord( &cmemData, 100 ) ){
-			ShowHokanMgr( cmemData, FALSE );
-		}else{
-			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
-				m_bHokan = FALSE;
-			}
-		}
-	}
+	PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
 	return;
 }
 
@@ -5880,157 +5844,6 @@ void CEditView::Command_UNINDENT( char cChar )
 	Redraw();	// 2002.01.25 hor
 	return;
 }
-
-
-/* GREPダイアログの表示 */
-void CEditView::Command_GREP_DIALOG( void )
-{
-	CMemory		cmemCurText;
-
-	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	GetCurrentTextForSearch( cmemCurText );
-
-	/* キーがないなら、履歴からとってくる */
-	if( 0 == cmemCurText.GetLength() ){
-//		cmemCurText.SetData( m_pShareData->m_szSEARCHKEYArr[0], lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) );
-		cmemCurText.SetDataSz( m_pShareData->m_szSEARCHKEYArr[0] );
-	}
-	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetPtr() );
-
-	/* Grepダイアログの表示 */
-	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
-//	MYTRACE( "nRet=%d\n", nRet );
-	if( FALSE == nRet ){
-		return;
-	}
-	HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);	//	GREPコマンドの発行
-}
-
-/* GREP */
-void CEditView::Command_GREP( void )
-{
-//	int			nRet;
-	CMemory		cmWork1;
-	CMemory		cmWork2;
-	CMemory		cmWork3;
-	CMemory		cmemCurText;
-
-	/* 編集ウィンドウの上限チェック */
-	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		char szMsg[512];
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
-		return;
-	}
-#if 0
-	YAZAKI Command_GREP_DIALOGとして独立
-	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	GetCurrentTextForSearch( cmemCurText );
-
-	/* キーがないなら、履歴からとってくる */
-	if( 0 == cmemCurText.GetLength() ){
-//		cmemCurText.SetData( m_pShareData->m_szSEARCHKEYArr[0], lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) );
-		cmemCurText.SetDataSz( m_pShareData->m_szSEARCHKEYArr[0] );
-	}
-	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetPtr() );
-
-	/* Grepダイアログの表示 */
-	nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
-//	MYTRACE( "nRet=%d\n", nRet );
-	if( FALSE == nRet ){
-		return;
-	}
-#endif
-//	MYTRACE( "m_pcEditDoc->m_cDlgGrep.m_szText  =[%s]\n", m_pcEditDoc->m_cDlgGrep.m_szText );
-//	MYTRACE( "m_pcEditDoc->m_cDlgGrep.m_szFile  =[%s]\n", m_pcEditDoc->m_cDlgGrep.m_szFile );
-//	MYTRACE( "m_pcEditDoc->m_cDlgGrep.m_szFolder=[%s]\n", m_pcEditDoc->m_cDlgGrep.m_szFolder );
-	cmWork1.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szText );
-	cmWork2.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFile );
-	cmWork3.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFolder );
-
-	/*	今のEditViewにGrep結果を表示する。
-		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
-	*/
-	if( m_pcEditDoc->m_bGrepMode ||
-		( !m_pcEditDoc->IsModified() &&
-		  !m_pcEditDoc->IsFilePathAvailable() )		/* 現在編集中のファイルのパス */
-	){
-		DoGrep(
-			&cmWork1,
-			&cmWork2,
-			&cmWork3,
-			m_pcEditDoc->m_cDlgGrep.m_bSubFolder,
-			m_pcEditDoc->m_cDlgGrep.m_bLoHiCase,
-			m_pcEditDoc->m_cDlgGrep.m_bRegularExp,
-			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet,
-			m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine,
-			m_pcEditDoc->m_cDlgGrep.m_bWordOnly,
-			m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle
-		);
-	}else{
-		/*======= Grepの実行 =============*/
-		/* Grep結果ウィンドウの表示 */
-		char*	pCmdLine = new char[1024];
-		char*	pOpt = new char[64];
-//		int		nDataLen;
-		cmWork1.Replace( "\"", "\"\"" );
-		cmWork2.Replace( "\"", "\"\"" );
-		cmWork3.Replace( "\"", "\"\"" );
-		/*
-		|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-		*/
-		wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
-			cmWork1.GetPtr(),
-			cmWork2.GetPtr(),
-			cmWork3.GetPtr(),
-			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet
-		);
-		pOpt[0] = '\0';
-		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder ){	/* サブフォルダからも検索する */
-			strcat( pOpt, "S" );
-		}
-	//	if( m_bFromThisText ){	/* この編集中のテキストから検索する */
-	//
-	//	}
-		if( m_pcEditDoc->m_cDlgGrep.m_bWordOnly ){	/* 単語単位で探す */
-			strcat( pOpt, "W" );
-		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bLoHiCase ){	/* 英大文字と英小文字を区別する */
-			strcat( pOpt, "L" );
-		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bRegularExp ){	/* 正規表現 */
-			strcat( pOpt, "R" );
-		}
-//	2002/09/20 Moca 文字コードセットオプションに統合
-//		if( m_pcEditDoc->m_cDlgGrep.m_KanjiCode_AutoDetect ){	/* 文字コード自動判別 */
-//			strcat( pOpt, "K" );
-//		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine ){	/* 行を出力するか該当部分だけ出力するか */
-			strcat( pOpt, "P" );
-		}
-		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
-			strcat( pOpt, "1" );
-		}
-		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
-			strcat( pOpt, "2" );
-		}
-		if( 0 < lstrlen( pOpt ) ){
-			strcat( pCmdLine, " -GOPT=" );
-			strcat( pCmdLine, pOpt );
-		}
-//		MYTRACE( "pCmdLine=[%s]\n", pCmdLine );
-		/* 新規編集ウィンドウの追加 ver 0 */
-		CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
-		delete [] pCmdLine;
-		delete [] pOpt;
-		/*======= Grepの実行 =============*/
-		/* Grep結果ウィンドウの表示 */
-	}
-	return;
-}
-
-
-
 
 /* 最後にテキストを追加 */
 void CEditView::Command_ADDTAIL( const char* pszData, int nDataLen )
@@ -8772,253 +8585,6 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 	SetClipboardText( m_pcEditDoc->m_hWnd, cMemKeyList.GetPtr(), cMemKeyList.GetLength() );
 	return;
 }
-
-
-/*!	補完ウィンドウを表示する
-	ウィンドウを表示した後は、HokanMgrに任せるので、ShowHokanMgrの知るところではない。
-	
-	cmemData：補完する元のテキスト 「Ab」などがくる。
-	bAutoDecided：候補が1つだったら確定する
-*/
-void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
-{
-	/* 補完対象ワードリストを調べる */
-	CMemory		cmemHokanWord;
-	int			nKouhoNum;
-	POINT		poWin;
-	/* 補完ウィンドウの表示位置を算出 */
-	poWin.x = m_nViewAlignLeft
-			 + (m_nCaretPosX - m_nViewLeftCol)
-			  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	poWin.y = m_nViewAlignTop
-			 + (m_nCaretPosY - m_nViewTopLine)
-			  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-	::ClientToScreen( m_hWnd, &poWin );
-	poWin.x -= (
-		cmemData.GetLength()
-		 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
-	);
-
-	/*	補完ウィンドウを表示
-		ただし、bAutoDecided == TRUEの場合は、補完候補が1つのときは、ウィンドウを表示しない。
-		詳しくは、Search()の説明を参照のこと。
-	*/
-	CMemory* pcmemHokanWord;
-	if ( bAutoDecided ){
-		pcmemHokanWord = &cmemHokanWord;
-	}
-	else {
-		pcmemHokanWord = NULL;
-	}
-	nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
-		&poWin,
-		m_nCharHeight,
-		m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
-		cmemData.GetPtr(),
-		m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
-		m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
-		m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
-		pcmemHokanWord
-	);
-	/* 補完候補の数によって動作を変える */
-	if (nKouhoNum <= 0) {				//	候補無し
-		if( m_bHokan ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
-			m_bHokan = FALSE;
-			// 2003.06.25 Moca 失敗してたら、ビープ音を出して補完終了。
-			::MessageBeep( MB_ICONHAND );
-		}
-	}
-	else if( bAutoDecided && nKouhoNum == 1){ //	候補1つのみ→確定。
-		if( m_bHokan ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
-			m_bHokan = FALSE;
-		}
-		// 2004.05.14 Moca CHokanMgr::Search側で改行を削除するようにし、直接書き換えるのをやめた
-//		pszKouhoWord = cmemHokanWord.GetPtr( &nKouhoWordLen );
-//		pszKouhoWord[nKouhoWordLen] = '\0';
-		Command_WordDeleteToStart();
-		Command_INSTEXT( TRUE, cmemHokanWord.GetPtr(), cmemHokanWord.GetLength(), TRUE );
-	}
-	else {
-		m_bHokan = TRUE;
-	}
-	
-	//	補完終了。
-	if ( !m_bHokan ){
-		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
-	}
-}
-
-
-/*!	入力補完
-	Ctrl+Spaceでここに到着。
-	CEditView::m_bHokan： 現在補完ウィンドウが表示されているかを表すフラグ。
-	m_Common.m_bUseHokan：現在補完ウィンドウが表示されているべきか否かをあらわすフラグ。
-
-    2001/06/19 asa-o 英大文字小文字を同一視する
-                     候補が1つのときはそれに確定する
-	2001/06/14 asa-o 参照データ変更
-	                 開くプロパティシートをタイプ別に変更
-	2000/09/15 JEPRO [Esc]キーと[x]ボタンでも中止できるように変更
-*/
-void CEditView::Command_HOKAN( void )
-{
-	if (m_pShareData->m_Common.m_bUseHokan == FALSE){
-		m_pShareData->m_Common.m_bUseHokan = TRUE;
-	}
-retry:;
-	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
-	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
-	if( m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
-		0 == lstrlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile 
-	) ){
-		::MessageBeep( MB_ICONHAND );
-		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
-		) ){
-			/* タイプ別設定 プロパティシート */
-			if( !m_pcEditDoc->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
-				return;
-			}
-			goto retry;
-		}
-	}
-
-	CMemory		cmemData;
-	/* カーソル直前の単語を取得 */
-	if( 0 < GetLeftWord( &cmemData, 100 ) ){
-		ShowHokanMgr( cmemData, TRUE );
-	}else{
-		::MessageBeep( MB_ICONHAND );
-		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
-	}
-	return;
-}
-
-/*!
-	編集中データから入力補完キーワードの検索
-	CHokanMgrから呼ばれる
-	
-	@author Moca
-	@date 2003.06.25
-
-	@return 候補数
-*/
-int CEditView::HokanSearchByFile(
-		const char* pszKey,
-		BOOL		bHokanLoHiCase,	//!< 英大文字小文字を同一視する
-		CMemory**	ppcmemKouho,	//!< [IN/OUT] 候補
-		int			nKouhoNum,		//!< ppcmemKouhoのすでに入っている数
-		int			nMaxKouho		//!< Max候補数(0==無制限)
-){
-	const int nKeyLen = lstrlen( pszKey );
-	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	int i, j, nWordLen, nLineLen, nRet;
-	int nCurX, nCurY; // 物理カーソル位置
-	const char* pszLine;
-	const char* word;
-	char *pszWork;
-	nCurX = m_nCaretPosX_PHY;
-	nCurY = m_nCaretPosY_PHY;
-	
-	for( i = 0; i < nLines; i++  ){
-		pszLine = m_pcEditDoc->m_cDocLineMgr.GetLineStrWithoutEOL( i, &nLineLen );
-		for( j = 0; j < nLineLen; j++ ){
-			if( IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ) ){
-				word = pszLine + j;
-				for( j++, nWordLen = 1;j < nLineLen && IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ); j++ ){
-					nWordLen++;
-				}
-				if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
-					continue;
-				}
-				if( nKeyLen <= nWordLen ){
-					if( bHokanLoHiCase ){
-						nRet = memicmp( pszKey, word, nKeyLen );
-					}else{
-						nRet = memcmp( pszKey, word, nKeyLen );
-					}
-					if( 0 == nRet ){
-						// カーソル位置の単語は候補からはずす
-						if( nCurY == i && nCurX <= j && j - nWordLen <= nCurX ){
-							continue;
-						}
-						if( NULL == *ppcmemKouho ){
-							*ppcmemKouho = new CMemory;
-							(*ppcmemKouho)->SetData( word, nWordLen );
-							(*ppcmemKouho)->AppendSz( "\n" );
-							++nKouhoNum;
-						}else{
-							// 重複していたら追加しない
-							int nLen;
-							const char* ptr = (*ppcmemKouho)->GetPtr( &nLen );
-							int nPosKouho;
-							nRet = 1;
-							if( bHokanLoHiCase ){
-								if( nWordLen < nLen ){
-									if( '\n' == ptr[nWordLen] && 0 == memicmp( ptr, word, nWordLen )  ){
-										nRet = 0;
-									}else{
-										int nPosKouhoMax = nLen - nWordLen - 1;
-										for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-											if( ptr[nPosKouho] == '\n' ){
-												if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
-													if( 0 == memicmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-														nRet = 0;
-														break;
-													}else{
-														nPosKouho += nWordLen;
-													}
-												}
-											}
-										}
-									}
-								}
-							}else{
-								if( nWordLen < nLen ){
-									if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
-										nRet = 0;
-									}else{
-										int nPosKouhoMax = nLen - nWordLen - 1;
-										for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-											if( ptr[nPosKouho] == '\n' ){
-												if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
-													if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-														nRet = 0;
-														break;
-													}else{
-														nPosKouho += nWordLen;
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-							if( 0 == nRet ){
-								continue;
-							}
-							pszWork = new char[nWordLen + 1];
-							memcpy( pszWork, word, nWordLen );
-							pszWork[nWordLen] = '\n';
-							(*ppcmemKouho)->Append( pszWork, nWordLen + 1 );
-							++nKouhoNum;
-						}
-						if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
-							return nKouhoNum;
-						}
-					}
-				}
-			}else if( _IS_SJIS_1( (unsigned char)pszLine[j] ) ){
-				j++;
-				continue;
-			}
-		}
-	}
-	return nKouhoNum;
-}
-
 
 /* ファイル内容比較 */
 void CEditView::Command_COMPARE( void )

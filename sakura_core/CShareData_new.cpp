@@ -331,6 +331,11 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 			m_pShareData->m_Common.m_szExtHelp, sizeof( m_pShareData->m_Common.m_szExtHelp ));
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHtmlHelp",
 			m_pShareData->m_Common.m_szExtHtmlHelp, sizeof( m_pShareData->m_Common.m_szExtHtmlHelp ));
+	
+		cProfile.IOProfileData( bRead, pszSecName, "szMigemoDll",
+			m_pShareData->m_Common.m_szMigemoDll, sizeof( m_pShareData->m_Common.m_szMigemoDll ));
+		cProfile.IOProfileData( bRead, pszSecName, "szMigemoDict",
+			m_pShareData->m_Common.m_szMigemoDict, sizeof( m_pShareData->m_Common.m_szMigemoDict ));
 
 		// ai 02/05/23 Add S
 		{// Keword Help Font

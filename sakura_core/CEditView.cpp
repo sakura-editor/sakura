@@ -47,6 +47,7 @@
 #include "CFileLoad.h" // 2002/08/30 Moca
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "my_icmp.h" // 2002/11/30 Moca 追加
+#include "CMigemo.h"
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -471,6 +472,13 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	
 // 2002/07/22 novice
 //	m_bCaretShowFlag = false;
+
+	//2004.10.23 isearch
+	m_nISearchMode = 0;
+	//m_pcmigemo = CMigemo::getInstance();
+	//m_pcmigemo->Init();
+	m_pcmigemo = NULL;
+
 	return;
 }
 
@@ -3108,6 +3116,11 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		m_bHokan = FALSE;
 	}
 
+	//isearch 2004.10.22 isearchをキャンセルする
+	if (m_nISearchMode > 0 ){
+		ISearchExit();
+	}
+
 //	DWORD	nKeyBoardSpeed;
 	int			nCaretPosY_Old;
 	CMemory		cmemCurText;
@@ -3947,6 +3960,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				/* 手カーソル */
 				::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
 			}else{
+				//migemo isearch 2004.10.22
+				if( m_nISearchMode > 0 ){
+					if (m_nISearchDirection == 1){
+						::SetCursor( ::LoadCursor( m_hInstance,MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+					}else{
+						::SetCursor( ::LoadCursor( m_hInstance,MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+					}
+				}else
 				/* アイビーム */
 				::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
 			}

@@ -72,6 +72,9 @@ OBJS =\
 	$(SRCDIR)\CEditDoc_FuncList1.obj \
 	$(SRCDIR)\CEditDoc_new.obj \
 	$(SRCDIR)\CEditView.obj \
+	$(SRCDIR)\CEditView_Cmdgrep.obj \
+	$(SRCDIR)\CEditView_CmdHokan.obj \
+	$(SRCDIR)\CEditView_Cmdisrch.obj \
 	$(SRCDIR)\CEditView_Command.obj \
 	$(SRCDIR)\CEditView_Command_New.obj \
 	$(SRCDIR)\CEditView_Diff.obj \
@@ -104,6 +107,7 @@ OBJS =\
 	$(SRCDIR)\CMarkMgr.obj \
 	$(SRCDIR)\CMemory.obj \
 	$(SRCDIR)\CMenuDrawer.obj \
+	$(SRCDIR)\CMigemo.obj \
 	$(SRCDIR)\CMRU.obj \
 	$(SRCDIR)\CMRUFolder.obj \
 	$(SRCDIR)\CMultiMonitor.obj \

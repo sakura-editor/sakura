@@ -18,6 +18,7 @@
 
 #include "global.h"
 #include "CProcess.h"
+#include "CMigemo.h"
 class CEditWnd;
 
 /*-----------------------------------------------------------------------
@@ -34,6 +35,9 @@ public:
 		m_pcEditWnd( 0 ),
 		CProcess( hInstance, lpCmdLine ){}
 	virtual ~CNormalProcess(); // 2002/2/3 aroka
+
+	//migemo
+	CMigemo m_cMigemo;
 
 protected:
 	CNormalProcess();
