@@ -3911,12 +3911,16 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 
 
 
-/* ビューに設定変更を反映させる */
+/*! ビューに設定変更を反映させる
+
+	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
+
+*/
 void CEditDoc::OnChangeSetting( void )
 {
 //	return;
 	int			i;
-	HWND		hwndProgress;
+	HWND		hwndProgress = NULL;
 
 	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 
@@ -3924,10 +3928,12 @@ void CEditDoc::OnChangeSetting( void )
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_hwndProgressBar;
-	}else{
-		hwndProgress = NULL;
+		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
 	}
 
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_SHOW );
+	}
 
 	/* ファイルの排他モード変更 */
 	if( m_nFileShareModeOld != m_pShareData->m_Common.m_nFileShareMode ){
@@ -3993,6 +3999,9 @@ void CEditDoc::OnChangeSetting( void )
 			m_cEditViewArr[i].MoveCursor( nPosX, nPosY, TRUE );
 			m_cEditViewArr[i].m_nCaretPosX_Prev = m_cEditViewArr[i].m_nCaretPosX;
 //		}
+	}
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_HIDE );
 	}
 }
 
