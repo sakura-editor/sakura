@@ -59,6 +59,12 @@ public:
 	//! 利用状態のチェック（operator版）
 	bool operator!(void) const { return IsAvailable(); }
 
+	//!	DLLのロード
+	/*!
+		詳細な戻り値を返さないこと以外はLoadLibrary()と同じ
+	*/
+	bool Init(void){ return LoadLibrary() == 0; }
+
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
 protected:
