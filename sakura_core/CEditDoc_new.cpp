@@ -680,3 +680,216 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 //	To HERE Sep. 8, 2000 genta
+
+
+
+
+
+
+
+
+//	From Here June 23, 2001 N.Nakatani
+//!	VisualBasic関数リスト作成（簡易版）
+/*!
+	VisualBasicのコードから単純にユーザー定義の関数やステートメントを取り出す動作を行う。
+*/
+void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
+{
+	const char*	pLine;
+	int			nLineLen;
+	int			nLineCount;
+	int			i;
+	int			nCharChars;
+	char		szWordPrev[100];
+	char		szWord[100];
+	int			nWordIdx = 0;
+	int			nMaxWordLeng = 70;
+	int			nMode;
+	char		szFuncName[80];
+	int			nFuncLine;
+	int			nFuncId;
+	int			nFuncNum;
+	int			nFuncOrProc = 0;
+	int			nParseCnt = 0;
+
+	szWordPrev[0] = '\0';
+	szWord[nWordIdx] = '\0';
+	nMode = 0;
+	nFuncNum = 0;
+	pLine = NULL;
+	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
+		if( NULL != pLine ){
+			if( '_' != pLine[nLineLen-1]){
+				nParseCnt = 0;
+			}
+		} 
+		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
+		for( i = 0; i < nLineLen; ++i ){
+			/* 1バイト文字だけを処理する */
+			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			if(	0 == nCharChars ){
+				nCharChars = 1;
+			}
+			/* 単語読み込み中 */
+			if( 1 == nMode ){
+				if( (1 == nCharChars && (
+					'_' == pLine[i] ||
+					'~' == pLine[i] ||
+					('a' <= pLine[i] &&	pLine[i] <= 'z' )||
+					('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
+					('0' <= pLine[i] &&	pLine[i] <= '9' )
+					))
+				 || 2 == nCharChars
+				){
+					if( nWordIdx >= nMaxWordLeng ){
+						nMode = 999;
+						continue;
+					}else{
+						memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						szWord[nWordIdx + nCharChars] = '\0';
+						nWordIdx += (nCharChars);
+					}
+				}else{
+					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Function" ) 
+					 && 0 != _stricmp( szWordPrev, "End" ) 
+					){
+						if( 0 == _stricmp( szWordPrev, "Declare" ) ){ 
+							nFuncId = 61;
+						}else{
+							nFuncId = 63;
+						}
+						nFuncOrProc = 1;
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+
+					}else
+					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Sub" ) 
+					 && 0 != _stricmp( szWordPrev, "End" ) 
+					){
+						nFuncOrProc = 2;
+						if( 0 == _stricmp( szWordPrev, "Declare" ) ){ 
+							nFuncId = 60;
+						}else{
+							nFuncId = 62;
+						}
+						nParseCnt = 1;
+						nFuncLine = nLineCount + 1;
+					}else
+					if( 1 == nParseCnt ){
+						++nParseCnt;
+						strcpy( szFuncName, szWord );
+						++nFuncNum;
+						/*
+						  カーソル位置変換
+						  物理位置(行頭からのバイト数、折り返し無し行位置)  
+						  → レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+						*/
+						int		nPosX;
+						int		nPosY;
+						m_cLayoutMgr.CaretPos_Phys2Log(	0, nFuncLine - 1, &nPosX, &nPosY );
+						pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1 , szFuncName, nFuncId );
+						nParseCnt = 0;
+					}
+
+					strcpy( szWordPrev, szWord );
+					nWordIdx = 0;
+					szWord[0] = '\0';
+					nMode = 0;
+					i--;
+					continue;
+				}
+			}else
+			/* 記号列読み込み中 */
+			if( 2 == nMode ){
+				if( '_' == pLine[i] ||
+					'~' == pLine[i] ||
+					('a' <= pLine[i] &&	pLine[i] <= 'z' )||
+					('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
+					('0' <= pLine[i] &&	pLine[i] <= '9' )||
+					'\t' == pLine[i] ||
+					' ' == pLine[i] ||
+					CR == pLine[i] ||
+					LF == pLine[i] ||
+					'{' == pLine[i] ||
+					'}' == pLine[i] ||
+					'(' == pLine[i] ||
+					')' == pLine[i] ||
+					';' == pLine[i]	||
+					'\'' == pLine[i] ||
+					'/' == pLine[i]	||
+					'-' == pLine[i]
+				){
+					strcpy( szWordPrev, szWord );
+					nWordIdx = 0;
+					szWord[0] = '\0';
+					nMode = 0;
+					i--;
+					continue;
+				}else{
+					if( nWordIdx >= nMaxWordLeng ){
+						nMode = 999;
+						continue;
+					}else{
+						memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						szWord[nWordIdx + nCharChars] = '\0';
+						nWordIdx += (nCharChars);
+					}
+				}
+			}else
+			/* 長過ぎる単語無視中 */
+			if( 999 == nMode ){
+				/* 空白やタブ記号等を飛ばす */
+				if( '\t' == pLine[i] ||
+					' ' == pLine[i] ||
+					CR == pLine[i] ||
+					LF == pLine[i]
+				){
+					nMode = 0;
+					continue;
+				}
+			}else
+			/* ノーマルモード */
+			if( 0 == nMode ){
+				/* 空白やタブ記号等を飛ばす */
+				if( '\t' == pLine[i] ||
+					' ' == pLine[i] ||
+					CR == pLine[i] ||
+					LF == pLine[i]
+				){
+					continue;
+				}else
+				if( i < nLineLen && '\'' == pLine[i] ){
+					break;
+				}else{
+					if( (1 == nCharChars && (
+						'_' == pLine[i] ||
+						'~' == pLine[i] ||
+						('a' <= pLine[i] &&	pLine[i] <= 'z' )||
+						('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
+						('0' <= pLine[i] &&	pLine[i] <= '9' )
+						))
+					 || 2 == nCharChars
+					){
+						nWordIdx = 0;
+
+						memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						szWord[nWordIdx + nCharChars] = '\0';
+						nWordIdx += (nCharChars);
+
+						nMode = 1;
+					}else{
+						nWordIdx = 0;
+						memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						szWord[nWordIdx + nCharChars] = '\0';
+						nWordIdx += (nCharChars);
+						
+						nMode = 2;
+					}
+				}
+			}
+			i += (nCharChars - 1);
+		}
+	}
+	return;
+}
+//	To Here June 23, 2001 N.Nakatani
