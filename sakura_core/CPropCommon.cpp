@@ -24,7 +24,7 @@
 #include "CDlgDebug.h"
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
-
+#include "funccode.h"    //Stonee, 2001/05/18
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 const DWORD p_helpids[] = {	//10900
@@ -1611,28 +1611,20 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 
 
 
-
-
-
-
-
-
-
-
-
 /* ヘルプ */
+//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 {
 	int		nContextID;
 	switch( nPageID ){
 	case IDD_PROP1P1:
-		nContextID = 81;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_GENERAL);
 		break;
 	case IDD_PROP_FORMAT:
-		nContextID = 82;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_FORMAT);
 		break;
 	case IDD_PROP_FILE:
-		nContextID = 83;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_FILE);
 		break;
 //	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
 //	変更は少し後の行(Sept. 9, 2000)で行っている
@@ -1640,36 +1632,36 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 //		nContextID = 84;
 //		break;
 	case IDD_PROP_TOOLBAR:
-		nContextID = 85;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_TOOLBAR);
 		break;
 	case IDD_PROP_KEYWORD:
-		nContextID = 86;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_KEYWORD);
 		break;
 	case IDD_PROP_CUSTMENU:
-		nContextID = 87;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_CUSTMENU);
 		break;
 	case IDD_PROP_HELPER:
-		nContextID = 88;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_HELPER);
 		break;
 
 	// From Here Sept. 9, 2000 JEPRO 共通設定のヘルプボタンが効かなくなっていた部分を以下の追加によって修正
 	case IDD_PROP_EDIT:
-		nContextID = 144;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_EDIT);
 		break;
 	case IDD_PROP_BACKUP:
-		nContextID = 145;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_BACKUP);
 		break;
 	case IDD_PROP_WIN:
-		nContextID = 146;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_WINDOW);
 		break;
 	case IDD_PROP_URL:
-		nContextID = 147;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_URL);
 		break;
 	case IDD_PROP_GREP:
-		nContextID = 148;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_GREP);
 		break;
 	case IDD_PROP_KEYBIND:
-		nContextID = 84;
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_KEYBIND);
 		break;
 	// To Here Sept. 9, 2000
 

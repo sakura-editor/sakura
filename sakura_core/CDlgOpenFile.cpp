@@ -14,6 +14,7 @@
 #include "sakura_rc.h"
 #include "etc_uty.h"
 #include "global.h"
+#include "funccode.h"    //Stonee, 2001/05/18
 
 #ifndef OFN_ENABLESIZING
 	#define OFN_ENABLESIZING	0x00800000
@@ -823,7 +824,8 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 //	m_ofn.lpTemplateName = MAKEINTRESOURCE( 149 );
 
 	m_nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-	m_nHelpTopicID = 15;
+	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
+	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILEOPEN);
 	m_bUseEol = false;	//	Feb. 9, 2001 genta
 
 
@@ -946,7 +948,7 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 		m_bUseEol = false;
 	}
 	//	To Here Feb. 9, 2001 genta
-	m_nHelpTopicID = 21;
+	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 	if( ::GetSaveFileName( &m_ofn ) ){
 
 //		MYTRACE( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */

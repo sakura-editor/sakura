@@ -77,6 +77,7 @@
 #define HIDC_CHECK_m_bHokanKey_TAB      0x93f10522    // IDD_PROP_HELPER
 #define HIDC_CHK_LCPOS1                 0x93f2056d    // IDD_PROP_COLOR
 #define HIDC_CHK_LCPOS2                 0x93f20435    // IDD_PROP_COLOR
+#define HIDC_CHK_LCPOS3                 0x93f20436    // IDD_PROP_COLOR
 #define HIDC_COMBO_FUNCKIND             0x93f30459    // IDD_PROP_KEYBIND
 #define HIDC_COMBO_SET                  0x93f2049b    // IDD_PROP_COLOR
 #define HIDC_COMBO_SET2                 0x93f2049c    // IDD_PROP_COLOR
@@ -96,6 +97,7 @@
 #define HIDC_EDIT_KEYWORDHELPFILE       0x93f10440    // IDD_PROP_HELPER
 #define HIDC_EDIT_LINECOMMENT           0x93f20456    // IDD_PROP_COLOR
 #define HIDC_EDIT_LINECOMMENT2          0x93f20457    // IDD_PROP_COLOR
+#define HIDC_EDIT_LINECOMMENT3          0x93f20459    // IDD_PROP_COLOR
 #define HIDC_EDIT_LINETERMCHAR          0x93f204c4    // IDD_PROP_COLOR
 #define HIDC_EDIT_MAX_MRU_FILE          0x806b04a2    // IDD_PROP1P1
 #define HIDC_EDIT_MAX_MRU_FOLDER        0x806b0456    // IDD_PROP1P1
@@ -110,6 +112,7 @@
 #define HIDC_HOTKEY_TRAYMENU            0x806b0506    // IDD_PROP1P1
 #define HIDC_LINECOMMENTPOS1            0x93f204d2    // IDD_PROP_COLOR
 #define HIDC_LINECOMMENTPOS2            0x93f204d3    // IDD_PROP_COLOR
+#define HIDC_LINECOMMENTPOS3            0x93f204d4    // IDD_PROP_COLOR
 #define HIDC_LIST_ASSIGNEDKEYS          0x93f30469    // IDD_PROP_KEYBIND
 #define HIDC_LIST_COLORS                0x93f204bb    // IDD_PROP_COLOR
 #define HIDC_LIST_FUNC                  0x93f30458    // IDD_PROP_KEYBIND
