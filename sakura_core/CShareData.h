@@ -371,6 +371,11 @@ struct Common {
 	bool	GetAutoMIMEdecode(void) const { return m_bAutoMIMEdecode != 0; }
 	void	SetAutoMIMEdecode(bool i){ m_bAutoMIMEdecode = i; }
 
+	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
+	bool	GetQueryIfCodeChange(void) const { return m_bQueryIfCodeChange != 0; }
+	void	SetQueryIfCodeChange(bool i){ m_bQueryIfCodeChange = i; }
+	
+
 	//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
 	//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
 
@@ -505,6 +510,7 @@ struct Common {
 
 	BOOL				m_bMenuIcon;		/* メニューにアイコンを表示する */
 	BOOL				m_bAutoMIMEdecode;	// ファイル読み込み時にMIMEのdecodeを行うか
+	BOOL				m_bQueryIfCodeChange;	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
 
 	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
 	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor

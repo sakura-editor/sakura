@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by sakura_rc.rc
 //
 #define IDOK2                           3
@@ -530,6 +530,7 @@
 #define IDC_SPIN_SY                     1489
 #define IDC_COMBO_WINTYPE               1490
 #define IDC_BUTTON_WINSIZE              1491
+#define IDC_CHECK_QueryIfCodeChange     1492
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -565,7 +566,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        232
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1492
+#define _APS_NEXT_CONTROL_VALUE         1493
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

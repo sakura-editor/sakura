@@ -507,7 +507,9 @@ HWND CEditWnd::Create(
 		char*	pszPathNew = new char[_MAX_PATH];
 		strcpy( pszPathNew, pszPath );
 		::ShowWindow( m_hWnd, SW_SHOW );
-		if( !m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly, TRUE ) ){
+		//	Oct. 03, 2004 genta コード確認は設定に依存
+		if( !m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly,
+			m_pShareData->m_Common.m_bQueryIfCodeChange ) ){
 			/* ファイルが既に開かれている */
 			if( bOpened ){
 				::PostMessage( m_hWnd, WM_CLOSE, 0, 0 );
@@ -1575,9 +1577,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 	int				nFuncCode;
 	HWND			hwndWork;
-	BOOL			bOpened;
-	FileInfo*		pfi;
-	HWND			hWndOwner;
 
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
@@ -1658,148 +1657,29 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				CMRU cMRU;
 				FileInfo checkFileInfo;
 				cMRU.GetFileInfo(wID - IDM_SELMRU, &checkFileInfo);
-				if( CShareData::getInstance()->IsPathOpened( checkFileInfo.m_szPath, &hWndOwner ) ){
+				//	Oct.  9, 2004 genta 共通関数化
+				m_cEditDoc.OpenFile( checkFileInfo.m_szPath );
 
-					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-					//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
-				
-					/* アクティブにする */
-					ActivateFrameWindow( hWndOwner );
-					/* MRUリストへの登録 */
-					cMRU.Add( pfi );
-				}else{
-					/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-//@@@ 2002.01.08 YAZAKI Grep結果で無い場合も含める。
-					if( !m_cEditDoc.IsModified() &&
-						!m_cEditDoc.IsFilePathAvailable() && 	/* 現在編集中のファイルのパス */
-						!m_cEditDoc.m_bGrepMode	//	さらに、Grepモードじゃない。
-					){
-						/* ファイル読み込み */
-						m_cEditDoc.FileRead(
-							checkFileInfo.m_szPath,
-							&bOpened,
-							checkFileInfo.m_nCharCode,
-							FALSE,	/* 読み取り専用か */
-							TRUE	/* 文字コード変更時の確認をするかどうか */
-						);
-					}else{
-						/* 新たな編集ウィンドウを起動 */
-						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-						CMRU cMRU;
-						FileInfo openFileInfo;
-						cMRU.GetFileInfo(wID - IDM_SELMRU, &openFileInfo);
-						if( m_pShareData->m_Common.GetRestoreCurPosition() ){
-							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &openFileInfo, FALSE );
-						}
-						else {
-							CEditApp::OpenNewEditor( m_hInstance, m_hWnd,
-								openFileInfo.m_szPath,
-								openFileInfo.m_nCharCode,
-								FALSE );
-
-						}
-						//	To Here Oct. 27, 2000 genta
-					}
-				}
 			}else
 			if( wID - IDM_SELOPENFOLDER >= 0 &&
 				wID - IDM_SELOPENFOLDER < 999
 			){
 				{
-					char		szPath[_MAX_PATH + 3];
-					BOOL		bOpened;
-					int			nCharCode;
-					BOOL		bReadOnly;
-					FileInfo*	pfi;
-					HWND		hWndOwner;
-
-					strcpy( szPath, "" );
-
 					//Stonee, 2001/12/21 UNCであれば接続を試みる
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 					CMRUFolder cMRUFolder;
 					NetConnect( cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER ) );
 
 					/* 「ファイルを開く」ダイアログ */
-					nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-					bReadOnly = FALSE;
+					int nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
+					BOOL bReadOnly = FALSE;
+					char		szPath[_MAX_PATH + 3];
+					szPath[0] = '\0';
 					if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
 						return;
 					}
-					/* 指定ファイルが開かれているか調べる */
-					if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner ) ){
-						::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-						pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-						if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
-							int nCharCodeNew; 
-							/*
-							|| ファイルの日本語コードセット判別
-							||
-							|| 【戻り値】
-							||	SJIS	0
-							||	JIS		1
-							||	EUC		2
-							||	Unicode	3
-							||	エラー	-1
-							*/
-							nCharCodeNew = CMemory::CheckKanjiCodeOfFile( szPath );
-							if( -1 == nCharCodeNew ){
-
-							}else{
-								nCharCode = nCharCodeNew;
-							}
-						}
-						if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
-							char*	pszCodeNameCur;
-							char*	pszCodeNameNew;
-							// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-							if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-								pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
-							}
-							if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
-								pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
-							}
-							::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-								"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
-								szPath, pszCodeNameCur, pszCodeNameNew
-							);
-						}
-						/* 自分が開いているか */
-						if( 0 == strcmp( m_cEditDoc.GetFilePath(), szPath ) ){
-							/* 何もしない */
-						}else{
-							//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
-							/* 開いているウィンドウをアクティブにする */
-							/* アクティブにする */
-							ActivateFrameWindow( hWndOwner );
-						}
-					}else{
-						/* ファイルが開かれていない */
-						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-						if( !m_cEditDoc.IsModified() &&
-							!m_cEditDoc.IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
-							//	Jun. 13, 2003 Moca GrepウィンドウへDropしたときにGrepウィンドウのまま
-							//	同じウィンドウで開かれてしまう問題を修正
-							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */
-						){
-							/* ファイル読み込み */
-							m_cEditDoc.FileRead( szPath, &bOpened, nCharCode, bReadOnly,
-								TRUE	/* 文字コード変更時の確認をするかどうか */
-							);
-						}else{
-							if( strchr( szPath, ' ' ) ){
-								char	szFile2[_MAX_PATH + 3];
-								wsprintf( szFile2, "\"%s\"", szPath );
-								strcpy( szPath, szFile2 );
-							}
-							/* 新たな編集ウィンドウを起動 */
-							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly );
-						}
-					}
+					//	Oct.  9, 2004 genta 共通関数化
+					m_cEditDoc.OpenFile( szPath );
 				}
 			}else{
 				//ビューにフォーカスを移動しておく
@@ -2632,7 +2512,8 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 										&bOpened,
 										CODE_AUTODETECT,	/* 文字コード自動判別 */
 										FALSE,				/* 読み取り専用か */
-										TRUE				/* 文字コード変更時の確認をするかどうか */
+										//	Oct. 03, 2004 genta コード確認は設定に依存
+										m_pShareData->m_Common.m_bQueryIfCodeChange
 								);
 								hWndOwner = m_hWnd;
 								/* アクティブにする */
@@ -2657,7 +2538,9 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 														&bOpened,
 														CODE_AUTODETECT,	/* 文字コード自動判別 */
 														FALSE,				/* 読み取り専用か */
-														TRUE				/* 文字コード変更時の確認をするかどうか */
+														//	Oct. 03, 2004 genta コード確認は設定に依存
+														m_pShareData->m_Common.m_bQueryIfCodeChange
+														//TRUE
 												);
 												hWndOwner = m_hWnd;
 												/* アクティブにする */

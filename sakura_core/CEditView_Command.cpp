@@ -3802,96 +3802,11 @@ void CEditView::Command_FILENEW( void )
 /*! @brief ファイルを開く
 
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
+	@data 2004.10.09 genta 実装をCEditDocへ移動
 */
 void CEditView::Command_FILEOPEN( const char *filename, int nCharCode, BOOL bReadOnly )
 {
-	char		pszPath[_MAX_PATH];
-	BOOL		bOpened;
-	FileInfo*	pfi;
-	HWND		hWndOwner;
-
-	/* 「ファイルを開く」ダイアログ */
-	if( filename == NULL ){
-		pszPath[0] = '\0';
-		if( !m_pcEditDoc->OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
-			return;
-		}
-	}
-	else {
-		strncpy( pszPath, filename, _MAX_PATH - 1 );
-	}
-	/* 指定ファイルが開かれているか調べる */
-	if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
-		::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-//		pfi = (FileInfo*)m_pShareData->m_szWork;
-		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-		int		nCharCodeNew;
-		if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
-			/*
-			|| ファイルの日本語コードセット判別
-			||
-			|| 【戻り値】
-			||	SJIS	0
-			||	JIS		1
-			||	EUC		2
-			||	Unicode	3
-			||	エラー	-1
-			*/
-			nCharCodeNew = CMemory::CheckKanjiCodeOfFile( pszPath );
-			if( -1 == nCharCodeNew ){
-
-			}else{
-				nCharCode = nCharCodeNew;
-			}
-		}
-		if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
-			char*	pszCodeNameCur;
-			char*	pszCodeNameNew;
-
-			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-			if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
-			}
-			if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
-				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
-			}
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-				"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
-				pszPath, pszCodeNameCur, pszCodeNameNew
-			);
-		}
-		/* 自分が開いているか */
-		if( 0 == strcmp( m_pcEditDoc->GetFilePath(), pszPath ) ){
-			/* 何もしない */
-		}else{
-			/* 開いているウィンドウをアクティブにする */
-			/* アクティブにする */
-			ActivateFrameWindow( hWndOwner );
-		}
-	}else{
-		/* ファイルが開かれていない */
-		/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-//@@@ 2001.12.26 YAZAKI Grep結果で無い場合も含める。
-		if( !m_pcEditDoc->IsModified() &&
-//			0 == lstrlen( m_pcEditDoc->GetFilePath() )	/* 現在編集中のファイルのパス */
-			!m_pcEditDoc->IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
-			!m_pcEditDoc->m_bGrepMode					/* Grep結果ではない */
-		){
-			/* ファイル読み込み */
-			m_pcEditDoc->FileRead( pszPath, &bOpened, nCharCode, bReadOnly, TRUE );
-		}else{
-			if( strchr( pszPath, ' ' ) ){
-				char	szFile2[_MAX_PATH + 3];
-				wsprintf( szFile2, "\"%s\"", pszPath );
-				strcpy( pszPath, szFile2 );
-			}
-			/* 新たな編集ウィンドウを起動 */
-			CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
-		}
-	}
-	//delete [] pszPath;
-	return;
+	m_pcEditDoc->OpenFile( filename, nCharCode, bReadOnly );
 }
 
 
@@ -3952,7 +3867,8 @@ void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOO
 
 	/* ファイルを開く */
 	// Mar. 30, 2003 genta
-	Command_FILEOPEN(( filename ? filename : pszPath ), nCharCode, bReadOnly );
+	// Oct.  9, 2004 genta CEditDocへ移動したことによる変更
+	m_pcEditDoc->OpenFile(( filename ? filename : pszPath ), nCharCode, bReadOnly );
 
 	return;
 }

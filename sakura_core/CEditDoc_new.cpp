@@ -25,6 +25,8 @@
 #include "Debug.h"
 #include "etc_uty.h"
 #include "my_icmp.h" // Nov. 29, 2002 genta/moca
+#include "mymessage.h"	//	Oct. 9, 2004 genta
+#include "CEditApp.h"	//	Oct. 9, 2004 genta
 
 /* Java関数リスト作成 */
 void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
@@ -1226,6 +1228,104 @@ void CEditDoc::AddToMRU(void)
 
 	//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	cMRU.Add( &fi );
+}
+
+/*!	@brief 指定されたファイルを開く
+
+	現在の編集状況に応じて，現在のウィンドウに読み込むか，新しいウィンドウを開くか
+	あるいは既に開かれているウィンドウにフォーカスを移すだけにするかを決定し，
+	実行する．
+
+	対象ファイル，エディタウィンドウの状況に依らず新しいファイルを開きたい場合に
+	使用する．
+
+	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
+	@date 2004.10.09 CEditViewより移動
+*/
+void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
+{
+	char		pszPath[_MAX_PATH];
+	BOOL		bOpened;
+	FileInfo*	pfi;
+	HWND		hWndOwner;
+
+	/* 「ファイルを開く」ダイアログ */
+	if( filename == NULL ){
+		pszPath[0] = '\0';
+		if( !OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+			return;
+		}
+	}
+	else {
+		strncpy( pszPath, filename, _MAX_PATH - 1 );
+	}
+	/* 指定ファイルが開かれているか調べる */
+	if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
+		::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
+//		pfi = (FileInfo*)m_pShareData->m_szWork;
+		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+
+		int		nCharCodeNew;
+		if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
+			/* ファイルの日本語コードセット判別
+				エラー	-1 */
+			nCharCodeNew = CMemory::CheckKanjiCodeOfFile( pszPath );
+			if( -1 == nCharCodeNew ){
+
+			}else{
+				nCharCode = nCharCodeNew;
+			}
+		}
+		/* 文字コード種別 */
+		//	Oct. 03, 2004 genta コード確認は設定に依存
+		if( nCharCode != pfi->m_nCharCode &&
+			m_pShareData->m_Common.GetQueryIfCodeChange() ){
+			char*	pszCodeNameCur;
+			char*	pszCodeNameNew;
+
+			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+			if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+			}
+			if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
+				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+			}
+			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+				"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
+				pszPath, pszCodeNameCur, pszCodeNameNew
+			);
+		}
+		/* 自分が開いているか */
+		if( 0 == strcmp( GetFilePath(), pszPath ) ){
+			/* 何もしない */
+		}else{
+			/* 開いているウィンドウをアクティブにする */
+			/* アクティブにする */
+			ActivateFrameWindow( hWndOwner );
+		}
+	}else{
+		/* ファイルが開かれていない */
+		/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
+//@@@ 2001.12.26 YAZAKI Grep結果で無い場合も含める。
+		if( !IsModified() &&
+			!IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
+			!m_bGrepMode					/* Grep結果ではない */
+		){
+			/* ファイル読み込み */
+			//	Oct. 03, 2004 genta コード確認は設定に依存
+			FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
+							m_pShareData->m_Common.m_bQueryIfCodeChange );
+		}else{
+			if( strchr( pszPath, ' ' ) ){
+				char	szFile2[_MAX_PATH + 3];
+				wsprintf( szFile2, "\"%s\"", pszPath );
+				strcpy( pszPath, szFile2 );
+			}
+			/* 新たな編集ウィンドウを起動 */
+			CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
+		}
+	}
+	return;
 }
 
 /*[EOF]*/
