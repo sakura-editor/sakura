@@ -1610,33 +1610,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			{
 				CDlgAbout cDlgAbout;
 				cDlgAbout.DoModal( m_hInstance, m_hWnd );
-
-#ifdef _DEBUG
-				HRESULT hres;
-				char szPath[_MAX_PATH + 1];
-				/* ショートカット(.lnk)の解決 */
-				hres = ::ResolveShortcutLink( m_hWnd, "C:\\WINDOWS\\All Users\\ﾃﾞｽｸﾄｯﾌﾟ\\Outlook Express.LNK", szPath );
-				MYTRACE( "hres=%xh, szPath=[%s]\n", hres, szPath );
-
-				/* ショートカット(.lnk)の解決 */
-				hres = ::ResolveShortcutLink( m_hWnd, "C:\\My Documents\\develop\\EDIT\\sakura\\CDlgCompare.cpp", szPath );
-				MYTRACE( "hres=%xh, szPath=[%s]\n", hres, szPath );
-
-				/* パス名に対するアイテムＩＤリストを作成する */
-				BOOL bRes;
-				ITEMIDLIST* pIDL;
-				pIDL = CreateItemIDList( "C:\\WINDOWS\\ALLUSE~1\\ﾃﾞｽｸﾄｯﾌﾟ\\OUTLOO~1.LNK" );
-//				pIDL = CreateItemIDList( "\\\\NPSV-NT5\\newpat-src\\nwmsc4\\ZENBUN~1\\ZENBUN~1.RC" );
-//				pIDL = CreateItemIDList( "C:\\MYDOCU~1\\DEVELOP\\ZENBUN~1\\CDLGSE~2.CPP" );
-
-				// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
-				bRes = ::SHGetPathFromIDList( pIDL, szPath );
-				MYTRACE( "szPath=[%s]\n", szPath );
-
-				/* アイテムＩＤリストを削除する */
-				bRes = DeleteItemIDList( pIDL );
-				MYTRACE( "bRes=%d\n", bRes );
-#endif
 			}
 			break;
 		default:
