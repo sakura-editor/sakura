@@ -39,7 +39,6 @@
 #include "debug.h"
 #include "global.h"
 #include "etc_uty.h"
-
 struct ARRHEAD {
 	int		nLength;
 	int		nItemNum;
@@ -3697,24 +3696,43 @@ int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort )
 }
 
 
-//#ifdef _DEBUG
-	/* デバッグモニタに出力 */
-	void CShareData::TraceOut( LPCTSTR lpFmt, ... )
-	{
-		if( NULL == m_pShareData->m_hwndDebug
-		|| !IsEditWnd( m_pShareData->m_hwndDebug )
-		){
-			CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE );
+/*!
+	アウトプットウインドウに出力
+
+	アウトプットウインドウが無ければオープンする
+	@param lpFmt [in] 書式指定文字列
+*/
+void CShareData::TraceOut( LPCTSTR lpFmt, ... )
+{
+
+	if( NULL == m_pShareData->m_hwndDebug
+	|| !IsEditWnd( m_pShareData->m_hwndDebug )
+	){
+		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE, true );
+#if 0
+		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
+		//	2001/06/23　N.Nakatani 窓が出るまでウエイトをかけるように修正
+		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
+		CRunningTimer wait_timer( NULL );
+		while( NULL == m_pShareData->m_hwndDebug && 5000 > wait_timer.Read() ){
+			Sleep(1);
+		}
+		Sleep(10);
+		if( NULL == m_pShareData->m_hwndDebug ){
 			return;
 		}
-		va_list argList;
-		va_start( argList, lpFmt );
-		wvsprintf( m_pShareData->m_szWork, lpFmt, argList );
-		va_end( argList );
-		::SendMessage( m_pShareData->m_hwndDebug, MYWM_ADDSTRING, 0, 0 );
-		return;
+#endif
+		/* 開いているウィンドウをアクティブにする */
+		/* アクティブにする */
+		ActivateFrameWindow( m_pShareData->m_hwndDebug );
 	}
-//#endif
+	va_list argList;
+	va_start( argList, lpFmt );
+	wvsprintf( m_pShareData->m_szWork, lpFmt, argList );
+	va_end( argList );
+	::SendMessage( m_pShareData->m_hwndDebug, MYWM_ADDSTRING, 0, 0 );
+	return;
+}
 
 /*!
 	MRUとOPENFOLDERリストの存在チェックなど
