@@ -430,13 +430,21 @@ protected:
 
 	/* ファイル操作系 */
 	void Command_FILENEW( void );				/* 新規作成 */
+	/* ファイルを開く */
 	// Oct. 2, 2001 genta マクロ用に機能拡張
-	void Command_FILEOPEN( const char *filename = NULL );		/* ファイルを開く */
+	// Mar. 30, 2003 genta 引数追加
+	void Command_FILEOPEN( const char *filename = NULL,
+		int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+	
 	BOOL Command_FILESAVE( void );				/* 上書き保存 */
 	BOOL Command_FILESAVEAS_DIALOG();			/* 名前を付けて保存 */
 	BOOL Command_FILESAVEAS( const char *filename );			/* 名前を付けて保存 */
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
-	void Command_FILECLOSE_OPEN( void );		/* 閉じて開く */
+	/* 閉じて開く*/
+	// Mar. 30, 2003 genta 引数追加
+	void Command_FILECLOSE_OPEN( const char *filename = NULL,
+		int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+	
 	void Command_FILE_REOPEN( int, int );			/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 #if 0
 	2002/04/19 YAZAKI
