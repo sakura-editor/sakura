@@ -20,6 +20,7 @@
 #include "CDicMgr.h"
 #include "CEditView.h"
 #include "mymessage.h"
+#include "sakura_rc.h"
 
 	WNDPROC			gm_wpHokanListProc;
 

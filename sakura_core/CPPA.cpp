@@ -39,6 +39,7 @@
 #include "CShareData.h"
 #include "etc_uty.h"
 #include "CEditApp.h"
+#include "CEditDoc.h"	//	2002/5/13 YAZAKI ƒwƒbƒ_®—
 
 #define NEVER_USED_PARAM(p) ((void)p)
 

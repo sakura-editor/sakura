@@ -10,20 +10,14 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, MIK, hor
-	Copyright (C) 2001, hor, YAZAKI, novice, aroka
+	Copyright (C) 2002, hor, YAZAKI, novice, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CEditView;
-
-#include "CEditDoc.h"
-
-
 #ifndef _CEDITVIEW_H_
 #define _CEDITVIEW_H_
-
 
 #define _CARETMARGINRATE 20
 
@@ -34,6 +28,7 @@ class CEditView;
 #include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
+#include "CEOL.h"
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
 class CMemory;///
 class COpe;///
@@ -42,6 +37,8 @@ class CSplitBoxWnd;///
 class CDlgCancel;///
 class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
+class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
+class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -60,11 +57,37 @@ typedef struct tagRECONVERTSTRING {
 } RECONVERTSTRING, *PRECONVERTSTRING;
 #endif // RECONVERTSTRING
 
-
+class CEditView;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+class SAKURA_CORE_API CCaretUnderLine
+{
+public:
+	CCaretUnderLine(){
+		m_nLockCounter = 0;
+	};
+	void Lock(){	//	表示非表示を切り替えられないようにする
+		m_nLockCounter++;
+	}
+	void UnLock(){	//	表示非表示を切り替えられるようにする
+		m_nLockCounter--;
+		if (m_nLockCounter < 0){
+			m_nLockCounter = 0;
+		};
+	}
+	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
+	void SetView( CEditView* pcEditView ){
+		m_pcEditView = pcEditView;
+	};
+protected:
+	/* ロックカウンタ。0のときは、ロックされていない。UnLockが呼ばれすぎても負にはならない */
+	int m_nLockCounter;
+	CEditView* m_pcEditView;
+};
+
 /*!
 	@brief 文書ウィンドウの管理
 	
@@ -233,6 +256,7 @@ public: /* テスト用にアクセス属性を変更 */
 	/* 入力状態 */
 	int		m_nCaretWidth;			/* キャレットの幅 */
 	int		m_nCaretHeight;			/* キャレットの高さ */
+	CCaretUnderLine m_cUnderLine;	/* アンダーライン */
 	int		m_nOldUnderLineY;
 
 	int		m_nOldCaretPosX;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK

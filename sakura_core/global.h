@@ -277,6 +277,11 @@ SAKURA_CORE_API enum enumColorIndexType {
 /*!< 色タイプ */
 SAKURA_CORE_API extern const char* const colorIDXKeyName[];
 
+/*!< 設定値の上限・下限 */
+//	ルーラの高さ
+#define IDC_SPIN_nRulerHeight_MIN	2
+#define IDC_SPIN_nRulerHeight_MAX	32
+
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */
 

@@ -16,6 +16,7 @@
 
 #include "CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
+#include "global.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #if 1	//@@@ 2002.01.03 add MIK
@@ -165,11 +166,11 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 			if( pMNUD->iDelta > 0 ){
 				--nVal;
 			}
-			if( nVal < 13 ){
-				nVal = 13;
+			if( nVal < IDC_SPIN_nRulerHeight_MIN ){
+				nVal = IDC_SPIN_nRulerHeight_MIN;
 			}
-			if( nVal > 32 ){
-				nVal = 32;
+			if( nVal > IDC_SPIN_nRulerHeight_MAX ){
+				nVal = IDC_SPIN_nRulerHeight_MAX;
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, nVal, FALSE );
 			return TRUE;
@@ -333,11 +334,11 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 
 	/* ルーラー高さ */
 	m_Common.m_nRulerHeight = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE );
-	if( m_Common.m_nRulerHeight < 13 ){
-		m_Common.m_nRulerHeight = 13;
+	if( m_Common.m_nRulerHeight < IDC_SPIN_nRulerHeight_MIN ){
+		m_Common.m_nRulerHeight = IDC_SPIN_nRulerHeight_MIN;
 	}
-	if( m_Common.m_nRulerHeight > 32 ){
-		m_Common.m_nRulerHeight = 32;
+	if( m_Common.m_nRulerHeight > IDC_SPIN_nRulerHeight_MAX ){
+		m_Common.m_nRulerHeight = IDC_SPIN_nRulerHeight_MAX;
 	}
 	/* ルーラーとテキストの隙間 */
 	m_Common.m_nRulerBottomSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, NULL, FALSE );

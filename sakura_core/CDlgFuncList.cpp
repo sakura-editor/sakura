@@ -27,6 +27,7 @@
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "mymessage.h"// 2002/2/3 aroka
 #include "Keycode.h"// 2002/2/10 aroka ヘッダ整理
+#include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 
 //アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

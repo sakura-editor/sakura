@@ -2219,8 +2219,6 @@ void CEditView::Command_SELECTALL( void )
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
 	/* 全体を選択する */
-//	m_nSelectLineBgn = 0;		/* 範囲選択開始行(原点) */
-//	m_nSelectColmBgn = 0;		/* 範囲選択開始桁(原点) */
 	m_nSelectLineBgnFrom = 0;	/* 範囲選択開始行(原点) */
 	m_nSelectColmBgnFrom = 0;	/* 範囲選択開始桁(原点) */
 	m_nSelectLineBgnTo = 0;		/* 範囲選択開始行(原点) */
@@ -2284,8 +2282,6 @@ bool CEditView::Command_SELECTWORD( void )
 		nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
 
 		/* 選択範囲の変更 */
-//		m_nSelectLineBgn = nLineFrom;		/* 範囲選択開始行(原点) */
-//		m_nSelectColmBgn = nColmFrom;		/* 範囲選択開始桁(原点) */
 		m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
 		m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
 		m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
@@ -3656,8 +3652,6 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		goto end_of_func;
 	}
 	if( IsTextSelected() ){	/* テキストが選択されているか */
-//		nSelectLineBgn_Old = m_nSelectLineBgn;			/* 範囲選択開始行(原点) */
-//		nSelectColBgn_Old = m_nSelectColmBgn;			/* 範囲選択開始桁(原点) */
 		nSelectLineBgnFrom_Old = m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
 		nSelectColBgnFrom_Old = m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
 		nSelectLineBgnTo_Old = m_nSelectLineBgnTo;		/* 範囲選択開始行(原点) */
@@ -3669,11 +3663,6 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		bSelectingLock_Old = m_bSelectingLock;
 		/* 矩形範囲選択中か */
 		if( !m_bBeginBoxSelect && TRUE == m_bSelectingLock ){	/* 選択状態のロック */
-//			if( ( m_nSelectLineBgn <  m_nCaretPosY ) ||
-//				( m_nSelectLineBgn == m_nCaretPosY && m_nSelectColmBgn < m_nCaretPosX )
-//			){
-//				bFlag1 = TRUE;
-//			}
 			bSelecting = TRUE;
 //			bSelectingLock_Old = m_bSelectingLock;
 //			/* 現在の選択範囲を非選択状態に戻す */
@@ -3740,8 +3729,6 @@ re_do:;							//	hor
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 		}else{
 			/* 選択範囲の変更 */
-//			m_nSelectLineBgn = nLineFrom;		/* 範囲選択開始行(原点) */
-//			m_nSelectColmBgn = nColmFrom;		/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
 			m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
@@ -3762,71 +3749,6 @@ re_do:;							//	hor
 		AddCurrentLineToHistory();
 		MoveCursor( nColmFrom, nLineFrom, bReDraw );
 		m_nCaretPosX_Prev = m_nCaretPosX;
-#if 0
-		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && -1 != m_nOldUnderLineY ){
-			/* カーソル行アンダーラインの消去 */
-			HPEN	hPen;
-			HPEN	hPenOld;
-			HDC		hdc;
-			hdc = ::GetDC( m_hWnd );
-			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-			hPenOld = (HPEN)::SelectObject( hdc, hPen );
-			::MoveToEx(
-				hdc,
-				m_nViewAlignLeft,
-				m_nOldUnderLineY,
-				NULL
-			);
-			::LineTo(
-				hdc,
-				m_nViewCx + m_nViewAlignLeft,
-				m_nOldUnderLineY
-			);
-			::SelectObject( hdc, hPenOld );
-			::DeleteObject( hPen );
-			::ReleaseDC( m_hWnd, hdc );
-			m_nOldUnderLineY = -1;
-		}
-		if( bSelecting ){
-			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY )
-
-			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
-			/* 選択範囲の変更 */
-//			m_nSelectLineBgn = nSelectLineBgn_Old;			/* 範囲選択開始行(原点) */
-//			m_nSelectColmBgn = nSelectColBgn_Old;			/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnTo = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-
-			m_nSelectLineFrom =	nLineFrom;
-			m_nSelectColmFrom = nColmFrom;
-			m_nSelectLineTo = nLineTo;
-			m_nSelectColmTo = nColmTo;
-			if( ( m_nSelectLineFrom > m_nSelectLineBgn ) ||
-				( m_nSelectLineFrom == m_nSelectLineBgn && m_nSelectColmFrom > m_nSelectColmBgn ) ){
-				m_nSelectLineFrom = m_nSelectLineBgn;
-				m_nSelectColmFrom = m_nSelectColmBgn;
-			}
-			if( ( m_nSelectLineTo < m_nSelectLineBgn ) ||
-				( m_nSelectLineTo == m_nSelectLineBgn && m_nSelectColmTo < m_nSelectColmBgn )
-			){
-				m_nSelectLineTo = m_nSelectLineBgn;
-				m_nSelectColmTo = m_nSelectColmBgn;
-			}
-		}else{
-			/* 選択範囲の変更 */
-			m_nSelectLineBgn = nLineFrom;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgn = nColmFrom;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineFrom =	nLineFrom;
-			m_nSelectColmFrom = nColmFrom;
-			m_nSelectLineTo = nLineTo;
-			m_nSelectColmTo = nColmTo;
-		}
-		/* 選択領域描画 */
-		DrawSelectArea();
-#endif
 		bFound = TRUE;
 	}else{
 		/* フォーカス移動時の再描画 */
@@ -3838,8 +3760,6 @@ re_do:;							//	hor
 		if( bSelecting ){
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 			/* 選択範囲の変更 */
-//			m_nSelectLineBgn = nSelectLineBgn_Old;			/* 範囲選択開始行(原点) */
-//			m_nSelectColmBgn = nSelectColBgn_Old;			/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
 			m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
@@ -3949,8 +3869,6 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 		if( !m_bBeginBoxSelect && TRUE == m_bSelectingLock ){
 			bSelecting = TRUE;
 			bSelectingLock_Old = m_bSelectingLock;
-//			nSelectLineBgn_Old = m_nSelectLineBgn;			/* 範囲選択開始行(原点) */
-//			nSelectColBgn_Old = m_nSelectColmBgn;			/* 範囲選択開始桁(原点) */
 			nSelectLineBgnFrom_Old = m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
 			nSelectColBgnFrom_Old = m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
 			nSelectLineBgnTo_Old = m_nSelectLineBgnTo;		/* 範囲選択開始行(原点) */
@@ -4048,8 +3966,6 @@ re_do:;
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 		}else{
 			/* 選択範囲の変更 */
-//			m_nSelectLineBgn = nLineFrom;		/* 範囲選択開始行(原点) */
-//			m_nSelectColmBgn = nColmFrom;		/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
 			m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
@@ -4083,8 +3999,6 @@ re_do:;
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 
 			/* 選択範囲の変更 */
-//			m_nSelectLineBgn = nSelectLineBgn_Old;			/* 範囲選択開始行(原点) */
-//			m_nSelectColmBgn = nSelectColBgn_Old;			/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
 			m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
 			m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
@@ -7996,8 +7910,6 @@ void CEditView::Command_REPLACE_DIALOG( void )
 //				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen );
 //				nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
 //				/* 選択範囲の変更 */
-////				m_nSelectLineBgn = nLineFrom;		/* 範囲選択開始行(原点) */
-////				m_nSelectColmBgn = nColmFrom;		/* 範囲選択開始桁(原点) */
 //				m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
 //				m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
 //				m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */

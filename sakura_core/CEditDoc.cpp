@@ -3237,7 +3237,7 @@ void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 void  CEditDoc::SetActivePane( int nIndex )
 {
 	m_cEditViewArr[m_nActivePaneIndex].OnKillFocus();
-	m_cEditViewArr[m_nActivePaneIndex].CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
+	m_cEditViewArr[m_nActivePaneIndex].m_cUnderLine.CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
 
 	/* アクティブなビューを切り替える */
 	m_nActivePaneIndex = nIndex;
