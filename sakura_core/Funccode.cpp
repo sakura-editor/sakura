@@ -111,7 +111,8 @@ const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edi
 	F_RTRIM				,	//右(末尾)の空白を削除	2001.12.03 hor
 	F_SORT_ASC			,	//選択行の昇順ソート	2001.12.06 hor
 	F_SORT_DESC			,	//選択行の降順ソート	2001.12.06 hor
-	F_MERGE					//選択行のマージ		2001.12.06 hor
+	F_MERGE				,	//選択行のマージ		2001.12.06 hor
+	F_RECONVERT				//再変換 				2002.04.09 minfu
 //		F_WORDSREFERENCE		//単語リファレンス
 };
 const int nFincList_Edit_Num = sizeof( pnFuncList_Edit ) / sizeof( pnFuncList_Edit[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)

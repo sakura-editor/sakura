@@ -11,7 +11,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, jepro, hor
-	Copyright (C) 2002, hor, aroka
+	Copyright (C) 2002, hor, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1013,12 +1013,12 @@ _CLOSEFILE_:;
 	この後変更後のファイル情報を開くためにファイルアクセスしているが、ここまで無理に変更する必要はないでしょう。*/
 
 	/* 更新後のファイル時刻の取得 */
-	{
+//	{
 		// 渡されたポインタを直に扱うようにする。
 		// なんか、こうしないと、正確な反映ができなかったようなので・・・。
 //		SYSTEMTIME	systimeL;
-		if( ::GetFileTime( (HANDLE)hFile, NULL, NULL, pFileTime ) ){
-			::FileTimeToLocalFileTime( pFileTime, pFileTime );
+//		if( ::GetFileTime( (HANDLE)hFile, NULL, NULL, pFileTime ) ){
+//			::FileTimeToLocalFileTime( pFileTime, pFileTime );	//@@@ 2002.04.09 delete MIK
 			// 取得したシステム日時を使ってない？
 //			::FileTimeToSystemTime( pFileTime, &systimeL );
 //			MYTRACE( "Last Update: %d/%d/%d %02d:%02d:%02d\n",
@@ -1029,12 +1029,37 @@ _CLOSEFILE_:;
 //				systimeL.wMinute,
 //				systimeL.wSecond
 //			);
-		}else{
+//		}else{
 //			MYTRACE( "GetFileTime() error.\n" );
-		}
-	}
+//		}
+//	}
 	::CloseHandle(hFile);
 	//>> 2002/03/25 Azumaiya
+
+	/* 更新後のファイル時刻の取得
+	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
+	 * されないことがある。しかたがないのでいったんクローズして再オープ
+	 * ンして時刻を取得する。
+	 */
+	dwFileAttribute = ::GetFileAttributes(pszPath);
+	if ( dwFileAttribute == (DWORD)-1 )
+	{
+		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;
+	}
+	hFile = ::CreateFile(
+						pszPath,			// 開くファイル名
+						GENERIC_READ,		// 読み込みモードで開く。
+						0,					// 共有しない。
+						NULL,				// ハンドルを継承しない。
+						OPEN_EXISTING,		// 存在するファイルを開く。
+						dwFileAttribute,	// ファイル属性。
+						NULL				// テンプレートファイルを使わない。
+						);
+	if ( hFile != INVALID_HANDLE_VALUE )
+	{
+		::GetFileTime( (HANDLE)hFile, NULL, NULL, pFileTime );
+		::CloseHandle(hFile);
+	}
 
 
 _RETURN_:;

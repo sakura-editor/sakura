@@ -325,9 +325,13 @@
 #define IDC_EDIT_DANSUU                 1260
 #define IDC_CHECK_WORDWRAP              1261
 #define IDC_CHECK_LINENUMBER            1262
+#define IDC_CHECK_KINSOKUHEAD           1262
 #define IDC_BUTTON_EDITSETTINGNAME      1263
+#define IDC_CHECK_KINSOKUTAIL           1263
 #define IDC_STATIC_PAGENUM              1264
+#define IDC_CHECK_PS_KINSOKUHEAD        1264
 #define IDC_STATIC_ZOOM                 1265
+#define IDC_CHECK_PS_KINSOKUTAIL        1265
 #define IDC_EDIT_HEAD1                  1270
 #define IDC_STATIC_PRNDEV               1271
 #define IDC_STATIC_PAPER                1272
@@ -506,6 +510,8 @@
 #define IDC_LIST_USEDLL                 1425
 #define IDC_EDIT_OUTLINERULEFILE        1426
 #define IDC_BUTTON_RULEFILE_REF         1427
+#define IDC_EDIT_KINSOKUHEAD            1428
+#define IDC_EDIT_KINSOKUTAIL            1429
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047

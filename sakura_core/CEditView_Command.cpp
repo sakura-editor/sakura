@@ -278,6 +278,7 @@ BOOL CEditView::HandleCommand(
 	case F_SORT_ASC:				Command_SORT(TRUE);break;			// 2001.12.06 hor
 	case F_SORT_DESC:				Command_SORT(FALSE);break;			// 2001.12.06 hor
 	case F_MERGE:					Command_MERGE();break;				// 2001.12.06 hor
+	case F_RECONVERT:				Command_Reconvert();break;			/* メニューからの再変換対応 minfu 2002.04.09 */ 
 
 	/* カーソル移動系 */
 	case F_IME_CHAR:		Command_IME_CHAR( (WORD)lparam1 ); break;					//全角文字入力

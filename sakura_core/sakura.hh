@@ -356,6 +356,8 @@
 #define HIDC_RADIO_FUNCKEYWND_PLACE2			11261 //ファンクションキー表示位置（下）
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
+#define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
+#define HIDC_CHECK_KINSOKUTAIL					11313 //行頭禁則	//@@@ 2002.04.08 MIK
 #define HIDC_COMBO_TABSPACE						11330 //TAB幅
 #define HIDC_COMBO_IMESWITCH					11331 //IMEのON/OFF状態
 #define HIDC_COMBO_IMESTATE						11332 //IMEの入力モード
@@ -368,6 +370,8 @@
 #define HIDC_EDIT_LINESPACE						11344 //行間の隙間
 #define HIDC_EDIT_INDENTCHARS					11345 //その他のインデント対象文字
 #define HIDC_EDIT_TABVIEWSTRING					11346 //TAB表示文字列
+#define HIDC_EDIT_KINSOKUHEAD					11347 //行頭禁則	//@@@ 2002.04.08 MIK
+#define HIDC_EDIT_KINSOKUTAIL					11348 //行頭禁則	//@@@ 2002.04.08 MIK
 #define HIDC_BUTTON_TEXTCOLOR					11400 //文字色
 #define HIDC_BUTTON_BACKCOLOR					11401 //背景色
 #define HIDC_BUTTON_SAMETEXTCOLOR				11402 //文字色統一
@@ -548,6 +552,8 @@
 #define HIDC_PS_EDIT_MARGINBY	12516	//余白下
 #define HIDC_PS_EDIT_MARGINLX	12517	//余白左
 #define HIDC_PS_EDIT_MARGINRX	12518	//余白右
+#define HIDC_PS_CHECK_KINSOKUHEAD	12519	//行頭禁則	//@@@ 2002.04.09 MIK
+#define HIDC_PS_CHECK_KINSOKUTAIL	12520	//行末禁則	//@@@ 2002.04.09 MIK
 
 //プロパティ
 #define HIDOK_PROP				12600	//

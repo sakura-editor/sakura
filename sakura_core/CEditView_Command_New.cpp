@@ -27,11 +27,13 @@
 #include "etc_uty.h"///
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here
+#include "COsVersionInfo.h"   // 2002.04.09 minfu 
 
 using namespace std; // 2002/2/3 aroka to here
 
-
-
+#ifndef FID_RECONVERT_VERSION  // 2002.04.10 minfu 
+#define FID_RECONVERT_VERSION 0x10000000
+#endif
 /*!	現在位置にデータを挿入 Ver0
 
 	@date 2002/03/24 YAZAKI bUndo削除
@@ -2555,5 +2557,87 @@ void CEditView::Command_MERGE(void)
 
 
 // To Here 2001.12.03 hor
+	
+/* メニューからの再変換対応 minfu 2002.04.09
+
+	@date 2002.04.11 YAZAKI COsVersionInfoのカプセル化を守りましょう。
+*/
+void CEditView::Command_Reconvert(void)
+{
+	int		nSize;
+	PRECONVERTSTRING	pReconv;
+	COsVersionInfo cOs;
+//	POSVERSIONINFO	pOsVer;
+	bool	bUseUnicodeATOK;
+	HIMC hIMC ;
+	
+	
+	//サイズを取得
+	nSize = SetReconvertStruct(NULL,false);
+	
+	if( 0 == nSize )  // サイズ０の時は何もしない
+		return ;
+	
+	bUseUnicodeATOK = false;
+	//バージョンチェック
+//	pOsVer  = cOs.GetOsVersionInfo();
+	if( cOs.OsDoesNOTSupportReconvert() ){
+		
+		// MSIMEかどうか
+		HWND hWnd = ImmGetDefaultIMEWnd(m_hWnd);
+		if (SendMessage(hWnd, m_uWM_MSIME_RECONVERTREQUEST, FID_RECONVERT_VERSION, 0)){
+			SendMessage(hWnd, m_uWM_MSIME_RECONVERTREQUEST, 0, (long)m_hWnd);
+			return ;
+		}
+		// ATOKが使えるかどうか
+		
+		//説明の取得
+		char sz[256];
+		
+		ImmGetDescription(GetKeyboardLayout(0),sz,256);
+		if ( (strncmp(sz,"ATOK",4) == 0) && (NULL != AT_ImmSetReconvertString) ){
+			bUseUnicodeATOK = true;
+		}else{
+			//対応IMEなし
+			return;
+		}
+	}else{
+		//現在のIMEが対応しているかどうか
+		//IMEのプロパティ
+		if ( !(ImmGetProperty(GetKeyboardLayout(0),IGP_SETCOMPSTR) & SCS_CAP_SETRECONVERTSTRING) ){
+			//対応IMEなし			
+			return ;
+		}
+	}
+	
+	//IMEのコンテキスト取得
+	hIMC = ::ImmGetContext( m_hWnd );
+	
+	//領域確保
+	pReconv = (PRECONVERTSTRING)::HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS, nSize);
+	
+	//構造体設定
+	SetReconvertStruct( pReconv, bUseUnicodeATOK);
+	
+	//変換範囲の調整
+	if(bUseUnicodeATOK){
+		(*AT_ImmSetReconvertString)(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize);
+	}else{
+		::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
+	}
+	//調整した変換範囲を選択する
+	SetSelectionFromReonvert(pReconv, bUseUnicodeATOK);
+	
+	//再変換実行
+	if(bUseUnicodeATOK){
+		(*AT_ImmSetReconvertString)(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize);
+	}else{
+		::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
+	}
+	//領域解放
+	::HeapFree(GetProcessHeap(),0,(LPVOID)pReconv);
+	::ImmReleaseContext( m_hWnd, hIMC);
+}
+
 
 /*[EOF]*/

@@ -8,6 +8,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -157,6 +158,8 @@ struct PRINTSETTING {
 	int				m_nPrintPaperOrientation;			/*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 	int				m_nPrintPaperSize;					/*!< 用紙サイズ */
 	BOOL			m_bPrintWordWrap;					/*!< 英文ワードラップする */
+	BOOL			m_bPrintKinsokuHead;				/*!< 行頭禁則する */	//@@@ 2002.04.09 MIK
+	BOOL			m_bPrintKinsokuTail;				/*!< 行末禁則する */	//@@@ 2002.04.09 MIK
 	BOOL			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
 
@@ -336,6 +339,10 @@ struct Types {
 
 //	char				m_bUseLBCC;						/*!< 禁則処理を行うか */
 	BOOL				m_bWordWrap;					/*!< 英文ワードラップをする */
+	BOOL				m_bKinsokuHead;					/*!< 行頭禁則をする */	//@@@ 2002.04.08 MIK
+	BOOL				m_bKinsokuTail;					/*!< 行末禁則をする */	//@@@ 2002.04.08 MIK
+	char				m_szKinsokuHead[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+	char				m_szKinsokuTail[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 
 	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 

@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, Stonee, jepro, mik, asa-o, YAZAKI
-	Copyright (C) 2002, YAZAKI, hor, aroka
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -621,6 +621,11 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 				strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "" );
 				strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "- $p -" );
 			}
+
+			//Л╓Се	//@@@ 2002.04.09 MIK
+			wsprintf( szKeyName, "PS[%02d].bKinsokuHead", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuHead, 0 );
+			wsprintf( szKeyName, "PS[%02d].bKinsokuTail", i ); cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ, (char*)&m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuTail, 0 );
+
 		}
 	}// Print
 
@@ -770,6 +775,12 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			}
 		}
 //@@@ 2001.11.17 add end MIK
+
+		/* Л╓Се */
+		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuHead"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuHead, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuTail"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuTail, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "szKinsokuHead"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKinsokuHead, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "szKinsokuTail"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKinsokuTail, 0 );
 
 	}// Types ( for loop)
 
