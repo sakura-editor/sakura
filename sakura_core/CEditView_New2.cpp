@@ -186,6 +186,15 @@ void CEditView::DispLineNumber(
 		}
 	}
 
+	/* 02/10/16 ai Start */
+	// ブックマークの表示
+	if(pCDocLine->IsBookMarked()){
+		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp ) {
+			nColorIndex = COLORIDX_MARK;
+		}
+	}
+	/* 02/10/16 ai End */
+
 //	if( m_pcEditDoc->GetDocumentAttribute().m_bDispLINE ){	/* 行番号表示／非表示 */
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[/*nColorIndex*/COLORIDX_GYOU].m_bDisp ){	/* 行番号表示／非表示 */
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
@@ -289,6 +298,7 @@ void CEditView::DispLineNumber(
 		::DeleteObject( hBrush );
 	}
 
+#if 0	/* 02/10/16 ai Start*/
 // From Here 2001.12.03 hor
 	/* とりあえずブックマークに縦線 */
 	if(pCDocLine->IsBookMarked()){
@@ -300,6 +310,7 @@ void CEditView::DispLineNumber(
 		::DeleteObject( hPen );
 	}
 // To Here 2001.12.03 hor
+#endif	/* 02/10/16 ai End */
 
 	if( type )	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
 	{
