@@ -1,8 +1,10 @@
 //	$Id$
-/************************************************************************
-	CPropComGrep.cpp
-	Copyright (C) 1998-2000, Norio Nakatani
-************************************************************************/
+/*!	@file
+	共通設定ダイアログボックス、「Grep」ページ
+	@author Norio Nakatani
+	@version $Revision$
+*/
+//	Copyright (C) 1998-2000, Norio Nakatani
 
 #include "CPropCommon.h"
 
@@ -16,8 +18,19 @@ const DWORD p_helpids[] = {	//10500
 };
 //@@@ 2001.02.04 End
 
-
-
+//	From Here Jun. 2, 2001 genta
+/*!
+	@param hwndDlg ダイアログボックスのWindow Handle
+	@param uMsg メッセージ
+	@param wParam パラメータ1
+	@param lParam パラメータ2
+*/
+BOOL CALLBACK CPropCommon::DlgProc_PROP_GREP(
+	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return DlgProc( DispatchEvent_PROP_GREP, hwndDlg, uMsg, wParam, lParam );
+}
+//	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )

@@ -1,10 +1,10 @@
 //	$Id$
-//	Copyright (C) 1998-2000, Norio Nakatani
 /*! @file
-	共通設定－「ファイル」プロパティシート
-
+	共通設定ダイアログボックス、「書式」ページ
 	@author Norio Nakatani
+	@version $Revision$
 */
+//	Copyright (C) 1998-2000, Norio Nakatani
 
 #include "CPropCommon.h"
 
@@ -29,6 +29,19 @@ const DWORD p_helpids[] = {	//01310
 };
 //@@@ 2001.02.04 End
 
+//	From Here Jun. 2, 2001 genta
+/*!
+	@param hwndDlg ダイアログボックスのWindow Handle
+	@param uMsg メッセージ
+	@param wParam パラメータ1
+	@param lParam パラメータ2
+*/
+BOOL CALLBACK CPropCommon::DlgProc_PROP_FILE(
+	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return DlgProc( DispatchEvent_p2, hwndDlg, uMsg, wParam, lParam );
+}
+//	To Here Jun. 2, 2001 genta
 
 /*! ファイルページ メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p2(

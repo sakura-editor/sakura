@@ -354,6 +354,10 @@ SOURCE=.\CPropComKeyword.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CPropComMacro.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CPropCommon.cpp
 # End Source File
 # Begin Source File
