@@ -81,7 +81,7 @@ public:
 	//	Feb. 9, 2001 genta 引数追加
 	BOOL FileWrite( const char*, enumEOLType cEolType );
 	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
-	BOOL MakeBackUp( void );	/* バックアップの作成 */
+	int MakeBackUp( const char* target_file );	/* バックアップの作成 */
 	void SetParentCaption( BOOL = FALSE );	/* 親ウィンドウのタイトルを更新 */
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
