@@ -623,7 +623,7 @@ CWSHMacroManager::~CWSHMacroManager()
 
 void CWSHMacroManager::ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *Info)
 {
-	while(Info->m_nFuncID != 0)
+	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
 		wchar_t FuncName[256];
 		MultiByteToWideChar(CP_ACP, 0, Info->m_pszFuncName, -1, FuncName, 255);
