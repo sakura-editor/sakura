@@ -53,13 +53,13 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_FILECLOSE,					"FileClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	{F_FILECLOSE_OPEN,				"FileCloseOpen",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて開く
 	{F_FILE_REOPEN,					"FileReopen",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す	//Dec. 4, 2002 genta
-	{F_FILE_REOPEN_SJIS,			"FileReopenSJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す
-	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
-	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
-	{F_FILE_REOPEN_UNICODE,			"FileReopenUNICODE",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicodeで開き直す
-	{F_FILE_REOPEN_UNICODEBE,		"FileReopenUNICODEBE",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UnicodeBEで開き直す
-	{F_FILE_REOPEN_UTF8,			"FileReopenUTF8",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8で開き直す
-	{F_FILE_REOPEN_UTF7,			"FileReopenUTF7",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7で開き直す
+	{F_FILE_REOPEN_SJIS,			"FileReopenSJIS",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す
+	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
+	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
+	{F_FILE_REOPEN_UNICODE,			"FileReopenUNICODE",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicodeで開き直す
+	{F_FILE_REOPEN_UNICODEBE,		"FileReopenUNICODEBE",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UnicodeBEで開き直す
+	{F_FILE_REOPEN_UTF8,			"FileReopenUTF8",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8で開き直す
+	{F_FILE_REOPEN_UTF7,			"FileReopenUTF7",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7で開き直す
 	{F_PRINT,						"Print",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷
 //	{F_PRINT_DIALOG,				"PrintDialog",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ダイアログ
 	{F_PRINT_PREVIEW,				"PrintPreview",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷プレビュー
@@ -76,7 +76,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 
 	/* 編集系 */
 	{F_CHAR,				"Char",					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字入力
-	{F_IME_CHAR,			"CharIme",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //全角文字入力
+	{F_IME_CHAR,			"CharIme",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //全角文字入力
 	{F_UNDO,				"Undo",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //元に戻す(Undo)
 	{F_REDO,				"Redo",					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //やり直し(Redo)
 	{F_DELETE,				"Delete",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //削除
