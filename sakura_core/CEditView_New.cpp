@@ -261,13 +261,17 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	/* 折り返し位置の表示 */
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bDisp ){
 		nX = m_nViewAlignLeft + ( TypeDataPtr->m_nMaxLineSize - m_nViewLeftCol ) * nCharWidth;
-		/* 折り返し記号の色のペンを作成 */
-		hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_colTEXT );
-		hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, nX, m_nViewAlignTop, NULL );
-		::LineTo( hdc, nX, m_nViewAlignTop + m_nViewCy );
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
+		//	2003.10.15 Moca Windows 95/98では座標を下位16bit表現しか見ないので
+		//	折り返し位置が右に行きすぎると変な位置に線が引かれてしまうのを防ぐ
+		if( nX < 0x10000 ){
+			/* 折り返し記号の色のペンを作成 */
+			hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_colTEXT );
+			hPenOld = (HPEN)::SelectObject( hdc, hPen );
+			::MoveToEx( hdc, nX, m_nViewAlignTop, NULL );
+			::LineTo( hdc, nX, m_nViewAlignTop + m_nViewCy );
+			::SelectObject( hdc, hPenOld );
+			::DeleteObject( hPen );
+		}
 	}
 
 
