@@ -6263,11 +6263,11 @@ DWORD CEditView::DoGrep(
 	}
 	strcpy( szFile, pcmGrepFile->GetPtr( /* &nDummy */ ) );
 
-
+	nWork = lstrlen( szKey ); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
 	/* 最後にテキストを追加 */
 	cmemMessage.AppendSz( "\r\n□検索条件  " );
-	if( 0 < lstrlen( szKey ) ){
+	if( 0 < nWork ){
 		CMemory cmemWork2;
 		cmemWork2.SetDataSz( szKey );
 		if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
@@ -6314,21 +6314,22 @@ DWORD CEditView::DoGrep(
 	}
 	cmemMessage.AppendSz( pszWork );
 
+	if( nWork < 0 ){ // 2003.06.10 Moca ファイル検索の場合は表示しない
+		if( bWordOnly ){
+		/* 単語単位で探す */
+			cmemMessage.AppendSz( "    (単語単位で探す)\r\n" );
+		}
 
-	if( bWordOnly ){
-	/* 単語単位で探す */
-		cmemMessage.AppendSz( "    (単語単位で探す)\r\n" );
-	}
+		if( bGrepLoHiCase ){
+			pszWork = "    (英大文字小文字を区別する)\r\n";
+		}else{
+			pszWork = "    (英大文字小文字を区別しない)\r\n";
+		}
+		cmemMessage.AppendSz( pszWork );
 
-	if( bGrepLoHiCase ){
-		pszWork = "    (英大文字小文字を区別する)\r\n";
-	}else{
-		pszWork = "    (英大文字小文字を区別しない)\r\n";
-	}
-	cmemMessage.AppendSz( pszWork );
-
-	if( bGrepRegularExp ){
-		cmemMessage.AppendSz( "    (正規表現)\r\n" );
+		if( bGrepRegularExp ){
+			cmemMessage.AppendSz( "    (正規表現)\r\n" );
+		}
 	}
 
 	if( CODE_AUTODETECT == nGrepCharSet ){
@@ -6339,17 +6340,17 @@ DWORD CEditView::DoGrep(
 		cmemMessage.AppendSz( ")\r\n" );
 	}
 
-	if( bGrepOutputLine ){
-	/* 該当行 */
-		pszWork = "    (一致した行を出力)\r\n";
-	}else{
-		pszWork = "    (一致した箇所のみ出力)\r\n";
+	if( nWork < 0 ){ // 2003.06.10 Moca ファイル検索の場合は表示しない
+		if( bGrepOutputLine ){
+		/* 該当行 */
+			pszWork = "    (一致した行を出力)\r\n";
+		}else{
+			pszWork = "    (一致した箇所のみ出力)\r\n";
+		}
+		cmemMessage.AppendSz( pszWork );
 	}
-	cmemMessage.AppendSz( pszWork );
 
 
-
-	pszWork = "\r\n\r\n";
 	cmemMessage.AppendSz( "\r\n\r\n" );
 	pszWork = cmemMessage.GetPtr( &nWork );
 //@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
@@ -6630,7 +6631,9 @@ cancel_return:;
 /*!	@brief Grep結果を構築する
 
 	@param pWork [out] Grep出力文字列．充分なメモリ領域を予め確保しておくこと．
-		最長で 本文1024 byte＋ファイル名 _MAX_PATH byte＋行・桁位置表示の長さが必要．
+		最長で 本文2000 byte＋ファイル名 _MAX_PATH byte＋行・桁位置表示の長さが必要．
+		ファイル単位出力の場合は本文2500 byte + _MAX_PATH + 行・桁位置表示の長さが必要．
+		
 
 	pWorkは充分なメモリ領域を持っているコト
 	@date 2002/08/29 Moca バイナリーデータに対応 pnWorkLen 追加
@@ -6661,32 +6664,36 @@ void CEditView::SetGrepResult(
 	const char * pDispData;
 	int k;
 	bool bEOL = true;
+	int nMaxOutStr;
 
 	if( 1 == nGrepOutputStyle ){
 	/* ノーマル */
 		nWorkLen = ::wsprintf( pWork, "%s(%d,%d)%s: ", pszFullPath, nLine, nColm, pszCodeName );
+		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
 	}else
 	if( 2 == nGrepOutputStyle ){
 	/* WZ風 */
 		nWorkLen = ::wsprintf( pWork, "・(%6d,%-5d): ", nLine, nColm );
+		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
 
 	if( bGrepOutputLine ){
 	/* 該当行 */
 		pDispData = pCompareData;
 		k = nLineLen - nEolCodeLen;
-		if( 1000 < k ){
-			k = 1000;
+		if( nMaxOutStr < k ){
+			k = nMaxOutStr; // 2003.06.10 Moca 最大長変更
 		}
 	}else{
 	/* 該当部分 */
 		pDispData = pMatchData;
 		k = nMatchLen;
-		if( 2000 < k ){
-			k = 2000;
+		if( nMaxOutStr < k ){
+			k = nMaxOutStr; // 2003.06.10 Moca 最大長変更
 		}
 		// 該当部分に改行を含む場合はその改行コードをそのまま利用する(次の行に空行を作らない)
-		if( pMatchData[ k -1 ] == '\r' || pMatchData[ k - 1 ] == '\n' ){
+		// 2003.06.10 Moca k==0のときにバッファアンダーランしないように
+		if( 0 < k && (pMatchData[ k - 1 ] == '\r' || pMatchData[ k - 1 ] == '\n') ){
 			bEOL = false;
 		}
 	}
@@ -6731,7 +6738,7 @@ int CEditView::DoGrepFile(
 {
 	int		nHitCount;
 //	char	szLine[16000];
-	char	szWork[3000];
+	char	szWork[3000]; // ここは SetGrepResult() が返す文字列を格納できるサイズが必要
 	char	szWork0[_MAX_PATH + 100];
 	int		nLine;
 	int		nWorkLen;
@@ -6753,34 +6760,24 @@ int CEditView::DoGrepFile(
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
 
-	nCharCode = nGrepCharSet;
 	pszCodeName = "";
-	if( CODE_AUTODETECT == nGrepCharSet ){
-		/*
-		|| ファイルの日本語コードセット判別
-		||
-		|| 【戻り値】
-		||	SJIS	0
-		||	JIS		1
-		||	EUC		2
-		||	Unicode	3
-		||	エラー	-1
-		||	詳細はenumCodeType(global.h) を参照
-		*/
-		nCharCode = CMemory::CheckKanjiCodeOfFile( pszFullPath );
-		if( -1 == nCharCode ){
-			wsprintf( szWork, "文字コードの判別処理でエラー [%s]\r\n", pszFullPath );
-			Command_ADDTAIL( szWork, lstrlen( szWork ) );
-			return 0;
-		}
-		pszCodeName = gm_pszCodeNameArr_3[nCharCode];
-	}
 	nHitCount = 0;
 	nLine = 0;
 
 	/* 検索条件が長さゼロの場合はファイル名だけ返す */
 	// 2002/08/29 行ループの前からここに移動
 	if( 0 == nKeyKen ){
+		if( CODE_AUTODETECT == nGrepCharSet ){
+			// 2003.06.10 Moca コード判別処理をここに移動．
+			// 判別エラーでもファイル数にカウントするため
+			// ファイルの日本語コードセット判別
+			nCharCode = CMemory::CheckKanjiCodeOfFile( pszFullPath );
+			if( -1 == nCharCode ){
+				pszCodeName = "  [(DetectError)]";
+			}else{
+				pszCodeName = gm_pszCodeNameArr_3[nCharCode];
+			}
+		}
 		if( 1 == nGrepOutputStyle ){
 		/* ノーマル */
 			wsprintf( szWork0, "%s%s\r\n", pszFullPath, pszCodeName );
@@ -6793,14 +6790,17 @@ int CEditView::DoGrepFile(
 		::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 		return 1;
 	}
-	wsprintf( szWork0, "■\"%s\"%s\r\n", pszFullPath, pszCodeName );
 
 
 	try{
 	// ファイルを開く
 	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
-	cfl.FileOpen( pszFullPath, nCharCode, 0 );
-
+	// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
+	nCharCode = cfl.FileOpen( pszFullPath, nGrepCharSet, 0 );
+	if( CODE_AUTODETECT == nGrepCharSet ){
+		pszCodeName = gm_pszCodeNameArr_3[nCharCode];
+	}
+	wsprintf( szWork0, "■\"%s\"%s\r\n", pszFullPath, pszCodeName );
 //	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
 		return -1;
@@ -6844,9 +6844,12 @@ int CEditView::DoGrepFile(
 			BREGEXP*	pRegexpData;	//	正規表現コンパイルデータ
 			int nColmPrev = 0;
 
-			while (1){	//	ぐるぐる回す
-				//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				if( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
+			//	Jun. 21, 2003 genta ループ条件見直し
+			//	マッチ箇所を1行から複数検出するケースを標準に，
+			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
+			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+			while( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
 
 					//	パターン発見
 					nColm = pRegexpData->startp[0] - pCompareData + 1;
@@ -6873,15 +6876,21 @@ int CEditView::DoGrepFile(
 					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
 						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 					}
-					if ( !bGrepOutputLine ) {
-						//	探し始める位置を補正
-						pCompareData += nColm;
-						nLineLen -= nColm;
-						nColmPrev += nColm;
-						continue;
+					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
+					if ( bGrepOutputLine ) {
+						break;
 					}
-				}
-				break;
+					//	探し始める位置を補正
+					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
+					//	nClom : マッチ位置
+					//	matchlen : マッチした文字列の長さ
+					int nPosDiff = nColm + matchlen;
+					if( matchlen != 0 ){
+						nPosDiff--;
+					}
+					pCompareData += nPosDiff;
+					nLineLen -= nPosDiff;
+					nColmPrev += nPosDiff;
 			}
 		}else
 		/* 単語のみ検索 */
@@ -6898,8 +6907,8 @@ int CEditView::DoGrepFile(
 			int nNextWordFrom = 0;
 			int nNextWordFrom2;
 			int nNextWordTo2;
-			while (1) {	//	ぐるぐるまわす。
-				if( TRUE ==
+			// Jun. 26, 2003 genta 無駄なwhileは削除
+			while( TRUE ==
 					CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
 				){
 					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
@@ -6915,7 +6924,7 @@ int CEditView::DoGrepFile(
 								//	Jun. 25, 2002 genta
 								//	桁位置は1始まりなので1を足す必要がある
 								nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
-								pszKey, nKeyKen,
+								&(pCompareData[nNextWordFrom2]), nKeyKen,
 								bGrepOutputLine, nGrepOutputStyle
 							);
 							if( 2 == nGrepOutputStyle ){
@@ -6940,17 +6949,15 @@ int CEditView::DoGrepFile(
 						break;	//	次の単語が無い。
 					}
 				}
-				else {
-					//	単語が見つからなかった。
-					break;
-				}
-			}
 		}
 		else {
 			/* 文字列検索 */
 			int nColmPrev = 0;
-			while (1){	//	ぐるぐる回す
-				if( NULL != ( pszRes = CDocLineMgr::SearchString(
+			//	Jun. 21, 2003 genta ループ条件見直し
+			//	マッチ箇所を1行から複数検出するケースを標準に，
+			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
+			while( NULL != ( pszRes = CDocLineMgr::SearchString(
 					(const unsigned char *)pCompareData, nLineLen,
 					0,
 					(const unsigned char *)pszKey, nKeyKen,
@@ -6964,7 +6971,7 @@ int CEditView::DoGrepFile(
 						szWork, &nWorkLen,
 						pszFullPath, pszCodeName,
 						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
-						pszKey, nKeyKen,
+						pszRes, nKeyKen,
 						bGrepOutputLine, nGrepOutputStyle
 					);
 					if( 2 == nGrepOutputStyle ){
@@ -6983,15 +6990,18 @@ int CEditView::DoGrepFile(
 						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 					}
 					
-					if ( !bGrepOutputLine ) {
-						//	探し始める位置を補正
-						pCompareData += nColm;
-						nLineLen -= nColm;
-						nColmPrev += nColm;
-						continue;
+					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
+					if ( bGrepOutputLine ) {
+						break;
 					}
-				}
-				break;
+					//	探し始める位置を補正
+					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
+					//	nClom : マッチ位置
+					//	matchlen : マッチした文字列の長さ
+					int nPosDiff = nColm += nKeyKen - 1;
+					pCompareData += nPosDiff;
+					nLineLen -= nPosDiff;
+					nColmPrev += nPosDiff;
 			}
 		}
 	}
