@@ -36,11 +36,13 @@
 */
 CLayoutMgr::CLayoutMgr()
 : m_cLineComment(), m_cBlockComment(),
+	//	2004.04.03 MIK
+	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する
+	m_nMaxLineSize( 10 ),
 	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 	getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta
 {
 	m_pcDocLineMgr = NULL;
-	m_nMaxLineSize = 0;
 	m_bWordWrap = TRUE;		/* 英文ワードラップをする */
 	m_nTabSpace = 8;		/* TAB文字スペース */
 	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
@@ -352,8 +354,14 @@ CLayout* CLayoutMgr::Search( int nLineNum )
 //		}
 //	}
 
+
 	/*+++++++わずかに高速版+++++++*/
-	if( m_pLayoutPrevRefer == NULL ){
+	// 2004.03.28 Moca m_pLayoutPrevReferより、Top,Botのほうが近い場合は、そちらを利用する
+	int nPrevToLineNumDiff = abs( m_nPrevReferLine - nLineNum );
+	if( m_pLayoutPrevRefer == NULL
+	  || nLineNum < nPrevToLineNumDiff
+	  || m_nLines - nLineNum < nPrevToLineNumDiff
+	){
 		if( nLineNum < (m_nLines / 2) ){
 			nCount = 0;
 			pLayout = m_pLayoutTop;
@@ -710,7 +718,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	CLayout*	pLayout;
 	CLayout*	pLayoutPrev;
 //	CLayout*	pLayoutNext;
-	CLayout*	pLayoutLast;
+//	CLayout*	pLayoutLast;
 	CLayout*	pLayoutWork;
 	int			nInsStartLogicalLine;
 	int			nInsStartLogicalPos;
@@ -728,7 +736,13 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	/* 現在行のデータを取得 */
 	pLine = GetLineStr( nLineNum, &nLineLen );
 	if( NULL == pLine ){
-		if( 0 == nLineNum ){
+		/*
+			2004.04.02 FILE / Moca カーソル位置不正のため、空テキストで
+			nLineNumが0でないときに落ちる対策．データが空であることを
+			カーソル位置ではなく総行数で判定することでより確実に．
+		*/
+		if( m_nLines == 0 )
+		{
 			/* 空のテキストの先頭に行を作る場合 */
 			pLayout = NULL;
 			nLineWork = 0;
@@ -737,7 +751,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 			nCurrentLineType = 0;
 		}else{
 			pLine = GetLineStr( m_nLines - 1, &nLineLen );
-			pLayoutLast = m_pLayoutPrevRefer;
+//			pLayoutLast = m_pLayoutPrevRefer;
 			if( ( nLineLen > 0 && ( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF )) ||
 				( nLineLen > 1 && ( pLine[nLineLen - 2] == CR || pLine[nLineLen - 2] == LF )) ){
 				/* 空でないテキストの最後に行を作る場合 */
