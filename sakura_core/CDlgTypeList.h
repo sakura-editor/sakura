@@ -31,7 +31,7 @@ const int PROP_TEMPCHANGE_FLAG = 0x10000;
 class CDlgTypeList : public CDialog
 {
 public:
-	BOOL DoModal( HINSTANCE, HWND, int* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, int* );	/* モーダルダイアログの表示 */
 
 	int				m_nSettingType;
 protected:
