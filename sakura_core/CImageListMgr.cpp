@@ -63,12 +63,30 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	
 	nRetPos = 0;
 	do {
-		//	リソースからBitmapを読み込む
-		hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ));
-		if( hRscbmp == NULL ){
-			nRetPos = 0;
-			break;
+		//	From Here 2001.7.1 GAE
+		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) toolbar.bmp から読めるように
+		char	szPath[_MAX_PATH], szExeDrive[_MAX_DRIVE], szExeDir[_MAX_DIR];
+		
+		// sakura.exe のパスを取得
+		::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
+		
+		// (sakuraディレクトリ)toolbar.bmp の文字列を作成
+		_splitpath( szPath, szExeDrive, szExeDir, NULL, NULL );
+		wsprintf( szPath, "%s%s%s", szExeDrive, szExeDir, "toolbar.bmp" );
+		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
+
+		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
+			//	このブロック内は従来の処理
+			//	リソースからBitmapを読み込む
+			hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ));
+			if( hRscbmp == NULL ){
+				nRetPos = 0;
+				break;
+			}
 		}
+		//	To Here 2001.7.1 GAE
+		
 		//	BitBltを使うためにMemoryDCにマッピングする
 		//	MAPした後MemoryDCに対して描画を行うとBitmapも書き換えられているという算段．
 		dcFrom = CreateCompatibleDC(0);	//	転送元用
