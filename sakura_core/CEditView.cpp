@@ -3358,8 +3358,19 @@ normal_action:;
 			Command_GOLINEEND( TRUE, FALSE );
 			Command_RIGHT( TRUE, FALSE, FALSE );
 
-			m_nSelectLineBgnTo = m_nSelectLineTo;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnTo = m_nSelectColmTo;	/* 範囲選択開始桁(原点) */
+			//	Apr. 14, 2003 genta
+			//	行番号の下をクリックしてドラッグを開始するとおかしくなるのを修正
+			//	行番号をクリックした場合にはChangeSelectAreaByCurrentCursor()にて
+			//	m_nSelectColmTo/m_nSelectLineToに-1が設定されるが、上の
+			//	Command_GOLINEEND(), Command_RIGHT()によって行選択が行われる。
+			//	しかしキャレットが末尾にある場合にはキャレットが移動しないので
+			//	m_nSelectColmTo/m_nSelectLineToが-1のまま残ってしまい、それが
+			//	原点に設定されるためにおかしくなっていた。
+			//	なので、範囲選択が行われていない場合は起点末尾の設定を行わないようにする
+			if( IsTextSelected() ){
+				m_nSelectLineBgnTo = m_nSelectLineTo;	/* 範囲選択開始行(原点) */
+				m_nSelectColmBgnTo = m_nSelectColmTo;	/* 範囲選択開始桁(原点) */
+			}
 		}else{
 //			/* 現在のカーソル位置から選択を開始する */
 //			BeginSelectArea( );
