@@ -406,13 +406,16 @@ bool CBregexp::GetMatchInfo( const char* target, int len, int nStart, BREGEXP**r
 	@param target [in] 置換対象データ
 	@param len [in] 置換対象データ長
 	@param out [out] 置換後文字列		// 2002.01.26 hor
+	@param outlen [out] 置換後文字列長
 	@param bOption [in]
 		0x01：大文字小文字の区別をする。
 
 	@retval true 成功
 	@retval false 失敗
+	
+	@date 2004.05.14 Moca outlen追加 (置換結果に0が含まれていても良いようにする)
 */
-bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, const char *target, int len, char **out, int bOption)
+bool CBregexp::Replace( const char *szPattern0, const char *szPattern1, const char *target, int len, char **out, int *outlen, int bOption )
 {
 	int result;
 
@@ -443,14 +446,15 @@ bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, const ch
 	}
 
 	if( result ){
-		if( m_sRep->outp != NULL && m_sRep->outp != '\0' ){
-//			strcpy( target, m_sRep->outp );
-			int i=lstrlen(m_sRep->outp);
+		if( m_sRep->outp != NULL && m_sRep->outp < m_sRep->outendp ){
+			int i = m_sRep->outendp - m_sRep->outp;
 			*out = new char[i+1];
-			strcpy( *out, m_sRep->outp );
+			memcpy( *out, m_sRep->outp, i );
 			(*out)[i] = '\0';
+			*outlen = i;
 		}else{
 //			strcpy( target, "" );
+			*outlen = 0;
 			*out = new char[1];
 			(*out)[0] = '\0';
 		}
@@ -547,9 +551,9 @@ bool CBregexp::GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOu
 		return false;
 	}
 
-	if( m_sRep->outp != NULL && m_sRep->outp[0] != '\0' )
+	if( m_sRep->outp != NULL && m_sRep->outp < m_sRep->outendp )
 	{
-		int i = strlen(m_sRep->outp);
+		int i = m_sRep->outendp - m_sRep->outp;
 		*pszOut = new char[i+1];
 		memcpy( *pszOut, m_sRep->outp, i );
 		(*pszOut)[i] = '\0';

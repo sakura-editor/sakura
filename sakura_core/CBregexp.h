@@ -91,7 +91,8 @@ public:
 	// 2002/01/19 novice 正規表現による文字列置換
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
-	bool Replace(const char* szPattern0, const char* szPattern1, const char *target, int len, char **out, int bOption );
+	// 2004.05.14 Moca   置換後文字列の長さを追加
+	bool Replace(const char *szPattern0, const char *szPattern1, const char *target, int len, char **out, int *outlen, int bOption );
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
 	bool CompileReplace(const char *szPattern0, const char *szPattern1, int bOption );
 	bool GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOutLen);
