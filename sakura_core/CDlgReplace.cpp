@@ -79,6 +79,9 @@ HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lPara
 	m_bSelectedArea = m_pShareData->m_Common.m_bSelectedArea;		/* 選択範囲内置換 */
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bSelected = bSelected;
+	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	/* 検索/置換開始時のカーソル位置退避	02/07/28 ai */
+	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	/* 検索/置換開始時のカーソル位置退避	02/07/28 ai */
+	((CEditView*)lParam)->m_bSearch = TRUE;							/* 検索/置換開始位置の登録有無			02/07/28 ai */
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_REPLACE, lParam, SW_SHOW );
 }
 
@@ -423,6 +426,14 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */
 		if( 0 < GetData() ){
+
+			// 検索開始位置を登録 02/07/28 ai start
+			if( TRUE == pcEditView->m_bSearch ){
+				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
+				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_bSearch = FALSE;
+			}// 02/07/28 ai end
+
 			/* コマンドコードによる処理振り分け */
 			/* 前を検索 */
 			pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
@@ -436,6 +447,14 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:	/* 下検索 */
 		if( 0 < GetData() ){
+
+			// 検索開始位置を登録 02/07/28 ai start
+			if( TRUE == pcEditView->m_bSearch ){
+				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
+				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_bSearch = FALSE;
+			}// 02/07/28 ai end
+
 			/* コマンドコードによる処理振り分け */
 			/* 次を検索 */
 			pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
@@ -464,6 +483,14 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	case IDC_BUTTON_REPALCE:	/* 置換 */
 		if( 0 < GetData() ){
+
+			// 置換開始位置を登録 02/07/28 ai start
+			if( TRUE == pcEditView->m_bSearch ){
+				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
+				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_bSearch = FALSE;
+			}// 02/07/28 ai end
+
 			/* 置換 */
 			//@@@ 2002.2.2 YAZAKI 置換コマンドをCEditViewに新設
 			//@@@ 2002/04/08 YAZAKI 親ウィンドウのハンドルを渡すように変更。
@@ -478,6 +505,14 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
 		if( 0 < GetData() ){
+
+			// 置換開始位置を登録 02/07/28 ai start
+			if( TRUE == pcEditView->m_bSearch ){
+				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
+				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_bSearch = FALSE;
+			}// 02/07/28 ai end
+
 			pcEditView->HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 

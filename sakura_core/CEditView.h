@@ -215,9 +215,9 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nCaretPosX_PHY;	/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
 	int		m_nCaretPosY_PHY;	/* カーソル位置  改行単位行の行番号（０開始）*/
 
-	int		m_nSrchStartPosX_PHY;	/* 検索開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
-	int		m_nSrchStartPosY_PHY;	/* 検索開始時のカーソル位置  改行単位行の行番号(0開始) */			// 02/06/26 ai
-	BOOL	m_bSearch;				/* 検索文字列が見つかったか */										// 02/06/26 ai
+	int		m_nSrchStartPosX_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
+	int		m_nSrchStartPosY_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行の行番号(0開始) */				// 02/06/26 ai
+	BOOL	m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
 
 	/*
 	||  メンバ変数

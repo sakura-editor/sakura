@@ -27,7 +27,7 @@
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {
-	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //新規作成
+	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，

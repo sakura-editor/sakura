@@ -287,7 +287,8 @@ bool CShareData::Init( void )
 			{ VK_F2,"F2", F_BOOKMARK_NEXT, F_BOOKMARK_PREV, F_BOOKMARK_SET, F_BOOKMARK_RESET, F_BOOKMARK_VIEW, 0, 0, 0 },
 		// To Here 2001.12.03 hor
 			//Sept. 21, 2000 JEPRO	Ctrl+F3 に「検索マークのクリア」を追加
-			{ VK_F3,"F3", F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, 0, 0, 0, 0, 0 },
+			//Aug. 12, 2002 ai	Ctrl+Shift+F3 に「検索開始位置へ戻る」を追加
+			{ VK_F3,"F3", F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, F_JUMP_SRCHSTARTPOS, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Alt+F4 に「ウィンドウを閉じる」, Shift+Alt+F4 に「すべてのウィンドウを閉じる」を追加
 			//	Ctrl+F4に割り当てられていた「縦横に分割」を「閉じて(無題)」に変更し Shift+Ctrl+F4 に「閉じて開く」を追加
 			//Jan. 14, 2001 Ctrl+Alt+F4 に「テキストエディタの全終了」を追加

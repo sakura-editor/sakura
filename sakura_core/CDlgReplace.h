@@ -52,6 +52,9 @@ public:
 	int				m_nPaste;			/* 貼り付け？ */	// 2001.12.03 hor
 	int				m_nReplaceCnt;		//すべて置換の実行結果		// 2002.02.08 hor
 	bool			m_bCanceled;		//すべて置換で中断したか	// 2002.02.08 hor
+	int				m_nEscCaretPosX_PHY;	/* 検索/置換開始時のカーソル位置退避エリア 02/07/28 ai */
+	int				m_nEscCaretPosY_PHY;	/* 検索/置換開始時のカーソル位置退避エリア 02/07/28 ai */
+
 protected:
 	/*
 	||  実装ヘルパ関数

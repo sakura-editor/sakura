@@ -1663,6 +1663,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY );
 
 
+			//	nWork‚Éˆ—‚ÌŠî€Œ…ˆÊ’u‚ğİ’è‚·‚é
 			if( CR != cChar ){
 				nWork = nCaretPosX_PHY - 1;
 			}else{
