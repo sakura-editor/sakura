@@ -3,10 +3,12 @@
 	@brief タブウィンドウ
 
 	@author MIK
+	@date 2004.01.27 break漏れ対応。TCHAR化。タブ表示が崩れる(?)の対応。
 	$Revision$
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2004, Moca, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -100,8 +102,8 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 					if( TabCtrl_GetItem( m_hwndTab, i, &tcitem ) )
 					{
 						switch( CUSTMENU_INDEX_FOR_TABWND ){
-						case 0:  nId = F_MENU_RBUTTON;
-						default: nId = F_CUSTMENU_BASE + CUSTMENU_INDEX_FOR_TABWND;
+						case 0:  nId = F_MENU_RBUTTON; break;	//break漏れ
+						default: nId = F_CUSTMENU_BASE + CUSTMENU_INDEX_FOR_TABWND; break;	//break漏れ
 						}
 	
 						//対象ウインドウをアクティブにする。
@@ -116,7 +118,7 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 				}
 			}
 		}
-		
+		break;	//break漏れ
 		//return 0L;
 	//^^^ WM_RBUTTONUP
 
@@ -137,96 +139,64 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 					tcitem.lParam = (LPARAM)NULL;
 					if( TabCtrl_GetItem( m_hwndTab, lpnmtdi->hdr.idFrom, &tcitem ) )
 					{
-						/*
-						CRecent	cRecentEditNode;
-						EditNode	*p;
-						cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
-						p = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&(tcitem.lParam) ) );
-						if( p && p->m_szPath[0] )
-						{
-							strcpy( m_szTextAnsi, p->m_szPath );
-						}
-						else
-						{
-							strcpy( m_szTextAnsi, _T("(無題)") );
-						}
-						cRecentEditNode.Terminate();
-						*/
 						FileInfo*	pfi;
 						::SendMessage( (HWND)tcitem.lParam, MYWM_GETFILEINFO, 0, 0 );
 						pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-#ifdef UNICODE	//Unicode対応 Moca
-						if( p && p->m_szPath[0] )
-						{
-							strcpy( m_szTextWide, p->m_szPath );
-						}
-						else if( pfi->m_bIsGrep )
-						{
-							strncpy( m_szTextWide, pfi->m_szGrepKey, sizeof( m_szTextWide ) );
-							m_szTextWide[ sizeof( m_szTextWide ) - 1 ] = '\0';
-						}
-						else if( pfi->m_bIsDebug )
-						{
-							strcpy( m_szTextWide, _T("(アウトプットウインドウ)") );
-						}
-						else
-						{
-							strcpy( m_szTextWide, _T("(無題)") );
-						}
 
-						if( TTN_GETDISPINFOA == lpnmtdi->hdr.code )
-						{
-							LPNMTTDISPINFOA	lpnmtdia = (LPNMTTDISPINFOA)lParam;
-							//memset( m_szTextWide, 0, sizeof( m_szTextWide ) );
-							m_szTextAnsi[ ::WideCharToMultiByte( CP_ACP, 0, m_szTextWide, -1, m_szTextAnsi, sizeof(m_szTextAnsi) - 1, 0, 0 ) ] = NUL;
-							lpnmtdia->hinst    = NULL;
-							lpnmtdia->lpszText = m_szTextAnsi;
-						}
-						else
-						{
-							lpnmtdi->hinst    = NULL;
-							lpnmtdi->lpszText = m_szTextWide;
-						}
-#else
 						if( pfi->m_szPath[0] )
 						{
-							strncpy( m_szTextAnsi, pfi->m_szPath, sizeof( m_szTextAnsi ) );
-							m_szTextAnsi[ sizeof( m_szTextAnsi ) - 1 ] = '\0';
+							_tcsncpy( m_szTextTip1, pfi->m_szPath, sizeof( m_szTextTip1 ) / sizeof( TCHAR ) );
+							m_szTextTip1[ (sizeof( m_szTextTip1 ) / sizeof( TCHAR )) - 1 ] = _T('\0');
 						}
 						else if( pfi->m_bIsGrep )
 						{
-							strncpy( m_szTextAnsi, pfi->m_szGrepKey, sizeof( m_szTextAnsi ) );
-							m_szTextAnsi[ sizeof( m_szTextAnsi ) - 1 ] = '\0';
+							_tcsncpy( m_szTextTip1, pfi->m_szGrepKey, sizeof( m_szTextTip1 ) / sizeof( TCHAR ) );
+							m_szTextTip1[ (sizeof( m_szTextTip1 ) / sizeof( TCHAR )) - 1 ] = _T('\0');
 						}
 						else if( pfi->m_bIsDebug )
 						{
-							strcpy( m_szTextAnsi, _T("(アウトプットウインドウ)") );
+							_tcscpy( m_szTextTip1, _T("(アウトプットウインドウ)") );
 						}
 						else
 						{
-							strcpy( m_szTextAnsi, _T("(無題)") );
+							_tcscpy( m_szTextTip1, _T("(無題)") );
 						}
 
 						if( TTN_GETDISPINFOW == lpnmtdi->hdr.code )
 						{
+#ifdef UNICODE
+							lpnmtdi->lpszText = m_szTextTip1;
+							lpnmtdi->hinst    = NULL;
+#else
+							//UNICODEの文字列が欲しい。
+							int	Size = _tcslen( m_szTextTip1 );
+							m_szTextTip2[ MultiByteToWideChar( CP_ACP, 0, m_szTextTip1, Size, m_szTextTip2, Size ) ] = 0;
 							LPNMTTDISPINFOW	lpnmtdiw = (LPNMTTDISPINFOW)lParam;
-							int	Size = strlen( m_szTextAnsi );
-							//memset( m_szTextWide, 0, sizeof( m_szTextWide ) );
-							m_szTextWide[ MultiByteToWideChar( CP_ACP, 0, m_szTextAnsi, Size, m_szTextWide, Size ) ] = 0;
+							lpnmtdiw->lpszText = m_szTextTip2;
 							lpnmtdiw->hinst    = NULL;
-							lpnmtdiw->lpszText = m_szTextWide;
+#endif	//UNICODE
 						}
 						else
 						{
+#ifdef UNICODE
+							//SJISの文字列が欲しい。
+							int	Size = _tcslen( m_szTextTip1 );
+							m_szTextTip2[ WideCharToMultiByte( CP_ACP, 0, m_szTextTip1, Size, m_szTextTip2, Size, 0, 0 ) ] = 0;
+							LPNMTTDISPINFOA	lpnmtdia = (LPNMTTDISPINFOA)lParam;
+							lpnmtdia->lpszText = m_szTextTip2;
+							lpnmtdia->hinst    = NULL;
+#else
+							lpnmtdi->lpszText = m_szTextTip1;
 							lpnmtdi->hinst    = NULL;
-							lpnmtdi->lpszText = m_szTextAnsi;
-						}
 #endif	//UNICODE
+						}
+
 						return 0L;
 					}
 				}
 			}
 		}
+		break;	//break漏れ
 		//return 0L;
 	//^^^ WM_NOTIFY
 
@@ -318,8 +288,10 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		//スタイルを変更する。
 		UINT lngStyle;
 		lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
-		lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
-		lngStyle |= TCS_TABS | TCS_SINGLELINE;
+		//lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
+		//lngStyle |= TCS_TABS | TCS_SINGLELINE;
+		lngStyle &= ~(TCS_BUTTONS | TCS_SINGLELINE);	//2004.01.31
+		lngStyle |= TCS_TABS | TCS_MULTILINE;
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
 
 		/* 表示用フォント */
@@ -339,7 +311,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		lf.lfClipPrecision	= 0x2;
 		lf.lfQuality		= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		strcpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
+		_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
 		m_hFont = ::CreateFontIndirect( &lf );
 		
 		/* フォント変更 */
@@ -512,27 +484,9 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( -1 == nIndex )
 		{
 			TCITEM	tcitem;
-//X			CRecent	cRecentEditNode;
 			TCHAR	szName[1024];
-//X			TCHAR	szFile[1024];
-//X			TCHAR	szExt[1024];
-//X			EditNode	*p;
-//X
-//Xウインドウ登録時はファイル名は未設定なので余計な処理を省く。
-//X			cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
-//X			p = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&lParam ) );
-//X			if( p && p->m_szPath[0] )
-//X			{
-//X				strcpy( szFile, _T("") );
-//X				strcpy( szExt, _T("") );
-//X				_splitpath( p->m_szPath, NULL, NULL, szFile, szExt );
-//X				wsprintf( szName, _T("%s%s"), szFile, szExt );
-//X			}
-//X			else
-//X			{
-				strcpy( szName, _T("(無題)") );
-//X			}
-//X			cRecentEditNode.Terminate();
+
+			_tcscpy( szName, _T("(無題)") );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName;
@@ -620,24 +574,18 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			TCITEM	tcitem;
 			CRecent	cRecentEditNode;
 			TCHAR	szName[1024];
-			//TCHAR	szFile[1024];
-			//TCHAR	szExt[1024];
 			EditNode	*p;
 
 			cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 			p = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&lParam ) );
 			if( p && p->m_szTabCaption[0] )
 			{
-				//strcpy( szFile, _T("") );
-				//strcpy( szExt, _T("") );
-				//_splitpath( p->m_szTabCaption, NULL, NULL, szFile, szExt );
-				//wsprintf( szName, _T("%s%s"), szFile, szExt );
-				strncpy( szName, p->m_szTabCaption, sizeof( szName ) );
-				szName[ sizeof( szName ) - 1 ] = '\0';
+				_tcsncpy( szName, p->m_szTabCaption, (sizeof( szName ) / sizeof( TCHAR )) );
+				szName[ (sizeof( szName ) / sizeof( TCHAR )) - 1 ] = _T('\0');
 			}
 			else
 			{
-				strcpy( szName, _T("(無題)") );
+				_tcscpy( szName, _T("(無題)") );
 			}
 			cRecentEditNode.Terminate();
 
@@ -672,6 +620,9 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( bFlag ) ::ShowWindow( m_hwndTab, SW_SHOW );
 	}
 
+	//更新
+	::InvalidateRect( m_hwndTab, NULL, TRUE );
+
 	return;
 }
 
@@ -704,8 +655,6 @@ void CTabWnd::Refresh( void )
 	int			nIndex;
 	TCITEM		tcitem;
 	TCHAR		szName[1024];
-	//TCHAR		szFile[1024];
-	//TCHAR		szExt[1024];
 	EditNode	*p;
 	int			nCount;
 
@@ -723,16 +672,12 @@ void CTabWnd::Refresh( void )
 
 		if( p[ i ].m_szTabCaption[0] )
 		{
-			//strcpy( szFile, _T("") );
-			//strcpy( szExt, _T("") );
-			//_splitpath( p[ i ].m_szTabCaption, NULL, NULL, szFile, szExt );
-			//wsprintf( szName, _T("%s%s"), szFile, szExt );
-			strncpy( szName, p[ i ].m_szTabCaption, sizeof( szName ) );
-			szName[ sizeof( szName ) - 1 ] = '\0';
+			_tcsncpy( szName, p[ i ].m_szTabCaption, (sizeof( szName ) / sizeof( TCHAR )) );
+			szName[ (sizeof( szName ) / sizeof( TCHAR )) - 1 ] = _T('\0');
 		}
 		else
 		{
-			strcpy( szName, _T("(無題)") );
+			_tcscpy( szName, _T("(無題)") );
 		}
 
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
@@ -755,43 +700,25 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 {
 	if( NULL == hwnd ) return;
 
-//	WINDOWPLACEMENT	wndpl;
-
-//	wndpl.length = sizeof( wndpl );
-//	if( FALSE == ::GetWindowPlacement( hwnd, &wndpl ) ) return;
-
 	if( bDisp )
 	{
-		//if( wndpl.showCmd == SW_HIDE )
+		if( m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
 		{
-			if( m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
-			{
-				//ウインドウ情報を引き継ぐ。
-				m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-				::SetWindowPlacement( hwnd, &(m_pShareData->m_TabWndWndpl) );
-			}
-
-			TabWnd_ActivateFrameWindow( hwnd );
+			//ウインドウ情報を引き継ぐ。
+			m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+			::SetWindowPlacement( hwnd, &(m_pShareData->m_TabWndWndpl) );
 		}
+
+		TabWnd_ActivateFrameWindow( hwnd );
 	}
 	else
 	{
-		//if( wndpl.showCmd != SW_HIDE )
+		if( m_pShareData->m_Common.m_bDispTabWnd )
 		{
-			//m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-			//::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
-
-			if( m_pShareData->m_Common.m_bDispTabWnd )
+			if( m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
 			{
-				if( m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
-				{
-					::ShowWindow( hwnd, SW_HIDE );
-				}
+				::ShowWindow( hwnd, SW_HIDE );
 			}
-
-			//WINDOWPLACEMENT	wndpl;
-			//wndpl.showCmd = SW_HIDE;
-			//::SetWindowPlacement( hwnd, &wndpl );
 		}
 	}
 
