@@ -58,7 +58,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	bool	bFavorite;
 	FileInfo	*p;
 
-	CShareData::getInstance()->TransformFileName_MakeCash();
+	CShareData::getInstance()->TransformFileName_MakeCache();
 
 	//	‹óƒƒjƒ…[‚ğì‚é
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
