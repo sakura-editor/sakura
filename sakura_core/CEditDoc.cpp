@@ -1456,7 +1456,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 			//Oct. 11, 2000 jepro note： アクティブでない時のタイトル表示
 			wsprintf(
 				pszCap,
-				"%s%s%s - %s UR%d.%d.%d.%d %s%s",
+				"%s%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた	
 				szFname, szExt,
 				m_bIsModified ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
@@ -1473,7 +1473,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 			//Oct. 11, 2000 jepro note： アクティブな時のタイトル表示
 			wsprintf(
 				pszCap,
-				"%s%s - %s UR%d.%d.%d.%d %s%s",
+				"%s%s - %s %d.%d.%d.%d %s%s",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
 				m_bIsModified ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
@@ -1637,10 +1637,10 @@ BOOL CEditDoc::MakeBackUp( void )
 			m_hWnd,
 			MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 			"バックアップ作成の確認",
-			"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと上書き保存になります。\n\n%s\n    ↓\n%s\n\n",
+			"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
 			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
 			szPath
-		);
+		);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
 		if( IDNO == nRet ){
 			return FALSE;
 		}else if( IDCANCEL == nRet ){
