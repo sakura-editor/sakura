@@ -180,7 +180,9 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		/* ツリーコントロールの初期化：C++メソッドツリー */
 		//SetTreeCpp( m_hWnd );
 		//	Jan. 04, 2002 genta Java Method Treeに統合
+
 		SetTreeJava( m_hWnd, TRUE );
+
 		::SetWindowText( m_hWnd, "C++ メソッドツリー" );
 	}else
 	if( OUTLINE_FILE == m_nListType ){	//@@@ 2002.04.01 YAZAKI アウトライン解析にルールファイル導入
@@ -729,37 +731,82 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				//	Apr. 1, 2001 genta
 				//	追加文字列を全角にしたのでメモリもそれだけ必要
 				//	6 == strlen( "クラス" ), 1 == strlen( '\0' )
-				pClassName = new char[ lstrlen( szClassArr[k] ) + 1 + 6 ];
-				strcpy( pClassName, szClassArr[k] );
-				if( bAddClass ){
-					strcat( pClassName, "クラス" );
-				}
-				while( NULL != htiClass ){
+
+				// 2002/10/28 frozen
+				// bAddClass == true の場合の仕様変更
+				// 既存の項目は　「(クラス名)(半角スペース一個)(追加文字列)」
+				// となっているとみなし、szClassArr[k] が 「クラス名」と一致すれば、それを親ノードに設定。
+				// ただし、一致する項目が複数ある場合は最後の項目を親ノードにする。
+				// 一致しない場合は「(クラス名)(半角スペース一個)クラス」のノードを作成する。
+				HTREEITEM htiClass_match = NULL;
+				size_t nClassNameLen = strlen( szClassArr[k] );
+				for( ; NULL != htiClass ; htiClass = TreeView_GetNextSibling( hwndTree, htiClass ))
+				{
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT;
 					tvi.hItem = htiClass;
 					tvi.pszText = szLabel;
 					tvi.cchTextMax = sizeof(szLabel);
-					if( TreeView_GetItem( hwndTree, &tvi ) ){
-						if( 0 == strcmp( pClassName, szLabel ) ){
-							break;
+					if( TreeView_GetItem( hwndTree, &tvi ) )
+					{
+						if( 0 == strncmp( szClassArr[k],szLabel,nClassNameLen) )
+						{
+							if(sizeof(szLabel) < (nClassNameLen +1) )
+								htiClass_match = htiClass; // バッファ不足では無条件にマッチする
+							else
+							{
+								if(bAddClass)
+								{
+									if(szLabel[nClassNameLen]==' ')
+										htiClass_match = htiClass;
+								}
+								else
+								{
+									if(szLabel[nClassNameLen]=='\0')
+										htiClass_match = htiClass;
+								}
+							}
 						}
 					}
-					htiClass = TreeView_GetNextSibling( hwndTree, htiClass );
 				}
+				htiClass = htiClass_match;
+//				pClassName = new char[ lstrlen( szClassArr[k] ) + 1 + 6 ];
+//				strcpy( pClassName, szClassArr[k] );
+//				if( bAddClass ){
+//					strcat( pClassName, "クラス" );
+//				}
+//				while( NULL != htiClass ){
+//					tvi.mask = TVIF_HANDLE | TVIF_TEXT;
+//					tvi.hItem = htiClass;
+//					tvi.pszText = szLabel;
+//					tvi.cchTextMax = sizeof(szLabel);
+//					if( TreeView_GetItem( hwndTree, &tvi ) ){
+//						if( 0 == strcmp( pClassName, szLabel ) ){
+//							break;
+//						}
+//					}
+//					htiClass = TreeView_GetNextSibling( hwndTree, htiClass );
+//				}
 				/* クラス名のアイテムが登録されていないので登録 */
 				if( NULL == htiClass ){
+					// 2002/10/28 frozen 上からここへ移動
+					pClassName = new char[ lstrlen( szClassArr[k] ) + 1 + 7 ]; // 2002/10/28 frozen 半角スペースの分追加して1+7に。
+					strcpy( pClassName, szClassArr[k] );
+					if( bAddClass )
+						strcat( pClassName, " クラス");// 2002/10/28 frozen 半角スペースを追加
+
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = TVI_LAST;
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
 					tvis.item.pszText = pClassName;
 					tvis.item.lParam = -1;
 					htiClass = TreeView_InsertItem( hwndTree, &tvis );
+					//	Jan. 04, 2001 genta
+					//	不要になったらさっさと削除
+					delete [] pClassName; // 2002/10/28 frozen 下からここへ移動
+
 				}else{
 					//none
 				}
-				//	Jan. 04, 2001 genta
-				//	不要になったらさっさと削除
-				delete [] pClassName;
 				htiParent = htiClass;
 				//if( k + 1 >= nClassNest ){
 				//	break;
@@ -770,26 +817,44 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		}else{
 			//	Jan. 04, 2001 genta
 			//	Global空間の場合 (C++のみ)
-			if( htiGlobal == NULL ){
-				TV_INSERTSTRUCT	tvg;
-				
-				::ZeroMemory( &tvg, sizeof(tvg));
-				tvg.hParent = TVI_ROOT;
-				tvg.hInsertAfter = TVI_LAST;
-				tvg.item.mask = TVIF_TEXT | TVIF_PARAM;
-				tvg.item.pszText = "グローバル";
-				tvg.item.lParam = -1;
-				htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
+
+			// 2002/10/27 frozen ここから
+			if( 3 <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= 7 )
+				htiClass = TVI_ROOT;
+			else
+			{
+			// 2002/10/27 frozen ここまで
+				if( htiGlobal == NULL ){
+					TV_INSERTSTRUCT	tvg;
+					
+					::ZeroMemory( &tvg, sizeof(tvg));
+					tvg.hParent = TVI_ROOT;
+					tvg.hInsertAfter = TVI_LAST;
+					tvg.item.mask = TVIF_TEXT | TVIF_PARAM;
+					tvg.item.pszText = "グローバル";
+					tvg.item.lParam = -1;
+					htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
+				}
+				htiClass = htiGlobal;
 			}
-			htiClass = htiGlobal;
 		}
 		
-		pFuncName = new char[ strlen(pWork) + 1 + 6 ];	// 6 == strlen( "(宣言)" );
+		pFuncName = new char[ strlen(pWork) + 1 + 9 ];	// 9 は追加する文字列の最大長 (" 名前空間")
 		strcpy( pFuncName, pWork );
-		/* 関数宣言か (C++のみ) */
-		if( 1 == pcFuncInfo->m_nInfo ){
-			strcat( pFuncName, "(宣言)" );
-		}
+
+		// 2002/10/27 frozen 追加文字列の種類を増やした
+		switch(pcFuncInfo->m_nInfo)
+		{
+		case 1: strcat( pFuncName, "(宣言)" );break;
+		case 3: strcat( pFuncName, " クラス" );break;
+		case 4: strcat( pFuncName, " 構造体" );break;
+		case 5: strcat( pFuncName, " 列挙体" );break;
+		case 6: strcat( pFuncName, " 共用体" );break;
+		case 7: strcat( pFuncName, " 名前空間" );break;
+		};
+//		if( 1 == pcFuncInfo->m_nInfo ){
+//			strcat( pFuncName, "(宣言)" );
+//		}
 		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
 		tvis.hParent = htiClass;
 		tvis.hInsertAfter = TVI_LAST;

@@ -24,7 +24,7 @@ class CFuncInfo;
 //@date 2002.04.01 YAZAKI 深さ導入
 class CFuncInfo {
 	public:
-		CFuncInfo( int, int, char*, int );	/* CFuncInfoクラス構築 */
+		CFuncInfo( int, int, const char*, int );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
 
 //	private:
