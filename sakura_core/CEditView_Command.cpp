@@ -432,7 +432,14 @@ BOOL CEditView::HandleCommand(
 		Command_EXECKEYMACRO();break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
-	case F_EXECCOMMAND:		Command_EXECCOMMAND();break;	/* 外部コマンド実行 */
+	case F_EXECCOMMAND:
+		/* 再帰処理対策 */// 2001/06/23 N.Nakatani 
+		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
+			delete m_pcOpeBlk;
+			m_pcOpeBlk = NULL;
+		}
+		Command_EXECCOMMAND();	/* 外部コマンド実行 */
+		break;
 	//	To Here Sept. 20, 2000
 
 	/* カスタムメニュー */
@@ -4979,6 +4986,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly )
 	case OUTLINE_COBOL:		m_pcEditDoc->MakeTopicList_cobol( &cFuncInfoArr );break;
 	case OUTLINE_ASM:		m_pcEditDoc->MakeTopicList_asm( &cFuncInfoArr );break;
 	case OUTLINE_PERL:		m_pcEditDoc->MakeFuncList_Perl( &cFuncInfoArr );break;	//	Sep. 8, 2000 genta
+	case OUTLINE_VB:		m_pcEditDoc->MakeFuncList_VisualBasic( &cFuncInfoArr );break;	//	June. 23, 2001 N.Nakatani
 	case OUTLINE_TEXT:
 	case OUTLINE_UNKNOWN:
 	default:
@@ -6430,6 +6438,7 @@ void CEditView::Command_GREP( void )
 			m_pcEditDoc->m_cDlgGrep.m_bRegularExp,
 			m_pcEditDoc->m_cDlgGrep.m_bKanjiCode_AutoDetect,
 			m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine,
+			m_pcEditDoc->m_cDlgGrep.m_bWordOnly,
 			m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle
 		);
 	}else{
@@ -7792,7 +7801,16 @@ void CEditView::Command_WIN_OUTPUT( void )
 	if( NULL == m_pShareData->m_hwndDebug
 		|| !CShareData::IsEditWnd( m_pShareData->m_hwndDebug )
 	){
-		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE );
+		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE, true );
+#if 0
+		//	Jun. 25, 2001 genta OpenNewEditorのsync機能を利用するように変更
+		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
+		CRunningTimer wait_timer( NULL );
+		while( NULL == m_pShareData->m_hwndDebug && 5000 > wait_timer.Read() ){
+			Sleep(1);
+		}
+		Sleep(10);
+#endif
 	}else{
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */
