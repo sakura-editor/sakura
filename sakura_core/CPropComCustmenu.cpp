@@ -204,7 +204,9 @@ BOOL CPropCommon::DispatchEvent_p8(
 //						strcpy( szLabel2, "--------------------------------" );
 						strcpy( szLabel2, " ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 					}else{
-						::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
+						//	Oct. 3, 2001 genta
+						m_pcLookup->Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
+			//			::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
 						/* キー */
 						if( '\0' == m_Common.m_nCustMenuItemKeyArr[nIdx1][i] ){
 							strcpy( szLabel2, szLabel );
@@ -251,7 +253,9 @@ BOOL CPropCommon::DispatchEvent_p8(
 				if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "メニューアイテムのアクセスキー設定", "キーを入力してください。", 1, szKey ) ){
 					return TRUE;
 				}
-				::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+				//	Oct. 3, 2001 genta
+				m_pcLookup->Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+				//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 //				if( ( szKey[0] == '\0' ) || ( '0' <= szKey[0] && szKey[0] <= '9' ) || ( 'A' <= szKey[0] && szKey[0] <= 'Z' ) ){
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = szKey[0];
 					wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
@@ -307,6 +311,10 @@ BOOL CPropCommon::DispatchEvent_p8(
 
 				/* 機能一覧に文字列をセット（リストボックス）*/
 //	Oct. 14, 2000 jepro note: ここのforブロックで実際にリストを書いているようである
+				// Oct. 3, 2001 genta
+				// 専用ルーチンに置き換え
+				m_pcLookup->SetListItem( hwndLIST_FUNC, nIdx3 );
+#if 0
 				::SendMessage( hwndLIST_FUNC, LB_RESETCONTENT, 0, 0 );
 				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIdx3]; ++i ){
 					if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[nIdx3])[i], szLabel, 255 ) ){
@@ -315,7 +323,7 @@ BOOL CPropCommon::DispatchEvent_p8(
 						::SendMessage( hwndLIST_FUNC, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
 					}
 				}
-
+#endif
 				i = 0;
 //				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 //					i |= _SHIFT;
@@ -441,7 +449,9 @@ BOOL CPropCommon::DispatchEvent_p8(
 						m_Common.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_nCustMenuItemFuncArr[nIdx1][i - 1];
 						m_Common.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = nsFuncCode::ppnFuncListArr[nIdx3][nIdx4];
+					//	Oct. 3, 2001 genta
+					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 );
+//					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = nsFuncCode::ppnFuncListArr[nIdx3][nIdx4];
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
 
@@ -483,13 +493,18 @@ BOOL CPropCommon::DispatchEvent_p8(
 					if( LB_ERR == nIdx4 ){
 						break;
 					}
-					if( 0 == nsFuncCode::ppnFuncListArr[nIdx3][nIdx4] ){
+					//	Oct. 3, 2001 genta
+					if( m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 ) == 0 )
 						break;
-					}
+//					if( 0 == nsFuncCode::ppnFuncListArr[nIdx3][nIdx4] ){
+//						break;
+//					}
 
 					::SendMessage( hwndLIST_FUNC, LB_GETTEXT, nIdx4, (LPARAM)szLabel );
 
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = nsFuncCode::ppnFuncListArr[nIdx3][nIdx4];
+					//	Oct. 3, 2001 genta
+					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 );
+//					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = nsFuncCode::ppnFuncListArr[nIdx3][nIdx4];
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nNum2] = '\0';
 					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
 
@@ -602,7 +617,10 @@ BOOL CPropCommon::DispatchEvent_p8(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
 		}
-		if( LB_ERR != nIdx3 && LB_ERR != nIdx4 && 0 == nsFuncCode::ppnFuncListArr[nIdx3][nIdx4] ){
+		if( LB_ERR != nIdx3 && LB_ERR != nIdx4 &&
+		 	//0 == nsFuncCode::ppnFuncListArr[nIdx3][nIdx4]
+		 	m_pcLookup->Pos2FuncCode( nIdx3, nIdx4 ) == 0
+		){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
 		}
@@ -661,9 +679,12 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
+	m_pcLookup->SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
+#if 0
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
 	}
+#endif
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 //	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)1, (LPARAM)0 );
 	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
@@ -696,7 +717,9 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 //			strcpy( szLabel, "--------------------------------" );
 			strcpy( szLabel, " ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 		}else{
-			::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			//	Oct. 3, 2001 genta
+			m_pcLookup->Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
 		}
 		/* キー */
 		if( '\0' == m_Common.m_nCustMenuItemKeyArr[nIdx][i] ){

@@ -277,8 +277,8 @@
 //	To Here Sept. 20, 2000
 
 //	Jul. 4, 2000 genta
-#define F_USERMACRO_0		31200	/* 登録マクロ開始 */
-#define SIZE_CUSTMACRO		100		/* 登録できるマクロの数 */
+#define F_USERMACRO_0		31600	/* 登録マクロ開始 */
+#define MAX_CUSTMACRO		20		/* 登録できるマクロの数 */
 
 
 /* カスタムメニュー */

@@ -35,6 +35,8 @@ class CPropCommon;
 #include "CKeyWordSetMgr.h"
 #include "CImageListMgr.h"
 #include "sakura_rc.h"
+#include "CSMacroMgr.h"
+#include "CFuncLookup.h"
 
 #define ID_PAGENUM_ZENPAN	0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
 #define ID_PAGENUM_WIN		1	//Oct. 25, 2000 JEPRO  5→ 1 に変更
@@ -69,7 +71,8 @@ public:
 	*/
 	CPropCommon();
 	~CPropCommon();
-	void Create( HINSTANCE, HWND, CImageListMgr* );	/* 初期化 */
+	//	Sep. 29, 2001 genta マクロクラスを渡すように;
+	void Create( HINSTANCE, HWND, CImageListMgr*, CFuncLookup* );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations
@@ -90,6 +93,9 @@ public:
 
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
+	
+	//	Oct. 2, 2001 genta 外部マクロ追加に伴う，対応部分の別クラス化
+	CFuncLookup*		m_pcLookup;
 
 	/*
 	|| ダイアログデータ
@@ -101,6 +107,7 @@ public:
 
 	CKeyWordSetMgr	m_CKeyWordSetMgr;
 	Types			m_Types[MAX_TYPES];
+	
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -253,7 +260,15 @@ protected:
 	BOOL DispatchEvent_PROP_Macro( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_Macro( HWND );//!<ダイアログデータの設定 Macro
 	int GetData_PROP_Macro( HWND );//!<ダイアログデータの取得 Macro
+	void InitDialog_PROP_Macro( HWND hwndDlg );//!< Macroページの初期化
 	//	To Here Jun. 2, 2001 genta
+	void SetMacro2List_Macro( HWND hwndDlg );//!< Macroデータの設定
+	void SelectBaseDir_Macro( HWND hwndDlg );//!< Macroディレクトリの選択
+	void OnFileDropdown_Macro( HWND hwndDlg );//!< ファイルドロップダウンが開かれるとき
+	void CheckListPosition_Macro( HWND hwndDlg );//!< リストビューのFocus位置確認
+	static int CALLBACK DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData );
+	
+	int nLastPos_Macro; //!< 前回フォーカスのあった場所
 
 	void p7_Edit_List_KeyWord( HWND, HWND );	/* p7:リスト中で選択されているキーワードを編集する */
 	void p7_Delete_List_KeyWord( HWND , HWND );	/* p7:リスト中で選択されているキーワードを削除する */

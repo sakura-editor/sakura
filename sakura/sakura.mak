@@ -9,7 +9,7 @@
 
 ## CPP Options
 CPPFLAGS=-w3 -I..\sakura_core  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x300 -M
-RFLAGS=-dDS_SETFOREGROUND=0x200L -I\Borland\include
+RFLAGS=-dDS_SETFOREGROUND=0x200L -I\Borland\bcc55\include
 
 ## Optimizing Options	// DEBUG,TRACE,RELEASE
 !ifdef DEBUG
@@ -68,6 +68,7 @@ OBJS =\
 	$(SRCDIR)\CFuncInfo.obj \
 	$(SRCDIR)\CFuncInfoArr.obj \
 	$(SRCDIR)\CFuncKeyWnd.obj \
+	$(SRCDIR)\CFuncLookup.obj \
 	$(SRCDIR)\CHokanMgr.obj \
 	$(SRCDIR)\CHtmlHelp.obj \
 	$(SRCDIR)\CImageListMgr.obj \
@@ -106,6 +107,7 @@ OBJS =\
 	$(SRCDIR)\CShareData_new.obj \
 	$(SRCDIR)\CShareData.obj \
 	$(SRCDIR)\CShareData_new2.obj \
+	$(SRCDIR)\CSMacroMgr.obj \
 	$(SRCDIR)\CSplitBoxWnd.obj \
 	$(SRCDIR)\CSplitterWnd.obj \
 	$(SRCDIR)\CTipWnd.obj \

@@ -201,7 +201,8 @@ BOOL CPropCommon::DispatchEvent_p5(
 				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				nIndex3 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
-				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
+				nFuncCode = m_pcLookup->Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
+//				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 					i |= _SHIFT;
@@ -286,7 +287,9 @@ BOOL CPropCommon::DispatchEvent_p5(
 					i |= _ALT;
 				}
 				nFuncCode = m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
-				if( 0 < ::LoadString( m_hInstance, nFuncCode, pszLabel, 255 )  ){
+				// Oct. 2, 2001 genta
+				if( m_pcLookup->Funccode2Name( nFuncCode, pszLabel, 255 )){
+//				if( 0 < ::LoadString( m_hInstance, nFuncCode, pszLabel, 255 )  ){	//}
 					::SetWindowText( hwndEDIT_KEYSFUNC, pszLabel );
 				}else{
 					::SetWindowText( hwndEDIT_KEYSFUNC, "--不明--" );
@@ -300,7 +303,8 @@ BOOL CPropCommon::DispatchEvent_p5(
 				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				nIndex3 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
-				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
+				nFuncCode = m_pcLookup->Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
+//				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum =  CKeyBind::GetKeyStrList( m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr, &ppcAssignedKeyList, nFuncCode );	/* 機能に対応するキー名の取得(複数) */
 				/* 割り当てキーリストをクリアして値の設定 */
@@ -320,9 +324,11 @@ BOOL CPropCommon::DispatchEvent_p5(
 		if( hwndCombo == hwndCtl){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
+//				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				/* 機能一覧に文字列をセット（リストボックス）*/
+				m_pcLookup->SetListItem( hwndFuncList, nIndex2 );	//	Oct. 2, 2001 genta
+#if 0
 				::SendMessage( hwndFuncList, LB_RESETCONTENT, 0, 0 );
 				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIndex2]; ++i ){
 					if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[nIndex2])[i], pszLabel, 255 ) ){
@@ -331,7 +337,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
 					}
 				}
-
+#endif
 //	From Here Sept. 7, 2000 JEPRO わかりにくいので選択しないように変更
 //				::SendMessage( hwndFuncList, LB_SETCURSEL, (WPARAM)0, 0 );
 //	To Here Sept. 7, 2000
@@ -370,9 +376,12 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 	/* 機能種別一覧に文字列をセット（コンボボックス）*/
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
+	m_pcLookup->SetCategory2Combo( hwndCombo );	//	Oct. 2, 2001 genta
+#if 0
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
 	}
+#endif
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 	/* キー一覧に文字列をセット（リストボックス）*/

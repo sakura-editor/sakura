@@ -130,6 +130,19 @@ BOOL CEditView::HandleCommand(
 		bRepeat = FALSE;
 	}
 
+	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
+	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
+		m_bExecutingKeyMacro = TRUE;
+		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( m_hInstance, this, nCommand - F_USERMACRO_0 )){
+			::MYMESSAGEBOX( m_hwndParent,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"マクロ %d (%s) の実行に失敗しました。", nCommand - F_USERMACRO_0,
+				m_pcEditDoc->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+			);
+		}
+		m_bExecutingKeyMacro = FALSE;
+		return TRUE;
+	}
+	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
 
 	if( m_bHokan ){
 		if( nCommand != F_HOKAN
@@ -180,7 +193,8 @@ BOOL CEditView::HandleCommand(
 
 	/* ファイル操作系 */
 	case F_FILENEW:		Command_FILENEW();break;			/* 新規作成 */
-	case F_FILEOPEN:	Command_FILEOPEN();break;			/* ファイルを開く */
+	//	Oct. 2, 2001 genta マクロ用機能拡張
+	case F_FILEOPEN:	Command_FILEOPEN((const char*)lparam1);break;			/* ファイルを開く */
 	case F_FILESAVE:	bRet = Command_FILESAVE();break;	/* 上書き保存 */
 	case F_FILESAVEAS:	bRet = Command_FILESAVEAS();break;	/* 名前を付けて保存 */
 	case F_FILECLOSE:										//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -3869,22 +3883,26 @@ void CEditView::Command_FILENEW( void )
 
 
 /* ファイルを開く */
-void CEditView::Command_FILEOPEN( void )
+void CEditView::Command_FILEOPEN( const char *filename )
 {
-	char*		pszPath = new char[_MAX_PATH];
+	char		pszPath[_MAX_PATH];
 	BOOL		bOpened;
 	int			nCharCode;
 	BOOL		bReadOnly;
 	FileInfo*	pfi;
 	HWND		hWndOwner;
 
-	strcpy( pszPath, "" );
-
 	/* 「ファイルを開く」ダイアログ */
 	nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 	bReadOnly = FALSE;
-	if( !m_pcEditDoc->OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
-		return;
+	if( filename == NULL ){
+		pszPath[0] = '\0';
+		if( !m_pcEditDoc->OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+			return;
+		}
+	}
+	else {
+		strncpy( pszPath, filename, _MAX_PATH - 1 );
 	}
 	/* 指定ファイルが開かれているか調べる */
 	if( m_cShareData.IsPathOpened( pszPath, &hWndOwner ) ){
@@ -3962,7 +3980,7 @@ void CEditView::Command_FILEOPEN( void )
 			CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
 		}
 	}
-	delete [] pszPath;
+	//delete [] pszPath;
 	return;
 }
 
@@ -5148,17 +5166,30 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ), GWL_USERDATA );
 	pCEditWnd->m_CMenuDrawer.ResetContents();
 
+	//	Oct. 3, 2001 genta
+	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
+
 	hMenu = ::CreatePopupMenu();
 //Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更したことで1番(カーソル移動系)が前にシフトされた(この変更によって i=1→i=0 と変更)
-	for( i = 0; i < nsFuncCode::nFuncKindNum; i++ ){
+	//	Oct. 3, 2001 genta
+	for( i = 0; i < FuncLookup.GetCategoryCount(); i++ ){
 		hMenuPopUp = ::CreatePopupMenu();
-		for( j = 0; j < nsFuncCode::pnFuncListNumArr[i]; j++ ){
-			::LoadString( m_hInstance, nsFuncCode::ppnFuncListArr[i][j], szLabel, 256 );
-			uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
-//			uFlags = MF_BYPOSITION | MF_STRING | MF_DISABLED | MF_GRAYED;
-			pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, nsFuncCode::ppnFuncListArr[i][j] , szLabel );
+		for( j = 0; j < FuncLookup.GetItemCount(i); j++ ){
+			//	Oct. 3, 2001 genta
+			int code = FuncLookup.Pos2FuncCode( i, j );
+			if( code != 0 ){
+				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
+				//::LoadString( m_hInstance, nsFuncCode::ppnFuncListArr[i][j], szLabel, 256 );
+				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
+		//			uFlags = MF_BYPOSITION | MF_STRING | MF_DISABLED | MF_GRAYED;
+		//			pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, nsFuncCode::ppnFuncListArr[i][j] , szLabel );
+				//	Oct. 3, 2001 genta
+				pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, code, szLabel );
+			}
 		}
-		pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
+		//	Oct. 3, 2001 genta
+		pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , FuncLookup.Category2Name(i) );
+//		pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
 	nId = ::TrackPopupMenu(
@@ -7873,6 +7904,9 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 	CEditWnd*	pCEditWnd;
 	pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ), GWL_USERDATA );
 	pCEditWnd->m_CMenuDrawer.ResetContents();
+	
+	//	Oct. 3, 2001 genta
+	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
 
 	if( nMenuIdx < 0 || MAX_CUSTOM_MENU <= nMenuIdx ){
 		return 0;
@@ -7885,7 +7919,9 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 		if( 0 == m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
 		}else{
-			::LoadString( m_hInstance, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			//	Oct. 3, 2001 genta
+			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+//			::LoadString( m_hInstance, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* キー */
 			if( '\0' == m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				strcpy( szLabel2, szLabel );

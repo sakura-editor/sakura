@@ -250,6 +250,10 @@ SOURCE=.\CFuncKeyWnd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CFuncLookup.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CHokanMgr.cpp
 # End Source File
 # Begin Source File
@@ -399,6 +403,10 @@ SOURCE=.\CShareData_new.cpp
 # Begin Source File
 
 SOURCE=.\CShareData_new2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CSMacroMgr.cpp
 # End Source File
 # Begin Source File
 
@@ -575,6 +583,10 @@ SOURCE=.\CFuncKeyWnd.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CFuncLookup.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\charcode.h
 # End Source File
 # Begin Source File
@@ -660,6 +672,10 @@ SOURCE=.\CRunningTimer.h
 # Begin Source File
 
 SOURCE=.\CShareData.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CSMacroMgr.h
 # End Source File
 # Begin Source File
 
