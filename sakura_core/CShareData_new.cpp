@@ -1089,15 +1089,22 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 	//	To Here  Sep. 14, 2001 genta
 
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-	/* **** その他のダイアログ **** */
-	/* 外部コマンド実行の「標準出力を得る」 */
-	cProfile.IOProfileData( bRead, pszSecName, "bGetStdout"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_bGetStdout, 0 );
-	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
-	cProfile.IOProfileData( bRead, pszSecName, "bLineNumIsCRLF"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_bLineNumIsCRLF, 0 );
+	{
+		pszSecName = "Other";	//セクションを1個作成した。2003.05.12 MIK
+		/* **** その他のダイアログ **** */
+		/* 外部コマンド実行の「標準出力を得る」 */
+		cProfile.IOProfileData( bRead, pszSecName, "bGetStdout"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_bGetStdout, 0 );
+		/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+		cProfile.IOProfileData( bRead, pszSecName, "bLineNumIsCRLF"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_bLineNumIsCRLF, 0 );
 
-	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
-	cProfile.IOProfileData( bRead, pszSecName, "nDiffFlgOpt"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_nDiffFlgOpt, 0 );
+		/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
+		cProfile.IOProfileData( bRead, pszSecName, "nDiffFlgOpt"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_nDiffFlgOpt, 0 );
 	
+		/* CTAGS */	//@@@ 2003.05.12 MIK
+		cProfile.IOProfileData( bRead, pszSecName, "nTagsOpt"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_nTagsOpt, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "szTagsCmdLine"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_szTagsCmdLine, sizeof( m_pShareData->m_szTagsCmdLine ) );
+	}
+
 	if( !bRead ){
 		cProfile.WriteProfile( szIniFileName, " sakura.ini テキストエディタ設定ファイル" );
 	}
