@@ -131,7 +131,7 @@ bool CNormalProcess::Initialize()
 				gi.bGrepSubFolder,
 				gi.bGrepNoIgnoreCase,
 				gi.bGrepRegularExp,
-				gi.bGrepKanjiCode_AutoDetect,
+				gi.nGrepCharSet,	//	2002/09/21 Moca
 				gi.bGrepOutputLine,
 				gi.bGrepWordOnly,	//	Jun. 26, 2001 genta
 				gi.nGrepOutputStyle
@@ -144,7 +144,7 @@ bool CNormalProcess::Initialize()
 			m_pShareData->m_Common.m_bGrepSubFolder = gi.bGrepSubFolder;
 			m_pShareData->m_Common.m_bLoHiCase = gi.bGrepNoIgnoreCase;
 			m_pShareData->m_Common.m_bRegularExp = gi.bGrepRegularExp;
-			m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect = gi.bGrepKanjiCode_AutoDetect;
+			m_pShareData->m_Common.m_nGrepCharSet = gi.nGrepCharSet;
 			m_pShareData->m_Common.m_bGrepOutputLine = gi.bGrepOutputLine;
 			m_pShareData->m_Common.m_bWordOnly = gi.bGrepWordOnly;
 			m_pShareData->m_Common.m_nGrepOutputStyle = gi.nGrepOutputStyle;

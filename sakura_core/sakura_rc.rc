@@ -432,12 +432,12 @@ BEGIN
                     HIDC_CHK_REGULAREXP
     LTEXT           "",IDC_STATIC_JRE32VER,18,105,159,8,0,0,
                     HIDC_STATIC_JRE32VER
-    CONTROL         "文字コードセット自動判別(&A)",
-                    IDC_CHK_KANJICODEAUTODETECT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,116,99,10,0,HIDC_CHK_KANJICODEAUTODETECT
+    LTEXT           "文字コードセット(&A)",IDC_STATIC,16,116,60,8
+    COMBOBOX        IDC_COMBO_CHARSET,76,114,65,101,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     CONTROL         "フォルダの初期値をカレントフォルダにする(&D)",
                     IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,127,164,10,0,HIDC_CHK_DEFAULTFOLDER
+                    WS_TABSTOP,5,128,164,10,0,HIDC_CHK_DEFAULTFOLDER
     CONTROL         "該当行(&L)",IDC_RADIO_OUTPUTLINE,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,73,45,10,
                     0,HIDC_RADIO_OUTPUTLINE

@@ -303,7 +303,7 @@
 #define IDC_RADIO_LINENUM_LAYOUT        1214
 #define IDC_RADIO_LINENUM_CRLF          1215
 #define IDC_STATIC_HAIKEI               1216
-#define IDC_CHK_KANJICODEAUTODETECT     1217
+#define IDC_COMBO_CHARSET               1217
 #define IDC_RADIO_LINETERMTYPE2         1218
 #define IDC_EDIT_LINETERMCHAR           1220
 #define IDC_RADIO_LINETERMTYPE0         1221
@@ -579,7 +579,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        224
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1439
+#define _APS_NEXT_CONTROL_VALUE         1433
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -42,11 +42,12 @@ public:
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
 	int			m_bLoHiCase;	/*!< 英大文字と小文字を区別する */
 	int			m_bRegularExp;	/*!< 正規表現 */
-	BOOL		m_bKanjiCode_AutoDetect;	/*!< 文字コード自動判別 */
 	BOOL		m_bGrepOutputLine;	/*!< 行を出力するか該当部分だけ出力するか */
 
 	//2001/06/23 N.Nakatani add
 	BOOL		m_bWordOnly;	/*!< 単語単位で検索 */
+	// 2002/09/22 Moca Add
+	int			m_nGrepCharSet;		/*!< 文字コードセット */
 
 	int			m_nGrepOutputStyle;				/*!< Grep: 出力形式 */
 	char		m_szText[_MAX_PATH + 1];	/*!< 検索文字列 */
@@ -63,6 +64,7 @@ protected:
 
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
+
 };
 
 

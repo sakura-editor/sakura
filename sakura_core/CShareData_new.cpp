@@ -250,6 +250,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepOutputLine"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepOutputLine, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nGrepOutputStyle"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nGrepOutputStyle, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepDefaultFolder"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepDefaultFolder, 0 );
+		// 2002/09/21 Moca 追加
+		cProfile.IOProfileData( bRead, pszSecName, "nGrepCharSet"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nGrepCharSet, 0 );
 
 		cProfile.IOProfileData( bRead, pszSecName, "bGTJW_RETURN"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGTJW_RETURN, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGTJW_LDBLCLK"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGTJW_LDBLCLK, 0 );
@@ -352,7 +354,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除：３行
 		cProfile.IOProfileData( bRead, pszSecName, "bUseHokan"					, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseHokan, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "bGrepKanjiCode_AutoDetect"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect, 0 );
+		// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
 		// 2001/06/19 asa-o タイプ別に移動したので削除：1行
 		cProfile.IOProfileData( bRead, pszSecName, "bSaveWindowSize"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bSaveWindowSize, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeType"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nWinSizeType, 0 );
