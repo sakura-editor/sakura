@@ -143,9 +143,12 @@ struct ARRHEAD {
 
 	Version 54:
 	マウスサイドボタン対応 2004/10/10 novice
+
+	Version 55:
+	マウス中ボタン対応 2004/10/11 novice
 */
 
-const unsigned int uShareDataVersion = 54;
+const unsigned int uShareDataVersion = 55;
 
 /*
 ||	Singleton風
@@ -339,6 +342,8 @@ bool CShareData::Init( void )
 			{ 0, "ダブルクリック",F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD },
 		//Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
 			{ 0, "右クリック",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, 0, 0, 0, 0 },
+		// novice 2004/10/11 マウス中ボタン対応
+			{ 0, "中クリック", 0, 0, 0, 0, 0, 0, 0, 0 },
 		// novice 2004/10/10 マウスサイドボタン対応
 			{ 0, "左サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
 			{ 0, "右サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },

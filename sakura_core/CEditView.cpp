@@ -909,7 +909,12 @@ LRESULT CEditView::DispatchEvent(
 		OnLBUTTONDBLCLK( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
-//	case WM_MBUTTONDOWN:
+// novice 2004/10/11 マウス中ボタン対応
+	case WM_MBUTTONDOWN:
+		OnMBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+
+		return 0L;
+
 	case WM_LBUTTONDOWN:
 //	case WM_RBUTTONDOWN:
 		::SetFocus( ::GetParent( m_hwndParent ) );
@@ -3629,15 +3634,16 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 }
 
 
-// novice 2004/10/10 マウスサイドボタン対応
+// novice 2004/10/11 マウス中ボタン対応
 /*!
-	マウス左サイドボタンを押したときの処理
+	マウス中ボタンを押したときの処理
 
 	@param fwkeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+	@date 2004.10.11 novice 新規作成
 */
-void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
 	int		nIdx;
 	int		nFuncID;
@@ -3646,6 +3652,32 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	nIdx = getCtrlKeyState();
 	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
 	nFuncID = m_pShareData->m_pKeyNameArr[2].m_nFuncCodeArr[nIdx];
+	if( nFuncID != 0 ){
+		/* コマンドコードによる処理振り分け */
+		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
+	}
+}
+
+
+// novice 2004/10/10 マウスサイドボタン対応
+/*!
+	マウス左サイドボタンを押したときの処理
+
+	@param fwkeys [in] first message parameter
+	@param xPos [in] マウスカーソルX座標
+	@param yPos [in] マウスカーソルY座標
+	@date 2004.10.10 novice 新規作成
+	@date 2004.10.11 novice マウス中ボタン対応のため変更
+*/
+void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+{
+	int		nIdx;
+	int		nFuncID;
+
+	/* Shift,Ctrl,Altキーが押されていたか */
+	nIdx = getCtrlKeyState();
+	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
+	nFuncID = m_pShareData->m_pKeyNameArr[3].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
@@ -3661,6 +3693,8 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	@param fwkeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+	@date 2004.10.10 novice 新規作成
+	@date 2004.10.11 novice マウス中ボタン対応のため変更
 */
 void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
@@ -3669,8 +3703,8 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス右サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[3].m_nFuncCodeArr[nIdx];
+	/* マウス右サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
+	nFuncID = m_pShareData->m_pKeyNameArr[4].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
