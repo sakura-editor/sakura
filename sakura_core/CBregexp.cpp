@@ -47,6 +47,10 @@ CBregexp::CBregexp() : m_sRep( NULL )
 
 CBregexp::~CBregexp()
 {
+	//<< 2002/03/27 Azumaiya
+	// 一応、クラスの終了時にコンパイルバッファを解放。
+	DeinitDll();
+	//>> 2002/03/27 Azumaiya
 }
 
 //	Jul. 5, 2001 genta 引数追加。ただし、ここでは使わない。
@@ -253,5 +257,124 @@ bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *ta
 	ReleaseCompileBuffer();
 	return false;
 }
+
+//<< 2002/03/27 Azumaiya
+/*!
+	JRE32のエミュレーション関数．空の文字列に対して置換を行うことにより
+	BREGEXP構造体の生成のみを行う．
+
+	@param szPattern0 [in] 置換パターン
+	@param szPattern1 [in] 置換後文字列パターン
+	@param bOption [in]
+		0x01：大文字小文字の区別をする。
+
+	@retval true 成功
+	@retval false 失敗
+*/
+bool CBregexp::CompileReplace( const char* szPattern0, const char* szPattern1, int bOption )
+{
+	static char tmp[2] = "\0";	//	検索対象となる空文字列
+
+	if( !IsAvailable() ){
+		return false;
+	}
+
+	ReleaseCompileBuffer();
+
+	// \xFF をセパレータに採用。
+	int nPattern0 = strlen( szPattern0 );
+	int nPattern1 = strlen( szPattern1 );
+	char *szNPattern = new char[ nPattern0 + nPattern1 + 15 ];	//	15：「s///option」が余裕ではいるように。
+	char *pEnd = szNPattern;
+	pEnd++[0] = 's';
+	pEnd++[0] = '\xFF';
+
+	// strcpy を使ってもよいと思いますが、速度的にこちらの方が勝っていると思いますので・・・。
+	pEnd = (char *)memcpy(pEnd, szPattern0, nPattern0) + nPattern0;
+
+	pEnd++[0] = '\xFF';
+
+	pEnd = (char *)memcpy(pEnd, szPattern1, nPattern1) + nPattern1;
+
+	pEnd++[0] = '\xFF';
+	pEnd++[0] = 'k';
+	pEnd++[0] = 'm';
+	if( !(bOption & 0x01) )		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+	{
+		pEnd++[0] = 'i';		// 同上
+	}
+	pEnd[0] = '\0';
+	// 上記のようにも書けるけど、見難いと思うので、わかりやすい書き方をします。
+	// どちらかを使ってください。
+	// ただ、上記の方が速いと思いますが・・・。
+/*	char *szNPattern = new char[ lstrlen( szPattern0 ) + lstrlen( szPattern1 ) + 15 ];	//	15：「s///option」が余裕ではいるように。
+	int nPattern = sprintf(szNPattern, "s\xFF%s\xFF%s\xFFkm", szPattern0, szPattern1);
+	if( !(bOption & 0x01) )		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+	{
+		szNPattern[nPattern++] = 'i';		// 同上
+		szNPattern[nPattern] = '\0';
+	}*/
+
+	BSubst( szNPattern, tmp, tmp + 1, &m_sRep, m_szMsg );
+	delete [] szNPattern;
+
+	//	メッセージが空文字列でなければ何らかのエラー発生。
+	//	サンプルソース参照
+	if( m_szMsg[0] ){
+		ReleaseCompileBuffer();
+		return false;
+	}
+
+	return true;
+}
+
+/*!
+	正規表現による文字列置換
+	既にあるコンパイル構造体を利用して置換（1行）を
+	行う．
+
+	@param szTarget [in] 置換対象データ
+	@param nLen [in] 置換対象データ長
+	@param pszOut [out] 置換後文字列
+	@param pnOutLen [out] 置換後文字列の長さ
+
+	@retval true 成功
+	@retval false 失敗
+*/
+bool CBregexp::GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOutLen)
+{
+	if( !IsAvailable() || m_sRep == NULL )
+	{
+		return false;
+	}
+
+	BSubst( NULL, szTarget, szTarget + nLen, &m_sRep, m_szMsg );
+
+	//	メッセージが空文字列でなければ何らかのエラー発生。
+	//	サンプルソース参照
+	if( m_szMsg[0] )
+	{
+		ReleaseCompileBuffer();
+		return false;
+	}
+
+	if( m_sRep->outp != NULL && m_sRep->outp[0] != '\0' )
+	{
+		int i = strlen(m_sRep->outp);
+		*pszOut = new char[i+1];
+		memcpy( *pszOut, m_sRep->outp, i );
+		(*pszOut)[i] = '\0';
+		*pnOutLen = i;
+	}
+	else
+	{
+		*pszOut = new char[1];
+		(*pszOut)[0] = '\0';
+		*pnOutLen = 0;
+	}
+
+	return true;
+}
+//>> 2002/03/27 Azumaiya
 
 /*[EOF]*/

@@ -787,14 +787,43 @@ BOOL CPropTypes::DispatchEvent_p1(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_CHECK_INDENT:	/* オートインデント */
-//				MYTRACE( "IDC_CHECK_INDENT\n" );
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
-					/* 日本語空白もインデント */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), TRUE );
-				}else{
-					/* 日本語空白もインデント */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
+			/*	2002.04.01 YAZAKI オートインデントを削除（もともと不要）
+				アウトライン解析にルールファイル関連を追加
+			*/
+			case IDC_RADIO_OUTLINEDEFAULT:	/* アウトライン解析→標準ルール */
+				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), TRUE );
+				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
+				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
+
+				::SendMessage( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), CB_SETCURSEL, 0, 0 );
+
+				return TRUE;
+			case IDC_RADIO_OUTLINERULEFILE:	/* アウトライン解析→ルールファイル */
+				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
+				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
+				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
+				return TRUE;
+
+			case IDC_BUTTON_RULEFILE_REF:	/* アウトライン解析→ルールファイルの「参照...」ボタン */
+				{
+					CDlgOpenFile	cDlgOpenFile;
+					char*			pszMRU = NULL;;
+					char*			pszOPENFOLDER = NULL;;
+					char			szPath[_MAX_PATH + 1];
+					strcpy( szPath, m_Types.m_szOutlineRuleFilename );
+					/* ファイルオープンダイアログの初期化 */
+					cDlgOpenFile.Create(
+						m_hInstance,
+						hwndDlg,
+						"*.*",
+						m_Types.m_szOutlineRuleFilename,
+						(const char **)&pszMRU,
+						(const char **)&pszOPENFOLDER
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						strcpy( m_Types.m_szOutlineRuleFilename, szPath );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
+					}
 				}
 				return TRUE;
 			}
@@ -990,7 +1019,10 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	::SetDlgItemText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars );
 
 
-	/* アウトライン解析方法 */
+	/* アウトライン解析方法
+	
+		2002.04.01 YAZAKI ルールファイル関連追加
+	*/
 	HWND	hwndCombo;
 	int		nSelPos;
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
@@ -1002,7 +1034,25 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 			nSelPos = i;
 		}
 	}
-	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+	if( m_Types.m_nDefaultOutline == OUTLINE_FILE ){
+		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, FALSE );
+		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, TRUE );
+
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
+
+		::SetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
+	}else{
+		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
+		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
+
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
+
+		::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+	}
 
 
 	/* スマートインデント種別 */
@@ -1124,12 +1174,22 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );
 // From Here 2001.12.03 hor
 
-	/* アウトライン解析方法 */
+	/* アウトライン解析方法
+	
+		2002.04.01 YAZAKI ルールファイル関連追加
+	*/
 	HWND	hwndCombo;
 	int		nSelPos;
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
-	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
-	m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+	
+	if ( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
+		m_Types.m_nDefaultOutline = OUTLINE_FILE;
+		::GetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, sizeof( m_Types.m_szOutlineRuleFilename ) - 1 );
+	}
+	else {
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
+		nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+	}
 
 	/* スマートインデント種別 */
 //	HWND	hwndCombo;
@@ -1168,11 +1228,7 @@ BOOL CPropTypes::DispatchEvent_p2(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-//	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-//	NM_UPDOWN*	pMNUD;
-//	int			idCtrl;
-//	int			nVal;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -1308,27 +1364,19 @@ BOOL CPropTypes::DispatchEvent_p2(
 //		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 //		pMNUD  = (NM_UPDOWN*)lParam;
-//		switch( idCtrl ){
-//		case ???????:
-//			return 0L;
-//		default:
-			switch( pNMHDR->code ){
-			case PSN_HELP:	//Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
-				OnHelp( hwndDlg, IDD_PROPTYPESP2 );
-				return TRUE;
-			case PSN_KILLACTIVE:
-//				MYTRACE( "p10 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p2 */
-				GetData_p2( hwndDlg );
-				return TRUE;
+		switch( pNMHDR->code ){
+		case PSN_HELP:	//Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
+			OnHelp( hwndDlg, IDD_PROPTYPESP2 );
+			return TRUE;
+		case PSN_KILLACTIVE:
+			/* ダイアログデータの取得 p2 */
+			GetData_p2( hwndDlg );
+			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-			case PSN_SETACTIVE:
-				m_nPageNum = 2;
-				return TRUE;
-			}
-//			break;
-//		}
-
+		case PSN_SETACTIVE:
+			m_nPageNum = 2;
+			return TRUE;
+		}
 		break;
 
 //From Here Jul. 05, 2001 JEPRO: Popup Help
@@ -1414,482 +1462,6 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 }
 
 // 2001/06/13 End
-
-
-
-//	/* p3 メッセージ処理 */
-//	BOOL CPropTypes::DispatchEvent_p3(
-//		HWND	hwndDlg,	// handle to dialog box
-//		UINT	uMsg,		// message
-//		WPARAM	wParam,		// first message parameter
-//		LPARAM	lParam 		// second message parameter
-//	)
-//	{
-//		WORD				wNotifyCode;
-//		WORD				wID;
-//		HWND				hwndCtl;
-//		NMHDR*				pNMHDR;
-//		NM_UPDOWN*			pMNUD;
-//		int					idCtrl;
-//	//	int					nVal;
-//		LPDRAWITEMSTRUCT	pDis;
-//
-//		switch( uMsg ){
-//		case WM_INITDIALOG:
-//			/* ダイアログデータの設定 p3 */
-//			SetData_p3( hwndDlg );
-//			::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
-//			return TRUE;
-//
-//		case WM_COMMAND:
-//			wNotifyCode	= HIWORD(wParam);	/* 通知コード */
-//			wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-//			hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
-//			switch( wNotifyCode ){
-//			/* ボタン／チェックボックスがクリックされた */
-//			case BN_CLICKED:
-//				switch( wID ){
-//				case IDC_BUTTON_SAMEBKCOLOR:	/* すべて同じ背景色にする */	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
-//					m_Types.m_colorCRLFBACK =
-//					m_Types.m_colorGYOUBACK =
-//					m_Types.m_colorTABBACK =
-//					m_Types.m_colorZENSPACEBACK =
-//					m_Types.m_colorEOFBACK =
-//					m_Types.m_colorCCPPKEYWORDBACK = m_Types.m_colorBACK;
-//					m_Types.m_colorCOMMENTBACK = m_Types.m_colorBACK;
-//					m_Types.m_colorSSTRINGBACK = m_Types.m_colorBACK;
-//					m_Types.m_colorWSTRINGBACK = m_Types.m_colorBACK;
-//
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_CRLFBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_GYOUBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TABBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_ZENBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_EOFBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_CCPPKEYWORDBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_COMMENTBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_SSTRINGBACKCOLOR ), NULL, TRUE );
-//					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_WSTRINGBACKCOLOR ), NULL, TRUE );
-//					return TRUE;
-//
-//				case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorTEXT ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//
-//				case IDC_BUTTON_CRLFCOLOR:	/* 改行の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorCRLF ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_CRLFCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_CRLFBACKCOLOR:	/* 改行背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorCRLFBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_CRLFBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//
-//				case IDC_BUTTON_GYOUCOLOR:	/* 行番号の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorGYOU ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_GYOUCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_GYOUBACKCOLOR:	/* 行番号背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorGYOUBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_GYOUBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//
-//				case IDC_BUTTON_TABCOLOR:	/* TAB文字の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorTAB ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TABCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_TABBACKCOLOR:	/* TAB文字背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorTABBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TABBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//
-//				case IDC_BUTTON_ZENCOLOR:	/* 全角スペース文字の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorZENSPACE ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_ZENCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_ZENBACKCOLOR:	/* 全角スペース文字背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorZENSPACEBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_ZENBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//				case IDC_BUTTON_EOFCOLOR:	/* EOFの色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorEOF ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_EOFCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_EOFBACKCOLOR:	/* EOF背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorEOFBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_EOFBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//
-//				case IDC_BUTTON_CCPPKEYWORDCOLOR:	/* 強調キーワードの色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorCCPPKEYWORD ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_CCPPKEYWORDCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_CCPPKEYWORDBACKCOLOR:	/* 強調キーワード背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorCCPPKEYWORDBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_CCPPKEYWORDBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//				case IDC_BUTTON_COMMENTCOLOR:	/* コメントの色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorCOMMENT ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_COMMENTCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_COMMENTBACKCOLOR:	/* コメント背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorCOMMENTBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_COMMENTBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_SSTRINGCOLOR:	/* シングルクォーテーション文字列の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorSSTRING ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_SSTRINGCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_SSTRINGBACKCOLOR:	/* シングルクォーテーション文字列背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorSSTRINGBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_SSTRINGBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_WSTRINGCOLOR:	/* ダブルクォーテーション文字列の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorWSTRING ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_WSTRINGCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_WSTRINGBACKCOLOR:	/* ダブルクォーテーション文字列背景の色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorWSTRINGBACK ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_WSTRINGBACKCOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//				case IDC_BUTTON_UNDERLINECOLOR:	/* カーソル行アンダーラインの色 */
-//					/* 色選択ダイアログ */
-//					if( SelectColor( hwndDlg, &m_Types.m_colorUNDERLINE ) ){
-//						::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_UNDERLINECOLOR ), NULL, TRUE );
-//					}
-//					return TRUE;
-//
-//	//			case IDC_BUTTON_IMPORT:	/* 色の設定をインポート */
-//	//				p3_Import_Colors( hwndDlg );
-//	//				return TRUE;
-//
-//	//			case IDC_BUTTON_EXPORT:	/* 色の設定をエクスポート */
-//	//				p3_Export_Colors( hwndDlg );
-//	//				return TRUE;
-//				}
-//			}
-//			break;
-//		case WM_NOTIFY:
-//			idCtrl = (int)wParam;
-//			pNMHDR = (NMHDR*)lParam;
-//			pMNUD  = (NM_UPDOWN*)lParam;
-//	//		switch( idCtrl ){
-//	//		default:
-//				switch( pNMHDR->code ){
-//				case PSN_HELP:
-//					OnHelp( hwndDlg, IDD_PROP1P3 );
-//					return TRUE;
-//				case PSN_KILLACTIVE:
-//					MYTRACE( "p3 PSN_KILLACTIVE\n" );
-//					/* ダイアログデータの取得 p3 */
-//					GetData_p3( hwndDlg );
-//					return TRUE;
-//				}
-//	//		}
-//			break;
-//		case WM_DRAWITEM:
-//			idCtrl = (UINT) wParam;	/* コントロールのID */
-//			pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報 */
-//			switch( idCtrl ){
-//
-//			case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
-//				DrawColorButton( pDis, m_Types.m_colorTEXT );
-//				return TRUE;
-//			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
-//				DrawColorButton( pDis, m_Types.m_colorBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_CRLFCOLOR:	/* 改行の色 */
-//				DrawColorButton( pDis, m_Types.m_colorCRLF );
-//				return TRUE;
-//			case IDC_BUTTON_CRLFBACKCOLOR:	/* 改行背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorCRLFBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_GYOUCOLOR:	/* 行番号の色 */
-//				DrawColorButton( pDis, m_Types.m_colorGYOU );
-//				return TRUE;
-//			case IDC_BUTTON_GYOUBACKCOLOR:	/* 行番号背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorGYOUBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_TABCOLOR:	/* TAB文字の色 */
-//				DrawColorButton( pDis, m_Types.m_colorTAB );
-//				return TRUE;
-//			case IDC_BUTTON_TABBACKCOLOR:	/* TAB文字背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorTABBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_ZENCOLOR:	/* 全角スペース文字の色 */
-//				DrawColorButton( pDis, m_Types.m_colorZENSPACE );
-//				return TRUE;
-//			case IDC_BUTTON_ZENBACKCOLOR:	/* 全角スペース文字背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorZENSPACEBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_EOFCOLOR:	/* EOFの色 */
-//				DrawColorButton( pDis, m_Types.m_colorEOF );
-//				return TRUE;
-//			case IDC_BUTTON_EOFBACKCOLOR:	/* EOF背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorEOFBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_CCPPKEYWORDCOLOR:	/*  強調キーワードの色 */
-//				DrawColorButton( pDis, m_Types.m_colorCCPPKEYWORD );
-//				return TRUE;
-//			case IDC_BUTTON_CCPPKEYWORDBACKCOLOR:	/*  強調キーワード背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorCCPPKEYWORDBACK );
-//				return TRUE;
-//
-//			case IDC_BUTTON_COMMENTCOLOR:	/* コメントの色 */
-//				DrawColorButton( pDis, m_Types.m_colorCOMMENT );
-//				return TRUE;
-//			case IDC_BUTTON_COMMENTBACKCOLOR:	/* コメント背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorCOMMENTBACK );
-//				return TRUE;
-//			case IDC_BUTTON_SSTRINGCOLOR:	/* シングルクォーテーション文字列の色 */
-//				DrawColorButton( pDis, m_Types.m_colorSSTRING );
-//				return TRUE;
-//			case IDC_BUTTON_SSTRINGBACKCOLOR:	/* シングルクォーテーション文字列背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorSSTRINGBACK );
-//				return TRUE;
-//			case IDC_BUTTON_WSTRINGCOLOR:	/* ダブルクォーテーション文字列の色  */
-//				DrawColorButton( pDis, m_Types.m_colorWSTRING );
-//				return TRUE;
-//			case IDC_BUTTON_WSTRINGBACKCOLOR:	/* ダブルクォーテーション文字列背景の色 */
-//				DrawColorButton( pDis, m_Types.m_colorWSTRINGBACK );
-//				return TRUE;
-//			case IDC_BUTTON_UNDERLINECOLOR:	/* カーソル行アンダーラインの色 */
-//				DrawColorButton( pDis, m_Types.m_colorUNDERLINE );
-//				return TRUE;
-//			}
-//			break;
-//		}
-//		return FALSE;
-//	}
-//
-//
-//
-//
-//
-//	/* ダイアログデータの設定 p3 */
-//	void CPropTypes::SetData_p3( HWND hwndDlg )
-//	{
-//
-//		HWND	hwndWork;
-//		int		i;
-//
-//
-//		/* 行番号を表示 */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DISPLINE, m_Types.m_bDispLINE );
-//
-//		/* タブ記号を表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DISPTAB, m_Types.m_bDispTAB );
-//
-//		/* 日本語空白を表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DISPZENSPACE, m_Types.m_bDispZENSPACE );
-//
-//		/* 改行記号を表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DISPCRLF, m_Types.m_bDispCRLF );
-//
-//		/* EOFを表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DISPEOF, m_Types.m_bDispEOF );
-//
-//		/* 強調キーワードを表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCCPP, m_Types.m_bDispCCPPKEYWORD );
-//
-//		/* コメントを表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_COMMENT, m_Types.m_bDispCOMMENT );
-//
-//		/* シングルクォーテーション文字列を表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_SSTRING, m_Types.m_bDispSSTRING );
-//
-//		/* ダブルクォーテーション文字列を表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_WSTRING, m_Types.m_bDispWSTRING );
-//
-//		/* カーソル行アンダーラインを表示する */
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_UNDERLINE, m_Types.m_bDispUNDERLINE );
-//
-//	//	/* キーワードの英大文字小文字区別 */
-//	//	::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, m_Types.m_nKEYWORDCASE );
-//
-//
-//
-//
-//		/* Grepモード: エンターキーでタグジャンプ */
-//	//	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_bGTJW_RETURN );
-//
-//		/* Grepモード: ダブルクリックでタグジャンプ */
-//	//	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_bGTJW_LDBLCLK );
-//
-//
-//		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment ) - 1 ), 0 );
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentFrom ) - 1 ), 0 );
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentTo ) - 1 ), 0 );
-//
-//		::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT, m_Types.m_szLineComment );				/* 行コメントデリミタ */
-//		::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM, m_Types.m_szBlockCommentFrom );	/* ブロックコメントデリミタ(From) */
-//		::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO, m_Types.m_szBlockCommentTo );		/* ブロックコメントデリミタ(To) */
-//
-//		if( 0 == m_Types.m_nStringType ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-//			::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, TRUE );
-//			::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_2, FALSE );
-//		}else{
-//			::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, FALSE );
-//			::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_2, TRUE );
-//		}
-//
-//		/* セット名コンボボックスの値セット */
-//		hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-//		::SendMessage( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */
-//		/* 一行目は空白 */
-//		::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)" " );
-//		if( 0 < m_CKeyWordSetMgr.m_nKeyWordSetNum ){
-//			for( i = 0; i < m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-//				::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_CKeyWordSetMgr.GetTypeName( i ) );
-//			}
-//			if( -1 == m_Types.m_nKeyWordSetIdx ){
-//				/* セット名コンボボックスのデフォルト選択 */
-//				::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)0, 0 );
-//			}else{
-//				/* セット名コンボボックスのデフォルト選択 */
-//				::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_Types.m_nKeyWordSetIdx + 1, 0 );
-//			}
-//		}
-//
-//
-//		return;
-//	}
-//
-//
-//
-//	/* ダイアログデータの取得 p3 */
-//	int CPropTypes::GetData_p3( HWND hwndDlg )
-//	{
-//		int		nIdx;
-//		HWND	hwndWork;
-//		m_nPageNum = 1;
-//
-//		/* 行番号を表示 */
-//		m_Types.m_bDispLINE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISPLINE );
-//
-//		/* タブ記号を表示する */
-//		m_Types.m_bDispTAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISPTAB );
-//
-//		/* 日本語空白を表示する */
-//		m_Types.m_bDispZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISPZENSPACE );
-//
-//		/* 改行記号を表示する */
-//		m_Types.m_bDispCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISPCRLF );
-//
-//		/* EOFを表示する */
-//		m_Types.m_bDispEOF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISPEOF );
-//
-//		/* 強調キーワードを表示する */
-//		m_Types.m_bDispCCPPKEYWORD = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCCPP );
-//
-//
-//		/* コメントを表示する */
-//		m_Types.m_bDispCOMMENT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_COMMENT );
-//
-//		/* シングルクォーテーション文字列を表示する */
-//		m_Types.m_bDispSSTRING = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SSTRING );
-//
-//		/* ダブルクォーテーション文字列を表示する */
-//		m_Types.m_bDispWSTRING = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WSTRING );
-//
-//		/* カーソル行アンダーラインを表示する */
-//		m_Types.m_bDispUNDERLINE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_UNDERLINE );
-//
-//	//	/* キーワードの英大文字小文字区別 */
-//	//	m_Types.m_nKEYWORDCASE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE );
-//
-//
-//
-//
-//		/* Grepモード: エンターキーでタグジャンプ */
-//	//	m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
-//
-//		/* Grepモード: ダブルクリックでタグジャンプ */
-//	//	m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
-//
-//		::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT, m_Types.m_szLineComment, sizeof( m_Types.m_szLineComment ) );					/* 行コメントデリミタ */
-//		::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM, m_Types.m_szBlockCommentFrom, sizeof( m_Types.m_szBlockCommentFrom ) );	/* ブロックコメントデリミタ(From) */
-//		::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO, m_Types.m_szBlockCommentTo, sizeof( m_Types.m_szBlockCommentTo ) );			/* ブロックコメントデリミタ(To) */
-//
-//		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-//		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_ESCAPETYPE_1 ) ){
-//			m_Types.m_nStringType = 0;
-//		}else{
-//			m_Types.m_nStringType = 1;
-//		}
-//
-//
-//		/* セット名コンボボックスの値セット */
-//		hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-//		nIdx = ::SendMessage( hwndWork, CB_GETCURSEL, 0, 0 );
-//		if( CB_ERR == nIdx ||
-//			0 == nIdx ){
-//			m_Types.m_nKeyWordSetIdx = -1;
-//		}else{
-//			m_Types.m_nKeyWordSetIdx = nIdx - 1;
-//
-//		}
-//
-//		return TRUE;
-//	}
 
 
 

@@ -64,9 +64,13 @@ protected:
 	BOOL OnJump( bool bCheckAutoClose = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
 	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
+	void SetTree();					/* ツリーコントロールの初期化：汎用品 */
+#if 0
+2002.04.01 YAZAKI SetTreeTxt()、SetTreeTxtNest()は廃止。GetTreeTextNextはもともと使用されていなかった。
 	void SetTreeTxt( HWND );	/* ツリーコントロールの初期化：テキストトピックツリー */
 	int SetTreeTxtNest( HWND, HTREEITEM, int, int, HTREEITEM*, int );
 	void GetTreeTextNext( HWND, HTREEITEM, int );
+#endif
 
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */

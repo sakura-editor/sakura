@@ -212,10 +212,12 @@ public:
 	void			MakeTopicList_asm( CFuncInfoArr* );		/* アセンブラ アウトライン解析 */
 	void			MakeFuncList_Perl( CFuncInfoArr* );		/* Perl関数リスト作成 */	//	Sep. 8, 2000 genta
 	void			MakeFuncList_VisualBasic( CFuncInfoArr* );/* Visual Basic関数リスト作成 */ //June 23, 2001 N.Nakatani
+	void			MakeFuncList_RuleFile( CFuncInfoArr* );	/* ルールファイルを使ってリスト作成 2002.04.01 YAZAKI */
+	int				ReadRuleFile( char* pszFilename, struct oneRule* pcOneRule );	/* ルールファイル読込 2002.04.01 YAZAKI */
+
 // From Here 2001.12.03 hor
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */
 // To Here 2001.12.03 hor
-
 
 	CSplitterWnd	m_cSplitterWnd;				/* 分割フレーム */
 	CEditView		m_cEditViewArr[4];			/* ビュー */

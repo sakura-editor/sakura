@@ -2596,7 +2596,10 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-/* テキスト・トピックリスト作成 */
+/*!	テキスト・トピックリスト作成
+	
+	@date 2002.04.01 YAZAKI CDlgFuncList::SetText()を使用するように改訂。
+*/
 void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 {
 	const unsigned char*	pLine;
@@ -2613,9 +2616,13 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	pszStarts = m_pShareData->m_Common.m_szMidashiKigou; 	/* 見出し記号 */
 	nStartsLen = lstrlen( pszStarts );
 
-//	for( nLineCount = 0; nLineCount <  m_cLayoutMgr.GetLineCount(); ++nLineCount ){
+	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
+		（256文字まで同じだったら同じものとして扱います）
+	*/
+	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
+	char pszStack[32][256];
+	char szTitle[256];			//	一時領域
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-//		pLine = (const unsigned char *)m_cLayoutMgr.GetLineStr( nLineCount, &nLineLen );
 		pLine = (const unsigned char *)m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		if( NULL == pLine ){
 			break;
@@ -2639,6 +2646,8 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			nCharChars2 = CMemory::MemCharNext( pszStarts, nStartsLen, &pszStarts[j] ) - &pszStarts[j];
 			if( nCharChars == nCharChars2 ){
 				if( 0 == memcmp( &pLine[i], &pszStarts[j], nCharChars ) ){
+					strncpy( szTitle, &pszStarts[j], nCharChars);	//	szTitleに保持。
+					szTitle[nCharChars] = '\0';
 					break;
 				}
 			}
@@ -2646,15 +2655,39 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		if( j >= nStartsLen ){
 			continue;
 		}
-		if( pLine[i] == '(' ){
-			if( ( pLine[i + 1] >= '0' && pLine[i + 1] <= '9' ) ||
-				( pLine[i + 1] >= 'A' && pLine[i + 1] <= 'Z' ) ||
-				( pLine[i + 1] >= 'a' && pLine[i + 1] <= 'z' )
-			){
-			}else{
+		/* 見出し文字に(が含まれていることが前提になっている! */
+		if( nCharChars == 1 && pLine[i] == '(' ){
+			if( pLine[i + 1] >= '0' && pLine[i + 1] <= '9' )  {
+				strcpy( szTitle, "(0)" );
+			}
+			else if ( pLine[i + 1] >= 'A' && pLine[i + 1] <= 'Z' ) {
+				strcpy( szTitle, "(A)" );
+			}
+			else if ( pLine[i + 1] >= 'a' && pLine[i + 1] <= 'z' ) {
+				strcpy( szTitle, "(a)" );
+			}
+			else {
 				continue;
 			}
 		}
+		else if ( nCharChars == 2 ){
+			/* 全角数字 */
+			if( pLine[0] == 0x82 && ( pLine[1] >= 0x4f && pLine[1] <= 0x58 ) ) {
+				strcpy( szTitle, "０" );
+			}
+			/* ①～⑳ */
+			if( pLine[0] == 0x87 && ( pLine[1] >= 0x40 && pLine[1] <= 0x53 ) ){
+				strcpy( szTitle, "①" );
+			}
+			/* Ⅰ～Ⅹ */
+			if( pLine[0] == 0x87 && ( pLine[1] >= 0x54 && pLine[1] <= 0x5d ) ){
+				strcpy( szTitle, "Ⅰ" );
+			}
+		}
+		/*	「見出し記号」に含まれる文字で始まるか、
+			(0、(1、...(9、(A、(B、...(Z、(a、(b、...(z
+			で始まる行は、アウトライン結果に表示する。
+		*/
 		pszText = new char[nLineLen + 1];
 		memcpy( pszText, (const char *)&pLine[i], nLineLen );
 		pszText[nLineLen] = '\0';
@@ -2664,7 +2697,6 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 				pszText[i] = '\0';
 			}
 		}
-//		MYTRACE( "pszText=[%s]\n", pszText );
 		/*
 		  カーソル位置変換
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -2679,13 +2711,193 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			&nPosX,
 			&nPosY
 		);
-		pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0 );
-//		pcFuncInfoArr->AppendData( nLineCount + 1, (char *)pszText, 0 );
+		/* nDepthを計算 */
+		int k;
+		for ( k = 0; k < nDepth; k++ ){
+			int nResult = strcmp( pszStack[k], szTitle );
+			if ( nResult == 0 ){
+				break;
+			}
+		}
+		if ( k < nDepth ){
+			//	ループ途中でbreak;してきた。＝今までに同じ見出しが存在していた。
+			//	ので、同じレベルに合わせてAppendData.
+			nDepth = k;
+		}
+		else {
+			//	いままでに同じ見出しが存在しなかった。
+			//	ので、pszStackにコピーしてAppendData.
+			strcpy(pszStack[nDepth], szTitle);
+		}
+		pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
+		nDepth++;
 		delete [] pszText;
+
 	}
 	return;
 }
 
+
+/*! ルールファイルの1行を管理する構造体
+
+	@date 2002.04.01 YAZAKI
+*/
+struct oneRule {
+	char szMatch[256];
+	int  nLength;
+	char szGroupName[256];
+};
+
+/*! ルールファイルを読み込み、ルール構造体の配列を作成する
+
+	@date 2002.04.01 YAZAKI
+*/
+int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule )
+{
+	long	i;
+	/* Test.outlineruleに決め打ち */
+	FILE*	pFile = fopen( pszFilename, "r" );
+	if( NULL == pFile ){
+		return 0;
+	}
+	char	szLine[10240];
+	char*	pszDelimit = " /// ";
+	char*	pszKeySeps = ",\0";
+	char*	pszWork;
+	int nCount = 0;
+	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
+		pszWork = strstr( szLine, pszDelimit );
+		if( NULL != pszWork && szLine[0] != ';' ){
+			*pszWork = '\0';
+			pszWork += lstrlen( pszDelimit );
+
+			/* 最初のトークンを取得します。 */
+			char* pszToken = strtok( szLine, pszKeySeps );
+			while( NULL != pszToken ){
+//				nRes = _stricmp( pszKey, pszToken );
+				for( i = 0; i < (int)lstrlen(pszWork); ++i ){
+					if( pszWork[i] == '\r' ||
+						pszWork[i] == '\n' ){
+						pszWork[i] = '\0';
+						break;
+					}
+				}
+				strcpy( pcOneRule[nCount].szMatch, pszToken );
+				strcpy( pcOneRule[nCount].szGroupName, pszWork );
+				pcOneRule[nCount].nLength = strlen(pcOneRule[nCount].szMatch);
+				nCount++;
+				pszToken = strtok( NULL, pszKeySeps );
+			}
+		}
+	}
+	fclose( pFile );
+	return nCount;
+}
+
+/*! ルールファイルを元に、トピックリストを作成
+
+	@date 2002.04.01 YAZAKI
+*/
+void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
+{
+	const unsigned char*	pLine;
+	int						nLineLen;
+	int						nLineCount;
+	int						i;
+	int						j;
+	char*					pszText;
+
+	/* ルールファイルの内容をバッファに読み込む */
+	oneRule test[1024];	//	1024個許可。
+	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test);
+	if ( nCount < 1 ){
+		return;
+	}
+
+	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
+		（256文字まで同じだったら同じものとして扱います）
+	*/
+	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
+	char pszStack[32][256];
+	char szTitle[256];			//	一時領域
+	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
+		pLine = (const unsigned char *)m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
+		if( NULL == pLine ){
+			break;
+		}
+		for( i = 0; i < nLineLen; ++i ){
+			if( pLine[i] == ' ' ||
+				pLine[i] == '\t'){
+				continue;
+			}else
+			if( i + 1 < nLineLen && pLine[i] == 0x81 && pLine[i + 1] == 0x40 ){
+				++i;
+				continue;
+			}
+			break;
+		}
+		if( i >= nLineLen ){
+			continue;
+		}
+		for( j = 0; j < nCount; j++ ){
+			if ( 0 == strncmp( (const char*)&pLine[i], test[j].szMatch, test[j].nLength ) ){
+				strcpy( szTitle, test[j].szGroupName );
+				break;
+			}
+		}
+		if( j >= nCount ){
+			continue;
+		}
+		/*	ルールにマッチした行は、アウトライン結果に表示する。
+		*/
+		pszText = new char[nLineLen + 1];
+		memcpy( pszText, (const char *)&pLine[i], nLineLen );
+		pszText[nLineLen] = '\0';
+		for( i = 0; i < (int)lstrlen(pszText); ++i ){
+			if( pszText[i] == CR ||
+				pszText[i] == LF ){
+				pszText[i] = '\0';
+			}
+		}
+		/*
+		  カーソル位置変換
+		  物理位置(行頭からのバイト数、折り返し無し行位置)
+		  →
+		  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+		*/
+		int		nPosX;
+		int		nPosY;
+		m_cLayoutMgr.CaretPos_Phys2Log(
+			0,
+			nLineCount,
+			&nPosX,
+			&nPosY
+		);
+		/* nDepthを計算 */
+		int k;
+		for ( k = 0; k < nDepth; k++ ){
+			int nResult = strcmp( pszStack[k], szTitle );
+			if ( nResult == 0 ){
+				break;
+			}
+		}
+		if ( k < nDepth ){
+			//	ループ途中でbreak;してきた。＝今までに同じ見出しが存在していた。
+			//	ので、同じレベルに合わせてAppendData.
+			nDepth = k;
+		}
+		else {
+			//	いままでに同じ見出しが存在しなかった。
+			//	ので、pszStackにコピーしてAppendData.
+			strcpy(pszStack[nDepth], szTitle);
+		}
+		pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
+		nDepth++;
+		delete [] pszText;
+
+	}
+	return;
+}
 
 
 

@@ -140,6 +140,9 @@ CEditWnd::CEditWnd() :
 	m_hdcCompatDC( NULL ),			/* Ä•`‰æ—pƒRƒ“ƒpƒ`ƒuƒ‹‚c‚b */
 	m_hbmpCompatBMP( NULL ),		/* Ä•`‰æ—pƒƒ‚ƒŠ‚a‚l‚o */
 	m_hbmpCompatBMPOld( NULL ),		/* Ä•`‰æ—pƒƒ‚ƒŠ‚a‚l‚o(OLD) */
+// 20020331 aroka Ä•ÏŠ·‘Î‰ž for 95/NT
+	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
+	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ),
 
 //@@@ 2002.01.14 YAZAKI ˆóüƒvƒŒƒrƒ…[‚ðCPrintPreview‚É“Æ—§‚³‚¹‚½‚±‚Æ‚É‚æ‚é•ÏX
 	m_pPrintPreview( NULL ),
@@ -1052,6 +1055,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_IME_CHAR:
 	case WM_KEYUP:
 	case WM_ENTERMENULOOP:
+	case MYWM_IME_REQUEST:   /*  Ä•ÏŠ·‘Î‰ž by minfu 2002.03.27  */ // 20020331 aroka
 		/* ƒƒbƒZ[ƒW‚Ì”z‘— */
 		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 
@@ -1372,6 +1376,11 @@ LRESULT CEditWnd::DispatchEvent(
 		m_cEditDoc.SetReferer( (HWND)wParam, ppoCaret->x, ppoCaret->y );
 		return 0L;
 	default:
+// << 20020331 aroka Ä•ÏŠ·‘Î‰ž for 95/NT
+		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
+			return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+		}
+// >> by aroka
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 	return DefWindowProc( hwnd, uMsg, wParam, lParam );

@@ -27,7 +27,7 @@ class CFuncInfoArr {
 		~CFuncInfoArr();	/* CFuncInfoArrクラス消滅 */
 		CFuncInfo* GetAt( int );	/* 0<=の指定番号のデータを返す */
 		void AppendData( CFuncInfo* );	/* 配列の最後にデータを追加する */
-		void AppendData( int, int, char*, int );	/* 配列の最後にデータを追加する */
+		void AppendData( int, int, char*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
 		int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
 		void Empty( void );
 		void DUMP( void );

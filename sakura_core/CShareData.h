@@ -340,6 +340,7 @@ struct Types {
 	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 
 	int					m_nDefaultOutline;				/*!< アウトライン解析方法 */
+	char				m_szOutlineRuleFilename[_MAX_PATH];	/*!< アウトライン解析ルールファイル */
 
 	int					m_nSmartIndent;					/*!< スマートインデント種別 */
 	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態

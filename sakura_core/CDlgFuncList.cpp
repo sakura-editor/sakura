@@ -182,6 +182,11 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		SetTreeJava( m_hWnd, TRUE );
 		::SetWindowText( m_hWnd, "C++ メソッドツリー" );
 	}else
+	if( OUTLINE_FILE == m_nListType ){	//@@@ 2002.04.01 YAZAKI アウトライン解析にルールファイル導入
+		m_nViewType = 1;
+		SetTree();
+		::SetWindowText( m_hWnd, "ルールファイル" );
+	}else
 	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
@@ -189,7 +194,8 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 //		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：テキストトピックツリー */
-		SetTreeTxt( m_hWnd );
+//		SetTreeTxt();
+		SetTree();	//@@@ 2002.04.01 YAZAKI テキストトピックツリーも、汎用SetTreeを呼ぶように変更。
 		::SetWindowText( m_hWnd, "テキスト トピックツリー" );
 	}else
 	if( OUTLINE_JAVA == m_nListType ){ /* Javaメソッドツリー */
@@ -839,7 +845,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	return;
 }
 
-
+#if 0
+2002.04.01 YAZAKI もともと使用されていなかったため
 void CDlgFuncList::GetTreeTextNext(
 		HWND		hwndTree,
 		HTREEITEM	htiParent,
@@ -876,10 +883,75 @@ void CDlgFuncList::GetTreeTextNext(
 	}
 	return;
 }
+#endif
 
+/*! 汎用ツリーコントロールの初期化：CFuncInfo::m_nDepthを利用して親子を設定
 
+	@date 2002.04.01 YAZAKI
+*/
+void CDlgFuncList::SetTree()
+{
+	HTREEITEM hItemSelected = NULL;
+	HWND hwndTree = ::GetDlgItem( m_hWnd, IDC_TREE1 );
+
+	int i;
+	int nFuncInfoArrNum = m_pcFuncInfoArr->GetNum();
+	int nStackPointer = 0;
+	HTREEITEM hParentStack[32];	//	32レベルの深さまで対応。
+	hParentStack[ nStackPointer ] = TVI_ROOT;
+
+	for (i = 0; i < nFuncInfoArrNum; i++){
+		CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+
+		/*	新しいアイテムを作成
+			現在の親の下にぶら下げる形で、最後に追加する。
+		*/
+		HTREEITEM hItem;
+		TV_INSERTSTRUCT cTVInsertStruct;
+		cTVInsertStruct.hParent = hParentStack[ nStackPointer ];
+		cTVInsertStruct.hInsertAfter = TVI_LAST;	//	必ず最後に追加。
+		cTVInsertStruct.item.mask = TVIF_TEXT | TVIF_PARAM;
+		cTVInsertStruct.item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
+		cTVInsertStruct.item.lParam = i;	//	あとでこの数値（＝m_pcFuncInfoArrの何番目のアイテムか）を見て、目的地にジャンプするぜ!!。
+
+		/*	親子関係をチェック
+		*/
+		if (nStackPointer != pcFuncInfo->m_nDepth){
+			//	レベルが変わりました!!
+			//	※が、2段階深くなることは考慮していないので注意。
+			//	　もちろん、2段階以上浅くなることは考慮済み。
+			nStackPointer = pcFuncInfo->m_nDepth;
+			cTVInsertStruct.hParent = hParentStack[ nStackPointer ];
+		}
+		hItem = TreeView_InsertItem( hwndTree, &cTVInsertStruct );
+		hParentStack[ nStackPointer+1 ] = hItem;
+
+		/*	pcFuncInfoに登録されている行数を確認して、選択するアイテムを考える
+		*/
+		if ( pcFuncInfo->m_nFuncLineLAYOUT <= m_nCurLine ){
+			hItemSelected = hItem;
+		}
+
+		/* クリップボードコピー用テキストを作成する */
+		int j;
+		for( j = 0; j < nStackPointer; ++j ){
+			m_cmemClipText.AppendSz( "  " );
+		}
+		m_cmemClipText.AppendSz( (const char *)pcFuncInfo->m_cmemFuncName.GetPtr() );
+		m_cmemClipText.AppendSz( (const char *)"\r\n" );
+	}
+	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
+
+	if( NULL != hItemSelected ){
+		/* 現在カーソル位置のメソッドを選択状態にする */
+		TreeView_SelectItem( hwndTree, hItemSelected );
+	}
+}
+
+#if 0
+2002.04.01 YAZAKI SetTreeTxt()、SetTreeTxtNest()は廃止。汎用のSetTree()を使うようにしました。
 /* ツリーコントロールの初期化：テキスト トピックツリー */
-void CDlgFuncList::SetTreeTxt( HWND hwndDlg )
+void CDlgFuncList::SetTreeTxt()
 {
 	HWND			hwndTree;
 	int				nBgn;
@@ -1014,7 +1086,7 @@ int CDlgFuncList::SetTreeTxtNest(
 	}
 	return 1;
 }
-
+#endif
 
 
 BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )

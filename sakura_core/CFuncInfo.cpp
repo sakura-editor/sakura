@@ -24,7 +24,7 @@ CFuncInfo::CFuncInfo(
 //	int		nFuncLine,		/*!< 関数のある行 */
 	char*	pszFuncName,	/*!< 関数名 */
 	int		nInfo			/*!< 付加情報 */
-)
+) : m_nDepth(0)				/*!< 深さ */
 {
 	m_nFuncLineCRLF = nFuncLineCRLF;		/* 関数のある行(CRLF単位) */
 	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* 関数のある行(折り返し単位) */

@@ -48,6 +48,9 @@
 #endif
 
 
+#ifndef IMR_RECONVERTSTRING
+#define IMR_RECONVERTSTRING             0x0004
+#endif // IMR_RECONVERTSTRING
 
 
 CEditView*	g_m_pcEditView;
@@ -279,7 +282,10 @@ VOID CALLBACK EditViewTimerProc(
 
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView() : m_cHistory( new CAutoMarkMgr )
+CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ),
+// 20020331 aroka 再変換対応 for 95/NT
+	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
+	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 {
 	TEXTMETRIC	tm;
 	LOGFONT		lf;
@@ -1058,8 +1064,26 @@ LRESULT CEditView::DispatchEvent(
 		::PostMessage( m_hwndParent, MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
 		return 0L;
 
-
+	case MYWM_IME_REQUEST:  /* 再変換  by minfu 2002.03.27 */ // 20020331 aroka
+		
+		if( (wParam == IMR_RECONVERTSTRING) &&  IsTextSelected() && ( !m_bBeginBoxSelect) ){
+			// lParamにIMEが用意した再変換用構造体のポインタが入っている。
+			return RequestedReconversion((PRECONVERTSTRING)lParam);
+		}
+		
+		return 0L;
+		
 	default:
+// << 20020331 aroka 再変換対応 for 95/NT
+		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
+			if( (wParam == IMR_RECONVERTSTRING) &&  IsTextSelected() && ( !m_bBeginBoxSelect) ){
+				// lParamにIMEが用意した再変換用構造体のポインタが入っている。
+				return RequestedReconversionW((PRECONVERTSTRING)lParam);
+			}
+			return 0L;
+		}
+// >> by aroka
+
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 }
@@ -2423,23 +2447,31 @@ void CEditView::DrawSelectAreaLine(
 
 
 /* テキストが選択されているか */
-BOOL CEditView::IsTextSelected( void )
+// 2002/03/29 Azumaiya
+// インライン関数に変更(ヘッダに記述)。
+/*BOOL CEditView::IsTextSelected( void )
 {
-	if( m_nSelectLineFrom	== -1 ||
+	if(
+		m_nSelectLineFrom	== -1 ||
 		m_nSelectLineTo		== -1 ||
 		m_nSelectColmFrom	== -1 ||
 		m_nSelectColmTo		== -1
-	){
+	)
+	{
 //	if( m_nSelectLineFrom == m_nSelectLineTo &&
 //		m_nSelectColmFrom  == m_nSelectColmTo ){
 		return FALSE;
 	}
 	return TRUE;
-}
+
+//	return ~(m_nSelectLineFrom|m_nSelectLineTo|m_nSelectColmFrom|m_nSelectColmTo) >> 31;
+}*/
 
 
 /* テキストの選択中か */
-BOOL CEditView::IsTextSelecting( void )
+// 2002/03/29 Azumaiya
+// インライン関数に変更(ヘッダに記述)。
+/*BOOL CEditView::IsTextSelecting( void )
 {
 	if( m_bBeginSelect ||
 		IsTextSelected()
@@ -2449,7 +2481,9 @@ BOOL CEditView::IsTextSelecting( void )
 	}
 //	MYTRACE( "m_bBeginSelect=%d IsTextSelected()=%d FALSE==IsTextSelecting()\n", m_bBeginSelect, IsTextSelected() );
 	return FALSE;
-}
+
+//	return m_bSelectingLock|IsTextSelected();
+}*/
 
 
 /* フォントの変更 */
@@ -8334,4 +8368,71 @@ void CEditView::SendStatusMessage( const char* msg ){
 	}
 }
 
+/*  IMEからの再変換要求に応える minfu 2002.03.27 */
+LRESULT CEditView::RequestedReconversion(PRECONVERTSTRING pReconv)
+{
+	CMemory cmemBuf;
+	int nlen;
+	
+	/* 選択範囲のデータを取得 */
+	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
+		::MessageBeep( MB_ICONHAND );
+		return 0L;
+	}
+	
+	/* pReconv構造体に 値をセット */
+	nlen =  cmemBuf.GetLength();
+	if ( pReconv != NULL ) {    
+		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen + 1;
+		pReconv->dwVersion = 0;
+		pReconv->dwStrLen = nlen ;
+		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
+		pReconv->dwCompStrLen = nlen;
+		pReconv->dwCompStrOffset = 0;
+		pReconv->dwTargetStrLen = nlen;
+		pReconv->dwTargetStrOffset = 0 ;
+		
+		strncpy ( (char *)(pReconv + 1), cmemBuf.GetPtr( NULL ), nlen);
+	
+	}/* pReconv がNULLのときはサイズを返すのみ */
+	
+	/* RECONVERTSTRING構造体のサイズが戻り値 */
+	return nlen + sizeof(RECONVERTSTRING);
+
+}
+
+/*  IMEからの再変換要求に応える for 95/NT */ // 20020331 aroka
+LRESULT CEditView::RequestedReconversionW(PRECONVERTSTRING pReconv)
+{
+	CMemory cmemBuf;
+	int nlen;
+	
+	/* 選択範囲のデータを取得 */
+	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
+		::MessageBeep( MB_ICONHAND );
+		return 0L;
+	}
+	
+	/* cmemBuf を UNICODE に変換 */
+	cmemBuf.SJISToUnicode();
+	/* pReconv構造体に 値をセット */
+	nlen =  cmemBuf.GetLength();
+	if ( pReconv != NULL ) {
+		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen  + sizeof(wchar_t);
+		pReconv->dwVersion = 0;
+		pReconv->dwStrLen = nlen/sizeof(wchar_t) ;
+		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
+		pReconv->dwCompStrLen = nlen/sizeof(wchar_t);
+		pReconv->dwCompStrOffset = 0;
+		pReconv->dwTargetStrLen = nlen/sizeof(wchar_t);
+		pReconv->dwTargetStrOffset = 0 ;
+		
+		wcsncpy ( (wchar_t *)(pReconv + 1), (wchar_t *)cmemBuf.GetPtr(), nlen/sizeof(wchar_t) );
+	
+	}/* pReconv がNULLのときはサイズを返すのみ */
+	
+	/* RECONVERTSTRING構造体のサイズが戻り値 */
+	return nlen + sizeof(RECONVERTSTRING);
+
+}
 /*[EOF]*/
