@@ -6684,8 +6684,11 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 
 					s[0][0] = s[1][0] = s[2][0] = s[3][0] = s[4][0] = '\0';
 					n2 = 0;
+					//	2004.06.04 Moca ファイル名/パスにスペースが含まれているときに
+					//	ダイレクトタグジャンプに失敗していた
+					//	sscanf の%[^\t\r\n] でスペースを読みとるように変更
 					nRet = sscanf( szLineData, 
-						"%s\t%s\t%d;\"\t%s\t%s",	//tagsフォーマット
+						"%s\t%[^\t\r\n]\t%d;\"\t%s\t%s",	//tagsフォーマット
 						s[0], s[1], &n2, s[3], s[4]
 						);
 					if( nRet < 4 ) goto next_line;
