@@ -19,6 +19,7 @@ class CDlgOpenFile;
 
 #include <windows.h>
 #include "CShareData.h"
+#include "CEol.h"
 
 
 /*-----------------------------------------------------------------------
@@ -39,7 +40,8 @@ public:
 	BOOL DoModal_GetOpenFileName( char* );	/* 開くダイアログ　モーダルダイアログの表示 */
 	BOOL DoModal_GetSaveFileName( char* );	/* 保存ダイアログ　モーダルダイアログの表示 */
 	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアログ　モーダルダイアログの表示 */
-	BOOL DoModalSaveDlg( char* , int* );	/* 保存ダイアログ　モーダルダイアログの表示 */
+	//	Feb. 9, 2001 genta	引数追加
+	BOOL DoModalSaveDlg( char* , int*, CEOL* );	/* 保存ダイアログ　モーダルダイアログの表示 */
 
 	BOOL DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
@@ -57,6 +59,8 @@ public:
 	int				m_nCharCode;					/* 文字コード */
 //	char			m_szHelpFile[_MAX_PATH + 1];
 //	int				m_nHelpTopicID;
+	CEOL			m_cEol;	//	Feb. 9, 2001 genta
+	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
 protected:
 	/*

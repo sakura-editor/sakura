@@ -12,6 +12,31 @@
 #define STR_KEYDATA_HEAD      "テキストエディタ キー設定ファイル\x1a"
 
 
+//@@@ 2001.02.04 Start by MIK: Popup Help
+const DWORD p_helpids[] = {	//10700
+	IDC_BUTTON_IMPORT,				10700,	//インポート
+	IDC_BUTTON_EXPORT,				10701,	//エクスポート
+	IDC_BUTTON_ASSIGN,				10702,	//キー割り当て
+	IDC_BUTTON_RELEASE,				10703,	//キー解除
+	IDC_CHECK_SHIFT,				10710,	//Shiftキー
+	IDC_CHECK_CTRL,					10711,	//Ctrlキー
+	IDC_CHECK_ALT,					10712,	//Altキー
+	IDC_COMBO_FUNCKIND,				10730,	//機能の種別
+	IDC_EDIT_KEYSFUNC,				10740,	//キーに割り当てられている機能
+	IDC_LIST_FUNC,					10750,	//機能一覧
+	IDC_LIST_KEY,					10751,	//キー一覧
+	IDC_LIST_ASSIGNEDKEYS,			10752,	//機能に割り当てられているキー
+	IDC_LABEL_MENUFUNCKIND,			-1,
+	IDC_LABEL_MENUFUNC,				-1,
+	IDC_LABEL_KEYKIND,				-1,
+	IDC_LABEL_FUNCtoKEY,			-1,
+	IDC_LABEL_KEYtoFUNC,			-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+//@@@ 2001.02.04 End
+
+
 
 
 
@@ -282,6 +307,18 @@ BOOL CPropCommon::DispatchEvent_p5(
 			}
 		}
 		break;
+
+//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//@@@ 2001.02.04 End
+
 	}
 	return FALSE;
 }

@@ -39,7 +39,7 @@ void CEditView::DispRulerEx( HDC hdc )
 	if( !m_bDrawSWITCH ){
 		return;
 	}
-	if( !m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
+	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		return;	
 	}
 	
@@ -117,7 +117,7 @@ void CEditView::DispRulerEx( HDC hdc )
 
 	rc.left = m_nViewAlignLeft - 2;
 	rc.top = 2;
-	rc.right = m_nViewAlignLeft + (m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace ) + 2;
+	rc.right = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 2;
 	if( rc.right > m_nViewAlignLeft + m_nViewCx + 2 ){
 		rc.right = m_nViewAlignLeft + m_nViewCx + 2;
 	}
@@ -165,7 +165,7 @@ void CEditView::DispRulerEx( HDC hdc )
 
 
 
-	hBrush = ::CreateSolidBrush( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
+	hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
 	rc.left++;
 	rc.top++;
 	rc.right--;
@@ -180,14 +180,14 @@ void CEditView::DispRulerEx( HDC hdc )
 	nY = (rc.top + rc.bottom) / 2;
 
 //	hPen = ::CreatePen( PS_SOLID, 0, RGB( 0, 0, 0 ) );
-	hPen = ::CreatePen( PS_SOLID, 0, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
 //	colTextOld = ::SetTextColor( hdc, RGB( 0, 0, 0 ) );  
-	colTextOld = ::SetTextColor( hdc, m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );  
+	colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );  
 
 	nToX = m_nViewAlignLeft + m_nViewCx;
 	
-	nToX = m_nViewAlignLeft + (m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace );
+	nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	if( nToX > m_nViewAlignLeft + m_nViewCx ){
 		nToX = m_nViewAlignLeft + m_nViewCx;
 	}
@@ -198,8 +198,8 @@ void CEditView::DispRulerEx( HDC hdc )
 	
 	for( i = m_nViewLeftCol; 
 		i <= m_nViewLeftCol + m_nViewColNum + 1 
-//	 && i <= m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize; 
-	 && i < m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize; 
+//	 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize; 
+	 && i < m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize; 
 		i++ 
 	){
 		if( 0 < i && 0 == ( (i) % 10 ) ){
@@ -231,7 +231,7 @@ void CEditView::DispRulerEx( HDC hdc )
 //			::MoveToEx( hdc, nX, nY , NULL );
 //			::LineTo( hdc, nX, nY + 1 );
 		}
-		nX += ( m_nCharWidth  + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace );
+		nX += ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	}
 	::SetTextColor( hdc, colTextOld );  
 	::SelectObject( hdc, hPenOld );
@@ -247,7 +247,7 @@ void CEditView::DispRulerEx( HDC hdc )
 		}else{
 			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
 		}
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nColmSpace ) + 1;	
+		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;	
 //		rc.top = 0;	
 		rc.right = rc.left + m_nCharWidth;	
 //		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;	

@@ -1,8 +1,14 @@
 //	$Id$
+/*! @file
+    End of Line種別の管理
+    
+    @author genta
+    @version $Revision$
+    @date 2000/5/15 新規作成
+*/
 /************************************************************************
 
 	CEOL.h
-    End of Line種別の管理
 	Copyright (C) 2000, genta
 
     UPDATE:
@@ -18,6 +24,13 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+/*!
+	@brief End Of Line すなわち行末の改行コードを管理する。
+	
+	管理とは言ってもオブジェクト化することで安全に設定を行えたり関連情報の取得を
+	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
+	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
+*/
 class SAKURA_CORE_API CEOL
 {
 	static const char* gm_pszEolDataArr[EOL_TYPE_NUM];
@@ -37,13 +50,13 @@ public:
 		{	SetType( GetEOLType( pszData, nDataLen )); }
 
 	//	読み出し関数
-	enumEOLType GetType(void) const { return m_enumEOLType; }	//	現在のTypeを取得
+	enumEOLType GetType(void) const { return m_enumEOLType; }	//!<	現在のTypeを取得
 	int GetLen(void) const
-		{ return gm_pnEolLenArr[ m_enumEOLType ]; }	//	現在のEOL長を取得
+		{ return gm_pnEolLenArr[ m_enumEOLType ]; }	//!<	現在のEOL長を取得
 	const char* GetName(void) const
-		{ return gm_pszEolNameArr[ m_enumEOLType ]; }	//	現在のEOLの名称取得
+		{ return gm_pszEolNameArr[ m_enumEOLType ]; }	//!<	現在のEOLの名称取得
 	const char* GetValue(void) const
-		{ return gm_pszEolDataArr[ m_enumEOLType ]; }	//	現在のEOL文字列先頭へのポインタを取得
+		{ return gm_pszEolDataArr[ m_enumEOLType ]; }	//!<	現在のEOL文字列先頭へのポインタを取得
 
 	//	利便性向上のためのOverload
 	bool operator==( enumEOLType t ) const { return GetType() == t; }
@@ -57,7 +70,7 @@ public:
 	CEOL( enumEOLType t ){ SetType(t); }
 	
 private:
-	enumEOLType		m_enumEOLType;	/* 改行コードの種類 */
+	enumEOLType		m_enumEOLType;	//!< 改行コードの種類
 	//int			m_nEOLLen;		/* 改行コードの長さ */
 };
 

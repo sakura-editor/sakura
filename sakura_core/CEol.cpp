@@ -1,18 +1,20 @@
 //	$Id$
-/************************************************************************
+/*!	@file
+	CEOLクラスの実装
 
-	CEol.cpp	CEOLクラスの実装
+	@author genta
+	@version $Revision$
+	@date 2000/05/15 新規作成	genta
 
-	2000/05/15 新規作成	genta
 	Copyright (C) 2000, genta
 
-************************************************************************/
+*/
 #include "CEol.h"
 
 //-----------------------------------------------
 //	固定データ
 //-----------------------------------------------
-/* 行終端子のデータの配列 */
+/*! 行終端子のデータの配列 */
 const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"",
 	"\x0d\x0\x0a\x0",	// EOL_CRLF_UNICODE
@@ -22,7 +24,7 @@ const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"\x0d"				// EOL_CR			
 };
 
-/* 行終端子のデータ長の配列 */
+/*! 行終端子のデータ長の配列 */
 const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 	LEN_EOL_NONE			,	// == 0
 	LEN_EOL_CRLF_UNICODE	,	// == 4
@@ -47,7 +49,12 @@ const char* CEOL::gm_pszEolNameArr[EOL_TYPE_NUM] = {
 //-----------------------------------------------
 //	実装部
 //-----------------------------------------------
-
+/*!
+	行末種別の設定。
+	@param t 行末種別
+	@retval true 正常終了。設定が反映された。
+	@retval false 異常終了。強制的にCRLFに設定。
+*/
 bool CEOL::SetType( enumEOLType t )
 {
 	if( t < EOL_NONE || EOL_CR < t ){
@@ -60,7 +67,12 @@ bool CEOL::SetType( enumEOLType t )
 	return true;
 }
 
-/* 行終端子の種類を調べる */
+/*!
+	行終端子の種類を調べる。
+	@param pszData 調査対象文字列へのポインタ
+	@param nDataLen 調査対象文字列の長さ
+	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
+*/
 enumEOLType CEOL::GetEOLType( const char* pszData, int nDataLen )
 {
 	int	i;

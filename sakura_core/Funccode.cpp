@@ -1,11 +1,16 @@
 //	$Id$
-//	Copyright (C) 1998-2000, Norio Nakatani
+/************************************************************************
+	funccode.cpp
+	機能に関するいろいろ
+	Copyright (C) 1998-2000, Norio Nakatani
+************************************************************************/
 
 //	Sept. 14, 2000 Jepro note: functions & commands list
 //	キーワード：コマンド一覧順序
 //	ここに登録されているコマンドが共通設定の機能種別に表示され、キー割り当てにも設定できるようになる
 //	このファイルは「コマンド一覧」のメニューの順番や表示にも使われている
 //	sakura_rc.rcファイルの下のほうにあるString Tableも参照のこと
+
 #include "funccode.h"
 
 //using namespace nsFuncCode;
@@ -48,25 +53,27 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_FILESAVEAS		,	//名前を付けて保存
 	F_FILECLOSE			,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	F_FILECLOSE_OPEN	,	//閉じて開く
-	F_FILE_REOPEN_SJIS		,//SJISで開く
-	F_FILE_REOPEN_JIS		,//JISで開く
-	F_FILE_REOPEN_EUC		,//EUCで開く
-	F_FILE_REOPEN_UNICODE	,//Unicodeで開く
-	F_FILE_REOPEN_UTF8		,//UTF-8で開く
-	F_FILE_REOPEN_UTF7		,//UTF-7で開く
+	F_WINCLOSE			,	//ウィンドウを閉じる	//Oct.17,2000 コマンド本家は「ウィンドウ系」	//Feb. 18, 2001	JEPRO 下から移動した
+	F_FILE_REOPEN_SJIS		,//SJISで開き直す
+	F_FILE_REOPEN_JIS		,//JISで開き直す
+	F_FILE_REOPEN_EUC		,//EUCで開き直す
+	F_FILE_REOPEN_UNICODE	,//Unicodeで開き直す
+	F_FILE_REOPEN_UTF8		,//UTF-8で開き直す
+	F_FILE_REOPEN_UTF7		,//UTF-7で開き直す
 	F_PRINT      		,	//印刷
 	F_PRINT_PREVIEW		,	//印刷プレビュー
-	F_PRINT_PAGESETUP	,	//印刷ページ設定	//	Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	F_OPENINCLUDEFILE	,	//同名のインクルードファイルを開く
-	F_OPENCCPP			,	//同名のC/C++ソースファイルを開く
-	F_ACTIVATE_SQLPLUS			,	/* Oracle SQL*Plusをアクティブ表示 */	// Sept. 20, 2000 「コンパイル」JEPRO アクティブ表示を上に移動した
-	F_PLSQL_COMPILE_ON_SQLPLUS	,	/* Oracle SQL*Plusで実行 */	// Sept. 20, 2000 jepro 説明の「コンパイル」を「実行」に統一
-	F_WINCLOSE			,	//ウィンドウを閉じる	//Oct.17,2000 コマンド本家は「ウィンドウ系」
-	F_WIN_CLOSEALL		,	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Oct.17,2000 コマンド本家は「ウィンドウ系」
+	F_PRINT_PAGESETUP	,	//印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	F_OPEN_HfromtoC		,	//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+	F_OPEN_HHPP			,	//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	F_OPEN_CCPP			,	//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	F_ACTIVATE_SQLPLUS			,	/* Oracle SQL*Plusをアクティブ表示 */	//Sept. 20, 2000 「コンパイル」JEPRO アクティブ表示を上に移動した
+	F_PLSQL_COMPILE_ON_SQLPLUS	,	/* Oracle SQL*Plusで実行 */	//Sept. 20, 2000 jepro 説明の「コンパイル」を「実行」に統一
 	F_BROWSE			,	//ブラウズ
-	F_PROPERTY_FILE			/* ファイルのプロパティ */
+	F_PROPERTY_FILE		,	/* ファイルのプロパティ */
+	F_WIN_CLOSEALL		,	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Oct.17,2000 コマンド本家は「ウィンドウ系」	//Feb. 18, 2001	JEPRO 上から移動した
+	F_EXITALL				//テキストエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 };
-const int nFincList_File_Num = sizeof( pnFuncList_File ) / sizeof( pnFuncList_File[0] );//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
+const int nFincList_File_Num = sizeof( pnFuncList_File ) / sizeof( pnFuncList_File[0] );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
 
 
 /* 編集系 */
@@ -75,16 +82,16 @@ const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edi
 	F_REDO				,	//やり直し(Redo)
 	F_DELETE			,	//カーソル位置を削除
 	F_DELETE_BACK		,	//カーソルの前を削除
-	F_WordDeleteToStart	,	//単語の左端まで削除  
-	F_WordDeleteToEnd	,	//単語の右端まで削除    
-	F_WordDelete		,	//単語を削除
-	F_WordCut			,	//単語を切り取り
-	F_LineDeleteToStart	,	//行頭まで削除(改行単位)
-	F_LineDeleteToEnd	,	//行末まで削除(改行単位)
+	F_WordDeleteToStart	,	//単語の左端まで削除
+	F_WordDeleteToEnd	,	//単語の右端まで削除
+	F_WordCut			,	//単語切り取り
+	F_WordDelete		,	//単語削除
 	F_LineCutToStart	,	//行頭まで切り取り(改行単位)
 	F_LineCutToEnd		,	//行末まで切り取り(改行単位)
-	F_DELETE_LINE		,	//行削除(折り返し単位)
+	F_LineDeleteToStart	,	//行頭まで削除(改行単位)
+	F_LineDeleteToEnd	,	//行末まで削除(改行単位)
 	F_CUT_LINE			,	//行切り取り(折り返し単位)
+	F_DELETE_LINE		,	//行削除(折り返し単位)
 	F_DUPLICATELINE		,	//行の二重化(折り返し単位)
 	F_INDENT_TAB		,	//TABインデント
 	F_UNINDENT_TAB		,	//逆TABインデント
@@ -116,7 +123,7 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_GOFILETOP			,	//ファイルの先頭に移動
 	F_GOFILEEND			,	//ファイルの最後に移動
 	F_CURLINECENTER		,	//カーソル行をウィンドウ中央へ
-	F_JUMP				,	//指定行ヘジャンプ	//	Sept. 17, 2000 JEPRO コマンド本家は「検索系」
+	F_JUMP				,	//指定行ヘジャンプ	//Sept. 17, 2000 JEPRO コマンド本家は「検索系」
 	F_JUMPPREV			,	//移動履歴: 前へ
 	F_JUMPNEXT				//移動履歴: 次へ
 };
@@ -189,10 +196,8 @@ const int pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Cli
 	F_COPYLINESASPASSAGE		,	//選択範囲内全行引用符付きコピー
 	F_COPYLINESWITHLINENUMBER	,	//選択範囲内全行行番号付きコピー
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
-	F_COPYTAG						//このファイルのパス名とカーソル位置をコピー	//	Sept. 14, 2000 JEPRO メニューに合わせて下に移動
-//jeprotest	Sept. 16, 2000 JEPRO
-//ショートカットキーがうまく働かないので次行は殺してある　それに合わせて上の行の','も取り除いてある(ショートカットを登録しなければ以下の設定で使えるが...)
-//	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー			//	added Sept. 15, 2000 JEPRO　IDM_TESTのままではうまくいかないのでFに変えて登録(.hも要変更)
+	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
+	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
 const int nFincList_Clip_Num = sizeof( pnFuncList_Clip ) / sizeof( pnFuncList_Clip[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
@@ -226,7 +231,7 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_CODECNV_SJIS2UTF8		,	/* SJIS→UTF-8コード変換 */
 	F_CODECNV_SJIS2UTF7		,	/* SJIS→UTF-7コード変換 */
 	F_BASE64DECODE			,	//Base64デコードして保存
-	F_UUDECODE					//uudecodeしてファイルに保存
+	F_UUDECODE					//uudecodeして保存
 	//Sept. 30, 2000JEPRO コメントアウトされてあったのを復活させた(動作しないのかも？)
 	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 };
@@ -236,7 +241,7 @@ const int nFincList_Convert_Num = sizeof( pnFuncList_Convert ) / sizeof( pnFuncL
 /* 検索系 */
 const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 	F_SEARCH_DIALOG		,	//検索(単語検索ダイアログ)
-	F_SEARCH_NEXT		,	//次を検索	//	Sept. 16, 2000 JEPRO "次"を"前"の前に移動
+	F_SEARCH_NEXT		,	//次を検索	//Sept. 16, 2000 JEPRO "次"を"前"の前に移動
 	F_SEARCH_PREV		,	//前を検索
 	F_REPLACE			,	//置換
 	F_SEARCH_CLEARMARK	,	//検索マークのクリア
@@ -262,16 +267,16 @@ const int nFincList_Mode_Num = sizeof( pnFuncList_Mode ) / sizeof( pnFuncList_Mo
 /* 設定系 */
 const int pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 	F_SHOWTOOLBAR		,	/* ツールバーの表示 */
-	F_SHOWFUNCKEY		,	/* ファンクションキーの表示 */	//	Sept. 14, 2000 JEPRO ファンクションキーとステータスバーを入れ替え
+	F_SHOWFUNCKEY		,	/* ファンクションキーの表示 */	//Sept. 14, 2000 JEPRO ファンクションキーとステータスバーを入れ替え
 	F_SHOWSTATUSBAR		,	/* ステータスバーの表示 */
-	F_TYPE_LIST			,	/* タイプ別設定一覧 */			//	Sept. 17, 2000 JEPRO 設定系に入ってなかったので追加
+	F_TYPE_LIST			,	/* タイプ別設定一覧 */			//Sept. 17, 2000 JEPRO 設定系に入ってなかったので追加
 	F_OPTION_TYPE		,	/* タイプ別設定 */
 	F_OPTION			,	/* 共通設定 */
 	F_FONT				,	/* フォント設定 */
-	F_WRAPWINDOWWIDTH	,	/* 現在のウィンドウ幅で折り返し */	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-	F_PRINT_PAGESETUP		//印刷ページ設定				//	Sept. 14, 2000 JEPRO 「印刷のページレイアウトの設定」を「印刷ページ設定」に変更	//Oct.17,2000 コマンド本家は「ファイル操作系」
+	F_WRAPWINDOWWIDTH	,	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	F_PRINT_PAGESETUP		//印刷ページ設定				//Sept. 14, 2000 JEPRO 「印刷のページレイアウトの設定」を「印刷ページ設定」に変更	//Oct. 17, 2000 コマンド本家は「ファイル操作系」
 };
-int	nFincList_Set_Num = sizeof( pnFuncList_Set ) / sizeof( pnFuncList_Set[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
+int		nFincList_Set_Num = sizeof( pnFuncList_Set ) / sizeof( pnFuncList_Set[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 
 
 /* マクロ系 */
@@ -333,7 +338,8 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_TILE_V			,	//上下に並べて表示
 	F_TILE_H			,	//左右に並べて表示
 	F_MAXIMIZE_V		,	//縦方向に最大化
-	F_MINIMIZE_ALL		,	//すべて最小化	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+	F_MAXIMIZE_H		,	//横方向に最大化 //2001.02.10 by MIK
+	F_MINIMIZE_ALL		,	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	F_REDRAW			,	//再描画
 	F_WIN_OUTPUT			//アウトプットウィンドウ表示
 };
@@ -343,13 +349,13 @@ const int nFincList_Win_Num = sizeof( pnFuncList_Win ) / sizeof( pnFuncList_Win[
 /* 支援 */
 const int pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 	F_HOKAN						,	/* 入力補完 */
-// 	Sept. 16, 2000 JEPRO
-//ショートカットキーがうまく働かないので次の2行は殺してある　それに伴い上の行の','も取り除いた(ショートカットを登録しなければ以下の設定で使えるが...)
-//	F_HELP_CONTENTS				,	/* ヘルプ目次 */			// added Sept. 15, 2000 JEPRO　IDM_HELPのままではうまくいかないのでFに変えたら登録できた(.hも要変更)
-//	F_HELP_SEARCH				,	/* ヘルプトピックの検索 */	// added Sept. 15, 2000 JEPRO　同上
+//Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
+	F_HELP_CONTENTS				,	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
+	F_HELP_SEARCH				,	/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
 	F_MENU_ALLFUNC				,	/* コマンド一覧 */
 	F_EXTHELP1					,	/* 外部ヘルプ１ */
-	F_EXTHTMLHELP					/* 外部HTMLヘルプ */
+	F_EXTHTMLHELP				,	/* 外部HTMLヘルプ */
+	F_ABOUT							/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 };
 const int nFincList_Support_Num = sizeof( pnFuncList_Support ) / sizeof( pnFuncList_Support[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 
@@ -367,7 +373,7 @@ const int nFincList_Others_Num = sizeof( pnFuncList_Others ) / sizeof( pnFuncLis
 
 const int nsFuncCode::pnFuncListNumArr[] = {
 //	nFincList_Undef_Num,	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
-	nFincList_File_Num,		/* ファイル操作系 */	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)	
+	nFincList_File_Num,		/* ファイル操作系 */	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	nFincList_Edit_Num,		/* 編集系 */			//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 	nFincList_Move_Num,		/* カーソル移動系 */	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 	nFincList_Select_Num,	/* 選択系 */			//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
@@ -389,7 +395,7 @@ const int *	nsFuncCode::ppnFuncListArr[] = {
 	(int*)pnFuncList_File,	/* ファイル操作系 */	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	(int*)pnFuncList_Edit,	/* 編集系 */			//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 	(int*)pnFuncList_Move,	/* カーソル移動系 */	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
-	(int*)pnFuncList_Select,/* 選択系 */			//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動　(矩形選択)は新設され次第ここにおく
+	(int*)pnFuncList_Select,/* 選択系 */			//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動  (矩形選択)は新設され次第ここにおく
 	(int*)pnFuncList_Box,	/* 矩形選択系 */		//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 	(int*)pnFuncList_Clip,	/* クリップボード系 */	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
 	(int*)pnFuncList_Insert,/* 挿入系 */
@@ -404,3 +410,6 @@ const int *	nsFuncCode::ppnFuncListArr[] = {
 	(int*)pnFuncList_Others	/* その他 */			//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 };
 const int nsFuncCode::nFincListNumArrNum = sizeof( nsFuncCode::pnFuncListNumArr ) / sizeof( nsFuncCode::pnFuncListNumArr[0] );
+
+
+/*[EOF]*/

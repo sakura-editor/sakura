@@ -1,13 +1,12 @@
 //	$Id$
 /************************************************************************
-
 	CEditView.h
 	Copyright (C) 1998-2000, Norio Nakatani
 
-    UPDATE:
-    CREATE: 1998/3/13  新規作成
-
+	UPDATE:
+	CREATE: 1998/3/13  新規作成
 ************************************************************************/
+
 class CEditView;
 
 #include "CEditDoc.h"
@@ -46,15 +45,15 @@ class CEditView;
 #endif
 
 struct GrepParam {
-	void*				pCEditView;
-	char*				pszGrepKey;
-	char*				pszGrepFile;
-	char*				pszGrepFolder;
-	BOOL				bGrepSubFolder;
-	BOOL				bGrepLoHiCase;
-	BOOL				bGrepRegularExp;
-	BOOL				bKanjiCode_AutoDetect;
-	BOOL				bGrepOutputLine;
+	void*	pCEditView;
+	char*	pszGrepKey;
+	char*	pszGrepFile;
+	char*	pszGrepFolder;
+	BOOL	bGrepSubFolder;
+	BOOL	bGrepLoHiCase;
+	BOOL	bGrepRegularExp;
+	BOOL	bKanjiCode_AutoDetect;
+	BOOL	bGrepOutputLine;
 };
 
 /*-----------------------------------------------------------------------
@@ -70,8 +69,8 @@ public:
 	/* 初期化系メンバ関数 */
 	BOOL Create( HINSTANCE, HWND, CEditDoc*, int,/* BOOL,*/ BOOL );
 	/* 状態 */
-	BOOL IsTextSelected( void );/* テキストが選択されているか */
-	BOOL IsTextSelecting( void );/* テキストの選択中か */
+	BOOL IsTextSelected( void );	/* テキストが選択されているか */
+	BOOL IsTextSelecting( void );	/* テキストの選択中か */
 	/* メッセージディスパッチャ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void OnMove( int, int, int, int );
@@ -80,18 +79,18 @@ public:
 	VOID OnTimer( HWND, UINT, UINT, DWORD );
 	BOOL HandleCommand( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
 	/* コマンド操作 */
-	void CaretUnderLineON( BOOL );/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF( BOOL );/* カーソル行アンダーラインのOFF */
-	void AdjustScrollBars( void );/* スクロールバーの状態を更新する */
-	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );/* 行桁指定によるカーソル移動 */
-	BOOL DetectWidthOfLineNumberArea( BOOL );/* 行番号表示に必要な幅を設定 */
-	int DetectWidthOfLineNumberArea_calculate( void );/* 行番号表示に必要な桁数を計算 */
-	void DisableSelectArea( BOOL );/* 現在の選択範囲を非選択状態に戻す */
-	void OnChangeSetting( void );/* 設定変更を反映させる */
-	void SetFont( void );/* フォントの変更 */
-	void RedrawAll( void );/* フォーカス移動時の再描画 */
-	void CopyViewStatus( CEditView* );/* 自分の表示状態を他のビューにコピー */
-	void SplitBoxOnOff( BOOL, BOOL, BOOL );/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
+	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
+	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
+	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
+	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
+	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */
+	void DisableSelectArea( BOOL );								/* 現在の選択範囲を非選択状態に戻す */
+	void OnChangeSetting( void );								/* 設定変更を反映させる */
+	void SetFont( void );										/* フォントの変更 */
+	void RedrawAll( void );										/* フォーカス移動時の再描画 */
+	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
+	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 	DWORD DoGrep( CMemory*, CMemory*, CMemory*, BOOL, BOOL, BOOL, BOOL, BOOL, int );/* Grep実行 */
 	/* Grep実行 */
 //	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, int*, const char*, const char*, BOOL, BOOL, BOOL, BOOL, BOOL, int, CJre*, int, int* );
@@ -110,22 +109,28 @@ public:
 						int upChar, int dnChar );	//	対括弧の前方検索
 	bool  SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 									int dnChar, int upChar );
+//@@@ 2001.02.03 Start by MIK: 全角の対括弧
+	bool  SearchBracketForward2( int PosX, int PosY, int* NewX, int* NewY,
+						         char* upChar, char* dnChar );	//	対括弧の前方検索
+	bool  SearchBracketBackward2( int PosX, int PosY, int* NewX, int* NewY,
+								  char* dnChar, char* upChar );
+//@@@ 2001.02.03 End
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
-	BOOL	m_bDrawSWITCH;
-	BOOL	m_bDragSource;	/* 選択テキストのドラッグ中か */
-	BOOL	m_bDragMode;	/* 選択テキストのドラッグ中か */
+	BOOL			m_bDrawSWITCH;
+	BOOL			m_bDragSource;	/* 選択テキストのドラッグ中か */
+	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
 
 	/* 単語検索の状態 */
 	CJre	m_CurSrch_CJre;
-	BOOL	m_bCurSrchKeyMark;	/* 検索文字列のマーク */
+	BOOL	m_bCurSrchKeyMark;			/* 検索文字列のマーク */
 	char	m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
-	int		m_bCurSrchRegularExp;	/* 検索／置換  1==正規表現 */
-	int		m_bCurSrchLoHiCase;	/* 検索／置換  1==英大文字小文字の区別 */
-	int		m_bCurSrchWordOnly;	/* 検索／置換  1==単語のみ検索 */
+	int		m_bCurSrchRegularExp;		/* 検索／置換  1==正規表現 */
+	int		m_bCurSrchLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
+	int		m_bCurSrchWordOnly;			/* 検索／置換  1==単語のみ検索 */
 
-	BOOL	m_bExecutingKeyMacro;	/* キーボードマクロの実行中 */
+	BOOL	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
 //	BOOL	m_bGrepRunning;
 	HANDLE	m_hThreadGrep;
 	HWND	m_hWnd;				/* 編集ウィンドウハンドル */
@@ -134,8 +139,8 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
 	int		m_nCaretPosX;		/* ビュー左端からのカーソル桁位置（０開始）*/
 	int		m_nCaretPosY;		/* ビュー上端からのカーソル行位置（０開始）*/
-	int		m_nCaretPosX_PHY;	/* カーソル位置　改行単位行先頭からのバイト数（０開始 */
-	int		m_nCaretPosY_PHY;	/* カーソル位置　改行単位行の行番号（０開始）*/
+	int		m_nCaretPosX_PHY;	/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
+	int		m_nCaretPosY_PHY;	/* カーソル位置  改行単位行の行番号（０開始）*/
 	/*
 	||  メンバ変数
 	*/
@@ -147,7 +152,7 @@ public: /* テスト用にアクセス属性を変更 */
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 
-	CEditDoc*		m_pcEditDoc;	/* ドキュメント */
+	CEditDoc*		m_pcEditDoc;		/* ドキュメント */
 	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
@@ -159,11 +164,11 @@ public: /* テスト用にアクセス属性を変更 */
 	HFONT			m_hFontCaretPosInfo;/* キャレットの行桁位置表示用フォント */
 	int				m_nCaretPosInfoCharWidth;
 	int				m_nCaretPosInfoCharHeight;
-	int				m_pnCaretPosInfoDx[64];		/* 文字列描画用文字幅配列 */
+	int				m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
-	int				m_pnDx[10240 + 10];		/* 文字列描画用文字幅配列 */
+	int				m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
 	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */
@@ -219,7 +224,7 @@ public: /* テスト用にアクセス属性を変更 */
 	POINT	m_poTipCurPos;			/* Tip起動時のマウスカーソル位置 */
 	BOOL	m_bInMenuLoop;			/* メニュー モーダル ループに入っています */
 	CDicMgr	m_cDicMgr;				/* 辞書マネージャ */
-	/* 補完 */
+	/* 入力補完 */
 //	CHokanMgr	m_cHokanMgr;
 	BOOL		m_bHokan;
 	//	Aug. 31, 2000 genta
@@ -228,70 +233,70 @@ public: /* テスト用にアクセス属性を変更 */
 	||  実装ヘルパ関数
 	*/
 protected:
-	CEOL GetCurrentInsertEOL( void );/* 現在、Enterなどで挿入する改行コードの種類を取得 */
+	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
-	void GetCurrentTextForSearch( CMemory& );/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	BOOL MyGetClipboardData( CMemory&, BOOL* );/* クリップボードからデータを取得 */
-	BOOL MySetClipboardData( const char*, int, BOOL );/* クリップボードにデータを設定 */	
-	int GetLeftWord( CMemory*, int );/* カーソル直前の単語を取得 */
-//	void PrintBitmap( HDC, int, int, const char* );/* ビットマップファイル表示 */
-//	HANDLE OpenDIB ( LPCSTR );/* DIBファイルを開いてメモリDIBを作成 */
-//	HANDLE ReadDibBitmapInfo ( int );/* DIB形式のファイルを読む */
-//	BOOL DibInfo ( HANDLE, LPBITMAPINFOHEADER );/* CF_DIB形式のメモリブロックに関連付けられているDIB情報を取得します */
-//	WORD PaletteSize ( VOID FAR * pv );/* パレットのバイト数を計算します */
-//	WORD DibNumColors ( VOID FAR * );/* 情報ブロックのBitCountメンバを参照して、DIBの色数を判断します */
-//	DWORD lread ( int, void*, DWORD );/* データをすべて読み取る */
-//	void TraceRgn( HRGN );/* デバッグ用　リージョン矩形のダンプ */
-//	void OnPaintOld( HDC, PAINTSTRUCT *, BOOL );/* 通常の描画処理 */
-	void OnPaint( HDC, PAINTSTRUCT *, BOOL );/* 通常の描画処理 */
-//	int DispLine( HDC, int, int, int, const unsigned char*, int, BOOL );/* 行のテキスト／選択状態の描画 */
-	int DispLineNew( HDC, const CLayout*, int&, int, int&, BOOL, int, BOOL );/* 行のテキスト／選択状態の描画 */
-	void DispLineNumber( HDC, const CLayout*, int, int );/* 行番号表示w */
-	void SetCurrentColor( HDC, int );/* 現在の色を指定 */
-	void DispRuler( HDC );/* ルーラー描画 */
-//	void DispRulerEx( HDC );/* ルーラー描画 */
-	int	DispText( HDC, int, int, const unsigned char*, int );/* テキスト表示 */
-	void DispTextSelected( HDC, int, int, int, int );/* テキスト反転 */
-	void TwoPointToRect( RECT*, int, int, int, int );/* ２点を対角とする矩形を求める */
-	void DrawSelectArea( void );/* 指定行の選択領域の描画 */
-	void DrawSelectAreaLine( HDC, int, int, int, int, int );/* 指定行の選択領域の描画 */
-	int  LineColmnToIndex( const char*, int, int );/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
-	int  LineColmnToIndex2( const char*, int, int, int* );/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */
-	int  LineIndexToColmn( const char*, int, int );/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
+	void GetCurrentTextForSearch( CMemory& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+	BOOL MyGetClipboardData( CMemory&, BOOL* );			/* クリップボードからデータを取得 */
+	BOOL MySetClipboardData( const char*, int, BOOL );	/* クリップボードにデータを設定 */
+	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
+//	void PrintBitmap( HDC, int, int, const char* );		/* ビットマップファイル表示 */
+//	HANDLE OpenDIB ( LPCSTR );							/* DIBファイルを開いてメモリDIBを作成 */
+//	HANDLE ReadDibBitmapInfo ( int );					/* DIB形式のファイルを読む */
+//	BOOL DibInfo ( HANDLE, LPBITMAPINFOHEADER );		/* CF_DIB形式のメモリブロックに関連付けられているDIB情報を取得します */
+//	WORD PaletteSize ( VOID FAR * pv );					/* パレットのバイト数を計算します */
+//	WORD DibNumColors ( VOID FAR * );					/* 情報ブロックのBitCountメンバを参照して、DIBの色数を判断します */
+//	DWORD lread ( int, void*, DWORD );					/* データをすべて読み取る */
+//	void TraceRgn( HRGN );								/* デバッグ用 リージョン矩形のダンプ */
+//	void OnPaintOld( HDC, PAINTSTRUCT *, BOOL );		/* 通常の描画処理 */
+	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
+//	int DispLine( HDC, int, int, int, const unsigned char*, int, BOOL );/		* 行のテキスト／選択状態の描画 */
+	int DispLineNew( HDC, const CLayout*, int&, int, int&, BOOL, int, BOOL );	/* 行のテキスト／選択状態の描画 */
+	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
+	void SetCurrentColor( HDC, int );							/* 現在の色を指定 */
+	void DispRuler( HDC );										/* ルーラー描画 */
+//	void DispRulerEx( HDC );									/* ルーラー描画 */
+	int	DispText( HDC, int, int, const unsigned char*, int );	/* テキスト表示 */
+	void DispTextSelected( HDC, int, int, int, int );			/* テキスト反転 */
+	void TwoPointToRect( RECT*, int, int, int, int );			/* 2点を対角とする矩形を求める */
+	void DrawSelectArea( void );								/* 指定行の選択領域の描画 */
+	void DrawSelectAreaLine( HDC, int, int, int, int, int );	/* 指定行の選択領域の描画 */
+	int  LineColmnToIndex( const char*, int, int );				/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
+	int  LineColmnToIndex2( const char*, int, int, int* );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */
+	int  LineIndexToColmn( const char*, int, int );				/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
-	void CopySelectedAllLines( const char*, BOOL );/* 選択範囲内の全行をクリップボードにコピーする */
-	void ConvSelectedArea( int );/* 選択エリアのテキストを指定方法で変換 */
-	void ConvMemory( CMemory*, int );/* 機能種別によるバッファの変換 */
-	void ShowEditCaret( void );/* キャレットの表示・更新 */
-	void OnSize( int, int );/* ウィンドウサイズの変更処理 */
-	void OnVScroll( int, int, HWND );/* 垂直スクロールバーメッセージ処理 */
-	void OnHScroll( int, int, HWND );/* 水平スクロールバーメッセージ処理 */
-	void OnLBUTTONDOWN( WPARAM, int, int );/* マウス左ボタン押下 */
-	void OnMOUSEMOVE( WPARAM, int, int );/* マウス移動のメッセージ処理 */
-	void OnLBUTTONUP( WPARAM, int, int );/* マウス左ボタン開放のメッセージ処理 */
-	void OnLBUTTONDBLCLK( WPARAM, int , int );/* マウス左ボタンダブルクリック */
-	void OnRBUTTONDOWN( WPARAM, int, int );/* マウス右ボタン押下 */
-	void OnRBUTTONUP( WPARAM, int, int );/* マウス右ボタン開放 */
-	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );/* マウスホイールのメッセージ処理 */
-	void BeginSelectArea( void );/* 現在のカーソル位置から選択を開始する */
-	void ChangeSelectAreaByCurrentCursor( int, int );/* 現在のカーソル位置によって選択範囲を変更 */
+	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
+	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
+	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
+	void ShowEditCaret( void );									/* キャレットの表示・更新 */
+	void OnSize( int, int );									/* ウィンドウサイズの変更処理 */
+	void OnVScroll( int, int, HWND );							/* 垂直スクロールバーメッセージ処理 */
+	void OnHScroll( int, int, HWND );							/* 水平スクロールバーメッセージ処理 */
+	void OnLBUTTONDOWN( WPARAM, int, int );						/* マウス左ボタン押下 */
+	void OnMOUSEMOVE( WPARAM, int, int );						/* マウス移動のメッセージ処理 */
+	void OnLBUTTONUP( WPARAM, int, int );						/* マウス左ボタン開放のメッセージ処理 */
+	void OnLBUTTONDBLCLK( WPARAM, int , int );					/* マウス左ボタンダブルクリック */
+	void OnRBUTTONDOWN( WPARAM, int, int );						/* マウス右ボタン押下 */
+	void OnRBUTTONUP( WPARAM, int, int );						/* マウス右ボタン開放 */
+	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );						/* マウスホイールのメッセージ処理 */
+	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
+	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
 	void ChangeSelectAreaByCurrentCursorTEST( int, int, int&, int&, int&, int& );/* 現在のカーソル位置によって選択範囲を変更 */
-	int  MoveCursorToPoint( int, int );/* マウス等による座標指定によるカーソル移動 */
-	void ScrollAtV( int );/* 指定上端行位置へスクロール */
-	void ScrollAtH( int );/* 指定左端桁位置へスクロール */
-	int Cursor_UPDOWN( int, int );/* カーソル上下移動処理 */
-	void SetIMECompFormPos( void );/* IME編集エリアの位置を変更 */
-	void SetIMECompFormFont( void );/* IME編集エリアの表示フォントを変更 */
-	void SetParentCaption( BOOL = FALSE );/* 親ウィンドウのタイトルを更新 */
-	void DrawCaretPosInfo( void );/* キャレットの行桁位置を表示する */
+	int  MoveCursorToPoint( int, int );							/* マウス等による座標指定によるカーソル移動 */
+	void ScrollAtV( int );										/* 指定上端行位置へスクロール */
+	void ScrollAtH( int );										/* 指定左端桁位置へスクロール */
+	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
+	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
+	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
+	void SetParentCaption( BOOL = FALSE );						/* 親ウィンドウのタイトルを更新 */
+	void DrawCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
 //	void Draw3dRect( HDC, int, int, int, int, COLORREF, COLORREF );
 //	void FillSolidRect( HDC, int, int, int, int, COLORREF );
 	BOOL IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
-	int IsCurrentPositionSelected( int, int );/* 指定カーソル位置が選択エリア内にあるか */
+	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
-	BOOL IsSeaechString( const char*, int, int, int* );/* 現在位置が検索文字列に該当するか */
-	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );/* フォントを選ぶ */
-	void ExecCmd(const char*, BOOL ) ;	// 子プロセスの標準出力をリダイレクトする
+	BOOL IsSeaechString( const char*, int, int, int* );			/* 現在位置が検索文字列に該当するか */
+	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
+	void ExecCmd(const char*, BOOL ) ;							// 子プロセスの標準出力をリダイレクトする
 	void AddToCmdArr( const char* );
 
 
@@ -310,24 +315,26 @@ protected:
 	void Command_FILEOPEN( void );				/* ファイルを開く */
 	BOOL Command_FILESAVE( void );				/* 上書き保存 */
 	BOOL Command_FILESAVEAS( void );			/* 名前を付けて保存 */
-	void Command_FILECLOSE( void );				/* 開じて無題 */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	void Command_FILECLOSE_OPEN( void );		/* 閉じて開く */
 	void ReOpen_XXX( int );			/* 再オープン */
-	void Command_FILE_REOPEN_SJIS( void );		/* SJISで開く */
-	void Command_FILE_REOPEN_JIS( void );		/* JISで開く*/
-	void Command_FILE_REOPEN_EUC( void );		/* EUCで開く */
-	void Command_FILE_REOPEN_UNICODE( void );	/* Unicodeで開く */
-	void Command_FILE_REOPEN_UTF8( void );		/* UTF-8で開く */
-	void Command_FILE_REOPEN_UTF7( void );		/* UTF-7で開く */
+	void Command_FILE_REOPEN_SJIS( void );		/* SJISで開き直す */
+	void Command_FILE_REOPEN_JIS( void );		/* JISで開き直す */
+	void Command_FILE_REOPEN_EUC( void );		/* EUCで開き直す */
+	void Command_FILE_REOPEN_UNICODE( void );	/* Unicodeで開き直す */
+	void Command_FILE_REOPEN_UTF8( void );		/* UTF-8で開き直す */
+	void Command_FILE_REOPEN_UTF7( void );		/* UTF-7で開き直す */
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
-	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//	Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	BOOL Command_OPENINCLUDEFILE( BOOL );		/* 同名のインクルードファイルを開く */
-	BOOL Command_OPENCCPP( BOOL );				/* 同名のC/C++ソースファイルを開く */
+	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	BOOL Command_OPEN_HfromtoC( BOOL );			/* 同名のC/C++ヘッダ(ソース)を開く */	//Feb. 7, 2001 JEPRO 追加
+	BOOL Command_OPEN_HHPP( BOOL );				/* 同名のC/C++ヘッダファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	BOOL Command_OPEN_CCPP( BOOL );				/* 同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	void Command_ACTIVATE_SQLPLUS( void );		/* Oracle SQL*Plusをアクティブ表示 */
 	void Command_PLSQL_COMPILE_ON_SQLPLUS( void );/* Oracle SQL*Plusで実行 */
 	void Command_BROWSE( void );				/* ブラウズ */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
+	void Command_EXITALL( void );				/* テキストエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */
 	void Command_CHAR( char );				/* 文字入力 */
@@ -338,14 +345,14 @@ protected:
 	void Command_DELETE_BACK( void );		/* カーソルの前を削除 */
 	void Command_WordDeleteToStart( void );	/* 単語の左端まで削除 */
 	void Command_WordDeleteToEnd( void );	/* 単語の右端まで削除 */
-	void Command_WordDelete( void );		/* 単語を削除 */
-	void Command_WordCut( void );			/* 単語を切り取り */
-	void Command_LineDeleteToStart( void );	/* 行頭まで削除(改行単位) */
-	void Command_LineDeleteToEnd( void );  	//行末まで削除(改行単位)
+	void Command_WordCut( void );			/* 単語切り取り */
+	void Command_WordDelete( void );		/* 単語削除 */
 	void Command_LineCutToStart( void );   	//行頭まで切り取り(改行単位)
 	void Command_LineCutToEnd( void );   	//行末まで切り取り(改行単位)
-	void Command_DELETE_LINE( void );		/* 行削除(折り返し単位) */
+	void Command_LineDeleteToStart( void );	/* 行頭まで削除(改行単位) */
+	void Command_LineDeleteToEnd( void );  	//行末まで削除(改行単位)
 	void Command_CUT_LINE( void );			/* 行切り取り(折り返し単位) */
+	void Command_DELETE_LINE( void );		/* 行削除(折り返し単位) */
 	void Command_DUPLICATELINE( void );		/* 行の二重化(折り返し単位) */
 	void Command_INDENT( char cChar );		/* インデント ver 1 */
 	void Command_INDENT( const char*, int );/* インデント ver0 */
@@ -418,17 +425,18 @@ protected:
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
 	void Command_COPYLINESASPASSAGE( void );		/* 選択範囲内全行引用符付きコピー */
 	void Command_COPYLINESWITHLINENUMBER( void );	/* 選択範囲内全行行番号付きコピー */
+	void Command_CREATEKEYBINDLIST( void );			// キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO	Command_の作り方がわからないので殺してある
 
 
 	/* データ置換 削除&挿入にも使える */
 void ReplaceData_CEditView(
 	int			nDelLineFrom,		/* 削除範囲行  From レイアウト行番号 */
 	int			nDelColmFrom,		/* 削除範囲位置From レイアウト行桁位置 */
-	int			nDelLineTo,			/* 削除範囲行　To   レイアウト行番号 */
+	int			nDelLineTo,			/* 削除範囲行  To   レイアウト行番号 */
 	int			nDelColmTo,			/* 削除範囲位置To   レイアウト行桁位置 */
 	CMemory*	pcmemCopyOfDeleted,	/* 削除されたデータのコピー(NULL可能) */
-	const char*	pInsData,			/* 挿入するデータ */       
-	int			nInsDataLen,		/* 挿入するデータの長さ */ 
+	const char*	pInsData,			/* 挿入するデータ */
+	int			nInsDataLen,		/* 挿入するデータの長さ */
 //	int*		pnAddLineNum,		/* 再描画ヒント レイアウト行の増減 */
 //	int*		pnModLineFrom,		/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 //	int*		pnModLineTo,		/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
@@ -441,7 +449,7 @@ void ReplaceData_CEditView(
 //	int			nDataLen,
 //	int*		pnNewLine,	/* 挿入された部分の次の位置の行 */
 //	int*		pnNewPos,	/* 挿入された部分の次の位置のデータ位置 */
-//	COpe*		pcOpe,		/* 編集操作要素　COpe */
+//	COpe*		pcOpe,		/* 編集操作要素 COpe */
 	BOOL		bRedraw
 //	BOOL		bUndo		/* Undo操作かどうか */
 );
@@ -470,7 +478,7 @@ void ReplaceData_CEditView(
 	void Command_CODECNV_SJIS2UTF8( void );		/* SJIS→UTF-8コード変換 */
 	void Command_CODECNV_SJIS2UTF7( void );		/* SJIS→UTF-7コード変換 */
 	void Command_BASE64DECODE( void );			/* Base64デコードして保存 */
-	void Command_UUDECODE( void );				/* uudecodeしてファイルに保存	*/	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+	void Command_UUDECODE( void );				/* uudecodeして保存	*/	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
 	/* 検索系 */
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
@@ -491,14 +499,14 @@ void ReplaceData_CEditView(
 	void Command_CANCEL_MODE( void );	/* 各種モードの取り消し */
 
 	/* 設定系 */
-	void Command_SHOWTOOLBAR( void );		/* ツールバー表示/非表示 */
-	void Command_SHOWFUNCKEY( void );		/* ファンクションキー表示/非表示 */
+	void Command_SHOWTOOLBAR( void );		/* ツールバーの表示/非表示 */
+	void Command_SHOWFUNCKEY( void );		/* ファンクションキーの表示/非表示 */
 	void Command_SHOWSTATUSBAR( void );		/* ステータスバーの表示/非表示 */
 	void Command_TYPE_LIST( void );			/* タイプ別設定一覧 */
 	void Command_OPTION_TYPE( void );		/* タイプ別設定 */
 	void Command_OPTION( void );			/* 共通設定 */
 	void Command_FONT( void );				/* フォント設定 */
-	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 
 	/* マクロ系 */
 	void Command_RECKEYMACRO( void );	/* キーマクロの記録開始／終了 */
@@ -525,15 +533,19 @@ void ReplaceData_CEditView(
 	void Command_TILE_V( void );		/* 上下に並べて表示 */
 	void Command_TILE_H( void );		/* 左右に並べて表示 */
 	void Command_MAXIMIZE_V( void );	/* 縦方向に最大化 */
+	void Command_MAXIMIZE_H( void );	/* 横方向に最大化 */  //2001.02.10 by MIK
 	void Command_MINIMIZE_ALL( void );	/* すべて最小化 */
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
-	
+
 	/* 支援 */
 	void Command_HOKAN( void );			/* 入力補完	*/
+	void Command_HELP_CONTENTS( void );	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO added
+	void Command_HELP_SEARCH( void );	/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO added
 	void Command_MENU_ALLFUNC( void );	/* コマンド一覧 */
 	void Command_EXTHELP1( void );		/* 外部ヘルプ１ */
 	void Command_EXTHTMLHELP( void );	/* 外部HTMLヘルプ */
+	void Command_ABOUT( void );			/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
 	void Command_SENDMAIL( void );		/* メール送信 */
@@ -552,5 +564,6 @@ void ReplaceData_CEditView(
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITVIEW_H_ */
+
 
 /*[EOF]*/

@@ -1,6 +1,6 @@
 //	$Id$
 /************************************************************
-  global.h
+	global.h
 	Copyright (C) 1998-2000, Norio Nakatani
 
 ************************************************************/
@@ -10,7 +10,7 @@
 
 //////////////////////////////////////////////////////////////
 #include <windows.h>
-// 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。 
+// 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。
 // この DLL 内のすべてのファイルはコマンドラインで定義された SAKURA_CORE_EXPORTS シンボル
 // でコンパイルされます。このシンボルはこの DLL が使用するどのプロジェクト上でも未定義でなけ
 // ればなりません。この方法ではソースファイルにこのファイルを含むすべてのプロジェクトが DLL 
@@ -35,7 +35,9 @@
 #endif
 #endif
 
-#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
+//Oct. 31, 2000 JEPRO TeX Keyword のために'\'を追加	//Nov. 9, 2000 JEPRO HSP Keyword のために'@'を追加
+//#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
+#define IS_KEYWORD_CHAR(c) ((c) == '#'/*35*/ || (c) == '$'/*36*/ || (c) == '@'/*64*/ || (c) == '\\'/*92*/ || __iscsym( (c) ))
 
 
 SAKURA_CORE_API extern const char* GSTR_APPNAME;
@@ -162,10 +164,10 @@ SAKURA_CORE_API enum enumEOLLen {
 };
 
 
-#define EOL_TYPE_NUM			6
+#define EOL_TYPE_NUM	6
 
 /* 行終端子の配列 */
-SAKURA_CORE_API extern const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM]; 
+SAKURA_CORE_API extern const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
 //	May 15, 2000 genta
 //	CEOLへ移動
@@ -196,3 +198,6 @@ SAKURA_CORE_API enum enumSmartIndentType {
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */
+
+
+/*[EOF]*/

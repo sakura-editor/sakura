@@ -122,8 +122,8 @@ void CEditView::InsertData_CEditView(
 		&nInsLineNum,
 		pnNewLine,			/* 挿入された部分の次の位置の行 */
 		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-		m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 		bUndo	/* Undo操作かどうか */
 	);
 
@@ -136,7 +136,7 @@ void CEditView::InsertData_CEditView(
 	if( pLine2 != NULL ){
 		*pnNewPos = LineIndexToColmn( pLine2, nLineLen2, *pnNewPos );
 	}
-	if( *pnNewPos >= m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nMaxLineSize ){
+	if( *pnNewPos >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
 		*pnNewPos = 0;
 		(*pnNewLine)++;
 	}
@@ -172,7 +172,7 @@ void CEditView::InsertData_CEditView(
 				AdjustScrollBars();
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (nY - m_nViewTopLine);
+				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine);
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 			}else{
 				if( nModifyLayoutLinesOld < 1 ){
@@ -181,8 +181,8 @@ void CEditView::InsertData_CEditView(
 	//			ps.rcPaint.left = m_nViewAlignLeft;
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (nY - m_nViewTopLine - 1);
-				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * ( nModifyLayoutLinesOld + 1);
+				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine - 1);
+				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * ( nModifyLayoutLinesOld + 1);
 				if( m_nViewAlignTop + m_nViewCy < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 				}
@@ -310,8 +310,8 @@ void CEditView::DeleteData2(
 		&nModifyLayoutLinesNew,
 		&nDeleteLayoutLines,
 		*pcMem,
-		m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 		bUndo	/* Undo操作かどうか */
 	);
 
@@ -325,7 +325,7 @@ void CEditView::DeleteData2(
 		if( 0 < nDeleteLayoutLines ){
 			ps.rcPaint.left = 0;
 			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-			ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (nCaretY - m_nViewTopLine - bLastLine );
+			ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nCaretY - m_nViewTopLine - bLastLine );
 			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 			hdc = ::GetDC( m_hWnd );
 			OnKillFocus();
@@ -354,8 +354,8 @@ void CEditView::DeleteData2(
 //				ps.rcPaint.left = m_nViewAlignLeft;
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (nCaretY - m_nViewTopLine - bLastLine);
-				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (nModifyLayoutLinesOld + bLastLine );
+				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nCaretY - m_nViewTopLine - bLastLine);
+				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nModifyLayoutLinesOld + bLastLine );
 				hdc = ::GetDC( m_hWnd );
 				OnKillFocus();
 				OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
@@ -583,7 +583,7 @@ void CEditView::DeleteData(
 				hdc = ::GetDC( m_hWnd );
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-	//			ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine);
+	//			ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine);
 				ps.rcPaint.top = m_nViewAlignTop;
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 				OnKillFocus();
@@ -1310,8 +1310,8 @@ void CEditView::ReplaceData_CEditView(
 //	LRArg.nModLineTo = 0;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 //	LRArg.nNewLine = 0;				/* 挿入された部分の次の位置の行(レイアウト行) */             
 //	LRArg.nNewPos = 0;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */ 
-	LRArg.bDispSSTRING = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;			/* シングルクォーテーション文字列を表示する */
-	LRArg.bDispWSTRING = m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;			/* ダブルクォーテーション文字列を表示する */
+	LRArg.bDispSSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;			/* シングルクォーテーション文字列を表示する */
+	LRArg.bDispWSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;			/* ダブルクォーテーション文字列を表示する */
 	LRArg.bUndo = m_bDoing_UndoRedo;					/* Undo操作かどうか */
 	m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr(
 		&LRArg
@@ -1329,11 +1329,22 @@ void CEditView::ReplaceData_CEditView(
 		&nNewLine,				/* 挿入された部分の次の位置の行(レイアウト行) */
 		&nNewPos,				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 
-		m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
+		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,	/* ダブルクォーテーション文字列を表示する */
 		m_bDoing_UndoRedo	/* Undo操作かどうか */
 #endif
 	);
+
+	//	Jan. 30, 2001 genta
+	//	再描画の時点でファイル更新フラグが適切になっていないといけないので
+	//	関数の末尾からここへ移動
+	/* 状態遷移 */
+	if( FALSE == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+		m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
+		if( bRedraw ){
+			SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
+		}
+	}
 
 	/* 現在の選択範囲を非選択状態に戻す */
 	DisableSelectArea( bRedraw );
@@ -1358,10 +1369,11 @@ void CEditView::ReplaceData_CEditView(
 			PAINTSTRUCT ps;
 			hdc = ::GetDC( m_hWnd );
 			/* 再描画ヒント レイアウト行の増減 */
-			if( 0 < LRArg.nAddLineNum ){
+			//	Jan. 30, 2001 genta	貼り付けで行数が減る場合の考慮が抜けていた
+			if( 0 != LRArg.nAddLineNum ){
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine);
+				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (m_nCaretPosY - m_nViewTopLine);
 				ps.rcPaint.top = 0/*m_nViewAlignTop*/;
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 			}else{
@@ -1369,14 +1381,14 @@ void CEditView::ReplaceData_CEditView(
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 
 				/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-				ps.rcPaint.top = m_nViewAlignTop + (LRArg.nModLineFrom - m_nViewTopLine)* (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace);
-				if( m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_bWordWrap ){
-					ps.rcPaint.top -= (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace);			
+				ps.rcPaint.top = m_nViewAlignTop + (LRArg.nModLineFrom - m_nViewTopLine)* (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
+				if( m_pcEditDoc->GetDocumentAttribute().m_bWordWrap ){
+					ps.rcPaint.top -= (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);			
 				}
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
 				}
-				ps.rcPaint.bottom = m_nViewAlignTop + (LRArg.nModLineTo - m_nViewTopLine + 1)* (m_nCharHeight + m_pShareData->m_Types[m_pcEditDoc->m_nSettingType].m_nLineSpace);
+				ps.rcPaint.bottom = m_nViewAlignTop + (LRArg.nModLineTo - m_nViewTopLine + 1)* (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
 				if( m_nViewAlignTop + m_nViewCy < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 				}
@@ -1484,13 +1496,10 @@ void CEditView::ReplaceData_CEditView(
 		ShowEditCaret();
 	}
 #endif
-	/* 状態遷移 */
-	if( FALSE == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
-		if( bRedraw ){
-			SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-		}
-	}
+	//	Jan. 30, 2001 genta
+	//	ファイル全体の更新フラグが立っていないと各行の更新状態が表示されないので
+	//	フラグ更新処理を再描画より前に移動する
+
 //#ifdef _DEBUG
 //	gm_ProfileOutput = 1;
 //	delete pCRunningTimer;

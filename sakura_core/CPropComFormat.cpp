@@ -5,6 +5,24 @@
 #include "etc_uty.h"
 
 
+//@@@ 2001.02.04 Start by MIK: Popup Help
+const DWORD p_helpids[] = {	//10400
+	IDC_EDIT_DFORM,						10440,	//日付書式
+	IDC_EDIT_TFORM,						10441,	//時刻書式
+	IDC_EDIT_DFORM_EX,					10442,	//日付書式（表示例）
+	IDC_EDIT_TFORM_EX,					10443,	//時刻書式（表示例）
+	IDC_EDIT_MIDASHIKIGOU,				10444,	//見出し記号
+	IDC_EDIT_INYOUKIGOU,				10445,	//引用符
+	IDC_RADIO_DFORM_0,					10460,	//日付書式（標準）
+	IDC_RADIO_DFORM_1,					10461,	//日付書式（カスタム）
+	IDC_RADIO_TFORM_0,					10462,	//時刻書式（標準）
+	IDC_RADIO_TFORM_1,					10463,	//時刻書式（カスタム）
+//	IDC_STATIC,							-1,
+	0, 0
+};
+//@@@ 2001.02.04 End
+
+
 void CPropCommon::ChangeDateExample( HWND hwndDlg )
 {
 	/* ダイアログデータの取得 p9 */
@@ -194,6 +212,18 @@ BOOL CPropCommon::DispatchEvent_p9(
 //		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos      );
 //		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta    );
 		break;
+
+//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//@@@ 2001.02.04 End
+
 	}
 	return FALSE;
 }

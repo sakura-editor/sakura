@@ -13,7 +13,7 @@ class CDlgTypeList;
 #ifndef _CDLGTYPELIST_H_
 #define _CDLGTYPELIST_H_
 
-
+const int PROP_TEMPCHANGE_FLAG = 0x10000;
 
 #include "CDialog.h"
 /*-----------------------------------------------------------------------

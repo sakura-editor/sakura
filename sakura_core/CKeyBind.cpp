@@ -1,19 +1,16 @@
 //	$Id$
 /************************************************************************
-
 	CKeyBind.cpp
-
-    キー割り当てに関するクラス
+	キー割り当てに関するクラス
 	Copyright (C) 1998-2000, Norio Nakatani
 
-    UPDATE: 1998/05/16 クラス内にデータを持たないように変更
-    CREATE: 1998/03/25 新規作成
-
+	UPDATE: 1998/05/16 クラス内にデータを持たないように変更
+	CREATE: 1998/03/25 新規作成
 ************************************************************************/
+
 #include "CKeyBind.h"
 #include "debug.h"
 #include "CMacro.h"
-
 
 
 CKeyBind::CKeyBind()
@@ -39,22 +36,22 @@ HACCEL CKeyBind::CreateAccerelator(
 	ACCEL*	pAccelArr;
 	int		nAccelArrNum;
 	HACCEL	hAccel;
-	int i, j, k;
+	int		i, j, k;
 
 	/* 機能が割り当てられているキーの数をカウント */
 	nAccelArrNum = 0;
 	for( i = 0; i < nKeyNameArrNum; ++i ){
 		if( 0 != pKeyNameArr[i].m_nKeyCode ){
 			for( j = 0; j < 8; ++j ){
-				if(	0 != pKeyNameArr[i].m_nFuncCodeArr[j] ){
+				if( 0 != pKeyNameArr[i].m_nFuncCodeArr[j] ){
 					nAccelArrNum++;
 				}
 			}
 		}
 	}
 //	nAccelArrNum = nKeyNameArrNum * 8;
-	
-	 
+
+
 	if( nAccelArrNum <= 0 ){
 		/* 機能割り当てがゼロ */
 		return NULL;
@@ -64,7 +61,7 @@ HACCEL CKeyBind::CreateAccerelator(
 	for( i = 0; i < nKeyNameArrNum; ++i ){
 		if( 0 != pKeyNameArr[i].m_nKeyCode ){
 			for( j = 0; j < 8; ++j ){
-				if(	0 != pKeyNameArr[i].m_nFuncCodeArr[j] ){
+				if( 0 != pKeyNameArr[i].m_nFuncCodeArr[j] ){
 					pAccelArr[k].fVirt = FNOINVERT | FVIRTKEY;;
 					pAccelArr[k].key = pKeyNameArr[i].m_nKeyCode;
 					pAccelArr[k].cmd = pKeyNameArr[i].m_nKeyCode | (((WORD)j)<<8) ;
@@ -104,7 +101,7 @@ int CKeyBind::GetFuncCode(
 	int nCmd = (int)( nAccelCmd & 0x00ff );
 	int nSts = (int)( ( nAccelCmd & 0xff00 ) >> 8 );
 	for( i = 0; i < nKeyNameArrNum; ++i ){
-		if(	nCmd == pKeyNameArr[i].m_nKeyCode ){
+		if( nCmd == pKeyNameArr[i].m_nKeyCode ){
 			return pKeyNameArr[i].m_nFuncCodeArr[nSts];
 		}
 	}
@@ -141,9 +138,11 @@ int CKeyBind::CreateKeyBindList(
 	char*	pszALT = "Alt+";
 //	char*	pszEQUAL = " = ";
 	char*	pszTAB = "\t";
-	char*	pszCR = "\n";
 
-	
+//	char*	pszCR = "\n";	//Feb. 17, 2001 JEPRO \n=0x0a=LFが行末コードになってしまうので
+	char*	pszCR = "\r\n";	//\r=0x0d=CRを追加
+
+
 	cMemList.AppendSz( "キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可" );
 	cMemList.AppendSz( pszCR );
 	cMemList.AppendSz( "-----\t-----\t-----\t-----\t-----" );
@@ -151,7 +150,7 @@ int CKeyBind::CreateKeyBindList(
 
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < nKeyNameArrNum; ++i ){
-			if(	0 != pKeyNameArr[i].m_nFuncCodeArr[j] ){
+			if( 0 != pKeyNameArr[i].m_nFuncCodeArr[j] ){
 				nValidKeys++;
 				if( j & _SHIFT ){
 					cMemList.AppendSz( pszSHIFT );
@@ -165,10 +164,10 @@ int CKeyBind::CreateKeyBindList(
 				cMemList.AppendSz( pKeyNameArr[i].m_szKeyName );
 //				cMemList.AppendSz( pszEQUAL );
 //				cMemList.AppendSz( pszTAB );
-				strcpy( szFuncNameJapanese, "---名前が定義されていない-----");
+				strcpy( szFuncNameJapanese, "---名前が定義されていない-----" );
 				strcpy( szFuncName, ""/*"---unknown()--"*/ );
 
-				/* 機能名 */
+				/* 機能名日本語 */
 				::LoadString(
 					hInstance,
 					pKeyNameArr[i].m_nFuncCodeArr[j],
@@ -178,14 +177,14 @@ int CKeyBind::CreateKeyBindList(
 				cMemList.AppendSz( szFuncNameJapanese );
 
 				/* 機能ID→関数名，機能名日本語 */
-				CMacro::GetFuncInfoByID( 
-					hInstance, 
-					pKeyNameArr[i].m_nFuncCodeArr[j], 
-					szFuncName, 
-					szFuncNameJapanese 
+				CMacro::GetFuncInfoByID(
+					hInstance,
+					pKeyNameArr[i].m_nFuncCodeArr[j],
+					szFuncName,
+					szFuncNameJapanese
 				);
-				
-				/* 機能名(関数名) */
+
+				/* 関数名 */
 				cMemList.AppendSz( pszTAB );
 				cMemList.AppendSz( szFuncName );
 
@@ -232,7 +231,7 @@ int CKeyBind::GetKeyStr(
 	cMemList.SetDataSz( "" );
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < nKeyNameArrNum; ++i ){
-			if(	nFuncId == pKeyNameArr[i].m_nFuncCodeArr[j] ){
+			if( nFuncId == pKeyNameArr[i].m_nFuncCodeArr[j] ){
 				if( j & _SHIFT ){
 //					cMemList.Append( pszSHIFT, strlen( pszSHIFT ) );
 					cMemList.AppendSz( pszSHIFT );
@@ -270,14 +269,14 @@ int CKeyBind::GetKeyStrList(
 	char*	pszCTRL = "Ctrl+";
 	char*	pszALT = "Alt+";
 	int		nAssignedKeysNum;
-	
+
 	nAssignedKeysNum = 0;
 	if( 0 == nFuncId ){
 		return 0;
 	}
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < nKeyNameArrNum; ++i ){
-			if(	nFuncId == pKeyNameArr[i].m_nFuncCodeArr[j] ){
+			if( nFuncId == pKeyNameArr[i].m_nFuncCodeArr[j] ){
 				nAssignedKeysNum++;
 			}
 		}
@@ -290,12 +289,12 @@ int CKeyBind::GetKeyStrList(
     	(*pppcMemList)[i] = new CMemory;
     }
    	(*pppcMemList)[i] = NULL;
-    
-    
+
+
 	nAssignedKeysNum = 0;
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < nKeyNameArrNum; ++i ){
-			if(	nFuncId == pKeyNameArr[i].m_nFuncCodeArr[j] ){
+			if( nFuncId == pKeyNameArr[i].m_nFuncCodeArr[j] ){
 				if( j & _SHIFT ){
 //					(*pppcMemList)[nAssignedKeysNum]->Append( pszSHIFT, strlen( pszSHIFT ) );
 					(*pppcMemList)[nAssignedKeysNum]->AppendSz( pszSHIFT );
@@ -337,11 +336,11 @@ char* CKeyBind::GetMenuLabel(
 		::LoadString( hInstance, nFuncId, pszLabel, 255 );
 	}
 
-	
+
 	/* 機能に対応するキー名を追加するか */
 	if( bKeyStr ){
 		/* 機能に対応するキー名の取得 */
-		if(	( IDM_SELWINDOW <= nFuncId && nFuncId <= IDM_SELWINDOW + 999 )
+		if( ( IDM_SELWINDOW <= nFuncId && nFuncId <= IDM_SELWINDOW + 999 )
 		 || ( IDM_SELMRU <= nFuncId && nFuncId <= IDM_SELMRU + 999 )
 		 || ( IDM_SELOPENFOLDER <= nFuncId && nFuncId <= IDM_SELOPENFOLDER + 999 )
 		 ){

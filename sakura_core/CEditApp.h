@@ -48,6 +48,7 @@ public:
 	|| メンバ関数
 	*/
 	HWND Create( HINSTANCE );	/* 作成 */
+	bool CreateTrayIcon( HWND );	// 20010412 by aroka
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
 	void MessageLoop( void );	/* メッセージループ */
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
@@ -59,7 +60,7 @@ public:
 //	static HWND OpenNewEditor3( HINSTANCE, HWND , const char*, BOOL );	/* 新規編集ウィンドウの追加 ver 2 */
 
 	static BOOL CloseAllEditor( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-	static void TerminateApplication( void );	/* テキストエディタの終了 */
+	static void TerminateApplication( void );	/* テキストエディタの全終了 */
 	/* コマンドラインの解析 */
 	static void CEditApp::ParseCommandLine( 
 		const char*	pszCmdLineSrc,
@@ -90,7 +91,7 @@ private:
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
 	char*			m_pszAppName;
-	BOOL			m_bCreatedTrayIcon;	/* トレイにアイコンを作った  */
+	BOOL			m_bCreatedTrayIcon;	/* トレイにアイコンを作った */
 
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
@@ -98,6 +99,9 @@ private:
 
 	CImageListMgr	m_hIcons;
 
+    void    DoGrep();   //Stonee, 2001/03/21
+	//	Apr. 6, 2001 genta コマンドラインオプションの解析
+	static int CheckCommandLine( char *str, char** arg );
 
 	/*
 	|| 実装ヘルパ系
@@ -114,3 +118,4 @@ protected:
 #endif /* _CEDITAPP_H_ */
 
 /*[EOF]*/
+

@@ -1,35 +1,38 @@
 //	$Id$
 /************************************************************************
-
 	CFuncInfo.cpp
-
-	アウトライン解析　データ要素
 	Copyright (C) 1998-2000, Norio Nakatani
 
-    CREATE: 1998/6/23  新規作成
-
+	CREATE: 1998/6/23  新規作成
 ************************************************************************/
+/*! @file
+	アウトライン解析  データ要素
+
+	@author Norio Nakatani
+	@date Jun. 23,1998
+*/
+
 #include "CFuncInfo.h"
 #include <windows.h>
 //#include <string.h>
 
-/* CFuncInfoクラス構築 */
+/*! CFuncInfoクラス構築 */
 CFuncInfo::CFuncInfo(
-	int		nFuncLineCRLF,	/* 関数のある行(CRLF単位) */
-	int		nFuncLineLAYOUT,/* 関数のある行(折り返し単位) */
-//	int		nFuncLine,		/* 関数のある行 */
-	char*	pszFuncName,	/* 関数名 */
-	int		nInfo			/* 付加情報 */
+	int		nFuncLineCRLF,	/*!< 関数のある行(CRLF単位) */
+	int		nFuncLineLAYOUT,/*!< 関数のある行(折り返し単位) */
+//	int		nFuncLine,		/*!< 関数のある行 */
+	char*	pszFuncName,	/*!< 関数名 */
+	int		nInfo			/*!< 付加情報 */
 )
 {
-	m_nFuncLineCRLF = nFuncLineCRLF;	/* 関数のある行(CRLF単位) */
+	m_nFuncLineCRLF = nFuncLineCRLF;		/* 関数のある行(CRLF単位) */
 	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* 関数のある行(折り返し単位) */
 //	m_nFuncLine = nFuncLine;;
 //    m_cmemFuncName = pszFuncName;
 //	m_cmemFuncName.SetData( pszFuncName, lstrlen( pszFuncName ) );
 	m_cmemFuncName.SetDataSz( pszFuncName );
 
-    m_nInfo = nInfo;
+	m_nInfo = nInfo;
 	return;
 }
 
@@ -43,3 +46,4 @@ CFuncInfo::~CFuncInfo()
 }
 
 
+/*[EOF]*/

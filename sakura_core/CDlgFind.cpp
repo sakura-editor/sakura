@@ -1,17 +1,16 @@
 //	$Id$
 /************************************************************************
-
 	CDlgFind.cpp
-
-	1999.12.2  再作成 
+	1999.12.2  再作成
 	Copyright (C) 1998-2000, Norio Nakatani
-
 ************************************************************************/
+
 #include "CDlgFind.h"
 #include "funccode.h"
 #include "sakura_rc.h"
 #include "CJre.h"
 #include "CEditView.h"
+#include "etc_uty.h"    //Stonee, 2001/03/12
 
 CDlgFind::CDlgFind()
 {
@@ -28,10 +27,10 @@ CDlgFind::CDlgFind()
 //	/* モーダルダイアログの表示 */
 //	int CDlgFind::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 //	{
-//		m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;	/* 1==正規表現 */
-//		m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;		/* 1==英大文字小文字の区別 */
-//		m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;		/* 1==単語のみ検索 */
-//		m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
+//		m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			/* 1==正規表現 */
+//		m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				/* 1==英大文字小文字の区別 */
+//		m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				/* 1==単語のみ検索 */
+//		m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 //		return CDialog::DoModal( hInstance, hwndParent, IDD_FIND, lParam );
 //	}
 
@@ -39,10 +38,10 @@ CDlgFind::CDlgFind()
 /* モードレスダイアログの表示 */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;	/* 1==正規表現 */
-	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;		/* 1==英大文字小文字の区別 */
-	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;		/* 1==単語のみ検索 */
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
+	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			/* 1==正規表現 */
+	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				/* 1==英大文字小文字の区別 */
+	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				/* 1==単語のみ検索 */
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, lParam, SW_SHOW );
 }
 
@@ -61,14 +60,14 @@ void CDlgFind::SetData( void )
 //	MYTRACE( "CDlgFind::SetData()" );
 	int		i;
 	HWND	hwndCombo;
-	
+
 	/*****************************
 	*  初期化                    *
 	*****************************/
 	if( CJre::IsExist() ){	// jre.dllがあるかどうかを判定
 		CJre	cJre;
+		WORD	wJreVersion;
 		char	szMsg[256];
-		int		wJreVersion;
 		cJre.Init();
 		/* JRE32.DLLのバージョン */
 		wJreVersion = cJre.GetVersion();
@@ -80,7 +79,7 @@ void CDlgFind::SetData( void )
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 
-	
+
 	/*****************************
 	*  データ設定                *
 	*****************************/
@@ -91,7 +90,7 @@ void CDlgFind::SetData( void )
 	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
 	}
-	/* 大文字と小文字を区別する */
+	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
 //	/* 一致する単語のみ検索する */
 //	::CheckDlgButton( m_hWnd, IDC_CHK_WORDONLY, m_bWordOnly );
@@ -107,7 +106,7 @@ void CDlgFind::SetData( void )
 		cJre.Init();
 		if( FALSE == cJre.IsExist() ){
 			::MessageBeep( MB_ICONEXCLAMATION );
-			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するには、jre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
 			::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 		}else{
 			/* 英大文字と英小文字を区別する */
@@ -117,7 +116,7 @@ void CDlgFind::SetData( void )
 	}
 	/* 検索ダイアログを自動的に閉じる */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFind, m_pShareData->m_Common.m_bAutoCloseDlgFind );
-	
+
 	return;
 }
 
@@ -143,9 +142,9 @@ int CDlgFind::GetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;	/* 1==正規表現 */
-	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;		/* 1==英大文字小文字の区別 */
-	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;		/* 1==単語のみ検索 */
+	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;			/* 1==正規表現 */
+	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;				/* 1==英大文字小文字の区別 */
+	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;				/* 1==単語のみ検索 */
 	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 
 	/* 検索文字列 */
@@ -161,7 +160,7 @@ int CDlgFind::GetData( void )
 			cJre.Init();
 			/* jre32.dllの存在チェック */
 			if( FALSE == cJre.IsExist() ){
-				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するには、jre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
 				return -1;
 			}
 			/* 検索パターンのコンパイル */
@@ -189,28 +188,31 @@ int CDlgFind::GetData( void )
 
 BOOL CDlgFind::OnBnClicked( int wID )
 {
-	int	nRet;
+	int			nRet;
 	CEditView*	pcEditView = (CEditView*)m_lParam;
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 59 );
+		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO 修正漏れを追加
 		break;
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
 //		MYTRACE( "IDC_CHK_REGULAREXP ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
 			/* CJreクラスの初期化 */
 			CJre	cJre;
-			char	szMsg[256];
-			WORD	wJreVersion;
 			cJre.Init();
 			if( FALSE == CJre::IsExist() ){
 				/* JRE32.DLLのバージョン */
 				::SetDlgItemText( m_hWnd, IDC_STATIC_JRE32VER, "" );
 				::MessageBeep( MB_ICONEXCLAMATION );
-				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するには、jre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+				::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
 				::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 			}else{
+				CJre	cJre;
+				WORD	wJreVersion;
+				char	szMsg[256];
+				cJre.Init();
 				/* JRE32.DLLのバージョン */
 				wJreVersion = cJre.GetVersion();
 				wsprintf( szMsg, "jre32.dll Ver%x.%x", wJreVersion / 0x100, wJreVersion % 0x100 );
@@ -226,11 +228,11 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
 		}
 		break;
-	case IDC_BUTTON1:	/* 上検索 */
+	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
 		/* ダイアログデータの取得 */
 		nRet = GetData();
 		if( 0 < nRet ){
-			if(	m_bModal ){		/* モーダル　ダイアログか */
+			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 1 );
 			}else{
 				/* 前を検索 */
@@ -242,17 +244,26 @@ BOOL CDlgFind::OnBnClicked( int wID )
 					CloseDialog( 0 );
 				}
 			}
-		}else
-		if( 0 == nRet ){
-			::MessageBeep( MB_ICONHAND );
-			CloseDialog( 0 );
+//From Here Feb. 20, 2001 JEPRO 「置換」ダイアログと同じように警告メッセージを表示するように変更
+//		}else
+//		if( 0 == nRet ){
+//			::MessageBeep( MB_ICONHAND );
+//			CloseDialog( 0 );
+//		}
+//		return TRUE;
+//ここまでコメントアウトし、代わりに以下を追加
+		}else{
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
+				"検索条件を指定してください。"
+			);
 		}
 		return TRUE;
-	case IDOK:			/* 下検索 */
+//To Here Feb. 20, 2001
+	case IDC_BUTTON_SEARCHNEXT:		/* 下検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDOK]→[IDC_BUTTON_SERACHNEXT]に変更
 		/* ダイアログデータの取得 */
 		nRet = GetData();
 		if( 0 < nRet ){
-			if(	m_bModal ){		/* モーダル　ダイアログか */
+			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 2 );
 			}else{
 				/* 次を検索 */
@@ -264,16 +275,24 @@ BOOL CDlgFind::OnBnClicked( int wID )
 					CloseDialog( 0 );
 				}
 			}
-		}else
-		if( 0 == nRet ){
-			::MessageBeep( MB_ICONHAND );
-			CloseDialog( 0 );
+//From Here Feb. 20, 2001 JEPRO 「置換」ダイアログと同じように警告メッセージを表示するように変更
+//		}else
+//		if( 0 == nRet ){
+//			::MessageBeep( MB_ICONHAND );
+//			CloseDialog( 0 );
+//		}
+//		return TRUE;
+//ここまでコメントアウトし、代わりに以下を追加
+		}else{
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
+				"検索条件を指定してください。"
+			);
 		}
 		return TRUE;
+//To Here Feb. 20, 2001
 	case IDCANCEL:
 		CloseDialog( 0 );
 		return TRUE;
-
 	}
 	return FALSE;
 }
@@ -293,11 +312,11 @@ void CDlgFind::AddToSearchKeyArr( const char* pszKey )
 	}
 	if( i < m_pShareData->m_nSEARCHKEYArrNum ){
 		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] ); 
+			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
 		}
 	}else{
 		for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] ); 
+			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
 		}
 		++m_pShareData->m_nSEARCHKEYArrNum;
 		if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
@@ -310,5 +329,5 @@ void CDlgFind::AddToSearchKeyArr( const char* pszKey )
 	return;
 }
 
-/*[EOF]*/
 
+/*[EOF]*/

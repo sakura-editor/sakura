@@ -1,14 +1,18 @@
 //	$Id$
 /************************************************************************
-
-		WinMain.cpp
+	WinMain.cpp
 	Copyright (C) 1998-2000, Norio Nakatani
 
-        UPDATE:
-        CREATE: 1998/3/13
-
-
+	UPDATE:
+	CREATE: 1998/3/13
 ************************************************************************/
+/*!
+	@file
+	MAIN
+	
+	@author Norio Nakatani
+	@date Mar. 13, 1998
+*/
 #include <windows.h>
 //#include <stdio.h>
 //#include <io.h>
@@ -31,10 +35,10 @@
 
 
 BOOL CALLBACK ExitingDlgProc(
-  HWND hwndDlg, // handle to dialog box
-  UINT uMsg, // message
-  WPARAM wParam, // first message parameter
-  LPARAM lParam // second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam		// second message parameter
 )
 {
 	switch( uMsg ){
@@ -51,25 +55,31 @@ int WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR, int );
 
 
 //struct VS_VERSION_INFO_HEAD {
-//    WORD  wLength;
-//    WORD  wValueLength;
-//    WORD  bText;
-//	WCHAR szKey[16];
-//	VS_FIXEDFILEINFO Value;
+//	WORD				wLength;
+//	WORD				wValueLength;
+//	WORD				bText;
+//	WCHAR				szKey[16];
+//	VS_FIXEDFILEINFO	Value;
 //};
 //char* m_pszAppName = "SakuraTrayClass";
 
 
 
-
-
-
-
-int WINAPI WinMain (
-	HINSTANCE	hInstance,		// handle to current instance
-	HINSTANCE	hPrevInstance,	// handle to previous instance
-	LPSTR		lpCmdLine,		// pointer to command line
-	int			nCmdShow		// show state of window
+/*!
+	Windows Entry point
+	
+	1つ目のエディタプロセスの場合は、このプロセスはコントロールプロセスと
+	なり、新しいエディタプロセスを起動する。そうでないときはエディタプロセス
+	となる。
+	
+	コントロールプロセスはCEditAppクラスのインスタンスを作り、エディタ
+	プロセスはCEditWndクラスのインスタンスを作る。
+*/
+int WINAPI WinMain(
+	HINSTANCE	hInstance,		//!< handle to current instance
+	HINSTANCE	hPrevInstance,	//!< handle to previous instance
+	LPSTR		lpCmdLine,		//!< pointer to command line
+	int			nCmdShow		//!< show state of window
 )
 {
 
@@ -84,15 +94,15 @@ int WINAPI WinMain (
 //	dwSize = RasConn.dwSize;
 //	/* RAS接続の監視 */
 //	dwStatus = ::RasEnumConnections(
-//	  &RasConn,  // buffer to receive connections data
-//	  &dwSize,         // size in bytes of buffer
+//	  &RasConn,			// buffer to receive connections data
+//	  &dwSize,			// size in bytes of buffer
 //	  &dwConnections	// number of connections written to buffer
 //	);
-//	if( 0 == dwStatus 
+//	if( 0 == dwStatus
 //	 && NULL != RasConn.hrasconn
 //	){
 //		/* RAS接続されている */
-//		RasConnStatus.dwSize = sizeof(RASCONNSTATUS);
+//		RasConnStatus.dwSize = sizeof( RASCONNSTATUS );
 //		::RasGetConnectStatus( RasConn.hrasconn, &RasConnStatus );
 //		if( RASCS_Connected == RasConnStatus.rasconnstate
 //		 && IDYES == ::MYMESSAGEBOX(
@@ -105,10 +115,10 @@ int WINAPI WinMain (
 //		){
 //			/* RAS接続を切断 */
 //			::RasHangUp( RasConn.hrasconn );
-//		
+//
 //		}
 //	}
- 
+
 
 
 
@@ -144,11 +154,11 @@ int WINAPI WinMain (
 
 //	cRunningTimer.Reset();
 //	cProfile.ReadProfile( "A:\\WINDOWS\\WIN.INI" );
-//	MYTRACE( "A:\\WINDOWS\\WIN.INI　読み込み処理 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE( "A:\\WINDOWS\\WIN.INI  読み込み処理 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
 //	cRunningTimer.Reset();
 //	cProfile.WriteProfile( "a:\\tmp\\test.ini" );
-//	MYTRACE( "a:\\tmp\\test.ini　書き込み処理 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE( "a:\\tmp\\test.ini  書き込み処理 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
 
 //	GetDllVersion( "Comctl32.dll" );
@@ -168,11 +178,11 @@ int WINAPI WinMain (
 
 //	/* 共有データ構造体のアドレスを返す */
 //	m_cShareData.Init();
-//	m_pShareData = m_cShareData.GetShareData( NULL, NULL);
+//	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
 
 	/* コマンドラインの解析 */
-	CEditApp::ParseCommandLine( 
+	CEditApp::ParseCommandLine(
 		lpCmdLine,
 		&bGrepMode,
 		&cmGrepKey,
@@ -193,31 +203,31 @@ int WINAPI WinMain (
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA );
 	if( NULL == hMutex ){
 		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "CreateMutex()失敗。\n終了します。" );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "CreateMutex()失敗。\n終了します。" );
 		return 0;
 	}
 	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
 		/* オブジェクトがシグナル状態になるか、または、タイムアウト時間が経過するまで待つ */
 		dwRet = ::WaitForSingleObject( hMutex, 20000 );
-		if( WAIT_TIMEOUT == dwRet 
-		 || WAIT_ABANDONED == dwRet 
-		 || WAIT_FAILED == dwRet 
+		if( WAIT_TIMEOUT == dwRet
+		 || WAIT_ABANDONED == dwRet
+		 || WAIT_FAILED == dwRet
 		){
 			::MessageBeep( MB_ICONSTOP );
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "コントロールプロセスが応答しません。\n終了します。" );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "コントロールプロセスが応答しません。\n終了します。" );
 			return 0;
 		}
-		::ReleaseMutex( hMutex );	
+		::ReleaseMutex( hMutex );
 
 
 		/* 共有データ構造体のアドレスを返す */
-		if( !m_cShareData.Init()){
+		if( !m_cShareData.Init() ){
 			//	適切なデータを得られなかった
-			::MessageBox( NULL, "異なるバージョンのエディタを同時に起動することはできません", GSTR_APPNAME, MB_OK | MB_ICONERROR );
+			::MessageBox( NULL, "異なるバージョンのエディタを同時に起動することはできません。", GSTR_APPNAME, MB_OK | MB_ICONERROR );
 			return 0;
 		}
-		m_pShareData = m_cShareData.GetShareData( NULL, NULL);
-		
+		m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+
 		bFindCTRLPROCESS = TRUE;
 		if( NULL == m_pShareData->m_hwndTray ){
 			bFindCTRLPROCESS = FALSE;
@@ -234,20 +244,20 @@ int WINAPI WinMain (
 			}
 		}
 		if( FALSE == bFindCTRLPROCESS ){
-//動作確認用	::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "コントロールプロセスが存在していませんでした。\n新たにコントロールプロセスを起動します。\n" );
+//動作確認用	::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "コントロールプロセスが存在していませんでした。\n新たにコントロールプロセスを起動します。\n" );
 //			bNoWindow = TRUE;
 			goto CreateControlProcess;
 //			return 0;
 		}
 
-		/* コマンドラインで受け取ったファイルが開かれている場合は、*/
+		/* コマンドラインで受け取ったファイルが開かれている場合は */
 		/* その編集ウィンドウをアクティブにする */
 		if( 0 < strlen( fi.m_szPath ) ){
 			//	Oct. 27, 2000 genta
 			//	MRUからカーソル位置を復元する操作はCEditDoc::FileReadで
 			//	行われるのでここでは必要なし．
 #if 0
-			/* MRUリストに存在するか調べる　存在するならばファイル情報を返す */
+			/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
 			FileInfo fiWork;
 			if( m_cShareData.IsExistInMRUList( (const char*)fi.m_szPath, &fiWork ) ){
 //				MYTRACE( "MRUリストに存在する[%s]\n", fi.m_szPath );
@@ -265,7 +275,7 @@ int WINAPI WinMain (
 
 			}
 #endif
-					
+
 			HWND hwndOwner;
 			/* 指定ファイルが開かれているか調べる */
 			if( TRUE == m_cShareData.IsPathOpened( fi.m_szPath, &hwndOwner ) ){
@@ -273,11 +283,11 @@ int WINAPI WinMain (
 				ActivateFrameWindow( hwndOwner );
 				return 0;
 			}else{
-	
+
 			}
 		}
-//マルチスレッド版		
-//		
+//マルチスレッド版
+//
 //		/* 新しい編集ウィンドウの作成依頼(コマンドラインを渡す) */
 //		::strcpy( pShareData->m_szWork, lpCmdLine );
 //		hwndNew = (HWND)::SendMessage( pShareData->m_hwndTray, MYWM_OPENNEWEDITOR, 0, 0 );
@@ -285,7 +295,7 @@ int WINAPI WinMain (
 //		ActivateFrameWindow( hwndNew );
 
 
-//複数プロセス版		
+//複数プロセス版
 		/* エディタウィンドウオブジェクトを作成 */
 		pcEditWnd = new CEditWnd;
 		if( bDebugMode ){
@@ -294,7 +304,7 @@ int WINAPI WinMain (
 //	#ifdef _DEBUG/////////////////////////////////////////////
 			/* デバッグモニタモードに設定 */
 			pcEditWnd->SetDebugModeON();
-//	#endif////////////////////////////////////////////////////		
+//	#endif////////////////////////////////////////////////////
 		}else
 		if( bGrepMode ){
 			hWnd = pcEditWnd->Create( hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
@@ -313,7 +323,7 @@ int WINAPI WinMain (
 				bGrepSubFolder,
 				bGrepLoHiCase,
 				bGrepRegularExp,
-				bGrepKanjiCode_AutoDetect, 
+				bGrepKanjiCode_AutoDetect,
 				bGrepOutputLine,
 				nGrepOutputStyle
 			);
@@ -323,14 +333,14 @@ int WINAPI WinMain (
 				//	Nov. 6, 2000 genta
 				//	キャレット位置の復元のため
 				//	オプション指定がないときは画面移動を行わないようにする
-				if(( 0 <= fi.m_nViewTopLine || 0 <= fi.m_nViewLeftCol ) && fi.m_nViewTopLine < pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
+				if( ( 0 <= fi.m_nViewTopLine || 0 <= fi.m_nViewLeftCol ) && fi.m_nViewTopLine < pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
 					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewTopLine = fi.m_nViewTopLine;
 					pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewLeftCol = fi.m_nViewLeftCol;
 				}
-				
+
 				//	Nov. 6, 2000 genta
 				//	キャレット位置の復元のため
-				//	m_nCaretPosX_Prevの用途は不明だが，何も設定しないのはまずいのでとりあえず0
+				//	m_nCaretPosX_Prevの用途は不明だが，何も設定しないのはまずいのでとりあえず 0
 				pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
 				//	オプション指定がないときはカーソル位置設定を行わないようにする
 				if( fi.m_nX > 0 || fi.m_nY > 0 ){
@@ -372,39 +382,37 @@ int WINAPI WinMain (
 		delete pcEditWnd;
 	}else{
 CreateControlProcess:;
-		
-		
+
+
 		/* 共有データ構造体のアドレスを返す */
-		if( !m_cShareData.Init()){
+		if( !m_cShareData.Init() ){
 			//	適切なデータを得られなかった
-			::MessageBox( NULL, "異なるバージョンのエディタを同時に起動することはできません", GSTR_APPNAME, MB_OK | MB_ICONERROR );
+			::MessageBox( NULL, "異なるバージョンのエディタを同時に起動することはできません。", GSTR_APPNAME, MB_OK | MB_ICONERROR );
 			return 0;
 		}
-		m_pShareData = m_cShareData.GetShareData( NULL, NULL);
-		
+		m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+
 		/* リソースから製品バージョンの取得 */
 		GetAppVersionInfo( hInstance, VS_VERSION_INFO, &m_pShareData->m_dwProductVersionMS, &m_pShareData->m_dwProductVersionLS );
 //		MYTRACE( "製品バージョン=%d.%d.%d.%d\n",
-//			HIWORD( m_pShareData->m_dwProductVersionMS ),	LOWORD( m_pShareData->m_dwProductVersionMS ),
-//			HIWORD( m_pShareData->m_dwProductVersionLS ),	LOWORD( m_pShareData->m_dwProductVersionLS )
+//			HIWORD( m_pShareData->m_dwProductVersionMS ), LOWORD( m_pShareData->m_dwProductVersionMS ),
+//			HIWORD( m_pShareData->m_dwProductVersionLS ), LOWORD( m_pShareData->m_dwProductVersionLS )
 //		);
 
 		/* 共有データのロード */
 		if( FALSE == m_cShareData.LoadShareData() ){
 //			int	i;
-			/*	レジストリから設定データが存在しなかった場合は初回起動時とみなし、 
-				全レジストリデータを作っておく
-			*/
+			/*	レジストリから設定データが存在しなかった場合は初回起動時とみなし全レジストリデータを作っておく */
 
 //			/* 変更フラグ(共通設定の全体)のセット */
 //			m_pShareData->m_nCommonModify = TRUE;
 //
-//			/* 変更フラグ　フォント */
+//			/* 変更フラグ フォント */
 //			m_pShareData->m_bFontModify = TRUE;
 //
-//			m_pShareData->m_bKeyBindModify = TRUE;	/* 変更フラグ　キーバインド */
+//			m_pShareData->m_bKeyBindModify = TRUE;	/* 変更フラグ キーバインド */
 //			for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
-//				m_pShareData->m_bKeyBindModifyArr[i] = TRUE;	/* 変更フラグ　キーバインド(キーごと) */
+//				m_pShareData->m_bKeyBindModifyArr[i] = TRUE;	/* 変更フラグ キーバインド(キーごと) */
 //			}
 //			/* 変更フラグ(印刷の全体)のセット */
 //			m_pShareData->m_bPrintSettingModify = TRUE;
@@ -421,7 +429,7 @@ CreateControlProcess:;
 //				m_pShareData->m_nTypesModifyArr[i] = TRUE;
 //			}
 
-			/* レジストリ項目　作成 */
+			/* レジストリ項目 作成 */
 			m_cShareData.SaveShareData();
 		}
 
@@ -431,19 +439,19 @@ CreateControlProcess:;
 
 		if( NULL == ( hwndTray = pcEditApp->Create( hInstance ) ) ){
 			::MessageBeep( MB_ICONSTOP );
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "ウィンドウの作成に失敗しました\n起動できません。" );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, "ウィンドウの作成に失敗しました。\n起動できません。" );
 			return 0;
 		}
 		m_pShareData->m_hwndTray = hwndTray;
 
-		::ReleaseMutex( hMutex );	
+		::ReleaseMutex( hMutex );
 
 		/* 空の編集ウィンドウを作成 */
 		if( !bNoWindow ){
-			CEditApp::OpenNewEditor( 
+			CEditApp::OpenNewEditor(
 				hInstance,
-				m_pShareData->m_hwndTray, 
-				lpCmdLine, 
+				m_pShareData->m_hwndTray,
+				lpCmdLine,
 				//	May 30, 2000 genta
 				fi.m_nCharCode,	/* 文字コードは引数の設定を引き継ぐ */
 				FALSE				/* 読み取り専用か */
@@ -457,8 +465,8 @@ CreateControlProcess:;
 		HWND hwndExitingDlg;
 		if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
 			/* 終了中ダイアログの表示 */
-			hwndExitingDlg = ::CreateDialog( 
-				hInstance, 
+			hwndExitingDlg = ::CreateDialog(
+				hInstance,
 				MAKEINTRESOURCE( IDD_EXITING ),
 				/*m_hWnd*/::GetDesktopWindow(),
 				(DLGPROC)ExitingDlgProc
@@ -484,19 +492,10 @@ CreateControlProcess:;
 		}
 
 //		Sleep( 3000 );
-		::ReleaseMutex( hMutex );	
+		::ReleaseMutex( hMutex );
 	}
 	return 0;
 }
-
-
-
-
-
-
-
-
-
 
 
 /*[EOF]*/

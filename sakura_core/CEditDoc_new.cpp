@@ -536,17 +536,17 @@ bool CEditDoc::SaveFile(bool force_rename)
 
 //	From Here Sep 8, 2000 genta
 //
-//	Perl用アウトライン解析機能（簡易版）
-//
-//	単純に /^\s*sub\s+(\w+)/ に一致したら $1を取り出す動作を行う
-//	ネストとかは面倒くさいので考えない
-//	package{ }を使わなければこれで十分．無いよりはまし．
-//
-//	nModeの意味
-//	0: はじめ
-//	2: subを見つけた後
-//	1: 単語読み出し中
-//
+//!	Perl用アウトライン解析機能（簡易版）
+/*!
+	単純に /^\s*sub\s+(\w+)/ に一致したら $1を取り出す動作を行う。
+	ネストとかは面倒くさいので考えない。
+	package{ }を使わなければこれで十分．無いよりはまし。
+
+	@par nModeの意味
+	@li 0: はじめ
+	@li 2: subを見つけた後
+	@li 1: 単語読み出し中
+*/
 void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 {
 	const char*	pLine;
@@ -647,7 +647,8 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 						&nPosX,
 						&nPosY
 					);
-					pcFuncInfoArr->AppendData( nPosY + 1/*nFuncLine*/, nPosY + 1, szWord, 0 );
+					//	Mar. 9, 2001
+					pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, szWord, 0 );
 					
 					break;
 				}

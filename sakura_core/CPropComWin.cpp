@@ -3,7 +3,25 @@
 
 #include "CPropCommon.h"
 
-
+//@@@ 2001.02.04 Start by MIK: Popup Help
+const DWORD p_helpids[] = {	//11200
+	IDC_CHECK_DispFUNCKEYWND,		11210,	//ファンクションキー表示
+	IDC_CHECK_DispSTATUSBAR,		11211,	//ステータスバー表示
+	IDC_CHECK_DispTOOLBAR,			11212,	//ツールバー表示
+	IDC_CHECK_bScrollBarHorz,		11213,	//水平スクロールバー
+	IDC_CHECK_bMenuIcon,			11214,	//アイコン付きメニュー
+	IDC_CHECK_WINSIZE,				11215,	//ウインドウサイズ継承
+	IDC_EDIT_nRulerBottomSpace,		11240,	//ルーラー
+	IDC_EDIT_nRulerHeight,			11241,	//ルーラー
+	IDC_RADIO_FUNCKEYWND_PLACE1,	11260,	//ファンクションキー表示位置
+	IDC_RADIO_FUNCKEYWND_PLACE2,	11261,	//ファンクションキー表示位置
+	IDC_SPIN_nRulerBottomSpace,		-1,
+	IDC_SPIN_nRulerHeight,			-1,
+	IDC_GROUP_FUNCKEYWND_POSITION,	-1,
+//	IDC_STATIC,						-1,
+	0, 0
+};
+//@@@ 2001.02.04 End
 
 
 
@@ -119,7 +137,7 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerBottomSpace, nVal, FALSE );
 			return TRUE;
 		}
-//****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
+//****	To Here Sept. 21, 2000
 //	From Here Sept. 9, 2000 JEPRO
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
@@ -138,6 +156,17 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 		}
 		break;
 //	To Here Sept. 9, 2000
+
+//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//@@@ 2001.02.04 End
 
 	}
 	return FALSE;

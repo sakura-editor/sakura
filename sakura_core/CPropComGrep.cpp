@@ -1,8 +1,20 @@
 //	$Id$
-//	Copyright (C) 1998-2000, Norio Nakatani
+/************************************************************************
+	CPropComGrep.cpp
+	Copyright (C) 1998-2000, Norio Nakatani
+************************************************************************/
 
 #include "CPropCommon.h"
 
+//@@@ 2001.02.04 Start by MIK: Popup Help
+const DWORD p_helpids[] = {	//10500
+	IDC_CHECK_bGrepExitConfirm,		10510,	//GREPの保存確認
+	IDC_CHECK_GTJW_RETURN,			10511,	//タグジャンプ（エンターキー）
+	IDC_CHECK_GTJW_LDBLCLK,			10512,	//タグジャンプ（ダブルクリック）
+//	IDC_STATIC,						-1,
+	0, 0
+};
+//@@@ 2001.02.04 End
 
 
 
@@ -47,6 +59,18 @@ BOOL CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wPara
 			break;
 //		}
 		break;
+
+//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+		{
+			HELPINFO *p = (HELPINFO *)lParam;
+			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (DWORD)(LPVOID)p_helpids );
+		}
+		return TRUE;
+		/*NOTREACHED*/
+		break;
+//@@@ 2001.02.04 End
+
 	}
 	return FALSE;
 }
@@ -57,7 +81,7 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 {
 //	BOOL	bRet;
 
-//	BOOL				m_bGrepExitConfirm;	/* Grepモードで保存確認するか */
+//	BOOL	m_bGrepExitConfirm;	/* Grepモードで保存確認するか */
 
 
 	/* Grepモードで保存確認するか */
@@ -75,20 +99,14 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 
 
 
-
-
-
-
 /* ダイアログデータの取得 */
 int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 {
 	m_nPageNum = ID_PAGENUM_GREP;
 
-
-
 	/* Grepモードで保存確認するか */
 	m_Common.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );
-	
+
 	/* Grepモード: エンターキーでタグジャンプ */
 	m_Common.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
 
@@ -99,3 +117,4 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 }
 
 
+/*[EOF]*/

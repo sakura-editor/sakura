@@ -1,30 +1,12 @@
 // $Id$
 //
-//	CMarkMgr.h	現在行のマークを管理する
-//
-//	Author: genta
-//	Copyright (C) 1998-2000, genta
-//
-//
-//	CMarkMgr : 純粋仮想関数を含むクラス．実際にはサブクラスを使う．
-//	
+/*!	@file
+	@brief 現在行のマークを管理する
 
-/*
-Specification:
+	@author genta
+	@version $Revision$
 
-[通常操作（共通）]
-	Add()で追加．場所と名前を登録できる．操作そのものはカスタマイズ可能．
-	[番号]で該当番号の要素を取得できる．
-
-[内部動作]
-	最大値を超えた場合はprotectedな関数で処理する．（カスタマイズ可能）
-	Add()の処理はサブクラスに任せる．
-
-[現在位置の管理]
-	現在位置はManager内で管理する．
-
-削除操作はサブクラスにまかせる
-
+	Copyright (C) 1998-2001, genta
 */
 
 #ifndef __CMARKMGR_H_
@@ -37,6 +19,24 @@ Specification:
 
 using namespace std;
 
+/*!
+	行マークを管理するクラス。
+	純粋仮想関数を含むので、実際にはサブクラスを作って使う。
+
+	@par 通常操作（共通）
+	Add()で追加．場所と名前を登録できる．操作そのものはカスタマイズ可能．
+	[番号]で該当番号の要素を取得できる．
+
+	@par 内部動作
+	最大値を超えた場合はprotectedな関数で処理する．（カスタマイズ可能）
+	Add()の処理はサブクラスに任せる．
+
+	@par 現在位置の管理
+	現在位置はManager内で管理する．
+
+	削除操作はサブクラスにまかせる
+
+*/
 class CMarkMgr {
 public:
 
@@ -65,10 +65,10 @@ public:
 		bool operator!=(CMark &r) const { return m_line != r.m_line; }
 
 	private:
-		string m_name;	//	要素名
-		int	m_line;		//	該当行番号: 行番号は論理行で数える
-		int m_pos;
-		int m_extra;	//	その他のデータ
+		string m_name;	//!<	要素名
+		int	m_line;		//!<	該当行番号: 行番号は論理行で数える
+		int m_pos;		//!<	該当桁位置
+		int m_extra;	//!<	サブクラスで使える予備領域。
 	};
 
 	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class
@@ -82,13 +82,16 @@ public:
 	CMarkMgr() : curpos(0), maxitem(10){}
 	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
 	
-	int Count(void) const { return dat.size(); }	//	項目数を返す
-	int GetMax(void) const { return maxitem; }	//	最大項目数を返す
-	void SetMax(int max);	//	最大項目数を設定
+	int Count(void) const { return dat.size(); }	//!<	項目数を返す
+	int GetMax(void) const { return maxitem; }	//!<	最大項目数を返す
+	void SetMax(int max);	//!<	最大項目数を設定
 
-	virtual void Add(const CMark& m) = 0;	//	要素の追加
+	virtual void Add(const CMark& m) = 0;	//!<	要素の追加
+	
+	//	Apr. 1, 2001 genta
+	virtual void Flush(void);	//!<	要素の全消去
 
-	//	要素の取得
+	//!	要素の取得
 	const CMark& GetCurrent(void) const { return dat[curpos]; }
 	
 	//	有効性の確認
@@ -121,11 +124,15 @@ private:
 };
 
 // ----------------------------------------------------
-
+/*!
+	@brief 移動履歴の管理クラス
+	
+	CMarkMgr を継承し、動作が規定されていない部分を実装する。
+*/
 class CAutoMarkMgr : public CMarkMgr{
 public:
-	virtual void Add(const CMark& m);	//	要素の追加
-	virtual void Expire(void);	//	要素数の調整
+	virtual void Add(const CMark& m);	//!<	要素の追加
+	virtual void Expire(void);	//!<	要素数の調整
 };
 
 #endif

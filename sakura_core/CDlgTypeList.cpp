@@ -12,6 +12,7 @@
 #include "CDlgTypeList.h"
 #include "etc_uty.h"
 #include "debug.h"
+#include "funccode.h"   //Stonee, 2001/03/12
 
 /* モーダルダイアログの表示 */
 int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingType )
@@ -32,7 +33,10 @@ BOOL CDlgTypeList::OnLbnDblclk( int wID )
 {
 	switch( wID ){
 	case IDC_LIST_TYPES:
-		::EndDialog( m_hWnd, ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 ) );
+		//	Nov. 29, 2000	genta
+		//	動作変更: 指定タイプの設定ダイアログ→一時的に別の設定を適用
+		::EndDialog( m_hWnd, ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
+			| PROP_TEMPCHANGE_FLAG );
 		return TRUE;
 	}
 	return FALSE;
@@ -43,8 +47,16 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「タイプ別設定一覧」のヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 72 );
+		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );
 		return TRUE;
+	//	Nov. 29, 2000	From Here	genta
+	//	適用する型の一時的変更
+	case IDC_BUTTON_TEMPCHANGE:
+		::EndDialog( m_hWnd, ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
+			| PROP_TEMPCHANGE_FLAG );
+		return TRUE;
+	//	Nov. 29, 2000	To Here
 	case IDOK:
 		::EndDialog( m_hWnd, ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 ) );
 		return TRUE;
