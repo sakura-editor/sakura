@@ -2874,7 +2874,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	@retval	FALSE 座標は修正されなかった
 	@note	EOFの直前が改行でない場合は、その行に限りEOF以降にも移動可能
 			EOFだけの行は、先頭位置のみ正しい。
-	@data 2004.04.02 Moca 関数化
+	@date 2004.04.02 Moca 関数化
 */
 BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
 	// 2004.03.28 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
@@ -7061,7 +7061,6 @@ void CEditView::SetGrepResult(
 	@param pszKey			[in] 検索パターン
 	@param pnKey_CharCharsArr	[in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
 	@param pszFile			[in] 処理対象ファイル名(表示用)
-	@param bGrepSubFolder	[in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
 	@param bGrepLoHiCase	[in] TRUE: 大文字小文字の区別あり / FALSE: 無し
 	@param bGrepRegularExp	[in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
 	@param nGrepCharSet		[in] 文字コードセット (0:自動認識)～
@@ -8922,7 +8921,7 @@ void CEditView::HideCaret_( HWND hwnd )
 
 /*!
 	@date 2003/02/18 ai
-	@para flag [in] モード(true:登録, false:解除)
+	@param flag [in] モード(true:登録, false:解除)
 */
 void CEditView::SetBracketPairPos( bool flag )
 {

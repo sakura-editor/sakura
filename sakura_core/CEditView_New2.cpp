@@ -964,8 +964,8 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 
 	@author genta
 
-	@param LayoutX [in] 検索開始点の物理座標X
-	@param LayoutY [in] 検索開始点の物理座標Y
+	@param PosX [in] 検索開始点の物理座標X
+	@param PosY [in] 検索開始点の物理座標Y
 	@param NewX [out] 移動先のレイアウト座標X
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字
@@ -1053,8 +1053,8 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 
 	@author genta
 
-	@param LayoutX [in] 検索開始点の物理座標X
-	@param LayoutY [in] 検索開始点の物理座標Y
+	@param PosX [in] 検索開始点の物理座標X
+	@param PosY [in] 検索開始点の物理座標Y
 	@param NewX [out] 移動先のレイアウト座標X
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字
@@ -1142,8 +1142,8 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 
 	@author MIK
 
-	@param LayoutX [in] 検索開始点の物理座標X
-	@param LayoutY [in] 検索開始点の物理座標Y
+	@param PosX [in] 検索開始点の物理座標X
+	@param PosY [in] 検索開始点の物理座標Y
 	@param NewX [out] 移動先のレイアウト座標X
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字へのポインタ
@@ -1229,8 +1229,8 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 
 	@author MIK
 
-	@param LayoutX [in] 検索開始点の物理座標X
-	@param LayoutY [in] 検索開始点の物理座標Y
+	@param PosX [in] 検索開始点の物理座標X
+	@param PosY [in] 検索開始点の物理座標Y
 	@param NewX [out] 移動先のレイアウト座標X
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字へのポインタ

@@ -1164,7 +1164,7 @@ void CEditDoc::SetFilePath(const char* szFile)
 }
 
 /*! ファイル名(パスなし)を取得する
-	@autor Moca
+	@author Moca
 	@date 2002.10.13
 */
 const char * CEditDoc::GetFileName( void ) const

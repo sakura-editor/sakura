@@ -127,7 +127,7 @@ int CBregexp::DeinitDll( void )
 ** @note szPattern2: == NULL:検索 != NULL:置換
 ** 
 ** @param szPattern [in] 検索パターン
-** @param szPattern2[in] 置換パターン(NULLなら検索)
+** @param szPattern2 [in] 置換パターン(NULLなら検索)
 ** @param szAdd2	[in] 置換パターンの後ろに付け加えるパターン($1など) 
 ** @param bOption	[in] 検索オプション
 **

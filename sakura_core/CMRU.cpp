@@ -182,7 +182,7 @@ BOOL CMRU::GetFileInfo( const char* pszPath, FileInfo* pfi )
 
 /*!	@brief MRUリストへの登録
 
-	@param pfi [in] 追加するファイルの情報
+	@param pFileInfo [in] 追加するファイルの情報
 
 	該当ファイルがリムーバブルディスク上にある場合にはMRU Listへの登録は行わない。
 

@@ -164,7 +164,7 @@ SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c )
 	@param s1   [in] 文字列１
 	@param s2   [in] 文字列２
 	@param n    [in] 文字長
-	@param dec  [in] ステップ値 (1=strnicmp,memicmp, 0=stricmp)
+	@param dcount  [in] ステップ値 (1=strnicmp,memicmp, 0=stricmp)
 	@param flag [in] 文字列終端チェック (true=stricmp,strnicmp, false=memicmp)
 
 	@retval 0	一致

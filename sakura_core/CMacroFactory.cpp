@@ -99,7 +99,6 @@ bool CMacroFactory::RegisterExt( const char* ext, Creator f )
 	Šg’£q‚Ì‘Î‰‚ğ‰Šú‚É“o˜^‚µ‚È‚¢Creator‚ğ“o˜^‚·‚éD
 	‚½‚¾‚µCˆê’U‘Î‰‚ª‚í‚©‚Á‚½‚çŸ‰ñˆÈ~‚Í‘Î‰•\‚ªg‚í‚ê‚éD
 	
-	@param ext [in] ŠÖ˜A‚Ã‚¯‚éŠg’£q
 	@param f [in] “o˜^‚·‚éFactoryŠÖ”
 	
 	@sa CMacroFactory::RegisterExts

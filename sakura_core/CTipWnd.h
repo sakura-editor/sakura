@@ -39,7 +39,7 @@ public:
 	*/
 	void Show( int, int, char*, RECT* pRect = NULL );	/* Tipを表示 */
 	void Hide( void );	/* Tipを消す */
-	void GetWindowSize(RECT* pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
+	void GetWindowSize(LPRECT pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
 
 	void ChangeFont( LOGFONT* lf ){
 		if ( m_hFont ){

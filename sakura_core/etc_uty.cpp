@@ -661,7 +661,7 @@ void ActivateFrameWindow( HWND hwnd )
 	
 	@param pszLine [in] 文字列
 	@param nLineLen [in] 文字列の長さ
-	@param nMatchLen [out] URLの長さ
+	@param pnMatchLen [out] URLの長さ
 	
 	@retval TRUE URLである
 	@retval FALSE URLでない
@@ -1812,8 +1812,10 @@ void AddLastYenFromDirectoryPath( char* pszFolder )
 }
 
 
-/*!最後の文字が指定された文字でないときは付加する
-	@param pszStr [i/o]操作する文字列
+/*!	文字列が指定された文字で終わっていなかった場合には
+	末尾にその文字を付加する．
+
+	@param pszPath [i/o]操作する文字列
 	@param nMaxLen [in]バッファ長
 	@param c [in]追加したい文字
 	@retval  0 \が元から付いていた
@@ -2350,7 +2352,7 @@ SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int lengt
 
 	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
 			バージョン番号の設定が不要であればNULL。
-	@param pRegexp [in] チェックに利用するCBregexpクラスへの参照
+	@param rRegexp [in] チェックに利用するCBregexpクラスへの参照
 	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
 
 	@retval true 初期化成功
@@ -2792,7 +2794,7 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 	パスの区切りは\．ルートディレクトリが深さ0で，サブディレクトリ毎に
 	深さが1ずつ上がっていく．
  
-	@param [in] path 深さを調べたいファイル/ディレクトリのフルパス
+	@param path [in] 深さを調べたいファイル/ディレクトリのフルパス
 
 	@date 2003.04.30 genta 新規作成
 */

@@ -165,7 +165,7 @@ private:
 	@param target [in] 検索対象領域先頭
 	@param targetendp [in] 検索対象領域末尾
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。
-	@pararm msg [out] エラーメッセージ
+	@param msg [out] エラーメッセージ
 
 	target <= p < targetendp の範囲が検索対象になる。
 */
@@ -178,7 +178,7 @@ private:
 	@param target [in] 検索対象領域先頭
 	@param targetendp [in] 検索対象領域末尾
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。
-	@pararm msg [out] エラーメッセージ
+	@param msg [out] エラーメッセージ
 
 	@return 置換した文字列の数
 	
@@ -194,7 +194,7 @@ private:
 	@param target [in] 検索対象領域先頭
 	@param targetendp [in] 検索対象領域末尾
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。
-	@pararm msg [out] エラーメッセージ
+	@param msg [out] エラーメッセージ
 
 	@return 変換した文字数
 
@@ -210,7 +210,7 @@ private:
 	@param target [in] 検索対象領域先頭
 	@param targetendp [in] 検索対象領域末尾
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。
-	@pararm msg [out] エラーメッセージ
+	@param msg [out] エラーメッセージ
 	@param limit [in] 最大分割数。これを越えた分については分割は行われずに最終要素に入る。
 
 	@return 分割数
