@@ -2789,9 +2789,10 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	int						j;
 	int						nCharChars;
 	int						nCharChars2;
-	char*					pszStarts;
+	const char*				pszStarts;
 	int						nStartsLen;
 	char*					pszText;
+
 
 	pszStarts = m_pShareData->m_Common.m_szMidashiKigou; 	/* 見出し記号 */
 	nStartsLen = lstrlen( pszStarts );
@@ -2850,19 +2851,34 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			else {
 				continue;
 			}
-		}
-		else if ( nCharChars == 2 ){
+		}else
+		if( 2 == nCharChars ){
+			// 2003.06.28 Moca 1桁目から始まっていないと同一レベルと認識されずに
+			//	どんどん子ノードになってしまうのを，字下げによらず同一レベルと認識されるように
 			/* 全角数字 */
-			if( pLine[0] == 0x82 && ( pLine[1] >= 0x4f && pLine[1] <= 0x58 ) ) {
+			if( pLine[i] == 0x82 && ( pLine[i + 1] >= 0x4f && pLine[i + 1] <= 0x58 ) ) {
 				strcpy( szTitle, "０" );
 			}
 			/* ①～⑳ */
-			else if( pLine[0] == 0x87 && ( pLine[1] >= 0x40 && pLine[1] <= 0x53 ) ){
+			else if( pLine[i] == 0x87 && ( pLine[i + 1] >= 0x40 && pLine[i + 1] <= 0x53 ) ){
 				strcpy( szTitle, "①" );
 			}
 			/* Ⅰ～Ⅹ */
-			else if( pLine[0] == 0x87 && ( pLine[1] >= 0x54 && pLine[1] <= 0x5d ) ){
+			else if( pLine[i] == 0x87 && ( pLine[i + 1] >= 0x54 && pLine[i + 1] <= 0x5d ) ){
 				strcpy( szTitle, "Ⅰ" );
+			}
+			// 2003.06.28 Moca 漢数字も同一階層に
+			//	漢数字が異なる＝番号が異なると異なる見出し記号と認識されていたのを
+			//	皆同じ階層と識別されるように
+			else{
+				char szCheck[3];
+				szCheck[0] = pLine[i];
+				szCheck[1] = pLine[i + 1];
+				szCheck[2] = '\0';
+				/* 一～十 */
+				if( NULL != strstr( "〇一二三四五六七八九十百零壱弐参伍", szCheck ) ){
+					strcpy( szTitle, "一" );
+				}
 			}
 		}
 		/*	「見出し記号」に含まれる文字で始まるか、
@@ -3426,10 +3442,11 @@ void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 	@author zenryaku
 	@date 2003.05.20 zenryaku 新規作成
 	@date 2003.05.25 genta 実装方法一部修正
+	@date 2003.06.21 Moca 階層が2段以上深くなる場合を考慮
 */
 void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 {
-
+	int levelPrev = 0;
 
 	for(int nLineCount=0;nLineCount<m_cDocLineMgr.GetLineCount();nLineCount++)
 	{
@@ -3446,7 +3463,7 @@ void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 		{
 			const char* pPos;	//	May 25, 2003 genta
 			int			nLength;
-			char		szTitle[32];
+			char		szTitle[1024];
 
 			//	ピリオドの数＝階層の深さを数える
 			for( pPos = pLine + 1 ; *pPos == '.' ; ++pPos )
@@ -3462,7 +3479,20 @@ void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 			);
 			
 			int level = pPos - pLine;
-			nLength = sprintf(szTitle,"%d - ", level );
+
+			// 2003.06.27 Moca 階層が2段位上深くなるときは、無題の要素を追加
+			if( levelPrev < level && level != levelPrev + 1  ){
+				int dummyLevel;
+				// (無題)を挿入
+				//	ただし，TAG一覧には出力されないように
+				for( dummyLevel = levelPrev + 1; dummyLevel < level; dummyLevel++ ){
+					pcFuncInfoArr->AppendData( nLineCount+1, nPosY+1,
+						"(無題)", FUNCINFO_NOCLIPTEXT, dummyLevel - 1 );
+				}
+			}
+			levelPrev = level;
+
+			nLength = wsprintf(szTitle,"%d - ", level );
 			
 			char *pDest = szTitle + nLength; // 書き込み先
 			char *pDestEnd = szTitle + sizeof(szTitle) - 2;
@@ -3946,6 +3976,7 @@ void CEditDoc::OnChangeSetting( void )
 	}
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
+	CShareData::getInstance()->TransformFileName_MakeCache();
 	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, false );
 
@@ -4452,6 +4483,7 @@ void CEditDoc::SetImeMode( int mode )
 	@li f  開いているファイルの名前（ファイル名+拡張子のみ）
 	@li g  開いているファイルの名前（拡張子除く）
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
+	@li N  開いているファイルの名前(簡易表示)
 	@li C  現在選択中のテキスト
 	@li x  現在の物理桁位置(先頭からのバイト数1開始)
 	@li y  現在の物理行位置(1開始)
@@ -4461,7 +4493,7 @@ void CEditDoc::SetImeMode( int mode )
 	@li P  総ページ
 	@li D  ファイルのタイムスタンプ(共通設定の日付書式)
 	@li T  ファイルのタイムスタンプ(共通設定の時刻書式)
-	@li V  ファイルのバージョン文字列
+	@li V  エディタのバージョン文字列
 	@li h  Grep検索キーの先頭32byte
 
 	@date 2003.04.03 genta strncpy_ex導入によるfor文の削減
@@ -4556,6 +4588,20 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 			break;
+		//	From Here 2003/06/21 Moca
+		case 'N':
+			if( !IsFilePathAvailable() ){
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				++p;
+			}
+			else {
+				char szText[1024];
+				CShareData::getInstance()->GetTransformFileNameFast( GetFilePath(), szText, 1023 );
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
+				++p;
+			}
+			break;
+		//	To Here 2003/06/21 Moca
 		//	From Here Jan. 15, 2002 hor
 		case 'C':	//	現在選択中のテキスト
 			{
