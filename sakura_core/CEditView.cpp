@@ -4473,8 +4473,9 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		return;
 	}
 
-	/* GREP出力モード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
-	if( m_pcEditDoc->m_bGrepMode && m_pShareData->m_Common.m_bGTJW_LDBLCLK ){
+	/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
+	//	2004.09.20 noah 外部コマンドの出力からTagjumpできるように
+	if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_bGTJW_LDBLCLK ){
 		/* タグジャンプ機能 */
 		Command_TAGJUMP();
 		return;
@@ -8614,9 +8615,18 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		//中断ダイアログ表示
 		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
 		//実行したコマンドラインを表示
-		CShareData::getInstance()->TraceOut( "%s", "\r\n" );
-		CShareData::getInstance()->TraceOut( "%s", pszCmd );
-		CShareData::getInstance()->TraceOut( "%s", "\r\n" );
+		// 2004.09.20 naoh 多少は見やすく・・・
+		{
+			char szTextDate[1024], szTextTime[1024];
+			SYSTEMTIME systime;
+			::GetLocalTime( &systime );
+			CShareData::getInstance()->MyGetDateFormat( systime, szTextDate, sizeof( szTextDate ) - 1 );
+			CShareData::getInstance()->MyGetTimeFormat( systime, szTextTime, sizeof( szTextTime ) - 1 );
+			CShareData::getInstance()->TraceOut( "\r\n%s\r\n", "#============================================================" );
+			CShareData::getInstance()->TraceOut( "#DateTime : %s %s\r\n", szTextDate, szTextTime );
+			CShareData::getInstance()->TraceOut( "#CmdLine  : %s\r\n", pszCmd );
+			CShareData::getInstance()->TraceOut( "#%s\r\n", "==============================" );
+		}
 		
 		
 		//実行結果の取り込み
@@ -8720,6 +8730,9 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		DWORD result;
 		::GetExitCodeProcess( pi.hProcess, &result );
 		CShareData::getInstance()->TraceOut( "\r\n終了コード: %d\r\n", result );
+
+		// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
+		if(result > 0) ActivateFrameWindow( m_pShareData->m_hwndDebug );
 	}
 
 

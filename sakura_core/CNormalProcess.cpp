@@ -118,6 +118,8 @@ bool CNormalProcess::Initialize()
 //	#ifdef _DEBUG/////////////////////////////////////////////
 		/* デバッグモニタモードに設定 */
 		m_pcEditWnd->SetDebugModeON();
+		// 2004.09.20 naoh アウトプット用タイプ別設定
+		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeExt("output"), true );
 //	#endif////////////////////////////////////////////////////
 	}else
 	if( bGrepMode ){
