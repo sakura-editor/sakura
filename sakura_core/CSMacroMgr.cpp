@@ -29,7 +29,10 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 {
 	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //新規作成
 	//	終端
-	{0,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
+	//	Jun. 27, 2002 genta
+	//	終端としては決して現れないものを使うべきなので，
+	//	FuncIDを-1に変更．(0は使われる)
+	{-1,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
@@ -201,6 +204,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_REPLACE,					"Replace",			{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //置換(実行)
 	{F_REPLACE_ALL,				"ReplaceAll",		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //すべて置換(実行)
 	{F_SEARCH_CLEARMARK,		"SearchClearMark",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索マークのクリア
+	{F_JUMP_SRCHSTARTPOS,		"SearchStartPos",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索開始位置へ戻る			// 02/06/26 ai
 	{F_GREP,					"Grep",				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	NULL}, //Grep
 	{F_JUMP,					"Jump",				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //指定行ヘジャンプ
 	{F_OUTLINE,					"Outline",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトライン解析
@@ -293,7 +297,10 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_ABOUT,					"About",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	//	終端
-	{0,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
+	//	Jun. 27, 2002 genta
+	//	終端としては決して現れないものを使うべきなので，
+	//	FuncIDを-1に変更．(0は使われる)
+	{-1,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 //int	CSMacroMgr::m_nMacroFuncInfoArrNum = sizeof( CSMacroMgr::m_MacroFuncInfoArr ) / sizeof( CSMacroMgr::m_MacroFuncInfoArr[0] );
 
@@ -478,6 +485,12 @@ BOOL CSMacroMgr::Save( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 		if( pKeyMacro != NULL ){
 			return pKeyMacro->SaveKeyMacro(hInstance, pszPath );
 		}
+		//	Jun. 27, 2002 genta
+		//	空マクロの場合は正常終了と見なす．
+		if( m_pKeyMacro == NULL ){
+			return TRUE;
+		}
+
 	}
 //	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
 //		return m_cSavedKeyMacro[idx]->SaveKeyMacro(hInstance, pszPath );
@@ -514,7 +527,9 @@ void CSMacroMgr::Clear( int idx )
 const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 {
 	int i;
-	for( i = 0; i < sizeof( m_MacroFuncInfoArr ) / sizeof( m_MacroFuncInfoArr[0] ); ++i ){
+	//	Jun. 27, 2002 genta
+	//	番人をコード0として拾ってしまうので，配列サイズによる判定をやめた．
+	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
 			return &m_MacroFuncInfoArr[i];
 		}
@@ -788,6 +803,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_REPLACE					://置換(実行)
 	case F_REPLACE_ALL				://すべて置換(実行)
 	case F_SEARCH_CLEARMARK			://検索マークのクリア
+	case F_JUMP_SRCHSTARTPOS		://検索開始位置へ戻る		// 02/06/26 ai
 	case F_GREP						://Grep
 //	case F_JUMP_DIALOG				://指定行ヘジャンプ
 	case F_JUMP						://指定行へジャンプ @@@ 2002.2.2 YAZAKI

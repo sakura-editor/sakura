@@ -568,7 +568,10 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	To Here Jun. 2, 2001 genta
 
 	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
-	psh.dwSize = sizeof( PROPSHEETHEADER );
+	//	Jun. 29, 2002 こおり
+	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
+	const size_t sizeof_old_PROPSHEETHEADER=40;
+	psh.dwSize = sizeof_old_PROPSHEETHEADER;
 //	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 //	psh.dwFlags = /*PSH_USEICONID |*/ /*PSH_NOAPPLYNOW |*/ PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
 	psh.dwFlags = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;

@@ -222,7 +222,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 				//	Jun. 16, 2002 genta double quotationも許容する
 				if( '\'' == szLine[i] || '\"' == szLine[i]  ){	//	'で始まったら文字列だよきっと。
 					// Jun. 16, 2002 genta プロトタイプチェック
-					if( mInfo->m_varArguments[nArgs] != VT_BSTR ){
+					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
+					if( mInfo->m_varArguments[nArgs] != VT_BSTR && 
+						mInfo->m_varArguments[nArgs] != VT_EMPTY ){
 						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
 							_T("Line %d: Column %d\r\n"
 							"関数%sの%d番目の引数に文字列は置けません．" ), line, i + 1, szFuncName, nArgs + 1 );
@@ -271,7 +273,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 				}
 				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
 					// Jun. 16, 2002 genta プロトタイプチェック
-					if( mInfo->m_varArguments[nArgs] != VT_I4 ){
+					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
+					if( mInfo->m_varArguments[nArgs] != VT_I4 && 
+						mInfo->m_varArguments[nArgs] != VT_EMPTY){
 						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
 							_T("Line %d: Column %d\r\n"
 							"関数%sの%d番目の引数に数値は置けません．" ), line, i + 1, szFuncName, nArgs + 1);

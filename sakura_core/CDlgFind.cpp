@@ -272,8 +272,24 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 1 );
 			}else{
+				// 02/06/26 ai Start
+				// 検索開始位置を退避
+				int x, y;
+				x = pcEditView->m_nCaretPosX_PHY;
+				y = pcEditView->m_nCaretPosY_PHY;
+				pcEditView->m_bSearch = FALSE;
+				//  02/06/26 ai End
+
 				/* 前を検索 */
 				pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+
+				// 02/06/26 ai Start
+				// 検索開始位置を登録
+				if( TRUE == pcEditView->m_bSearch ){
+					pcEditView->m_nSrchStartPosX_PHY = x;
+					pcEditView->m_nSrchStartPosY_PHY = y;
+				}//  02/06/26 ai End
+
 //				/* 再描画 */
 //				pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
@@ -303,8 +319,24 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 2 );
 			}else{
+				// 02/06/26 ai Start
+				// 検索開始位置を退避
+				int x, y;
+				x = pcEditView->m_nCaretPosX_PHY;
+				y = pcEditView->m_nCaretPosY_PHY;
+				pcEditView->m_bSearch = FALSE;
+				//  02/06/26 ai End
+
 				/* 次を検索 */
 				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+
+				// 02/06/26 ai Start
+				// 検索開始位置を登録
+				if( TRUE == pcEditView->m_bSearch ){
+					pcEditView->m_nSrchStartPosX_PHY = x;
+					pcEditView->m_nSrchStartPosY_PHY = y;
+				}//  02/06/26 ai End
+
 //				/* 再描画 */
 //				pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */

@@ -373,6 +373,9 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	m_nCaretPosX_PHY = 0;		/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
 	m_nCaretPosY_PHY = 0;		/* カーソル位置 改行単位行の行番号(０開始) */
 
+	m_nSrchStartPosX_PHY = -1;	/* 検索開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
+	m_nSrchStartPosY_PHY = -1;	/* 検索開始時のカーソル位置  改行単位行の行番号(0開始) */			// 02/06/26 ai
+	m_bSearch = FALSE;			/* 検索文字列が見つかったか */										// 02/06/26 ai
 
 	m_nCaretWidth = 0;			/* キャレットの幅 */
 	m_nCaretHeight = 0;			/* キャレットの高さ */
