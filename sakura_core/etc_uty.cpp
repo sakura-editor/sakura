@@ -1734,7 +1734,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TOZENKAKUHIRA:			return 51;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA:	return 123;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	return 124;	/* 半角カタカナ→全角ひらがな */
-	case F_TOZENEI:					return 125;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	case F_TOZENEI:					return 200;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka //Stonee, 2001/09/26 番号修正
 	case F_TABTOSPACE:				return 182;	/* TAB→空白 */
 	case F_SPACETOTAB:				return 196;	/* 空白→TAB */ //#### Stonee, 2001/05/27	//Jul. 03, 2001 JEPRO 番号修正
 	case F_CODECNV_AUTO2SJIS:		return 178;	/* 自動判別→SJISコード変換 */

@@ -543,7 +543,8 @@ void ReplaceData_CEditView(
 	void Command_EXECKEYMACRO( void );	/* キーマクロの実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	void Command_EXECCMMAND( void );	/* 外部コマンド実行 */
-	void Command_EXECCOMMAND( void );	/* 外部コマンド実行 */
+	//	Oct. 9, 2001 genta マクロ対応のため機能拡張
+	void Command_EXECCOMMAND( const char* cmd );	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 	/* カスタムメニュー */
