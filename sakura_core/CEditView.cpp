@@ -2468,6 +2468,8 @@ void CEditView::SetFont( void )
 //		OnKillFocus();
 //		OnSetFocus();
 //	}
+	//	Oct. 11, 2002 genta IMEのフォントも変更
+	SetIMECompFormFont();
 	return;
 }
 
