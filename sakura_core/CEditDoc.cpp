@@ -425,7 +425,7 @@ BOOL CEditDoc::FileRead(
 	//	_accessではロックされたファイルの状態を取得できないので
 	//	実際にファイルを開いて確認する
 	if( bFileIsExist){
-		HANDLE hTest = 	CreateFile( pszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_READ,
+		HANDLE hTest = 	CreateFile( pszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
 			NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
 		if( hTest == INVALID_HANDLE_VALUE ){
 			// 読み込みアクセス権がない
