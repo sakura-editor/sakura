@@ -24,6 +24,7 @@
 #include "etc_uty.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
 #include <tchar.h>
+#include "CRunningTimer.h"
 
 
 
@@ -58,6 +59,8 @@ BOOL CALLBACK CControlProcess::ExitingDlgProc(
 */
 bool CControlProcess::Initialize()
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::Initialize" );
+
 	// 旧バージョンとの互換性：「異なるバージョン...」が二回出ないように
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
 	if( NULL == m_hMutex ){
@@ -96,8 +99,12 @@ bool CControlProcess::Initialize()
 		m_cShareData.SaveShareData();
 	}
 
+	MY_TRACETIME( cRunningTimer, "Before new CEditApp" );
+
 	/* タスクトレイにアイコン作成 */
 	m_pcEditApp = new CEditApp;
+
+	MY_TRACETIME( cRunningTimer, "After new CEditApp" );
 
 	if( NULL == ( m_hWnd = m_pcEditApp->Create( m_hInstance ) ) ){
 		::ReleaseMutex( m_hMutexCP );

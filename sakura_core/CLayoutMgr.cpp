@@ -104,6 +104,8 @@ void CLayoutMgr::SetLayoutInfo(
 	Types&	refType			/* タイプ別設定 */
 )
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
+
 	m_nMaxLineSize = refType.m_nMaxLineSize;
 	m_bWordWrap		= refType.m_bWordWrap;		/* 英文ワードラップをする */
 	m_nTabSpace		= refType.m_nTabSpace;

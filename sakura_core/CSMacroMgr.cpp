@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <assert.h> // ŽŽŒ±—p
 #include "debug.h"
+#include "CRunningTimer.h"
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {
@@ -314,6 +315,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 */
 CSMacroMgr::CSMacroMgr()
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CSMacroMgr::CSMacroMgr" );
+	
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	
 	CPPAMacroMgr::declare();

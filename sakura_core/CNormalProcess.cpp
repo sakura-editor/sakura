@@ -26,6 +26,7 @@
 #include "CEditWnd.h" // 2002/2/3 aroka
 #include "mymessage.h" // 2002/2/3 aroka
 #include <tchar.h>
+#include "CRunningTimer.h"
 
 
 /*!
@@ -40,6 +41,8 @@
 */
 bool CNormalProcess::Initialize()
 {
+	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
+
 	HANDLE			hMutex;
 	HWND			hWnd;
 
@@ -97,9 +100,11 @@ bool CNormalProcess::Initialize()
 		}
 	}
 
+	MY_TRACETIME( cRunningTimer, "CheckFile" );
 //複数プロセス版
 	/* エディタウィンドウオブジェクトを作成 */
 	m_pcEditWnd = new CEditWnd;
+	MY_TRACETIME( cRunningTimer, "CEditWnd Created" );
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::Instance()->IsDebugMode();
@@ -215,6 +220,8 @@ bool CNormalProcess::Initialize()
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
 		}
 	}
+	MY_TRACETIME( cRunningTimer, "EditDoc->Create() End" );
+
 	m_hWnd = hWnd;
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
@@ -273,6 +280,7 @@ CNormalProcess::~CNormalProcess()
 */
 HANDLE CNormalProcess::GetInitializeMutex() const
 {
+	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::GetInitializeMutex" );
 	HANDLE hMutex;
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
 	if( NULL == hMutex ){

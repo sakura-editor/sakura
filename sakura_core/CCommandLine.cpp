@@ -23,6 +23,7 @@
 #include <tchar.h>
 #include <io.h>
 #include <string.h>
+#include "CRunningTimer.h"
 
 CCommandLine* CCommandLine::_instance = NULL;
 
@@ -58,7 +59,6 @@ int CCommandLine::CheckCommandLine(
 	char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
 )
 {
-
 	/*!
 		コマンドラインオプション解析用構造体配列
 	*/
@@ -154,6 +154,8 @@ void CCommandLine::ParseCommandLine(
 	bool*		pbReadOnly	//!< [out] TRUE: Read Only
 )
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
+
 	bool			bGrepMode;
 	bool			bGrepDlg;
 	CMemory			cmGrepKey;

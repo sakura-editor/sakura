@@ -23,6 +23,7 @@
 #include "global.h"
 #include "etc_uty.h"
 #include <locale.h>
+#include "CRunningTimer.h"
 
 struct ARRHEAD {
 	int		nLength;
@@ -133,6 +134,8 @@ CShareData::~CShareData()
 */
 bool CShareData::Init( void )
 {
+	MY_RUNNINGTIMER(cRunningTimer,"CShareData::Init" );
+
 	if (CShareData::_instance == NULL)	//	Singleton•—
 		CShareData::_instance = this;
 

@@ -21,6 +21,7 @@
 #include <windows.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
+#include "CRunningTimer.h"
 
 /*!
 	Windows Entry point
@@ -39,10 +40,13 @@ int WINAPI WinMain(
 	int			nCmdShow		//!< show state of window
 )
 {
+	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
+
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{
 		process = aFactory.Create( hInstance, lpCmdLine );
+		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
 	}
 	catch(...){
 	}
