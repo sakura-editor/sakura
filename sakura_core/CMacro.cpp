@@ -325,11 +325,15 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 	_lwrite( hFile, szLine, strlen( szLine ) );
 }
 
-/*!	Macroコマンドを、CEditViewのHandleCommandに引き渡す。
+/*!	MacroコマンドをCEditView::HandleCommandに引き渡す。
 
-	Index: 機能ID
-	*Argument[]: 引数
-	ArgSize:引数の数
+	引数がないマクロを除き，マクロとHandleCommandでの対応をここで定義する必要がある．
+
+	@param pcEditView	[in]	操作対象EditView
+	@param Index	[in] 機能 ID
+	@param Argument [in] 引数
+	@param ArgSize	[in] 引数の数
+	
 */
 void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize )
 {

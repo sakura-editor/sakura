@@ -639,6 +639,11 @@ void CWSHMacroManager::ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *In
 	}
 }
 
+/*!
+	WSHマクロの実行
+
+	@param EditView [in] 操作対象EditView
+*/
 void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
 {
 	CWSHClient* Engine;
@@ -661,6 +666,12 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
 	delete Engine;
 }
 
+/*!
+	WSHマクロの読み込み
+
+	@param Instance [in] インスタンスハンドル(未使用)
+	@param Path		[in] ファイルのパス
+*/
 BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, char const* Path)
 {
 	BOOL Result = FALSE;

@@ -68,7 +68,7 @@ void CKeyMacroMgr::ClearAll( void )
 
 /*! キーマクロのバッファにデータ追加
 	機能番号と、引数ひとつを追加版。
-	@@@2002.2.2 YAZAKI pcEditViewも渡すようにした。
+	@date 2002.2.2 YAZAKI pcEditViewも渡すようにした。
 */
 void CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1, CEditView* pcEditView )
 {
