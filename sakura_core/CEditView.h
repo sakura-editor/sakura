@@ -223,6 +223,9 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nSrchStartPosY_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行の行番号(0開始) */				// 02/06/26 ai
 	BOOL	m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
 	int		m_nCharSize;			/* 対括弧の文字サイズ */	// 02/09/18 ai 
+	int		m_nBracketPairPosX_PHY;	/* 対括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 02/12/13 ai
+	int		m_nBracketPairPosY_PHY;	/* 対括弧の位置 改行単位行の行番号(0開始) */			// 02/12/13 ai
+	BOOL	m_bDrawSelectArea;		/* 選択範囲を描画したか */	// 02/12/13 ai
 
 	/*
 	||  メンバ変数
@@ -385,6 +388,7 @@ protected:
 	void ScrollAtH( int );										/* 指定左端桁位置へスクロール */
 	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
 	void DrawBracketPair( void );								/* 対括弧の強調表示 02/09/18 ai */
+	int GetColorIndex( HDC, const CLayout*, int );				/* 指定位置のColorIndexの取得 02/12/13 ai */
 public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
 protected:
