@@ -2775,7 +2775,8 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_JUMPHIST_SET:	//	現在位置を移動履歴に登録
 		return TRUE;
 	case F_DIRECT_TAGJUMP:	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
-	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
+	//	2003.05.12 MIK タグファイル作成先を選べるようにしたので、常に作成可能とする
+//	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
 		if( pcEditDoc->IsFilePathAvailable() ){
 			return TRUE;
 		}else{

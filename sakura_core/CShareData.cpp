@@ -113,8 +113,11 @@ struct ARRHEAD {
 
 	Version 44:
 	Window Caption文字列領域をCommonに追加 2003.04.05 genta
+
+	Version 45:
+	タグファイル作成用コマンドオプション保存領域(m_nTagsOpt,m_szTagsCmdLine)を追加 2003.05.12 MIK
 */
-const unsigned int uShareDataVersion = 44;
+const unsigned int uShareDataVersion = 45;
 
 /*
 ||	Singleton風
@@ -3631,6 +3634,9 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 
 		m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
+
+		m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
+		strcpy( m_pShareData->m_szTagsCmdLine, "" );	/* CTAGS */	//@@@ 2003.05.12 MIK
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
