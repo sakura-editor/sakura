@@ -2859,6 +2859,13 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 		}
 	}
 //	2001/06/20 End
+
+// 02/09/18 対括弧の強調表示 ai Start
+	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
+		DrawBracketPair();
+	}
+// 02/09/18 対括弧の強調表示 ai End
+
 	return nScrollRowNum;
 
 
@@ -8560,6 +8567,135 @@ void CEditView::HideCaret_( HWND hwnd )
 		::HideCaret( hwnd );
 		m_bCaretShowFlag = false;
 	}
+}
+
+
+/*!
+	対括弧の強調表示
+	@date 2002/09/18 ai
+*/
+void CEditView::DrawBracketPair( void )
+{
+	static int	pX_old = -1;
+	static int	pY_old = -1;
+	const char*	pLine;
+	int			nLineLen;
+	int			nCol;
+	int			nLine;
+	int			OutputX;
+	int			nLeft;
+	int			nTop;
+	HDC			hdc;
+	COLORREF	crBackOld;
+	COLORREF	crTextOld;
+	HFONT		hFontOld;
+
+	hdc = ::GetDC( m_hWnd );
+	Types *TypeDataPtr = &( m_pcEditDoc->GetDocumentAttribute() );
+
+	/**********************************/
+	/** 前回の対括弧の表示を元に戻す **/
+	/**********************************/
+	if( ( 0 <= pX_old ) && ( 0 <= pY_old ) )
+	{
+		// 物理位置からレイアウト位置へ変換
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pX_old, pY_old, &nCol, &nLine );
+
+		if ( ( nCol < m_nViewLeftCol ) || ( nCol > m_nViewLeftCol + m_nViewColNum )
+			|| ( nLine < m_nViewTopLine ) || ( nLine > m_nViewTopLine + m_nViewRowNum ) )
+		{
+			/* なにもしない */
+		}
+		else
+		{
+			/****************************/
+			/** 対括弧の強調表示の消去 **/
+			/****************************/
+			PAINTSTRUCT ps;
+			ps.rcPaint.left = m_nViewAlignLeft;
+			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
+			ps.rcPaint.top = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+			ps.rcPaint.bottom = ps.rcPaint.top + m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+			OnPaint( hdc, &ps, TRUE );	// メモリＤＣを使用してちらつきのない再描画
+		}
+		pX_old = -1;
+		pY_old = -1;
+	}
+
+	/*******************/
+	/** 対括弧の表示  **/
+	/*******************/
+	// 対応する括弧が見つかり 且つ 選択中ではない場合に対括弧の表示を行なう
+	if( ( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, 0 ) ) && ( FALSE == IsTextSelecting() ) )
+	{
+		if ( ( nCol < m_nViewLeftCol ) || ( nCol > m_nViewLeftCol + m_nViewColNum )
+			|| ( nLine < m_nViewTopLine ) || ( nLine > m_nViewTopLine + m_nViewRowNum ) )
+		{
+			//pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen );
+			//if( NULL != pLine )
+			//{
+			//	char	szText[512];
+			//	wsprintf( szText, "%s", pLine );
+			//	SendStatusMessage( szText );
+			//}
+			/* なにもしない */
+		}
+		else
+		{
+			/**********************/
+			/** 対括弧の強調表示 **/
+			/**********************/
+			// フォントを選ぶ
+			hFontOld = (HFONT)::SelectObject( hdc,
+				ChooseFontHandle(
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bFatFont,
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bUnderLine
+				)
+			);
+			m_hFontOld = NULL;
+
+			crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );	// COLORIDX_TEXT固定ではまずい?
+			crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );	// COLORIDX_TEXT固定ではまずい?
+
+			::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_colTEXT );
+			::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_colBACK );
+
+			// 現在位置の括弧の強調表示
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
+			if( NULL != pLine )
+			{
+				OutputX = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+				nTop  = ( m_nCaretPosY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+				HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
+				DispText( hdc, nLeft, nTop, (const unsigned char *)&pLine[OutputX], m_nCharSize );
+				ShowCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
+			}
+
+			// 対括弧の強調表示
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen );
+			if( NULL != pLine )
+			{
+				OutputX = LineColmnToIndex( pLine, nLineLen, nCol );
+				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+				nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+				DispText( hdc, nLeft, nTop, (const unsigned char *)&pLine[OutputX], m_nCharSize );
+			}
+
+			::SetTextColor( hdc, crTextOld );
+			::SetBkColor( hdc, crBackOld );
+			::SelectObject( hdc, hFontOld );
+
+			m_cUnderLine.CaretUnderLineON( TRUE );
+
+			// レイアウト位置から物理位置へ変換(強調表示位置を記憶)
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( nCol, nLine, &pX_old, &pY_old );
+		}
+	}
+
+	::ReleaseDC( m_hWnd, hdc );
+
+	return;
 }
 
 /*[EOF]*/
