@@ -137,6 +137,7 @@ UINT APIENTRY OFNHookProc(
 	static HWND				hwndComboOPENFOLDER;
 	static HWND				hwndComboCODES;
 	static HWND				hwndComboEOL;	//	Feb. 9, 2001 genta
+	static HWND				hwndCheckBOM;	//	Jul. 26, 2003 ryoji BOMチェックボックス
 	static CDlgOpenFile*	pcDlgOpenFile;
 	int						i;
 	OFNOTIFY*				pofn;
@@ -155,6 +156,7 @@ UINT APIENTRY OFNHookProc(
 	int						fwSizeType;
 	int						nWidth;
 	int						nHeight;
+	WPARAM					fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
 
 	//	From Here	Feb. 9, 2001 genta
 	const int			nEolValueArr[] = {
@@ -225,6 +227,7 @@ UINT APIENTRY OFNHookProc(
 		hwndComboMRU = ::GetDlgItem( hdlg, IDC_COMBO_MRU );
 		hwndComboOPENFOLDER = ::GetDlgItem( hdlg, IDC_COMBO_OPENFOLDER );
 		hwndComboEOL = ::GetDlgItem( hdlg, IDC_COMBO_EOL );
+		hwndCheckBOM = ::GetDlgItem( hdlg, IDC_CHECK_BOM );//	Jul. 26, 2003 ryoji BOMチェックボックス
 
 		/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 		::SendMessage( hwndComboCODES, CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
@@ -250,6 +253,29 @@ UINT APIENTRY OFNHookProc(
 			::ShowWindow( hwndComboEOL, SW_HIDE );
 		}
 		//	To Here Feb. 9, 2001 genta
+
+		//	From Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
+		if( pcDlgOpenFile->m_bUseBom ){
+			//	使うときは有効／無効を切り替え、チェック状態を初期値に設定する
+			switch( pcDlgOpenFile->m_nCharCode ){
+			case CODE_UNICODE:
+			case CODE_UTF8:
+			case CODE_UNICODEBE:
+				::EnableWindow( hwndCheckBOM, TRUE );
+				fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
+				break;
+			default:
+				::EnableWindow( hwndCheckBOM, FALSE );
+				fCheck = BST_UNCHECKED;
+				break;
+			}
+			::SendMessage( hwndCheckBOM, BM_SETCHECK, fCheck, 0 );
+		}
+		else {
+			//	使わないときは隠す
+			::ShowWindow( hwndCheckBOM, SW_HIDE );
+		}
+		//	To Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
 
 		/* Explorerスタイルの「開く」ダイアログをフック */
 		m_wpOpenDialogProc = (WNDPROC) ::SetWindowLong( hwndOpenDlg, GWL_WNDPROC, (LONG) OFNHookProcMain );
@@ -424,6 +450,13 @@ UINT APIENTRY OFNHookProc(
 //			lRes = ::SendMessage( hwndComboCODES, CB_GETCURSEL, 0, 0 );
 				pcDlgOpenFile->m_cEol = (enumEOLType)lRes;	/* 文字コード */
 			}
+			//	From Here Jul. 26, 2003 ryoji
+			//	BOMチェックボックスの状態を取得
+			if( pcDlgOpenFile->m_bUseBom ){
+				lRes = ::SendMessage( hwndCheckBOM, BM_GETCHECK, 0, 0 );
+				pcDlgOpenFile->m_bBom = (lRes == BST_CHECKED);	/* BOM */
+			}
+			//	To Here Jul. 26, 2003 ryoji
 
 //			MYTRACE( "文字コード  lRes=%d\n", lRes );
 //			MYTRACE( "pofn->hdr.code=CDN_FILEOK        \n" );break;
@@ -466,6 +499,30 @@ UINT APIENTRY OFNHookProc(
 		switch( wNotifyCode ){
 		case CBN_SELCHANGE:
 			switch( (int) LOWORD(wParam) ){
+			//	From Here Jul. 26, 2003 ryoji
+			//	文字コードの変更をBOMチェックボックスに反映
+			case IDC_COMBO_CODE:
+				nIdx = ::SendMessage( (HWND) lParam, CB_GETCURSEL, 0, 0 );
+				lRes = ::SendMessage( (HWND) lParam, CB_GETITEMDATA, nIdx, 0 );
+				switch( lRes ){
+				case CODE_UNICODE:
+				case CODE_UTF8:
+				case CODE_UNICODEBE:
+					::EnableWindow( hwndCheckBOM, TRUE );
+					if (lRes == pcDlgOpenFile->m_nCharCode){
+						fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
+					}else{
+						fCheck = (lRes == CODE_UTF8)? BST_UNCHECKED: BST_CHECKED;
+					}
+					break;
+				default:
+					::EnableWindow( hwndCheckBOM, FALSE );
+					fCheck = BST_UNCHECKED;
+					break;
+				}
+				::SendMessage( hwndCheckBOM, BM_SETCHECK, fCheck, 0 );
+				break;
+			//	To Here Jul. 26, 2003 ryoji
 			case IDC_COMBO_MRU:
 				nIdx = ::SendMessage( (HWND) lParam, CB_GETCURSEL, 0, 0 );
 				if( CB_ERR != ::SendMessage( (HWND) lParam, CB_GETLBTEXT, nIdx, (LPARAM) (LPCSTR)szWork ) ){
@@ -911,6 +968,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILEOPEN);
 	m_bUseEol = false;	//	Feb. 9, 2001 genta
+	m_bUseBom = false;	//	Jul. 26, 2003 ryoji
 	// 2002/08/22 カレントディレクトリを保存
 	TCHAR	szCurDir[_MAX_PATH];
 	bool	bGetCurDirSuc = false;
@@ -970,10 +1028,17 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 }
 
 /*! 保存ダイアログ モーダルダイアログの表示
+
+	@param pszPath [out]	取得したパス名
+	@param pnCharCode [out]	文字コード
+	@param pcEol [out]		改行コード
+	@param pbBom [out]		BOM
+
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
+	@date 2003.07.26 ryoji BOMパラメータ追加
 */
-BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
+BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBom )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
@@ -1040,6 +1105,15 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 		m_bUseEol = false;
 	}
 	//	To Here Feb. 9, 2001 genta
+	//	Jul. 26, 2003 ryoji BOM設定
+	if( NULL != pbBom ){
+		m_bBom = *pbBom;
+		m_bUseBom = true;
+	}
+	else{
+		m_bUseBom = false;
+	}
+
 	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS_DIALOG);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 	if( ::GetSaveFileName( &m_ofn ) ){
 
@@ -1051,6 +1125,10 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 		//	Feb. 9, 2001 genta
 		if( m_bUseEol ){
 			*pcEol = m_cEol;
+		}
+		//	Jul. 26, 2003 ryoji BOM設定
+		if( m_bUseBom ){
+			*pbBom = m_bBom;
 		}
 		if( bGetCurDirSuc ){
 			::SetCurrentDirectory( szCurDir );

@@ -654,7 +654,21 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				nSaveLineCode = atoi( Argument[2] );
 			}
 			// 文字コードセット
-			pcEditView->m_pcEditDoc->m_nCharCode = nCharCode;
+			if( nCharCode != pcEditView->m_pcEditDoc->m_nCharCode ){
+				pcEditView->m_pcEditDoc->m_nCharCode = nCharCode;
+				//	From Here Jul. 26, 2003 ryoji BOM状態を初期化
+				switch( pcEditView->m_pcEditDoc->m_nCharCode ){
+				case CODE_UNICODE:
+				case CODE_UNICODEBE:
+					pcEditView->m_pcEditDoc->m_bBomExist = TRUE;
+					break;
+				case CODE_UTF8:
+				default:
+					pcEditView->m_pcEditDoc->m_bBomExist = FALSE;
+					break;
+				}
+				//	To Here Jul. 26, 2003 ryoji BOM状態を初期化
+			}
 			// 改行コード
 			switch (nSaveLineCode){
 			case 0:

@@ -91,9 +91,11 @@ CFileLoad::~CFileLoad( void )
 	@param pFileName [in] ファイル名
 	@param CharCode  [in] ファイルの文字コード．
 	@param nFlag [in] 文字コードのオプション
+	@param pbBomExist [out] BOMの有無
 	@date 2003.06.08 Moca CODE_AUTODETECTを指定できるように変更
+	@date 2003.07.26 ryoji BOM引数追加
 */
-enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
+enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL* pbBomExist )
 {
 	HANDLE	hFile;
 	DWORD	FileSize;
@@ -151,7 +153,11 @@ enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
 	m_nFileDataLen = m_nFileSize;
 	if( nBomCode != 0 && nBomCode == m_CharCode ){
+		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		m_bBomExist = TRUE;
+		if( pbBomExist != NULL ){
+			*pbBomExist = TRUE;
+		}
 		switch( nBomCode ){
 			case CODE_UNICODE:
 			case CODE_UNICODEBE:
@@ -163,7 +169,13 @@ enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 				m_nReadBufOffSet += 3;
 				break;
 		}
+	}else{
+		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
+		if( pbBomExist != NULL ){
+			*pbBomExist = FALSE;
+		}
 	}
+	
 	// To Here Jun. 13, 2003 Moca BOMの除去
 	m_eMode = FLMODE_REDY;
 //	m_cmemLine.AllocBuffer( 256 );

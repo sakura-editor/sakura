@@ -511,6 +511,7 @@
 #define IDC_FRAME_SEARCH_MSG            1474
 #define IDC_CHECK_DIFF_EXEC_STATE       1475
 #define IDC_STATIC_FAVORITE_MSG         1476
+#define IDC_CHECK_BOM                   1478
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -545,7 +546,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1477
+#define _APS_NEXT_CONTROL_VALUE         1479
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

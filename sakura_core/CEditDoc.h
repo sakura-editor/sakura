@@ -85,11 +85,11 @@ public:
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
-
 	BOOL OpenFileDialog( HWND, const char*, char*, int*, BOOL* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
 	void SetReferer( HWND , int, int );	/* タグジャンプ元など参照元の情報を保持する */
-	BOOL SaveFileDialog( char*, int*, CEOL* pcEol = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
+	//	Jul. 26, 2003 ryoji BOMオプション追加
+	BOOL SaveFileDialog( char*, int*, CEOL* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
 	void ReloadCurrentFile( BOOL, BOOL );/* 同一ファイルの再オープン */
@@ -196,6 +196,7 @@ public: /* テスト用にアクセス属性を変更 */
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
 	int				m_nCharCode;				/* 文字コード種別 */
+	BOOL			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
 
 	//	May 15, 2000 genta
 protected:
