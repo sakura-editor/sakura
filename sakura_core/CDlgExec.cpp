@@ -101,7 +101,7 @@ void CDlgExec::SetData( void )
 /* ダイアログデータの取得 */
 int CDlgExec::GetData( void )
 {
-	::GetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand, sizeof( m_szCommand ) - 1 );
+	::GetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand, sizeof( m_szCommand ));
 
 	// 標準出力を得る
 //	From Here Sept. 12, 2000 jeprotest

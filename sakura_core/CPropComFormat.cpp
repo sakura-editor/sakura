@@ -394,7 +394,7 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 		m_Common.m_nDateFormatType = 1;
 	}
 	//日付書式
-	::GetDlgItemText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_szDateFormat, sizeof( m_Common.m_szDateFormat ) - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_szDateFormat, sizeof( m_Common.m_szDateFormat ));
 
 	//時刻書式のタイプ
 	if( BST_CHECKED == ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_TFORM_0 ) ){
@@ -404,7 +404,7 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 	}
 
 	//時刻書式
-	::GetDlgItemText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_szTimeFormat, sizeof( m_Common.m_szTimeFormat ) - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_szTimeFormat, sizeof( m_Common.m_szTimeFormat ));
 
 
 

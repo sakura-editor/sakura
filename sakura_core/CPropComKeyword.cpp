@@ -262,7 +262,8 @@ BOOL CPropCommon::DispatchEvent_p7(
 					}
 					/* モードレスダイアログの表示 */
 					strcpy( szKeyWord, "" );
-					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "キーワードのセット追加", "セット名を入力してください。", MAX_KEYWORDLEN, szKeyWord ) ){
+					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
+					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "キーワードのセット追加", "セット名を入力してください。", MAX_SETNAMELEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( 0 < strlen( szKeyWord ) ){

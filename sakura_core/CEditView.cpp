@@ -5726,14 +5726,18 @@ void CEditView::DrawCaretPosInfo( void )
 			int nLineLen = m_nCaretPosX_PHY;	//	 - pcLayout->m_nOffset;
 			nPosX = 0;
 			int i;
-			for( i = 0; i < nLineLen; ++i ){
+			//	Oct. 4, 2002 genta
+			//	文字位置のカウント方法が誤っていたのを修正
+			for( i = 0; i < nLineLen; ){
 				int nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
 				if ( nCharChars == 1 && pLine[i] == TAB ){
 					//	Sep. 23, 2002 genta LayoutMgrの値を使う
 					nPosX += m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
+					++i;
 				}
 				else {
 					nPosX += nCharChars;
+					i += nCharChars;
 				}
 			}
 			nPosX ++;	//	補正

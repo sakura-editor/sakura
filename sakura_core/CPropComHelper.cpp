@@ -390,11 +390,12 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 //	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Common.m_szKeyWordHelpFile, MAX_PATH - 1 );
 //	2001/06/14 End
 
+	// Oct. 5, 2002 genta サイズ制限方法変更
 	/* 外部ヘルプ１ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp, MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp, sizeof( m_Common.m_szExtHelp ));
 
 	/* 外部HTMLヘルプ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp, MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp, sizeof( m_Common.m_szExtHtmlHelp ));
 
 	/* HtmlHelpビューアはひとつ */
 	m_Common.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HTMLHELPISSINGLE );

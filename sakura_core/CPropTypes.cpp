@@ -78,7 +78,7 @@ const int nImeSwitchArrNum = sizeof( ImeSwitchArr ) / sizeof( ImeSwitchArr[0] );
 TYPE_NAME IndentTypeArr[] = {
 	{ 0, "なし" },
 	{ 1, "tx2x" },
-	{ 2, "前行先頭" },
+	{ 2, "論理行先頭" },
 };
 const int nIndentTypeArrNum = sizeof( IndentTypeArr ) / sizeof( IndentTypeArr[0] );
 
@@ -808,6 +808,8 @@ BOOL CPropTypes::DispatchEvent_p1(
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), EM_LIMITTEXT, (WPARAM)( sizeof( m_Types.m_szTabViewString ) - 1 ), 0 );
 //#endif
+		//	Oct. 5, 2002 genta 画面上でも入力制限
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Types.m_szOutlineRuleFilename ) - 1 ), 0 );
 
 		if( 0 == m_Types.m_nIdx ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );
@@ -1323,7 +1325,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	
 	if ( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
 		m_Types.m_nDefaultOutline = OUTLINE_FILE;
-		::GetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, sizeof( m_Types.m_szOutlineRuleFilename ) - 1 );
+		::GetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, sizeof( m_Types.m_szOutlineRuleFilename ));
 	}
 	else {
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
@@ -1612,17 +1614,17 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
 
 	/* 入力補完 単語ファイル */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, sizeof( m_Types.m_szHokanFile ));
 
 	/* キーワードヘルプを使用する */
 	m_Types.m_bUseKeyWordHelp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEKEYWORDHELP );
 
 	/* キーワードヘルプ 辞書ファイル */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile, _MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile, sizeof( m_Types.m_szKeyWordHelpFile ));
 
 	//@@@ 2002.2.2 YAZAKI
-	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _MAX_PATH - 1);
-	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _MAX_PATH - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, sizeof( m_Types.m_szExtHelp ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, sizeof( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE );
 	return TRUE;
 }

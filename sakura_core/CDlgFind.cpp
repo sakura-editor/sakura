@@ -191,7 +191,7 @@ int CDlgFind::GetData( void )
 	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 
 	/* 検索文字列 */
-	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, _MAX_PATH - 1 );
+	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, sizeof( m_szText ));
 
 	/* 検索ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFind );
