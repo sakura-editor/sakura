@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <windows.h>
+#include <tchar.h>
 #include "global.h"
 #include <shlobj.h>
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
@@ -83,7 +84,7 @@ SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage
 SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD_PTR data,bool msgflag = true);
 SAKURA_CORE_API DWORD NetConnect ( const char strNetWorkPass[] );
 
-SAKURA_CORE_API int cescape(const char* org, char* out, char cesc, char cwith);
+SAKURA_CORE_API int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
 SAKURA_CORE_API int cescape_j(const char* org, char* out, char cesc, char cwith);
 
 /* ヘルプの目次を表示 */
@@ -95,9 +96,10 @@ SAKURA_CORE_API bool SetClipboardText( HWND, const char*, int );	//!クリープボー
 	メニューに含まれる&を&&に置き換える
 	@author genta
 	@date 2002/01/30 cescapeに拡張し，
+	@date 2004/06/19 genta Generic mapping
 */
-inline void dupamp(const char* org, char* out)
-{	cescape( org, out, '&', '&' ); }
+inline void dupamp(const TCHAR* org, TCHAR* out)
+{	cescape( org, out, _T('&'), _T('&') ); }
 ///////////////////////////////////////////////////////////////////////
 
 /* カラー名＜＞インデックス番号の変換 */	//@@@ 2002.04.30
