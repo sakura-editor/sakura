@@ -1985,7 +1985,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_JUMPNEXT:		return HLP000232;	//移動履歴: 次へ
 	case F_WndScrollDown:	return HLP000198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
 	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
-
+//	case F_GONEXTPARAGRAPH:	return ;	//次の段落へ
+//	case F_GOPREVPARAGRAPH:	return ;	//前の段落へ
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択

@@ -38,7 +38,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_FILESAVE,					"S_FileSave",			"",					NULL}, //上書き保存
 	{F_FILESAVEAS,					"S_FileSaveAs",			"(str: string; charcode, eolcode: Integer)",	NULL}, //名前を付けて保存
 	{F_FILECLOSE,					"S_FileClose",			"",					NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
-//	{F_FILECLOSE_OPEN,				"S_FileCloseOpen",		"(str: string)",	NULL}, //閉じて開く
+	{F_FILECLOSE_OPEN,				"S_FileCloseOpen",		"",					NULL}, //閉じて開く
 	{F_FILE_REOPEN_SJIS,			"S_FileReopenSJIS",		"",					NULL}, //SJISで開き直す
 	{F_FILE_REOPEN_JIS,				"S_FileReopenJIS",		"",					NULL}, //JISで開き直す
 	{F_FILE_REOPEN_EUC,				"S_FileReopenEUC",		"",					NULL}, //EUCで開き直す
@@ -61,7 +61,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 
 	/* 編集系 */
 	{F_CHAR,				"S_Char",				"(Val: integer)",	NULL}, //文字入力
-//	{F_IME_CHAR,			"S_CharIme",			"",					NULL}, //全角文字入力
+	{F_IME_CHAR,			"S_CharIme",			"",					NULL}, //全角文字入力
 	{F_UNDO,				"S_Undo",				"",					NULL}, //元に戻す(Undo)
 	{F_REDO,				"S_Redo",				"",					NULL}, //やり直し(Redo)
 	{F_DELETE,				"S_Delete",				"",					NULL}, //削除
@@ -110,6 +110,8 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_JUMPNEXT,			"S_MoveHistNext",		"",					NULL}, //移動履歴: 次へ
 	{F_WndScrollDown,		"S_F_WndScrollDown",	"",					NULL}, //テキストを１行下へスクロール	// 2001/06/20 asa-o
 	{F_WndScrollUp,			"S_F_WndScrollUp",		"",					NULL}, //テキストを１行上へスクロール	// 2001/06/20 asa-o
+	{F_GONEXTPARAGRAPH,		"S_GoNextParagraph",	"",					NULL}, //次の段落へ移動
+	{F_GOPREVPARAGRAPH,		"S_GoPrevParagraph",	"",					NULL}, //前の段落へ移動
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
 	{F_SELECTWORD,			"S_SelectWord",			"",					NULL}, //現在位置の単語選択

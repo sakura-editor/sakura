@@ -381,13 +381,16 @@ protected:
 	BOOL Command_FILESAVEAS( const char *filename );			/* 名前を付けて保存 */
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	void Command_FILECLOSE_OPEN( void );		/* 閉じて開く */
-	void ReOpen_XXX( int );			/* 再オープン */
+	void Command_FILE_REOPEN( int );			/* 再オープン */
+#if 0
+	2002/04/19 YAZAKI
 	void Command_FILE_REOPEN_SJIS( void );		/* SJISで開き直す */
 	void Command_FILE_REOPEN_JIS( void );		/* JISで開き直す */
 	void Command_FILE_REOPEN_EUC( void );		/* EUCで開き直す */
 	void Command_FILE_REOPEN_UNICODE( void );	/* Unicodeで開き直す */
 	void Command_FILE_REOPEN_UTF8( void );		/* UTF-8で開き直す */
 	void Command_FILE_REOPEN_UTF7( void );		/* UTF-7で開き直す */
+#endif
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
 	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -483,6 +486,8 @@ protected:
 	void Command_JUMPNEXT(void);			// 移動履歴: 次へ
 	void Command_WndScrollDown(void);		// テキストを１行下へスクロール	// 2001/06/20 asa-o
 	void Command_WndScrollUp(void);			// テキストを１行上へスクロール	// 2001/06/20 asa-o
+	void Command_GONEXTPARAGRAPH( int bSelect );	// 次の段落へ進む
+	void Command_GOPREVPARAGRAPH( int bSelect );	// 前の段落へ戻る
 
 	/* 選択系 */
 	void Command_SELECTWORD( void );		/* 現在位置の単語選択 */

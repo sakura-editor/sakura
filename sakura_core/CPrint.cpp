@@ -924,6 +924,7 @@ void CPrint::Initialize()
 	m_pShareData->m_PrintSettingArr[i].m_bPrintWordWrap = TRUE;		/* 英文ワードラップする */
 	m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuHead = FALSE;		/* 行頭禁則する */	//@@@ 2002.04.09 MIK
 	m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuTail = FALSE;		/* 行末禁則する */	//@@@ 2002.04.09 MIK
+	m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuRet = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	m_pShareData->m_PrintSettingArr[i].m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
 	m_pShareData->m_PrintSettingArr[i].m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
 	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */

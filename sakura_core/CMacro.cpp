@@ -330,6 +330,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	switch (Index) 
 	{
 	case F_CHAR:		//	文字入力。数値は文字コード
+	case F_IME_CHAR:	//	日本語入力
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動：未実装）
 		//	一つ目の引数が数値。
 		pcEditView->HandleCommand( Index, FALSE, atoi(Argument[0]), 0, 0, 0 );
@@ -553,8 +554,20 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	case F_FILESAVEAS:
 		//	Argument[0]を別名で保存。
 		{
-			pcEditView->m_pcEditDoc->m_nCharCode = atoi(Argument[1]);
-			switch (atoi(Argument[2])){
+			/* デフォルト値 */
+			int nCharCode = 0;
+			int nSaveLineCode = 0;
+			
+			if (Argument[1] != NULL){
+				nCharCode = atoi( Argument[1] );
+			}
+			if (Argument[2] != NULL){
+				nSaveLineCode = atoi( Argument[2] );
+			}
+			// 文字コードセット
+			pcEditView->m_pcEditDoc->m_nCharCode = nCharCode;
+			// 改行コード
+			switch (nSaveLineCode){
 			case 0:
 				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;
 				break;
@@ -567,7 +580,11 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			case 3:
 				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_CR;
 				break;
+			default:
+				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;
+				break;
 			}
+			
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;

@@ -27,6 +27,10 @@ class CEditWnd;
 #include "CFuncKeyWnd.h"
 #include "CMenuDrawer.h"
 #include "CImageListMgr.h"
+
+//by 鬼
+#include"CDropTarget.h"
+
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //#include "CPrintPreview.h" // 2002/2/10 aroka
 class CPrintPreview;// 2002/2/10 aroka
@@ -158,6 +162,15 @@ public:
 private:
 	UINT	m_uMSIMEReconvertMsg;
 	UINT	m_uATOKReconvertMsg;
+
+//by 鬼
+private:
+	enum {icNone, icDown, icClicked, icDoubleClicked} m_IconClicked;
+	LRESULT OnNcLButtonDown(WPARAM, LPARAM);
+	LRESULT OnNcLButtonUp(WPARAM, LPARAM);
+	LRESULT OnLButtonDblClk(WPARAM, LPARAM);
+public:
+	void OnSysMenuTimer();
 };
 
 

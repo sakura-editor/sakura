@@ -126,8 +126,16 @@ VOID CALLBACK CEditWndTimerProc(
 	return;
 }
 
+//by 鬼(2)
+void CALLBACK SysMenuTimer(HWND Wnd, UINT Msg, UINT Event, DWORD Time)
+{
+	CEditWnd *WndObj;
+	WndObj = (CEditWnd*)GetWindowLong(Wnd, GWL_USERDATA);
+	if(WndObj != NULL)
+		WndObj->OnSysMenuTimer();
 
-
+	KillTimer(Wnd, Event);
+}
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd() :
@@ -146,12 +154,13 @@ CEditWnd::CEditWnd() :
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	m_pPrintPreview( NULL ),
-	m_pszAppName( GSTR_EDITWINDOWNAME )
+	m_pszAppName( GSTR_EDITWINDOWNAME ),
 //@@@ 2002.01.14 YAZAKI 不使用と思われるため
 #if 0
 	m_hbmpOPENED( NULL ),
 	m_hbmpOPENED_THIS( NULL )
 #endif
+	m_IconClicked(icNone) //by 鬼(2)
 {
 
 	/* 共有データ構造体のアドレスを返す */
@@ -1375,6 +1384,17 @@ LRESULT CEditWnd::DispatchEvent(
 //		m_cEditDoc.SetReferer( (HWND)wParam, (int)lParam );
 		m_cEditDoc.SetReferer( (HWND)wParam, ppoCaret->x, ppoCaret->y );
 		return 0L;
+
+	//by 鬼 (2) MYWM_CHECKSYSMENUDBLCLKは不要に, WM_LBUTTONDBLCLK追加
+	case WM_NCLBUTTONDOWN:
+		return OnNcLButtonDown(wParam, lParam);
+
+	case WM_NCLBUTTONUP:
+		return OnNcLButtonUp(wParam, lParam);
+
+	case WM_LBUTTONDBLCLK:
+		return OnLButtonDblClk(wParam, lParam);
+
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
 		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
@@ -1383,7 +1403,7 @@ LRESULT CEditWnd::DispatchEvent(
 // >> by aroka
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
-	return DefWindowProc( hwnd, uMsg, wParam, lParam );
+//	return DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
 
 /*! 終了時の処理
@@ -2025,6 +2045,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DOWN2		, "カーソル下移動(２行ごと) (&K)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDLEFT	, "単語の左端に移動(&L)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDRIGHT	, "単語の右端に移動(&R)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOPREVPARAGRAPH	, "前の段落に移動(&A)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GONEXTPARAGRAPH	, "次の段落に移動(&Z)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINETOP	, "行頭に移動(折り返し単位) (&H)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINEEND	, "行末に移動(折り返し単位) (&E)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
@@ -3506,6 +3528,10 @@ LRESULT CEditWnd::OnHScroll( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 {
+	//by 鬼(2) キャプチャーして押されたら非クライアントでもこっちに来る
+	if(m_IconClicked != icNone)
+		return 0;
+
 	WPARAM		fwKeys;
 	int			xPos;
 	int			yPos;
@@ -3519,9 +3545,21 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 
 	return 0;
 }
-
+#define IDT_SYSMENU 1357
 LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 {
+	//by 鬼 2002/04/18
+	if(m_IconClicked != icNone)
+	{
+		if(m_IconClicked == icDown)
+		{
+			m_IconClicked = icClicked;
+			//by 鬼(2) タイマー(IDは適当です)
+			SetTimer(m_hWnd, IDT_SYSMENU, GetDoubleClickTime(), SysMenuTimer);
+		}
+		return 0;
+	}
+
 	m_bDragMode = FALSE;
 	ReleaseCapture();
 	::InvalidateRect( m_hWnd, NULL, TRUE );
@@ -3531,6 +3569,92 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 {
+	//by 鬼
+	if(m_IconClicked != icNone)
+	{
+		//by 鬼(2) 一回押された時だけ
+		if(m_IconClicked == icDown)
+		{
+			POINT P;
+			GetCursorPos(&P); //スクリーン座標
+			if(SendMessage(m_hWnd, WM_NCHITTEST, 0, P.x | (P.y << 16)) != HTSYSMENU)
+			{
+				ReleaseCapture();
+				m_IconClicked = icNone;
+
+				if(m_cEditDoc.m_szFilePath[0] != 0)
+				{
+					char *PathEnd = m_cEditDoc.m_szFilePath;
+					for(char* I = m_cEditDoc.m_szFilePath; *I != 0; ++I)
+					{
+						//by 鬼(2): DBCS処理
+						if(IsDBCSLeadByte(*I))
+							++I;
+						else if(*I == '\\')
+							PathEnd = I;
+					}
+
+					wchar_t WPath[MAX_PATH];
+					int c = MultiByteToWideChar(CP_ACP, 0, m_cEditDoc.m_szFilePath, PathEnd - m_cEditDoc.m_szFilePath, WPath, MAX_PATH);
+					WPath[c] = 0;
+					wchar_t WFile[MAX_PATH];
+					MultiByteToWideChar(CP_ACP, 0, PathEnd + 1, -1, WFile, MAX_PATH);
+
+					IDataObject *DataObject;
+					IMalloc *Malloc;
+					IShellFolder *Desktop, *Folder;
+					LPITEMIDLIST PathID, ItemID;
+					SHGetMalloc(&Malloc);
+					SHGetDesktopFolder(&Desktop);
+					DWORD Eaten, Attribs;
+					if(SUCCEEDED(Desktop->ParseDisplayName(0, NULL, WPath, &Eaten, &PathID, &Attribs)))
+					{
+						Desktop->BindToObject(PathID, NULL, IID_IShellFolder, (void**)&Folder);
+						Malloc->Free(PathID);
+						if(SUCCEEDED(Folder->ParseDisplayName(0, NULL, WFile, &Eaten, &ItemID, &Attribs)))
+						{
+							LPCITEMIDLIST List[1];
+							List[0] = ItemID;
+							Folder->GetUIObjectOf(0, 1, List, IID_IDataObject, NULL, (void**)&DataObject);
+							Malloc->Free(ItemID);
+	#define DDASTEXT
+	#ifdef  DDASTEXT
+							//テキストでも持たせる…便利
+							int Len = lstrlen(m_cEditDoc.m_szFilePath);
+							FORMATETC F;
+							STGMEDIUM M;
+
+							F.cfFormat = CF_TEXT;
+							F.ptd      = NULL;
+							F.dwAspect = DVASPECT_CONTENT;
+							F.lindex   = -1;
+							F.tymed    = TYMED_HGLOBAL;
+
+							M.tymed = TYMED_HGLOBAL;
+							M.pUnkForRelease = NULL;
+							M.hGlobal = GlobalAlloc(GMEM_MOVEABLE, Len+1);
+
+							void* P = GlobalLock(M.hGlobal);
+							CopyMemory(P, m_cEditDoc.m_szFilePath, Len+1);
+							GlobalUnlock(M.hGlobal);
+
+							DataObject->SetData(&F, &M, TRUE);
+	#endif
+							//移動は禁止
+							DWORD R;
+							DoDragDrop(DataObject, new CDropSource(TRUE), DROPEFFECT_COPY | DROPEFFECT_LINK, &R);
+							DataObject->Release();
+						}
+						Folder->Release();
+					}
+					Desktop->Release();
+					Malloc->Release();
+				}
+			}
+		}
+		return 0;
+	}
+
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	if (!m_pPrintPreview){
 		return 0;
@@ -3628,5 +3752,78 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	return bRes;
 }
 
+///////////////////////////// by 鬼
+
+LRESULT CEditWnd::OnNcLButtonDown(WPARAM wp, LPARAM lp)
+{
+	LRESULT Result;
+	if(wp == HTSYSMENU)
+	{
+		SetCapture(m_hWnd);
+		m_IconClicked = icDown;
+		Result = 0;
+	}
+	else
+		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONDOWN, wp, lp);
+
+	return Result;
+}
+
+LRESULT CEditWnd::OnNcLButtonUp(WPARAM wp, LPARAM lp)
+{
+	LRESULT Result;
+	if(m_IconClicked != icNone)
+	{
+		//念のため
+		ReleaseCapture();
+		m_IconClicked = icNone;
+		Result = 0;
+	}
+	else if(wp == HTSYSMENU)
+		Result = 0;
+	else
+		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONDOWN, wp, lp);
+
+	return Result;
+}
+
+LRESULT CEditWnd::OnLButtonDblClk(WPARAM wp, LPARAM lp) //by 鬼(2)
+{
+	LRESULT Result;
+	if(m_IconClicked != icNone)
+	{
+		ReleaseCapture();
+		m_IconClicked = icDoubleClicked;
+
+		SendMessage(m_hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+
+		Result = 0;
+	}
+	else
+		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONDOWN, wp, lp);
+
+	return Result;
+}
+
+void CEditWnd::OnSysMenuTimer() //by 鬼(2)
+{
+	if(m_IconClicked == icClicked)
+	{
+		ReleaseCapture();
+
+		//システムメニュー表示
+		HMENU SysMenu = GetSystemMenu(m_hWnd, FALSE);
+		RECT R;
+		GetWindowRect(m_hWnd, &R);
+		DWORD Cmd = TrackPopupMenu(SysMenu, TPM_RETURNCMD | TPM_LEFTBUTTON |
+						TPM_LEFTALIGN | TPM_TOPALIGN,
+						(R.left + GetSystemMetrics(SM_CXFRAME) > 0)? R.left + GetSystemMetrics(SM_CXFRAME) : 0,
+						R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME),
+						0, m_hWnd, NULL);
+		if(Cmd != 0)
+			SendMessage(m_hWnd, WM_SYSCOMMAND, Cmd, 0);
+	}
+	m_IconClicked = icNone;
+}
 
 /*[EOF]*/

@@ -143,7 +143,9 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_JUMPPREV			,	//移動履歴: 前へ
 	F_JUMPNEXT			,	//移動履歴: 次へ
 	F_WndScrollDown		,	//テキストを１行下へスクロール	// 2001/06/20 asa-o
-	F_WndScrollUp			//テキストを１行上へスクロール	// 2001/06/20 asa-o
+	F_WndScrollUp		,	//テキストを１行上へスクロール	// 2001/06/20 asa-o
+	F_GONEXTPARAGRAPH	,	//次の段落へ
+	F_GOPREVPARAGRAPH		//前の段落へ
 };
 const int nFincList_Move_Num = sizeof( pnFuncList_Move ) / sizeof( pnFuncList_Move[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
