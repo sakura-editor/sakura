@@ -4356,7 +4356,7 @@ int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
 		return 0;
 	}
 
-	int nLen = strlen( pszPath );
+	int nLen = strlen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
 
 	if(( ptr[0] == '\\' || ( ptr[1] == ':' && ptr[2] == '\\' ))	// 絶対パス
 		|| m_pShareData->m_szMACROFOLDER[0] == '\0' ){	//	フォルダ指定なし
