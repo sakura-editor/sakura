@@ -181,8 +181,11 @@ int WINAPI WinMain(
 		return 0;
 	}
 	/* システムリソースのチェック */
-	if( FALSE == CheckSystemResources( GSTR_APPNAME ) ){
-		return 0;
+	// Jul. 5, 2001 shoji masami NTではリソースチェックを行わない
+	if( !CheckWindowsVersionNT() ){
+		if( !CheckSystemResources( GSTR_APPNAME ) ){
+			return 0;
+		}
 	}
 
 	/* コモンコントロールの初期化 */
