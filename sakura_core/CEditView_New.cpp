@@ -580,7 +580,8 @@ searchnext:;
 						colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );		/* TAB文字背景の色 */
 
 						rcClip2.left = x + nX * ( nCharWidth );
-						rcClip2.right = rcClip2.left + ( nCharWidth ) * ( 1 );
+						// Jul. 20, 2003 ryoji 横スクロール時に改行コードが欠けないように
+						rcClip2.right = rcClip2.left + ( nCharWidth ) * ( 2 );
 						if( rcClip2.left < m_nViewAlignLeft ){
 							rcClip2.left = m_nViewAlignLeft;
 						}
