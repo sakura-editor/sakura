@@ -3378,7 +3378,9 @@ normal_action:;
 //			m_bBeginLineSelect = FALSE;
 
 			/* URLがクリックされたら選択するか */
-			if( TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
+			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLは普通の文字として扱う
+			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+				TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
 
 				int			nUrlLine;	// URLの行(折り返し単位)
 				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
@@ -3811,7 +3813,9 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}else
 			/* カーソル位置にURLが有る場合 */
-			if( IsCurrentPositionURL(
+			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
+			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+				IsCurrentPositionURL(
 				nNewX,			// カーソル位置X
 				nNewY,			// カーソル位置Y
 				&nUrlLine,		// URLの行(改行単位)
@@ -4285,7 +4289,9 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	const char*	pszMailTo = "mailto:";
 
 	/* カーソル位置にURLが有る場合のその範囲を調べる */
-	if( IsCurrentPositionURL(
+	//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
+	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+		IsCurrentPositionURL(
 		m_nCaretPosX,	// カーソル位置X
 		m_nCaretPosY,	// カーソル位置Y
 		&nUrlLine,		// URLの行(改行単位)
