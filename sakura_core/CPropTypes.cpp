@@ -63,7 +63,7 @@ const int nImeSwitchArrNum = sizeof( ImeSwitchArr ) / sizeof( ImeSwitchArr[0] );
 
 WNDPROC	m_wpColorListProc;
 
-//	Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(21→32)
+//Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(21→32)
 #define STR_COLORDATA_HEAD_LEN	32
 #define STR_COLORDATA_HEAD		"テキストエディタ 色設定ファイル\x1a"
 
@@ -88,17 +88,17 @@ char* MakeRGBStr( DWORD dwRGB, char* pszText )
 //@@@ 2001.02.04 Start by MIK: Popup Help
 const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				11310,	//英文ワードラップ
-	IDC_COMBO_TABSPACE,				11330,	//タブ幅
-	IDC_COMBO_IMESWITCH,			11331,	//起動時のIME
-	IDC_COMBO_IMESTATE,				11332,	//起動時のIME状態
+	IDC_COMBO_TABSPACE,				11330,	//TAB幅
+	IDC_COMBO_IMESWITCH,			11331,	//IMEのON/OFF状態
+	IDC_COMBO_IMESTATE,				11332,	//IMEの入力モード
 	IDC_COMBO_SMARTINDENT,			11333,	//スマートインデント
 	IDC_COMBO_OUTLINES,				11334,	//アウトライン解析方法
 	IDC_EDIT_TYPENAME,				11340,	//設定の名前
 	IDC_EDIT_TYPEEXTS,				11341,	//ファイル拡張子
 	IDC_EDIT_MAXLINELEN,			11342,	//折り返し桁数
-	IDC_EDIT_CHARSPACE,				11343,	//文字の隙間
-	IDC_EDIT_LINESPACE,				11344,	//行間の隙間
-	IDC_EDIT_INDENTCHARS,			11345,	//インデント対象文字
+	IDC_EDIT_CHARSPACE,				11343,	//文字の間隔
+	IDC_EDIT_LINESPACE,				11344,	//行の間隔
+	IDC_EDIT_INDENTCHARS,			11345,	//その他のインデント対象文字
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	IDC_EDIT_TABVIEWSTRING,         11346,  //TAB表示文字列
 //#endif
@@ -118,22 +118,25 @@ const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_DISP,					11410,	//色分け表示
 	IDC_CHECK_FAT,					11411,	//太字
 	IDC_CHECK_UNDERLINE,			11412,	//下線
-	IDC_CHECK1,						11413,	//位置１
-	IDC_CHECK6,						11414,	//位置２
-	IDC_COMBO_SET,					11430,	//キーワードセット１
-	IDC_COMBO_SET2,					11431,	//キーワードセット２
-	IDC_EDIT_BLOCKCOMMENT_FROM,		11440,	//ブロックコメント開始
-	IDC_EDIT_BLOCKCOMMENT_TO,		11441,	//ブロックコメント終了
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	IDC_EDIT_BLOCKCOMMENT_FROM2,	11440,	//ブロックコメント開始
-	IDC_EDIT_BLOCKCOMMENT_TO2,		11441,	//ブロックコメント終了
-//#endif
-	IDC_EDIT_LINECOMMENT,			11442,	//行コメント（１）
-	IDC_EDIT_LINECOMMENT2,			11443,	//行コメント（２）
-	IDC_EDIT3,						11444,	//位置編集１
-	IDC_EDIT5,						11445,	//位置編集２
+	IDC_CHECK_LCPOS,				11413,	//桁指定１
+	IDC_CHECK_LCPOS2,				11414,	//桁指定２
+	IDC_COMBO_SET,					11430,	//強調キーワード１セット名
+	IDC_COMBO_SET2,					11431,	//強調キーワード２セット名
+	IDC_EDIT_BLOCKCOMMENT_FROM,		11440,	//ブロックコメント１開始
+	IDC_EDIT_BLOCKCOMMENT_TO,		11441,	//ブロックコメント１終了
+	IDC_EDIT_LINECOMMENT,			11442,	//行コメント１
+	IDC_EDIT_LINECOMMENT2,			11443,	//行コメント２
+	IDC_EDIT_LINECOMMENTPOS,		11444,	//桁数１
+	IDC_EDIT_LINECOMMENTPOS2,		11445,	//桁数２
 	IDC_EDIT_LINETERMCHAR,			11446,	//行番号区切り
-	IDC_LIST_COLORS,				11450,	//色リスト
+//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+	IDC_EDIT_BLOCKCOMMENT_FROM2,	11447,	//ブロックコメント２開始
+	IDC_EDIT_BLOCKCOMMENT_TO2,		11448,	//ブロックコメント２終了
+//#endif
+	IDC_EDIT_LINECOMMENT3,			11449,	//行コメント３
+	IDC_LIST_COLORS,				11450,	//色指定
+	IDC_CHECK_LCPOS3,				11451,	//桁指定３
+	IDC_EDIT_LINECOMMENTPOS3,		11452,	//桁数３
 	IDC_RADIO_ESCAPETYPE_1,			11460,	//文字列エスケープ（C言語風）
 	IDC_RADIO_ESCAPETYPE_2,			11461,	//文字列エスケープ（PL/SQL風）
 	IDC_RADIO_LINENUM_LAYOUT,		11462,	//行番号の表示（折り返し単位）
@@ -2075,9 +2078,9 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( idCtrl ){
 		//	From Here May 21, 2001 genta activate spin control
-		case IDC_SPIN_LCColNum1:
+		case IDC_SPIN_LCColNum:
 			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -2090,11 +2093,11 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 			if( nVal > 1000 ){
 				nVal = 1000;
 			}
-			::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, nVal, FALSE );
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_LCColNum2:
 			/* 行コメント桁位置 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, NULL, FALSE );
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
 			}else
@@ -2107,9 +2110,29 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 			if( nVal > 1000 ){
 				nVal = 1000;
 			}
-			::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, nVal, FALSE );
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, nVal, FALSE );
 			return TRUE;
 		//	To Here May 21, 2001 genta activate spin control
+
+		//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
+		case IDC_SPIN_LCColNum3:
+			/* 行コメント桁位置 */
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 1 ){
+				nVal = 1;
+			}
+			if( nVal > 1000 ){
+				nVal = 1000;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, nVal, FALSE );
+			return TRUE;
+		//	To Here Jun. 01, 2001
 		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
@@ -2173,6 +2196,7 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT )		, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment ) - 1 ), 0 );
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT2 )		, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment2 ) - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT3 )		, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment3 ) - 1 ), 0 );	//Jun. 01, 2001 JEPRO 追加
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentFrom ) - 1 ), 0 );
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentTo ) - 1 ), 0 );
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
@@ -2180,36 +2204,64 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2 )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentTo2 ) - 1 ), 0 );
 //#endif
 
+//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
+/*
+	::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, m_Types.m_bSpecifyLineCommentPos );
+	if( BST_CHECKED == m_Types.m_bSpecifyLineCommentPos ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
+	}
+*/
+//	To Here Jun. 01, 2001
+
 	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT			, m_Types.m_szLineComment );		/* 行コメントデリミタ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2		, m_Types.m_szLineComment2 );		/* 行コメントデリミタ2 */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT3		, m_Types.m_szLineComment3 );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_szBlockCommentFrom );	/* ブロックコメントデリミタ(From) */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_szBlockCommentTo );		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2 );	/* ブロックコメントデリミタ(From) */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2 );	/* ブロックコメントデリミタ(To) */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2 );	/* ブロックコメントデリミタ2(From) */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2 );	/* ブロックコメントデリミタ2(To) */
 //#endif
 	//	From Here May 12, 2001 genta
 	//	行コメントの開始桁位置設定
 	//	May 21, 2001 genta 桁位置を1から数えるように
 	if( m_Types.m_nLineCommentPos >= 0 ){
-		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS1, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, m_Types.m_nLineCommentPos + 1, FALSE );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, TRUE );
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, m_Types.m_nLineCommentPos + 1, FALSE );
 	}
 	else {
-		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS1, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, (~m_Types.m_nLineCommentPos) + 1, FALSE );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, (~m_Types.m_nLineCommentPos) + 1, FALSE );
 	}
 
 	if( m_Types.m_nLineCommentPos2 >= 0 ){
-		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS2, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, m_Types.m_nLineCommentPos2 + 1, FALSE );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS2, TRUE );
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, m_Types.m_nLineCommentPos2 + 1, FALSE );
 	}
 	else {
-		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS2, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, (~m_Types.m_nLineCommentPos2) + 1, FALSE );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS2, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, (~m_Types.m_nLineCommentPos2) + 1, FALSE );
 	}
 
 	//	To Here May 12, 2001 genta
+
+	//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
+	if( m_Types.m_nLineCommentPos3 >= 0 ){
+		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS3, TRUE );
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, m_Types.m_nLineCommentPos3 + 1, FALSE );
+	}
+	else {
+		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS3, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, (~m_Types.m_nLineCommentPos3) + 1, FALSE );
+	}
+	//	To Here Jun. 01, 2001
+
 
 	if( 0 == m_Types.m_nStringType ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, TRUE );
@@ -2320,8 +2372,24 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	m_nPageNum = 1;
 
 
-	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT			, m_Types.m_szLineComment		, sizeof( m_Types.m_szLineComment ) );		/* 行コメントデリミタ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2		, m_Types.m_szLineComment2		, sizeof( m_Types.m_szLineComment2 ) );		/* 行コメントデリミタ2 */
+//	From Here Jun. 01, 2001 JEPRO 桁位置を指定する時だけ桁位置数とスピンボタンをEnableにする(失敗)
+/*
+	::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, m_Types.m_bSpecifyLineCommentPos );
+	if( BST_CHECKED == m_Types.m_bSpecifyLineCommentPos ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
+	}
+*/
+//	To Here Jun. 01, 2001
+
+	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT		, m_Types.m_szLineComment	, sizeof( m_Types.m_szLineComment ) );		/* 行コメントデリミタ */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2	, m_Types.m_szLineComment2	, sizeof( m_Types.m_szLineComment2 ) );		/* 行コメントデリミタ2 */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT3	, m_Types.m_szLineComment3	, sizeof( m_Types.m_szLineComment3 ) );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 	//	From Here May 12, 2001 genta
 	//	コメントの開始桁位置の取得
 	//	May 21, 2001 genta 桁位置を1から数えるように
@@ -2329,8 +2397,8 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	UINT en;
 	BOOL bTranslated;
 
-	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHK_LCPOS1 );
-	pos = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, &bTranslated, FALSE );
+	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS );
+	pos = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, &bTranslated, FALSE );
 	if( bTranslated != TRUE ){
 		en = 0;
 		pos = 0;
@@ -2341,8 +2409,8 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	//	無効のときは1の補数で格納
 	m_Types.m_nLineCommentPos = en ? pos : ~pos;
 
-	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHK_LCPOS2 );
-	pos = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, &bTranslated, FALSE );
+	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS2 );
+	pos = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, &bTranslated, FALSE );
 	if( bTranslated != TRUE ){
 		en = 0;
 		pos = 0;
@@ -2353,11 +2421,25 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	m_Types.m_nLineCommentPos2 = en ? pos : ~pos;
 
 	//	To Here May 12, 2001 genta 
+
+	//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
+	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 );
+	pos = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, &bTranslated, FALSE );
+	if( bTranslated != TRUE ){
+		en = 0;
+		pos = 0;
+	}
+	//	pos == 0のときは無効扱い
+	if( pos == 0 )	en = 0;
+	else			--pos;
+	m_Types.m_nLineCommentPos3 = en ? pos : ~pos;
+	//	To Here Jun. 01, 2001
+
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_szBlockCommentFrom	, sizeof( m_Types.m_szBlockCommentFrom ) );	/* ブロックコメントデリミタ(From) */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_szBlockCommentTo	, sizeof( m_Types.m_szBlockCommentTo ) );	/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2	, sizeof( m_Types.m_szBlockCommentFrom2 ) );	/* ブロックコメントデリミタ(From) */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2	, sizeof( m_Types.m_szBlockCommentTo2 ) );	/* ブロックコメントデリミタ(To) */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2	, sizeof( m_Types.m_szBlockCommentFrom2 ) );/* ブロックコメントデリミタ2(From) */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2	, sizeof( m_Types.m_szBlockCommentTo2 ) );	/* ブロックコメントデリミタ2(To) */
 //#endif
 
 	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */

@@ -2468,9 +2468,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUKATA, "半角カタカナ→全角カタカナ(&K)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUHIRA, "半角カタカナ→全角ひらがな(&H)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TABTOSPACE			, "&TAB→空白" );		//Feb. 19, 2001 JEPRO 下から移動した
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, "空白→TAB(&S)" );	//Feb. 19, 2001 JEPRO ダミーで入れてみた(F_SPACETABは未実装です)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, "空白→TAB(&S)" );	//#### Stonee, 2001/05/27
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TABTOSPACE			, "TAB→空白(&S)" );	//Feb. 19, 2001 JEPRO 下から移動した
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, "空白→TAB(&T)" );	//#### Stonee, 2001/05/27
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//「文字コード変換」ポップアップ
@@ -4737,11 +4736,12 @@ void CEditWnd::OnChangePrintSetting( void )
 		m_cEditDoc.GetDocumentAttribute().m_nTabSpace,
 		""/*m_cEditDoc.GetDocumentAttribute().m_szLineComment*/,		/* 行コメントデリミタ */
 		""/*m_cEditDoc.GetDocumentAttribute().m_szLineComment2*/,		/* 行コメントデリミタ2 */
+		""/*m_cEditDoc.GetDocumentAttribute().m_szLineComment3*/,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		""/*m_cEditDoc.GetDocumentAttribute().m_szBlockCommentFrom*/,	/* ブロックコメントデリミタ(From) */
 		""/*m_cEditDoc.GetDocumentAttribute().m_szBlockCommentTo*/,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-		""/*m_cEditDoc.GetDocumentAttribute().m_szBlockCommentFrom2*/,	/* ブロックコメントデリミタ(From) */
-		""/*m_cEditDoc.GetDocumentAttribute().m_szBlockCommentTo2*/,	/* ブロックコメントデリミタ(To) */
+		""/*m_cEditDoc.GetDocumentAttribute().m_szBlockCommentFrom2*/,	/* ブロックコメントデリミタ2(From) */
+		""/*m_cEditDoc.GetDocumentAttribute().m_szBlockCommentTo2*/,	/* ブロックコメントデリミタ2(To) */
 //#endif
 		0/*m_cEditDoc.GetDocumentAttribute().m_nStringType*/,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,

@@ -90,11 +90,12 @@ CEditDoc::CEditDoc() :
 		ref.m_nTabSpace,
 		ref.m_szLineComment,		/* 行コメントデリミタ */
 		ref.m_szLineComment2,		/* 行コメントデリミタ2 */
+		ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 		ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
-		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ(To) */
+		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
 //#endif
 		ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,
@@ -633,11 +634,12 @@ BOOL CEditDoc::FileRead(
 			ref.m_nTabSpace,
 			ref.m_szLineComment,		/* 行コメントデリミタ */
 			ref.m_szLineComment2,		/* 行コメントデリミタ2 */
+			ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 			ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 			ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
-			ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ(To) */
+			ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+			ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
 //#endif
 			ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 			TRUE,
@@ -846,11 +848,12 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 			ref.m_nTabSpace,
 			ref.m_szLineComment,		/* 行コメントデリミタ */
 			ref.m_szLineComment2,		/* 行コメントデリミタ2 */
+			ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 			ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 			ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
-			ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ(To) */
+			ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+			ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
 //#endif
 			ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 			TRUE,
@@ -3257,11 +3260,12 @@ void CEditDoc::OnChangeSetting( void )
 		ref.m_nTabSpace,
 		ref.m_szLineComment,		/* 行コメントデリミタ */
 		ref.m_szLineComment2,		/* 行コメントデリミタ2 */
+		ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 		ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
-		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ(To) */
+		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
 //#endif
 		ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,
@@ -3501,11 +3505,12 @@ void CEditDoc::Init( void )
 		ref.m_nTabSpace,
 		ref.m_szLineComment,		/* 行コメントデリミタ */
 		ref.m_szLineComment2,		/* 行コメントデリミタ2 */
+		ref.m_szLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		ref.m_szBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
 		ref.m_szBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ(From) */
-		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ(To) */
+		ref.m_szBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+		ref.m_szBlockCommentTo2,	/* ブロックコメントデリミタ2(To) */
 //#endif
 		ref.m_nStringType,			/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		TRUE,
