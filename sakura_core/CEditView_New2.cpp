@@ -299,10 +299,10 @@ void CEditView::DispLineNumber(
 		::DeleteObject( hBrush );
 	}
 
-#if 0	/* 02/10/16 ai Start*/
 // From Here 2001.12.03 hor
 	/* とりあえずブックマークに縦線 */
-	if(pCDocLine->IsBookMarked()){
+	if(pCDocLine->IsBookMarked() &&	// Dec. 24, 2002 ai
+		(FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp)){
 		hPen = ::CreatePen( PS_SOLID, 2, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx( hdc, 1, y, NULL );
@@ -311,7 +311,6 @@ void CEditView::DispLineNumber(
 		::DeleteObject( hPen );
 	}
 // To Here 2001.12.03 hor
-#endif	/* 02/10/16 ai End */
 
 	if( type )	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
 	{
