@@ -408,8 +408,8 @@ protected:
 	void Command_CURLINECENTER( void );		/* カーソル行をウィンドウ中央へ */
 	void Command_JUMPPREV(void);			// 移動履歴: 前へ
 	void Command_JUMPNEXT(void);			// 移動履歴: 次へ
-	void Command_WndScrollUp(void);			// 画面を上へ1行スクロール	// 2001/06/20 asa-o
-	void Command_WndScrollDown(void);		// 画面を下へ1行スクロール	// 2001/06/20 asa-o
+	void Command_WndScrollUp(void);			// 画面を上へ１行スクロール	// 2001/06/20 asa-o
+	void Command_WndScrollDown(void);		// 画面を下へ１行スクロール	// 2001/06/20 asa-o
 
 	/* 選択系 */
 	void Command_SELECTWORD( void );		/* 現在位置の単語選択 */

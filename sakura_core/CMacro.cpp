@@ -107,8 +107,8 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_CURLINECENTER				, "CurLineCenter",	//カーソル行をウィンドウ中央へ
 	F_JUMPPREV					, "MoveHistPrev",	//移動履歴: 前へ
 	F_JUMPNEXT					, "MoveHistNext",	//移動履歴: 次へ
-	F_WndScrollUp				, "F_WndScrollUp",	//画面を上へ1行スクロール	// 2001/06/20 asa-o
-	F_WndScrollDown				, "F_WndScrollDown",//画面を下へ1行スクロール	// 2001/06/20 asa-o
+	F_WndScrollUp				, "F_WndScrollUp",	//画面を上へ１行スクロール	// 2001/06/20 asa-o
+	F_WndScrollDown				, "F_WndScrollDown",//画面を下へ１行スクロール	// 2001/06/20 asa-o
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
 	F_SELECTWORD				, "SelectWord",			//現在位置の単語選択
