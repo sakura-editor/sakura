@@ -43,6 +43,8 @@ const DWORD p_helpids[] = {	//10000
 	IDC_RADIO_BACKUP_TYPE1,			10060,	//バックアップの種類（拡張子）
 	IDC_RADIO_BACKUP_TYPE2,			10061,	//バックアップの種類（連番）
 	IDC_RADIO_BACKUP_TYPE3,			10062,	//バックアップの種類（日付・時刻）
+	IDC_RADIO_BACKUP_DATETYPE1,		10063,	//付加する日時の種類（作成日時）	//Jul. 05, 2001 JEPRO 追加
+	IDC_RADIO_BACKUP_DATETYPE2,		10064,	//付加する日時の種類（更新日時）	//Jul. 05, 2001 JEPRO 追加
 	IDC_SPIN_BACKUP_GENS,			-1,
 //	IDC_STATIC,						-1,
 	0, 0

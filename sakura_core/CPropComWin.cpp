@@ -33,13 +33,14 @@ const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_bScrollBarHorz,		11213,	//水平スクロールバー
 	IDC_CHECK_bMenuIcon,			11214,	//アイコン付きメニュー
 	IDC_CHECK_WINSIZE,				11215,	//ウインドウサイズ継承
+	IDC_CHECK_SplitterWndVScroll,	11216,	//垂直スクロールの同期	//Jul. 05, 2001 JEPRO 追加
+	IDC_CHECK_SplitterWndHScroll,	11217,	//水平スクロールの同期	//Jul. 05, 2001 JEPRO 追加
 	IDC_EDIT_nRulerBottomSpace,		11240,	//ルーラー
 	IDC_EDIT_nRulerHeight,			11241,	//ルーラー
 	IDC_RADIO_FUNCKEYWND_PLACE1,	11260,	//ファンクションキー表示位置
 	IDC_RADIO_FUNCKEYWND_PLACE2,	11261,	//ファンクションキー表示位置
 	IDC_SPIN_nRulerBottomSpace,		-1,
 	IDC_SPIN_nRulerHeight,			-1,
-	IDC_GROUP_FUNCKEYWND_POSITION,	-1,
 //	IDC_STATIC,						-1,
 	0, 0
 };
