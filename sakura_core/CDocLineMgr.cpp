@@ -703,8 +703,8 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 	case CODE_UNICODEBE:
 		file.Write( "\xfe\xff", sizeof(char) * 2 );
 		break;
-//	case CODE_UTF8: // 2002.06.06 Moca 普通は付けないらしいのでコメントアウト
-//		file.Write( "\xff\xbb\xbf", sizeof(char) * 3 );
+//	case CODE_UTF8: // 2003.05.04 Moca BOMの間違いを訂正
+//		file.Write( "\xfe\xbb\xbf", sizeof(char) * 3 );
 //		break;
 	}
 
