@@ -2296,7 +2296,9 @@ int	CEditApp::CreatePopUpMenu_R( void )
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_EXITALL, "テキストエディタの全終了(&X)", FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, "テキストエディタの全終了(&X)", FALSE );	//Dec. 26, 2000 JEPRO F_に変更
+//	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, "テキストエディタの全終了(&X)", FALSE );	//Dec. 26, 2000 JEPRO F_に変更
+	//	Jun. 18, 2001 genta ソフトウェア名改称
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, "サクラエディタの全終了(&X)", FALSE );	//De
 
 	po.x = 0;
 	po.y = 0;
