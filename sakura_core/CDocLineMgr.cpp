@@ -1026,20 +1026,12 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 			if( 0 < nLineLen - nDeleteLength ){
 				pDocLine->m_pLine->SetData( pData, nLineLen - nDeleteLength );
 			}else{
-				/* 行の削除 */
-				if( NULL != pDocLine->m_pPrev ){
-					pDocLine->m_pPrev->m_pNext = NULL;
-				}
-				m_pDocLineBot = pDocLine->m_pPrev;
-				delete pDocLine; // 2003/10/11 Moca メモリーリーク修正
+				// 行の削除
+				// 2004.03.18 Moca 関数を使う
+				DeleteNode( pDocLine );
 				pDocLine = NULL;
 				*pnDelLineOldFrom = nLine;	/* 削除された変更前論理行(from) */
 				*pnDelLineOldNum = 1;		/* 削除された行数 */
-				m_nLines--;					/* 全行数 */
-				if( 0 == m_nLines ){
-					/* データがなくなった */
-					Init();
-				}
 			}
 			delete [] pData;
 		}else{
@@ -1064,20 +1056,11 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 			pDocLine->m_cEol = pDocLine2->m_cEol;
 
 			/* 次の行を削除 && 次次行とのリストの連結*/
-			pDocLine->m_pNext = pDocLine2->m_pNext;
-			if( NULL != pDocLine->m_pNext ){
-				pDocLine->m_pNext->m_pPrev = pDocLine;
-			}else{
-				m_pDocLineBot = pDocLine;
-			}
-			delete pDocLine2;
+			// 2004.03.18 Moca DeleteNode を使う
+			DeleteNode( pDocLine2 );
+			pDocLine2 = NULL;
 			*pnDelLineOldFrom = nLine + 1;	/* 削除された変更前論理行(from) */
 			*pnDelLineOldNum = 1;			/* 削除された行数 */
-			m_nLines--;						/* 全行数 */
-			if( 0 == m_nLines ){
-				/* データがなくなった */
-				Init();
-			}
 			delete [] pData;
 		}
 	}else{
@@ -2204,7 +2187,9 @@ char* CDocLineMgr::SearchString(
 		}
 		return NULL;
 	//	Mar. 4, 2001 genta	: comment out
-	//}
+#if 0
+	}
+#endif
 }
 
 
@@ -2304,19 +2289,74 @@ int	CDocLineMgr::WhatKindOfChar(
 }
 
 
+/*!	@brief CDocLineMgrDEBUG用
 
+	@date 2004.03.18 Moca
+		m_pDocLineCurrentとm_pCodePrevReferがデータチェーンの
+		要素を指しているかの検証機能を追加．
 
-
+*/
 void CDocLineMgr::DUMP( void )
 {
 #ifdef _DEBUG
 	MYTRACE( "------------------------\n" );
-	MYTRACE( "m_nLines=%d\n", m_nLines );
-	MYTRACE( "m_pDocLineTop=%08lxh\n", m_pDocLineTop );
-	MYTRACE( "m_pDocLineBot=%08lxh\n", m_pDocLineBot );
 
 	CDocLine* pDocLine;
 	CDocLine* pDocLineNext;
+	CDocLine* pDocLineEnd = NULL;
+	pDocLine = m_pDocLineTop;
+
+	// 正当性を調べる
+	bool bIncludeCurrent = false;
+	bool bIncludePrevRefer = false;
+	int nNum = 0;
+	if( m_pDocLineTop->m_pPrev != NULL ){
+		MYTRACE( "error: m_pDocLineTop->m_pPrev != NULL\n");
+	}
+	if( m_pDocLineBot->m_pNext != NULL ){
+		MYTRACE( "error: m_pDocLineBot->m_pNext != NULL\n" );
+	}
+	while( NULL != pDocLine ){
+		if( m_pDocLineCurrent == pDocLine ){
+			bIncludeCurrent = true;
+		}
+		if( m_pCodePrevRefer == pDocLine ){
+			bIncludePrevRefer = true;
+		}
+		if( NULL != pDocLine->m_pNext ){
+			if( pDocLine->m_pNext == pDocLine ){
+				MYTRACE( "error: pDocLine->m_pPrev Invalid value.\n" );
+				break;
+			}
+			if( pDocLine->m_pNext->m_pPrev != pDocLine ){
+				MYTRACE( "error: pDocLine->m_pNext->m_pPrev != pDocLine.\n" );
+				break;
+			}
+		}else{
+			pDocLineEnd = pDocLine;
+		}
+		pDocLine = pDocLine->m_pNext;
+		nNum++;
+	}
+	
+	if( pDocLineEnd != m_pDocLineBot ){
+		MYTRACE( "error: pDocLineEnd != m_pDocLineBot" );
+	}
+	
+	if( nNum != m_nLines ){
+		MYTRACE( "error: nNum(%d) != m_nLines(%d)\n", nNum, m_nLines );
+	}
+	if( false == bIncludeCurrent && m_pDocLineCurrent != NULL ){
+		MYTRACE( "error: m_pDocLineCurrent=%08lxh Invalid value.\n", m_pDocLineCurrent );
+	}
+	if( false == bIncludePrevRefer && m_pCodePrevRefer != NULL ){
+		MYTRACE( "error: m_pCodePrevRefer =%08lxh Invalid value.\n", m_pCodePrevRefer );
+	}
+
+	// DUMP
+	MYTRACE( "m_nLines=%d\n", m_nLines );
+	MYTRACE( "m_pDocLineTop=%08lxh\n", m_pDocLineTop );
+	MYTRACE( "m_pDocLineBot=%08lxh\n", m_pDocLineBot );
 	pDocLine = m_pDocLineTop;
 	while( NULL != pDocLine ){
 		pDocLineNext = pDocLine->m_pNext;
@@ -2449,8 +2489,6 @@ void CDocLineMgr::DeleteNode( CDocLine* pCDocLine )
 		m_pCodePrevRefer = pCDocLine->m_pNext;
 	}
 	delete pCDocLine;
-	pCDocLine = NULL;
-
 
 	return;
 }

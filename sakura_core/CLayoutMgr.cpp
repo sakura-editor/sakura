@@ -300,9 +300,11 @@ void CLayoutMgr::Empty()
 }
 
 
-/*
-|| 指定された物理行のレイアウト情報を取得
-|| 物理行は０オリジン
+/*!
+	@brief 指定された物理行のレイアウト情報を取得
+
+	@param nLineNum [in] 物理行番号 (0～)
+
 */
 CLayout* CLayoutMgr::Search( int nLineNum )
 {
@@ -314,10 +316,15 @@ CLayout* CLayoutMgr::Search( int nLineNum )
 	if( 0 == m_nLines ){
 		return NULL;
 	}
-	if( nLineNum >= m_nLines ){
+	//	Mar. 19, 2003 Moca nLineNumが負の場合のチェックを追加
+	if( 0 > nLineNum || nLineNum >= m_nLines ){
+#ifdef _DEBUG
+		if( 0 > nLineNum ){
+			MYTRACE( "CLayoutMgr::Search() nLineNum = %d\n", nLineNum );
+		}
+#endif
 		return NULL;
 	}
-
 //	/*+++++++ 低速版 +++++++++*/
 //	if( nLineNum < (m_nLines / 2) ){
 //		nCount = 0;
