@@ -52,6 +52,7 @@ const DWORD p_helpids[] = {	//13200
 };
 
 CDlgDiff::CDlgDiff()
+	: m_nIndexSave( 0 )
 {
 	strcpy( m_szFile1, "" );
 	strcpy( m_szFile2, "" );
@@ -125,6 +126,13 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_DIFF_DST ), TRUE );
 		//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_DIFF_DST ), TRUE );
 		//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES ), FALSE );
+		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶
+		{
+			int n = ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES ), LB_GETCURSEL, 0, 0 );
+			if( n != LB_ERR ){
+				m_nIndexSave = n;
+			}
+		}
 		::SendMessage( ::GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES), LB_SETCURSEL, (WPARAM)-1, 0 );
 		return TRUE;
 
@@ -139,7 +147,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 			HWND hwndList = GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES );
 			if( ::SendMessage( hwndList, LB_GETCURSEL, 0, 0 ) == LB_ERR )
 			{
-				::SendMessage( hwndList, LB_SETCURSEL, 0 /*先頭アイテム*/, 0 );
+				::SendMessage( hwndList, LB_SETCURSEL, m_nIndexSave, 0 );
 			}
 		}
 		return TRUE;
@@ -188,10 +196,6 @@ void CDlgDiff::SetData( void )
 
 	//DIFF差分が見つからないときにメッセージを表示 2003.05.12 MIK
 	if( m_nDiffFlgOpt & 0x0040 ) ::CheckDlgButton( m_hWnd, IDC_CHECK_DIFF_EXEC_STATE, TRUE );
-
-	/* 相手ファイルの選択 */
-	::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, TRUE );
-	::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST2, FALSE );
 
 	/* 見つからないときメッセージを表示 */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_pShareData->m_Common.m_bNOTIFYNOTFOUND );
@@ -278,12 +282,32 @@ void CDlgDiff::SetData( void )
 			//::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
 		}
 
+		//	From Here 2004.02.22 じゅうじ
+		//	開いているファイルがある場合には初期状態でそちらを優先
 		if( count == 0 )
 		{
+			/* 相手ファイルの選択 */
+			::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, TRUE );
+			::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST2, FALSE );
 			/* その他の編集中リストはなし */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_DIFF_DST2 ), FALSE );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES ), FALSE );
 		}
+		else
+		{
+			/* 相手ファイルの選択 */
+			::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, FALSE );
+			::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST2, TRUE );
+			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
+			HWND hwndList = GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES );
+			if( ::SendMessage( hwndList, LB_GETCURSEL, 0, 0 ) == LB_ERR )
+			{
+			    ::SendMessage( hwndList, LB_SETCURSEL, 0 /*先頭アイテム*/, 0 );
+			}
+		}
+		//	To Here 2004.02.22 じゅうじ
+		//	Feb. 28, 2004 genta 一番上を選択位置とする．
+		m_nIndexSave = 0;
 	}
 
 	return;
@@ -391,6 +415,12 @@ BOOL CDlgDiff::OnEditChange( HWND hwndCtl, int wID )
 	{
 		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, TRUE );
 		::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST2, FALSE );
+		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶して選択解除
+		int n = ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES ), LB_GETCURSEL, 0, 0 );
+		if( n != LB_ERR ){
+			m_nIndexSave = n;
+		}
+		::SendMessage( ::GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES), LB_SETCURSEL, (WPARAM)-1, 0 );
 		return TRUE;
 	}
 

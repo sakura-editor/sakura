@@ -70,6 +70,10 @@ protected:
 
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
+
+private:
+	//	Feb. 28, 2004 genta 最後に選択されていた番号を保存する
+	int m_nIndexSave;
 };
 
 
