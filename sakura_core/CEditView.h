@@ -148,7 +148,8 @@ public:
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int, CBregexp*, int, int* );
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int, CBregexp*, int, int*, const char*, CMemory& );
+	//	Mar. 28, 2004 genta 不要な引数を削除
+	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, BOOL, BOOL, int, BOOL, BOOL, int, CBregexp*, int*, const char*, CMemory& );
 	/* Grep結果をpszWorkに格納 */
 	void SetGrepResult(
 		/* データ格納先 */
