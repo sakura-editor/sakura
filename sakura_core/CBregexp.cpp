@@ -8,6 +8,7 @@
 	@date Jun. 10, 2001
 	@date 2002/2/1 hor		ReleaseCompileBufferを適宜追加
 	@date Jul. 25, 2002 genta 行頭条件を考慮した検索を行うように．(置換はまだ)
+	@date 2003.05.22 かろと 正規な正規表現に近づける
 */
 /*
 	Copyright (C) 2001-2002, genta
@@ -126,37 +127,35 @@ int CBregexp::DeinitDll( void )
 ** @note szPattern2: == NULL:検索 != NULL:置換
 ** 
 ** @param szPattern [in] 検索パターン
-** @param szPattern2 [in] 置換パターン(NULLなら検索)
-** @param bOption [in] 検索オプション
+** @param szPattern2[in] 置換パターン(NULLなら検索)
+** @param szAdd2	[in] 置換パターンの後ろに付け加えるパターン($1など) 
+** @param bOption	[in] 検索オプション
 **
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
 ** 
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int bOption ) {
+char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int bOption ) 
+{
 	static const char DELIMITER = '\xFF';		//<! デリミタ
- 
-	// パターン種別の設定
-	if (szPattern[0] == '^') {
-		m_ePatType = PAT_TOP;
-	} else if (szPattern[strlen(szPattern)-1] == '$') {
-		m_ePatType = PAT_BOTTOM;
-	} else {
-		m_ePatType = PAT_NORMAL;
-	} 
+	int nLen;									//!< szPatternの長さ
+	int nLen2;									//!< szPattern2 + szAdd2 の長さ
 
 	// 検索パターン作成
 	char *szNPattern;		//!< ライブラリ渡し用の検索パターン文字列
 	char *pPat;				//!< パターン文字列操作用のポインタ
+
+	nLen = strlen(szPattern);
 	if (szPattern2 == NULL) {
 		// 検索(BMatch)時
-		szNPattern = new char[ strlen(szPattern) + 15 ];	//	15：「s///option」が余裕ではいるように。
+		szNPattern = new char[ nLen + 15 ];	//	15：「s///option」が余裕ではいるように。
 		pPat = szNPattern;
 		*pPat++ = 'm';
 	} else {
 		// 置換(BSubst)時
-		szNPattern = new char[ strlen(szPattern) + strlen(szPattern2) + 15 ];
+		nLen2 = strlen(szPattern2) + strlen(szAdd2);
+		szNPattern = new char[ nLen + nLen2 + 15 ];
 		pPat = szNPattern;
 		*pPat++ = 's';
 	}
@@ -165,6 +164,7 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	*pPat++ = DELIMITER;
 	if (szPattern2 != NULL) {
 		while (*szPattern2 != '\0') { *pPat++ = *szPattern2++; }
+		while (*szAdd2 != '\0') { *pPat++ = *szAdd2++; }
 		*pPat++ = DELIMITER;
 	}
 	*pPat++ = 'k';			// 漢字対応
@@ -173,6 +173,129 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 		*pPat++ = 'i';		// 同上
 	}
 	*pPat = '\0';
+	return szNPattern;
+}
+
+
+/*! 
+** 行末文字の意味がライブラリでは \n固定なので、
+** これをごまかすために、ライブラリに渡すための検索・置換パターンを工夫する
+**
+** 行末文字($)が検索パターンの最後にあり、その直前が [\r\n] でない場合に、
+** 行末文字($)の手前に ([\r\n]+)を補って、置換パターンに $(nParen+1)を補う
+** というアルゴリズムを用いて、ごまかす。
+**
+** @note szPattern2: == NULL:検索 != NULL:置換
+** 
+** @param szPattern [in] 検索パターン
+** @param szPattern2 [in] 置換パターン(NULLなら検索)
+** @param bOption [in] 検索オプション
+**
+** @retval ライブラリに渡す検索パターンへのポインタを返す
+** @note 返すポインタは、呼び出し側で delete すること
+**
+** @date 2003.05.03 かろと 関数に切り出し
+*/
+char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int bOption ) 
+{
+	static const char CRLF[] = "\r\n";			//!< 復帰・改行
+	static const char CR[] = "\r";				//!< 復帰
+	static const char LF[] = "\n";				//!< 改行
+	static const char LFCR[] = "\n\r";			//!< 改行・復帰
+	static const char TOP_MATCH[] = "/^\\(*\\^/k";							//!< 行頭パターンのチェック用パターン
+	static const char DOL_MATCH[] = "/\\\\\\$$/k";							//!< \$(行末パターンでない)チェック用パターン
+	static const char BOT_MATCH[] = "/\\$\\)*$/k";							//!< 行末パターンのチェック用パターン
+	static const char BOT_SUBST[] = "s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< 行末パターンの置換用パターン
+	static const char TAB_MATCH[] = "/^\\(*\\^\\$\\)*$/k";					//!< "^$"パターンかをチェック用パターン
+	int nLen;									//!< szPatternの長さ
+	BREGEXP*	sReg = NULL;					//!< コンパイル構造体
+	char szMsg[80] = "";						//!< エラーメッセージ
+	char szAdd2[5] = "";						//!< 行末あり置換の $数字 格納用
+	int nParens = 0;							//!< 検索パターン(szPattern)中の括弧の数(行末時に使用)
+	char *szNPattern;							//!< 検索パターン
+
+	nLen = strlen( szPattern );
+	// パターン種別の設定
+	if( BMatch( TOP_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
+		// 行頭パターンにマッチした
+		m_ePatType |= PAT_TOP;
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+	if( BMatch( TAB_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
+		// 行頭行末パターンにマッチした
+		m_ePatType |= PAT_TAB;
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+	if( BMatch( DOL_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
+		// 行末の\$ にマッチした
+		// PAT_NORMAL
+	} else {
+		BRegfree(sReg);
+		sReg = NULL;
+		if( BMatch( BOT_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
+			// 行末パターンにマッチした
+			m_ePatType |= PAT_BOTTOM;
+		} else {
+			// その他
+			// PAT_NORMAL
+		}
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+
+	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
+		bool bJustDollar = false;			// 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
+		szNPattern = MakePatternSub(szPattern, NULL, NULL, bOption);
+		int matched = BMatch( szNPattern, CRLF, CRLF+sizeof(CRLF)-1, &sReg, szMsg );
+		if( matched >= 0 ) {
+			// szNPatternが不正なパターン等のエラーでなかった
+			// エラー時には sRegがNULLのままなので、sReg->nparensへのアクセスは不正
+			nParens = sReg->nparens;			// オリジナルの検索文字列中の()の数を記憶
+			if( matched > 0 ) {
+				if( sReg->startp[0] == &CRLF[1] && sReg->endp[0] == &CRLF[1] ) {
+					if( BMatch( NULL, CR, CR+sizeof(CR)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &CR[1] && sReg->endp[0] == &CR[1] ) {
+						if( BMatch( NULL, LF, LF+sizeof(LF)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &LF[0] && sReg->endp[0] == &LF[0] ) {
+							if( BMatch( NULL, LFCR, LFCR+sizeof(LFCR)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &LFCR[0] && sReg->endp[0] == &LFCR[0] ) {
+								// 検索文字列は 行末($)のみだった
+								bJustDollar = true;
+							}
+						}
+					}
+				}
+			} else {
+				if( BMatch( NULL, CR, CR+sizeof(CR)-1, &sReg, szMsg ) <= 0 ) {
+					if( BMatch( NULL, LF, LF+sizeof(LF)-1, &sReg, szMsg ) <= 0 ) {
+						if( BMatch( NULL, LFCR, LFCR+sizeof(LFCR)-1, &sReg, szMsg ) <= 0 ) {
+							// 検索文字列は、文字＋行末($)だった
+							bJustDollar = true;
+						}
+					}
+				}
+			}
+			BRegfree(sReg);
+			sReg = NULL;
+		}
+		delete [] szNPattern;
+
+		if( bJustDollar == true || (m_ePatType & PAT_TAB) != 0 ) {
+			// 行末指定の$ or 行頭行末指定 なので、検索文字列を置換
+			if( BSubst( BOT_SUBST, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
+				szPattern = sReg->outp;
+				if( szPattern2 != NULL ) {
+					// 置換パターンもあるので、置換パターンの最後に $(nParens+1)を追加
+					wsprintf( szAdd2, "$%d", nParens + 1 );
+				}
+			}
+			// sReg->outp のポインタを参照しているので、sRegを解放するのは最後に
+		}
+	}
+
+	szNPattern = MakePatternSub( szPattern, szPattern2, szAdd2, bOption );
+	if( sReg != NULL ) {
+		BRegfree(sReg);
+	}
 	return szNPattern;
 }
 
@@ -250,7 +373,7 @@ bool CBregexp::GetMatchInfo( const char* target, int len, int nStart, BREGEXP**r
 	/*
 	** 行頭(^)とマッチするのは、nStart=0の時だけなので、それ以外は false
 	*/
-	if( m_ePatType == PAT_TOP && nStart != 0 ) {
+	if( (m_ePatType & PAT_TOP) != 0 && nStart != 0 ) {
 		// nStart!=0でも、BMatch()にとっては行頭になるので、ここでfalseにする必要がある
 		return false;
 	}

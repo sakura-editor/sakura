@@ -121,6 +121,10 @@ protected:
 	BREGEXP_BRegfree BRegfree;
 	BREGEXP_BRegexpVersion BRegexpVersion;
 
+	#define	PAT_NORMAL	0 	//!< 通常
+	#define	PAT_TOP		1	//!< 行頭"^"
+	#define	PAT_BOTTOM	2	//!< 行末"$"
+	#define PAT_TAB		4	//!< 行頭行末"^$"
 	//!	コンパイルバッファを解放する
 	/*!
 		m_sRepをBRegfree()に渡して解放する．解放後はNULLにセットする．
@@ -141,16 +145,14 @@ private:
 	//int ChooseBoundary(const char* str1, const char* str2 = NULL );
 
 	//! 検索パターン作成
+	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int bOption );
 	char* MakePattern( const char* szPattern, const char* szPattern2, int bOption );
 	//	メンバ変数
 	BREGEXP*	m_sRep;	//!< コンパイル構造体
 	static char tmpBuf[2];			//!< ダミー文字列
 	// 行頭検索を特別扱いするための変数 by かろと
-	enum {
-		PAT_NORMAL, //!< 通常
-		PAT_TOP,	//!< 行頭"^"
-		PAT_BOTTOM	//!< 行末"$"
-	} m_ePatType;					//!< 検索文字列パターン種別
+	
+	int			m_ePatType;			//!< 検索文字列パターン種別
 	char		m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
 };
 
