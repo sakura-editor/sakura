@@ -49,7 +49,8 @@ TYPE_NAME OlmArr[] = {
 	{ OUTLINE_COBOL,"COBOL" },
 	{ OUTLINE_PERL,	"Perl" },		//	Sep. 8, 2000 genta
 	{ OUTLINE_ASM,	"アセンブラ" },
-	{ OUTLINE_TEXT,	"テキスト" }
+	{ OUTLINE_TEXT,	"テキスト" },
+	{ OUTLINE_VB,	"VisualBasic" } // 2001/06/23 N.Nakatani
 };
 const int	nOlmArrNum = sizeof( OlmArr ) / sizeof( OlmArr[0] );
 
