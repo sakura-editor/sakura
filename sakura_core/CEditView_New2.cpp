@@ -798,7 +798,9 @@ const struct ZENKAKKO_T{
 	@param LayoutY [in] 検索開始点の物理座標Y
 	@param NewX [out] 移動先のレイアウト座標X
 	@param NewY [out] 移動先のレイアウト座標Y
-	@param mode [in] 0:カーソルの後ろを調べない(対括弧の強調表示),1:カーソルの後ろを調べる(対括弧の検索)
+	@param mode [in/out] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
+						 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる (このbitを参照)
+						 bit2(out) : 見つかった位置         0:後ろ      1:前     (このbitを更新)
 
 	@retval true 成功
 	@retval false 失敗
@@ -807,9 +809,8 @@ const struct ZENKAKKO_T{
 	@date Jun. 16, 2000 genta
 	@date Feb. 03, 2001 MIK 全角括弧に対応
 	@date Sep. 18, 2002 ai modeの追加
-
 */
-bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, int mode )
+bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, int* mode )
 {
 	int len;	//	行の長さ
 	int nCharSize;	//	（メモリ上の）文字幅
@@ -836,11 +837,13 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 		case '[':	return SearchBracketForward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
 		case '{':	return SearchBracketForward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
 		case '<':	return SearchBracketForward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
+		case '｢':	return SearchBracketForward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
 
 		case ')':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '(', ')', mode );	// modeの追加 02/09/19 ai
 		case ']':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
 		case '}':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
 		case '>':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
+		case '｣':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
 		}
 //@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
 	}else if( nCharSize == 2 ){	// 2バイト文字
@@ -862,10 +865,11 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	}
 
 	// 02/09/18 ai Start
-	if( 0 == mode ){
-		/* カーソルの後ろを調べない(対括弧の強調表示)の場合 */
+	if( 0 == ( (int)(*mode) & 2 ) ){
+		/* カーソルの前方を調べない場合 */
 		return false;
 	}
+	(int)(*mode) |= 4;
 	// 02/09/18 ai End
 
 	//	括弧が見つからなかったら，カーソルの直前の文字を調べる
@@ -876,6 +880,7 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	}
 	const char *bPos = CMemory::MemCharPrev( cline, PosX, cline + PosX );
 	nCharSize = cline + PosX - bPos;
+	m_nCharSize = nCharSize;	// 02/10/01 対括弧の文字サイズ設定 ai
 	if( nCharSize == 1 ){	//	1バイト文字
 		PosX = bPos - cline;
 
@@ -888,11 +893,13 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 		case '[':	return SearchBracketForward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
 		case '{':	return SearchBracketForward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
 		case '<':	return SearchBracketForward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
+		case '｢':	return SearchBracketForward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
 
 		case ')':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '(', ')', mode );	// modeの追加 02/09/19 ai
 		case ']':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '[', ']', mode );	// modeの追加 02/09/19 ai
 		case '}':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '{', '}', mode );	// modeの追加 02/09/19 ai
 		case '>':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '<', '>', mode );	// modeの追加 02/09/19 ai
+		case '｣':	return SearchBracketBackward( PosX, PosY, NewX, NewY, '｢', '｣', mode );	// ｢｣の追加 02/10/01 ai
 		}
 //@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
 	}else if( nCharSize == 2 ){	// 2バイト文字
@@ -927,13 +934,15 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字
 	@param dnChar [in] 括弧を閉じる文字列
-	@param mode [in] 0:表示域を検索(対括弧の強調表示),1:ファイルの終端まで検索(対括弧の検索)
+	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
+					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+					 bit2(out) : 見つかった位置         0:後ろ      1:前
 
 	@retval true 成功
 	@retval false 失敗
 */
 bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
-									int upChar, int dnChar, int mode )
+									int upChar, int dnChar, int* mode )
 {
 	CDocLine* ci;
 
@@ -977,8 +986,8 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == mode ) )
-		{	// 表示域を検索(対括弧の強調表示)モードで表示域の終端の場合
+		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		{	// 表示領域外を調べないモードで表示領域の終端の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
 		}
@@ -1009,13 +1018,15 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字
 	@param dnChar [in] 括弧を閉じる文字列
-	@param mode [in] 0:表示域を検索(対括弧の強調表示),1:ファイルの先頭まで検索(対括弧の検索)
+	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
+					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+					 bit2(out) : 見つかった位置         0:後ろ      1:前
 
 	@retval true 成功
 	@retval false 失敗
 */
 bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
-									int dnChar, int upChar, int mode )
+									int dnChar, int upChar, int* mode )
 {
 	CDocLine* ci;
 
@@ -1059,8 +1070,8 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == mode ) )
-		{	// 表示域を検索(対括弧の強調表示)モードで表示域の先頭の場合
+		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		{	// 表示領域外を調べないモードで表示領域の先頭の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
 		}
@@ -1091,7 +1102,9 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字へのポインタ
 	@param dnChar [in] 括弧を閉じる文字列へのポインタ
-	@param mode [in] 0:表示域を検索(対括弧の強調表示),1:ファイルの終端まで検索(対括弧の検索)
+	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
+					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+					 bit2(out) : 見つかった位置         0:後ろ      1:前
 
 	@retval true 成功
 	@retval false 失敗
@@ -1099,7 +1112,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 										int*	NewX,	int*	NewY,
 										char*	upChar,	char*	dnChar,
-										int		mode )
+										int*	mode )
 {
 	CDocLine* ci;
 
@@ -1142,8 +1155,8 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == mode ) )
-		{	// 表示域を検索(対括弧の強調表示)モードで表示域の終端の場合
+		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		{	// 表示領域外を調べないモードで表示領域の終端の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
 		}
@@ -1176,7 +1189,9 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 	@param NewY [out] 移動先のレイアウト座標Y
 	@param upChar [in] 括弧の始まりの文字へのポインタ
 	@param dnChar [in] 括弧を閉じる文字列へのポインタ
-	@param mode [in] 0:表示域を検索(対括弧の強調表示),1:ファイルの先頭まで検索(対括弧の検索)
+	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
+					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+					 bit2(out) : 見つかった位置         0:後ろ      1:前
 
 	@retval true 成功
 	@retval false 失敗
@@ -1184,7 +1199,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 									    int*  NewX,   int*  NewY,
 									    char* dnChar, char* upChar,
-										int   mode )
+										int*  mode )
 {
 	CDocLine* ci;
 
@@ -1227,8 +1242,8 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == mode ) )
-		{	// 表示域を検索(対括弧の強調表示)モードで表示域の先頭の場合
+		if( ( 0 > nSearchNum ) && ( 0 == ((int)(*mode) & 1 ) ) )
+		{	// 表示領域外を調べないモードで表示領域の先頭の場合
 			//SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
 		}

@@ -8559,6 +8559,7 @@ void CEditView::DrawBracketPair( void )
 	int			OutputX;
 	int			nLeft;
 	int			nTop;
+	int			mode;
 	HDC			hdc;
 	COLORREF	crBackOld;
 	COLORREF	crTextOld;
@@ -8578,7 +8579,7 @@ void CEditView::DrawBracketPair( void )
 		if ( ( nCol < m_nViewLeftCol ) || ( nCol > m_nViewLeftCol + m_nViewColNum )
 			|| ( nLine < m_nViewTopLine ) || ( nLine > m_nViewTopLine + m_nViewRowNum ) )
 		{
-			/* なにもしない */
+			/* 表示領域外の場合はなにもしない */
 		}
 		else
 		{
@@ -8596,23 +8597,27 @@ void CEditView::DrawBracketPair( void )
 		pY_old = -1;
 	}
 
+	if( TRUE == IsTextSelecting() )
+	{	// 選択中は強調表示をしない
+		return;
+	}
+
 	/*******************/
 	/** 対括弧の表示  **/
 	/*******************/
-	// 対応する括弧が見つかり 且つ 選択中ではない場合に対括弧の表示を行なう
-	if( ( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, 0 ) ) && ( FALSE == IsTextSelecting() ) )
+	/*
+	bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
+	bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+	bit2(out) : 見つかった位置         0:後ろ      1:前
+	*/
+	mode = 2;
+	// 対応する括弧が見つかった場合に対括弧の表示を行なう
+	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) )
 	{
 		if ( ( nCol < m_nViewLeftCol ) || ( nCol > m_nViewLeftCol + m_nViewColNum )
 			|| ( nLine < m_nViewTopLine ) || ( nLine > m_nViewTopLine + m_nViewRowNum ) )
 		{
-			//pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen );
-			//if( NULL != pLine )
-			//{
-			//	char	szText[512];
-			//	wsprintf( szText, "%s", pLine );
-			//	SendStatusMessage( szText );
-			//}
-			/* なにもしない */
+			/* 表示領域外の場合はなにもしない */
 		}
 		else
 		{
@@ -8641,6 +8646,16 @@ void CEditView::DrawBracketPair( void )
 			{
 				OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX );
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+				if( 0 == ( mode & 4 ) )
+				{	// カーソルの後方文字位置
+					OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX );
+					nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+				}
+				else
+				{	// カーソルの前方文字位置
+					OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX - m_nCharSize );
+					nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + ( m_nCaretPosX - m_nCharSize ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+				}
 				nTop  = ( m_nCaretPosY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 				HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );

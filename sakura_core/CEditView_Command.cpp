@@ -9625,8 +9625,13 @@ void CEditView::AddToCmdArr( const char* szCmd )
 void CEditView::Command_BRACKETPAIR( void )
 {
 	int nLine, nCol;
-
-	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, 1 ) ){	// mode:カーソルの後ろを調べる(対括弧の検索) 02/09/18 ai
+	int mode = 3;
+	/*
+	bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
+	bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
+	bit2(out) : 見つかった位置         0:後ろ      1:前
+	*/
+	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) ){	// 02/09/18 ai
 		MoveCursor( nCol, nLine, true );
 	}
 	else{
