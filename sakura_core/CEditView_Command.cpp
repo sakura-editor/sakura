@@ -6580,6 +6580,7 @@ void/*BOOL*/ CEditView::Command_TAGJUMPBACK( void/*BOOL bCheckOnly*/ )
 
 	@author	MIK
 	@date	2003.04.13	新規作成
+	@date	2003.04.30 genta tags探索回数をファイル名から決定する
 */
 bool CEditView::Command_TagJumpByTagsFile( void )
 {
@@ -6599,20 +6600,19 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 	bool	bNoTag = true;
 	int		nLoop;
 
-//	nLoop = m_pShareData->m_Common.m_nTagDepth;
-	nLoop = 0;
-	if( nLoop <  0 ) nLoop =  0;
-	if( nLoop > 10 ) nLoop = 10;
-
 	//現在カーソル位置のキーを取得する。
 	GetCurrentTextForSearch( cmemKey );
 	if( 0 == cmemKey.GetLength() ) return false;	//キーがないなら終わり
 
-	for( j = 0; j < 2; j++ )
-	{
+	// Apr. 30, 2003 genta
+	// 元々無効になっていた2回のループ(tags自動生成)を削除
+	if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
+	strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
+
+	// ファイル名に応じて探索回数を決定する
+	nLoop = CalcDirectoryDepth( szCurrentPath );
+
 		//パス名のみ取り出す。
-		if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
-		strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
 		cDlgTagJumpList.SetFileName( szCurrentPath );
 		szCurrentPath[ strlen( szCurrentPath ) - strlen( m_pcEditDoc->GetFileName() ) ] = '\0';
 
@@ -6711,14 +6711,6 @@ next_line:
 			//カレントパスを1階層上へ。
 			strcat( szCurrentPath, "..\\" );
 		}
-
-		if( false == bNoTag ) break;	//タグファイルはあったのでこれ以上はしない。
-
-		bNoTag = false;	//これ以上は試さない。
-		//tagsファイルを作成してみる。
-		//if( false == Command_TagsMake() ) break;
-		break;	//自動生成はしない。
-	}
 
 	return false;
 }

@@ -2658,4 +2658,59 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 	memcpy( dst, src, src_count );
 	return dst + src_count;
 }
+
+/*! @brief ディレクトリの深さを計算する
+
+	与えられたパス名からディレクトリの深さを計算する．
+	パスの区切りは\．ルートディレクトリが深さ0で，サブディレクトリ毎に
+	深さが1ずつ上がっていく．
+	
+	@param [in] path 深さを調べたいファイル/ディレクトリのフルパス
+
+	@date 2003.04.30 genta 新規作成
+*/
+int CalcDirectoryDepth(const char* path)
+{
+	int depth = 0;
+	
+	//	とりあえず\の数を数える
+	for( const char *p = path; *p != '\0'; ++p ){
+		//	2バイト文字は区切りではない
+		if( _IS_SJIS_1(*(unsigned const char*)p)){ // unsignedにcastしないと判定を誤る
+			++p;
+			if( *p == '\0' )
+				break;
+		}
+		else if( *p == '\\' ){
+			++depth;
+			//	フルパスには入っていないはずだが念のため
+			//	.\はカレントディレクトリなので，深さに関係ない．
+			while( p[1] == '.' && p[2] == '\\' ){
+				p += 2;
+			}
+		}
+	}
+	
+	//	補正
+	//	ドライブ名はパスの深さに数えない
+	if(( 'A' <= (path[0] & ~0x20)) && ((path[0] & ~0x20) <= 'Z' ) &&
+		path[1] == ':' && path[2] == '\\' ){
+		//フルパス
+		--depth; // C:\ の \ はルートの記号なので階層深さではない
+	}
+	else if( path[0] == '\\' ){
+		if( path[1] == '\\' ){
+			//	ネットワークパス
+			//	先頭の2つはネットワークを表し，その次はホスト名なので
+			//	ディレクトリ階層とは無関係
+			depth -= 3;
+		}
+		else {
+			//	ドライブ名無しのフルパス
+			//	先頭の\は対象外
+			--depth;
+		}
+	}
+	return depth;
+}
 /*[EOF]*/
