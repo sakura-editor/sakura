@@ -1564,13 +1564,12 @@ void CEditView::OnVScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
 /* 水平スクロールバーメッセージ処理 */
 void CEditView::OnHScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
 {
+	m_bRedrawRuler = true; // YAZAKI
 	switch( nScrollCode ){
 	case SB_LINELEFT:
-		m_bRedrawRuler = true; // YAZAKI
 		ScrollAtH( m_nViewLeftCol - 4 );
 		break;
 	case SB_LINERIGHT:
-		m_bRedrawRuler = true; // YAZAKI
 		ScrollAtH( m_nViewLeftCol + 4 );
 		break;
 	case SB_PAGELEFT:
