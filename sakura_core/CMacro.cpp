@@ -67,7 +67,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_UNDO						, "Undo",				//元に戻す(Undo)
 	F_REDO						, "Redo",				//やり直し(Redo)
 	F_DELETE					, "Delete",				//削除
-	F_DELETE_BACK				, "DeleteBack",			//カーソルの前を削除
+	F_DELETE_BACK				, "DeleteBack",			//カーソル前を削除
 	F_WordDeleteToStart			, "WordDeleteToStart",	//単語の左端まで削除
 	F_WordDeleteToEnd			, "WordDeleteToEnd",	//単語の右端まで削除
 	F_WordCut					, "WordCut",			//単語切り取り
@@ -366,7 +366,7 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_UNDO						://元に戻す(Undo)
 	case F_REDO						://やり直し(Redo)
 	case F_DELETE					://削除
-	case F_DELETE_BACK				://カーソルの前を削除
+	case F_DELETE_BACK				://カーソル前を削除
 	case F_WordDeleteToStart		://単語の左端まで削除
 	case F_WordDeleteToEnd			://単語の右端まで削除
 	case F_WordCut					://単語切り取り

@@ -144,7 +144,7 @@ public: /* テスト用にアクセス属性を変更 */
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
 
 	/* 単語検索の状態 */
-	
+
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	CBregexp	m_CurRegexp;			/*!< コンパイルデータ */
 	BOOL	m_bCurSrchKeyMark;			/* 検索文字列のマーク */
@@ -365,7 +365,7 @@ protected:
 	void Command_UNDO( void );				/* 元に戻す(Undo) */
 	void Command_REDO( void );				/* やり直し(Redo) */
 	void Command_DELETE( void );			/* カーソル位置または選択エリアを削除 */
-	void Command_DELETE_BACK( void );		/* カーソルの前を削除 */
+	void Command_DELETE_BACK( void );		/* カーソル前を削除 */
 	void Command_WordDeleteToStart( void );	/* 単語の左端まで削除 */
 	void Command_WordDeleteToEnd( void );	/* 単語の右端まで削除 */
 	void Command_WordCut( void );			/* 単語切り取り */
