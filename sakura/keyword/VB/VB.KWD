@@ -1,0 +1,148 @@
+//=========================================================
+// VB用キーワードファイル
+//  00/10/10 ver1.0   Stonee
+//  00/12/05 ver1.1   Stonee  VB.NET用キーワードをコメントとして追加
+//                            VB.NETでの廃止が決定したキーワードを
+//                            下のほうに固めました
+//  00/12/07 ver1.2   Stonee  みくさんのキーワードとマージして抜けてる
+//                            単語を追加
+// 組み込み関数は第二強調キーワード用ファイル(vb2.kwd)にあります。
+//
+// 大文字小文字を区別しない
+// ファイル拡張子  bas,frm,cls,ctl
+// ブロックコメント  （空欄）
+// ラインコメント1    '
+// ラインコメント2   （空欄）
+// エスケープ         PL/SQL風("""")
+//=========================================================
+And
+As
+Attribute
+Begin
+BeginProperty
+Boolean
+ByVal
+Byte
+Call
+Case
+Const
+Currency
+Date
+Declare
+Dim
+Do
+Double
+Each
+Else
+ElseIf
+Empty
+End
+EndProperty
+Error
+Eqv
+Exit
+False
+For
+Friend
+Function
+Get
+GoTo
+If
+Imp
+Integer
+Is
+Let
+Like
+Long
+Loop
+Me
+Mod
+New
+Next
+Not
+Null
+Object
+On
+Option
+Or
+Private
+Property
+Public
+RSet
+ReDim
+Rem
+Resume
+Select
+Set
+Single
+Static
+Step
+Stop
+String
+Sub
+Then
+To
+True
+Type
+Wend
+While
+With
+Xor
+
+#If
+#Else
+#End
+#Const
+
+//=========================================================
+// みくさんのファイルとマージして追加されたキーワード
+//=========================================================
+AddressOf
+Alias
+Append
+Array
+ByRef
+Explicit
+Global
+In
+Lib
+Nothing
+Optional
+Output
+Terminate
+Until
+
+//=========================================================
+// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
+//=========================================================
+DefBool
+DefByte
+DefCur
+DefDate
+DefDbl
+DefInt
+DefLng
+DefObj
+DefSng
+DefStr
+DefVar
+
+LSet
+GoSub
+Return
+Variant
+
+//Option Base
+//As Any
+
+//=========================================================
+// 以下はVB.NET用キーワードです
+//=========================================================
+//BitAnd
+//BitOr
+//BitNot
+//BitXor
+//Delegate
+//Short
+//Structure
+
