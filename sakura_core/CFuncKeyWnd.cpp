@@ -298,6 +298,7 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::MoveWindow( m_hwndButtonArr[i], nX, 1, nButtonWidth, nButtonHeight, TRUE );
 		nX += nButtonWidth + 1;
 	}
+	::InvalidateRect( m_hWnd, NULL, TRUE );	//çƒï`âÊÇµÇƒÇÀÅB	//@@@ 2003.06.11 MIK
 	return 0L;
 }
 
