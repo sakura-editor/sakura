@@ -31,6 +31,7 @@
 #include "CMemory.h"
 #include <shlobj.h>
 #include "CEol.h"
+#include "CBregexp.h"	//	Jun. 26, 2001 genta
 
 SAKURA_CORE_API const char* MyGetDateFormat( char*, int, int, const char* );/* 日付をフォーマット */
 SAKURA_CORE_API const char* MyGetTimeFormat( char*, int, int, const char* );/* 時刻をフォーマット */
@@ -72,6 +73,12 @@ SAKURA_CORE_API BOOL BlockingHook( HWND hwndDlgCancel );
 
 /*機能番号に対応したヘルプトピックIDを返す*/
 SAKURA_CORE_API int FuncID_To_HelpContextID( int nFuncID );	//Stonee, 2001/02/23
+
+//	Jun. 26, 2001 genta
+//!	正規表現ライブラリのバージョン取得
+SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
+SAKURA_CORE_API bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage );
+SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _ETC_UTY_H_ */
