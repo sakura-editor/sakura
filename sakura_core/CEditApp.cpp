@@ -532,7 +532,9 @@ LRESULT CEditApp::DispatchEvent(
 			 &&	( wHotKeyMods )  == fuModifiers
 			 && wHotKeyCode == uVirtKey
 			){
-				::PostMessage( m_hWnd, MYWM_NOTIFYICON, 0, WM_LBUTTONDOWN );
+				// Jan. 1, 2003 AROKA
+				// タスクトレイメニューの表示タイミングをLBUTTONDOWN→LBUTTONUPに変更したことによる
+				::PostMessage( m_hWnd, MYWM_NOTIFYICON, 0, WM_LBUTTONUP );
 			}
 		}
 		return 0;
