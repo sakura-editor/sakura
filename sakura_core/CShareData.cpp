@@ -223,8 +223,10 @@ bool CShareData::Init( void )
 		strcpy(m_pShareData->m_szKeyMacroFileName, "");	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
-		m_pShareData->m_dwProductVersionMS = 0L;
-		m_pShareData->m_dwProductVersionLS = 0L;
+
+		// 2004.05.13 Moca リソースから製品バージョンの取得
+		GetAppVersionInfo( NULL, VS_VERSION_INFO,
+			&m_pShareData->m_dwProductVersionMS, &m_pShareData->m_dwProductVersionLS );
 		m_pShareData->m_hwndTray = NULL;
 		m_pShareData->m_hAccel = NULL;
 		m_pShareData->m_hwndDebug = NULL;

@@ -52,8 +52,8 @@ bool CProcess::Initialize()
 	m_pShareData = m_cShareData.GetShareData();
 
 	/* リソースから製品バージョンの取得 */
-	GetAppVersionInfo( m_hInstance, VS_VERSION_INFO,
-		&m_pShareData->m_dwProductVersionMS, &m_pShareData->m_dwProductVersionLS );
+	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
+	//	ShareDataで設定するように変更したのでここからは削除
 
 	return true;
 }

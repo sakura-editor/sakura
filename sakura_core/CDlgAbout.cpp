@@ -95,11 +95,16 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
 	//	Feb. 7, 2002 genta コンパイラ情報追加
+	//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
+	DWORD dwVersionMS, dwVersionLS;
+	GetAppVersionInfo( NULL, VS_VERSION_INFO,
+		&dwVersionMS, &dwVersionLS );
+
 	wsprintf( szMsg, "Ver. %d.%d.%d.%d " COMPILER_TYPE,
-		HIWORD( m_pShareData->m_dwProductVersionMS ),
-		LOWORD( m_pShareData->m_dwProductVersionMS ),
-		HIWORD( m_pShareData->m_dwProductVersionLS ),
-		LOWORD( m_pShareData->m_dwProductVersionLS )
+		HIWORD( dwVersionMS ),
+		LOWORD( dwVersionMS ),
+		HIWORD( dwVersionLS ),
+		LOWORD( dwVersionLS )
 	);
 	::SetDlgItemText( m_hWnd, IDC_STATIC_VER, szMsg );
 

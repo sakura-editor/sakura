@@ -348,16 +348,18 @@ bool CEditApp::CreateTrayIcon( HWND hWnd )
 			/* バージョン情報 */
 			//	UR version no.を設定 (cf. cDlgAbout.cpp)
 			char	pszTips[64];
-			char	pszTipsVerno[32];
+			//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
+			DWORD dwVersionMS, dwVersionLS;
+			GetAppVersionInfo( NULL, VS_VERSION_INFO,
+				&dwVersionMS, &dwVersionLS );
 
-			strcpy( pszTips, GSTR_APPNAME );
-			wsprintf( pszTipsVerno, " %d.%d.%d.%d",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
-			HIWORD( m_pShareData->m_dwProductVersionMS ),
-			LOWORD( m_pShareData->m_dwProductVersionMS ),
-			HIWORD( m_pShareData->m_dwProductVersionLS ),
-			LOWORD( m_pShareData->m_dwProductVersionLS )
+			wsprintf( pszTips, "%s %d.%d.%d.%d",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+				GSTR_APPNAME,
+				HIWORD( dwVersionMS ),
+				LOWORD( dwVersionMS ),
+				HIWORD( dwVersionLS ),
+				LOWORD( dwVersionLS )
 			);
-			strcat( pszTips, pszTipsVerno );
 			TrayMessage( m_hWnd, NIM_ADD, 0,  hIcon, pszTips );
 //To Here Jan. 12, 2001
 			m_bCreatedTrayIcon = TRUE;	/* トレイにアイコンを作った */
