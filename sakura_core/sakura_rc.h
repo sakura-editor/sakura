@@ -42,6 +42,7 @@
 #define IDC_CURSOR_MOVEARROW            222
 #define IDC_CURSOR_RVARROW              223
 #define IDD_FILEUPDATEQUERY             225
+#define IDD_PROP_FNAME                  226
 #define IDI_ICON_STD                    230
 #define IDI_ICON_DEBUG                  231
 #define IDI_ICON_GREP                   240
@@ -117,6 +118,7 @@
 #define IDC_EDIT_EXTHTMLHELP            1087
 #define IDC_EDIT_TFORM                  1087
 #define IDC_EDIT_BLOCKCOMMENT_FROM2     1087
+#define IDC_EDIT_FNAME_TO               1087
 #define IDC_CHECK_BACKUP_MONTH          1088
 #define IDC_BUTTON_INSERTSEPARATOR      1088
 #define IDC_EDIT_KEYWORDHELPFILE        1088
@@ -468,6 +470,17 @@
 #define IDC_BTN_CLOSE                   1439
 #define IDC_UPDATEDFILENAME             1440
 #define IDC_QUERYRELOADMSG              1441
+#define IDC_CHECK_FNAME                 1442
+#define IDC_BUTTON_FNAME_TOP            1446
+#define IDC_BUTTON_FNAME_UP             1447
+#define IDC_BUTTON_FNAME_DOWN           1448
+#define IDC_BUTTON_FNAME_LAST           1449
+#define IDC_BUTTON_FNAME_INS            1450
+#define IDC_BUTTON_FNAME_ADD            1451
+#define IDC_BUTTON_FNAME_UPD            1452
+#define IDC_BUTTON_FNAME_DEL            1453
+#define IDC_LIST_FNAME                  1454
+#define IDC_EDIT_FNAME_FROM             1455
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -500,9 +513,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        226
+#define _APS_NEXT_RESOURCE_VALUE        227
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1442
+#define _APS_NEXT_CONTROL_VALUE         1456
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

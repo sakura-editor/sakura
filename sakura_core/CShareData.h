@@ -66,6 +66,7 @@ enum maxdata{
 
 	MAX_MARKLINES_LEN			= 1023,	// 2002.01.18 hor
 	MAX_DOCTYPE_LEN				= 7,
+	MAX_TRANSFORM_FILENAME		= 16,	/// 2002.11.24 Moca
 };
 
 
@@ -573,6 +574,10 @@ struct DLLSHAREDATA {
 	int					m_nOPENFOLDERArrNum;
 	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
 
+	int					m_nTransformFileNameArrNum;
+	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+
 	int					m_nSEARCHKEYArrNum;
 	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
 	int					m_nREPLACEKEYArrNum;
@@ -750,6 +755,14 @@ public:
 	const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
 	const char* MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
 	
+	// 2002.11.24 Moca Add
+//	LPTSTR GetTransformFileList( LPCTSTR*, LPTSTR*, int );
+	LPTSTR GetTransformFileName( LPCTSTR, LPTSTR, int );
+	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );
+	int TransformFileName_MakeCash( void );
+	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
+	static bool ExpandMetaToFolder( LPCTSTR, LPTSTR, int );
+
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -765,6 +778,10 @@ protected:
 //@@@ 2002.01.03 YAZAKI CMRU、CMRUFolderに移動した。
 //	void CheckMRUandOPENFOLDERList( void );
 
+	// ファイル名簡易表示用キャッシュ
+	int m_nTransformFileNameCount; // 有効数
+	TCHAR m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	int m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 
 };
 

@@ -181,6 +181,7 @@
 #define HLP000086	86 //共通設定 『強調キーワード』プロパティ
 #define HLP000088	88 //共通設定 『支援』プロパティ
 #define HLP000201	201 //共通設定 『マクロ』プロパティ
+#define HLP000266	266 //共通設定『ファイル名表示』タブ
 #define HLP000071	71 //フォント設定
 #define HLP000184	184 //現在のウィンドウ幅で折り返し
 #define HLP000125	125 //キーマクロの記録開始／終了
@@ -252,10 +253,14 @@
 #define HLP000252	252	//次の差分へ
 #define HLP000253	253	//前の差分へ
 #define HLP000254	254	//差分表示の全解除
+// NextHelpID 267
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
 #define HLP000302	302 //色設定ファイル
+// note: 303 は 「このファイル名をコピー」が使用
+#define HLP000304	304 //メタ文字列の仕様
+
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
 #define HLP_UR009	3009 //変更履歴(-2002/12/27)
@@ -338,6 +343,7 @@
 //#define HIDC_BUTTON_KEYWORDHELPFILE_REF			10601 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_BUTTON_OPENHELP1					10602 //外部ヘルプファイル参照
 #define HIDC_BUTTON_OPENEXTHTMLHELP				10603 //外部HTMLファイル参照
+#define HIDC_BUTTON_KEYWORDHELPFONT				11604 //キーワードヘルプのフォント
 #define HIDC_CHECK_USEHOKAN						10610 //逐次入力補完
 //#define HIDC_CHECK_HOKANLOHICASE				10611 //入力補完の英大文字小文字			//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_CHECK_m_bHokanKey_RETURN			10612 //候補決定キー（Enter）
@@ -381,6 +387,8 @@
 #define HIDC_CHECK_STAYTASKTRAY					10914 //タスクトレイに常駐
 #define HIDC_CHECK_REPEATEDSCROLLSMOOTH			10915 //少し滑らかにする
 #define HIDC_CHECK_EXITCONFIRM					10916 //終了の確認
+#define HIDC_CHECK_STOPS_WORD					10917 //単語単位で移動するときに単語の両端に止まる
+#define HIDC_CHECK_STOPS_PARAGRAPH				10918 //段落単位で移動するときに段落の両端に止まる
 #define HIDC_HOTKEY_TRAYMENU					10940 //左クリックメニューのショートカットキー
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM			10941 //スクロール行数
 #define HIDC_EDIT_MAX_MRU_FILE					10942 //ファイル履歴の最大数
@@ -408,6 +416,7 @@
 #define HIDC_CHECK_SplitterWndHScroll			11217 //水平スクロールの同期
 #define HIDC_EDIT_nRulerBottomSpace				11240 //ルーラー（テキストとの隙間）
 #define HIDC_EDIT_nRulerHeight					11241 //ルーラー（高さ）
+#define HIDC_EDIT_nLineNumberRightSpace			11242 //行番号とテキストの隙間
 #define HIDC_RADIO_FUNCKEYWND_PLACE1			11260 //ファンクションキー表示位置（上）
 #define HIDC_RADIO_FUNCKEYWND_PLACE2			11261 //ファンクションキー表示位置（下）
 #define HIDC_EDIT_FUNCKEYWND_GROUPNUM			11262 //ファンクションキーのグループボタン数
@@ -573,6 +582,7 @@
 #define HIDC_FL_TREE1			12206	//トピックツリー
 #define HIDC_FL_CHECK_bFunclistSetFocusOnJump	12207	//ジャンプでフォーカス移動する
 #define HIDC_FL_CHECK_bMarkUpBlankLineEnable	12208	//空行を無視する
+#define HIDC_COMBO_nSortType	12209	//順序
 
 //ファイル内容比較
 #define HIDC_CMP_BUTTON1		12300	//上下に表示
@@ -684,5 +694,19 @@
 #define HIDC_CTRLCODE_IDOK			13301	//OK
 #define HIDC_CTRLCODE_IDCANCEL		13302	//キャンセル
 #define HIDC_BUTTON_CTRLCODE_HELP	13303	//ヘルプ
+
+//共通設定『ファイル名表示』タブ
+#define HIDC_LIST_FNAME				13400	// ファイル名置換リスト
+#define HIDC_EDIT_FNAME_FROM		13401	// 置換前
+#define HIDC_EDIT_FNAME_TO			13402	// 置換後
+#define HIDC_BUTTON_FNAME_INS		13403	// 挿入
+#define HIDC_BUTTON_FNAME_ADD		13404	// 追加
+#define HIDC_BUTTON_FNAME_UPD		13405	// 更新
+#define HIDC_BUTTON_FNAME_DEL		13406	// 削除
+#define HIDC_BUTTON_FNAME_TOP		13407	// 先頭
+#define HIDC_BUTTON_FNAME_UP		13408	// 上へ
+#define HIDC_BUTTON_FNAME_DOWN		13409	// 下へ
+#define HIDC_BUTTON_FNAME_LAST		13410	// 最終
+//#define HIDC_CHECK_FNAME,	13411	// ファイル名を簡易表示する
 
 #define HIDC_STATIC								19999 //不明

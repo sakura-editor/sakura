@@ -43,15 +43,17 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	int		i;
 
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
+	CShareData::getInstance()->TransformFileName_MakeCash();
 	for( i = 0; i < Length() ; ++i ){
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX <= createdMenuItem ){
 			break;
 		}
 
+		CShareData::getInstance()->GetTransformFileNameFast( m_pShareData->m_szOPENFOLDERArr[i], szMemu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
-		dupamp( m_pShareData->m_szOPENFOLDERArr[i], szFolder2 );
+		dupamp( szMemu, szFolder2 );
 
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がフォルダの履歴MAXを36個にしてあるので事実上OKでしょう
 		wsprintf( szMemu, "&%c %s", (createdMenuItem < 10) ? ('0' + createdMenuItem) : ('A' + createdMenuItem - 10), szFolder2 );

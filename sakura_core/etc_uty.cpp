@@ -1991,12 +1991,14 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_GOFILETOP:		return HLP000228;	//ファイルの先頭に移動
 	case F_GOFILEEND:		return HLP000229;	//ファイルの最後に移動
 	case F_CURLINECENTER:	return HLP000230;	//カーソル行をウィンドウ中央へ
+	case F_JUMP_SRCHSTARTPOS:	return HLP000264; //検索開始位置へ戻る
 	case F_JUMPHIST_PREV:		return HLP000231;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
 	case F_JUMPHIST_NEXT:		return HLP000232;	//移動履歴: 次へ
+	case F_JUMPHIST_SET:	return HLP000265;	//現在位置を移動履歴に登録
 	case F_WndScrollDown:	return HLP000198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
 	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
-//	case F_GONEXTPARAGRAPH:	return ;	//次の段落へ
-//	case F_GOPREVPARAGRAPH:	return ;	//前の段落へ
+	case F_GONEXTPARAGRAPH:	return HLP000262;	//前の段落に移動
+	case F_GOPREVPARAGRAPH:	return HLP000263;	//前の段落に移動
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
@@ -2020,6 +2022,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_1PageDown_Sel:	return HLP000241;	//(範囲選択)１ページダウン
 	case F_GOFILETOP_SEL:	return HLP000242;	//(範囲選択)ファイルの先頭に移動
 	case F_GOFILEEND_SEL:	return HLP000243;	//(範囲選択)ファイルの最後に移動
+//	case F_GONEXTPARAGRAPH_SEL:	return HLP000262;	//(範囲選択)次の段落へ
+//	case F_GOPREVPARAGRAPH_SEL:	return HLP000263;	//(範囲選択)前の段落へ
 
 
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
@@ -2078,12 +2082,13 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TOLOWER:					return HLP000047;	//英大文字→英小文字
 	case F_TOUPPER:					return HLP000048;	//英小文字→英大文字
 	case F_TOHANKAKU:				return HLP000049;	/* 全角→半角 */
+	case F_TOHANKATA:				return HLP000258;	//全角カタカナ→半角カタカナ
 	case F_TOZENKAKUKATA:			return HLP000050;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			return HLP000051;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA:	return HLP000123;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	return HLP000124;	/* 半角カタカナ→全角ひらがな */
 	case F_TOZENEI:					return HLP000200;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka //Stonee, 2001/09/26 番号修正
-	case F_TOHANEI:					return HLP000200;	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
+	case F_TOHANEI:					return HLP000215;	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
 	case F_TABTOSPACE:				return HLP000182;	/* TAB→空白 */
 	case F_SPACETOTAB:				return HLP000196;	/* 空白→TAB */	//#### Stonee, 2001/05/27	//Jul. 03, 2001 JEPRO 番号修正
 	case F_CODECNV_AUTO2SJIS:		return HLP000178;	/* 自動判別→SJISコード変換 */
@@ -2158,6 +2163,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_OPTION_HELPER:	return HLP000088;	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
 	case F_OPTION_MACRO:	return HLP000201;	/* 共通設定『マクロ』 */	//@@@ 2002.01.02
+	case F_OPTION_FNAME:	return HLP000266;	/* 共通設定 『全般』プロパティ */	// 2002.12.09 Moca Add
 	case F_FONT:			return HLP000071;	/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正
 
@@ -2222,14 +2228,11 @@ int FuncID_To_HelpContextID( int nFuncID )
 	/* 支援 */
 	case F_HOKAN:			return HLP000111;	/* 入力補完機能 */
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO	//ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
-//	case IDM_HELP_CONTENTS:	return 100;	//ヘルプ目次
 	case F_HELP_CONTENTS:	return HLP000100;	//ヘルプ目次			//Nov. 25, 2000 JEPRO
-//	case IDM_HELP_SEARCH:	return 101;	//ヘルプトピックの検索
 	case F_HELP_SEARCH:		return HLP000101;	//ヘルプキーワード検索	//Nov. 25, 2000 JEPRO「トピックの」→「キーワード」に変更
 	case F_MENU_ALLFUNC:	return HLP000189;	/* コマンド一覧 */
 	case F_EXTHELP1:		return HLP000190;	/* 外部ヘルプ１ */
 	case F_EXTHTMLHELP:		return HLP000191;	/* 外部HTMLヘルプ */
-//	case IDM_ABOUT:			return 102;	//バージョン情報
 	case F_ABOUT:			return HLP000102;	//バージョン情報	//Dec. 24, 2000 JEPRO F_に変更
 
 

@@ -39,7 +39,7 @@ class CMenuDrawer;// 2002/2/10 aroka to here
 #define ID_PAGENUM_KEYWORD	11	//Oct. 25, 2000 JEPRO 10→11 に変更
 #define ID_PAGENUM_HELPER	12
 #define ID_PAGENUM_MACRO	13	//Oct. 25, 2000 JEPRO 10→11 に変更
-
+#define ID_PAGENUM_FILENAME	14	// Moca 追加
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -68,6 +68,10 @@ public:
 	||  Attributes & Operations
 	*/
 	int DoPropertySheet( int/*, int*/ );	/* プロパティシートの作成 */
+
+	// 2002.12.11 Moca 追加
+	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する
+	void ApplyData( void );		//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 
 	//	Jun. 2, 2001 genta
 	//	ここにあったEvent Handlerはprotectedエリアに移動した．
@@ -106,6 +110,11 @@ public:
 	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
 	char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
+
+	//! ファイル名簡易表示
+	int		m_nTransformFileNameArrNum;
+	char	m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	char	m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 
 protected:
 	/*
@@ -267,8 +276,24 @@ protected:
 	void OnFileDropdown_Macro( HWND hwndDlg );//!< ファイルドロップダウンが開かれるとき
 	void CheckListPosition_Macro( HWND hwndDlg );//!< リストビューのFocus位置確認
 	static int CALLBACK DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData );
-	
+
+	//==============================================================
+	//!	ファイル名表示ページのDialog Procedure
+	static BOOL CALLBACK DlgProc_PROP_FILENAME(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	//! Message Handler for FileName page
+	BOOL DispatchEvent_PROP_FILENAME( HWND, UINT, WPARAM, LPARAM );
+	void SetData_PROP_FILENAME( HWND );
+	int  GetData_PROP_FILENAME( HWND );
+	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListViewのアイテムを設定
+	static void GetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR );//!<ListViewのアイテムを取得
+	static int MoveListViewItem_FILENAME( HWND hListView, int, int );//!<ListViewのアイテムを移動する
+
+
+
 	int nLastPos_Macro; //!< 前回フォーカスのあった場所
+	int m_nLastPos_FILENAME; //!< 前回フォーカスのあった場所 ファイル名タブ用
+
 
 	void p7_Edit_List_KeyWord( HWND, HWND );	/* p7:リスト中で選択されているキーワードを編集する */
 	void p7_Delete_List_KeyWord( HWND , HWND );	/* p7:リスト中で選択されているキーワードを削除する */

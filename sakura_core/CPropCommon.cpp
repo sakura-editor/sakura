@@ -38,12 +38,14 @@ static const DWORD p_helpids[] = {	//10900
 	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//履歴をクリア（ファイル）
 	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//履歴をクリア（フォルダ）
 	IDC_CHECK_FREECARET,			HIDC_CHECK_FREECARET,				//フリーカーソル
-	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,					//自動インデント
-	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,			//全角空白もインデント
+//DEL	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,					//自動インデント ：タイプ別へ移動
+//DEL	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,			//全角空白もインデント ：タイプ別へ移動
 	IDC_CHECK_USETRAYICON,			HIDC_CHECK_USETRAYICON,				//タスクトレイを使う
 	IDC_CHECK_STAYTASKTRAY,			HIDC_CHECK_STAYTASKTRAY,			//タスクトレイに常駐
 	IDC_CHECK_REPEATEDSCROLLSMOOTH,	HIDC_CHECK_REPEATEDSCROLLSMOOTH,	//少し滑らかにする
 	IDC_CHECK_EXITCONFIRM,			HIDC_CHECK_EXITCONFIRM,				//終了の確認
+	IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, HIDC_CHECK_STOPS_WORD, //単語単位で移動するときに単語の両端に止まる
+	IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH, HIDC_CHECK_STOPS_PARAGRAPH, // 段落単位で移動するときに段落の両端に止まる
 	IDC_HOTKEY_TRAYMENU,			HIDC_HOTKEY_TRAYMENU,				//左クリックメニューのショートカットキー
 	IDC_EDIT_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,	//スクロール行数
 	IDC_EDIT_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,				//ファイル履歴の最大数
@@ -384,7 +386,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	char		szLabel[256];
 //	char		szFuncName[200];
 	TBBUTTON	tbb;
-	int			nLength;
+//	int			nLength;
 	HBRUSH		hBrush;
 	RECT		rc;
 	RECT		rc0;
@@ -461,7 +463,8 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		if( 0 == tbb.idCommand ){
 //			nLength = strlen( strcpy( szFuncName, "セパレータ"	) );
 //			nLength = strlen( strcpy( szFuncName, "---------------------" ) );
-			nLength = strlen( strcpy( szLabel, "───────────" ) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータ
+//			nLength = strlen( strcpy( szLabel, "───────────" ) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータ
+			strcpy( szLabel, "───────────" );	// nLength 未使用 2003/01/09 Moca
 		//	From Here Oct. 15, 2001 genta
 		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, sizeof( szLabel ) )){
 			wsprintf( szLabel, "%s", "-- UNKNOWN --" );
@@ -544,6 +547,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ "強調キーワード",	IDD_PROP_KEYWORD,	DlgProc_PROP_KEYWORD },
 		{ "支援",			IDD_PROP_HELPER,	DlgProc_PROP_HELPER },
 		{ "マクロ",			IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
+		{ "ファイル名表示", IDD_PROP_FNAME,  DlgProc_PROP_FILENAME},
 	};
 
 	for( nIdx = 0, i = 0; i < sizeof(ComPropSheetInfoList)/sizeof(ComPropSheetInfoList[0])
@@ -630,6 +634,82 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	return nRet;
 }
 
+
+
+/*!	ShareDataから一時領域へ設定をコピーする
+	@date 2002.12.11 Moca CEditDoc::OpenPropertySheetから移動
+*/
+void CPropCommon::InitData( void )
+{
+	int i;
+	m_Common = m_pShareData->m_Common;
+	m_nKeyNameArrNum = m_pShareData->m_nKeyNameArrNum;
+	for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
+		m_pKeyNameArr[i] = m_pShareData->m_pKeyNameArr[i];
+	}
+	m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
+
+	//2002/04/25 YAZAKI Types全体を保持する必要はない。
+	for( i = 0; i < MAX_TYPES; ++i ){
+		m_Types_nKeyWordSetIdx[i] = m_pShareData->m_Types[i].m_nKeyWordSetIdx;
+		m_Types_nKeyWordSetIdx2[i] = m_pShareData->m_Types[i].m_nKeyWordSetIdx2;
+	}
+	/* マクロ関係
+	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	*/
+	for( i = 0; i < MAX_CUSTMACRO; ++i ){
+		m_MacroTable[i] = m_pShareData->m_MacroTable[i];
+	}
+	memcpy( m_szMACROFOLDER, m_pShareData->m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ) );
+
+	// ファイル名簡易表示関係
+	memcpy( m_szTransformFileNameFrom, m_pShareData->m_szTransformFileNameFrom,
+		sizeof( m_pShareData->m_szTransformFileNameFrom ) );
+	memcpy( m_szTransformFileNameTo, m_pShareData->m_szTransformFileNameTo,
+		sizeof( m_pShareData->m_szTransformFileNameTo ) );
+	m_nTransformFileNameArrNum = m_pShareData->m_nTransformFileNameArrNum;
+
+}
+
+/*!	ShareData に 設定を適用・コピーする
+	@note ShareDataにコピーするだけなので，更新要求などは，利用する側で処理してもらう
+	@date 2002.12.11 Moca CEditDoc::OpenPropertySheetから移動
+*/
+void CPropCommon::ApplyData( void )
+{
+	int i;
+
+	for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
+		m_pShareData->m_pKeyNameArr[i] = m_pKeyNameArr[i];
+	}
+	m_pShareData->m_CKeyWordSetMgr = m_CKeyWordSetMgr;
+
+	m_pShareData->m_Common = m_Common;
+
+	for( i = 0; i < MAX_TYPES; ++i ){
+		//2002/04/25 YAZAKI Types全体を保持する必要はない。
+		/* 変更された設定値のコピー */
+		m_pShareData->m_Types[i].m_nKeyWordSetIdx = m_Types_nKeyWordSetIdx[i];
+		m_pShareData->m_Types[i].m_nKeyWordSetIdx2 = m_Types_nKeyWordSetIdx2[i];
+	}
+
+	/* マクロ関係 */
+	for( i = 0; i < MAX_CUSTMACRO; ++i ){
+		m_pShareData->m_MacroTable[i] = m_MacroTable[i];
+	}
+	memcpy( m_pShareData->m_szMACROFOLDER, m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ) );
+
+	// ファイル名簡易表示関係
+	// 念のため，書き換える前に 0 を設定しておく
+	m_pShareData->m_nTransformFileNameArrNum = 0;
+	memcpy( m_pShareData->m_szTransformFileNameFrom, m_szTransformFileNameFrom,
+		sizeof( m_pShareData->m_szTransformFileNameFrom ) );
+	memcpy( m_pShareData->m_szTransformFileNameTo, m_szTransformFileNameTo,
+		sizeof( m_pShareData->m_szTransformFileNameTo ) );
+
+	m_pShareData->m_nTransformFileNameArrNum = m_nTransformFileNameArrNum;
+
+}
 
 
 
@@ -1104,6 +1184,9 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	// To Here Sept. 9, 2000
 	case IDD_PROP_MACRO:	//@@@ 2002.01.02
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_MACRO);
+		break;
+	case IDD_PROP_FNAME:	// 2002.12.09 Moca FNAME追加
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_FNAME);
 		break;
 
 	default:

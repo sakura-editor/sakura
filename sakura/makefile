@@ -16,7 +16,7 @@ WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp
 !ifdef DEBUG
 OPTFLAGS=-Od -v -y -N -D_DEBUG $(WARNINGS)
 !else
-OPTFLAGS=-5 -O1 -Octv
+OPTFLAGS=-5 -O1 -Octv -d
 !ifdef TRACE
 OPTFLAGS=-v -y $(OPTFLAGS) $(WARNINGS)
 !else
@@ -46,6 +46,7 @@ OBJS =\
 	$(SRCDIR)\CDlgDiff.obj \
 	$(SRCDIR)\CDlgDebug.obj \
 	$(SRCDIR)\CDlgExec.obj \
+	$(SRCDIR)\CDlgFileUpdateQuery.obj \
 	$(SRCDIR)\CDlgFind.obj \
 	$(SRCDIR)\CDlgFuncList.obj \
 	$(SRCDIR)\CDlgGrep.obj \
@@ -114,6 +115,7 @@ OBJS =\
 	$(SRCDIR)\CPropComCustmenu.obj \
 	$(SRCDIR)\CPropComEdit.obj \
 	$(SRCDIR)\CPropComFile.obj \
+	$(SRCDIR)\CPropComFileName.obj \
 	$(SRCDIR)\CPropComFormat.obj \
 	$(SRCDIR)\CPropComGrep.obj \
 	$(SRCDIR)\CPropComHelper.obj \

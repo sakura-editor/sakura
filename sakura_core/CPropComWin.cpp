@@ -30,13 +30,16 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_WINSIZE,				HIDC_CHECK_WINSIZE,				//ウインドウサイズ継承
 	IDC_CHECK_SplitterWndVScroll,	HIDC_CHECK_SplitterWndVScroll,	//垂直スクロールの同期	//Jul. 05, 2001 JEPRO 追加
 	IDC_CHECK_SplitterWndHScroll,	HIDC_CHECK_SplitterWndHScroll,	//水平スクロールの同期	//Jul. 05, 2001 JEPRO 追加
-	IDC_EDIT_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,	//ルーラー
-	IDC_EDIT_nRulerHeight,			HIDC_EDIT_nRulerHeight,			//ルーラー
+	IDC_EDIT_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,	//ルーラーの高さ
+	IDC_EDIT_nRulerHeight,			HIDC_EDIT_nRulerHeight,			//ルーラーとテキストの間隔
+	IDC_EDIT_nLineNumberRightSpace,	HIDC_EDIT_nLineNumberRightSpace,	//行番号とテキストの隙間
 	IDC_RADIO_FUNCKEYWND_PLACE1,	HIDC_RADIO_FUNCKEYWND_PLACE1,	//ファンクションキー表示位置
 	IDC_RADIO_FUNCKEYWND_PLACE2,	HIDC_RADIO_FUNCKEYWND_PLACE2,	//ファンクションキー表示位置
 	IDC_EDIT_FUNCKEYWND_GROUPNUM,	HIDC_EDIT_FUNCKEYWND_GROUPNUM,	//ファンクションキーのグループボタン数
 	IDC_SPIN_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,
 	IDC_SPIN_nRulerHeight,			HIDC_EDIT_nRulerHeight,
+	IDC_SPIN_nLineNumberRightSpace,	HIDC_EDIT_nLineNumberRightSpace,
+	IDC_SPIN_FUNCKEYWND_GROUPNUM,	HIDC_EDIT_FUNCKEYWND_GROUPNUM,
 //	IDC_STATIC,						-1,
 	0, 0
 };

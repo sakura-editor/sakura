@@ -1749,6 +1749,30 @@ BEGIN
     LTEXT           "",IDC_QUERYRELOADMSG,7,43,189,12
 END
 
+IDD_PROP_FNAME DIALOGEX 0, 0, 270, 213
+STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "ＭＳ Ｐゴシック"
+BEGIN
+    GROUPBOX        "ファイル名の簡易表示(&I)",IDC_STATIC,6,20,256,180
+    CONTROL         "List1",IDC_LIST_FNAME,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | 
+                    LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,12,35,205,117
+    LTEXT           "置換前(&F)",IDC_STATIC,13,161,37,10
+    EDITTEXT        IDC_EDIT_FNAME_FROM,50,160,164,13,ES_AUTOHSCROLL
+    LTEXT           "置換後(&R)",IDC_STATIC,13,180,37,10
+    EDITTEXT        IDC_EDIT_FNAME_TO,50,177,164,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "挿入(&S)",IDC_BUTTON_FNAME_INS,220,123,38,15
+    PUSHBUTTON      "追加(&A)",IDC_BUTTON_FNAME_ADD,220,141,38,15
+    PUSHBUTTON      "更新(&E)",IDC_BUTTON_FNAME_UPD,220,159,38,15
+    PUSHBUTTON      "削除(&D)",IDC_BUTTON_FNAME_DEL,220,177,38,15
+    PUSHBUTTON      "先頭(&T)",IDC_BUTTON_FNAME_TOP,220,43,38,15
+    PUSHBUTTON      "上へ(&U)",IDC_BUTTON_FNAME_UP,220,61,38,15
+    PUSHBUTTON      "下へ(&G)",IDC_BUTTON_FNAME_DOWN,220,79,38,15
+    PUSHBUTTON      "最終(&B)",IDC_BUTTON_FNAME_LAST,220,97,38,15
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2097,6 +2121,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 90
     END
+
+    IDD_PROP_FNAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 263
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 206
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2214,15 +2246,7 @@ BEGIN
     F_FILECLOSE             "閉じて(無題)"
     F_FILECLOSE_OPEN        "閉じて開く..."
     F_FILEOPEN_DROPDOWN     "開く... (ドロップダウン)"
-    F_FILE_REOPEN           "開き直す"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_SPLIT_VH              "縦横に分割／分割解除"
-    F_WINCLOSE              "ウィンドウを閉じる"
-    F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2233,6 +2257,14 @@ BEGIN
     F_FILE_REOPEN_UTF8      "UTF-8で開き直す"
     F_FILE_REOPEN_UTF7      "UTF-7で開き直す"
     F_FILE_REOPEN_UNICODEBE "UnicodeBEで開き直す"
+    F_FILE_REOPEN           "開き直す"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_SPLIT_VH              "縦横に分割／分割解除"
+    F_WINCLOSE              "ウィンドウを閉じる"
+    F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
 END
 
 STRINGTABLE DISCARDABLE 

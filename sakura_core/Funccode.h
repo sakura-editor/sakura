@@ -291,6 +291,7 @@
 #define F_OPTION_HELPER		32012	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
 #define F_OPTION_MACRO		32013	/* 共通設定『マクロ』 */
+#define F_OPTION_FNAME		32014	/* 共通設定 『全般』 */ // 2002.12.09 Moca Add
 
 #define F_FONT				31120	/* フォント設定 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更

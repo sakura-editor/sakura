@@ -33,9 +33,9 @@
 
 
 #include "CPropCommon.h"
-#include "memory.h"
-#include "stdlib.h"
-#include <Shlobj.h>
+#include <memory.h>
+#include <stdlib.h>
+// #include <Shlobj.h>
 #include "etc_uty.h" // 2002/04/14 novice
 
 //! Popup Help—pID
