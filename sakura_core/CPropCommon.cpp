@@ -113,7 +113,7 @@ int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 INT_PTR CALLBACK CPropCommon::DlgProc_PROP_GENERAL(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( DispatchEvent_p1, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( &CPropCommon::DispatchEvent_p1, hwndDlg, uMsg, wParam, lParam );
 }
 
 /*!

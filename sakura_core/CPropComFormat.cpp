@@ -92,7 +92,7 @@ static const char *p_time_form[] = {
 INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FORMAT(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( DispatchEvent_p9, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( &CPropCommon::DispatchEvent_p9, hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
