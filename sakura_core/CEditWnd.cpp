@@ -2470,6 +2470,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TABTOSPACE			, "&TAB→空白" );		//Feb. 19, 2001 JEPRO 下から移動した
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, "空白→TAB(&S)" );	//Feb. 19, 2001 JEPRO ダミーで入れてみた(F_SPACETABは未実装です)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, "空白→TAB(&S)" );	//#### Stonee, 2001/05/27
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//「文字コード変換」ポップアップ
@@ -3260,6 +3261,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_HANKATATOZENKAKUKATA:	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				/* TAB→空白 */
+	case F_SPACETOTAB:				/* 空白→TAB */  //#### Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL:			/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:		/* EUC→SJISコード変換 */

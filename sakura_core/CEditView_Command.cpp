@@ -344,6 +344,7 @@ BOOL CEditView::HandleCommand(
 	case F_HANKATATOZENKAKUKATA:	Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	Command_HANKATATOZENKAKUHIRA();break;	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				Command_TABTOSPACE();break;				/* TAB→空白 */
+	case F_SPACETOTAB:				Command_SPACETOTAB();break;				/* 空白→TAB */  //#### Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		Command_CODECNV_AUTO2SJIS();break;		/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL:			Command_CODECNV_EMAIL();break;			/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:		Command_CODECNV_EUC2SJIS();break;		/* EUC→SJISコード変換 */
@@ -4708,6 +4709,88 @@ void CEditView::Command_TABTOSPACE( void )
 	ConvSelectedArea( F_TABTOSPACE );
 	return;
 }
+
+/* 空白→TAB */ //#### Stonee, 2001/05/27
+void CEditView::Command_SPACETOTAB( void )
+{
+	HDC			hdc;
+	PAINTSTRUCT	ps;
+	int			nSelectLineFromOld;	/* 範囲選択開始行 */
+	int			nSelectColFromOld; 	/* 範囲選択開始桁 */
+	int			nSelectLineToOld;	/* 範囲選択終了行 */
+	int			nSelectColToOld;	/* 範囲選択終了桁 2*/
+	RECT		rcSel;
+	CMemory		cmemBuf;
+//	HGLOBAL		hgClip;
+//	char*		pszClip;
+//	const char*	pLine;
+//	int			nLineLen;
+	if( !IsTextSelected() ){	/* テキストが選択されているか */
+		return;
+	}
+	/* 矩形範囲選択中か */
+	if( m_bBeginBoxSelect ){
+		/* 2点を対角とする矩形を求める */
+		TwoPointToRect(
+			&rcSel,
+			m_nSelectLineFrom,		/* 範囲選択開始行 */
+			m_nSelectColmFrom,		/* 範囲選択開始桁 */
+			m_nSelectLineTo,		/* 範囲選択終了行 */
+			m_nSelectColmTo			/* 範囲選択終了桁 */
+		);
+		/* 現在の選択範囲を非選択状態に戻す */
+		DisableSelectArea( TRUE );
+//		/* 挿入データの先頭位置へカーソルを移動 */
+//		MoveCursor( rcSel.left, rcSel.top, FALSE );
+		m_nSelectLineFrom = rcSel.top;			/* 範囲選択開始行 */
+		m_nSelectColmFrom = 0;		 			/* 範囲選択開始桁 */
+		m_nSelectLineTo = rcSel.bottom + 1;		/* 範囲選択終了行 */
+		m_nSelectColmTo = 0;					/* 範囲選択終了桁 */
+		m_bBeginBoxSelect = FALSE;
+	}else{
+		nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
+		nSelectColFromOld = 0; 					/* 範囲選択開始桁 */
+		nSelectLineToOld = m_nSelectLineTo;		/* 範囲選択終了行 */
+		if( m_nSelectColmTo > 0 ){
+			++nSelectLineToOld;					/* 範囲選択終了行 */
+		}
+		nSelectColToOld = 0;					/* 範囲選択終了桁 */
+		/* 現在の選択範囲を非選択状態に戻す */
+		DisableSelectArea( TRUE );
+		m_nSelectLineFrom = nSelectLineFromOld;	/* 範囲選択開始行 */
+		m_nSelectColmFrom = nSelectColFromOld; 	/* 範囲選択開始桁 */
+		m_nSelectLineTo = nSelectLineToOld;		/* 範囲選択終了行 */
+		m_nSelectColmTo = nSelectColToOld;		/* 範囲選択終了桁 */
+	}
+	/* 再描画 */
+	//	::UpdateWindow();
+	hdc = ::GetDC( m_hWnd );
+	ps.rcPaint.left = 0;
+	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
+	ps.rcPaint.top = m_nViewAlignTop;
+	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
+	OnKillFocus();
+	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+	OnSetFocus();
+	::ReleaseDC( m_hWnd, hdc );
+	/* 選択範囲をクリップボードにコピー */
+	/* 選択範囲のデータを取得 */
+	/* 正常時はTRUE,範囲未選択の場合は終了する */
+	if( FALSE == GetSelectedData(
+		cmemBuf,
+		FALSE,
+		NULL, /* 引用符 */
+		FALSE /* 行番号を付与する */
+	) ){
+		::MessageBeep( MB_ICONHAND );
+		return;
+	}
+
+	/* 選択エリアのテキストを指定方法で変換 */
+	ConvSelectedArea( F_SPACETOTAB );
+	return;
+}
+
 
 
 //#define F_HANKATATOZENKAKUKATA	30557	/* 半角カタカナ→全角カタカナ */

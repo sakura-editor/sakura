@@ -466,6 +466,7 @@
 #define IDD_PROP_BACKUP                 5112
 #define IDD_OPERATIONRUNNING            5113
 #define IDD_PROP_KEYBIND1               5114
+#define IDS_STRING31581                 31581
 #define IDC_EXECINFO                    -1
 
 // Next default values for new objects

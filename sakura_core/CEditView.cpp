@@ -5293,7 +5293,11 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 		pCMemory->TABToSPACE(
 			m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
 		);break;	/* TAB¨‹ó”’ */
-
+	case F_SPACETOTAB:	//#### Stonee, 2001/05/27
+		pCMemory->SPACEToTAB(
+			m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
+		);
+		break;		/* ‹ó”’¨TAB */
 	}
 	return;
 

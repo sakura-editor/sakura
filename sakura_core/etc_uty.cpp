@@ -1694,6 +1694,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_HANKATATOZENKAKUKATA:	return 123;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	return 124;	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				return 182;	/* TAB→空白 */
+	//case F_SPACETOTAB:			return 182;	/* 空白→TAB */ //#### Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		return 178;	/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL:			return 52;	//E-Mail(JIS→SJIS)コード変換
 	case F_CODECNV_EUC2SJIS:		return 53;	//EUC→SJISコード変換

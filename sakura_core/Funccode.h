@@ -177,6 +177,7 @@
 #define F_HANKATATOZENKAKUKATA	30813	/* 半角カタカナ→全角カタカナ */
 #define F_HANKATATOZENKAKUHIRA	30814	/* 半角カタカナ→全角ひらがな */
 #define F_TABTOSPACE			30830	/* TAB→空白 */
+#define F_SPACETOTAB			30831	/* 空白→TAB *///#### Stonee, 2001/05/27
 #define F_CODECNV_AUTO2SJIS		30850	/* 自動判別→SJISコード変換 */
 #define F_CODECNV_EMAIL			30851	//E-Mail(JIS→SJIS)コード変換
 #define F_CODECNV_EUC2SJIS		30852	//EUC→SJISコード変換

@@ -475,6 +475,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_HANKATATOZENKAKUKATA:
 	case F_HANKATATOZENKAKUHIRA:
 	case F_TABTOSPACE:
+	case F_SPACETOTAB:  //#### Stonee, 2001/05/27
 	case F_HOKAN:
 	case F_CHGMOD_INS:
 //		::MessageBox( m_hWnd, "Operation is forbidden.", "DEBUG", MB_OK | MB_ICONEXCLAMATION );
