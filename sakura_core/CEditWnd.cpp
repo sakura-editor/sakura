@@ -2313,6 +2313,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, "上下に並べて表示(&H)" );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, "左右に並べて表示(&T)" );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOPMOST			, "常に手前に表示" ); //2004.09.21 Moca
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_V		, "縦方向に最大化(&X)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_H		, "横方向に最大化(&Y)" );	//2001.02.10 by MIK
@@ -2733,6 +2734,14 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 	case F_BIND_WINDOW:	//
 		return ((pShareData->m_Common.m_bDispTabWnd) && !(pShareData->m_Common.m_bDispTabWndMultiWin));
 
+	// 2004.09.21 Moca
+	case F_TOPMOST:
+		if( (DWORD)::GetWindowLongPtr( pCEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+		break;
 	// Jan. 10, 2004 genta インクリメンタルサーチ
 	case F_ISEARCH_NEXT:
 	case F_ISEARCH_PREV:
@@ -4114,6 +4123,31 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 		break;
 	}
 	return CDRF_DODEFAULT;
+}
+
+/*! 常に手前に表示
+	@param top  0:トグル動作 1:最前面 2:最前面解除 その他:なにもしない
+	@date 2004.09.21 Moca
+*/
+void CEditWnd::WindowTopMost( int top )
+{
+	if( 0 == top ){
+		DWORD dwExstyle = (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE );
+		if( dwExstyle & WS_EX_TOPMOST ){
+			top = 2; // 最前面である -> 解除
+		}else{
+			top = 1;
+		}
+	}
+	
+	switch( top ){
+	case 1:
+		::SetWindowPos( m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		break;
+	case 2:
+		::SetWindowPos( m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		break;
+	}
 }
 
 /*[EOF]*/

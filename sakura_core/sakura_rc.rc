@@ -2853,6 +2853,7 @@ BEGIN
     F_MAXIMIZE_V            "c•ûŒü‚ÉÅ‘å‰»"
     F_MINIMIZE_ALL          "‚·‚×‚ÄÅ¬‰»"
     F_MAXIMIZE_H            "‰¡•ûŒü‚ÉÅ‘å‰»"
+    F_TOPMOST               "í‚ÉŽè‘O‚É•\Ž¦"
 END
 
 STRINGTABLE DISCARDABLE 

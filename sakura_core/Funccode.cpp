@@ -403,11 +403,12 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_CASCADE			,	//重ねて表示
 	F_TILE_V			,	//上下に並べて表示
 	F_TILE_H			,	//左右に並べて表示
+	F_TOPMOST			,	//常に手前に表示
 	F_MAXIMIZE_V		,	//縦方向に最大化
 	F_MAXIMIZE_H		,	//横方向に最大化 //2001.02.10 by MIK
 	F_MINIMIZE_ALL		,	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	F_REDRAW			,	//再描画
-	F_WIN_OUTPUT			//アウトプットウィンドウ表示
+	F_WIN_OUTPUT		,	//アウトプットウィンドウ表示
 };
 const int nFincList_Win_Num = sizeof( pnFuncList_Win ) / sizeof( pnFuncList_Win[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 

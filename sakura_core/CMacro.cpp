@@ -717,6 +717,14 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		}
 		break;
 	//	To Here Dec. 4, 2002 genta
+	case F_TOPMOST:
+		{
+			int lparam1;
+			if( Argument[0] != NULL ){
+				lparam1 = atoi( Argument[0] );
+				pcEditView->HandleCommand( Index, FALSE, lparam1, 0, 0, 0 );
+			}
+		}
 	default:
 		//	ˆø”‚È‚µB
 		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	•W€
