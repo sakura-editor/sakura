@@ -168,14 +168,17 @@ SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c )
 	@param flag [in] 文字列終端チェック (true=stricmp,strnicmp, false=memicmp)
 
 	@retval 0	一致
+	@date 2002.11.29 Moca 0以外の時の戻り値を，「元の値の差」から「大文字としたときの差」に変更
  */
 SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
 {
 	unsigned int	i;
 	unsigned char	*p1, *p2;
-	int	c1, c1_lo, c1_up;
-	int	c2, c2_lo, c2_up;
-	bool	prev1, prev2;
+//	2002.11.29 Moca 元の値を保持する必要がなくなったため *_lo, *_upを削除
+//	int	c1, c1_lo, c1_up;
+//	int	c2, c2_lo, c2_up;
+	int 	c1, c2;
+	bool	prev1, prev2; /* 前の文字が SJISの１バイト目か */
 #ifdef MY_ICMP_MBS
 	bool	mba1, mba2;
 #endif  /* MY_ICMP_MBS */
@@ -191,19 +194,12 @@ SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned i
 	for(i = n; i > 0; i -= dcount)
 	{
 		/* 比較対象となる文字を取得する */
-		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
-		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
+//		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
+//		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
+		c1 = (int)((unsigned int)*p1);
+		c2 = (int)((unsigned int)*p2);
 
-		if( flag ){
-			/* 文字列の終端に達したか調べる */
-			if( ! c1 ){
-				if( ! c2 ) return 0;
-				return 0 - c2;
-			}
-			else if( ! c2 ){
-				return c1;
-			}
-		}
+		/* 2002.11.29 Moca 文字列の終端に達したか調べる部分 は後方へ移動 */
 
 		/* 文字１の日本語チェックを行い比較用の大文字小文字をセットする */
 		if( prev1 ){	/* 前の文字が日本語１バイト目 */
@@ -214,8 +210,9 @@ SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned i
 			if( mba1 ){
 				mba1 = false;
 				if( my_mbisalpha2( c1 ) ){
-					c1_lo = my_mbtolower2( c1 );
-					c1_up = my_mbtoupper2( c1 );
+//					c1_lo = my_mbtolower2( c1 );
+//					c1_up = my_mbtoupper2( c1 );
+					c1 = my_mbtoupper2( c1 );
 				}
 			}
 #endif  /* MY_ICMP_MBS */
@@ -228,8 +225,9 @@ SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned i
 #endif  /* MY_ICMP_MBS */
 		}
 		else{
-			c1_lo = my_tolower(c1);
-			c1_up = my_toupper(c1);
+//			c1_lo = my_tolower(c1);
+//			c1_up = my_toupper(c1);
+			c1 = my_toupper(c1);
 		}
 
 		/* 文字２の日本語チェックを行い比較用の大文字小文字をセットする */
@@ -241,8 +239,9 @@ SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned i
 			if( mba2 ){
 				mba2 = false;
 				if( my_mbisalpha2( c2 ) ){
-					c2_lo = my_mbtolower2( c2 );
-					c2_up = my_mbtoupper2( c2 );
+//					c2_lo = my_mbtolower2( c2 );
+//					c2_up = my_mbtoupper2( c2 );
+					c2 = my_mbtoupper2( c2 );
 				}
 			}
 #endif  /* MY_ICMP_MBS */
@@ -255,13 +254,21 @@ SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned i
 #endif  /* MY_ICMP_MBS */
 		}
 		else{
-			c2_lo = my_tolower(c2);
-			c2_up = my_toupper(c2);
+//			c2_lo = my_tolower(c2);
+//			c2_up = my_toupper(c2);
+			c2 = my_toupper(c2);
 		}
 
 		/* 比較する */
-		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* 戻り値は元の文字の差 */
+//		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* 戻り値は元の文字の差 */
+		if( c1 - c2 ) return c1 - c2;	/* 戻り値は大文字に変換した文字の差 */
 
+		/* 2002.11.29 Moca 戻り値を変更したことにより，小文字→大文字変換の後に移動
+		   片方だけ NULL文字 の場合は上の比較した時点で return するためその処理は不要 */
+		if( flag ){
+			/* 文字列の終端に達したか調べる */
+			if( ! c1 ) return 0;
+		}
 		/* ポインタを進める */
 		p1++;
 		p2++;

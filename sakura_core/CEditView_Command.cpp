@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <io.h>
+#include <mbstring.h>
 #include "sakura_rc.h"
 #include "CEditView.h"
 #include "debug.h"
@@ -3147,9 +3148,9 @@ void CEditView::Command_CHAR( char cChar )
 							memcpy( szCurrent, &pLine[nPos], nCharChars );
 							szCurrent[nCharChars] = '\0';
 							/* ‚»‚Ì‘¼‚ÌƒCƒ“ƒfƒ“ƒg‘ÎÛ•¶Žš */
-							if( NULL != strstr(
-								m_pcEditDoc->GetDocumentAttribute().m_szIndentChars,
-								szCurrent
+							if( NULL != _mbsstr(
+								(const unsigned char*)m_pcEditDoc->GetDocumentAttribute().m_szIndentChars,
+								(const unsigned char*)szCurrent
 							) ){
 								goto end_of_for;
 							}

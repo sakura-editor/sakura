@@ -27,7 +27,7 @@
 #include "CEol.h"// 2002/2/3 aroka
 #include "CBregexp.h"// 2002/2/3 aroka
 #include "COsVersionInfo.h"
-#include "my_icmp.h" // Nov. 29, 2002 genta/moca
+#include "my_icmp.h" // 2002/11/30 Moca 追加
 
 //	CShareDataへ移動
 /* 日付をフォーマット */
@@ -1532,7 +1532,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			) &&
 			/* 上の文字がSJIS2バイトコードの2バイト目でないことを、1つ前の文字がSJIS2バイトコードの1バイト目でないことで判断する */
 			//	Oct. 5, 2002 genta
-			( i > 0 && ! _IS_SJIS_1( pLine[i - 1] )
+			( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] )
 			) ){
 			goto can_not_tagjump;
 		}else{

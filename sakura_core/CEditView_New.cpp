@@ -36,7 +36,7 @@
 #include "my_icmp.h"	//@@@ 2002.01.13 add
 #include "Clayout.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
-#include <locale.h>
+// #include <locale.h>
 
 /*! フォントを選ぶ
 	@param bFat TRUEで太字
@@ -441,7 +441,8 @@ int CEditView::DispLineNew(
 	nLineBgn = 0;
 	nX = 0;
 	nCharChars = 0;
-	setlocale ( LC_ALL, "C" );	//	Oct. 29, 2001 genta 検索文字列のハイライトに関係する
+	// my_icmpの利用によりlocaleに依存しない 2002/11/30 Moca
+	// setlocale ( LC_ALL, "C" );	//	Oct. 29, 2001 genta 検索文字列のハイライトに関係する
 
 	if( NULL != pLine ){
 

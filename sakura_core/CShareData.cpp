@@ -22,9 +22,9 @@
 #include "debug.h"
 #include "global.h"
 #include "etc_uty.h"
-#include <locale.h>
+// #include <locale.h> // 2002/11/30 Moca my_icmpを利用するため不要に
 #include "CRunningTimer.h"
-#include "my_icmp.h" // Nov. 29, 2002 genta/moca
+#include "my_icmp.h" // 2002/11/30 Moca 追加
 
 struct ARRHEAD {
 	int		nLength;
@@ -3961,7 +3961,8 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 		return FALSE;
 	}
 	//	Oct. 11, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
-	setlocale ( LC_ALL, "C" );
+	//	my_icmp に変更したため不要に
+//	setlocale ( LC_ALL, "C" );
 	
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
