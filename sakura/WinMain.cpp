@@ -43,7 +43,8 @@
 //#include "CProfile.h"
 //#include "CRunningTimer.h"
 
-
+//	Aug. 28, 2001 genta
+bool StartControlProcess(void);
 
 BOOL CALLBACK ExitingDlgProc(
 	HWND	hwndDlg,	// handle to dialog box
@@ -163,6 +164,7 @@ int WINAPI WinMain(
 	DWORD			dwRet;
 	BOOL			bFindCTRLPROCESS;
 //	BOOL			bInstanceAlreadyExist;
+	bool			bFirstTrial = true;	// Sep. 3, 2001 genta
 
 //	cRunningTimer.Reset();
 //	cProfile.ReadProfile( "A:\\WINDOWS\\WIN.INI" );
@@ -216,6 +218,8 @@ int WINAPI WinMain(
 		&bReadOnly
 	);
 
+RestartForEditor:
+
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA );
 	if( NULL == hMutex ){
 		::MessageBeep( MB_ICONSTOP );
@@ -265,6 +269,10 @@ int WINAPI WinMain(
 			goto CreateControlProcess;
 //			return 0;
 		}
+		//	Aug. 28, 2001 genta
+		//	-NOWINなら絶対Windowを作らない == Control Processがあれば何もしない
+		if( bNoWindow )
+			return 0;
 
 		/* コマンドラインで受け取ったファイルが開かれている場合は */
 		/* その編集ウィンドウをアクティブにする */
@@ -400,6 +408,18 @@ int WINAPI WinMain(
 	}else{
 CreateControlProcess:;
 
+		// Aug. 28, 2001 genta
+		//	コントロールプロセスは別に起動する
+		if( !bNoWindow ){
+			::ReleaseMutex( hMutex );
+			//	Sep. 3, 2001 genta プロセスの起動に失敗したら2回は試みないように
+			if( bFirstTrial && StartControlProcess()){
+				bFirstTrial = false;
+				goto RestartForEditor;
+			}
+			else
+				return 1;
+		}
 
 		/* 共有データ構造体のアドレスを返す */
 		if( !m_cShareData.Init() ){
@@ -465,6 +485,7 @@ CreateControlProcess:;
 
 		/* 空の編集ウィンドウを作成 */
 		if( !bNoWindow ){
+			//	Aug. 28, 2001 genta comment: ここは常に通らない
 			CEditApp::OpenNewEditor(
 				hInstance,
 				m_pShareData->m_hwndTray,
@@ -514,5 +535,88 @@ CreateControlProcess:;
 	return 0;
 }
 
+//	From Here Aug. 28, 2001 genta
+/*!
+	@brief コントロールプロセスを起動する
+	
+	自分自身に -NOWIN オプションを付けて起動する．
+	共有メモリをチェックしてはいけないので，残念ながらCEditApp::OpenNewEditorは使えない．
+*/
+bool StartControlProcess(void)
+{
+	//	プロセスの起動
+	PROCESS_INFORMATION p;
+	STARTUPINFO s;
 
+	s.cb = sizeof( s );
+	s.lpReserved = NULL;
+	s.lpDesktop = NULL;
+	s.lpTitle = NULL;
+	/*
+	s.dwX = CW_USEDEFAULT;
+	s.dwY = CW_USEDEFAULT;
+	s.dwXSize = CW_USEDEFAULT;
+	s.dwYSize = CW_USEDEFAULT;
+	*/
+
+	s.dwFlags = STARTF_USESHOWWINDOW;
+	s.wShowWindow = SW_SHOWDEFAULT;
+	s.cbReserved2 = 0;
+	s.lpReserved2 = NULL;
+
+	char szCmdLineBuf[1024];	//	コマンドライン
+	char szEXE[MAX_PATH + 1];	//	アプリケーションパス名
+	char szDir[MAX_PATH + 1];	//	ディレクトリパス名
+
+	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, sizeof( szEXE ));
+	::wsprintf( szCmdLineBuf, "%s -NOWIN", szEXE );
+	::GetSystemDirectory( szDir, sizeof( szDir ));
+
+	if( CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,
+		CREATE_DEFAULT_ERROR_MODE, NULL, szDir, &s, &p ) == 0 ){
+		//	失敗
+		LPVOID pMsg;
+		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
+						FORMAT_MESSAGE_IGNORE_INSERTS |
+						FORMAT_MESSAGE_FROM_SYSTEM,
+						NULL,
+						GetLastError(),
+						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+						(LPTSTR) &pMsg,
+						0,
+						NULL
+		);
+		::MYMESSAGEBOX(
+			NULL,
+			MB_OK | MB_ICONSTOP,
+			GSTR_APPNAME,
+			"\'%s\'\nプロセスの起動に失敗しました。\n%s",
+			szEXE,
+			(char*)pMsg
+		);
+		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
+		return false;
+	}
+
+	//	起動したプロセスが完全に立ち上がるまでちょっと待つ．
+	int nResult = WaitForInputIdle( p.hProcess, 10000 );	//	最大20秒間待つ
+	if( nResult != 0 ){
+		::MYMESSAGEBOX(
+			NULL,
+			MB_OK | MB_ICONSTOP,
+			GSTR_APPNAME,
+			"\'%s\'\nコントロールプロセスの起動に失敗しました。",
+			szEXE
+		);
+		CloseHandle( p.hThread );
+		CloseHandle( p.hProcess );
+		return false;
+	}
+
+	CloseHandle( p.hThread );
+	CloseHandle( p.hProcess );
+	
+	return true;
+}
+//	To Here Aug. 28, 2001 genta
 /*[EOF]*/
