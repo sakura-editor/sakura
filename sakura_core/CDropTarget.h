@@ -23,9 +23,6 @@ class COleLibrary;
 #include <windows.h>
 class CEditView;// 2002/2/3 aroka ヘッダ軽量化
 
-// 何か問題があれば↓この行をコメントアウトしてください		//Feb. 26, 2001, fixed by yebisuya sugoroku
-#define ENABLED_YEBISUYA_ADDITION
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -116,19 +113,13 @@ public:
 class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
 	CLIPFORMAT m_cfFormat;
-#ifdef ENABLED_YEBISUYA_ADDITION
+	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	LPBYTE			data;
 	unsigned int	size;// 2002/2/3 aroka 警告対策：型変換
-#else
-	HGLOBAL	m_hData;
-#endif
+
 public:
 	CDataObject (LPCTSTR lpszText ):m_cfFormat( 0 ),
-#ifdef ENABLED_YEBISUYA_ADDITION
-	data( NULL ), size( 0 )
-#else
-	m_hData( NULL )
-#endif
+	data( NULL ), size( 0 )	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	{SetText( lpszText );}
 	~CDataObject(){SetText( NULL );}
 	void	SetText( LPCTSTR lpszText );

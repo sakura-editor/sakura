@@ -64,8 +64,11 @@ struct ARRHEAD {
 	Version 30:
 	PRINTSETTINGに、m_bPrintKinsokuKutoを追加 2002.04.17 MIK
 	Typesに、m_bKinsokuKutoを追加 2002.04.17 MIK
+
+	Version 31:
+	Commonに、m_bStopsBothEndsWhenSearchParagraphを追加 2002/04/26 YAZAKI
 */
-const unsigned int uShareDataVersion = 30;
+const unsigned int uShareDataVersion = 31;
 
 /*
 ||	Singleton風
@@ -572,6 +575,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bAutoIndent = TRUE;			/* オートインデント */
 		m_pShareData->m_Common.m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
 		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
+		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
 		//	Oct. 27, 2000 genta
 		m_pShareData->m_Common.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元

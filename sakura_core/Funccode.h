@@ -70,7 +70,7 @@
 #define F_UNINDENT_TAB		30261	//逆TABインデント
 #define F_INDENT_SPACE		30262	//SPACEインデント
 #define F_UNINDENT_SPACE	30263	//逆SPACEインデント
-#define F_WORDSREFERENCE	30270	//単語リファレンス
+//#define F_WORDSREFERENCE	30270	//単語リファレンス
 #define F_LTRIM				30280	//左(先頭)の空白を削除	2001.12.03 hor
 #define F_RTRIM				30281	//右(末尾)の空白を削除	2001.12.03 hor
 #define F_SORT_ASC			30282	//選択行の昇順ソート	2001.12.06 hor

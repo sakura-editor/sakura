@@ -230,7 +230,7 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 
 void CDataObject::SetText( LPCTSTR lpszText )
 {
-#ifdef ENABLED_YEBISUYA_ADDITION		//Feb. 26, 2001, fixed by yebisuya sugoroku
+	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( data != NULL ){
 		delete[] data;
 		data = NULL;
@@ -243,21 +243,6 @@ void CDataObject::SetText( LPCTSTR lpszText )
 		memcpy( data, lpszText, size) ;
 		m_cfFormat = CF_TEXT;
 	}
-#else
-	if( m_hData != NULL ){
-		::GlobalFree( m_hData );
-		m_hData = NULL;
-		m_cfFormat = 0;
-	}
-	if( lpszText != NULL ){
-//?		m_hData = ::GlobalAlloc( GHND | GMEM_DDESHARE, (_tcslen(lpszText) + 1) * sizeof( TCHAR ) );
-		m_hData = ::GlobalAlloc( GHND | GMEM_DDESHARE, (lstrlen(lpszText) + 1) * sizeof( TCHAR ) );
-//?		_tcscpy( (LPTSTR) ::GlobalLock( m_hData ), lpszText );
-		strcpy( (LPTSTR) ::GlobalLock( m_hData ), lpszText );
-		::GlobalUnlock( m_hData );
-		m_cfFormat = CF_TEXT;
-	}
-#endif
 }
 
 DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
@@ -271,7 +256,7 @@ DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
 
 STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
-#ifdef ENABLED_YEBISUYA_ADDITION		//Feb. 26, 2001, fixed by yebisuya sugoroku
+	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( lpfe == NULL || lpsm == NULL )
 		return E_INVALIDARG;
 	if( data == NULL )
@@ -297,28 +282,11 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	lpsm->pUnkForRelease = NULL;
 
 	return S_OK;
-#else
-	if( lpfe == NULL || lpsm == NULL )
-		return E_INVALIDARG;
-	if( m_hData == NULL )
-		return OLE_E_NOTRUNNING;
-	if( lpfe->cfFormat != m_cfFormat
-		|| !(lpfe->tymed & TYMED_HGLOBAL)
-		|| lpfe->lindex != -1
-		|| lpfe->dwAspect != DVASPECT_CONTENT)
-		return DV_E_FORMATETC;
-
-	lpsm->tymed = TYMED_HGLOBAL;
-	lpsm->hGlobal = m_hData;
-	lpsm->pUnkForRelease = NULL;
-
-	return S_OK;
-#endif
 }
 
 STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
-#ifdef ENABLED_YEBISUYA_ADDITION		//Feb. 26, 2001, fixed by yebisuya sugoroku
+	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( lpfe == NULL || lpsm == NULL || lpsm->hGlobal == NULL )
 		return E_INVALIDARG;
 	if( data == NULL )
@@ -340,42 +308,15 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	::GlobalUnlock( lpsm->hGlobal );
 
 	return S_OK;
-#else
-	if( lpfe == NULL || lpsm == NULL || lpsm->hGlobal == NULL )
-		return E_INVALIDARG;
-	if( m_hData == NULL )
-		return OLE_E_NOTRUNNING;
-	if( lpfe->cfFormat != m_cfFormat
-		|| !(lpfe->tymed & TYMED_HGLOBAL)
-		|| lpfe->lindex != -1
-		|| lpfe->dwAspect != DVASPECT_CONTENT )
-		return DV_E_FORMATETC;
-
-	DWORD nSize = ::GlobalSize( m_hData );
-	if( nSize > ::GlobalSize( lpsm->hGlobal ) )
-		return DATA_E_FORMATETC;
-
-	LPVOID lpSource = ::GlobalLock( m_hData );
-	LPVOID lpDest = ::GlobalLock( lpsm->hGlobal );
-	memcpy( lpDest, lpSource, nSize );
-	::GlobalUnlock(lpsm->hGlobal);
-	::GlobalUnlock( m_hData );
-
-	return S_OK;
-#endif
 }
 
 STDMETHODIMP CDataObject::QueryGetData( LPFORMATETC lpfe )
 {
 	if( lpfe == NULL )
 		return E_INVALIDARG;
-#ifdef ENABLED_YEBISUYA_ADDITION		//Feb. 26, 2001, fixed by yebisuya sugoroku
+	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( data == NULL )
 		return OLE_E_NOTRUNNING;
-#else
-	if( m_hData == NULL )
-		return OLE_E_NOTRUNNING;
-#endif
 
 	if( lpfe->cfFormat != m_cfFormat
 		|| lpfe->ptd != NULL

@@ -199,16 +199,10 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 
 //	DUMP();
-#ifdef _DEBUG
-	MYTRACE( "OLD：%d\n",	nModifyLayoutLinesOld - pArg->nModLineTo);
-	MYTRACE( "NEW：%d\n",	m_nLines - nWork_nLines);
-	if ( nModifyLayoutLinesOld - pArg->nModLineTo != m_nLines - nWork_nLines ){
-		MYTRACE( "バグらないか？" );
-	}
-#endif
 
-	//pArg->nAddLineNum = nModifyLayoutLinesOld - pArg->nModLineTo;/* nAddInsLineNum;*/	/* 再描画ヒント レイアウト行の増減 */
-	pArg->nAddLineNum = m_nLines - nWork_nLines;	//変更後の全行数との差分	@@@ 2002.04.19 MIK
+	pArg->nAddLineNum = nWork_nLines - m_nLines;	//変更後の全行数との差分	@@@ 2002.04.19 MIK
+	if( 0 == pArg->nAddLineNum )
+		pArg->nAddLineNum = nModifyLayoutLinesOld - pArg->nModLineTo;/* nAddInsLineNum;*/	/* 再描画ヒント レイアウト行の増減 */
 	pArg->nModLineFrom = pArg->nDelLineFrom;	/* 再描画ヒント 変更されたレイアウト行From */
 	pArg->nModLineTo += ( pArg->nModLineFrom - 1 ) ;	/* 再描画ヒント 変更されたレイアウト行To */
 

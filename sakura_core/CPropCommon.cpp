@@ -955,6 +955,9 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, m_Common.m_bStopsBothEndsWhenSearchWord );
 
+	/* 段落単位で移動するときに、段落の両端で止まるか */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH, m_Common.m_bStopsBothEndsWhenSearchParagraph );
+
 //	/* TAB幅 */
 //	j = 0;
 //	for( i = 0; i < nTabArrNum; ++i ){
@@ -1094,6 +1097,9 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	m_Common.m_bStopsBothEndsWhenSearchWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD );
+
+	/* 段落単位で移動するときに、段落の両端で止まるか */
+	m_Common.m_bStopsBothEndsWhenSearchParagraph = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH );
 
 //	/* TAB幅 */
 //	m_Common.m_nTABSPACE = ::GetDlgItemInt( hwndDlg, IDC_COMBO_TABSPACE, NULL, FALSE );

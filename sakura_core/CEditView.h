@@ -103,7 +103,7 @@ public:
 	void OnMove( int, int, int, int );
 	void OnSetFocus( void );
 	void OnKillFocus( void );
-	VOID OnTimer( HWND, UINT, UINT, DWORD );
+	void OnTimer( HWND, UINT, UINT, DWORD );
 	BOOL HandleCommand( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
 	/* コマンド操作 */
 	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
@@ -429,7 +429,7 @@ protected:
 	void Command_INDENT_TAB( void );		/* インデント ver 2 */
 // To Here 2001.12.03 hor
 	void Command_UNINDENT( char cChar );	/* 逆インデント */
-	void Command_WORDSREFERENCE( void );	/* 単語リファレンス */
+//	void Command_WORDSREFERENCE( void );	/* 単語リファレンス */
 	void Command_TRIM(BOOL);				// 2001.12.03 hor
 	void Command_TRIM2(CMemory*,BOOL);		// 2001.12.03 hor
 	void Command_SORT(BOOL);				// 2001.12.06 hor

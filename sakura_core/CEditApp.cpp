@@ -1770,13 +1770,16 @@ int	CEditApp::CreatePopUpMenu_R( void )
 		::DeleteMenu( hMenu, i, MF_BYPOSITION );
 	}
 
+#if 0
+	2002/04/26 YAZAKI 使えないものは表示しない
+
 	/* トレイ右クリックの「オプション」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_TYPE_LIST, "タイプ別設定一覧(&L)...", FALSE );	//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_OPTION_TYPE, "タイプ別設定(&Y)...", FALSE );	//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_OPTION, "共通設定(&C)...", FALSE );				//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_FONT, "フォント設定(&F)...", FALSE );			//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-
+#endif
 
 	/* トレイ右クリックの「ヘルプ」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , "ヘルプ目次(&O)", FALSE );
@@ -1785,9 +1788,13 @@ int	CEditApp::CreatePopUpMenu_R( void )
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MENU_ALLFUNC , "コマンド一覧(&M)", FALSE );	//Jan. 12, 2001 JEPRO まずコメントアウト第一号 (T_T)
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
+#if 0
+	2002/04/26 YAZAKI 使えないものは表示しない
+
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_EXTHELP1 , "外部ヘルプ１(&E)", FALSE );			//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_EXTHTMLHELP , "外部HTMLヘルプ(&H)", FALSE );	//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+#endif
 
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_ABOUT, "バージョン情報(&A)", FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, "バージョン情報(&A)", FALSE );	//Dec. 25, 2000 JEPRO F_に変更

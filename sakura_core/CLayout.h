@@ -32,7 +32,8 @@ class CLayout;
 
 //#include "CDocLine.h"
 #include "CEol.h"// 2002/2/10 aroka
-class CDocLine;// 2002/2/10 aroka
+#include "CDocLine.h"// 2002/4/21 YAZAKI
+#include "CMemory.h"// 2002/4/21 YAZAKI
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -45,6 +46,12 @@ public:
 	CLayout();
 	~CLayout();
 	void DUMP( void );
+	
+	/* m_nOffsetで補正したあとの文字列を得る */
+	char*	GetPtr(){	return m_pCDocLine->m_pLine->GetPtr() + m_nOffset;	};
+	int		GetLengthWithEOL(){	return m_nLength;	};	//	ただしEOLは常に1文字とカウント？？
+	int		GetLengthWithoutEOL(){	return m_nLength - (m_cEol.GetLen() ? 1 : 0);	};
+
 public:
 	CLayout*		m_pPrev;
 	CLayout*		m_pNext;
