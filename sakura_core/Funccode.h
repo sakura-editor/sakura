@@ -291,7 +291,7 @@
 #define F_OPTION_HELPER		32012	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
 #define F_OPTION_MACRO		32013	/* 共通設定『マクロ』 */
-#define F_OPTION_FNAME		32014	/* 共通設定 『全般』 */ // 2002.12.09 Moca Add
+#define F_OPTION_FNAME		32014	/* 共通設定『ファイル名表示』 */
 
 #define F_FONT				31120	/* フォント設定 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
@@ -377,9 +377,11 @@
 //	Windows 95の制約により，WM_COMMANDで使う機能番号として32768以上の値を用いることができません．
 //	メニュー等で使われないマクロ専用のコマンドにはそれ以上の値を割り当てましょう．
 
-#define F_GETFILENAME		40001		/* 編集中のファイル名を取得する */
-#define F_GETSELECTED		40002	//	Oct. 19, 2002 genta 選択範囲の取得
+#define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 
+#define F_GETFILENAME     40001 /* 編集中のファイル名を取得する */
+#define F_GETSELECTED     40002 // Oct. 19, 2002 genta 選択範囲の取得
+#define F_EXPANDPARAMETER 40003 // 2003-02-21 鬼 コマンドラインパラメータ展開
 
 /* 機能一覧に関するデータ宣言 */
 namespace nsFuncCode{

@@ -19,6 +19,8 @@ class CMacro;
 #define _CMACRO_H_
 
 #include <windows.h>
+//#include "oleauto.h" //2003-02-21 鬼
+
 class CEditView;
 
 /*! @brief キーボードマクロの1コマンド
@@ -55,6 +57,7 @@ public:
 	void AddParam( const int lParam );
 
 	static void HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize );
+	static bool HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result);
 #if 0
 	/*
 	||  Attributes & Operations

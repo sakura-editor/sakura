@@ -8,6 +8,7 @@
 */
 /*
 	Copyright (C) 2001, YAZAKI
+	Copyright (C) 2003, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -40,6 +41,7 @@
 #include "etc_uty.h"
 #include "CEditApp.h"
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "OleTypes.h"
 
 #define NEVER_USED_PARAM(p) ((void)p)
 
@@ -139,6 +141,7 @@ int CPPA::InitDll()
 	if( ! RegisterEntries(table) )
 		return 1;
 
+	SetIntFunc((void*)CPPA::stdIntFunc);	// 2003.02.24 Moca
 	SetStrFunc((void*)CPPA::stdStrFunc);
 	SetProc((void*)CPPA::stdProc);
 
@@ -175,6 +178,9 @@ void CPPA::GetDeclarations( MacroFuncInfo& cMacroFuncInfo )
 		strcpy( szType, "function" );
 		if (cMacroFuncInfo.m_varResult == VT_BSTR){
 			strcpy( szReturn, ": string" );
+		}
+		else if ( cMacroFuncInfo.m_varResult == VT_I4 ){
+			strcpy( szReturn, ": Integer" );
 		}
 		else {
 			szReturn[0] = '\0';
@@ -244,6 +250,7 @@ int CPPA::DeinitDll( void )
 	return 0;
 }
 
+
 //----------------------------------------------------------------------
 void __stdcall CPPA::stdProc(
 	const char* FuncName, const int Index,
@@ -256,28 +263,139 @@ void __stdcall CPPA::stdProc(
 }
 
 //----------------------------------------------------------------------
-static char g_ResultStr[4096];	//	作業用
+/*!
+	整数値を返す関数を処理する
 
+	PPAから呼びだされる
+	@author Moca
+	@date 2003.02.24 Moca
+*/
+void __stdcall CPPA::stdIntFunc(
+	const char* FuncName, const int Index,
+	const char* Argument[], const int ArgSize, int* Err_CD,
+	int* ResultValue)
+{
+	NEVER_USED_PARAM(FuncName);
+	VARIANT Ret;
+	::VariantInit(&Ret);
+
+	*ResultValue = 0;
+	*Err_CD = 0;
+	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
+		switch( Ret.vt ){
+		case VT_I4:
+			*ResultValue = Ret.lVal;
+			break;
+		case VT_INT:
+			*ResultValue = Ret.intVal;
+			break;
+		case VT_UINT:
+			*ResultValue = Ret.uintVal;
+			break;
+		default:
+			*Err_CD = -1;
+		}
+		::VariantClear(&Ret);
+		return;
+	}
+	::VariantClear(&Ret);
+	*Err_CD = -1;
+	return;
+}
+
+//----------------------------------------------------------------------
+/*!
+	文字列を返す関数を処理する
+
+	PPAから呼びだされる
+	@date 2003.02.24 Moca CallHandleFunction対応
+*/
 void __stdcall CPPA::stdStrFunc(
 	const char* FuncName, const int Index,
 	const char* Argument[], const int ArgSize, int* Err_CD,
 	char** ResultValue)
 {
 	NEVER_USED_PARAM(FuncName);
-	static CMemory cMem;
-
+	static CMemory cMem; // ANSI文字列でなければならない
+						// これの管理するポインタをPPAに渡すのでstaticである必要がある。
+	VARIANT Ret;
+	::VariantInit(&Ret);
 	*Err_CD = 0;
-	switch ( Index ){
-	case F_GETFILENAME:	//	ファイル名を返す
-		strcpy(g_ResultStr, m_pcEditView->m_pcEditDoc->GetFilePath());
-		*ResultValue = g_ResultStr;
-		break;
+	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
+		if(VT_BSTR == Ret.vt){
+			int len;
+			char* buf;
+			Wrap(&Ret.bstrVal)->Get(&buf,&len);
+			cMem.SetData(buf,len); // Mar. 9, 2003 genta
+			delete[] buf;
+			*ResultValue = cMem.GetPtr();
+			::VariantClear(&Ret);
+			return;
+		}
+	}
+	::VariantClear(&Ret);
+	*Err_CD = -1;
+	*ResultValue = "";
+	return;
+}
 
-	//	From Here Oct. 19, 2002 genta
-	case F_GETSELECTED:	
-		m_pcEditView->GetCurrentTextForSearch( cMem );
-		*ResultValue = cMem.GetPtr();
-		break;
-	//	To Here Oct. 19, 2002 genta
+/*!
+	引数型変換
+
+	文字列で与えられた引数をVARIANT/BSTRに変換してCMacro::HandleFunction()を呼びだす
+	@author Moca
+*/
+bool CPPA::CallHandleFunction(
+	const int Index, const char* Arg[],
+	int ArgSize, VARIANT* Result )
+{
+	int i, ArgCnt;
+	VARIANT vtArg[4];
+	const MacroFuncInfo* mfi;
+	bool Ret;
+
+	mfi = CSMacroMgr::GetFuncInfoByID(Index);
+	for( i=0; i<4; i++ ){
+		::VariantInit( &vtArg[i] );
+	}
+	for(i=0, ArgCnt=0; i<4 && i<ArgSize; i++ ){
+		if(VT_EMPTY == mfi->m_varArguments[i]){
+			break;
+		}
+
+		switch( mfi->m_varArguments[i] ){
+		case VT_I4:
+		{
+			vtArg[i].vt = VT_I4;
+			vtArg[i].lVal = atoi( Arg[i] );
+			break;
+		}
+		case VT_BSTR:
+		{
+			SysString S(Arg[i],lstrlen(Arg[i]));
+			Wrap(&vtArg[i])->Receive(S);
+			break;
+		}
+		default:
+			for( i=0; i<4; i++ ){
+				::VariantClear( &vtArg[i] );
+			}
+			return false;
+		}
+		ArgCnt++;
+	}
+
+	if(Index >= F_FUNCTION_FIRST)
+	{
+		Ret = CMacro::HandleFunction(m_pcEditView, Index, vtArg, ArgCnt, *Result);
+		for( i=0; i<4; i++ ){
+			::VariantClear( &vtArg[i] );
+		}
+		return Ret;
+	}else{
+		for( i=0; i<4; i++ ){
+			::VariantClear( &vtArg[i] );
+		}
+		return false;
 	}
 }
