@@ -5107,9 +5107,12 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && !nReLoad ){
 		/* アクティブにする */
 //		m_pcEditDoc->m_cDlgFuncList.m_nCurLine = m_nCaretPosY + 1;	// 2002/04/18 YAZAKI
-		m_pcEditDoc->m_cDlgFuncList.ChangeListType( nOutlineType );
-		ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
-		return TRUE;
+		//	Oct. 5, 2002 genta
+		//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
+		if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
+			ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
+			return TRUE;
+		}
 	}
 
 	/* 解析結果データを空にする */
@@ -5195,6 +5198,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 			);
 		}else{
 			/* アクティブにする */
+			m_pcEditDoc->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, m_nCaretPosY + 1 );
 			ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
 //			::SetDlgItemText( m_pcEditDoc->m_cDlgFuncList.m_hWnd, IDC_COMBO_TEXT, cmemCurText.GetPtr() );
 		}

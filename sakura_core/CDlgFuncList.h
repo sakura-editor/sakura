@@ -41,8 +41,11 @@ public:
 	*/
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, int, int, int );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
-	/* ブックマークと、アウトラインを切り替える */
-	void ChangeListType( int nOutLineType );
+	
+	/*! 現在の種別と同じなら
+	*/
+	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nListType; }
+	void Redraw( int nOutLineType, CFuncInfoArr*, int nCurLine );
 
 	CFuncInfoArr*	m_pcFuncInfoArr;	/* 関数情報配列 */
 	int				m_nCurLine;			/* 現在行 */

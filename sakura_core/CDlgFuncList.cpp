@@ -1489,11 +1489,15 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	}
 }
 
-/*	ブックマーク←→アウトラインを切り替える（のが、主な目的）
+/*!
+	@date 2002.10.05 genta
 */
-void CDlgFuncList::ChangeListType( int nOutLineType )
+void CDlgFuncList::Redraw( int nOutLineType, CFuncInfoArr* pcFuncInfoArr, int nCurLine )
 {
 	m_nListType = nOutLineType;
+	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
+	m_nCurLine = nCurLine;				/* 現在行 */
 	SetData();
 }
+
 /*[EOF]*/
