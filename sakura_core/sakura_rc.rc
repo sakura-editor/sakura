@@ -1301,9 +1301,9 @@ BEGIN
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,0,HIDC_LIST_FUNC
     LTEXT           "機能に割り当てられているキー",IDC_LABEL_FUNCtoKEY,6,168,
                     91,8,NOT WS_GROUP
-    LISTBOX         IDC_LIST_ASSIGNEDKEYS,3,177,118,33,NOT LBS_NOTIFY | 
-                    LBS_SORT | LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL | 
-                    WS_HSCROLL | WS_GROUP,0,HIDC_LIST_ASSIGNEDKEYS
+    LISTBOX         IDC_LIST_ASSIGNEDKEYS,3,177,118,33,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
+                    WS_GROUP,0,HIDC_LIST_ASSIGNEDKEYS
     PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_IMPORT,159,3,53,14,
                     WS_GROUP,0,HIDC_BUTTON_IMPORT
     PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,214,3,53,14,0,0,
@@ -1704,6 +1704,53 @@ BEGIN
     GROUPBOX        "キーワードヘルプ機能",IDC_STATIC,3,55,264,47
 END
 
+IDD_PROP_REGEX DIALOGEX 0, 0, 271, 211
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "ＭＳ Ｐゴシック"
+BEGIN
+    GROUPBOX        "正規表現キーワード(&K)",IDC_FRAME_REGEX,4,24,264,165,0,
+                    0,HIDC_FRAME_REGEX
+    CONTROL         "List5",IDC_LIST_REGEX,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | 
+                    LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | 
+                    WS_TABSTOP,9,33,213,118,0,HIDC_LIST_REGEX
+    LTEXT           "正規表現(&N)",IDC_LABEL_REGEX_KEYWORD,13,157,38,8,NOT 
+                    WS_GROUP,0,HIDC_LABEL_REGEX_KEYWORD
+    EDITTEXT        IDC_EDIT_REGEX,53,155,169,14,ES_AUTOHSCROLL,0,
+                    HIDC_EDIT_REGEX
+    LTEXT           "色指定(&C)",IDC_LABEL_REGEX_COLOR,20,173,31,8,NOT 
+                    WS_GROUP,0,HIDC_LABEL_REGEX_COLOR
+    COMBOBOX        IDC_COMBO_REGEX_COLOR,53,171,128,180,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_REGEX_COLOR
+    PUSHBUTTON      "挿入(&S)",IDC_BUTTON_REGEX_INS,226,114,38,15,0,0,
+                    HIDC_BUTTON_REGEX_INS
+    PUSHBUTTON      "追加(&A)",IDC_BUTTON_REGEX_ADD,226,131,38,15,0,0,
+                    HIDC_BUTTON_REGEX_ADD
+    PUSHBUTTON      "更新(&E)",IDC_BUTTON_REGEX_UPD,226,149,38,15,0,0,
+                    HIDC_BUTTON_REGEX_UPD
+    PUSHBUTTON      "削除(&D)",IDC_BUTTON_REGEX_DEL,226,167,38,15,0,0,
+                    HIDC_BUTTON_REGEX_DEL
+    PUSHBUTTON      "先頭(&T)",IDC_BUTTON_REGEX_TOP,226,33,38,15,0,0,
+                    HIDC_BUTTON_REGEX_TOP
+    PUSHBUTTON      "上へ(&U)",IDC_BUTTON_REGEX_UP,226,51,38,15,0,0,
+                    HIDC_BUTTON_REGEX_UP
+    PUSHBUTTON      "下へ(&G)",IDC_BUTTON_REGEX_DOWN,226,69,38,15,0,0,
+                    HIDC_BUTTON_REGEX_DOWN
+    PUSHBUTTON      "最終(&B)",IDC_BUTTON_REGEX_LAST,226,87,38,15,0,0,
+                    HIDC_BUTTON_REGEX_LAST
+    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_REGEX_IMPORT,156,193,53,
+                    14,WS_GROUP,0,HIDC_BUTTON_REGEX_IMPORT
+    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_REGEX_EXPORT,212,193,53,
+                    14,0,0,HIDC_BUTTON_REGEX_EXPORT
+    RTEXT           "BREGEXP.DLL Version",IDC_LABEL_REGEX_VERSION,118,16,148,
+                    10,NOT WS_GROUP,WS_EX_TRANSPARENT,
+                    HIDC_LABEL_REGEX_VERSION
+    CONTROL         "正規表現キーワードを使用する(&R)",IDC_CHECK_REGEX,
+                    "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,6,
+                    118,13,0,HIDC_CHECK_REGEX
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2100,6 +2147,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 206
     END
+
+    IDD_PROP_REGEX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 264
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 204
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2142,7 +2197,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,102,0
+ PRODUCTVERSION 1,2,103,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2166,7 +2221,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.102.0\0"
+            VALUE "ProductVersion", "1.2.103.0\0"
         END
     END
     BLOCK "VarFileInfo"

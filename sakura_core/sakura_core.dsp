@@ -390,6 +390,14 @@ SOURCE=.\CPropTypes.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CPropTypesRegex.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CRegexKeyword.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CRunningTimer.cpp
 # End Source File
 # Begin Source File
@@ -664,6 +672,10 @@ SOURCE=.\CPropCommon.h
 # Begin Source File
 
 SOURCE=.\CPropTypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CRegexKeyword.h
 # End Source File
 # Begin Source File
 

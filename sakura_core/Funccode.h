@@ -247,6 +247,7 @@
 #define F_TYPE_SCREEN		31115	/* タイプ別設定『スクリーン』 */
 #define F_TYPE_COLOR		31116	/* タイプ別設定『カラー』 */
 #define F_TYPE_HELPER		31117	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
+#define F_TYPE_REGEX_KEYWORD	31118	/* タイプ別設定『正規表現キーワード』 */	//@@@ 2001.11.17 add MIK
 #define F_OPTION_GENERAL	32000	/* 共通設定『全般』 */
 #define F_OPTION_WINDOW		32001	/* 共通設定『ウィンドウ』 */
 #define F_OPTION_EDIT		32002	/* 共通設定『編集』 */

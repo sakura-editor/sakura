@@ -613,6 +613,20 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	nIdx++;
 	// 2001/06/14 End
 
+	// 2001.11.17 add start MIK タイプ別設定に正規表現キーワードタブ追加
+	memset( &psp[nIdx], 0, sizeof( PROPSHEETPAGE ) );
+	psp[nIdx].dwSize = sizeof( PROPSHEETPAGE );
+	psp[nIdx].dwFlags = PSP_USETITLE | PSP_HASHELP;
+	psp[nIdx].hInstance = m_hInstance;
+	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_REGEX );
+	psp[nIdx].pszIcon = NULL;
+	psp[nIdx].pfnDlgProc = (DLGPROC)PropTypesRegex;
+	psp[nIdx].pszTitle = "正規表現キーワード";
+	psp[nIdx].lParam = (LPARAM)this;
+	psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+	// 2001.11.17 add end MIK
+
 	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
 	psh.dwSize = sizeof( PROPSHEETHEADER );
 // JEPROtest Sept. 30, 2000 タイプ別設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
@@ -850,6 +864,13 @@ BOOL CPropTypes::DispatchEvent_p1(
 		/*NOTREACHED*/
 		break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.11.17 add start MIK
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids1 );
+		return TRUE;
+//@@@ 2001.11.17 add end MIK
 
 	}
 	return FALSE;
@@ -1200,6 +1221,13 @@ BOOL CPropTypes::DispatchEvent_p2(
 		/*NOTREACHED*/
 		break;
 //To Here  Jul. 05, 2001
+
+//@@@ 2001.11.17 add start MIK
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids3 );
+		return TRUE;
+//@@@ 2001.11.17 add end MIK
 
 	}
 	return FALSE;
@@ -2301,6 +2329,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 				}
 				/* 現在選択されている色タイプ */
 				::SendMessage( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
+				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 			case IDC_CHECK_FAT:	/* 太字か */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FAT ) ){
@@ -2323,6 +2352,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 
 			case IDC_BUTTON_IMPORT:	/* 色の設定をインポート */
 				p3_Import_Colors( hwndDlg );
+				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 
 			case IDC_BUTTON_EXPORT:	/* 色の設定をエクスポート */
@@ -2449,6 +2479,13 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 		/*NOTREACHED*/
 		break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.11.17 add start MIK
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids2 );
+		return TRUE;
+//@@@ 2001.11.17 add end MIK
 
 	}
 	return FALSE;
@@ -2919,6 +2956,11 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 		case IDD_PROPTYPESP2:
 		nContextID = ::FuncID_To_HelpContextID(F_TYPE_HELPER);
 		break;
+//@@@ 2001.11.17 add start MIK
+	case IDD_PROP_REGEX:
+		nContextID = ::FuncID_To_HelpContextID(F_TYPE_REGEX_KEYWORD);
+		break;
+//@@@ 2001.11.17 add end MIK
 	default:
 		nContextID = -1;
 		break;
@@ -2982,6 +3024,7 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 	//	To Here Jun. 6, 2001 genta
 }
 //	To Here Sept. 10, 2000
+
 
 
 /*[EOF]*/
