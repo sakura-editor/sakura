@@ -884,6 +884,12 @@ LRESULT CEditView::DispatchEvent(
 		m_bPrevCommand = 0;
 		return 0L;
 
+	// 2004.04.27 Moca From Here ALT+xでALTを押したままだとキーリピートがOFFにならない対策
+	case WM_SYSKEYUP:
+		m_bPrevCommand = 0;
+		// 念のため呼ぶ
+		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+	// 2004.04.27 To Here
 
 //	case WM_MBUTTONDBLCLK:
 	case WM_LBUTTONDBLCLK:
