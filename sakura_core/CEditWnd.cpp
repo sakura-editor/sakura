@@ -249,7 +249,8 @@ HWND CEditWnd::Create(
 	wc.cbSize			= sizeof( wc );
 	wc.hIconSm			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 	if( 0 == ( atom = RegisterClassEx( &wc ) ) ){
-//		return NULL;
+		//	2004.05.13 Moca return NULLを有効にした
+		return NULL;
 	}
 
 	/* ウィンドウサイズ継承 */
@@ -274,6 +275,7 @@ HWND CEditWnd::Create(
 	}
 
 	/* ウィンドウ位置指定 */
+
 	int nWinOX, nWinOY;
 	nWinOX = CW_USEDEFAULT;
 	nWinOY = 0;
@@ -517,20 +519,25 @@ HWND CEditWnd::Create(
 				m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 			}
 		}
-		//	Mar. 7, 2002 genta 文書タイプの強制指定
-		if( nDocumentType >= 0 ){
-			m_cEditDoc.SetDocumentType( nDocumentType, true );
-			//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
-			m_cEditDoc.LockDocumentType();
-			/* 設定変更を反映させる */
-			m_cEditDoc.OnChangeSetting();
-		}
 		delete [] pszPathNew;
 	}
 	else {
 		//	Nov. 20, 2000 genta
 		m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 	}
+	//	Mar. 7, 2002 genta 文書タイプの強制指定
+	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
+	if( nDocumentType >= 0 ){
+		m_cEditDoc.SetDocumentType( nDocumentType, true );
+		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
+		m_cEditDoc.LockDocumentType();
+		/* 設定変更を反映させる */
+		m_cEditDoc.OnChangeSetting();
+	}
+	//	Jun. 4 ,2004 genta ファイル名指定が無くても読みとり専用強制指定を有効にする
+	m_cEditDoc.m_bReadOnly = bReadOnly;
+	m_cEditDoc.SetParentCaption();
+	
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
 	return m_hWnd;
