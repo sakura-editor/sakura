@@ -2548,7 +2548,7 @@ DWORD NetConnect ( const char strNetWorkPass[] )
 	@param cesc  [in] エスケープしないといけない文字
 	@param cwith [in] エスケープに使う文字
 	
-	@retval 出力したバイト数
+	@retval 出力したバイト数 (Unicodeの場合は文字数)
 
 	文字列中にそのまま使うとまずい文字がある場合にその文字の前に
 	エスケープキャラクタを挿入するために使う．
@@ -2561,18 +2561,19 @@ DWORD NetConnect ( const char strNetWorkPass[] )
 	@date 2002/01/30 genta &専用(dupamp)から一般の文字を扱えるように拡張．
 		dupampはinline関数にした．
 	@date 2002/02/01 genta bugfix エスケープする文字とされる文字の出力順序が逆だった
+	@date 2004/06/19 genta Generic mapping対応
 */
-int cescape(const char* org, char* buf, char cesc, char cwith)
+int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith)
 {
-	char *out = buf;
-	for( ; *org != '\0'; ++org, ++out ){
+	TCHAR *out = buf;
+	for( ; *org != _T('\0'); ++org, ++out ){
 		if( *org == cesc ){
 			*out = cwith;
 			++out;
 		}
 		*out = *org;
 	}
-	*out = '\0';
+	*out = _T('\0');
 	return out - buf;
 }
 
