@@ -953,6 +953,13 @@ void CEditView::Command_UNDO( void )
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
+
+	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
+		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
+		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^2].Redraw();
+		m_pcEditDoc->m_cEditViewArr[(m_nMyIndex^1)^2].Redraw();
+	//	2001/06/21 End
+
 	}
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 	return;
@@ -1140,6 +1147,13 @@ void CEditView::Command_REDO( void )
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
+
+	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
+		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
+		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^2].Redraw();
+		m_pcEditDoc->m_cEditViewArr[(m_nMyIndex^1)^2].Redraw();
+	//	2001/06/21 End
+
 	}
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
@@ -1868,3 +1882,55 @@ void CEditView::SmartIndent_CPP( char cChar )
 	}	
 	return;
 }
+
+
+// 2001/06/20 Start by asa-o
+
+// 画面を上へ1行スクロール
+void CEditView::Command_WndScrollUp(void)
+{
+	ScrollAtV(m_nViewTopLine - 1);
+	// テキストが選択されていない
+	if(!IsTextSelected())
+	{
+		// カーソルが画面外に出た
+		if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - 3)
+		{
+			CaretUnderLineOFF(TRUE);
+			MoveCursor(m_nCaretPosX, m_nViewRowNum + m_nViewTopLine - 3, FALSE);
+			ShowEditCaret();
+			CaretUnderLineON(TRUE);
+		}
+	}
+	if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+	{
+		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+		pcEditView -> ScrollAtV( m_nViewTopLine );
+	}
+}
+
+// 画面を下へ1行スクロール
+void CEditView::Command_WndScrollDown(void)
+{
+	ScrollAtV(m_nViewTopLine + 1);
+	// テキストが選択されていない
+	if(!IsTextSelected())
+	{
+		// カーソルが画面外に出た
+		if(m_nCaretPosY < m_nViewTopLine + 1)
+		{
+			CaretUnderLineOFF(TRUE);
+			MoveCursor(m_nCaretPosX, m_nViewTopLine + 1, FALSE);
+			ShowEditCaret();
+			CaretUnderLineON(TRUE);
+		}
+	}
+	if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+	{
+		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+		pcEditView -> ScrollAtV( m_nViewTopLine );
+	}
+}
+
+// 2001/06/20 End
+

@@ -413,6 +413,8 @@ struct Common {
 
 	BOOL				m_bDispFUNCKEYWND;				/* 次回ウィンドウを開いたときファンクションキーを表示する */
 	int					m_nFUNCKEYWND_Place;			/* ファンクションキー表示位置／0:上 1:下 */
+	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
+	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
 	/* カスタムメニュー情報 */
 	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];

@@ -3148,6 +3148,13 @@ void  CEditDoc::SetActivePane( int nIndex )
 		m_cHokanMgr.ChangeView( (LPARAM)&m_cEditViewArr[m_nActivePaneIndex] );
 	}
 
+//	2001/06/20 Start by asa-o:	アクティブでないペインのカーソルアンダーバーを非表示
+	m_cEditViewArr[m_nActivePaneIndex].CaretUnderLineON(TRUE);
+	m_cEditViewArr[m_nActivePaneIndex^1].CaretUnderLineOFF(TRUE);
+	m_cEditViewArr[m_nActivePaneIndex^2].CaretUnderLineOFF(TRUE);
+	m_cEditViewArr[(m_nActivePaneIndex^2)^1].CaretUnderLineOFF(TRUE);
+//	2001/06/20 End
+
 	return;
 }
 

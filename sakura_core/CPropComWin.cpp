@@ -253,6 +253,10 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	/* アイコン付きメニュー */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuIcon, m_Common.m_bMenuIcon );
 
+	//	2001/06/20 Start by asa-o:	スクロールの同期
+	::CheckDlgButton( hwndDlg, IDC_CHECK_SplitterWndVScroll, m_Common.m_bSplitterWndVScroll );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_SplitterWndHScroll, m_Common.m_bSplitterWndHScroll );
+	//	2001/06/20 End
 
 	//	Fronm Here Sept. 9, 2000 JEPRO
 	//	ファンクションキーを表示する時だけその位置指定をEnableに設定
@@ -322,6 +326,10 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	/* アイコン付きメニュー */
 	m_Common.m_bMenuIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bMenuIcon );
 
+	//	2001/06/20 Start by asa-o:	スクロールの同期
+	m_Common.m_bSplitterWndVScroll = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SplitterWndVScroll );
+	m_Common.m_bSplitterWndHScroll = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SplitterWndHScroll );
+	//	2001/06/20 End
 
 
 

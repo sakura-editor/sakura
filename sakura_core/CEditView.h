@@ -106,6 +106,7 @@ public:
 	void OnChangeSetting( void );								/* 設定変更を反映させる */
 	void SetFont( void );										/* フォントの変更 */
 	void RedrawAll( void );										/* フォーカス移動時の再描画 */
+	void Redraw( void );										// 2001/06/21 asa-o 再描画
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 	DWORD DoGrep( CMemory*, CMemory*, CMemory*, BOOL, BOOL, BOOL, BOOL, BOOL, int );/* Grep実行 */
@@ -407,6 +408,8 @@ protected:
 	void Command_CURLINECENTER( void );		/* カーソル行をウィンドウ中央へ */
 	void Command_JUMPPREV(void);			// 移動履歴: 前へ
 	void Command_JUMPNEXT(void);			// 移動履歴: 次へ
+	void Command_WndScrollUp(void);			// 画面を上へ1行スクロール	// 2001/06/20 asa-o
+	void Command_WndScrollDown(void);		// 画面を下へ1行スクロール	// 2001/06/20 asa-o
 
 	/* 選択系 */
 	void Command_SELECTWORD( void );		/* 現在位置の単語選択 */

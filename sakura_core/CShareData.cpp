@@ -56,7 +56,7 @@ struct ARRHEAD {
 	
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 12;
+const unsigned int uShareDataVersion = 13;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､ 
@@ -615,14 +615,16 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nToolBarButtonIdxArr[++i] = 346;	//コマンド一覧	//Oct. 8, 2000 JEPRO 追加
 
 
-		m_pShareData->m_Common.m_nToolBarButtonNum = ++i;	/* ツールバーボタンの数 */
-		m_pShareData->m_Common.m_bToolBarIsFlat = TRUE;		/* フラットツールバーにする／しない */
+		m_pShareData->m_Common.m_nToolBarButtonNum = ++i;		/* ツールバーボタンの数 */
+		m_pShareData->m_Common.m_bToolBarIsFlat = TRUE;			/* フラットツールバーにする／しない */
 
 
-		m_pShareData->m_Common.m_bDispTOOLBAR = TRUE;		/* 次回ウィンドウを開いたときツールバーを表示する */
-		m_pShareData->m_Common.m_bDispSTATUSBAR = TRUE;		/* 次回ウィンドウを開いたときステータスバーを表示する */
-		m_pShareData->m_Common.m_bDispFUNCKEYWND = FALSE;	/* 次回ウィンドウを開いたときファンクションキーを表示する */
-		m_pShareData->m_Common.m_nFUNCKEYWND_Place = 1;		/* ファンクションキー表示位置／0:上 1:下 */
+		m_pShareData->m_Common.m_bDispTOOLBAR = TRUE;			/* 次回ウィンドウを開いたときツールバーを表示する */
+		m_pShareData->m_Common.m_bDispSTATUSBAR = TRUE;			/* 次回ウィンドウを開いたときステータスバーを表示する */
+		m_pShareData->m_Common.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
+		m_pShareData->m_Common.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
+		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
+		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
 		/* カスタムメニュー情報 */
 		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[0], "右クリックメニュー", i );
