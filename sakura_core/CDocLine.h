@@ -20,9 +20,8 @@ class CDocLine;
 #ifndef _CDOCLINE_H_
 #define _CDOCLINE_H_
 
-//#include "CMemory.h" // 2002/2/10 aroka
 #include "CEOL.h"
-class CMemory;// 2002/2/10 aroka
+#include "CMemory.h"
 
 #ifndef TRUE
 	#define TRUE 1
@@ -61,6 +60,9 @@ public:
 	bool		IsBookMarked( void ) const { return m_bBookMark;}	// ブックマークの状態を取得する 2001.12.14 hor
 	void		SetBookMark ( bool bFlg )  { m_bBookMark = bFlg;}	// ブックマークの状態を指定する 2001.12.14 hor
 
+	bool		IsEmptyLine( void );	//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
+	int			GetLengthWithoutEOL( void ){ return m_pLine->GetLength() - m_cEol.GetLen(); }
+	char*		GetPtr( void )             { return m_pLine->GetPtr(); }
 protected:
 	bool		m_bModify;					/*!< 変更フラグ */
 	bool		m_bBookMark;				/*!< ブックマーク */

@@ -81,7 +81,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_UNINDENT_TAB,		"S_UnindentTab",		"",					NULL}, //逆TABインデント
 	{F_INDENT_SPACE,		"S_IndentSpace",		"",					NULL}, //SPACEインデント
 	{F_UNINDENT_SPACE,		"S_UnindentSpace",		"",					NULL}, //逆SPACEインデント
-	{F_WORDSREFERENCE,		"S_WordReference",		"",					NULL}, //単語リファレンス
+//	{F_WORDSREFERENCE,		"S_WordReference",		"",					NULL}, //単語リファレンス
 	{F_LTRIM,				"S_LTrim",				"",					NULL}, //左(先頭)の空白を削除 2001.12.03 hor
 	{F_RTRIM,				"S_RTrim",				"",					NULL}, //右(末尾)の空白を削除 2001.12.03 hor
 	{F_SORT_ASC,			"S_SortAsc",			"",					NULL}, //選択行の昇順ソート 2001.12.06 hor

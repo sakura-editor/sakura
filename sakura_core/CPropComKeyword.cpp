@@ -283,12 +283,13 @@ BOOL CPropCommon::DispatchEvent_p7(
 					/* 削除対象のセットを使用しているファイルタイプを列挙 */
 					strcpy( pszLabel, "" );
 					for( i = 0; i < MAX_TYPES; ++i ){
-						if( nIndex1 == m_Types[i].m_nKeyWordSetIdx
-						||  nIndex1 == m_Types[i].m_nKeyWordSetIdx2 ){	//MIK
+						// 2002/04/25 YAZAKI Types全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
+						if( nIndex1 == m_Types_nKeyWordSetIdx[i]
+						||  nIndex1 == m_Types_nKeyWordSetIdx2[i] ){	//MIK
 							strcat( pszLabel, "・" );
-							strcat( pszLabel, m_Types[i].m_szTypeName );
+							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeName );
 							strcat( pszLabel, "（" );
-							strcat( pszLabel, m_Types[i].m_szTypeExts );
+							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeExts );
 							strcat( pszLabel, "）" );
 							strcat( pszLabel, "\n" );
 						}
@@ -302,17 +303,18 @@ BOOL CPropCommon::DispatchEvent_p7(
 					}
 					/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
 					for( i = 0; i < MAX_TYPES; ++i ){
-						if( nIndex1 == m_Types[i].m_nKeyWordSetIdx ){
-							m_Types[i].m_nKeyWordSetIdx = -1;
+						// 2002/04/25 YAZAKI Types全体を保持する必要はない。
+						if( nIndex1 == m_Types_nKeyWordSetIdx[i] ){
+							m_Types_nKeyWordSetIdx[i] = -1;
 						}
-						else if( nIndex1 < m_Types[i].m_nKeyWordSetIdx ){
-							m_Types[i].m_nKeyWordSetIdx--;
+						else if( nIndex1 < m_Types_nKeyWordSetIdx[i] ){
+							m_Types_nKeyWordSetIdx[i]--;
 						}
-						if( nIndex1 == m_Types[i].m_nKeyWordSetIdx2 ){	//MIK
-							m_Types[i].m_nKeyWordSetIdx2 = -1;			//MIK
+						if( nIndex1 == m_Types_nKeyWordSetIdx2[i] ){	//MIK
+							m_Types_nKeyWordSetIdx2[i] = -1;			//MIK
 						}												//MIK
-						else if( nIndex1 < m_Types[i].m_nKeyWordSetIdx2 ){
-							m_Types[i].m_nKeyWordSetIdx--;
+						else if( nIndex1 < m_Types_nKeyWordSetIdx2[i] ){
+							m_Types_nKeyWordSetIdx2[i]--;
 						}
 					}
 					/* ｎ番目のセットを削除 */

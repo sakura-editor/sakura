@@ -930,7 +930,7 @@ void CPrintPreview::DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen )
 	//	¶Šñ‚¹xÀ•W
 	Print_DrawLine( hdc,
 		rect.left,
-		rect.bottom - m_pPrintSetting->m_nPrintFontHeight,
+		rect.bottom + m_pPrintSetting->m_nPrintFontHeight,
 		szFooterWork, lstrlen( szFooterWork ),
 		hFontZen
 	);
@@ -939,7 +939,7 @@ void CPrintPreview::DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen )
 	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
 	Print_DrawLine( hdc,
 		( rect.right + rect.left - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
-		rect.bottom - m_pPrintSetting->m_nPrintFontHeight,
+		rect.bottom + m_pPrintSetting->m_nPrintFontHeight,
 		szFooterWork, lstrlen( szFooterWork ),
 		hFontZen
 	);
@@ -948,7 +948,7 @@ void CPrintPreview::DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen )
 	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
 	Print_DrawLine( hdc,
 		rect.right - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth,
-		rect.bottom - m_pPrintSetting->m_nPrintFontHeight,
+		rect.bottom + m_pPrintSetting->m_nPrintFontHeight,
 		szFooterWork, lstrlen( szFooterWork ),
 		hFontZen
 	);

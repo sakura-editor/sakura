@@ -125,35 +125,35 @@ IDD_PROP1P1 DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    GROUPBOX        "カーソル",IDC_STATIC,3,3,140,84
+    GROUPBOX        "カーソル",IDC_STATIC,3,3,141,96
     CONTROL         "フリーカーソル(&F)",IDC_CHECK_FREECARET,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,18,67,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,14,67,10,0,
                     HIDC_CHECK_FREECARET
     CONTROL         "自動インデント(&U)",IDC_CHECK_INDENT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,33,67,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,29,67,10,0,
                     HIDC_CHECK_INDENT
     CONTROL         "全角空白もインデント(&Z)",IDC_CHECK_INDENT_WSPACE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,48,86,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,44,86,10,0,
                     HIDC_CHECK_INDENT_WSPACE
-    GROUPBOX        "カーソル形状",IDC_STATIC,3,90,140,35,WS_GROUP
+    GROUPBOX        "カーソル形状",IDC_STATIC,3,103,140,29,WS_GROUP
     CONTROL         "&Windows風",IDC_RADIO_CARETTYPE0,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,105,45,10,0,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,116,45,10,0,
                     HIDC_RADIO_CARETTYPE0
     CONTROL         "MS-&DOS風",IDC_RADIO_CARETTYPE1,"Button",
-                    BS_AUTORADIOBUTTON,60,105,45,10,0,HIDC_RADIO_CARETTYPE1
-    GROUPBOX        "タスクトレイ",IDC_STATIC,3,130,140,75,WS_GROUP
+                    BS_AUTORADIOBUTTON,60,116,45,10,0,HIDC_RADIO_CARETTYPE1
+    GROUPBOX        "タスクトレイ",IDC_STATIC,3,138,140,75,WS_GROUP
     CONTROL         "タスクトレイを使う(&T)",IDC_CHECK_USETRAYICON,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,145,75,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,153,75,10,0,
                     HIDC_CHECK_USETRAYICON
     CONTROL         "タスクトレイに常駐(&R)",IDC_CHECK_STAYTASKTRAY,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,160,78,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,168,78,10,0,
                     HIDC_CHECK_STAYTASKTRAY
     LTEXT           "左クリックメニューのショートカットキー(&K)",IDC_STATIC,
-                    8,175,120,8
+                    8,183,120,8
     CONTROL         "HotKey1",IDC_HOTKEY_TRAYMENU,"msctls_hotkey32",
-                    WS_BORDER | WS_TABSTOP,8,185,95,12,0,
+                    WS_BORDER | WS_TABSTOP,8,193,95,12,0,
                     HIDC_HOTKEY_TRAYMENU
     GROUPBOX        "スクロール",IDC_STATIC,150,3,117,65,WS_GROUP
     LTEXT           "行数(&N)",IDC_STATIC,155,19,24,8,NOT WS_GROUP
@@ -189,7 +189,12 @@ BEGIN
     CONTROL         "単語単位で移動するときに\n単語の両端に止まる(&B)",
                     IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD,"Button",
                     BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,8,
-                    64,102,19,0,HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD
+                    60,102,19,0,HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD
+    CONTROL         "段落単位で移動するときに\n段落の両端に止まる(&P)",
+                    IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH,"Button",
+                    BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,8,
+                    79,102,19,0,
+                    HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH
 END
 
 IDD_FIND DIALOGEX 30, 0, 277, 93
@@ -239,7 +244,7 @@ IDD_PROP_FILE DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     CONTROL         "排他制御しない(&N)",IDC_CHECK_EXCVLUSIVE_NO,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,8,18,70,10,0,
@@ -1507,7 +1512,7 @@ END
 IDD_PROP_MACRO DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "名前(&N)",IDC_STATIC,6,164,24,8
     EDITTEXT        IDC_MACRONAME,35,161,187,14,ES_AUTOHSCROLL,0,
@@ -1635,10 +1640,10 @@ GUIDELINES DESIGNINFO DISCARDABLE
 BEGIN
     IDD_PROP1P1, DIALOG
     BEGIN
-        LEFTMARGIN, 7
+        LEFTMARGIN, 3
         RIGHTMARGIN, 263
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 211
     END
 
     IDD_FIND, DIALOG
@@ -1990,7 +1995,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,107,7
+ PRODUCTVERSION 1,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2014,7 +2019,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.107.7\0"
+            VALUE "ProductVersion", "1.3.0.0\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2069,12 +2074,19 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_FILENEW               "新規作成"
-    F_FILEOPEN              "開く"
+    F_FILEOPEN              "開く..."
     F_FILESAVE              "上書き保存"
     F_FILESAVEAS_DIALOG     "名前を付けて保存"
     F_FILECLOSE             "閉じて(無題)"
-    F_FILECLOSE_OPEN        "閉じて開く"
+    F_FILECLOSE_OPEN        "閉じて開く..."
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_SPLIT_VH              "縦横に分割／分割解除"
+    F_WINCLOSE              "ウィンドウを閉じる"
+    F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2088,6 +2100,13 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_PRINT                 "印刷..."
+    F_PRINT_PREVIEW         "印刷プレビュー..."
+    F_PRINT_PAGESETUP       "印刷ページ設定..."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     F_OPEN_HHPP             "同名のC/C++ヘッダファイルを開く"
     F_OPEN_CCPP             "同名のC/C++ソースファイルを開く"
     F_OPEN_HfromtoC         "同名のC/C++ヘッダ(ソース)を開く"
@@ -2097,16 +2116,72 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_PRINT                 "印刷"
-    F_PRINT_PREVIEW         "印刷プレビュー"
-    F_PRINT_PAGESETUP       "印刷ページ設定"
+    F_BROWSE                "ブラウズ"
+    F_READONLY              "読み取り専用"
+    F_PROPERTY_FILE         "ファイルのプロパティ"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_BROWSE                "ブラウズ"
-    F_READONLY              "読み取り専用"
-    F_PROPERTY_FILE         "ファイルのプロパティ"
+    F_EXITALL               "サクラエディタの全終了"
+    F_CHAR                  "文字入力"
+    F_IME_CHAR              "全角文字入力"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_UNDO                  "元に戻す"
+    F_REDO                  "やり直し"
+    F_DELETE                "削除"
+    F_DELETE_BACK           "カーソル前を削除"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_CUT                   "切り取り"
+    F_COPY                  "コピー"
+    F_COPY_CRLF             "CRLF改行でコピー"
+    F_PASTE                 "貼り付け"
+    F_PASTEBOX              "矩形貼り付け"
+    F_INSTEXT               "テキストを貼り付け"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_SELECTWORD            "現在位置の単語選択"
+    F_SELECTALL             "すべて選択"
+    F_BEGIN_SEL             "範囲選択開始"
+    F_UP_SEL                "(選択)カーソル上移動"
+    F_DOWN_SEL              "(選択)カーソル下移動"
+    F_LEFT_SEL              "(選択)カーソル左移動"
+    F_RIGHT_SEL             "(選択)カーソル右移動"
+    F_UP2_SEL               "(選択)カーソル上移動(２行ごと)"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_LTRIM                 "左(先頭)の空白を削除"
+    F_RTRIM                 "右(末尾)の空白を削除"
+    F_SORT_ASC              "選択行の昇順ソート"
+    F_SORT_DESC             "選択行の降順ソート"
+    F_MERGE                 "選択行のマージ"
+    F_RECONVERT             "再変換"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_CHGMOD_INS            "挿入／上書きモード切り替え"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_COPY_ADDCRLF          "折り返し位置に改行をつけてコピー"
+    F_COPYLINES             "選択範囲内全行コピー"
+    F_COPYLINESASPASSAGE    "選択範囲内全行引用符付きコピー"
+    F_COPYLINESWITHLINENUMBER "選択範囲内全行行番号付きコピー"
+    F_COPYPATH              "このファイルのパス名をコピー"
+    F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
+    F_COPYFNAME             "このファイル名をコピー"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2154,21 +2229,6 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXITALL               "サクラエディタの全終了"
-    F_CHAR                  "文字入力"
-    F_IME_CHAR              "全角文字入力"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_UNDO                  "元に戻す(Undo)"
-    F_REDO                  "やり直し(Redo)"
-    F_DELETE                "削除"
-    F_DELETE_BACK           "カーソル前を削除"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
     F_WordDeleteToStart     "単語の左端まで削除"
     F_WordDeleteToEnd       "単語の右端まで削除"
     F_WordCut               "単語切り取り"
@@ -2192,29 +2252,6 @@ BEGIN
     F_UNINDENT_TAB          "逆TABインデント"
     F_INDENT_SPACE          "SPACEインデント"
     F_UNINDENT_SPACE        "逆SPACEインデント"
-    F_WORDSREFERENCE        "単語リファレンス"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_LTRIM                 "左(先頭)の空白を削除"
-    F_RTRIM                 "右(末尾)の空白を削除"
-    F_SORT_ASC              "選択行の昇順ソート"
-    F_SORT_DESC             "選択行の降順ソート"
-    F_MERGE                 "選択行のマージ"
-    F_RECONVERT             "再変換"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_SELECTWORD            "現在位置の単語選択"
-    F_SELECTALL             "すべて選択"
-    F_BEGIN_SEL             "範囲選択開始"
-    F_UP_SEL                "(選択)カーソル上移動"
-    F_DOWN_SEL              "(選択)カーソル下移動"
-    F_LEFT_SEL              "(選択)カーソル左移動"
-    F_RIGHT_SEL             "(選択)カーソル右移動"
-    F_UP2_SEL               "(選択)カーソル上移動(２行ごと)"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2243,27 +2280,6 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_BEGIN_BOX             "矩形範囲選択開始"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_CUT                   "切り取り"
-    F_COPY                  "コピー"
-    F_COPY_CRLF             "CRLF改行でコピー"
-    F_PASTE                 "貼り付け"
-    F_PASTEBOX              "矩形貼り付け"
-    F_INSTEXT               "テキストを貼り付け"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_COPY_ADDCRLF          "折り返し位置に改行をつけてコピー"
-    F_COPYLINES             "選択範囲内全行コピー"
-    F_COPYLINESASPASSAGE    "選択範囲内全行引用符付きコピー"
-    F_COPYLINESWITHLINENUMBER "選択範囲内全行行番号付きコピー"
-    F_COPYPATH              "このファイルのパス名をコピー"
-    F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
-    F_COPYFNAME             "このファイル名をコピー"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2361,11 +2377,6 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CHGMOD_INS            "挿入／上書きモード切り替え"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
     F_CANCEL_MODE           "各種モードの取り消し"
     F_SHOWTOOLBAR           "ツールバーの表示／非表示"
     F_SHOWFUNCKEY           "ファンクションキーの表示／非表示"
@@ -2407,13 +2418,6 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_SPLIT_V               "上下に分割／分割解除"
     F_SPLIT_H               "左右に分割／分割解除"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_SPLIT_VH              "縦横に分割／分割解除"
-    F_WINCLOSE              "ウィンドウを閉じる"
-    F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
 END
 
 STRINGTABLE DISCARDABLE 

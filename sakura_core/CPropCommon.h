@@ -105,8 +105,11 @@ public:
 	KEYDATA			m_pKeyNameArr[100];				/* キー割り当て表 */
 
 	CKeyWordSetMgr	m_CKeyWordSetMgr;
-	Types			m_Types[MAX_TYPES];
-//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	//2002/04/25 YAZAKI Types全体を保持する必要はない。
+	//Types			m_Types[MAX_TYPES];
+	int				m_Types_nKeyWordSetIdx[MAX_TYPES];
+	int				m_Types_nKeyWordSetIdx2[MAX_TYPES];
+	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
 	char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
 

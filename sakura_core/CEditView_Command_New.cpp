@@ -2007,52 +2007,162 @@ void CEditView::Command_WndScrollUp(void)
 
 
 /* 次の段落へ進む
-	2002/04/19
+	2002/04/26 段落の両端で止まるオプションを追加
+	2002/04/19 新規
 */
 void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 {
 	CDocLine* pcDocLine;
-	int nCaretPointer = +1;
-	char* pLine;
-	int nLineLen;
-	int i;
+	int nCaretPointer = 0;
+	
+	bool nFirstLineIsEmptyLine = false;
+	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
+	if ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ){
+		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
+		nCaretPointer++;
+	}
+	else {
+		// EOF行でした。
+		return;
+	}
+
+	/* 次に、nFirstLineIsEmptyLineと異なるところまで読み飛ばす */
 	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
-		pLine = pcDocLine->m_pLine->GetPtr();
-		nLineLen = pcDocLine->m_pLine->GetLength() - pcDocLine->m_cEol.GetLen();
-		for ( i = 0; i < nLineLen; i++ ){
-			if (pLine[i] != ' ' && pLine[i] != '\t'){
-				break;	//	スペース、タブ以外の文字があったので移動続行。
-			}
+		if ( pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine ){
+			nCaretPointer++;
 		}
-		if (i == nLineLen)	break;	//	すべてスペースかタブだけだったので移動終了。
-		nCaretPointer++;	//	次の行
+		else {
+			break;
+		}
 	};
+
+	/*	nFirstLineIsEmptyLineが空行だったら、今見ているところは非空行。すなわちおしまい。
+		nFirstLineIsEmptyLineが非空行だったら、今見ているところは空行。
+	*/
+	if ( nFirstLineIsEmptyLine == true ){
+		//	おしまい。
+	}
+	else {
+		//	いま見ているところは空行の1行目
+		if ( m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
+		}
+		else {
+			/* 仕上げに、空行じゃないところまで進む */
+			while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+				if ( pcDocLine->IsEmptyLine() ){
+					nCaretPointer++;
+				}
+				else {
+					break;
+				}
+			};
+		}
+	}
+
 	//	EOFまで来たり、目的の場所まできたので移動終了。
-	Cursor_UPDOWN( nCaretPointer, bSelect );
+
+	/* 移動距離を計算 */
+	int nCaretPosX_Layo;
+	int nCaretPosY_Layo;
+
+	/* 移動前の物理位置 */
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_nCaretPosX_PHY, m_nCaretPosY_PHY,
+		&nCaretPosX_Layo, &nCaretPosY_Layo
+	);
+
+	/* 移動後の物理位置 */
+	int nCaretPosY_Layo_CaretPointer;
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_nCaretPosX_PHY, m_nCaretPosY_PHY + nCaretPointer,
+		&nCaretPosX_Layo, &nCaretPosY_Layo_CaretPointer
+	);
+
+	Cursor_UPDOWN( nCaretPosY_Layo_CaretPointer - nCaretPosY_Layo, bSelect );
 	return;
 }
 
+/* 前の段落へ進む
+	2002/04/26 段落の両端で止まるオプションを追加
+	2002/04/19 新規
+*/
 void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
 {
 	CDocLine* pcDocLine;
 	int nCaretPointer = -1;
-	char* pLine;
-	int nLineLen;
-	int i;
+
+	bool nFirstLineIsEmptyLine = false;
+	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
+	if ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ){
+		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
+		nCaretPointer--;
+	}
+	else {
+		nFirstLineIsEmptyLine = true;
+		nCaretPointer--;
+	}
+
+	/* 次に、nFirstLineIsEmptyLineと異なるところまで読み飛ばす */
 	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
-		pLine = pcDocLine->m_pLine->GetPtr();
-		nLineLen = pcDocLine->m_pLine->GetLength() - pcDocLine->m_cEol.GetLen();
-		for ( i = 0; i < nLineLen; i++ ){
-			if (pLine[i] != ' ' && pLine[i] != '\t'){
-				break;	//	スペース、タブ以外の文字があったので移動続行。
-			}
+		if ( pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine ){
+			nCaretPointer--;
 		}
-		nCaretPointer--;	//	前の行
-		if (i == nLineLen)	break;	//	すべてスペースかタブだけだったので移動終了。
+		else {
+			break;
+		}
 	};
-	nCaretPointer++;	//	補正
+
+	/*	nFirstLineIsEmptyLineが空行だったら、今見ているところは非空行。すなわちおしまい。
+		nFirstLineIsEmptyLineが非空行だったら、今見ているところは空行。
+	*/
+	if ( nFirstLineIsEmptyLine == true ){
+		//	おしまい。
+		if ( m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
+			nCaretPointer++;	//	空行の最上行（段落の末端の次の行）で止まる。
+		}
+		else {
+			/* 仕上げに、空行じゃないところまで進む */
+			while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+				if ( pcDocLine->IsEmptyLine() ){
+					break;
+				}
+				else {
+					nCaretPointer--;
+				}
+			};
+			nCaretPointer++;	//	空行の最上行（段落の末端の次の行）で止まる。
+		}
+	}
+	else {
+		//	いま見ているところは空行の1行目
+		if ( m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
+			nCaretPointer++;
+		}
+		else {
+			nCaretPointer++;
+		}
+	}
+
 	//	EOFまで来たり、目的の場所まできたので移動終了。
-	Cursor_UPDOWN( nCaretPointer, bSelect );
+
+	/* 移動距離を計算 */
+	int nCaretPosX_Layo;
+	int nCaretPosY_Layo;
+
+	/* 移動前の物理位置 */
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_nCaretPosX_PHY, m_nCaretPosY_PHY,
+		&nCaretPosX_Layo, &nCaretPosY_Layo
+	);
+
+	/* 移動後の物理位置 */
+	int nCaretPosY_Layo_CaretPointer;
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_nCaretPosX_PHY, m_nCaretPosY_PHY + nCaretPointer,
+		&nCaretPosX_Layo, &nCaretPosY_Layo_CaretPointer
+	);
+
+	Cursor_UPDOWN( nCaretPosY_Layo_CaretPointer - nCaretPosY_Layo, bSelect );
 	return;
 }
 

@@ -1058,8 +1058,11 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		m_cPropCommon.m_pKeyNameArr[i] = m_pShareData->m_pKeyNameArr[i];
 	}
 	m_cPropCommon.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
+
+	//2002/04/25 YAZAKI Types全体を保持する必要はない。
 	for( i = 0; i < MAX_TYPES; ++i ){
-		m_cPropCommon.m_Types[i] = m_pShareData->m_Types[i];
+		m_cPropCommon.m_Types_nKeyWordSetIdx[i] = m_pShareData->m_Types[i].m_nKeyWordSetIdx;
+		m_cPropCommon.m_Types_nKeyWordSetIdx2[i] = m_pShareData->m_Types[i].m_nKeyWordSetIdx2;
 	}
 	/* マクロ関係
 	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
@@ -1107,13 +1110,11 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 //		}
 
 		for( i = 0; i < MAX_TYPES; ++i ){
-//			/* 変更されたか？ */
-//			if( 0 != memcmp( &m_pShareData->m_Types[i], &m_cPropCommon.m_Types[i], sizeof( Types ) ) ){
-				/* 変更された設定値のコピー */
-				m_pShareData->m_Types[i] = m_cPropCommon.m_Types[i];
-//				/* 変更フラグ(タイプ別設定) のセット */
-//				m_pShareData->m_nTypesModifyArr[i] = TRUE;
-//			}
+			//2002/04/25 YAZAKI Types全体を保持する必要はない。
+			/* 変更された設定値のコピー */
+//			m_pShareData->m_Types[i] = m_cPropCommon.m_Types[i];
+			m_pShareData->m_Types[i].m_nKeyWordSetIdx = m_cPropCommon.m_Types_nKeyWordSetIdx[i];
+			m_pShareData->m_Types[i].m_nKeyWordSetIdx2 = m_cPropCommon.m_Types_nKeyWordSetIdx2[i];
 		}
 
 		/* マクロ関係 */

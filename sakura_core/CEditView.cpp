@@ -1119,7 +1119,7 @@ LRESULT CEditView::DispatchEvent(
 		}
 		
 		return 0L;
-		
+	
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
 		if( (m_uMSIMEReconvertMsg && (uMsg == m_uMSIMEReconvertMsg)) 
@@ -3865,8 +3865,6 @@ VOID CEditView::OnTimer(
 
 
 
-
-
 /* マウス移動のメッセージ処理 */
 void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 {
@@ -5025,6 +5023,38 @@ BOOL CEditView::GetSelectedData(
 		);
 //		cmemBuf.SetData( "", 0 );
 		cmemBuf.SetDataSz( "" );
+
+		//<< 2002/04/18 Azumaiya
+		// サイズ分だけ要領をとっておく。
+		// 結構大まかに見ています。
+		int i = rcSel.bottom - rcSel.top;
+
+		// 最初に行数分の改行量を計算してしまう。
+		int nBufSize = strlen(CRLF) * i;
+
+		// 実際の文字量。
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
+		for(; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext)
+		{
+			pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
+			nLineLen = pcLayout->m_nLength;
+			if( NULL != pLine )
+			{
+				/* 指定された桁に対応する行のデータ内の位置を調べる */
+				nIdxFrom	= LineColmnToIndex( pLine, nLineLen, rcSel.left  );
+				nIdxTo		= LineColmnToIndex( pLine, nLineLen, rcSel.right );
+
+				nBufSize += nIdxTo - nIdxFrom;
+			}
+			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
+				break;
+			}
+		}
+
+		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
+		cmemBuf.AllocBuffer(nBufSize);
+		//>> 2002/04/18 Azumaiya
+
 		nRowNum = 0;
 		for( nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 //			if( nRowNum > 0 ){
@@ -5059,6 +5089,55 @@ BOOL CEditView::GetSelectedData(
 		}
 	}else{
 		cmemBuf.SetDataSz( "" );
+
+		//<< 2002/04/18 Azumaiya
+		//  これから貼り付けに使う領域の大まかなサイズを取得する。
+		//  大まかというレベルですので、サイズ計算の誤差が（容量を多く見積もる方に）結構出ると思いますが、
+		// まぁ、速さ優先ということで勘弁してください。
+		//  無駄な容量確保が出ていますので、もう少し精度を上げたいところですが・・・。
+		//  とはいえ、逆に小さく見積もることになってしまうと、かなり速度をとられる要因になってしまうので
+		// 困ってしまうところですが・・・。
+		m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen, &pcLayout );
+		int nBufSize = 0;
+		int i = m_nSelectLineTo - m_nSelectLineFrom;
+		// 先頭に引用符を付けるとき。
+		if ( NULL != pszQuote )
+		{
+			nBufSize += strlen(pszQuote);
+		}
+
+		// 行番号を付ける。
+		if ( bWithLineNumber )
+		{
+			nBufSize += nLineNumCols;
+		}
+
+		// 改行コードについて。
+		if ( neweol == EOL_UNKNOWN )
+		{
+			nBufSize += strlen(CRLF);
+		}
+		else
+		{
+			nBufSize += appendEol.GetLen();
+		}
+
+		// すべての行について同様の操作をするので、行数倍する。
+		nBufSize *= i;
+
+		// 実際の各行の長さ。
+		for (; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext )
+		{
+			nBufSize += pcLayout->m_nLength + appendEol.GetLen();
+			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
+				break;
+			}
+		}
+
+		// 調べた長さ分だけバッファを取っておく。
+		cmemBuf.AllocBuffer(nBufSize);
+		//>> 2002/04/18 Azumaiya
+
 		for( nLineNum = m_nSelectLineFrom; nLineNum <= m_nSelectLineTo; ++nLineNum ){
 //			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen );
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );

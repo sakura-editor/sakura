@@ -268,6 +268,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent_ZENSPACE, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchWord"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchParagraph"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph, 0 );
 		//	Oct. 27, 2000 genta
 		cProfile.IOProfileData( bRead, pszSecName, "m_bRestoreCurPosition"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bRestoreCurPosition, 0 );
 		// 2002.01.16 hor

@@ -124,7 +124,8 @@ void CLayoutMgr::DoLayout(
 		nWordLen = 0;
 		nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 
-		int nEol_1 = pCDocLine->m_cEol.GetLen() - 1;
+		int	nEol = pCDocLine->m_cEol.GetLen();
+		int nEol_1 = nEol - 1;
 		if( 0 >	nEol_1 ){
 			nEol_1 = 0;
 		}
@@ -143,6 +144,18 @@ void CLayoutMgr::DoLayout(
 				//禁則処理の最後尾に達したら禁則処理中を解除する
 				if( nPos >= nWordBgn + nWordLen )
 				{
+					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
+					 && nPos == nWordBgn + nWordLen )
+					{
+						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						{
+							AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+							nCOMMENTMODE_Prev = nCOMMENTMODE;
+							nBgn = nPos;
+							nPosX = 0;
+						}
+					}
+					
 					nWordLen = 0;
 					nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 				}
@@ -227,13 +240,6 @@ void CLayoutMgr::DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
-						if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) && nEol_1 ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{
-							AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-							nBgn = nPos;
-							nPosX = 0;
-						}
 					}
 				}
 
@@ -325,6 +331,14 @@ void CLayoutMgr::DoLayout(
 						{
 							// "（あ": "あ"で折り返しのとき
 							bKinsokuFlag = true;
+						}
+						else if( nCharChars2 == 1 )
+						{
+							if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
+							{
+								// "(あ": "あ"の2バイト目で折り返しのとき
+								bKinsokuFlag = true;
+							}
 						}
 						break;
 					case 1:	// 1文字前
@@ -639,14 +653,17 @@ void CLayoutMgr::DoLayout(
 					break;	//@@@ 2002.04.16 MIK
 				}
 				if( nPosX + nCharChars > m_nMaxLineSize ){
-					if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) && nEol_1 ) )	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
-					{	//@@@ 2002.04.14 MIK
-						AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-						nCOMMENTMODE_Prev = nCOMMENTMODE;
-						nBgn = nPos;
-						nPosX = 0;
-						continue;
-					}	//@@@ 2002.04.14 MIK
+					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+					{
+						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						{	//@@@ 2002.04.14 MIK
+							AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+							nCOMMENTMODE_Prev = nCOMMENTMODE;
+							nBgn = nPos;
+							nPosX = 0;
+							continue;
+						}	//@@@ 2002.04.14 MIK
+					}
 				}
 				nPos+= nCharChars;
 				nPosX += nCharChars;
@@ -887,7 +904,8 @@ int CLayoutMgr::DoLayout3_New(
 		nWordLen = 0;
 		nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 
-		int nEol_1 = pCDocLine->m_cEol.GetLen() - 1;
+		int	nEol = pCDocLine->m_cEol.GetLen();
+		int nEol_1 = nEol - 1;
 		if( 0 >	nEol_1 ){
 			nEol_1 = 0;
 		}
@@ -905,6 +923,46 @@ int CLayoutMgr::DoLayout3_New(
 				//禁則処理の最後尾に達したら禁則処理中を解除する
 				if( nPos >= nWordBgn + nWordLen )
 				{
+					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
+					 && nPos == nWordBgn + nWordLen )
+					{
+						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						{
+							pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+							nCOMMENTMODE_Prev = nCOMMENTMODE;
+							if( bAdd ){
+								CLayout*	pLayoutWork;
+								pLayoutWork = pLayoutNext;
+								pLayoutNext = pLayoutNext->m_pNext;
+								pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
+								if( NULL != pLayoutNext ){
+									pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
+								}else{
+									m_pLayoutBot = pLayoutWork->m_pPrev;
+								}
+
+#ifdef _DEBUG
+								if( m_pLayoutPrevRefer == pLayoutWork ){
+									MYTRACE( "バグバグ\n" );
+								}
+#endif
+								delete pLayoutWork;
+								m_nLines--;
+
+								(*pnExtInsLineNum)++;
+							}
+
+							nBgn = nPos;
+							nPosX = 0;
+							if( ( nDelLogicalLineFrom == nCurLine &&
+								  nDelLogicalColFrom < nPos ) ||
+								( nDelLogicalLineFrom < nCurLine )
+							){
+								(nModifyLayoutLinesNew)++;;
+							}
+						}
+					}
+
 					nWordLen = 0;
 					nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 				}
@@ -1015,41 +1073,6 @@ int CLayoutMgr::DoLayout3_New(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
-						if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) && nEol_1 ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{
-							pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-							if( bAdd ){
-								CLayout*	pLayoutWork;
-								pLayoutWork = pLayoutNext;
-								pLayoutNext = pLayoutNext->m_pNext;
-								pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
-								if( NULL != pLayoutNext ){
-									pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
-								}else{
-									m_pLayoutBot = pLayoutWork->m_pPrev;
-								}
-
-#ifdef _DEBUG
-								if( m_pLayoutPrevRefer == pLayoutWork ){
-									MYTRACE( "バグバグ\n" );
-								}
-#endif
-								delete pLayoutWork;
-								m_nLines--;
-
-								(*pnExtInsLineNum)++;
-							}
-
-							nBgn = nPos;
-							nPosX = 0;
-							if( ( nDelLogicalLineFrom == nCurLine &&
-								  nDelLogicalColFrom < nPos ) ||
-								( nDelLogicalLineFrom < nCurLine )
-							){
-								(nModifyLayoutLinesNew)++;;
-							}
-						}
 					}
 				}
 
@@ -1169,6 +1192,14 @@ int CLayoutMgr::DoLayout3_New(
 						{
 							// "（あ": "あ"で折り返しのとき
 							bKinsokuFlag = true;
+						}
+						else if( nCharChars2 == 1 )
+						{
+							if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
+							{
+								// "(あ": "あ"の2バイト目で折り返しのとき
+								bKinsokuFlag = true;
+							}
 						}
 						break;
 					case 1:	// 1文字前
@@ -1537,40 +1568,43 @@ int CLayoutMgr::DoLayout3_New(
 					break;	//@@@ 2002.04.16 MIK
 				}
 				if( nPosX + nCharChars > m_nMaxLineSize ){
-					if( ! (m_bKinsokuRet && (nPos + 1 == nLineLen - nEol_1) && nEol_1 ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-					{	//@@@ 2002.04.14 MIK
-						pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-						nCOMMENTMODE_Prev = nCOMMENTMODE;
-						if( bAdd ){
-							CLayout*	pLayoutWork;
-							pLayoutWork = pLayoutNext;
-							pLayoutNext = pLayoutNext->m_pNext;
-							pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
-							if( NULL != pLayoutNext ){
-								pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
-							}else{
-								m_pLayoutBot = pLayoutWork->m_pPrev;
-							}
+					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+					{
+						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						{	//@@@ 2002.04.14 MIK
+							pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
+							nCOMMENTMODE_Prev = nCOMMENTMODE;
+							if( bAdd ){
+								CLayout*	pLayoutWork;
+								pLayoutWork = pLayoutNext;
+								pLayoutNext = pLayoutNext->m_pNext;
+								pLayoutWork->m_pPrev->m_pNext = pLayoutNext;
+								if( NULL != pLayoutNext ){
+									pLayoutNext->m_pPrev = pLayoutWork->m_pPrev;
+								}else{
+									m_pLayoutBot = pLayoutWork->m_pPrev;
+								}
 #ifdef _DEBUG
-							if( m_pLayoutPrevRefer == pLayoutWork ){
-								MYTRACE( "バグバグ\n" );
-							}
+								if( m_pLayoutPrevRefer == pLayoutWork ){
+									MYTRACE( "バグバグ\n" );
+								}
 #endif
-							delete pLayoutWork;
-							m_nLines--;
+								delete pLayoutWork;
+								m_nLines--;
 
-							(*pnExtInsLineNum)++;
-						}
+								(*pnExtInsLineNum)++;
+							}
 
-						nBgn = nPos;
-						nPosX = 0;
-						if( ( nDelLogicalLineFrom == nCurLine &&
-							  nDelLogicalColFrom < nPos ) ||
-							( nDelLogicalLineFrom < nCurLine )
-						){
-							(nModifyLayoutLinesNew)++;;
+							nBgn = nPos;
+							nPosX = 0;
+							if( ( nDelLogicalLineFrom == nCurLine &&
+								  nDelLogicalColFrom < nPos ) ||
+								( nDelLogicalLineFrom < nCurLine )
+							){
+								(nModifyLayoutLinesNew)++;;
+							}
+							continue;
 						}
-						continue;
 					}
 				}
 				nPos+= nCharChars;

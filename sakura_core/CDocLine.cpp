@@ -29,5 +29,22 @@ CDocLine::~CDocLine()
 	delete m_pLine;
 }
 
+/* 空行（スペース、タブ、改行記号のみの行）かどうかを取得する
+	true：空行だ。
+	false：空行じゃないぞ。
 
+	2002/04/26 YAZAKI
+*/
+bool CDocLine::IsEmptyLine( void )
+{
+	char* pLine = GetPtr();
+	int nLineLen = GetLengthWithoutEOL();
+	int i;
+	for ( i = 0; i < nLineLen; i++ ){
+		if (pLine[i] != ' ' && pLine[i] != '\t'){
+			return false;	//	スペースでもタブでもない文字があったらfalse。
+		}
+	}
+	return true;	//	すべてスペースかタブだけだったらtrue。
+}
 /*[EOF]*/

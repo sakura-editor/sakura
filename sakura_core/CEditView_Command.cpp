@@ -4223,7 +4223,6 @@ void CEditView::Command_FILENEW( void )
 
 
 
-
 /* ファイルを開く */
 void CEditView::Command_FILEOPEN( const char *filename )
 {
