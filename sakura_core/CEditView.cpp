@@ -6419,7 +6419,7 @@ DWORD CEditView::DoGrep(
 	}
 	cmemMessage.AppendSz( pszWork );
 
-	if( nWork < 0 ){ // 2003.06.10 Moca ファイル検索の場合は表示しない
+	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( bWordOnly ){
 		/* 単語単位で探す */
 			cmemMessage.AppendSz( "    (単語単位で探す)\r\n" );
@@ -6445,7 +6445,7 @@ DWORD CEditView::DoGrep(
 		cmemMessage.AppendSz( ")\r\n" );
 	}
 
-	if( nWork < 0 ){ // 2003.06.10 Moca ファイル検索の場合は表示しない
+	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( bGrepOutputLine ){
 		/* 該当行 */
 			pszWork = "    (一致した行を出力)\r\n";
