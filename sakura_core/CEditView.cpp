@@ -8641,22 +8641,22 @@ void CEditView::DrawBracketPair( void )
 
 			// 現在位置の括弧の強調表示
 			const CLayout* pcLayout;
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
-			if( NULL != pLine )
-			{
-				OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX );
-				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-				if( 0 == ( mode & 4 ) )
-				{	// カーソルの後方文字位置
-					OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX );
-					nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-				}
-				else
-				{	// カーソルの前方文字位置
-					OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX - m_nCharSize );
-					nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + ( m_nCaretPosX - m_nCharSize ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-				}
-				nTop  = ( m_nCaretPosY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+			int LogX, LogY;
+			if( 0 == ( mode & 4 ) )
+			{	// カーソルの後方文字位置
+				LogX = m_nCaretPosX;
+				LogY = m_nCaretPosY;
+			}
+			else
+			{	// カーソルの前方文字位置
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( m_nCaretPosX_PHY - m_nCharSize, m_nCaretPosY_PHY, &LogX, &LogY );
+			}
+
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( LogY, &nLineLen, &pcLayout );
+			if( NULL != pLine ){
+				OutputX = LineColmnToIndex( pcLayout, LogX );
+				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + LogX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+				nTop  = ( LogY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 				HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
 				ShowCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止

@@ -105,7 +105,9 @@ void CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 	hFile = ::CreateFile(
 		pFileName,
 		GENERIC_READ,
-		FILE_SHARE_READ, 			// 共有
+		//	Oct. 18, 2002 genta FILE_SHARE_WRITE 追加
+		//	他プロセスが書き込み中のファイルを開けるように
+		FILE_SHARE_READ | FILE_SHARE_WRITE,	// 共有
 		NULL,						// セキュリティ記述子
 		OPEN_EXISTING,				// 作成方法
 		FILE_FLAG_SEQUENTIAL_SCAN,	// ファイル属性
