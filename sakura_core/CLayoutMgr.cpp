@@ -1238,11 +1238,17 @@ void CLayoutMgr::XYLogicalToLayout(
 }
 
 
-/*
-  カーソル位置変換
+/*! @brief カーソル位置変換 物理→レイアウト
+
   物理位置(行頭からのバイト数、折り返し無し行位置)
-  →
-  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+  →レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+
+	@param nX [in] 物理位置X
+	@param nY [in] 物理位置Y
+	@param pnCaretPosX [out] 論理位置X
+	@param pnCaretPosY [out] 論理位置Y
+
+	@date 2004.06.16 Moca インデント表示の際のTABを含む行の座標ずれ修正
 */
 void CLayoutMgr::CaretPos_Phys2Log(
 		int		nX,
@@ -1283,11 +1289,14 @@ void CLayoutMgr::CaretPos_Phys2Log(
 	}
 	nCaretPosY = nY;
 
+	//	Layoutを１つずつ先に進めながらnYが物理行に一致するLayoutを探す
 
 	nCaretPosX = 0;
 	do{
 		if( nY == pLayout->m_nLinePhysical ){
-			nCaretPosX = 0;
+			//	2004.06.16 Moca インデント表示の際に位置がずれる(TAB位置ずれによる)
+			//	TAB幅を正確に計算するには当初からインデント分を加えておく必要がある．
+			nCaretPosX = pLayout->GetIndent();
 //			pData = GetLineStr( nCaretPosY, &nDataLen );
 //			pData = pLayout->m_pLine + pLayout->m_nOffset;
 			pData = pLayout->m_pCDocLine->m_pLine->GetPtr() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
@@ -1313,29 +1322,33 @@ void CLayoutMgr::CaretPos_Phys2Log(
 				i += nCharChars - 1;
 			}
 			if( i < nDataLen ){
+				//	nX, nYがこの行の中に見つかったらループ打ち切り
 				break;
 			}
 			if( NULL == pLayout->m_pNext ){
+				//	当該位置に達していなくても，レイアウト末尾ならデータ末尾を返す．
 				nCaretPosX += ( nDataLen - i );
 //				nCaretPosX = 0;
 				break;
 			}
 			if( nY < pLayout->m_pNext->m_nLinePhysical ){
+				//	次のLayoutが当該物理行を過ぎてしまう場合はデータ末尾を返す．
 				nCaretPosX += ( nDataLen - i );
 				break;
 			}
-//		}else{
-//			nCaretPosX = 0;
 		}
 		if( nY < pLayout->m_nLinePhysical ){
+			//	ふつうはここには来ないと思うが... (genta)
+			//	Layoutの指す物理行が探している行より先を指していたら打ち切り
 			break;
-		}else{
-//			nCaretPosX = 0;
-			nCaretPosY++;
 		}
+
+		//	次の行へ進む
+		nCaretPosY++;
 		pLayout = pLayout->m_pNext;
 	}while( NULL != pLayout );
-	*pnCaretPosX = nCaretPosX + (pLayout ? pLayout->GetIndent() : 0);
+	//	2004.06.16 Moca インデント表示の際の位置ずれ修正
+	*pnCaretPosX = pLayout ? nCaretPosX : 0;
 	*pnCaretPosY = nCaretPosY;
 //#ifdef _DEBUG
 //	MYTRACE( "\t\tnCaretPosY - nY = %d\n", nCaretPosY - nY );
