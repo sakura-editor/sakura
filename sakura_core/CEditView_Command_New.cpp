@@ -2731,4 +2731,18 @@ void CEditView::Command_WINTOPMOST( LPARAM lparam )
 	m_pcEditDoc->m_pcEditWnd->WindowTopMost( int(lparam) );
 }
 
+/*!	@brief ˆø—p•„‚ÌÝ’è
+	@date Jan. 29, 2005 genta V‹Kì¬
+*/
+void CEditView::Command_SET_QUOTESTRING( const char* quotestr )
+{
+	if( quotestr == NULL )
+		return;
+
+	strncpy( m_pShareData->m_Common.m_szInyouKigou, quotestr,
+		sizeof( m_pShareData->m_Common.m_szInyouKigou ));
+	
+	m_pShareData->m_Common.m_szInyouKigou[ sizeof( m_pShareData->m_Common.m_szInyouKigou ) - 1 ] = '\0';
+}
+
 /*[EOF]*/

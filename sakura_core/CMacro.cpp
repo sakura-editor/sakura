@@ -352,11 +352,12 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		break;
 	case F_INSTEXT:		//	テキスト挿入
 	case F_ADDTAIL:		//	この操作はキーボード操作では存在しないので保存することができない？
+	case F_SET_QUOTESTRING:	// Jan. 29, 2005 genta 追加 テキスト引数1つを取るマクロはここに統合していこう．
 		//	一つ目の引数が文字列。
 		//	ただし2つ目の引数は文字数。
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T(	"挿入すべき文字列が指定されていません．" ));
+				_T(	"引数(文字列)が指定されていません．" ));
 			break;
 		}
 		{
@@ -725,6 +726,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				pcEditView->HandleCommand( Index, FALSE, lparam1, 0, 0, 0 );
 			}
 		}
+		break;	//	Jan. 29, 2005 genta 抜けていた
 	default:
 		//	引数なし。
 		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準

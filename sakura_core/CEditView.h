@@ -758,6 +758,7 @@ void ReplaceData_CEditView(
 	void Command_FONT( void );				/* フォント設定 */
 	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	void Command_Favorite( void );	//お気に入り	//@@@ 2003.04.08 MIK
+	void Command_SET_QUOTESTRING( const char* );	//	Jan. 29, 2005 genta 引用符の設定
 
 	/* マクロ系 */
 	void Command_RECKEYMACRO( void );	/* キーマクロの記録開始／終了 */
