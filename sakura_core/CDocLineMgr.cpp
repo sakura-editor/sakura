@@ -734,21 +734,6 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 			}
 		}
 
-//		for( i = 0; i < nLineLen; ++i ){
-//			if( pLine[i] == CR ||
-//				pLine[i] == LF ){
-//				break;
-//			}
-//		}
-//		if( i < nLineLen ){
-//			nWriteLen = i;
-//			bCRLF = TRUE;
-//		}else{
-//			nWriteLen = nLineLen;
-//			bCRLF = FALSE;
-//		}
-
-
 		nWriteLen = nLineLen - pCDocLine->m_cEol.GetLen();
 		cmemBuf.SetDataSz( "" );
 		if( 0 < nWriteLen ){

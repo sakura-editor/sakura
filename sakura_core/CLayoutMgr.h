@@ -197,6 +197,10 @@ protected:
 	CLineComment	m_cLineComment;				/* 行コメントデリミタ */		//@@@ 2002.09.22 YAZAKI
 	CBlockComment	m_cBlockComment;			/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 	int				m_nStringType;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+//	int				m_nIndentLayout;			/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
+	//	Oct. 1, 2002 genta インデント幅計算関数を保持
+	int (CLayoutMgr::*getIndentOffset)( CLayout* );
+
 
 	int				m_nPrevReferLine;
 	CLayout*		m_pLayoutPrevRefer;
@@ -204,7 +208,7 @@ protected:
 	|| 実装ヘルパ系
 	*/
 	//@@@ 2002.09.23 YAZAKI
-	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext );
+	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext, int nIndent );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
 	void AddLineBottom( CLayout* );
 public:
@@ -220,6 +224,12 @@ private:
 	//@@@ 2002.09.22 YAZAKI
 	bool CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine, BOOL bDispSSTRING, BOOL bDispWSTRING );
 	int Match_Quote( char szQuote, int nPos, int nLineLen, const char* pLine );
+//	int getMaxLineSize( CLayout* pLayoutPrev );
+	
+	//	Oct. 1, 2002 genta インデント幅計算関数群
+	int getIndentOffset_Normal( CLayout* pLayoutPrev );
+	int getIndentOffset_Yazaki( CLayout* pLayoutPrev );
+	int getIndentOffset_LeftSpace( CLayout* pLayoutPrev );
 };
 
 

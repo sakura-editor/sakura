@@ -501,6 +501,25 @@ int CEditView::DispLineNew(
 			nBgn = nPos;
 			nLineBgn = nBgn;
 			nX = 0;
+
+			//	行頭背景
+			if (pcLayout2 && pcLayout2->GetIndent()){
+				rcClip.left = x;
+				rcClip.right = x + pcLayout2->GetIndent() * ( nCharWidth );
+				rcClip.top = y;
+				rcClip.bottom = y + nLineHeight;
+				if( rcClip.left < m_nViewAlignLeft ){
+					rcClip.left = m_nViewAlignLeft;
+				}
+				if( rcClip.left < rcClip.right &&
+					rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
+					hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+					::FillRect( hdc, &rcClip, hBrush );
+					::DeleteObject( hBrush );
+				}
+				nX += pcLayout2->GetIndent();
+			}
+
 			while( nPos - nLineBgn < pcLayout2->m_nLength ){
 				/* 検索文字列の色分け */
 				if( TRUE == m_bCurSrchKeyMark	/* 検索文字列のマーク */
@@ -1533,8 +1552,9 @@ end_of_line:;
 				if( nCount > 0 && nLineNum == nCount ){
 					const char*	pLine;
 					int			nLineLen;
-					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCount - 1, &nLineLen );
-					nLineCols = LineIndexToColmn( pLine, nLineLen, nLineLen );
+					const CLayout* pcLayout;
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCount - 1, &nLineLen, &pcLayout );
+					nLineCols = LineIndexToColmn( pcLayout, nLineLen );
 					if( ( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ) ||
 						nLineCols >= TypeDataPtr->m_nMaxLineSize
 					 ){

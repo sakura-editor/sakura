@@ -24,7 +24,7 @@
 #include "CDocLine.h"/// 2002/2/10 aroka
 #include "CDocLineMgr.h"// 2002/2/10 aroka
 #include "CMemory.h"/// 2002/2/10 aroka
-#include "CShareData.h" // 2002/03/13 novice
+//#include "CShareData.h" // 2002/03/13 novice	@@@ 2002.09.29 YAZAKI
 
 //レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
 #define	KINSOKU_TYPE_NONE			0	//なし
@@ -33,23 +33,6 @@
 #define	KINSOKU_TYPE_KINSOKU_TAIL	3	//行末禁則中
 #define	KINSOKU_TYPE_KINSOKU_KUTO	4	//句読点ぶら下げ中
 
-//	/*
-//	|| 	新しい折り返し文字数に合わせて全データのレイアウト情報を再生成します
-//	||
-//	*/
-//	void CLayoutMgr::DoLayout(
-//			int		nMaxLineSize,
-//			BOOL	bWordWrap,	/* 英文ワードラップをする */
-//			HWND	hwndProgress,
-//			BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-//			BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
-//	)
-//	{
-//		m_nMaxLineSize = nMaxLineSize;
-//		m_bWordWrap = bWordWrap;		/* 英文ワードラップをする */
-//		DoLayout( hwndProgress, bDispSSTRING, bDispWSTRING );
-//		return;
-//	}
 
 
 /*
@@ -84,6 +67,9 @@ void CLayoutMgr::DoLayout(
 	int			nCharChars3;	//@@@ 2002.04.17 MIK
 	int			nKinsokuType;	//@@@ 2002.04.20 MIK
 
+	int			nIndent;			//	インデント幅
+	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
+	int			nMaxLineSize;
 
 // 2002/03/13 novice
 	nCOMMENTMODE = COLORIDX_TEXT;
@@ -129,7 +115,26 @@ void CLayoutMgr::DoLayout(
 			nEol_1 = 0;
 		}
 
+		nIndent = 0;				//	インデント幅
+		pLayoutCalculated = NULL;	//	インデント幅計算済みのCLayout.
+		nMaxLineSize = m_nMaxLineSize;
+
 		while( nPos < nLineLen - nEol_1 ){
+			//	インデント幅の計算コストを下げるための方策
+			if ( m_pLayoutBot && 
+				 m_pLayoutBot != pLayoutCalculated &&
+				 nBgn ){
+				//	計算
+				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
+				nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+				nMaxLineSize = m_nMaxLineSize - nIndent;
+				//nMaxLineSize = getMaxLineSize( m_pLayoutBot );
+				//nIndent = m_nMaxLineSize - nMaxLineSize;
+				
+				//	計算済み
+				pLayoutCalculated = m_pLayoutBot;
+			}
+
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 			if( 0 == nCharChars ){
 				nCharChars = 1;
@@ -148,7 +153,7 @@ void CLayoutMgr::DoLayout(
 					{
 						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
 							nPosX = 0;
@@ -192,10 +197,10 @@ void CLayoutMgr::DoLayout(
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
 						nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
-						if( nPosX + i - nPos >= m_nMaxLineSize
+						if( nPosX + i - nPos >= nMaxLineSize
 						 && nPos - nBgn > 0
 						){
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
 							nPosX = 0;
@@ -212,12 +217,12 @@ void CLayoutMgr::DoLayout(
 				//@@@ 2002.04.07 MIK start
 				/* 句読点のぶらさげ */
 				if( m_bKinsokuKuto
-				 && (m_nMaxLineSize - nPosX < 2)
+				 && (nMaxLineSize - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					bKinsokuFlag = false;
 					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( m_nMaxLineSize - nPosX )
+					switch( nMaxLineSize - nPosX )
 					{
 					case 1:	// 1文字前
 						if( nCharChars2 == 2 )
@@ -244,14 +249,14 @@ void CLayoutMgr::DoLayout(
 
 				/* 行頭禁則 */
 				if( m_bKinsokuHead
-				 && (m_nMaxLineSize - nPosX < 4)
+				 && (nMaxLineSize - nPosX < 4)
 				 && nPosX
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					bKinsokuFlag = false;
 					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 					nCharChars3 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2];
-					switch( m_nMaxLineSize - nPosX )
+					switch( nMaxLineSize - nPosX )
 					{
 					//    321012  ↓マジックナンバー
 					// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
@@ -298,7 +303,7 @@ void CLayoutMgr::DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2 + nCharChars3;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
-						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
 						nPosX = 0;
@@ -307,13 +312,13 @@ void CLayoutMgr::DoLayout(
 
 				/* 行末禁則 */
 				if( m_bKinsokuTail
-				 && (m_nMaxLineSize - nPosX < 4)
+				 && (nMaxLineSize - nPosX < 4)
 				 && nPosX
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 					bKinsokuFlag = false;
 					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( m_nMaxLineSize - nPosX )
+					switch( nMaxLineSize - nPosX )
 					{
 					case 3:	// 3文字前
 						if( nCharChars2 == 2 )
@@ -355,7 +360,7 @@ void CLayoutMgr::DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
 						nPosX = 0;
@@ -372,8 +377,8 @@ void CLayoutMgr::DoLayout(
 			if( pLine[nPos] == TAB ){
 				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 				nCharChars = GetActualTabSpace( nPosX );
-				if( nPosX + nCharChars > m_nMaxLineSize ){
-					AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+				if( nPosX + nCharChars > nMaxLineSize ){
+					AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					nBgn = nPos;
 					nPosX = 0;
@@ -388,12 +393,12 @@ void CLayoutMgr::DoLayout(
 					nCharChars = 1;
 					break;	//@@@ 2002.04.16 MIK
 				}
-				if( nPosX + nCharChars > m_nMaxLineSize ){
+				if( nPosX + nCharChars > nMaxLineSize ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
 						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
 							nPosX = 0;
@@ -410,7 +415,7 @@ void CLayoutMgr::DoLayout(
 			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
 				nCOMMENTMODE = COLORIDX_TEXT;
 			}
-			AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+			AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 		}
 		nLineNum++;
@@ -445,119 +450,6 @@ void CLayoutMgr::DoLayout(
 }
 
 
-//	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
-//	int CLayoutMgr::DoLayout3(
-//				CLayout* pLayoutPrev,
-//				int		nLineNum,
-//				int		nDelLogicalLineFrom,
-//				int		nDelLogicalColFrom
-//	 )
-//	{
-//		int			nLineNumWork;
-//		int			nLineLen;
-//		int			nCurLine;
-//		const char* pLine;
-//		int			nBgn;
-//		int			nPos;
-//		int			nPosX;
-//		int			nCharChars;
-//		CLayout*	pLayout;
-//		int			nModifyLayoutLinesNew;
-//		int			nCOMMENTMODE;
-//		int			nCOMMENTMODE_Prev;
-//	//	int			nCOMMENTEND;
-//		nLineNumWork = 0;
-//
-//		if( 0 == nLineNum ){
-//			return 0;
-//		}
-//		pLayout = pLayoutPrev;
-//		if( NULL == pLayout ){
-//			nCurLine = 0;
-//		}else{
-//			nCurLine = pLayout->m_nLinePhysical + 1;
-//		}
-//		nCOMMENTMODE = 0;
-//		nCOMMENTMODE_Prev = 0;
-//
-//		pLine = m_pcDocLineMgr->GetLineStr( nCurLine, &nLineLen );
-//		nModifyLayoutLinesNew = 0;
-//
-//		while( NULL != pLine ){
-//			nPosX = 0;
-//			nCharChars = 0;
-//			nBgn = 0;
-//			nPos = 0;
-//			while( nPos < nLineLen ){
-//				if( pLine[nPos] == TAB ){
-//					nCharChars = m_nTabSpace - ( nPosX % m_nTabSpace );
-//					if( nPosX + nCharChars > m_nMaxLineSize ){
-//						pLayout = InsertLineNext( pLayout, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-//						nCOMMENTMODE_Prev = nCOMMENTMODE;
-//
-//						nBgn = nPos;
-//						nPosX = 0;
-//						if( ( nDelLogicalLineFrom == nCurLine &&
-//							  nDelLogicalColFrom < nPos ) ||
-//							( nDelLogicalLineFrom < nCurLine )
-//						){
-//							(nModifyLayoutLinesNew)++;;
-//						}
-//						continue;
-//					}
-//					nPos++;
-//				}else{
-//					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-//					if( 0 == nCharChars ){
-//						nCharChars = 1;
-//						break;
-//					}
-//					if( nPosX + nCharChars > m_nMaxLineSize ){
-//						pLayout = InsertLineNext( pLayout, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-//						nCOMMENTMODE_Prev = nCOMMENTMODE;
-//
-//						nBgn = nPos;
-//						nPosX = 0;
-//						if( ( nDelLogicalLineFrom == nCurLine &&
-//							  nDelLogicalColFrom < nPos ) ||
-//							( nDelLogicalLineFrom < nCurLine )
-//						){
-//							(nModifyLayoutLinesNew)++;;
-//						}
-//						continue;
-//					}
-//					nPos+= nCharChars;
-//				}
-//
-//				nPosX += nCharChars;
-//			}
-//			if( nPos - nBgn > 0 ){
-//				if( nCOMMENTMODE == 1 ){	/* 行コメントである */
-//					nCOMMENTMODE = 0;
-//				}
-//				pLayout = InsertLineNext( pLayout, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
-//				nCOMMENTMODE_Prev = nCOMMENTMODE;
-//
-//				if( ( nDelLogicalLineFrom == nCurLine &&
-//					  nDelLogicalColFrom < nPos ) ||
-//					( nDelLogicalLineFrom < nCurLine )
-//				){
-//					(nModifyLayoutLinesNew)++;;
-//				}
-//			}
-//
-//			nLineNumWork++;
-//			nCurLine++;
-//			if( nLineNumWork >= nLineNum ){
-//				break;
-//			}
-//			pLine = m_pcDocLineMgr->GetNextLinrStr( &nLineLen );
-//		}
-//		m_nPrevReferLine = 0;
-//		m_pLayoutPrevRefer = NULL;
-//		m_pLayoutCurrent = NULL;
-//		return nModifyLayoutLinesNew;
-//	}
 
 
 
@@ -598,6 +490,10 @@ int CLayoutMgr::DoLayout3_New(
 	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
 	int			nCharChars3;	//@@@ 2002.04.17 MIK
 	int			nKinsokuType;	//@@@ 2002.04.20 MIK
+
+	int			nIndent;			//	インデント幅
+	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
+	int			nMaxLineSize;
 
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
@@ -644,7 +540,25 @@ int CLayoutMgr::DoLayout3_New(
 			nEol_1 = 0;
 		}
 
+		nIndent = 0;				//	インデント幅
+		pLayoutCalculated = pLayout;	//	インデント幅計算済みのCLayout.
+		nMaxLineSize = m_nMaxLineSize;
+
 		while( nPos < nLineLen - nEol_1 ){
+			//	インデント幅の計算コストを下げるための方策
+			if ( pLayout && 
+				 pLayout != pLayoutCalculated ){
+				//	計算
+				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
+				nIndent = (this->*getIndentOffset)( pLayout );
+				nMaxLineSize = m_nMaxLineSize - nIndent;
+				//nMaxLineSize = getMaxLineSize( pLayout );
+				//nIndent = m_nMaxLineSize - nMaxLineSize;
+
+				//	計算済み
+				pLayoutCalculated = pLayout;
+			}
+
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 			if( 0 == nCharChars ){
 				nCharChars = 1;
@@ -670,7 +584,7 @@ int CLayoutMgr::DoLayout3_New(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -720,7 +634,7 @@ int CLayoutMgr::DoLayout3_New(
 						nWordLen = i - nPos;
 						nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
 
-						if( nPosX + i - nPos >= m_nMaxLineSize
+						if( nPosX + i - nPos >= nMaxLineSize
 						 && nPos - nBgn > 0
 						){
 							//@@@ 2002.09.23 YAZAKI 最適化
@@ -731,7 +645,7 @@ int CLayoutMgr::DoLayout3_New(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -755,12 +669,12 @@ int CLayoutMgr::DoLayout3_New(
 				//@@@ 2002.04.07 MIK start
 				/* 句読点のぶらさげ */
 				if( m_bKinsokuKuto
-				 && (m_nMaxLineSize - nPosX < 2)
+				 && (nMaxLineSize - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					bKinsokuFlag = false;
 					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( m_nMaxLineSize - nPosX )
+					switch( nMaxLineSize - nPosX )
 					{
 					case 1:	// 1文字前
 						if( nCharChars2 == 2 )
@@ -787,14 +701,14 @@ int CLayoutMgr::DoLayout3_New(
 
 				/* 行頭禁則 */
 				if( m_bKinsokuHead
-				 && (m_nMaxLineSize - nPosX < 4)
+				 && (nMaxLineSize - nPosX < 4)
 				 && nPosX
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					bKinsokuFlag = false;
 					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 					nCharChars3 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2];
-					switch( m_nMaxLineSize - nPosX )
+					switch( nMaxLineSize - nPosX )
 					{
 					//    321012  ↓マジックナンバー
 					// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
@@ -849,7 +763,7 @@ int CLayoutMgr::DoLayout3_New(
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
 						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 						}
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -865,13 +779,13 @@ int CLayoutMgr::DoLayout3_New(
 
 				/* 行末禁則 */
 				if( m_bKinsokuTail
-				 && (m_nMaxLineSize - nPosX < 4)
+				 && (nMaxLineSize - nPosX < 4)
 				 && nPosX
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 					bKinsokuFlag = false;
 					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( m_nMaxLineSize - nPosX )
+					switch( nMaxLineSize - nPosX )
 					{
 					case 3:	// 3文字前
 						if( nCharChars2 == 2 )
@@ -921,7 +835,7 @@ int CLayoutMgr::DoLayout3_New(
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
 						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 						}
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -945,7 +859,7 @@ int CLayoutMgr::DoLayout3_New(
 			if( pLine[nPos] == TAB ){
 				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 				nCharChars = GetActualTabSpace( nPosX );
-				if( nPosX + nCharChars > m_nMaxLineSize ){
+				if( nPosX + nCharChars > nMaxLineSize ){
 					//@@@ 2002.09.23 YAZAKI 最適化
 					if( bNeedChangeCOMMENTMODE ){
 						pLayout = pLayout->m_pNext;
@@ -954,7 +868,7 @@ int CLayoutMgr::DoLayout3_New(
 						(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 					}
 					else {
-						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 					}
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -974,7 +888,7 @@ int CLayoutMgr::DoLayout3_New(
 					nCharChars = 1;
 					break;	//@@@ 2002.04.16 MIK
 				}
-				if( nPosX + nCharChars > m_nMaxLineSize ){
+				if( nPosX + nCharChars > nMaxLineSize ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
 						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
@@ -987,7 +901,7 @@ int CLayoutMgr::DoLayout3_New(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -1020,7 +934,7 @@ int CLayoutMgr::DoLayout3_New(
 				(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 			}
 			else {
-				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE) );
+				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE, nIndent) );
 			}
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -1258,4 +1172,129 @@ bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, 
 	}
 	return false;
 }
+
+/*!
+	@brief 行の長さを計算する (2行目以降の字下げ無し)
+	
+	字下げを行わないので，常に0を返す．
+	引数は使わない．
+	
+	@return 1行の表示文字数 (常に0)
+	
+	@author genta
+	@date 2002.10.01
+*/
+int CLayoutMgr::getIndentOffset_Normal( CLayout* )
+{
+	return 0;
+}
+
+/*!
+	@brief インデント幅を計算する (やざきさん版)
+	
+	前の行の最後のTABの位置をインデント位置として返す．
+	ただし，残り幅が6文字未満の場合はインデントを行わない．
+	
+	@author Yazaki
+	@return インデントすべき文字数
+	
+	@date 2002.10.01 
+*/
+int CLayoutMgr::getIndentOffset_Yazaki( CLayout* pLayoutPrev )
+{
+	//	前の行が無いときは、インデント不要。
+	if ( pLayoutPrev == NULL ) return 0;
+
+	//	インデントの計算
+	int nRetCode = pLayoutPrev->GetIndent();
+	//int nRetCode = m_nMaxLineSize;
+	//nRetCode -= pLayoutPrev->GetIndent();
+	int nBuf = 0;	//	計算用: TABから次のTABまでの表示上の幅を保持する
+	int i;
+	for(i=0; i<pLayoutPrev->m_nLength; i++){
+		int nPos = i+pLayoutPrev->m_nOffset;
+		int nLineLen;
+		const char* pLine = pLayoutPrev->m_pCDocLine->m_pLine->GetPtr( &nLineLen );
+
+		int nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+		if( 0 == nCharChars ){
+			nCharChars = 1;
+		}
+		//else <-間違い？
+		if ( 1 == nCharChars ){
+			if( pLine[ nPos ] == TAB ){
+				//nRetCode -= m_nTabSpace - ( nBuf % m_nTabSpace ) + nBuf;
+				nRetCode += m_nTabSpace - ( nBuf % m_nTabSpace ) + nBuf;
+				nBuf = 0;
+			}
+			else {
+				nBuf++;	//	文字数を数えるよ
+			}
+		}
+		else {
+			nBuf+=2;	//	文字数を数えるよ
+			i++;
+		}
+	}
+	if ( m_nMaxLineSize - nRetCode < 6 ){
+		nRetCode = 0;	//	あきらめる
+	}
+	return nRetCode;	//	インデント
+}
+
+/*!
+	@brief インデント幅を計算する (スペース字下げ版)
+	
+	前の行の先頭のホワイトスペースの終わりインデント位置として返す．
+	ただし，残り幅が6文字未満の場合はインデントを行わない．
+	
+	@author genta
+	@return インデントすべき文字数
+	
+	@date 2002.10.01 
+*/
+int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
+{
+	//	前の行が無いときは、インデント不要。
+	if ( pLayoutPrev == NULL ) return 0;
+
+	//	インデントの計算
+	int nIpos = pLayoutPrev->GetIndent();
+	
+	//	前の行が既にインデントされていればそれに合わせる
+	if( nIpos > 0 )
+		return nIpos;
+	
+	int i;
+	for(i=0; i<pLayoutPrev->m_nLength; i++){
+		int nPos = i + pLayoutPrev->m_nOffset;
+		int nLineLen;
+		const char* pLine = pLayoutPrev->m_pCDocLine->m_pLine->GetPtr( &nLineLen );
+
+		int nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+		if( 0 == nCharChars ){
+			nCharChars = 1;
+		}
+		if ( 1 == nCharChars ){
+			if( pLine[ nPos ] == TAB ){
+				//nRetCode -= m_nTabSpace - ( nBuf % m_nTabSpace ) + nBuf;
+				nIpos += m_nTabSpace - ( nIpos % m_nTabSpace );
+			}
+			else if( pLine[ nPos ] == ' ' ){
+				++nIpos;
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			break;
+		}
+	}
+	if ( m_nMaxLineSize - nIpos < 6 ){
+		nIpos = 0;	//	あきらめる
+	}
+	return nIpos;
+}
+
 /*[EOF]*/

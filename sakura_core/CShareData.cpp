@@ -89,8 +89,11 @@ struct ARRHEAD {
 	TypesのLineComment関連をm_cLineCommentに変更．  @@@ 2002.09.23 YAZAKI
 	TypesのBlockComment関連をm_cBlockCommentに変更．@@@ 2002.09.23 YAZAKI
 
+	Version 38:
+	Typesにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
+	2002.10.01 genta m_nIndentLayoutに名前変更
 */
-const unsigned int uShareDataVersion = 37;
+const unsigned int uShareDataVersion = 38;
 
 /*
 ||	Singleton風
@@ -604,10 +607,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
 		m_pShareData->m_Common.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
 		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
-#if 0
-		m_pShareData->m_Common.m_bAutoIndent = TRUE;			/* オートインデント */
-		m_pShareData->m_Common.m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
-#endif
+
 		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
@@ -993,77 +993,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
 		m_pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
 
-/**
-		static const char* ppszTypeName[] = {
-			"テキスト",							// CI[00]
-			"行番号",							// CI[01]
-			"改行記号",							// CI[02]
-			"TAB記号",							// CI[03]
-			"日本語空白",						// CI[04]
-			"EOF記号",							// CI[05]
-			"強調キーワード",					// CI[06]
-			"コメント",							// CI[07]
-			"シングルクォーテーション文字列",	// CI[08]
-			"ダブルクォーテーション文字列",		// CI[09]
-			"カーソル行アンダーライン",			// CI[10]
-			"折り返し記号",						// CI[11]
-			"コントロールコード",				// CI[12]
-			"URL",								// CI[13]
-			"検索文字列",						// CI[14]
-			"行番号(変更行)",					// CI[15]
-			"ルーラー"							// CI[16]
-		};
-**/
-
-/*	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
-		static ColorInfoIni ColorInfo_DEFAULT[] = {
-			"テキスト",				TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 255 ),
-			"行番号",				TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
-			"改行記号",				TRUE , FALSE, FALSE, RGB( 0, 128, 255 )		, RGB( 255, 255, 255 ),
-			"TAB記号",				TRUE , FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 255, 255 ),
-			"日本語空白",			TRUE , FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 255, 255 ),
-			"EOF記号",				TRUE , FALSE, FALSE, RGB( 0, 255, 255 )		, RGB( 0, 0, 0 ) },
-			"強調キーワード",		TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 255, 255 ),
-			"コメント",				TRUE , FALSE, FALSE, RGB( 0, 128, 0 )		, RGB( 255, 255, 255 ),
-		//	From Here Sept. 4, 2000 JEPRO
-		//	シングルクォーテーション文字列に色を割り当てるが色分け表示はしない
-		//	"シングルクォーテーション文字列", FALSE, FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 255, 255 ),
-			"シングルクォーテーション文字列", FALSE, FALSE, FALSE, RGB( 64, 128, 128 )	, RGB( 255, 255, 255 ),
-		//	To Here Sept. 4, 2000
-			"ダブルクォーテーション文字列", TRUE, FALSE, FALSE, RGB( 128, 0, 64 ),RGB( 255, 255, 255 ),
-			"カーソル行アンダーライン",  TRUE, FALSE, FALSE, RGB( 0, 0, 255 )	, RGB( 255, 255, 255 ),
-			"折り返し記号",			TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 255, 255 ),
-			"コントロールコード",	TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 255, 255 ),
-			"URL",					TRUE , FALSE, TRUE , RGB( 0, 0, 255 )		, RGB( 255, 255, 255 ),
-			"検索文字列",			TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
-			"行番号(変更行)",		TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
-			"ルーラー",				TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 )
-		};
-*/
-
-
-/**
-		static const char* ppszTypeName[] = {	//改修前のColor Index
-//Dec.26, 2000 jepro 補追 UR1.2.24から強調キーワードが1つ増えたが以下はそれ以前のもの
-			"テキスト",							// CI[00]
-			"ルーラー",							// CI[16]
-			"カーソル行アンダーライン",			// CI[10]
-			"行番号",							// CI[01]
-			"行番号(変更行)",					// CI[15]
-			"TAB記号",							// CI[03]
-			"日本語空白",						// CI[04]
-			"コントロールコード",				// CI[12]
-			"改行記号",							// CI[02]
-			"折り返し記号",						// CI[11]
-			"EOF記号",							// CI[05]
-			"検索文字列",						// CI[14]
-			"強調キーワード",					// CI[06]
-			"コメント",							// CI[07]
-			"シングルクォーテーション文字列",	// CI[08]
-			"ダブルクォーテーション文字列",		// CI[09]
-			"URL"								// CI[13]
-		};
-**/
+		m_pShareData->m_Types[nIdx].m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
 		static ColorInfoIni ColorInfo_DEFAULT[] = {
 		//	Nov. 9, 2000 Jepro note: color setting (詳細は CshareData.h を参照のこと)
@@ -1121,7 +1051,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			m_pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bUnderLine		= ColorInfo_DEFAULT[i].m_bUnderLine;
 			m_pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colTEXT			= ColorInfo_DEFAULT[i].m_colTEXT;
 			m_pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colBACK			= ColorInfo_DEFAULT[i].m_colBACK;
-//			strcpy( m_pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_szName, ppszTypeName[i] );
 			strcpy( m_pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
 		}
 		m_pShareData->m_Types[nIdx].m_bLineNumIsCRLF = TRUE;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */

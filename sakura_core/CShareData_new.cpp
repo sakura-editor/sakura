@@ -236,10 +236,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "nCaretType"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nCaretType, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bIsINSMode"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bIsINSMode, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bIsFreeCursorMode"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bIsFreeCursorMode, 0 );
-#if 0
-		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bAutoIndent_ZENSPACE, 0 );
-#endif
+
 		cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchWord"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchParagraph"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph, 0 );
 		//	Oct. 27, 2000 genta
@@ -875,6 +872,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bAutoIndent, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bAutoIndent_ZENSPACE, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "nIndentLayout"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nIndentLayout, 0 );
 
 		/* FÝ’è I/O */
 		IO_ColorSet( &cProfile, bRead, pszSecName, m_pShareData->m_Types[i].m_ColorInfoArr  );

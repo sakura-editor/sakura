@@ -44,6 +44,7 @@
 #include "COsVersionInfo.h"
 #include "CDocLine.h"   // 2002.04.09 minfu
 #include "CFileLoad.h" // 2002/08/30 Moca
+#include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -1286,11 +1287,12 @@ void CEditView::ShowEditCaret( void )
 		if( m_pShareData->m_Common.m_bIsINSMode ){
 			nCaretWidth = 2;
 		}else{
+			const CLayout* pcLayout;
 			nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+				nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
 				if( nIdxFrom >= nLineLen ||
 					pLine[nIdxFrom] == CR || pLine[nIdxFrom] == LF ||
 					pLine[nIdxFrom] == TAB ){
@@ -1310,11 +1312,12 @@ void CEditView::ShowEditCaret( void )
 		}else{
 			nCaretHeight = m_nCharHeight;				/* キャレットの高さ */
 		}
+		const CLayout* pcLayout;
 		nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ||
 				pLine[nIdxFrom] == CR || pLine[nIdxFrom] == LF ||
 				pLine[nIdxFrom] == TAB ){
@@ -2304,38 +2307,24 @@ void CEditView::DrawSelectAreaLine(
 //	MYTRACE( "CEditView::DrawSelectAreaLine()\n" );
 	const char*		pLine;
 	int				nLineLen;
-	int				i;
-	int				nCharChars;
-	int				nPosX;
 	RECT			rcClip;
 	int				nSelectFrom;
 	int				nSelectTo;
 	const CLayout*	pcLayout;
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-	if( NULL == pLine ){
-		nLineLen = 0;
-	}
-	nPosX = 0;
-	for( i = 0; i < nLineLen; ){
-		if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
-			++nPosX;
-			i = nLineLen;
+
+	int nPosX = 0;
+	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getIndex() >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+			nPosX ++;
 			break;
 		}
-		if( pLine[i] == TAB ){
-			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
-			++i;
-		}else{
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
-			i+= nCharChars;
-		}
-		nPosX += nCharChars;
+		it.addDelta();
 	}
+	nPosX += it.getColumn();
+
 	if( nFromLine == nToLine ){
 			nSelectFrom = nFromCol;
 			nSelectTo	= nToCol;
@@ -2345,10 +2334,10 @@ void CEditView::DrawSelectAreaLine(
 			nSelectTo	= nPosX;
 		}else
 		if( nLineNum == nToLine ){
-			nSelectFrom = 0;
+			nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
 			nSelectTo	= nToCol;
 		}else{
-			nSelectFrom = 0;
+			nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
 			nSelectTo	= nPosX;
 		}
 	}
@@ -2946,11 +2935,8 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 {
 	const char*		pLine;
 	int				nLineLen;
-	int				i;
-	int				nCharChars;
 	int				nNewX;
 	int				nNewY;
-	int				nPosX;
 	int				nScrollRowNum = 0;
 	const CLayout*	pcLayout;
 	nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
@@ -2974,7 +2960,7 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 			nNewX = 0;
 			++nNewY;
 		}else{
-			nNewX = LineIndexToColmn( pLine, nLineLen, nLineLen );
+			nNewX = LineIndexToColmn( pcLayout, nLineLen );
 		}
 		nScrollRowNum = MoveCursor( nNewX, nNewY, TRUE, 1000 );
 		m_nCaretPosX_Prev = m_nCaretPosX;
@@ -2988,47 +2974,36 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 	}else{
 		/* 移動先の行のデータを取得 */
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
-		if( NULL == pLine ){
-			nLineLen = 0;
-		}
-		nPosX = 0;
-		nCharChars = 0;
-		for( i = 0; i < nLineLen; ){
-			nPosX += nCharChars;
-			if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+
+		int nPosX = 0;
+		int i = 0;
+		CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+		for( it.first(); !it.end(); ){
+			it.scanNext();
+			if ( it.getIndex() >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
 				i = nLineLen;
 				break;
 			}
-			if( pLine[i] == TAB ){
-				//	Sep. 23, 2002 genta LayoutMgrの値を使う
-				nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
-				if( nPosX + nCharChars > nNewX ){
-					break;
+			if( it.getColumn() + it.getColumnDelta() > nNewX ){
+				if (nNewX >= (pcLayout ? pcLayout->GetIndent() : 0) && (it.getColumnDelta() > 1) && ((it.getColumn() + it.getColumnDelta() - nNewX) <= it.getColumnDelta() / 2)){
+					nPosX += it.getColumnDelta();
 				}
-				++i;
-			}else{
-				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-				if( 0 == nCharChars ){
-					nCharChars = 1;
-				}
-				if( nPosX + nCharChars > nNewX ){
-					//From 2002.04.05 kanju マルチバイト文字の前もしくは後にキャレット挿入
-					//マルチバイト文字かつマルチバイト文字の後半部分（奇数）なら文字の後ろにキャレットを挿入
-					//2002.05.13 YAZAKI 行の先頭にマルチバイト文字があったときの問題に対処。
-					if (nNewX >= 0 && (nCharChars == 2) && ((nPosX + nCharChars - nNewX)&1)){
-							nPosX += nCharChars;
-					}
-					//To 2002.04.05 kanju
-					break;
-				}
-				i+= nCharChars;
+				i = it.getIndex();
+				break;
 			}
+			it.addDelta();
 		}
+		nPosX += it.getColumn();// + it.getColumnDelta();
+		if ( it.end() ){
+			i = it.getIndex();
+			nPosX -= it.getColumnDelta();
+		}
+
 		if( i >= nLineLen ){
 // From 2001.12.21 hor フリーカーソルOFFでEOFのある行の直前がマウスで選択できないバグの修正
 			if( nNewY +1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
 				EOL_NONE == pcLayout->m_cEol.GetLen() ){
-				nPosX = LineIndexToColmn( pLine, nLineLen, nLineLen );
+				nPosX = LineIndexToColmn( pcLayout, nLineLen );
 			}else
 // To 2001.12.21 hor
 			/* フリーカーソルモードか */
@@ -3304,18 +3279,19 @@ normal_action:;
 
 
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen );
+				const CLayout* pcLayout;
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pLine, nLineLen, m_nSelectColmFrom );
+					nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						m_nSelectLineFrom, nIdx, &nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 					){
 						/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen );
-						nColmFrom = LineIndexToColmn( pLine, nLineLen, nColmFrom );
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen );
-						nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
+						nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
+						nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 
 
 						nWork = IsCurrentPositionSelected(
@@ -3341,19 +3317,19 @@ normal_action:;
 	//					}
 					}
 				}
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pLine, nLineLen, m_nSelectColmTo );
+					nIdx = LineColmnToIndex( pcLayout, m_nSelectColmTo );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						m_nSelectLineTo, nIdx,
 						&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 					){
 						/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen );
-						nColmFrom = LineIndexToColmn( pLine, nLineLen, nColmFrom );
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen );
-						nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
+						nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
+						nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 
 						nWork = IsCurrentPositionSelected(
 							nColmFrom,	// カーソル位置X
@@ -3905,18 +3881,19 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				);
 				return;
 			}
-			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen ) ) ){
-				nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+			const CLayout* pcLayout;
+			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ) ){
+				nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
 				/* 現在位置の単語の範囲を調べる */
 				if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 					m_nCaretPosY, nIdx,
 					&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 				){
 					/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen );
-					nColmFrom = LineIndexToColmn( pLine, nLineLen, nColmFrom );
-					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen );
-					nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
+					nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
+					nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 
 					nWorkF = IsCurrentPositionSelectedTEST(
 						nColmFrom,	// カーソル位置X
@@ -4401,10 +4378,9 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 {
 	const char*		pLine;
 	int				nLineLen;
-	int				nPosX;
+	int				nPosX = 0;
 	int				nPosY = m_nCaretPosY;
 	int				i;
-	int				nCharChars;
 	int				nLineCols;
 	int				nScrollLines;
 	const CLayout*	pcLayout;
@@ -4417,7 +4393,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 		if( nMoveLines <= 0 ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
-				nLineCols = LineIndexToColmn( pLine, nLineLen, nLineLen );
+				nLineCols = LineIndexToColmn( pcLayout, nLineLen );
 				/* 改行で終わっているか */
 				if( ( EOL_NONE != pcLayout->m_cEol.GetLen() )
 //				if( ( pLine[ nLineLen - 1 ] == '\n' || pLine[ nLineLen - 1 ] == '\r' )
@@ -4487,34 +4463,24 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	}
 	/* 次の行のデータを取得 */
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY + nMoveLines, &nLineLen, &pcLayout );
-	if( NULL == pLine ){
-		nLineLen = 0;
-	}
-	nPosX = 0;
-	for( i = 0; i < nLineLen; ){
-		if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getIndex() >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
 			i = nLineLen;
 			break;
 		}
-		if( pLine[i] == TAB ){
-			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			nCharChars =m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
-			if( nPosX + nCharChars > m_nCaretPosX_Prev ){
-				break;
-			}
-			++i;
-		}else{
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
-			if( nPosX + nCharChars > m_nCaretPosX_Prev ){
-				break;
-			}
-			i+= nCharChars;
+		if( it.getColumn() + it.getColumnDelta() > m_nCaretPosX_Prev ){
+			i = it.getIndex();
+			break;
 		}
-		nPosX += nCharChars;
+		it.addDelta();
 	}
+	nPosX += it.getColumn();
+	if ( it.end() ){
+		i = it.getIndex();
+	}
+
 	if( i >= nLineLen ){
 		/* フリーカーソルモードか */
 		if( m_pShareData->m_Common.m_bIsFreeCursorMode
@@ -4782,8 +4748,8 @@ BOOL CEditView::GetSelectedData(
 			if( NULL != pLine )
 			{
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColmnToIndex( pLine, nLineLen, rcSel.left  );
-				nIdxTo		= LineColmnToIndex( pLine, nLineLen, rcSel.right );
+				nIdxFrom	= LineColmnToIndex( pcLayout, rcSel.left  );
+				nIdxTo		= LineColmnToIndex( pcLayout, rcSel.right );
 
 				nBufSize += nIdxTo - nIdxFrom;
 			}
@@ -4808,8 +4774,8 @@ BOOL CEditView::GetSelectedData(
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColmnToIndex( pLine, nLineLen, rcSel.left  );
-				nIdxTo		= LineColmnToIndex( pLine, nLineLen, rcSel.right );
+				nIdxFrom	= LineColmnToIndex( pcLayout, rcSel.left  );
+				nIdxTo		= LineColmnToIndex( pcLayout, rcSel.right );
 				//2002.02.08 hor
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
@@ -4887,13 +4853,13 @@ BOOL CEditView::GetSelectedData(
 			}
 			if( nLineNum == m_nSelectLineFrom ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColmnToIndex( pLine, nLineLen, m_nSelectColmFrom );
+				nIdxFrom = LineColmnToIndex( pcLayout, m_nSelectColmFrom );
 			}else{
 				nIdxFrom = 0;
 			}
 			if( nLineNum == m_nSelectLineTo ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxTo = LineColmnToIndex( pLine, nLineLen, m_nSelectColmTo );
+				nIdxTo = LineColmnToIndex( pcLayout, m_nSelectColmTo );
 			}else{
 				nIdxTo = nLineLen;
 			}
@@ -5131,13 +5097,14 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		nIdxFrom = 0;
 		nIdxTo = 0;
 		for( nLineNum = rcSel.bottom; nLineNum >= rcSel.top - 1; nLineNum-- ){
+			const CLayout* pcLayout;
 			nDelPosNext = nIdxFrom;
 			nDelLenNext	= nIdxTo - nIdxFrom;
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen );
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColmnToIndex( pLine, nLineLen, rcSel.left );
-				nIdxTo		= LineColmnToIndex( pLine, nLineLen, rcSel.right );
+				nIdxFrom	= LineColmnToIndex( pcLayout, rcSel.left );
+				nIdxTo		= LineColmnToIndex( pcLayout, rcSel.right );
 
 				for( i = nIdxFrom; i <= nIdxTo; ++i ){
 					if( pLine[i] == CR || pLine[i] == LF ){
@@ -5152,8 +5119,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			nDelPos = nDelPosNext;
 			nDelLen	= nDelLenNext;
 			if( nLineNum < rcSel.bottom && 0 < nDelLen ){
-				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2 );
-				nPosX = LineIndexToColmn( pLine2, nLineLen2, nDelPos );
+				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2, &pcLayout );
+				nPosX = LineIndexToColmn( pcLayout, nDelPos );
 				nPosY =  nLineNum + 1;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe = new COpe;
@@ -5395,93 +5362,73 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 
 
 
-
-
-
-
-/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
-int CEditView::LineColmnToIndex( const char* pLine, int nLineLen, int nColmn )
+/* 指定された桁に対応する行のデータ内の位置を調べる Ver1
+	
+	@@@ 2002.09.28 YAZAKI CDocLine版
+*/
+int CEditView::LineColmnToIndex( const CDocLine* pcDocLine, int nColumn )
 {
-//#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CEditView::LineColmnToIndex" );
-//#endif
-	int		nPosX;
-	int		i;
-	int		nCharChars;
-	nPosX = 0;
-//	*pnLineAllColLen = 0;
-	for( i = 0; i < nLineLen; ){
-		if( pLine[i] == TAB ){
-			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
-			if( nPosX + nCharChars > nColmn ){
-				break;
-			}
-			++i;
-		}else{
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
-			if( nPosX + nCharChars > nColmn ){
-				break;
-			}
-			i+= nCharChars;
+	int i2 = 0;
+	CMemoryIterator<CDocLine> it( pcDocLine, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
+			break;
 		}
-		nPosX += nCharChars;
+		it.addDelta();
 	}
-//	if( i >= nLineLen  ){
-//		*pnLineAllColLen = nPosX;
-//	}
-	return i;
+	i2 += it.getIndex();
+	return i2;
+}
+
+
+/* 指定された桁に対応する行のデータ内の位置を調べる Ver1
+	
+	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
+*/
+int CEditView::LineColmnToIndex( const CLayout* pcLayout, int nColumn )
+{
+	int i2 = 0;
+	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
+			break;
+		}
+		it.addDelta();
+	}
+	i2 += it.getIndex();
+	return i2;
 }
 
 
 
 /* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */
 /* 指定された桁より、行が短い場合はpnLineAllColLenに行全体の表示桁数を返す */
-/* それ以外の場合はpnLineAllColLenに０をセットする */
-int CEditView::LineColmnToIndex2( const char* pLine, int nLineLen, int nColmn, int* pnLineAllColLen )
+/* それ以外の場合はpnLineAllColLenに０をセットする
+	
+	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
+*/
+int CEditView::LineColmnToIndex2( const CLayout* pcLayout, int nColumn, int& pnLineAllColLen )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CEditView::LineColmnToIndex(0)" );
-#endif
-	int		nPosX;
-	int		i;
-	int		nCharChars;
-//	int		bEOL = FALSE;
-	nPosX = 0;
-	*pnLineAllColLen = 0;
-	for( i = 0; i < nLineLen; ){
-//		if( bEOL ){
-//			break;
-//		}
-//		if( pLine[i] == '\r' || pLine[i] == '\n' ){
-//			bEOL = TRUE;
-//		}
-		if( pLine[i] == TAB ){
-			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
-			if( nPosX + nCharChars > nColmn ){
-				break;
-			}
-			++i;
-		}else{
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
-			if( nPosX + nCharChars > nColmn ){
-				break;
-			}
-			i+= nCharChars;
+	pnLineAllColLen = 0;
+
+	int i2 = 0;
+	int nPosX2 = 0;
+	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
+			break;
 		}
-		nPosX += nCharChars;
+		it.addDelta();
 	}
-	if( i >= nLineLen  ){
-		*pnLineAllColLen = nPosX;
+	i2 += it.getIndex();
+	if( i2 >= pcLayout->GetLength() ){
+		nPosX2 += it.getColumn();
+		pnLineAllColLen = nPosX2;
 	}
-	return i;
+	return i2;
 }
 
 
@@ -5491,34 +5438,44 @@ int CEditView::LineColmnToIndex2( const char* pLine, int nLineLen, int nColmn, i
 /*
 ||	指定された行のデータ内の位置に対応する桁の位置を調べる
 ||
+||	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
 */
-int CEditView::LineIndexToColmn( const char* pLine, int nLineLen, int nIndex )
+int CEditView::LineIndexToColmn( const CLayout* pcLayout, int nIndex )
 {
-	int		nPosX;
-	int		i;
-	int		nCharChars;
-	nPosX = 0;
-	for( i = 0; i < nLineLen; ){
-		if( i >= nIndex ){
+	//	以下、iterator版
+	int nPosX2 = 0;
+	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getIndex() >= nIndex ){
 			break;
 		}
-		if( pLine[i] == TAB ){
-			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
-			++i;
-		}else{
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
-			i+= nCharChars;
-		}
-		nPosX += nCharChars;
+		it.addDelta();
 	}
-	return nPosX;
+	nPosX2 += it.getColumn();
+	return nPosX2;
 }
 
 
+/*
+||	指定された行のデータ内の位置に対応する桁の位置を調べる
+||
+||	@@@ 2002.09.28 YAZAKI CDocLine版
+*/
+int CEditView::LineIndexToColmn( const CDocLine* pcDocLine, int nIndex )
+{
+	int nPosX2 = 0;
+	CMemoryIterator<CDocLine> it( pcDocLine, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+	for( it.first(); !it.end(); ){
+		it.scanNext();
+		if ( it.getIndex() >= nIndex ){
+			break;
+		}
+		it.addDelta();
+	}
+	nPosX2 += it.getColumn();
+	return nPosX2;
+}
 
 
 
@@ -5807,7 +5764,7 @@ void CEditView::DrawCaretPosInfo( void )
 		//	From Here
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = LineColmnToIndex( (const char *)pLine, nLineLen, m_nCaretPosX );
+			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ){
 				/* szText */
 				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
@@ -5870,7 +5827,7 @@ void CEditView::DrawCaretPosInfo( void )
 		nCharChars = 0;
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = LineColmnToIndex( (const char *)pLine, nLineLen, m_nCaretPosX );
+			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ){
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
@@ -7108,15 +7065,16 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 	CMemory		cmemWord;
 	int			nCurLine;
 	int			nCharChars;
+	const CLayout* pcLayout;
 
 	nCurLine = m_nCaretPosY;
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCurLine, &nLineLen );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCurLine, &nLineLen, &pcLayout );
 	if( NULL == pLine ){
 //		return 0;
 		nIdxTo = 0;
 	}else{
 		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
-		nIdxTo = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+		nIdxTo = LineColmnToIndex( pcLayout, m_nCaretPosX );
 	}
 	if( 0 == nIdxTo || NULL == pLine ){
 		if( nCurLine <= 0 ){
@@ -7855,10 +7813,11 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 			szTopic[_MAX_PATH - 1] = '\0';
 		}
 	}else{
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
+		const CLayout*	pcLayout;
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+			nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
 
 			/* 現在位置の単語の範囲を調べる */
 			if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
@@ -7866,10 +7825,10 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 			){
 				/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen );
-				nColmFrom = LineIndexToColmn( pLine, nLineLen, nColmFrom );
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen );
-				nColmTo = LineIndexToColmn( pLine, nLineLen, nColmTo );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
+				nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
+				nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 				/* 選択範囲の変更 */
 				m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
 				m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
@@ -8674,10 +8633,11 @@ void CEditView::DrawBracketPair( void )
 			::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_colBACK );
 
 			// 現在位置の括弧の強調表示
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
+			const CLayout* pcLayout;
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
 			if( NULL != pLine )
 			{
-				OutputX = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+				OutputX = LineColmnToIndex( pcLayout, m_nCaretPosX );
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + m_nCaretPosX * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 				nTop  = ( m_nCaretPosY - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 				HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
@@ -8686,10 +8646,10 @@ void CEditView::DrawBracketPair( void )
 			}
 
 			// 対括弧の強調表示
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen );
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen, &pcLayout );
 			if( NULL != pLine )
 			{
-				OutputX = LineColmnToIndex( pLine, nLineLen, nCol );
+				OutputX = LineColmnToIndex( pcLayout, nCol );
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 				nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
 				DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );

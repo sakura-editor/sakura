@@ -416,6 +416,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 	int			nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
 	int			nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
 	HRGN		hrgnDraw;
+	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
 
 	/* ‘I‘ð”ÍˆÍ“à‚Ìs‚©‚È */
 //	if( IsTextSelected() ){
@@ -433,10 +434,10 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 						nSelectTo   = nX;
 					}else
 					if( nLineNum == m_nSelectLineTo ){
-						nSelectFrom = 0;
+						nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
 						nSelectTo   = m_nSelectColmTo;
 					}else{
-						nSelectFrom = 0;
+						nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
 						nSelectTo   = nX;
 					}
 				}
