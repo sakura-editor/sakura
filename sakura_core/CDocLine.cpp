@@ -31,10 +31,11 @@ CDocLine::CDocLine()
 	m_pNext = NULL;
 	m_pLine = NULL;
 //	m_nType = 0;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-	m_bModify = TRUE;	/* 変更フラグ */
+	m_bModify = true;	/* 変更フラグ */
 //	m_enumEOLType = EOL_NONE;	/* 改行コードの種類 */
 //	m_nEOLLen = gm_pnEolLenArr[EOL_NONE];
 //	m_nModifyCount = 32000;	/* 変更回数 */
+	m_bBookMark = false;	/* ブックマーク */
 	return;
 }
 

@@ -497,6 +497,11 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_SPACETOTAB:  //#### Stonee, 2001/05/27
 	case F_HOKAN:
 	case F_CHGMOD_INS:
+	case F_LTRIM:		// 2001.12.03 hor
+	case F_RTRIM:		// 2001.12.03 hor
+	case F_SORT_ASC:	// 2001.12.11 hor
+	case F_SORT_DESC:	// 2001.12.11 hor
+	case F_MARGE:		// 2001.12.11 hor
 //		::MessageBox( m_hWnd, "Operation is forbidden.", "DEBUG", MB_OK | MB_ICONEXCLAMATION );
 		return true;
 	}
@@ -895,5 +900,68 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 }
 //	To Here June 23, 2001 N.Nakatani
 
+
+// From Here 2001.12.03 hor
+/* ブックマークリスト作成（無理矢理！） */
+void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
+{
+	const char*	pLine;
+	int		nLineLen;
+	int		nLineCount;
+	int		i,j,nX,nY;
+	char*	pszText;
+	int		nNewLineLen	= m_cNewLineCode.GetLen();
+	int		nLineLast	= m_cDocLineMgr.GetLineCount();
+
+	for( nLineCount = 0; nLineCount <  nLineLast; ++nLineCount ){
+		if(!m_cDocLineMgr.GetLineInfo(nLineCount)->IsBookMarked())continue;
+		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
+		if( NULL == pLine ){
+			break;
+		}
+		if( nLineLen<=nNewLineLen && nLineCount< nLineLast ){
+			continue;
+		}
+		// LTrim
+		for( i = 0; i < nLineLen; ++i ){
+			if( pLine[i] == ' ' ||
+				pLine[i] == '\t'){
+				continue;
+			}else if( (unsigned char)pLine[i] == (unsigned char)0x81 && (unsigned char)pLine[i + 1] == (unsigned char)0x40 ){
+				++i;
+				continue;
+			}
+			break;
+		}
+		if(( i >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
+		   ( i >= nLineLen )) {
+			continue;
+		}
+		// RTrim
+		for( j=nLineLen ; j>=i ; --j ){
+			if( pLine[j] == CR ||
+				pLine[j] == LF ||
+				pLine[j] ==' ' ||
+				pLine[j] =='\t'||
+				pLine[j] =='\0'){
+				continue;
+			}else if( 1<j && (unsigned char)pLine[j-1] == (unsigned char)0x81 && (unsigned char)pLine[j] == (unsigned char)0x40 ){
+				--j;
+				continue;
+			}else{
+				break;
+			}
+		}
+		nLineLen=j-i+1;
+		pszText = new char[nLineLen + 1];
+		memcpy( pszText, (const char *)&pLine[i], nLineLen );
+		pszText[nLineLen] = '\0';
+		m_cLayoutMgr.CaretPos_Phys2Log(	0, nLineCount, &nX, &nY );
+		pcFuncInfoArr->AppendData( nLineCount+1, nY+1 , (char *)pszText, 0 );
+		delete [] pszText;
+	}
+	return;
+}
+// To Here 2001.12.03 hor
 
 /*[EOF]*/

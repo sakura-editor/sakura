@@ -82,6 +82,11 @@
 #define F_INDENT_SPACE		30262	//SPACEインデント
 #define F_UNINDENT_SPACE	30263	//逆SPACEインデント
 #define F_WORDSREFERENCE	30270	//単語リファレンス
+#define F_LTRIM				30280	//左(先頭)の空白を削除	2001.12.03 hor
+#define F_RTRIM				30281	//右(末尾)の空白を削除	2001.12.03 hor
+#define F_SORT_ASC			30282	//選択行の昇順ソート	2001.12.06 hor
+#define F_SORT_DESC			30283	//選択行の降順ソート	2001.12.06 hor
+#define F_MARGE				30284	//選択行のマージ		2001.12.06 hor
 
 
 /* カーソル移動系 */
@@ -228,6 +233,11 @@
 #define F_TAGJUMPBACK		30941	//タグジャンプバック機能
 #define F_COMPARE			30950	//ファイル内容比較
 #define F_BRACKETPAIR		30960	//対括弧の検索
+#define F_BOOKMARK_SET		30970	//ブックマーク設定・解除
+#define F_BOOKMARK_NEXT		30971	//次のブックマークへ
+#define F_BOOKMARK_PREV		30972	//前のブックマークへ
+#define F_BOOKMARK_RESET	30973	//ブックマークの全解除
+#define F_BOOKMARK_VIEW		30974	//ブックマークの一覧
 
 
 /* モード切り替え系 */

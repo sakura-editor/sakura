@@ -287,6 +287,12 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				if( m_pShareData->m_Common.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
+				// 2001.12.03 hor
+				//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
+				//	キャレットが表示されなくなるのを回避する
+				else{
+				::SendMessage(m_hWnd,WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(m_hWnd,IDC_COMBO_TEXT ),TRUE);
+				}
 			}
 //From Here Feb. 20, 2001 JEPRO 「置換」ダイアログと同じように警告メッセージを表示するように変更
 //		}else

@@ -59,11 +59,20 @@ public:
 	CDocLine*	m_pNext;
 	CMemory*	m_pLine;
 //	int			m_nType;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-	int			m_bModify;	/* 変更フラグ */
 	CEOL		m_cEol;		/* 行末コード */
 //	enumEOLType	m_enumEOLType;	/* 改行コードの種類 */
 //	int			m_nEOLLen;		/* 改行コードの長さ */
 //	int			m_nModifyCount;	/* 変更回数 */
+
+	bool		IsModifyed  ( void ) const { return m_bModify;  }	// 変更フラグの状態を取得する	2001.12.18 hor
+	void		SetModifyFlg( bool bFlg )  { m_bModify = bFlg;  }	// 変更フラグの状態を指定する	2001.12.18 hor
+
+	bool		IsBookMarked( void ) const { return m_bBookMark;}	// ブックマークの状態を取得する 2001.12.14 hor
+	void		SetBookMark ( bool bFlg )  { m_bBookMark = bFlg;}	// ブックマークの状態を指定する 2001.12.14 hor
+
+protected:
+	bool		m_bModify;					/* 変更フラグ */
+	bool		m_bBookMark;				/*ブックマーク*/
 };
 
 

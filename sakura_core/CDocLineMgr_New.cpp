@@ -296,7 +296,7 @@ next_line:;
 				/* 改行コードの情報を更新 */
 				pCDocLine->m_cEol.SetType( EOL_NONE );
 			}
-			pCDocLine->m_bModify = TRUE;	/* 変更フラグ */
+			pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 		}else{
 		/* 行内だけの削除 */
 			pWork = new char[pCDocLine->m_pLine->m_nDataLen - nWorkLen + 1];
@@ -311,7 +311,7 @@ next_line:;
 			pCDocLine->m_pLine->SetData( pWork, pCDocLine->m_pLine->m_nDataLen - nWorkLen );
 			delete [] pWork;
 			pWork = NULL;
-			pCDocLine->m_bModify = TRUE;	/* 変更フラグ */
+			pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 		}
 
 prev_line:;
@@ -387,7 +387,7 @@ prev_line:;
 //			++pCDocLine->m_nModifyCount;	/* 変更回数 */
 //			pCDocLine->m_bModify = TRUE;	/* 変更フラグ */
 //		}
-		pCDocLine->m_bModify = TRUE;	/* 変更フラグ */
+		pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		cmemPrevLine.SetData( pLine, pArg->nDelPosFrom );
@@ -561,4 +561,54 @@ end_of_func:;
 }
 
 
+// 2001.12.03 hor ブックマークの全解除
+void CDocLineMgr::ResetAllBookMark( void )
+{
+	CDocLine* pDocLine;
+	pDocLine = m_pDocLineTop;
+	while( NULL != pDocLine ){
+		pDocLine->SetBookMark(false);
+		pDocLine = pDocLine->m_pNext;
+	}
+	return;
+}
+
+
+// 2001.12.03 hor ブックマーク検索
+int CDocLineMgr::SearchBookMark(
+	int			nLineNum,		/* 検索開始行 */
+	int			bPrevOrNext,	/* 0==前方検索 1==後方検索 */
+	int*		pnLineNum 		/* マッチ行 */
+)
+{
+	CDocLine*	pDocLine;
+	int			nLinePos=nLineNum;
+	int			nX=0;
+
+	/* 0==前方検索 1==後方検索 */
+	if( 0 == bPrevOrNext ){
+		nLinePos--;
+		pDocLine = GetLineInfo( nLinePos );
+		while( NULL != pDocLine ){
+			if(pDocLine->IsBookMarked()){
+				*pnLineNum = nLinePos;				/* マッチ行 */
+				return TRUE;
+			}
+			nLinePos--;
+			pDocLine = pDocLine->m_pPrev;
+		}
+	}else{
+		nLinePos++;
+		pDocLine = GetLineInfo( nLinePos );
+		while( NULL != pDocLine ){
+			if(pDocLine->IsBookMarked()){
+				*pnLineNum = nLinePos;				/* マッチ行 */
+				return TRUE;
+			}
+			nLinePos++;
+			pDocLine = pDocLine->m_pNext;
+		}
+	}
+	return FALSE;
+}
 /*[EOF]*/

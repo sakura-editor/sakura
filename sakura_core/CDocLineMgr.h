@@ -92,6 +92,11 @@ public:
 	void ResetAllModifyFlag( void );	/* 行変更状態をすべてリセット */
 
 
+// From Here 2001.12.03 hor
+	void ResetAllBookMark( void );			/* ブックマークの全解除 */
+	int SearchBookMark( int , int , int* ); /* ブックマーク検索 */
+// To Here 2001.12.03 hor
+
 	/*
 	|| 更新系
 	*/

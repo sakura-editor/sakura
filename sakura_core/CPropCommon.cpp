@@ -647,12 +647,18 @@ BOOL CPropCommon::DispatchEvent_p1(
 //	m_Common.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
 
 			case IDC_CHECK_USETRAYICON:	/* タスクトレイを使う */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
-				}else{
-//					::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */	//Jan. 12, 2001 JEPRO 前のチェックが残るように変更(コメントアウトしただけ)
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+			// From Here 2001.12.03 hor
+			//		操作しにくいって評判だったのでタスクトレイ関係のEnable制御をやめました
+			//	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
+			//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+			//	}else{
+			//		::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
+			//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+			//	}
+				if(!::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
+					::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
 				}
+			// To Here 2001.12.03 hor
 				return TRUE;
 
 			case IDC_CHECK_STAYTASKTRAY:	/* タスクトレイに常駐 */
@@ -962,11 +968,13 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 
 	/* タスクトレイを使う */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, m_Common.m_bUseTaskTray );
-	if( m_Common.m_bUseTaskTray ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
-	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
-	}
+// From Here 2001.12.03 hor
+//	if( m_Common.m_bUseTaskTray ){
+//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
+//	}else{
+//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
+//	}
+// To Here 2001.12.03 hor
 	/* タスクトレイに常駐 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, m_Common.m_bStayTaskTray );
 

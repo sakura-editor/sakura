@@ -120,6 +120,9 @@ const DWORD p_helpids1[] = {	//11300
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	IDC_EDIT_TABVIEWSTRING,			11346,  //TAB表示文字列
 //#endif
+// From Here 2001.12.03 hor
+	IDC_CHECK_INS_SPACE,			11347,	//スペースの挿入
+// To Here 2001.12.03 hor
 	IDC_SPIN_MAXLINELEN,			-1,
 	IDC_SPIN_CHARSPACE,				-1,
 	IDC_SPIN_LINESPACE,				-1,
@@ -920,6 +923,11 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );
 //#endif
 
+// From Here 2001.12.03 hor
+	/* スペースの挿入 */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );
+// To Here 2001.12.03 hor
+
 	/* その他のインデント対象文字 */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars );
 
@@ -1051,6 +1059,11 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		m_Types.m_szTabViewString[i] = szTab[i];
 	}
 //#endif
+
+// 2001.12.03 hor
+	/* スペースの挿入 */
+	m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );
+// From Here 2001.12.03 hor
 
 	/* アウトライン解析方法 */
 	HWND	hwndCombo;

@@ -41,6 +41,8 @@ CDlgReplace::CDlgReplace()
 	m_bSelectedArea = FALSE;	/* 選択範囲内置換 */
 	m_szText[0] = '\0';			/* 検索文字列 */
 	m_szText2[0] = '\0';		/* 置換後文字列 */
+	m_nReplaceTarget=0;			/* 置換対象 */		// 2001.12.03 hor
+	m_nPaste=FALSE;				/* 張付ける？ */	// 2001.12.03 hor
 	return;
 }
 
@@ -94,12 +96,14 @@ void CDlgReplace::SetData( void )
 	/* 単語単位で探す */
 	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
 
-	/* 選択範囲内置換 */
-	if( m_pShareData->m_Common.m_bSelectedArea ){
-		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, TRUE );
-	}else{
-		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, TRUE );
-	}
+// From Here 2001.12.03 hor
+//	/* 選択範囲内置換 */
+//	if( m_pShareData->m_Common.m_bSelectedArea ){
+//		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, TRUE );
+//	}else{
+//		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, TRUE );
+//	}
+// To Here 2001.12.03 hor
 
 	// From Here Jun. 29, 2001 genta
 	// 正規表現ライブラリの差し替えに伴う処理の見直し
@@ -127,6 +131,21 @@ void CDlgReplace::SetData( void )
 
 	/* 置換 ダイアログを自動的に閉じる */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace, m_pShareData->m_Common.m_bAutoCloseDlgReplace );
+
+	// From Here 2001.12.03 hor
+	// クリップボードから張り付ける？
+	::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, m_nPaste );
+	// 置換対象
+	if(m_nReplaceTarget==0){
+		::CheckDlgButton( m_hWnd, IDC_RADIO_REPLACE, TRUE );
+	}else
+	if(m_nReplaceTarget==1){
+		::CheckDlgButton( m_hWnd, IDC_RADIO_INSERT, TRUE );
+	}else
+	if(m_nReplaceTarget==2){
+		::CheckDlgButton( m_hWnd, IDC_RADIO_ADD, TRUE );
+	}
+	// To Here 2001.12.03 hor
 
 	return;
 }
@@ -225,6 +244,19 @@ int CDlgReplace::GetData( void )
 		strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork->GetPtr( NULL ) );
 		delete pcmWork;
 
+		// From Here 2001.12.03 hor
+		// クリップボードから張り付ける？
+		m_nPaste=IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), !m_nPaste );
+		// 置換対象
+		m_nReplaceTarget=0;
+		if(::IsDlgButtonChecked( m_hWnd, IDC_RADIO_INSERT )){
+			m_nReplaceTarget=1;
+		}else
+		if(::IsDlgButtonChecked( m_hWnd, IDC_RADIO_ADD )){
+			m_nReplaceTarget=2;
+		}
+		// To Here 2001.12.03 hor
 
 		return 1;
 	}else{
@@ -253,14 +285,14 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* テキスト選択中か */
 	if( m_bSelected ){
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SEARCHPREV ), FALSE );
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SEARCHNEXT ), FALSE );
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_REPALCE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SEARCHPREV ), FALSE );	// 2001.12.03 hor コメント解除
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SEARCHNEXT ), FALSE );	// 2001.12.03 hor コメント解除
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_REPALCE ), FALSE );		// 2001.12.03 hor コメント解除
 		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, TRUE );
-		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, FALSE );
+//		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, FALSE );						// 2001.12.03 hor コメント
 	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_SELECTEDAREA ), FALSE );
-		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, FALSE );
+//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_SELECTEDAREA ), FALSE );	// 2001.12.03 hor コメント
+//		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, FALSE );					// 2001.12.03 hor コメント
 		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, TRUE );
 	}
 	/* 基底クラスメンバ */
@@ -281,7 +313,62 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	HWND		hwndProgress;
 	HWND		hwndStatic;
 //	MSG			msg;
+
+// From Here 2001.12.03 hor
+	int			colFrom;		//選択範囲開始桁
+	int			linFrom;		//選択範囲開始行
+	int			colTo,colToP;	//選択範囲終了桁
+	int			linTo,linToP;	//選択範囲終了行
+	int			colDif = 0;		//置換後の桁調整
+	int			linDif = 0;		//置換後の行調整
+	int			colOld = 0;		//検索後の選択範囲次桁
+	int			linOld = 0;		//検索後の行
+	int			lineCnt;		//置換前の行数
+	int			linPrev;		//前回の検索行(矩形)
+	int			linNext;		//次回の検索行(矩形)
+	int			colTmp,linTmp,colLast,linLast;
+	int			bBeginBoxSelect; // 矩形選択？
+	const char*	pLine;
+	int			nLineLen;
+	const CLayout* pcLayout;
+	int			bLineOffset=FALSE;
+	int			bLineChecked=FALSE;
+
 	switch( wID ){
+	case IDC_CHK_PASTE:
+		/* テキストの張り付け */
+		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE ) &&
+			!pcEditView->m_pcEditDoc->IsEnablePaste() ){
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+			::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
+		}
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE)) );
+		return TRUE;
+	case IDC_RADIO_SELECTEDAREA:
+		/* 範囲範囲 */
+		if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_ALLAREA ) ){
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHPREV ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHNEXT ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_REPALCE ), TRUE );
+		}else{
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHPREV ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHNEXT ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_REPALCE ), FALSE );
+		}
+		return TRUE;
+	case IDC_RADIO_ALLAREA:
+		/* ファイル全体 */
+		if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_ALLAREA ) ){
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHPREV ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHNEXT ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_REPALCE ), TRUE );
+		}else{
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHPREV ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_SEARCHNEXT ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_REPALCE ), FALSE );
+		}
+		return TRUE;
+// To Here 2001.12.03 hor
 	case IDC_BUTTON_HELP:
 		/* 「置換」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
@@ -355,6 +442,13 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 			/* 再描画 */
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+
+			// 2001.12.03 hor
+			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
+			//	キャレットが表示されなくなるのを回避する
+			::SendMessage(m_hWnd,WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(m_hWnd,IDC_COMBO_TEXT ),TRUE);
+			// To Here 2001.12.03 hor
+               
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
 				"文字列を指定してください。"
@@ -364,8 +458,20 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	case IDC_BUTTON_REPALCE:	/* 置換 */
 		if( 0 < GetData() ){
+			// From Here 2001.12.03 hor
+			if( m_nPaste && !pcEditView->m_pcEditDoc->IsEnablePaste()){
+				::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+				::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
+				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
+				return TRUE;
+			}
+
+			// 矩形選択？
+			bBeginBoxSelect = pcEditView->m_bBeginBoxSelect;
+
 			/* カーソル左移動 */
-			pcEditView->HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );
+			//pcEditView->HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );	//？？？
+			// To Here 2001.12.03 hor
 
 			/* テキスト選択解除 */
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -376,9 +482,52 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 			/* テキストが選択されているか */
 			if( pcEditView->IsTextSelected() ){
+				// From Here 2001.12.03 hor
+				if(m_nReplaceTarget==1){	//挿入位置へ移動
+					colTmp = pcEditView->m_nSelectColmTo - pcEditView->m_nSelectColmFrom;
+					linTmp = pcEditView->m_nSelectLineTo - pcEditView->m_nSelectLineFrom;
+					pcEditView->m_nSelectColmFrom=-1;
+					pcEditView->m_nSelectLineFrom=-1;
+					pcEditView->m_nSelectColmTo	 =-1;
+					pcEditView->m_nSelectLineTo	 =-1;
+				}else
+				if(m_nReplaceTarget==2){	//追加位置へ移動
+					if(m_bRegularExp){
+						//検索後の文字が改行やったら次の行の先頭へ移動
+						pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+							pcEditView->m_nSelectColmTo,
+							pcEditView->m_nSelectLineTo,
+							&colTmp,
+							&linTmp
+						);
+						pLine = pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr2( pcEditView->m_nSelectLineTo, &nLineLen, &pcLayout );
+						if( NULL != pLine &&
+							colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
+							pcEditView->m_nSelectColmTo=0;
+							pcEditView->m_nSelectLineTo++;
+						}
+					}
+					pcEditView->m_nCaretPosX = pcEditView->m_nSelectColmTo;
+					pcEditView->m_nCaretPosY = pcEditView->m_nSelectLineTo;
+					pcEditView->m_nSelectColmFrom=-1;
+					pcEditView->m_nSelectLineFrom=-1;
+					pcEditView->m_nSelectColmTo	 =-1;
+					pcEditView->m_nSelectLineTo	 =-1;
+				}
 				/* コマンドコードによる処理振り分け */
 				/* テキストを貼り付け */
-				pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)m_szText2, FALSE, 0, 0 );
+				//pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)m_szText2, FALSE, 0, 0 );
+				if(m_nPaste){
+					pcEditView->HandleCommand( F_PASTE, 0, 0, 0, 0, 0 );
+				}else{
+					pcEditView->HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_szText2, FALSE, 0, 0 );
+				}
+				// 挿入後の検索開始位置を調整
+				if(m_nReplaceTarget==1){
+					pcEditView->m_nCaretPosX+=colTmp;
+					pcEditView->m_nCaretPosY+=linTmp;
+				}
+				// To Here 2001.12.03 hor
 				/* 次を検索 */
 				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
 			}
@@ -392,6 +541,17 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:
 		if( 0 < GetData() ){
+
+		// From Here 2001.12.03 hor
+			if( m_nPaste && !pcEditView->m_pcEditDoc->IsEnablePaste() ){
+				::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+				::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
+				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
+				return TRUE;
+			}
+			// 矩形選択？
+			bBeginBoxSelect = pcEditView->m_bBeginBoxSelect;
+		// To Here 2001.12.03 hor
 
 
 			/* 表示処理ON/OFF */
@@ -423,13 +583,37 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 //			::SetWindowText( hwndStatic, szLabel );
 
-			/* ファイルの先頭に移動 */
-			pcEditView->HandleCommand( F_GOFILETOP, bDisplayUpdate, 0, 0, 0, 0 );
+		// From Here 2001.12.03 hor
+			if (m_bSelectedArea) {
+				/* 選択範囲置換 */
+				/* 選択範囲開始位置の取得 */
+				colFrom = pcEditView->m_nSelectColmFrom;
+				linFrom = pcEditView->m_nSelectLineFrom;
+				colTo   = pcEditView->m_nSelectColmTo;
+				linTo   = pcEditView->m_nSelectLineTo;
+				pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+					colTo,
+					linTo,
+					&colToP,
+					&linToP
+				);
+				//選択範囲開始位置へ移動
+				pcEditView->MoveCursor( colFrom, linFrom, bDisplayUpdate );
+			}else{
+				/* ファイル全体置換 */
+				/* ファイルの先頭に移動 */
+				pcEditView->HandleCommand( F_GOFILETOP, bDisplayUpdate, 0, 0, 0, 0 );
+			}
+			colLast=pcEditView->m_nCaretPosX;
+			linLast=pcEditView->m_nCaretPosY;
+
 			/* テキスト選択解除 */
 			/* 現在の選択範囲を非選択状態に戻す */
-			pcEditView->DisableSelectArea( FALSE );
+			pcEditView->DisableSelectArea( bDisplayUpdate );
 			/* 次を検索 */
 			pcEditView->HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
+		// To Here 2001.12.03 hor
+
 			/* テキストが選択されているか */
 			while( pcEditView->IsTextSelected() ){
 				/* キャンセルされたか */
@@ -468,9 +652,153 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 //					CRunningTimer* pcRunningTimer = new CRunningTimer( (const char*)"F_INSTEXT" );
 //					gm_ProfileOutput = FALSE;
 //#endif
+
+				// From Here 2001.12.03 hor
+					/* 検索後の位置を確認 */
+					if(m_bSelectedArea){
+						if (bBeginBoxSelect) {
+						// 矩形選択
+						//	o レイアウト座標をチェックしながら置換する
+						//	o 折り返しがあると変になるかも・・・
+						//
+							// 検索時の行数を記憶
+							lineCnt=pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+							// 検索後の範囲終端
+							colOld = pcEditView->m_nSelectColmTo;
+							linOld = pcEditView->m_nSelectLineTo;
+							// 前回の検索行と違う？
+							if(linOld!=linPrev){
+								colDif=0;
+							}
+							linPrev=linOld;
+							// 行は範囲内？
+							if ((linTo+linDif == linOld && colTo+colDif < colOld) ||
+								(linTo+linDif <  linOld)) {
+								break;
+							}
+							// 桁は範囲内？
+							if(!((colFrom<=pcEditView->m_nSelectColmFrom)&&
+							     (colOld<=colTo+colDif))){
+								if(colOld<colTo+colDif){
+									linNext=pcEditView->m_nSelectLineTo;
+								}else{
+									linNext=pcEditView->m_nSelectLineTo+1;
+								}
+								//次の検索開始位置へシフト
+								pcEditView->m_nCaretPosX=colFrom;
+								pcEditView->m_nCaretPosY=linNext;
+								//pcEditView->DisableSelectArea( bDisplayUpdate );
+								//pcEditView->MoveCursor( colFrom, linNext, bDisplayUpdate );
+								pcEditView->HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
+								colDif=0;
+								continue;
+							}
+						}else{
+						// 普通の選択
+						//	o 物理座標をチェックしながら置換する
+						//
+							// 検索時の行数を記憶
+							lineCnt=pcEditView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+							// 検索後の範囲終端
+							pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+								pcEditView->m_nSelectColmTo,
+								pcEditView->m_nSelectLineTo,
+								&colOld,
+								&linOld
+							);
+							// 行は範囲内？
+							if ((linToP+linDif == linOld && colToP+colDif < colOld) ||
+								(linToP+linDif <  linOld)) {
+								break;
+							}
+						}
+					}
+
+					if(m_nReplaceTarget==1){	//挿入位置セット
+						colTmp = pcEditView->m_nSelectColmTo - pcEditView->m_nSelectColmFrom;
+						linTmp = pcEditView->m_nSelectLineTo - pcEditView->m_nSelectLineFrom;
+						pcEditView->m_nSelectColmFrom=-1;
+						pcEditView->m_nSelectLineFrom=-1;
+						pcEditView->m_nSelectColmTo	 =-1;
+						pcEditView->m_nSelectLineTo	 =-1;
+					}else
+					if(m_nReplaceTarget==2){	//追加位置セット
+						if(!bLineChecked){
+							//検索後の位置が改行やったら次の行の先頭にオフセット
+							pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+								pcEditView->m_nSelectColmTo,
+								pcEditView->m_nSelectLineTo,
+								&colTmp,
+								&linTmp
+							);
+							if(m_bRegularExp){
+								pLine = pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr2( pcEditView->m_nSelectLineTo, &nLineLen, &pcLayout );
+								if( NULL != pLine &&
+									colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
+									bLineOffset=TRUE;
+								}
+							}
+							bLineChecked=TRUE;
+						}
+						if(bLineOffset){
+							pcEditView->m_nCaretPosX = 0;
+							pcEditView->m_nCaretPosY ++;
+							pcEditView->m_nCaretPosX_PHY = 0;
+							pcEditView->m_nCaretPosY_PHY ++;
+						}else{
+							pcEditView->m_nCaretPosX = pcEditView->m_nSelectColmTo;
+							pcEditView->m_nCaretPosY = pcEditView->m_nSelectLineTo;
+						}
+						pcEditView->m_nSelectColmFrom=-1;
+						pcEditView->m_nSelectLineFrom=-1;
+						pcEditView->m_nSelectColmTo	 =-1;
+						pcEditView->m_nSelectLineTo	 =-1;
+					}
+
 					/* コマンドコードによる処理振り分け */
 					/* テキストを貼り付け */
-					pcEditView->HandleCommand( F_INSTEXT, bDisplayUpdate, (LPARAM)m_szText2, TRUE, 0, 0 );
+					//pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)m_szText2, FALSE, 0, 0 );
+					if(m_nPaste){
+						pcEditView->HandleCommand( F_PASTE, 0, 0, 0, 0, 0 );
+					}else{
+						pcEditView->HandleCommand( F_INSTEXT, bDisplayUpdate, (LPARAM)m_szText2, TRUE, 0, 0 );
+					}
+
+					// 挿入後の位置調整
+					if(m_nReplaceTarget==1){
+						pcEditView->m_nCaretPosX+=colTmp;
+						pcEditView->m_nCaretPosY+=linTmp;
+						if (!bBeginBoxSelect) {
+							pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+								pcEditView->m_nCaretPosX,
+								pcEditView->m_nCaretPosY,
+								&pcEditView->m_nCaretPosX_PHY,
+								&pcEditView->m_nCaretPosY_PHY
+							);
+						}
+					}
+
+					// 最後に置換した位置を記憶
+					colLast=pcEditView->m_nCaretPosX;
+					linLast=pcEditView->m_nCaretPosY;
+
+					/* 置換後の位置を確認 */
+					if(m_bSelectedArea){
+						// 検索→置換の行補正値取得
+						if(bBeginBoxSelect){
+							colDif += colLast - colOld;
+							linDif += pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineCount() - lineCnt;
+						}else{
+							colTmp=pcEditView->m_nCaretPosX_PHY;
+							linTmp=pcEditView->m_nCaretPosY_PHY;
+							linDif += pcEditView->m_pcEditDoc->m_cDocLineMgr.GetLineCount() - lineCnt;
+							if(linToP+linDif==linTmp){
+								colDif += colTmp - colOld;
+							}
+						}
+					}
+				// To Here 2001.12.03 hor
+
 //#ifdef _DEBUG
 //					gm_ProfileOutput = TRUE;
 //					delete pcRunningTimer;
@@ -501,11 +829,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			_itoa( nReplaceNum, szLabel, 10 );
 			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 
-			//再描画
-			pcEditView->m_bDrawSWITCH = TRUE;
-			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
-
-
 			if( !cDlgCancel.IsCanceled() ){
 				nNewPos = 100;
 				::SendMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
@@ -517,7 +840,47 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			::EnableWindow( ::GetParent( ::GetParent( m_hWnd ) ), TRUE );
 
 
-			/* 再描画 */
+		// From Here 2001.12.03 hor
+
+			/* テキスト選択解除 */
+			pcEditView->DisableSelectArea( TRUE );
+
+			/* カーソル・選択範囲復元 */
+			if((!m_bSelectedArea) ||			// ファイル全体置換
+			   (cDlgCancel.IsCanceled())) {		// キャンセルされた
+				// 最後に置換した文字列の右へ
+				pcEditView->MoveCursor( colLast, linLast, TRUE );
+			}else{
+				if (bBeginBoxSelect) {
+				// 矩形選択
+					pcEditView->m_bBeginBoxSelect=bBeginBoxSelect;
+					linTo+=linDif;
+					if(linTo<0)linTo=0;
+				}else{
+				// 普通の選択
+					colToP+=colDif;
+					if(colToP<0)colToP=0;
+					linToP+=linDif;
+					if(linToP<0)linToP=0;
+					pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+						colToP,
+						linToP,
+						&colTo,
+						&linTo
+					);
+				}
+				if(linFrom<linTo || colFrom<colTo){
+					pcEditView->m_nSelectLineFrom = linFrom;
+					pcEditView->m_nSelectColmFrom = colFrom;
+					pcEditView->m_nSelectLineTo   = linTo;
+					pcEditView->m_nSelectColmTo   = colTo;
+				}
+				pcEditView->MoveCursor( colTo, linTo, TRUE );
+			}
+		// To Here 2001.12.03 hor
+
+			// 再描画
+			pcEditView->m_bDrawSWITCH = TRUE;
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 			/* アクティブにする */

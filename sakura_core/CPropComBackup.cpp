@@ -38,6 +38,7 @@ const DWORD p_helpids[] = {	//10000
 	IDC_CHECK_BACKUP_SEC,			10016,	//バックアップファイル名（秒）
 	IDC_CHECK_BACKUPDIALOG,			10017,	//作成前に確認
 	IDC_CHECK_BACKUPFOLDER,			10018,	//指定フォルダに作成
+	IDC_CHECK_BACKUP_DUSTBOX,		10019,	//バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
 	IDC_EDIT_BACKUPFOLDER,			10040,	//保存フォルダ名
 	IDC_EDIT_BACKUP_3,				10041,	//世代数
 	IDC_RADIO_BACKUP_TYPE1,			10060,	//バックアップの種類（拡張子）
@@ -189,7 +190,7 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 		}
 		return TRUE;
 		/*NOTREACHED*/
-		break;
+		//break;
 //@@@ 2001.02.04 End
 
 	}
@@ -245,6 +246,9 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 
 	/* バックアップを作成するフォルダ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder );
+
+	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX, m_Common.m_bBackUpDustBox );	//@@@ 2001.12.11 add MIK
 
 	//	From Here Aug. 16, 2000 genta
 	int nN = m_Common.GetBackupCount();
@@ -314,6 +318,9 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 
 	/* バックアップを作成するフォルダ */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder, MAX_PATH - 1 );
+
+	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+	m_Common.m_bBackUpDustBox = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX );	//@@@ 2001.12.11 add MIK
 
 //	int nDummy;
 //	int nCharChars;
@@ -399,6 +406,7 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKUP_FOLDER_REF ), FALSE );
 		}
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ), TRUE );	//@@@ 2001.12.11 add MIK
 
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ), FALSE );
@@ -419,6 +427,7 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKUP_FOLDER_REF ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ), FALSE );	//@@@ 2001.12.11 add MIK
 	}
 }
 //	To Here Aug. 16, 2000 genta

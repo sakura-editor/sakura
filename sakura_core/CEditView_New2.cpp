@@ -266,8 +266,8 @@ void CEditView::DispLineNumber(
 //		pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( pcLayout->m_nLinePhysical );
 		pCDocLine = pcLayout->m_pCDocLine;
 
-		if( TRUE == m_pcEditDoc->m_bIsModified	/* ドキュメントが無変更の状態か */
-		 && TRUE == pCDocLine->m_bModify ){		/* 変更フラグ */
+		if( m_pcEditDoc->m_bIsModified	/* ドキュメントが無変更の状態か */
+		 && pCDocLine->IsModifyed() ){		/* 変更フラグ */
 //			if( 0 == pCDocLine->m_nModifyCount ){	/* 変更回数 */
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 //			}
@@ -381,6 +381,19 @@ void CEditView::DispLineNumber(
 		::FillRect( hdc, &rcClip, hBrush );
 		::DeleteObject( hBrush );
 	}
+
+// From Here 2001.12.03 hor
+	/* とりあえずブックマークに縦線 */
+	if(pCDocLine->IsBookMarked()){
+		hPen = ::CreatePen( PS_SOLID, 2, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
+		hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, 1, y, NULL );
+		::LineTo( hdc, 1, y + nLineHeight );
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+	}
+// To Here 2001.12.03 hor
+
 	return;
 }
 

@@ -84,6 +84,11 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_INDENT_SPACE				, "IndentSpace",		//SPACEインデント
 	F_UNINDENT_SPACE			, "UnindentSpace",		//逆SPACEインデント
 	F_WORDSREFERENCE			, "WordReference",		//単語リファレンス
+	F_LTRIM						, "LTrim",				// 2001.12.03 hor
+	F_RTRIM						, "RTrim",				// 2001.12.03 hor
+	F_SORT_ASC					, "SortAsc",			// 2001.12.06 hor
+	F_SORT_DESC					, "SortDesc",			// 2001.12.06 hor
+	F_MARGE						, "Marge",				// 2001.12.06 hor
 
 	/* カーソル移動系 */
 	F_UP						, "Up",				//カーソル上移動
@@ -212,6 +217,13 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_TAGJUMPBACK				, "TagJumpBack",		//タグジャンプバック機能
 	F_COMPARE					, "Compare",			//ファイル内容比較
 	F_BRACKETPAIR				, "BracketPair",		//対括弧の検索
+// From Here 2001.12.03 hor
+	F_BOOKMARK_SET				, "BookmarkSet",		//ブックマーク設定・解除
+	F_BOOKMARK_NEXT				, "BookmarkNext",		//次のブックマークへ
+	F_BOOKMARK_PREV				, "BookmarkPrev",		//前のブックマークへ
+	F_BOOKMARK_RESET			, "BookmarkReset",		//ブックマークの全解除
+	F_BOOKMARK_VIEW				, "BookmarkView",		//ブックマークの一覧
+// To Here 2001.12.03 hor
 
 	/* モード切り替え系 */
 	F_CHGMOD_INS				, "ChgmodINS",		//挿入／上書きモード切り替え
@@ -386,6 +398,11 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_UNINDENT_TAB				://逆TABインデント
 	case F_INDENT_SPACE				://SPACEインデント
 	case F_UNINDENT_SPACE			://逆SPACEインデント
+	case F_LTRIM					:// 2001.12.03 hor
+	case F_RTRIM					:// 2001.12.03 hor
+	case F_SORT_ASC					:// 2001.12.06 hor
+	case F_SORT_DESC				:// 2001.12.06 hor
+	case F_MARGE					:// 2001.12.06 hor
 
 	/* カーソル移動系 */
 	case F_UP						://カーソル上移動
@@ -510,6 +527,13 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_TAGJUMPBACK				://タグジャンプバック機能
 //	case F_COMPARE					://ファイル内容比較
 	case F_BRACKETPAIR				://対括弧の検索
+// From Here 2001.12.03 hor
+	case F_BOOKMARK_SET				://ブックマーク設定・解除
+	case F_BOOKMARK_NEXT			://次のブックマークへ
+	case F_BOOKMARK_PREV			://前のブックマークへ
+	case F_BOOKMARK_RESET			://ブックマークの全解除
+//	case F_BOOKMARK_VIEW			://ブックマークの一覧
+// To Here 2001.12.03 hor
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS				://挿入／上書きモード切り替え

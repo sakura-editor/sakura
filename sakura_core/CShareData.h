@@ -232,6 +232,7 @@ struct Types {
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	char				m_szTabViewString[9];			/* TAB表示文字列 */
 //#endif
+	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
 //	int					m_bDispLINE;					/* 行番号表示／非表示 */
 //	BOOL				m_bDispTAB;						/* タブ記号を表示する */
 //	BOOL				m_bDispZENSPACE;				/* 日本語空白を表示する */
@@ -434,6 +435,7 @@ struct Common {
 	int 				m_nBackUpType_Opt4;				/* バックアップファイル名：オプション4 */
 	int 				m_nBackUpType_Opt5;				/* バックアップファイル名：オプション5 */
 	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
+	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	int					m_nFileShareMode;				/* ファイルの排他制御モード */
 	char				m_szExtHelp1[_MAX_PATH];		/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */

@@ -395,18 +395,22 @@ HWND CEditWnd::Create(
 	::GetWindowRect( m_hWnd, &rcOrg );
 	/* ウィンドウ位置調整 */
 	if( rcOrg.bottom >= rcDesktop.bottom ){
-		if( 0 > rcOrg.top - (rcOrg.bottom - rcDesktop.bottom ) ){
+		//if( 0 > rcOrg.top - (rcOrg.bottom - rcDesktop.bottom ) ){	//@@@ 2001.11.23 MIK
+		if( 0 >= rcOrg.top - (rcOrg.bottom - rcDesktop.bottom ) ){	//@@@ 2001.11.23 MIK
 			rcOrg.top = 0;
 		}else{
-			rcOrg.top -= rcOrg.bottom - rcDesktop.bottom;
+			//rcOrg.top -= rcOrg.bottom - rcDesktop.bottom;	//@@@ 2001.11.23 MIK
+			rcOrg.top = rcOrg.top - (rcOrg.bottom - rcDesktop.bottom) - 1;	//@@@ 2001.11.23 MIK
 		}
 		rcOrg.bottom = rcDesktop.bottom - 1;
 	}
 	if( rcOrg.right >= rcDesktop.right ){
-		if( 0 > rcOrg.left - (rcOrg.right - rcDesktop.right ) ){
+		//if( 0 > rcOrg.left - (rcOrg.right - rcDesktop.right ) ){	//@@@ 2001.11.23 MIK
+		if( 0 >= rcOrg.left - (rcOrg.right - rcDesktop.right ) ){	//@@@ 2001.11.23 MIK
 			rcOrg.left = 0;
 		}else{
-			rcOrg.left -= rcOrg.right - rcDesktop.right;
+			//rcOrg.left -= rcOrg.right - rcDesktop.right;	//@@@ 2001.11.23 MIK
+			rcOrg.left = rcOrg.left - (rcOrg.right - rcDesktop.right) - 1;	//@@@ 2001.11.23 MIK
 		}
 		rcOrg.right = rcDesktop.right - 1;
 	}
@@ -1602,8 +1606,14 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//From Here Jan. 13, 2001 JEPRO HELP_FINDERでは前回アクティブだったトピックの検索のタブになってしまう
 			//一方 HELP_CONTENTS (あるいは HELP＿INDEX) だと目次ページが出てくる。それもいいが...
 			//	::WinHelp( m_hWnd, szHelp, HELP_FINDER, 0 );
-				::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );	//[目次]タブの表示
+			//	::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );	//[目次]タブの表示
 			//To Here Jan. 13, 2001
+			// From Here 2001.12.03 hor
+			//	WinNT 4 ではなにも表示されなかったのでエラーの場合は HELP_CONTENTS 表示するように変更
+				if( ::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" )){
+					::WinHelp( m_hWnd, szHelp, HELP_CONTENTS , 0 );	//[目次]タブの表示
+				}
+			// To Here 2001.12.03 hor
 			}
 			break;
 //		case IDM_HELP_SEARCH:
@@ -2374,6 +2384,16 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "矩形選択(&E)" );
 
+			hMenuPopUp = ::CreateMenu();
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LTRIM, "左(先頭)の空白を削除(&L)" );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_RTRIM, "右(末尾)の空白を削除(&R)" );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SORT_ASC, "選択行の昇順ソート(&A)" );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SORT_DESC, "選択行の降順ソート(&D)" );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_MARGE, "選択行のマージ(&M)" );			// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "整形(&K)" );
+
 			break;
 #if 0	//From Here Feb. 19, 2001 JEPRO [移動][移動], [選択]を[編集]配下に移したのでコメントアウトした ////////////////////
 		//From Here Oct. 22, 2000 JEPRO [移動(M)] 新設
@@ -2533,7 +2553,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_NEXT		, "次を検索(&N)" );				//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_PREV		, "前を検索(&P)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REPLACE			, "置換(&R)..." );				//Oct. 7, 2000 JEPRO 下のセクションからここに移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_CLEARMARK, "検索マークのクリア(&C)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_CLEARMARK, "検索マークの切替え(&C)" );	// "検索マークのクリア(&C)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP			, "&Grep..." );					//Oct. 7, 2000 JEPRO 下からここに移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP			, "指定行へジャンプ(&J)..." );	//Sept. 11, 2000 jepro キャプションに「 ジャンプ」を追加
@@ -2548,6 +2568,14 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BRACKETPAIR		, "対括弧の検索(&[)" );
 //	To Here Sept. 1, 2000
+// From Here 2001.12.03 hor
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BOOKMARK_SET	, "ブックマーク設定・解除(&S)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BOOKMARK_NEXT	, "次のブックマークへ(&A)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BOOKMARK_PREV	, "前のブックマークへ(&Z)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BOOKMARK_RESET	, "ブックマークの全解除(&X)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BOOKMARK_VIEW	, "ブックマークの一覧(&V)" );
+// To Here 2001.12.03 hor
 
 			break;
 
@@ -3238,12 +3266,15 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		}
 
 	case F_SEARCH_CLEARMARK:	//検索マークのクリア
-		/* 検索文字列のマーク */
-		if( pcEditDoc->m_cEditViewArr[pcEditDoc->m_nActivePaneIndex].m_bCurSrchKeyMark ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
+// From Here 2001.12.03 hor
+		return TRUE;
+//		/* 検索文字列のマーク */
+//		if( pcEditDoc->m_cEditViewArr[pcEditDoc->m_nActivePaneIndex].m_bCurSrchKeyMark ){
+//			return TRUE;
+//		}else{
+//			return FALSE;
+//		}
+// To Here 2001.12.03 hor
 
 	case F_COMPARE:	/* ファイル内容比較 */
 		if( 2 <= pShareData->m_nEditArrNum ){
