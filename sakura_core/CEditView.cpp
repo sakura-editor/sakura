@@ -4689,6 +4689,11 @@ void CEditView::ScrollAtH( int nPos )
 	//	ウィンドウの幅をきわめて狭くしたときに編集領域が行番号から離れてしまうことがあった．
 	if( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum  < nPos ){
 		nPos = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum ;
+		//	May 29, 2004 genta 折り返し幅よりウィンドウ幅が大きいときにWM_HSCROLLが来ると
+		//	nPosが負の値になることがあり，その場合にスクロールバーから編集領域が
+		//	離れてしまう．
+		if( nPos < 0 )
+			nPos = 0;
 	}
 	if( m_nViewLeftCol == nPos ){
 		return;
