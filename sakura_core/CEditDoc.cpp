@@ -1078,7 +1078,8 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 {
 	m_cPropTypes.m_Types = m_pShareData->m_Types[nSettingType];
-	m_cPropTypes.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
+	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
+	//m_cPropTypes.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
 
 	/* プロパティシートの作成 */
 	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
