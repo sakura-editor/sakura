@@ -6026,11 +6026,17 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 /* 逆インデント */
 void CEditView::Command_UNINDENT( char cChar )
 {
+	//	Aug. 9, 2003 genta
+	//	選択されていない場合に逆TABインデントした場合に
+	//	TABが入力されるのをやめる．
+	//	代わりに注意メッセージを出す
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		/* １バイト文字入力 */
-		Command_CHAR( cChar );
+		//Command_CHAR( cChar );
+		SendStatusMessage("★逆TABインデントは選択してから");
 		return;
 	}
+
 	int			nSelectLineFromOld;	/* 範囲選択開始行 */
 	int			nSelectColFromOld; 	/* 範囲選択開始桁 */
 	int			nSelectLineToOld;	/* 範囲選択終了行 */
@@ -6044,11 +6050,13 @@ void CEditView::Command_UNINDENT( char cChar )
 	int			i;
 	CMemory		cmemBuf;
 
-	if( !IsTextSelected() ){	/* テキストが選択されているか */
-		/* 1バイト文字入力 */
-		Command_CHAR( cChar );
-		return;
-	}
+	//	Aug. 9, 2003 genta
+	//	重複削除
+	//if( !IsTextSelected() ){	/* テキストが選択されているか */
+	//	/* 1バイト文字入力 */
+	//	Command_CHAR( cChar );
+	//	return;
+	//}
 	/* 矩形範囲選択中か */
 	if( m_bBeginBoxSelect ){
 		::MessageBeep( MB_ICONHAND );
