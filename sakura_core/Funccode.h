@@ -30,6 +30,7 @@
 #define F_FILECLOSE					30105	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 #define F_FILECLOSE_OPEN			30107	//閉じて開く
 #define F_FILEOPEN_DROPDOWN			30108	//開く(ドロップダウン)
+#define F_FILESAVECLOSE				30109	//保存して閉じる Feb. 28, 2004 genta
 //	Dec. 4, 2002 genta
 #define F_FILE_REOPEN				30119	//現在と同じ文字コードでで開き直す
 #define F_FILE_REOPEN_SJIS			30111	//SJISで開き直す
