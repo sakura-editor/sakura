@@ -121,6 +121,7 @@
 #define IDC_RADIO_CARETTYPE1            1078
 #define IDC_BUTTON_WSTRINGCOLOR         1078
 #define IDC_RADIO_nRulerType_1          1078
+#define IDC_CHK_LCPOS3                  1078
 #define IDC_RADIO_BACKUP_TYPE2          1079
 #define IDC_BUTTON_WSTRINGBACKCOLOR     1079
 #define IDC_RADIO_FUNCKEYWND_PLACE2     1079
@@ -201,6 +202,7 @@
 #define IDC_COMBO_FUNCKIND              1113
 #define IDC_EDIT_SMTPPORT2              1113
 #define IDC_EDIT_DANSPACE               1113
+#define IDC_EDIT_LINECOMMENT3           1113
 #define IDC_LIST_KEY                    1114
 #define IDC_CHECK_CTRL                  1115
 #define IDC_CHECK_ADDCRLFWHENCOPY       1116
@@ -262,7 +264,9 @@
 #define IDC_EDIT_MAX_MRU_FILE           1186
 #define IDC_SPIN_PLSQL                  1186
 #define IDC_SPIN_PLSQL_E1               1186
+#define IDC_SPIN_LCColNum2              1186
 #define IDC_BUTTON_CLEAR_MRU_FILE       1187
+#define IDC_SPIN_LCColNum3              1187
 #define IDC_COMBO_MENU                  1188
 #define IDC_RADIO_FUNCKEYWND_PLACE1     1190
 #define IDC_CHECK_DispFUNCKEYWND        1191
@@ -304,6 +308,7 @@
 #define IDC_BUTTON_PREVPAGE             1235
 #define IDC_LINECOMMENTPOS2             1235
 #define IDC_SPIN_MARGINTY               1236
+#define IDC_LINECOMMENTPOS3             1236
 #define IDC_SPIN_MARGINBY               1237
 #define IDC_SPIN_MARGINLX               1238
 #define IDC_SPIN_MARGINRX               1239
@@ -434,6 +439,7 @@
 #define IDC_STATIC_EOL                  1385
 #define IDC_BUTTON_JUMP                 1388
 #define IDC_CHK_LCPOS1                  1389
+#define IDC_SPIN_LCColNum1              1390
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -468,7 +474,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        216
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1390
+#define _APS_NEXT_CONTROL_VALUE         1391
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -218,6 +218,25 @@
 #define F_TYPE_LIST			31110	/* タイプ別設定一覧 */
 #define F_OPTION_TYPE		31111	/* タイプ別設定 */
 #define F_OPTION			31112	/* 共通設定 */
+
+//From here 設定ダイアログ用の機能番号を用意  Stonee, 2001/05/18
+#define F_TYPE_SCREEN		31115	/* タイプ別設定『スクリーン』 */
+#define F_TYPE_COLOR		31116	/* タイプ別設定『カラー』 */
+#define F_OPTION_GENERAL	32000	/* 共通設定『全般』 */
+#define F_OPTION_WINDOW		32001	/* 共通設定『ウィンドウ』 */
+#define F_OPTION_EDIT		32002	/* 共通設定『編集』 */
+#define F_OPTION_FILE		32003	/* 共通設定『ファイル』 */
+#define F_OPTION_BACKUP		32004	/* 共通設定『バックアップ』 */
+#define F_OPTION_FORMAT		32005	/* 共通設定『書式』 */
+#define F_OPTION_URL		32006	/* 共通設定『クリッカブルURL』 */
+#define F_OPTION_GREP		32007	/* 共通設定『Grep』 */
+#define F_OPTION_KEYBIND	32008	/* 共通設定『キー割り当て』 */
+#define F_OPTION_CUSTMENU	32009	/* 共通設定『カスタムメニュー』 */
+#define F_OPTION_TOOLBAR	32010	/* 共通設定『ツールバー』 */
+#define F_OPTION_KEYWORD	32011	/* 共通設定『強調キーワード』 */
+#define F_OPTION_HELPER		32012	/* 共通設定『支援』 */
+//To here  Stonee, 2001/05/18
+
 #define F_FONT				31120	/* フォント設定 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 

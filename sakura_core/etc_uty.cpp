@@ -1735,6 +1735,23 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TYPE_LIST:		return 72;	/* タイプ別設定一覧 */
 	case F_OPTION_TYPE:		return 73;	/* タイプ別設定 */
 	case F_OPTION:			return 76;	/* 共通設定 */
+//From here 設定ダイアログ用のhelpトピックIDを追加  Stonee, 2001/05/18
+	case F_TYPE_SCREEN:		return 74;	/* タイプ別設定『スクリーン』 */
+	case F_TYPE_COLOR:		return 75;	/* タイプ別設定『カラー』 */
+	case F_OPTION_GENERAL:	return 81;	/* 共通設定『全般』 */
+	case F_OPTION_WINDOW:	return 146;	/* 共通設定『ウィンドウ』 */
+	case F_OPTION_EDIT:		return 144;	/* 共通設定『編集』 */
+	case F_OPTION_FILE:		return 83;	/* 共通設定『ファイル』 */
+	case F_OPTION_BACKUP:	return 145;	/* 共通設定『バックアップ』 */
+	case F_OPTION_FORMAT:	return 82;	/* 共通設定『書式』 */
+	case F_OPTION_URL:		return 147;	/* 共通設定『クリッカブルURL』 */
+	case F_OPTION_GREP:		return 148;	/* 共通設定『Grep』 */
+	case F_OPTION_KEYBIND:	return 84;	/* 共通設定『キー割り当て』 */
+	case F_OPTION_CUSTMENU:	return 87;	/* 共通設定『カスタムメニュー』 */
+	case F_OPTION_TOOLBAR:	return 85;	/* 共通設定『ツールバー』 */
+	case F_OPTION_KEYWORD:	return 86;	/* 共通設定『強調キーワード』 */
+	case F_OPTION_HELPER:	return 88;	/* 共通設定『支援』 */
+//To here  Stonee, 2001/05/18
 	case F_FONT:			return 71;	/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	return 73;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 

@@ -18,6 +18,7 @@
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"
+#include "funccode.h"    //Stonee, 2001/05/18
 
 struct TYPE_NAME {
 	int		nMethod;
@@ -1861,7 +1862,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 	NMHDR*				pNMHDR;
 	NM_UPDOWN*			pMNUD;
 	int					idCtrl;
-//	int					nVal;
+	int					nVal;
 	int					nIndex;
 	static HWND			hwndListColor;
     LPDRAWITEMSTRUCT	pDis;
@@ -2072,8 +2073,44 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 		pMNUD  = (NM_UPDOWN*)lParam;
-//		switch( idCtrl ){
-//		default:
+		switch( idCtrl ){
+		//	From Here May 21, 2001 genta activate spin control
+		case IDC_SPIN_LCColNum1:
+			/* 行コメント桁位置 */
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 1 ){
+				nVal = 1;
+			}
+			if( nVal > 1000 ){
+				nVal = 1000;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, nVal, FALSE );
+			return TRUE;
+		case IDC_SPIN_LCColNum2:
+			/* 行コメント桁位置 */
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 1 ){
+				nVal = 1;
+			}
+			if( nVal > 1000 ){
+				nVal = 1000;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, nVal, FALSE );
+			return TRUE;
+		//	To Here May 21, 2001 genta activate spin control
+		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 //	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
@@ -2086,7 +2123,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 				GetData_p3_new( hwndDlg );
 				return TRUE;
 			}
-//		}
+		}
 		break;
 	case WM_DRAWITEM:
 		idCtrl = (UINT) wParam;				/* コントロールのID */
@@ -2153,24 +2190,24 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 //#endif
 	//	From Here May 12, 2001 genta
 	//	行コメントの開始桁位置設定
+	//	May 21, 2001 genta 桁位置を1から数えるように
 	if( m_Types.m_nLineCommentPos >= 0 ){
 		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS1, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, m_Types.m_nLineCommentPos, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, m_Types.m_nLineCommentPos + 1, FALSE );
 	}
 	else {
 		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS1, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, ~m_Types.m_nLineCommentPos, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS1, (~m_Types.m_nLineCommentPos) + 1, FALSE );
 	}
 
 	if( m_Types.m_nLineCommentPos2 >= 0 ){
 		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS2, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, m_Types.m_nLineCommentPos2, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, m_Types.m_nLineCommentPos2 + 1, FALSE );
 	}
 	else {
 		::CheckDlgButton( hwndDlg, IDC_CHK_LCPOS2, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, ~m_Types.m_nLineCommentPos2, FALSE );
+		::SetDlgItemInt( hwndDlg, IDC_LINECOMMENTPOS2, (~m_Types.m_nLineCommentPos2) + 1, FALSE );
 	}
-
 
 	//	To Here May 12, 2001 genta
 
@@ -2287,6 +2324,7 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2		, m_Types.m_szLineComment2		, sizeof( m_Types.m_szLineComment2 ) );		/* 行コメントデリミタ2 */
 	//	From Here May 12, 2001 genta
 	//	コメントの開始桁位置の取得
+	//	May 21, 2001 genta 桁位置を1から数えるように
 	int pos;
 	UINT en;
 	BOOL bTranslated;
@@ -2297,6 +2335,9 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 		en = 0;
 		pos = 0;
 	}
+	//	pos == 0のときは無効扱い
+	if( pos == 0 )	en = 0;
+	else			--pos;
 	//	無効のときは1の補数で格納
 	m_Types.m_nLineCommentPos = en ? pos : ~pos;
 
@@ -2306,6 +2347,9 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 		en = 0;
 		pos = 0;
 	}
+	//	pos == 0のときは無効扱い
+	if( pos == 0 )	en = 0;
+	else			--pos;
 	m_Types.m_nLineCommentPos2 = en ? pos : ~pos;
 
 	//	To Here May 12, 2001 genta 
@@ -2530,17 +2574,18 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 
 /* ヘルプ */
+//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 {
 	int		nContextID;
 	switch( nPageID ){
 	case IDD_PROPTYPESP1:
-		nContextID = 74;
+		nContextID = ::FuncID_To_HelpContextID(F_TYPE_SCREEN);
 		break;
 //	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
 //	case IDD_PROP1P3:
 	case IDD_PROP_COLOR:
-		nContextID = 75;
+		nContextID = ::FuncID_To_HelpContextID(F_TYPE_COLOR);
 		break;
 	default:
 		nContextID = -1;
