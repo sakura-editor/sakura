@@ -6616,12 +6616,30 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 			}
 		}
 	}else{
-		if( IsFilePath( pLine, &nBgn, &nPathLen ) ){
-			memcpy( szJumpToFile, &pLine[nBgn], nPathLen );
-			GetLineColm( &pLine[nBgn + nPathLen], &nJumpToLine, &nJumpToColm );
-		}else{
-			goto can_not_tagjump;
+		//	From Here Aug. 27, 2001 genta
+		//	Borland 形式のメッセージからのTAG JUMP
+		const char *p = pLine;
+		const char *p_end = p + nLineLen;
+		while( p < p_end ){
+			//	skip space
+			for( ; p < p_end && ( *p == ' ' || *p == '\t' || *p == '\n' ); ++p )
+				;
+			if( p >= p_end )
+				break;
+		
+			//	Check Path
+			if( IsFilePath( p, &nBgn, &nPathLen ) ){
+				memcpy( szJumpToFile, &p[nBgn], nPathLen );
+				GetLineColm( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColm );
+				break;
+			}
+			//	skip non-space
+			for( ; p < p_end && ( *p != ' ' && *p != '\t' ); ++p )
+				;
 		}
+		if( szJumpToFile[0] == '\0' )
+			goto can_not_tagjump;
+		//	From Here Aug. 27, 2001 genta
 	}
 	char szWork[MAX_PATH];
 	/* ロングファイル名を取得する */
