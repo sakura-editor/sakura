@@ -328,6 +328,10 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SplitterWndHScroll, m_Common.m_bSplitterWndHScroll );
 	//	2001/06/20 End
 
+	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
+	::SetDlgItemText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_szWindowCaptionActive );
+	::SetDlgItemText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_szWindowCaptionInactive );
+
 	//	Fronm Here Sept. 9, 2000 JEPRO
 	//	ファンクションキーを表示する時だけその位置指定をEnableに設定
 	EnableWinPropInput( hwndDlg );
@@ -421,8 +425,11 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	m_Common.m_bSplitterWndHScroll = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SplitterWndHScroll );
 	//	2001/06/20 End
 
-
-
+	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
+	::GetDlgItemText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_szWindowCaptionActive,
+		sizeof( m_Common.m_szWindowCaptionActive ) );
+	::GetDlgItemText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_szWindowCaptionInactive,
+		sizeof( m_Common.m_szWindowCaptionInactive ) );
 
 	return TRUE;
 }

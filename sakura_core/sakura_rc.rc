@@ -1231,72 +1231,71 @@ IDD_PROP_WIN DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "ツールバー表示(&T)",IDC_CHECK_DispTOOLBAR,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,18,71,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,13,71,10,0,
                     HIDC_CHECK_DispTOOLBAR
     CONTROL         "ファンクションキー表示(&K)",IDC_CHECK_DispFUNCKEYWND,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,33,88,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,25,88,10,0,
                     HIDC_CHECK_DispFUNCKEYWND
     CONTROL         "ステータスバー表示(&S)",IDC_CHECK_DispSTATUSBAR,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,48,83,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,37,83,10,0,
                     HIDC_CHECK_DispSTATUSBAR
-    CONTROL         "ウィンドウサイズ継承(&Z)",IDC_CHECK_WINSIZE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,63,85,10,0,
-                    HIDC_CHECK_WINSIZE
     CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,179,18,84,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,171,13,84,10,0,
                     HIDC_CHECK_bScrollBarHorz
+    CONTROL         "ウィンドウサイズ継承(&Z)",IDC_CHECK_WINSIZE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,171,37,85,10,0,
+                    HIDC_CHECK_WINSIZE
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,179,33,82,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,171,25,82,10,0,
                     HIDC_CHECK_bMenuIcon
-    GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,80,WS_GROUP
-    LTEXT           "ルーラーの高さ(&E)",IDC_STATIC,7,99,55,8
-    EDITTEXT        IDC_EDIT_nRulerHeight,96,97,28,12,ES_AUTOHSCROLL,0,
+    GROUPBOX        "次に開くウィンドウ",IDC_STATIC,3,3,264,48,WS_GROUP
+    LTEXT           "ルーラーの高さ(&E)",IDC_STATIC,7,63,55,8
+    EDITTEXT        IDC_EDIT_nRulerHeight,96,61,28,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_nRulerHeight
     CONTROL         "Spin1",IDC_SPIN_nRulerHeight,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,97,7,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,61,7,
                     12
-    LTEXT           "ドット",IDC_STATIC,126,99,15,8
-    LTEXT           "ルーラーとテキストの隙間(&P)",IDC_STATIC,8,114,86,8
-    EDITTEXT        IDC_EDIT_nRulerBottomSpace,96,112,28,12,ES_AUTOHSCROLL,0,
+    LTEXT           "ドット",IDC_STATIC,126,63,15,8
+    LTEXT           "ルーラーとテキストの隙間(&P)",IDC_STATIC,8,78,86,8
+    EDITTEXT        IDC_EDIT_nRulerBottomSpace,96,76,28,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_nRulerBottomSpace
     CONTROL         "Spin1",IDC_SPIN_nRulerBottomSpace,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,112,6,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,76,7,
                     12
-    LTEXT           "ドット",IDC_STATIC,126,114,15,8
-    LTEXT           "行番号とテキストの隙間(&L)",IDC_STATIC,7,129,79,8
-    EDITTEXT        IDC_EDIT_nLineNumberRightSpace,96,127,28,12,
+    LTEXT           "ドット",IDC_STATIC,126,78,15,8
+    LTEXT           "行番号とテキストの隙間(&L)",IDC_STATIC,7,93,79,8
+    EDITTEXT        IDC_EDIT_nLineNumberRightSpace,96,91,28,12,
                     ES_AUTOHSCROLL,0,HIDC_EDIT_nLineNumberRightSpace
     CONTROL         "Spin1",IDC_SPIN_nLineNumberRightSpace,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,127,6,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,91,7,
                     12
-    LTEXT           "ドット",IDC_STATIC,126,129,15,8
-    GROUPBOX        "",IDC_STATIC,3,88,143,57
+    LTEXT           "ドット",IDC_STATIC,126,93,15,8
+    GROUPBOX        "",IDC_STATIC,3,52,143,57
     CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,167,109,30,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,167,73,30,10,
                     0,HIDC_RADIO_FUNCKEYWND_PLACE1
     CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
-                    BS_AUTORADIOBUTTON,197,109,30,10,0,
+                    BS_AUTORADIOBUTTON,197,73,30,10,0,
                     HIDC_RADIO_FUNCKEYWND_PLACE2
-    GROUPBOX        "位置",IDC_GROUP_FUNCKEYWND_POSITION,165,100,65,23,
+    GROUPBOX        "位置",IDC_GROUP_FUNCKEYWND_POSITION,165,64,65,23,
                     WS_GROUP
-    LTEXT           "グループボタン数(&G)",IDC_STATIC,166,129,62,10
-    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,231,127,28,12,
-                    ES_AUTOHSCROLL | ES_NUMBER,0,
-                    HIDC_EDIT_FUNCKEYWND_GROUPNUM
+    LTEXT           "グループボタン数(&G)",IDC_STATIC,166,93,62,10
+    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,231,91,28,12,ES_AUTOHSCROLL | 
+                    ES_NUMBER,0,HIDC_EDIT_FUNCKEYWND_GROUPNUM
     CONTROL         "Spin1",IDC_SPIN_FUNCKEYWND_GROUPNUM,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,260,127,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,260,91,7,
                     12
-    GROUPBOX        "ファンクションキー",IDC_STATIC,160,88,107,57
+    GROUPBOX        "ファンクションキー",IDC_STATIC,160,52,107,57
     CONTROL         "垂直スクロールの同期をとる(&V)",
                     IDC_CHECK_SplitterWndVScroll,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,163,107,10
+                    WS_GROUP | WS_TABSTOP,8,122,107,10
     CONTROL         "水平スクロールの同期をとる(&H)",
                     IDC_CHECK_SplitterWndHScroll,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,120,163,107,10
-    GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,147,264,30,WS_GROUP
+                    WS_TABSTOP,120,122,107,10
+    GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,112,264,24,WS_GROUP
     CONTROL         "スタイル-1",IDC_RADIO_nRulerType_0,"Button",
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,8,189,47,
                     10
@@ -1304,6 +1303,11 @@ BEGIN
                     BS_AUTORADIOBUTTON | NOT WS_VISIBLE,64,189,47,10
     GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,4,180,264,22,
                     NOT WS_VISIBLE | WS_GROUP
+    GROUPBOX        "タイトルバー",IDC_STATIC,3,140,264,43
+    EDITTEXT        IDC_WINCAPTION_ACTIVE,60,149,201,14,ES_AUTOHSCROLL
+    LTEXT           "アクティブ時",IDC_STATIC,7,152,50,10
+    EDITTEXT        IDC_WINCAPTION_INACTIVE,60,166,201,14,ES_AUTOHSCROLL
+    LTEXT           "非アクティブ時",IDC_STATIC,7,165,50,10
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 270, 213
@@ -1779,7 +1783,7 @@ IDD_FAVORITE DIALOGEX 0, 0, 271, 255
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "お気に入りの設定"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     CONTROL         "List1",IDC_LIST_FAVORITE_FILE,"SysListView32",
                     LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | 
@@ -1823,21 +1827,22 @@ IDD_TAGJUMPLIST DIALOGEX 0, 0, 385, 161
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "ダイレクトタグジャンプ一覧"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     CONTROL         "List1",IDC_LIST_TAGJUMP,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | 
                     WS_BORDER | WS_TABSTOP,3,4,378,133,0,0x80e405bc
-    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,278,142,50,14,0,0,0x80e40001
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,331,142,50,14,0,0,0x80e40002
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,3,142,50,14,0,0,0x80e4044b
+    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,278,142,50,14,0,0,HIDOK
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,331,142,50,14,0,0,HIDCANCEL
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,3,142,50,14,0,0,
+                    HIDC_BUTTON_HELP
 END
 
 IDD_TAG_MAKE DIALOGEX 0, 0, 187, 125
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "タグファイル作成"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,77,104,50,14
     PUSHBUTTON      "ｷｬﾝｾﾙ",IDCANCEL,130,104,50,14
@@ -2636,12 +2641,12 @@ BEGIN
     F_TAGJUMPBACK           "タグジャンプバック"
     F_TAGJUMP_LIST          "ダイレクトタグジャンプ一覧"
     F_TAGS_MAKE             "タグファイルの作成"
-    F_DIRECT_TAGJUMP        "ダイレクトタグジャンプ"
-    F_TAGJUMP_CLOSE         "閉じてタグジャンプ"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_DIRECT_TAGJUMP        "ダイレクトタグジャンプ"
+    F_TAGJUMP_CLOSE         "閉じてタグジャンプ"
     F_COMPARE               "ファイル内容比較"
 END
 
