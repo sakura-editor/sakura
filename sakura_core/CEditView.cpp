@@ -942,52 +942,41 @@ LRESULT CEditView::DispatchEvent(
 		::SetFocus( ::GetParent( m_hwndParent ) );
 
 //		MYTRACE( "	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
-		OnVScroll(
-			(int) LOWORD( wParam ),
-			((int) HIWORD( wParam )) * m_nVScrollRate,
-			(HWND) lParam
-		);
+		//	Sep. 11, 2004 genta 同期スクロールの関数化
+		{
+			int Scroll = OnVScroll(
+				(int) LOWORD( wParam ), ((int) HIWORD( wParam )) * m_nVScrollRate );
 
+			//	シフトキーが押されていないときだけ同期スクロール
+			if(( ::GetKeyState( VK_SHIFT ) & 0x8000 ) == 0 ){
+				SyncScrollV( Scroll );
+			}
+		}
 		if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
 			/* アクティブなペインを設定 */
 			m_pcEditDoc->SetActivePane( m_nMyIndex );
 		}
-
-//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
-		if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-		{
-			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-			pcEditView -> ScrollAtV( m_nViewTopLine );
-		}
-//	2001/06/20 End
 
 		return 0L;
 
 	case WM_HSCROLL:
 		::SetFocus( ::GetParent( m_hwndParent ) );
 //		MYTRACE( "	WM_HSCROLL nPos=%d\n", GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
-		OnHScroll(
-			(int) LOWORD( wParam ),
-			((int) HIWORD( wParam )),
-			(HWND) lParam
-		);
+		//	Sep. 11, 2004 genta 同期スクロールの関数化
+		{
+			int Scroll = OnHScroll(
+				(int) LOWORD( wParam ), ((int) HIWORD( wParam )) );
+
+			//	シフトキーが押されていないときだけ同期スクロール
+			if(( ::GetKeyState( VK_SHIFT ) & 0x8000 ) == 0 ){
+				SyncScrollH( Scroll );
+			}
+		}
 
 		if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
 			/* アクティブなペインを設定 */
 			m_pcEditDoc->SetActivePane( m_nMyIndex );
 		}
-
-//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
-		if( m_pShareData->m_Common.m_bSplitterWndHScroll )	// 水平スクロールの同期をとる
-		{
-			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
-			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
-			pcEditView -> ScrollAtH( m_nViewLeftCol );
-			m_bRedrawRuler = true; //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
-			DispRuler( hdc );
-			::ReleaseDC( m_hWnd, hdc );
-		}
-//	2001/06/20 End
 
 		return 0L;
 
@@ -1431,84 +1420,99 @@ void CEditView::OnKillFocus( void )
 
 
 
-/* 垂直スクロールバーメッセージ処理 */
-void CEditView::OnVScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
+/*! 垂直スクロールバーメッセージ処理
+
+	@param nScrollCode [in]	スクロール種別 (Windowsから渡されるもの)
+	@param nPos [in]		スクロール位置(THUMBTRACK用)
+	@retval	実際にスクロールした行数
+
+	@date 2004.09.11 genta スクロール行数を返すように．
+		未使用のhwndScrollBar引数削除．
+*/
+int CEditView::OnVScroll( int nScrollCode, int nPos )
 {
-//	int		i;
+	int nScrollVal = 0;
+
 	switch( nScrollCode ){
 	case SB_LINEDOWN:
 //		for( i = 0; i < 4; ++i ){
 //			ScrollAtV( m_nViewTopLine + 1 );
 //		}
-		ScrollAtV( m_nViewTopLine + m_pShareData->m_Common.m_nRepeatedScrollLineNum );
-
+		nScrollVal = ScrollAtV( m_nViewTopLine + m_pShareData->m_Common.m_nRepeatedScrollLineNum );
 		break;
 	case SB_LINEUP:
 //		for( i = 0; i < 4; ++i ){
 //			ScrollAtV( m_nViewTopLine - 1 );
 //		}
-		ScrollAtV( m_nViewTopLine - m_pShareData->m_Common.m_nRepeatedScrollLineNum );
+		nScrollVal = ScrollAtV( m_nViewTopLine - m_pShareData->m_Common.m_nRepeatedScrollLineNum );
 		break;
 	case SB_PAGEDOWN:
-		ScrollAtV( m_nViewTopLine + m_nViewRowNum );
+		nScrollVal = ScrollAtV( m_nViewTopLine + m_nViewRowNum );
 		break;
 	case SB_PAGEUP:
-		ScrollAtV( m_nViewTopLine - m_nViewRowNum );
+		nScrollVal = ScrollAtV( m_nViewTopLine - m_nViewRowNum );
 		break;
 	case SB_THUMBPOSITION:
-		ScrollAtV( nPos );
+		nScrollVal = ScrollAtV( nPos );
 		break;
 	case SB_THUMBTRACK:
-		ScrollAtV( nPos );
+		nScrollVal = ScrollAtV( nPos );
 		break;
 	case SB_TOP:
-		ScrollAtV( 0 );
+		nScrollVal = ScrollAtV( 0 );
 		break;
 	case SB_BOTTOM:
-		ScrollAtV(( m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) - m_nViewRowNum );
+		nScrollVal = ScrollAtV(( m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) - m_nViewRowNum );
 		break;
 	default:
 		break;
 	}
-	return;
+	return nScrollVal;
 }
 
+/*! 水平スクロールバーメッセージ処理
 
+	@param nScrollCode [in]	スクロール種別 (Windowsから渡されるもの)
+	@param nPos [in]		スクロール位置(THUMBTRACK用)
+	@retval	実際にスクロールした桁数
 
-
-/* 水平スクロールバーメッセージ処理 */
-void CEditView::OnHScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
+	@date 2004.09.11 genta スクロール桁数を返すように．
+		未使用のhwndScrollBar引数削除．
+*/
+int CEditView::OnHScroll( int nScrollCode, int nPos )
 {
+	int nScrollVal = 0;
+
 	m_bRedrawRuler = true; // YAZAKI
 	switch( nScrollCode ){
 	case SB_LINELEFT:
-		ScrollAtH( m_nViewLeftCol - 4 );
+		nScrollVal = ScrollAtH( m_nViewLeftCol - 4 );
 		break;
 	case SB_LINERIGHT:
-		ScrollAtH( m_nViewLeftCol + 4 );
+		nScrollVal = ScrollAtH( m_nViewLeftCol + 4 );
 		break;
 	case SB_PAGELEFT:
-		ScrollAtH( m_nViewLeftCol - m_nViewColNum );
+		nScrollVal = ScrollAtH( m_nViewLeftCol - m_nViewColNum );
 		break;
 	case SB_PAGERIGHT:
-		ScrollAtH( m_nViewLeftCol + m_nViewColNum );
+		nScrollVal = ScrollAtH( m_nViewLeftCol + m_nViewColNum );
 		break;
 	case SB_THUMBPOSITION:
-		ScrollAtH( nPos );
+		nScrollVal = ScrollAtH( nPos );
 //		MYTRACE( "nPos=%d\n", nPos );
 		break;
 	case SB_THUMBTRACK:
-		ScrollAtH( nPos );
+		nScrollVal = ScrollAtH( nPos );
 //		MYTRACE( "nPos=%d\n", nPos );
 		break;
 	case SB_LEFT:
-		ScrollAtH( 0 );
+		nScrollVal = ScrollAtH( 0 );
 		break;
 	case SB_RIGHT:
-		ScrollAtH( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum );
+		nScrollVal = ScrollAtH( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum );
 		break;
 	}
-	return;
+	return nScrollVal;
 }
 
 
@@ -2631,18 +2635,23 @@ void CEditView::AdjustScrollBars( void )
 	
 	@param nWk_CaretPosX	[in] 移動先桁位置(0～)
 	@param nWk_CaretPosY	[in] 移動先行位置(0～)
-	@param bDraw			[in] TRUE: 再描画あり/ FALSE: 再描画無し
+	@param bScroll			[in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
 	@param nCaretMarginRate	[in] 縦スクロール開始位置を決める値
 	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
 
 	@note 不正な位置が指定された場合には適切な座標値に
 		移動するため，引数で与えた座標と移動後の座標は
 		必ずしも一致しない．
+	
+	@note bScrollがfalseの場合にはカーソル位置のみ移動する．
+		trueの場合にはスクロール位置があわせて変更される
 
 	@date 2001/10/20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
 	@date 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
+	@date 2004.09.11 genta bDrawスイッチは動作と名称が一致していないので
+		再描画スイッチ→画面位置調整スイッチと名称変更
 */
-int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int nCaretMarginRate )
+int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, int nCaretMarginRate )
 {
 
 	/* スクロール処理 */
@@ -2665,7 +2674,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 
 	/* カーソル行アンダーラインのOFF */
 //	if (IsTextSelected()) { //2002.02.27 Add By KK アンダーラインのちらつきを低減 - ここではテキスト選択時のみアンダーラインを消す。
-		m_cUnderLine.CaretUnderLineOFF( bDraw );	//	YAZAKI
+		m_cUnderLine.CaretUnderLineOFF( bScroll );	//	YAZAKI
 //	}	2002/04/04 YAZAKI 半ページスクロール時にアンダーラインが残ったままスクロールしてしまう問題に対処。
 
 	if( m_bBeginSelect ){	/* 範囲選択中 */
@@ -2722,7 +2731,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 				m_nViewTopLine + m_nViewRowNum - ( nCaretMarginY ) - ( nWk_CaretPosY + 2 );
 		}
 	}
-	if( bDraw ){
+	if( bScroll ){
 		/* スクロール */
 		if( abs( nScrollColNum ) >= m_nViewColNum ||
 			abs( nScrollRowNum ) >= m_nViewRowNum ){
@@ -2824,7 +2833,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 
 	/* カーソル行アンダーラインのON */
 	//CaretUnderLineON( bDraw ); //2002.02.27 Del By KK アンダーラインのちらつきを低減
-	if( bDraw ){
+	if( bScroll ){
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 
@@ -2836,31 +2845,15 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 
 		/* キャレットの行桁位置を表示する */
 		DrawCaretPosInfo();
+
+		//	Sep. 11, 2004 genta 同期スクロールの関数化
+		//	bScroll == FALSEの時にはスクロールしないので，実行しない
+		SyncScrollV( -nScrollRowNum );	//	方向が逆なので符号反転が必要
+		SyncScrollH( -nScrollColNum );	//	方向が逆なので符号反転が必要
+
 	}
 	::ReleaseDC( m_hWnd, hdc );
 
-//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
-	if(nScrollRowNum != 0)
-	{
-		if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-		{
-			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-			pcEditView -> ScrollAtV( m_nViewTopLine );
-		}
-	}
-	if(nScrollColNum != 0)
-	{
-		if( m_pShareData->m_Common.m_bSplitterWndHScroll && m_pcEditDoc->m_cSplitterWnd.GetAllSplitRows() == 2 )	// 水平スクロールの同期をとる
-		{
-			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
-			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
-			pcEditView -> ScrollAtH( m_nViewLeftCol );
-			m_bRedrawRuler = true; //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
-			DispRuler( hdc );
-			::ReleaseDC( pcEditView->m_hWnd, hdc );
-		}
-	}
-//	2001/06/20 End
 
 // 02/09/18 対括弧の強調表示 ai Start	03/02/18 ai mod S
 	DrawBracketPair( false );
@@ -4055,17 +4048,16 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	for( i = 0; i < nRollLineNum; ++i ){
 //		::PostMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
 //		::SendMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
+
+		//	Sep. 11, 2004 genta 同期スクロール行数
+		int line;
+
 		if( nScrollCode == SB_LINEUP ){
-			ScrollAtV( m_nViewTopLine - 1 );
+			line = ScrollAtV( m_nViewTopLine - 1 );
 		}else{
-			ScrollAtV( m_nViewTopLine + 1 );
+			line = ScrollAtV( m_nViewTopLine + 1 );
 		}
-//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
-		if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-		{
-			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01].ScrollAtV( m_nViewTopLine );
-		}
-//	2001/06/20 End
+		SyncScrollV( line );
 	}
 	return 0;
 }
@@ -4490,16 +4482,9 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
 				}
 			}
-//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
-			if(nScrollLines != 0)
-			{
-				if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-				{
-					CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-					pcEditView -> ScrollAtV( m_nViewTopLine );
-				}
-			}
-//	2001/06/20 End
+			//	Sep. 11, 2004 genta 同期スクロールの関数化
+			//	MoveCursorでスクロール位置調整済み
+			//SyncScrollV( nScrollLines );
 			return nScrollLines;
 		}
 	}else{
@@ -4508,16 +4493,8 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			nMoveLines = - m_nCaretPosY;
 		}
 		if( nMoveLines >= 0 ){
-//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
-			if(nScrollLines != 0)
-			{
-				if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-				{
-					CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-					pcEditView -> ScrollAtV( m_nViewTopLine );
-				}
-			}
-//	2001/06/20 End
+			//	Sep. 11, 2004 genta 同期スクロールの関数化
+			SyncScrollV( nScrollLines );
 			return nScrollLines;
 		}
 	}
@@ -4605,8 +4582,14 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 
 
 
-/* 指定上端行位置へスクロール */
-void CEditView::ScrollAtV( int nPos )
+/*! 指定上端行位置へスクロール
+
+	@param nPos [in] スクロール位置
+	@retval 実際にスクロールした行数 (正:下方向/負:上方向)
+
+	@data 2004.09.11 genta 行数を戻り値として返すように．(同期スクロール用)
+*/
+int CEditView::ScrollAtV( int nPos )
 {
 	int			nScrollRowNum;
 	RECT		rcScrol;
@@ -4621,7 +4604,7 @@ void CEditView::ScrollAtV( int nPos )
 		}
 	}
 	if( m_nViewTopLine == nPos ){
-		return;	//	スクロール無し。
+		return 0;	//	スクロール無し。
 	}
 	/* 垂直スクロール量（行数）の算出 */
 	nScrollRowNum = m_nViewTopLine - nPos;
@@ -4676,14 +4659,20 @@ void CEditView::ScrollAtV( int nPos )
 	/* キャレットの表示・更新 */
 	ShowEditCaret();
 
-	return;
+	return -nScrollRowNum;	//方向が逆なので符号反転が必要
 }
 
 
 
 
-/* 指定左端桁位置へスクロール */
-void CEditView::ScrollAtH( int nPos )
+/*! 指定左端桁位置へスクロール
+
+	@param nPos [in] スクロール位置
+	@retval 実際にスクロールした桁数 (正:右方向/負:左方向)
+
+	@data 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
+*/
+int CEditView::ScrollAtH( int nPos )
 {
 	int			nScrollColNum;
 	RECT		rcScrol;
@@ -4702,7 +4691,7 @@ void CEditView::ScrollAtH( int nPos )
 			nPos = 0;
 	}
 	if( m_nViewLeftCol == nPos ){
-		return;
+		return 0;
 	}
 	/* 水平スクロール量（文字数）の算出 */
 	nScrollColNum = m_nViewLeftCol - nPos;
@@ -4756,7 +4745,65 @@ void CEditView::ScrollAtH( int nPos )
 	HDC hdc = ::GetDC( m_hWnd );
 	DispRuler( hdc );
 	::ReleaseDC( m_hWnd, hdc );
-	return;
+	return -nScrollColNum;	//方向が逆なので符号反転が必要
+}
+
+/*!	垂直同期スクロール
+
+	垂直同期スクロールがONならば，対応するウィンドウを指定行数同期スクロールする
+	
+	@param line [in] スクロール行数 (正:下方向/負:上方向/0:何もしない)
+	
+	@author asa-o
+	@date 2001.06.20 asa-o 新規作成
+	@date 2004.09.11 genta 関数化
+
+	@note 動作の詳細は設定や機能拡張により変更になる可能性がある
+
+*/
+void CEditView::SyncScrollV( int line )
+{
+	if( m_pShareData->m_Common.m_bSplitterWndVScroll && line != 0 )
+	{
+		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+#if 0
+		//	差分を保ったままスクロールする場合
+		pcEditView -> ScrollByV( line );
+#else
+		pcEditView -> ScrollAtV( m_nViewTopLine );
+#endif
+	}
+}
+
+/*!	水平同期スクロール
+
+	水平同期スクロールがONならば，対応するウィンドウを指定行数同期スクロールする．
+	
+	@param col [in] スクロール桁数 (正:右方向/負:左方向/0:何もしない)
+	
+	@author asa-o
+	@date 2001.06.20 asa-o 新規作成
+	@date 2004.09.11 genta 関数化
+
+	@note 動作の詳細は設定や機能拡張により変更になる可能性がある
+*/
+void CEditView::SyncScrollH( int col )
+{
+	if( m_pShareData->m_Common.m_bSplitterWndHScroll && col != 0 )
+	{
+		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
+		HDC			hdc = ::GetDC( pcEditView->m_hWnd );
+		
+#if 0
+		//	差分を保ったままスクロールする場合
+		pcEditView -> ScrollByH( col );
+#else
+		pcEditView -> ScrollAtH( m_nViewLeftCol );
+#endif
+		m_bRedrawRuler = true; //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
+		DispRuler( hdc );
+		::ReleaseDC( m_hWnd, hdc );
+	}
 }
 
 /* 選択範囲のデータを取得 */

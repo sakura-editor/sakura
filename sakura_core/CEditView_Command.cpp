@@ -1079,13 +1079,12 @@ void CEditView::Command_1PageUp( int bSelect )
 		m_bDrawSWITCH = FALSE;
 		int nViewTopLine=m_nCaretPosY-m_nViewTopLine;
 		Cursor_UPDOWN( -m_nViewRowNum+1, bSelect );
-		m_nViewTopLine=m_nCaretPosY-nViewTopLine;
+		//	Sep. 11, 2004 genta 同期スクロール処理のため
+		//	RedrawAllではなくScrollAtを使うように
+		SyncScrollV( ScrollAtV( m_nCaretPosY-nViewTopLine ));
 		m_bDrawSWITCH = TRUE;
 		RedrawAll();
-		if( m_pShareData->m_Common.m_bSplitterWndVScroll ){	// 垂直スクロールの同期をとる
-			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-			pcEditView -> ScrollAtV( m_nViewTopLine );
-		}
+		
 	}else{
 		Cursor_UPDOWN( -m_nViewRowNum+1, bSelect );
 	}
@@ -1111,13 +1110,11 @@ void CEditView::Command_1PageDown( int bSelect )
 		m_bDrawSWITCH = FALSE;
 		int nViewTopLine=m_nCaretPosY-m_nViewTopLine;
 		Cursor_UPDOWN( m_nViewRowNum-1, bSelect );
-		m_nViewTopLine=m_nCaretPosY-nViewTopLine;
+		//	Sep. 11, 2004 genta 同期スクロール処理のため
+		//	RedrawAllではなくScrollAtを使うように
+		SyncScrollV( ScrollAtV( m_nCaretPosY-nViewTopLine ));
 		m_bDrawSWITCH = TRUE;
 		RedrawAll();
-		if( m_pShareData->m_Common.m_bSplitterWndVScroll ){	// 垂直スクロールの同期をとる
-			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-			pcEditView -> ScrollAtV( m_nViewTopLine );
-		}
 	}else{
 		Cursor_UPDOWN( m_nViewRowNum , bSelect );
 		Command_DOWN( bSelect, TRUE );
@@ -8345,17 +8342,16 @@ void CEditView::Command_CURLINECENTER( void )
 
 	// sui 02/08/09
 	if( 0 > nViewTopLine )	nViewTopLine = 0;
+	
+	int nScrollLines = nViewTopLine - m_nViewTopLine;	//Sep. 11, 2004 genta 同期用に行数を記憶
 	m_nViewTopLine = nViewTopLine;
 	/* フォーカス移動時の再描画 */
 	RedrawAll();
 	// sui 02/08/09
 
-// From Here 2001.12.03 hor
-	if( m_pShareData->m_Common.m_bSplitterWndVScroll ){	// 垂直スクロールの同期をとる
-		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-		pcEditView -> ScrollAtV( m_nViewTopLine );
-	}
-// To Here 2001.12.03 hor
+	//	Sep. 11, 2004 genta 同期スクロールの関数化
+	SyncScrollV( nScrollLines );
+
 	return;
 }
 

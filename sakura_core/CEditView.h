@@ -396,8 +396,8 @@ protected:
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
 	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
 	void OnSize( int, int );									/* ウィンドウサイズの変更処理 */
-	void OnVScroll( int, int, HWND );							/* 垂直スクロールバーメッセージ処理 */
-	void OnHScroll( int, int, HWND );							/* 水平スクロールバーメッセージ処理 */
+	int  OnVScroll( int, int );								/* 垂直スクロールバーメッセージ処理 */
+	int  OnHScroll( int, int );								/* 水平スクロールバーメッセージ処理 */
 	void OnLBUTTONDOWN( WPARAM, int, int );						/* マウス左ボタン押下 */
 	void OnMOUSEMOVE( WPARAM, int, int );						/* マウス移動のメッセージ処理 */
 	void OnLBUTTONUP( WPARAM, int, int );						/* マウス左ボタン開放のメッセージ処理 */
@@ -409,8 +409,14 @@ protected:
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
 	void ChangeSelectAreaByCurrentCursorTEST( int, int, int&, int&, int&, int& );/* 現在のカーソル位置によって選択範囲を変更 */
 	int  MoveCursorToPoint( int, int );							/* マウス等による座標指定によるカーソル移動 */
-	void ScrollAtV( int );										/* 指定上端行位置へスクロール */
-	void ScrollAtH( int );										/* 指定左端桁位置へスクロール */
+	int  ScrollAtV( int );										/* 指定上端行位置へスクロール */
+	int  ScrollAtH( int );										/* 指定左端桁位置へスクロール */
+	//	From Here Sep. 11, 2004 genta ずれ維持の同期スクロール
+	int  ScrollByV( int vl ){	return ScrollAtV( m_nViewTopLine + vl );}			/* 指定行スクロール*/
+	int  ScrollByH( int hl ){	return ScrollAtH( m_nViewLeftCol + hl );}					/* 指定桁スクロール */
+	void SyncScrollV( int );									/* 垂直同期スクロール */
+	void SyncScrollH( int );									/* 水平同期スクロール */
+	//	To Here Sep. 11, 2004 genta ずれ維持の同期スクロール
 	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
 	void DrawBracketPair( bool );								/* 対括弧の強調表示 02/09/18 ai */
 	void SetBracketPairPos( bool );								/* 対括弧の強調表示位置設定 03/02/18 ai */

@@ -1748,7 +1748,9 @@ void CEditView::Command_WndScrollDown( void )
 		m_cUnderLine.CaretUnderLineOFF( TRUE );
 	}
 
-	ScrollAtV(m_nViewTopLine - 1);
+	//	Sep. 11, 2004 genta 同期用に行数を記憶
+	//	Sep. 11, 2004 genta 同期スクロールの関数化
+	SyncScrollV( ScrollAtV(m_nViewTopLine - 1));
 
 	// テキストが選択されていない
 	if( !IsTextSelected() )
@@ -1767,11 +1769,6 @@ void CEditView::Command_WndScrollDown( void )
 			DrawCaretPosInfo();
 		}
 	}
-	if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-	{
-		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-		pcEditView -> ScrollAtV( m_nViewTopLine );
-	}
 
 	m_cUnderLine.CaretUnderLineON( TRUE );
 }
@@ -1789,7 +1786,9 @@ void CEditView::Command_WndScrollUp(void)
 		m_cUnderLine.CaretUnderLineOFF( TRUE );
 	}
 
-	ScrollAtV( m_nViewTopLine + 1 );
+	//	Sep. 11, 2004 genta 同期用に行数を記憶
+	//	Sep. 11, 2004 genta 同期スクロールの関数化
+	SyncScrollV( ScrollAtV( m_nViewTopLine + 1 ));
 
 	// テキストが選択されていない
 	if( !IsTextSelected() )
@@ -1803,11 +1802,6 @@ void CEditView::Command_WndScrollUp(void)
 				Cursor_UPDOWN( 1, FALSE );
 			DrawCaretPosInfo();
 		}
-	}
-	if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
-	{
-		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
-		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
 
 	m_cUnderLine.CaretUnderLineON( TRUE );
