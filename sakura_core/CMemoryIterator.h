@@ -90,6 +90,9 @@ public:
 
 	//	2002.10.07 YAZAKI
 	const char getCurrentChar(){	return m_pLine[m_nIndex];	};
+	//	Jul. 20, 2003 genta ’Ç‰Á
+	//	memcpy‚ð‚·‚é‚Ì‚Éƒ|ƒCƒ“ƒ^‚ª‚Æ‚ê‚È‚¢‚Æ–Ê“|
+	const char* getCurrentPos(){	return m_pLine + m_nIndex;	};
 };
 
 

@@ -110,7 +110,7 @@ CEditDoc::CEditDoc() :
 
 
 	/* レイアウト管理情報の初期化 */
-	m_cLayoutMgr.Create( &m_cDocLineMgr );
+	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
 	/* レイアウト情報の変更 */
 	Types& ref = GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(

@@ -25,6 +25,7 @@
 #include "CDocLineMgr.h"// 2002/2/10 aroka
 #include "CMemory.h"/// 2002/2/10 aroka
 #include "CMemoryIterator.h"
+#include "CEditDoc.h" /// 2003/07/20 genta
 
 //レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
 #define	KINSOKU_TYPE_NONE			0	//なし
@@ -1266,10 +1267,31 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	
 	//	2002.10.07 YAZAKI インデントの計算
 	CMemoryIterator<CLayout> it( pLayoutPrev, m_nTabSpace );
+
+	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
+	bool bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
+	const char* szSpecialIndentChar = m_pcEditDoc->GetDocumentAttribute().m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();
-		if ( it.getIndexDelta() == 1 && (it.getCurrentChar() == TAB || it.getCurrentChar() == ' ') ){
+		if (( it.getIndexDelta() == 1 && (it.getCurrentChar() == TAB || it.getCurrentChar() == ' ') ) ||
+			//	Jul. 20, 2003 genta 全角スペース対応
+			( bZenSpace && it.getIndexDelta() == 2 &&
+				it.getCurrentChar() == (char)0x81 && it.getCurrentPos()[1] == (char)0x40 ))
+		{
 			//	インデントのカウントを継続する
+		}
+		//	Jul. 20, 2003 genta インデント対象文字
+		else if( szSpecialIndentChar[0] != '\0' ){
+			unsigned char buf[3]; // 文字の長さは1 or 2
+			memcpy( buf, it.getCurrentPos(), it.getIndexDelta() );
+			buf[ it.getIndexDelta() ] = '\0';
+			if( NULL != _mbsstr( (const unsigned char*)szSpecialIndentChar, buf )){
+				//	インデントのカウントを継続する
+			}
+			else {
+				nIpos = it.getColumn();	//	終了
+				break;
+			}
 		}
 		else {
 			nIpos = it.getColumn();	//	終了
