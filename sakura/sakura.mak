@@ -103,7 +103,9 @@ OBJS =\
 	$(SRCDIR)\CPropComUrl.obj \
 	$(SRCDIR)\CPropComWin.obj \
 	$(SRCDIR)\CPropTypes.obj \
+	$(SRCDIR)\CPropTypesRegex.obj \
 	$(SRCDIR)\CRunningTimer.obj \
+	$(SRCDIR)\CRegexKeyword.obj \
 	$(SRCDIR)\CShareData_new.obj \
 	$(SRCDIR)\CShareData.obj \
 	$(SRCDIR)\CShareData_new2.obj \

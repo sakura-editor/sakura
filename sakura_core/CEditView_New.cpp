@@ -41,6 +41,7 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
+#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 
 /*! フォントを選ぶ
 	@param bFat TRUEで太字
@@ -82,7 +83,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	//	May 9, 2000 genta
 	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
-
 	int				i;
 	HFONT			hFontOld;
 	HBRUSH			hBrush;
@@ -102,6 +102,16 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	const CLayout*	pcLayout;
 	HPEN			hPen;
 	HPEN			hPenOld;
+
+//@@@ 2001.11.17 add start MIK
+	//変更があればタイプ設定を行う。
+	if( TypeDataPtr->m_bUseRegexKeyword
+	 || m_cRegexKeyword->m_bUseRegexKeyword )	//OFFなのに前回のデータが残ってる
+	{
+		//タイプ別設定をする。設定済みかどうかは呼び先でチェックする。
+		m_cRegexKeyword->RegexKeySetTypes(TypeDataPtr);
+	}
+//@@@ 2001.11.17 add end MIK
 
 	/* キャレットの行桁位置を表示する */
 //	DrawCaretPosInfo();
@@ -325,6 +335,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
  - 50: 強調キーワード２
  - 80: URL
  - 90: 検索
+ - 1000: 正規表現キーワード
+ 	色指定SetCurrentColorを呼ぶときにCOLORIDX_*値を加算するので、
+ 	1000～COLORIDX_LASTまでは正規表現で使用する。
 
  */
 //@@@ 2001.02.17 End by MIK
@@ -391,6 +404,12 @@ int CEditView::DispLineNew(
 	int						nColorIdx;
 	bool					bKeyWordTop = true;	//	Keyword Top
 //	const CDocLine*			pCDocLine;
+
+//@@@ 2001.11.17 add start MIK
+	int		nMatchLen;
+	int		nMatchColor;
+//@@@ 2001.11.17 add end MIK
+
 	bSearchStringMode = FALSE;
 
 	/* テキスト描画モード */
@@ -427,6 +446,7 @@ int CEditView::DispLineNew(
 
 		pcLayout2 = NULL;
 	}
+
 	/* 現在の色を指定 */
 //	SetCurrentColor( hdc, 0 );
 	SetCurrentColor( hdc, nCOMMENTMODE );
@@ -437,7 +457,16 @@ int CEditView::DispLineNew(
 	nX = 0;
 	nCharChars = 0;
 	setlocale ( LC_ALL, "C" );	//	Oct. 29, 2001 genta 検索文字列のハイライトに関係する
+
 	if( NULL != pLine ){
+
+		//@@@ 2001.11.17 add start MIK
+		if( TypeDataPtr->m_bUseRegexKeyword )
+		{
+			m_cRegexKeyword->RegexKeyLineStart();
+		}
+		//@@@ 2001.11.17 add end MIK
+
 		y -= nLineHeight;
 		nLineNum--;
 //		MYTRACE( "\n\n=======================================" );
@@ -584,6 +613,28 @@ searchnext:;
 				SEARCH_START:;
 				switch( nCOMMENTMODE ){
 				case 0:
+//@@@ 2001.11.17 add start MIK
+					//正規表現キーワード
+					if( TypeDataPtr->m_bUseRegexKeyword
+					 && m_cRegexKeyword->RegexIsKeyword( (const char*)pLine, nPos, nLineLen, &nMatchLen, &nMatchColor )
+					 /*&& TypeDataPtr->m_ColorInfoArr[nMatchColor].m_bDisp*/ )
+					{
+						if( y/* + nLineHeight*/ >= m_nViewAlignTop )
+						{
+							/* テキスト表示 */
+							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
+						}
+						/* 現在の色を指定 */
+						nBgn = nPos;
+						nCOMMENTMODE = 1000;	/* 色指定 */
+						nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
+						if( !bSearchStringMode ){
+							//SetCurrentColor( hdc, nCOMMENTMODE );
+							SetCurrentColor( hdc, nCOMMENTMODE + nMatchColor );
+						}
+					}
+					else
+//@@@ 2001.11.17 add end MIK
 					//	Mar. 15, 2000 genta
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
 						//	行コメント1
@@ -917,6 +968,7 @@ searchnext:;
 				case 5:		/* キーワードモードである */
 				case 9:		/* 半角数値である */  //@@@ 2001.02.17 by MIK
 				case 50:	/* キーワード2モードである */	//MIK
+				case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -1181,7 +1233,8 @@ searchnext:;
 					nBgn = nPos + 1;
 					nCharChars = 1;
 				}else
-				if( pLine[nPos] == 0x81 && pLine[nPos + 1] == 0x40 ){
+				if( pLine[nPos] == 0x81 && pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
+				 && nCOMMENTMODE != 1000 ){	//@@@ 2001.11.17 add MIK
 					if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 						/* テキスト表示 */
 						nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
