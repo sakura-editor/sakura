@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	DLLのロード、アンロード
+	@brief DLLのロード、アンロード
 
 	@author genta
 	@date Jun. 10, 2001

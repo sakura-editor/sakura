@@ -1,26 +1,16 @@
 //	$Id$
 /*!	@file
-	共通設定ダイアログボックス、「バックアップ」ページ
+	@brief 共通設定ダイアログボックス、「バックアップ」ページ
 
 	@author Norio Nakatani
 	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, MIK
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 #include "CPropCommon.h"
 
@@ -357,8 +347,9 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 }
 
 //	From Here Aug. 16, 2000 genta
-//	チェック状態に応じてダイアログボックス要素のEnable/Disableを
-//	適切に設定する
+/*!	チェック状態に応じてダイアログボックス要素のEnable/Disableを
+	適切に設定する
+*/
 void CPropCommon::EnableBackupInput(HWND hwndDlg)
 {
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP ) ){

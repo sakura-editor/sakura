@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	CImageListMgr ImageListを扱うクラス
+	@brief ImageListの取り扱い
 
 	@author genta
 	@date Oct. 11, 2000 genta
@@ -9,21 +9,10 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
+	Copyright (C) 2001, GAE
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 #include "CImageListMgr.h"
 #include "sakura_rc.h"
@@ -36,6 +25,15 @@ CImageListMgr::~CImageListMgr()
 	}
 }
 
+/*
+	@brief Image Listの作成
+	
+	リソースまたはファイルからbitmapを読み込み，
+	それを元にImage Listを構築する．
+	
+	@param hInstance [in] bitmapリソースを持つインスタンス
+	@param hWnd [in] 未使用
+*/
 bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 {
 	if( m_hList != NULL ){	//	既に構築済みなら無視する

@@ -2,7 +2,8 @@
 //
 //	CAutoSave.cpp
 /*! @file
-	ファイルの自動保存
+	@brief ファイルの自動保存
+
 	@author genta
 	@date 2000
 	$Revision$

@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	文書ウィンドウの管理
+	@brief 文書ウィンドウの管理
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
@@ -8,20 +8,11 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000-2001, genta
+	Copyright (C) 2001, MIK, hor
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 class CEditView;
@@ -78,7 +69,13 @@ struct GrepParam {
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-
+/*!
+	@brief 文書ウィンドウの管理
+	
+	１つの文書ウィンドウにつき１つのCEditViewオブジェクトが割り当てられる。
+	ウィンドウメッセージの処理、コマンドメッセージの処理、
+	画面表示などを行う。
+*/
 class SAKURA_CORE_API CEditView/* : public CDropTarget*/
 {
 public:

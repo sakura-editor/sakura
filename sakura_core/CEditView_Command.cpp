@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	CEditViewクラスのコマンド処理系関数群
+	@brief CEditViewクラスのコマンド処理系関数群
 
 	@author Norio Nakatani
 	@date	1998/07/17 作成
@@ -8,20 +8,11 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000-2001, jepro, genta, みつ
+	Copyright (C) 2001, Misaka, asa-o, novice, hor
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 
 //#include <stdio.h>
@@ -999,7 +990,12 @@ void CEditView::Command_HalfPageDown( int bSelect )
 
 
 
-/* １ページアップ */	//Oct. 10, 2000 JEPRO added
+/*! １ページアップ
+
+	@date 2000.10.10 JEPRO 作成
+	@date 2001.12.13 hor 画面に対するカーソル位置はそのままで
+		１ページアップに動作変更
+*/	//Oct. 10, 2000 JEPRO added
 void CEditView::Command_1PageUp( int bSelect )
 {
 //	Cursor_UPDOWN( - m_nViewRowNum, bSelect );
@@ -1026,7 +1022,12 @@ void CEditView::Command_1PageUp( int bSelect )
 
 
 
-/* １ページダウン */	//Oct. 10, 2000 JEPRO added
+/*!	１ページダウン
+
+	@date 2000.10.10 JEPRO 作成
+	@date 2001.12.13 hor 画面に対するカーソル位置はそのままで
+		１ページダウンに動作変更
+*/
 void CEditView::Command_1PageDown( int bSelect )
 {
 //	Cursor_UPDOWN( m_nViewRowNum, bSelect );
@@ -1083,8 +1084,8 @@ void CEditView::Command_DOWN2( int bSelect )
 	@param lparam [in] マクロから使用する拡張フラグ
 		@li 0: キー操作と同一(default)
 		@li 1: 空白を無視して先頭に移動。
-		@li 4: 改行単位で先頭に移動(合成可) / 未実装
-		@li 8: 選択して移動(合成可)
+		@li 4: 選択して移動(合成可)
+		@li 8: 改行単位で先頭に移動(合成可) / 未実装
 	
 	Oct. 29, 2001 genta マクロ用機能拡張(パラメータ追加) + goto排除
 */

@@ -1,6 +1,9 @@
 //	$Id$
 /*!	@file
-	MRU、キー割り当て、共通設定、編集ウィンドウの管理
+	@brief 常駐部
+
+	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
+	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
@@ -10,19 +13,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 class CEditApp;
@@ -40,15 +32,11 @@ class CEditApp;
 #include "CShareData.h"
 #include "CMenuDrawer.h"
 
-
-
-
-
-
-
-/*-----------------------------------------------------------------------
-クラスの宣言
------------------------------------------------------------------------*/
+//!	常駐部の管理
+/*!
+	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
+	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
+*/
 class SAKURA_CORE_API CEditApp
 {
 public:
@@ -106,7 +94,7 @@ private:
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
 	char*			m_pszAppName;
-	BOOL			m_bCreatedTrayIcon;	/* トレイにアイコンを作った */
+	BOOL			m_bCreatedTrayIcon;	/*!< トレイにアイコンを作った */
 
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
@@ -119,15 +107,15 @@ private:
 	//	Apr. 6, 2001 genta コマンドラインオプションの解析
 	static int CheckCommandLine( char *str, char** arg );
 	//	Apr. 24, 2001 genta
-	//	RegisterMessageで得られるMessage IDの保管場所
+	/*!	RegisterMessageで得られるMessage IDの保管場所 */
 	UINT	m_uCreateTaskBarMsg;
 
 	/*
 	|| 実装ヘルパ系
 	*/
 protected:
-	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const char* );	/* タスクトレイのアイコンに関する処理 */
-	void OnCommand( WORD , WORD  , HWND );	/* WM_COMMANDメッセージ処理 */
+	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const char* );	/*!< タスクトレイのアイコンに関する処理 */
+	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
 
 
 };

@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	文書関連情報の管理
+	@brief 文書関連情報の管理
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
@@ -9,19 +9,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 class CEditDoc;
@@ -59,11 +48,7 @@ class CEditDoc;
 #include "CSMacroMgr.h"
 #include "CFuncLookup.h"
 
-
-/*-----------------------------------------------------------------------
-クラスの宣言
------------------------------------------------------------------------*/
-
+//! 文書関連情報の管理
 class SAKURA_CORE_API CEditDoc
 {
 public:
@@ -123,7 +108,7 @@ public:
 	bool IsModificationForbidden( int nCommand );
 
 	//	Aug. 21, 2000 genta
-	CPassiveTimer	m_cAutoSave;	//	自動保存管理
+	CPassiveTimer	m_cAutoSave;	//!<	自動保存管理
 	void	CheckAutoSave(void);
 	void	ReloadAutoSaveParam(void);	//	設定をSharedAreaから読み出す
 
@@ -148,19 +133,20 @@ public:
 			m_pShareData->m_Types[m_nSettingType].m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
 		}
 	}
-	int GetDocumentType(void) const	//	文書種別の読み出し
+	int GetDocumentType(void) const	//!<	文書種別の読み出し
 	{
 		return m_nSettingType;
 	}
-	Types& GetDocumentAttribute(void) const	//	設定された文書情報への参照を返す
+	Types& GetDocumentAttribute(void) const	//!<	設定された文書情報への参照を返す
 	{
 		return m_pShareData->m_Types[m_nSettingType];
 	}
 	//	Nov. 23, 2000 To Here
 
 	//	May 18, 2001 genta
-	//! ReadOnly状態の設定
+	//! ReadOnly状態の読み出し
 	BOOL IsReadOnly( void ){ return m_bReadOnly; }
+	//! ReadOnly状態の設定
 	void SetReadOnly( BOOL flag){ m_bReadOnly = flag; }
 
 

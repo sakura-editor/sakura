@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	タイプ別設定ダイアログボックス
+	@brief タイプ別設定ダイアログボックス
 
 	@author Norio Nakatani
 	@date 1998/05/08  新規作成
@@ -8,20 +8,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, MIK
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 
 class CPropTypes;
@@ -38,6 +28,9 @@ class CPropTypes;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+/*!
+	@brief タイプ別設定ダイアログボックス
+*/
 class SAKURA_CORE_API CPropTypes
 {
 public:

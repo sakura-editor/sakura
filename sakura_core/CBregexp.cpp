@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	BREGEXP Library Handler
+	@brief BREGEXP Library Handler
 
 	Perl5互換正規表現を扱うDLLであるBREGEXP.DLLを利用するためのインターフェース
 

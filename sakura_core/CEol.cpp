@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	CEOLクラスの実装
+	@brief CEOLクラスの実装
 
 	@author genta
 	@date 2000/05/15 新規作成 genta

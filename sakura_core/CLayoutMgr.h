@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	テキストのレイアウト情報管理
+	@brief テキストのレイアウト情報管理
 
 	@author Norio Nakatani
 	@date 1998/03/06 新規作成
@@ -11,19 +11,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
 */
 
 class CLayoutMgr;
@@ -51,30 +40,31 @@ class CLayoutMgr;
 
 
 struct LayoutReplaceArg {
-	int			nDelLineFrom;			/* 削除範囲行  From レイアウト行番号 */
-	int			nDelColmFrom;			/* 削除範囲位置From レイアウト行桁位置 */
-	int			nDelLineTo;				/* 削除範囲行  To   レイアウト行番号 */
-	int			nDelColmTo;				/* 削除範囲位置To   レイアウト行桁位置 */
-	CMemory*	pcmemDeleted;			/* 削除されたデータ */
-	const char*	pInsData;				/* 挿入するデータ */
-	int			nInsDataLen;			/* 挿入するデータの長さ */
+	int			nDelLineFrom;			/*!< 削除範囲行  From レイアウト行番号 */
+	int			nDelColmFrom;			/*!< 削除範囲位置From レイアウト行桁位置 */
+	int			nDelLineTo;				/*!< 削除範囲行  To   レイアウト行番号 */
+	int			nDelColmTo;				/*!< 削除範囲位置To   レイアウト行桁位置 */
+	CMemory*	pcmemDeleted;			/*!< 削除されたデータ */
+	const char*	pInsData;				/*!< 挿入するデータ */
+	int			nInsDataLen;			/*!< 挿入するデータの長さ */
 
-	int			nAddLineNum;			/* 再描画ヒント レイアウト行の増減 */
-	int			nModLineFrom;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-	int			nModLineTo;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
+	int			nAddLineNum;			/*!< 再描画ヒント レイアウト行の増減 */
+	int			nModLineFrom;			/*!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
+	int			nModLineTo;			/*!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 
-	int			nNewLine;				/* 挿入された部分の次の位置の行(レイアウト行) */
-	int			nNewPos;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
+	int			nNewLine;				/*!< 挿入された部分の次の位置の行(レイアウト行) */
+	int			nNewPos;				/*!< 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 
-	BOOL		bDispSSTRING;			/* シングルクォーテーション文字列を表示する */
-	BOOL		bDispWSTRING;			/* ダブルクォーテーション文字列を表示する */
-	BOOL		bUndo;					/* Undo操作かどうか */
+	BOOL		bDispSSTRING;			/*!< シングルクォーテーション文字列を表示する */
+	BOOL		bDispWSTRING;			/*!< ダブルクォーテーション文字列を表示する */
+	BOOL		bUndo;					/*!< Undo操作かどうか */
 };
 
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+//! テキストのレイアウト情報管理
 class SAKURA_CORE_API CLayoutMgr
 {
 public:

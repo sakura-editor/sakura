@@ -2,7 +2,7 @@
 //
 //	CAutoSave.h
 /*!	@file
-	ファイルの自動保存
+	@brief ファイルの自動保存
 
 	@author genta
 	@version $Revision$
