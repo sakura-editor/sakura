@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, hor
+	Copyright (C) 2003, ‹S
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,6 +23,7 @@
 #include "etc_uty.h" //2002/2/10 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ƒwƒbƒ_®—
 #include "debug.h"
+#include "OleTypes.h" //2003-02-21 ‹S
 
 CMacro::CMacro( int nFuncID )
 {
@@ -700,6 +702,69 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//	ˆø”‚È‚µB
 		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	•W€
 		break;
+	}
+}
+
+/*!	’l‚ğ•Ô‚·ŠÖ”‚ğˆ—‚·‚é
+
+	@param View      [in] ‘ÎÛ‚Æ‚È‚éView
+	@param ID        [in] ŠÖ””Ô†
+	@param Arguments [in] ˆø”‚Ì”z—ñ
+	@param ArgSize   [in] ˆø”‚Ì”(Argument)
+	@VARIANT Result  [out] Œ‹‰Ê‚Ì’l‚ğ•Ô‚·êŠB–ß‚è’l‚ªfalse‚Ì‚Æ‚«‚Í•s’èB
+	
+	@return true: ¬Œ÷, false: ¸”s
+
+	@author ‹S
+	@date 2003.02.21 ‹S
+*/
+bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result)
+{
+	//2003-02-21 ‹S
+	switch(ID)
+	{
+	case F_GETFILENAME:
+		{
+			char const * FileName = View->m_pcEditDoc->GetFilePath();
+			SysString S(FileName, lstrlen(FileName));
+			Wrap(&Result)->Receive(S);
+		}
+		return true;
+	case F_GETSELECTED:
+		{
+			if(View->IsTextSelected())
+			{
+				CMemory cMem;
+				if(!View->GetSelectedData(cMem, FALSE, NULL, FALSE, FALSE)) return false;
+				SysString S(cMem.GetPtr(), cMem.GetLength());
+				Wrap(&Result)->Receive(S);
+			}
+			else
+			{
+				Result.vt = VT_BSTR;
+				Result.bstrVal = SysAllocString(L"");
+			}
+		}
+		return true;
+	case F_EXPANDPARAMETER:
+		// 2003.02.24 Moca
+		{
+			if(ArgSize != 1) return false;
+			if(Arguments[0].vt != VT_BSTR) return false;
+			//void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);
+			//pszSource‚ğ“WŠJ‚µ‚ÄApszBuffer‚ÉƒRƒs[
+			char *Source;
+			int SourceLength;
+			Wrap(&Arguments[0].bstrVal)->Get(&Source, &SourceLength);
+			char Buffer[2048];
+			View->m_pcEditDoc->ExpandParameter(Source, Buffer, 2047);
+			delete[] Source;
+			SysString S(Buffer, lstrlen(Buffer));
+			Wrap(&Result)->Receive(S);
+		}
+		return true;
+	default:
+		return false;
 	}
 }
 

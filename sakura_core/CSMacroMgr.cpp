@@ -32,6 +32,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
 	//	Oct. 19, 2002 genta
 	{F_GETSELECTED,	"GetSelectedString",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
+	{F_EXPANDPARAMETER,	"ExpandParameter",	{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
@@ -534,6 +535,7 @@ void CSMacroMgr::Clear( int idx )
 	@return 構造体へのポインタ．見つからなければNULL
 	
 	@date 2002.06.16 genta
+	@data 2003.02.24 m_MacroFuncInfoNotCommandArrも検索対象にする
 */
 const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 {
@@ -543,6 +545,11 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
 			return &m_MacroFuncInfoArr[i];
+		}
+	}
+	for( i = 0; m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; ++i ){
+		if( m_MacroFuncInfoNotCommandArr[i].m_nFuncID == nFuncID ){
+			return &m_MacroFuncInfoNotCommandArr[i];
 		}
 	}
 	return NULL;

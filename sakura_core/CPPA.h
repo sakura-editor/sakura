@@ -234,7 +234,11 @@ public:
 
 private:
 	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
+	static void __stdcall stdIntFunc( const char* FuncName, const int Index,
+		const char* Argument[], const int ArgSize, int* Err_CD, int* ResultValue); // 2002.02.24 Moca
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
+
+	static bool CallHandleFunction( const int Index, const char* Arg[], int ArgSize, VARIANT* Result ); // 2002.02.24 Moca
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
