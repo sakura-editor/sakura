@@ -1700,7 +1700,16 @@ const char* GetNextLine(
 
 
 
-/* 指定長以下のテキストに切り分ける */
+/*! 指定長以下のテキストに切り分ける
+
+	@param pText [in] 切り分け対象となる文字列へのポインタ
+	@param nTextLen [in] 切り分け対象となる文字列全体の長さ
+	@param nLimitLen [in] 切り分ける長さ
+	@param pnLineLen [out] 実際に取り出された文字列の長さ
+	@param pnBgn [i/o] 入力: 切り分け開始位置, 出力: 取り出された文字列の次の位置
+
+	@note 2003.05.25 未使用のようだ
+*/
 const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimitLen, int* pnLineLen, int* pnBgn )
 {
 	int		i;
@@ -2475,6 +2484,8 @@ int cescape(const char* org, char* buf, char cesc, char cwith)
 
 	@note 変換後のデータは最大で元の文字列の2倍になる
 	@note この関数は2バイト文字の考慮を行っている
+	
+	@note 2003.05.25 未使用のようだ
 */
 int cescape_j(const char* org, char* buf, char cesc, char cwith)
 {
