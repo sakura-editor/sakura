@@ -81,8 +81,6 @@ protected:
 	/*
 	|| ŽÀ‘•ƒwƒ‹ƒpŒn
 	*/
-	void CreateTabButtons( void );	/*!< ƒ{ƒ^ƒ“‚Ì¶¬ */
-
 	void Refresh( void );
 	int FindTabIndexByHWND( HWND hWnd );
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );

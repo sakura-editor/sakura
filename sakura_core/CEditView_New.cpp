@@ -379,6 +379,7 @@ int CEditView::DispLineNew(
 	RECT					rcClip2;
 	int						nLineHeight = m_nCharHeight + TypeDataPtr->m_nLineSpace;
 	int						nCharWidth = m_nCharWidth + TypeDataPtr->m_nColmSpace;
+	//	テキスト描画モード
 	UINT					fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 //@@@ 2001.12.21 YAZAKI
 //	HPEN					hPen;
@@ -421,9 +422,6 @@ int CEditView::DispLineNew(
 	bSearchFlg	= TRUE;	// 2002.02.08 hor
 	nSearchStart= -1;	// 2002.02.08 hor
 	nSearchEnd	= -1;	// 2002.02.08 hor
-
-	/* テキスト描画モード */
-	fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
