@@ -902,6 +902,7 @@ end_of_func:;
 
 
 /* 「ファイルを開く」ダイアログ */
+//	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
 BOOL CEditDoc::OpenFileDialog(
 	HWND		hwndParent,
 	const char*	pszOpenFolder,	//<! [in]  NULL以外を指定すると初期フォルダを指定できる
@@ -941,8 +942,9 @@ BOOL CEditDoc::OpenFileDialog(
 	}else{
 		if( IsFilePathAvailable() ){
 			pszDefFolder = GetFilePath();
-		}else if( ppszMRU[0] != NULL && ppszMRU[0][0] != '\0' ){ // Sep. 9, 2002 genta
-			pszDefFolder = ppszMRU[0];
+		// Mar. 28, 2003 genta カレントディレクトリをMRUより優先させる
+		//}else if( ppszMRU[0] != NULL && ppszMRU[0][0] != '\0' ){ // Sep. 9, 2002 genta
+		//	pszDefFolder = ppszMRU[0];
 		}else{ // 2002.10.25 Moca
 			int nCurDir;
 			pszCurDir = new char[_MAX_PATH];
@@ -985,10 +987,13 @@ BOOL CEditDoc::OpenFileDialog(
 	を取得する。
 */
 //	Feb. 9, 2001 genta	改行コードを示す引数追加
+//	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
 BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 {
 	char**	ppszMRU;		//	最近のファイル
 	char**	ppszOPENFOLDER;	//	最近のフォルダ
+	const char*	pszDefFolder; // デフォルトフォルダ
+	char*	pszCurDir = NULL;
 	BOOL	bret;
 
 	/* MRUリストのファイルのリスト */
@@ -1005,17 +1010,30 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 
 	/* ファイル保存ダイアログの初期化 */
 	/* ファイル名の無いファイルだったら、ppszMRU[0]をデフォルトファイル名として？ppszOPENFOLDERじゃない？ */
+	// ファイル名の無いときはカレントフォルダをデフォルトにします。Mar. 30, 2003 genta
+	// 掲示板要望 No.2699 (2003/02/05)
 	if( !IsFilePathAvailable() ){
-		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, ppszMRU[0], (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
+		// 2002.10.25 Moca さんのコードを流用 Mar. 23, 2003 genta
+		int nCurDir;
+		pszCurDir = new char[_MAX_PATH];
+		nCurDir = ::GetCurrentDirectory( _MAX_PATH, pszCurDir );
+		if( 0 == nCurDir || _MAX_PATH < nCurDir ){
+			pszDefFolder = "";
+		}else{
+			pszDefFolder = pszCurDir;
+		}
 	}else{
-		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, GetFilePath(), (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
+		pszDefFolder = GetFilePath();
 	}
+	m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, pszDefFolder,
+		(const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 
 	/* ダイアログを表示 */
 	bret = m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol );
 
 	delete [] ppszMRU;
 	delete [] ppszOPENFOLDER;
+	delete [] pszCurDir;
 	return bret;
 }
 
