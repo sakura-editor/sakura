@@ -1398,38 +1398,37 @@ BEGIN
                     119,10,0,HIDC_CHECK_BACKUP
     CONTROL         "拡張子を .bakに変更したもの(1世代 &B)",
                     IDC_RADIO_BACKUP_TYPE1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,12,33,129,10,0,
+                    WS_TABSTOP,12,33,129,10,0,
                     HIDC_RADIO_BACKUP_TYPE1
     CONTROL         "拡張子を連番(.b00～b98)に変更したもの(&G)",
                     IDC_RADIO_BACKUP_TYPE3,"Button",BS_AUTORADIOBUTTON,12,48,
                     142,10,0,HIDC_RADIO_BACKUP_TYPE3
-    CONTROL         "ファイル名の後ろに日付・時刻を付加したもの(&T)",
-                    IDC_RADIO_BACKUP_TYPE2,"Button",BS_AUTORADIOBUTTON,12,78,
-                    155,10,0,HIDC_RADIO_BACKUP_TYPE2
+    CONTROL         "ファイル名の後ろに保存時の日付・時刻を付加したもの(&E)",
+                    IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON,
+                    12,78,180,10,0,HIDC_RADIO_BACKUP_DATETYPE1
+    CONTROL         "ファイル名の後ろに前回の保存時の日付・時刻を付加したもの(&U)",
+                    IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
+                    12,93,200,10,0,HIDC_RADIO_BACKUP_DATETYPE2
+    CONTROL         "元の拡張子を保存(&R)",IDC_CHECK_BACKUP_RETAINEXT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,162,33,80,10,0,HIDC_CHECK_BACKUP_RETAINEXT
     LTEXT           "保存する世代数(1-99 &N)",IDC_LABEL_BACKUP_3,22,64,73,8
     EDITTEXT        IDC_EDIT_BACKUP_3,97,62,28,12,0,0,HIDC_EDIT_BACKUP_3
     CONTROL         "Spin1",IDC_SPIN_BACKUP_GENS,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,125,62,9,
                     12
     CONTROL         "西暦(&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,93,35,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,107,35,10,0,
                     HIDC_CHECK_BACKUP_YEAR
     CONTROL         "月(&M)",IDC_CHECK_BACKUP_MONTH,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,63,93,27,10,0,HIDC_CHECK_BACKUP_MONTH
+                    WS_TABSTOP,63,107,27,10,0,HIDC_CHECK_BACKUP_MONTH
     CONTROL         "日(&D)",IDC_CHECK_BACKUP_DAY,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,96,93,27,10,0,HIDC_CHECK_BACKUP_DAY
+                    WS_TABSTOP,96,107,27,10,0,HIDC_CHECK_BACKUP_DAY
     CONTROL         "時(&H)",IDC_CHECK_BACKUP_HOUR,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,129,93,27,10,0,HIDC_CHECK_BACKUP_HOUR
+                    WS_TABSTOP,129,107,27,10,0,HIDC_CHECK_BACKUP_HOUR
     CONTROL         "分(&I)",IDC_CHECK_BACKUP_MIN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,162,93,27,10,0,HIDC_CHECK_BACKUP_MIN
+                    WS_TABSTOP,162,107,27,10,0,HIDC_CHECK_BACKUP_MIN
     CONTROL         "秒(&S)",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,195,93,27,10,0,HIDC_CHECK_BACKUP_SEC
-    CONTROL         "バックアップファイルを作成する時点での日時を使用(&E)",
-                    IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP,22,107,175,10,0,HIDC_RADIO_BACKUP_DATETYPE1
-    CONTROL         "前回の保存時の日時(ファイルの更新日時)を使用(&U)",
-                    IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
-                    22,122,169,10,0,HIDC_RADIO_BACKUP_DATETYPE2
+                    WS_TABSTOP,195,107,27,10,0,HIDC_CHECK_BACKUP_SEC
     CONTROL         "作成前に確認する(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,138,78,10,0,
                     HIDC_CHECK_BACKUPDIALOG

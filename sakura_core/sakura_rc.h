@@ -400,6 +400,7 @@
 #define IDC_SPIN_BACKUP_GENS            1366
 #define IDC_SPIN_AUTOBACKUP_INTERVAL    1367
 #define IDC_SPIN_nRulerHeight           1368
+#define IDC_CHECK_BACKUP_RETAINEXT      1369
 #define IDC_SPIN_LINENUM                1372
 #define IDC_LANEL_NOTE                  1373
 #define IDC_CHECK_RestoreCurPosition    1375
