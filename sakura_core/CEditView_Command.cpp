@@ -1688,9 +1688,11 @@ void CEditView::Command_DELETE_BACK( void )
 	BOOL		bBool;
 	int			nPosX;
 	int			nPosY;
-	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
+	//	May 29, 2004 genta 実際に削除された文字がないときはフラグをたてないように
+	//m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 	if( IsTextSelected() ){				/* テキストが選択されているか */
 		DeleteData( TRUE );
+		m_pcEditDoc->SetModified(true,true);	//	May 29, 2004 genta
 	}else{
 		nPosX = m_nCaretPosX;
 		nPosY = m_nCaretPosY;
@@ -1729,6 +1731,7 @@ void CEditView::Command_DELETE_BACK( void )
 				m_pcOpeBlk->AppendOpe( pcOpe );
 			}
 			DeleteData( TRUE );
+			m_pcEditDoc->SetModified(true,true);	//	May 29, 2004 genta
 		}
 	}
 	/* 入力補完機能を使用する */
