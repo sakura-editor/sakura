@@ -288,6 +288,9 @@ const int BKUP_SEC		= 1;
 //	Aug. 21, 2000 genta
 const int BKUP_AUTO		= 64;
 
+// Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
+const int MAX_CAPTION_CONF_LEN = 256;
+
 //! 共通設定
 struct Common {
 
@@ -470,6 +473,10 @@ struct Common {
 
 	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
 	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
+
+	// Apr. 5, 2003 genta
+	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];
+	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];
 
 //	int					m_nTagDepth;	//ダイレクトタグジャンプ階層
 
