@@ -57,7 +57,7 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* キーストロークを親に転送 */
 			::EnableWindow( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ), TRUE );
 //			::ShowWindow( pCDialog->m_hWnd, SW_HIDE );
-			::SetFocus( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ) );
+//			::SetFocus( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ) );
 			return ::PostMessage( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ), uMsg, wParam, lParam );
 		}
 		break;
