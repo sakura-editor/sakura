@@ -864,7 +864,21 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	DoFileUnLock();
 
 	if( m_pShareData->m_Common.m_bBackUp ){	/* バックアップの作成 */
-		MakeBackUp();
+		//	Jun.  5, 2004 genta ファイル名を与えるように．戻り値に応じた処理を追加．
+		switch( MakeBackUp( pszPath )){
+		case 2:	//	中断指示
+			return FALSE;
+		case 3: //	ファイルエラー
+			if( IDYES != ::MYMESSAGEBOX(
+				m_hWnd,
+				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
+				"ファイル保存",
+				"バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．"
+			)){
+				return FALSE;
+			}
+		break;
+		}
 	}
 
 	CWaitCursor cWaitCursor( m_hWnd );
@@ -1231,9 +1245,16 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 	@date 2001.06.12 asa-o
 		ファイルの時刻を元にバックアップファイル名を作成する機能
 	@date 2001.12.11 MIK バックアップファイルをゴミ箱に入れる機能
-	
+	@date 2004.06.05 genta バックアップ対象ファイルを引数で与えるように．
+		名前を付けて保存の時は自分のバックアップを作っても無意味なので．
+		また，バックアップも保存も行わない選択肢を追加．
+
+	@retval 0 バックアップ作成失敗．
+	@retval 1 バックアップ作成成功．
+	@retval 2 バックアップ作成失敗．保存中断指示．
+	@retval 3 ファイル操作エラーによるバックアップ作成失敗．
 */
-BOOL CEditDoc::MakeBackUp( void )
+int CEditDoc::MakeBackUp( const char* target_file )
 {
 	time_t	ltime;
 	struct	tm *today, *gmt, xmas = { 0, 0, 12, 25, 11, 93 };
@@ -1248,18 +1269,13 @@ BOOL CEditDoc::MakeBackUp( void )
 	int		nRet;
 	char*	pBase;
 
-	/* ファイル名が付いているか */
-	if( !IsFilePathAvailable() ){
-		return FALSE;
-	}
-
 	/* バックアップソースの存在チェック */
-	if( (_access( GetFilePath(), 0 )) == -1 ){
-		return FALSE;
+	if( (_access( target_file, 0 )) == -1 ){
+		return 0;
 	}
 
 	/* パスの分解 */
-	_splitpath( GetFilePath(), szDrive, szDir, szFname, szExt );
+	_splitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		strcpy( szPath, m_pShareData->m_Common.m_szBackUpFolder );
@@ -1397,17 +1413,18 @@ BOOL CEditDoc::MakeBackUp( void )
 		}else{	//@@@ 2001.12.11 add end MIK
 			nRet = ::MYMESSAGEBOX(
 				m_hWnd,
-				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
+				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				"バックアップ作成の確認",
 				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
 				IsFilePathAvailable() ? GetFilePath() : "（無題）",
 				szPath
 			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
 		}	//@@@ 2001.12.11 add MIK
+		//	Jun.  5, 2005 genta 戻り値変更
 		if( IDNO == nRet ){
-			return FALSE;
+			return 0;//	保存継続
 		}else if( IDCANCEL == nRet ){
-			return FALSE;// FALSE ではダメですが何を返せばいいのかわかりません。。。
+			return 2;// 保存中断
 		}
 //To Here Feb. 27, 2001
 	}
@@ -1453,7 +1470,9 @@ BOOL CEditDoc::MakeBackUp( void )
 			wsprintf( pBase, "%02d", i );
 			if( ::DeleteFile( szPath ) == 0 ){
 				::MessageBox( m_hWnd, szPath, "削除失敗", MB_OK );
-				return FALSE;
+				//	Jun.  5, 2005 genta 戻り値変更
+				//	失敗しても保存は継続
+				return 0;
 				//	失敗した場合
 				//	後で考える
 			}
@@ -1478,7 +1497,9 @@ BOOL CEditDoc::MakeBackUp( void )
 				//	失敗した場合
 				//	後で考える
 				::MessageBox( m_hWnd, szPath, "移動失敗", MB_OK );
-				return FALSE;
+				//	Jun.  5, 2005 genta 戻り値変更
+				//	失敗しても保存は継続
+				return 0;
 			}
 		}
 	}
@@ -1513,8 +1534,11 @@ BOOL CEditDoc::MakeBackUp( void )
 		//@@@ 2001.12.11 end MIK
 	}else{
 		/* エラー終了 */
+		//	Jun.  5, 2005 genta 戻り値変更
+		return 3;
 	}
-	return TRUE;
+	//	Jun.  5, 2005 genta 戻り値変更
+	return 1;
 }
 
 
