@@ -196,7 +196,8 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	if( OUTLINE_WZTXT == m_nListType ){ //@@@ 2003.05.20 zenryaku 階層付テキストアウトライン解析
 		m_nViewType = 1;
 		SetTree();
-		::SetWindowText( m_hWnd, "階層付テキスト" );
+		//	2003.06.22 Moca 名前変更
+		::SetWindowText( m_hWnd, "WZ階層付テキスト" );
 	}else
 	if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
 		m_nViewType = 1;
@@ -1254,12 +1255,15 @@ void CDlgFuncList::SetTree()
 		}
 
 		/* クリップボードコピー用テキストを作成する */
-		int j;
-		for( j = 0; j < nStackPointer; ++j ){
-			m_cmemClipText.AppendSz( "  " );
+		//	2003.06.22 Moca dummy要素はツリーに入れるがTAGJUMPには加えない
+		if( pcFuncInfo->IsAddClipText() ){
+			int j;
+			for( j = 0; j < nStackPointer; ++j ){
+				m_cmemClipText.AppendSz( "  " );
+			}
+			m_cmemClipText.AppendSz( (const char *)pcFuncInfo->m_cmemFuncName.GetPtr() );
+			m_cmemClipText.AppendSz( (const char *)"\r\n" );
 		}
-		m_cmemClipText.AppendSz( (const char *)pcFuncInfo->m_cmemFuncName.GetPtr() );
-		m_cmemClipText.AppendSz( (const char *)"\r\n" );
 	}
 
 end_of_func:;
@@ -1666,42 +1670,50 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 }
 
 
+/*!	ウィンドウサイズが変更された
 
+	@date 2003.06.22 Moca コードの整理(コントロールの処理方法をテーブルに持たせる)
+	@date 2003.08.16 genta 配列はstaticに(無駄な初期化を行わないため)
+*/
 BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 {
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
 
-	int	Controls[] = {
-		IDC_CHECK_bFunclistSetFocusOnJump,
-		IDC_CHECK_bMarkUpBlankLineEnable,
-		IDC_CHECK_bAutoCloseDlgFuncList,
-		IDC_BUTTON_COPY,
-		IDOK,
-		IDCANCEL,
-		IDC_BUTTON_HELP,
-		IDC_LIST1,
-		IDC_TREE1// IDC_TREE1はIDC_LIST1の後でなければならない
+	static const int Controls[][2] = {
+		{IDC_CHECK_bFunclistSetFocusOnJump, 1},
+		{IDC_CHECK_bMarkUpBlankLineEnable , 1},
+		{IDC_CHECK_bAutoCloseDlgFuncList, 1},
+		{IDC_BUTTON_COPY, 2},
+		{IDOK, 2},
+		{IDCANCEL, 2},
+		{IDC_BUTTON_HELP, 2},
+		{IDC_LIST1, 3},
+		{IDC_TREE1, 3},
 	};
 	int		nControls = sizeof( Controls ) / sizeof( Controls[0] );
-	int		fwSizeType;
+//	int		fwSizeType;
 	int		nWidth;
 	int		nHeight;
 	int		i;
-	int		nWork;
+	int		nHeightCheckBox;
+	int		nHeightButton;
+	const int	nHeightMargin = 3;
 	RECT	rc;
 	HWND	hwndCtrl;
 	POINT	po;
 
-	fwSizeType = wParam;		// resizing flag
 	nWidth = LOWORD(lParam);	// width of client area
 	nHeight = HIWORD(lParam);	// height of client area
 
-	int nHeight_LIST1;	///< 2002/11/1 frozen　IDC_LIST1 の以前の高さ
 
-	nWork = 48;
+	::GetWindowRect( ::GetDlgItem( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList ), &rc );
+	nHeightCheckBox = rc.bottom -  rc.top;
+	::GetWindowRect( ::GetDlgItem( m_hWnd, IDOK ), &rc );	
+	nHeightButton = rc.bottom - rc.top;
+
 	for ( i = 0; i < nControls; ++i ){
-		hwndCtrl = ::GetDlgItem( m_hWnd, Controls[i] );
+		hwndCtrl = ::GetDlgItem( m_hWnd, Controls[i][0] );
 		::GetWindowRect( hwndCtrl, &rc );
 		po.x = rc.left;
 		po.y = rc.top;
@@ -1713,26 +1725,28 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		::ScreenToClient( m_hWnd, &po );
 		rc.right = po.x;
 		rc.bottom  = po.y;
-		if( Controls[i] >= IDC_CHECK_bAutoCloseDlgFuncList){
-			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 31 /*- nWork*//*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-		}else
+		//	2003.06.22 Moca テーブル上の種別によって処理方法を変える
+		switch( Controls[i][1] ){
+		case 1:
+			::SetWindowPos( hwndCtrl, NULL, 
+				rc.left,
+				nHeight - nHeightCheckBox - nHeightMargin,
+				0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			break;
 // 2002/11/1 fozen ここから
-		if( Controls[i] == IDC_LIST1){
-			nHeight_LIST1 = rc.bottom - rc.top;
-			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5/*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-		}else if(Controls[i] == IDC_TREE1){
-			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5 + (rc.bottom -rc.top) - nHeight_LIST1 /*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-//		if( Controls[i] != IDC_LIST1
-//		 && Controls[i] != IDC_TREE1
-//		){
-		}else{
-			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 6/*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-//			::InvalidateRect( hwndCtrl, NULL, TRUE );
+		case 2:
+			::SetWindowPos( hwndCtrl, NULL,
+				rc.left,
+				nHeight - nHeightCheckBox - nHeightButton - nHeightMargin * 2,
+				0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			break;
+		case 3:
+			::SetWindowPos( hwndCtrl, NULL, 0, 0, 
+				nWidth - 2 * rc.left,
+				nHeight - rc.top - nHeightCheckBox - nHeightButton - 3 * nHeightMargin,
+				SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			break;
 		}
-//		if( 
-//		}else{
-//			::SetWindowPos( hwndCtrl, NULL, 0, 0, nWidth - 2 * rc.left, nHeight - nWork + 5/*rc.bottom - rc.top + nExtraSize*/, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-//		}
 // 2002/11/1 fozen ここまで
 		::InvalidateRect( hwndCtrl, NULL, TRUE );
 	}
