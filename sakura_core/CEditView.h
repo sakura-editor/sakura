@@ -467,6 +467,7 @@ void ReplaceData_CEditView(
 	void Command_HANKATATOZENKAKUKATA( void );	/* 半角カタカナ→全角カタカナ */
 	void Command_HANKATATOZENKAKUHIRA( void );	/* 半角カタカナ→全角ひらがな */
 	void Command_TABTOSPACE( void );			/* TAB→空白 */
+	void Command_SPACETOTAB( void );			/* 空白→TAB */  //#### Stonee, 2001/05/27
 	void Command_CODECNV_AUTO2SJIS( void );		/* 自動判別→SJISコード変換 */
 	void Command_CODECNV_EMAIL( void );			/* E-Mail(JIS→SJIS)コード変換 */
 	void Command_CODECNV_EUC2SJIS( void );		/* EUC→SJISコード変換 */

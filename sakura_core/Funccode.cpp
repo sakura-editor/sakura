@@ -220,6 +220,7 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_HANKATATOZENKAKUKATA	,	/* 半角カタカナ→全角カタカナ */
 	F_HANKATATOZENKAKUHIRA	,	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE			,	/* TAB→空白 */
+	F_SPACETOTAB			,	/* 空白→TAB */  //#### Stonee, 2001/05/27
 	F_CODECNV_AUTO2SJIS		,	/* 自動判別→SJISコード変換 */
 	F_CODECNV_EMAIL			,	//E-Mail(JIS→SJIS)コード変換
 	F_CODECNV_EUC2SJIS		,	//EUC→SJISコード変換

@@ -2997,6 +2997,120 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 }
 
 
+//!空白→TAB変換
+/*!
+	@param nTabSpace TABの文字数
+	単独のスペースは変換しない
+	
+	@Author Stonee
+	@Date 2001/5/27
+*/
+void CMemory::SPACEToTAB( int nTabSpace )
+{
+	const char*	pLine;
+	int			nLineLen;
+	char*		pDes;
+	int			nBgn;
+	int			i;
+	int			nPosDes;
+	int			nPosX;
+	CEOL		cEol;
+
+	BOOL		bSpace = FALSE;     //スペースの処理中かどうか
+	int		j;
+	int		nStartPos;
+
+	nBgn = 0;
+	nPosDes = 0;
+	/* 変換後に必要なバイト数を調べる */
+	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+		if( 0 < nLineLen ){
+			nPosDes += nLineLen;
+		}
+		nPosDes += cEol.GetLen();
+	}
+	if( 0 >= nPosDes ){
+		return;
+	}
+	pDes = new char[nPosDes + 1];
+	nBgn = 0;
+	nPosDes = 0;
+	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
+	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+		if( 0 < nLineLen ){
+			nPosX = 0;
+			bSpace = FALSE;
+			nStartPos = 0;
+			for( i = 0; i < nLineLen; ++i ){
+				if( SPACE == pLine[i] || TAB == pLine[i] ){
+					if (bSpace == FALSE) {
+						nStartPos = nPosX;
+					}
+					bSpace = TRUE;
+					if( SPACE == pLine[i] ){
+						nPosX++;
+					}else if( TAB == pLine[i] ){
+						nPosX += nTabSpace - (nPosX % nTabSpace);
+					}
+				}else{
+					if (bSpace) {
+						if ((1 == nPosX - nStartPos) && (SPACE == pLine[i - 1])) {
+							pDes[nPosDes] = SPACE;
+							nPosDes++;
+						} else {
+							for (j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++) {
+								pDes[nPosDes] = TAB;
+								nPosDes++;
+							}
+							for (j = 0; j < (nPosX % nTabSpace); j++) {
+								pDes[nPosDes] = SPACE;
+								nPosDes++;
+							}
+						}
+					}
+					nPosX++;
+					pDes[nPosDes] = pLine[i];
+					nPosDes++;
+					bSpace = FALSE;
+				}
+			}
+			//for( ; i < nLineLen; ++i ){
+			//	pDes[nPosDes] = pLine[i];
+			//	nPosDes++;
+			//}
+			if (bSpace) {
+				if ((1 == nPosX - nStartPos) && (SPACE == pLine[i - 1])) {
+					pDes[nPosDes] = SPACE;
+					nPosDes++;
+				} else {
+					//for (j = nStartPos - 1; (j + nTabSpace) <= nPosX + 1; j+=nTabSpace) {
+					for (j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++) {
+						pDes[nPosDes] = TAB;
+						nPosDes++;
+					}
+					for (j = 0; j < nPosX % nTabSpace; j++) {
+						pDes[nPosDes] = SPACE;
+						nPosDes++;
+					}
+				}
+			}
+		}
+
+		/* 行末の処理 */
+		memcpy( &pDes[nPosDes], cEol.GetValue(), cEol.GetLen() );
+		nPosDes += cEol.GetLen();
+	}
+	pDes[nPosDes] = '\0';
+
+	SetData( pDes, nPosDes );
+	delete [] pDes;
+	pDes = NULL;
+	return;
+}
+
+
+
+
 //	/* バッファの先頭にデータを挿入する */
 //	void CMemory::InsertTop( const char* pData, int nDataLen )
 //	{

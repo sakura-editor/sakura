@@ -249,7 +249,8 @@ bool CShareData::Init( void )
 		//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND, 0, 0, 0, 0, 0 },
 		//	To Here Sept. 20, 2000
 			//Oct. 28, 2000 F5 は「再描画」に変更	//Jan. 14, 2001 Alt+F5 に「uudecodeして保存」, Ctrl+ Alt+F5 に「TAB→空白」を追加
-			{ VK_F5,"F5", F_REDRAW, 0, F_EXECCOMMAND, 0, F_UUDECODE, 0, F_TABTOSPACE, 0 },
+			//	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
+			{ VK_F5,"F5", F_REDRAW, 0, F_EXECCOMMAND, 0, F_UUDECODE, 0, F_TABTOSPACE, F_SPACETOTAB },
 			//Jan. 14, 2001 JEPRO	Ctrl+F6 に「英大文字→英小文字」, Alt+F6 に「Base64デコードして保存」を追加
 			{ VK_F6,"F6", F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, 0, F_BASE64DECODE, 0, 0, 0 },
 			//Jan. 14, 2001 JEPRO	Ctrl+F7 に「英小文字→英大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加

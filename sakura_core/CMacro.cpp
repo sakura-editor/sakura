@@ -162,6 +162,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_HANKATATOZENKAKUKATA		, "HanKataToZenKata",	/* 半角カタカナ→全角カタカナ */
 	F_HANKATATOZENKAKUHIRA		, "HanKataToZenHira",	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE				, "TABToSPACE",			/* TAB→空白 */
+	F_SPACETOTAB				, "SPACEToTAB",			/* 空白→TAB */ //#### Stonee, 2001/05/27
 	F_CODECNV_AUTO2SJIS			, "AutoToSJIS",			/* 自動判別→SJISコード変換 */
 	F_CODECNV_EMAIL				, "JIStoSJIS",			//E-Mail(JIS→SJIS)コード変換
 	F_CODECNV_EUC2SJIS			, "EUCtoSJIS",			//EUC→SJISコード変換
@@ -456,6 +457,7 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_HANKATATOZENKAKUKATA		:/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA		:/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE				:/* TAB→空白 */
+	case F_SPACETOTAB				:/* 空白→TAB */  //#### Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS		:/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL			://E-Mail(JIS→SJIS)コード変換
 	case F_CODECNV_EUC2SJIS			://EUC→SJISコード変換
