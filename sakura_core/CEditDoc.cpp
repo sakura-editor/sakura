@@ -672,14 +672,16 @@ BOOL CEditDoc::FileRead(
 	if( FALSE == bFileIsExist ){
 //		::MessageBeep( MB_ICONINFORMATION );
 
-		::MYMESSAGEBOX(
-			m_hwndParent,
-			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-			GSTR_APPNAME,
+		//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
+		//	ここでステータスメッセージを使っても画面に表示されない．
+		//::MYMESSAGEBOX(
+		//	m_hwndParent,
+		//	MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
+		//	GSTR_APPNAME,
 //			"\'%s\'\nファイルは存在しません。 ファイルを保存したときに、ディスク上にファイルが作成されます。",
-			"%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。",	//Mar. 24, 2001 jepro 若干修正
-			pszPath
-		);
+		//	"%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。",	//Mar. 24, 2001 jepro 若干修正
+		//	pszPath
+		//);
 
 //		::MessageBeep( MB_ICONHAND );
 //		::MYMESSAGEBOX( hwndParent, MB_OK | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
