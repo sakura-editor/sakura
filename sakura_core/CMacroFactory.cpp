@@ -30,6 +30,7 @@
 */
 #include "CMacroFactory.h"
 #include <algorithm>
+#include "ctype.h"
 
 static const char NULSTR[] = "";
 
@@ -52,7 +53,7 @@ std::string CMacroFactory::Ext2Key(const char *ext)
 	}
 	
 	std::string key = ext;
-	std::transform( key.begin(), key.end(), key.begin(), tolower);
+	std::transform( key.begin(), key.end(), key.begin(), (int (*)(int))tolower);
 
 	return key;
 }

@@ -457,6 +457,10 @@ HWND CEditWnd::Create(
 		//	Mar. 7, 2002 genta 文書タイプの強制指定
 		if( nDocumentType >= 0 ){
 			m_cEditDoc.SetDocumentType( nDocumentType, true );
+			//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
+			m_cEditDoc.LockDocumentType();
+			/* 設定変更を反映させる */
+			m_cEditDoc.OnChangeSetting();
 		}
 		delete [] pszPathNew;
 	}
@@ -2441,12 +2445,9 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						}
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu );
-#if 0
-					YAZAKI チェックされないので。
 					if( m_hWnd == pEditNodeArr[i].m_hWnd ){
 						::CheckMenuItem( hMenu, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, MF_BYCOMMAND | MF_CHECKED );
 					}
-#endif
 				}
 				delete [] pEditNodeArr;
 			}
@@ -2494,10 +2495,12 @@ end_of_func_IsEnable:;
 		/* 機能がチェック状態か調べる */
 		if( IsFuncChecked( &m_cEditDoc, m_pShareData, id ) ){
 			fuFlags = MF_BYCOMMAND | MF_CHECKED;
-		}else{
+			::CheckMenuItem(hMenu, id, fuFlags);
+		}
+		/* else{
 			fuFlags = MF_BYCOMMAND | MF_UNCHECKED;
 		}
-		::CheckMenuItem(hMenu, id, fuFlags);
+		*/
 	}
 	return;
 }

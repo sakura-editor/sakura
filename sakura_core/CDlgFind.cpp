@@ -222,7 +222,6 @@ int CDlgFind::GetData( void )
 
 
 
-
 BOOL CDlgFind::OnBnClicked( int wID )
 {
 	int			nRet;

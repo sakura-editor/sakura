@@ -3162,8 +3162,7 @@ void CEditView::Command_CHAR( char cChar )
 		cChar == LF ){
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 		// enumEOLType nWorkEOL;
-		CEOL cWork;
-		cWork = GetCurrentInsertEOL();
+		CEOL cWork = m_pcEditDoc->GetNewLineCode();
 		cmemData.SetData( cWork.GetValue(), cWork.GetLen() );
 
 		/* テキストが選択されているか */
@@ -4957,7 +4956,7 @@ void CEditView::Command_DUPLICATELINE( void )
 	cmemBuf.SetData( pLine, nLineLen + ( (0 == pcLayout->m_cEol.GetLen()) ? (0) : (pcLayout->m_cEol.GetLen() - 1) ) );
 	if( bAddCRLF ){
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-		CEOL cWork = GetCurrentInsertEOL();
+		CEOL cWork = m_pcEditDoc->GetNewLineCode();
 		cmemBuf.Append( cWork.GetValue(), cWork.GetLen() );
 //		cmemBuf.Append( CRLF, lstrlen( CRLF ) );
 	}
