@@ -141,6 +141,8 @@ void CEditView::DispLineNumber(
 	HPEN			hPen, hPenOld;
 	int				nColorIndex;
 	const CDocLine*	pCDocLine;
+	//	Sep. 23, 2002 genta 共通式のくくりだし
+	int				nLineNumAreaWidth = m_nViewAlignLeftCols * nCharWidth;
 
 	nColorIndex = COLORIDX_GYOU;	/* 行番号 */
 	if( NULL != pcLayout ){
@@ -201,7 +203,8 @@ void CEditView::DispLineNumber(
 		nLineCols = lstrlen( szLineNum );
 
 		colTextColorOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );	/* 行番号の色 */
-		colBkColorOld = ::SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colBACK );		/* 行番号背景の色 */
+		//	Sep. 23, 2002 余白をテキストの背景色にする
+		colBkColorOld = ::SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );		/* テキスト背景の色 */
 
 		HFONT	hFontOld;
 		/* フォントを選ぶ */
@@ -216,36 +219,46 @@ void CEditView::DispLineNumber(
 //		}else{
 //			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
 //		}
+
 		/* 余白を埋める */
-		rcClip.left = m_nViewAlignLeft - 3;
+		rcClip.left = nLineNumAreaWidth;
 		rcClip.right = m_nViewAlignLeft;
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
 		::ExtTextOut( hdc,
-			(m_nViewAlignLeftCols - nLineCols - 1) * ( nCharWidth ),
+			rcClip.left,
 			y, fuOptions,
 			&rcClip, " ", 1, m_pnDx
 		);
-
+		
+		//	Sep. 23, 2002 余白をテキストの背景色にするため，背景色の設定を移動
+		SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colBACK );		/* 行番号背景の色 */
 
 //		/* 行番号のテキストを表示 */
 //		m_pShareData->m_Types[nIdx].m_nLineTermType = 1;			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 //		m_pShareData->m_Types[nIdx].m_cLineTermChar = ':';			/* 行番号区切り文字 */
 
+		int drawNumTop = (m_nViewAlignLeftCols - nLineCols - 1) * ( nCharWidth );
+
 		/* 行番号区切り 0=なし 1=縦線 2=任意 */
 		if( 2 == m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
-			char szLineTerm[2];
-			wsprintf( szLineTerm, "%c", m_pcEditDoc->GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
-			strcat( szLineNum, szLineTerm );
+			//	Sep. 22, 2002 genta
+			szLineNum[ nLineCols ] = m_pcEditDoc->GetDocumentAttribute().m_cLineTermChar;
+			szLineNum[ ++nLineCols ] = '\0';
+			//char szLineTerm[2];
+			//wsprintf( szLineTerm, "%c", m_pcEditDoc->GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
+			//strcat( szLineNum, szLineTerm );
 		}
 		rcClip.left = 0;
-		rcClip.right = m_nViewAlignLeft/* - 3*/;
+		//rcClip.right = m_nViewAlignLeft/* - 3*/;
+		//	Sep. 23, 2002 genta
+		rcClip.right = nLineNumAreaWidth;
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
 		::ExtTextOut( hdc,
-			(m_nViewAlignLeftCols - nLineCols - 1) * ( nCharWidth ),
+			drawNumTop,
 			y, fuOptions,
-			&rcClip, szLineNum, lstrlen( szLineNum ), m_pnDx
+			&rcClip, szLineNum, nLineCols, m_pnDx // Sep. 22, 2002 genta
 		);
 
 
@@ -256,28 +269,18 @@ void CEditView::DispLineNumber(
 		if( 1 == m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
 			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
 			hPenOld = (HPEN)::SelectObject( hdc, hPen );
-			::MoveToEx( hdc, m_nViewAlignLeft - 4, y, NULL );
-			::LineTo( hdc, m_nViewAlignLeft - 4, y + nLineHeight );
+			::MoveToEx( hdc, nLineNumAreaWidth - 2, y, NULL );
+			::LineTo( hdc, nLineNumAreaWidth - 2, y + nLineHeight );
 			::SelectObject( hdc, hPenOld );
 			::DeleteObject( hPen );
 		}
 		::SetTextColor( hdc, colTextColorOld );
 		::SetBkColor( hdc, colBkColorOld );
-
-//		colBkColorOld = ::SetBkColor( hdc, RGB( 255, 0, 0 ) );
-
-
-
-
-
-
-//		::SetBkColor( hdc, colBkColorOld );
-
-
 		::SelectObject( hdc, hFontOld );
 	}else{
 		rcClip.left = 0;
-		rcClip.right = m_nViewAlignLeft;
+		//	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
+		rcClip.right = m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace;
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
 //		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_colorBACK );

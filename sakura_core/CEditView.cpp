@@ -2323,7 +2323,8 @@ void CEditView::DrawSelectAreaLine(
 			break;
 		}
 		if( pLine[i] == TAB ){
-			nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 			++i;
 		}else{
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -2999,7 +3000,8 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 				break;
 			}
 			if( pLine[i] == TAB ){
-				nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+				//	Sep. 23, 2002 genta LayoutMgrの値を使う
+				nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 				if( nPosX + nCharChars > nNewX ){
 					break;
 				}
@@ -4495,7 +4497,8 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			break;
 		}
 		if( pLine[i] == TAB ){
-			nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			nCharChars =m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 			if( nPosX + nCharChars > m_nCaretPosX_Prev ){
 				break;
 			}
@@ -5374,11 +5377,13 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	case F_CODECNV_AUTO2SJIS:	pCMemory->AUTOToSJIS();break;		/* 自動判別→SJISコード変換 */
 	case F_TABTOSPACE:
 		pCMemory->TABToSPACE(
-			m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			m_pcEditDoc->m_cLayoutMgr.GetTabSpace()
 		);break;	/* TAB→空白 */
 	case F_SPACETOTAB:	//#### Stonee, 2001/05/27
 		pCMemory->SPACEToTAB(
-			m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			m_pcEditDoc->m_cLayoutMgr.GetTabSpace()
 		);
 		break;		/* 空白→TAB */
 	case F_LTRIM:	Command_TRIM2( pCMemory , TRUE  );break;	// 2001.12.03 hor
@@ -5407,7 +5412,8 @@ int CEditView::LineColmnToIndex( const char* pLine, int nLineLen, int nColmn )
 //	*pnLineAllColLen = 0;
 	for( i = 0; i < nLineLen; ){
 		if( pLine[i] == TAB ){
-			nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 			if( nPosX + nCharChars > nColmn ){
 				break;
 			}
@@ -5454,7 +5460,8 @@ int CEditView::LineColmnToIndex2( const char* pLine, int nLineLen, int nColmn, i
 //			bEOL = TRUE;
 //		}
 		if( pLine[i] == TAB ){
-			nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 			if( nPosX + nCharChars > nColmn ){
 				break;
 			}
@@ -5496,7 +5503,8 @@ int CEditView::LineIndexToColmn( const char* pLine, int nLineLen, int nIndex )
 			break;
 		}
 		if( pLine[i] == TAB ){
-			nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+			//	Sep. 23, 2002 genta LayoutMgrの値を使う
+			nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 			++i;
 		}else{
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -5764,7 +5772,8 @@ void CEditView::DrawCaretPosInfo( void )
 			for( i = 0; i < nLineLen; ++i ){
 				int nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
 				if ( nCharChars == 1 && pLine[i] == TAB ){
-					nPosX += m_pcEditDoc->GetDocumentAttribute().m_nTabSpace - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+					//	Sep. 23, 2002 genta LayoutMgrの値を使う
+					nPosX += m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
 				}
 				else {
 					nPosX += nCharChars;
