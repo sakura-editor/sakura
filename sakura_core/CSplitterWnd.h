@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	分割線ウィンドウクラス
-	
+
 	@author Norio Nakatani
 	@date 1998/07/07 新規作成
 	$Revision$
@@ -52,7 +52,7 @@ public:
 //	HWND			m_hWnd;					/* このダイアログのハンドル */
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
-	void*			m_pCEditWnd;	
+	void*			m_pCEditWnd;
 	int				m_nAllSplitRows;		/* 分割行数 */
 	int				m_nAllSplitCols;		/* 分割桁数 */
 	int				m_nVSplitPos;			/* 垂直分割位置 */
@@ -68,8 +68,8 @@ public:
 	void SetChildWndArr( HWND* );	/* 子ウィンドウの設定 */
 	void DoSplit( int, int );	/* ウィンドウの分割 */
 	void SetActivePane( int );	/* アクティブペインの設定 */
-	int GetPrevPane( void );	/* 前のペインを返す */ 
-	int GetNextPane( void );	/* 次のペインを返す */ 
+	int GetPrevPane( void );	/* 前のペインを返す */
+	int GetNextPane( void );	/* 次のペインを返す */
 	int GetFirstPane( void );	/* 最初のペインを返す */
 	int GetLastPane( void );	/* 最後のペインを返す */
 
@@ -80,7 +80,7 @@ public:
 protected:
 	/* 仮想関数 */
 	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
-	
+
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );	/* ウィンドウサイズの変更処理 */
 	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* 描画処理 */
@@ -102,5 +102,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSPLITTERWND_H_ */
+
 
 /*[EOF]*/

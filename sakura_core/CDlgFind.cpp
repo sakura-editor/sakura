@@ -1,10 +1,10 @@
 //	$Id$
 /*!	@file
 	検索ダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date	1998/12/12 再作成
-	@date 2001/06/23 N.Nakatani　単語単位で検索する機能を実装
+	@date 2001/06/23 N.Nakatani 単語単位で検索する機能を実装
 	$Revision$
 */
 /*
@@ -31,7 +31,7 @@
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "CEditView.h"
-#include "etc_uty.h"    //Stonee, 2001/03/12
+#include "etc_uty.h"	//Stonee, 2001/03/12
 
 CDlgFind::CDlgFind()
 {
@@ -83,7 +83,7 @@ void CDlgFind::SetData( void )
 	HWND	hwndCombo;
 
 	/*****************************
-	*  初期化                    *
+	*           初期化           *
 	*****************************/
 	// Here Jun. 26, 2001 genta
 	// 正規表現ライブラリの差し替えに伴う処理の見直しによりjre.dll判定を削除
@@ -95,7 +95,7 @@ void CDlgFind::SetData( void )
 
 
 	/*****************************
-	*  データ設定                *
+	*         データ設定         *
 	*****************************/
 	/* 検索文字列 */
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
@@ -125,7 +125,7 @@ void CDlgFind::SetData( void )
 		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
-		// 2001/06/23 N.Nakatani 
+		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 	}
@@ -150,7 +150,7 @@ int CDlgFind::GetData( void )
 //	int			i;
 //	int			j;
 //	CMemory*	pcmWork;
-	//	
+	//
 
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
@@ -181,11 +181,11 @@ int CDlgFind::GetData( void )
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true )){
+		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
-		
+
 		/* 検索文字列 */
 		AddToSearchKeyArr( (const char*)m_szText );
 		if( FALSE == m_bModal ){
@@ -214,10 +214,10 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
 //		MYTRACE( "IDC_CHK_REGULAREXP ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
-			
+
 			// From Here Jun. 26, 2001 genta
 			//	正規表現ライブラリの差し替えに伴う処理の見直し
-			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true )){
+			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true ) ){
 				::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 			}else{
 			// To Here Jun. 26, 2001 genta

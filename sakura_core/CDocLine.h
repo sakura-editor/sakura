@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	文書データ1行
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -62,12 +62,13 @@ public:
 	int			m_bModify;	/* 変更フラグ */
 	CEOL		m_cEol;		/* 行末コード */
 //	enumEOLType	m_enumEOLType;	/* 改行コードの種類 */
-//	int			m_nEOLLen;		/* 改行コードの長さ */ 		
+//	int			m_nEOLLen;		/* 改行コードの長さ */
 //	int			m_nModifyCount;	/* 変更回数 */
 };
 
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDOCLINE_H_ */
+
 
 /*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファイルプロパティダイアログ
-	
+
 	@author Norio Nakatani
 	@date 1999/02/31 新規作成
 	@date 1999/12/05 再作成

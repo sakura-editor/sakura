@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	メニュー管理＆表示
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -88,7 +88,7 @@ void CMenuDrawer::ResetContents( void )
 		m_nMenuItemFuncArr[i] = 0;
 	}
 	m_nMenuItemNum = 0;
-	
+
 	NONCLIENTMETRICS	ncm;
 	ncm.cbSize = sizeof( NONCLIENTMETRICS );
 	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), (PVOID)&ncm, 0 );
@@ -97,7 +97,7 @@ void CMenuDrawer::ResetContents( void )
 	if( 21 > m_nMenuHeight ){
 		m_nMenuHeight = 21;
 	}
-	
+
 	if( NULL != m_hFontMenu ){
 		::DeleteObject( m_hFontMenu );
 		m_hFontMenu = NULL;
@@ -111,7 +111,7 @@ void CMenuDrawer::ResetContents( void )
 	lf.lfUnderline = TRUE;
 	m_hFontMenuUndelLine = ::CreateFontIndirect( &lf );
 	m_nMaxTab = 0;
-	m_nMaxTabLen = 0;	
+	m_nMaxTabLen = 0;
 	return;
 }
 
@@ -122,7 +122,7 @@ void CMenuDrawer::ResetContents( void )
 int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
 
-	
+
 	*pnItemHeight = m_nMenuHeight;
 	const char* pszLabel;
 	RECT rc;
@@ -161,7 +161,7 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 	if( nFuncId != 0 ){
 		/* メニューラベルの作成 */
 		CKeyBind::GetMenuLabel(
-			m_hInstance, 
+			m_hInstance,
 			m_pShareData->m_nKeyNameArrNum,
 			m_pShareData->m_pKeyNameArr,
 			nFuncId,
@@ -173,8 +173,8 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 	/* アイコン用ビットマップを持つものは、オーナードロウにする */
 	if( 0 != nFuncId ){
 		if( m_nMenuItemNum + 1 > MAX_MENUITEMS ){
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, 
-				"CMenuDrawer::MyAppendMenu()エラー\n\nCMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n ", MAX_MENUITEMS 
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+				"CMenuDrawer::MyAppendMenu()エラー\n\nCMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n ", MAX_MENUITEMS
 			);
 		}else{
 
@@ -195,7 +195,7 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 					m_nMenuItemBitmapIdxArr[m_nMenuItemNum] = m_cShareData.m_tbMyButton[i].iBitmap;
 					break;
 				}
-			}  
+			}
 			m_nMenuItemNum++;
 		}
 	}
@@ -204,22 +204,22 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 	memset( &mii, 0, sizeof( MENUITEMINFO ) );
 	mii.cbSize = sizeof( MENUITEMINFO );
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
-    mii.fType = 0; 
-	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW; 
-	if( MF_SEPARATOR	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_SEPARATOR; 
-	if( MF_STRING		& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_STRING; 
-	if( MF_MENUBREAK	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_MENUBREAK; 
-	if( MF_MENUBARBREAK	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_MENUBARBREAK; 
+	mii.fType = 0;
+	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW;
+	if( MF_SEPARATOR	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_SEPARATOR;
+	if( MF_STRING		& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_STRING;
+	if( MF_MENUBREAK	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_MENUBREAK;
+	if( MF_MENUBARBREAK	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_MENUBARBREAK;
 
-    mii.fState = 0; 
-	if( MF_GRAYED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_GRAYED; 
-	if( MF_CHECKED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_CHECKED; 
-    
-	mii.wID = nFuncId; 
-    mii.hSubMenu = (nFlag&MF_POPUP)?((HMENU)nFuncId):NULL; 
-    mii.hbmpChecked = NULL;
-    mii.hbmpUnchecked = NULL;
-    mii.dwItemData = (DWORD)this;
+	mii.fState = 0;
+	if( MF_GRAYED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_GRAYED;
+	if( MF_CHECKED		& ( nFlag | nFlagAdd ) ) mii.fState |= MFS_CHECKED;
+
+	mii.wID = nFuncId;
+	mii.hSubMenu = (nFlag&MF_POPUP)?((HMENU)nFuncId):NULL;
+	mii.hbmpChecked = NULL;
+	mii.hbmpUnchecked = NULL;
+	mii.dwItemData = (DWORD)this;
 	mii.dwTypeData = (LPTSTR)szLabel;
 	mii.cch = 0;
 
@@ -234,7 +234,7 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 /* メニューアイテム描画 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
-	
+
 	int			i;
 	int			j;
 	int			nItemIndex;
@@ -277,7 +277,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::FillRect( hdc, &lpdis->rcItem, hBrush );
 	::DeleteObject( hBrush );
 
-	
+
 	/* アイテムが選択されている */
 	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
@@ -316,7 +316,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	strcpy( szText, "--unknown--" );
 	mii.dwTypeData = (LPTSTR)szText;
 	mii.cch = sizeof( szText ) - 1;
-	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, (MENUITEMINFO*)&mii ) 
+	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, (MENUITEMINFO*)&mii )
 	 && NULL == mii.hSubMenu
 	 && 0 == CEditWnd::FuncID_To_HelpContextID( lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
@@ -327,7 +327,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	rcText = lpdis->rcItem;
 	rcText.left += nIndentLeft;
 	rcText.right -= nIndentRight;
-	
+
 	/* TAB文字の前と後ろに分割してテキストを描画する */
 	for( j = 0; j < nItemStrLen; ++j ){
 		if( pszItemStr[j] == '\t' ){
@@ -374,11 +374,11 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	/* チェック状態なら凹んだ3D枠を描画する */
 	if( lpdis->itemState & ODS_CHECKED ){
 		/* アイコンを囲む枠 */
-		CSplitBoxWnd::Draw3dRect(	
-			hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top, 
+		CSplitBoxWnd::Draw3dRect(
+			hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
 			2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
 			::GetSysColor( COLOR_3DSHADOW ),
-			::GetSysColor( COLOR_3DHILIGHT ) 
+			::GetSysColor( COLOR_3DHILIGHT )
 		);
 		/* アイテムが選択されていない場合は3D枠の中を明るく塗りつぶす */
 		if( lpdis->itemState & ODS_SELECTED ){
@@ -394,7 +394,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 	}
 
-	
+
 	/* 機能の画像が存在するならメニューアイコン?を描画する */
 	if( -1 != m_nMenuItemBitmapIdxArr[nItemIndex] ){
 		/* 3D枠を描画する */
@@ -406,10 +406,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				if( lpdis->itemState & ODS_CHECKED ){
 				}else{
 					/* アイコンを囲む枠 */
-					CSplitBoxWnd::Draw3dRect(	
-						hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top, 
+					CSplitBoxWnd::Draw3dRect(
+						hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
 						2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
-						::GetSysColor( COLOR_3DHILIGHT ), 
+						::GetSysColor( COLOR_3DHILIGHT ),
 						::GetSysColor( COLOR_3DSHADOW )
 					 );
 				}
@@ -420,16 +420,16 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		if( lpdis->itemState & ODS_DISABLED ){
 			/* 淡色アイコン */
 			COLORREF cOld;
-//			cOld = SetTextColor( hdc, GetSysColor(COLOR_3DSHADOW));	//Oct. 24, 2000 これは標準ではRGB(128,128,128)と同じ
-			cOld = SetTextColor( hdc, RGB(132,132,132));	//Oct. 24, 2000 JEPRO もう少し薄くした
+//			cOld = SetTextColor( hdc, GetSysColor(COLOR_3DSHADOW) );	//Oct. 24, 2000 これは標準ではRGB(128,128,128)と同じ
+			cOld = SetTextColor( hdc, RGB(132,132,132) );	//Oct. 24, 2000 JEPRO もう少し薄くした
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1,	//	X
 				lpdis->rcItem.top + 1,		//	Y
-				ILD_MASK  
+				ILD_MASK
 			);
 			SetTextColor( hdc, cOld );
-			
+
 		}else{
 			COLORREF colBk;
 			if( lpdis->itemState & ODS_CHECKED && !( lpdis->itemState & ODS_SELECTED ) ){
@@ -438,7 +438,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}else{
 				colBk = ::GetSysColor( COLOR_MENU );
 			}
-			
+
 			/* 通常のアイコン */
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
@@ -462,10 +462,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			::MoveToEx( hdc, nX, nY, NULL );
 			::LineTo( hdc, nX + 1, nY + 1 );
 			::LineTo( hdc, nX + 4, nY - 2 );
-		
+
 		}
 	}
-	
+
 	//	::ReleaseDC( m_hWndOwner, hdc );
 	return;
 }
@@ -527,9 +527,9 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 //	HMENU				hMenu;
 	MENUITEMINFO		mii;
 	int i;
-	chUser = (TCHAR) LOWORD(wParam); // character code
-	fuFlag = (UINT) HIWORD(wParam);  // menu flag 
-	hmenu = (HMENU) lParam;          // handle to menu 
+	chUser = (TCHAR) LOWORD(wParam);	// character code
+	fuFlag = (UINT) HIWORD(wParam);		// menu flag
+	hmenu = (HMENU) lParam;				// handle to menu
 //	MYTRACE( "::GetMenuItemCount( %xh )==%d\n", hmenu, ::GetMenuItemCount( hmenu ) );
 
 	//	Oct. 27, 2000 genta
@@ -539,17 +539,17 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	else {
 		chUser = toupper( chUser );
 	}
-	
+
 	struct WorkData{
-		int				idx;	
+		int				idx;
 		MENUITEMINFO	mii;
 	};
-	
+
 	WorkData vecAccel[100];
 	int nAccelNum;
 	int nAccelSel;
 	nAccelNum = 0;
-    nAccelSel = 99999;
+	nAccelSel = 99999;
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
 		char	szText[1024];
 		// メニュー項目に関する情報を取得します。
@@ -602,13 +602,13 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 /* ビットマップの表示 灰色を透明描画 */
 void CMenuDrawer::MyBitBlt(
-	HDC drawdc, 
-	int nXDest, 
-	int nYDest, 
-	int nWidth, 
-	int nHeight, 
-	HBITMAP bmp, 
-	int nXSrc, 
+	HDC drawdc,
+	int nXDest,
+	int nYDest,
+	int nWidth,
+	int nHeight,
+	HBITMAP bmp,
+	int nXSrc,
 	int nYSrc,
 	COLORREF colToTransParent, //bmpの中の透明にしたい色
 	COLORREF colBkColor //描画先の背景色
@@ -625,21 +625,21 @@ void CMenuDrawer::MyBitBlt(
 	HBITMAP bmpMem2;
 	HBITMAP bmpMem2Old;
 	// create a monochrome memory DC
-	hdcMask = CreateCompatibleDC(0);
-	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
-	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
+	hdcMask = CreateCompatibleDC( 0 );
+	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
+	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask );
 	/* 元ビットマップ用DC */
 	hdcMem = ::CreateCompatibleDC( drawdc );
 	bmpMemOld = (HBITMAP)::SelectObject( hdcMem, bmp );
 	/* 作業用DC */
 	hdcMem2 = ::CreateCompatibleDC( drawdc );
-	bmpMem2 = CreateCompatibleBitmap( drawdc, nWidth, nHeight);
-	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
+	bmpMem2 = CreateCompatibleBitmap( drawdc, nWidth, nHeight );
+	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2 );
 
 	// build a mask
-	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
+	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS );
 	SetBkColor( hdcMem, colToTransParent );
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
+	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY );
 
 	/* マスク描画(透明にしない部分だけ黒く描画) */
 	::SetBkColor( drawdc, colBkColor/*::GetSysColor( COLOR_MENU )*/ );
@@ -669,8 +669,8 @@ void CMenuDrawer::MyBitBlt(
 
 
 /* メニューアイコンの淡色表示 */
-void CMenuDrawer::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc)
+void CMenuDrawer::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
+							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc)
 {
 	HBRUSH brShadow, brHilight;
 	HDC		hdcMask;
@@ -683,43 +683,43 @@ void CMenuDrawer::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	COLORREF colToTransParent = RGB( 192, 192, 192 );	/* BMPの中の透明にする色 */
 
 	// create a monochrome memory DC
-	hdcMask = CreateCompatibleDC(0);
-	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
-	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
+	hdcMask = CreateCompatibleDC( 0 );
+	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
+	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask );
 
-	hdcMem = CreateCompatibleDC(0);
-	bmpMemOld = (HBITMAP)SelectObject( hdcMem, bmp);
+	hdcMem = CreateCompatibleDC( 0 );
+	bmpMemOld = (HBITMAP)SelectObject( hdcMem, bmp );
 
 	// build a mask
-	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
+	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS );
 	SetBkColor( hdcMem, colToTransParent );
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
+	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY );
 	SetBkColor( hdcMem, RGB( 255, 255, 255 ) );
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCPAINT);
+	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCPAINT );
 
 	// Copy the image from the toolbar into the memory DC
 	// and draw it (grayed) back into the toolbar.
-	FillSolidRect( hdcMem, 0,0, nWidth, nHeight, GetSysColor( COLOR_MENU) );
-    //SK: Looks better on the old shell
-	SetBkColor( hdcMem, RGB(0, 0, 0));
-	SetTextColor( hdcMem, RGB(255, 255, 255));
-	brHilight = CreateSolidBrush(GetSysColor(COLOR_BTNHILIGHT));
-	brShadow = CreateSolidBrush(GetSysColor(COLOR_BTNSHADOW));
-	pOldBrush = (HBRUSH)SelectObject( hdcMem, brHilight);
-	BitBlt( hdcMem, 0,0, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L);
-	BitBlt( drawdc, nXDest+1,nYDest+1,nWidth, nHeight, hdcMem,0,0,SRCCOPY);
+	FillSolidRect( hdcMem, 0,0, nWidth, nHeight, GetSysColor( COLOR_MENU ) );
+	//SK: Looks better on the old shell
+	SetBkColor( hdcMem, RGB( 0, 0, 0) );
+	SetTextColor( hdcMem, RGB( 255, 255, 255 ) );
+	brHilight = CreateSolidBrush( GetSysColor( COLOR_BTNHILIGHT ) );
+	brShadow = CreateSolidBrush( GetSysColor( COLOR_BTNSHADOW ) );
+	pOldBrush = (HBRUSH)SelectObject( hdcMem, brHilight );
+	BitBlt( hdcMem, 0, 0, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L );
+	BitBlt( drawdc, nXDest+1,nYDest+1,nWidth, nHeight, hdcMem,0,0,SRCCOPY );
 
-	BitBlt( hdcMem, 1,1, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L);
+	BitBlt( hdcMem, 1, 1, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L );
 	SelectObject( hdcMem, brShadow);
-	BitBlt( hdcMem, 0,0, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L);
-	BitBlt( drawdc, nXDest,nYDest,nWidth, nHeight, hdcMem,0,0,SRCCOPY);
+	BitBlt( hdcMem, 0, 0, nWidth, nHeight, hdcMask, 0, 0, 0x00E20746L );
+	BitBlt( drawdc, nXDest,nYDest,nWidth, nHeight, hdcMem,0,0,SRCCOPY );
 
 	// reset DCs
-	SelectObject( hdcMask, bmpMaskOld);
+	SelectObject( hdcMask, bmpMaskOld );
 	DeleteDC( hdcMask );
 
-	SelectObject( hdcMem, pOldBrush);
-	SelectObject( hdcMem, bmpMemOld);
+	SelectObject( hdcMem, pOldBrush );
+	SelectObject( hdcMem, bmpMemOld );
 	DeleteDC( hdcMem );
 
 	DeleteObject( bmpMask );
@@ -730,9 +730,4 @@ void CMenuDrawer::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 }
 
 
-
-
-
-
-
-/* [EOF] */
+/*[EOF]*/

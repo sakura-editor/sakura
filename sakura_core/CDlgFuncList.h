@@ -1,10 +1,10 @@
 //	$Id$
 /*!	@file
 	アウトライン解析ダイアログボックス
-	
+
 	@author Norio Nakatani
-    @date 1998/06/23 新規作成
-    @date 1998/12/04 再作成
+	@date 1998/06/23 新規作成
+	@date 1998/12/04 再作成
 	$Revision$
 */
 /*
@@ -70,9 +70,9 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnJump( void );
-	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：　C++メソッドツリー */
-	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：　Javaメソッドツリー */
-	void SetTreeTxt( HWND );	/* ツリーコントロールの初期化：　テキストトピックツリー */
+	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
+	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
+	void SetTreeTxt( HWND );	/* ツリーコントロールの初期化：テキストトピックツリー */
 	int SetTreeTxtNest( HWND, HTREEITEM, int, int, HTREEITEM*, int );
 	void GetTreeTextNext( HWND, HTREEITEM, int );
 
@@ -80,7 +80,7 @@ private:
 	//	May 18, 2001 genta
 	/*!
 		@brief アウトライン解析種別
-		
+
 		0: List, 1: Tree
 	*/
 	int	m_nViewType;
@@ -91,5 +91,6 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGFUNCLIST_H_ */
+
 
 /*[EOF]*/

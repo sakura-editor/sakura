@@ -57,7 +57,7 @@ BOOL CPropCommon::DispatchEvent_PROP_URL( HWND hwndDlg, UINT uMsg, WPARAM wParam
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
 //	int			nVal;
-//    LPDRAWITEMSTRUCT pDis;
+//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 

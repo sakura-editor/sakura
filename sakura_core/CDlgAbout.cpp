@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	バージョン情報ダイアログ
-	
+
 	@author Norio Nakatani
 	@date	1998/3/13 作成
 	$Revision$
@@ -43,14 +43,14 @@ BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPara
 	switch( wMsg ){
 	case WM_SETCURSOR:
 		//	カーソルがコントロール上に来た
-		if( (HWND)wParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR )){
+		if( (HWND)wParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR ) ){
 			if( nCursorState != 1 ){
 				nCursorState = 1;
 				//	再描画させる必要がある
 				::InvalidateRect( (HWND)wParam, NULL, TRUE );
 			}
 		}
-		else if( (HWND)wParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG )){
+		else if( (HWND)wParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG ) ){
 			if( nCursorState != 2 ){
 				nCursorState = 2;
 				//	再描画させる必要がある
@@ -69,12 +69,12 @@ BOOL CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_CTLCOLORSTATIC:
 		if( nCursorState == 1 &&
-			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR )){
+			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_UR ) ){
 			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
 			result = (BOOL)(HBRUSH)GetStockObject(NULL_BRUSH);
 		}
 		else if( nCursorState == 2 &&
-			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG )){
+			(HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_URL_ORG ) ){
 			::SetTextColor( (HDC)wParam, RGB(0,0,0xff) );
 			result = (BOOL)(HBRUSH)GetStockObject(NULL_BRUSH);
 		}
@@ -112,7 +112,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	char			szFile[_MAX_PATH];
 	WIN32_FIND_DATA	wfd;
 	SYSTEMTIME		systimeL;
-	
+
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
 	::FindFirstFile( szFile, &wfd );
@@ -142,14 +142,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	Nov. 7, 2000 genta カーソル位置の情報を保持
 	nCursorState = 0;
-	
+
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
-	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, sizeof( szMsg ));
+	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, sizeof( szMsg ) );
 	if( desclen > 0 ){
 		::SetDlgItemText( m_hWnd, IDC_EDIT_ABOUT, szMsg );
 	}
-	
+
 	//	To Here Jun. 8, 2001 genta
 
 	/* 基底クラスメンバ */

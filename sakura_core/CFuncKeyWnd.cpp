@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファンクションキーウィンドウ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -81,26 +81,26 @@ CFuncKeyWnd::CFuncKeyWnd()
 	/* 表示用フォント */
 	/* LOGFONTの初期化 */
 	memset( &lf, 0, sizeof(LOGFONT) );
-	lf.lfHeight         = -12;
-	lf.lfWidth          = 0;
-	lf.lfEscapement     = 0;
-	lf.lfOrientation    = 0;
-	lf.lfWeight         = 400;
-	lf.lfItalic         = 0x0;
-	lf.lfUnderline      = 0x0;
-	lf.lfStrikeOut      = 0x0;
-	lf.lfCharSet        = 0x80;
-	lf.lfOutPrecision   = 0x3;
-	lf.lfClipPrecision  = 0x2;
-	lf.lfQuality        = 0x1;
-	lf.lfPitchAndFamily = 0x31;
+	lf.lfHeight			= -12;
+	lf.lfWidth			= 0;
+	lf.lfEscapement		= 0;
+	lf.lfOrientation	= 0;
+	lf.lfWeight			= 400;
+	lf.lfItalic			= 0x0;
+	lf.lfUnderline		= 0x0;
+	lf.lfStrikeOut		= 0x0;
+	lf.lfCharSet		= 0x80;
+	lf.lfOutPrecision	= 0x3;
+	lf.lfClipPrecision	= 0x2;
+	lf.lfQuality		= 0x1;
+	lf.lfPitchAndFamily	= 0x31;
 	strcpy( lf.lfFaceName, "ＭＳ Ｐゴシック" );
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	m_bSizeBox = FALSE;
 	m_hwndSizeBox = NULL;
 	m_nTimerCount = 0;
-	
+
 	return;
 }
 
@@ -117,7 +117,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 
 
 
-/* ウィンドウ　オープン */
+/* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, BOOL bSizeBox )
 {
 //	WNDCLASS	wc;
@@ -150,13 +150,13 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	atom = RegisterClass( &wc );
 */
 	/* ウィンドウクラス作成 */
-	RegisterWC( 
+	RegisterWC(
 		/* WNDCLASS用 */
-		NULL,// Handle to the class icon. 
-		NULL,	//Handle to a small icon  
-		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor. 
-		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush. 
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file. 
+		NULL,// Handle to the class icon.
+		NULL,	//Handle to a small icon
+		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor.
+		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
+		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
@@ -166,8 +166,8 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		m_pszAppName,		// pointer to window name
 		WS_VISIBLE |
 		0
-		| WS_VISIBLE 
-		| WS_CHILD 
+		| WS_VISIBLE
+		| WS_CHILD
 		,	// window style
 
 		CW_USEDEFAULT,		// horizontal position of window
@@ -183,7 +183,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 **/
 
 	/* 基底クラスメンバ呼び出し */
-	CWnd::Create( 
+	CWnd::Create(
 		/* CreateWindowEx()用 */
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -196,7 +196,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		NULL // handle to menu, or child-window identifier
 	);
 
-	
+
 	m_hwndSizeBox = NULL;
 	if( m_bSizeBox ){
 		m_hwndSizeBox = ::CreateWindowEx(
@@ -208,14 +208,14 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 			0,							/* vertical position			*/
 			200,						/* width of the scroll bar		*/
 			CW_USEDEFAULT,				/* default height				*/
-			m_hWnd, 				/* handle of main window		*/
+			m_hWnd, 					/* handle of main window		*/
 			(HMENU) NULL,				/* no menu for a scroll bar 	*/
 			m_hInstance,				/* instance owning this window	*/
-			(LPVOID) NULL			/* pointer not needed				*/
+			(LPVOID) NULL				/* pointer not needed			*/
 		);
 		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 	}
-	
+
 	/* ボタンの生成 */
 	CreateButtons();
 
@@ -228,7 +228,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 //		if( 0 == ::SetTimer( m_hWnd, IDT_FUNCWND, TIMER_TIMEOUT, (TIMERPROC)CFuncKeyWndTimerProc ) ){
 		if( 0 == ::SetTimer( m_hWnd, IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
 			::MYMESSAGEBOX(	m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。" 
+				"CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
 			);
 		}
 	}
@@ -239,7 +239,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 
 
 
-/* ウィンドウ　クローズ */
+/* ウィンドウ クローズ */
 void CFuncKeyWnd::Close( void )
 {
 	::DestroyWindow( m_hWnd );
@@ -285,13 +285,13 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 
 	nButtonNum = sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] );
-	
+
 	/* ボタンのサイズを計算 */
 	nButtonWidth = CalcButtonSize();
 
 	::GetWindowRect( m_hWnd, &rcParent );
 	nButtonHeight = rcParent.bottom - rcParent.top - 2;
-	
+
 	nX = 1;
 	for( i = 0; i < nButtonNum; ++i ){
 		if( 0 < i  && 0 == ( i % m_nButtonGroupNum ) ){
@@ -315,7 +315,7 @@ LRESULT CFuncKeyWnd::DispatchEvent(
 //	if( NULL == m_hWnd ){
 //		return 0L;
 //	}
-	
+
 	int		i;
 	WORD	wNotifyCode;
 	WORD	wID;
@@ -342,9 +342,9 @@ LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	WORD	wID;
 	HWND	hwndCtl;
 
-	wNotifyCode = HIWORD(wParam); // notification code 
-	wID = LOWORD(wParam);         // item, control, or accelerator identifier 
-	hwndCtl = (HWND) lParam;      // handle of control 
+	wNotifyCode = HIWORD(wParam);	// notification code
+	wID = LOWORD(wParam);			// item, control, or accelerator identifier
+	hwndCtl = (HWND) lParam;		// handle of control
 //	switch( wNotifyCode ){
 //	case BN_PUSHED:
 		for( i = 0; i < sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] ); ++i ){
@@ -370,13 +370,13 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //	UINT idEvent,	// timer identifier
 //	DWORD dwTime 	// current system time
 
-	
+
 	//	return;
 	if( NULL == m_hWnd ){
 		return 0;
 	}
 
-	
+
 	int			nIdx;
 //	int			nFuncId;
 	int			i;
@@ -397,8 +397,8 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	/* ALT,Shift,Ctrlキーの状態が変化したか */
 	if( nIdx != m_nCurrentKeyState ){
 		m_nTimerCount = TIMER_CHECKFUNCENABLE + 1;
-		
-		/* [F1]キーの位置を捜す */	
+
+		/* [F1]キーの位置を捜す */
 		for( i = 0; i < m_pShareData->m_nKeyNameArrNum; ++i ){
 			if( VK_F1 == m_pShareData->m_pKeyNameArr[i].m_nKeyCode ){
 				break;
@@ -409,7 +409,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			return 0;
 		}
 		nOffF1 = i;
-		/* ファンクションキーの機能名を取得 */	
+		/* ファンクションキーの機能名を取得 */
 		for( i = 0; i < sizeof( m_szFuncNameArr ) / sizeof( m_szFuncNameArr[0] ); ++i ){
 			nFuncCode = m_pShareData->m_pKeyNameArr[nOffF1 + i].m_nFuncCodeArr[nIdx];
 			if( nFuncCode != m_nFuncCodeArr[i] ){
@@ -418,14 +418,14 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 					strcpy( m_szFuncNameArr[i], "" );
 				}else{
 					::LoadString( m_hInstance, m_nFuncCodeArr[i], m_szFuncNameArr[i], sizeof(m_szFuncNameArr[i]) - 1 );
-				}	
+				}
 				::SetWindowText( m_hwndButtonArr[i], m_szFuncNameArr[i] );
 			}
 		}
 	}
 	m_nTimerCount += TIMER_TIMEOUT;
-	if( m_nTimerCount > TIMER_CHECKFUNCENABLE || 
-		nIdx != m_nCurrentKeyState 
+	if( m_nTimerCount > TIMER_CHECKFUNCENABLE ||
+		nIdx != m_nCurrentKeyState
 	){
 		m_nTimerCount = 0;
 		/* 機能が利用可能か調べる */
@@ -464,7 +464,7 @@ LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
 	}
-	
+
 	m_hWnd = NULL;
 	return 0L;
 
@@ -493,8 +493,8 @@ int CFuncKeyWnd::CalcButtonSize( void )
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 		nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
-		::MoveWindow( m_hwndSizeBox,  rc.right - rc.left - nCxVScroll, rc.bottom - rc.top - nCyHScroll, nCxVScroll, nCyHScroll, TRUE ); 
-//		::MoveWindow( m_hwndSizeBox,  0, 0, nCxVScroll, nCyHScroll, TRUE ); 
+		::MoveWindow( m_hwndSizeBox,  rc.right - rc.left - nCxVScroll, rc.bottom - rc.top - nCyHScroll, nCxVScroll, nCyHScroll, TRUE );
+//		::MoveWindow( m_hwndSizeBox,  0, 0, nCxVScroll, nCyHScroll, TRUE );
 
 		return ( rc.right - rc.left - nCxVScroll - nButtonNum - ( nButtonNum / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 	}
@@ -525,21 +525,21 @@ void CFuncKeyWnd::CreateButtons( void )
 
 	nX = 1;
 	for( i = 0; i < sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] ); ++i ){
-		m_hwndButtonArr[i] = ::CreateWindow(  
-			"BUTTON",   // predefined class 
-			"",       // button text 
+		m_hwndButtonArr[i] = ::CreateWindow(
+			"BUTTON",	// predefined class
+			"",			// button text
 			WS_VISIBLE | WS_CHILD | BS_LEFT
-			,  // styles 
-			// Size and position values are given explicitly, because 
-			// the CW_USEDEFAULT constant gives zero values for buttons. 
-			nX,         // starting x position 
-			0 + 1,         // starting y position 
-			nButtonWidth,        // button width 
-			nButtonHeight,        // button height 
-			m_hWnd,       // parent window 
-			NULL,       // No menu 
-			(HINSTANCE) GetWindowLong(m_hWnd, GWL_HINSTANCE), 
-			NULL      // pointer not needed 
+			,			// styles
+			// Size and position values are given explicitly, because
+			// the CW_USEDEFAULT constant gives zero values for buttons.
+			nX,			// starting x position
+			0 + 1,		// starting y position
+			nButtonWidth,		// button width
+			nButtonHeight,		// button height
+			m_hWnd,		// parent window
+			NULL,		// No menu
+			(HINSTANCE) GetWindowLong(m_hWnd, GWL_HINSTANCE),
+			NULL		// pointer not needed
 		);
 		/* フォント変更 */
 		::SendMessage( m_hwndButtonArr[i], WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
@@ -556,7 +556,7 @@ void CFuncKeyWnd::CreateButtons( void )
 /* サイズボックスの表示／非表示切り替え */
 void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 {
-	
+
 	RECT		rc;
 	::GetWindowRect( m_hWnd, &rc );
 	if( m_bSizeBox == bSizeBox ){
@@ -588,12 +588,6 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 	}
 	return;
 }
-
-
-
-
-
-
 
 
 /*[EOF]*/

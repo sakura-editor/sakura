@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	テキストのレイアウト情報
-	
+
 	@author Norio Nakatani
 	@date 1998/3/11 新規作成
 	$Revision$
@@ -58,7 +58,7 @@ public:
 	CLayout*		m_pPrev;
 	CLayout*		m_pNext;
 	int				m_nLinePhysical;		/* 対応する改行単位の行の番号 */
-	const CDocLine*	m_pCDocLine;	
+	const CDocLine*	m_pCDocLine;
 //	const char*		m_pLine;
 	int				m_nOffset;		/* 対応する改行単位の行頭からのオフセット */
 	int				m_nLength;		/* このレイアウト行の長さ(ハイト数) */
@@ -72,5 +72,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CLAYOUT_H_ */
+
 
 /*[EOF]*/

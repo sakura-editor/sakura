@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	印刷ダイアログボックス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */

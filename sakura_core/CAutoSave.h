@@ -10,7 +10,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -46,21 +46,21 @@ public:
 		初期値は間隔1msecでタイマーは無効。
 	*/
 	CPassiveTimer() : nInterval(1), bEnabled(false){ Reset(); }
-	
+
 	//!	時間間隔の設定
 	void SetInterval(int m);
 
 	//!	時間間隔の取得
 	int GetInterval(void) const {return nInterval / MSec2Min; }
-	
+
 	//!	基準時刻のリセット
 	void Reset(void){ nLastTick = ::GetTickCount(); }
-	
+
 	//!	有効／無効の設定
 	void Enable(bool flag);
 	//!	有効／無効の読み出し
 	bool IsEnabled(void) const { return bEnabled; }
-	
+
 	//!	規定時間に達したかどうかの判定
 	bool CheckAction(void);
 
@@ -70,3 +70,6 @@ private:
 	bool bEnabled;	//!<	有効かどうか
 };
 #endif
+
+
+/*[EOF]*/

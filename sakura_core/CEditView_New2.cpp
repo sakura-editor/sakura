@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	CEditViewクラス
-	
+
 	@author Norio Nakatani
 	@date	1998/12/08 作成
 	$Revision$
@@ -482,8 +482,8 @@ BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int
 
 	if( m_bCurSrchRegularExp ){
 		/* 行頭ではない? */
-		if((( m_szCurSrchKey[0] == '/' && '^' == m_szCurSrchKey[1] )
-			|| ( m_szCurSrchKey[0] == 'm' && '^' == m_szCurSrchKey[2] ))
+		if( ( ( m_szCurSrchKey[0] == '/' && '^' == m_szCurSrchKey[1] )
+			|| ( m_szCurSrchKey[0] == 'm' && '^' == m_szCurSrchKey[2] ) )
 			&& 0 != nPos ){
 			return FALSE;
 		}
@@ -514,7 +514,7 @@ BOOL CEditView::IsSeaechString( const char* pszData, int nDataLen, int nPos, int
 			}
 		}
 
-		//検索条件が未定義　または　検索条件の長さより調べるデータが短いときはヒットしない
+		//検索条件が未定義 または 検索条件の長さより調べるデータが短いときはヒットしない
 		if( 0 == nKeyLength || nKeyLength > nDataLen - nPos ){
 			return FALSE;
 		}
@@ -588,19 +588,19 @@ void CEditView::DispRuler( HDC hdc )
 
 	/* LOGFONTの初期化 */
 	memset( &lf, 0, sizeof(LOGFONT) );
-	lf.lfHeight         = -12;
-	lf.lfWidth          = 5/*0*/;
-	lf.lfEscapement     = 0;
-	lf.lfOrientation    = 0;
-	lf.lfWeight         = 400;
-	lf.lfItalic         = 0;
-	lf.lfUnderline      = 0;
-	lf.lfStrikeOut      = 0;
-	lf.lfCharSet        = 0;
-	lf.lfOutPrecision   = 3;
-	lf.lfClipPrecision  = 2;
-	lf.lfQuality        = 1;
-	lf.lfPitchAndFamily = 34;
+	lf.lfHeight			= -12;
+	lf.lfWidth			= 5/*0*/;
+	lf.lfEscapement		= 0;
+	lf.lfOrientation	= 0;
+	lf.lfWeight			= 400;
+	lf.lfItalic			= 0;
+	lf.lfUnderline		= 0;
+	lf.lfStrikeOut		= 0;
+	lf.lfCharSet		= 0;
+	lf.lfOutPrecision	= 3;
+	lf.lfClipPrecision	= 2;
+	lf.lfQuality		= 1;
+	lf.lfPitchAndFamily	= 34;
 	strcpy( lf.lfFaceName, "Arial" );
 	hFont = ::CreateFontIndirect( &lf );
 	hFontOld = (HFONT)::SelectObject( hdc, hFont );
@@ -727,12 +727,12 @@ const struct ZENKAKKO_T{
 //	Jun. 16, 2000 genta
 /*!
 	@brief 対括弧の検索
-	
+
 	カーソル位置の括弧に対応する括弧を探す。カーソル位置が括弧でない場合は
 	カーソルの後ろの文字が括弧かどうかを調べる。
-	
+
 	カーソルの前後いずれもが括弧でない場合は何もしない。
-	
+
 	括弧が半角か全角か、及び始まりか終わりかによってこれに続く4つの関数に
 	制御を移す。
 
@@ -1003,9 +1003,9 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 	@retval true 成功
 	@retval false 失敗
 */
-bool CEditView::SearchBracketForward2( int   PosX,   int   PosY,
-									   int*  NewX,   int*  NewY,
-									   char* upChar, char* dnChar )
+bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
+										int*	NewX,	int*	NewY,
+										char*	upChar,	char*	dnChar )
 {
 	CDocLine* ci;
 
@@ -1061,9 +1061,9 @@ bool CEditView::SearchBracketForward2( int   PosX,   int   PosY,
 //@@@ 2001.02.03 Start by MIK:
 /*!
 	@brief 全角対括弧の検索:逆方向
-	
+
 	@author MIK
-	
+
 	@param LayoutX [in] 検索開始点の物理座標X
 	@param LayoutY [in] 検索開始点の物理座標Y
 	@param NewX [out] 移動先のレイアウト座標X
@@ -1214,4 +1214,4 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
 //	2001/06/18 End
 
 
-/* [EOF] */
+/*[EOF]*/

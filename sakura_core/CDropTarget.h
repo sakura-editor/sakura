@@ -56,7 +56,7 @@ private:
 
 
 
-class CYbInterfaceBase 
+class CYbInterfaceBase
 {
 private:
 	static COleLibrary m_olelib;
@@ -68,7 +68,7 @@ protected:
 
 
 template<class BASEINTERFACE>
-class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase 
+class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase
 {
 private:
 	static REFIID m_owniid;
@@ -83,7 +83,7 @@ public:
 };
 
 
-class CDropTarget : public CYbInterfaceImpl<IDropTarget> 
+class CDropTarget : public CYbInterfaceImpl<IDropTarget>
 {
 public:
 	/*

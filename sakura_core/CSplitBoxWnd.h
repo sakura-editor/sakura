@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	分割ボックスウィンドウクラス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -75,5 +75,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSPLITBOXWND_H_ */
+
 
 /*[EOF]*/

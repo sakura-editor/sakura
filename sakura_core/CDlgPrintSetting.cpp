@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	印刷設定ダイアログ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -32,10 +32,10 @@
 #define IDT_PRINTSETTING 1467
 
 int CALLBACK SetData_EnumFontFamProc(
-	ENUMLOGFONT*	pelf,	// pointer to logical-font data 
-	NEWTEXTMETRIC*	pntm,	// pointer to physical-font data 
-	int				nFontType,	// type of font 
-	LPARAM			lParam 	// address of application-defined data  
+	ENUMLOGFONT*	pelf,	// pointer to logical-font data
+	NEWTEXTMETRIC*	pntm,	// pointer to physical-font data
+	int				nFontType,	// type of font
+	LPARAM			lParam 	// address of application-defined data
 )
 {
 	CDlgPrintSetting*	pCDlgPrintSetting;
@@ -55,11 +55,11 @@ int CALLBACK SetData_EnumFontFamProc(
 }
 
 /* モーダルダイアログの表示 */
-int CDlgPrintSetting::DoModal( 
-	HINSTANCE		hInstance, 
-	HWND			hwndParent, 
-	int*			pnCurrentPrintSetting, 
-	PRINTSETTING*	pPrintSettingArr 
+int CDlgPrintSetting::DoModal(
+	HINSTANCE		hInstance,
+	HWND			hwndParent,
+	int*			pnCurrentPrintSetting,
+	PRINTSETTING*	pPrintSettingArr
 )
 {
 	int		nRet;
@@ -68,7 +68,7 @@ int CDlgPrintSetting::DoModal(
 	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
 		m_PrintSettingArr[i] = pPrintSettingArr[i];
 	}
-	
+
 	nRet = CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, NULL );
 //	nRet = ::DialogBoxParam(
 //		m_hInstance,
@@ -90,7 +90,7 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 {
 	m_hWnd = hwndDlg;
 //	hwndComboSettingName = ::GetDlgItem( m_hWnd, IDC_COMBO_SETTINGNAME );
-	
+
 //	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 //	::SendMessage( ::GetDlgItem( m_hWnd, IDC_EDIT_LINENUM ), EM_LIMITTEXT, (WPARAM)9, 0 );
 
@@ -193,13 +193,13 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			int		nItemIdx;
 			nSelectIdx = 0;
 			for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
-				nItemIdx = ::SendMessage( 
-					hwndComboSettingName, CB_ADDSTRING, 0, 
-					(LPARAM)(LPCTSTR)m_PrintSettingArr[i].m_szPrintSettingName 
+				nItemIdx = ::SendMessage(
+					hwndComboSettingName, CB_ADDSTRING, 0,
+					(LPARAM)(LPCTSTR)m_PrintSettingArr[i].m_szPrintSettingName
 				);
 				::SendMessage( hwndComboSettingName, CB_SETITEMDATA, nItemIdx, (LPARAM)i );
 				if( i == m_nCurrentPrintSetting ){
-					nSelectIdx = nItemIdx;	
+					nSelectIdx = nItemIdx;
 				}
 			}
 			::SendMessage( hwndComboSettingName, CB_SETCURSEL, nSelectIdx, 0 );
@@ -243,7 +243,7 @@ void CDlgPrintSetting::SetData( void )
 		"B4 Envelope(250 x 353 mm)",
 		"B5 Envelope(176 x 250 mm)",
 		"B6 Envelope(176 x 125 mm)",
-		"Italy Envelope(110 x 230 mm)"	
+		"Italy Envelope(110 x 230 mm)"
 		"Letter、8 1/2x11 inch",
 		"Legal、8 1/2x14 inch",
 		"C sheet、17x22 inch",
@@ -310,7 +310,7 @@ void CDlgPrintSetting::SetData( void )
 		DMPAPER_ENV_MONARCH,
 		DMPAPER_ENV_PERSONAL,
 		DMPAPER_FANFOLD_US,
-		DMPAPER_FANFOLD_STD_GERMAN, 
+		DMPAPER_FANFOLD_STD_GERMAN,
 		DMPAPER_FANFOLD_LGL_GERMAN
 	};
 	int	i;
@@ -401,7 +401,7 @@ void CDlgPrintSetting::SetData( void )
 		nItemIdx = ::SendMessage( hwndComboSettingName, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)m_PrintSettingArr[i].m_szPrintSettingName );
 		::SendMessage( hwndComboSettingName, CB_SETITEMDATA, nItemIdx, (LPARAM)i );
 		if( i == m_nCurrentPrintSetting ){
-			nSelectIdx = nItemIdx;	
+			nSelectIdx = nItemIdx;
 		}
 	}
 	::SendMessage( hwndComboSettingName, CB_SETCURSEL, nSelectIdx, 0 );
@@ -417,7 +417,7 @@ void CDlgPrintSetting::SetData( void )
 
 
 /* ダイアログデータの取得 */
-/* 　TRUE==正常　 FALSE==入力エラー  */
+/* TRUE==正常 FALSE==入力エラー */
 int CDlgPrintSetting::GetData( void )
 {
 	HWND	hwndCtrl;
@@ -427,26 +427,26 @@ int CDlgPrintSetting::GetData( void )
 	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_FONT_HAN );
 	nIdx1 = ::SendMessage( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	::SendMessage( hwndCtrl, CB_GETLBTEXT, nIdx1, 
-		(LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan 
+	::SendMessage( hwndCtrl, CB_GETLBTEXT, nIdx1,
+		(LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan
 	);
 	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_FONT_ZEN );
 	nIdx1 = ::SendMessage( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	::SendMessage( hwndCtrl, CB_GETLBTEXT, nIdx1, 
-		(LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen 
+	::SendMessage( hwndCtrl, CB_GETLBTEXT, nIdx1,
+		(LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen
 	);
 
 	/* 用紙サイズ一覧 */
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER );
 	nIdx1 = ::SendMessage( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize = 
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
 		::SendMessage( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
 
 	/* 用紙方向一覧 */
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT );
 	nIdx1 = ::SendMessage( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = 
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation =
 		::SendMessage( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
 
 
@@ -515,7 +515,7 @@ int CDlgPrintSetting::GetData( void )
 		::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
 	}
 
-	
+
 //	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu = DataCheckAndCrrect( IDC_EDIT_DANSUU, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu );
 //	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth = DataCheckAndCrrect( IDC_EDIT_FONTWIDTH, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth );
 //	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing = DataCheckAndCrrect( IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing );
@@ -532,7 +532,7 @@ int CDlgPrintSetting::GetData( void )
 //	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINBY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY / 10, FALSE );
 //	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINLX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10, FALSE );
 //	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
-	
+
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth * 2;
 	return TRUE;
 }
@@ -547,7 +547,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	int		nItemNum;
 	int		nItemData;
 	int		i;
-	
+
 	if( bGetData ){
 		GetData();
 	}
@@ -804,28 +804,28 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	GetData();
 //	SetData( m_hWnd );
 	pPS = &m_PrintSettingArr[m_nCurrentPrintSetting];
-	
+
 	dmDummy.dmFields = DM_PAPERSIZE | DMORIENT_LANDSCAPE;
 	dmDummy.dmPaperSize = pPS->m_nPrintPaperSize;
 	dmDummy.dmOrientation = pPS->m_nPrintPaperOrientation;
 	/* 用紙の幅、高さ */
-	if( FALSE == CPrint::GetPaperSize( 
-		&nPaperAllWidth, 
-		&nPaperAllHeight, 
+	if( FALSE == CPrint::GetPaperSize(
+		&nPaperAllWidth,
+		&nPaperAllHeight,
 		&dmDummy
 	) ){
 		nPaperAllWidth = 210 * 10;		/* 用紙幅 */
 		nPaperAllHeight = 297 * 10;		/* 用紙高さ */
 	}
 	/* 行あたりの文字数(行番号込み) */
-	nEnableColmns = 
-		( nPaperAllWidth - pPS->m_nPrintMarginLX - pPS->m_nPrintMarginRX 
+	nEnableColmns =
+		( nPaperAllWidth - pPS->m_nPrintMarginLX - pPS->m_nPrintMarginRX
 		- ( pPS->m_nPrintDansuu - 1 ) * pPS->m_nPrintDanSpace
 //		- ( pPS->m_nPrintDansuu ) *  ( ( m_nPreview_LineNumberColmns /*+ (m_nPreview_LineNumberColmns?1:0)*/ ) * pPS->m_nPrintFontWidth )
 		) / pPS->m_nPrintFontWidth / pPS->m_nPrintDansuu;	/* 印字可能桁数/ページ */
 	/* 縦方向の行数 */
-	nEnableLines = 
-		( nPaperAllHeight - pPS->m_nPrintMarginTY - pPS->m_nPrintMarginBY ) / 
+	nEnableLines =
+		( nPaperAllHeight - pPS->m_nPrintMarginTY - pPS->m_nPrintMarginBY ) /
 		( pPS->m_nPrintFontHeight + ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 ) ) - 4;	/* 印字可能行数/ページ */
 //	/* ページあたりの行数 */
 //	nEnableLinesAll = nEnableLines * pPS->m_nPrintDansuu;
@@ -835,5 +835,6 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 //	::SetDlgItemInt( m_hWnd, IDC_STATIC_ENABLELINESALL, nEnableLinesAll, FALSE );
 	return TRUE;
 }
+
 
 /*[EOF]*/

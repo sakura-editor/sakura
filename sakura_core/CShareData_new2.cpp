@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ツールバーデータの初期化
-	
+
 	@author Norio Nakatani, Jepro
 	$Revision$
 */
@@ -44,11 +44,11 @@ CShareData::CShareData()
 	*/
 	SetTBBUTTONVal( &m_tbMyButton[0], 0, 0, 0, TBSTYLE_SEP, 0, 0 );		//セパレータ
 	struct TBUTTONDATA {
-	    int			idCommand;
-	    BYTE		fsState;
-	    BYTE		fsStyle;
-	    DWORD		dwData;
-	    int			iString;
+		int			idCommand;
+		BYTE		fsState;
+		BYTE		fsStyle;
+		DWORD		dwData;
+		int			iString;
 	};
 //	キーワード：アイコン順序(アイコンインデックス)
 //	Sept. 16, 2000 Jepro note: アイコン登録メニュー

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファイルオープンダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date	1998/08/10 作成
 	$Revision$
@@ -49,11 +49,11 @@ public:
 	||  Attributes & Operations
 	*/
 	void Create( HINSTANCE, HWND, const char*, const char*, const char**,const char** );
-	BOOL DoModal_GetOpenFileName( char* );	/* 開くダイアログ　モーダルダイアログの表示 */
-	BOOL DoModal_GetSaveFileName( char* );	/* 保存ダイアログ　モーダルダイアログの表示 */
-	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアログ　モーダルダイアログの表示 */
+	BOOL DoModal_GetOpenFileName( char* );	/* 開くダイアログ モーダルダイアログの表示 */
+	BOOL DoModal_GetSaveFileName( char* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
-	BOOL DoModalSaveDlg( char* , int*, CEOL* );	/* 保存ダイアログ　モーダルダイアログの表示 */
+	BOOL DoModalSaveDlg( char* , int*, CEOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
 	BOOL DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
@@ -66,7 +66,7 @@ public:
 //	int				m_nSettingType;
 
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
-	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ	*/
+	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAME	m_ofn;							/* 「ファイルを開く」ダイアログ用構造体 */
 	int				m_nCharCode;					/* 文字コード */
 //	char			m_szHelpFile[_MAX_PATH + 1];
@@ -84,5 +84,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGOPENFILE_H_ */
+
 
 /*[EOF]*/

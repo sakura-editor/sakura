@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	プロセス間共有データへのアクセス
-	
+
 	@author Norio Nakatani
 	@date 1998/05/26  新規作成
 	$Revision$
@@ -45,7 +45,7 @@ enum maxdata{
 	MAX_REPLACEKEY				=  30,
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
-	MAX_TYPES					=  16,
+	MAX_TYPES					=  20,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした
 //	MAX_TOOLBARBUTTONS			= 256,
 	MAX_TOOLBARBUTTONS			= 384,	//Oct. 22, 2000 JEPORO アイコンの最大登録数を128個増やした(256→384)
 	MAX_CUSTOM_MENU				=  25,
@@ -140,8 +140,8 @@ struct PRINTSETTING {
 //#define COLORIDX_COMMENT		7	/* コメント */
 //#define COLORIDX_SSTRING		8	/* シングルクォーテーション文字列 */
 //#define COLORIDX_WSTRING		9	/* ダブルクォーテーション文字列 */
-//#define COLORIDX_UNDERLINE	10	/* カーソル行アンダーライン	*/
-//#define COLORIDX_WRAP			11	/* 折り返し記号	*/
+//#define COLORIDX_UNDERLINE	10	/* カーソル行アンダーライン */
+//#define COLORIDX_WRAP			11	/* 折り返し記号 */
 //#define COLORIDX_CTRLCODE		12	/* コントロールコード */
 //#define COLORIDX_URL			13	/* URL */
 //#define COLORIDX_SEARCH		14	/* 検索文字列 */
@@ -150,14 +150,14 @@ struct PRINTSETTING {
 //#define COLORIDX_LAST			17
 #define COLORIDX_TEXT			0	/* テキスト */
 #define COLORIDX_RULER			1	/* ルーラー */
-#define COLORIDX_UNDERLINE		2	/* カーソル行アンダーライン	*/
+#define COLORIDX_UNDERLINE		2	/* カーソル行アンダーライン */
 #define COLORIDX_GYOU			3	/* 行番号 */
 #define COLORIDX_GYOU_MOD		4	/* 行番号(変更行) */
 #define COLORIDX_TAB			5	/* TAB記号 */
 #define COLORIDX_ZENSPACE		6	/* 日本語空白 */
 #define COLORIDX_CTRLCODE		7	/* コントロールコード */
 #define COLORIDX_CRLF			8	/* 改行記号 */
-#define COLORIDX_WRAP			9	/* 折り返し記号	*/
+#define COLORIDX_WRAP			9	/* 折り返し記号 */
 #define COLORIDX_EOF			10	/* EOF記号 */
 //@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
 //#ifdef COMPILE_COLOR_DIGIT
@@ -254,7 +254,7 @@ struct Types {
 	int					m_nLineCommentPos;				//< 行コメント1の開始位置(負数は指定無し)
 	int					m_nLineCommentPos2;				//< 行コメント2の開始位置(負数は指定無し)
 	int					m_nLineCommentPos3;				//< 行コメント3の開始位置(負数は指定無し)	//Jun. 01, 2001 JEPRO 追加
-	
+
 	char				m_szBlockCommentFrom[16];		/* ブロックコメントデリミタ(From) */
 	char				m_szBlockCommentTo[16];			/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
@@ -378,7 +378,7 @@ struct Common {
 	int					m_bLoHiCase;					/* 検索／置換  1==英大文字小文字の区別 */
 	int					m_bWordOnly;					/* 検索／置換  1==単語のみ検索 */
 	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
-	int					m_bSelectedArea;				/* 置換       選択範囲内置換 */
+	int					m_bSelectedArea;				/* 置換  選択範囲内置換 */
 	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */
 	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
 	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */

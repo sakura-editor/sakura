@@ -74,10 +74,10 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_HELPER(
 
 /* p10 メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p10(
-    HWND	hwndDlg,	// handle to dialog box
-    UINT	uMsg,		// message
-    WPARAM	wParam,		// first message parameter
-    LPARAM	lParam 		// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam 		// second message parameter
 )
 {
 	WORD		wNotifyCode;
@@ -249,10 +249,10 @@ BOOL CPropCommon::DispatchEvent_p10(
 //		}
 
 //		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom   );
-//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code     );
-//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos      );
-//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta    );
+//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
+//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code );
+//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos );
+//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

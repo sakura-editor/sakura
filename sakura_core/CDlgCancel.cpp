@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キャンセルボタンダイアログボックス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -56,7 +56,7 @@ BOOL CDlgCancel::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)NULL );
 	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
-	
+
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
@@ -72,5 +72,6 @@ BOOL CDlgCancel::OnBnClicked( int wID )
 	}
 	return FALSE;
 }
+
 
 /*[EOF]*/

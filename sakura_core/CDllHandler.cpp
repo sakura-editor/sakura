@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -35,21 +35,21 @@ CDllHandler::CDllHandler()
 */
 CDllHandler::~CDllHandler()
 {
-	if( IsAvailable()){
+	if( IsAvailable() ){
 		FreeLibrary(true);
 	}
 }
 
 int CDllHandler::LoadLibrary(char* str)
 {
-	if( IsAvailable()){
+	if( IsAvailable() ){
 		//	既に利用可能で有れば何もしない．
 		return 0;
 	}
 
 	char *name = GetDllName(str);
 	if( name == NULL )	return -1;
-	
+
 	m_hInstance = ::LoadLibrary( name );
 	if( m_hInstance == NULL )	return -2;
 
@@ -63,7 +63,7 @@ int CDllHandler::LoadLibrary(char* str)
 
 int CDllHandler::FreeLibrary(bool force)
 {
-	if( m_hInstance == NULL || (!IsAvailable())){
+	if( m_hInstance == NULL || (!IsAvailable()) ){
 		//	DLLが読み込まれていなければ何もしない
 		return 0;
 	}
@@ -82,3 +82,6 @@ int CDllHandler::DeinitDll(void)
 {
 	return 0;
 }
+
+
+/*[EOF]*/

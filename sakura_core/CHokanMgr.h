@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キーワード補完
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -48,7 +48,7 @@ public:
 	HWND DoModeless( HINSTANCE, HWND, LPARAM );/* モードレスダイアログの表示 */
 	void Hide( void );
 	/* 初期化 */
-	int CHokanMgr::Search( 
+	int CHokanMgr::Search(
 	//	HFONT		hFont,
 		POINT*		ppoWin,
 		int			nWinHeight,
@@ -81,7 +81,7 @@ public:
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
 
-    
+
 //	HFONT			m_hFont;
 //	HFONT			m_hFontOld;
 	CMemory			m_cmemCurWord;
@@ -109,5 +109,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CHOKANMGR_H_ */
+
 
 /*[EOF]*/

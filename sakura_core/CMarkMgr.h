@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -62,21 +62,21 @@ public:
 		//	constructor
 		CMark( int x, int y ) : m_pos(x), m_line(y), m_extra(0) {}
 		CMark( void ) : m_extra(-1) {}
-		
+
 		//	type converter
 		const char *GetNameStr(void) const { return m_name.c_str(); }
 		void SetNameStr(const char* newstr) { m_name = newstr; }
-		
+
 		int GetLine(void) const { return m_line; }
 		int GetPos(void) const { return m_pos; }
 		void SetPosition(int x, int y) { m_pos = x; m_line = y; }
 
 		int GetExtra(void) const { return m_extra; }
 		void SetExtra(int l) { m_extra = l; }
-		
+
 		bool IsValid(void) const { return m_extra != -1; }
 		void Invalidate(void){ m_extra = -1; }
-		
+
 		bool operator==(CMark &r) const { return m_line == r.m_line; }
 		bool operator!=(CMark &r) const { return m_line != r.m_line; }
 
@@ -88,7 +88,7 @@ public:
 	};
 
 	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class
-	
+
 	//	型宣言
 	typedef std::vector<CMark> CMarkChain;
 	typedef std::vector<CMark>::iterator	CMarkIterator;
@@ -97,30 +97,30 @@ public:
 	//	constructor
 	CMarkMgr() : curpos(0), maxitem(10){}
 	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
-	
+
 	int Count(void) const { return dat.size(); }	//!<	項目数を返す
 	int GetMax(void) const { return maxitem; }	//!<	最大項目数を返す
 	void SetMax(int max);	//!<	最大項目数を設定
 
 	virtual void Add(const CMark& m) = 0;	//!<	要素の追加
-	
+
 	//	Apr. 1, 2001 genta
 	virtual void Flush(void);	//!<	要素の全消去
 
 	//!	要素の取得
 	const CMark& GetCurrent(void) const { return dat[curpos]; }
-	
+
 	//	有効性の確認
 	bool  CheckCurrent(void) const;
 	bool  CheckPrev(void) const;
 	bool  CheckNext(void) const;
-	
+
 	//	現在位置の移動
 	bool NextValid(void);
 	bool PrevValid(void);
 
 	const CMark& operator[](int index) const { return dat[index]; }
-	
+
 	//	連続取得インターフェース
 	CMarkIterator CurrentPos(void) const { return (CMarkIterator)dat.begin() + curpos; }
 	CMarkIterator Begin(void) const { return (CMarkIterator)dat.begin(); }
@@ -132,7 +132,7 @@ protected:
 	// CMarkFactory m_factory;	//	Factory Class (マクロで生成される）
 	CMarkChain dat;	//	マークデータ本体
 	int curpos;	//	現在位置（番号）
-	
+
 	int maxitem;	//	保管可能アイテムの最大数
 private:
 	//CMarkMgr( const CMarkMgr& );	//	Copy禁止
@@ -142,7 +142,7 @@ private:
 // ----------------------------------------------------
 /*!
 	@brief 移動履歴の管理クラス
-	
+
 	CMarkMgr を継承し、動作が規定されていない部分を実装する。
 */
 class CAutoMarkMgr : public CMarkMgr{
@@ -152,3 +152,6 @@ public:
 };
 
 #endif
+
+
+/*[EOF]*/

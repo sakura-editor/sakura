@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	プロセス間共有データへのアクセス
-	
+
 	@author Norio Nakatani
 	@date 1998/05/26  新規作成
 	$Revision$
@@ -26,7 +26,7 @@
 
 /*! @file
 	プロセス間共有データへのアクセス
-	
+
 	@author Norio Nakatani
 	@date May. 26, 1998
 */
@@ -47,18 +47,18 @@ struct ARRHEAD {
 //!	共有メモリのバージョン
 /*!
 	共有メモリのバージョン番号。共有メモリの形式を変更したときはここを1増やす。
-	
+
 	この値は共有メモリのバージョンフィールドに格納され、異なる構造の共有メモリを
 	使うエディタが同時に起動しないようにする。
-	
+
 	設定可能な値は 1～unsinged intの最大値
-	
+
 	@sa Init()
 */
 const unsigned int uShareDataVersion = 13;
 
 /*!
-	共有メモリ領域がある場合はプロセスのアドレス空間から､ 
+	共有メモリ領域がある場合はプロセスのアドレス空間から､
 	すでにマップされているファイル ビューをアンマップする。
 */
 CShareData::~CShareData()
@@ -75,10 +75,10 @@ CShareData::~CShareData()
 //! CShareDataクラスの初期化処理
 /*!
 	CShareDataクラスを利用する前に必ず呼び出すこと。
-	
+
 	@retval true 初期化成功
 	@retval false 初期化失敗
-	
+
 	@note 既に存在する共有メモリのバージョンがこのエディタが使うものと
 	異なる場合は致命的エラーを防ぐためにfalseを返します。WinMain()
 	でInit()に失敗するとメッセージを出してエディタの起動を中止します。
@@ -808,10 +808,10 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
 		m_pShareData->m_Common.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 
-		m_pShareData->m_Common.m_bHokanKey_RETURN = TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_bHokanKey_TAB    = FALSE;			/* VK_TAB   補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_bHokanKey_RIGHT  = TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_bHokanKey_SPACE  = FALSE;			/* VK_SPACE 補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 
 
 /***********
@@ -852,7 +852,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Common.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
 		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか
+		m_pShareData->m_Common.m_bAutoMIMEdecode = TRUE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 //		/* MRU 外部コマンド */
 //		m_pShareData->m_Common.m_MRU_ExtCmd.m_nExtCmdArrNum = 0;
@@ -945,12 +945,12 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//	To Here Sept. 4, 2000
 			"ダブルクォーテーション文字列", TRUE, FALSE, FALSE, RGB( 128, 0, 64 ),RGB( 255, 255, 255 ),
 			"カーソル行アンダーライン",  TRUE, FALSE, FALSE, RGB( 0, 0, 255 )	, RGB( 255, 255, 255 ),
-			"折り返し記号",       TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 255, 255 ),
-			"コントロールコード", TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 255, 255 ),
-			"URL",                TRUE , FALSE, TRUE , RGB( 0, 0, 255 )			, RGB( 255, 255, 255 ),
-			"検索文字列",         TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
-			"行番号(変更行)",	  TRUE , TRUE , FALSE, RGB( 0, 0, 255 )			, RGB( 239, 239, 239 ),
-			"ルーラー",           TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 )
+			"折り返し記号",			TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 255, 255 ),
+			"コントロールコード",	TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 255, 255 ),
+			"URL",					TRUE , FALSE, TRUE , RGB( 0, 0, 255 )		, RGB( 255, 255, 255 ),
+			"検索文字列",			TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
+			"行番号(変更行)",		TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
+			"ルーラー",				TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 )
 		};
 */
 
@@ -981,7 +981,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		static ColorInfoIni ColorInfo_DEFAULT[] = {
 		//	Nov. 9, 2000 Jepro note: color setting (詳細は CshareData.h を参照のこと)
 		//	0,							1(Disp),	 2(FatFont),3(UnderLIne) , 4(colTEXT),	5(colBACK),
-		//	szName(項目名),				色分け／表示, 太字,	    下線,	       文字色,		背景色,
+		//	szName(項目名),				色分け／表示, 太字,		下線,		文字色,		背景色,
 		//
 		//Oct. 8, 2000 JEPRO 背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
 			"テキスト",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),
@@ -1044,11 +1044,15 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"AWK",
 			"MS-DOSバッチファイル",
 			"Pascal",
-			"TeX",		//Oct. 31, 2000 JEPRO TeX ユーザに贈る
-			"設定13",
-			"設定14",
-			"設定15",
-			"設定ファイル"	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
+			"TeX",				//Oct. 31, 2000 JEPRO TeX  ユーザに贈る
+			"Perl",				//Jul. 08, 2001 JEPRO Perl ユーザに贈る
+			"Visual Basic",		//JUl. 10, 2001 JEPRO VB   ユーザに贈る
+			"リッチテキスト",	//JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね
+			"設定ファイル",		//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
+			"設定17",			//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
+			"設定18",
+			"設定19",
+			"設定20"			//To Here Jul. 12, 2001
 		};
 		static char* pszTypeExts[] = {
 			"",
@@ -1066,10 +1070,14 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			"bat",
 			"dpr,pas",
 			"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo",		//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
+			"cgi,pl,pm",			//Jul. 08, 2001 JEPRO 追加
+			"bas,frm,cls,ctl,pag",	//Jul. 09, 2001 JEPRO 追加
+			"rtf",					//Jul. 10, 2001 JEPRO 追加
+			"ini,inf,cnf,kwd,col",	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
+			"",						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
 			"",
 			"",
-			"",
-			"ini,inf,cnf,kwd,col"	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
+			""						//To Here Jul. 12, 2001
 		};
 
 		m_pShareData->m_Types[0].m_nIdx = 0;
@@ -1090,7 +1098,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[0].m_szBlockCommentFrom, "" );	/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[0].m_szBlockCommentTo, "" );		/* ブロックコメントデリミタ(To) */
 		m_pShareData->m_Types[0].m_nMaxLineSize = 10240;				/* 折り返し文字数 */
-		m_pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_UNKNOWN;	/* アウトライン解析方法 */
+//		m_pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_UNKNOWN;	/* アウトライン解析方法 */	//Jul. 08, 2001 JEPRO 使わないように変更
+		m_pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 		//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
 		m_pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 		//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
@@ -1119,6 +1128,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[2].m_szLineComment2, "" );			/* 行コメントデリミタ2 */
 		strcpy( m_pShareData->m_Types[2].m_szBlockCommentFrom, "/*" );		/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[2].m_szBlockCommentTo, "*/" );		/* ブロックコメントデリミタ(To) */
+		strcpy( m_pShareData->m_Types[2].m_szBlockCommentFrom2, "#if 0" );	/* ブロックコメントデリミタ2(From) */	//Jul. 11, 2001 JEPRO
+		strcpy( m_pShareData->m_Types[2].m_szBlockCommentTo2, "#endif" );	/* ブロックコメントデリミタ2(To) */
 		m_pShareData->m_Types[2].m_nKeyWordSetIdx = 0;						/* キーワードセット */
 		m_pShareData->m_Types[2].m_nDefaultOutline = OUTLINE_CPP;			/* アウトライン解析方法 */
 		m_pShareData->m_Types[2].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
@@ -1132,7 +1143,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[3].m_szBlockCommentFrom, "<!--" );	/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[3].m_szBlockCommentTo, "-->" );		/* ブロックコメントデリミタ(To) */
 		m_pShareData->m_Types[3].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-		m_pShareData->m_Types[3].m_nKeyWordSetIdx = 2;						/* キーワードセット */
+		m_pShareData->m_Types[3].m_nKeyWordSetIdx = 1;						/* キーワードセット */
 
 		// nIdx = 3;
 		/* PL/SQL */
@@ -1142,7 +1153,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[4].m_szBlockCommentTo, "*/" );		/* ブロックコメントデリミタ(To) */
 		m_pShareData->m_Types[4].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[4].m_szIndentChars, "|★" );			/* その他のインデント対象文字 */
-		m_pShareData->m_Types[4].m_nKeyWordSetIdx = 1;						/* キーワードセット */
+		m_pShareData->m_Types[4].m_nKeyWordSetIdx = 2;						/* キーワードセット */
 		m_pShareData->m_Types[4].m_nDefaultOutline = OUTLINE_PLSQL;			/* アウトライン解析方法 */
 
 		/* COBOL */
@@ -1155,7 +1166,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[5].m_nLineCommentPos2 = 6;					/* 行コメント2 桁位置 */	//Jun. 04, 2001 JEPRO 追加
 		m_pShareData->m_Types[5].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		strcpy( m_pShareData->m_Types[5].m_szIndentChars, "*" );			/* その他のインデント対象文字 */
-		m_pShareData->m_Types[5].m_nKeyWordSetIdx = 1;						/* キーワードセット */
+		m_pShareData->m_Types[5].m_nKeyWordSetIdx = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
 		m_pShareData->m_Types[5].m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 
 
@@ -1164,7 +1175,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[6].m_szLineComment2, "" );			/* 行コメントデリミタ2 */
 		strcpy( m_pShareData->m_Types[6].m_szBlockCommentFrom, "/*" );		/* ブロックコメントデリミタ(From) */
 		strcpy( m_pShareData->m_Types[6].m_szBlockCommentTo, "*/" );		/* ブロックコメントデリミタ(To) */
-		m_pShareData->m_Types[6].m_nKeyWordSetIdx = 3;						/* キーワードセット */
+		m_pShareData->m_Types[6].m_nKeyWordSetIdx = 4;						/* キーワードセット */
 		m_pShareData->m_Types[6].m_nDefaultOutline = OUTLINE_JAVA;			/* アウトライン解析方法 */
 		m_pShareData->m_Types[6].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
@@ -1195,7 +1206,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Types[10].m_szBlockCommentTo2, "*)" );		/* ブロックコメントデリミタ2(To) */
 //#endif
 		m_pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
-		m_pShareData->m_Types[10].m_nKeyWordSetIdx = 5;						/* キーワードセット */
+		m_pShareData->m_Types[10].m_nKeyWordSetIdx = 8;						/* キーワードセット */
 		//Mar. 10, 2001 JEPRO	半角数値を色分け表示
 		m_pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
 
@@ -1210,8 +1221,41 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//ダブルクォーテーション文字列を色分け表示しない
 		m_pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
 		//URLにアンダーラインを引かない(やっぱりやめた)
-//		m_pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_URL].m_bUnderLine = FALSE;
+//		m_pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_URL].m_bDisp = FALSE;
 		//To Here Oct. 31, 2000
+
+		//From Here Jul. 08, 2001 JEPRO
+		/* Perl */
+		strcpy( m_pShareData->m_Types[12].m_szLineComment, "#" );			/* 行コメントデリミタ */
+		m_pShareData->m_Types[12].m_nDefaultOutline = OUTLINE_PERL;			/* アウトライン解析方法 */
+		m_pShareData->m_Types[12].m_nKeyWordSetIdx  = 11;					/* キーワードセット */
+		m_pShareData->m_Types[12].m_nKeyWordSetIdx2 = 12;					/* キーワードセット2 */
+		m_pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
+		//To Here Jul. 08, 2001
+
+		//From Here Jul. 10, 2001 JEPRO
+		/* Visual Basic */
+		strcpy( m_pShareData->m_Types[13].m_szLineComment, "'" );			/* 行コメントデリミタ */
+		m_pShareData->m_Types[13].m_nDefaultOutline = OUTLINE_VB;			/* アウトライン解析方法 */
+		m_pShareData->m_Types[13].m_nKeyWordSetIdx  = 13;					/* キーワードセット */
+		m_pShareData->m_Types[13].m_nKeyWordSetIdx2 = 14;					/* キーワードセット2 */
+		m_pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
+		m_pShareData->m_Types[13].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+		//シングルクォーテーション文字列を色分け表示しない
+		m_pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+
+		/* リッチテキスト */
+		m_pShareData->m_Types[14].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
+		m_pShareData->m_Types[14].m_nKeyWordSetIdx  = 15;					/* キーワードセット */
+		m_pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
+		m_pShareData->m_Types[14].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+		//シングルクォーテーション文字列を色分け表示しない
+		m_pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+		//ダブルクォーテーション文字列を色分け表示しない
+		m_pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+		//URLにアンダーラインを引かない
+		m_pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_URL].m_bDisp = FALSE;
+		//To Here Jul. 10, 2001
 
 		//From Here Nov. 9, 2000 JEPRO
 		/* 設定ファイル */
@@ -1229,16 +1273,21 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = 0;
 
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "C/C++", TRUE );			/* セット 0の追加 */
-		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "PL/SQL", FALSE );		/* セット 1の追加 */
-		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "HTML", FALSE );			/* セット 2の追加 */
-		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Java", TRUE );			/* セット 3の追加 */
-		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "CORBA IDL", TRUE );		/* セット 4の追加 */
-		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Pascal", FALSE );		/* セット 5の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "HTML", FALSE );			/* セット 1の追加 */
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "PL/SQL", FALSE );		/* セット 2の追加 */
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "COBOL", TRUE );			/* セット 3の追加 */
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Java", TRUE );			/* セット 4の追加 */
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "CORBA IDL", TRUE );		/* セット 5の追加 */
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "AWK", TRUE );			/* セット 6の追加 */
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "MS-DOS batch", FALSE );	/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
-		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Perl", TRUE );			/* セット 8の追加 */
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Pascal", FALSE );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "TeX", TRUE );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "TeX2", TRUE );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Perl", TRUE );			/* セット11の追加 */
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Perl2", TRUE );			/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Visual Basic", FALSE );	/* セット13の追加 */	//Jul. 10, 2001 JEPRO
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Visual Basic2", FALSE );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
+		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "リッチテキスト", TRUE );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
 
 
@@ -1330,93 +1379,6 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 0, ppszKeyWordsCPP[i] );
 		}
 
-
-		static const char*	ppszKeyWordsPLSQL[] = {
-			"AND",
-			"AS",
-			"BEGIN",
-			"BINARY_INTEGER",
-			"BODY",
-			"BOOLEAN",
-			"BY",
-			"CHAR",
-			"CHR",
-			"COMMIT",
-			"COUNT",
-			"CREATE",
-			"CURSOR",
-			"DATE",
-			"DECLARE",
-			"DEFAULT",
-			"DELETE",
-			"ELSE",
-			"ELSIF",
-			"END",
-			"ERRORS",
-			"EXCEPTION",
-			"FALSE",
-			"FOR",
-			"FROM",
-			"FUNCTION",
-			"GOTO",
-			"HTP",
-			"IDENT_ARR",
-			"IF",
-			"IN",
-			"INDEX",
-			"INTEGER",
-			"IS",
-			"LOOP",
-			"NOT",
-			"NO_DATA_FOUND",
-			"NULL",
-			"NUMBER",
-			"OF",
-			"OR",
-			"ORDER",
-			"OUT",
-			"OWA_UTIL",
-			"PACKAGE",
-			"PRAGMA",
-			"PRN",
-			"PROCEDURE",
-			"REPLACE",
-			"RESTRICT_REFERENCES",
-			"RETURN",
-			"ROWTYPE",
-			"SELECT",
-			"SHOW",
-			"SUBSTR",
-			"TABLE",
-			"THEN",
-			"TRUE",
-			"TYPE",
-			"UPDATE",
-			"VARCHAR",
-			"VARCHAR2",
-			"WHEN",
-			"WHERE",
-			"WHILE",
-			"WNDS",
-			"WNPS",
-			"RAISE",
-			"INSERT",
-			"INTO",
-			"VALUES",
-			"SET",
-			"SYSDATE",
-			"RTRIM",
-			"LTRIM",
-			"TO_CHAR",
-			"DUP_VAL_ON_INDEX",
-			"ROLLBACK",
-			"OTHERS",
-			"SQLCODE"
-		};
-		static int nKeyWordsPLSQL_Num = sizeof( ppszKeyWordsPLSQL ) / sizeof( ppszKeyWordsPLSQL[0] );
-		for( i = 0; i < nKeyWordsPLSQL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 1, ppszKeyWordsPLSQL[i] );
-		}
 
 		static const char*	ppszKeyWordsHTML[] = {
 			"_blank",
@@ -1674,7 +1636,206 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		};
 		static int nKeyWordsHTML_Num = sizeof( ppszKeyWordsHTML ) / sizeof( ppszKeyWordsHTML[0] );
 		for( i = 0; i < nKeyWordsHTML_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 2, ppszKeyWordsHTML[i] );
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 1, ppszKeyWordsHTML[i] );
+		}
+
+
+		static const char*	ppszKeyWordsPLSQL[] = {
+			"AND",
+			"AS",
+			"BEGIN",
+			"BINARY_INTEGER",
+			"BODY",
+			"BOOLEAN",
+			"BY",
+			"CHAR",
+			"CHR",
+			"COMMIT",
+			"COUNT",
+			"CREATE",
+			"CURSOR",
+			"DATE",
+			"DECLARE",
+			"DEFAULT",
+			"DELETE",
+			"ELSE",
+			"ELSIF",
+			"END",
+			"ERRORS",
+			"EXCEPTION",
+			"FALSE",
+			"FOR",
+			"FROM",
+			"FUNCTION",
+			"GOTO",
+			"HTP",
+			"IDENT_ARR",
+			"IF",
+			"IN",
+			"INDEX",
+			"INTEGER",
+			"IS",
+			"LOOP",
+			"NOT",
+			"NO_DATA_FOUND",
+			"NULL",
+			"NUMBER",
+			"OF",
+			"OR",
+			"ORDER",
+			"OUT",
+			"OWA_UTIL",
+			"PACKAGE",
+			"PRAGMA",
+			"PRN",
+			"PROCEDURE",
+			"REPLACE",
+			"RESTRICT_REFERENCES",
+			"RETURN",
+			"ROWTYPE",
+			"SELECT",
+			"SHOW",
+			"SUBSTR",
+			"TABLE",
+			"THEN",
+			"TRUE",
+			"TYPE",
+			"UPDATE",
+			"VARCHAR",
+			"VARCHAR2",
+			"WHEN",
+			"WHERE",
+			"WHILE",
+			"WNDS",
+			"WNPS",
+			"RAISE",
+			"INSERT",
+			"INTO",
+			"VALUES",
+			"SET",
+			"SYSDATE",
+			"RTRIM",
+			"LTRIM",
+			"TO_CHAR",
+			"DUP_VAL_ON_INDEX",
+			"ROLLBACK",
+			"OTHERS",
+			"SQLCODE"
+		};
+		static int nKeyWordsPLSQL_Num = sizeof( ppszKeyWordsPLSQL ) / sizeof( ppszKeyWordsPLSQL[0] );
+		for( i = 0; i < nKeyWordsPLSQL_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 2, ppszKeyWordsPLSQL[i] );
+		}
+
+
+//Jul. 10, 2001 JEPRO 追加
+		static const char*	ppszKeyWordsCOBOL[] = {
+			"ACCEPT",
+			"ADD",
+			"ADVANCING",
+			"AFTER",
+			"ALL",
+			"AND",
+			"ARGUMENT",
+			"ASSIGN",
+			"AUTHOR",
+			"BEFORE",
+			"BLOCK",
+			"BY",
+			"CALL",
+			"CHARACTERS",
+			"CLOSE",
+			"COMP",
+			"COMPILED",
+			"COMPUTE",
+			"COMPUTER",
+			"CONFIGURATION",
+			"CONSOLE",
+			"CONTAINS",
+			"CONTINUE",
+			"CONTROL",
+			"COPY",
+			"DATA",
+			"DELETE",
+			"DISPLAY",
+			"DIVIDE",
+			"DIVISION",
+			"ELSE",
+			"END",
+			"ENVIRONMENT",
+			"EVALUATE",
+			"EXAMINE",
+			"EXIT",
+			"EXTERNAL",
+			"FD",
+			"FILE",
+			"FILLER",
+			"FROM",
+			"GIVING",
+			"GO",
+			"GOBACK",
+			"HIGH-VALUE",
+			"IDENTIFICATION"
+			"IF",
+			"INITIALIZE",
+			"INPUT",
+			"INTO",
+			"IS",
+			"LABEL",
+			"LINKAGE",
+			"LOW-VALUE",
+			"MODE",
+			"MOVE",
+			"NOT",
+			"OBJECT",
+			"OCCURS",
+			"OF",
+			"ON",
+			"OPEN",
+			"OR",
+			"OTHER",
+			"OUTPUT",
+			"PERFORM",
+			"PIC",
+			"PROCEDURE",
+			"PROGRAM",
+			"READ",
+			"RECORD",
+			"RECORDING",
+			"REDEFINES",
+			"REMAINDER",
+			"REMARKS",
+			"REPLACING",
+			"REWRITE",
+			"ROLLBACK",
+			"SECTION",
+			"SELECT",
+			"SOURCE",
+			"SPACE",
+			"STANDARD",
+			"STOP",
+			"STORAGE",
+			"SYSOUT",
+			"TEST",
+			"THEN",
+			"TO",
+			"TODAY",
+			"TRANSFORM",
+			"UNTIL",
+			"UPON",
+			"USING",
+			"VALUE",
+			"VARYING",
+			"WHEN",
+			"WITH",
+			"WORKING",
+			"WRITE",
+			"WRITTEN",
+			"ZERO"
+		};
+		static int nKeyWordsCOBOL_Num = sizeof( ppszKeyWordsCOBOL ) / sizeof( ppszKeyWordsCOBOL[0] );
+		for( i = 0; i < nKeyWordsCOBOL_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 3, ppszKeyWordsCOBOL[i] );
 		}
 
 
@@ -1729,8 +1890,9 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		};
 		static int nKeyWordsJAVA_Num = sizeof( ppszKeyWordsJAVA ) / sizeof( ppszKeyWordsJAVA[0] );
 		for( i = 0; i < nKeyWordsJAVA_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 3, ppszKeyWordsJAVA[i] );
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 4, ppszKeyWordsJAVA[i] );
 		}
+
 
 		static const char*	ppszKeyWordsCORBA_IDL[] = {
 			"any",
@@ -1773,84 +1935,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		};
 		static int nKeyWordsCORBA_IDL_Num = sizeof( ppszKeyWordsCORBA_IDL ) / sizeof( ppszKeyWordsCORBA_IDL[0] );
 		for( i = 0; i < nKeyWordsCORBA_IDL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 4, ppszKeyWordsCORBA_IDL[i] );
-		}
-
-		static const char*	ppszKeyWordsPASCAL[] = {
-			"and",
-			"exports",
-			"mod",
-			"shr",
-			"array",
-			"file",
-			"nil",
-			"string",
-			"as",
-			"finalization",
-			"not",
-			"stringresource",
-			"asm",
-			"finally",
-			"object",
-			"then",
-			"begin",
-			"for",
-			"of",
-			"case",
-			"function",
-			"or",
-			"to",
-			"class",
-			"goto",
-			"out",
-			"try",
-			"const",
-			"if",
-			"packed",
-			"type",
-			"constructor",
-			"implementation",
-			"procedure",
-			"unit",
-			"destructor",
-			"in",
-			"program",
-			"until",
-			"dispinterface",
-			"inherited",
-			"property",
-			"uses",
-			"div",
-			"initialization",
-			"raise",
-			"var",
-			"do",
-			"inline",
-			"record",
-			"while",
-			"downto",
-			"interface",
-			"repeat",
-			"with",
-			"else",
-			"is",
-			"resourcestring",
-			"xor",
-			"end",
-			"label",
-			"set",
-			"except",
-			"library",
-			"shl",
-			"private",
-			"public",
-			"published",
-			"protected",
-			"override"
-		};
-		static int nKeyWordsPASCAL_Num = sizeof( ppszKeyWordsPASCAL ) / sizeof( ppszKeyWordsPASCAL[0] );
-		for( i = 0; i < nKeyWordsPASCAL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 5, ppszKeyWordsPASCAL[i] );
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 5, ppszKeyWordsCORBA_IDL[i] );
 		}
 
 
@@ -2030,342 +2115,81 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		}
 
 
-		static const char*	ppszKeyWordsPERL[] = {
-			"break",
-			"continue",
-			"do",
-			"elsif",
-			"else",
+		static const char*	ppszKeyWordsPASCAL[] = {
+			"and",
+			"exports",
+			"mod",
+			"shr",
+			"array",
+			"file",
+			"nil",
+			"string",
+			"as",
+			"finalization",
+			"not",
+			"stringresource",
+			"asm",
+			"finally",
+			"object",
+			"then",
+			"begin",
 			"for",
-			"foreach",
+			"of",
+			"case",
+			"function",
+			"or",
+			"to",
+			"class",
 			"goto",
+			"out",
+			"try",
+			"const",
 			"if",
-			"last",
-			"next",
-			"return",
-			"sub",
-			"undef",
-			"unless",
+			"packed",
+			"type",
+			"constructor",
+			"implementation",
+			"procedure",
+			"unit",
+			"destructor",
+			"in",
+			"program",
 			"until",
-			"while",
-			"abs",
-			"accept",
-			"alarm",
-			"atan2",
-			"bind",
-			"binmode",
-			"bless",
-			"caller",
-			"chdir",
-			"chmod",
-			"chomp",
-			"chop",
-			"chown",
-			"chr",
-			"chroot",
-			"close",
-			"closedir",
-			"connect",
-			"continue",
-			"cos",
-			"crypt",
-			"dbmclose",
-			"dbmopen",
-			"defined",
-			"delete",
-			"die",
+			"dispinterface",
+			"inherited",
+			"property",
+			"uses",
+			"div",
+			"initialization",
+			"raise",
+			"var",
 			"do",
-			"dump",
-			"each",
-			"eof",
-			"eval",
-			"exec",
-			"exists",
-			"exit",
-			"exp",
-			"fcntl",
-			"fileno",
-			"flock",
-			"fork",
-			"format",
-			"formline",
-			"getc",
-			"getlogin",
-			"getpeername",
-			"getpgrp",
-			"getppid",
-			"getpriority",
-			"getpwnam",
-			"getgrnam",
-			"gethostbyname",
-			"getnetbyname",
-			"getprotobyname",
-			"getpwuid",
-			"getgrgid",
-			"getservbyname",
-			"gethostbyaddr",
-			"getnetbyaddr",
-			"getprotobynumber",
-			"getservbyport",
-			"getpwent",
-			"getgrent",
-			"gethostent",
-			"getnetent",
-			"getprotoent",
-			"getservent",
-			"setpwent",
-			"setgrent",
-			"sethostent",
-			"setnetent",
-			"setprotoent",
-			"setservent",
-			"endpwent",
-			"endgrent",
-			"endhostent",
-			"endnetent",
-			"endprotoent",
-			"endservent",
-			"getsockname",
-			"getsockopt",
-			"glob",
-			"gmtime",
-			"goto",
-			"grep",
-			"hex",
-			"import",
-			"index",
-			"int",
-			"ioctl",
-			"join",
-			"keys",
-			"kill",
-			"last",
-			"lc",
-			"lcfirst",
-			"length",
-			"link",
-			"listen",
-			"local",
-			"localtime",
-			"log",
-			"lstat",
-//			"//m",
-			"map",
-			"mkdir",
-			"msgctl",
-			"msgget",
-			"msgsnd",
-			"msgrcv",
-			"my",
-			"next",
-			"no",
-			"oct",
-			"open",
-			"opendir",
-			"ord",
-			"pack",
-			"package",
-			"pipe",
-			"pop",
-			"pos",
-			"print",
-			"printf",
-			"prototype",
-			"push",
-//			"//q",
-			"qq",
-			"qr",
-			"qx",
-			"qw",
-			"quotemeta",
-			"rand",
-			"read",
-			"readdir",
-			"readline",
-			"readlink",
-			"readpipe",
-			"recv",
-			"redo",
-			"ref",
-			"rename",
-			"require",
-			"reset",
-			"return",
-			"reverse",
-			"rewinddir",
-			"rindex",
-			"rmdir",
-//			"//s",
-			"scalar",
-			"seek",
-			"seekdir",
-			"select",
-			"semctl",
-			"semget",
-			"semop",
-			"send",
-			"setpgrp",
-			"setpriority",
-			"setsockopt",
-			"shift",
-			"shmctl",
-			"shmget",
-			"shmread",
-			"shmwrite",
-			"shutdown",
-			"sin",
-			"sleep",
-			"socket",
-			"socketpair",
-			"sort",
-			"splice",
-			"split",
-			"sprintf",
-			"sqrt",
-			"srand",
-			"stat",
-			"study",
-			"sub",
-			"substr",
-			"symlink",
-			"syscall",
-			"sysopen",
-			"sysread",
-			"sysseek",
-			"system",
-			"syswrite",
-			"tell",
-			"telldir",
-			"tie",
-			"tied",
-			"time",
-			"times",
-			"tr",
-			"truncate",
-			"uc",
-			"ucfirst",
-			"umask",
-			"undef",
-			"unlink",
-			"unpack",
-			"untie",
-			"unshift",
-			"use",
-			"utime",
-			"values",
-			"vec",
-			"wait",
-			"waitpid",
-			"wantarray",
-			"warn",
-			"write",
-			"$ARGV",
-			"$_",
-			"$1",
-			"$2",
-			"$3",
-			"$4",
-			"$5",
-			"$6",
-			"$7",
-			"$8",
-			"$9",
-			"$0",
-			"$MATCH",
-			"$&",
-			"$PREMATCH",
-			"$`",
-			"$POSTMATCH",
-			"$'",
-			"$LAST_PAREN_MATCH",
-			"$+",
-			"$MULTILINE_MATCHING",
-			"$*",
-			"$INPUT_LINE_NUMBER",
-			"$NR",
-			"$.",
-			"$INPUT_RECORD_SEPARATOR",
-			"$RS",
-			"$/",
-			"$OUTPUT_AUTOFLUSH",
-			"$|",
-			"$OUTPUT_FIELD_SEPARATOR",
-			"$OFS",
-			"$,",
-			"$OUTPUT_RECORD_SEPARATOR",
-			"$ORS",
-			"$\\",
-			"$LIST_SEPARATOR",
-			"$\"",
-			"$SUBSCRIPT_SEPARATOR",
-			"$SUBSEP",
-			"$;",
-			"$OFMT",
-			"$#",
-			"$FORMAT_PAGE_NUMBER",
-			"$%",
-			"$FORMAT_LINES_PER_PAGE",
-			"$=",
-			"$FORMAT_LINES_LEFT",
-			"$-",
-			"$FORMAT_NAME",
-			"$~",
-			"$FORMAT_TOP_NAME",
-			"$^",
-			"$FORMAT_LINE_BREAK_CHARACTERS",
-			"$:",
-			"$FORMAT_FORMFEED",
-			"$^L",
-			"$ACCUMULATOR",
-			"$^A",
-			"$CHILD_ERROR",
-			"$?",
-			"$OS_ERROR",
-			"$ERRNO",
-			"$!",
-			"$EVAL_ERROR",
-			"$@",
-			"$PROCESS_ID",
-			"$PID",
-			"$$",
-			"$REAL_USER_ID",
-			"$UID",
-			"$<",
-			"$EFFECTIVE_USER_ID",
-			"$EUID",
-			"$>",
-			"$REAL_GROUP_ID",
-			"$GID",
-			"$(",
-			"$EFFECTIVE_GROUP_ID",
-			"$EGID",
-			"$)",
-			"$PROGRAM_NAME",
-			"$0",
-			"$[",
-			"$PERL_VERSION",
-			"$]",
-			"$DEBUGGING",
-			"$^D",
-			"$SYSTEM_FD_MAX",
-			"$^F",
-			"$INPLACE_EDIT",
-			"$^I",
-			"$PERLDB",
-			"$^P",
-			"$BASETIME",
-			"$^T",
-			"$WARNING",
-			"$^W",
-			"$EXECUTABLE_NAME",
-			"$^X",
-			"$ARGV",
-			"$ENV",
-			"$SIG"
+			"inline",
+			"record",
+			"while",
+			"downto",
+			"interface",
+			"repeat",
+			"with",
+			"else",
+			"is",
+			"resourcestring",
+			"xor",
+			"end",
+			"label",
+			"set",
+			"except",
+			"library",
+			"shl",
+			"private",
+			"public",
+			"published",
+			"protected",
+			"override"
 		};
-		static int nKeyWordsPERL_Num = sizeof( ppszKeyWordsPERL ) / sizeof( ppszKeyWordsPERL[0] );
-		for( i = 0; i < nKeyWordsPERL_Num; ++i ){
-			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 8, ppszKeyWordsPERL[i] );
+		static int nKeyWordsPASCAL_Num = sizeof( ppszKeyWordsPASCAL ) / sizeof( ppszKeyWordsPASCAL[0] );
+		for( i = 0; i < nKeyWordsPASCAL_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 8, ppszKeyWordsPASCAL[i] );
 		}
 
 
@@ -3035,6 +2859,782 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 10, ppszKeyWordsTEX2[i] );
 		}
 
+
+		static const char*	ppszKeyWordsPERL[] = {
+//Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
+			"break",
+			"continue",
+			"do",
+			"elsif",
+			"else",
+			"for",
+			"foreach",
+			"goto",
+			"if",
+			"last",
+			"next",
+			"return",
+			"sub",
+			"undef",
+			"unless",
+			"until",
+			"while",
+			"abs",
+			"accept",
+			"alarm",
+			"atan2",
+			"bind",
+			"binmode",
+			"bless",
+			"caller",
+			"chdir",
+			"chmod",
+			"chomp",
+			"chop",
+			"chown",
+			"chr",
+			"chroot",
+			"close",
+			"closedir",
+			"connect",
+			"continue",
+			"cos",
+			"crypt",
+			"dbmclose",
+			"dbmopen",
+			"defined",
+			"delete",
+			"die",
+			"do",
+			"dump",
+			"each",
+			"eof",
+			"eval",
+			"exec",
+			"exists",
+			"exit",
+			"exp",
+			"fcntl",
+			"fileno",
+			"flock",
+			"fork",
+			"format",
+			"formline",
+			"getc",
+			"getlogin",
+			"getpeername",
+			"getpgrp",
+			"getppid",
+			"getpriority",
+			"getpwnam",
+			"getgrnam",
+			"gethostbyname",
+			"getnetbyname",
+			"getprotobyname",
+			"getpwuid",
+			"getgrgid",
+			"getservbyname",
+			"gethostbyaddr",
+			"getnetbyaddr",
+			"getprotobynumber",
+			"getservbyport",
+			"getpwent",
+			"getgrent",
+			"gethostent",
+			"getnetent",
+			"getprotoent",
+			"getservent",
+			"setpwent",
+			"setgrent",
+			"sethostent",
+			"setnetent",
+			"setprotoent",
+			"setservent",
+			"endpwent",
+			"endgrent",
+			"endhostent",
+			"endnetent",
+			"endprotoent",
+			"endservent",
+			"getsockname",
+			"getsockopt",
+			"glob",
+			"gmtime",
+			"goto",
+			"grep",
+			"hex",
+			"import",
+			"index",
+			"int",
+			"ioctl",
+			"join",
+			"keys",
+			"kill",
+			"last",
+			"lc",
+			"lcfirst",
+			"length",
+			"link",
+			"listen",
+			"local",
+			"localtime",
+			"log",
+			"lstat",
+//			"//m",
+			"map",
+			"mkdir",
+			"msgctl",
+			"msgget",
+			"msgsnd",
+			"msgrcv",
+			"my",
+			"next",
+			"no",
+			"oct",
+			"open",
+			"opendir",
+			"ord",
+			"pack",
+			"package",
+			"pipe",
+			"pop",
+			"pos",
+			"print",
+			"printf",
+			"prototype",
+			"push",
+//			"//q",
+			"qq",
+			"qr",
+			"qx",
+			"qw",
+			"quotemeta",
+			"rand",
+			"read",
+			"readdir",
+			"readline",
+			"readlink",
+			"readpipe",
+			"recv",
+			"redo",
+			"ref",
+			"rename",
+			"require",
+			"reset",
+			"return",
+			"reverse",
+			"rewinddir",
+			"rindex",
+			"rmdir",
+//			"//s",
+			"scalar",
+			"seek",
+			"seekdir",
+			"select",
+			"semctl",
+			"semget",
+			"semop",
+			"send",
+			"setpgrp",
+			"setpriority",
+			"setsockopt",
+			"shift",
+			"shmctl",
+			"shmget",
+			"shmread",
+			"shmwrite",
+			"shutdown",
+			"sin",
+			"sleep",
+			"socket",
+			"socketpair",
+			"sort",
+			"splice",
+			"split",
+			"sprintf",
+			"sqrt",
+			"srand",
+			"stat",
+			"study",
+			"sub",
+			"substr",
+			"symlink",
+			"syscall",
+			"sysopen",
+			"sysread",
+			"sysseek",
+			"system",
+			"syswrite",
+			"tell",
+			"telldir",
+			"tie",
+			"tied",
+			"time",
+			"times",
+			"tr",
+			"truncate",
+			"uc",
+			"ucfirst",
+			"umask",
+			"undef",
+			"unlink",
+			"unpack",
+			"untie",
+			"unshift",
+			"use",
+			"utime",
+			"values",
+			"vec",
+			"wait",
+			"waitpid",
+			"wantarray",
+			"warn",
+			"write"
+		};
+		static int nKeyWordsPERL_Num = sizeof( ppszKeyWordsPERL ) / sizeof( ppszKeyWordsPERL[0] );
+		for( i = 0; i < nKeyWordsPERL_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 11, ppszKeyWordsPERL[i] );
+		}
+
+
+		static const char*	ppszKeyWordsPERL2[] = {
+//Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
+			"$ARGV",
+			"$_",
+			"$1",
+			"$2",
+			"$3",
+			"$4",
+			"$5",
+			"$6",
+			"$7",
+			"$8",
+			"$9",
+			"$0",
+			"$MATCH",
+			"$&",
+			"$PREMATCH",
+			"$`",
+			"$POSTMATCH",
+			"$'",
+			"$LAST_PAREN_MATCH",
+			"$+",
+			"$MULTILINE_MATCHING",
+			"$*",
+			"$INPUT_LINE_NUMBER",
+			"$NR",
+			"$.",
+			"$INPUT_RECORD_SEPARATOR",
+			"$RS",
+			"$/",
+			"$OUTPUT_AUTOFLUSH",
+			"$|",
+			"$OUTPUT_FIELD_SEPARATOR",
+			"$OFS",
+			"$,",
+			"$OUTPUT_RECORD_SEPARATOR",
+			"$ORS",
+			"$\\",
+			"$LIST_SEPARATOR",
+			"$\"",
+			"$SUBSCRIPT_SEPARATOR",
+			"$SUBSEP",
+			"$;",
+			"$OFMT",
+			"$#",
+			"$FORMAT_PAGE_NUMBER",
+			"$%",
+			"$FORMAT_LINES_PER_PAGE",
+			"$=",
+			"$FORMAT_LINES_LEFT",
+			"$-",
+			"$FORMAT_NAME",
+			"$~",
+			"$FORMAT_TOP_NAME",
+			"$^",
+			"$FORMAT_LINE_BREAK_CHARACTERS",
+			"$:",
+			"$FORMAT_FORMFEED",
+			"$^L",
+			"$ACCUMULATOR",
+			"$^A",
+			"$CHILD_ERROR",
+			"$?",
+			"$OS_ERROR",
+			"$ERRNO",
+			"$!",
+			"$EVAL_ERROR",
+			"$@",
+			"$PROCESS_ID",
+			"$PID",
+			"$$",
+			"$REAL_USER_ID",
+			"$UID",
+			"$<",
+			"$EFFECTIVE_USER_ID",
+			"$EUID",
+			"$>",
+			"$REAL_GROUP_ID",
+			"$GID",
+			"$(",
+			"$EFFECTIVE_GROUP_ID",
+			"$EGID",
+			"$)",
+			"$PROGRAM_NAME",
+			"$0",
+			"$[",
+			"$PERL_VERSION",
+			"$]",
+			"$DEBUGGING",
+			"$^D",
+			"$SYSTEM_FD_MAX",
+			"$^F",
+			"$INPLACE_EDIT",
+			"$^I",
+			"$PERLDB",
+			"$^P",
+			"$BASETIME",
+			"$^T",
+			"$WARNING",
+			"$^W",
+			"$EXECUTABLE_NAME",
+			"$^X",
+			"$ARGV",
+			"$ENV",
+			"$SIG"
+		};
+		static int nKeyWordsPERL2_Num = sizeof( ppszKeyWordsPERL2 ) / sizeof( ppszKeyWordsPERL2[0] );
+		for( i = 0; i < nKeyWordsPERL2_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 12, ppszKeyWordsPERL2[i] );
+		}
+
+
+//Jul. 10, 2001 JEPRO 追加
+		static const char*	ppszKeyWordsVB[] = {
+			"And",
+			"As",
+			"Attribute",
+			"Begin",
+			"BeginProperty",
+			"Boolean",
+			"ByVal",
+			"Byte",
+			"Call",
+			"Case",
+			"Const",
+			"Currency",
+			"Date",
+			"Declare",
+			"Dim",
+			"Do",
+			"Double",
+			"Each",
+			"Else",
+			"ElseIf",
+			"Empty",
+			"End",
+			"EndProperty",
+			"Error",
+			"Eqv",
+			"Exit",
+			"False",
+			"For",
+			"Friend",
+			"Function",
+			"Get",
+			"GoTo",
+			"If",
+			"Imp",
+			"Integer",
+			"Is",
+			"Let",
+			"Like",
+			"Long",
+			"Loop",
+			"Me",
+			"Mod",
+			"New",
+			"Next",
+			"Not",
+			"Null",
+			"Object",
+			"On",
+			"Option",
+			"Or",
+			"Private",
+			"Property",
+			"Public",
+			"RSet",
+			"ReDim",
+			"Rem",
+			"Resume",
+			"Select",
+			"Set",
+			"Single",
+			"Static",
+			"Step",
+			"Stop",
+			"String",
+			"Sub",
+			"Then",
+			"To",
+			"True",
+			"Type",
+			"Wend",
+			"While",
+			"With",
+			"Xor",
+			"#If",
+			"#Else",
+			"#End",
+			"#Const",
+			"AddressOf",
+			"Alias",
+			"Append",
+			"Array",
+			"ByRef",
+			"Explicit",
+			"Global",
+			"In",
+			"Lib",
+			"Nothing",
+			"Optional",
+			"Output",
+			"Terminate",
+			"Until",
+//=========================================================
+// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
+//=========================================================
+			"DefBool",
+			"DefByte",
+			"DefCur",
+			"DefDate",
+			"DefDbl",
+			"DefInt",
+			"DefLng",
+			"DefObj",
+			"DefSng",
+			"DefStr",
+			"DefVar",
+			"LSet",
+			"GoSub",
+			"Return",
+			"Variant",
+//			"Option Base
+//			"As Any
+//=========================================================
+// 以下はVB.NET用キーワードです
+//=========================================================
+			//BitAnd
+			//BitOr
+			//BitNot
+			//BitXor
+			//Delegate
+			//Short
+			//Structure
+		};
+		static int nKeyWordsVB_Num = sizeof( ppszKeyWordsVB ) / sizeof( ppszKeyWordsVB[0] );
+		for( i = 0; i < nKeyWordsVB_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 13, ppszKeyWordsVB[i] );
+		}
+
+
+//Jul. 10, 2001 JEPRO 追加
+		static const char*	ppszKeyWordsVB2[] = {
+			"AppActivate",
+			"Beep",
+			"BeginTrans",
+			"ChDir",
+			"ChDrive",
+			"Close",
+			"CommitTrans",
+			"CompactDatabase",
+			"Date",
+			"DeleteSetting",
+			"Erase",
+			"FileCopy",
+			"FreeLocks",
+			"Input",
+			"Kill",
+			"Load",
+			"Lock",
+			"Mid",
+			"MidB",
+			"MkDir",
+			"Name",
+			"Open",
+			"Print",
+			"Put",
+			"Randomize",
+			"RegisterDatabase",
+			"RepairDatabase",
+			"Reset",
+			"RmDir",
+			"Rollback",
+			"SavePicture",
+			"SaveSetting",
+			"Seek",
+			"SendKeys",
+			"SetAttr",
+			"SetDataAccessOption",
+			"SetDefaultWorkspace",
+			"Time",
+			"Unload",
+			"Unlock",
+			"Width",
+			"Write",
+			"Array",
+			"Asc",
+			"AscB",
+			"Atn",
+			"CBool",
+			"CByte",
+			"CCur",
+			"CDate",
+			"CDbl",
+			"CInt",
+			"CLng",
+			"CSng",
+			"CStr",
+			"CVErr",
+			"CVar",
+			"Choose",
+			"Chr",
+			"ChrB",
+			"Command",
+			"Cos",
+			"CreateDatabase",
+			"CreateObject",
+			"CurDir",
+			"DDB",
+			"Date",
+			"DateAdd",
+			"DateDiff",
+			"DatePart",
+			"DateSerial",
+			"DateValue",
+			"Day",
+			"Dir",
+			"DoEvents",
+			"EOF",
+			"Environ",
+			"Error",
+			"Exp",
+			"FV",
+			"FileAttr",
+			"FileDateTime",
+			"FileLen",
+			"Fix",
+			"Format",
+			"FreeFile",
+			"GetAllSettings",
+			"GetAttr",
+			"GetObject",
+			"GetSetting",
+			"Hex",
+			"Hour",
+			"IIf",
+			"IMEStatus",
+			"IPmt",
+			"IRR",
+			"InStr",
+			"Input",
+			"Int",
+			"IsArray",
+			"IsDate",
+			"IsEmpty",
+			"IsError",
+			"IsMissing",
+			"IsNull",
+			"IsNumeric",
+			"IsObject",
+			"LBound",
+			"LCase",
+			"LOF",
+			"LTrim",
+			"Left",
+			"LeftB",
+			"Len",
+			"LoadPicture",
+			"Loc",
+			"Log",
+			"MIRR",
+			"Mid",
+			"MidB",
+			"Minute",
+			"Month",
+			"MsgBox",
+			"NPV",
+			"NPer",
+			"Now",
+			"Oct",
+			"OpenDatabase",
+			"PPmt",
+			"PV",
+			"Partition",
+			"Pmt",
+			"QBColor",
+			"RGB",
+			"RTrim",
+			"Rate",
+			"ReadProperty",
+			"Right",
+			"RightB",
+			"Rnd",
+			"SLN",
+			"SYD",
+			"Second",
+			"Seek",
+			"Sgn",
+			"Shell",
+			"Sin",
+			"Space",
+			"Spc",
+			"Sqr",
+			"Str",
+			"StrComp",
+			"StrConv",
+			"Switch",
+			"Tab",
+			"Tan",
+			"Time",
+			"TimeSerial",
+			"TimeValue",
+			"Timer",
+			"Trim",
+			"TypeName",
+			"UBound",
+			"UCase",
+			"Val",
+			"VarType",
+			"Weekday",
+			"Year",
+			"Hide",
+			"Line",
+			"Refresh",
+			"Show",
+//=========================================================
+// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
+//=========================================================
+//$付き関数各種
+			"Dir$",
+			"LCase$",
+			"Left$",
+			"LeftB$",
+			"Mid$",
+			"MidB$",
+			"RightB$",
+			"Right$",
+			"Space$",
+			"Str$",
+			"String$",
+			"Trim$",
+			"UCase$",
+//VB5,6の隠し関数
+			"VarPtr",
+			"StrPtr",
+			"ObjPtr",
+			"VarPrtArray",
+			"VarPtrStringArray"
+		};
+		static int nKeyWordsVB2_Num = sizeof( ppszKeyWordsVB2 ) / sizeof( ppszKeyWordsVB2[0] );
+		for( i = 0; i < nKeyWordsVB2_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 14, ppszKeyWordsVB2[i] );
+		}
+
+
+//Jul. 10, 2001 JEPRO 追加
+		static const char*	ppszKeyWordsRTF[] = {
+			"\\ansi",
+			"\\b",
+			"\\bin",
+			"\\box",
+			"\\brdrb",
+			"\\brdrbar",
+			"\\brdrdb",
+			"\\brdrdot",
+			"\\brdrl",
+			"\\brdrr",
+			"\\brdrs",
+			"\\brdrsh",
+			"\\brdrt",
+			"\\brdrth",
+			"\\cell",
+			"\\cellx",
+			"\\cf",
+			"\\chftn",
+			"\\clmgf",
+			"\\clmrg",
+			"\\colortbl",
+			"\\deff",
+			"\\f",
+			"\\fi",
+			"\\field",
+			"\\fldrslt",
+			"\\fonttbl",
+			"\\footnote",
+			"\\fs",
+			"\\i"
+			"\\intbl",
+			"\\keep",
+			"\\keepn",
+			"\\li",
+			"\\line",
+			"\\mac",
+			"\\page",
+			"\\par",
+			"\\pard",
+			"\\pc",
+			"\\pich",
+			"\\pichgoal",
+			"\\picscalex",
+			"\\picscaley",
+			"\\pict",
+			"\\picw",
+			"\\picwgoal",
+			"\\plain",
+			"\\qc",
+			"\\ql",
+			"\\qr",
+			"\\ri",
+			"\\row",
+			"\\rtf",
+			"\\sa",
+			"\\sb",
+			"\\scaps",
+			"\\sect",
+			"\\sl",
+			"\\strike",
+			"\\tab",
+			"\\tqc",
+			"\\tqr",
+			"\\trgaph",
+			"\\trleft",
+			"\\trowd",
+			"\\trqc",
+			"\\trql",
+			"\\tx",
+			"\\ul",
+			"\\uldb",
+			"\\v",
+			"\\wbitmap",
+			"\\wbmbitspixel",
+			"\\wbmplanes",
+			"\\wbmwidthbytes",
+			"\\wmetafile",
+			"bmc",
+			"bml",
+			"bmr",
+			"emc",
+			"eml",
+			"emr"
+		};
+		static int nKeyWordsRTF_Num = sizeof( ppszKeyWordsRTF ) / sizeof( ppszKeyWordsRTF[0] );
+		for( i = 0; i < nKeyWordsRTF_Num; ++i ){
+			m_pShareData->m_CKeyWordSetMgr.AddKeyWord( 15, ppszKeyWordsRTF[i] );
+		}
+
+
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
@@ -3131,22 +3731,22 @@ void CShareData::SetKeyNameArrVal(
 /* TBBUTTON構造体にデータをセット */
 void CShareData::SetTBBUTTONVal(
 	TBBUTTON*	ptb,
-    int			iBitmap,
-    int			idCommand,
-    BYTE		fsState,
-    BYTE		fsStyle,
-    DWORD		dwData,
-    int			iString
+	int			iBitmap,
+	int			idCommand,
+	BYTE		fsState,
+	BYTE		fsStyle,
+	DWORD		dwData,
+	int			iString
 )
 {
 /*
 typedef struct _TBBUTTON {
-    int iBitmap;	// ボタン イメージの 0 から始まるインデックス
-    int idCommand;	// ボタンが押されたときに送られるコマンド
-    BYTE fsState;	// ボタンの状態--以下を参照
-    BYTE fsStyle;	// ボタン スタイル--以下を参照
-    DWORD dwData;	// アプリケーション-定義された値
-    int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
+	int iBitmap;	// ボタン イメージの 0 から始まるインデックス
+	int idCommand;	// ボタンが押されたときに送られるコマンド
+	BYTE fsState;	// ボタンの状態--以下を参照
+	BYTE fsStyle;	// ボタン スタイル--以下を参照
+	DWORD dwData;	// アプリケーション-定義された値
+	int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 } TBBUTTON;
 */
 
@@ -3286,9 +3886,9 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 //!	MRUリストへの登録
 /*!
 	@param pfi [in] 追加するファイルの情報
-	
+
 	該当ファイルがリムーバブルディスク上にある場合にはMRU Listへの登録は行わない。
-	
+
 	@par History
 	2001.03.29 リムーバブルディスク上のファイルを登録しないようにした。(by みく)
 */
@@ -3316,8 +3916,8 @@ void CShareData::AddMRUList( FileInfo* pfi )
 	if( c >= 'A' && c <= 'Z' ){
 		sprintf( szDriveType, "%c:\\", c );
 		lngRet = GetDriveType( szDriveType );
-		if( DRIVE_REMOVABLE == lngRet
-		 || DRIVE_CDROM     == lngRet){
+		if( DRIVE_REMOVABLE	== lngRet
+		 || DRIVE_CDROM		== lngRet){
 			return;
 		}
 	}
@@ -3397,7 +3997,7 @@ void CShareData::AddOPENFOLDERList( const char* pszFolder )
 
 /*!
 	指定された名前のファイルがMRUリストに存在するか調べる。存在するならばファイル情報を返す。
-	
+
 	@param pszPath [in] 検索するファイル名
 	@param pfi [out] データが見つかったときにファイル情報を格納する領域。
 		呼び出し側で領域をあらかじめ用意する必要がある。
@@ -3527,9 +4127,9 @@ int CShareData::GetEditorWindowsNum( void )
 
 /* 全編集ウィンドウへメッセージをポストする */
 BOOL CShareData::PostMessageToAllEditors(
-	UINT		uMsg,		/* ポストするメッセージ	*/
-	WPARAM		wParam,		/* 第1メッセージ パラメータ	*/
-	LPARAM		lParam,		/* 第2メッセージ パラメータ	*/
+	UINT		uMsg,		/* ポストするメッセージ */
+	WPARAM		wParam,		/* 第1メッセージ パラメータ */
+	LPARAM		lParam,		/* 第2メッセージ パラメータ */
 	HWND		m_hWndLast	/* 最後に送りたいウィンドウ */
  )
 {
@@ -3719,7 +4319,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE, true );
 #if 0
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
-		//	2001/06/23　N.Nakatani 窓が出るまでウエイトをかけるように修正
+		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		CRunningTimer wait_timer( NULL );
 		while( NULL == m_pShareData->m_hwndDebug && 5000 > wait_timer.Read() ){
@@ -3745,7 +4345,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 /*!
 	MRUとOPENFOLDERリストの存在チェックなど
 	存在しないファイルやフォルダはMRUやOPENFOLDERリストから削除する
-	
+
 	@note 現在は使われていないようだ。
 */
 void CShareData::CheckMRUandOPENFOLDERList( void )

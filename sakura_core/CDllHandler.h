@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -35,11 +35,11 @@ class SAKURA_CORE_API CDllHandler {
 public:
 	CDllHandler();
 	virtual ~CDllHandler();
-	
+
 	//! 利用状態のチェック
 	/*!
 		DLLの関数を呼び出せるか状態どうか
-	
+
 		@retval true 利用可能
 		@retval false 利用不能
 	*/
@@ -48,7 +48,7 @@ public:
 	/*!
 		@retval 0 正常終了。DLLがロードされた。
 		@retval other 異常終了。DLLはロードされなかった。
-		
+
 		@date Jul. 5, 2001 genta 引数追加。パスの指定などに使える
 	*/
 	int LoadLibrary(char* str = NULL);
@@ -74,10 +74,10 @@ protected:
 	/*!
 		DLLのロードに成功した直後に呼び出される．エントリポイントの
 		確認などを行う．
-		
+
 		@retval 0 正常終了
 		@retval other 異常終了．値の意味は自由に設定して良い．
-		
+
 		@note 0以外の値を返した場合は、読み込んだDLLを解放する．
 	*/
 	virtual int InitDll(void) = 0;
@@ -85,10 +85,10 @@ protected:
 	/*!
 		DLLのアンロードを行う直前に呼び出される．メモリの解放などを
 		行う．
-		
+
 		@retval 0 正常終了
 		@retval other 異常終了．値の意味は自由に設定して良い．
-		
+
 		@note 0以外を返したときはDLLのUnloadは行われない．
 	*/
 	virtual int DeinitDll(void);
@@ -103,3 +103,6 @@ private:
 };
 
 #endif
+
+
+/*[EOF]*/

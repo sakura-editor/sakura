@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	
+
 	@author Norio Nakatani
 	$Revision$
 */

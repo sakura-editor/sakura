@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファイル比較ダイアログボックス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -116,7 +116,7 @@ void CDlgCompare::SetData( void )
 	int				i;
 	char			szMenu[512];
 	int				nItem;
-	
+
 	hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_FILES );
 
 	/* 現在開いている編集窓のリストをメニューにする */
@@ -196,7 +196,7 @@ int CDlgCompare::GetData( void )
 	/* 左右に並べて表示 */
 	m_bCompareAndTileHorz = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_TILE_H );
 //	m_bCompareAndTileHorz = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_TILE_H );	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
-	
+
 	return TRUE;
 }
 

@@ -110,13 +110,13 @@ protected:
 	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
 	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */
 	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
-	
+
 	//	Jun. 2, 2001 genta
 	//	Event Handler, Dialog Procedureの見直し
 	//	Global関数だったDialog procedureをclassのstatic methodとして
 	//	組み込んだ．
 	//	ここから以下 Macroまで配置の見直しとstatic methodの追加
-	
+
 	//! 汎用ダイアログプロシージャ
 	static BOOL DlgProc(
 		BOOL (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),

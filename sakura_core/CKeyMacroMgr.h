@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キーボードマクロ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -76,5 +76,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CKEYMACROMGR_H_ */
+
 
 /*[EOF]*/

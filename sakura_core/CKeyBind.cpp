@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キー割り当てに関するクラス
-	
+
 	@author Norio Nakatani
 	@date 1998/03/25 新規作成
 	@date 1998/05/16 クラス内にデータを持たないように変更
@@ -298,14 +298,14 @@ int CKeyBind::GetKeyStrList(
 			}
 		}
 	}
-    if( 0 == nAssignedKeysNum ){
-    	return 0;
-    }
-    (*pppcMemList) = new CMemory*[nAssignedKeysNum + 1];
-    for( i = 0; i < nAssignedKeysNum; ++i ){
-    	(*pppcMemList)[i] = new CMemory;
-    }
-   	(*pppcMemList)[i] = NULL;
+	if( 0 == nAssignedKeysNum ){
+		return 0;
+	}
+	(*pppcMemList) = new CMemory*[nAssignedKeysNum + 1];
+	for( i = 0; i < nAssignedKeysNum; ++i ){
+		(*pppcMemList)[i] = new CMemory;
+	}
+	(*pppcMemList)[i] = NULL;
 
 
 	nAssignedKeysNum = 0;

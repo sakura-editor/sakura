@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	アンドゥ・リドゥバッファ
-	
+
 	@author Norio Nakatani
 	@date 1998/06/09 新規作成
 	$Revision$
@@ -29,7 +29,7 @@ class COpeBuf;
 #ifndef _COPEBUF_H_
 #define _COPEBUF_H_
 
-/* アンドゥバッファ用　操作コード */
+/* アンドゥバッファ用 操作コード */
 enum enumOPECODE {
 	OPE_INSERT		= 1,
 	OPE_DELETE		= 2,
@@ -70,5 +70,6 @@ class SAKURA_CORE_API COpeBuf {
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _COPEBUF_H_ */
+
 
 /*[EOF]*/

@@ -35,7 +35,7 @@
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"
-#include "funccode.h"    //Stonee, 2001/05/18
+#include "funccode.h"	//Stonee, 2001/05/18
 
 struct TYPE_NAME {
 	int		nMethod;
@@ -47,10 +47,10 @@ TYPE_NAME OlmArr[] = {
 	{ OUTLINE_PLSQL,"PL/SQL" },
 	{ OUTLINE_JAVA,	"Java" },
 	{ OUTLINE_COBOL,"COBOL" },
-	{ OUTLINE_PERL,	"Perl" },		//	Sep. 8, 2000 genta
+	{ OUTLINE_PERL,	"Perl" },			//Sep. 8, 2000 genta
 	{ OUTLINE_ASM,	"アセンブラ" },
-	{ OUTLINE_TEXT,	"テキスト" },
-	{ OUTLINE_VB,	"Visual Basic" } // 2001/06/23 N.Nakatani
+	{ OUTLINE_VB,	"Visual Basic" },	// 2001/06/23 N.Nakatani
+	{ OUTLINE_TEXT,	"テキスト" }		//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
 const int	nOlmArrNum = sizeof( OlmArr ) / sizeof( OlmArr[0] );
 
@@ -118,7 +118,7 @@ const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_LINESPACE,				11344,	//行の間隔
 	IDC_EDIT_INDENTCHARS,			11345,	//その他のインデント対象文字
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	IDC_EDIT_TABVIEWSTRING,         11346,  //TAB表示文字列
+	IDC_EDIT_TABVIEWSTRING,			11346,  //TAB表示文字列
 //#endif
 	IDC_SPIN_MAXLINELEN,			-1,
 	IDC_SPIN_CHARSPACE,				-1,
@@ -247,10 +247,10 @@ BOOL CALLBACK PropTypesP2Proc(
 
 //	/* p3 ダイアログプロシージャ */
 //	BOOL CALLBACK PropTypesP3Proc(
-//	    HWND	hwndDlg,	// handle to dialog box
-//	    UINT	uMsg,		// message
-//	    WPARAM	wParam,		// first message parameter
-//	    LPARAM	lParam 		// second message parameter
+//		HWND	hwndDlg,	// handle to dialog box
+//		UINT	uMsg,		// message
+//		WPARAM	wParam,		// first message parameter
+//		LPARAM	lParam 		// second message parameter
 //	)
 //	{
 //	PROPSHEETPAGE*	pPsp;
@@ -372,15 +372,15 @@ BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor )
 	for( i = 0; i < 16; i++ ){
 		dwCustColors[i] = (DWORD)RGB( 255, 255, 255 );
 	}
-    cc.lStructSize = sizeof( cc );
-    cc.hwndOwner = hwndParent;
-    cc.hInstance = NULL;
-    cc.rgbResult = *pColor;
-    cc.lpCustColors = (LPDWORD) dwCustColors;
-    cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-    cc.lCustData = NULL;
-    cc.lpfnHook = NULL;
-    cc.lpTemplateName = NULL;
+	cc.lStructSize = sizeof( cc );
+	cc.hwndOwner = hwndParent;
+	cc.hInstance = NULL;
+	cc.rgbResult = *pColor;
+	cc.lpCustColors = (LPDWORD) dwCustColors;
+	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
+	cc.lCustData = NULL;
+	cc.lpfnHook = NULL;
+	cc.lpTemplateName = NULL;
 	if( FALSE == ::ChooseColor( &cc ) ){
 		return FALSE;
 	}
@@ -414,7 +414,7 @@ void CPropTypes::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	::FillRect( pDis->hDC, &(pDis->rcItem), hBrush );
 	::DeleteObject( hBrush );
 
-	/* 枠の描画	*/
+	/* 枠の描画 */
 	rcFocus = rc = pDis->rcItem;
 	rc.top += 4;
 	rc.left += 4;
@@ -556,7 +556,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 
 	int				nRet;
 	PROPSHEETPAGE	psp[16];
-    PROPSHEETHEADER	psh;
+	PROPSHEETHEADER	psh;
 	int				nIdx;
 
 	m_nMaxLineSize_org = m_Types.m_nMaxLineSize;
@@ -626,7 +626,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 
 	if( -1 == nPageNum ){
 		psh.nStartPage = m_nPageNum;
-    }else{
+	}else{
 		psh.nStartPage = nPageNum;
 	}
 	if( 0 > psh.nStartPage ){
@@ -636,7 +636,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 		psh.nStartPage = psh.nPages - 1;
 	}
 	psh.ppsp = (LPCPROPSHEETPAGE)psp;
-    psh.pfnCallback = NULL;
+	psh.pfnCallback = NULL;
 
 //	m_hbmpToolButtons = ::LoadBitmap( m_hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
 
@@ -684,7 +684,7 @@ BOOL CPropTypes::DispatchEvent_p1(
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
 	int			nVal;
-//    LPDRAWITEMSTRUCT pDis;
+//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 
@@ -1262,10 +1262,10 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 
 //	/* p3 メッセージ処理 */
 //	BOOL CPropTypes::DispatchEvent_p3(
-//	    HWND	hwndDlg,	// handle to dialog box
-//	    UINT	uMsg,		// message
-//	    WPARAM	wParam,		// first message parameter
-//	    LPARAM	lParam 		// second message parameter
+//		HWND	hwndDlg,	// handle to dialog box
+//		UINT	uMsg,		// message
+//		WPARAM	wParam,		// first message parameter
+//		LPARAM	lParam 		// second message parameter
 //	)
 //	{
 //		WORD				wNotifyCode;
@@ -1275,7 +1275,7 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 //		NM_UPDOWN*			pMNUD;
 //		int					idCtrl;
 //	//	int					nVal;
-//	    LPDRAWITEMSTRUCT	pDis;
+//		LPDRAWITEMSTRUCT	pDis;
 //
 //		switch( uMsg ){
 //		case WM_INITDIALOG:
@@ -1482,8 +1482,8 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 //	//		}
 //			break;
 //		case WM_DRAWITEM:
-//			idCtrl = (UINT) wParam;	/* コントロールのID	*/
-//			pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報	*/
+//			idCtrl = (UINT) wParam;	/* コントロールのID */
+//			pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報 */
 //			switch( idCtrl ){
 //
 //			case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
@@ -2137,7 +2137,7 @@ BOOL CPropTypes::DispatchEvent_p3_new(
 	int					nVal;
 	int					nIndex;
 	static HWND			hwndListColor;
-    LPDRAWITEMSTRUCT	pDis;
+	LPDRAWITEMSTRUCT	pDis;
 	int					i;
 
 	switch( uMsg ){
@@ -2464,7 +2464,7 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 
 	HWND	hwndWork;
 	int		i;
-    int		nItem;
+	int		nItem;
 
 	m_nCurrentColorType = 0;	/* 現在選択されている色タイプ */
 
@@ -2666,7 +2666,7 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	else			--pos;
 	m_Types.m_nLineCommentPos2 = en ? pos : ~pos;
 
-	//	To Here May 12, 2001 genta 
+	//	To Here May 12, 2001 genta
 
 	//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
 	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 );
@@ -2832,19 +2832,19 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	rc1.right = rc1.left + 12;
 	rc1.bottom = rc1.top + 12;
 	if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
-		::MoveToEx( pDis->hDC, rc1.left + 2, rc1.top + 6, NULL );
-		::LineTo( pDis->hDC,   rc1.left + 5, rc1.bottom - 3 );
-		::LineTo( pDis->hDC, rc1.right - 2, rc1.top + 4 );
+		::MoveToEx( pDis->hDC,	rc1.left + 2, rc1.top + 6, NULL );
+		::LineTo( pDis->hDC,	rc1.left + 5, rc1.bottom - 3 );
+		::LineTo( pDis->hDC,	rc1.right - 2, rc1.top + 4 );
 		rc1.top -= 1;
 		rc1.bottom -= 1;
-		::MoveToEx( pDis->hDC, rc1.left + 2, rc1.top + 6, NULL );
-		::LineTo( pDis->hDC,   rc1.left + 5, rc1.bottom - 3 );
-		::LineTo( pDis->hDC, rc1.right - 2, rc1.top + 4 );
+		::MoveToEx( pDis->hDC,	rc1.left + 2, rc1.top + 6, NULL );
+		::LineTo( pDis->hDC,	rc1.left + 5, rc1.bottom - 3 );
+		::LineTo( pDis->hDC,	rc1.right - 2, rc1.top + 4 );
 		rc1.top -= 1;
 		rc1.bottom -= 1;
-		::MoveToEx( pDis->hDC, rc1.left + 2, rc1.top + 6, NULL );
-		::LineTo( pDis->hDC,   rc1.left + 5, rc1.bottom - 3 );
-		::LineTo( pDis->hDC, rc1.right - 2, rc1.top + 4 );
+		::MoveToEx( pDis->hDC,	rc1.left + 2, rc1.top + 6, NULL );
+		::LineTo( pDis->hDC,	rc1.left + 5, rc1.bottom - 3 );
+		::LineTo( pDis->hDC,	rc1.right - 2, rc1.top + 4 );
 	}
 //	return;
 
@@ -2950,7 +2950,7 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 	//	From Here Jun. 6, 2001 genta
 	//	行コメント開始桁位置入力ボックスのEnable/Disable設定
 	//	1つ目
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS )){
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), TRUE );
@@ -2960,7 +2960,7 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum ), FALSE );
 	}
 	//	2つ目
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS2 )){
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS2 ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS2 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS2 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum2 ), TRUE );
@@ -2970,7 +2970,7 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum2 ), FALSE );
 	}
 	//	3つ目
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 )){
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENTPOS3 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LCPOS3 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_LCColNum3 ), TRUE );

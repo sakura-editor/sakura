@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	文書ウィンドウの管理
-	
+
 	@author Norio Nakatani
 	@date	1998/03/13 作成
 	$Revision$
@@ -800,7 +800,7 @@ LRESULT CEditView::DispatchEvent(
 			dwSize = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
 
 			// increase buffer size for NULL terminator,
-			//   maybe it is in Unicode
+			//	maybe it is in Unicode
 			dwSize += sizeof( WCHAR );
 
 			hstr = GlobalAlloc( GHND, dwSize );
@@ -862,12 +862,12 @@ LRESULT CEditView::DispatchEvent(
 //		}
 //		m_pcOpeBlk = NULL;
 //		m_bCommandRunning = FALSE;
-//        return 0L;
+//			return 0L;
 
 	case WM_KEYUP:
 		/* キーリピート状態 */
 		m_bPrevCommand = 0;
-        return 0L;
+		return 0L;
 
 
 //	case WM_MBUTTONDBLCLK:
@@ -989,11 +989,11 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 
-    case WM_PAINT:
+	case WM_PAINT:
 		hdc = BeginPaint( hwnd, &ps );
 		OnPaint( hdc, &ps, FALSE );
-        EndPaint(hwnd, &ps);
-        return 0L;
+		EndPaint(hwnd, &ps);
+		return 0L;
 
 	case WM_CLOSE:
 //		MYTRACE( "	WM_CLOSE\n" );
@@ -1154,7 +1154,7 @@ void CEditView::OnSize( int cx, int cy )
 	SetParentCaption();
 
 
-//	/* 現在のウィンドウ幅で折り返し	*/
+//	/* 現在のウィンドウ幅で折り返し */
 //	Command_WRAPWINDIWWIDTH();
 
 
@@ -1206,10 +1206,10 @@ void CEditView::ShowEditCaret( void )
 //}
 
 /*
-	   なんかフレームウィンドウがアクティブでないときに内部的にカーソル移動すると
-	   カーソルがないのに、カーソルがあるということになってしまう
-	   のでアクティブにしてもカーソルが出てこないときがある
-	   フレームウィンドウがアクティブでないときは、カーソルがないことにする
+		なんかフレームウィンドウがアクティブでないときに内部的にカーソル移動すると
+		カーソルがないのに、カーソルがあるということになってしまう
+		のでアクティブにしてもカーソルが出てこないときがある
+		フレームウィンドウがアクティブでないときは、カーソルがないことにする
 */
 	if( ::GetActiveWindow() != ::GetParent( m_hwndParent ) ){
 		m_nCaretWidth = 0;
@@ -1724,7 +1724,7 @@ HANDLE CEditView::ReadDibBitmapInfo ( int fh )
 		bi.biXPelsPerMeter	= 0;
 		bi.biYPelsPerMeter	= 0;
 		bi.biClrUsed		= nNumColors;
-		bi.biClrImportant       = nNumColors;
+		bi.biClrImportant	= nNumColors;
 		_llseek( fh, (LONG)sizeof( BITMAPCOREHEADER ) - sizeof( BITMAPINFOHEADER ), SEEK_CUR );
 		break;
 	  default:
@@ -2250,7 +2250,7 @@ void CEditView::DrawSelectArea( void )
 			m_nSelectColmFrom  == m_nSelectColmFromOld ){
 			/* 範囲が後方に拡大された */
 			if( m_nSelectLineTo > m_nSelectLineToOld ||
-			    (m_nSelectLineTo == m_nSelectLineToOld &&
+			   (m_nSelectLineTo == m_nSelectLineToOld &&
 				m_nSelectColmTo > m_nSelectColmToOld ) ){
 				nFromLine	= m_nSelectLineToOld;
 				nFromCol	= m_nSelectColmToOld;
@@ -2272,7 +2272,7 @@ void CEditView::DrawSelectArea( void )
 			m_nSelectColmTo  == m_nSelectColmToOld ){
 			/* 範囲が前方に拡大された */
 			if( m_nSelectLineFrom < m_nSelectLineFromOld ||
-			    (m_nSelectLineFrom == m_nSelectLineFromOld &&
+			   (m_nSelectLineFrom == m_nSelectLineFromOld &&
 				m_nSelectColmFrom < m_nSelectColmFromOld ) ){
 				nFromLine	= m_nSelectLineFrom;
 				nFromCol	= m_nSelectColmFrom;
@@ -2364,18 +2364,18 @@ void CEditView::DrawSelectAreaLine(
 	}
 	if( nFromLine == nToLine ){
 			nSelectFrom = nFromCol;
-			nSelectTo   = nToCol;
+			nSelectTo	= nToCol;
 	}else{
 		if( nLineNum == nFromLine ){
 			nSelectFrom = nFromCol;
-			nSelectTo   = nPosX;
+			nSelectTo	= nPosX;
 		}else
 		if( nLineNum == nToLine ){
 			nSelectFrom = 0;
-			nSelectTo   = nToCol;
+			nSelectTo	= nToCol;
 		}else{
 			nSelectFrom = 0;
-			nSelectTo   = nPosX;
+			nSelectTo	= nPosX;
 		}
 	}
 	if( nSelectFrom < m_nViewLeftCol ){
@@ -3626,7 +3626,7 @@ VOID CEditView::OnTimer(
 	UINT uMsg,		// WM_TIMER message
 	UINT idEvent,	// timer identifier
 	DWORD dwTime 	// current system time
-   )
+	)
 {
 	POINT		po;
 	RECT		rc;
@@ -4087,7 +4087,7 @@ void CEditView::DisableSelectArea( BOOL bDraw )
 	if( bDraw ){
 		DrawSelectArea();
 	}
-	m_bSelectingLock     = FALSE;	/* 選択状態のロック */
+	m_bSelectingLock	 = FALSE;	/* 選択状態のロック */
 	m_nSelectLineFromOld = 0;		/* 範囲選択開始行 */
 	m_nSelectColmFromOld = 0; 		/* 範囲選択開始桁 */
 	m_nSelectLineToOld = 0;			/* 範囲選択終了行 */
@@ -5214,9 +5214,9 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 						&pcOpe->m_nCaretPosX_PHY_Before,
 						&pcOpe->m_nCaretPosY_PHY_Before
 					);
-			    }else{
-			    	pcOpe = NULL;
-			    }
+				}else{
+					pcOpe = NULL;
+				}
 
 				pcMemDeleted = new CMemory;
 				/* 指定位置の指定長データ削除 */
@@ -6286,15 +6286,15 @@ DWORD CEditView::DoGrep(
 	m_bCurSrchRegularExp = bGrepRegularExp;					/* 検索／置換  1==正規表現 */
 	m_bCurSrchLoHiCase = bGrepLoHiCase;						/* 検索／置換  1==英大文字小文字の区別 */
 	/* 正規表現 */
-	
+
 	//	From Here Jun. 27 genta
-	/*	
+	/*
 		Grepを行うに当たって検索・画面色分け用正規表現バッファも
 		初期化する．これはGrep検索結果の色分けを行うため．
 	*/
 	if( m_bCurSrchRegularExp ){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true )){
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return 0;
 		}
 
@@ -6426,7 +6426,7 @@ DWORD CEditView::DoGrep(
 		Command_ADDTAIL( pszWork, nWork );
 	}
 	if( bGrepRegularExp ){
-		if( !InitRegexp( m_hWnd, cRegexp, true )){
+		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
@@ -6498,7 +6498,7 @@ DWORD CEditView::DoGrep(
 	//	Apr. 13, 2001 genta
 	//	Grep実行後はファイルを変更無しの状態にする．
 	m_pcEditDoc->m_bIsModified = FALSE;
-	
+
 	m_pcEditDoc->m_bGrepRunning = FALSE;
 	m_bDoing_UndoRedo = FALSE;
 
@@ -7624,7 +7624,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
 	*pdwEffect = DROPEFFECT_NONE;
-	if( IsDataAvailable(pDataObject, CF_TEXT)){
+	if( IsDataAvailable(pDataObject, CF_TEXT) ){
 #ifdef _DEBUG
 		MYTRACE( "TRUE == IsDataAvailable()\n" );
 #endif
@@ -8022,10 +8022,10 @@ CEOL CEditView::GetCurrentInsertEOL( void )
 	作業ファイルのハンドルを標準出力先に設定した状態で、子プロセスを起動する
 	子プロセスが終了またはユーザーにより中断されるまでループ
 	作業ファイルを読み込む
-	終了処理　(後始末)
+	終了処理  (後始末)
 	作業ファイルを削除
 */
-/*  
+/*
 ファイルを介してリダイレクトする
 	【問題点】
 	子プロセス実行中にリアルタイムに出力を取り出したいが
@@ -8040,13 +8040,13 @@ CEOL CEditView::GetCurrentInsertEOL( void )
 	一つのファイルに対するハンドルを二つ持つ。
 	子に渡すハンドルと、親が読むハンドルを別々にする事で、出力結果の内容の問題は解決した。
 
-	2001/06/23　N.Nakatani すこし修正　でもまだちゃんと動かない
+	2001/06/23 N.Nakatani すこし修正  でもまだちゃんと動かない
 
 */
 //////////////////////////////////////////////////////////////////////
-void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout ) 
+void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 {
-	#define	IsKanji1(x) ((unsigned char)((x^0x20)-0xA1)<=0x3B) 
+	#define	IsKanji1(x) ((unsigned char)((x^0x20)-0xA1)<=0x3B)
 	char				cmdline[1024];
 	HANDLE				hStdOutWrite, hStdOutRead;
 	PROCESS_INFORMATION	pi;
@@ -8082,7 +8082,7 @@ void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout )
 
 	//コマンドライン実行
 	strcpy( cmdline, pszCmd );
-	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE, 
+	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 				CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
@@ -8093,16 +8093,16 @@ void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout )
 		vi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 		GetVersionEx( &vi );
 		//コマンドライン文字列作成
-		wsprintf( cmdline, "%s %s%s", 
+		wsprintf( cmdline, "%s %s%s",
 				( vi.dwPlatformId == VER_PLATFORM_WIN32_NT ? "cmd.exe" : "command.com" ),
 				( bGetStdout ? "/C " : "/K " ), pszCmd );
-		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE, 
+		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 					CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
-			MessageBox( NULL, cmdline, "コマンド実行は失敗しました", MB_OK | MB_ICONEXCLAMATION );
+			MessageBox( NULL, cmdline, "コマンド実行は失敗しました。", MB_OK | MB_ICONEXCLAMATION );
 			goto finish;
 		}
 	}
-	
+
 	if( bGetStdout ) {
 		DWORD	read_cnt;
 		DWORD	new_cnt;
@@ -8143,7 +8143,7 @@ void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout )
 			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
 				if( new_cnt > 0 ) {												//待機中のものがある
 					if( new_cnt >= sizeof(work)-2 ) {							//パイプから読み出す量を調整
-						new_cnt = sizeof(work)-2;		
+						new_cnt = sizeof(work)-2;
 					}
 					ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
@@ -8191,14 +8191,14 @@ finish:
 }
 //	To Here Jun. 30, 2001 GAE
 
-//void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout ) 
+//void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout )
 //{
 //	HANDLE					hFile;
 //	HANDLE					hFile2;
 //	char					szTempFile[_MAX_PATH+ 1];
-//	STARTUPINFO             StartupInfo;
-//	PROCESS_INFORMATION     ProcessInfo;
-//	char                    szCmd[512];
+//	STARTUPINFO				StartupInfo;
+//	PROCESS_INFORMATION		ProcessInfo;
+//	char					szCmd[512];
 //	CDlgCancel				cDlgCancel;
 //	CMemory					cmBuf;
 //
@@ -8214,7 +8214,7 @@ finish:
 //		  szTempFile // pointer to buffer that receives the new filename
 //		);
 ////		MYTRACE( "szTempFile=[%s]\n", szTempFile );
-//		
+//
 ////old	hFile = CreateFile( szTempFile, GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 //		hFile = ::CreateFile( szTempFile, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 //		if ( hFile == INVALID_HANDLE_VALUE ){
@@ -8232,11 +8232,11 @@ finish:
 //	}
 //
 //	GetStartupInfo(&StartupInfo);
-//	StartupInfo.dwFlags     |= ( STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW );
-//	StartupInfo.wShowWindow = bGetStdout?/*SW_SHOW*/SW_HIDE:SW_SHOW;      /* 子プロセスのウインドウ表示状態 */
+//	StartupInfo.dwFlags		|= ( STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW );
+//	StartupInfo.wShowWindow	 = bGetStdout?/*SW_SHOW*/SW_HIDE:SW_SHOW;		/* 子プロセスのウインドウ表示状態 */
 //	if( bGetStdout ){
-//		StartupInfo.hStdOutput  = hFile;
-//		StartupInfo.hStdError   = hFile;
+//		StartupInfo.hStdOutput	= hFile;
+//		StartupInfo.hStdError	= hFile;
 //	}
 //	lstrcpy(szCmd, "");
 //	lstrcat(szCmd, pszCmd);
@@ -8377,7 +8377,7 @@ finish:
 //		if( NULL != ProcessInfo.hProcess ){
 //			CloseHandle( ProcessInfo.hProcess );
 //		}
-//		cDlgCancel.CloseDialog( 0 );	 
+//		cDlgCancel.CloseDialog( 0 );
 //	}
 //	if( NULL != hFile ){
 //		::CloseHandle( hFile );
@@ -8390,5 +8390,6 @@ finish:
 //	return;
 //}
 //
+
 
 /*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	Entry Point
-	
+
 	@author Norio Nakatani
 	@date	1998/03/13 作成
 	@date	2001/06/26 genta ワード単位のGrepのためのコマンドライン処理追加
@@ -78,11 +78,11 @@ int WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR, int );
 
 /*!
 	Windows Entry point
-	
+
 	1つ目のエディタプロセスの場合は、このプロセスはコントロールプロセスと
 	なり、新しいエディタプロセスを起動する。そうでないときはエディタプロセス
 	となる。
-	
+
 	コントロールプロセスはCEditAppクラスのインスタンスを作り、エディタ
 	プロセスはCEditWndクラスのインスタンスを作る。
 */
@@ -94,7 +94,7 @@ int WINAPI WinMain(
 )
 {
 
-	
+
 //	/* テスト */
 //	RASCONN			RasConn;
 //	DWORD			dwStatus;
@@ -499,13 +499,13 @@ CreateControlProcess:;
 			/* 終了中ダイアログの破棄 */
 			::DestroyWindow( hwndExitingDlg );
 		}
-		
+
 		m_pShareData->m_hwndTray = NULL;
 		delete pcEditApp;
 		/* アクセラレータテーブルの削除 */
 		if( m_pShareData->m_hAccel != NULL ){
 			::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-			m_pShareData->m_hAccel = NULL; 
+			m_pShareData->m_hAccel = NULL;
 		}
 
 //		Sleep( 3000 );

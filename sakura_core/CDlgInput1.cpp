@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	1行入力ダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date	1998/05/31 作成
 	$Revision$
@@ -32,10 +32,10 @@
 
 /* ダイアログプロシージャ */
 BOOL CALLBACK CDlgInput1Proc(
-    HWND hwndDlg,	// handle to dialog box
-    UINT uMsg,	// message
-    WPARAM wParam,	// first message parameter
-    LPARAM lParam 	// second message parameter
+	HWND hwndDlg,	// handle to dialog box
+	UINT uMsg,		// message
+	WPARAM wParam,	// first message parameter
+	LPARAM lParam 	// second message parameter
 )
 {
 	CDlgInput1* pCDlgInput1;
@@ -99,10 +99,10 @@ BOOL CDlgInput1::DoModal( HINSTANCE hInstApp, HWND hwndParent, const char* pszTi
 
 /* ダイアログのメッセージ処理 */
 BOOL CDlgInput1::DispatchEvent(
-    HWND hwndDlg,	// handle to dialog box
-    UINT uMsg,	// message
-    WPARAM wParam,	// first message parameter
-    LPARAM lParam 	// second message parameter
+	HWND hwndDlg,	// handle to dialog box
+	UINT uMsg,		// message
+	WPARAM wParam,	// first message parameter
+	LPARAM lParam 	// second message parameter
 )
 {
 	WORD	wNotifyCode;
@@ -122,8 +122,8 @@ BOOL CDlgInput1::DispatchEvent(
 		return TRUE;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -141,7 +141,6 @@ BOOL CDlgInput1::DispatchEvent(
 	}
 	return FALSE;
 }
-
 
 
 /*[EOF]*/

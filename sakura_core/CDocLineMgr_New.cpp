@@ -46,12 +46,12 @@ void CDocLineMgr::ReplaceData(
 		DocLineReplaceArg* pArg
 #if 0
 	int			nDelLineFrom,			/* 削除範囲行  From 改行単位の行番号 0開始) */
-	int			nDelPosFrom,			/* 削除範囲位置From 改行単位の行頭からのバイト位置　0開始) */
-	int			nDelLineTo,			/* 削除範囲行　To   改行単位の行番号 0開始) */
-	int			nDelPosTo,				/* 削除範囲位置To   改行単位の行頭からのバイト位置　0開始) */
+	int			nDelPosFrom,			/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
+	int			nDelLineTo,				/* 削除範囲行  To   改行単位の行番号 0開始) */
+	int			nDelPosTo,				/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
 	CMemory*	pcmemDeleted,		/* 削除されたデータを保存 */
 	int*		pnDeletedLineNum,	/* 削除した行の総数 */
-	const char*	pInsData,			/* 挿入するデータ */      
+	const char*	pInsData,			/* 挿入するデータ */
 	int			nInsDataLen,		/* 挿入するデータの長さ */
 	int*		pnInsLineNum,		/* 挿入によって増えた行の数 */
 	int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
@@ -97,18 +97,18 @@ void CDocLineMgr::ReplaceData(
 	CDlgCancel*	pCDlgCancel = NULL;
 	HWND		hwndCancel;
 	HWND		hwndProgress;
-	
+
 
 	pArg->nNewLine = pArg->nDelLineFrom;
 	pArg->nNewPos =  pArg->nDelPosFrom;
 
 	/* 大量のデータを操作するとき */
-	if( 3000 < pArg->nDelLineTo - pArg->nDelLineFrom 
+	if( 3000 < pArg->nDelLineTo - pArg->nDelLineFrom
 	 || 1024000 < pArg->nInsDataLen
 	){
 //		/* バッファサイズの調整 */
 //		cmemWork.AllocBuffer( 1024000 );
-		
+
 		/* 進捗ダイアログの表示 */
 		pCDlgCancel = new CDlgCancel;
 		if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
@@ -121,12 +121,12 @@ void CDocLineMgr::ReplaceData(
 		}
 	}
 //	pcmemDeleted->cmemWork( 1024000 );
-	
 
-	
-	
-	
-	
+
+
+
+
+
 
 	// 削除データの取得のループ
 	/* 前から処理していく */
@@ -161,7 +161,7 @@ void CDocLineMgr::ReplaceData(
 
 		/* 改行も削除するんかぃのぉ・・・？ */
 		if( EOL_NONE != pCDocLine->m_cEol &&
-			nWorkPos + nWorkLen > pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen() 
+			nWorkPos + nWorkLen > pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
 		){
 			/* 削除する長さに改行も含める */
 			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
@@ -174,7 +174,7 @@ void CDocLineMgr::ReplaceData(
 			pArg->pcmemDeleted->SetDataSz( "" );
 			break;
 		}
-next_line:;		
+next_line:;
 		/* 次の行のオブジェクトのポインタ */
 		pCDocLine = pCDocLineNext;
 		/* 最近参照した行番号と行データ */
@@ -200,9 +200,9 @@ next_line:;
 		}
 	} // 削除データの取得のループ
 
-	
-	
-	
+
+
+
 	/* 現在行の情報を得る */
 	pCDocLine = GetLineInfo( pArg->nDelLineTo );
 	i = pArg->nDelLineTo;
@@ -242,7 +242,7 @@ next_line:;
 		}
 		/* 改行も削除するんかぃのぉ・・・？ */
 		if( EOL_NONE != pCDocLine->m_cEol &&
-			nWorkPos + nWorkLen > pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen() 
+			nWorkPos + nWorkLen > pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
 		){
 			/* 削除する長さに改行も含める */
 			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
@@ -277,10 +277,10 @@ next_line:;
 			pCDocLine->m_pLine->SetData( pWork, nWorkPos );
 			delete [] pWork;
 			pWork = NULL;
-			
+
 			/* 次の行がある */
 			if( NULL != pCDocLineNext ){
-				/* 改行コードの情報を更新　(次の行からもらう) */
+				/* 改行コードの情報を更新 (次の行からもらう) */
 				pCDocLine->m_cEol = pCDocLineNext->m_cEol;	/* 改行コードの種類 */
 
 				/* 次の行のデータを最後に追加 */
@@ -314,7 +314,7 @@ next_line:;
 			pCDocLine->m_bModify = TRUE;	/* 変更フラグ */
 		}
 
-prev_line:;		
+prev_line:;
 		/* 直前の行のオブジェクトのポインタ */
 		pCDocLine = pCDocLinePrev;
 		/* 最近参照した行番号と行データ */
@@ -322,7 +322,7 @@ prev_line:;
 		m_pCodePrevRefer = pCDocLine;
 
 		if( NULL != hwndCancel){
-			if( 0 != (pArg->nDelLineTo - i) && ( 0 == ((pArg->nDelLineTo - i) % 32)) ){
+			if( 0 != (pArg->nDelLineTo - i) && ( 0 == ((pArg->nDelLineTo - i) % 32) ) ){
 				nProgress = (pArg->nDelLineTo - i) * 100 / (pArg->nDelLineTo - pArg->nDelLineFrom) / 2 + 50;
 				::SendMessage( hwndProgress, PBM_SETPOS, nProgress, 0 );
 
@@ -346,9 +346,9 @@ prev_line:;
 //	m_nPrevReferLine = 0;
 //	m_pCodePrevRefer = NULL;
 
-	
-	
-	
+
+
+
 	/* データ挿入処理 */
 	if( 0 == pArg->nInsDataLen ){
 		goto end_of_func;
@@ -424,7 +424,7 @@ prev_line:;
 					*(pCDocLineNew->m_pLine) += cmemCurLine;
 
 					pCDocLineNew->m_cEol = cEOLType;	/* 改行コードの種類 */
-					// pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */ 		
+					// pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */
 				}else{
 					if( NULL != m_pDocLineBot ){
 						m_pDocLineBot->m_pNext = pCDocLineNew;
@@ -445,8 +445,8 @@ prev_line:;
 					*(pCDocLine->m_pLine) += cmemCurLine;
 
 					pCDocLine->m_cEol = cEOLType;	/* 改行コードの種類 */
-					//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */ 		
-					
+					//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */
+
 					pCDocLine = pCDocLine->m_pNext;
 				}else{
 					pCDocLineNew = new CDocLine;
@@ -458,7 +458,7 @@ prev_line:;
 					pCDocLineNew->m_pLine->SetData( &cmemCurLine );
 
 					pCDocLineNew->m_cEol = cEOLType;	/* 改行コードの種類 */
-					//pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */ 		
+					//pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */
 
 					++m_nLines;
 				}
@@ -467,8 +467,8 @@ prev_line:;
 			/* 挿入データを行終端で区切った行数カウンタ */
 			++nCount;
 			++(pArg->nNewLine);	/* 挿入された部分の次の位置の行 */
-			if( NULL != hwndCancel){
-				if( 0 != pArg->nInsDataLen && ( 0 == (nPos % 1024)) ){
+			if( NULL != hwndCancel ){
+				if( 0 != pArg->nInsDataLen && ( 0 == (nPos % 1024) ) ){
 					nProgress = nPos * 100 / pArg->nInsDataLen;
 					::SendMessage( hwndProgress, PBM_SETPOS, nProgress, 0 );
 				}
@@ -477,7 +477,7 @@ prev_line:;
 		}else{
 			++nPos;
 		}
-		// ::MessageBox( NULL, cEOLType.GetName(),"cEOLTypeNext",MB_OK);
+		// ::MessageBox( NULL, cEOLType.GetName(),"cEOLTypeNext",MB_OK );
 	}
 //	nEOLType = EOL_NONE;
 	if( 0 < nPos - nBgn || 0 < cmemNextLine.GetLength() ){
@@ -501,7 +501,7 @@ prev_line:;
 				*(pCDocLineNew->m_pLine) += cmemCurLine;
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				// pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */ 		
+				// pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
 
 			}else{
 				if( NULL != m_pDocLineBot ){
@@ -513,7 +513,7 @@ prev_line:;
 				pCDocLineNew->m_pLine->SetData( &cmemCurLine );
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				//pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */ 		
+				//pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
 
 			}
 			pCDocLine = NULL;
@@ -526,7 +526,7 @@ prev_line:;
 				*(pCDocLine->m_pLine) += cmemCurLine;
 
 				pCDocLine->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */ 		
+				//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
 
 				pCDocLine = pCDocLine->m_pNext;
 				pArg->nNewPos = cmemPrevLine.GetLength() + nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
@@ -540,25 +540,25 @@ prev_line:;
 				pCDocLineNew->m_pLine->SetData( &cmemCurLine );
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */ 		
+				//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
 
 
 				++m_nLines;
 				pArg->nNewPos = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
 			}
 		}
-		// ::MessageBox( NULL, pCDocLine->m_cEol.GetName(),"cEOLTypeNext",MB_OK);
-		// ::MessageBox( NULL, pCDocLine->m_pNext->m_cEol.GetName(),"cEOLTypeNext",MB_OK);
-		// ::MessageBox( NULL, pCDocLine->m_pPrev->m_cEol.GetName(),"cEOLTypeNext",MB_OK);
+		// ::MessageBox( NULL, pCDocLine->m_cEol.GetName(),"cEOLTypeNext",MB_OK );
+		// ::MessageBox( NULL, pCDocLine->m_pNext->m_cEol.GetName(),"cEOLTypeNext",MB_OK );
+		// ::MessageBox( NULL, pCDocLine->m_pPrev->m_cEol.GetName(),"cEOLTypeNext",MB_OK );
 	}
 	pArg->nInsLineNum = m_nLines - nAllLinesOld;
 end_of_func:;
-//	pCDlgCancel->CloseDialog( 0 );	 
+//	pCDlgCancel->CloseDialog( 0 );
 	if( NULL != pCDlgCancel ){
-		delete pCDlgCancel;		
+		delete pCDlgCancel;
 	}
 	return;
 }
 
 
-
+/*[EOF]*/

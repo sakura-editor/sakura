@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	砂時計カーソル
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -47,7 +47,6 @@ CWaitCursor::~CWaitCursor()
 	::SetCursor( m_hCursorOld );
 	return;
 }
-
 
 
 /*[EOF]*/

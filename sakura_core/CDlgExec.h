@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	外部コマンド実行ダイアログ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */

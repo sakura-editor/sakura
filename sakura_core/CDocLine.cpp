@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	文書データ1行
-	
+
 	@author Norio Nakatani
 	$Revision$
 */

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファイルオープンダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date	1998/08/10 作成
 	$Revision$
@@ -30,7 +30,7 @@
 #include "sakura_rc.h"
 #include "etc_uty.h"
 #include "global.h"
-#include "funccode.h"    //Stonee, 2001/05/18
+#include "funccode.h"	//Stonee, 2001/05/18
 
 #ifndef OFN_ENABLESIZING
 	#define OFN_ENABLESIZING	0x00800000
@@ -222,7 +222,7 @@ UINT APIENTRY OFNHookProc(
 		return 0;
 	case WM_INITDIALOG:
 //From Here jeprotest Oct. 12, 2000 JEPRO デフォルトボタン名変更実験
-//        CommDlg_OpenSave_SetControlText( GetParent(hdlg), IDOK, "このﾌｧｲﾙを開く" );
+//		CommDlg_OpenSave_SetControlText( GetParent(hdlg), IDOK, "このファイルを開く" );
 //To Here jeorotest
 
 		// Save off the long pointer to the OPENFILENAME structure.
@@ -441,11 +441,11 @@ UINT APIENTRY OFNHookProc(
 //			MYTRACE( "\tlRes=%d\tszFolder=[%s]\n", lRes, szFolder );
 
 			break;
-//		case CDN_HELP          :	MYTRACE( "pofn->hdr.code=CDN_HELP          \n" );break;
-//		case CDN_INITDONE      :	MYTRACE( "pofn->hdr.code=CDN_INITDONE      \n" );break;
-//		case CDN_SELCHANGE     :	MYTRACE( "pofn->hdr.code=CDN_SELCHANGE     \n" );break;
-//		case CDN_SHAREVIOLATION:	MYTRACE( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
-//		case CDN_TYPECHANGE    :	MYTRACE( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
+//		case CDN_HELP			:	MYTRACE( "pofn->hdr.code=CDN_HELP          \n" );break;
+//		case CDN_INITDONE		:	MYTRACE( "pofn->hdr.code=CDN_INITDONE      \n" );break;
+//		case CDN_SELCHANGE		:	MYTRACE( "pofn->hdr.code=CDN_SELCHANGE     \n" );break;
+//		case CDN_SHAREVIOLATION	:	MYTRACE( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
+//		case CDN_TYPECHANGE		:	MYTRACE( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
 //		default:					MYTRACE( "pofn->hdr.code=???\n" );break;
 		}
 
@@ -511,7 +511,8 @@ CDlgOpenFile::CDlgOpenFile()
 	/* OPENFILENAMEの初期化 */
 	memset( &m_ofn, 0, sizeof( OPENFILENAME ) );
 	m_ofn.lStructSize = sizeof( OPENFILENAME );
-	m_ofn.nFilterIndex = 3;
+//	m_ofn.nFilterIndex = 3;
+	m_ofn.nFilterIndex = 1;	//Jul. 09, 2001 JEPRO		/* 「開く」での最初のワイルドカード */
 
 //	::GetCurrentDirectory( _MAX_PATH, m_szInitialDir );	/* 「開く」での初期ディレクトリ */
 	lPathLen = ::GetModuleFileName(
@@ -586,9 +587,9 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 	char	szWork[256];
 	char	szFilter[1024];
 	char*	pszFilterArr[] = {
-			"テキストファイル",	"*.txt",
-			"すべてのファイル", "*.*",
-			"ユーザー指定", m_szDefaultWildCard
+			"ユーザー指定",	m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
+			"テキストファイル", "*.txt",
+			"すべてのファイル", "*.*"
 	};
 	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
 	/* 拡張子フィルタの作成 */
@@ -644,21 +645,21 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 		bCancel = FALSE;
 		dwError = ::CommDlgExtendedError();
 		switch( dwError ){
-		case CDERR_DIALOGFAILURE  : pszError = "CDERR_DIALOGFAILURE  "; break;
-		case CDERR_FINDRESFAILURE : pszError = "CDERR_FINDRESFAILURE "; break;
-		case CDERR_NOHINSTANCE    : pszError = "CDERR_NOHINSTANCE    "; break;
-		case CDERR_INITIALIZATION : pszError = "CDERR_INITIALIZATION "; break;
-		case CDERR_NOHOOK         : pszError = "CDERR_NOHOOK         "; break;
-		case CDERR_LOCKRESFAILURE : pszError = "CDERR_LOCKRESFAILURE "; break;
-		case CDERR_NOTEMPLATE     : pszError = "CDERR_NOTEMPLATE     "; break;
-		case CDERR_LOADRESFAILURE : pszError = "CDERR_LOADRESFAILURE "; break;
-		case CDERR_STRUCTSIZE     : pszError = "CDERR_STRUCTSIZE     "; break;
-		case CDERR_LOADSTRFAILURE : pszError = "CDERR_LOADSTRFAILURE "; break;
-		case FNERR_BUFFERTOOSMALL : pszError = "FNERR_BUFFERTOOSMALL "; break;
-		case CDERR_MEMALLOCFAILURE: pszError = "CDERR_MEMALLOCFAILURE"; break;
-		case FNERR_INVALIDFILENAME: pszError = "FNERR_INVALIDFILENAME"; break;
-		case CDERR_MEMLOCKFAILURE : pszError = "CDERR_MEMLOCKFAILURE "; break;
-		case FNERR_SUBCLASSFAILURE: pszError = "FNERR_SUBCLASSFAILURE"; break;
+		case CDERR_DIALOGFAILURE	: pszError = "CDERR_DIALOGFAILURE  "; break;
+		case CDERR_FINDRESFAILURE	: pszError = "CDERR_FINDRESFAILURE "; break;
+		case CDERR_NOHINSTANCE		: pszError = "CDERR_NOHINSTANCE    "; break;
+		case CDERR_INITIALIZATION	: pszError = "CDERR_INITIALIZATION "; break;
+		case CDERR_NOHOOK			: pszError = "CDERR_NOHOOK         "; break;
+		case CDERR_LOCKRESFAILURE	: pszError = "CDERR_LOCKRESFAILURE "; break;
+		case CDERR_NOTEMPLATE		: pszError = "CDERR_NOTEMPLATE     "; break;
+		case CDERR_LOADRESFAILURE	: pszError = "CDERR_LOADRESFAILURE "; break;
+		case CDERR_STRUCTSIZE		: pszError = "CDERR_STRUCTSIZE     "; break;
+		case CDERR_LOADSTRFAILURE	: pszError = "CDERR_LOADSTRFAILURE "; break;
+		case FNERR_BUFFERTOOSMALL	: pszError = "FNERR_BUFFERTOOSMALL "; break;
+		case CDERR_MEMALLOCFAILURE	: pszError = "CDERR_MEMALLOCFAILURE"; break;
+		case FNERR_INVALIDFILENAME	: pszError = "FNERR_INVALIDFILENAME"; break;
+		case CDERR_MEMLOCKFAILURE	: pszError = "CDERR_MEMLOCKFAILURE "; break;
+		case FNERR_SUBCLASSFAILURE	: pszError = "FNERR_SUBCLASSFAILURE"; break;
 		default: bCancel = TRUE; break;
 		}
 		if( !bCancel ){
@@ -680,9 +681,9 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath )
 	char	szWork[256];
 	char	szFilter[1024];
 	char*	pszFilterArr[] = {
+			"ユーザー指定", m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
 			"テキストファイル",	"*.txt",
-			"すべてのファイル", "*.*",
-			"ユーザー指定", m_szDefaultWildCard
+			"すべてのファイル", "*.*"
 	};
 	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
 	/* 拡張子フィルタの作成 */
@@ -782,9 +783,16 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	char	szWork[256];
 	char	szFilter[1024];
 	char*	pszFilterArr[] = {
-			"テキストファイル", "*.txt",
+//			"テキストファイル", "*.txt",
 			"すべてのファイル", "*.*",
-			"ユーザー指定", m_szDefaultWildCard
+			"テキストファイル",	"*.txt",
+//			"ユーザー指定",		m_szDefaultWildCard,					//Jul. 09, 2001 JEPRO	これは使わない
+			"C/C++ファイル",	"*.c;*.cpp;*.cxx;*.h;*.rc",				//Jul. 08, 2001 JEPRO
+			"HTMLファイル",		"*.html;*.htm;*.shtml",					//Jul. 08, 2001 JEPRO
+			"Perlファイル",		"*.cgi;*.pl;*.pm",						//Jul. 08, 2001 JEPRO
+			"VBファイル",		"*.bas;*.frm;*.cls,*.ctl;*.pag",		//Jul. 08, 2001 JEPRO
+			"TeXファイル",		"*.tex;*.ltx;*.sty",					//Jul. 08, 2001 JEPRO
+			"Winヘルプ関連",	"*.rtf;*.cnt;*.hpj;*.hh;*.hm"			//Jul. 08, 2001 JEPRO
 	};
 	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
 	/* 拡張子フィルタの作成 */
@@ -900,9 +908,10 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 	char	szWork[256];
 	char	szFilter[1024];
 	char*	pszFilterArr[] = {
+			"ユーザー指定", m_szDefaultWildCard,	//Jul. 09, 2001 JEPRO これがリストの先頭に来るように変更
 			"テキストファイル",	"*.txt",
-			"すべてのファイル", "*.*",
-			"ユーザー指定", m_szDefaultWildCard
+			"すべてのファイル", "*.*"
+
 	};
 	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
 	/* 拡張子フィルタの作成 */

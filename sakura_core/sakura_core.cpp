@@ -27,8 +27,8 @@
 #include "stdafx.h"
 #include "sakura_core.h"
 
-BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
+BOOL APIENTRY DllMain( HANDLE hModule,
+                       DWORD  ul_reason_for_call,
                        LPVOID lpReserved
 					 )
 {
@@ -56,7 +56,9 @@ SAKURA_CORE_API int fnSakura_core(void)
 // これはエクスポートされたクラスのコンストラクタです。
 // クラスの定義については sakura_core.h を参照してください。
 CSakura_core::CSakura_core()
-{ 
-	return; 
+{
+	return;
 }
 
+
+/*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	メモリバッファクラス
-	
+
 	@author Norio Nakatani
 	@date 1998/03/06 新規作成
 	$Revision$
@@ -47,9 +47,9 @@ public:
 	CMemory( const char*, int );
 	~CMemory();
 
-    /*
-    || 関数
-    */
+	/*
+	|| 関数
+	*/
 //  int GetLength() const;
 	int GetLength() const { return m_nDataLen; }
 	void AllocBuffer( int );	/* バッファサイズの調整 */
@@ -72,7 +72,8 @@ public:
 
 	void AUTOToSJIS( void );	/* 自動判別→SJISコード変換 */
 	void SJIStoJIS( void );		/* SJIS→JISコード変換 */
-	void JIStoSJIS( bool base64decode = false);		/* E-Mail(JIS→SJIS)コード変換 */
+//	void JIStoSJIS( bool base64decode = false);		/* E-Mail(JIS→SJIS)コード変換 */
+	void JIStoSJIS( bool base64decode = true);		/* E-Mail(JIS→SJIS)コード変換 */	//Jul. 15, 2001 JEPRO
 	void SJISToUnicode( void );	/* SJIS→Unicodeコード変換 */
 	void SJISToEUC( void );		/* SJIS→EUCコード変換 */
 	void EUCToSJIS( void );		/* EUC→SJISコード変換 */
@@ -103,17 +104,17 @@ public:
 	static int CheckKanjiCodeOfFile( const char* );
 	/* 日本語コードセット判別 */
 	static int CheckKanjiCode( const unsigned char*, int );
-	/* 日本語コードセット判別:　EUCか？ */
+	/* 日本語コードセット判別: EUCか？ */
 	static int CheckKanjiCode_EUC( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別:　SJISか？ */
+	/* 日本語コードセット判別: SJISか？ */
 	static int CheckKanjiCode_SJIS( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別:　Unicodeか？ */
+	/* 日本語コードセット判別: Unicodeか？ */
 	static int CheckKanjiCode_UNICODE( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別:　JISか？ */
+	/* 日本語コードセット判別: JISか？ */
 	static int CMemory::CheckKanjiCode_JIS( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別:　UTF-8Sか？ */
+	/* 日本語コードセット判別: UTF-8Sか？ */
 	static int CheckKanjiCode_UTF8( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別:　UTF-7Sか？ */
+	/* 日本語コードセット判別: UTF-7Sか？ */
 	static int CheckKanjiCode_UTF7( const unsigned char*, int, int*, int* );
 	static int IsZenHiraOrKata( unsigned short );
 
@@ -149,7 +150,7 @@ public:
 		return (char*)m_pData;
 	}
 
-	
+
 //	void Append( const char*, int );	/* データの最後に追加 publicメンバ */
 //protected:
 	/*
@@ -166,12 +167,12 @@ public:
 	void Empty( void );
 	void AddData( const char*, int );
 	static int IsEUCKan1(unsigned char );	/* EUC全角コードの１バイト目か */
-	static int IsEUCKan2(unsigned char );	/*  EUC全角コードの２バイト目か */
+	static int IsEUCKan2(unsigned char );	/* EUC全角コードの２バイト目か */
 	static long MemBASE64_Decode( unsigned char*, long );	/* Base64デコード */
 	int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64エンコード */
-	long QuotedPrintable_Decode(char*, long );	/* Quoted-Printableデコード	*/
+	long QuotedPrintable_Decode(char*, long );	/* Quoted-Printableデコード */
 	long MemJIStoSJIS(unsigned char*, long );	/* JIS→SJIS変換 */
-	int StrSJIStoJIS( CMemory*, unsigned char*, int );	/* SJIS→JISで新メモリ確保　*/
+	int StrSJIStoJIS( CMemory*, unsigned char*, int );	/* SJIS→JISで新メモリ確保 */
 	long MemSJIStoJIS( unsigned char*, long );	/* SJIS→JIS変換 */
 	static int IsBASE64Char( char );	/* 文字がBaseE64のデータか */
 
@@ -181,5 +182,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CMEMORY_H_ */
+
 
 /*[EOF]*/

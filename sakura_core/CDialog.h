@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	Dialog Box基底クラスヘッダファイル
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -43,7 +43,7 @@ class CDialog;
 -----------------------------------------------------------------------*/
 /*!
 	ダイアログウィンドウを扱うクラス
-	
+
 	ダイアログボックスを作るときにはここから継承させる．
 */
 class SAKURA_CORE_API CDialog
@@ -91,11 +91,11 @@ public:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
-	BOOL			m_bModal;		/* モーダル　ダイアログか */
+	BOOL			m_bModal;		/* モーダル ダイアログか */
 	int				m_nWidth;
 	int				m_nHeight;
 	int				m_xPos;
-	int				m_yPos;		
+	int				m_yPos;
 //	void*			m_pcEditView;
 	char			m_szHelpFile[_MAX_PATH + 1];
 	CShareData		m_cShareData;
@@ -113,5 +113,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDIALOG_H_ */
+
 
 /*[EOF]*/

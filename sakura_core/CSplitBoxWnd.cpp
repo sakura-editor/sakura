@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	分割ボックスウィンドウクラス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -75,13 +75,13 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
 //		lpfnWndProc = (WNDPROC)HSplitBoxWndProc;
 	}
-	RegisterWC( 
+	RegisterWC(
 		/* WNDCLASS用 */
-		NULL,// Handle to the class icon. 
-		NULL,	//Handle to a small icon  
-		hCursor,// Handle to the class cursor. 
-		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush. 
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file. 
+		NULL,// Handle to the class icon.
+		NULL,	//Handle to a small icon
+		hCursor,// Handle to the class cursor.
+		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
+		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
@@ -96,16 +96,16 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	::GetClientRect( m_hwndParent, &rc );
 
 	/* 基底クラスメンバ呼び出し */
-	return CWnd::Create( 
+	return CWnd::Create(
 		/* CreateWindowEx()用 */
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
 		WS_CHILD | WS_VISIBLE, // window style
 		bVertical ? ( rc.right - nCxVScroll ):( 0 ), // horizontal position of window
-		bVertical ? ( 0                     ):( rc.bottom - nCyHScroll ), // vertical position of window
+		bVertical ? ( 0 ):( rc.bottom - nCyHScroll ), // vertical position of window
 		bVertical ? ( nCxVScroll ):( 7 ), // window width
-		bVertical ? ( 7          ):( nCyHScroll ), // window height
+		bVertical ? ( 7 ):( nCyHScroll ), // window height
 		NULL // handle to menu, or child-window identifier
 	);
 }
@@ -439,10 +439,10 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		::SelectObject( hdc, hBrushOld );
 		::DeleteObject( hBrush );
 		::ReleaseDC( ::GetParent( m_hwndParent ), hdc );
-	
+
 		/* 親ウィンドウに、メッセージをポストする */
 		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)0, (LPARAM)m_nDragPosY );
-	
+
 	}else{
 		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* 垂直スクロールバーの幅 */
@@ -486,7 +486,7 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 		::GetClientRect( m_hwndParent, &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;
-	
+
 		/* 親ウィンドウに、メッセージをポストする */
 		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)0, (LPARAM)(rc.bottom / 2) );
 	}else{
@@ -502,4 +502,3 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
 
 /*[EOF]*/
-

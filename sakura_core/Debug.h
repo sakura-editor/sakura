@@ -52,7 +52,7 @@ SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 //#endif
 
 //#ifdef _DEBUG
-	#define MYASSERT AssertError 
+	#define MYASSERT AssertError
 //#endif
 //#ifndef _DEBUG
 //	#define MYASSERT raise_compile_error
@@ -61,10 +61,10 @@ SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 
 /*
 #ifdef _DEBUG
-	#define MYASSERT( _file, _line, b) AssertError( (_file), (_line), (b))
+	#define MYASSERT( _file, _line, b ) AssertError( (_file), (_line), (b) )
 #endif
 #ifndef _DEBUG
-	#define MYASSERT( _file, _line, b) AssertError( (_file), (_line), (b))
+	#define MYASSERT( _file, _line, b ) AssertError( (_file), (_line), (b) )
 #endif
 */
 
@@ -76,5 +76,6 @@ SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _DEBUG_H_ */
+
 
 /*[EOF]*/

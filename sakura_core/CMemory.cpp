@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	メモリバッファクラス
-	
+
 	@author Norio Nakatani
 	@date 1998/03/06 新規作成
 	$Revision$
@@ -370,7 +370,7 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 			if( CHAR_NULL != nCharKind ){
 				bChange = TRUE;
 			}
-			
+
 			nWorkLen = i - nWorkBgn;
 			/* 以前の文字種類 */
 			switch( nCharKindOld ){
@@ -507,7 +507,7 @@ void CMemory::JIStoSJIS( bool bMIMEdecode )
 		}
 		if( bMIME == TRUE ){
 			if( i <= nSrcLen - 2  &&
-			   0 == memcmp( "?=", &pszSrc[i], 2 ) ){
+				0 == memcmp( "?=", &pszSrc[i], 2 ) ){
 				nWorkLen = i - nWorkBgn;
 				pszWork = new unsigned char [nWorkLen + 1];
 				memset( pszWork, 0, nWorkLen + 1 );
@@ -785,7 +785,7 @@ int CMemory::MemBASE64_Encode(
 		}else{
 			k = 4;
 			for( m = 0; m < 3; m++ ){
-				((char*)&nDataSrc)[3 - m] = pszSrc[i + m]; 
+				((char*)&nDataSrc)[3 - m] = pszSrc[i + m];
 			}
 		}
 		for( j = 0; j < k; j++ ){
@@ -876,7 +876,7 @@ void CMemory::UUDECODE( char* pszFileName )
 			int				nBufLen = nPos - nBgn;
 			unsigned char*	pBuf = new unsigned char[ nBufLen + 1];
 			memset( pBuf, 0, nBufLen + 1 );
-			memcpy( pBuf, &pszSrc[nBgn], nBufLen ); 
+			memcpy( pBuf, &pszSrc[nBgn], nBufLen );
 			if( !bBEGIN	){
 				if( 0 == memcmp( pBuf, "begin ", 6 ) ){
 					bBEGIN = TRUE;
@@ -1058,7 +1058,7 @@ void CMemory::EUCToSJIS( void )
 			nPtr += 2;
 		}else
 		/* EUC漢字コードか? */
-		if( nPtr < nBufLen - 1 && IsEUCKan1(pBuf[nPtr]) && IsEUCKan2(pBuf[nPtr + 1L])){
+		if( nPtr < nBufLen - 1 && IsEUCKan1(pBuf[nPtr]) && IsEUCKan2(pBuf[nPtr + 1L]) ){
 			/* 通常のJISコードに変換 */
 			pBuf[nPtr	  ] &= 0x7f;
 			pBuf[nPtr + 1L] &= 0x7f;
@@ -1066,7 +1066,7 @@ void CMemory::EUCToSJIS( void )
 			/* SJISコードに変換 */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 			sCode = (unsigned short)_mbcjistojms(
 				(unsigned int)
-				(((unsigned short)pBuf[nPtr	   ] << 8) |
+				(((unsigned short)pBuf[nPtr] << 8) |
 				 ((unsigned short)pBuf[nPtr + 1]))
 			);
 			if( sCode != 0 ){
@@ -1224,7 +1224,7 @@ void CMemory::UTF8ToSJIS( void )
 	int				nUNICODEBytes;
 	unsigned char	pWork[100];
 
-    setlocale( LC_ALL, "Japanese" );
+	setlocale( LC_ALL, "Japanese" );
 	pDes = new unsigned char[nBufLen * 2];
 	k = 0;
 	for( i = 0; i < nBufLen; ){
@@ -1275,7 +1275,7 @@ void CMemory::SJISToUTF8( void )
 {
 	/* コード変換 SJIS→Unicode */
 	SJISToUnicode();
-	
+
 	/* コード変換 Unicode→UTF-8 */
 	UnicodeToUTF8();
 	return;
@@ -1286,7 +1286,7 @@ void CMemory::SJISToUTF7( void )
 {
 	/* コード変換 SJIS→Unicode */
 	SJISToUnicode();
-	
+
 	/* コード変換 Unicode→UTF-7 */
 	UnicodeToUTF7();
 	return;
@@ -1315,7 +1315,7 @@ void CMemory::UnicodeToUTF8( void )
 //	wchar_t*		pUniBuf;
 
 
-    setlocale( LC_ALL, "Japanese" );
+	setlocale( LC_ALL, "Japanese" );
 	k = 0;
 	for( i = 0; i < (int)(nBufLen / sizeof( wchar_t )); ++i ){
 		if( 0x0000 <= pUniBuf[i] && 0x007f >= pUniBuf[i] ){
@@ -1350,10 +1350,10 @@ void CMemory::UnicodeToUTF8( void )
 		if( 0x0800 <= pUniBuf[i] && 0xffff >= pUniBuf[i] ){
 			pDes[k] = ( ( pWork[1] & 0xf0 ) >> 4 )
 						| 0xe0;
-			pDes[k + 1] = 0x80 
+			pDes[k + 1] = 0x80
 						| ( ( pWork[1] & 0x0f ) << 2 )
 						| ( ( pWork[0] & 0xc0 ) >> 6 );
-			pDes[k + 2] = 0x80 
+			pDes[k + 2] = 0x80
 						| ( pWork[0] & 0x3f );
 
 			k += 3;
@@ -1406,14 +1406,14 @@ void CMemory::UTF7ToSJIS( void )
 
 	pcmemWork = new CMemory;
 
-    pDes = new char[nBufLen + 1];
+	pDes = new char[nBufLen + 1];
 	setlocale( LC_ALL, "Japanese" );
 	k = 0;
 	bBASE64 = FALSE;
 	for( i = 0; i < nBufLen; ++i ){
 		if( !bBASE64 ){
 			if( i < nBufLen - 1
-			  &&  '+' == pBuf[i] 
+			  &&  '+' == pBuf[i]
 			  &&  '-' == pBuf[i + 1]
 			){
 				pDes[k] = '+';
@@ -1421,7 +1421,7 @@ void CMemory::UTF7ToSJIS( void )
 				++i;
 			}else
 			if( i < nBufLen - 2
-			  &&  '+' == pBuf[i] 
+			  &&  '+' == pBuf[i]
 			  &&  -1 != IsBASE64Char( pBuf[i + 1] ) /* 文字がBase64のデータか */
 			){
 				nBgn = i + 1;
@@ -1435,7 +1435,7 @@ void CMemory::UTF7ToSJIS( void )
 				nWorkLen = i - nBgn;
 				BOOL bSuccess;
 				bSuccess = TRUE;
-				
+
 				if( 3 <= nWorkLen ){
 					pszWork = new char [nWorkLen + 1];
 //					memset( pszWork, 0, nWorkLen + 1 );
@@ -1832,7 +1832,7 @@ const char* CMemory::MemCharNext( const char* pData, int nDataLen, const char* p
 			)
 			&&
 			/* SJIS全角コードの2バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			( 
+			(
 			  ( (unsigned char)0x40 <= (unsigned char)pDataCurrent[1] && (unsigned char)pDataCurrent[1] <= (unsigned char)0x7E ) ||
 			  ( (unsigned char)0x80 <= (unsigned char)pDataCurrent[1] && (unsigned char)pDataCurrent[1] <= (unsigned char)0xFC )
 			)
@@ -1871,13 +1871,13 @@ const char* CMemory::MemCharPrev( const char* pData, int nDataLen, const char* p
 //		if( pDataCurrent - pData >= 2 &&
 //			/* SJIS全角コードの1バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 //			(
-//			 ( (unsigned char)0x81 <= (unsigned char)pDataCurrent[-2] && (unsigned char)pDataCurrent[-2] <= (unsigned char)0x9F ) ||
-//			 ( (unsigned char)0xE0 <= (unsigned char)pDataCurrent[-2] && (unsigned char)pDataCurrent[-2] <= (unsigned char)0xFC )
+//			( (unsigned char)0x81 <= (unsigned char)pDataCurrent[-2] && (unsigned char)pDataCurrent[-2] <= (unsigned char)0x9F ) ||
+//			( (unsigned char)0xE0 <= (unsigned char)pDataCurrent[-2] && (unsigned char)pDataCurrent[-2] <= (unsigned char)0xFC )
 //			) &&
 //			/* SJIS全角コードの2バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
 //			(
-//			 ( (unsigned char)0x40 <= (unsigned char)pDataCurrent[-1] && (unsigned char)pDataCurrent[-1] <= (unsigned char)0x7E ) ||
-//		     ( (unsigned char)0x80 <= (unsigned char)pDataCurrent[-1] && (unsigned char)pDataCurrent[-1] <= (unsigned char)0xFC )
+//			( (unsigned char)0x40 <= (unsigned char)pDataCurrent[-1] && (unsigned char)pDataCurrent[-1] <= (unsigned char)0x7E ) ||
+//			( (unsigned char)0x80 <= (unsigned char)pDataCurrent[-1] && (unsigned char)pDataCurrent[-1] <= (unsigned char)0xFC )
 //			)
 //		){
 //			pPrev = pDataCurrent - 2;
@@ -1886,7 +1886,7 @@ const char* CMemory::MemCharPrev( const char* pData, int nDataLen, const char* p
 //		}
 //	}
 //	if( pPrev < pData ){
-//		pPrev = pData; 
+//		pPrev = pData;
 //	}
 	return pPrev;
 }
@@ -1941,12 +1941,12 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 	char*		pBufUnicode;
 	int			nCharChars;
 
-    setlocale( LC_ALL, "Japanese" );
+	setlocale( LC_ALL, "Japanese" );
 	i = 0;
 	k = 0;
 	nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
 	while( nCharChars > 0 && i < nBufLen ){
-        i += nCharChars;
+		i += nCharChars;
 		k += 2;
 		nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
 	}
@@ -1962,9 +1962,9 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 			++i;
 		}else{
 			*((wchar_t*)&(pBufUnicode[k])) = wchar;
-			i += j;	
+			i += j;
 		}
-        k += 2;
+		k += 2;
 		nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
 	}
 	*ppBufUnicode = pBufUnicode;
@@ -1983,7 +1983,7 @@ int CMemory::MemUnicodeToSJIS( char** ppBufSJIS, const char*pBuf, int nBufLen )
 	wchar_t*	pUniBuf;
 	char		mbchar[4];
 
-    setlocale( LC_ALL, "Japanese" );
+	setlocale( LC_ALL, "Japanese" );
 	pUniBuf = (wchar_t*)pBuf;
 	i = 0;
 	k = 0;
@@ -2127,7 +2127,7 @@ void CMemory::ToZenkaku(
 						nCharChars = 2;
 					}
 				}
-				
+
 				if( TRUE == bHiragana ){
 					/* ひらがなに変換可能なカタカナならば、ひらがなに変換する */
 					if( (unsigned short)0x8340 <= usDes && usDes <= (unsigned short)0x837e ){	/* ァ～ミ */
@@ -2136,7 +2136,7 @@ void CMemory::ToZenkaku(
 					if( (unsigned short)0x8380 <= usDes && usDes <= (unsigned short)0x8393 ){	/* ム～ン */
 						usDes-= (unsigned short)0x00a2;
 					}
-				} 
+				}
 				pBufDes[nBufDesLen]		= ( usDes & 0xff00 ) >>  8;
 				pBufDes[nBufDesLen + 1] = ( usDes & 0x00ff );
 				nBufDesLen += 2;
@@ -2249,7 +2249,7 @@ void CMemory::ToHankaku( void )
 }
 
 
-/* 
+/*
 || ファイルの日本語コードセット判別
 ||
 || 【戻り値】
@@ -2268,7 +2268,7 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 	const unsigned char*	pBuf;
 	int						nBufLen;
 	int						nCodeType;
-	
+
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
 	hFile = _lopen( pszFile, OF_READ );
@@ -2302,7 +2302,7 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 }
 
 
-/* 
+/*
 || 日本語コードセット判別
 ||
 || 【戻り値】
@@ -2334,7 +2334,7 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 	}else{
 		return -1;
 	}
-	/* 
+	/*
 	||日本語コードセット判別: EUCか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -2342,7 +2342,7 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 	}else{
 		return -1;
 	}
-	/* 
+	/*
 	||日本語コードセット判別: SJISか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -2367,7 +2367,7 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 	}else{
 		return -1;
 	}
-	/* 
+	/*
 	||日本語コードセット判別: UTF-7か？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -2420,7 +2420,7 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 
 
 
-/* 
+/*
 ||日本語コードセット判別: Unicodeか？
 || エラーの場合、FALSEを返す
 */
@@ -2440,7 +2440,7 @@ int CMemory::CheckKanjiCode_UNICODE( const unsigned char* pBuf, int nBufLen, int
 	nUNICODECodeNum = 0;
 
 	if( (unsigned char)(pBuf[0	  ]) == (unsigned char)0xff &&
-	    (unsigned char)(pBuf[0 + 1]) == (unsigned char)0xfe ){
+		(unsigned char)(pBuf[0 + 1]) == (unsigned char)0xfe ){
 		nMojiNum = 1;
 		nUNICODECodeNum = 1;
 	}
@@ -2449,7 +2449,7 @@ int CMemory::CheckKanjiCode_UNICODE( const unsigned char* pBuf, int nBufLen, int
 	return TRUE;
 }
 
-/* 
+/*
 ||日本語コードセット判別: EUCか？
 || エラーの場合、FALSEを返す
 */
@@ -2587,7 +2587,7 @@ int CMemory::CheckKanjiCode_SJIS( const unsigned char* pBuf, int nBufLen, int*	p
 			){
 				nMojiNum++;
 
-				sCode = 
+				sCode =
 					(((unsigned short)pBuf[i	] << 8) |
 					 ((unsigned short)pBuf[i + 1]));
 				if( 0xe380 > sCode ){
@@ -2721,7 +2721,7 @@ int CMemory::CheckKanjiCode_JIS( const unsigned char* pBuf, int nBufLen, int* pn
 
 
 
-/* 
+/*
 ||日本語コードセット判別: UTF-8か？
 || エラーの場合、FALSEを返す
 */
@@ -2747,7 +2747,7 @@ int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* p
 	nMojiNum = 0;
 	nUTF8CodeNum = 0;
 
-    setlocale( LC_ALL, "Japanese" );
+	setlocale( LC_ALL, "Japanese" );
 	for( i = 0; i < nBufLen; ){
 		/* UTF-8の文字か */
 		nUTF8Bytes = IsUTF8( (const unsigned char *)&pBuf[i], nBufLen - i );
@@ -2794,7 +2794,7 @@ int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* p
 
 
 
-/* 
+/*
 ||日本語コードセット判別: UTF-7か？
 || エラーの場合、FALSEを返す
 */
@@ -2821,7 +2821,7 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 	*pnUTF7CodeNum = 0;
 	nMojiNum = 0;
 	nUTF7CodeNum = 0;
-	
+
 	setlocale( LC_ALL, "Japanese" );
 //	k = 0;
 	bBASE64 = FALSE;
@@ -2906,7 +2906,7 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 void CMemory::AUTOToSJIS( void )
 {
 	int	nCodeType;
-	/* 
+	/*
 	|| 日本語コードセット判別
 	||
 	|| 【戻り値】
@@ -3019,7 +3019,7 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 /*!
 	@param nTabSpace TABの文字数
 	単独のスペースは変換しない
-	
+
 	@Author Stonee
 	@Date 2001/5/27
 */
@@ -3034,7 +3034,7 @@ void CMemory::SPACEToTAB( int nTabSpace )
 	int			nPosX;
 	CEOL		cEol;
 
-	BOOL		bSpace = FALSE;     //スペースの処理中かどうか
+	BOOL		bSpace = FALSE;	//スペースの処理中かどうか
 	int		j;
 	int		nStartPos;
 
@@ -3061,7 +3061,7 @@ void CMemory::SPACEToTAB( int nTabSpace )
 			nStartPos = 0;
 			for( i = 0; i < nLineLen; ++i ){
 				if( SPACE == pLine[i] || TAB == pLine[i] ){
-					if (bSpace == FALSE) {
+					if( bSpace == FALSE ){
 						nStartPos = nPosX;
 					}
 					bSpace = TRUE;
@@ -3071,16 +3071,16 @@ void CMemory::SPACEToTAB( int nTabSpace )
 						nPosX += nTabSpace - (nPosX % nTabSpace);
 					}
 				}else{
-					if (bSpace) {
-						if ((1 == nPosX - nStartPos) && (SPACE == pLine[i - 1])) {
+					if( bSpace ){
+						if( (1 == nPosX - nStartPos) && (SPACE == pLine[i - 1]) ){
 							pDes[nPosDes] = SPACE;
 							nPosDes++;
-						} else {
-							for (j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++) {
+						} else{
+							for( j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++ ){
 								pDes[nPosDes] = TAB;
 								nPosDes++;
 							}
-							for (j = 0; j < (nPosX % nTabSpace); j++) {
+							for( j = 0; j < (nPosX % nTabSpace); j++ ){
 								pDes[nPosDes] = SPACE;
 								nPosDes++;
 							}
@@ -3096,17 +3096,17 @@ void CMemory::SPACEToTAB( int nTabSpace )
 			//	pDes[nPosDes] = pLine[i];
 			//	nPosDes++;
 			//}
-			if (bSpace) {
-				if ((1 == nPosX - nStartPos) && (SPACE == pLine[i - 1])) {
+			if( bSpace ){
+				if( (1 == nPosX - nStartPos) && (SPACE == pLine[i - 1]) ){
 					pDes[nPosDes] = SPACE;
 					nPosDes++;
-				} else {
-					//for (j = nStartPos - 1; (j + nTabSpace) <= nPosX + 1; j+=nTabSpace) {
-					for (j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++) {
+				} else{
+					//for( j = nStartPos - 1; (j + nTabSpace) <= nPosX + 1; j+=nTabSpace ){
+					for( j = nStartPos / nTabSpace; j < (nPosX / nTabSpace); j++ ){
 						pDes[nPosDes] = TAB;
 						nPosDes++;
 					}
-					for (j = 0; j < nPosX % nTabSpace; j++) {
+					for( j = 0; j < nPosX % nTabSpace; j++ ){
 						pDes[nPosDes] = SPACE;
 						nPosDes++;
 					}

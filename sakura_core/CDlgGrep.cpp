@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	GREPダイアログボックス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -62,7 +62,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								/* 1==大文字小文字の区別 */
 	m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					/* Grep: 出力形式 */
-	
+
 	//2001/06/23 N.Nakatani add
 	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;					/* 単語単位で検索 */
 
@@ -70,7 +70,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 
 	return CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
 }
-	
+
 //	/* モードレスダイアログの表示 */
 //	HWND CDlgGrep::DoModeless( HINSTANCE hInstance, HWND hwndParent, const char* pszCurrentFilePath )
 //	{
@@ -81,7 +81,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 //		m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
 //		m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					/* Grep: 出力形式 */
 //		lstrcpy( m_szCurrentFilePath, pszCurrentFilePath );
-//  
+//
 //		return CDialog::DoModeless( hInstance, hwndParent, IDD_GREP, NULL );
 //	}
 
@@ -173,7 +173,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
 			// From Here Jun. 26, 2001 genta
 			//	正規表現ライブラリの差し替えに伴う処理の見直し
-			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true )){
+			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true ) ){
 				::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 			}else{
 				//	To Here Jun. 26, 2001 genta
@@ -195,7 +195,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //単語単位のgrepが実装されたらコメントをを外すと思います
 //			/* 単語単位で検索 */
 //			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
-		
+
 		}
 		return TRUE;
 
@@ -339,7 +339,7 @@ void CDlgGrep::SetData( void )
 		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
-		// 2001/06/23 N.Nakatani 
+		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 	}
@@ -384,7 +384,7 @@ int CDlgGrep::GetData( void )
 	//2001/06/23 N.Nakatani
 	/* 単語単位で検索 */
 	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
-	
+
 	/* 正規表現 */
 	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
 
@@ -455,11 +455,11 @@ int CDlgGrep::GetData( void )
 	::GetCurrentDirectory( MAX_PATH, m_szFolder );
 	::SetCurrentDirectory( szCurDirOld );
 
-	
+
 //	if( 0 < lstrlen( m_szText ) ){
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( m_bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true )){
+		if( m_bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true ) ){
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え

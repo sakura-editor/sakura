@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	砂時計カーソル
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -57,5 +57,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CWAITCURSOR_H_ */
+
 
 /*[EOF]*/

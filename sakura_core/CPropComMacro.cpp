@@ -5,7 +5,7 @@
 	@author genta
 	@date Jun. 2, 2001 genta
 	$Revision$
-	
+
 */
 /*
 	Copyright (C) 1998-2001, genta
@@ -124,5 +124,6 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 
 	return TRUE;
 }
+
 
 /*[EOF]*/

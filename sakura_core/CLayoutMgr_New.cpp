@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	テキストのレイアウト情報管理
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -35,8 +35,8 @@
 //	|| 	新しい折り返し文字数に合わせて全データのレイアウト情報を再生成します
 //	||
 //	*/
-//	void CLayoutMgr::DoLayout( 
-//			int		nMaxLineSize, 
+//	void CLayoutMgr::DoLayout(
+//			int		nMaxLineSize,
 //			BOOL	bWordWrap,	/* 英文ワードラップをする */
 //			HWND	hwndProgress,
 //			BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
@@ -54,7 +54,7 @@
 || 	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
 ||
 */
-void CLayoutMgr::DoLayout( 
+void CLayoutMgr::DoLayout(
 		HWND	hwndProgress,
 		BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 		BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
@@ -96,7 +96,7 @@ void CLayoutMgr::DoLayout(
 	Empty();
 	Init();
 	nLineNum = 0;
-	
+
 //	pLine = m_pcDocLineMgr->GetFirstLinrStr( &nLineLen );
 	pCDocLine = m_pcDocLineMgr->m_pDocLineTop;
 
@@ -133,7 +133,7 @@ void CLayoutMgr::DoLayout(
 				if( 0 == nWordLen ){
 					/* 英単語の先頭か */
 					if( nPos >= nBgn &&
-						nCharChars == 1 && 
+						nCharChars == 1 &&
 //						( pLine[nPos] == '#' || __iscsym( pLine[nPos] ) )
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
@@ -144,8 +144,8 @@ void CLayoutMgr::DoLayout(
 							if( 0 == nCharChars2 ){
 								nCharChars2 = 1;
 							}
-							if( nCharChars2 == 1 && 
-//								( pLine[i] == '#' || __iscsym( pLine[i] ) ) 
+							if( nCharChars2 == 1 &&
+//								( pLine[i] == '#' || __iscsym( pLine[i] ) )
 								IS_KEYWORD_CHAR( pLine[i] )
 							){
 							}else{
@@ -155,7 +155,7 @@ void CLayoutMgr::DoLayout(
 						}
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
-						if( nPosX + i - nPos >= m_nMaxLineSize 
+						if( nPosX + i - nPos >= m_nMaxLineSize
 						 && nPos - nBgn > 0
 						){
 							AddLineBottom( pCDocLine, /*pLine,*/ nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
@@ -248,7 +248,7 @@ void CLayoutMgr::DoLayout(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -257,7 +257,7 @@ void CLayoutMgr::DoLayout(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\'' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '\'' ){
 									++i;
@@ -284,7 +284,7 @@ void CLayoutMgr::DoLayout(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -293,7 +293,7 @@ void CLayoutMgr::DoLayout(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '"' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '"' ){
 									++i;
@@ -309,9 +309,9 @@ void CLayoutMgr::DoLayout(
 					}
 				}
 				break;
-			case 1:	/* 行コメントである */					
+			case 1:	/* 行コメントである */
 				break;
-			case 2:	/* ブロックコメントである */					
+			case 2:	/* ブロックコメントである */
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -336,7 +336,7 @@ void CLayoutMgr::DoLayout(
 				}
 				break;
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			case 20:	/* ブロックコメントである */					
+			case 20:	/* ブロックコメントである */
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -371,7 +371,7 @@ void CLayoutMgr::DoLayout(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -380,7 +380,7 @@ void CLayoutMgr::DoLayout(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\'' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '\'' ){
 									++i;
@@ -400,7 +400,7 @@ void CLayoutMgr::DoLayout(
 					goto SEARCH_START;
 				}
 				break;
-			case 4:	/* ダブルクォーテーション文字列である */					
+			case 4:	/* ダブルクォーテーション文字列である */
 				if( 0 == nCOMMENTEND ){
 					/* ダブルクォーテーション文字列の終端があるか */
 					int i;
@@ -410,7 +410,7 @@ void CLayoutMgr::DoLayout(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -419,7 +419,7 @@ void CLayoutMgr::DoLayout(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '"' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '"' ){
 									++i;
@@ -712,7 +712,7 @@ int CLayoutMgr::DoLayout3_New(
 				if( 0 == nWordLen ){
 					/* 英単語の先頭か */
 					if( nPos >= nBgn &&
-						nCharChars == 1 && 
+						nCharChars == 1 &&
 //						( pLine[nPos] == '#' || __iscsym( pLine[nPos] ) )
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
@@ -732,7 +732,7 @@ int CLayoutMgr::DoLayout3_New(
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
 
-						if( nPosX + i - nPos >= m_nMaxLineSize 
+						if( nPosX + i - nPos >= m_nMaxLineSize
 						 && nPos - nBgn > 0
 						){
 							pLayout = InsertLineNext( pLayout, pCDocLine, /*pLine,*/ nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nCOMMENTMODE );
@@ -747,7 +747,7 @@ int CLayoutMgr::DoLayout3_New(
 								}else{
 									m_pLayoutBot = pLayoutWork->m_pPrev;
 								}
-								
+
 #ifdef _DEBUG
 								if( m_pLayoutPrevRefer == pLayoutWork ){
 									MYTRACE( "バグバグ\n" );
@@ -853,7 +853,7 @@ int CLayoutMgr::DoLayout3_New(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -862,7 +862,7 @@ int CLayoutMgr::DoLayout3_New(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\'' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '\'' ){
 									++i;
@@ -889,7 +889,7 @@ int CLayoutMgr::DoLayout3_New(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -898,7 +898,7 @@ int CLayoutMgr::DoLayout3_New(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '"' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '"' ){
 									++i;
@@ -914,9 +914,9 @@ int CLayoutMgr::DoLayout3_New(
 					}
 				}
 				break;
-			case 1:	/* 行コメントである */					
+			case 1:	/* 行コメントである */
 				break;
-			case 2:	/* ブロックコメントである */					
+			case 2:	/* ブロックコメントである */
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -941,7 +941,7 @@ int CLayoutMgr::DoLayout3_New(
 				}
 				break;
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-			case 20:	/* ブロックコメントである */					
+			case 20:	/* ブロックコメントである */
 				if( 0 == nCOMMENTEND ){
 					/* この物理行にブロックコメントの終端があるか */
 					int i;
@@ -976,7 +976,7 @@ int CLayoutMgr::DoLayout3_New(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -985,7 +985,7 @@ int CLayoutMgr::DoLayout3_New(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\'' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '\'' ){
 									++i;
@@ -1005,7 +1005,7 @@ int CLayoutMgr::DoLayout3_New(
 					goto SEARCH_START;
 				}
 				break;
-			case 4:	/* ダブルクォーテーション文字列である */					
+			case 4:	/* ダブルクォーテーション文字列である */
 				if( 0 == nCOMMENTEND ){
 					/* ダブルクォーテーション文字列の終端があるか */
 					int i;
@@ -1015,7 +1015,7 @@ int CLayoutMgr::DoLayout3_New(
 						if( 0 == nCharChars2 ){
 							nCharChars2 = 1;
 						}
-						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '\\' ){
 								++i;
 							}else
@@ -1024,7 +1024,7 @@ int CLayoutMgr::DoLayout3_New(
 								break;
 							}
 						}else
-						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+						if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 							if( 1 == nCharChars2 && pLine[i] == '"' ){
 								if( i + 1 < nLineLen && pLine[i + 1] == '"' ){
 									++i;
@@ -1045,8 +1045,8 @@ int CLayoutMgr::DoLayout3_New(
 				}
 				break;
 			}
-			
-			
+
+
 			if( pLine[nPos] == TAB ){
 				nCharChars = m_nTabSpace - ( nPosX % m_nTabSpace );
 				if( nPosX + nCharChars > m_nMaxLineSize ){
@@ -1168,9 +1168,9 @@ int CLayoutMgr::DoLayout3_New(
 		if( nLineNumWork >= nLineNum ){
 //			pLayoutNext = pLayout->m_pNext;
 			if( NULL != pLayout
-			 && NULL != ( pLayoutNext = pLayout->m_pNext ) 
-			){  
-			    if( nCOMMENTMODE_Prev == pLayoutNext->m_nTypePrev ){
+			 && NULL != ( pLayoutNext = pLayout->m_pNext )
+			){
+				if( nCOMMENTMODE_Prev == pLayoutNext->m_nTypePrev ){
 					break;
 				}else{
 //					CLayout*	pLayoutWork;
@@ -1184,15 +1184,15 @@ int CLayoutMgr::DoLayout3_New(
 //					}
 //					delete pLayoutWork;
 //					m_nLines--;
- 
+
 					bAdd = TRUE;
-					
 
 
-//					int i; 
+
+//					int i;
 //					i = 1;
 //					break;
-				} 
+				}
 			}else{
 				break;
 			}
@@ -1214,3 +1214,6 @@ int CLayoutMgr::DoLayout3_New(
 
 	return nModifyLayoutLinesNew;
 }
+
+
+/*[EOF]*/

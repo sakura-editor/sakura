@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	INIファイル入出力
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -59,7 +59,7 @@ CProfile::~CProfile()
 	m_nSecNum = 0;
 	for( i = 0; i < MAX_SECNUM; ++i ){
 		m_nSecDataNumArr[i] = 0;
-		
+
 		if( NULL != m_pSecNameArr[i] ){
 			delete m_pSecNameArr[i];
 			m_pSecNameArr[i] = NULL;
@@ -126,10 +126,10 @@ BOOL CProfile::ReadProfile( const char* pszProfileName )
 	while( NULL != ( pLine = GetNextLine( pBuf, nFileLength, &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
 //			szLine = &pBuf[nBgn];
-			if( 2 < nLineLen && 
-				0 == memcmp( pLine, "//", 2 )	
+			if( 2 < nLineLen &&
+				0 == memcmp( pLine, "//", 2 )
 			){
-				/* コメント行 */	
+				/* コメント行 */
 			}else{
 				if( '[' == pLine[0]
 				 && 1 < nLineLen
@@ -162,7 +162,7 @@ int CProfile::SearchSection( const char* pszSectionName, int nSectionNameLen )
 	for( i = 0; i < m_nSecNum; ++i ){
 		pszWork = m_pSecNameArr[i]->GetPtr( &nWork );
 		if( nWork == nSectionNameLen &&
-			0 == memcmp( pszSectionName, pszWork, nWork ) 
+			0 == memcmp( pszSectionName, pszWork, nWork )
 		){
 			return i;
 		}
@@ -178,7 +178,7 @@ int CProfile::SearchDataName( int nCurrentSection, const char* pszDataName, int 
 	for( i = 0; i < m_nSecDataNumArr[nCurrentSection]; ++i ){
 		pszWork = m_pDataNameArr[nCurrentSection][i]->GetPtr( &nWork );
 		if( nWork == nDataNameLen &&
-			0 == memcmp( pszDataName, pszWork, nWork ) 
+			0 == memcmp( pszDataName, pszWork, nWork )
 		){
 			return i;
 		}
@@ -200,7 +200,7 @@ int CProfile::AddSection( const char* pszSectionName, int nSectionNameLen )
 		m_pSecNameArr[nCurrentSection] = new CMemory( pszSectionName, nSectionNameLen );
 //		MYTRACE( "★[%s]\n", m_pSecNameArr[nCurrentSection]->GetPtr( NULL ) );
 
-		
+
 //		m_pSecNameArr[nCurrentSection]->SetData( pszSectionName, nSectionNameLen );
 	}
 	return nCurrentSection;
@@ -209,34 +209,34 @@ int CProfile::AddSection( const char* pszSectionName, int nSectionNameLen )
 
 
 
-BOOL CProfile::AddSectionData( 
-	int			nCurrentSection, 
-	const char*	pszDataName, 
+BOOL CProfile::AddSectionData(
+	int			nCurrentSection,
+	const char*	pszDataName,
 	int			nDataNameLen,
-	const char*	pszData, 
+	const char*	pszData,
 	int			nDataLen
 )
 {
 	int		nCurrentIdx;
-	if( 0 > nCurrentSection || 
+	if( 0 > nCurrentSection ||
 		m_nSecNum <= nCurrentSection ){
 		return FALSE;
 	}
 	if( -1 == ( nCurrentIdx = SearchDataName( nCurrentSection, pszDataName, nDataNameLen ) ) ){
 		nCurrentIdx = m_nSecDataNumArr[nCurrentSection];
 		if( nCurrentIdx + 1 > MAX_SECDATA ){
-//			MYTRACE( "★★★★nCurrentIdx + 1 > MAX_SECDATA\n   nCurrentIdx=%d, MAX_SECDATA=%d\n", nCurrentIdx, MAX_SECDATA );
+//			MYTRACE( "★★★★nCurrentIdx + 1 > MAX_SECDATA\n  nCurrentIdx=%d, MAX_SECDATA=%d\n", nCurrentIdx, MAX_SECDATA );
 			return FALSE;
 		}
 		m_nSecDataNumArr[nCurrentSection]++;
 		m_pDataNameArr[nCurrentSection][nCurrentIdx] = new CMemory( pszDataName, nDataNameLen );
-		
-		
+
+
 		m_pDataArr[nCurrentSection][nCurrentIdx] = new CMemory;
 //		m_pDataNameArr[nCurrentSection][nCurrentIdx]->SetData( pszDataName, nDataNameLen );
 	}
 	m_pDataArr[nCurrentSection][nCurrentIdx]->SetData( pszData, nDataLen );
-//	MYTRACE( "　□[%s]=[%s]\n", m_pDataNameArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+//	MYTRACE( "    [%s]=[%s]\n", m_pDataNameArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
 	return TRUE;
 }
 
@@ -295,10 +295,10 @@ BOOL CProfile::WriteProfile( const char* pszProfileName, const char* pszComment 
 
 
 
-BOOL CProfile::IOProfileData( 
-	BOOL		bRead, 
+BOOL CProfile::IOProfileData(
+	BOOL		bRead,
 	const char* pszSectionName,
-//	int			nSentio 
+//	int			nSentio
 	const char*	lpValueName,
 	int			nRegCnvID,
 	char*		lpDataSrc,
@@ -307,8 +307,8 @@ BOOL CProfile::IOProfileData(
 {
 //	LONG			lRet;
 	DWORD			dwType;
-	const char*		pData;		// address of value data 
-	DWORD			nDataLen;	// size of value data 
+	const char*		pData;		// address of value data
+	DWORD			nDataLen;	// size of value data
 //	char			szValueStr[1024];
 	static char		szValueStr[MAX_SETNUM * MAX_KEYWORDNUM * ( MAX_KEYWORDLEN ) + 1];
 	int				nWork;
@@ -318,7 +318,7 @@ BOOL CProfile::IOProfileData(
 	int				nCurrentIdx;
 #ifdef _DEBUG
 	if( NULL == lpDataSrc ){
-		MYTRACE( "MY_RegVal_IO() NULL == lpDataSrc\n" );	
+		MYTRACE( "MY_RegVal_IO() NULL == lpDataSrc\n" );
 	}
 #endif
 //	szValueStr[0] = '\0';
@@ -361,20 +361,20 @@ BOOL CProfile::IOProfileData(
 //		if( ERROR_SUCCESS != lRet ){
 //			char*	pszMsgBuf;
 //			::FormatMessage(
-//				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-//				FORMAT_MESSAGE_FROM_SYSTEM | 
+//				FORMAT_MESSAGE_ALLOCATE_BUFFER |
+//				FORMAT_MESSAGE_FROM_SYSTEM |
 //				FORMAT_MESSAGE_IGNORE_INSERTS,
 //				NULL,
 //				::GetLastError(),
 //				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
 //				(LPTSTR) &pszMsgBuf,
 //				0,
-//				NULL 
+//				NULL
 //			);
 //			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-//				"レジストリ項目　値の読み込み失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf
+//				"レジストリ項目 値の読み込み失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf
 //			);
-//			MYTRACE( "レジストリ項目　値の読み込み失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf );
+//			MYTRACE( "レジストリ項目 値の読み込み失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf );
 //			::LocalFree( pszMsgBuf );
 //		}else{
 			switch( nRegCnvID ){
@@ -478,26 +478,26 @@ BOOL CProfile::IOProfileData(
 //		if( ERROR_SUCCESS != lRet ){
 //			char*	pszMsgBuf;
 //			::FormatMessage(
-//				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-//				FORMAT_MESSAGE_FROM_SYSTEM | 
+//				FORMAT_MESSAGE_ALLOCATE_BUFFER |
+//				FORMAT_MESSAGE_FROM_SYSTEM |
 //				FORMAT_MESSAGE_IGNORE_INSERTS,
 //				NULL,
 //				::GetLastError(),
 //				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
 //				(LPTSTR) &pszMsgBuf,
 //				0,
-//				NULL 
+//				NULL
 //			);
 //			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-//				"レジストリ項目　値の書き込み()失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf
+//				"レジストリ項目 値の書き込み()失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf
 //			);
-//			MYTRACE( "レジストリ項目　値の書き込み()失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf );
+//			MYTRACE( "レジストリ項目 値の書き込み()失敗 lpValueName=[%s]%s\n", lpValueName, pszMsgBuf );
 //			::LocalFree( pszMsgBuf );
 //		}
 //		return lRet;
 	}
 
-} 
+}
 
 
 
@@ -525,5 +525,4 @@ void CProfile::DUMP( void )
 }
 
 
-/* [EOF] */
-
+/*[EOF]*/

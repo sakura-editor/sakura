@@ -76,3 +76,5 @@ const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_CR					// == 1
 };
 
+
+/*[EOF]*/

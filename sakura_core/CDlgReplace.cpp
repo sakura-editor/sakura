@@ -1,9 +1,9 @@
 //	$Id$
 /*!	@file
 	置換ダイアログ
-	
+
 	@author Norio Nakatani
-	@date 2001/06/23 N.Nakatani　単語単位で検索する機能を実装
+	@date 2001/06/23 N.Nakatani 単語単位で検索する機能を実装
 	$Revision$
 */
 /*
@@ -89,8 +89,8 @@ void CDlgReplace::SetData( void )
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
-	
-	// 2001/06/23 N.Nakatani 
+
+	// 2001/06/23 N.Nakatani
 	/* 単語単位で探す */
 	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
 
@@ -112,7 +112,7 @@ void CDlgReplace::SetData( void )
 		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
-		// 2001/06/23 N.Nakatani 
+		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 	}
@@ -123,11 +123,11 @@ void CDlgReplace::SetData( void )
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
-	
-	
+
+
 	/* 置換 ダイアログを自動的に閉じる */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace, m_pShareData->m_Common.m_bAutoCloseDlgReplace );
-	
+
 	return;
 }
 
@@ -145,7 +145,7 @@ int CDlgReplace::GetData( void )
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
 
-	// 2001/06/23 N.Nakatani 
+	// 2001/06/23 N.Nakatani
 	/* 単語単位で探す */
 	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
 
@@ -174,7 +174,7 @@ int CDlgReplace::GetData( void )
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true )){
+		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
@@ -298,7 +298,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
 			// From Here Jun. 26, 2001 genta
 			//	正規表現ライブラリの差し替えに伴う処理の見直し
-			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true )){
+			if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, true ) ){
 				::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
 			}else{
 			// To Here Jun. 26, 2001 genta
@@ -307,7 +307,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
-				// 2001/06/23 N.Nakatani 
+				// 2001/06/23 N.Nakatani
 				/* 単語単位で探す */
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 
@@ -317,7 +317,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
 			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
 
-			// 2001/06/23 N.Nakatani 
+			// 2001/06/23 N.Nakatani
 			/* 単語単位で探す */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
 
@@ -484,7 +484,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 //					CRunningTimer* pcRunningTimer = new CRunningTimer( (const char*)"F_SEARCH_NEXT" );
 //					gm_ProfileOutput = FALSE;
 //#endif
-				
+
 					/* 次を検索 */
 					pcEditView->HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
 //#ifdef _DEBUG
@@ -504,7 +504,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			//再描画
 			pcEditView->m_bDrawSWITCH = TRUE;
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
-			
+
 
 			if( !cDlgCancel.IsCanceled() ){
 				nNewPos = 100;

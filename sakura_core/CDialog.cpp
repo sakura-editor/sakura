@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	Dialog Boxの基底クラス．
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -202,7 +202,7 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	/* サイズボックスの移動 */
 	if( NULL != m_hwndSizeBox ){
 		::GetClientRect( m_hWnd, &rc );
-//		::SetWindowPos( m_hwndSizeBox, NULL, 
+//		::SetWindowPos( m_hwndSizeBox, NULL,
 //	Sept. 17, 2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更する必要ある？
 //	Jan. 12, 2001 JEPRO (directed by stonee) 15を16に変更するとアウトライン解析のダイアログの右下にある
 //	グリップサイズに`遊び'ができてしまい(移動する！)、ダイアログを大きくできないという障害が発生するので
@@ -214,7 +214,7 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 
 //	Jan. 12, 2001 Stonee (suggested by genta)
 //		"13"という固定値ではなくシステムから取得したスクロールバーサイズを使うように修正
-		::SetWindowPos( m_hwndSizeBox, NULL, 
+		::SetWindowPos( m_hwndSizeBox, NULL,
 		rc.right - rc.left - GetSystemMetrics(SM_CXVSCROLL), //<-- stonee
 		rc.bottom - rc.top - GetSystemMetrics(SM_CYHSCROLL), //<-- stonee
 		GetSystemMetrics(SM_CXVSCROLL), //<-- stonee
@@ -299,7 +299,7 @@ BOOL CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_SIZE:
 		m_hWnd = hwndDlg;
 		return OnSize( wParam, lParam );
-	case WM_MOVE:		
+	case WM_MOVE:
 		m_hWnd = hwndDlg;
 		return OnMove( wParam, lParam );
 	case WM_DRAWITEM:	return OnDrawItem( wParam, lParam );
@@ -319,8 +319,8 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 	WORD	wID;
 	HWND	hwndCtl;
 	wNotifyCode = HIWORD(wParam);	/* 通知コード */
-	wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-	hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+	wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+	hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 	switch( wNotifyCode ){
 
 	/* コンボボックス用メッセージ */

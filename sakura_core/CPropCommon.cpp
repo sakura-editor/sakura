@@ -38,7 +38,7 @@
 #include "CDlgDebug.h"
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
-#include "funccode.h"    //Stonee, 2001/05/18
+#include "funccode.h"	//Stonee, 2001/05/18
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 const DWORD p_helpids[] = {	//10900
@@ -218,7 +218,7 @@ void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	COLORREF	cBtnShadow		= (COLORREF)::GetSysColor(COLOR_3DSHADOW);
 	COLORREF	cBtnDkShadow	= (COLORREF)::GetSysColor(COLOR_3DDKSHADOW);
 	COLORREF	cBtnFace		= (COLORREF)::GetSysColor(COLOR_3DFACE);
-	COLORREF	cRim; 
+	COLORREF	cRim;
 	HBRUSH		hBrush;
 	HBRUSH		hBrushOld;
 	HPEN		hPen;
@@ -404,7 +404,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 				pDis->hDC,		// handle to destination device context
 				rc.left + 2,	// x-coordinate of destination rectangle's upper-left corner
 				rc.top  + 2,	// x-coordinate of destination rectangle's upper-left corner
-				16,	// width of destination rectangle 
+				16,	// width of destination rectangle
 //	Sept. 17, 2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更
 //				15,				// height of destination rectangle
 				16,				// height of destination rectangle
@@ -492,14 +492,14 @@ struct ComPropSheetInfo {
 int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 {
 //	m_nActiveItem = nActiveItem;
-	
+
 	/* 共有データ構造体のアドレスを返す */
 	m_cShareData.Init();
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
 	int				nRet;
 	PROPSHEETPAGE	psp[32];
-    PROPSHEETHEADER	psh;
+	PROPSHEETHEADER	psh;
 	int				nIdx;
 	int				i;
 
@@ -552,12 +552,12 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	psh.hInstance = m_hInstance;
 	psh.pszIcon = NULL /*MAKEINTRESOURCE( IDI_CELL_PROPERTIES )*/;
 	psh.pszCaption = (LPSTR) "共通設定";
-    psh.nPages = nIdx;
+	psh.nPages = nIdx;
 
 
 	if( -1 == nPageNum ){
 		psh.nStartPage = m_nPageNum;
-    }else{
+	}else{
 		psh.nStartPage = nPageNum;
 	}
 	if( 0 > psh.nStartPage ){
@@ -621,7 +621,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
 	int			nVal;
-//    LPDRAWITEMSTRUCT pDis;
+//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 
@@ -682,7 +682,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 
 				m_pShareData->m_nMRUArrNum = 0;
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					"最近使ったファイルの履歴を削除しました。\n" 
+					"最近使ったファイルの履歴を削除しました。\n"
 				);
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
@@ -693,7 +693,7 @@ BOOL CPropCommon::DispatchEvent_p1(
 				}
 				m_pShareData->m_nOPENFOLDERArrNum = 0;
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					"最近使ったフォルダの履歴を削除しました。\n" 
+					"最近使ったフォルダの履歴を削除しました。\n"
 				);
 				return TRUE;
 
@@ -1088,7 +1088,7 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 //
 //	/* 次回ウィンドウを開いたときツールバーを表示する */
 //	m_Common.m_bDispTOOLBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTOOLBAR );
-//	
+//
 //	/* 次回ウィンドウを開いたときファンクションキーを表示する */
 //	m_Common.m_bDispFUNCKEYWND = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND );
 //
@@ -1104,7 +1104,7 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	m_Common.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
 
 	/* タスクトレイ左クリックメニューのショートカット */
-	LRESULT	lResult; 
+	LRESULT	lResult;
 	lResult = ::SendMessage( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), HKM_GETHOTKEY, 0, 0 );
 	m_Common.m_wTrayMenuHotKeyCode = LOBYTE( lResult );
 	m_Common.m_wTrayMenuHotKeyMods = HIBYTE( lResult );
@@ -1177,5 +1177,6 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	}
 	return;
 }
+
 
 /*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	CDicMgrクラス
-	
+
 	@author Norio Nakatani
 	@date	1998/11/05 作成
 	$Revision$
@@ -46,9 +46,9 @@ CDicMgr::~CDicMgr()
 
 
 /*
-||   キーワードの検索
+||  キーワードの検索
 ||
-||   最初に見つかったキーワードの意味を返す
+||  最初に見つかったキーワードの意味を返す
 */
 BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszKeyWordHelpFile )
 {
@@ -112,11 +112,11 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 
 
 /*
-||   入力補完キーワードの検索
+||  入力補完キーワードの検索
 ||
-||   ・見つかった候補をすべて返す(改行で区切って返す)
-||   ・指定された候補の最大数を超えると処理を中断する
-||   ・見つかった数を返す
+||  ・見つかった候補をすべて返す(改行で区切って返す)
+||  ・指定された候補の最大数を超えると処理を中断する
+||  ・見つかった数を返す
 ||
 */
 int CDicMgr::HokanSearch(

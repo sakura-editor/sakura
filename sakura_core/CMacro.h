@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キーボードマクロ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -49,7 +49,7 @@ public:
 	static char* CMacro::GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* 機能ID→関数名，機能名日本語 */
 	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
-	
+
 
 protected:
 	/*

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	CEditViewクラス
-	
+
 	@author Norio Nakatani
 	@date	1998/12/08 作成
 	$Revision$
@@ -128,9 +128,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	m_hFontOld = NULL;
 
 
-//	crBackOld = ::SetBkColor(   hdc, TypeDataPtr->m_colorBACK );
+//	crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_colorBACK );
 //	crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_colorTEXT );
-	crBackOld = ::SetBkColor(   hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+	crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
 	crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
 
 //	::FillRect( hdc, &pPs->rcPaint, ::GetStockObject( WHITE_BRUSH ) );
@@ -228,7 +228,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 //	if( bEOF ){
 //		nTop = ( i + 1 - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
 //	}else{
-//		nTop = ( i     - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
+//		nTop = ( i	   - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
 //	}
 	if( bDispBkBitmap ){
 	}else{
@@ -299,9 +299,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 //@@@ 2001.02.17 Start by MIK
 /*! 行のテキスト／選択状態の描画
-   @par nCOMMENTMODE 
-   関数内部で状態遷移のために使われる変数nCOMMENTMODEと状態の関係。
-   
+	@par nCOMMENTMODE
+	関数内部で状態遷移のために使われる変数nCOMMENTMODEと状態の関係。
+
  - 0: 通常
  - 1: 行コメント
  - 2: ブロックコメント
@@ -314,7 +314,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
  - 50: 強調キーワード２
  - 80: URL
  - 90: 検索
- 
+
  */
 //@@@ 2001.02.17 End by MIK
 int CEditView::DispLineNew(
@@ -625,10 +625,10 @@ searchnext:;
 					}else
 					//	Mar. 15, 2000 genta
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
-						NULL !=     TypeDataPtr->m_szBlockCommentFrom &&	/* ブロックコメントデリミタ(From) */
+						NULL != TypeDataPtr->m_szBlockCommentFrom &&	/* ブロックコメントデリミタ(From) */
 //						0 < lstrlen( TypeDataPtr->m_szBlockCommentFrom ) &&
 						'\0' != TypeDataPtr->m_szBlockCommentFrom[0] &&
-						NULL !=     TypeDataPtr->m_szBlockCommentTo &&		/* ブロックコメントデリミタ(To) */
+						NULL != TypeDataPtr->m_szBlockCommentTo &&		/* ブロックコメントデリミタ(To) */
 //						0 < lstrlen( TypeDataPtr->m_szBlockCommentTo ) &&
 						'\0' != TypeDataPtr->m_szBlockCommentTo[0]  &&
 						nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom ) &&	/* ブロックコメントデリミタ(From) */
@@ -1308,7 +1308,7 @@ searchnext:;
 					::DeleteObject( hBrush );
 				}
 
-				/* 折り返し記号	*/
+				/* 折り返し記号 */
 				/* 折り返し記号を表示する */
 				rcClip2.left = x + nX * ( nCharWidth );
 				rcClip2.right = rcClip2.left + ( nCharWidth ) * 1;
@@ -1577,7 +1577,7 @@ end_of_func:;
 }
 
 //	May 23, 2000 genta
-/*! 画面描画補助関数: 
+/*! 画面描画補助関数:
 	行末の改行マークを改行コードによって書き分ける（メイン）
 
 	@param hdc Device Context Handle
@@ -1588,7 +1588,7 @@ end_of_func:;
 	@param nHeight 描画エリアのサイズY
 	@param cEol 行末コード種別
 	@param bBold TRUE: 太字
-	
+
 	@note bBoldがTRUEの時は横に1ドットずらして重ね書きを行うが、
 	あまり太く見えない。
 */

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キーボードマクロ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -60,7 +60,7 @@ int CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1 )
 	if( m_nKeyMacroDataArrNum + 1 > MAX_KEYMACRONUM ){
 		return m_nKeyMacroDataArrNum;
 	}
-	
+
 	switch( nFuncID ){
 	case F_INSTEXT:
 		m_pKeyMacroDataArr[m_nKeyMacroDataArrNum].m_nFuncID = nFuncID;
@@ -103,11 +103,11 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 	_lwrite( hFile, szLine, strlen( szLine ) );
 	for( i = 0; i < m_nKeyMacroDataArrNum; ++i ){
 		/* 機能ID→関数名，機能名日本語 */
-		if( NULL != CMacro::GetFuncInfoByID( hInstance, m_pKeyMacroDataArr[i].m_nFuncID, szFuncName, szFuncNameJapanese )){
+		if( NULL != CMacro::GetFuncInfoByID( hInstance, m_pKeyMacroDataArr[i].m_nFuncID, szFuncName, szFuncNameJapanese ) ){
 			switch( m_pKeyMacroDataArr[i].m_nFuncID ){
 			case F_INSTEXT:
 				nPos = 0;
-				/* 指定長以下のテキストに切り分ける */				
+				/* 指定長以下のテキストに切り分ける */
 				while( NULL != ( pText = GetNextLimitedLengthText( m_szKeyMacroDataArr[i], strlen( m_szKeyMacroDataArr[i] ), 11/*MAX_STRLEN - 1*/, &nTextLen, &nPos ) ) ){
 					cmemWork.SetData( pText, nTextLen );
 					cmemWork.Replace( "\\\"", "\"" );
@@ -115,14 +115,14 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 					wsprintf( szLine, "%s(\"%s\");\t/* %s */\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
 					_lwrite( hFile, szLine, strlen( szLine ) );
 				}
-			
+
 //				cmemWork = m_cmemKeyMacroDataArr[i];
 //				cmemWork.SetData( m_szKeyMacroDataArr[i], strlen( m_szKeyMacroDataArr[i] ) );
 //				cmemWork.Replace( "\\", "\\\\" );
 //				cmemWork.Replace( "\"", "\\\"" );
 //				sprintf( szLine, "%s(\"%s\");\t/* %s */\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
 				break;
-			default:			
+			default:
 				if( 0 == m_pKeyMacroDataArr[i].m_lParam1 ){
 					wsprintf( szLine, "%s();\t/* %s */\r\n", szFuncName, szFuncNameJapanese );
 				}else{
@@ -131,7 +131,7 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 				_lwrite( hFile, szLine, strlen( szLine ) );
 				break;
 			}
-		
+
 		}else{
 			wsprintf( szLine, "CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n" );
 			_lwrite( hFile, szLine, strlen( szLine ) );
@@ -179,7 +179,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 
 	/* キーマクロのバッファをクリアする */
 	Clear();
-	
+
 	if( NULL == pFile ){
 		::MYMESSAGEBOX(	hwndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルを開けませんでした。\n\n%s", pszPath
@@ -223,12 +223,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 						break;
 					}
 				}
-				
+
 				int			nPos;
 				const char*	pText;
 				int			nTextLen;
 				nPos = 0;
-				/* 指定長以下のテキストに切り分ける */				
+				/* 指定長以下のテキストに切り分ける */
 				while( NULL != ( pText = GetNextLimitedLengthText( &szLine[nBgn], i - nBgn, 11/*MAX_STRLEN - 1*/, &nTextLen, &nPos ) ) ){
 					cmemWork.SetData( pText, nTextLen );
 					cmemWork.Replace( "\\\"", "\"" );
@@ -236,7 +236,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 					/* キーマクロのバッファにデータ追加 */
 					Append( nFuncID, (LPARAM)cmemWork.GetPtr( NULL ) );
 				}
-//				
+//
 //				cmemWork.SetData( &szLine[nBgn], i - nBgn );
 //				cmemWork.Replace( "\\\"", "\"" );
 //				cmemWork.Replace( "\\\\", "\\" );
@@ -262,4 +262,4 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, HWND hwndParent, const cha
 }
 
 
-/* [EOF] */
+/*[EOF]*/

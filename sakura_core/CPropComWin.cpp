@@ -63,10 +63,10 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_WIN(
 
 /* メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_PROP_WIN(
-    HWND	hwndDlg,	// handle to dialog box
-    UINT	uMsg,	// message
-    WPARAM	wParam,	// first message parameter
-    LPARAM	lParam 	// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,	// message
+	WPARAM	wParam,	// first message parameter
+	LPARAM	lParam 	// second message parameter
 )
 {
 //	WORD		wNotifyCode;
@@ -84,7 +84,7 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 	int			idCtrl;
 //	int			nVal;
 	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
-//    LPDRAWITEMSTRUCT pDis;
+//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 
@@ -176,9 +176,9 @@ BOOL CPropCommon::DispatchEvent_PROP_WIN(
 //****	To Here Sept. 21, 2000
 //	From Here Sept. 9, 2000 JEPRO
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -278,7 +278,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 
 	/* 次回ウィンドウを開いたときツールバーを表示する */
 	m_Common.m_bDispTOOLBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTOOLBAR );
-	
+
 	/* 次回ウィンドウを開いたときファンクションキーを表示する */
 	m_Common.m_bDispFUNCKEYWND = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND );
 
@@ -303,7 +303,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_nRulerType_1 ) ){
 		m_Common.m_nRulerType = 1;
 	}
-	
+
 	/* ルーラー高さ */
 	m_Common.m_nRulerHeight = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE );
 	if( m_Common.m_nRulerHeight < 13 ){
@@ -359,7 +359,6 @@ void CPropCommon::EnableWinPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 9, 2000
-
 
 
 /*[EOF]*/

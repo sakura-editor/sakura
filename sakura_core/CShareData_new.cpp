@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	プロセス間共有データのファイルへ／からの入出力
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -40,7 +40,7 @@
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
   配列の順番は共有メモリ中のデータの順番と一致している。
-    
+
   @note 数値による内部的対応はCShareData.hで行っているので参照のこと。(Mar. 7, 2001 jepro)
 */
 static char* colorIDXKeyName[] =
@@ -876,18 +876,18 @@ BOOL CShareData::ShareData_IO( BOOL bRead )
 			if( bRead ){
 				if( ERROR_SUCCESS == MY_RegVal_IO( bRead, hkReg, szKeyName, REGCNV_SZ2SZ, (BYTE *)szKeyData, 0 ) ){
 					sscanf( szKeyData, pszForm,
-						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp   ,
+						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp,
 						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bFatFont,
-						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT ,
+						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT,
 						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colBACK
 //						m_pShareData->m_Types[i].m_ColorInfoArr[j].m_szName
 					 );
 				}
 			}else{
 				wsprintf( szKeyData, pszForm,
-					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp   ,
+					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp,
 					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bFatFont,
-					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT ,
+					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT,
 					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colBACK
 //					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_szName
 				);
@@ -956,8 +956,8 @@ Section02:;
 
 
 /*!
-	共有データの読み込み/保存 2 
-	
+	共有データの読み込み/保存 2
+
 	@param bRead [in] true: 読み込み / false: 書き込み
 */
 BOOL CShareData::ShareData_IO_2( BOOL bRead )
@@ -1664,7 +1664,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		if( bRead ){
 			if( m_pShareData->m_Types[i].m_nLineSpace < /* 1 */ 0 ){
 				m_pShareData->m_Types[i].m_nLineSpace = /* 1 */ 0;
-			} 
+			}
 			if( m_pShareData->m_Types[i].m_nLineSpace > 16 ){
 				m_pShareData->m_Types[i].m_nLineSpace = 16;
 			}
@@ -1730,17 +1730,17 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 			if( bRead ){
 				if( TRUE == cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 ) ){
 					sscanf( szKeyData, pszForm,
-						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp   ,
+						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp,
 						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bFatFont,
-						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT ,
+						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT,
 						&m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colBACK
 					 );
 				}
 			}else{
 				wsprintf( szKeyData, pszForm,
-					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp   ,
+					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bDisp,
 					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_bFatFont,
-					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT ,
+					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colTEXT,
 					m_pShareData->m_Types[i].m_ColorInfoArr[j].m_colBACK
 				);
 				cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 );
@@ -1873,10 +1873,10 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 /*!
 	@brief 色設定 I/O
-	
+
 	指定された色設定を指定されたセクションに書き込む。または
 	指定されたセクションからいろ設定を読み込む。
-	
+
 	@param pcProfile [i/o] 書き出し、読み込み先Profile object (入出力方向はbReadに依存)
 	@param bRead [in] true: 読み出し / false: 書き込み
 	@param pszSecName [in] セクション名
@@ -1898,19 +1898,19 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, BOOL bRead, const char* pszSe
 			if( TRUE == pcProfile->IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 ) ){
 				pColorInfoArr[j].m_bUnderLine = FALSE;
 				sscanf( szKeyData, pszForm,
-					&pColorInfoArr[j].m_bDisp   ,
+					&pColorInfoArr[j].m_bDisp,
 					&pColorInfoArr[j].m_bFatFont,
-					&pColorInfoArr[j].m_colTEXT ,
-					&pColorInfoArr[j].m_colBACK ,
+					&pColorInfoArr[j].m_colTEXT,
+					&pColorInfoArr[j].m_colBACK,
 					&pColorInfoArr[j].m_bUnderLine
 				 );
 			}
 		}else{
 			wsprintf( szKeyData, pszForm,
-				pColorInfoArr[j].m_bDisp   ,
+				pColorInfoArr[j].m_bDisp,
 				pColorInfoArr[j].m_bFatFont,
-				pColorInfoArr[j].m_colTEXT ,
-				pColorInfoArr[j].m_colBACK ,
+				pColorInfoArr[j].m_colTEXT,
+				pColorInfoArr[j].m_colBACK,
 				pColorInfoArr[j].m_bUnderLine
 			);
 			pcProfile->IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ, (char*)szKeyData, 0 );

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	強調キーワード管理
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -31,7 +31,7 @@ class CKeyWordSetMgr;
 #include <windows.h>
 #include "CMemory.h"
 
-#define		MAX_SETNUM		20
+#define		MAX_SETNUM		20	//Jul. 12, 2001 jepro notes: 強調キーワードのセット数の最大値
 #define		MAX_SETNAMELEN	32
 #define		MAX_KEYWORDNUM	1000
 #define		MAX_KEYWORDLEN	100
@@ -71,9 +71,9 @@ public:
 	int		m_nCurrentKeyWordSetIdx;
 	int		m_nKeyWordSetNum;
 	char	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];
-    int		m_nKEYWORDCASEArr[MAX_SETNUM];	/* キーワードの英大文字小文字区別 */
-	int		m_nKeyWordNumArr[MAX_SETNUM];				
-	char	m_szKeyWordArr[MAX_SETNUM][MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];				
+	int		m_nKEYWORDCASEArr[MAX_SETNUM];	/* キーワードの英大文字小文字区別 */
+	int		m_nKeyWordNumArr[MAX_SETNUM];
+	char	m_szKeyWordArr[MAX_SETNUM][MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];
 	char	m_IsSorted[MAX_SETNUM];	/* ソートしたかどうかのフラグ */  //MIK
 protected:
 	/*
@@ -85,5 +85,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CKEYWORDSETMGR_H_ */
+
 
 /*[EOF]*/
