@@ -914,7 +914,7 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 
 
 
-//@@@ 2001.02.17 Start by MIK
+//@@@ 2001.11.07 Start by MIK
 //#ifdef COMPILE_COLOR_DIGIT
 /*
  * 数値なら長さを返す。
@@ -934,179 +934,529 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
  * 123.     123
  * 0x567.8  0x567 , 8
  */
-int IsNumber(const char* buf, int offset, int length)
+/*
+ * 半角数値
+ *   1, 1.2, 1.2.3, .1, 0xabc, 1L, 1F, 1.2f, 0x1L, 0x2F, -.1, -1, 1e2, 1.2e+3, 1.2e-3, -1e0
+ *   10進数, 16進数, LF接尾語, 浮動小数点数, 負符号
+ *   IPアドレスのドット連結(本当は数値じゃないんだよね)
+ */
+int IsNumber(const char *buf, int offset, int length)
 {
-	const char *p, *q;
-	int i = 0;
-	int d;
+	register const char *p, *q;
+	register int i = 0;
+	register int d = 0;
+	register int f = 0;
 
-	/* 高速化のためポインタを使う! */
 	p = &buf[offset];
-	//q = &buf[length];	/* 数字以外のときの高速化のためここではしない */
+	q = &buf[length];
 
-	if( *p >= '0' && *p <= '9' ){
-		q = &buf[length];
-		/* 8,10,16進数 */
-		p++;
-		if( p < q ){
-			if( *(p - 1) == '0' && *p == 'x' ){
-				/* 16進数 */
-				p++;
-				for( i = 2; p < q; p++, i++ ){
-					if( (*p < '0' || *p > '9')
-					&& (*p < 'A' || *p > 'F')
-					&& (*p < 'a' || *p > 'f') ){
-						break;
+	if( *p == '0' )  /* 10進数,Cの16進数 */
+	{
+		p++; i++;
+		if( ( p < q ) && ( *p == 'x' ) )  /* Cの16進数 */
+		{
+			p++; i++;
+			while( p < q )
+			{
+				if( ( *p >= '0' && *p <= '9' )
+				 || ( *p >= 'A' && *p <= 'F' )
+				 || ( *p >= 'a' && *p <= 'f' ) )
+				{
+					p++; i++;
+				}
+				else
+				{
+					break;
+				}
+			}
+			/* "0x" なら "0" だけが数値 */
+			if( i == 2 ) return 1;
+			
+			/* 接尾語 */
+			if( p < q )
+			{
+				if( *p == 'L' || *p == 'l' || *p == 'F' || *p == 'f' )
+				{
+					p++; i++;
+				}
+			}
+			return i;
+		}
+		else if( *p >= '0' && *p <= '9' )
+		{
+			p++; i++;
+			while( p < q )
+			{
+				if( *p < '0' || *p > '9' )
+				{
+					if( *p == '.' )
+					{
+						if( f == 1 ) break;  /* 指数部に入っている */
+						d++;
+						if( d > 1 )
+						{
+							if( *(p - 1) == '.' ) break;  /* "." が連続なら中断 */
+						}
 					}
-				}
-				/* "0x" のときは "0" が数値になる */
-				if( i == 2 ){
-					return 1;
-				}
-			}else{
-				/* 10進数または8進数 */
-				for( i = 1, d = 0; p < q; p++, i++ ){
-					if( *p < '0' || *p > '9' ){
-						if( *p == '.' ){
-							d++;
-							if( d > 1 ) break;
-							//if( d > 1 )	return 0;
-						}else{
+					else if( *p == 'E' || *p == 'e' )
+					{
+						if( f == 1 ) break;  /* 指数部に入っている */
+						if( p + 2 < q )
+						{
+							if( ( *(p + 1) == '+' || *(p + 1) == '-' )
+							 && ( *(p + 2) >= '0' && *(p + 2) <= '9' ) )
+							{
+								p++; i++;
+								p++; i++;
+								f = 1;
+							}
+							else if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+							{
+								p++; i++;
+								f = 1;
+							}
+							else
+							{
+								break;
+							}
+						}
+						else if( p + 1 < q )
+						{
+							if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+							{
+								p++; i++;
+								f = 1;
+							}
+							else
+							{
+								break;
+							}
+						}
+						else
+						{
 							break;
 						}
 					}
-				}
-				/* "." で終わるときは "." は入れない */
-				if( *(p - 1) == '.' ){
-					i--;
-				}
-			}
-		}else{
-			return 1;
-		}
-	}else if( *p == '-' /* || *p == '+' */ ){
-		q = &buf[length];
-		/* マイナスの10進数 */
-		p++;
-		if( p < q ){
-			if( *p == '0' ){
-				p++;
-				if( p < q ){
-					if( *p == 'x' ){
-						p++;
-						if( p < q ){						//***16進数にマイナスがないときはここを有効に。
-						//for( i = 3; p < q; p++, i++ ){	//***16進数にマイナスもあるときはここを有効に。
-							if( (*p >= '0' && *p <= '9')
-							||  (*p >= 'A' && *p <= 'F')
-							||  (*p >= 'a' && *p <= 'f') ){
-								//break;					//***16進数にマイナスもあるときはここを有効に。
-								/* 16進数なのでマイナス符号ではない */
-								return 0;					//***16進数にマイナスがないときはここを有効に。
-							}
-						}
-						//if( i == 3 ){						//***16進数にマイナスもあるときはここを有効に。
-							/* "-0x" のうち "-0" が数値 */
-							return 2;
-						//}									//***16進数にマイナスもあるときはここを有効に。
-					}else{
-						for( i = 2, d = 0; p < q; p++, i++ ){
-							if( *p < '0' || *p > '9' ){
-								if( *p == '.' ){
-									d++;
-									if( d > 1 ) break;
-									//if( d > 1 ) return 0;
-								}else{
-									break;
-								}
-							}
-						}
-						/* "." で終わるときは "." は入れない */
-						if( *(p - 1) == '.' ){
-							i--;
-						}
-					}
-				}else{
-					return 2;
-				}
-			}else{
-				for( i = 1, d = 0; p < q; p++, i++ ){
-					if( *p < '0' || *p > '9' ){
-						if( *p == '.' ){
-							d++;
-							if( d > 1 || i == 1 ) break;	/* こっちは -.5 を数値としない */
-							//if( d > 1 ) break;			/* こっちは -.5 を数値とする */
-							//if( i == 1 ) break;			/* -.5 を数値としない */
-						}else{
-							break;
-						}
-					}
-				}
-				if( i == 1 ){
-					/* マイナス符号ではなかった */
-					return 0;
-				}else if( *(p - 1) == '.' ){
-					if( i == 2 ){
-						i = 0;
-					}else{
-						i--;
-					}
-				}
-			}
-		}else{
-			return 0;
-		}
-//#if 0  /* 小数点始まりの数字 : これだと "0.5.1.6" が全部数値になってしまいます */
-	}else if( *p == '.' ){
-		/* 小数点始まりの数値 */
-		q = &buf[length];
-		p++;
-		for( i = 1, d = 1; p < q; p++, i++ ){
-			if( *p < '0' || *p > '9' ){
-				d++;
-				if( d > 1 ) break;
-				//if( d > 1 ) return 0;
-				break;
-			}
-		}
-		if( i == 1 ){
-			return 0;
-		}
-//#endif
-#if 0  /* VBの16進数 */
-	}else if( *p == '&' ){
-		q = &buf[length];
-		/* VBの16進数 */
-		p++;
-		if( p < q ){
-			if( *p == 'H' || *p == 'h' ){
-				p++;
-				for( i = 2; p < q; p++, i++ ){
-					if( (*p < '0' || *p > '9')
-					&&  (*p < 'A' || *p > 'F')
-					&&  (*p < 'a' || *p > 'f') ){
+					else
+					{
 						break;
 					}
 				}
-				/* "&H" のときは数値ではない */
-				if( i == 2 ){
-					return 0;
-				}
-			}else{
-				return 0;
+				p++; i++;
 			}
-		}else{
-			return 0;
+			if( *(p - 1)  == '.' ) return i - 1;  /* 最後が "." なら含めない */
+			/* 接尾語 */
+			if( p < q )
+			{
+				if( (( d == 0 ) && ( *p == 'L' || *p == 'l' ))
+				 || *p == 'F' || *p == 'f' )
+				{
+					p++; i++;
+				}
+			}
+			return i;
 		}
-#endif
-	}else{
-		/* 数値ではない */
-		return 0;
+		else if( *p == '.' )
+		{
+			while( p < q )
+			{
+				if( *p < '0' || *p > '9' )
+				{
+					if( *p == '.' )
+					{
+						if( f == 1 ) break;  /* 指数部に入っている */
+						d++;
+						if( d > 1 )
+						{
+							if( *(p - 1) == '.' ) break;  /* "." が連続なら中断 */
+						}
+					}
+					else if( *p == 'E' || *p == 'e' )
+					{
+						if( f == 1 ) break;  /* 指数部に入っている */
+						if( p + 2 < q )
+						{
+							if( ( *(p + 1) == '+' || *(p + 1) == '-' )
+							 && ( *(p + 2) >= '0' && *(p + 2) <= '9' ) )
+							{
+								p++; i++;
+								p++; i++;
+								f = 1;
+							}
+							else if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+							{
+								p++; i++;
+								f = 1;
+							}
+							else
+							{
+								break;
+							}
+						}
+						else if( p + 1 < q )
+						{
+							if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+							{
+								p++; i++;
+								f = 1;
+							}
+							else
+							{
+								break;
+							}
+						}
+						else
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				p++; i++;
+			}
+			if( *(p - 1)  == '.' ) return i - 1;  /* 最後が "." なら含めない */
+			/* 接尾語 */
+			if( p < q )
+			{
+				if( *p == 'F' || *p == 'f' )
+				{
+					p++; i++;
+				}
+			}
+			return i;
+		}
+		else if( *p == 'E' || *p == 'e' )
+		{
+			p++; i++;
+			while( p < q )
+			{
+				if( *p < '0' || *p > '9' )
+				{
+					if( ( *p == '+' || *p == '-' ) && ( *(p - 1) == 'E' || *(p - 1) == 'e' ) )
+					{
+						if( p + 1 < q )
+						{
+							if( *(p + 1) < '0' || *(p + 1) > '9' )
+							{
+								/* "0E+", "0E-" */
+								break;
+							}
+						}
+						else
+						{
+							/* "0E-", "0E+" */
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				p++; i++;
+			}
+			if( i == 2 ) return 1;  /* "0E", 0e" なら "0" が数値 */
+			/* 接尾語 */
+			if( p < q )
+			{
+				if( (( d == 0 ) && ( *p == 'L' || *p == 'l' ))
+				 || *p == 'F' || *p == 'f' )
+				{
+					p++; i++;
+				}
+			}
+			return i;
+		}
+		else
+		{
+			/* "0" だけが数値 */
+			/*if( *p == '.' ) return i - 1;*/  /* 最後が "." なら含めない */
+			if( p < q )
+			{
+				if( (( d == 0 ) && ( *p == 'L' || *p == 'l' ))
+				 || *p == 'F' || *p == 'f' )
+				{
+					p++; i++;
+				}
+			}
+			return i;
+		}
 	}
 
-	return i;
+	else if( *p >= '1' && *p <= '9' )  /* 10進数 */
+	{
+		p++; i++;
+		while( p < q )
+		{
+			if( *p < '0' || *p > '9' )
+			{
+				if( *p == '.' )
+				{
+					if( f == 1 ) break;  /* 指数部に入っている */
+					d++;
+					if( d > 1 )
+					{
+						if( *(p - 1) == '.' ) break;  /* "." が連続なら中断 */
+					}
+				}
+				else if( *p == 'E' || *p == 'e' )
+				{
+					if( f == 1 ) break;  /* 指数部に入っている */
+					if( p + 2 < q )
+					{
+						if( ( *(p + 1) == '+' || *(p + 1) == '-' )
+						 && ( *(p + 2) >= '0' && *(p + 2) <= '9' ) )
+						{
+							p++; i++;
+							p++; i++;
+							f = 1;
+						}
+						else if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+						{
+							p++; i++;
+							f = 1;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else if( p + 1 < q )
+					{
+						if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+						{
+							p++; i++;
+							f = 1;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+			p++; i++;
+		}
+		if( *(p - 1) == '.' ) return i - 1;  /* 最後が "." なら含めない */
+		/* 接尾語 */
+		if( p < q )
+		{
+			if( (( d == 0 ) && ( *p == 'L' || *p == 'l' ))
+			 || *p == 'F' || *p == 'f' )
+			{
+				p++; i++;
+			}
+		}
+		return i;
+	}
+
+	else if( *p == '-' )  /* マイナス */
+	{
+		p++; i++;
+		while( p < q )
+		{
+			if( *p < '0' || *p > '9' )
+			{
+				if( *p == '.' )
+				{
+					if( f == 1 ) break;  /* 指数部に入っている */
+					d++;
+					if( d > 1 )
+					{
+						if( *(p - 1) == '.' ) break;  /* "." が連続なら中断 */
+					}
+				}
+				else if( *p == 'E' || *p == 'e' )
+				{
+					if( f == 1 ) break;  /* 指数部に入っている */
+					if( p + 2 < q )
+					{
+						if( ( *(p + 1) == '+' || *(p + 1) == '-' )
+						 && ( *(p + 2) >= '0' && *(p + 2) <= '9' ) )
+						{
+							p++; i++;
+							p++; i++;
+							f = 1;
+						}
+						else if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+						{
+							p++; i++;
+							f = 1;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else if( p + 1 < q )
+					{
+						if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+						{
+							p++; i++;
+							f = 1;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+			p++; i++;
+		}
+		/* "-", "-." だけなら数値でない */
+		//@@@ 2001.11.09 start MIK
+		//if( i <= 2 ) return 0;
+		//if( *(p - 1)  == '.' ) return i - 1;  /* 最後が "." なら含めない */
+		if( i == 1 ) return 0;
+		if( *(p - 1) == '.' )
+		{
+			i--;
+			if( i == 1 ) return 0;
+			return i;
+		}  //@@@ 2001.11.09 end MIK
+		/* 接尾語 */
+		if( p < q )
+		{
+			if( (( d == 0 ) && ( *p == 'L' || *p == 'l' ))
+			 || *p == 'F' || *p == 'f' )
+			{
+				p++; i++;
+			}
+		}
+		return i;
+	}
+
+	else if( *p == '.' )  /* 小数点 */
+	{
+		d++;
+		p++; i++;
+		while( p < q )
+		{
+			if( *p < '0' || *p > '9' )
+			{
+				if( *p == '.' )
+				{
+					if( f == 1 ) break;  /* 指数部に入っている */
+					d++;
+					if( d > 1 )
+					{
+						if( *(p - 1) == '.' ) break;  /* "." が連続なら中断 */
+					}
+				}
+				else if( *p == 'E' || *p == 'e' )
+				{
+					if( f == 1 ) break;  /* 指数部に入っている */
+					if( p + 2 < q )
+					{
+						if( ( *(p + 1) == '+' || *(p + 1) == '-' )
+						 && ( *(p + 2) >= '0' && *(p + 2) <= '9' ) )
+						{
+							p++; i++;
+							p++; i++;
+							f = 1;
+						}
+						else if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+						{
+							p++; i++;
+							f = 1;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else if( p + 1 < q )
+					{
+						if( *(p + 1) >= '0' && *(p + 1) <= '9' )
+						{
+							p++; i++;
+							f = 1;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+			p++; i++;
+		}
+		/* "." だけなら数値でない */
+		if( i == 1 ) return 0;
+		if( *(p - 1)  == '.' ) return i - 1;  /* 最後が "." なら含めない */
+		/* 接尾語 */
+		if( p < q )
+		{
+			if( *p == 'F' || *p == 'f' )
+			{
+				p++; i++;
+			}
+		}
+		return i;
+	}
+
+#if 0
+	else if( *p == '&' )  /* VBの16進数 */
+	{
+		p++; i++;
+		if( ( p < q ) && ( *p == 'H' ) )
+		{
+			p++; i++;
+			while( p < q )
+			{
+				if( ( *p >= '0' && *p <= '9' )
+				 || ( *p >= 'A' && *p <= 'F' )
+				 || ( *p >= 'a' && *p <= 'f' ) )
+				{
+					p++; i++;
+				}
+				else
+				{
+					break;
+				}
+			}
+			/* "&H" だけなら数値でない */
+			if( i == 2 ) i = 0;
+			return i;
+		}
+
+		/* "&" だけなら数値でない */
+		return 0;
+	}
+#endif
+
+	/* 数値ではない */
+	return 0;
 }
-//#endif
-//@@@ 2001.02.17 End by MIK
+//@@@ 2001.11.07 End by MIK
 
 
 
@@ -1749,6 +2099,10 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_CODECNV_SJIS2UTF7:		return 181;	/* SJIS→UTF-7コード変換 */
 	case F_BASE64DECODE:			return 54;	//Base64デコードして保存
 	case F_UUDECODE:				return 55;	//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+//	case F_SPC_TOZENKAKU:			return -1;	/* 半角空白→全角空白 */	//@@@ 2001.11.08 add
+//	case F_SPC_TOHANKAKU:			return -1;	/* 全角空白→半角空白 */	//@@@ 2001.11.08 add
+//	case F_SPC2_TOZENKAKU:			return -1;	/* 半角空白2個→全角空白 */	//@@@ 2001.11.08 add
+//	case F_SPC2_TOHANKAKU:			return -1;	/* 全角空白→半角空白2個 */	//@@@ 2001.11.08 add
 
 
 	/* 検索系 */
