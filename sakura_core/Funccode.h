@@ -110,8 +110,8 @@
 #define F_CURLINECENTER		30360	//カーソル行をウィンドウ中央へ
 #define F_JUMPPREV			30370	//移動履歴: 前へ
 #define F_JUMPNEXT			30371	//移動履歴: 次へ
-#define F_WndScrollUp		30380	//画面を上へ１行スクロール	// 2001/06/20 asa-o
-#define F_WndScrollDown		30381	//画面を下へ１行スクロール	// 2001/06/20 asa-o
+#define F_WndScrollDown		30380	//テキストを１行下へスクロール	// 2001/06/20 asa-o
+#define F_WndScrollUp		30381	//テキストを１行上へスクロール	// 2001/06/20 asa-o
 
 
 /* 選択系 */
