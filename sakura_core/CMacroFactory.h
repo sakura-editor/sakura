@@ -35,12 +35,22 @@
 #pragma warning(disable: 4786)
 
 #include <map>
+#include <list>
 #include <string>
 
 class CMacroManagerBase;
 
 /*!
 	@brief マクロHandler生成クラス
+	
+	@par 初期化
+	CMacroManagerBase::declare() により，MacroEngineのCreaterの登録
+	RegisterEngine() 及び 対応拡張子の登録 RegisterExt() が呼び出される．
+	
+	@par 呼び出し
+	CMacroFactory::Create()を拡張子を引数にして呼び出すと対応する
+	マクロエンジンが返される．得られたEngineに対してLoadKeyMacro()及び
+	ExecKeyMacro() を呼び出すことでマクロの読み込み・実行が行われる．
 
 	Singleton
 */
@@ -48,8 +58,9 @@ class CMacroFactory {
 public:
 	typedef CMacroManagerBase* (*Creator)(const char*);
 
-	bool Register( const char*, Creator );
-	bool Unregister( const char* );
+	bool RegisterCreator( Creator );
+	bool RegisterExt( const char*, Creator );
+	bool Unregister( Creator );
 
 	CMacroManagerBase* Create(const char*);
 	
@@ -59,8 +70,15 @@ private:
 	CMacroFactory();
 	std::string Ext2Key(const char *ext);
 
-	typedef std::map< std::string, Creator> MacroTypeRep;
+	typedef std::map<std::string, Creator> MacroTypeRep;
+	typedef std::list<Creator> MacroEngineRep;
 
-	MacroTypeRep m_mMacroEngines;
+	MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
+	/*!
+		Creatorリスト
+		@date 2002.08.25 genta 追加
+	*/
+	MacroEngineRep m_mMacroCreators;
+
 };
 #endif

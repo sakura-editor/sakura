@@ -497,6 +497,10 @@ SOURCE=..\sakura_core\CWnd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CWSH.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\Debug.cpp
 # End Source File
 # Begin Source File
@@ -846,6 +850,14 @@ SOURCE=..\sakura_core\CWaitCursor.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CWnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CWSH.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CWSHManager.h
 # End Source File
 # Begin Source File
 

@@ -367,7 +367,7 @@ CMacroManagerBase* CKeyMacroMgr::Creator(const char*)
 void CKeyMacroMgr::declare (void)
 {
 	//	í‚ÉŽÀs
-	CMacroFactory::Instance()->Register("mac", Creator);
+	CMacroFactory::Instance()->RegisterExt("mac", Creator);
 }
 //	To Here Apr. 29, 2002 genta
 

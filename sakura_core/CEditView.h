@@ -186,6 +186,8 @@ public:
 
 // 2002/01/19 novice public属性に変更
 	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	//	Aug. 25, 2002 genta protected->publicに移動
+	void ShowEditCaret( void );									/* キャレットの表示・更新 */
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
@@ -358,7 +360,6 @@ protected:
 	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
 	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
-	void ShowEditCaret( void );									/* キャレットの表示・更新 */
 	void OnSize( int, int );									/* ウィンドウサイズの変更処理 */
 	void OnVScroll( int, int, HWND );							/* 垂直スクロールバーメッセージ処理 */
 	void OnHScroll( int, int, HWND );							/* 水平スクロールバーメッセージ処理 */
