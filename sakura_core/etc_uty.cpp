@@ -2557,4 +2557,72 @@ bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, u
 	return Result;
 }
 
+/*!
+	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
+	
+	@param pDir [out] EXEファイルのあるディレクトリを返す場所．
+		予め_MAX_PATHのバッファを用意しておくこと．
+	@param szFile [in] ディレクトリ名に結合するファイル名．
+	
+	@author genta
+	@date 2002.12.02 genta
+*/
+void GetExecutableDir( char* pDir, const char* szFile )
+{
+	if( pDir == NULL )
+		return;
+	
+	char	szPath[_MAX_PATH];
+	// sakura.exe のパスを取得
+	::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
+	if( szFile == NULL ){
+		SplitPath_FolderAndFile( szPath, pDir, NULL );
+	}
+	else {
+		char	szDir[_MAX_PATH];
+		SplitPath_FolderAndFile( szPath, szDir, NULL );
+		wsprintf( pDir, "%s\\%s", szDir, szFile );
+	}
+}
+
+
+/*!
+	@brief アプリケーションアイコンの取得
+	
+	アイコンファイルが存在する場合はそこから，無い場合は
+	リソースファイルから取得する
+	
+	@param hInst [in] Instance Handle
+	@param nResource [in] デフォルトアイコン用Resource ID
+	@param szFile [in] アイコンファイル名
+	@param bSmall [in] true: small icon (16x16) / false: large icon (32x32)
+	
+	@return アイコンハンドル．失敗した場合はNULL．
+	
+	@date 2002.12.02 genta 新規作成
+	@author genta
+*/
+HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmall )
+{
+	// サイズの設定
+	int size = ( bSmall ? 16 : 32 );
+
+	char szPath[_MAX_PATH];
+	
+	GetExecutableDir( szPath, szFile );
+	
+	HICON hIcon;
+	// ファイルからの読み込みをまず試みる
+	hIcon = (HICON)::LoadImage( NULL, szPath, IMAGE_ICON, size, size,
+			LR_SHARED | LR_LOADFROMFILE );
+	if( hIcon != NULL ){
+		return hIcon;
+	}
+	
+	//	ファイルからの読み込みに失敗したらリソースから取得
+	hIcon = (HICON)::LoadImage( hInst, MAKEINTRESOURCE(nResource),
+		IMAGE_ICON, size, size, LR_SHARED );
+	
+	return hIcon;
+}
 /*[EOF]*/

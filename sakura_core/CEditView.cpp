@@ -6286,22 +6286,15 @@ DWORD CEditView::DoGrep(
 //	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
-	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ), IMAGE_ICON, 16, 16, 0);
+	//	Dec, 2, 2002 genta アイコン読み込み方法変更
+	hIconBig = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, false );
+	hIconSmall = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
+
 	//	Sep. 10, 2002 genta
 	//	CEditWndに新設した関数を使うように
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
-//	HICON	hIcon;
-//	hIcon = ::LoadIcon( NULL, IDI_QUESTION );
-//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL,	(LPARAM)NULL );
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL,	(LPARAM)hIcon );
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG,	(LPARAM)NULL );
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG,	(LPARAM)hIcon );
 
 	pszWork = pcmGrepFolder->GetPtr();
 	strcpy( szPath, pszWork );

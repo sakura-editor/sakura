@@ -18,6 +18,8 @@
 
 #include "CBREGEXP.h"
 #include "CPPA.h"
+//	Dec. 2, 2002 genta
+#include "etc_uty.h"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -164,6 +166,16 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		::SetDlgItemText( m_hWnd, IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta
+
+	//	From Here Dec. 2, 2002 genta
+	//	アイコンをカスタマイズアイコンに合わせる
+	HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
+	HWND hIconWnd = GetDlgItem( m_hWnd, IDC_STATIC_MYICON );
+	
+	if( hIconWnd != NULL && hIcon != NULL ){
+		::SendMessage( hIconWnd, STM_SETICON, (WPARAM)hIcon, 0 );
+	}
+	//	To Here Dec. 2, 2002 genta
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );

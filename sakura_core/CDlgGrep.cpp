@@ -123,16 +123,11 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 //	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
-//	hIcon = ::LoadIcon( NULL, IDI_QUESTION );
-//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ), IMAGE_ICON, 16, 16, 0);
+	//	Dec, 2, 2002 genta アイコン読み込み方法変更
+	hIconBig = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, false );
+	hIconSmall = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
 	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
 	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
-//	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
-//	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
-//	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)NULL );
-//	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
 	// 2002/09/22 Moca Add
 	int i;

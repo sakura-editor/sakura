@@ -341,13 +341,8 @@ bool CEditApp::CreateTrayIcon( HWND hWnd )
 //		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)this );
 		/* タスクトレイのアイコンを作る */
 		if( TRUE == m_pShareData->m_Common.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
-#ifdef _DEBUG
-//			hIcon =	::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
-			hIcon=(HICON)::LoadImage(m_hInstance,MAKEINTRESOURCE(IDI_ICON_DEBUG),IMAGE_ICON,16,16,0);	//Jul. 02, 2001 JEPRO
-#else
-//			hIcon =	::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
-			hIcon=(HICON)::LoadImage(m_hInstance,MAKEINTRESOURCE(IDI_ICON_STD),IMAGE_ICON,16,16,0);	//Jul. 02, 2001 JEPRO
-#endif
+			//	Dec. 02, 2002 genta
+			hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 //From Here Jan. 12, 2001 JEPRO トレイアイコンにポイントするとバージョンno.が表示されるように修正
 //			TrayMessage( m_hWnd, NIM_ADD, 0,  hIcon, GSTR_APPNAME );
 			/* バージョン情報 */
