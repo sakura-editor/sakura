@@ -828,6 +828,8 @@ void CEditView::Command_UNDO( void )
 
 		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
+		SetBracketPairPos( true );	// 03/03/07 ai
+
 		/* 再描画 */
 		hdc = ::GetDC( m_hWnd );
 		ps.rcPaint.left = 0;
@@ -1025,6 +1027,8 @@ void CEditView::Command_REDO( void )
 		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
 		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+
+		SetBracketPairPos( true );	// 03/03/07 ai
 
 		/* 再描画 */
 		hdc = ::GetDC( m_hWnd );

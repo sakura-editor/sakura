@@ -113,6 +113,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		hdc = m_hdcCompatDC;
 	}
 
+	/* 03/02/18 対括弧の強調表示(消去) ai */
+	DrawBracketPair( false );
+
 	/* ルーラーとテキストの間の余白 */
 	//@@@ 2002.01.03 YAZAKI 余白が0のときは無駄でした。
 	if ( m_nTopYohaku ){
@@ -292,6 +295,10 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 			SRCCOPY
 		);
 	}
+
+	/* 03/02/18 対括弧の強調表示(描画) ai */
+	DrawBracketPair( true );
+
 	/* キャレットを現在位置に表示します */
 	ShowCaret_( m_hWnd ); // 2002/07/22 novice
 	return;
