@@ -781,7 +781,7 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd )
 {
 	if( ::IsIconic( hwnd ) )
 	{
-		::ShowWindow( hwnd, SW_MINIMIZE );
+		::ShowWindow( hwnd, SW_RESTORE );	// Nov. 7. 2003 MIK アイコン時は元のサイズに戻す
 		return;
 	}
 	else if( ::IsZoomed( hwnd ) )
