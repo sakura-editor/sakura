@@ -241,6 +241,10 @@ SOURCE=..\sakura_core\CEditDoc.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CEditDoc_FuncList1.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CEditDoc_new.cpp
 # End Source File
 # Begin Source File

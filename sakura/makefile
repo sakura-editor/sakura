@@ -69,6 +69,7 @@ OBJS =\
 	$(SRCDIR)\CDropTarget.obj \
 	$(SRCDIR)\CEditApp.obj \
 	$(SRCDIR)\CEditDoc.obj \
+	$(SRCDIR)\CEditDoc_FuncList1.obj \
 	$(SRCDIR)\CEditDoc_new.obj \
 	$(SRCDIR)\CEditView.obj \
 	$(SRCDIR)\CEditView_Command.obj \
