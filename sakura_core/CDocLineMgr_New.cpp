@@ -10,6 +10,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
+	Copyright (C) 2002, hor, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,10 +19,7 @@
 #include "CDocLineMgr.h"
 #include "debug.h"
 #include "charcode.h"
-//#include <stdio.h>
 #include <io.h>
-//#include <string.h>
-//#include <memory.h>
 #include <commctrl.h>
 #include "global.h"
 #include "etc_uty.h"
@@ -33,22 +31,7 @@
   Fromを含む位置からToの直前を含むデータを削除する
   Fromの位置へテキストを挿入する
 */
-void CDocLineMgr::ReplaceData(
-		DocLineReplaceArg* pArg
-#if 0
-	int			nDelLineFrom,			/* 削除範囲行  From 改行単位の行番号 0開始) */
-	int			nDelPosFrom,			/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
-	int			nDelLineTo,				/* 削除範囲行  To   改行単位の行番号 0開始) */
-	int			nDelPosTo,				/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
-	CMemory*	pcmemDeleted,		/* 削除されたデータを保存 */
-	int*		pnDeletedLineNum,	/* 削除した行の総数 */
-	const char*	pInsData,			/* 挿入するデータ */
-	int			nInsDataLen,		/* 挿入するデータの長さ */
-	int*		pnInsLineNum,		/* 挿入によって増えた行の数 */
-	int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
-	int*		pnNewPos			/* 挿入された部分の次の位置のデータ位置 */
-#endif
-)
+void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 {
 #ifdef _DEBUG
 	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::ReplaceData()" );
@@ -71,7 +54,6 @@ void CDocLineMgr::ReplaceData(
 	char* pLine2;
 	int nLineLen2;
 	int i;
-	char* pWork;
 	int			nBgn;
 	int			nPos;
 	int			nAllLinesOld;
@@ -83,12 +65,9 @@ void CDocLineMgr::ReplaceData(
 	//	May 15, 2000
 	CEOL cEOLType;
 	CEOL cEOLTypeNext;
-	// enumEOLType nEOLType;
-	// enumEOLType nEOLTypeNext;
 	CDlgCancel*	pCDlgCancel = NULL;
 	HWND		hwndCancel;
 	HWND		hwndProgress;
-
 
 	pArg->nNewLine = pArg->nDelLineFrom;
 	pArg->nNewPos =  pArg->nDelPosFrom;
@@ -97,8 +76,6 @@ void CDocLineMgr::ReplaceData(
 	if( 3000 < pArg->nDelLineTo - pArg->nDelLineFrom
 	 || 1024000 < pArg->nInsDataLen
 	){
-//		/* バッファサイズの調整 */
-//		cmemWork.AllocBuffer( 1024000 );
 
 		/* 進捗ダイアログの表示 */
 		pCDlgCancel = new CDlgCancel;
@@ -106,17 +83,8 @@ void CDocLineMgr::ReplaceData(
 			hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 			::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM(0, 100) );
  			::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
-
-//			hwndStatic = ::GetDlgItem( hwndCancel, IDC_STATIC_KENSUU );
-// 			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)"" );
 		}
 	}
-//	pcmemDeleted->cmemWork( 1024000 );
-
-
-
-
-
 
 
 	// 削除データの取得のループ
@@ -160,7 +128,6 @@ void CDocLineMgr::ReplaceData(
 		}
 		/* 削除されたデータを保存 */
 		if( NULL == pArg->pcmemDeleted->Append( &pCDocLine->m_pLine->m_pData[nWorkPos], nWorkLen ) ){
-//		if( NULL == pArg->pcmemDeleted->m_pData ){
 			/* メモリ確保に失敗した */
 			pArg->pcmemDeleted->SetDataSz( "" );
 			break;
@@ -177,21 +144,9 @@ next_line:;
 				nProgress = (i - pArg->nDelLineFrom) * 100 / (pArg->nDelLineTo - pArg->nDelLineFrom) / 2;
 				::SendMessage( hwndProgress, PBM_SETPOS, nProgress, 0 );
 
-//				wsprintf( szWork, "%d/%d", (i - pArg->nDelLineFrom), (pArg->nDelLineTo - pArg->nDelLineFrom) );
-//				::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)szWork );
-//				/* 処理中のユーザー操作を可能にする */
-//				if( !::BlockingHook() ){
-//					return;
-//				}
-//				/* 中断ボタン押下チェック */
-//				if( pCDlgCancel->IsCanceled() ){
-//					break;
-//				}
 			}
 		}
 	} // 削除データの取得のループ
-
-
 
 
 	/* 現在行の情報を得る */
@@ -215,14 +170,7 @@ next_line:;
 		}
 		/* 現在行の削除データ長を調べる */
 		if( i == pArg->nDelLineTo ){
-//			/* 削除開始位置が改行の位置なら */
-//			if( EOL_NONE != pCDocLine->m_cEol &&
-	//				nWorkPos >= pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
-//			){
-//				nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
-//			}else{
-				nWorkLen = pArg->nDelPosTo - nWorkPos;
-//			}
+			nWorkLen = pArg->nDelPosTo - nWorkPos;
 		}else{
 			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
 		}
@@ -237,18 +185,7 @@ next_line:;
 		){
 			/* 削除する長さに改行も含める */
 			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
-
 		}
-
-		/* 削除されたデータを保存 */
-// 1999.12.23 我慢できなかった
-//t		/* 遅いけど我慢する */
-//t		cmemWork = (*(pArg->pcmemDeleted));
-//t		(*(pArg->pcmemDeleted)).SetData( &pCDocLine->m_pLine->m_pData[nWorkPos], nWorkLen );
-//t		(*(pArg->pcmemDeleted)) += cmemWork;
-
-//		/* バッファの先頭にデータを挿入する */
-//		pArg->pcmemDeleted->InsertTop( &pCDocLine->m_pLine->m_pData[nWorkPos], nWorkLen );
 
 
 		/* 行全体の削除 */
@@ -263,11 +200,12 @@ next_line:;
 		if( nWorkPos + nWorkLen >= pCDocLine->m_pLine->m_nDataLen ){
 
 			/* 行内データ削除 */
-			pWork = new char[nWorkPos + 1];
-			memcpy( pWork, pLine, nWorkPos );
-			pCDocLine->m_pLine->SetData( pWork, nWorkPos );
-			delete [] pWork;
-			pWork = NULL;
+			{// 20020119 aroka ブロック内に pWork を閉じ込めた
+				char* pWork = new char[nWorkPos + 1];
+				memcpy( pWork, pLine, nWorkPos );
+				pCDocLine->m_pLine->SetData( pWork, nWorkPos );
+				delete [] pWork;
+			}
 
 			/* 次の行がある */
 			if( NULL != pCDocLineNext ){
@@ -290,18 +228,15 @@ next_line:;
 			pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 		}else{
 		/* 行内だけの削除 */
-			pWork = new char[pCDocLine->m_pLine->m_nDataLen - nWorkLen + 1];
-			memcpy( pWork, pLine, nWorkPos );
-//			pWork[nWorkPos] = '\0';
-//			MYTRACE( "pWork=[%s]\n", pWork );
+			{// 20020119 aroka ブロック内に pWork を閉じ込めた
+				char* pWork = new char[pCDocLine->m_pLine->m_nDataLen - nWorkLen + 1];
+				memcpy( pWork, pLine, nWorkPos );
 
-			memcpy( &pWork[nWorkPos], &pLine[nWorkPos + nWorkLen], pCDocLine->m_pLine->m_nDataLen - ( nWorkPos + nWorkLen ) );
-//			pWork[pCDocLine->m_pLine->m_nDataLen - nWorkLen] = '\0';
-//			MYTRACE( "pWork=[%s]\n", pWork );
+				memcpy( &pWork[nWorkPos], &pLine[nWorkPos + nWorkLen], pCDocLine->m_pLine->m_nDataLen - ( nWorkPos + nWorkLen ) );
 
-			pCDocLine->m_pLine->SetData( pWork, pCDocLine->m_pLine->m_nDataLen - nWorkLen );
-			delete [] pWork;
-			pWork = NULL;
+				pCDocLine->m_pLine->SetData( pWork, pCDocLine->m_pLine->m_nDataLen - nWorkLen );
+				delete [] pWork;
+			}
 			pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 		}
 
@@ -316,28 +251,9 @@ prev_line:;
 			if( 0 != (pArg->nDelLineTo - i) && ( 0 == ((pArg->nDelLineTo - i) % 32) ) ){
 				nProgress = (pArg->nDelLineTo - i) * 100 / (pArg->nDelLineTo - pArg->nDelLineFrom) / 2 + 50;
 				::SendMessage( hwndProgress, PBM_SETPOS, nProgress, 0 );
-
-//				wsprintf( szWork, "%d/%d", (pArg->nDelLineTo - i), (pArg->nDelLineTo - pArg->nDelLineFrom) );
- //				::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)szWork );
-//				/* 処理中のユーザー操作を可能にする */
-//				if( !::BlockingHook() ){
-//					return;
-//				}
-//				/* 中断ボタン押下チェック */
-//				if( pCDlgCancel->IsCanceled() ){
-//					break;
-//				}
 			}
 		}
 	}
-//	MYTRACE( "\n\n■■■■■■■■■■■■■■\n" );
-//	MYTRACE( "(pArg->nDeletedLineNum)=%d\n", (pArg->nDeletedLineNum) );
-
-//	/* 難しいのでやめとく */
-//	m_nPrevReferLine = 0;
-//	m_pCodePrevRefer = NULL;
-
-
 
 
 	/* データ挿入処理 */
@@ -363,21 +279,6 @@ prev_line:;
 		cEOLTypeNext.SetType( EOL_NONE );
 		// ::MessageBox( NULL, "pDocLine==NULL","Warning",MB_OK);
 	}else{
-//		/* Undo操作かどうか */
-//		if( bUndo ){
-//			pCDocLine->m_nModifyCount--;	/* 変更回数 */
-//			if( 0 == pCDocLine->m_nModifyCount ){	/* 変更回数 */
-//				pCDocLine->m_bModify = FALSE;	/* 変更フラグ */
-//			}
-//			if( 0 > pCDocLine->m_nModifyCount ){	/* 変更回数 */
-//				::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-//					"CDocLineMgr::InsertData()で変更カウンタが0以下になりました。バグじゃぁああ"
-//				);
-//			}
-//		}else{
-//			++pCDocLine->m_nModifyCount;	/* 変更回数 */
-//			pCDocLine->m_bModify = TRUE;	/* 変更フラグ */
-//		}
 		pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
@@ -387,7 +288,6 @@ prev_line:;
 		cEOLTypeNext = pCDocLine->m_cEol;
 	}
 	nBgn = 0;
-	nPos = 0;
 	for( nPos = 0; nPos < pArg->nInsDataLen; ){
 		if( pArg->pInsData[nPos] == '\n' || pArg->pInsData[nPos] == '\r' ){
 			/* 行終端子の種類を調べる */
@@ -415,7 +315,6 @@ prev_line:;
 					*(pCDocLineNew->m_pLine) += cmemCurLine;
 
 					pCDocLineNew->m_cEol = cEOLType;	/* 改行コードの種類 */
-					// pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */
 				}else{
 					if( NULL != m_pDocLineBot ){
 						m_pDocLineBot->m_pNext = pCDocLineNew;
@@ -436,8 +335,6 @@ prev_line:;
 					*(pCDocLine->m_pLine) += cmemCurLine;
 
 					pCDocLine->m_cEol = cEOLType;	/* 改行コードの種類 */
-					//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */
-
 					pCDocLine = pCDocLine->m_pNext;
 				}else{
 					pCDocLineNew = new CDocLine;
@@ -449,7 +346,6 @@ prev_line:;
 					pCDocLineNew->m_pLine->SetData( &cmemCurLine );
 
 					pCDocLineNew->m_cEol = cEOLType;	/* 改行コードの種類 */
-					//pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];		/* 改行コードの長さ */
 
 					++m_nLines;
 				}
@@ -468,9 +364,7 @@ prev_line:;
 		}else{
 			++nPos;
 		}
-		// ::MessageBox( NULL, cEOLType.GetName(),"cEOLTypeNext",MB_OK );
 	}
-//	nEOLType = EOL_NONE;
 	if( 0 < nPos - nBgn || 0 < cmemNextLine.GetLength() ){
 		cmemCurLine.SetData( &(pArg->pInsData[nBgn]), nPos - nBgn );
 		cmemCurLine += cmemNextLine;
@@ -492,7 +386,6 @@ prev_line:;
 				*(pCDocLineNew->m_pLine) += cmemCurLine;
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				// pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
 
 			}else{
 				if( NULL != m_pDocLineBot ){
@@ -504,8 +397,6 @@ prev_line:;
 				pCDocLineNew->m_pLine->SetData( &cmemCurLine );
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				//pCDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
-
 			}
 			pCDocLine = NULL;
 			++m_nLines;
@@ -517,7 +408,6 @@ prev_line:;
 				*(pCDocLine->m_pLine) += cmemCurLine;
 
 				pCDocLine->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
 
 				pCDocLine = pCDocLine->m_pNext;
 				pArg->nNewPos = cmemPrevLine.GetLength() + nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
@@ -531,20 +421,14 @@ prev_line:;
 				pCDocLineNew->m_pLine->SetData( &cmemCurLine );
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
-				//pCDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];		/* 改行コードの長さ */
-
 
 				++m_nLines;
 				pArg->nNewPos = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
 			}
 		}
-		// ::MessageBox( NULL, pCDocLine->m_cEol.GetName(),"cEOLTypeNext",MB_OK );
-		// ::MessageBox( NULL, pCDocLine->m_pNext->m_cEol.GetName(),"cEOLTypeNext",MB_OK );
-		// ::MessageBox( NULL, pCDocLine->m_pPrev->m_cEol.GetName(),"cEOLTypeNext",MB_OK );
 	}
 	pArg->nInsLineNum = m_nLines - nAllLinesOld;
 end_of_func:;
-//	pCDlgCancel->CloseDialog( 0 );
 	if( NULL != pCDlgCancel ){
 		delete pCDlgCancel;
 	}
@@ -580,7 +464,6 @@ int CDocLineMgr::SearchBookMark(
 {
 	CDocLine*	pDocLine;
 	int			nLinePos=nLineNum;
-	int			nX=0;
 
 	/* 0==前方検索 1==後方検索 */
 	if( 0 == bPrevOrNext ){

@@ -7,11 +7,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, Stonee, genta, JEPRO, YAZAKI
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-//#include <stdio.h>
+
 #include "sakura_rc.h"
 #include "CDlgCompare.h"
 #include "etc_uty.h"
@@ -20,6 +22,8 @@
 //#include "CEditView.h"	// Oct. 10, 2000 JEPRO added	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は必要？
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
+#include "mymessage.h"
+#include <locale.h>
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -132,7 +136,6 @@ void CDlgCompare::SetData( void )
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-//			pfi = (FileInfo*)m_pShareData->m_szWork;
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない

@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, MIK, hor
+	Copyright (C) 2001, hor, YAZAKI, novice, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -27,28 +28,36 @@ class CEditView;
 #define _CARETMARGINRATE 20
 
 #include <windows.h>
-#include "CDropTarget.h"
-#include "CMemory.h"
-#include "CDocLineMgr.h"
-#include "CLayoutMgr.h"
-#include "COpe.h"
-#include "COpeBlk.h"
-#include "COpeBuf.h"
-#include "CDlgFind.h"
-//@@#include "CProp1.h"
+///#include "CDropTarget.h" /// 2002/2/3 aroka ヘッダ軽量化
+///#include "CMemory.h"
+///#include "CDocLineMgr.h"
+///#include "CLayoutMgr.h"
+///#include "COpe.h"
+///#include "COpeBlk.h"
+///#include "COpeBuf.h"
+///#include "CDlgFind.h"
+///@@#include "CProp1.h"
 #include "CShareData.h"
-#include "CFuncInfoArr.h"
-#include "CSplitBoxWnd.h"
-#include "CSplitterWnd.h"
-#include "CDlgCancel.h"
+///#include "CFuncInfoArr.h"
+///#include "CSplitBoxWnd.h"
+///#include "CSplitterWnd.h"
+///#include "CDlgCancel.h"
 #include "CTipWnd.h"
 #include "CDicMgr.h"
 #include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
-#include "CDropTarget.h"
-#include "CMarkMgr.h"
-#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
+///#include "CDropTarget.h"
+///#include "CMarkMgr.h"
+///#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
+class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
+class CMemory;///
+class COpe;///
+class COpeBlk;///
+class CSplitBoxWnd;///
+class CDlgCancel;///
+class CRegexKeyword;///
+class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -261,10 +270,10 @@ public: /* テスト用にアクセス属性を変更 */
 	/*
 	||  実装ヘルパ関数
 	*/
+	void GetCurrentTextForSearch( CMemory& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 protected:
 	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
-	void GetCurrentTextForSearch( CMemory& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	BOOL MyGetClipboardData( CMemory&, BOOL* );			/* クリップボードからデータを取得 */
 	BOOL MySetClipboardData( const char*, int, BOOL );	/* クリップボードにデータを設定 */
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
@@ -462,6 +471,7 @@ protected:
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
 	void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
 	void Command_ADDTAIL( const char*, int );		/* 最後にテキストを追加 */
+	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */// 2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
 	void Command_COPYTAG( void );					/* このファイルのパス名とカーソル位置をコピー */
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
@@ -528,9 +538,12 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
 	void Command_SEARCH_NEXT( BOOL, HWND, const char* );/* 次を検索 */
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
-	void Command_REPLACE( void );						/* 置換(置換ダイアログ) */
+	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
+	void Command_REPLACE( void );						/* 置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
+	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
+	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
 // From Here 2001.12.03 hor
 //	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
@@ -570,6 +583,7 @@ void ReplaceData_CEditView(
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	void Command_EXECCMMAND( void );	/* 外部コマンド実行 */
 	//	Oct. 9, 2001 genta マクロ対応のため機能拡張
+	void Command_EXECCOMMAND_DIALOG( const char* cmd );	/* 外部コマンド実行ダイアログ表示 */
 	void Command_EXECCOMMAND( const char* cmd );	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
@@ -616,7 +630,6 @@ void ReplaceData_CEditView(
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
-
 };
 
 

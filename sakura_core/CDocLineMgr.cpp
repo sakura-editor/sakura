@@ -10,7 +10,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, hor
+	Copyright (C) 2001, genta, jepro, hor
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1838,7 +1838,8 @@ int CDocLineMgr::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 				//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
+				if( nIdxPos <= (nLineLen - pDocLine->m_cEol.GetLen() ) && 	//	行末で検索すると起こる問題に対処？
+					pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
 					*pnLineNum = nLinePos;								/* マッチ行 */
 					*pnIdxFrom = pRegexpData->startp[0] - pLine;		/* マッチ位置from */
 					*pnIdxTo = pRegexpData->endp[0] - pLine;			/* マッチ位置to */

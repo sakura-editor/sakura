@@ -50,17 +50,19 @@ public:
 	void Exec( CEditView* pcEditView );
 	void Save( HINSTANCE hInstance, HFILE hFile );
 	
-	void AddLParam( LPARAM lParam );
+	void AddLParam( LPARAM lParam, CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
 	void AddParam( const char* lParam );
 	void AddParam( const int lParam );
 
+	static void HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize );
+#if 0
 	/*
 	||  Attributes & Operations
 	*/
 	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* 機能ID→関数名，機能名日本語 */
 	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
-
+#endif
 
 protected:
 	/*

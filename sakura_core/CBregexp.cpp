@@ -6,10 +6,11 @@
 
 	@author genta
 	@date Jun. 10, 2001
+	@date 2002/2/1 hor		ReleaseCompileBufferを適宜追加
 */
 /*
 	Copyright (C) 2001-2002, genta
-	Copyright (C) 2002, hor
+	Copyright (C) 2002, novice, hor
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -94,13 +95,16 @@ int CBregexp::DeinitDll( void )
 	JRE32のエミュレーション関数．空の文字列に対して検索を行うことにより
 	BREGEXP構造体の生成のみを行う．
 
+	検索文字列はperl形式 i.e. /pattern/option または m/pattern/option
+
 	@param szPattern [in] 検索パターン
+	@param bOption [in]
+		0x01：大文字小文字の区別をする。
 
 	@retval true 成功
 	@retval false 失敗
-	
 */
-bool CBregexp::Compile( const char* szPattern )
+bool CBregexp::Compile( const char* szPattern, int bOption )
 {
 	static char tmp[2] = "\0";	//	検索対象となる空文字列
 
@@ -119,6 +123,8 @@ bool CBregexp::Compile( const char* szPattern )
 	char *pEnd = szNPattern + 1 + cescape( szPattern, szNPattern + 1, '/', '\\' );
 	*pEnd = '/';
 	*++pEnd = 'k';
+	if( !(bOption & 0x01) )		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+		*++pEnd = 'i';		// 同上
 	*++pEnd = '\0';
 
 	BMatch( szNPattern, tmp, tmp+1, &m_sRep, m_szMsg );
@@ -181,11 +187,13 @@ bool CBregexp::GetMatchInfo( const char* target, int len, int nStart, BREGEXP**r
 	@param target [in] 置換対象データ
 	@param len [in] 置換対象データ長
 	@param out [out] 置換後文字列		// 2002.01.26 hor
+	@param bOption [in]
+		0x01：大文字小文字の区別をする。
+
 	@retval true 成功
 	@retval false 失敗
-
 */
-bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *target, int len , char **out)
+bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *target, int len, char **out, int bOption)
 {
 	int result;
 
@@ -210,6 +218,8 @@ bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *ta
 	*pEnd = '/';
 	*++pEnd = 'k';
 	*++pEnd = 'm';
+	if( !(bOption & 0x01) )		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+		*++pEnd = 'i';		// 同上
 	*++pEnd = '\0';
 	//	To Here Feb. 01, 2002 genta
 
@@ -219,6 +229,7 @@ bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *ta
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
 	if( m_szMsg[0] ){
+		ReleaseCompileBuffer();
 		return false;
 	}
 
@@ -235,9 +246,11 @@ bool CBregexp::Replace( const char* szPattern0, const char* szPattern1, char *ta
 			(*out)[0] = '\0';
 		}
 
+		ReleaseCompileBuffer();
 		return true;
 	}
 
+	ReleaseCompileBuffer();
 	return false;
 }
 

@@ -7,14 +7,16 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include "CEditView.h"
+#include "CEditView.h"// 2002/2/3 aroka
 #include "CDropTarget.h"
 #include "global.h"
+#include "debug.h"// 2002/2/3 aroka
 
 
 COleLibrary CYbInterfaceBase::m_olelib;

@@ -44,20 +44,21 @@ public:
 	||  Attributes & Operations
 	*/
 	void ClearAll( void );				/* キーマクロのバッファをクリアする */
-	void Append( int , LPARAM );		/* キーマクロのバッファにデータ追加 */
+	void Append( int , LPARAM, class CEditView* pcEditView );		/* キーマクロのバッファにデータ追加 */
 	void Append( class CMacro* macro );		/* キーマクロのバッファにデータ追加 */
-	int GetMacroNum() { return m_nKeyMacroDataArrNum; };
+//	int GetMacroNum() { return m_nKeyMacroDataArrNum; };
 	
 	/* キーボードマクロをまとめて取り扱う */
 	BOOL SaveKeyMacro( HINSTANCE hInstance, const char* pszPath) const;	/* CMacroの列を、キーボードマクロに保存 */
-	void ExecKeyMacro( class CEditView* pcEditView ) const;				/* キーボードマクロの実行 */
-	BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);		/* キーボードマクロを読み込み、CMacroの列に変換 */
+	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
+	virtual void ExecKeyMacro( class CEditView* pcEditView ) const;				/* キーボードマクロの実行 */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);		/* キーボードマクロを読み込み、CMacroの列に変換 */
 	
 	/* キーボードマクロが読み込み済みか確認する */
 	BOOL IsReady(){ return m_nReady; }
 
 protected:
-	int				m_nKeyMacroDataArrNum;
+//	int				m_nKeyMacroDataArrNum;
 	BOOL			m_nReady;	//	Load済みかどうかを表すフラグ TRUE...Load済み、FALSE...未Load。
 
 	class CMacro*	m_pTop;	//	先頭と終端を保持

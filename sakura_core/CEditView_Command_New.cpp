@@ -7,6 +7,8 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, genta, asa-o, hor
+	Copyright (C) 2002, YAZAKI, hor, genta. aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,6 +18,17 @@
 #include "charcode.h"
 #include "CRunningTimer.h"
 #include <algorithm>		// 2001.12.11 hor    for VC++
+#include "COpe.h" ///	2002/2/3 aroka from here
+#include "COpeBlk.h" ///
+#include "CLayout.h"///
+#include "CDocLine.h"///
+#include "mymessage.h"///
+#include "debug.h"///
+#include "etc_uty.h"///
+#include <string>///
+#include <vector> /// 2002/2/3 aroka to here
+
+using namespace std; // 2002/2/3 aroka to here
 
 
 
@@ -437,7 +450,8 @@ void CEditView::DeleteData(
 	const CLayout*	pcLayout;
 	int			nSelectColmFrom_Old;
 	int			nSelectLineFrom_Old;
-	CWaitCursor cWaitCursor( m_hWnd );	// 2002.01.25 hor
+// hor IsTextSelected内に移動
+//	CWaitCursor cWaitCursor( m_hWnd );	// 2002.01.25 hor
 
 	nCaretPosXOld = m_nCaretPosX;
 	nCaretPosYOld = m_nCaretPosY;
@@ -445,6 +459,7 @@ void CEditView::DeleteData(
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
+		CWaitCursor cWaitCursor( m_hWnd );  // 2002.02.05 hor
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
@@ -472,7 +487,7 @@ void CEditView::DeleteData(
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
 			m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
-			bBoxSelected = TRUE;
+//			bBoxSelected = TRUE;	// 2002/2/3 aroka
 			nSelectColmFrom_Old = m_nSelectColmFrom;
 			nSelectLineFrom_Old = m_nSelectLineFrom;
 
@@ -2108,7 +2123,9 @@ void CEditView::Command_BOOKMARK_PATTERN(const char* Pattern)
 	}else{
 		//外部マクロから呼び出された (マクロの引数には正規表現が指定されているものとする)
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ) return;
-		m_CurRegexp.Compile( Pattern );
+		int nFlag = 0x00;
+		nFlag |= m_pShareData->m_Common.m_bLoHiCase ? 0x01 : 0x00;
+		m_CurRegexp.Compile( Pattern, nFlag );
 		m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
 			Pattern,								/* 検索条件 */
 			1,										/* 1==正規表現 */
@@ -2117,7 +2134,9 @@ void CEditView::Command_BOOKMARK_PATTERN(const char* Pattern)
 			&m_CurRegexp							/* 正規表現コンパイルデータ */
 		);
 		//元の検索パターンをコンパイル
-		if(m_pShareData->m_Common.m_bRegularExp)m_CurRegexp.Compile( m_szCurSrchKey );
+		nFlag = 0x00;
+		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
+		if(m_pShareData->m_Common.m_bRegularExp)m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
 	// 2002.01.16 hor 分割したビューも更新
 	for( int v = 0; v < 4; ++v ) if( m_pcEditDoc->m_nActivePaneIndex != v )m_pcEditDoc->m_cEditViewArr[v].Redraw();

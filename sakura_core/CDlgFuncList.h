@@ -9,7 +9,8 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, hor
+	Copyright (C) 2001, genta, hor
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -57,7 +58,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnJump( void );
+	BOOL OnJump( bool bCheckAutoClose = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
 	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTreeTxt( HWND );	/* ツリーコントロールの初期化：テキストトピックツリー */
@@ -67,6 +68,7 @@ protected:
 	// 2001.12.03 hor
 	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	void Key2Command( WORD );		//	キー操作→コマンド変換
 
 private:
 	//	May 18, 2001 genta

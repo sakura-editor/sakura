@@ -12,12 +12,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "CProfile.h"
-//#include <stdio.h>
 #include "debug.h"
 #include "global.h"
 #include "etc_uty.h"
 #include "CKeyWordSetMgr.h"
-//#include "CRunningTimer.h"
+#include "CMemory.h" // 2002/2/3 aroka
+#include "CEol.h" // 2002/2/3 aroka
 
 #ifndef CRLF
 	#define CRLF			"\015\012"

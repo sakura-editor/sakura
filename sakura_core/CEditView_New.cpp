@@ -34,6 +34,7 @@
 #include "etc_uty.h"
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 #include "my_icmp.h"	//@@@ 2002.01.13 add
+#include <locale.h>
 
 /*! フォントを選ぶ
 	@param bFat TRUEで太字

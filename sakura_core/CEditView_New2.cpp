@@ -9,29 +9,32 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, mik, asa-o
-	Copyright (C) 2001, hor
+	Copyright (C) 2001, hor, MIK 
+	Copyright (C) 2002, YAZAKI, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
 #include "CEditView.h"
 #include "debug.h"
-#include "keycode.h"
+//#include "keycode.h"
 #include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
-#include "CWaitCursor.h"
+//#include "CWaitCursor.h"
 #include "CEditWnd.h"
 #include "CShareData.h"
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
+#include "Clayout.h" /// 2002/2/3 aroka
+#include "CDocLine.h" /// 2002/2/3 aroka
+#include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "my_icmp.h"	//@@@ 2002.01.13 add
 
 
@@ -413,7 +416,7 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 	 && rcClip.top >= m_nViewAlignTop
 	){
 		rcClip.bottom = y + nLineHeight;
-		::ExtTextOut( hdc, x, y, fuOptions, &rcClip, (const char *)pData, nLength, m_pnDx );
+//		::ExtTextOut( hdc, x, y, fuOptions, &rcClip, (const char *)pData, nLength, m_pnDx );
 		//@@@	From Here 2002.01.30 YAZAKI ExtTextOutの制限回避
 		if( rcClip.right - rcClip.left > m_nViewCx ){
 			rcClip.right = rcClip.left + m_nViewCx;
@@ -421,17 +424,16 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 		int nBefore = 0;	//	ウィンドウの左にあふれた文字数
 		int nAfter = 0;		//	ウィンドウの右にあふれた文字数
 		if ( x < 0 ){
-			int nCharChars;
-		 
-			while (nBefore < ( 0 - x ) / nCharWidth - 1){
-				nCharChars = CMemory::MemCharNext( (const char *)pData, nLength, (const char *)&pData[nBefore] ) - (const char *)&pData[nBefore];
-				nBefore += nCharChars;
+			int nLeft = ( 0 - x ) / nCharWidth - 1;
+			while (nBefore < nLeft){
+				nBefore += CMemory::MemCharNext( (const char *)pData, nLength, (const char *)&pData[nBefore] ) - (const char *)&pData[nBefore];
 			}
 		}
 		if ( rcClip.right < x + nCharWidth * nLength ){
 			//	-1してごまかす（うしろはいいよね？）
 			nAfter = (x + nCharWidth * nLength - rcClip.right) / nCharWidth - 1;
 		}
+		::ExtTextOut( hdc, x + nBefore * nCharWidth, y, fuOptions, &rcClip, (const char *)&pData[nBefore], nLength - nBefore - nAfter, m_pnDx );
 		//@@@	To Here 2002.01.30 YAZAKI ExtTextOutの制限回避
 	}
 	return nLength;
@@ -526,8 +528,9 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 
 	if( m_bCurSrchRegularExp ){
 		/* 行頭ではない? */
-		if( ( ( m_szCurSrchKey[0] == '/' && '^' == m_szCurSrchKey[1] )
-			|| ( m_szCurSrchKey[0] == 'm' && '^' == m_szCurSrchKey[2] ) )
+//		if( ( ( m_szCurSrchKey[0] == '/' && '^' == m_szCurSrchKey[1] )
+//			|| ( m_szCurSrchKey[0] == 'm' && '^' == m_szCurSrchKey[2] ) )
+		if( ( m_szCurSrchKey[0] == '^' )
 			&& 0 != nPos ){
 			return FALSE;
 		}

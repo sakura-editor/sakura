@@ -4,10 +4,12 @@
 
 	@author Norio Nakatani
 	@date 1998/07/07 新規作成
+	@date 2002/2/3 aroka 未使用コード除去
 	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,34 +20,30 @@
 #include "mymessage.h"
 #include "CEditWnd.h"
 #include "CEditView.h"
+#include <tchar.h>
 
-
-CSplitterWnd::CSplitterWnd()
+CSplitterWnd::CSplitterWnd() :
+	m_pszClassName("SplitterWndClass"),	/* クラス名 */
+	m_nActivePane(0),					/* アクティブなペイン 0-3 */
+	m_nAllSplitRows(1),					/* 分割行数 */
+	m_nAllSplitCols(1),					/* 分割桁数 */
+	m_nVSplitPos(0),					/* 垂直分割位置 */
+	m_nHSplitPos(0),					/* 水平分割位置 */
+	m_bDragging(0),						/* 分割バーをドラッグ中か */
+	m_nDragPosX(0),						/* ドラッグ位置Ｘ */
+	m_nDragPosY(0),						/* ドラッグ位置Ｙ */
+	m_pCEditWnd(NULL)
 {
 	strcat( m_szClassInheritances, "::CSplitterWnd" );
-	m_pCEditWnd = NULL;
 	/* 共有データ構造体のアドレスを返す */
 	m_cShareData.Init();
 	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
 
-	m_nActivePane = 0;
-	m_pszClassName = "SplitterWndClass";	/* クラス名 */
-//	m_hInstance = NULL;						/* アプリケーションインスタンスのハンドル */
-//	m_hwndParent = NULL;						/* オーナーウィンドウのハンドル */
-//	m_hWnd = NULL;							/* このダイアログのハンドル */
-	m_nAllSplitRows = 1;					/* 分割行数 */
-	m_nAllSplitCols = 1;					/* 分割桁数 */
-	m_nVSplitPos = 0;						/* 垂直分割位置 */
-	m_nHSplitPos = 0;						/* 水平分割位置 */
 	m_hcurOld = NULL;						/* もとのマウスカーソル */
-	m_bDragging = 0;						/* 分割バーをドラッグ中か */
-	m_nDragPosX = 0;						/* ドラッグ位置Ｘ */
-	m_nDragPosY = 0;						/* ドラッグ位置Ｙ */
 
-	m_ChildWndArr[0] = NULL;				/* 子ウィンドウ配列 */
-	m_ChildWndArr[1] = NULL;				/* 子ウィンドウ配列 */
-	m_ChildWndArr[2] = NULL;				/* 子ウィンドウ配列 */
-	m_ChildWndArr[3] = NULL;				/* 子ウィンドウ配列 */
+	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){
+		m_ChildWndArr[v] = NULL;				/* 子ウィンドウ配列 */
+	}
 	return;
 }
 
@@ -54,11 +52,6 @@ CSplitterWnd::CSplitterWnd()
 
 CSplitterWnd::~CSplitterWnd()
 {
-//	if( NULL != m_hWnd ){
-//		::DestroyWindow( m_hWnd );
-//		m_hWnd = NULL;
-//	}
-	return;
 }
 
 
@@ -67,18 +60,11 @@ CSplitterWnd::~CSplitterWnd()
 /* 初期化 */
 HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
 {
-//	WNDCLASS	wc;
-
 	/* 初期化 */
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pCEditWnd	= pCEditWnd;
 
-//	/* 初期化 */
-//	Init(
-//		hInstance,	// handle to application instance
-//		hwndParent	 // handle to parent or owner window
-//	);
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
@@ -87,9 +73,16 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 		NULL,	//Handle to a small icon
 		NULL,// Handle to the class cursor.
 		(HBRUSH)NULL,// Handle to the class background brush.
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated 
+				//character string that specifies the resource name of the class menu,
+				//as the name appears in the resource file.
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
+	if( 0 == atWork ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			_T("SplitterWndクラスの登録に失敗しました。")
+		);
+	}
 
 	/* 基底クラスメンバ呼び出し */
 	return CWnd::Create(
@@ -113,16 +106,15 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 /* 子ウィンドウの設定 */
 void CSplitterWnd::SetChildWndArr( HWND* pcEditViewArr )
 {
-	m_ChildWndArr[0] = pcEditViewArr[0];				/* 子ウィンドウ配列 */
-	m_ChildWndArr[1] = pcEditViewArr[1];				/* 子ウィンドウ配列 */
-	m_ChildWndArr[2] = pcEditViewArr[2];				/* 子ウィンドウ配列 */
-	m_ChildWndArr[3] = pcEditViewArr[3];				/* 子ウィンドウ配列 */
+	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){
+		m_ChildWndArr[v] = pcEditViewArr[v];				/* 子ウィンドウ配列 */
+	}
 
 	/* ウィンドウの分割 */
-	DoSplit( 0, 0 );
+	DoSplit( m_nHSplitPos, m_nVSplitPos );
+//	DoSplit( 0, 0 );
 	return;
 }
-
 
 
 
@@ -250,8 +242,8 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	RECT				rc;
 	int					nAllSplitRowsOld = m_nAllSplitRows;	/* 分割行数 */
 	int					nAllSplitColsOld = m_nAllSplitCols;	/* 分割桁数 */
-	CEditView*			pcViewArr[4];
-	int					i;
+	CEditView*			pcViewArr[MAXCOUNTOFVIEW];
+//	int					i;
 	BOOL				bVUp;
 	BOOL				bHUp;
 	BOOL				bSizeBox;
@@ -288,9 +280,9 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		bSizeBox = FALSE;
 	}
 
-
-	for( i = 0; i < 4; ++i ){
-		pcViewArr[i] = ( CEditView* )::GetWindowLong( m_ChildWndArr[i], 0 );
+	int v;
+	for( v=0; v < MAXCOUNTOFVIEW; v++ ){
+		pcViewArr[v] = ( CEditView* )::GetWindowLong( m_ChildWndArr[v], 0 );
 	}
 	::GetClientRect( m_hWnd, &rc );
 	if( nHorizontal < nLimit ){
@@ -596,6 +588,8 @@ void CSplitterWnd::VSplitOnOff( void )
 	return;
 }
 
+
+
 /* 横分割ＯＮ／ＯＦＦ */
 void CSplitterWnd::HSplitOnOff( void )
 {
@@ -615,6 +609,7 @@ void CSplitterWnd::HSplitOnOff( void )
 	}
 	return;
 }
+
 
 
 /* 縦横分割ＯＮ／ＯＦＦ */
@@ -748,26 +743,25 @@ int CSplitterWnd::GetFirstPane( void )
 	return 0;
 }
 
+
+
 /* 最後のペインを返す */
 int CSplitterWnd::GetLastPane( void )
 {
 	int		nPane;
-	nPane = 0;
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 1 ){
 		nPane = 0;
 	}else
-	if( m_nAllSplitRows == 2 &&	m_nAllSplitCols == 1 ){
-		nPane = 2;
-	}else
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 2 ){
 		nPane = 1;
+	}else
+	if( m_nAllSplitRows == 2 &&	m_nAllSplitCols == 1 ){
+		nPane = 2;
 	}else{
 		nPane = 3;
 	}
 	return nPane;
 }
-
-
 
 
 
@@ -799,35 +793,17 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 
 
-///* ウィンドウ移動時の処理 */
-//void CSplitterWnd::MoveWnd( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
-//{
-//	int x;
-//	int y;
-//	int nWidth;
-//	int nHeight;
-//
-//	::MoveWindow( m_hWnd, x, y, nWidth, nHeight, TRUE );
-//	return;
-//}
-
-
 
 /* ウィンドウサイズの変更処理 */
 LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	int cx;
-	int cy;
-	cx = LOWORD(lParam);
-	cy = HIWORD(lParam);
-
 	CEditWnd*	pCEditWnd = (CEditWnd*)m_pCEditWnd;
-	CEditView*	pcViewArr[4];
+	CEditView*	pcViewArr[MAXCOUNTOFVIEW];
 	int					i;
 	RECT		rcClient;
 	int			nFrameWidth = 3;
 	BOOL		bSizeBox;
-	for( i = 0; i < 4; ++i ){
+	for( i = 0; i < MAXCOUNTOFVIEW; ++i ){
 		pcViewArr[i] = ( CEditView* )::GetWindowLong( m_ChildWndArr[i], 0 );
 	}
 
@@ -860,14 +836,14 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	if( m_nAllSplitRows == 1 && m_nAllSplitCols == 1 ){
 		if( m_ChildWndArr[0] != NULL ){
-			::MoveWindow( m_ChildWndArr[0], 0, 0, rcClient.right,  rcClient.bottom, TRUE );			/* 子ウィンドウ配列 */
+			::MoveWindow( m_ChildWndArr[0], 0, 0, rcClient.right,  rcClient.bottom, TRUE );		/* 子ウィンドウ配列 */
 
 			pcViewArr[0]->SplitBoxOnOff( TRUE, TRUE, bSizeBox );		/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
 	}else
 	if( m_nAllSplitRows == 2 && m_nAllSplitCols == 1 ){
 		if( m_ChildWndArr[0] != NULL ){
-			::MoveWindow( m_ChildWndArr[0], 0, 0, rcClient.right,  m_nVSplitPos, TRUE );			/* 子ウィンドウ配列 */
+			::MoveWindow( m_ChildWndArr[0], 0, 0, rcClient.right,  m_nVSplitPos, TRUE );		/* 子ウィンドウ配列 */
 			pcViewArr[0]->SplitBoxOnOff( FALSE, FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
 		if( m_ChildWndArr[2] != NULL ){
@@ -980,6 +956,7 @@ LRESULT CSplitterWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 
 
 
+
 /* マウス左ボタン解放時の処理 */
 LRESULT CSplitterWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -987,11 +964,6 @@ LRESULT CSplitterWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	int bDraggingOld;
 	int nX;
 	int nY;
-	int	xPos;
-	int	yPos;
-
-	xPos = (int)(short)LOWORD(lParam);
-	yPos = (int)(short)HIWORD(lParam);
 
 	if( m_bDragging ){
 		/* 分割トラッカーの表示 */
@@ -1064,6 +1036,8 @@ LRESULT CSplitterWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	OnMouseMove( m_hWnd, 0, 0, MAKELONG( xPos, yPos ) );
 	return 0L;
 }
+
+
 
 
 /* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */

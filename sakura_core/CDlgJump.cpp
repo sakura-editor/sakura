@@ -133,7 +133,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「指定行へジャンプ」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_JUMP) );
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_JUMP_DIALOG) );
 		return TRUE;
 	case IDC_CHECK_PLSQL:		/* PL/SQLソースの有効行か */
 		if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PLSQL ) ){
@@ -180,6 +180,10 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			);
 		}
 //To Here Feb. 20, 2001
+		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。
+			CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
+			pCEditDoc->m_cEditViewArr[pCEditDoc->m_nActivePaneIndex].HandleCommand(F_JUMP, TRUE, 0, 0, 0, 0);	//	ジャンプコマンド発行
+		}
 		return TRUE;
 	case IDCANCEL:
 		::EndDialog( m_hWnd, FALSE );

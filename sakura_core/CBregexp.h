@@ -7,10 +7,13 @@
 	@author genta
 	@date Jun. 10, 2001
 	@date Jan. 05, 2002 genta コメント追加
+	@date 2002/2/1 hor
+
 	$Revision$
 */
 /*
-	Copyright (C) 2001, genta
+	Copyright (C) 2001-2002, genta
+	Copyright (C) 2001, novice, hor
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -81,10 +84,12 @@ public:
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
-	bool Compile(const char *szPattern);
+	bool Compile(const char *szPattern, int bOption );
 	bool GetMatchInfo(const char*target, int len, int nStart, BREGEXP**rep);
+	// 2002/01/19 novice 正規表現による文字列置換
 	// 2002.01.26 hor    置換後文字列を別引数に
-	bool Replace(const char* szPattern0, const char* szPattern1, char *target, int len, char **out);
+	// 2002.02.01 hor    大文字小文字を無視するオプション追加
+	bool Replace(const char* szPattern0, const char* szPattern1, char *target, int len, char **out, int bOption );
 
 	//! BREGEXPメッセージを取得する
 	const char* GetLastMessage(void) const { return m_szMsg; }

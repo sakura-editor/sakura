@@ -7,6 +7,8 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, Stonee, genta
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -140,7 +142,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「Grep」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP) );
+		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP_DIALOG) );
 		return TRUE;
 	case IDC_CHK_FROMTHISTEXT:	/* この編集中のテキストから検索する */
 		if( 0 < (int)lstrlen(m_szCurrentFilePath ) ){
@@ -193,8 +195,9 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			}else{
 				//	To Here Jun. 26, 2001 genta
 				/* 英大文字と英小文字を区別する */
-				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+				//	正規表現のときも選択できるように。
+//				::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+//				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 				//2001/06/23 N.Nakatani
 				/* 単語単位で検索 */
@@ -202,12 +205,13 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
-			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
+			//	正規表現のときも選択できるように。
+//			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
+//			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
 
 
 //2001/06/23 N.Nakatani
-//単語単位のgrepが実装されたらコメントをを外すと思います
+//単語単位のgrepが実装されたらコメントを外すと思います
 //			/* 単語単位で検索 */
 //			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
 
@@ -351,8 +355,9 @@ void CDlgGrep::SetData( void )
 		&& m_bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
-		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+		//	正規表現のときも選択できるように。
+//		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+//		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
@@ -470,14 +475,19 @@ int CDlgGrep::GetData( void )
 	::GetCurrentDirectory( MAX_PATH, m_szFolder );
 	::SetCurrentDirectory( szCurDirOld );
 
-
-//	if( 0 < lstrlen( m_szText ) ){
+//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
+	/* 検索文字列 */
+	if( 0 < lstrlen( m_szText ) ){
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( m_bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true ) ){
+		int nFlag = 0;
+		nFlag |= m_bLoHiCase ? 0x01 : 0x00;
+		if( m_bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag) ){
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
+		m_cShareData.AddToSearchKeyArr( m_szText );
+#if 0
 		/* 検索文字列 */
 		if( 0 < lstrlen( m_szText ) ){
 			pcmWork = new CMemory( m_szText, lstrlen( m_szText ) );
@@ -502,53 +512,55 @@ int CDlgGrep::GetData( void )
 			strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork->GetPtr( NULL ) );
 			delete pcmWork;
 		}
+#endif
+	}
 
-		/* 検索ファイル */
-		pcmWork = new CMemory( m_szFile, lstrlen( m_szFile ) );
-		for( i = 0; i < m_pShareData->m_nGREPFILEArrNum; ++i ){
-			if( 0 == strcmp( m_szFile, m_pShareData->m_szGREPFILEArr[i] ) ){
-				break;
-			}
+	/* 検索ファイル */
+	pcmWork = new CMemory( m_szFile, lstrlen( m_szFile ) );
+	for( i = 0; i < m_pShareData->m_nGREPFILEArrNum; ++i ){
+		if( 0 == strcmp( m_szFile, m_pShareData->m_szGREPFILEArr[i] ) ){
+			break;
 		}
-		if( i < m_pShareData->m_nGREPFILEArrNum ){
-			for( j = i; j > 0; j-- ){
-				strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
-			}
-		}else{
-			for( j = MAX_GREPFILE - 1; j > 0; j-- ){
-				strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
-			}
-			++m_pShareData->m_nGREPFILEArrNum;
-			if( m_pShareData->m_nGREPFILEArrNum > MAX_GREPFILE ){
-				m_pShareData->m_nGREPFILEArrNum = MAX_GREPFILE;
-			}
+	}
+	if( i < m_pShareData->m_nGREPFILEArrNum ){
+		for( j = i; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
 		}
-		strcpy( m_pShareData->m_szGREPFILEArr[0], pcmWork->GetPtr( NULL ) );
-		delete pcmWork;
+	}else{
+		for( j = MAX_GREPFILE - 1; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
+		}
+		++m_pShareData->m_nGREPFILEArrNum;
+		if( m_pShareData->m_nGREPFILEArrNum > MAX_GREPFILE ){
+			m_pShareData->m_nGREPFILEArrNum = MAX_GREPFILE;
+		}
+	}
+	strcpy( m_pShareData->m_szGREPFILEArr[0], pcmWork->GetPtr( NULL ) );
+	delete pcmWork;
 
-		/* 検索フォルダ */
-		pcmWork = new CMemory( m_szFolder, lstrlen( m_szFolder ) );
-		for( i = 0; i < m_pShareData->m_nGREPFOLDERArrNum; ++i ){
-			if( 0 == strcmp( m_szFolder, m_pShareData->m_szGREPFOLDERArr[i] ) ){
-				break;
-			}
+	/* 検索フォルダ */
+	pcmWork = new CMemory( m_szFolder, lstrlen( m_szFolder ) );
+	for( i = 0; i < m_pShareData->m_nGREPFOLDERArrNum; ++i ){
+		if( 0 == strcmp( m_szFolder, m_pShareData->m_szGREPFOLDERArr[i] ) ){
+			break;
 		}
-		if( i < m_pShareData->m_nGREPFOLDERArrNum ){
-			for( j = i; j > 0; j-- ){
-				strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
-			}
-		}else{
-			for( j = MAX_GREPFOLDER - 1; j > 0; j-- ){
-				strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
-			}
-			++m_pShareData->m_nGREPFOLDERArrNum;
-			if( m_pShareData->m_nGREPFOLDERArrNum > MAX_GREPFOLDER ){
-				m_pShareData->m_nGREPFOLDERArrNum = MAX_GREPFOLDER;
-			}
+	}
+	if( i < m_pShareData->m_nGREPFOLDERArrNum ){
+		for( j = i; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
 		}
-		strcpy( m_pShareData->m_szGREPFOLDERArr[0], pcmWork->GetPtr( NULL ) );
-		delete pcmWork;
-//	}
+	}else{
+		for( j = MAX_GREPFOLDER - 1; j > 0; j-- ){
+			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
+		}
+		++m_pShareData->m_nGREPFOLDERArrNum;
+		if( m_pShareData->m_nGREPFOLDERArrNum > MAX_GREPFOLDER ){
+			m_pShareData->m_nGREPFOLDERArrNum = MAX_GREPFOLDER;
+		}
+	}
+	strcpy( m_pShareData->m_szGREPFOLDERArr[0], pcmWork->GetPtr( NULL ) );
+	delete pcmWork;
+
 	return TRUE;
 }
 

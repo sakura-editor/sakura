@@ -9,13 +9,13 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
-	Copyright (C) 2001, GAE, MIK, hor
+	Copyright (C) 2001, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
+	Copyright (C) 2002, YAZAKI, hor, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
@@ -31,11 +31,16 @@
 #include "CShareData.h"
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
-//#include "_global_fio.h"
 #include "etc_uty.h"
 #include "global.h"
-//#include "CDataObject.h"
 #include "CAutoSave.h"
+#include "CLayout.h"/// 2002/2/3 aroka
+#include "COpe.h"///
+#include "COpeBlk.h"///
+#include "CDropTarget.h"///
+#include "CSplitBoxWnd.h"///
+#include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
+#include "CMarkMgr.h"///
 
 
 #ifndef WM_MOUSEWHEEL
@@ -6359,11 +6364,14 @@ DWORD CEditView::DoGrep(
 
 	/* アンドゥバッファの処理 */
 	if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-		while( NULL != m_pcOpeBlk ){}
+//@@@2002.2.2 YAZAKI NULLじゃないと進まないので、とりあえずコメント。＆NULLのときは、new COpeBlkする。
+//		while( NULL != m_pcOpeBlk ){}
 //		delete m_pcOpeBlk;
 //		m_pcOpeBlk = NULL;
 	}
-	m_pcOpeBlk = new COpeBlk;
+	else {
+		m_pcOpeBlk = new COpeBlk;
+	}
 
 	m_bCurSrchKeyMark = TRUE;								/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, pcmGrepKey->GetPtr( NULL ) );	/* 検索文字列 */
@@ -6383,7 +6391,9 @@ DWORD CEditView::DoGrep(
 		}
 
 		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_szCurSrchKey );
+		int nFlag = 0x00;
+		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
+		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
 	//	To Here Jun. 27 genta
 
@@ -6516,7 +6526,9 @@ DWORD CEditView::DoGrep(
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
-		if( !cRegexp.Compile( szKey ) ){
+		int nFlag = 0x00;
+		nFlag |= bGrepLoHiCase ? 0x01 : 0x00;
+		if( !cRegexp.Compile( szKey, nFlag ) ){
 			return 0;
 		}
 	}else{
@@ -8480,15 +8492,41 @@ finish:
 //
 
 //2002.01.26 hor
-//  検索／置換／ブックマーク検索後の状態をステータスバーに表示する
+//  検索／置換／ブックマーク検索後の状態を表示する
 void CEditView::SendStatusMessage( const char* msg ){
 	CEditWnd* pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ) , GWL_USERDATA );
-	if( NULL != pCEditWnd->m_hwndStatusBar ){
-		::SendMessage( 
-			pCEditWnd->m_hwndStatusBar,
-			SB_SETTEXT,
-			0 | SBT_NOBORDERS,
-			(LPARAM) (LPINT)msg );
+	if( NULL == pCEditWnd->m_hwndStatusBar ){
+		// メニューバーへ
+		HDC		hdc;
+		POINT	po,poFrame;
+		RECT	rc,rcFrame;
+		HFONT	hFontOld;
+		HWND	hwndFrame;
+		int		nStrLen;
+		char	szText[64];
+		wsprintf( szText, "%s            ", msg );
+		hwndFrame = ::GetParent( m_hwndParent );
+		hdc = ::GetWindowDC( hwndFrame );
+		poFrame.x = 0;
+		poFrame.y = 0;
+		::ClientToScreen( hwndFrame, &poFrame );
+		::GetWindowRect( hwndFrame, &rcFrame );
+		po.x = rcFrame.right - rcFrame.left;
+		po.y = poFrame.y - rcFrame.top;
+		hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
+		nStrLen = 30;
+		rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - 5;
+		rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
+		rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
+		rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
+		::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
+		::SetBkColor( hdc, ::GetSysColor( COLOR_MENU ) );
+		::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
+		::SelectObject( hdc, hFontOld );
+		::ReleaseDC( hwndFrame, hdc );
+	}else{
+		// ステータスバーへ
+		::SendMessage( pCEditWnd->m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
 	}
 }
 

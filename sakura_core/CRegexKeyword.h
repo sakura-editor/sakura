@@ -25,13 +25,11 @@
 
 #include <windows.h>
 #include "CShareData.h"
-//#include "CMemory.h"
 #include "global.h"
 #include "CBregexp.h"
 
 
 #define USE_PARENT	//親を使ってキーワード格納領域を削減する。
-//#undef USE_PARENT
 
 /*
  * パラメータ宣言
@@ -75,8 +73,8 @@ typedef struct RegexInfo_t {
 #else
 	struct RegexKeywordInfo	sRegexKey;	//コンパイルパターンを保持
 #endif
-	char   nStatus;		//状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
-	char   nMatch;		//このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
+	int    nStatus;		//状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
+	int    nMatch;		//このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
 	int    nOffset;		//マッチした位置
 	int    nLength;		//マッチした長さ
 	int    nHead;		//先頭のみチェックするか？
@@ -103,8 +101,6 @@ public:
 	//! 書式(囲み)チェック
 	BOOL RegexKeyCheckSyntax( const char *s );
 
-//	CShareData	m_cShareData;
-//	DLLSHAREDATA*	m_pShareData;
 	int		m_nTypeIndex;		//現在のタイプ設定番号
 	BOOL		m_bUseRegexKeyword;	//正規表現キーワードを使用する・しない
 

@@ -9,6 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
+	Copyright (C) 2002, aroka
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -46,7 +47,7 @@
 */
 void CMarkMgr::SetMax(int max)
 {
-	maxitem = max;
+	m_nMaxitem = max;
 	Expire();	//	éwíËÇµÇΩêîÇ…óvëfÇå∏ÇÁÇ∑
 }
 
@@ -58,8 +59,8 @@ void CMarkMgr::SetMax(int max)
 */
 bool CMarkMgr::CheckCurrent(void) const
 {
-	if( curpos < Count() )
-		return dat[ curpos ].IsValid();
+	if( m_nCurpos < Count() )
+		return m_cMarkChain[ m_nCurpos ].IsValid();
 
 	return false;
 }
@@ -72,8 +73,8 @@ bool CMarkMgr::CheckCurrent(void) const
 */
 bool CMarkMgr::CheckPrev(void) const
 {
-	for( int i = curpos - 1; i >= 0; i-- ){
-		if( dat[ i ].IsValid() )
+	for( int i = m_nCurpos - 1; i >= 0; i-- ){
+		if( m_cMarkChain[ i ].IsValid() )
 			return true;
 	}
 	return false;
@@ -87,8 +88,8 @@ bool CMarkMgr::CheckPrev(void) const
 */
 bool CMarkMgr::CheckNext(void) const
 {
-	for( int i = curpos + 1; i < Count(); i++ ){
-		if( dat[ i ].IsValid() )
+	for( unsigned int i = m_nCurpos + 1; i < Count(); i++ ){
+		if( m_cMarkChain[ i ].IsValid() )
 			return true;
 	}
 	return false;
@@ -102,9 +103,9 @@ bool CMarkMgr::CheckNext(void) const
 */
 bool CMarkMgr::PrevValid(void)
 {
-	for( int i = curpos - 1; i >= 0; i-- ){
-		if( dat[ i ].IsValid() ){
-			curpos = i;
+	for( int i = m_nCurpos - 1; i >= 0; i-- ){
+		if( m_cMarkChain[ i ].IsValid() ){
+			m_nCurpos = i;
 			return true;
 		}
 	}
@@ -118,9 +119,9 @@ bool CMarkMgr::PrevValid(void)
 */
 bool CMarkMgr::NextValid(void)
 {
-	for( int i = curpos + 1; i < Count(); i++ ){
-		if( dat[ i ].IsValid() ){
-			curpos = i;
+	for( unsigned int i = m_nCurpos + 1; i < Count(); i++ ){
+		if( m_cMarkChain[ i ].IsValid() ){
+			m_nCurpos = i;
 			return true;
 		}
 	}
@@ -136,8 +137,8 @@ bool CMarkMgr::NextValid(void)
 */
 void CMarkMgr::Flush(void)
 {
-	dat.erase( dat.begin(), dat.end() );
-	curpos = 0;
+	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.end() );
+	m_nCurpos = 0;
 }
 //	To Here
 
@@ -154,14 +155,14 @@ void CMarkMgr::Flush(void)
 void CAutoMarkMgr::Add(const CMark& m)
 {
 	//	åªç›à íuÇ™ìríÜÇÃéû
-	if( curpos < dat.size() ){
+	if( m_nCurpos < m_cMarkChain.size() ){
 		//	åªç›à íuÇ‹Ç≈óvëfÇçÌèú
-		dat.erase( dat.begin() + curpos, dat.end() );
+		m_cMarkChain.erase( m_cMarkChain.begin() + m_nCurpos, m_cMarkChain.end() );
 	}
 
 	//	óvëfÇÃí«â¡
-	dat.push_back(m);
-	++curpos;
+	m_cMarkChain.push_back(m);
+	++m_nCurpos;
 
 	//	ãKíËêîÇí¥Ç¶ÇƒÇµÇ‹Ç§Ç∆Ç´ÇÃëŒâû
 	Expire();
@@ -173,15 +174,15 @@ void CAutoMarkMgr::Add(const CMark& m)
 */
 void CAutoMarkMgr::Expire(void)
 {
-	int range = dat.size() - GetMax();
+	int range = m_cMarkChain.size() - GetMax();
 
 	if( range <= 0 )	return;
 
 	//	ç≈ëÂílÇí¥Ç¶ÇƒÇ¢ÇÈèÍçá
-	dat.erase( dat.begin(), dat.begin() + range );
-	curpos -= range;
-	if( curpos < 0 )
-		curpos = 0;
+	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.begin() + range );
+	m_nCurpos -= range;
+	if( m_nCurpos < 0 )
+		m_nCurpos = 0;
 }
 
 

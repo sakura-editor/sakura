@@ -876,7 +876,8 @@ LRESULT CEditApp::DispatchEvent(
 //					}
 //					break;
 					do{
-						if( 0 != strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
+						if( m_cShareData.ExtWinHelpIsSet() ) {	//	共通設定のみ確認
+//						if( 0 != strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
 							break;
 						}else
 						{
@@ -1066,7 +1067,7 @@ LRESULT CEditApp::DispatchEvent(
 						}
 					}
 					break;
-				case F_GREP:
+				case F_GREP_DIALOG:
 					/* Grep */
 					DoGrep();  //Stonee, 2001/03/21  Grepを別関数に
 					break;
@@ -1854,7 +1855,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, "新規作成(&N)", FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, "開く(&O)...", FALSE );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP, "&Grep...", FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, "&Grep...", FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	/* MRUリストのファイルのリストをメニューにする */

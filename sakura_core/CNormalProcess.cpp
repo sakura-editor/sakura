@@ -23,6 +23,8 @@
 #include "CShareData.h"
 #include "Debug.h"
 #include "etc_uty.h"
+#include "CEditWnd.h" // 2002/2/3 aroka
+#include "mymessage.h" // 2002/2/3 aroka
 #include <tchar.h>
 
 
@@ -42,23 +44,10 @@ bool CNormalProcess::Initialize()
 	DLLSHAREDATA*	m_pShareData;
 
 	/* プロセス初期化の目印 */
-	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
+	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
 	if( NULL == hMutex ){
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
-			GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
 		return false;
 	}
-	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
-		DWORD dwRet = ::WaitForSingleObject( hMutex, 10000 );
-		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				_T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
-			::CloseHandle( hMutex );
-			return false;
-		}
-	}
-	
 
 	/* 共有データ構造体のアドレスを返す */
 	if( !m_cShareData.Init() ){
@@ -78,15 +67,9 @@ bool CNormalProcess::Initialize()
 	GrepInfo		gi;
 	FileInfo		fi;
 	
-	/* コマンドラインの解析 */
-	bReadOnly = CCommandLine::Instance()->IsReadOnly();
-	bDebugMode = CCommandLine::Instance()->IsDebugMode();
-	bGrepMode = CCommandLine::Instance()->IsGrepMode();
-	CCommandLine::Instance()->GetFileInfo(fi);
-	CCommandLine::Instance()->GetGrepInfo(gi);
-	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
+	CCommandLine::Instance()->GetFileInfo(fi); // 2002/2/8 aroka ここに移動
 	if( 0 < strlen( fi.m_szPath ) ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileReadで
@@ -123,6 +106,11 @@ bool CNormalProcess::Initialize()
 //複数プロセス版
 	/* エディタウィンドウオブジェクトを作成 */
 	m_pcEditWnd = new CEditWnd;
+
+	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
+	bDebugMode = CCommandLine::Instance()->IsDebugMode();
+	bGrepMode = CCommandLine::Instance()->IsGrepMode();
+	
 	if( bDebugMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
 
@@ -137,6 +125,7 @@ bool CNormalProcess::Initialize()
 		/*nHitCount = */
 
 		TCHAR szWork[MAX_PATH];
+		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
 		/* ロングファイル名を取得する */
 		if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr( NULL ), szWork ) ){
 			gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
@@ -155,6 +144,7 @@ bool CNormalProcess::Initialize()
 		);
 	}else{
 		if( 0 < (int)strlen( fi.m_szPath ) ){
+			bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, 
 										fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */ );
 			//	Nov. 6, 2000 genta
@@ -241,5 +231,50 @@ void CNormalProcess::Terminate()
 {
 }
 
+
+
+/*!
+	デストラクタ
+	
+	@date 2002/2/3 aroka ヘッダから移動
+*/
+CNormalProcess::~CNormalProcess()
+{
+	if( m_pcEditWnd ){
+		delete m_pcEditWnd;
+	}
+};
+
+
+/*!
+	@brief Mutex(プロセス初期化の目印)を取得する
+
+	多数同時に起動するとウィンドウが表に出てこないことがある。
+	
+	@date 2002/2/8 aroka Initializeから移動
+	@retval Mutex のハンドルを返す
+	@retval 失敗した時はリリースしてから NULL を返す
+*/
+HANDLE CNormalProcess::GetInitializeMutex() const
+{
+	HANDLE hMutex;
+	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
+	if( NULL == hMutex ){
+		::MessageBeep( MB_ICONSTOP );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
+			GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
+		return NULL;
+	}
+	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
+		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
+		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+				_T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
+			::CloseHandle( hMutex );
+			return NULL;
+		}
+	}
+	return hMutex;
+}
 
 /*[EOF]*/

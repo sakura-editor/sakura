@@ -6,7 +6,7 @@
 	$Revision$
 */
 /*
-	Copyright (C) 2002, YAZAKI
+	Copyright (C) 2002, YAZAKI, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,6 +17,10 @@
 #include "CEditWnd.h"
 #include "charcode.h"
 #include "CDlgPrintPage.h"
+#include "CDlgCancel.h"/// 2002/2/3 aroka from here
+#include "Debug.h"///
+#include "etc_uty.h"///
+#include <stdio.h>/// 2002/2/3 aroka to here
 
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
@@ -148,6 +152,39 @@ LRESULT CPrintPreview::OnPaint(
 
 	HFONT	hFontZenOld = (HFONT)::SelectObject( hdc, hFontZen );
 
+	/*	ヘッダ	*/
+	const int nHeaderWorkLen = 1024;
+	char      szHeaderWork[1024 + 1];
+	
+	/* 左寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
+	//	左寄せx座標
+	int nLeft = m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX + 5;
+	int nRight = m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth - m_pPrintSetting->m_nPrintMarginRX - 5;
+	int nTop = nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ) - 5;
+	::TextOut( hdc,
+		nLeft,
+		nTop,
+		szHeaderWork, lstrlen( szHeaderWork )
+	);
+
+	/* 中央寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
+	::TextOut( hdc,
+		( nRight + nLeft - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
+		nTop,
+		szHeaderWork, lstrlen( szHeaderWork )
+	);
+	
+	/* 右寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
+	::TextOut( hdc,
+		nRight - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth,
+		nTop,
+		szHeaderWork, lstrlen( szHeaderWork )
+	);
+
+#if 0
 	/* ファイル名の表示 */
 	char			szWork[260];
 	if( 0 == lstrlen( m_pParentWnd->m_cEditDoc.m_szFilePath ) ){	/* 現在編集中のファイルのパス */
@@ -163,6 +200,7 @@ LRESULT CPrintPreview::OnPaint(
 		nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ),
 		szWork, lstrlen( szWork )
 	);
+#endif
 	::SelectObject( hdc, hFontZenOld );
 
 	/* 印刷/印刷プレビュー ページテキストの描画 */
@@ -174,6 +212,37 @@ LRESULT CPrintPreview::OnPaint(
 		hFontZen,
 		NULL
 	);
+
+	/*	フッタ	*/
+	const int nFooterWorkLen = 1024;
+	char      szFooterWork[1024 + 1];
+	
+	/* 左寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
+	//	左寄せx座標
+	int nBottom = nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY - m_pPrintSetting->m_nPrintFontHeight ) + 5;
+	::TextOut( hdc,
+		nLeft,
+		nBottom,
+		szFooterWork, lstrlen( szFooterWork )
+	);
+
+	/* 中央寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
+	::TextOut( hdc,
+		( nRight + nLeft - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
+		nBottom,
+		szFooterWork, lstrlen( szFooterWork )
+	);
+	
+	/* 右寄せ */
+	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
+	::TextOut( hdc,
+		nRight - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth,
+		nBottom,
+		szFooterWork, lstrlen( szFooterWork )
+	);
+#if 0
 	/* ページ番号の表示 */
 	wsprintf( szWork, "- %d -", m_nCurPageNum + 1 );
 	::TextOut( hdc,
@@ -184,7 +253,7 @@ LRESULT CPrintPreview::OnPaint(
 		nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY - m_pPrintSetting->m_nPrintFontHeight/* - m_nPreview_PaperOffsetTop*/ ),
 		szWork, lstrlen( szWork )
 	);
-
+#endif
 	/* 印刷フォント解除 & 破棄 */
 	::SelectObject( hdc, hFontOld );
 	::DeleteObject( hFont );

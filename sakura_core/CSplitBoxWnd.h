@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,8 +19,9 @@ class CSplitBoxWnd;
 #define _CSPLITBOXWND_H_
 
 #include "CWnd.h"
-//#include <windows.h>
-#include "mymessage.h"
+//#include "mymessage.h"// 2002/2/3 aroka ヘッダ軽量化
+
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -45,9 +47,6 @@ public:
 
 public:
 	const char*	m_pszClassName;	/* クラス名 */
-//	HINSTANCE	m_hInstance;	/* インスタンスハンドル */
-//	HWND		m_hWnd;			/* ウィンドウハンドル */
-//	HWND		m_hwndParent; 	/* 親ウィンドウハンドル */
 	int			m_bVertical;	/* 垂直分割ボックスか */
 	int			m_nDragPosY;
 	int			m_nDragPosX;

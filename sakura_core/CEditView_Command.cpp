@@ -9,27 +9,28 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta, みつ
-	Copyright (C) 2001, Misaka, asa-o, novice, hor
+	Copyright (C) 2001, Misaka, asa-o, novice, hor, YAZAKI
+	Copyright (C) 2002, hor, YAZAKI, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <stdlib.h>
 #include <io.h>
 #include "sakura_rc.h"
 #include "CEditView.h"
 #include "debug.h"
-#include "keycode.h"
 #include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "CEditApp.h"
 #include "CWaitCursor.h"
 #include "CSplitterWnd.h"
-#include "CMacro.h"
-#include "CKeyMacroMgr.h"
+//@@@ 2002.2.2 YAZAKI マクロはCSMacroMgrに統一
+//#include "CMacro.h"
+//#include "CKeyMacroMgr.h"
+#include "CSMacroMgr.h"
 #include "etc_uty.h"
 #include "CDlgTypeList.h"
 #include "CDlgProperty.h"
@@ -39,26 +40,15 @@
 #include "CRunningtimer.h"
 #include "CDlgExec.h"
 #include "CDlgAbout.h"	//Dec. 24, 2000 JEPRO 追加
-
-//#include "mailapi32_api.h"
-//#include "CDlgWords.h"
-
-
-//	BOOL CALLBACK SendingMailDialogProc(
-//	HWND hwndDlg,	/* ダイアログ ボックスのハンドル */
-//	UINT uMsg,		/* メッセージ */
-//	WPARAM wParam,	/* 第1メッセージ パラメータ */
-//	LPARAM lParam	/* 第2メッセージ パラメータ */
-//	)
-//	{
-//	switch( uMsg ){
-//	case WM_INITDIALOG:
-//		return TRUE;
-//	default:
-//		return FALSE;
-//	}
-//	}
-
+#include "COpe.h"/// 2002/2/3 aroka 追加 from here
+#include "COpeBlk.h"///
+#include "CLayout.h"///
+#include "CEditWnd.h"///
+#include "CFuncInfoArr.h"///
+#include "CMarkMgr.h"///
+#include "CDocLine.h"///
+#include "CSMacroMgr.h"///
+#include "mymessage.h"/// 2002/2/3 aroka 追加 to here
 
 
 
@@ -112,12 +102,11 @@ BOOL CEditView::HandleCommand(
 		/* キーリピート状態をなくする */
 		bRepeat = FALSE;
 		/* キーマクロに記録可能な機能かどうかを調べる */
-		if( CMacro::CanFuncIsKeyMacro( nCommand ) ){
+		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+		if( CSMacroMgr::CanFuncIsKeyMacro( nCommand ) ){
 			/* キーマクロのバッファにデータ追加 */
-//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
-			m_pcEditDoc->m_CKeyMacroMgr.Append( nCommand, lparam1 );
-//			m_pShareData->m_CKeyMacroMgr.Append( nCommand, lparam1 );
-		}else{
+			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
+			m_pcEditDoc->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, this );
 		}
 	}
 	/* キーボードマクロの実行中 */
@@ -129,7 +118,8 @@ BOOL CEditView::HandleCommand(
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		m_bExecutingKeyMacro = TRUE;
-		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( m_hInstance, this, nCommand - F_USERMACRO_0 )){
+		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
+		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, m_hInstance, this )){
 			::MYMESSAGEBOX( m_hwndParent,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 				"マクロ %d (%s) の実行に失敗しました。", nCommand - F_USERMACRO_0,
 				m_pcEditDoc->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
@@ -149,17 +139,19 @@ BOOL CEditView::HandleCommand(
 			m_bHokan = FALSE;
 		}
 	}
+	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
+#if 0
 	if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-//		if( nCommand == F_TAGJUMP ){
-//			return Command_TAGJUMP( FALSE );
-//		}
 		return -1;
-//		while( NULL != m_pcOpeBlk ){}
-
-//		delete m_pcOpeBlk;
-//		m_pcOpeBlk = NULL;
 	}
 	m_pcOpeBlk = new COpeBlk;
+#endif
+	if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
+		
+	}
+	else {
+		m_pcOpeBlk = new COpeBlk;
+	}
 
 //	if( !m_pcEditDoc->m_bDebugMode ){
 //		char*		szCommandName[256];
@@ -362,6 +354,7 @@ BOOL CEditView::HandleCommand(
 	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, (BOOL)lparam2 );break;/* テキストを貼り付け */
 	case F_ADDTAIL:					Command_ADDTAIL( (const char*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
+	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
 	case F_COPYTAG:					Command_COPYTAG();break;				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYLINES:				Command_COPYLINES();break;				//選択範囲内全行コピー
@@ -401,23 +394,26 @@ BOOL CEditView::HandleCommand(
 	case F_SEARCH_DIALOG:		Command_SEARCH_DIALOG();break;												//検索(単語検索ダイアログ)
 	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( bRedraw, (HWND)lparam1, (const char*)lparam2 );break;	//次を検索
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
-	case F_REPLACE:	//置換(置換ダイアログ)
+	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)
 		/* 再帰処理対策 */
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
 		}
-		Command_REPLACE();
+		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
 		break;
+	case F_REPLACE:				Command_REPLACE();break;			//置換実行 @@@ 2002.2.2 YAZAKI
 	case F_SEARCH_CLEARMARK:	Command_SEARCH_CLEARMARK();break;	//検索マークのクリア
-	case F_GREP:	//Grep
+	case F_GREP_DIALOG:	//Grepダイアログの表示
 		/* 再帰処理対策 */
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
 		}
-		Command_GREP();
+		Command_GREP_DIALOG();
 		break;
+	case F_GREP:			Command_GREP();break;							//Grep
+	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
 	case F_OUTLINE:			bRet = Command_FUNCLIST( (BOOL)lparam1 );break;	//アウトライン解析
 	case F_TAGJUMP:			Command_TAGJUMP();break;						/* タグジャンプ機能 */
@@ -460,15 +456,18 @@ BOOL CEditView::HandleCommand(
 		Command_EXECKEYMACRO();break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
-	case F_EXECCOMMAND:
+	case F_EXECCOMMAND_DIALOG:
 		/* 再帰処理対策 */// 2001/06/23 N.Nakatani
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
 		}
-		Command_EXECCOMMAND((const char*)lparam1);	/* 外部コマンド実行 */
+		Command_EXECCOMMAND_DIALOG((const char*)lparam1);	/* 外部コマンド実行 */
 		break;
 	//	To Here Sept. 20, 2000
+	case F_EXECCOMMAND:
+		Command_EXECCOMMAND((const char*)lparam1);
+		break;
 
 	/* カスタムメニュー */
 	case F_MENU_RBUTTON:	/* 右クリックメニュー */
@@ -732,6 +731,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 				}
 				nPosX = 0;
 				nCharChars = 0;
+				int nTabSpace = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace; // 2002/2/8 aroka
 				for( i = 0; i < nLineLen; ){
 					nPosX += nCharChars;
 					if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
@@ -739,8 +739,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 						break;
 					}
 					if( pLine[i] == TAB ){
-						nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
-						 - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+						nCharChars = nTabSpace - ( nPosX % nTabSpace ); // 2002/2/8 aroka
 						++i;
 					}else{
 						nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -762,10 +761,10 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 				nLineLen = 0;
 			}
 			nPosX = 0;
+			int nTabSpace = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace; // 2002/2/8 aroka
 			for( i = 0; i < nLineLen; ){
 				if( pLine[i] == TAB ){
-					nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
-					 - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
+					nCharChars = nTabSpace - ( nPosX % nTabSpace ); // 2002/2/8 aroka
 					++i;
 				}else{
 					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
@@ -867,28 +866,30 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 			}
 		}
 		nPosX = 0;
-		for( i = 0; i < nLineLen; ){
-			if( nPosX > m_nCaretPosX ){
-				break;
-			}
-	//		if( i == nLineLen - 1 && (pLine[i] == '\n' || pLine[i] == '\r' ) ){
-	//		if( i >= nLineLen - pcLayout->m_cEol.GetLen() ){
-			if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
-				i = nLineLen;
-				break;
-			}
-			if( pLine[i] == TAB ){
-				nCharChars = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace
-				 - ( nPosX % m_pcEditDoc->GetDocumentAttribute().m_nTabSpace );
-				++i;
-			}else{
-				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
-				if( 0 == nCharChars ){
-					nCharChars = 1;
+		{
+			int nTabSpace = m_pcEditDoc->GetDocumentAttribute().m_nTabSpace; // 2002/2/8 aroka
+			for( i = 0; i < nLineLen; ){
+				if( nPosX > m_nCaretPosX ){
+					break;
 				}
-				i+= nCharChars;
+		//		if( i == nLineLen - 1 && (pLine[i] == '\n' || pLine[i] == '\r' ) ){
+		//		if( i >= nLineLen - pcLayout->m_cEol.GetLen() ){
+				if( i >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+					i = nLineLen;
+					break;
+				}
+				if( pLine[i] == TAB ){
+					nCharChars = nTabSpace - ( nPosX % nTabSpace ); // 2002/2/8 aroka
+					++i;
+				}else{
+					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+					if( 0 == nCharChars ){
+						nCharChars = 1;
+					}
+					i+= nCharChars;
+				}
+				nPosX += nCharChars;
 			}
-			nPosX += nCharChars;
 		}
 		if( i >= nLineLen ){
 			/* フリーカーソルモードか */
@@ -3342,8 +3343,10 @@ BOOL CEditView::ChangeCurRegexp(void)
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return FALSE;
 		}
+		int nFlag = 0x00;
+		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
 		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_szCurSrchKey );
+		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
 
 	if( bChangeState ){
@@ -4198,6 +4201,28 @@ BOOL CEditView::Command_FILESAVEAS( void )
 
 
 
+/*!	現在編集中のファイル名をクリップボードにコピー
+	2002/2/3 aroka
+*/
+void CEditView::Command_COPYFILENAME( void )
+{
+	if( '\0' != m_pcEditDoc->m_szFilePath[0] ){
+		/* クリップボードにデータを設定 */
+		char szFname[_MAX_FNAME];
+		char szExt[_MAX_EXT];
+		char szFilename[_MAX_FNAME];
+		_splitpath( m_pcEditDoc->m_szFilePath, NULL, NULL, szFname, szExt );
+		wsprintf( szFilename, "%s%s", szFname, szExt );
+		MySetClipboardData( szFilename, lstrlen( szFilename ), FALSE );
+	}else{
+		::MessageBeep( MB_ICONHAND );
+	}
+	return;
+}
+
+
+
+
 /* 現在編集中のファイルのパス名をクリップボードにコピー */
 void CEditView::Command_COPYPATH( void )
 {
@@ -4251,6 +4276,17 @@ void CEditView::Command_COPYTAG( void )
 
 }
 
+/*! 指定行へジャンプダイアログの表示
+	2002.2.2 YAZAKI
+*/
+void CEditView::Command_JUMP_DIALOG( void )
+{
+	if( !m_pcEditDoc->m_cDlgJump.DoModal(
+		m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc
+	) ){
+		return;
+	}
+}
 
 
 
@@ -4267,6 +4303,8 @@ void CEditView::Command_JUMP( void )
 	int			nCurrentLine;
 	int			nCommentBegin;
 	int			nBgn;
+#if 0
+	2002.2.2 YAZAKI ダイアログ呼び出し部と、コマンド実行部を分離
 //	int			nCharChars;
 //	m_pcEditDoc->m_cDlgJump.Create( m_hInstance, m_hWnd, (void *)m_pcEditDoc );
 	if( !m_pcEditDoc->m_cDlgJump.DoModal(
@@ -4278,6 +4316,7 @@ void CEditView::Command_JUMP( void )
 //		::MessageBeep( MB_ICONHAND );	//Feb. 20, 2001 JEPRO [キャンセル]時に鳴る警告音の正体はこれ(コメントアウトにした)
 		return;
 	}
+#endif
 	if( 0 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
 		::MessageBeep( MB_ICONHAND );
 		return;
@@ -5101,17 +5140,17 @@ void CEditView::Command_CODECNV_AUTO2SJIS( void )
 
 /* アウトライン解析 */
 //BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly )	//	2001.12.03 hor ブックマーク用のフラグを追加
-BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly , int nOutlineType )
+BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 {
-	if( bCheckOnly ){
-		return TRUE;
-	}
+//	if( bCheckOnly ){	不要なの？
+//		return TRUE;
+//	}
 
 	static CFuncInfoArr	cFuncInfoArr;
 //	int		nLine;
 	int		nListType;
 
-	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd ){
+	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && !nReLoad ){
 		/* アクティブにする */
 		ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
 		return TRUE;
@@ -5371,7 +5410,8 @@ void CEditView::Command_MENU_ALLFUNC( void )
 void CEditView::Command_EXTHELP1( void )
 {
 retry:;
-	if( 0 == strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
+	if( m_cShareData.ExtWinHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
+//	if( 0 == strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
 		::MessageBeep( MB_ICONHAND );
 //From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -5395,7 +5435,7 @@ retry:;
 	CMemory		cmemCurText;
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	GetCurrentTextForSearch( cmemCurText );
-	::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr( NULL ) );
+	::WinHelp( m_hwndParent, m_cShareData.GetExtWinHelp( m_pcEditDoc->GetDocumentType() ), HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr( NULL ) );
 	return;
 }
 
@@ -5411,7 +5451,7 @@ void CEditView::Command_EXTHTMLHELP( void )
 	int			nLen;
 
 retry:;
-	if( 0 == strlen( m_pShareData->m_Common.m_szExtHtmlHelp ) ){
+	if( m_cShareData.ExtHTMLHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
 		::MessageBeep( MB_ICONHAND );
 //	From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -5436,10 +5476,11 @@ retry:;
 	GetCurrentTextForSearch( cmemCurText );
 
 	/* HtmlHelpビューアはひとつ */
-	if( m_pShareData->m_Common.m_bHtmlHelpIsSingle ){
+	if( m_cShareData.HTMLHelpIsSingle( m_pcEditDoc->GetDocumentType() ) ){
+//	if( m_pShareData->m_Common.m_bHtmlHelpIsSingle ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
-		strcpy( m_pShareData->m_szWork, m_pShareData->m_Common.m_szExtHtmlHelp );
-		nLen = lstrlen( m_pShareData->m_Common.m_szExtHtmlHelp );
+		strcpy( m_pShareData->m_szWork, m_cShareData.GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ) );
+		nLen = lstrlen( m_pShareData->m_szWork );
 		strcpy( &m_pShareData->m_szWork[nLen + 1], cmemCurText.GetPtr( NULL ) );
 		hwndHtmlHelp = (HWND)::SendMessage( m_pShareData->m_hwndTray, MYWM_HTMLHELP, (WPARAM)::GetParent( m_hwndParent ), 0 );
 	}else{
@@ -5457,7 +5498,7 @@ retry:;
 		//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 		hwndHtmlHelp = OpenHtmlHelp(
 			NULL/*m_pShareData->m_hwndTray*/,
-			m_pShareData->m_Common.m_szExtHtmlHelp,
+			m_cShareData.GetExtHTMLHelp( m_pcEditDoc->GetDocumentType() ),
 			HH_KEYWORD_LOOKUP,
 			(DWORD)&link
 		);
@@ -6709,12 +6750,34 @@ void CEditView::Command_UNINDENT( char cChar )
 }
 
 
+/* GREPダイアログの表示 */
+void CEditView::Command_GREP_DIALOG( void )
+{
+	CMemory		cmemCurText;
 
+	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+	GetCurrentTextForSearch( cmemCurText );
+
+	/* キーがないなら、履歴からとってくる */
+	if( 0 == cmemCurText.GetLength() ){
+//		cmemCurText.SetData( m_pShareData->m_szSEARCHKEYArr[0], lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) );
+		cmemCurText.SetDataSz( m_pShareData->m_szSEARCHKEYArr[0] );
+	}
+	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetPtr( NULL ) );
+
+	/* Grepダイアログの表示 */
+	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->m_szFilePath );
+//	MYTRACE( "nRet=%d\n", nRet );
+	if( FALSE == nRet ){
+		return;
+	}
+	HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);	//	GREPコマンドの発行
+}
 
 /* GREP */
 void CEditView::Command_GREP( void )
 {
-	int			nRet;
+//	int			nRet;
 	CMemory		cmWork1;
 	CMemory		cmWork2;
 	CMemory		cmWork3;
@@ -6727,6 +6790,8 @@ void CEditView::Command_GREP( void )
 		::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
 		return;
 	}
+#if 0
+	YAZAKI Command_GREP_DIALOGとして独立
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	GetCurrentTextForSearch( cmemCurText );
 
@@ -6743,6 +6808,7 @@ void CEditView::Command_GREP( void )
 	if( FALSE == nRet ){
 		return;
 	}
+#endif
 //	MYTRACE( "m_pcEditDoc->m_cDlgGrep.m_szText  =[%s]\n", m_pcEditDoc->m_cDlgGrep.m_szText );
 //	MYTRACE( "m_pcEditDoc->m_cDlgGrep.m_szFile  =[%s]\n", m_pcEditDoc->m_cDlgGrep.m_szFile );
 //	MYTRACE( "m_pcEditDoc->m_cDlgGrep.m_szFolder=[%s]\n", m_pcEditDoc->m_cDlgGrep.m_szFolder );
@@ -7859,7 +7925,7 @@ void CEditView::Command_MINIMIZE_ALL( void )
 
 
 //置換(置換ダイアログ)
-void CEditView::Command_REPLACE( void )
+void CEditView::Command_REPLACE_DIALOG( void )
 {
 //	int			nRet;
 	CMemory		cmemCurText;
@@ -7972,6 +8038,122 @@ void CEditView::Command_REPLACE( void )
 	return;
 }
 
+/*! 置換実行
+*/
+void CEditView::Command_REPLACE( void )
+{
+	// From Here 2001.12.03 hor
+	if( m_pcEditDoc->m_cDlgReplace.m_nPaste && !m_pcEditDoc->IsEnablePaste()){
+		::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+		::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
+		return;	//	失敗return;
+	}
+
+	// 2002.01.09 hor
+	// 選択エリアがあれば、その先頭にカーソルを移す
+	if( IsTextSelected() ){
+		if( m_bBeginBoxSelect ){
+			MoveCursor( m_nSelectColmFrom,
+						m_nSelectLineFrom,
+						TRUE );
+		} else {
+			HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );
+		}
+	}
+	// To Here 2002.01.09 hor
+	
+	// 矩形選択？
+//			bBeginBoxSelect = m_bBeginBoxSelect;
+
+	/* カーソル左移動 */
+	//HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );	//？？？
+	// To Here 2001.12.03 hor
+
+	/* テキスト選択解除 */
+	/* 現在の選択範囲を非選択状態に戻す */
+	DisableSelectArea( TRUE );
+
+	/* 次を検索 */
+	HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+
+	/* テキストが選択されているか */
+	if( IsTextSelected() ){
+		// From Here 2001.12.03 hor
+		int colTmp, linTmp;
+		if(m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget==1){	//挿入位置へ移動
+			colTmp = m_nSelectColmTo - m_nSelectColmFrom;
+			linTmp = m_nSelectLineTo - m_nSelectLineFrom;
+			m_nSelectColmFrom=-1;
+			m_nSelectLineFrom=-1;
+			m_nSelectColmTo	 =-1;
+			m_nSelectLineTo	 =-1;
+		}else
+		if(m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget==2){	//追加位置へ移動
+			if(m_pcEditDoc->m_cDlgReplace.m_bRegularExp){
+				//検索後の文字が改行やったら次の行の先頭へ移動
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+					m_nSelectColmTo,
+					m_nSelectLineTo,
+					&colTmp,
+					&linTmp
+				);
+				int			nLineLen;
+				const CLayout* pcLayout;
+				const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nSelectLineTo, &nLineLen, &pcLayout );
+				if( NULL != pLine &&
+					colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
+					m_nSelectColmTo=0;
+					m_nSelectLineTo++;
+				}
+			}
+			m_nCaretPosX = m_nSelectColmTo;
+			m_nCaretPosY = m_nSelectLineTo;
+			m_nSelectColmFrom=-1;
+			m_nSelectLineFrom=-1;
+			m_nSelectColmTo	 =-1;
+			m_nSelectLineTo	 =-1;
+		}
+		/* コマンドコードによる処理振り分け */
+		/* テキストを貼り付け */
+		//HandleCommand( F_INSTEXT, TRUE, (LPARAM)m_szText2, FALSE, 0, 0 );
+		if(m_pcEditDoc->m_cDlgReplace.m_nPaste){
+			HandleCommand( F_PASTE, 0, 0, 0, 0, 0 );
+		}else{
+			// 2002/01/19 novice 正規表現による文字列置換
+			if( m_bCurSrchRegularExp ){ /* 検索／置換  1==正規表現 */
+				CMemory cmemory;
+				CBregexp cRegexp;
+				char*	RegRepOut;
+
+				if( !InitRegexp( m_hWnd, cRegexp, true ) ){
+					return;	//	失敗return;
+				}
+
+				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE /*, EOL_NONE 2002/1/26 novice */ ) ){
+					::MessageBeep( MB_ICONHAND );
+				}
+				// 変換後の文字列を別の引数にしました 2002.01.26 hor
+				int nFlag = 0x00;
+				nFlag |= m_pcEditDoc->m_cDlgReplace.m_bLoHiCase ? 0x01 : 0x00;
+				if( cRegexp.Replace( m_pShareData->m_szSEARCHKEYArr[0], m_pShareData->m_szREPLACEKEYArr[0], cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut, nFlag) ){
+					HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
+					delete [] RegRepOut;
+				}
+			}else{
+				HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
+			}
+		}
+		// 挿入後の検索開始位置を調整
+		if(m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget==1){
+			m_nCaretPosX+=colTmp;
+			m_nCaretPosY+=linTmp;
+		}
+		// To Here 2001.12.03 hor
+		/* 次を検索 */
+		HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
+	}
+}
 
 
 
@@ -8970,7 +9152,9 @@ void CEditView::Command_RECKEYMACRO( void )
 		strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
 		strcat( szInitDir, "RecKey.mac");
 		strcpy( m_pShareData->m_szKeyMacroFileName, szInitDir );
-		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+		if ( FALSE == m_pcEditDoc->m_pcSMacroMgr->Save( STAND_KEYMACRO, m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
 			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 				"マクロファイルを作成できませんでした。\n\n%s", m_pShareData->m_szKeyMacroFileName
 			);
@@ -8979,8 +9163,10 @@ void CEditView::Command_RECKEYMACRO( void )
 		m_pShareData->m_bRecordingKeyMacro = TRUE;
 		m_pShareData->m_hwndRecordingKeyMacro = ::GetParent( m_hwndParent );;	/* キーボードマクロを記録中のウィンドウ */
 		/* キーマクロのバッファをクリアする */
-//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
-		m_pcEditDoc->m_CKeyMacroMgr.ClearAll();
+		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
+		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+		m_pcEditDoc->m_pcSMacroMgr->Clear(STAND_KEYMACRO);
+//		m_pcEditDoc->m_CKeyMacroMgr.ClearAll();
 //		m_pShareData->m_CKeyMacroMgr.Clear();
 	}
 	/* 親ウィンドウのタイトルを更新 */
@@ -9023,12 +9209,14 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szMACROFOLDER, NULL );
-	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szMACROFOLDER, NULL );
+//	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
 
 	/* キーボードマクロの保存 */
-//@@@ 2002.1.24 YAZAKI
-	if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, szPath ) ){
+	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+	//@@@ 2002.1.24 YAZAKI
+//	if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, szPath ) ){
+	if ( FALSE == m_pcEditDoc->m_pcSMacroMgr->Save( STAND_KEYMACRO, m_hInstance, szPath ) ){
 		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"マクロファイルを作成できませんでした。\n\n%s", szPath
 		);
@@ -9057,13 +9245,16 @@ void CEditView::Command_EXECKEYMACRO( void )
 	//@@@ 2002.1.24 YAZAKI
 	if ( m_pShareData->m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
-		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+		if ( FALSE == m_pcEditDoc->m_pcSMacroMgr->Load( STAND_KEYMACRO, m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
 			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 				"ファイルを開けませんでした。\n\n%s", m_pShareData->m_szKeyMacroFileName
 			);
 		}
 		else {
-			m_pcEditDoc->m_CKeyMacroMgr.ExecKeyMacro( this );
+//			m_pcEditDoc->m_CKeyMacroMgr.ExecKeyMacro( this );
+			m_pcEditDoc->m_pcSMacroMgr->Exec( STAND_KEYMACRO, m_hInstance, this );
 		}
 	}
 //	m_pShareData->m_CKeyMacroMgr.ExecKeyMacro( (void*)this );
@@ -9312,14 +9503,10 @@ void CEditView::Command_INS_TIME( void )
 }
 
 
-
-
-//外部コマンド実行
-//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
-//	void CEditView::Command_EXECCMMAND( void )
-//	Oct. 9, 2001 genta マクロ対応のため引数追加
-void CEditView::Command_EXECCOMMAND( const char *cmd )
-//	To Here Sept. 20, 2000
+/*! 外部コマンド実行ダイアログ表示
+	@@@2002.2.2 YAZAKI.
+*/
+void CEditView::Command_EXECCOMMAND_DIALOG( const char *cmd )
 {
 	const char *cmd_string;	//	Oct. 9, 2001 genta
 	CDlgExec cDlgExec;
@@ -9337,78 +9524,42 @@ void CEditView::Command_EXECCOMMAND( const char *cmd )
 	else {
 		cmd_string = cmd;
 	}
+	HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+}
 
+//外部コマンド実行
+//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
+//	void CEditView::Command_EXECCMMAND( void )
+//	Oct. 9, 2001 genta マクロ対応のため引数追加
+//@@@ 2002.2.2 YAZAKI ダイアログ呼び出し部とコマンド実行部を分離
+void CEditView::Command_EXECCOMMAND( const char *cmd_string )
+//	To Here Sept. 20, 2000
+{
+#if 0
+	const char *cmd_string;	//	Oct. 9, 2001 genta
+	CDlgExec cDlgExec;
+
+	if( cmd == NULL ){
+		/* モードレスダイアログの表示 */
+		if( FALSE == cDlgExec.DoModal( m_hInstance, m_hWnd, 0 ) ){
+			return;
+		}
+	//	MYTRACE( "cDlgExec.m_szCommand=[%s]\n", cDlgExec.m_szCommand );
+
+		AddToCmdArr( cDlgExec.m_szCommand );
+		cmd_string = cDlgExec.m_szCommand;
+	}
+	else {
+		cmd_string = cmd;
+	}
+#endif
 	//	From Here Aug. 21, 2001 genta
 	//	パラメータ置換 (超暫定)
 	const int bufmax = 1024;
 	char buf[bufmax + 1];
-	const char *p, *r;
-	char *q, *q_max;
-	for( p = cmd_string, q = buf, q_max = buf + bufmax; *p != '\0' && q < q_max; ++p, ++q){
-		if( *p != '$' ){
-			*q = *p;
-			continue;
-		}
-		switch( p[1] ){
-		case '$':	//	 $$ -> $
-			*q = *p;
-			++p;
-			break;
-		case 'F':
-			for( r = m_pcEditDoc->m_szFilePath; *r != '\0' && q < q_max; ++r, ++q )
-				*q = *r;
-			--q; // genta
-			++p;
-			break;
-		case 'f':	// Oct. 28, 2001 genta
-			//	ファイル名のみを渡すバージョン
-			//	ポインタを末尾に
-			r = m_pcEditDoc->m_szFilePath + strlen( m_pcEditDoc->m_szFilePath );
-			
-			//	後ろから区切りを探す
-			for( --r; r >= m_pcEditDoc->m_szFilePath && *r != '\\' ; --r )
-				;
-			//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
-			//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
-			for( ++r ; *r != '\0' && q < q_max; ++r, ++q )
-				*q = *r;
-			--q;
-			++p;
-			break;
-		case '/':	// Oct. 28, 2001 genta
-			//	パスの区切りとして'/'を使うバージョン
-			for( r = m_pcEditDoc->m_szFilePath; *r != '\0' && q < q_max; ++r, ++q ){
-				if( *r == '\\' )
-					*q = '/';
-				else
-					*q = *r;
-			}
-			--q;
-			++p;
-			break;
-		//	From Here Jan. 15, 2002 hor
-		case 'C':	// CurText
-			{
-				CMemory cmemCurText;
-				GetCurrentTextForSearch( cmemCurText );
-				for( r = cmemCurText.GetPtr( NULL ); *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
-				--q;
-				++p;
-			}
-		//	To Here Jan. 15, 2002 hor
-			break;
-		default:
-			*q = *p;
-			break;
-		}
-	}
-	*q = '\0';
+	m_pcEditDoc->ExpandParameter(cmd_string, buf, bufmax);
 	
-	//::MessageBox( m_hWnd, buf, "Command line", MB_OK );
-
 	// 子プロセスの標準出力をリダイレクトする
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 	ExecCmd( buf, m_pShareData->m_bGetStdout );
 	//	To Here Aug. 21, 2001 genta
 	return;
@@ -9419,11 +9570,12 @@ void CEditView::Command_EXECCOMMAND( const char *cmd )
 
 void CEditView::AddToCmdArr( const char* szCmd )
 {
-	CMemory*	pcmWork;
+//	CMemory*	pcmWork;
 	int			i;
 	int			j;
-	pcmWork = NULL;
-	pcmWork = new CMemory( szCmd, lstrlen( szCmd ) );
+//	pcmWork = NULL;
+//	pcmWork = new CMemory( szCmd, lstrlen( szCmd ) );
+	
 	for( i = 0; i < m_pShareData->m_nCmdArrNum; ++i ){
 		if( 0 == strcmp( szCmd, m_pShareData->m_szCmdArr[i] ) ){
 			break;
@@ -9442,9 +9594,9 @@ void CEditView::AddToCmdArr( const char* szCmd )
 			m_pShareData->m_nCmdArrNum = MAX_CMDARR;
 		}
 	}
-	strcpy( m_pShareData->m_szCmdArr[0], pcmWork->GetPtr( NULL ) );
-	delete pcmWork;
-	pcmWork = NULL;
+	strcpy( m_pShareData->m_szCmdArr[0], szCmd );
+//	delete pcmWork;
+//	pcmWork = NULL;
 	return;
 }
 

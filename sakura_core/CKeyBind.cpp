@@ -200,7 +200,9 @@ int CKeyBind::CreateKeyBindList(
 				cMemList.AppendSz( szFuncNameJapanese );
 
 				/* 機能ID→関数名，機能名日本語 */
-				CMacro::GetFuncInfoByID(
+				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//				CMacro::GetFuncInfoByID(
+				CSMacroMgr::GetFuncInfoByID(
 					hInstance,
 					pKeyNameArr[i].m_nFuncCodeArr[j],
 					szFuncName,
@@ -218,7 +220,9 @@ int CKeyBind::CreateKeyBindList(
 
 				/* キーマクロに記録可能な機能かどうかを調べる */
 				cMemList.AppendSz( pszTAB );
-				if( CMacro::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
+				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//				if( CMacro::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
+				if( CSMacroMgr::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
 					cMemList.AppendSz( "○" );
 				}else{
 					cMemList.AppendSz( "×" );

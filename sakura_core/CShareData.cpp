@@ -21,6 +21,8 @@
 #include "debug.h"
 #include "global.h"
 #include "etc_uty.h"
+#include <locale.h>
+
 struct ARRHEAD {
 	int		nLength;
 	int		nItemNum;
@@ -37,7 +39,7 @@ struct ARRHEAD {
 
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 21;
+const unsigned int uShareDataVersion = 22;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -237,11 +239,11 @@ bool CShareData::Init( void )
 			//Jun. 2001「サクラエディタの全終了」に改称
 			{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, F_FILECLOSE, F_FILECLOSE_OPEN, F_WINCLOSE, F_WIN_CLOSEALL, F_EXITALL, 0 },
 		//	From Here Sept. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
-		//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND, 0, 0, 0, 0, 0 },
+		//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND_DIALOG, 0, 0, 0, 0, 0 },
 		//	To Here Sept. 20, 2000
 			//Oct. 28, 2000 F5 は「再描画」に変更	//Jan. 14, 2001 Alt+F5 に「uudecodeして保存」, Ctrl+ Alt+F5 に「TAB→空白」を追加
 			//	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
-			{ VK_F5,"F5", F_REDRAW, 0, F_EXECCOMMAND, 0, F_UUDECODE, 0, F_TABTOSPACE, F_SPACETOTAB },
+			{ VK_F5,"F5", F_REDRAW, 0, F_EXECCOMMAND_DIALOG, 0, F_UUDECODE, 0, F_TABTOSPACE, F_SPACETOTAB },
 			//Jan. 14, 2001 JEPRO	Ctrl+F6 に「英大文字→英小文字」, Alt+F6 に「Base64デコードして保存」を追加
 			{ VK_F6,"F6", F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, 0, F_BASE64DECODE, 0, 0, 0 },
 			//Jan. 14, 2001 JEPRO	Ctrl+F7 に「英小文字→英大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加
@@ -363,14 +365,14 @@ bool CShareData::Init( void )
 			//Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
 			{ 'E', "E",0, 0, F_CUT_LINE, F_DELETE_LINE, 0, 0, F_CASCADE, 0 },
 			{ 'F', "F",0, 0, F_SEARCH_DIALOG, 0, 0, 0, 0, 0 },
-			{ 'G', "G",0, 0, F_GREP, 0, 0, 0, 0, 0 },
+			{ 'G', "G",0, 0, F_GREP_DIALOG, 0, 0, 0, 0, 0 },
 			//Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加
 			//Jan. 16, 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H に「.cまたは.cppと同名の.hを開く」を追加
 			//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
 			{ 'H', "H",0, 0, F_CURLINECENTER, F_OPEN_HfromtoC, 0, 0, F_TILE_V, 0 },
 			//Jan. 21, 2001	JEPRO	Ctrl+I に「行の二重化」を追加
 			{ 'I', "I",0, 0, F_DUPLICATELINE, 0, 0, 0, 0, 0 },
-			{ 'J', "J",0, 0, F_JUMP, 0, 0, 0, 0, 0 },
+			{ 'J', "J",0, 0, F_JUMP_DIALOG, 0, 0, 0, 0, 0 },
 			//Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
 			{ 'K', "K",0, 0, F_LineCutToEnd, F_LineDeleteToEnd, 0, 0, 0, 0 },
 			//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「英大文字→英小文字」, Shift+Ctrl+Alt+L に「英小文字→英大文字」を追加
@@ -390,7 +392,7 @@ bool CShareData::Init( void )
 			//Jan. 24, 2001	JEPRO	Ctrl+Q に「キー割り当て一覧をコピー」を追加
 			{ 'Q', "Q",0, 0, F_CREATEKEYBINDLIST, 0, 0, 0, 0, 0 },
 			//2001.12.03 hor Alt+R を「RTRIM」に割当
-			{ 'R', "R",0, 0, F_REPLACE, 0, F_RTRIM, 0, 0, 0 },
+			{ 'R', "R",0, 0, F_REPLACE_DIALOG, 0, F_RTRIM, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
 			{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
@@ -407,7 +409,8 @@ bool CShareData::Init( void )
 			{ 'Z', "Z",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
 			/* 記号 */
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+- に「上下に分割」を追加
-			{ 0x00bd, "-",0, 0, 0, F_SPLIT_V, 0, 0, 0, 0 },
+			// 2002/2/3 aroka	Ctrl+- に「ファイル名のコピ－」を追加
+			{ 0x00bd, "-",0, 0, F_COPYFNAME, F_SPLIT_V, 0, 0, 0, 0 },
 			{ 0x00de, "^",0, 0, F_COPYTAG, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ に「左右に分割」を追加
 			{ 0x00dc, "\\",0, 0, F_COPYPATH, F_SPLIT_H, 0, 0, 0, 0 },
@@ -536,7 +539,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bLoHiCase = 0;					/* 1==英大文字小文字の区別 */
 		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
 		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
-		m_pShareData->m_Common.m_szExtHelp1[0] = '\0';			/* 外部ヘルプ１ */
+		m_pShareData->m_Common.m_szExtHelp[0] = '\0';			/* 外部ヘルプ１ */
 		m_pShareData->m_Common.m_szExtHtmlHelp[0] = '\0';		/* 外部HTMLヘルプ */
 
 		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
@@ -893,6 +896,10 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		// 2001/06/19 asa-o
 		m_pShareData->m_Types[nIdx].m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
 
+		//@@@2002.2.4 YAZAKI
+		m_pShareData->m_Types[nIdx].m_szExtHelp[0] = '\0';
+		m_pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = '\0';
+		m_pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = TRUE;
 /**
 		static const char* ppszTypeName[] = {
 			"テキスト",							// CI[00]
@@ -4225,4 +4232,161 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	2001.12.26 削除した。（YAZAKI）
 	
 */
+/*!	idxで指定したマクロファイル名（フルパス）を取得する
+	idxは正確なものでなければならない。
+	YAZAKI
+*/
+char* CShareData::GetMacroFilename( int idx )
+{
+	if( !m_pShareData->m_MacroTable[idx].IsEnabled() )
+		return NULL;
+
+	char fbuf[_MAX_PATH * 2];
+	char *ptr = m_pShareData->m_MacroTable[idx].m_szFile;
+
+	if( ptr[0] == '\0' )	//	ファイル名が無い
+		return NULL;
+
+	if( ptr[0] == '\\' || ( ptr[1] == ':' && ptr[2] == '\\' )){	// 絶対パス
+	}
+	else if( m_pShareData->m_szMACROFOLDER[0] != '\0' ){	//	フォルダ指定あり
+		//	相対パス→絶対パス
+		strcpy( fbuf, m_pShareData->m_szMACROFOLDER );
+		ptr = fbuf + strlen( fbuf );
+		//::MessageBox( pCEditView->m_hwndParent, ptr - 1, "CSMacroMgr::Exec/folder", MB_OK );
+		if( ptr[-1] != '\\' ){
+			*ptr++ = '\\';
+		}
+		strcpy( ptr, m_pShareData->m_MacroTable[idx].m_szFile );
+		ptr = fbuf;
+	}
+	
+	return ptr;
+}
+
+/*!	m_szSEARCHKEYArrにpszSearchKeyを追加する。
+	YAZAKI
+*/
+void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
+{
+	CMemory	pcmWork( pszSearchKey, lstrlen( pszSearchKey ) );
+	int		i;
+	int		j;
+	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
+		if( 0 == strcmp( pszSearchKey, m_pShareData->m_szSEARCHKEYArr[i] ) ){
+			break;
+		}
+	}
+	if( i < m_pShareData->m_nSEARCHKEYArrNum ){
+		for( j = i; j > 0; j-- ){
+			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
+		}
+	}else{
+		for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
+			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
+		}
+		++m_pShareData->m_nSEARCHKEYArrNum;
+		if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
+			m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
+		}
+	}
+	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork.GetPtr( NULL ) );
+	return;
+}
+
+/*!	m_szREPLACEKEYArrにpszReplaceKeyを追加する
+	YAZAKI
+*/
+void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
+{
+	CMemory pcmWork( pszReplaceKey, lstrlen( pszReplaceKey ) );
+	int		i;
+	int		j;
+	for( i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i ){
+		if( 0 == strcmp( pszReplaceKey, m_pShareData->m_szREPLACEKEYArr[i] ) ){
+			break;
+		}
+	}
+	if( i < m_pShareData->m_nREPLACEKEYArrNum ){
+		for( j = i; j > 0; j-- ){
+			strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
+		}
+	}else{
+		for( j = MAX_REPLACEKEY - 1; j > 0; j-- ){
+			strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
+		}
+		++m_pShareData->m_nREPLACEKEYArrNum;
+		if( m_pShareData->m_nREPLACEKEYArrNum > MAX_REPLACEKEY ){
+			m_pShareData->m_nREPLACEKEYArrNum = MAX_REPLACEKEY;
+		}
+	}
+	strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork.GetPtr( NULL ) );
+}
+
+/*!	外部Winヘルプが設定されているか確認。
+*/
+bool CShareData::ExtWinHelpIsSet( int nTypeNo )
+{
+	if (m_pShareData->m_Common.m_szExtHelp[0] != '\0'){
+		return true;	//	共通設定に設定されている
+	}
+	if (nTypeNo < 0 || MAX_TYPES <= nTypeNo ){
+		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
+	}
+	if (m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != '\0'){
+		return true;	//	タイプ別設定に設定されている。
+	}
+	return false;
+}
+
+/*!	設定されている外部Winヘルプのファイル名を返す。
+	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
+	そうでなければ、共通設定のファイル名を返します。
+*/
+char* CShareData::GetExtWinHelp( int nTypeNo )
+{
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != '\0'){
+		return m_pShareData->m_Types[nTypeNo].m_szExtHelp;
+	}
+	
+	return m_pShareData->m_Common.m_szExtHelp;
+}
+/*!	外部HTMLヘルプが設定されているか確認。
+*/
+bool CShareData::ExtHTMLHelpIsSet( int nTypeNo )
+{
+	if (m_pShareData->m_Common.m_szExtHtmlHelp[0] != '\0'){
+		return true;	//	共通設定に設定されている
+	}
+	if (nTypeNo < 0 || MAX_TYPES <= nTypeNo ){
+		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
+	}
+	if (m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+		return true;	//	タイプ別設定に設定されている。
+	}
+	return false;
+}
+
+/*!	設定されている外部Winヘルプのファイル名を返す。
+	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
+	そうでなければ、共通設定のファイル名を返します。
+*/
+char* CShareData::GetExtHTMLHelp( int nTypeNo )
+{
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+		return m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp;
+	}
+	
+	return m_pShareData->m_Common.m_szExtHtmlHelp;
+}
+/*!	ビューアを複数起動しないがONかを返す。
+*/
+bool CShareData::HTMLHelpIsSingle( int nTypeNo )
+{
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+		return (m_pShareData->m_Types[nTypeNo].m_bHtmlHelpIsSingle != FALSE);
+	}
+	
+	return (m_pShareData->m_Common.m_bHtmlHelpIsSingle != FALSE);
+}
 /*[EOF]*/

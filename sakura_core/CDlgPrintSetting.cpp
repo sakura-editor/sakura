@@ -11,7 +11,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-//#include <stdio.h>
+#include <stdio.h>
 //#include "sakura_rc.h"
 #include "CDlgPrintSetting.h"
 #include "CDlgInput1.h"
@@ -124,15 +124,15 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 
-	::SetTimer( hwndDlg, IDT_PRINTSETTING, 500, NULL );
+//	::SetTimer( m_hWnd, IDT_PRINTSETTING, 500, NULL );
 
 	/* 基底クラスメンバ */
-	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );
 }
 
 BOOL CDlgPrintSetting::OnDestroy( void )
 {
-	::KillTimer( m_hWnd, IDT_PRINTSETTING );
+//	::KillTimer( m_hWnd, IDT_PRINTSETTING );
 	/* 基底クラスメンバ */
 	return CDialog::OnDestroy();
 }
@@ -557,6 +557,67 @@ int CDlgPrintSetting::GetData( void )
 //	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
 
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth * 2;
+
+	//@@@ 2002.2.4 YAZAKI
+	char pszWork[HEADER_MAX+1];
+	::GetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, pszWork, HEADER_MAX );	//	100文字で制限しないと。。。
+	/*	pszWorkを$bで分割	*/
+	char *p, *q;	//	p:着目点。q:各位置の先頭。
+	int pos = POS_LEFT;
+	for (p = pszWork, q = pszWork; *p != '\0' && pos <= POS_RIGHT; ){
+		if( *p != '$' ){
+			p++;
+			continue;
+		}
+		if ( *(p + 1) == '$' ){	//	$$は無視。
+			p++;
+			continue;
+		}
+		else if ( *(p + 1) == '\0' ){
+			//	$の次に文字が無い
+			break;	
+		}
+		if ( *(p + 1) == 'b' ){
+			strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[pos], q, p - q);
+			pos++;
+			q = p + 2;	//	qは$bの次の文字。
+			p = q;			//	pも同じところ。
+		}
+	}
+	if (pos == POS_RIGHT){
+		strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[pos], q, p - q);
+	}
+
+	/* フッター */
+	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, pszWork, HEADER_MAX );	//	100文字で制限しないと。。。
+	/*	pszWorkを$bで分割	*/
+	pos = POS_LEFT;
+	for (p = pszWork, q = pszWork; *p != '\0' && pos <= POS_RIGHT; ){
+		if( *p != '$' ){
+			p++;
+			continue;
+		}
+		if ( *(p + 1) == '$' ){	//	$$は無視。
+			p++;
+			continue;
+		}
+		else if ( *(p + 1) == '\0' ){
+			//	$の次に文字が無い
+			break;	
+		}
+		if ( *(p + 1) == 'b' ){
+			strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[pos], q, p - q);
+			pos++;
+			q = p + 2;	//	qは$bの次の文字。
+			p = q;			//	pも同じところ。
+		}
+		else {
+			p++;
+		}
+	}
+	if (pos == POS_RIGHT){
+		strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[pos], q, p - q);
+	}
 	return TRUE;
 }
 
@@ -591,8 +652,21 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINLX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10, FALSE );
 	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
 
-	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0] );
-	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0] );
+	char pszWork[HEADER_MAX+1];
+	sprintf(pszWork, "%s$b%s$b%s",
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT],
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER],
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT]
+	);
+	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, pszWork );	//	100文字で制限しないと。。。
+//	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0] );
+	sprintf(pszWork, "%s$b%s$b%s",
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT],
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER],
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT]
+	);
+	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, pszWork );	//	100文字で制限しないと。。。
+//	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0] );
 
 	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap ){
 		::CheckDlgButton( m_hWnd, IDC_CHECK_WORDWRAP, BST_CHECKED );
@@ -612,7 +686,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	nIdx1 = ::SendMessage( hwndCtrl, CB_FINDSTRING, 0, (LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 	::SendMessage( hwndCtrl, CB_SETCURSEL, nIdx1, 0 );
 
-		/* フォント一覧 */
+	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_FONT_ZEN );
 	nIdx1 = ::SendMessage( hwndCtrl, CB_FINDSTRING, 0, (LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
 	::SendMessage( hwndCtrl, CB_SETCURSEL, nIdx1, 0 );
@@ -868,4 +942,15 @@ LPVOID CDlgPrintSetting::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
+BOOL CDlgPrintSetting::OnDbnDropDown( HWND hwndCtl, int wID )
+{
+	::SetTimer( m_hWnd, IDT_PRINTSETTING, 500, NULL );
+	return FALSE;
+}
+
+BOOL CDlgPrintSetting::OnDbnCloseUp( HWND hwndCtl, int wID )
+{
+	::KillTimer( m_hWnd, IDT_PRINTSETTING );
+	return FALSE;
+}
 /*[EOF]*/

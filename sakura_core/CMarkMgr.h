@@ -9,6 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
+	Copyright (C) 2002, aroka
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -102,11 +103,11 @@ public:
 
 	//	Interface
 	//	constructor
-	CMarkMgr() : curpos(0), maxitem(10){}
+	CMarkMgr() : m_nCurpos(0), m_nMaxitem(10){}
 	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
 
-	int Count(void) const { return dat.size(); }	//!<	項目数を返す
-	int GetMax(void) const { return maxitem; }	//!<	最大項目数を返す
+	unsigned int Count(void) const { return m_cMarkChain.size(); }	//!<	項目数を返す
+	int GetMax(void) const { return m_nMaxitem; }	//!<	最大項目数を返す
 	void SetMax(int max);	//!<	最大項目数を設定
 
 	virtual void Add(const CMark& m) = 0;	//!<	要素の追加
@@ -115,7 +116,7 @@ public:
 	virtual void Flush(void);	//!<	要素の全消去
 
 	//!	要素の取得
-	const CMark& GetCurrent(void) const { return dat[curpos]; }
+	const CMark& GetCurrent(void) const { return m_cMarkChain[m_nCurpos]; }
 
 	//	有効性の確認
 	bool  CheckCurrent(void) const;
@@ -126,21 +127,21 @@ public:
 	bool NextValid(void);
 	bool PrevValid(void);
 
-	const CMark& operator[](int index) const { return dat[index]; }
+	const CMark& operator[](int index) const { return m_cMarkChain[index]; }
 
 	//	連続取得インターフェース
-	CMarkIterator CurrentPos(void) const { return (CMarkIterator)dat.begin() + curpos; }
-	CMarkIterator Begin(void) const { return (CMarkIterator)dat.begin(); }
-	CMarkIterator End(void) const { return (CMarkIterator)dat.end(); }
+	CMarkIterator CurrentPos(void) const { return (CMarkIterator)m_cMarkChain.begin() + m_nCurpos; }
+	CMarkIterator Begin(void) const { return (CMarkIterator)m_cMarkChain.begin(); }
+	CMarkIterator End(void) const { return (CMarkIterator)m_cMarkChain.end(); }
 
 protected:
 	virtual void Expire(void) = 0;
 
 	// CMarkFactory m_factory;	//	Factory Class (マクロで生成される）
-	CMarkChain dat;	//	マークデータ本体
-	int curpos;	//	現在位置（番号）
+	CMarkChain m_cMarkChain;	//	マークデータ本体
+	int m_nCurpos;	//	現在位置（番号）
 
-	int maxitem;	//	保管可能アイテムの最大数
+	int m_nMaxitem;	//	保管可能アイテムの最大数
 private:
 	//CMarkMgr( const CMarkMgr& );	//	Copy禁止
 

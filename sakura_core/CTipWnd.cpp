@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, asa-o
+	Copyright (C) 2002, GAE
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -90,7 +91,7 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	/* 基底クラスメンバ呼び出し */
 	CWnd::Create(
 		/* CreateWindowEx()用 */
-		0, // extended window style
+		WS_EX_TOOLWINDOW, // extended window style	// 2002/2/3 GAE
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
 		WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN | WS_BORDER, // window style

@@ -9,7 +9,8 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, genta, hor
+	Copyright (C) 2001, genta, JEPRO, hor, Stonee
+	Copyright (C) 2002, MIK, hor
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -132,8 +133,9 @@ void CDlgFind::SetData( void )
 		&& m_bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
-		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+//正規表現がONでも、大文字小文字を区別する／しないを選択できるように。
+//		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+//		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
@@ -197,13 +199,16 @@ int CDlgFind::GetData( void )
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true ) ){
+		int nFlag = 0x00;
+		nFlag |= m_bLoHiCase ? 0x01 : 0x00;
+		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 
 		/* 検索文字列 */
-		AddToSearchKeyArr( (const char*)m_szText );
+		//@@@ 2002.2.2 YAZAKI CShareDataに移動
+		m_cShareData.AddToSearchKeyArr( (const char*)m_szText );
 		if( FALSE == m_bModal ){
 			/* ダイアログデータの設定 */
 			SetData();
@@ -353,6 +358,8 @@ BOOL CDlgFind::OnBnClicked( int wID )
 }
 
 
+#if 0
+//@@@ 2002.2.2 YAZAKI CShareDataに移動
 void CDlgFind::AddToSearchKeyArr( const char* pszKey )
 {
 	CMemory*	pcmWork;
@@ -383,6 +390,7 @@ void CDlgFind::AddToSearchKeyArr( const char* pszKey )
 	pcmWork = NULL;
 	return;
 }
+#endif
 
 //@@@ 2002.01.18 add start
 LPVOID CDlgFind::GetHelpIdTable(void)
