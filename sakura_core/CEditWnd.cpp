@@ -1548,6 +1548,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&
 							!m_cEditDoc.IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
+							//	Jun. 13, 2003 Moca GrepウィンドウへDropしたときにGrepウィンドウのまま
+							//	同じウィンドウで開かれてしまう問題を修正
 							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */
 						){
 							/* ファイル読み込み */
@@ -2342,6 +2344,8 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&	//	Jan. 22, 2002 genta
 							!m_cEditDoc.IsFilePathAvailable() &&	/* 現在編集中のファイルのパス */
+							//	Jun. 13, 2003 Moca GrepウィンドウへDropしたときにGrepウィンドウのまま
+							//	同じウィンドウで開かれてしまう問題を修正
 							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */  // 2003.06.13 Add
 						){
 								/* ファイル読み込み */
