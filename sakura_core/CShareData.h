@@ -656,7 +656,8 @@ public:
 	int			m_nStdToolBarButtons;
 
 	//@@@ 2002.2.2 YAZAKI
-	char*		GetMacroFilename( int idx );	//	idxで指定したマクロファイル名（フルパス）を取得する
+	//	Jun. 14, 2003 genta 引数追加．書式変更
+	int		GetMacroFilename( int idx, char* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する
 	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 	void		AddToSearchKeyArr( const char* pszSearchKey );	//	m_szSEARCHKEYArrにpszSearchKeyを追加する
 	void		AddToReplaceKeyArr( const char* pszReplaceKey );	//	m_szREPLACEKEYArrにpszReplaceKeyを追加する
