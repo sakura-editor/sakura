@@ -375,7 +375,8 @@ void CDlgFuncList::SetTreeCpp( HWND hwndDlg )
 	char*			pPos;
 	char*			pClassName;
 	char*			pFuncName;
-	char			szLabel[32];
+	//	Jul. 7, 2001 genta
+	char			szLabel[64];
 	HTREEITEM		htiGlobal;
 	HTREEITEM		htiClass;
 	HTREEITEM		htiItem;
