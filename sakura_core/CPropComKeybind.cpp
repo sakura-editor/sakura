@@ -27,12 +27,16 @@
 #include "CPropCommon.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
+#include "CMacro.h"	//@@@ 2001.11.08 add MIK
 
 //	From Here Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(21→34)
 #define STR_KEYDATA_HEAD_LEN  34
 //	To Here Sept. 5, 2000
 #define STR_KEYDATA_HEAD      "テキストエディタ キー設定ファイル\x1a"
-
+#define STR_KEYDATA_HEAD2     "// テキストエディタキー設定 Ver2"	//@@@ 2001.11.07 add MIK
+#define STR_SHIFT_PLUS        "Shift+"  //@@@ 2001.11.08 add MIK
+#define STR_CTRL_PLUS         "Ctrl+"  //@@@ 2001.11.08 add MIK
+#define STR_ALT_PLUS          "Alt+"  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 const DWORD p_helpids[] = {	//10700
@@ -343,6 +347,60 @@ BOOL CPropCommon::DispatchEvent_p5(
 //	To Here Sept. 7, 2000
 				return TRUE;
 			}
+
+//@@@ 2001.11.08 add start MIK
+		}else
+		if( hwndAssignedkeyList == hwndCtl){
+			switch( wNotifyCode ){
+			case LBN_SELCHANGE:
+			//case LBN_DBLCLK:
+				{
+					char	buff[1024], *p;
+					int	ret;
+
+					nIndex = ::SendMessage( hwndAssignedkeyList, LB_GETCURSEL, 0, 0 );
+					memset(buff, 0, sizeof(buff));
+					ret = ::SendMessage( hwndAssignedkeyList, LB_GETTEXT, nIndex, (LPARAM)buff);
+					if( ret != LB_ERR )
+					{
+						i = 0;
+						p = buff;
+						//SHIFT
+						if( memcmp(p, STR_SHIFT_PLUS, strlen(STR_SHIFT_PLUS)) == 0 ){
+							p += strlen(STR_SHIFT_PLUS);
+							i |= _SHIFT;
+						}
+						//CTRL
+						if( memcmp(p, STR_CTRL_PLUS, strlen(STR_CTRL_PLUS)) == 0 ){
+							p += strlen(STR_CTRL_PLUS);
+							i |= _CTRL;
+						}
+						//ALT
+						if( memcmp(p, STR_ALT_PLUS, strlen(STR_ALT_PLUS)) == 0 ){
+							p += strlen(STR_ALT_PLUS);
+							i |= _ALT;
+						}
+						for(j = 0; j < m_nKeyNameArrNum; j++)
+						{
+							if( strcmp(m_pKeyNameArr[j].m_szKeyName, p) == 0 )
+							{
+								::SendMessage( hwndKeyList, LB_SETCURSEL, (WPARAM)j, (LPARAM)0);
+								if( i & _SHIFT ) ::CheckDlgButton( hwndDlg, IDC_CHECK_SHIFT, BST_CHECKED );  //チェック
+								else             ::CheckDlgButton( hwndDlg, IDC_CHECK_SHIFT, BST_UNCHECKED );  //チェックをはずす
+								if( i & _CTRL )  ::CheckDlgButton( hwndDlg, IDC_CHECK_CTRL,  BST_CHECKED );  //チェック
+								else             ::CheckDlgButton( hwndDlg, IDC_CHECK_CTRL,  BST_UNCHECKED );  //チェックをはずす
+								if( i & _ALT )   ::CheckDlgButton( hwndDlg, IDC_CHECK_ALT,   BST_CHECKED );  //チェック
+								else             ::CheckDlgButton( hwndDlg, IDC_CHECK_ALT,   BST_UNCHECKED );  //チェックをはずす
+								::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+								break;
+							}
+						}
+					}
+					return TRUE;
+				}
+			}
+//@@@ 2001.11.08 add end MIK
+
 		}
 		break;
 
@@ -356,6 +414,13 @@ BOOL CPropCommon::DispatchEvent_p5(
 		/*NOTREACHED*/
 		break;
 //@@@ 2001.02.04 End
+
+//@@@ 2001.11.07 Start by MIK: Context Menu Help
+	//Context Menu
+	case WM_CONTEXTMENU:
+		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (DWORD)(LPVOID)p_helpids );
+		return TRUE;
+//@@@ 2001.11.07 End
 
 	}
 	return FALSE;
@@ -451,6 +516,85 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		sizeof( pKeyNameArr )		!= _lread( hFile,  pKeyNameArr,    sizeof( pKeyNameArr ) ) ||
 		0 != memcmp( pHeader, STR_KEYDATA_HEAD, STR_KEYDATA_HEAD_LEN )
 	){
+		_lclose( hFile );  //@@@ 2001.11.07 add MIK
+
+//@@@ 2001.11.07 add start MIK
+		{
+			FILE	*fp;
+			int	i, j, cnt, kc, n, an;
+			char	buff[1024], name[1024], szFuncNameJapanese[256], s[1024], *p, *q;
+
+			if( (fp = fopen( szPath, "r" )) == NULL )
+			{
+				::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+					"ファイルを開けませんでした。\n\n%s", szPath
+				);
+				return;
+			}
+
+			if( fgets(buff, sizeof(buff), fp) != NULL
+			 && memcmp(buff, STR_KEYDATA_HEAD2, strlen(STR_KEYDATA_HEAD2)) == 0
+			 && fgets(buff, sizeof(buff), fp) != NULL )
+			{
+				cnt = sscanf(buff, "Count=%d", &an);
+				nKeyNameArrNum = an;
+				if( cnt == 1 && an >= 0 && an <= 100 )
+				{
+					for(i = 0; i < 100; i++)
+					{
+						name[0] = '\0';
+						if( fgets(buff, sizeof(buff), fp) == NULL ) break;
+						for(j = strlen(buff) - 1; j >= 0; j--){
+							if( buff[j] == '\n' || buff[j] == '\r' ) buff[j] = '\0';
+						}
+						cnt = sscanf(buff, "KeyBind[%03d]=%04x,%s",
+							&n,
+							&kc,
+							s,
+							name);
+						if( cnt != 3 ) break;
+						if( i != n ) break;
+						pKeyNameArr[i].m_nKeyCode = kc;
+
+						p = s;
+						for(j = 0; j < 8; j++)
+						{
+							q = strstr(p, ",");
+							if( !q )
+								break;
+							*q = '\0';
+							//機能名を数値に置き換える。(数値の機能名もあるかも)
+							n = CMacro::GetFuncInfoByName(m_hInstance, p, szFuncNameJapanese);
+							if( n == -1 )
+							{
+								if( *p >= '0' && *p <= '9' )
+								{
+									n = atol(p);
+								}
+								else
+								{
+									n = 0;
+								}
+							}
+							pKeyNameArr[i].m_nFuncCodeArr[j] = n;
+							p = q + 1;
+						}
+
+						if( j != 8 ) break;
+
+						strcpy(pKeyNameArr[i].m_szKeyName, p);
+					}
+					if( i == 100 )
+					{
+						fclose(fp);
+						goto ToMaster;
+					}
+				}
+			}
+			fclose(fp);
+		}
+//@@@ 2001.11.07 add end MIK
+
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"キー設定ファイルの形式が違います。\n\n%s", szPath
 		);
@@ -458,6 +602,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	}
 	_lclose( hFile );
 
+ToMaster:	//@@@ 2001.11.07 add MIK
 	/* データのコピー */
 	m_nKeyNameArrNum = nKeyNameArrNum;
 	memcpy( m_pKeyNameArr, pKeyNameArr, sizeof( pKeyNameArr ) );
@@ -467,8 +612,12 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 //	/* ダイアログデータの設定 p5 */
 //	SetData_p5( hwndDlg );
-	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
-	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
+	//hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
+	//::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
+	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+//@@@ 2001.11.07 modify end MIK
 
 	return;
 }
@@ -481,7 +630,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	char*			pszMRU = NULL;;
 	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
-	HFILE			hFile;
+//	HFILE			hFile;	//@@@ 2001.11.07 del MIK
 //	char			szLine[1024];
 //	int				i;
 //	char			pHeader[STR_KEYDATA_HEAD_LEN + 1];
@@ -508,6 +657,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
 	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
 
+#if 0  //@@@ 2001.11.07 del start MIK
 	hFile = _lcreat( szPath, 0 );
 	if( HFILE_ERROR == hFile ){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -522,9 +672,51 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルの書き込みに失敗しました。\n\n%s", szPath
 		);
+		_lclose( hFile );	//@@@ 2001.11.09 add MIK
 		return;
 	}
 	_lclose( hFile );
+#endif  //@@@ 2001.11.07 del end MIK
+//@@@ 2001.11.07 add start MIK: テキスト形式で保存
+	{
+		FILE	*fp;
+		int	i, j;
+		char	szFuncName[256], szFuncNameJapanese[256], *p;
+		
+		if( (fp = fopen( szPath, "w" )) == NULL )
+		{
+			::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				"ファイルを開けませんでした。\n\n%s", szPath
+			);
+			return;
+		}
+		
+		fprintf(fp, "%s\n", STR_KEYDATA_HEAD2);
+		fprintf(fp, "Count=%d\n", m_nKeyNameArrNum);
+		
+		for(i = 0; i < 100; i++)
+		{
+			fprintf(fp, "KeyBind[%03d]=%04x", i, m_pKeyNameArr[i].m_nKeyCode);
+
+			for(j = 0; j < 8; j++)
+			{
+				p = CMacro::GetFuncInfoByID(m_hInstance, m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
+				if( p )
+				{
+					fprintf(fp, ",%s", p);
+				}
+				else
+				{
+					fprintf(fp, ",%d", m_pKeyNameArr[i].m_nFuncCodeArr[j]);
+				}
+			}
+			
+			fprintf(fp, ",%s\n", m_pKeyNameArr[i].m_szKeyName);
+		}
+		
+		fclose(fp);
+	}
+//@@@ 2001.11.07 add end MIK
 
 	return;
 }
