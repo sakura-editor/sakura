@@ -248,7 +248,9 @@ HWND CEditWnd::Create(
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
 
-	WNDCLASS	wc;
+	//	Dec. 6, 2002 genta
+	//	small icon指定のため RegisterClassExに変更
+	WNDCLASSEX	wc;
 	HWND		hWnd;
 	ATOM		atom;
 //	char		szMutexName[260];
@@ -284,7 +286,12 @@ HWND CEditWnd::Create(
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
 	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
 	wc.lpszClassName	= m_pszAppName;
-	if( 0 == ( atom = RegisterClass( &wc ) ) ){
+
+	//	Dec. 6, 2002 genta
+	//	small icon指定のため RegisterClassExに変更
+	wc.cbSize			= sizeof( wc );
+	wc.hIconSm			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
+	if( 0 == ( atom = RegisterClassEx( &wc ) ) ){
 //		return NULL;
 	}
 
