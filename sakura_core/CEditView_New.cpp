@@ -62,6 +62,10 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::OnPaint" );
 
+	// 2004.01.28 Moca デスクトップに作画しないように
+	if( NULL == hdc ){
+		return;
+	}
 //	if( m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 //		return;
 //	}
