@@ -105,7 +105,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	HPEN			hPenOld;
 
 	/* キャレットの行桁位置を表示する */
-	DrawCaretPosInfo();
+//	DrawCaretPosInfo();
 
 	/* メモリＤＣを利用した再描画の場合は描画先のＤＣを切り替える */
 	bUseMemoryDC = FALSE;

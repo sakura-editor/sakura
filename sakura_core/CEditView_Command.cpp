@@ -289,6 +289,8 @@ BOOL CEditView::HandleCommand(
 	case F_CURLINECENTER:	Command_CURLINECENTER(); break;								/* カーソル行をウィンドウ中央へ */
 	case F_JUMPPREV:		Command_JUMPPREV(); break;									//移動履歴: 前へ
 	case F_JUMPNEXT:		Command_JUMPNEXT(); break;									//移動履歴: 次へ
+	case F_WndScrollUp:		Command_WndScrollUp(); break;								//画面を上へ1行スクロール	// 2001/06/20 asa-o
+	case F_WndScrollDown:	Command_WndScrollDown(); break;								//画面を下へ1行スクロール	// 2001/06/20 asa-o
 
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
@@ -527,11 +529,20 @@ BOOL CEditView::HandleCommand(
 		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+
+		//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
+			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
+			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^2].Redraw();
+			m_pcEditDoc->m_cEditViewArr[(m_nMyIndex^1)^2].Redraw();
+			DrawCaretPosInfo();
+		//	2001/06/21 End
+
 		}else{
 			delete m_pcOpeBlk;
 		}
 		m_pcOpeBlk = NULL;
 	}
+
 	return bRet;
 }
 
@@ -8752,6 +8763,7 @@ void CEditView::Command_JUMPNEXT( void )
 	}
 }
 //	To HERE Sep. 8, 2000 genta
+
 
 
 /* [EOF] */

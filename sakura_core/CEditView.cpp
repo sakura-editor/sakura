@@ -930,6 +930,15 @@ LRESULT CEditView::DispatchEvent(
 			/* アクティブなペインを設定 */
 			m_pcEditDoc->SetActivePane( m_nMyIndex );
 		}
+
+//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
+		if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+		{
+			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+			pcEditView -> ScrollAtV( m_nViewTopLine );
+		}
+//	2001/06/20 End
+
 		return 0L;
 
 	case WM_HSCROLL:
@@ -945,6 +954,18 @@ LRESULT CEditView::DispatchEvent(
 			/* アクティブなペインを設定 */
 			m_pcEditDoc->SetActivePane( m_nMyIndex );
 		}
+
+//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
+		if( m_pShareData->m_Common.m_bSplitterWndHScroll )	// 水平スクロールの同期をとる
+		{
+			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
+			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
+			pcEditView -> ScrollAtH( m_nViewLeftCol );
+			DispRuler( hdc );
+			::ReleaseDC( m_hWnd, hdc );
+		}
+//	2001/06/20 End
+
 		return 0L;
 
 	case WM_ENTERMENULOOP:
@@ -2868,6 +2889,27 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 //	}
 //	MYTRACE( "\n" );
 
+//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
+	if(nScrollRowNum != 0)
+	{
+		if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+		{
+			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+			pcEditView -> ScrollAtV( m_nViewTopLine );
+		}
+	}
+	if(nScrollColNum != 0)
+	{
+		if( m_pShareData->m_Common.m_bSplitterWndHScroll )	// 水平スクロールの同期をとる
+		{
+			CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
+			HDC			hdc = ::GetDC( pcEditView->m_hWnd );
+			pcEditView -> ScrollAtH( m_nViewLeftCol );
+			DispRuler( hdc );
+			::ReleaseDC( m_hWnd, hdc );
+		}
+	}
+//	2001/06/20 End
 	return nScrollRowNum;
 
 
@@ -3081,6 +3123,15 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		return;
 	}
 	nCaretPosY_Old = m_nCaretPosY;
+
+	/* 辞書Tipが起動されている */
+	if( 0 == m_dwTipTimer ){
+		/* 辞書Tipを消す */
+		m_cTipWnd.Hide();
+		m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
+	}else{
+		m_dwTipTimer = ::GetTickCount();		/* 辞書Tip起動タイマー */
+	}
 
 	/* 現在のマウスカーソル位置→レイアウト位置 */
 	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
@@ -3979,6 +4030,12 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		}else{
 			ScrollAtV( m_nViewTopLine + 1 );
 		}
+//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
+		if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+		{
+			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01].ScrollAtV( m_nViewTopLine );
+		}
+//	2001/06/20 End
 	}
 	return 0;
 }
@@ -4421,6 +4478,16 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 					nScrollLines = MoveCursor( nPosX, nPosY, TRUE );
 				}
 			}
+//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
+			if(nScrollLines != 0)
+			{
+				if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+				{
+					CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+					pcEditView -> ScrollAtV( m_nViewTopLine );
+				}
+			}
+//	2001/06/20 End
 			return nScrollLines;
 		}
 	}else{
@@ -4429,6 +4496,16 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			nMoveLines = - m_nCaretPosY;
 		}
 		if( nMoveLines >= 0 ){
+//	2001/06/20 Start by asa-o:	分割ウィンドウのスクロールの同期
+			if(nScrollLines != 0)
+			{
+				if( m_pShareData->m_Common.m_bSplitterWndVScroll )	// 垂直スクロールの同期をとる
+				{
+					CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+					pcEditView -> ScrollAtV( m_nViewTopLine );
+				}
+			}
+//	2001/06/20 End
 			return nScrollLines;
 		}
 	}
@@ -4519,6 +4596,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 //		ChangeSelectAreaByCurrentCursor( nPosX, m_nCaretPosY + nMoveLines );
 		ChangeSelectAreaByCurrentCursor( nPosX, m_nCaretPosY );
 	}
+
 	return nScrollLines;
 }
 
@@ -5939,10 +6017,12 @@ void CEditView::RedrawAll( void )
 	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
 	OnSetFocus();
 	::ReleaseDC( m_hWnd, hdc );
+
+//	2001/06/21 asa-o 削除
 	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+//	AdjustScrollBars();
 	/* カーソル移動 */
-	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
+//	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
 
 	/* キャレットの行桁位置を表示する */
 	DrawCaretPosInfo();
@@ -5956,7 +6036,23 @@ void CEditView::RedrawAll( void )
 	return;
 }
 
+// 2001/06/21 Start by asa-o 再描画
+void CEditView::Redraw( void )
+{
+	HDC			hdc;
+	PAINTSTRUCT	ps;
 
+	hdc = ::GetDC( m_hWnd );
+
+	::GetClientRect( m_hWnd, &ps.rcPaint );
+
+	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
+
+	::ReleaseDC( m_hWnd, hdc );
+
+	return;
+}
+// 2001/06/21 End
 
 /* 自分の表示状態を他のビューにコピー */
 void CEditView::CopyViewStatus( CEditView* pView )
