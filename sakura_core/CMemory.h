@@ -74,7 +74,6 @@ public:
 	void UnicodeToUTF7( void );	/* Unicode→UTF-7コード変換 */
 	void TABToSPACE( int );	/* TAB→空白 */
 	void SPACEToTAB( int );	/* 空白→TAB */  //#### Stonee, 2001/05/27
-	void TRIM( int );			// 2001.12.03 hor
 
 	void BASE64Decode( void );	// Base64デコード
 	void UUDECODE( char* );		/* uudecode(デコード) */
