@@ -36,7 +36,8 @@
 */
 CLayoutMgr::CLayoutMgr()
 : m_cLineComment(), m_cBlockComment(),
-	getIndentOffset( getIndentOffset_Normal )	//	Oct. 1, 2002 genta
+	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
+	getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta
 {
 	m_pcDocLineMgr = NULL;
 	m_nMaxLineSize = 0;
@@ -118,13 +119,14 @@ void CLayoutMgr::SetLayoutInfo(
 	//	数が増えてきたらテーブルにすべき
 	switch ( refType.m_nIndentLayout ){	/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
 		case 1:
-			getIndentOffset = getIndentOffset_Tx2x;
+			//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
+			getIndentOffset = &CLayoutMgr::getIndentOffset_Tx2x;
 			break;
 		case 2:
-			getIndentOffset = getIndentOffset_LeftSpace;
+			getIndentOffset = &CLayoutMgr::getIndentOffset_LeftSpace;
 			break;
 		default:
-			getIndentOffset = getIndentOffset_Normal;
+			getIndentOffset = &CLayoutMgr::getIndentOffset_Normal;
 			break;
 	}
 	
