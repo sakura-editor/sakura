@@ -6449,6 +6449,7 @@ void CEditView::Command_ADDTAIL( const char* pszData, int nDataLen )
 	@param bClose [in] true:元ウィンドウを閉じる
 
 	@date 2003.04.03 genta 元ウィンドウを閉じるかどうかの引数を追加
+	@date 2004.05.13 Moca 行桁位置の指定が無い場合は、行桁を移動しない
 */
 bool CEditView::Command_TAGJUMP( bool bClose )
 {
@@ -6462,8 +6463,10 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 	int			nPathLen;
 	int			nBgn;
 	memset( szJumpToFile, 0, sizeof(szJumpToFile) );
-	nJumpToLine = 1;
-	nJumpToColm = 1;
+	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
+	// 0以下は未指定扱い。(1開始)
+	nJumpToLine = 0;
+	nJumpToColm = 0;
 	/*
 	  カーソル位置変換
 	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -6766,11 +6769,14 @@ next_line:
 /*
 	指定ファイルの指定位置にタグジャンプする。
 
+	@param nJumpToLine [in] 論理行番号(1開始)。0以下を指定したら行ジャンプはしない。
+	@param nJumpToColm [in] 論理行単位の行内の位置(1開始)
 	@param bClose [in] true: 元ウィンドウを閉じる / false: 元ウィンドウを閉じない
 
 	@author	MIK
 	@date	2003.04.13	新規作成
 	@date	2003.04.21 genta bClose追加
+	@date	2004.05.29 Moca 0以下が指定されたときは、善処する
 */
 bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm, bool bClose )
 {
@@ -6799,12 +6805,18 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 	/* ファイルを開いているか */
 	if( CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
 	{
-		/* カーソルを移動させる */
-		poCaret.x = nJumpToColm - 1;
-		poCaret.y = nJumpToLine - 1;
-		memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
-		::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
-
+		// 2004.05.13 Moca マイナス値は無効
+		if( 0 < nJumpToLine ){
+			/* カーソルを移動させる */
+			poCaret.y = nJumpToLine - 1;
+			if( 0 < nJumpToColm ){
+				poCaret.x = nJumpToColm - 1;
+			}else{
+				poCaret.x = 0;
+			}
+			memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
+			::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
+		}
 		/* アクティブにする */
 		ActivateFrameWindow( hwndOwner );
 	}
