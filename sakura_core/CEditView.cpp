@@ -298,11 +298,7 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 //	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
 //	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 {
-	TEXTMETRIC	tm;
 	LOGFONT		lf;
-	HDC			hdc;
-	HFONT		hFontOld;
-	int			i;
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	m_CurRegexp.Init();
@@ -323,36 +319,8 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	m_bPrevCommand = 0;
 	m_nMyIndex = 0;
 
-
-	/* キャレットの行桁位置表示用フォント */
-	/* LOGFONTの初期化 */
-	memset( &lf, 0, sizeof( LOGFONT ) );
-	lf.lfHeight			= -12;
-	lf.lfWidth			= 0;
-	lf.lfEscapement		= 0;
-	lf.lfOrientation	= 0;
-	lf.lfWeight			= 400;
-	lf.lfItalic			= 0x0;
-	lf.lfUnderline		= 0x0;
-	lf.lfStrikeOut		= 0x0;
-	lf.lfCharSet		= 0x80;
-	lf.lfOutPrecision	= 0x3;
-	lf.lfClipPrecision	= 0x2;
-	lf.lfQuality		= 0x1;
-	lf.lfPitchAndFamily	= 0x31;
-	strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
-	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
-
-	hdc = ::GetDC( ::GetDesktopWindow() );
-	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
-	::GetTextMetrics( hdc, &tm );
-	m_nCaretPosInfoCharWidth = tm.tmAveCharWidth;
-	m_nCaretPosInfoCharHeight = tm.tmHeight;
-	for( i = 0; i < ( sizeof( m_pnCaretPosInfoDx ) / sizeof( m_pnCaretPosInfoDx[0] ) ); ++i ){
-		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
-	}
-	::SelectObject( hdc, hFontOld );
-	::ReleaseDC( ::GetDesktopWindow(), hdc );
+	//	Dec. 4, 2002 genta
+	//	メニューバーへのメッセージ表示機能はCEditWndへ移管
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
@@ -448,10 +416,6 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 	}
 	m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
 
-
-
-
-
 	lf = m_pShareData->m_Common.m_lf;
 	lf.lfCharSet = SHIFTJIS_CHARSET;
 	lf.lfOutPrecision = 1;
@@ -520,9 +484,6 @@ CEditView::~CEditView()
 	if( m_hdcCompatDC != NULL ){
 		::DeleteDC( m_hdcCompatDC );
 	}
-
-	/* キャレットの行桁位置表示用フォント */
-	::DeleteObject( m_hFontCaretPosInfo );
 
 	delete m_pcDropTarget;
 	m_pcDropTarget = NULL;
@@ -5677,15 +5638,8 @@ void CEditView::DrawCaretPosInfo( void )
 		return;
 	}
 
-	HDC				hdc;
-	POINT			poFrame;
-	POINT			po;
-	RECT			rcFrame;
-	HFONT			hFontOld;
 	char			szText[64];
 	HWND			hwndFrame;
-	int				nStrLen;
-	RECT			rc;
 	unsigned char*	pLine;
 	int				nLineLen;
 	int				nIdxFrom;
@@ -5766,14 +5720,6 @@ void CEditView::DrawCaretPosInfo( void )
 	/* ステータス情報を書き出す */
 	if( NULL == pCEditWnd->m_hwndStatusBar ){
 		/* ウィンドウ右上に書き出す */
-		hdc = ::GetWindowDC( hwndFrame );
-		poFrame.x = 0;
-		poFrame.y = 0;
-		::ClientToScreen( hwndFrame, &poFrame );
-		::GetWindowRect( hwndFrame, &rcFrame );
-		po.x = rcFrame.right - rcFrame.left;
-		po.y = poFrame.y - rcFrame.top;
-		hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加
 		//	From Here
@@ -5782,7 +5728,7 @@ void CEditView::DrawCaretPosInfo( void )
 			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
 			if( nIdxFrom >= nLineLen ){
 				/* szText */
-				wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+				wsprintf( szText, "%s(%s)       %6d：%d", pCodeName, nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
 					nCharChars = CMemory::MemCharNext( (char *)pLine, nLineLen, (char *)&pLine[nIdxFrom] ) - (char *)&pLine[nIdxFrom];
@@ -5792,46 +5738,28 @@ void CEditView::DrawCaretPosInfo( void )
 				switch( nCharChars ){
 				case 1:
 					/* szText */
-					wsprintf( szText, "%s(%s)   [%02x]%6d：%d            ", pCodeName, nNlTypeName, pLine[nIdxFrom], nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s)   [%02x]%6d：%d", pCodeName, nNlTypeName, pLine[nIdxFrom], nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 					break;
 				case 2:
 					/* szText */
-					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d            ", pCodeName, nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s) [%02x%02x]%6d：%d", pCodeName, nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 					break;
 				case 4:
 					/* szText */
-					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d            ", pCodeName, nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s) [%02x%02x%02x%02x]%d：%d", pCodeName, nNlTypeName, pLine[nIdxFrom],  pLine[nIdxFrom + 1] , pLine[nIdxFrom + 2],  pLine[nIdxFrom + 3] , nPosY, nPosX);//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 					break;
 				default:
 					/* szText */
-					wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+					wsprintf( szText, "%s(%s)       %6d：%d", pCodeName, nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 				}
 			}
 		}else{
 			/* szText */
-			wsprintf( szText, "%s(%s)       %6d：%d            ", pCodeName, nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
+			wsprintf( szText, "%s(%s)       %6d：%d", pCodeName, nNlTypeName, nPosY, nPosX );//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 		}
 		//	To Here
-		/* 文字列描画 */
-		nStrLen = 30;	//Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
-		rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - 5;
-		rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
-		rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
-		rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
-		::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
-		::SetBkColor( hdc, ::GetSysColor( COLOR_MENU ) );
-		::ExtTextOut(
-			hdc,
-			rc.left,
-			rc.top,
-			/*ETO_CLIPPED | */ ETO_OPAQUE,
-			&rc,
-			szText,
-			nStrLen,
-			m_pnCaretPosInfoDx
-		);
-		::SelectObject( hdc, hFontOld );
-		::ReleaseDC( hwndFrame, hdc );
+		//	Dec. 4, 2002 genta メニューバー表示はCEditWndが行う
+		m_pcEditDoc->m_pcEditWnd->PrintMenubarMessage( szText );
 	}else{
 		/* ステータスバーに状態を書き出す */
 		char	szText_1[64];
@@ -8194,46 +8122,16 @@ finish:
 }
 //	To Here Jun. 30, 2001 GAE
 
+/*!
+	検索／置換／ブックマーク検索時の状態をステータスバーに表示する
 
-//2002.01.26 hor
-//  検索／置換／ブックマーク検索後の状態を表示する
-void CEditView::SendStatusMessage( const char* msg ){
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	if( NULL == pCEditWnd->m_hwndStatusBar ){
-		// メニューバーへ
-		HDC		hdc;
-		POINT	po,poFrame;
-		RECT	rc,rcFrame;
-		HFONT	hFontOld;
-		HWND	hwndFrame;
-		int		nStrLen;
-		char	szText[64];
-		wsprintf( szText, "%s            ", msg );
-		hwndFrame = ::GetParent( m_hwndParent );
-		hdc = ::GetWindowDC( hwndFrame );
-		poFrame.x = 0;
-		poFrame.y = 0;
-		::ClientToScreen( hwndFrame, &poFrame );
-		::GetWindowRect( hwndFrame, &rcFrame );
-		po.x = rcFrame.right - rcFrame.left;
-		po.y = poFrame.y - rcFrame.top;
-		hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
-		nStrLen = 30;
-		rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - 5;
-		rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
-		rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
-		rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
-		::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
-		::SetBkColor( hdc, ::GetSysColor( COLOR_MENU ) );
-		::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
-		::SelectObject( hdc, hFontOld );
-		::ReleaseDC( hwndFrame, hdc );
-	}else{
-		// ステータスバーへ
-		::SendMessage( pCEditWnd->m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
-	}
+	@date 2002.01.26 hor 新規作成
+	@date 2002.12.04 genta 実体をCEditWndへ移動
+*/
+void CEditView::SendStatusMessage( const char* msg )
+{
+	m_pcEditDoc->m_pcEditWnd->SendStatusMessage( msg );
 }
-
 // 使わなくなりました minfu 2002.04.10 
 ///*  IMEからの再変換要求に応える minfu 2002.03.27 */
 //LRESULT CEditView::RequestedReconversion(PRECONVERTSTRING pReconv)

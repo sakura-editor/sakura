@@ -368,7 +368,7 @@ IDD_FUNCLIST DIALOGEX 0, 0, 222, 290
 STYLE DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | 
     WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "x"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     CONTROL         "Tree1",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
@@ -654,9 +654,8 @@ BEGIN
     COMBOBOX        IDC_COMBO_SMARTINDENT,73,162,50,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_SMARTINDENT
     LTEXT           "その他のインデント対象文字(&I)",IDC_STATIC,9,179,90,8
-    EDITTEXT        IDC_EDIT_INDENTCHARS,33,188,90,12,ES_AUTOHSCROLL,0,
-    LTEXT           "折り返し行インデント(&2)",IDC_STATIC,8,203,68,8
-                    HIDC_EDIT_INDENTCHARS
+    EDITTEXT        IDC_EDIT_INDENTCHARS,33,188,90,12,ES_AUTOHSCROLL
+    LTEXT           "折り返し行インデント(&2)",IDC_STATIC,8,203,68,1118
     COMBOBOX        IDC_COMBO_INDENTLAYOUT,77,201,48,63,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_INDENTLAYOUT
     GROUPBOX        "インデント",IDC_STATIC,3,140,125,88
@@ -1732,6 +1731,24 @@ BEGIN
                     HIDC_BUTTON_HELP
 END
 
+IDD_FILEUPDATEQUERY DIALOG DISCARDABLE  0, 0, 203, 97
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+CAPTION "ファイルが更新されました"
+FONT 9, "ＭＳ Ｐゴシック"
+BEGIN
+    PUSHBUTTON      "再読込(&R)",IDC_BTN_RELOAD,7,58,50,14
+    DEFPUSHBUTTON   "閉じる(&C)",IDC_BTN_CLOSE,59,58,50,14
+    PUSHBUTTON      "以後通知メッセージのみ(&M)",IDC_BTN_NOTIFYONLY,7,76,97,
+                    14
+    LTEXT           "このファイルは外部のエディタ等で変更されています。",
+                    IDC_FILEUPDATEMSG,7,31,189,9
+    PUSHBUTTON      "以後更新を監視しない(&N)",IDC_BTN_NOSUPERVISION,109,76,
+                    87,14
+    EDITTEXT        IDC_UPDATEDFILENAME,7,7,189,20,ES_READONLY | 
+                    ES_WANTRETURN | NOT WS_TABSTOP
+    LTEXT           "",IDC_QUERYRELOADMSG,7,43,189,12
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2072,6 +2089,14 @@ BEGIN
         TOPMARGIN, 2
         BOTTOMMARGIN, 182
     END
+
+    IDD_FILEUPDATEQUERY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 196
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 90
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2103,7 +2128,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,3,0,0
- PRODUCTVERSION 1,3,5,8
+ PRODUCTVERSION 1,3,6,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2127,7 +2152,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.3.5.8\0"
+            VALUE "ProductVersion", "1.3.6.0\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2189,6 +2214,7 @@ BEGIN
     F_FILECLOSE             "閉じて(無題)"
     F_FILECLOSE_OPEN        "閉じて開く..."
     F_FILEOPEN_DROPDOWN     "開く... (ドロップダウン)"
+    F_FILE_REOPEN           "開き直す"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
 END
 

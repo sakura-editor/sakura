@@ -95,6 +95,13 @@ public:
 	void GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const;
 	bool GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const;
 
+	//	Dec. 4, 2002 genta
+	//	メニューバーへのメッセージ表示機能をCEditWndより移管
+	void InitMenubarMessageFont(void);
+	void PrintMenubarMessage( const char* msg );
+	//	Dec. 4, 2002 genta 実体をCEditViewから移動
+	void SendStatusMessage( const char* msg );
+
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */
 //#ifdef _DEBUG
 	void SetDebugModeON( void );	/* デバッグモニタモードに設定 */
@@ -181,6 +188,13 @@ private:
 	HFONT	m_fontSearchBox;
 	void	ProcSearchBox( MSG* );	//検索(ボックス)
 	int		m_nCurrentFocus;
+
+	//	Dec. 4, 2002 genta
+	//	メニューバーへのメッセージ表示機能をCEditWndより移管
+	HFONT		m_hFontCaretPosInfo;	/*!< キャレットの行桁位置表示用フォント */
+	int			m_nCaretPosInfoCharWidth;	/*!< キャレットの行桁位置表示用フォントの幅 */
+	int			m_nCaretPosInfoCharHeight;	/*!< キャレットの行桁位置表示用フォントの高さ */
+	int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 
 public:
 	void OnSysMenuTimer();

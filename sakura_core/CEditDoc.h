@@ -279,6 +279,19 @@ public:
 	//	Oct. 2, 2001 genta
 	CFuncLookup		m_cFuncLookup;	//!< 機能名，機能番号などのresolve
 
+	//	From Here Dec. 4, 2002 genta
+	//	更新監視と更新通知
+	/*!
+		ファイルが更新された場合に再読込を行うかどうかのフラグ
+	*/
+	enum WatchUpdate {
+		WU_QUERY,	//!< 再読込を行うかどうかダイアログボックスで問い合わせる
+		WU_NOTIFY,	//!< 更新されたことをステータスバーで通知
+		WU_NONE		//!< 更新監視を行わない
+	};
+	WatchUpdate		m_eWatchUpdate;	//!< 更新監視方法
+	//	To Here Dec. 4, 2002 genta
+
 //	CDlgTest*		m_pcDlgTest;
 
 	/*
