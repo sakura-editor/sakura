@@ -20,6 +20,7 @@
 #include "CSMacroMgr.h"
 #include "CEditView.h"
 #include "CPPAMacroMgr.h"
+#include "CWSHManager.h"
 #include "CMacroFactory.h"
 #include <stdio.h>
 #include <assert.h> // ŽŽŒ±—p
@@ -315,6 +316,7 @@ CSMacroMgr::CSMacroMgr()
 	
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();
+	CWSHMacroManager::declare();
 	
 	int i;
 	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){

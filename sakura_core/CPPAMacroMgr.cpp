@@ -80,7 +80,7 @@ CMacroManagerBase* CPPAMacroMgr::Creator(const char*)
 void CPPAMacroMgr::declare (void)
 {
 	if( m_cPPA.Init() ){
-		CMacroFactory::Instance()->Register("ppa", Creator);
+		CMacroFactory::Instance()->RegisterExt("ppa", Creator);
 	}
 }
 //	To Here Apr. 29, 2002 genta

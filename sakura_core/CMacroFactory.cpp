@@ -31,6 +31,7 @@
 #include "CMacroFactory.h"
 #include <algorithm>
 #include "ctype.h"
+#include "debug.h"
 
 static const char NULSTR[] = "";
 
@@ -59,12 +60,18 @@ std::string CMacroFactory::Ext2Key(const char *ext)
 }
 
 /*!
-	Creator‚Ì“o˜^
+	‘Î‰Šg’£q‚Ì“o˜^
+	
+	Šg’£q‚Æ‘Î‰‚·‚éCreator‚ğ“o˜^‚·‚éD
 	
 	@param ext [in] ŠÖ˜A‚Ã‚¯‚éŠg’£q
 	@param f [in] “o˜^‚·‚éFactoryŠÖ”
+	
+	@sa CMacroFactory::RegisterCreator
+	
+	@date 2002.08.25 genta –¼‘O•ÏX
 */
-bool CMacroFactory::Register( const char* ext, Creator f )
+bool CMacroFactory::RegisterExt( const char* ext, Creator f )
 {
 	if( f == NULL ){
 		return false;
@@ -72,26 +79,79 @@ bool CMacroFactory::Register( const char* ext, Creator f )
 
 	std::string key = Ext2Key( ext );
 	
+#ifdef _DEBUG
+	MYTRACE( "CMacroFactory::RegisterExt(%s)\n", key.c_str() );
+#endif
+
 	//	ã‘‚«ƒ`ƒFƒbƒN‚Ís‚í‚È‚¢
-	m_mMacroEngines[ key ] = f;
+	m_mMacroExts[ key ] = f;
+	return true;
+}
+
+/*!
+	Creator‚Ì“o˜^
+	
+	Šg’£q‚Ì‘Î‰‚ğ‰Šú‚É“o˜^‚µ‚È‚¢Creator‚ğ“o˜^‚·‚éD
+	‚½‚¾‚µCˆê’U‘Î‰‚ª‚í‚©‚Á‚½‚çŸ‰ñˆÈ~‚Í‘Î‰•\‚ªg‚í‚ê‚éD
+	
+	@param ext [in] ŠÖ˜A‚Ã‚¯‚éŠg’£q
+	@param f [in] “o˜^‚·‚éFactoryŠÖ”
+	
+	@sa CMacroFactory::RegisterExts
+
+	@date 2002.08.25 genta ’Ç‰Á
+*/
+bool CMacroFactory::RegisterCreator( Creator f )
+{
+	if( f == NULL ){
+		return false;
+	}
+
+	m_mMacroCreators.push_back( f );
 	return true;
 }
 
 /*!
 	Creator‚Ì“o˜^‰ğœ
 	
-	@param ext [in] “o˜^‰ğœ‚·‚éŠg’£q
+	@param f [in] “o˜^‰ğœ‚·‚éCreator
 */
-bool CMacroFactory::Unregister( const char* ext )
+bool CMacroFactory::Unregister( Creator f )
 {
-	std::string key = Ext2Key( ext );
+	//	Šg’£qƒŠƒXƒg‚©‚ç‚Ìíœ
+	MacroTypeRep::iterator ext_it = m_mMacroExts.begin();
+	while( ext_it != m_mMacroExts.end() ){
+		if( ext_it->second == f ){
+			MacroTypeRep::iterator tmp_it;
 
-	MacroTypeRep::iterator find_it =
-		m_mMacroEngines.find( key );
-	if( find_it == m_mMacroEngines.end())
-		return false;
+			//	‚¢‚«‚È‚èíœ‚·‚é‚Æiterator‚ª–³Œø‚É‚È‚é‚Ì‚ÅC
+			//	iterator‚ğ1‚Âi‚ß‚Ä‚©‚çŒ»İˆÊ’u‚ğíœ‚·‚éD
+			tmp_it = ext_it++;
+			m_mMacroExts.erase( tmp_it );
+		}
+		else {
+			++ ext_it;
+		}
+	}
 	
-	m_mMacroEngines.erase( find_it );
+	//	Creator List‚©‚ç‚Ìíœ
+	MacroEngineRep::iterator c_it = m_mMacroCreators.begin();
+	while( c_it != m_mMacroCreators.end() ){
+		if( *c_it == f ){
+			MacroEngineRep::iterator tmp_it;
+
+			//	‚¢‚«‚È‚èíœ‚·‚é‚Æiterator‚ª–³Œø‚É‚È‚é‚Ì‚ÅC
+			//	iterator‚ğ1‚Âi‚ß‚Ä‚©‚çŒ»İˆÊ’u‚ğíœ‚·‚éD
+			tmp_it = c_it++;
+			m_mMacroCreators.erase( tmp_it );
+			//	d•¡“o˜^‚³‚ê‚Ä‚¢‚éê‡‚ğl—¶‚µ‚ÄC
+			//	1‚ÂŒ©‚Â‚©‚Á‚Ä‚àÅŒã‚Ü‚Åƒ`ƒFƒbƒN‚·‚é
+		}
+		else {
+			++ c_it;
+		}
+	}
+	
 	return true;
 }
 
@@ -108,11 +168,34 @@ CMacroManagerBase* CMacroFactory::Create(const char* ext)
 {
 	std::string key = Ext2Key( ext );
 
-	MacroTypeRep::iterator ext_it = m_mMacroEngines.find( key );
-	if( ext_it == m_mMacroEngines.end()){
-		return NULL;
+	MacroTypeRep::iterator ext_it = m_mMacroExts.find( key );
+	if( ext_it != m_mMacroExts.end()){
+		CMacroManagerBase* pobj = (*ext_it->second)(key.c_str());
+		if( pobj != NULL ){
+#ifdef _DEBUG
+			MYTRACE( "CMacroFactory::Create/ Found in map (%s)\n", key.c_str() );
+#endif
+			return pobj;
+		}
+		
+		//	NULL‚ª•Ô‚³‚ê‚½ê‡
 	}
-	return (*ext_it->second)(key.c_str());
+
+	//	Creator‚ğ‡‚É‚·
+	for( MacroEngineRep::iterator c_it = m_mMacroCreators.begin();
+		c_it != m_mMacroCreators.end(); ++ c_it ){
+		CMacroManagerBase* pobj = (*c_it)(key.c_str());
+		if( pobj != NULL ){
+#ifdef _DEBUG
+			MYTRACE( "CMacroFactory::Create/ Answered for (%s)\n", key.c_str() );
+#endif
+			//	‘Î‰•\‚É“o˜^‚·‚é
+			m_mMacroExts[ key ] = *c_it;
+			return pobj;
+		}
+	}
+	
+	return NULL;
 }
 
 /*!
