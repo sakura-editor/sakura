@@ -35,7 +35,6 @@ class SAKURA_CORE_API CBlockComment
 	char	m_szBlockCommentTo[BLOCKCOMMENT_NUM][BLOCKCOMMENT_BUFFERSIZE];			/*!< ブロックコメントデリミタ(To) */	int		m_nBlockFromLen[BLOCKCOMMENT_NUM];
 	int		m_nBlockToLen[BLOCKCOMMENT_NUM];
 
-	friend class CShareData;
 public:
 	/*
 	||  Constructors：コンパイラ標準を使用。

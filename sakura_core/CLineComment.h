@@ -35,7 +35,6 @@ class SAKURA_CORE_API CLineComment
 	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
 	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
 
-	friend class CShareData;
 public:
 	/*
 	||  Constructors：コンパイラ標準を使用。
