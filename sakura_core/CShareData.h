@@ -1,0 +1,612 @@
+//	$Id$
+/************************************************************************
+
+	CShareData.h
+
+    プロセス間共有データへのアクセス
+	Copyright (C) 1998-2000, Norio Nakatani
+
+    UPDATE:
+    CREATE: 1998/5/26  新規作成
+
+
+************************************************************************/
+
+class CShareData;
+
+#ifndef _CSHAREDATA_H_
+#define _CSHAREDATA_H_
+
+#include <windows.h>
+#include <commctrl.h>
+#include "CKeyBind.h"
+#include "CKeyWordSetMgr.h"
+#include "CPrint.h"
+#include "CKeyMacroMgr.h"
+#include "CProfile.h"
+
+enum maxdata{
+	MAX_EDITWINDOWS				= 256,
+	MAX_MRU						=  36,	// Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
+	MAX_OPENFOLDER				=  36,	// Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
+	MAX_SEARCHKEY				=  30,
+	MAX_REPLACEKEY				=  30,
+	MAX_GREPFILE				=  30,
+	MAX_GREPFOLDER				=  30,
+	MAX_TYPES					=  16,
+//	MAX_TOOLBARBUTTONS			= 256,
+	MAX_TOOLBARBUTTONS			= 384,	// Oct. 22, 2000 JEPORO アイコンの最大登録数を128個増やした(256→384)
+	MAX_CUSTOM_MENU				=  25,
+	MAX_CUSTOM_MENU_NAME_LEN	=  32,
+	MAX_CUSTOM_MENU_ITEMS		=  48,
+	MAX_PRINTSETTINGARR			=   8,
+
+	MAX_EXTCMDLEN				= 1024,
+	MAX_EXTCMDMRUNUM			= 32,
+
+	MAX_DATETIMEFOREMAT_LEN		= 100,
+
+	MAX_CMDLEN					= 1024,
+	MAX_CMDARR					= 32
+
+};
+
+
+///* 外部コマンド情報 */
+//struct ExtCmd {
+//	char m_szCmd[MAX_EXTCMDLEN + 1];
+//	/* 初期化 */
+//	void ExtCmd::Init(void){
+//		m_szCmd[0] = '\0';
+//		return;
+//	}
+//};	
+
+
+///* MRU 外部コマンド情報 */
+//struct MRU_ExtCmd {
+//	int		m_nExtCmdArrNum;
+//	ExtCmd	m_ExtCmdArr[MAX_EXTCMDMRUNUM];
+//};	
+
+/* ファイル情報 */
+struct FileInfo {
+	int		m_nViewTopLine;			/* 表示域の一番上の行(0開始) */	
+	int		m_nViewLeftCol;			/* 表示域の一番左の桁(0開始) */
+	int		m_nX;					/* カーソル　物理位置(行頭からのバイト数) */
+	int		m_nY;					/* カーソル　物理位置(折り返し無し行位置) */
+	int		m_bIsModified;			/* 変更フラグ */
+	int		m_nCharCode;			/* 文字コード種別 */
+	char	m_szPath[_MAX_PATH];	/* ファイル名 */
+	BOOL	m_bIsGrep;				/* Grepのウィンドウか */
+	char	m_szGrepKey[1024];
+};
+
+struct EditNode {
+	int				m_nIndex;
+	HWND			m_hWnd;
+};
+
+struct PRINTSETTING {
+	char			m_szPrintSettingName[32 + 1];		/* 印刷設定の名前 */
+//	char			m_szPrintFontFace[LF_FACESIZE];		/* 印刷フォント */
+	char			m_szPrintFontFaceHan[LF_FACESIZE];	/* 印刷フォント */
+	char			m_szPrintFontFaceZen[LF_FACESIZE];	/* 印刷フォント */
+	int				m_nPrintFontWidth;					/* 印刷フォント幅(1/10mm単位単位) */
+	int				m_nPrintFontHeight;					/* 印刷フォント高さ(1/10mm単位単位) */
+	int				m_nPrintDansuu;						/* 段組の段数 */
+	int				m_nPrintDanSpace;					/* 段と段の隙間(1/10mm単位) */
+	int				m_nPrintLineSpacing;				/* 印刷フォント行間　文字の高さに対する割合(%) */
+	int				m_nPrintMarginTY;					/* 印刷用紙マージン　上(mm単位) */
+	int				m_nPrintMarginBY;					/* 印刷用紙マージン　下(mm単位) */
+	int				m_nPrintMarginLX;					/* 印刷用紙マージン　左(mm単位) */
+	int				m_nPrintMarginRX;					/* 印刷用紙マージン　右(mm単位) */
+	int				m_nPrintPaperOrientation;			/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
+	int				m_nPrintPaperSize;					/* 用紙サイズ */
+	BOOL			m_bPrintWordWrap;					/* 英文ワードラップする */
+	BOOL			m_bPrintLineNumber;					/* 行番号を印刷する */
+
+
+	MYDEVMODE		m_mdmDevMode;						/* プリンタ設定 DEVMODE用*/	
+	BOOL			m_bHeaderUse[3];	
+	char			m_szHeaderForm[3][100];
+	BOOL			m_bFooterUse[3];	
+	char			m_szFooterForm[3][100];
+};
+
+//	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
+//#define COLORIDX_TEXT			0	/* テキスト */
+//#define COLORIDX_GYOU			1	/* 行番号 */
+//#define COLORIDX_CRLF			2	/* 改行記号 */
+//#define COLORIDX_TAB			3	/* TAB記号 */
+//#define COLORIDX_ZENSPACE		4	/* 日本語空白 */
+//#define COLORIDX_EOF			5	/* EOF記号 */
+//#define COLORIDX_KEYWORD		6	/* 強調キーワード */
+//#define COLORIDX_COMMENT		7	/* コメント */
+//#define COLORIDX_SSTRING		8	/* シングルクォーテーション文字列 */
+//#define COLORIDX_WSTRING		9	/* ダブルクォーテーション文字列 */
+//#define COLORIDX_UNDERLINE		10	/* カーソル行アンダーライン	*/
+//#define COLORIDX_WRAP			11	/* 折り返し記号	*/
+//#define COLORIDX_CTRLCODE		12	/* コントロールコード */
+//#define COLORIDX_URL			13	/* URL */
+//#define COLORIDX_SEARCH			14	/* 検索文字列 */
+//#define COLORIDX_GYOU_MOD		15	/* 行番号(変更行) */
+//#define COLORIDX_RULER			16	/* ルーラー */
+//#define COLORIDX_LAST			17
+#define COLORIDX_TEXT			0	/* テキスト */
+#define COLORIDX_RULER			1	/* ルーラー */
+#define COLORIDX_UNDERLINE		2	/* カーソル行アンダーライン	*/
+#define COLORIDX_GYOU			3	/* 行番号 */
+#define COLORIDX_GYOU_MOD		4	/* 行番号(変更行) */
+#define COLORIDX_TAB			5	/* TAB記号 */
+#define COLORIDX_ZENSPACE		6	/* 日本語空白 */
+#define COLORIDX_CTRLCODE		7	/* コントロールコード */
+#define COLORIDX_CRLF			8	/* 改行記号 */
+#define COLORIDX_WRAP			9	/* 折り返し記号	*/
+#define COLORIDX_EOF			10	/* EOF記号 */
+#define COLORIDX_SEARCH			11	/* 検索文字列 */
+#define COLORIDX_KEYWORD		12	/* 強調キーワード */
+#define COLORIDX_COMMENT		13	/* コメント */
+#define COLORIDX_SSTRING		14	/* シングルクォーテーション文字列 */
+#define COLORIDX_WSTRING		15	/* ダブルクォーテーション文字列 */
+#define COLORIDX_URL			16	/* URL */
+#define COLORIDX_LAST			17
+//	To Here Sept. 18, 2000
+
+/* 色設定 */
+struct ColorInfo {
+	int			m_nColorIdx;
+	BOOL		m_bDisp;			/* 色分け/表示 をする */
+	BOOL		m_bFatFont;			/* 太字か */
+	BOOL		m_bUnderLine;		/* アンダーラインか */
+	COLORREF	m_colTEXT;			/* 前景色(文字色) */
+	COLORREF	m_colBACK;			/* 背景色 */
+	char		m_szName[32];		/* 名前 */
+	char		m_cReserved[60];
+};
+
+struct ColorInfoIni {
+	const char*	m_pszName;			/* 色名 */
+	BOOL		m_bDisp;			/* 色分け/表示 をする */
+	BOOL		m_bFatFont;			/* 太字か */
+	BOOL		m_bUnderLine;		/* アンダーラインか */
+	COLORREF	m_colTEXT;			/* 前景色(文字色) */
+	COLORREF	m_colBACK;			/* 背景色 */
+};
+
+///* Ver 0.3.5.0の設定データ構造体 */
+//#include "CShareData_0_3_5_0.h"
+
+
+
+
+struct Types {
+	int					m_nIdx;
+	char				m_szTypeName[64];				/* タイプ属性：名称 */
+	char				m_szTypeExts[64];				/* タイプ属性：拡張子リスト */
+	int					m_nMaxLineSize;					/* 折り返し文字数 */
+	int					m_nColmSpace;					/* 文字と文字の隙間 */
+	int					m_nLineSpace;					/* 行間のすきま */
+	int					m_nTabSpace;					/* TABの文字数 */
+//	int					m_bDispLINE;					/* 行番号表示／非表示 */
+//	BOOL				m_bDispTAB;						/* タブ記号を表示する */
+//	BOOL				m_bDispZENSPACE;				/* 日本語空白を表示する */
+//	BOOL				m_bDispCRLF;					/* 改行記号を表示する */
+//	BOOL				m_bDispEOF;						/* EOFを表示する */
+//	BOOL				m_bDispCCPPKEYWORD;				/* 強調キーワードを表示する */
+//	BOOL				m_bDispCOMMENT;					/* コメントを表示する */
+//	BOOL				m_bDispSSTRING;					/* シングルクォーテーション文字列を表示する */
+//	BOOL				m_bDispWSTRING;					/* ダブルクォーテーション文字列を表示する */
+//	BOOL				m_bDispUNDERLINE;				/* カーソル行アンダーラインを表示する */
+//	COLORREF			m_colorTEXT;					/* テキスト色 */
+//	COLORREF			m_colorBACK;					/* 背景色 */
+//	COLORREF			m_colorCRLF;					/* 改行の色 */
+//	COLORREF			m_colorCRLFBACK;				/* 改行背景の色 */
+//	COLORREF			m_colorGYOU;					/* 行番号の色 */
+//	COLORREF			m_colorGYOUBACK;				/* 行番号背景の色 */
+//	COLORREF			m_colorTAB;						/* TAB文字の色 */
+//	COLORREF			m_colorTABBACK;					/* TAB文字背景の色 */
+//	COLORREF			m_colorZENSPACE;				/* 全角スペース文字の色 */
+//	COLORREF			m_colorZENSPACEBACK;			/* 全角スペース文字背景の色 */
+//	COLORREF			m_colorEOF;						/* EOFの色 */
+//	COLORREF			m_colorEOFBACK;					/* EOF背景の色 */
+//	COLORREF			m_colorCCPPKEYWORD;				/* 強調キーワードの色 */
+//	COLORREF			m_colorCCPPKEYWORDBACK;			/* 強調キーワード背景の色 */
+	int					m_nKeyWordSetIdx;				/* キーワードセット */
+//	COLORREF			m_colorCOMMENT;					/* コメント色 */
+//	COLORREF			m_colorCOMMENTBACK;				/* コメント背景の色 */
+//	COLORREF			m_colorSSTRING;					/* シングルクォーテーション文字列色 */
+//	COLORREF			m_colorSSTRINGBACK;				/* シングルクォーテーション文字列背景の色 */
+//	COLORREF			m_colorWSTRING;					/* ダブルクォーテーション文字列色 */
+//	COLORREF			m_colorWSTRINGBACK;				/* ダブルクォーテーション文字列背景の色 */
+//	COLORREF			m_colorUNDERLINE;				/* カーソル行アンダーラインの色 */
+	char				m_szLineComment[16];			/* 行コメントデリミタ */
+	char				m_szBlockCommentFrom[16];		/* ブロックコメントデリミタ(From) */
+	char				m_szBlockCommentTo[16];			/* ブロックコメントデリミタ(To) */
+	int					m_nStringType;					/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+	char				m_szIndentChars[64];			/* その他のインデント対象文字 */
+//	int					m_nKEYWORDCASE;					/* キーワードの英大文字小文字区別 */
+
+	int					m_nColorInfoArrNum;				/* 色設定配列の有効数 */
+	ColorInfo			m_ColorInfoArr[64];				/* 色設定配列 */
+
+	int					m_bLineNumIsCRLF;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	int					m_nLineTermType;				/* 行番号区切り　0=なし 1=縦線 2=任意 */
+	char				m_cLineTermChar;				/* 行番号区切り文字 */
+
+//	char				m_bUseLBCC;						/* 禁則処理を行うか */
+	BOOL				m_bWordWrap;					/* 英文ワードラップをする */
+	char				m_szLineComment2[16];			/* 行コメントデリミタ2 */
+
+	int					m_nCurrentPrintSetting;			/* 現在選択している印刷設定 */
+
+	int					m_nDefaultOutline;				/* アウトライン解析方法 */
+
+	int					m_nSmartIndent;					/* スマートインデント種別 */
+
+}; /* Types */
+
+//	Aug. 15, 2000 genta
+//	Backup Flags
+const int BKUP_YEAR		= 32;
+const int BKUP_MONTH	= 16;
+const int BKUP_DAY		= 8;
+const int BKUP_HOUR		= 4;
+const int BKUP_MIN		= 2;
+const int BKUP_SEC		= 1;
+
+//	Aug. 21, 2000 genta
+const int BKUP_AUTO		= 64;
+
+struct Common {
+
+	//	Jul. 3, 2000 genta
+	//	アクセス関数(簡易)
+	//	intをビット単位に分割して使う
+	//	下4bitをCaretTypeに当てておく(将来の予約で多めに取っておく)
+	int		GetCaretType(void) const { return m_nCaretType & 0xf; }
+	void	SetCaretType(const int f){ m_nCaretType &= ~0xf; m_nCaretType |= f & 0xf; }
+
+	//	Aug. 15, 2000 genta
+	//	Backup設定のアクセス関数
+	int		GetBackupType(void) const { return m_nBackUpType; }
+	void	SetBackupType(int n){ m_nBackUpType = n; }
+
+	bool	GetBackupOpt(int flag) const { return ( flag & m_nBackUpType_Opt1 ) == flag; }
+	void	SetBackupOpt(int flag, bool value){
+		m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 );
+	}
+
+	//	バックアップ数
+	int		GetBackupCount(void) const { return m_nBackUpType_Opt2 & 0xffff; }
+	void	SetBackupCount(int value){
+		m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff );
+	}
+
+	//	バックアップの拡張子先頭文字(1文字)
+	int		GetBackupExtChar(void) const { return ( m_nBackUpType_Opt2 >> 16 ) & 0xff ; }
+	void	SetBackupExtChar(int value){
+		m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 );
+	}
+	
+	//	Aug. 21, 2000 genta
+	//	自動Backup
+	bool	IsAutoBackupEnabled(void) const { return GetBackupOpt( BKUP_AUTO ); }
+	void	EnableAutoBackup(bool flag){ SetBackupOpt( BKUP_AUTO, flag ); }
+	
+	int		GetAutoBackupInterval(void) const { return m_nBackUpType_Opt3; }
+	void	SetAutoBackupInterval(int i){ m_nBackUpType_Opt3 = i; }
+	
+	//	Oct. 27, 2000 genta
+	//	カーソル位置を復元するかどうか
+	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition; }
+	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; }
+
+	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
+	int					m_bIsINSMode;					/* 挿入／上書きモード */
+	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
+	int					m_bAutoIndent;					/* オートインデント */
+	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	bool				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
+//	int					m_bEnableLineISlog;				/* ★廃止★行番号種別　物理行／論理行 */
+
+//	char				m_szEMailUserName[_MAX_PATH];	/* メールユーザー名 */
+//	char				m_szEMailUserAddress[_MAX_PATH];/* メールアドレス */
+//	char				m_szSMTPServer[_MAX_PATH];		/* SMTPホスト名・アドレス */
+//	int					m_nSMTPPort;					/* SMTPポート番号(通常は25) */
+
+	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
+	int					m_nRepeatedScrollLineNum;		/* キーリピート時のスクロール行数 */
+	BOOL				m_nRepeatedScroll_Smooth;		/* キーリピート時のスクロールを滑らかにするか */
+	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
+//	short				m_nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
+//	KEYDATA				m_pKeyNameArr[100];				/* キー割り当て表 */
+	int					m_bRegularExp;					/* 検索／置換  1==正規表現 */
+	int					m_bLoHiCase;					/* 検索／置換  1==英大文字小文字の区別 */
+	int					m_bWordOnly;					/* 検索／置換  1==単語のみ検索 */
+	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
+	int					m_bSelectedArea;				/* 置換       選択範囲内置換 */
+	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */
+	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
+	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
+
+	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
+	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
+	LOGFONT				m_lf;							/* 現在のフォント情報 */
+	BOOL				m_bFontIs_FIXED_PITCH;			/* 現在のフォントは固定幅フォントである */
+	BOOL				m_bBackUp;						/* バックアップの作成 */
+	BOOL				m_bBackUpDialog;				/* バックアップの作成前に確認 */
+	BOOL				m_bBackUpFolder;				/* 指定フォルダにバックアップを作成する */
+	char				m_szBackUpFolder[_MAX_PATH];	/* バックアップを作成するフォルダ */
+	int 				m_nBackUpType;					/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+	int 				m_nBackUpType_Opt1;				/* バックアップファイル名：オプション1 */
+	int 				m_nBackUpType_Opt2;				/* バックアップファイル名：オプション2 */
+	int 				m_nBackUpType_Opt3;				/* バックアップファイル名：オプション3 */
+	int 				m_nBackUpType_Opt4;				/* バックアップファイル名：オプション4 */
+	int 				m_nBackUpType_Opt5;				/* バックアップファイル名：オプション5 */
+	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
+	int					m_nFileShareMode;				/* ファイルの排他制御モード */
+	char				m_szExtHelp1[_MAX_PATH];		/* 外部ヘルプ１ */
+	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
+
+	
+	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
+	int					m_nToolBarButtonIdxArr[MAX_TOOLBARBUTTONS];	/* ツールバーボタン構造体 */
+	int					m_bToolBarIsFlat;				/* フラットツールバーにする／しない */
+	int					m_nMRUArrNum_MAX;
+	int					m_nOPENFOLDERArrNum_MAX;
+	BOOL				m_bDispTOOLBAR;					/* 次回ウィンドウを開いたときツールバーを表示する */
+	BOOL				m_bDispSTATUSBAR;				/* 次回ウィンドウを開いたときステータスバーを表示する */
+
+	BOOL				m_bDispFUNCKEYWND;				/* 次回ウィンドウを開いたときファンクションキーを表示する */
+	int					m_nFUNCKEYWND_Place;			/* ファンクションキー表示位置／0:上 1:下 */
+
+	/* カスタムメニュー情報 */
+	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];	
+	int					m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
+	int					m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];	
+	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];	
+	char				m_szMidashiKigou[256];		/* 見出し記号 */
+	char				m_szInyouKigou[32];			/* 引用符 */
+	int					m_bUseKeyWordHelp;			/* キーワードヘルプを使用する */
+	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */
+	int					m_bUseHokan;				/* 入力補完機能を使用する */
+	char				m_szHokanFile[_MAX_PATH];	/* 入力補完 単語ファイル */
+	BOOL				m_bGrepKanjiCode_AutoDetect;/* Grep: 文字コード自動判別 */
+	int					m_bHokanLoHiCase;			/* 入力補完機能：英大文字小文字を同一視する */
+//	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
+	BOOL				m_bSaveWindowSize;			/* ウィンドウサイズ継承 */
+	int					m_nWinSizeType;
+	int					m_nWinSizeCX;
+	int					m_nWinSizeCY;
+
+
+	BOOL				m_bUseTaskTray;		/* タスクトレイのアイコンを使う */
+	BOOL				m_bStayTaskTray;	/* タスクトレイのアイコンを常駐 */
+
+	WORD				m_wTrayMenuHotKeyCode;	/* タスクトレイメニュー　キー */
+	WORD				m_wTrayMenuHotKeyMods;	/* タスクトレイメニュー　キー */
+
+	BOOL				m_bUseOLE_DragDrop;		/* OLEによるDrag&Dropを使う */
+	BOOL				m_bUseOLE_DropSource;	/* OLEによるDrag元にするか */
+
+	
+	BOOL				m_bDispExitingDialog;	/* 終了ダイアログを表示する */
+	BOOL				m_bEnableUnmodifiedOverwrite;	/* 無変更でも上書きするか */
+	BOOL				m_bJumpSingleClickURL;	/* URLのシングルクリックでJump */
+	BOOL				m_bSelectClickedURL;	/* URLがクリックされたら選択するか */
+	BOOL				m_bGrepExitConfirm;		/* Grepモードで保存確認するか */
+
+//	BOOL				m_bRulerDisp;			/* ルーラー表示 */
+	int					m_nRulerHeight;			/* ルーラー高さ */
+	int					m_nRulerBottomSpace;	/* ルーラーとテキストの隙間 */
+	int					m_nRulerType;			/* ルーラーのタイプ */
+
+
+	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
+	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
+	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 *
+//	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
+	BOOL				m_bDropFileAndClose;		/* ファイルをドロップしたときは閉じて開く */
+	int					m_nDropFileNumMax;			/* 一度にドロップ可能なファイル数 */
+	BOOL				m_bCheckFileTimeStamp;		/* 更新の監視 */
+	BOOL				m_bNotOverWriteCRLF;		/* 改行は上書きしない */
+	RECT				m_rcOpenDialog;				/* 「開く」ダイアログのサイズと位置 */
+	BOOL				m_bAutoCloseDlgFind;		/* 検索ダイアログを自動的に閉じる */
+	BOOL				m_bScrollBarHorz;			/* 水平スクロールバーを使う */
+	BOOL				m_bAutoCloseDlgFuncList;	/* アウトライン ダイアログを自動的に閉じる */
+	BOOL				m_bAutoCloseDlgReplace;		/* 置換 ダイアログを自動的に閉じる */
+	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
+
+	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN 補完決定キーが有効/無効 */
+	BOOL				m_bHokanKey_TAB;	/* VK_TAB    補完決定キーが有効/無効 */
+	BOOL				m_bHokanKey_RIGHT;	/* VK_RIGHT  補完決定キーが有効/無効 */
+	BOOL				m_bHokanKey_SPACE;	/* VK_SPACE  補完決定キーが有効/無効 */
+
+
+	int					m_nDateFormatType;						//日付書式のタイプ
+	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];//日付書式
+	int					m_nTimeFormatType;						//時刻書式のタイプ
+	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];//時刻書式
+
+	BOOL				m_bMenuIcon;	/* メニューにアイコンを表示する */
+
+
+
+}; /* Common */
+
+
+
+struct DLLSHAREDATA {
+	//	Oct. 27, 2000 genta
+	//	データ構造 Version
+	//	データ構造の異なるバージョンの同時起動を防ぐため
+	//	必ず先頭になくてはならない．
+	unsigned int		m_vStructureVersion;
+	/* 共通作業域(保存しない) */
+	char				m_szWork[32000];
+	FileInfo			m_FileInfo_MYWM_GETFILEINFO;
+
+	DWORD				m_dwProductVersionMS;
+	DWORD				m_dwProductVersionLS;
+	HWND				m_hwndTray;
+	HWND				m_hwndDebug;
+	HACCEL				m_hAccel;
+	LONG				m_nSequences;					/* ウィンドウ連番 */
+	/**** 共通作業域(保存する) ****/
+	short				m_nEditArrNum;
+	EditNode			m_pEditArr[MAX_EDITWINDOWS + 1];
+	int					m_nMRUArrNum;
+	FileInfo			m_fiMRUArr[MAX_MRU];
+	int					m_nOPENFOLDERArrNum;
+	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
+	int					m_nSEARCHKEYArrNum;
+	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
+	int					m_nREPLACEKEYArrNum;
+	char				m_szREPLACEKEYArr[MAX_REPLACEKEY][_MAX_PATH];
+	int					m_nGREPFILEArrNum;
+	char				m_szGREPFILEArr[MAX_GREPFILE][_MAX_PATH];
+	int					m_nGREPFOLDERArrNum;
+	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
+
+	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
+	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
+
+//	MRU_ExtCmd			m_MRU_ExtCmd;	/* MRU 外部コマンド */
+	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
+	int					m_nCmdArrNum;
+	
+	
+	/**** 共通設定 ****/
+//	BOOL				m_nCommonModify;	/* 変更フラグ(共通設定の全体) */
+	Common				m_Common;
+
+	/* 変更フラグ　フォント */
+//	BOOL				m_bFontModify;
+
+	/* キー割り当て */
+//	BOOL				m_bKeyBindModify;			/* 変更フラグ　キー割り当て */
+//	BOOL				m_bKeyBindModifyArr[100];	/* 変更フラグ　キー割り当て(キーごと) */
+	short				m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
+	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
+
+	/**** 印刷ページ設定 ****/
+//	BOOL				m_bPrintSettingModify;		/* 変更フラグ(印刷の全体) */
+//	BOOL				m_bPrintSettingModifyArr[MAX_PRINTSETTINGARR];	/* 変更フラグ(印刷設定ごと) */
+	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
+
+	/* 強調キーワード設定 */
+//	BOOL				m_bKeyWordSetModify;		/* 変更フラグ(キーワードの全体) */
+//	BOOL				m_bKeyWordSetModifyArr[MAX_SETNUM];	/* 変更フラグ(キーワードのセットごと) */
+	CKeyWordSetMgr		m_CKeyWordSetMgr;			/* 強調キーワード */
+
+	/* **** タイプ別設定 **** */
+//	BOOL				m_nTypesModifyArr[MAX_TYPES];	/* 変更フラグ(タイプ別設定) */
+	Types				m_Types[MAX_TYPES];
+
+	CKeyMacroMgr		m_CKeyMacroMgr;				/* キーワードマクロのバッファ */
+	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */	
+	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */	
+};
+
+
+
+/*-----------------------------------------------------------------------
+クラスの宣言
+-----------------------------------------------------------------------*/
+class SAKURA_CORE_API CShareData
+{
+public:
+	/*
+	||  Constructors
+	*/
+	CShareData();
+	~CShareData();
+
+	/*
+	||  Attributes & Operations
+	*/
+	bool Init(void);	/* CShareDataクラスの初期化処理 */
+	DLLSHAREDATA* GetShareData( const char*, int* );	/* 共有データ構造体のアドレスを返す */
+	BOOL AddEditWndList( HWND );	/* 編集ウィンドウの登録 */
+	void DeleteEditWndList( HWND );	/* 編集ウィンドウリストからの削除 */
+
+//	void AddMRUList( const char* );	/* MRUリストへの登録 */
+	void AddMRUList( FileInfo*  );	/* MRUリストへの登録 */
+	void AddOPENFOLDERList( const char* );	/* 開いたフォルダ　リストへの登録 */
+	BOOL IsExistInMRUList( const char* , FileInfo*  );	/* MRUリストに存在するか調べる　存在するならばファイル情報を返す */
+	BOOL RequestCloseAllEditor( void );	/* 全編集ウィンドウへ終了要求を出す */
+	BOOL IsPathOpened( const char*, HWND* );	/* 指定ファイルが開かれているか調べる */
+	int GetEditorWindowsNum( void );	/* 現在の編集ウィンドウの数を調べる */
+	BOOL PostMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージをポストする */
+	BOOL SendMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージを送るする */
+	int GetOpenedWindowArr( EditNode** , BOOL );	/* 現在開いている編集ウィンドウの配列を返す */
+	static BOOL IsEditWnd( HWND );	/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
+	static void SetTBBUTTONVal(	TBBUTTON*, int, int, BYTE, BYTE, DWORD, int	);	/* TBBUTTON構造体にデータをセット */
+	static void SetKeyNameArrVal(
+		DLLSHAREDATA*, int, short, char*,
+		short, short, short, short,
+		short, short, short, short );	/* KEYDATA配列にデータをセット */
+	static void SetKeyNameArrVal( DLLSHAREDATA*, int, short, char* );	/* KEYDATA配列にデータをセット */
+//	static void SetKeyNames( DLLSHAREDATA* );	/* キー名称のセット */
+	static LONG MY_RegSetVal( 
+		HKEY hKey,	// handle of key to set value for  
+		LPCTSTR lpValueName,	// address of value to set 
+		CONST BYTE *lpData,	// address of value data 
+		DWORD cbData 	// size of value data 
+	);
+	static LONG MY_RegQuerVal( 
+		HKEY hKey,	// handle of key to set value for  
+		LPCTSTR lpValueName,	// address of value to set 
+		BYTE *lpData,	// address of value data 
+		DWORD cbData 	// size of value data 
+	);
+//#ifdef _DEBUG
+	void TraceOut( LPCTSTR lpFmt, ...);	/* デバッグモニタに出力 */
+//#endif
+	BOOL LoadShareData( void );	/* 共有データのロード */
+	void SaveShareData( void );	/* 共有データの保存 */
+#if 0
+	LONG MY_RegVal_IO(
+		BOOL			bRead,
+		HKEY			hKey,			// handle of key to set value for  
+		LPCTSTR			lpValueName,	// address of value to set 
+		int				nRegCnvID,		// 
+		BYTE *			lpDataSrc,		// address of value data 
+		DWORD			cbDataSrc 		// size of value data,
+	);
+	BOOL ShareData_IO( BOOL );	/* 共有データの保存 */
+#endif
+	BOOL ShareData_IO_2( BOOL );	/* 共有データの保存 */
+	static void IO_ColorSet( CProfile* , BOOL , const char* , ColorInfo* );	/* 色設定 I/O */
+
+//	static BOOL LoadShareData_0_3_5_0( DLLSHAREDATA_0_3_5_0* );	/* Ver0.3.5.0用　設定データのロード */
+//	void TakeOver_0_3_5_0( DLLSHAREDATA_0_3_5_0* );	/* Ver0.3.5.0用　設定データを、引き継ぐ */
+
+	TBBUTTON	m_tbMyButton[MAX_TOOLBARBUTTONS];	/* ツールバーのボタン */
+	int			m_nMyButtonNum;
+	int			m_nStdToolBarButtons;
+
+protected:
+	/*
+	||  実装ヘルパ関数
+	*/
+	const char*		m_pszAppName;
+	HANDLE			m_hFileMap;
+	DLLSHAREDATA*	m_pShareData;
+
+//	long GetModuleDir(char* , long );	/* この実行ファイルのあるディレクトリを返します */
+	/* MRUとOPENFOLDERリストの存在チェックなど
+	存在しないファイルやフォルダはMRUやOPENFOLDERリストから削除する
+	 */
+	void CheckMRUandOPENFOLDERList( void );
+
+
+};
+
+
+
+///////////////////////////////////////////////////////////////////////
+#endif /* _CSHAREDATA_H_ */
+
+/*[EOF]*/
