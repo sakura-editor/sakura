@@ -37,9 +37,11 @@ bool RcCvt::setErr(char*errstr)
 	char *t;
 	int lcr = strlen(errstr)+2;
 	if( strerr ){
-		t = (char*)realloc( strerr , strlen(strerr)+lcr+1 );
+		t = (char*)realloc( strerr , strlen(strerr)+lcr );	// 2003.10.31 moca 不要な+1を削除
 	}else{
-		t = (char*)malloc( lcr+1 );
+		// 2003.10.31 moca 不要な+1を削除
+		// 2003.11.01 genta callocで0クリアを保証する
+		t = (char*)calloc( lcr, 1 );
 	}
 	if( t==NULL){
 		return false;
