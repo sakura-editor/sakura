@@ -3592,6 +3592,8 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 
 
 		hMenu = ::GetMenu( m_hWnd );
+		//	Jun. 18, 2001 genta Print Preview‚Å‚Íƒƒjƒ…[‚ğíœ
+		::SetMenu( m_hWnd, NULL );
 		::DestroyMenu( hMenu );
 //		::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );
 		::DrawMenuBar( m_hWnd );
