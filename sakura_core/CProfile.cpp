@@ -348,6 +348,7 @@ bool CProfile::IOProfileData(
 	@retval false ¸”s
 
 	@date 2004-01-10 D.S.Koba ƒGƒ“ƒgƒŠ‚ÌŒ^•Ê‚ÉŠÖ”‚ğ•ª—£
+	@date 2004-02-14 MIK _tstoi¨_ttoi
 */
 bool CProfile::IOProfileData(
 	const bool&		bRead,
@@ -361,7 +362,7 @@ bool CProfile::IOProfileData(
 	{
 		std::basic_string< TCHAR > strWork;
 		if( false == GetProfileData( pszSectionName, pszEntryKey, strWork ) ) return false;
-		EntryValue = _tstoi( strWork.c_str() );
+		EntryValue = _ttoi( strWork.c_str() );
 		//std::basic_stringstream< TCHAR > stream;
 		//stream << strWork;
 		//stream >> EntryValue;
