@@ -69,6 +69,7 @@ int CSMacroMgr::Append( CSMacroMgr::Macro1& mbuf, int nFuncID, LPARAM lParam1 )
 	switch( nFuncID ){
 	case F_INSTEXT:
 	case F_FILEOPEN:
+	case F_EXECCOMMAND:
 		mbuf.m_strlist.push_back( (const char*)lParam1 );
 		dat.m_nFuncID = nFuncID;
 		dat.m_lParam1 = mbuf.m_strlist.size() - 1;
@@ -144,6 +145,7 @@ BOOL CSMacroMgr::Exec( HINSTANCE hInstance, CEditView* pCEditView, int idx )
 		switch( ptr->m_nFuncID ){
 		case F_INSTEXT:
 		case F_FILEOPEN:
+		case F_EXECCOMMAND:
 			//::MessageBox( pCEditView->m_hwndParent, mref.m_strlist[ptr->m_lParam1].c_str(), "CSMacroMgr::Exec/INSTEXT", MB_OK );
 			pCEditView->HandleCommand( ptr->m_nFuncID, FALSE, (LONG)(mref.m_strlist[ptr->m_lParam1].c_str()), 0, 0, 0 );
 			break;

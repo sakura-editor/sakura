@@ -227,6 +227,9 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_FONT						, "SelectFont",		/* フォント設定 */
 	F_WRAPWINDOWWIDTH			, "WrapWindowWidth",/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 
+	//	Oct. 9, 2001 genta 追加
+	F_EXECCOMMAND				, "ExecCommand",	/* 外部コマンド実行 */
+
 	/* カスタムメニュー */
 	F_MENU_RBUTTON				, "RMenu",			/* 右クリックメニュー */
 	F_CUSTMENU_1				, "CustMenu1",		/* カスタムメニュー1 */

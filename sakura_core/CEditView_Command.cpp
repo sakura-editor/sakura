@@ -453,7 +453,7 @@ BOOL CEditView::HandleCommand(
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
 		}
-		Command_EXECCOMMAND();	/* 外部コマンド実行 */
+		Command_EXECCOMMAND((const char*)lparam1);	/* 外部コマンド実行 */
 		break;
 	//	To Here Sept. 20, 2000
 
@@ -8744,24 +8744,34 @@ void CEditView::Command_INS_TIME( void )
 //外部コマンド実行
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	void CEditView::Command_EXECCMMAND( void )
-void CEditView::Command_EXECCOMMAND( void )
+//	Oct. 9, 2001 genta マクロ対応のため引数追加
+void CEditView::Command_EXECCOMMAND( const char *cmd )
 //	To Here Sept. 20, 2000
 {
+	const char *cmd_string;	//	Oct. 9, 2001 genta
 	CDlgExec cDlgExec;
-	/* モードレスダイアログの表示 */
-	if( FALSE == cDlgExec.DoModal( m_hInstance, m_hWnd, 0 ) ){
-		return;
-	}
-//	MYTRACE( "cDlgExec.m_szCommand=[%s]\n", cDlgExec.m_szCommand );
 
-	AddToCmdArr( cDlgExec.m_szCommand );
+	if( cmd == NULL ){
+		/* モードレスダイアログの表示 */
+		if( FALSE == cDlgExec.DoModal( m_hInstance, m_hWnd, 0 ) ){
+			return;
+		}
+	//	MYTRACE( "cDlgExec.m_szCommand=[%s]\n", cDlgExec.m_szCommand );
+
+		AddToCmdArr( cDlgExec.m_szCommand );
+		cmd_string = cDlgExec.m_szCommand;
+	}
+	else {
+		cmd_string = cmd;
+	}
 
 	//	From Here Aug. 21, 2001 genta
 	//	パラメータ置換 (超暫定)
 	const int bufmax = 1024;
 	char buf[bufmax + 1];
-	char *p, *q, *r, *q_max;
-	for( p = cDlgExec.m_szCommand, q = buf, q_max = buf + bufmax; *p != '\0' && q < q_max; ++p, ++q){
+	const char *p, *r;
+	char *q, *q_max;
+	for( p = cmd_string, q = buf, q_max = buf + bufmax; *p != '\0' && q < q_max; ++p, ++q){
 		if( *p != '$' ){
 			*q = *p;
 			continue;
