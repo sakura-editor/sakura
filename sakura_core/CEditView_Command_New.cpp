@@ -172,7 +172,8 @@ void CEditView::InsertData_CEditView(
 		}
 		else
 		{
-			*pnNewPos = 0;
+			// Oct. 7, 2002 YAZAKI
+			*pnNewPos = pcLayout->m_pNext ? pcLayout->m_pNext->GetIndent() : 0;
 			(*pnNewLine)++;
 		}
 	}
@@ -281,9 +282,6 @@ void CEditView::DeleteData2(
 	int			nDelLen,
 	CMemory*	pcMem,
 	COpe*		pcOpe		/* 編集操作要素 COpe */
-//	BOOL		bRedraw,
-//	BOOL		bRedraw2
-//	BOOL		bUndo			/* Undo操作かどうか */
 )
 {
 #ifdef _DEBUG
@@ -346,55 +344,6 @@ void CEditView::DeleteData2(
 		pcOpe->m_pcmemData = pcMem;				/* 操作に関連するデータ */
 	}
 
-#if 0
-	YAZAKI bRedraw、bRedraw2削除。常にFALSEだったので
-	if( bRedraw2 ){
-		PAINTSTRUCT ps;
-		HDC			hdc;
-		/* 再描画 */
-		if( 0 < nDeleteLayoutLines ){
-			ps.rcPaint.left = 0;
-			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-			ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nCaretY - m_nViewTopLine - bLastLine );
-			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-			hdc = ::GetDC( m_hWnd );
-			OnKillFocus();
-			OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-			OnSetFocus();
-			::ReleaseDC( m_hWnd, hdc );
-
-			/* 行番号表示に必要な幅を設定 */
-			if( DetectWidthOfLineNumberArea( TRUE ) ){
-				int i;
-				::DestroyCaret();
-				m_nCaretWidth = 0;
-				for( i = 0; i < 4; ++i ){
-					if( m_nMyIndex != i ){
-						m_pcEditDoc->m_cEditViewArr[i].DetectWidthOfLineNumberArea( TRUE );
-					}
-				}
-				/* キャレットの表示・更新 */
-				ShowEditCaret();
-			}
-
-			/* スクロールバーの状態を更新する */
-			AdjustScrollBars();
-		}else{
-			if( bRedraw ){
-//				ps.rcPaint.left = m_nViewAlignLeft;
-				ps.rcPaint.left = 0;
-				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
-				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nCaretY - m_nViewTopLine - bLastLine);
-				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nModifyLayoutLinesOld + bLastLine );
-				hdc = ::GetDC( m_hWnd );
-				OnKillFocus();
-				OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-				OnSetFocus();
-				::ReleaseDC( m_hWnd, hdc );
-			}
-		}
-	}
-#endif
 	/* 選択エリアの先頭へカーソルを移動 */
 	MoveCursor( nCaretX, nCaretY, FALSE );
 	m_nCaretPosX_Prev = m_nCaretPosX;
@@ -683,24 +632,16 @@ void CEditView::DeleteData(
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				goto end_of_func;
-//				return;
 			}
 			/* 改行で終わっているか */
 			if( ( EOL_NONE != pcLayout->m_cEol ) ){
 				goto end_of_func;
-//				return;
 			}
 			/*ファイルの最後に移動 */
 			Command_GOFILEEND( FALSE );
 		}
 	}
 end_of_func:;
-//#ifdef _DEBUG
-//	delete pCRunningTimer;
-//	pCRunningTimer = NULL;
-//
-//	gm_ProfileOutput = 0;
-//#endif
 
 	return;
 }

@@ -2336,27 +2336,13 @@ char* CDocLineMgr::GetAllData( int*	pnDataLen )
 	int			nDataLen;
 	char*		pLine;
 	int			nLineLen;
-//	int			nAllocLen;
 	CDocLine* 	pDocLine;
-//	CDocLine* 	pDocLineNext;
 
 	pDocLine = m_pDocLineTop;
-//	pData = NULL;
 	nDataLen = 0;
-	while( NULL != pDocLine ){
-		pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-		if( 0 < nLineLen &&
-			( '\r' == pLine[nLineLen - 1] || '\n' == pLine[nLineLen - 1] )
-		){
-			nLineLen--;
-		}
-		if( 0 < nLineLen &&
-			( '\r' == pLine[nLineLen - 1] || '\n' == pLine[nLineLen - 1] )
-		){
-			nLineLen--;
-		}
-		nDataLen+= nLineLen;
-		nDataLen+= 2;
+	while( NULL != pDocLine ){   
+		//	Oct. 7, 2002 YAZAKI
+		nDataLen += pDocLine->GetLengthWithoutEOL() + 2;	//	\r\n‚ð’Ç‰Á‚µ‚Ä•Ô‚·‚½‚ß+2‚·‚éB
 		pDocLine = pDocLine->m_pNext;
 	}
 
@@ -2371,26 +2357,18 @@ char* CDocLineMgr::GetAllData( int*	pnDataLen )
 		return NULL;
 	}
 	pDocLine = m_pDocLineTop;
-//	pData = NULL;
+
 	nDataLen = 0;
 	while( NULL != pDocLine ){
-		pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-		if( 0 < nLineLen &&
-			( '\r' == pLine[nLineLen - 1] || '\n' == pLine[nLineLen - 1] )
-		){
-			nLineLen--;
-		}
-		if( 0 < nLineLen &&
-			( '\r' == pLine[nLineLen - 1] || '\n' == pLine[nLineLen - 1] )
-		){
-			nLineLen--;
-		}
+		//	Oct. 7, 2002 YAZAKI
+		nLineLen = pDocLine->GetLengthWithoutEOL();
 		if( 0 <= nLineLen ){
+			pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 			memcpy( &pData[nDataLen], pLine, nLineLen );
-			nDataLen+= nLineLen;
+			nDataLen += nLineLen;
 		}
 		memcpy( &pData[nDataLen], "\r\n", 2 );
-		nDataLen+= 2;
+		nDataLen += 2;
 		pDocLine = pDocLine->m_pNext;
 	}
 	pData[nDataLen] = '\0';

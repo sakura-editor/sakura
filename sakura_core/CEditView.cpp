@@ -2315,9 +2315,9 @@ void CEditView::DrawSelectAreaLine(
 
 	int nPosX = 0;
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
-		if ( it.getIndex() >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+		if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
 			nPosX ++;
 			break;
 		}
@@ -2978,9 +2978,9 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 		int nPosX = 0;
 		int i = 0;
 		CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-		for( it.first(); !it.end(); ){
+		while( !it.end() ){
 			it.scanNext();
-			if ( it.getIndex() >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+			if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
 				i = nLineLen;
 				break;
 			}
@@ -2993,7 +2993,7 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 			}
 			it.addDelta();
 		}
-		nPosX += it.getColumn();// + it.getColumnDelta();
+		nPosX += it.getColumn();
 		if ( it.end() ){
 			i = it.getIndex();
 			nPosX -= it.getColumnDelta();
@@ -3367,14 +3367,10 @@ normal_action:;
 //			BeginSelectArea( );
 			m_bBeginLineSelect = TRUE;
 
-			// 2001.12.21 hor EOFを含む行で行番号をクリックしても行選択してくれないバグの対策
-			if(m_nCaretPosY+1<m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
-				/* カーソル下移動 */
-				Command_DOWN( TRUE, FALSE );
-			}else{
-				/* カーソル行末移動 */
-				Command_GOLINEEND( TRUE, FALSE );
-			}
+			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
+			Command_GOLINEEND( TRUE, FALSE );
+			Command_RIGHT( TRUE, FALSE, FALSE );
+
 			m_nSelectLineBgnTo = m_nSelectLineTo;	/* 範囲選択開始行(原点) */
 			m_nSelectColmBgnTo = m_nSelectColmTo;	/* 範囲選択開始桁(原点) */
 		}else{
@@ -4464,9 +4460,9 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	/* 次の行のデータを取得 */
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY + nMoveLines, &nLineLen, &pcLayout );
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
-		if ( it.getIndex() >= nLineLen - (pcLayout->m_cEol.GetLen()?1:0 ) ){
+		if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
 			i = nLineLen;
 			break;
 		}
@@ -5370,7 +5366,7 @@ int CEditView::LineColmnToIndex( const CDocLine* pcDocLine, int nColumn )
 {
 	int i2 = 0;
 	CMemoryIterator<CDocLine> it( pcDocLine, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
 		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
 			break;
@@ -5390,7 +5386,7 @@ int CEditView::LineColmnToIndex( const CLayout* pcLayout, int nColumn )
 {
 	int i2 = 0;
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
 		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
 			break;
@@ -5416,7 +5412,7 @@ int CEditView::LineColmnToIndex2( const CLayout* pcLayout, int nColumn, int& pnL
 	int i2 = 0;
 	int nPosX2 = 0;
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
 		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
 			break;
@@ -5445,9 +5441,9 @@ int CEditView::LineIndexToColmn( const CLayout* pcLayout, int nIndex )
 	//	以下、iterator版
 	int nPosX2 = 0;
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
-		if ( it.getIndex() >= nIndex ){
+		if ( it.getIndex() + it.getIndexDelta() > nIndex ){
 			break;
 		}
 		it.addDelta();
@@ -5466,9 +5462,9 @@ int CEditView::LineIndexToColmn( const CDocLine* pcDocLine, int nIndex )
 {
 	int nPosX2 = 0;
 	CMemoryIterator<CDocLine> it( pcDocLine, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	for( it.first(); !it.end(); ){
+	while( !it.end() ){
 		it.scanNext();
-		if ( it.getIndex() >= nIndex ){
+		if ( it.getIndex() + it.getIndexDelta() > nIndex ){
 			break;
 		}
 		it.addDelta();

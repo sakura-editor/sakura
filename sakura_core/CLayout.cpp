@@ -23,14 +23,10 @@ CLayout::CLayout()
 	m_pNext = NULL;
 	m_nLinePhysical = 0;	/* 対応する論理行番号 */
 	m_pCDocLine = NULL;
-//	m_pLine = NULL;
 	m_nOffset = 0;	/* 対応する論理行の先頭からのオフセット */
 	m_nLength = 0;	/* 対応する論理行のハイト数 */
 	m_nIndent = 0;	/* このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI */
 	m_nTypePrev = 0;/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-	m_nTypeNext = 0;/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-//	m_enumEOLType = EOL_NONE;	/* 改行コードの種類 */
-//	m_nEOLLen = gm_pnEolLenArr[EOL_NONE];
 	return;
 }
 
@@ -48,7 +44,6 @@ void CLayout::DUMP( void )
 	MYTRACE( "m_nOffset=%d\t\t対応する論理行の先頭からのオフセット\n", m_nOffset );
 	MYTRACE( "m_nLength=%d\t\t対応する論理行のハイト数\n", m_nLength );
 	MYTRACE( "m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n", m_nTypePrev );
-	MYTRACE( "m_nTypeNext=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列\n", m_nTypeNext );
 	MYTRACE( "======================\n" );
 #endif
 	return;

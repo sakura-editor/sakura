@@ -115,8 +115,8 @@ void CLayoutMgr::SetLayoutInfo(
 	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
 	//	数が増えてきたらテーブルにすべき
 	switch ( refType.m_nIndentLayout ){	/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
-		case 1:	// やざきさんOriginal
-			getIndentOffset = getIndentOffset_Yazaki;
+		case 1:
+			getIndentOffset = getIndentOffset_Tx2x;
 			break;
 		case 2:
 			getIndentOffset = getIndentOffset_LeftSpace;
@@ -455,7 +455,7 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 /* CLayoutを作成する
 	@@@ 2002.09.23 YAZAKI
 */
-CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext, int nIndent )
+CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nIndent )
 {
 	CLayout* pLayout = new CLayout;
 	pLayout->m_pCDocLine = pCDocLine;
@@ -477,26 +477,8 @@ CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, 
 			pLayout->m_cEol = EOL_NONE;/* 改行コードの種類 */
 		}
 	}
-
-	pLayout->m_nTypeNext = nTypeNext;
-#ifdef _DEBUG
-	if( 1 == pLayout->m_nTypeNext ){
-		MYTRACE( "★★★CLayoutMgr::InsertLineNext()  1 == pLayout->m_nTypeNext\n" );
-	}
-#endif
 	return pLayout;
 }
-
-
-//	/*
-//	|| 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す
-//	*/
-//	const CLayout* CLayoutMgr::GetLineData( int nLine )
-//	{
-//		return Search( nLine );
-//	}
-
-
 
 
 /*
@@ -672,32 +654,16 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		}
 	}
 
-//	if( NULL != pLayoutPrev ){
-//		pLayoutNext	= pLayoutPrev->m_pNext;
-//	}else{
-//		pLayoutNext	= m_pLayoutBot;
-//	}
-
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
-//	*pnModifyLayoutLinesNew = DoLayout3(
-//		pLayoutPrev, nRowNum,
-//		nDelStartLogicalLine, nDelStartLogicalPos
-//	);
-
-//	MYTRACE( "pLayoutPrev=[%xh]\n", pLayoutPrev );
-//	MYTRACE( "pLayoutNext=[%xh]\n", pLayoutNext );
-	*pnModifyLayoutLinesNew = DoLayout3_New(
+	*pnModifyLayoutLinesNew = DoLayout_Range(
 		pLayoutPrev,
-//		pLayoutNext,
 		nRowNum,
 		nDelStartLogicalLine, nDelStartLogicalPos,
 		nCurrentLineType,
 		&nAddInsLineNum,
 		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
-);
-
-//	DUMP();
+	);
 
 	*pnDeleteLayoutLines = nAllLinesOld - m_nLines + nAddInsLineNum;
 	return;
@@ -766,7 +732,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 				nLineWork = 0;
 				nInsStartLogicalLine = m_pcDocLineMgr->GetLineCount();
 				nInsStartLogicalPos  = 0;
-				nCurrentLineType = pLayoutLast->m_nTypeNext;
+				nCurrentLineType = m_nLineTypeBot;
 			}else{
 				/* 空でないテキストの最後の行を変更する場合 */
 				nLineNum = m_nLines	- 1;
@@ -860,21 +826,9 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		}
 	}
 
-
-//	if( NULL != pLayoutPrev ){
-//		pLayoutNext	= pLayoutPrev->m_pNext;
-//	}else{
-//		pLayoutNext	= m_pLayoutBot;
-//	}
-
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
-//	DoLayout3(
-//		pLayoutPrev, nRowNum,
-//		nInsStartLogicalLine, nInsStartLogicalPos
-//	);
-	DoLayout3_New(
+	DoLayout_Range(
 		pLayoutPrev,
-//		pLayoutNext,
 		nRowNum,
 		nInsStartLogicalLine, nInsStartLogicalPos,
 		nCurrentLineType,
@@ -1493,7 +1447,6 @@ void CLayoutMgr::DUMP( void )
 		MYTRACE( "\tm_enumEOLType =%s\n",	pLayout->m_cEol.GetName() );
 		MYTRACE( "\tm_nEOLLen =%d\n",		pLayout->m_cEol.GetLen() );
 		MYTRACE( "\tm_nTypePrev=%d\n",		pLayout->m_nTypePrev );
-		MYTRACE( "\tm_nTypeNext=%d\n",		pLayout->m_nTypeNext );
 		pData = m_pcDocLineMgr->GetLineStr( pLayout->m_nLinePhysical, &nDataLen );
 		MYTRACE( "\t[%s]\n", pData );
 		pLayout = pLayoutNext;

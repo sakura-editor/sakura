@@ -171,24 +171,10 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		}
 	}
 
-//	if( NULL != pLayoutPrev ){
-//		pLayoutNext	= pLayoutPrev->m_pNext;
-//	}else{
-//		pLayoutNext	= m_pLayoutBot;
-//	}
-
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
-//	*pnModifyLayoutLinesNew = DoLayout3(
-//		pLayoutPrev, nRowNum,
-//		nDelStartLogicalLine, nDelStartLogicalPos
-//	);
-
-//	MYTRACE( "pLayoutPrev=[%xh]\n", pLayoutPrev );
-//	MYTRACE( "pLayoutNext=[%xh]\n", pLayoutNext );
 	int nAddInsLineNum;
-	pArg->nModLineTo = DoLayout3_New(
+	pArg->nModLineTo = DoLayout_Range(
 		pLayoutPrev,
-//		pLayoutNext,
 		nRowNum,
 		nyFrom, nxFrom,
 		nCurrentLineType,
@@ -196,7 +182,6 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		pArg->bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 		pArg->bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
 	);
-
 
 //	DUMP();
 
