@@ -125,9 +125,9 @@ IDD_PROP1P1 DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    GROUPBOX        "カーソル",IDC_STATIC,3,3,140,65
+    GROUPBOX        "カーソル",IDC_STATIC,3,3,140,84
     CONTROL         "フリーカーソル(&F)",IDC_CHECK_FREECARET,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,18,67,10,0,
                     HIDC_CHECK_FREECARET
@@ -137,23 +137,23 @@ BEGIN
     CONTROL         "全角空白もインデント(&Z)",IDC_CHECK_INDENT_WSPACE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,48,86,10,0,
                     HIDC_CHECK_INDENT_WSPACE
-    GROUPBOX        "カーソル形状",IDC_STATIC,3,73,140,35,WS_GROUP
+    GROUPBOX        "カーソル形状",IDC_STATIC,3,90,140,35,WS_GROUP
     CONTROL         "&Windows風",IDC_RADIO_CARETTYPE0,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,88,45,10,0,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,105,45,10,0,
                     HIDC_RADIO_CARETTYPE0
     CONTROL         "MS-&DOS風",IDC_RADIO_CARETTYPE1,"Button",
-                    BS_AUTORADIOBUTTON,60,88,45,10,0,HIDC_RADIO_CARETTYPE1
-    GROUPBOX        "タスクトレイ",IDC_STATIC,3,113,140,75,WS_GROUP
+                    BS_AUTORADIOBUTTON,60,105,45,10,0,HIDC_RADIO_CARETTYPE1
+    GROUPBOX        "タスクトレイ",IDC_STATIC,3,130,140,75,WS_GROUP
     CONTROL         "タスクトレイを使う(&T)",IDC_CHECK_USETRAYICON,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,128,75,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,145,75,10,0,
                     HIDC_CHECK_USETRAYICON
     CONTROL         "タスクトレイに常駐(&R)",IDC_CHECK_STAYTASKTRAY,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,143,78,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,160,78,10,0,
                     HIDC_CHECK_STAYTASKTRAY
     LTEXT           "左クリックメニューのショートカットキー(&K)",IDC_STATIC,
-                    8,158,120,8
+                    8,175,120,8
     CONTROL         "HotKey1",IDC_HOTKEY_TRAYMENU,"msctls_hotkey32",
-                    WS_BORDER | WS_TABSTOP,8,168,95,12,0,
+                    WS_BORDER | WS_TABSTOP,8,185,95,12,0,
                     HIDC_HOTKEY_TRAYMENU
     GROUPBOX        "スクロール",IDC_STATIC,150,3,117,65,WS_GROUP
     LTEXT           "行数(&N)",IDC_STATIC,155,19,24,8,NOT WS_GROUP
@@ -186,6 +186,10 @@ BEGIN
     CONTROL         "終了の確認をする(&V)",IDC_CHECK_EXITCONFIRM,"Button",
                     BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_GROUP | 
                     WS_TABSTOP,155,178,74,10,0,HIDC_CHECK_EXITCONFIRM
+    CONTROL         "単語単位で移動するときに\n単語の両端に止まる(&B)",
+                    IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD,"Button",
+                    BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,8,
+                    64,102,19,0,HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD
 END
 
 IDD_FIND DIALOGEX 30, 0, 277, 93
@@ -296,7 +300,7 @@ END
 IDD_ABOUT DIALOGEX 0, 0, 231, 203
 STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "バージョン情報"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
@@ -1954,7 +1958,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,106,3
+ PRODUCTVERSION 1,2,106,4
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -1978,7 +1982,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.106.3\0"
+            VALUE "ProductVersion", "1.2.106.4\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2069,6 +2073,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_BROWSE                "ブラウズ"
+    F_READONLY              "読み取り専用"
     F_PROPERTY_FILE         "ファイルのプロパティ"
 END
 

@@ -74,7 +74,7 @@ public:
 	static int WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 
 	static int WhatKindOfChar( char*, int, int );	/* 現在位置の文字の種類を調べる */
-	int PrevOrNextWord( int , int , int* , int );	/* 現在位置の左右の単語の先頭位置を調べる */
+	int PrevOrNextWord( int , int , int* , BOOL bLEFT, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CBregexp* ); /* 単語検索 */
 //	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int*, int ); /* 文字列検索 */

@@ -98,11 +98,13 @@ BOOL CALLBACK CPropTypes::PropTypesRegex(
 		if( NULL != pCPropTypes ){
 			return pCPropTypes->DispatchEvent_Regex( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}
+		break;
 	default:
 		pCPropTypes = ( CPropTypes* )::GetWindowLong( hwndDlg, DWL_USER );
 		if( NULL != pCPropTypes ){
 			return pCPropTypes->DispatchEvent_Regex( hwndDlg, uMsg, wParam, lParam );
 		}
+		break;
 	}
 	return FALSE;
 }

@@ -43,6 +43,7 @@
 #define F_ACTIVATE_SQLPLUS			30170	/* Oracle SQL*Plusをアクティブ表示 */
 #define F_PLSQL_COMPILE_ON_SQLPLUS	30171	/* Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
 #define F_BROWSE					30180	//ブラウズ
+#define F_READONLY					30185	/* ファイルのプロパティ */
 #define F_PROPERTY_FILE				30190	/* ファイルのプロパティ */
 #define F_EXITALL					30195	/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 

@@ -1067,7 +1067,8 @@ int CLayoutMgr::PrevOrNextWord(
 		int		nIdx,
 		int*	pnLineNew,
 		int*	pnColmNew,
-		int		bLEFT
+		BOOL	bLEFT,
+		BOOL	bStopsBothEnds
 )
 {
 	int			nRetCode;
@@ -1081,7 +1082,8 @@ int CLayoutMgr::PrevOrNextWord(
 		pLayout->m_nLinePhysical,
 		pLayout->m_nOffset + nIdx,
 		pnColmNew,
-		bLEFT
+		bLEFT,
+		bStopsBothEnds
 	);
 
 	if( nRetCode ){

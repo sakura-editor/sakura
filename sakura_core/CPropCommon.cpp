@@ -952,6 +952,9 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
 	}
 
+	/* 単語単位で移動するときに、単語の両端で止まるか */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, m_Common.m_bStopsBothEndsWhenSearchWord );
+
 //	/* TAB幅 */
 //	j = 0;
 //	for( i = 0; i < nTabArrNum; ++i ){
@@ -1088,6 +1091,9 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 
 	/* 日本語空白もインデント */
 	m_Common.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+
+	/* 単語単位で移動するときに、単語の両端で止まるか */
+	m_Common.m_bStopsBothEndsWhenSearchWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD );
 
 //	/* TAB幅 */
 //	m_Common.m_nTABSPACE = ::GetDlgItemInt( hwndDlg, IDC_COMBO_TABSPACE, NULL, FALSE );

@@ -49,9 +49,9 @@ SAKURA_CORE_API int IsNumber( const char*, int, int );/* 数値ならその長さを返す 
 SAKURA_CORE_API void ActivateFrameWindow( HWND );	/* アクティブにする */
 SAKURA_CORE_API BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
 SAKURA_CORE_API BOOL CheckSystemResources( const char* );	/* システムリソースのチェック */
-SAKURA_CORE_API BOOL CheckWindowsVersion( const char* pszAppName );	/* Windowsバージョンのチェック */
+//SAKURA_CORE_API BOOL CheckWindowsVersion( const char* pszAppName );	/* Windowsバージョンのチェック */
 // Jul. 5, 2001 shoji masami
-SAKURA_CORE_API bool CheckWindowsVersionNT( void );	/* NTプラットフォームかどうか */
+//SAKURA_CORE_API bool CheckWindowsVersionNT( void );	/* NTプラットフォームかどうか */
 SAKURA_CORE_API void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* リソースから製品バージョンの取得 */
 SAKURA_CORE_API void SplitPath_FolderAndFile( const char*, char*, char* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 SAKURA_CORE_API BOOL GetAbsolutePath( const char*, char*, BOOL );	/* 相対パス→絶対パス */
@@ -84,6 +84,9 @@ SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD da
 SAKURA_CORE_API DWORD NetConnect ( const char strNetWorkPass[] );
 
 SAKURA_CORE_API int cescape(const char* org, char* out, char cesc, char cwith);
+
+/* ヘルプの目次を表示 */
+SAKURA_CORE_API void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
 
 /*!	&の二重化
 	メニューに含まれる&を&&に置き換える

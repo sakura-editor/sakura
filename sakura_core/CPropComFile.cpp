@@ -182,6 +182,7 @@ BOOL CPropCommon::DispatchEvent_p2(
 //@@@ 2001.03.21 End by MIK
 		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるのでWM_NOTIFYをコメントアウトにしその下に修正を置いた
+		break;
 
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */

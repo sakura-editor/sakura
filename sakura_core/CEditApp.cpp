@@ -841,19 +841,9 @@ LRESULT CEditApp::DispatchEvent(
 					/* ヘルプ目次 */
 					{
 						char	szHelp[_MAX_PATH + 1];
-						::GetHelpFilePath( szHelp );
 						/* ヘルプファイルのフルパスを返す */
-					//From Here Jan. 13, 2001 JEPRO HELP_FINDERでは前回アクティブだったトピックの検索のタブになってしまう
-					//一方 HELP_CONTENTS (あるいは HELP＿INDEX) だと目次ページが出てくる。それもいいが...
-					//	::WinHelp( m_hWnd, szHelp, HELP_FINDER, 0 );
-					//	::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );	//[目次]タブの表示
-					//To Here Jan. 13, 2001
-					// From Here 2001.12.03 hor
-					//	WinNT 4 ではなにも表示されなかったのでエラーの場合は HELP_CONTENTS 表示するように変更
-						if( ::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" ) == 0){
-							::WinHelp( m_hWnd, szHelp, HELP_CONTENTS , 0 );	//[目次]タブの表示
-						}
-					// To Here 2001.12.03 hor
+						::GetHelpFilePath( szHelp );
+						ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
 					}
 					break;
 				case F_HELP_SEARCH:

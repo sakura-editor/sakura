@@ -431,6 +431,8 @@ struct Common {
 	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
 	int					m_bAutoIndent;					/* オートインデント */
 	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	BOOL				m_bStopsBothEndsWhenSearchWord;	/* 単語単位で移動するときに、単語の両端で止まるか */
+
 	BOOL				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
 	BOOL				m_bRestoreBookmarks;			// 2002.01.16 hor ブックマークを復元するかどうか
 //	int					m_bEnableLineISlog;				/* ★廃止★行番号種別  物理行／論理行 */

@@ -224,6 +224,7 @@ BOOL CEditView::HandleCommand(
 		Command_PLSQL_COMPILE_ON_SQLPLUS();
 		break;
 	case F_BROWSE:				Command_BROWSE();break;				/* ブラウズ */
+	case F_READONLY:			Command_READONLY();break;			/* 読み取り専用 */
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
 	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
 
@@ -1248,6 +1249,8 @@ void CEditView::Command_GOFILETOP( int bSelect )
 			/* 現在のカーソル位置から選択を開始する */
 			BeginSelectArea();
 		}
+		/* 現在のカーソル位置によって選択範囲を変更 */
+		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, 0 );
 	}else{
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -1257,14 +1260,12 @@ void CEditView::Command_GOFILETOP( int bSelect )
 	/* 先頭へカーソルを移動 */
 	//	Sep. 8, 2000 genta
 	AddCurrentLineToHistory();
-	MoveCursor( 0, 0, TRUE );
-//やめた	m_nCaretPosX_Prev = m_nCaretPosX;
-	if( bSelect ){
-		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( 0, 0 );
-	}
-	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
-	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = 0;
+
+	if ( !m_bBeginBoxSelect )	m_nCaretPosX = 0;	//	通常は、(0, 0)へ移動。ボックス選択中は、(m_nCaretPosX, 0)へ移動
+
+	MoveCursor( m_nCaretPosX, 0, TRUE );
+	m_nCaretPosX_Prev = m_nCaretPosX;
+
 	return;
 }
 
@@ -1367,7 +1368,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
 	/* 現在位置の左の単語の先頭位置を調べる */
-	if( m_pcEditDoc->m_cLayoutMgr.PrevOrNextWord( m_nCaretPosY, nIdx, &nLineNew, &nColmNew, TRUE ) ){
+	if( m_pcEditDoc->m_cLayoutMgr.PrevWord( m_nCaretPosY, nIdx, &nLineNew, &nColmNew, m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord ) ){
 		/* 行が変わった */
 		if( nLineNew != m_nCaretPosY ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNew, &nLineLen );
@@ -1438,7 +1439,7 @@ try_again:;
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
 	/* 現在位置の右の単語の先頭位置を調べる */
-	if( m_pcEditDoc->m_cLayoutMgr.PrevOrNextWord( nCurLine, nIdx, &nLineNew, &nColmNew, FALSE ) ){
+	if( m_pcEditDoc->m_cLayoutMgr.NextWord( nCurLine, nIdx, &nLineNew, &nColmNew, m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord ) ){
 		/* 行が変わった */
 		if( nLineNew != nCurLine ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNew, &nLineLen );
@@ -1468,7 +1469,6 @@ try_again:;
 	}
 	return;
 }
-
 
 
 
@@ -5303,18 +5303,7 @@ void CEditView::Command_HELP_CONTENTS( void )
 	char	szHelp[_MAX_PATH + 1];
 	/* ヘルプファイルのフルパスを返す */
 	::GetHelpFilePath( szHelp );
-//From Here Jan. 13, 2001 JEPRO HELP_FINDERでは前回アクティブだったトピックの検索のタブになってしまう
-// 一方 HELP_CONTENTS (あるいは HELP＿INDEX) だと目次ページが出てくる。それもいいが...
-//	::WinHelp( m_hWnd, szHelp, HELP_FINDER, 0 );
-//	::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );	//[目次]タブの表示
-//To Here Jan. 13, 2001
-
-// From Here 2001.12.03 hor
-//	WinNT 4 ではなにも表示されなかったのでエラーの場合は HELP_CONTENTS 表示するように変更
-	if( ::WinHelp( m_hWnd, szHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" ) == 0){
-		::WinHelp( m_hWnd, szHelp, HELP_CONTENTS , 0 );	//[目次]タブの表示
-	}
-// To Here 2001.12.03 hor
+	ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
 	return;
 }
 
@@ -8838,6 +8827,15 @@ void CEditView::Command_ACTIVATE_SQLPLUS( void )
 
 
 
+
+/* 読み取り専用 */
+void CEditView::Command_READONLY( void )
+{
+	m_pcEditDoc->m_bReadOnly ^= 1;
+
+	/* 親ウィンドウのタイトルを更新 */
+	m_pcEditDoc->SetParentCaption();
+}
 
 /* ファイルのプロパティ */
 void CEditView::Command_PROPERTY_FILE( void )

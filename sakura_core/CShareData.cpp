@@ -38,8 +38,14 @@ struct ARRHEAD {
 	設定可能な値は 1～unsinged intの最大値
 
 	@sa Init()
+
+	Version 1～24:
+	いろいろ
+	
+	Version 25:
+	m_bStopsBothEndsWhenSearchWord追加
 */
-const unsigned int uShareDataVersion = 24;
+const unsigned int uShareDataVersion = 25;
 
 /*
 ||	Singleton風
@@ -545,6 +551,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
 		m_pShareData->m_Common.m_bAutoIndent = TRUE;			/* オートインデント */
 		m_pShareData->m_Common.m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
+		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
 		//	Oct. 27, 2000 genta
 		m_pShareData->m_Common.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元

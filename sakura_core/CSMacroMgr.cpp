@@ -48,6 +48,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_ACTIVATE_SQLPLUS,			"S_ActivateSQLPLUS",	"",					NULL}, /* Oracle SQL*Plusをアクティブ表示 */
 	{F_PLSQL_COMPILE_ON_SQLPLUS,	"S_ExecSQLPLUS",		"",					NULL}, /* Oracle SQL*Plusで実行 */
 	{F_BROWSE,						"S_Browse",				"",					NULL}, //ブラウズ
+	{F_READONLY,					"S_ReadOnly",			"",					NULL}, //読み取り専用
 	{F_PROPERTY_FILE,				"S_PropertyFile",		"",					NULL}, //ファイルのプロパティ
 	{F_EXITALL,						"S_ExitAll",			"",					NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 

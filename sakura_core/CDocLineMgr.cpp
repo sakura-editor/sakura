@@ -1470,11 +1470,6 @@ int	CDocLineMgr::WhereCurrentWord(
 	CDocLine*	pDocLine;
 	char*		pLine;
 	int			nLineLen;
-//	int			nCharKind;
-//	int			nCharKindNext;
-//	int			nIdxNext;
-//	int			nIdxNextPrev;
-//	int			nCharChars;
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
 	pDocLine = GetLineInfo( nLineNum );
@@ -1607,10 +1602,11 @@ int	CDocLineMgr::WhereCurrentWord_2(
 
 /* 現在位置の左右の単語の先頭位置を調べる */
 int CDocLineMgr::PrevOrNextWord(
-		int		nLineNum,
-		int		nIdx,
-		int*	pnColmNew,
-		int		bLEFT
+	int			nLineNum,	//	行数
+	int			nIdx,		//	桁数
+	int*		pnColmNew,	//	？
+	BOOL		bLEFT,		//	TRUE:前方（左）へ向かう。FALSE:後方（右）へ向かう。
+	BOOL		bStopsBothEnds	//	単語の両端で止まる
 )
 {
 	CDocLine*	pDocLine;
@@ -1667,6 +1663,10 @@ int CDocLineMgr::PrevOrNextWord(
 			if( nCharKind != nCharKindNext ){
 				/* サーチ開始位置の文字が空白またはタブの場合 */
 				if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
+					if ( bStopsBothEnds && nCount ){
+						nIdxNext = nIdxNextPrev;
+						break;
+					}
 					nCharKind = nCharKindNext;
 				}else{
 					if( nCount == 0){
@@ -1690,7 +1690,13 @@ int CDocLineMgr::PrevOrNextWord(
 			nIdxNext += nCharChars;
 			nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
 			/* 空白とタブは無視する */
-			if( nCharKindNext != CK_TAB	&& nCharKindNext != CK_SPACE ){
+			if( nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE ){
+				if ( bStopsBothEnds && nCharKind != nCharKindNext ){
+					break;
+				}
+				nCharKind = nCharKindNext;
+			}
+			else {
 				if( nCharKind == CK_MBC_NOVASU ){
 					if( nCharKindNext == CK_MBC_HIRA ||
 						nCharKindNext == CK_MBC_KATA ){
@@ -1706,8 +1712,6 @@ int CDocLineMgr::PrevOrNextWord(
 				if( nCharKind != nCharKindNext ){
 					break;
 				}
-			}else{
-				nCharKind = nCharKindNext;
 			}
 			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
 		}
@@ -1864,7 +1868,7 @@ int CDocLineMgr::SearchWord(
 	/* 1==単語のみ検索 */
 	if( bWordOnly ){
 		/*
-			20001/06/23 Norio Nakatani
+			2001/06/23 Norio Nakatani
 			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
 			英単語やC/C++識別子などの検索条件ならヒットします。
 		*/
@@ -1881,7 +1885,7 @@ int CDocLineMgr::SearchWord(
 			CMemory cmemTest;
 			nNextWordFrom = nIdx;
 			while( NULL != pDocLine ){
-				if( TRUE == PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE ) ){
+				if( TRUE == PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
 					nNextWordFrom = nWork;
 //					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , &cmemTest, NULL ) ){
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
@@ -1939,7 +1943,7 @@ int CDocLineMgr::SearchWord(
 						}
 					}
 					/* 現在位置の左右の単語の先頭位置を調べる */
-					if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE ) ){
+					if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE, FALSE ) ){
 						continue;
 					}
 				}
