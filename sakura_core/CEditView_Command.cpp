@@ -8528,8 +8528,6 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	int			nRet;
 	BOOL		nBool;
 	char		szPath[MAX_PATH + 2];
-	int			i;
-	BOOL		bSPACE;
 	BOOL		bResult;
 // Modified by KEITA for WIN64 2003.9.6
 //	DWORD		dwResult;
