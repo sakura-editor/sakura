@@ -4261,7 +4261,8 @@ BOOL CEditView::Command_FILESAVEAS_DIALOG()
 		strcpy( szPath, m_pcEditDoc->GetFilePath() );
 
 	//	Feb. 9, 2001 genta
-	if( m_pcEditDoc->SaveFileDialog( szPath, &m_pcEditDoc->m_nCharCode, &m_pcEditDoc->m_cSaveLineCode ) ){
+	//	Jul. 26, 2003 ryoji BOMの有無を与えるパラメータ
+	if( m_pcEditDoc->SaveFileDialog( szPath, &m_pcEditDoc->m_nCharCode, &m_pcEditDoc->m_cSaveLineCode, &m_pcEditDoc->m_bBomExist ) ){
 		Command_FILESAVEAS( szPath );
 		return TRUE;
 	}
@@ -4279,7 +4280,8 @@ BOOL CEditView::Command_FILESAVEAS( const char *filename )
 		DrawCaretPosInfo();
 		m_pcEditDoc->OnChangeSetting();	//	タイプ別設定の変更を指示。
 		//	再オープン
-		m_pcEditDoc->ReloadCurrentFile( CODE_AUTODETECT, FALSE );
+		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
+		m_pcEditDoc->ReloadCurrentFile( m_pcEditDoc->m_nCharCode, FALSE );
 		return TRUE;
 	}
 	return FALSE;

@@ -64,6 +64,7 @@ CEditDoc::CEditDoc() :
 	m_bDebugMode( FALSE ),			/* デバッグモニタモード */
 	m_bGrepMode( FALSE ),			/* Grepモードか */
 	m_nCharCode( 0 ),				/* 文字コード種別 */
+	m_bBomExist( FALSE ),			//	Jul. 26, 2003 ryoji BOM
 	m_nActivePaneIndex( 0 ),
 //@@@ 2002.01.14 YAZAKI 不使用のため
 //	m_pcOpeBlk( NULL ),				/* 操作ブロック */
@@ -654,6 +655,19 @@ BOOL CEditDoc::FileRead(
 	doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, true );
 
+	//	From Here Jul. 26, 2003 ryoji BOMの有無の初期状態を設定
+	switch( m_nCharCode ){
+	case CODE_UNICODE:
+	case CODE_UNICODEBE:
+		m_bBomExist = TRUE;
+		break;
+	case CODE_UTF8:
+	default:
+		m_bBomExist = FALSE;
+		break;
+	}
+	//	To Here Jul. 26, 2003 ryoji BOMの有無の初期状態を設定
+
 	/* ファイルが存在しない */
 	if( FALSE == bFileIsExist ){
 //		::MessageBeep( MB_ICONINFORMATION );
@@ -677,8 +691,9 @@ BOOL CEditDoc::FileRead(
 		if( NULL != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
+		//	Jul. 26, 2003 ryoji BOM引数追加
 		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_hWnd, hwndProgress,
-			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode() ) ){
+			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode(), &m_bBomExist ) ){
 			//	Sep. 10, 2002 genta
 			SetFilePath( "" );
 			bRet = FALSE;
@@ -788,6 +803,20 @@ end_of_func:;
 		/* ファイルの排他ロック */
 		DoFileLock();
 	}
+	//	From Here Jul. 26, 2003 ryoji エラーの時は規定のBOM設定とする
+	if( FALSE == bRet ){
+		switch( m_nCharCode ){
+		case CODE_UNICODE:
+		case CODE_UNICODEBE:
+			m_bBomExist = TRUE;
+			break;
+		case CODE_UTF8:
+		default:
+			m_bBomExist = FALSE;
+			break;
+		}
+	}
+	//	To Here Jul. 26, 2003 ryoji
 	return bRet;
 }
 
@@ -845,7 +874,9 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	}
 
 	CWaitCursor cWaitCursor( m_hWnd );
-	if( FALSE == m_cDocLineMgr.WriteFile( pszPath, m_hWnd, hwndProgress, m_nCharCode, &m_FileTime, cEol ) ){
+	//	Jul. 26, 2003 ryoji BOM引数追加
+	if( FALSE == m_cDocLineMgr.WriteFile( pszPath, m_hWnd, hwndProgress,
+		m_nCharCode, &m_FileTime, cEol , m_bBomExist ) ){
 		bRet = FALSE;
 		goto end_of_func;
 	}
@@ -979,17 +1010,17 @@ BOOL CEditDoc::OpenFileDialog(
 //pszOpenFolder pszOpenFolder
 
 
-/* 「ファイル名を付けて保存」ダイアログ
+/*! 「ファイル名を付けて保存」ダイアログ
 
-	ファイル名をつけて保存ダイアログを表示して、
-	　pszPath：保存ファイル名
-	　pnCharCode：保存文字コードセット
-	　pcEol：保存改行コード
-	を取得する。
+	@param pszPath [out]	保存ファイル名
+	@param pnCharCode [out]	保存文字コードセット
+	@param pcEol [out]		保存改行コード
+
+	@date 2001.02.09 genta	改行コードを示す引数追加
+	@date 2003.03.30 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
+	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
 */
-//	Feb. 9, 2001 genta	改行コードを示す引数追加
-//	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
-BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
+BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBomExist )
 {
 	char**	ppszMRU;		//	最近のファイル
 	char**	ppszOPENFOLDER;	//	最近のフォルダ
@@ -1030,7 +1061,8 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 		(const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 
 	/* ダイアログを表示 */
-	bret = m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol );
+	//	Jul. 26, 2003 ryoji pbBomExist追加
+	bret = m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
 
 	delete [] ppszMRU;
 	delete [] ppszOPENFOLDER;
@@ -4175,6 +4207,7 @@ void CEditDoc::Init( void )
 
 	/* 文字コード種別 */
 	m_nCharCode = 0;
+	m_bBomExist = FALSE;	//	Jul. 26, 2003 ryoji
 
 	//	May 12, 2000
 	m_cNewLineCode.SetType( EOL_CRLF );
@@ -4314,7 +4347,18 @@ void CEditDoc::ReloadCurrentFile(
 {
 	if( -1 == _access( GetFilePath(), 0 ) ){
 		/* ファイルが存在しない */
+		//	Jul. 26, 2003 ryoji BOMを標準設定に
 		m_nCharCode = nCharCode;
+		switch( m_nCharCode ){
+		case CODE_UNICODE:
+		case CODE_UNICODEBE:
+			m_bBomExist = TRUE;
+			break;
+		case CODE_UTF8:
+		default:
+			m_bBomExist = FALSE;
+			break;
+		}
 		return;
 	}
 

@@ -713,7 +713,8 @@ BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 			NULL,
 			m_pcEditDoc->m_nCharCode,
 			&filetime,
-			cEol );
+			cEol,
+			m_pcEditDoc->m_bBomExist);	//	Jul. 26, 2003 ryoji BOM
 	}
 
 	fp = fopen( filename, "wb" );

@@ -69,7 +69,8 @@ public:
 	CFileLoad( void );
 	~CFileLoad( void );
 
-	enumCodeType FileOpen( LPCTSTR, int, int );		// 指定文字コードでファイルをオープンする
+	//	Jul. 26, 2003 ryoji BOM引数追加
+	enumCodeType FileOpen( LPCTSTR, int, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	const char* ReadLine( int*, CEOL* );	// 1行データをロードする 順アクセス用

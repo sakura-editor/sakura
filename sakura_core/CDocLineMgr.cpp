@@ -452,13 +452,15 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEOL cEol )
 	ファイルを読み込んで格納する（分割読み込みテスト版）
 	@version	2.0
 	@note	Windows用にコーディングしてある
-	@param	nFlags
-		bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+	@param	nFlags [in]			bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+	@param	hWndParent [in]		親ウィンドウのハンドル
+	@param	hwndProgress [in]	Progress barのウィンドウハンドル
 	@retval	TRUE	正常読み込み
 	@retval	FALSE	エラー(またはユーザによるキャンセル?)
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
+	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
-int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, int nFlags )
+int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, int nFlags, BOOL* pbBomExist)
 {
 #ifdef _DEBUG
 	MYTRACE( "pszPath=[%s]\n", pszPath );
@@ -484,7 +486,8 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	try{
 	// ファイルを開く
 	// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
-	cfl.FileOpen( pszPath, nCharCode, nFlags );
+	//	Jul. 28, 2003 ryoji BOMパラメータ追加
+	cfl.FileOpen( pszPath, nCharCode, nFlags, pbBomExist );
 
 	/* ファイル時刻の取得 */
 	FILETIME	FileTime;
@@ -590,9 +593,15 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 
 
 
-/* バッファ内容をファイルに書き出す (テスト用) */
-/* (注意) Windows用にコーディングしてある */
-int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, CEOL cEol )
+/*! バッファ内容をファイルに書き出す (テスト用)
+
+	@param cEol [in]		使用する改行コード
+	@param bBomExist [in]	ファイル先頭にBOMを付けるか
+
+	@note Windows用にコーディングしてある
+	@date 2003.07.26 ryoji BOM引数追加
+*/
+int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, CEOL cEol, BOOL bBomExist)
 {
 	const char*		pLine;
 //	char*			pLineUnicode;
@@ -707,22 +716,22 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 //
 //　2002/05/22 Frozen ここまで削除
 
-	switch( nCharCode ){
-	case CODE_UNICODE:
-		file.Write("\xff\xfe",sizeof(char)*2);// 2002/05/22 breakの次の}までをこの一行で置き換え
-////-		if( HFILE_ERROR == _lwrite( hFile, "\xff\xfe", 2 ) ){
-//		if( fwrite( "\xff\xfe", sizeof( char ), 2, sFile ) < 2 ){ /* add */
-////			MYTRACE( "file write error %s\n", pszPath );
-//			nRetVal = FALSE;
-//			goto _CLOSEFILE_;
-//		}
-		break;
-	case CODE_UNICODEBE:
-		file.Write( "\xfe\xff", sizeof(char) * 2 );
-		break;
-//	case CODE_UTF8: // 2003.05.04 Moca BOMの間違いを訂正
-//		file.Write( "\xfe\xbb\xbf", sizeof(char) * 3 );
-//		break;
+	//	Jul. 26, 2003 ryoji bBomExitによってBOMを付けるかどうかを決める
+	if (bBomExist) {
+		switch( nCharCode ){
+		case CODE_UNICODE:
+			file.Write("\xff\xfe",sizeof(char)*2);
+			break;
+		case CODE_UNICODEBE:
+			file.Write( "\xfe\xff", sizeof(char) * 2 );
+			break;
+		case CODE_UTF8: // 2003.05.04 Moca BOMの間違いを訂正
+			file.Write( "\xef\xbb\xbf", sizeof(char) * 3 );
+			break;
+		default:
+			//	genta ここに来るのはバグだ
+			;
+		}
 	}
 
 	nLineNumber = 0;

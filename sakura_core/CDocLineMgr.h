@@ -171,9 +171,11 @@ public:
 	);
 
 	//	Nov. 12, 2000 genta 引数追加
-	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag );
+	//	Jul. 26, 2003 ryoji BOM引数追加
+	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
-	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEOL );
+	//	Jul. 26, 2003 ryoji BOM引数追加
+	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEOL, BOOL bBomExist = FALSE );
 	CDocLine* GetLineInfo( int );
 	// 2002/2/10 aroka メンバを private にしてアクセサ追加
 	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }
