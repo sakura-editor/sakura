@@ -630,7 +630,7 @@ void CDocLineMgr::SetBookMarks( char* pMarkLines )
 char* CDocLineMgr::GetBookMarks( void )
 {
 	CDocLine*	pCDocLine;
-	char szText[MAX_MARKLINES_LEN];	//2002.01.17
+	char szText[MAX_MARKLINES_LEN + 1];	//2002.01.17
 	char szBuff[10];
 	int	nLinePos=0;
 	pCDocLine = GetLineInfo( nLinePos );

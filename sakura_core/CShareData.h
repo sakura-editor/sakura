@@ -61,7 +61,8 @@ enum maxdata{
 	MAX_CMDARR					= 32,
 	MAX_REGEX_KEYWORD			= 100,	//@@@ 2001.11.17 add MIK
 
-	MAX_MARKLINES_LEN			= 1024	// 2002.01.18 hor
+	MAX_MARKLINES_LEN			= 1023,	// 2002.01.18 hor
+	MAX_DOCTYPE_LEN				= 7,
 };
 
 
@@ -82,7 +83,10 @@ enum maxdata{
 //	ExtCmd	m_ExtCmdArr[MAX_EXTCMDMRUNUM];
 //};
 
-//! ファイル情報
+/*! ファイル情報
+
+	@date 2002.03.07 genta m_szDocType追加
+*/
 struct FileInfo {
 	int		m_nViewTopLine;			/*!< 表示域の一番上の行(0開始) */
 	int		m_nViewLeftCol;			/*!< 表示域の一番左の桁(0開始) */
@@ -93,7 +97,19 @@ struct FileInfo {
 	char	m_szPath[_MAX_PATH];	/*!< ファイル名 */
 	BOOL	m_bIsGrep;				/*!< Grepのウィンドウか */
 	char	m_szGrepKey[1024];
-	char	m_szMarkLines[MAX_MARKLINES_LEN];	/*!< ブックマークの物理行リスト */
+	char	m_szMarkLines[MAX_MARKLINES_LEN + 1];	/*!< ブックマークの物理行リスト */
+	char	m_szDocType[MAX_DOCTYPE_LEN + 1];	/*!< 文書タイプ */
+	
+	// Mar. 7, 2002 genta
+	// Constructor 確実に初期化するため
+	FileInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
+		m_nX( -1 ), m_nY( -1 ), m_bIsModified( 0 ),
+		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE )
+	{
+		m_szPath[0] = '\0';
+		m_szMarkLines[0] = '\0';
+		m_szDocType[0] = '\0';
+	}
 };
 
 /*!	検索オプション
@@ -349,6 +365,7 @@ struct MacroRec {
 //	int		m_bEnabled;	//!< 有効/無効フラグ	// Oct. 4, 2001 deleted by genta
 	char	m_szName[MACRONAME_MAX];	//<! 表示名
 	char	m_szFile[_MAX_PATH+1];	//<! ファイル名(ディレクトリを含まない)
+	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 	
 //	bool IsEnabled() const { return m_bEnabled & 1; }
 	bool IsEnabled() const { return m_szFile[0] != '\0'; }
@@ -663,9 +680,18 @@ struct DLLSHAREDATA {
 
 
 
-/*-----------------------------------------------------------------------
-クラスの宣言
------------------------------------------------------------------------*/
+/*!	@brief 共有データの管理
+
+	CShareDataはCProcessのメンバであるため，両者の寿命は同一です．
+	本来はCProcessオブジェクトを通じてアクセスするべきですが，
+	CProcess内のデータ領域へのポインタをstatic変数に保存することで
+	Singletonのようにどこからでもアクセスできる構造になっています．
+
+	共有メモリへのポインタをm_pShareDataに保持します．このメンバは
+	公開されていますが，CShareDataによってMap/Unmapされるために
+	ChareDataの消滅によってポインタm_pShareDataも無効になることに
+	注意してください．
+*/
 class SAKURA_CORE_API CShareData
 {
 public:
@@ -691,6 +717,7 @@ public:
 //	DLLSHAREDATA* GetShareData( const char*, int* );			/* 共有データ構造体のアドレスを返す */
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
 	int GetDocumentType( const char* pszFilePath );				/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
+	int GetDocumentTypeExt( const char* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	BOOL AddEditWndList( HWND );								/* 編集ウィンドウの登録 */
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 
@@ -744,6 +771,7 @@ public:
 
 	//@@@ 2002.2.2 YAZAKI
 	char*		GetMacroFilename( int idx );	//	idxで指定したマクロファイル名（フルパス）を取得する
+	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 	void		AddToSearchKeyArr( const char* pszSearchKey );	//	m_szSEARCHKEYArrにpszSearchKeyを追加する
 	void		AddToReplaceKeyArr( const char* pszReplaceKey );	//	m_szREPLACEKEYArrにpszReplaceKeyを追加する
 	

@@ -44,8 +44,12 @@ struct ARRHEAD {
 	
 	Version 25:
 	m_bStopsBothEndsWhenSearchWord追加
+	
+	Version 26:
+	MacroRecに、m_bReloadWhenExecuteを追加 2002/03/11 YAZAKI
+	FileInfoに、m_szDocType追加 Mar. 7, 2002 genta
 */
-const unsigned int uShareDataVersion = 25;
+const unsigned int uShareDataVersion = 26;
 
 /*
 ||	Singleton風
@@ -80,7 +84,7 @@ CShareData::~CShareData()
 	@retval false 初期化失敗
 
 	@note 既に存在する共有メモリのバージョンがこのエディタが使うものと
-	異なる場合は致命的エラーを防ぐためにfalseを返します。WinMain()
+	異なる場合は致命的エラーを防ぐためにfalseを返します。CProcess::Initialize()
 	でInit()に失敗するとメッセージを出してエディタの起動を中止します。
 */
 bool CShareData::Init( void )
@@ -689,6 +693,9 @@ bool CShareData::Init( void )
 		n++;
 		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = 'L';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_COPY_ADDCRLF;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = 'H';
 		n++;
 		m_pShareData->m_Common.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [0][n] = 'X';
@@ -3682,6 +3689,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		//	mptr->m_bEnabled = FALSE;	// Oct 4. 2001 deleted by genta
 			mptr->m_szName[0] = '\0';
 			mptr->m_szFile[0] = '\0';
+			mptr->m_bReloadWhenExecute = FALSE;
 		}
 		//	To Here Sep. 14, 2001 genta
 
@@ -3816,32 +3824,52 @@ typedef struct _TBBUTTON {
 
 
 
-/*! ファイル名から、ドキュメントタイプ（数値）を取得する
+/*!
+	ファイル名から、ドキュメントタイプ（数値）を取得する
+	
+	@param pszFilePath [in] ファイル名
+	
+	拡張子を切り出して GetDocumentTypeExt に渡すだけ．
 */
 int CShareData::GetDocumentType( const char* pszFilePath )
 {
 	char	szExt[_MAX_EXT];
-	char	szText[256];
-	int		i;
-	char*	pszToken;
-	char*	pszSeps = " ;,";
 
 	if( NULL != pszFilePath && 0 < (int)strlen( pszFilePath ) ){
 		_splitpath( pszFilePath, NULL, NULL, NULL, szExt );
-		if( szExt[0] == '.' ){
-			char	szExt2[_MAX_EXT];
-			strcpy( szExt2, szExt );
-			strcpy( szExt, &szExt2[1] );
-		}
-		for( i = 0; i < MAX_TYPES; ++i ){
-			strcpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
-			pszToken = strtok( szText, pszSeps );
-			while( NULL != pszToken ){
-				if( 0 == _stricmp( szExt, pszToken ) ){
-					return i;	//	番号
-				}
-				pszToken = strtok( NULL, pszSeps );
+		if( szExt[0] == '.' )
+			return GetDocumentTypeExt( szExt + 1 );
+		else
+			return GetDocumentTypeExt( szExt );
+	}
+	return 0;
+}
+
+/*!
+	拡張子から、ドキュメントタイプ（数値）を取得する
+	
+	@param pszExt [in] 拡張子 (先頭の,は含まない)
+	
+	指定された拡張子の属する文書タイプ番号を返す．
+	とりあえず今のところはタイプは拡張子のみに依存すると仮定している．
+	ファイル全体の形式に対応させるときは，また考え直す．
+*/
+int CShareData::GetDocumentTypeExt( const char* pszExt )
+{
+	const char	pszSeps[] = " ;,";	// separator
+
+	int		i;
+	char*	pszToken;
+	char	szText[256];
+
+	for( i = 0; i < MAX_TYPES; ++i ){
+		strcpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
+		pszToken = strtok( szText, pszSeps );
+		while( NULL != pszToken ){
+			if( 0 == _stricmp( pszExt, pszToken ) ){
+				return i;	//	番号
 			}
+			pszToken = strtok( NULL, pszSeps );
 		}
 	}
 	return 0;	//	ハズレ
@@ -4276,6 +4304,18 @@ char* CShareData::GetMacroFilename( int idx )
 	}
 	
 	return ptr;
+}
+
+/*!	idxで指定したマクロのm_bReloadWhenExecuteを取得する。
+	idxは正確なものでなければならない。
+	YAZAKI
+*/
+bool CShareData::BeReloadWhenExecuteMacro( int idx )
+{
+	if( !m_pShareData->m_MacroTable[idx].IsEnabled() )
+		return false;
+
+	return ( m_pShareData->m_MacroTable[idx].m_bReloadWhenExecute == TRUE );
 }
 
 /*!	m_szSEARCHKEYArrにpszSearchKeyを追加する。

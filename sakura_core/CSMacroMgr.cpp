@@ -132,6 +132,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_CUT,						"S_Cut",						"",					NULL}, //切り取り(選択範囲をクリップボードにコピーして削除)
 	{F_COPY,					"S_Copy",						"",					NULL}, //コピー(選択範囲をクリップボードにコピー)
 	{F_PASTE,					"S_Paste",						"",					NULL}, //貼り付け(クリップボードから貼り付け)
+	{F_COPY_ADDCRLF,			"S_CopyAddCRLF",				"",					NULL}, //折り返し位置に改行をつけてコピー
 	{F_COPY_CRLF,				"S_CopyCRLF",					"",					NULL}, //CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
 	{F_PASTEBOX,				"S_PasteBox",					"",					NULL}, //矩形貼り付け(クリップボードから矩形貼り付け)
 	{F_INSTEXT,					"S_InsText",					"(str: string)",	NULL}, // テキストを貼り付け
@@ -356,17 +357,17 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	範囲チェック
 		return FALSE;
 
-	if( !m_cSavedKeyMacro[idx]->IsReady() ){	//	読み込み前
+	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
+	if( !m_cSavedKeyMacro[idx]->IsReady() || CShareData::getInstance()->BeReloadWhenExecuteMacro( idx )){
 		//	CShareDataから、マクロファイル名を取得
-		CShareData	m_cShareData;
-		m_cShareData.Init();
-		char* p = m_cShareData.GetMacroFilename( idx );
+		char* p = CShareData::getInstance()->GetMacroFilename( idx );
 		if ( p == NULL){
 			return FALSE;
 		}
 		char ptr[_MAX_PATH * 2];
 		strcpy(ptr, p);
 
+		Clear( idx );	//	一度クリアしてから読み込む（念のため）
 		if( !Load( idx, hInstance, ptr ) )
 			return FALSE;
 	}
@@ -592,6 +593,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	/* クリップボード系 */
 	case F_CUT						://切り取り(選択範囲をクリップボードにコピーして削除)
 	case F_COPY						://コピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF				://折り返し位置に改行をつけてコピー
 	case F_COPY_CRLF				://CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
 	case F_PASTE					://貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX					://矩形貼り付け(クリップボードから矩形貼り付け)

@@ -110,6 +110,7 @@
 #define IDC_CHECK_SHIFT                 1076
 #define IDC_CHK_FROMTHISTEXT            1076
 #define IDC_CHECK_TOOLBARISFLAT         1076
+#define IDC_CHECK_RELOADWHENEXECUTE     1076
 #define IDC_BUTTON_SSTRINGBACKCOLOR     1077
 #define IDC_CHECK_LCPOS2                1077
 #define IDC_CHECK_SplitterWndHScroll    1077

@@ -350,7 +350,8 @@ BOOL CEditView::HandleCommand(
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
-	case F_COPY:					Command_COPY( FALSE );break;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY:					Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF:			Command_COPY( FALSE, TRUE );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	case F_COPY_CRLF:				Command_COPY( FALSE, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE();break;					//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
@@ -1472,33 +1473,39 @@ try_again:;
 
 
 
-/* 選択範囲をクリップボードにコピー */
-void CEditView::Command_COPY( int bIgnoreLockAndDisdable,
-			enumEOLType neweol )
+/*!	選択範囲をクリップボードにコピー
+	bIgnoreLockAndDisable：選択範囲を解除するか？
+	bAddCRLFWhenCopy：折り返し位置に改行コードを挿入するか？
+	neweol：コピーするときのEOL。
+*/
+void CEditView::Command_COPY(
+	int bIgnoreLockAndDisable,
+	BOOL bAddCRLFWhenCopy,
+	enumEOLType neweol
+)
 {
 	CMemory			cmemBuf;
-//	HGLOBAL			hgClip;
-//	char*			pszClip;
-	const char*		pLine;
-	int				nLineLen;
-	BOOL			bBeginBoxSelect;
-	const CLayout*	pcLayout;
+	BOOL			bBeginBoxSelect = FALSE;
 
-	/* テキストが選択されているか */
-	bBeginBoxSelect = FALSE;
+	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	if( IsTextSelected() ){
+		/* テキストが選択されているときは、選択範囲のデータを取得 */
+
 		if( m_bBeginBoxSelect ){
 			bBeginBoxSelect = TRUE;
 		}
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, neweol ) ){
+		if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
 			::MessageBeep( MB_ICONHAND );
 			return;
 		}
 	}else{
 		/* 非選択時は、カーソル行をコピーする */
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nCaretPosY, &nLineLen, &pcLayout );
+
+		int				nLineLen;
+		const CLayout*	pcLayout;
+		const char*		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nCaretPosY, &nLineLen, &pcLayout );
 		if( NULL == pLine ){
 			return;
 		}
@@ -1510,19 +1517,18 @@ void CEditView::Command_COPY( int bIgnoreLockAndDisdable,
 			);
 		}
 	}
-	/* クリップボードにデータを設定 */
-	if( FALSE == MySetClipboardData( cmemBuf.GetPtr( NULL ), cmemBuf.GetLength(), bBeginBoxSelect ) ){
+
+	/* クリップボードにデータcmemBufの内容を設定 */
+	if( FALSE == MySetClipboardData( cmemBuf.GetPtr2(), cmemBuf.GetLength(), bBeginBoxSelect ) ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
 
-
-	if( !bIgnoreLockAndDisdable ){
+	/* 選択範囲の後片付け */
+	if( !bIgnoreLockAndDisable ){
 		/* 選択状態のロック */
 		if( m_bSelectingLock ){
 			m_bSelectingLock = FALSE;
-//			/* 現在の選択範囲を非選択状態に戻す */
-//			DisableSelectArea( TRUE );
 		}
 	}
 	if( m_pShareData->m_Common.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
@@ -1566,7 +1572,7 @@ void CEditView::Command_CUT( void )
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE ) ){
+	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
@@ -1663,9 +1669,11 @@ void CEditView::Command_DELETE_BACK( void )
  	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
 	){
 		CMemory	cmemData;
-		POINT	poWin;
+
 		/* カーソル直前の単語を取得 */
 		if( 0 < GetLeftWord( &cmemData, 100 ) ){
+			ShowHokanMgr( cmemData, FALSE );
+#if 0
 //			MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr( NULL ) );
 			/* 補完対象ワードリストを調べる */
 			poWin.x = m_nViewAlignLeft
@@ -1697,6 +1705,7 @@ void CEditView::Command_DELETE_BACK( void )
 					m_bHokan = FALSE;
 				}
 			}
+#endif
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();
@@ -2904,7 +2913,6 @@ void CEditView::Command_CHAR( char cChar )
 	int				nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
 	char			szCurrent[10];
-	POINT			poWin;
 	const CLayout*	pcLayout;
 
 	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
@@ -3098,6 +3106,8 @@ void CEditView::Command_CHAR( char cChar )
 	){
 		/* カーソル直前の単語を取得 */
 		if( 0 < GetLeftWord( &cmemData, 100 ) ){
+			ShowHokanMgr( cmemData, FALSE );
+#if 0
 //			MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr( NULL ) );
 			/* 補完対象ワードリストを調べる */
 			poWin.x = m_nViewAlignLeft
@@ -3129,6 +3139,7 @@ void CEditView::Command_CHAR( char cChar )
 					m_bHokan = FALSE;
 				}
 			}
+#endif
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();
@@ -3157,7 +3168,6 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 	int				nNewLine;		/* 挿入された部分の次の位置の行 */
 	int				nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
-	POINT			poWin;
 	const CLayout*	pcLayout;
 	if( 0 == (wChar & 0x00ff) ){
 		Command_CHAR( (char)((wChar&0xff00)>>8) );
@@ -3234,6 +3244,8 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 
 		/* カーソル直前の単語を取得 */
 		if( 0 < GetLeftWord( &cmemData, 100 ) ){
+			ShowHokanMgr( cmemData, FALSE );
+#if 0
 //			MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr( NULL ) );
 			/* 補完対象ワードリストを調べる */
 			poWin.x = m_nViewAlignLeft
@@ -3265,6 +3277,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 					m_bHokan = FALSE;
 				}
 			}
+#endif
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();
@@ -6812,9 +6825,13 @@ void CEditView::Command_GREP( void )
 	cmWork1.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szText );
 	cmWork2.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFile );
 	cmWork3.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFolder );
-	/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-	if( !m_pcEditDoc->IsModified() &&
-		0 == lstrlen( m_pcEditDoc->m_szFilePath )		/* 現在編集中のファイルのパス */
+
+	/*	今のEditViewにGrep結果を表示する。
+		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
+	*/
+	if( m_pcEditDoc->m_bGrepMode ||
+		( !m_pcEditDoc->IsModified() &&
+		  0 == lstrlen( m_pcEditDoc->m_szFilePath ) )		/* 現在編集中のファイルのパス */
 	){
 		DoGrep(
 			&cmWork1,
@@ -6852,6 +6869,9 @@ void CEditView::Command_GREP( void )
 	//	if( m_bFromThisText ){	/* この編集中のテキストから検索する */
 	//
 	//	}
+		if( m_pcEditDoc->m_cDlgGrep.m_bWordOnly ){	/* 単語単位で探す */
+			strcat( pOpt, "W" );
+		}
 		if( m_pcEditDoc->m_cDlgGrep.m_bLoHiCase ){	/* 英大文字と英小文字を区別する */
 			strcat( pOpt, "L" );
 		}
@@ -8137,7 +8157,7 @@ void CEditView::Command_REPLACE( void )
 					return;	//	失敗return;
 				}
 
-				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE /*, EOL_NONE 2002/1/26 novice */ ) ){
+				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
 					::MessageBeep( MB_ICONHAND );
 				}
 				// 変換後の文字列を別の引数にしました 2002.01.26 hor
@@ -8414,7 +8434,7 @@ void CEditView::Command_REPLACE_ALL( void )
 					return;// 0;
 				}
 
-				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE /*, EOL_NONE 2002/1/26 novice */ ) ){
+				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
 					::MessageBeep( MB_ICONHAND );
 				}
 
@@ -8625,7 +8645,7 @@ void CEditView::Command_BASE64DECODE( void )
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE ) ){
+	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
@@ -8670,7 +8690,7 @@ void CEditView::Command_UUDECODE( void )
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE ) ){
+	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
@@ -9065,8 +9085,124 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 }
 
 
+/*!	補完ウィンドウを表示する
+	ウィンドウを表示した後は、HokanMgrに任せるので、ShowHokanMgrの知るところではない。
+	
+	cmemData：補完する元のテキスト 「Ab」などがくる。
+	bAutoDecided：候補が1つだったら確定する
+*/
+void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
+{
+	/* 補完対象ワードリストを調べる */
+	CMemory		cmemHokanWord;
+	int			nKouhoNum;
+	char*		pszKouhoWord;
+	POINT		poWin;
+	/* 補完ウィンドウの表示位置を算出 */
+	poWin.x = m_nViewAlignLeft
+			 + (m_nCaretPosX - m_nViewLeftCol)
+			  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	poWin.y = m_nViewAlignTop
+			 + (m_nCaretPosY - m_nViewTopLine)
+			  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
+	::ClientToScreen( m_hWnd, &poWin );
+	poWin.x -= (
+		cmemData.GetLength()
+		 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
+	);
+
+	/*	補完ウィンドウを表示
+		ただし、bAutoDecided == TRUEの場合は、補完候補が1つのときは、ウィンドウを表示しない。
+		詳しくは、Search()の説明を参照のこと。
+	*/
+	CMemory* pcmemHokanWord;
+	if ( bAutoDecided ){
+		pcmemHokanWord = &cmemHokanWord;
+	}
+	else {
+		pcmemHokanWord = NULL;
+	}
+	nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
+		&poWin,
+		m_nCharHeight,
+		m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
+		cmemData.GetPtr( NULL ),
+		m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
+		m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
+		pcmemHokanWord
+	);
+	/* 補完候補の数によって動作を変える */
+	if (nKouhoNum <= 0) {				//	候補無し
+		if( m_bHokan ){
+			m_pcEditDoc->m_cHokanMgr.Hide();
+			m_bHokan = FALSE;
+		}
+	}
+	else
+	if ( bAutoDecided ){
+		if(nKouhoNum > 1){	//	複数の候補アリ
+			m_bHokan = TRUE;
+		}else
+		if(nKouhoNum == 1){	//	候補1つのみ→確定。
+			if( m_bHokan ){
+				m_pcEditDoc->m_cHokanMgr.Hide();
+				m_bHokan = FALSE;
+			}
+			pszKouhoWord = cmemHokanWord.GetPtr(NULL);
+			pszKouhoWord[lstrlen(pszKouhoWord)-1] = '\0';
+			Command_WordDeleteToStart();
+			Command_INSTEXT( TRUE, (const char*)pszKouhoWord, TRUE );
+		}
+	}
+	else {
+		m_bHokan = TRUE;
+	}
+}
 
 
+/*!	入力補完
+	Ctrl+Spaceでここに到着。
+
+    2001/06/19 asa-o 英大文字小文字を同一視する
+                     候補が1つのときはそれに確定する
+	2001/06/14 asa-o 参照データ変更
+	                 開くプロパティシートをタイプ別に変更
+	2000/09/15 JEPRO [Esc]キーと[x]ボタンでも中止できるように変更
+*/
+void CEditView::Command_HOKAN( void )
+{
+	if (m_pShareData->m_Common.m_bUseHokan == TRUE){
+		m_pShareData->m_Common.m_bUseHokan = FALSE;
+		DrawCaretPosInfo();	//	"補完"と"非"を書き換える
+		return;
+	}
+	m_pShareData->m_Common.m_bUseHokan = TRUE;	//	強制TRUE
+	DrawCaretPosInfo();	//	"補完"と"非"を書き換える
+retry:;
+	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
+	if( 0 == strlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile ) ){
+		::MessageBeep( MB_ICONHAND );
+		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
+		) ){
+			/* タイプ別設定 プロパティシート */
+			if( !m_pcEditDoc->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
+				return;
+			}
+			goto retry;
+		}
+	}
+
+	CMemory		cmemData;
+	/* カーソル直前の単語を取得 */
+	if( 0 < GetLeftWord( &cmemData, 100 ) ){
+		ShowHokanMgr( cmemData, TRUE );
+	}else{
+		::MessageBeep( MB_ICONHAND );
+	}
+	return;
+}
+#if 0
 /* 入力補完 */
 void CEditView::Command_HOKAN( void )
 {
@@ -9155,7 +9291,7 @@ retry:;
 	}
 	return;
 }
-
+#endif
 
 
 

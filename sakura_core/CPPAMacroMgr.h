@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, aroka
+	Copyright (C) 2002, YAZAKI
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,6 +18,7 @@
 
 #include <windows.h>
 #include "CKeyMacroMgr.h"
+#include "CMemory.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -38,6 +40,9 @@ public:
 	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);	/* キーボードマクロを読み込み、CMacroの列に変換 */
 
 	static class CPPA m_cPPA;
+
+protected:
+	CMemory m_cBuffer;
 };
 
 

@@ -3224,7 +3224,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 				)
 			){
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE ) ){
+				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
 					m_bDragSource = TRUE;
 					CDataObject data( cmemCurText.GetPtr( NULL ) );
@@ -3747,7 +3747,7 @@ VOID CEditView::OnTimer(
 					300 < ::GetTickCount() - m_dwTipTimer	/* 一定時間以上、マウスが固定されている */
 				){
 					/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-					if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE ) ){
+					if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 						pszWork = cmemCurText.GetPtr( NULL );
 						nWorkLength	= lstrlen( pszWork );
 						for( i = 0; i < nWorkLength; ++i ){
@@ -4948,6 +4948,7 @@ BOOL CEditView::GetSelectedData(
 		BOOL		bLineOnly,
 		const char*	pszQuote,			/* 先頭に付ける引用符 */
 		BOOL		bWithLineNumber,	/* 行番号を付与する */
+		BOOL		bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 //	Jul. 25, 2000 genta
 		enumEOLType	neweol				//	コピー後の改行コード EOL_NONEはコード保存
 )
@@ -5087,7 +5088,7 @@ BOOL CEditView::GetSelectedData(
 			}else{
 				cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				if( nIdxTo - nIdxFrom >= nLineLen ){
-					if( m_pShareData->m_Common.m_bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
+					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
 						NULL != pszQuote || /* 先頭に付ける引用符 */
 						bWithLineNumber 	/* 行番号を付与する */
 					){
@@ -5186,7 +5187,8 @@ void CEditView::CopySelectedAllLines(
 		cmemBuf,
 		FALSE,
 		pszQuote, /* 引用符 */
-		bWithLineNumber /* 行番号を付与する */
+		bWithLineNumber, /* 行番号を付与する */
+		m_pShareData->m_Common.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
 	) ){
 		::MessageBeep( MB_ICONHAND );
 		return;
@@ -5388,7 +5390,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	}else{
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		GetSelectedData( cmemBuf, FALSE, NULL, FALSE );
+		GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
 		ConvMemory( &cmemBuf, nFuncCode );
@@ -5743,7 +5745,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 						//1000 < ::GetTickCount() - m_dwTipTimer	/* 一定時間以上、マウスが固定されている */
 					){
 						/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-						if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE ) ){
+						if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 							pszWork = cmemCurText.GetPtr( NULL );
 							nWorkLength	= lstrlen( pszWork );
 							for( i = 0; i < nWorkLength; ++i ){
@@ -6048,7 +6050,7 @@ void CEditView::DrawCaretPosInfo( void )
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 2 | 0, (LPARAM) (LPINT)nNlTypeName );
 		//	To Here
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_2 );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM)(LPINT)pCodeNameArr2[m_pcEditDoc->m_nCharCode] );
+		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)pCodeNameArr2[m_pcEditDoc->m_nCharCode] );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)"" );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_5 );
 	}
@@ -6490,7 +6492,7 @@ DWORD CEditView::DoGrep(
 
 
 	/* 最後にテキストを追加 */
-	cmemMessage.AppendSz( "検索条件  " );
+	cmemMessage.AppendSz( "□検索条件  " );
 	if( 0 < lstrlen( szKey ) ){
 		CMemory cmemWork2;
 		cmemWork2.SetDataSz( szKey );
@@ -8044,7 +8046,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 	szTopic[0] = '\0';
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 選択範囲のデータを取得 */
-		if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE ) ){
+		if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 			/* 検索文字列を現在位置の単語で初期化 */
 			strncpy( szTopic, cmemCurText.GetPtr( NULL ), _MAX_PATH - 1 );
 			szTopic[_MAX_PATH - 1] = '\0';
@@ -8079,7 +8081,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				m_nSelectLineTo = nLineTo;
 				m_nSelectColmTo = nColmTo;
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE ) ){
+				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
 					strncpy( szTopic, cmemCurText.GetPtr( NULL ), MAX_PATH - 1 );
 					szTopic[MAX_PATH - 1] = '\0';

@@ -305,9 +305,15 @@ BOOL CPropCommon::DispatchEvent_p7(
 						if( nIndex1 == m_Types[i].m_nKeyWordSetIdx ){
 							m_Types[i].m_nKeyWordSetIdx = -1;
 						}
+						else if( nIndex1 < m_Types[i].m_nKeyWordSetIdx ){
+							m_Types[i].m_nKeyWordSetIdx--;
+						}
 						if( nIndex1 == m_Types[i].m_nKeyWordSetIdx2 ){	//MIK
 							m_Types[i].m_nKeyWordSetIdx2 = -1;			//MIK
 						}												//MIK
+						else if( nIndex1 < m_Types[i].m_nKeyWordSetIdx2 ){
+							m_Types[i].m_nKeyWordSetIdx--;
+						}
 					}
 					/* ‚Ž”Ô–Ú‚ÌƒZƒbƒg‚ðíœ */
 					m_CKeyWordSetMgr.DelKeyWordSet( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );

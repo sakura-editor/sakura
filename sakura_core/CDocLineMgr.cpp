@@ -1676,9 +1676,15 @@ int CDocLineMgr::PrevOrNextWord(
 		return FALSE;
 	}
 	pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+
+	// ABC D[EOF]となっていたときに、Dの後ろにカーソルを合わせ、単語の左端に移動すると、Aにカーソルがあうバグ修正。YAZAKI
 	if( nIdx >= nLineLen ){
-		nIdx = nLineLen - 1;
-//		return FALSE;
+		if (bLEFT && nIdx == nLineLen){
+
+		}
+		else {
+			nIdx = nLineLen - 1;
+		}
 	}
 	/* 現在位置の文字の種類によっては選択不能 */
 	if( FALSE == bLEFT && ( pLine[nIdx] == CR || pLine[nIdx] == LF ) ){
