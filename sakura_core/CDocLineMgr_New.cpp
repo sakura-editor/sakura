@@ -31,7 +31,6 @@
 #include <io.h>
 //#include <string.h>
 //#include <memory.h>
-#include "CJre.h"
 #include <commctrl.h>
 #include "global.h"
 #include "etc_uty.h"
