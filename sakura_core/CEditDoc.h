@@ -20,17 +20,17 @@ class CEditDoc;
 
 
 #include <windows.h>
-#include "CMemory.h"
+//#include "CMemory.h"  // 2002/2/10 aroka
 #include "CDocLineMgr.h"
 #include "CLayoutMgr.h"
-#include "COpe.h"
-#include "COpeBlk.h"
+//#include "COpe.h" // 2002/2/10 aroka
+//#include "COpeBlk.h" // 2002/2/10 aroka
 #include "COpeBuf.h"
 #include "CDlgFind.h"
 #include "CDlgReplace.h"
 //@@#include "CProp1.h"
 #include "CShareData.h"
-#include "CFuncInfoArr.h"
+//#include "CFuncInfoArr.h" // 2002/2/10 aroka
 //@@@ 2002.01.14 YAZAKI 不要
 //#include "CSplitBoxWnd.h"
 #include "CEditView.h"
@@ -45,9 +45,11 @@ class CEditDoc;
 //#include "CDlgTest.h"
 #include "CHokanMgr.h"
 #include "CAutoSave.h"
-#include "CImageListMgr.h"
-#include "CSMacroMgr.h"
+//#include "CImageListMgr.h" // 2002/2/10 aroka
+//#include "CSMacroMgr.h" // 2002/2/10 aroka
 #include "CFuncLookup.h"
+class CImageListMgr; // 2002/2/10 aroka
+class CSMacroMgr; // 2002/2/10 aroka
 
 //! 文書関連情報の管理
 class SAKURA_CORE_API CEditDoc
@@ -199,6 +201,7 @@ public: /* テスト用にアクセス属性を変更 */
 	char			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
 	HWND			m_hWnd;						/* 編集ウィンドウハンドル */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */
+public:
 	void			MakeFuncList_C( CFuncInfoArr* );		/* C/C++関数リスト作成 */
 	void 			MakeFuncList_PLSQL( CFuncInfoArr* );	/* PL/SQL関数リスト作成 */
 	void 			MakeTopicList_txt( CFuncInfoArr* );		/* テキスト・トピックリスト作成 */

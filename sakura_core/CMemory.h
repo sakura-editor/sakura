@@ -22,7 +22,7 @@ class CMemory;
 #define CheckKanjiCode_MAXREADLENGTH 16384
 
 #include "global.h"
-#include "debug.h"
+//#include "debug.h" // 2002/2/10 aroka
 
 //! メモリバッファクラス
 class SAKURA_CORE_API CMemory
@@ -86,7 +86,7 @@ public:
 	static int DecodeUTF8toUnicode( const unsigned char*, int, unsigned char* );
 	static int IsUTF8( const unsigned char*, int ); /* UTF-8の文字か */
 	void ToZenkaku( int, int );	/* 半角→全角 */
-	void ToHankaku( void );	/* 全角→半角 */
+	void ToHankaku( int nMode );	/* 全角→半角 */
 
 	/* ファイルの日本語コードセット判別 */
 	static int CheckKanjiCodeOfFile( const char* );
@@ -140,7 +140,7 @@ public:
 
 
 //	void Append( const char*, int );	/* データの最後に追加 publicメンバ */
-//protected:
+protected: // 2002/2/10 aroka アクセス権変更
 	/*
 	|| メンバ変数
 	*/

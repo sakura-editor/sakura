@@ -4,6 +4,7 @@
 
 	@author MIK
 	@date Jan. 11, 2002
+	@date Feb. 02, 2002  内部処理を統一、全角アルファベット同一視に対応
 	$Revision$
 */
 /*
@@ -50,12 +51,13 @@
  * ヘッダ
  */
 #include <stdio.h>
+#include <limits.h>
 #include "my_icmp.h"
 
 
 
 /*!	大文字に変換する。
-	@param c[in] 変換する文字コード
+	@param c [in] 変換する文字コード
 
 	@return 変換された文字コード
 */
@@ -108,6 +110,168 @@ SAKURA_CORE_API MY_INLINE int my_iskanji2( int c )
 
 
 
+#ifdef MY_ICMP_MBS
+/*!	全角アルファベットの２文字目を大文字に変換する。
+	@param c [in] 変換する文字コード
+
+	@note
+		0x8260 - 0x8279 : Ａ...Ｚ
+		0x8281 - 0x829a : ａ...ｚ
+
+	@return 変換された文字コード
+*/
+SAKURA_CORE_API MY_INLINE int my_mbtoupper2( int c )
+{
+	if( c >= 0x81 && c <= 0x9a ) return c - (0x81 - 0x60);
+	return c;
+}
+#endif  /* MY_ICMP_MBS */
+
+
+
+#ifdef MY_ICMP_MBS
+/*!	全角アルファベットの２文字目を小文字に変換する。
+	@param c [in] 変換する文字コード
+
+	@return 変換された文字コード
+*/
+SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c )
+{
+	if( c >= 0x60 && c <= 0x79 ) return c + (0x81 - 0x60);
+	return c;
+}
+#endif  /* MY_ICMP_MBS */
+
+
+
+#ifdef MY_ICMP_MBS
+/*!	全角アルファベットの２文字目か調べる。
+	@param c [in] 検査する文字コード
+
+	@retval 1	全角アルファベット２バイト目である
+	@retval 0	ちがう
+*/
+SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c )
+{
+	if( (c >= 0x60 && c <= 0x79) || (c >= 0x81 && c <= 0x9a) ) return 1;
+	return 0;
+}
+#endif  /* MY_ICMP_MBS */
+
+
+
+/*!	大文字小文字を同一視する文字列長さ制限比較をする。
+	@param s1   [in] 文字列１
+	@param s2   [in] 文字列２
+	@param n    [in] 文字長
+	@param dec  [in] ステップ値 (1=strnicmp,memicmp, 0=stricmp)
+	@param flag [in] 文字列終端チェック (true=stricmp,strnicmp, false=memicmp)
+
+	@retval 0	一致
+ */
+SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
+{
+	unsigned int	i;
+	unsigned char	*p1, *p2;
+	int	c1, c1_lo, c1_up;
+	int	c2, c2_lo, c2_up;
+	bool	prev1, prev2;
+#ifdef MY_ICMP_MBS
+	bool	mba1, mba2;
+#endif  /* MY_ICMP_MBS */
+
+	p1 = (unsigned char*)s1;
+	p2 = (unsigned char*)s2;
+	prev1 = prev2 = false;
+#ifdef MY_ICMP_MBS
+	mba1 = mba2 = false;
+#endif  /* MY_ICMP_MBS */
+
+	/* 指定長だけ繰り返す */
+	for(i = n; i > 0; i -= dcount)
+	{
+		/* 比較対象となる文字を取得する */
+		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
+		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
+
+		if( flag ){
+			/* 文字列の終端に達したか調べる */
+			if( ! c1 ){
+				if( ! c2 ) return 0;
+				return 0 - c2;
+			}
+			else if( ! c2 ){
+				return c1;
+			}
+		}
+
+		/* 文字１の日本語チェックを行い比較用の大文字小文字をセットする */
+		if( prev1 ){	/* 前の文字が日本語１バイト目 */
+			/* 今回は日本語２バイト目なので変換しない */
+			prev1 = false;
+#ifdef MY_ICMP_MBS
+			/* 全角文字のアルファベット */
+			if( mba1 ){
+				mba1 = false;
+				if( my_mbisalpha2( c1 ) ){
+					c1_lo = my_mbtolower2( c1 );
+					c1_up = my_mbtoupper2( c1 );
+				}
+			}
+#endif  /* MY_ICMP_MBS */
+		}
+		else if( my_iskanji1(c1) ){
+			/* 今回は日本語１バイト目なので変換しない */
+			prev1 = true;
+#ifdef MY_ICMP_MBS
+			if( c1 == 0x82 ) mba1 = true;
+#endif  /* MY_ICMP_MBS */
+		}
+		else{
+			c1_lo = my_tolower(c1);
+			c1_up = my_toupper(c1);
+		}
+
+		/* 文字２の日本語チェックを行い比較用の大文字小文字をセットする */
+		if( prev2 ){	/* 前の文字が日本語１バイト目 */
+			/* 今回は日本語２バイト目なので変換しない */
+			prev2 = false;
+#ifdef MY_ICMP_MBS
+			/* 全角文字のアルファベット */
+			if( mba2 ){
+				mba2 = false;
+				if( my_mbisalpha2( c2 ) ){
+					c2_lo = my_mbtolower2( c2 );
+					c2_up = my_mbtoupper2( c2 );
+				}
+			}
+#endif  /* MY_ICMP_MBS */
+		}
+		else if( my_iskanji1(c2) ){
+			/* 今回は日本語１バイト目なので変換しない */
+			prev2 = true;
+#ifdef MY_ICMP_MBS
+			if( c2 == 0x82 ) mba2 = true;
+#endif  /* MY_ICMP_MBS */
+		}
+		else{
+			c2_lo = my_tolower(c2);
+			c2_up = my_toupper(c2);
+		}
+
+		/* 比較する */
+		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* 戻り値は元の文字の差 */
+
+		/* ポインタを進める */
+		p1++;
+		p2++;
+	}
+
+	return 0;
+}
+
+
+
 /*!	大文字小文字を同一視するメモリ比較をする。
 	@param m1 [in] データ１
 	@param m2 [in] データ２
@@ -121,70 +285,10 @@ SAKURA_CORE_API MY_INLINE int my_iskanji2( int c )
 	しかし、テキストデータにバイナリが含まれることがあるため memicmp で
 	比較を行っている。
 	ここでは日本語に対応した memicmp を実装する。
-	なお、日本語1バイト目を見つけたら次の文字は必ず日本語2バイト目と認識
-	するので、バイナリデータによっては比較誤認識の可能性もあることに注意
-	すること。
 */
 SAKURA_CORE_API int my_memicmp( const void *m1, const void *m2, unsigned int n )
 {
-	unsigned int	i;
-	unsigned char	*p1, *p2;
-	int	c1, c1_lo, c1_up;
-	int	c2, c2_lo, c2_up;
-	int	prev1, prev2;
-
-	p1 = (unsigned char*)m1;
-	p2 = (unsigned char*)m2;
-	prev1 = prev2 = 0;
-
-	/* 指定長だけ繰り返す */
-	for(i = n; i > 0; i--)
-	{
-		/* 比較対象となる文字を取得する */
-		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
-		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
-
-		/* 文字１の日本語チェックを行い比較用の大文字小文字をセットする */
-		if( prev1 ){	/* 前の文字が日本語１バイト目 */
-			/* 今回は日本語２バイト目なので変換しない */
-			prev1 = 0;
-			/* 実は日本語でない場合、変換範囲にないので問題ない */
-		}
-		else if( my_iskanji1(c1) ){
-			/* 今回は日本語１バイト目なので変換しない */
-			prev1 = 1;
-			/* 日本語の２バイト目が不正でも１バイト目は変換範囲にないので問題ない */
-		}
-		else{
-			c1_lo = my_tolower(c1);
-			c1_up = my_toupper(c1);
-		}
-
-		/* 文字２の日本語チェックを行い比較用の大文字小文字をセットする */
-		if( prev2 ){	/* 前の文字が日本語１バイト目 */
-			/* 今回は日本語２バイト目なので変換しない */
-			prev2 = 0;
-			/* 実は日本語でない場合、変換範囲にないので問題ない */
-		}
-		else if( my_iskanji1(c2) ){
-			/* 今回は日本語１バイト目なので変換しない */
-			prev2 = 1;
-			/* 日本語の２バイト目が不正でも１バイト目は変換範囲にないので問題ない */
-		}
-		else{
-			c2_lo = my_tolower(c2);
-			c2_up = my_toupper(c2);
-		}
-
-		/* 比較する */
-		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* 戻り値は元の文字の差 */
-
-		/* ポインタを進める */
-		p1++;
-		p2++;
-	}
-
-	return 0;
+	return my_internal_icmp( (const char*)m1, (const char*)m2, n, 1, false );
 }
 
 
@@ -197,71 +301,9 @@ SAKURA_CORE_API int my_memicmp( const void *m1, const void *m2, unsigned int n )
  */
 SAKURA_CORE_API int my_stricmp( const char *s1, const char *s2 )
 {
-	unsigned char	*p1, *p2;
-	int	c1, c1_lo, c1_up;
-	int	c2, c2_lo, c2_up;
-	int	prev1, prev2;
-
-	p1 = (unsigned char*)s1;
-	p2 = (unsigned char*)s2;
-	prev1 = prev2 = 0;
-
-	/* 文字列の終端まで繰り返す */
-	while(1)
-	{
-		/* 比較対象となる文字を取得する */
-		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
-		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
-
-		/* 文字列の終端に達したか調べる */
-		if( ! c1 ){
-			if( ! c2 ) return 0;
-			return 0 - c2;
-		}
-		else if( ! c2 ){
-			return c1;
-		}
-
-		/* 文字１の日本語チェックを行い比較用の大文字小文字をセットする */
-		if( prev1 ){	/* 前の文字が日本語１バイト目 */
-			/* 今回は日本語２バイト目なので変換しない */
-			prev1 = 0;
-			/* 実は日本語でない場合、変換範囲にないので問題ない */
-		}
-		else if( my_iskanji1(c1) ){
-			/* 今回は日本語１バイト目なので変換しない */
-			prev1 = 1;
-			/* 日本語の２バイト目が不正でも１バイト目は変換範囲にないので問題ない */
-		}
-		else{
-			c1_lo = my_tolower(c1);
-			c1_up = my_toupper(c1);
-		}
-
-		/* 文字２の日本語チェックを行い比較用の大文字小文字をセットする */
-		if( prev2 ){	/* 前の文字が日本語１バイト目 */
-			/* 今回は日本語２バイト目なので変換しない */
-			prev2 = 0;
-			/* 実は日本語でない場合、変換範囲にないので問題ない */
-		}
-		else if( my_iskanji1(c2) ){
-			/* 今回は日本語１バイト目なので変換しない */
-			prev2 = 1;
-			/* 日本語の２バイト目が不正でも１バイト目は変換範囲にないので問題ない */
-		}
-		else{
-			c2_lo = my_tolower(c2);
-			c2_up = my_toupper(c2);
-		}
-
-		/* 比較する */
-		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* 戻り値は元の文字の差 */
-
-		/* ポインタを進める */
-		p1++;
-		p2++;
-	}
-	/*NOTREACHED*/
+	/* チェックする文字数をuint最大に設定する */
+	//return my_internal_icmp( s1, s2, (unsigned int)(~0), 0, true );
+	return my_internal_icmp( s1, s2, UINT_MAX, 0, true );
 }
 
 
@@ -275,73 +317,7 @@ SAKURA_CORE_API int my_stricmp( const char *s1, const char *s2 )
  */
 SAKURA_CORE_API int my_strnicmp( const char *s1, const char *s2, size_t n )
 {
-	unsigned int	i;
-	unsigned char	*p1, *p2;
-	int	c1, c1_lo, c1_up;
-	int	c2, c2_lo, c2_up;
-	int	prev1, prev2;
-
-	p1 = (unsigned char*)s1;
-	p2 = (unsigned char*)s2;
-	prev1 = prev2 = 0;
-
-	/* 指定長だけ繰り返す */
-	for(i = n; i > 0; i--)
-	{
-		/* 比較対象となる文字を取得する */
-		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
-		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
-
-		/* 文字列の終端に達したか調べる */
-		if( ! c1 ){
-			if( ! c2 ) return 0;
-			return 0 - c2;
-		}
-		else if( ! c2 ){
-			return c1;
-		}
-
-		/* 文字１の日本語チェックを行い比較用の大文字小文字をセットする */
-		if( prev1 ){	/* 前の文字が日本語１バイト目 */
-			/* 今回は日本語２バイト目なので変換しない */
-			prev1 = 0;
-			/* 実は日本語でない場合、変換範囲にないので問題ない */
-		}
-		else if( my_iskanji1(c1) ){
-			/* 今回は日本語１バイト目なので変換しない */
-			prev1 = 1;
-			/* 日本語の２バイト目が不正でも１バイト目は変換範囲にないので問題ない */
-		}
-		else{
-			c1_lo = my_tolower(c1);
-			c1_up = my_toupper(c1);
-		}
-
-		/* 文字２の日本語チェックを行い比較用の大文字小文字をセットする */
-		if( prev2 ){	/* 前の文字が日本語１バイト目 */
-			/* 今回は日本語２バイト目なので変換しない */
-			prev2 = 0;
-			/* 実は日本語でない場合、変換範囲にないので問題ない */
-		}
-		else if( my_iskanji1(c2) ){
-			/* 今回は日本語１バイト目なので変換しない */
-			prev2 = 1;
-			/* 日本語の２バイト目が不正でも１バイト目は変換範囲にないので問題ない */
-		}
-		else{
-			c2_lo = my_tolower(c2);
-			c2_up = my_toupper(c2);
-		}
-
-		/* 比較する */
-		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* 戻り値は元の文字の差 */
-
-		/* ポインタを進める */
-		p1++;
-		p2++;
-	}
-
-	return 0;
+	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }
 
 

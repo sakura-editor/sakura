@@ -20,8 +20,9 @@ class CDocLine;
 #ifndef _CDOCLINE_H_
 #define _CDOCLINE_H_
 
-#include "CMemory.h"
+//#include "CMemory.h" // 2002/2/10 aroka
 #include "CEOL.h"
+class CMemory;// 2002/2/10 aroka
 
 #ifndef TRUE
 	#define TRUE 1

@@ -30,7 +30,9 @@ class CLayout;
 	#define NULL 0
 #endif
 
-#include "CDocLine.h"
+//#include "CDocLine.h"
+#include "CEol.h"// 2002/2/10 aroka
+class CDocLine;// 2002/2/10 aroka
 /*-----------------------------------------------------------------------
 ÉNÉâÉXÇÃêÈåæ
 -----------------------------------------------------------------------*/

@@ -27,47 +27,12 @@
 #include "CEol.h"// 2002/2/3 aroka
 #include "CBregexp.h"// 2002/2/3 aroka
 
+//	CShareDataへ移動
 /* 日付をフォーマット */
-const char* MyGetDateFormat( char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat )
-{
-	SYSTEMTIME systime;
-	const char* pszForm;
-	DWORD dwFlags;
-	::GetLocalTime( &systime );
-	if( 0 == nDateFormatType ){
-		dwFlags = DATE_LONGDATE;
-		pszForm = NULL;
-	}else{
-		dwFlags = 0;
-		pszForm = pszDateFormat;
-	}
-	::GetDateFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
-	return pszDest;
-}
-
-
-
+//const char* MyGetDateFormat( char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat )
 
 /* 時刻をフォーマット */
-const char* MyGetTimeFormat( char* pszDest, int nDestLen, int nTimeFormatType, const char* pszTimeFormat )
-{
-	SYSTEMTIME systime;
-	const char* pszForm;
-	DWORD dwFlags;
-	::GetLocalTime( &systime );
-	if( 0 == nTimeFormatType ){
-		dwFlags = 0;
-		pszForm = NULL;
-	}else{
-		dwFlags = 0;
-		pszForm = pszTimeFormat;
-	}
-	::GetTimeFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
-	return pszDest;
-}
-
-
-
+//const char* MyGetTimeFormat( char* pszDest, int nDestLen, int nTimeFormatType, const char* pszTimeFormat )
 
 int CALLBACK MYBrowseCallbackProc(
 	HWND hwnd,
@@ -2121,7 +2086,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_COPYLINESWITHLINENUMBER:	return HLP000038;	//選択範囲内全行行番号付きコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
-//	case F_COPYFNAME:		return xxxxxxxxx;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
+	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
 	case F_CREATEKEYBINDLIST:		return HLP000057;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 JEPRO 「リスト」を「一覧」に変更、IDM＿TESTをFに変更したがうまくいかないので殺してある	//Dec. 25, 2000 復活
 
@@ -2140,6 +2105,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_HANKATATOZENKAKUKATA:	return HLP000123;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENKAKUHIRA:	return HLP000124;	/* 半角カタカナ→全角ひらがな */
 	case F_TOZENEI:					return HLP000200;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka //Stonee, 2001/09/26 番号修正
+	case F_TOHANEI:					return HLP000200;	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
 	case F_TABTOSPACE:				return HLP000182;	/* TAB→空白 */
 	case F_SPACETOTAB:				return HLP000196;	/* 空白→TAB */	//#### Stonee, 2001/05/27	//Jul. 03, 2001 JEPRO 番号修正
 	case F_CODECNV_AUTO2SJIS:		return HLP000178;	/* 自動判別→SJISコード変換 */

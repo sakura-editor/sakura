@@ -20,12 +20,18 @@ class CLayoutMgr;
 #ifndef _CLAYOUTMGR_H_
 #define _CLAYOUTMGR_H_
 
-//#include <windows.h>
-#include "CLayout.h"
-#include "CDocLineMgr.h"
-#include "CMemory.h"
- //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-#include "CBregexp.h"
+#include <windows.h>// 2002/2/10 aroka
+#include "global.h"// 2002/2/10 aroka
+//#include "CLayout.h"// 2002/2/10 aroka
+//#include "CDocLineMgr.h"// 2002/2/10 aroka
+//#include "CMemory.h"// 2002/2/10 aroka
+// //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+//#include "CBregexp.h"// 2002/2/10 aroka
+class CBregexp;// 2002/2/10 aroka
+class CLayout;// 2002/2/10 aroka
+class CDocLineMgr;// 2002/2/10 aroka
+class CDocLine;// 2002/2/10 aroka
+class CMemory;// 2002/2/10 aroka
 
 #ifndef TRUE
 	#define TRUE 1

@@ -17,7 +17,8 @@ class CProfile;
 
 
 #include <windows.h>
-#include "CMemory.h"
+//#include "CMemory.h"
+class CMemory; // 2002/2/10 aroka
 
 #define MAX_SECNUM	64
 #define MAX_SECDATA	1024

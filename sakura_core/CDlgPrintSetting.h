@@ -61,8 +61,6 @@ protected:
 	BOOL OnCbnSelChange( HWND, int );
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-	BOOL OnDbnDropDown( HWND hwndCtl, int wID );
-	BOOL OnDbnCloseUp( HWND hwndCtl, int wID );
 
 	void OnChangeSettingType( BOOL );	/* 設定のタイプが変わった */
 	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */

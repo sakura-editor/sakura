@@ -19,7 +19,8 @@ class CFuncKeyWnd;
 #include "CWnd.h"
 //#include <windows.h>
 #include "CShareData.h"
-#include "CEditDoc.h"
+//#include "CEditDoc.h" // 2002/2/10 aroka
+class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ
 class SAKURA_CORE_API CFuncKeyWnd : public CWnd

@@ -20,6 +20,10 @@
 #include "debug.h"
 #include <commctrl.h>
 #include "CRunningTimer.h"
+#include "CLayout.h"/// 2002/2/10 aroka
+#include "CDocLine.h"/// 2002/2/10 aroka
+#include "CDocLineMgr.h"/// 2002/2/10 aroka
+#include "CMemory.h"/// 2002/2/10 aroka
 
 
 
@@ -365,8 +369,8 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 #ifdef _DEBUG
 	{
 		if( NULL != pCDocLine ){
-			int nLineLen = pCDocLine->m_pLine->m_nDataLen;
-			const char * pLine = (const char *)pCDocLine->m_pLine->m_pData;
+			int nLineLen = pCDocLine->m_pLine->GetLength();
+			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr2();
 		}
 	}
 #endif
@@ -397,7 +401,7 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 	}else{
 //		if( pLayout->m_nOffset + pLayout->m_nLength >=
 		if( pLayout->m_nOffset + pLayout->m_nLength >
-			pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
+			pCDocLine->m_pLine->GetLength() - pCDocLine->m_cEol.GetLen() // 2002/2/10 aroka CMemory変更
 		){
 			pLayout->m_cEol = pCDocLine->m_cEol;/* 改行コードの種類 */
 		}else{
@@ -432,8 +436,8 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 #ifdef _DEBUG
 	{
 		if( NULL != pCDocLine ){
-			int nLineLen = pCDocLine->m_pLine->m_nDataLen;
-			const char * pLine = (const char *)pCDocLine->m_pLine->m_pData;
+			int nLineLen = pCDocLine->m_pLine->GetLength();
+			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
 		}
 	}
 #endif
@@ -478,7 +482,7 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 	}else{
 //		if( pLayout->m_nOffset + pLayout->m_nLength >=
 		if( pLayout->m_nOffset + pLayout->m_nLength >
-			pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
+			pCDocLine->m_pLine->GetLength() - pCDocLine->m_cEol.GetLen()
 		){
 			pLayout->m_cEol = pCDocLine->m_cEol;/* 改行コードの種類 */
 		}else{
@@ -524,9 +528,10 @@ const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen )
 	}
 //	pData = m_pcDocLineMgr->GetLineStr( pLayout->m_nLinePhysical, &nDataLen );
 	*pnLineLen = pLayout->m_nLength;
+// 2002/2/10 aroka CMemory変更
 //	return pData + pLayout->m_nOffset;
 //	return pLayout->m_pLine + pLayout->m_nOffset;
-	return pLayout->m_pCDocLine->m_pLine->m_pData + pLayout->m_nOffset;
+	return pLayout->m_pCDocLine->m_pLine->GetPtr2() + pLayout->m_nOffset;
 }
 
 /*
@@ -1298,7 +1303,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 			nCaretPosX = 0;
 //			pData = GetLineStr( nCaretPosY, &nDataLen );
 //			pData = pLayout->m_pLine + pLayout->m_nOffset;
-			pData = pLayout->m_pCDocLine->m_pLine->m_pData + pLayout->m_nOffset;
+			pData = pLayout->m_pCDocLine->m_pLine->GetPtr2() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
 			nDataLen = pLayout->m_nLength;
 
 			for( i = 0; i < nDataLen; ++i ){
@@ -1391,16 +1396,16 @@ void CLayoutMgr::CaretPos_Log2Phys(
 			pLayout = Search( nCaretPosY - 1 );
 			if( NULL == pLayout ){
 				*pnX = 0;
-				*pnY = m_pcDocLineMgr->m_nLines;
+				*pnY = m_pcDocLineMgr->GetLines(); // 2002/2/10 aroka CDocLineMgr変更
 				return;
 			}else{
 				pData = GetLineStr( nCaretPosY - 1, &nDataLen );
 				if( pData[nDataLen - 1] == '\r' || pData[nDataLen - 1] == '\n' ){
 					*pnX = 0;
-					*pnY = m_pcDocLineMgr->m_nLines;
+					*pnY = m_pcDocLineMgr->GetLines(); // 2002/2/10 aroka CDocLineMgr変更
 					return;
 				}else{
-					*pnY = m_pcDocLineMgr->m_nLines - 1;
+					*pnY = m_pcDocLineMgr->GetLines() - 1; // 2002/2/10 aroka CDocLineMgr変更
 					bEOF = TRUE;
 					nX = 999999;
 					goto checkloop;

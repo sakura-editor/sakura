@@ -19,8 +19,9 @@ class CKeyBind;
 #define _CKEYBIND_H_
 
 #include <windows.h>
-#include "CMemory.h"
-#include "keycode.h"
+//#include "CMemory.h"// 2002/2/10 aroka
+//#include "keycode.h"// 2002/2/10 aroka
+class CMemory;// 2002/2/10 aroka
 
 //! ƒL[î•ñ‚ğ•Û‚·‚é
 struct KEYDATA {

@@ -23,7 +23,7 @@
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "mymessage.h"
-#include <locale.h>
+//#include <locale.h>	// 2002/2/10 aroka
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -127,8 +127,9 @@ void CDlgCompare::SetData( void )
 
 	hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_FILES );
 
-	//	Oct. 15, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
-	setlocale ( LC_ALL, "C" );
+//	2002/2/10 aroka ファイル名で比較しないため不用 (2001.12.26 YAZAKIさん)
+//	//	Oct. 15, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
+//	setlocale ( LC_ALL, "C" );
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );

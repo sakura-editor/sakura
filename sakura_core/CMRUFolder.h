@@ -32,6 +32,8 @@ class CMRUFolder;
 #ifndef _CMRUFOLDER_H_
 #define _CMRUFOLDER_H_
 
+#include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+
 enum MRUFolder_maxdata{
 	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z Ç≈36å¬Ç…Ç»ÇÈÇÃÇ≈ÇªÇÍÇ…çáÇÌÇπÇƒ30Å®36Ç…ïœçX
 };

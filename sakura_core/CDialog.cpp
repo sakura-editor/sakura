@@ -13,6 +13,7 @@
 */
 #include "CDialog.h"
 #include "etc_uty.h"
+#include "debug.h"/// 2002/2/10 aroka ヘッダ整理
 
 /* ダイアログプロシージャ */
 BOOL CALLBACK MyDialogProc(

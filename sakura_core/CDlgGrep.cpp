@@ -119,13 +119,18 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* ダイアログのアイコン */
 //	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
-	HICON	hIcon;
+//2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
+	HICON	hIconBig, hIconSmall;
 //	hIcon = ::LoadIcon( NULL, IDI_QUESTION );
-	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
-	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
-	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)NULL );
-	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
+//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
+	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
+	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ), IMAGE_ICON, 16, 16, 0);
+	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
+	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
+//	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
+//	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
+//	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)NULL );
+//	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
 
 	/* 基底クラスメンバ */
@@ -487,32 +492,6 @@ int CDlgGrep::GetData( void )
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 		m_cShareData.AddToSearchKeyArr( m_szText );
-#if 0
-		/* 検索文字列 */
-		if( 0 < lstrlen( m_szText ) ){
-			pcmWork = new CMemory( m_szText, lstrlen( m_szText ) );
-			for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-				if( 0 == strcmp( m_szText, m_pShareData->m_szSEARCHKEYArr[i] ) ){
-					break;
-				}
-			}
-			if( i < m_pShareData->m_nSEARCHKEYArrNum ){
-				for( j = i; j > 0; j-- ){
-					strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-				}
-			}else{
-				for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-					strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-				}
-				++m_pShareData->m_nSEARCHKEYArrNum;
-				if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
-					m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
-				}
-			}
-			strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork->GetPtr( NULL ) );
-			delete pcmWork;
-		}
-#endif
 	}
 
 	/* 検索ファイル */

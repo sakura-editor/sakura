@@ -25,6 +25,10 @@
 #include "etc_uty.h"
 #include "CRunningTimer.h"
 #include "CDlgCancel.h"
+#include "CDocLine.h"// 2002/2/10 aroka
+#include "CMemory.h"// 2002/2/10 aroka
+#include "CBregexp.h"// 2002/2/10 aroka
+#include "sakura_rc.h"// 2002/2/10 aroka
 
 
 /* 指定範囲のデータを置換(削除 & データを挿入)
@@ -51,8 +55,9 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	int nWorkLen;
 	char* pLine;
 	int nLineLen;
-	char* pLine2;
-	int nLineLen2;
+// 2002/2/10 aroka 未使用
+//	char* pLine2;
+//	int nLineLen2;
 	int i;
 	int			nBgn;
 	int			nPos;
@@ -92,8 +97,8 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	/* 現在行の情報を得る */
 	pCDocLine = GetLineInfo( pArg->nDelLineFrom );
 	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
-		pLine = pCDocLine->m_pLine->m_pData;
-		nLineLen = pCDocLine->m_pLine->m_nDataLen;
+		pLine = pCDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+		nLineLen = pCDocLine->m_pLine->GetLength(); // 2002/2/10 aroka CMemory変更
 		pCDocLinePrev = pCDocLine->m_pPrev;
 		pCDocLineNext = pCDocLine->m_pNext;
 		/* 現在行の削除開始位置を調べる */
@@ -106,7 +111,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 		if( i == pArg->nDelLineTo ){
 			nWorkLen = pArg->nDelPosTo - nWorkPos;
 		}else{
-			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
+			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
 		if( 0 == nWorkLen ){
 			/* 前の行へ */
@@ -120,14 +125,20 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 
 		/* 改行も削除するんかぃのぉ・・・？ */
 		if( EOL_NONE != pCDocLine->m_cEol &&
-			nWorkPos + nWorkLen > pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
+			nWorkPos + nWorkLen > nLineLen - pCDocLine->m_cEol.GetLen() // 2002/2/10 aroka CMemory変更
 		){
 			/* 削除する長さに改行も含める */
-			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
-
+			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
 		/* 削除されたデータを保存 */
-		if( NULL == pArg->pcmemDeleted->Append( &pCDocLine->m_pLine->m_pData[nWorkPos], nWorkLen ) ){
+		// 2002/2/10 aroka from here CMemory変更 念のため。
+		if( pLine != pCDocLine->m_pLine->GetPtr2() ){
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
+				"CDocLineMgr::ReplaceData()\n\npLine != pCDocLine->m_pLine->GetPtr2() =%d\ni=%d\npArg->nDelLineTo=%d", pLine, i, pArg->nDelLineTo
+			);
+		}
+		// 2002/2/10 aroka to here CMemory変更
+		if( NULL == pArg->pcmemDeleted->Append( &pLine[nWorkPos], nWorkLen ) ){
 			/* メモリ確保に失敗した */
 			pArg->pcmemDeleted->SetDataSz( "" );
 			break;
@@ -158,8 +169,8 @@ next_line:;
 	}
 	/* 後ろから処理していく */
 	for( ; i >= pArg->nDelLineFrom && NULL != pCDocLine; i-- ){
-		pLine = pCDocLine->m_pLine->m_pData;
-		nLineLen = pCDocLine->m_pLine->m_nDataLen;
+		pLine = pCDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+		nLineLen = pCDocLine->m_pLine->GetLength(); // 2002/2/10 aroka CMemory変更
 		pCDocLinePrev = pCDocLine->m_pPrev;
 		pCDocLineNext = pCDocLine->m_pNext;
 		/* 現在行の削除開始位置を調べる */
@@ -172,7 +183,7 @@ next_line:;
 		if( i == pArg->nDelLineTo ){
 			nWorkLen = pArg->nDelPosTo - nWorkPos;
 		}else{
-			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
+			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
 
 		if( 0 == nWorkLen ){
@@ -181,15 +192,15 @@ next_line:;
 		}
 		/* 改行も削除するんかぃのぉ・・・？ */
 		if( EOL_NONE != pCDocLine->m_cEol &&
-			nWorkPos + nWorkLen > pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
+			nWorkPos + nWorkLen > nLineLen - pCDocLine->m_cEol.GetLen() // 2002/2/10 aroka CMemory変更
 		){
 			/* 削除する長さに改行も含める */
-			nWorkLen = pCDocLine->m_pLine->m_nDataLen - nWorkPos;
+			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
 
 
 		/* 行全体の削除 */
-		if( nWorkLen >= pCDocLine->m_pLine->m_nDataLen ){
+		if( nWorkLen >= nLineLen ){ // 2002/2/10 aroka CMemory変更
 			/* 削除した行の総数 */
 			++(pArg->nDeletedLineNum);
 			/* 行オブジェクトの削除、リスト変更、行数-- */
@@ -197,12 +208,12 @@ next_line:;
 			pCDocLine = NULL;
 		}else
 		/* 次の行と連結するような削除 */
-		if( nWorkPos + nWorkLen >= pCDocLine->m_pLine->m_nDataLen ){
+		if( nWorkPos + nWorkLen >= nLineLen ){ // 2002/2/10 aroka CMemory変更
 
 			/* 行内データ削除 */
 			{// 20020119 aroka ブロック内に pWork を閉じ込めた
 				char* pWork = new char[nWorkPos + 1];
-				memcpy( pWork, pLine, nWorkPos );
+				memcpy( pWork, pLine, nWorkPos ); // 2002/2/10 aroka 何度も GetPtr を呼ばない
 				pCDocLine->m_pLine->SetData( pWork, nWorkPos );
 				delete [] pWork;
 			}
@@ -213,9 +224,10 @@ next_line:;
 				pCDocLine->m_cEol = pCDocLineNext->m_cEol;	/* 改行コードの種類 */
 
 				/* 次の行のデータを最後に追加 */
-				pLine2 = pCDocLineNext->m_pLine->m_pData;
-				nLineLen2 = pCDocLineNext->m_pLine->m_nDataLen;
-				pCDocLine->m_pLine->Append( pLine2, nLineLen2 );
+				// 2002/2/10 aroka 直接 CMemory を Append
+				//pLine2 = pCDocLineNext->m_pLine->GetPtr2();
+				//nLineLen2 = pCDocLineNext->m_pLine->GetLength();
+				pCDocLine->m_pLine->Append( pCDocLineNext->m_pLine );
 				/* 次の行 行オブジェクトの削除 */
 				DeleteNode( pCDocLineNext );
 				pCDocLineNext = NULL;
@@ -229,12 +241,14 @@ next_line:;
 		}else{
 		/* 行内だけの削除 */
 			{// 20020119 aroka ブロック内に pWork を閉じ込めた
-				char* pWork = new char[pCDocLine->m_pLine->m_nDataLen - nWorkLen + 1];
+				// 2002/2/10 aroka CMemory変更 何度も GetLength,GetPtr をよばない。
+				int nLength = pCDocLine->m_pLine->GetLength();
+				char* pWork = new char[nLength - nWorkLen + 1];
 				memcpy( pWork, pLine, nWorkPos );
 
-				memcpy( &pWork[nWorkPos], &pLine[nWorkPos + nWorkLen], pCDocLine->m_pLine->m_nDataLen - ( nWorkPos + nWorkLen ) );
+				memcpy( &pWork[nWorkPos], &pLine[nWorkPos + nWorkLen], nLength - ( nWorkPos + nWorkLen ) );
 
-				pCDocLine->m_pLine->SetData( pWork, pCDocLine->m_pLine->m_nDataLen - nWorkLen );
+				pCDocLine->m_pLine->SetData( pWork, nLength - nWorkLen );
 				delete [] pWork;
 			}
 			pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
@@ -281,6 +295,7 @@ prev_line:;
 	}else{
 		pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 
+		// 2002/2/10 aroka 何度も GetPtr を呼ばない
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		cmemPrevLine.SetData( pLine, pArg->nDelPosFrom );
 		cmemNextLine.SetData( &pLine[pArg->nDelPosFrom], nLineLen - pArg->nDelPosFrom );
@@ -536,9 +551,11 @@ void CDocLineMgr::MarkSearchWord(
 		while( NULL != pDocLine ){
 			if(!pDocLine->IsBookMarked() &&
 				WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )) {
+				const char* pData = pDocLine->m_pLine->GetPtr2(); // 2002/2/10 aroka CMemory変更
+				
 				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
-				   (( FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
-					( TRUE  == bLoHiCase && 0 ==   memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
+				   (( FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
+					( TRUE  == bLoHiCase && 0 ==   memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
 					pDocLine->SetBookMark(true);
 				}else
 				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE ) ){

@@ -37,7 +37,7 @@ public:
 	*/
 	CWaitCursor( HWND );
 	~CWaitCursor();
-public:
+private: // 2002/2/10 aroka
 	HCURSOR	m_hCursor;
 	HCURSOR	m_hCursorOld;
 

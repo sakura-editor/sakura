@@ -17,6 +17,7 @@
 #include "CDlgInput1.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
+#include "debug.h" // 2002/2/10 aroka
 
 //	From Here Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(27→46)
 #define STR_CUSTMENU_HEAD_LEN 	46

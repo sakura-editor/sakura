@@ -35,6 +35,7 @@
 #include "Funccode.h"
 #include "debug.h"
 #include "CMacro.h"
+#include "CSMacroMgr.h"// 2002/2/10 aroka
 #include "CShareData.h"
 #include "etc_uty.h"
 #include "CEditApp.h"

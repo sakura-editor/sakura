@@ -34,7 +34,7 @@
 #define _CEOL_H_
 
 #include "global.h"
-#include "debug.h"
+//#include "debug.h" 2002/2/10 aroka
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

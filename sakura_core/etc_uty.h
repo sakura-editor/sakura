@@ -29,8 +29,9 @@ class CMemory;// 2002/2/3 aroka ヘッダ軽量化
 class CEOL;// 2002/2/3 aroka ヘッダ軽量化
 class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 
-SAKURA_CORE_API const char* MyGetDateFormat( char*, int, int, const char* );/* 日付をフォーマット */
-SAKURA_CORE_API const char* MyGetTimeFormat( char*, int, int, const char* );/* 時刻をフォーマット */
+//@@@ 2002.2.9 YAZAKI CShareDataに移動
+//SAKURA_CORE_API const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat );/* 日付をフォーマット */
+//SAKURA_CORE_API const char* MyGetTimeFormat( SYSTEMTIME &systime, char* pszDest, int nDestLen, int nTimeFormatType, const char* pszTimeFormat );/* 時刻をフォーマット */
 SAKURA_CORE_API void CutLastYenFromDirectoryPath( char* );/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 SAKURA_CORE_API void AddLastYenFromDirectoryPath( char* );/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 SAKURA_CORE_API int LimitStringLengthB( const char*, int, int, CMemory& );/* データを指定バイト数以内に切り詰める */

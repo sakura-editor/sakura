@@ -14,6 +14,7 @@
 */
 
 #include "CPropCommon.h"
+#include "debug.h" // 2002/2/10 aroka
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

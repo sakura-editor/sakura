@@ -129,7 +129,11 @@
                                         0x8089051b    // IDD_REPLACE
 #define HIDC_CHECK_bCheckFileTimeStamp  0x806e0513    // IDD_PROP_FILE
 #define HIDC_CHECK_bDropFileAndClose    0x806e0511    // IDD_PROP_FILE
+#define HIDC_CHECK_bFunclistSetFocusOnJump \
+                                        0x807a051c    // IDD_FUNCLIST
 #define HIDC_CHECK_bGrepExitConfirm     0x93f7050f    // IDD_PROP_GREP
+#define HIDC_CHECK_bMarkUpBlankLineEnable \
+                                        0x807a051b    // IDD_FUNCLIST
 #define HIDC_CHECK_bMenuIcon            0x93f40537    // IDD_PROP_WIN
 #define HIDC_CHECK_bNotOverWriteCRLF    0x93f50514    // IDD_PROP_EDIT
 #define HIDC_CHECK_bScrollBarHorz       0x93f40519    // IDD_PROP_WIN

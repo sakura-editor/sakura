@@ -17,6 +17,8 @@
 #include "CDlgInput1.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
+#include "sakura_rc.h"	// 2002/2/10 aroka
+#include "debug.h"		// 2002/2/10 aroka
 
 // 印刷設定 CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -124,7 +126,7 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 
-//	::SetTimer( m_hWnd, IDT_PRINTSETTING, 500, NULL );
+	::SetTimer( m_hWnd, IDT_PRINTSETTING, 500, NULL );
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );
@@ -132,7 +134,7 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 
 BOOL CDlgPrintSetting::OnDestroy( void )
 {
-//	::KillTimer( m_hWnd, IDT_PRINTSETTING );
+	::KillTimer( m_hWnd, IDT_PRINTSETTING );
 	/* 基底クラスメンバ */
 	return CDialog::OnDestroy();
 }
@@ -292,7 +294,7 @@ void CDlgPrintSetting::SetData( void )
 		"German Std Fanfold、8 1/2x12 inch",
 		"German Legal Fanfold、8 1/2x13 inch"
 	};
-	int		nPaerNameArrNum = sizeof( pszPaperNameArr ) / sizeof( pszPaperNameArr[0] );
+	int		nPaperNameArrNum = sizeof( pszPaperNameArr ) / sizeof( pszPaperNameArr[0] );
 	int		nPaperIdArr[] = {
 		DMPAPER_A4		,
 		DMPAPER_A3		,
@@ -358,7 +360,7 @@ void CDlgPrintSetting::SetData( void )
 	/* 用紙サイズ一覧 */
 	hwndComboPaper = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER );
 	::SendMessage( hwndComboPaper, CB_RESETCONTENT, 0, 0 );
-	for( i = 0; i < nPaerNameArrNum; ++i ){
+	for( i = 0; i < nPaperNameArrNum; ++i ){
 		nItemIdx = ::SendMessage( hwndComboPaper, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)pszPaperNameArr[i] );
 		::SendMessage( hwndComboPaper, CB_SETITEMDATA, nItemIdx, (LPARAM)nPaperIdArr[i] );
 	}
@@ -559,65 +561,16 @@ int CDlgPrintSetting::GetData( void )
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth * 2;
 
 	//@@@ 2002.2.4 YAZAKI
-	char pszWork[HEADER_MAX+1];
-	::GetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, pszWork, HEADER_MAX );	//	100文字で制限しないと。。。
-	/*	pszWorkを$bで分割	*/
-	char *p, *q;	//	p:着目点。q:各位置の先頭。
-	int pos = POS_LEFT;
-	for (p = pszWork, q = pszWork; *p != '\0' && pos <= POS_RIGHT; ){
-		if( *p != '$' ){
-			p++;
-			continue;
-		}
-		if ( *(p + 1) == '$' ){	//	$$は無視。
-			p++;
-			continue;
-		}
-		else if ( *(p + 1) == '\0' ){
-			//	$の次に文字が無い
-			break;	
-		}
-		if ( *(p + 1) == 'b' ){
-			strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[pos], q, p - q);
-			pos++;
-			q = p + 2;	//	qは$bの次の文字。
-			p = q;			//	pも同じところ。
-		}
-	}
-	if (pos == POS_RIGHT){
-		strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[pos], q, p - q);
-	}
+	/* ヘッダー */
+	::GetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
+	::GetDlgItemText( m_hWnd, IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
+	::GetDlgItemText( m_hWnd, IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
 	/* フッター */
-	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, pszWork, HEADER_MAX );	//	100文字で制限しないと。。。
-	/*	pszWorkを$bで分割	*/
-	pos = POS_LEFT;
-	for (p = pszWork, q = pszWork; *p != '\0' && pos <= POS_RIGHT; ){
-		if( *p != '$' ){
-			p++;
-			continue;
-		}
-		if ( *(p + 1) == '$' ){	//	$$は無視。
-			p++;
-			continue;
-		}
-		else if ( *(p + 1) == '\0' ){
-			//	$の次に文字が無い
-			break;	
-		}
-		if ( *(p + 1) == 'b' ){
-			strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[pos], q, p - q);
-			pos++;
-			q = p + 2;	//	qは$bの次の文字。
-			p = q;			//	pも同じところ。
-		}
-		else {
-			p++;
-		}
-	}
-	if (pos == POS_RIGHT){
-		strncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[pos], q, p - q);
-	}
+	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
+	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
+	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
+
 	return TRUE;
 }
 
@@ -652,21 +605,15 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINLX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10, FALSE );
 	::SetDlgItemInt( m_hWnd, IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
 
-	char pszWork[HEADER_MAX+1];
-	sprintf(pszWork, "%s$b%s$b%s",
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT],
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER],
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT]
-	);
-	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, pszWork );	//	100文字で制限しないと。。。
-//	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0] );
-	sprintf(pszWork, "%s$b%s$b%s",
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT],
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER],
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT]
-	);
-	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, pszWork );	//	100文字で制限しないと。。。
-//	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0] );
+	/* ヘッダー */
+	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT] );	//	100文字で制限しないと。。。
+	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER] );	//	100文字で制限しないと。。。
+	::SetDlgItemText( m_hWnd, IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT] );	//	100文字で制限しないと。。。
+
+	/* フッター */
+	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT] );	//	100文字で制限しないと。。。
+	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100文字で制限しないと。。。
+	::SetDlgItemText( m_hWnd, IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100文字で制限しないと。。。
 
 	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap ){
 		::CheckDlgButton( m_hWnd, IDC_CHECK_WORDWRAP, BST_CHECKED );
@@ -942,15 +889,4 @@ LPVOID CDlgPrintSetting::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
-BOOL CDlgPrintSetting::OnDbnDropDown( HWND hwndCtl, int wID )
-{
-	::SetTimer( m_hWnd, IDT_PRINTSETTING, 500, NULL );
-	return FALSE;
-}
-
-BOOL CDlgPrintSetting::OnDbnCloseUp( HWND hwndCtl, int wID )
-{
-	::KillTimer( m_hWnd, IDT_PRINTSETTING );
-	return FALSE;
-}
 /*[EOF]*/

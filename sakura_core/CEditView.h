@@ -331,7 +331,7 @@ protected:
 	BOOL IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
-	BOOL IsSearchString( const char*, int, int, int* );			/* 現在位置が検索文字列に該当するか */
+	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, BOOL ) ;							// 子プロセスの標準出力をリダイレクトする
 	void AddToCmdArr( const char* );
@@ -471,7 +471,7 @@ protected:
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
 	void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
 	void Command_ADDTAIL( const char*, int );		/* 最後にテキストを追加 */
-	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */// 2002/2/3 aroka
+	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
 	void Command_COPYTAG( void );					/* このファイルのパス名とカーソル位置をコピー */
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
@@ -517,6 +517,7 @@ void ReplaceData_CEditView(
 	void Command_TOZENKAKUHIRA( void );			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	void Command_TOHANKAKU( void );				/* 全角→半角 */
 	void Command_TOZENEI( void );				/* 半角英数→全角英数 */ //July. 30, 2001 Misaka
+	void Command_TOHANEI( void );				/* 全角英数→半角英数 */ //@@@ 2002.2.11 YAZAKI
 	void Command_HANKATATOZENKAKUKATA( void );	/* 半角カタカナ→全角カタカナ */
 	void Command_HANKATATOZENKAKUHIRA( void );	/* 半角カタカナ→全角ひらがな */
 	void Command_TABTOSPACE( void );			/* TAB→空白 */
@@ -540,6 +541,7 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( void );						/* 置換(実行) */
+	void Command_REPLACE_ALL( void );					/* すべて置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
@@ -559,7 +561,7 @@ void ReplaceData_CEditView(
 	void Command_BOOKMARK_PREV( void );					/* 前のブックマークへ */
 	void Command_BOOKMARK_RESET( void );				/* ブックマークの全解除 */
 // To Here 2001.12.03 hor
-	void Command_BOOKMARK_PATTERN(const char*);	// 2002.01.16 hor 指定パターンに一致する行をマーク
+	void Command_BOOKMARK_PATTERN( void );				// 2002.01.16 hor 指定パターンに一致する行をマーク
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */

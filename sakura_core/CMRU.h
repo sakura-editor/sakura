@@ -33,6 +33,8 @@ class CMRU;
 #ifndef _CMRU_H_
 #define _CMRU_H_
 
+#include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+
 /*	MRUƒŠƒXƒg‚ÉŠÖŒW‚·‚émaxdata	*/
 enum MRU_maxdata{
 	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z ‚Å36ŒÂ‚É‚È‚é‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚Ä30¨36‚É•ÏX

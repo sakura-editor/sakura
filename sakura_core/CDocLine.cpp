@@ -15,6 +15,7 @@
 */
 
 #include "CDocLine.h"
+#include "CMemory.h"
 
 CDocLine::CDocLine()
 	: m_pPrev( NULL ), m_pNext( NULL ), m_pLine( NULL ),

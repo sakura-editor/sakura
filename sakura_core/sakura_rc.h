@@ -337,10 +337,14 @@
 #define IDC_EDIT_KEYSFUNC               1273
 #define IDC_BUTTON_ASSIGN               1274
 #define IDC_BUTTON2                     1275
+#define IDC_EDIT_HEAD2                  1275
 #define IDC_BUTTON4                     1276
+#define IDC_EDIT_HEAD3                  1276
 #define IDC_BUTTON_CURRENTFOLDER        1277
 #define IDC_EDIT_DEBUG                  1278
+#define IDC_EDIT_FOOT2                  1278
 #define IDC_CHECK_USETRAYICON           1279
+#define IDC_EDIT_FOOT3                  1279
 #define IDC_CHECK_STAYTASKTRAY          1280
 #define IDC_CHECK_DispSTATUSBAR         1281
 #define IDC_RADIO_OUTPUTSTYLE2          1282
@@ -371,6 +375,8 @@
 #define IDC_CHECK_bScrollBarHorz        1305
 #define IDC_CHECK_bAutoCloseDlgFuncList 1306
 #define IDC_CHECK_bAutoCloseDlgReplace  1307
+#define IDC_CHECK_bMarkUpBlankLineEnable 1307
+#define IDC_CHECK_bFunclistSetFocusOnJump 1308
 #define IDC_STATIC_CURFILE              1310
 #define IDC_PROGRESS                    1311
 #define IDC_LIST_WORDS                  1312

@@ -17,7 +17,9 @@
 #include "funccode.h"
 #include "CMacro.h"
 #include "CEditApp.h"
-
+#include "CEditView.h" //2002/2/10 aroka
+#include "CSMacroMgr.h" //2002/2/10 aroka
+#include "etc_uty.h" //2002/2/10 aroka
 
 CMacro::CMacro( int nFuncID )
 {
@@ -52,10 +54,6 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 	/*	文字列パラメータを追加 */
 	case F_INSTEXT:
 	case F_FILEOPEN:
-	case F_BOOKMARK_PATTERN:	//2002.01.16
-		AddParam( (const char *)lParam );
-		break;
-
 	case F_EXECCOMMAND:
 		{
 			AddParam( (const char *)lParam );	//	lParamを追加。
@@ -75,6 +73,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 		}
 		break;
 
+	case F_BOOKMARK_PATTERN:	//2002.02.08 hor
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		{
@@ -91,6 +90,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 		}
 		break;
 	case F_REPLACE:
+	case F_REPLACE_ALL:
 		{
 			AddParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
 			AddParam( pcEditView->m_pShareData->m_szREPLACEKEYArr[0] );	//	lParamを追加。
@@ -234,20 +234,11 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 		switch ( m_nFuncID ){
 		case F_INSTEXT:
 		case F_FILEOPEN:
-		case F_BOOKMARK_PATTERN:	//2002.01.16
-			//	引数ひとつ分だけ保存
-			pText = m_pParamTop->m_pData;
-			nTextLen = strlen(pText);
-			cmemWork.SetData( pText, nTextLen );
-			cmemWork.Replace( "\\\'", "\'" );
-			cmemWork.Replace( "\\\\", "\\" );
-			wsprintf( szLine, "%s(\'%s\');\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
-			_lwrite( hFile, szLine, strlen( szLine ) );
-			break;
 		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 			wsprintf( szLine, "%s(%d, %d);\t// %s\r\n", szFuncName, (m_pParamTop->m_pData ? atoi(m_pParamTop->m_pData) : 1), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
+		case F_BOOKMARK_PATTERN:	//2002.02.08 hor
 		case F_SEARCH_NEXT:
 		case F_SEARCH_PREV:
 			pText = m_pParamTop->m_pData;
@@ -269,6 +260,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_REPLACE:
+		case F_REPLACE_ALL:
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
@@ -334,10 +326,6 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		pcEditView->HandleCommand( Index, FALSE, atoi(Argument[0]), 0, 0, 0 );
 		break;
 	case F_INSTEXT:			//	テキスト挿入
-	case F_BOOKMARK_PATTERN:	//2002.01.16
-		//	一つ目の引数が文字列。
-		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0 );	//	標準
-		break;
 	case F_ADDTAIL:		//	この操作はキーボード操作では存在しないので保存することができない？
 		//	一つ目の引数が文字列。
 		//	ただし2つ目の引数は文字数。
@@ -365,6 +353,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		}
 		break;
 	/*	一つ目の引数は文字列、二つ目の引数は数値	*/
+	case F_BOOKMARK_PATTERN:	//2002.02.08 hor
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		//	Argument[0]を検索。オプションはArgument[1]に。
@@ -397,7 +386,8 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->m_pShareData->m_Common.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
 			//	コマンド発行
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+		//	pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0);
 		}
 		break;
 	case F_EXECCOMMAND:
@@ -408,11 +398,13 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		{
 			LPARAM lFlag = atoi(Argument[1]);
 			pcEditView->m_pShareData->m_bGetStdout = lFlag & 0x01 ? 1 : 0;
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)atoi(Argument[1]), 0, 0);
+		//	pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)atoi(Argument[1]), 0, 0);
+			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
 	/* はじめの2つの引数は文字列。3つ目は数値 */
 	case F_REPLACE:
+	case F_REPLACE_ALL:
 		//	Argument[0]を、Argument[1]に置換。オプションはArgument[2]に（入れる予定）
 		//	Argument[2]:
 		//		次の数値の和。
@@ -455,7 +447,15 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->m_pShareData->m_Common.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
-			pcEditView->m_pShareData->m_Common.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;	//	置換する時は選べない
+//			pcEditView->m_pShareData->m_Common.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
+			if (Index == F_REPLACE) {
+				//	置換する時は選べない
+				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= 0;
+			}
+			else if (Index == F_REPLACE_ALL) {
+				//	全置換の時は選べる？
+				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
+			}
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget	= lFlag >> 8;	//	8bitシフト（0x100で割り算）
 			//	コマンド発行
 			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0);

@@ -19,11 +19,11 @@ class CDialog;
 
 #include <windows.h>
 #include <dbt.h>
-#include "sakura_rc.h"
+//#include "sakura_rc.h" // 2002/2/10 aroka ヘッダ整理
 //#include "debug.h"
 #include "CShareData.h"
-#include "etc_uty.h"
-#include "debug.h"
+//#include "etc_uty.h" // 2002/2/10 aroka 
+//#include "debug.h" // 2002/2/10 aroka 
 #include "global.h"
 
 
@@ -64,8 +64,8 @@ public:
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked( int );
 	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnDbnDropDown( HWND hwndCtl, int wID ){return FALSE;}
-	virtual BOOL OnDbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
+//	virtual BOOL OnDbnDropDown( HWND hwndCtl, int wID ){return FALSE;}
+//	virtual BOOL OnDbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }

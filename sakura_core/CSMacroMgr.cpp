@@ -126,6 +126,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_TOUPPER,		 			"S_ToUpper",				"",			NULL}, //英小文字→英大文字
 	{F_TOHANKAKU,		 		"S_ToHankaku",				"",			NULL}, /* 全角→半角 */
 	{F_TOZENEI,		 			"S_ToZenEi",				"",			NULL}, /* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	{F_TOHANEI,		 			"S_ToHanEi",				"",			NULL}, /* 全角英数→半角英数 */
 	{F_TOZENKAKUKATA,	 		"S_ToZenKata",				"",			NULL}, /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	{F_TOZENKAKUHIRA,	 		"S_ToZenHira",				"",			NULL}, /* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	{F_HANKATATOZENKAKUKATA,	"S_HanKataToZenKata",		"",			NULL}, /* 半角カタカナ→全角カタカナ */
@@ -151,7 +152,8 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_SEARCH_NEXT,				"S_SearchNext",				"(str: String; flg: Integer)",			NULL}, //次を検索
 	{F_SEARCH_PREV,				"S_SearchPrev",				"(str: String; flg: Integer)",			NULL}, //前を検索
 	{F_REPLACE_DIALOG,			"S_ReplaceDialog",			"",			NULL}, //置換(置換ダイアログ)
-	{F_REPLACE,					"S_Replace",				"(before, after: String; flg: Integer)",	NULL}, //置換(置換ダイアログ)
+	{F_REPLACE,					"S_Replace",				"(before, after: String; flg: Integer)",	NULL}, //置換(実行)
+	{F_REPLACE_ALL,				"S_ReplaceAll",				"(before, after: String; flg: Integer)",	NULL}, //すべて置換(実行)
 	{F_SEARCH_CLEARMARK,		"S_SearchClearMark",		"",			NULL}, //検索マークのクリア
 	{F_GREP,					"S_Grep",					"(str, file, folder: String; flg: Integer)",			NULL}, //Grep
 	{F_JUMP,					"S_Jump",					"(line, flg: Integer)",			NULL}, //指定行ヘジャンプ
@@ -167,7 +169,7 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_BOOKMARK_RESET,			"S_BookmarkReset",			"",			NULL}, //ブックマークの全解除
 	{F_BOOKMARK_VIEW,			"S_BookmarkView",			"",			NULL}, //ブックマークの一覧
 // To Here 2001.12.03 hor
-	{F_BOOKMARK_PATTERN,		"S_BookmarkPattern",		"",			NULL}, // 2002.01.16 hor 指定パターンに一致する行をマーク
+	{F_BOOKMARK_PATTERN,		"S_BookmarkPattern",		"(str: String; flg: Integer)",	NULL}, // 2002.01.16 hor 指定パターンに一致する行をマーク
 
 	/* モード切り替え系 */
 	{F_CHGMOD_INS,				"S_ChgmodINS",				"",			NULL}, //挿入／上書きモード切り替え
@@ -579,6 +581,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_TOUPPER		 			://英小文字→英大文字
 	case F_TOHANKAKU		 		:/* 全角→半角 */
 	case F_TOZENEI			 		:/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	case F_TOHANEI			 		:/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA	 		:/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA	 		:/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA		:/* 半角カタカナ→全角カタカナ */
@@ -602,7 +605,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_SEARCH_DIALOG			://検索(単語検索ダイアログ)
 	case F_SEARCH_NEXT				://次を検索
 	case F_SEARCH_PREV				://前を検索
-	case F_REPLACE					://置換(置換ダイアログ)
+	case F_REPLACE					://置換(実行)
+	case F_REPLACE_ALL				://すべて置換(実行)
 	case F_SEARCH_CLEARMARK			://検索マークのクリア
 	case F_GREP						://Grep
 //	case F_JUMP_DIALOG				://指定行ヘジャンプ
@@ -619,6 +623,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_BOOKMARK_RESET			://ブックマークの全解除
 //	case F_BOOKMARK_VIEW			://ブックマークの一覧
 // To Here 2001.12.03 hor
+	case F_BOOKMARK_PATTERN			://検索しして該当行をマーク	// 2002.02.08 hor
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS				://挿入／上書きモード切り替え
@@ -676,7 +681,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_TILE_H					://左右に並べて表示
 //	case F_MAXIMIZE_V				://縦方向に最大化
 //	case F_MINIMIZE_ALL				://すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
-//	case F_REDRAW					://再描画
+	case F_REDRAW					://再描画
 	case F_WIN_OUTPUT				://アウトプットウィンドウ表示
 
 	/* 支援 */

@@ -4,6 +4,7 @@
 
 	@author MIK
 	@date Jan. 11, 2002
+	@date Feb. 02, 2002  内部処理を統一、全角アルファベット同一視に対応
 	$Revision$
 */
 /*
@@ -36,6 +37,10 @@
  * ものです。
  * 日本語は SJIS です。
  *
+ * MY_ICMP_MBS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ *  これを定義すると全角のアルファベットも大文字小文字の区別がなくなります。
+ * @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ *
  * stricmp, strnicmp, memicmp (および _ 付きのもの) を使用しているファイルの
  * 先頭に #include "my_icmp.h" を追加します。ただし、他のヘッダファイルよりも
  * 後になる場所に追加してください。
@@ -57,6 +62,12 @@
 /*
  * マクロ
  */
+#define MY_ICMP_MBS  /* マルチバイト対応をします */
+#undef  MY_ICMP_MBS
+
+
+
+/* 関数を再定義します */
 #define  memicmp(a,b,c)    my_memicmp((a),(b),(c))
 #define  stricmp(a,b)      my_stricmp((a),(b))
 #define  strnicmp(a,b,c)   my_strnicmp((a),(b),(c))
@@ -76,10 +87,15 @@
 #endif
 #define  _strnicmp(a,b,c)  my_strnicmp((a),(b),(c))
 
+#if 0
+#define  _mbsicmp(a,b)     my_stricmp((a),(b))
+#define  _mbsnicmp(a,b,c)    my_strnicmp((a),(b),(c))
+#endif  /* if 0 */
+
+#if 0
 #define  toupper(a)        my_toupper((a))
 #define  tolower(a)        my_tolower((a))
 
-//#if 0
 #ifdef  _toupper
 #undef  _toupper
 #endif
@@ -89,11 +105,11 @@
 #undef  _tolower
 #endif
 #define  _tolower(a)       my_tolower((a))
-//#endif
+#endif  /* if 0 */
 
 #if 0
 #define  setlocale(a,b)    
-#endif
+#endif  /* if 0 */
 
 #define  MY_INLINE
 //#define  MY_INLINE  inline
@@ -107,9 +123,15 @@ SAKURA_CORE_API MY_INLINE int my_toupper( int c );
 SAKURA_CORE_API MY_INLINE int my_tolower( int c );
 SAKURA_CORE_API MY_INLINE int my_iskanji1( int c );
 SAKURA_CORE_API MY_INLINE int my_iskanji2( int c );
+SAKURA_CORE_API int my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 SAKURA_CORE_API int my_memicmp( const void *m1, const void *m2, unsigned int n );
 SAKURA_CORE_API int my_stricmp( const char *s1, const char *s2 );
 SAKURA_CORE_API int my_strnicmp( const char *s1, const char *s2, size_t n );
+#ifdef MY_ICMP_MBS
+SAKURA_CORE_API MY_INLINE int my_mbtoupper2( int c );
+SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c );
+SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c );
+#endif  /* MY_ICMP_MBS */
 
 
 

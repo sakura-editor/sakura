@@ -20,7 +20,7 @@ class CHokanMgr;
 #include "CDialog.h"
 #include <windows.h>
 #include "CMemory.h"
-#include "CShareData.h"
+//#include "CShareData.h" // 2002/2/10 aroka
 
 //! キーワード補完
 class SAKURA_CORE_API CHokanMgr : public CDialog

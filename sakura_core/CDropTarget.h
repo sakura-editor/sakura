@@ -82,11 +82,13 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+private: // 2002/2/10 aroka アクセス権変更
 	HWND			m_hWnd_DropTarget;
-	LPDATAOBJECT	m_pDataObject;
 	CEditView*		m_pCEditView;
 //	void*			m_pCEditView;
 	//	static REFIID	m_owniid;
+public:
+	LPDATAOBJECT	m_pDataObject;// 2002/2/10 aroka ここに移動
 	BOOL			Register_DropTarget( HWND );
 	BOOL			Revoke_DropTarget( void );
 	STDMETHODIMP	DragEnter( LPDATAOBJECT, DWORD, POINTL , LPDWORD );

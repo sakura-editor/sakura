@@ -20,6 +20,7 @@
 //	#include <malloc.h>
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
+#include "CSMacroMgr.h"// 2002/2/10 aroka
 //	#include "debug.h"
 #include "charcode.h"
 //	#include "etc_uty.h"

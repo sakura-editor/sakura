@@ -445,7 +445,7 @@ void CEditView::DeleteData(
 //	int			nPosYNext;
 	int			nCaretPosXOld;
 	int			nCaretPosYOld;
-	BOOL		bBoxSelected;
+//	BOOL		bBoxSelected;
 	int			i;
 	const CLayout*	pcLayout;
 	int			nSelectColmFrom_Old;
@@ -455,7 +455,7 @@ void CEditView::DeleteData(
 
 	nCaretPosXOld = m_nCaretPosX;
 	nCaretPosYOld = m_nCaretPosY;
-	bBoxSelected = FALSE;
+//	bBoxSelected = FALSE;
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
@@ -796,6 +796,7 @@ void CEditView::Command_UNDO( void )
 
 	/* 現在のUndo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = m_pcEditDoc->m_cOpeBuf.DoUndo( &bIsModified ) ) ){
+		m_bDrawSWITCH = FALSE;	//	hor
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		for( i = nOpeBlkNum - 1; i >= 0; i-- ){
 			pcOpe = pcOpeBlk->GetOpe( i );
@@ -932,6 +933,7 @@ void CEditView::Command_UNDO( void )
 
 		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
+		m_bDrawSWITCH = TRUE;	//	hor
 		/* 再描画 */
 		hdc = ::GetDC( m_hWnd );
 		ps.rcPaint.left = 0;
@@ -2108,36 +2110,18 @@ void CEditView::Command_BOOKMARK_RESET(void)
 
 
 //指定パターンに一致する行をマーク 2002.01.16 hor
-void CEditView::Command_BOOKMARK_PATTERN(const char* Pattern)
+//キーマクロで記録できるように	2002.02.08 hor
+void CEditView::Command_BOOKMARK_PATTERN( void )
 {
-	if(Pattern==NULL){
-		//検索or置換ダイアログから呼び出された
-		if(!ChangeCurRegexp())return;
-		m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
-			m_pShareData->m_szSEARCHKEYArr[0],		/* 検索条件 */
-			m_pShareData->m_Common.m_bRegularExp,	/* 1==正規表現 */
-			m_pShareData->m_Common.m_bLoHiCase,		/* 1==英大文字小文字の区別 */
-			m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
-			&m_CurRegexp							/* 正規表現コンパイルデータ */
-		);
-	}else{
-		//外部マクロから呼び出された (マクロの引数には正規表現が指定されているものとする)
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ) return;
-		int nFlag = 0x00;
-		nFlag |= m_pShareData->m_Common.m_bLoHiCase ? 0x01 : 0x00;
-		m_CurRegexp.Compile( Pattern, nFlag );
-		m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
-			Pattern,								/* 検索条件 */
-			1,										/* 1==正規表現 */
-			m_pShareData->m_Common.m_bLoHiCase,		/* 1==英大文字小文字の区別 */
-			m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
-			&m_CurRegexp							/* 正規表現コンパイルデータ */
-		);
-		//元の検索パターンをコンパイル
-		nFlag = 0x00;
-		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
-		if(m_pShareData->m_Common.m_bRegularExp)m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
-	}
+	//検索or置換ダイアログから呼び出された
+	if(!ChangeCurRegexp())return;
+	m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
+		m_pShareData->m_szSEARCHKEYArr[0],		/* 検索条件 */
+		m_pShareData->m_Common.m_bRegularExp,	/* 1==正規表現 */
+		m_pShareData->m_Common.m_bLoHiCase,		/* 1==英大文字小文字の区別 */
+		m_pShareData->m_Common.m_bWordOnly,		/* 1==単語のみ検索 */
+		&m_CurRegexp							/* 正規表現コンパイルデータ */
+	);
 	// 2002.01.16 hor 分割したビューも更新
 	for( int v = 0; v < 4; ++v ) if( m_pcEditDoc->m_nActivePaneIndex != v )m_pcEditDoc->m_cEditViewArr[v].Redraw();
 	Redraw();
@@ -2190,7 +2174,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	nBgn = 0;
 	nPosDes = 0;
 	/* 変換後に必要なバイト数を調べる */
-	while( NULL != ( pLine = GetNextLine( pCMemory->m_pData, pCMemory->m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+	while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr2(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
 		}
@@ -2204,7 +2188,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	nPosDes = 0;
 	if( bLeft ){
 	// LTRIM
-		while( NULL != ( pLine = GetNextLine( pCMemory->m_pData, pCMemory->m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr2(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				for( i = 0; i <= nLineLen; ++i ){
 					if( pLine[i] ==' ' ||
@@ -2227,7 +2211,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 		}
 	}else{
 	// RTRIM
-		while( NULL != ( pLine = GetNextLine( pCMemory->m_pData, pCMemory->m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
+		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr2(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				for( j=nLineLen-1 ; j>=0 ; --j ){
 					if( pLine[j] ==' ' ||
