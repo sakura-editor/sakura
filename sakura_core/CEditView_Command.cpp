@@ -7330,7 +7330,7 @@ void CEditView::Command_TILE_H( void )
 			::ShowWindow( phwndArr[i], SW_RESTORE );
 			::SetWindowPos(
 				phwndArr[i], 0,
-				width * i, rcDesktop.top,
+				width * i + rcDesktop.left, rcDesktop.top, // Oct. 18, 2003 genta タスクバーが左にある場合を考慮
 				width, rcDesktop.bottom - rcDesktop.top,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
@@ -9241,7 +9241,7 @@ end_of_compare:;
 		for( i = 1; i >= 0; i-- ){
 			::SetWindowPos(
 				phwndArr[i], 0,
-				width * i, rcDesktop.top,
+				width * i + rcDesktop.left, rcDesktop.top, // Oct. 18, 2003 genta タスクバーが左にある場合を考慮
 				width, rcDesktop.bottom - rcDesktop.top,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
