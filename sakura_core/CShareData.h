@@ -39,14 +39,11 @@ class CShareData;
 
 enum maxdata{
 	MAX_EDITWINDOWS				= 256,
-//	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
-//	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
 	MAX_SEARCHKEY				=  30,
 	MAX_REPLACEKEY				=  30,
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
 	MAX_TYPES					=  20,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした
-//	MAX_TOOLBARBUTTONS			= 256,
 	MAX_TOOLBARBUTTONS			= 384,	//Oct. 22, 2000 JEPORO アイコンの最大登録数を128個増やした(256→384)
 	MAX_CUSTOM_MENU				=  25,
 	MAX_CUSTOM_MENU_NAME_LEN	=  32,
@@ -70,26 +67,11 @@ enum maxdata{
 };
 
 
-///* 外部コマンド情報 */
-//struct ExtCmd {
-//	char m_szCmd[MAX_EXTCMDLEN + 1];
-//	/* 初期化 */
-//	void ExtCmd::Init(void){
-//		m_szCmd[0] = '\0';
-//		return;
-//	}
-//};
-
-
-///* MRU 外部コマンド情報 */
-//struct MRU_ExtCmd {
-//	int		m_nExtCmdArrNum;
-//	ExtCmd	m_ExtCmdArr[MAX_EXTCMDMRUNUM];
-//};
 
 /*! ファイル情報
 
 	@date 2002.03.07 genta m_szDocType追加
+	@date 2003.01.26 aroka m_nWindowSizeX/Y m_nWindowOriginX/Y追加
 */
 struct FileInfo {
 	int		m_nViewTopLine;			/*!< 表示域の一番上の行(0開始) */
@@ -103,12 +85,18 @@ struct FileInfo {
 	char	m_szGrepKey[1024];
 	char	m_szMarkLines[MAX_MARKLINES_LEN + 1];	/*!< ブックマークの物理行リスト */
 	char	m_szDocType[MAX_DOCTYPE_LEN + 1];	/*!< 文書タイプ */
+	int		m_nWindowSizeX;			/*!< ウィンドウ  幅(ピクセル数？) */
+	int		m_nWindowSizeY;			/*!< ウィンドウ  高さ(？) */
+	int		m_nWindowOriginX;		/*!< ウィンドウ  物理位置(ピクセル数) */
+	int		m_nWindowOriginY;		/*!< ウィンドウ  物理位置(ピクセル数) */
 	
 	// Mar. 7, 2002 genta
 	// Constructor 確実に初期化するため
 	FileInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
 		m_nX( -1 ), m_nY( -1 ), m_bIsModified( 0 ),
-		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE )
+		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ),
+		m_nWindowSizeX( -1 ), m_nWindowSizeY( -1 ),
+		m_nWindowOriginX( -1 ), m_nWindowOriginY( -1 )
 	{
 		m_szPath[0] = '\0';
 		m_szMarkLines[0] = '\0';
@@ -127,8 +115,6 @@ struct GrepInfo {
 	bool		bGrepSubFolder;		/*!< サブフォルダを検索する */
 	bool		bGrepNoIgnoreCase;	/*!< 大文字と小文字を区別する */
 	bool		bGrepRegularExp;	/*!< 正規表現を使用する */
-//	2002/09/21 Moca 文字コードセット選択に変更＆統合
-//	bool		bGrepKanjiCode_AutoDetect;	//!< 漢字コードの自動判別 */
 	bool		bGrepOutputLine;	/*!< 結果出力で該当行を出力する */
 	int			nGrepOutputStyle;	/*!< 結果出力形式 */
 	int			nGrepCharSet;		/*!< 文字コードセット */
@@ -148,7 +134,6 @@ struct EditNode {
 #define FOOTER_MAX	HEADER_MAX
 struct PRINTSETTING {
 	char			m_szPrintSettingName[32 + 1];		/*!< 印刷設定の名前 */
-//	char			m_szPrintFontFace[LF_FACESIZE];		/*!< 印刷フォント */
 	char			m_szPrintFontFaceHan[LF_FACESIZE];	/*!< 印刷フォント */
 	char			m_szPrintFontFaceZen[LF_FACESIZE];	/*!< 印刷フォント */
 	int				m_nPrintFontWidth;					/*!< 印刷フォント幅(1/10mm単位単位) */
@@ -217,50 +202,16 @@ struct Types {
 	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
 	int					m_nLineSpace;					/*!< 行間のすきま */
 	int					m_nTabSpace;					/*!< TABの文字数 */
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	char				m_szTabViewString[9];			/*!< TAB表示文字列 */
-//#endif
+	char				m_szTabViewString[17];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
-//	int					m_bDispLINE;					/* 行番号表示／非表示 */
-//	BOOL				m_bDispTAB;						/* タブ記号を表示する */
-//	BOOL				m_bDispZENSPACE;				/* 日本語空白を表示する */
-//	BOOL				m_bDispCRLF;					/* 改行記号を表示する */
-//	BOOL				m_bDispEOF;						/* EOFを表示する */
-//	BOOL				m_bDispCCPPKEYWORD;				/* 強調キーワードを表示する */
-//	BOOL				m_bDispCOMMENT;					/* コメントを表示する */
-//	BOOL				m_bDispSSTRING;					/* シングルクォーテーション文字列を表示する */
-//	BOOL				m_bDispWSTRING;					/* ダブルクォーテーション文字列を表示する */
-//	BOOL				m_bDispUNDERLINE;				/* カーソル行アンダーラインを表示する */
-//	COLORREF			m_colorTEXT;					/* テキスト色 */
-//	COLORREF			m_colorBACK;					/* 背景色 */
-//	COLORREF			m_colorCRLF;					/* 改行の色 */
-//	COLORREF			m_colorCRLFBACK;				/* 改行背景の色 */
-//	COLORREF			m_colorGYOU;					/* 行番号の色 */
-//	COLORREF			m_colorGYOUBACK;				/* 行番号背景の色 */
-//	COLORREF			m_colorTAB;						/* TAB文字の色 */
-//	COLORREF			m_colorTABBACK;					/* TAB文字背景の色 */
-//	COLORREF			m_colorZENSPACE;				/* 全角スペース文字の色 */
-//	COLORREF			m_colorZENSPACEBACK;			/* 全角スペース文字背景の色 */
-//	COLORREF			m_colorEOF;						/* EOFの色 */
-//	COLORREF			m_colorEOFBACK;					/* EOF背景の色 */
-//	COLORREF			m_colorCCPPKEYWORD;				/* 強調キーワードの色 */
-//	COLORREF			m_colorCCPPKEYWORDBACK;			/* 強調キーワード背景の色 */
 	int					m_nKeyWordSetIdx;				/* キーワードセット1 */
 	int					m_nKeyWordSetIdx2;				/* キーワードセット2 */	//Dec. 4, 2000 MIK
-//	COLORREF			m_colorCOMMENT;					/* コメント色 */
-//	COLORREF			m_colorCOMMENTBACK;				/* コメント背景の色 */
-//	COLORREF			m_colorSSTRING;					/* シングルクォーテーション文字列色 */
-//	COLORREF			m_colorSSTRINGBACK;				/* シングルクォーテーション文字列背景の色 */
-//	COLORREF			m_colorWSTRING;					/* ダブルクォーテーション文字列色 */
-//	COLORREF			m_colorWSTRINGBACK;				/* ダブルクォーテーション文字列背景の色 */
-//	COLORREF			m_colorUNDERLINE;				/* カーソル行アンダーラインの色 */
 
 	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
 	CBlockComment		m_cBlockComment;				/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	char				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
-//	int					m_nKEYWORDCASE;					/*!< キーワードの英大文字小文字区別 */
 
 	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
 	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
@@ -269,7 +220,6 @@ struct Types {
 	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
 	char				m_cLineTermChar;				/*!< 行番号区切り文字 */
 
-//	char				m_bUseLBCC;						/*!< 禁則処理を行うか */
 	BOOL				m_bWordWrap;					/*!< 英文ワードラップをする */
 	BOOL				m_bKinsokuHead;					/*!< 行頭禁則をする */	//@@@ 2002.04.08 MIK
 	BOOL				m_bKinsokuTail;					/*!< 行末禁則をする */	//@@@ 2002.04.08 MIK
@@ -316,15 +266,11 @@ struct Types {
 
 //! マクロ情報
 struct MacroRec {
-//	int		m_bEnabled;	//!< 有効/無効フラグ	// Oct. 4, 2001 deleted by genta
 	char	m_szName[MACRONAME_MAX];	//<! 表示名
 	char	m_szFile[_MAX_PATH+1];	//<! ファイル名(ディレクトリを含まない)
 	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 	
-//	bool IsEnabled() const { return m_bEnabled & 1; }
 	bool IsEnabled() const { return m_szFile[0] != '\0'; }
-	// Oct. 4, 2001 deleted by genta
-//	void Enable(bool f){ m_bEnabled = f ? (m_bEnabled | 1) : (m_bEnabled & ~1); }
 };
 //	To Here Sep. 14, 2001 genta
 
@@ -400,27 +346,16 @@ struct Common {
 	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
 	int					m_bIsINSMode;					/* 挿入／上書きモード */
 	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
-//2002/04/30 YAZAKI タイプ別設定に移動
-//	int					m_bAutoIndent;					/* オートインデント */
-//	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
 	BOOL				m_bStopsBothEndsWhenSearchWord;	/* 単語単位で移動するときに、単語の両端で止まるか */
 	BOOL				m_bStopsBothEndsWhenSearchParagraph;	/* 段落単位で移動するときに、段落の両端で止まるか */
 
 	BOOL				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
 	BOOL				m_bRestoreBookmarks;			// 2002.01.16 hor ブックマークを復元するかどうか
-//	int					m_bEnableLineISlog;				/* ★廃止★行番号種別  物理行／論理行 */
-
-//	char				m_szEMailUserName[_MAX_PATH];	/* メールユーザー名 */
-//	char				m_szEMailUserAddress[_MAX_PATH];/* メールアドレス */
-//	char				m_szSMTPServer[_MAX_PATH];		/* SMTPホスト名・アドレス */
-//	int					m_nSMTPPort;					/* SMTPポート番号(通常は25) */
 
 	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
 	int					m_nRepeatedScrollLineNum;		/* キーリピート時のスクロール行数 */
 	BOOL				m_nRepeatedScroll_Smooth;		/* キーリピート時のスクロールを滑らかにするか */
 	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
-//	short				m_nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
-//	KEYDATA				m_pKeyNameArr[100];				/* キー割り当て表 */
 	int					m_bRegularExp;					/* 検索／置換  1==正規表現 */
 	int					m_bLoHiCase;					/* 検索／置換  1==英大文字小文字の区別 */
 	int					m_bWordOnly;					/* 検索／置換  1==単語のみ検索 */
@@ -474,13 +409,7 @@ struct Common {
 	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 	char				m_szMidashiKigou[256];			/* 見出し記号 */
 	char				m_szInyouKigou[32];				/* 引用符 */
-//	int					m_bUseKeyWordHelp;				/* キーワードヘルプを使用する */	// 2001/06/14 asa-o タイプ別に変更したので削除
-//	char				m_szKeyWordHelpFile[_MAX_PATH];	/* キーワードヘルプ 辞書ファイル */	// 2001/06/14 asa-o タイプ別に変更したので削除
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
-//	char				m_szHokanFile[_MAX_PATH];		/* 入力補完 単語ファイル */			// 2001/06/14 asa-o タイプ別に変更したので削除
-//	BOOL				m_bGrepKanjiCode_AutoDetect;	/* Grep: 文字コード自動判別 */		// 2002/09/20 Moca 文字コードセット指定に統合
-//	int					m_bHokanLoHiCase;				/* 入力補完機能：英大文字小文字を同一視する */	// 2001/06/19 asa-o タイプ別に変更したので削除
-//	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
 	BOOL				m_bSaveWindowSize;				/* ウィンドウサイズ継承 */
 	int					m_nWinSizeType;
 	int					m_nWinSizeCX;
@@ -503,7 +432,6 @@ struct Common {
 	BOOL				m_bSelectClickedURL;			/* URLがクリックされたら選択するか */
 	BOOL				m_bGrepExitConfirm;				/* Grepモードで保存確認するか */
 
-//	BOOL				m_bRulerDisp;				/* ルーラー表示 */
 	int					m_nRulerHeight;				/* ルーラー高さ */
 	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
 	int					m_nRulerType;				/* ルーラーのタイプ */
@@ -511,8 +439,7 @@ struct Common {
 
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
 	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
-	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 *
-//	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
+	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */
 	BOOL				m_bDropFileAndClose;		/* ファイルをドロップしたときは閉じて開く */
 	int					m_nDropFileNumMax;			/* 一度にドロップ可能なファイル数 */
 	BOOL				m_bCheckFileTimeStamp;		/* 更新の監視 */
@@ -599,38 +526,26 @@ struct DLLSHAREDATA {
 
 
 	/**** 共通設定 ****/
-//	BOOL				m_nCommonModify;	/* 変更フラグ(共通設定の全体) */
 	Common				m_Common;
 
-	/* 変更フラグ フォント */
-//	BOOL				m_bFontModify;
-
 	/* キー割り当て */
-//	BOOL				m_bKeyBindModify;			/* 変更フラグ キー割り当て */
-//	BOOL				m_bKeyBindModifyArr[100];	/* 変更フラグ キー割り当て(キーごと) */
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
 	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
 
 	/**** 印刷ページ設定 ****/
-//	BOOL				m_bPrintSettingModify;							/* 変更フラグ(印刷の全体) */
-//	BOOL				m_bPrintSettingModifyArr[MAX_PRINTSETTINGARR];	/* 変更フラグ(印刷設定ごと) */
 	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
 
 	/* 強調キーワード設定 */
-//	BOOL				m_bKeyWordSetModify;				/* 変更フラグ(キーワードの全体) */
-//	BOOL				m_bKeyWordSetModifyArr[MAX_SETNUM];	/* 変更フラグ(キーワードのセットごと) */
 	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
 	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
 
 	/* **** タイプ別設定 **** */
-//	BOOL				m_nTypesModifyArr[MAX_TYPES];	/* 変更フラグ(タイプ別設定) */
 	Types				m_Types[MAX_TYPES];
 
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
 		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
 	*/
-//	CKeyMacroMgr		m_CKeyMacroMgr;				/* キーワードマクロのバッファ */
 	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
 	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
 	char				m_szKeyMacroFileName[MAX_PATH];	/* キーボードマクロのファイル名 */
@@ -681,18 +596,12 @@ public:
 	||  Attributes & Operations
 	*/
 	bool Init(void);	/* CShareDataクラスの初期化処理 */
-//	DLLSHAREDATA* GetShareData( const char*, int* );			/* 共有データ構造体のアドレスを返す */
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
 	int GetDocumentType( const char* pszFilePath );				/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	int GetDocumentTypeExt( const char* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	BOOL AddEditWndList( HWND );								/* 編集ウィンドウの登録 */
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 
-//	void AddMRUList( const char* );								/* MRUリストへの登録 */
-//@@@ 2001.12.31 YAZAKI CMRU、CMRUFolderに移動した。
-//	void AddMRUList( FileInfo*  );								/* MRUリストへの登録 */
-//	void AddOPENFOLDERList( const char* );						/* 開いたフォルダリストへの登録 */
-//	BOOL IsExistInMRUList( const char* , FileInfo*  );			/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
 	BOOL RequestCloseAllEditor( void );							/* 全編集ウィンドウへ終了要求を出す */
 	BOOL IsPathOpened( const char*, HWND* );					/* 指定ファイルが開かれているか調べる */
 	int GetEditorWindowsNum( void );							/* 現在の編集ウィンドウの数を調べる */
@@ -705,7 +614,6 @@ public:
 		short, short, short, short,
 		short, short, short, short );									/* KEYDATA配列にデータをセット */
 	static void SetKeyNameArrVal( DLLSHAREDATA*, int, short, char* );	/* KEYDATA配列にデータをセット */
-//	static void SetKeyNames( DLLSHAREDATA* );							/* キー名称のセット */
 	static LONG MY_RegSetVal(
 		HKEY hKey,				// handle of key to set value for
 		LPCTSTR lpValueName,	// address of value to set
@@ -718,20 +626,12 @@ public:
 		BYTE *lpData,			// address of value data
 		DWORD cbData 			// size of value data
 	);
-//#ifdef _DEBUG
 	void TraceOut( LPCTSTR lpFmt, ...);	/* デバッグモニタに出力 */
-//#endif
 	BOOL LoadShareData( void );	/* 共有データのロード */
 	void SaveShareData( void );	/* 共有データの保存 */
 	BOOL ShareData_IO_2( BOOL );	/* 共有データの保存 */
 	static void IO_ColorSet( CProfile* , BOOL , const char* , ColorInfo* );	/* 色設定 I/O */
 
-//	static BOOL LoadShareData_0_3_5_0( DLLSHAREDATA_0_3_5_0* );	/* Ver0.3.5.0用設定データのロード */
-//	void TakeOver_0_3_5_0( DLLSHAREDATA_0_3_5_0* );				/* Ver0.3.5.0用設定データを引き継ぐ */
-
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//	TBBUTTON	m_tbMyButton[MAX_TOOLBARBUTTONS];	/* ツールバーのボタン */
-//	int			m_nMyButtonNum;
 	int			m_nStdToolBarButtons;
 
 	//@@@ 2002.2.2 YAZAKI
@@ -767,7 +667,6 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-//	const char*		m_pszAppName;
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
 

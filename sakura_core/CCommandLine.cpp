@@ -38,11 +38,16 @@ CCommandLine* CCommandLine::_instance = NULL;
 #define CMDLINEOPT_VY			4
 #define CMDLINEOPT_TYPE			5
 #define CMDLINEOPT_CODE			6
+#define CMDLINEOPT_SX			7
+#define CMDLINEOPT_SY			8
+#define CMDLINEOPT_WX			9
+#define CMDLINEOPT_WY			10
 #define CMDLINEOPT_GKEY			101
 #define CMDLINEOPT_GFILE		102
 #define CMDLINEOPT_GFOLDER		103
 #define CMDLINEOPT_GOPT			104
 #define CMDLINEOPT_GCODE		105
+
 /*!
 	コマンドラインのチェックを行って、オプション番号と
 	引数がある場合はその先頭アドレスを返す。
@@ -89,6 +94,10 @@ int CCommandLine::CheckCommandLine(
 		{"Y", 1,			CMDLINEOPT_Y},
 		{"VX", 2,			CMDLINEOPT_VX},
 		{"VY", 2,			CMDLINEOPT_VY},
+		{"SX", 2,			CMDLINEOPT_SX},
+		{"SY", 2,			CMDLINEOPT_SY},
+		{"WX", 2,			CMDLINEOPT_WX},
+		{"WY", 2,			CMDLINEOPT_WY},
 		{"CODE", 4,			CMDLINEOPT_CODE},	// 2002/09/20 Moca _COptWoAから移動
 		{"TYPE", 4,			CMDLINEOPT_TYPE},	//!< タイプ別設定 Mar. 7, 2002 genta
 		{"GKEY", 4,			CMDLINEOPT_GKEY},
@@ -199,14 +208,7 @@ void CCommandLine::ParseCommandLine(
 	bNoWindow = false;
 
 	//	Oct. 19, 2001 genta 初期値を-1にして，指定有り/無しを判別可能にしてみた
-	//	Mar. 7, 2002 genta 初期化はコンストラクタで行う．
-//	fi.m_nViewTopLine = -1;				/* 表示域の一番上の行(0開始) */
-//	fi.m_nViewLeftCol = -1;				/* 表示域の一番左の桁(0開始) */
-//	fi.m_nX = -1;						/* カーソル 物理位置(行頭からのバイト数) */
-//	fi.m_nY = -1;						/* カーソル 物理位置(折り返し無し行位置) */
-//	fi.m_bIsModified = 0;				/* 変更フラグ */
-//	fi.m_nCharCode = CODE_AUTODETECT;	/* 文字コード種別 *//* 文字コード自動判別 */
-//	fi.m_szPath[0] = '\0';				/* ファイル名 */
+	//	Mar. 7, 2002 genta FileInfoの初期化はコンストラクタで行う．
 	bReadOnly = false;					/* 読み取り専用か */
 
 	//	May 30, 2000 genta
@@ -225,8 +227,6 @@ void CCommandLine::ParseCommandLine(
 			}
 		}
 	}
-
-
 
 
 
@@ -294,6 +294,18 @@ void CCommandLine::ParseCommandLine(
 			case CMDLINEOPT_VY:	//	VY
 				/* 行桁指定を1開始にした */
 				fi.m_nViewTopLine = AtoiOptionInt( arg ) - 1;
+				break;
+			case CMDLINEOPT_SX: //	SX
+				fi.m_nWindowSizeX = AtoiOptionInt( arg ) - 1;
+				break;
+			case CMDLINEOPT_SY:	//	SY
+				fi.m_nWindowSizeY = AtoiOptionInt( arg ) - 1;
+				break;
+			case CMDLINEOPT_WX: //	WX
+				fi.m_nWindowOriginX = AtoiOptionInt( arg ) - 1;
+				break;
+			case CMDLINEOPT_WY:	//	WY
+				fi.m_nWindowOriginY = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
 				//	Mar. 7, 2002 genta
