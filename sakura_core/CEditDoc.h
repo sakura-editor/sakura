@@ -255,8 +255,7 @@ public:
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
-	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
-	OPENFILENAME	m_ofn;							/* 「ファイルを開く」ダイアログ用構造体 */
+//	2004.03.28 Moca 未使用変数削除
 
 //	2004.02.16 Moca メンバから外す
 //	CHOOSEFONT		m_cf;				/* フォント選択ダイアログ用 */
