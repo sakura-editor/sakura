@@ -17,6 +17,7 @@
 #include "CImageListMgr.h"
 #include "sakura_rc.h"
 #include "CRunningTimer.h"
+#include "etc_uty.h"
 
 //	Destructor
 CImageListMgr::~CImageListMgr()
@@ -73,7 +74,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 		// (sakuraディレクトリ) my_icons.bmp の文字列を作成
 		_splitpath( szPath, szExeDrive, szExeDir, NULL, NULL );
 		//	@@TEST@@
-		wsprintf( szPath, "%s%s%s", szExeDrive, szExeDir, "my_icons.bmp" );	//Jul.04, 2001 JEPRO toolbar.bmp→my_icons.bmp に名前変更
+		wsprintf( szPath, "%s%s" FN_TOOL_BMP, szExeDrive, szExeDir );	//Jul.04, 2001 JEPRO toolbar.bmp→my_icons.bmp に名前変更
 		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 

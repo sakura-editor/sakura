@@ -270,12 +270,8 @@ HWND CEditWnd::Create(
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= 32;
 	wc.hInstance		= m_hInstance;
-#ifdef _DEBUG
-	wc.hIcon			= LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
-#else
-	wc.hIcon			= LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
-#endif
-//	wc.hIcon			= NULL;
+	//	Dec, 2, 2002 genta アイコン読み込み方法変更
+	wc.hIcon			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
 
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
@@ -4147,16 +4143,12 @@ void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
 
 	@author genta
 	@date 2002.09.10
+	@date 2002.12.02 genta 新設した共通関数を使うように
 */
 void CEditWnd::GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const
 {
-#ifdef _DEBUG
-	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
-	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ), IMAGE_ICON, 16, 16, 0);
-#else
-	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
-	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ), IMAGE_ICON, 16, 16, 0);
-#endif
+	hIconBig = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
+	hIconSmall = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 }
 
 /*!
