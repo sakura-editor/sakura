@@ -336,7 +336,10 @@ void CMemory::SJIStoJIS( void )
 }
 
 
-/* SJIS→JIS */
+/*!	SJIS→JIS
+
+	@date 2003.09.07 genta 不要なキャスト除去
+*/
 int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen )
 {
 //	BOOL bSJISKAN	= FALSE;
@@ -370,14 +373,14 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 		// 漢字か？
 		if( ( i < nSrcLen - 1) &&
 			/* SJIS全角コードの1バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			_IS_SJIS_1( (unsigned char)pszSrc[i + 0] ) &&
+			_IS_SJIS_1( pszSrc[i + 0] ) &&
 			/* SJIS全角コードの2バイト目か */
-			_IS_SJIS_2( (unsigned char)pszSrc[i + 1] )
+			_IS_SJIS_2( pszSrc[i + 1] )
 		){
 			nCharKind = CHAR_ZENKAKU;	/* 全角文字 */
 //			++i;
 		}else
-		if( (unsigned char)pszSrc[i] & (unsigned char)0x80 ){
+		if( pszSrc[i] & (unsigned char)0x80 ){
 			nCharKind = CHAR_8BITCODE;	/* 8ビットコード(半角カタカナなど) */
 		}else{
 			nCharKind = CHAR_ASCII;		/* ASCII文字 */
@@ -402,7 +405,7 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
 					pszWork[ nWorkLen ] = '\0';
 					for( j = 0; j < nWorkLen; ++j ){
-						(unsigned char)pszWork[j] -= (unsigned char)0x80;
+						pszWork[j] -= (unsigned char)0x80;
 					}
 					pcmemDes->Append( (char *)pszWork, nWorkLen );
 					delete [] pszWork;
@@ -414,7 +417,7 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
 					pszWork[ nWorkLen ] = '\0';
 					// SJIS→JIS変換
-					nWorkLen = MemSJIStoJIS( (unsigned char*)pszWork, nWorkLen );
+					nWorkLen = MemSJIStoJIS( pszWork, nWorkLen );
 					pcmemDes->Append( (char *)pszWork, nWorkLen );
 					delete [] pszWork;
 				}
