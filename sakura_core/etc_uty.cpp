@@ -10,6 +10,7 @@
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, shoji masami, stonee, MIK, YAZAKI
 	Copyright (C) 2002, genta, aroka, hor, MIK, 鬼
+	Copyright (C) 2003, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -2664,7 +2665,7 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 	与えられたパス名からディレクトリの深さを計算する．
 	パスの区切りは\．ルートディレクトリが深さ0で，サブディレクトリ毎に
 	深さが1ずつ上がっていく．
-	
+ 
 	@param [in] path 深さを調べたいファイル/ディレクトリのフルパス
 
 	@date 2003.04.30 genta 新規作成
@@ -2672,7 +2673,7 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 int CalcDirectoryDepth(const char* path)
 {
 	int depth = 0;
-	
+ 
 	//	とりあえず\の数を数える
 	for( const char *p = path; *p != '\0'; ++p ){
 		//	2バイト文字は区切りではない
@@ -2690,7 +2691,7 @@ int CalcDirectoryDepth(const char* path)
 			}
 		}
 	}
-	
+ 
 	//	補正
 	//	ドライブ名はパスの深さに数えない
 	if(( 'A' <= (path[0] & ~0x20)) && ((path[0] & ~0x20) <= 'Z' ) &&
