@@ -51,6 +51,52 @@
 #endif
 #endif
 
+//	Sep. 22, 2003 MIK
+//	古いSDK対策．新しいSDKでは不要
+#ifndef _WIN64
+#ifndef DWORD_PTR
+#define DWORD_PTR DWORD
+#endif
+#ifndef ULONG_PTR
+#define ULONG_PTR ULONG
+#endif
+#ifndef LONG_PTR
+#define LONG_PTR LONG
+#endif
+#ifndef UINT_PTR
+#define UINT_PTR UINT
+#endif
+#ifndef INT_PTR
+#define INT_PTR INT
+#endif
+#ifndef SetWindowLongPtr
+#define SetWindowLongPtr SetWindowLong
+#endif
+#ifndef GetWindowLongPtr
+#define GetWindowLongPtr GetWindowLong
+#endif
+#ifndef DWLP_USER
+#define DWLP_USER DWL_USER
+#endif
+#ifndef GWLP_WNDPROC
+#define GWLP_WNDPROC GWL_WNDPROC
+#endif
+#ifndef GWLP_USERDATA
+#define GWLP_USERDATA GWL_USERDATA
+#endif
+#ifndef GWLP_HINSTANCE
+#define GWLP_HINSTANCE GWL_HINSTANCE
+#endif
+#endif  //_WIN64
+
+#ifndef COLOR_MENUHILIGHT
+#define COLOR_MENUHILIGHT 29
+#endif
+#ifndef COLOR_MENUBAR
+#define COLOR_MENUBAR 30
+#endif
+
+
 //Oct. 31, 2000 JEPRO TeX Keyword のために'\'を追加	//Nov. 9, 2000 JEPRO HSP Keyword のために'@'を追加
 //#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
 //#define IS_KEYWORD_CHAR(c) ((c) == '#'/*35*/ || (c) == '$'/*36*/ || (c) == '@'/*64*/ || (c) == '\\'/*92*/ || __iscsym( (c) ))
