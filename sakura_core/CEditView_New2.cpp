@@ -294,6 +294,17 @@ void CEditView::DispLineNumber(
 		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex/*COLORIDX_TEXT*/].m_colBACK );
 		::FillRect( hdc, &rcClip, hBrush );
 		::DeleteObject( hBrush );
+		
+		// From Here Mar. 5, 2003, Moca
+		// 行番号とテキストの隙間の描画漏れ
+		rcClip.left = rcClip.right;
+		rcClip.right = m_nViewAlignLeft;
+		rcClip.top = y;
+		rcClip.bottom = y + nLineHeight;
+		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+		::FillRect( hdc, &rcClip, hBrush );
+		::DeleteObject( hBrush );
+		// To Here Mar. 5, 2003, Moca
 	}
 
 // From Here 2001.12.03 hor
