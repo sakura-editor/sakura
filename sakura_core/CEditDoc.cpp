@@ -3588,6 +3588,112 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 	}
 }
 
+/*! TeX アウトライン解析
+
+	@author naoh
+	@date 2003.07.21 naoh 新規作成
+*/
+void CEditDoc::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
+{
+	const char*	pLine;
+	int						nLineLen;
+	int						nLineCount;
+	int						i;
+	int						j;
+	int						k;
+
+	const int nMaxStack = 8;	//	ネストの最深
+	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
+	char szTag[32], szTitle[256];			//	一時領域
+	int thisSection=0, lastSection = 0;	// 現在のセクション種類と一つ前のセクション種類
+	int stackSection[nMaxStack];		// 各深さでのセクションの番号
+	int nStartTitlePos;					// \section{dddd} の dddd の部分の始まる番号
+	int bNoNumber;						// * 付の場合はセクション番号を付けない
+
+	for(nLineCount=0;nLineCount<m_cDocLineMgr.GetLineCount();nLineCount++)
+	{
+		pLine	=	(const char *)m_cDocLineMgr.GetLineStr(nLineCount,&nLineLen);
+		if(!pLine) break;
+		for(i=0;i<nLineLen-1;i++)
+		{
+			if(pLine[i] == '%') break;
+			if(pLine[i] != '\\' || nDepth>=nMaxStack) continue;
+			++i;
+			for(j=0;i+j<nLineLen && j<sizeof(szTag)-1;j++)
+			{
+				if(pLine[i+j] == '{'){
+					bNoNumber = (pLine[i+j-1] == '*');
+					nStartTitlePos = j+i+1;
+					break;
+				}
+				szTag[j]	=	pLine[i+j];
+			}
+			if(j==0) continue;
+			if(bNoNumber){
+				szTag[j-1] = '\0';
+			}else{
+				szTag[j]	 = '\0';
+			}
+//			MessageBox(NULL, szTitle, "", MB_OK);
+
+			if(!strcmp(szTag,"subsubsection")) thisSection = 4;
+			else if(!strcmp(szTag,"subsection")) thisSection = 3;
+			else if(!strcmp(szTag,"section")) thisSection = 2;
+			else if(!strcmp(szTag,"chapter")) thisSection = 1;
+			else thisSection = 0;
+			if( thisSection > 0)
+			{
+				// sectionの中身取得
+				for(k=0;nStartTitlePos+k<nLineLen && k<sizeof(szTitle)-1;k++)
+				{
+					if(pLine[k+nStartTitlePos] == '}') break;
+					szTitle[k]	=	pLine[k+nStartTitlePos];
+				}
+				szTitle[k] = '\0';
+
+				int		nPosX;
+				int		nPosY;
+				TCHAR tmpstr[256];
+				TCHAR secstr[4];
+
+				m_cLayoutMgr.CaretPos_Phys2Log(
+					i,
+					nLineCount,
+					&nPosX,
+					&nPosY
+				);
+
+				int sabunSection = thisSection - lastSection;
+				if(lastSection == 0){
+					nDepth = 0;
+					stackSection[0] = 1;
+				}else{
+					nDepth += sabunSection;
+					if(sabunSection > 0){
+						if(nDepth >= nMaxStack) nDepth=nMaxStack-1;
+						stackSection[nDepth] = 1;
+					}else{
+						if(nDepth < 0) nDepth=0;
+						++stackSection[nDepth];
+					}
+				}
+				tmpstr[0] = '\0';
+				if(!bNoNumber){
+					for(k=0; k<=nDepth; k++){
+						sprintf(secstr, "%d.", stackSection[k]);
+						strcat(tmpstr, secstr);
+					}
+					strcat(tmpstr, " ");
+				}
+				strcat(tmpstr, szTitle);
+				pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1, tmpstr, 0, nDepth);
+				if(!bNoNumber) lastSection = thisSection;
+			}
+			i	+=	j;
+		}
+	}
+}
+
 
 
 
