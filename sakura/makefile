@@ -8,7 +8,7 @@
 #
 
 ## CPP Options
-CPPFLAGS=-I..\sakura_core  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -M
+CPPFLAGS=-I..\sakura_core  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -M -D_MBCS
 RFLAGS=-dDS_SETFOREGROUND=0x200L
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 
