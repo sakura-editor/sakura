@@ -848,9 +848,10 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "nImeState"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nImeState, 0 );	//	IME制御
 
 		//	2001/06/14 Start By asa-o: タイプ別の補完ファイルとキーワードヘルプ
+		//	Oct. 5, 2002 genta sizeof()で誤ってポインタのサイズを取得していたのを修正
 		cProfile.IOProfileData( bRead, pszSecName, "szHokanFile"		, REGCNV_SZ2SZ,
 			(char*)&m_pShareData->m_Types[i].m_szHokanFile,
-			sizeof( &m_pShareData->m_Types[0].m_szHokanFile ));		//	補完ファイル
+			sizeof( m_pShareData->m_Types[0].m_szHokanFile ));		//	補完ファイル
 		cProfile.IOProfileData( bRead, pszSecName, "bUseKeyWordHelp"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bUseKeyWordHelp, 0 );	//	キーワードヘルプを使用する
 		cProfile.IOProfileData( bRead, pszSecName, "szKeyWordHelpFile"	, REGCNV_SZ2SZ,
 			(char*)&m_pShareData->m_Types[i].m_szKeyWordHelpFile,

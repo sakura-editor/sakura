@@ -104,6 +104,10 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 		SetData_PROP_Macro( hwndDlg );
 		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
 
+		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_MacroTable[0].m_szName ) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_MacroTable[0].m_szFile ) - 1 ), 0 );
+
 		return TRUE;
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;

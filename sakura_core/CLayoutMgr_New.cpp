@@ -1245,7 +1245,7 @@ int CLayoutMgr::getIndentOffset_Yazaki( CLayout* pLayoutPrev )
 /*!
 	@brief インデント幅を計算する (スペース字下げ版)
 	
-	前の行の先頭のホワイトスペースの終わりインデント位置として返す．
+	論理行行頭のホワイトスペースの終わりインデント位置として返す．
 	ただし，残り幅が6文字未満の場合はインデントを行わない．
 	
 	@author genta
@@ -1261,8 +1261,9 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	//	インデントの計算
 	int nIpos = pLayoutPrev->GetIndent();
 	
-	//	前の行が既にインデントされていればそれに合わせる
-	if( nIpos > 0 )
+	//	Oct. 5, 2002 genta
+	//	折り返しの3行目以降は1つ前の行のインデントに合わせる．
+	if( pLayoutPrev->m_nOffset > 0 )
 		return nIpos;
 	
 	int i;

@@ -107,6 +107,8 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 		::SetWindowLong( hwndDlg, DWL_USER, (LONG)lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
+		//	Oct. 5, 2002 genta バックアップフォルダ名の入力サイズを指定
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_szBackUpFolder ) - 1 ), 0 );
 		return TRUE;
 //****	From Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
 //	case WM_NOTIFY:
@@ -192,7 +194,7 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 			case IDC_BUTTON_BACKUP_FOLDER_REF:	/* フォルダ参照 */
 //				strcpy( szFolder, m_Common.m_szBackUpFolder );
 				/* バックアップを作成するフォルダ */
-				::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, MAX_PATH - 1 );
+				::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, sizeof( szFolder ));
 
 				if( SelectDir( hwndDlg, "バックアップを作成するフォルダを選んでください", (const char *)szFolder, (char *)szFolder ) ){
 					strcpy( m_Common.m_szBackUpFolder, szFolder );
@@ -347,7 +349,8 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 	m_Common.SetBackupOpt(BKUP_SEC, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_SEC ) == BST_CHECKED);
 
 	/* バックアップを作成するフォルダ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder, MAX_PATH - 1 );
+	//	Oct. 5, 2002 サイズをsizeof()で指定
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder, sizeof( m_Common.m_szBackUpFolder ));
 
 	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	m_Common.m_bBackUpDustBox = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX );	//@@@ 2001.12.11 add MIK
