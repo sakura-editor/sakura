@@ -183,28 +183,12 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		nRollBackLineNum++;
 	}
 
-
-//	if( NULL != pcLayout ){
-//		if( 0 != pcLayout->m_nOffset ){	/* 対応する論理行の先頭からのオフセット */
-//			pcLayout = pcLayout->m_pPrev;
-//			i--;
-//			if( NULL != pcLayout ){
-//				if( 0 != pcLayout->m_nOffset ){	/* 対応する論理行の先頭からのオフセット */
-//					pcLayout = pcLayout->m_pPrev;
-//					i--;
-//				}
-//			}
-//		}
-//	}
-
-
 	nY = ( i - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
 	nLineTo = m_nViewTopLine + ( ( pPs->rcPaint.bottom - m_nViewAlignTop ) / nLineHeight );
 
 	BOOL bSelected;
 	bSelected = IsTextSelected();
 	for( ; i <= nLineTo; ){
-//		pcLayout = m_pcEditDoc->m_cLayoutMgr.GetLineData( i );
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
 #ifdef _DEBUG
 		{
@@ -439,11 +423,6 @@ int CEditView::DispLineNew(
 
 		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 		nCOMMENTEND = 0;
-//		pcLayout2 = m_pcEditDoc->m_cLayoutMgr.GetLineData( nLineNum );
-//		pcLayout2 = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
-//		if( pcLayout2 != pcLayout ){
-//			MYTRACE( "あががががか\n" );
-//		}
 		pcLayout2 = pcLayout;
 
 	}else{
@@ -490,9 +469,6 @@ int CEditView::DispLineNew(
 			if( nLineTo < nLineNum ){
 				goto end_of_func;
 			}
-//			pcLayout2 = m_pcEditDoc->m_cLayoutMgr.GetLineData( nLineNum );
-
-//MYTRACE( "pcLayout2 = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum == %d);\n", nLineNum );
 			pcLayout2 = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
 			if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 				/* 行番号表示 */
@@ -617,13 +593,6 @@ searchnext:;
 								nPosX = x + nX * ( nCharWidth );
 								nPosY = y;
 								//@@@ 2001.12.21 YAZAKI
-								//hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
-								//hPenOld = (HPEN)::SelectObject( hdc, hPen );
-								////	May 23, 2000 genta
-								//DrawEOL(hdc, hPen, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
-								//	pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont );
-								//::SelectObject( hdc, hPenOld );
-								//::DeleteObject( hPen );
 								DrawEOL(hdc, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
 									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
 							}
@@ -1414,7 +1383,6 @@ searchnext:;
 					DispTextSelected( hdc, nLineNum, x, y, nX );
 				}
 			}
-//			pcLayout2 = pcLayout2->m_pNext;
 
 		}
 		if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
