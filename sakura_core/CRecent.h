@@ -47,7 +47,7 @@ typedef enum {
 	RECENT_CMP_STRNICMP = 3,
 	RECENT_CMP_MEMCMP   = 4,
 	RECENT_CMP_MEMICMP  = 5
-} enumRecent;
+} enumRecentCmp;
 
 typedef enum {
 	RECENT_FOR_FILE        = 0,
@@ -57,7 +57,7 @@ typedef enum {
 	RECENT_FOR_GREP_FILE   = 4,
 	RECENT_FOR_GREP_FOLDER = 5,
 	RECENT_FOR_CMD         = 6
-};
+} enumRecentFor;	//Œ^–¼’Ç‰Á	//@@@ 2003.05.12 MIK
 
 
 
