@@ -489,10 +489,10 @@ int CDlgGrep::GetData( void )
 //	}
 	/* この編集中のテキストから検索する */
 	if( 0 == lstrlen( m_szFile ) ){
-		::MYMESSAGEBOX(	m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			"検索対象ファイルを指定してください。"
-		);
-		return FALSE;
+		//	Jun. 16, 2003 Moca
+		//	検索パターンが指定されていない場合のメッセージ表示をやめ、
+		//	「*.*」が指定されたものと見なす．
+		strcpy( m_szFile, "*.*" );
 	}
 	if( 0 == lstrlen( m_szFolder ) ){
 		::MYMESSAGEBOX(	m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
