@@ -674,7 +674,7 @@ void CEditWnd::CreateToolBar( void )
 							m_nCurrentFocus = 0;
 
 							memset( &lf, 0, sizeof(LOGFONT) );
-							lf.lfHeight			= 14;
+							lf.lfHeight			= 12; // Jan. 14, 2003 genta ダイアログにあわせてちょっと小さく
 							lf.lfWidth			= 0;
 							lf.lfEscapement		= 0;
 							lf.lfOrientation	= 0;
