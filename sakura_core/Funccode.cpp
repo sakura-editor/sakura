@@ -288,6 +288,7 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_JUMP_DIALOG		,	//指定行ヘジャンプ
 	F_OUTLINE			,	//アウトライン解析
 	F_TAGJUMP			,	//タグジャンプ機能
+	F_TAGJUMP_CLOSE		,	//閉じてタグジャンプ(元ウィンドウを閉じる) // Apr. 03, 2003 genta
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
 	F_TAGS_MAKE			,	//タグファイルの作成	//@@@ 2003.04.13 MIK
 	F_DIRECT_TAGJUMP	,	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
