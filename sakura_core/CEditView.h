@@ -697,7 +697,7 @@ void ReplaceData_CEditView(
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
-	void/*BOOL*/ Command_TAGJUMPBACK( void/*BOOL*/ );	/* タグジャンプバック機能 */
+	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFile( void );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
 	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
 	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn, bool bClose = false );

@@ -320,7 +320,6 @@
 
 //	Jul. 4, 2000 genta
 #define F_USERMACRO_0		31600	/* 登録マクロ開始 */
-#define MAX_CUSTMACRO		20		/* 登録できるマクロの数 */
 
 
 /* カスタムメニュー */

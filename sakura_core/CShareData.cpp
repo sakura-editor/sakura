@@ -132,8 +132,11 @@ struct ARRHEAD {
 	Version 50:
 	ウィンドウ位置固定・継承を追加 2004.05.13 Moca
 
+	Version 51:
+	タグジャンプ機能追加 2004/06/21 novice
+
 */
-const unsigned int uShareDataVersion = 50;
+const unsigned int uShareDataVersion = 51;
 
 /*
 ||	Singleton風
@@ -3680,6 +3683,10 @@ bool CShareData::Init( void )
 		}
 		//	To Here Sep. 14, 2001 genta
 
+		// 2004/06/21 novice タグジャンプ機能追加
+		m_pShareData->m_TagJumpNum = 0;
+		// 2004.06.22 Moca タグジャンプの先頭
+		m_pShareData->m_TagJumpTop = 0;
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 		m_pShareData->m_bGetStdout = TRUE;	/* 外部コマンド実行の「標準出力を得る」 */
 		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */

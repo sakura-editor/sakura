@@ -65,6 +65,11 @@ enum maxdata{
 	MAX_MARKLINES_LEN			= 1023,	// 2002.01.18 hor
 	MAX_DOCTYPE_LEN				= 7,
 	MAX_TRANSFORM_FILENAME		= 16,	/// 2002.11.24 Moca
+
+	MAX_CUSTMACRO				= 20,	// 登録できるマクロの数
+
+	// 2004/06/21 novice タグジャンプ機能追加
+	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
 };
 
 
@@ -280,6 +285,13 @@ struct MacroRec {
 	bool IsEnabled() const { return m_szFile[0] != '\0'; }
 };
 //	To Here Sep. 14, 2001 genta
+
+// 2004/06/21 novice タグジャンプ機能追加
+//! タグジャンプ情報
+struct TagJump {
+	HWND	hwndReferer;				//<! 参照元ウィンドウ
+	POINT	point;						//<! ライン, カラム
+};
 
 //	Aug. 15, 2000 genta
 //	Backup Flags
@@ -564,6 +576,11 @@ struct DLLSHAREDATA {
 	//	Sep. 14, 2001 genta
 	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
 
+	// 2004/06/21 タグジャンプ機能追加
+	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
+	int					m_TagJumpTop;					//!< スタックの一番上の位置
+	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
+
 //	MRU_ExtCmd			m_MRU_ExtCmd;	/* MRU 外部コマンド */
 	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
 	int					m_nCmdArrNum;
@@ -711,6 +728,10 @@ public:
 	int TransformFileName_MakeCache( void );
 	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
 	static bool ExpandMetaToFolder( LPCTSTR, LPTSTR, int );
+
+	// 2004/06/21 novice タグジャンプ機能追加
+	void PushTagJump(const TagJump *);		//!< タグジャンプ情報の保存
+	bool PopTagJump(TagJump *);				//!< タグジャンプ情報の参照
 
 protected:
 	/*

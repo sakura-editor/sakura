@@ -1157,4 +1157,54 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, bool bRead, const char* pszSe
 }
 
 
+/*!
+	@brief タグジャンプ情報の保存
+
+	タグジャンプするときに、タグジャンプ先の情報を保存する。
+
+	@param  pTagJump [in] 保存するタグジャンプ情報
+	@return true : 保存成功 false : 保存失敗
+
+	@date 2004/06/21 新規作成
+	@date 2004/06/22 Moca 一杯になったら一番古い情報を削除しそこに新しい情報を入れる
+*/
+void CShareData::PushTagJump(const TagJump *pTagJump)
+{
+	int i = m_pShareData->m_TagJumpTop + 1;
+	if( MAX_TAGJUMPNUM <= i ){
+		i = 0;
+	}
+	if( m_pShareData->m_TagJumpNum < MAX_TAGJUMPNUM ){
+		m_pShareData->m_TagJumpNum++;
+	}
+	m_pShareData->m_TagJump[i] = *pTagJump;
+	m_pShareData->m_TagJumpTop = i;
+}
+
+
+/*!
+	@brief タグジャンプ情報の参照
+
+	タグジャンプバックするときに、タグジャンプ元の情報を参照する。
+
+	@param  pTagJump [out] 参照するタグジャンプ情報
+	@return true : 参照成功 false : 参照失敗
+
+	@date 2004/06/21 新規作成
+	@date 2004/06/22 Moca SetTagJump変更による修正
+*/
+bool CShareData::PopTagJump(TagJump *pTagJump)
+{
+	if( 0 < m_pShareData->m_TagJumpNum ){
+		*pTagJump = m_pShareData->m_TagJump[m_pShareData->m_TagJumpTop--];
+		if( m_pShareData->m_TagJumpTop < 0 ){
+			m_pShareData->m_TagJumpTop = MAX_TAGJUMPNUM - 1;
+		}
+		m_pShareData->m_TagJumpNum--;
+		return true;
+	}
+	return false;
+}
+
+
 /*[EOF]*/

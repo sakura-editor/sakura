@@ -6647,8 +6647,27 @@ can_not_tagjump_end:;
 
 
 /* タグジャンプバック */
-void/*BOOL*/ CEditView::Command_TAGJUMPBACK( void/*BOOL bCheckOnly*/ )
+void CEditView::Command_TAGJUMPBACK( void )
 {
+// 2004/06/21 novice タグジャンプ機能追加
+	TagJump tagJump;
+
+	/* タグジャンプ情報の参照 */
+	if( !CShareData::getInstance()->PopTagJump(&tagJump) || !CShareData::IsEditWnd(tagJump.hwndReferer) ){
+		SendStatusMessage("タグジャンプバックできません");
+		// 2004.07.10 Moca m_TagJumpNumを0にしなくてもいいと思う
+		// m_pShareData->m_TagJumpNum = 0;
+		return;
+	}
+
+	/* アクティブにする */
+	ActivateFrameWindow( tagJump.hwndReferer );
+
+	/* カーソルを移動させる */
+	memcpy( m_pShareData->m_szWork, (void*)&(tagJump.point), sizeof( tagJump.point ) );
+	::SendMessage( tagJump.hwndReferer, MYWM_SETCARETPOS, 0, 0 );
+
+#if 0
 	HWND hwndReferer = m_pcEditDoc->m_hwndReferer;
 	if( NULL == hwndReferer ){	/* 参照元ウィンドウ */
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -6674,6 +6693,7 @@ void/*BOOL*/ CEditView::Command_TAGJUMPBACK( void/*BOOL bCheckOnly*/ )
 		memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
 		::SendMessage( hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 	}
+#endif
 	return;
 }
 
@@ -6840,6 +6860,11 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 	POINT	poCaret;
 	char	szJumpToFile[1024];
 	char	szWork[1024];
+	// 2004/06/21 novice タグジャンプ機能追加
+	TagJump	tagJump;
+
+	// 参照元ウィンドウ保存
+	tagJump.hwndReferer = m_pcEditDoc->m_hwndParent;
 
 	strcpy( szJumpToFile, pszFileName );
 
@@ -6855,6 +6880,24 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 	{
 		Command_WINCLOSE();	//	挑戦するだけ。
 	}
+
+// 2004/06/21 novice タグジャンプ機能追加
+// 2004/07/05 みちばな
+// 同一ファイルだとSendMesssageで m_nCaretPosX,m_nCaretPosYが更新されてしまい、
+// ジャンプ先の場所がジャンプ元として保存されてしまっているので、
+// その前で保存するように変更。
+
+	/* カーソル位置変換 */
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_nCaretPosX,
+		m_nCaretPosY,
+		(int*)&tagJump.point.x,
+		(int*)&tagJump.point.y
+	);
+
+	// タグジャンプ情報の保存
+	CShareData::getInstance()->PushTagJump(&tagJump);
+
 
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
@@ -6906,22 +6949,12 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 			return false;
 	}
 
-	/*
-	カーソル位置変換
-	レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	→
-	物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-		m_nCaretPosX,
-		m_nCaretPosY,
-		(int*)&poCaret.x,
-		(int*)&poCaret.y
-	);
-
+// 2004/06/21 novice タグジャンプ機能追加
+#if 0
 	/* タグジャンプ元通知 */
 	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
 	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
+#endif
 
 	return true;
 }
@@ -7327,22 +7360,31 @@ open_c:;
 	}
 	/* アクティブにする */
 	ActivateFrameWindow( hwndOwner );
+
+// 2004/06/21 novice タグジャンプ機能追加
+// 2004/07/09 genta/Moca タグジャンプバックの登録が取り除かれていたが、
+//            こちらでも従来どおり登録する
+	TagJump	tagJump;
 	/*
 	  カーソル位置変換
 	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	POINT	poCaret;
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 		m_nCaretPosX,
 		m_nCaretPosY,
-		(int*)&poCaret.x,
-		(int*)&poCaret.y
+		(int*)&tagJump.point.x,
+		(int*)&tagJump.point.y
 	);
+	tagJump.hwndReferer = m_pcEditDoc->m_hwndParent;
+	// タグジャンプ情報の保存
+	CShareData::getInstance()->PushTagJump(&tagJump);
+#if 0
 	/* タグジャンプ元通知 */
 	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
 	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
+#endif
 	return TRUE;
 }
 
