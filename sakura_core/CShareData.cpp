@@ -123,8 +123,11 @@ struct ARRHEAD {
 	Version 47:
 	ファイルからの補完をTypesに追加 2003.06.28 Moca
 
+	Version 48:
+	Grepリアルタイム表示追加 2003.06.28 Moca
+
 */
-const unsigned int uShareDataVersion = 47;
+const unsigned int uShareDataVersion = 48;
 
 /*
 ||	Singleton風
@@ -636,7 +639,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
 		m_pShareData->m_Common.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
 		m_pShareData->m_Common.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
-
+		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;				/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
 		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
@@ -1314,8 +1317,9 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "リッチテキスト", TRUE );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
+		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
 		strcpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
-			"${w?$h$:アウトプット$:${I?$f$:$F$}$}${U?(更新)$} -"
+			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -"
 			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
 		strcpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
 			"${w?$h$:アウトプット$:$f$}${U?(更新)$} -"
@@ -4710,6 +4714,7 @@ const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int
 	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
 	@date 2002.11.27 Moca 新規作成
 */
+/**************** 未使用
 LPTSTR CShareData::GetTransformFileName( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen )
 {
 	int i;
@@ -4739,7 +4744,7 @@ LPTSTR CShareData::GetTransformFileName( LPCTSTR pszSrc, LPTSTR pszDest, int nDe
 	}
 	return pszDest;
 }
-
+****************/
 
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
@@ -4754,7 +4759,7 @@ LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int
 	TCHAR szBuf[_MAX_PATH + 1];
 
 	if( -1 == m_nTransformFileNameCount ){
-		TransformFileName_MakeCash();
+		TransformFileName_MakeCache();
 	}
 
 	if( 0 < m_nTransformFileNameCount ){
@@ -4779,8 +4784,9 @@ LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int
 /*!	展開済みメタ文字列のキャッシュを作成・更新する
 	@retval 有効な展開済み置換前文字列の数
 	@date 2003.01.27 Moca 新規作成
+	@date 2003.06.23 Moca 関数名変更
 */
-int CShareData::TransformFileName_MakeCash( void ){
+int CShareData::TransformFileName_MakeCache( void ){
 	int i;
 	int nCount = 0;
 	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
