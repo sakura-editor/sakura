@@ -1113,9 +1113,10 @@ void CEditView::Command_DOWN2( int bSelect )
 		@li 0: キー操作と同一(default)
 		@li 1: 空白を無視して先頭に移動。
 		@li 4: 選択して移動(合成可)
-		@li 8: 改行単位で先頭に移動(合成可) / 未実装
+		@li 8: 改行単位で先頭に移動(合成可)
 	
 	Oct. 29, 2001 genta マクロ用機能拡張(パラメータ追加) + goto排除
+	May. 15, 2002 oak   改行単位移動
 */
 void CEditView::Command_GOLINETOP( int bSelect, BOOL bLineTopOnly, int lparam )
 {
@@ -1124,6 +1125,7 @@ void CEditView::Command_GOLINETOP( int bSelect, BOOL bLineTopOnly, int lparam )
 	int				nCaretPosX;
 	int				nCaretPosY;
 	int				nPos;
+	int				nPosY;
 //	const CLayout*	pcLayout;
 
 	if( lparam & 1 ){
@@ -1145,34 +1147,46 @@ void CEditView::Command_GOLINETOP( int bSelect, BOOL bLineTopOnly, int lparam )
 			DisableSelectArea( TRUE );
 		}
 	}
-	nCaretPosX = 0;
-	nCaretPosY = m_nCaretPosY;
+	if ( lparam & 8 ){
+		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			0,
+			m_nCaretPosY_PHY,
+			&nCaretPosX,
+			&nCaretPosY
+		);
+	}else{
+		nCaretPosX = 0;
+		nCaretPosY = m_nCaretPosY;
+	}
 	if( !bLineTopOnly ){
-		/* 現在行のデータを取得 */
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
-		if( NULL == pLine ){
-			return;
-		}
-		for( nPos = 0; nPos < nLineLen; ++nPos ){
-			if( ' ' != pLine[nPos] && '\t' != pLine[nPos] ){
-				if( CR == pLine[nPos] || LF == pLine[nPos] ){
-					nPos = nLineLen;
-				}
-				break;
+		/* 目的行のデータを取得 */
+		/* 改行単位指定で、先頭から空白が1折り返し行以上続いている場合は次の行データを取得 */
+		nPosY = nCaretPosY - 1;
+		do {
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ++nPosY, &nLineLen );
+			if( NULL == pLine ){
+				return;
 			}
-		}
+			for( nPos = 0; nPos < nLineLen; ++nPos ){
+				if( ' ' != pLine[nPos] && '\t' != pLine[nPos] ){
+					if( CR == pLine[nPos] || LF == pLine[nPos] ){
+						nPos = nLineLen;
+					}
+					break;
+				}
+			}
+		} while (( lparam & 8 ) && (nPos >= nLineLen) && (m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 > nPosY) );
 		if( nPos >= nLineLen ){
 			nPos = 0;
+			nPosY = nCaretPosY;
 		}
 		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 		nPos = LineIndexToColmn( pLine, nLineLen, nPos );
-		if( m_nCaretPosX == nPos ){
-			nCaretPosX = 0;
-		}
-		else {
+		if( (m_nCaretPosX != nPos) || (m_nCaretPosY != nPosY) ){
 			nCaretPosX = nPos;
+			nCaretPosY = nPosY;
 		}
-		nCaretPosY = m_nCaretPosY;
 	}
 
 	MoveCursor( nCaretPosX, nCaretPosY, TRUE );
@@ -9503,7 +9517,7 @@ end_of_compare:;
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
 		memcpy( m_pShareData->m_szWork, (void*)&poDes, sizeof( poDes ) );
-		::PostMessage( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
+		::SendMessage( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
 		memcpy( m_pShareData->m_szWork, (void*)&poSrc, sizeof( poSrc ) );
