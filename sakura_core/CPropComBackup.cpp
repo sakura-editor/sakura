@@ -108,7 +108,8 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		//	Oct. 5, 2002 genta バックアップフォルダ名の入力サイズを指定
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_szBackUpFolder ) - 1 ), 0 );
+		//	Oct. 8, 2002 genta 最後に付加される\の領域を残すためバッファサイズ-1しか入力させない
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_szBackUpFolder ) - 1 - 1 ), 0 );
 		return TRUE;
 //****	From Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
 //	case WM_NOTIFY:
@@ -349,8 +350,9 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 	m_Common.SetBackupOpt(BKUP_SEC, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_SEC ) == BST_CHECKED);
 
 	/* バックアップを作成するフォルダ */
-	//	Oct. 5, 2002 サイズをsizeof()で指定
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder, sizeof( m_Common.m_szBackUpFolder ));
+	//	Oct. 5, 2002 genta サイズをsizeof()で指定
+	//	Oct. 8, 2002 genta 後ろに\が追加されるので，1文字余裕を見る必要がある．
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder, sizeof( m_Common.m_szBackUpFolder ) - 1);
 
 	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	m_Common.m_bBackUpDustBox = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX );	//@@@ 2001.12.11 add MIK
