@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2004, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -67,8 +68,14 @@ public:
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */
 	HWND			m_hwndToolTip;	/*!< ツールチップ */
-	wchar_t			m_szTextWide[1024];
-	char			m_szTextAnsi[1024];
+	TCHAR			m_szTextTip1[1024];
+#ifdef UNICODE
+	//※現在扱っている文字コードとは逆の文字コードを指定する。
+	char			m_szTextTip2[1024];	//!< SJIS文字列でのツールチップ
+#else
+	//※現在扱っている文字コードとは逆の文字コードを指定する。
+	wchar_t			m_szTextTip2[1024];	//!< UNICODE文字列でのツールチップ
+#endif	//UNICODE
 
 protected:
 	/*
