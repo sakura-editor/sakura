@@ -236,6 +236,17 @@ void CEditView::Command_Diff(
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
 
+	//	From Here Dec. 28, 2002 MIK
+	//	diff.exeの存在チェック
+	wsprintf( cmdline, "%s\\%s", szExeFolder, "diff.exe" );
+	if( -1 == ::GetFileAttributes( cmdline ) )
+	{
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			_T( "差分コマンド実行は失敗しました。\nDIFF.EXE が見つかりません。" ) );
+		return;
+	}
+	//	To Here Dec. 28, 2002 MIK
+
 	//OSバージョン取得
 	COsVersionInfo cOsVer;
 	//コマンドライン文字列作成(MAX:1024)
