@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	編集操作要素ブロック
-	
+
 	@author Norio Nakatani
 	@date 1998/06/09 新規作成
 	$Revision$
@@ -78,19 +78,19 @@ COpeBlk::~COpeBlk()
 /* 操作の追加 */
 int COpeBlk::AppendOpe( COpe* pcOpe/*, CLayoutMgr* pCLayoutMgr*/ )
 {
-	if( -1 == pcOpe->m_nCaretPosX_PHY_Before	/* カーソル位置　改行単位行先頭からのバイト数（０開始） */
-	 || -1 == pcOpe->m_nCaretPosY_PHY_Before	/* カーソル位置　改行単位行の行番号（０開始） */
-	 || -1 == pcOpe->m_nCaretPosX_PHY_After		/* カーソル位置　改行単位行先頭からのバイト数（０開始） */
-	 || -1 == pcOpe->m_nCaretPosY_PHY_After		/* カーソル位置　改行単位行の行番号（０開始） */
+	if( -1 == pcOpe->m_nCaretPosX_PHY_Before	/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
+	 || -1 == pcOpe->m_nCaretPosY_PHY_Before	/* カーソル位置 改行単位行の行番号（０開始）*/
+	 || -1 == pcOpe->m_nCaretPosX_PHY_After		/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
+	 || -1 == pcOpe->m_nCaretPosY_PHY_After		/* カーソル位置 改行単位行の行番号（０開始）*/
 	){
 //		MessageBox( 0, "COpeBlk::AppendOpe() error", "バグ", MB_OK );
-		MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, 
+		MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			"COpeBlk::AppendOpe() error.\n バグ\n pcOpe->m_nCaretPosX_PHY_Before = %d\npcOpe->m_nCaretPosY_PHY_Before = %d\npcOpe->m_nCaretPosX_PHY_After = %d\npcOpe->m_nCaretPosY_PHY_After = %d\n",
 			pcOpe->m_nCaretPosX_PHY_Before,
 			pcOpe->m_nCaretPosY_PHY_Before,
 			pcOpe->m_nCaretPosX_PHY_After,
 			pcOpe->m_nCaretPosY_PHY_After
-		);	
+		);
 	}
 //	/*
 //	  カーソル位置変換
@@ -113,7 +113,7 @@ int COpeBlk::AppendOpe( COpe* pcOpe/*, CLayoutMgr* pCLayoutMgr*/ )
 //		&pcOpe->m_nCaretPosY_PHY_After
 //	);
 
-	
+
 	/* 配列のメモリサイズを調整 */
 	if( 0 == m_nCOpeArrNum ){
 		m_ppCOpeArr = (COpe**)malloc( sizeof( COpe* ) );
@@ -155,8 +155,6 @@ void COpeBlk::DUMP( void )
 #endif
 	return;
 }
-
-
 
 
 /*[EOF]*/

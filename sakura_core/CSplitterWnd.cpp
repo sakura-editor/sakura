@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	分割線ウィンドウクラス
-	
+
 	@author Norio Nakatani
 	@date 1998/07/07 新規作成
 	$Revision$
@@ -92,18 +92,18 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 //	);
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
-	atWork = RegisterWC( 
+	atWork = RegisterWC(
 		/* WNDCLASS用 */
-		NULL,// Handle to the class icon. 
-		NULL,	//Handle to a small icon  
-		NULL,// Handle to the class cursor. 
-		(HBRUSH)NULL,// Handle to the class background brush. 
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file. 
+		NULL,// Handle to the class icon.
+		NULL,	//Handle to a small icon
+		NULL,// Handle to the class cursor.
+		(HBRUSH)NULL,// Handle to the class background brush.
+		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
 	/* 基底クラスメンバ呼び出し */
-	return CWnd::Create( 
+	return CWnd::Create(
 		/* CreateWindowEx()用 */
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -141,11 +141,11 @@ void CSplitterWnd::SetChildWndArr( HWND* pcEditViewArr )
 /* 分割フレーム描画 */
 void CSplitterWnd::DrawFrame( HDC hdc, RECT* prc )
 {
-	CSplitBoxWnd::Draw3dRect( hdc, prc->left, prc->top, prc->right, prc->bottom, 
+	CSplitBoxWnd::Draw3dRect( hdc, prc->left, prc->top, prc->right, prc->bottom,
 		::GetSysColor( COLOR_3DSHADOW ),
 		::GetSysColor( COLOR_3DHILIGHT )
 	);
-	CSplitBoxWnd::Draw3dRect( hdc, prc->left + 1, prc->top + 1, prc->right - 2, prc->bottom - 2, 
+	CSplitBoxWnd::Draw3dRect( hdc, prc->left + 1, prc->top + 1, prc->right - 2, prc->bottom - 2,
 		RGB( 0, 0, 0 ),
 		::GetSysColor( COLOR_3DFACE )
 	);
@@ -164,7 +164,7 @@ void CSplitterWnd::DrawSplitter( int xPos, int yPos, int bEraseOld )
 	RECT		rc;
 	RECT		rc2;
 	int			nTrackerWidth = 6;
-	
+
 	hdc = ::GetDC( m_hWnd );
 	hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 	hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -223,21 +223,21 @@ int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
 
 	if( m_nAllSplitRows == 1 && m_nAllSplitCols == 1 ){
 		return 0;
-	}else 
+	}else
 	if( m_nAllSplitRows == 2 && m_nAllSplitCols == 1 ){
 		if( m_nVSplitPos - nMargin < yPos && yPos < m_nVSplitPos + nFrameWidth + nMargin ){
 			return 1;
 		}else{
 			return 0;
 		}
-	}else 
+	}else
 	if( m_nAllSplitRows == 1 && m_nAllSplitCols == 2 ){
 		if( m_nHSplitPos - nMargin < xPos && xPos < m_nHSplitPos + nFrameWidth + nMargin ){
 			return 2;
 		}else{
 			return 0;
 		}
-	}else{ 
+	}else{
 		if( m_nVSplitPos - nMargin < yPos && yPos < m_nVSplitPos + nFrameWidth + nMargin &&
 			m_nHSplitPos - nMargin < xPos && xPos < m_nHSplitPos + nFrameWidth + nMargin ){
 			return 3;
@@ -250,7 +250,7 @@ int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
 		}else{
 			return 0;
 		}
-	} 
+	}
 }
 
 /* ウィンドウの分割 */
@@ -274,15 +274,15 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		nVertical = m_nVSplitPos;		/* 垂直分割位置 */
 		nHorizontal = m_nHSplitPos;		/* 水平分割位置 */
 	}
-	/* 
+	/*
 	|| ファンクションキーを下に表示している場合はサイズボックスを表示しない
-	|| ステータスパーを表示している場合はサイズボックスを表示しない 
+	|| ステータスパーを表示している場合はサイズボックスを表示しない
 	*/
-	if( NULL == pCEditWnd 
+	if( NULL == pCEditWnd
 	 ||( NULL != pCEditWnd->m_CFuncKeyWnd.m_hWnd
 	  && 1 == m_pShareData->m_Common.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
-	){	
+	){
 		bSizeBox = FALSE;
 	}else{
 		bSizeBox = TRUE;
@@ -299,28 +299,28 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		bSizeBox = FALSE;
 	}
 
-	
+
 	for( i = 0; i < 4; ++i ){
-		pcViewArr[i] = ( CEditView* )::GetWindowLong( m_ChildWndArr[i], 0 ); 
+		pcViewArr[i] = ( CEditView* )::GetWindowLong( m_ChildWndArr[i], 0 );
 	}
 	::GetClientRect( m_hWnd, &rc );
 	if( nHorizontal < nLimit ){
 		if( nHorizontal > 0 ){
-			bHUp = TRUE; 		
+			bHUp = TRUE;
 		}
 		nHorizontal = 0;
 	}
 	if( nHorizontal > rc.right - nLimit * 2 ){
-		nHorizontal = 0;	
+		nHorizontal = 0;
 	}
 	if( nVertical < nLimit ){
 		if( nVertical > 0 ){
-			bVUp = TRUE; 		
+			bVUp = TRUE;
 		}
-		nVertical = 0;	
+		nVertical = 0;
 	}
 	if( nVertical > rc.bottom - nLimit * 2 ){
-		nVertical = 0;	
+		nVertical = 0;
 	}
 	m_nVSplitPos = nVertical;		/* 垂直分割位置 */
 	m_nHSplitPos = nHorizontal;		/* 水平分割位置 */
@@ -350,8 +350,8 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 				}
 			}else{
 				/* ペインの表示状態を他のビューにコピー */
-				if( m_nActivePane != 0 && 
-				    NULL != pcViewArr[m_nActivePane] && NULL != pcViewArr[0] ){
+				if( m_nActivePane != 0 &&
+					NULL != pcViewArr[m_nActivePane] && NULL != pcViewArr[0] ){
 					pcViewArr[m_nActivePane]->CopyViewStatus( pcViewArr[0] );
 				}
 			}
@@ -364,16 +364,16 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 				}
 			}else{
 				/* ペインの表示状態を他のビューにコピー */
-				if( m_nActivePane != 0 && 
-				    NULL != pcViewArr[m_nActivePane] && NULL != pcViewArr[0] ){
+				if( m_nActivePane != 0 &&
+					NULL != pcViewArr[m_nActivePane] && NULL != pcViewArr[0] ){
 					pcViewArr[m_nActivePane]->CopyViewStatus( pcViewArr[0] );
 				}
 			}
 		}else{
 			if( !bVUp && !bHUp ){
 				/* ペインの表示状態を他のビューにコピー */
-				if( m_nActivePane != 0 && 
-				    NULL != pcViewArr[m_nActivePane] && NULL != pcViewArr[0] ){
+				if( m_nActivePane != 0 &&
+					NULL != pcViewArr[m_nActivePane] && NULL != pcViewArr[0] ){
 					pcViewArr[m_nActivePane]->CopyViewStatus( pcViewArr[0] );
 				}
 			}else
@@ -433,12 +433,12 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 				}
 			}else{
 				/* ペインの表示状態を他のビューにコピー */
-				if( m_nActivePane != 0 && 
-					m_nActivePane != 2 && 
-				    NULL != pcViewArr[0] &&
-				    NULL != pcViewArr[1] &&
-				    NULL != pcViewArr[2] &&
-				    NULL != pcViewArr[3] 
+				if( m_nActivePane != 0 &&
+					m_nActivePane != 2 &&
+					NULL != pcViewArr[0] &&
+					NULL != pcViewArr[1] &&
+					NULL != pcViewArr[2] &&
+					NULL != pcViewArr[3]
 				){
 					pcViewArr[1]->CopyViewStatus( pcViewArr[0] );
 					pcViewArr[3]->CopyViewStatus( pcViewArr[2] );
@@ -487,12 +487,12 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 				}
 			}else{
 				/* ペインの表示状態を他のビューにコピー */
-				if( m_nActivePane != 0 && 
-					m_nActivePane != 1 && 
-				    NULL != pcViewArr[0] &&
-				    NULL != pcViewArr[1] &&
-				    NULL != pcViewArr[2] &&
-				    NULL != pcViewArr[3] 
+				if( m_nActivePane != 0 &&
+					m_nActivePane != 1 &&
+					NULL != pcViewArr[0] &&
+					NULL != pcViewArr[1] &&
+					NULL != pcViewArr[2] &&
+					NULL != pcViewArr[3]
 				){
 					pcViewArr[2]->CopyViewStatus( pcViewArr[0] );
 					pcViewArr[3]->CopyViewStatus( pcViewArr[1] );
@@ -641,14 +641,14 @@ void CSplitterWnd::VHSplitOnOff( void )
 		nY = 0;
 	}else{
 		if( m_nAllSplitRows == 1){
-			nY = rc.bottom / 2; 
+			nY = rc.bottom / 2;
 		}else{
-			nY = m_nVSplitPos; 
+			nY = m_nVSplitPos;
 		}
 		if( m_nAllSplitCols == 1 ){
-			nX = rc.right / 2; 
+			nX = rc.right / 2;
 		}else{
-			nX = m_nHSplitPos; 
+			nX = m_nHSplitPos;
 		}
 	}
 	DoSplit( nX, nY );
@@ -657,47 +657,47 @@ void CSplitterWnd::VHSplitOnOff( void )
 }
 
 
-/* 前のペインを返す */ 
+/* 前のペインを返す */
 int CSplitterWnd::GetPrevPane( void )
 {
 	int		nPane;
-	nPane = -1;	
+	nPane = -1;
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 1 ){
 		nPane = -1;
 	}else
 	if( m_nAllSplitRows == 2 &&	m_nAllSplitCols == 1 ){
 		switch( m_nActivePane ){
 		case 0:
-			nPane = -1;	
-			break;	
+			nPane = -1;
+			break;
 		case 2:
-			nPane = 0;	
-			break;	
+			nPane = 0;
+			break;
 		}
 	}else
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 2 ){
 		switch( m_nActivePane ){
-		case 0:	
-			nPane = -1;	
-			break;	
-		case 1:	
-			nPane = 0;	
-			break;	
+		case 0:
+			nPane = -1;
+			break;
+		case 1:
+			nPane = 0;
+			break;
 		}
 	}else{
 		switch( m_nActivePane ){
-		case 0:	
-			nPane = -1;	
-			break;	
-		case 1:	
-			nPane = 0;	
-			break;	
-		case 2:	
-			nPane = 1;	
-			break;	
-		case 3:	
-			nPane = 2;	
-			break;	
+		case 0:
+			nPane = -1;
+			break;
+		case 1:
+			nPane = 0;
+			break;
+		case 2:
+			nPane = 1;
+			break;
+		case 3:
+			nPane = 2;
+			break;
 		}
 	}
 	return nPane;
@@ -706,47 +706,47 @@ int CSplitterWnd::GetPrevPane( void )
 
 
 
-/* 次のペインを返す */ 
+/* 次のペインを返す */
 int CSplitterWnd::GetNextPane( void )
 {
 	int		nPane;
-	nPane = -1;	
+	nPane = -1;
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 1 ){
 		nPane = -1;
 	}else
 	if( m_nAllSplitRows == 2 &&	m_nAllSplitCols == 1 ){
 		switch( m_nActivePane ){
 		case 0:
-			nPane = 2;	
-			break;	
+			nPane = 2;
+			break;
 		case 2:
-			nPane = -1;	
-			break;	
+			nPane = -1;
+			break;
 		}
 	}else
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 2 ){
 		switch( m_nActivePane ){
-		case 0:	
-			nPane = 1;	
-			break;	
-		case 1:	
-			nPane = -1;	
-			break;	
+		case 0:
+			nPane = 1;
+			break;
+		case 1:
+			nPane = -1;
+			break;
 		}
 	}else{
 		switch( m_nActivePane ){
-		case 0:	
-			nPane = 1;	
-			break;	
-		case 1:	
-			nPane = 2;	
-			break;	
-		case 2:	
-			nPane = 3;	
-			break;	
-		case 3:	
-			nPane = -1;	
-			break;	
+		case 0:
+			nPane = 1;
+			break;
+		case 1:
+			nPane = 2;
+			break;
+		case 2:
+			nPane = 3;
+			break;
+		case 3:
+			nPane = -1;
+			break;
 		}
 	}
 	return nPane;
@@ -763,17 +763,17 @@ int CSplitterWnd::GetFirstPane( void )
 int CSplitterWnd::GetLastPane( void )
 {
 	int		nPane;
-	nPane = 0;	
+	nPane = 0;
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 1 ){
 		nPane = 0;
 	}else
 	if( m_nAllSplitRows == 2 &&	m_nAllSplitCols == 1 ){
-		nPane = 2;	
+		nPane = 2;
 	}else
 	if( m_nAllSplitRows == 1 &&	m_nAllSplitCols == 2 ){
-		nPane = 1;	
+		nPane = 1;
 	}else{
-		nPane = 3;	
+		nPane = 3;
 	}
 	return nPane;
 }
@@ -839,18 +839,18 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	int			nFrameWidth = 3;
 	BOOL		bSizeBox;
 	for( i = 0; i < 4; ++i ){
-		pcViewArr[i] = ( CEditView* )::GetWindowLong( m_ChildWndArr[i], 0 ); 
+		pcViewArr[i] = ( CEditView* )::GetWindowLong( m_ChildWndArr[i], 0 );
 	}
-	
-	/* 
+
+	/*
 	|| ファンクションキーを下に表示している場合はサイズボックスを表示しない
-	|| ステータスパーを表示している場合はサイズボックスを表示しない 
+	|| ステータスパーを表示している場合はサイズボックスを表示しない
 	*/
-	if( NULL == pCEditWnd 
+	if( NULL == pCEditWnd
 	 ||( NULL != pCEditWnd->m_CFuncKeyWnd.m_hWnd
 	  && 1 == m_pShareData->m_Common.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
-	){	
+	){
 		bSizeBox = FALSE;
 	}else{
 		bSizeBox = TRUE;
@@ -875,7 +875,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			pcViewArr[0]->SplitBoxOnOff( TRUE, TRUE, bSizeBox );		/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
-	}else 
+	}else
 	if( m_nAllSplitRows == 2 && m_nAllSplitCols == 1 ){
 		if( m_ChildWndArr[0] != NULL ){
 			::MoveWindow( m_ChildWndArr[0], 0, 0, rcClient.right,  m_nVSplitPos, TRUE );			/* 子ウィンドウ配列 */
@@ -885,7 +885,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			::MoveWindow( m_ChildWndArr[2], 0, m_nVSplitPos + nFrameWidth, rcClient.right, rcClient.bottom - ( m_nVSplitPos + nFrameWidth ), TRUE );			/* 子ウィンドウ配列 */
 			pcViewArr[2]->SplitBoxOnOff( FALSE, TRUE, bSizeBox );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
-	}else 
+	}else
 	if( m_nAllSplitRows == 1 && m_nAllSplitCols == 2 ){
 		if( m_ChildWndArr[0] != NULL ){
 			::MoveWindow( m_ChildWndArr[0], 0, 0, m_nHSplitPos, rcClient.bottom, TRUE );			/* 子ウィンドウ配列 */
@@ -895,7 +895,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			::MoveWindow( m_ChildWndArr[1], m_nHSplitPos + nFrameWidth, 0, rcClient.right - ( m_nHSplitPos + nFrameWidth ),  rcClient.bottom, TRUE );			/* 子ウィンドウ配列 */
 			pcViewArr[1]->SplitBoxOnOff( TRUE, FALSE, bSizeBox );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
-	}else{ 
+	}else{
 		if( m_ChildWndArr[0] != NULL ){
 			::MoveWindow( m_ChildWndArr[0], 0, 0, m_nHSplitPos,  m_nVSplitPos, TRUE );			/* 子ウィンドウ配列 */
 			pcViewArr[0]->SplitBoxOnOff( FALSE, FALSE, FALSE );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
@@ -912,7 +912,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			::MoveWindow( m_ChildWndArr[3], m_nHSplitPos + nFrameWidth, m_nVSplitPos + nFrameWidth, rcClient.right - ( m_nHSplitPos + nFrameWidth ),  rcClient.bottom - ( m_nVSplitPos + nFrameWidth ), TRUE );			/* 子ウィンドウ配列 */
 			pcViewArr[3]->SplitBoxOnOff( FALSE, FALSE, bSizeBox );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
-	}	
+	}
 	return 0L;
 }
 
@@ -921,7 +921,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 /* マウス移動時の処理 */
 LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	
+
 	int		nHit;
 	HCURSOR	hcurOld;	/* もとのマウスカーソル */
 	RECT	rc;
@@ -1101,11 +1101,8 @@ LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam,
 		SetActivePane( (int)wParam );
 		break;
 	}
-	return 0L;		
+	return 0L;
 }
 
 
 /*[EOF]*/
-
-
-

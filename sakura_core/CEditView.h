@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	文書ウィンドウの管理
-	
+
 	@author Norio Nakatani
 	@date	1998/03/13 作成
 	$Revision$
@@ -128,7 +128,7 @@ public:
 									int dnChar, int upChar );
 //@@@ 2001.02.03 Start by MIK: 全角の対括弧
 	bool  SearchBracketForward2( int PosX, int PosY, int* NewX, int* NewY,
-						         char* upChar, char* dnChar );	//	対括弧の前方検索
+								 char* upChar, char* dnChar );	//	対括弧の前方検索
 	bool  SearchBracketBackward2( int PosX, int PosY, int* NewX, int* NewY,
 								  char* dnChar, char* upChar );
 //@@@ 2001.02.03 End
@@ -370,8 +370,8 @@ protected:
 	void Command_WordDeleteToEnd( void );	/* 単語の右端まで削除 */
 	void Command_WordCut( void );			/* 単語切り取り */
 	void Command_WordDelete( void );		/* 単語削除 */
-	void Command_LineCutToStart( void );   	//行頭まで切り取り(改行単位)
-	void Command_LineCutToEnd( void );   	//行末まで切り取り(改行単位)
+	void Command_LineCutToStart( void );	//行頭まで切り取り(改行単位)
+	void Command_LineCutToEnd( void );		//行末まで切り取り(改行単位)
 	void Command_LineDeleteToStart( void );	/* 行頭まで削除(改行単位) */
 	void Command_LineDeleteToEnd( void );  	//行末まで削除(改行単位)
 	void Command_CUT_LINE( void );			/* 行切り取り(折り返し単位) */
@@ -504,7 +504,7 @@ void ReplaceData_CEditView(
 	void Command_CODECNV_SJIS2UTF8( void );		/* SJIS→UTF-8コード変換 */
 	void Command_CODECNV_SJIS2UTF7( void );		/* SJIS→UTF-7コード変換 */
 	void Command_BASE64DECODE( void );			/* Base64デコードして保存 */
-	void Command_UUDECODE( void );				/* uudecodeして保存	*/	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+	void Command_UUDECODE( void );				/* uudecodeして保存 */	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
 	/* 検索系 */
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
@@ -565,7 +565,7 @@ void ReplaceData_CEditView(
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
 
 	/* 支援 */
-	void Command_HOKAN( void );			/* 入力補完	*/
+	void Command_HOKAN( void );			/* 入力補完 */
 	void Command_HELP_CONTENTS( void );	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO added
 	void Command_HELP_SEARCH( void );	/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO added
 	void Command_MENU_ALLFUNC( void );	/* コマンド一覧 */

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	テキストのレイアウト情報
-	
+
 	@author Norio Nakatani
 	@date 1998/3/11 新規作成
 	$Revision$
@@ -63,5 +63,6 @@ void CLayout::DUMP( void )
 #endif
 	return;
 }
+
 
 /*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	アウトライン解析  データ要素
-	
+
 	@author Norio Nakatani
 	@date	1998/06/23 作成
 	$Revision$
@@ -54,5 +54,6 @@ class CFuncInfo {
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CFUNCINFO_H_ */
+
 
 /*[EOF]*/

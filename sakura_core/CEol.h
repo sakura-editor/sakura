@@ -1,14 +1,14 @@
 //	$Id$
 /*! @file
-    End of Line種別の管理
-    
+	End of Line種別の管理
+
 	@author genta
 	@date 2000/5/15 新規作成
 	$Revision$
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -35,7 +35,7 @@
 -----------------------------------------------------------------------*/
 /*!
 	@brief End Of Line すなわち行末の改行コードを管理する。
-	
+
 	管理とは言ってもオブジェクト化することで安全に設定を行えたり関連情報の取得を
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
@@ -46,17 +46,17 @@ class SAKURA_CORE_API CEOL
 	static const int gm_pnEolLenArr[EOL_TYPE_NUM];
 	static const char* gm_pszEolNameArr[EOL_TYPE_NUM];
 public:
-	
+
 	//	設定関数
 	void Init(void){
 		m_enumEOLType = EOL_NONE;
 	//	m_nEOLLen = 2; /* = CR+LF */
 	}
-	
+
 	static enumEOLType GetEOLType( const char* pszData, int nDataLen );
 	bool SetType( enumEOLType t);	//	Typeの設定
 	void GetTypeFromString( const char* pszData, int nDataLen )
-		{	SetType( GetEOLType( pszData, nDataLen )); }
+		{	SetType( GetEOLType( pszData, nDataLen ) ); }
 
 	//	読み出し関数
 	enumEOLType GetType(void) const { return m_enumEOLType; }	//!<	現在のTypeを取得
@@ -73,11 +73,11 @@ public:
 	const CEOL& operator=( const CEOL& t )
 		{ m_enumEOLType = t.m_enumEOLType; return *this; }
 	operator enumEOLType(void) const { return GetType(); }
-	
+
 	//	constructor
 	CEOL(){ Init(); }
 	CEOL( enumEOLType t ){ SetType(t); }
-	
+
 private:
 	enumEOLType		m_enumEOLType;	//!< 改行コードの種類
 	//int			m_nEOLLen;		/* 改行コードの長さ */
@@ -88,3 +88,6 @@ private:
 // inline bool operator!=(m_enumEOLType t, const CEOL& c ){ return c != t; }
 
 #endif
+
+
+/*[EOF]*/

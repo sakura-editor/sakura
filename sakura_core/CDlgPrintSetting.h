@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	印刷設定ダイアログ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -73,7 +73,7 @@ protected:
 	BOOL OnCbnSelChange( HWND, int );
 	BOOL OnBnClicked( int );
 
-	
+
 	void OnChangeSettingType( BOOL );	/* 設定のタイプが変わった */
 	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */
 	int DataCheckAndCrrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
@@ -85,5 +85,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGPRINTSETTING_H_ */
+
 
 /*[EOF]*/

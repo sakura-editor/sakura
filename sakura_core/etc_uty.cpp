@@ -28,7 +28,7 @@
 #include "etc_uty.h"
 #include "debug.h"
 #include "CMemory.h"
-#include "funccode.h"    //Stonee, 2001/02/23
+#include "funccode.h"	//Stonee, 2001/02/23
 
 
 /* 日付をフォーマット */
@@ -1193,7 +1193,7 @@ BOOL IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen )
 			 pLine[i] == '"' ||	//	0x22
 			 pLine[i] == '|' ||	//	0x7C
 			 pLine[i] == '*'	//	0x2A
-		    ) &&
+			) &&
 			/* 上の文字がSJIS2バイトコードの2バイト目でないことを、1つ前の文字がSJIS2バイトコードの1バイト目でないことで判断する */
 			( i > 0 &&
 				(
@@ -1543,8 +1543,8 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 
 
 /*
-||   処理中のユーザー操作を可能にする
-||  ブロッキングフック(?)（メッセージ配送
+||	処理中のユーザー操作を可能にする
+||	ブロッキングフック(?)（メッセージ配送
 */
 BOOL BlockingHook( HWND hwndDlgCancel )
 {
@@ -1573,9 +1573,9 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	@date	2001/02/23
 	@param nFuncID 機能番号
 	@return ヘルプトピック番号。該当IDが無い場合には0を返す。
-	
+
 	内容はcase文の羅列。
-	
+
 */
 int FuncID_To_HelpContextID( int nFuncID )
 {
@@ -1882,7 +1882,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 /*!
 	与えられた正規表現ライブラリの初期化を行う．
 	メッセージフラグがONで初期化に失敗したときはメッセージを表示する．
-	
+
 	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
 			バージョン番号の設定が不要であればNULL。
 	@param pRegexp [in] チェックに利用するCBregexpクラスへの参照
@@ -1893,7 +1893,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 */
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
 {
-	if( !rRegexp.Init()){
+	if( !rRegexp.Init() ){
 		if( bShowMessage ){
 			::MessageBeep( MB_ICONEXCLAMATION );
 			::MessageBox( hWnd, "BREGEXP.DLLが見つかりません。\r\n"
@@ -1909,49 +1909,49 @@ bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
 /*!
 	正規表現ライブラリの存在を確認し、あればバージョン情報を指定コンポーネントにセットする。
 	失敗した場合には空文字列をセットする。
-	
+
 	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
 			バージョン番号の設定が不要であればNULL。
 	@param nCmpId [in] バージョン文字列を設定するコンポーネントID
 	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
-	
+
 	@retval true バージョン番号の設定に成功
 	@retval false 正規表現ライブラリの初期化に失敗
 */
 bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMessage )
 {
 	CBregexp cRegexp;
-	
-	if( !InitRegexp( hWnd, cRegexp, bShowMessage )){
+
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		if( hWnd != NULL ){
-			::SetDlgItemText( hWnd, nCmpId, "");
+			::SetDlgItemText( hWnd, nCmpId, " ");
 		}
 		return false;
 	}
 	if( hWnd != NULL ){
-		::SetDlgItemText( hWnd, nCmpId, cRegexp.GetVersion());
+		::SetDlgItemText( hWnd, nCmpId, cRegexp.GetVersion() );
 	}
 	return true;
 }
 
 /*!
 	正規表現が規則に従っているかをチェックする。
-	
+
 	@param szPattern [in] チェックする正規表現
 	@param hWnd [in] メッセージボックスの親ウィンドウ
 	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
-	
+
 	@retval true 正規表現は規則通り
 	@retval false 文法に誤りがある。または、ライブラリが使用できない。
 */
 bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage )
 {
 	CBregexp cRegexp;
-	
-	if( !InitRegexp( hWnd, cRegexp, bShowMessage )){
+
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		return false;
 	}
-	if( !cRegexp.Compile( szPattern )){
+	if( !cRegexp.Compile( szPattern ) ){
 		if( bShowMessage ){
 			::MessageBox( hWnd, cRegexp.GetLastMessage(),
 				"正規表現エラー", MB_OK | MB_ICONEXCLAMATION );
@@ -1974,22 +1974,22 @@ CHtmlHelp g_cHtmlHelp;
 
 /*!
 	HTML Helpを開く
-	
+
 	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
-	
+
 	@param hWnd [in] 呼び出し元ウィンドウのウィンドウハンドル
 	@param szFile [in] HTML Helpのファイル名。
 				不等号に続けてウィンドウタイプ名を指定可能。
 	@param uCmd [in] HTML Help に渡すコマンド
 	@param data [in] コマンドに応じたデータ
 	@param msgflag [in] エラーメッセージを表示するか。省略時はtrue。
-	
+
 	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
 */
 
 HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data, bool msgflag )
 {
-	if( g_cHtmlHelp.Init()){
+	if( g_cHtmlHelp.Init() ){
 		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
 	}
 	if( msgflag ){
@@ -2004,5 +2004,4 @@ HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD data, bool msgflag
 //	To Here Jun. 26, 2001 genta
 
 
-
-/* [EOF] */
+/*[EOF]*/

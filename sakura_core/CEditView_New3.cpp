@@ -1,9 +1,9 @@
 //	$Id$
 /*!	@file
 	CEditViewƒNƒ‰ƒX
-	
+
 	ŽŽŒ±—p‚Ì‚½‚ßAŽÀ‘Ì‚Í–³‚¢
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -57,9 +57,9 @@ void CEditView::DispRulerEx( HDC hdc )
 		return;
 	}
 	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		return;	
+		return;
 	}
-	
+
 	/* •`‰æˆ— */
 	HBRUSH		hBrush;
 	HBRUSH		hBrushOld;
@@ -83,25 +83,25 @@ void CEditView::DispRulerEx( HDC hdc )
 
 	/* LOGFONT‚Ì‰Šú‰» */
 	memset( &lf, 0, sizeof(LOGFONT) );
-	lf.lfHeight         = -11;
-	lf.lfWidth          = 5;
-	lf.lfEscapement     = 0;
-	lf.lfOrientation    = 0;
-	lf.lfWeight         = 400;
-	lf.lfItalic         = 0;
-	lf.lfUnderline      = 0;
-	lf.lfStrikeOut      = 0;
-	lf.lfCharSet        = 0;
-	lf.lfOutPrecision   = 3;
-	lf.lfClipPrecision  = 2;
-	lf.lfQuality        = 1;
-	lf.lfPitchAndFamily = 34;
+	lf.lfHeight			= -11;
+	lf.lfWidth			= 5;
+	lf.lfEscapement		= 0;
+	lf.lfOrientation	= 0;
+	lf.lfWeight			= 400;
+	lf.lfItalic			= 0;
+	lf.lfUnderline		= 0;
+	lf.lfStrikeOut		= 0;
+	lf.lfCharSet		= 0;
+	lf.lfOutPrecision	= 3;
+	lf.lfClipPrecision	= 2;
+	lf.lfQuality		= 1;
+	lf.lfPitchAndFamily	= 34;
 	strcpy( lf.lfFaceName, "Arial" );
 	hFont = ::CreateFontIndirect( &lf );
 	hFontOld = (HFONT)::SelectObject( hdc, hFont );
 	::GetTextExtentPoint32( hdc, "X", 1, &sizFont );
 	::SetBkMode( hdc, TRANSPARENT );
-	
+
 	/* ”wŒi */
 	hPen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_3DHILIGHT ) );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
@@ -129,7 +129,7 @@ void CEditView::DispRulerEx( HDC hdc )
 	::LineTo( hdc, m_nViewAlignLeft + m_nViewCx, m_nViewAlignTop - m_nTopYohaku - 1 );
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
-	
+
 
 
 	rc.left = m_nViewAlignLeft - 2;
@@ -139,7 +139,7 @@ void CEditView::DispRulerEx( HDC hdc )
 		rc.right = m_nViewAlignLeft + m_nViewCx + 2;
 	}
 	rc.bottom = m_nViewAlignTop - m_nTopYohaku - 3;
-	CSplitBoxWnd::Draw3dRect( hdc,  
+	CSplitBoxWnd::Draw3dRect( hdc,
 		rc.left,
 		rc.top,
 		rc.right - rc.left,
@@ -148,29 +148,29 @@ void CEditView::DispRulerEx( HDC hdc )
 		::GetSysColor( COLOR_3DHILIGHT )
 	);
 
-	
+
 	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_3DFACE ) );
 	rc2.left = 0;
-	rc2.top = 1;	
+	rc2.top = 1;
 	rc2.right = rc.left;
-	rc2.bottom = m_nViewAlignTop - m_nTopYohaku - 1;	
+	rc2.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 	::FillRect( hdc, &rc2, hBrush );
 	::DeleteObject( hBrush );
 
 	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_3DFACE ) );
 	rc2.left = rc.right;
-	rc2.top = 1;	
+	rc2.top = 1;
 	rc2.right = m_nViewAlignLeft + m_nViewCx + 2;
-	rc2.bottom = m_nViewAlignTop - m_nTopYohaku - 1;	
+	rc2.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 	::FillRect( hdc, &rc2, hBrush );
 	::DeleteObject( hBrush );
 
-	
+
 	rc.left++;
 	rc.top++;
 	rc.right--;
 	rc.bottom--;
-	CSplitBoxWnd::Draw3dRect( hdc,  
+	CSplitBoxWnd::Draw3dRect( hdc,
 		rc.left,
 		rc.top,
 		rc.right - rc.left,
@@ -189,7 +189,7 @@ void CEditView::DispRulerEx( HDC hdc )
 	rc.bottom--;
 	::FillRect( hdc, &rc, hBrush );
 	::DeleteObject( hBrush );
-	
+
 
 
 	nX = m_nViewAlignLeft;
@@ -199,11 +199,11 @@ void CEditView::DispRulerEx( HDC hdc )
 //	hPen = ::CreatePen( PS_SOLID, 0, RGB( 0, 0, 0 ) );
 	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//	colTextOld = ::SetTextColor( hdc, RGB( 0, 0, 0 ) );  
-	colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );  
+//	colTextOld = ::SetTextColor( hdc, RGB( 0, 0, 0 ) );
+	colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 
 	nToX = m_nViewAlignLeft + m_nViewCx;
-	
+
 	nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	if( nToX > m_nViewAlignLeft + m_nViewCx ){
 		nToX = m_nViewAlignLeft + m_nViewCx;
@@ -212,12 +212,12 @@ void CEditView::DispRulerEx( HDC hdc )
 //	::MoveToEx( hdc, m_nViewAlignLeft, nY + 1, NULL );
 //	::LineTo( hdc, nToX/*m_nViewAlignLeft + m_nViewCx*/, nY + 1 );
 
-	
-	for( i = m_nViewLeftCol; 
-		i <= m_nViewLeftCol + m_nViewColNum + 1 
-//	 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize; 
-	 && i < m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize; 
-		i++ 
+
+	for( i = m_nViewLeftCol;
+		i <= m_nViewLeftCol + m_nViewColNum + 1
+//	 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+	 && i < m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		i++
 	){
 		if( 0 < i && 0 == ( (i) % 10 ) ){
 //			::MoveToEx( hdc, nX, rc.top, NULL );
@@ -250,7 +250,7 @@ void CEditView::DispRulerEx( HDC hdc )
 		}
 		nX += ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	}
-	::SetTextColor( hdc, colTextOld );  
+	::SetTextColor( hdc, colTextOld );
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
 
@@ -264,10 +264,10 @@ void CEditView::DispRulerEx( HDC hdc )
 		}else{
 			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
 		}
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;	
-//		rc.top = 0;	
-		rc.right = rc.left + m_nCharWidth;	
-//		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;	
+		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+//		rc.top = 0;
+		rc.right = rc.left + m_nCharWidth;
+//		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 		nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
 		hRgn = ::CreateRectRgnIndirect( &rc );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -278,15 +278,15 @@ void CEditView::DispRulerEx( HDC hdc )
 		::DeleteObject( hBrush );
 		::SetROP2( hdc, nROP_Old );
 	}
-/***	
-	rc.left = 0;	
-	rc.top = 0;	
-	rc.right = m_nViewAlignLeft + m_nViewCx;	
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku;	
-	CSplitBoxWnd::Draw3dRect( 
-		hdc, 
-		rc.left, rc.top, rc.right, rc.bottom, 
-		::GetSysColor( COLOR_3DHILIGHT ), 
+/***
+	rc.left = 0;
+	rc.top = 0;
+	rc.right = m_nViewAlignLeft + m_nViewCx;
+	rc.bottom = m_nViewAlignTop - m_nTopYohaku;
+	CSplitBoxWnd::Draw3dRect(
+		hdc,
+		rc.left, rc.top, rc.right, rc.bottom,
+		::GetSysColor( COLOR_3DHILIGHT ),
 		::GetSysColor( COLOR_3DSHADOW )
 	);
 ***/
@@ -296,3 +296,6 @@ void CEditView::DispRulerEx( HDC hdc )
 }
 #endif //#ifdef _DEBUG
 #endif //#if 0
+
+
+/*[EOF]*/

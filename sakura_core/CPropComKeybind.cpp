@@ -96,10 +96,10 @@ LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 
 /* p5 メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p5(
-    HWND	hwndDlg,	// handle to dialog box
-    UINT	uMsg,	// message
-    WPARAM	wParam,	// first message parameter
-    LPARAM	lParam 	// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,	// message
+	WPARAM	wParam,	// first message parameter
+	LPARAM	lParam 	// second message parameter
 )
 {
 	WORD		wNotifyCode;
@@ -237,9 +237,9 @@ BOOL CPropCommon::DispatchEvent_p5(
 				return TRUE;
 			}
 		}
-		if( hwndCheckShift == hwndCtl 
-		 || hwndCheckCtrl == hwndCtl 
-		 || hwndCheckAlt == hwndCtl 
+		if( hwndCheckShift == hwndCtl
+		 || hwndCheckCtrl == hwndCtl
+		 || hwndCheckAlt == hwndCtl
 		){
 			switch( wNotifyCode ){
 			case BN_CLICKED:
@@ -293,7 +293,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				}
 				return TRUE;
 			}
-		}else 
+		}else
 		if( hwndFuncList == hwndCtl ){
 			switch( wNotifyCode ){
 			case LBN_SELCHANGE:
@@ -316,7 +316,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 				}
 				return TRUE;
 			}
-		}else 
+		}else
 		if( hwndCombo == hwndCtl){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
@@ -334,7 +334,7 @@ BOOL CPropCommon::DispatchEvent_p5(
 
 //	From Here Sept. 7, 2000 JEPRO わかりにくいので選択しないように変更
 //				::SendMessage( hwndFuncList, LB_SETCURSEL, (WPARAM)0, 0 );
-//	To Here Sept. 7, 2000 
+//	To Here Sept. 7, 2000
 				return TRUE;
 			}
 		}
@@ -364,8 +364,8 @@ BOOL CPropCommon::DispatchEvent_p5(
 /* ダイアログデータの設定 p5 */
 void CPropCommon::SetData_p5( HWND hwndDlg )
 {
-    HWND		hwndCombo;
-    HWND		hwndKeyList;
+	HWND		hwndCombo;
+	HWND		hwndKeyList;
 	int			i;
 
 	/* 機能種別一覧に文字列をセット（コンボボックス）*/
@@ -404,7 +404,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	HFILE			hFile;
 //	char			szLine[1024];
 //	int				i;
-	
+
 	char			pHeader[STR_KEYDATA_HEAD_LEN + 1];
 	short			nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
 	KEYDATA			pKeyNameArr[100];				/* キー割り当て表 */
@@ -414,12 +414,12 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	strcpy( szPath, "" );
 	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create( 
-		m_hInstance, 
-		hwndDlg, 
-		"*.key", 
-		szInitDir, 
-		(const char **)&pszMRU, 
+	cDlgOpenFile.Create(
+		m_hInstance,
+		hwndDlg,
+		"*.key",
+		szInitDir,
+		(const char **)&pszMRU,
 		(const char **)&pszOPENFOLDER
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -437,9 +437,9 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		);
 		return;
 	}
-	if( STR_KEYDATA_HEAD_LEN     != _lread( hFile, pHeader, STR_KEYDATA_HEAD_LEN ) ||
-		sizeof( nKeyNameArrNum ) != _lread( hFile, &nKeyNameArrNum, sizeof( nKeyNameArrNum ) ) || 
-		sizeof( pKeyNameArr    ) != _lread( hFile,  pKeyNameArr   , sizeof( pKeyNameArr    ) ) ||
+	if( STR_KEYDATA_HEAD_LEN		!= _lread( hFile, pHeader, STR_KEYDATA_HEAD_LEN ) ||
+		sizeof( nKeyNameArrNum )	!= _lread( hFile, &nKeyNameArrNum, sizeof( nKeyNameArrNum ) ) ||
+		sizeof( pKeyNameArr )		!= _lread( hFile,  pKeyNameArr,    sizeof( pKeyNameArr ) ) ||
 		0 != memcmp( pHeader, STR_KEYDATA_HEAD, STR_KEYDATA_HEAD_LEN )
 	){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -460,7 +460,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 //	SetData_p5( hwndDlg );
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
-	
+
 	return;
 }
 
@@ -483,12 +483,12 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	strcpy( szPath, "" );
 	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create( 
-		m_hInstance, 
-		hwndDlg, 
-		"*.key", 
-		szInitDir, 
-		(const char **)&pszMRU, 
+	cDlgOpenFile.Create(
+		m_hInstance,
+		hwndDlg,
+		"*.key",
+		szInitDir,
+		(const char **)&pszMRU,
 		(const char **)&pszOPENFOLDER
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
@@ -506,9 +506,9 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		);
 		return;
 	}
-	if( STR_KEYDATA_HEAD_LEN     != _lwrite( hFile, (LPCSTR)STR_KEYDATA_HEAD, STR_KEYDATA_HEAD_LEN ) ||
-		sizeof( m_nKeyNameArrNum ) != _lwrite( hFile, (LPCSTR)&m_nKeyNameArrNum, sizeof( m_nKeyNameArrNum ) ) || 
-		sizeof( m_pKeyNameArr    ) != _lwrite( hFile, (LPCSTR) m_pKeyNameArr   , sizeof( m_pKeyNameArr    ) )
+	if( STR_KEYDATA_HEAD_LEN		!= _lwrite( hFile, (LPCSTR)STR_KEYDATA_HEAD, STR_KEYDATA_HEAD_LEN ) ||
+		sizeof( m_nKeyNameArrNum )	!= _lwrite( hFile, (LPCSTR)&m_nKeyNameArrNum, sizeof( m_nKeyNameArrNum ) ) ||
+		sizeof( m_pKeyNameArr )		!= _lwrite( hFile, (LPCSTR) m_pKeyNameArr,    sizeof( m_pKeyNameArr ) )
 	){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルの書き込みに失敗しました。\n\n%s", szPath
@@ -521,3 +521,4 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 }
 
 
+/*[EOF]*/

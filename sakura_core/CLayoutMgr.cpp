@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	テキストのレイアウト情報管理
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -46,7 +46,7 @@ CLayoutMgr::CLayoutMgr()
 	m_nMaxLineSize = 0;
 	m_bWordWrap = TRUE;		/* 英文ワードラップをする */
 	m_nTabSpace = 8;		/* TAB文字スペース */
-	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 	m_pszLineComment = NULL;			/* 行コメントデリミタ */
 	m_pszLineComment2 = NULL;			/* 行コメントデリミタ2 */
 	m_pszLineComment3 = NULL;			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
@@ -105,7 +105,7 @@ CLayoutMgr::~CLayoutMgr()
 /*
 || レイアウト情報の変更
 */
-void CLayoutMgr::SetLayoutInfo( 
+void CLayoutMgr::SetLayoutInfo(
 	int		nMaxLineSize,			/* 折り返し文字数 */
 	BOOL	bWordWrap,				/* 英文ワードラップをする */
 	int		nTabSpace,				/* TAB文字スペース */
@@ -118,8 +118,8 @@ void CLayoutMgr::SetLayoutInfo(
 	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
 	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ2(To) */
 //#endif
-	int		nStringType,			/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
-	int		bDoRayout, 
+	int		nStringType,			/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+	int		bDoRayout,
 	HWND	hwndProgress,
 	BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 	BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
@@ -127,9 +127,9 @@ void CLayoutMgr::SetLayoutInfo(
 {
 	int		nStrLen;
 	m_nMaxLineSize = nMaxLineSize;
-	m_bWordWrap = bWordWrap;		/* 英文ワードラップをする */
-	m_nTabSpace    = nTabSpace;
-	m_nStringType = nStringType;		/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+	m_bWordWrap		= bWordWrap;		/* 英文ワードラップをする */
+	m_nTabSpace		= nTabSpace;
+	m_nStringType	= nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
 	if( NULL != m_pszLineComment ){	/* 行コメントデリミタ */
 		delete [] m_pszLineComment;
@@ -150,7 +150,7 @@ void CLayoutMgr::SetLayoutInfo(
 		m_pszLineComment2 = new char[nStrLen + 1];
 		strcpy( m_pszLineComment2, pszLineComment2 );
 	}
-	
+
 	if( NULL != m_pszLineComment3 ){	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		delete [] m_pszLineComment3;
 		m_pszLineComment3 = NULL;
@@ -160,7 +160,7 @@ void CLayoutMgr::SetLayoutInfo(
 		m_pszLineComment3 = new char[nStrLen + 1];
 		strcpy( m_pszLineComment3, pszLineComment3 );
 	}
-	
+
 
 	if( NULL != m_pszBlockCommentFrom ){	/* ブロックコメントデリミタ(From) */
 		delete [] m_pszBlockCommentFrom;
@@ -371,7 +371,7 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 //	if( pLine != pCDocLine->m_pLine->m_pData ){
 //		int		i;
 //		i = 1234;
-//	
+//
 //	}
 #ifdef _DEBUG
 	{
@@ -380,8 +380,8 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 			const char * pLine = (const char *)pCDocLine->m_pLine->m_pData;
 		}
 	}
-#endif	
-	
+#endif
+
 	CLayout* pLayout;
 	if(	0 == m_nLines ){
 		m_pLayoutBot = m_pLayoutTop = new CLayout;
@@ -406,8 +406,8 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 	if( EOL_NONE == pCDocLine->m_cEol ){
 		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
 	}else{
-//		if( pLayout->m_nOffset + pLayout->m_nLength >= 
-		if( pLayout->m_nOffset + pLayout->m_nLength > 
+//		if( pLayout->m_nOffset + pLayout->m_nLength >=
+		if( pLayout->m_nOffset + pLayout->m_nLength >
 			pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
 		){
 			pLayout->m_cEol = pCDocLine->m_cEol;/* 改行コードの種類 */
@@ -415,15 +415,15 @@ void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int 
 			pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
 		}
 	}
-	// pLayout->m_nEOLLen = gm_pnEolLenArr[pLayout->m_enumEOLType];/* 改行コードの長さ */ 		
+	// pLayout->m_nEOLLen = gm_pnEolLenArr[pLayout->m_enumEOLType];/* 改行コードの長さ */
 
 
 	pLayout->m_nTypeNext = nTypeNext;
 //#ifdef _DEBUG
 //	if( 1 == pLayout->m_nTypeNext ){
-//		MYTRACE( "★★★CLayoutMgr::AddLineBottom::InsertLineNext()   1 == pLayout->m_nTypeNext\n" );
+//		MYTRACE( "★★★CLayoutMgr::AddLineBottom::InsertLineNext()  1 == pLayout->m_nTypeNext\n" );
 //	}
-//#endif	
+//#endif
 /***
 	MYTRACE( "m_nLines=%d, pLayout->nLine=%d, pLayout->nOffset=%d, pLayout->nLength=%d \n", m_nLines, pLayout->nLine, pLayout->nOffset, pLayout->nLength );
 ***/
@@ -487,8 +487,8 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 	if( EOL_NONE == pCDocLine->m_cEol ){
 		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
 	}else{
-//		if( pLayout->m_nOffset + pLayout->m_nLength >= 
-		if( pLayout->m_nOffset + pLayout->m_nLength > 
+//		if( pLayout->m_nOffset + pLayout->m_nLength >=
+		if( pLayout->m_nOffset + pLayout->m_nLength >
 			pCDocLine->m_pLine->m_nDataLen - pCDocLine->m_cEol.GetLen()
 		){
 			pLayout->m_cEol = pCDocLine->m_cEol;/* 改行コードの種類 */
@@ -496,15 +496,15 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 			pLayout->m_cEol = EOL_NONE;/* 改行コードの種類 */
 		}
 	}
-	// pLayout->m_nEOLLen = gm_pnEolLenArr[pLayout->m_enumEOLType];/* 改行コードの長さ */ 		
-	
-	
+	// pLayout->m_nEOLLen = gm_pnEolLenArr[pLayout->m_enumEOLType];/* 改行コードの長さ */
+
+
 	pLayout->m_nTypeNext = nTypeNext;
 #ifdef _DEBUG
 	if( 1 == pLayout->m_nTypeNext ){
-		MYTRACE( "★★★CLayoutMgr::InsertLineNext()   1 == pLayout->m_nTypeNext\n" );
+		MYTRACE( "★★★CLayoutMgr::InsertLineNext()  1 == pLayout->m_nTypeNext\n" );
 	}
-#endif	
+#endif
 	m_nLines++;
 	return pLayout;
 }
@@ -568,7 +568,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		int			*pnModifyLayoutLinesOld,
 		int			*pnModifyLayoutLinesNew,
 		int			*pnDeleteLayoutLines,
-		CMemory&	cmemDeleted,			/* 削除されたデータ */	
+		CMemory&	cmemDeleted,			/* 削除されたデータ */
 		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 		BOOL		bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
 		BOOL		bUndo			/* Undo操作かどうか */
@@ -603,14 +603,14 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	pLayout = m_pLayoutPrevRefer;
 	nDelStartLogicalLine = pLayout->m_nLinePhysical;
 	nDelStartLogicalPos  = nDelPos + pLayout->m_nOffset;
-	
+
 //	pLayoutWork = pLayout;
 //	do{
-//		pLayoutWork = pLayoutWork->m_pNext;		
+//		pLayoutWork = pLayoutWork->m_pNext;
 //	}while( NULL != pLayoutWork && 0 != pLayoutWork->m_nOffset );
 //	pLayoutNext = pLayoutWork;
-	
-	
+
+
 	pLayoutWork = pLayout;
 	nLineWork = nLineNum;
 	while( 0 != pLayoutWork->m_nOffset ){
@@ -635,7 +635,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	pLayoutPrev = DeleteLayoutAsLogical(
 		pLayoutWork,
 		nLineWork,
-		
+
 		nModLineOldFrom, nModLineOldTo,
 		nDelStartLogicalLine, nDelStartLogicalPos,
 		pnModifyLayoutLinesOld
@@ -664,7 +664,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 				pLayoutPrev->m_nLinePhysical - 1;
 		}
 	}
-	
+
 //	if( NULL != pLayoutPrev ){
 //		pLayoutNext	= pLayoutPrev->m_pNext;
 //	}else{
@@ -680,11 +680,11 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 //	MYTRACE( "pLayoutPrev=[%xh]\n", pLayoutPrev );
 //	MYTRACE( "pLayoutNext=[%xh]\n", pLayoutNext );
 	*pnModifyLayoutLinesNew = DoLayout3_New(
-		pLayoutPrev, 
-//		pLayoutNext, 
+		pLayoutPrev,
+//		pLayoutNext,
 		nRowNum,
 		nDelStartLogicalLine, nDelStartLogicalPos,
-		nCurrentLineType, 
+		nCurrentLineType,
 		&nAddInsLineNum,
 		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
@@ -769,7 +769,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 				nInsStartLogicalLine = pLayout->m_nLinePhysical;
 				nInsStartLogicalPos  = nInsPos + pLayout->m_nOffset;
 				nCurrentLineType = pLayout->m_nTypePrev;
-			} 
+			}
 		}
 	}else{
 		pLayout = m_pLayoutPrevRefer;
@@ -780,11 +780,11 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nInsStartLogicalPos  = nInsPos + pLayout->m_nOffset;
 		nCurrentLineType = pLayout->m_nTypePrev;
 	}
-	
+
 	if( NULL != pLayout ){
 		pLayoutWork = pLayout;
 		while( pLayoutWork != NULL && 0 != pLayoutWork->m_nOffset ){
-			pLayoutWork = pLayoutWork->m_pPrev;		
+			pLayoutWork = pLayoutWork->m_pPrev;
 			nLineWork--;
 		}
 		if( NULL != pLayoutWork ){
@@ -799,11 +799,11 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	m_pcDocLineMgr->InsertData_CDocLineMgr(
 		nInsStartLogicalLine,
 		nInsStartLogicalPos,
-		pInsData, 
+		pInsData,
 		nInsDataLen,
 		&nInsLineNum,
-		&nNewLine, 
-		&nNewPos, 
+		&nNewLine,
+		&nNewPos,
 		bUndo
 	);
 //	MYTRACE( "nNewLine=%d nNewPos=%d \n", nNewLine, nNewPos );
@@ -815,9 +815,9 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	nAllLinesOld = m_nLines;
 	if( NULL != pLayout ){
 		pLayoutPrev = DeleteLayoutAsLogical(
-			pLayoutWork, 
-			nLineWork,			
-			
+			pLayoutWork,
+			nLineWork,
+
 			nInsStartLogicalLine, nInsStartLogicalLine,
 			nInsStartLogicalLine, nInsStartLogicalPos,
 			pnModifyLayoutLinesOld
@@ -865,8 +865,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 //		nInsStartLogicalLine, nInsStartLogicalPos
 //	);
 	DoLayout3_New(
-		pLayoutPrev,  
-//		pLayoutNext, 
+		pLayoutPrev,
+//		pLayoutNext,
 		nRowNum,
 		nInsStartLogicalLine, nInsStartLogicalPos,
 		nCurrentLineType,
@@ -906,7 +906,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 )
 {
 
-	
+
 //#ifdef _DEBUG
 //	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::DeleteLayoutAsLogical" );
 //#endif
@@ -922,7 +922,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		return NULL;
 	}
 
-	// 1999.11.22 
+	// 1999.11.22
 	m_pLayoutPrevRefer = pLayoutInThisArea->m_pPrev;
 	m_nPrevReferLine = nLineOf_pLayoutInThisArea - 1;
 //	m_pLayoutPrevRefer = NULL;
@@ -969,7 +969,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 
 		if( ( nDelLogicalLineFrom == pLayout->m_nLinePhysical &&
 			  nDelLogicalColFrom < pLayout->m_nOffset + pLayout->m_nLength ) ||
-		    ( nDelLogicalLineFrom < pLayout->m_nLinePhysical )
+			( nDelLogicalLineFrom < pLayout->m_nLinePhysical )
 		){
 			(*pnDeleteLines)++;;
 		}
@@ -980,7 +980,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		}
 #endif
 		delete pLayout;
-		
+
 		m_nLines--;	/* 全物理行数 */
 		if( NULL == pLayoutNext ){
 			m_pLayoutBot = pLayoutWork;
@@ -1057,7 +1057,7 @@ int CLayoutMgr::WhereCurrentWord(
 	if( nRetCode ){
 		/* 論理位置→レイアウト位置変換 */
 		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_nLinePhysical, *pnIdxFrom, pnLineFrom, pnIdxFrom );
-		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_nLinePhysical, *pnIdxTo,   pnLineTo, pnIdxTo );
+		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_nLinePhysical, *pnIdxTo,	pnLineTo, pnIdxTo );
 	}
 	return nRetCode;
 
@@ -1148,17 +1148,17 @@ int CLayoutMgr::SearchWord(
 		/* 論理位置→レイアウト位置変換 */
 		nLogLine = *pnLineFrom;
 //		XYLogicalToLayout( pLayout, nLineNum, nLogLine, *pnIdxFrom, pnLineFrom, pnIdxFrom );
-//		XYLogicalToLayout( pLayout, nLineNum, nLogLine, *pnIdxTo,   pnLineTo,   pnIdxTo );
+//		XYLogicalToLayout( pLayout, nLineNum, nLogLine, *pnIdxTo,	pnLineTo,	pnIdxTo );
 		CaretPos_Phys2Log(
-			*pnIdxFrom,	
+			*pnIdxFrom,
 			nLogLine,
-			pnIdxFrom,	
+			pnIdxFrom,
 			pnLineFrom
 		);
 		CaretPos_Phys2Log(
-			*pnIdxTo,	
+			*pnIdxTo,
 			nLogLine,
-			pnIdxTo,	
+			pnIdxTo,
 			pnLineTo
 		);
 	}
@@ -1226,7 +1226,7 @@ void CLayoutMgr::XYLogicalToLayout(
 		pLayout =  pLayoutInThisArea;
 		nCurLayLine = nLayoutLineOfThisArea;
 		while( pLayout != NULL ){
-			if( pLayout->m_nLinePhysical   == nLogLine &&
+			if( pLayout->m_nLinePhysical == nLogLine &&
 				pLayout->m_nOffset <= nLogIdx  &&
 				nLogIdx <= pLayout->m_nOffset + pLayout->m_nLength
 			 ){
@@ -1235,7 +1235,7 @@ void CLayoutMgr::XYLogicalToLayout(
 				return;
 			}
 			if( NULL == pLayout->m_pNext ){
-//			    if( nCurLayLine == nLogLine ){
+//				if( nCurLayLine == nLogLine ){
 //					*pnLayLine = nCurLayLine;
 //					*pnLayIdx = pLayout->m_nLength;
 //				}else{
@@ -1290,7 +1290,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 //	pLayout = m_pLayoutTop;
 //	nCaretPosY = 0;
 
-	/* 改行単位行 <= 折り返し単位行　が成り立つから、
+	/* 改行単位行 <= 折り返し単位行 が成り立つから、
 	サーチ開始地点をできるだけ目的地へ近づける */
 //	pLayout = GetLineData( nY );
 	pLayout = Search( nY );
@@ -1302,7 +1302,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 	}
 	nCaretPosY = nY;
 
-	
+
 	nCaretPosX = 0;
 	do{
 		if( nY == pLayout->m_nLinePhysical ){
@@ -1415,7 +1415,7 @@ void CLayoutMgr::CaretPos_Log2Phys(
 					bEOF = TRUE;
 					nX = 999999;
 					goto checkloop;
-				
+
 				}
 			}
 		}
@@ -1425,10 +1425,10 @@ void CLayoutMgr::CaretPos_Log2Phys(
 	}else{
 		*pnY = pLayout->m_nLinePhysical;
 	}
-	
+
 	pData = GetLineStr( nCaretPosY, &nDataLen );
 	nX = 0;
-checkloop:;	
+checkloop:;
 //	enumEOLType nEOLType;
 	for( i = 0; i < nDataLen; ++i ){
 		if( pData[i] ==	TAB ){
@@ -1484,17 +1484,17 @@ void CLayoutMgr::DUMP( void )
 		pLayoutNext = pLayout->m_pNext;
 		MYTRACE( "\t-------\n" );
 		MYTRACE( "\tthis=%08lxh\n", pLayout );
-		MYTRACE( "\tm_pPrev =%08lxh\n", pLayout->m_pPrev );
-		MYTRACE( "\tm_pNext =%08lxh\n", pLayout->m_pNext );
-		MYTRACE( "\tm_nLinePhysical=%d\n",      pLayout->m_nLinePhysical );
-		MYTRACE( "\tm_nOffset=%d\n",     pLayout->m_nOffset );
-		MYTRACE( "\tm_nLength=%d\n",     pLayout->m_nLength );
-		MYTRACE( "\tm_enumEOLType =%s\n", pLayout->m_cEol.GetName() );
-		MYTRACE( "\tm_nEOLLen =%d\n", pLayout->m_cEol.GetLen() );
-		MYTRACE( "\tm_nTypePrev=%d\n",   pLayout->m_nTypePrev );
-		MYTRACE( "\tm_nTypeNext=%d\n",   pLayout->m_nTypeNext );
+		MYTRACE( "\tm_pPrev =%08lxh\n",		pLayout->m_pPrev );
+		MYTRACE( "\tm_pNext =%08lxh\n",		pLayout->m_pNext );
+		MYTRACE( "\tm_nLinePhysical=%d\n",	pLayout->m_nLinePhysical );
+		MYTRACE( "\tm_nOffset=%d\n",		pLayout->m_nOffset );
+		MYTRACE( "\tm_nLength=%d\n",		pLayout->m_nLength );
+		MYTRACE( "\tm_enumEOLType =%s\n",	pLayout->m_cEol.GetName() );
+		MYTRACE( "\tm_nEOLLen =%d\n",		pLayout->m_cEol.GetLen() );
+		MYTRACE( "\tm_nTypePrev=%d\n",		pLayout->m_nTypePrev );
+		MYTRACE( "\tm_nTypeNext=%d\n",		pLayout->m_nTypeNext );
 		pData = m_pcDocLineMgr->GetLineStr( pLayout->m_nLinePhysical, &nDataLen );
-		MYTRACE( "\t[%s]\n",   pData );
+		MYTRACE( "\t[%s]\n", pData );
 		pLayout = pLayoutNext;
 	}
 	MYTRACE( "------------------------\n" );

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	置換ダイアログ
-	
+
 	@author Norio Nakatani
 	@date 1998/10/02  新規作成
 	$Revision$
@@ -70,5 +70,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGREPLACE_H_ */
+
 
 /*[EOF]*/

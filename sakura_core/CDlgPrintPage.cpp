@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	印刷ダイアログボックス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -79,7 +79,7 @@ void CDlgPrintPage::SetData( void )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_TO ), FALSE );
 	}
 //	To Here Sept. 12, 2000
-	
+
 	return;
 }
 
@@ -94,8 +94,8 @@ int CDlgPrintPage::GetData( void )
 	}else{
 		m_bAllPage = FALSE;
 	}
-	m_nPageFrom = ::GetDlgItemInt( m_hWnd, IDC_EDIT_FROM, NULL, FALSE ); 
-	m_nPageTo   = ::GetDlgItemInt( m_hWnd, IDC_EDIT_TO  , NULL, FALSE ); 
+	m_nPageFrom = ::GetDlgItemInt( m_hWnd, IDC_EDIT_FROM, NULL, FALSE );
+	m_nPageTo	= ::GetDlgItemInt( m_hWnd, IDC_EDIT_TO  , NULL, FALSE );
 	/* 頁範囲チェック */
 	if( FALSE == m_bAllPage ){
 		if( m_nPageMin <= m_nPageFrom && m_nPageFrom <= m_nPageMax &&
@@ -134,7 +134,7 @@ BOOL CDlgPrintPage::OnBnClicked( int wID )
 		}
 		return TRUE;
 //	To Here Sept. 12, 2000
-	
+
 	case IDOK:			/* 下検索 */
 		/* ダイアログデータの取得 */
 		if( GetData() ){
@@ -150,4 +150,3 @@ BOOL CDlgPrintPage::OnBnClicked( int wID )
 
 
 /*[EOF]*/
-

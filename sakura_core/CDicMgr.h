@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	CDicMgrƒNƒ‰ƒX’è‹`
-	
+
 	@author Norio Nakatani
 	@date	1998/11/05 ì¬
 	$Revision$
@@ -65,5 +65,5 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDICMGR_H_ */
 
-/*[EOF]*/
 
+/*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	•¶‘ŠÖ˜Aî•ñ‚ÌŠÇ—
-	
+
 	@author Norio Nakatani
 	@date	1998/03/13 ì¬
 	$Revision$
@@ -154,7 +154,7 @@ public:
 		return m_pShareData->m_Types[m_nSettingType];
 	}
 	//	Nov. 23, 2000 To Here
-	
+
 	//	May 18, 2001 genta
 	//! ReadOnlyó‘Ô‚Ìİ’è
 	BOOL IsReadOnly( void ){ return m_bReadOnly; }

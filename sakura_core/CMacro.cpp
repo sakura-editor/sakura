@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キーボードマクロ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -164,10 +164,10 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_INSTEXT					, "InsText",				// テキストを貼り付け
 	F_ADDTAIL					, "AddTail",				// 最後にテキストを追加
 	F_COPYLINES					, "CopyLines",				//選択範囲内全行コピー
-	F_COPYLINESASPASSAGE      	, "CopyLinesAsPassage",		//選択範囲内全行引用符付きコピー
+	F_COPYLINESASPASSAGE		, "CopyLinesAsPassage",		//選択範囲内全行引用符付きコピー
 	F_COPYLINESWITHLINENUMBER 	, "CopyLinesWithLineNumber",//選択範囲内全行行番号付きコピー
-	F_COPYPATH          		, "CopyPath",				//このファイルのパス名をクリップボードにコピー
-	F_COPYTAG	         		, "CopyTag",				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
+	F_COPYPATH					, "CopyPath",				//このファイルのパス名をクリップボードにコピー
+	F_COPYTAG					, "CopyTag",				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	F_CREATEKEYBINDLIST			, "CopyKeyBindList",		//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加 //Dec. 25, 2000 復活
 
 	/* 挿入系 */
@@ -459,10 +459,10 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_INSTEXT					://テキストを貼り付け
 //	case F_ADDTAIL					://最後にテキストを追加
 	case F_COPYLINES				://選択範囲内全行コピー
-	case F_COPYLINESASPASSAGE      	://選択範囲内全行引用符付きコピー
+	case F_COPYLINESASPASSAGE		://選択範囲内全行引用符付きコピー
 	case F_COPYLINESWITHLINENUMBER 	://選択範囲内全行行番号付きコピー
-	case F_COPYPATH          		://このファイルのパス名をクリップボードにコピー
-	case F_COPYTAG          		://このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
+	case F_COPYPATH					://このファイルのパス名をクリップボードにコピー
+	case F_COPYTAG					://このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_CREATEKEYBINDLIST		://キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加	//Dec. 25, 2000 復活
 
 	/* 挿入系 */

@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -33,9 +33,9 @@
 //-----------------------------------
 /*!
 	@brief 保管する最大件数を指定する。
-	
+
 	現在より小さい値を設定したときは余分な要素は削除される。
-	
+
 	@param max 設定する最大件数
 */
 void CMarkMgr::SetMax(int max)
@@ -46,7 +46,7 @@ void CMarkMgr::SetMax(int max)
 
 /*!
 	@brief 現在位置の要素が有効かどうかの判定
-	
+
 	@retval true	有効
 	@retval false	無効
 */
@@ -90,7 +90,7 @@ bool CMarkMgr::CheckNext(void) const
 
 /*!
 	@brief 現在位置を前の有効な位置まで進める
-	
+
 	@retval true	正常終了。現在位置は1つ前の有効な要素に移動した。
 	@retval false	有効な要素が見つからなかった。現在位置は移動していない。
 */
@@ -106,7 +106,7 @@ bool CMarkMgr::PrevValid(void)
 }
 /*!
 	@brief 現在位置を後の有効な位置まで進める
-	
+
 	@retval true	正常終了。現在位置は1つ後の有効な要素に移動した。
 	@retval false	有効な要素が見つからなかった。現在位置は移動していない。
 */
@@ -121,16 +121,16 @@ bool CMarkMgr::NextValid(void)
 	return false;
 }
 
-//	From Here Apr. 1, 2001 genta 
+//	From Here Apr. 1, 2001 genta
 /*!
 	現在のデータを全て消去し、現在位置のポインタをリセットする。
-	
+
 	@par history
 	Apr. 1, 2001 genta 新規追加
 */
 void CMarkMgr::Flush(void)
 {
-	dat.erase( dat.begin(), dat.end());
+	dat.erase( dat.begin(), dat.end() );
 	curpos = 0;
 }
 //	To Here
@@ -142,21 +142,21 @@ void CMarkMgr::Flush(void)
 /*!
 	現在位置に要素を追加する．現在位置より後ろは全て削除する。
 	要素番号が大きい方が新しいデータ。
-	
+
 	@param m 追加する要素
 */
 void CAutoMarkMgr::Add(const CMark& m)
 {
 	//	現在位置が途中の時
-	if( curpos < dat.size()){
+	if( curpos < dat.size() ){
 		//	現在位置まで要素を削除
 		dat.erase( dat.begin() + curpos, dat.end() );
 	}
-	
+
 	//	要素の追加
 	dat.push_back(m);
 	++curpos;
-	
+
 	//	規定数を超えてしまうときの対応
 	Expire();
 }
@@ -168,12 +168,15 @@ void CAutoMarkMgr::Add(const CMark& m)
 void CAutoMarkMgr::Expire(void)
 {
 	int range = dat.size() - GetMax();
-	
+
 	if( range <= 0 )	return;
-	
+
 	//	最大値を超えている場合
 	dat.erase( dat.begin(), dat.begin() + range );
 	curpos -= range;
 	if( curpos < 0 )
 		curpos = 0;
 }
+
+
+/*[EOF]*/

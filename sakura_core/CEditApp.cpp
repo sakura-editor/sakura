@@ -4,7 +4,7 @@
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
-	@date 2001/06/03 N.Nakatani grep単語単位で検索を実装するときのためにコマンドラインオプションの処理追加 
+	@date 2001/06/03 N.Nakatani grep単語単位で検索を実装するときのためにコマンドラインオプションの処理追加
 	$Revision$
 */
 /*
@@ -72,7 +72,7 @@ void CEditApp::DoGrep()
 
 	//Stonee, 2001/06/30
 	//前回のダイアログがあれば前面に (suggested by genta)
-	if ( ::IsWindow(m_cDlgGrep.m_hWnd)) {
+	if ( ::IsWindow(m_cDlgGrep.m_hWnd) ){
 		::OpenIcon(m_cDlgGrep.m_hWnd);
 		::BringWindowToTop(m_cDlgGrep.m_hWnd);
 		return;
@@ -87,8 +87,8 @@ void CEditApp::DoGrep()
 		return;
 	}
 
-//					MYTRACE( "cDlgGrep.m_szText  =[%s]\n", cDlgGrep.m_szText   );
-//					MYTRACE( "cDlgGrep.m_szFile  =[%s]\n", cDlgGrep.m_szFile   );
+//					MYTRACE( "cDlgGrep.m_szText  =[%s]\n", cDlgGrep.m_szText );
+//					MYTRACE( "cDlgGrep.m_szFile  =[%s]\n", cDlgGrep.m_szFile );
 //					MYTRACE( "cDlgGrep.m_szFolder=[%s]\n", cDlgGrep.m_szFolder );
 
 	/*======= Grepの実行 =============*/
@@ -198,7 +198,7 @@ LRESULT CALLBACK CEditAppWndProc(
 
 CEditApp::CEditApp() :
 	//	Apr. 24, 2001 genta
-	m_uCreateTaskBarMsg( ::RegisterWindowMessage(TEXT("TaskbarCreated"))),
+	m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) ),
 	m_bCreatedTrayIcon( FALSE ),	//トレイにアイコンを作った
 	m_hInstance( NULL ),
 	m_hWnd( NULL )
@@ -228,7 +228,7 @@ CEditApp::CEditApp() :
 //	#ifndef _DEBUG
 		m_pszAppName = GSTR_CEDITAPP;
 //	#endif
-	
+
 	return;
 }
 
@@ -425,7 +425,7 @@ void CEditApp::MessageLoop( void )
 /* タスクトレイのアイコンに関する処理 */
 BOOL CEditApp::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const char* pszTip )
 {
-    BOOL			res;
+	BOOL			res;
 	NOTIFYICONDATA	tnd;
 	tnd.cbSize				= sizeof( NOTIFYICONDATA );
 	tnd.hWnd				= hDlg;
@@ -440,7 +440,7 @@ BOOL CEditApp::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, c
 	}
 	res = Shell_NotifyIcon( dwMessage, &tnd );
 	if( hIcon ){
-	    DestroyIcon( hIcon );
+		DestroyIcon( hIcon );
 	}
 	return res;
 }
@@ -1095,7 +1095,7 @@ LRESULT CEditApp::DispatchEvent(
 					break;
 				default:
 					if( nId - IDM_SELWINDOW  >= 0 &&
-					    nId - IDM_SELWINDOW  < m_pShareData->m_nEditArrNum ){
+						nId - IDM_SELWINDOW  < m_pShareData->m_nEditArrNum ){
 						hwndWork = m_pShareData->m_pEditArr[nId - IDM_SELWINDOW].m_hWnd;
 
 						/* アクティブにする */
@@ -1109,7 +1109,7 @@ LRESULT CEditApp::DispatchEvent(
 //						::SetActiveWindow( hwndWork );
 					}else
 					if( nId - IDM_SELMRU  >= 0 &&
-//					    nId - IDM_SELMRU  < (( m_pShareData->m_nMRUArrNum < m_pShareData->m_Common.m_nMRUArrNum_MAX )?m_pShareData->m_nMRUArrNum :m_pShareData->m_Common.m_nMRUArrNum_MAX )
+//						nId - IDM_SELMRU  < (( m_pShareData->m_nMRUArrNum < m_pShareData->m_Common.m_nMRUArrNum_MAX )?m_pShareData->m_nMRUArrNum :m_pShareData->m_Common.m_nMRUArrNum_MAX )
 						nId - IDM_SELMRU  < 999
 					){
 
@@ -1446,27 +1446,27 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 	//	::MessageBox( NULL, szCmdLineBuf, "OpenNewEditor", MB_OK );
 
 	//	プロセスの起動
-    PROCESS_INFORMATION p;
-    STARTUPINFO s;
+	PROCESS_INFORMATION p;
+	STARTUPINFO s;
 
-    s.cb = sizeof( s );
-    s.lpReserved = NULL;
-    s.lpDesktop = NULL;
-    s.lpTitle = NULL;
-    /*
-    s.dwX = CW_USEDEFAULT;
-    s.dwY = CW_USEDEFAULT;
-    s.dwXSize = CW_USEDEFAULT;
-    s.dwYSize = CW_USEDEFAULT;
-    */
+	s.cb = sizeof( s );
+	s.lpReserved = NULL;
+	s.lpDesktop = NULL;
+	s.lpTitle = NULL;
+	/*
+	s.dwX = CW_USEDEFAULT;
+	s.dwY = CW_USEDEFAULT;
+	s.dwXSize = CW_USEDEFAULT;
+	s.dwYSize = CW_USEDEFAULT;
+	*/
 
-    s.dwFlags = STARTF_USESHOWWINDOW;
-    s.wShowWindow = SW_SHOWDEFAULT;
-    s.cbReserved2 = 0;
-    s.lpReserved2 = NULL;
+	s.dwFlags = STARTF_USESHOWWINDOW;
+	s.wShowWindow = SW_SHOWDEFAULT;
+	s.cbReserved2 = 0;
+	s.lpReserved2 = NULL;
 
-    if( CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,
-        CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &s, &p ) == 0 ){
+	if( CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,
+		CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &s, &p ) == 0 ){
 		//	失敗
 		LPVOID pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -1502,14 +1502,14 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 				"\'%s\'\nプロセスの起動に失敗しました。",
 				szEXE
 			);
-		    CloseHandle( p.hThread );
-		    CloseHandle( p.hProcess );
+			CloseHandle( p.hThread );
+			CloseHandle( p.hProcess );
 			return false;
 		}
 	}
 
-    CloseHandle( p.hThread );
-    CloseHandle( p.hProcess );
+	CloseHandle( p.hThread );
+	CloseHandle( p.hProcess );
 
 	return true;
 }
@@ -2353,7 +2353,7 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	コマンドラインのチェックを行って、オプション番号と
 	引数がある場合はその先頭アドレスを返す。
 	CEditApp::ParseCommandLine()で使われる。
-	
+
 	@return オプションの番号。どれにも該当しないときは0を返す。
 
 	@author genta
@@ -2402,10 +2402,10 @@ int CEditApp::CheckCommandLine(
 		"GOPT", 4, 104,
 		NULL, 0, 0
 	};
-	
+
 	const _CmdLineOpt *ptr;
 	int len = lstrlen( str );
-	
+
 	//	引数がある場合を先に確認
 	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ ){
 		if( len >= ptr->len &&	//	長さが足りているか
@@ -2417,7 +2417,7 @@ int CEditApp::CheckCommandLine(
 			return ptr->value;
 		}
 	}
-	
+
 	//	引数がない場合
 	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ ){
 		if( len == ptr->len &&	//	長さチェック
@@ -2430,7 +2430,7 @@ int CEditApp::CheckCommandLine(
 }
 
 /*! コマンドラインの解析
-	
+
 	WinMain()から呼び出される。
 */
 void CEditApp::ParseCommandLine(
@@ -2478,7 +2478,7 @@ void CEditApp::ParseCommandLine(
 	int				nPos;
 	char*			pszToken;
 	CMemory			cmWork;
-	//const char*		pszOpt;	
+	//const char*		pszOpt;
 	//int				nOptLen;
 
 	bGrepMode = FALSE;
@@ -2561,7 +2561,7 @@ void CEditApp::ParseCommandLine(
 	pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, " " );
 	while( pszToken != NULL ){
 		if( !bFind && pszToken[0] != '-' ){
-		    if( pszToken[0] == '\"' ){
+			if( pszToken[0] == '\"' ){
 				cmWork.SetData( &pszToken[1],  lstrlen( pszToken ) - 2 );
 				cmWork.Replace( "\"\"", "\"" );
 				strcpy( fi.m_szPath, cmWork.GetPtr( NULL/*&nDummy*/ ) );	/* ファイル名 */
@@ -2571,7 +2571,7 @@ void CEditApp::ParseCommandLine(
 		}else{
 			++pszToken;	//	先頭の'-'はskip
 			char *arg;
-			switch( CheckCommandLine( pszToken, &arg )){
+			switch( CheckCommandLine( pszToken, &arg ) ){
 			case 1: //	X
 				/* 行桁指定を1開始にした */
 				fi.m_nX = atoi( arg ) - 1;

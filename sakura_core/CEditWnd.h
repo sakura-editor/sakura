@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	編集ウィンドウ（外枠）管理クラス
-	
+
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
 	$Revision$
@@ -58,7 +58,7 @@ public:
 
 
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
-	BOOL DispatchEvent_PPB( HWND, UINT, WPARAM, LPARAM );	/* 印刷プレビュー　操作バー　ダイアログのメッセージ処理 */
+	BOOL DispatchEvent_PPB( HWND, UINT, WPARAM, LPARAM );	/* 印刷プレビュー 操作バー ダイアログのメッセージ処理 */
 
 	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
 
@@ -74,19 +74,19 @@ public:
 	void OnTimer( HWND, UINT, UINT, DWORD );	/* タイマーの処理 */
 	void OnCommand( WORD, WORD , HWND );
 
-	void CreateToolBar( void );	/* ツールバー作成 */
-	void CreateStatusBar( void );	/* ステータスバー作成 */
-	void DestroyStatusBar( void );	/* ステータスバー破棄 */
+	void CreateToolBar( void );			/* ツールバー作成 */
+	void CreateStatusBar( void );		/* ステータスバー作成 */
+	void DestroyStatusBar( void );		/* ステータスバー破棄 */
 	void CreatePrintPreviewBar( void );	/* ツールバー作成 */
 
 	void InitMenu( HMENU, UINT, BOOL );
-//複数プロセス版		
+//複数プロセス版
 	void MessageLoop( void );	/* メッセージループ */
 
 	int	OnClose( void );	/* 終了時の処理 */
 
 
-void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/) ;
+void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
 
 
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */
@@ -113,7 +113,7 @@ void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/) ;
     HWND			m_hwndToolBar;
 	HWND			m_hwndStatusBar;
 	HWND			m_hwndProgressBar;
-	HWND			m_hwndPrintPreviewBar;	/* 印刷プレビュー　操作バー */
+	HWND			m_hwndPrintPreviewBar;	/* 印刷プレビュー 操作バー */
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
 	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
@@ -179,19 +179,19 @@ void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/) ;
 	*/
 protected:
 	void OnDropFiles( HDROP );	/* ファイルがドロップされた */
-	void InitPreviewScrollBar( void );	/* 印刷プレビュー　スクロールバー初期化 */
+	void InitPreviewScrollBar( void );	/* 印刷プレビュー スクロールバー初期化 */
 	void OnPreviewZoom( BOOL );	/* プレビュー拡大縮小 */
 	void OnPreviewGoPage( int );	/* プレビュー ページ指定 */
 	/* 印刷／プレビュー 行描画 */
-	void CEditWnd::Print_DrawLine( 
+	void CEditWnd::Print_DrawLine(
 		HDC			hdc,
-		int			x, 
-		int			y, 
+		int			x,
+		int			y,
 		const char*	pLine,
 		int			nLineLen,
 		HFONT		hFontZen
 	);
-	/* 印刷/印刷プレビュー　ページテキストの描画 */
+	/* 印刷/印刷プレビュー ページテキストの描画 */
 	void CEditWnd::DrawPageText( HDC, int, int, int, HFONT, CDlgCancel* );
 	void OnPrint( void );	/* 印刷実行 */
 	void OnChangePrintSetting( void );	/* 印刷設定の反映 */
@@ -203,5 +203,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITWND_H_ */
+
 
 /*[EOF]*/

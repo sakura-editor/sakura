@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	CEditViewクラスのコマンド処理系関数群
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -38,7 +38,7 @@ void CEditView::InsertData_CEditView(
 	int			nDataLen,
 	int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
 	int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-	COpe*		pcOpe,				/* 編集操作要素　COpe */
+	COpe*		pcOpe,				/* 編集操作要素 COpe */
 	BOOL		bRedraw,
 	BOOL		bUndo			/* Undo操作かどうか */
 )
@@ -78,10 +78,10 @@ void CEditView::InsertData_CEditView(
 	cMem.SetDataSz( "" );
 	if( NULL != pLine ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		nIdxFrom = LineColmnToIndex2( 
-			pLine, 
-			nLineLen/* - pcLayout->m_cEol.GetLen() + (pcLayout->m_cEol.GetLen()?1:0)*/, 
-			nX, &nLineAllColLen 
+		nIdxFrom = LineColmnToIndex2(
+			pLine,
+			nLineLen/* - pcLayout->m_cEol.GetLen() + (pcLayout->m_cEol.GetLen()?1:0)*/,
+			nX, &nLineAllColLen
 		);
 		/* 行終端より右に挿入しようとした */
 		if( nLineAllColLen > 0 ){
@@ -173,7 +173,7 @@ void CEditView::InsertData_CEditView(
 			SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
 		}
 	}
-	
+
 	/* 再描画 */
 	/* 行番号表示に必要な幅を設定 */
 	if( DetectWidthOfLineNumberArea( bRedraw ) ){
@@ -251,10 +251,10 @@ void CEditView::InsertData_CEditView(
 //?				&pcOpe->m_nCaretPosY_PHY_Before
 //?			);
 //?		}
-		
-		
-		
-		
+
+
+
+
 		pcOpe->m_nDataLen = cMem.GetLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = NULL;				/* 操作に関連するデータ */
 	}
@@ -274,7 +274,7 @@ void CEditView::DeleteData2(
 	int			nCaretY,
 	int			nDelLen,
 	CMemory*	pcMem,
-	COpe*		pcOpe,		/* 編集操作要素　COpe */
+	COpe*		pcOpe,		/* 編集操作要素 COpe */
 	BOOL		bRedraw,
 	BOOL		bRedraw2,
 	BOOL		bUndo			/* Undo操作かどうか */
@@ -391,7 +391,7 @@ void CEditView::DeleteData2(
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
 
-end_of_func:;	
+end_of_func:;
 #ifdef _DEBUG
 	delete pCRunningTimer;
 	pCRunningTimer = NULL;
@@ -407,7 +407,7 @@ end_of_func:;
 
 
 //カーソル位置または選択エリアを削除
-void CEditView::DeleteData( 
+void CEditView::DeleteData(
 				BOOL	bRedraw,
 				BOOL	bUndo	/* Undo操作かどうか */
 )
@@ -511,7 +511,7 @@ void CEditView::DeleteData(
 				if( NULL != pLine ){
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
 					nIdxFrom = LineColmnToIndex( pLine, nLineLen, rcSel.left  );
-					nIdxTo   = LineColmnToIndex( pLine, nLineLen, rcSel.right );
+					nIdxTo	 = LineColmnToIndex( pLine, nLineLen, rcSel.right );
 
 					for( i = nIdxFrom; i <= nIdxTo; ++i ){
 						if( pLine[i] == CR || pLine[i] == LF ){
@@ -521,7 +521,7 @@ void CEditView::DeleteData(
 					}
 				}else{
 					nIdxFrom = 0;
-					nIdxTo   = 0;
+					nIdxTo	 = 0;
 				}
 				nDelPos = nDelPosNext;
 				nDelLen	= nDelLenNext;
@@ -545,7 +545,7 @@ void CEditView::DeleteData(
 						);
 
 					}else{
-					    pcOpe = NULL;
+						pcOpe = NULL;
 					}
 					pcMemDeleted = new CMemory;
 					/* 指定位置の指定長データ削除 */
@@ -554,7 +554,7 @@ void CEditView::DeleteData(
 						nLineNum + 1,
 						nDelLen,
 						pcMemDeleted,
-						pcOpe,				/* 編集操作要素　COpe */
+						pcOpe,				/* 編集操作要素 COpe */
 						bRedraw,
 						bRedraw,
 						bUndo	/* Undo操作かどうか */
@@ -651,13 +651,13 @@ void CEditView::DeleteData(
 		}else{
 			/* データ置換 削除&挿入にも使える */
 			ReplaceData_CEditView(
-				m_nSelectLineFrom,		/* 範囲選択開始行 */    
-				m_nSelectColmFrom,		/* 範囲選択開始桁 */    
-				m_nSelectLineTo,		/* 範囲選択終了行 */    
+				m_nSelectLineFrom,		/* 範囲選択開始行 */
+				m_nSelectColmFrom,		/* 範囲選択開始桁 */
+				m_nSelectLineTo,		/* 範囲選択終了行 */
 				m_nSelectColmTo,		/* 範囲選択終了桁 */
 				NULL,					/* 削除されたデータのコピー(NULL可能) */
-				"",				/* 挿入するデータ */       
-				0,		/* 挿入するデータの長さ */ 
+				"",						/* 挿入するデータ */
+				0,						/* 挿入するデータの長さ */
 				bRedraw
 			);
 		}
@@ -696,17 +696,17 @@ void CEditView::DeleteData(
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
-			m_nCaretPosY,		/* 範囲選択開始行 */    
-			m_nCaretPosX,		/* 範囲選択開始桁 */    
-			m_nCaretPosY,		/* 範囲選択終了行 */    
-			nNxtPos,		/* 範囲選択終了桁 */
-			NULL,					/* 削除されたデータのコピー(NULL可能) */
-			"",				/* 挿入するデータ */       
-			0,		/* 挿入するデータの長さ */ 
+			m_nCaretPosY,		/* 範囲選択開始行 */
+			m_nCaretPosX,		/* 範囲選択開始桁 */
+			m_nCaretPosY,		/* 範囲選択終了行 */
+			nNxtPos,			/* 範囲選択終了桁 */
+			NULL,				/* 削除されたデータのコピー(NULL可能) */
+			"",					/* 挿入するデータ */
+			0,					/* 挿入するデータの長さ */
 			bRedraw
 		);
 	}
-	
+
 	m_pcEditDoc->m_bIsModified = TRUE;	/* 変更フラグ */
 	if( bRedraw ){
 		SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
@@ -751,7 +751,7 @@ end_of_func:;
 
 
 
-/* Undo　元に戻す */
+/* Undo 元に戻す */
 void CEditView::Command_UNDO( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
@@ -769,8 +769,8 @@ void CEditView::Command_UNDO( void )
 #endif
 	COpe*		pcOpe = NULL;
 	COpeBlk*	pcOpeBlk;
-    int			nOpeBlkNum;
-    int			i;
+	int			nOpeBlkNum;
+	int			i;
 	CMemory*	pcMem;
 	int			bIsModified;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
@@ -788,7 +788,7 @@ void CEditView::Command_UNDO( void )
 	int			nCaretPosX_After;
 	int			nCaretPosY_After;
 
-	/* 各種モードの取り消し	*/
+	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
 
 	m_bDoing_UndoRedo = TRUE;	/* アンドゥ・リドゥの実行中か */
@@ -802,7 +802,7 @@ void CEditView::Command_UNDO( void )
 				pcOpe->m_nCaretPosX_PHY_After,
 				pcOpe->m_nCaretPosY_PHY_After,
 				&nCaretPosX_After,
-				&nCaretPosY_After 
+				&nCaretPosY_After
 			);
 			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
 				pcOpe->m_nCaretPosX_PHY_Before,
@@ -837,22 +837,22 @@ void CEditView::Command_UNDO( void )
 				m_nSelectColmTo = nCaretPosX_After;
 
 //				GetSelectedData( *pcMem, FALSE, NULL, FALSE );
-//				DeleteData( 
-//					FALSE, 
+//				DeleteData(
+//					FALSE,
 //					bUndo	/* Undo操作かどうか */
 //				);
 
 
 				/* データ置換 削除&挿入にも使える */
 				ReplaceData_CEditView(
-					m_nSelectLineFrom,		/* 範囲選択開始行 */    
-					m_nSelectColmFrom,		/* 範囲選択開始桁 */    
-					m_nSelectLineTo,		/* 範囲選択終了行 */    
+					m_nSelectLineFrom,		/* 範囲選択開始行 */
+					m_nSelectColmFrom,		/* 範囲選択開始桁 */
+					m_nSelectLineTo,		/* 範囲選択終了行 */
 					m_nSelectColmTo,		/* 範囲選択終了桁 */
 					pcMem,					/* 削除されたデータのコピー(NULL可能) */
-					"",				/* 挿入するデータ */       
-					0,		/* 挿入するデータの長さ */ 
-					FALSE	/*再描画するか否か*/
+					"",						/* 挿入するデータ */
+					0,						/* 挿入するデータの長さ */
+					FALSE					/*再描画するか否か*/
 				);
 
 
@@ -881,14 +881,14 @@ void CEditView::Command_UNDO( void )
 				if( 0 < pcOpe->m_pcmemData->GetLength() ){
 					/* データ置換 削除&挿入にも使える */
 					ReplaceData_CEditView(
-						nCaretPosY_Before,		/* 範囲選択開始行 */    
-						nCaretPosX_Before,		/* 範囲選択開始桁 */    
-						nCaretPosY_Before,		/* 範囲選択終了行 */    
-						nCaretPosX_Before,		/* 範囲選択終了桁 */
-						pcMem,					/* 削除されたデータのコピー(NULL可能) */
-						pcOpe->m_pcmemData->GetPtr( NULL ),				/* 挿入するデータ */       
-						pcOpe->m_nDataLen,		/* 挿入するデータの長さ */ 
-						FALSE	/*再描画するか否か*/
+						nCaretPosY_Before,					/* 範囲選択開始行 */
+						nCaretPosX_Before,					/* 範囲選択開始桁 */
+						nCaretPosY_Before,					/* 範囲選択終了行 */
+						nCaretPosX_Before,					/* 範囲選択終了桁 */
+						pcMem,								/* 削除されたデータのコピー(NULL可能) */
+						pcOpe->m_pcmemData->GetPtr( NULL ),	/* 挿入するデータ */
+						pcOpe->m_nDataLen,					/* 挿入するデータの長さ */
+						FALSE								/*再描画するか否か*/
 					);
 
 //					InsertData_CEditView(
@@ -969,7 +969,7 @@ void CEditView::Command_UNDO( void )
 
 
 
-/* Redo　やり直し */
+/* Redo やり直し */
 void CEditView::Command_REDO( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
@@ -977,7 +977,7 @@ void CEditView::Command_REDO( void )
 		return;
 	}
 
-	
+
 	if( !m_pcEditDoc->IsEnableRedo() ){	/* Redo(やり直し)可能な状態か？ */
 		return;
 	}
@@ -987,8 +987,8 @@ void CEditView::Command_REDO( void )
 #endif
 	COpe*		pcOpe = NULL;
 	COpeBlk*	pcOpeBlk;
-    int			nOpeBlkNum;
-    int			i;
+	int			nOpeBlkNum;
+	int			i;
 	CMemory*	pcMem;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
@@ -1005,7 +1005,7 @@ void CEditView::Command_REDO( void )
 	int			nCaretPosY_After;
 
 
-	/* 各種モードの取り消し	*/
+	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
 
 	m_bDoing_UndoRedo = TRUE;	/* アンドゥ・リドゥの実行中か */
@@ -1043,14 +1043,14 @@ void CEditView::Command_REDO( void )
 				if( 0 < pcOpe->m_pcmemData->GetLength() ){
 					/* データ置換 削除&挿入にも使える */
 					ReplaceData_CEditView(
-						nCaretPosY_Before,		/* 範囲選択開始行 */    
-						nCaretPosX_Before,		/* 範囲選択開始桁 */    
-						nCaretPosY_Before,		/* 範囲選択終了行 */    
-						nCaretPosX_Before,		/* 範囲選択終了桁 */
-						NULL,					/* 削除されたデータのコピー(NULL可能) */
-						pcOpe->m_pcmemData->GetPtr( NULL ),				/* 挿入するデータ */       
-						pcOpe->m_pcmemData->GetLength(),		/* 挿入するデータの長さ */ 
-						FALSE	/*再描画するか否か*/
+						nCaretPosY_Before,					/* 範囲選択開始行 */
+						nCaretPosX_Before,					/* 範囲選択開始桁 */
+						nCaretPosY_Before,					/* 範囲選択終了行 */
+						nCaretPosX_Before,					/* 範囲選択終了桁 */
+						NULL,								/* 削除されたデータのコピー(NULL可能) */
+						pcOpe->m_pcmemData->GetPtr( NULL ),	/* 挿入するデータ */
+						pcOpe->m_pcmemData->GetLength(),	/* 挿入するデータの長さ */
+						FALSE								/*再描画するか否か*/
 					);
 
 //					InsertData_CEditView(
@@ -1079,13 +1079,13 @@ void CEditView::Command_REDO( void )
 
 				/* データ置換 削除&挿入にも使える */
 				ReplaceData_CEditView(
-					nCaretPosY_Before,		/* 範囲選択開始行 */    
-					nCaretPosX_Before,		/* 範囲選択開始桁 */    
-					nCaretPosY_To,		/* 範囲選択終了行 */    
+					nCaretPosY_Before,	/* 範囲選択開始行 */
+					nCaretPosX_Before,	/* 範囲選択開始桁 */
+					nCaretPosY_To,		/* 範囲選択終了行 */
 					nCaretPosX_To,		/* 範囲選択終了桁 */
-					pcMem,		/* 削除されたデータのコピー(NULL可能) */
-					"",				/* 挿入するデータ */       
-					0,			/* 挿入するデータの長さ */ 
+					pcMem,				/* 削除されたデータのコピー(NULL可能) */
+					"",					/* 挿入するデータ */
+					0,					/* 挿入するデータの長さ */
 					FALSE
 				);
 
@@ -1093,10 +1093,10 @@ void CEditView::Command_REDO( void )
 //				DeleteData2(
 //					pcOpe->m_nCaretPosX_Before,
 //					pcOpe->m_nCaretPosY_Before,
-//					pcOpe->m_nDataLen, 
-//					pcMem, 
-//					NULL, 
-//					FALSE, 
+//					pcOpe->m_nDataLen,
+//					pcMem,
+//					NULL,
+//					FALSE,
 //					FALSE
 //				);
 				pcOpe->m_pcmemData = pcMem;
@@ -1108,7 +1108,7 @@ void CEditView::Command_REDO( void )
 				pcOpe->m_nCaretPosX_PHY_After,
 				pcOpe->m_nCaretPosY_PHY_After,
 				&nCaretPosX_After,
-				&nCaretPosY_After 
+				&nCaretPosY_After
 			);
 
 			if( i == nOpeBlkNum - 1	){
@@ -1175,13 +1175,13 @@ void CEditView::Command_REDO( void )
 void CEditView::ReplaceData_CEditView(
 	int			nDelLineFrom,			/* 削除範囲行  From レイアウト行番号 */
 	int			nDelColmFrom,			/* 削除範囲位置From レイアウト行桁位置 */
-	int			nDelLineTo,				/* 削除範囲行　To   レイアウト行番号 */
+	int			nDelLineTo,				/* 削除範囲行  To   レイアウト行番号 */
 	int			nDelColmTo,				/* 削除範囲位置To   レイアウト行桁位置 */
 	CMemory*	pcmemCopyOfDeleted,		/* 削除されたデータのコピー(NULL可能) */
-	const char*	pInsData,				/* 挿入するデータ */       
-	int			nInsDataLen,			/* 挿入するデータの長さ */ 
+	const char*	pInsData,				/* 挿入するデータ */
+	int			nInsDataLen,			/* 挿入するデータの長さ */
 	BOOL		bRedraw
-//	BOOL		bUndo			/* Undo操作かどうか */
+//	BOOL		bUndo					/* Undo操作かどうか */
 )
 {
 //#ifdef _DEBUG
@@ -1240,7 +1240,7 @@ void CEditView::ReplaceData_CEditView(
 		//	To Here
 	}
 
-	COpe* pcOpe = NULL;		/* 編集操作要素　COpe */
+	COpe* pcOpe = NULL;		/* 編集操作要素 COpe */
 	CMemory* pcMemDeleted;
 	int	nCaretPosXOld;
 	int	nCaretPosYOld;
@@ -1253,15 +1253,15 @@ void CEditView::ReplaceData_CEditView(
 	nCaretPosY_PHY_Old = m_nCaretPosY_PHY;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+		pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
 //		pcOpe->m_nCaretPosX_Before = m_nCaretPosX;			/* 操作前のキャレット位置Ｘ */
 //		pcOpe->m_nCaretPosY_Before = m_nCaretPosY;			/* 操作前のキャレット位置Ｙ */
 		pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 		pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
 
-		
-//		pcOpe->m_nCaretPosX_After = m_nCaretPosX;	/* 操作後のキャレット位置Ｘ */
-//		pcOpe->m_nCaretPosY_After = m_nCaretPosY;	/* 操作後のキャレット位置Ｙ */
+
+//		pcOpe->m_nCaretPosX_After = m_nCaretPosX;			/* 操作後のキャレット位置Ｘ */
+//		pcOpe->m_nCaretPosY_After = m_nCaretPosY;			/* 操作後のキャレット位置Ｙ */
 //		pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
 //		pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
 		pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
@@ -1331,21 +1331,21 @@ void CEditView::ReplaceData_CEditView(
 //	int		nAddLineNum;	/* 再描画ヒント レイアウト行の増減 */
 //	int		nModLineFrom;	/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 //	int		nModLineTo;		/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-//	int		nNewLine;		/* 挿入された部分の次の位置の行(レイアウト行) */            
+//	int		nNewLine;		/* 挿入された部分の次の位置の行(レイアウト行) */
 //	int		nNewPos;		/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 	LayoutReplaceArg	LRArg;
-	LRArg.nDelLineFrom = nDelLineFrom;			/* 削除範囲行  From レイアウト行番号 */
-	LRArg.nDelColmFrom = nDelColmFrom;			/* 削除範囲位置From レイアウト行桁位置 */
-	LRArg.nDelLineTo = nDelLineTo;				/* 削除範囲行　To   レイアウト行番号 */
-	LRArg.nDelColmTo = nDelColmTo;				/* 削除範囲位置To   レイアウト行桁位置 */
-	LRArg.pcmemDeleted = pcMemDeleted;			/* 削除されたデータ */	
-	LRArg.pInsData = pInsData;				/* 挿入するデータ */       
-	LRArg.nInsDataLen = nInsDataLen;			/* 挿入するデータの長さ */ 
+	LRArg.nDelLineFrom = nDelLineFrom;	/* 削除範囲行  From レイアウト行番号 */
+	LRArg.nDelColmFrom = nDelColmFrom;	/* 削除範囲位置From レイアウト行桁位置 */
+	LRArg.nDelLineTo = nDelLineTo;		/* 削除範囲行  To   レイアウト行番号 */
+	LRArg.nDelColmTo = nDelColmTo;		/* 削除範囲位置To   レイアウト行桁位置 */
+	LRArg.pcmemDeleted = pcMemDeleted;	/* 削除されたデータ */
+	LRArg.pInsData = pInsData;			/* 挿入するデータ */
+	LRArg.nInsDataLen = nInsDataLen;	/* 挿入するデータの長さ */
 //	LRArg.nAddLineNum = 0;			/* 再描画ヒント レイアウト行の増減 */
 //	LRArg.nModLineFrom = 0;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 //	LRArg.nModLineTo = 0;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-//	LRArg.nNewLine = 0;				/* 挿入された部分の次の位置の行(レイアウト行) */             
-//	LRArg.nNewPos = 0;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */ 
+//	LRArg.nNewLine = 0;				/* 挿入された部分の次の位置の行(レイアウト行) */
+//	LRArg.nNewPos = 0;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 	LRArg.bDispSSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;			/* シングルクォーテーション文字列を表示する */
 	LRArg.bDispWSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;			/* ダブルクォーテーション文字列を表示する */
 	LRArg.bUndo = m_bDoing_UndoRedo;					/* Undo操作かどうか */
@@ -1354,11 +1354,11 @@ void CEditView::ReplaceData_CEditView(
 #if 0
 		nDelLineFrom,			/* 削除範囲行  From レイアウト行番号 */
 		nDelColmFrom,			/* 削除範囲位置From レイアウト行桁位置 */
-		nDelLineTo,				/* 削除範囲行　To   レイアウト行番号 */
+		nDelLineTo,				/* 削除範囲行  To   レイアウト行番号 */
 		nDelColmTo,				/* 削除範囲位置To   レイアウト行桁位置 */
-		pcMemDeleted,			/* 削除されたデータ */	
-		pInsData,				/* 挿入するデータ */       
-		nInsDataLen,			/* 挿入するデータの長さ */ 
+		pcMemDeleted,			/* 削除されたデータ */
+		pInsData,				/* 挿入するデータ */
+		nInsDataLen,			/* 挿入するデータの長さ */
 		&nAddLineNum,			/* 再描画ヒント レイアウト行の増減 */
 		&nModLineFrom,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 		&nModLineTo,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
@@ -1384,7 +1384,7 @@ void CEditView::ReplaceData_CEditView(
 
 	/* 現在の選択範囲を非選択状態に戻す */
 	DisableSelectArea( bRedraw );
-	
+
 	/* 行番号表示に必要な幅を設定 */
 	if( DetectWidthOfLineNumberArea( bRedraw ) ){
 		::DestroyCaret();
@@ -1419,7 +1419,7 @@ void CEditView::ReplaceData_CEditView(
 				/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 				ps.rcPaint.top = m_nViewAlignTop + (LRArg.nModLineFrom - m_nViewTopLine)* (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
 				if( m_pcEditDoc->GetDocumentAttribute().m_bWordWrap ){
-					ps.rcPaint.top -= (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);			
+					ps.rcPaint.top -= (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
 				}
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
@@ -1443,10 +1443,10 @@ void CEditView::ReplaceData_CEditView(
 	){
 		*pcmemCopyOfDeleted = *pcMemDeleted;
 	}
-	
+
 	if( !m_bDoing_UndoRedo /* アンドゥ・リドゥの実行中か */
 	 && 0 < pcMemDeleted->GetLength()	/* 削除したデータの長さ */
-	){	
+	){
 		pcOpe->m_nDataLen = pcMemDeleted->GetLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = pcMemDeleted;				/* 操作に関連するデータ */
 		/* 操作の追加 */
@@ -1458,8 +1458,8 @@ void CEditView::ReplaceData_CEditView(
 
 
 	if( !m_bDoing_UndoRedo		/* アンドゥ・リドゥの実行中か */
-	 && 0 < nInsDataLen			/* 挿入するデータの長さ */ 
-	){	
+	 && 0 < nInsDataLen			/* 挿入するデータの長さ */
+	){
 		pcOpe = new COpe;
 		pcOpe->m_nOpe = OPE_INSERT;				/* 操作種別 */
 
@@ -1480,7 +1480,7 @@ void CEditView::ReplaceData_CEditView(
 		pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_To;
 		pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_To;
 
-		
+
 		/* 操作の追加 */
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}else{
@@ -1489,10 +1489,10 @@ void CEditView::ReplaceData_CEditView(
 
 
 	/* 挿入直後位置へカーソルを移動 */
-	MoveCursor( 
+	MoveCursor(
 		LRArg.nNewPos,		/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
-		LRArg.nNewLine,		/* 挿入された部分の次の位置の行(レイアウト行) */            
-		bRedraw 
+		LRArg.nNewLine,		/* 挿入された部分の次の位置の行(レイアウト行) */
+		bRedraw
 	);
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
@@ -1540,7 +1540,7 @@ void CEditView::ReplaceData_CEditView(
 //	gm_ProfileOutput = 1;
 //	delete pCRunningTimer;
 //	pCRunningTimer = NULL;
-//  
+//
 //	gm_ProfileOutput = 0;
 //#endif
 	return;
@@ -1560,7 +1560,7 @@ void CEditView::ReplaceData_CEditView(
 /* C/C++スマートインデント処理 */
 void CEditView::SmartIndent_CPP( char cChar )
 {
-	
+
 //! 2000.1.12 編集動作とスマートインデントのUndo/Redoバッファを分ける場合
 //!
 //!	/* アンドゥバッファの処理 */
@@ -1576,7 +1576,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 //!	/* アンドゥバッファの処理 */
 //!	m_pcOpeBlk = new COpeBlk;
 
-	
+
 	const char*	pLine;
 	int			nLineLen;
 	int			i;
@@ -1595,7 +1595,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 	char*		pszData = NULL;
 	int			nDataLen;
-	
+
 	int			nCPX;
 	int			nCPY;
 	COpe*		pcOpe = NULL;
@@ -1608,7 +1608,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 	BOOL		bChange;
 
 
-	switch( cChar ){ 
+	switch( cChar ){
 	case CR:
 	case ':':
 	case '}':
@@ -1618,8 +1618,8 @@ void CEditView::SmartIndent_CPP( char cChar )
 		break;
 	default:
 		return;
-	} 
-	switch( cChar ){ 
+	}
+	switch( cChar ){
 	case CR:
 	case ':':
 	case '}':
@@ -1645,14 +1645,14 @@ void CEditView::SmartIndent_CPP( char cChar )
 		}else{
 			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY );
 
-			
+
 			if( CR != cChar ){
 				nWork = nCaretPosX_PHY - 1;
 			}else{
-				/*  
+				/*
 				|| CRが入力された時、カーソル直後の識別子をインデントする。
 				|| カーソル直後の識別子が'}'や')'ならば
-				|| '}'や')'が入力された時と同じ処理をする 
+				|| '}'や')'が入力された時と同じ処理をする
 				*/
 
 				for( i = nCaretPosX_PHY; i < nLineLen; i++ ){
@@ -1695,7 +1695,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 				}
 			}else{
 				if( ':' == cChar ){
-					return;				
+					return;
 				}
 			}
 			/* 調整によって置換される箇所 */
@@ -1705,12 +1705,12 @@ void CEditView::SmartIndent_CPP( char cChar )
 			nYTo = m_nCaretPosY_PHY;
 		}
 
-		
+
 		/* 対応する括弧をさがす */
 		nLevel = 0;	/* {}の入れ子レベル */
 //		bString = FALSE;
-		
-		
+
+
 		nDataLen = 0;
 		for( j = m_nCaretPosY_PHY; j >= 0 && NULL != ( pLine2 = m_pcEditDoc->m_cDocLineMgr.GetLineStr( j, &nLineLen2 ) ); --j ){
 			if( j == m_nCaretPosY_PHY ){
@@ -1720,10 +1720,10 @@ void CEditView::SmartIndent_CPP( char cChar )
 				nCharChars = &pLine2[nLineLen2] - CMemory::MemCharPrev( pLine2, nLineLen2, &pLine2[nLineLen2] );
 				k = nLineLen2 - nCharChars;
 			}
-			
+
 			for( ; k >= 0; /*k--*/ ){
 				if( 1 == nCharChars && ( '}' == pLine2[k] || ')' == pLine2[k] )
-				){ 
+				){
 					if( 0 < k && '\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && '\'' == pLine2[k + 1]
 					){
@@ -1787,11 +1787,11 @@ void CEditView::SmartIndent_CPP( char cChar )
 				}
 			}
 
-			
+
 			nDataLen = m;
 			pszData = new char[nDataLen + 2];
 			memcpy( pszData, pLine2, nDataLen );
-			if( CR  == cChar 
+			if( CR  == cChar
 			 || '{' == cChar
 			 || '(' == cChar
 			){
@@ -1844,26 +1844,26 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 			/* データ置換 削除&挿入にも使える */
 			ReplaceData_CEditView(
-				nYFm,			/* 削除範囲行  From レイアウト行番号 */
-				nXFm,			/* 削除範囲位置From レイアウト行桁位置 */
-				nYTo,				/* 削除範囲行　To   レイアウト行番号 */
-				nXTo,				/* 削除範囲位置To   レイアウト行桁位置 */
+				nYFm,		/* 削除範囲行  From レイアウト行番号 */
+				nXFm,		/* 削除範囲位置From レイアウト行桁位置 */
+				nYTo,		/* 削除範囲行  To   レイアウト行番号 */
+				nXTo,		/* 削除範囲位置To   レイアウト行桁位置 */
 				NULL,		/* 削除されたデータのコピー(NULL可能) */
-				pszData,				/* 挿入するデータ */       
-				nDataLen,			/* 挿入するデータの長さ */ 
+				pszData,	/* 挿入するデータ */
+				nDataLen,	/* 挿入するデータの長さ */
 				TRUE
 			//	BOOL		bUndo			/* Undo操作かどうか */
 			);
 		}
-		
-		
+
+
 		/* カーソル位置調整 */
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nCPX, nCPY, &nCPX, &nCPY );
 		/* 選択エリアの先頭へカーソルを移動 */
 		MoveCursor( nCPX, nCPY, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
-		
+
 		if( bChange && !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
@@ -1879,7 +1879,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 	if( NULL != pszData ){
 		delete pszData;
 		pszData = NULL;
-	}	
+	}
 	return;
 }
 
@@ -1887,30 +1887,30 @@ void CEditView::SmartIndent_CPP( char cChar )
 // 2001/06/20 Start by asa-o
 
 // テキストを１行下へスクロール
-void CEditView::Command_WndScrollDown(void)
+void CEditView::Command_WndScrollDown( void )
 {
 	int	nCaretMarginY;
 
 	nCaretMarginY = m_nViewRowNum / _CARETMARGINRATE;
-	if(nCaretMarginY < 1)
+	if( nCaretMarginY < 1 )
 		nCaretMarginY = 1;
 
 	nCaretMarginY += 2;
 
-	if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - (nCaretMarginY + 1)){
+	if( m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - (nCaretMarginY + 1) ){
 		CaretUnderLineOFF(TRUE);
 	}
 
 	ScrollAtV(m_nViewTopLine - 1);
 
 	// テキストが選択されていない
-	if(!IsTextSelected())
+	if( !IsTextSelected() )
 	{
 		// カーソルが画面外に出た
-		if(m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - nCaretMarginY)
+		if( m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - nCaretMarginY )
 		{
-			if(m_nCaretPosY > m_pcEditDoc->m_cDocLineMgr.GetLineCount() - nCaretMarginY)
-				Cursor_UPDOWN( (m_pcEditDoc->m_cDocLineMgr.GetLineCount() - nCaretMarginY) - m_nCaretPosY, FALSE);
+			if( m_nCaretPosY > m_pcEditDoc->m_cDocLineMgr.GetLineCount() - nCaretMarginY )
+				Cursor_UPDOWN( (m_pcEditDoc->m_cDocLineMgr.GetLineCount() - nCaretMarginY) - m_nCaretPosY, FALSE );
 			else
 				Cursor_UPDOWN( -1, FALSE);
 			DrawCaretPosInfo();
@@ -1931,25 +1931,25 @@ void CEditView::Command_WndScrollUp(void)
 	int	nCaretMarginY;
 
 	nCaretMarginY = m_nViewRowNum / _CARETMARGINRATE;
-	if(nCaretMarginY < 1)
+	if( nCaretMarginY < 1 )
 		nCaretMarginY = 1;
 
-	if(m_nCaretPosY < m_nViewTopLine + (nCaretMarginY + 1)){
-		CaretUnderLineOFF(TRUE);
+	if( m_nCaretPosY < m_nViewTopLine + (nCaretMarginY + 1) ){
+		CaretUnderLineOFF( TRUE );
 	}
 
-	ScrollAtV(m_nViewTopLine + 1);
+	ScrollAtV( m_nViewTopLine + 1 );
 
 	// テキストが選択されていない
-	if(!IsTextSelected())
+	if( !IsTextSelected() )
 	{
 		// カーソルが画面外に出た
-		if(m_nCaretPosY < m_nViewTopLine + nCaretMarginY)
+		if( m_nCaretPosY < m_nViewTopLine + nCaretMarginY )
 		{
-			if(m_nViewTopLine == 1)
-				Cursor_UPDOWN( nCaretMarginY + 1, FALSE);
+			if( m_nViewTopLine == 1 )
+				Cursor_UPDOWN( nCaretMarginY + 1, FALSE );
 			else
-				Cursor_UPDOWN( 1, FALSE);
+				Cursor_UPDOWN( 1, FALSE );
 			DrawCaretPosInfo();
 		}
 	}
@@ -1959,8 +1959,10 @@ void CEditView::Command_WndScrollUp(void)
 		pcEditView -> ScrollAtV( m_nViewTopLine );
 	}
 
-	CaretUnderLineON(TRUE);
+	CaretUnderLineON( TRUE );
 }
 
 // 2001/06/20 End
 
+
+/*[EOF]*/

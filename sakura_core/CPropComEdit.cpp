@@ -171,7 +171,7 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 
 	/* 折り返し行に改行を付けてコピー */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY, m_Common.m_bAddCRLFWhenCopy );
-	
+
 	/* コピーしたら選択解除 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA, m_Common.m_bCopyAndDisablSelection );
 
@@ -199,7 +199,7 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 
 	/* コピーしたら選択解除 */
 	m_Common.m_bCopyAndDisablSelection = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA );
-	
+
 	/* 改行は上書きしない */
 	m_Common.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );
 	return TRUE;

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	強調キーワード管理
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -74,7 +74,7 @@ BOOL CKeyWordSetMgr::AddKeyWordSet( const char* pszSetName, BOOL nKEYWORDCASE )
 
 	m_IsSorted[m_nKeyWordSetNum] = 0;	//MIK 2000.12.01 binary search
 	m_nKeyWordSetNum++;
-	return TRUE; 
+	return TRUE;
 }
 
 /* ｎ番目のセットを削除 */
@@ -132,7 +132,7 @@ char* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
 	}
 	if( m_nKeyWordNumArr[nIdx] <= nIdx2 ){
 		return NULL;
-	} 
+	}
 	return m_szKeyWordArr[nIdx][nIdx2];
 }
 
@@ -276,17 +276,17 @@ BOOL CKeyWordSetMgr::IsModify( CKeyWordSetMgr& cKeyWordSetMgrNew, BOOL* pnModify
 	bModifyAll = FALSE;
 	if( m_nCurrentKeyWordSetIdx != cKeyWordSetMgrNew.m_nCurrentKeyWordSetIdx
 	 || m_nKeyWordSetNum != cKeyWordSetMgrNew.m_nKeyWordSetNum
-	 || 0 != memcmp( &m_szSetNameArr, &cKeyWordSetMgrNew.m_szSetNameArr, sizeof( m_szSetNameArr ) ) 
-	 || 0 != memcmp( &m_nKEYWORDCASEArr, &cKeyWordSetMgrNew.m_nKEYWORDCASEArr, sizeof( m_nKEYWORDCASEArr ) ) 
-	 || 0 != memcmp( &m_nKeyWordNumArr, &cKeyWordSetMgrNew.m_nKeyWordNumArr, sizeof( m_nKeyWordNumArr ) ) 
-	 || 0 != memcmp( &m_szKeyWordArr, &cKeyWordSetMgrNew.m_szKeyWordArr, sizeof( m_szKeyWordArr ) ) 
+	 || 0 != memcmp( &m_szSetNameArr, &cKeyWordSetMgrNew.m_szSetNameArr, sizeof( m_szSetNameArr ) )
+	 || 0 != memcmp( &m_nKEYWORDCASEArr, &cKeyWordSetMgrNew.m_nKEYWORDCASEArr, sizeof( m_nKEYWORDCASEArr ) )
+	 || 0 != memcmp( &m_nKeyWordNumArr, &cKeyWordSetMgrNew.m_nKeyWordNumArr, sizeof( m_nKeyWordNumArr ) )
+	 || 0 != memcmp( &m_szKeyWordArr, &cKeyWordSetMgrNew.m_szKeyWordArr, sizeof( m_szKeyWordArr ) )
 	 ){
 		bModifyAll = TRUE;
 		for( i = 0; i < MAX_SETNUM; ++i ){
-			if( 0 != memcmp( &m_szSetNameArr[i], &cKeyWordSetMgrNew.m_szSetNameArr[i], sizeof( m_szSetNameArr[i] ) ) 
-			 || 0 != memcmp( &m_nKEYWORDCASEArr[i], &cKeyWordSetMgrNew.m_nKEYWORDCASEArr[i], sizeof( m_nKEYWORDCASEArr[i] ) ) 
-			 || 0 != memcmp( &m_nKeyWordNumArr[i], &cKeyWordSetMgrNew.m_nKeyWordNumArr[i], sizeof( m_nKeyWordNumArr[i] ) ) 
-			 || 0 != memcmp( &m_szKeyWordArr[i], &cKeyWordSetMgrNew.m_szKeyWordArr[i], sizeof( m_szKeyWordArr[i] ) ) 
+			if( 0 != memcmp( &m_szSetNameArr[i], &cKeyWordSetMgrNew.m_szSetNameArr[i], sizeof( m_szSetNameArr[i] ) )
+			 || 0 != memcmp( &m_nKEYWORDCASEArr[i], &cKeyWordSetMgrNew.m_nKEYWORDCASEArr[i], sizeof( m_nKEYWORDCASEArr[i] ) )
+			 || 0 != memcmp( &m_nKeyWordNumArr[i], &cKeyWordSetMgrNew.m_nKeyWordNumArr[i], sizeof( m_nKeyWordNumArr[i] ) )
+			 || 0 != memcmp( &m_szKeyWordArr[i], &cKeyWordSetMgrNew.m_szKeyWordArr[i], sizeof( m_szKeyWordArr[i] ) )
 			){
 				pnModifyFlagArr[i] = TRUE;
 			}
@@ -378,5 +378,6 @@ int CKeyWordSetMgr::GetKeyWordCase( int nIdx )
 	return 	m_nKEYWORDCASEArr[nIdx];
 }
 //MIK END
+
 
 /*[EOF]*/

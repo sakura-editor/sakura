@@ -146,12 +146,12 @@ BOOL CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wPa
 			return TRUE;
 		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
-		
+
 
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -213,7 +213,7 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_bBackUpFolder );
 
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-	switch( m_Common.GetBackupType()){
+	switch( m_Common.GetBackupType() ){
 	case 2:
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE2, 1 );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1, 1 );	// 付加する日付のタイプ(現時刻)
@@ -231,11 +231,11 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 		break;
 	}
 	/* バックアップファイル名：日付の年 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_YEAR, m_Common.GetBackupOpt(BKUP_YEAR)  );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_YEAR, m_Common.GetBackupOpt(BKUP_YEAR) );
 	/* バックアップファイル名：日付の月 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_MONTH, m_Common.GetBackupOpt(BKUP_MONTH) );
 	/* バックアップファイル名：日付の日 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_DAY, m_Common.GetBackupOpt(BKUP_DAY));
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_DAY, m_Common.GetBackupOpt(BKUP_DAY) );
 	/* バックアップファイル名：日付の時 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_HOUR, m_Common.GetBackupOpt(BKUP_HOUR) );
 	/* バックアップファイル名：日付の分 */
@@ -424,3 +424,6 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 	}
 }
 //	To Here Aug. 16, 2000 genta
+
+
+/*[EOF]*/

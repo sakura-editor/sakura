@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	アウトライン解析 データ配列
-	
+
 	@author Norio Nakatani
 	@date	1998/06/23 作成
 	$Revision$
@@ -51,7 +51,7 @@ class CFuncInfoArr {
 
 
 
-		char		m_szFilePath[_MAX_PATH + 1];	/* 解析対象ファイル名 */	
+		char		m_szFilePath[_MAX_PATH + 1];	/* 解析対象ファイル名 */
 	private:
 		int			m_nFuncInfoArrNum;	/* 配列要素数 */
 		CFuncInfo**	m_ppcFuncInfoArr;	/* 配列 */
@@ -61,5 +61,6 @@ class CFuncInfoArr {
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CFUNCINFOARR_H_ */
+
 
 /*[EOF]*/

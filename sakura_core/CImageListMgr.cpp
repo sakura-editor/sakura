@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -41,7 +41,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	if( m_hList != NULL ){	//	既に構築済みなら無視する
 		return true;
 	}
-	
+
 	HBITMAP	hRscbmp;	//	リソースから読み込んだひとかたまりのBitmap
 	HBITMAP	hTmpbmp;	//	1アイコンBitmap用の領域
 	HBITMAP	hFOldbmp;	//	SetObjectで得られた1つ前のハンドルを保持する
@@ -50,26 +50,26 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	HDC		dcTo;		//	描画用
 	int		nRetPos;	//	後処理用
 	m_cx = m_cy  = 16;
-	
+
 //	Oct. 21, 2000 JEPRO 設定
 	const int MAX_X = 32;
 	const int MAX_Y = 11;
-	
+
 	//	暫定
 //	const int MAX_X = 128;
 //	const int MAX_Y = 1;
 
 	COLORREF cTransparent;	//	取得した画像の(0,0)の色を背景色として使う
-	
+
 	nRetPos = 0;
 	do {
 		//	From Here 2001.7.1 GAE
 		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
 		char	szPath[_MAX_PATH], szExeDrive[_MAX_DRIVE], szExeDir[_MAX_DIR];
-		
+
 		// sakura.exe のパスを取得
 		::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
-		
+
 		// (sakuraディレクトリ) my_icons.bmp の文字列を作成
 		_splitpath( szPath, szExeDrive, szExeDir, NULL, NULL );
 		wsprintf( szPath, "%s%s%s", szExeDrive, szExeDir, "my_icons.bmp" );	//Jul.04, 2001 JEPRO toolbar.bmp→my_icons.bmp に名前変更
@@ -79,14 +79,14 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
 			//	このブロック内は従来の処理
 			//	リソースからBitmapを読み込む
-			hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ));
+			hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
 			if( hRscbmp == NULL ){
 				nRetPos = 0;
 				break;
 			}
 		}
 		//	To Here 2001.7.1 GAE
-		
+
 		//	BitBltを使うためにMemoryDCにマッピングする
 		//	MAPした後MemoryDCに対して描画を行うとBitmapも書き換えられているという算段．
 		dcFrom = CreateCompatibleDC(0);	//	転送元用
@@ -94,7 +94,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 			nRetPos = 1;
 			break;
 		}
-		
+
 		//	まずbitmapをdcにmapする
 		//	こうすることでCreateCompatibleBitmapで
 		//	hRscbmpと同じ形式のbitmapを作れる．
@@ -121,7 +121,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 			nRetPos = 3;
 			break;
 		}
-		
+
 		hTOldbmp = (HBITMAP)SelectObject( dcTo, hTmpbmp );
 		if( hTOldbmp == NULL ){
 			nRetPos = 5;
@@ -167,7 +167,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 
 	//	後処理
 	switch( nRetPos ){
-	
+
 	case 6:
 		SelectObject( dcTo, hTOldbmp );
 	case 0:
@@ -188,3 +188,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 
 	return nRetPos == 0;
 }
+
+
+/*[EOF]*/

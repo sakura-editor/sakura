@@ -1,9 +1,9 @@
 //	$Id$
 /*!	@file
 	処理所要時間の計測クラス
-	
+
 	デバッグ目的で用いる
-	
+
 	@author Norio Nakatani
 	@date 1998/03/06  新規作成
 	$Revision$
@@ -48,9 +48,9 @@ public:
 	CRunningTimer( const char* );
 	~CRunningTimer();
 
-    /*
-    || 関数
-    */
+	/*
+	|| 関数
+	*/
 	void Reset();
 	DWORD Read();
 
@@ -65,5 +65,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CRUNNINGTIMER_H_ */
+
 
 /*[EOF]*/

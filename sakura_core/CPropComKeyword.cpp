@@ -68,10 +68,10 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_KEYWORD(
 
 /* p7 メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p7(
-    HWND	hwndDlg,	// handle to dialog box
-    UINT	uMsg,		// message
-    WPARAM	wParam,		// first message parameter
-    LPARAM	lParam 		// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam 		// second message parameter
 )
 {
 	WORD				wNotifyCode;
@@ -121,9 +121,9 @@ BOOL CPropCommon::DispatchEvent_p7(
 		lvc.iSubItem = 0;
 		ListView_InsertColumn( hwndLIST_KEYWORD, 0, &lvc );
 
-		dwStyle = ::GetWindowLong( hwndLIST_KEYWORD, GWL_STYLE ); 
+		dwStyle = ::GetWindowLong( hwndLIST_KEYWORD, GWL_STYLE );
 		::SetWindowLong( hwndLIST_KEYWORD, GWL_STYLE, dwStyle | LVS_SHOWSELALWAYS );
-//            (dwStyle & ~LVS_TYPEMASK) | dwView); 
+//				(dwStyle & ~LVS_TYPEMASK) | dwView);
 
 
 		/* コントロール更新のタイミング用のタイマーを起動 */
@@ -448,7 +448,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //	);
 //	return;
 
-	
+
 	CDlgOpenFile	cDlgOpenFile;
 	char*			pszMRU = NULL;;
 	char*			pszOPENFOLDER = NULL;;
@@ -515,7 +515,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //	char			szLine[1024];
 	int				i;
 	int				nKeyWordNum;
-	
+
 	strcpy( szPath, "" );
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -560,7 +560,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 		"ファイルへエクスポートしました。\n\n%s", szPath
 	);
-	
+
 	return;
 }
 
@@ -574,7 +574,7 @@ void CPropCommon::SetData_p7( HWND hwndDlg )
 //	int		nIdx;
 //	char*	pszWork;
 
-	
+
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
 	::SendMessage( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */
@@ -591,7 +591,7 @@ void CPropCommon::SetData_p7( HWND hwndDlg )
 		/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 		SetData_p7_KeyWordSet( hwndDlg, -1 );
 	}
-	
+
 	return;
 }
 
@@ -638,7 +638,7 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE );
 	}
-	
+
 	/* ｎ番目のセットのキーワードの数を返す */
 	nNum = m_CKeyWordSetMgr.GetKeyWordNum( nIdx );
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
@@ -652,7 +652,7 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 		lvi.iSubItem = 0;
 		lvi.lParam	= i;
 		ListView_InsertItem( hwndList, &lvi );
-		
+
 	}
 	m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
 	return;

@@ -8,7 +8,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -33,10 +33,10 @@
 const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"",
 	"\x0d\x0\x0a\x0",	// EOL_CRLF_UNICODE
-	"\x0d\x0a",			// EOL_CRLF		
-	"\x0a\x0d",			// EOL_LFCR		
-	"\x0a",				// EOL_LF			
-	"\x0d"				// EOL_CR			
+	"\x0d\x0a",			// EOL_CRLF
+	"\x0a\x0d",			// EOL_LFCR
+	"\x0a",				// EOL_LF
+	"\x0d"				// EOL_CR
 };
 
 /*! 行終端子のデータ長の配列 */
@@ -93,7 +93,7 @@ enumEOLType CEOL::GetEOLType( const char* pszData, int nDataLen )
 	int	i;
 	/* 改行コードの長さを調べる */
 	for( i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( gm_pnEolLenArr[i] <= nDataLen 
+		if( gm_pnEolLenArr[i] <= nDataLen
 		 && 0 == memcmp( pszData, gm_pszEolDataArr[i], gm_pnEolLenArr[i] )
 		){
 			return gm_pnEolTypeArr[i];
@@ -101,3 +101,6 @@ enumEOLType CEOL::GetEOLType( const char* pszData, int nDataLen )
 	}
 	return EOL_NONE;
 }
+
+
+/*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	テキストのレイアウト情報管理
-	
+
 	@author Norio Nakatani
 	@date 1998/03/06 新規作成
 	@date 1998/04/14 データの削除を実装
@@ -53,18 +53,18 @@ class CLayoutMgr;
 struct LayoutReplaceArg {
 	int			nDelLineFrom;			/* 削除範囲行  From レイアウト行番号 */
 	int			nDelColmFrom;			/* 削除範囲位置From レイアウト行桁位置 */
-	int			nDelLineTo;				/* 削除範囲行　To   レイアウト行番号 */
+	int			nDelLineTo;				/* 削除範囲行  To   レイアウト行番号 */
 	int			nDelColmTo;				/* 削除範囲位置To   レイアウト行桁位置 */
-	CMemory*	pcmemDeleted;			/* 削除されたデータ */	
-	const char*	pInsData;				/* 挿入するデータ */       
-	int			nInsDataLen;			/* 挿入するデータの長さ */ 
+	CMemory*	pcmemDeleted;			/* 削除されたデータ */
+	const char*	pInsData;				/* 挿入するデータ */
+	int			nInsDataLen;			/* 挿入するデータの長さ */
 
 	int			nAddLineNum;			/* 再描画ヒント レイアウト行の増減 */
 	int			nModLineFrom;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 	int			nModLineTo;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 
-	int			nNewLine;				/* 挿入された部分の次の位置の行(レイアウト行) */             
-	int			nNewPos;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */ 
+	int			nNewLine;				/* 挿入された部分の次の位置の行(レイアウト行) */
+	int			nNewPos;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 
 	BOOL		bDispSSTRING;			/* シングルクォーテーション文字列を表示する */
 	BOOL		bDispWSTRING;			/* ダブルクォーテーション文字列を表示する */
@@ -103,7 +103,7 @@ public:
 	|| 更新系
 	*/
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO　char* (行コメントデリミタ3用)を1つ追加
+	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */	//Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
 //#else
 //	void SetLayoutInfo( int , BOOL, int , char*, char*, char*, char*, int, int, HWND, BOOL, BOOL ); /* レイアウト情報の変更 */
 //#endif
@@ -116,18 +116,18 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 #if 0
 		int			nDelLineFrom,			/* 削除範囲行  From レイアウト行番号 */
 		int			nDelColmFrom,			/* 削除範囲位置From レイアウト行桁位置 */
-		int			nDelLineTo,				/* 削除範囲行　To   レイアウト行番号 */
+		int			nDelLineTo,				/* 削除範囲行  To   レイアウト行番号 */
 		int			nDelColmTo,				/* 削除範囲位置To   レイアウト行桁位置 */
-		CMemory*	pcmemDeleted,			/* 削除されたデータ */	
-		const char*	pInsData,				/* 挿入するデータ */       
-		int			nInsDataLen,			/* 挿入するデータの長さ */ 
+		CMemory*	pcmemDeleted,			/* 削除されたデータ */
+		const char*	pInsData,				/* 挿入するデータ */
+		int			nInsDataLen,			/* 挿入するデータの長さ */
 
 		int*		pnAddLineNum,			/* 再描画ヒント レイアウト行の増減 */
 		int*		pnModLineFrom,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 		int*		pnModLineTo,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 
-		int*		pnNewLine,				/* 挿入された部分の次の位置の行(レイアウト行) */             
-		int*		pnNewPos,				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */ 
+		int*		pnNewLine,				/* 挿入された部分の次の位置の行(レイアウト行) */
+		int*		pnNewPos,				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 
 		BOOL		bDispSSTRING,			/* シングルクォーテーション文字列を表示する */
 		BOOL		bDispWSTRING,			/* ダブルクォーテーション文字列を表示する */
@@ -143,7 +143,7 @@ protected:
 	*/
 	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
 	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
-	void XYLogicalToLayout( CLayout*, int, int, int, int*, int*	);	/* 論理位置→レイアウト位置変換 */
+	void XYLogicalToLayout( CLayout*, int, int, int, int*, int* );	/* 論理位置→レイアウト位置変換 */
 
 
 	/*
@@ -180,7 +180,7 @@ protected:
 	char*			m_pszBlockCommentFrom2;		/* ブロックコメントデリミタ2(From) */
 	char*			m_pszBlockCommentTo2;		/* ブロックコメントデリミタ2(To) */
 //#endif
-	int				m_nStringType;				/* 文字列区切り記号エスケープ方法　0=[\"][\'] 1=[""][''] */
+	int				m_nStringType;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
 	int				m_nPrevReferLine;
 	CLayout*		m_pLayoutPrevRefer;
@@ -198,5 +198,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CLAYOUTMGR_H_ */
+
 
 /*[EOF]*/

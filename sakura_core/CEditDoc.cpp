@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	文書関連情報の管理
-	
+
 	@author Norio Nakatani
 	@date	1998/03/13 作成
 	$Revision$
@@ -520,7 +520,7 @@ BOOL CEditDoc::FileRead(
 						m_hWnd,
 						MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 						"文字コード情報",
-						"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]　＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません",
+						"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません",
 						m_szFilePath, pszCodeName, pszCodeName, pszCodeNameNew
 					);
 					if( IDYES == nRet ){
@@ -1456,7 +1456,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 			//Oct. 11, 2000 jepro note： アクティブでない時のタイトル表示
 			wsprintf(
 				pszCap,
-				"%s%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた	
+				"%s%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 				szFname, szExt,
 				m_bIsModified ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
@@ -1498,7 +1498,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 BOOL CEditDoc::MakeBackUp( void )
 {
 	time_t	ltime;
-    struct	tm *today, *gmt, xmas = { 0, 0, 12, 25, 11, 93 };
+	struct	tm *today, *gmt, xmas = { 0, 0, 12, 25, 11, 93 };
 	char	szTime[64];
 	char	szForm[64];
 	char	szPath[_MAX_PATH];
@@ -1515,7 +1515,7 @@ BOOL CEditDoc::MakeBackUp( void )
 		return FALSE;
 	}
 
-   /* バックアップソースの存在チェック */
+	/* バックアップソースの存在チェック */
 	if( (_access( m_szFilePath, 0 )) == -1 ){
 		return FALSE;
 	}
@@ -1891,7 +1891,7 @@ inline bool C_IsWordChar( char c ){
 //	From Here Apr. 1, 2001 genta
 /*!
 	特殊な関数名 "operator" かどうかを判定する。
-	
+
 	文字列が"operator"それ自身か、あるいは::の後ろにoperatorと続いて
 	終わっているときにoperatorと判定。
 
@@ -1932,7 +1932,7 @@ inline bool C_IsOperator( char* szStr, int nLen	)
 	10の位で目的別に使い分けている．C/C++用は10位が0
 	- 1: 宣言
 	- 2: 通常の関数 (追加文字列無し)
-	
+
 	@param pcFuncInfoArr [out] 関数一覧を返すためのクラス。
 	ここに関数のリストを登録する。
 */
@@ -2024,7 +2024,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 					//	From Here Mar. 31, 2001 genta
 					//	operatorキーワード(演算子overload)の対応
 					//	ただし、operatorキーワードの後ろにスペースが入っているとうまく動かない。
-					if( C_IsOperator( szWord, nWordIdx + 1 )){
+					if( C_IsOperator( szWord, nWordIdx + 1 ) ){
 						//	operatorだ！
 						/*  overloadする演算子一覧
 							& && &=
@@ -2113,7 +2113,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 							oplen = 2;
 							break;
 						}
-						
+
 						//	oplen の長さだけキーワードに追加
 						for( ; oplen > 0 ; oplen--, i++ ){
 							++nWordIdx;
@@ -2129,7 +2129,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 
 							// 演算子が抜けている場合の動作
 							// 引数部が()の場合はそれが演算子と見なされるため、その行は関数定義と認識されない
-							// それ以外の場合はoperatorという関数と認識される							
+							// それ以外の場合はoperatorという関数と認識される
 					}
 					//	To Here Mar. 31, 2001 genta
 					strcpy( szWordPrev, szWord );
@@ -2332,7 +2332,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr )
 							}
 							//	From Here Apr. 1, 2001 genta
 							//	operator new/delete 演算子の対応
-							else if( C_IsOperator( szWordPrev, pos + 2 )){
+							else if( C_IsOperator( szWordPrev, pos + 2 ) ){
 								//	スペースを入れて、前の文字列に続ける
 								szWordPrev[pos + 2] = ' ';
 								szWordPrev[pos + 3] = '\0';
@@ -3551,7 +3551,7 @@ void CEditDoc::Init( void )
 
 	/* 現在編集中のファイルのタイムスタンプ */
 	m_FileTime.dwLowDateTime = 0;
-    m_FileTime.dwHighDateTime = 0;
+	m_FileTime.dwHighDateTime = 0;
 
 
 	/* 共有データ構造体のアドレスを返す */
@@ -3588,7 +3588,7 @@ void CEditDoc::Init( void )
 
 	/* 文字コード種別 */
 	m_nCharCode = 0;
-	
+
 	//	May 12, 2000
 	m_cNewLineCode.SetType( EOL_CRLF );
 

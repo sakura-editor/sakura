@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	キー割り当てに関するクラス
-	
+
 	@author Norio Nakatani
 	@date 1998/03/25 新規作成
 	@date 1998/05/16 クラス内にデータを持たないように変更
@@ -37,7 +37,7 @@ class CKeyBind;
 struct KEYDATA {
 	short			m_nKeyCode;
 //	char*			m_pszKeyName;
-	char			m_szKeyName[64];	
+	char			m_szKeyName[64];
 	/*short*/int	m_nFuncCodeArr[8];
 };
 
@@ -86,5 +86,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CKEYBIND_H_ */
+
 
 /*[EOF]*/

@@ -50,7 +50,7 @@ void DebugOut( LPCTSTR lpFmt, ...)
 	wvsprintf( szText, lpFmt, argList );
 	OutputDebugString( szText );
 
-	::Sleep(1);	// Norio Nakatani, 2001/06/23　大量にトレースするときのために
+	::Sleep(1);	// Norio Nakatani, 2001/06/23 大量にトレースするときのために
 
 	va_end(argList);
 	return;

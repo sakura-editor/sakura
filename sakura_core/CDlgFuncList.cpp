@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	アウトライン解析ダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date 2001/06/23 N.Nakatani Visual Basicのアウトライン解析
 	$Revision$
@@ -261,7 +261,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = "PROC";}else
 			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = "ラベル";}else
 			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = "ENDP";}else{
-			
+
 			// 2001/06/23 N.Nakatani for Visual Basic
 			//	Jun. 26, 2001 genta 半角かな→全角に
 			if( 60 == pcFuncInfo->m_nInfo ){item.pszText = "ステートメント宣言";}else
@@ -785,8 +785,8 @@ void CDlgFuncList::GetTreeTextNext(
 		tvi.cchTextMax = sizeof( szWork );
 		TreeView_GetItem( hwndTree, &tvi );
 		for( i = 0; i < nDepth; ++i ){
-//			m_cmemClipText.Append( "　", 2 );	/* クリップボードコピー用テキスト */
-			m_cmemClipText.AppendSz( "　" );	/* クリップボードコピー用テキスト */
+//			m_cmemClipText.Append( "  ", 2 );	/* クリップボードコピー用テキスト */
+			m_cmemClipText.AppendSz( "  " );	/* クリップボードコピー用テキスト */
 		}
 //		m_cmemClipText.Append( (const char *)tvi.pszText, lstrlen( (const char *)tvi.pszText ) );	/* クリップボードコピー用テキスト */
 		m_cmemClipText.AppendSz( (const char *)tvi.pszText );	/* クリップボードコピー用テキスト */
@@ -865,8 +865,8 @@ int CDlgFuncList::SetTreeTxtNest(
 		htiItem = TreeView_InsertItem( hwndTree, &tvis );
 
 		for( i = 0; i < nDepth; ++i ){
-//			m_cmemClipText.Append( "　", 2 );	/* クリップボードコピー用テキスト */
-			m_cmemClipText.AppendSz( "　" );	/* クリップボードコピー用テキスト */
+//			m_cmemClipText.Append( "  ", 2 );	/* クリップボードコピー用テキスト */
+			m_cmemClipText.AppendSz( "  " );	/* クリップボードコピー用テキスト */
 		}
 //		m_cmemClipText.Append( (const char *)pWork, lstrlen( (const char *)pWork ) );	/* クリップボードコピー用テキスト */
 		m_cmemClipText.AppendSz( (const char *)pWork );		/* クリップボードコピー用テキスト */
@@ -1036,30 +1036,30 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	if( hwndTree == pnmh->hwndFrom ){
 		pnmtv = (NM_TREEVIEW *) lParam;
 //		switch( pnmh->code ){
-//		case TVN_BEGINDRAG     :
+//		case TVN_BEGINDRAG:
 //		case TVN_BEGINLABELEDIT:
-//		case TVN_BEGINRDRAG    :
-//		case TVN_DELETEITEM    :
-//		case TVN_ENDLABELEDIT  :
-//		case TVN_GETDISPINFO   :
-//		case TVN_ITEMEXPANDED  :
-//		case TVN_ITEMEXPANDING :
-//		case TVN_KEYDOWN       :
-//		case TVN_SELCHANGED    :
-//		case TVN_SELCHANGING   :
-//		case TVN_SETDISPINFO   :
+//		case TVN_BEGINRDRAG:
+//		case TVN_DELETEITEM:
+//		case TVN_ENDLABELEDIT:
+//		case TVN_GETDISPINFO:
+//		case TVN_ITEMEXPANDED:
+//		case TVN_ITEMEXPANDING:
+//		case TVN_KEYDOWN:
+//		case TVN_SELCHANGED:
+//		case TVN_SELCHANGING:
+//		case TVN_SETDISPINFO:
 //			break;
 //		default:
 			switch( pnmtv->hdr.code ){
-			case NM_DBLCLK     :
+			case NM_DBLCLK:
 				return OnJump();
-//			case NM_CLICK      :
-//			case NM_KILLFOCUS  :
+//			case NM_CLICK:
+//			case NM_KILLFOCUS:
 //			case NM_OUTOFMEMORY:
-//			case NM_RCLICK     :
-//			case NM_RDBLCLK    :
-//			case NM_RETURN     :
-//			case NM_SETFOCUS   :
+//			case NM_RCLICK:
+//			case NM_RDBLCLK:
+//			case NM_RETURN:
+//			case NM_SETFOCUS:
 //			default:
 //				break;
 			}
@@ -1127,9 +1127,9 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	HWND	hwndCtrl;
 	POINT	po;
 
-	fwSizeType = wParam;      // resizing flag
-	nWidth = LOWORD(lParam);  // width of client area
-	nHeight = HIWORD(lParam); // height of client area
+	fwSizeType = wParam;		// resizing flag
+	nWidth = LOWORD(lParam);	// width of client area
+	nHeight = HIWORD(lParam);	// height of client area
 
 	nWork = 48;
 	for ( i = 0; i < nControls; ++i ){

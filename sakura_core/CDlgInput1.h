@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	1行入力ダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date	1998/05/31 作成
 	$Revision$

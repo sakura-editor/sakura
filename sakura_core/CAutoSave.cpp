@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -62,7 +62,7 @@ void CPassiveTimer::Enable(bool flag)
 /*!
 	外部で定期に実行されるところから呼び出される関数。
 	呼び出されると経過時間をチェックする。
-	
+
 	@retval true 所定時間が経過した。このときは測定基準が自動的にリセットされる。
 	@retval false 所定の時間に達していない。
 */
@@ -74,12 +74,15 @@ bool CPassiveTimer::CheckAction(void)
 	//	時刻比較
 	DWORD now = ::GetTickCount();
 	int diff;
-	
+
 	diff = now - nLastTick;	//	TickCountが一回りしてもこれでうまくいくはず...
-	
+
 	if( diff < nInterval )	//	規定時間に達していない
 		return false;
-	
+
 	Reset();
 	return true;
 }
+
+
+/*[EOF]*/

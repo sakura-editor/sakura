@@ -123,7 +123,7 @@ void CDocLineMgr::Init()
 
 /*!
 	データのクリア
-	
+
 	全ての行を削除する
 */
 void CDocLineMgr::Empty()
@@ -158,7 +158,7 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 
 /*!
 	指定された番号の行へのポインタを返す
-	
+
 	@param nLine [in] 行番号
 	@return 行オブジェクトへのポインタ。該当行がない場合はNULL。
 */
@@ -292,7 +292,7 @@ const char* CDocLineMgr::GetFirstLinrStr( int* pnLineLen )
 
 
 
-/*! 
+/*!
 	順アクセスモード：次の行を得る
 
 	@param pnLineLen [out] 行の長さが返る。
@@ -396,7 +396,7 @@ const char* CDocLineMgr::GetNextLinrStr( int* pnLineLen )
 	末尾に行を追加
 
 	@version 1.5
-	
+
 	@param pData [in] 追加する文字列へのポインタ
 	@param nDataLen [in] 文字列の長さ
 	@param cEol [in] 行末コード
@@ -1484,19 +1484,19 @@ int	CDocLineMgr::WhereCurrentWord(
 //@@@ 2001.06.23 N.Nakatani
 /*!
 	@brief 現在位置の単語の範囲を調べる staticメンバ
-	
+
 	@author N.Nakatani
-	
+
 	@param pLine [in] 調べるメモリ全体の先頭アドレス
 	@param nLineLen [in] 調べるメモリ全体の有効長
-	@param nIdx [out] 調査開始地点:pLineからの相対的な位置　
-	@param pnIdxFrom [out] 単語が見つかった場合は、単語の先頭インデックスを返す
-	@param pnIdxTo [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す
-	@param pcmcmWord [out] 単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する
-	@param pcmcmWordLeft [out] 単語が見つかった場合は、現在単語の左に位置する単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する
+	@param nIdx [out] 調査開始地点:pLineからの相対的な位置
+	@param pnIdxFrom [out]		単語が見つかった場合は、単語の先頭インデックスを返す。
+	@param pnIdxTo [out]		単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
+	@param pcmcmWord [out]		単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
+	@param pcmcmWordLeft [out]	単語が見つかった場合は、現在単語の左に位置する単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
 
-	@retval true 成功　現在位置のデータは「単語」と認識する
-	@retval false 失敗　現在位置のデータは「単語」とは言いきれない気がする
+	@retval true	成功 現在位置のデータは「単語」と認識する。
+	@retval false	失敗 現在位置のデータは「単語」とは言いきれない気がする。
 */
 int	CDocLineMgr::WhereCurrentWord_2(
 	const char* pLine,
@@ -1773,18 +1773,18 @@ int CDocLineMgr::SearchWord(
 			pDocLine = GetLineInfo( nLinePos );
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-				nHitPos    = -1;
+				nHitPos		= -1;
 				//	Jun. 27, 2001 genta	正規表現ライブラリの違いを吸収するため変数追加
 				int nCurLen = 0;	//	マッチした長さ
 				while( 1 ){
 					nHitPosOld = nHitPos;
 					//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 					nHitLenOld = nCurLen;
-					if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData )){
+					if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
 						nHitPos = pRegexpData->startp[0] - pLine;
 						nIdxPos = pRegexpData->endp[0] - pLine + 1;
 						nCurLen = pRegexpData->endp[0] - pRegexpData->startp[0];
-						//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え						
+						//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 						if( nHitPos >= nHitTo ){
 							if( -1 != nHitPosOld ){
 								*pnLineNum = nLinePos;				/* マッチ行 */
@@ -1825,7 +1825,7 @@ int CDocLineMgr::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 				//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData )){
+				if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
 					*pnLineNum = nLinePos;								/* マッチ行 */
 					*pnIdxFrom = pRegexpData->startp[0] - pLine;		/* マッチ位置from */
 					*pnIdxTo = pRegexpData->endp[0] - pLine;			/* マッチ位置to */
@@ -1844,9 +1844,9 @@ int CDocLineMgr::SearchWord(
 	/* 1==単語のみ検索 */
 	if( bWordOnly ){
 		/*
-			20001/06/23 Norio Nakatani 
+			20001/06/23 Norio Nakatani
 			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
-			英単語やc/c++識別子などの検索条件ならヒットします
+			英単語やC/C++識別子などの検索条件ならヒットします。
 		*/
 
 		/* 0==前方検索 1==後方検索 */
@@ -1858,7 +1858,7 @@ int CDocLineMgr::SearchWord(
 			int nNextWordTo2;
 //			int bState;
 			int nWork;
-			CMemory cmemTest; 
+			CMemory cmemTest;
 			nNextWordFrom = nIdx;
 			while( NULL != pDocLine ){
 				if( TRUE == PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE ) ){
@@ -1869,7 +1869,7 @@ int CDocLineMgr::SearchWord(
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 							/* 1==大文字小文字の区別 */
 							if( (FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-								(TRUE  == bLoHiCase && 0 ==   memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+								(TRUE  == bLoHiCase && 0 ==	 memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 							){
 								*pnLineNum = nLinePos;	/* マッチ行 */
 								*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
@@ -1907,7 +1907,7 @@ int CDocLineMgr::SearchWord(
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 						/* 1==大文字小文字の区別 */
 						if( (FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-							(TRUE  == bLoHiCase && 0 ==   memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+							(TRUE  == bLoHiCase && 0 ==	  memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 						){
 							*pnLineNum = nLinePos;	/* マッチ行 */
 							*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
@@ -1927,7 +1927,7 @@ int CDocLineMgr::SearchWord(
 				nNextWordFrom = 0;
 			}
 		}
-			
+
 		nRetVal = 0;
 		goto end_of_func;
 	}else{
@@ -2352,9 +2352,9 @@ void CDocLineMgr::DUMP( void )
 		MYTRACE( "\tm_nEOLLen =%d\n", pDocLine->m_cEol.GetLen() );
 
 
-//		MYTRACE( "\t[%s]\n",   (char*)*(pDocLine->m_pLine) );
-		MYTRACE( "\tpDocLine->m_pLine->m_nDataLen=[%d]\n",   pDocLine->m_pLine->m_nDataLen );
-		MYTRACE( "\t[%s]\n",   pDocLine->m_pLine->GetPtr( NULL ) );
+//		MYTRACE( "\t[%s]\n", (char*)*(pDocLine->m_pLine) );
+		MYTRACE( "\tpDocLine->m_pLine->m_nDataLen=[%d]\n", pDocLine->m_pLine->m_nDataLen );
+		MYTRACE( "\t[%s]\n", pDocLine->m_pLine->GetPtr( NULL ) );
 
 
 		pDocLine = pDocLineNext;

@@ -31,8 +31,8 @@
 // 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。
 // この DLL 内のすべてのファイルはコマンドラインで定義された SAKURA_CORE_EXPORTS シンボル
 // でコンパイルされます。このシンボルはこの DLL が使用するどのプロジェクト上でも未定義でなけ
-// ればなりません。この方法ではソースファイルにこのファイルを含むすべてのプロジェクトが DLL 
-// からインポートされたものとして SAKURA_CORE_API 関数を参照し、そのためこの DLL はこのマク 
+// ればなりません。この方法ではソースファイルにこのファイルを含むすべてのプロジェクトが DLL
+// からインポートされたものとして SAKURA_CORE_API 関数を参照し、そのためこの DLL はこのマク
 // ロで定義されたシンボルをエクスポートされたものとして参照します。
 #ifdef SAKURA_CORE_EXPORTS
 #define SAKURA_CORE_API __declspec(dllexport)
@@ -132,7 +132,7 @@ SAKURA_CORE_API extern const char* gm_pszCodeNameArr_2[];
 SAKURA_CORE_API extern const char* gm_pszCodeNameArr_3[];
 
 //const char* GetCodeTypeName( enumCodeType nCodeTYpe )
-//{ 
+//{
 //	const char* pszCodeTypeNameArr[] = {
 //		"SJIS",
 //		"JIS",

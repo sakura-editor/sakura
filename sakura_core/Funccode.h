@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	機能に関するいろいろ
-	
+
 	機能番号定義
 
 	@author Norio Nakatani

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	メニュー管理＆表示
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -32,8 +32,8 @@ class CMenuDrawer;
 #include "CShareData.h"
 #include "CImageListMgr.h"
 
-//#define MAX_MENUPOS   10
-#define MAX_MENUITEMS 300
+//#define MAX_MENUPOS	10
+#define MAX_MENUITEMS	300
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ public:
 	CMenuDrawer();
 	~CMenuDrawer();
 	void Create( HINSTANCE, HWND, CImageListMgr* );
-	
+
 
 	/*
 	||  Attributes & Operations
@@ -59,15 +59,15 @@ public:
 	const char* GetLabel( int nFuncID );
 	char GetAccelCharFromLabel( const char* pszLabel );
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	static void MyBitBlt( HDC drawdc, int nXDest, int nYDest, int nWidth, 
+	static void MyBitBlt( HDC drawdc, int nXDest, int nYDest, int nWidth,
 							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF, COLORREF);
-	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
+	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
+						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
 
-	
+
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
-	
+
 	HINSTANCE		m_hInstance;
 	HWND			m_hWndOwner;
 
@@ -95,5 +95,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CMENUDRAWER_H_ */
+
 
 /*[EOF]*/

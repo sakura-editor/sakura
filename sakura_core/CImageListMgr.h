@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2000-2001, genta
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -38,7 +38,7 @@ public:
 	//	constructor
 	CImageListMgr() : m_hList( NULL ), m_cx( 16 ), m_cy( 16 ){}
 	~CImageListMgr();
-	
+
 	bool Create(HINSTANCE hInstance, HWND hWnd);	//	ê∂ê¨
 	bool Draw(int index, HDC dc, int x, int y, int fstyle) const	//	ï`âÊ
 		{ return m_hList == NULL ? false : (ImageList_Draw( m_hList, index, dc, x, y, fstyle) != 0 ); }
@@ -61,4 +61,7 @@ protected:
 
 };
 
-#endif	/* EOF */
+#endif
+
+
+/*[EOF]*/

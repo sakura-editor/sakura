@@ -69,8 +69,8 @@ SAKURA_CORE_API BOOL DeleteItemIDList( ITEMIDLIST* );/* アイテムＩＤリストを削除
 SAKURA_CORE_API BOOL ResolveShortcutLink(HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath);/* ショートカット(.lnk)の解決 */
 
 /*
-||   処理中のユーザー操作を可能にする
-||  ブロッキングフック(?)(メッセージ配送)
+||	処理中のユーザー操作を可能にする
+||	ブロッキングフック(?)(メッセージ配送)
 */
 SAKURA_CORE_API BOOL BlockingHook( HWND hwndDlgCancel );
 
@@ -89,4 +89,4 @@ SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD da
 #endif /* _ETC_UTY_H_ */
 
 
-/* [EOF] */
+/*[EOF]*/

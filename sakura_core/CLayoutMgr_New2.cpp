@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	テキストのレイアウト情報管理
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -38,18 +38,18 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 #if 0
 		int			nDelLineFrom,			/* 削除範囲行  From レイアウト行番号 */
 		int			nDelColmFrom,			/* 削除範囲位置From レイアウト行桁位置 */
-		int			nDelLineTo,				/* 削除範囲行　To   レイアウト行番号 */
+		int			nDelLineTo,				/* 削除範囲行  To   レイアウト行番号 */
 		int			nDelColmTo,				/* 削除範囲位置To   レイアウト行桁位置 */
-		CMemory*	pcmemDeleted,			/* 削除されたデータ */	
-		const char*	pInsData,				/* 挿入するデータ */       
-		int			nInsDataLen,			/* 挿入するデータの長さ */ 
+		CMemory*	pcmemDeleted,			/* 削除されたデータ */
+		const char*	pInsData,				/* 挿入するデータ */
+		int			nInsDataLen,			/* 挿入するデータの長さ */
 
 		int*		pnAddLineNum,			/* 再描画ヒント レイアウト行の増減 */
 		int*		pnModLineFrom,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 		int*		pnModLineTo,			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 
-		int*		pnNewLine,				/* 挿入された部分の次の位置の行(レイアウト行) */             
-		int*		pnNewPos,				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */ 
+		int*		pnNewLine,				/* 挿入された部分の次の位置の行(レイアウト行) */
+		int*		pnNewPos,				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 
 		BOOL		bDispSSTRING,			/* シングルクォーテーション文字列を表示する */
 		BOOL		bDispWSTRING,			/* ダブルクォーテーション文字列を表示する */
@@ -87,49 +87,49 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 	/*
 	||  カーソル位置変換
-	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)　 →
+	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置) →
 	||  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
 	CaretPos_Log2Phys( pArg->nDelColmFrom, pArg->nDelLineFrom, &nxFrom, &nyFrom );
 	CaretPos_Log2Phys( pArg->nDelColmTo, pArg->nDelLineTo, &nxTo, &nyTo );
-	
+
 	/* 指定範囲のデータを置換(削除 & データを挿入)
 	  Fromを含む位置からToの直前を含むデータを削除する
 	  Fromの位置へテキストを挿入する
 	*/
 	DocLineReplaceArg DLRArg;
 	DLRArg.nDelLineFrom = nyFrom;			/* 削除範囲行  From 改行単位の行番号 0開始) */
-	DLRArg.nDelPosFrom = nxFrom;			/* 削除範囲位置From 改行単位の行頭からのバイト位置　0開始) */
-	DLRArg.nDelLineTo = nyTo;			/* 削除範囲行　To   改行単位の行番号 0開始) */
-	DLRArg.nDelPosTo = nxTo;				/* 削除範囲位置To   改行単位の行頭からのバイト位置　0開始) */
-	DLRArg.pcmemDeleted = pArg->pcmemDeleted;		/* 削除されたデータを保存 */
-//	DLRArg.nDeletedLineNum = 0;	/* 削除した行の総数 */
-	DLRArg.pInsData = pArg->pInsData;			/* 挿入するデータ */      
+	DLRArg.nDelPosFrom = nxFrom;			/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
+	DLRArg.nDelLineTo = nyTo;				/* 削除範囲行  To   改行単位の行番号 0開始) */
+	DLRArg.nDelPosTo = nxTo;				/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
+	DLRArg.pcmemDeleted = pArg->pcmemDeleted;	/* 削除されたデータを保存 */
+//	DLRArg.nDeletedLineNum = 0;					/* 削除した行の総数 */
+	DLRArg.pInsData = pArg->pInsData;			/* 挿入するデータ */
 	DLRArg.nInsDataLen = pArg->nInsDataLen;		/* 挿入するデータの長さ */
-//	DLRArg.nInsLineNum = 0;		/* 挿入によって増えた行の数 */
-//	DLRArg.nNewLine = 0;			/* 挿入された部分の次の位置の行 */
-//	DLRArg.nNewPos = 0;			/* 挿入された部分の次の位置のデータ位置 */
+//	DLRArg.nInsLineNum = 0;						/* 挿入によって増えた行の数 */
+//	DLRArg.nNewLine = 0;						/* 挿入された部分の次の位置の行 */
+//	DLRArg.nNewPos = 0;							/* 挿入された部分の次の位置のデータ位置 */
 	m_pcDocLineMgr->ReplaceData(
 		&DLRArg
 #if 0
-		nyFrom,			/* 削除範囲行  From 改行単位の行番号 0開始) */
-		nxFrom,			/* 削除範囲位置From 改行単位の行頭からのバイト位置　0開始) */
-		nyTo,			/* 削除範囲行　To   改行単位の行番号 0開始) */
-		nxTo,				/* 削除範囲位置To   改行単位の行頭からのバイト位置　0開始) */
+		nyFrom,					/* 削除範囲行  From 改行単位の行番号 0開始) */
+		nxFrom,					/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
+		nyTo,					/* 削除範囲行  To   改行単位の行番号 0開始) */
+		nxTo,					/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
 		pArg->pcmemDeleted,		/* 削除されたデータを保存 */
-		&nDeletedLineNum,	/* 削除した行の総数 */
+		&nDeletedLineNum,		/* 削除した行の総数 */
 
-		pArg->pInsData,			/* 挿入するデータ */      
+		pArg->pInsData,			/* 挿入するデータ */
 		pArg->nInsDataLen,		/* 挿入するデータの長さ */
-		&nInsLineNum,		/* 挿入によって増えた行の数 */
-		&pArg->nNewLine,			/* 挿入された部分の次の位置の行 */
+		&nInsLineNum,			/* 挿入によって増えた行の数 */
+		&pArg->nNewLine,		/* 挿入された部分の次の位置の行 */
 		&pArg->nNewPos			/* 挿入された部分の次の位置のデータ位置 */
 #endif
 	);
-//	nDeletedLineNum = DLRArg.nDeletedLineNum;/* 削除した行の総数 */
+//	nDeletedLineNum = DLRArg.nDeletedLineNum;	/* 削除した行の総数 */
 //	pArg->nInsLineNum = DLRArg.nInsLineNum;		/* 挿入によって増えた行の数 */
 	pArg->nNewLine = DLRArg.nNewLine;			/* 挿入された部分の次の位置の行 */
-	pArg->nNewPos = DLRArg.nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
+	pArg->nNewPos = DLRArg.nNewPos;				/* 挿入された部分の次の位置のデータ位置 */
 
 
 
@@ -146,17 +146,17 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	nWork = __max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
 //	if( 0 < nWork ){
 //		--nWork;
-//	} 
-	
-	
+//	}
+
+
 //	DUMP();
 
 	if( NULL != pLayoutWork ){
 		pLayoutPrev = DeleteLayoutAsLogical(
 			pLayoutWork,
 			nLineWork,
-			
-			nyFrom, 
+
+			nyFrom,
 			nyFrom + nWork,
 			nyFrom, nxFrom,
 			&nModifyLayoutLinesOld
@@ -168,7 +168,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		/* 論理行が削除された場合は０より小さい行数 */
 		/* 論理行が挿入された場合は０より大きい行数 */
 		if( 0 != DLRArg.nInsLineNum - DLRArg.nDeletedLineNum ){
-			ShiftLogicalLineNum( pLayoutPrev, 
+			ShiftLogicalLineNum( pLayoutPrev,
 				DLRArg.nInsLineNum - DLRArg.nDeletedLineNum
 			);
 		}
@@ -176,7 +176,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		pLayoutPrev = m_pLayoutBot;
 	}
 //	DUMP();
-	
+
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	int	nRowNum;
 	if( NULL == pLayoutPrev ){
@@ -196,7 +196,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 				pLayoutPrev->m_nLinePhysical - 1;
 		}
 	}
-	
+
 //	if( NULL != pLayoutPrev ){
 //		pLayoutNext	= pLayoutPrev->m_pNext;
 //	}else{
@@ -213,11 +213,11 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 //	MYTRACE( "pLayoutNext=[%xh]\n", pLayoutNext );
 	int nAddInsLineNum;
 	pArg->nModLineTo = DoLayout3_New(
-		pLayoutPrev, 
-//		pLayoutNext, 
+		pLayoutPrev,
+//		pLayoutNext,
 		nRowNum,
 		nyFrom, nxFrom,
-		nCurrentLineType, 
+		nCurrentLineType,
 		&nAddInsLineNum,
 		pArg->bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
 		pArg->bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
@@ -252,4 +252,4 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 }
 
 
-
+/*[EOF]*/

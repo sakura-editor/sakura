@@ -120,7 +120,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 		return TRUE;
 
 	case WM_DRAWITEM:
-		idCtrl = (UINT) wParam;	/* コントロールのID	*/
+		idCtrl = (UINT) wParam;	/* コントロールのID */
 		pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報 */
 		switch( idCtrl ){
 		case IDC_LIST_RES:	/* ツールバーボタン結果リスト */
@@ -264,7 +264,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 					}
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
-				
+
 				case IDC_BUTTON_UP:
 					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 || 0 >= nIndex1 ){
@@ -275,7 +275,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 					j = ::SendMessage( hwndResList, LB_DELETESTRING, nIndex1, 0 );
 					if( j == LB_ERR ){
 						break;
-					} 
+					}
 					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1 - 1, i );
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
@@ -291,12 +291,12 @@ BOOL CPropCommon::DispatchEvent_p6(
 					j = ::SendMessage( hwndResList, LB_DELETESTRING, nIndex1, 0 );
 					if( j == LB_ERR ){
 						break;
-					} 
+					}
 					nIndex1 = ::SendMessage( hwndResList, LB_INSERTSTRING, nIndex1 + 1, i );
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 				}
-				
+
 				break;
 			}
 		}
@@ -322,7 +322,7 @@ BOOL CPropCommon::DispatchEvent_p6(
 			}else{
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), TRUE );
 			}
-		}	
+		}
 		if( LB_ERR == nIndex1 || LB_ERR == nIndex2 ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 		}else{

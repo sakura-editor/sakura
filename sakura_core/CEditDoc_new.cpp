@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	文書関連情報の管理
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -48,12 +48,12 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nFuncId;
 	int			nFuncNum;
 	char		szClass[1024];
-	
+
 //	int			nClassNest;
 	int			nClassNestArr[16];
 	int			nClassNestArrNum;
 	int			nNestLevel2Arr[16];
-	
+
 	BOOL		bClassReading;
 	nNestLevel = 0;
 	szWordPrev[0] = '\0';
@@ -134,9 +134,9 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						}
 						strcat( szClass, szWord );
 
-					
-					
-					
+
+
+
 						nFuncId = 0;
 						++nFuncNum;
 						/*
@@ -156,10 +156,10 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						char szWork[256];
 						wsprintf( szWork, "%s::%s", szClass, "定義位置" );
 						pcFuncInfoArr->AppendData( nPosY + 1/*nFuncLine*/, nPosY + 1, szWork, nFuncId );
-					
+
 					}
 
-					
+
 //					strcpy( szWordPrev, szWord );
 //					nWordIdx = 0;
 //					szWord[0] = '\0';
@@ -280,7 +280,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 
 					nNestLevel--;
 					if( 0 < nClassNestArrNum &&
-						nClassNestArr[nClassNestArrNum - 1] == nNestLevel					 
+						nClassNestArr[nClassNestArrNum - 1] == nNestLevel
 					){
 						nClassNestArrNum--;
 						int k;
@@ -292,7 +292,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						if( 0 > k ){
 							k = 0;
 						}
-						szClass[k] = '\0'; 
+						szClass[k] = '\0';
 					}
 					nMode = 0;
 					continue;
@@ -427,7 +427,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			}
 		}
 	}
-#ifdef _DEBUG	
+#ifdef _DEBUG
 	pcFuncInfoArr->DUMP();
 #endif
 	return;
@@ -441,9 +441,9 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 bool CEditDoc::IsModificationForbidden( int nCommand )
 {
 	if( m_bReadOnly == FALSE &&	//	読みとり専用でも
-		!( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ))	//	上書き禁止でもなければ
+		!( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) )	//	上書き禁止でもなければ
 		return false;			//	常に書き換え許可
-	
+
 	//	上書き禁止モードの場合
 	//	暫定Case文: 実際にはもっと効率の良い方法を使うべき
 	switch( nCommand ){
@@ -509,7 +509,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 //
 void CEditDoc::CheckAutoSave(void)
 {
-	if( m_cAutoSave.CheckAction()){
+	if( m_cAutoSave.CheckAction() ){
 		//	上書き保存
 
 		bool en;
@@ -577,7 +577,7 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
-	
+
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		nMode = 0;
@@ -603,7 +603,7 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				//	sub の一文字目かもしれない
 				if( nLineLen - i < 4 )
 					break;
-				if( strncmp( pLine + i, "sub", 3 ))
+				if( strncmp( pLine + i, "sub", 3 ) )
 					break;
 				int c = pLine[ i + 3 ];
 				if( c == ' ' || c == '\t' ){
@@ -635,7 +635,7 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				}
 				else
 					break;
-			
+
 			}
 			else if( 1 == nMode ){
 				if( '_' == pLine[i] ||
@@ -668,13 +668,13 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 					);
 					//	Mar. 9, 2001
 					pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, szWord, 0 );
-					
+
 					break;
 				}
 			}
 		}
 	}
-#ifdef _DEBUG	
+#ifdef _DEBUG
 	pcFuncInfoArr->DUMP();
 #endif
 	return;
@@ -722,7 +722,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			if( '_' != pLine[nLineLen-1]){
 				nParseCnt = 0;
 			}
-		} 
+		}
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
@@ -738,7 +738,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					('a' <= pLine[i] &&	pLine[i] <= 'z' )||
 					('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
 					('0' <= pLine[i] &&	pLine[i] <= '9' )
-					))
+					) )
 				 || 2 == nCharChars
 				){
 					if( nWordIdx >= nMaxWordLeng ){
@@ -750,10 +750,10 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nWordIdx += (nCharChars);
 					}
 				}else{
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Function" ) 
-					 && 0 != _stricmp( szWordPrev, "End" ) 
+					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Function" )
+					 && 0 != _stricmp( szWordPrev, "End" )
 					){
-						if( 0 == _stricmp( szWordPrev, "Declare" ) ){ 
+						if( 0 == _stricmp( szWordPrev, "Declare" ) ){
 							nFuncId = 61;
 						}else{
 							nFuncId = 63;
@@ -763,11 +763,11 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nFuncLine = nLineCount + 1;
 
 					}else
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Sub" ) 
-					 && 0 != _stricmp( szWordPrev, "End" ) 
+					if( 0 == nParseCnt && 0 == _stricmp( szWord, "Sub" )
+					 && 0 != _stricmp( szWordPrev, "End" )
 					){
 						nFuncOrProc = 2;
-						if( 0 == _stricmp( szWordPrev, "Declare" ) ){ 
+						if( 0 == _stricmp( szWordPrev, "Declare" ) ){
 							nFuncId = 60;
 						}else{
 							nFuncId = 62;
@@ -781,7 +781,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						++nFuncNum;
 						/*
 						  カーソル位置変換
-						  物理位置(行頭からのバイト数、折り返し無し行位置)  
+						  物理位置(行頭からのバイト数、折り返し無し行位置)
 						  → レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 						*/
 						int		nPosX;
@@ -867,7 +867,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						('a' <= pLine[i] &&	pLine[i] <= 'z' )||
 						('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
 						('0' <= pLine[i] &&	pLine[i] <= '9' )
-						))
+						) )
 					 || 2 == nCharChars
 					){
 						nWordIdx = 0;
@@ -882,7 +882,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
 						szWord[nWordIdx + nCharChars] = '\0';
 						nWordIdx += (nCharChars);
-						
+
 						nMode = 2;
 					}
 				}
@@ -893,3 +893,6 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 //	To Here June 23, 2001 N.Nakatani
+
+
+/*[EOF]*/

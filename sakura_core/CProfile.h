@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	INIファイル入出力
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -77,5 +77,5 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CPROFILE_H_ */
 
-/*[EOF]*/
 
+/*[EOF]*/

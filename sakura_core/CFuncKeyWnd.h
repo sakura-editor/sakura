@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファンクションキーウィンドウ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -45,8 +45,8 @@ public:
 	/*
 	|| メンバ関数
 	*/
-	HWND Open( HINSTANCE, HWND, CEditDoc*, BOOL );	/* ウィンドウ　オープン */
-	void Close( void );	/* ウィンドウ　クローズ */
+	HWND Open( HINSTANCE, HWND, CEditDoc*, BOOL );	/* ウィンドウ オープン */
+	void Close( void );	/* ウィンドウ クローズ */
 	void SizeBox_ONOFF( BOOL );	/* サイズボックスの表示／非表示切り替え */
 	/*
 	|| メンバ変数
@@ -72,7 +72,7 @@ protected:
 	int CalcButtonSize( void );	/* ボタンのサイズを計算 */
 
 	/* 仮想関数 */
-	
+
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );	// WM_TIMERタイマーの処理
 	virtual LRESULT OnCommand( HWND, UINT, WPARAM, LPARAM );	// WM_COMMAND処理
@@ -83,5 +83,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CFUNCKEYWND_H_ */
+
 
 /*[EOF]*/

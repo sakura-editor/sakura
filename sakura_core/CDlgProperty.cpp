@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファイルプロパティダイアログ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -130,7 +130,7 @@ void CDlgProperty::SetData( void )
 			wsprintf( szWork, "あなたはこのファイルをロックしていません。\r\n" );
 			cmemProp.AppendSz( szWork );
 		}
-		
+
 		wsprintf( szWork, "ファイル属性  ", pCEditDoc->m_cDocLineMgr.GetLineCount() );
 		cmemProp.AppendSz( szWork );
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE ){
@@ -212,9 +212,9 @@ void CDlgProperty::SetData( void )
 		::FindClose( nFind );
 	}
 
-	
-	
-	
+
+
+
 #ifdef _DEBUG/////////////////////////////////////////////////////
 	int		nEUCMojiNum, nEUCCodeNum;
 	int		nSJISMojiNum, nSJISCodeNum;
@@ -246,8 +246,8 @@ void CDlgProperty::SetData( void )
 	pBuf = (const unsigned char*)::GlobalLock( hgData );
 	_lread( hFile, (void *)pBuf, nBufLen );
 	_lclose( hFile );
-	
-	/* 
+
+	/*
 	||ファイルの日本語コードセット判別: Unicodeか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -259,7 +259,7 @@ void CDlgProperty::SetData( void )
 		}
 		cmemProp.AppendSz( szWork );
 	}
-	/* 
+	/*
 	||ファイルの日本語コードセット判別: EUCか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -271,7 +271,7 @@ void CDlgProperty::SetData( void )
 		}
 		cmemProp.AppendSz( szWork );
 	}
-	/* 
+	/*
 	||ファイルの日本語コードセット判別: SJISか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -285,7 +285,7 @@ void CDlgProperty::SetData( void )
 	}
 
 
-	/* 
+	/*
 	||ファイルの日本語コードセット判別: JISか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -298,7 +298,7 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendSz( szWork );
 	}
 
-	/* 
+	/*
 	||ファイルの日本語コードセット判別: UTF-8Sか？
 	|| エラーの場合、FALSEを返す
 	*/
@@ -311,7 +311,7 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendSz( szWork );
 	}
 
-	/* 
+	/*
 	||ファイルの日本語コードセット判別: UTF-7Sか？
 	|| エラーの場合、FALSEを返す
 	*/

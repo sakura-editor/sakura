@@ -117,18 +117,18 @@ protected:
 
 
 	/* MDI用 */
-	virtual DECLH( OnMDIActivate	);	// WM_MDIACTIVATE	
-//	virtual DECLH( OnMDICascade		);	// WM_MDICASCADE	
-//	virtual DECLH( OnMDICreate		);	// WM_MDICREATE		
-//	virtual DECLH( OnMDIDestroy		);	// WM_MDIDESTROY	
-//	virtual DECLH( OnMDIGetActive	);	// WM_MDIGETACTIVE	
+	virtual DECLH( OnMDIActivate	);	// WM_MDIACTIVATE
+//	virtual DECLH( OnMDICascade		);	// WM_MDICASCADE
+//	virtual DECLH( OnMDICreate		);	// WM_MDICREATE
+//	virtual DECLH( OnMDIDestroy		);	// WM_MDIDESTROY
+//	virtual DECLH( OnMDIGetActive	);	// WM_MDIGETACTIVE
 //	virtual DECLH( OnMDIIconArrange	);	// WM_MDIICONARRANGE
-//	virtual DECLH( OnMDIMaximize	);	// WM_MDIMAXIMIZE	
-//	virtual DECLH( OnMDINext		);	// WM_MDINEXT		
+//	virtual DECLH( OnMDIMaximize	);	// WM_MDIMAXIMIZE
+//	virtual DECLH( OnMDINext		);	// WM_MDINEXT
 //	virtual DECLH( OnMDIRefreshMenu	);	// WM_MDIREFRESHMENU
-//	virtual DECLH( OnMDIRestore		);	// WM_MDIRESTORE	
-//	virtual DECLH( OnMDISetMenu		);	// WM_MDISETMENU	
-//	virtual DECLH( OnMDITile		);	// WM_MDITILE		
+//	virtual DECLH( OnMDIRestore		);	// WM_MDIRESTORE
+//	virtual DECLH( OnMDISetMenu		);	// WM_MDISETMENU
+//	virtual DECLH( OnMDITile		);	// WM_MDITILE
 
 
 	/* デフォルトメッセージ処理 */
@@ -138,5 +138,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CWND_H_ */
+
 
 /*[EOF]*/

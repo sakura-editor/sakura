@@ -1,7 +1,7 @@
 //	$Id$
 /*! @file
 	共通設定ダイアログボックス、「書式」ページ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -62,10 +62,10 @@ BOOL CALLBACK CPropCommon::DlgProc_PROP_FILE(
 
 /*! ファイルページ メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p2(
-    HWND	hwndDlg,	//!< handle to dialog box
-    UINT	uMsg,	//!< message
-    WPARAM	wParam,	//!< first message parameter
-    LPARAM	lParam 	//!< second message parameter
+	HWND	hwndDlg,	//!< handle to dialog box
+	UINT	uMsg,	//!< message
+	WPARAM	wParam,	//!< first message parameter
+	LPARAM	lParam 	//!< second message parameter
 )
 {
 	WORD		wNotifyCode;
@@ -164,11 +164,11 @@ BOOL CPropCommon::DispatchEvent_p2(
 //@@@ 2001.03.21 End by MIK
 		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるのでWM_NOTIFYをコメントアウトにしその下に修正を置いた
-		
+
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -265,7 +265,7 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 
 /*! ファイルページ ダイアログデータの取得
 	ダイアログボックスに設定されたデータを共有メモリに反映させる
-	
+
 	@par バックアップ世代数が妥当な値かどうかのチェックも行う。不適切な値の時は
 	最も近い適切な値を設定する。
 
@@ -341,7 +341,7 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 //	From Here Aug. 21, 2000 genta
 /*!	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 	適切に設定する
-	
+
 	@param hwndDlg プロパティシートのWindow Handle
 */
 void CPropCommon::EnableFilePropInput(HWND hwndDlg)
@@ -381,3 +381,6 @@ void CPropCommon::EnableFilePropInput(HWND hwndDlg)
 	}
 }
 //	To Here Aug. 21, 2000 genta
+
+
+/*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	編集ウィンドウ（外枠）管理クラス
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -1216,7 +1216,7 @@ LRESULT CEditWnd::DispatchEvent(
 				::SetFocus( m_hwndPrintPreviewBar );
 			}
 		}
-		
+
 		return lRes;
 
 
@@ -3400,7 +3400,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
 //		m_cEditDoc.m_bReadOnly = TRUE;		/* 読み取り専用モード */
-		m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */ 
+		m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */
 		/* 親ウィンドウのタイトルを更新 */
 		m_cEditDoc.SetParentCaption();
 		return;
@@ -4319,11 +4319,15 @@ void CEditWnd::OnPreviewGoPage( int nPage/*, BOOL bPrevPage*/ )
 
 
 		if( 0 == m_nCurPageNum ){
+			//	Jul. 18, 2001 genta FocusのあるWindowをDisableにすると操作できなくなるのを回避
+			::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ));
 			::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
 		}else{
 			::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), TRUE );
 		}
 		if( m_nAllPageNum <= m_nCurPageNum + 1 ){
+			//	Jul. 18, 2001 genta FocusのあるWindowをDisableにすると操作できなくなるのを回避
+			::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ));
 			::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ), FALSE );
 		}else{
 			::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ), TRUE );
@@ -5043,7 +5047,8 @@ void CEditWnd::OnPrint( void )
 		nTo = m_nAllPageNum;
 	}
 	for( i = nFrom - 1; i < nTo; ++i ){
-		sprintf( szProgress, "%d/%d", i - nFrom - 1/*i*/, nTo - nFrom + 1/*m_nAllPageNum*/ );
+		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正
+		sprintf( szProgress, "%d/%d", i - (nFrom - 1) + 1/*i*/, nTo - (nFrom - 1)/*m_nAllPageNum*/ );
 		::SetDlgItemText( cDlgPrinting.m_hWnd, IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */

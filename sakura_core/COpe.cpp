@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	編集操作要素
-	
+
 	@author Norio Nakatani
 	@date 1998/06/09 新規作成
 	$Revision$
@@ -41,10 +41,10 @@ COpe::COpe()
 
 	m_nCaretPosX_PHY_To = 0;	/* 操作前のキャレット位置Ｘ To 改行単位行の行番号（０開始）*/
 	m_nCaretPosY_PHY_To = 0;	/* 操作前のキャレット位置Ｙ To 改行単位行先頭からのバイト数（０開始）*/
-	m_nCaretPosX_PHY_Before = -1;	/* カーソル位置　改行単位行先頭からのバイト数（０開始） */
-	m_nCaretPosY_PHY_Before = -1;	/* カーソル位置　改行単位行の行番号（０開始） */
-	m_nCaretPosX_PHY_After = -1;		/* カーソル位置　改行単位行先頭からのバイト数（０開始） */
-	m_nCaretPosY_PHY_After = -1;		/* カーソル位置　改行単位行の行番号（０開始） */
+	m_nCaretPosX_PHY_Before = -1;	/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
+	m_nCaretPosY_PHY_Before = -1;	/* カーソル位置 改行単位行の行番号（０開始）*/
+	m_nCaretPosX_PHY_After = -1;	/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
+	m_nCaretPosY_PHY_After = -1;	/* カーソル位置 改行単位行の行番号（０開始）*/
 //	m_nOpePosX = 0;				/* 操作位置Ｘ */
 //	m_nOpePosY = 0;				/* 操作位置Ｙ */
 	m_nDataLen = 0;				/* 操作に関連するデータのサイズ */
@@ -83,8 +83,6 @@ void COpe::DUMP( void )
 #endif
 	return;
 }
-
-
 
 
 /*[EOF]*/

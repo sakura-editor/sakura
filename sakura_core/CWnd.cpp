@@ -38,7 +38,7 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	CWnd* pCWnd;
 //	CREATESTRUCT* lpcs;
-	if( NULL != gm_pCWnd 
+	if( NULL != gm_pCWnd
 	 && NULL == ::GetWindowLong( hwnd, GWL_USERDATA )
 	){
 		pCWnd = gm_pCWnd;
@@ -94,14 +94,14 @@ void CWnd::Init(
 
 
 /* ウィンドウクラス作成 */
-ATOM CWnd::RegisterWC( 
+ATOM CWnd::RegisterWC(
 	/* WNDCLASS用 */
-    HICON		hIcon,			// Handle to the class icon. 
-	HICON		hIconSm,		// Handle to a small icon  
-    HCURSOR		hCursor,		// Handle to the class cursor. 
-    HBRUSH		hbrBackground,	// Handle to the class background brush. 
-    LPCTSTR		lpszMenuName,	// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file. 
-    LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
+	HICON		hIcon,			// Handle to the class icon.
+	HICON		hIconSm,		// Handle to a small icon
+	HCURSOR		hCursor,		// Handle to the class cursor.
+	HBRUSH		hbrBackground,	// Handle to the class background brush.
+	LPCTSTR		lpszMenuName,	// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+	LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
 )
 {
 	/* ウィンドウクラスの登録 */
@@ -124,10 +124,10 @@ ATOM CWnd::RegisterWC(
 }
 
 /* 作成 */
-HWND CWnd::Create( 
+HWND CWnd::Create(
 	/* CreateWindowEx()用 */
 	DWORD		dwExStyle, // extended window style
-    LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
+	LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
 	LPCTSTR		lpWindowName, // pointer to window name
 	DWORD		dwStyle, // window style
 	int			x, // horizontal position of window
@@ -139,7 +139,7 @@ HWND CWnd::Create(
 {
 	/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
 	PreviCreateWindow();
-	
+
 	/* 初期ウィンドウサイズ */
 	/* ウィンドウの作成 */
 	gm_pCWnd = this;
@@ -161,7 +161,7 @@ HWND CWnd::Create(
 		::MessageBox( m_hwndParent, "CWnd::Create()\n\n::CreateWindowEx failed.", "error", MB_OK );
 		return NULL;
 	}
-	
+
 	/* ウィンドウ作成後の処理 */
 	AfterCreateWindow();
 	return m_hWnd;
@@ -257,7 +257,6 @@ LRESULT CWnd::CallDefWndProc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	return ::DefWindowProc( hwnd, msg, wp, lp );
 }
-
 
 
 /*[EOF]*/

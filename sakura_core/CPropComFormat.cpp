@@ -73,7 +73,7 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 {
 	/* ダイアログデータの取得 p9 */
 	GetData_p9( hwndDlg );
-	
+
 	/* 時刻をフォーマット */
 	char szText[1024];
 	::MyGetTimeFormat( szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
@@ -84,10 +84,10 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 
 /* p9 メッセージ処理 */
 BOOL CPropCommon::DispatchEvent_p9(
-    HWND	hwndDlg,	// handle to dialog box
-    UINT	uMsg,	// message
-    WPARAM	wParam,	// first message parameter
-    LPARAM	lParam 	// second message parameter
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,	// message
+	WPARAM	wParam,	// first message parameter
+	LPARAM	lParam 	// second message parameter
 )
 {
 	WORD		wNotifyCode;
@@ -114,7 +114,7 @@ BOOL CPropCommon::DispatchEvent_p9(
 //		/* 外部HTMLヘルプ */
 //		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHTMLHELP ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
 
-		
+
 		/* 見出し記号 */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szMidashiKigou) - 1 ), 0 );
 
@@ -126,14 +126,14 @@ BOOL CPropCommon::DispatchEvent_p9(
 
 		/* 時刻書式 */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szTimeFormat) - 1 ), 0 );
-		
+
 
 
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* 通知コード */
-		wID         = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl     = (HWND) lParam;	/* コントロールのハンドル */
+		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		case EN_CHANGE:
 			if( IDC_EDIT_DFORM == wID ){
@@ -180,12 +180,12 @@ BOOL CPropCommon::DispatchEvent_p9(
 //					char			szPath[_MAX_PATH + 1];
 //					strcpy( szPath, m_Common.m_szExtHelp1 );
 //					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create( 
-//						m_hInstance, 
-//						hwndDlg, 
-//						"*.hlp", 
-//						m_Common.m_szExtHelp1, 
-//						(const char **)&pszMRU, 
+//					cDlgOpenFile.Create(
+//						m_hInstance,
+//						hwndDlg,
+//						"*.hlp",
+//						m_Common.m_szExtHelp1,
+//						(const char **)&pszMRU,
 //						(const char **)&pszOPENFOLDER
 //					);
 //					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -202,12 +202,12 @@ BOOL CPropCommon::DispatchEvent_p9(
 //					char			szPath[_MAX_PATH + 1];
 //					strcpy( szPath, m_Common.m_szExtHtmlHelp );
 //					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create( 
-//						m_hInstance, 
-//						hwndDlg, 
-//						"*.chm;*.col", 
-//						m_Common.m_szExtHtmlHelp, 
-//						(const char **)&pszMRU, 
+//					cDlgOpenFile.Create(
+//						m_hInstance,
+//						hwndDlg,
+//						"*.chm;*.col",
+//						m_Common.m_szExtHtmlHelp,
+//						(const char **)&pszMRU,
 //						(const char **)&pszOPENFOLDER
 //					);
 //					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -216,7 +216,7 @@ BOOL CPropCommon::DispatchEvent_p9(
 //					}
 //				}
 //				return TRUE;
-//			
+//
 			}
 		}
 		break;
@@ -242,10 +242,10 @@ BOOL CPropCommon::DispatchEvent_p9(
 //		}
 
 //		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom   );
-//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code     );
-//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos      );
-//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta    );
+//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
+//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code );
+//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos );
+//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -321,7 +321,7 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 
 	/* 見出し記号 */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_szMidashiKigou, sizeof(m_Common.m_szMidashiKigou) );
-	
+
 //	/* 外部ヘルプ１ */
 //	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1, MAX_PATH - 1 );
 //
@@ -393,7 +393,6 @@ void CPropCommon::EnableFormatPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 10, 2000
-
 
 
 /*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	外部コマンド実行ダイアログ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -59,9 +59,9 @@ void CDlgExec::SetData( void )
 //	MYTRACE( "CDlgExec::SetData()" );
 	int		i;
 	HWND	hwndCombo;
-	
+
 	/*****************************
-	*  初期化                    *
+	*           初期             *
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand ), CB_LIMITTEXT, (WPARAM)sizeof( m_szCommand ) - 1, 0 );
@@ -75,9 +75,9 @@ void CDlgExec::SetData( void )
 //	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, TRUE );
 //	To Here Sept. 12, 2000 	うまくいかないので元に戻してある
 
-	
+
 	/*****************************
-	*  データ設定                *
+	*         データ設定         *
 	*****************************/
 //	HWND hwndCombo;
 	strcpy( m_szCommand, m_pShareData->m_szCmdArr[0] );
@@ -98,7 +98,7 @@ void CDlgExec::SetData( void )
 int CDlgExec::GetData( void )
 {
 	::GetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand, sizeof( m_szCommand ) - 1 );
-	
+
 	// 標準出力を得る
 //	From Here Sept. 12, 2000 jeprotest
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ファイルタイプ一覧ダイアログ
-	
+
 	@author Norio Nakatani
 	$Revision$
 */
@@ -29,12 +29,12 @@
 #include "CDlgTypeList.h"
 #include "etc_uty.h"
 #include "debug.h"
-#include "funccode.h"   //Stonee, 2001/03/12
+#include "funccode.h"	//Stonee, 2001/03/12
 
 /* モーダルダイアログの表示 */
 int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingType )
 {
-	int	nRet;	
+	int	nRet;
 	m_nSettingType = *pnSettingType;
 	nRet = CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
 	if( -1 == nRet ){
@@ -83,7 +83,7 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
-	
+
 }
 
 
@@ -96,12 +96,12 @@ void CDlgTypeList::SetData( void )
 	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST_TYPES );
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
 		if( 0 < lstrlen( m_pShareData->m_Types[nIdx].m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
-			wsprintf( szText, "%s ( %s )", 
+			wsprintf( szText, "%s ( %s )",
 				m_pShareData->m_Types[nIdx].m_szTypeName,	/* タイプ属性：名称 */
 				m_pShareData->m_Types[nIdx].m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
-			wsprintf( szText, "%s", 
+			wsprintf( szText, "%s",
 				m_pShareData->m_Types[nIdx].m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
@@ -110,5 +110,6 @@ void CDlgTypeList::SetData( void )
 	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)m_nSettingType, (LPARAM)0 );
 	return;
 }
+
 
 /*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	アンドゥ・リドゥバッファ
-	
+
 	@author Norio Nakatani
 	@date 1998/06/09 新規作成
 	$Revision$
@@ -217,5 +217,6 @@ void COpeBuf::ClearAll( void )
 	m_nNoModifiedIndex = 0;	/* 無変更な状態になった位置 */
 	return;
 }
+
 
 /*[EOF]*/

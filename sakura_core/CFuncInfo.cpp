@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	アウトライン解析  データ要素
-	
+
 	@author Norio Nakatani
 	@date	1998/06/23 作成
 	$Revision$
@@ -40,7 +40,7 @@ CFuncInfo::CFuncInfo(
 	m_nFuncLineCRLF = nFuncLineCRLF;		/* 関数のある行(CRLF単位) */
 	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* 関数のある行(折り返し単位) */
 //	m_nFuncLine = nFuncLine;;
-//    m_cmemFuncName = pszFuncName;
+//	m_cmemFuncName = pszFuncName;
 //	m_cmemFuncName.SetData( pszFuncName, lstrlen( pszFuncName ) );
 	m_cmemFuncName.SetDataSz( pszFuncName );
 

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
-	アウトライン解析　データ配列
-	
+	アウトライン解析 データ配列
+
 	@author Norio Nakatani
 	@date	1998/06/23 作成
 	$Revision$
@@ -119,3 +119,6 @@ void CFuncInfoArr::DUMP( void )
 	MYTRACE( "=============================\n" );
 #endif
 }
+
+
+/*[EOF]*/

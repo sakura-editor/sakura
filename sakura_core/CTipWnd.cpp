@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ツールチップ
-	
+
 	@author Norio Nakatani
 	@date 1998/10/30 新規作成
 	$Revision$
@@ -28,7 +28,7 @@
 
 
 
-/* CTipWndクラス　デストラクタ */
+/* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
 {
 	strcat( m_szClassInheritances, "::CTipWnd" );
@@ -44,7 +44,7 @@ CTipWnd::CTipWnd()
 
 
 
-/* CTipWndクラス　デストラクタ */
+/* CTipWndクラス デストラクタ */
 CTipWnd::~CTipWnd()
 {
 //	HDC			hdc;
@@ -87,18 +87,18 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 //	);
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
-	atWork = RegisterWC( 
+	atWork = RegisterWC(
 		/* WNDCLASS用 */
-		NULL,// Handle to the class icon. 
-		NULL,	//Handle to a small icon  
-		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor. 
-		(HBRUSH)/*NULL*/(COLOR_INFOBK + 1),// Handle to the class background brush. 
-		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file. 
+		NULL,// Handle to the class icon.
+		NULL,	//Handle to a small icon
+		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor.
+		(HBRUSH)/*NULL*/(COLOR_INFOBK + 1),// Handle to the class background brush.
+		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
 	/* 基底クラスメンバ呼び出し */
-	CWnd::Create( 
+	CWnd::Create(
 		/* CreateWindowEx()用 */
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -110,7 +110,7 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 		0, // window height
 		NULL // handle to menu, or child-window identifier
 	);
-	
+
 	if( NULL != m_hFont ){
 		::DeleteObject( m_hFont );
 		m_hFont = NULL;
@@ -137,7 +137,7 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 	char*	pszInfo;
 
 
-	
+
 
 //	/* Tipウィンドウの作成 */
 //	g_m_pcTipWnd = this;
@@ -171,7 +171,7 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 
 
 	if( NULL != szText ){
-		m_cInfo.SetData( szText, strlen( szText ) ); 
+		m_cInfo.SetData( szText, strlen( szText ) );
 	}
 	pszInfo = m_cInfo.GetPtr( NULL );
 
@@ -187,16 +187,16 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 	{
 		/* ウィンドウのサイズを決める */
 		ComputeWindowSize( hdc, m_hFont, pszInfo, &rc );
-	}	
-	
-//	
+	}
+
+//
 //	pszInfo = m_cInfo.GetPtr( NULL );
-//	nHeight = ::DrawText( hdc, pszInfo, strlen( pszInfo ), &rc, 
+//	nHeight = ::DrawText( hdc, pszInfo, strlen( pszInfo ), &rc,
 //		DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/ );
 //	::SelectObject( hdc, hFontOld );
 
 	::ReleaseDC( m_hWnd, hdc );
-	
+
 	::MoveWindow( m_hWnd, nX, nY, rc.right + 8, rc.bottom + 8/*nHeight*/, TRUE );
 	::ShowWindow( m_hWnd, SW_SHOWNA );
 	return;
@@ -204,10 +204,10 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 }
 
 /* ウィンドウのサイズを決める */
-void CTipWnd::ComputeWindowSize( 
-		HDC			hdc, 
-		HFONT		hFont, 
-		const char*	pszText, 
+void CTipWnd::ComputeWindowSize(
+		HDC			hdc,
+		HFONT		hFont,
+		const char*	pszText,
 		RECT*		pRect
 )
 {
@@ -221,7 +221,7 @@ void CTipWnd::ComputeWindowSize(
 	int		nCharChars;
 
 	hFontOld = (HFONT)::SelectObject( hdc, hFont );
-	
+
 	nCurMaxWidth = 0;
 	nCurHeight = 0;
 	nTextLength = strlen( pszText );
@@ -235,25 +235,25 @@ void CTipWnd::ComputeWindowSize(
 				pszWork = new char[i - nBgn + 1];
 				memcpy( pszWork, &pszText[nBgn], i - nBgn );
 				pszWork[i - nBgn] = '\0';
-			
+
 				rc.left = 0;
 				rc.top = 0;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = 0;
-				::DrawText( hdc, pszWork, strlen(pszWork), &rc, 
+				::DrawText( hdc, pszWork, strlen(pszWork), &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 				delete [] pszWork;
 				if( nCurMaxWidth < rc.right ){
-					nCurMaxWidth = rc.right; 
+					nCurMaxWidth = rc.right;
 				}
 			}else{
-				::DrawText( hdc, " ", 1, &rc, 
+				::DrawText( hdc, " ", 1, &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}
 			nCurHeight += rc.bottom;
-		
+
 			nBgn = i + 2;
 		}
 		if( 2 == nCharChars ){
@@ -267,18 +267,18 @@ void CTipWnd::ComputeWindowSize(
 	pRect->bottom = nCurHeight + 2;
 
 	::SelectObject( hdc, hFontOld );
-	
+
 	return;
 
 
 }
-	
+
 
 /* ウィンドウのテキストを表示 */
-void CTipWnd::DrawTipText( 
-		HDC			hdc, 
-		HFONT		hFont, 
-		const char*	pszText 
+void CTipWnd::DrawTipText(
+		HDC			hdc,
+		HFONT		hFont,
+		const char*	pszText
 )
 {
 	int			nTextLength;
@@ -309,28 +309,28 @@ void CTipWnd::DrawTipText(
 				pszWork = new char[i - nBgn + 1];
 				memcpy( pszWork, &pszText[nBgn], i - nBgn );
 				pszWork[i - nBgn] = '\0';
-			
+
 				rc.left = 4;
 				rc.top = 4 + nCurHeight;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, pszWork, strlen(pszWork), &rc, 
+				nCurHeight += ::DrawText( hdc, pszWork, strlen(pszWork), &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 				delete [] pszWork;
 				if( nCurMaxWidth < rc.right ){
-					nCurMaxWidth = rc.right; 
+					nCurMaxWidth = rc.right;
 				}
 			}else{
 				rc.left = 4;
 				rc.top = 4 + nCurHeight;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, " ", 1, &rc, 
+				nCurHeight += ::DrawText( hdc, " ", 1, &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}
-		
+
 			nBgn = i + 2;
 		}
 		if( 2 == nCharChars ){
@@ -342,7 +342,7 @@ void CTipWnd::DrawTipText(
 	::SetTextColor( hdc, colText_Old );
 	::SelectObject( hdc, hFontOld );
 	::SetBkMode( hdc, nBkMode_Old );
-	
+
 	return;
 
 
@@ -374,7 +374,7 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 	pszText = m_cInfo.GetPtr( &nTextLen );
 	::GetClientRect( hwnd, &rc );
 	/* ウィンドウのテキストを表示 */
-	DrawTipText( hdc, m_hFont, pszText );   
+	DrawTipText( hdc, m_hFont, pszText );
 
 //	hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 //
@@ -382,7 +382,7 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 //	::GetClientRect( hwnd, &rc );
 //	rc.left = 4;
 //	rc.top = 4;
-//	::DrawText( hdc, pszText, nTextLen, &rc, 
+//	::DrawText( hdc, pszText, nTextLen, &rc,
 //		DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/ );
 //	::SelectObject( hdc, hFontOld );
 
@@ -408,3 +408,6 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 }
 
 // 2001/06/19 End
+
+
+/*[EOF]*/

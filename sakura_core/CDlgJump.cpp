@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	指定行へのジャンプダイアログボックス
-	
+
 	@author Norio Nakatani
 	@date	1998/05/31 作成
 	$Revision$
@@ -217,7 +217,7 @@ void CDlgJump::SetData( void )
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ||
 			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 //			MYTRACE( "cFuncInfoArr.GetAt( i )->m_cmemFuncName=%s(%d)\n",
-//				(char*)(cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL )),
+//				(char*)(cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr( NULL ) ),
 //				cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF
 //			);
 		}

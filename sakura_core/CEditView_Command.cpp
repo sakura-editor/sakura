@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	CEditViewクラスのコマンド処理系関数群
-	
+
 	@author Norio Nakatani
 	@date	1998/07/17 作成
 	$Revision$
@@ -295,7 +295,7 @@ BOOL CEditView::HandleCommand(
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
 	case F_SELECTALL:		Command_SELECTALL();break;						//すべて選択
-	case F_BEGIN_SEL:		Command_BEGIN_SELECT();break;					/* 範囲選択開始	*/
+	case F_BEGIN_SEL:		Command_BEGIN_SELECT();break;					/* 範囲選択開始 */
 	case F_UP_SEL:			Command_UP( TRUE, bRepeat ); break;				//(範囲選択)カーソル上移動
 	case F_DOWN_SEL:		Command_DOWN( TRUE, bRepeat ); break;			//(範囲選択)カーソル下移動
 	case F_LEFT_SEL:		Command_LEFT( TRUE, bRepeat ); break;			//(範囲選択)カーソル左移動
@@ -375,7 +375,7 @@ BOOL CEditView::HandleCommand(
 	case F_CODECNV_SJIS2UTF8:		Command_CODECNV_SJIS2UTF8();break;		/* SJIS→UTF-8コード変換 */
 	case F_CODECNV_SJIS2UTF7:		Command_CODECNV_SJIS2UTF7();break;		/* SJIS→UTF-7コード変換 */
 	case F_BASE64DECODE:			Command_BASE64DECODE();break;			/* Base64デコードして保存 */
-	case F_UUDECODE:				Command_UUDECODE();break;				/* uudecodeして保存	*/	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+	case F_UUDECODE:				Command_UUDECODE();break;				/* uudecodeして保存 */	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		Command_SEARCH_DIALOG();break;												//検索(単語検索ダイアログ)
@@ -417,7 +417,7 @@ BOOL CEditView::HandleCommand(
 	case F_OPTION_TYPE:		Command_OPTION_TYPE();break;	/* タイプ別設定 */
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
-	case F_WRAPWINDOWWIDTH:	Command_WRAPWINDOWWIDTH();break;/* 現在のウィンドウ幅で折り返し	*/	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	case F_WRAPWINDOWWIDTH:	Command_WRAPWINDOWWIDTH();break;/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 
 	/* マクロ系 */
 	case F_RECKEYMACRO:		Command_RECKEYMACRO();break;	/* キーマクロの記録開始／終了 */
@@ -433,7 +433,7 @@ BOOL CEditView::HandleCommand(
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
 	case F_EXECCOMMAND:
-		/* 再帰処理対策 */// 2001/06/23 N.Nakatani 
+		/* 再帰処理対策 */// 2001/06/23 N.Nakatani
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
@@ -1354,7 +1354,7 @@ try_again:;
 
 
 
-/* 選択範囲をクリップボードにコピー	*/
+/* 選択範囲をクリップボードにコピー */
 void CEditView::Command_COPY( int bIgnoreLockAndDisdable,
 			enumEOLType neweol )
 {
@@ -1553,10 +1553,10 @@ void CEditView::Command_DELETE_BACK( void )
 			/* 補完対象ワードリストを調べる */
 			poWin.x = m_nViewAlignLeft
 					 + (m_nCaretPosX - m_nViewLeftCol)
-					  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+						* ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 			poWin.y = m_nViewAlignTop
 					  + (m_nCaretPosY - m_nViewTopLine)
-					   * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
+						* ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
 			::ClientToScreen( m_hWnd, &poWin );
 			poWin.x -= (
 				cmemData.GetLength()
@@ -1793,7 +1793,7 @@ void CEditView::Command_LineCutToEnd( void )
 		return;
 	}
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength()    , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength() , pCLayout->m_nLinePhysical, &nX, &nY );
 	}else{
 //		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength() - 1, pCLayout->m_nLinePhysical, &nX, &nY );
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
@@ -1878,7 +1878,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 		return;
 	}
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength()    , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength() , pCLayout->m_nLinePhysical, &nX, &nY );
 	}else{
 //		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength() - 1, pCLayout->m_nLinePhysical, &nX, &nY );
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
@@ -3078,7 +3078,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 //		);
 		pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 		pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
-    }
+	}
 	InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, (char*)&wChar, 2, &nNewLine, &nNewPos, pcOpe, TRUE );
 
 	/* 挿入データの最後へカーソルを移動 */
@@ -3245,7 +3245,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		/* 矩形範囲選択中か */
 		if( !m_bBeginBoxSelect && TRUE == m_bSelectingLock ){	/* 選択状態のロック */
 //			if( ( m_nSelectLineBgn <  m_nCaretPosY ) ||
-//			    ( m_nSelectLineBgn == m_nCaretPosY && m_nSelectColmBgn < m_nCaretPosX )
+//				( m_nSelectLineBgn == m_nCaretPosY && m_nSelectColmBgn < m_nCaretPosX )
 //			){
 //				bFlag1 = TRUE;
 //			}
@@ -3298,7 +3298,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	 && bChangeState
 	){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true )){
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return;
 		}
 		/* 検索パターンのコンパイル */
@@ -3407,12 +3407,12 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 			m_nSelectLineTo = nLineTo;
 			m_nSelectColmTo = nColmTo;
 			if( ( m_nSelectLineFrom > m_nSelectLineBgn ) ||
-			    ( m_nSelectLineFrom == m_nSelectLineBgn && m_nSelectColmFrom > m_nSelectColmBgn ) ){
+				( m_nSelectLineFrom == m_nSelectLineBgn && m_nSelectColmFrom > m_nSelectColmBgn ) ){
 				m_nSelectLineFrom = m_nSelectLineBgn;
 				m_nSelectColmFrom = m_nSelectColmBgn;
 			}
 			if( ( m_nSelectLineTo < m_nSelectLineBgn ) ||
-			    ( m_nSelectLineTo == m_nSelectLineBgn && m_nSelectColmTo < m_nSelectColmBgn )
+				( m_nSelectLineTo == m_nSelectLineBgn && m_nSelectColmTo < m_nSelectColmBgn )
 			){
 				m_nSelectLineTo = m_nSelectLineBgn;
 				m_nSelectColmTo = m_nSelectColmBgn;
@@ -3544,7 +3544,7 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 			nSelectColTo_Old = m_nSelectColmTo;
 
 			if( ( m_nSelectLineBgnFrom >  m_nCaretPosY ) ||
-			    ( m_nSelectLineBgnFrom == m_nCaretPosY && m_nSelectColmBgnFrom >= m_nCaretPosX )
+				( m_nSelectLineBgnFrom == m_nCaretPosY && m_nSelectColmBgnFrom >= m_nCaretPosX )
 			){
 				/* カーソル移動 */
 				MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, bRedraw );
@@ -3595,7 +3595,7 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 	 && bChangeState
 	){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true )){
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return;
 		}
 		/* 検索パターンのコンパイル */
@@ -3688,24 +3688,24 @@ re_do:;
 			m_nSelectColmTo = nSelectColTo_Old;
 
 			if( ( nSelectLineFrom_Old <  nLineFrom ) ||
-			    ( nSelectLineFrom_Old == nLineFrom && nSelectColFrom_Old < nColmFrom ) ){
+				( nSelectLineFrom_Old == nLineFrom && nSelectColFrom_Old < nColmFrom ) ){
 				if( bFlag1 ){
 					m_nSelectLineFrom = nLineFrom;
 					m_nSelectColmFrom = nColmFrom;
 				}
 			}
 			if( ( nSelectLineTo_Old <  nLineTo ) ||
-			    ( nSelectLineTo_Old == nLineTo && nSelectColTo_Old < nColmTo ) ){
+				( nSelectLineTo_Old == nLineTo && nSelectColTo_Old < nColmTo ) ){
 				m_nSelectLineTo = nLineTo;
 				m_nSelectColmTo = nColmTo;
 			}
 			if( ( m_nSelectLineFrom >  m_nSelectLineBgn ) ||
-			    ( m_nSelectLineFrom == m_nSelectLineBgn && m_nSelectColmFrom > m_nSelectColmBgn ) ){
+				( m_nSelectLineFrom == m_nSelectLineBgn && m_nSelectColmFrom > m_nSelectColmBgn ) ){
 				m_nSelectLineFrom = m_nSelectLineBgn;
 				m_nSelectColmFrom = m_nSelectColmBgn;
 			}
 			if( ( m_nSelectLineTo < m_nSelectLineBgn ) ||
-			    ( m_nSelectLineTo == m_nSelectLineBgn && m_nSelectColmTo < m_nSelectColmBgn )
+				( m_nSelectLineTo == m_nSelectLineBgn && m_nSelectColmTo < m_nSelectColmBgn )
 			){
 				m_nSelectLineBgn = m_nSelectLineTo;
 				m_nSelectColmBgn = m_nSelectColmTo;
@@ -4277,7 +4277,7 @@ void CEditView::Command_JUMP( void )
 			}
 			/* コメントブロック内の改行だけの行 */
 			if( CR == pLine[nBgn] ||
-			    LF == pLine[nBgn] ){
+				LF == pLine[nBgn] ){
 				bValidLine = FALSE;
 			}
 		}
@@ -4468,7 +4468,7 @@ void CEditView::Command_DUPLICATELINE( void )
 		pcOpe = new COpe;
 		pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 		pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
-    }
+	}
 
 	/* 二重化したい行を調べる
 	||	・改行で終わっている
@@ -4961,7 +4961,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly )
 	case OUTLINE_PERL:		m_pcEditDoc->MakeFuncList_Perl( &cFuncInfoArr );break;	//	Sep. 8, 2000 genta
 	case OUTLINE_VB:		m_pcEditDoc->MakeFuncList_VisualBasic( &cFuncInfoArr );break;	//	June 23, 2001 N.Nakatani
 	case OUTLINE_TEXT:
-	case OUTLINE_UNKNOWN:
+//	case OUTLINE_UNKNOWN:	//Jul. 08, 2001 JEPRO 使わないように変更
 	default:
 		m_pcEditDoc->MakeTopicList_txt( &cFuncInfoArr );
 		break;
@@ -5767,7 +5767,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen )
 						);
 
 					}else{
-			    		pcOpe = NULL;
+						pcOpe = NULL;
 					}
 					pcMemDeleted = new CMemory;
 					/* 指定位置の指定長データ削除 */
@@ -6122,7 +6122,7 @@ void CEditView::Command_UNINDENT( char cChar )
 //							&pcOpe->m_nCaretPosY_PHY_Before
 //						);
 //					}else{
-//			    		pcOpe = NULL;
+//						pcOpe = NULL;
 //					}
 //
 //					pcMemDeleted = new CMemory;
@@ -6674,7 +6674,7 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 		//	Apr. 23, 2001 genta
 		//	hwndOwnerに値が入らなくなってしまったために
 		//	Tag Jump Backが動作しなくなっていたのを修正
-		if( FALSE == m_cShareData.IsPathOpened( (const char*)szJumpToFile, &hwndOwner ))
+		if( FALSE == m_cShareData.IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
 			return;
 	}
 	/*
@@ -7422,7 +7422,7 @@ void CEditView::Command_REPLACE( void )
 //	nRet = m_pcEditDoc->m_cDlgReplace.DoModal( (LPARAM)this, bSelected );
 //	MYTRACE( "nRet=%d\n", nRet );
 	//	From Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
-	if( !::IsWindow( m_pcEditDoc->m_cDlgReplace.m_hWnd )){
+	if( !::IsWindow( m_pcEditDoc->m_cDlgReplace.m_hWnd ) ){
 		m_pcEditDoc->m_cDlgReplace.DoModeless( m_hInstance, m_hWnd/*::GetParent( m_hwndParent )*/, (LPARAM)this, bSelected );
 	}
 	else {
@@ -8141,7 +8141,7 @@ end_of_compare:;
 		}
 		::TileWindows( NULL, MDITILE_VERTICAL, NULL, 2, phwndArr );
 		delete [] phwndArr;
-   }
+	}
 //To Here Oct. 10, 2000
 
 	if( FALSE == bDefferent ){
@@ -8317,8 +8317,8 @@ void CEditView::Command_PRINT( void )
 	ZeroMemory( &pd, sizeof( PRINTDLG ) );
 	pd.lStructSize	= sizeof(PRINTDLG);
 	pd.hwndOwner	= m_hWnd;
-	pd.hDevMode		= NULL;      // Don't forget to free or store hDevMode.
-	pd.hDevNames	= NULL;      // Don't forget to free or store hDevNames.
+	pd.hDevMode		= NULL;		// Don't forget to free or store hDevMode.
+	pd.hDevNames	= NULL;		// Don't forget to free or store hDevNames.
 	pd.Flags		= PD_USEDEVMODECOPIESANDCOLLATE | PD_RETURNDC | PD_NOPAGENUMS | PD_NOSELECTION;
 	pd.nCopies		= 1;
 	pd.nFromPage	= 0xFFFF;
@@ -8770,5 +8770,4 @@ void CEditView::Command_JUMPNEXT( void )
 //	To HERE Sep. 8, 2000 genta
 
 
-
-/* [EOF] */
+/*[EOF]*/

@@ -1,7 +1,7 @@
 //	$Id$
 /*!	@file
 	ツールチップ
-	
+
 	@author Norio Nakatani
 	@date 1998/10/30 新規作成
 	$Revision$
@@ -62,7 +62,7 @@ public:
 
 	CMemory		m_cKey;			/* キーの内容データ */
 	BOOL		m_KeyWasHit;	/* キーがヒットしたか */
-	
+
 	CMemory		m_cInfo;		/* Tipの内容データ */
 
 protected:
@@ -83,5 +83,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CTIPWND_H_ */
+
 
 /*[EOF]*/

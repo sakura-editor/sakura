@@ -4,7 +4,7 @@
 
 	@author Norio Nakatani
 	@date 1998/3/5  新規作成
-	@date 2001/06/23 N.Nakatani WhereCurrentWord_2()追加　staticメンバ
+	@date 2001/06/23 N.Nakatani WhereCurrentWord_2()追加 staticメンバ
 	$Revision$
 */
 /*
@@ -38,13 +38,13 @@ class CDocLineMgr;
 #include "CBregexp.h"
 
 struct DocLineReplaceArg {
-	int			nDelLineFrom;			/* 削除範囲行  From 改行単位の行番号 0開始) */
-	int			nDelPosFrom;			/* 削除範囲位置From 改行単位の行頭からのバイト位置　0開始) */
-	int			nDelLineTo;			/* 削除範囲行　To   改行単位の行番号 0開始) */
-	int			nDelPosTo;				/* 削除範囲位置To   改行単位の行頭からのバイト位置　0開始) */
+	int			nDelLineFrom;		/* 削除範囲行  From 改行単位の行番号 0開始) */
+	int			nDelPosFrom;		/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
+	int			nDelLineTo;			/* 削除範囲行  To   改行単位の行番号 0開始) */
+	int			nDelPosTo;			/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
 	CMemory*	pcmemDeleted;		/* 削除されたデータを保存 */
 	int			nDeletedLineNum;	/* 削除した行の総数 */
-	const char*	pInsData;			/* 挿入するデータ */      
+	const char*	pInsData;			/* 挿入するデータ */
 	int			nInsDataLen;		/* 挿入するデータの長さ */
 	int			nInsLineNum;		/* 挿入によって増えた行の数 */
 	int			nNewLine;			/* 挿入された部分の次の位置の行 */
@@ -86,7 +86,7 @@ public:
 //	static void CreateCharUsedArr( const unsigned char*, int, const int*, int** ); /* 検索条件の情報(キー文字列の使用文字表)作成 */
 
 
-	
+
 	void DUMP( void );
 //	void ResetAllModifyFlag( BOOL );	/* 行変更状態をすべてリセット */
 	void ResetAllModifyFlag( void );	/* 行変更状態をすべてリセット */
@@ -103,7 +103,7 @@ public:
 	void AddLineStrSz( const char* );	/* 末尾に行を追加 Ver0 */
 	void AddLineStr( const char*, int );	/* 末尾に行を追加 Ver1 */
 	void AddLineStr( CMemory& );	/* 末尾に行を追加 Ver2 */
-#endif	
+#endif
 	//	May 15, 2000 genta
 	void AddLineStrX( const char*, int, CEOL );	/* 末尾に行を追加 Ver1.5 */
 
@@ -117,12 +117,12 @@ public:
 		DocLineReplaceArg*
 #if 0
 		int			nDelLineFrom,		/* 削除範囲行  From 改行単位の行番号 0開始) */
-		int			nDelPosFrom,		/* 削除範囲位置From 改行単位の行頭からのバイト位置　0開始) */
-		int			nDelLineTo,			/* 削除範囲行　To   改行単位の行番号 0開始) */
-		int			nDelPosTo,			/* 削除範囲位置To   改行単位の行頭からのバイト位置　0開始) */
+		int			nDelPosFrom,		/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
+		int			nDelLineTo,			/* 削除範囲行  To   改行単位の行番号 0開始) */
+		int			nDelPosTo,			/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
 		CMemory*	pcmemDeleted,		/* 削除されたデータを保存 */
 		int*		pnDeletedLineNum,	/* 削除した行の総数 */
-		const char*	pInsData,			/* 挿入するデータ */      
+		const char*	pInsData,			/* 挿入するデータ */
 		int			nInsDataLen,		/* 挿入するデータの長さ */
 		int*		pnInsLineNum,		/* 挿入によって増えた行の数 */
 		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
@@ -132,7 +132,7 @@ public:
 	void DeleteNode( CDocLine* );/* 行オブジェクトの削除、リスト変更、行数-- */
 	void InsertNode( CDocLine*, CDocLine* );	/* 行オブジェクトの挿入、リスト変更、行数++ */
 
-	
+
 	void InsertData_CDocLineMgr( int , int , const char* , int , int* , int* , int*, int );	/* データの挿入 */
 	//	Nov. 12, 2000 genta 引数追加
 	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag );
@@ -163,5 +163,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDOCLINEMGR_H_ */
+
 
 /*[EOF]*/
