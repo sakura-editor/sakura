@@ -17,7 +17,7 @@
 
 /* 未定義用(ダミーとしても使う) */	//Oct. 17, 2000 jepro noted
 #define F_DISABLE		0	//未使用
-
+#define F_SEPARATOR		1	//セパレータ
 
 /* ファイル操作系 */
 #define F_FILENEW					30101	//新規作成
@@ -46,7 +46,9 @@
 #define F_READONLY					30185	/* ファイルのプロパティ */
 #define F_PROPERTY_FILE				30190	/* ファイルのプロパティ */
 #define F_EXITALL					30195	/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
-
+#define F_NOWOPENFILE				30197	//現在開いているファイル
+#define F_RECENTFILE				30198	//最近使ったファイル
+#define F_RECENTFOLDER				30199	//最近使ったフォルダ
 
 /* 編集系 */
 #define F_CHAR				30200	//文字入力
@@ -136,6 +138,8 @@
 //#define F_DISPLAYEND_SEL	30445	//(範囲選択)画面の最後に移動(未実装)
 #define F_GOFILETOP_SEL		30450	//(範囲選択)ファイルの先頭に移動
 #define F_GOFILEEND_SEL		30451	//(範囲選択)ファイルの最後に移動
+#define F_GONEXTPARAGRAPH_SEL	30482	//(範囲選択)次の段落へ
+#define F_GOPREVPARAGRAPH_SEL	30483	//(範囲選択)前の段落へ
 
 
 /* 矩形選択系 */

@@ -305,6 +305,14 @@ SOURCE=..\sakura_core\CMacro.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CMacroFactory.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CMacroManagerBase.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CMarkMgr.cpp
 # End Source File
 # Begin Source File

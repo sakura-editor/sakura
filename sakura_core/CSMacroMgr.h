@@ -46,6 +46,17 @@ class CEditView;
 #define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）
 #define SAVED_KEYMACRO	0	//	保存されたマクロ
 
+//	関数名はCSMacroMgrが持つ
+struct MacroFuncInfo {
+	int  	m_nFuncID;
+	char *	m_pszFuncName;
+//		char *	m_pszFuncParam;
+	VARTYPE	m_varArguments[4]; //引数の型の配列
+//		int		m_ArgumentCount; //引数の数
+	VARTYPE	m_varResult; //戻り値の型 VT_EMPTYならprocedureということで
+	char *	m_pszData;
+};
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 
@@ -54,7 +65,7 @@ class CEditView;
 class CSMacroMgr
 {
 	//	データの型宣言
-	CKeyMacroMgr* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
+	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
 	CKeyMacroMgr* m_cKeyMacro;						//	標準の（保存ができる）キーマクロも管理
 
 public:
@@ -121,21 +132,8 @@ private:
 	DLLSHAREDATA*	m_pShareData;
 
 public:
-	//	関数名はCSMacroMgrが持つ
-	struct MacroFuncInfo {
-		int  	m_nFuncID;
-		char *	m_pszFuncName;
-		char *	m_pszFuncParam;
-		char *	m_pszData;
-	};
 	static MacroFuncInfo	m_MacroFuncInfoArr[];
-
-	struct MacroFuncInfoNotCommand {
-		int  	m_nFuncID;
-		char *	m_pszFuncName;
-		char *	m_pszData;
-	};
-	static MacroFuncInfoNotCommand	m_MacroFuncInfoNotCommandArr[];
+	static MacroFuncInfo	m_MacroFuncInfoNotCommandArr[];
 };
 
 

@@ -539,7 +539,9 @@ void CEditWnd::DestroyStatusBar( void )
 	return;
 }
 
-/* ツールバー作成 */
+/* ツールバー作成
+	@date @@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+*/
 void CEditWnd::CreateToolBar( void )
 {
 	int				nFlag;
@@ -587,8 +589,6 @@ void CEditWnd::CreateToolBar( void )
 		/* ツールバーにボタンを追加 */
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
 			nIdx = m_pShareData->m_Common.m_nToolBarButtonIdxArr[i];
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//			tbb = m_cShareData.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
 			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
 			::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
 		}
@@ -2035,6 +2035,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DOWN2_SEL		, "(選択)カーソル下移動(２行ごと) (&K)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDLEFT_SEL	, "(選択)単語の左端に移動(&L)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDRIGHT_SEL	, "(選択)単語の右端に移動(&R)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOPREVPARAGRAPH_SEL	, "(選択)前の段落に移動(&A)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GONEXTPARAGRAPH_SEL	, "(選択)次の段落に移動(&Z)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINETOP_SEL	, "(選択)行頭に移動(折り返し単位) (&H)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINEEND_SEL	, "(選択)行末に移動(折り返し単位) (&E)" );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
@@ -2629,7 +2631,9 @@ end_of_drop_query:;
 }
 
 
-/* タイマーの処理 */
+/* タイマーの処理
+	@datey 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+*/
 void CEditWnd::OnTimer(
 	HWND		hwnd,		// handle of window for timer messages
 	UINT		uMsg,		// WM_TIMER message
@@ -2651,8 +2655,6 @@ void CEditWnd::OnTimer(
 	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
 	if( !m_pPrintPreview && NULL != m_hwndToolBar ){
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//			tbb = m_cShareData.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
 			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
 			/* 機能が利用可能か調べる */
 			::PostMessage(

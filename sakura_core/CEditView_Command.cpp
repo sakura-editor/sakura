@@ -331,6 +331,8 @@ BOOL CEditView::HandleCommand(
 	case F_1PageDown_Sel:	Command_1PageDown( TRUE ); break;				//(範囲選択)１ページダウン
 	case F_GOFILETOP_SEL:	Command_GOFILETOP( TRUE );break;				//(範囲選択)ファイルの先頭に移動
 	case F_GOFILEEND_SEL:	Command_GOFILEEND( TRUE );break;				//(範囲選択)ファイルの最後に移動
+	case F_GONEXTPARAGRAPH_SEL:	Command_GONEXTPARAGRAPH( TRUE ); break;			//次の段落へ進む
+	case F_GOPREVPARAGRAPH_SEL:	Command_GOPREVPARAGRAPH( TRUE ); break;			//前の段落へ戻る
 
 	/* 矩形選択系 */
 //	case F_BOXSELALL:		Command_BOXSELECTALL();break;		//矩形ですべて選択
@@ -941,9 +943,11 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 			}
 		}
 		if( nPosX >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-			if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )	//@@@ 2002.04.16 MIK
+//			if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )
+			if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
+			 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 			{
-				if( ! m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( nPosY, nPosX ) )	//@@@ 2002.04.18
+				if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( nPosY, nPosX ) )	//@@@ 2002.04.18
 				{
 					nPosX = 0;
 					++nPosY;
@@ -2244,7 +2248,7 @@ void CEditView::Command_SELECTALL( void )
 
 
 /* 現在位置の単語選択 */
-void CEditView::Command_SELECTWORD( void )
+bool CEditView::Command_SELECTWORD( void )
 {
 	int				nLineFrom;
 	int				nColmFrom;
@@ -2261,7 +2265,7 @@ void CEditView::Command_SELECTWORD( void )
 	}
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
 	if( NULL == pLine ){
-		return;
+		return false;	//	単語選択に失敗
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
@@ -2297,8 +2301,11 @@ void CEditView::Command_SELECTWORD( void )
 
 		/* 選択領域描画 */
 		DrawSelectArea();
+		return true;	//	単語選択に成功。
 	}
-	return;
+	else {
+		return false;	//	単語選択に失敗
+	}
 }
 
 
@@ -3165,10 +3172,10 @@ void CEditView::Command_CHAR( char cChar )
 		}
 		if( m_pcEditDoc->m_bGrepMode && m_pShareData->m_Common.m_bGTJW_RETURN ){
 			/* タグジャンプ機能 */
-			Command_TAGJUMP();
-			return;
+			if ( Command_TAGJUMP() )
+				return;
 		}else
-		if( m_pShareData->m_Common.m_bAutoIndent ){	/* オートインデント */
+		if( m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent ){	/* オートインデント */
 			const CLayout* pCLayout;
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pCLayout );
 			if( NULL != pCLayout ){
@@ -3217,7 +3224,7 @@ void CEditView::Command_CHAR( char cChar )
 							}
 						}else
 						if( nCharChars == 2 ){
-							if( m_pShareData->m_Common.m_bAutoIndent_ZENSPACE ){	/* 日本語空白もインデント */
+							if( m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE ){	/* 日本語空白もインデント */
 								if( pLine[nPos    ] == (char)0x81 &&
 									pLine[nPos + 1] == (char)0x40 ){
 								}else{
@@ -4179,7 +4186,14 @@ void CEditView::Command_BEGIN_SELECT( void )
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea();
 	}
-	m_bSelectingLock = TRUE;	/* 選択状態のロック */
+	
+	//	ロックの解除切り替え
+	if ( m_bSelectingLock ) {
+		m_bSelectingLock = FALSE;	/* 選択状態のロック解除 */
+	}
+	else {
+		m_bSelectingLock = TRUE;	/* 選択状態のロック */
+	}
 	return;
 }
 
@@ -7046,7 +7060,7 @@ void CEditView::Command_ADDTAIL( const char* pszData, int nDataLen )
 
 
 /* タグジャンプ */
-void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
+bool CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 {
 	const char*	pLine;
 	int			nLineLen;
@@ -7203,13 +7217,13 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 		);
 
 		if( !bSuccess )	//	ファイルが開けなかった
-			return;
+			return false;
 
 		//	Apr. 23, 2001 genta
 		//	hwndOwnerに値が入らなくなってしまったために
 		//	Tag Jump Backが動作しなくなっていたのを修正
 		if( FALSE == CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
-			return;
+			return false;
 	}
 	/*
 	カーソル位置変換
@@ -7227,14 +7241,14 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 	/* タグジャンプ元通知 */
 	memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof( poCaret ) );
 	::SendMessage( hwndOwner, MYWM_SETREFERER, (WPARAM)(m_pcEditDoc->m_hwndParent), 0 );
-	return;
+	return true;
 can_not_tagjump:;
 can_not_tagjump_end:;
 //@@@ YAZAKI 2001.12.31 うるさい。
 //	::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 //		"タグジャンプできません。\n[%s]", szJumpToFile
 //	);
-	return;
+	return false;
 }
 
 
@@ -9994,10 +10008,12 @@ void CEditView::Command_LOADKEYMACRO( void )
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return;
 	}
+#if 0
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szMACROFOLDER, NULL );
 	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
+#endif
 
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む

@@ -1599,6 +1599,12 @@ void CEditView::OnVScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
 	case SB_THUMBTRACK:
 		ScrollAtV( nPos );
 		break;
+	case SB_TOP:
+		ScrollAtV( 0 );
+		break;
+	case SB_BOTTOM:
+		ScrollAtV(( m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) - m_nViewRowNum );
+		break;
 	default:
 		break;
 	}
@@ -1632,6 +1638,12 @@ void CEditView::OnHScroll( int nScrollCode, int nPos, HWND hwndScrollBar )
 	case SB_THUMBTRACK:
 		ScrollAtH( nPos );
 //		MYTRACE( "nPos=%d\n", nPos );
+		break;
+	case SB_LEFT:
+		ScrollAtH( 0 );
+		break;
+	case SB_RIGHT:
+		ScrollAtH( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum );
 		break;
 	}
 	return;
@@ -2181,7 +2193,7 @@ void CEditView::TraceRgn( HRGN hrgn )
 void CEditView::DrawSelectArea( void )
 {
 	/* カーソル行アンダーラインのOFF */
-	CaretUnderLineOFF( TRUE );
+//	CaretUnderLineOFF( TRUE );	YAZAKI
 	if( !m_bDrawSWITCH ){
 		return;
 	}
@@ -2421,7 +2433,6 @@ void CEditView::DrawSelectAreaLine(
 )
 {
 //	MYTRACE( "CEditView::DrawSelectAreaLine()\n" );
-	HRGN			hrgnDraw;
 	const char*		pLine;
 	int				nLineLen;
 	int				i;
@@ -2485,10 +2496,14 @@ void CEditView::DrawSelectAreaLine(
 		rcClip.right = rcClip.left + 3000;
 	}
 //	::Rectangle( hdc, rcClip.left, rcClip.top, rcClip.right + 1, rcClip.bottom + 1 );
+	//	必要なときだけ。
+	if ( rcClip.right != rcClip.left ){
+		CaretUnderLineOFF( TRUE );	//	YAZAKI
 
-	hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
-	::PaintRgn( hdc, hrgnDraw );
-	::DeleteObject( hrgnDraw );
+		HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
+		::PaintRgn( hdc, hrgnDraw );
+		::DeleteObject( hrgnDraw );
+	}
 
 
 //	::Rectangle( hdc, rcClip.left, rcClip.top, rcClip.right + 1, rcClip.bottom + 1);
@@ -3405,11 +3420,12 @@ normal_action:;
 			m_bBeginWordSelect = TRUE;		/* 単語単位選択中 */
 			if( !IsTextSelected() ){
 				/* 現在位置の単語選択 */
-				Command_SELECTWORD();
-				m_nSelectLineBgnFrom = m_nSelectLineFrom;	/* 範囲選択開始行(原点) */
-				m_nSelectColmBgnFrom = m_nSelectColmFrom;	/* 範囲選択開始桁(原点) */
-				m_nSelectLineBgnTo = m_nSelectLineTo;		/* 範囲選択開始行(原点) */
-				m_nSelectColmBgnTo = m_nSelectColmTo;		/* 範囲選択開始桁(原点) */
+				if ( Command_SELECTWORD() ){
+					m_nSelectLineBgnFrom = m_nSelectLineFrom;	/* 範囲選択開始行(原点) */
+					m_nSelectColmBgnFrom = m_nSelectColmFrom;	/* 範囲選択開始桁(原点) */
+					m_nSelectLineBgnTo = m_nSelectLineTo;		/* 範囲選択開始行(原点) */
+					m_nSelectColmBgnTo = m_nSelectColmTo;		/* 範囲選択開始桁(原点) */
+				}
 			}else{
 
 				/* 選択領域描画 */
@@ -6080,7 +6096,16 @@ void CEditView::DrawCaretPosInfo( void )
 		char	szText_1[64];
 		char	szText_2[64];
 		char	szText_5[64];
-		wsprintf( szText_1, "%6d 行 %5d 桁", m_nCaretPosY + 1, m_nCaretPosX + 1 );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		int nPosX, nPosY;
+		if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			nPosX = m_nCaretPosX_PHY;
+			nPosY = m_nCaretPosY_PHY;
+		}
+		else {
+			nPosX = m_nCaretPosX;
+			nPosY = m_nCaretPosY;
+		}
+		wsprintf( szText_1, "%6d 行 %5d 桁", nPosY + 1, nPosX + 1 );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		nCharChars = 0;
 		if( NULL != pLine ){
@@ -6563,17 +6588,17 @@ DWORD CEditView::DoGrep(
 
 
 	/* 最後にテキストを追加 */
-	cmemMessage.AppendSz( "□検索条件  " );
+	cmemMessage.AppendSz( "\r\n□検索条件  " );
 	if( 0 < lstrlen( szKey ) ){
 		CMemory cmemWork2;
 		cmemWork2.SetDataSz( szKey );
 		if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-			cmemWork2.Replace( "\\", "\\\\" );
-			cmemWork2.Replace( "\'", "\\\'" );
-			cmemWork2.Replace( "\"", "\\\"" );
+			cmemWork2.Replace_j( "\\", "\\\\" );
+			cmemWork2.Replace_j( "\'", "\\\'" );
+			cmemWork2.Replace_j( "\"", "\\\"" );
 		}else{
-			cmemWork2.Replace( "\'", "\'\'" );
-			cmemWork2.Replace( "\"", "\"\"" );
+			cmemWork2.Replace_j( "\'", "\'\'" );
+			cmemWork2.Replace_j( "\"", "\"\"" );
 		}
 		cmemWork.AppendSz( "\"" );
 		cmemWork.Append( &cmemWork2 );
@@ -7193,36 +7218,47 @@ int CEditView::DoGrepFile(
 		/* 正規表現検索 */
 		if( bGrepRegularExp ){
 			BREGEXP*	pRegexpData;	//	正規表現コンパイルデータ
+			int nColmPrev = 0;
 
-			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-			if( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
+			while (1){	//	ぐるぐる回す
+				//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+				if( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
 
-				//	パターン発見
-				nColm = pRegexpData->startp[0] - pCompareData + 1;
-				int matchlen = pRegexpData->endp[0] - pRegexpData->startp[0];
+					//	パターン発見
+					nColm = pRegexpData->startp[0] - pCompareData + 1;
+					int matchlen = pRegexpData->endp[0] - pRegexpData->startp[0];
 
-				/* Grep結果を、szWorkに格納する */
-				SetGrepResult(
-					szWork,
-					pszFullPath, pszCodeName,
-					nLine, nColm, pCompareData, nLineLen, nEolCodeLen,
-					pRegexpData->startp[0], matchlen,
-					bGrepOutputLine, nGrepOutputStyle
-				);
-				if( 2 == nGrepOutputStyle ){
-				/* WZ風 */
-					if( !bOutFileName ){
-						cmemMessage.AppendSz( szWork0 );
-						bOutFileName = TRUE;
+					/* Grep結果を、szWorkに格納する */
+					SetGrepResult(
+						szWork,
+						pszFullPath, pszCodeName,
+						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
+						pRegexpData->startp[0], matchlen,
+						bGrepOutputLine, nGrepOutputStyle
+					);
+					if( 2 == nGrepOutputStyle ){
+					/* WZ風 */
+						if( !bOutFileName ){
+							cmemMessage.AppendSz( szWork0 );
+							bOutFileName = TRUE;
+						}
+					}
+
+					cmemMessage.AppendSz( szWork );
+					++nHitCount;
+					++(*pnHitCount);
+					if( 0 == ( (*pnHitCount) % 16 ) ){
+						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+					}
+					if ( !bGrepOutputLine ) {
+						//	探し始める位置を補正
+						pCompareData += nColm;
+						nLineLen -= nColm;
+						nColmPrev += nColm;
+						continue;
 					}
 				}
-
-				cmemMessage.AppendSz( szWork );
-				++nHitCount;
-				++(*pnHitCount);
-				if( 0 == ( (*pnHitCount) % 16 ) ){
-					::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				}
+				break;
 			}
 		}else
 		/* 単語のみ検索 */
@@ -7287,38 +7323,50 @@ int CEditView::DoGrepFile(
 		}
 		else {
 			/* 文字列検索 */
-			if( NULL != ( pszRes = (char *)CDocLineMgr::SearchString(
-				(const unsigned char *)pCompareData, nLineLen,
-				0,
-				(const unsigned char *)pszKey, nKeyKen,
-				pnKey_CharCharsArr,
-				bGrepLoHiCase
-			) ) ){
-				nColm = pszRes - pCompareData + 1;
+			int nColmPrev = 0;
+			while (1){	//	ぐるぐる回す
+				if( NULL != ( pszRes = (char *)CDocLineMgr::SearchString(
+					(const unsigned char *)pCompareData, nLineLen,
+					0,
+					(const unsigned char *)pszKey, nKeyKen,
+					pnKey_CharCharsArr,
+					bGrepLoHiCase
+				) ) ){
+					nColm = pszRes - pCompareData + 1;
 
-				/* Grep結果を、szWorkに格納する */
-				SetGrepResult(
-					szWork,
-					pszFullPath, pszCodeName,
-					nLine, nColm, pCompareData, nLineLen, nEolCodeLen,
-					pszKey, nKeyKen,
-					bGrepOutputLine, nGrepOutputStyle
-				);
-				if( 2 == nGrepOutputStyle ){
-				/* WZ風 */
-					if( !bOutFileName ){
-						cmemMessage.AppendSz( szWork0 );
-						bOutFileName = TRUE;
+					/* Grep結果を、szWorkに格納する */
+					SetGrepResult(
+						szWork,
+						pszFullPath, pszCodeName,
+						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
+						pszKey, nKeyKen,
+						bGrepOutputLine, nGrepOutputStyle
+					);
+					if( 2 == nGrepOutputStyle ){
+					/* WZ風 */
+						if( !bOutFileName ){
+							cmemMessage.AppendSz( szWork0 );
+							bOutFileName = TRUE;
+						}
+					}
+
+					cmemMessage.AppendSz( szWork );
+					++nHitCount;
+					++(*pnHitCount);
+					//	May 22, 2000 genta
+					// if( 0 == ( (*pnHitCount) % 16 ) ){
+						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+					// }
+					
+					if ( !bGrepOutputLine ) {
+						//	探し始める位置を補正
+						pCompareData += nColm;
+						nLineLen -= nColm;
+						nColmPrev += nColm;
+						continue;
 					}
 				}
-
-				cmemMessage.AppendSz( szWork );
-				++nHitCount;
-				++(*pnHitCount);
-				//	May 22, 2000 genta
-				// if( 0 == ( (*pnHitCount) % 16 ) ){
-					::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				// }
+				break;
 			}
 		}
 	}

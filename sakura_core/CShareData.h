@@ -172,67 +172,6 @@ struct PRINTSETTING {
 	char			m_szFooterForm[3][FOOTER_MAX];		/* 0:左寄せフッタ。1:中央寄せフッタ。2:右寄せフッタ。*/
 };
 
-// Stonee 注： 2000/01/12
-// ここを変更したときは、CCshareData_new.cpp のcolorIDXKeyNameの定義も変更して下さい。
-
-//	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
-//#define COLORIDX_TEXT			0	/* テキスト */
-//#define COLORIDX_GYOU			1	/* 行番号 */
-//#define COLORIDX_CRLF			2	/* 改行記号 */
-//#define COLORIDX_TAB			3	/* TAB記号 */
-//#define COLORIDX_ZENSPACE		4	/* 日本語空白 */
-//#define COLORIDX_EOF			5	/* EOF記号 */
-//#define COLORIDX_KEYWORD		6	/* 強調キーワード */
-//#define COLORIDX_COMMENT		7	/* コメント */
-//#define COLORIDX_SSTRING		8	/* シングルクォーテーション文字列 */
-//#define COLORIDX_WSTRING		9	/* ダブルクォーテーション文字列 */
-//#define COLORIDX_UNDERLINE	10	/* カーソル行アンダーライン */
-//#define COLORIDX_WRAP			11	/* 折り返し記号 */
-//#define COLORIDX_CTRLCODE		12	/* コントロールコード */
-//#define COLORIDX_URL			13	/* URL */
-//#define COLORIDX_SEARCH		14	/* 検索文字列 */
-//#define COLORIDX_GYOU_MOD		15	/* 行番号(変更行) */
-//#define COLORIDX_RULER		16	/* ルーラー */
-//#define COLORIDX_LAST			17
-#define COLORIDX_TEXT			0	/* テキスト */
-#define COLORIDX_RULER			1	/* ルーラー */
-#define COLORIDX_UNDERLINE		2	/* カーソル行アンダーライン */
-#define COLORIDX_GYOU			3	/* 行番号 */
-#define COLORIDX_GYOU_MOD		4	/* 行番号(変更行) */
-#define COLORIDX_TAB			5	/* TAB記号 */
-#define COLORIDX_ZENSPACE		6	/* 日本語空白 */
-#define COLORIDX_CTRLCODE		7	/* コントロールコード */
-#define COLORIDX_CRLF			8	/* 改行記号 */
-#define COLORIDX_WRAP			9	/* 折り返し記号 */
-#define COLORIDX_EOF			10	/* EOF記号 */
-//@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
-//#ifdef COMPILE_COLOR_DIGIT
-#define COLORIDX_DIGIT			11	/* 半角数値 */	//@@@ 2001.02.17 by MIK	//色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
-#define COLORIDX_SEARCH			12	/* 検索文字列 */
-#define COLORIDX_KEYWORD1		13	/* 強調キーワード1 */ // 2002/03/13 novice
-#define COLORIDX_KEYWORD2		14	/* 強調キーワード2 */ // 2002/03/13 novice	//MIK ADDED
-#define COLORIDX_COMMENT		15	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
-#define COLORIDX_SSTRING		16	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
-#define COLORIDX_WSTRING		17	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
-#define COLORIDX_URL			18	/* URL */								//Dec. 4, 2000 shifted by MIK
-#define COLORIDX_REGEX1			19	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX2			20	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX3			21	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX4			22	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX5			23	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX6			24	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX7			25	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX8			26	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX9			27	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_REGEX10		28	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
-#define COLORIDX_LAST			29											//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
-
-#define COLORIDX_BLOCK1			30	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */ // 2002/03/13 novice
-#define COLORIDX_BLOCK2			31	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */ // 2002/03/13 novice
-//#else
-//#define COLORIDX_LAST			18											//Dec. 4, 2000
-//#endif
-//	To Here Sept. 18, 2000
 
 //! 色設定
 struct ColorInfo {
@@ -373,6 +312,11 @@ struct Types {
 	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
 	struct RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
 //@@@ 2001.11.17 add end MIK
+
+	//	2002/04/30 YAZAKI Commonから移動。
+	int					m_bAutoIndent;					/* オートインデント */
+	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+
 }; /* Types */
 
 //! マクロ情報
@@ -461,8 +405,9 @@ struct Common {
 	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
 	int					m_bIsINSMode;					/* 挿入／上書きモード */
 	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
-	int					m_bAutoIndent;					/* オートインデント */
-	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+//2002/04/30 YAZAKI タイプ別設定に移動
+//	int					m_bAutoIndent;					/* オートインデント */
+//	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
 	BOOL				m_bStopsBothEndsWhenSearchWord;	/* 単語単位で移動するときに、単語の両端で止まるか */
 	BOOL				m_bStopsBothEndsWhenSearchParagraph;	/* 段落単位で移動するときに、段落の両端で止まるか */
 
@@ -707,6 +652,8 @@ struct DLLSHAREDATA {
 	公開されていますが，CShareDataによってMap/Unmapされるために
 	ChareDataの消滅によってポインタm_pShareDataも無効になることに
 	注意してください．
+
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
 class SAKURA_CORE_API CShareData
 {
@@ -749,8 +696,6 @@ public:
 	BOOL SendMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージを送るする */
 	int GetOpenedWindowArr( EditNode** , BOOL );				/* 現在開いている編集ウィンドウの配列を返す */
 	static BOOL IsEditWnd( HWND );								/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//	static void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD, int );	/* TBBUTTON構造体にデータをセット */
 	static void SetKeyNameArrVal(
 		DLLSHAREDATA*, int, short, char*,
 		short, short, short, short,

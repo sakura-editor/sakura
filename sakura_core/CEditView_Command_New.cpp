@@ -165,9 +165,11 @@ void CEditView::InsertData_CEditView(
 		*pnNewPos = LineIndexToColmn( pLine2, nLineLen2, *pnNewPos );
 	}
 	if( *pnNewPos >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )	//@@@ 2002.04.16 MIK
+//		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )
+		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
+		 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{
-			if( ! m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( *pnNewLine, *pnNewPos ) )	//@@@ 2002.04.18
+			if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( *pnNewLine, *pnNewPos ) )	//@@@ 2002.04.18
 			{
 				*pnNewPos = 0;
 				(*pnNewLine)++;

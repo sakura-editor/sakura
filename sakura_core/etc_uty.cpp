@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, shoji masami, stonee, MIK, YAZAKI
-	Copyright (C) 2002, genta, aroka, hor
+	Copyright (C) 2002, genta, aroka, hor, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -636,7 +636,12 @@ void ActivateFrameWindow( HWND hwnd )
 	if( ::IsIconic( hwnd ) ){
 		::ShowWindow( hwnd, SW_RESTORE );
 	}
-	::ShowWindow( hwnd, SW_SHOW );
+	else if ( ::IsZoomed( hwnd ) ){
+		::ShowWindow( hwnd, SW_MAXIMIZE );
+	}
+	else {
+		::ShowWindow( hwnd, SW_SHOW );
+	}
 	::SetForegroundWindow( hwnd );
 	::BringWindowToTop( hwnd );
 	return;
@@ -2434,6 +2439,40 @@ int cescape(const char* org, char* buf, char cesc, char cwith)
 	return out - buf;
 }
 
+/*! 文字のエスケープ
+
+	@param org [in] 変換したい文字列
+	@param buf [out] 返還後の文字列を入れるバッファ
+	@param cesc  [in] エスケープしないといけない文字
+	@param cwith [in] エスケープに使う文字
+	
+	@retval 出力したバイト数
+
+	文字列中にそのまま使うとまずい文字がある場合にその文字の前に
+	エスケープキャラクタを挿入するために使う．
+
+	@note 変換後のデータは最大で元の文字列の2倍になる
+	@note この関数は2バイト文字の考慮を行っている
+*/
+int cescape_j(const char* org, char* buf, char cesc, char cwith)
+{
+	char *out = buf;
+	for( ; *org != '\0'; ++org, ++out ){
+		unsigned char c = (unsigned char)*org;
+		if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ){
+			*out = *org;
+			++out; ++org;
+		}
+		else if( *org == cesc ){
+			*out = cwith;
+			++out;
+		}
+		*out = *org;
+	}
+	*out = '\0';
+	return out - buf;
+}
+
 /*	ヘルプの目次を表示
 	目次タブを表示。問題があるバージョンでは、目次ページを表示。
 */
@@ -2448,6 +2487,28 @@ void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
 	/* 目次タブを表示する */
 	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (unsigned long)"CONTENTS()" );
 	return;
+}
+
+
+/*
+ * カラー名からインデックス番号に変換する
+ */
+SAKURA_CORE_API int GetColorIndexByName( const char *name )
+{
+	int	i;
+	for( i = 0; i < COLORIDX_LAST; i++ )
+	{
+		if( strcmp( name, (const char*)colorIDXKeyName[i] ) == 0 ) return i;
+	}
+	return -1;
+}
+
+/*
+ * インデックス番号からカラー名に変換する
+ */
+SAKURA_CORE_API const char* GetColorNameByIndex( int index )
+{
+	return colorIDXKeyName[index];
 }
 
 /*[EOF]*/

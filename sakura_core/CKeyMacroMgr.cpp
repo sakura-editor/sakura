@@ -15,6 +15,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+
 #include <stdio.h>
 //	#include <stdlib.h>
 //	#include <malloc.h>
@@ -27,13 +28,15 @@
 //	#include "global.h"
 //	#include "CEditView.h"
 #include "CMemory.h"
+#include "CMacroFactory.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
 	m_pTop = NULL;
 	m_pBot = NULL;
 //	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
-	m_nReady = FALSE;
+	//	Apr. 29, 2002 genta
+	//	m_nReadyはCMacroManagerBaseへ
 	return;
 }
 
@@ -140,7 +143,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 
 	FILE* hFile = fopen( pszPath, "r" );
 	if( NULL == hFile ){
-		m_nReady = FALSE;
+		m_nReady = false;
 		return FALSE;
 	}
 
@@ -180,6 +183,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 				break;
 			}
 		}
+		// 関数名にS_が付いていたら
 
 		/* 関数名→機能ID，機能名日本語 */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -197,6 +201,11 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					++i;
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
+						unsigned char c = (unsigned char)szLine[i];
+						if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ){
+							++i;
+							continue;
+						}
 						if( szLine[i] == '\\' ){	// エスケープのスキップ
 							++i;
 							continue;
@@ -255,9 +264,29 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	}
 	fclose( hFile );
 
-	m_nReady = TRUE;
+	m_nReady = true;
 	return TRUE;
 }
 
+//	From Here Apr. 29, 2002 genta
+/*!
+	Factory
+
+	引数に渡された拡張子は使わない。
+*/
+CMacroManagerBase* CKeyMacroMgr::Creator(const char*)
+{
+	return new CKeyMacroMgr;
+}
+
+/*!	CKeyMacroManagerの登録
+
+*/
+void CKeyMacroMgr::declare (void)
+{
+	//	常に実行
+	CMacroFactory::Instance()->Register("mac", Creator);
+}
+//	To Here Apr. 29, 2002 genta
 
 /*[EOF]*/

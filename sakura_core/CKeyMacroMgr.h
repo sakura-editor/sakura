@@ -17,6 +17,7 @@
 #define _CKEYMACROMGR_H_
 
 #include <windows.h>
+#include "CMacroManagerBase.h"
 
 /*
 struct KeyMacroData {
@@ -31,7 +32,10 @@ struct KeyMacroData {
 クラスの宣言
 -----------------------------------------------------------------------*/
 //! キーボードマクロ
-class CKeyMacroMgr
+/*!
+	キーボードマクロクラス
+*/
+class CKeyMacroMgr : public CMacroManagerBase
 {
 public:
 	/*
@@ -55,11 +59,17 @@ public:
 	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);		/* キーボードマクロを読み込み、CMacroの列に変換 */
 	
 	/* キーボードマクロが読み込み済みか確認する */
-	BOOL IsReady(){ return m_nReady; }
+	//	Apr. 29, 2002 genta
+	//	IsReadyはCMacroManagerBaseへ移動
+
+	// Apr. 29, 2002 genta
+	static CMacroManagerBase* Creator(const char*);
+	static void declare(void);
 
 protected:
 //	int				m_nKeyMacroDataArrNum;
-	BOOL			m_nReady;	//	Load済みかどうかを表すフラグ TRUE...Load済み、FALSE...未Load。
+	//	Apr. 29, 2002 genta
+	//	m_nReadyはCMacroManagerBaseへ移動
 
 	class CMacro*	m_pTop;	//	先頭と終端を保持
 	class CMacro*	m_pBot;

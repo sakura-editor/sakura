@@ -136,65 +136,66 @@ CLayoutMgr::~CLayoutMgr()
 || レイアウト情報の変更
 */
 void CLayoutMgr::SetLayoutInfo(
-	int		nMaxLineSize,			/* 折り返し文字数 */
-	BOOL	bWordWrap,				/* 英文ワードラップをする */
-	int		nTabSpace,				/* TAB文字スペース */
-	char*	pszLineComment,			/* 行コメントデリミタ */
-	char*	pszLineComment2,		/* 行コメントデリミタ2 */
-	char*	pszLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	char*	pszBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
-	char*	pszBlockCommentTo,		/* ブロックコメントデリミタ(To) */
+//	int		nMaxLineSize,			/* 折り返し文字数 */
+//	BOOL	bWordWrap,				/* 英文ワードラップをする */
+//	int		nTabSpace,				/* TAB文字スペース */
+//	char*	pszLineComment,			/* 行コメントデリミタ */
+//	char*	pszLineComment2,		/* 行コメントデリミタ2 */
+//	char*	pszLineComment3,		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+//	char*	pszBlockCommentFrom,	/* ブロックコメントデリミタ(From) */
+//	char*	pszBlockCommentTo,		/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
-	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ2(To) */
+//	char*	pszBlockCommentFrom2,	/* ブロックコメントデリミタ2(From) */
+//	char*	pszBlockCommentTo2,		/* ブロックコメントデリミタ2(To) */
 //#endif
-	int		nStringType,			/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+//	int		nStringType,			/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 	int		bDoRayout,
 	HWND	hwndProgress,
-	BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-	BOOL	bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
-	BOOL	bKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
-	BOOL	bKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
-	BOOL	bKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	BOOL	bKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	char*	pszKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-	char*	pszKinsokuTail	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
+//	BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
+//	BOOL	bDispWSTRING,	/* ダブルクォーテーション文字列を表示する */
+//	BOOL	bKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
+//	BOOL	bKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
+//	BOOL	bKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+//	BOOL	bKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+//	char*	pszKinsokuHead,	/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+//	char*	pszKinsokuTail,	/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
+	Types&	refType			/* タイプ別設定 */
 )
 {
 	int		nStrLen;
-	m_nMaxLineSize = nMaxLineSize;
-	m_bWordWrap		= bWordWrap;		/* 英文ワードラップをする */
-	m_nTabSpace		= nTabSpace;
-	m_nStringType	= nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+	m_nMaxLineSize = refType.m_nMaxLineSize;
+	m_bWordWrap		= refType.m_bWordWrap;		/* 英文ワードラップをする */
+	m_nTabSpace		= refType.m_nTabSpace;
+	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
 	if( NULL != m_pszLineComment ){	/* 行コメントデリミタ */
 		delete [] m_pszLineComment;
 		m_pszLineComment = NULL;
 	}
-	nStrLen = strlen( pszLineComment );
+	nStrLen = strlen( refType.m_szLineComment );
 	if( 0 < nStrLen ){
 		m_pszLineComment = new char[nStrLen + 1];
-		strcpy( m_pszLineComment, pszLineComment );
+		strcpy( m_pszLineComment, refType.m_szLineComment );
 	}
 
 	if( NULL != m_pszLineComment2 ){	/* 行コメントデリミタ2 */
 		delete [] m_pszLineComment2;
 		m_pszLineComment2 = NULL;
 	}
-	nStrLen = strlen( pszLineComment2 );
+	nStrLen = strlen( refType.m_szLineComment2 );
 	if( 0 < nStrLen ){
 		m_pszLineComment2 = new char[nStrLen + 1];
-		strcpy( m_pszLineComment2, pszLineComment2 );
+		strcpy( m_pszLineComment2, refType.m_szLineComment2 );
 	}
 
 	if( NULL != m_pszLineComment3 ){	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 		delete [] m_pszLineComment3;
 		m_pszLineComment3 = NULL;
 	}
-	nStrLen = strlen( pszLineComment3 );
+	nStrLen = strlen( refType.m_szLineComment3 );
 	if( 0 < nStrLen ){
 		m_pszLineComment3 = new char[nStrLen + 1];
-		strcpy( m_pszLineComment3, pszLineComment3 );
+		strcpy( m_pszLineComment3, refType.m_szLineComment3 );
 	}
 
 
@@ -202,20 +203,20 @@ void CLayoutMgr::SetLayoutInfo(
 		delete [] m_pszBlockCommentFrom;
 		m_pszBlockCommentFrom = NULL;
 	}
-	nStrLen = strlen( pszBlockCommentFrom );
+	nStrLen = strlen( refType.m_szBlockCommentFrom );
 	if( 0 < nStrLen ){
 		m_pszBlockCommentFrom = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentFrom, pszBlockCommentFrom );
+		strcpy( m_pszBlockCommentFrom, refType.m_szBlockCommentFrom );
 	}
 
 	if( NULL != m_pszBlockCommentTo ){	/* ブロックコメントデリミタ(To) */
 		delete [] m_pszBlockCommentTo;
 		m_pszBlockCommentTo = NULL;
 	}
-	nStrLen = strlen( pszBlockCommentTo );
+	nStrLen = strlen( refType.m_szBlockCommentTo );
 	if( 0 < nStrLen ){
 		m_pszBlockCommentTo = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentTo, pszBlockCommentTo );
+		strcpy( m_pszBlockCommentTo, refType.m_szBlockCommentTo );
 	}
 
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
@@ -223,20 +224,20 @@ void CLayoutMgr::SetLayoutInfo(
 		delete [] m_pszBlockCommentFrom2;
 		m_pszBlockCommentFrom2 = NULL;
 	}
-	nStrLen = strlen( pszBlockCommentFrom2 );
+	nStrLen = strlen( refType.m_szBlockCommentFrom2 );
 	if( 0 < nStrLen ){
 		m_pszBlockCommentFrom2 = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentFrom2, pszBlockCommentFrom2 );
+		strcpy( m_pszBlockCommentFrom2, refType.m_szBlockCommentFrom2 );
 	}
 
 	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ2(To) */
 		delete [] m_pszBlockCommentTo2;
 		m_pszBlockCommentTo2 = NULL;
 	}
-	nStrLen = strlen( pszBlockCommentTo2 );
+	nStrLen = strlen( refType.m_szBlockCommentTo2 );
 	if( 0 < nStrLen ){
 		m_pszBlockCommentTo2 = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentTo2, pszBlockCommentTo2 );
+		strcpy( m_pszBlockCommentTo2, refType.m_szBlockCommentTo2 );
 	}
 //#endif
 
@@ -245,7 +246,7 @@ void CLayoutMgr::SetLayoutInfo(
 		int	length;
 
 		//句読点のぶらさげ
-		m_bKinsokuKuto = bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+		m_bKinsokuKuto = refType.m_bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 		if( NULL != m_pszKinsokuKuto_1 )
 		{
 			delete [] m_pszKinsokuKuto_1;
@@ -268,7 +269,7 @@ void CLayoutMgr::SetLayoutInfo(
 		//データ部は行頭禁則処理で設定する。
 
 		//行頭禁則文字の1,2バイト文字を分けて管理する。
-		m_bKinsokuHead = bKinsokuHead;
+		m_bKinsokuHead = refType.m_bKinsokuHead;
 		if( NULL != m_pszKinsokuHead_1 )
 		{
 			delete [] m_pszKinsokuHead_1;
@@ -279,14 +280,14 @@ void CLayoutMgr::SetLayoutInfo(
 			delete [] m_pszKinsokuHead_2;
 			m_pszKinsokuHead_2 = NULL;
 		}
-		length = strlen( pszKinsokuHead ) + 1;
+		length = strlen( refType.m_szKinsokuHead ) + 1;
 		m_pszKinsokuHead_1 = new char[ length ];
 		m_pszKinsokuHead_2 = new char[ length ];
 		q1 = (unsigned char *)m_pszKinsokuHead_1;
 		q2 = (unsigned char *)m_pszKinsokuHead_2;
 		memset( (void *)q1, 0, length );
 		memset( (void *)q2, 0, length );
-		for( p = (unsigned char *)pszKinsokuHead; *p; p++ )
+		for( p = (unsigned char *)refType.m_szKinsokuHead; *p; p++ )
 		{
 			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
 			{
@@ -319,7 +320,7 @@ void CLayoutMgr::SetLayoutInfo(
 		}
 
 		//行末禁則文字の1,2バイト文字を分けて管理する。
-		m_bKinsokuTail = bKinsokuTail;
+		m_bKinsokuTail = refType.m_bKinsokuTail;
 		if( NULL != m_pszKinsokuTail_1 )
 		{
 			delete [] m_pszKinsokuTail_1;
@@ -330,14 +331,14 @@ void CLayoutMgr::SetLayoutInfo(
 			delete [] m_pszKinsokuTail_2;
 			m_pszKinsokuTail_2 = NULL;
 		}
-		length = strlen( pszKinsokuTail ) + 1;
+		length = strlen( refType.m_szKinsokuTail ) + 1;
 		m_pszKinsokuTail_1 = new char[ length ];
 		m_pszKinsokuTail_2 = new char[ length ];
 		q1 = (unsigned char *)m_pszKinsokuTail_1;
 		q2 = (unsigned char *)m_pszKinsokuTail_2;
 		memset( (void *)q1, 0, length );
 		memset( (void *)q2, 0, length );
-		for( p = (unsigned char *)pszKinsokuTail; *p; p++ )
+		for( p = (unsigned char *)refType.m_szKinsokuTail; *p; p++ )
 		{
 			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
 			{
@@ -352,12 +353,12 @@ void CLayoutMgr::SetLayoutInfo(
 			}
 		}
 
-		m_bKinsokuRet = bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 
 	}	//@@@ 2002.04.08 MIK end
 
 	if( bDoRayout ){
-		DoLayout( hwndProgress, bDispSSTRING, bDispWSTRING );
+		DoLayout( hwndProgress, refType.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp, refType.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp );
 	}
 
 	return;
@@ -716,21 +717,25 @@ const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen, const CLayout** p
 }
 
 /*
-|| 指定された位置が行末(改行文字の直前)かどうか調べる
+|| 指定された位置がレイアウト行の途中の行末かどうか調べる
 
-	@date 2002/4/18 MIK
+	@date 2002/4/27 MIK
 */
 bool CLayoutMgr::IsEndOfLine( int nLine, int nPos )
 {
 	CLayout* pLayout;
-	int	nEolLen;
-	if( NULL == ( pLayout = Search( nLine )	) ){
+
+	if( NULL == ( pLayout = Search( nLine )	) )
+	{
 		return false;
 	}
-	nEolLen = pLayout->m_pCDocLine->m_cEol.GetLen();
-	if( (pLayout->m_nOffset + nPos == pLayout->m_pCDocLine->m_pLine->GetLength() - nEolLen)
-	 && nEolLen )
-		return true;
+
+	if( EOL_NONE == pLayout->m_cEol.GetType() )
+	{	/* この行に改行はない */
+		/* この行の最後か？ */
+		if( nPos == pLayout->m_nLength ) return true;
+	}
+
 	return false;
 }
 

@@ -849,32 +849,32 @@ int CDlgPrintSetting::DataCheckAndCrrect( int nCtrlId, int nData )
 		}
 		break;
 	case IDC_EDIT_MARGINTY:
-		if( 10 >= nData ){
-			nData = 10;
+		if( 0 >= nData ){
+			nData = 0;
 		}
 		if( 50 < nData ){
 			nData = 50;
 		}
 		break;
 	case IDC_EDIT_MARGINBY:
-		if( 10 >= nData ){
-			nData = 10;
+		if( 0 >= nData ){
+			nData = 0;
 		}
 		if( 50 < nData ){
 			nData = 50;
 		}
 		break;
 	case IDC_EDIT_MARGINLX:
-		if( 10 >= nData ){
-			nData = 10;
+		if( 0 >= nData ){
+			nData = 0;
 		}
 		if( 50 < nData ){
 			nData = 50;
 		}
 		break;
 	case IDC_EDIT_MARGINRX:
-		if( 10 >= nData ){
-			nData = 10;
+		if( 0 >= nData ){
+			nData = 0;
 		}
 		if( 50 < nData ){
 			nData = 50;

@@ -1336,7 +1336,58 @@ searchnext:;
 					}
 					nBgn = nPos + 2;
 					nCharChars = 2;
-				}else{
+				}
+				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
+				else if (pLine[nPos] == ' ' && TypeDataPtr->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp 
+					 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )
+				{
+					nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
+					if( y >= m_nViewAlignTop ){
+						rcClip2.left = x + nX * ( nCharWidth );
+						rcClip2.right = rcClip2.left + ( nCharWidth );
+						if( rcClip2.left < m_nViewAlignLeft ){
+							rcClip2.left = m_nViewAlignLeft;
+						}
+						if( rcClip2.left < rcClip2.right &&
+							rcClip2.left < m_nViewAlignLeft + m_nViewCx && rcClip2.right > m_nViewAlignLeft ){
+
+							if( bSearchStringMode ){
+								nColorIdx = COLORIDX_SEARCH;
+							}else{
+								nColorIdx = COLORIDX_SPACE;
+							}
+
+							colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );	/* 半角スペース文字の色 */
+							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );		/* 半角スペース文字背景の色 */
+							HFONT	hFontOld = (HFONT)::SelectObject( hdc,
+								ChooseFontHandle(
+									TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont,
+									TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bUnderLine
+								)
+							);
+							
+							//小文字"o"の下半分を出力
+							rcClip2.top = y + (int)((nLineHeight/2) ) ;
+							rcClip2.bottom = y + nLineHeight;
+							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
+								&rcClip2, "o", 1, m_pnDx );
+							
+							//上半分は普通の空白で出力（"o"の上半分を消す）
+							rcClip2.top = y ;
+							rcClip2.bottom = y + (int)((nLineHeight/2) ) ;
+							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
+								&rcClip2, " ", 1, m_pnDx );
+
+							::SelectObject( hdc, hFontOld );
+							::SetTextColor( hdc, colTextColorOld );
+							::SetBkColor( hdc, colBkColorOld );
+						}
+						nX++;
+					}
+					nBgn = nPos + 1;
+					nCharChars = 1;
+				}
+				else{
 					nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[nPos] ) - (const char *)&pLine[nPos];
 					if( 0 == nCharChars ){
 						nCharChars = 1;

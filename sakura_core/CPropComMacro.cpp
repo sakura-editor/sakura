@@ -525,7 +525,7 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
 
 	::GetDlgItemText( hwndDlg, IDC_MACRODIR, path, _MAX_PATH );
-	strcat( path, "*.mac" );
+	strcat( path, "*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	::SendMessage( hCombo, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );
@@ -539,9 +539,12 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 	
 	do {
 		//	コンボボックスに設定
-		int result = ::SendMessage( hCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)wf.cFileName );
-		if( result == CB_ERR || result == CB_ERRSPACE )
-			break;
+		//	でも.と..は勘弁。
+		if (strcmp( wf.cFileName, "." ) != 0 && strcmp( wf.cFileName, ".." ) != 0){
+			int result = ::SendMessage( hCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)wf.cFileName );
+			if( result == CB_ERR || result == CB_ERRSPACE )
+				break;
+		}
 	} while( FindNextFile( hFind, &wf ));
 
     FindClose(hFind);

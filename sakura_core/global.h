@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -52,7 +53,9 @@
 
 //Oct. 31, 2000 JEPRO TeX Keyword のために'\'を追加	//Nov. 9, 2000 JEPRO HSP Keyword のために'@'を追加
 //#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
-#define IS_KEYWORD_CHAR(c) ((c) == '#'/*35*/ || (c) == '$'/*36*/ || (c) == '@'/*64*/ || (c) == '\\'/*92*/ || __iscsym( (c) ))
+//#define IS_KEYWORD_CHAR(c) ((c) == '#'/*35*/ || (c) == '$'/*36*/ || (c) == '@'/*64*/ || (c) == '\\'/*92*/ || __iscsym( (c) ))
+SAKURA_CORE_API	extern const unsigned char gm_keyword_char[256];	//@@@ 2002.04.27
+#define IS_KEYWORD_CHAR(c)	((int)(gm_keyword_char[(unsigned char)((c) & 0xff)]))	//@@@ 2002.04.27 ロケールに依存しない
 
 
 SAKURA_CORE_API extern const char* GSTR_APPNAME;
@@ -219,6 +222,60 @@ SAKURA_CORE_API enum enumSmartIndentType {
 	SMARTINDENT_NONE,
 	SMARTINDENT_CPP
 };
+
+
+
+
+// Stonee 注： 2000/01/12
+// ここを変更したときは、global.cpp のcolorIDXKeyNameの定義も変更して下さい。
+//	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
+SAKURA_CORE_API enum enumColorIndexType {
+	COLORIDX_TEXT		= 0,	/* テキスト */
+	COLORIDX_RULER		= 1,	/* ルーラー */
+	COLORIDX_UNDERLINE	= 2,	/* カーソル行アンダーライン */
+	COLORIDX_GYOU		= 3,	/* 行番号 */
+	COLORIDX_GYOU_MOD	= 4,	/* 行番号(変更行) */
+	COLORIDX_TAB		= 5,	/* TAB記号 */
+	COLORIDX_SPACE		= 6,	/* 半角空白 */ //2002.04.28 Add by KK 以降全て+1
+	COLORIDX_ZENSPACE	= 7,	/* 日本語空白 */
+	COLORIDX_CTRLCODE	= 8,	/* コントロールコード */
+	COLORIDX_CRLF		= 9,	/* 改行記号 */
+	COLORIDX_WRAP		= 10,	/* 折り返し記号 */
+	COLORIDX_EOF		= 11,	/* EOF記号 */
+	COLORIDX_DIGIT		= 12,	/* 半角数値 */	//@@@ 2001.02.17 by MIK	//色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
+	COLORIDX_SEARCH		= 13,	/* 検索文字列 */
+	COLORIDX_KEYWORD1	= 14,	/* 強調キーワード1 */ // 2002/03/13 novice
+	COLORIDX_KEYWORD2	= 15,	/* 強調キーワード2 */ // 2002/03/13 novice	//MIK ADDED
+	COLORIDX_COMMENT	= 16,	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
+	COLORIDX_SSTRING	= 17,	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
+	COLORIDX_WSTRING	= 18,	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
+	COLORIDX_URL		= 19,	/* URL */								//Dec. 4, 2000 shifted by MIK
+	COLORIDX_REGEX1		= 20,	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX2		= 21,	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX3		= 22,	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX4		= 23,	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX5		= 24,	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX6		= 25,	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX7		= 26,	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX8		= 27,	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX9		= 28,	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX10	= 29,	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
+
+	//カラーの最後
+	COLORIDX_LAST		= 30,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
+
+	//カラー表示制御用
+	COLORIDX_BLOCK1		= 31,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */
+	COLORIDX_BLOCK2		= 32	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */
+
+	//1000-1099 : カラー表示制御用(正規表現キーワード)
+};
+//	To Here Sept. 18, 2000
+
+
+
+/*!< 色タイプ */
+SAKURA_CORE_API extern const char* const colorIDXKeyName[];
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */

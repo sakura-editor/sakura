@@ -152,27 +152,29 @@ const int nFincList_Move_Num = sizeof( pnFuncList_Move ) / sizeof( pnFuncList_Mo
 
 /* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 const int pnFuncList_Select[] = {
-	F_SELECTWORD		,	//現在位置の単語選択
-	F_SELECTALL			,	//すべて選択
-	F_BEGIN_SEL			,	//範囲選択開始
-	F_UP_SEL			,	//(範囲選択)カーソル上移動
-	F_DOWN_SEL			,	//(範囲選択)カーソル下移動
-	F_LEFT_SEL			,	//(範囲選択)カーソル左移動
-	F_RIGHT_SEL			,	//(範囲選択)カーソル右移動
-	F_UP2_SEL			,	//(範囲選択)カーソル上移動(２行ごと)
-	F_DOWN2_SEL			,	//(範囲選択)カーソル下移動(２行ごと)
-	F_WORDLEFT_SEL		,	//(範囲選択)単語の左端に移動
-	F_WORDRIGHT_SEL		,	//(範囲選択)単語の右端に移動
-	F_GOLINETOP_SEL		,	//(範囲選択)行頭に移動(折り返し単位)
-	F_GOLINEEND_SEL		,	//(範囲選択)行末に移動(折り返し単位)
-//	F_ROLLDOWN_SEL		,	//(範囲選択)スクロールダウン
-//	F_ROLLUP_SEL		,	//(範囲選択)スクロールアップ
-	F_HalfPageUp_Sel	,	//(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	F_HalfPageDown_Sel	,	//(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	F_1PageUp_Sel		,	//(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-	F_1PageDown_Sel		,	//(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-	F_GOFILETOP_SEL		,	//(範囲選択)ファイルの先頭に移動
-	F_GOFILEEND_SEL			//(範囲選択)ファイルの最後に移動
+	F_SELECTWORD			,	//現在位置の単語選択
+	F_SELECTALL				,	//すべて選択
+	F_BEGIN_SEL				,	//範囲選択開始
+	F_UP_SEL				,	//(範囲選択)カーソル上移動
+	F_DOWN_SEL				,	//(範囲選択)カーソル下移動
+	F_LEFT_SEL				,	//(範囲選択)カーソル左移動
+	F_RIGHT_SEL				,	//(範囲選択)カーソル右移動
+	F_UP2_SEL				,	//(範囲選択)カーソル上移動(２行ごと)
+	F_DOWN2_SEL				,	//(範囲選択)カーソル下移動(２行ごと)
+	F_WORDLEFT_SEL			,	//(範囲選択)単語の左端に移動
+	F_WORDRIGHT_SEL			,	//(範囲選択)単語の右端に移動
+	F_GOLINETOP_SEL			,	//(範囲選択)行頭に移動(折り返し単位)
+	F_GOLINEEND_SEL			,	//(範囲選択)行末に移動(折り返し単位)
+//	F_ROLLDOWN_SEL			,	//(範囲選択)スクロールダウン
+//	F_ROLLUP_SEL			,	//(範囲選択)スクロールアップ
+	F_HalfPageUp_Sel		,	//(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	F_HalfPageDown_Sel		,	//(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	F_1PageUp_Sel			,	//(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	F_1PageDown_Sel			,	//(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	F_GOFILETOP_SEL			,	//(範囲選択)ファイルの先頭に移動
+	F_GOFILEEND_SEL			,	//(範囲選択)ファイルの最後に移動
+	F_GONEXTPARAGRAPH_SEL	,	//(範囲選択)次の段落へ
+	F_GOPREVPARAGRAPH_SEL		//(範囲選択)前の段落へ
 };
 const int nFincList_Select_Num = sizeof( pnFuncList_Select ) / sizeof( pnFuncList_Select[0] );
 

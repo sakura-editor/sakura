@@ -1061,7 +1061,7 @@ _RETURN_:;
 	}
 
 	/* 行変更状態をすべてリセット */
-	ResetAllModifyFlag();
+	if ( nRetVal ) ResetAllModifyFlag();	// ここでむじょうけんにリセットしてはいけません。2002/04/28 YAZAKI
 
 	return nRetVal;
 }
