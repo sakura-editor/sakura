@@ -35,21 +35,13 @@
 || コンストラクタ
 */
 CLayoutMgr::CLayoutMgr()
+: m_cLineComment(), m_cBlockComment()
 {
 	m_pcDocLineMgr = NULL;
 	m_nMaxLineSize = 0;
 	m_bWordWrap = TRUE;		/* 英文ワードラップをする */
 	m_nTabSpace = 8;		/* TAB文字スペース */
 	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	m_pszLineComment = NULL;			/* 行コメントデリミタ */
-	m_pszLineComment2 = NULL;			/* 行コメントデリミタ2 */
-	m_pszLineComment3 = NULL;			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	m_pszBlockCommentFrom = NULL;		/* ブロックコメントデリミタ(From) */
-	m_pszBlockCommentTo = NULL;			/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	m_pszBlockCommentFrom2 = NULL;		/* ブロックコメントデリミタ2(From) */
-	m_pszBlockCommentTo2 = NULL;		/* ブロックコメントデリミタ2(To) */
-//#endif
 	m_bKinsokuHead = FALSE;		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_bKinsokuTail = FALSE;		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_bKinsokuRet  = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
@@ -73,36 +65,6 @@ CLayoutMgr::~CLayoutMgr()
 {
 	Empty();
 
-	if( NULL != m_pszLineComment ){	/* 行コメントデリミタ */
-		delete [] m_pszLineComment;
-		m_pszLineComment = NULL;
-	}
-	if( NULL != m_pszLineComment2 ){	/* 行コメントデリミタ2 */
-		delete [] m_pszLineComment2;
-		m_pszLineComment2 = NULL;
-	}
-	if( NULL != m_pszLineComment3 ){	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-		delete [] m_pszLineComment3;
-		m_pszLineComment3 = NULL;
-	}
-	if( NULL != m_pszBlockCommentFrom ){	/* ブロックコメントデリミタ(From) */
-		delete [] m_pszBlockCommentFrom;
-		m_pszBlockCommentFrom = NULL;
-	}
-	if( NULL != m_pszBlockCommentTo ){	/* ブロックコメントデリミタ(To) */
-		delete [] m_pszBlockCommentTo;
-		m_pszBlockCommentTo = NULL;
-	}
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ2(From) */
-		delete [] m_pszBlockCommentFrom2;
-		m_pszBlockCommentFrom2 = NULL;
-	}
-	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ2(To) */
-		delete [] m_pszBlockCommentTo2;
-		m_pszBlockCommentTo2 = NULL;
-	}
-//#endif
 	if( NULL != m_pszKinsokuHead_1 ){	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 		delete [] m_pszKinsokuHead_1;
 		m_pszKinsokuHead_1 = NULL;
@@ -162,84 +124,13 @@ void CLayoutMgr::SetLayoutInfo(
 	Types&	refType			/* タイプ別設定 */
 )
 {
-	int		nStrLen;
 	m_nMaxLineSize = refType.m_nMaxLineSize;
 	m_bWordWrap		= refType.m_bWordWrap;		/* 英文ワードラップをする */
 	m_nTabSpace		= refType.m_nTabSpace;
 	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
-	if( NULL != m_pszLineComment ){	/* 行コメントデリミタ */
-		delete [] m_pszLineComment;
-		m_pszLineComment = NULL;
-	}
-	nStrLen = strlen( refType.m_szLineComment );
-	if( 0 < nStrLen ){
-		m_pszLineComment = new char[nStrLen + 1];
-		strcpy( m_pszLineComment, refType.m_szLineComment );
-	}
-
-	if( NULL != m_pszLineComment2 ){	/* 行コメントデリミタ2 */
-		delete [] m_pszLineComment2;
-		m_pszLineComment2 = NULL;
-	}
-	nStrLen = strlen( refType.m_szLineComment2 );
-	if( 0 < nStrLen ){
-		m_pszLineComment2 = new char[nStrLen + 1];
-		strcpy( m_pszLineComment2, refType.m_szLineComment2 );
-	}
-
-	if( NULL != m_pszLineComment3 ){	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-		delete [] m_pszLineComment3;
-		m_pszLineComment3 = NULL;
-	}
-	nStrLen = strlen( refType.m_szLineComment3 );
-	if( 0 < nStrLen ){
-		m_pszLineComment3 = new char[nStrLen + 1];
-		strcpy( m_pszLineComment3, refType.m_szLineComment3 );
-	}
-
-
-	if( NULL != m_pszBlockCommentFrom ){	/* ブロックコメントデリミタ(From) */
-		delete [] m_pszBlockCommentFrom;
-		m_pszBlockCommentFrom = NULL;
-	}
-	nStrLen = strlen( refType.m_szBlockCommentFrom );
-	if( 0 < nStrLen ){
-		m_pszBlockCommentFrom = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentFrom, refType.m_szBlockCommentFrom );
-	}
-
-	if( NULL != m_pszBlockCommentTo ){	/* ブロックコメントデリミタ(To) */
-		delete [] m_pszBlockCommentTo;
-		m_pszBlockCommentTo = NULL;
-	}
-	nStrLen = strlen( refType.m_szBlockCommentTo );
-	if( 0 < nStrLen ){
-		m_pszBlockCommentTo = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentTo, refType.m_szBlockCommentTo );
-	}
-
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	if( NULL != m_pszBlockCommentFrom2 ){	/* ブロックコメントデリミタ2(From) */
-		delete [] m_pszBlockCommentFrom2;
-		m_pszBlockCommentFrom2 = NULL;
-	}
-	nStrLen = strlen( refType.m_szBlockCommentFrom2 );
-	if( 0 < nStrLen ){
-		m_pszBlockCommentFrom2 = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentFrom2, refType.m_szBlockCommentFrom2 );
-	}
-
-	if( NULL != m_pszBlockCommentTo2 ){	/* ブロックコメントデリミタ2(To) */
-		delete [] m_pszBlockCommentTo2;
-		m_pszBlockCommentTo2 = NULL;
-	}
-	nStrLen = strlen( refType.m_szBlockCommentTo2 );
-	if( 0 < nStrLen ){
-		m_pszBlockCommentTo2 = new char[nStrLen + 1];
-		strcpy( m_pszBlockCommentTo2, refType.m_szBlockCommentTo2 );
-	}
-//#endif
+	m_cLineComment = refType.m_cLineComment;	/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	m_cBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	{	//@@@ 2002.04.08 MIK start
 		unsigned char	*p, *q1, *q2, *k1, *k2;
@@ -515,96 +406,29 @@ CLayout* CLayoutMgr::Search( int nLineNum )
 }
 
 
-
-void CLayoutMgr::AddLineBottom( CDocLine* pCDocLine, /*const char* pLine,*/ int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext )
+//@@@ 2002.09.23 YAZAKI CLayout*を作成するところは分離して、InsertLineNext()と共通化
+void CLayoutMgr::AddLineBottom( CLayout* pLayout )
 {
-#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::AddLineBottom" );
-#endif
-//	if( pLine != pCDocLine->m_pLine->GetPtr() ){
-//	if( pLine != pCDocLine->m_pLine->m_pData ){
-//		int		i;
-//		i = 1234;
-//
-//	}
-#ifdef _DEBUG
-	{
-		if( NULL != pCDocLine ){
-			int nLineLen = pCDocLine->m_pLine->GetLength();
-			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr();
-		}
-	}
-#endif
-
-	CLayout* pLayout;
 	if(	0 == m_nLines ){
-		m_pLayoutBot = m_pLayoutTop = new CLayout;
+		m_pLayoutBot = m_pLayoutTop = pLayout;
 		m_pLayoutTop->m_pPrev = NULL;
-		pLayout = m_pLayoutTop;
 	}else{
-		pLayout = new CLayout;
 		m_pLayoutBot->m_pNext = pLayout;
 		pLayout->m_pPrev = m_pLayoutBot;
 		m_pLayoutBot = pLayout;
 	}
 	pLayout->m_pNext = NULL;
-//	pLayout->m_pLine = pLine;
-//	pLayout->m_pLine = pCDocLine->m_pLine->m_pData;
-	pLayout->m_pCDocLine = pCDocLine;
-
-	pLayout->m_nLinePhysical = nLine;
-	pLayout->m_nOffset = nOffset;
-	pLayout->m_nLength = nLength;
-	pLayout->m_nTypePrev = nTypePrev;
-
-	if( EOL_NONE == pCDocLine->m_cEol ){
-		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
-	}else{
-//		if( pLayout->m_nOffset + pLayout->m_nLength >=
-		if( pLayout->m_nOffset + pLayout->m_nLength >
-			pCDocLine->m_pLine->GetLength() - pCDocLine->m_cEol.GetLen() // 2002/2/10 aroka CMemory変更
-		){
-			pLayout->m_cEol = pCDocLine->m_cEol;/* 改行コードの種類 */
-		}else{
-			pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
-		}
-	}
-	// pLayout->m_nEOLLen = gm_pnEolLenArr[pLayout->m_enumEOLType];/* 改行コードの長さ */
-
-
-	pLayout->m_nTypeNext = nTypeNext;
-//#ifdef _DEBUG
-//	if( 1 == pLayout->m_nTypeNext ){
-//		MYTRACE( "★★★CLayoutMgr::AddLineBottom::InsertLineNext()  1 == pLayout->m_nTypeNext\n" );
-//	}
-//#endif
-/***
-	MYTRACE( "m_nLines=%d, pLayout->nLine=%d, pLayout->nOffset=%d, pLayout->nLength=%d \n", m_nLines, pLayout->nLine, pLayout->nOffset, pLayout->nLength );
-***/
 	m_nLines++;
 	return;
 }
 
-
-CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, /*const char* pLine,*/ int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext )
+//@@@ 2002.09.23 YAZAKI CLayout*を作成するところは分離して、AddLineBottom()と共通化
+CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 {
-//#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::InsertLineNext" );
-//#endif
 	CLayout* pLayoutNext;
-	CLayout* pLayout;
-	pLayout = new CLayout;
-#ifdef _DEBUG
-	{
-		if( NULL != pCDocLine ){
-			int nLineLen = pCDocLine->m_pLine->GetLength();
-			const char * pLine = (const char *)pCDocLine->m_pLine->GetPtr(); // 2002/2/10 aroka CMemory変更
-		}
-	}
-#endif
-
 
 	if(	0 == m_nLines ){
+		/* 初 */
 		m_pLayoutBot = m_pLayoutTop = pLayout;
 		m_pLayoutTop->m_pPrev = NULL;
 		m_pLayoutTop->m_pNext = NULL;
@@ -623,14 +447,23 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 		pLayout->m_pNext = NULL;
 		m_pLayoutBot = pLayout;
 	}else{
+		/* 途中に挿入 */
 		pLayoutNext = pLayoutPrev->m_pNext;
 		pLayoutPrev->m_pNext = pLayout;
 		pLayoutNext->m_pPrev = pLayout;
 		pLayout->m_pPrev = pLayoutPrev;
 		pLayout->m_pNext = pLayoutNext;
 	}
-//	pLayout->m_pLine = pLine;
-//	pLayout->m_pLine = pCDocLine->m_pLine->m_pData;
+	m_nLines++;
+	return pLayout;
+}
+
+/* CLayoutを作成する
+	@@@ 2002.09.23 YAZAKI
+*/
+CLayout* CLayoutMgr::CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext )
+{
+	CLayout* pLayout = new CLayout;
 	pLayout->m_pCDocLine = pCDocLine;
 
 	pLayout->m_nLinePhysical = nLine;
@@ -641,7 +474,6 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 	if( EOL_NONE == pCDocLine->m_cEol ){
 		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
 	}else{
-//		if( pLayout->m_nOffset + pLayout->m_nLength >=
 		if( pLayout->m_nOffset + pLayout->m_nLength >
 			pCDocLine->m_pLine->GetLength() - pCDocLine->m_cEol.GetLen()
 		){
@@ -650,8 +482,6 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 			pLayout->m_cEol = EOL_NONE;/* 改行コードの種類 */
 		}
 	}
-	// pLayout->m_nEOLLen = gm_pnEolLenArr[pLayout->m_enumEOLType];/* 改行コードの長さ */
-
 
 	pLayout->m_nTypeNext = nTypeNext;
 #ifdef _DEBUG
@@ -659,10 +489,8 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CDocLine* pCDocLine, 
 		MYTRACE( "★★★CLayoutMgr::InsertLineNext()  1 == pLayout->m_nTypeNext\n" );
 	}
 #endif
-	m_nLines++;
 	return pLayout;
 }
-
 
 
 //	/*

@@ -369,7 +369,7 @@ int CEditView::DispLineNew(
 	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
 	int						nLineNumOrg = nLineNum;
-	const unsigned char*	pLine;
+	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
 	int						nLineLen;
 	int						nX;
 	int						nLineBgn;
@@ -435,16 +435,7 @@ int CEditView::DispLineNew(
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
 		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
-		pLine = (const unsigned char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
-
-//		pCDocLine = pcLayout->m_pCDocLine;
-//		if( NULL == pCDocLine ){
-//			nLineLen = 0;
-//			pLine = NULL;
-//		}else{
-//			nLineLen = pCDocLine->m_pLine->m_nDataLen;
-//			pLine = (const unsigned char *)pCDocLine->m_pLine->m_pData;
-//		}
+		pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
 
 		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 		nCOMMENTEND = 0;
@@ -517,11 +508,9 @@ int CEditView::DispLineNew(
 searchnext:;
 				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
 					if(!bSearchStringMode && (!m_bCurSrchRegularExp || (bSearchFlg && nSearchStart < nPos))){
-						bSearchFlg=IsSearchString( (const char*)pLine, nLineLen, nPos, &nSearchStart, &nSearchEnd );
+						bSearchFlg=IsSearchString( pLine, nLineLen, nPos, &nSearchStart, &nSearchEnd );
 					}
 					if( !bSearchStringMode && bSearchFlg && nSearchStart==nPos
-				//	if( !bSearchStringMode
-				//	 && IsSearchString( (const char*)pLine, nLineLen, nPos, &nSearchEnd )
 					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -641,7 +630,7 @@ searchnext:;
 //@@@ 2001.11.17 add start MIK
 					//正規表現キーワード
 					if( TypeDataPtr->m_bUseRegexKeyword
-					 && m_cRegexKeyword->RegexIsKeyword( (const char*)pLine, nPos, nLineLen, &nMatchLen, &nMatchColor )
+					 && m_cRegexKeyword->RegexIsKeyword( pLine, nPos, nLineLen, &nMatchLen, &nMatchColor )
 					 /*&& TypeDataPtr->m_ColorInfoArr[nMatchColor].m_bDisp*/ )
 					{
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop )
@@ -662,41 +651,9 @@ searchnext:;
 					else
 //@@@ 2001.11.17 add end MIK
 					//	Mar. 15, 2000 genta
-					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
-						//	行コメント1
-						(
-							NULL != TypeDataPtr->m_szLineComment &&									/* 行コメントデリミタ */
-							( TypeDataPtr->m_nLineCommentPos < 0 || nPos == TypeDataPtr->m_nLineCommentPos ) &&
-							0 < lstrlen( TypeDataPtr->m_szLineComment ) &&
-							nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szLineComment ) &&		/* 行コメントデリミタ */
-							0 == memicmp( &pLine[nPos], TypeDataPtr->m_szLineComment, (int)lstrlen( TypeDataPtr->m_szLineComment ) )
-						) ||
-						(
-						//	行コメント2
-							NULL != TypeDataPtr->m_szLineComment2 &&								/* 行コメントデリミタ2 */
-							( TypeDataPtr->m_nLineCommentPos2 < 0 || nPos == TypeDataPtr->m_nLineCommentPos2 ) &&							0 < lstrlen( TypeDataPtr->m_szLineComment2 ) &&
-							//	Mar. 15, 2000 genta for Fortran
-							(
-							//	Jun. 6, 2001 genta
-							//	行コメントが3カ所桁位置指定付きでできるようになったので
-							//	Fortran専用機能は役割を終えた
-							//	TypeDataPtr->m_szLineComment2[0] == 'C' ?
-							//	nPos == 0 ? ( pLine[0] == 'C' || pLine[0] == 'c' || pLine[0] == '*' ) : false
-							//	:
-								nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szLineComment2 ) &&	/* 行コメントデリミタ2 */
-								0 == memicmp( &pLine[nPos], TypeDataPtr->m_szLineComment2, (int)lstrlen( TypeDataPtr->m_szLineComment2 ) )
-							)
-						//	From Here Jun. 6, 2001 genta 3つ目の行コメント色分けに対応
-						) ||
-						(
-							NULL != TypeDataPtr->m_szLineComment &&									/* 行コメントデリミタ */
-							( TypeDataPtr->m_nLineCommentPos3 < 0 || nPos == TypeDataPtr->m_nLineCommentPos3 ) &&
-							0 < lstrlen( TypeDataPtr->m_szLineComment3 ) &&
-							nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szLineComment3 ) &&		/* 行コメントデリミタ */
-							0 == memicmp( &pLine[nPos], TypeDataPtr->m_szLineComment3, (int)lstrlen( TypeDataPtr->m_szLineComment3 ) )
-						//	To Here Jun. 6, 2001 genta
-						)
-					) ){
+					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
+						TypeDataPtr->m_cLineComment.Match( nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
+					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
@@ -713,16 +670,9 @@ searchnext:;
 //						}
 					}else
 					//	Mar. 15, 2000 genta
-					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
-						NULL != TypeDataPtr->m_szBlockCommentFrom &&	/* ブロックコメントデリミタ(From) */
-//						0 < lstrlen( TypeDataPtr->m_szBlockCommentFrom ) &&
-						'\0' != TypeDataPtr->m_szBlockCommentFrom[0] &&
-						NULL != TypeDataPtr->m_szBlockCommentTo &&		/* ブロックコメントデリミタ(To) */
-//						0 < lstrlen( TypeDataPtr->m_szBlockCommentTo ) &&
-						'\0' != TypeDataPtr->m_szBlockCommentTo[0]  &&
-						nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom ) &&	/* ブロックコメントデリミタ(From) */
-						0 == memicmp( &pLine[nPos], TypeDataPtr->m_szBlockCommentFrom, (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom ) )
-					) ){
+					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
+						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
+					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
@@ -737,32 +687,13 @@ searchnext:;
 							}
 //						}
 						/* この物理行にブロックコメントの終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos + (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom ); i <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentTo ); ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( 0 == memicmp( &pLine[i], TypeDataPtr->m_szBlockCommentTo, (int)lstrlen( TypeDataPtr->m_szBlockCommentTo ) ) ){
-								nCOMMENTEND = i + (int)lstrlen( TypeDataPtr->m_szBlockCommentTo );
-								break;
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-						i = i;
+						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, nPos + (int)lstrlen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(0) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
+
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 					}else
-					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && (
-						NULL != TypeDataPtr->m_szBlockCommentFrom2 &&	/* ブロックコメントデリミタ2(From) */
-						'\0' != TypeDataPtr->m_szBlockCommentFrom2[0] &&
-						NULL != TypeDataPtr->m_szBlockCommentTo2 &&		/* ブロックコメントデリミタ2(To) */
-						'\0' != TypeDataPtr->m_szBlockCommentTo2[0]  &&
-						nPos <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 ) &&	/* ブロックコメントデリミタ2(From) */
-						0 == memicmp( &pLine[nPos], TypeDataPtr->m_szBlockCommentFrom2, (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 ) )
-					) ){
+					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
+						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 1, nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
+					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
@@ -776,22 +707,7 @@ searchnext:;
 							}
 //						}
 						/* この物理行にブロックコメントの終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos + (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 ); i <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentTo2 ); ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( 0 == memicmp( &pLine[i], TypeDataPtr->m_szBlockCommentTo2, (int)lstrlen( TypeDataPtr->m_szBlockCommentTo2 ) ) ){
-								nCOMMENTEND = i + (int)lstrlen( TypeDataPtr->m_szBlockCommentTo2 );
-								break;
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-						i = i;
+						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, nPos + (int)lstrlen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(1) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 //#endif
 					}else
 					if( pLine[nPos] == '\'' &&
@@ -814,7 +730,7 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -859,7 +775,7 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -888,7 +804,7 @@ searchnext:;
 						}
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
-					 && ( TRUE == IsURL( (const char *)&pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+					 && ( TRUE == IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -904,7 +820,7 @@ searchnext:;
 //@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
 //#ifdef COMPILE_COLOR_DIGIT
 					}else if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
-						&& (i = IsNumber( (const char*)pLine, nPos, nLineLen )) > 0 )		/* 半角数字を表示する */
+						&& (i = IsNumber( pLine, nPos, nLineLen )) > 0 )		/* 半角数字を表示する */
 					{
 						/* キーワード文字列の終端をセットする */
 						i = nPos + i;
@@ -925,14 +841,12 @@ searchnext:;
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx != -1 && /* キーワードセット */
 						TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
-//						( pLine[nPos] == '#' || pLine[nPos] == '$' || __iscsym( pLine[nPos] ) )
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
 						//	Mar 4, 2001 genta comment out
 						//	bKeyWordTop = false;
 						/* キーワード文字列の終端を探す */
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-//							if( pLine[i] == '#' || pLine[i] == '$' || __iscsym( pLine[i] ) ){
 							if( IS_KEYWORD_CHAR( pLine[i] ) ){
 							}else{
 								break;
@@ -943,7 +857,7 @@ searchnext:;
 						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
 						nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
 							TypeDataPtr->m_nKeyWordSetIdx,
-							(const char *)&pLine[nPos],
+							&pLine[nPos],
 							j
 						);
 						if( nIdx != -1 ){
@@ -966,7 +880,7 @@ searchnext:;
 								/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
 								nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
 									TypeDataPtr->m_nKeyWordSetIdx2 ,													//MIK
-									(const char *)&pLine[nPos],															//MIK
+									&pLine[nPos],																		//MIK
 									j																					//MIK
 								);																						//MIK
 								if( nIdx != -1 ){																		//MIK
@@ -1032,21 +946,7 @@ searchnext:;
 				case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos/* + (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom )*/; i <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentTo ); ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( 0 == memicmp( &pLine[i], TypeDataPtr->m_szBlockCommentTo, (int)lstrlen( TypeDataPtr->m_szBlockCommentTo ) ) ){
-								nCOMMENTEND = i + (int)lstrlen( TypeDataPtr->m_szBlockCommentTo );
-								break;
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
+						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 					}else
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
@@ -1066,21 +966,7 @@ searchnext:;
 				case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos/* + (int)lstrlen( TypeDataPtr->m_szBlockCommentFrom2 )*/; i <= nLineLen - (int)lstrlen( TypeDataPtr->m_szBlockCommentTo2 ); ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( 0 == memicmp( &pLine[i], TypeDataPtr->m_szBlockCommentTo2, (int)lstrlen( TypeDataPtr->m_szBlockCommentTo2 ) ) ){
-								nCOMMENTEND = i + (int)lstrlen( TypeDataPtr->m_szBlockCommentTo2 );
-								break;
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
+						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 					}else
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
@@ -1103,7 +989,7 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -1151,7 +1037,7 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -1274,7 +1160,7 @@ searchnext:;
 					nBgn = nPos + 1;
 					nCharChars = 1;
 				}else
-				if( pLine[nPos] == 0x81 && pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
+				if( (unsigned char)pLine[nPos] == 0x81 && (unsigned char)pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
 				// && nCOMMENTMODE != 1000 )	//@@@ 2002.01.04
 				 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
 				{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
@@ -1392,7 +1278,7 @@ searchnext:;
 					nCharChars = 1;
 				}
 				else{
-					nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[nPos] ) - (const char *)&pLine[nPos];
+					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
 					if( 0 == nCharChars ){
 						nCharChars = 1;
 					}
@@ -1402,9 +1288,9 @@ searchnext:;
 					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
 					 &&	(
 								//	Jan. 23, 2002 genta 警告抑制
-							( /*(unsigned char)0x0 <= pLine[nPos] &&*/ pLine[nPos] <= (unsigned char)0x1F ) ||
-							( (unsigned char)'~' < pLine[nPos] && pLine[nPos] < (unsigned char)'｡' ) ||
-							( (unsigned char)'ﾟ' < pLine[nPos] /*&& pLine[nPos] <= (unsigned char)0xff*/ )
+							( (unsigned char)pLine[nPos] <= (unsigned char)0x1F ) ||
+							( (unsigned char)'~' < (unsigned char)pLine[nPos] && (unsigned char)pLine[nPos] < (unsigned char)'｡' ) ||
+							( (unsigned char)'ﾟ' < (unsigned char)pLine[nPos] )
 						)
 					 && pLine[nPos] != TAB && pLine[nPos] != CR && pLine[nPos] != LF
 					){
@@ -1418,7 +1304,7 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
 						/* コントロールコード列の終端を探す */
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -1427,9 +1313,9 @@ searchnext:;
 							}
 							if( (
 								//	Jan. 23, 2002 genta 警告抑制
-								( /*(unsigned char)0x0 <= pLine[i] &&*/ pLine[i] <= (unsigned char)0x1F ) ||
-									( (unsigned char)'~' < pLine[i] && pLine[i] < (unsigned char)'｡' ) ||
-									( (unsigned char)'ﾟ' < pLine[i] /*&& pLine[i] <= (unsigned char)0xff*/ )
+								( (unsigned char)pLine[i] <= (unsigned char)0x1F ) ||
+									( (unsigned char)'~' < (unsigned char)pLine[i] && (unsigned char)pLine[i] < (unsigned char)'｡' ) ||
+									( (unsigned char)'ﾟ' < (unsigned char)pLine[i] )
 								) &&
 								pLine[i] != TAB && pLine[i] != CR && pLine[i] != LF
 							){

@@ -34,6 +34,7 @@ TOOLDIR=..\btool
 
 OBJS =\
 	$(SRCDIR)\CAutoSave.obj \
+	$(SRCDIR)\CBlockComment.obj \
 	$(SRCDIR)\CCommandLine.obj \
 	$(SRCDIR)\CControlProcess.obj \
 	$(SRCDIR)\CDialog.obj \
@@ -89,6 +90,7 @@ OBJS =\
 	$(SRCDIR)\CLayoutMgr.obj \
 	$(SRCDIR)\CLayoutMgr_New.obj \
 	$(SRCDIR)\CLayoutMgr_New2.obj \
+	$(SRCDIR)\CLineComment.obj \
 	$(SRCDIR)\CMacro.obj \
 	$(SRCDIR)\CMacroFactory.obj \
 	$(SRCDIR)\CMacroManagerBase.obj \

@@ -35,6 +35,9 @@ class CShareData;
 #include "funccode.h"
 #include "CMemory.h"
 
+#include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
+#include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
+
 enum maxdata{
 	MAX_EDITWINDOWS				= 256,
 //	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
@@ -254,21 +257,10 @@ struct Types {
 //	COLORREF			m_colorWSTRING;					/* ダブルクォーテーション文字列色 */
 //	COLORREF			m_colorWSTRINGBACK;				/* ダブルクォーテーション文字列背景の色 */
 //	COLORREF			m_colorUNDERLINE;				/* カーソル行アンダーラインの色 */
-	char				m_szLineComment[16];			/*!< 行コメントデリミタ */
-	char				m_szLineComment2[16];			/*!< 行コメントデリミタ2 */
-	char				m_szLineComment3[16];			/*!< 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 
-	//	May. 12, 2001 genta
-	int					m_nLineCommentPos;				//< 行コメント1の開始位置(負数は指定無し)
-	int					m_nLineCommentPos2;				//< 行コメント2の開始位置(負数は指定無し)
-	int					m_nLineCommentPos3;				//< 行コメント3の開始位置(負数は指定無し)	//Jun. 01, 2001 JEPRO 追加
+	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
+	CBlockComment		m_cBlockComment;				/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
-	char				m_szBlockCommentFrom[16];		/*!< ブロックコメントデリミタ(From) */
-	char				m_szBlockCommentTo[16];			/*!< ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char				m_szBlockCommentFrom2[16];		/*!< ブロックコメントデリミタ2(From) */ //@@@ 2001.03.10 by MIK
-	char				m_szBlockCommentTo2[16];		/*!< ブロックコメントデリミタ2(To) */ //@@@ 2001.03.10 by MIK
-//#endif
 	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	char				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
 //	int					m_nKEYWORDCASE;					/*!< キーワードの英大文字小文字区別 */

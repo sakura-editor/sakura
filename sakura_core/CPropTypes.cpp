@@ -70,6 +70,16 @@ TYPE_NAME ImeSwitchArr[] = {
 };
 const int nImeSwitchArrNum = sizeof( ImeSwitchArr ) / sizeof( ImeSwitchArr[0] );
 
+//	行コメントに関する情報
+struct {
+	int nEditID;
+	int nCheckBoxID;
+	int nTextID;
+} const cLineComment[COMMENT_DELIMITER_NUM] = {
+	{ IDC_EDIT_LINECOMMENT	, IDC_CHECK_LCPOS , IDC_EDIT_LINECOMMENTPOS },
+	{ IDC_EDIT_LINECOMMENT2	, IDC_CHECK_LCPOS2, IDC_EDIT_LINECOMMENTPOS2},
+	{ IDC_EDIT_LINECOMMENT3	, IDC_CHECK_LCPOS3, IDC_EDIT_LINECOMMENTPOS3}
+};
 
 WNDPROC	m_wpColorListProc;
 
@@ -2337,60 +2347,43 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 
 	m_nCurrentColorType = 0;	/* 現在選択されている色タイプ */
 
-	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT )		, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment ) - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT2 )		, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment2 ) - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT3 )		, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szLineComment3 ) - 1 ), 0 );	//Jun. 01, 2001 JEPRO 追加
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentFrom ) - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentTo ) - 1 ), 0 );
+	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */	//@@@ 2002.09.22 YAZAKI
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT )		, EM_LIMITTEXT, (WPARAM)( COMMENT_DELIMITER_BUFFERSIZE - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT2 )		, EM_LIMITTEXT, (WPARAM)( COMMENT_DELIMITER_BUFFERSIZE - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT3 )		, EM_LIMITTEXT, (WPARAM)( COMMENT_DELIMITER_BUFFERSIZE - 1 ), 0 );	//Jun. 01, 2001 JEPRO 追加
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2 )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentFrom2 ) - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2 )	, EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_szBlockCommentTo2 ) - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2 )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2 )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
 //#endif
 
-	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT			, m_Types.m_szLineComment );		/* 行コメントデリミタ */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2		, m_Types.m_szLineComment2 );		/* 行コメントデリミタ2 */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT3		, m_Types.m_szLineComment3 );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_szBlockCommentFrom );	/* ブロックコメントデリミタ(From) */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_szBlockCommentTo );		/* ブロックコメントデリミタ(To) */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_cBlockComment.getBlockCommentFrom(0) );	/* ブロックコメントデリミタ(From) */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_cBlockComment.getBlockCommentTo(0) );	/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2 );	/* ブロックコメントデリミタ2(From) */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2 );	/* ブロックコメントデリミタ2(To) */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_cBlockComment.getBlockCommentFrom(1) );	/* ブロックコメントデリミタ2(From) */
+	::SetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_cBlockComment.getBlockCommentTo(1) );	/* ブロックコメントデリミタ2(To) */
 //#endif
+
+	/* 行コメントデリミタ @@@ 2002.09.22 YAZAKI*/
 	//	From Here May 12, 2001 genta
 	//	行コメントの開始桁位置設定
 	//	May 21, 2001 genta 桁位置を1から数えるように
-	if( m_Types.m_nLineCommentPos >= 0 ){
-		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, m_Types.m_nLineCommentPos + 1, FALSE );
-	}
-	else {
-		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, (~m_Types.m_nLineCommentPos) + 1, FALSE );
-	}
+	for ( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
+		//	テキスト
+		::SetDlgItemText( hwndDlg, cLineComment[i].nEditID, m_Types.m_cLineComment.getLineComment(i) );	
 
-	if( m_Types.m_nLineCommentPos2 >= 0 ){
-		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS2, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, m_Types.m_nLineCommentPos2 + 1, FALSE );
+		//	桁数チェックと、数値
+		int nPos = m_Types.m_cLineComment.getLineCommentPos(i);
+		if( nPos >= 0 ){
+			::CheckDlgButton( hwndDlg, cLineComment[i].nCheckBoxID, TRUE );
+			::SetDlgItemInt( hwndDlg, cLineComment[i].nTextID, nPos + 1, FALSE );
+		}
+		else {
+			::CheckDlgButton( hwndDlg, cLineComment[i].nCheckBoxID, FALSE );
+			::SetDlgItemInt( hwndDlg, cLineComment[i].nTextID, (~nPos) + 1, FALSE );
+		}
 	}
-	else {
-		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS2, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, (~m_Types.m_nLineCommentPos2) + 1, FALSE );
-	}
-
-	//	To Here May 12, 2001 genta
-
-	//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
-	if( m_Types.m_nLineCommentPos3 >= 0 ){
-		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS3, TRUE );
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, m_Types.m_nLineCommentPos3 + 1, FALSE );
-	}
-	else {
-		::CheckDlgButton( hwndDlg, IDC_CHECK_LCPOS3, FALSE );
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, (~m_Types.m_nLineCommentPos3) + 1, FALSE );
-	}
-	//	To Here Jun. 01, 2001
-
 
 	if( 0 == m_Types.m_nStringType ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, TRUE );
@@ -2502,61 +2495,41 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 1;
 
-
-	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT		, m_Types.m_szLineComment	, sizeof( m_Types.m_szLineComment ) );		/* 行コメントデリミタ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT2	, m_Types.m_szLineComment2	, sizeof( m_Types.m_szLineComment2 ) );		/* 行コメントデリミタ2 */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_LINECOMMENT3	, m_Types.m_szLineComment3	, sizeof( m_Types.m_szLineComment3 ) );		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
 	//	From Here May 12, 2001 genta
 	//	コメントの開始桁位置の取得
 	//	May 21, 2001 genta 桁位置を1から数えるように
+	char buffer[COMMENT_DELIMITER_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI LineCommentを取得するためのバッファ
 	int pos;
 	UINT en;
 	BOOL bTranslated;
 
-	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS );
-	pos = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS, &bTranslated, FALSE );
-	if( bTranslated != TRUE ){
-		en = 0;
-		pos = 0;
+	int i;
+	for( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
+		en = ::IsDlgButtonChecked( hwndDlg, cLineComment[i].nCheckBoxID );
+		pos = ::GetDlgItemInt( hwndDlg, cLineComment[i].nTextID, &bTranslated, FALSE );
+		if( bTranslated != TRUE ){
+			en = 0;
+			pos = 0;
+		}
+		//	pos == 0のときは無効扱い
+		if( pos == 0 )	en = 0;
+		else			--pos;
+		//	無効のときは1の補数で格納
+
+		::GetDlgItemText( hwndDlg, cLineComment[i].nEditID		, buffer	, COMMENT_DELIMITER_BUFFERSIZE );		/* 行コメントデリミタ */
+		m_Types.m_cLineComment.CopyTo( i, buffer, en ? pos : ~pos );
 	}
-	//	pos == 0のときは無効扱い
-	if( pos == 0 )	en = 0;
-	else			--pos;
-	//	無効のときは1の補数で格納
-	m_Types.m_nLineCommentPos = en ? pos : ~pos;
 
-	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS2 );
-	pos = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS2, &bTranslated, FALSE );
-	if( bTranslated != TRUE ){
-		en = 0;
-		pos = 0;
-	}
-	//	pos == 0のときは無効扱い
-	if( pos == 0 )	en = 0;
-	else			--pos;
-	m_Types.m_nLineCommentPos2 = en ? pos : ~pos;
+	char szFromBuffer[BLOCKCOMMENT_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI
+	char szToBuffer[BLOCKCOMMENT_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI
 
-	//	To Here May 12, 2001 genta
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, szFromBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(From) */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, szToBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(To) */
+	m_Types.m_cBlockComment.CopyTo( 0, szFromBuffer, szToBuffer );
 
-	//	From Here Jun. 01, 2001 JEPRO 3つ目を追加
-	en = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_LCPOS3 );
-	pos = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINECOMMENTPOS3, &bTranslated, FALSE );
-	if( bTranslated != TRUE ){
-		en = 0;
-		pos = 0;
-	}
-	//	pos == 0のときは無効扱い
-	if( pos == 0 )	en = 0;
-	else			--pos;
-	m_Types.m_nLineCommentPos3 = en ? pos : ~pos;
-	//	To Here Jun. 01, 2001
-
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_szBlockCommentFrom	, sizeof( m_Types.m_szBlockCommentFrom ) );	/* ブロックコメントデリミタ(From) */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_szBlockCommentTo	, sizeof( m_Types.m_szBlockCommentTo ) );	/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_szBlockCommentFrom2	, sizeof( m_Types.m_szBlockCommentFrom2 ) );/* ブロックコメントデリミタ2(From) */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_szBlockCommentTo2	, sizeof( m_Types.m_szBlockCommentTo2 ) );	/* ブロックコメントデリミタ2(To) */
-//#endif
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, szFromBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(From) */
+	::GetDlgItemText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, szToBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(To) */
+	m_Types.m_cBlockComment.CopyTo( 1, szFromBuffer, szToBuffer );
 
 	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_ESCAPETYPE_1 ) ){

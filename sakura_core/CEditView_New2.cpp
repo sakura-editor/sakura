@@ -352,9 +352,10 @@ void CEditView::DispLineNumber(
 
 
 
-
-/* テキスト表示 */
-int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int nLength )
+/* テキスト表示
+	@@@ 2002.09.22 YAZAKI const unsigned char* pDataを、const char* pDataに変更
+*/
+int CEditView::DispText( HDC hdc, int x, int y, const char* pData, int nLength )
 {
 	if( 0 >= nLength ){
 		return 0;
@@ -374,7 +375,7 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 	 && rcClip.top >= m_nViewAlignTop
 	){
 		rcClip.bottom = y + nLineHeight;
-//		::ExtTextOut( hdc, x, y, fuOptions, &rcClip, (const char *)pData, nLength, m_pnDx );
+
 		//@@@	From Here 2002.01.30 YAZAKI ExtTextOutの制限回避
 		if( rcClip.right - rcClip.left > m_nViewCx ){
 			rcClip.right = rcClip.left + m_nViewCx;
@@ -384,14 +385,14 @@ int CEditView::DispText( HDC hdc, int x, int y, const unsigned char* pData, int 
 		if ( x < 0 ){
 			int nLeft = ( 0 - x ) / nCharWidth - 1;
 			while (nBefore < nLeft){
-				nBefore += CMemory::MemCharNext( (const char *)pData, nLength, (const char *)&pData[nBefore] ) - (const char *)&pData[nBefore];
+				nBefore += CMemory::MemCharNext( pData, nLength, &pData[nBefore] ) - &pData[nBefore];
 			}
 		}
 		if ( rcClip.right < x + nCharWidth * nLength ){
 			//	-1してごまかす（うしろはいいよね？）
 			nAfter = (x + nCharWidth * nLength - rcClip.right) / nCharWidth - 1;
 		}
-		::ExtTextOut( hdc, x + nBefore * nCharWidth, y, fuOptions, &rcClip, (const char *)&pData[nBefore], nLength - nBefore - nAfter, m_pnDx );
+		::ExtTextOut( hdc, x + nBefore * nCharWidth, y, fuOptions, &rcClip, &pData[nBefore], nLength - nBefore - nAfter, m_pnDx );
 		//@@@	To Here 2002.01.30 YAZAKI ExtTextOutの制限回避
 	}
 	return nLength;

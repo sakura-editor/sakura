@@ -611,13 +611,14 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
 	ref.m_nTabSpace =			m_pParentWnd->m_cEditDoc.m_cLayoutMgr.GetTabSpace();
-	strcpy( ref.m_szLineComment,	"");		/* 行コメントデリミタ */
-	strcpy( ref.m_szLineComment2,	"");		/* 行コメントデリミタ2 */
-	strcpy( ref.m_szLineComment3,	"");		/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	strcpy( ref.m_szBlockCommentFrom,	"");		/* ブロックコメントデリミタ(From) */
-	strcpy( ref.m_szBlockCommentTo,		"");		/* ブロックコメントデリミタ(To) */
-	strcpy( ref.m_szBlockCommentFrom2,	"");		/* ブロックコメントデリミタ2(From) */
-	strcpy( ref.m_szBlockCommentTo2,	"");		/* ブロックコメントデリミタ2(To) */
+
+	//@@@ 2002.09.22 YAZAKI
+	ref.m_cLineComment.CopyTo(0, "", -1);	/* 行コメントデリミタ */
+	ref.m_cLineComment.CopyTo(1, "", -1);	/* 行コメントデリミタ2 */
+	ref.m_cLineComment.CopyTo(2, "", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+	ref.m_cBlockComment.CopyTo(0, "", "");	/* ブロックコメントデリミタ */
+	ref.m_cBlockComment.CopyTo(1, "", "");	/* ブロックコメントデリミタ2 */
+
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 	ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;

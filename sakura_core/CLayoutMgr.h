@@ -29,6 +29,8 @@ class CLayoutMgr;
 // //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 //#include "CBregexp.h"// 2002/2/10 aroka
 #include "CShareData.h"
+#include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
+#include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
 class CDocLineMgr;// 2002/2/10 aroka
@@ -192,15 +194,8 @@ protected:
 	char*			m_pszKinsokuKuto_1;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	char*			m_pszKinsokuKuto_2;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	int				m_nTabSpace;				/* TAB文字スペース */
-	char*			m_pszLineComment;			/* 行コメントデリミタ */
-	char*			m_pszLineComment2;			/* 行コメントデリミタ2 */
-	char*			m_pszLineComment3;			/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	char*			m_pszBlockCommentFrom;		/* ブロックコメントデリミタ(From) */
-	char*			m_pszBlockCommentTo;		/* ブロックコメントデリミタ(To) */
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	char*			m_pszBlockCommentFrom2;		/* ブロックコメントデリミタ2(From) */
-	char*			m_pszBlockCommentTo2;		/* ブロックコメントデリミタ2(To) */
-//#endif
+	CLineComment	m_cLineComment;				/* 行コメントデリミタ */		//@@@ 2002.09.22 YAZAKI
+	CBlockComment	m_cBlockComment;			/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 	int				m_nStringType;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
 	int				m_nPrevReferLine;
@@ -208,8 +203,10 @@ protected:
 	/*
 	|| 実装ヘルパ系
 	*/
-	CLayout* InsertLineNext( CLayout*, CDocLine*, /*const char*,*/ int, int, int, int, int );
-	void AddLineBottom( CDocLine*, /*const char*,*/ int, int, int, int, int );
+	//@@@ 2002.09.23 YAZAKI
+	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nTypeNext );
+	CLayout* InsertLineNext( CLayout*, CLayout* );
+	void AddLineBottom( CLayout* );
 public:
 	void Init();
 	void Empty();
@@ -219,6 +216,10 @@ private:
 	bool IsKinsokuTail( const char *pLine, int length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 	bool IsKutoTen( unsigned char c1, unsigned char c2 );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
 	bool IsKinsokuKuto( const char *pLine, int length );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
+
+	//@@@ 2002.09.22 YAZAKI
+	bool CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine, BOOL bDispSSTRING, BOOL bDispWSTRING );
+	int Match_Quote( char szQuote, int nPos, int nLineLen, const char* pLine );
 };
 
 
