@@ -1302,6 +1302,12 @@ void CEditView::Command_GOFILETOP( int bSelect )
 	MoveCursor( m_nCaretPosX, 0, TRUE );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
+	//	Feb. 21, 2004 gis_dur 選択しながら文書先頭へ移動すると
+	//	選択範囲が変になる
+	if( bSelect ){
+		/* 現在のカーソル位置によって選択範囲を変更 */
+		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, 0 );
+	}
 	return;
 }
 
