@@ -42,7 +42,7 @@
 #include "etc_uty.h"
 #include "CEol.h"// 2002/2/3 aroka
 #include "charcode.h"
-
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 //#ifdef _DEBUG
 #include "global.h"

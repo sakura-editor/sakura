@@ -27,6 +27,7 @@
 #include "CEol.h"// 2002/2/3 aroka
 #include "CBregexp.h"// 2002/2/3 aroka
 #include "COsVersionInfo.h"
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 //	CShareDataへ移動
 /* 日付をフォーマット */

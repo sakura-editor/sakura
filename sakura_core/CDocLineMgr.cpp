@@ -49,7 +49,7 @@
 
 #include "CFileWrite.h" //2002/05/22 Frozen
 #include "CFileLoad.h" // 2002/08/30 Moca
-
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 
 /* •¶ŽšŽí—ÞŽ¯•ÊŽq */

@@ -24,7 +24,7 @@
 #include "CEditWnd.h"
 #include "Debug.h"
 #include "etc_uty.h"
-
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 /* JavaŠÖ”ƒŠƒXƒgì¬ */
 void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )

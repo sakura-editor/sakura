@@ -15,6 +15,7 @@
 */
 #include "CBlockComment.h"
 #include "CMemory.h"
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 CBlockComment::CBlockComment()
 {

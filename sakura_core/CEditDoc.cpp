@@ -38,6 +38,7 @@
 #include "CDocLine.h" /// 2002/2/3 aroka
 #include "CPrintPreview.h"
 #include <assert.h> /// 2002/11/2 frozen
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 #define IDT_ROLLMOUSE	1
 
