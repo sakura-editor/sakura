@@ -58,7 +58,7 @@ SAKURA_CORE_API BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨
 SAKURA_CORE_API BOOL GetLongFileName( const char*, char* );	/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */
 SAKURA_CORE_API char* GetHelpFilePath( char* , unsigned int nMaxLen = _MAX_PATH );	/* ƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚· */// 20020119 aroka
 SAKURA_CORE_API BOOL CheckEXT( const char*, const char* );	/* Šg’£q‚ğ’²‚×‚é */
-SAKURA_CORE_API char* my_strtok( char*, int, int*, char* );
+SAKURA_CORE_API char* my_strtok( char*, int, int*, const char* );
 /* Shell InterfaceŒn(?) */
 SAKURA_CORE_API BOOL SelectDir(HWND, const char*, const char*, char* );	/* ƒtƒHƒ‹ƒ_‘I‘ğƒ_ƒCƒAƒƒO */
 SAKURA_CORE_API ITEMIDLIST* CreateItemIDList( const char* );	/* ƒpƒX–¼‚É‘Î‚·‚éƒAƒCƒeƒ€‚h‚cƒŠƒXƒg‚ğæ“¾‚·‚é */
