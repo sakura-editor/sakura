@@ -1229,7 +1229,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bUseHokan"					, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bUseHokan, 0 );
 //		cProfile.IOProfileData( bRead, pszSecName, "szHokanFile"				, REGCNV_SZ2SZ, (char*)/*&*/m_pShareData->m_Common.m_szHokanFile, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bGrepKanjiCode_AutoDetect"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "bHokanLoHiCase"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bHokanLoHiCase, 0 );
+		// 2001/06/19 asa-o タイプ別に移動したので削除
+//		cProfile.IOProfileData( bRead, pszSecName, "bHokanLoHiCase"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bHokanLoHiCase, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bSaveWindowSize"			, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bSaveWindowSize, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeType"				, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nWinSizeType, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "nWinSizeCX"					, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_nWinSizeCX, 0 );
@@ -1711,6 +1712,9 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bUseKeyWordHelp"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bUseKeyWordHelp, 0 );	//	キーワードヘルプを使用する
 		cProfile.IOProfileData( bRead, pszSecName, "szKeyWordHelpFile"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKeyWordHelpFile, 0 );	//	キーワードヘルプ 辞書ファイル
 		//	2001/06/14 End
+
+		//	2001/06/19 asa-o
+		cProfile.IOProfileData( bRead, pszSecName, "bHokanLoHiCase"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bHokanLoHiCase, 0 );
 
 		/* 色設定 I/O */
 		IO_ColorSet( &cProfile, bRead, pszSecName, m_pShareData->m_Types[i].m_ColorInfoArr  );

@@ -55,7 +55,9 @@ public:
 		int			nColmWidth,
 		const char*	pszCurWord,
 	//	void*		pcEditView,
-		const char* pszHokanFile
+		const char* pszHokanFile,
+		int			bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+		CMemory*	pcmemHokanWord = NULL	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	);
 	void SetCurKouhoStr( void );
 	BOOL DoHokan( int );
@@ -75,6 +77,9 @@ public:
 //	BOOL OnNextDlgCtl( WPARAM, LPARAM );
 
 	int KeyProc( WPARAM, LPARAM );
+
+//	2001/06/18 asa-o
+	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
 
     
 //	HFONT			m_hFont;

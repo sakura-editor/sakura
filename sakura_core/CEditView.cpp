@@ -3742,15 +3742,18 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
 		::GetCursorPos( &po );
-		/* 辞書Tipが起動されている */
-		if( 0 == m_dwTipTimer ){
-			if( (m_poTipCurPos.x != po.x || m_poTipCurPos.y != po.y ) ){
-				/* 辞書Tipを消す */
-				m_cTipWnd.Hide();
-				m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
+		//	2001/06/18 asa-o: 補完ウィンドウが表示されていない
+		if(!m_bHokan){
+			/* 辞書Tipが起動されている */
+			if( 0 == m_dwTipTimer ){
+				if( (m_poTipCurPos.x != po.x || m_poTipCurPos.y != po.y ) ){
+					/* 辞書Tipを消す */
+					m_cTipWnd.Hide();
+					m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
+				}
+			}else{
+				m_dwTipTimer = ::GetTickCount();		/* 辞書Tip起動タイマー */
 			}
-		}else{
-			m_dwTipTimer = ::GetTickCount();		/* 辞書Tip起動タイマー */
 		}
 		/* 現在のマウスカーソル位置→レイアウト位置 */
 		int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );

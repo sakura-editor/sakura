@@ -127,7 +127,7 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 
 
 /* Tipを表示 */
-void CTipWnd::Show( int nX, int nY, char* szText )
+void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 {
 //	LOGFONT	lf;
 	HDC		hdc;
@@ -178,10 +178,16 @@ void CTipWnd::Show( int nX, int nY, char* szText )
 	hdc = ::GetDC( m_hWnd );
 //	hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 
-	/* ウィンドウのサイズを決める */
-	ComputeWindowSize( hdc, m_hFont, pszInfo, &rc );
-	
-	
+	// サイズを計算済み	2001/06/19 asa-o
+	if(pRect != NULL)
+	{
+		rc = *pRect;
+	}
+	else
+	{
+		/* ウィンドウのサイズを決める */
+		ComputeWindowSize( hdc, m_hFont, pszInfo, &rc );
+	}	
 	
 //	
 //	pszInfo = m_cInfo.GetPtr( NULL );
@@ -385,3 +391,20 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 
 
 }
+
+
+// 2001/06/19 Start by asa-o: ウィンドウのサイズを得る
+void CTipWnd::GetWindowSize(LPRECT pRect)
+{
+	HDC			hdc;
+	const char*	pszText;
+
+	hdc = ::GetDC( m_hWnd );
+
+	pszText = m_cInfo.GetPtr(NULL);
+
+	// ウィンドウのサイズを得る
+	ComputeWindowSize( hdc, m_hFont, pszText , pRect );
+}
+
+// 2001/06/19 End

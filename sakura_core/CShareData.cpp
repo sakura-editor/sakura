@@ -56,7 +56,7 @@ struct ARRHEAD {
 	
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 11;
+const unsigned int uShareDataVersion = 12;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､ 
@@ -763,7 +763,8 @@ bool CShareData::Init( void )
 //		m_pShareData->m_Common.m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
 //		strcpy( m_pShareData->m_Common.m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
 		m_pShareData->m_Common.m_bGrepKanjiCode_AutoDetect = FALSE;	/* Grep: 文字コード自動判別 */
-		m_pShareData->m_Common.m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
+		// 2001/06/19 asa-o タイプ別に移動したので削除
+//		m_pShareData->m_Common.m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
 		m_pShareData->m_Common.m_bSaveWindowSize = TRUE;			/* ウィンドウサイズ継承 */
 		m_pShareData->m_Common.m_nWinSizeType = SIZE_RESTORED;
 		m_pShareData->m_Common.m_nWinSizeCX = CW_USEDEFAULT;
@@ -892,6 +893,9 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
 		strcpy( m_pShareData->m_Types[nIdx].m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
 		// 2001/06/14 End
+
+		// 2001/06/19 asa-o
+		m_pShareData->m_Types[nIdx].m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
 
 /**
 		static const char* ppszTypeName[] = {

@@ -1121,4 +1121,78 @@ void CEditView::AddCurrentLineToHistory( void )
 
 }
 
+
+//	2001/06/18 Start by asa-o: 補完ウィンドウ用のキーワードヘルプ表示
+bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
+{
+	CMemory		cmemCurText;
+	CMemory*	pcmemRefText;
+	LPSTR		pszWork;
+	RECT		rcTipWin,
+				rcDesktop;
+
+	if( m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+		if( m_bInMenuLoop == FALSE	&&	/* メニュー モーダル ループに入っていない */
+			0 != m_dwTipTimer			/* 辞書Tipを表示していない */
+		){
+			cmemCurText.SetDataSz( pszHelp );
+
+			/* 既に検索済みか */
+			if( CMemory::IsEqual( cmemCurText, m_cTipWnd.m_cKey ) ){
+				/* 該当するキーがなかった */
+				if( !m_cTipWnd.m_KeyWasHit ){
+					return false;
+				}
+			}else{
+				m_cTipWnd.m_cKey = cmemCurText;
+				/* 検索実行 */
+				if( m_cDicMgr.Search( cmemCurText.GetPtr( NULL ), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
+					/* 該当するキーがある */
+					m_cTipWnd.m_KeyWasHit = TRUE;
+					pszWork = pcmemRefText->GetPtr( NULL );
+//								m_cTipWnd.m_cInfo.SetData( pszWork, lstrlen( pszWork ) );
+					m_cTipWnd.m_cInfo.SetDataSz( pszWork );
+					delete pcmemRefText;
+				}else{
+					/* 該当するキーがなかった */
+					m_cTipWnd.m_KeyWasHit = FALSE;
+					return false;
+				}
+			}
+			m_dwTipTimer = 0;	/* 辞書Tipを表示している */
+
+		// 2001/06/19 Start by asa-o: 辞書Tipの表示位置調整
+			// 辞書Tipのサイズを取得
+			m_cTipWnd.GetWindowSize(&rcTipWin);
+
+			::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+
+			// 右に入る
+			if(prcHokanWin->right + rcTipWin.right < rcDesktop.right){
+				// そのまま
+			}else
+			// 左に入る
+			if(rcDesktop.left < prcHokanWin->left - rcTipWin.right ){
+				// 左に表示
+				po.x = prcHokanWin->left - (rcTipWin.right + 8);
+			}else
+			// どちらもスペースが無いとき広いほうに表示
+			if(rcDesktop.right - prcHokanWin->right > prcHokanWin->left ){
+				// 右に表示 そのまま
+			}else{
+				// 左に表示
+				po.x = prcHokanWin->left - (rcTipWin.right + 8);
+			}
+		// 2001/06/19 End
+
+			/* 辞書Tipを表示 */
+			m_cTipWnd.Show( po.x, po.y , NULL , &rcTipWin);
+			return true;
+		}
+	}
+	return false;
+}
+//	2001/06/18 End
+
+
 /* [EOF] */

@@ -48,8 +48,9 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void Show( int, int, char* );	/* Tipを表示 */
+	void Show( int, int, char*, RECT* pRect = NULL );	/* Tipを表示 */
 	void Hide( void );	/* Tipを消す */
+	void GetWindowSize(RECT* pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
 //	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
 	char*		m_pszClassName;	/* Mutex作成用・ウィンドウクラス名 */

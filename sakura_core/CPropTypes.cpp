@@ -1187,6 +1187,10 @@ void CPropTypes::SetData_p2( HWND hwndDlg )
 	/* 入力補完用単語ファイル */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
 
+//	2001/06/19 asa-o
+	/* 入力補完機能：英大文字小文字を同一視する */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Types.m_bHokanLoHiCase );
+
 	/* キーワードヘルプを使用する  */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Types.m_bUseKeyWordHelp );
 //	From Here Sept. 12, 2000 JEPRO キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする
@@ -1211,6 +1215,10 @@ void CPropTypes::SetData_p2( HWND hwndDlg )
 int CPropTypes::GetData_p2( HWND hwndDlg )
 {
 	m_nPageNum = 2;
+
+//	2001/06/19	asa-o
+	/* 入力補完機能：英大文字小文字を同一視する */
+	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
 
 	/* 入力補完 単語ファイル */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, MAX_PATH - 1 );
