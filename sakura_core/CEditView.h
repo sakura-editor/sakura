@@ -357,7 +357,7 @@ protected:
 	void Command_PLSQL_COMPILE_ON_SQLPLUS( void );/* Oracle SQL*Plusで実行 */
 	void Command_BROWSE( void );				/* ブラウズ */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
-	void Command_EXITALL( void );				/* テキストエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
+	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */
 	void Command_CHAR( char );				/* 文字入力 */

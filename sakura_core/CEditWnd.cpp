@@ -1559,7 +1559,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		switch( wID ){
 //		case IDM_EXITALL:
 		case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
-			/* テキストエディタの全終了 */
+			/* サクラエディタの全終了 */
 			CEditApp::TerminateApplication();
 			break;
 		/* キー割り当て一覧を作成 */
