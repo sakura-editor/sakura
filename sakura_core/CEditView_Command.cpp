@@ -1345,8 +1345,13 @@ void CEditView::Command_GOFILEEND( int bSelect )
 	AddCurrentLineToHistory();
 	Cursor_UPDOWN( m_pcEditDoc->m_cLayoutMgr.GetLineCount() , bSelect );
 	Command_DOWN( bSelect, TRUE );
-	if ( !m_bBeginBoxSelect )							// 2002/04/18 YAZAKI
-		Command_GOLINEEND( bSelect, TRUE );				// 2001.12.21 hor Add
+	if ( !m_bBeginBoxSelect ){							// 2002/04/18 YAZAKI
+		/*	2004.04.19 fotomo
+			改行のない最終行で選択肢ながら文書末へ移動した場合に
+			選択範囲が正しくない場合がある問題に対応
+		*/
+		Command_GOLINEEND( bSelect, FALSE );				// 2001.12.21 hor Add
+	}
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
 	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = m_nCaretPosX;
