@@ -380,19 +380,19 @@ IDD_FUNCLIST DIALOGEX 0, 0, 222, 290
 STYLE DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | 
     WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "x"
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "Tree1",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
-                    WS_BORDER | WS_TABSTOP,5,20,210,185,0,HIDC_TREE1
+                    WS_BORDER | WS_TABSTOP,0,17,222,188,0,HIDC_TREE1
     CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | 
-                    LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,5,
-                    0,210,205,0,HIDC_LIST1
-    PUSHBUTTON      "コピー(&C)",IDC_BUTTON_COPY,5,235,50,14,WS_DISABLED,0,
+                    LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,0,
+                    0,222,205,0,HIDC_LIST1
+    PUSHBUTTON      "コピー(&C)",IDC_BUTTON_COPY,0,235,50,14,WS_DISABLED,0,
                     HIDC_BUTTON_COPY
-    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,58,235,50,14,0,0,HIDOK
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,112,235,50,14,0,0,HIDCANCEL
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,165,235,50,14,0,0,
+    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,53,235,50,14,0,0,HIDOK
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,107,235,50,14,0,0,HIDCANCEL
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,162,235,50,14,0,0,
                     HIDC_BUTTON_HELP
     CONTROL         "自動的に閉じる(&D)",IDC_CHECK_bAutoCloseDlgFuncList,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,255,65,10,0,
@@ -403,8 +403,8 @@ BEGIN
     CONTROL         "空行を無視する(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,255,65,10,0,
                     HIDC_CHECK_bMarkUpBlankLineEnable
-    LTEXT           "順序(&S)",IDC_STATIC_nSortType,7,7,23,8
-    COMBOBOX        IDC_COMBO_nSortType,34,5,94,65,CBS_DROPDOWNLIST | 
+    LTEXT           "順序(&S)",IDC_STATIC_nSortType,0,6,23,8
+    COMBOBOX        IDC_COMBO_nSortType,34,4,94,65,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
 END
 
@@ -1987,8 +1987,6 @@ BEGIN
 
     IDD_FUNCLIST, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 215
         TOPMARGIN, 7
         BOTTOMMARGIN, 283
     END
