@@ -192,6 +192,7 @@ static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_KEYWORDHELPFILE_REF,	HIDC_BUTTON_KEYWORDHELPFILE_REF,	//キーワードヘルプファイル参照
 	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
 	IDC_CHECK_USEKEYWORDHELP,		HIDC_CHECK_USEKEYWORDHELP,			//キーワードヘルプ機能
+	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
 	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
 	IDC_EDIT_KEYWORDHELPFILE,		HIDC_EDIT_KEYWORDHELPFILE,			//辞書ファイル名
 //	IDC_STATIC,						-1,
@@ -766,18 +767,19 @@ BOOL CPropTypes::DispatchEvent_p1(
 			case IDC_BUTTON_RULEFILE_REF:	/* アウトライン解析→ルールファイルの「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Types.m_szOutlineRuleFilename );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					if( _IS_REL_PATH( m_Types.m_szOutlineRuleFilename ) ){
+						GetExecutableDir( szPath, m_Types.m_szOutlineRuleFilename );
+					}else{
+						strcpy( szPath, m_Types.m_szOutlineRuleFilename );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.*",
-						m_Types.m_szOutlineRuleFilename,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Types.m_szOutlineRuleFilename, szPath );
@@ -1061,15 +1063,18 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 			nSelPos = i;
 		}
 	}
+
+	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
+
 	if( m_Types.m_nDefaultOutline == OUTLINE_FILE ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, FALSE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, TRUE );
 
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
 
-		::SetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
@@ -1265,9 +1270,11 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	HWND	hwndCombo;
 	int		nSelPos;
 	
+	// 2003.06.23 Moca ルールを使っていなくてもファイル名を保持
+	::GetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, sizeof( m_Types.m_szOutlineRuleFilename ));
+
 	if ( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
 		m_Types.m_nDefaultOutline = OUTLINE_FILE;
-		::GetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, sizeof( m_Types.m_szOutlineRuleFilename ));
 	}
 	else {
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
@@ -1365,18 +1372,19 @@ BOOL CPropTypes::DispatchEvent_p2(
 			case IDC_BUTTON_HOKANFILE_REF:	/* 入力補完 単語ファイルの「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Types.m_szHokanFile );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					if( _IS_REL_PATH( m_Types.m_szHokanFile ) ){
+						GetExecutableDir( szPath, m_Types.m_szHokanFile );
+					}else{
+						strcpy( szPath, m_Types.m_szHokanFile );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.*",
-						m_Types.m_szHokanFile,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Types.m_szHokanFile, szPath );
@@ -1403,18 +1411,19 @@ BOOL CPropTypes::DispatchEvent_p2(
 			case IDC_BUTTON_KEYWORDHELPFILE_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Types.m_szKeyWordHelpFile );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					if( _IS_REL_PATH( m_Types.m_szKeyWordHelpFile ) ){
+						GetExecutableDir( szPath, m_Types.m_szKeyWordHelpFile );
+					}else{
+						strcpy( szPath, m_Types.m_szKeyWordHelpFile );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.*",
-						m_Types.m_szKeyWordHelpFile,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Types.m_szKeyWordHelpFile, szPath );
@@ -1425,18 +1434,19 @@ BOOL CPropTypes::DispatchEvent_p2(
 			case IDC_BUTTON_TYPEOPENHELP:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Types.m_szExtHelp );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					if( _IS_REL_PATH( m_Types.m_szExtHelp ) ){
+						GetExecutableDir( szPath, m_Types.m_szExtHelp );
+					}else{
+						strcpy( szPath, m_Types.m_szExtHelp );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.hlp",
-						m_Types.m_szExtHelp,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Types.m_szExtHelp, szPath );
@@ -1447,18 +1457,19 @@ BOOL CPropTypes::DispatchEvent_p2(
 			case IDC_BUTTON_TYPEOPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
-					char*			pszMRU = NULL;;
-					char*			pszOPENFOLDER = NULL;;
 					char			szPath[_MAX_PATH + 1];
-					strcpy( szPath, m_Types.m_szExtHtmlHelp );
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					if( _IS_REL_PATH( m_Types.m_szExtHtmlHelp ) ){
+						GetExecutableDir( szPath, m_Types.m_szExtHtmlHelp );
+					}else{
+						strcpy( szPath, m_Types.m_szExtHtmlHelp );
+					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
 						"*.chm;*.col",
-						m_Types.m_szExtHtmlHelp,
-						(const char **)&pszMRU,
-						(const char **)&pszOPENFOLDER
+						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						strcpy( m_Types.m_szExtHtmlHelp, szPath );
@@ -1521,6 +1532,9 @@ void CPropTypes::SetData_p2( HWND hwndDlg )
 	/* 入力補完機能：英大文字小文字を同一視する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Types.m_bHokanLoHiCase );
 
+	// 2003.06.25 Moca ファイルからの補完機能
+	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANBYFILE, m_Types.m_bUseHokanByFile );
+
 	/* キーワードヘルプを使用する  */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Types.m_bUseKeyWordHelp );
 //	From Here Sept. 12, 2000 JEPRO キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする
@@ -1554,6 +1568,9 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 //	2001/06/19	asa-o
 	/* 入力補完機能：英大文字小文字を同一視する */
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
+
+	m_Types.m_bUseHokanByFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANBYFILE );
+
 
 	/* 入力補完 単語ファイル */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, sizeof( m_Types.m_szHokanFile ));

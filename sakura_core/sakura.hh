@@ -270,7 +270,6 @@
 #define HLP000252	252	//次の差分へ
 #define HLP000253	253	//前の差分へ
 #define HLP000254	254	//差分表示の全解除
-// NextHelpID 267
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
@@ -500,6 +499,7 @@
 #define HIDC_BUTTON_KEYWORDHELPFILE_REF			11501 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANLOHICASE				11510 //入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_USEKEYWORDHELP				11511 //キーワードヘルプ機能			//Jul. 05, 2001 JEPRO 共通から移動・変更
+#define HIDC_CHECK_HOKANBYFILE					11512 //現在のファイルから入力補完		// 2003.06.25 Moca
 #define HIDC_EDIT_HOKANFILE						11540 //単語ファイル名					//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_EDIT_KEYWORDHELPFILE				11541 //辞書ファイル名					//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_BUTTON_REGEX_IMPORT	11600	//インポート	//@@@ 2001.11.17 add MIK

@@ -158,12 +158,13 @@ int CHokanMgr::Search(
 	int			nWinHeight,
 	int			nColmWidth,
 	const char*	pszCurWord,
-//	void*		pcEditView,
 	const char* pszHokanFile,
 	int			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+	BOOL		bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
 	CMemory*	pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
+	CEditView* pcEditView = (CEditView*)m_lParam;
 	/*
 	||  補完キーワードの検索
 	||
@@ -174,6 +175,7 @@ int CHokanMgr::Search(
 	*/
 	if( NULL != m_pcmemKouho ){
 		delete m_pcmemKouho;
+		m_pcmemKouho = NULL;
 	}
 	m_nKouhoNum = CDicMgr::HokanSearch(
 		pszCurWord,
@@ -183,6 +185,17 @@ int CHokanMgr::Search(
 		0, //Max候補数
 		pszHokanFile
 	);
+
+	// 2003.05.16 Moca 追加 編集中データ内から候補を探す
+	if( bHokanByFile ){
+		m_nKouhoNum = pcEditView->HokanSearchByFile(
+			pszCurWord,
+			bHokanLoHiCase,
+			&m_pcmemKouho,
+			m_nKouhoNum,
+			1024 // 編集中データからなので数を制限しておく
+		);
+	}
 	if( 0 == m_nKouhoNum ){
 		m_nCurKouhoIdx = -1;
 		return 0;
@@ -213,7 +226,6 @@ int CHokanMgr::Search(
 	m_nColmWidth = nColmWidth;
 //	m_cmemCurWord.SetData( pszCurWord, lstrlen( pszCurWord ) );
 	m_cmemCurWord.SetDataSz( pszCurWord );
-//	m_pcEditView = pcEditView;
 
 	/* 文字列描画用文字幅配列 */
 	for( i = 0; i < ( sizeof(m_pnDx) / sizeof(m_pnDx[0]) ); ++i ){
@@ -358,12 +370,17 @@ int CHokanMgr::Search(
 //	2001/06/18 asa-o:
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 
-
+//	2003.06.25 Moca 他のメソッドで使っていないので、とりあえず削除しておく
+	if( NULL != m_pcmemKouho ){
+		delete m_pcmemKouho;
+		m_pcmemKouho = NULL;
+	}
 	return m_nKouhoNum;
 }
 
 
-
+#if 0
+///// 2003.06.25　未使用のようだ。Moca
 void CHokanMgr::SetCurKouhoStr( void )
 {
 	char*	pszCR = "\n";
@@ -411,7 +428,7 @@ void CHokanMgr::SetCurKouhoStr( void )
 	return;
 
 }
-
+#endif
 
 
 BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )

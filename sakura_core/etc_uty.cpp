@@ -1814,6 +1814,37 @@ void AddLastYenFromDirectoryPath( char* pszFolder )
 }
 
 
+/*!最後の文字が指定された文字でないときは付加する
+	@param pszStr [i/o]操作する文字列
+	@param nMaxLen [in]バッファ長
+	@param c [in]追加したい文字
+	@retval  0 \が元から付いていた
+	@retval  1 \を付加した
+	@retval -1 バッファが足りず、\を付加できなかった
+	@date 2003.06.24 Moca 新規作成
+*/
+int AddLastChar( char* pszPath, int nMaxLen, char c ){
+	int pos = strlen( pszPath );
+	// 何もないときは\を付加
+	if( 0 == pos ){
+		if( nMaxLen <= pos + 1 ){
+			return -1;
+		}
+		pszPath[0] = c;
+		pszPath[1] = '\0';
+		return 1;
+	}
+	// 最後が\でないときも\を付加(日本語を考慮)
+	else if( *::CharPrev( pszPath, &pszPath[pos] ) != c ){
+		if( nMaxLen <= pos + 1 ){
+			return -1;
+		}
+		pszPath[pos] = c;
+		pszPath[pos + 1] = '\0';
+		return 1;
+	}
+	return 0;
+}
 
 
 /* ショートカット(.lnk)の解決 */
@@ -2651,6 +2682,37 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 	
 	return hIcon;
 }
+
+/*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
+	@author Moca
+	@date 2003.06.23
+*/
+FILE* fopen_absexe(const char* fname, const char* mode)
+{
+	if( _IS_REL_PATH( fname ) ){
+		char path[_MAX_PATH];
+		GetExecutableDir( path, fname );
+		return fopen( path, mode );
+	}
+	return fopen( fname, mode );
+	
+}
+
+/*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
+	@author Moca
+	@date 2003.06.23
+*/
+HFILE _lopen_absexe(LPCSTR fname, int mode)
+{
+	// fnameが相対パス
+	if( _IS_REL_PATH( fname ) ){
+		char path[_MAX_PATH];
+		GetExecutableDir( path, fname );
+		return _lopen( path, mode );
+	}
+	return _lopen( fname, mode );
+}
+
 
 /*! 文字数制限機能付きstrncpy
 

@@ -34,6 +34,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 	//	Oct. 19, 2002 genta
 	{F_GETSELECTED,	"GetSelectedString",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
 	{F_EXPANDPARAMETER,	"ExpandParameter",	{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
+	{F_GETLINESTR, "GetLineStr", {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_BSTR, NULL }, // 指定論理行の取得 2003.06.01 Moca
+	{F_GETLINECOUNT, "GetLineCount", {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 全論理行数の取得 2003.06.01 Moca
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，

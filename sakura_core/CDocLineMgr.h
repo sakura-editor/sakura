@@ -61,6 +61,7 @@ public:
 	char* GetAllData( int* );	/* 全行データを返す */
 	int GetLineCount( void ) { return m_nLines; }	/* 全行数を返す */
 	const char* GetLineStr( int , int* );
+	const char* GetLineStrWithoutEOL( int , int* ); // 2003.06.22 Moca
 	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
 	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
 
@@ -175,7 +176,6 @@ public:
 	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEOL );
 	CDocLine* GetLineInfo( int );
 	// 2002/2/10 aroka メンバを private にしてアクセサ追加
-	int GetLines() const { return m_nLines; }
 	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }
 	CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }
 

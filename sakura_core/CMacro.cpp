@@ -764,6 +764,46 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			Wrap(&Result)->Receive(S);
 		}
 		return true;
+	case F_GETLINESTR:
+		//	2003.06.01 Moca マクロ追加
+		{
+			if( ArgSize != 1 ) return false;
+			if( Arguments[0].vt != VT_I4 ) return false;
+			if( -1 < Arguments[0].lVal ){
+				const char *Buffer;
+				int nLength, nLine;
+				if( 0 == Arguments[0].lVal ){
+					nLine = View->m_nCaretPosY_PHY;
+				}else{
+					nLine = Arguments[0].lVal - 1;
+				}
+				Buffer = View->m_pcEditDoc->m_cDocLineMgr.GetLineStr( nLine, &nLength );
+				if( Buffer != NULL ){
+					SysString S( Buffer, nLength );
+					Wrap( &Result )->Receive( S );
+				}else{
+					Result.vt = VT_BSTR;
+					Result.bstrVal = SysAllocString(L"");
+				}
+			}else{
+				return false;
+			}
+		}
+		return true;
+	case F_GETLINECOUNT:
+		//	2003.06.01 Moca マクロ追加
+		{
+			if( ArgSize != 1 ) return false;
+			if( Arguments[0].vt != VT_I4 ) return false;
+			if( 0 == Arguments[0].lVal ){
+				int nLineCount;
+				nLineCount = View->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+				Wrap( &Result )->Receive( nLineCount );
+			}else{
+				return false;
+			}
+		}
+		return true;
 	default:
 		return false;
 	}

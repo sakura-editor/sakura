@@ -107,6 +107,8 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_MacroTable[0].m_szName ) - 1 ), 0 );
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_MacroTable[0].m_szFile ) - 1 ), 0 );
+		// 2003.06.23 Moca
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRODIR ),  EM_LIMITTEXT, (WPARAM)( sizeof(m_szMACROFOLDER ) - 1 ), 0 );
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -163,6 +165,21 @@ BOOL CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wPar
 				break;
 			}
 			break;	/* CBN_DROPDOWN */
+		// From Here 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
+		case EN_KILLFOCUS:
+			switch( wID ){
+			case IDC_MACRODIR:
+				{
+					TCHAR szDir[_MAX_PATH];
+					::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
+					if( 1 == AddLastChar( szDir, _MAX_PATH, '\\' ) ){
+						::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
+					}
+				}
+				break;
+			}
+			break;
+		// To Here 2003.06.23 Moca
 		}
 
 		break;	/* WM_COMMAND */
@@ -226,7 +243,7 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 	}
 	
 	//	マクロディレクトリ
-	::SetDlgItemText( hwndDlg, IDC_MACRODIR, m_pShareData->m_szMACROFOLDER );
+	::SetDlgItemText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_szMACROFOLDER );
 
 	nLastPos_Macro = -1;
 	
@@ -296,7 +313,9 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	::GetDlgItemText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_szMACROFOLDER, _MAX_PATH );
-
+	// 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
+	AddLastChar( m_szMACROFOLDER, _MAX_PATH, '\\' );
+	
 	return TRUE;
 }
 
@@ -429,67 +448,22 @@ void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 {
 
 // 2002/04/14 novice
-#if 0
-	LPMALLOC pMalloc;
-	BROWSEINFO bi;
-	TCHAR szDir[MAX_PATH + 1]; // 追加する\\用に1足した
-	LPITEMIDLIST pidl;
-
-	char szInitial[MAX_PATH];
-
-	if( SHGetMalloc(&pMalloc) == E_FAIL ){
-		::MessageBox( hwndDlg, "PropComMacro::SelectBaseDir_Macro::SHGetMalloc",
-			"バグ報告お願い", MB_OK );
-		return;	//	よくわからんけど失敗した
-	}
-
-	::GetDlgItemText( hwndDlg, IDC_MACRODIR, szInitial, MAX_PATH );
-
-	ZeroMemory(&bi,sizeof(bi));
-	bi.hwndOwner = hwndDlg;	 // オーナーウィンドウハンドルを設定
-	bi.pidlRoot = NULL;
-	bi.pszDisplayName = szDir;
-	bi.lpszTitle = "Macroディレクトリの選択";
-	bi.ulFlags = BIF_RETURNONLYFSDIRS;
-	bi.lpfn = CPropCommon::DirCallback_Macro;
-	bi.lParam = (LPARAM)szInitial;	// 初期ディレクトリ
-
-	// フォルダの参照ダイアログボックスの表示
-	pidl = SHBrowseForFolder(&bi);
-
-	if (pidl)
-	{
-		if (SHGetPathFromIDList(pidl,szDir))
-		{
-			//	末尾に\\マークを追加する．
-			int pos = strlen( szDir );
-			if( szDir[ pos - 1 ] != '\\' ){
-				szDir[ pos ] = '\\';
-				szDir[ pos + 1 ] = '\0';
-			}
-			::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
-		}
-
-		// SHBrowseForFolder によって割り当てられた PIDL を解放
-		pMalloc->Free(pidl);
-	}
-
-	// Shell のアロケータを開放
-	pMalloc->Release();
-#endif
+//	SelectDir()に分離された部分を削除
 	TCHAR szDir[MAX_PATH + 1]; // 追加する\\用に1足した
 
 	/* 検索フォルダ */
 	::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
 
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	if( _IS_REL_PATH( szDir ) ){
+		char folder[_MAX_PATH];
+		strcpy( folder, szDir );
+		GetExecutableDir( szDir, folder );
+	}
+
 	if( SelectDir( hwndDlg, "Macroディレクトリの選択", szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
-		int pos = strlen( szDir );
-		if( szDir[ pos - 1 ] != '\\' ){
-			szDir[ pos ] = '\\';
-			szDir[ pos + 1 ] = '\0';
-		}
-
+		AddLastChar( szDir, _MAX_PATH, '\\' );
 		::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
 	}
 }
@@ -530,6 +504,13 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
 
 	::GetDlgItemText( hwndDlg, IDC_MACRODIR, path, _MAX_PATH );
+
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	if( _IS_REL_PATH( path ) ){
+		char folder[_MAX_PATH];
+		strcpy( folder, path );
+		GetExecutableDir( path, folder );
+	}
 	strcat( path, "*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化

@@ -479,8 +479,6 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	FILE*			pFile;
 	char			szLine[1024];
@@ -492,9 +490,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		m_hInstance,
 		hwndDlg,
 		"*.kwd",
-		szPath,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szPath
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return;
@@ -537,8 +533,6 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //		"単語をファイルへエクスポートする機能は、まだ完成していないのです。\n"
 //	);
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	FILE*			pFile;
 //	char			szLine[1024];
@@ -551,9 +545,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		m_hInstance,
 		hwndDlg,
 		"*.kwd",
-		szPath,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szPath
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;

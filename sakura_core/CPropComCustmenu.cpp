@@ -819,8 +819,6 @@ int CPropCommon::GetData_p8( HWND hwndDlg )
 void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
 //	char			szLine[1024];
@@ -839,9 +837,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 		m_hInstance,
 		hwndDlg,
 		"*.mnu",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return;
@@ -882,8 +878,6 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
 //	char			szLine[1024];
@@ -897,9 +891,7 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 		m_hInstance,
 		hwndDlg,
 		"*.mnu",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;

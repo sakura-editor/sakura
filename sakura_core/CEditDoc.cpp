@@ -2914,7 +2914,8 @@ struct oneRule {
 int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule, int nMaxCount )
 {
 	long	i;
-	FILE*	pFile = fopen( pszFilename, "r" );
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+	FILE*	pFile = fopen_absexe( pszFilename, "r" );
 	if( NULL == pFile ){
 		return 0;
 	}

@@ -37,6 +37,9 @@
 #include "CDllHandler.h"
 #include "stdio.h"
 
+#define PPADLL_VER 123
+
+
 /*!
 	@brief PPA.DLL をサポートするクラス
 
@@ -114,6 +117,7 @@ private:
 	// 以下は PPA.DLL Version 1.23 で追加された関数 --
 	#if PPADLL_VER >= 123
 	typedef BYTE (WINAPI *PPA_IsRunning)();
+	typedef void (WINAPI *PPA_SetFinishProc)(void*);	//	2003.06.01 Moca
 	#endif // PPADLL_VER >= 123
 
 	PPA_Execute    m_fnExecute;
@@ -155,6 +159,7 @@ private:
 
 #if PPADLL_VER >= 123
 	PPA_IsRunning m_fnIsRunning;
+	PPA_SetFinishProc m_fnSetFinishProc;	//	2003.06.01 Moca
 #endif
 
 public:
@@ -231,20 +236,32 @@ public:
 #if PPADLL_VER >= 123
 	BOOL IsRunning()
 		{ return (BOOL)m_fnIsRunning(); }
+	void SetFinishProc(void* proc)	//	2003.06.01 Moca
+		{ m_fnSetFinishProc(proc); }
 #endif
 
 private:
+	// コールバックプロシージャ群
+	static void __stdcall stdStrObj(const char*, int, BYTE, int*, char**);	//	2003.06.01 Moca
+
 	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
 	static void __stdcall stdIntFunc( const char* FuncName, const int Index,
 		const char* Argument[], const int ArgSize, int* Err_CD, int* ResultValue); // 2002.02.24 Moca
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
-
 	static bool CallHandleFunction( const int Index, const char* Arg[], int ArgSize, VARIANT* Result ); // 2002.02.24 Moca
+
+	static void __stdcall stdError( int, const char* );	//	2003.06.01 Moca
+	static void __stdcall stdFinishProc();	//	2003.06.01 Moca
+
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
-	static class CEditView*		m_pcEditView;
-	static struct DLLSHAREDATA*	m_pShareData;
+	static CMemory			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
+	static CEditView*		m_pcEditView;	//	2003.06.01 Moca
+	static DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
+	static bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
+	static CMemory			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];
 	static int					m_nFuncNum;	//	SAKURAエディタ用関数の数

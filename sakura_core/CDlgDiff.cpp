@@ -90,8 +90,6 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 	case IDC_BUTTON_DIFF_DST:	/* 参照 */
 		{
 			CDlgOpenFile	cDlgOpenFile;
-			char*			pszMRU = NULL;;
-			char*			pszOPENFOLDER = NULL;;
 			char			szPath[_MAX_PATH];
 			strcpy( szPath, m_szFile2 );
 			/* ファイルオープンダイアログの初期化 */
@@ -99,9 +97,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 				m_hInstance,
 				m_hWnd,
 				"*.*",
-				m_szFile1 /*m_szFile2*/,
-				(const char **)&pszMRU,
-				(const char **)&pszOPENFOLDER
+				m_szFile1 /*m_szFile2*/
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 			{

@@ -88,8 +88,6 @@ BOOL CALLBACK CPropTypes::PropTypesRegex(
 BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*		pszMRU = NULL;;
-	char*		pszOPENFOLDER = NULL;;
 	char		szPath[_MAX_PATH + 1];
 	int		i, j, k;
 	char		szInitDir[_MAX_PATH + 1];
@@ -108,9 +106,7 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 		m_hInstance,
 		hwndDlg,
 		"*.rkw",	/* [R]egex [K]ey[W]ord */
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return FALSE;
@@ -196,8 +192,6 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*		pszMRU = NULL;;
-	char*		pszOPENFOLDER = NULL;;
 	char		szPath[_MAX_PATH + 1];
 	int		i, j, k;
 	char		szInitDir[_MAX_PATH + 1];
@@ -213,9 +207,7 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 		m_hInstance,
 		hwndDlg,
 		"*.rkw",	/* [R]egex [K]ey[W]ord */
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return FALSE;

@@ -13,10 +13,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include <stdio.h>
 #include "CDicMgr.h"
 #include "CMemory.h" // 2002/2/10 aroka ヘッダ整理
-#include <stdio.h>
 #include "CRunningTimer.h"
+#include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 
 
@@ -62,7 +63,8 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 	if( 0 >= lstrlen( pszKeyWordHelpFile ) ){
 		return FALSE;
 	}
-	pFile = fopen( pszKeyWordHelpFile, "r" );
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+	pFile = fopen_absexe( pszKeyWordHelpFile, "r" );
 	if( NULL == pFile ){
 		return FALSE;
 	}
@@ -123,16 +125,17 @@ int CDicMgr::HokanSearch(
 	int		nKeyLen;
 	int		nKouhoNum;
 	int		nRet;
+	*ppcmemKouho = NULL;
 	if( 0 >= lstrlen( pszKeyWordFile ) ){
 		return 0;
 	}
-	pFile = fopen( pszKeyWordFile, "r" );
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+	pFile = fopen_absexe( pszKeyWordFile, "r" );
 	if( NULL == pFile ){
 		return 0;
 	}
 	nKouhoNum = 0;
 	nKeyLen = lstrlen( pszKey );
-	*ppcmemKouho = NULL;
 	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
 		if( nKeyLen > (int)lstrlen( szLine ) ){
 			continue;

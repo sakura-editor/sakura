@@ -1361,16 +1361,16 @@ void CLayoutMgr::CaretPos_Log2Phys(
 			pcLayout = Search( nCaretPosY - 1 );
 			if( NULL == pcLayout ){
 				*pnX = 0;
-				*pnY = m_pcDocLineMgr->GetLines(); // 2002/2/10 aroka CDocLineMgr変更
+				*pnY = m_pcDocLineMgr->GetLineCount(); // 2002/2/10 aroka CDocLineMgr変更
 				return;
 			}else{
 				pData = GetLineStr( nCaretPosY - 1, &nDataLen );
 				if( pData[nDataLen - 1] == '\r' || pData[nDataLen - 1] == '\n' ){
 					*pnX = 0;
-					*pnY = m_pcDocLineMgr->GetLines(); // 2002/2/10 aroka CDocLineMgr変更
+					*pnY = m_pcDocLineMgr->GetLineCount(); // 2002/2/10 aroka CDocLineMgr変更
 					return;
 				}else{
-					*pnY = m_pcDocLineMgr->GetLines() - 1; // 2002/2/10 aroka CDocLineMgr変更
+					*pnY = m_pcDocLineMgr->GetLineCount() - 1; // 2002/2/10 aroka CDocLineMgr変更
 					bEOF = TRUE;
 					nX = 999999;
 					goto checkloop;

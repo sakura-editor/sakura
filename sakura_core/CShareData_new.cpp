@@ -934,6 +934,9 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		//	2001/06/19 asa-o
 		cProfile.IOProfileData( bRead, pszSecName, "bHokanLoHiCase"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bHokanLoHiCase, 0 );
 
+		//	2003.06.23 Moca ファイル内からの入力補完機能
+		cProfile.IOProfileData( bRead, pszSecName, "bUseHokanByFile"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bUseHokanByFile, 0 );
+
 		//@@@ 2002.2.4 YAZAKI
 		cProfile.IOProfileData( bRead, pszSecName, "szExtHelp"			, REGCNV_SZ2SZ,
 			(char*)/*&*/m_pShareData->m_Types[i].m_szExtHelp,

@@ -119,8 +119,12 @@ struct ARRHEAD {
 
 	Version 46:
 	編集ウインドウ数修正、タブウインドウ用情報追加
+
+	Version 47:
+	ファイルからの補完をTypesに追加 2003.06.28 Moca
+
 */
-const unsigned int uShareDataVersion = 46;
+const unsigned int uShareDataVersion = 47;
 
 /*
 ||	Singleton風
@@ -964,6 +968,9 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		// 2001/06/19 asa-o
 		m_pShareData->m_Types[nIdx].m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
 
+		//	2003.06.23 Moca ファイル内からの入力補完機能
+		m_pShareData->m_Types[nIdx].m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
+
 		//@@@2002.2.4 YAZAKI
 		m_pShareData->m_Types[nIdx].m_szExtHelp[0] = '\0';
 		m_pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = '\0';
@@ -1164,7 +1171,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
 		//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
 		m_pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
-
+		//	2003.06.23 Moca ファイル内からの入力補完機能
+		m_pShareData->m_Types[2].m_bUseHokanByFile = TRUE;			/*! 入力補完 開いているファイル内から候補を探す */
 
 		/* HTML */
 		m_pShareData->m_Types[3].m_cBlockComment.CopyTo( 0, "<!--", "-->" );	/* ブロックコメントデリミタ */
@@ -4338,49 +4346,73 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	@author YAZAKI
 	@date 2003.06.08 Moca ローカル変数へのポインタを返さないように仕様変更
 	@date 2003.06.14 genta 文字列長，ポインタのチェックを追加
+	@date 2003.06.24 Moca idxが-1のとき、キーマクロのフルパスを返す.
 	
 	@note idxは正確なものでなければならない。(内部で正当性チェックを行っていない)
 */
 int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
 {
-	if( !m_pShareData->m_MacroTable[idx].IsEnabled() )
+	if( -1 != idx && !m_pShareData->m_MacroTable[idx].IsEnabled() )
 		return 0;
-
 //	char fbuf[_MAX_PATH * 2];
-	char *ptr = m_pShareData->m_MacroTable[idx].m_szFile;
+	char *ptr;
+	char *pszFile;
 
-	if( ptr[0] == '\0' ){	//	ファイル名が無い
+	if( -1 == idx ){
+		pszFile = "RecKey.mac";
+	}else{
+		pszFile = m_pShareData->m_MacroTable[idx].m_szFile;
+	}
+	if( pszFile[0] == '\0' ){	//	ファイル名が無い
 		if( pszPath != NULL ){
 			pszPath[0] = '\0';
 		}
 		return 0;
 	}
-
+	ptr = pszFile;
 	int nLen = strlen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
 
-	if(( ptr[0] == '\\' || ( ptr[1] == ':' && ptr[2] == '\\' ))	// 絶対パス
+	if( !_IS_REL_PATH( pszFile )	// 絶対パス
 		|| m_pShareData->m_szMACROFOLDER[0] == '\0' ){	//	フォルダ指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
-		strcpy( pszPath, ptr );
+		strcpy( pszPath, pszFile );
 		return nLen;
 	}
 	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
 		int nFlen = strlen( m_pShareData->m_szMACROFOLDER );
-		int nAllLen = nLen + nFlen
-			+ ( m_pShareData->m_szMACROFOLDER[ nFlen - 1 ] == '\\' ? 0 : 1 );
-		
+		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, sizeof(m_pShareData->m_szMACROFOLDER), '\\' );
+		int nAllLen = nLen + nFlen + ( 0 == nFolderSep ? 0 : 1 );
+
+		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
+		if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
+			char szExeDir[_MAX_PATH];
+			int nExeLen;
+			GetExecutableDir( szExeDir, NULL );
+			nExeLen = strlen( szExeDir );
+			nAllLen += nExeLen + 1;
+			if( pszPath == NULL || nBufLen <= nAllLen ){
+				return -nAllLen;
+			}
+			strcpy( pszPath, szExeDir );
+			ptr = pszPath + nExeLen;
+			*ptr++ = '\\';
+		}else{
+			ptr = pszPath;
+		}
+
 		if( pszPath == NULL || nBufLen <= nAllLen ){
 			return -nAllLen;
 		}
-		strcpy( pszPath, m_pShareData->m_szMACROFOLDER );
-		ptr = pszPath + nFlen;
-		if( ptr[-1] != '\\' ){
+
+		strcpy( ptr, m_pShareData->m_szMACROFOLDER );
+		ptr += nFlen;
+		if( -1 == nFolderSep ){
 			*ptr++ = '\\';
 		}
-		strcpy( ptr, m_pShareData->m_MacroTable[idx].m_szFile );
+		strcpy( ptr, pszFile );
 		return nAllLen;
 	}
 

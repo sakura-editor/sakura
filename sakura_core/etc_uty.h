@@ -19,6 +19,7 @@
 #ifndef _ETC_UTY_H_
 #define _ETC_UTY_H_
 
+#include <stdio.h>
 #include <windows.h>
 #include "global.h"
 #include <shlobj.h>
@@ -32,6 +33,7 @@ class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 //SAKURA_CORE_API const char* MyGetTimeFormat( SYSTEMTIME &systime, char* pszDest, int nDestLen, int nTimeFormatType, const char* pszTimeFormat );/* 時刻をフォーマット */
 SAKURA_CORE_API void CutLastYenFromDirectoryPath( char* );/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 SAKURA_CORE_API void AddLastYenFromDirectoryPath( char* );/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+SAKURA_CORE_API int AddLastChar( char*, int, char );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
 SAKURA_CORE_API int LimitStringLengthB( const char*, int, int, CMemory& );/* データを指定バイト数以内に切り詰める */
 SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* 指定長以下のテキストに切り分ける */
 //SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, BOOL*, BOOL );/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
@@ -110,6 +112,9 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
+FILE *fopen_absexe(const char* fname, const char* mode); // 2003.06.23 Moca
+HFILE _lopen_absexe(LPCSTR fname, int mode); // 2003.06.23 Moca
+
 //	Apr. 30, 2003 genta
 //	ディレクトリの深さを調べる
 int CalcDirectoryDepth(const char* path);
@@ -126,6 +131,22 @@ inline bool _IS_SJIS_1(unsigned int ch)
 inline bool _IS_SJIS_2(unsigned int ch)
 {
 	return ( ch >=0x040 )&&( ch <=0x07E || (( ch >=0x080 )&&( ch <=0x0FC )));
+}
+
+/*! 相対パスか判定する
+	@author Moca
+	@date 2003.06.23
+*/
+inline bool _IS_REL_PATH(const char* path)
+{
+	bool ret = true;
+	if( ( 'A' <= path[0] && path[0] <= 'Z' || 'a' <= path[0] && path[0] <= 'z' )
+		&& path[1] == ':' && path[2] == '\\'
+		|| path[0] == '\\' && path[1] == '\\'
+		 ){
+		ret = false;
+	}
+	return ret;
 }
 
 #endif /* _ETC_UTY_H_ */

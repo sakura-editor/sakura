@@ -1703,39 +1703,6 @@ void CEditView::Command_DELETE_BACK( void )
 		/* カーソル直前の単語を取得 */
 		if( 0 < GetLeftWord( &cmemData, 100 ) ){
 			ShowHokanMgr( cmemData, FALSE );
-#if 0
-//			MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr() );
-			/* 補完対象ワードリストを調べる */
-			poWin.x = m_nViewAlignLeft
-					 + (m_nCaretPosX - m_nViewLeftCol)
-						* ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-			poWin.y = m_nViewAlignTop
-					  + (m_nCaretPosY - m_nViewTopLine)
-						* ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-			::ClientToScreen( m_hWnd, &poWin );
-			poWin.x -= (
-				cmemData.GetLength()
-				 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
-			);
-			if( 0 < m_pcEditDoc->m_cHokanMgr.Search(
-//t				m_hFont_HAN,
-				&poWin,
-				m_nCharHeight,
-				m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
-				cmemData.GetPtr(),
-//t				(void*)this,
-//				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
-				m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase	// 2001/06/19 asa-o 英大文字小文字を同一視する
-			) ){
-				m_bHokan = TRUE;
-			}else{
-				if( m_bHokan ){
-					m_pcEditDoc->m_cHokanMgr.Hide();
-					m_bHokan = FALSE;
-				}
-			}
-#endif
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();
@@ -3328,39 +3295,6 @@ void CEditView::Command_CHAR( char cChar )
 		/* カーソル直前の単語を取得 */
 		if( 0 < GetLeftWord( &cmemData, 100 ) ){
 			ShowHokanMgr( cmemData, FALSE );
-#if 0
-//			MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr() );
-			/* 補完対象ワードリストを調べる */
-			poWin.x = m_nViewAlignLeft
-					 + (m_nCaretPosX - m_nViewLeftCol)
-					  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-			poWin.y = m_nViewAlignTop
-					  + (m_nCaretPosY - m_nViewTopLine)
-					   * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-			::ClientToScreen( m_hWnd, &poWin );
-			poWin.x -= (
-				cmemData.GetLength()
-				 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
-			);
-			if( 0 < m_pcEditDoc->m_cHokanMgr.Search(
-//t				m_hFont_HAN,
-				&poWin,
-				m_nCharHeight,
-				m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
-				cmemData.GetPtr(),
-//t				(void*)this,
-//				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
-				m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase	// 2001/06/19 asa-o 英大文字小文字を同一視する
-			) ){
-				m_bHokan = TRUE;
-			}else{
-				if( m_bHokan ){
-					m_pcEditDoc->m_cHokanMgr.Hide();
-					m_bHokan = FALSE;
-				}
-			}
-#endif
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();
@@ -3482,39 +3416,6 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		/* カーソル直前の単語を取得 */
 		if( 0 < GetLeftWord( &cmemData, 100 ) ){
 			ShowHokanMgr( cmemData, FALSE );
-#if 0
-//			MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr() );
-			/* 補完対象ワードリストを調べる */
-			poWin.x = m_nViewAlignLeft
-					 + (m_nCaretPosX - m_nViewLeftCol)
-					  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-			poWin.y = m_nViewAlignTop
-					 + (m_nCaretPosY - m_nViewTopLine)
-					  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-			::ClientToScreen( m_hWnd, &poWin );
-			poWin.x -= (
-				cmemData.GetLength()
-				 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
-			);
-			if( 0 < m_pcEditDoc->m_cHokanMgr.Search(
-//t				m_hFont_HAN,
-				&poWin,
-				m_nCharHeight,
-				m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
-				cmemData.GetPtr(),
-//t				(void*)this,
-//				m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-				m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
-				m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase	// 2001/06/19 asa-o 英大文字小文字を同一視する
-			) ){
-				m_bHokan = TRUE;
-			}else{
-				if( m_bHokan ){
-					m_pcEditDoc->m_cHokanMgr.Hide();
-					m_bHokan = FALSE;
-				}
-			}
-#endif
 		}else{
 			if( m_bHokan ){
 				m_pcEditDoc->m_cHokanMgr.Hide();
@@ -5484,9 +5385,17 @@ retry:;
 	}
 
 	CMemory		cmemCurText;
+	const char*	helpfile = CShareData::getInstance()->GetExtWinHelp( m_pcEditDoc->GetDocumentType() );
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	GetCurrentTextForSearch( cmemCurText );
-	::WinHelp( m_hwndParent, CShareData::getInstance()->GetExtWinHelp( m_pcEditDoc->GetDocumentType() ), HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
+	if( _IS_REL_PATH( helpfile ) ){
+		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+		char path[_MAX_PATH];
+		GetExecutableDir( path, helpfile );
+		::WinHelp( m_hwndParent, path, HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
+		return;
+	}
+	::WinHelp( m_hwndParent, helpfile , HELP_KEY, (DWORD)(char*)cmemCurText.GetPtr() );
 	return;
 }
 
@@ -5547,7 +5456,12 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 	if( CShareData::getInstance()->HTMLHelpIsSingle( m_pcEditDoc->GetDocumentType() ) ){
 //	if( m_pShareData->m_Common.m_bHtmlHelpIsSingle ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
-		strcpy( m_pShareData->m_szWork, filename ); //	Jul. 5, 2002 genta
+		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+		if( _IS_REL_PATH( filename ) ){
+			GetExecutableDir( m_pShareData->m_szWork, filename );
+		}else{
+			strcpy( m_pShareData->m_szWork, filename ); //	Jul. 5, 2002 genta
+		}
 		nLen = lstrlen( m_pShareData->m_szWork );
 		strcpy( &m_pShareData->m_szWork[nLen + 1], cmemCurText.GetPtr() );
 		hwndHtmlHelp = (HWND)::SendMessage( m_pShareData->m_hwndTray, MYWM_HTMLHELP, (WPARAM)::GetParent( m_hwndParent ), 0 );
@@ -5563,13 +5477,26 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 		link.pszWindow = NULL;
 		link.fIndexOnFail = TRUE;
 
-		//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-		hwndHtmlHelp = OpenHtmlHelp(
-			NULL/*m_pShareData->m_hwndTray*/,
-			filename, //	Jul. 5, 2002 genta
-			HH_KEYWORD_LOOKUP,
-			(DWORD)&link
-		);
+		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+		if( _IS_REL_PATH( filename ) ){
+			char path[_MAX_PATH];
+			GetExecutableDir( path, filename );
+			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+			hwndHtmlHelp = OpenHtmlHelp(
+				NULL/*m_pShareData->m_hwndTray*/,
+				path, //	Jul. 5, 2002 genta
+				HH_KEYWORD_LOOKUP,
+				(DWORD)&link
+			);
+		}else{
+			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+			hwndHtmlHelp = OpenHtmlHelp(
+				NULL/*m_pShareData->m_hwndTray*/,
+				filename, //	Jul. 5, 2002 genta
+				HH_KEYWORD_LOOKUP,
+				(DWORD)&link
+			);
+		}
 	}
 
 
@@ -9243,6 +9170,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 		cmemData.GetPtr(),
 		m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
 		m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
+		m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
 		pcmemHokanWord
 	);
 	/* 補完候補の数によって動作を変える */
@@ -9250,31 +9178,26 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 		if( m_bHokan ){
 			m_pcEditDoc->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
+			// 2003.06.25 Moca 失敗してたら、ビープ音を出して補完終了。
+			::MessageBeep( MB_ICONHAND );
 		}
 	}
-	else
-	if ( bAutoDecided ){
-		if(nKouhoNum > 1){	//	複数の候補アリ
-			m_bHokan = TRUE;
-		}else
-		if(nKouhoNum == 1){	//	候補1つのみ→確定。
-			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
-				m_bHokan = FALSE;
-			}
-			pszKouhoWord = cmemHokanWord.GetPtr();
-			pszKouhoWord[lstrlen(pszKouhoWord)-1] = '\0';
-			Command_WordDeleteToStart();
-			Command_INSTEXT( TRUE, (const char*)pszKouhoWord, TRUE );
+	else if( bAutoDecided && nKouhoNum == 1){ //	候補1つのみ→確定。
+		if( m_bHokan ){
+			m_pcEditDoc->m_cHokanMgr.Hide();
+			m_bHokan = FALSE;
 		}
+		pszKouhoWord = cmemHokanWord.GetPtr();
+		pszKouhoWord[lstrlen(pszKouhoWord)-1] = '\0';
+		Command_WordDeleteToStart();
+		Command_INSTEXT( TRUE, (const char*)pszKouhoWord, TRUE );
 	}
 	else {
 		m_bHokan = TRUE;
 	}
 	
-	//	失敗してたら、ビープ音を出して補完終了。
+	//	補完終了。
 	if ( !m_bHokan ){
-		::MessageBeep( MB_ICONHAND );
 		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
 	}
 }
@@ -9298,7 +9221,10 @@ void CEditView::Command_HOKAN( void )
 	}
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
-	if( 0 == strlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile ) ){
+	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
+	if( m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
+		0 == lstrlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile 
+	) ){
 		::MessageBeep( MB_ICONHAND );
 		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
@@ -9322,99 +9248,128 @@ retry:;
 	return;
 }
 
+/*!
+	編集中データから入力補完キーワードの検索
+	CHokanMgrから呼ばれる
+	
+	@author Moca
+	@date 2003.06.25
 
-
-#if 0
-/* 入力補完 */
-void CEditView::Command_HOKAN( void )
-{
-	CMemory		cmemData;
-	POINT		poWin;
-	CMemory		cmemHokanWord;
-	int			nKouhoNum;
-	char*		pszKouhoWord;
-
-retry:;
-//	if( 0 == strlen( m_pShareData->m_Common.m_szHokanFile ) ){	// 2001/06/14 asa-o 参照データ変更
-	if( 0 == strlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile ) ){
-		::MessageBeep( MB_ICONHAND );
-//	From Here Sept. 15, 2000 JEPRO
-//		[Esc]キーと[x]ボタンでも中止できるように変更
-//		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-//	To Here Sept. 15, 2000
-			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
-		) ){
-//	2001/06/14 Start by asa-o: 開くプロパティシートをタイプ別に変更
-			/* 共通設定 プロパティシート */
-//			if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_HOKANFILE*/ ) ){
-//				return;
-//			}
-			/* タイプ別設定 プロパティシート */
-			if( !m_pcEditDoc->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
-				return;
+	@return 候補数
+*/
+int CEditView::HokanSearchByFile(
+		const char* pszKey,
+		BOOL		bHokanLoHiCase,	//!< 英大文字小文字を同一視する
+		CMemory**	ppcmemKouho,	//!< [IN/OUT] 候補
+		int			nKouhoNum,		//!< ppcmemKouhoのすでに入っている数
+		int			nMaxKouho		//!< Max候補数(0==無制限)
+){
+	const int nKeyLen = lstrlen( pszKey );
+	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+	int i, j, nWordLen, nLineLen, nRet;
+	int nCurX, nCurY; // 物理カーソル位置
+	const char* pszLine;
+	const char* word;
+	char *pszWork;
+	nCurX = m_nCaretPosX_PHY;
+	nCurY = m_nCaretPosY_PHY;
+	
+	for( i = 0; i < nLines; i++  ){
+		pszLine = m_pcEditDoc->m_cDocLineMgr.GetLineStrWithoutEOL( i, &nLineLen );
+		for( j = 0; j < nLineLen; j++ ){
+			if( IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ) ){
+				word = pszLine + j;
+				for( j++, nWordLen = 1;j < nLineLen && IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ); j++ ){
+					nWordLen++;
+				}
+				if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
+					continue;
+				}
+				if( nKeyLen <= nWordLen ){
+					if( bHokanLoHiCase ){
+						nRet = memicmp( pszKey, word, nKeyLen );
+					}else{
+						nRet = memcmp( pszKey, word, nKeyLen );
+					}
+					if( 0 == nRet ){
+						// カーソル位置の単語は候補からはずす
+						if( nCurY == i && nCurX <= j && j - nWordLen <= nCurX ){
+							continue;
+						}
+						if( NULL == *ppcmemKouho ){
+							*ppcmemKouho = new CMemory;
+							(*ppcmemKouho)->SetData( word, nWordLen );
+							(*ppcmemKouho)->AppendSz( "\n" );
+							++nKouhoNum;
+						}else{
+							// 重複していたら追加しない
+							int nLen;
+							const char* ptr = (*ppcmemKouho)->GetPtr( &nLen );
+							int nPosKouho;
+							nRet = 1;
+							if( bHokanLoHiCase ){
+								if( nWordLen < nLen ){
+									if( '\n' == ptr[nWordLen] && 0 == memicmp( ptr, word, nWordLen )  ){
+										nRet = 0;
+									}else{
+										int nPosKouhoMax = nLen - nWordLen - 1;
+										for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
+											if( ptr[nPosKouho] == '\n' ){
+												if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
+													if( 0 == memicmp( &ptr[nPosKouho + 1], word, nWordLen) ){
+														nRet = 0;
+														break;
+													}else{
+														nPosKouho += nWordLen;
+													}
+												}
+											}
+										}
+									}
+								}
+							}else{
+								if( nWordLen < nLen ){
+									if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
+										nRet = 0;
+									}else{
+										int nPosKouhoMax = nLen - nWordLen - 1;
+										for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
+											if( ptr[nPosKouho] == '\n' ){
+												if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
+													if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
+														nRet = 0;
+														break;
+													}else{
+														nPosKouho += nWordLen;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+							if( 0 == nRet ){
+								continue;
+							}
+							pszWork = new char[nWordLen + 1];
+							memcpy( pszWork, word, nWordLen );
+							pszWork[nWordLen] = '\n';
+							(*ppcmemKouho)->Append( pszWork, nWordLen + 1 );
+							++nKouhoNum;
+						}
+						if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
+							return nKouhoNum;
+						}
+					}
+				}
+			}else if( _IS_SJIS_1( (unsigned char)pszLine[j] ) ){
+				j++;
+				continue;
 			}
-//	2001/06/14 End
-			goto retry;
 		}
 	}
-
-	/* カーソル直前の単語を取得 */
-	if( 0 < GetLeftWord( &cmemData, 100 ) ){
-//		MYTRACE( "cmemData=[%s]\n", cmemData.GetPtr() );
-		/* 補完対象ワードリストを調べる */
-		poWin.x = m_nViewAlignLeft
-				 + (m_nCaretPosX - m_nViewLeftCol)
-				  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		poWin.y = m_nViewAlignTop
-				 + (m_nCaretPosY - m_nViewTopLine)
-				  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
-		::ClientToScreen( m_hWnd, &poWin );
-		poWin.x -= (
-			cmemData.GetLength()
-			 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
-		);
-//		if( 1 < m_pcEditDoc->m_cHokanMgr.Search(
-		nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
-//t			m_hFont_HAN,
-			&poWin,
-			m_nCharHeight,
-			m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
-			cmemData.GetPtr(),
-//t			(void*)this,
-//			m_pShareData->m_Common.m_szHokanFile	// 2001/06/14 asa-o 参照データ変更
-			m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
-			// 2001/06/19 asa-o 英大文字小文字を同一視する
-			m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
-			&cmemHokanWord
-		);
-//		) ){
-		if(nKouhoNum > 1){
-			m_bHokan = TRUE;
-		}else
-		// 2001/06/19 asa-o 候補が1つのときはそれに確定する
-		if(nKouhoNum == 1){
-			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
-				m_bHokan = FALSE;
-			}
-			pszKouhoWord = cmemHokanWord.GetPtr();
-			pszKouhoWord[lstrlen(pszKouhoWord)-1] = '\0';
-			Command_WordDeleteToStart();
-			Command_INSTEXT( TRUE, (const char*)pszKouhoWord, TRUE );
-		}else{
-			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
-				m_bHokan = FALSE;
-			}
-		}
-	}else{
-		::MessageBeep( MB_ICONHAND );
-	}
-	return;
+	return nKouhoNum;
 }
-#endif
-
 
 
 /* ファイル内容比較 */
@@ -9828,9 +9783,17 @@ void CEditView::Command_RECKEYMACRO( void )
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
 		char szInitDir[MAX_PATH];
-		strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
-		strcat( szInitDir, "RecKey.mac");
-		strcpy( m_pShareData->m_szKeyMacroFileName, szInitDir );
+		int nRet;
+		// 2003.06.23 Moca 記録用キーマクロのフルパスをCShareData経由で取得
+		nRet = CShareData::getInstance()->GetMacroFilename( -1, szInitDir, MAX_PATH ); 
+		if( nRet <= 0 ){
+			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				"マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d", nRet
+			);
+			return;
+		}else{
+			strcpy( m_pShareData->m_szKeyMacroFileName, szInitDir );
+		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 //		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.SaveKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
 		if ( FALSE == m_pcEditDoc->m_pcSMacroMgr->Save( STAND_KEYMACRO, m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
@@ -9874,21 +9837,21 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	}
 
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
 	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
-
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
+		GetExecutableDir( szInitDir, m_pShareData->m_szMACROFOLDER );
+	}else{
+		strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
+	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
 		m_hWnd,
 		"*.mac",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;
@@ -9964,30 +9927,27 @@ void CEditView::Command_LOADKEYMACRO( void )
 	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
+	const char*		pszFolder;
 	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
+	pszFolder = m_pShareData->m_szMACROFOLDER;
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	if( _IS_REL_PATH( pszFolder ) ){
+		GetExecutableDir( szInitDir, pszFolder );
+	}else{
+		strcpy( szInitDir, pszFolder );	/* マクロ用フォルダ */
+	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
 		m_hWnd,
 		"*.*",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return;
 	}
-#if 0
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szMACROFOLDER, NULL );
-	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
-#endif
 
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む

@@ -45,8 +45,17 @@
 
 #define NEVER_USED_PARAM(p) ((void)p)
 
+
+// 2003.06.01 Moca
+#define omGet (0)
+#define omSet (1)
+
+CMemory			CPPA::m_cMemRet;
+CMemory			CPPA::m_cMemDebug;
 CEditView*		CPPA::m_pcEditView = NULL;
 DLLSHAREDATA*	CPPA::m_pShareData = NULL;
+bool			CPPA::m_bError = false;
+
 
 CPPA::CPPA()
 {
@@ -66,6 +75,8 @@ void CPPA::Execute(CEditView* pcEditView )
 {
 	m_pcEditView = pcEditView;
 	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_bError = false;			//	2003.06.01 Moca
+	m_cMemDebug.SetDataSz("");	//	2003.06.01 Moca
 	m_fnExecute();
 }
 
@@ -131,6 +142,7 @@ int CPPA::InitDll()
 
 #if PPADLL_VER >= 123
 		{ &m_fnIsRunning, "IsRunning" },
+		{ &m_fnSetFinishProc, "SetFinishProc"}, // 2003.06.23 Moca
 #endif
 
 		{ NULL, 0 }
@@ -145,7 +157,15 @@ int CPPA::InitDll()
 	SetStrFunc((void*)CPPA::stdStrFunc);
 	SetProc((void*)CPPA::stdProc);
 
-	/* SAKURAエディタ用独自関数を準備 */
+	// 2003.06.01 Moca エラーメッセージを追加
+	SetErrProc((void*)CPPA::stdError);
+	SetStrObj((void*)CPPA::stdStrObj);	// UserErrorMes用
+#if PPADLL_VER >= 123
+	SetFinishProc((void*)CPPA::stdFinishProc);
+#endif
+
+	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
+	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 デバッグ用文字列変数を用意
 
 	int i;
 	
@@ -263,6 +283,97 @@ int CPPA::DeinitDll( void )
 }
 
 
+/*! ユーザー定義文字列型オブジェクト
+	現在は、デバッグ用文字列を設定する為のみ
+*/
+void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int* Err_CD, char** Value)
+{
+	NEVER_USED_PARAM(ObjName);
+	*Err_CD = 0;
+	switch(Index){
+	case 2:
+		switch(GS_Mode){
+		case omGet:
+//			::MessageBox( m_pcEditView->m_hWnd, m_cMemDebug.GetPtr(), "GetStrObj", MB_OK );
+			*Value = m_cMemDebug.GetPtr();
+			break;
+		case omSet:
+//			::MessageBox( m_pcEditView->m_hWnd, *Value, "SetStrObj", MB_OK );
+			m_cMemDebug.SetDataSz(*Value);
+			break;
+		}
+		break;
+	default:
+		*Err_CD = -1;
+	}
+}
+
+
+/*! ユーザー定義関数のエラーメッセージの作成
+
+	stdProc, stdIntFunc, stdStrFunc がエラーコードを返した場合、PPAから呼び出される。
+	異常終了/不正引数時のエラーメッセージを独自に指定する。
+	@author Moca
+	@param Err_CD IN  0以外各コールバック関数が設定した値
+			 1以上 FuncID + 1
+			 0     PPAのエラー
+			-1以下 その他ユーザ定義エラー
+	@param Err_Mes IN エラーメッセージ
+
+	@date 2003.06.01 Moca
+*/
+void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
+{
+	if( false != m_bError ){
+		return;
+	}
+	m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
+
+	char szMes[2048]; // 2048あれば足りるかと
+	const char* pszErr;
+	pszErr = szMes;
+	if( 0 < Err_CD ){
+		int i, FuncID;
+		FuncID = Err_CD - 1;
+		for( i = 0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID != -1; i++ ){
+			if( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID == FuncID ){
+				break;
+			}
+		}
+		if( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID != -1 ){
+			char szFuncDec[1024];
+			GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i], szFuncDec );
+			wsprintf( szMes, "関数の実行エラー\n%s", szFuncDec );
+		}else{
+			wsprintf( szMes, "不明な関数の実行エラー(バグです)\nFunc_ID=%d", FuncID );
+		}
+	}else{
+		switch( Err_CD ){
+		case 0:
+			if( 0 == lstrlen( Err_Mes ) ){
+				pszErr = "詳細不明のエラー";
+			}else{
+				pszErr = Err_Mes;
+			}
+			break;
+		default:
+			wsprintf( szMes, "未定義のエラー\nError_CD=%d\n%s", Err_CD, Err_Mes );
+		}
+	}
+	if( 0 == m_cMemDebug.GetLength() ){
+		::MessageBox( m_pcEditView->m_hWnd, pszErr, "PPA実行エラー", MB_OK );
+	}else{
+		char* p = new char [ lstrlen(pszErr) + m_cMemDebug.GetLength() + 2 ];
+		strcpy( p, pszErr );
+		strcat( p, "\n" );
+		strcat( p, m_cMemDebug.GetPtr() );
+		::MessageBox( m_pcEditView->m_hWnd, p, "PPA実行エラー", MB_OK );
+		delete [] p;
+	}
+}
+
+
+
 //----------------------------------------------------------------------
 void __stdcall CPPA::stdProc(
 	const char* FuncName, const int Index,
@@ -305,13 +416,13 @@ void __stdcall CPPA::stdIntFunc(
 			*ResultValue = Ret.uintVal;
 			break;
 		default:
-			*Err_CD = -1;
+			*Err_CD = -2; // 2003.06.01 Moca 値変更
 		}
 		::VariantClear(&Ret);
 		return;
 	}
+	*Err_CD = Index + 1; // 2003.06.01 Moca
 	::VariantClear(&Ret);
-	*Err_CD = -1;
 	return;
 }
 
@@ -328,8 +439,9 @@ void __stdcall CPPA::stdStrFunc(
 	char** ResultValue)
 {
 	NEVER_USED_PARAM(FuncName);
-	static CMemory cMem; // ANSI文字列でなければならない
-						// これの管理するポインタをPPAに渡すのでstaticである必要がある。
+//	2003.06.01 Moca スタティックメンバに変更
+//	static CMemory cMem; // ANSI文字列でなければならない
+//						// これの管理するポインタをPPAに渡すのでstaticである必要がある。
 	VARIANT Ret;
 	::VariantInit(&Ret);
 	*Err_CD = 0;
@@ -338,15 +450,15 @@ void __stdcall CPPA::stdStrFunc(
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
-			cMem.SetData(buf,len); // Mar. 9, 2003 genta
+			m_cMemRet.SetData(buf,len); // Mar. 9, 2003 genta
 			delete[] buf;
-			*ResultValue = cMem.GetPtr();
+			*ResultValue = m_cMemRet.GetPtr();
 			::VariantClear(&Ret);
 			return;
 		}
 	}
 	::VariantClear(&Ret);
-	*Err_CD = -1;
+	*Err_CD = Index + 1;
 	*ResultValue = "";
 	return;
 }
@@ -411,3 +523,24 @@ bool CPPA::CallHandleFunction(
 		return false;
 	}
 }
+
+
+#if PPADLL_VER >= 123
+
+/*!
+	PPAマクロの実行終了時に呼ばれる
+	
+	@date 2003.06.01 Moca
+*/
+void __stdcall CPPA::stdFinishProc()
+{
+	m_cMemRet.SetDataSz("");
+	m_cMemDebug.SetDataSz("");
+	m_pShareData = NULL;
+	m_pcEditView = NULL;
+	m_bError = false;
+}
+
+#endif
+
+/*[EOF]*/
