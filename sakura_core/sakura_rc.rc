@@ -1962,7 +1962,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,107,3
+ PRODUCTVERSION 1,2,107,4
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -1986,7 +1986,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.107.3\0"
+            VALUE "ProductVersion", "1.2.107.4\0"
         END
     END
     BLOCK "VarFileInfo"
