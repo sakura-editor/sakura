@@ -302,10 +302,10 @@ void CCommandLine::ParseCommandLine(
 				fi.m_nWindowSizeY = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_WX: //	WX
-				fi.m_nWindowOriginX = AtoiOptionInt( arg ) - 1;
+				fi.m_nWindowOriginX = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_WY:	//	WY
-				fi.m_nWindowOriginY = AtoiOptionInt( arg ) - 1;
+				fi.m_nWindowOriginY = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
 				//	Mar. 7, 2002 genta
