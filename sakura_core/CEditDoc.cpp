@@ -353,10 +353,19 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 
 
 
-/*! ファイルを開く */
+/*! ファイルを開く
+
+	@date 2004.06.18 moca ファイルが開けなかった場合にpbOpenedがFALSEに初期化されていなかった．
+	
+	@return 成功: TRUE/pbOpened==FALSE,
+			既に開かれている: FALSE/pbOpened==TRUE
+			失敗: FALSE/pbOpened==FALSE
+
+	@note genta 近いうちに見直した方がいいな．
+*/
 BOOL CEditDoc::FileRead(
 	char*	pszPath,	//!< [in/out]
-	BOOL*	pbOpened,
+	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
 	int		nCharCode,			/*!< [in] 文字コード自動判別 */
 	BOOL	bReadOnly,			/*!< [in] 読み取り専用か */
 	BOOL	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
@@ -374,6 +383,7 @@ BOOL CEditDoc::FileRead(
 	BOOL			bFileIsExist;
 	int				doctype;
 
+	*pbOpened = FALSE;	// 2004.06.18 Moca 初期化ミス
 	m_bReadOnly = bReadOnly;	/* 読み取り専用モード */
 
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -454,7 +464,6 @@ BOOL CEditDoc::FileRead(
 	}else{
 		hwndProgress = NULL;
 	}
-	*pbOpened = FALSE;
 	bRet = TRUE;
 	if( NULL == pszPath ){
 		MYMESSAGEBOX(
@@ -2999,7 +3008,7 @@ struct oneRule {
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.03 Moca 引数nMaxCountを追加。バッファ長チェックをするように変更
 */
-int CEditDoc::ReadRuleFile( char* pszFilename, oneRule* pcOneRule, int nMaxCount )
+int CEditDoc::ReadRuleFile( const char* pszFilename, oneRule* pcOneRule, int nMaxCount )
 {
 	long	i;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
