@@ -169,12 +169,14 @@ LRESULT CALLBACK CEditAppWndProc(
 /////////////////////////////////////////////////////////////////////////////
 // CEditApp
 
-CEditApp::CEditApp()
+CEditApp::CEditApp() :
+	//	Apr. 24, 2001 genta
+	m_uCreateTaskBarMsg( ::RegisterWindowMessage(TEXT("TaskbarCreated"))),
+	m_bCreatedTrayIcon( FALSE ),	//トレイにアイコンを作った
+	m_hInstance( NULL ),
+	m_hWnd( NULL )
 {
-	m_bCreatedTrayIcon = FALSE;	/* トレイにアイコンを作った */
 //	m_hAccel		= NULL;
-	m_hInstance		= NULL;
-	m_hWnd			= NULL;
 //	m_nEditArrNum	= 0;
 //	m_pEditArr		= NULL;
 	/* 共有データ構造体のアドレスを返す */
@@ -199,6 +201,7 @@ CEditApp::CEditApp()
 //	#ifndef _DEBUG
 		m_pszAppName = GSTR_CEDITAPP;
 //	#endif
+	
 	return;
 }
 
@@ -748,13 +751,6 @@ LRESULT CEditApp::DispatchEvent(
 			}
 
 			return 0L;
-
-// << 20010412 by aroka
-		case MYWM_CREATETASKBAR :
-			/* TaskTray Iconの再登録を要求するメッセージ．
-				Explorerが再起動したときに送出される．*/
-			CreateTrayIcon( m_hWnd ) ;
-// >> by aroka
 
 		case MYWM_NOTIFYICON:
 //			MYTRACE( "MYWM_NOTIFYICON\n" );
@@ -1343,6 +1339,15 @@ LRESULT CEditApp::DispatchEvent(
 			/* Windows にスレッドの終了を要求します。*/
 			::PostQuitMessage( 0 );
 			return 0L;
+		default:
+// << 20010412 by aroka
+//	Apr. 24, 2001 genta RegisterWindowMessageを使うように修正
+			if( uMsg == m_uCreateTaskBarMsg ){
+				/* TaskTray Iconの再登録を要求するメッセージ．
+					Explorerが再起動したときに送出される．*/
+				CreateTrayIcon( m_hWnd ) ;
+			}
+// >> by aroka
 	}
 	return DefWindowProc( hwnd, uMsg, wParam, lParam );
 }

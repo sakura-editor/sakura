@@ -6567,6 +6567,11 @@ void/*BOOL*/ CEditView::Command_TAGJUMP( void/*BOOL bCheckOnly*/ )
 			return;
 		}
 #endif
+		//	Apr. 23, 2001 genta
+		//	hwndOwnerに値が入らなくなってしまったために
+		//	Tag Jump Backが動作しなくなっていたのを修正
+		if( FALSE == m_cShareData.IsPathOpened( (const char*)szJumpToFile, &hwndOwner ))
+			return;
 	}
 	/*
 	カーソル位置変換
