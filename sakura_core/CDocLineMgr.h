@@ -4,6 +4,7 @@
 
 	@author Norio Nakatani
 	@date 1998/3/5  新規作成
+	@date 2001/06/23 N.Nakatani WhereCurrentWord_2()追加　staticメンバ
 	$Revision$
 */
 /*
@@ -28,7 +29,6 @@ class CDocLineMgr;
 
 #ifndef _CDOCLINEMGR_H_
 #define _CDOCLINEMGR_H_
-
 
 #include <windows.h>
 #include "CDocLine.h"
@@ -70,8 +70,12 @@ public:
 	const char* GetLineStr( int , int* );
 	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
 	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
-	int	WhereCurrentWord( int , int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
-	static int	WhatKindOfChar( char*, int, int );	/* 現在位置の文字の種類を調べる */
+
+	int WhereCurrentWord( int , int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+	// 2001/06/23 N.Nakatani WhereCurrentWord_2()追加 staticメンバ
+	static int WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+
+	static int WhatKindOfChar( char*, int, int );	/* 現在位置の文字の種類を調べる */
 	int PrevOrNextWord( int , int , int* , int );	/* 現在位置の左右の単語の先頭位置を調べる */
 	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CJre* ); /* 単語検索 */
 //	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int*, int ); /* 文字列検索 */
