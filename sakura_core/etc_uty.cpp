@@ -34,6 +34,7 @@
 #include "CMRU.h"
 #include "CMRUFolder.h"
 #include "CMultiMonitor.h"	//	2004.05.01 genta
+#include "Keycode.h"// novice 2004/10/10
 
 //	CShareDataへ移動
 /* 日付をフォーマット */
@@ -2872,5 +2873,34 @@ bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop)
 	return g_MultiMonitor.GetMonitorWorkRect( hWnd, rcDesktop );
 }
 //	To Here May 01, 2004 genta
+
+
+// novice 2004/10/10 マウスサイドボタン対応
+/*!
+	Shift,Ctrl,Altキー状態の取得
+
+	@retval nIdx Shift,Ctrl,Altキー状態
+	@date 2004.10.10 関数化
+*/
+int getCtrlKeyState(void)
+{
+	int nIdx = 0;
+
+	/* Shiftキーが押されているなら */
+	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
+		nIdx |= _SHIFT;
+	}
+	/* Ctrlキーが押されているなら */
+	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
+		nIdx |= _CTRL;
+	}
+	/* Altキーが押されているなら */
+	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
+		nIdx |= _ALT;
+	}
+
+	return nIdx;
+}
+
 
 /*[EOF]*/

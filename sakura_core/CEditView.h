@@ -404,6 +404,9 @@ protected:
 	void OnLBUTTONDBLCLK( WPARAM, int , int );					/* マウス左ボタンダブルクリック */
 	void OnRBUTTONDOWN( WPARAM, int, int );						/* マウス右ボタン押下 */
 	void OnRBUTTONUP( WPARAM, int, int );						/* マウス右ボタン開放 */
+// novice 2004/10/10 マウスサイドボタン対応
+	void OnXLBUTTONDOWN( WPARAM, int, int );					/* マウス左サイドボタン押下 */
+	void OnXRBUTTONDOWN( WPARAM, int, int );					/* マウス右サイドボタン押下 */
 	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );						/* マウスホイールのメッセージ処理 */
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
