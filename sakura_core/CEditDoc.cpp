@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, mik, jepro
 	Copyright (C) 2002, YAZAKI, hor, genta, aroka, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1185,6 +1186,13 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 	// To Here Apr. 04, 2003 genta
 
 	::SetWindowText( m_hwndParent, pszCap );
+
+	//@@@ From Here 2003.06.13 MIK
+	//タブウインドウのファイル名を通知
+	ExpandParameter( m_pShareData->m_Common.m_szTabWndCaption, pszCap, sizeof( pszCap ));
+	m_pcEditWnd->ChangeFileNameNotify( pszCap );
+	//@@@ To Here 2003.06.13 MIK
+
 	return;
 }
 
@@ -3707,6 +3715,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 				}
 				/* 次のウィンドウをアクティブにする */
 				hwndWork = pEditNodeArr[j].m_hWnd;
+				m_pcEditWnd->TabWnd_SucceedWindowPlacement( m_hwndParent, hwndWork );	//@@@ 2003.06.23 MIK
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
 //				if( ::IsIconic( hwndWork ) ){
@@ -3745,6 +3754,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 				}
 				/* 次のウィンドウをアクティブにする */
 				hwndWork = pEditNodeArr[j].m_hWnd;
+				m_pcEditWnd->TabWnd_SucceedWindowPlacement( m_hwndParent, hwndWork );	//@@@ 2003.06.23 MIK
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
 //				if( ::IsIconic( hwndWork ) ){
@@ -3921,6 +3931,8 @@ BOOL CEditDoc::OnFileClose( void )
 	AddToMRU();
 
 	if( m_bGrepRunning ){		/* Grep処理中 */
+		/* アクティブにする */
+		ActivateFrameWindow( hwndMainFrame );	//@@@ 2003.06.25 MIK
 		::MYMESSAGEBOX(
 			hwndMainFrame,
 			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,

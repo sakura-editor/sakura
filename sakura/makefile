@@ -140,6 +140,7 @@ OBJS =\
 	$(SRCDIR)\CSMacroMgr.obj \
 	$(SRCDIR)\CSplitBoxWnd.obj \
 	$(SRCDIR)\CSplitterWnd.obj \
+	$(SRCDIR)\CTabWnd.obj \
 	$(SRCDIR)\CTipWnd.obj \
 	$(SRCDIR)\CWnd.obj \
 	$(SRCDIR)\CWaitCursor.obj \

@@ -319,6 +319,7 @@ const int nFincList_Mode_Num = sizeof( pnFuncList_Mode ) / sizeof( pnFuncList_Mo
 const int pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 	F_SHOWTOOLBAR		,	/* ツールバーの表示 */
 	F_SHOWFUNCKEY		,	/* ファンクションキーの表示 */	//Sept. 14, 2000 JEPRO ファンクションキーとステータスバーを入れ替え
+	F_SHOWTAB			,	/* タブの表示 */	//@@@ 2003.06.10 MIK
 	F_SHOWSTATUSBAR		,	/* ステータスバーの表示 */
 	F_TYPE_LIST			,	/* タイプ別設定一覧 */			//Sept. 17, 2000 JEPRO 設定系に入ってなかったので追加
 	F_OPTION_TYPE		,	/* タイプ別設定 */

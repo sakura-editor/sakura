@@ -11,6 +11,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001-2002, YAZAKI
 	Copyright (C) 2002, aroka
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,6 +25,7 @@ class CEditWnd;
 #include "CEditDoc.h"
 #include "CShareData.h"
 #include "CFuncKeyWnd.h"
+#include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "CMenuDrawer.h"
 #include "CImageListMgr.h"
 
@@ -93,6 +95,9 @@ public:
 	void GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const;
 	bool GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const;
 
+	void ChangeFileNameNotify( const char *pszFile );	//ファイル名変更通知	//@@@ 2003.05.31 MIK
+	void TabWnd_SucceedWindowPlacement( HWND hwndSrc, HWND hwndDst );	//ウインドウ位置情報継承	//@@@ 2003.06.14 MIK
+
 	//	Dec. 4, 2002 genta
 	//	メニューバーへのメッセージ表示機能をCEditWndより移管
 	void InitMenubarMessageFont(void);
@@ -132,6 +137,7 @@ public:
 //	HBITMAP			m_hbmpOPENED;
 //	HBITMAP			m_hbmpOPENED_THIS;
 	CFuncKeyWnd		m_CFuncKeyWnd;
+	CTabWnd			m_cTabWnd;		//タブウインドウ	//@@@ 2003.05.31 MIK
 	CMenuDrawer		m_CMenuDrawer;
 	int				m_nWinSizeType;	/* サイズ変更のタイプ */
 	//	うまくやれば、以下はPrintPreviewへ行きそう。

@@ -10,6 +10,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -88,6 +89,12 @@
 
 //	/* トレイ管理ウィンドウからの全終了メッセージ */
 //	#define	MYWM_CLOSEALL		(WM_APP+900)
+
+/*! タブウインドウ用メッセージ */
+#define	MYWM_TAB_WINDOW_NOTIFY	(WM_APP+213)	//@@@ 2003.05.31 MIK
+
+/*! バーの表示・非表示変更メッセージ */
+#define	MYWM_BAR_CHANGE_NOTIFY	(WM_APP+214)	//@@@ 2003.06.10 MIK
 
 
 /* 再変換対応 */ // 20020331 aroka

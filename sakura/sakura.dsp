@@ -525,6 +525,10 @@ SOURCE=..\sakura_core\CSplitterWnd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CTabWnd.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CTipWnd.cpp
 # End Source File
 # Begin Source File
@@ -918,6 +922,10 @@ SOURCE=..\sakura_core\CSplitBoxWnd.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CSplitterWnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CTabWnd.h
 # End Source File
 # Begin Source File
 

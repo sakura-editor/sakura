@@ -91,6 +91,8 @@
 #define HIDC_CHECK_DispFUNCKEYWND       0x93f404a7    // IDD_PROP_WIN
 #define HIDC_CHECK_DispSTATUSBAR        0x93f40501    // IDD_PROP_WIN
 #define HIDC_CHECK_DispTOOLBAR          0x93f40444    // IDD_PROP_WIN
+#define HIDC_CHECK_DispTabWnd           0x93f40502    // IDD_PROP_WIN
+#define HIDC_CHECK_DispTabWndMultiWin   0x93f40503    // IDD_PROP_WIN
 #define HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE \
                                         0x806e0507    // IDD_PROP_FILE
 #define HIDC_CHECK_EXCVLUSIVE_NO        0x806e042d    // IDD_PROP_FILE
@@ -217,7 +219,7 @@
 #define HIDC_EDIT_EXTHTMLHELP           0x93f1043f    // IDD_PROP_HELPER
 #define HIDC_EDIT_FONTWIDTH             0x80ae04eb    // IDD_PRINTSETTING
 #define HIDC_EDIT_FROM                  0x80c10535    // IDD_PRINTPAGE
-#define HIDC_EDIT_FUNCKEYWND_GROUPNUM   0x93f4059a    // IDD_PROP_WIN
+#define HIDC_EDIT_FUNCKEYWND_GROUPNUM   0x93f40597    // IDD_PROP_WIN
 #define HIDC_EDIT_HOKANFILE             0x93fa04b1    // IDD_PROPTYPESP2
 #define HIDC_EDIT_INYOUKIGOU            0x93f004aa    // IDD_PROP_FORMAT
 #define HIDC_EDIT_KEYSFUNC              0x93f304f9    // IDD_PROP_KEYBIND
@@ -344,6 +346,7 @@
 #define HIDC_STATIC_DIFF_SRC            0x93fb0594    // IDD_DIFF
 #define HIDC_STATIC_JRE32VER            0x806d0429    // IDD_FIND
 #define HIDC_STATIC_MSG                 0x809a046a    // IDD_INPUT1
+#define HIDC_TABWND_CAPTION             0x93f405bf    // IDD_PROP_WIN
 #define HIDC_TAB_FAVORITE               0x80e305b1    // IDD_FAVORITE
 #define HIDC_TREE1                      0x807a0474    // IDD_FUNCLIST
 #define HIDOK                           0x80730001    // IDD_ABOUT

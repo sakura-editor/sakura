@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, Stonee, genta, JEPRO, YAZAKI
 	Copyright (C) 2002, aroka
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -186,6 +187,14 @@ void CDlgCompare::SetData( void )
 	);
 	::SetDlgItemText( m_hWnd, IDC_STATIC_COMPARESRC, szWork );
 	/* 左右に並べて表示 */
+	//@@@ 2003.06.12 MIK
+	// TAB 1ウィンドウ表示のときは並べて比較できなくする
+	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		m_bCompareAndTileHorz = FALSE;
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_TILE_H ), FALSE );
+	}
 	::CheckDlgButton( m_hWnd, IDC_CHECK_TILE_H, m_bCompareAndTileHorz );
 //	::CheckDlgButton( m_hWnd, IDC_CHECK_TILE_H, m_bCompareAndTileHorz );	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 	return;

@@ -11,6 +11,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, Stonee, Miasaka, hor
 	Copyright (C) 2002, hor, genta, aroka
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1005,6 +1006,11 @@ void CEditDoc::SetFilePath(const char* szFile)
 {
 	strcpy( m_szFilePath, szFile );
 	SetDocumentIcon();
+
+	//@@@ From Here 2003.05.31 MIK
+	//タブウインドウ	//SetParentCaptionで実施
+	//m_pcEditWnd->ChangeFileNameNotify( szFile );
+	//@@@ To Here 2003.05.31 MIK
 }
 
 /*! ファイル名(パスなし)を取得する

@@ -14,6 +14,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, stonee, jepro, genta, aroka, hor
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1052,6 +1053,15 @@ LRESULT CEditApp::DispatchEvent(
 						nId - IDM_SELWINDOW  < m_pShareData->m_nEditArrNum ){
 						hwndWork = m_pShareData->m_pEditArr[nId - IDM_SELWINDOW].m_hWnd;
 
+						//@@@ 2003.06.25 MIK
+						//	ウィンドウ位置を復元
+						if( m_pShareData->m_TabWndWndpl.length 
+						 && TRUE  == m_pShareData->m_Common.m_bDispTabWnd
+						 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+						{
+							::SetWindowPlacement( hwndWork, &(m_pShareData->m_TabWndWndpl) );
+						}
+
 						/* アクティブにする */
 						ActivateFrameWindow( hwndWork );
 //						if( ::IsIconic( hwndWork ) ){
@@ -1398,7 +1408,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
+	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		char szMsg[512];
 		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
@@ -1511,7 +1521,7 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* p
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
+	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		char szMsg[512];
 		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );

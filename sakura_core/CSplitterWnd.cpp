@@ -889,6 +889,8 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			pcViewArr[3]->SplitBoxOnOff( FALSE, FALSE, bSizeBox );	/* 縦・横の分割ボックスのＯＮ／ＯＦＦ */
 		}
 	}
+	//デスクトップがちらつくのでだめ!
+	//::InvalidateRect( m_hWnd, NULL, TRUE );	//再描画してね。	//@@@ 2003.06.11 MIK
 	return 0L;
 }
 

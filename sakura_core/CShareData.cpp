@@ -116,8 +116,11 @@ struct ARRHEAD {
 
 	Version 45:
 	タグファイル作成用コマンドオプション保存領域(m_nTagsOpt,m_szTagsCmdLine)を追加 2003.05.12 MIK
+
+	Version 46:
+	編集ウインドウ数修正、タブウインドウ用情報追加
 */
-const unsigned int uShareDataVersion = 45;
+const unsigned int uShareDataVersion = 46;
 
 /*
 ||	Singleton風
@@ -217,6 +220,12 @@ bool CShareData::Init( void )
 		m_pShareData->m_hwndDebug = NULL;
 		m_pShareData->m_nSequences = 0;					/* ウィンドウ連番 */
 		m_pShareData->m_nEditArrNum = 0;
+
+		//From Here 2003.05.31 MIK
+		//タブウインドウ情報
+		m_pShareData->m_TabWndWndpl.length = 0;
+		//To Here 2003.05.31 MIK
+
 		m_pShareData->m_Common.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 		CMRU cMRU;
@@ -685,6 +694,12 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
 		m_pShareData->m_Common.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
 		m_pShareData->m_Common.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
+
+		m_pShareData->m_Common.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
+		m_pShareData->m_Common.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
+		strcpy( m_pShareData->m_Common.m_szTabWndCaption,
+			"${w?【Grep】$h$:【アウトプット】$:${I?$f$:$F$}$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
@@ -698,6 +713,7 @@ bool CShareData::Init( void )
 				m_pShareData->m_Common.m_nCustMenuItemKeyArr [i][j] = '\0';
 			}
 		}
+		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[CUSTMENU_INDEX_FOR_TABWND], "タブメニュー" );	//@@@ 2003.06.13 MIK
 
 		/* カスタムメニュー 規定値 */
 
@@ -785,10 +801,33 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [1][3] = 'L';
 		m_pShareData->m_Common.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [1][4] = 'U';
-		m_pShareData->m_Common.m_nCustMenuItemFuncArr[1][6] = 0;
-		m_pShareData->m_Common.m_nCustMenuItemKeyArr [1][6] = '\0';
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[1][5] = 0;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [1][5] = '\0';
 		m_pShareData->m_Common.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
 		m_pShareData->m_Common.m_nCustMenuItemKeyArr [1][6] = 'C';
+
+		/* タブメニュー */	//@@@ 2003.06.14 MIK
+		n = 0;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVE;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'S';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVEAS_DIALOG;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'A';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'B';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE_OPEN;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'L';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_WINCLOSE;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'C';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
+		m_pShareData->m_Common.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
+		n++;
+		m_pShareData->m_Common.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
+
 		/* 見出し記号 */
 		strcpy( m_pShareData->m_Common.m_szMidashiKigou, "１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
 		/* 引用符 */
@@ -3763,49 +3802,94 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 
 
 
-/* 編集ウィンドウリストへの登録 */
+/*! 編集ウィンドウリストへの登録
+
+	@date 2003.06.28 MIK CRecent利用で書き換え
+*/
 BOOL CShareData::AddEditWndList( HWND hWnd )
 {
-	int		i;
-	int		j;
-	/* 同じウィンドウハンドルがある場合は先頭に持ってくる */
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nEditArrNum ){
-		for( j = i; j > 0; j-- ){
-			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
-		}
-	}else{
-		if( m_pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
-			/* これ以上登録できない */
-			return FALSE;
-		}
+//	int		i;
+//	int		j;
+//	/* 同じウィンドウハンドルがある場合は先頭に持ってくる */
+//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
+//		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
+//			break;
+//		}
+//	}
+//	if( i < m_pShareData->m_nEditArrNum ){
+//		for( j = i; j > 0; j-- ){
+//			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
+//		}
+//	}else{
+//		if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+//			/* これ以上登録できない */
+//			return FALSE;
+//		}
+//
+//		for( j = MAX_EDITWINDOWS - 1; j > 0; j-- ){
+//			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
+//		}
+//		m_pShareData->m_nEditArrNum++;
+//		if( m_pShareData->m_nEditArrNum > MAX_EDITWINDOWS ){
+//			m_pShareData->m_nEditArrNum = MAX_EDITWINDOWS;
+////#ifdef _DEBUG
+////			/* デバッグモニタに出力 */
+////			TraceOut( "%s(%d): m_nEditArrNum=%d\n", __FILE__, __LINE__, hWnd, m_pShareData->m_nEditArrNum );
+////#endif
+//			/* これ以上登録できない */
+//			return FALSE;
+//		}
+//	}
+//	m_pShareData->m_pEditArr[0].m_hWnd = hWnd;
 
-		for( j = MAX_EDITWINDOWS - 1; j > 0; j-- ){
-			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
-		}
-		m_pShareData->m_nEditArrNum++;
-		if( m_pShareData->m_nEditArrNum > MAX_EDITWINDOWS ){
-			m_pShareData->m_nEditArrNum = MAX_EDITWINDOWS;
-//#ifdef _DEBUG
-//			/* デバッグモニタに出力 */
-//			TraceOut( "%s(%d): m_nEditArrNum=%d\n", __FILE__, __LINE__, hWnd, m_pShareData->m_nEditArrNum );
-//#endif
-			/* これ以上登録できない */
+	int		nSubCommand = TWNT_ADD;
+	int		nIndex;
+	CRecent	cRecentEditNode;
+	EditNode	MyEditNode;
+	EditNode	*p;
+
+	memset( &MyEditNode, 0, sizeof( MyEditNode ) );
+	MyEditNode.m_hWnd = hWnd;
+
+	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+
+	//登録済みか？
+	if( -1 != (nIndex = cRecentEditNode.FindItem( (const char*)&hWnd ) ) )
+	{
+		//もうこれ以上登録できないか？
+		if( cRecentEditNode.GetItemCount() >= cRecentEditNode.GetArrayCount() )
+		{
+			cRecentEditNode.Terminate();
 			return FALSE;
 		}
+		nSubCommand = TWNT_ORDER;
+
+		//以前の情報をコピーする。
+		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
+		if( p )
+		{
+			memcpy( &MyEditNode, p, sizeof( MyEditNode ) );
+		}
 	}
-	m_pShareData->m_pEditArr[0].m_hWnd = hWnd;
 
 	/* ウィンドウ連番 */
 
-	if( 0 == ::GetWindowLong( hWnd, 4 ) ){
+	if( 0 == ::GetWindowLong( hWnd, 4 ) )
+	{
 		m_pShareData->m_nSequences++;
 		::SetWindowLong( hWnd, 4, (LONG)m_pShareData->m_nSequences );
+
+		//連番を更新する。
+		MyEditNode.m_nIndex = m_pShareData->m_nSequences;
 	}
+
+	//追加または先頭に移動する。
+	cRecentEditNode.AppendItem( (const char*)&MyEditNode );
+	cRecentEditNode.Terminate();
+
+	//ウインドウ登録メッセージをブロードキャストする。
+	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)nSubCommand, (LPARAM)hWnd, hWnd );
+
 	return TRUE;
 }
 
@@ -3813,25 +3897,38 @@ BOOL CShareData::AddEditWndList( HWND hWnd )
 
 
 
-/* 編集ウィンドウリストからの削除 */
+/*! 編集ウィンドウリストからの削除
+
+	@date 2003.06.28 MIK CRecent利用で書き換え
+*/
 void CShareData::DeleteEditWndList( HWND hWnd )
 {
-	int		i;
-	int		j;
+//	int		i;
+//	int		j;
+//
+//	/* ウィンドウハンドルの検索 */
+//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
+//		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
+//			break;
+//		}
+//	}
+//	if( i >= m_pShareData->m_nEditArrNum ){
+//		return;
+//	}
+//	for( j = i; j < m_pShareData->m_nEditArrNum - 1; ++j ){
+//		m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j + 1];
+//	}
+//	m_pShareData->m_nEditArrNum--;
 
-	/* ウィンドウハンドルの検索 */
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
-			break;
-		}
-	}
-	if( i >= m_pShareData->m_nEditArrNum ){
-		return;
-	}
-	for( j = i; j < m_pShareData->m_nEditArrNum - 1; ++j ){
-		m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j + 1];
-	}
-	m_pShareData->m_nEditArrNum--;
+	//ウインドウをリストから削除する。
+	CRecent	cRecentEditNode;
+	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+	cRecentEditNode.DeleteItem( (const char*)&hWnd );
+	cRecentEditNode.Terminate();
+
+	//ウインドウ削除メッセージをブロードキャストする。
+	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_DEL, (LPARAM)hWnd, hWnd );
+
 	return;
 }
 
@@ -4028,73 +4125,155 @@ BOOL CShareData::IsEditWnd( HWND hWnd )
 
 }
 
-/* 現在開いている編集ウィンドウの配列を返す */
-/* 配列の要素数を返す 要素数>0 の場合は呼び出し側で配列をdeleteしてください */
+/*! 現在開いている編集ウィンドウの配列を返す
+
+	@param ppEditNode [out] 配列を受け取るポインタ
+	@param bSort [in]	true: ソートあり / false: ソート無し
+
+	@return 配列の要素数を返す
+	@note 要素数>0 の場合は呼び出し側で配列をdeleteしてください
+
+	@date 2003.06.28 MIK CRecent利用で書き換え
+*/
 int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort )
 {
-	int			nRowNum;
-	int			i;
-	int			j;
-	int			k;
-	int			nMinIdx;
-	int			nMin;
-	HWND*		phWndArr;
+//	int			nRowNum;
+//	int			i;
+//	int			j;
+//	int			k;
+//	int			nMinIdx;
+//	int			nMin;
+//	HWND*		phWndArr;
+//
+//	nRowNum = 0;
+//	// phWndArr = NULL;
+//	*ppEditNode = NULL;
+//	j = 0;
+//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
+//		if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+//			j++;
+//		}
+//	}
+//	if( j > 0 ){
+//		phWndArr = new HWND[j];
+//		*ppEditNode = new EditNode[j];
+//		nRowNum = 0;
+//		for( i = 0;i < j; ++i ){
+//			phWndArr[i] = NULL;
+//		}
+//		k = 0;
+//		for( i = 0; i < m_pShareData->m_nEditArrNum && k < j; ++i ){
+//			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+//				phWndArr[k] = m_pShareData->m_pEditArr[i].m_hWnd;
+//				k++;
+//			}
+//		}
+//		if( bSort ){
+//			while( 1 ){
+//				nMinIdx = 99999;
+//				nMin = 99999;
+//				for( i = 0; i < j; ++i ){
+//					if( phWndArr[i] != NULL &&
+//						nMin > ::GetWindowLong( phWndArr[i], 4 )
+//					){
+//						nMinIdx = i;
+//						nMin = ::GetWindowLong( phWndArr[i], 4 );
+//					}
+//				}
+//				if( nMinIdx != 99999 ){
+//					i = nMinIdx;
+//					(*ppEditNode)[nRowNum].m_nIndex = i;
+//					(*ppEditNode)[nRowNum].m_hWnd = m_pShareData->m_pEditArr[i].m_hWnd;
+//					nRowNum++;
+//					phWndArr[i] = NULL;
+//				}else{
+//					break;
+//				}
+//			}
+//		}else{
+//			for( i = 0; i < k; ++i ){
+//				(*ppEditNode)[i].m_nIndex = i;
+//				(*ppEditNode)[i].m_hWnd = phWndArr[i];
+//			}
+//			nRowNum = k;
+//		}
+//
+//		delete [] phWndArr;
+//	}
+//	return nRowNum;
 
-	nRowNum = 0;
-	// phWndArr = NULL;
-	*ppEditNode = NULL;
-	j = 0;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-			j++;
-		}
+	//編集ウインドウ数を取得する。
+	int		nRowNum;	//編集ウインドウ数
+	int		nCount;		//実際の追加数
+	int		nInsert;	//挿入ポイント
+	int		i, j, k;
+	int		*pnIndex;
+
+	//編集ウインドウ数を取得する。
+	nRowNum = GetEditorWindowsNum();
+	if( nRowNum <= 0 )
+	{
+		*ppEditNode = NULL;
+		return 0;
 	}
-	if( j > 0 ){
-		phWndArr = new HWND[j];
-		*ppEditNode = new EditNode[j];
-		nRowNum = 0;
-		for( i = 0;i < j; ++i ){
-			phWndArr[i] = NULL;
-		}
-		k = 0;
-		for( i = 0; i < m_pShareData->m_nEditArrNum && k < j; ++i ){
-			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-				phWndArr[k] = m_pShareData->m_pEditArr[i].m_hWnd;
-				k++;
-			}
-		}
-		if( bSort ){
-			while( 1 ){
-				nMinIdx = 99999;
-				nMin = 99999;
-				for( i = 0; i < j; ++i ){
-					if( phWndArr[i] != NULL &&
-						nMin > ::GetWindowLong( phWndArr[i], 4 )
-					){
-						nMinIdx = i;
-						nMin = ::GetWindowLong( phWndArr[i], 4 );
+
+	//編集ウインドウリスト格納領域を作成する。
+	*ppEditNode = new EditNode[ nRowNum ];
+	if( NULL == *ppEditNode ) return 0;
+	pnIndex = new int[ nRowNum ];
+	if( NULL == pnIndex )
+	{
+		delete [] *ppEditNode;
+		*ppEditNode = NULL;
+		return 0;
+	}
+
+	nCount = 0;
+	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	{
+		//編集ウインドウか？
+		if( IsEditWnd( m_pShareData->m_pEditArr[ i ].m_hWnd ) )
+		{
+			nInsert = nCount;
+			if( bSort )
+			{
+				//挿入ポイントを探す。
+				for( j = 0; j < nCount; j++ )
+				{
+					if( (*ppEditNode)[ j ].m_nIndex > m_pShareData->m_pEditArr[ i ].m_nIndex )
+					{
+						nInsert = j;
+						break;
 					}
 				}
-				if( nMinIdx != 99999 ){
-					i = nMinIdx;
-					(*ppEditNode)[nRowNum].m_nIndex = i;
-					(*ppEditNode)[nRowNum].m_hWnd = m_pShareData->m_pEditArr[i].m_hWnd;
-					nRowNum++;
-					phWndArr[i] = NULL;
-				}else{
-					break;
+				
+				//後ろにずらす。
+				for( k = nCount; k > j; k-- )
+				{
+					(*ppEditNode)[ k ] = (*ppEditNode)[ k - 1 ];
+					pnIndex[ k ] = pnIndex[ k - 1 ];
 				}
 			}
-		}else{
-			for( i = 0; i < k; ++i ){
-				(*ppEditNode)[i].m_nIndex = i;
-				(*ppEditNode)[i].m_hWnd = phWndArr[i];
-			}
-			nRowNum = k;
+
+			//情報をコピーする。
+			(*ppEditNode)[ nInsert ] = m_pShareData->m_pEditArr[ i ];
+			pnIndex[ nInsert ] = i;
+
+			nCount++;
 		}
 
-		delete [] phWndArr;
+		if( nCount >= nRowNum ) break;	//ガード
 	}
+
+	//インデックスを付ける。
+	//このインデックスは m_pEditArr の配列番号です。
+	for( i = 0; i < nRowNum; i++ )
+	{
+		(*ppEditNode)[ i ].m_nIndex = pnIndex[ i ];
+	}
+
+	delete [] pnIndex;
+
 	return nRowNum;
 }
 

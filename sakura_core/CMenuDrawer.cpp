@@ -406,7 +406,7 @@ CMenuDrawer::CMenuDrawer()
 /* 267 */		F_FONT				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//フォント設定
 /* 268 */		F_WRAPWINDOWWIDTH	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//現在のウィンドウ幅で折り返し	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 /* 269 */		F_FAVORITE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//お気に入り	//@@@ 2003.04.08 MIK
-/* 270 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 270 */		F_SHOWTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブの表示	//@@@ 2003.06.10 MIK
 /* 271 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 272 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 273 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -453,7 +453,7 @@ CMenuDrawer::CMenuDrawer()
 /* 310 */		F_DISABLE/*F_CUSTMENU_21*/	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー21	//アイコン未作
 /* 311 */		F_DISABLE/*F_CUSTMENU_22*/	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー22	//アイコン未作
 /* 312 */		F_DISABLE/*F_CUSTMENU_23*/	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー23	//アイコン未作
-/* 313 */		F_DISABLE/*F_CUSTMENU_24*/	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー24	//アイコン未作
+/* 313 */		F_CUSTMENU_24				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー24	//アイコン未作
 /* 314 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 315 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 316 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
