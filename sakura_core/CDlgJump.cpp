@@ -203,7 +203,7 @@ void CDlgJump::SetData( void )
 	int				i;
 	HWND			hwndCtrl;
 	char			szText[1024];
-	int				nIndexCurSel;
+	int				nIndexCurSel = 0;	//	Sep. 11, 2004 genta ‰Šú‰»
 	int				nIndex;
 	int				nWorkLine;
 	int				nPLSQLBlockNum;
