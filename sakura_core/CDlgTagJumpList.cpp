@@ -151,7 +151,7 @@ CDlgTagJumpList::~CDlgTagJumpList()
 }
 
 /* モーダルダイアログの表示 */
-CDlgTagJumpList::DoModal(
+int CDlgTagJumpList::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
 	LPARAM		lParam

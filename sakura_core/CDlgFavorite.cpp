@@ -175,7 +175,7 @@ CDlgFavorite::~CDlgFavorite()
 }
 
 /* モーダルダイアログの表示 */
-CDlgFavorite::DoModal(
+int CDlgFavorite::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
 	LPARAM		lParam
