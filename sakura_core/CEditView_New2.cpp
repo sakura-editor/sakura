@@ -60,6 +60,7 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 	case COLORIDX_KEYWORD2:	/* 強調キーワード2（登録単語）文字列である */
 	case COLORIDX_URL:	    /* URLである */
 	case COLORIDX_SEARCH:	/* 検索文字列である */
+	case COLORIDX_BRACKET_PAIR: /* 対括弧の強調表示である */	// 2002/12/18 ai
 		nColorIdx = nCOMMENTMODE;
 		break;
 	case COLORIDX_COMMENT:	/* 行コメントである */
