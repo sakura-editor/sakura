@@ -4098,6 +4098,9 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 	if( 0 ==  GetEditorWindowsNum() ){
 		return FALSE;
 	}
+	//	Oct. 11, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
+	setlocale ( LC_ALL, "C" );
+	
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			/* トレイからエディタへの編集ファイル名要求通知 */

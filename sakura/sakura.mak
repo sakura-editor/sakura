@@ -13,7 +13,7 @@ RFLAGS=-dDS_SETFOREGROUND=0x200L -I\Borland\bcc55\include
 
 ## Optimizing Options	// DEBUG,TRACE,RELEASE
 !ifdef DEBUG
-OPTFLAGS=-Od -v -D_DEBUG
+OPTFLAGS=-Od -v -y -D_DEBUG
 !else
 OPTFLAGS=-5 -O1 -Octv -DNDEBUG
 !ifdef TRACE
