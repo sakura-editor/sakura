@@ -1654,6 +1654,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 //	case F_CURLINECENTER:	return ;	//カーソル行をウィンドウ中央へ
 //	case F_JUMPPREV:		return ;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
 //	case F_JUMPNEXT:		return ;	//移動履歴: 次へ
+	case F_WndScrollDown:	return 198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
+	case F_WndScrollUp:		return 199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
 
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
