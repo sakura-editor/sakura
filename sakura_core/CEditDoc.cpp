@@ -3935,7 +3935,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 			break;
-		case 'f':	//	開いているファイルの名前（ファイル名のみ）
+		case 'f':	//	開いているファイルの名前（ファイル名+拡張子のみ）
 			// Oct. 28, 2001 genta
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
@@ -3958,6 +3958,37 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 			break;
+		case 'g':	//	開いているファイルの名前（拡張子を除くファイル名のみ）
+			//	From Here Sep. 16, 2002 genta
+			if ( ! IsFilePathAvailable() ){
+				memcpy(q, "(無題)", 6);
+				q += 6 - 1;
+				++p;
+			} 
+			else {
+				//	ポインタを末尾に
+				const char *dot_position, *end_of_path;
+				end_of_path = dot_position = r =
+					GetFilePath() + strlen( GetFilePath() );
+				
+				//	後ろから区切りを探す
+				for( --r ; r >= GetFilePath() && *r != '\\' ; --r )
+					;
+				for( --dot_position ; dot_position > r && *dot_position != '.'
+					; --dot_position )
+					;
+				//	rと同じ場所まで行ってしまった⇔.が無かった
+				if( dot_position == r )
+					dot_position = end_of_path;
+				//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
+				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
+				for( ++r ; r < dot_position && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+			//	To Here Sep. 16, 2002 genta
 		case '/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
 			// Oct. 28, 2001 genta
 			if ( !IsFilePathAvailable() ){

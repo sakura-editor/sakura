@@ -2533,6 +2533,8 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 		m_nViewAlignLeftNew = 8;
 		m_nViewAlignLeftCols = 0;
 	}
+	//	Sep 18, 2002 genta
+	m_nViewAlignLeftNew += m_pShareData->m_Common.m_nLineNumRightSpace;
 	if( m_nViewAlignLeftNew != m_nViewAlignLeft ){
 		m_nViewAlignLeft = m_nViewAlignLeftNew;
 		::GetClientRect( m_hWnd, &rc );

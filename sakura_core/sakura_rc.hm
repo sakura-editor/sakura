@@ -250,6 +250,8 @@
 #define HIDC_EDIT_TYPEEXTS              0x93ed0455    // IDD_PROPTYPESP1
 #define HIDC_EDIT_TYPENAME              0x93ed043e    // IDD_PROPTYPESP1
 #define HIDC_EDIT_nDropFileNumMax       0x806e0512    // IDD_PROP_FILE
+#define HIDC_EDIT_nLineNumberRightSpace \
+                                        0x93f40456    // IDD_PROP_WIN
 #define HIDC_EDIT_nRulerBottomSpace     0x93f40455    // IDD_PROP_WIN
 #define HIDC_EDIT_nRulerHeight          0x93f4050e    // IDD_PROP_WIN
 #define HIDC_FRAME_DIFF_FILE12          0x93fb059c    // IDD_DIFF

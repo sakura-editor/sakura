@@ -1704,8 +1704,9 @@ void CEditView::SmartIndent_CPP( char cChar )
 						 || 0 == strncmp( &pLine[i], "protected:", 10 )
 						)
 					)
-				 || ( '{' == cChar )
-				 || ( '(' == cChar )
+					//	Sep. 18, 2002 ‚©‚ë‚Æ
+					|| (( '{' == cChar ) && ( '#' != pLine[i] ))
+					|| (( '(' == cChar ) && ( '#' != pLine[i] ))
 				){
 
 				}else{
@@ -1839,6 +1840,8 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 		nSrcLen = nXTo - nXFm;
 		if( nSrcLen >= sizeof( pszSrc ) - 1 ){
+			//	Sep. 18, 2002 genta ƒƒ‚ƒŠƒŠ[ƒN‘Îô
+			delete [] pszData;
 			return;
 		}
 		if( NULL == pLine ){

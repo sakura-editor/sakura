@@ -513,6 +513,7 @@ struct Common {
 	int					m_nRulerHeight;				/* ルーラー高さ */
 	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
 	int					m_nRulerType;				/* ルーラーのタイプ */
+	int					m_nLineNumRightSpace;		// 行番号の右のスペース Sep. 18, 2002 genta
 
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
 	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */

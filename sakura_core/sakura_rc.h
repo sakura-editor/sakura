@@ -196,6 +196,7 @@
 #define IDC_EDIT_INDENTCHARS            1110
 #define IDC_EDIT_MAX_MRU_FOLDER         1110
 #define IDC_EDIT_MARGINBY               1110
+#define IDC_EDIT_nLineNumberRightSpace  1110
 #define IDC_EDIT_SMTPPORT               1111
 #define IDC_EDIT_LINECOMMENT2           1111
 #define IDC_EDIT_MARGINLX               1111
@@ -273,6 +274,7 @@
 #define IDC_SPIN_PLSQL                  1186
 #define IDC_SPIN_PLSQL_E1               1186
 #define IDC_SPIN_LCColNum2              1186
+#define IDC_SPIN_nLineNumberRightSpace  1186
 #define IDC_BUTTON_CLEAR_MRU_FILE       1187
 #define IDC_SPIN_LCColNum3              1187
 #define IDC_COMBO_MENU                  1188

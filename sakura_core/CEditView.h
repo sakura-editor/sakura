@@ -44,7 +44,7 @@ class CLayout;	//	2002/5/13 YAZAKI ƒwƒbƒ_Œy—Ê‰»
 #define IDM_COPYDICINFO 2000
 #endif
 
-#ifndef RECONVERTSTRING
+#if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
 typedef struct tagRECONVERTSTRING {
     DWORD dwSize;
     DWORD dwVersion;
