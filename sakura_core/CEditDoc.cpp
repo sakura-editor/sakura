@@ -3380,6 +3380,209 @@ void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 
 
 
+/*! 階層付きテキスト アウトライン解析
+
+	@author zenryaku
+	@date 2003.05.20 zenryaku 新規作成
+	@date 2003.05.25 genta 実装方法一部修正
+*/
+void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
+{
+
+
+	for(int nLineCount=0;nLineCount<m_cDocLineMgr.GetLineCount();nLineCount++)
+	{
+		const char*	pLine;
+		int			nLineLen;
+
+		pLine = m_cDocLineMgr.GetLineStr(nLineCount,&nLineLen);
+		if(!pLine)
+		{
+			break;
+		}
+		//	May 25, 2003 genta 判定順序変更
+		if( *pLine == '.' )
+		{
+			const char* pPos;	//	May 25, 2003 genta
+			int			nLength;
+			char		szTitle[32];
+
+			//	ピリオドの数＝階層の深さを数える
+			for( pPos = pLine + 1 ; *pPos == '.' ; ++pPos )
+				;
+
+			int	nPosX;
+			int	nPosY;
+			m_cLayoutMgr.CaretPos_Phys2Log(
+				0,
+				nLineCount,
+				&nPosX,
+				&nPosY
+			);
+			
+			int level = pPos - pLine;
+			nLength = sprintf(szTitle,"%d - ", level );
+			
+			char *pDest = szTitle + nLength; // 書き込み先
+			char *pDestEnd = szTitle + sizeof(szTitle) - 2;
+			
+			while( pDest < pDestEnd )
+			{
+				if( *pPos =='\r' || *pPos =='\n' || *pPos == '\0')
+				{
+					break;
+				}
+				//	May 25, 2003 genta 2バイト文字の切断を防ぐ
+				else if( _IS_SJIS_1( *pPos )){
+					*pDest++ = *pPos++;
+					*pDest++ = *pPos++;
+				}
+				else {
+					*pDest++ = *pPos++;
+				}
+			}
+			*pDest = '\0';
+			pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle, 0, level - 1);
+		}
+	}
+}
+
+/*! HTML アウトライン解析
+
+	@author zenryaku
+	@date 2003.05.20 zenryaku 新規作成
+*/
+void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
+{
+	const unsigned char*	pLine;
+	int						nLineLen;
+	int						nLineCount;
+	int						i;
+	int						j;
+	int						k;
+	BOOL					bEndTag;
+
+	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
+		（32文字まで同じだったら同じものとして扱います）
+	*/
+	const int nMaxStack = 32;	//	ネストの最深
+	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
+	char pszStack[nMaxStack][32];
+	char szTitle[32];			//	一時領域
+	for(nLineCount=0;nLineCount<m_cDocLineMgr.GetLineCount();nLineCount++)
+	{
+		pLine	=	(const unsigned char *)m_cDocLineMgr.GetLineStr(nLineCount,&nLineLen);
+		if(!pLine)
+		{
+			break;
+		}
+		for(i=0;i<nLineLen-1;i++)
+		{
+			if(pLine[i]!='<' || nDepth>=nMaxStack)
+			{
+				continue;
+			}
+			bEndTag	=	FALSE;
+			if(pLine[++i]=='/')
+			{
+				i++;
+				bEndTag	=	TRUE;
+			}
+			for(j=0;i+j<nLineLen && j<sizeof(szTitle)-1;j++)
+			{
+				if((pLine[i+j]<'a' || pLine[i+j]>'z') &&
+					(pLine[i+j]<'A' || pLine[i+j]>'Z') &&
+					!(j!=0 && pLine[i+j]>='0' && pLine[i+j]<='9'))
+				{
+					break;
+				}
+				szTitle[j]	=	pLine[i+j];
+			}
+			if(j==0)
+			{
+				continue;
+			}
+			szTitle[j]	=	'\0';
+			if(bEndTag)
+			{
+				// 終了タグ
+				while(nDepth>0)
+				{
+					nDepth--;
+					if(!_stricmp(pszStack[nDepth],szTitle))
+					{
+						break;
+					}
+				}
+			}
+			else
+			{
+				if(_stricmp(szTitle,"br") && _stricmp(szTitle,"area") &&
+					_stricmp(szTitle,"base") && _stricmp(szTitle,"frame") && _stricmp(szTitle,"param"))
+				{
+					int		nPosX;
+					int		nPosY;
+
+					m_cLayoutMgr.CaretPos_Phys2Log(
+						i,
+						nLineCount,
+						&nPosX,
+						&nPosY
+					);
+
+					if(_stricmp(szTitle,"hr") && _stricmp(szTitle,"meta") && _stricmp(szTitle,"link") &&
+						_stricmp(szTitle,"input") && _stricmp(szTitle,"img") && _stricmp(szTitle,"area") &&
+						_stricmp(szTitle,"base") && _stricmp(szTitle,"frame") && _stricmp(szTitle,"param"))
+					{
+						// 終了タグなしを除く全てのタグらしきものを判定
+						strcpy(pszStack[nDepth],szTitle);
+						k	=	j;
+						if(j<sizeof(szTitle)-3)
+						{
+							for(;i+j<nLineLen;j++)
+							{
+								if(pLine[i+j]=='>')
+								{
+									break;
+								}
+							}
+							szTitle[k++]	=	' ';
+							for(j-=k-1;i+j+k<nLineLen && k<sizeof(szTitle)-1;k++)
+							{
+								if(pLine[i+j+k]=='<' || pLine[i+j+k]=='\r' || pLine[i+j+k]=='\n')
+								{
+									break;
+								}
+								szTitle[k]	=	pLine[i+j+k];
+							}
+							j	+=	k-1;
+						}
+						szTitle[k]	=	'\0';
+						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,nDepth++);
+					}
+					else
+					{
+						for(;i+j<nLineLen && j<sizeof(szTitle)-1;j++)
+						{
+							if(pLine[i+j]=='>')
+							{
+								break;
+							}
+							szTitle[j]	=	pLine[i+j];
+						}
+						szTitle[j]	=	'\0';
+						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,nDepth);
+					}
+				}
+			}
+			i	+=	j;
+		}
+	}
+}
+
+
+
+
 /* アクティブなペインを設定 */
 void  CEditDoc::SetActivePane( int nIndex )
 {
