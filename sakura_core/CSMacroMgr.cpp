@@ -468,10 +468,13 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 	*ppMacro = NULL;
 	
 	const char *ext = strrchr( pszPath, '.');
-	const char *chk = strrchr( ext, '\\' );
-	if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
-						//	\が漢字の2バイト目の場合も拡張子ではない。
-		ext = NULL;
+	//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
+	if( ext != NULL ){
+		const char *chk = strrchr( ext, '\\' );
+		if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
+							//	\が漢字の2バイト目の場合も拡張子ではない。
+			ext = NULL;
+		}
 	}
 	if(ext != NULL){
 		++ext;
