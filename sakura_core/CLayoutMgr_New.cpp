@@ -15,6 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include <mbstring.h>
 #include "CLayoutMgr.h"
 #include "charcode.h"
 #include "etc_uty.h"
