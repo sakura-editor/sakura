@@ -857,7 +857,6 @@ LRESULT CEditApp::DispatchEvent(
 //					break;
 					do{
 						if( CShareData::getInstance()->ExtWinHelpIsSet() ) {	//	共通設定のみ確認
-//						if( 0 != strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
 							break;
 						}else
 						{
@@ -1412,7 +1411,7 @@ void CEditApp::OnNewEditor(void)
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2003.05.30 genta 外部プロセス起動時のカレントディレクトリ指定を可能に．
 */
-bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPath, int nCharCode, BOOL bReadOnly, bool sync, const char* szCurDir )
+bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* pszPath, int nCharCode, BOOL bReadOnly, bool sync, const char* szCurDir )
 {
 	DLLSHAREDATA*	pShareData;
 	char szCmdLineBuf[1024];	//	コマンドライン
@@ -1526,7 +1525,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 
 	@date Oct. 24, 2000 genta create.
 */
-bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* pfi, BOOL bReadOnly, bool sync )
+bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, const FileInfo* pfi, BOOL bReadOnly, bool sync )
 {
 	char			pszCmdLine[1024];
 	DLLSHAREDATA*	pShareData;

@@ -59,8 +59,8 @@ public:
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
 
-	static bool OpenNewEditor( HINSTANCE, HWND, char*, int, BOOL, bool sync = false, const char* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
-	static bool OpenNewEditor2( HINSTANCE, HWND , FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
+	static bool OpenNewEditor( HINSTANCE, HWND, const char*, int, BOOL, bool sync = false, const char* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
+	static bool OpenNewEditor2( HINSTANCE, HWND , const FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
 
 	static BOOL CloseAllEditor( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	static void TerminateApplication( void );	/* サクラエディタの全終了 */
