@@ -2314,6 +2314,43 @@ int FuncID_To_HelpContextID( int nFuncID )
 	}
 }
 
+/*!クリープボードにText形式でコピーする
+	@param hwnd [in] クリップボードのオーナー
+	@param pszText [in] 設定するテキスト
+	@param length [in] 有効なテキストの長さ
+	
+	@retval true コピー成功
+	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
+	@date 2004.02.17 Moca 各所のソースを統合
+*/
+SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int length )
+{
+	HGLOBAL		hgClip;
+	char*		pszClip;
+
+	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, length + 1 );
+	if( NULL == hgClip ){
+		return false;
+	}
+	pszClip = (char*)::GlobalLock( hgClip );
+	if( NULL == pszClip ){
+		::GlobalFree( hgClip );
+		return false;
+	}
+	memcpy( pszClip, pszText, length );
+	pszClip[length] = 0;
+	::GlobalUnlock( hgClip );
+	if( FALSE == ::OpenClipboard( hwnd ) ){
+		::GlobalFree( hgClip );
+		return false;
+	}
+	::EmptyClipboard();
+	::SetClipboardData( CF_OEMTEXT, hgClip );
+	::CloseClipboard();
+
+	return true;
+}
+
 //	From Here Jun. 26, 2001 genta
 /*!
 	与えられた正規表現ライブラリの初期化を行う．
