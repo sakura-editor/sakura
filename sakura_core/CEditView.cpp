@@ -499,7 +499,9 @@ BOOL CEditView::Create(
 
 
 	/* ウィンドウクラスの登録 */
-	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
+	//	Apr. 27, 2000 genta
+	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
+	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= (WNDPROC)EditViewWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= sizeof( LONG );

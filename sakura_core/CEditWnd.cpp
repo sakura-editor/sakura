@@ -258,7 +258,9 @@ HWND CEditWnd::Create(
 	m_hbmpOPENED = ::LoadBitmap( m_hInstance, MAKEINTRESOURCE( IDB_OPENED ) );
 	m_hbmpOPENED_THIS = ::LoadBitmap( m_hInstance, MAKEINTRESOURCE( IDB_OPENED_THIS ) );
 //	sprintf( szMutexName, "%sIsAlreadyExist", m_pszAppName );
-	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
+	//	Apr. 27, 2000 genta
+	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
+	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= 32;

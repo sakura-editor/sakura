@@ -87,7 +87,9 @@ ATOM CWnd::RegisterWC(
 	/* ウィンドウクラスの登録 */
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	//	Apr. 27, 2000 genta
+	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
+	wc.style = CS_DBLCLKS;
 	wc.lpfnWndProc = CWndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 32;
