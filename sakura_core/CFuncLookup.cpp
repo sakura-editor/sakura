@@ -109,6 +109,9 @@ bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsi
 	@param position [in] 分類中のindex (0-)
 	@param ptr [out] 文字列を格納するバッファの先頭
 	@param bufsize [in] 文字列を格納するバッファのサイズ
+	
+	@retval true 名称の設定に成功
+	@retval false 失敗。文字列は格納されていない
 */
 bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 {

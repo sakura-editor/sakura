@@ -389,7 +389,8 @@ protected:
 	void SmartIndent_CPP( char );	/* C/C++スマートインデント処理 */
 
 	/* カーソル移動系 */
-	int Command_UP( int, BOOL );			/* カーソル上移動 */
+	//	Oct. 24, 2001 genta 機能拡張のため引数追加
+	int Command_UP( int, BOOL, int line = 0 );			/* カーソル上移動 */
 	int Command_DOWN( int, BOOL );			/* カーソル下移動 */
 	int  Command_LEFT( int, BOOL );			/* カーソル左移動 */
 	void Command_RIGHT( int, int, BOOL );	/* カーソル右移動 */
@@ -397,7 +398,8 @@ protected:
 	void Command_DOWN2( int );				/* カーソル下移動（２行づつ） */
 	void Command_WORDLEFT( int );			/* 単語の左端に移動 */
 	void Command_WORDRIGHT( int );			/* 単語の右端に移動 */
-	void Command_GOLINETOP( int, BOOL );	/* 行頭に移動（折り返し単位） */
+	//	Oct. 29, 2001 genta マクロ向け機能拡張
+	void Command_GOLINETOP( int, BOOL, int lparam = 0 );	/* 行頭に移動（折り返し単位） */
 	void Command_GOLINEEND( int, int );		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
