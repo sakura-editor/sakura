@@ -297,6 +297,7 @@ void CEditView::Command_Diff(
 		bool	bDiffInfo = false;	//DIFF情報か
 		int		nDiffLen = 0;		//DIFF情報長
 		char	szDiffData[100];	//DIFF情報
+		bool	bFirst = true;	//先頭か？	//@@@ 2003.05.31 MIK
 
 		//中断ダイアログ表示
 //		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
@@ -320,7 +321,8 @@ void CEditView::Command_Diff(
 //			}
 
 			//プロセスが終了していないか確認
-			if( WaitForSingleObject( pi.hProcess, 0 ) == WAIT_OBJECT_0 )
+			// Jul. 04, 2003 genta CPUを100%使い果たすのを防ぐため 200msec休む
+			if( WaitForSingleObject( pi.hProcess, 200 ) == WAIT_OBJECT_0 )
 			{
 				//終了していればループフラグをFALSEとする
 				//ただしループの終了条件は プロセス終了 && パイプが空
@@ -340,6 +342,19 @@ void CEditView::Command_Diff(
 					if( read_cnt == 0 )
 					{
 						continue;
+					}
+
+					//@@@ 2003.05.31 MIK
+					//	先頭がBinary filesならバイナリファイルのため意味のある差分が取られなかった
+					if( bFirst )
+					{
+						bFirst = false;
+						if( strncmp( work, "Binary files ", strlen( "Binary files " ) ) == 0 )
+						{
+							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+								"DIFF差分を行おうとしたファイルはバイナリファイルです。" );
+							goto finish;
+						}
 					}
 
 					//読み出した文字列をチェックする
@@ -397,7 +412,6 @@ void CEditView::Command_Diff(
 					}
 				}
 			}
-			Sleep(0);
 		} while( bLoopFlag || new_cnt > 0 );
 
 		//残ったDIFF情報があれば解析する
