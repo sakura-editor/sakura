@@ -69,7 +69,7 @@ public:
 	CFileLoad( void );
 	~CFileLoad( void );
 
-	void FileOpen( LPCTSTR, int, int );		// 指定文字コードでファイルをオープンする
+	enumCodeType FileOpen( LPCTSTR, int, int );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	const char* ReadLine( int*, CEOL* );	// 1行データをロードする 順アクセス用
@@ -85,7 +85,11 @@ public:
 
 	//! ファイルの日時を取得する
 	BOOL GetFileTime( FILETIME*, FILETIME*, FILETIME* ); // inline
-	
+
+	//	Jun. 08, 2003 Moca
+	//! 開いたファイルにはBOMがあるか？
+	BOOL IsBomExist( void ){ return m_bBomExist; }
+
 	//! 現在の進行率を取得する(0% - 100%) 若干誤差が出る
 	int GetPercent( void );
 
@@ -102,7 +106,7 @@ protected:
 	CFileLoad& operator= ( const CFileLoad& ){ return *this; }
 
 	// Oct. 19, 2002 genta スペルミス修正
-	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
+//	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
 	void Buffering( void );		// バッファにデータをロードする
 	void ReadBufEmpty( void );	// バッファを空にする
 
@@ -126,8 +130,17 @@ protected:
 	int		m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	int		m_CharCode;		// 文字コード
+	BOOL	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
-	int		m_nMode;		// 現在の読み込み状態 0=初期, 1=順アクセスOK 2=ファイル終端までバッファに入れた
+	//	Jun. 13, 2003 Moca
+	//	状態をenumとしてわかりやすく．
+	enum enumFileLoadMode{
+		FLMODE_CLOSE = 0, //!< 初期状態
+		FLMODE_OPEN, //!< ファイルオープンのみ
+		FLMODE_REDY, //!< 順アクセスOK
+		FLMODE_READBUFEND //!<ファイルの終端までバッファに入れた
+	};
+	enumFileLoadMode	m_eMode;		// 現在の読み込み状態
 
 	// 読み込みバッファ系
 	char*	m_pReadBuf;			// 読み込みバッファへのポインタ
