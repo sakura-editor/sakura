@@ -135,6 +135,7 @@ public:
 	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
 	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
 	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
+	BOOL GetAdjustCursorPos( int *, int *);	// 正しいカーソル位置を算出する
 	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
 	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */
 	void DisableSelectArea( BOOL );								/* 現在の選択範囲を非選択状態に戻す */
@@ -216,7 +217,24 @@ public: /* テスト用にアクセス属性を変更 */
 	HWND	m_hWnd;				/* 編集ウィンドウハンドル */
 	int		m_nViewTopLine;		/* 表示域の一番上の行(0開始) */
 	int		m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
-	int		m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
+	/*!	@brief 直前のX座標記憶用
+
+		フリーカーソルモードでない場合にカーソルを上下に移動させた場合
+		カーソル位置より短い行では行末にカーソルを移動するが，
+		さらに移動を続けた場合に長い行で移動起点のX位置を復元できるように
+		するための変数．
+		
+		@par 使い方
+		読み出しはCEditView::Cursor_UPDOWN()のみで行う．
+		カーソル上下移動以外でカーソル移動を行った場合には
+		直ちにm_nCaretPosXの値を設定する．そうしないと
+		その直後のカーソル上下移動で移動前のX座標に戻ってしまう．
+	
+		ビュー左端からのカーソル桁位置(０開始)
+		
+		@date 2004.04.09 genta 説明文追加
+	*/
+	int		m_nCaretPosX_Prev;
 	int		m_nCaretPosX;		/* ビュー左端からのカーソル桁位置（０開始）*/
 	int		m_nCaretPosY;		/* ビュー上端からのカーソル行位置（０開始）*/
 	int		m_nCaretPosX_PHY;	/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
