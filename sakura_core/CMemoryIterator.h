@@ -46,13 +46,18 @@ public:
 	{
 		first();
 	};
-	
+
+	/*! 桁位置を行の先頭にセット  */
 	void first(){
 		m_nIndex = 0;
 		m_nColumn = m_nIndent;
 		m_nIndex_Delta = 0;
 		m_nColumn_Delta = 0;
 	};
+	
+	/*! 行末かどうか
+		@return true: 行末, false: 行末ではない
+	 */
 	bool end(){
 		return (m_nLineLen <= m_nIndex);
 	};
@@ -69,6 +74,10 @@ public:
 			m_nColumn_Delta = m_nIndex_Delta;
 		}
 	};
+	
+	/*! 予め計算した差分を桁位置に加える．
+		@sa scanNext()
+	 */
 	void addDelta(){
 		m_nColumn += m_nColumn_Delta;
 		m_nIndex += m_nIndex_Delta;

@@ -222,7 +222,7 @@ const char* CFileLoad::ReadLine(
 				Buffering();
 				continue;
 			}else{
-				m_cmemLine.Append( pLine, nBufLineLen + nEolLen );
+				m_cmemLine.Append( pLine, nBufLineLen );
 				break;
 			}
 		}
@@ -265,14 +265,10 @@ const char* CFileLoad::ReadLine(
 //		return NULL;
 //	}
 	// データあり
-	if( 0 != ( *pnLineLen = m_cmemLine.GetLength() ) ){
-		return m_cmemLine.GetPtr();
-	}
-	// 文字コード変換前はデータが在ったがなくなった(コード変換エラーの可能性あり)
-	else if( 0 != nBufLineLen ){
-		// コード変換前にあった改行コードだけ復活させる
+	if( 0 != nBufLineLen + nEolLen ){
+		// 改行コードを追加
 		m_cmemLine.Append( pcEol->GetValue(), pcEol->GetLen() );
-		return m_cmemLine.GetPtr();
+		return m_cmemLine.GetPtr( pnLineLen );
 	}
 	// データがない => 終了
 //	m_cmemLine.Empty(); // protected メンバ
@@ -301,7 +297,7 @@ const wchar_t* CFileLoad::ReadLineW(
 	int			nEolLen;
 
 	// 行データクリア。本当はバッファは開放したくない
-	m_cmemLine.SetData( L"\0", 2 );
+	m_cmemLine.SetDataSz( "" );
 
 	// 1行取り出し ReadBuf -> m_memLine
 	while( 1 ){
@@ -315,7 +311,7 @@ const wchar_t* CFileLoad::ReadLineW(
 				Buffering();
 				continue;
 			}else{
-				m_cmemLine.Append( pLine, nBufLineLen + nEolLen );
+				m_cmemLine.Append( pLine, nBufLineLen );
 				break;
 			}
 		}
@@ -368,14 +364,10 @@ const wchar_t* CFileLoad::ReadLineW(
 //		return NULL;
 //	}
 	// データあり
-	if( 0 != ( *pnLineLen = m_cmemLine.GetLength() ) ){
-		return reinterpret_cast<wchar_t*>m_cmemLine.GetPtr();
-	}
-	// 文字コード変換前はデータが在ったがなくなった(コード変換エラーの可能性あり)
-	else if( 0 != nBufLineLen ){
-		// コード変換前にあった改行コードだけ復活させる
-		m_cmemLine.Append( pcEol->GetValue(), pcEol->GetLen() );
-		return reinterpret_cast<wchar_t*>m_cmemLine.GetPtr();
+	if( 0 != nBufLineLen + nEolLen ){
+		// 改行コードを追加
+		m_cmemLine.Append( pcEol->GetUnicodeValue(), pcEol->GetLen() * sizeof( wchar_t ) );
+		return reinterpret_cast<wchar_t*>( m_cmemLine.GetPtr( pnLineLen ) );
 	}
 	// データがない => 終了
 //	m_cmemLine.Empty(); // protected メンバ
