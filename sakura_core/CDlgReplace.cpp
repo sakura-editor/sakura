@@ -94,9 +94,6 @@ void CDlgReplace::SetData( void )
 	/* 単語単位で探す */
 	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
 
-	/* 正規表現 */
-	::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, m_bRegularExp );
-
 	/* 選択範囲内置換 */
 	if( m_pShareData->m_Common.m_bSelectedArea ){
 		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, TRUE );
@@ -104,23 +101,26 @@ void CDlgReplace::SetData( void )
 		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, TRUE );
 	}
 
-	if( m_bRegularExp ){
-		// From Here Jun. 26, 2001 genta
-		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		if( !CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )){
-			::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
-		}else{
-		// To Here Jun. 26, 2001 genta
-			/* 英大文字と英小文字を区別する */
-			::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+	// From Here Jun. 29, 2001 genta
+	// 正規表現ライブラリの差し替えに伴う処理の見直し
+	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
+	// 無関係にCheckRegexpVersionを通過するようにした。
+	if( CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )
+		&& m_bRegularExp){
+		/* 英大文字と英小文字を区別する */
+		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
+		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
-			// 2001/06/23 N.Nakatani 
-			/* 単語単位で探す */
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
-
-		}
+		// 2001/06/23 N.Nakatani 
+		/* 単語単位で探す */
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 	}
+	else {
+		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
+	}
+	// To Here Jun. 29, 2001 genta
+
 	/* 検索／置換  見つからないときメッセージを表示 */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
 	
