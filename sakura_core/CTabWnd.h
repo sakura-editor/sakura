@@ -62,7 +62,7 @@ public:
 	/*
 	|| メンバ変数
 	*/
-	const char*		m_pszClassName;	/*!< クラス名 */
+	LPCTSTR			m_pszClassName;	/*!< クラス名 */
 	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */

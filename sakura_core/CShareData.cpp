@@ -126,8 +126,11 @@ struct ARRHEAD {
 	Version 48:
 	Grepリアルタイム表示追加 2003.06.28 Moca
 
+	Version 49:
+	ファイル情報にIsDebug追加 (タブ表示用) 2003.10.13 MIK
+
 */
-const unsigned int uShareDataVersion = 48;
+const unsigned int uShareDataVersion = 49;
 
 /*
 ||	Singleton風
@@ -705,7 +708,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		m_pShareData->m_Common.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		strcpy( m_pShareData->m_Common.m_szTabWndCaption,
-			"${w?【Grep】$h$:【アウトプット】$:${I?$f$:$F$}$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる

@@ -4078,6 +4078,10 @@ void CEditDoc::SetFileInfo( FileInfo* pfi )
 
 	pfi->m_bIsGrep = m_bGrepMode;
 	strcpy( pfi->m_szGrepKey, m_szGrepKey );
+
+	//デバッグモニタ(アウトプットウインドウ)
+	pfi->m_bIsDebug = m_bDebugMode;
+
 	return;
 
 }
