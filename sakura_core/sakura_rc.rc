@@ -2820,6 +2820,7 @@ BEGIN
     F_CASCADE               "重ねて表示"
     F_TILE_V                "上下に並べて表示"
     F_TILE_H                "左右に並べて表示"
+    F_BIND_WINDOW           "結合して表示"
     F_NEXTWINDOW            "次のウィンドウ"
     F_PREVWINDOW            "前のウィンドウ"
 END

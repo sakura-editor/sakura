@@ -763,6 +763,7 @@ void ReplaceData_CEditView(
 	void Command_SPLIT_VH( void );		/* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
 	void Command_WINCLOSE( void );		/* ウィンドウを閉じる */
 	void Command_FILECLOSEALL( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
+	void Command_BIND_WINDOW( void );	/* 結合して表示 */	//2004.07.14 Kazika 新規追加
 	void Command_CASCADE( void );		/* 重ねて表示 */
 	void Command_TILE_V( void );		/* 上下に並べて表示 */
 	void Command_TILE_H( void );		/* 左右に並べて表示 */

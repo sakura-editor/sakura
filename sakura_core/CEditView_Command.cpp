@@ -600,6 +600,7 @@ BOOL CEditView::HandleCommand(
 		}
 		Command_FILECLOSEALL();
 		break;
+	case F_BIND_WINDOW:		Command_BIND_WINDOW();break;	//結合して表示 2004.07.14 Kazika 新規追加
 	case F_CASCADE:			Command_CASCADE();break;		//重ねて表示
 	case F_TILE_V:			Command_TILE_V();break;			//上下に並べて表示
 	case F_TILE_H:			Command_TILE_H();break;			//左右に並べて表示
@@ -7079,6 +7080,34 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 // 2003.06.28 Moca コメントとして残っていたコードを削除
 }
 
+//Start 2004.07.14 Kazika 追加
+/*!	@brief 結合して表示
+
+	タブウィンドウの結合、非結合を切り替えるコマンドです。
+	[共通設定]->[ウィンドウ]->[タブ表示 まとめない]の切り替えと同じです。
+	@author Kazika
+	@date 2004.07.14 Kazika 新規作成
+*/
+void CEditView::Command_BIND_WINDOW( void )
+{
+	//タブモードであるならば
+	if (m_pShareData->m_Common.m_bDispTabWnd)
+	{
+		//タブウィンドウの設定を変更
+		m_pShareData->m_Common.m_bDispTabWndMultiWin = !m_pShareData->m_Common.m_bDispTabWndMultiWin;
+
+		//Start 2004.08.27 Kazika 変更
+		//タブウィンドウの設定を変更をブロードキャストする
+		CShareData::getInstance()->PostMessageToAllEditors(
+			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
+			(WPARAM)((m_pShareData->m_Common.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
+			(LPARAM)m_pcEditDoc->m_pcEditWnd->m_hWnd,	//CEditWndのウィンドウハンドル
+			m_hWnd);									//自分自身
+		//End 2004.08.27 Kazika
+	}
+}
+//End 2004.07.14 Kazika
+
 /*!	@brief 重ねて表示
 
 	@date 2002.01.08 YAZAKI 「左右に並べて表示」すると、
@@ -7093,8 +7122,14 @@ void CEditView::Command_CASCADE( void )
 	int i;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	//Start 2004.07.15 Kazika タブウィンドウ時はタブモードを解除して実行
 	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin ) return;
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		//タブウィンドウをまとめない設定に変更
+		m_pShareData->m_Common.m_bDispTabWndMultiWin = TRUE;
+	}
+	//End 2004.07.15 Kazika
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
@@ -7184,6 +7219,17 @@ void CEditView::Command_CASCADE( void )
 		}
 
 		// -----------------------------------------
+		//	最大化/非表示解除
+		//	最大化されたウィンドウを元に戻す．これがないと，最大化ウィンドウが
+		//	最大化状態のまま並び替えられてしまい，その後最大化動作が変になる．
+		//
+		//	Sep. 04, 2004 genta
+		// -----------------------------------------
+		for( i = 0; i < count; i++ ){
+			::ShowWindow( pWndArr[i].hWnd, SW_RESTORE | SW_SHOWNA );
+		}
+
+		// -----------------------------------------
 		//	ウィンドウ配置
 		//
 		//	Mar. 20, 2004 genta APIを素直に使ってZ-Orderの上から下の順で並べる．
@@ -7224,8 +7270,14 @@ void CEditView::Command_TILE_H( void )
 	int i;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	//Start 2004.07.15 Kazika タブウィンドウ時はタブモードを解除して実行
 	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin ) return;
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		//タブウィンドウをまとめない設定に変更
+		m_pShareData->m_Common.m_bDispTabWndMultiWin = TRUE;
+	}
+	//End 2004.07.15 Kazika
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
@@ -7281,8 +7333,14 @@ void CEditView::Command_TILE_V( void )
 	int i;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
+	//Start 2004.07.15 Kazika タブウィンドウ時はタブモードを解除して実行
 	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin ) return;
+	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )// return;
+	{
+		//タブウィンドウをまとめない設定に変更
+		m_pShareData->m_Common.m_bDispTabWndMultiWin = TRUE;
+	}
+	//End 2004.07.15 Kazika
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
