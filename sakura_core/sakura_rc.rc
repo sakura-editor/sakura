@@ -2447,12 +2447,12 @@ BEGIN
     F_TOZENKAKUHIRA         "半角＋全カタ→全角・ひらがな"
     F_HANKATATOZENKAKUKATA  "半角カタカナ→全角カタカナ"
     F_HANKATATOZENKAKUHIRA  "半角カタカナ→全角ひらがな"
-    F_TOZENEI               "全角英数→半角英数"
+    F_TOZENEI               "半角英数→全角英数"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_TOHANEI               "半角英数→全角英数"
+    F_TOHANEI               "全角英数→半角英数"
     F_TOHANKATA             "全角カタカナ→半角カタカナ"
     F_TABTOSPACE            "TAB→空白"
     F_SPACETOTAB            "空白→TAB"
