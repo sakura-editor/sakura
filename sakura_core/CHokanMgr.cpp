@@ -20,6 +20,7 @@
 #include "CEditView.h"
 #include "mymessage.h"
 #include "sakura_rc.h"
+#include "etc_uty.h"
 
 	WNDPROC			gm_wpHokanListProc;
 
@@ -294,7 +295,8 @@ int CHokanMgr::Search(
 	int nCX;
 	int nCY;
 	RECT	rcDesktop;
-	::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+	//	May 01, 2004 genta マルチモニタ対応
+	::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 
 	nX = m_poWin.x - m_nColmWidth;
 	nY = m_poWin.y + m_nWinHeight + 4;

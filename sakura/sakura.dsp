@@ -381,6 +381,10 @@ SOURCE=..\sakura_core\CMRUFolder.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CMultiMonitor.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CNormalProcess.cpp
 # End Source File
 # Begin Source File
@@ -838,6 +842,10 @@ SOURCE=..\sakura_core\CMRU.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CMRUFolder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CMultiMonitor.h
 # End Source File
 # Begin Source File
 

@@ -7350,7 +7350,8 @@ void CEditView::Command_CASCADE( void )
 
 		//	デスクトップサイズを得る
 		RECT	rcDesktop;
-		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		//	May 01, 2004 genta マルチモニタ対応
+		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		
 		int width = (rcDesktop.right - rcDesktop.left ) * 4 / 5; // Mar. 9, 2003 genta 整数演算のみにする
 		int height = (rcDesktop.bottom - rcDesktop.top ) * 4 / 5;
@@ -7446,7 +7447,8 @@ void CEditView::Command_TILE_H( void )
 		int		count = 0;
 		//	デスクトップサイズを得る
 		RECT	rcDesktop;
-		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		//	May 01, 2004 genta マルチモニタ対応
+		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
 				continue;
@@ -7502,7 +7504,8 @@ void CEditView::Command_TILE_V( void )
 		int		count = 0;
 		//	デスクトップサイズを得る
 		RECT	rcDesktop;
-		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		//	May 01, 2004 genta マルチモニタ対応
+		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
 				continue;
@@ -7548,7 +7551,8 @@ void CEditView::Command_MAXIMIZE_V( void )
 	RECT	rcDesktop;
 	hwndFrame = ::GetParent( m_hwndParent );
 	::GetWindowRect( hwndFrame, &rcOrg );
-	::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+	//	May 01, 2004 genta マルチモニタ対応
+	::GetMonitorWorkRect( hwndFrame, &rcDesktop );
 	::SetWindowPos(
 		hwndFrame, 0,
 		rcOrg.left, rcDesktop.top,
@@ -7571,7 +7575,8 @@ void CEditView::Command_MAXIMIZE_H( void )
 
 	hwndFrame = ::GetParent( m_hwndParent );
 	::GetWindowRect( hwndFrame, &rcOrg );
-	::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+	//	May 01, 2004 genta マルチモニタ対応
+	::GetMonitorWorkRect( hwndFrame, &rcDesktop );
 	::SetWindowPos(
 		hwndFrame, 0,
 		rcDesktop.left, rcOrg.top,
@@ -9359,7 +9364,8 @@ end_of_compare:;
 		}
 		//	デスクトップサイズを得る 2002.1.24 YAZAKI
 		RECT	rcDesktop;
-		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
+		//	May 01, 2004 genta マルチモニタ対応
+		::GetMonitorWorkRect( phwndArr[0], &rcDesktop );
 		int width = (rcDesktop.right - rcDesktop.left ) / 2;
 		for( i = 1; i >= 0; i-- ){
 			::SetWindowPos(

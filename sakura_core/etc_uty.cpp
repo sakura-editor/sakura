@@ -33,6 +33,7 @@
 #include "CShareData.h"
 #include "CMRU.h"
 #include "CMRUFolder.h"
+#include "CMultiMonitor.h"	//	2004.05.01 genta
 
 //	CShareDataへ移動
 /* 日付をフォーマット */
@@ -2842,4 +2843,14 @@ int CalcDirectoryDepth(const char* path)
 	}
 	return depth;
 }
+
+//	From Here May 01, 2004 genta MutiMonitor
+CMultiMonitor	g_MultiMonitor;
+
+bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop)
+{
+	return g_MultiMonitor.GetMonitorWorkRect( hWnd, rcDesktop );
+}
+//	To Here May 01, 2004 genta
+
 /*[EOF]*/
