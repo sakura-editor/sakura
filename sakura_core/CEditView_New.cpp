@@ -590,16 +590,25 @@ searchnext:;
 							rcClip2.top = y;
 							rcClip2.bottom = y + nLineHeight;
 							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );	/* CRLF背景の色 */
+							//	2003.08.17 ryoji 改行文字が欠けないように
 							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
-								&rcClip2, (const char *)" ", 1, m_pnDx );
+								&rcClip2, (const char *)"  ", 2, m_pnDx );
 							::SetBkColor( hdc, colBkColorOld );
 							/* 改行記号の表示 */
 							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_CRLF].m_bDisp ){
 								nPosX = x + nX * ( nCharWidth );
 								nPosY = y;
+								//	From Here 2003.08.17 ryoji 改行文字が欠けないように
+								HRGN hRgn;
+								hRgn = ::CreateRectRgnIndirect(&rcClip2);
+								::SelectClipRgn(hdc, hRgn);
 								//@@@ 2001.12.21 YAZAKI
 								DrawEOL(hdc, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
-									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
+									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont,
+										TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );
+								::SelectClipRgn(hdc, NULL);
+								::DeleteObject(hRgn);
+								//	To Here 2003.08.17 ryoji 改行文字が欠けないように
 							}
 						}
 						::SelectObject( hdc, hFontOld );
