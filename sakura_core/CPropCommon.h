@@ -105,8 +105,8 @@ public:
 	CKeyWordSetMgr	m_CKeyWordSetMgr;
 	//2002/04/25 YAZAKI Types全体を保持する必要はない。
 	//Types			m_Types[MAX_TYPES];
-	int				m_Types_nKeyWordSetIdx[MAX_TYPES];
-	int				m_Types_nKeyWordSetIdx2[MAX_TYPES];
+	// 2005.01.13 MIK セット数増加
+	int				m_Types_nKeyWordSetIdx[MAX_TYPES][MAX_KEYWORDSET_PER_TYPE];
 	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
 	char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
@@ -185,6 +185,7 @@ protected:
 	void SetData_p7_KeyWordSet( HWND , int );	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	int  GetData_p7( HWND );	/* ダイアログデータの取得 p7 */
 	void GetData_p7_KeyWordSet( HWND , int );	/* ダイアログデータの取得 p7 指定キーワードセットの取得 */
+	void DispKeywordCount( HWND hwndDlg );
 
 	//==============================================================
 	//!	カスタムメニューページのDialog Procedure

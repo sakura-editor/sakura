@@ -51,6 +51,7 @@
 #define IDI_ICON_GREP                   240
 #define IDC_CURSOR_ISEARCH_F            241
 #define IDC_CURSOR_ISEARCH_B            242
+#define IDD_DIALOG_KEYWORD_SELECT       243
 #define IDC_HIDE                        1000
 #define IDC_CHK_LOHICASE                1006
 #define IDC_CHECK_INDENT                1009
@@ -537,9 +538,21 @@
 #define IDC_SPIN_SY                     1489
 #define IDC_COMBO_WINTYPE               1490
 #define IDC_BUTTON_WINSIZE              1491
-#define IDC_HOTKEY1                     1493
 #define IDC_CHECK_QueryIfCodeChange     1492
+#define IDC_HOTKEY1                     1493
 #define IDC_CHECK_AlertIfFileNotExist   1493
+#define IDC_COMBO1                      1494
+#define IDC_BUTTON_KEYWORD_SELECT       1495
+#define IDC_COMBO2                      1495
+#define IDC_COMBO3                      1496
+#define IDC_STATIC_KEYWORD_COUNT        1496
+#define IDC_COMBO4                      1497
+#define IDC_COMBO5                      1498
+#define IDC_COMBO6                      1499
+#define IDC_COMBO7                      1500
+#define IDC_COMBO8                      1501
+#define IDC_COMBO9                      1502
+#define IDC_COMBO10                     1503
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -574,9 +587,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        243
+#define _APS_NEXT_RESOURCE_VALUE        244
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1494
+#define _APS_NEXT_CONTROL_VALUE         1497
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

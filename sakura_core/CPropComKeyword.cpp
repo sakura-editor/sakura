@@ -286,8 +286,16 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					strcpy( pszLabel, "" );
 					for( i = 0; i < MAX_TYPES; ++i ){
 						// 2002/04/25 YAZAKI Types全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
-						if( nIndex1 == m_Types_nKeyWordSetIdx[i]
-						||  nIndex1 == m_Types_nKeyWordSetIdx2[i] ){	//MIK
+						if( nIndex1 == m_Types_nKeyWordSetIdx[i][0]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][1]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][2]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][3]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][4]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][5]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][6]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][7]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][8]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i][9] ){
 							strcat( pszLabel, "・" );
 							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeName );
 							strcat( pszLabel, "（" );
@@ -306,17 +314,13 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
 					for( i = 0; i < MAX_TYPES; ++i ){
 						// 2002/04/25 YAZAKI Types全体を保持する必要はない。
-						if( nIndex1 == m_Types_nKeyWordSetIdx[i] ){
-							m_Types_nKeyWordSetIdx[i] = -1;
-						}
-						else if( nIndex1 < m_Types_nKeyWordSetIdx[i] ){
-							m_Types_nKeyWordSetIdx[i]--;
-						}
-						if( nIndex1 == m_Types_nKeyWordSetIdx2[i] ){	//MIK
-							m_Types_nKeyWordSetIdx2[i] = -1;			//MIK
-						}												//MIK
-						else if( nIndex1 < m_Types_nKeyWordSetIdx2[i] ){
-							m_Types_nKeyWordSetIdx2[i]--;
+						for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
+							if( nIndex1 == m_Types_nKeyWordSetIdx[i][j] ){
+								m_Types_nKeyWordSetIdx[i][j] = -1;
+							}
+							else if( nIndex1 < m_Types_nKeyWordSetIdx[i][j] ){
+								m_Types_nKeyWordSetIdx[i][j]--;
+							}
 						}
 					}
 					/* ｎ番目のセットを削除 */
@@ -466,6 +470,10 @@ void CPropCommon::p7_Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	ListView_SetItemState( hwndLIST_KEYWORD, nIndex1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+
+	//キーワード数を表示する。
+	DispKeywordCount( hwndDlg );
+
 	return;
 }
 
@@ -677,6 +685,10 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 
 	}
 	m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
+
+	//キーワード数を表示する。
+	DispKeywordCount( hwndDlg );
+
 	return;
 }
 
@@ -702,5 +714,19 @@ void CPropCommon::GetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 {
 }
 
+//キーワード数を表示する。
+void CPropCommon::DispKeywordCount( HWND hwndDlg )
+{
+	HWND	hwndList;
+	int		n;
+	TCHAR szCount[ 256 ];
+
+	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
+	n = ListView_GetItemCount( hwndList );
+	if( n < 0 ) n = 0;
+
+	wsprintf( szCount, _T("(最大 %d 文字   登録数 %d / %d 個)"), MAX_KEYWORDLEN, n, MAX_KEYWORDNUM ); 
+	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
+}
 
 /*[EOF]*/

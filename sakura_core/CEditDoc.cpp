@@ -1134,7 +1134,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 /*! タイプ別設定 プロパティシート */
 BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 {
-	m_cPropTypes.m_Types = m_pShareData->m_Types[nSettingType];
+	m_cPropTypes.SetTypeData( m_pShareData->m_Types[nSettingType] );
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
 	//m_cPropTypes.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
 
@@ -1148,7 +1148,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 //		/* 変更フラグ(タイプ別設定) のセット */
 //		m_pShareData->m_nTypesModifyArr[nSettingType] = TRUE;
 		/* 変更された設定値のコピー */
-		m_pShareData->m_Types[nSettingType] = m_cPropTypes.m_Types;
+		m_cPropTypes.GetTypeData( m_pShareData->m_Types[nSettingType] );
 
 //		/* 折り返し桁数が変更された */
 //		if( m_cPropTypes.m_nMaxLineSize_org != m_cPropTypes.m_Types.m_nMaxLineSize){

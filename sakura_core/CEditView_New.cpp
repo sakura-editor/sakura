@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, genta, mik
 	Copyright (C) 2001, hor
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -846,7 +847,7 @@ searchnext:;
 //#endif
 //@@@ 2001.02.17 End by MIK: 半角数値を強調表示
 					}else
-					if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx != -1 && /* キーワードセット */
+					if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx[0] != -1 && /* キーワードセット */
 						TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
@@ -863,7 +864,7 @@ searchnext:;
 						j = i - nPos;
 						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
 						nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
-							TypeDataPtr->m_nKeyWordSetIdx,
+							TypeDataPtr->m_nKeyWordSetIdx[0],
 							&pLine[nPos],
 							j
 						);
@@ -881,29 +882,39 @@ searchnext:;
 								SetCurrentColor( hdc, nCOMMENTMODE );
 							}
 						}else{		//MIK START ADD 2000.12.01 second keyword & binary search
-							if(TypeDataPtr->m_nKeyWordSetIdx2 != -1 && /* キーワードセット */							//MIK 2000.12.01 second keyword
-								TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD2].m_bDisp)									//MIK
-							{																							//MIK
-								/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-								nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
-									TypeDataPtr->m_nKeyWordSetIdx2 ,													//MIK
-									&pLine[nPos],																		//MIK
-									j																					//MIK
-								);																						//MIK
-								if( nIdx != -1 ){																		//MIK
-									if( y/* + nLineHeight*/ >= m_nViewAlignTop ){										//MIK
-										/* テキスト表示 */																//MIK
-										nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );	//MIK
-									}																					//MIK
-									/* 現在の色を指定 */																//MIK
-									nBgn = nPos;																		//MIK
-									nCOMMENTMODE = COLORIDX_KEYWORD2;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
-									nCOMMENTEND = i;																	//MIK
-									if( !bSearchStringMode ){															//MIK
-										SetCurrentColor( hdc, nCOMMENTMODE );											//MIK
-									}																					//MIK
-								}																						//MIK
-							}																							//MIK
+							// 2005.01.13 MIK 強調キーワード数追加に伴う配列化
+							for( int my_i = 1; my_i < 10; my_i++ )
+							{
+								if(TypeDataPtr->m_nKeyWordSetIdx[ my_i ] != -1 && /* キーワードセット */							//MIK 2000.12.01 second keyword
+									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
+								{																							//MIK
+									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
+									nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
+										TypeDataPtr->m_nKeyWordSetIdx[ my_i ] ,													//MIK
+										&pLine[nPos],																		//MIK
+										j																					//MIK
+									);																						//MIK
+									if( nIdx != -1 ){																		//MIK
+										if( y/* + nLineHeight*/ >= m_nViewAlignTop ){										//MIK
+											/* テキスト表示 */																//MIK
+											nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );	//MIK
+										}																					//MIK
+										/* 現在の色を指定 */																//MIK
+										nBgn = nPos;																		//MIK
+										nCOMMENTMODE = COLORIDX_KEYWORD1 + my_i;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
+										nCOMMENTEND = i;																	//MIK
+										if( !bSearchStringMode ){															//MIK
+											SetCurrentColor( hdc, nCOMMENTMODE );											//MIK
+										}																					//MIK
+										break;
+									}																						//MIK
+								}																							//MIK
+								else
+								{
+									if(TypeDataPtr->m_nKeyWordSetIdx[my_i] == -1 )
+										break;
+								}
+							}
 						}			//MIK END
 					}
 					//	From Here Mar. 4, 2001 genta
@@ -916,6 +927,14 @@ searchnext:;
 				case COLORIDX_KEYWORD1:	/* 強調キーワード1 */
 				case COLORIDX_DIGIT:	/* 半角数値である */  //@@@ 2001.02.17 by MIK
 				case COLORIDX_KEYWORD2:	/* 強調キーワード2 */	//MIK
+				case COLORIDX_KEYWORD3:	// 2005.01.13 MIK 強調キーワード3-10
+				case COLORIDX_KEYWORD4:
+				case COLORIDX_KEYWORD5:
+				case COLORIDX_KEYWORD6:
+				case COLORIDX_KEYWORD7:
+				case COLORIDX_KEYWORD8:
+				case COLORIDX_KEYWORD9:
+				case COLORIDX_KEYWORD10:
 				//case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04 del
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){

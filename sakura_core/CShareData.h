@@ -70,6 +70,7 @@ enum maxdata{
 
 	// 2004/06/21 novice タグジャンプ機能追加
 	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
+	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) タイプ別設定毎のキーワードセット数
 };
 
 
@@ -214,8 +215,8 @@ struct Types {
 	int					m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
 	char				m_szTabViewString[17];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
-	int					m_nKeyWordSetIdx;				/* キーワードセット1 */
-	int					m_nKeyWordSetIdx2;				/* キーワードセット2 */	//Dec. 4, 2000 MIK
+	// 2005.01.13 MIK 配列化
+	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	/*!< キーワードセット */
 
 	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
 	CBlockComment		m_cBlockComment;				/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI

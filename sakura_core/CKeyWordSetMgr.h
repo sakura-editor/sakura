@@ -20,10 +20,10 @@ class CKeyWordSetMgr;
 #include <windows.h>
 #include "global.h"// 2002/2/10 aroka
 
-#define		MAX_SETNUM		20	//Jul. 12, 2001 jepro notes: 強調キーワードのセット数の最大値
+#define		MAX_SETNUM		25	//Jul. 12, 2001 jepro notes: 強調キーワードのセット数の最大値
 #define		MAX_SETNAMELEN	32
 #define		MAX_KEYWORDNUM	1000
-#define		MAX_KEYWORDLEN	100
+#define		MAX_KEYWORDLEN	64
 
 //! 強調キーワード管理
 class SAKURA_CORE_API CKeyWordSetMgr
