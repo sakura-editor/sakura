@@ -114,7 +114,8 @@ public:
 
 	
 	void InsertData_CDocLineMgr( int , int , const char* , int , int* , int* , int*, int );	/* ƒf[ƒ^‚Ì‘}“ü */
-	int ReadFile( const char*, HWND, HWND, int, FILETIME* );
+	//	Nov. 12, 2000 genta ˆø”’Ç‰Á
+	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag );
 	int WriteFile( const char*, HWND, HWND, int, FILETIME* );
 	CDocLine* GetLineInfo( int );
 

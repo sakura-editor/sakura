@@ -416,6 +416,7 @@
 #define IDC_STATIC_URL_CAPTION          1376
 #define IDC_STATIC_URL_UR               1379
 #define IDC_STATIC_URL_ORG              1380
+#define IDC_CHECK_AutoMIMEDecode        1381
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -454,7 +455,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        215
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1381
+#define _APS_NEXT_CONTROL_VALUE         1382
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

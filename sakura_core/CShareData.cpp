@@ -28,7 +28,7 @@ struct ARRHEAD {
 
 //	共有メモリのバージョン 1～unsinged intの最大値
 //	共有メモリの形式を変更したときはここも修正すること
-const unsigned int uShareDataVersion = 2;
+const unsigned int uShareDataVersion = 3;
 
 
 CShareData::~CShareData()
@@ -442,7 +442,7 @@ bool CShareData::Init(void)
 		m_pShareData->m_Common.m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
 
 		//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_bRestoreCurPosition = true;	//	カーソル位置復元
+		m_pShareData->m_Common.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
 
 //		m_pShareData->m_Common.m_bEnableLineISlog = TRUE;		/* ★廃止★行番号種別　物理行／論理行 */
 
@@ -734,7 +734,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		strcpy( m_pShareData->m_Common.m_szTimeFormat, "tthh\'時\'mm\'分\'ss\'秒\'"  );//時刻書式
 
 		m_pShareData->m_Common.m_bMenuIcon = TRUE;	/* メニューにアイコンを表示する */
-
+		//	Nov. 12, 2000 genta
+		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//	ファイル読み込み時にMIMEのdecodeを行うか
 
 //		/* MRU 外部コマンド */
 //		m_pShareData->m_Common.m_MRU_ExtCmd.m_nExtCmdArrNum = 0;
