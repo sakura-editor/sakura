@@ -288,10 +288,11 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		//スタイルを変更する。
 		UINT lngStyle;
 		lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
-		//lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
-		//lngStyle |= TCS_TABS | TCS_SINGLELINE;
-		lngStyle &= ~(TCS_BUTTONS | TCS_SINGLELINE);	//2004.01.31
-		lngStyle |= TCS_TABS | TCS_MULTILINE;
+		//	Feb. 14, 2004 MIK マルチライン化の変更混入戻し
+		lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
+		lngStyle |= TCS_TABS | TCS_SINGLELINE;
+		//lngStyle &= ~(TCS_BUTTONS | TCS_SINGLELINE);	//2004.01.31
+		//lngStyle |= TCS_TABS | TCS_MULTILINE;
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
 
 		/* 表示用フォント */
