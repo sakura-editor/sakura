@@ -512,7 +512,10 @@ HWND CEditWnd::Create(
 			if( bOpened ){
 				::PostMessage( m_hWnd, WM_CLOSE, 0, 0 );
 				delete [] pszPathNew;
-				return NULL;
+				// 2004.07.12 Moca return NULLだと、メッセージループを通らずにそのまま破棄されてしまい、タブの終了処理が抜ける
+				//	この後は正常ルートでメッセージループに入った後WM_CLOSEを受信して直ちにCLOSE & DESTROYとなる．
+				//	その中で編集ウィンドウの削除が行われる．
+				return m_hWnd;
 			}
 			else {
 				//	Nov. 20, 2000 genta
