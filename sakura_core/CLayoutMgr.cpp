@@ -25,7 +25,7 @@
 #include "CDocLine.h"/// 2002/2/10 aroka
 #include "CDocLineMgr.h"/// 2002/2/10 aroka
 #include "CMemory.h"/// 2002/2/10 aroka
-
+#include "etc_uty.h" // Oct. 5, 2002 genta
 
 
 
@@ -174,7 +174,7 @@ void CLayoutMgr::SetLayoutInfo(
 		memset( (void *)q2, 0, length );
 		for( p = (unsigned char *)refType.m_szKinsokuHead; *p; p++ )
 		{
-			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
+			if( _IS_SJIS_1( *p ) )
 			{
 				if( IsKutoTen( *p, *(p+1) ) )	//‹å“Ç“_‚Í•ÊŠÇ—
 				{
@@ -225,7 +225,7 @@ void CLayoutMgr::SetLayoutInfo(
 		memset( (void *)q2, 0, length );
 		for( p = (unsigned char *)refType.m_szKinsokuTail; *p; p++ )
 		{
-			if( (*p >= 0x81 && *p <= 0x9f) || (*p >= 0xe0 && *p <= 0xfc) )
+			if( _IS_SJIS_1( *p ) )
 			{
 				*q2 = *p; q2++; p++;
 				*q2 = *p; q2++;

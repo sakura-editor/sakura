@@ -270,15 +270,6 @@ void CMemory::AddData( const char* pData, int nDataLen )
 	return;
 }
 
-/*! Shift_JIS の漢字の1バイト目？ の判定 */
-inline bool _IS_SJIS_1(unsigned int ch){
-	return ( ( ch >=0x081 )&&( ch <=0x09F ) ) || ( ( ch >=0x0E0 )&&( ch <=0x0FC ) );
-}
-/*!  Shift_JIS の漢字の2バイト目？ の判定 */
-inline bool _IS_SJIS_2(unsigned int ch){
-	return ( ( ch >=0x040 )&&( ch <=0x07E ) ) || ( ( ch >=0x080 )&&( ch <=0x0FC ) );
-}
-
 /*!
 	@brief 拡張版 SJIS→JIS変換
 
@@ -378,16 +369,9 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 		// 漢字か？
 		if( ( i < nSrcLen - 1) &&
 			/* SJIS全角コードの1バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			(
-			  ( (unsigned char)0x81 <= (unsigned char)pszSrc[i + 0] && (unsigned char)pszSrc[i + 0] <= (unsigned char)0x9F ) ||
-			  ( (unsigned char)0xE0 <= (unsigned char)pszSrc[i + 0] && (unsigned char)pszSrc[i + 0] <= (unsigned char)0xFC )
-			)
-			&&
+			_IS_SJIS_1( (unsigned char)pszSrc[i + 0] ) &&
 			/* SJIS全角コードの2バイト目か */
-			(
-			  ( (unsigned char)0x40 <= (unsigned char)pszSrc[i + 1] && (unsigned char)pszSrc[i + 1] <= (unsigned char)0x7E ) ||
-			  ( (unsigned char)0x80 <= (unsigned char)pszSrc[i + 1] && (unsigned char)pszSrc[i + 1] <= (unsigned char)0xFC )
-			)
+			_IS_SJIS_2( (unsigned char)pszSrc[i + 1] )
 		){
 			nCharKind = CHAR_ZENKAKU;	/* 全角文字 */
 //			++i;
@@ -1860,16 +1844,10 @@ const char* CMemory::MemCharNext( const char* pData, int nDataLen, const char* p
 //		pNext = ::CharNext( pDataCurrent );
 		if(
 			/* SJIS全角コードの1バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			(
-			  ( (unsigned char)0x81 <= (unsigned char)pDataCurrent[0] && (unsigned char)pDataCurrent[0] <= (unsigned char)0x9F ) ||
-			  ( (unsigned char)0xE0 <= (unsigned char)pDataCurrent[0] && (unsigned char)pDataCurrent[0] <= (unsigned char)0xFC )
-			)
+			_IS_SJIS_1( (unsigned char)pDataCurrent[0] )
 			&&
 			/* SJIS全角コードの2バイト目か */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			(
-			  ( (unsigned char)0x40 <= (unsigned char)pDataCurrent[1] && (unsigned char)pDataCurrent[1] <= (unsigned char)0x7E ) ||
-			  ( (unsigned char)0x80 <= (unsigned char)pDataCurrent[1] && (unsigned char)pDataCurrent[1] <= (unsigned char)0xFC )
-			)
+			_IS_SJIS_2( (unsigned char)pDataCurrent[1] )
 		){
 			pNext = pDataCurrent + 2;
 		}else{
@@ -2113,8 +2091,7 @@ void CMemory::Replace_j( char* pszFrom, char* pszTo )
 			nBgn = nBgn + nFromLen;
 			nBgnOld = nBgn;
 		}else{
-			unsigned char c = (unsigned char)m_pData[nBgn];
-			if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ) nBgn++;
+			if( _IS_SJIS_1( (unsigned char)m_pData[nBgn] ) ) nBgn++;
 			nBgn++;
 		}
 	}

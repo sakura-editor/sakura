@@ -166,6 +166,28 @@ BOOL CEditView::HandleCommand(
 
 	switch( nCommand ){
 	case F_CHAR:	/* 文字入力 */
+		//	To Here Oct. 5, 2002 genta
+		//	WM_CHARでくる漢字コードを受け入れる
+		{
+			static unsigned int ucSjis1 = 0;
+			if( ucSjis1 == 0 ){
+				if( _IS_SJIS_1( (unsigned char)lparam1 )){
+					ucSjis1 = lparam1;
+					break;
+				}
+			}
+			else {
+				//	一文字前にSJISの1バイト目が来ている
+				if( _IS_SJIS_2( (unsigned char)lparam1 )){
+					Command_IME_CHAR( ucSjis1 << 8 | lparam1 );
+					ucSjis1 = 0;
+					break;
+				}
+				ucSjis1 = 0;
+			}
+			
+		}
+		//	To Here Oct. 5, 2002 genta
 		/* コントロールコード入力禁止 */
 		if(
 			( ( (unsigned char)0x0 <= (unsigned char)lparam1 && (unsigned char)lparam1 <= (unsigned char)0x1F ) ||
@@ -3305,7 +3327,18 @@ void CEditView::Command_CHAR( char cChar )
 
 
 
-/* 2バイト文字入力 */
+/*!
+	@brief 2バイト文字入力
+	
+	WM_IME_CHARで送られてきた文字を処理する．
+	ただし，挿入モードではWM_IME_CHARではなくWM_IME_COMPOSITIONで文字列を
+	取得するのでここには来ない．
+
+	@param wChar [in] SJIS漢字コード．上位が1バイト目，下位が2バイト目．
+	
+	@date 2002.10.06 genta 引数の上下バイトの意味を逆転．
+		WM_IME_CHARのwParamに合わせた．
+*/
 void CEditView::Command_IME_CHAR( WORD wChar )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
@@ -3318,18 +3351,24 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 	int				nNewLine;		/* 挿入された部分の次の位置の行 */
 	int				nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
+	char	sWord[2];
 //	const CLayout*	pcLayout;
-	if( 0 == (wChar & 0x00ff) ){
-		Command_CHAR( (char)((wChar&0xff00)>>8) );
+	//	Oct. 6 ,2002 genta 上下逆転
+	if( 0 == (wChar & 0xff00) ){
+		Command_CHAR( wChar & 0xff );
 		return;
 	}
 	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
+
+	//	Oct. 6 ,2002 genta バッファに格納する
+	sWord[0] = (wChar >> 8) & 0xff;
+	sWord[1] = wChar & 0xff;
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
-			Command_INDENT( (const char*)&wChar, sizeof( wChar ) );
+			Command_INDENT( &sWord[0], 2 );	//	Oct. 6 ,2002 genta 
 			return;
 		}else{
 			DeleteData( TRUE );
@@ -3367,7 +3406,8 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 		pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
 	}
-	InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, (char*)&wChar, 2, &nNewLine, &nNewPos, pcOpe, TRUE );
+	//	Oct. 6 ,2002 genta 
+	InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, &sWord[0], 2, &nNewLine, &nNewPos, pcOpe, TRUE );
 
 	/* 挿入データの最後へカーソルを移動 */
 	MoveCursor( nNewPos, nNewLine, TRUE );
