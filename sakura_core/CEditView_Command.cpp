@@ -2584,7 +2584,8 @@ void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, int nTextLen
 // です。
 //  なお、これらを呼び出し側に期待するわけは、「すべて置換」のような何回も連続で呼び出す
 // ときに、最初に一回チェックすればよいものを何回もチェックするのは無駄と判断したためです。
-void CEditView::Command_PASTEBOX(char *szPaste, int nPasteSize)
+// @note 2004.06.30 現在、すべて置換では使用していない
+void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 {
 	/* これらの動作は残しておきたいのだが、呼び出し側で責任を持ってやってもらうことに変更。
 	if( m_bBeginSelect )	// マウスによる範囲選択中
@@ -2616,7 +2617,10 @@ void CEditView::Command_PASTEBOX(char *szPaste, int nPasteSize)
 	m_bDrawSWITCH = FALSE;	// 2002.01.25 hor
 
 	// とりあえず選択範囲を削除
-	DeleteData( FALSE/*TRUE 2002.01.25 hor*/ );
+	// 2004.06.30 Moca IsTextSelected()がないと未選択時、一文字消えてしまう
+	if( IsTextSelected() ){
+		DeleteData( FALSE/*TRUE 2002.01.25 hor*/ );
+	}
 
 	nCurXOld = m_nCaretPosX;
 	nCurYOld = m_nCaretPosY;
@@ -2733,10 +2737,11 @@ void CEditView::Command_PASTEBOX(char *szPaste, int nPasteSize)
 			if(
 				(nPos + 1 < nPasteSize ) &&
 				(
-//				 ( lptstr[nPos] == '\n' && lptstr[nPos + 1] == '\r') ||
-				 ((WORD *)(szPaste + nPos))[0] == MAKEWORD('\n', '\r') ||
-//				 ( lptstr[nPos] == '\r' && lptstr[nPos + 1] == '\n')
-				 ((WORD *)(szPaste + nPos))[0] == MAKEWORD('\r', '\n')
+// 2004.06.30 Moca WORD*では非x86で境界不整列の可能性あり
+				 ( szPaste[nPos] == '\n' && szPaste[nPos + 1] == '\r') ||
+				 ( szPaste[nPos] == '\r' && szPaste[nPos + 1] == '\n')
+//				 ((WORD *)(szPaste + nPos))[0] == MAKEWORD('\n', '\r') ||
+//				 ((WORD *)(szPaste + nPos))[0] == MAKEWORD('\r', '\n')
 				)
 			  )
 			{
@@ -2779,7 +2784,8 @@ void CEditView::Command_PASTEBOX(char *szPaste, int nPasteSize)
 
 // 一応、Command_PASTEBOX(char *, int) を使った Command_PASTEBOX(void) を書いておきます。
 /* 矩形貼り付け(クリップボードから矩形貼り付け) */
-/*
+// 2004.06.29 Moca 未使用だったものを有効にする
+//	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
 void CEditView::Command_PASTEBOX( void )
 {
 	if( m_bBeginSelect )	// マウスによる範囲選択中
@@ -2800,344 +2806,17 @@ void CEditView::Command_PASTEBOX( void )
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
-	char *lptstr = cmemClip.GetPtr();
-	int nstrlen = lstrlen( lptstr );
+	// 2004.07.13 Moca \0コピー対策
+	int nstrlen;
+	const char *lptstr = cmemClip.GetPtr( &nstrlen );
 
 	Command_PASTEBOX(lptstr, nstrlen);
 
 	Redraw();			// 2002.01.25 hor
 	return;
 }
-*/
+
 //>> 2002/03/29 Azumaiya
-
-
-/* 矩形貼り付け(クリップボードから矩形貼り付け) */
-void CEditView::Command_PASTEBOX( void )
-{
-	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
-		return;
-	}
-
-
-	if( FALSE == m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
-		return;
-	}
-//	HGLOBAL			hglb;
-	char*			lptstr;
-	int				nstrlen;
-	int				nBgn;
-	int				nPos;
-	int				nCount;
-//	CMemory			cMem;
-	int				nNewLine;		/* 挿入された部分の次の位置の行 */
-	int				nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
-	int				nCurXOld;
-	int				nCurYOld;
-	COpe*			pcOpe = NULL;
-//	CWaitCursor 	cWaitCursor( m_hWnd );
-	BOOL			bAddLastCR;
-	int				nInsPosX;
-//	BOOL			bBeginBoxSelect;
-//	const CLayout*	pcLayout;
-
-	/* クリップボードからデータを取得 */
-	CMemory			cmemClip;
-	if( FALSE == MyGetClipboardData( cmemClip, NULL ) ){
-		::MessageBeep( MB_ICONHAND );
-		return;
-	}
-	lptstr = cmemClip.GetPtr();
-
-
-	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
-
-	m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
-	/* テキストが選択されているか */
-	if( IsTextSelected() ){
-		DeleteData( FALSE/*TRUE 2002.01.25 hor*/ );
-	}
-	nCurXOld = m_nCaretPosX;
-	nCurYOld = m_nCaretPosY;
-
-	nstrlen = lstrlen( lptstr );
-	nCount = 0;
-	nBgn = 0;
-	for( nPos = 0; nPos < nstrlen; ){
-		if( lptstr[nPos] == CR || lptstr[nPos] == LF ){
-			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
-//				pcOpe->m_nCaretPosX_Before = nCurXOld/*m_nCaretPosX*/;			/* 操作前のキャレット位置Ｘ */
-//				pcOpe->m_nCaretPosY_Before = nCurYOld + nCount/*m_nCaretPosY*/;	/* 操作前のキャレット位置Ｙ */
-//				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//					pcOpe->m_nCaretPosX_Before,
-//					pcOpe->m_nCaretPosY_Before,
-//					&pcOpe->m_nCaretPosX_PHY_Before,
-//					&pcOpe->m_nCaretPosY_PHY_Before
-//				);
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-					nCurXOld/*m_nCaretPosX*/,
-					nCurYOld + nCount/*m_nCaretPosY*/,
-					&pcOpe->m_nCaretPosX_PHY_Before,
-					&pcOpe->m_nCaretPosY_PHY_Before
-				);
-			}
-			/* 現在位置にデータを挿入 */
-// 2001/10/02 deleted by novice
-#if 0
-			if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() <= nCurYOld + nCount ){
-				InsertData_CEditView(
-					nCurXOld,
-					nCurYOld + nCount,
-					&lptstr[nBgn],
-					nPos - nBgn + 1,
-					&nNewLine,
-					&nNewPos,
-					pcOpe,
-					TRUE
-				);
-				{
-					char szTest[1024];
-					memcpy( szTest, &lptstr[nBgn], nPos - nBgn + 1 );
-					szTest[nPos - nBgn + 1] = '\0';
-//					MYTRACE( "ins-1:[%s]\n", szTest );
-				}
-			}else{
-#endif
-				if( nPos - nBgn > 0 ){
-					InsertData_CEditView(
-						nCurXOld,
-						nCurYOld + nCount,
-						&lptstr[nBgn],
-						nPos - nBgn,
-						&nNewLine,
-						&nNewPos,
-						pcOpe,
-						FALSE/*TRUE 2002.01.25 hor*/
-					);
-// 2001/10/02 deleted by novice
-#if 0
-					{
-						char szTest[1024];
-						memcpy( szTest, &lptstr[nBgn], nPos - nBgn );
-						szTest[nPos - nBgn] = '\0';
-//						MYTRACE( "ins-2:[%s]\n", szTest );
-					}
-#endif
-				}
-#if 0
-			}
-#endif
-			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-//				pcOpe->m_nCaretPosX_After = nNewPos/*m_nCaretPosX*/;	/* 操作後のキャレット位置Ｘ */
-//				pcOpe->m_nCaretPosY_After = nNewLine/*m_nCaretPosY*/;	/* 操作後のキャレット位置Ｙ */
-//				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//					pcOpe->m_nCaretPosX_After,
-//					pcOpe->m_nCaretPosY_After,
-//					&pcOpe->m_nCaretPosX_PHY_After,
-//					&pcOpe->m_nCaretPosY_PHY_After
-//				);
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-					nNewPos/*m_nCaretPosX*/,
-					nNewLine/*m_nCaretPosY*/,
-					&pcOpe->m_nCaretPosX_PHY_After,
-					&pcOpe->m_nCaretPosY_PHY_After
-				);
-
-				/* 操作の追加 */
-				m_pcOpeBlk->AppendOpe( pcOpe );
-			}
-			/* この行の挿入位置へカーソルを移動 */
-			MoveCursor( nCurXOld, nCurYOld + nCount, FALSE/*TRUE 2002.01.25 hor*/ );
-			m_nCaretPosX_Prev = m_nCaretPosX;
-			/* 行末に改行を付加するか？ */
-			/* カーソル行が最後の行かつ行末に改行が無く、挿入すべきデータがまだある場合 */
-			bAddLastCR = FALSE;
-
-			const char*		pLine;
-			int				nLineLen = 0;
-			const CLayout*	pcLayout;
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
-			if( NULL != pLine && 1 <= nLineLen ){
-				if( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ){
-				}else{
-					/* 挿入すべきデータがまだあるか */
-					bAddLastCR = TRUE;
-					nInsPosX = LineIndexToColmn( pcLayout, nLineLen );
-				}
-			}else{ // 2001/10/02 novice
-				bAddLastCR = TRUE;
-				nInsPosX = LineIndexToColmn( pcLayout, nLineLen );
-			}
-
-			if( bAddLastCR ){
-//				MYTRACE( " カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
-				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-					pcOpe = new COpe;
-//					pcOpe->m_nCaretPosX_Before = nInsPosX/*m_nCaretPosX*/;		/* 操作前のキャレット位置Ｘ */
-//					pcOpe->m_nCaretPosY_Before = m_nCaretPosY/*m_nCaretPosY*/;	/* 操作前のキャレット位置Ｙ */
-//					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//						pcOpe->m_nCaretPosX_Before,
-//						pcOpe->m_nCaretPosY_Before,
-//						&pcOpe->m_nCaretPosX_PHY_Before,
-//						&pcOpe->m_nCaretPosY_PHY_Before
-//					);
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-						nInsPosX/*m_nCaretPosX*/,
-						m_nCaretPosY/*m_nCaretPosY*/,
-						&pcOpe->m_nCaretPosX_PHY_Before,
-						&pcOpe->m_nCaretPosY_PHY_Before
-					);
-				}
-				InsertData_CEditView(
-					nInsPosX,
-					m_nCaretPosY,
-//					CRLF, 2001/10/02 novice
-//					1,
-					m_pcEditDoc->GetNewLineCode().GetValue(),
-					m_pcEditDoc->GetNewLineCode().GetLen(),
-					&nNewLine,
-					&nNewPos,
-					pcOpe,
-					FALSE/*TRUE 2002.01.25 hor*/
-				);
-				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-//					pcOpe->m_nCaretPosX_After = nNewPos/*m_nCaretPosX*/;	/* 操作後のキャレット位置Ｘ */
-//					pcOpe->m_nCaretPosY_After = nNewLine/*m_nCaretPosY*/;	/* 操作後のキャレット位置Ｙ */
-//					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//						pcOpe->m_nCaretPosX_After,
-//						pcOpe->m_nCaretPosY_After,
-//						&pcOpe->m_nCaretPosX_PHY_After,
-//						&pcOpe->m_nCaretPosY_PHY_After
-//					);
-
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-						nNewPos/*m_nCaretPosX*/,
-						nNewLine/*m_nCaretPosY*/,
-						&pcOpe->m_nCaretPosX_PHY_After,
-						&pcOpe->m_nCaretPosY_PHY_After
-					);
-
-					/* 操作の追加 */
-					m_pcOpeBlk->AppendOpe( pcOpe );
-				}
-			}
-			if( (nPos + 1 < nstrlen ) &&
-				(
-				 ( lptstr[nPos] == '\n' && lptstr[nPos + 1] == '\r') ||
-				 ( lptstr[nPos] == '\r' && lptstr[nPos + 1] == '\n')
-				)
-			){
-				nBgn = nPos + 2;
-			}else{
-				nBgn = nPos + 1;
-			}
-			nPos = nBgn;
-			++nCount;
-		}else{
-			++nPos;
-		}
-	}
-// 2001/10/02 deleted by novice
-#if 0
-	if( nPos - nBgn > 0 ){
-		/* 現在位置にデータを挿入 */
-		cMem.SetData( &lptstr[nBgn], nPos - nBgn );
-		if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() <= nCurYOld + nCount ){
-			cMem += CR;
-		}
-		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-//			pcOpe->m_nCaretPosX_Before = nCurXOld/*m_nCaretPosX*/;			/* 操作前のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_Before = nCurYOld + nCount/*m_nCaretPosY*/;	/* 操作前のキャレット位置Ｙ */
-//			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//				pcOpe->m_nCaretPosX_Before,
-//				pcOpe->m_nCaretPosY_Before,
-//				&pcOpe->m_nCaretPosX_PHY_Before,
-//				&pcOpe->m_nCaretPosY_PHY_Before
-//			);
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-				nCurXOld/*m_nCaretPosX*/,
-				nCurYOld + nCount/*m_nCaretPosY*/,
-				&pcOpe->m_nCaretPosX_PHY_Before,
-				&pcOpe->m_nCaretPosY_PHY_Before
-			);
-		}
-		InsertData_CEditView(
-			nCurXOld,
-			nCurYOld + nCount,
-			cMem.GetPtr(),
-			cMem.GetLength(),
-			&nNewLine,
-			&nNewPos,
-			pcOpe,
-			TRUE
-		);
-//		{
-//			char szTest[1024];
-//			memcpy( szTest, cMem.GetPtr(), cMem.GetLength() );
-//			szTest[cMem.GetLength()] = '\0';
-//			MYTRACE( "ins-3:[%s]\n", szTest );
-//		}
-		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-//			pcOpe->m_nCaretPosX_After = nNewPos/*m_nCaretPosX*/;	/* 操作後のキャレット位置Ｘ */
-//			pcOpe->m_nCaretPosY_After = nNewLine/*m_nCaretPosY*/;	/* 操作後のキャレット位置Ｙ */
-//			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//				pcOpe->m_nCaretPosX_After,
-//				pcOpe->m_nCaretPosY_After,
-//				&pcOpe->m_nCaretPosX_PHY_After,
-//				&pcOpe->m_nCaretPosY_PHY_After
-//			);
-
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-				nNewPos/*m_nCaretPosX*/,
-				nNewLine/*m_nCaretPosY*/,
-				&pcOpe->m_nCaretPosX_PHY_After,
-				&pcOpe->m_nCaretPosY_PHY_After
-			);
-
-			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe( pcOpe );
-		}
-		/* この行の挿入位置へカーソルを移動 */
-		MoveCursor( nCurXOld, nCurYOld + nCount, TRUE );
-		m_nCaretPosX_Prev = m_nCaretPosX;
-	}
-#endif
-	/* 挿入データの先頭位置へカーソルを移動 */
-	MoveCursor( nCurXOld, nCurYOld, TRUE );
-	m_nCaretPosX_Prev = m_nCaretPosX;
-	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
-//		pcOpe->m_nCaretPosX_Before = m_nCaretPosX;			/* 操作前のキャレット位置Ｘ */
-//		pcOpe->m_nCaretPosY_Before = m_nCaretPosY;			/* 操作前のキャレット位置Ｙ */
-//		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//			pcOpe->m_nCaretPosX_Before,
-//			pcOpe->m_nCaretPosY_Before,
-//			&pcOpe->m_nCaretPosX_PHY_Before,
-//			&pcOpe->m_nCaretPosY_PHY_Before
-//		);
-		pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
-		pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
-
-//		pcOpe->m_nCaretPosX_After = m_nCaretPosX;						/* 操作後のキャレット位置Ｘ */
-//		pcOpe->m_nCaretPosY_After = m_nCaretPosY;						/* 操作後のキャレット位置Ｙ */
-//		pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;				/* 操作後のキャレット位置Ｘ */
-//		pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;				/* 操作後のキャレット位置Ｙ */
-		pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
-		pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
-		/* 操作の追加 */
-		m_pcOpeBlk->AppendOpe( pcOpe );
-	}
-	m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
-	Redraw();			// 2002.01.25 hor
-	return;
-}
-
-
-
 
 /* １バイト文字入力 */
 void CEditView::Command_CHAR( char cChar )
@@ -9585,6 +9264,9 @@ void CEditView::Command_SHOWTOOLBAR( void )
 	}
 //	/* 変更フラグ(共通設定の全体) のセット */
 //	m_pShareData->m_nCommonModify = TRUE;
+	// 2004.07.12 Moca ツールバー表示時、クライアント領域にごみが残るバグの修正
+	m_pcEditDoc->m_cSplitterWnd.DoSplit( -1, -1 );
+
 	::GetClientRect( pCEditWnd->m_hWnd, &rc );
 	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 	SetIMECompFormPos();	//	2002/05/30 YAZAKI ツールバーの表示/非表示を変更すると、変換位置がずれるバグ修正
