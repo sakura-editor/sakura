@@ -1456,12 +1456,13 @@ bool IsFileExists(const char* path, bool bFileOnly)
 	@date 2002.01.04 genta ディレクトリを検査対象外にする機能を追加
 	@date 2003.01.15 matsumo gccのエラーメッセージ(:区切り)でもファイルを検出可能に
 	@date 2004.05.29 genta C:\からファイルCが切り出されるのを防止
+	@date 2004.11.13 genta/Moca ファイル名先頭の*?を考慮
+	@date 2005.01.10 genta 変数名変更 j -> cur_pos
 	
 */
 bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 {
 	int		i;
-	int		j;
 	int		nLineLen;
 	char	szJumpToFile[1024];
 	memset( szJumpToFile, 0, sizeof( szJumpToFile ) );
@@ -1495,8 +1496,8 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 		goto can_not_tagjump;
 	}
 	*pnBgn = i;
-	j = 0;
-	for( ; i <= nLineLen && j + 1 < sizeof(szJumpToFile); ++i ){
+	int cur_pos = 0;
+	for( ; i <= nLineLen && cur_pos + 1 < sizeof(szJumpToFile); ++i ){
 		if( ( i == nLineLen    ||
 			  pLine[i] == ' '  ||
 			  pLine[i] == '\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
@@ -1506,7 +1507,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			  pLine[i] == '\0' ||
 			  pLine[i] == '>'  ||
 			  // May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
-			  ( j > 1 && pLine[i] == ':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
+			  ( cur_pos > 1 && pLine[i] == ':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
 			  pLine[i] == '"'
 			) &&
 			0 < strlen( szJumpToFile )
@@ -1537,8 +1538,8 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 //			goto can_not_tagjump;
 //		}
 //
-//		szJumpToFile[j] = pLine[i];
-//		j++;
+//		szJumpToFile[cur_pos] = pLine[i];
+//		cur_pos++;
 //	}
 //  To Here comment out
 //	From Here Sept. 27, 2000 JEPRO added
@@ -1553,12 +1554,12 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			) &&
 			/* 上の文字がSJIS2バイトコードの2バイト目でないことを、1つ前の文字がSJIS2バイトコードの1バイト目でないことで判断する */
 			//	Oct. 5, 2002 genta
-			( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] )
-			) ){
+			//	2004.11.13 Moca/genta 先頭に上の文字がある場合の考慮を追加
+			( i == 0 || ( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] ))) ){
 			goto can_not_tagjump;
 		}else{
-		szJumpToFile[j] = pLine[i];
-		j++;
+		szJumpToFile[cur_pos] = pLine[i];
+		cur_pos++;
 		}
 	}
 //	To Here Sept. 27, 2000
