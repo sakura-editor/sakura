@@ -84,7 +84,7 @@ BOOL CEditView::HandleCommand(
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	if( TRUE == m_pcEditDoc->m_bPrintPreviewMode &&
-	CEditWnd* pCEditWnd = ( CEditWnd* )::GetWindowLong( m_pcEditDoc->m_hwndParent, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( pCEditWnd->m_pPrintPreview &&
 		F_PRINT_PREVIEW != nCommand
 	){
@@ -304,8 +304,9 @@ BOOL CEditView::HandleCommand(
 	case F_GOFILETOP:		Command_GOFILETOP( m_bSelectingLock ); break;				//ファイルの先頭に移動
 	case F_GOFILEEND:		Command_GOFILEEND( m_bSelectingLock ); break;				//ファイルの最後に移動
 	case F_CURLINECENTER:	Command_CURLINECENTER(); break;								/* カーソル行をウィンドウ中央へ */
-	case F_JUMPPREV:		Command_JUMPPREV(); break;									//移動履歴: 前へ
-	case F_JUMPNEXT:		Command_JUMPNEXT(); break;									//移動履歴: 次へ
+	case F_JUMPHIST_PREV:	Command_JUMPHIST_PREV(); break;								//移動履歴: 前へ
+	case F_JUMPHIST_NEXT:	Command_JUMPHIST_NEXT(); break;								//移動履歴: 次へ
+	case F_JUMPHIST_SET:	Command_JUMPHIST_SET(); break;								//現在位置を移動履歴に登録
 	case F_WndScrollDown:	Command_WndScrollDown(); break;								//テキストを１行下へスクロール	// 2001/06/20 asa-o
 	case F_WndScrollUp:		Command_WndScrollUp(); break;								//テキストを１行上へスクロール	// 2001/06/20 asa-o
 	case F_GONEXTPARAGRAPH:	Command_GONEXTPARAGRAPH( m_bSelectingLock ); break;			//次の段落へ進む
@@ -382,6 +383,7 @@ BOOL CEditView::HandleCommand(
 	case F_TOLOWER:					Command_TOLOWER();break;				/* 英大文字→英小文字 */
 	case F_TOUPPER:					Command_TOUPPER();break;				/* 英小文字→英大文字 */
 	case F_TOHANKAKU:				Command_TOHANKAKU();break;				/* 全角→半角 */
+	case F_TOHANKATA:				Command_TOHANKATA();break;				/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	case F_TOZENEI:					Command_TOZENEI();break;				/* 全角→半角 */					//July. 30, 2001 Misaka
 	case F_TOHANEI:					Command_TOHANEI();break;				/* 半角→全角 */
 	case F_TOZENKAKUKATA:			Command_TOZENKAKUKATA();break;			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
@@ -4263,7 +4265,7 @@ void CEditView::Command_FILEOPEN( const char *filename )
 			);
 		}
 		/* 自分が開いているか */
-		if( 0 == strcmp( m_pcEditDoc->m_szFilePath, pszPath ) ){
+		if( 0 == strcmp( m_pcEditDoc->GetFilePath(), pszPath ) ){
 			/* 何もしない */
 		}else{
 			/* 開いているウィンドウをアクティブにする */
@@ -4275,8 +4277,8 @@ void CEditView::Command_FILEOPEN( const char *filename )
 		/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 //@@@ 2001.12.26 YAZAKI Grep結果で無い場合も含める。
 		if( !m_pcEditDoc->IsModified() &&
-//			0 == lstrlen( m_pcEditDoc->m_szFilePath )	/* 現在編集中のファイルのパス */
-			'\0' == m_pcEditDoc->m_szFilePath[0] &&		/* 現在編集中のファイルのパス */
+//			0 == lstrlen( m_pcEditDoc->GetFilePath() )	/* 現在編集中のファイルのパス */
+			!m_pcEditDoc->IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
 			!m_pcEditDoc->m_bGrepMode					/* Grep結果ではない */
 		){
 			/* ファイル読み込み */
@@ -4357,11 +4359,11 @@ BOOL CEditView::Command_FILESAVE( void )
 		return TRUE;
 	}
 
-	if( m_pcEditDoc->m_szFilePath[0] == '\0' ){
+	if( !m_pcEditDoc->IsFilePathAvailable() ){
 		Command_FILESAVEAS_DIALOG();
 	}
 	else {
-		if( m_pcEditDoc->SaveFile( m_pcEditDoc->m_szFilePath ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
+		if( m_pcEditDoc->SaveFile( m_pcEditDoc->GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
 			/* キャレットの行桁位置を表示する */
 			DrawCaretPosInfo();
 			return TRUE;
@@ -4383,7 +4385,7 @@ BOOL CEditView::Command_FILESAVEAS_DIALOG()
 	if( m_pcEditDoc->IsReadOnly() )
 		szPath[0] = '\0';
 	else
-		strcpy( szPath, m_pcEditDoc->m_szFilePath );
+		strcpy( szPath, m_pcEditDoc->GetFilePath() );
 
 	//	Feb. 9, 2001 genta
 	if( m_pcEditDoc->SaveFileDialog( szPath, &m_pcEditDoc->m_nCharCode, &m_pcEditDoc->m_cSaveLineCode ) ){
@@ -4418,12 +4420,12 @@ BOOL CEditView::Command_FILESAVEAS( const char *filename )
 */
 void CEditView::Command_COPYFILENAME( void )
 {
-	if( '\0' != m_pcEditDoc->m_szFilePath[0] ){
+	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* クリップボードにデータを設定 */
 		char szFname[_MAX_FNAME];
 		char szExt[_MAX_EXT];
 		char szFilename[_MAX_FNAME];
-		_splitpath( m_pcEditDoc->m_szFilePath, NULL, NULL, szFname, szExt );
+		_splitpath( m_pcEditDoc->GetFilePath(), NULL, NULL, szFname, szExt );
 		wsprintf( szFilename, "%s%s", szFname, szExt );
 		MySetClipboardData( szFilename, lstrlen( szFilename ), FALSE );
 	}else{
@@ -4440,18 +4442,18 @@ void CEditView::Command_COPYPATH( void )
 {
 //	HGLOBAL		hgClip;
 //	char*		pszClip;
-//	if( 0 < lstrlen( m_pcEditDoc->m_szFilePath ) ){
-	if( '\0' != m_pcEditDoc->m_szFilePath[0] ){
+//	if( 0 < lstrlen( m_pcEditDoc->GetFilePath() ) ){
+	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* クリップボードにデータを設定 */
-		MySetClipboardData( m_pcEditDoc->m_szFilePath, lstrlen( m_pcEditDoc->m_szFilePath ), FALSE );
+		MySetClipboardData( m_pcEditDoc->GetFilePath(), lstrlen( m_pcEditDoc->GetFilePath() ), FALSE );
 
 //		/* Windowsクリップボードにコピー */
 //		hgClip = ::GlobalAlloc(
 //			GMEM_MOVEABLE | GMEM_DDESHARE,
-//			lstrlen( m_pcEditDoc->m_szFilePath ) + 1
+//			lstrlen( m_pcEditDoc->GetFilePath() ) + 1
 //		);
 //		pszClip = (char*)::GlobalLock( hgClip );
-//		strcpy( pszClip, (char*)m_pcEditDoc->m_szFilePath );
+//		strcpy( pszClip, (char*)m_pcEditDoc->GetFilePath() );
 //		::GlobalUnlock( hgClip );
 //		::OpenClipboard( m_hWnd );
 //		::EmptyClipboard();
@@ -4471,7 +4473,7 @@ void CEditView::Command_COPYPATH( void )
 /* 現在編集中のファイルのパス名とカーソル位置をクリップボードにコピー */
 void CEditView::Command_COPYTAG( void )
 {
-	if( '\0' != m_pcEditDoc->m_szFilePath[0] ){
+	if( m_pcEditDoc->IsFilePathAvailable() ){
 		char	buf[ MAX_PATH + 20 ];
 		int		line, col;
 
@@ -4479,7 +4481,7 @@ void CEditView::Command_COPYTAG( void )
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( m_nCaretPosX, m_nCaretPosY, &col, &line );
 
 		/* クリップボードにデータを設定 */
-		wsprintf( buf, "%s (%d,%d): ", m_pcEditDoc->m_szFilePath, line+1, col+1 );
+		wsprintf( buf, "%s (%d,%d): ", m_pcEditDoc->GetFilePath(), line+1, col+1 );
 		MySetClipboardData( buf, lstrlen( buf ), FALSE );
 	}else{
 		::MessageBeep( MB_ICONHAND );
@@ -5013,6 +5015,14 @@ void CEditView::Command_TOHANKAKU( void )
 }
 
 
+/* 全角カタカナ→半角カタカナ */		//Aug. 29, 2002 ai
+void CEditView::Command_TOHANKATA( void )
+{
+	/* 選択エリアのテキストを指定方法で変換 */
+	ConvSelectedArea( F_TOHANKATA );
+	return;
+}
+
 
 /*! 半角英数→全角英数 */			//July. 30, 2001 Misaka
 void CEditView::Command_TOZENEI( void )
@@ -5407,7 +5417,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 	case OUTLINE_CPP:
 		m_pcEditDoc->MakeFuncList_C( &cFuncInfoArr );
 		/* C言語標準保護委員会勧告特別処理実装箇所(嘘) */
-		if( CheckEXT( m_pcEditDoc->m_szFilePath, "c" ) ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
 			nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
 		}
 		break;
@@ -5427,7 +5437,7 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 	}
 
 	/* 解析対象ファイル名 */
-	strcpy( cFuncInfoArr.m_szFilePath, m_pcEditDoc->m_szFilePath );
+	strcpy( cFuncInfoArr.m_szFilePath, m_pcEditDoc->GetFilePath() );
 
 	/* アウトライン ダイアログ */
 //	m_pcEditDoc->m_cDlgFuncList.Create(
@@ -5575,8 +5585,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	po.y = 0;
 	::ClientToScreen( m_hWnd, &po );
 
-	CEditWnd*	pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ), GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	pCEditWnd->m_CMenuDrawer.ResetContents();
 
 	//	Oct. 3, 2001 genta
@@ -6850,7 +6859,7 @@ void CEditView::Command_GREP_DIALOG( void )
 	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetPtr() );
 
 	/* Grepダイアログの表示 */
-	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->m_szFilePath );
+	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
 //	MYTRACE( "nRet=%d\n", nRet );
 	if( FALSE == nRet ){
 		return;
@@ -6887,7 +6896,7 @@ void CEditView::Command_GREP( void )
 	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetPtr() );
 
 	/* Grepダイアログの表示 */
-	nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->m_szFilePath );
+	nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
 //	MYTRACE( "nRet=%d\n", nRet );
 	if( FALSE == nRet ){
 		return;
@@ -6905,7 +6914,7 @@ void CEditView::Command_GREP( void )
 	*/
 	if( m_pcEditDoc->m_bGrepMode ||
 		( !m_pcEditDoc->IsModified() &&
-		  0 == lstrlen( m_pcEditDoc->m_szFilePath ) )		/* 現在編集中のファイルのパス */
+		  !m_pcEditDoc->IsFilePathAvailable() )		/* 現在編集中のファイルのパス */
 	){
 		DoGrep(
 			&cmWork1,
@@ -7017,7 +7026,8 @@ void CEditView::Command_ADDTAIL( const char* pszData, int nDataLen )
 		TRUE
 	);
 	/* 挿入データの最後へカーソルを移動 */
-	MoveCursor( nNewPos, nNewLine, FALSE );
+	// Sep. 2, 2002 すなふき アンダーラインの表示が残ってしまう問題を修正
+	MoveCursor( nNewPos, nNewLine, TRUE );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 //		pcOpe->m_nCaretPosX_After = m_nCaretPosX;			/* 操作後のキャレット位置Ｘ */
@@ -7283,9 +7293,9 @@ BOOL CEditView::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 
 	/* 編集中のファイルの拡張子を調べる */
 //Feb. 7, 2001 JEPRO 原作版をコメントアウト
-//	if( CheckEXT( m_pcEditDoc->m_szFilePath, "cpp" ) ||
-//		CheckEXT( m_pcEditDoc->m_szFilePath, "cxx" ) ||
-//		CheckEXT( m_pcEditDoc->m_szFilePath, "c" ) ){
+//	if( CheckEXT( m_pcEditDoc->GetFilePath(), "cpp" ) ||
+//		CheckEXT( m_pcEditDoc->GetFilePath(), "cxx" ) ||
+//		CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
 //	}else{
 //		if( !bCheckOnly ){
 //			::MessageBeep( MB_ICONHAND );
@@ -7295,7 +7305,7 @@ BOOL CEditView::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 
 //From Here Feb. 7, 2001 JEPRO 追加
 	for( i = 0; i < src_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->m_szFilePath, source_ext[i] ) ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), source_ext[i] ) ){
 			bwantopen_h = TRUE;
 			goto open_h;
 		}
@@ -7315,7 +7325,7 @@ open_h:;
 	char	szExt[_MAX_EXT];
 	HWND	hwndOwner;
 
-	_splitpath( m_pcEditDoc->m_szFilePath, szDrive, szDir, szFname, szExt );
+	_splitpath( m_pcEditDoc->GetFilePath(), szDrive, szDir, szFname, szExt );
 //Feb. 7, 2001 JEPRO 原作版をコメントアウト
 //	_makepath( szPath, szDrive, szDir, szFname, "h" );
 //	if( -1 == _access( (const char *)szPath, 0 ) ){
@@ -7416,7 +7426,7 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 
 	/* 編集中ファイルの拡張子を調べる */
 //Feb. 7, 2001 JEPRO 原作版をコメントアウト
-//	if( CheckEXT( m_pcEditDoc->m_szFilePath, "h" ) ){
+//	if( CheckEXT( m_pcEditDoc->GetFilePath(), "h" ) ){
 //	}else{
 //		if( !bCheckOnly ){
 //			::MessageBeep( MB_ICONHAND );
@@ -7426,7 +7436,7 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 
 //From Here Feb. 7, 2001 JEPRO 追加
 	for( i = 0; i < hdr_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->m_szFilePath, header_ext[i] ) ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), header_ext[i] ) ){
 			bwantopen_c = TRUE;
 			goto open_c;
 		}
@@ -7446,7 +7456,7 @@ open_c:;
 	char	szExt[_MAX_EXT];
 	HWND	hwndOwner;
 
-	_splitpath( m_pcEditDoc->m_szFilePath, szDrive, szDir, szFname, szExt );
+	_splitpath( m_pcEditDoc->GetFilePath(), szDrive, szDir, szFname, szExt );
 //Feb. 7, 2001 JEPRO 原作版をコメントアウト
 //	_makepath( szPath, szDrive, szDir, szFname, "c" );
 //	if( -1 == _access( (const char *)szPath, 0 ) ){
@@ -7557,13 +7567,13 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 
 	/* 編集中ファイルの拡張子を調べる */
 //Feb. 8, 2001 JEPRO VC++で使用される拡張子のみ対応(初期バージョンなのでコメントアウト)
-//	if( CheckEXT( m_pcEditDoc->m_szFilePath, "cpp" ) ||
-//		CheckEXT( m_pcEditDoc->m_szFilePath, "cxx" ) ||
-//		CheckEXT( m_pcEditDoc->m_szFilePath, "c" ) ){
+//	if( CheckEXT( m_pcEditDoc->GetFilePath(), "cpp" ) ||
+//		CheckEXT( m_pcEditDoc->GetFilePath(), "cxx" ) ||
+//		CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
 //		bopen_h = TRUE;
-//	}else if( CheckEXT( m_pcEditDoc->m_szFilePath, "h" ) ||
-//		CheckEXT( m_pcEditDoc->m_szFilePath, "hpp" ) ||
-//		CheckEXT( m_pcEditDoc->m_szFilePath, "hxx" ) ){
+//	}else if( CheckEXT( m_pcEditDoc->GetFilePath(), "h" ) ||
+//		CheckEXT( m_pcEditDoc->GetFilePath(), "hpp" ) ||
+//		CheckEXT( m_pcEditDoc->GetFilePath(), "hxx" ) ){
 //		bopen_h = FALSE;
 //	}else{
 //		if( !bCheckOnly ){
@@ -7573,13 +7583,13 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 //	}
 
 	for( i = 0; i < src_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->m_szFilePath, source_ext[i] ) ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), source_ext[i] ) ){
 			bwantopen_h = TRUE;
 			goto open_hc;
 		}
 	}
 	for( i = 0; i < hdr_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->m_szFilePath, header_ext[i] ) ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), header_ext[i] ) ){
 			bwantopen_h = FALSE;
 			goto open_hc;
 		}
@@ -7598,7 +7608,7 @@ open_hc:;
 	char	szExt[_MAX_EXT];
 	HWND	hwndOwner;
 
-	_splitpath( m_pcEditDoc->m_szFilePath, szDrive, szDir, szFname, szExt );
+	_splitpath( m_pcEditDoc->GetFilePath(), szDrive, szDir, szFname, szExt );
 //Feb. 8, 2001 JEPRO VC++で使用される拡張子のみ対応(初期バージョンなのでコメントアウト)
 //	if( TRUE == bwantopen_h ){
 //		_makepath( szPath, szDrive, szDir, szFname, "h" );
@@ -8922,11 +8932,11 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			MB_YESNOCANCEL | MB_ICONEXCLAMATION,
 			GSTR_APPNAME,
 			"%s\nは変更されています。 Oracle SQL*Plusで実行する前に保存しますか？",
-			lstrlen( m_pcEditDoc->m_szFilePath ) ? m_pcEditDoc->m_szFilePath : "(無題)"
+			m_pcEditDoc->IsFilePathAvailable() ? m_pcEditDoc->GetFilePath() : "(無題)"
 		);
 		switch( nRet ){
 		case IDYES:
-			if( 0 < lstrlen( m_pcEditDoc->m_szFilePath ) ){
+			if( m_pcEditDoc->IsFilePathAvailable() ){
 				nBool = HandleCommand( F_FILESAVE, TRUE, 0, 0, 0, 0 );
 			}else{
 				nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
@@ -8942,19 +8952,19 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			return;
 		}
 	}
-	if( 0 < lstrlen( m_pcEditDoc->m_szFilePath ) ){
+	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		bSPACE = FALSE;
-		for( i = 0; i < (int)lstrlen( m_pcEditDoc->m_szFilePath ); ++i ){
-			if( m_pcEditDoc->m_szFilePath[i] == ' ' ){
+		for( i = 0; i < (int)lstrlen( m_pcEditDoc->GetFilePath() ); ++i ){
+			if( (m_pcEditDoc->GetFilePath())[i] == ' ' ){
 				bSPACE = TRUE;
 				break;
 			}
 		}
 		if( bSPACE ){
-			wsprintf( szPath, "@\"%s\"\r", m_pcEditDoc->m_szFilePath );
+			wsprintf( szPath, "@\"%s\"\r", m_pcEditDoc->GetFilePath() );
 		}else{
-			wsprintf( szPath, "@%s\r", m_pcEditDoc->m_szFilePath );
+			wsprintf( szPath, "@%s\r", m_pcEditDoc->GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		MySetClipboardData( szPath, lstrlen( szPath ), FALSE );
@@ -9113,8 +9123,7 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 	UINT		uFlags;
 //	BOOL		bBool;
 
-	CEditWnd*	pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ), GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	pCEditWnd->m_CMenuDrawer.ResetContents();
 	
 	//	Oct. 3, 2001 genta
@@ -9484,8 +9493,8 @@ void CEditView::Command_COMPARE( void )
 	/* 比較後、左右に並べて表示 */
 	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_bCompareAndTileHorz;
 //	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_bCompareAndTileHorz;	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
-//	if( FALSE == cDlgCompare.DoModal( m_pcEditDoc->m_szFilePath, m_pcEditDoc->IsModified(), szPath, &hwndCompareWnd ) ){
-	if( FALSE == cDlgCompare.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc, m_pcEditDoc->m_szFilePath,
+//	if( FALSE == cDlgCompare.DoModal( m_pcEditDoc->GetFilePath(), m_pcEditDoc->IsModified(), szPath, &hwndCompareWnd ) ){
+	if( FALSE == cDlgCompare.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc, m_pcEditDoc->GetFilePath(),
 		m_pcEditDoc->IsModified(), szPath, &hwndCompareWnd ) ){
 		return;
 	}
@@ -9648,11 +9657,10 @@ end_of_compare:;
 /* ツールバーの表示/非表示 */
 void CEditView::Command_SHOWTOOLBAR( void )
 {
-	HWND		hwndFrame;
-	CEditWnd*	pCEditWnd;
+	//HWND		hwndFrame;
 	RECT		rc;
-	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	//hwndFrame = ::GetParent( m_hwndParent );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL == pCEditWnd->m_hwndToolBar ){
 		/* ツールバー作成 */
 		pCEditWnd->CreateToolBar();
@@ -9677,11 +9685,10 @@ void CEditView::Command_SHOWTOOLBAR( void )
 /* ステータスバーの表示/非表示 */
 void CEditView::Command_SHOWSTATUSBAR( void )
 {
-	HWND		hwndFrame;
-	CEditWnd*	pCEditWnd;
+	//HWND		hwndFrame;
 	RECT		rc;
-	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	//hwndFrame = ::GetParent( m_hwndParent );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL == pCEditWnd->m_hwndStatusBar ){
 		/* ステータスバー作成 */
 		pCEditWnd->CreateStatusBar();
@@ -9705,12 +9712,11 @@ void CEditView::Command_SHOWSTATUSBAR( void )
 /* ファンクションキーの表示/非表示 */
 void CEditView::Command_SHOWFUNCKEY( void )
 {
-	HWND		hwndFrame;
-	CEditWnd*	pCEditWnd;
+	//HWND		hwndFrame;
 	RECT		rc;
 	BOOL		bSizeBox;
-	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	//hwndFrame = ::GetParent( m_hwndParent );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL == pCEditWnd->m_CFuncKeyWnd.m_hWnd ){
 		m_pShareData->m_Common.m_bDispFUNCKEYWND = TRUE;	/* 次回ウィンドウを開いたときファンクションキーを表示する */
 		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
@@ -9784,10 +9790,7 @@ void CEditView::Command_PRINT( void )
 	}
 #endif
 	Command_PRINT_PREVIEW();
-	HWND		hwndFrame;
-	CEditWnd*	pCEditWnd;
-	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷プレビューモードのオン/オフ */
 	pCEditWnd->m_pPrintPreview->OnPrint();
@@ -9799,10 +9802,7 @@ void CEditView::Command_PRINT( void )
 /* 印刷プレビュー */
 void CEditView::Command_PRINT_PREVIEW( void )
 {
-	HWND		hwndFrame;
-	CEditWnd*	pCEditWnd;
-	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷プレビューモードのオン/オフ */
 	pCEditWnd->PrintPreviewModeONOFF();
@@ -9815,11 +9815,8 @@ void CEditView::Command_PRINT_PREVIEW( void )
 /* 印刷のページレイアウトの設定 */
 void CEditView::Command_PRINT_PAGESETUP( void )
 {
-	HWND		hwndFrame;
-	CEditWnd*	pCEditWnd;
 	BOOL		bRes;
-	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷ページ設定 */
 	bRes = pCEditWnd->OnPrintPageSetting();
@@ -9832,12 +9829,12 @@ void CEditView::Command_PRINT_PAGESETUP( void )
 /* ブラウズ */
 void CEditView::Command_BROWSE( void )
 {
-	if( 0 == lstrlen( m_pcEditDoc->m_szFilePath ) ){
+	if( !m_pcEditDoc->IsFilePathAvailable() ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
 //	char	szURL[MAX_PATH + 64];
-//	wsprintf( szURL, "%s", m_pcEditDoc->m_szFilePath );
+//	wsprintf( szURL, "%s", m_pcEditDoc->GetFilePath() );
 	/* URLを開く */
 //	::ShellExecuteEx( NULL, "open", szURL, NULL, NULL, SW_SHOW );
 
@@ -9846,7 +9843,7 @@ void CEditView::Command_BROWSE( void )
     info.fMask = 0;
     info.hwnd = NULL;
     info.lpVerb = NULL;
-    info.lpFile = m_pcEditDoc->m_szFilePath;
+    info.lpFile = m_pcEditDoc->GetFilePath();
     info.lpParameters = NULL;
     info.lpDirectory = NULL;
     info.nShow = SW_SHOWNORMAL;
@@ -10141,12 +10138,12 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 /* 再オープン */
 void CEditView::Command_FILE_REOPEN( int nCharCode )
 {
-	if( -1 != _access( m_pcEditDoc->m_szFilePath, 0 )
+	if( -1 != _access( m_pcEditDoc->GetFilePath(), 0 )
 	 && m_pcEditDoc->IsModified()	/* 変更フラグ */
 	){
 		if( IDOK != MYMESSAGEBOX( m_hWnd, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
 			"%s\n\nこのファイルは変更されています。\n再ロードを行うと変更が失われますが、よろしいですか?",
-			m_pcEditDoc->m_szFilePath
+			m_pcEditDoc->GetFilePath()
 		) ){
 			return;
 		}
@@ -10311,12 +10308,17 @@ void CEditView::Command_BRACKETPAIR( void )
 }
 
 
+//	現在位置を移動履歴に登録する
+void CEditView::Command_JUMPHIST_SET( void )
+{
+	AddCurrentLineToHistory();
+}
 
 
 //	From HERE Sep. 8, 2000 genta
 //	移動履歴を前へたどる
 //
-void CEditView::Command_JUMPPREV( void )
+void CEditView::Command_JUMPHIST_PREV( void )
 {
 	// 2001.12.13 hor
 	// 移動履歴の最後に現在の位置を記憶する
@@ -10339,11 +10341,8 @@ void CEditView::Command_JUMPPREV( void )
 	}
 }
 
-
-
-
 //	移動履歴を次へたどる
-void CEditView::Command_JUMPNEXT( void )
+void CEditView::Command_JUMPHIST_NEXT( void )
 {
 	if( m_cHistory->CheckNext() ){
 		int x, y;

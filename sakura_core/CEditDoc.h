@@ -48,6 +48,7 @@
 #include "CFuncLookup.h"
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
+class CEditWnd; // Sep. 10, 2002 genta
 
 //! 文書関連情報の管理
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -121,6 +122,11 @@ public:
 	//	Nov. 20, 2000 genta
 	void SetImeMode(int mode);	//	IME状態の設定
 
+	//	Sep. 9, 2002 genta
+	const char* GetFilePath(void) const { return m_szFilePath; }
+	bool IsFilePathAvailable(void) const { return m_szFilePath[0] != '\0'; }
+	void SetDocumentIcon(void);	// Sep. 10, 2002 genta
+
 	//	Nov. 29, 2000 From Here	genta
 	//	設定の一時変更時に拡張子による強制的な設定変更を無効にする
 	void LockDocumentType(void){ m_nSettingTypeLocked = true; }
@@ -135,6 +141,7 @@ public:
 			m_nSettingType = type;
 			UnlockDocumentType();
 			m_pShareData->m_Types[m_nSettingType].m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
+			SetDocumentIcon();	// Sep. 11, 2002 genta
 		}
 	}
 	int GetDocumentType(void) const	//!<	文書種別の読み出し
@@ -168,8 +175,7 @@ public:
 	void SetModified( BOOL flag, bool redraw){
 		SetModified( flag != FALSE, redraw );
 	}
-
-
+	
 protected:
 	int				m_nSettingType;
 	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態
@@ -178,6 +184,10 @@ protected:
 		@date 2002.01.22 genta public→protectedに移動．型をint→boolに．
 	*/
 	bool			m_bIsModified;
+	//	Sep. 9, 2002 genta protectedに移動
+	char			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
+	
+	void SetFilePath(const char*);	// Sep. 9, 2002 genta
 
 public: /* テスト用にアクセス属性を変更 */
 	/* 入力補完 */
@@ -186,7 +196,6 @@ public: /* テスト用にアクセス属性を変更 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	BOOL			m_bPrintPreviewMode;		/* 印刷プレビューモードか */
 	int				m_nCommandExecNum;			/* コマンド実行回数 */
-	char			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
 	FILETIME		m_FileTime;					/* ファイルの最終更新日付 */
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
@@ -231,6 +240,7 @@ public:
 //	CDlgSendMail	m_cDlgSendMail;				/* メール送信ダイアログ */
 	CDlgGrep		m_cDlgGrep;					/* Grepダイアログ */
 	CDlgFuncList	m_cDlgFuncList;				/* アウトライン解析結果ダイアログ */
+	CEditWnd*		m_pcEditWnd;	//	Sep. 10, 2002
 	/*
 	||  メンバ変数
 	*/

@@ -11,7 +11,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, jepro, hor
-	Copyright (C) 2002, hor, aroka, MIK
+	Copyright (C) 2002, hor, aroka, MIK, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -48,6 +48,7 @@
 #include "CMemory.h"// 2002/2/10 aroka
 
 #include "CFileWrite.h" //2002/05/22 Frozen
+#include "CFileLoad.h" // 2002/08/30 Moca
 
 
 
@@ -438,113 +439,51 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEOL cEol )
 	return;
 }
 
-
-
-
-/* ファイルを読み込んで格納する（テスト用） */
-/* （注意）Windows用にコーディングしてある */
-//	nFlags:
-//		bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+/*!
+	ファイルを読み込んで格納する（分割読み込みテスト版）
+	@version	2.0
+	@note	Windows用にコーディングしてある
+	@param	nFlags
+		bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+	@retval	TRUE	正常読み込み
+	@retval	FALSE	エラー(またはユーザによるキャンセル?)
+	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
+*/
 int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, int nFlags )
 {
 #ifdef _DEBUG
 	MYTRACE( "pszPath=[%s]\n", pszPath );
 	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::ReadFile" );
 #endif
-	int			nRetVal;
-	int			nEOF;
-	BOOL		bBinaryAlerted;
-	int			nFileLength;
-	int			nReadLength;
-	int			nFilePerCent;
-//	char*		pSJISBuf;
-//	int			nSJISBufLen;
-	CMemory		cmemBuf;
-	/*
-	|| バッファサイズの調整
-	*/
-	cmemBuf.AllocBuffer( 32000 );
-
-	nRetVal = TRUE;
-	nEOF = FALSE;
-	bBinaryAlerted = FALSE;
-	HGLOBAL	hgRead = NULL;	//	goto _RETURN_;で飛んだ先で困るかもしれないので、初期化。
+	int			nRetVal = TRUE;
+	int			nLineNum = 0;
+	//	May 15, 2000 genta
+	CEOL cEol;
+	CFileLoad cfl; 	//	2002/08/30 Moca Add
+	const char*	pLine;
+	int			nLineLen;
 
 	/* 既存データのクリア */
 	Empty();
 	Init();
-//	CMemory		cMem;
-//	UINT		nReadBufSize = 16/*32000*/;
-	char*		pBuf;
-//	char*		pBuf = new char[nReadBufSize + 1];
-	int			nReadSize;
-	int			nBgn;
-//	int			nPos;
-	HFILE		hFile;
-//	const char*	pLine;
-//	int			nLineLen;
-	BOOL		bLFisOK;
-//	char*		pszCRLF_UNICODE = "\x0d\x0\x0a\x0";
-//	int			nCRLF_UNICODE_LEN;
-//	char*		pszCRLF = "\x0d\x0a";
-//	int			nCRLF_LEN;
-//	char*		pszLF = "\x0a";
-//	int			nLF_LEN;
-//	char*		pszCR = "\x0d";
-//	int			nCR_LEN;
-//	char*		pszLFCR = "\x0a\x0d";
-//	int			nLFCR_LEN;
-//	int			nEolCodeLen;
-//	enumEOLType	nEolType;
-//	BOOL		bEOL;
-	int			nLineNum;
-	//	May 15, 2000 genta
-	CEOL cEol;
 
-//	nCRLF_UNICODE_LEN = 4;
-//	nCRLF_LEN = 2;
-//	nLFCR_LEN = 2;
-//	nLF_LEN = 1;
-//	nCR_LEN = 1;
-//	nEolType = EOL_UNKNOWN;
-
-//	pBuf[nReadBufSize] = '\0';
-//	cMem.SetData( "", lstrlen( "" ) );
-//	cMem.SetDataSz( "" );
-
-	hFile = _lopen( pszPath, OF_READ );
-	if( HFILE_ERROR == hFile ){
-//		MYTRACE( "file open error %s\n", pszPath );
-		if( (_access( pszPath, 0 )) == -1 ){
-			::MYMESSAGEBOX(
-				hWndParent,
-				MB_OK | MB_ICONSTOP,
-				GSTR_APPNAME,
-//				"\'%s\'\nファイルを開けません。\nファイルが存在しません。",
-				"%s\nというファイルを開けません。\nファイルが存在しません。",	//Mar. 24, 2001 jepro 若干修正
-				pszPath
-			 );
-		}else{
-			::MYMESSAGEBOX(
-				hWndParent,
-				MB_OK | MB_ICONSTOP,
-				GSTR_APPNAME,
-				"\'%s\'\nというファイルを開けません。\n他のアプリケーションで使用されている可能性があります。",
-				pszPath
-			 );
-		}
-		nRetVal = FALSE;
-		goto _RETURN_;
+	/* 処理中のユーザー操作を可能にする */
+	if( !::BlockingHook( NULL ) ){
+		return FALSE;
 	}
+
+	try{
+	// ファイルを開く
+	// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
+	cfl.FileOpen( pszPath, nCharCode, nFlags );
 
 	/* ファイル時刻の取得 */
 	FILETIME	FileTime;
-	SYSTEMTIME	systimeL;
-	if( ::GetFileTime( (HANDLE)hFile, NULL, NULL, &FileTime ) ){
+	if( TRUE == cfl.GetFileTime( NULL, NULL, &FileTime ) ){
 		*pFileTime = FileTime;
-
-		::FileTimeToLocalFileTime( &FileTime, &FileTime );
-		::FileTimeToSystemTime( &FileTime, &systimeL );
+//		SYSTEMTIME	systimeL;
+//		::FileTimeToLocalFileTime( &FileTime, &FileTime );
+//		::FileTimeToSystemTime( &FileTime, &systimeL );
 //		MYTRACE( "Last Update: %d/%d/%d %02d:%02d:%02d\n",
 //			systimeL.wYear,
 //			systimeL.wMonth,
@@ -557,266 +496,87 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 //		MYTRACE( "GetFileTime() error.\n" );
 	}
 
-
-	/* ファイルサイズの取得 */
-	nFileLength = _llseek( hFile, 0, FILE_END );
-	_llseek( hFile, 0, FILE_BEGIN );
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
 		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 	}
-	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( NULL ) ){
-		return -1;
-	}
 
-	hgRead = ::GlobalAlloc( GHND, nFileLength );
-	if( NULL == hgRead ){
-		::MYMESSAGEBOX(
-			hWndParent,
-			MB_OK | MB_ICONSTOP,
-			GSTR_APPNAME,
-			"CDocLineMgr::ReadFile()\nメモリ確保に失敗しました。\n%dバイト",
-			nFileLength
-		);
-		nRetVal = FALSE;
-		goto _CLOSEFILE_;
-	}
-	pBuf = (char*)::GlobalLock( hgRead );
-	nEOF = TRUE;
-
-	switch( nCharCode ){
-	case CODE_UTF8:
-		nReadSize = _lread( hFile, pBuf, 3 );
-		if( HFILE_ERROR == nReadSize ){
-//			MYTRACE( "file read error %s\n", pszPath );
-			nRetVal = FALSE;
-			goto _CLOSEFILE_;
-		}
-		break;
-	case CODE_UNICODE:
-	case CODE_UNICODEBE:
-		nReadSize = _lread( hFile, pBuf, 2 );
-		if( HFILE_ERROR == nReadSize ){
-//			MYTRACE( "file read error %s\n", pszPath );
-			nRetVal = FALSE;
-			goto _CLOSEFILE_;
-		}
-		break;
-	}
-	/* ファイルの先頭がBOM以外の場合はポインタを戻す */
-	if( nCharCode != CMemory::IsUnicodeBom( (const unsigned char*)pBuf, nFileLength ) ){
-		_llseek( hFile, 0, FILE_BEGIN );
-	}
-
-	nReadLength = 0;
-	nReadSize = _lread( hFile, pBuf, nFileLength/*nReadBufSize*/ );
-	if( HFILE_ERROR == nReadSize ){
-//		MYTRACE( "file read error %s\n", pszPath );
-		nRetVal = FALSE;
-		goto _CLOSEFILE_;
-	}
-//	nReadLength += nReadSize;
-
-	bLFisOK = FALSE;
-	switch( nCharCode ){
-	case CODE_EUC:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* EUC→SJISコード変換 */
-		cmemBuf.EUCToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		bLFisOK = TRUE;
-		break;
-	case CODE_JIS:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* E-Mail(JIS→SJIS)コード変換 */
-		cmemBuf.JIStoSJIS( (nFlags & 1) == 1 );	//	Nov. 12, 2000 genta フラグ追加
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UNICODE:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* Unicode→SJISコード変換 */
-		cmemBuf.UnicodeToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UNICODEBE:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* UnicodeBE→SJISコード変換 */
-		cmemBuf.UnicodeBEToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UTF8:	/* UTF-8 */
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* UTF-8→SJISコード変換 */
-		cmemBuf.UTF8ToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UTF7:	/* UTF-7 */
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* UTF-7→SJISコード変換 */
-		cmemBuf.UTF7ToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_SJIS:
-	default:
-		break;
-	}
-	nFileLength = nReadSize;
-	// 約20MB以上のときのオーバーフロー対策
-	nFilePerCent = nReadSize / 128;
-
-
-	if( NULL != hwndProgress && 0 < nFilePerCent ){
-		::PostMessage( hwndProgress, PBM_SETPOS, (nReadLength / 128) * 100 / nFilePerCent , 0 );
-	}
-	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( NULL ) ){
-		nRetVal = FALSE;
-		goto _CLOSEFILE_;
-//		return -1;
-	}
-
-
-
-	nLineNum = 0;
-//	bEOL = FALSE;
-
-
-
-	const char*	pLine;
-	int			nLineLen;
-	// enumEOLType nEOLType;
-	int			nEolCodeLen;
-	nBgn = 0;
-//	nPos = 0;
-	while( NULL != ( pLine = GetNextLine( pBuf, nFileLength, &nLineLen, &nBgn, &cEol ) ) ){
-		nEolCodeLen = cEol.GetLen();
+	// ReadLineはファイルから 文字コード変換された1行を読み出します
+	// エラー時はthrow CError_FileRead を投げます
+	while( NULL != ( pLine = cfl.ReadLine( &nLineLen, &cEol ) ) ){
 		++nLineNum;
-//		AddLineStrX( &pBuf[nBgn], nPos - nBgn + nEolCodeLen, nEolType );
-		AddLineStrX( pLine, nLineLen + nEolCodeLen, cEol );
-//		nReadLength += nPos - nBgn + nEolCodeLen;
-		nReadLength += nLineLen + nEolCodeLen;
-		if( NULL != hwndProgress && 0 < nFilePerCent && 0 == ( nLineNum % 1024 ) ){
-			// 約20MB以上のファイルときのオーバーフロー対策
-			::PostMessage( hwndProgress, PBM_SETPOS, ( nReadLength / 128) * 100 / nFilePerCent , 0 );
+		AddLineStrX( pLine, nLineLen, cEol );
+		if( NULL != hwndProgress && 0 == ( nLineNum % 512 ) ){
+			::PostMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( NULL ) ){
-				nRetVal = FALSE;
-				goto _CLOSEFILE_;
+				return FALSE;
 			}
 		}
-//		nBgn = nPos + nEolCodeLen;
-//		nPos = nBgn;
 	}
 
-
-//	do{
-//		while( nBgn < nReadSize && nPos	< nReadSize ){
-//			/* 改行コードがあった */
-//			if( pBuf[nPos] == '\n' || pBuf[nPos] == '\r' ){
-//				/* 改行コードの長さを調べる */
-//				if( nPos <= nReadSize - nCRLF_UNICODE_LEN &&
-//					0 == memcmp( &pBuf[nPos], pszCRLF_UNICODE, nCRLF_UNICODE_LEN )
-//				){
-//					nEolCodeLen = nCRLF_UNICODE_LEN;
-//					nEolType = EOL_CRLF_UNICODE;
-//				}else
-//				if( nPos <= nReadSize - nCRLF_LEN &&
-//					0 == memcmp( &pBuf[nPos], pszCRLF, nCRLF_LEN )
-//				){
-//					nEolCodeLen = nCRLF_LEN;
-//					nEolType = EOL_CRLF;
-//				}else
-//				if( nPos <= nReadSize - nLFCR_LEN &&
-//					0 == memcmp( &pBuf[nPos], pszLFCR, nLFCR_LEN )
-//				){
-//					nEolCodeLen = nLFCR_LEN;
-//					nEolType = EOL_LFCR;
-//				}else
-//				if( nPos <= nReadSize - nLF_LEN &&
-//					0 == memcmp( &pBuf[nPos], pszLF, nLF_LEN )
-//				){
-//					nEolCodeLen = nLF_LEN;
-//					nEolType = EOL_LF;
-//				}else{
-//					nEolCodeLen = nCR_LEN;
-//					nEolType = EOL_CR;
-//				}
-//				++nLineNum;
-//				AddLineStrX( &pBuf[nBgn], nPos - nBgn + nEolCodeLen, nEolType );
-//				nReadLength += nPos - nBgn + nEolCodeLen/*cMem.GetLength()*/;
-//				if( NULL != hwndProgress && 0 < nFileLength && 0 == (nLineNum % 1000 ) ){
-//					::PostMessage( hwndProgress, PBM_SETPOS, nReadLength * 100 / nFileLength , 0 );
-//					/* 処理中のユーザー操作を可能にする */
-//					if( !::BlockingHook() ){
-//						return -1;
-//					}
-//				}
-//				nBgn = nPos + nEolCodeLen;
-//				nPos = nBgn;
-//			}else{
-//				++nPos;
-//			}
+	// ファイルをクローズする
+	cfl.FileClose();
+	} // try
+	catch( CError_FileOpen ){
+		nRetVal = FALSE;
+		if( -1 == _access( pszPath, 0 )){
+			// ファイルがない
+			::MYMESSAGEBOX(
+				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				_T("%s\nというファイルを開けません。\nファイルが存在しません。"),	//Mar. 24, 2001 jepro 若干修正
+				pszPath
+			 );
+		}
+		else if( -1 == _access( pszPath, 4 )){
+			// 読み込みアクセス権がない
+			::MYMESSAGEBOX(
+				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				_T("\'%s\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
+				pszPath
+			 );
+		}
+//		else if( ファイルサイズ > 2GB ){
+//			nRetVal = FALSE;
+//			::MYMESSAGEBOX(
+//				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+//				_("\'%s\'\nというファイルを開けません。\n2GB以上のファイルサイズは開けません。"),
+//				pszPath
+//			 );
 //		}
-//		if( /*nReadSize < nReadBufSize*/nPos - nBgn > 0 ){
-//			if( nBgn < nPos ){
-//				AddLineStrX( &pBuf[nBgn], nPos - nBgn, EOL_NONE );
-//				nReadLength += nPos - nBgn/*cMem.GetLength()*/;
-//				if( NULL != hwndProgress && 0 < nFileLength ){
-//					::PostMessage( hwndProgress, PBM_SETPOS, nReadLength * 100 / nFileLength , 0 );
-//				}
-//				/* 処理中のユーザー操作を可能にする */
-//				if( !::BlockingHook() ){
-//					return -1;
-//				}
-//			}
-//			nEOF = TRUE;
-//		}
-//
-//	}while( !nEOF );
-
-
-
-
-
-_CLOSEFILE_:;
-	_lclose( hFile );
-_RETURN_:;
-//	delete pBuf;
-	if( NULL != hgRead ){
-		::GlobalUnlock( hgRead );
-		::GlobalFree( hgRead );
+		else{
+			::MYMESSAGEBOX(
+				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				_T("\'%s\'\nというファイルを開けません。\n他のアプリケーションで使用されている可能性があります。"),
+				pszPath
+			 );
+		}
 	}
+	catch( CError_FileRead ){
+		nRetVal = FALSE;
+		::MYMESSAGEBOX(
+			hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			_T("\'%s\'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"),
+			pszPath
+		 );
+		/* 既存データのクリア */
+		Empty();
+		Init();
+		nRetVal = FALSE;
+	} // 例外処理終わり
 
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 	}
 	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
-		return -1;
+		return FALSE;
 	}
 
 	/* 行変更状態をすべてリセット */
 	ResetAllModifyFlag();
-//		TRUE	/* 変更回数を0にするかどうか */
-//	);
-
 	return nRetVal;
 }
-
-
-
-
-
-
-
-
 
 
 

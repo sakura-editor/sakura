@@ -257,6 +257,10 @@ SOURCE=..\sakura_core\CEol.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CFileLoad.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CFileWrite.cpp
 # End Source File
 # Begin Source File
@@ -670,6 +674,10 @@ SOURCE=..\sakura_core\CEditWnd.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CEol.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CFileLoad.h
 # End Source File
 # Begin Source File
 

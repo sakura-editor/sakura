@@ -316,6 +316,9 @@ struct Types {
 	//	2002/04/30 YAZAKI Commonから移動。
 	int					m_bAutoIndent;					/* オートインデント */
 	int					m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	
+	//	Sep. 10, 2002 genta
+	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
 
 }; /* Types */
 

@@ -45,7 +45,7 @@ void CEditView::Command_Diff_Dialog( void )
 
 	//DIFF差分表示ダイアログを表示する
 	if( FALSE == cDlgDiff.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc,
-		m_pcEditDoc->m_szFilePath,
+		m_pcEditDoc->GetFilePath(),
 		m_pcEditDoc->IsModified() ) )
 	{
 		return;
@@ -87,7 +87,7 @@ void CEditView::Command_Diff_Dialog( void )
 	else
 	{
 //		bTmpFile1 = false;
-		strcpy( szTmpFile1, m_pcEditDoc->m_szFilePath );
+		strcpy( szTmpFile1, m_pcEditDoc->GetFilePath() );
 		if( strlen( szTmpFile1 ) == 0 ) return;
 	}
 

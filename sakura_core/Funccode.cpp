@@ -144,8 +144,9 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_CURLINECENTER		,	//カーソル行をウィンドウ中央へ
 	F_JUMP_DIALOG		,	//指定行ヘジャンプ	//Sept. 17, 2000 JEPRO コマンド本家は「検索系」
 	F_JUMP_SRCHSTARTPOS	,	//検索開始位置へ戻る	// 02/06/26 ai コマンド本家は｢検索系｣
-	F_JUMPPREV			,	//移動履歴: 前へ
-	F_JUMPNEXT			,	//移動履歴: 次へ
+	F_JUMPHIST_PREV		,	//移動履歴: 前へ
+	F_JUMPHIST_NEXT		,	//移動履歴: 次へ
+	F_JUMPHIST_SET		,	//現在位置を移動履歴に登録
 	F_WndScrollDown		,	//テキストを１行下へスクロール	// 2001/06/20 asa-o
 	F_WndScrollUp		,	//テキストを１行上へスクロール	// 2001/06/20 asa-o
 	F_GONEXTPARAGRAPH	,	//次の段落へ
@@ -244,6 +245,7 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_TOLOWER				,	//英大文字→英小文字
 	F_TOUPPER				,	//英小文字→英大文字
 	F_TOHANKAKU				,	/* 全角→半角 */
+	F_TOHANKATA				,	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	F_TOZENEI				,	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	F_TOHANEI				,	/* 全角英数→半角英数 */
 	F_TOZENKAKUKATA			,	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更

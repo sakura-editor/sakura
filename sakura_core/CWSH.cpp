@@ -18,6 +18,7 @@
 #include "CSMacroMgr.h"
 #include "CEditView.h"
 #include "CEditDoc.h"
+#include "etc_uty.h"
 
 //スクリプトに渡されるオブジェクトの情報
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
@@ -421,7 +422,7 @@ void CInterfaceObject::AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, 
 	Info->ID = ID;
 	for(int I = 0; I < ArgumentCount; ++I)
 	{
-		Info->Arguments[I].tdesc.vt = ArgumentTypes[I];
+		Info->Arguments[I].tdesc.vt = ArgumentTypes[ArgumentCount - I - 1];
 		Info->Arguments[I].paramdesc.wParamFlags = PARAMFLAG_FIN;
 	}
 	Info->Arguments[ArgumentCount].tdesc.vt = ResultType;
@@ -525,7 +526,7 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 		if(Result != NULL)
 		{
 			wchar_t FileName[2048];
-			MultiByteToWideChar(CP_ACP, 0, View->m_pcEditDoc->m_szFilePath, -1, FileName, 2047);
+			MultiByteToWideChar(CP_ACP, 0, View->m_pcEditDoc->GetFilePath(), -1, FileName, 2047);
 			
 			Result->vt = VT_BSTR;
 			Result->bstrVal = SysAllocString(FileName);
@@ -570,7 +571,7 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 				S = new char[1];
 				S[0] = 0;
 			}
-			StrArgs[I] = S;
+			StrArgs[ArgCount - I - 1] = S;
 		}
 		
 		CMacro::HandleCommand(View, ID, const_cast<char const **>(StrArgs), ArgCount);
@@ -594,24 +595,8 @@ static void MacroError(BSTR Description, BSTR Source, void *Data)
 	MessageBox(View->m_hWnd, MessageA, SourceA, MB_ICONERROR);
 }
 
-static bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, unsigned BufferSize)
-{
-	bool Result = false;
-	
-	HKEY Key;
-	if(RegOpenKeyEx(Hive, Path, 0, KEY_READ, &Key) == ERROR_SUCCESS)
-	{
-		ZeroMemory(Buffer, BufferSize);
-
-		DWORD dwType = REG_SZ;
-		DWORD dwDataLen = BufferSize - 1;
-		
-		Result = (RegQueryValueEx(Key, Item, NULL, &dwType, reinterpret_cast<unsigned char*>(Buffer), &dwDataLen) == ERROR_SUCCESS);
-		
-		RegCloseKey(Key);
-	}
-	return Result;
-}
+// ReadRegistryはetc_uty.cppに移動しました．
+//
 
 CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName) : m_EngineName(AEngineName)
 {

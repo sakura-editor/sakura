@@ -89,6 +89,11 @@ public:
 //@@@ 2002.01.14 YAZAKI 不使用のため
 //void CEditWnd::ExecCmd(LPCSTR lpszCmd/*, HANDLE hFile*/);
 
+	//	Sep. 10, 2002 genta
+	void SetWindowIcon( HICON, int);
+	//	Sep. 10, 2002 genta
+	void GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const;
+	bool GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const;
 
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */
 //#ifdef _DEBUG
@@ -148,7 +153,7 @@ public:
 
 	//	Oct. 12, 2000 genta
 	CImageListMgr	m_cIcons;	//	Image List
-
+	
 	/*
 	|| 実装ヘルパ系
 	*/

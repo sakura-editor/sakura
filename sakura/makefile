@@ -74,6 +74,7 @@ OBJS =\
 	$(SRCDIR)\CEditWnd.obj \
 	$(SRCDIR)\CEol.obj \
 	$(SRCDIR)\CFileWrite.obj \
+	$(SRCDIR)\CFileLoad.obj \
 	$(SRCDIR)\CFuncInfo.obj \
 	$(SRCDIR)\CFuncInfoArr.obj \
 	$(SRCDIR)\CFuncKeyWnd.obj \
@@ -133,6 +134,7 @@ OBJS =\
 	$(SRCDIR)\CTipWnd.obj \
 	$(SRCDIR)\CWnd.obj \
 	$(SRCDIR)\CWaitCursor.obj \
+	$(SRCDIR)\CWSH.obj \
 	$(SRCDIR)\CBregexp.obj \
 	$(SRCDIR)\Debug.obj \
 	$(SRCDIR)\etc_uty.obj \

@@ -40,8 +40,11 @@
 
 #define IDT_ROLLMOUSE	1
 
-//	May 12, 2000 genta 初期化方法変更
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+/*!
+	May 12, 2000 genta 初期化方法変更
+	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@note m_pcEditWnd はコンストラクタ内では使用しないこと．
+*/
 CEditDoc::CEditDoc() :
 	m_cNewLineCode( EOL_CRLF ),		//	New Line Type
 	m_cSaveLineCode( EOL_NONE ),		//	保存時のLine Type
@@ -66,6 +69,7 @@ CEditDoc::CEditDoc() :
 	m_hInstance( NULL ),
 	m_hWnd( NULL ),
 	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
+	m_nSettingType( 0 ),	// Sep. 11, 2002 genta
 	m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 //	m_pcDlgTest = new CDlgTest;
@@ -75,8 +79,10 @@ CEditDoc::CEditDoc() :
 	/* 共有データ構造体のアドレスを返す */
 
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
-	SetDocumentType( doctype, true );
+	//	Sep. 11, 2002 genta 削除
+	//	SetDocumentTypeはコンストラクタ中では使わない．
+	//int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	//SetDocumentType( doctype, true );
 
 	/* OPENFILENAMEの初期化 */
 	memset( &m_ofn, 0, sizeof( OPENFILENAME ) );
@@ -185,7 +191,7 @@ BOOL CEditDoc::Create(
 	m_hwndParent = hwndParent;
 
 	/* 分割フレーム作成 */
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 	m_cSplitterWnd.Create( m_hInstance, m_hwndParent, pCEditWnd );
 
 	/* ビュー */
@@ -428,8 +434,7 @@ BOOL CEditDoc::FileRead(
 
 
 
-	CEditWnd* pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_hwndProgressBar;
 	}else{
@@ -471,7 +476,8 @@ BOOL CEditDoc::FileRead(
 		}
 	}
 
-	strcpy( m_szFilePath, pszPath ); /* 現在編集中のファイルのパス */
+	//	Sep. 10, 2002 genta
+	SetFilePath( pszPath ); /* 現在編集中のファイルのパス */
 
 
 	/* 指定された文字コード種別に変更する */
@@ -518,7 +524,8 @@ BOOL CEditDoc::FileRead(
 					"%s\n文字コードの判別処理でエラーが発生しました。",
 					pszPath
 				);
-				strcpy( m_szFilePath, "" );
+				//	Sep. 10, 2002 genta
+				SetFilePath( "" );
 				bRet = FALSE;
 				goto end_of_func;
 			}
@@ -560,7 +567,7 @@ BOOL CEditDoc::FileRead(
 						MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 						"文字コード情報",
 						"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません",
-						m_szFilePath, pszCodeName, pszCodeName, pszCodeNameNew
+						GetFilePath(), pszCodeName, pszCodeName, pszCodeNameNew
 					);
 					if( IDYES == nRet ){
 						/* 前回に指定された文字コード種別に変更する */
@@ -568,7 +575,8 @@ BOOL CEditDoc::FileRead(
 					}else
 					if( IDCANCEL == nRet ){
 						m_nCharCode = 0;
-						strcpy( m_szFilePath, "" );
+						//	Sep. 10, 2002 genta
+						SetFilePath( "" );
 						bRet = FALSE;
 						goto end_of_func;
 					}
@@ -579,7 +587,8 @@ BOOL CEditDoc::FileRead(
 						"バグじゃぁあああ！！！",
 						"【対処】エラーの出た状況を作者に連絡してください。"
 					);
-					strcpy( m_szFilePath, "" );
+					//	Sep. 10, 2002 genta
+					SetFilePath( "" );
 					bRet = FALSE;
 					goto end_of_func;
 				}
@@ -610,7 +619,8 @@ BOOL CEditDoc::FileRead(
 					"%s\n文字コードの判別処理でエラーが発生しました。",
 					pszPath
 				);
-				strcpy( m_szFilePath, "" );
+				//	Sep. 10, 2002 genta
+				SetFilePath( "" );
 				bRet = FALSE;
 				goto end_of_func;
 			}
@@ -639,12 +649,13 @@ BOOL CEditDoc::FileRead(
 	char szWork[MAX_PATH];
 	/* ロングファイル名を取得する */
 	if( TRUE == ::GetLongFileName( pszPath, szWork ) ){
-		strcpy( m_szFilePath, szWork );
+		//	Sep. 10, 2002 genta
+		SetFilePath( szWork );
 	}
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
+	doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, true );
 
 	/* ファイルが存在しない */
@@ -670,9 +681,10 @@ BOOL CEditDoc::FileRead(
 		if( NULL != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
-		if( FALSE == m_cDocLineMgr.ReadFile( m_szFilePath, m_hWnd, hwndProgress,
+		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_hWnd, hwndProgress,
 			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode() ) ){
-			strcpy( m_szFilePath, "" );
+			//	Sep. 10, 2002 genta
+			SetFilePath( "" );
 			bRet = FALSE;
 			goto end_of_func;
 		}
@@ -780,7 +792,7 @@ BOOL CEditDoc::FileRead(
 	{
 		char	szCurDir[_MAX_PATH];
 		char	szDrive[_MAX_DRIVE], szDir[_MAX_DIR];
-		_splitpath( m_szFilePath, szDrive, szDir, NULL, NULL );
+		_splitpath( GetFilePath(), szDrive, szDir, NULL, NULL );
 		strcpy( szCurDir, szDrive);
 		strcat( szCurDir, szDir );
 		::SetCurrentDirectory( szCurDir );
@@ -790,7 +802,7 @@ end_of_func:;
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
-	if( TRUE == bRet && 0 < lstrlen( m_szFilePath ) ){
+	if( TRUE == bRet && IsFilePathAvailable() ){
 		/* ファイルの排他ロック */
 		DoFileLock();
 	}
@@ -824,7 +836,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 			MB_OK | MB_ICONSTOP | MB_TOPMOST,
 			GSTR_APPNAME,
 			"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n名前を付けて保存をすればいいと思います。",
-			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）"
+			IsFilePathAvailable() ? GetFilePath() : "（無題）"
 		);
 		return FALSE;
 	}
@@ -832,8 +844,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 
 	bRet = TRUE;
 
-	CEditWnd* pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_hwndProgressBar;
 	}else{
@@ -860,8 +871,9 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 #if 0
 	/* ロングファイル名を取得する。（上書き保存のときのみ） */
 	char szWork[MAX_PATH];
-	if( TRUE == ::GetLongFileName( m_szFilePath, szWork ) ){
-		strcpy( m_szFilePath, szWork );
+	if( TRUE == ::GetLongFileName( GetFilePath(), szWork ) ){
+		//	Sep. 10, 2002 genta
+		SetFilePath( szWork );
 	}
 #endif
 
@@ -873,7 +885,8 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	}
 	m_cEditViewArr[m_nActivePaneIndex].RedrawAll();
 
-	strcpy( m_szFilePath, pszPath ); /* 現在編集中のファイルのパス */
+	//	Sep. 10, 2002 genta
+	SetFilePath( pszPath ); /* 現在編集中のファイルのパス */
 
 	SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
 
@@ -892,7 +905,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	SetParentCaption();
 end_of_func:;
 
-	if( 0 < lstrlen( m_szFilePath ) &&
+	if( IsFilePathAvailable() &&
 		FALSE == m_bReadOnly && /* 読み取り専用モード ではない */
 		TRUE == bRet
 	){
@@ -945,9 +958,9 @@ BOOL CEditDoc::OpenFileDialog(
 	if( NULL != pszOpenFolder ){
 		pszDefFolder = pszOpenFolder;
 	}else{
-		if( 0 != lstrlen( m_szFilePath ) ){
-			pszDefFolder = m_szFilePath;
-		}else if( 0 != lstrlen( m_szFilePath ) ){
+		if( IsFilePathAvailable() ){
+			pszDefFolder = GetFilePath();
+		}else if( ppszMRU[0] != NULL && ppszMRU[0][0] != '\0' ){ // Sep. 9, 2002 genta
 			pszDefFolder = ppszMRU[0];
 		}
 	}
@@ -1001,10 +1014,10 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol )
 
 	/* ファイル保存ダイアログの初期化 */
 	/* ファイル名の無いファイルだったら、ppszMRU[0]をデフォルトファイル名として？ppszOPENFOLDERじゃない？ */
-	if( 0 == lstrlen( m_szFilePath ) ){
+	if( !IsFilePathAvailable() ){
 		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, ppszMRU[0], (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 	}else{
-		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, m_szFilePath, (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
+		m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, GetFilePath(), (const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 	}
 
 	/* ダイアログを表示 */
@@ -1234,10 +1247,10 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 //#endif
 	}else{
 
-		if( 0 < lstrlen( m_szFilePath ) && (::IsIconic( hwnd ) || bKillFocus ) ){
+		if( IsFilePathAvailable() && (::IsIconic( hwnd ) || bKillFocus ) ){
 			char szFname[_MAX_FNAME];
 			char szExt[_MAX_EXT];
-			_splitpath( m_szFilePath, NULL, NULL, szFname, szExt );
+			_splitpath( GetFilePath(), NULL, NULL, szFname, szExt );
 			//Oct. 11, 2000 jepro note： アクティブでない時のタイトル表示
 			wsprintf(
 				pszCap,
@@ -1258,7 +1271,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 			wsprintf(
 				pszCap,
 				"%s%s - %s %d.%d.%d.%d %s%s",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
-				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+				IsFilePathAvailable() ? GetFilePath() : "（無題）",
 				IsModified() ? "（更新）" : "",	/* 変更フラグ */
 				pszAppName,
 				HIWORD( m_pShareData->m_dwProductVersionMS ),
@@ -1304,17 +1317,17 @@ BOOL CEditDoc::MakeBackUp( void )
 	char*	pBase;
 
 	/* ファイル名が付いているか */
-	if( 0 >= lstrlen( m_szFilePath ) ){
+	if( !IsFilePathAvailable() ){
 		return FALSE;
 	}
 
 	/* バックアップソースの存在チェック */
-	if( (_access( m_szFilePath, 0 )) == -1 ){
+	if( (_access( GetFilePath(), 0 )) == -1 ){
 		return FALSE;
 	}
 
 	/* パスの分解 */
-	_splitpath( m_szFilePath, szDrive, szDir, szFname, szExt );
+	_splitpath( GetFilePath(), szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		strcpy( szPath, m_pShareData->m_Common.m_szBackUpFolder );
@@ -1369,7 +1382,7 @@ BOOL CEditDoc::MakeBackUp( void )
 						LocalTime;
 			SYSTEMTIME	SystemTime;
 
-			hFile = ::CreateFile(m_szFilePath,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+			hFile = ::CreateFile(GetFilePath(),GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 			::GetFileTime(hFile,NULL,NULL,&LastWriteTime);			// ファイルのタイプスタンプを取得(更新日時のみ)
 			CloseHandle(hFile);
 			::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
@@ -1435,7 +1448,7 @@ BOOL CEditDoc::MakeBackUp( void )
 //			MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 //			"バックアップ作成の確認",
 //			"変更される前に、バックアップファイルを作成します。\nよろしいですか？\n\n%s\n    ↓\n%s\n\n",
-//			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+//			IsFilePathAvailable() ? GetFilePath() : "（無題）",
 //			szPath
 //		) ){
 //			return FALSE;
@@ -1446,7 +1459,7 @@ BOOL CEditDoc::MakeBackUp( void )
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 				"バックアップ作成の確認",
 				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n作成したバックアップファイルをごみ箱に放り込みます。\n",
-				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+				IsFilePathAvailable() ? GetFilePath() : "（無題）",
 				szPath
 			);
 		}else{	//@@@ 2001.12.11 add end MIK
@@ -1455,7 +1468,7 @@ BOOL CEditDoc::MakeBackUp( void )
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 				"バックアップ作成の確認",
 				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
-				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+				IsFilePathAvailable() ? GetFilePath() : "（無題）",
 				szPath
 			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
 		}	//@@@ 2001.12.11 add MIK
@@ -1541,7 +1554,7 @@ BOOL CEditDoc::MakeBackUp( void )
 
 	//::MessageBox( NULL, szPath, "直前のバックアップファイル", MB_OK );
 	/* バックアップの作成 */
-	if( ::CopyFile( m_szFilePath, szPath, FALSE ) ){
+	if( ::CopyFile( GetFilePath(), szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
 		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
@@ -1590,7 +1603,7 @@ void CEditDoc::DoFileLock( void )
 	}
 
 	/* ファイルが存在しない */
-	if( -1 == _access( m_szFilePath, 0 ) ){
+	if( -1 == _access( GetFilePath(), 0 ) ){
 		/* ファイルの排他制御モード */
 		m_nFileShareModeOld = 0;
 		return;
@@ -1601,7 +1614,7 @@ void CEditDoc::DoFileLock( void )
 
 
 	/* ファイルを開いていない */
-	if( 0 == lstrlen( m_szFilePath ) ){
+	if( ! IsFilePathAvailable() ){
 		return;
 	}
 	/* 読み取り専用モード */
@@ -1620,7 +1633,7 @@ void CEditDoc::DoFileLock( void )
 		bCheckOnly = TRUE;
 	}
 	/* 書込み禁止かどうか調べる */
-	if( -1 == _access( m_szFilePath, 2 ) ){	/* アクセス権：書き込み許可 */
+	if( -1 == _access( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
 #if 0
 		// Apr. 28, 2000 genta: Request from Koda
 
@@ -1630,7 +1643,7 @@ void CEditDoc::DoFileLock( void )
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
 			GSTR_APPNAME,
 			"現在\n%s\nは読取専用に設定されています。 または、書き込みのアクセス権がありません。",
-			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）"
+			IsFilePathAvailable() ? GetFilePath() : "（無題）"
 		);
 #endif
 		m_hLockedFile = NULL;
@@ -1640,7 +1653,7 @@ void CEditDoc::DoFileLock( void )
 	}
 
 
-	m_hLockedFile = ::_lopen( m_szFilePath, OF_READWRITE );
+	m_hLockedFile = ::_lopen( GetFilePath(), OF_READWRITE );
 	_lclose( m_hLockedFile );
 	if( HFILE_ERROR == m_hLockedFile ){
 		::MessageBeep( MB_ICONEXCLAMATION );
@@ -1649,14 +1662,14 @@ void CEditDoc::DoFileLock( void )
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
 			GSTR_APPNAME,
 			"%s\nは現在他のプロセスによって書込みが禁止されています。",
-			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）"
+			IsFilePathAvailable() ? GetFilePath() : "（無題）"
 		);
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
 		SetParentCaption();
 		return;
 	}
-	m_hLockedFile = ::_lopen( m_szFilePath, nAccessMode | m_pShareData->m_Common.m_nFileShareMode );
+	m_hLockedFile = ::_lopen( GetFilePath(), nAccessMode | m_pShareData->m_Common.m_nFileShareMode );
 	if( HFILE_ERROR == m_hLockedFile ){
 		switch( m_pShareData->m_Common.m_nFileShareMode ){
 		case OF_SHARE_EXCLUSIVE:	/* 読み書き */
@@ -1675,7 +1688,7 @@ void CEditDoc::DoFileLock( void )
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
 			GSTR_APPNAME,
 			"%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。",
-			lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）",
+			IsFilePathAvailable() ? GetFilePath() : "（無題）",
 			pszMode
 		);
 		/* 親ウィンドウのタイトルを更新 */
@@ -3371,8 +3384,7 @@ void CEditDoc::OnChangeSetting( void )
 	int			i;
 	HWND		hwndProgress;
 
-	CEditWnd*	pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	pCEditWnd->m_CFuncKeyWnd.m_nCurrentKeyState = -1;
 
@@ -3392,7 +3404,7 @@ void CEditDoc::OnChangeSetting( void )
 	}
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
+	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, false );
 
 	/*
@@ -3477,7 +3489,7 @@ void CEditDoc::SetFileInfo( FileInfo* pfi )
 	int		nX;
 	int		nY;
 
-	strcpy( pfi->m_szPath, m_szFilePath );
+	strcpy( pfi->m_szPath, GetFilePath() );
 	pfi->m_nViewTopLine = m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine;	/* 表示域の一番上の行(0開始) */
 	pfi->m_nViewLeftCol = m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol;	/* 表示域の一番左の桁(0開始) */
 	//	pfi->m_nCaretPosX = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;	/* ビュー左端からのカーソル桁位置(０開始) */
@@ -3578,11 +3590,11 @@ BOOL CEditDoc::OnFileClose( void )
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
 				"%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n",
-				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）"
+				IsFilePathAvailable() ? GetFilePath() : "（無題）"
 			);
 			switch( nRet ){
 			case IDYES:
-//				if( 0 < lstrlen( m_szFilePath ) ){
+//				if( IsFilePathAvailable() ){
 //					nBool = HandleCommand( F_FILESAVE );
 //				}else{
 					nBool = HandleCommand( F_FILESAVEAS_DIALOG );
@@ -3601,11 +3613,11 @@ BOOL CEditDoc::OnFileClose( void )
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
 				"%s\nは変更されています。 閉じる前に保存しますか？",
-				lstrlen( m_szFilePath ) ? m_szFilePath : "（無題）"
+				IsFilePathAvailable() ? GetFilePath() : "（無題）"
 			);
 			switch( nRet ){
 			case IDYES:
-				if( 0 < lstrlen( m_szFilePath ) ){
+				if( IsFilePathAvailable() ){
 					nBool = HandleCommand( F_FILESAVE );
 				}else{
 					nBool = HandleCommand( F_FILESAVEAS_DIALOG );
@@ -3633,28 +3645,8 @@ void CEditDoc::Init( void )
 	strcpy( m_szGrepKey, "" );
 	m_bGrepMode = FALSE;	/* Grepモード */
 
-//@@@ 2001.12.26 YAZAKI 大きいアイコンと小さいアイコンを別々にする。
-	HICON	hIconBig, hIconSmall;
-#ifdef _DEBUG
-	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
-	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ), IMAGE_ICON, 16, 16, 0);
-#else
-	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
-	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ), IMAGE_ICON, 16, 16, 0);
-#endif
-	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
-	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
-
-//	HICON	hIcon;
-//#ifdef _DEBUG
-//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
-//#else
-//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
-//#endif
-//	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
-//	::SendMessage( m_hwndParent, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
-//	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)NULL );
-//	::SendMessage( m_hwndParent, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
+//	Sep. 10, 2002 genta
+//	アイコン設定はファイル名設定と一体化のためここからは削除
 
 	/* ファイルの排他ロック解除 */
 	DoFileUnLock();
@@ -3672,7 +3664,9 @@ void CEditDoc::Init( void )
 	m_cDocLineMgr.Init();
 
 	/* 現在編集中のファイルのパス */
-	m_szFilePath[0] = '\0';
+	//	Sep. 10, 2002 genta
+	//	アイコンも同時に初期化される
+	SetFilePath( "" );
 
 	/* 現在編集中のファイルのタイムスタンプ */
 	m_FileTime.dwLowDateTime = 0;
@@ -3681,7 +3675,7 @@ void CEditDoc::Init( void )
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	int doctype = CShareData::getInstance()->GetDocumentType( m_szFilePath );
+	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, true );
 
 	/* レイアウト管理情報の初期化 */
@@ -3761,7 +3755,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && m_pShareData->m_Common.m_nFileShareMode == 0	/* ファイルの排他制御モード */
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
 	 && hwndActive == m_hwndParent
-	 && 0 < lstrlen( m_szFilePath )
+	 && IsFilePathAvailable()
 	 && ( m_FileTime.dwLowDateTime != 0 || m_FileTime.dwHighDateTime != 0 ) 	/* 現在編集中のファイルのタイムスタンプ */
 
 	){
@@ -3774,7 +3768,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 			BOOL		bWork;
 			LONG		lWork;
 
-			hFile = _lopen( m_szFilePath, OF_READ );
+			hFile = _lopen( GetFilePath(), OF_READ );
 			if( HFILE_ERROR == hFile ){
 				break;
 			}
@@ -3798,7 +3792,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	}
 	if( IDYES != MYMESSAGEBOX( m_hwndParent, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
 		"%s\n\nこのファイルは外部のエディタ等で変更されています。%s",
-		m_szFilePath,
+		GetFilePath(),
 		(IsModified())?"\n再ロードを行うと変更が失われますがよろしいですか?":"再ロードしますか?"
 	) ){
 		return;
@@ -3826,7 +3820,7 @@ void CEditDoc::ReloadCurrentFile(
 	BOOL	bReadOnly		/*!< [in] 読み取り専用モード */
 )
 {
-	if( -1 == _access( m_szFilePath, 0 ) ){
+	if( -1 == _access( GetFilePath(), 0 ) ){
 		/* ファイルが存在しない */
 		m_nCharCode = nCharCode;
 		return;
@@ -3840,7 +3834,7 @@ void CEditDoc::ReloadCurrentFile(
 	nCaretPosX = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 	nCaretPosY = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY;
 
-	strcpy( szFilePath, m_szFilePath );
+	strcpy( szFilePath, GetFilePath() );
 
 	/* 既存データのクリア */
 	Init();
@@ -3929,13 +3923,13 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			++p;
 			break;
 		case 'F':	//	開いているファイルの名前（フルパス）
-			if (m_szFilePath[0] == '\0'){
+			if ( !IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
 				q += 6 - 1;
 				++p;
 			} 
 			else {
-				for( r = m_szFilePath; *r != '\0' && q < q_max; ++r, ++q )
+				for( r = GetFilePath(); *r != '\0' && q < q_max; ++r, ++q )
 					*q = *r;
 				--q; // genta
 				++p;
@@ -3945,16 +3939,16 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			// Oct. 28, 2001 genta
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
-			if (m_szFilePath[0] == '\0'){
+			if ( ! IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
 				q += 6 - 1;
 				++p;
 			} 
 			else {
-				r = m_szFilePath + strlen( m_szFilePath );
+				r = GetFilePath() + strlen( GetFilePath() );
 				
 				//	後ろから区切りを探す
-				for( --r; r >= m_szFilePath && *r != '\\' ; --r )
+				for( --r; r >= GetFilePath() && *r != '\\' ; --r )
 					;
 				//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
@@ -3966,14 +3960,14 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		case '/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
 			// Oct. 28, 2001 genta
-			if (m_szFilePath[0] == '\0'){
+			if ( !IsFilePathAvailable() ){
 				memcpy(q, "(無題)", 6);
 				q += 6 - 1;
 				++p;
 			} 
 			else {
 				//	パスの区切りとして'/'を使うバージョン
-				for( r = m_szFilePath; *r != '\0' && q < q_max; ++r, ++q ){
+				for( r = GetFilePath(); *r != '\0' && q < q_max; ++r, ++q ){
 					if( *r == '\\' )
 						*q = '/';
 					else
@@ -4021,7 +4015,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		case 'p':	//	現在のページ
 			{
-				CEditWnd* pcEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+				CEditWnd*	pcEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					char szText[1024];
 					itoa(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
@@ -4040,7 +4034,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		case 'P':	//	総ページ
 			{
-				CEditWnd* pcEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+				CEditWnd*	pcEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
 					char szText[1024];
 					itoa(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);

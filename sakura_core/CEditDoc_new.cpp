@@ -21,6 +21,7 @@
 #include "charcode.h"
 #include "CFuncInfoArr.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
+#include "CEditWnd.h"
 
 
 /* Java関数リスト作成 */
@@ -480,6 +481,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_TOLOWER:
 	case F_TOUPPER:
 	case F_TOHANKAKU:
+	case F_TOHANKATA:				// 2002/08/29 ai
 	case F_TOZENEI:					// 2001/07/30 Miasaka
 	case F_TOHANEI:
 	case F_TOZENKAKUKATA:
@@ -517,7 +519,7 @@ void CEditDoc::CheckAutoSave(void)
 
 		en = m_cAutoSave.IsEnabled();
 		m_cAutoSave.Enable(false);	//	2重呼び出しを防ぐため
-		SaveFile( m_szFilePath );	//	保存（m_nCharCode, m_cSaveLineCodeを変更しない）
+		SaveFile( GetFilePath() );	//	保存（m_nCharCode, m_cSaveLineCodeを変更しない）
 		m_cAutoSave.Enable(en);
 	}
 }
@@ -975,4 +977,44 @@ void CEditDoc::SetModified( bool flag, bool redraw)
 }
 // From Here Jan. 22, 2002 genta
 
+/*!
+	ファイル名の設定
+	
+	ファイル名を設定すると同時に，ウィンドウアイコンを適切に設定する．
+	
+	@param szFile [in] ファイルのパス名
+	
+	@author genta
+	@date 2002.09.09
+*/
+void CEditDoc::SetFilePath(const char* szFile)
+{
+	strcpy( m_szFilePath, szFile );
+	SetDocumentIcon();
+}
+
+/*!
+	アイコンの設定
+	
+	タイプ別設定に応じてウィンドウアイコンをファイルに関連づけられた物，
+	または標準のものに設定する．
+	
+	@author genta
+	@date 2002.09.10
+*/
+void CEditDoc::SetDocumentIcon(void)
+{
+	HICON	hIconBig, hIconSmall;
+	
+	if( m_bGrepMode )	// Grepモードの時はアイコンを変更しない
+		return;
+	
+	if( GetDocumentAttribute().m_bUseDocumentIcon )
+		m_pcEditWnd->GetRelatedIcon( GetFilePath(), hIconBig, hIconSmall );
+	else
+		m_pcEditWnd->GetDefaultIcon( hIconBig, hIconSmall );
+
+	m_pcEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
+	m_pcEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
+}
 /*[EOF]*/

@@ -62,6 +62,8 @@ public:
 	}
 
 	static enumEOLType GetEOLType( const char* pszData, int nDataLen );
+	static enumEOLType GetEOLTypeUni( const wchar_t* pszData, int nDataLen );
+	static enumEOLType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen );
 	bool SetType( enumEOLType t);	//	TypeÇÃê›íË
 	void GetTypeFromString( const char* pszData, int nDataLen )
 		{	SetType( GetEOLType( pszData, nDataLen ) ); }
