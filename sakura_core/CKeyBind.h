@@ -41,10 +41,14 @@ struct KEYDATA {
 	/*short*/int	m_nFuncCodeArr[8];
 };
 
+class CFuncLookup;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+/*!
+	キー割り当て関連ルーチン。すべての関数はstaticで保持するデータはない。
+*/
 class CKeyBind
 {
 public:
@@ -59,7 +63,8 @@ public:
 	*/
 	static HACCEL CreateAccerelator( int, KEYDATA* );
 	static int GetFuncCode( WORD, int, KEYDATA* );
-	static int CreateKeyBindList( HINSTANCE, int, KEYDATA*, CMemory& );
+	//! キー割り当て一覧を作成する
+	static int CreateKeyBindList( HINSTANCE, int, KEYDATA*, CMemory&, CFuncLookup* );
 	static int GetKeyStr( HINSTANCE, int, KEYDATA*, CMemory&, int );	/* 機能に対応するキー名の取得 */
 	static int CKeyBind::GetKeyStrList( HINSTANCE, int, KEYDATA*, CMemory***, int );	/* 機能に対応するキー名の取得(複数) */
 	static char* GetMenuLabel( HINSTANCE, int, KEYDATA*, int, char*, BOOL );	/* メニューラベルの作成 */

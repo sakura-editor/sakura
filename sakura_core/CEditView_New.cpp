@@ -436,6 +436,7 @@ int CEditView::DispLineNew(
 	nLineBgn = 0;
 	nX = 0;
 	nCharChars = 0;
+	setlocale ( LC_ALL, "C" );	//	Oct. 29, 2001 genta 検索文字列のハイライトに関係する
 	if( NULL != pLine ){
 		y -= nLineHeight;
 		nLineNum--;

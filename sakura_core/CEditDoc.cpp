@@ -708,6 +708,8 @@ BOOL CEditDoc::FileRead(
 //			m_cEditViewArr[m_nActivePaneIndex].Command_GOFILEEND(FALSE);
 			m_cEditViewArr[m_nActivePaneIndex].HandleCommand( F_GOFILEEND, 0, 0, 0, 0, 0 );
 		}else{
+			m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine = fi.m_nViewTopLine; // 2001/10/20 novice
+			m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = fi.m_nViewLeftCol; // 2001/10/20 novice
 			m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE );
 			m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev =
 				m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;

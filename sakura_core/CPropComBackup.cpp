@@ -251,9 +251,7 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 99 ? 99 : nN;
 
-	char buf[6];
-	wsprintf( buf, "%d", nN);
-	::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUP_3, buf );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nN, FALSE );	//	Oct. 29, 2001 genta
 	//	To Here Aug. 16, 2000 genta
 
 	EnableBackupInput(hwndDlg);
@@ -331,18 +329,18 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 
 	//	From Here Aug. 16, 2000 genta
 	//	ê¢ë„êîÇÃéÊìæ
-	char szNumBuf[6];
+//	char szNumBuf[6];
 	int	 nN;
-	char *pDigit;
-	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUP_3, szNumBuf, 4 );
+//	char *pDigit;
+	nN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, NULL, FALSE );	//	Oct. 29, 2001 genta
 
-	for( nN = 0, pDigit = szNumBuf; *pDigit != '\0'; pDigit++ ){
-		if( '0' <= *pDigit && *pDigit <= '9' ){
-			nN = nN * 10 + *pDigit - '0';
-		}
-		else
-			break;
-	}
+//	for( nN = 0, pDigit = szNumBuf; *pDigit != '\0'; pDigit++ ){
+//		if( '0' <= *pDigit && *pDigit <= '9' ){
+//			nN = nN * 10 + *pDigit - '0';
+//		}
+//		else
+//			break;
+//	}
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 99 ? 99 : nN;
 	m_Common.SetBackupCount( nN );

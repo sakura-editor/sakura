@@ -34,6 +34,7 @@ class CSMacroMgr;
 #include <vector>
 #include "CMemory.h"
 #include "CShareData.h"
+#include "CKeyMacroMgr.h"
 
 using namespace std;
 

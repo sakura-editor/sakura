@@ -2665,10 +2665,11 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	/* カーソル行アンダーラインのOFF */
 	CaretUnderLineOFF( bDraw );
 
-	nCaretMarginY = m_nViewRowNum / nCaretMarginRate;
 	if( m_bBeginSelect ){	/* 範囲選択中 */
 		nCaretMarginY = 0;
 	}else{
+		//	2001/10/20 novice
+		nCaretMarginY = m_nViewRowNum / nCaretMarginRate;
 		if( 1 > nCaretMarginY ){
 			nCaretMarginY = 1;
 		}
@@ -2735,11 +2736,12 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 		if( abs( nScrollColNum ) >= m_nViewColNum ||
 			abs( nScrollRowNum ) >= m_nViewRowNum ){
 			m_nViewTopLine -= nScrollRowNum;
-			if( bDraw ){
+			//	2001/10/20 deleted by novice
+//			if( bDraw ){
 				::InvalidateRect( m_hWnd, NULL, TRUE );
-				/* スクロールバーの状態を更新する */
-				AdjustScrollBars();
-			}
+//				/* スクロールバーの状態を更新する */
+//				AdjustScrollBars();
+//			}
 		}else
 		if( nScrollRowNum != 0 || nScrollColNum != 0 ){
 			rcScrol.left = 0;
@@ -2816,9 +2818,13 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bDraw, int
 	 			}
 				::UpdateWindow( m_hWnd );
 			}
-			/* スクロールバーの状態を更新する */
-			AdjustScrollBars();
+			//	2001/10/20 moved by novice
+//			/* スクロールバーの状態を更新する */
+//			AdjustScrollBars();
 		}
+
+		/* スクロールバーの状態を更新する */
+		AdjustScrollBars(); // 2001/10/20 novice
 	}
 
 	/* キャレット移動 */

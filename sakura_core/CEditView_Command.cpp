@@ -290,7 +290,8 @@ BOOL CEditView::HandleCommand(
 	case F_DOWN2:			Command_DOWN2( m_bSelectingLock ); break;					//カーソル下移動(２行づつ)
 	case F_WORDLEFT:		Command_WORDLEFT( m_bSelectingLock ); break;				/* 単語の左端に移動 */
 	case F_WORDRIGHT:		Command_WORDRIGHT( m_bSelectingLock ); break;				/* 単語の右端に移動 */
-	case F_GOLINETOP:		Command_GOLINETOP( m_bSelectingLock, FALSE ); break;		//行頭に移動(折り返し単位)
+	//	0ct. 29, 2001 genta マクロ向け機能拡張
+	case F_GOLINETOP:		Command_GOLINETOP( m_bSelectingLock, FALSE, lparam1  ); break;//行頭に移動(折り返し単位)
 	case F_GOLINEEND:		Command_GOLINEEND( m_bSelectingLock, FALSE ); break;		//行末に移動(折り返し単位)
 //	case F_ROLLDOWN:		Command_ROLLDOWN( m_bSelectingLock ); break;				//スクロールダウン
 //	case F_ROLLUP:			Command_ROLLUP( m_bSelectingLock ); break;					//スクロールアップ
@@ -310,7 +311,7 @@ BOOL CEditView::HandleCommand(
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
 	case F_SELECTALL:		Command_SELECTALL();break;						//すべて選択
 	case F_BEGIN_SEL:		Command_BEGIN_SELECT();break;					/* 範囲選択開始 */
-	case F_UP_SEL:			Command_UP( TRUE, bRepeat ); break;				//(範囲選択)カーソル上移動
+	case F_UP_SEL:			Command_UP( TRUE, bRepeat, lparam1 ); break;	//(範囲選択)カーソル上移動
 	case F_DOWN_SEL:		Command_DOWN( TRUE, bRepeat ); break;			//(範囲選択)カーソル下移動
 	case F_LEFT_SEL:		Command_LEFT( TRUE, bRepeat ); break;			//(範囲選択)カーソル左移動
 	case F_RIGHT_SEL:		Command_RIGHT( TRUE, FALSE, bRepeat ); break;	//(範囲選択)カーソル右移動
@@ -572,9 +573,16 @@ BOOL CEditView::HandleCommand(
 
 /////////////////////////////////// 以下はコマンド群 (Oct. 17, 2000 jepro note) ///////////////////////////////////////////
 
-/* カーソル上移動 */
-int CEditView::Command_UP( int bSelect, BOOL bRepeat )
+/*! カーソル上移動 */
+int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
 {
+	//	From Here Oct. 24, 2001 genta
+	if( lines != 0 ){
+		Cursor_UPDOWN( lines, FALSE );
+		return 1;
+	}
+	//	To Here Oct. 24, 2001 genta
+
 	int		i;
 	int		nRepeat;
 	nRepeat = 0;
@@ -1016,14 +1024,36 @@ void CEditView::Command_DOWN2( int bSelect )
 
 
 
-/* 行頭に移動(折り返し単位) */
-void CEditView::Command_GOLINETOP( int bSelect, BOOL bLineTopOnly )
+/*! @brief 行頭に移動
+
+	@param bSelect [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
+	@param bLineTopOnly [in] true: カーソル位置に関係なく行頭に移動。
+					false: 先頭の空白によって行頭または文字先頭に移動。
+	@param lparam [in] マクロから使用する拡張フラグ
+		@li 0: キー操作と同一(default)
+		@li 1: 空白を無視して先頭に移動。
+		@li 4: 改行単位で先頭に移動(合成可) / 未実装
+		@li 8: 選択して移動(合成可)
+	
+	Oct. 29, 2001 genta マクロ用機能拡張(パラメータ追加) + goto排除
+*/
+void CEditView::Command_GOLINETOP( int bSelect, BOOL bLineTopOnly, int lparam )
 {
 	const char*		pLine;
 	int				nLineLen;
 	int				nCaretPosX;
+	int				nCaretPosY;
 	int				nPos;
 	const CLayout*	pcLayout;
+
+	if( lparam & 1 ){
+		bLineTopOnly = TRUE;
+	}
+	
+	if( lparam & 4 ){
+		bSelect = TRUE;
+	}
+	
 	if( bSelect ){
 		if( !IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在のカーソル位置から選択を開始する */
@@ -1036,43 +1066,41 @@ void CEditView::Command_GOLINETOP( int bSelect, BOOL bLineTopOnly )
 		}
 	}
 	nCaretPosX = 0;
-proc_begin:;
-	if( bLineTopOnly ){
-		MoveCursor( nCaretPosX, m_nCaretPosY, TRUE );
-		m_nCaretPosX_Prev = nCaretPosX;
-		if( bSelect ){
-			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( nCaretPosX, m_nCaretPosY );
+	nCaretPosY = m_nCaretPosY;
+	if( !bLineTopOnly ){
+		/* 現在行のデータを取得 */
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nCaretPosY, &nLineLen, &pcLayout );
+		if( NULL == pLine ){
+			return;
 		}
-		return;
-	}
-	/* 現在行のデータを取得 */
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr2( m_nCaretPosY, &nLineLen, &pcLayout );
-	if( NULL == pLine ){
-		return;
-	}
-	for( nPos = 0; nPos < nLineLen; ++nPos ){
-		if( ' ' != pLine[nPos] && '\t' != pLine[nPos] ){
-			if( CR == pLine[nPos] || LF == pLine[nPos] ){
-				nPos = nLineLen;
+		for( nPos = 0; nPos < nLineLen; ++nPos ){
+			if( ' ' != pLine[nPos] && '\t' != pLine[nPos] ){
+				if( CR == pLine[nPos] || LF == pLine[nPos] ){
+					nPos = nLineLen;
+				}
+				break;
 			}
-			break;
 		}
+		if( nPos >= nLineLen ){
+			nPos = 0;
+		}
+		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
+		nPos = LineIndexToColmn( pLine, nLineLen, nPos );
+		if( m_nCaretPosX == nPos ){
+			nCaretPosX = 0;
+		}
+		else {
+			nCaretPosX = nPos;
+		}
+		nCaretPosY = m_nCaretPosY;
 	}
-	if( nPos >= nLineLen ){
-		nPos = 0;
+
+	MoveCursor( nCaretPosX, nCaretPosY, TRUE );
+	m_nCaretPosX_Prev = nCaretPosX;
+	if( bSelect ){
+		/* 現在のカーソル位置によって選択範囲を変更 */
+		ChangeSelectAreaByCurrentCursor( nCaretPosX, m_nCaretPosY );
 	}
-	/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-	nPos = LineIndexToColmn( pLine, nLineLen, nPos );
-	if( m_nCaretPosX == nPos ){
-		nCaretPosX = 0;
-		bLineTopOnly = TRUE;
-		goto proc_begin;
-	}
-	nCaretPosX = nPos;
-	bLineTopOnly = TRUE;
-	goto proc_begin;
-	return;
 }
 
 
@@ -8019,7 +8047,8 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 	m_hInstance,
 	m_pShareData->m_nKeyNameArrNum,
 	m_pShareData->m_pKeyNameArr,
-	cMemKeyList
+	cMemKeyList,
+	&m_pcEditDoc->m_cFuncLookup	//	Oct. 31, 2001 genta 追加
 	 );
 
 	/* Windowsクリップボードにコピー */
@@ -8787,6 +8816,32 @@ void CEditView::Command_EXECCOMMAND( const char *cmd )
 			for( r = m_pcEditDoc->m_szFilePath; *r != '\0' && q < q_max; ++r, ++q )
 				*q = *r;
 			--q; // genta
+			++p;
+			break;
+		case 'f':	// Oct. 28, 2001 genta
+			//	ファイル名のみを渡すバージョン
+			//	ポインタを末尾に
+			r = m_pcEditDoc->m_szFilePath + strlen( m_pcEditDoc->m_szFilePath );
+			
+			//	後ろから区切りを探す
+			for( --r; r >= m_pcEditDoc->m_szFilePath && *r != '\\' ; --r )
+				;
+			//	\\が無かった場合は１つ目の条件によって先頭の１つ前にポインタがある。
+			//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
+			for( ++r ; *r != '\0' && q < q_max; ++r, ++q )
+				*q = *r;
+			--q;
+			++p;
+			break;
+		case '/':	// Oct. 28, 2001 genta
+			//	パスの区切りとして'/'を使うバージョン
+			for( r = m_pcEditDoc->m_szFilePath; *r != '\0' && q < q_max; ++r, ++q ){
+				if( *r == '\\' )
+					*q = '/';
+				else
+					*q = *r;
+			}
+			--q;
 			++p;
 			break;
 		default:

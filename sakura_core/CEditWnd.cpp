@@ -1565,6 +1565,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			/* サクラエディタの全終了 */
 			CEditApp::TerminateApplication();
 			break;
+#if 0
 		/* キー割り当て一覧を作成 */
 		/* 割り当てられているキーストロークの数を返す */
 //From Here Sept. 15, 2000 JEPRO
@@ -1589,7 +1590,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			::SetClipboardData( CF_OEMTEXT, hgClip );
 			::CloseClipboard();
 			break;
-
+#endif
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 //		case IDM_HELP_CONTENTS:
 		case F_HELP_CONTENTS:

@@ -28,6 +28,7 @@
 #include "CKeyBind.h"
 #include "debug.h"
 #include "CMacro.h"
+#include "CFuncLookup.h"
 
 
 CKeyBind::CKeyBind()
@@ -130,13 +131,23 @@ int CKeyBind::GetFuncCode(
 
 
 
-/* キー割り当て一覧を作成 */
-/* 機能が割り当てられているキーストロークの数を返す */
+/*!
+	@param hInstance [in] インスタンスハンドル
+	@param nKeyNameArrNum [in] 
+	@param nKeyNameArr [out] 
+	@param cMemList
+	@param pcFuncLookup [in] 機能番号→名前の対応を取る
+
+	@return 機能が割り当てられているキーストロークの数
+	
+	@date Oct. 31, 2001 genta 動的な機能名に対応するため引数追加
+*/
 int CKeyBind::CreateKeyBindList(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
-		CMemory&	cMemList
+		CMemory&	cMemList,
+		CFuncLookup* pcFuncLookup
 )
 {
 	int		i;
@@ -181,15 +192,20 @@ int CKeyBind::CreateKeyBindList(
 				cMemList.AppendSz( pKeyNameArr[i].m_szKeyName );
 //				cMemList.AppendSz( pszEQUAL );
 //				cMemList.AppendSz( pszTAB );
-				strcpy( szFuncNameJapanese, "---名前が定義されていない-----" );
+				//	Oct. 31, 2001 genta 
+				if( !pcFuncLookup->Funccode2Name(
+					pKeyNameArr[i].m_nFuncCodeArr[j],
+					szFuncNameJapanese, 255 )){
+					strcpy( szFuncNameJapanese, "---名前が定義されていない-----" );
+				}
 				strcpy( szFuncName, ""/*"---unknown()--"*/ );
 
-				/* 機能名日本語 */
-				::LoadString(
-					hInstance,
-					pKeyNameArr[i].m_nFuncCodeArr[j],
-					 szFuncNameJapanese, 255
-				);
+//				/* 機能名日本語 */
+//				::LoadString(
+//					hInstance,
+//					pKeyNameArr[i].m_nFuncCodeArr[j],
+//					 szFuncNameJapanese, 255
+//				);
 				cMemList.AppendSz( pszTAB );
 				cMemList.AppendSz( szFuncNameJapanese );
 
