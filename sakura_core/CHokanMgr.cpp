@@ -16,6 +16,7 @@
 #include "CHokanMgr.h"
 #include "debug.h"
 #include "CKeyBind.h"
+#include "Keycode.h"
 #include "CDicMgr.h"
 #include "CEditView.h"
 #include "mymessage.h"
@@ -35,13 +36,28 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 //	LPARAM hwndLB;
 //	int i;
 	MSG* pMsg;
-	int nVirtKey;
-	LPARAM lKeyData;
+	int nVKey;
+//	LPARAM lKeyData;
 	switch( uMsg ){
 	case WM_KEYDOWN:
-		nVirtKey = (int) wParam;	// virtual-key code
-		lKeyData = lParam;			// key data
-//		MYTRACE( "WM_KEYDOWN nVirtKey = %xh\n", nVirtKey );
+		nVKey = (int) wParam;	// virtual-key code
+//		lKeyData = lParam;			// key data
+//		MYTRACE( "WM_KEYDOWN nVKey = %xh\n", nVKey );
+		/* キー操作を偽造しよう */
+		if (nVKey == VK_SPACE){	//	Space
+			int nIdx = 0;
+			if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT	  ) ) nIdx |= _SHIFT;
+			if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ) nIdx |= _CTRL;
+			if( (SHORT)0x8000 & ::GetKeyState( VK_MENU    ) ) nIdx |= _ALT;
+			if (nIdx == _SHIFT){
+				//	Shift + Spaceで↑を偽造
+				wParam = VK_UP;
+			}
+			else if (nIdx == 0) {
+				//	Spaceのみで↓を偽造
+				wParam = VK_DOWN;
+			}
+		}
 		/* 補完実行キーなら補完する */
 		if( -1 != pCHokanMgr->KeyProc( wParam, lParam ) ){
 			/* キーストロークを親に転送 */
@@ -502,10 +518,10 @@ BOOL CHokanMgr::OnBnClicked( int wID )
 
 BOOL CHokanMgr::OnKeyDown( WPARAM wParam, LPARAM lParam )
 {
-	int nVirtKey;
-	nVirtKey = (int) wParam;	// virtual-key code
+	int nVKey;
+	nVKey = (int) wParam;	// virtual-key code
 //	lKeyData = lParam;			// key data
-	switch( nVirtKey ){
+	switch( nVKey ){
 	case VK_HOME:
 	case VK_END:
 	case VK_UP:
@@ -552,7 +568,9 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	if( VK_RETURN	== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
 	if( VK_TAB		== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
 	if( VK_RIGHT	== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
+#if 0
 	if( VK_SPACE	== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_SPACE )		return FALSE;/* VK_SPACE  補完決定キーが有効/無効 */
+#endif
 
 	HWND hwndList;
 	int nItem;
@@ -564,10 +582,12 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 		return FALSE;
 	}
 	::SendMessage( hwndList, LB_GETTEXT, nItem, (WPARAM)szLabel );
+#if 0
 	/* スペースで候補決定の場合はスペースをつける */
 	if( VK_SPACE == nVKey ){
 		strcat( szLabel, " " );
 	}
+#endif
 //	pszWork += m_cmemCurWord.GetLength();
 
  	/* テキストを貼り付け */
@@ -579,6 +599,8 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	// Until here
 //	pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)(szLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
+
+	m_pShareData->m_Common.m_bUseHokan = FALSE;	//	補完したら
 	return TRUE;
 }
 
@@ -642,18 +664,24 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_DOWN:
 	case VK_PRIOR:
 	case VK_NEXT:
-		/* リストボックスのデホルトの動作をさせる */
+		/* リストボックスのデフォルトの動作をさせる */
 		return -1;
 	case VK_RETURN:
 	case VK_TAB:
 	case VK_RIGHT:
+#if 0
 	case VK_SPACE:
+#endif
 		/* 補完実行 */
 		if( DoHokan( vkey ) ){
 			return -1;
 		}else{
 			return -2;
 		}
+	case VK_ESCAPE:
+	case VK_LEFT:
+		m_pShareData->m_Common.m_bUseHokan = FALSE;
+		return -2;
 	}
 	return -2;
 }

@@ -127,8 +127,14 @@ public:
 		char *	m_pszFuncParam;
 		char *	m_pszData;
 	};
-
 	static MacroFuncInfo	m_MacroFuncInfoArr[];
+
+	struct MacroFuncInfoNotCommand {
+		int  	m_nFuncID;
+		char *	m_pszFuncName;
+		char *	m_pszData;
+	};
+	static MacroFuncInfoNotCommand	m_MacroFuncInfoNotCommandArr[];
 };
 
 

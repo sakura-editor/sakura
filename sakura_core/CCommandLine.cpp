@@ -60,6 +60,7 @@ int CCommandLine::CheckCommandLine(
 		"R", 1, 1002,
 		"NOWIN", 5, 1003,
 		"GREPMODE", 8, 1100,
+		"GREPDLG", 7, 1101,
 		"DEBUGMODE", 9, 1999,
 		NULL, 0, 0
 	};
@@ -118,6 +119,7 @@ int CCommandLine::CheckCommandLine(
 void CCommandLine::ParseCommandLine(
 	LPCSTR	pszCmdLineSrc,	//!< [in]コマンドライン文字列
 	bool*		pbGrepMode,	//!< [out] TRUE: Grep Mode
+	bool*		pbGrepDlg,	//!< [out] TRUE: Grep Dialog表示
 	CMemory*	pcmGrepKey,	//!< [out] GrepのKey
 	CMemory*	pcmGrepFile,
 	CMemory*	pcmGrepFolder,
@@ -135,6 +137,7 @@ void CCommandLine::ParseCommandLine(
 )
 {
 	bool			bGrepMode;
+	bool			bGrepDlg;
 	CMemory			cmGrepKey;
 	CMemory			cmGrepFile;
 	CMemory			cmGrepFolder;
@@ -164,6 +167,7 @@ void CCommandLine::ParseCommandLine(
 	//int			nOptLen;
 
 	bGrepMode = false;
+	bGrepDlg = false;
 	bGrepSubFolder = false;
 	bGrepLoHiCase = false;
 	bGrepRegularExp = false;
@@ -289,6 +293,9 @@ void CCommandLine::ParseCommandLine(
 			case 1100:	//	GREPMODE
 				bGrepMode = true;
 				break;
+			case 1101:	//	GREPDLG
+				bGrepDlg = true;
+				break;
 			case 101:	//	GKEY
 				//	前後の""を取り除く
 				cmGrepKey.SetData( arg + 1,  lstrlen( arg ) - 2 );
@@ -351,6 +358,7 @@ void CCommandLine::ParseCommandLine(
 
 	/* 処理結果を格納 */
 	*pbGrepMode					= bGrepMode;
+	*pbGrepDlg					= bGrepDlg;
 	*pcmGrepKey					= cmGrepKey;
 	*pcmGrepFile				= cmGrepFile;
 	*pcmGrepFolder				= cmGrepFolder;
@@ -388,6 +396,7 @@ CCommandLine::CCommandLine(LPSTR cmd) :
 	ParseCommandLine(
 		m_pszCmdLineSrc,
 		&m_bGrepMode,
+		&m_bGrepDlg,
 		&m_gi.cmGrepKey,
 		&m_gi.cmGrepFile,
 		&m_gi.cmGrepFolder,

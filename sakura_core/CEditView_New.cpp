@@ -324,18 +324,19 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	@par nCOMMENTMODE
 	関数内部で状態遷移のために使われる変数nCOMMENTMODEと状態の関係。
 
- - 0: 通常
- - 1: 行コメント
- - 2: ブロックコメント
- - 3: シングルコーテーション
- - 4: ダブルコーテーション
- - 5: 強調キーワード１
- - 6: コントロールコード
- - 9: 半角数値
- - 20: ブロックコメント２
- - 50: 強調キーワード２
- - 80: URL
- - 90: 検索
+// 2002/03/13 novice
+ - COLORIDX_TEXT     : テキスト
+ - COLORIDX_COMMENT  : 行コメント
+ - COLORIDX_BLOCK1   : ブロックコメント1
+ - COLORIDX_SSTRING  : シングルコーテーション
+ - COLORIDX_WSTRING  : ダブルコーテーション
+ - COLORIDX_KEYWORD1 : 強調キーワード1
+ - COLORIDX_CTRLCODE : コントロールコード
+ - COLORIDX_DIGIT    : 半角数値
+ - COLORIDX_BLOCK2   : ブロックコメント2
+ - COLORIDX_KEYWORD2 : 強調キーワード2
+ - COLORIDX_URL      : URL
+ - COLORIDX_SEARCH   : 検索
  - 1000: 正規表現キーワード
  	色指定SetCurrentColorを呼ぶときにCOLORIDX_*値を加算するので、
  	1000～COLORIDX_LASTまでは正規表現で使用する。
@@ -450,7 +451,7 @@ int CEditView::DispLineNew(
 	}else{
 		pLine = NULL;
 		nLineLen = 0;
-		nCOMMENTMODE = 0;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
+		nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 		nCOMMENTEND = 0;
 
 		pcLayout2 = NULL;
@@ -526,7 +527,7 @@ searchnext:;
 //						nCOMMENTEND_OLD_2 = nCOMMENTEND;
 						/* 現在の色を指定 */
 //						SetCurrentColor( hdc, nCOMMENTMODE );
-						SetCurrentColor( hdc, 90 );
+						SetCurrentColor( hdc, COLORIDX_SEARCH ); // 2002/03/13 novice
 					}else
 					if( bSearchStringMode
 					 && nSearchEnd == nPos
@@ -629,7 +630,7 @@ searchnext:;
 				}
 				SEARCH_START:;
 				switch( nCOMMENTMODE ){
-				case 0:
+				case COLORIDX_TEXT: // 2002/03/13 novice
 //@@@ 2001.11.17 add start MIK
 					//正規表現キーワード
 					if( TypeDataPtr->m_bUseRegexKeyword
@@ -695,7 +696,7 @@ searchnext:;
 						}
 						nBgn = nPos;
 
-						nCOMMENTMODE = 1;	/* 行コメントである */
+						nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 
 //						if( TypeDataPtr->m_bDispCOMMENT ){	/* コメントを表示する */
 							/* 現在の色を指定 */
@@ -720,7 +721,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 2;	/* ブロックコメントである */
+						nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
 
 //						if( TypeDataPtr->m_bDispCOMMENT ){	/* コメントを表示する */
 							/* 現在の色を指定 */
@@ -760,7 +761,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 20;	/* ブロックコメントである */
+						nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 //						if( TypeDataPtr->m_bDispCOMMENT ){	/* コメントを表示する */
 							/* 現在の色を指定 */
 							if( !bSearchStringMode ){
@@ -794,7 +795,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 3;	/* シングルクォーテーション文字列である */
+						nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 
 //						if( TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp ){	/* シングルクォーテーション文字列を表示する */
 							/* 現在の色を指定 */
@@ -842,7 +843,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 4;	/* ダブルクォーテーション文字列である */
+						nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -887,7 +888,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 80;	/* URLモード */
+						nCOMMENTMODE = COLORIDX_URL;	/* URLモード */ // 2002/03/13 novice
 						nCOMMENTEND = nPos + nUrlLen;
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
@@ -907,7 +908,7 @@ searchnext:;
 						}
 						/* 現在の色を指定 */
 						nBgn = nPos;
-						nCOMMENTMODE = 9;	/* 半角数値である */
+						nCOMMENTMODE = COLORIDX_DIGIT;	/* 半角数値である */ // 2002/03/13 novice
 						nCOMMENTEND = i;
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -916,7 +917,7 @@ searchnext:;
 //@@@ 2001.02.17 End by MIK: 半角数値を強調表示
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx != -1 && /* キーワードセット */
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD].m_bDisp &&  /* 強調キーワードを表示する */
+						TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
 //						( pLine[nPos] == '#' || pLine[nPos] == '$' || __iscsym( pLine[nPos] ) )
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
@@ -946,7 +947,7 @@ searchnext:;
 
 							/* 現在の色を指定 */
 							nBgn = nPos;
-							nCOMMENTMODE = 5;	/* キーワードモード */
+							nCOMMENTMODE = COLORIDX_KEYWORD1;	/* 強調キーワード1 */ // 2002/03/13 novice
 							nCOMMENTEND = i;
 							if( !bSearchStringMode ){
 								SetCurrentColor( hdc, nCOMMENTMODE );
@@ -968,7 +969,7 @@ searchnext:;
 									}																					//MIK
 									/* 現在の色を指定 */																//MIK
 									nBgn = nPos;																		//MIK
-									nCOMMENTMODE = 50;	/* キーワード2モード */											//MIK
+									nCOMMENTMODE = COLORIDX_KEYWORD2;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
 									nCOMMENTEND = i;																	//MIK
 									if( !bSearchStringMode ){															//MIK
 										SetCurrentColor( hdc, nCOMMENTMODE );											//MIK
@@ -982,10 +983,11 @@ searchnext:;
 					else								bKeyWordTop = true;
 					//	To Here
 					break;
-				case 80:	/* URLモードである */
-				case 5:		/* キーワードモードである */
-				case 9:		/* 半角数値である */  //@@@ 2001.02.17 by MIK
-				case 50:	/* キーワード2モードである */	//MIK
+// 2002/03/13 novice
+				case COLORIDX_URL:		/* URLモードである */
+				case COLORIDX_KEYWORD1:	/* 強調キーワード1 */
+				case COLORIDX_DIGIT:	/* 半角数値である */  //@@@ 2001.02.17 by MIK
+				case COLORIDX_KEYWORD2:	/* 強調キーワード2 */	//MIK
 				//case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04 del
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
@@ -993,7 +995,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 0;
+						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -1001,7 +1003,7 @@ searchnext:;
 						goto SEARCH_START;
 					}
 					break;
-				case 6:	/* コントロールコード */
+				case COLORIDX_CTRLCODE:	/* コントロールコード */ // 2002/03/13 novice
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -1018,9 +1020,9 @@ searchnext:;
 					}
 					break;
 
-				case 1:	/* 行コメントである */
+				case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
 					break;
-				case 2:	/* ブロックコメントである */
+				case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
 						int i;
@@ -1045,7 +1047,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 0;
+						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -1054,7 +1056,7 @@ searchnext:;
 					}
 					break;
 //#ifdef	COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-				case 20:	/* ブロックコメントである */
+				case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
 						int i;
@@ -1079,7 +1081,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 0;
+						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -1088,7 +1090,7 @@ searchnext:;
 					}
 					break;
 //#endif
-				case 3:	/* シングルクォーテーション文字列である */
+				case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* シングルクォーテーション文字列の終端があるか */
 						int i;
@@ -1128,7 +1130,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 0;
+						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -1136,7 +1138,7 @@ searchnext:;
 						goto SEARCH_START;
 					}
 					break;
-				case 4:	/* ダブルクォーテーション文字列である */
+				case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* ダブルクォーテーション文字列の終端があるか */
 						int i;
@@ -1176,7 +1178,7 @@ searchnext:;
 							nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 						}
 						nBgn = nPos;
-						nCOMMENTMODE = 0;
+						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
@@ -1192,7 +1194,7 @@ searchnext:;
 								nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 							}
 							nBgn = nPos;
-							nCOMMENTMODE = 0;
+							nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 							/* 現在の色を指定 */
 							if( !bSearchStringMode ){
 								SetCurrentColor( hdc, nCOMMENTMODE );
@@ -1341,7 +1343,7 @@ searchnext:;
 					}
 					if( !bSearchStringMode
 					 && 1 == nCharChars
-					 && 6 != nCOMMENTMODE
+					 && COLORIDX_CTRLCODE != nCOMMENTMODE // 2002/03/13 novice
 					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
 					 &&	(
 								//	Jan. 23, 2002 genta 警告抑制
@@ -1358,7 +1360,7 @@ searchnext:;
 						nBgn = nPos;
 						nCOMMENTMODE_OLD = nCOMMENTMODE;
 						nCOMMENTEND_OLD = nCOMMENTEND;
-						nCOMMENTMODE = 6;	/* コントロールコード モード */
+						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
 						/* コントロールコード列の終端を探す */
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
 							nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];

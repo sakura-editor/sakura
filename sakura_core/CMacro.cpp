@@ -551,7 +551,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		}
 		break;
 	case F_FILESAVEAS:
-		//	Argument[0]‚ðŠJ‚­B
+		//	Argument[0]‚ð•Ê–¼‚Å•Û‘¶B
 		{
 			pcEditView->m_pcEditDoc->m_nCharCode = atoi(Argument[1]);
 			switch (atoi(Argument[2])){

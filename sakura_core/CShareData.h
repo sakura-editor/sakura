@@ -204,9 +204,9 @@ struct PRINTSETTING {
 //#ifdef COMPILE_COLOR_DIGIT
 #define COLORIDX_DIGIT			11	/* 半角数値 */	//@@@ 2001.02.17 by MIK	//色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
 #define COLORIDX_SEARCH			12	/* 検索文字列 */
-#define COLORIDX_KEYWORD		13	/* 強調キーワード1 */
-#define COLORIDX_KEYWORD2		14	/* 強調キーワード2 */					//MIK ADDED
-#define COLORIDX_COMMENT		15	/* コメント */							//Dec. 4, 2000 shifted by MIK
+#define COLORIDX_KEYWORD1		13	/* 強調キーワード1 */ // 2002/03/13 novice
+#define COLORIDX_KEYWORD2		14	/* 強調キーワード2 */ // 2002/03/13 novice	//MIK ADDED
+#define COLORIDX_COMMENT		15	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
 #define COLORIDX_SSTRING		16	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
 #define COLORIDX_WSTRING		17	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
 #define COLORIDX_URL			18	/* URL */								//Dec. 4, 2000 shifted by MIK
@@ -221,6 +221,9 @@ struct PRINTSETTING {
 #define COLORIDX_REGEX9			27	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
 #define COLORIDX_REGEX10		28	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
 #define COLORIDX_LAST			29											//Dec. 4, 2000 @@@2001.02.17 renumber by MIK
+
+#define COLORIDX_BLOCK1			30	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */ // 2002/03/13 novice
+#define COLORIDX_BLOCK2			31	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */ // 2002/03/13 novice
 //#else
 //#define COLORIDX_LAST			18											//Dec. 4, 2000
 //#endif

@@ -1414,4 +1414,12 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 		break;
 	}
 }
+
+/*	ブックマーク←→アウトラインを切り替える（のが、主な目的）
+*/
+void CDlgFuncList::ChangeListType( int nOutLineType )
+{
+	m_nListType = nOutLineType;
+	SetData();
+}
 /*[EOF]*/

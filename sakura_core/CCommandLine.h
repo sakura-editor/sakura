@@ -35,7 +35,8 @@ public:
 private:
 	static void ParseCommandLine(
 		LPCSTR		pszCmdLineSrc,	//!< [in]コマンドライン文字列
-		bool*		pbGrepMode,	//!< [out] TRUE: Grep Mode
+		bool*		pbGrepMode,	//!< [out] true: Grep Mode
+		bool*		pbGrepDlg,	//!< [out] true: Grep Dialog表示
 		CMemory*	pcmGrepKey,	//!< [out] GrepのKey
 		CMemory*	pcmGrepFile,
 		CMemory*	pcmGrepFolder,
@@ -64,6 +65,7 @@ private:
 public:
 	bool IsNoWindow() const {return m_bNoWindow;};
 	bool IsGrepMode() const {return m_bGrepMode;};
+	bool IsGrepDlg() const {return m_bGrepDlg;};
 	bool IsDebugMode() const {return m_bDebugMode;};
 	bool IsReadOnly() const {return m_bReadOnly;};
 	bool GetFileInfo(FileInfo& fi) const {fi = m_fi;return true;};
@@ -74,6 +76,7 @@ private:
 	static CCommandLine* _instance;
 	LPCSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
+	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
 	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
 	FileInfo	m_fi;				//!

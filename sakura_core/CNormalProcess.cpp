@@ -69,6 +69,7 @@ bool CNormalProcess::Initialize()
 	bool			bReadOnly;
 	bool			bDebugMode;
 	bool			bGrepMode;
+	bool			bGrepDlg;
 	GrepInfo		gi;
 	FileInfo		fi;
 	
@@ -115,6 +116,7 @@ bool CNormalProcess::Initialize()
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::Instance()->IsDebugMode();
 	bGrepMode = CCommandLine::Instance()->IsGrepMode();
+	bGrepDlg = CCommandLine::Instance()->IsGrepDlg();
 	
 	if( bDebugMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
@@ -127,26 +129,32 @@ bool CNormalProcess::Initialize()
 	if( bGrepMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
 		/* GREP */
-		/*nHitCount = */
-
-		TCHAR szWork[MAX_PATH];
-		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
-		/* ロングファイル名を取得する */
-		if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr( NULL ), szWork ) ){
-			gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
+		if( false == bGrepDlg ){
+			TCHAR szWork[MAX_PATH];
+			CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
+			/* ロングファイル名を取得する */
+			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr2(), szWork ) ){
+				gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
+			}
+			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
+				&gi.cmGrepKey,
+				&gi.cmGrepFile,
+				&gi.cmGrepFolder,
+				gi.bGrepSubFolder,
+				gi.bGrepNoIgnoreCase,
+				gi.bGrepRegularExp,
+				gi.bGrepKanjiCode_AutoDetect,
+				gi.bGrepOutputLine,
+				gi.bGrepWordOnly,	//	Jun. 26, 2001 genta
+				gi.nGrepOutputStyle
+			);
+		}else{
+			//-GREPDLGでダイアログを出す。　引数は無視
+			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, m_hWnd,  NULL);
+			if( FALSE != nRet ){
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
+			}
 		}
-		m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
-			&gi.cmGrepKey,
-			&gi.cmGrepFile,
-			&gi.cmGrepFolder,
-			gi.bGrepSubFolder,
-			gi.bGrepNoIgnoreCase,
-			gi.bGrepRegularExp,
-			gi.bGrepKanjiCode_AutoDetect,
-			gi.bGrepOutputLine,
-			gi.bGrepWordOnly,	//	Jun. 26, 2001 genta
-			gi.nGrepOutputStyle
-		);
 	}else{
 		if( 0 < (int)strlen( fi.m_szPath ) ){
 			bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
