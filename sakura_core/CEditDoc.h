@@ -125,6 +125,8 @@ public:
 	//	Sep. 9, 2002 genta
 	const char* GetFilePath(void) const { return m_szFilePath; }
 	bool IsFilePathAvailable(void) const { return m_szFilePath[0] != '\0'; }
+	//	2002.10.13 Moca
+	const char* GetFileName(void) const; //!< ファイル名(パスなし)を取得
 	void SetDocumentIcon(void);	// Sep. 10, 2002 genta
 
 	//	Nov. 29, 2000 From Here	genta

@@ -1759,7 +1759,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 //@@@ 2002.01.08 YAZAKI Grep結果で無い場合も含める。
 					if( !m_cEditDoc.IsModified() &&
-						0 == lstrlen( m_cEditDoc.GetFilePath() ) && 	/* 現在編集中のファイルのパス */
+						!m_cEditDoc.IsFilePathAvailable() && 	/* 現在編集中のファイルのパス */
 						!m_cEditDoc.m_bGrepMode	//	さらに、Grepモードじゃない。
 					){
 						/* ファイル読み込み */
@@ -1854,24 +1854,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 							if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
 								pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
 							}
-#if 0
-							switch( pfi->m_nCharCode ){
-							case CODE_SJIS:		/* SJIS */		pszCodeNameCur = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-							case CODE_JIS:		/* JIS */		pszCodeNameCur = "JIS";break;
-							case CODE_EUC:		/* EUC */		pszCodeNameCur = "EUC";break;
-							case CODE_UNICODE:	/* Unicode */	pszCodeNameCur = "Unicode";break;
-							case CODE_UTF8:		/* UTF-8 */		pszCodeNameCur = "UTF-8";break;
-							case CODE_UTF7:		/* UTF-7 */		pszCodeNameCur = "UTF-7";break;
-							}
-							switch( nCharCode ){
-							case CODE_SJIS:		/* SJIS */		pszCodeNameNew = "SJIS";break;	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-							case CODE_JIS:		/* JIS */		pszCodeNameNew = "JIS";break;
-							case CODE_EUC:		/* EUC */		pszCodeNameNew = "EUC";break;
-							case CODE_UNICODE:	/* Unicode */	pszCodeNameNew = "Unicode";break;
-							case CODE_UTF8:		/* UTF-8 */		pszCodeNameNew = "UTF-8";break;
-							case CODE_UTF7:		/* UTF-7 */		pszCodeNameNew = "UTF-7";break;
-							}
-#endif
 							::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 								"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
 								pszPath, pszCodeNameCur, pszCodeNameNew
@@ -1889,7 +1871,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						/* ファイルが開かれていない */
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&
-							0 == lstrlen( m_cEditDoc.GetFilePath() )		/* 現在編集中のファイルのパス */
+							!m_cEditDoc.IsFilePathAvailable()		/* 現在編集中のファイルのパス */
 						){
 							/* ファイル読み込み */
 							m_cEditDoc.FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
@@ -2794,7 +2776,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				}else{
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&	//	Jan. 22, 2002 genta
-							0 == strlen( m_cEditDoc.GetFilePath() )	/* 現在編集中のファイルのパス */
+							!m_cEditDoc.IsFilePathAvailable()	/* 現在編集中のファイルのパス */
 						){
 								/* ファイル読み込み */
 								m_cEditDoc.FileRead(

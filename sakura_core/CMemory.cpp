@@ -694,7 +694,7 @@ int CMemory::IsBASE64Char( char cData )
 #endif
 }
 
-// BASE64 => エンコード後
+// BASE64 => デコード後
 // 4文字  => 3文字
 
 // Base64デコード
@@ -1338,10 +1338,10 @@ void CMemory::UnicodeToUTF8( void )
 	for( i = 0; i < (int)(nBufLen / sizeof( wchar_t )); ++i ){
 		if( 0x0000 <= pUniBuf[i] && 0x007f >= pUniBuf[i] ){
 			k += 1;
-		}
+		}else
 		if( 0x0080 <= pUniBuf[i] && 0x07ff >= pUniBuf[i] ){
 			k += 2;
-		}
+		}else
 		if( 0x0800 <= pUniBuf[i] && 0xffff >= pUniBuf[i] ){
 			k += 3;
 		}
@@ -1411,7 +1411,6 @@ void CMemory::UTF7ToSJIS( void )
 	char*		pBuf = (char*)m_pData;
 	int			nBufLen = m_nDataLen;
 	int			i;
-	int			j;
 	char*		pszWork;
 	int			nWorkLen;
 	char*		pDes;
@@ -1420,7 +1419,6 @@ void CMemory::UTF7ToSJIS( void )
 	int			nBgn;
 //	CMemory		cmemWork;
 	CMemory*	pcmemWork;
-	char		cWork;
 
 	pcmemWork = new CMemory;
 
@@ -1428,7 +1426,8 @@ void CMemory::UTF7ToSJIS( void )
 	setlocale( LC_ALL, "Japanese" );
 	k = 0;
 	bBASE64 = FALSE;
-	for( i = 0; i < nBufLen; ++i ){
+	// 2002.10.05 Moca < を<= に変更 ただし，pBuf[nBufLen]は存在しないことに注意
+	for( i = 0; i <= nBufLen; ++i ){
 		if( !bBASE64 ){
 			if( i < nBufLen - 1
 			  &&  '+' == pBuf[i]
@@ -1444,12 +1443,14 @@ void CMemory::UTF7ToSJIS( void )
 			){
 				nBgn = i + 1;
 				bBASE64 = TRUE;
-			}else{
+			}else
+			if( i < nBufLen ){
 				pDes[k] = pBuf[i];
 				k++;
 			}
 		}else{
-			if( -1 == IsBASE64Char( pBuf[i] ) ){	//	Oct. 10, 2000 genta
+			if( i == nBufLen ||				//	2002.10.25 Moca データ終端時もデコード
+				-1 == IsBASE64Char( pBuf[i] ) ){	//	Oct. 10, 2000 genta
 				nWorkLen = i - nBgn;
 				BOOL bSuccess;
 				bSuccess = TRUE;
@@ -1463,22 +1464,17 @@ void CMemory::UTF7ToSJIS( void )
 					nWorkLen = MemBASE64_Decode( (unsigned char *)pszWork, nWorkLen );
 					pszWork[nWorkLen] = '\0';
 					if( 0 == nWorkLen % 2 ){
-						/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
-						for( j = 0; j < nWorkLen; j += 2 ){
-							cWork = pszWork[j + 1];
-							pszWork[j + 1] = pszWork[j];
-							pszWork[j] = cWork;
-						}
+						/* Unicodeは2バイト単位 */
 						pcmemWork->SetData( pszWork, nWorkLen );
-						/* コード変換 Unicode→SJIS */
-						pcmemWork->UnicodeToSJIS();
+						/* コード変換 UnicodeBE→SJIS */
+						pcmemWork->UnicodeBEToSJIS();
 						memcpy( &pDes[k], pcmemWork->m_pData, pcmemWork->m_nDataLen );
 						k += pcmemWork->m_nDataLen;	//	Oct. 10, 2000 genta
 
 						//	Oct. 10, 2000 genta
 						//	'-'はBase64部の終わりを示す記号
 						// それ以外はBase64の終わりを示すと同時に有意な文字列
-						if( '-' != pBuf[i] )
+						if( i < nBufLen && '-' != pBuf[i] )
 							--i;
 					}else{
 						bSuccess = FALSE;
@@ -1490,8 +1486,13 @@ void CMemory::UTF7ToSJIS( void )
 
 				}
 				if( FALSE == bSuccess ){
-					memcpy( &pDes[k],  &pBuf[nBgn - 1], i - nBgn + 2 );
-					k += (i - nBgn + 2);
+					if( i < nBufLen ){
+						nWorkLen = i - nBgn + 2;
+					}else{ // pBuf[nBufLen] は無効
+						nWorkLen = i - nBgn + 1;
+					}
+					memcpy( &pDes[k],  &pBuf[nBgn - 1], nWorkLen );
+					k += nWorkLen;
 				}
 				bBASE64 = FALSE;
 			}
@@ -1504,41 +1505,75 @@ void CMemory::UTF7ToSJIS( void )
 	return;
 }
 
+/*!
+	Unicodeの文字がUTF-7で直接エンコードできるか調べる
+	@author Moca
+	@data 2002.10.25 新規作成
+
+	TAB SP CR LF は 直接エンコード可能
+	基本セット
+	         '(),-./012...789:?ABC...XYZabc...xyz
+	以下はオプションでメールでは支障をきたす場合がある
+	         !"#$%&*;<=>@[\]^_`{|}
+	とりあえず無条件でオプションは直接変換できないと判断する
+*/
+int CMemory::IsUTF7Direct( wchar_t wc ){
+	if( L'z' <  wc ){ // パフォーマンス
+	}else
+	if( L'a'  <= wc && L'z' >= wc ||
+		L'A'  <= wc && L'Z' >= wc ||
+		L','  <= wc && L':' >= wc ||
+		L'\'' <= wc && L')' >= wc ||
+		L'?'    == wc ||
+		L'\x20' == wc || // SP
+		L'\x09' == wc || // TAB
+		L'\x0d' == wc || // CR
+		L'\x0a' == wc    // LF
+		)
+	{
+		return 1;
+	}
+	return 0;
+}
 
 
 
-/* コード変換 Unicode→UTF-7 */
+/*! コード変換 Unicode→UTF-7
+	@data 2002.10.25 Moca UTF-7で直接エンコードできる文字をRFCに合わせて制限した
+*/
 void CMemory::UnicodeToUTF7( void )
 {
-	wchar_t*		pUniBuf = (wchar_t*)m_pData;
-	int				nBufLen = m_nDataLen;
+	wchar_t*		pUniBuf;
+//	int				nBufLen = m_nDataLen;
+	int				nUniBufLen = m_nDataLen / sizeof(wchar_t);
 	int				i;
 	int				j;
 	unsigned char*	pDes;
 	int				k;
 	BOOL			bBASE64;
-	char			mbchar[4];
+//	char			mbchar[4];
 	int				nBgn;
 	char*			pszBase64Buf;
 	int				nBase64BufLen;
 	char*			pszWork;
 	char			cWork;
 
-	setlocale( LC_ALL, "Japanese" );
+//	setlocale( LC_ALL, "Japanese" ); // wctomb を使わなくなったためコメントアウト
 	k = 0;
 	bBASE64 = FALSE;
 	nBgn = 0;
-	pUniBuf = new wchar_t[nBufLen + 1];
-	memset( (char*)pUniBuf, 0, nBufLen + 1 );
-	memcpy( (char*)pUniBuf, m_pData, nBufLen );
-	for( i = 0; i < (int)(nBufLen / sizeof( wchar_t )); ++i ){
-		j = wctomb( (char*)mbchar, pUniBuf[i] );
+	pUniBuf = new wchar_t[nUniBufLen + 1];
+//	memset( pUniBuf, 0, (nUniBufLen + 1) * sizeof( wchar_t ) );
+	memcpy( pUniBuf, m_pData, nUniBufLen * sizeof( wchar_t ) );
+	pUniBuf[nUniBufLen] = L'\0';
+	for( i = 0; i < nUniBufLen; ++i ){
+		j = IsUTF7Direct( pUniBuf[i]);
 		if( !bBASE64 ){
-			if( 1 == j && '+' == mbchar[0] ){
-				k += 2;
-			}else
 			if( 1 == j ){
 				k++;
+			}else
+			if( L'+' == pUniBuf[i] ){
+				k += 2;
 			}else{
 				bBASE64 = TRUE;
 				nBgn = i;
@@ -1614,16 +1649,17 @@ void CMemory::UnicodeToUTF7( void )
 	bBASE64 = FALSE;
 	nBgn = 0;
 	pUniBuf = (wchar_t*)m_pData;
-	for( i = 0; i < (int)(nBufLen / sizeof( wchar_t )); ++i ){
-		j = wctomb( (char*)mbchar, pUniBuf[i] );
+	for( i = 0; i < nUniBufLen; ++i ){
+		j = IsUTF7Direct( pUniBuf[i] );
 		if( !bBASE64 ){
-			if( 1 == j && '+' == mbchar[0] ){
-				memcpy( &pDes[k], "+-", 2 );
-				k += 2;
-			}else
 			if( 1 == j ){
-				pDes[k] = mbchar[0];
+				pDes[k] = (unsigned char)(pUniBuf[i] & 0x007f);
 				k++;
+			}else
+			if( L'+' == pUniBuf[i] ){
+				pDes[k    ] = '+';
+				pDes[k + 1] = '-';
+				k += 2;
 			}else{
 				bBASE64 = TRUE;
 				nBgn = i;

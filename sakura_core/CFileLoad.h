@@ -127,13 +127,14 @@ protected:
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	int		m_CharCode;		// 文字コード
 	int		m_nFlag;		// 文字コードの変換オプション
+	int		m_nMode;		// 現在の読み込み状態 0=初期, 1=順アクセスOK 2=ファイル終端までバッファに入れた
 
 	// 読み込みバッファ系
 	char*	m_pReadBuf;			// 読み込みバッファへのポインタ
 	int		m_nReadBufSize;		// 読み込みバッファの実際に確保しているサイズ
 	int		m_nReadDataLen;		// 読み込みバッファの有効データサイズ
 	int		m_nReadBufOffSet;	// 読み込みバッファ中のオフセット(次の行頭位置)
-	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
+//	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
 
 }; // class CFileLoad
 
