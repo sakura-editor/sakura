@@ -8524,11 +8524,15 @@ void CEditView::Command_REPLACE_ALL( void )
 				Command_INSTEXT( FALSE, szREPLACEKEY, TRUE );
 				delete [] szREPLACEKEY;
 			} else {
-				// 通常ここに来るのは、バグがあるに違いない
-				// 例えば、cRegexp.m_sRepがNULLになると GetReplaceInfo()には失敗するが、
-				// Command_SEARCH_NEXT()には成功してループから抜け出せなくなる。
-				// 念のため、この場合はループから脱出 2003.05.02 かろと
-				break;		// break for loop
+				// ---------------------
+				// Command_REPLACE()と同じになるように修正 2003.07.11 かろと
+				// (説明) else時に breakしていたのは、０文字マッチの無限ループ対策の１つだったが、
+				// ０文字マッチでも１文字進める対策したため、改行位置で０文字マッチすると breakして
+				// 全置換がそこで終わる不具合になっていた
+				// ----------------------
+//				break;		// break for loop
+				// ここに来たら実際に置換は行われていないので、１減算して置換個数が増えないように調整 2003.07.11 かろと
+				--nReplaceNum;				
 			}
 		}
 		else
