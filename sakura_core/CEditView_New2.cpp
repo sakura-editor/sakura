@@ -23,7 +23,7 @@
 #include "debug.h"
 //#include "keycode.h"
 #include "funccode.h"
-#include "CRunningTimer.h"
+//#include "CRunningTimer.h" 2002/2/10 aroka
 #include "charcode.h"
 #include "mymessage.h"
 //#include "CWaitCursor.h"
@@ -513,7 +513,9 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 
 
 /* 現在位置が検索文字列に該当するか */
-BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int* pnSearchEnd )
+//2002.02.08 hor
+//正規表現で検索したときの速度改善のため、マッチ先頭位置を引数に追加
+BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int* pnSearchStart, int* pnSearchEnd )
 {
 	int		nKeyLength;
 
@@ -525,6 +527,7 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 
 	//	From Here Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	BREGEXP* result;
+	*pnSearchStart = nPos;	// 2002.02.08 hor
 
 	if( m_bCurSrchRegularExp ){
 		/* 行頭ではない? */
@@ -536,8 +539,9 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 		}
 
 		if( m_CurRegexp.GetMatchInfo( &pszData[nPos], nDataLen - nPos, 0, &result )
-		 && ( result->startp[0] == &pszData[nPos] )
+	//	 && ( result->startp[0] == &pszData[nPos] )			// 2002.02.08 hor
 		){
+			*pnSearchStart = result->startp[0] - pszData;	// 2002.02.08 hor
 			*pnSearchEnd = result->endp[0] - pszData;
 	//	To Here Jun. 26, 2001 genta
 			return TRUE;

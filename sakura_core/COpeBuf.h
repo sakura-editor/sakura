@@ -26,7 +26,10 @@ enum enumOPECODE {
 };
 
 
-#include "COpeBlk.h"
+//#include "COpeBlk.h"
+//#include "sakura_core.h"/// 2002/2/10 aroka
+#include "global.h"
+class COpeBlk;/// 2002/2/10 aroka
 
 
 

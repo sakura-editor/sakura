@@ -11,6 +11,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, jepro, hor
+	Copyright (C) 2002, hor, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -43,6 +44,8 @@
 
 //	May 15, 2000 genta
 #include "CEol.h"
+#include "CDocLine.h"// 2002/2/10 aroka ヘッダ整理
+#include "CMemory.h"// 2002/2/10 aroka
 
 
 
@@ -141,9 +144,10 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 		*pnLineLen = 0;
 		return NULL;
 	}
-//	return pDocLine->m_pLine->GetPtr( pnLineLen );
-	*pnLineLen = pDocLine->m_pLine->m_nDataLen;
-	return pDocLine->m_pLine->m_pData;
+	// 2002/2/10 aroka CMemory のメンバ変数に直接アクセスしない(inline化されているので速度的な問題はない)
+	return pDocLine->m_pLine->GetPtr( pnLineLen );
+//	*pnLineLen = pDocLine->m_pLine->m_nDataLen;
+//	return pDocLine->m_pLine->m_pData;
 }
 
 /*!
@@ -1838,14 +1842,16 @@ int CDocLineMgr::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 				//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				if( nIdxPos <= (nLineLen - pDocLine->m_cEol.GetLen() ) && 	//	行末で検索すると起こる問題に対処？
+				if( nIdxPos <= (nLineLen - pDocLine->m_cEol.GetLen() ) && // 2002.02.08 hor $の次検索で次の行に移動できない問題を回避
 					pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
-					*pnLineNum = nLinePos;								/* マッチ行 */
-					*pnIdxFrom = pRegexpData->startp[0] - pLine;		/* マッチ位置from */
-					*pnIdxTo = pRegexpData->endp[0] - pLine;			/* マッチ位置to */
-				//	To Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-					nRetVal = 1;
-					goto end_of_func;
+					if(nIdxPos<(pRegexpData->endp[0]-pLine)){	// 2002.02.08 hor EOF直前の文字が何度もマッチしてしまう問題を回避
+						*pnLineNum = nLinePos;								/* マッチ行 */
+						*pnIdxFrom = pRegexpData->startp[0] - pLine;		/* マッチ位置from */
+						*pnIdxTo = pRegexpData->endp[0] - pLine;			/* マッチ位置to */
+					//	To Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+						nRetVal = 1;
+						goto end_of_func;
+					}
 				}
 				++nLinePos;
 				pDocLine = pDocLine->m_pNext;
@@ -1881,9 +1887,10 @@ int CDocLineMgr::SearchWord(
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
 //						MYTRACE( "[%d][%s]\n", nLinePos, cmemTest.GetPtr(NULL) );
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
+							const char* pData = pDocLine->m_pLine->GetPtr2();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
-							if( (FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-								(TRUE  == bLoHiCase && 0 ==	 memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+							if( (FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+								(TRUE  == bLoHiCase && 0 ==	 memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 							){
 								*pnLineNum = nLinePos;	/* マッチ行 */
 								*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
@@ -1919,9 +1926,10 @@ int CDocLineMgr::SearchWord(
 					WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
 				){
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
+						const char* pData = pDocLine->m_pLine->GetPtr2();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
-						if( (FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-							(TRUE  == bLoHiCase && 0 ==	  memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+						if( (FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+							(TRUE  == bLoHiCase && 0 ==	  memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 						){
 							*pnLineNum = nLinePos;	/* マッチ行 */
 							*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
@@ -2367,7 +2375,7 @@ void CDocLineMgr::DUMP( void )
 
 
 //		MYTRACE( "\t[%s]\n", (char*)*(pDocLine->m_pLine) );
-		MYTRACE( "\tpDocLine->m_pLine->m_nDataLen=[%d]\n", pDocLine->m_pLine->m_nDataLen );
+		MYTRACE( "\tpDocLine->m_pLine->GetLength()=[%d]\n", pDocLine->m_pLine->GetLength() );
 		MYTRACE( "\t[%s]\n", pDocLine->m_pLine->GetPtr( NULL ) );
 
 

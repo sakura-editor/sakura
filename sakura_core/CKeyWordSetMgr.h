@@ -18,7 +18,8 @@ class CKeyWordSetMgr;
 #define _CKEYWORDSETMGR_H_
 
 #include <windows.h>
-#include "CMemory.h"
+//#include "CMemory.h"// 2002/2/10 aroka
+#include "global.h"// 2002/2/10 aroka
 
 #define		MAX_SETNUM		20	//Jul. 12, 2001 jepro notes: 強調キーワードのセット数の最大値
 #define		MAX_SETNAMELEN	32

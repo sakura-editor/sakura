@@ -21,12 +21,12 @@
 #include <io.h>
 #include "CEditView.h"
 #include "debug.h"
-#include "keycode.h"
+//#include "keycode.h" 2002/2/10 aroka
 #include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
-#include "CWaitCursor.h"
+//#include "CWaitCursor.h" 2002/2/10 aroka
 #include "CEditWnd.h"
 #include "CShareData.h"
 #include "CDlgCancel.h"
@@ -34,6 +34,8 @@
 #include "etc_uty.h"
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 #include "my_icmp.h"	//@@@ 2002.01.13 add
+#include "Clayout.h"// 2002/2/10 aroka
+#include "CDocLine.h"// 2002/2/10 aroka
 #include <locale.h>
 
 /*! フォントを選ぶ
@@ -211,8 +213,8 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 					pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
 				}
 
-				int nLineLen = pcLayout->m_pCDocLine->m_pLine->m_nDataLen - pcLayout->m_nOffset;
-				const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->m_pData + pcLayout->m_nOffset;
+				int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
+				const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr2() + pcLayout->m_nOffset;
 			}
 		}
 #endif
@@ -397,6 +399,8 @@ int CEditView::DispLineNew(
 	int						nIdx;
 	int						nUrlLen;
 	BOOL					bSearchStringMode;
+	BOOL					bSearchFlg;			// 2002.02.08 hor
+	int						nSearchStart;		// 2002.02.08 hor
 	int						nSearchEnd;
 	int						nColorIdx;
 	bool					bKeyWordTop = true;	//	Keyword Top
@@ -408,14 +412,18 @@ int CEditView::DispLineNew(
 //@@@ 2001.11.17 add end MIK
 
 	bSearchStringMode = FALSE;
+	bSearchFlg	= TRUE;	// 2002.02.08 hor
+	nSearchStart= -1;	// 2002.02.08 hor
+	nSearchEnd	= -1;	// 2002.02.08 hor
 
 	/* テキスト描画モード */
 	fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
-		nLineLen = pcLayout->m_pCDocLine->m_pLine->m_nDataLen - pcLayout->m_nOffset;
-		pLine = (const unsigned char *)pcLayout->m_pCDocLine->m_pLine->m_pData + pcLayout->m_nOffset;
+		// 2002/2/10 aroka CMemory変更
+		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
+		pLine = (const unsigned char *)pcLayout->m_pCDocLine->m_pLine->GetPtr2() + pcLayout->m_nOffset;
 
 //		pCDocLine = pcLayout->m_pCDocLine;
 //		if( NULL == pCDocLine ){
@@ -495,8 +503,13 @@ int CEditView::DispLineNew(
 				if( TRUE == m_bCurSrchKeyMark	/* 検索文字列のマーク */
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
-					if( !bSearchStringMode
-					 && IsSearchString( (const char*)pLine, nLineLen, nPos, &nSearchEnd )
+				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
+					if(!bSearchStringMode && (!m_bCurSrchRegularExp || (bSearchFlg && nSearchStart < nPos))){
+						bSearchFlg=IsSearchString( (const char*)pLine, nLineLen, nPos, &nSearchStart, &nSearchEnd );
+					}
+					if( !bSearchStringMode && bSearchFlg && nSearchStart==nPos
+				//	if( !bSearchStringMode
+				//	 && IsSearchString( (const char*)pLine, nLineLen, nPos, &nSearchEnd )
 					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */

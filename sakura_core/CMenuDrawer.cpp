@@ -293,7 +293,7 @@ CMenuDrawer::CMenuDrawer()
 /* 171 */		F_COPYPATH	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイルのパス名をコピー //added Oct. 22, 2000 JEPRO				//Nov. 5, 2000 JEPRO 追加
 /* 172 */		F_COPYTAG	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイルのパス名とカーソル位置をコピー //added Oct. 22, 2000 JEPRO	//Nov. 5, 2000 JEPRO 追加
 /* 173 */		F_CREATEKEYBINDLIST			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//キー割り当て一覧をコピー //added Oct. 22, 2000 JEPRO	//Dec. 25, 2000 JEPRO アイコン追加
-/* 174 */		F_COPYFNAME	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイル名をコピー //仮 2002/2/3 aroka
+/* 174 */		F_COPYFNAME					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 /* 175 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 176 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 177 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
@@ -338,7 +338,7 @@ CMenuDrawer::CMenuDrawer()
 /* 212 */		F_UUDECODE				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//uudecodeしてファイルに保存//Sept. 28, 2000 JEPRO 追加	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 /* 213 */		F_SPACETOTAB			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//空白→TAB	//Jun. 01, 2001 JEPRO 追加
 /* 214 */		F_TOZENEI				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//半角英数→全角英数 //July. 30, 2001 Misaka 追加
-/* 215 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
+/* 215 */		F_TOHANEI				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//全角英数→半角英数
 /* 216 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 217 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 218 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー

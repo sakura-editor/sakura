@@ -77,6 +77,7 @@
 #define HLP000036	36 //選択範囲内全行コピー
 #define HLP000037	37 //選択範囲内全行引用符付きコピー
 #define HLP000038	38 //選択範囲内全行行番号付きコピー
+#define HLP000303	303 //このファイル名をコピー
 #define HLP000056	56 //このファイルのパス名をコピー
 #define HLP000175	175 //このファイルのパス名とカーソル位置をコピー
 #define HLP000057	57 //キー割り当て一覧をコピー
@@ -505,6 +506,8 @@
 #define HIDC_FL_CHECK_bAutoCloseDlgFuncList	12204	//自動的に閉じる
 #define HIDC_FL_LIST1			12205	//トピックリスト
 #define HIDC_FL_TREE1			12206	//トピックツリー
+#define HIDC_FL_CHECK_bFunclistSetFocusOnJump	12207	//ジャンプでフォーカス移動する
+#define HIDC_FL_CHECK_bMarkUpBlankLineEnable	12208	//空行を無視する
 
 //ファイル内容比較
 #define HIDC_CMP_BUTTON1		12300	//上下に表示

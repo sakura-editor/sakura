@@ -2183,50 +2183,96 @@ void CMemory::ToZenkaku(
 
 
 
-/* 全角→半角 */
-void CMemory::ToHankaku( void )
+/*!	全角→半角
+	nMode
+		0x01	カタカナに影響アリ
+		0x02	ひらがなに影響アリ
+		0x04	英数字に影響アリ
+*/
+#define TO_KATAKANA	0x01
+#define TO_HIRAGANA	0x02
+#define TO_EISU		0x04
+void CMemory::ToHankaku(
+		int nMode		/* 0==カタカナ 1== ひらがな 2==英数専用 */
+)
 {
-	unsigned char*			pBuf = (unsigned char*)m_pData;
-	int						nBufLen = m_nDataLen;
-	int						i;
-	int						nCharChars;
-//	unsigned char			uc;
-//	unsigned short			usSrc;
-//	unsigned short			usDes;
-	unsigned char*			pBufDes;
-	int						nBufDesLen;
-	unsigned int			uiSrc;
-	unsigned int			uiDes;
 	static unsigned char*	pszZenDAKU = (unsigned char*)"がぎぐげござじずぜぞだぢづでどばびぶべぼガギグゲゴザジズゼゾダヂヅデドバビブベボヴ";
 	static unsigned char*	pszZenYOU  = (unsigned char*)"ぱぴぷぺぽパピプペポ";
-	pBufDes = new unsigned char[nBufLen + 1];
-	unsigned char			pszZen[3];
+
+	/* 入力 */
+	unsigned char*			pBuf = (unsigned char*)m_pData;
+	int						nBufLen = m_nDataLen;
+	unsigned int			uiSrc;
+
+	/* 出力 */
+	unsigned char*			pBufDes = new unsigned char[nBufLen + 1];
+	int						nBufDesLen = 0;
+	unsigned int			uiDes;
 	if( NULL ==	pBufDes ){
 		return;
 	}
-	nBufDesLen = 0;
+
+	/* 作業用 */
+	int						nCharChars;
+	unsigned char			pszZen[3];	//	全角文字用バッファ
+	int i;
+	BOOL bHenkanOK;
 	for( i = 0; i < nBufLen; ++i ){
 		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
 		if( nCharChars == 2 ){
 			uiSrc = pBuf[i + 1] | ( pBuf[i] << 8 );
-			uiDes = _mbctombb( uiSrc );
-			if( uiDes == uiSrc ){
+			
+			bHenkanOK = FALSE;
+			if( nMode == 0x00 ){	//	どんな文字もokモード
+				bHenkanOK = TRUE;
+			}
+			if( nMode & TO_KATAKANA ){	/* カタカナに作用する */
+				if( 0x8340 <= uiSrc && uiSrc <= 0x8396){
+					bHenkanOK = TRUE;
+				}
+			}
+			if( nMode & TO_HIRAGANA ){	/* ひらがなに作用する */
+				if( 0x829F <= uiSrc && uiSrc <= 0x82F1){
+					bHenkanOK = TRUE;
+				}
+			}
+			if ( nMode & TO_EISU ){		/* 英数に作用する */
+				if( 0x824F <= uiSrc && uiSrc <= 0x8258){	//	数字
+					bHenkanOK = TRUE;
+				}
+				else if( 0x8260 <= uiSrc && uiSrc <= 0x8279){	//	英大文字
+					bHenkanOK = TRUE;
+				}
+				else if( 0x8281 <= uiSrc && uiSrc <= 0x829A){	//	英大文字
+					bHenkanOK = TRUE;
+				}
+			}
+			if (bHenkanOK == TRUE){
+				uiDes = _mbctombb( uiSrc );
+				if( uiDes == uiSrc ){	//	変換不可能
+					memcpy( &pBufDes[nBufDesLen], &pBuf[i], nCharChars );
+					nBufDesLen += nCharChars;
+				}else{
+					pBufDes[nBufDesLen] = (unsigned char)uiDes;
+					nBufDesLen++;
+
+					memcpy( pszZen, &pBuf[i], 2 );
+					pszZen[2] = '\0';
+					/* 濁音探し */
+					if( NULL != strstr( (const char *)pszZenDAKU, (const char *)pszZen ) ){
+						pBufDes[nBufDesLen] = (unsigned char)'ﾞ';
+						nBufDesLen++;
+					}else
+					/* 拗音探し */
+					if( NULL != strstr( (const char *)pszZenYOU,  (const char *)pszZen ) ){
+						pBufDes[nBufDesLen] = (unsigned char)'ﾟ';
+						nBufDesLen++;
+					}
+				}
+			}
+			else {
 				memcpy( &pBufDes[nBufDesLen], &pBuf[i], nCharChars );
 				nBufDesLen += nCharChars;
-			}else{
-				pBufDes[nBufDesLen] = (unsigned char)uiDes;
-				nBufDesLen++;
-
-				memcpy( pszZen, &pBuf[i], 2 );
-				pszZen[2] = '\0';
-				if( NULL != strstr( (const char *)pszZenDAKU, (const char *)pszZen ) ){
-					pBufDes[nBufDesLen] = (unsigned char)'ﾞ';
-					nBufDesLen++;
-				}else
-				if( NULL != strstr( (const char *)pszZenYOU,  (const char *)pszZen ) ){
-					pBufDes[nBufDesLen] = (unsigned char)'ﾟ';
-					nBufDesLen++;
-				}
 			}
 		}else{
 			memcpy( &pBufDes[nBufDesLen], &pBuf[i], nCharChars );

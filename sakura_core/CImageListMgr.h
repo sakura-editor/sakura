@@ -35,7 +35,7 @@
 #define _CIMAGELIST_MGR_H_
 
 #include "global.h"
-#include "commctrl.h"
+#include <commctrl.h>
 
 //! ImageListÇÃä«óù
 class SAKURA_CORE_API CImageListMgr {

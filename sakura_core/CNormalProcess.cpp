@@ -19,7 +19,7 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CEditApp.h"
-#include "CMemory.h"
+//#include "CMemory.h"
 #include "CShareData.h"
 #include "Debug.h"
 #include "etc_uty.h"

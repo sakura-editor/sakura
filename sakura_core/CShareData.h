@@ -30,6 +30,10 @@ class CShareData;
 #include "CMRU.h"
 #include "CMRUFolder.h"
 
+//20020129 aroka
+#include "funccode.h"
+#include "CMemory.h"
+
 enum maxdata{
 	MAX_EDITWINDOWS				= 256,
 //	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
@@ -556,6 +560,8 @@ struct Common {
 	BOOL				m_bMenuIcon;		/* メニューにアイコンを表示する */
 	BOOL				m_bAutoMIMEdecode;	// ファイル読み込み時にMIMEのdecodeを行うか
 
+	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
+	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
 
 }; /* Common */
 
@@ -711,17 +717,6 @@ public:
 //#endif
 	BOOL LoadShareData( void );	/* 共有データのロード */
 	void SaveShareData( void );	/* 共有データの保存 */
-#if 0
-	LONG MY_RegVal_IO(
-		BOOL			bRead,
-		HKEY			hKey,			// handle of key to set value for
-		LPCTSTR			lpValueName,	// address of value to set
-		int				nRegCnvID,		//
-		BYTE *			lpDataSrc,		// address of value data
-		DWORD			cbDataSrc 		// size of value data,
-	);
-	BOOL ShareData_IO( BOOL );		/* 共有データの保存 */
-#endif
 	BOOL ShareData_IO_2( BOOL );	/* 共有データの保存 */
 	static void IO_ColorSet( CProfile* , BOOL , const char* , ColorInfo* );	/* 色設定 I/O */
 
@@ -744,6 +739,13 @@ public:
 	bool		ExtHTMLHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
 	char*		GetExtHTMLHelp( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
 	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
+	
+	//@@@ 2002.2.9 YAZAKI
+	const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen );
+	const char* MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen );
+	const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
+	const char* MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
+	
 protected:
 	/*
 	||  実装ヘルパ関数

@@ -50,6 +50,8 @@ public:
 	BOOL			m_bSelected;	/* テキスト選択中か */
 	int				m_nReplaceTarget;	/* 置換対象 */	// 2001.12.03 hor
 	int				m_nPaste;			/* 貼り付け？ */	// 2001.12.03 hor
+	int				m_nReplaceCnt;		//すべて置換の実行結果		// 2002.02.08 hor
+	bool			m_bCanceled;		//すべて置換で中断したか	// 2002.02.08 hor
 protected:
 	/*
 	||  実装ヘルパ関数

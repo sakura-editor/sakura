@@ -39,7 +39,7 @@ struct ARRHEAD {
 
 	@sa Init()
 */
-const unsigned int uShareDataVersion = 22;
+const unsigned int uShareDataVersion = 23;
 
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
@@ -180,14 +180,14 @@ bool CShareData::Init( void )
 		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[0] = TRUE;
 		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[1] = FALSE;
 		m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[2] = FALSE;
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0], "&f" );
+		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0], "$f" );
 		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[1], "" );
 		strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[2], "" );
 		m_pShareData->m_PrintSettingArr[i].m_bFooterUse[0] = TRUE;
 		m_pShareData->m_PrintSettingArr[i].m_bFooterUse[1] = FALSE;
 		m_pShareData->m_PrintSettingArr[i].m_bFooterUse[2] = FALSE;
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "&C- &P -" );
-		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "" );
+		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "" );
+		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "- $p -" );
 		strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[2], "" );
 		for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 			m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
@@ -409,7 +409,7 @@ bool CShareData::Init( void )
 			{ 'Z', "Z",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
 			/* 記号 */
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+- に「上下に分割」を追加
-			// 2002/2/3 aroka	Ctrl+- に「ファイル名のコピ－」を追加
+			// 2002.02.08 hor Ctrl+-にファイル名をコピーを追加
 			{ 0x00bd, "-",0, 0, F_COPYFNAME, F_SPLIT_V, 0, 0, 0, 0 },
 			{ 0x00de, "^",0, 0, F_COPYTAG, 0, 0, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ に「左右に分割」を追加
@@ -802,6 +802,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
 		m_pShareData->m_Common.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 
+		m_pShareData->m_Common.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
+		m_pShareData->m_Common.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
 
 /***********
 書式指定子 意味
@@ -4389,4 +4391,58 @@ bool CShareData::HTMLHelpIsSingle( int nTypeNo )
 	
 	return (m_pShareData->m_Common.m_bHtmlHelpIsSingle != FALSE);
 }
+
+/*! 日付をフォーマット
+	systime：時刻データ
+	
+	pszDest：フォーマット済みテキスト格納用バッファ
+	nDestLen：pszDestの長さ
+	
+	pszDateFormat：
+		カスタムのときのフォーマット
+*/
+const char* CShareData::MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen )
+{
+	return MyGetDateFormat( systime, pszDest, nDestLen, m_pShareData->m_Common.m_nDateFormatType, m_pShareData->m_Common.m_szDateFormat );
+}
+
+const char* CShareData::MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat )
+{
+	const char* pszForm;
+	DWORD dwFlags;
+	if( 0 == nDateFormatType ){
+		dwFlags = DATE_LONGDATE;
+		pszForm = NULL;
+	}else{
+		dwFlags = 0;
+		pszForm = szDateFormat;
+	}
+	::GetDateFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
+	return pszDest;
+}
+
+
+
+/* 時刻をフォーマット */
+const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen )
+{
+	return MyGetTimeFormat( systime, pszDest, nDestLen, m_pShareData->m_Common.m_nTimeFormatType, m_pShareData->m_Common.m_szTimeFormat );
+}
+
+/* 時刻をフォーマット */
+const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat )
+{
+	const char* pszForm;
+	DWORD dwFlags;
+	if( 0 == nTimeFormatType ){
+		dwFlags = 0;
+		pszForm = NULL;
+	}else{
+		dwFlags = 0;
+		pszForm = szTimeFormat;
+	}
+	::GetTimeFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
+	return pszDest;
+}
+
 /*[EOF]*/

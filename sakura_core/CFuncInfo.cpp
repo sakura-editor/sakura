@@ -14,7 +14,7 @@
 */
 
 #include "CFuncInfo.h"
-#include <windows.h>
+//#include <windows.h> // 2002/2/10 aroka
 //#include <string.h>
 
 /*! CFuncInfoÉNÉâÉXç\íz */

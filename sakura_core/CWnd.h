@@ -44,9 +44,11 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+protected: // 2002/2/10 aroka アクセス権変更
 	char		m_szClassInheritances[1024];
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
+public:
 	HWND		m_hWnd;			/* このダイアログのハンドル */
 
 	void Init( HINSTANCE, HWND );/* 初期化 */

@@ -26,6 +26,7 @@
 #include "funccode.h"		//Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "mymessage.h"// 2002/2/3 aroka
+#include "Keycode.h"// 2002/2/10 aroka ヘッダ整理
 
 //アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -37,6 +38,8 @@ const DWORD p_helpids[] = {	//12200
 	IDC_CHECK_bAutoCloseDlgFuncList,	HIDC_FL_CHECK_bAutoCloseDlgFuncList,	//自動的に閉じる
 	IDC_LIST1,						HIDC_FL_LIST1,			//トピックリスト
 	IDC_TREE1,						HIDC_FL_TREE1,			//トピックツリー
+	IDC_CHECK_bFunclistSetFocusOnJump	,HIDC_FL_CHECK_bFunclistSetFocusOnJump,	//ジャンプでフォーカス移動する
+	IDC_CHECK_bMarkUpBlankLineEnable	,HIDC_FL_CHECK_bMarkUpBlankLineEnable,	//空行を無視する
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -158,7 +161,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
 	hwndTree = ::GetDlgItem( m_hWnd, IDC_TREE1 );
 
-	//	共通部分の取り出し
+	//2002.02.08 hor 隠しといてアイテム削除→あとで表示
 	::ShowWindow( hwndList, SW_HIDE );
 	::ShowWindow( hwndTree, SW_HIDE );
 	ListView_DeleteAllItems( hwndList );
@@ -207,15 +210,6 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		/* ツリーコントロールの初期化：COBOL アウトライン */
 		SetTreeJava( m_hWnd, FALSE );
 		::SetWindowText( m_hWnd, "COBOL アウトライン" );
-// From Here 2001.12.03 hor
-//	ブックマークの一覧を無理矢理つくる
-	}else
-	if( OUTLINE_BOOKMARK == m_nListType ){	/* ブックマークリスト */
-//		::ShowWindow( hwndTree, SW_HIDE );
-		SetTreeBookMark( m_hWnd );
-		m_nViewType = 0;
-		::SetWindowText( m_hWnd, "ブックマーク" );
-// To Here 2001.12.03 hor
 	}else{
 		switch( m_nListType ){
 		case OUTLINE_C:
@@ -232,6 +226,14 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			break;
 		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for Visual Basic
 			::SetWindowText( m_hWnd, "Visual Basic アウトライン" );
+			break;
+		case OUTLINE_BOOKMARK:
+			LV_COLUMN col;
+			col.mask = LVCF_TEXT;
+			col.pszText = "テキスト";
+			col.iSubItem = 0;
+			ListView_SetColumn( hwndList, 0, &col );
+			::SetWindowText( m_hWnd, "ブックマーク" );
 			break;
 //		case OUTLINE_COBOL:
 //			::SetWindowText( m_hWnd, "COBOLアウトライン" );
@@ -318,16 +320,10 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 				pcFuncInfo->m_cmemFuncName.GetPtr( NULL ),	/* 検出結果 */
 				item.pszText								/* 検出結果の種類 */
 			);
-//			m_cmemClipText.Append( (const char *)szText, lstrlen( szText ) );	/* クリップボードコピー用テキスト */
 			m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
 		}
-		if( bSelected ){
-			ListView_GetItemRect( hwndList, 0, &rc, LVIR_BOUNDS );
-			ListView_Scroll( hwndList, 0, nSelectedLine * ( rc.bottom - rc.top ) );
-			ListView_SetItemState( hwndList, nSelectedLine, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-//			ListView_GetItemRect( hwndList, nSelectedLine, &rc, LVIR_BOUNDS );
-//			::PostMessage( hwndList, WM_LBUTTONDOWN, 0, MAKELONG( rc.left + 2, rc.bottom - 2) );
-		}
+		//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
+		::ShowWindow( hwndList, SW_SHOW );
 		/* 列の幅をデータに合わせて調整 */
 		ListView_SetColumnWidth( hwndList, 0, LVSCW_AUTOSIZE );
 		ListView_SetColumnWidth( hwndList, 1, LVSCW_AUTOSIZE );
@@ -335,17 +331,34 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		ListView_SetColumnWidth( hwndList, 0, ListView_GetColumnWidth( hwndList, 0 ) + 16 );
 		ListView_SetColumnWidth( hwndList, 1, ListView_GetColumnWidth( hwndList, 1 ) + 16 );
 		ListView_SetColumnWidth( hwndList, 2, ListView_GetColumnWidth( hwndList, 2 ) + 16 );
+		if( bSelected ){
+			ListView_GetItemRect( hwndList, 0, &rc, LVIR_BOUNDS );
+			ListView_Scroll( hwndList, 0, nSelectedLine * ( rc.bottom - rc.top ) );
+			ListView_SetItemState( hwndList, nSelectedLine, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+		}
 	}
 	/* アウトライン ダイアログを自動的に閉じる */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList, m_pShareData->m_Common.m_bAutoCloseDlgFuncList );
+	/* アウトライン ブックマーク一覧で空行を無視する */
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable, m_pShareData->m_Common.m_bMarkUpBlankLineEnable );
+	/* アウトライン ジャンプしたらフォーカスを移す */
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump, m_pShareData->m_Common.m_bFunclistSetFocusOnJump );
 
+	//2002.02.08 hor
 	//（IDC_LIST1もIDC_TREE1も常に存在していて、m_nViewTypeによって、どちらを表示するかを選んでいる）
 	if(m_nViewType){
 		::ShowWindow( hwndTree, SW_SHOW );
-		::SetFocus	( hwndTree );
+		::SetFocus( hwndTree );
 	}else{
-		::ShowWindow( hwndList, SW_SHOW );
-		::SetFocus	( hwndList );
+//		::ShowWindow( hwndList, SW_SHOW );
+		::SetFocus( hwndList );
+	}
+	//2002.02.08 hor
+	//空行をどう扱うかのチェックボックスはブックマーク一覧のときだけ表示する
+	if(OUTLINE_BOOKMARK == m_nListType){
+		::ShowWindow( GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), SW_SHOW );
+	}else{
+		::ShowWindow( GetDlgItem( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable ), SW_HIDE );
 	}
 
 	return;
@@ -368,8 +381,9 @@ int CDlgFuncList::GetData( void )
 	TV_ITEM			tvi;
 	char			szLabel[32];
 
-	/* アウトライン ダイアログを自動的に閉じる */
-	m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
+//2002.02.08 hor OnBnClicked内に移動
+//	/* アウトライン ダイアログを自動的に閉じる */
+//	m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
 
 	nLineTo = -1;
 	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
@@ -1054,6 +1068,19 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		::SetClipboardData( CF_OEMTEXT, hgClip );
 		::CloseClipboard();
 		return TRUE;
+	//2002.02.08 オプション切替後List/Treeにフォーカス移動
+	case IDC_CHECK_bAutoCloseDlgFuncList:
+	case IDC_CHECK_bMarkUpBlankLineEnable:
+	case IDC_CHECK_bFunclistSetFocusOnJump:
+		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
+		m_pShareData->m_Common.m_bMarkUpBlankLineEnable = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable );
+		m_pShareData->m_Common.m_bFunclistSetFocusOnJump = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump );
+		if(m_nViewType){
+			::SetFocus( ::GetDlgItem( m_hWnd, IDC_TREE1 ) );
+		}else{
+			::SetFocus( ::GetDlgItem( m_hWnd, IDC_LIST1 ) );
+		}
+		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -1206,6 +1233,8 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	CDialog::OnSize( wParam, lParam );
 
 	int	Controls[] = {
+		IDC_CHECK_bFunclistSetFocusOnJump,
+		IDC_CHECK_bMarkUpBlankLineEnable,
 		IDC_CHECK_bAutoCloseDlgFuncList,
 		IDC_BUTTON_COPY,
 		IDOK,
@@ -1242,7 +1271,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		::ScreenToClient( m_hWnd, &po );
 		rc.right = po.x;
 		rc.bottom  = po.y;
-		if( Controls[i] == IDC_CHECK_bAutoCloseDlgFuncList ){
+		if( Controls[i] >= IDC_CHECK_bAutoCloseDlgFuncList ){
 			::SetWindowPos( hwndCtrl, NULL, rc.left, nHeight - nWork + 32 /*- nWork*//*rc.top + nExtraSize*/, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		}else
 		if( Controls[i] != IDC_LIST1
@@ -1261,7 +1290,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 
 
 
-BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )
+BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )	//2002.02.08 hor 引数追加
 {
 	int				nLineTo;
 	/* ダイアログデータの取得 */
@@ -1279,7 +1308,8 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )
 				/* アウトライン ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
 					::DestroyWindow( m_hWnd );
-				}else{
+				}else
+				if( m_pShareData->m_Common.m_bFunclistSetFocusOnJump ){
 					::SetFocus( m_hwndParent );
 				}
 			}
@@ -1289,98 +1319,6 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )
 }
 
 
-// From Here 2001.12.03 hor
-/* ブックマークリストの作成	*/
-void CDlgFuncList::SetTreeBookMark( HWND hwndDlg )
-{
-	int				i;
-	char			szText[2048];
-	CFuncInfo*		pcFuncInfo;
-	LV_ITEM			item;
-	LV_COLUMN		col;
-	HWND			hwndList;
-//	HWND			hwndTree;
-	int				bSelected;
-	int				nFuncLineOld;
-	int				nSelectedLine;
-	RECT			rc;
-	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
-	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
-	nFuncLineOld = 0;
-	bSelected = FALSE;
-	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
-		if( !bSelected ){
-			if( i == 0 && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
-				bSelected = TRUE;
-				nSelectedLine = i;
-			}else
-			if( i > 0 && nFuncLineOld <= m_nCurLine && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
-				bSelected = TRUE;
-				nSelectedLine = i - 1;
-			}
-		}
-		nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
-	}
-	if( 0 < m_pcFuncInfoArr->GetNum() && !bSelected ){
-		bSelected = TRUE;
-		nSelectedLine =  m_pcFuncInfoArr->GetNum() - 1;
-	}
-	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
-		/* 現在の解析結果要素 */
-		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
-
-		item.mask = LVIF_TEXT | LVIF_PARAM;
-		item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr( NULL );
-		item.iItem = i;
-		item.iSubItem = 0;
-		item.lParam	= i;
-		ListView_InsertItem( hwndList, &item);
-
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineCRLF );
-		}else{
-			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineLAYOUT );
-		}
-		item.mask = LVIF_TEXT;
-		item.pszText = szText;
-		item.iItem = i;
-		item.iSubItem = 1;
-		ListView_SetItem( hwndList, &item);
-
-		/* クリップボードにコピーするテキストを編集 */
-		wsprintf( szText, "%s(%d): %s\r\n",
-			m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-			pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-			pcFuncInfo->m_cmemFuncName.GetPtr( NULL )	/* 検出結果 */
-		);
-		m_cmemClipText.AppendSz( (const char *)szText );					/* クリップボードコピー用テキスト */
-
-	}
-
-	if( bSelected ){
-		ListView_GetItemRect( hwndList, 0, &rc, LVIR_BOUNDS );
-		ListView_Scroll( hwndList, 0, nSelectedLine * ( rc.bottom - rc.top ) );
-		ListView_SetItemState( hwndList, nSelectedLine, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-	}
-	/* 列名変更 */
-	col.mask = LVCF_TEXT;
-	col.pszText = "テキスト";
-	col.iSubItem = 0;
-	ListView_SetColumn( hwndList, 0, &col );
-
-	/* 列の幅をデータに合わせて調整 */
-	ListView_SetColumnWidth( hwndList, 0, LVSCW_AUTOSIZE );
-	ListView_SetColumnWidth( hwndList, 1, LVSCW_AUTOSIZE );
-	ListView_SetColumnWidth( hwndList, 2, 0 );
-
-	/* アウトライン ダイアログを自動的に閉じる */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList, m_pShareData->m_Common.m_bAutoCloseDlgFuncList );
-	return;
-}
-// To Here 2001.12.03 hor
-
 //@@@ 2002.01.18 add start
 LPVOID CDlgFuncList::GetHelpIdTable(void)
 {
@@ -1388,14 +1326,14 @@ LPVOID CDlgFuncList::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
+
 /*!	キー操作をコマンドに変換するヘルパー関数
 	
 */
 void CDlgFuncList::Key2Command(WORD KeyCode)
 {
 	CEditView*	pcEditView;
-	int nIdx, nFuncCode;	//	,bAutoClose;
-	m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
+	int nIdx, nFuncCode;
 	/* Ctrl,ALT,キーが押されていたか */
 	nIdx = 0;
 	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT	  ) ) nIdx |= _SHIFT;
@@ -1422,6 +1360,9 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 		pcEditView->HandleCommand( nFuncCode, TRUE, 0, 0, 0, 0 );
 		if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
 			::DestroyWindow( m_hWnd );
+		}else
+		if( m_pShareData->m_Common.m_bFunclistSetFocusOnJump ){
+			::SetFocus( m_hwndParent );
 		}
 	}
 }

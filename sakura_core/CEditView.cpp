@@ -4956,12 +4956,14 @@ BOOL CEditView::GetSelectedData(
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				nIdxFrom	= LineColmnToIndex( pLine, nLineLen, rcSel.left  );
 				nIdxTo		= LineColmnToIndex( pLine, nLineLen, rcSel.right );
-			}
-			if( nIdxTo - nIdxFrom > 0 ){
-				if( pLine[nIdxTo - 1] == '\n' || pLine[nIdxTo - 1] == '\r' ){
-					cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
-				}else{
-					cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+				//2002.02.08 hor
+				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
+				if( nIdxTo - nIdxFrom > 0 ){
+					if( pLine[nIdxTo - 1] == '\n' || pLine[nIdxTo - 1] == '\r' ){
+						cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
+					}else{
+						cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+					}
 				}
 			}
 			++nRowNum;
@@ -5356,8 +5358,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			m_nSelectLineTo,		/* 範囲選択終了行 */
 			m_nSelectColmTo,		/* 範囲選択終了桁 */
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
-			cmemBuf.m_pData,		/* 挿入するデータ */
-			cmemBuf.m_nDataLen,		/* 挿入するデータの長さ */
+			cmemBuf.GetPtr2(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
+			cmemBuf.GetLength(),		/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
 			FALSE/*TRUEbRedraw*/
 		);
 
@@ -5453,8 +5455,9 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	switch( nFuncCode ){
 	case F_TOLOWER: pCMemory->ToLower(); break;						/* 英大文字→英小文字 */
 	case F_TOUPPER: pCMemory->ToUpper(); break;						/* 英小文字→英大文字 */
-	case F_TOHANKAKU: pCMemory->ToHankaku(); break;					/* 全角→半角 */
+	case F_TOHANKAKU: pCMemory->ToHankaku( 0x0 ); break;					/* 全角→半角 */
 	case F_TOZENEI: pCMemory->ToZenkaku( 2, 0 );				/* 2== 英数専用				*/ break;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	case F_TOHANEI: pCMemory->ToHankaku( 0x4 );						/* 2== 英数専用				*/ break;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOZENKAKUKATA: pCMemory->ToZenkaku( 0, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA: pCMemory->ToZenkaku( 1, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA: pCMemory->ToZenkaku( 0, 1 );	/* 1== ひらがな 0==カタカナ */ break;	/* 半角カタカナ→全角カタカナ */
@@ -6412,13 +6415,19 @@ DWORD CEditView::DoGrep(
 	m_pcEditDoc->m_bGrepMode = TRUE;
 
 //	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
-	HICON	hIcon;
+//2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
+	HICON	hIconBig, hIconSmall;
+	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
+	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ), IMAGE_ICON, 16, 16, 0);
+	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
+	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
+//	HICON	hIcon;
 //	hIcon = ::LoadIcon( NULL, IDI_QUESTION );
-	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL,	(LPARAM)NULL );
-	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL,	(LPARAM)hIcon );
-	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG,	(LPARAM)NULL );
-	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG,	(LPARAM)hIcon );
+//	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
+//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL,	(LPARAM)NULL );
+//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL,	(LPARAM)hIcon );
+//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG,	(LPARAM)NULL );
+//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG,	(LPARAM)hIcon );
 
 	pszWork = pcmGrepFolder->GetPtr( NULL );
 	strcpy( szPath, pszWork );

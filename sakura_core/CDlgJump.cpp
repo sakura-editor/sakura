@@ -20,6 +20,7 @@
 #include "debug.h"
 #include "CEditDoc.h"
 #include "funccode.h"		// Stonee, 2001/03/12
+#include "CFuncInfoArr.h"// 2002/2/10 aroka ヘッダ整理
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

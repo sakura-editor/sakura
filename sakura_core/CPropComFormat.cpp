@@ -14,6 +14,7 @@
 
 #include "CPropCommon.h"
 #include "etc_uty.h"
+#include "debug.h" // 2002/2/10 aroka
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -102,7 +103,9 @@ void CPropCommon::ChangeDateExample( HWND hwndDlg )
 
 	/* 日付をフォーマット */
 	char szText[1024];
-	::MyGetDateFormat( szText, sizeof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
+	SYSTEMTIME systime;
+	::GetLocalTime( &systime );
+	m_cShareData.MyGetDateFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
 	return;
 }
@@ -113,7 +116,9 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 
 	/* 時刻をフォーマット */
 	char szText[1024];
-	::MyGetTimeFormat( szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
+	SYSTEMTIME systime;
+	::GetLocalTime( &systime );
+	m_cShareData.MyGetTimeFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TFORM_EX, szText );
 	return;
 }

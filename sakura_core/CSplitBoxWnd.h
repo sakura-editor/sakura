@@ -45,7 +45,7 @@ public:
 
 
 
-public:
+private:
 	const char*	m_pszClassName;	/* クラス名 */
 	int			m_bVertical;	/* 垂直分割ボックスか */
 	int			m_nDragPosY;

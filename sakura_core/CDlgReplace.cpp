@@ -22,7 +22,7 @@
 #include "global.h"
 //#include "CWaitCursor.h" // 2002/2/3 aroka
 #include "funccode.h"		// Stonee, 2001/03/12
-#include "CDlgCancel.h"/// 2002/2/3 aroka
+//#include "CDlgCancel.h"/// 2002/2/3 aroka	// 2002/2/8 hor コメント
 #include "CLayout.h"/// 2002/2/3 aroka
 
 //置換 CDlgReplace.cpp	//@@@ 2002.01.07 add start MIK
@@ -62,8 +62,10 @@ CDlgReplace::CDlgReplace()
 	m_bSelectedArea = FALSE;	/* 選択範囲内置換 */
 	m_szText[0] = '\0';			/* 検索文字列 */
 	m_szText2[0] = '\0';		/* 置換後文字列 */
-	m_nReplaceTarget=0;			/* 置換対象 */		// 2001.12.03 hor
-	m_nPaste=FALSE;				/* 貼り付ける？ */	// 2001.12.03 hor
+	m_nReplaceTarget = 0;		/* 置換対象 */		// 2001.12.03 hor
+	m_nPaste = FALSE;			/* 貼り付ける？ */	// 2001.12.03 hor
+	m_nReplaceCnt = 0;			//すべて置換の実行結果		// 2002.02.08 hor
+	m_bCanceled = false;		//すべて置換を中断したか	// 2002.02.08 hor
 	return;
 }
 
@@ -231,56 +233,11 @@ int CDlgReplace::GetData( void )
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
 		m_cShareData.AddToSearchKeyArr( m_szText );
-#if 0
-		pcmWork = new CMemory( m_szText, lstrlen( m_szText ) );
-		for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-			if( 0 == strcmp( m_szText, m_pShareData->m_szSEARCHKEYArr[i] ) ){
-				break;
-			}
-		}
-		if( i < m_pShareData->m_nSEARCHKEYArrNum ){
-			for( j = i; j > 0; j-- ){
-				strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-			}
-		}else{
-			for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-				strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-			}
-			++m_pShareData->m_nSEARCHKEYArrNum;
-			if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
-				m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
-			}
-		}
-		strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork->GetPtr( NULL ) );
-		delete pcmWork;
-#endif
 
 		/* 置換後文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToReplaceKeyArr()追加に伴う変更
 		m_cShareData.AddToReplaceKeyArr( m_szText2 );
-#if 0
-		pcmWork = new CMemory( m_szText2, lstrlen( m_szText2 ) );
-		for( i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i ){
-			if( 0 == strcmp( m_szText2, m_pShareData->m_szREPLACEKEYArr[i] ) ){
-				break;
-			}
-		}
-		if( i < m_pShareData->m_nREPLACEKEYArrNum ){
-			for( j = i; j > 0; j-- ){
-				strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
-			}
-		}else{
-			for( j = MAX_REPLACEKEY - 1; j > 0; j-- ){
-				strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
-			}
-			++m_pShareData->m_nREPLACEKEYArrNum;
-			if( m_pShareData->m_nREPLACEKEYArrNum > MAX_REPLACEKEY ){
-				m_pShareData->m_nREPLACEKEYArrNum = MAX_REPLACEKEY;
-			}
-		}
-		strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork->GetPtr( NULL ) );
-		delete pcmWork;
-#endif
+
 		// From Here 2001.12.03 hor
 		// クリップボードから貼り付ける？
 		m_nPaste=IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE );
@@ -343,34 +300,33 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgReplace::OnBnClicked( int wID )
 {
 	CEditView*	pcEditView = (CEditView*)m_lParam;
-	int			nNewPos;
-	int			nReplaceNum;
-	char		szLabel[64];
-	int			nAllLineNum;
-	HWND		hwndProgress;
-	HWND		hwndStatic;
+//	int			nNewPos;
+//	int			nReplaceNum;
+//	char		szLabel[64];
+//	int			nAllLineNum;
+//	HWND		hwndProgress;
+//	HWND		hwndStatic;
 //	MSG			msg;
 
 // From Here 2001.12.03 hor
-	int			colFrom;		//選択範囲開始桁
-	int			linFrom;		//選択範囲開始行
-	int			colTo,colToP;	//選択範囲終了桁
-	int			linTo,linToP;	//選択範囲終了行
-	int			colDif = 0;		//置換後の桁調整
-	int			linDif = 0;		//置換後の行調整
-	int			colOld = 0;		//検索後の選択範囲次桁
-	int			linOld = 0;		//検索後の行
-	int			lineCnt;		//置換前の行数
-	int			linPrev = 0;	//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
-	int			linNext;		//次回の検索行(矩形)
-	int			colTmp,linTmp,colLast,linLast;
-	int			bBeginBoxSelect; // 矩形選択？
-	const char*	pLine;
-	int			nLineLen;
-	const CLayout* pcLayout;
-	int			bLineOffset=FALSE;
-	int			bLineChecked=FALSE;
-//	char*		RegRepOut;
+//	int			colFrom;		//選択範囲開始桁
+//	int			linFrom;		//選択範囲開始行
+//	int			colTo,colToP;	//選択範囲終了桁
+//	int			linTo,linToP;	//選択範囲終了行
+//	int			colDif = 0;		//置換後の桁調整
+//	int			linDif = 0;		//置換後の行調整
+//	int			colOld = 0;		//検索後の選択範囲次桁
+//	int			linOld = 0;		//検索後の行
+//	int			lineCnt;		//置換前の行数
+//	int			linPrev = 0;	//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
+//	int			linNext;		//次回の検索行(矩形)
+//	int			colTmp,linTmp,colLast,linLast;
+//	int			bBeginBoxSelect; // 矩形選択？
+//	const char*	pLine;
+//	int			nLineLen;
+//	const CLayout* pcLayout;
+//	int			bLineOffset=FALSE;
+//	int			bLineChecked=FALSE;
 
 	switch( wID ){
 	case IDC_CHK_PASTE:
@@ -432,7 +388,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				//	Jan. 31, 2002 genta
 				//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 				//::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+				//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 				// 2001/06/23 N.Nakatani
 				/* 単語単位で探す */
@@ -441,7 +397,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
+			//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
 			//	Jan. 31, 2002 genta
 			//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 			//::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
@@ -500,7 +456,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
 		if( 0 < GetData() ){
-			pcEditView->HandleCommand( F_BOOKMARK_PATTERN, NULL, 0, 0, 0, 0 );
+			pcEditView->HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
 			::SendMessage(m_hWnd,WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(m_hWnd,IDC_COMBO_TEXT ),TRUE);
 		}
 		return TRUE;
@@ -510,115 +466,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 置換 */
 			//@@@ 2002.2.2 YAZAKI 置換コマンドをCEditViewに新設
 			pcEditView->HandleCommand( F_REPLACE, TRUE, 0, 0, 0, 0 );
-#if 0
-			// From Here 2001.12.03 hor
-			if( m_nPaste && !pcEditView->m_pcEditDoc->IsEnablePaste()){
-				::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
-				::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
-				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
-				return TRUE;
-			}
-
-			// 2002.01.09 hor
-			// 選択エリアがあれば、その先頭にカーソルを移す
-			if( pcEditView->IsTextSelected() ){
-				if( pcEditView->m_bBeginBoxSelect ){
-					pcEditView->MoveCursor( pcEditView->m_nSelectColmFrom,
-											pcEditView->m_nSelectLineFrom,
-											TRUE );
-				} else {
-					pcEditView->HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );
-				}
-			}
-			// To Here 2002.01.09 hor
-			
-			// 矩形選択？
-//			bBeginBoxSelect = pcEditView->m_bBeginBoxSelect;
-
-			/* カーソル左移動 */
-			//pcEditView->HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );	//？？？
-			// To Here 2001.12.03 hor
-
-			/* テキスト選択解除 */
-			/* 現在の選択範囲を非選択状態に戻す */
-			pcEditView->DisableSelectArea( TRUE );
-
-			/* 次を検索 */
-			pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
-
-			/* テキストが選択されているか */
-			if( pcEditView->IsTextSelected() ){
-				// From Here 2001.12.03 hor
-				if(m_nReplaceTarget==1){	//挿入位置へ移動
-					colTmp = pcEditView->m_nSelectColmTo - pcEditView->m_nSelectColmFrom;
-					linTmp = pcEditView->m_nSelectLineTo - pcEditView->m_nSelectLineFrom;
-					pcEditView->m_nSelectColmFrom=-1;
-					pcEditView->m_nSelectLineFrom=-1;
-					pcEditView->m_nSelectColmTo	 =-1;
-					pcEditView->m_nSelectLineTo	 =-1;
-				}else
-				if(m_nReplaceTarget==2){	//追加位置へ移動
-					if(m_bRegularExp){
-						//検索後の文字が改行やったら次の行の先頭へ移動
-						pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-							pcEditView->m_nSelectColmTo,
-							pcEditView->m_nSelectLineTo,
-							&colTmp,
-							&linTmp
-						);
-						pLine = pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr2( pcEditView->m_nSelectLineTo, &nLineLen, &pcLayout );
-						if( NULL != pLine &&
-							colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
-							pcEditView->m_nSelectColmTo=0;
-							pcEditView->m_nSelectLineTo++;
-						}
-					}
-					pcEditView->m_nCaretPosX = pcEditView->m_nSelectColmTo;
-					pcEditView->m_nCaretPosY = pcEditView->m_nSelectLineTo;
-					pcEditView->m_nSelectColmFrom=-1;
-					pcEditView->m_nSelectLineFrom=-1;
-					pcEditView->m_nSelectColmTo	 =-1;
-					pcEditView->m_nSelectLineTo	 =-1;
-				}
-				/* コマンドコードによる処理振り分け */
-				/* テキストを貼り付け */
-				//pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)m_szText2, FALSE, 0, 0 );
-				if(m_nPaste){
-					pcEditView->HandleCommand( F_PASTE, 0, 0, 0, 0, 0 );
-				}else{
-					// 2002/01/19 novice 正規表現による文字列置換
-					if( pcEditView->m_bCurSrchRegularExp ){ /* 検索／置換  1==正規表現 */
-						CMemory cmemory;
-						CBregexp cRegexp;
-						char*	RegRepOut;
-
-						if( !InitRegexp( m_hWnd, cRegexp, true ) ){
-							return 0;
-						}
-
-						if( FALSE == pcEditView->GetSelectedData( cmemory, FALSE, NULL, FALSE /*, EOL_NONE 2002/1/26 novice */ ) ){
-							::MessageBeep( MB_ICONHAND );
-						}
-						// 変換後の文字列を別の引数にしました 2002.01.26 hor
-						int nFlag = m_bLoHiCase ? 0x01 : 0x00;
-						if( cRegexp.Replace( m_szText, m_szText2, cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut, nFlag) ){
-							pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
-							delete [] RegRepOut;
-						}
-					}else{
-						pcEditView->HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_szText2, FALSE, 0, 0 );
-					}
-				}
-				// 挿入後の検索開始位置を調整
-				if(m_nReplaceTarget==1){
-					pcEditView->m_nCaretPosX+=colTmp;
-					pcEditView->m_nCaretPosY+=linTmp;
-				}
-				// To Here 2001.12.03 hor
-				/* 次を検索 */
-				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, (LPARAM)"最後まで置換しました。", 0, 0 );
-			}
-#endif
 			/* 再描画 */
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
@@ -629,376 +476,14 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
 		if( 0 < GetData() ){
-
-		// From Here 2001.12.03 hor
-			if( m_nPaste && !pcEditView->m_pcEditDoc->IsEnablePaste() ){
-				::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
-				::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
-				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
-				return TRUE;
-			}
-			// 矩形選択？
-			bBeginBoxSelect = pcEditView->m_bBeginBoxSelect;
-		// To Here 2001.12.03 hor
-
-
-			/* 表示処理ON/OFF */
-			BOOL bDisplayUpdate = FALSE;
-
-
-			pcEditView->m_bDrawSWITCH = bDisplayUpdate;
-			CDlgCancel	cDlgCancel;
-			HWND		hwndCancel;
-			nAllLineNum = pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-
-			/* 進捗表示&中止ダイアログの作成 */
-			hwndCancel = cDlgCancel.DoModeless( m_hInstance, m_hWnd, IDD_REPLACERUNNING );
-			::EnableWindow( m_hWnd, FALSE );
-			::EnableWindow( ::GetParent( m_hWnd ), FALSE );
-			::EnableWindow( ::GetParent( ::GetParent( m_hWnd ) ), FALSE );
-
-			/* プログレスバー初期化 */
-			hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS_REPLACE );
-			::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
-			nNewPos = 0;
- 			::SendMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
-
-			/* 置換個数初期化 */
-			nReplaceNum = 0;
-			hwndStatic = ::GetDlgItem( hwndCancel, IDC_STATIC_KENSUU );
-//			wsprintf( szLabel, "%d", nReplaceNum );
-			_itoa( nReplaceNum, szLabel, 10 );
-			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
-//			::SetWindowText( hwndStatic, szLabel );
-
-		// From Here 2001.12.03 hor
-			if (m_bSelectedArea) {
-				/* 選択範囲置換 */
-				/* 選択範囲開始位置の取得 */
-				colFrom = pcEditView->m_nSelectColmFrom;
-				linFrom = pcEditView->m_nSelectLineFrom;
-				colTo   = pcEditView->m_nSelectColmTo;
-				linTo   = pcEditView->m_nSelectLineTo;
-				pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-					colTo,
-					linTo,
-					&colToP,
-					&linToP
-				);
-				//選択範囲開始位置へ移動
-				pcEditView->MoveCursor( colFrom, linFrom, bDisplayUpdate );
-			}else{
-				/* ファイル全体置換 */
-				/* ファイルの先頭に移動 */
-				pcEditView->HandleCommand( F_GOFILETOP, bDisplayUpdate, 0, 0, 0, 0 );
-			}
-			colLast=pcEditView->m_nCaretPosX;
-			linLast=pcEditView->m_nCaretPosY;
-
-			/* テキスト選択解除 */
-			/* 現在の選択範囲を非選択状態に戻す */
-			pcEditView->DisableSelectArea( bDisplayUpdate );
-			/* 次を検索 */
-			pcEditView->HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
-		// To Here 2001.12.03 hor
-
-			/* テキストが選択されているか */
-			while( pcEditView->IsTextSelected() ){
-				/* キャンセルされたか */
-//				if( cDlgCancel.IsCanceled() ){
-				if( cDlgCancel.m_bCANCEL ){
-					break;
-				}
-//				if( 0 == ( nReplaceNum % 8 ) ){
-					/* 処理中のユーザー操作を可能にする */
-					if( !::BlockingHook( hwndCancel ) ){
-						return -1;
-					}
-//					if( ::PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) ){
-//						if( msg.message == WM_QUIT ){
-//							return -1;
-//						}
-//						if( !IsDialogMessage (hwndCancel, &msg ) ){
-//							::TranslateMessage( &msg );
-//							::DispatchMessage( &msg );
-//						}
-//					}
-//				}
-				if( 0 == ( nReplaceNum % 8 ) ){
-
-
-//					if( 0 < nAllLineNum ){
-						nNewPos = (pcEditView->m_nSelectLineFrom * 100) / nAllLineNum;
-						::PostMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
-//					}
-					_itoa( nReplaceNum, szLabel, 10 );
-					::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)(const char*)szLabel );
-				}
-
-//#ifdef _DEBUG
-//				{
-//					CRunningTimer* pcRunningTimer = new CRunningTimer( (const char*)"F_INSTEXT" );
-//					gm_ProfileOutput = FALSE;
-//#endif
-
-				// From Here 2001.12.03 hor
-					/* 検索後の位置を確認 */
-					if(m_bSelectedArea){
-						if (bBeginBoxSelect) {
-						// 矩形選択
-						//	o レイアウト座標をチェックしながら置換する
-						//	o 折り返しがあると変になるかも・・・
-						//
-							// 検索時の行数を記憶
-							lineCnt=pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-							// 検索後の範囲終端
-							colOld = pcEditView->m_nSelectColmTo;
-							linOld = pcEditView->m_nSelectLineTo;
-							// 前回の検索行と違う？
-							if(linOld!=linPrev){
-								colDif=0;
-							}
-							linPrev=linOld;
-							// 行は範囲内？
-							if ((linTo+linDif == linOld && colTo+colDif < colOld) ||
-								(linTo+linDif <  linOld)) {
-								break;
-							}
-							// 桁は範囲内？
-							if(!((colFrom<=pcEditView->m_nSelectColmFrom)&&
-							     (colOld<=colTo+colDif))){
-								if(colOld<colTo+colDif){
-									linNext=pcEditView->m_nSelectLineTo;
-								}else{
-									linNext=pcEditView->m_nSelectLineTo+1;
-								}
-								//次の検索開始位置へシフト
-								pcEditView->m_nCaretPosX=colFrom;
-								pcEditView->m_nCaretPosY=linNext;
-								//pcEditView->DisableSelectArea( bDisplayUpdate );
-								//pcEditView->MoveCursor( colFrom, linNext, bDisplayUpdate );
-								pcEditView->HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
-								colDif=0;
-								continue;
-							}
-						}else{
-						// 普通の選択
-						//	o 物理座標をチェックしながら置換する
-						//
-							// 検索時の行数を記憶
-							lineCnt=pcEditView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-							// 検索後の範囲終端
-							pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-								pcEditView->m_nSelectColmTo,
-								pcEditView->m_nSelectLineTo,
-								&colOld,
-								&linOld
-							);
-							// 行は範囲内？
-							if ((linToP+linDif == linOld && colToP+colDif < colOld) ||
-								(linToP+linDif <  linOld)) {
-								break;
-							}
-						}
-					}
-
-					if(m_nReplaceTarget==1){	//挿入位置セット
-						colTmp = pcEditView->m_nSelectColmTo - pcEditView->m_nSelectColmFrom;
-						linTmp = pcEditView->m_nSelectLineTo - pcEditView->m_nSelectLineFrom;
-						pcEditView->m_nSelectColmFrom=-1;
-						pcEditView->m_nSelectLineFrom=-1;
-						pcEditView->m_nSelectColmTo	 =-1;
-						pcEditView->m_nSelectLineTo	 =-1;
-					}else
-					if(m_nReplaceTarget==2){	//追加位置セット
-						if(!bLineChecked){
-							//検索後の位置が改行やったら次の行の先頭にオフセット
-							pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-								pcEditView->m_nSelectColmTo,
-								pcEditView->m_nSelectLineTo,
-								&colTmp,
-								&linTmp
-							);
-							if(m_bRegularExp){
-								pLine = pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr2( pcEditView->m_nSelectLineTo, &nLineLen, &pcLayout );
-								if( NULL != pLine &&
-									colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
-									bLineOffset=TRUE;
-								}
-							}
-							bLineChecked=TRUE;
-						}
-						if(bLineOffset){
-							pcEditView->m_nCaretPosX = 0;
-							pcEditView->m_nCaretPosY ++;
-							pcEditView->m_nCaretPosX_PHY = 0;
-							pcEditView->m_nCaretPosY_PHY ++;
-						}else{
-							pcEditView->m_nCaretPosX = pcEditView->m_nSelectColmTo;
-							pcEditView->m_nCaretPosY = pcEditView->m_nSelectLineTo;
-						}
-						pcEditView->m_nSelectColmFrom=-1;
-						pcEditView->m_nSelectLineFrom=-1;
-						pcEditView->m_nSelectColmTo	 =-1;
-						pcEditView->m_nSelectLineTo	 =-1;
-					}
-
-					/* コマンドコードによる処理振り分け */
-					/* テキストを貼り付け */
-					//pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)m_szText2, FALSE, 0, 0 );
-					if(m_nPaste){
-						pcEditView->HandleCommand( F_PASTE, 0, 0, 0, 0, 0 );
-					}else{
-						// 2002/01/19 novice 正規表現による文字列置換
-						if( pcEditView->m_bCurSrchRegularExp ){ /* 検索／置換  1==正規表現 */
-							CMemory cmemory;
-							CBregexp cRegexp;
-							char*	RegRepOut;
-
-							if( !InitRegexp( m_hWnd, cRegexp, true ) ){
-								return 0;
-							}
-
-							if( FALSE == pcEditView->GetSelectedData( cmemory, FALSE, NULL, FALSE /*, EOL_NONE 2002/1/26 novice */ ) ){
-								::MessageBeep( MB_ICONHAND );
-							}
-
-							// 変換後の文字列を別の引数にしました 2002.01.26 hor
-							int nFlag = 0x00;
-							nFlag |= m_bLoHiCase ? 0x01 : 0x00;
-							if( cRegexp.Replace( m_szText, m_szText2, cmemory.m_pData, cmemory.m_nDataLen ,&RegRepOut, nFlag) ){
-								pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
-								delete [] RegRepOut;
-							}
-						}else{
-							pcEditView->HandleCommand( F_INSTEXT, bDisplayUpdate, (LPARAM)m_szText2, TRUE, 0, 0 );
-						}
-					}
-
-					// 挿入後の位置調整
-					if(m_nReplaceTarget==1){
-						pcEditView->m_nCaretPosX+=colTmp;
-						pcEditView->m_nCaretPosY+=linTmp;
-						if (!bBeginBoxSelect) {
-							pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-								pcEditView->m_nCaretPosX,
-								pcEditView->m_nCaretPosY,
-								&pcEditView->m_nCaretPosX_PHY,
-								&pcEditView->m_nCaretPosY_PHY
-							);
-						}
-					}
-
-					// 最後に置換した位置を記憶
-					colLast=pcEditView->m_nCaretPosX;
-					linLast=pcEditView->m_nCaretPosY;
-
-					/* 置換後の位置を確認 */
-					if(m_bSelectedArea){
-						// 検索→置換の行補正値取得
-						if(bBeginBoxSelect){
-							colDif += colLast - colOld;
-							linDif += pcEditView->m_pcEditDoc->m_cLayoutMgr.GetLineCount() - lineCnt;
-						}else{
-							colTmp=pcEditView->m_nCaretPosX_PHY;
-							linTmp=pcEditView->m_nCaretPosY_PHY;
-							linDif += pcEditView->m_pcEditDoc->m_cDocLineMgr.GetLineCount() - lineCnt;
-							if(linToP+linDif==linTmp){
-								colDif += colTmp - colOld;
-							}
-						}
-					}
-				// To Here 2001.12.03 hor
-
-//#ifdef _DEBUG
-//					gm_ProfileOutput = TRUE;
-//					delete pcRunningTimer;
-//					gm_ProfileOutput = FALSE;
-//				}
-//#endif
-				++nReplaceNum;
-
-//#ifdef _DEBUG
-//				{
-//					CRunningTimer* pcRunningTimer = new CRunningTimer( (const char*)"F_SEARCH_NEXT" );
-//					gm_ProfileOutput = FALSE;
-//#endif
-
-					/* 次を検索 */
-					pcEditView->HandleCommand( F_SEARCH_NEXT, bDisplayUpdate, 0, 0, 0, 0 );
-//#ifdef _DEBUG
-//					gm_ProfileOutput = TRUE;
-//					delete pcRunningTimer;
-//					gm_ProfileOutput = FALSE;
-//				}
-//#endif
-			}
-			if( 0 < nAllLineNum ){
-				nNewPos = (pcEditView->m_nSelectLineFrom * 100) / nAllLineNum;
-				::SendMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
-			}
-			_itoa( nReplaceNum, szLabel, 10 );
-			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
-
-			if( !cDlgCancel.IsCanceled() ){
-				nNewPos = 100;
-				::SendMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
-			}
-//			cDlgCancel.Close();
-			cDlgCancel.CloseDialog( 0 );
-			::EnableWindow( m_hWnd, TRUE );
-			::EnableWindow( ::GetParent( m_hWnd ), TRUE );
-			::EnableWindow( ::GetParent( ::GetParent( m_hWnd ) ), TRUE );
-
-
-		// From Here 2001.12.03 hor
-
-			/* テキスト選択解除 */
-			pcEditView->DisableSelectArea( TRUE );
-
-			/* カーソル・選択範囲復元 */
-			if((!m_bSelectedArea) ||			// ファイル全体置換
-			   (cDlgCancel.IsCanceled())) {		// キャンセルされた
-				// 最後に置換した文字列の右へ
-				pcEditView->MoveCursor( colLast, linLast, TRUE );
-			}else{
-				if (bBeginBoxSelect) {
-				// 矩形選択
-					pcEditView->m_bBeginBoxSelect=bBeginBoxSelect;
-					linTo+=linDif;
-					if(linTo<0)linTo=0;
-				}else{
-				// 普通の選択
-					colToP+=colDif;
-					if(colToP<0)colToP=0;
-					linToP+=linDif;
-					if(linToP<0)linToP=0;
-					pcEditView->m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
-						colToP,
-						linToP,
-						&colTo,
-						&linTo
-					);
-				}
-				if(linFrom<linTo || colFrom<colTo){
-					pcEditView->m_nSelectLineFrom = linFrom;
-					pcEditView->m_nSelectColmFrom = colFrom;
-					pcEditView->m_nSelectLineTo   = linTo;
-					pcEditView->m_nSelectColmTo   = colTo;
-				}
-				pcEditView->MoveCursor( colTo, linTo, TRUE );
-			}
-		// To Here 2001.12.03 hor
-
-			// 再描画
-			pcEditView->m_bDrawSWITCH = TRUE;
+			pcEditView->HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 			/* アクティブにする */
 			ActivateFrameWindow( m_hWnd );
 
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME,
-				"%d箇所を置換しました。", nReplaceNum
+				"%d箇所を置換しました。", m_nReplaceCnt/*nReplaceNum*/
 			);
 
 //			nNewPos = 100;
@@ -1006,7 +491,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 //			::ShowWindow( ::GetDlgItem( m_hWnd, IDC_PROGRESS_REPLACE ), SW_HIDE );
 
-			if( !cDlgCancel.IsCanceled() ){
+//			if( !cDlgCancel.IsCanceled() ){
+			if( !m_bCanceled ){
 				if( m_bModal ){		/* モーダルダイアログか */
 					/* 置換ダイアログを閉じる */
 					::EndDialog( m_hWnd, 0 );
@@ -1017,8 +503,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 					}
 				}
 			}
-
-
 			return TRUE;
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,

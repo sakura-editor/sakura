@@ -14,6 +14,7 @@
 */
 
 #include "CDicMgr.h"
+#include "CMemory.h" // 2002/2/10 aroka ƒwƒbƒ_®—
 #include <stdio.h>
 #include "CRunningTimer.h"
 

@@ -19,6 +19,8 @@
 //#include <stdio.h>
 #include "CEditDoc.h"
 #include "charcode.h"
+#include "CFuncInfoArr.h"// 2002/2/10 aroka
+#include "CDocLine.h"// 2002/2/10 aroka
 
 
 /* Java関数リスト作成 */
@@ -461,6 +463,8 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_ADDTAIL:
 	case F_PASTEBOX:
 	case F_REPLACE_DIALOG:
+	case F_REPLACE:
+	case F_REPLACE_ALL:
 	case F_CODECNV_EMAIL:
 	case F_CODECNV_EUC2SJIS:
 	case F_CODECNV_UNICODE2SJIS:
@@ -475,6 +479,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_TOUPPER:
 	case F_TOHANKAKU:
 	case F_TOZENEI:					// 2001/07/30 Miasaka
+	case F_TOHANEI:
 	case F_TOZENKAKUKATA:
 	case F_TOZENKAKUHIRA:
 	case F_HANKATATOZENKAKUKATA:
@@ -884,7 +889,6 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 	20020119 aroka
 	空行をマーク対象にするフラグ bMarkUpBlankLineEnable を導入しました。
-	どなたかプロパティで設定可能にしてくれませんか？
 */
 void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -893,7 +897,7 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	int		nLineCount;
 	int		i,j,nX,nY;
 	char*	pszText;
-	bool	bMarkUpBlankLineEnable = false;	//! 空行をマーク対象にするフラグ 20020119 aroka
+	BOOL	bMarkUpBlankLineEnable = m_pShareData->m_Common.m_bMarkUpBlankLineEnable;	//! 空行をマーク対象にするフラグ 20020119 aroka
 	int		nNewLineLen	= m_cNewLineCode.GetLen();
 	int		nLineLast	= m_cDocLineMgr.GetLineCount();
 

@@ -31,6 +31,7 @@
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
 #include "funccode.h"	//Stonee, 2001/05/18
+#include "CImageListMgr.h" // 2002/2/10 aroka
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #if 1	//@@@ 2002.01.03 add MIK

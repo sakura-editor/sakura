@@ -15,6 +15,7 @@
 #include "debug.h"
 #include "CEditWnd.h"
 #include "global.h"
+#include "KeyCode.h"// 2002/2/10 aroka
 
 #define IDT_FUNCWND 1248
 #define TIMER_TIMEOUT 100

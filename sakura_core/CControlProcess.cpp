@@ -22,6 +22,7 @@
 #include "CEditApp.h"
 #include "CMemory.h"
 #include "etc_uty.h"
+#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ƒwƒbƒ_®—
 #include <tchar.h>
 
 

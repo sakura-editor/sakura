@@ -18,9 +18,9 @@ class COpeBlk;
 #ifndef _COPEBLK_H_
 #define _COPEBLK_H_
 
-#include <windows.h>
+//#include <windows.h>
 #include "COpe.h"
-#include "CLayoutMgr.h"
+//#include "CLayoutMgr.h"
 
 
 

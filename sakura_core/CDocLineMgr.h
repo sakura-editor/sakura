@@ -11,6 +11,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
+	Copyright (C) 2002, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,11 +23,16 @@ class CDocLineMgr;
 #define _CDOCLINEMGR_H_
 
 #include <windows.h>
-#include "CDocLine.h"
-#include "CMemory.h"
-#include "cRunningTimer.h"
-//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-#include "CBregexp.h"
+//#include "CDocLine.h" // 2002/2/10 aroka ヘッダ整理
+//#include "CMemory.h" // 2002/2/10 aroka
+//#include "cRunningTimer.h" // 2002/2/10 aroka
+////	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+//#include "CBregexp.h" // 2002/2/10 aroka
+#include "global.h" // 2002/2/10 aroka
+#include "CEol.h" // 2002/2/10 aroka
+class CDocLine; // 2002/2/10 aroka
+class CMemory; // 2002/2/10 aroka
+class CBregexp; // 2002/2/10 aroka
 
 struct DocLineReplaceArg {
 	int			nDelLineFrom;		/* 削除範囲行  From 改行単位の行番号 0開始) */
@@ -141,6 +147,11 @@ public:
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
 	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEOL );
 	CDocLine* GetLineInfo( int );
+	// 2002/2/10 aroka メンバを private にしてアクセサ追加
+	int GetLines() const { return m_nLines; }
+	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }
+	CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }
+private:
 
 	/*
 	|| メンバ変数

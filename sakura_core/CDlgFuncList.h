@@ -23,8 +23,9 @@ class CDlgFuncList;
 
 #include <windows.h>
 #include "CDialog.h"
-#include "CFuncInfoArr.h"
-#include "CShareData.h"
+//#include "CFuncInfoArr.h" // 2002/2/10 aroka ヘッダ整理
+//#include "CShareData.h" // 2002/2/10 aroka
+class CFuncInfoArr; // 2002/2/10 aroka
 
 
 //!	アウトライン解析ダイアログボックス
@@ -66,7 +67,7 @@ protected:
 	void GetTreeTextNext( HWND, HTREEITEM, int );
 
 	// 2001.12.03 hor
-	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
+//	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 	void Key2Command( WORD );		//	キー操作→コマンド変換
 

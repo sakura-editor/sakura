@@ -379,10 +379,15 @@ BEGIN
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,112,235,50,14,0,0,HIDCANCEL
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,165,235,50,14,0,0,
                     HIDC_BUTTON_HELP
-    CONTROL         "このダイアログを自動的に閉じる(&D)",
-                    IDC_CHECK_bAutoCloseDlgFuncList,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,255,118,10,0,
+    CONTROL         "自動的に閉じる(&D)",IDC_CHECK_bAutoCloseDlgFuncList,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,255,65,10,0,
                     HIDC_CHECK_bAutoCloseDlgFuncList
+    CONTROL         "空行を無視する(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,149,255,65,10,0,
+                    HIDC_CHECK_bMarkUpBlankLineEnable
+    CONTROL         "フォーカスを移す(&F)",IDC_CHECK_bFunclistSetFocusOnJump,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,75,255,69,10,0,
+                    HIDC_CHECK_bFunclistSetFocusOnJump
 END
 
 IDD_PROP_MAIL DIALOG DISCARDABLE  0, 0, 281, 201
@@ -1269,8 +1274,8 @@ BEGIN
     CONTROL         "英文ワードラップ(&W)",IDC_CHECK_WORDWRAP,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,147,50,74,10,0,
                     HIDC_CHECK_WORDWRAP
-    LTEXT           "ヘッダー(&U)",IDC_STATIC,108,166,37,8,WS_DISABLED
-    LTEXT           "フッター(&D)",IDC_STATIC,108,192,33,8,WS_DISABLED
+    LTEXT           "ヘッダー(&U)",IDC_STATIC,108,168,37,8
+    LTEXT           "フッター(&D)",IDC_STATIC,108,194,33,8
     DEFPUSHBUTTON   "&OK",IDOK,59,234,50,14,0,0,HIDOK
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,119,234,50,14,0,0,HIDCANCEL
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,179,234,50,14,0,0,
@@ -1280,13 +1285,17 @@ BEGIN
     RTEXT           "",IDC_STATIC_ENABLECOLMNS,195,79,20,8
     RTEXT           "",IDC_STATIC_ENABLELINES,195,95,20,8
     GROUPBOX        "",IDC_STATIC,131,69,92,39
-    EDITTEXT        IDC_EDIT_HEAD1,108,178,115,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_FOOT1,108,203,115,14,ES_AUTOHSCROLL
     CONTROL         "縦(&I)",IDC_RADIO_PORTLAIT,"Button",BS_AUTORADIOBUTTON | 
                     WS_DISABLED | WS_GROUP,54,145,29,10,0,
                     HIDC_RADIO_PORTLAIT
     CONTROL         "横(&A)",IDC_RADIO_LANDSCAPE,"Button",BS_AUTORADIOBUTTON | 
                     WS_DISABLED,91,145,32,10,0,HIDC_RADIO_LANDSCAPE
+    EDITTEXT        IDC_EDIT_HEAD1,108,177,37,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_HEAD2,148,177,37,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_HEAD3,188,177,37,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FOOT1,108,203,37,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FOOT2,148,203,37,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FOOT3,188,203,37,14,ES_AUTOHSCROLL
 END
 
 IDD_PROP_KEYBIND DIALOGEX 0, 0, 270, 213
@@ -1698,7 +1707,7 @@ IDD_PROPTYPESP2 DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "単語ファイル(&W)",IDC_STATIC,8,17,47,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_HOKANFILE,57,15,190,12,ES_AUTOHSCROLL | 
@@ -2212,7 +2221,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,106,0
+ PRODUCTVERSION 1,2,106,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2236,7 +2245,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.106.0\0"
+            VALUE "ProductVersion", "1.2.106.1\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2481,6 +2490,7 @@ BEGIN
     F_COPYLINESWITHLINENUMBER "選択範囲内全行行番号付きコピー"
     F_COPYPATH              "このファイルのパス名をコピー"
     F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
+    F_COPYFNAME             "このファイル名をコピー"
 END
 
 STRINGTABLE DISCARDABLE 

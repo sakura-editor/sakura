@@ -18,7 +18,8 @@ class COpe;
 #ifndef _COPE_H_
 #define _COPE_H_
 
-#include "CMemory.h"
+//#include "CMemory.h"// 2002/2/10 aroka
+class CMemory;// 2002/2/10 aroka
 
 /*!
 	@brief 編集操作要素
@@ -49,7 +50,6 @@ class COpe {
 		int		m_nCaretPosY_PHY_To;		/* 操作前のキャレット位置Ｙ To 改行単位行の行番号（０開始）*/
 		int		m_nCaretPosX_PHY_After;		/* カーソル位置 改行単位行先頭からのバイト数（０開始） */
 		int		m_nCaretPosY_PHY_After;		/* カーソル位置 改行単位行の行番号（０開始） */
-
 
 
 		int		m_nDataLen;					/* 操作に関連するデータのサイズ */

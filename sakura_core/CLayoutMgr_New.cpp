@@ -19,7 +19,10 @@
 #include "debug.h"
 #include <commctrl.h>
 #include "CRunningTimer.h"
-
+#include "CLayout.h"/// 2002/2/10 aroka
+#include "CDocLine.h"/// 2002/2/10 aroka
+#include "CDocLineMgr.h"// 2002/2/10 aroka
+#include "CMemory.h"/// 2002/2/10 aroka
 
 //	/*
 //	|| 	新しい折り返し文字数に合わせて全データのレイアウト情報を再生成します
@@ -88,7 +91,7 @@ void CLayoutMgr::DoLayout(
 	nLineNum = 0;
 
 //	pLine = m_pcDocLineMgr->GetFirstLinrStr( &nLineLen );
-	pCDocLine = m_pcDocLineMgr->m_pDocLineTop;
+	pCDocLine = m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
 
 	if( nCOMMENTMODE_Prev == 1 ){	/* 行コメントである */
 		nCOMMENTMODE_Prev = 0;

@@ -192,6 +192,7 @@
 #define F_HANKATATOZENKAKUKATA	30813	/* 半角カタカナ→全角カタカナ */
 #define F_HANKATATOZENKAKUHIRA	30814	/* 半角カタカナ→全角ひらがな */
 #define F_TOZENEI				30815	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+#define F_TOHANEI				30816	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
 #define F_TABTOSPACE			30830	/* TAB→空白 */
 #define F_SPACETOTAB			30831	/* 空白→TAB *///#### Stonee, 2001/05/27
 #define F_CODECNV_AUTO2SJIS		30850	/* 自動判別→SJISコード変換 */
@@ -214,6 +215,7 @@
 #define F_SEARCH_PREV		30903	//前を検索
 #define F_REPLACE_DIALOG	30904	//置換(置換ダイアログ)
 #define F_REPLACE			30906	//置換(実行)
+#define F_REPLACE_ALL		30907	//すべて置換(実行)
 #define F_SEARCH_CLEARMARK	30905	//検索マークのクリア
 #define F_GREP_DIALOG		30910	//Grep
 #define F_GREP				30911	//Grep

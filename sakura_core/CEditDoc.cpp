@@ -36,6 +36,7 @@
 #include "CSMacroMgr.h"///
 #include "CMarkMgr.h"///
 #include "CDocLine.h" /// 2002/2/3 aroka
+#include "CPrintPreview.h"
 
 #define IDT_ROLLMOUSE	1
 
@@ -127,6 +128,10 @@ CEditDoc::CEditDoc() :
 	//	マクロ
 	m_pcSMacroMgr = new CSMacroMgr;
 	//strcpy(m_pszCaption, "sakura");	//@@@	YAZAKI
+	
+	//	m_FileTimeの初期化
+	m_FileTime.dwLowDateTime = 0;
+	m_FileTime.dwHighDateTime = 0;
 	return;
 }
 
@@ -3848,7 +3853,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			*q = *p;
 			++p;
 			break;
-		case 'F':
+		case 'F':	//	開いているファイルの名前（フルパス）
 			if (m_szFilePath[0] == '\0'){
 				memcpy(q, "(無題)", 6);
 				q += 6 - 1;
@@ -3861,7 +3866,8 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 			break;
-		case 'f':	// Oct. 28, 2001 genta
+		case 'f':	//	開いているファイルの名前（ファイル名のみ）
+			// Oct. 28, 2001 genta
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
 			if (m_szFilePath[0] == '\0'){
@@ -3883,7 +3889,8 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 			break;
-		case '/':	// Oct. 28, 2001 genta
+		case '/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
+			// Oct. 28, 2001 genta
 			if (m_szFilePath[0] == '\0'){
 				memcpy(q, "(無題)", 6);
 				q += 6 - 1;
@@ -3902,7 +3909,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		//	From Here Jan. 15, 2002 hor
-		case 'C':	// CurText
+		case 'C':	//	現在選択中のテキスト
 			{
 				CMemory cmemCurText;
 				m_cEditViewArr[m_nActivePaneIndex].GetCurrentTextForSearch( cmemCurText );
@@ -3912,6 +3919,108 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 		//	To Here Jan. 15, 2002 hor
+			break;
+		case 'd':	//	共通設定の日付書式
+			{
+				char szText[1024];
+				SYSTEMTIME systime;
+				::GetLocalTime( &systime );
+				m_cShareData.MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
+				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+		case 't':	//	共通設定の時刻書式
+			{
+				char szText[1024];
+				SYSTEMTIME systime;
+				::GetLocalTime( &systime );
+				m_cShareData.MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
+				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+		case 'p':	//	現在のページ
+			{
+				CEditWnd* pcEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+				if (pcEditWnd->m_pPrintPreview){
+					char szText[1024];
+					itoa(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
+					for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+						*q = *r;
+					--q;
+					++p;
+				}
+				else {
+					for ( r = "(印刷プレビューでのみ使用できます)"; *r != '\0' && q < q_max; ++r, ++q )
+						*q = *r;
+					--q;
+					++p;
+				}
+			}
+			break;
+		case 'P':	//	総ページ
+			{
+				CEditWnd* pcEditWnd = ( CEditWnd* )::GetWindowLong( m_hwndParent, GWL_USERDATA );
+				if (pcEditWnd->m_pPrintPreview){
+					char szText[1024];
+					itoa(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
+					for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+						*q = *r;
+					--q;
+					++p;
+				}
+				else {
+					for ( r = "(印刷プレビューでのみ使用できます)"; *r != '\0' && q < q_max; ++r, ++q )
+						*q = *r;
+					--q;
+					++p;
+				}
+			}
+			break;
+		case 'D':	//	タイムスタンプ
+			if (m_FileTime.dwLowDateTime){
+				FILETIME	FileTime;
+				SYSTEMTIME	systimeL;
+				::FileTimeToLocalFileTime( &m_FileTime, &FileTime );
+				::FileTimeToSystemTime( &FileTime, &systimeL );
+				char szText[1024];
+				m_cShareData.MyGetDateFormat( systimeL, szText, sizeof( szText ) - 1 );
+				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			else {
+				for ( r = "(保存されていません)"; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			break;
+		case 'T':	//	タイムスタンプ
+			if (m_FileTime.dwLowDateTime){
+				FILETIME	FileTime;
+				SYSTEMTIME	systimeL;
+				::FileTimeToLocalFileTime( &m_FileTime, &FileTime );
+				::FileTimeToSystemTime( &FileTime, &systimeL );
+				char szText[1024];
+				m_cShareData.MyGetTimeFormat( systimeL, szText, sizeof( szText ) - 1 );
+				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
+			else {
+				for ( r = "(保存されていません)"; *r != '\0' && q < q_max; ++r, ++q )
+					*q = *r;
+				--q;
+				++p;
+			}
 			break;
 		default:
 			*q = *p;

@@ -19,8 +19,11 @@ class CDicMgr;
 #define _CDICMGR_H_
 
 #include <windows.h>
-#include "CMemory.h"
-#include "debug.h"
+//#include "CMemory.h" // 2002/2/10 aroka ヘッダ整理
+//#include "debug.h" // 2002/2/10 aroka
+#include "global.h"
+
+class CMemory;
 
 /*-----------------------------------------------------------------------
 クラスの宣言

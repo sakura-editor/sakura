@@ -23,6 +23,7 @@
 #include "CBregexp.h"
 #include "CEditView.h"
 #include "etc_uty.h"	//Stonee, 2001/03/12
+#include "debug.h"// 2002/2/10 aroka ヘッダ整理
 
 //検索 CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -247,7 +248,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				//	Jan. 31, 2002 genta
 				//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 				//::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
+				//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 				// 2001/06/23 Norio Nakatani
 				/* 単語単位で検索 */
@@ -255,7 +256,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
+			//::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), TRUE );
 			//	Jan. 31, 2002 genta
 			//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 			//::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 0 );
@@ -263,7 +264,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			// 2001/06/23 Norio Nakatani
 			/* 単語単位で検索 */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
-
 		}
 		break;
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
@@ -339,7 +339,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 2 );
 			}else{
-				pcEditView->HandleCommand( F_BOOKMARK_PATTERN, NULL, 0, 0, 0, 0 );
+				pcEditView->HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
@@ -356,41 +356,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	}
 	return FALSE;
 }
-
-
-#if 0
-//@@@ 2002.2.2 YAZAKI CShareDataに移動
-void CDlgFind::AddToSearchKeyArr( const char* pszKey )
-{
-	CMemory*	pcmWork;
-	int			i;
-	int			j;
-	pcmWork = NULL;
-	pcmWork = new CMemory( pszKey, lstrlen( pszKey ) );
-	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-		if( 0 == strcmp( pszKey, m_pShareData->m_szSEARCHKEYArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nSEARCHKEYArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-		}
-		++m_pShareData->m_nSEARCHKEYArrNum;
-		if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
-			m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
-		}
-	}
-	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork->GetPtr( NULL ) );
-	delete pcmWork;
-	pcmWork = NULL;
-	return;
-}
-#endif
 
 //@@@ 2002.01.18 add start
 LPVOID CDlgFind::GetHelpIdTable(void)

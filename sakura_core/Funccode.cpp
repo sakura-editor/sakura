@@ -211,9 +211,9 @@ const int pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Cli
 	F_COPYLINES					,	//選択範囲内全行コピー
 	F_COPYLINESASPASSAGE		,	//選択範囲内全行引用符付きコピー
 	F_COPYLINESWITHLINENUMBER	,	//選択範囲内全行行番号付きコピー
+	F_COPYFNAME					,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
-	F_COPYFNAME					,	//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
 const int nFincList_Clip_Num = sizeof( pnFuncList_Clip ) / sizeof( pnFuncList_Clip[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
@@ -233,6 +233,7 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_TOUPPER				,	//英小文字→英大文字
 	F_TOHANKAKU				,	/* 全角→半角 */
 	F_TOZENEI				,	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	F_TOHANEI				,	/* 全角英数→半角英数 */
 	F_TOZENKAKUKATA			,	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	F_TOZENKAKUHIRA			,	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	F_HANKATATOZENKAKUKATA	,	/* 半角カタカナ→全角カタカナ */
