@@ -289,12 +289,16 @@ HWND CEditWnd::Create(
 	 && m_pShareData->m_TabWndWndpl.length
 	 && m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
 	{
+		//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
+		RECT	rcArea;
+		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcArea, 0 );
 		nWinCX = m_pShareData->m_TabWndWndpl.rcNormalPosition.right
 			   - m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
 		nWinCY = m_pShareData->m_TabWndWndpl.rcNormalPosition.bottom
 			   - m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
-		nWinOX = m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
-		nWinOY = m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
+		nWinOX = m_pShareData->m_TabWndWndpl.rcNormalPosition.left + rcArea.left;
+		nWinOY = m_pShareData->m_TabWndWndpl.rcNormalPosition.top  + rcArea.top;
+
 	}
 	//To Here @@@ 2003.05.31 MIK
 
