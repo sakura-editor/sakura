@@ -54,9 +54,10 @@ LRESULT CALLBACK CEditAppWndProc( HWND, UINT, WPARAM, LPARAM );
 CEditApp*	g_m_pCEditApp;
 
 //Stonee, 2001/03/21
+//Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CEditApp::DoGrep()
 {
-	CDlgGrep	cDlgGrep;
+//	CDlgGrep	cDlgGrep;	// Jul. 2, 2001 genta
 	char*			pCmdLine;
 	char*			pOpt;
   	int				nDataLen;
@@ -69,81 +70,87 @@ void CEditApp::DoGrep()
 	/*Grepダイアログの初期化１ */
 //	cDlgGrep.Create( m_hInstance, /*m_hWnd*/NULL );
 
-	strcpy( cDlgGrep.m_szText, m_pShareData->m_szSEARCHKEYArr[0] );
+	//Stonee, 2001/06/30
+	//前回のダイアログがあれば前面に (suggested by genta)
+	if ( ::IsWindow(m_cDlgGrep.m_hWnd)) {
+		::OpenIcon(m_cDlgGrep.m_hWnd);
+		::BringWindowToTop(m_cDlgGrep.m_hWnd);
+		return;
+	}
+
+	strcpy( m_cDlgGrep.m_szText, m_pShareData->m_szSEARCHKEYArr[0] );
 
 	/* Grepダイアログの表示 */
-					nRet = cDlgGrep.DoModal( m_hInstance, /*m_hWnd*/NULL, "" );
+	nRet = m_cDlgGrep.DoModal( m_hInstance, /*m_hWnd*/NULL, "" );
 //					MYTRACE( "nRet=%d\n", nRet );
-					if( FALSE == nRet || m_hWnd == NULL ){
-						return;
-					}
+	if( FALSE == nRet || m_hWnd == NULL ){
+		return;
+	}
 
 //					MYTRACE( "cDlgGrep.m_szText  =[%s]\n", cDlgGrep.m_szText   );
 //					MYTRACE( "cDlgGrep.m_szFile  =[%s]\n", cDlgGrep.m_szFile   );
 //					MYTRACE( "cDlgGrep.m_szFolder=[%s]\n", cDlgGrep.m_szFolder );
 
-					/*======= Grepの実行 =============*/
-					/* Grep結果ウィンドウの表示 */
+	/*======= Grepの実行 =============*/
+	/* Grep結果ウィンドウの表示 */
 
-					pCmdLine = new char[1024];
-					pOpt = new char[64];
+	pCmdLine = new char[1024];
+	pOpt = new char[64];
 
-					cmWork1.SetDataSz( cDlgGrep.m_szText );
-					cmWork2.SetDataSz( cDlgGrep.m_szFile );
-					cmWork3.SetDataSz( cDlgGrep.m_szFolder );
-					cmWork1.Replace( "\"", "\"\"" );
-					cmWork2.Replace( "\"", "\"\"" );
-					cmWork3.Replace( "\"", "\"\"" );
+	cmWork1.SetDataSz( m_cDlgGrep.m_szText );
+	cmWork2.SetDataSz( m_cDlgGrep.m_szFile );
+	cmWork3.SetDataSz( m_cDlgGrep.m_szFolder );
+	cmWork1.Replace( "\"", "\"\"" );
+	cmWork2.Replace( "\"", "\"\"" );
+	cmWork3.Replace( "\"", "\"\"" );
 
-					/*
-					|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
-					*/
-					wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"" ,
-						cmWork1.GetPtr( &nDataLen ),
-						cmWork2.GetPtr( &nDataLen ),
-						cmWork3.GetPtr( &nDataLen )
-					);
+	/*
+	|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GOPT=S
+	*/
+	wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\"" ,
+		cmWork1.GetPtr( &nDataLen ),
+		cmWork2.GetPtr( &nDataLen ),
+		cmWork3.GetPtr( &nDataLen )
+	);
 
-					pOpt[0] = '\0';
-					if( cDlgGrep.m_bSubFolder ){			/* サブフォルダからも検索する */
-						strcat( pOpt, "S" );
-					}
-				//	if( m_bFromThisText ){					/* この編集中のテキストから検索する */
-				//
-				//	}
-					if( cDlgGrep.m_bLoHiCase ){				/* 英大文字と英小文字を区別する */
-						strcat( pOpt, "L" );
-					}
-					if( cDlgGrep.m_bRegularExp ){			/* 正規表現 */
-						strcat( pOpt, "R" );
-					}
-					if( cDlgGrep.m_bKanjiCode_AutoDetect ){	/* 文字コード自動判別 */
-						strcat( pOpt, "K" );
-					}
-					if( cDlgGrep.m_bGrepOutputLine ){		/* 行を出力するか該当部分だけ出力するか */
-						strcat( pOpt, "P" );
-					}
-					if( cDlgGrep.m_bWordOnly ){				/* 単語単位で探す */
-						strcat( pOpt, "W" );
-					}
-					if( 1 == cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
-						strcat( pOpt, "1" );
-					}
-					if( 2 == cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
-						strcat( pOpt, "2" );
-					}
+	pOpt[0] = '\0';
+	if( m_cDlgGrep.m_bSubFolder ){			/* サブフォルダからも検索する */
+		strcat( pOpt, "S" );
+	}
+
+	if( m_cDlgGrep.m_bLoHiCase ){				/* 英大文字と英小文字を区別する */
+		strcat( pOpt, "L" );
+	}
+	if( m_cDlgGrep.m_bRegularExp ){			/* 正規表現 */
+		strcat( pOpt, "R" );
+	}
+	if( m_cDlgGrep.m_bKanjiCode_AutoDetect ){	/* 文字コード自動判別 */
+		strcat( pOpt, "K" );
+	}
+	if( m_cDlgGrep.m_bGrepOutputLine ){		/* 行を出力するか該当部分だけ出力するか */
+		strcat( pOpt, "P" );
+	}
+	if( m_cDlgGrep.m_bWordOnly ){				/* 単語単位で探す */
+		strcat( pOpt, "W" );
+	}
+	if( 1 == m_cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
+		strcat( pOpt, "1" );
+	}
+	if( 2 == m_cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
+		strcat( pOpt, "2" );
+	}
 
 
-					if( 0 < lstrlen( pOpt ) ){
-						strcat( pCmdLine, " -GOPT=" );
-						strcat( pCmdLine, pOpt );
-					}
+	if( 0 < lstrlen( pOpt ) ){
+		strcat( pCmdLine, " -GOPT=" );
+		strcat( pCmdLine, pOpt );
+	}
 
-					/* 新規編集ウィンドウの追加 ver 0 */
-					CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
+	/* 新規編集ウィンドウの追加 ver 0 */
+	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
 
-					delete [] pCmdLine;
-					delete [] pOpt;
+	delete [] pCmdLine;
+	delete [] pOpt;
 }
 
 //	BOOL CALLBACK ExitingDlgProc(

@@ -111,6 +111,7 @@ private:
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nSettingType;
+	CDlgGrep		m_cDlgGrep; // Jul. 2, 2001 genta
 
 	CImageListMgr	m_hIcons;
 
