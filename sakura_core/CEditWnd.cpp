@@ -386,8 +386,13 @@ HWND CEditWnd::Create(
 	RECT	rcOrg;
 	RECT	rcDesktop;
 //	int		nWork;
+
 	::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcDesktop, 0 );
 	::GetWindowRect( m_hWnd, &rcOrg );
+#if 0
+	Jan. 25, 2004 genta 暫定対応
+	マルチスクリーンに正式対応するまでウィンドウ位置調整機能をOFFにする
+
 	/* ウィンドウ位置調整 */
 	if( rcOrg.bottom >= rcDesktop.bottom ){
 		if( 0 > rcOrg.top - (rcOrg.bottom - rcDesktop.bottom ) ){
@@ -420,6 +425,7 @@ HWND CEditWnd::Create(
 		//rcOrg.right = rcDesktop.right - 1;	//@@@ 2002.01.08
 		rcOrg.right = rcDesktop.right;	//@@@ 2002.01.08
 	}
+#endif
 
 	//From Here @@@ 2003.06.13 MIK
 	if( m_pShareData->m_Common.m_bDispTabWnd 
