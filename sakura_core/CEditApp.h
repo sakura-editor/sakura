@@ -4,6 +4,7 @@
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
+	@date 2001/06/03 N.Nakatani grep単語単位で検索を実装するときのためにコマンドラインオプションの処理追加
 	$Revision$
 */
 /*
@@ -86,6 +87,7 @@ public:
 		BOOL*		pbGrepRegularExp,
 		BOOL*		pbGrepKanjiCode_AutoDetect,
 		BOOL*		pbGrepOutputLine,
+		BOOL*		pbGrepWordOnly,
 		int	*		pnGrepOutputStyle,
 		BOOL*		pbDebugMode,
 		BOOL*		pbNoWindow,
