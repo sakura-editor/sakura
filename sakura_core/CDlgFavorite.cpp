@@ -75,6 +75,7 @@ CDlgFavorite::CDlgFavorite()
 	int	i;
 
 	m_nCurrentTab = 0;
+	strcpy( m_szMsg, "" );
 
 	{
 		memset( p_favorite_info, 0, sizeof( p_favorite_info ) );
@@ -192,6 +193,8 @@ void CDlgFavorite::SetData( void )
 	{
 		SetDataOne( nTab, 0 );
 	}
+
+	::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, "" );
 
 	return;
 }
@@ -379,7 +382,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_FAVORITE ) );
 		return TRUE;
 
-	case IDOK:			/* 左右に表示 */
+	case IDOK:
 		/* ダイアログデータの取得 */
 		::EndDialog( m_hWnd, (BOOL)GetData() );
 		return TRUE;
@@ -390,6 +393,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 
 	case IDC_BUTTON_CLEAR:	//履歴のクリア
 		{
+			::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, "" );
 			HWND	hwndTab;
 			int		nIndex;
 			hwndTab = ::GetDlgItem( m_hWnd, IDC_TAB_FAVORITE );
@@ -474,6 +478,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 		switch( lpnmhdr->code )
 		{
 		case TCN_SELCHANGE:
+			::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, "" );
 			nIndex = TabCtrl_GetCurSel( hwndTab );
 			if( -1 != nIndex )
 			{
@@ -515,8 +520,9 @@ BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
 		//		MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 		//		"リストが更新されました。\n設定中の情報をクリアし再表示しました。" );
 		//}
-		//return TRUE;
-		break;
+		::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, m_szMsg );
+		return TRUE;
+		//break;
 
 	case WA_INACTIVE:
 	default:
@@ -540,6 +546,10 @@ bool CDlgFavorite::RefreshList( void )
 	int		nTab;
 	bool	bret;
 	bool	ret_val = false;
+	char	msg[1024];
+
+	strcpy( msg, "" );
+	strcpy( m_szMsg, "" );
 
 	//全リストの現在選択中のアイテムを取得する。
 	for( nTab = 0; NULL != p_favorite_info[nTab].m_pRecent; nTab++ )
@@ -551,7 +561,17 @@ bool CDlgFavorite::RefreshList( void )
 		//	::MYMESSAGEBOX( m_hWnd, 
 		//		MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 		//		"最近使った%sの履歴が更新されました。\n\n設定中の情報をクリアし再表示しました。", p_favorite_info[nTab].m_pszCaption );
+		
+			if( strlen( msg ) > 0 ) strcat( msg, "、" );
+			strcat( msg, p_favorite_info[nTab].m_pszCaption );
 		}
+	}
+
+	if( ret_val )
+	{
+		wsprintf( m_szMsg, 
+			"履歴(%s)が更新されたため編集中情報を破棄し再表示しました。",
+			msg );
 	}
 
 	return ret_val;
@@ -605,12 +625,12 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 changed:
 	SetDataOne( nIndex, nCurrentIndex );
 	
-	if( nItemCount > 0 )
-	{
-		::MYMESSAGEBOX( m_hWnd, 
-			MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-			"最近使った%sの履歴が更新されました。\n\n設定中の情報をクリアし再表示しました。", p_favorite_info[nIndex].m_pszCaption );
-	}
+//	if( nItemCount > 0 )
+//	{
+//		::MYMESSAGEBOX( m_hWnd, 
+//			MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+//			"最近使った%sの履歴が更新されました。\n\n設定中の情報をクリアし再表示しました。", p_favorite_info[nIndex].m_pszCaption );
+//	}
 
 	return true;
 }
