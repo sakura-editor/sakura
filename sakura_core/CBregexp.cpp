@@ -7,6 +7,7 @@
 	@author genta
 	@date Jun. 10, 2001
 	@date 2002/2/1 hor		ReleaseCompileBufferを適宜追加
+	@date Jul. 25, 2002 genta 行頭条件を考慮した検索を行うように．(置換はまだ)
 */
 /*
 	Copyright (C) 2001-2002, genta
@@ -41,7 +42,8 @@
 const char BREGEXP_OPT_KI[]	= "ki";
 const char BREGEXP_OPT_K[]	= "k";
 
-CBregexp::CBregexp() : m_sRep( NULL )
+CBregexp::CBregexp() : m_sRep( NULL ),
+	m_bTop( false )	//	Jul, 25, 2002 genta
 {
 }
 
@@ -159,6 +161,13 @@ bool CBregexp::Compile( const char* szPattern, int bOption )
 		ReleaseCompileBuffer();
 		return false;
 	}
+	
+	//	From Here Jul. 25, 2002 genta
+	//	行頭条件のチェックを追加
+	if( szPattern[0] == '^' ){
+		m_bTop = true;
+	}
+	//	To Here Jul. 25, 2002 genta
 
 	return true;
 }
@@ -190,6 +199,14 @@ bool CBregexp::GetMatchInfo( const char* target, int len, int nStart, BREGEXP**r
 		*rep = NULL;
 		return false;
 	}
+
+	//	From Here Jul. 25, 2002 genta
+	//	行頭チェックの追加
+	if( m_bTop && nStart != 0 ){
+		return false;
+	}
+	//	To Here Jul. 25, 2002 genta
+
 
 	*rep = m_sRep;
 	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
@@ -344,6 +361,12 @@ bool CBregexp::CompileReplace( const char* szPattern0, const char* szPattern1, i
 		return false;
 	}
 
+	//	From Here Jul. 25, 2002 genta
+	//	行頭条件のチェックを追加
+	if( szPattern0[0] == '^' ){
+		m_bTop = true;
+	}
+	//	To Here Jul. 25, 2002 genta
 	return true;
 }
 

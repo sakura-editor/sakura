@@ -6676,27 +6676,31 @@ cancel_return:;
 
 
 
-/*!	Grep結果を、pszWorkに格納する。
+/*!	@brief Grep結果を構築する
+
+	@param pszWork [out] Grep出力文字列．充分なメモリ領域を予め確保しておくこと．
+		最長で 本文1024 byte＋ファイル名 _MAX_PATH byte＋行・桁位置表示の長さが必要．
+
 	pszWorkは充分なメモリ領域を持っているコト
 */
 void CEditView::SetGrepResult(
 	/* データ格納先 */
 	char*		pszWork, 
 	/* マッチしたファイルの情報 */
-	const char*		pszFullPath,	//	フルパス
-	char*		pszCodeName,		//	文字コード情報"[SJIS]"とか
+	const char*		pszFullPath,	/*!< [in] フルパス */
+	char*		pszCodeName,		/*!< [in] 文字コード情報．"[SJIS]"とか */
 	/* マッチした行の情報 */
-	int			nLine,				//	マッチした行番号
-	int			nColm,				//	マッチした桁番号
-	char*		pCompareData,		//	行の文字列
-	int			nLineLen,			//	行の文字列の長さ
-	int			nEolCodeLen,		//	EOLの長さ
+	int			nLine,				/*!< [in] マッチした行番号(1～) */
+	int			nColm,				/*!< [in] マッチした桁番号(1～) */
+	char*		pCompareData,		/*!< [in] 行の文字列 */
+	int			nLineLen,			/*!< [in] 行の文字列の長さ */
+	int			nEolCodeLen,		/*!< [in] EOLの長さ */
 	/* マッチした文字列の情報 */
-	const char*		pMatchData,		//	マッチした文字列
-	int			nMatchLen,			//	マッチした文字列の長さ
+	const char*		pMatchData,		/*!< [in] マッチした文字列 */
+	int			nMatchLen,			/*!< [in] マッチした文字列の長さ */
 	/* オプション */
-	BOOL		bGrepOutputLine,
-	int			nGrepOutputStyle
+	BOOL		bGrepOutputLine,	/*!< [in] 0: 該当部分のみ, !0: 該当行 */
+	int			nGrepOutputStyle	/*!< [in] 1: Normal, 2: WZ風(ファイル単位) */
 )
 {
 	if( bGrepOutputLine ){
@@ -7050,7 +7054,9 @@ int CEditView::DoGrepFile(
 							SetGrepResult(
 								szWork,
 								pszFullPath, pszCodeName,
-								nLine, nNextWordFrom2, pCompareData, nLineLen, nEolCodeLen,
+								//	Jun. 25, 2002 genta
+								//	桁位置は1始まりなので1を足す必要がある
+								nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
 								pszKey, nKeyKen,
 								bGrepOutputLine, nGrepOutputStyle
 							);
