@@ -1638,7 +1638,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	m_bUseTrayMenu = true;
 
 	m_CMenuDrawer.ResetContents();
-	CShareData::getInstance()->TransformFileName_MakeCash();
+	CShareData::getInstance()->TransformFileName_MakeCache();
 
 	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
 	hMenu = ::GetSubMenu( hMenuTop, 0 );

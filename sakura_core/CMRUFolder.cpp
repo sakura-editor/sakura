@@ -48,7 +48,7 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	bool	bFavorite;
 
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-	CShareData::getInstance()->TransformFileName_MakeCash();
+	CShareData::getInstance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
