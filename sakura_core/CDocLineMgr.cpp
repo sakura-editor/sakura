@@ -3,7 +3,9 @@
 	テキストの管理
 
 	@author Norio Nakatani
-	@date 1998/3/5  新規作成
+	@date 1998/03/05  新規作成
+	@date 2001/06/23 N.Nakatani 単語単位で検索する機能を実装
+	@date 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
 	$Revision$
 */
 /*
@@ -1446,6 +1448,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 
 
 /* 現在位置の単語の範囲を調べる */
+// 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
 int	CDocLineMgr::WhereCurrentWord(
 	int			nLineNum,
 	int			nIdx,
@@ -1458,11 +1461,11 @@ int	CDocLineMgr::WhereCurrentWord(
 	CDocLine*	pDocLine;
 	char*		pLine;
 	int			nLineLen;
-	int			nCharKind;
-	int			nCharKindNext;
-	int			nIdxNext;
-	int			nIdxNextPrev;
-	int			nCharChars;
+//	int			nCharKind;
+//	int			nCharKindNext;
+//	int			nIdxNext;
+//	int			nIdxNextPrev;
+//	int			nCharChars;
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
 	pDocLine = GetLineInfo( nLineNum );
@@ -1470,6 +1473,55 @@ int	CDocLineMgr::WhereCurrentWord(
 		return FALSE;
 	}
 	pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+	/* 現在位置の単語の範囲を調べる */
+	return CDocLineMgr::WhereCurrentWord_2( pLine, nLineLen, nIdx, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
+
+}
+
+
+
+//@@@ 2001.06.23 N.Nakatani
+/*!
+	@brief 現在位置の単語の範囲を調べる staticメンバ
+	
+	@author N.Nakatani
+	
+	@param pLine [in] 調べるメモリ全体の先頭アドレス
+	@param nLineLen [in] 調べるメモリ全体の有効長
+	@param nIdx [out] 調査開始地点:pLineからの相対的な位置　
+	@param pnIdxFrom [out] 単語が見つかった場合は、単語の先頭インデックスを返す
+	@param pnIdxTo [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す
+	@param pcmcmWord [out] 単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する
+	@param pcmcmWordLeft [out] 単語が見つかった場合は、現在単語の左に位置する単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する
+
+	@retval true 成功　現在位置のデータは「単語」と認識する
+	@retval false 失敗　現在位置のデータは「単語」とは言いきれない気がする
+*/
+int	CDocLineMgr::WhereCurrentWord_2(
+	const char* pLine,
+	int			nLineLen,
+	int			nIdx,
+	int*		pnIdxFrom,
+	int*		pnIdxTo,
+	CMemory*	pcmcmWord,
+	CMemory*	pcmcmWordLeft
+)
+{
+	int			nCharKind;
+	int			nCharKindNext;
+	int			nIdxNext;
+	int			nIdxNextPrev;
+	int			nCharChars;
+	*pnIdxFrom = nIdx;
+	*pnIdxTo = nIdx;
+//	pDocLine = GetLineInfo( nLineNum );
+//	if( NULL == pDocLine ){
+//		return FALSE;
+//	}
+//	pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+	if( NULL == pLine ){
+		return FALSE;
+	}
 	if( nIdx >= nLineLen ){
 		return FALSE;
 	}
@@ -1478,14 +1530,14 @@ int	CDocLineMgr::WhereCurrentWord(
 		return FALSE;
 	}
 	/* 現在位置の文字の種類を調べる */
-	nCharKind = WhatKindOfChar( pLine, nLineLen, nIdx );
+	nCharKind = WhatKindOfChar( (char*)pLine, nLineLen, nIdx );
 	/* 文字種類が変わるまで前方へサーチ */
 	nIdxNext = nIdx;
 	nCharChars = &pLine[nIdxNext] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nIdxNext] );
 	while( nCharChars > 0 ){
 		nIdxNextPrev = nIdxNext;
 		nIdxNext -= nCharChars;
-		nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
+		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
 		if( nCharKind == CK_MBC_NOVASU ){
 			if( nCharKindNext == CK_MBC_HIRA ||
 				nCharKindNext == CK_MBC_KATA ){
@@ -1515,7 +1567,7 @@ int	CDocLineMgr::WhereCurrentWord(
 	nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
 	while( nCharChars > 0 ){
 		nIdxNext += nCharChars;
-		nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
+		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
 		if( nCharKind == CK_MBC_NOVASU ){
 			if( nCharKindNext == CK_MBC_HIRA ||
 				nCharKindNext == CK_MBC_KATA ){
@@ -1540,7 +1592,6 @@ int	CDocLineMgr::WhereCurrentWord(
 	}
 	return TRUE;
 }
-
 
 
 
@@ -1691,6 +1742,7 @@ int CDocLineMgr::SearchWord(
 	int			nHitLenOld;
 	int			nRetVal;
 	int*		pnKey_CharCharsArr;
+	int			nPatternLen = lstrlen( pszPattern );	//2001/06/23 N.Nakatani
 	pnKey_CharCharsArr = NULL;
 //	int*		pnKey_CharUsedArr;
 //	pnKey_CharUsedArr = NULL;
@@ -1798,6 +1850,91 @@ int CDocLineMgr::SearchWord(
 	}else
 	/* 1==単語のみ検索 */
 	if( bWordOnly ){
+		/*
+			20001/06/23 Norio Nakatani 
+			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
+			英単語やc/c++識別子などの検索条件ならヒットします
+		*/
+
+		/* 0==前方検索 1==後方検索 */
+		if( 0 == bPrevOrNext ){
+			nLinePos = nLineNum;
+			pDocLine = GetLineInfo( nLinePos );
+			int nNextWordFrom;
+			int nNextWordFrom2;
+			int nNextWordTo2;
+//			int bState;
+			int nWork;
+			CMemory cmemTest; 
+			nNextWordFrom = nIdx;
+			while( NULL != pDocLine ){
+				if( TRUE == PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE ) ){
+					nNextWordFrom = nWork;
+//					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , &cmemTest, NULL ) ){
+					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
+//						MYTRACE( "[%d][%s]\n", nLinePos, cmemTest.GetPtr(NULL) );
+						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
+							/* 1==大文字小文字の区別 */
+							if( (FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+								(TRUE  == bLoHiCase && 0 ==   memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+							){
+								*pnLineNum = nLinePos;	/* マッチ行 */
+								*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
+								*pnIdxTo = *pnIdxFrom + nPatternLen;	/* マッチ位置to */
+								nRetVal = 1;
+								goto end_of_func;
+							}
+						}
+						continue;
+					}
+				}
+				/* 前の行を見に行く */
+				nLinePos--;
+				pDocLine = pDocLine->m_pPrev;
+				if( NULL != pDocLine ){
+					nNextWordFrom = pDocLine->m_pLine->GetLength() - pDocLine->m_cEol.GetLen();
+					if( 0 > nNextWordFrom ){
+						nNextWordFrom = 0;
+					}
+				}
+			}
+		}else{
+			nLinePos = nLineNum;
+			pDocLine = GetLineInfo( nLinePos );
+			int nNextWordFrom;
+
+			int nNextWordFrom2;
+			int nNextWordTo2;
+//			int bState;
+			nNextWordFrom = nIdx;
+			while( NULL != pDocLine ){
+				if( TRUE ==
+					WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
+				){
+					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
+						/* 1==大文字小文字の区別 */
+						if( (FALSE == bLoHiCase && 0 == _memicmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+							(TRUE  == bLoHiCase && 0 ==   memcmp( &(pDocLine->m_pLine->m_pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+						){
+							*pnLineNum = nLinePos;	/* マッチ行 */
+							*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
+							*pnIdxTo = *pnIdxFrom + nPatternLen;	/* マッチ位置to */
+							nRetVal = 1;
+							goto end_of_func;
+						}
+					}
+					/* 現在位置の左右の単語の先頭位置を調べる */
+					if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE ) ){
+						continue;
+					}
+				}
+				/* 次の行を見に行く */
+				nLinePos++;
+				pDocLine = pDocLine->m_pNext;
+				nNextWordFrom = 0;
+			}
+		}
+			
 		nRetVal = 0;
 		goto end_of_func;
 	}else{
