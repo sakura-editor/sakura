@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -202,6 +203,7 @@ struct Types {
 	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
 	int					m_nLineSpace;					/*!< 行間のすきま */
 	int					m_nTabSpace;					/*!< TABの文字数 */
+	int					m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
 	char				m_szTabViewString[17];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
 	int					m_nKeyWordSetIdx;				/* キーワードセット1 */
