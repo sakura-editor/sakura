@@ -149,7 +149,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：C++メソッドツリー */
 		SetTreeCpp( m_hWnd );
-		::SetWindowText( m_hWnd, "C++メソッドツリー" );
+		::SetWindowText( m_hWnd, "C++ メソッドツリー" );
 	}else
 	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		//	May 18, 2001 genta
@@ -169,7 +169,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		m_nViewType = 1;
 		/* ツリーコントロールの初期化：Javaメソッドツリー */
 		SetTreeJava( m_hWnd, TRUE );
-		::SetWindowText( m_hWnd, "Javaメソッドツリー" );
+		::SetWindowText( m_hWnd, "Java メソッドツリー" );
 	}else
 	if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
 		//	May 18, 2001 genta
@@ -183,19 +183,19 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	}else{
 		switch( m_nListType ){
 		case OUTLINE_C:
-			::SetWindowText( m_hWnd, "C関数一覧" );
+			::SetWindowText( m_hWnd, "C 関数一覧" );
 			break;
 		case OUTLINE_PLSQL:
-			::SetWindowText( m_hWnd, "PL/SQL関数一覧" );
+			::SetWindowText( m_hWnd, "PL/SQL 関数一覧" );
 			break;
 		case OUTLINE_ASM:
 			::SetWindowText( m_hWnd, "アセンブラ アウトライン" );
 			break;
 		case OUTLINE_PERL:	//	Sep. 8, 2000 genta
-			::SetWindowText( m_hWnd, "Perl関数一覧" );
+			::SetWindowText( m_hWnd, "Perl 関数一覧" );
 			break;
-		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for VisualBasic
-			::SetWindowText( m_hWnd, "VisualBasic　アウトライン" );
+		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for Visual Basic
+			::SetWindowText( m_hWnd, "Visual Basic アウトライン" );
 			break;
 //		case OUTLINE_COBOL:
 //			::SetWindowText( m_hWnd, "COBOLアウトライン" );
@@ -262,7 +262,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = "ラベル";}else
 			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = "ENDP";}else{
 			
-			// 2001/06/23 N.Nakatani for VisualBasic
+			// 2001/06/23 N.Nakatani for Visual Basic
 			//	Jun. 26, 2001 genta 半角かな→全角に
 			if( 60 == pcFuncInfo->m_nInfo ){item.pszText = "ステートメント宣言";}else
 			if( 61 == pcFuncInfo->m_nInfo ){item.pszText = "関数宣言";}else
