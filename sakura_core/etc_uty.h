@@ -109,6 +109,9 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
+//	Apr. 30, 2003 genta
+int CalcDirectoryDepth(const char* path);
+
 // Oct. 5, 2002 genta CMemory.cppより移動
 /*! Shift_JIS の漢字の1バイト目？ の判定 */
 inline bool _IS_SJIS_1(unsigned int ch)
