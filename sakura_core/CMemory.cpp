@@ -1934,22 +1934,11 @@ void CMemory::UnicodeToSJIS( void )
 	int				nBufUnicodeLen;
 	unsigned char*	pBuf;
 	pBuf = (unsigned char*)m_pData;
-	if( 2 <= m_nDataLen &&
-		pBuf[0] == 0xff &&
-		pBuf[0 + 1] == 0xfe
-	){
-		if( 2 == m_nDataLen ){
-			SetDataSz( "" );
-		}else{
-			nBufUnicodeLen = CMemory::MemUnicodeToSJIS( &pBufUnicode, (const char *)(pBuf + 2), m_nDataLen - 2 );
-			SetData( pBufUnicode, nBufUnicodeLen );
-			delete [] pBufUnicode;
-		}
-	}else{
+//	BOM‚Ìíœ‚Í‚±‚±‚Å‚Í‚µ‚È‚¢‚æ‚¤‚É•ÏX
+//	ŒÄ‚Ño‚µ‘¤‚Å‘Îˆ‚µ‚Ä‚­‚¾‚³‚¢ 2002/08/30 Moca
 		nBufUnicodeLen = CMemory::MemUnicodeToSJIS( &pBufUnicode, m_pData, m_nDataLen );
 		SetData( pBufUnicode, nBufUnicodeLen );
 		delete [] pBufUnicode;
-	}
 	return;
 }
 

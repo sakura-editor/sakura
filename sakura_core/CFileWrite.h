@@ -9,10 +9,18 @@
 #ifndef FILE_WRITE_H
 #define FILE_WRITE_H
 
+
 //! ファイルのオープンに失敗したときに送出する例外
+
+#ifndef DEF_CERROR_FILEOPEN
+
+#define DEF_CERROR_FILEOPEN
 class CError_FileOpen
 {
 };
+
+#endif
+
 //! ファイルの書き込みに失敗したときに送出する例外
 class CError_FileWrite
 {

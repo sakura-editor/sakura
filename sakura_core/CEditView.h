@@ -150,14 +150,15 @@ public:
 	/* Grep結果をpszWorkに格納 */
 	void SetGrepResult(
 		/* データ格納先 */
-		char*		pszWork, 
+		char*		pWork,
+		int*		pnWorkLen,
 		/* マッチしたファイルの情報 */
 		const char*		pszFullPath,	//	フルパス
-		char*		pszCodeName,	//	文字コード情報"[SJIS]"とか
+		const char*		pszCodeName,	//	文字コード情報"[SJIS]"とか
 		/* マッチした行の情報 */
 		int			nLine,			//	マッチした行番号
 		int			nColm,			//	マッチした桁番号
-		char*		pCompareData,	//	行の文字列
+		const char*		pCompareData,	//	行の文字列
 		int			nLineLen,		//	行の文字列の長さ
 		int			nEolCodeLen,	//	EOLの長さ
 		/* マッチした文字列の情報 */
@@ -521,8 +522,9 @@ protected:
 	void Command_GOFILETOP( int );			/* ファイルの先頭に移動 */
 	void Command_GOFILEEND( int );			/* ファイルの最後に移動 */
 	void Command_CURLINECENTER( void );		/* カーソル行をウィンドウ中央へ */
-	void Command_JUMPPREV(void);			// 移動履歴: 前へ
-	void Command_JUMPNEXT(void);			// 移動履歴: 次へ
+	void Command_JUMPHIST_PREV(void);		// 移動履歴: 前へ
+	void Command_JUMPHIST_NEXT(void);		// 移動履歴: 次へ
+	void Command_JUMPHIST_SET(void);		// 現在位置を移動履歴に登録
 	void Command_WndScrollDown(void);		// テキストを１行下へスクロール	// 2001/06/20 asa-o
 	void Command_WndScrollUp(void);			// テキストを１行上へスクロール	// 2001/06/20 asa-o
 	void Command_GONEXTPARAGRAPH( int bSelect );	// 次の段落へ進む
@@ -608,6 +610,7 @@ void ReplaceData_CEditView(
 	void Command_TOZENKAKUKATA( void );			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	void Command_TOZENKAKUHIRA( void );			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	void Command_TOHANKAKU( void );				/* 全角→半角 */
+	void Command_TOHANKATA( void );				/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	void Command_TOZENEI( void );				/* 半角英数→全角英数 */ //July. 30, 2001 Misaka
 	void Command_TOHANEI( void );				/* 全角英数→半角英数 */ //@@@ 2002.2.11 YAZAKI
 	void Command_HANKATATOZENKAKUKATA( void );	/* 半角カタカナ→全角カタカナ */

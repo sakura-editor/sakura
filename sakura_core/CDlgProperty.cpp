@@ -90,7 +90,7 @@ void CDlgProperty::SetData( void )
 
 	//	Aug. 16, 2000 genta	全角化
 	cmemProp.AppendSz( "ファイル名  " );
-	cmemProp.AppendSz( pCEditDoc->m_szFilePath );
+	cmemProp.AppendSz( pCEditDoc->GetFilePath() );
 	cmemProp.AppendSz( "\r\n" );
 
 	cmemProp.AppendSz( "設定のタイプ  " );
@@ -122,7 +122,7 @@ void CDlgProperty::SetData( void )
 	wsprintf( szWork, "--ファイル情報-----------------\r\n", pCEditDoc->m_cDocLineMgr.GetLineCount() );
 	cmemProp.AppendSz( szWork );
 
-	if( INVALID_HANDLE_VALUE != ( nFind = ::FindFirstFile( pCEditDoc->m_szFilePath, (WIN32_FIND_DATA*)&wfd ) ) ){
+	if( INVALID_HANDLE_VALUE != ( nFind = ::FindFirstFile( pCEditDoc->GetFilePath(), (WIN32_FIND_DATA*)&wfd ) ) ){
 		if( pCEditDoc->m_hLockedFile ){
 			if( m_pShareData->m_Common.m_nFileShareMode == OF_SHARE_DENY_WRITE ){
 				wsprintf( szWork, "あなたはこのファイルを、他プロセスからの上書き禁止モードでロックしています。\r\n" );
@@ -237,7 +237,7 @@ void CDlgProperty::SetData( void )
 	int						nBufLen;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
-	hFile = _lopen( pCEditDoc->m_szFilePath, OF_READ );
+	hFile = _lopen( pCEditDoc->GetFilePath(), OF_READ );
 	if( HFILE_ERROR == hFile ){
 		goto end_of_CodeTest;
 	}

@@ -780,12 +780,12 @@ void CPrintPreview::OnPrint( void )
 	}
 
 	/* プリンタに渡すジョブ名を生成 */
-	if( 0 == lstrlen( m_pParentWnd->m_cEditDoc.m_szFilePath ) ){	/* 現在編集中のファイルのパス */
+	if( ! m_pParentWnd->m_cEditDoc.IsFilePathAvailable() ){	/* 現在編集中のファイルのパス */
 		strcpy( szJobName, "無題" );
 	}else{
 		char	szFileName[_MAX_FNAME];
 		char	szExt[_MAX_EXT];
-		_splitpath( m_pParentWnd->m_cEditDoc.m_szFilePath, NULL, NULL, szFileName, szExt );
+		_splitpath( m_pParentWnd->m_cEditDoc.GetFilePath(), NULL, NULL, szFileName, szExt );
 		wsprintf( szJobName, "%s%s", szFileName, szExt );
 	}
 

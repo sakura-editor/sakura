@@ -1172,6 +1172,9 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 //			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), FALSE );
 //		}
 	}	//@@@ 2002.04.08 MIK end
+	
+	//	Sep. 10, 2002 genta
+	::CheckDlgButton( hwndDlg, IDC_CHCEK_DOCICON, m_Types.m_bUseDocumentIcon  ? TRUE : FALSE );
 
 	return;
 }
@@ -1301,6 +1304,9 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		::GetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, sizeof( m_Types.m_szKinsokuHead ) );
 		::GetDlgItemText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, sizeof( m_Types.m_szKinsokuTail ) );
 	}	//@@@ 2002.04.08 MIK end
+
+	//	Sep. 10, 2002 genta
+	m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHCEK_DOCICON ) ? TRUE : FALSE;
 
 	return TRUE;
 }

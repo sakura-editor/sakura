@@ -269,7 +269,7 @@ void __stdcall CPPA::stdStrFunc(
 	*Err_CD = 0;
 	switch ( Index ){
 	case F_GETFILENAME:	//	ƒtƒ@ƒCƒ‹–¼‚ð•Ô‚·
-		strcpy(g_ResultStr, m_pcEditView->m_pcEditDoc->m_szFilePath);
+		strcpy(g_ResultStr, m_pcEditView->m_pcEditDoc->GetFilePath());
 		*ResultValue = g_ResultStr;
 		break;
 	}

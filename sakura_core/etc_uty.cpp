@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, shoji masami, stonee, MIK, YAZAKI
-	Copyright (C) 2002, genta, aroka, hor, MIK
+	Copyright (C) 2002, genta, aroka, hor, MIK, 鬼
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1995,8 +1995,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_GOFILETOP:		return HLP000228;	//ファイルの先頭に移動
 	case F_GOFILEEND:		return HLP000229;	//ファイルの最後に移動
 	case F_CURLINECENTER:	return HLP000230;	//カーソル行をウィンドウ中央へ
-	case F_JUMPPREV:		return HLP000231;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
-	case F_JUMPNEXT:		return HLP000232;	//移動履歴: 次へ
+	case F_JUMPHIST_PREV:		return HLP000231;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
+	case F_JUMPHIST_NEXT:		return HLP000232;	//移動履歴: 次へ
 	case F_WndScrollDown:	return HLP000198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
 	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
 //	case F_GONEXTPARAGRAPH:	return ;	//次の段落へ
@@ -2525,6 +2525,40 @@ SAKURA_CORE_API int GetColorIndexByName( const char *name )
 SAKURA_CORE_API const char* GetColorNameByIndex( int index )
 {
 	return colorIDXKeyName[index];
+}
+
+/*!
+	@brief レジストリから文字列を読み出す．
+	
+	@param Hive [in] HIVE
+	@param Path [in] レジストリキーへのパス
+	@param Item [in] レジストリアイテム名．NULLで標準のアイテム．
+	@param Buffer [out] 取得文字列を格納する場所
+	@param BufferSize [in] Bufferの指す領域のサイズ
+	
+	@retval true 値の取得に成功
+	@retval false 値の取得に失敗
+	
+	@author 鬼
+	@date 2002.09.10 genta CWSH.cppから移動
+*/
+bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, unsigned BufferSize)
+{
+	bool Result = false;
+	
+	HKEY Key;
+	if(RegOpenKeyEx(Hive, Path, 0, KEY_READ, &Key) == ERROR_SUCCESS)
+	{
+		ZeroMemory(Buffer, BufferSize);
+
+		DWORD dwType = REG_SZ;
+		DWORD dwDataLen = BufferSize - 1;
+		
+		Result = (RegQueryValueEx(Key, Item, NULL, &dwType, reinterpret_cast<unsigned char*>(Buffer), &dwDataLen) == ERROR_SUCCESS);
+		
+		RegCloseKey(Key);
+	}
+	return Result;
 }
 
 /*[EOF]*/

@@ -75,8 +75,11 @@ struct ARRHEAD {
 	Commonに、m_lf_khを追加 2002/05/21 ai
 	m_nDiffFlgOptを追加 2002.05.27 MIK
 	Types-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
+
+	Version 34:
+	m_bUseDocumentIcon 追加． 2002.09.10 genta
 */
-const unsigned int uShareDataVersion = 33;
+const unsigned int uShareDataVersion = 34;
 
 /*
 ||	Singleton風
@@ -439,12 +442,12 @@ bool CShareData::Init( void )
 			//2001.12.06 hor Alt+M を「MERGE」に割当
 			{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MERGE, 0, 0, 0 },
 			//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
-			{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPNEXT, 0, 0, 0 },
+			{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPHIST_NEXT, 0, 0, 0 },
 			//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
 			{ 'O', "O",0, 0, F_FILEOPEN, 0, F_WIN_OUTPUT, 0, 0, 0 },
 			//Oct. 7, 2000 JEPRO	Ctrl+P に「印刷」, Shift+Ctrl+P に「印刷プレビュー」, Ctrl+Alt+P に「ページ設定」を追加
 			//Oct. 20, 2000 JEPRO	Alt+P に「移動履歴: 前へ」を追加
-			{ 'P', "P",0, 0, F_PRINT, F_PRINT_PREVIEW, F_JUMPPREV, 0, F_PRINT_PAGESETUP, 0 },
+			{ 'P', "P",0, 0, F_PRINT, F_PRINT_PREVIEW, F_JUMPHIST_PREV, 0, F_PRINT_PAGESETUP, 0 },
 			//Jan. 24, 2001	JEPRO	Ctrl+Q に「キー割り当て一覧をコピー」を追加
 			{ 'Q', "Q",0, 0, F_CREATEKEYBINDLIST, 0, 0, 0, 0, 0 },
 			//2001.12.03 hor Alt+R を「RTRIM」に割当
@@ -1192,6 +1195,8 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			m_pShareData->m_Types[nIdx].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 			strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuHead, "" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 			strcpy( m_pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+
+			m_pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 		}
 
 

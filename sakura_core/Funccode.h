@@ -108,8 +108,9 @@
 #define F_GOFILETOP			30350	//ファイルの先頭に移動
 #define F_GOFILEEND			30351	//ファイルの最後に移動
 #define F_CURLINECENTER		30360	//カーソル行をウィンドウ中央へ
-#define F_JUMPPREV			30370	//移動履歴: 前へ
-#define F_JUMPNEXT			30371	//移動履歴: 次へ
+#define F_JUMPHIST_PREV		30370	//移動履歴: 前へ
+#define F_JUMPHIST_NEXT		30371	//移動履歴: 次へ
+#define F_JUMPHIST_SET		30372	//現在位置を移動履歴に登録
 #define F_WndScrollDown		30380	//テキストを１行下へスクロール	// 2001/06/20 asa-o
 #define F_WndScrollUp		30381	//テキストを１行上へスクロール	// 2001/06/20 asa-o
 #define F_GONEXTPARAGRAPH	30382	//次の段落へ
@@ -200,6 +201,7 @@
 #define F_TOLOWER				30800	//英大文字→英小文字
 #define F_TOUPPER				30801	//英小文字→英大文字
 #define F_TOHANKAKU				30810	/* 全角→半角 */
+#define F_TOHANKATA				30817	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 #define F_TOZENKAKUKATA			30811	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 #define F_TOZENKAKUHIRA			30812	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 #define F_HANKATATOZENKAKUKATA	30813	/* 半角カタカナ→全角カタカナ */

@@ -102,6 +102,9 @@ inline void dupamp(const char* org, char* out)
 SAKURA_CORE_API int GetColorIndexByName( const char *name );
 SAKURA_CORE_API const char* GetColorNameByIndex( int index );
 
+//	Sep. 10, 2002 genta CWSH.cpp‚©‚ç‚ÌˆÚ“®‚É”º‚¤’Ç‰Á
+bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, unsigned BufferSize);
+
 #endif /* _ETC_UTY_H_ */
 
 

@@ -166,7 +166,8 @@ CEditWnd::CEditWnd() :
 #endif
 	m_IconClicked(icNone) //by 鬼(2)
 {
-
+	// Sep. 10, 2002 genta
+	m_cEditDoc.m_pcEditWnd = this;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
@@ -1470,6 +1471,7 @@ LRESULT CEditWnd::DispatchEvent(
 //		::SetWindowPos( hwnd, 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top + 1, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 //		::SetWindowPos( hwnd, 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 
+		m_cEditDoc.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
 		m_cEditDoc.OnChangeSetting();	/* ビューに設定変更を反映させる */
 		return 0L;
 	case MYWM_SETACTIVEPANE:
@@ -1754,7 +1756,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 //@@@ 2002.01.08 YAZAKI Grep結果で無い場合も含める。
 					if( !m_cEditDoc.IsModified() &&
-						0 == lstrlen( m_cEditDoc.m_szFilePath ) && 	/* 現在編集中のファイルのパス */
+						0 == lstrlen( m_cEditDoc.GetFilePath() ) && 	/* 現在編集中のファイルのパス */
 						!m_cEditDoc.m_bGrepMode	//	さらに、Grepモードじゃない。
 					){
 						/* ファイル読み込み */
@@ -1873,7 +1875,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 							);
 						}
 						/* 自分が開いているか */
-						if( 0 == strcmp( m_cEditDoc.m_szFilePath, pszPath ) ){
+						if( 0 == strcmp( m_cEditDoc.GetFilePath(), pszPath ) ){
 							/* 何もしない */
 						}else{
 							/* 開いているウィンドウをアクティブにする */
@@ -1884,7 +1886,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						/* ファイルが開かれていない */
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&
-							0 == lstrlen( m_cEditDoc.m_szFilePath )		/* 現在編集中のファイルのパス */
+							0 == lstrlen( m_cEditDoc.GetFilePath() )		/* 現在編集中のファイルのパス */
 						){
 							/* ファイル読み込み */
 							m_cEditDoc.FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
@@ -2237,8 +2239,9 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG, "指定行へジャンプ(&J)..." );
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, "検索開始位置へ戻る(&I)" );	// 検索開始位置へ戻る 02/06/26 ai
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPPREV	, "移動履歴: 前へ(&P)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPNEXT	, "移動履歴: 次へ(&N)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_PREV	, "移動履歴: 前へ(&P)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_NEXT	, "移動履歴: 次へ(&N)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_SET	, "現在位置を移動履歴に登録(&S)" );
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "移動(&O)" );
 
@@ -2317,6 +2320,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUKATA		, "半角→全角カタカナ" );
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUHIRA		, "半角→全角ひらがな" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKAKU			, "全角→半角(&F)" );					//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKATA			, "全角カタカナ→半角カタカナ" );		//Aug. 29, 2002 ai
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANEI				, "全角英数→半角英数" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENEI				, "半角英数→全角英数" );				//July. 29, 2001 Misaka アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUKATA		, "半角＋全ひら→全角・カタカナ(&Z)" );	//Sept. 13, 2000 JEPRO キャプション変更 & アクセスキー付与 //Oct. 11, 2000 JEPRO キャプション変更
@@ -2787,7 +2791,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				}else{
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						if( !m_cEditDoc.IsModified() &&	//	Jan. 22, 2002 genta
-							0 == strlen( m_cEditDoc.m_szFilePath )	/* 現在編集中のファイルのパス */
+							0 == strlen( m_cEditDoc.GetFilePath() )	/* 現在編集中のファイルのパス */
 						){
 								/* ファイル読み込み */
 								m_cEditDoc.FileRead(
@@ -3127,7 +3131,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
 //	case F_DIFF:		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
 		if( pcEditDoc->IsModified() ) return FALSE;
-		if( pcEditDoc->m_szFilePath[0] == '\0' ) return FALSE;
+		if( ! pcEditDoc->IsFilePathAvailable() ) return FALSE;
 		return TRUE;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
@@ -3192,6 +3196,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_TOLOWER:					/* 英大文字→英小文字 */
 	case F_TOUPPER:					/* 英小文字→英大文字 */
 	case F_TOHANKAKU:				/* 全角→半角 */
+	case F_TOHANKATA:				/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	case F_TOZENEI:					/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOHANEI:					/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA:			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
@@ -3252,25 +3257,27 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:						//ブラウズ
-	case F_READONLY:					//読み取り専用
+	//case F_READONLY:					//読み取り専用	//	Sep. 10, 2002 genta 常に使えるように
 	case F_PROPERTY_FILE:
 		/* 現在編集中のファイルのパス名をクリップボードにコピーできるか */
-//		if( 0 < lstrlen( pcEditDoc->m_szFilePath ) ){
-		if( '\0' != pcEditDoc->m_szFilePath[0] ){
+//		if( 0 < lstrlen( pcEditDoc->GetFilePath() ) ){
+		if( pcEditDoc->IsFilePathAvailable() ){
 			return TRUE;
 		}else{
 			return FALSE;
 		}
-	case F_JUMPPREV:	//	移動履歴: 前へ
+	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->ActiveView().m_cHistory->CheckPrev() )
 			return TRUE;
 		else
 			return FALSE;
-	case F_JUMPNEXT:	//	移動履歴: 次へ
+	case F_JUMPHIST_NEXT:	//	移動履歴: 次へ
 		if( pcEditDoc->ActiveView().m_cHistory->CheckNext() )
 			return TRUE;
 		else
 			return FALSE;
+	case F_JUMPHIST_SET:	//	現在位置を移動履歴に登録
+		return TRUE;
 
 // 	case F_TAGJUMP:
 //		/* タグジャンプできるか */
@@ -3772,10 +3779,10 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 				ReleaseCapture();
 				m_IconClicked = icNone;
 
-				if(m_cEditDoc.m_szFilePath[0] != 0)
+				if(m_cEditDoc.IsFilePathAvailable())
 				{
-					char *PathEnd = m_cEditDoc.m_szFilePath;
-					for(char* I = m_cEditDoc.m_szFilePath; *I != 0; ++I)
+					const char *PathEnd = m_cEditDoc.GetFilePath();
+					for(const char* I = m_cEditDoc.GetFilePath(); *I != 0; ++I)
 					{
 						//by 鬼(2): DBCS処理
 						if(IsDBCSLeadByte(*I))
@@ -3785,7 +3792,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					}
 
 					wchar_t WPath[MAX_PATH];
-					int c = MultiByteToWideChar(CP_ACP, 0, m_cEditDoc.m_szFilePath, PathEnd - m_cEditDoc.m_szFilePath, WPath, MAX_PATH);
+					int c = MultiByteToWideChar(CP_ACP, 0, m_cEditDoc.GetFilePath(), PathEnd - m_cEditDoc.GetFilePath(), WPath, MAX_PATH);
 					WPath[c] = 0;
 					wchar_t WFile[MAX_PATH];
 					MultiByteToWideChar(CP_ACP, 0, PathEnd + 1, -1, WFile, MAX_PATH);
@@ -3810,7 +3817,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 	#define DDASTEXT
 	#ifdef  DDASTEXT
 							//テキストでも持たせる…便利
-							int Len = lstrlen(m_cEditDoc.m_szFilePath);
+							int Len = lstrlen(m_cEditDoc.GetFilePath());
 							FORMATETC F;
 							STGMEDIUM M;
 
@@ -3825,7 +3832,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 							M.hGlobal = GlobalAlloc(GMEM_MOVEABLE, Len+1);
 
 							void* P = GlobalLock(M.hGlobal);
-							CopyMemory(P, m_cEditDoc.m_szFilePath, Len+1);
+							CopyMemory(P, m_cEditDoc.GetFilePath(), Len+1);
 							GlobalUnlock(M.hGlobal);
 
 							DataObject->SetData(&F, &M, TRUE);
@@ -4128,4 +4135,85 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 	return;
 }
 
+/*!
+	@brief ウィンドウのアイコン設定
+
+	指定されたアイコンをウィンドウに設定する．
+	以前のアイコンは破棄する．
+
+	@param hIcon [in] 設定するアイコン
+	@param flag [in] アイコン種別．ICON_BIGまたはICON_SMALL.
+	@author genta
+	@date 2002.09.10
+*/
+void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
+{
+	HICON hOld = (HICON)::SendMessage( m_hWnd, WM_SETICON, flag, (LPARAM)hIcon );
+	if( hOld != NULL ){
+		::DestroyIcon( hOld );
+	}
+}
+
+/*!
+	標準アイコンの取得
+
+	@param hIconBig   [out] 大きいアイコンのハンドル
+	@param hIconSmall [out] 小さいアイコンのハンドル
+
+	@author genta
+	@date 2002.09.10
+*/
+void CEditWnd::GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const
+{
+#ifdef _DEBUG
+	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ) );
+	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_DEBUG ), IMAGE_ICON, 16, 16, 0);
+#else
+	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ) );
+	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_STD ), IMAGE_ICON, 16, 16, 0);
+#endif
+}
+
+/*!
+	アイコンの取得
+	
+	指定されたファイル名に対応するアイコン(大・小)を取得して返す．
+	
+	@param szFile     [in] ファイル名
+	@param hIconBig   [out] 大きいアイコンのハンドル
+	@param hIconSmall [out] 小さいアイコンのハンドル
+	
+	@retval true 関連づけられたアイコンが見つかった
+	@retval false 関連づけられたアイコンが見つからなかった
+	
+	@author genta
+	@date 2002.09.10
+*/
+bool CEditWnd::GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const
+{
+	if( NULL != szFile && szFile[0] != '\0' ){
+		char szExt[_MAX_EXT];
+		char FileType[1024];
+
+		// (.で始まる)拡張子の取得
+		_splitpath( szFile, NULL, NULL, NULL, szExt );
+		
+		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, sizeof(FileType) - 13)){
+			lstrcat( FileType, "\\DefaultIcon" );
+			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, NULL, 0)){
+				// 関連づけられたアイコンを取得する
+				SHFILEINFO shfi;
+				SHGetFileInfo( szFile, 0, &shfi, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_LARGEICON );
+				hIconBig = shfi.hIcon;
+				SHGetFileInfo( szFile, 0, &shfi, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_SMALLICON );
+				hIconSmall = shfi.hIcon;
+				return true;
+			}
+		}
+	}
+
+	//	標準のアイコンを返す
+	GetDefaultIcon( hIconBig, hIconSmall );
+	return false;
+}
 /*[EOF]*/

@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
-	Copyright (C) 2002, YAZAKI, hor, aroka, MIK
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -43,7 +43,7 @@
 #include "CMarkMgr.h"///
 #include "COsVersionInfo.h"
 #include "CDocLine.h"   // 2002.04.09 minfu
-
+#include "CFileLoad.h" // 2002/08/30 Moca
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -5345,6 +5345,7 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	case F_TOLOWER: pCMemory->ToLower(); break;						/* 英大文字→英小文字 */
 	case F_TOUPPER: pCMemory->ToUpper(); break;						/* 英小文字→英大文字 */
 	case F_TOHANKAKU: pCMemory->ToHankaku( 0x0 ); break;					/* 全角→半角 */
+	case F_TOHANKATA: pCMemory->ToHankaku( 0x01 ); break;					/* 全角カタカナ→半角カタカナ */	// Aug. 29, 2002 ai
 	case F_TOZENEI: pCMemory->ToZenkaku( 2, 0 );				/* 2== 英数専用				*/ break;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOHANEI: pCMemory->ToHankaku( 0x4 );						/* 2== 英数専用				*/ break;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOZENKAKUKATA: pCMemory->ToZenkaku( 0, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
@@ -5527,8 +5528,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 //	BOOL		bBool;
 
 
-	CEditWnd*	pCEditWnd;
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ), GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	pCEditWnd->m_CMenuDrawer.ResetContents();
 
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
@@ -5733,7 +5733,7 @@ void CEditView::DrawCaretPosInfo( void )
 //	int	nCodeNameArrNum = sizeof( pCodeNameArr ) / sizeof( pCodeNameArr[0] );
 
 	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWL_USERDATA );
+	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	/* カーソル位置の文字コード */
 //	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
 	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
@@ -6209,7 +6209,7 @@ DWORD CEditView::DoGrep(
 	/*
 	|| バッファサイズの調整
 	*/
-	cmemMessage.AllocBuffer( 64000 );
+	cmemMessage.AllocBuffer( 4000 );
 
 
 
@@ -6284,6 +6284,7 @@ DWORD CEditView::DoGrep(
 	hwndCancel = cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_GREPRUNNING );
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
+	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
 
 	pszWork = pcmGrepKey->GetPtr();
 	strcpy( szKey, pszWork );
@@ -6296,8 +6297,13 @@ DWORD CEditView::DoGrep(
 	HICON	hIconBig, hIconSmall;
 	hIconBig = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
 	hIconSmall = (HICON)LoadImage( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ), IMAGE_ICON, 16, 16, 0);
-	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
-	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
+	//	Sep. 10, 2002 genta
+	//	CEditWndに新設した関数を使うように
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
+	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
+//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
+//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)hIconBig );
 //	HICON	hIcon;
 //	hIcon = ::LoadIcon( NULL, IDI_QUESTION );
 //	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
@@ -6624,7 +6630,8 @@ int CEditView::DoGrepTree(
 					pcDlgCancel, hwndCancel, pszKey,
 					pnKey_CharCharsArr,
 //					pnKey_CharUsedArr,
-					pszFile, szPath2,
+					w32fd.cFileName, szPath2,
+//					pszFile, szPath2,
 					bGrepSubFolder, bGrepLoHiCase,
 					bGrepRegularExp, bKanjiCode_AutoDetect,
 					bGrepOutputLine, bWordOnly, nGrepOutputStyle,
@@ -6651,6 +6658,7 @@ int CEditView::DoGrepTree(
 last_of_this_loop:;
 		pszToken = my_strtok( szFile, nFileLen, &nPos, " ;," );
 	}
+	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
 	/* 結果出力 */
 	pszWork = cmemMessage.GetPtr( &nWork );
 	if( 0 < nWork ){
@@ -6675,24 +6683,25 @@ cancel_return:;
 
 
 
-
 /*!	@brief Grep結果を構築する
 
-	@param pszWork [out] Grep出力文字列．充分なメモリ領域を予め確保しておくこと．
+	@param pWork [out] Grep出力文字列．充分なメモリ領域を予め確保しておくこと．
 		最長で 本文1024 byte＋ファイル名 _MAX_PATH byte＋行・桁位置表示の長さが必要．
 
-	pszWorkは充分なメモリ領域を持っているコト
+	pWorkは充分なメモリ領域を持っているコト
+	@data 2002/08/29 Moca バイナリーデータに対応 pnWorkLen 追加
 */
 void CEditView::SetGrepResult(
 	/* データ格納先 */
-	char*		pszWork, 
+	char*		pWork,
+	int*		pnWorkLen,			/*!< [out] Grep出力文字列の長さ */
 	/* マッチしたファイルの情報 */
 	const char*		pszFullPath,	/*!< [in] フルパス */
-	char*		pszCodeName,		/*!< [in] 文字コード情報．"[SJIS]"とか */
+	const char*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
 	/* マッチした行の情報 */
 	int			nLine,				/*!< [in] マッチした行番号(1～) */
 	int			nColm,				/*!< [in] マッチした桁番号(1～) */
-	char*		pCompareData,		/*!< [in] 行の文字列 */
+	const char*		pCompareData,	/*!< [in] 行の文字列 */
 	int			nLineLen,			/*!< [in] 行の文字列の長さ */
 	int			nEolCodeLen,		/*!< [in] EOLの長さ */
 	/* マッチした文字列の情報 */
@@ -6703,44 +6712,56 @@ void CEditView::SetGrepResult(
 	int			nGrepOutputStyle	/*!< [in] 1: Normal, 2: WZ風(ファイル単位) */
 )
 {
+
+	int nWorkLen = 0;
+	const char * pDispData;
+	int k;
+	bool bEOL = true;
+
+	if( 1 == nGrepOutputStyle ){
+	/* ノーマル */
+		nWorkLen = ::wsprintf( pWork, "%s(%d,%d)%s: ", pszFullPath, nLine, nColm, pszCodeName );
+	}else
+	if( 2 == nGrepOutputStyle ){
+	/* WZ風 */
+		nWorkLen = ::wsprintf( pWork, "・(%6d,%-5d): ", nLine, nColm );
+	}
+
 	if( bGrepOutputLine ){
 	/* 該当行 */
-		int k = nLineLen - nEolCodeLen;
-		if( k > 1000 ){
+		pDispData = pCompareData;
+		k = nLineLen - nEolCodeLen;
+		if( 1000 < k ){
 			k = 1000;
-		}
-		pCompareData[k] = '\0';
-
-		if( 1 == nGrepOutputStyle ){
-		/* ノーマル */
-			wsprintf( pszWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pCompareData );
-		}else
-		if( 2 == nGrepOutputStyle ){
-		/* WZ風 */
-			wsprintf( pszWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pCompareData );
 		}
 	}else{
 	/* 該当部分 */
-		char* pszHit;
-		//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		pszHit = new char[ nMatchLen + 1 ];
-		memcpy( pszHit, pMatchData, nMatchLen );
-		pszHit[ nMatchLen ] = '\0';
-		//	To Here Jun. 27, 2001 genta
-		if( 1 == nGrepOutputStyle ){
-		/* ノーマル */
-			wsprintf( pszWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pszHit );
-		}else
-		if( 2 == nGrepOutputStyle ){
-		/* WZ風 */
-			wsprintf( pszWork, "・(%6d,%-5d): %s\r\n", nLine, nColm, pszHit );
+		pDispData = pMatchData;
+		k = nMatchLen;
+		if( 2000 < k ){
+			k = 2000;
 		}
-		delete [] pszHit;
+		// 該当部分に改行を含む場合はその改行コードをそのまま利用する(次の行に空行を作らない)
+		if( pMatchData[ k -1 ] == '\r' || pMatchData[ k - 1 ] == '\n' ){
+			bEOL = false;
+		}
 	}
+
+	memcpy( &pWork[nWorkLen], pDispData, k );
+	nWorkLen += k;
+	if( bEOL ){
+		memcpy( &pWork[nWorkLen], "\r\n", 2 );
+		nWorkLen = nWorkLen + 2;
+	}
+	*pnWorkLen = nWorkLen;
 }
 
-
-/* Grep実行 */
+/*!
+	Grep実行 (CFileLoadを使ったテスト版)
+	@retval -1 GREPのキャンセル
+	@retval それ以外 ヒット数(ファイル検索時はファイル数)
+	@date 2002/08/30 Moca CFileLoadを使ったテスト版
+*/
 int CEditView::DoGrepFile(
 	CDlgCancel* pcDlgCancel,
 	HWND		hwndCancel,
@@ -6759,45 +6780,32 @@ int CEditView::DoGrepFile(
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	CBregexp*	pRegexp,	/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
 	int			nNest,
-	int*		pnHitCount,
+	int*		pnHitCount, //!< [i/o] ヒット数の全合計
 	const char*	pszFullPath,
 	CMemory&	cmemMessage
 )
 {
 	int		nHitCount;
-	char	szLine[16000];
-	char	szWork[16500];
+//	char	szLine[16000];
+	char	szWork[3000];
 	char	szWork0[_MAX_PATH + 100];
-	HFILE	hFile;
 	int		nLine;
-	char*	pszRes;
-	CMemory	cmemBuf;
-//	CMemory	cmemLine;
+	int		nWorkLen;
+	const char*	pszRes; // 2002/08/29 const付加
 	int		nCharCode;
-	char*	pCompareData;
-	char*	pszCodeName;
-	int		nFileLength;
-	int		nReadLength;
-	int		nReadSize;
-	HGLOBAL	hgRead = NULL;;
-	char*	pBuf;
-	int		nEOF;
-	int		nBgn;
-	int		nPos;
+	const char*	pCompareData; // 2002/08/29 const付加
+	const char*	pszCodeName; // 2002/08/29 const付加
 	int		nColm;
 	BOOL	bOutFileName;
 	bOutFileName = FALSE;
-//	CMemory	cmemMessage;
-//	char*	pszWork;
-//	int		nWork;
 	int		nLineLen;
 	const	char*	pLine;
-//	int		nLineLen;
-//	enumEOLType nEOLType;
 	CEOL	cEol;
 	int		nEolCodeLen;
-//	int		k;
-//	int		nLineNum;
+	CFileLoad	cfl;
+	int		nOldPercent = 0;
+
+	int	nKeyKen = lstrlen( pszKey );
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
 
@@ -6817,131 +6825,17 @@ int CEditView::DoGrepFile(
 		*/
 		nCharCode = CMemory::CheckKanjiCodeOfFile( pszFullPath );
 		if( -1 == nCharCode ){
-			wsprintf( szLine, "文字コードの判別処理でエラー [%s]\r\n", pszFullPath );
-			Command_ADDTAIL( szLine, lstrlen( szLine ) );
+			wsprintf( szWork, "文字コードの判別処理でエラー [%s]\r\n", pszFullPath );
+			Command_ADDTAIL( szWork, lstrlen( szWork ) );
 			return 0;
 		}
-		pszCodeName = (char*)gm_pszCodeNameArr_3[nCharCode];
+		pszCodeName = gm_pszCodeNameArr_3[nCharCode];
 	}
 	nHitCount = 0;
 	nLine = 0;
-	hFile = _lopen( pszPath, OF_READ );
-	if( HFILE_ERROR == hFile ){
-		wsprintf( szLine, "file open error [%s]\r\n", pszFullPath );
-		Command_ADDTAIL( szLine, lstrlen( szLine ) );
-		return 0;
-	}
-
-	/* ファイルサイズの取得 */
-	nFileLength = _llseek( hFile, 0, FILE_END );
-	_llseek( hFile, 0, FILE_BEGIN );
-
-	hgRead = ::GlobalAlloc( GHND, nFileLength + 1 );
-	if( NULL == hgRead ){
-		wsprintf( szLine, "CEditView::DoGrepFile()\n[%s] メモリ確保に失敗しました。\n%dバイト \r\n", pszFullPath, nFileLength );
-		Command_ADDTAIL( szLine, lstrlen( szLine ) );
-		_lclose( hFile );
-		return 0;
-	}
-	pBuf = (char*)::GlobalLock( hgRead );
-	nEOF = TRUE;
-//	if( nCharCode == 3 ){ /* Unicode */
-// 		nReadSize = _lread( hFile, pBuf, 2);
-// 	}
-	switch( nCharCode ){
-	case CODE_UNICODE:
-	case CODE_UNICODEBE:
-		if( 2 <= nFileLength ){
-			nReadSize = _lread( hFile, pBuf, 2);
-			// もし(そのファイル形式の)BOMでない場合にはファイルの先頭へ戻る
-			if( nCharCode != CMemory::IsUnicodeBom( (const unsigned char *)pBuf, 2 ) ){
-				_llseek( hFile, 0, FILE_BEGIN );
-			}
-		}
-		break;
-	case CODE_UTF8:
-		if( 3 <= nFileLength ){
-			nReadSize = _lread( hFile, pBuf, 3);
-			if( nCharCode != CMemory::IsUnicodeBom( (const unsigned char *)pBuf, 3 ) ){
-				_llseek( hFile, 0, FILE_BEGIN );
-			}
-		}
-//		default:
-		break;
-	}
-	nReadLength = 0;
-	nBgn = 0;
-	nPos = 0;
-	nReadSize = _lread( hFile, pBuf, nFileLength/*nReadBufSize*/);
-	pBuf[nFileLength] = '\0';
-
-	if( HFILE_ERROR == nReadSize ){
-		wsprintf( szLine, "file read error %s\r\n", pszFullPath );
-		Command_ADDTAIL( szLine, lstrlen( szLine ) );
-		_lclose( hFile );
-		return 0;
-	}
-	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
-		return -1;
-	}
-	/* 中断ボタン押下チェック */
-	if( pcDlgCancel->IsCanceled() ){
-		return -1;
-	}
-
-	switch( nCharCode ){
-	case CODE_EUC /* EUC */:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* EUC→SJISコード変換 */
-		cmemBuf.EUCToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_JIS /* JIS */:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* E-Mail(JIS→SJIS)コード変換 */
-		cmemBuf.JIStoSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UNICODE /* Unicode */:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* Unicode→SJISコード変換 */
-		cmemBuf.UnicodeToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UTF8 /* UTF-8 */:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* UTF-8→SJISコード変換 */
-		cmemBuf.UTF8ToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UTF7 /* UTF-7 */:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* UTF-7→SJISコード変換 */
-		cmemBuf.UTF7ToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_UNICODEBE /* UnicodeBE */:
-		cmemBuf.SetData( pBuf, nReadSize );
-		/* UnicodeBE→SJISコード変換 */
-		cmemBuf.UnicodeBEToSJIS();
-		memcpy( pBuf, cmemBuf.GetPtr(), cmemBuf.GetLength() );
-		nReadSize = cmemBuf.GetLength();
-		break;
-	case CODE_SJIS /* SJIS */:
-	default:
-		break;
-	}
-
-
-	int	nKeyKen = lstrlen( pszKey );
 
 	/* 検索条件が長さゼロの場合はファイル名だけ返す */
+	// 2002/08/29 行ループの前からここに移動
 	if( 0 == nKeyKen ){
 		if( 1 == nGrepOutputStyle ){
 		/* ノーマル */
@@ -6958,16 +6852,28 @@ int CEditView::DoGrepFile(
 	wsprintf( szWork0, "■\"%s\"%s\r\n", pszFullPath, pszCodeName );
 
 
-	nBgn = 0;
-//	nPos = 0;
-	nLine = 0;
-	while( NULL != ( pLine = GetNextLine( pBuf, nReadSize, &nLineLen, &nBgn, &cEol ) ) ){
+	try{
+	// ファイルを開く
+	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
+	cfl.FileOpen( pszFullPath, nCharCode, 0 );
+
+//	/* 処理中のユーザー操作を可能にする */
+	if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
+		return -1;
+	}
+	/* 中断ボタン押下チェック */
+	if( pcDlgCancel->IsCanceled() ){
+		return -1;
+	}
+
+	/* 検索条件が長さゼロの場合はファイル名だけ返す */
+	// 2002/08/29 ファイルオープンの手前へ移動
+
+	// 注意 : cfl.ReadLine が throw する可能性がある
+	while( NULL != ( pLine = cfl.ReadLine( &nLineLen, &cEol ) ) ){
 		nEolCodeLen = cEol.GetLen();
 		++nLine;
-//		AddLineStrX( pLine, nLineLen + nEolCodeLen, nEOLType );
-		nReadLength += nLineLen + nEolCodeLen;
-		nLineLen += nEolCodeLen;
-		pCompareData = (char*)pLine;
+		pCompareData = pLine;
 
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
@@ -6977,6 +6883,15 @@ int CEditView::DoGrepFile(
 			/* 中断ボタン押下チェック */
 			if( pcDlgCancel->IsCanceled() ){
 				return -1;
+			}
+			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
+			if( 5000000 < cfl.GetFileSize() ){
+				int nPercent = cfl.GetPercent();
+				if( 5 <= nPercent - nOldPercent ){
+					nOldPercent = nPercent;
+					::wsprintf( szWork, "%s (%3d%%)", pszFile, nPercent );
+					::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, szWork );
+				}
 			}
 		}
 
@@ -6995,7 +6910,7 @@ int CEditView::DoGrepFile(
 
 					/* Grep結果を、szWorkに格納する */
 					SetGrepResult(
-						szWork,
+						szWork, &nWorkLen,
 						pszFullPath, pszCodeName,
 						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
 						pRegexpData->startp[0], matchlen,
@@ -7008,11 +6923,10 @@ int CEditView::DoGrepFile(
 							bOutFileName = TRUE;
 						}
 					}
-
-					cmemMessage.AppendSz( szWork );
+					cmemMessage.Append( szWork, nWorkLen );
 					++nHitCount;
 					++(*pnHitCount);
-					if( 0 == ( (*pnHitCount) % 16 ) ){
+					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
 						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 					}
 					if ( !bGrepOutputLine ) {
@@ -7045,18 +6959,16 @@ int CEditView::DoGrepFile(
 					CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
 				){
 					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
-						const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更
+						// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
 						/* 1==大文字小文字の区別 */
-						if( (FALSE == bGrepLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
-							(TRUE  == bGrepLoHiCase && 0 ==	  memcmp( &(pData[nNextWordFrom2]) , pszKey, nKeyKen ) )
+						if( (FALSE == bGrepLoHiCase && 0 == _memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
+							(TRUE  == bGrepLoHiCase && 0 ==	  memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
 						){
 							/* Grep結果を、szWorkに格納する */
 							SetGrepResult(
-								szWork,
+								szWork, &nWorkLen,
 								pszFullPath, pszCodeName,
-								//	Jun. 25, 2002 genta
-								//	桁位置は1始まりなので1を足す必要がある
-								nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
+								nLine, nNextWordFrom2, pCompareData, nLineLen, nEolCodeLen,
 								pszKey, nKeyKen,
 								bGrepOutputLine, nGrepOutputStyle
 							);
@@ -7068,7 +6980,7 @@ int CEditView::DoGrepFile(
 								}
 							}
 
-							cmemMessage.AppendSz( szWork );
+							cmemMessage.Append( szWork, nWorkLen );
 							++nHitCount;
 							++(*pnHitCount);
 							//	May 22, 2000 genta
@@ -7092,7 +7004,7 @@ int CEditView::DoGrepFile(
 			/* 文字列検索 */
 			int nColmPrev = 0;
 			while (1){	//	ぐるぐる回す
-				if( NULL != ( pszRes = (char *)CDocLineMgr::SearchString(
+				if( NULL != ( pszRes = CDocLineMgr::SearchString(
 					(const unsigned char *)pCompareData, nLineLen,
 					0,
 					(const unsigned char *)pszKey, nKeyKen,
@@ -7103,7 +7015,7 @@ int CEditView::DoGrepFile(
 
 					/* Grep結果を、szWorkに格納する */
 					SetGrepResult(
-						szWork,
+						szWork, &nWorkLen,
 						pszFullPath, pszCodeName,
 						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
 						pszKey, nKeyKen,
@@ -7117,13 +7029,13 @@ int CEditView::DoGrepFile(
 						}
 					}
 
-					cmemMessage.AppendSz( szWork );
+					cmemMessage.Append( szWork, nWorkLen );
 					++nHitCount;
 					++(*pnHitCount);
 					//	May 22, 2000 genta
-					// if( 0 == ( (*pnHitCount) % 16 ) ){
+					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
 						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-					// }
+					}
 					
 					if ( !bGrepOutputLine ) {
 						//	探し始める位置を補正
@@ -7138,11 +7050,19 @@ int CEditView::DoGrepFile(
 		}
 	}
 
-	if( NULL != hgRead ){
-		::GlobalUnlock( hgRead );
-		::GlobalFree( hgRead );
+	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
+	cfl.FileClose();
+	} // try
+	catch( CError_FileOpen ){
+		wsprintf( szWork, "file open error [%s]\r\n", pszFullPath );
+		Command_ADDTAIL( szWork, lstrlen( szWork ) );
+		return 0;
 	}
-	_lclose( hFile );
+	catch( CError_FileRead ){
+		wsprintf( szWork, "CEditView::DoGrepFile() ファイルの読み込み中にエラーが発生しました。\r\n");
+		Command_ADDTAIL( szWork, lstrlen( szWork ) );
+	} // 例外処理終わり
+
 	return nHitCount;
 }
 
@@ -8286,7 +8206,7 @@ finish:
 //2002.01.26 hor
 //  検索／置換／ブックマーク検索後の状態を表示する
 void CEditView::SendStatusMessage( const char* msg ){
-	CEditWnd* pCEditWnd = ( CEditWnd* )::GetWindowLong( ::GetParent( m_hwndParent ) , GWL_USERDATA );
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	if( NULL == pCEditWnd->m_hwndStatusBar ){
 		// メニューバーへ
 		HDC		hdc;

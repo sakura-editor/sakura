@@ -115,8 +115,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_GOFILETOP,			"GoFileTop",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの先頭に移動
 	{F_GOFILEEND,			"GoFileEnd",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの最後に移動
 	{F_CURLINECENTER,		"CurLineCenter",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル行をウィンドウ中央へ
-	{F_JUMPPREV,			"MoveHistPrev",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 前へ
-	{F_JUMPNEXT,			"MoveHistNext",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 次へ
+	{F_JUMPHIST_PREV,		"MoveHistPrev",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 前へ
+	{F_JUMPHIST_NEXT,		"MoveHistNext",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 次へ
+	{F_JUMPHIST_SET,		"MoveHistSet",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置を移動履歴に登録
 	{F_WndScrollDown,		"F_WndScrollDown",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行下へスクロール	// 2001/06/20 asa-o
 	{F_WndScrollUp,			"F_WndScrollUp",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行上へスクロール	// 2001/06/20 asa-o
 	{F_GONEXTPARAGRAPH,		"GoNextParagraph",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の段落へ移動
@@ -174,6 +175,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_TOLOWER,		 			"ToLower",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英大文字→英小文字
 	{F_TOUPPER,		 			"ToUpper",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英小文字→英大文字
 	{F_TOHANKAKU,		 		"ToHankaku",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角→半角 */
+	{F_TOHANKATA,		 		"ToHankata",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	{F_TOZENEI,		 			"ToZenEi",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	{F_TOHANEI,		 			"ToHanEi",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角英数→半角英数 */
 	{F_TOZENKAKUKATA,	 		"ToZenKata",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
@@ -704,8 +706,9 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_WORDLEFT					://単語の左端に移動
 	case F_WORDRIGHT				://単語の右端に移動
 //	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
-	case F_JUMPPREV					://移動履歴: 前へ
-	case F_JUMPNEXT					://移動履歴: 次へ
+	case F_JUMPHIST_PREV			://移動履歴: 前へ
+	case F_JUMPHIST_NEXT			://移動履歴: 次へ
+	case F_JUMPHIST_SET				://現在位置を移動履歴に登録
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので独立化して(選択)を移動(サブメニュー化は構造上できないので)
 	case F_SELECTWORD				://現在位置の単語選択
@@ -777,6 +780,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_TOLOWER		 			://英大文字→英小文字
 	case F_TOUPPER		 			://英小文字→英大文字
 	case F_TOHANKAKU		 		:/* 全角→半角 */
+	case F_TOHANKATA		 		:/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	case F_TOZENEI			 		:/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOHANEI			 		:/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA	 		:/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
