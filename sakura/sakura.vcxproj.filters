@@ -541,6 +541,9 @@
     <ClInclude Include="..\sakura_core\basis\CStrictRect.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\basis\CStringRef.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
     <ClInclude Include="..\sakura_core\basis\primitive.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>

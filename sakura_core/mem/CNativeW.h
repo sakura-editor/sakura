@@ -25,35 +25,9 @@
 #pragma once
 
 #include "CNative.h"
+#include "basis/CStringRef.h"
 #include "basis/SakuraBasis.h"
 #include "debug/Debug2.h" //assert
-
-//! 文字列への参照を取得するインターフェース
-class IStringRef{
-public:
-	virtual const wchar_t*	GetPtr()	const = 0;
-	virtual int				GetLength()	const = 0;
-};
-
-//! 文字列への参照を保持するクラス
-class CStringRef final : public IStringRef{
-public:
-	CStringRef() : m_pData(NULL), m_nDataLen(0) { }
-	CStringRef(const wchar_t* pData, int nDataLen) : m_pData(pData), m_nDataLen(nDataLen) { }
-	const wchar_t*	GetPtr()		const override{ return m_pData;    }
-	int				GetLength()		const override{ return m_nDataLen; }
-
-	//########補助
-	bool			IsValid()		const{ return m_pData!=NULL; }
-	wchar_t			At(int nIndex)	const
-	{
-		assert(nIndex>=0 && nIndex<m_nDataLen);
-		return m_pData[nIndex];
-	}
-private:
-	const wchar_t*	m_pData;
-	int				m_nDataLen;
-};
 
 // グローバル演算子の前方宣言
 class CNativeW;
