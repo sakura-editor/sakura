@@ -672,7 +672,11 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					// +1は終端NUL文字
 					{
 						strcpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
-						if( nMode2 == M2_FUNC_NAME_END )
+						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
+						//	関数の後ろにconst, throw または初期化子があると
+						//	M2_KR_FUNCに遷移して，';'が見つからないとその状態のまま
+						//	中括弧に遭遇する．
+						if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC )
 							++ nNestLevel_func;
 						else
 						{
@@ -703,7 +707,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 							&nPosY
 						);
 						pcFuncInfoArr->AppendData( nItemLine, nPosY + 1 , szNamespace, nItemFuncId);
-						if( nMode2 != M2_FUNC_NAME_END )
+						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
+						if( nMode2 != M2_FUNC_NAME_END && nMode2 != M2_KR_FUNC )
 						{
 							szNamespace[nNamespaceLen[nNestLevel_global]] = ':';
 							nNamespaceLen[nNestLevel_global] += 2;
@@ -711,7 +716,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					}
 					else
 					{
-						if(nMode2 == M2_FUNC_NAME_END)
+						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
+						if(nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC)
 							++ nNestLevel_func;
 						else
 						{
@@ -766,6 +772,14 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						++ nNestLevel_fparam;
 					}
 					//  2002/10/27 frozen ここまで
+					
+					//	From Here Jan. 30, 2005 genta 
+					if( nNestLevel_func == 0 && nMode2 == M2_KR_FUNC ){
+						//	throwなら (例外の型,...) を読み飛ばす
+						if(nNestLevel_fparam==0)
+							++ nNestLevel_fparam;
+					}
+					//	To Here Jan. 30, 2005 genta 
 					continue;
 				}else
 				if( ')' == pLine[i] ){
@@ -814,12 +828,20 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 //					nNestLevel2 = 0;
 					if( nMode2 == M2_KR_FUNC )
 					{
-						// zenryaku K&Rスタイルの関数宣言の終了後 M2_FUNC_NAME_END にもどす
-						nMode2 = M2_FUNC_NAME_END;
-						continue;
-					}
-					else if(
-						nMode2 == M2_FUNC_NAME_END &&
+						//	Jan. 30, 2005 genta 関数後の const, throwの後ろの
+						//	';'はK&R形式宣言の終わりでなく関数宣言の終わり
+						if( strcmp( szWordPrev, "const" ) == 0 ||
+							strcmp( szWordPrev, "throw" ) == 0 ){
+								nMode2 = M2_FUNC_NAME_END;
+								//	すぐ下のif文に引っかかりますように
+						}
+						else {
+							// zenryaku K&Rスタイルの関数宣言の終了後 M2_FUNC_NAME_END にもどす
+							nMode2 = M2_FUNC_NAME_END;
+							continue;
+						}
+					} //	Jan. 30, 2005 genta K&R処理に引き続いて宣言処理も行う．
+					if( nMode2 == M2_FUNC_NAME_END &&
 						nNestLevel_global < nNamespaceNestMax &&
 						(nNamespaceLen[nNestLevel_global] + strlen(szItemName)) < nNamespaceLenMax &&
 						nNestPoint_class == 0)
