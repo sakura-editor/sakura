@@ -47,7 +47,7 @@
 #include "CDocLine.h"// 2002/2/10 aroka ヘッダ整理
 #include "CMemory.h"// 2002/2/10 aroka
 
-#include "CFileWrite.h" //2000/05/22 Frozen
+#include "CFileWrite.h" //2002/05/22 Frozen
 
 
 
@@ -456,6 +456,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	BOOL		bBinaryAlerted;
 	int			nFileLength;
 	int			nReadLength;
+	int			nFilePerCent;
 //	char*		pSJISBuf;
 //	int			nSJISBufLen;
 	CMemory		cmemBuf;
@@ -472,7 +473,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	/* 既存データのクリア */
 	Empty();
 	Init();
-	CMemory		cMem;
+//	CMemory		cMem;
 //	UINT		nReadBufSize = 16/*32000*/;
 	char*		pBuf;
 //	char*		pBuf = new char[nReadBufSize + 1];
@@ -509,7 +510,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 
 //	pBuf[nReadBufSize] = '\0';
 //	cMem.SetData( "", lstrlen( "" ) );
-	cMem.SetDataSz( "" );
+//	cMem.SetDataSz( "" );
 
 	hFile = _lopen( pszPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
@@ -579,7 +580,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 			nFileLength
 		);
 		nRetVal = FALSE;
-		goto _RETURN_;
+		goto _CLOSEFILE_;
 	}
 	pBuf = (char*)::GlobalLock( hgRead );
 	nEOF = TRUE;
@@ -667,14 +668,18 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		break;
 	}
 	nFileLength = nReadSize;
+	// 約20MB以上のときのオーバーフロー対策
+	nFilePerCent = nReadSize / 128;
 
 
-	if( NULL != hwndProgress && 0 < nFileLength ){
-		::PostMessage( hwndProgress, PBM_SETPOS, nReadLength * 100 / nFileLength , 0 );
+	if( NULL != hwndProgress && 0 < nFilePerCent ){
+		::PostMessage( hwndProgress, PBM_SETPOS, (nReadLength / 128) * 100 / nFilePerCent , 0 );
 	}
 	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
-		return -1;
+		nRetVal = FALSE;
+		goto _CLOSEFILE_;
+//		return -1;
 	}
 
 
@@ -697,11 +702,13 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		AddLineStrX( pLine, nLineLen + nEolCodeLen, cEol );
 //		nReadLength += nPos - nBgn + nEolCodeLen;
 		nReadLength += nLineLen + nEolCodeLen;
-		if( NULL != hwndProgress && 0 < nFileLength && 0 == ( nLineNum % 1024 ) ){
-			::PostMessage( hwndProgress, PBM_SETPOS, nReadLength * 100 / nFileLength , 0 );
+		if( NULL != hwndProgress && 0 < nFilePerCent && 0 == ( nLineNum % 1024 ) ){
+			// 約20MB以上のファイルときのオーバーフロー対策
+			::PostMessage( hwndProgress, PBM_SETPOS, ( nReadLength / 128) * 100 / nFilePerCent , 0 );
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( NULL ) ){
-				return -1;
+				nRetVal = FALSE;
+				goto _CLOSEFILE_;
 			}
 		}
 //		nBgn = nPos + nEolCodeLen;

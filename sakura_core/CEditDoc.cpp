@@ -775,6 +775,16 @@ BOOL CEditDoc::FileRead(
 	/* MRUリストへの登録 */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	cMRU.Add( &fi );
+	
+	/* カレントディレクトリの変更 */
+	{
+		char	szCurDir[_MAX_PATH];
+		char	szDrive[_MAX_DRIVE], szDir[_MAX_DIR];
+		_splitpath( m_szFilePath, szDrive, szDir, NULL, NULL );
+		strcpy( szCurDir, szDrive);
+		strcat( szCurDir, szDir );
+		::SetCurrentDirectory( szCurDir );
+	}
 
 end_of_func:;
 	if( NULL != hwndProgress ){
@@ -901,20 +911,19 @@ end_of_func:;
 /* 「ファイルを開く」ダイアログ */
 BOOL CEditDoc::OpenFileDialog(
 	HWND		hwndParent,
-	const char*	pszOpenFolder,	//NULL以外を指定すると初期フォルダを指定できる
-	char*		pszPath,		//開くファイルのパスを受け取るアドレス
-	int*		pnCharCode,		//指定された文字コード種別を受け取るアドレス
-	BOOL*		pbReadOnly		//読み取り専用か
+	const char*	pszOpenFolder,	//<! [in]  NULL以外を指定すると初期フォルダを指定できる
+	char*		pszPath,		//<! [out] 開くファイルのパスを受け取るアドレス
+	int*		pnCharCode,		//<! [out] 指定された文字コード種別を受け取るアドレス
+	BOOL*		pbReadOnly		//<! [out] 読み取り専用か
 )
 {
 	/* アクティブにする */
 	ActivateFrameWindow( hwndParent );
-	ActivateFrameWindow( hwndParent );
 
-//	int		i;
-//	int		j;
+	const char*	pszDefFolder;
 	char**	ppszMRU;
 	char**	ppszOPENFOLDER;
+	BOOL	bRet;
 
 	/* MRUリストのファイルのリスト */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -931,86 +940,33 @@ BOOL CEditDoc::OpenFileDialog(
 	ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
 	cMRUFolder.GetPathList(ppszOPENFOLDER);
 
+	/* 初期フォルダの設定 */
+	// pszFolderはフォルダ名だが、ファイル名付きパスを渡してもCDlgOpenFile側で処理してくれる
+	if( NULL != pszOpenFolder ){
+		pszDefFolder = pszOpenFolder;
+	}else{
+		if( 0 != lstrlen( m_szFilePath ) ){
+			pszDefFolder = m_szFilePath;
+		}else if( 0 != lstrlen( m_szFilePath ) ){
+			pszDefFolder = ppszMRU[0];
+		}
+	}
 	/* ファイルオープンダイアログの初期化 */
-	if( 0 == lstrlen( m_szFilePath ) ){
-		if( NULL == pszOpenFolder ){
-			m_cDlgOpenFile.Create(
-				m_hInstance,
-				/*NULL*//*m_hWnd*/hwndParent,
-				m_szDefaultWildCard,
-				ppszMRU[0],
-				(const char **)ppszMRU,
-				(const char **)ppszOPENFOLDER
-			);
-		}else{
-			char*	pszFolderNew = new char[MAX_PATH];
-			int		nDummy;
-			int		nCharChars;
-			strcpy( pszFolderNew, pszOpenFolder );
-			nDummy = lstrlen( pszFolderNew );
-			/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
-			nCharChars = &pszFolderNew[nDummy] - CMemory::MemCharPrev( pszFolderNew, nDummy, &pszFolderNew[nDummy] );
-			if( 1 == nCharChars && pszFolderNew[nDummy - 1] == '\\' ){
-			}else{
-				strcat( pszFolderNew, "\\" );
-			}
+	m_cDlgOpenFile.Create(
+		m_hInstance,
+		hwndParent,
+		m_szDefaultWildCard,
+		pszDefFolder,
+		(const char **)ppszMRU,
+		(const char **)ppszOPENFOLDER
+	);
+	
+	bRet = m_cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
 
-
-			m_cDlgOpenFile.Create(
-				m_hInstance,
-				/*NULL*//*m_hWnd*/hwndParent,
-				m_szDefaultWildCard,
-				pszFolderNew/*pszOpenFolder*/,
-				(const char **)ppszMRU,
-				(const char **)ppszOPENFOLDER
-			);
-			delete [] pszFolderNew;
-		}
-	}else{
-		if( NULL == pszOpenFolder ){
-			m_cDlgOpenFile.Create(
-				m_hInstance,
-				/*NULL*//*m_hWnd*/hwndParent,
-				m_szDefaultWildCard,
-				m_szFilePath,
-				(const char **)ppszMRU,
-				(const char **)ppszOPENFOLDER
-			);
-		}else{
-			char*	pszFolderNew = new char[MAX_PATH];
-			int		nDummy;
-			int		nCharChars;
-			strcpy( pszFolderNew, pszOpenFolder );
-			nDummy = lstrlen( pszFolderNew );
-			/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
-			nCharChars = &pszFolderNew[nDummy] - CMemory::MemCharPrev( pszFolderNew, nDummy, &pszFolderNew[nDummy] );
-			if( 1 == nCharChars && pszFolderNew[nDummy - 1] == '\\' ){
-			}else{
-				strcat( pszFolderNew, "\\" );
-			}
-
-			m_cDlgOpenFile.Create(
-				m_hInstance,
-				/*NULL*//*m_hWnd*/hwndParent,
-				m_szDefaultWildCard,
-				pszFolderNew/*pszOpenFolder*/,
-				(const char **)ppszMRU,
-				(const char **)ppszOPENFOLDER
-			);
-			delete [] pszFolderNew;
-		}
-	}
-	if( m_cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly ) ){
-		delete [] ppszMRU;
-		delete [] ppszOPENFOLDER;
-		return TRUE;
-	}else{
-		delete [] ppszMRU;
-		delete [] ppszOPENFOLDER;
-		return FALSE;
-	}
+	delete [] ppszMRU;
+	delete [] ppszOPENFOLDER;
+	return bRet;
 }
-
 
 
 //pszOpenFolder pszOpenFolder

@@ -216,7 +216,7 @@ void CCommandLine::ParseCommandLine(
 
 		for( char *p = exename + len - 1; p > exename; p-- ){
 			if( *p == '.' ){
-				if( '0' <= p[-1] && p[-1] <= '5' )
+				if( '0' <= p[-1] && p[-1] <= '6' )
 					fi.m_nCharCode = p[-1] - '0';
 				break;
 			}

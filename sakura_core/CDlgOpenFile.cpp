@@ -618,8 +618,10 @@ void CDlgOpenFile::Create(
 /*! 「開く」ダイアログ モーダルダイアログの表示
 
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
+	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
+	@data 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 */
-BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
+BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 {
 	DWORD	dwError;
 	int		i;
@@ -631,6 +633,16 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 			"すべてのファイル", "*.*"
 	};
 	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
+
+	TCHAR	szCurDir[_MAX_PATH];
+	bool	bGetCurDirSuc = false;
+	if( false == bSetCurDir ){
+		int nRetVal;
+		nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
+		if( 0 < nRetVal && _MAX_PATH > nRetVal ){
+			bGetCurDirSuc = true;
+		}
+	}
 	/* 拡張子フィルタの作成 */
 	strcpy( szFilter, "" );
 	for( i = 0; i < nFilterArrNum; i += 2 ){
@@ -696,6 +708,10 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 	if( ::GetOpenFileName( &m_ofn ) ){
+		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
+		if( bGetCurDirSuc ){
+			::SetCurrentDirectory( szCurDir );
+		}
 		return TRUE;
 	}else{
 //		MYTRACE( "FALSE == GetOpenFileName( .... )\n" );
@@ -732,8 +748,12 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath )
 }
 
 
-/*! 保存ダイアログ モーダルダイアログの表示 */
-BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath )
+/*! 保存ダイアログ モーダルダイアログの表示
+	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
+	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
+	@data 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
+*/
+BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 {
 	DWORD	dwError;
 	int		i;
@@ -745,6 +765,16 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath )
 			"すべてのファイル", "*.*"
 	};
 	int		nFilterArrNum = sizeof( pszFilterArr ) / sizeof( pszFilterArr[0] );
+
+	TCHAR	szCurDir[_MAX_PATH];
+	bool	bGetCurDirSuc = false;
+	if( false == bSetCurDir ){
+		int nRetVal;
+		nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
+		if( 0 < nRetVal && _MAX_PATH > nRetVal ){
+			bGetCurDirSuc = true;
+		}
+	}
 	/* 拡張子フィルタの作成 */
 	strcpy( szFilter, "" );
 	for( i = 0; i < nFilterArrNum; i += 2 ){
@@ -793,6 +823,10 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath )
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 	if( ::GetSaveFileName( &m_ofn ) ){
+		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
+		if( bGetCurDirSuc ){
+			::SetCurrentDirectory( szCurDir );
+		}
 		return TRUE;
 	}else{
 //		MYTRACE( "FALSE == GetSaveFileName( .... )\n" );
@@ -910,6 +944,14 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILEOPEN);
 	m_bUseEol = false;	//	Feb. 9, 2001 genta
+	// 2002/08/22 カレントディレクトリを保存
+	TCHAR	szCurDir[_MAX_PATH];
+	bool	bGetCurDirSuc = false;
+	int nRetVal;
+	nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
+	if( 0 < nRetVal && _MAX_PATH > nRetVal ){
+		bGetCurDirSuc = true;
+	}
 
 
 	if( ::GetOpenFileName( &m_ofn ) ){
@@ -921,6 +963,9 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 		}
 		if( NULL != pbReadOnly ){
 			*pbReadOnly = m_bReadOnly;
+		}
+		if( bGetCurDirSuc ){
+			::SetCurrentDirectory( szCurDir );
 		}
 		return TRUE;
 	}else{
@@ -1020,6 +1065,15 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 
+	// 2002/08/22 カレントディレクトリを保存
+	TCHAR	szCurDir[_MAX_PATH];
+	bool	bGetCurDirSuc = false;
+	int nRetVal;
+	nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
+	if( 0 < nRetVal && _MAX_PATH > nRetVal ){
+		bGetCurDirSuc = true;
+	}
+
 	if( NULL != pnCharCode ){
 		m_nCharCode = *pnCharCode;
 	}
@@ -1043,6 +1097,9 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 		//	Feb. 9, 2001 genta
 		if( m_bUseEol ){
 			*pcEol = m_cEol;
+		}
+		if( bGetCurDirSuc ){
+			::SetCurrentDirectory( szCurDir );
 		}
 		return TRUE;
 	}else{
