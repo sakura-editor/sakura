@@ -8077,7 +8077,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				}
 			}
 			if( FALSE == bBoxSelected ){	/* ‹éŒ`”ÍˆÍ‘I‘ğ’† */
-				Command_INSTEXT( TRUE, cmemBuf.GetPtr(), FALSE );
+				//	2004,05.14 Moca ˆø”‚É•¶š—ñ’·‚ğ’Ç‰Á
+				Command_INSTEXT( TRUE, cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE );
 			}else{
 
 				cmemClip.SetDataSz( "" );

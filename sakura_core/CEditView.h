@@ -611,7 +611,8 @@ protected:
 	void Command_PASTEBOX(char *szPaste, int nPasteSize);
 	//>> 2002/03/29 Azumaiya
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
-	void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
+	//void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
+	void Command_INSTEXT( BOOL, const char*, int, BOOL ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
 	void Command_ADDTAIL( const char*, int );		/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
@@ -679,7 +680,7 @@ void ReplaceData_CEditView(
 
 	/* 検索系 */
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT( BOOL, HWND, const char* );/* 次を検索 */
+	void Command_SEARCH_NEXT( bool, BOOL, HWND, const char* );/* 次を検索 */
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
