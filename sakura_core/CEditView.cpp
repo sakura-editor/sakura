@@ -6968,7 +6968,9 @@ int CEditView::DoGrepFile(
 							SetGrepResult(
 								szWork, &nWorkLen,
 								pszFullPath, pszCodeName,
-								nLine, nNextWordFrom2, pCompareData, nLineLen, nEolCodeLen,
+								//	Jun. 25, 2002 genta
+								//	桁位置は1始まりなので1を足す必要がある
+								nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
 								pszKey, nKeyKen,
 								bGrepOutputLine, nGrepOutputStyle
 							);

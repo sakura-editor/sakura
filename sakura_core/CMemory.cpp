@@ -40,6 +40,7 @@
 #include "CMemory.h"
 #include "etc_uty.h"
 #include "CEol.h"// 2002/2/3 aroka
+#include "charcode.h"
 
 
 //#ifdef _DEBUG
@@ -48,35 +49,6 @@
 #include "CRunningTimer.h"
 //#endif
 
-#ifndef BOOL
-#define BOOL	int
-#endif
-#ifndef TRUE
-#define TRUE	1
-#endif
-#ifndef FALSE
-#define FALSE	0
-#endif
-
-
-#ifndef CRLF
-#define CRLF	"\015\012"
-#endif
-#ifndef CR
-#define CR		(char)'\015'
-#endif
-#ifndef LF
-#define LF		(char)'\012'
-#endif
-#ifndef TAB
-#define TAB		(char)'\011'
-#endif
-#ifndef SPACE
-#define SPACE	(char)' '
-#endif
-#ifndef ESC
-#define ESC		(char)'\x01b'
-#endif
 
 
 #define ESC_JIS		"\x01b$B"
