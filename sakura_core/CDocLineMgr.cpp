@@ -1031,6 +1031,8 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 					pDocLine->m_pPrev->m_pNext = NULL;
 				}
 				m_pDocLineBot = pDocLine->m_pPrev;
+				delete pDocLine; // 2003/10/11 Moca メモリーリーク修正
+				pDocLine = NULL;
 				*pnDelLineOldFrom = nLine;	/* 削除された変更前論理行(from) */
 				*pnDelLineOldNum = 1;		/* 削除された行数 */
 				m_nLines--;					/* 全行数 */
