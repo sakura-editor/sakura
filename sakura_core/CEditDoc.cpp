@@ -1290,7 +1290,10 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 	switch( m_pShareData->m_Common.GetBackupType() ){
 	case 1:
-		wsprintf( pBase, "%s%s", szFname, ".bak" );
+		wsprintf( pBase, "%s.bak", szFname );
+		break;
+	case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
+		wsprintf( pBase, "%s%s.bak", szFname, szExt );
 		break;
 	case 2:	//	日付，時刻
 		_tzset();
@@ -1330,7 +1333,7 @@ int CEditDoc::MakeBackUp( const char* target_file )
 						LocalTime;
 			SYSTEMTIME	SystemTime;
 
-			hFile = ::CreateFile(GetFilePath(),GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+			hFile = ::CreateFile(target_file,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 			::GetFileTime(hFile,NULL,NULL,&LastWriteTime);			// ファイルのタイプスタンプを取得(更新日時のみ)
 			CloseHandle(hFile);
 			::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
@@ -1361,15 +1364,25 @@ int CEditDoc::MakeBackUp( const char* target_file )
 // 2001/06/12 End
 
 	case 3: //	?xx : xx = 00~99, ?は任意の文字
+	case 6: //	Jun.  5, 2005 genta 3の拡張子を残す版
 		//	Aug. 15, 2000 genta
 		//	ここでは作成するバックアップファイル名のみ生成する．
 		//	ファイル名のRotationは確認ダイアログの後で行う．
-		szExt[0] = '.';
-		szExt[1] = m_pShareData->m_Common.GetBackupExtChar();
-		szExt[2] = '0';
-		szExt[3] = '0';
-		szExt[4] = '\0';
-
+		{
+			//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
+			char* ptr;
+			if( m_pShareData->m_Common.GetBackupType() == 3 ){
+				ptr = szExt;
+			}
+			else {
+				ptr = szExt + strlen( szExt );
+			}
+			*ptr   = '.';
+			*++ptr = m_pShareData->m_Common.GetBackupExtChar();
+			*++ptr = '0';
+			*++ptr = '0';
+			*++ptr = '\0';
+		}
 		wsprintf( pBase, "%s%s", szFname, szExt );
 		break;
 	}
@@ -1407,7 +1420,7 @@ int CEditDoc::MakeBackUp( const char* target_file )
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 				"バックアップ作成の確認",
 				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n作成したバックアップファイルをごみ箱に放り込みます。\n",
-				IsFilePathAvailable() ? GetFilePath() : "（無題）",
+				target_file,
 				szPath
 			);
 		}else{	//@@@ 2001.12.11 add end MIK
@@ -1430,7 +1443,9 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	}
 
 	//	From Here Aug. 16, 2000 genta
-	if( m_pShareData->m_Common.GetBackupType() == 3 ){
+	//	Jun.  5, 2005 genta 1の拡張子を残す版を追加
+	if( m_pShareData->m_Common.GetBackupType() == 3 ||
+		m_pShareData->m_Common.GetBackupType() == 6 ){
 		//	既に存在するBackupをずらす処理
 		int				i;
 

@@ -34,7 +34,7 @@ static const DWORD p_helpids[] = {	//10000
 	IDC_EDIT_BACKUPFOLDER,			HIDC_EDIT_BACKUPFOLDER,			//保存フォルダ名
 	IDC_EDIT_BACKUP_3,				HIDC_EDIT_BACKUP_3,				//世代数
 	IDC_RADIO_BACKUP_TYPE1,			HIDC_RADIO_BACKUP_TYPE1,		//バックアップの種類（拡張子）
-	IDC_RADIO_BACKUP_TYPE2,			HIDC_RADIO_BACKUP_TYPE2NEWHID,		//バックアップの種類（日付・時刻） // 2002.11.09 Moca HIDが.._TYPE3と逆だった
+//	IDC_RADIO_BACKUP_TYPE2,			HIDC_RADIO_BACKUP_TYPE2NEWHID,		//バックアップの種類（日付・時刻） // 2002.11.09 Moca HIDが.._TYPE3と逆だった	// Jun.  5, 2004 genta 廃止
 	IDC_RADIO_BACKUP_TYPE3,			HIDC_RADIO_BACKUP_TYPE3NEWHID,		//バックアップの種類（連番）// 2002.11.09 Moca HIDが.._TYPE2と逆だった
 	IDC_RADIO_BACKUP_DATETYPE1,		HIDC_RADIO_BACKUP_DATETYPE1,	//付加する日時の種類（作成日時）	//Jul. 05, 2001 JEPRO 追加
 	IDC_RADIO_BACKUP_DATETYPE2,		HIDC_RADIO_BACKUP_DATETYPE2,	//付加する日時の種類（更新日時）	//Jul. 05, 2001 JEPRO 追加
@@ -58,7 +58,7 @@ static const DWORD p_helpids[] = {	//10000
 	IDC_EDIT_BACKUPFOLDER,			10040,	//保存フォルダ名
 	IDC_EDIT_BACKUP_3,				10041,	//世代数
 	IDC_RADIO_BACKUP_TYPE1,			10060,	//バックアップの種類（拡張子）
-	IDC_RADIO_BACKUP_TYPE2,			10062,	//バックアップの種類（日付・時刻）
+//	IDC_RADIO_BACKUP_TYPE2,			10062,	//バックアップの種類（日付・時刻	// Jun.  5, 2004 genta 廃止
 	IDC_RADIO_BACKUP_TYPE3,			10061,	//バックアップの種類（連番）
 	IDC_RADIO_BACKUP_DATETYPE1,		10063,	//付加する日時の種類（作成日時）	//Jul. 05, 2001 JEPRO 追加
 	IDC_RADIO_BACKUP_DATETYPE2,		10064,	//付加する日時の種類（更新日時）	//Jul. 05, 2001 JEPRO 追加
@@ -183,7 +183,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_RADIO_BACKUP_TYPE1:
-			case IDC_RADIO_BACKUP_TYPE2:
 				//	Aug. 16, 2000 genta
 				//	バックアップ方式追加
 			case IDC_RADIO_BACKUP_TYPE3:
@@ -191,6 +190,10 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 			case IDC_CHECK_BACKUPFOLDER:
 				//	Aug. 21, 2000 genta
 			case IDC_CHECK_AUTOSAVE:
+			//	Jun.  5, 2004 genta IDC_RADIO_BACKUP_TYPE2を廃止して，
+			//	IDC_RADIO_BACKUP_DATETYPE1, IDC_RADIO_BACKUP_DATETYPE2を同列に持ってきた
+			case IDC_RADIO_BACKUP_DATETYPE1:
+			case IDC_RADIO_BACKUP_DATETYPE2:
 				EnableBackupInput(hwndDlg);
 				return TRUE;
 			case IDC_BUTTON_BACKUP_FOLDER_REF:	/* フォルダ参照 */
@@ -231,7 +234,12 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 }
 
 
-/* ダイアログデータの設定 */
+/*! ダイアログデータの設定
+	@date 2004.06.05 genta 元の拡張子を残す設定を追加．
+		日時指定でチェックボックスが空欄で残ると設定されない問題を避けるため，
+		IDC_RADIO_BACKUP_TYPE2
+		を廃止してレイアウト変更
+*/
 void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 {
 //	BOOL	bRet;
@@ -247,23 +255,30 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_bBackUpFolder );
 
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+	//	Jun.  5, 2004 genta 元の拡張子を残す設定(5,6)を追加．
 	switch( m_Common.GetBackupType() ){
 	case 2:
-		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE2, 1 );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1, 1 );	// 付加する日付のタイプ(現時刻)
 		break;
 	case 3:
+	case 6:
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE3, 1 );
 		break;
 	case 4:
-		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE2, 1 );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2, 1 );	// 付加する日付のタイプ(前回の保存時刻)
 		break;
+	case 5:
 	case 1:
 	default:
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_TYPE1, 1 );
 		break;
 	}
+	
+	//	Jun.  5, 2004 genta 元の拡張子を残す設定(5,6)を追加．
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT,
+		( m_Common.GetBackupType() == 5 || m_Common.GetBackupType() == 6 ) ? 1 : 0
+	 );
+
 	/* バックアップファイル名：日付の年 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_YEAR, m_Common.GetBackupOpt(BKUP_YEAR) );
 	/* バックアップファイル名：日付の月 */
@@ -318,9 +333,15 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ) ){
-		m_Common.SetBackupType(1);
+		//	Jun.  5, 2005 genta 拡張子を残すパターンを追加
+		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT )){
+			m_Common.SetBackupType(5);
+		}
+		else {
+			m_Common.SetBackupType(1);
+		}
 	}
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE2 ) ){
+//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE2 ) ){
 		// 2001/06/05 Start by asa-o: 日付のタイプ
 		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ) ){
 			m_Common.SetBackupType(2);	// 現時刻
@@ -329,12 +350,17 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 			m_Common.SetBackupType(4);	// 前回の保存時刻
 		}
 		// 2001/06/05 End
-	}
+//	}
 
 	//	Aug. 16, 2000 genta
 	//	3 = *.b??
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ) ){
-		m_Common.SetBackupType(3);
+		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT )){
+			m_Common.SetBackupType(6);
+		}
+		else {
+			m_Common.SetBackupType(3);
+		}
 	}
 
 	/* バックアップファイル名：日付の年 */
@@ -395,22 +421,27 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 //	From Here Aug. 16, 2000 genta
 /*!	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 	適切に設定する
+
+	@date 2004.06.05 genta 元の拡張子を残す設定を追加．
+		日時指定でチェックボックスが空欄で残ると設定されない問題を避けるため，
+		IDC_RADIO_BACKUP_TYPE2
+		を廃止してレイアウト変更
 */
 void CPropCommon::EnableBackupInput(HWND hwndDlg)
 {
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE2 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ), TRUE );
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE2 ) ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), TRUE );
+		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ) ||
+			::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ) ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DAY ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), TRUE );
 		}else{
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), FALSE );
@@ -418,8 +449,6 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
 		}
 		if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ) ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_3 ), TRUE );
@@ -445,9 +474,16 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 		}
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ), TRUE );	//@@@ 2001.12.11 add MIK
 
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ) ||
+		::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 )){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), TRUE );
+	}
+	else {
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), FALSE );
+	}
+
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE2 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), FALSE );
@@ -465,6 +501,8 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ), FALSE );	//@@@ 2001.12.11 add MIK
+		//	Jun.  5, 2005 genta 追加
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), FALSE );
 	}
 }
 //	To Here Aug. 16, 2000 genta
