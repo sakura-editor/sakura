@@ -512,6 +512,12 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bMarkUpBlankLineEnable"		, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bMarkUpBlankLineEnable, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "bFunclistSetFocusOnJump"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Common.m_bFunclistSetFocusOnJump, 0 );
 
+		//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
+		cProfile.IOProfileData( bRead, pszSecName, "szWinCaptionActive"
+			, REGCNV_SZ2SZ,(char*)m_pShareData->m_Common.m_szWindowCaptionActive, MAX_CAPTION_CONF_LEN );
+		cProfile.IOProfileData( bRead, pszSecName, "szWinCaptionInactive"
+			, REGCNV_SZ2SZ,(char*)m_pShareData->m_Common.m_szWindowCaptionInactive, MAX_CAPTION_CONF_LEN );
+
 	}// Common
 	
 	/* ツールバー */

@@ -110,8 +110,11 @@ struct ARRHEAD {
 
 	Version 43:
 	最近使ったファイル・フォルダにお気に入りを追加 2003.04.08 MIK
+
+	Version 44:
+	Window Caption文字列領域をCommonに追加 2003.04.05 genta
 */
-const unsigned int uShareDataVersion = 43;
+const unsigned int uShareDataVersion = 44;
 
 /*
 ||	Singleton風
@@ -1260,7 +1263,13 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "Visual Basic2", FALSE );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
 		m_pShareData->m_CKeyWordSetMgr.AddKeyWordSet( "リッチテキスト", TRUE );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
-
+		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
+		strcpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
+			"${w?$h$:アウトプット$:${I?$f$:$F$}$}${U?(更新)$} -"
+			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
+		strcpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
+			"${w?$h$:アウトプット$:$f$}${U?(更新)$} -"
+			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
 
 		/* ｎ番目のセットにキーワードを追加 */
 		static const char*	ppszKeyWordsCPP[] = {

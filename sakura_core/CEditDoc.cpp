@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>	// Apr. 03, 2003 genta
 #include <io.h>
 #include "CEditDoc.h"
 #include "debug.h"
@@ -1162,8 +1163,6 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 		return;
 	}
 
-
-	HWND	hwnd;
 	char	pszCap[1024];	//	Nov. 6, 2000 genta オーバーヘッド軽減のためHeap→Stackに変更
 
 //	/* アイコン化されていない時はフルパス */
@@ -1174,101 +1173,20 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 //		bKillFocus = FALSE;
 //	}
 
-
-	const char*	pszAppName = GSTR_APPNAME;
-	char*		pszMode;
-	char*		pszKeyMacroRecking;
-
-
-	hwnd = m_hwndParent;
-
-	if( m_bReadOnly ){	/* 読み取り専用モード */
-		pszMode = "（読み取り専用）";
-	}else
-	if( 0 != m_nFileShareModeOld && /* ファイルの排他制御モード */
-		NULL == m_hLockedFile		/* ロックしていない */
-	){
-		pszMode = "（上書き禁止）";
-	}else{
-		pszMode = "";
+	// From Here Apr. 04, 2003 genta / Apr.05 ShareDataのパラメータ利用に
+	if( bKillFocus ){
+		ExpandParameter( m_pShareData->m_Common.m_szWindowCaptionInactive,
+			pszCap, sizeof( pszCap ));
 	}
-
-	if( TRUE == m_pShareData->m_bRecordingKeyMacro &&	/* キーボードマクロの記録中 */
-		m_pShareData->m_hwndRecordingKeyMacro == hwnd	/* キーボードマクロを記録中のウィンドウ */
-	){
-		pszKeyMacroRecking = "  【キーマクロの記録中】";
-	}else{
-		pszKeyMacroRecking = "";
+	else {
+		ExpandParameter( m_pShareData->m_Common.m_szWindowCaptionActive,
+			pszCap, sizeof( pszCap ));
 	}
+	// To Here Apr. 04, 2003 genta
 
-
-
-	if( m_bGrepMode ){
-		/* データを指定バイト数以内に切り詰める */
-		CMemory		cmemDes;
-		int			nDesLen;
-		const char*	pszDes;
-		LimitStringLengthB( m_szGrepKey, lstrlen( m_szGrepKey ), 64, cmemDes );
-		pszDes = cmemDes.GetPtr();
-		nDesLen = lstrlen( pszDes );
-//		wsprintf( pszCap, "【Grep】\"%s%s\" - %s",
-		wsprintf( pszCap, "%s%s - %s",
-			pszDes, ( (int)lstrlen( m_szGrepKey ) > nDesLen ) ? "・・・":"",
-			pszAppName
-		);
-//#ifdef _DEBUG
-	}else
-	if( m_bDebugMode ){
-		wsprintf( pszCap, "アウトプット - %s%s",
-			pszAppName,
-			m_bReadOnly ? "（上書き禁止）" : ""	/* 読み取り専用モード */
-		 );
-//#endif
-	}else{
-
-		if( IsFilePathAvailable() && (::IsIconic( hwnd ) || bKillFocus ) ){
-			//Oct. 11, 2000 jepro note： アクティブでない時のタイトル表示
-			wsprintf(
-				pszCap,
-				"%s%s - %s %d.%d.%d.%d %s%s",	//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
-				GetFileName(),
-				IsModified() ? "（更新）" : "",	/* 変更フラグ */
-				pszAppName,
-				HIWORD( m_pShareData->m_dwProductVersionMS ),
-				LOWORD( m_pShareData->m_dwProductVersionMS ),
-				HIWORD( m_pShareData->m_dwProductVersionLS ),
-				LOWORD( m_pShareData->m_dwProductVersionLS ),
-				pszMode,	/* モード */
-				pszKeyMacroRecking
-			);
-		}else{
-			TCHAR szFileName[_MAX_PATH + 1];
-			//Oct. 11, 2000 jepro note： アクティブな時のタイトル表示
-			wsprintf(
-				pszCap,
-				"%s%s - %s %d.%d.%d.%d %s%s",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
-				IsFilePathAvailable() ? CShareData::getInstance()->GetTransformFileName( GetFilePath(), szFileName, _MAX_PATH ) : "（無題）",
-				IsModified() ? "（更新）" : "",	/* 変更フラグ */
-				pszAppName,
-				HIWORD( m_pShareData->m_dwProductVersionMS ),
-				LOWORD( m_pShareData->m_dwProductVersionMS ),
-				HIWORD( m_pShareData->m_dwProductVersionLS ),
-				LOWORD( m_pShareData->m_dwProductVersionLS ),
-				pszMode,	/* モード */
-				pszKeyMacroRecking
-			);
-		}
-	}
-	// delete [] pszCap;
-	//if (strcmp( m_pszCaption, pszCap ) != 0){
-		::SetWindowText( hwnd, pszCap );
-	//	strcpy( m_pszCaption, pszCap );
-	//}
+	::SetWindowText( m_hwndParent, pszCap );
 	return;
 }
-
-
-
 
 /*! バックアップの作成
 	@author genta
@@ -4177,10 +4095,22 @@ void CEditDoc::SetImeMode( int mode )
 	@li P  総ページ
 	@li D  ファイルのタイムスタンプ(共通設定の日付書式)
 	@li T  ファイルのタイムスタンプ(共通設定の時刻書式)
-	
+	@li V  ファイルのバージョン文字列
+	@li h  Grep検索キーの先頭32byte
+
+	@date 2003.04.03 genta strncpy_ex導入によるfor文の削減
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
 {
+	
+	// Apr. 03, 2003 genta 固定文字列をまとめる
+	static const char PRINT_PREVIEW_ONLY[] = "(印刷プレビューでのみ使用できます)";
+	const int PRINT_PREVIEW_ONLY_LEN = sizeof( PRINT_PREVIEW_ONLY ) - 1;
+	static const char NO_TITLE[] = "(無題)";
+	const int NO_TITLE_LEN = sizeof( NO_TITLE ) - 1;
+	static const char NOT_SAVED[] = "(保存されていません)";
+	const int NOT_SAVED_LEN = sizeof( NOT_SAVED ) - 1;
+
 	const char *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
 	char *q, *q_max;
 	for( p = pszSource, q = pszBuffer, q_max = pszBuffer + nBufferLen; *p != '\0' && q < q_max;){
@@ -4194,13 +4124,12 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		case 'F':	//	開いているファイルの名前（フルパス）
 			if ( !IsFilePathAvailable() ){
-				memcpy(q, "(無題)", 6);
-				q += 6;
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
 			else {
-				for( r = GetFilePath(); *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				r = GetFilePath();
+				q = strncpy_ex( q, q_max - q, r, strlen( r ));
 				++p;
 			}
 			break;
@@ -4209,23 +4138,20 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
 			if ( ! IsFilePathAvailable() ){
-				memcpy(q, "(無題)", 6);
-				q += 6;
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
 			else {
 				r = GetFileName(); // 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
-				for( ; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, r, strlen( r ));
 				++p;
 			}
 			break;
 		case 'g':	//	開いているファイルの名前（拡張子を除くファイル名のみ）
 			//	From Here Sep. 16, 2002 genta
 			if ( ! IsFilePathAvailable() ){
-				memcpy(q, "(無題)", 6);
-				q += 6;
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
 			else {
@@ -4241,9 +4167,8 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				//	rと同じ場所まで行ってしまった⇔.が無かった
 				if( dot_position == r )
 					dot_position = end_of_path;
-				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
-				for( ; r < dot_position && q < q_max; ++r, ++q )
-					*q = *r;
+
+				q = strncpy_ex( q, q_max - q, r, dot_position - r );
 				++p;
 			}
 			break;
@@ -4251,8 +4176,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		case '/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
 			// Oct. 28, 2001 genta
 			if ( !IsFilePathAvailable() ){
-				memcpy(q, "(無題)", 6);
-				q += 6;
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
 			else {
@@ -4271,8 +4195,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				CMemory cmemCurText;
 				m_cEditViewArr[m_nActivePaneIndex].GetCurrentTextForSearch( cmemCurText );
-				for( r = cmemCurText.GetPtr(); *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, cmemCurText.GetPtr(), cmemCurText.GetLength());
 				++p;
 			}
 		//	To Here Jan. 15, 2002 hor
@@ -4282,8 +4205,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				char szText[11];
 				_itot( m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_PHY + 1, szText, 10 );
-				for( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
 			break;
@@ -4291,8 +4213,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				char szText[11];
 				_itot( m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY_PHY + 1, szText, 10 );
-				for( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
 			break;
@@ -4303,8 +4224,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
 				CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
-				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
 			break;
@@ -4314,8 +4234,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
 				CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
-				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
 			break;
@@ -4325,13 +4244,11 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				if (pcEditWnd->m_pPrintPreview){
 					char szText[1024];
 					itoa(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
-					for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-						*q = *r;
+					q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 					++p;
 				}
 				else {
-					for ( r = "(印刷プレビューでのみ使用できます)"; *r != '\0' && q < q_max; ++r, ++q )
-						*q = *r;
+					q = strncpy_ex( q, q_max - q, PRINT_PREVIEW_ONLY, PRINT_PREVIEW_ONLY_LEN );
 					++p;
 				}
 			}
@@ -4342,13 +4259,11 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				if (pcEditWnd->m_pPrintPreview){
 					char szText[1024];
 					itoa(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
-					for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-						*q = *r;
+					q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 					++p;
 				}
 				else {
-					for ( r = "(印刷プレビューでのみ使用できます)"; *r != '\0' && q < q_max; ++r, ++q )
-						*q = *r;
+					q = strncpy_ex( q, q_max - q, PRINT_PREVIEW_ONLY, PRINT_PREVIEW_ONLY_LEN );
 					++p;
 				}
 			}
@@ -4361,13 +4276,11 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				::FileTimeToSystemTime( &FileTime, &systimeL );
 				char szText[1024];
 				CShareData::getInstance()->MyGetDateFormat( systimeL, szText, sizeof( szText ) - 1 );
-				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
 			else {
-				for ( r = "(保存されていません)"; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, NOT_SAVED, NOT_SAVED_LEN );
 				++p;
 			}
 			break;
@@ -4379,20 +4292,46 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				::FileTimeToSystemTime( &FileTime, &systimeL );
 				char szText[1024];
 				CShareData::getInstance()->MyGetTimeFormat( systimeL, szText, sizeof( szText ) - 1 );
-				for ( r = szText; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
 			else {
-				for ( r = "(保存されていません)"; *r != '\0' && q < q_max; ++r, ++q )
-					*q = *r;
+				q = strncpy_ex( q, q_max - q, NOT_SAVED, NOT_SAVED_LEN );
 				++p;
 			}
 			break;
-			//	Mar. 31, 2003 genta
-			//	条件分岐
-			//	${cond:string1$:string2$:string3$}
-			//	
+		case 'V':	// Apr. 4, 2003 genta
+			// Version number
+			{
+				char buf[28]; // 6(符号含むWORDの最大長) * 4 + 4(固定部分)
+				int len = sprintf( buf, "%d.%d.%d.%d",
+					HIWORD( m_pShareData->m_dwProductVersionMS ),
+					LOWORD( m_pShareData->m_dwProductVersionMS ),
+					HIWORD( m_pShareData->m_dwProductVersionLS ),
+					LOWORD( m_pShareData->m_dwProductVersionLS )
+				);
+				q = strncpy_ex( q, q_max - q, buf, len );
+				++p;
+			}
+			break;
+		case 'h':	//	Apr. 4, 2003 genta
+			//	Grep Key文字列 MAX 32文字
+			//	中身はSetParentCaption()より移植
+			{
+				CMemory		cmemDes;
+				LimitStringLengthB( m_szGrepKey, lstrlen( m_szGrepKey ),
+					(q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
+				if( (int)lstrlen( m_szGrepKey ) > cmemDes.GetLength() ){
+					cmemDes.Append( "...", 3 );
+				}
+				q = strncpy_ex( q, q_max - q, cmemDes.GetPtr(), cmemDes.GetLength());
+				++p;
+			}
+			break;
+		//	Mar. 31, 2003 genta
+		//	条件分岐
+		//	${cond:string1$:string2$:string3$}
+		//	
 		case '{':	// 条件分岐
 			{
 				int cond;
@@ -4500,7 +4439,7 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		}else{
 			return 2;
 		}
-	case 'g': // Grepモード/Output Mode
+	case 'w': // Grepモード/Output Mode
 		if( m_bGrepMode ){
 			return 0;
 		}else if( m_bDebugMode ){
@@ -4522,6 +4461,12 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		else {
 			return 1;
 		}
+	case 'I': // アイコン化されているか
+		if( ::IsIconic( m_hwndParent )){
+			return 0;
+		} else {
+ 			return 1;
+ 		}
 	default:
 		return 0;
 	}
