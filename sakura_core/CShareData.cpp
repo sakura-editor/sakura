@@ -4094,12 +4094,15 @@ int CShareData::GetEditorWindowsNum( void )
 
 
 
-/* 全編集ウィンドウへメッセージをポストする */
+/*! 全編集ウィンドウへメッセージをポストする
+
+	@date 2005.01.24 genta m_hWndLast == NULLのとき全くメッセージが送られなかった
+*/
 BOOL CShareData::PostMessageToAllEditors(
-	UINT		uMsg,		/* ポストするメッセージ */
-	WPARAM		wParam,		/* 第1メッセージ パラメータ */
-	LPARAM		lParam,		/* 第2メッセージ パラメータ */
-	HWND		m_hWndLast	/* 最後に送りたいウィンドウ */
+	UINT		uMsg,		/*!< ポストするメッセージ */
+	WPARAM		wParam,		/*!< 第1メッセージ パラメータ */
+	LPARAM		lParam,		/*!< 第2メッセージ パラメータ */
+	HWND		m_hWndLast	/*!< 最後に送りたいウィンドウ */
  )
 {
 	HWND*	phWndArr;
@@ -4114,7 +4117,9 @@ BOOL CShareData::PostMessageToAllEditors(
 		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
 	}
 	for( i = 0; i < j; ++i ){
-		if( NULL != m_hWndLast && phWndArr[i] != m_hWndLast ){
+		//	Jan. 24, 2005 genta m_hWndLast == NULLのときにメッセージが送られるように
+		if( m_hWndLast == NULL ||
+			( NULL != m_hWndLast && phWndArr[i] != m_hWndLast ) ){
 			if( IsEditWnd( phWndArr[i] ) ){
 				/* トレイからエディタへメッセージをポスト */
 				::PostMessage( phWndArr[i], uMsg, wParam, lParam );
@@ -4130,7 +4135,10 @@ BOOL CShareData::PostMessageToAllEditors(
 }
 
 
-/* 全編集ウィンドウへメッセージを送る */
+/*! 全編集ウィンドウへメッセージを送る
+
+	@date 2005.01.24 genta m_hWndLast == NULLのとき全くメッセージが送られなかった
+*/
 BOOL CShareData::SendMessageToAllEditors(
 	UINT		uMsg,		/* ポストするメッセージ */
 	WPARAM		wParam,		/* 第1メッセージ パラメータ */
@@ -4151,7 +4159,9 @@ BOOL CShareData::SendMessageToAllEditors(
 		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
 	}
 	for( i = 0; i < j; ++i ){
-		if( NULL != m_hWndLast && phWndArr[i] != m_hWndLast ){
+		//	Jan. 24, 2005 genta m_hWndLast == NULLのときにメッセージが送られるように
+		if( m_hWndLast == NULL ||
+			( NULL != m_hWndLast && phWndArr[i] != m_hWndLast ) ){
 			if( IsEditWnd( phWndArr[i] ) ){
 				/* トレイからエディタへメッセージをポスト */
 				::SendMessage( phWndArr[i], uMsg, wParam, lParam );
