@@ -8015,7 +8015,7 @@ CEOL CEditView::GetCurrentInsertEOL( void )
 #endif
 }
 
-
+//	From Here Jun. 30, 2001 GAE
 //////////////////////////////////////////////////////////////////////
 /*! 子プロセスの標準出力をリダイレクトする
 	作業ファイルを作成
@@ -8046,202 +8046,349 @@ CEOL CEditView::GetCurrentInsertEOL( void )
 //////////////////////////////////////////////////////////////////////
 void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout ) 
 {
-	HANDLE					hFile;
-	HANDLE					hFile2;
-	char					szTempFile[_MAX_PATH+ 1];
-	STARTUPINFO             StartupInfo;
-	PROCESS_INFORMATION     ProcessInfo;
-	char                    szCmd[512];
+	#define	IsKanji1(x) ((unsigned char)((x^0x20)-0xA1)<=0x3B) 
+	char				cmdline[1024];
+	HANDLE				hStdOutWrite, hStdOutRead;
+	PROCESS_INFORMATION	pi;
+	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
 	CDlgCancel				cDlgCancel;
-	CMemory					cmBuf;
 
-	hFile = NULL;
-	hFile2 = NULL;
-	if( bGetStdout ){
-		::GetTempPath( sizeof( szTempFile ) - 1, szTempFile );
-		// テンポラリファイルのファイル名を作成します。
-		::GetTempFileName(
-		  szTempFile, // pointer to directory name for temporary file
-		  "skr", // pointer to filename prefix
-		  0, // number used to create temporary filename
-		  szTempFile // pointer to buffer that receives the new filename
-		);
-//		MYTRACE( "szTempFile=[%s]\n", szTempFile );
-		
-//old	hFile = CreateFile( szTempFile, GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
-		hFile = ::CreateFile( szTempFile, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
-		if ( hFile == INVALID_HANDLE_VALUE ){
-			goto end_of_func;
-		}
-		/* 読み込み用ファイルハンドル */
-		hFile2 = ::CreateFile( szTempFile, /*GENERIC_WRITE |*/ GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
-		if( hFile2 == INVALID_HANDLE_VALUE ){
-			goto end_of_func;
-		}
+	//子プロセスの標準出力と接続するパイプを作成
+	SECURITY_ATTRIBUTES	sa;
+	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+	sa.bInheritHandle = TRUE;
+	sa.lpSecurityDescriptor = NULL;
+	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE ) {
+		//エラー。対策無し
+		return;
+	}
+	//継承不能にする
+	DuplicateHandle( GetCurrentProcess(), hStdOutRead,
+				GetCurrentProcess(), NULL,
+				0, FALSE, DUPLICATE_SAME_ACCESS );
+
+	//CreateProcessに渡すSTARTUPINFOを作成
+	STARTUPINFO	sui;
+	ZeroMemory( &sui, sizeof(STARTUPINFO) );
+	sui.cb = sizeof(STARTUPINFO);
+	if( bGetStdout ) {
+		sui.dwFlags = STARTF_USESHOWWINDOW;
+		sui.wShowWindow = SW_HIDE;
+		sui.dwFlags |=  STARTF_USESTDHANDLES;
+		sui.hStdInput = GetStdHandle( STD_INPUT_HANDLE );
+		sui.hStdOutput = hStdOutWrite;
+		sui.hStdError = hStdOutWrite;
 	}
 
-	if( bGetStdout ){
+	//コマンドライン実行
+	strcpy( cmdline, pszCmd );
+	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE, 
+				CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
+		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
+		// command(9x) か cmd(NT) を呼び出す
+
+		//OSバージョン取得
+		OSVERSIONINFO	vi;
+		ZeroMemory( &vi, sizeof(OSVERSIONINFO) );
+		vi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx( &vi );
+		//コマンドライン文字列作成
+		wsprintf( cmdline, "%s %s%s", 
+				( vi.dwPlatformId == VER_PLATFORM_WIN32_NT ? "cmd.exe" : "command.com" ),
+				( bGetStdout ? "/C " : "/K " ), pszCmd );
+		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE, 
+					CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
+			MessageBox( NULL, cmdline, "コマンド実行は失敗しました", MB_OK | MB_ICONEXCLAMATION );
+			goto finish;
+		}
+	}
+	
+	if( bGetStdout ) {
+		DWORD	read_cnt;
+		DWORD	new_cnt;
+		char	work[1024];
+		char	tmp;
+		int		bufidx = 0;
+		int		j;
+		BOOL	bLoopFlag = TRUE;
+
+		//中断ダイアログ表示
 		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
-	}
-
-	GetStartupInfo(&StartupInfo);
-	StartupInfo.dwFlags     |= ( STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW );
-	StartupInfo.wShowWindow = bGetStdout?/*SW_SHOW*/SW_HIDE:SW_SHOW;      /* 子プロセスのウインドウ表示状態 */
-	if( bGetStdout ){
-		StartupInfo.hStdOutput  = hFile;
-		StartupInfo.hStdError   = hFile;
-	}
-	lstrcpy(szCmd, "");
-	lstrcat(szCmd, pszCmd);
-	/* Command.comのオプション */
-	const char* pszOpt_C;
-	if( bGetStdout ){
-		pszOpt_C = "/C";
-	}else{
-		pszOpt_C = "/K";
-	}
-	memset( &ProcessInfo, 0, sizeof( PROCESS_INFORMATION ) );
-	if( !CreateProcess( NULL, szCmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &StartupInfo, &ProcessInfo ) ){
-		/* プロセス起動に失敗した場合はDOSコマンドとして処理する */
-		wsprintf( szCmd, "command.com %s ", pszOpt_C );  // Win95/98 なら command.com
-		lstrcat(szCmd, pszCmd);
-		if( !CreateProcess( NULL, szCmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &StartupInfo, &ProcessInfo ) ){
-			wsprintf(szCmd, "cmd.exe %s ", pszOpt_C );  // Win NT なら cmd.exe
-			lstrcat(szCmd, pszCmd);
-			if( !CreateProcess( NULL, szCmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &StartupInfo, &ProcessInfo ) ){
-				goto end_of_func;
-			}
-		}
-	}
-	if( bGetStdout ){
-		/* 最後にテキストを追加 */
+		//実行したコマンドラインを表示
 		m_cShareData.TraceOut( "%s", "\r\n" );
-		m_cShareData.TraceOut( "%s", szCmd );
+		m_cShareData.TraceOut( "%s", pszCmd );
 		m_cShareData.TraceOut( "%s", "\r\n" );
-	}
-	if( bGetStdout ){
-		::SetDlgItemText( cDlgCancel.m_hWnd, IDC_STATIC_CMD, szCmd );
-	}
-
-	DWORD dwRes;
-	DWORD swFPOld;
-	DWORD swFPRead;
-	DWORD dwNumberOfBytesRead;
-//	DWORD dwNumberOfBytesWritten;
-	swFPRead = 0;
-	BOOL bRes;
-	char szBuffer[1000];
-	/* プロセスオブジェクトがシグナル状態になるまでループする */
-	while(bGetStdout){
-		if( bGetStdout ){
-			/* ファイルポインタを移動します。 */
-			swFPOld = SetFilePointer( hFile2, swFPRead, NULL, FILE_BEGIN );
-			while(1){
-				bRes = ReadFile( hFile2, szBuffer, sizeof( szBuffer ) - 1, &dwNumberOfBytesRead, NULL );
-				swFPRead += dwNumberOfBytesRead;
-				szBuffer[dwNumberOfBytesRead] = '\0';
-				if( 0 < dwNumberOfBytesRead ){
-					/* 最後にテキストを追加 */
-//					m_cShareData.TraceOut( "%s", szBuffer );
-					cmBuf.AppendSz( szBuffer );
-					if( szBuffer[dwNumberOfBytesRead - 1] != 0x0d ){
-						m_cShareData.TraceOut( "%s", cmBuf.GetPtr2() );
-						cmBuf.SetDataSz( "" );
-					}
-
-				}
-				if( dwNumberOfBytesRead < sizeof( szBuffer ) - 1 ){
-					break;
-				}
-			}
-		}
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
-			break;
-		}
-		/* 中断ボタン押下チェック */
-		if( cDlgCancel.IsCanceled() ){
-			//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
-			::TerminateProcess( ProcessInfo.hProcess, 0 );
-			/* 最後にテキストを追加 */
-			const char* pszText;
-			pszText = "\r\n中断しました。\r\n";
-			m_cShareData.TraceOut( "%s", pszText );
-			break;
-		}
-		/* プロセスオブジェクトの状態を調べる */
-		dwRes = ::WaitForSingleObject(ProcessInfo.hProcess, 0 );
-		/* プロセスオブジェクトがシグナル状態 */
-		if( WAIT_OBJECT_0 == dwRes ){
-			break;
-		}
-		Sleep(1);
-	}
-	if( bGetStdout ){
-		/* サブプロセス終了後でも出力結果の読み残しがあるので、読み込む */
-		while(1){
-			Sleep(1);
-			/* ファイルポインタを移動します。 */
-			swFPOld = SetFilePointer( hFile2, swFPRead, NULL, FILE_BEGIN );
-			bRes = ReadFile( hFile2, szBuffer, sizeof( szBuffer ) - 1, &dwNumberOfBytesRead, NULL );
-//			SetFilePointer( hFile2, swFPOld, NULL, FILE_BEGIN );
-
-			if( 0 == bRes || 0 == dwNumberOfBytesRead )
-				break;
-			swFPRead += dwNumberOfBytesRead;
-			szBuffer[dwNumberOfBytesRead] = '\0';
-//			if( 0 < dwNumberOfBytesRead )
-//			MYTRACE( "%s", szBuffer );	/* 最後にテキストを追加 */
-			/* 最後にテキストを追加 */
-			cmBuf.AppendSz( szBuffer );
-			if( szBuffer[dwNumberOfBytesRead - 1] != 0x0d ){
-				m_cShareData.TraceOut( "%s", cmBuf.GetPtr2() );
-				cmBuf.SetDataSz( "" );
-			}
-
-
-			/* 処理中のユーザー操作を可能にする */
+		//実行結果の取り込み
+		do {
+			//処理中のユーザー操作を可能にする
 			if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
 				break;
 			}
-			/* 中断ボタン押下チェック */
+			//中断ボタン押下チェック
 			if( cDlgCancel.IsCanceled() ){
 				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
-				::TerminateProcess( ProcessInfo.hProcess, 0 );
-				/* 最後にテキストを追加 */
-				const char* pszText;
-				pszText = "\r\n中断しました。\r\n";
+				::TerminateProcess( pi.hProcess, 0 );
+				//最後にテキストを追加
+				const char* pszText = "\r\n中断しました。\r\n";
 				m_cShareData.TraceOut( "%s", pszText );
 				break;
 			}
-		}
-	}
-	if( 0 < cmBuf.GetLength() ){
-		m_cShareData.TraceOut( "%s", cmBuf.GetPtr2() );
-		cmBuf.SetDataSz( "" );
+			//プロセスが終了していないか確認
+			if( WaitForSingleObject( pi.hProcess, 0 ) == WAIT_OBJECT_0 ) {
+				//終了していればループフラグをFALSEとする
+				//ただしループの終了条件は プロセス終了 && パイプが空
+				bLoopFlag = FALSE;
+			}
+			new_cnt = 0;
+			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
+				if( new_cnt > 0 ) {												//待機中のものがある
+					if( new_cnt >= sizeof(work)-2 ) {							//パイプから読み出す量を調整
+						new_cnt = sizeof(work)-2;		
+					}
+					ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					read_cnt += bufidx;													//work内の実際のサイズにする
+					if( read_cnt == 0 ) {
+						continue;
+					}
+					//読み出した文字列をチェックする
+					// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
+					for( j=0; j<read_cnt-1; j++ ) {
+						if( IsKanji1(work[j]) ) {
+							j++;
+						} else {
+							if( work[j] == '\r' && work[j+1] == '\n' ) {
+								j++;
+							} else if( work[j] == '\n' && work[j+1] == '\r' ) {
+								j++;
+							}
+						}
+					}
+					if( j == read_cnt ) {	//ぴったり出力できる場合
+						work[read_cnt] = 0;
+						m_cShareData.TraceOut( "%s", work );
+						bufidx = 0;
+					} else {
+						tmp = work[read_cnt-1];
+						work[read_cnt-1] = 0;
+						m_cShareData.TraceOut( "%s", work );
+						work[0] = tmp;
+						bufidx = 1;
+					}
+				}
+			}
+			Sleep(0);
+		} while( bLoopFlag || new_cnt > 0 );
 	}
 
 
-end_of_func:;
-	if( bGetStdout ){
-		if( NULL != ProcessInfo.hThread ){
-			CloseHandle( ProcessInfo.hThread );
-		}
-		if( NULL != ProcessInfo.hProcess ){
-			CloseHandle( ProcessInfo.hProcess );
-		}
-		cDlgCancel.CloseDialog( 0 );	 
-	}
-	if( NULL != hFile ){
-		::CloseHandle( hFile );
-		::DeleteFile( szTempFile );
-	}
-	if( NULL != hFile2 ){
-		::CloseHandle( hFile2 );
-	}
-
-	return;
+finish:
+	//終了処理
+	CloseHandle( hStdOutWrite );
+	CloseHandle( hStdOutRead );
+	if( pi.hProcess ) CloseHandle( pi.hProcess );
+	if( pi.hThread ) CloseHandle( pi.hThread );
+	#undef IsKanji1
 }
+//	To Here Jun. 30, 2001 GAE
 
+//void CEditView::ExecCmd(const char* pszCmd, BOOL bGetStdout ) 
+//{
+//	HANDLE					hFile;
+//	HANDLE					hFile2;
+//	char					szTempFile[_MAX_PATH+ 1];
+//	STARTUPINFO             StartupInfo;
+//	PROCESS_INFORMATION     ProcessInfo;
+//	char                    szCmd[512];
+//	CDlgCancel				cDlgCancel;
+//	CMemory					cmBuf;
+//
+//	hFile = NULL;
+//	hFile2 = NULL;
+//	if( bGetStdout ){
+//		::GetTempPath( sizeof( szTempFile ) - 1, szTempFile );
+//		// テンポラリファイルのファイル名を作成します。
+//		::GetTempFileName(
+//		  szTempFile, // pointer to directory name for temporary file
+//		  "skr", // pointer to filename prefix
+//		  0, // number used to create temporary filename
+//		  szTempFile // pointer to buffer that receives the new filename
+//		);
+////		MYTRACE( "szTempFile=[%s]\n", szTempFile );
+//		
+////old	hFile = CreateFile( szTempFile, GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
+//		hFile = ::CreateFile( szTempFile, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
+//		if ( hFile == INVALID_HANDLE_VALUE ){
+//			goto end_of_func;
+//		}
+//		/* 読み込み用ファイルハンドル */
+//		hFile2 = ::CreateFile( szTempFile, /*GENERIC_WRITE |*/ GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+//		if( hFile2 == INVALID_HANDLE_VALUE ){
+//			goto end_of_func;
+//		}
+//	}
+//
+//	if( bGetStdout ){
+//		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
+//	}
+//
+//	GetStartupInfo(&StartupInfo);
+//	StartupInfo.dwFlags     |= ( STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW );
+//	StartupInfo.wShowWindow = bGetStdout?/*SW_SHOW*/SW_HIDE:SW_SHOW;      /* 子プロセスのウインドウ表示状態 */
+//	if( bGetStdout ){
+//		StartupInfo.hStdOutput  = hFile;
+//		StartupInfo.hStdError   = hFile;
+//	}
+//	lstrcpy(szCmd, "");
+//	lstrcat(szCmd, pszCmd);
+//	/* Command.comのオプション */
+//	const char* pszOpt_C;
+//	if( bGetStdout ){
+//		pszOpt_C = "/C";
+//	}else{
+//		pszOpt_C = "/K";
+//	}
+//	memset( &ProcessInfo, 0, sizeof( PROCESS_INFORMATION ) );
+//	if( !CreateProcess( NULL, szCmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &StartupInfo, &ProcessInfo ) ){
+//		/* プロセス起動に失敗した場合はDOSコマンドとして処理する */
+//		wsprintf( szCmd, "command.com %s ", pszOpt_C );  // Win95/98 なら command.com
+//		lstrcat(szCmd, pszCmd);
+//		if( !CreateProcess( NULL, szCmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &StartupInfo, &ProcessInfo ) ){
+//			wsprintf(szCmd, "cmd.exe %s ", pszOpt_C );  // Win NT なら cmd.exe
+//			lstrcat(szCmd, pszCmd);
+//			if( !CreateProcess( NULL, szCmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &StartupInfo, &ProcessInfo ) ){
+//				goto end_of_func;
+//			}
+//		}
+//	}
+//	if( bGetStdout ){
+//		/* 最後にテキストを追加 */
+//		m_cShareData.TraceOut( "%s", "\r\n" );
+//		m_cShareData.TraceOut( "%s", szCmd );
+//		m_cShareData.TraceOut( "%s", "\r\n" );
+//	}
+//	if( bGetStdout ){
+//		::SetDlgItemText( cDlgCancel.m_hWnd, IDC_STATIC_CMD, szCmd );
+//	}
+//
+//	DWORD dwRes;
+//	DWORD swFPOld;
+//	DWORD swFPRead;
+//	DWORD dwNumberOfBytesRead;
+////	DWORD dwNumberOfBytesWritten;
+//	swFPRead = 0;
+//	BOOL bRes;
+//	char szBuffer[1000];
+//	/* プロセスオブジェクトがシグナル状態になるまでループする */
+//	while(bGetStdout){
+//		if( bGetStdout ){
+//			/* ファイルポインタを移動します。 */
+//			swFPOld = SetFilePointer( hFile2, swFPRead, NULL, FILE_BEGIN );
+//			while(1){
+//				bRes = ReadFile( hFile2, szBuffer, sizeof( szBuffer ) - 1, &dwNumberOfBytesRead, NULL );
+//				swFPRead += dwNumberOfBytesRead;
+//				szBuffer[dwNumberOfBytesRead] = '\0';
+//				if( 0 < dwNumberOfBytesRead ){
+//					/* 最後にテキストを追加 */
+////					m_cShareData.TraceOut( "%s", szBuffer );
+//					cmBuf.AppendSz( szBuffer );
+//					if( szBuffer[dwNumberOfBytesRead - 1] != 0x0d ){
+//						m_cShareData.TraceOut( "%s", cmBuf.GetPtr2() );
+//						cmBuf.SetDataSz( "" );
+//					}
+//
+//				}
+//				if( dwNumberOfBytesRead < sizeof( szBuffer ) - 1 ){
+//					break;
+//				}
+//			}
+//		}
+//		/* 処理中のユーザー操作を可能にする */
+//		if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
+//			break;
+//		}
+//		/* 中断ボタン押下チェック */
+//		if( cDlgCancel.IsCanceled() ){
+//			//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
+//			::TerminateProcess( ProcessInfo.hProcess, 0 );
+//			/* 最後にテキストを追加 */
+//			const char* pszText;
+//			pszText = "\r\n中断しました。\r\n";
+//			m_cShareData.TraceOut( "%s", pszText );
+//			break;
+//		}
+//		/* プロセスオブジェクトの状態を調べる */
+//		dwRes = ::WaitForSingleObject(ProcessInfo.hProcess, 0 );
+//		/* プロセスオブジェクトがシグナル状態 */
+//		if( WAIT_OBJECT_0 == dwRes ){
+//			break;
+//		}
+//		Sleep(1);
+//	}
+//	if( bGetStdout ){
+//		/* サブプロセス終了後でも出力結果の読み残しがあるので、読み込む */
+//		while(1){
+//			Sleep(1);
+//			/* ファイルポインタを移動します。 */
+//			swFPOld = SetFilePointer( hFile2, swFPRead, NULL, FILE_BEGIN );
+//			bRes = ReadFile( hFile2, szBuffer, sizeof( szBuffer ) - 1, &dwNumberOfBytesRead, NULL );
+////			SetFilePointer( hFile2, swFPOld, NULL, FILE_BEGIN );
+//
+//			if( 0 == bRes || 0 == dwNumberOfBytesRead )
+//				break;
+//			swFPRead += dwNumberOfBytesRead;
+//			szBuffer[dwNumberOfBytesRead] = '\0';
+////			if( 0 < dwNumberOfBytesRead )
+////			MYTRACE( "%s", szBuffer );	/* 最後にテキストを追加 */
+//			/* 最後にテキストを追加 */
+//			cmBuf.AppendSz( szBuffer );
+//			if( szBuffer[dwNumberOfBytesRead - 1] != 0x0d ){
+//				m_cShareData.TraceOut( "%s", cmBuf.GetPtr2() );
+//				cmBuf.SetDataSz( "" );
+//			}
+//
+//
+//			/* 処理中のユーザー操作を可能にする */
+//			if( !::BlockingHook( cDlgCancel.m_hWnd ) ){
+//				break;
+//			}
+//			/* 中断ボタン押下チェック */
+//			if( cDlgCancel.IsCanceled() ){
+//				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
+//				::TerminateProcess( ProcessInfo.hProcess, 0 );
+//				/* 最後にテキストを追加 */
+//				const char* pszText;
+//				pszText = "\r\n中断しました。\r\n";
+//				m_cShareData.TraceOut( "%s", pszText );
+//				break;
+//			}
+//		}
+//	}
+//	if( 0 < cmBuf.GetLength() ){
+//		m_cShareData.TraceOut( "%s", cmBuf.GetPtr2() );
+//		cmBuf.SetDataSz( "" );
+//	}
+//
+//
+//end_of_func:;
+//	if( bGetStdout ){
+//		if( NULL != ProcessInfo.hThread ){
+//			CloseHandle( ProcessInfo.hThread );
+//		}
+//		if( NULL != ProcessInfo.hProcess ){
+//			CloseHandle( ProcessInfo.hProcess );
+//		}
+//		cDlgCancel.CloseDialog( 0 );	 
+//	}
+//	if( NULL != hFile ){
+//		::CloseHandle( hFile );
+//		::DeleteFile( szTempFile );
+//	}
+//	if( NULL != hFile2 ){
+//		::CloseHandle( hFile2 );
+//	}
+//
+//	return;
+//}
+//
 
 /*[EOF]*/
