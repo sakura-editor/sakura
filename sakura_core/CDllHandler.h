@@ -48,8 +48,10 @@ public:
 	/*!
 		@retval 0 正常終了。DLLがロードされた。
 		@retval other 異常終了。DLLはロードされなかった。
+		
+		@date Jul. 5, 2001 genta 引数追加。パスの指定などに使える
 	*/
-	int LoadLibrary(void);
+	int LoadLibrary(char* str = NULL);
 	//! DLLのアンロード
 	/*!
 		@param force [in] 終了処理に失敗してもDLLを解放するかどうか
@@ -63,7 +65,7 @@ public:
 	/*!
 		詳細な戻り値を返さないこと以外はLoadLibrary()と同じ
 	*/
-	bool Init(void){ return LoadLibrary() == 0; }
+	bool Init(char* str = NULL){ return LoadLibrary(str) == 0; }
 
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
@@ -91,7 +93,10 @@ protected:
 	*/
 	virtual int DeinitDll(void);
 	//! DLLファイル名の取得
-	virtual char* GetDllName(void) = 0;
+	/*!
+		@date Jul. 5, 2001 genta 引数追加。パスの指定などに使える
+	*/
+	virtual char* GetDllName(char*) = 0;
 
 private:
 	HINSTANCE m_hInstance;

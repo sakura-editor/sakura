@@ -37,8 +37,9 @@ CBregexp::~CBregexp()
 {
 }
 
+//	Jul. 5, 2001 genta 引数追加。ただし、ここでは使わない。
 char *
-CBregexp::GetDllName()
+CBregexp::GetDllName(char* str)
 {
 	return "BREGEXP.DLL";
 }
