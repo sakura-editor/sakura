@@ -4044,9 +4044,14 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			if( nIconId < 0 ){
 				nIconId = 348; // なんとなく(i)アイコン
 			}
-			//	Aug. 30, 2003 genta 背景色を引数に追加
-			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + 2, pnmh->rc.top + 2,
-				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL, ::GetSysColor( COLOR_3DFACE )
+			//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
+			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;
+			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
+			
+
+			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
+			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + 3 + shift, pnmh->rc.top + 3 + shift,
+				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
 		}
 		break;
