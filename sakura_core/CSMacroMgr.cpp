@@ -30,6 +30,8 @@
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {
 	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
+	//	Oct. 19, 2002 genta
+	{F_GETSELECTED,	"GetSelectedString",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
