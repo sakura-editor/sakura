@@ -8681,8 +8681,38 @@ void CEditView::Command_EXECCOMMAND( void )
 
 	AddToCmdArr( cDlgExec.m_szCommand );
 
+	//	From Here Aug. 21, 2001 genta
+	//	パラメータ置換 (超暫定)
+	const int bufmax = 1024;
+	char buf[bufmax + 1];
+	char *p, *q, *r, *q_max;
+	for( p = cDlgExec.m_szCommand, q = buf, q_max = buf + bufmax; *p != '\0' && q < q_max; ++p, ++q){
+		if( *p != '$' ){
+			*q = *p;
+			continue;
+		}
+		switch( p[1] ){
+		case '$':	//	 $$ -> $
+			*q = *p;
+			++p;
+			break;
+		case 'F':
+			for( r = m_pcEditDoc->m_szFilePath; *r != '\0' && q < q_max; ++r, ++q )
+				*q = *r;
+			++p;
+			break;
+		default:
+			*q = *p;
+			break;
+		}
+	}
+	*q = '\0';
+	
+	//::MessageBox( m_hWnd, buf, "Command line", MB_OK );
+
 	// 子プロセスの標準出力をリダイレクトする
-	ExecCmd( cDlgExec.m_szCommand, cDlgExec.m_bGetStdout );
+	ExecCmd( buf, cDlgExec.m_bGetStdout );
+	//	To Here Aug. 21, 2001 genta
 	return;
 }
 

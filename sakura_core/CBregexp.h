@@ -37,7 +37,7 @@
 typedef struct bregexp {
 	const char *outp;	//!< BSubst 置換データの先頭ポインタ
 	const char *outendp;	//!< BSubst 置換データの最終ポインタ+1
-	const int  splitctr;	//!< BSplit 配列数
+	int  splitctr;	//!< BSplit 配列数
 	const char **splitp;	//!< BSplit データポインタ
 	int	rsv1;		//!< リザーブ 自由に使用可能
 	char *parap;		//!< パターンデータポインタ

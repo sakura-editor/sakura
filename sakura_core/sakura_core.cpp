@@ -45,7 +45,11 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 
 // これはエクスポートされた変数の例です。
+#ifndef __BORLANDC__
 SAKURA_CORE_API int nSakura_core=0;
+#else
+SAKURA_CORE_API int nSakura_core;
+#endif
 
 // これはエクスポートされた関数の例です。
 SAKURA_CORE_API int fnSakura_core(void)
