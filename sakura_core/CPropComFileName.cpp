@@ -91,6 +91,10 @@ BOOL CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM w
 			col.iSubItem = 1;
 			ListView_InsertColumn( hListView, 1, &col );
 
+			// Apr. 28, 2003 Moca 初期化漏れ修正
+			// ダイアログを開いたときにリストが選択されていてもフィールドが空の場合があった
+			m_nLastPos_FILENAME = -1;
+
 			// ダイアログデータの設定
 			SetData_PROP_FILENAME( hwndDlg );
 
