@@ -5685,7 +5685,11 @@ void CEditView::SetParentCaption( BOOL bKillFocus )
 }
 
 
-/* キャレットの行桁位置を表示する */
+/*! キャレットの行桁位置およびステータスバーの状態表示の更新
+
+	@note ステータスバーの状態の並び方の変更はメッセージを受信する
+		CEditWnd::DispatchEvent()のWM_NOTIFYにも影響があることに注意
+*/
 void CEditView::DrawCaretPosInfo( void )
 {
 	if( !m_bDrawSWITCH ){
