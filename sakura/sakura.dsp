@@ -448,10 +448,6 @@ SOURCE=..\sakura_core\CShareData_new.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CShareData_new2.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\CSMacroMgr.cpp
 # End Source File
 # Begin Source File
@@ -493,10 +489,6 @@ SOURCE=..\sakura_core\global.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\my_icmp.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\sakura_core.cpp
 # End Source File
 # Begin Source File
 
