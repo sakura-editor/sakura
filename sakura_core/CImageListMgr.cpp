@@ -228,9 +228,10 @@ void CImageListMgr::MyBitBlt(
 	@author Nakatani
 	
 	@date 2003.07.21 genta 以前のCMenuDrawerより移転復活
+	@date 2003.08.30 genta 背景色を指定する引数を追加
 */
 void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc) const
+                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF colBkColor) const
 {
 	HBRUSH brShadow, brHilight;
 	HDC		hdcMask;
@@ -269,7 +270,8 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 
 	// Copy the image from the toolbar into the memory DC
 	// and draw it (grayed) back into the toolbar.
-	FillSolidRect( hdcMem2, 0,0, nWidth, nHeight, GetSysColor( COLOR_MENU) );
+	//	Aug. 30, 2003 genta 背景色を引数でもらうように
+	FillSolidRect( hdcMem2, 0,0, nWidth, nHeight, colBkColor );
     //SK: Looks better on the old shell
 	SetBkColor( hdcMem2, RGB(0, 0, 0));
 	SetTextColor( hdcMem2, RGB(255, 255, 255));
@@ -313,23 +315,25 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	@param x [in] 描画するX座標
 	@param y [in] 描画するY座標
 	@param fstyle [in] 描画スタイル
+	@param bgColor [in] 背景色(透明部分の描画用)
 
 	@note 描画スタイルとして有効なのは，ILD_NORMAL, ILD_MASK
 	
 	@date 2003.07.21 genta 独自描画ルーチンを使う
+	@date 2003.08.30 genta 背景色を指定する引数を追加
 */
-bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle) const
+bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle, COLORREF bgColor ) const
 {
 	if( m_hIconBitmap == NULL )
 		return false;
 	
 	if( fstyle == ILD_MASK ){
 		DitherBlt2( dc, x, y, cx() - 1, cy() - 1, m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
+		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), bgColor );
 	}
 	else {
 		MyBitBlt( dc, x, y, cx() - 1, cy() - 1, m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), ::GetSysColor( COLOR_MENU ) );
+		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), bgColor );
 	}
 	return true;
 }
