@@ -398,7 +398,7 @@ IDD_GREP DIALOGEX 0, 0, 302, 143
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Grep条件入力"
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "条件(&N)",IDC_STATIC,5,6,24,8
     COMBOBOX        IDC_COMBO_TEXT,40,4,256,120,CBS_DROPDOWN | 
@@ -1478,18 +1478,18 @@ END
 IDD_PROP_MACRO DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "名前(&N)",IDC_STATIC,5,182,24,8
-    EDITTEXT        IDC_MACRONAME,35,179,187,14,ES_AUTOHSCROLL,0,
+    LTEXT           "名前(&N)",IDC_STATIC,6,164,24,8
+    EDITTEXT        IDC_MACRONAME,35,161,187,14,ES_AUTOHSCROLL,0,
                     HIDC_MACRONAME
-    LTEXT           "&File",IDC_STATIC,6,197,12,8
-    COMBOBOX        IDC_MACROPATH,34,195,186,130,CBS_DROPDOWN | CBS_SORT | 
+    LTEXT           "&File",IDC_STATIC,6,179,12,8
+    COMBOBOX        IDC_MACROPATH,35,177,186,130,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_MACROPATH
-    LTEXT           "Id:",IDC_STATIC,227,179,8,8
-    COMBOBOX        IDC_COMBO_MACROID,239,177,24,129,CBS_DROPDOWNLIST | 
+    LTEXT           "Id:",IDC_STATIC,227,161,8,8
+    COMBOBOX        IDC_COMBO_MACROID,239,159,24,129,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_COMBO_MACROID
-    PUSHBUTTON      "設定(&A)",IDC_MACRO_REG,225,193,38,14,0,0,
+    PUSHBUTTON      "設定(&A)",IDC_MACRO_REG,225,175,38,14,0,0,
                     HIDC_MACRO_REG
     LTEXT           "マクロ一覧",IDC_STATIC,6,7,36,10
     EDITTEXT        IDC_MACRODIR,46,5,181,14,ES_AUTOHSCROLL | ES_READONLY,0,
@@ -1498,8 +1498,11 @@ BEGIN
                     HIDC_MACRODIRREF
     CONTROL         "List1",IDC_MACROLIST,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | 
-                    LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,21,259,151,0,
+                    LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,21,259,133,0,
                     HIDC_MACROLIST
+    CONTROL         "マクロを実行するたびにファイルを読み込みなおす（&L）",
+                    IDC_CHECK_RELOADWHENEXECUTE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,196,171,10
 END
 
 IDD_PROPTYPESP2 DIALOGEX 0, 0, 270, 213
@@ -1958,7 +1961,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,106,6
+ PRODUCTVERSION 1,2,106,8
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -1982,7 +1985,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.2.106.6\0"
+            VALUE "ProductVersion", "1.2.106.8\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2214,6 +2217,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_CUT                   "切り取り"
     F_COPY                  "コピー"
+    F_COPY_ADDCRLF          "折り返し位置に改行をつけてコピー"
     F_COPY_CRLF             "CRLF改行でコピー"
     F_PASTE                 "貼り付け"
     F_PASTEBOX              "矩形貼り付け"

@@ -26,10 +26,11 @@ CPPAMacroMgr::~CPPAMacroMgr()
 }
 
 /*! キーボードマクロの実行
-	CMacroに委譲。
+	PPA.DLLに、バッファ内容を渡して実行。
 */
 void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
 {
+	m_cPPA.SetSource( m_cBuffer.GetPtr2() );
 	m_cPPA.Execute(pcEditView);
 }
 
@@ -46,7 +47,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 
 	CMemory cmemWork;
 
-	// 一行ずつ読みこみ、コメント行を排除した上で、macroコマンドを作成する。
+	// バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
 	char	szLine[10240];	//	1行が10240以上だったら無条件にアウト
 	while( NULL != fgets( szLine, sizeof(szLine), hFile ) ){
 		int nLineLen = strlen( szLine );
@@ -54,7 +55,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	}
 	fclose( hFile );
 
-	m_cPPA.SetSource( cmemWork.GetPtr2() );
+	m_cBuffer.SetData( &cmemWork );	//	m_cBufferにコピー
 
 	m_nReady = TRUE;
 	return TRUE;

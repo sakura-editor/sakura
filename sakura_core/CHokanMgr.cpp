@@ -130,7 +130,10 @@ void CHokanMgr::Hide( void )
 
 }
 
-/* 初期化 */
+/*!	初期化
+	pcmemHokanWord == NULLのとき、補完候補がひとつだったら、補完ウィンドウを表示しないで終了します。
+	Search()呼び出し元で確定処理を進めてください。
+*/
 int CHokanMgr::Search(
 //	HFONT		hFont,
 	POINT*		ppoWin,

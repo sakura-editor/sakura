@@ -22,6 +22,7 @@
 #include "etc_uty.h"
 #include <tchar.h>
 #include <io.h>
+#include <string.h>
 
 CCommandLine* CCommandLine::_instance=0;
 
@@ -72,6 +73,7 @@ int CCommandLine::CheckCommandLine(
 		"Y", 1, 2,
 		"VX", 2, 3,
 		"VY", 2, 4,
+		"TYPE", 4, 5,	//!< タイプ別設定 Mar. 7, 2002 genta
 		"GKEY", 4, 101,
 		"GFILE", 5, 102,
 		"GFOLDER", 7, 103,
@@ -108,6 +110,10 @@ int CCommandLine::CheckCommandLine(
 /*! コマンドラインの解析
 
 	WinMain()から呼び出される。
+	
+	@note
+	これが呼び出された時点では共有メモリの初期化が完了していないため，
+	共有メモリにアクセスしてはならない．
 */
 void CCommandLine::ParseCommandLine(
 	LPCSTR	pszCmdLineSrc,	//!< [in]コマンドライン文字列
@@ -169,13 +175,14 @@ void CCommandLine::ParseCommandLine(
 	bNoWindow = false;
 
 	//	Oct. 19, 2001 genta 初期値を-1にして，指定有り/無しを判別可能にしてみた
-	fi.m_nViewTopLine = -1;				/* 表示域の一番上の行(0開始) */
-	fi.m_nViewLeftCol = -1;				/* 表示域の一番左の桁(0開始) */
-	fi.m_nX = -1;						/* カーソル 物理位置(行頭からのバイト数) */
-	fi.m_nY = -1;						/* カーソル 物理位置(折り返し無し行位置) */
-	fi.m_bIsModified = 0;				/* 変更フラグ */
-	fi.m_nCharCode = CODE_AUTODETECT;	/* 文字コード種別 *//* 文字コード自動判別 */
-	fi.m_szPath[0] = '\0';				/* ファイル名 */
+	//	Mar. 7, 2002 genta 初期化はコンストラクタで行う．
+//	fi.m_nViewTopLine = -1;				/* 表示域の一番上の行(0開始) */
+//	fi.m_nViewLeftCol = -1;				/* 表示域の一番左の桁(0開始) */
+//	fi.m_nX = -1;						/* カーソル 物理位置(行頭からのバイト数) */
+//	fi.m_nY = -1;						/* カーソル 物理位置(折り返し無し行位置) */
+//	fi.m_bIsModified = 0;				/* 変更フラグ */
+//	fi.m_nCharCode = CODE_AUTODETECT;	/* 文字コード種別 *//* 文字コード自動判別 */
+//	fi.m_szPath[0] = '\0';				/* ファイル名 */
 	bReadOnly = false;					/* 読み取り専用か */
 
 	//	May 30, 2000 genta
@@ -263,6 +270,12 @@ void CCommandLine::ParseCommandLine(
 			case 4:	//	VY
 				/* 行桁指定を1開始にした */
 				fi.m_nViewTopLine = atoi( arg ) - 1;
+				break;
+			case 5:	//	T
+				//	Mar. 7, 2002 genta
+				//	ファイルタイプの強制指定
+				strncpy( fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
+				fi.m_szDocType[ MAX_DOCTYPE_LEN ]= '\0';
 				break;
 			case 1001:	//	CODE
 				fi.m_nCharCode = atoi( arg );

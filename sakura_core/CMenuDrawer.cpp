@@ -294,7 +294,7 @@ CMenuDrawer::CMenuDrawer()
 /* 172 */		F_COPYTAG	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイルのパス名とカーソル位置をコピー //added Oct. 22, 2000 JEPRO	//Nov. 5, 2000 JEPRO 追加
 /* 173 */		F_CREATEKEYBINDLIST			, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//キー割り当て一覧をコピー //added Oct. 22, 2000 JEPRO	//Dec. 25, 2000 JEPRO アイコン追加
 /* 174 */		F_COPYFNAME					, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
-/* 175 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
+/* 175 */		F_COPY_ADDCRLF				, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//折り返し位置に改行をつけてコピー
 /* 176 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 177 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー
 /* 178 */		F_DISABLE	, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0,	//ダミー

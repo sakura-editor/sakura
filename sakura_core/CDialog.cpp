@@ -215,6 +215,8 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	::GetWindowRect( m_hWnd, &rc );
 
 	/* ダイアログのサイズの記憶 */
+	m_xPos = rc.left;
+	m_yPos = rc.top;
 	m_nWidth = rc.right - rc.left;
 	m_nHeight = rc.bottom - rc.top;
 
@@ -262,8 +264,12 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 	}
 	RECT	rc;
 	::GetWindowRect( m_hWnd, &rc );
+
+	/* ダイアログのサイズの記憶 */
 	m_xPos = rc.left;
 	m_yPos = rc.top;
+	m_nWidth = rc.right - rc.left;
+	m_nHeight = rc.bottom - rc.top;
 #ifdef _DEBUG
 		MYTRACE( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 #endif

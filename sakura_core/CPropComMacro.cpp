@@ -210,6 +210,13 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 2;
 		sItem.pszText = m_pShareData->m_MacroTable[index].m_szFile;
 		ListView_SetItem( hListView, &sItem );
+
+		memset( &sItem, 0, sizeof( sItem ));
+		sItem.iItem = index;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 3;
+		sItem.pszText = m_pShareData->m_MacroTable[index].m_bReloadWhenExecute ? "on" : "off";
+		ListView_SetItem( hListView, &sItem );
 	}
 	
 	//	マクロディレクトリ
@@ -263,6 +270,21 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 		sItem.pszText = /*m_pShareData->*/m_MacroTable[index].m_szFile;
 		ListView_GetItem( hListView, &sItem );
+
+		memset( &sItem, 0, sizeof( sItem ));
+		sItem.iItem = index;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 3;
+		char buf[MAX_PATH];
+		sItem.pszText = buf;
+		sItem.cchTextMax = MAX_PATH;
+		ListView_GetItem( hListView, &sItem );
+		if ( strcmp(buf, "on") == 0){
+			m_MacroTable[index].m_bReloadWhenExecute = TRUE;
+		}
+		else {
+			m_MacroTable[index].m_bReloadWhenExecute = FALSE;
+		}
 	}
 
 	//	マクロディレクトリ
@@ -279,8 +301,9 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 		int width;
 	} ColumnList[] = {
 		{ "番号", 40 },
-		{ "マクロ名", 200 },
-		{ "ファイル名", 200 },
+		{ "マクロ名", 180 },
+		{ "ファイル名", 180 },
+		{ "実行時に読み込み", 40 },
 	};
 
 	//	ListViewの初期化
@@ -380,6 +403,14 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 
 	::GetDlgItemText( hwndDlg, IDC_MACROPATH, buf, _MAX_PATH );
 	sItem.pszText = buf;
+	ListView_SetItem( hListView, &sItem );
+
+	// チェック
+	memset( &sItem, 0, sizeof( sItem ));
+	sItem.iItem = index;
+	sItem.mask = LVIF_TEXT;
+	sItem.iSubItem = 3;
+	sItem.pszText = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? "on" : "off";
 	ListView_SetItem( hListView, &sItem );
 }
 
@@ -532,4 +563,17 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 	ListView_GetItem( hListView, &sItem );
 	::SetDlgItemText( hwndDlg, IDC_MACROPATH, buf );
 
+	memset( &sItem, 0, sizeof( sItem ));
+	sItem.iItem = current;
+	sItem.mask = LVIF_TEXT;
+	sItem.iSubItem = 3;
+	sItem.pszText = buf;
+	sItem.cchTextMax = MAX_PATH;
+	ListView_GetItem( hListView, &sItem );
+	if ( strcmp(buf, "on") == 0){
+		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
+	}
+	else {
+		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, false );
+	}
 }

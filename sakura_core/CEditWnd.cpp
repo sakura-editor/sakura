@@ -203,13 +203,24 @@ CEditWnd::~CEditWnd()
 
 
 
-/* 作成 */
+/*!	作成
+
+	@param hInstance [in] Instance Handle
+	@param hwndParent [in] 親ウィンドウのハンドル
+	@param pszPath [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
+	@param nCharCode [in] 漢字コード
+	@param bReadOnly [in] 読みとり専用で開くかどうか
+	@param nDocumentType [in] 文書タイプ．-1のとき強制指定無し．
+	
+	@date 2002.03.07 genta nDocumentType追加
+*/
 HWND CEditWnd::Create(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
 	const char*	pszPath,
 	int			nCharCode,
-	BOOL		bReadOnly
+	BOOL		bReadOnly,
+	int			nDocumentType
 )
 {
 	WNDCLASS	wc;
@@ -432,6 +443,10 @@ HWND CEditWnd::Create(
 				//	Nov. 20, 2000 genta
 				m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 			}
+		}
+		//	Mar. 7, 2002 genta 文書タイプの強制指定
+		if( nDocumentType >= 0 ){
+			m_cEditDoc.SetDocumentType( nDocumentType, true );
 		}
 		delete [] pszPathNew;
 	}
@@ -1942,6 +1957,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CHGMOD_INS	, "挿入／上書きモード切り替え(&M)" );	//Nov. 9, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY_CRLF	, "CR&LF改行でコピー" );				//Nov. 9, 2000 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY_ADDCRLF	, "折り返し位置に改行をつけてコピー(&H)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PASTEBOX	, "矩形貼り付け(&X)" );					//Sept. 13, 2000 JEPRO 移動に伴いアクセスキー付与	//Oct. 22, 2000 JEPRO アクセスキー変更(P→X)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DELETE_BACK	, "カーソル前を削除(&B)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );

@@ -234,6 +234,15 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 		switch ( m_nFuncID ){
 		case F_INSTEXT:
 		case F_FILEOPEN:
+			//	引数ひとつ分だけ保存
+			pText = m_pParamTop->m_pData;
+			nTextLen = strlen(pText);
+			cmemWork.SetData( pText, nTextLen );
+			cmemWork.Replace( "\\", "\\\\" );
+			cmemWork.Replace( "\'", "\\\'" );
+			wsprintf( szLine, "%s(\'%s\');\t// %s\r\n", szFuncName, cmemWork.GetPtr( NULL ), szFuncNameJapanese );
+			_lwrite( hFile, szLine, strlen( szLine ) );
+			break;
 		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 			wsprintf( szLine, "%s(%d, %d);\t// %s\r\n", szFuncName, (m_pParamTop->m_pData ? atoi(m_pParamTop->m_pData) : 1), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );

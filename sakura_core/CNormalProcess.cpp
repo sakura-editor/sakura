@@ -150,8 +150,12 @@ bool CNormalProcess::Initialize()
 	}else{
 		if( 0 < (int)strlen( fi.m_szPath ) ){
 			bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
+			//	Mar. 9, 2002 genta 文書タイプ指定
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, 
-										fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */ );
+							fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+							fi.m_szDocType[0] == '\0' ? -1 :
+								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
+				 );
 			//	Nov. 6, 2000 genta
 			//	キャレット位置の復元のため
 			//	オプション指定がないときは画面移動を行わないようにする

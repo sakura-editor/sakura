@@ -2035,6 +2035,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	/* クリップボード系 */
 	case F_CUT:				return HLP000034;			//切り取り(選択範囲をクリップボードにコピーして削除)
 	case F_COPY:			return HLP000035;			//コピー(選択範囲をクリップボードにコピー)
+//	case F_COPY_ADDCRLF:	return HLPxxxxxx;			//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	case F_COPY_CRLF:		return HLP000163;			//CRLF改行でコピー(選択範囲をクリップボードにコピー)	//Feb. 23, 2001 JEPRO 抜けていたので追加
 	case F_PASTE:			return HLP000039;			//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:		return HLP000040;			//矩形貼り付け(クリップボードから矩形貼り付け)

@@ -204,6 +204,7 @@ const int nFincList_Box_Num = sizeof( pnFuncList_Box ) / sizeof( pnFuncList_Box[
 const int pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
 	F_CUT						,	//切り取り(選択範囲をクリップボードにコピーして削除)
 	F_COPY						,	//コピー(選択範囲をクリップボードにコピー)
+	F_COPY_ADDCRLF				,	//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	F_COPY_CRLF					,	//CRLF改行でコピー
 	F_PASTE						,	//貼り付け(クリップボードから貼り付け)
 	F_PASTEBOX					,	//矩形貼り付け(クリップボードから矩形貼り付け)

@@ -133,7 +133,7 @@ public:
 	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 
 // 2002/01/19 novice public属性に変更
- 	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
@@ -253,7 +253,7 @@ public: /* テスト用にアクセス属性を変更 */
 	CDicMgr	m_cDicMgr;				/* 辞書マネージャ */
 	/* 入力補完 */
 //	CHokanMgr	m_cHokanMgr;
-	BOOL		m_bHokan;
+	BOOL		m_bHokan;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
 	//	Aug. 31, 2000 genta
 	CAutoMarkMgr	*m_cHistory;	//	Jump履歴
 	CRegexKeyword	*m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
@@ -457,7 +457,7 @@ protected:
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( int, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( int, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( void );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( void );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
@@ -602,6 +602,7 @@ void ReplaceData_CEditView(
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
 
 	/* 支援 */
+	void ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided );	//	補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void Command_HOKAN( void );			/* 入力補完 */
 	void Command_HELP_CONTENTS( void );	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO added
 	void Command_HELP_SEARCH( void );	/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO added

@@ -46,7 +46,8 @@ public:
 	/*
 	|| メンバ関数
 	*/
-	HWND Create( HINSTANCE, HWND, const char*, int, BOOL );	/* 作成 */
+	//	Mar. 7, 2002 genta 文書タイプ用引数追加
+	HWND Create( HINSTANCE, HWND, const char*, int, BOOL, int = -1 );	/* 作成 */
 
 
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */

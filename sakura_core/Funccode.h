@@ -165,6 +165,7 @@
 /* クリップボード系 */
 #define F_CUT						30601	//切り取り(選択範囲をクリップボードにコピーして削除)
 #define F_COPY						30602	//コピー(選択範囲をクリップボードにコピー)
+#define F_COPY_ADDCRLF				30608	//折り返し位置に改行をつけてコピー
 #define F_COPY_CRLF					30603	//CRLF改行でコピー
 #define F_PASTE						30604	//貼り付け(クリップボードから貼り付け)
 #define F_PASTEBOX					30605	//矩形貼り付け(クリップボードから矩形貼り付け)
