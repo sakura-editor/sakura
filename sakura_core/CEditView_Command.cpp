@@ -4283,6 +4283,23 @@ BOOL CEditView::Command_FILESAVE( bool warnbeep )
 		return Command_FILESAVEAS_DIALOG();
 	}
 	else {
+		//	Jun.  5, 2004 genta
+		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
+		if( m_pcEditDoc->m_bReadOnly ){	/* 読み取り専用モード */
+			if( warnbeep ){
+				::MessageBeep( MB_ICONHAND );
+				MYMESSAGEBOX(
+					m_hWnd,
+					MB_OK | MB_ICONSTOP | MB_TOPMOST,
+					GSTR_APPNAME,
+					"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n"
+					"名前を付けて保存をすればいいと思います。",
+					m_pcEditDoc->IsFilePathAvailable() ? m_pcEditDoc->GetFilePath() : "（無題）"
+				);
+			}
+			return FALSE;
+		}
+
 		if( m_pcEditDoc->SaveFile( m_pcEditDoc->GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
 			/* キャレットの行桁位置を表示する */
 			DrawCaretPosInfo();
@@ -4310,8 +4327,22 @@ BOOL CEditView::Command_FILESAVEAS_DIALOG()
 	//	Feb. 9, 2001 genta
 	//	Jul. 26, 2003 ryoji BOMの有無を与えるパラメータ
 	if( m_pcEditDoc->SaveFileDialog( szPath, &m_pcEditDoc->m_nCharCode, &m_pcEditDoc->m_cSaveLineCode, &m_pcEditDoc->m_bBomExist ) ){
-		Command_FILESAVEAS( szPath );
-		return TRUE;
+		//	Jun.  5, 2004 genta
+		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
+		//	同名で上書きされるのを防ぐ
+		if( m_pcEditDoc->m_bReadOnly && strcmp( szPath, m_pcEditDoc->GetFilePath()) == 0 ){
+			::MessageBeep( MB_ICONHAND );
+			MYMESSAGEBOX(
+				m_hWnd,
+				MB_OK | MB_ICONSTOP | MB_TOPMOST,
+				GSTR_APPNAME,
+				"読み取り専用モードでは同一ファイルへの上書き保存はできません。"
+			);
+		}
+		else {
+			Command_FILESAVEAS( szPath );
+			return TRUE;
+		}
 	}
 	return FALSE;
 }

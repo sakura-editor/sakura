@@ -839,17 +839,8 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 	//	Feb. 9, 2001 genta
 	CEOL	cEol( cEolType );
 
-	if( m_bReadOnly ){	/* 読み取り専用モード */
-		::MessageBeep( MB_ICONHAND );
-		MYMESSAGEBOX(
-			m_hWnd,
-			MB_OK | MB_ICONSTOP | MB_TOPMOST,
-			GSTR_APPNAME,
-			"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n名前を付けて保存をすればいいと思います。",
-			IsFilePathAvailable() ? GetFilePath() : "（無題）"
-		);
-		return FALSE;
-	}
+	//	Jun.  5, 2004 genta ここでReadOnlyチェックをすると，ファイル名を変更しても
+	//	保存できなくなってしまうので，チェックを上書き保存処理へ移動．
 
 	//	Sep. 7, 2003 genta
 	//	保存が完了するまではファイル更新の通知を抑制する
