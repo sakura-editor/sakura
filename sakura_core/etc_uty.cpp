@@ -30,6 +30,10 @@
 #include "COsVersionInfo.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 
+#include "CShareData.h"
+#include "CMRU.h"
+#include "CMRUFolder.h"
+
 //	CShareDataへ移動
 /* 日付をフォーマット */
 //const char* MyGetDateFormat( char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat )
@@ -2184,6 +2188,9 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		return HLP000046;	//挿入／上書きモード切り替え
+	case F_CHGMOD_EOL_CRLF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
+	case F_CHGMOD_EOL_CR:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
+	case F_CHGMOD_EOL_LF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
 	case F_CANCEL_MODE:		return HLP000194;	//各種モードの取り消し
 
 
@@ -2292,6 +2299,15 @@ int FuncID_To_HelpContextID( int nFuncID )
 //	case F_SENDMAIL:		return ;	/* メール送信 */
 
 	default:
+		// From Here 2003.09.23 Moca
+		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
+			return HLP000029;	//最近使ったファイル
+		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
+			return HLP000023;	//最近使ったフォルダ
+		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
+			return HLP000097;	//ウィンドウリスト
+		}
+		// To Here 2003.09.23 Moca
 		return 0;
 	}
 }
