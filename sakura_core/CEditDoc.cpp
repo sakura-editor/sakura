@@ -127,6 +127,9 @@ CEditDoc::CEditDoc() :
 	//	自動保存の設定
 	ReloadAutoSaveParam();
 
+	//	Sep, 29, 2001 genta
+	//	マクロ
+	m_pcSMacroMgr = new CSMacroMgr;
 	return;
 }
 
@@ -140,6 +143,7 @@ CEditDoc::~CEditDoc()
 		DestroyWindow( m_hWnd );
 	}
 	/* ファイルの排他ロック解除 */
+	delete m_pcSMacroMgr;
 	DoFileUnLock();
 	return;
 }
@@ -193,9 +197,14 @@ BOOL CEditDoc::Create(
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 	m_hWnd = m_cSplitterWnd.m_hWnd;
 
+
+	//	Oct. 2, 2001 genta
+	m_cFuncLookup.Init( m_hInstance, m_pcSMacroMgr );
+
 	/* 設定プロパティシートの初期化１ */
 //@@	m_cProp1.Create( m_hInstance, m_hWnd );
-	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons );
+	//	Sep. 29, 2001 genta マクロクラスを渡すように
+	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, &m_cFuncLookup );
 	m_cPropTypes.Create( m_hInstance, m_hWnd );
 
 	/* 入力補完ウィンドウ作成 */
@@ -336,7 +345,7 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 
 /* ファイルを開く */
 BOOL CEditDoc::FileRead(
-	char*	pszPath,
+	char*	pszPath,	//!< [in/out]
 	BOOL*	pbOpened,
 	int		nCharCode,			/* 文字コード自動判別 */
 	BOOL	bReadOnly,			/* 読み取り専用か */

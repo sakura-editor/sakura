@@ -335,7 +335,8 @@ protected:
 
 	/* ファイル操作系 */
 	void Command_FILENEW( void );				/* 新規作成 */
-	void Command_FILEOPEN( void );				/* ファイルを開く */
+	// Oct. 2, 2001 genta マクロ用に機能拡張
+	void Command_FILEOPEN( const char *filename = NULL );		/* ファイルを開く */
 	BOOL Command_FILESAVE( void );				/* 上書き保存 */
 	BOOL Command_FILESAVEAS( void );			/* 名前を付けて保存 */
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更

@@ -5572,14 +5572,17 @@ int	CEditView::CreatePopUpMenu_R( void )
 //		return 0;
 //	}
 
-
+	//	Oct. 3, 2001 genta
+	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
 
 	hMenu = ::CreatePopupMenu();
 	for( i = 0; i < m_pShareData->m_Common.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
 		if( 0 == m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
 		}else{
-			::LoadString( m_hInstance, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			//	Oct. 3, 2001 genta
+			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+//			::LoadString( m_hInstance, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* ƒL[ */
 			if( '\0' == m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				strcpy( szLabel2, szLabel );

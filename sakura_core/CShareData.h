@@ -291,6 +291,22 @@ struct Types {
 
 }; /* Types */
 
+//	From Here Sep. 14, 2001 genta
+const int MACRONAME_MAX = 64;
+
+//! マクロ情報
+struct MacroRec {
+//	int		m_bEnabled;	//!< 有効/無効フラグ	// Oct. 4, 2001 deleted by genta
+	char	m_szName[MACRONAME_MAX];	//<! 表示名
+	char	m_szFile[_MAX_PATH+1];	//<! ファイル名(ディレクトリを含まない)
+	
+//	bool IsEnabled() const { return m_bEnabled & 1; }
+	bool IsEnabled() const { return m_szFile[0] != '\0'; }
+	// Oct. 4, 2001 deleted by genta
+//	void Enable(bool f){ m_bEnabled = f ? (m_bEnabled | 1) : (m_bEnabled & ~1); }
+};
+//	To Here Sep. 14, 2001 genta
+
 //	Aug. 15, 2000 genta
 //	Backup Flags
 const int BKUP_YEAR		= 32;
@@ -526,6 +542,9 @@ struct DLLSHAREDATA {
 
 	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
 	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
+	
+	//	Sep. 14, 2001 genta
+	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
 
 //	MRU_ExtCmd			m_MRU_ExtCmd;	/* MRU 外部コマンド */
 	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];

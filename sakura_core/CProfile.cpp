@@ -383,7 +383,12 @@ BOOL CProfile::IOProfileData(
 //				*((int*)lpDataSrc) = atoi( szValueStr );
 				break;
 			case REGCNV_SZ2SZ:
-				strcpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+				if( cbDataSrc != 0 ){
+					strncpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ), cbDataSrc );
+				}
+				else {
+					strcpy( (char *)lpDataSrc, m_pDataArr[nCurrentSection][nCurrentIdx]->GetPtr( NULL ) );
+				}
 //				strcpy( (char *)lpDataSrc, szValueStr );
 				break;
 			case REG_MULTI_SZ:
@@ -448,7 +453,6 @@ BOOL CProfile::IOProfileData(
 			dwType = REG_SZ;
 			pData = szValueStr;
 			nDataLen = strlen( szValueStr );
-			break;
 			break;
 
 		default:

@@ -454,6 +454,8 @@
 #define IDC_EDIT_ABOUT                  1398
 #define IDC_CHECK_SplitterWndVScroll    1399
 #define IDC_CHK_WORD                    1400
+#define IDC_MACRODIR                    1401
+#define IDC_MACRODIRREF                 1402
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
@@ -492,7 +494,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        219
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1401
+#define _APS_NEXT_CONTROL_VALUE         1403
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

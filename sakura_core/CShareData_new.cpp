@@ -1828,6 +1828,24 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		}
 //	}
 
+		//	From Here Sep. 14, 2001 genta
+		//	Macro
+		pszSecName = "Macro";
+		
+		for( i = 0; i < MAX_CUSTMACRO; ++i ){
+			//	Oct. 4, 2001 genta あまり意味がなさそうなので削除
+//			wsprintf( szKeyName, "Flag[%03d]", i );
+//			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_INT2SZ,
+//				(char*)&m_pShareData->m_MacroTable[i].m_bEnabled, FALSE );
+			wsprintf( szKeyName, "Name[%03d]", i );
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
+				(char*)m_pShareData->m_MacroTable[i].m_szName, MACRONAME_MAX - 1 );
+			wsprintf( szKeyName, "File[%03d]", i );
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName, REGCNV_SZ2SZ,
+				(char*)m_pShareData->m_MacroTable[i].m_szFile, _MAX_PATH );
+		}
+		//	To Here  Sep. 14, 2001 genta
+
 //	MYTRACE( "Iniファイル処理 6 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 //	cRunningTimer.Reset();
 

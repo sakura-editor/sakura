@@ -2605,6 +2605,24 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, "キーマクロの記録終了&&読み込み(&A)" );
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, "キーマクロの記録終了&&実行(&D)" );
 			}
+			
+			//	From Here Sep. 14, 2001 genta
+			//「カスタムメニュー」ポップアップ
+			hMenuPopUp = ::CreateMenu();
+			
+			for( i = 0; i < MAX_CUSTMACRO; ++i ){
+				MacroRec *mp = &m_pShareData->m_MacroTable[i];
+				if( mp->IsEnabled() && mp->m_szFile[0] ){
+					if(  mp->m_szName[0] ){
+						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + i, mp->m_szName );
+					}
+					else {
+						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + i, mp->m_szFile );
+					}
+				}
+			}
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "登録済みマクロ(&B)" );
+			//	To Here Sep. 14, 2001 genta
 
 			if( m_pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );

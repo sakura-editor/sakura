@@ -417,7 +417,10 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				if( 0 == m_nFuncCodeArr[i] ){
 					strcpy( m_szFuncNameArr[i], "" );
 				}else{
-					::LoadString( m_hInstance, m_nFuncCodeArr[i], m_szFuncNameArr[i], sizeof(m_szFuncNameArr[i]) - 1 );
+					//	Oct. 2, 2001 genta
+					m_pCEditDoc->m_cFuncLookup.Funccode2Name( m_nFuncCodeArr[i],
+						m_szFuncNameArr[i], sizeof(m_szFuncNameArr[i]) - 1 );
+//					::LoadString( m_hInstance, m_nFuncCodeArr[i], m_szFuncNameArr[i], sizeof(m_szFuncNameArr[i]) - 1 );
 				}
 				::SetWindowText( m_hwndButtonArr[i], m_szFuncNameArr[i] );
 			}

@@ -167,11 +167,13 @@ CPropCommon::~CPropCommon()
 
 
 /* 初期化 */
-void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons )
+void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons, CFuncLookup* lookup )
 {
 	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pcIcons = cIcons;
+	m_pcLookup = lookup;	//	機能名・番号resolveクラス．
+
 	return;
 }
 
@@ -521,7 +523,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ "ツールバー",		IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },
 		{ "強調キーワード",	IDD_PROP_KEYWORD,	DlgProc_PROP_KEYWORD },
 		{ "支援",			IDD_PROP_HELPER,	DlgProc_PROP_HELPER },
-//		{ "マクロ",			IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
+		{ "マクロ",			IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
 	};
 
 	for( nIdx = 0, i = 0; i < sizeof(ComPropSheetInfoList)/sizeof(ComPropSheetInfoList[0])

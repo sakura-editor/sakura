@@ -6,6 +6,7 @@
 
 	@author genta
 	@date Jun. 10, 2001
+	$Revision$
 */
 /*
 	Copyright (C) 2001, genta
