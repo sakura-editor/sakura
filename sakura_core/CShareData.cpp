@@ -189,7 +189,7 @@ bool CShareData::Init( void )
 
 	/* ファイルマッピングオブジェクト */
 	m_hFileMap = ::CreateFileMapping(
-		(HANDLE)0xFFFFFFFF,
+		INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
 		NULL,
 		PAGE_READWRITE | SEC_COMMIT,
 		0,
