@@ -351,7 +351,7 @@ bool CEditApp::CreateTrayIcon( HWND hWnd )
 			char	pszTipsVerno[32];
 
 			strcpy( pszTips, GSTR_APPNAME );
-			wsprintf( pszTipsVerno, " UR%d.%d.%d.%d",
+			wsprintf( pszTipsVerno, " %d.%d.%d.%d",		//Jul. 06, 2001 jepro UR ‚Í‚à‚¤•t‚¯‚È‚­‚È‚Á‚½‚Ì‚ð–Y‚ê‚Ä‚¢‚½
 			HIWORD( m_pShareData->m_dwProductVersionMS ),
 			LOWORD( m_pShareData->m_dwProductVersionMS ),
 			HIWORD( m_pShareData->m_dwProductVersionLS ),
