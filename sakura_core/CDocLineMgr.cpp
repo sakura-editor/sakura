@@ -491,7 +491,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 
 	/* ƒtƒ@ƒCƒ‹‚Ìæ“¾ */
 	FILETIME	FileTime;
-	if( TRUE == cfl.GetFileTime( NULL, NULL, &FileTime ) ){
+	if( FALSE != cfl.GetFileTime( NULL, NULL, &FileTime ) ){
 		*pFileTime = FileTime;
 //		SYSTEMTIME	systimeL;
 //		::FileTimeToLocalFileTime( &FileTime, &FileTime );
