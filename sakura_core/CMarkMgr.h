@@ -38,8 +38,6 @@
 #pragma warning(disable: 4786)
 #include <vector>
 #include <string>
-//#include "CStr.h"
-//#include "CVectorBase.h"
 
 using namespace std;
 

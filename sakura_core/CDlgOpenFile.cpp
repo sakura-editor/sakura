@@ -14,7 +14,6 @@
 */
 
 #include "CDlgOpenFile.h"
-//#include <stdio.h>
 #include "debug.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"

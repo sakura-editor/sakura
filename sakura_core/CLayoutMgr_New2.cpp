@@ -17,7 +17,6 @@
 #include "etc_uty.h"
 #include "debug.h"
 #include <commctrl.h>
-//#include "CRunningTimer.h" // 2002/2/10 aroka
 #include <stdlib.h>
 #include "CLayout.h" // 2002/2/10 aroka
 #include "CDocLineMgr.h" // 2002/2/10 aroka

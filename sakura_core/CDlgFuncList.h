@@ -23,8 +23,6 @@ class CDlgFuncList;
 
 #include <windows.h>
 #include "CDialog.h"
-//#include "CFuncInfoArr.h" // 2002/2/10 aroka ƒwƒbƒ_®—
-//#include "CShareData.h" // 2002/2/10 aroka
 class CFuncInfoArr; // 2002/2/10 aroka
 
 

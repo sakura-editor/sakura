@@ -17,9 +17,7 @@ class CFuncKeyWnd;
 #define _CFUNCKEYWND_H_
 
 #include "CWnd.h"
-//#include <windows.h>
 #include "CShareData.h"
-//#include "CEditDoc.h" // 2002/2/10 aroka
 class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ

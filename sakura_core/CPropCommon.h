@@ -19,14 +19,8 @@ class CPropCommon;
 #define _CPROP1_H_
 #include <windows.h>
 #include "CShareData.h"
-//#include "CMemory.h" // 2002/2/10 aroka from here
-//#include "CKeyBind.h"
-//#include "CKeyWordSetMgr.h"
-//#include "CImageListMgr.h"
 #include "sakura_rc.h"
-//#include "CSMacroMgr.h"
 #include "CFuncLookup.h"
-//#include "CMenuDrawer.h"
 class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here

@@ -19,8 +19,6 @@ class CDlgCancel;
 #ifndef _CDLGCANCEL_H_
 #define _CDLGCANCEL_H_
 
-//#include <windows.h>
-//#include "CMemory.h"
 #include "CDialog.h"
 
 

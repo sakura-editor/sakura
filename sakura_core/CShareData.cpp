@@ -14,7 +14,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include <io.h>
 #include "CShareData.h"
 #include "CEditApp.h"
@@ -22,7 +21,6 @@
 #include "debug.h"
 #include "global.h"
 #include "etc_uty.h"
-// #include <locale.h> // 2002/11/30 Moca my_icmp‚ð—˜—p‚·‚é‚½‚ß•s—v‚É
 #include "CRunningTimer.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 

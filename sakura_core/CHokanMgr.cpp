@@ -12,7 +12,6 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
-//#include <stdio.h>
 #include "CHokanMgr.h"
 #include "debug.h"
 #include "CKeyBind.h"

@@ -24,7 +24,6 @@ class CShareData;
 #include "CKeyBind.h"
 #include "CKeyWordSetMgr.h"
 #include "CPrint.h"
-//#include "CKeyMacroMgr.h" @@@ 2002.2.2 YAZAKI
 #include "CProfile.h"
 
 //@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
@@ -199,9 +198,6 @@ struct ColorInfoIni {
 	COLORREF	m_colTEXT;			/* 前景色(文字色) */
 	COLORREF	m_colBACK;			/* 背景色 */
 };
-
-///* Ver 0.3.5.0の設定データ構造体 */
-//#include "CShareData_0_3_5_0.h"
 
 //@@@ 2001.11.17 add start MIK
 struct RegexKeywordInfo {

@@ -20,10 +20,7 @@
 
 #include <windows.h>
 #include "global.h"
-//#include "CMemory.h"// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 #include <shlobj.h>
-//#include "CEol.h"// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
-//#include "CBregexp.h"	//	Jun. 26, 2001 genta  2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
 class CMemory;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 class CEOL;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»

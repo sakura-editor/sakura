@@ -19,7 +19,6 @@ class CSplitBoxWnd;
 #define _CSPLITBOXWND_H_
 
 #include "CWnd.h"
-//#include "mymessage.h"// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 
 
 /*-----------------------------------------------------------------------

@@ -18,7 +18,6 @@
 
 #include "CCommandLine.h"
 #include "CMemory.h"
-//#include "CShareData.h"	2002/03/24 YAZAKI
 #include "etc_uty.h"
 #include <tchar.h>
 #include <io.h>

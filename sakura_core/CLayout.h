@@ -20,7 +20,6 @@ class CLayout;
 
 
 
-//#include "CDocLine.h"
 #include "CEol.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/4/21 YAZAKI
 #include "CMemory.h"// 2002/4/21 YAZAKI

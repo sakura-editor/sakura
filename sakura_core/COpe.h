@@ -18,7 +18,6 @@ class COpe;
 #ifndef _COPE_H_
 #define _COPE_H_
 
-//#include "CMemory.h"// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 
 /*!

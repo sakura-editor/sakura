@@ -11,7 +11,6 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-//#include <stdio.h>
 #include "sakura_rc.h"
 #include "CDlgProperty.h"
 #include "debug.h"

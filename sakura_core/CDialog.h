@@ -19,11 +19,7 @@ class CDialog;
 
 #include <windows.h>
 #include <dbt.h>
-//#include "sakura_rc.h" // 2002/2/10 aroka ƒwƒbƒ_®—
-//#include "debug.h"
 #include "CShareData.h"
-//#include "etc_uty.h" // 2002/2/10 aroka 
-//#include "debug.h" // 2002/2/10 aroka 
 #include "global.h"
 
 

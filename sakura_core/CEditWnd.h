@@ -22,7 +22,6 @@
 class CEditWnd;
 
 #include "CEditDoc.h"
-//#include "CKeyBind.h" // 2002/2/10 aroka
 #include "CShareData.h"
 #include "CFuncKeyWnd.h"
 #include "CMenuDrawer.h"
@@ -32,7 +31,6 @@ class CEditWnd;
 #include"CDropTarget.h"
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-//#include "CPrintPreview.h" // 2002/2/10 aroka
 class CPrintPreview;// 2002/2/10 aroka
 
 

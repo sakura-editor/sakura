@@ -20,7 +20,6 @@
 #include "CPropTypes.h"
 #include "debug.h"
 #include <windows.h>
-//#include <stdio.h>
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"

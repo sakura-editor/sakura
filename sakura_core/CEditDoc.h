@@ -18,33 +18,22 @@
 
 
 #include <windows.h>
-//#include "CMemory.h"  // 2002/2/10 aroka
 #include "CDocLineMgr.h"
 #include "CLayoutMgr.h"
-//#include "COpe.h" // 2002/2/10 aroka
-//#include "COpeBlk.h" // 2002/2/10 aroka
 #include "COpeBuf.h"
 #include "CDlgFind.h"
 #include "CDlgReplace.h"
-//@@#include "CProp1.h"
 #include "CShareData.h"
-//#include "CFuncInfoArr.h" // 2002/2/10 aroka
-//@@@ 2002.01.14 YAZAKI •s—v
-//#include "CSplitBoxWnd.h"
 #include "CEditView.h"
 #include "CSplitterWnd.h"
 #include "CDlgOpenFile.h"
-//#include "CDlgSendMail.h"
 #include "CDlgGrep.h"
 #include "CDlgJump.h"
 #include "CPropCommon.h"
 #include "CPropTypes.h"
 #include "CDlgFuncList.h"
-//#include "CDlgTest.h"
 #include "CHokanMgr.h"
 #include "CAutoSave.h"
-//#include "CImageListMgr.h" // 2002/2/10 aroka
-//#include "CSMacroMgr.h" // 2002/2/10 aroka
 #include "CFuncLookup.h"
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka

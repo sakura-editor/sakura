@@ -19,8 +19,6 @@ class CDicMgr;
 #define _CDICMGR_H_
 
 #include <windows.h>
-//#include "CMemory.h" // 2002/2/10 aroka ƒwƒbƒ_®—
-//#include "debug.h" // 2002/2/10 aroka
 #include "global.h"
 
 class CMemory;

@@ -14,14 +14,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include <windows.h>
-//#include <stdio.h>
 
 
 #include "sakura_rc.h"
 #include "CDlgGrep.h"
 #include "debug.h"
 
-//#include "_global_fio.h"
 #include "etc_uty.h"
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12

@@ -29,7 +29,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-//#include "CBuffer.h"
 class CMemory;
 
 #ifndef _CMEMORY_H_
@@ -39,7 +38,6 @@ class CMemory;
 #define CheckKanjiCode_MAXREADLENGTH 16384
 
 #include "global.h"
-//#include "debug.h" // 2002/2/10 aroka
 
 //! メモリバッファクラス
 class SAKURA_CORE_API CMemory

@@ -14,7 +14,6 @@
 */
 #include <windows.h>
 #include <commctrl.h>
-//#include <stdio.h>
 #include "sakura_rc.h"
 #include "CDlgTypeList.h"
 #include "etc_uty.h"

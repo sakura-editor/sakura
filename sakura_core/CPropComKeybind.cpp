@@ -18,7 +18,6 @@
 #include "CPropCommon.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
-//#include "CMacro.h"	//@@@ 2001.11.08 add MIK @@@ 2002.2.2 YAZAKI delete.
 #include "CSMacroMgr.h" // 2002/2/10 aroka
 #include "KeyCode.h"	/// 2002/2/3 aroka from here
 #include "CFuncInfo.h" ///

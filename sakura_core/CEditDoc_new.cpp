@@ -16,7 +16,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-//#include <stdio.h>
 #include "CEditDoc.h"
 #include "charcode.h"
 #include "CFuncInfoArr.h"// 2002/2/10 aroka

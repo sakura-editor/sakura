@@ -20,7 +20,6 @@ class CTipWnd;
 #define _CTIPWND_H_
 
 #include "CWnd.h"
-//#include <windows.h>
 #include "CMemory.h"
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

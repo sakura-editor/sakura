@@ -23,11 +23,6 @@ class CDocLineMgr;
 #define _CDOCLINEMGR_H_
 
 #include <windows.h>
-//#include "CDocLine.h" // 2002/2/10 aroka ヘッダ整理
-//#include "CMemory.h" // 2002/2/10 aroka
-//#include "cRunningTimer.h" // 2002/2/10 aroka
-////	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-//#include "CBregexp.h" // 2002/2/10 aroka
 #include "global.h" // 2002/2/10 aroka
 #include "CEol.h" // 2002/2/10 aroka
 class CDocLine; // 2002/2/10 aroka
