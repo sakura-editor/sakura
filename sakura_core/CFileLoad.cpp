@@ -40,7 +40,9 @@
 #include "CMemory.h"
 #include "CEOL.h"
 #include "CFileLoad.h"
-
+#ifdef _DEBUG
+#include "Debug.h"
+#endif
 /*
 	@note Win32APIで実装
 		2GB以上のファイルは開けない
@@ -60,9 +62,10 @@ CFileLoad::CFileLoad( void ) : m_cmemLine()
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
 	m_CharCode		= 0;
+	m_bBomExist		= FALSE;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
-	m_nMode			= 0;
+	m_eMode			= FLMODE_CLOSE;	// Jun. 08, 2003 Moca
 
 	m_nLineIndex	= -1;
 
@@ -86,15 +89,16 @@ CFileLoad::~CFileLoad( void )
 /*!
 	ファイルを開く
 	@param pFileName [in] ファイル名
-	@param CharCode  [in] ファイルの文字コード．AUTODETECTは指定不可．
-		予め漢字コードの判定はすませておく．
+	@param CharCode  [in] ファイルの文字コード．
 	@param nFlag [in] 文字コードのオプション
+	@date 2003.06.08 Moca CODE_AUTODETECTを指定できるように変更
 */
-void CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
+enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 {
 	HANDLE	hFile;
 	DWORD	FileSize;
 	DWORD	FileSizeHigh;
+	int		nBomCode;
 
 	// FileCloseを呼んでからにしてください
 	if( NULL != m_hFile ){
@@ -126,18 +130,44 @@ void CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag )
 		throw CError_FileOpen();
 	}
 	m_nFileSize = FileSize;
+//	m_eMode = FLMODE_OPEN;
 
+	// From Here Jun. 08, 2003 Moca 文字コード判定
+	// データ読み込み
+	Buffering();
+
+	if( CharCode == CODE_AUTODETECT ){
+		CharCode = CMemory::CheckKanjiCode( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
+	}
+	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
 	if( 0 > CharCode || CODE_CODEMAX <= CharCode ){
-		CharCode = 0;
+		CharCode = CODE_SJIS;
 	}
 	m_CharCode = CharCode;
 	m_nFlag = nFlag;
-	m_nMode = 1;
 
-	SeekBegin();
-	Buffering();
+	// From Here Jun. 08, 2003 Moca BOMの除去
+	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
+	m_nFileDataLen = m_nFileSize;
+	if( nBomCode != 0 && nBomCode == m_CharCode ){
+		m_bBomExist = TRUE;
+		switch( nBomCode ){
+			case CODE_UNICODE:
+			case CODE_UNICODEBE:
+				m_nFileDataLen -= 2;
+				m_nReadBufOffSet += 2;
+				break;
+			case CODE_UTF8:
+				m_nFileDataLen -= 3;
+				m_nReadBufOffSet += 3;
+				break;
+		}
+	}
+	// To Here Jun. 13, 2003 Moca BOMの除去
+	m_eMode = FLMODE_REDY;
 //	m_cmemLine.AllocBuffer( 256 );
+	return (enumCodeType)m_CharCode;
 }
 
 /*!
@@ -155,16 +185,20 @@ void CFileLoad::FileClose( void )
 	m_nFileSize		=  0;
 	m_nFileDataLen	=  0;
 	m_CharCode		=  0;
+	m_bBomExist		= FALSE; // From Here Jun. 08, 2003
 	m_nFlag 		=  0;
 	m_nReadLength	=  0;
-	m_nMode			=  0;
+	m_eMode			= FLMODE_CLOSE;
 	m_nLineIndex	= -1;
 }
 
 /*!
 	ファイルの先頭にポインタを移動する
 	BOMはここで読み飛ばす
+	
+	@date 2003.06.13 Moca 使わないのでコメントアウト
 */
+/*
 void CFileLoad::SeekBegin( void )
 {
 	DWORD	ReadSize = 0;
@@ -189,12 +223,17 @@ void CFileLoad::SeekBegin( void )
 //		break;
 	}
 	// もしBOMが付いていなかったらポインタを元に戻す
-	if( ReadSize != 0 && m_CharCode != CMemory::IsUnicodeBom( (const unsigned char*)Buf, ReadSize ) ){
-		m_nFileDataLen = m_nFileSize;
-		FilePointer( 0, FILE_BEGIN );
+	m_bBomExist = FALSE;
+	if( ReadSize != 0 ){
+		if( m_CharCode == CMemory::IsUnicodeBom( (const unsigned char*)Buf, ReadSize ) ){
+			m_bBomExist = TRUE;
+		}else{
+			m_nFileDataLen = m_nFileSize;
+			FilePointer( 0, FILE_BEGIN );
+		}
 	}
 }
-
+*/
 
 /*!
 	次の論理行を文字コード変換してロードする
@@ -212,7 +251,12 @@ const char* CFileLoad::ReadLine(
 	int			nRetVal = 1;
 	int			nBufLineLen;
 	int			nEolLen;
-
+#ifdef _DEBUG
+	if( m_eMode < FLMODE_REDY ){
+		MYTRACE( "CFileLoad::ReadLine(): m_eMode = %d\n", m_eMode );
+		return NULL;
+	}
+#endif
 	// 行データクリア。本当はバッファは開放したくない
 	m_cmemLine.SetData( "", 0 );
 
@@ -221,7 +265,7 @@ const char* CFileLoad::ReadLine(
 	while( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen,
 		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
 			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
-			if( m_nReadDataLen <= m_nReadBufOffSet && 1 == m_nMode ){
+			if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_REDY == m_eMode ){// From Here Jun. 13, 2003 Moca
 				m_cmemLine.Append( pLine, nBufLineLen );
 				m_nReadBufOffSet -= nEolLen;
 				// バッファロード   File -> ReadBuf
@@ -388,6 +432,10 @@ void CFileLoad::Buffering( void )
 	if( NULL == m_pReadBuf ){
 		int nBufSize;
 		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( m_nFileSize ):( gm_nBufSizeDef );
+		if( 0 >= nBufSize ){
+			nBufSize = 1; // Jun. 08, 2003  BCCのmalloc(0)がNULLを返す仕様に対処
+		}
+
 		m_pReadBuf = (char *)malloc( nBufSize );
 		if( NULL == m_pReadBuf ){
 			throw CError_FileRead(); // メモリー確保に失敗
@@ -409,7 +457,7 @@ void CFileLoad::Buffering( void )
 	// ファイルの読み込み
 	ReadSize = Read( &m_pReadBuf[m_nReadDataLen], m_nReadBufSize - m_nReadDataLen );
 	if( 0 == ReadSize ){
-		m_nMode = 2;	// ファイルなどの終わりに達したらしい
+		m_eMode = FLMODE_READBUFEND;	// ファイルなどの終わりに達したらしい
 	}
 	m_nReadDataLen += ReadSize;
 }
