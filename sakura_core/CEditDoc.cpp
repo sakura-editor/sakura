@@ -2848,6 +2848,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 
 	@author naoh
 	@date 2003.07.21 naoh 新規作成
+	@date 2005.01.03 naoh 「マ」などの"}"を含む文字に対する修正、prosperのslideに対応
 */
 void CEditDoc::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 {
@@ -2866,44 +2867,71 @@ void CEditDoc::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 	int nStartTitlePos;					// \section{dddd} の dddd の部分の始まる番号
 	int bNoNumber;						// * 付の場合はセクション番号を付けない
 
+	// 一行ずつ
 	for(nLineCount=0;nLineCount<m_cDocLineMgr.GetLineCount();nLineCount++)
 	{
 		pLine	=	(const char *)m_cDocLineMgr.GetLineStr(nLineCount,&nLineLen);
 		if(!pLine) break;
+		// 一文字ずつ
 		for(i=0;i<nLineLen-1;i++)
 		{
-			if(pLine[i] == '%') break;
-			if(pLine[i] != '\\' || nDepth>=nMaxStack) continue;
+			if(pLine[i] == '%' && !(i>0 && _IS_SJIS_1(pLine[i-1])) ) break;	// コメントなら以降はいらない
+			if(pLine[i] != '\\' 
+				&& !(i>0 && _IS_SJIS_1(pLine[i-1]))	// 「\」の前の文字がSJISの1バイト目なら次の文字へ
+				|| nDepth>=nMaxStack) continue;	// 「\」がないなら次の文字へ
 			++i;
+			// 見つかった「\」以降の文字列チェック
 			for(j=0;i+j<nLineLen && j<sizeof(szTag)-1;j++)
 			{
-				if(pLine[i+j] == '{'){
+				if(pLine[i+j] == '{' && !(i+j>0 && _IS_SJIS_1((unsigned char)pLine[i+j-1])) ) {	// SJIS1チェック
 					bNoNumber = (pLine[i+j-1] == '*');
 					nStartTitlePos = j+i+1;
 					break;
 				}
-				szTag[j]	=	pLine[i+j];
+				szTag[j] = pLine[i+j];
 			}
 			if(j==0) continue;
 			if(bNoNumber){
 				szTag[j-1] = '\0';
 			}else{
-				szTag[j]	 = '\0';
+				szTag[j]   = '\0';
 			}
 //			MessageBox(NULL, szTitle, "", MB_OK);
 
+			thisSection = 0;
 			if(!strcmp(szTag,"subsubsection")) thisSection = 4;
 			else if(!strcmp(szTag,"subsection")) thisSection = 3;
 			else if(!strcmp(szTag,"section")) thisSection = 2;
 			else if(!strcmp(szTag,"chapter")) thisSection = 1;
-			else thisSection = 0;
+			else if(!strcmp(szTag,"begin")) {		// beginなら prosperのslideの可能性も考慮
+				// さらに{slide}{}まで読みとっておく
+				if(strstr(pLine, "{slide}")){
+					k=0;
+					for(j=nStartTitlePos+1;i+j<nLineLen && j<sizeof(szTag)-1;j++)
+					{
+						if(pLine[i+j] == '{' && !(i+j>0 && _IS_SJIS_1((unsigned char)pLine[i+j-1])) ) {	// SJIS1チェック
+							nStartTitlePos = j+i+1;
+							break;
+						}
+						szTag[k++]	=	pLine[i+j];
+					}
+					szTag[k] = '\0';
+					thisSection = 1;
+				}
+			}
+
 			if( thisSection > 0)
 			{
 				// sectionの中身取得
 				for(k=0;nStartTitlePos+k<nLineLen && k<sizeof(szTitle)-1;k++)
 				{
-					if(pLine[k+nStartTitlePos] == '}') break;
-					szTitle[k]	=	pLine[k+nStartTitlePos];
+					if(_IS_SJIS_1((unsigned char)pLine[k+nStartTitlePos])) {
+						szTitle[k] = pLine[k+nStartTitlePos];
+						k++;	// 次はチェック不要
+					} else if(pLine[k+nStartTitlePos] == '}') {
+						break;
+					}
+					szTitle[k] = pLine[k+nStartTitlePos];
 				}
 				szTitle[k] = '\0';
 
