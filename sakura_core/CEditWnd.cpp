@@ -3278,22 +3278,32 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	From Here
 		int			nStArr[8];
 		// 2003.08.26 Moca CR0LF0廃止に従い、適当に調整
-		const char*	pszLabel[7] = { "", "99999行 9999列", "CRLF ", "FFFFFFFF", "SJIS  ", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
+		// 2004-02-28 yasu 文字列を出力時の書式に合わせる
+		// 幅を変えた場合にはCEditView::DrawCaretPosInfo()での表示方法を見直す必要あり．
+		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
 		int			nStArrNum = 7;
 		//	To Here
-		int			nAllWidth;
+		int			nAllWidth = rc.right - rc.left;
+		int			nSbxWidth = ::GetSystemMetrics(SM_CXVSCROLL) + ::GetSystemMetrics(SM_CXEDGE); // サイズボックスの幅
+		int			nBdrWidth = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXEDGE) * 2; // 境界の幅
 		SIZE		sz;
 		HDC			hdc;
 		int			i;
-		nAllWidth = rc.right - rc.left;
+		// 2004-02-28 yasu
+		// 正確な幅を計算するために、表示フォントを取得してhdcに選択させる。
 		hdc = ::GetDC( m_hwndStatusBar );
+		HFONT hFont = (HFONT)::SendMessage(m_hwndStatusBar, WM_GETFONT, 0, 0);
+		if (hFont != NULL)
+		{
+			hFont = (HFONT)::SelectObject(hdc, hFont);
+		}
 		nStArr[nStArrNum - 1] = nAllWidth;
 		if( wParam != SIZE_MAXIMIZED ){
-			nStArr[nStArrNum - 1] -= 17; // 2003.08.26 Moca Lunaで「挿入」が「挿」になるので、16を17にした
+			nStArr[nStArrNum - 1] -= nSbxWidth;
 		}
 		for( i = nStArrNum - 1; i > 0; i-- ){
 			::GetTextExtentPoint32( hdc, pszLabel[i], lstrlen( pszLabel[i] ), &sz );
-			nStArr[i - 1] = nStArr[i] - ( sz.cx + ::GetSystemMetrics( SM_CXEDGE ) + 1 ); // 2003.08.26 Moca Luna向けに+1 してみる
+			nStArr[i - 1] = nStArr[i] - ( sz.cx + nBdrWidth );
 		}
 
 		//	Nov. 8, 2003 genta
@@ -3302,11 +3312,11 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	最初に「枠無し」状態を設定した後でバーの分割を行う．
 		::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
 
-		//Nov. 2, 2000 JEPRO よくわからないがともかくここを増やしてみる
-		// 2003.08.26 Moca pszLabel[1]を2文字削って不要に
-		// nStArr[0] += 16;
-
 		::SendMessage( m_hwndStatusBar, SB_SETPARTS, nStArrNum, (LPARAM) (LPINT)nStArr );
+		if (hFont != NULL)
+		{
+			::SelectObject(hdc, hFont);
+		}
 		::ReleaseDC( m_hwndStatusBar, hdc );
 
 
