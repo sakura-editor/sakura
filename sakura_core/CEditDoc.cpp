@@ -72,6 +72,7 @@ CEditDoc::CEditDoc() :
 	m_nSettingType( 0 ),	// Sep. 11, 2002 genta
 	m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
 //	m_pcDlgTest = new CDlgTest;
 
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
@@ -164,6 +165,8 @@ BOOL CEditDoc::Create(
 	CImageListMgr* pcIcons
  )
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
+
 	HWND		hWndArr[4];
 	CEditWnd*	pCEditWnd;
 	m_hInstance = hInstance;
@@ -197,6 +200,7 @@ BOOL CEditDoc::Create(
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 	m_hWnd = m_cSplitterWnd.m_hWnd;
 
+	MY_TRACETIME( cRunningTimer, "View created" );
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( m_hInstance, m_pcSMacroMgr, &m_pShareData->m_Common );
@@ -204,6 +208,8 @@ BOOL CEditDoc::Create(
 	/* 設定プロパティシートの初期化１ */
 	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr, &(pCEditWnd->m_CMenuDrawer) );
 	m_cPropTypes.Create( m_hInstance, m_hWnd );
+
+	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 
 	/* 入力補完ウィンドウ作成 */
 	m_cHokanMgr.DoModeless( m_hInstance, m_cEditViewArr[0].m_hWnd, (LPARAM)&(m_cEditViewArr[0]) );

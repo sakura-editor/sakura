@@ -27,6 +27,7 @@
 #include "etc_uty.h"
 #include <tchar.h>
 #include "COsVersionInfo.h"
+#include "CRunningTimer.h"
 
 class CProcess;
 
@@ -154,6 +155,8 @@ bool CProcessFactory::IsExistControlProcess()
 */
 bool CProcessFactory::StartControlProcess()
 {
+	MY_RUNNINGTIMER(cRunningTimer,"StartControlProcess" );
+
 	//	プロセスの起動
 	PROCESS_INFORMATION p;
 	STARTUPINFO s;

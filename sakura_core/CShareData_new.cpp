@@ -49,8 +49,7 @@ CShareData::CShareData()
 */
 BOOL CShareData::ShareData_IO_2( BOOL bRead )
 {
-	CRunningTimer cRunningTimer( "CShareData::ShareData_IO_2" );
-	cRunningTimer.Reset();
+	MY_RUNNINGTIMER( cRunningTimer, "CShareData::ShareData_IO_2" );
 
 	char			szKey[256];
 	char			szKeyData[1024];

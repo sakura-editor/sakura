@@ -40,6 +40,7 @@
 #include "CPrintPreview.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "CSMacroMgr.h" // Jun. 16, 2002 genta
+#include "CRunningTimer.h"
 
 
 #define IDT_TOOLBAR		456
@@ -238,6 +239,8 @@ HWND CEditWnd::Create(
 	int			nDocumentType
 )
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
+
 	WNDCLASS	wc;
 	HWND		hWnd;
 	ATOM		atom;

@@ -35,8 +35,7 @@ public:
 	/*
 	||  Constructors
 	*/
-//	CRunningTimer();
-	CRunningTimer( const char* );
+	CRunningTimer( const char* Text = NULL);
 	~CRunningTimer();
 
 	/*
@@ -44,15 +43,25 @@ public:
 	*/
 	void Reset();
 	DWORD Read();
+	
+	void WriteTrace(const char* msg = "") const;
 
 protected:
 	DWORD	m_nStartTime;
-	char	m_szText[100];
+	char	m_szText[100];	//<! タイマー名
+	int		m_nDeapth;	//<! このオブジェクトのネストの深さ
+	
 	static int m_nNestCount;
+	
 };
 
-
-
+#ifdef _DEBUG
+  #define MY_TRACETIME(c,m) (c).WriteTrace(m)
+  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m)
+#else
+  #define MY_TRACETIME(c,m)
+  #define MY_RUNNINGTIMER(c,m)
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CRUNNINGTIMER_H_ */

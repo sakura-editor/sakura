@@ -16,6 +16,7 @@
 */
 #include "CImageListMgr.h"
 #include "sakura_rc.h"
+#include "CRunningTimer.h"
 
 //	Destructor
 CImageListMgr::~CImageListMgr()
@@ -36,6 +37,7 @@ CImageListMgr::~CImageListMgr()
 */
 bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CImageListMgr::Create" );
 	if( m_hList != NULL ){	//	ä˘Ç…ç\ízçœÇ›Ç»ÇÁñ≥éãÇ∑ÇÈ
 		return true;
 	}

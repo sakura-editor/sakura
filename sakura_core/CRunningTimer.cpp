@@ -21,43 +21,25 @@
 
 
 int CRunningTimer::m_nNestCount = 0;
-
-//	CRunningTimer::CRunningTimer()
-//	{
-//		Reset();
-//		m_szText[0] = '\0';
-//	//	m_nNestCount++;
-///		return;
-//	}
+#ifdef _DEBUG
 
 CRunningTimer::CRunningTimer( const char* pszText )
 {
 	Reset();
-#ifdef _DEBUG
-//	strcpy( m_szText, pszText );
-//	if( '\0' != m_szText[0] ){
-//		m_nNestCount++;
-//	}
-#endif
+	if( pszText != NULL )
+		strcpy( m_szText, pszText );
+	else
+		m_szText[0] = '\0';
+	m_nDeapth = m_nNestCount++;
+	MYTRACE( "%3d:\"%s\" : Enter \n", m_nDeapth, m_szText );
 	return;
 }
 
 
 CRunningTimer::~CRunningTimer()
 {
-#ifdef _DEBUG
-//	if( gm_ProfileOutput ){
-//		if( '\0' != m_szText[0] ){
-//			for( int i = 0; i < m_nNestCount; ++i ){
-//				MYTRACE( "„ " );
-//			}
-//			MYTRACE( "\"%s\", %d‡_•b\n", m_szText, GetTickCount() - m_nStartTime );
-//		}
-//	}
-//	if( '\0' != m_szText[0] ){
-//		m_nNestCount--;
-//	}
-#endif
+	WriteTrace("Exit Scope");
+	m_nNestCount--;
 	return;
 }
 
@@ -73,5 +55,13 @@ DWORD CRunningTimer::Read()
 	return GetTickCount() - m_nStartTime;
 }
 
+/*!
+	@date 2002.10.15 genta
+*/
+void CRunningTimer::WriteTrace(const char* msg) const
+{
+	MYTRACE( "%3d:\"%s\", %d‡_•b : %s\n", m_nDeapth, m_szText, GetTickCount() - m_nStartTime, msg );
+}
+#endif
 
 /*[EOF]*/

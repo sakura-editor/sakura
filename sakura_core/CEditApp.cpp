@@ -246,6 +246,8 @@ CEditApp::~CEditApp()
 /* çÏê¨ */
 HWND CEditApp::Create( HINSTANCE hInstance )
 {
+	MY_RUNNINGTIMER( cRunningTimer, "CEditApp::Create" );
+
 	WNDCLASS	wc;
 //	HANDLE		hMutex;
 //	HWND		hWnd;
@@ -311,9 +313,13 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 	);
 //	m_hWnd = hWnd;
 //	MYMESSAGEBOX( "m_hWnd=%08xH \n", m_hWnd );
+	MY_TRACETIME( cRunningTimer, "Window is created" );
 
 	//	Oct. 16, 2000 genta
 	m_hIcons.Create( m_hInstance, m_hWnd );
+	
+	MY_TRACETIME( cRunningTimer, "Icons are created" );
+	
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_hIcons );
 
 	if( NULL != m_hWnd ){
