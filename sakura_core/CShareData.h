@@ -87,10 +87,10 @@ struct FileInfo {
 	char	m_szGrepKey[1024];
 	char	m_szMarkLines[MAX_MARKLINES_LEN + 1];	/*!< ブックマークの物理行リスト */
 	char	m_szDocType[MAX_DOCTYPE_LEN + 1];	/*!< 文書タイプ */
-	int		m_nWindowSizeX;			/*!< ウィンドウ  幅(ピクセル数？) */
-	int		m_nWindowSizeY;			/*!< ウィンドウ  高さ(？) */
-	int		m_nWindowOriginX;		/*!< ウィンドウ  物理位置(ピクセル数) */
-	int		m_nWindowOriginY;		/*!< ウィンドウ  物理位置(ピクセル数) */
+	int		m_nWindowSizeX;			/*!< ウィンドウ  幅(ピクセル数) */
+	int		m_nWindowSizeY;			/*!< ウィンドウ  高さ(ピクセル数) */
+	int		m_nWindowOriginX;		/*!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効) */
+	int		m_nWindowOriginY;		/*!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効) */
 	
 	// Mar. 7, 2002 genta
 	// Constructor 確実に初期化するため
@@ -98,7 +98,8 @@ struct FileInfo {
 		m_nX( -1 ), m_nY( -1 ), m_bIsModified( 0 ),
 		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ), m_bIsDebug( FALSE ),
 		m_nWindowSizeX( -1 ), m_nWindowSizeY( -1 ),
-		m_nWindowOriginX( -1 ), m_nWindowOriginY( -1 )
+		//	2004.05.13 Moca “指定無し”を-1からCW_USEDEFAULTに変更
+		m_nWindowOriginX( CW_USEDEFAULT ), m_nWindowOriginY( CW_USEDEFAULT )
 	{
 		m_szPath[0] = '\0';
 		m_szMarkLines[0] = '\0';
@@ -295,6 +296,15 @@ const int BKUP_AUTO		= 64;
 // Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
 const int MAX_CAPTION_CONF_LEN = 256;
 
+//	2004.05.13 Moca
+//! ウィンドウサイズ・位置の制御方法
+enum eWINSIZEMODE{
+	WINSIZEMODE_DEF = 0, //!< 指定なし
+	WINSIZEMODE_SAVE = 1, //!< 継承(保存)
+	WINSIZEMODE_SET = 2   //!< 直接指定(固定)
+};
+
+
 //! 共通設定
 struct Common {
 
@@ -425,11 +435,14 @@ struct Common {
 	char				m_szMidashiKigou[256];			/* 見出し記号 */
 	char				m_szInyouKigou[32];				/* 引用符 */
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
-	BOOL				m_bSaveWindowSize;				/* ウィンドウサイズ継承 */
+
+	int					m_nSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 eWINSIZEMODEに順ずる
 	int					m_nWinSizeType;
 	int					m_nWinSizeCX;
 	int					m_nWinSizeCY;
-
+	int					m_nSaveWindowPos;	// 2004.05.13 Moca ウィンドウ位置継承・固定 eWINSIZEMODEに順ずる
+	int					m_nWinPosX;
+	int					m_nWinPosY;
 
 	BOOL				m_bUseTaskTray;				/* タスクトレイのアイコンを使う */
 	BOOL				m_bStayTaskTray;			/* タスクトレイのアイコンを常駐 */

@@ -18,6 +18,7 @@
 #include "CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
 #include "global.h"
+#include "CDlgWinSize.h"	//	2004.05.13 Moca
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #include "sakura.hh"
@@ -29,7 +30,6 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispTOOLBAR,			HIDC_CHECK_DispTOOLBAR,			//ツールバー表示
 	IDC_CHECK_bScrollBarHorz,		HIDC_CHECK_bScrollBarHorz,		//水平スクロールバー
 	IDC_CHECK_bMenuIcon,			HIDC_CHECK_bMenuIcon,			//アイコン付きメニュー
-	IDC_CHECK_WINSIZE,				HIDC_CHECK_WINSIZE,				//ウインドウサイズ継承
 	IDC_CHECK_SplitterWndVScroll,	HIDC_CHECK_SplitterWndVScroll,	//垂直スクロールの同期	//Jul. 05, 2001 JEPRO 追加
 	IDC_CHECK_SplitterWndHScroll,	HIDC_CHECK_SplitterWndHScroll,	//水平スクロールの同期	//Jul. 05, 2001 JEPRO 追加
 	IDC_EDIT_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,	//ルーラーの高さ
@@ -243,6 +243,28 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
 					//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
 				}
+				break;
+			// From Here 2004.05.13 Moca 「位置と大きさの設定」ボタン
+			//	ウィンドウ設定ダイアログにて起動時のウィンドウ状態指定
+			case IDC_BUTTON_WINSIZE:
+				{
+					CDlgWinSize cDlgWinSize;
+					RECT rc;
+					rc.right  = m_Common.m_nWinSizeCX;
+					rc.bottom = m_Common.m_nWinSizeCY;
+					rc.top    = m_Common.m_nWinPosX;
+					rc.left   = m_Common.m_nWinPosY;
+					cDlgWinSize.DoModal( ::GetModuleHandle(NULL), hwndDlg,
+						m_Common.m_nSaveWindowSize, m_Common.m_nSaveWindowPos,
+						m_Common.m_nWinSizeType, rc
+					);
+					m_Common.m_nWinSizeCX = rc.right;
+					m_Common.m_nWinSizeCY = rc.bottom;
+					m_Common.m_nWinPosX = rc.top;
+					m_Common.m_nWinPosY = rc.left;
+				}
+				break;
+			// To Here 2004.05.13 Moca
 			}
 			break;
 		}
@@ -308,9 +330,6 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
-
-	/* ウィンドウサイズ継承 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_WINSIZE, m_Common.m_bSaveWindowSize );
 
 	/* ルーラー高さ */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, m_Common.m_nRulerHeight, FALSE );
@@ -396,9 +415,6 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	m_Common.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );
-
-	/* ウィンドウサイズ継承 */
-	m_Common.m_bSaveWindowSize = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WINSIZE );
 
 	/* ルーラーのタイプ */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_nRulerType_0 ) ){
