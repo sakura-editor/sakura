@@ -98,6 +98,10 @@ SOURCE=.\CAutoSave.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CBregexp.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CDialog.cpp
 # End Source File
 # Begin Source File
@@ -167,6 +171,10 @@ SOURCE=.\CDlgReplace.cpp
 # Begin Source File
 
 SOURCE=.\CDlgTypeList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CDllHandler.cpp
 # End Source File
 # Begin Source File
 
@@ -247,10 +255,6 @@ SOURCE=.\CHokanMgr.cpp
 # Begin Source File
 
 SOURCE=.\CImageListMgr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CJre.cpp
 # End Source File
 # Begin Source File
 
@@ -426,10 +430,6 @@ SOURCE=.\Funccode.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\global.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sakura_core.cpp
 # End Source File
 # Begin Source File
@@ -444,6 +444,10 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\CAutoSave.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CBregexp.h
 # End Source File
 # Begin Source File
 
@@ -519,6 +523,10 @@ SOURCE=.\CDlgTypeList.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CDllHandler.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CDocLine.h
 # End Source File
 # Begin Source File
@@ -572,10 +580,6 @@ SOURCE=.\CHokanMgr.h
 # Begin Source File
 
 SOURCE=.\CImageListMgr.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CJre.h
 # End Source File
 # Begin Source File
 
@@ -683,11 +687,11 @@ SOURCE=.\Funccode.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\global.h
+SOURCE=.\global.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Jreusr.h
+SOURCE=.\global.h
 # End Source File
 # Begin Source File
 

@@ -3297,27 +3297,14 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	if( m_bCurSrchRegularExp
 	 && bChangeState
 	){
-		/* CJreクラスの初期化 */
-		m_CurSrch_CJre.Init();
-		/* jre32.dllの存在チェック */
-		if( FALSE == m_CurSrch_CJre.IsExist() ){
-			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true )){
 			return;
 		}
 		/* 検索パターンのコンパイル */
-		m_CurSrch_CJre.Compile( m_szCurSrchKey );
+		m_CurRegexp.Compile( m_szCurSrchKey );
 	}
 
-//		/* jre32.dllの存在チェック */
-//		if( FALSE == m_CurSrch_CJre.IsExist() ){
-//			m_bCurSrchKeyMark = FALSE;
-//		}else{
-//			/* 検索パターンのコンパイル */
-//			if( !m_CurSrch_CJre.Compile( m_szCurSrchKey ) ){
-//				m_bCurSrchKeyMark = FALSE;
-//			}
-//		}
-//	}
 	if( bChangeState ){
 		/* フォーカス移動時の再描画 */
 		RedrawAll();
@@ -3337,7 +3324,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		&nColmFrom, 							/* マッチレイアウト位置from */
 		&nLineTo, 								/* マッチレイアウト行to */
 		&nColmTo, 								/* マッチレイアウト位置to */
-		&m_CurSrch_CJre							/* 正規表現コンパイルデータ */
+		&m_CurRegexp							/* 正規表現コンパイルデータ */
 	) ){
 		/* フォーカス移動時の再描画 */
 		RedrawAll();
@@ -3607,27 +3594,13 @@ void CEditView::Command_SEARCH_NEXT( BOOL bRedraw, HWND hwndParent, const char* 
 	if( m_bCurSrchRegularExp
 	 && bChangeState
 	){
-		/* CJreクラスの初期化 */
-		m_CurSrch_CJre.Init();
-		/* jre32.dllの存在チェック */
-		if( FALSE == m_CurSrch_CJre.IsExist() ){
-			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true )){
 			return;
 		}
 		/* 検索パターンのコンパイル */
-		m_CurSrch_CJre.Compile( m_szCurSrchKey );
+		m_CurRegexp.Compile( m_szCurSrchKey );
 	}
-//	if( m_bCurSrchRegularExp ){
-//		/* jre32.dllの存在チェック */
-//		if( FALSE == m_CurSrch_CJre.IsExist() ){
-//			m_bCurSrchKeyMark = FALSE;
-//		}else{
-//			/* 検索パターンのコンパイル */
-//			if( !m_CurSrch_CJre.Compile( m_szCurSrchKey ) ){
-//				m_bCurSrchKeyMark = FALSE;
-//			}
-//		}
-//	}
 	if( bChangeState ){
 		/* フォーカス移動時の再描画 */
 		RedrawAll();
@@ -3648,7 +3621,7 @@ re_do:;
 		&nColmFrom, 							/* マッチレイアウト位置from */
 		&nLineTo, 								/* マッチレイアウト行to */
 		&nColmTo, 								/* マッチレイアウト位置to */
-		&m_CurSrch_CJre							/* 正規表現コンパイルデータ */
+		&m_CurRegexp							/* 正規表現コンパイルデータ */
 	) ){
 
 //		/* フォーカス移動時の再描画 */

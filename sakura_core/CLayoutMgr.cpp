@@ -1101,8 +1101,10 @@ int CLayoutMgr::PrevOrNextWord(
 
 
 
-/* 単語検索 */
-/* 見つからない場合は０を返す */
+//! 単語検索
+/*
+	@retval 0 見つからない
+*/
 int CLayoutMgr::SearchWord(
 	int			nLineNum, 		/* 検索開始行 */
 	int			nIdx, 			/* 検索開始位置 */
@@ -1115,7 +1117,8 @@ int CLayoutMgr::SearchWord(
 	int*		pnIdxFrom, 		/* マッチレイアウト位置from */
 	int*		pnLineTo, 		/* マッチレイアウト行to */
 	int*		pnIdxTo,  		/* マッチレイアウト位置to */
-	CJre*		pCJre			/* 正規表現コンパイルデータ */
+	//!	[in] 正規表現コンパイルデータ
+	CBregexp*	pRegexp	//	Jun. 26, 2001 genta
 
 )
 {
@@ -1138,7 +1141,7 @@ int CLayoutMgr::SearchWord(
 		pnLineFrom,
 		pnIdxFrom,
 		pnIdxTo,
-		pCJre			/* 正規表現コンパイルデータ */
+		pRegexp			/* 正規表現コンパイルデータ */
 	);
 
 	if( nRetCode ){

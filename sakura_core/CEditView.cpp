@@ -42,7 +42,6 @@
 #include "sakura_rc.h"
 //#include "_global_fio.h"
 #include "etc_uty.h"
-#include "CJre.h"
 #include "global.h"
 //#include "CDataObject.h"
 #include "CAutoSave.h"
@@ -289,18 +288,20 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr )
 	HFONT		hFontOld;
 	int			i;
 
-	m_CurSrch_CJre.Init();
+	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+	m_CurRegexp.Init();
 
 	m_bDrawSWITCH = TRUE;
 	m_pcDropTarget = new CDropTarget( this );
 	m_bDragSource = FALSE;
 	m_bDragMode = FALSE;					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = FALSE;				/* 検索文字列 */
-	strcpy( m_szCurSrchKey, "" );			/**/
+	//	Jun. 27, 2001 genta
+	m_szCurSrchKey[0] = '\0';
+	//strcpy( m_szCurSrchKey, "" );			/**/
 	m_bCurSrchRegularExp = 0;				/* 検索／置換  1==正規表現 */
 	m_bCurSrchLoHiCase = 0;					/* 検索／置換  1==英大文字小文字の区別 */
 	m_bCurSrchWordOnly = 0;					/* 検索／置換  1==単語のみ検索 */
-//	m_CurSrch_CJre.Init();
 
 	m_bExecutingKeyMacro = FALSE;			/* キーボードマクロの実行中 */
 	m_bPrevCommand = 0;
@@ -6228,7 +6229,8 @@ DWORD CEditView::DoGrep(
 	char*		pszWork;
 	HWND		hwndMainFrame;
 	int			nCharChars;
-	CJre		cJre;
+	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+	CBregexp	cRegexp;
 	CMemory		cmemMessage;
 	CMemory		cmemWork;
 	int			nWork;
@@ -6284,31 +6286,24 @@ DWORD CEditView::DoGrep(
 	m_bCurSrchRegularExp = bGrepRegularExp;					/* 検索／置換  1==正規表現 */
 	m_bCurSrchLoHiCase = bGrepLoHiCase;						/* 検索／置換  1==英大文字小文字の区別 */
 	/* 正規表現 */
+	
+	//	From Here Jun. 27 genta
+	/*	
+		Grepを行うに当たって検索・画面色分け用正規表現バッファも
+		初期化する．これはGrep検索結果の色分けを行うため．
+	*/
 	if( m_bCurSrchRegularExp ){
-		/* CJreクラスの初期化 */
-		m_CurSrch_CJre.Init();
-		/* jre32.dllの存在チェック */
-		if( FALSE == m_CurSrch_CJre.IsExist() ){
-			::MessageBox( m_hWnd, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true )){
 			return 0;
 		}
 
 		/* 検索パターンのコンパイル */
-		m_CurSrch_CJre.Compile( m_szCurSrchKey );
+		m_CurRegexp.Compile( m_szCurSrchKey );
 	}
+	//	To Here Jun. 27 genta
 
 //まだ m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
-//	if( m_bCurSrchRegularExp ){
-//		/* jre32.dllの存在チェック */
-//		if( FALSE == m_CurSrch_CJre.IsExist() ){
-//			m_bCurSrchKeyMark = FALSE;
-//		}else{
-//			/* 検索パターンのコンパイル */
-//			if( !m_CurSrch_CJre.Compile( m_szCurSrchKey ) ){
-//				m_bCurSrchKeyMark = FALSE;
-//			}
-//		}
-//	}
 
 //	cDlgCancel.Create( m_hInstance, m_hwndParent );
 //	hwndCancel = cDlgCancel.Open( MAKEINTRESOURCE(IDD_GREPRUNNING) );
@@ -6431,15 +6426,11 @@ DWORD CEditView::DoGrep(
 		Command_ADDTAIL( pszWork, nWork );
 	}
 	if( bGrepRegularExp ){
-		/* CJreクラスの初期化 */
-		cJre.Init();
-		/* jre32.dllの存在チェック */
-		if( FALSE == cJre.IsExist() ){
-			::MessageBox( 0, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
+		if( !InitRegexp( m_hWnd, cRegexp, true )){
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
-		if( !cJre.Compile( szKey ) ){
+		if( !cRegexp.Compile( szKey ) ){
 			return 0;
 		}
 	}else{
@@ -6470,7 +6461,7 @@ DWORD CEditView::DoGrep(
 //		pnKey_CharUsedArr,
 		szFile, szPath, bGrepSubFolder, bGrepLoHiCase,
 		bGrepRegularExp, bKanjiCode_AutoDetect,
-		bGrepOutputLine, bWordOnly, nGrepOutputStyle, &cJre, 0, &nHitCount
+		bGrepOutputLine, bWordOnly, nGrepOutputStyle, &cRegexp, 0, &nHitCount
 	) ){
 		wsprintf( szPath, "中断しました。\r\n", nHitCount );
 		Command_ADDTAIL( szPath, lstrlen( szPath ) );
@@ -6547,7 +6538,8 @@ int CEditView::DoGrepTree(
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle,
-	CJre*		pCJre,
+	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+	CBregexp*	pRegexp,	/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
 	int			nNest,
 	int*		pnHitCount
 )
@@ -6609,7 +6601,7 @@ int CEditView::DoGrepTree(
 						pszFile, szPath2,
 						bGrepSubFolder, bGrepLoHiCase,
 						bGrepRegularExp, bKanjiCode_AutoDetect,
-						bGrepOutputLine, bWordOnly, nGrepOutputStyle, pCJre, nNest + 1, pnHitCount
+						bGrepOutputLine, bWordOnly, nGrepOutputStyle, pRegexp, nNest + 1, pnHitCount
 					) ){
 						goto cancel_return;
 					}
@@ -6651,7 +6643,7 @@ int CEditView::DoGrepTree(
 					bGrepSubFolder, bGrepLoHiCase,
 					bGrepRegularExp, bKanjiCode_AutoDetect,
 					bGrepOutputLine, bWordOnly, nGrepOutputStyle,
-					pCJre, nNest, pnHitCount, szPath2, cmemMessage
+					pRegexp, nNest, pnHitCount, szPath2, cmemMessage
 				);
 //				::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 				if( *pnHitCount - nHitCountOld  >= 10 ){
@@ -6718,7 +6710,8 @@ int CEditView::DoGrepFile(
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle,
-	CJre*		pCJre,
+	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+	CBregexp*	pRegexp,	/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
 	int			nNest,
 	int*		pnHitCount,
 	const char*	pszFullPath,
@@ -6731,7 +6724,6 @@ int CEditView::DoGrepFile(
 	char	szWork0[_MAX_PATH + 100];
 	HFILE	hFile;
 	int		nLine;
-//	CJre	cJre;
 	char*	pszRes;
 	CMemory	cmemBuf;
 //	CMemory	cmemLine;
@@ -6761,25 +6753,7 @@ int CEditView::DoGrepFile(
 	int		k;
 //	int		nLineNum;
 
-
-
-
-
-
-//	if( bGrepRegularExp ){
-//		/* CJreクラスの初期化 */
-//		cJre.Init();
-//
-//		/* jre32.dllの存在チェック */
-//		if( FALSE == cJre.IsExist() ){
-//			::MessageBox( 0, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
-//			return -1;
-//		}
-//		/* 検索パターンのコンパイル */
-//		if( !cJre.Compile( pszKey ) ){
-//			return -1;
-//		}
-//	}
+	//	ここでは正規表現コンパイルデータの初期化は不要
 
 	nCharCode = 0;
 	pszCodeName = "";
@@ -6956,10 +6930,15 @@ int CEditView::DoGrepFile(
 		}
 
 		if( bGrepRegularExp ){
-			if( NULL != ( pszRes = (char *)pCJre->GetMatchInfo( pCompareData, nLineLen, 0 ) )
-			){
-				nColm = pszRes - pCompareData + 1;
+			BREGEXP*	pRegexpData;	//	正規表現コンパイルデータ
+			int matchlen;	//	一致長格納用
 
+			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+			if( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
+
+				//	パターン発見
+				nColm = pRegexpData->startp[0] - pCompareData + 1;
+				matchlen = pRegexpData->endp[0] - pRegexpData->startp[0];
 
 //				if( nLineLen > sizeof( szLine ) - 10 ){
 //					nLineLen = sizeof( szLine ) - 10;
@@ -6986,9 +6965,11 @@ int CEditView::DoGrepFile(
 				}else{
 				/* 該当部分 */
 					char* pszHit;
-					pszHit = new char[pCJre->m_jreData.nLength + 1];
-					memcpy( pszHit, pszRes, pCJre->m_jreData.nLength );
-					pszHit[pCJre->m_jreData.nLength] = '\0';
+					//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+					pszHit = new char[ matchlen + 1 ];
+					memcpy( pszHit, pRegexpData->startp[0], matchlen );
+					pszHit[ matchlen ] = '\0';
+					//	To Here Jun. 27, 2001 genta
 					if( 1 == nGrepOutputStyle ){
 					/* ノーマル */
 						wsprintf( szWork, "%s(%d,%d)%s: %s\r\n", pszFullPath, nLine, nColm, pszCodeName, pszHit );

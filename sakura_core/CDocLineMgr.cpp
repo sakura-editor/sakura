@@ -44,7 +44,8 @@
 #include <io.h>
 //#include <string.h>
 //#include <memory.h>
-#include "CJre.h"
+//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+#include "CBregexp.h"
 #include <commctrl.h>
 #include "global.h"
 #include "etc_uty.h"
@@ -1724,7 +1725,8 @@ int CDocLineMgr::SearchWord(
 	int*		pnLineNum, 		/* マッチ行 */
 	int*		pnIdxFrom, 		/* マッチ位置from */
 	int*		pnIdxTo,  		/* マッチ位置to */
-	CJre*		pCJre			/* 正規表現コンパイルデータ */
+	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
+	CBregexp*	pRegexp			/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
 )
 {
 //#ifdef _DEBUG
@@ -1762,21 +1764,7 @@ int CDocLineMgr::SearchWord(
 
 	/* 1==正規表現 */
 	if( bRegularExp ){
-//		CJre	cJre;
-//		/* CJreクラスの初期化 */
-//		cJre.Init();
-//
-//		/* jre32.dllの存在チェック */
-//		if( FALSE == cJre.IsExist() ){
-//			::MessageBox( 0, "jre32.dllが見つかりません。\n正規表現を利用するにはjre32.dllが必要です。\n", "情報", MB_OK | MB_ICONEXCLAMATION );
-//			nRetVal = 0;
-//			goto end_of_func;
-//		}
-//		/* 検索パターンのコンパイル */
-//		if( !cJre.Compile( pszPattern ) ){
-//			nRetVal = 0;
-//			goto end_of_func;
-//		}
+		BREGEXP* pRegexpData;
 		/* 0==前方検索 1==後方検索 */
 		if( 0 == bPrevOrNext ){
 			nLinePos = nLineNum;
@@ -1786,13 +1774,17 @@ int CDocLineMgr::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 				nHitPos    = -1;
+				//	Jun. 27, 2001 genta	正規表現ライブラリの違いを吸収するため変数追加
+				int nCurLen = 0;	//	マッチした長さ
 				while( 1 ){
 					nHitPosOld = nHitPos;
-					nHitLenOld = pCJre->m_jreData.nLength;
-					pszRes = (char*)(pCJre->GetMatchInfo( pLine, nLineLen, nIdxPos ));
-					if( NULL != pszRes ){
-						nHitPos = pszRes - pLine;
-						nIdxPos = pszRes - pLine + 1;
+					//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+					nHitLenOld = nCurLen;
+					if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData )){
+						nHitPos = pRegexpData->startp[0] - pLine;
+						nIdxPos = pRegexpData->endp[0] - pLine + 1;
+						nCurLen = pRegexpData->endp[0] - pRegexpData->startp[0];
+						//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え						
 						if( nHitPos >= nHitTo ){
 							if( -1 != nHitPosOld ){
 								*pnLineNum = nLinePos;				/* マッチ行 */
@@ -1832,11 +1824,12 @@ int CDocLineMgr::SearchWord(
 			pDocLine = GetLineInfo( nLinePos );
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-				pszRes = (char*)pCJre->GetMatchInfo( pLine, nLineLen, nIdxPos );
-				if( NULL != pszRes ){
+				//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+				if( pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData )){
 					*pnLineNum = nLinePos;								/* マッチ行 */
-					*pnIdxFrom = pszRes - pLine;						/* マッチ位置from */
-					*pnIdxTo = *pnIdxFrom + pCJre->m_jreData.nLength;	/* マッチ位置to */
+					*pnIdxFrom = pRegexpData->startp[0] - pLine;		/* マッチ位置from */
+					*pnIdxTo = pRegexpData->endp[0] - pLine;			/* マッチ位置to */
+				//	To Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 					nRetVal = 1;
 					goto end_of_func;
 				}
