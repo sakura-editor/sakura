@@ -168,7 +168,10 @@ public:
 	}
 
 	void AddToMRU(void); // Mar. 30, 2003 genta
-	
+	// Mar. 31, 2003 genta ExpandParameter•â•ŠÖ”
+	const char* ExParam_SkipCond(const char* pszSource, int part);
+	int ExParam_Evaluate( const char* pCond );
+
 protected:
 	int				m_nSettingType;
 	bool			m_nSettingTypeLocked;	//	•¶‘í•Ê‚Ìˆêİ’èó‘Ô
