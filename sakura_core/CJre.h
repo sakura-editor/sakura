@@ -1,5 +1,4 @@
 //	$Id$
-//	Copyright (C) 1998-2000, Norio Nakatani
 
 #ifndef __JRE_H
 #define __JRE_H

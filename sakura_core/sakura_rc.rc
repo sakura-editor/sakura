@@ -274,22 +274,20 @@ BEGIN
                     WS_TABSTOP,8,133,214,10,0,HIDC_CHECK_AutoMIMEDecode
 END
 
-IDD_ABOUT DIALOG DISCARDABLE  0, 0, 239, 109
+IDD_ABOUT DIALOGEX 0, 0, 258, 177
 STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "バージョン情報"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
-    CONTROL         "テキストエディタ Ver. 0.3.9.0",IDC_STATIC,"Static",
-                    SS_LEFTNOWORDWRAP,30,7,80,8
-    LTEXT           "UR8.8.8.8",IDC_STATIC_VER,113,7,60,8,NOT WS_GROUP
+    ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,21,SS_NOTIFY
+    CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
+                    30,7,56,8
+    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,91,7,60,8,NOT WS_GROUP
     LTEXT           "Copyright (C) 1998-2001  by Norio Nakatani && Collaborators",
                     IDC_STATIC,38,33,182,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,97,8,NOT WS_GROUP
-    LTEXT           "このソフトはフリーソフトです。 ご自由にお使いください。",
-                    IDC_STATIC,38,76,162,8,NOT WS_GROUP
-    DEFPUSHBUTTON   "&OK",IDOK,94,91,50,14
+    DEFPUSHBUTTON   "&OK",IDOK,93,156,50,14
     PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,175,7,59,14
     LTEXT           "Project Sakura Editor:",IDC_STATIC_URL_CAPTION,12,60,64,
                     8
@@ -298,6 +296,9 @@ BEGIN
     LTEXT           "http://hp.vector.co.jp/authors/VA016528/",
                     IDC_STATIC_URL_ORG,80,48,123,8,SS_NOTIFY
     LTEXT           "原作者ホームページ:",IDC_STATIC,12,48,61,8
+    EDITTEXT        IDC_EDIT_ABOUT,7,71,244,78,ES_MULTILINE | ES_AUTOVSCROLL | 
+                    ES_READONLY | ES_WANTRETURN | WS_VSCROLL,
+                    WS_EX_DLGMODALFRAME
 END
 
 IDD_JUMP DIALOG DISCARDABLE  0, 0, 245, 121
@@ -1653,7 +1654,7 @@ END
 IDD_PROP_MACRO DIALOGEX 0, 0, 270, 213
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     PUSHBUTTON      "登録(&R)",IDC_MACRO_REG,88,161,50,14
     EDITTEXT        IDC_MACRONAME,26,179,219,14,ES_AUTOHSCROLL
@@ -1707,9 +1708,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 232
+        RIGHTMARGIN, 251
         TOPMARGIN, 7
-        BOTTOMMARGIN, 102
+        BOTTOMMARGIN, 170
     END
 
     IDD_JUMP, DIALOG
@@ -2583,6 +2584,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_AUTHOR_PAGE         "http://hp.vector.co.jp/authors/VA016528/"
     IDS_AUTHOR_MAIL         "hippie@mcn.ne.jp"
+    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n\r\nこのソフトウェアはFree Software Foundationが定めるGPLライセンス(バージョン2またはそれ以降)に従った改造および再配布が認められています．ソースコードは配布パッケージに含めておりませんが、必要な方はプロジェクトホームページから入手可能です．\r\n\r\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or any later version.\r\n\r\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\r\n\r\nYou should have received a copy of the GNU General Public license along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"
 END
 
 #endif    // 日本語 resources

@@ -441,19 +441,21 @@
 #define IDC_SPIN_LCColNum               1390
 #define IDC_LABEL_LCPOS                 1391
 #define IDC_LABEL_LCPOS2                1392
-#define IDC_LABEL_LCPOS3                1393
 #define IDC_MACRO_REF                   1392
+#define IDC_LABEL_LCPOS3                1393
 #define IDC_MACRO_REG                   1393
 #define IDC_COMBO_MACROID               1394
 #define IDC_MACRO_DEL                   1395
 #define IDC_MACROLIST                   1396
 #define IDC_MACRONAME                   1397
+#define IDC_EDIT_ABOUT                  1398
 #define FILEOPENORD1                    1538
 #define IDD_PROP1P6                     1539
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_AUTHOR_MAIL                 4055
+#define IDS_ABOUT_DESCRIPTION           4056
 #define IDM_POPLAST2                    4064
 #define ID_MENUITEM4071                 4071
 #define IDD_PROPTYPESP1                 5101
@@ -483,7 +485,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        218
 #define _APS_NEXT_COMMAND_VALUE         4072
-#define _APS_NEXT_CONTROL_VALUE         1398
+#define _APS_NEXT_CONTROL_VALUE         1399
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -2,19 +2,28 @@
 /*! @file
     End of LineéÌï ÇÃä«óù
     
-    @author genta
-    @version $Revision$
-    @date 2000/5/15 êVãKçÏê¨
+	@author genta
+	@date 2000/5/15 êVãKçÏê¨
+	$Revision$
 */
-/************************************************************************
+/*
+	Copyright (C) 2000-2001, genta
+	
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    any later version.
 
-	CEOL.h
-	Copyright (C) 2000, genta
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-    UPDATE:
-    CREATE: 2000/05/15  êVãKçÏê¨	genta
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
-************************************************************************/
 #ifndef _CEOL_H_
 #define _CEOL_H_
 

@@ -1,10 +1,28 @@
 //	$Id$
-/*
-	CImageListMgr	ImageListを扱うクラス
+/*!	@file
+	CImageListMgr ImageListを扱うクラス
 
-	Author: genta
-	Date:	Oct. 11, 2000
-	Copyright (C) 1998-2000, genta
+	@author genta
+	@date Oct. 11, 2000 genta
+	$Revision$
+
+*/
+/*
+	Copyright (C) 2000-2001, genta
+	
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 #include "CImageListMgr.h"
@@ -31,10 +49,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	HDC		dcFrom;		//	描画用
 	HDC		dcTo;		//	描画用
 	int		nRetPos;	//	後処理用
-#ifdef _DEBUG
-	HDC		dcOrg;		//	スクリーンへの描画用(DEBUG)
-	char buf[60];	//	お試し用
-#endif
 	m_cx = m_cy  = 16;
 	
 //	Oct. 21, 2000 JEPRO 設定
@@ -55,14 +69,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 			nRetPos = 0;
 			break;
 		}
-#ifdef _DEBUG
-		//	スクリーンのdcを得る
-		dcOrg = CreateDC( "DISPLAY", NULL, NULL, NULL );
-		if( dcFrom == NULL ){
-			nRetPos = 50;
-			break;
-		}
-#endif
 		//	BitBltを使うためにMemoryDCにマッピングする
 		//	MAPした後MemoryDCに対して描画を行うとBitmapも書き換えられているという算段．
 		dcFrom = CreateCompatibleDC(0);	//	転送元用
@@ -124,22 +130,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 				0, py,		//	転送元
 				SRCCOPY		//	単純コピー
 			);
-#ifdef _DEBUG
-			::BitBlt( dcOrg,	//	Destination
-				px, 0,		//	転送先
-				m_cx * MAX_X, m_cy,		//	転送サイズ
-				dcFrom,		//	Source
-				0, py,		//	転送元
-				SRCCOPY		//	単純コピー
-			);
-			::BitBlt( dcOrg,	//	Destination
-				px, m_cy,		//	転送先
-				m_cx * MAX_X, m_cy,		//	転送サイズ
-				dcTo,		//	Source
-				0, 0,		//	転送元
-				SRCCOPY		//	単純コピー
-			);
-#endif
 			SelectObject( dcTo, hTOldbmp );	//	超重要！
 			//	BitmapがMemoryDCにAssignされている間はbitmapハンドルを
 			//	使っても正しいbitmapが取得できない．
@@ -174,17 +164,9 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	case 4:
 		DeleteDC( dcFrom );
 	case 1:
-#ifdef _DEBUG
-		DeleteObject( dcOrg );
-#endif
 	case 50:
 		DeleteObject( hRscbmp );
 	}
-
-#if 0
-	wsprintf( buf, "Ret: %d", nRetPos );
-	::MessageBox( NULL, buf, "ImageList", MB_OK );
-#endif
 
 	return nRetPos == 0;
 }

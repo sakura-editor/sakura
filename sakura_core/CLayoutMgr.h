@@ -1,19 +1,30 @@
 //	$Id$
-/************************************************************************
+/*!	@file
+	テキストのレイアウト情報管理
+	
+	@author Norio Nakatani
+	@date 1998/03/06 新規作成
+	@date 1998/04/14 データの削除を実装
+	@date 1999/12/20 データの置換を実装
+	$Revision$
+*/
+/*
+	Copyright (C) 1998-2001, Norio Nakatani
 
-	CLayoutMgr.h
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    any later version.
 
-    テキストのレイアウト情報管理
-	Copyright (C) 1998-2000, Norio Nakatani
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-
-    UPDATE:
-    UPDATE: 1999/12/20  データの置換を実装
-    UPDATE: 1998/ 4/14  データの削除を実装
-    CREATE: 1998/ 3/ 6
-
-************************************************************************/
-
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 class CLayoutMgr;
 

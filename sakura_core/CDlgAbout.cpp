@@ -1,12 +1,28 @@
 //	$Id$
-/************************************************************************
-
-	CDlgAbout.cpp
-
+/*!	@file
 	バージョン情報ダイアログ
-	Copyright (C) 1998-2000, Norio Nakatani
+	
+	@author Norio Nakatani
+	@date	1998/3/13 作成
+	$Revision$
+*/
+/*
+	Copyright (C) 1998-2001, Norio Nakatani
 
-************************************************************************/
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 #include "CDlgAbout.h"
 //#include <windows.h>
 //#include <stdio.h>
@@ -96,6 +112,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	char			szFile[_MAX_PATH];
 	WIN32_FIND_DATA	wfd;
 	SYSTEMTIME		systimeL;
+	
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
 	::FindFirstFile( szFile, &wfd );
@@ -103,7 +120,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::FileTimeToSystemTime( &wfd.ftLastWriteTime, &systimeL );
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
-	wsprintf( szMsg, "UR%d.%d.%d.%d",
+	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
+	wsprintf( szMsg, "Ver. %d.%d.%d.%d",
 		HIWORD( m_pShareData->m_dwProductVersionMS ),
 		LOWORD( m_pShareData->m_dwProductVersionMS ),
 		HIWORD( m_pShareData->m_dwProductVersionLS ),
@@ -124,6 +142,15 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	Nov. 7, 2000 genta カーソル位置の情報を保持
 	nCursorState = 0;
+	
+	//	From Here Jun. 8, 2001 genta
+	//	Edit Boxにメッセージを追加する．
+	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, sizeof( szMsg ));
+	if( desclen > 0 ){
+		::SetDlgItemText( m_hWnd, IDC_EDIT_ABOUT, szMsg );
+	}
+	
+	//	To Here Jun. 8, 2001 genta
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );

@@ -1,22 +1,28 @@
 //	$Id$
-/************************************************************************
+/*!	@file
+	ウィンドウの基本クラス
 
-	CWnd.h
+	@author Norio Nakatani
+	@date 2000/01/11 新規作成
+	$Revision$
+*/
+/*
+	Copyright (C) 2000-2001, Norio Nakatani
 
-   ウィンドウの基本クラス
-	Copyright (C) 1998-2000, Norio Nakatani
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    any later version.
 
-メモ
-2000.1.12 CWndクラスの基本的な機能
-	ウィンドウ作成
-	ウィンドウメッセージ配送
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-2000.1.11 普通?のウィンドウの使用方法は以下の手順
-  Init()		初期化
-  RegisterWC()	ウィンドウクラス登録
-  Create()		ウィンドウ作成
-
-************************************************************************/
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 class CWnd;
 
 #ifndef _CWND_H_
@@ -29,6 +35,17 @@ extern CWnd* gm_pCWnd;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+//!	ウィンドウの基本クラス
+/*!
+	@par CWndクラスの基本的な機能
+	@li ウィンドウ作成
+	@li ウィンドウメッセージ配送
+
+	@par 普通?のウィンドウの使用方法は以下の手順
+	@li Init()		初期化
+	@li RegisterWC()	ウィンドウクラス登録
+	@li Create()		ウィンドウ作成
+*/
 class SAKURA_CORE_API CWnd
 {
 public:
