@@ -802,7 +802,7 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "bKinsokuKuto"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuKuto, 0 );	//@@@ 2002.04.17 MIK
 		cProfile.IOProfileData( bRead, pszSecName, "szKinsokuHead"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKinsokuHead, 0 );
 		cProfile.IOProfileData( bRead, pszSecName, "szKinsokuTail"	, REGCNV_SZ2SZ, (char*)&m_pShareData->m_Types[i].m_szKinsokuTail, 0 );
-		cProfile.IOProfileData( bRead, pszSecName, "bUseDocumentIcon"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bKinsokuTail, 0 );
+		cProfile.IOProfileData( bRead, pszSecName, "bUseDocumentIcon"	, REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_bUseDocumentIcon, 0 );	// Sep. 19 ,2002 genta •Ï”–¼Œë‚èC³
 
 	}// Types ( for loop)
 
