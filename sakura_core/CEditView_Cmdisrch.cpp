@@ -558,19 +558,20 @@ void CEditView::ISearchWordMake(void) {
 	
 	@author isearch
 	@date 2004/10/13
+	@date 2005.01.13 genta •¶Žš—ñC³
 */
 void CEditView::ISearchSetStatusMsg(CMemory* msg) const
 {
 
 	switch ( m_nISearchMode){
 		case 1 :
-			msg->SetDataSz("I-Serch" );
+			msg->SetDataSz("I-Search" );
 			break;
 		case 2 :
 			msg->SetDataSz("[RegExp] I-Search" );
 			break;
 		case 3 :
-			msg->SetDataSz("[MIGEMO] I-Search" );
+			msg->SetDataSz("[Migemo] I-Search" );
 			break;
 		default:
 			msg->SetDataSz("");
