@@ -3969,7 +3969,7 @@ BOOL CEditView::Command_FILESAVEAS( const char *filename )
 */
 BOOL CEditView::Command_FILESAVEALL( void )
 {
-	CShareData::getInstance()->PostMessageToAllEditors(
+	CShareData::getInstance()->SendMessageToAllEditors(
 		WM_COMMAND, MAKELONG( F_FILESAVE_QUIET, 0 ), (LPARAM)0, NULL);
 	return TRUE;
 }
