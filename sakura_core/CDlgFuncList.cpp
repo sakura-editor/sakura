@@ -233,6 +233,13 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		/* ツリーコントロールの初期化：COBOL アウトライン */
 		SetTreeJava( m_hWnd, FALSE );
 		::SetWindowText( m_hWnd, "COBOL アウトライン" );
+	}else
+	if( OUTLINE_VB == m_nListType ){	/* VisualBasic アウトライン */
+		// Jul 10, 2003  little YOSHI   処理が長くなったので独立
+		m_nViewType = 0;
+		/* リストビューコントロールの初期化：Visual Basic アウトライン */
+		SetListVB();
+		::SetWindowText( m_hWnd, "Visual Basic アウトライン" );
 	}else{
 		m_nViewType = 0;
 		switch( m_nListType ){
@@ -248,9 +255,11 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		case OUTLINE_PERL:	//	Sep. 8, 2000 genta
 			::SetWindowText( m_hWnd, "Perl 関数一覧" );
 			break;
-		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for Visual Basic
-			::SetWindowText( m_hWnd, "Visual Basic アウトライン" );
-			break;
+// Jul 10, 2003  little YOSHI  上に移動しました--->>
+//		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for Visual Basic
+//			::SetWindowText( m_hWnd, "Visual Basic アウトライン" );
+//			break;
+// <<---ここまで
 		case OUTLINE_BOOKMARK:
 			LV_COLUMN col;
 			col.mask = LVCF_TEXT;
@@ -322,13 +331,8 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = "PROC";}else
 			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = "ラベル";}else
 			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = "ENDP";}else{
-
-			// 2001/06/23 N.Nakatani for Visual Basic
-			//	Jun. 26, 2001 genta 半角かな→全角に
-			if( 60 == pcFuncInfo->m_nInfo ){item.pszText = "ステートメント宣言";}else
-			if( 61 == pcFuncInfo->m_nInfo ){item.pszText = "関数宣言";}else
-			if( 62 == pcFuncInfo->m_nInfo ){item.pszText = "ステートメント";}else
-			if( 63 == pcFuncInfo->m_nInfo ){item.pszText = "関数";}else
+				// Jul 10, 2003  little YOSHI
+				// ここにあったVB関係の処理はSetListVB()メソッドに移動しました。
 
 				item.pszText = "";
 			}
@@ -953,6 +957,192 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		}
 	}
 //	GetTreeTextNext( hwndTree, NULL, 0 );
+	return;
+}
+
+
+/*! リストビューコントロールの初期化：VisualBasic
+
+  長くなったので独立させました。
+
+  @date Jul 10, 2003  little YOSHI
+*/
+void CDlgFuncList::SetListVB (void)
+{
+	int				i;
+	char			szText[2048], szType[128], szOption[256];
+	CFuncInfo*		pcFuncInfo;
+	LV_ITEM			item;
+	HWND			hwndList;
+	int				bSelected;
+	int				nFuncLineOld;
+	int				nSelectedLine;
+	RECT			rc;
+
+	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
+
+	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST1 );
+
+	nFuncLineOld = 0;
+	bSelected = FALSE;
+	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+		if( !bSelected ){
+			if( i == 0 && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
+				bSelected = TRUE;
+				nSelectedLine = i;
+			}else
+			if( i > 0 && nFuncLineOld <= m_nCurLine && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
+				bSelected = TRUE;
+				nSelectedLine = i - 1;
+			}
+		}
+		nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+	}
+	if( 0 < m_pcFuncInfoArr->GetNum() && !bSelected ){
+		bSelected = TRUE;
+		nSelectedLine =  m_pcFuncInfoArr->GetNum() - 1;
+	}
+	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+		/* 現在の解析結果要素 */
+		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
+
+		item.mask = LVIF_TEXT | LVIF_PARAM;
+		item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
+		item.iItem = i;
+		item.iSubItem = 0;
+		item.lParam	= i;
+		ListView_InsertItem( hwndList, &item);
+
+		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		if(m_bLineNumIsCRLF ){
+			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineCRLF );
+		}else{
+			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineLAYOUT );
+		}
+		item.mask = LVIF_TEXT;
+		item.pszText = szText;
+		item.iItem = i;
+		item.iSubItem = 1;
+		ListView_SetItem( hwndList, &item);
+
+		item.mask = LVIF_TEXT;
+
+		// 2001/06/23 N.Nakatani for Visual Basic
+		//	Jun. 26, 2001 genta 半角かな→全角に
+		memset(szText, '\0', sizeof(szText));
+		memset(szType, '\0', sizeof(szType));
+		memset(szOption, '\0', sizeof(szOption));
+		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
+			// スタティック宣言(Static)
+			strcpy(szOption, "静的");
+		}
+		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
+			case 2  :	// プライベート(Private)
+				strncat(szOption, "プライベート", sizeof(szText) - strlen(szText));
+				break;
+
+			case 3  :	// フレンド(Friend)
+				strncat(szOption, "フレンド", sizeof(szText) - strlen(szText));
+				break;
+
+			default :	// パブリック(Public)
+				strncat(szOption, "パブリック", sizeof(szText) - strlen(szText));
+		}
+		switch (pcFuncInfo->m_nInfo & 0x0f) {
+			case 1:		// 関数(Function)
+				strcpy(szType, "関数");
+				break;
+
+			case 2:		// ステータス(Sub)
+				strcpy(szType, "ステータス");
+				break;
+
+			case 3:		// プロパティ 取得(Property Get)
+				strcpy(szType, "プロパティ 取得");
+				break;
+
+			case 4:		// プロパティ 設定(Property Let)
+				strcpy(szType, "プロパティ 設定");
+				break;
+
+			case 5:		// プロパティ 参照(Property Set)
+				strcpy(szType, "プロパティ 参照");
+				break;
+
+			case 6:		// 定数(Const)
+				strcpy(szType, "定数");
+				break;
+
+			case 7:		// 列挙型(Enum)
+				strcpy(szType, "列挙型");
+				break;
+
+			case 8:		// ユーザ定義型(Type)
+				strcpy(szType, "ユーザ定義型");
+				break;
+
+			case 9:		// イベント(Event)
+				strcpy(szType, "イベント");
+				break;
+
+			default:	// 未定義なのでクリア
+				pcFuncInfo->m_nInfo	= 0;
+
+		}
+		if ( 2 == ((pcFuncInfo->m_nInfo >> 8) & 0x02) ) {
+			// 宣言(Declareなど)
+			strncat(szType, "宣言", sizeof(szType) - strlen(szType));
+		}
+
+		if ( 0 == pcFuncInfo->m_nInfo ) {
+			memset(szText, '\0', sizeof(szText));
+		} else
+		if ( 0 == strlen(szOption) ) {
+			wsprintf(szText, "%s", szType);
+		} else {
+			wsprintf(szText, "%s（%s）", szType, szOption);
+		}
+		item.pszText = szText;
+		item.iItem = i;
+		item.iSubItem = 2;
+		ListView_SetItem( hwndList, &item);
+
+		/* クリップボードにコピーするテキストを編集 */
+		if(lstrlen(item.pszText)){
+			// 検出結果の種類(関数,,,)があるとき
+			wsprintf( szText, "%s(%d): %s(%s)\r\n",
+				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
+				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+				pcFuncInfo->m_cmemFuncName.GetPtr(),		/* 検出結果 */
+				item.pszText								/* 検出結果の種類 */
+			);
+		}else{
+			// 検出結果の種類(関数,,,)がないとき
+			wsprintf( szText, "%s(%d): %s\r\n",
+				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
+				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+				pcFuncInfo->m_cmemFuncName.GetPtr()			/* 検出結果 */
+			);
+		}
+		m_cmemClipText.AppendSz( (const char *)szText );	/* クリップボードコピー用テキスト */
+	}
+
+	//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
+	::ShowWindow( hwndList, SW_SHOW );
+	/* 列の幅をデータに合わせて調整 */
+	ListView_SetColumnWidth( hwndList, 0, LVSCW_AUTOSIZE );
+	ListView_SetColumnWidth( hwndList, 1, LVSCW_AUTOSIZE );
+	ListView_SetColumnWidth( hwndList, 2, LVSCW_AUTOSIZE );
+	ListView_SetColumnWidth( hwndList, 0, ListView_GetColumnWidth( hwndList, 0 ) + 16 );
+	ListView_SetColumnWidth( hwndList, 1, ListView_GetColumnWidth( hwndList, 1 ) + 16 );
+	ListView_SetColumnWidth( hwndList, 2, ListView_GetColumnWidth( hwndList, 2 ) + 16 );
+	if( bSelected ){
+		ListView_GetItemRect( hwndList, 0, &rc, LVIR_BOUNDS );
+		ListView_Scroll( hwndList, 0, nSelectedLine * ( rc.bottom - rc.top ) );
+		ListView_SetItemState( hwndList, nSelectedLine, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+	}
+
 	return;
 }
 
