@@ -11,6 +11,7 @@
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, mik, misaka, Stonee, hor
 	Copyright (C) 2002, Moca, sui
+	Copyright (C) 2003, かろと
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -2323,6 +2324,7 @@ void CMemory::ToHankaku(
 	unsigned char			pszZen[3];	//	全角文字用バッファ
 	int i;
 	BOOL bHenkanOK;
+	bool bInHiraKata = false;				// 前の文字がカタカナorひらがなだったなら、trueとし、長音、濁点、半濁点を半角へ変換可能とする
 	for( i = 0; i < nBufLen; ++i ){
 		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
 		if( nCharChars == 2 ){
@@ -2333,13 +2335,37 @@ void CMemory::ToHankaku(
 				bHenkanOK = TRUE;
 			}
 			if( nMode & TO_KATAKANA ){	/* カタカナに作用する */
-				if( 0x8340 <= uiSrc && uiSrc <= 0x8396){
+				if( 0x8340 <= uiSrc && uiSrc <= 0x8396 ){
 					bHenkanOK = TRUE;
+					bInHiraKata = true;
+				} else {
+					// 2003-04-30 かろと 長音がが変換できなかったのを修正
+					// 但し、ひらがな・カタカナの区別がない文字なので直前の文字で決定する
+					if( bInHiraKata == true ) {
+						// 長音"ー"(0x815b)・濁点(0x814a)・半濁点(0x814b)
+						if( uiSrc == 0x815b || uiSrc == 0x814a || uiSrc == 0x814b ) {
+							bHenkanOK = TRUE;
+						} else {
+							bInHiraKata = false;
+						}
+					}
 				}
 			}
 			if( nMode & TO_HIRAGANA ){	/* ひらがなに作用する */
-				if( 0x829F <= uiSrc && uiSrc <= 0x82F1){
+				if( 0x829F <= uiSrc && uiSrc <= 0x82F1 ){
 					bHenkanOK = TRUE;
+					bInHiraKata = true;
+				} else {
+					// 2003-04-30 かろと 長音がが変換できなかったのを修正
+					// 但し、ひらがな・カタカナの区別がない文字なので直前の文字で決定する
+					if( bInHiraKata == true ) {
+						// 長音"ー"(0x815b)・濁点(0x814a)・半濁点(0x814b)
+						if( uiSrc == 0x815b || uiSrc == 0x814a || uiSrc == 0x814b ) {
+							bHenkanOK = TRUE;
+						} else {
+							bInHiraKata = false;
+						}
+					}
 				}
 			}
 			if ( nMode & TO_EISU ){		/* 英数に作用する */
