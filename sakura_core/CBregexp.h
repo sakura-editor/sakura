@@ -15,6 +15,7 @@
 /*
 	Copyright (C) 2001-2002, genta
 	Copyright (C) 2001, novice, hor
+	Copyright (C) 2003, かろと
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -86,11 +87,11 @@ public:
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
 	bool Compile(const char *szPattern, int bOption );
-	bool GetMatchInfo(const char*target, int len, int nStart, BREGEXP**rep);
+	bool GetMatchInfo(const char*target, int len, int nStart, BREGEXP**rep);		//!< コンパイル後の検索結果を得る
 	// 2002/01/19 novice 正規表現による文字列置換
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
-	bool Replace(const char* szPattern0, const char* szPattern1, char *target, int len, char **out, int bOption );
+	bool Replace(const char* szPattern0, const char* szPattern1, const char *target, int len, char **out, int bOption );
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
 	bool CompileReplace(const char *szPattern0, const char *szPattern1, int bOption );
 	bool GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOutLen);
@@ -107,7 +108,7 @@ protected:
 
 	//	DLL Interfaceの受け皿
 	typedef int (*BREGEXP_BMatch)(const char*,const char *,const char *,BREGEXP **,char *);
-	typedef int (*BREGEXP_BSubst)(const char*,char *,char *,BREGEXP **,char *);
+	typedef int (*BREGEXP_BSubst)(const char*,const char *,const char *,BREGEXP **,char *);
 	typedef int (*BREGEXP_BTrans)(const char*,char *,char *,BREGEXP **,char *);
 	typedef int (*BREGEXP_BSplit)(const char*,char *,char *,int,BREGEXP **,char *);
 	typedef void (*BREGEXP_BRegfree)(BREGEXP*);
@@ -130,7 +131,7 @@ protected:
 			BRegfree( m_sRep );
 			m_sRep = NULL;
 		}
-		m_bTop = false;	//	Jul, 25, 2002 genta
+		m_ePatType = PAT_NORMAL;
 	}
 
 private:
@@ -139,12 +140,17 @@ private:
 	//!	境界選択
 	//int ChooseBoundary(const char* str1, const char* str2 = NULL );
 
+	//! 検索パターン作成
+	char* MakePattern( const char* szPattern, const char* szPattern2, int bOption );
 	//	メンバ変数
 	BREGEXP*	m_sRep;	//!< コンパイル構造体
-	/*! true: 行頭制約あり, false: 行頭制約なし
-		@date 2002.07.25 genta
-	*/
-	bool		m_bTop;
+	static char tmpBuf[2];			//!< ダミー文字列
+	// 行頭検索を特別扱いするための変数 by かろと
+	enum {
+		PAT_NORMAL, //!< 通常
+		PAT_TOP,	//!< 行頭"^"
+		PAT_BOTTOM	//!< 行末"$"
+	} m_ePatType;					//!< 検索文字列パターン種別
 	char		m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
 };
 
