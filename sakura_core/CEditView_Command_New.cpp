@@ -814,13 +814,14 @@ void CEditView::Command_UNDO( void )
 			);
 
 
-			if( i == nOpeBlkNum - 1	){
-				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_After, nCaretPosY_After, TRUE );
-			}else{
+		// 2002.02.16 hor
+		//	if( i == nOpeBlkNum - 1	){
+		//		/* カーソルを移動 */
+		//		MoveCursor( nCaretPosX_After, nCaretPosY_After, TRUE );
+		//	}else{
 				/* カーソルを移動 */
 				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE );
-			}
+		//	}
 			switch( pcOpe->m_nOpe ){
 			case OPE_INSERT:
 				pcMem = new CMemory;
@@ -910,7 +911,7 @@ void CEditView::Command_UNDO( void )
 				break;
 			case OPE_MOVECARET:
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_After, nCaretPosY_After, TRUE );
+				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE/*TRUE 2002.02.16 hor */ );
 				break;
 			}
 

@@ -45,7 +45,7 @@ private: // 2002/2/3 aroka
 	||  Attributes & Operations
 	*/
 	char*			m_pszClassName;			/* ƒNƒ‰ƒX–¼ */
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	void*			m_pCEditWnd;
 	int				m_nAllSplitRows;		/* •ªŠ„s” */

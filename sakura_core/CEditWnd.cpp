@@ -152,8 +152,9 @@ CEditWnd::CEditWnd() :
 {
 
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 //	MYTRACE( "CEditWnd::CEditWnd()おわり\n" );
 	return;
@@ -401,7 +402,7 @@ HWND CEditWnd::Create(
 		/* ドロップされたファイルを受け入れる */
 		::DragAcceptFiles( m_hWnd, TRUE );
 		/* 編集ウィンドウリストへの登録 */
-		if( FALSE == m_cShareData.AddEditWndList( m_hWnd ) ){
+		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd ) ){
 			wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 			::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
 			::DestroyWindow( m_hWnd );
@@ -1060,7 +1061,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 		/* 編集ウィンドウリストへの登録 */
-		m_cShareData.AddEditWndList( m_hWnd );
+		CShareData::getInstance()->AddEditWndList( m_hWnd );
 		/* メッセージの配送 */
 		lRes = m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 
@@ -1162,7 +1163,7 @@ LRESULT CEditWnd::DispatchEvent(
 		/* ドロップされたファイルを受け入れるのを解除 */
 		::DragAcceptFiles( hwnd, FALSE );
 		/* 編集ウィンドウリストからの削除 */
-		m_cShareData.DeleteEditWndList( m_hWnd );
+		CShareData::getInstance()->DeleteEditWndList( m_hWnd );
 
 		if( m_pShareData->m_hwndDebug == m_hWnd ){
 			m_pShareData->m_hwndDebug = NULL;
@@ -1536,7 +1537,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				CMRU cMRU;
 				FileInfo checkFileInfo;
 				cMRU.GetFileInfo(wID - IDM_SELMRU, &checkFileInfo);
-				if( m_cShareData.IsPathOpened( checkFileInfo.m_szPath, &hWndOwner ) ){
+				if( CShareData::getInstance()->IsPathOpened( checkFileInfo.m_szPath, &hWndOwner ) ){
 
 					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
@@ -1609,7 +1610,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						return;
 					}
 					/* 指定ファイルが開かれているか調べる */
-					if( m_cShareData.IsPathOpened( pszPath, &hWndOwner ) ){
+					if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
 						::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 //						pfi = (FileInfo*)m_pShareData->m_szWork;
 						pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
@@ -1810,7 +1811,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW			, "新規作成(&N)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN		, "開く(&O)..." );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVE		, "上書き保存(&S)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEAS		, "名前を付けて保存(&A)..." );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEAS_DIALOG	, "名前を付けて保存(&A)..." );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE		, "閉じて(無題) (&B)" );	//Oct. 17, 2000 jepro キャプションを「閉じる」から変更	//Feb. 18, 2001 JEPRO アクセスキー変更(C→B; Blankの意味)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE_OPEN	, "閉じて開く(&L)..." );
@@ -2377,7 +2378,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_OUTPUT		, "アウトプット(&U)" );		//Sept. 13, 2000 JEPRO アクセスキー変更(O→U)
 
 			/* 現在開いている編集窓のリストをメニューにする */
-			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if( nRowNum > 0 ){
 				/* セパレータ */
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
@@ -2578,7 +2579,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				}
 
 				/* 指定ファイルが開かれているか調べる */
-				if( m_cShareData.IsPathOpened( szFile, &hWndOwner ) ){
+				if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
 					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 //					pfi = (FileInfo*)m_pShareData->m_szWork;
 					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;

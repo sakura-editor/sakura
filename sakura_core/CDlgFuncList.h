@@ -80,6 +80,9 @@ private:
 	*/
 	int	m_nViewType;
 
+	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 1/4
+	// (無理矢理なのでどなたか修正お願いします)
+	bool m_bWaitTreeProcess;
 };
 
 

@@ -60,7 +60,7 @@ public:
 protected:
 
 	//	共有メモリアクセス用。
-	CShareData*		m_pcShareData;
+//	CShareData*		m_pcShareData;
 	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
 };
 

@@ -105,7 +105,7 @@ void CPropCommon::ChangeDateExample( HWND hwndDlg )
 	char szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	m_cShareData.MyGetDateFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
+	CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
 	return;
 }
@@ -118,7 +118,7 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 	char szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	m_cShareData.MyGetTimeFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
+	CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TFORM_EX, szText );
 	return;
 }

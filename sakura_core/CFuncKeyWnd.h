@@ -41,7 +41,7 @@ public:
 	|| メンバ変数
 	*/
 	const char*		m_pszClassName;	/*!< クラス名 */
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 	CEditDoc*		m_pCEditDoc;
 	HFONT			m_hFont;	/*!< 表示用フォント */

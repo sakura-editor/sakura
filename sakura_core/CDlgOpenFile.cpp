@@ -67,13 +67,13 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	WORD					wID;
 	HWND					hwndCtl;
 //	HWND					hwndFrame;
-	static CShareData		cShareData;
+//	static CShareData		cShareData;
 	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
-		cShareData.Init();
-		pShareData = cShareData.GetShareData( NULL, NULL );
+//		cShareData.Init();
+		pShareData = CShareData::getInstance()->GetShareData();
 		::GetWindowRect( hwnd, &pShareData->m_Common.m_rcOpenDialog );
 //		MYTRACE( "WM_MOVE 1\n" );
 		break;
@@ -537,8 +537,8 @@ CDlgOpenFile::CDlgOpenFile()
 //	m_cShareData = NULL;
 
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* OPENFILENAMEの初期化 */
 	memset( &m_ofn, 0, sizeof( OPENFILENAME ) );
@@ -1005,7 +1005,7 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol )
 		m_bUseEol = false;
 	}
 	//	To Here Feb. 9, 2001 genta
-	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
+	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS_DIALOG);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 	if( ::GetSaveFileName( &m_ofn ) ){
 
 //		MYTRACE( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */

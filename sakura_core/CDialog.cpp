@@ -48,8 +48,10 @@ CDialog::CDialog()
 {
 //	MYTRACE( "CDialog::CDialog()\n" );
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+//	m_cShareData.Init();
+//	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */

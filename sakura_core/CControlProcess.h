@@ -7,7 +7,7 @@
 	$Revision$
 */
 /*
-	Copyright (C) 2002, aroka 新規作成
+	Copyright (C) 2002, aroka 新規作成, YAZAKI
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -34,8 +34,7 @@ class SAKURA_CORE_API CControlProcess : public CProcess {
 public:
 	CControlProcess( HINSTANCE hInstance, LPSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),
-		m_pcEditApp( 0 ),
-		m_pShareData( 0 ){}
+		m_pcEditApp( 0 ){}
 
 	static BOOL CALLBACK ExitingDlgProc(
 		HWND	hwndDlg,	// handle to dialog box
@@ -54,8 +53,9 @@ private:
 	HANDLE			m_hMutex;
 	HANDLE			m_hMutexCP;
 	CEditApp*		m_pcEditApp;
-	CShareData		m_cShareData;
-	DLLSHAREDATA*	m_pShareData;
+//@@@ 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+//	CShareData		m_cShareData;
+//	DLLSHAREDATA*	m_pShareData;
 };
 
 

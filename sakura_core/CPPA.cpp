@@ -44,7 +44,7 @@
 
 CEditView*		CPPA::m_pcEditView = NULL;
 DLLSHAREDATA*	CPPA::m_pShareData = NULL;
-CShareData*		CPPA::m_cShareData = NULL;
+//CShareData*		CPPA::m_cShareData = NULL;
 
 CPPA::CPPA()
 {
@@ -58,8 +58,8 @@ CPPA::~CPPA()
 void CPPA::Execute(CEditView* pcEditView )
 {
 	m_pcEditView = pcEditView;
-	m_cShareData = &m_pcEditView->m_cShareData;
-	m_pShareData = m_pcEditView->m_pShareData;
+//	m_cShareData = &m_pcEditView->m_cShareData;
+	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_fnExecute();
 }
 

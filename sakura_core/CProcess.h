@@ -17,6 +17,7 @@
 #define _CPROCESS_H_
 
 #include "global.h"
+#include "CShareData.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -31,13 +32,17 @@ public:
 	virtual ~CProcess(){};
 protected:
 	CProcess();
-	virtual bool Initialize() = 0;
+	virtual bool Initialize();
 	virtual bool MainLoop() = 0;
 	virtual void Terminate() = 0;
 	
 	HINSTANCE m_hInstance;
 	HWND m_hWnd;
 	LPSTR m_CommandLine;
+	
+	//	唯一のCShareDateとする。（CProcessが責任を持ってnew/deleteする）
+	CShareData m_cShareData;
+	DLLSHAREDATA*	m_pShareData;
 
 private:
 };

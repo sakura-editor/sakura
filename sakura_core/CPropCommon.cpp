@@ -159,8 +159,8 @@ CPropCommon::CPropCommon()
 //	long	lPathLen;
 
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
@@ -518,8 +518,8 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 //	m_nActiveItem = nActiveItem;
 
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	int				nRet;
 	PROPSHEETPAGE	psp[32];

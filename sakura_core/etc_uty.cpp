@@ -1954,7 +1954,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_FILENEW:				return HLP000025;			//新規作成
 	case F_FILEOPEN:			return HLP000015;			//開く
 	case F_FILESAVE:			return HLP000020;			//上書き保存
-	case F_FILESAVEAS:			return HLP000021;			//名前を付けて保存
+	case F_FILESAVEAS_DIALOG:	return HLP000021;			//名前を付けて保存
 	case F_FILECLOSE:			return HLP000017;			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	case F_FILECLOSE_OPEN:		return HLP000119;			//閉じて開く
 	case F_FILE_REOPEN_SJIS:	return HLP000156;			//SJISで開き直す

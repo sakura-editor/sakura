@@ -200,8 +200,8 @@ CEditApp::CEditApp() :
 //	m_nEditArrNum	= 0;
 //	m_pEditArr		= NULL;
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 	if( m_pShareData->m_hAccel != NULL ){
 		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
 		m_pShareData->m_hAccel = NULL;
@@ -659,7 +659,7 @@ LRESULT CEditApp::DispatchEvent(
 		 || FALSE == m_bCreatedTrayIcon						/* トレイにアイコンを作っていない */
 		 ){
 			/* 現在開いている編集窓のリスト */
-			nRowNum = m_cShareData.GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if( 0 < nRowNum ){
 				delete [] pEditNodeArr;
 			}
@@ -876,7 +876,7 @@ LRESULT CEditApp::DispatchEvent(
 //					}
 //					break;
 					do{
-						if( m_cShareData.ExtWinHelpIsSet() ) {	//	共通設定のみ確認
+						if( CShareData::getInstance()->ExtWinHelpIsSet() ) {	//	共通設定のみ確認
 //						if( 0 != strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
 							break;
 						}else
@@ -1005,7 +1005,7 @@ LRESULT CEditApp::DispatchEvent(
 						delete [] ppszMRU;
 						delete [] ppszOPENFOLDER;
 						/* 指定ファイルが開かれているか調べる */
-						if( m_cShareData.IsPathOpened( szPath, &hWndOwner ) ){
+						if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner ) ){
 							::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 //							pfi = (FileInfo*)m_pShareData->m_szWork;
 							pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
@@ -1183,7 +1183,7 @@ LRESULT CEditApp::DispatchEvent(
 							delete [] ppszMRU;
 							delete [] ppszOPENFOLDER;
 							/* 指定ファイルが開かれているか調べる */
-							if( m_cShareData.IsPathOpened( szPath, &hWndOwner ) ){
+							if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner ) ){
 								::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 								pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
@@ -1301,7 +1301,7 @@ LRESULT CEditApp::DispatchEvent(
 			//	オプションに関わらず終了ダイアログの表示は行わない
 
 			//	共有データの保存(重要)
-			m_cShareData.SaveShareData();
+			CShareData::getInstance()->SaveShareData();
 
 			return 0;	//	もうこのプロセスに制御が戻ることはない
 		//	To Here Jan. 31, 2000 genta
@@ -1373,15 +1373,15 @@ void CEditApp::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 //	WinExec -> CreateProcess．同期機能を付加
 bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPath, int nCharCode, BOOL bReadOnly, bool sync )
 {
-	CShareData		cShareData;
+//	CShareData		cShareData;
 	DLLSHAREDATA*	pShareData;
 	char szCmdLineBuf[1024];	//	コマンドライン
 	char szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 	int nPos = 0;				//	コマンドライン構築用ポインタ
 
 	/* 共有データ構造体のアドレスを返す */
-	cShareData.Init();
-	pShareData = cShareData.GetShareData( NULL, NULL );
+//	cShareData.Init();
+	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
@@ -1560,13 +1560,13 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, char* pszPat
 bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* pfi, BOOL bReadOnly, bool sync )
 {
 	char			pszCmdLine[1024];
-	CShareData		cShareData;
+//	CShareData		cShareData;
 	DLLSHAREDATA*	pShareData;
 	int				nPos = 0;		//	引数作成用ポインタ
 
 	/* 共有データ構造体のアドレスを返す */
-	cShareData.Init();
-	pShareData = cShareData.GetShareData( NULL, NULL );
+//	cShareData.Init();
+	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum + 1 > MAX_EDITWINDOWS ){
@@ -1766,17 +1766,17 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, FileInfo* p
 /* サクラエディタの全終了 */
 void CEditApp::TerminateApplication( void )
 {
-	CShareData		cShareData;
+//	CShareData		cShareData;
 	DLLSHAREDATA*	pShareData;
 //	int				nSettingType;
 
 	/* 共有データ構造体のアドレスを返す */
-	cShareData.Init();
-	pShareData = cShareData.GetShareData( NULL, NULL );
+//	cShareData.Init();
+	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 現在の編集ウィンドウの数を調べる */
 	if( pShareData->m_Common.m_bExitConfirm ){	//終了時の確認
-		if( 0 < cShareData.GetEditorWindowsNum() ){
+		if( 0 < CShareData::getInstance()->GetEditorWindowsNum() ){
 			if( IDYES != ::MYMESSAGEBOX(
 				NULL,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,

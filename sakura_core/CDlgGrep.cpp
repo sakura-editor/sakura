@@ -48,6 +48,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_RADIO_OUTPUTSTYLE1,			HIDC_GREP_RADIO_OUTPUTSTYLE1,		//結果出力形式：ノーマル
 	IDC_RADIO_OUTPUTSTYLE2,			HIDC_GREP_RADIO_OUTPUTSTYLE2,		//結果出力形式：ファイル毎
 	IDC_STATIC_JRE32VER,			HIDC_GREP_STATIC_JRE32VER,			//正規表現バージョン
+	IDC_CHK_DEFAULTFOLDER,			HIDC_GREP_CHK_DEFAULTFOLDER,		//フォルダの初期値をカレントフォルダにする
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -238,6 +239,12 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 
 		return TRUE;
+	case IDC_CHK_DEFAULTFOLDER:
+		/* フォルダの初期値をカレントフォルダにする */
+		{
+			m_pShareData->m_Common.m_bGrepDefaultFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_DEFAULTFOLDER );
+		}
+		return TRUE;
 	case IDOK:
 		/* ダイアログデータの取得 */
 		if( GetData() ){
@@ -265,7 +272,7 @@ void CDlgGrep::SetData( void )
 //	char	szWorkPath[_MAX_PATH + 1];
 //	m_hWnd = hwndDlg;	/* このダイアログのハンドル */
 
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
@@ -288,7 +295,7 @@ void CDlgGrep::SetData( void )
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szGREPFOLDERArr[i] );
 	}
 
-	if( 0 == lstrlen( m_pShareData->m_szGREPFOLDERArr[0] ) &&
+	if((0 == lstrlen( m_pShareData->m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_bGrepDefaultFolder ) &&
 		0 < lstrlen( m_szCurrentFilePath )
 	){
 		char	szWorkFolder[MAX_PATH];
@@ -379,6 +386,9 @@ void CDlgGrep::SetData( void )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_FROMTHISTEXT ), FALSE );
 	}
 
+	// フォルダの初期値をカレントフォルダにする
+	::CheckDlgButton( m_hWnd, IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_bGrepDefaultFolder );
+	if( m_pShareData->m_Common.m_bGrepDefaultFolder ) OnBnClicked( IDC_BUTTON_CURRENTFOLDER );
 
 	return;
 }
@@ -394,7 +404,7 @@ int CDlgGrep::GetData( void )
 	int			j;
 	CMemory*	pcmWork;
 
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* サブフォルダからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_SUBFOLDER );
@@ -491,7 +501,7 @@ int CDlgGrep::GetData( void )
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
-		m_cShareData.AddToSearchKeyArr( m_szText );
+		CShareData::getInstance()->AddToSearchKeyArr( m_szText );
 	}
 
 	/* 検索ファイル */

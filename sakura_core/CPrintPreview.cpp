@@ -86,7 +86,7 @@ LRESULT CPrintPreview::OnPaint(
 	char	szText[1024];
 	char	szPaperName[256];
 	::SetDlgItemText( m_hwndPrintPreviewBar, IDC_STATIC_PRNDEV, m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName );
-	CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , (char*)szPaperName );
+	m_cPrint.GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , (char*)szPaperName );
 	wsprintf( szText, "%s  %s",
 		szPaperName,
 		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? "横" : "縦"
@@ -541,7 +541,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 
 	/* 印刷/プレビューに必要な情報を取得 */
 	char	szErrMsg[1024];
-	if( FALSE == CPrint::GetPrintMetrics(
+	if( FALSE == m_cPrint.GetPrintMetrics(
 		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
 		&m_nPreview_PaperAllWidth,		/* 用紙幅 */
 		&m_nPreview_PaperAllHeight,		/* 用紙高さ */
@@ -563,8 +563,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 			char	szPaperNameOld[256];
 			char	szPaperNameNew[256];
 			/* 用紙の名前を取得 */
-			CPrint::GetPaperName( m_pPrintSetting->m_nPrintPaperSize , (char*)szPaperNameOld );
-			CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , (char*)szPaperNameNew );
+			m_cPrint.GetPaperName( m_pPrintSetting->m_nPrintPaperSize , (char*)szPaperNameOld );
+			m_cPrint.GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , (char*)szPaperNameNew );
 
 			::MYMESSAGEBOX( m_pParentWnd->m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 				"現在のプリンタ %s では、\n指定された用紙 %s は使用できません。\n利用可能な用紙 %s に変更しました。",
@@ -778,7 +778,7 @@ void CPrintPreview::OnPrint( void )
 	::EnableWindow( m_pParentWnd->m_hWnd, FALSE );
 
 	/* 印刷 ジョブ開始 */
-	if( FALSE == CPrint::PrintOpen(
+	if( FALSE == m_cPrint.PrintOpen(
 		szJobName,
 		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
 		&hPrinter,
@@ -817,7 +817,7 @@ void CPrintPreview::OnPrint( void )
 		::SetDlgItemText( cDlgPrinting.m_hWnd, IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */
-		CPrint::PrintStartPage( hdc );
+		m_cPrint.PrintStartPage( hdc );
 
 		/* ヘッダ印刷 */
 		DrawHeader( hdc, cRect, hFontZen );
@@ -836,7 +836,7 @@ void CPrintPreview::OnPrint( void )
 		DrawFooter( hdc, cRect, hFontZen );
 
 		/* 印刷 ページ終了 */
-		CPrint::PrintEndPage( hdc );
+		m_cPrint.PrintEndPage( hdc );
 
 		/* 中断ボタン押下チェック */
 		if( cDlgPrinting.IsCanceled() ){
@@ -844,7 +844,7 @@ void CPrintPreview::OnPrint( void )
 		}
 	}
 	/* 印刷 ジョブ終了 */
-	CPrint::PrintClose( hPrinter, hdc );
+	m_cPrint.PrintClose( hPrinter, hdc );
 
 	//	印刷前のフォントに戻す
 	::SelectObject( hdc, hFontOld );
@@ -1499,6 +1499,9 @@ BOOL CPrintPreview::DispatchEvent_PPB(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
+			case IDC_BUTTON_PRINTERSELECT:
+				m_cPrint.GetPrinterInfo( &m_pPrintSetting->m_mdmDevMode );
+				break;
 			case IDC_BUTTON_PRINTSETTING:
 				m_pParentWnd->OnPrintPageSetting();
 				break;

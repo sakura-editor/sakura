@@ -78,8 +78,8 @@ void CDlgProperty::SetData( void )
 //	SYSTEMTIME		systimeU;
 	SYSTEMTIME		systimeL;
 	/* 共有データ構造体のアドレスを返す */
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	//	Aug. 16, 2000 genta	全角化
 	cmemProp.AppendSz( "ファイル名  " );

@@ -108,7 +108,7 @@ public:
 	HWND			m_hwndProgressBar;
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
 	//	変数を移動
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 //@@@ 2002.01.14 YAZAKI 不使用のため

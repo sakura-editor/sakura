@@ -100,7 +100,7 @@ private:
 	char*			m_pszAppName;
 	BOOL			m_bCreatedTrayIcon;	/*!< トレイにアイコンを作った */
 
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;	未使用
 	CDlgGrep		m_cDlgGrep; // Jul. 2, 2001 genta

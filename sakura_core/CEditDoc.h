@@ -87,8 +87,8 @@ public:
 	BOOL SelectFont( LOGFONT* );
 	BOOL FileRead( /*const*/ char* , BOOL*, int, BOOL, BOOL );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
-	BOOL FileWrite( const char*, enumEOLType cEolType = EOL_NONE );
-	bool SaveFile(bool force_rename);	//	ファイルの保存（に伴ういろいろ）
+	BOOL FileWrite( const char*, enumEOLType cEolType );
+	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
 	BOOL MakeBackUp( void );	/* バックアップの作成 */
 	void SetParentCaption( BOOL = FALSE );	/* 親ウィンドウのタイトルを更新 */
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
@@ -192,7 +192,8 @@ public: /* テスト用にアクセス属性を変更 */
 	int				m_nCharCode;				/* 文字コード種別 */
 
 	//	May 15, 2000 genta
-	CEOL 			m_cNewLineCode;		//	Enter押下時に挿入する改行コード種別
+	CEOL 			m_cNewLineCode;				//	Enter押下時に挿入する改行コード種別
+	CEOL			m_cSaveLineCode;			//	保存時の改行コード種別（EOL_NONE:変換なし）
 
 
 	BOOL			m_bReadOnly;				/* 読み取り専用モード */
@@ -232,7 +233,7 @@ public:
 	HINSTANCE		m_hInstance;		/* インスタンスハンドル */
 	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
 
-	CShareData		m_cShareData;
+//	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 //@@@ 2002.01.14 YAZAKI 不使用のため

@@ -23,7 +23,8 @@
 #define F_FILENEW					30101	//新規作成
 #define F_FILEOPEN					30102	//開く
 #define F_FILESAVE					30103	//上書き保存
-#define F_FILESAVEAS				30104	//名前を付けて保存
+#define F_FILESAVEAS_DIALOG			30104	//名前を付けて保存
+#define F_FILESAVEAS				30106	//名前を付けて保存
 #define F_FILECLOSE					30105	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 #define F_FILECLOSE_OPEN			30107	//閉じて開く
 #define F_FILE_REOPEN_SJIS			30111	//SJISで開き直す

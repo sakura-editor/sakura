@@ -515,7 +515,7 @@ void CEditDoc::CheckAutoSave(void)
 
 		en = m_cAutoSave.IsEnabled();
 		m_cAutoSave.Enable(false);	//	2重呼び出しを防ぐため
-		SaveFile(false);	//	保存
+		SaveFile( m_szFilePath );	//	保存（m_nCharCode, m_cSaveLineCodeを変更しない）
 		m_cAutoSave.Enable(en);
 	}
 }
@@ -532,16 +532,13 @@ void CEditDoc::ReloadAutoSaveParam(void)
 
 //	ファイルの保存機能をEditViewから移動
 //
-bool CEditDoc::SaveFile(bool force_rename)
+bool CEditDoc::SaveFile( const char* path )
 {
-	char *path = ( force_rename || m_szFilePath[0] == '\0' ) ? NULL : m_szFilePath;
-
-	if( FileWrite( path ) ){
+	if( FileWrite( path, m_cSaveLineCode ) ){
 		SetModified(false,true);	//	Jan. 22, 2002 genta
 
 		/* 現在位置で無変更な状態になったことを通知 */
 		m_cOpeBuf.SetNoModified();
-
 		return true;
 	}
 	return false;

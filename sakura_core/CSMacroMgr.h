@@ -116,6 +116,7 @@ public:
 	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
 private:
+//	CShareData	m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 public:

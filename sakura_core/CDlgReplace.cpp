@@ -232,11 +232,11 @@ int CDlgReplace::GetData( void )
 
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
-		m_cShareData.AddToSearchKeyArr( m_szText );
+		CShareData::getInstance()->AddToSearchKeyArr( m_szText );
 
 		/* 置換後文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToReplaceKeyArr()追加に伴う変更
-		m_cShareData.AddToReplaceKeyArr( m_szText2 );
+		CShareData::getInstance()->AddToReplaceKeyArr( m_szText2 );
 
 		// From Here 2001.12.03 hor
 		// クリップボードから貼り付ける？

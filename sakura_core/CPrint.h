@@ -61,6 +61,12 @@ class CPrint
 {
 public:
 	/*
+	||	static関数群
+	*/
+	static void Initialize();
+
+public:
+	/*
 	||  Constructors
 	*/
 	CPrint();
@@ -69,10 +75,12 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static BOOL GetDefaultPrinter( PRINTDLG* );	/* デフォルトのプリンタ情報を取得 */
-	static BOOL GetDefaultPrinterInfo( MYDEVMODE* );	/* デフォルトのプリンタ設定 MYDEVMODE を取得 */
+	BOOL GetDefaultPrinter( PRINTDLG* );		/* デフォルトのプリンタ情報を取得 */
+	BOOL GetDefaultPrinterInfo( MYDEVMODE* );	/* デフォルトのプリンタ設定 MYDEVMODE を取得 */
+	BOOL GetPrinter( PRINTDLG* );				/* プリンタ情報を取得 */
+	BOOL GetPrinterInfo( MYDEVMODE* );			/* プリンタ設定 MYDEVMODE を取得 */
 	/* 印刷/プレビューに必要な情報を取得 */
-	static BOOL GetPrintMetrics(
+	BOOL GetPrintMetrics(
 		MYDEVMODE*	pMYDEVMODE,
 //		LOGFONT*	pLOGFONT,
 //		int			nMarginTY,			/* マージン 上 */
@@ -101,18 +109,17 @@ public:
 
 
 	/* 印刷 ジョブ開始 */
-	static BOOL PrintOpen(
+	BOOL PrintOpen(
 		char*		pszJobName,
 		MYDEVMODE*	pMYDEVMODE,
 		HANDLE*		phPrinter,
 		HDC*		phdc,
 		char*		pszErrMsg		/* エラーメッセージ格納場所 */
 	);
-	static void PrintStartPage( HDC );	/* 印刷 ページ開始 */
-	static void PrintEndPage( HDC );	/* 印刷 ページ終了 */
-	static void PrintClose( HANDLE , HDC );	/* 印刷 ジョブ終了 */
-	static char* CPrint::GetPaperName( int , char* );	/* 用紙の名前を取得 */
-
+	void PrintStartPage( HDC );	/* 印刷 ページ開始 */
+	void PrintEndPage( HDC );	/* 印刷 ページ終了 */
+	void PrintClose( HANDLE , HDC );	/* 印刷 ジョブ終了 */
+	char* CPrint::GetPaperName( int , char* );	/* 用紙の名前を取得 */
 
 protected:
 	/*

@@ -25,6 +25,32 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 {
 //	機能ID			関数名			引数				作業用バッファ
 
+	/* ファイル操作系 */
+	{F_FILENEW,						"S_FileNew",			"",					NULL}, //新規作成
+	{F_FILEOPEN,					"S_FileOpen",			"(str: string)",	NULL}, //開く
+	{F_FILESAVE,					"S_FileSave",			"",					NULL}, //上書き保存
+	{F_FILESAVEAS,					"S_FileSaveAs",			"(str: string; charcode, eolcode: Integer)",	NULL}, //名前を付けて保存
+	{F_FILECLOSE,					"S_FileClose",			"",					NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+//	{F_FILECLOSE_OPEN,				"S_FileCloseOpen",		"(str: string)",	NULL}, //閉じて開く
+	{F_FILE_REOPEN_SJIS,			"S_FileReopenSJIS",		"",					NULL}, //SJISで開き直す
+	{F_FILE_REOPEN_JIS,				"S_FileReopenJIS",		"",					NULL}, //JISで開き直す
+	{F_FILE_REOPEN_EUC,				"S_FileReopenEUC",		"",					NULL}, //EUCで開き直す
+	{F_FILE_REOPEN_UNICODE,			"S_FileReopenUNICODE",	"",					NULL}, //Unicodeで開き直す
+	{F_FILE_REOPEN_UTF8,			"S_FileReopenUTF8",		"",					NULL}, //UTF-8で開き直す
+	{F_FILE_REOPEN_UTF7,			"S_FileReopenUTF7",		"",					NULL}, //UTF-7で開き直す
+	{F_PRINT,						"S_Print",				"",					NULL}, //印刷
+//	{F_PRINT_DIALOG,				"S_PrintDialog",		"",					NULL}, //印刷ダイアログ
+	{F_PRINT_PREVIEW,				"S_PrintPreview",		"",					NULL}, //印刷プレビュー
+	{F_PRINT_PAGESETUP,				"S_PrintPageSetup",		"",					NULL}, //印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	{F_OPEN_HfromtoC,				"S_OpenHfromtoC",		"",					NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+	{F_OPEN_HHPP,					"S_OpenHHpp",			"",					NULL}, //同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	{F_OPEN_CCPP,					"S_OpenCCpp",			"",					NULL}, //同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	{F_ACTIVATE_SQLPLUS,			"S_ActivateSQLPLUS",	"",					NULL}, /* Oracle SQL*Plusをアクティブ表示 */
+	{F_PLSQL_COMPILE_ON_SQLPLUS,	"S_ExecSQLPLUS",		"",					NULL}, /* Oracle SQL*Plusで実行 */
+	{F_BROWSE,						"S_Browse",				"",					NULL}, //ブラウズ
+	{F_PROPERTY_FILE,				"S_PropertyFile",		"",					NULL}, //ファイルのプロパティ
+	{F_EXITALL,						"S_ExitAll",			"",					NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+
 	/* 編集系 */
 	{F_CHAR,				"S_Char",				"(Val: integer)",	NULL}, //文字入力
 //	{F_IME_CHAR,			"S_CharIme",			"",					NULL}, //全角文字入力
@@ -248,9 +274,8 @@ CSMacroMgr::MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 
 CSMacroMgr::CSMacroMgr()
 {
-	CShareData	m_cShareData;
-	m_cShareData.Init();
-	m_pShareData = m_cShareData.GetShareData( NULL, NULL );
+//	m_cShareData.Init();
+	m_pShareData = CShareData::getInstance()->GetShareData();
 	
 	if ( CPPAMacroMgr::m_cPPA.Init() ){
 		//	PPA.DLLアリ
@@ -274,6 +299,13 @@ CSMacroMgr::~CSMacroMgr()
 {
 	//- 20011229 add by aroka
 	ClearAll();
+	
+	//	PPA.DLLアリナシ共通
+	int i;
+	for (i=0; i<MAX_CUSTMACRO; i++){
+		delete m_cSavedKeyMacro[i];
+	}
+	delete m_cKeyMacro;
 }
 
 /* キーマクロのバッファをクリアする */
@@ -439,7 +471,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_FILENEW					://新規作成
 //	case F_FILEOPEN					://開く
 //	case F_FILESAVE					://上書き保存
-//	case F_FILESAVEAS				://名前を付けて保存
+//	case F_FILESAVEAS_DIALOG		://名前を付けて保存
 //	case F_FILECLOSE				://閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 //	case F_FILECLOSE_OPEN			://閉じて開く
 //	case F_FILE_REOPEN_SJIS			://SJISで開き直す
