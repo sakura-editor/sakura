@@ -1598,6 +1598,8 @@ BOOL CShareData::ShareData_IO_2( BOOL bRead )
 
 		cProfile.IOProfileData( bRead, pszSecName, "nDefaultOutline", REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nDefaultOutline, 0 );/* アウトライン解析方法 */
 		cProfile.IOProfileData( bRead, pszSecName, "nSmartIndent", REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nSmartIndent, 0 );/* スマートインデント種別 */
+		//	Nov. 20, 2000 genta
+		cProfile.IOProfileData( bRead, pszSecName, "nImeState", REGCNV_INT2SZ, (char*)&m_pShareData->m_Types[i].m_nImeState, 0 );	//	IME制御
 
 
 		/* 色設定 I/O */

@@ -633,6 +633,10 @@ BOOL CEditDoc::FileRead(
 	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	InitAllView();
 
+	//	Nov. 20, 2000 genta
+	//	IME状態の設定
+	SetImeMode( m_pShareData->m_Types[m_nSettingType].m_nImeState );
+
 	if( bIsExistInMRU && m_pShareData->m_Common.GetRestoreCurPosition() ){
 //#ifdef _DEBUG
 //	if( FALSE == m_bDebugMode ){
@@ -3409,5 +3413,47 @@ void CEditDoc::ReloadCurrentFile(
 
 	m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE );
 }
+
+//	From Here Nov. 20, 2000 genta
+//	IME状態の設定
+void CEditDoc::SetImeMode(int mode)
+{
+	DWORD conv, sent;
+	HIMC  hIme;
+
+	hIme = ImmGetContext( m_hwndParent );
+
+	//	最下位ビットはIME自身のOn/Off制御
+	if(( mode & 3 ) == 2){
+		ImmSetOpenStatus( hIme, FALSE );
+	}
+	if(( mode >> 2 ) > 0 ){
+		ImmGetConversionStatus( hIme, &conv, &sent );
+		
+		switch( mode >> 2){
+		case 1:	//	FullShape
+			conv |= IME_CMODE_FULLSHAPE;
+			conv &= ~IME_CMODE_NOCONVERSION;
+			break;
+		case 2:	//	FullShape & Hiragana
+			conv |= IME_CMODE_FULLSHAPE | IME_CMODE_NATIVE;
+			conv &= ~( IME_CMODE_KATAKANA | IME_CMODE_NOCONVERSION );
+			break;
+		case 3:	//	FullShape & Katakana
+			conv |= IME_CMODE_FULLSHAPE | IME_CMODE_NATIVE | IME_CMODE_KATAKANA;
+			conv &= ~IME_CMODE_NOCONVERSION;
+			break;
+		case 4: //	Non-Conversion
+			conv |= IME_CMODE_NOCONVERSION;
+			break;
+		}
+		ImmSetConversionStatus( hIme, conv, sent );
+	}
+	if(( mode & 3 ) == 1){
+		ImmSetOpenStatus( hIme, TRUE );
+	}
+	ImmReleaseContext( m_hwndParent, hIme );
+}
+//	To Here Nov. 20, 2000 genta
 
 /*[EOF]*/

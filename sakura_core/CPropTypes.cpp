@@ -35,15 +35,31 @@ TYPE_NAME OlmArr[] = {
 	{ OUTLINE_ASM,	"アセンブラ" },
 	{ OUTLINE_TEXT,	"テキスト" }
 };
-int	nOlmArrNum = sizeof( OlmArr ) / sizeof( OlmArr[0] );
+const int	nOlmArrNum = sizeof( OlmArr ) / sizeof( OlmArr[0] );
 
 
 TYPE_NAME SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	"なし" },
 	{ SMARTINDENT_CPP,	"C/C++" }
 };
-int	nSmartIndentArrNum = sizeof( SmartIndentArr ) / sizeof( SmartIndentArr[0] );
+const int	nSmartIndentArrNum = sizeof( SmartIndentArr ) / sizeof( SmartIndentArr[0] );
 
+//	Nov. 20, 2000 genta
+TYPE_NAME ImeStateArr[] = {
+	{ 0, "標準設定" },
+	{ 1, "全角" },
+	{ 2, "全角ひらがな" },
+	{ 3, "全角カタカナ" },
+	{ 4, "無変換" }
+};
+const int nImeStateArrNum = sizeof( ImeStateArr ) / sizeof( ImeStateArr[0] );
+
+TYPE_NAME ImeSwitchArr[] = {
+	{ 0, "そのまま" },
+	{ 1, "常にON" },
+	{ 2, "常にOFF" },
+};
+const int nImeSwitchArrNum = sizeof( ImeSwitchArr ) / sizeof( ImeSwitchArr[0] );
 
 
 WNDPROC	m_wpColorListProc;
@@ -756,6 +772,32 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	}
 	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 
+	//	From Here Nov. 20, 2000 genta
+	//	IME入力モード
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
+	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	int ime = m_Types.m_nImeState >> 2;
+	nSelPos = 0;
+	for( i = 0; i < nImeStateArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeStateArr[i].pszName );
+		if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
+			nSelPos = i;
+		}
+	}
+	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+	//	IME ON/OFF制御
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	ime = m_Types.m_nImeState & 3;
+	nSelPos = 0;
+	for( i = 0; i < nImeSwitchArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeSwitchArr[i].pszName );
+		if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
+			nSelPos = i;
+		}
+	}
+	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+	//	To Here Nov. 20, 2000 genta
 
 	/* 英文ワードラップをする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_WORDWRAP, m_Types.m_bWordWrap );
@@ -828,6 +870,16 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 	m_Types.m_nSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+
+	//	From Here Nov. 20, 2000 genta	IME状態
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
+	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+	m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IME入力モード
+	
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+	m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
+	//	To Here Nov. 20, 2000 genta
 
 	/* 英文ワードラップをする */
 	m_Types.m_bWordWrap = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WORDWRAP );

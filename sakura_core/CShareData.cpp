@@ -28,7 +28,7 @@ struct ARRHEAD {
 
 //	共有メモリのバージョン 1～unsinged intの最大値
 //	共有メモリの形式を変更したときはここも修正すること
-const unsigned int uShareDataVersion = 3;
+const unsigned int uShareDataVersion = 4;
 
 
 CShareData::~CShareData()
@@ -885,6 +885,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 		m_pShareData->m_Types[nIdx].m_nCurrentPrintSetting = 0;			/* 現在選択している印刷設定 */
 		m_pShareData->m_Types[nIdx].m_nDefaultOutline = OUTLINE_TEXT;	/* アウトライン解析方法 */
 		m_pShareData->m_Types[nIdx].m_nSmartIndent = SMARTINDENT_NONE;	/* スマートインデント種別 */
+		m_pShareData->m_Types[nIdx].m_nImeState = IME_CMODE_NOCONVERSION;	/* スマートインデント種別 */
 
 
 		static char* pszTypeNameArr[] = {
