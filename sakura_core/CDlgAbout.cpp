@@ -16,7 +16,7 @@
 #include "CDlgAbout.h"
 //#include <windows.h>
 //#include <stdio.h>
-//#include "sakura_rc.h"
+#include "sakura_rc.h" // 2002/2/10 aroka 復帰
 //#include "debug.h"
 //#include "etc_uty.h"
 
@@ -37,6 +37,22 @@ const DWORD p_helpids[] = {	//12900
 //	Nov. 7, 2000 genta URLとして表示する文字列
 //const char orgURL[] = "http://hp.vector.co.jp/authors/VA016528/";
 //const char urURL[] = "http://sakura-editor.sourceforge.net/";
+
+//	From Here Feb. 7, 2002 genta
+#if defined(__BORLANDC__)
+#  define COMPILER_TYPE "B"
+#else
+#  if defined(__GNUG__)
+#    define COMPILER_TYPE "G"
+#  else
+#    if defined(_MSC_VER)
+#      define COMPILER_TYPE "V"
+#    else
+#      define COMPILER_TYPE "U"
+#    endif
+#  endif
+#endif
+//	To Here Feb. 7, 2002 genta
 
 //	From Here Nov. 7, 2000 genta
 /*!
@@ -127,7 +143,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
-	wsprintf( szMsg, "Ver. %d.%d.%d.%d",
+	//	Feb. 7, 2002 genta コンパイラ情報追加
+	wsprintf( szMsg, "Ver. %d.%d.%d.%d " COMPILER_TYPE,
 		HIWORD( m_pShareData->m_dwProductVersionMS ),
 		LOWORD( m_pShareData->m_dwProductVersionMS ),
 		HIWORD( m_pShareData->m_dwProductVersionLS ),
