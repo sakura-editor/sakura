@@ -24,6 +24,7 @@
 #include "etc_uty.h"
 #include <locale.h>
 #include "CRunningTimer.h"
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 struct ARRHEAD {
 	int		nLength;

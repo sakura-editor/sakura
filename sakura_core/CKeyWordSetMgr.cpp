@@ -15,7 +15,7 @@
 #include "CKeyWordSetMgr.h"
 #include <stdlib.h>
 #include <malloc.h>
-
+#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 CKeyWordSetMgr::CKeyWordSetMgr( void )
 {
