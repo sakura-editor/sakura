@@ -489,6 +489,7 @@ void ReplaceData_CEditView(
 	void Command_TOZENKAKUKATA( void );			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	void Command_TOZENKAKUHIRA( void );			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	void Command_TOHANKAKU( void );				/* 全角→半角 */
+	void Command_TOZENEI( void );				/* 半角英数→全角英数 */ //July. 30, 2001 Misaka
 	void Command_HANKATATOZENKAKUKATA( void );	/* 半角カタカナ→全角カタカナ */
 	void Command_HANKATATOZENKAKUHIRA( void );	/* 半角カタカナ→全角ひらがな */
 	void Command_TABTOSPACE( void );			/* TAB→空白 */

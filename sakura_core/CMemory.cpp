@@ -2068,8 +2068,8 @@ int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 
 /* 半角→全角 */
 void CMemory::ToZenkaku(
-		int bHiragana,		/* 1== ひらがな 0==カタカナ */
-		int bHanKataOnly	/* 1== 半角カタカナにのみ作用する */
+		int bHiragana,		/* 1== ひらがな 0==カタカナ //2==英数専用 2001/07/30 Misaka 追加 */
+		int bHanKataOnly	/* 1== 半角カタカナにのみ作用する*/
 )
 {
 	unsigned char*			pBuf = (unsigned char*)m_pData;
@@ -2093,15 +2093,16 @@ void CMemory::ToZenkaku(
 	nBufDesLen = 0;
 	for( i = 0; i < nBufLen; ++i ){
 		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
-		if( nCharChars == 1 ){
+		if( nCharChars == 1){
 			bHenkanOK = FALSE;
 			if( bHanKataOnly ){	/* 1== 半角カタカナにのみ作用する */
 				if( NULL != strchr( (const char *)pszHanKataSet, pBuf[i] ) ){
 					bHenkanOK = TRUE;
 				}
 			}else{
+				//! 英数変換用に新たな条件を付加 2001/07/30 Misaka
 				if( ( (unsigned char)0x20 <= pBuf[i] && pBuf[i] <= (unsigned char)0x7E ) ||
-					( (unsigned char)0xA1 <= pBuf[i] && pBuf[i] <= (unsigned char)0xDF )
+					( bHiragana != 2 && (unsigned char)0xA1 <= pBuf[i] && pBuf[i] <= (unsigned char)0xDF )
 				){
 					bHenkanOK = TRUE;
 				}
@@ -2110,25 +2111,28 @@ void CMemory::ToZenkaku(
 				usSrc = pBuf[i];
 				if( FALSE == bHiragana &&
 					pBuf[i]		== (unsigned char)'ｳ' &&
-					pBuf[i + 1] == (unsigned char)'ﾞ'
+					pBuf[i + 1] == (unsigned char)'ﾞ' &&
+					bHiragana != 2
 				){
 					usDes = (unsigned short)0x8394; /* ヴ */
 					nCharChars = 2;
-				}else{
+				}else {
 					usDes = _mbbtombc( usSrc );
 					/* 濁音 */
-					if( pBuf[i + 1] == (unsigned char)'ﾞ' && NULL != strchr( (const char *)pszDakuSet, pBuf[i] ) ){
+					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'ﾞ' && NULL != strchr( (const char *)pszDakuSet, pBuf[i] ) ){
 						usDes++;
 						nCharChars = 2;
 					}
 					/* 拗音 */
-					if( pBuf[i + 1] == (unsigned char)'ﾟ' && NULL != strchr( (const char *)pszYouSet, pBuf[i] ) ){
+					//! 英数変換用に新たな条件を付加 2001/07/30 Misaka
+					//! bHiragana != 2 //英数変換フラグがオンではない場合
+					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'ﾟ' && NULL != strchr( (const char *)pszYouSet, pBuf[i] ) ){
 						usDes += 2;
 						nCharChars = 2;
 					}
 				}
 
-				if( TRUE == bHiragana ){
+				if( bHiragana == 1 ){
 					/* ひらがなに変換可能なカタカナならば、ひらがなに変換する */
 					if( (unsigned short)0x8340 <= usDes && usDes <= (unsigned short)0x837e ){	/* ァ～ミ */
 						usDes-= (unsigned short)0x00a1;
@@ -2148,8 +2152,8 @@ void CMemory::ToZenkaku(
 		}else
 		if( nCharChars == 2 ){
 			usDes = usSrc = pBuf[i + 1] | ( pBuf[i] << 8 );
-			if( !bHanKataOnly ){
-				if( TRUE == bHiragana ){
+			if( bHanKataOnly == 0 ){
+				if( bHiragana == 1 ){//英数変換を付加したために数値で指定した　2001/07/30 Misaka
 					/* 全角ひらがなに変換可能な全角カタカナならば、ひらがなに変換する */
 					if( (unsigned short)0x8340 <= usSrc && usSrc <= (unsigned short)0x837e ){	/* ァ～ミ */
 						usDes = usSrc - (unsigned short)0x00a1;
@@ -2157,7 +2161,7 @@ void CMemory::ToZenkaku(
 					if( (unsigned short)0x8380 <= usSrc && usSrc <= (unsigned short)0x8393 ){	/* ム～ン */
 						usDes = usSrc - (unsigned short)0x00a2;
 					}
-				}else{
+				}else if( bHiragana == 0 ){//英数変換を付加したために数値で指定した　2001/07/30 Misaka
 					/* 全角カタカナに変換可能な全角ひらがなならば、カタカナに変換する */
 					if( (unsigned short)0x829f <= usSrc && usSrc <= (unsigned short)0x82dd ){	/* ぁ～み */
 						usDes = usSrc + (unsigned short)0x00a1;

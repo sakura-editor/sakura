@@ -5381,6 +5381,7 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	case F_TOLOWER: pCMemory->ToLower(); break;						/* 英大文字→英小文字 */
 	case F_TOUPPER: pCMemory->ToUpper(); break;						/* 英小文字→英大文字 */
 	case F_TOHANKAKU: pCMemory->ToHankaku(); break;					/* 全角→半角 */
+	case F_TOZENEI: pCMemory->ToZenkaku( 2, 0 );				/* 2== 英数専用				*/ break;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOZENKAKUKATA: pCMemory->ToZenkaku( 0, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA: pCMemory->ToZenkaku( 1, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA: pCMemory->ToZenkaku( 0, 1 );	/* 1== ひらがな 0==カタカナ */ break;	/* 半角カタカナ→全角カタカナ */

@@ -2417,6 +2417,7 @@ BEGIN
     F_TOZENKAKUHIRA         "半角＋全カタ→全角・ひらがな"
     F_HANKATATOZENKAKUKATA  "半角カタカナ→全角カタカナ"
     F_HANKATATOZENKAKUHIRA  "半角カタカナ→全角ひらがな"
+    IDS_STRING30815         "半角英数→全角英数"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2619,7 +2620,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_AUTHOR_PAGE         "http://hp.vector.co.jp/authors/VA016528/"
     IDS_AUTHOR_MAIL         "hippie@mcn.ne.jp"
-    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n\r\nこのソフトウェアはFree Software Foundationが定めるGPLライセンス(バージョン2またはそれ以降)に従った改造および再配布が認められています．ソースコードは配布パッケージに含めておりませんが、必要な方はプロジェクトホームページから入手可能です．\r\n\r\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or any later version.\r\n\r\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\r\n\r\nYou should have received a copy of the GNU General Public license along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"
+    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n無償で利用できますが，著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です。\r\nソースコードの利用に対する詳細なライセンスは現在検討中です．"
 END
 
 #endif    // 日本語 resources

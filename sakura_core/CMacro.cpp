@@ -178,6 +178,7 @@ MacroFuncInfo m_MacroFuncInfoArr[] =
 	F_TOLOWER		 			, "ToLower",			//英大文字→英小文字
 	F_TOUPPER		 			, "ToUpper",			//英小文字→英大文字
 	F_TOHANKAKU		 			, "ToHankaku",			/* 全角→半角 */
+	F_TOZENEI		 			, "ToZenEi",			/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	F_TOZENKAKUKATA	 			, "ToZenKata",			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	F_TOZENKAKUHIRA	 			, "ToZenHira",			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	F_HANKATATOZENKAKUKATA		, "HanKataToZenKata",	/* 半角カタカナ→全角カタカナ */
@@ -473,6 +474,7 @@ BOOL CMacro::CanFuncIsKeyMacro( int nFuncID )
 	case F_TOLOWER		 			://英大文字→英小文字
 	case F_TOUPPER		 			://英小文字→英大文字
 	case F_TOHANKAKU		 		:/* 全角→半角 */
+	case F_TOZENEI			 		:/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 	case F_TOZENKAKUKATA	 		:/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA	 		:/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	case F_HANKATATOZENKAKUKATA		:/* 半角カタカナ→全角カタカナ */
