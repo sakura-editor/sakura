@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 2001, MIK
 	Copyright (C) 2002, MIK
+	Copyright (C) 2003, MIK
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -31,7 +32,6 @@
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 
 
-#if 1	//@@@ 2002.01.03 add start MIK
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	//11600
 	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//インポート
@@ -55,30 +55,6 @@ static const DWORD p_helpids[] = {	//11600
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids4[] = {	//11600
-	IDC_BUTTON_REGEX_IMPORT,	11600,	//インポート
-	IDC_BUTTON_REGEX_EXPORT,	11601,	//エクスポート
-	IDC_BUTTON_REGEX_INS,		11602,	//挿入
-	IDC_BUTTON_REGEX_ADD,		11603,	//追加
-	IDC_BUTTON_REGEX_UPD,		11604,	//更新
-	IDC_BUTTON_REGEX_DEL,		11605,	//削除
-	IDC_BUTTON_REGEX_TOP,		11606,	//先頭
-	IDC_BUTTON_REGEX_LAST,		11607,	//最終
-	IDC_BUTTON_REGEX_UP,		11608,	//上へ
-	IDC_BUTTON_REGEX_DOWN,		11609,	//下へ
-	IDC_CHECK_REGEX,		11610,	//正規表現キーワードを使用する
-	IDC_COMBO_REGEX_COLOR,		11630,	//色
-	IDC_EDIT_REGEX,			11640,	//正規表現キーワード
-	IDC_LIST_REGEX,			11650,	//リスト
-	IDC_LABEL_REGEX_KEYWORD,	11640,	
-	IDC_LABEL_REGEX_COLOR,		11630,	
-	IDC_FRAME_REGEX,		11650,	
-	IDC_LABEL_REGEX_VERSION,	11670,	//バージョン
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 
 
 /* 正規表現キーワード ダイアログプロシージャ */
@@ -306,6 +282,7 @@ BOOL CPropTypes::DispatchEvent_Regex(
 	LV_COLUMN	col;
 	RECT		rc;
 	char	szKeyWord[256], szColorIndex[256];
+	static int nPrevIndex = -1;	//更新時におかしくなるバグ修正 @@@ 2003.03.26 MIK
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 
@@ -775,23 +752,27 @@ BOOL CPropTypes::DispatchEvent_Regex(
 					}
 					return FALSE;
 				}
-				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
-				::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
-				hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
-				for(i = 0, j = 0; i < COLORIDX_LAST; i++)
-				{
-					//if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") != 0)
-					if( m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_UNDERLINE )
+				if( nPrevIndex != nIndex )	//@@@ 2003.03.26 MIK
+				{	//更新時にListViewのSubItemを正しく取得できないので、その対策
+					ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
+					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
+					::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
+					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
+					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
-						if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
+						//if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") != 0)
+						if( m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_UNDERLINE )
 						{
-							::SendMessage(hwndCombo, CB_SETCURSEL, j, 0);
-							break;
+							if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
+							{
+								::SendMessage(hwndCombo, CB_SETCURSEL, j, 0);
+								break;
+							}
+							j++;
 						}
-						j++;
 					}
 				}
+				nPrevIndex = nIndex;
 			}
 			break;
 		}
