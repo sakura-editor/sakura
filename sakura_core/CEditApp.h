@@ -102,6 +102,9 @@ private:
     void    DoGrep();   //Stonee, 2001/03/21
 	//	Apr. 6, 2001 genta コマンドラインオプションの解析
 	static int CheckCommandLine( char *str, char** arg );
+	//	Apr. 24, 2001 genta
+	//	RegisterMessageで得られるMessage IDの保管場所
+	UINT	m_uCreateTaskBarMsg;
 
 	/*
 	|| 実装ヘルパ系

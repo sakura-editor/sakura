@@ -83,11 +83,6 @@
 //	/* トレイ管理ウィンドウからの全終了メッセージ */
 //	#define	MYWM_CLOSEALL		(WM_APP+900)
 
-//	タスクバーが作成された　＜ExplorerがBroadcastするMessage＞
-#define MYWM_CREATETASKBAR		(53177)
-
-
-
 
 /*[EOF]*/
 
