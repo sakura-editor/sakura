@@ -63,9 +63,8 @@ HFONT CEditView::ChooseFontHandle( BOOL bFat, BOOL bUnderLine )
 /* ’Êí‚Ì•`‰æˆ— new */
 void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CEditView::OnPaint" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::OnPaint" );
+
 //	if( m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌŽÀs’†‚© */
 //		return;
 //	}
@@ -346,9 +345,8 @@ int CEditView::DispLineNew(
 		BOOL					bSelected
 )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CEditView::DispLineNew" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DispLineNew" );
+
 	//	May 9, 2000 genta
 	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 

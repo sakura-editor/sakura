@@ -960,9 +960,8 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 /* ˜_—s‚ª‘}“ü‚³‚ê‚½ê‡‚Í‚O‚æ‚è‘å‚«‚¢s” */
 void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, int nShiftLines )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::ShiftLogicalLineNum" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::ShiftLogicalLineNum" );
+
 	CLayout* pLayout;
 //	CLayout* pLayoutNext;
 	if( 0 == nShiftLines ){
