@@ -115,7 +115,10 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					}
 				}else{
 					/* クラス宣言部分を見つけた */
-					if( 0 == strcmp( "class", szWordPrev ) ){
+					//	Oct. 10, 2002 genta interfaceも対象に
+					if( 0 == strcmp( "class", szWordPrev ) ||
+						0 == strcmp( "interface", szWordPrev )
+					 ){
 						nClassNestArr[nClassNestArrNum] = nNestLevel;
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
@@ -225,7 +228,11 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				}else
 				if( '{' == pLine[i] ){
 					if( 0 < nClassNestArrNum && 2 == nNestLevel2Arr[nClassNestArrNum - 1] ){
-						if( 0 != strcmp( "sizeof", szFuncName )
+						//	Oct. 10, 2002 genta
+						//	メソッド中でさらにメソッドを定義することはないので
+						//	ネストレベル判定追加 class/interfaceの直下の場合のみ判定する
+						if( nClassNestArr[nClassNestArrNum - 1] == nNestLevel - 1
+						 && 0 != strcmp( "sizeof", szFuncName )
 						 && 0 != strcmp( "if", szFuncName )
 						 && 0 != strcmp( "for", szFuncName )
 						 && 0 != strcmp( "do", szFuncName )
@@ -360,7 +367,10 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				}else
 				if( ';' == pLine[i] ){
 					if( 0 < nClassNestArrNum && 2 == nNestLevel2Arr[nClassNestArrNum - 1] ){
-						if( 0 != strcmp( "sizeof", szFuncName )
+						//	Oct. 10, 2002 genta
+						// 関数の中で別の関数の宣言部を使うことって，Javaであるの？
+						if( nClassNestArr[nClassNestArrNum - 1] == nNestLevel - 1
+						 && 0 != strcmp( "sizeof", szFuncName )
 						 && 0 != strcmp( "if", szFuncName )
 						 && 0 != strcmp( "for", szFuncName )
 						 && 0 != strcmp( "do", szFuncName )
