@@ -90,6 +90,10 @@ public:
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
 	bool Replace(const char* szPattern0, const char* szPattern1, char *target, int len, char **out, int bOption );
+	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
+	bool CompileReplace(const char *szPattern0, const char *szPattern1, int bOption );
+	bool GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOutLen);
+	//<< 2002/03/27 Azumaiya
 
 	//! BREGEXPメッセージを取得する
 	const char* GetLastMessage(void) const { return m_szMsg; }

@@ -48,8 +48,11 @@ struct ARRHEAD {
 	Version 26:
 	MacroRecに、m_bReloadWhenExecuteを追加 2002/03/11 YAZAKI
 	FileInfoに、m_szDocType追加 Mar. 7, 2002 genta
+	
+	Version 27:
+	Typesに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
 */
-const unsigned int uShareDataVersion = 26;
+const unsigned int uShareDataVersion = 27;
 
 /*
 ||	Singleton風
@@ -1137,6 +1140,7 @@ tt 時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。
 			strcpy( m_pShareData->m_Types[nIdx].m_szTypeName, pszTypeNameArr[nIdx] );	/* タイプ属性：名称 */
 			strcpy( m_pShareData->m_Types[nIdx].m_szTypeExts, pszTypeExts[nIdx] );		/* タイプ属性：拡張子リスト */
 			m_pShareData->m_Types[nIdx].m_nKeyWordSetIdx2 = -1;	//Dec. 4, 2000 MIK
+			m_pShareData->m_Types[nIdx].m_szOutlineRuleFilename[0] = '\0';	//Dec. 4, 2000 MIK
 		}
 
 

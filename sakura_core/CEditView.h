@@ -47,6 +47,21 @@ class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 #define IDM_COPYDICINFO 2000
 #endif
 
+#ifndef RECONVERTSTRING
+typedef struct tagRECONVERTSTRING {
+    DWORD dwSize;
+    DWORD dwVersion;
+    DWORD dwStrLen;
+    DWORD dwStrOffset;
+    DWORD dwCompStrLen;
+    DWORD dwCompStrOffset;
+    DWORD dwTargetStrLen;
+    DWORD dwTargetStrOffset;
+} RECONVERTSTRING, *PRECONVERTSTRING;
+#endif // RECONVERTSTRING
+
+
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -69,8 +84,19 @@ public:
 	/* 初期化系メンバ関数 */
 	BOOL Create( HINSTANCE, HWND, CEditDoc*, int,/* BOOL,*/ BOOL );
 	/* 状態 */
-	BOOL IsTextSelected( void );	/* テキストが選択されているか */
-	BOOL IsTextSelecting( void );	/* テキストの選択中か */
+	//<< 2002/03/29 Azumaiya インライン関数化
+	BOOL IsTextSelected( void )		/* テキストが選択されているか */
+	{
+		// ジャンプ回数を減らして、一気に判定。
+		// すべてを or 演算した後に、ビット反転して最上位ビット(符号フラグ)を返す。
+		return ~(m_nSelectLineFrom|m_nSelectLineTo|m_nSelectColmFrom|m_nSelectColmTo) >> 31;
+	};
+	BOOL IsTextSelecting( void )	/* テキストの選択中か */
+	{
+		// ジャンプ回数を減らして、一気に判定。
+		return m_bSelectingLock|IsTextSelected();
+	};
+	//>> 2002/03/29 Azumaiya
 	/* メッセージディスパッチャ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void OnMove( int, int, int, int );
@@ -329,6 +355,8 @@ protected:
 	void AddToCmdArr( const char* );
 	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
+	LRESULT RequestedReconversion( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える minfu 2002.03.27 */
+	LRESULT RequestedReconversionW( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える for 95/NT 20020331 aroka */
 
 public: /* テスト用にアクセス属性を変更 */
 	/* IDropTarget実装 */
@@ -481,6 +509,10 @@ protected:
 	void Command_COPY( int, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( void );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( void );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
+	//<< 2002/03/29 Azumaiya
+	/* 矩形貼り付け（引数渡しでの張り付け）*/
+	void Command_PASTEBOX(char *szPaste, int nPasteSize);
+	//>> 2002/03/29 Azumaiya
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
 	void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
 	void Command_ADDTAIL( const char*, int );		/* 最後にテキストを追加 */
@@ -644,6 +676,10 @@ void ReplaceData_CEditView(
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
+
+private:
+	UINT	m_uMSIMEReconvertMsg;
+	UINT	m_uATOKReconvertMsg;
 };
 
 

@@ -80,15 +80,20 @@ void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 
 
 
-/*! 配列の最後にデータを追加する */
+/*! 配列の最後にデータを追加する
+
+	@date 2002.04.01 YAZAKI 深さ導入
+*/
 void CFuncInfoArr::AppendData(
 	int		nFuncLineCRLF,	/* 関数のある行(CRLF単位) */
 	int		nFuncLineLAYOUT,/* 関数のある行(折り返し単位) */
 	char*	pszFuncName,	/* 関数名 */
-	int		nInfo			/* 付加情報 */
+	int		nInfo,			/* 付加情報 */
+	int		nDepth			/* 深さ */
 )
 {
 	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncLineLAYOUT, pszFuncName, nInfo );
+	pcFuncInfo->m_nDepth = nDepth;
 	AppendData( pcFuncInfo );
 	return;
 }

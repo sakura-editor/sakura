@@ -21,6 +21,7 @@ class CFuncInfo;
 #include "CMemory.h"
 
 //! アウトライン解析  データ要素
+//@date 2002.04.01 YAZAKI 深さ導入
 class CFuncInfo {
 	public:
 		CFuncInfo( int, int, char*, int );	/* CFuncInfoクラス構築 */
@@ -31,6 +32,7 @@ class CFuncInfo {
 		int			m_nFuncLineLAYOUT;	/*!< 関数のある行(折り返し単位) */
 		CMemory		m_cmemFuncName;	/*!< 関数名 */
 		int			m_nInfo;		/*!< 付加情報 */
+		int			m_nDepth;		/*!< 深さ */
 };
 
 

@@ -90,4 +90,12 @@
 //	#define	MYWM_CLOSEALL		(WM_APP+900)
 
 
+/* çƒïœä∑ëŒâû */ // 20020331 aroka
+#ifndef WM_IME_REQUEST
+#define MYWM_IME_REQUEST 0x288  // ==WM_IME_REQUEST
+#else
+#define MYWM_IME_REQUEST WM_IME_REQUEST
+#endif
+#define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
+#define RWM_RECONVERT TEXT("MSIMEReconvert")
 /*[EOF]*/
