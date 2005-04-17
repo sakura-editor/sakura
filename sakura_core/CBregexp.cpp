@@ -9,6 +9,7 @@
 	@date 2002/2/1 hor		ReleaseCompileBufferを適宜追加
 	@date Jul. 25, 2002 genta 行頭条件を考慮した検索を行うように．(置換はまだ)
 	@date 2003.05.22 かろと 正規な正規表現に近づける
+	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽。
 */
 /*
 	Copyright (C) 2001-2002, genta
@@ -42,13 +43,9 @@
 #include "etc_uty.h"
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
-char CBregexp::tmpBuf[2] = "\0";
+const char CBregexp::m_tmpBuf[2] = "\0";
 
-// 未使用なので削除
-//const char BREGEXP_OPT_KI[]	= "ki";
-//const char BREGEXP_OPT_K[]	= "k";
-
-CBregexp::CBregexp() : m_sRep( NULL ),
+CBregexp::CBregexp() : m_pRegExp( NULL ),
 	m_ePatType( PAT_NORMAL )	//	Jul, 25, 2002 genta
 {
 }
@@ -75,7 +72,7 @@ CBregexp::GetDllName( char* str )
 	@retval 0 成功
 	@retval 1 アドレス取得に失敗
 */
-int CBregexp::InitDll()
+int CBregexp::InitDll(void)
 {
 	//	Apr. 15, 2002 genta
 	//	CPPA.cpp を参考に設定を配列化した
@@ -93,23 +90,10 @@ int CBregexp::InitDll()
 	if( ! RegisterEntries( table )){
 		return 1;
 	}
+	// 2003.11.01 かろと 拡張した関数のアドレス取得
+	BMatchEx = (BREGEXP_BMatchEx)GetProcAddress( GetInstance(), "BMatchEx" );
+	BSubstEx = (BREGEXP_BSubstEx)GetProcAddress( GetInstance(), "BSubstEx" );
 	
-#if 0
-	//	アドレス取得
-	if( (BMatch = (BREGEXP_BMatch)GetProcAddress( GetInstance(), "BMatch" )) == NULL )
-		return 1;
-	if( (BSubst = (BREGEXP_BSubst)GetProcAddress( GetInstance(), "BSubst" )) == NULL )
-		return 1;
-	if( (BTrans = (BREGEXP_BTrans)GetProcAddress( GetInstance(), "BTrans" )) == NULL )
-		return 1;
-	if( (BSplit = (BREGEXP_BSplit)GetProcAddress( GetInstance(), "BSplit" )) == NULL )
-		return 1;
-	if( (BRegfree = (BREGEXP_BRegfree)GetProcAddress( GetInstance(), "BRegfree" )) == NULL )
-		return 1;
-	if( (BRegexpVersion = (BREGEXP_BRegexpVersion)GetProcAddress( GetInstance(), "BRegexpVersion" )) == NULL )
-		return 1;
-#endif
-
 	return 0;
 }
 
@@ -122,14 +106,76 @@ int CBregexp::DeinitDll( void )
 	return 0;
 }
 
+/*! @brief 検索パターンが特定の検索パターンかチェックする
+**
+** @param[in] szPattern 検索パターン
+**
+** @retval 検索パターン文字列長
+** 
+** @date 2005.03.20 かろと 関数に切り出し
+*/
+int CBregexp::CheckPattern(const char *szPattern)
+{
+	static const char TOP_MATCH[] = "/^\\(*\\^/k";							//!< 行頭パターンのチェック用パターン
+	static const char DOL_MATCH[] = "/\\\\\\$$/k";							//!< \$(行末パターンでない)チェック用パターン
+	static const char BOT_MATCH[] = "/\\$\\)*$/k";							//!< 行末パターンのチェック用パターン
+	static const char TAB_MATCH[] = "/^\\(*\\^\\$\\)*$/k";					//!< "^$"パターンかをチェック用パターン
+	static const char LOOKAHEAD[] = "/\\(\\?[=]/k";							//!< "(?=" 先読み の存在チェックパターン
+	BREGEXP*	sReg = NULL;					//!< コンパイル構造体
+	char szMsg[80] = "";						//!< エラーメッセージ
+	int nLen;									//!< 検索パターンの長さ
+	const char *szPatternEnd;					//!< 検索パターンの終端
+
+	m_ePatType = PAT_NORMAL;	//!<　ノーマルは確定
+	nLen = strlen( szPattern );
+	szPatternEnd = szPattern + nLen;
+	// パターン種別の設定
+	if( BMatch( TOP_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
+		// 行頭パターンにマッチした
+		m_ePatType |= PAT_TOP;
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+	if( BMatch( TAB_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
+		// 行頭行末パターンにマッチした
+		m_ePatType |= PAT_TAB;
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+	if( BMatch( DOL_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
+		// 行末の\$ にマッチした
+		// PAT_NORMAL
+	} else {
+		BRegfree(sReg);
+		sReg = NULL;
+		if( BMatch( BOT_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
+			// 行末パターンにマッチした
+			m_ePatType |= PAT_BOTTOM;
+		} else {
+			// その他
+			// PAT_NORMAL
+		}
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+	
+	if( BMatch( LOOKAHEAD, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
+		// 先読みパターンにマッチした
+		m_ePatType |= PAT_LOOKAHEAD;
+	}
+	BRegfree(sReg);
+	sReg = NULL;
+	return (nLen);
+}
+
 /*! @brief ライブラリに渡すための検索・置換パターンを作成する
 **
 ** @note szPattern2: == NULL:検索 != NULL:置換
 ** 
-** @param szPattern [in] 検索パターン
-** @param szPattern2 [in] 置換パターン(NULLなら検索)
-** @param szAdd2	[in] 置換パターンの後ろに付け加えるパターン($1など) 
-** @param bOption	[in] 検索オプション
+** @param[in] szPattern 検索パターン
+** @param[in] szPattern2 置換パターン(NULLなら検索)
+** @param[in] szAdd2	置換パターンの後ろに付け加えるパターン($1など) 
+** @param[in] bOption	検索オプション
 **
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
@@ -169,7 +215,7 @@ char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, c
 	}
 	*pPat++ = 'k';			// 漢字対応
 	*pPat++ = 'm';			// 複数行対応(但し、呼び出し側が複数行対応でない)
-	if( !(bOption & 0x01) ) {		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+	if( !(bOption & bIgnoreCase) ) {		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
 		*pPat++ = 'i';		// 同上
 	}
 	*pPat = '\0';
@@ -187,9 +233,9 @@ char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, c
 **
 ** @note szPattern2: == NULL:検索 != NULL:置換
 ** 
-** @param szPattern [in] 検索パターン
-** @param szPattern2 [in] 置換パターン(NULLなら検索)
-** @param bOption [in] 検索オプション
+** @param[in] szPattern 検索パターン
+** @param[in] szPattern2 置換パターン(NULLなら検索)
+** @param[in] bOption 検索オプション
 **
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
@@ -202,11 +248,7 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	static const char CR[] = "\r";				//!< 復帰
 	static const char LF[] = "\n";				//!< 改行
 	static const char LFCR[] = "\n\r";			//!< 改行・復帰
-	static const char TOP_MATCH[] = "/^\\(*\\^/k";							//!< 行頭パターンのチェック用パターン
-	static const char DOL_MATCH[] = "/\\\\\\$$/k";							//!< \$(行末パターンでない)チェック用パターン
-	static const char BOT_MATCH[] = "/\\$\\)*$/k";							//!< 行末パターンのチェック用パターン
 	static const char BOT_SUBST[] = "s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< 行末パターンの置換用パターン
-	static const char TAB_MATCH[] = "/^\\(*\\^\\$\\)*$/k";					//!< "^$"パターンかをチェック用パターン
 	int nLen;									//!< szPatternの長さ
 	BREGEXP*	sReg = NULL;					//!< コンパイル構造体
 	char szMsg[80] = "";						//!< エラーメッセージ
@@ -214,37 +256,7 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	int nParens = 0;							//!< 検索パターン(szPattern)中の括弧の数(行末時に使用)
 	char *szNPattern;							//!< 検索パターン
 
-	nLen = strlen( szPattern );
-	// パターン種別の設定
-	if( BMatch( TOP_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
-		// 行頭パターンにマッチした
-		m_ePatType |= PAT_TOP;
-	}
-	BRegfree(sReg);
-	sReg = NULL;
-	if( BMatch( TAB_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
-		// 行頭行末パターンにマッチした
-		m_ePatType |= PAT_TAB;
-	}
-	BRegfree(sReg);
-	sReg = NULL;
-	if( BMatch( DOL_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
-		// 行末の\$ にマッチした
-		// PAT_NORMAL
-	} else {
-		BRegfree(sReg);
-		sReg = NULL;
-		if( BMatch( BOT_MATCH, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
-			// 行末パターンにマッチした
-			m_ePatType |= PAT_BOTTOM;
-		} else {
-			// その他
-			// PAT_NORMAL
-		}
-	}
-	BRegfree(sReg);
-	sReg = NULL;
-
+	nLen = CheckPattern( szPattern );
 	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
 		bool bJustDollar = false;			// 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
 		szNPattern = MakePatternSub(szPattern, NULL, NULL, bOption);
@@ -301,19 +313,17 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 
 
 /*!
-	JRE32のエミュレーション関数．空の文字列に対して検索を行うことにより
+	JRE32のエミュレーション関数．空の文字列に対して検索・置換を行うことにより
 	BREGEXP構造体の生成のみを行う．
 
-	検索文字列はperl形式 i.e. /pattern/option または m/pattern/option
-
-	@param szPattern [in] 検索パターン
-	@param bOption [in]
-		0x01：大文字小文字の区別をする。
+	@param[in] szPattern0 検索or置換パターン
+	@param[in] szPattern1 置換後文字列パターン(検索時はNULL)
+	@param[in] bOption 		0x01：大文字小文字の区別をする。
 
 	@retval true 成功
 	@retval false 失敗
 */
-bool CBregexp::Compile( const char* szPattern, int bOption )
+bool CBregexp::Compile( const char *szPattern0, const char *szPattern1, int bOption )
 {
 
 	//	DLLが利用可能でないときはエラー終了
@@ -325,8 +335,15 @@ bool CBregexp::Compile( const char* szPattern, int bOption )
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	char *szNPattern = MakePattern( szPattern, NULL, bOption );
-	BMatch( szNPattern, tmpBuf, tmpBuf+1, &m_sRep, m_szMsg );
+	char *szNPattern = MakePattern( szPattern0, szPattern1, bOption );
+	m_szMsg[0] = '\0';		//!< エラー解除
+	if (szPattern1 == NULL) {
+		// 検索実行
+		BMatch( szNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
+	} else {
+		// 置換実行
+		BSubst( szNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
+	}
 	delete [] szNPattern;
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
@@ -345,204 +362,96 @@ bool CBregexp::Compile( const char* szPattern, int bOption )
 	JRE32のエミュレーション関数．既にあるコンパイル構造体を利用して検索（1行）を
 	行う．
 
-	@param target [in] 検索対象領域先頭アドレス
-	@param len [in] 検索対象領域サイズ
-	@param nStart [in] 検索開始位置．(先頭は0)
-	@param rep [out] コンパイル構造体へのアドレスを返す。
-	検索には内部で保持している構造体が用いられるため、ここに別の構造体を設定しても
-	それは検索には用いられない。
+	@param[in] target 検索対象領域先頭アドレス
+	@param[in] len 検索対象領域サイズ
+	@param[in] nStart 検索開始位置．(先頭は0)
 
 	@retval true Match
-	@retval false No Match または エラー。エラーはrep == NULLにより判定可能。
-
-	@note 戻り値==-1
-
-	@par repに返される情報
-
+	@retval false No Match または エラー。エラーは GetLastMessage()により判定可能。
 
 */
-bool CBregexp::GetMatchInfo( const char* target, int len, int nStart, BREGEXP**rep )
+bool CBregexp::Match( const char* target, int len, int nStart )
 {
+	int matched;		//!< 検索一致したか? >0:Match, 0:NoMatch, <0:Error
+
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
-	if( (!IsAvailable()) || m_sRep == NULL ){
-		*rep = NULL;
+	if( (!IsAvailable()) || m_pRegExp == NULL ){
 		return false;
 	}
 
-	// 行の先頭("^")の検索時の特別処理 by かろと
-	/*
-	** 行頭(^)とマッチするのは、nStart=0の時だけなので、それ以外は false
-	*/
-	if( (m_ePatType & PAT_TOP) != 0 && nStart != 0 ) {
-		// nStart!=0でも、BMatch()にとっては行頭になるので、ここでfalseにする必要がある
-		return false;
+	m_szMsg[0] = '\0';		//!< エラー解除
+	// 拡張関数がない場合は、行の先頭("^")の検索時の特別処理 by かろと
+	if (BMatchEx == NULL) {
+		/*
+		** 行頭(^)とマッチするのは、nStart=0の時だけなので、それ以外は false
+		*/
+		if( (m_ePatType & PAT_TOP) != 0 && nStart != 0 ) {
+			// nStart!=0でも、BMatch()にとっては行頭になるので、ここでfalseにする必要がある
+			return false;
+		}
+		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+		matched = BMatch( NULL, target + nStart, target + len, &m_pRegExp, m_szMsg );
+	} else {
+		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
+		matched = BMatchEx( NULL, target, target + nStart, target + len, &m_pRegExp, m_szMsg );
 	}
+	m_szTarget = target;
 			
-
-	*rep = m_sRep;
-	//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
-	int matched = BMatch( NULL, target + nStart, target + len, &m_sRep, m_szMsg );
-	if ( matched < 0 ) {
+	if ( matched < 0 || m_szMsg[0] ) {
 		// BMatchエラー
 		// エラー処理をしていなかったので、nStart>=lenのような場合に、マッチ扱いになり
 		// 無限置換等の不具合になっていた 2003.05.03 by かろと
-		*rep = NULL;
 		return false;
 	} else if ( matched == 0 ) {
-		return false;
-	} else {
-		return true;
-	}
-
-	return false;
-}
-
-// 2002/01/19 novice
-/*!
-	正規表現による文字列置換
-
-	@param szPattern0 [in] マッチパターン
-	@param szPattern1 [in] 置換文字列
-	@param target [in] 置換対象データ
-	@param len [in] 置換対象データ長
-	@param out [out] 置換後文字列		// 2002.01.26 hor
-	@param outlen [out] 置換後文字列長
-	@param bOption [in]
-		0x01：大文字小文字の区別をする。
-
-	@retval true 成功
-	@retval false 失敗
-	
-	@date 2004.05.14 Moca outlen追加 (置換結果に0が含まれていても良いようにする)
-*/
-bool CBregexp::Replace( const char *szPattern0, const char *szPattern1, const char *target, int len, char **out, int *outlen, int bOption )
-{
-	int result;
-
-	if( !IsAvailable() ){
+		// 一致しなかった
 		return false;
 	}
 
-	ReleaseCompileBuffer();
-
-	// ライブラリに渡す検索パターンを作成
-	// 別関数で共通処理に変更 2003.05.03 by かろと
-	char *szNPattern = MakePattern( szPattern0, szPattern1, bOption );
-
-	// nLenが０だと、BSubst()が置換に失敗してしまうので、代用データ(tmpBuf)を使う 2003.05.03 かろと
-	if( len == 0 ) {
-		target = tmpBuf;
-		len = 1;
-	}
-	// 置換実行
-	result = BSubst( szNPattern, target, target + len, &m_sRep, m_szMsg );
-	delete [] szNPattern;
-
-	//	メッセージが空文字列でなければ何らかのエラー発生。
-	//	サンプルソース参照
-	if( m_szMsg[0] ){
-		ReleaseCompileBuffer();
-		return false;
-	}
-
-	if( result ){
-		if( m_sRep->outp != NULL && m_sRep->outp < m_sRep->outendp ){
-			int i = m_sRep->outendp - m_sRep->outp;
-			*out = new char[i+1];
-			memcpy( *out, m_sRep->outp, i );
-			(*out)[i] = '\0';
-			*outlen = i;
-		}else{
-//			strcpy( target, "" );
-			*outlen = 0;
-			*out = new char[1];
-			(*out)[0] = '\0';
-		}
-
-		ReleaseCompileBuffer();
-		return true;
-	}
-
-	ReleaseCompileBuffer();
-	return false;
-}
-
-//<< 2002/03/27 Azumaiya
-/*!
-	JRE32のエミュレーション関数．空の文字列に対して置換を行うことにより
-	BREGEXP構造体の生成のみを行う．
-
-	@param szPattern0 [in] 置換パターン
-	@param szPattern1 [in] 置換後文字列パターン
-	@param bOption [in]
-		0x01：大文字小文字の区別をする。
-
-	@retval true 成功
-	@retval false 失敗
-*/
-bool CBregexp::CompileReplace( const char* szPattern0, const char* szPattern1, int bOption )
-{
-
-	if( !IsAvailable() ){
-		return false;
-	}
-
-	ReleaseCompileBuffer();
-
-	// ライブラリに渡す検索パターンを作成
-	// 別関数で共通処理に変更 2003.05.03
-	char *szNPattern = MakePattern(szPattern0, szPattern1, bOption);
-	// 置換実行
-	BSubst( szNPattern, tmpBuf, tmpBuf + 1, &m_sRep, m_szMsg );
-	delete [] szNPattern;
-
-	//	メッセージが空文字列でなければ何らかのエラー発生。
-	//	サンプルソース参照
-	if( m_szMsg[0] ){
-		ReleaseCompileBuffer();
-		return false;
-	}
-
-	// 行頭条件チェックは、MakePatternに取り込み 2003.05.03
 	return true;
 }
 
+
+//<< 2002/03/27 Azumaiya
 /*!
 	正規表現による文字列置換
 	既にあるコンパイル構造体を利用して置換（1行）を
 	行う．
 
-	@param szTarget [in] 置換対象データ
-	@param nLen [in] 置換対象データ長
-	@param pszOut [out] 置換後文字列
-	@param pnOutLen [out] 置換後文字列の長さ
+	@param[in] szTarget 置換対象データ
+	@param[in] nLen 置換対象データ長
+	@param[in] nStart 置換開始位置(0からnLen未満)
 
 	@retval true 成功
 	@retval false 失敗
 */
-bool CBregexp::GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOutLen)
+bool CBregexp::Replace(const char *szTarget, int nLen, int nStart)
 {
-	if( !IsAvailable() || m_sRep == NULL )
+	int result;
+	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
+	if( !IsAvailable() || m_pRegExp == NULL )
 	{
 		return false;
 	}
 
 	//	From Here 2003.05.03 かろと
-	// nLenが０だと、BSubst()が置換に失敗してしまうので、代用データ(tmpBuf)を使う
+	// nLenが０だと、BSubst()が置換に失敗してしまうので、代用データ(m_tmpBuf)を使う
 	if( nLen == 0 ) {
-		szTarget = tmpBuf;
+		szTarget = m_tmpBuf;
 		nLen = 1;
 	}
 	//	To Here 2003.05.03 かろと
 
-	int result = BSubst( NULL, szTarget, szTarget + nLen, &m_sRep, m_szMsg );
+	m_szMsg[0] = '\0';		//!< エラー解除
+	if (BSubstEx == NULL) {
+		result = BSubst( NULL, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
+	} else {
+		result = BSubstEx( NULL, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
+	}
+	m_szTarget = szTarget;
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
-	if( m_szMsg[0] )
-	{
-		// 逆方向への置換等再呼び出しを考慮して、コンパイルバッファはクリアしない by かろと
-//		ReleaseCompileBuffer();
+	if( m_szMsg[0] ) {
 		return false;
 	}
 
@@ -550,22 +459,6 @@ bool CBregexp::GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOu
 		// 置換するものがなかった
 		return false;
 	}
-
-	if( m_sRep->outp != NULL && m_sRep->outp < m_sRep->outendp )
-	{
-		int i = m_sRep->outendp - m_sRep->outp;
-		*pszOut = new char[i+1];
-		memcpy( *pszOut, m_sRep->outp, i );
-		(*pszOut)[i] = '\0';
-		*pnOutLen = i;
-	}
-	else
-	{
-		*pszOut = new char[1];
-		(*pszOut)[0] = '\0';
-		*pnOutLen = 0;
-	}
-
 	return true;
 }
 //>> 2002/03/27 Azumaiya

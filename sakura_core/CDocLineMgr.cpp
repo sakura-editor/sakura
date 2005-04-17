@@ -1680,7 +1680,6 @@ int CDocLineMgr::SearchWord(
 
 	/* 1==正規表現 */
 	if( bRegularExp ){
-		BREGEXP* pRegexpData;
 		/* 0==前方検索 1==後方検索 */
 		if( 0 == bPrevOrNext ){
 			//
@@ -1699,13 +1698,14 @@ int CDocLineMgr::SearchWord(
 					nHitPosOld = nHitPos;
 					//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 					nHitLenOld = nCurLen;
+					// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 					if( nIdxPos <= pDocLine->GetLengthWithoutEOL() 
-						&& pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
+						&& pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
 						// 検索にマッチした！
-						nHitPos = pRegexpData->startp[0] - pLine;
-						//nIdxPos = pRegexpData->endp[0] - pLine + 1;では、１文字検索でも２文字ずつ検索されるので NG 2003.05.03 かろと
-						nIdxPos = pRegexpData->endp[0] - pLine;
-						nCurLen = pRegexpData->endp[0] - pRegexpData->startp[0];
+						nHitPos = pRegexp->GetIndex();
+						nIdxPos = pRegexp->GetLastIndex();
+						nCurLen = nIdxPos - nHitPos;
+					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 						// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
 						if (nCurLen == 0) {
 							nIdxPos += (CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxPos] ) - &pLine[nIdxPos] == 2 ? 2 : 1);
@@ -1768,14 +1768,16 @@ int CDocLineMgr::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
 				//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+				// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 				if( nIdxPos <= pDocLine->GetLengthWithoutEOL() && // 2002.02.08 hor $の次検索で次の行に移動できない問題を回避
-					pRegexp->GetMatchInfo( pLine, nLineLen, nIdxPos, &pRegexpData ) ){
+					pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
 // 行頭文字を検索すると endp[0]-pLineは０になるので、この条件では行頭文字の検索ができない不具合となる
 //					if(nIdxPos<(pRegexpData->endp[0]-pLine)){	// 2002.02.08 hor EOF直前の文字が何度もマッチしてしまう問題を回避
 // EOF行の直前にマッチする問題は、GetMatchInfo側で対応 2003.05.03 by かろと
 					*pnLineNum = nLinePos;								/* マッチ行 */
-					*pnIdxFrom = pRegexpData->startp[0] - pLine;		/* マッチ位置from */
-					*pnIdxTo = pRegexpData->endp[0] - pLine;			/* マッチ位置to */
+					*pnIdxFrom = pRegexp->GetIndex();					/* マッチ位置from */
+					*pnIdxTo = pRegexp->GetLastIndex();					/* マッチ位置to */
+				//  To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 				//	To Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 					nRetVal = 1;
 					goto end_of_func;

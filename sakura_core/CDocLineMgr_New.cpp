@@ -530,12 +530,12 @@ void CDocLineMgr::MarkSearchWord(
 
 	/* 1==正規表現 */
 	if( bRegularExp ){
-		BREGEXP* pRegexpData;
 		pDocLine = GetLineInfo( 0 );
 		while( NULL != pDocLine ){
 			if(!pDocLine->IsBookMarked()){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-				if( pRegexp->GetMatchInfo( pLine, nLineLen, 0, &pRegexpData ) ){
+				// 2005.03.19 かろと 前方一致サポートのためのメソッド変更
+				if( pRegexp->Match( pLine, nLineLen, 0 ) ){
 					pDocLine->SetBookMark(true);
 				}
 			}
