@@ -479,6 +479,10 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 			rcClip.right  = x + nSelectTo   * ( nCharWidth );
 			rcClip.top    = y;
 			rcClip.bottom = y + nLineHeight;
+			// 2005/04/02 かろと ０文字マッチだと反転幅が０となり反転されないので、1/3文字幅だけ反転させる
+			if (rcClip.right == rcClip.left) {
+				rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+			}
 			if( rcClip.right - rcClip.left > 3000 ){
 				rcClip.right = rcClip.left + 3000;
 			}
@@ -507,29 +511,21 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 	int		nKeyLength;
 
 	//	From Here Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	BREGEXP* result;
 	*pnSearchStart = nPos;	// 2002.02.08 hor
 
 	if( m_bCurSrchRegularExp ){
 		/* 行頭ではない? */
-//		if( ( ( m_szCurSrchKey[0] == '/' && '^' == m_szCurSrchKey[1] )
-//			|| ( m_szCurSrchKey[0] == 'm' && '^' == m_szCurSrchKey[2] ) )
-		if( ( m_szCurSrchKey[0] == '^' )
-			&& 0 != nPos ){
-			return FALSE;
-		}
+		/* 行頭検索チェックは、CBregexpクラス内部で実施するので不要 2003.11.01 かろと */
 
 		/* 位置を0でMatchInfo呼び出すと、行頭文字検索時に、全て true　となり、
 		** 画面全体が検索文字列扱いになる不具合修正
 		** 対策として、行頭を MacthInfoに教えないといけないので、文字列の長さ・位置情報を与える形に変更
 		** 2003.05.04 かろと
 		*/
-//		if( m_CurRegexp.GetMatchInfo( &pszData[nPos], nDataLen - nPos, 0, &result )
-		if( m_CurRegexp.GetMatchInfo( pszData, nDataLen, nPos, &result )
-	//	 && ( result->startp[0] == &pszData[nPos] )			// 2002.02.08 hor
+		if( m_CurRegexp.Match( pszData, nDataLen, nPos )
 		){
-			*pnSearchStart = result->startp[0] - pszData;	// 2002.02.08 hor
-			*pnSearchEnd = result->endp[0] - pszData;
+			*pnSearchStart = m_CurRegexp.GetIndex();	// 2002.02.08 hor
+			*pnSearchEnd = m_CurRegexp.GetLastIndex();
 	//	To Here Jun. 26, 2001 genta
 			return TRUE;
 

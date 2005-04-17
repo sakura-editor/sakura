@@ -74,11 +74,26 @@ typedef struct bregexp {
 	その安全性を保証するのが難しいため、現時点では両者を１つのクラスに入れた。
 
 	@note このクラスはThread Safeではない。
+
+	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 */
 class SAKURA_CORE_API CBregexp : public CDllHandler {
 public:
 	CBregexp();
 	virtual ~CBregexp();
+
+	enum Option {
+		bIgnoreCase = 1			//!< 大文字小文字無視オプション
+	};
+	//! 検索パターン定義
+	enum Pattern {
+		PAT_UNKNOWN = 0,		//!< 不明（初期値)
+		PAT_NORMAL = 1,			//!< 通常
+		PAT_TOP = 2,			//!< 行頭"^"
+		PAT_BOTTOM = 4,			//!< 行末"$"
+		PAT_TAB = 8,			//!< 行頭行末"^$"
+		PAT_LOOKAHEAD = 16		//!< 先読み"(?[=]"
+	};
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得
 		return IsAvailable() ? BRegexpVersion() : "";
@@ -86,20 +101,84 @@ public:
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
-	bool Compile(const char *szPattern, int bOption );
-	bool GetMatchInfo(const char*target, int len, int nStart, BREGEXP**rep);		//!< コンパイル後の検索結果を得る
 	// 2002/01/19 novice 正規表現による文字列置換
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
-	// 2004.05.14 Moca   置換後文字列の長さを追加
-	bool Replace(const char *szPattern0, const char *szPattern1, const char *target, int len, char **out, int *outlen, int bOption );
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
-	bool CompileReplace(const char *szPattern0, const char *szPattern1, int bOption );
-	bool GetReplaceInfo(char *szTarget, int nLen, char **pszOut, int *pnOutLen);
-	//<< 2002/03/27 Azumaiya
+	bool Compile(const char *szPattern, int bOption = 0) {
+		return Compile(szPattern, NULL, bOption);
+	}
+	bool Compile(const char *szPattern0, const char *szPattern1, int bOption = 0);	//!< Replace用
+	bool Match(const char *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
+	bool Replace(const char *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する
 
-	//! BREGEXPメッセージを取得する
+	//-----------------------------------------
+	// 2005.03.19 かろと クラス内部を隠蔽
+	/*! @{
+		@name 結果を得るメソッドを追加し、BREGEXPを外部から隠す
+	*/
+	/*!
+	    検索に一致した文字列の先頭位置を返す(文字列先頭なら0)
+		@retval 検索に一致した文字列の先頭位置
+	*/
+	int GetIndex(void) {
+		return m_pRegExp->startp[0] - m_szTarget;
+	}
+	/*!
+	    検索に一致した文字列の次の位置を返す
+		@retval 検索に一致した文字列の次の位置
+	*/
+	int GetLastIndex(void) {
+		return m_pRegExp->endp[0] - m_szTarget;
+	}
+	/*!
+		検索に一致した文字列の長さを返す
+		@retval 検索に一致した文字列の長さ
+	*/
+	int GetMatchLen(void) {
+		return m_pRegExp->endp[0] - m_pRegExp->startp[0];
+	}
+	/*!
+		置換された文字列の長さを返す
+		@retval 置換された文字列の長さ
+	*/
+	int GetStringLen(void) {
+		// 置換後文字列が０幅なら outp、outendpもNULLになる
+		// NULLポインタの引き算は問題なく０になる。
+		// outendpは '\0'なので、文字列長は +1不要
+		return m_pRegExp->outendp - m_pRegExp->outp;
+	}
+	/*!
+		置換された文字列を返す
+		@retval 置換された文字列へのポインタ
+	*/
+	const char *GetString(void) {
+		return m_pRegExp->outp;
+	}
+	/*! @} */
+	//-----------------------------------------
+
+	/*! BREGEXPメッセージを取得する
+		@retval メッセージへのポインタ
+	*/
 	const char* GetLastMessage(void) const { return m_szMsg; }
+	/*!	先読みパターンが存在するかを返す
+		この関数は、コンパイル後であることが前提なので、コンパイル前はfalse
+		@retval true 先読みがある
+		@retval false 先読みがない 又は コンパイル前
+	*/
+	bool IsLookAhead(void) {
+		return m_ePatType & PAT_LOOKAHEAD ? true : false;
+	}
+	/*!	検索パターンに先読みが含まれるか？（コンパイル前でも判別可能）
+		@param[in] pattern 検索パターン
+		@retval true 先読みがある
+		@retval false 先読みがない
+	*/
+	bool IsLookAhead(const char *pattern) {
+		CheckPattern(pattern);
+		return IsLookAhead();
+	}
 
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
@@ -114,6 +193,9 @@ protected:
 	typedef int (*BREGEXP_BSplit)(const char*,char *,char *,int,BREGEXP **,char *);
 	typedef void (*BREGEXP_BRegfree)(BREGEXP*);
 	typedef const char* (*BREGEXP_BRegexpVersion)(void);
+	// 2005.03.19 かろと 前方一致用新インターフェース
+	typedef int (*BREGEXP_BMatchEx)(const char*,const char*, const char *,const char *,BREGEXP **,char *);
+	typedef int (*BREGEXP_BSubstEx)(const char*,const char*, const char *,const char *,BREGEXP **,char *);
 
 	BREGEXP_BMatch BMatch;
 	BREGEXP_BSubst BSubst;
@@ -121,40 +203,36 @@ protected:
 	BREGEXP_BSplit BSplit;
 	BREGEXP_BRegfree BRegfree;
 	BREGEXP_BRegexpVersion BRegexpVersion;
+	BREGEXP_BMatchEx BMatchEx;
+	BREGEXP_BSubstEx BSubstEx;
 
-	#define	PAT_NORMAL	0 	//!< 通常
-	#define	PAT_TOP		1	//!< 行頭"^"
-	#define	PAT_BOTTOM	2	//!< 行末"$"
-	#define PAT_TAB		4	//!< 行頭行末"^$"
 	//!	コンパイルバッファを解放する
 	/*!
-		m_sRepをBRegfree()に渡して解放する．解放後はNULLにセットする．
+		m_pcRegをBRegfree()に渡して解放する．解放後はNULLにセットする．
 		元々NULLなら何もしない
 	*/
 	void ReleaseCompileBuffer(void){
-		if( m_sRep ){
-			BRegfree( m_sRep );
-			m_sRep = NULL;
+		if( m_pRegExp ){
+			BRegfree( m_pRegExp );
+			m_pRegExp = NULL;
 		}
-		m_ePatType = PAT_NORMAL;
+		m_ePatType = PAT_UNKNOWN;
 	}
 
 private:
 	//	内部関数
 
-	//!	境界選択
-	//int ChooseBoundary(const char* str1, const char* str2 = NULL );
-
 	//! 検索パターン作成
+	int CheckPattern( const char *szPattern );
 	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int bOption );
 	char* MakePattern( const char* szPattern, const char* szPattern2, int bOption );
 	//	メンバ変数
-	BREGEXP*	m_sRep;	//!< コンパイル構造体
-	static char tmpBuf[2];			//!< ダミー文字列
-	// 行頭検索を特別扱いするための変数 by かろと
-	
-	int			m_ePatType;			//!< 検索文字列パターン種別
-	char		m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
+	BREGEXP*			m_pRegExp;			//!< コンパイル構造体
+	int					m_ePatType;			//!< 検索文字列パターン種別
+	const char			*m_szTarget;		//!< 対象文字列へのポインタ
+	char				m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
+	// 静的メンバ変数
+	static const char	m_tmpBuf[2];		//!< ダミー文字列
 };
 
 //	以下は関数ポインタに読み込まれる関数の解説
@@ -170,12 +248,41 @@ private:
 
 	target <= p < targetendp の範囲が検索対象になる。
 */
+/*!	@fn int CBregexp::BMatchEx(char* str,char *targetbeg, char *target,char *targetendp, BREGEXP **rxp,char *msg)
+
+	m/pattern/option 形式のPerl互換パターンマッチングを行う。
+
+	@param str [in] 検索するパターン(コンパイル済みならNULL)
+	@param targetbeg [in] 検索対象文字列(行頭から)
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	target <= p < targetendp の範囲が検索対象になる。
+*/
 
 /*!	@fn int CBregexp::BSubst(char* str,char *target,char *targetendp, BREGEXP **rxp,char *msg);
 
 	s/pattern/replace/option 形式のPerl互換文字列置換を行う
 
 	@param str [in] 検索・置換パターン
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	@return 置換した文字列の数
+	
+	rxp->outpからrxp->outendpに置換後の文字列が格納される。
+
+*/
+/*!	@fn int CBregexp::BSubstEx(char* str,char *targetbeg char *target, ,char *targetendp, BREGEXP **rxp,char *msg);
+
+	s/pattern/replace/option 形式のPerl互換文字列置換を行う
+
+	@param str [in] 検索・置換パターン（コンパイル済みならNULL)
+	@param target [in] 検索対象文字列（行頭から）
 	@param target [in] 検索対象領域先頭
 	@param targetendp [in] 検索対象領域末尾
 	@param rxp [out] BREGEXP構造体。結果はここから取得する。

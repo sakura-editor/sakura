@@ -7351,7 +7351,6 @@ int CEditView::DoGrepFile(
 
 		/* 正規表現検索 */
 		if( bGrepRegularExp ){
-			BREGEXP*	pRegexpData;	//	正規表現コンパイルデータ
 			int nColmPrev = 0;
 
 			//	Jun. 21, 2003 genta ループ条件見直し
@@ -7359,20 +7358,22 @@ int CEditView::DoGrepFile(
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
 			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
 			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-			while( pRegexp->GetMatchInfo( pCompareData, nLineLen, 0, &pRegexpData ) ){
+			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
+			while( pRegexp->Match( pCompareData, nLineLen, 0 ) ){
 
 					//	パターン発見
-					nColm = pRegexpData->startp[0] - pCompareData + 1;
-					int matchlen = pRegexpData->endp[0] - pRegexpData->startp[0];
+					nColm = pRegexp->GetIndex() + 1;
+					int matchlen = pRegexp->GetMatchLen();
 
 					/* Grep結果を、szWorkに格納する */
 					SetGrepResult(
 						szWork, &nWorkLen,
 						pszFullPath, pszCodeName,
 						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
-						pRegexpData->startp[0], matchlen,
+						pCompareData + nColm - 1, matchlen,
 						bGrepOutputLine, nGrepOutputStyle
 					);
+					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 					if( 2 == nGrepOutputStyle ){
 					/* WZ風 */
 						if( !bOutFileName ){

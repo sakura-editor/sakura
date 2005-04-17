@@ -278,6 +278,8 @@ BOOL CDlgFind::OnBnClicked( int wID )
 
 				/* 前を検索 */
 				pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
+				pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
@@ -321,6 +323,8 @@ BOOL CDlgFind::OnBnClicked( int wID )
 
 				/* 次を検索 */
 				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
+				pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録

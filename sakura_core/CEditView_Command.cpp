@@ -7455,67 +7455,72 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		if(nPaste){
 		//	HandleCommand( F_PASTE, 0, 0, 0, 0, 0 );
 			Command_PASTE();
-		}else{
+		} else if ( bRegularExp ) { /* 検索／置換  1==正規表現 */
+			// 先読みに対応するために物理行末までを使うように変更 2005/03/27 かろと
 			// 2002/01/19 novice 正規表現による文字列置換
-			if( bRegularExp ){ /* 検索／置換  1==正規表現 */
-				CMemory cmemory;
-				CBregexp cRegexp;
-				char*	RegRepOut;
-				int     nRegRepOutLen;
+			CMemory cmemory;
+			CBregexp cRegexp;
 
-				if( !InitRegexp( m_hWnd, cRegexp, true ) ){
-					return;	//	失敗return;
-				}
-
-				if (save_nSelectLineFrom == save_nSelectLineTo && save_nSelectColmFrom == save_nSelectColmTo) {
-					// 長さ０マッチで無限置換しないように、長さ１文字分増やして置き換える
-					m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineTo;
-					m_nSelectColmFrom = m_nSelectColmTo = save_nSelectColmTo;
-					int nLineLen;
-					int nIdx;
-					const CLayout* pcLayout;
-					const char* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(m_nSelectLineTo, &nLineLen, &pcLayout);
-					nIdx = LineColmnToIndex( pcLayout, m_nSelectColmTo );
-					if( nIdx < nLineLen ) {
-						nIdx += (CMemory::MemCharNext(pLine, nLineLen, pLine+nIdx) - (pLine+nIdx) == 2 ? 2 : 1);
-					} else {
-						++nIdx;
-					}
-					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdx );
-					if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
-						::MessageBeep( MB_ICONHAND );
-					}
-					// 注意！nReplaceTargetが挿入位置、追加位置であっても、m_nSelectXXXXは元に戻さない。
-				} else {
-#define	SWAP_VAR(a,b)	{ int x; x = a; a = b; b = x; }
-					SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
-					SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
-					SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
-					SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
-
-					if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy /*, EOL_NONE 2002/1/26 novice */ ) ){
-						::MessageBeep( MB_ICONHAND );
-					}
-
-					SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
-					SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
-					SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
-					SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
-#undef	SWAP_VAR
-				}
-
-				// 変換後の文字列を別の引数にしました 2002.01.26 hor
-				//	2004.05.14 Moca 置換後の文字列の長さを受け取る
-				if( cRegexp.Replace( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey.GetPtr(),
-				    cmemory.GetPtr(), cmemory.GetLength(),&RegRepOut, &nRegRepOutLen, nFlag) ){ // 2002/2/10 aroka CMemory変更
-				//	HandleCommand( F_INSTEXT, TRUE, (LPARAM)RegRepOut, FALSE, 0, 0 );
-					Command_INSTEXT( FALSE, RegRepOut, nRegRepOutLen , TRUE );
-					delete [] RegRepOut;
-				}
-			}else{
-			//	HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
-				Command_INSTEXT( FALSE, cMemRepKey.GetPtr(), cMemRepKey.GetLength(), TRUE );
+			if( !InitRegexp( m_hWnd, cRegexp, true ) ){
+				return;	//	失敗return;
 			}
+
+			// 物理行、物理行長、物理行での検索マッチ位置
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(save_nSelectLineFrom);
+			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
+			int nPyLineNum = pcLayout->m_nLinePhysical;
+			int nIdx = LineColmnToIndex( pcLayout, save_nSelectColmFrom ) + pcLayout->m_nOffset;
+			int nLen = strlen(pLine);
+			int nLenEOL = pcLayout->m_pCDocLine->m_cEol.GetLen();
+			// 正規表現で選択始点・終点への挿入を記述
+			CMemory cMemMatchStr = CMemory("$&", strlen("$&"));
+			CMemory cMemRepKey2;
+			if (nReplaceTarget == 1) {	//選択始点へ挿入
+				cMemRepKey2 = cMemRepKey;
+				cMemRepKey2 += cMemMatchStr;
+			} else if (nReplaceTarget == 2) { // 選択終点へ挿入
+				cMemRepKey2 = cMemMatchStr;
+				cMemRepKey2 += cMemRepKey;
+			} else {
+				cMemRepKey2 = cMemRepKey;
+			}
+			cRegexp.Compile( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
+			if( cRegexp.Replace(pLine, nLen, nIdx) ){
+				// Command_INSTEXT用に選択位置(m_nSelectXXXX)を物理行行末までに更新
+				m_nSelectLineFrom = save_nSelectLineFrom;
+				m_nSelectColmFrom = save_nSelectColmFrom;
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nLen, nPyLineNum, &m_nSelectColmTo, &m_nSelectLineTo);
+				// 物理行末までINSTEXTするので、キャレット位置が次の行頭になってしまうから
+				// キャレット位置を検索文字列末の位置まで戻す
+				// 置換前後で文字列長が変わる場合があるので、置換前後の文字列長の差だけ、検索文字列を調整
+				// INSTEXT後は pLineが変わっているかもしれないので先に nIdxToを計算
+				int colDiff = cRegexp.GetStringLen() - (nLen - nIdx);
+				int matchLen = cRegexp.GetMatchLen();
+				int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
+				if (matchLen == 0) {
+					// ０文字マッチの時(無限置換にならないように１文字進める)
+					if (nIdxTo < nLen) {
+						nIdxTo += (CMemory::MemCharNext(pLine, nLen, pLine+nIdxTo) - (pLine+nIdxTo) == 2 ? 2 : 1);
+					} else {
+						++nIdxTo;
+					}
+				} else if (nIdxTo == nLen) {
+					// 改行コード全て含んだ置換の場合
+					// そのまま
+				} else if (nIdxTo > nLen - nLenEOL) {
+					// 改行コードの中なので、進む
+					nIdxTo++;
+				}
+				// 置換後文字列への書き換え
+				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen(), TRUE );
+				// キャレット位置の調整
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nIdxTo + colDiff, nPyLineNum, &m_nCaretPosX, &m_nCaretPosY);
+				// キャレット位置は調整済みなので colTmp, linTmpは０クリア
+				colTmp = linTmp = 0;
+			}
+		}else{
+			//	HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
+			Command_INSTEXT( FALSE, cMemRepKey.GetPtr(), cMemRepKey.GetLength(), TRUE );
 		}
 		// 挿入後の検索開始位置を調整
 		if(nReplaceTarget==1){
@@ -7735,7 +7740,20 @@ void CEditView::Command_REPLACE_ALL( void )
 			return;
 		}
 
-		cRegexp.CompileReplace(m_pShareData->m_szSEARCHKEYArr[0], szREPLACEKEY, nFlag);
+		const CMemory	cMemRepKey( szREPLACEKEY, _tcslen(szREPLACEKEY) );
+		CMemory cMemRepKey2;
+		// 正規表現で選択始点・終点への挿入を記述
+		CMemory cMemMatchStr = CMemory("$&", strlen("$&"));
+		if (nReplaceTarget == 1 ) {	//選択始点へ挿入
+			cMemRepKey2 = cMemRepKey;
+			cMemRepKey2 += cMemMatchStr;
+		} else if (nReplaceTarget == 2) { // 選択終点へ挿入
+			cMemRepKey2 = cMemMatchStr;
+			cMemRepKey2 += cMemRepKey;
+		} else {
+			cMemRepKey2 = cMemRepKey;
+		}
+		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
 	}
 
 	int save_nSelectColmFrom;
@@ -7918,61 +7936,48 @@ void CEditView::Command_REPLACE_ALL( void )
 		// 2002/01/19 novice 正規表現による文字列置換
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
 		{
-			//	From Here 2003.05.18 かろと
-			if (save_nSelectLineFrom == save_nSelectLineTo && save_nSelectColmFrom == save_nSelectColmTo) {
-				// 長さ０マッチで無限置換しないように、長さ１文字分増やして置き換える
-				m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineTo;
-				m_nSelectColmFrom = m_nSelectColmTo = save_nSelectColmTo;
-				int nLineLen;
-				int nIdx;
-				const char* pLine = rLayoutMgr.GetLineStr(m_nSelectLineTo, &nLineLen, &pcLayout);
-				nIdx = LineColmnToIndex( pcLayout, m_nSelectColmTo );
-				if (nIdx < nLineLen) {
-					nIdx += (CMemory::MemCharNext(pLine, nLineLen, pLine+nIdx) - (pLine+nIdx) == 2 ? 2 : 1);
-				} else {
-					++nIdx;
+			// 物理行、物理行長、物理行での検索マッチ位置
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(save_nSelectLineFrom);
+			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
+			const int nPyLineNum = pcLayout->m_nLinePhysical;
+			int nIdx = LineColmnToIndex( pcLayout, save_nSelectColmFrom ) + pcLayout->m_nOffset;
+			int nLen = strlen(pLine);
+			int nLenEOL = pcLayout->m_pCDocLine->m_cEol.GetLen();
+			if( cRegexp.Replace(pLine, nLen, nIdx) ){
+				// Command_INSTEXT用に選択位置(m_nSelectXXXX)を物理行行末までに更新
+				m_nSelectLineFrom = save_nSelectLineFrom;
+				m_nSelectColmFrom = save_nSelectColmFrom;
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nLen, nPyLineNum, &m_nSelectColmTo, &m_nSelectLineTo);
+				// 物理行末までINSTEXTするので、キャレット位置が次の行頭になってしまうから
+				// キャレット位置を検索文字列末の位置まで戻す
+				// 置換前後で文字列長が変わる場合があるので、置換前後の文字列長の差だけ、検索文字列を調整
+				// INSTEXT後は pLineが変わっているかもしれないので先に計算 nIdxToを計算
+				int colDiff = cRegexp.GetStringLen() - (nLen - nIdx);
+				int matchLen = cRegexp.GetMatchLen();
+				int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
+				if (matchLen == 0) {
+					// ０文字マッチの時(無限置換にならないように１文字進める)
+					if (nIdxTo < nLen) {
+						nIdxTo += (CMemory::MemCharNext(pLine, nLen, pLine+nIdxTo) - (pLine+nIdxTo) == 2 ? 2 : 1);
+					} else {
+						++nIdxTo;
+					}
+				} else if (nIdxTo == nLen) {
+					// 改行コード全て含んだ置換の場合
+					// そのまま
+				} else if (nIdxTo > nLen - nLenEOL) {
+					// 改行コードの中なので、進む
+					nIdxTo++;
 				}
-				m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdx );
-				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, bAddCRLFWhenCopy ) ){
-					::MessageBeep( MB_ICONHAND );
-				}
-				// 注意！nReplaceTargetが挿入位置、追加位置であっても、m_nSelectXXXXは元に戻さない。
+				// 置換後文字列への書き換え
+				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen(), TRUE );
+				// キャレット位置の調整
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nIdxTo + colDiff, nPyLineNum, &m_nCaretPosX, &m_nCaretPosY);
+				// キャレット位置は調整済みなので colTmp, linTmpは０クリア
+				colTmp = linTmp = 0;
 			} else {
-#define	SWAP_VAR(a,b)	{ int x; x = a; a = b; b = x; }
-				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
-				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
-				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
-				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
-
-				if( FALSE == GetSelectedData( cmemory, FALSE, NULL, FALSE, bAddCRLFWhenCopy ) ){
-					::MessageBeep( MB_ICONHAND );
-				}
-
-				SWAP_VAR(save_nSelectColmFrom, m_nSelectColmFrom);
-				SWAP_VAR(save_nSelectLineFrom, m_nSelectLineFrom);
-				SWAP_VAR(save_nSelectColmTo  , m_nSelectColmTo  );
-				SWAP_VAR(save_nSelectLineTo  , m_nSelectLineTo  );
-#undef	SWAP_VAR
-			}
-			//	To Here 2003.05.18 かろと
-
-			if( cRegexp.GetReplaceInfo(cmemory.GetPtr(), cmemory.GetLength(), &szREPLACEKEY, &nREPLACEKEY) )
-			{
-				/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
-				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18
-				*/
-				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
-				delete [] szREPLACEKEY;
-			} else {
-				// ---------------------
-				// Command_REPLACE()と同じになるように修正 2003.07.11 かろと
-				// (説明) else時に breakしていたのは、０文字マッチの無限ループ対策の１つだったが、
-				// ０文字マッチでも１文字進める対策したため、改行位置で０文字マッチすると breakして
-				// 全置換がそこで終わる不具合になっていた
-				// ----------------------
-//				break;		// break for loop
 				// ここに来たら実際に置換は行われていないので、１減算して置換個数が増えないように調整 2003.07.11 かろと
-				--nReplaceNum;				
+				--nReplaceNum;
 			}
 		}
 		else
