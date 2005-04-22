@@ -97,7 +97,7 @@ CDlgFuncList::CDlgFuncList()
 {
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = 0;				/* 現在行 */
-	m_nSortCol = 0;				/* ソートする列番号 */
+	m_nSortCol = 1;				/* ソートする列番号 2004.04.06 zenryaku 標準は行番号(2列目) */
 	m_bLineNumIsCRLF = FALSE;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
 	m_nSortType = 0;
@@ -432,6 +432,7 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), FALSE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), SW_HIDE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_HIDE );
+		ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
 	}
 
 	return;
