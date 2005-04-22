@@ -6,11 +6,13 @@
 
 	@author MIK
 	@date Apr. 05, 2003
+	@date Apr. 03, 2005
 
 	$Revision$
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -57,7 +59,8 @@ typedef enum {
 	RECENT_FOR_GREP_FILE   = 4,
 	RECENT_FOR_GREP_FOLDER = 5,
 	RECENT_FOR_CMD         = 6,
-	RECENT_FOR_EDITNODE    = 7	//ウインドウリスト	@@@ 2003.05.31 MIK
+	RECENT_FOR_EDITNODE    = 7,	//ウインドウリスト	@@@ 2003.05.31 MIK
+	RECENT_FOR_TAGJUMP_KEYWORD = 8	//タグジャンプキーワード @@@ 2005.04.03 MIK
 } enumRecentFor;	//型名追加	//@@@ 2003.05.12 MIK
 
 

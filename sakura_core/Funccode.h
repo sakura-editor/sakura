@@ -252,6 +252,7 @@
 #define	F_TAGS_MAKE			30943	//タグファイルの作成	//@@@ 2003.04.13 MIK
 #define	F_DIRECT_TAGJUMP	30944	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
 #define F_TAGJUMP_CLOSE		30945	//閉じてタグジャンプ(元ウィンドウclose) // Apr. 03. 2003 genta
+#define F_TAGJUMP_KEYWORD	30946	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
 #define F_COMPARE			30950	//ファイル内容比較
 #define F_BRACKETPAIR		30960	//対括弧の検索
 #define F_BOOKMARK_SET		30970	//ブックマーク設定・解除

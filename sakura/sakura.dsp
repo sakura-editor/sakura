@@ -549,6 +549,10 @@ SOURCE=..\sakura_core\CSMacroMgr.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CSortedTagJumpList.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CSplitBoxWnd.cpp
 # End Source File
 # Begin Source File
@@ -962,6 +966,10 @@ SOURCE=..\sakura_core\CShareData.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CSMacroMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CSortedTagJumpList.h
 # End Source File
 # Begin Source File
 

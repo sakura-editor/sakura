@@ -6,11 +6,13 @@
 
 	@author MIK
 	@date Apr. 05, 2003
+	@date Apr. 03, 2005
 
 	$Revision$
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -700,6 +702,19 @@ bool CRecent::EasyCreate( int nRecentType )
 			(int)(&((EditNode*)0)->m_hWnd),
 			sizeof( ((EditNode*)0)->m_hWnd ),	//sizeof(HWND)
 			RECENT_CMP_MEMCMP
+		);
+
+	case RECENT_FOR_TAGJUMP_KEYWORD:	//タグジャンプキーワード 2005.04.03 MIK
+		return Create(
+			(char*)m_pShareData->m_szTagJumpKeywordArr,
+			&m_pShareData->m_nTagJumpKeywordArrNum,
+			NULL /*m_pShareData->m_bTagJumpKeywordArrFavorite*/,
+			MAX_TAGJUMP_KEYWORD,
+			NULL,
+			sizeof( m_pShareData->m_szTagJumpKeywordArr[0] ),	//_MAX_PATH
+			0,
+			0,	//AppendItemのデータは文字列
+			RECENT_CMP_STRCMP
 		);
 
 	default:

@@ -351,6 +351,8 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 
 	/* コンボボックス用メッセージ */
 	case CBN_SELCHANGE:	return OnCbnSelChange( hwndCtl, wID );
+	// @@2005.03.31 MIK タグジャンプDialogで使うので追加
+	case CBN_EDITCHANGE:	return OnCbnEditChange( hwndCtl, wID );
 //	case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
 //	case CBN_DROPDOWN:	return OnDbnDropDown( hwndCtl, wID );
 //	case CBN_CLOSEUP:	return OnDbnCloseUp( hwndCtl, wID );

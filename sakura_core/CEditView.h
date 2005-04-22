@@ -723,6 +723,7 @@ void ReplaceData_CEditView(
 	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
 	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn, bool bClose = false );
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
+	bool Command_TagJumpByTagsFileKeyword( const char* keyword );	//	@@ 2005.03.31 MIK
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_Diff_Dialog( void );					/* DIFF差分表示ダイアログ */	//@@@ 2002.05.25 MIK
 	void Command_Diff( const char*, const char*, int );	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK

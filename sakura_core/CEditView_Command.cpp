@@ -491,6 +491,7 @@ BOOL CEditView::HandleCommand(
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
 	case F_TAGS_MAKE:		Command_TagsMake();break;						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	case F_DIRECT_TAGJUMP:	Command_TagJumpByTagsFile();break;				/* ダイレクトタグジャンプ機能 */	//@@@ 2003.04.15 MIK
+	case F_TAGJUMP_KEYWORD:	Command_TagJumpByTagsFileKeyword( (const char*)lparam1 );break;	/* @@ 2005.03.31 MIK キーワードを指定してダイレクトタグジャンプ機能 */
 	case F_COMPARE:			Command_COMPARE();break;						/* ファイル内容比較 */
 	case F_DIFF_DIALOG:		Command_Diff_Dialog();break;					/* DIFF差分表示(ダイアログ) */	//@@@ 2002.05.25 MIK
 	case F_DIFF:			Command_Diff( (const char*)lparam1, (const char*)lparam2, (int)lparam3 );break;		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
@@ -6142,8 +6143,6 @@ void CEditView::Command_TAGJUMPBACK( void )
 */
 bool CEditView::Command_TagJumpByTagsFile( void )
 {
-#define	TAG_FILENAME	"tags"
-
 	CMemory	cmemKey;
 	int		i;
 	char	szCurrentPath[1024];	//カレントフォルダ
@@ -6196,8 +6195,9 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 					//	2004.06.04 Moca ファイル名/パスにスペースが含まれているときに
 					//	ダイレクトタグジャンプに失敗していた
 					//	sscanf の%[^\t\r\n] でスペースを読みとるように変更
+					//	@@ 2005.03.31 MIK TAG_FORMAT定数化
 					nRet = sscanf( szLineData, 
-						"%s\t%[^\t\r\n]\t%d;\"\t%s\t%s",	//tagsフォーマット
+						TAG_FORMAT,	//tagsフォーマット
 						s[0], s[1], &n2, s[3], s[4]
 						);
 					if( nRet < 4 ) goto next_line;
@@ -6205,7 +6205,8 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 
 					if( 0 != strcmp( s[0], cmemKey.GetPtr() ) ) goto next_line;
 
-					cDlgTagJumpList.AddParam( s[0], s[1], n2, s[3], s[4] );
+					//	@@ 2005.03.31 MIK 階層パラメータ追加
+					cDlgTagJumpList.AddParam( s[0], s[1], n2, s[3], s[4], i );
 					nMatch++;
 					continue;
 
@@ -6229,7 +6230,9 @@ next_line:
 				//タグジャンプする。
 				if( nMatch > 0 )
 				{
-					if( false == cDlgTagJumpList.GetSelectedParam( s[0], s[1], &n2, s[3], s[4] ) )
+					//	@@ 2005.03.31 MIK 階層パラメータ追加
+					int depth;
+					if( false == cDlgTagJumpList.GetSelectedParam( s[0], s[1], &n2, s[3], s[4], &depth ) )
 					{
 						return false;
 					}
@@ -6240,6 +6243,7 @@ next_line:
 					 * n2   行番号
 					 * s[3] タイプ
 					 * s[4] コメント
+					 * depth (さかのぼる)階層数
 					 */
 
 					//完全パス名を作成する。
@@ -6644,6 +6648,80 @@ finish:
 	return true;
 }
 
+/*!
+	キーワードを指定してタグジャンプ
+
+	@author MIK
+	@date 2005.03.31 新規作成
+*/
+bool CEditView::Command_TagJumpByTagsFileKeyword( const char* keyword )
+{
+	CMemory	cmemKey;
+	CDlgTagJumpList	cDlgTagJumpList;
+	char	s[5][1024];
+	int		n2;
+	int depth;
+	char	szTagFile[1024];		//タグファイル
+	char	szCurrentPath[1024];
+
+	if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
+	strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
+
+	cDlgTagJumpList.SetFileName( szCurrentPath );
+	cDlgTagJumpList.SetKeyword( keyword );
+
+	szCurrentPath[ strlen( szCurrentPath ) - strlen( m_pcEditDoc->GetFileName() ) ] = '\0';
+
+	if( ! cDlgTagJumpList.DoModal( m_hInstance, m_hWnd, (LPARAM)1 ) ) 
+	{
+		return true;	//キャンセル
+	}
+
+	//タグジャンプする。
+	if( false == cDlgTagJumpList.GetSelectedParam( s[0], s[1], &n2, s[3], s[4], &depth ) )
+	{
+		return false;
+	}
+
+	/*
+	 * s[0] キー
+	 * s[1] ファイル名
+	 * n2   行番号
+	 * s[3] タイプ
+	 * s[4] コメント
+	 * depth (さかのぼる)階層数
+	 */
+
+	//完全パス名を作成する。
+	char	*p;
+	p = s[1];
+	if( p[0] == '\\' )	//ドライブなし絶対パスか？
+	{
+		if( p[1] == '\\' )	//ネットワークパスか？
+		{
+			strcpy( szTagFile, p );	//何も加工しない。
+		}
+		else
+		{
+			//ドライブ加工したほうがよい？
+			strcpy( szTagFile, p );	//何も加工しない。
+		}
+	}
+	else if( isalpha( p[0] ) && p[1] == ':' )	//絶対パスか？
+	{
+		strcpy( szTagFile, p );	//何も加工しない。
+	}
+	else
+	{
+		for( int i = 0; i < depth; i++ )
+		{
+			strcat( szCurrentPath, "..\\" );
+		}
+		wsprintf( szTagFile, "%s%s", szCurrentPath, p );
+	}
+
+	return TagJumpSub( szTagFile, n2, 0 );
+}
 
 
 

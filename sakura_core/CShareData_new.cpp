@@ -1104,6 +1104,20 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		cProfile.IOProfileData( bRead, pszSecName, "nTagsOpt"		, m_pShareData->m_nTagsOpt );
 		cProfile.IOProfileData( bRead, pszSecName, "szTagsCmdLine"	, m_pShareData->m_szTagsCmdLine, sizeof( m_pShareData->m_szTagsCmdLine ) );
 
+		//From Here 2005.04.03 MIK キーワード指定タグジャンプ
+		cProfile.IOProfileData( bRead, pszSecName, "_TagJumpKeyword_Counts", m_pShareData->m_nTagJumpKeywordArrNum );
+		for( i = 0; i < m_pShareData->m_nTagJumpKeywordArrNum; ++i ){
+			wsprintf( szKeyName, "TagJumpKeyword[%02d]", i );
+			if( i >= m_pShareData->m_nTagJumpKeywordArrNum ){
+				strcpy( m_pShareData->m_szTagJumpKeywordArr[i], "" );
+			}
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName,
+				m_pShareData->m_szTagJumpKeywordArr[i], sizeof( m_pShareData->m_szTagJumpKeywordArr[0] ));
+		}
+		cProfile.IOProfileData( bRead, pszSecName, "m_bTagJumpICase"		, m_pShareData->m_bTagJumpICase );
+		cProfile.IOProfileData( bRead, pszSecName, "m_bTagJumpAnyWhere"		, m_pShareData->m_bTagJumpAnyWhere );
+		//From Here 2005.04.03 MIK キーワード指定タグジャンプの
+
 		//	MIK バージョン情報（書き込みのみ）
 		if( ! bRead ){
 			TCHAR	iniVer[256];

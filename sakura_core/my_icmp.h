@@ -114,6 +114,15 @@
 #define  MY_INLINE
 //#define  MY_INLINE  inline
 
+// 2005.04.07 MIK strstrånä÷êîí«â¡
+#ifdef strstri
+#  undef strstri
+#endif
+#define strstri(a,b)        my_strstri((a),(b))
+#ifdef strchri
+#  undef strchri
+#endif
+#define strchri(a,b)        my_strchri((a),(b))
 
 
 /*
@@ -133,7 +142,31 @@ SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c );
 SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c );
 #endif  /* MY_ICMP_MBS */
 
+// 2005.04.07 MIK strstrånä÷êîí«â¡
+SAKURA_CORE_API const char* __cdecl my_strstri( const char* s1, const char* s2 );
+SAKURA_CORE_API const char* __cdecl my_strstr( const char* s1, const char* s2 );
+SAKURA_CORE_API const char* __cdecl my_strchri( const char* s1, int c2 );
+SAKURA_CORE_API const char* __cdecl my_strchr( const char* s1, int c2 );
 
+inline SAKURA_CORE_API char* __cdecl my_strstri( char* s1, const char* s2 )
+{
+	return const_cast<char*>(my_strstri((const char*)s1, s2));
+}
+
+inline SAKURA_CORE_API char* __cdecl my_strstr( char* s1, const char* s2 )
+{
+	return const_cast<char*>(my_strstr((const char*)s1, s2));
+}
+
+inline SAKURA_CORE_API char* __cdecl my_strchri( char* s1, int c2 )
+{
+	return const_cast<char*>(my_strchri((const char*)s1, c2));
+}
+
+inline SAKURA_CORE_API char* __cdecl my_strchr( char* s1, int c2 )
+{
+	return const_cast<char*>(my_strchr((const char*)s1, c2));
+}
 
 #endif  /* _MY_ICMP_H_ */
 
