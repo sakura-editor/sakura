@@ -786,6 +786,22 @@ protected:
 	void InitTypeConfig(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);
 	
+	void ShareData_IO_Mru( const bool, CProfile& );
+	void ShareData_IO_Keys( const bool, CProfile& );
+	void ShareData_IO_Grep( const bool, CProfile& );
+	void ShareData_IO_Folders( const bool, CProfile& );
+	void ShareData_IO_Cmd( const bool, CProfile& );
+	void ShareData_IO_Nickname( const bool, CProfile& );
+	void ShareData_IO_Common( const bool, CProfile& );
+	void ShareData_IO_Toolbar( const bool, CProfile& );
+	void ShareData_IO_CustMenu( const bool, CProfile& );
+	void ShareData_IO_Font( const bool, CProfile& );
+	void ShareData_IO_KeyBind( const bool, CProfile& );
+	void ShareData_IO_Print( const bool, CProfile& );
+	void ShareData_IO_Types( const bool, CProfile& );
+	void ShareData_IO_KeyWords( const bool, CProfile& );
+	void ShareData_IO_Macro( const bool, CProfile& );
+	void ShareData_IO_Other( const bool, CProfile& );
 };
 
 
