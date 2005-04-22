@@ -180,9 +180,12 @@ tall : $(SRCDIR)\sakurabc.rc sakura_rc.exe
 	move /y sakura_rc.exe sakura.exe
 	move /y sakura_rc.map sakura.map
 
-
+# 2005.03.09 Karoto : Use response file
+#
 sakura_rc.exe : $(OBJS)
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) -W -e$(OUTDIR)\$. $** 
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) -W -e$(OUTDIR)\$. @&&! 
+$**
+!
 
 $(SRCDIR)\sakurabc.rc : $(SRCDIR)\sakura_rc.rc
 	$(TOOLDIR)\mrc2brc	$** $:\$. > $(TOOLDIR)\mrc2brc.log
