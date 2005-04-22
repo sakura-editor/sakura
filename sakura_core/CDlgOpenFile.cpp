@@ -213,10 +213,6 @@ UINT_PTR CALLBACK OFNHookProc(
 		::SetWindowPos( hwndComboOPENFOLDER, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		return 0;
 	case WM_INITDIALOG:
-//From Here jeprotest Oct. 12, 2000 JEPRO デフォルトボタン名変更実験
-//		CommDlg_OpenSave_SetControlText( GetParent(hdlg), IDOK, "このファイルを開く" );
-//To Here jeorotest
-
 		// Save off the long pointer to the OPENFILENAME structure.
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr(hdlg, DWLP_USER, lParam);
@@ -406,25 +402,6 @@ UINT_PTR CALLBACK OFNHookProc(
 //		);
 //		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 
-//NG  1999.11.21
-//NG		/* 「開く」ダイアログのサイズと位置 */
-//NG		if( 0 != pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.left
-//NG		 && 0 != pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.top
-//NG		 && 0 != pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.right
-//NG		 && 0 != pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.bottom
-//NG		){
-//NG			hwndFrame = ::GetParent( hdlg );
-//NG			::SetWindowPos(
-//NG				hwndFrame,
-//NG				0,
-//NG				pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.left,
-//NG				pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.top,
-//NG				pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.right - pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.left,
-//NG				pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.bottom - pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog.top,
-//NG				/*SWP_NOMOVE |*/ SWP_NOOWNERZORDER | SWP_NOZORDER
-//NG			);
-//NG		}
-//NG
 		break;
 
 
@@ -480,6 +457,8 @@ UINT_PTR CALLBACK OFNHookProc(
 //		case CDN_SHAREVIOLATION	:	MYTRACE( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
 //		case CDN_TYPECHANGE		:	MYTRACE( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
 //		default:					MYTRACE( "pofn->hdr.code=???\n" );break;
+// 2005/02/20 novice 拡張子を省略したら補完する(不要な処理)
+#if 0
 		case CDN_TYPECHANGE:	//@@@ 2002.1.24 YAZAKI 名前を付けて保存するときに「テキストファイル（*.txt）」を選択したら、拡張子txtを補うように変更
 			switch (pOf->nFilterIndex){
 			case 1:
@@ -494,6 +473,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			}
 			::SendMessage( hwndOpenDlg, CDM_SETDEFEXT, 0, (LPARAM)pOf->lpstrDefExt );
 			break;
+#endif
 		}
 
 //		MYTRACE( "=======================\n" );
@@ -595,7 +575,6 @@ CDlgOpenFile::CDlgOpenFile()
 	/* OPENFILENAMEの初期化 */
 	memset( &m_ofn, 0, sizeof( OPENFILENAME ) );
 	m_ofn.lStructSize = sizeof( OPENFILENAME );
-//	m_ofn.nFilterIndex = 3;
 	m_ofn.nFilterIndex = 1;	//Jul. 09, 2001 JEPRO		/* 「開く」での最初のワイルドカード */
 
 //	::GetCurrentDirectory( _MAX_PATH, m_szInitialDir );	/* 「開く」での初期ディレクトリ */
@@ -688,11 +667,12 @@ void CDlgOpenFile::Create(
 
 /*! 「開く」ダイアログ モーダルダイアログの表示
 
-	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
-	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
+	@param[in,out] pszPath 初期ファイル名．選択されたファイル名の格納場所
+	@param[in] bSetCurDir カレントディレクトリを変更するか デフォルト: false
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
+	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
 BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 {
@@ -719,31 +699,27 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
-//	m_ofn.nFilterIndex = 3;
 	// From Here Jun. 23, 2002 genta
 	// 「開く」での初期フォルダチェック強化
-	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
-	}else{
-		char szDrive[_MAX_DRIVE];
-		char szDir[_MAX_DIR];
-		char szName[_MAX_FNAME];
-		char szExt  [_MAX_EXT];
+// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	char szDrive[_MAX_DRIVE];
+	char szDir[_MAX_DIR];
+	char szName[_MAX_FNAME];
+	char szExt  [_MAX_EXT];
 
-		//	Jun. 23, 2002 Thanks to sui
-		my_splitpath( pszPath, szDrive, szDir, szName, szExt );
-		
-		//	指定されたファイルが存在しないとき szName == NULL
-		//	ファイルの場所にディレクトリを指定するとエラーになるので
-		//	ファイルが無い場合は全く指定しないことにする．
-		if( szName[0] == '\0' ){
-			pszPath[0] = '\0';
-		}
-		else {
-			wsprintf( pszPath, "%s%s%s%s", szDrive, szDir, szName, szExt );
-		}
-		m_ofn.lpstrFile = pszPath;
+	//	Jun. 23, 2002 Thanks to sui
+	my_splitpath( pszPath, szDrive, szDir, szName, szExt );
+	
+	//	指定されたファイルが存在しないとき szName == NULL
+	//	ファイルの場所にディレクトリを指定するとエラーになるので
+	//	ファイルが無い場合は全く指定しないことにする．
+	if( szName[0] == '\0' ){
+		pszPath[0] = '\0';
 	}
+	else {
+		wsprintf( pszPath, "%s%s%s%s", szDrive, szDir, szName, szExt );
+	}
+	m_ofn.lpstrFile = pszPath;
 	// To Here Jun. 23, 2002 genta
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrFileTitle = NULL;
@@ -759,7 +735,8 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 		;
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
-	m_ofn.lpstrDefExt = NULL;
+// 2005/02/20 novice 拡張子を省略したら補完する
+	m_ofn.lpstrDefExt = "";
 	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
@@ -783,6 +760,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
+	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
 BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 {
@@ -809,12 +787,8 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
-//	m_ofn.nFilterIndex = 3;
-	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
-	}else{
-		m_ofn.lpstrFile = pszPath;
-	}
+// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	m_ofn.lpstrFile = pszPath;
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrFileTitle = NULL;
 	m_ofn.nMaxFileTitle = 0;
@@ -832,7 +806,8 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/;
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
-	m_ofn.lpstrDefExt = NULL;
+// 2005/02/20 novice 拡張子を省略したら補完する
+	m_ofn.lpstrDefExt = "";
 	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
@@ -856,6 +831,7 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 /*! 「開く」ダイアログ モーダルダイアログの表示
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
+	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
 BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadOnly )
 {
@@ -879,12 +855,8 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
-//	m_ofn.nFilterIndex = 3;
-	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
-	}else{
-		m_ofn.lpstrFile = pszPath;
-	}
+// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	m_ofn.lpstrFile = pszPath;
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrFileTitle = NULL;
 	m_ofn.nMaxFileTitle = 0;
@@ -905,7 +877,8 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	}
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
-	m_ofn.lpstrDefExt = NULL;
+// 2005/02/20 novice 拡張子を省略したら補完する
+	m_ofn.lpstrDefExt = "";
 	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";
@@ -957,6 +930,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2003.07.26 ryoji BOMパラメータ追加
+	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
 BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBom )
 {
@@ -975,12 +949,8 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrCustomFilter = NULL;
 	m_ofn.nMaxCustFilter = 0;
-//	m_ofn.nFilterIndex = 3;
-	if( 0 == lstrlen( pszPath ) ){
-		m_ofn.lpstrFile = strcpy( pszPath, cFileExt.GetExt( m_ofn.nFilterIndex - 1 ) );
-	}else{
-		m_ofn.lpstrFile = pszPath;
-	}
+// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	m_ofn.lpstrFile = pszPath;
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrFileTitle = NULL;
 	m_ofn.nMaxFileTitle = 0;
@@ -997,7 +967,8 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	}
 	m_ofn.nFileOffset = 0;
 	m_ofn.nFileExtension = 0;
-	m_ofn.lpstrDefExt = NULL;
+// 2005/02/20 novice 拡張子を省略したら補完する
+	m_ofn.lpstrDefExt = "";
 	m_ofn.lCustData = (LPARAM)this;
 	m_ofn.lpfnHook = OFNHookProc;
 	m_ofn.lpTemplateName = "IDD_FILEOPEN";

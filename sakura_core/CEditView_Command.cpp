@@ -722,19 +722,6 @@ int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
 
 
 
-//jeprotestnow Oct. 25, 2000
-/* (矩形選択)カーソル上移動 */
-//int CEditView::Command_UP_BOX( BOOL bRepeat )
-//{
-//	/* 矩形範囲選択開始 */
-//	Command_BEGIN_BOXSELECT();
-//	/* カーソル上移動 */
-//	return Command_UP( TRUE, bRepeat );
-//}
-
-
-
-
 /* カーソル下移動 */
 int CEditView::Command_DOWN( int bSelect, BOOL bRepeat )
 {
@@ -2238,15 +2225,6 @@ void CEditView::Command_SELECTALL( void )
 	DrawSelectArea();
 	return;
 }
-
-
-
-
-//jeprotestnow Oct. 25, 2000
-/* 矩形ですべて選択 */
-//void CEditView::Command_SELBOXALL( void )
-//{
-//}
 
 
 
@@ -8866,35 +8844,6 @@ end_of_compare:;
 
 
 
-//jeprotestnow Oct. 30, 2000
-/* メニューバーの表示/非表示 */
-//void CEditView::Command_SHOWMENUBAR( void )
-//{
-//	HWND		hwndFrame;
-//	CEditWnd*	pCEditWnd;
-//	RECT		rc;
-//	hwndFrame = ::GetParent( m_hwndParent );
-//	pCEditWnd = ( CEditWnd* )::GetWindowLong( hwndFrame, GWLP_USERDATA );
-//	if( NULL == pCEditWnd->m_hwndToolBar ){
-//		/* メニューバー作成 */
-//		pCEditWnd->CreateToolBar();
-//		m_pShareData->m_Common.m_bDispTOOLBAR = TRUE;	/* 次回ウィンドウを開いたときメニューバーを表示する */
-//	}else{
-//		::DestroyWindow( pCEditWnd->m_hwndToolBar );
-//		pCEditWnd->m_hwndToolBar = NULL;
-//		m_pShareData->m_Common.m_bDispTOOLBAR = FALSE;	/* 次回ウィンドウを開いたときメニューバーを表示しない */	//Sept. 9, 2000 jepro 「表示する」となっていたのを修正
-//	}
-////	/* 変更フラグ(共通設定の全体) のセット */
-////	m_pShareData->m_nCommonModify = TRUE;
-//	::GetClientRect( pCEditWnd->m_hWnd, &rc );
-//	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-//	return;
-//}
-//jeprotestnow To Here
-
-
-
-
 /* ツールバーの表示/非表示 */
 void CEditView::Command_SHOWTOOLBAR( void )
 {
@@ -9255,7 +9204,9 @@ void CEditView::Command_EXECKEYMACRO( void )
 
 
 
-/* キーマクロの読み込み */
+/*! キーマクロの読み込み
+	@date 2005/02/20 novice デフォルトの拡張子変更
+ */
 void CEditView::Command_LOADKEYMACRO( void )
 {
 	m_pShareData->m_bRecordingKeyMacro = FALSE;
@@ -9277,7 +9228,8 @@ void CEditView::Command_LOADKEYMACRO( void )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		m_hWnd,
-		"*.*",
+// 2005/02/20 novice デフォルトの拡張子変更
+		"*.mac",
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
