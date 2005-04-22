@@ -739,7 +739,10 @@ void CDlgTagJumpList::find_key( const char* keyword )
 					m_cList.AddParam( s[0], s[1], n2, s[3][0], s[4], i );
 					nMatch++;
 				}else if( 0 < cmp ){
-					if( m_bTagJumpICase && (!m_bTagJumpAnyWhere) ) break;
+					//	tagsはソートされているので，先頭からのcase sensitiveな
+					//	比較結果によって検索の時は処理の打ち切りが可能
+					//	2005.04.05 MIK バグ修正
+					if( (!m_bTagJumpICase) && (!m_bTagJumpAnyWhere) ) break;
 				}
 next_line:
 				//if( nMatch >= 10 ) break;
