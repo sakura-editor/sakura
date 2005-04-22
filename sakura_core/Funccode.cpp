@@ -294,6 +294,7 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
 	F_TAGS_MAKE			,	//タグファイルの作成	//@@@ 2003.04.13 MIK
 	F_DIRECT_TAGJUMP	,	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
+	F_TAGJUMP_KEYWORD	,	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
 	F_COMPARE			,	//ファイル内容比較
 	F_DIFF_DIALOG		,	//DIFF差分表示(ダイアログ)
 	F_DIFF_NEXT			,	//次の差分へ

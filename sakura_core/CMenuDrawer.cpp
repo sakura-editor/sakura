@@ -388,7 +388,7 @@ CMenuDrawer::CMenuDrawer()
 /* 253 */		F_ISEARCH_REGEXP_PREV	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//正規表現前方インクリメンタルサーチ //2004.10.13 isearch
 /* 254 */		F_ISEARCH_MIGEMO_NEXT	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MIGEMO前方インクリメンタルサーチ //2004.10.13 isearch
 /* 255 */		F_ISEARCH_MIGEMO_PREV	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MIGEMO前方インクリメンタルサーチ //2004.10.13 isearch
-/* 256 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 256 */		F_TAGJUMP_KEYWORD	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーワードを指定してダイレクトタグジャンプ //2005.03.31 MIK
 
 /* モード切り替え系(9段目4個: 257-260) */
 /* 257 */		F_CHGMOD_INS	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//挿入／上書きモード切り替え	//Nov. 5, 2000 JEPRO 追加

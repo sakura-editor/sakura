@@ -551,9 +551,13 @@
 #define IDC_COMBO5                      1498
 #define IDC_BUTTON_KEYCLEAN             1498
 #define IDC_COMBO6                      1499
+#define IDC_KEYWORD                     1499
 #define IDC_COMBO7                      1500
+#define IDC_STATIC_KEYWORD              1500
 #define IDC_COMBO8                      1501
+#define IDC_CHECK_ICASE                 1501
 #define IDC_COMBO9                      1502
+#define IDC_CHECK_ANYWHERE              1502
 #define IDC_COMBO10                     1503
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
@@ -591,7 +595,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        244
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1499
+#define _APS_NEXT_CONTROL_VALUE         1504
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

@@ -158,9 +158,12 @@ struct ARRHEAD {
 
 	Version 59:
 	マクロ数を増やした 2005/01/30 genta
+	
+	Version 60:
+	キーワード指定タグジャンプ履歴保存 2005/04/03 MIK
 */
 
-const unsigned int uShareDataVersion = 59;
+const unsigned int uShareDataVersion = 60;
 
 /*
 ||	Singleton風
@@ -571,6 +574,16 @@ bool CShareData::Init( void )
 
 		m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
 		strcpy( m_pShareData->m_szTagsCmdLine, "" );	/* CTAGS */	//@@@ 2003.05.12 MIK
+		//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
+		m_pShareData->m_nTagJumpKeywordArrNum = 0;
+		for( i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
+			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], "" );
+			//m_pShareData->m_bTagJumpKeywordArrFavorite[i] = false;	//お気に入り
+		}
+		m_pShareData->m_bTagJumpICase = FALSE;
+		m_pShareData->m_bTagJumpAnyWhere = FALSE;
+		//To Here 2005.04.03 MIK 
+
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */

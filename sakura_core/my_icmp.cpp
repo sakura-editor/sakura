@@ -1,14 +1,15 @@
 //	$Id$
 /*!	@file
-	@brief 独自比較関数
+	@brief 独自文字列比較関数
 
 	@author MIK
 	@date Jan. 11, 2002
 	@date Feb. 02, 2002  内部処理を統一、全角アルファベット同一視に対応
+	@date Apr. 07, 2005  MIK strstr系関数を追加
 	$Revision$
 */
 /*
-	Copyright (C) 2002, MIK
+	Copyright (C) 2002-2005, MIK
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -327,6 +328,58 @@ SAKURA_CORE_API int __cdecl my_strnicmp( const char *s1, const char *s2, size_t 
 	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }
 
+/*!
+	strstr()の大文字小文字同一視版
 
+	@note
+	Windows APIにあるStrStrIはIE4が入っていないPCでは使用不可のため
+	独自に作成
 
+	@date 2005.04.07 MIK 新規作成
+*/
+const char* my_strstri( const char* s1, const char* s2 ){
+	size_t n = strlen( s2 );
+	for( const char* p1 = s1; *p1; p1++ ){
+		if( my_strnicmp( p1, s2, n ) == 0 ) return p1;
+		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
+	}
+	return NULL;
+}
+
+/*!
+	strstr()の2byte code対応版
+
+	@date 2005.04.07 MIK 新規作成
+*/
+const char* my_strstr( const char* s1, const char* s2 ){
+	size_t n = strlen( s2 );
+	for( const char* p1 = s1; *p1; p1++ ){
+		if( strncmp( p1, s2, n ) == 0 ) return p1;
+		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
+	}
+	return NULL;
+}
+
+/*!
+	@date 2005.04.07 MIK 新規作成
+*/
+const char* my_strchri( const char* s1, int c2 ){
+	int C2 = my_toupper( c2 );
+	for( const char* p1 = s1; *p1; p1++ ){
+		if( my_toupper( *p1 ) == C2 ) return p1;
+		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
+	}
+	return NULL;
+}
+
+/*!
+	@date 2005.04.07 MIK 新規作成
+*/
+const char* my_strchr( const char* s1, int c2 ){
+	for( const char* p1 = s1; *p1; p1++ ){
+		if( *p1 == c2 ) return p1;
+		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
+	}
+	return NULL;
+}
 /*[EOF]*/

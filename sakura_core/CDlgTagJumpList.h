@@ -36,7 +36,24 @@ class CDlgTagJumpList;
 #define	_CDLGTAGJUMPLIST_H_
 
 #include "CDialog.h"
+#include "CSortedTagJumpList.h"
 
+//	@@ 2005.03.31 MIK
+//編集ボックスがコンボかどうか
+#define TAGJUMP_EDITBOX_IS_COMBO
+
+//キーワードを入力して該当する情報を表示するまでの時間(ミリ秒)
+#define TAGJUMP_TIMER_DELAY 700
+//タグファイル名	//	@@ 2005.03.31 MIK 定数化
+#define TAG_FILENAME        "tags"
+//タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
+#define TAG_FORMAT          "%s\t%[^\t\r\n]\t%d;\"\t%s\t%s"
+
+/*!	@brief ダイレクトタグジャンプ候補一覧ダイアログ
+
+	ダイレクトタグジャンプで複数の候補がある場合及び
+	キーワード指定タグジャンプのためのダイアログボックス制御
+*/
 class SAKURA_CORE_API CDlgTagJumpList : public CDialog
 {
 public:
@@ -51,9 +68,11 @@ public:
 	*/
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
-	bool AddParam( char *s0, char *s1, int n2, char *s3, char *s4 );	//登録
-	bool GetSelectedParam( char *s0, char *s1, int *n2, char *s3, char *s4 );	//取得
+	//	@@ 2005.03.31 MIK 階層パラメータを追加
+	bool AddParam( char *s0, char *s1, int n2, char *s3, char *s4, int depth );	//登録
+	bool GetSelectedParam( char *s0, char *s1, int *n2, char *s3, char *s4, int *depth );	//取得
 	void SetFileName( const char *pszFileName );
+	void SetKeyword( const char *pszKeyword );	//	@@ 2005.03.31 MIK
 
 protected:
 	/*
@@ -62,29 +81,39 @@ protected:
 	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	BOOL	OnBnClicked( int );
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
+	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理
+	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );
+	BOOL	OnCbnEditChange( HWND hwndCtl, int wID );
+	//BOOL	OnEditChange( HWND hwndCtl, int wID );
+	BOOL	OnTimer( WPARAM wParam );
 	LPVOID	GetHelpIdTable( void );
+	void	StopTimer( void );
+	void	StartTimer( void );
 
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
+	void	UpdateData( void );	//	@@ 2005.03.31 MIK
 
 	char	*GetNameByType( const char type, const char *name );	//タイプを名前に変換する。
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
+	//	@@ 2005.03.31 MIK
+	const char *GetFileName( void );
+	const char *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : ""; }
+	void find_key( const char* keyword );
+	void Empty( void );
+
+
 
 private:
-	typedef struct {
-		char	*s0;	//キーワード
-		char	*s1;	//ファイル名
-		int		n2;		//行番号
-		char	*s3;	//タイプ
-		char	*s4;	//備考
-	} ParamTag;
 
-#define	MAX_TAGJUMPLIST	100	//タグジャンプリストの最大管理数(これ以上あっても選べる？)
-	int			m_nCount;
-	ParamTag	m_uParam[MAX_TAGJUMPLIST];
-	int			m_nIndex;
-	bool		m_bOverflow;	//登録数が多すぎるか？
-	char		*m_pszFileName;
+	int		m_nIndex;		//!< 選択された要素番号
+	char	*m_pszFileName;	//!< 編集中のファイル名
+	char	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
+	int		m_nLoop;		//!< さかのぼれる階層数
+	CSortedTagJumpList	m_cList;	//!< タグジャンプ情報
+	UINT	m_nTimerId;		//!< タイマ番号
+	BOOL	m_bTagJumpICase;	//!< 大文字小文字を同一視
+	BOOL	m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
 
 };
 

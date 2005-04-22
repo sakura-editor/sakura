@@ -73,6 +73,7 @@ enum maxdata{
 
 	// 2004/06/21 novice タグジャンプ機能追加
 	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
+	MAX_TAGJUMP_KEYWORD			= 30,	//タグジャンプ用キーワード最大登録数2005.04.04 MIK
 	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) タイプ別設定毎のキーワードセット数
 };
 
@@ -640,6 +641,13 @@ struct DLLSHAREDATA {
 	
 	char				m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
 	int					m_nTagsOpt;			/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
+	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
+	int					m_nTagJumpKeywordArrNum;
+	char				m_szTagJumpKeywordArr[MAX_TAGJUMP_KEYWORD][_MAX_PATH];
+//	bool				m_bTagJumpKeywordArrFavorite[MAX_TAGJUMPKEYWORD];	//お気に入り
+	BOOL				m_bTagJumpICase;	//!< 大文字小文字を同一視
+	BOOL				m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
+	//To Here 2005.04.03 MIK
 };
 
 

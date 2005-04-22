@@ -731,6 +731,12 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			}
 		}
 		break;	//	Jan. 29, 2005 genta ”²‚¯‚Ä‚¢‚½
+	case F_TAGJUMP_KEYWORD:	// @@ 2005.03.31 MIK
+		{
+			//ˆø”‚ÍNULL‚Å‚àOK
+			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+		}
+		break;
 	default:
 		//	ˆø”‚È‚µB
 		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	•W€

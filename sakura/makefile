@@ -146,6 +146,7 @@ OBJS =\
 	$(SRCDIR)\CShareData_new.obj \
 	$(SRCDIR)\CShareData.obj \
 	$(SRCDIR)\CSMacroMgr.obj \
+	$(SRCDIR)\CSortedTagJumpList.obj \
 	$(SRCDIR)\CSplitBoxWnd.obj \
 	$(SRCDIR)\CSplitterWnd.obj \
 	$(SRCDIR)\CTabWnd.obj \

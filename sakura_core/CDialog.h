@@ -63,6 +63,7 @@ public:
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked( int );
 	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnCbnEditChange( HWND hwndCtl, int wID ){return FALSE;} // @@2005.03.31 MIK タグジャンプDialog
 //	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 //	virtual BOOL OnDbnDropDown( HWND hwndCtl, int wID ){return FALSE;}
 //	virtual BOOL OnDbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
