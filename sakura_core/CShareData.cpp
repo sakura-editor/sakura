@@ -4791,8 +4791,21 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	for( nIdx = 1; nIdx < MAX_TYPES; ++nIdx ){
 		pShareData->m_Types[nIdx] = pShareData->m_Types[0];
 		pShareData->m_Types[nIdx].m_nIdx = nIdx;
-		strcpy( pShareData->m_Types[nIdx].m_szTypeName, pszTypeNameArr[nIdx] );	/* タイプ属性：名称 */
-		strcpy( pShareData->m_Types[nIdx].m_szTypeExts, pszTypeExts[nIdx] );		/* タイプ属性：拡張子リスト */
+
+		//	From Here 2005.02.20 りんご 配列数が設定数より小さいケースの考慮
+		const char* pszTypeName;
+		const char* pszTypeExt;
+		if(nIdx < (sizeof(pszTypeNameArr)/sizeof(char*)))
+			pszTypeName = pszTypeNameArr[nIdx];
+		else
+			pszTypeName = "未定義";
+		if(nIdx < (sizeof(pszTypeExts)/sizeof(char*)))
+			pszTypeExt = pszTypeExts[nIdx];
+		else
+			pszTypeExt = "";
+		strcpy( m_pShareData->m_Types[nIdx].m_szTypeName, pszTypeName );
+		strcpy( m_pShareData->m_Types[nIdx].m_szTypeExts, pszTypeExt );
+		//	To Here 2005.02.20 りんご
 	}
 
 
