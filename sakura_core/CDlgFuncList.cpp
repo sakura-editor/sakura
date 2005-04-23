@@ -63,10 +63,12 @@ int CALLBACK _CompareFunc_( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 	if( NULL == pcFuncInfo2 ){
 		return -1;
 	}
-	if( 0 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
+	//	Apr. 23, 2005 genta 行番号を左端へ
+	if( 1 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
 		return strcmp( pcFuncInfo1->m_cmemFuncName.GetPtr(), pcFuncInfo2->m_cmemFuncName.GetPtr() );
 	}
-	if( 1 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
+	//	Apr. 23, 2005 genta 行番号を左端へ
+	if( 0 == pcDlgFuncList->m_nSortCol){	/* ソートする列番号 */
 		if( pcFuncInfo1->m_nFuncLineCRLF < pcFuncInfo2->m_nFuncLineCRLF ){
 			return -1;
 		}else
@@ -97,7 +99,8 @@ CDlgFuncList::CDlgFuncList()
 {
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = 0;				/* 現在行 */
-	m_nSortCol = 1;				/* ソートする列番号 2004.04.06 zenryaku 標準は行番号(2列目) */
+	//	Apr. 23, 2005 genta 行番号を左端へ
+	m_nSortCol = 0;				/* ソートする列番号 2004.04.06 zenryaku 標準は行番号(1列目) */
 	m_bLineNumIsCRLF = FALSE;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
 	m_nSortType = 0;
@@ -271,7 +274,8 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			col.mask = LVCF_TEXT;
 			col.pszText = "テキスト";
 			col.iSubItem = 0;
-			ListView_SetColumn( hwndList, 0, &col );
+			//	Apr. 23, 2005 genta 行番号を左端へ
+			ListView_SetColumn( hwndList, 1, &col );
 			::SetWindowText( m_hWnd, "ブックマーク" );
 			break;
 //		case OUTLINE_COBOL:
@@ -307,24 +311,26 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 			/* 現在の解析結果要素 */
 			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
-			item.mask = LVIF_TEXT | LVIF_PARAM;
-			item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
-			item.iItem = i;
-			item.iSubItem = 0;
-			item.lParam	= i;
-			ListView_InsertItem( hwndList, &item);
-
+			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 			if(m_bLineNumIsCRLF ){
 				wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineCRLF );
 			}else{
 				wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineLAYOUT );
 			}
-			item.mask = LVIF_TEXT;
+			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
+			item.iItem = i;
+			item.lParam	= i;
+			item.iSubItem = 0;
+			ListView_InsertItem( hwndList, &item);
+
+			item.mask = LVIF_TEXT;
+			item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
 			item.iItem = i;
 			item.iSubItem = 1;
 			ListView_SetItem( hwndList, &item);
+			//	To Here Apr. 23, 2005 genta 行番号を左端へ
 
 			item.mask = LVIF_TEXT;
 			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = "宣言";}else
@@ -432,7 +438,8 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), FALSE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), SW_HIDE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_HIDE );
-		ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
+		//ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
+		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダ書き換えのため)
 	}
 
 	return;
@@ -1014,24 +1021,26 @@ void CDlgFuncList::SetListVB (void)
 		/* 現在の解析結果要素 */
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
-		item.mask = LVIF_TEXT | LVIF_PARAM;
-		item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
-		item.iItem = i;
-		item.iSubItem = 0;
-		item.lParam	= i;
-		ListView_InsertItem( hwndList, &item);
-
+		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 		if(m_bLineNumIsCRLF ){
 			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineCRLF );
 		}else{
 			wsprintf( szText, "%d", pcFuncInfo->m_nFuncLineLAYOUT );
 		}
-		item.mask = LVIF_TEXT;
+		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
+		item.iItem = i;
+		item.iSubItem = 0;
+		item.lParam	= i;
+		ListView_InsertItem( hwndList, &item);
+
+		item.mask = LVIF_TEXT;
+		item.pszText = pcFuncInfo->m_cmemFuncName.GetPtr();
 		item.iItem = i;
 		item.iSubItem = 1;
 		ListView_SetItem( hwndList, &item);
+		//	To Here Apr. 23, 2005 genta 行番号を左端へ
 
 		item.mask = LVIF_TEXT;
 
@@ -1436,14 +1445,16 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.cx = rc.right - rc.left - ( nColWidthArr[1] + nColWidthArr[2] ) - nCxVScroll - 8;
-	col.pszText = "関数名";
+	//	Apr. 23, 2005 genta 行番号を左端へ
+	col.pszText = "行 *";
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col);
 
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[1];
-	col.pszText = "行 *";
+	//	Apr. 23, 2005 genta 行番号を左端へ
+	col.pszText = "関数名";
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col);
 
@@ -1520,7 +1531,6 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	HWND			hwndTree;
 	NM_TREEVIEW*	pnmtv;
 //	int				nLineTo;
-	LV_COLUMN		col;
 
 //	idCtrl = (int) wParam;
 	pnmh = (LPNMHDR) lParam;
@@ -1582,75 +1592,8 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 		case LVN_COLUMNCLICK:
 //				MYTRACE( "LVN_COLUMNCLICK\n" );
 			m_nSortCol =  pnlv->iSubItem;
-			if( m_nSortCol == 0 ){
-				col.mask = LVCF_TEXT;
-			// From Here 2001.12.03 hor
-			//	col.pszText = "関数名 *";
-				if(OUTLINE_BOOKMARK == m_nListType){
-					col.pszText = "テキスト *";
-				}else{
-					col.pszText = "関数名 *";
-				}
-			// To Here 2001.12.03 hor
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 0, &col );
-				col.mask = LVCF_TEXT;
-				col.pszText = "行";
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 1, &col );
-			// From Here 2001.12.07 hor
-				col.mask = LVCF_TEXT;
-				col.pszText = "";
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 2, &col );
-			// To Here 2001.12.07 hor
-				ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
-			}else
-			if( m_nSortCol == 1 ){
-				col.mask = LVCF_TEXT;
-			// From Here 2001.12.03 hor
-			//	col.pszText = "関数名";
-				if(OUTLINE_BOOKMARK == m_nListType){
-					col.pszText = "テキスト";
-				}else{
-					col.pszText = "関数名";
-				}
-			// To Here 2001.12.03 hor
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 0, &col );
-				col.mask = LVCF_TEXT;
-				col.pszText = "行 *";
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 1, &col );
-			// From Here 2001.12.07 hor
-				col.mask = LVCF_TEXT;
-				col.pszText = "";
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 2, &col );
-			// To Here 2001.12.03 hor
-				ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
-			// From Here 2001.12.07 hor
-			}else
-			if( m_nSortCol == 2 ){
-				col.mask = LVCF_TEXT;
-				if(OUTLINE_BOOKMARK == m_nListType){
-					col.pszText = "テキスト";
-				}else{
-					col.pszText = "関数名";
-				}
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 0, &col );
-				col.mask = LVCF_TEXT;
-				col.pszText = "行";
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 1, &col );
-				col.mask = LVCF_TEXT;
-				col.pszText = "*";
-				col.iSubItem = 0;
-				ListView_SetColumn( hwndList, 2, &col );
-				ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
-			// To Here 2001.12.07 hor
-			}
+			//	Apr. 23, 2005 genta 関数として独立させた
+			SortListView( hwndList, m_nSortCol );
 			return TRUE;
 		case NM_DBLCLK:
 			return OnJump();
@@ -1661,7 +1604,91 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	}
 	return FALSE;
 }
+/*!
+	指定されたカラムでリストビューをソートする．
+	同時にヘッダも書き換える．
 
+	@param[in] hwndList	リストビューのウィンドウハンドル
+	@param[in] sortcol	ソートするカラム番号(0-2)
+
+	@date 2005.04.23 genta 関数として独立させた
+*/
+void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
+{
+	LV_COLUMN		col;
+
+	//	Apr. 23, 2005 genta 行番号を左端へ
+	if( sortcol == 1 ){
+		col.mask = LVCF_TEXT;
+	// From Here 2001.12.03 hor
+	//	col.pszText = "関数名 *";
+		if(OUTLINE_BOOKMARK == m_nListType){
+			col.pszText = "テキスト *";
+		}else{
+			col.pszText = "関数名 *";
+		}
+	// To Here 2001.12.03 hor
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 1, &col );
+		col.mask = LVCF_TEXT;
+		col.pszText = "行";
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 0, &col );
+	// From Here 2001.12.07 hor
+		col.mask = LVCF_TEXT;
+		col.pszText = "";
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 2, &col );
+	// To Here 2001.12.07 hor
+		ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
+	}else
+	if( sortcol == 0 ){
+		col.mask = LVCF_TEXT;
+	// From Here 2001.12.03 hor
+	//	col.pszText = "関数名";
+		if(OUTLINE_BOOKMARK == m_nListType){
+			col.pszText = "テキスト";
+		}else{
+			col.pszText = "関数名";
+		}
+	// To Here 2001.12.03 hor
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 1, &col );
+		col.mask = LVCF_TEXT;
+		col.pszText = "行 *";
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 0, &col );
+	// From Here 2001.12.07 hor
+		col.mask = LVCF_TEXT;
+		col.pszText = "";
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 2, &col );
+	// To Here 2001.12.03 hor
+		ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
+	// From Here 2001.12.07 hor
+	}else
+	if( sortcol == 2 ){
+		col.mask = LVCF_TEXT;
+		if(OUTLINE_BOOKMARK == m_nListType){
+			col.pszText = "テキスト";
+		}else{
+			col.pszText = "関数名";
+		}
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 1, &col );
+		col.mask = LVCF_TEXT;
+		col.pszText = "行";
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 0, &col );
+		col.mask = LVCF_TEXT;
+		col.pszText = "*";
+		col.iSubItem = 0;
+		ListView_SetColumn( hwndList, 2, &col );
+		ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
+	// To Here 2001.12.07 hor
+	}
+
+}
 
 /*!	ウィンドウサイズが変更された
 
