@@ -3297,33 +3297,36 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
-	{	/* ファンクションキー表示位置／0:上 1:下 */
-		::MoveWindow(
-			m_CFuncKeyWnd.m_hWnd,
-			0,
-			nToolBarHeight,
-			cx,
-			nFuncKeyWndHeight, TRUE );
-	}
-	else if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 1 )
-	{	/* ファンクションキー表示位置／0:上 1:下 */
-		::MoveWindow(
-			m_CFuncKeyWnd.m_hWnd,
-			0,
-			cy - nFuncKeyWndHeight - nStatusBarHeight,
-			cx,
-			nFuncKeyWndHeight, TRUE
-		);
+	//	2005.04.23 genta ファンクションキー非表示の時は移動しない
+	if( m_CFuncKeyWnd.m_hWnd != NULL ){
+		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+		{	/* ファンクションキー表示位置／0:上 1:下 */
+			::MoveWindow(
+				m_CFuncKeyWnd.m_hWnd,
+				0,
+				nToolBarHeight,
+				cx,
+				nFuncKeyWndHeight, TRUE );
+		}
+		else if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 1 )
+		{	/* ファンクションキー表示位置／0:上 1:下 */
+			::MoveWindow(
+				m_CFuncKeyWnd.m_hWnd,
+				0,
+				cy - nFuncKeyWndHeight - nStatusBarHeight,
+				cx,
+				nFuncKeyWndHeight, TRUE
+			);
 
-		BOOL	bSizeBox = TRUE;
-		if( NULL != m_hwndStatusBar ){
-			bSizeBox = FALSE;
+			BOOL	bSizeBox = TRUE;
+			if( NULL != m_hwndStatusBar ){
+				bSizeBox = FALSE;
+			}
+			if( wParam == SIZE_MAXIMIZED ){
+				bSizeBox = FALSE;
+			}
+			m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 		}
-		if( wParam == SIZE_MAXIMIZED ){
-			bSizeBox = FALSE;
-		}
-		m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 	}
 
 	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
