@@ -78,6 +78,9 @@ protected:
 	void GetTreeTextNext( HWND, HTREEITEM, int );
 #endif
 
+	//	Apr. 23, 2005 genta リストビューのソートを関数として独立させた
+	void SortListView(HWND hwndList, int sortcol);
+
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
