@@ -93,8 +93,6 @@ int CALLBACK _CompareFunc_( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 	return -1;
 }
 
-
-
 CDlgFuncList::CDlgFuncList()
 {
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
@@ -1608,10 +1606,21 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	指定されたカラムでリストビューをソートする．
 	同時にヘッダも書き換える．
 
+	ソート後はフォーカスが画面内に現れるように表示位置を調整する．
+
+	@par 表示位置調整の小技
+	EnsureVisibleの結果は，上スクロールの場合は上端に，下スクロールの場合は
+	下端に目的の項目が現れる．端から少し離したい場合はオフセットを与える必要が
+	あるが，スクロール方向がわからないと±がわからない
+	そのため最初に一番下に一回スクロールさせることでEnsureVisibleでは
+	かならず上スクロールになるようにすることで，ソート後の表示位置を
+	固定する
+
 	@param[in] hwndList	リストビューのウィンドウハンドル
 	@param[in] sortcol	ソートするカラム番号(0-2)
 
 	@date 2005.04.23 genta 関数として独立させた
+	@date 2005.04.29 genta ソート後の表示位置調整
 */
 void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 {
@@ -1687,7 +1696,15 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 		ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );
 	// To Here 2001.12.07 hor
 	}
+	//	2005.04.23 zenryaku 選択された項目が見えるようにする
 
+	//	Apr. 29, 2005 genta 一旦一番下にスクロールさせる
+	ListView_EnsureVisible( hwndList,
+		ListView_GetItemCount(hwndList) - 1,
+		FALSE );
+	ListView_EnsureVisible( hwndList,
+		ListView_GetNextItem(hwndList, -1, LVNI_FOCUSED) - 2,
+		FALSE );
 }
 
 /*!	ウィンドウサイズが変更された
