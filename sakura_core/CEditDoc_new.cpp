@@ -583,6 +583,8 @@ bool CEditDoc::SaveFile( const char* pszPath )
 	@li 0: はじめ
 	@li 2: subを見つけた後
 	@li 1: 単語読み出し中
+
+	@date 2005.06.18 genta パッケージ区切りを表す ::と'を考慮するように
 */
 void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -659,7 +661,10 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				if( '_' == pLine[i] ||
 					('a' <= pLine[i] &&	pLine[i] <= 'z' )||
 					('A' <= pLine[i] &&	pLine[i] <= 'Z' )||
-					('0' <= pLine[i] &&	pLine[i] <= '9' )
+					('0' <= pLine[i] &&	pLine[i] <= '9' )||
+					//	Jun. 18, 2005 genta パッケージ修飾子を考慮
+					//	コロンは2つ連続しないといけないのだが，そこは手抜き
+					':' == pLine[i] || '\'' == pLine[i]
 				){
 					++nWordIdx;
 					if( nWordIdx >= nMaxWordLeng ){
