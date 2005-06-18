@@ -7482,7 +7482,9 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				const CLayout* pcLayout;
 				const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
 				if( NULL != pLine &&
-					colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
+					//	Jun. 18, 2005 かろと
+					//	改行の前にもう1文字あっても次の行に送られてしまっていた
+					colTmp > nLineLen - (pcLayout->m_cEol.GetLen()) ){
 					m_nSelectColmTo=0;
 					m_nSelectLineTo++;
 				}
@@ -7524,55 +7526,35 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(save_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nPyLineNum = pcLayout->m_nLinePhysical;
 			int nIdx = LineColmnToIndex( pcLayout, save_nSelectColmFrom ) + pcLayout->m_nOffset;
-			int nLen = strlen(pLine);
-			int nLenEOL = pcLayout->m_pCDocLine->m_cEol.GetLen();
+			int nLen = pcLayout->m_pCDocLine->GetLength();
 			// 正規表現で選択始点・終点への挿入を記述
-			CMemory cMemMatchStr = CMemory("$&", strlen("$&"));
-			CMemory cMemRepKey2;
-			if (nReplaceTarget == 1) {	//選択始点へ挿入
-				cMemRepKey2 = cMemRepKey;
-				cMemRepKey2 += cMemMatchStr;
-			} else if (nReplaceTarget == 2) { // 選択終点へ挿入
-				cMemRepKey2 = cMemMatchStr;
-				cMemRepKey2 += cMemRepKey;
-			} else {
-				cMemRepKey2 = cMemRepKey;
-			}
-			cRegexp.Compile( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
+			//	Jun. 6, 2005 かろと
+			// →これでは「検索の後ろの文字が改行だったら次の行頭へ移動」が処理できない
+			cRegexp.Compile( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey.GetPtr(), nFlag);
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
-				// Command_INSTEXT用に選択位置(m_nSelectXXXX)を物理行行末までに更新
-				m_nSelectLineFrom = save_nSelectLineFrom;
-				m_nSelectColmFrom = save_nSelectColmFrom;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nLen, nPyLineNum, &m_nSelectColmTo, &m_nSelectLineTo);
-				// 物理行末までINSTEXTするので、キャレット位置が次の行頭になってしまうから
-				// キャレット位置を検索文字列末の位置まで戻す
-				// 置換前後で文字列長が変わる場合があるので、置換前後の文字列長の差だけ、検索文字列を調整
-				// INSTEXT後は pLineが変わっているかもしれないので先に nIdxToを計算
-				int colDiff = cRegexp.GetStringLen() - (nLen - nIdx);
+				// From Here Jun. 6, 2005 かろと
+				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
+				// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
+				// そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
 				int matchLen = cRegexp.GetMatchLen();
 				int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
 				if (matchLen == 0) {
 					// ０文字マッチの時(無限置換にならないように１文字進める)
 					if (nIdxTo < nLen) {
 						nIdxTo += (CMemory::MemCharNext(pLine, nLen, pLine+nIdxTo) - (pLine+nIdxTo) == 2 ? 2 : 1);
-					} else {
-						++nIdxTo;
 					}
-				} else if (nIdxTo == nLen) {
-					// 改行コード全て含んだ置換の場合
-					// そのまま
-				} else if (nIdxTo > nLen - nLenEOL) {
-					// 改行コードの中なので、進む
-					nIdxTo++;
+					// 無限置換しないように、１文字増やしたので１文字選択に変更
+					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
+					m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineFrom;
+					m_nSelectColmFrom = save_nSelectColmFrom;
+					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
 				}
-				// 置換後文字列への書き換え
-				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen(), TRUE );
-				// キャレット位置の調整
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nIdxTo + colDiff, nPyLineNum, &m_nCaretPosX, &m_nCaretPosY);
-				// キャレット位置は調整済みなので colTmp, linTmpは０クリア
-				colTmp = linTmp = 0;
+				// 行末から検索文字列末尾までの文字数
+				int colDiff = nLen - nIdxTo;
+				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
+				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
+				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
 			//	HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
@@ -7797,19 +7779,8 @@ void CEditView::Command_REPLACE_ALL( void )
 		}
 
 		const CMemory	cMemRepKey( szREPLACEKEY, _tcslen(szREPLACEKEY) );
-		CMemory cMemRepKey2;
-		// 正規表現で選択始点・終点への挿入を記述
-		CMemory cMemMatchStr = CMemory("$&", strlen("$&"));
-		if (nReplaceTarget == 1 ) {	//選択始点へ挿入
-			cMemRepKey2 = cMemRepKey;
-			cMemRepKey2 += cMemMatchStr;
-		} else if (nReplaceTarget == 2) { // 選択終点へ挿入
-			cMemRepKey2 = cMemMatchStr;
-			cMemRepKey2 += cMemRepKey;
-		} else {
-			cMemRepKey2 = cMemRepKey;
-		}
-		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
+		// Jun. 6, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更
+		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey.GetPtr(), nFlag);
 	}
 
 	int save_nSelectColmFrom;
@@ -7934,7 +7905,9 @@ void CEditView::Command_REPLACE_ALL( void )
 				{
 					pLine = rLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
 					if( NULL != pLine &&
-						colTmp >= nLineLen - (pcLayout->m_cEol.GetLen()) ){
+						//	Jun. 18, 2005 かろと
+						//	改行の前にもう1文字あっても次の行に送られてしまっていた
+						colTmp > nLineLen - (pcLayout->m_cEol.GetLen()) ){
 						bLineOffset=TRUE;
 					}
 				}
@@ -7995,42 +7968,31 @@ void CEditView::Command_REPLACE_ALL( void )
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(save_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			const int nPyLineNum = pcLayout->m_nLinePhysical;
 			int nIdx = LineColmnToIndex( pcLayout, save_nSelectColmFrom ) + pcLayout->m_nOffset;
-			int nLen = strlen(pLine);
-			int nLenEOL = pcLayout->m_pCDocLine->m_cEol.GetLen();
+			int nLen = pcLayout->m_pCDocLine->GetLength();
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
-				// Command_INSTEXT用に選択位置(m_nSelectXXXX)を物理行行末までに更新
-				m_nSelectLineFrom = save_nSelectLineFrom;
-				m_nSelectColmFrom = save_nSelectColmFrom;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nLen, nPyLineNum, &m_nSelectColmTo, &m_nSelectLineTo);
-				// 物理行末までINSTEXTするので、キャレット位置が次の行頭になってしまうから
-				// キャレット位置を検索文字列末の位置まで戻す
-				// 置換前後で文字列長が変わる場合があるので、置換前後の文字列長の差だけ、検索文字列を調整
-				// INSTEXT後は pLineが変わっているかもしれないので先に計算 nIdxToを計算
-				int colDiff = cRegexp.GetStringLen() - (nLen - nIdx);
+				// From Here Jun. 6, 2005 かろと
+				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
+				// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
+				// そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
 				int matchLen = cRegexp.GetMatchLen();
 				int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
 				if (matchLen == 0) {
 					// ０文字マッチの時(無限置換にならないように１文字進める)
 					if (nIdxTo < nLen) {
 						nIdxTo += (CMemory::MemCharNext(pLine, nLen, pLine+nIdxTo) - (pLine+nIdxTo) == 2 ? 2 : 1);
-					} else {
-						++nIdxTo;
 					}
-				} else if (nIdxTo == nLen) {
-					// 改行コード全て含んだ置換の場合
-					// そのまま
-				} else if (nIdxTo > nLen - nLenEOL) {
-					// 改行コードの中なので、進む
-					nIdxTo++;
+					// 無限置換しないように、１文字増やしたので１文字選択に変更
+					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
+					m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineFrom;
+					m_nSelectColmFrom = save_nSelectColmFrom;
+					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
 				}
-				// 置換後文字列への書き換え
-				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen(), TRUE );
-				// キャレット位置の調整
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nIdxTo + colDiff, nPyLineNum, &m_nCaretPosX, &m_nCaretPosY);
-				// キャレット位置は調整済みなので colTmp, linTmpは０クリア
-				colTmp = linTmp = 0;
+				// 行末から検索文字列末尾までの文字数
+				int colDiff =  nLen - nIdxTo;
+				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
+				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
+				// To Here Jun. 6, 2005 かろと
 			} else {
 				// ここに来たら実際に置換は行われていないので、１減算して置換個数が増えないように調整 2003.07.11 かろと
 				--nReplaceNum;
