@@ -146,7 +146,15 @@ public:
 		// 置換後文字列が０幅なら outp、outendpもNULLになる
 		// NULLポインタの引き算は問題なく０になる。
 		// outendpは '\0'なので、文字列長は +1不要
-		return m_pRegExp->outendp - m_pRegExp->outp;
+
+		// Jun. 03, 2005 Karoto
+		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
+		//	outpのNULLチェックが必要
+		if (m_pRegExp->outp == NULL) {
+			return 0;
+		} else {
+			return m_pRegExp->outendp - m_pRegExp->outp;
+		}
 	}
 	/*!
 		置換された文字列を返す
