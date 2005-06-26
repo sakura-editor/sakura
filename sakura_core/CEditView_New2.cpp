@@ -480,7 +480,10 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 			rcClip.top    = y;
 			rcClip.bottom = y + nLineHeight;
 			// 2005/04/02 ‚©‚ë‚Æ ‚O•¶Žšƒ}ƒbƒ`‚¾‚Æ”½“]•‚ª‚O‚Æ‚È‚è”½“]‚³‚ê‚È‚¢‚Ì‚ÅA1/3•¶Žš•‚¾‚¯”½“]‚³‚¹‚é
-			if (rcClip.right == rcClip.left) {
+			// 2005/06/26 zenryaku ‘I‘ð‰ðœ‚ÅƒLƒƒƒŒƒbƒg‚ÌŽcŠ[‚ªŽc‚é–â‘è‚ðC³
+			if (IsTextSelected() && rcClip.right == rcClip.left &&
+				m_nSelectLineFrom == m_nSelectLineTo)
+			{
 				rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
 			}
 			if( rcClip.right - rcClip.left > 3000 ){
