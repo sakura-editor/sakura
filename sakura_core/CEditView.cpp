@@ -7711,9 +7711,9 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 		/* 矩形選択のテキストデータがクリップボードにあるか */
 		uFormat = 0;
 		while( 0 != ( uFormat = ::EnumClipboardFormats( uFormat ) ) ){
-			::GetClipboardFormatName( uFormat, szFormatName, sizeof(szFormatName) - 1 );
-//			MYTRACE( "szFormatName=[%s]\n", szFormatName );
-			if( 0 == lstrcmp( "MSDEVColumnSelect", szFormatName ) ){
+			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
+			if( ::GetClipboardFormatName( uFormat, szFormatName, sizeof(szFormatName) - 1 ) &&
+				0 == lstrcmp( "MSDEVColumnSelect", szFormatName ) ){
 				*pbColmnSelect = TRUE;
 				break;
 			}
