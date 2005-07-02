@@ -552,9 +552,10 @@ int CLayoutMgr::DoLayout_Range(
 
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
-	if( 0 == nLineNum ){
-		return 0;
-	}
+	//	Jun. 22, 2005 Moca ÅŒã‚Ìs[EOF‚Ì‚İ]‚Ì‚½‚ß‚É‚Ílinenum==0‚Å‚àˆ—‚ª•K—v
+	//if( 0 == nLineNum ){
+	//	return 0;
+	//}
 	pLayout = pLayoutPrev;
 	if( NULL == pLayout ){
 		nCurLine = 0;
