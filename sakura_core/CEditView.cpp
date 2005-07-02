@@ -22,19 +22,19 @@
 #include <io.h>
 #include "CEditView.h"
 #include "debug.h"
-#include "keycode.h"
-#include "funccode.h"
+//#include "keycode.h"
+//#include "funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
 #include "CWaitCursor.h"
 #include "CEditWnd.h"
-#include "CShareData.h"
+//#include "CShareData.h"
 #include "CDlgCancel.h"
-#include "sakura_rc.h"
+//#include "sakura_rc.h"
 #include "etc_uty.h"
-#include "global.h"
-#include "CAutoSave.h"
+//#include "global.h"
+//#include "CAutoSave.h"
 #include "CLayout.h"/// 2002/2/3 aroka
 #include "COpe.h"///
 #include "COpeBlk.h"///
@@ -43,11 +43,11 @@
 #include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
 #include "CMarkMgr.h"///
 #include "COsVersionInfo.h"
-#include "CDocLine.h"   // 2002.04.09 minfu
+//#include "CDocLine.h"   // 2002.04.09 minfu
 #include "CFileLoad.h" // 2002/08/30 Moca
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
-#include "my_icmp.h" // 2002/11/30 Moca 追加
-#include "CMigemo.h"
+//#include "my_icmp.h" // 2002/11/30 Moca 追加
+//#include "CMigemo.h"
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -90,9 +90,6 @@ VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
 /* 指定された値を最も近いバイト境界に整列させるマクロ */
 #define	 WIDTHBYTES(i)	((i+31)/32*4)
 
-//DWORD DoGrepProc(
-//	DWORD	dwGrepParam
-//);
 
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
 int CEditView::m_pnDx[10240 + 10];
@@ -1926,114 +1923,6 @@ void CEditView::PrintBitmap( HDC hdc, int x1, int y1, const char* szFile )
 
 
 
-/*
-プリプロセッサ ディレクティブ
-
-#define	#endif	#ifdef	#line
-#elif	#error	#ifndef	#pragma
-#else	#if	#include	#undef
-
-
-
-Cキーワード
-
-auto	double	int	struct
-break	else	long	switch
-case	enum	register	typedef
-char	extern	return	union
-const	float	short	unsigned
-continue	for	signed	void
-default		goto	sizeof	volatile
-do	if	static	while
-
-
-
-C++キーワード
-
-asm	auto	bad_cast	bad_typeid
-break	case	catch	char
-class	const	const_cast	continue
-default	delete	do	double
-dynamic_cast	else	enum	except
-extern	finally	float	for
-friend	goto	if	inline
-int	long	namespace	new
-operator	private	protected	public
-register	reinterpret_cast	return	short
-signed	sizeof	static	static_cast
-struct	switch	template	this
-throw	try	type_info	typedef
-typeid	union	unsigned	using
-virtual	void	volatile	while
-xalloc
-
-
-C++演算子
-
-::	スコープ解決	なし
-::	グローバル	なし
-[ ]	配列添字	左から右
-( )	関数呼び出し	左から右
-( )	変換	なし
-.	メンバ選択 (オブジェクト)	左から右
-->	メンバ選択 (ポインタ)	左から右
-++	後置インクリメント	なし
---	後置デクリメント	なし
-new	オブジェクト割り当て	なし
-delete	オブジェクト解放	なし
-delete[ ]	オブジェクト解放	なし
-++	前置インクリメント	なし
---	前置デクリメント	なし
-*	参照	なし
-&	アドレス	なし
-+	単項プラス	なし
--	算術否定 (単項)	なし
-!	論理 NOT	なし
-~	ビットごとの補数	なし
-sizeof	オブジェクトのサイズ	なし
-sizeof ( )	型のサイズ	なし
-typeid( )	型名	なし
-(type)	型キャスト (変換)	右から左
-const_cast	型キャスト (変換)	なし
-dynamic_cast	型キャスト (変換)	なし
-reinterpret_cast	型キャスト (変換)	なし
-static_cast	型キャスト (変換)	なし
-.*	クラス メンバへの適用ポインタ (オブジェクト)	左から右
-->*	ポインタを介した、クラス メンバへの逆参照ポインタ	左から右
-*	乗算	左から右
-/	除算	左から右
-%	剰余 (モジュール)	左から右
-+	加算	左から右
--	減算	左から右
-<<	左シフト	左から右
->>	右シフト	左から右
-<	小なり	左から右
->	大なり	左から右
-<=	以下	左から右
->=	以上	左から右
-==	等価	左から右
-!=	不等価	左から右
-&	ビットごとの AND	左から右
-^	ビットごとの排他的 OR	左から右
-|	ビットごとの OR	左から右
-&&	論理 AND	左から右
-||	論理 OR	左から右
-e1?e2:e3	条件	右から左
-=	代入	右から左
-*=	乗算代入	右から左
-/=	除算代入	右から左
-%=	剰余代入	右から左
-+=	加算代入	右から左
--=	減算代入	右から左
-<<=	左シフト代入	右から左
->>=	右シフト代入	右から左
-&=	ビットごとの AND 代入	右から左
-|=	ビットごとの OR 代入	右から左
-^=	ビットごとの排他的 OR 代入	右から左
-, 	カンマ	左から右
-
-
-*/
 
 
 /* 2点を対角とする矩形を求める */
@@ -7791,7 +7680,9 @@ int CEditView::IsCurrentPositionSelectedTEST(
 	return 0;
 }
 
-/* クリップボードからデータを取得 */
+/*! クリップボードからデータを取得
+	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
+*/
 BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 {
 	HGLOBAL		hglb;
@@ -7838,6 +7729,19 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 			return TRUE;
 		}
 	}else{
+		// From Here 2005/05/29 novice UNICODE TEXT 対応処理を追加
+		hglb = ::GetClipboardData( CF_UNICODETEXT );
+		if( hglb != NULL ){
+			lptstr = (char*)::GlobalLock(hglb);
+			//	Jul. 2, 2005 genta : remove temporary variable
+			cmemBuf.SetData( lptstr, GlobalSize(lptstr) );
+			cmemBuf.UnicodeToSJIS();
+			::GlobalUnlock(hglb);
+			::CloseClipboard();
+			return TRUE;
+		}
+		//	To Here 2005/05/29 novice
+
 		hglb = ::GetClipboardData( CF_OEMTEXT );
 		if( hglb != NULL ){
 			lptstr = (char*)::GlobalLock(hglb);
