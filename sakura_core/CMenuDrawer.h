@@ -24,7 +24,9 @@ class CMenuDrawer;
 class CImageListMgr;// 2002/2/10 aroka
 
 //#define MAX_MENUPOS	10
-#define MAX_MENUITEMS	300
+//	Jul. 2, 2005 genta : マクロをたくさん登録すると上限を超えてしまうので
+//	初期値の300から増やす
+#define MAX_MENUITEMS	400
 
 //ツールバーの拡張	//@@@ 2002.06.15 MIK
 #define TBSTYLE_COMBOBOX	((BYTE)0x40)	//ツールバーにコンボボックス
