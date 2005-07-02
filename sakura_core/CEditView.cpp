@@ -7733,9 +7733,11 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 		hglb = ::GetClipboardData( CF_UNICODETEXT );
 		if( hglb != NULL ){
 			lptstr = (char*)::GlobalLock(hglb);
-			//	Jul. 2, 2005 genta : remove temporary variable
-			cmemBuf.SetData( lptstr, GlobalSize(lptstr) );
-			cmemBuf.UnicodeToSJIS();
+			//	UnicodeToSJISでは後ろに余計な空白が入るので，
+			//	一時変数を介した後に\0までを取り出す．
+			CMemory cmemUnicode( lptstr, GlobalSize(lptstr) );
+			cmemUnicode.UnicodeToSJIS();
+			cmemBuf.SetDataSz( cmemUnicode.GetPtr() );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
 			return TRUE;
