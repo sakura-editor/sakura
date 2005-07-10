@@ -2608,11 +2608,17 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 	nCurYOld = m_nCaretPosY;
 
 	nCount = 0;
-	nBgn = 0;
 
-	for( nPos = 0; nPos < nPasteSize; )
+	// Jul. 10, 2005 genta 貼り付けデータの最後にCR/LFが無い場合の対策
+	//	データの最後まで処理 i.e. nBgnがnPasteSizeを超えたら終了
+	//for( nPos = 0; nPos < nPasteSize; )
+	for( nBgn = nPos = 0; nBgn < nPasteSize; )
 	{
-		if( szPaste[nPos] == CR || szPaste[nPos] == LF )
+		// Jul. 10, 2005 genta 貼り付けデータの最後にCR/LFが無いと
+		//	最終行のPaste処理が動かないので，
+		//	データの末尾に来た場合は強制的に処理するようにする
+		if( szPaste[nPos] == CR || szPaste[nPos] == LF ||
+			nPos == nPasteSize )
 		{
 			if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 			{
