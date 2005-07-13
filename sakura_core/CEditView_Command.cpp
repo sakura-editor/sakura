@@ -9197,7 +9197,8 @@ void CEditView::Command_LOADKEYMACRO( void )
 		m_hInstance,
 		m_hWnd,
 // 2005/02/20 novice デフォルトの拡張子変更
-		"*.mac",
+// 2005/07/13 novice 多様なマクロをサポートしているのでデフォルトは全て表示にする
+		"*.*",
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
