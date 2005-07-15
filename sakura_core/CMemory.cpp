@@ -39,6 +39,7 @@
 #include <mbstring.h>
 #include <ctype.h>
 #include <locale.h>
+#include <limits.h>
 #include "CMemory.h"
 #include "etc_uty.h"
 #include "CEol.h"// 2002/2/3 aroka
@@ -2992,6 +2993,7 @@ int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* p
 
 	@date 2001.04.01 genta +-の判定をUTF7らしさに加えないように
 	@date 2003.11.03 genta UTF7であり得ない文字として'=','\','~'を考慮するように．
+	@date 2005.07.11 Moca 文字判定のバグ修正．1/3以上失敗した場合はUTF-7らしさを0に
 
 	@note 文字数のカウントが正確とは言えないが，とりあえず無視
 
@@ -3011,11 +3013,13 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 	CMemory		cmemWork;
 	char		cWork;
 	int			nUniBytes;
+	int			nBadDecode;
 
 	*pnMojiNum = 0;
 	*pnUTF7CodeNum = 0;
 	nMojiNum = 0;
 	nUTF7CodeNum = 0;
+	nBadDecode = 0;
 
 	//	Nov. 03, 2003 genta
 	//	積算値に関わらず絶対にUTF-7ではあり得ない
@@ -3056,21 +3060,25 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 				nWorkLen = i - nBgn;
 				if( 3 <= nWorkLen ){
 					pszWork = new char [nWorkLen + 1];
-					memset( pszWork, 0, nWorkLen + 1 );
 					memcpy( pszWork, &pBuf[nBgn], nWorkLen );
+					pszWork[nWorkLen] = '\0';
 					// Base64デコード
 					nWorkLen = MemBASE64_Decode( (unsigned char *)pszWork, nWorkLen );
 					if( 0 == nWorkLen % 2 ){
+						char szMbChar[MB_LEN_MAX];
 						nMojiNum += (nWorkLen / 2);
 						/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
 						for( j = 0; j < nWorkLen; j += 2 ){
 							cWork = pszWork[j + 1];
 							pszWork[j + 1] = pszWork[j];
 							pszWork[j] = cWork;
-							/* 変換可能なUnicodeか */
-							nUniBytes = wctomb( (char*)NULL, *(wchar_t*)(&pszWork[j]) );
+							// SJISに変換可能なUnicode文字か
+							// 2004.11.20-2005.01.25 Moca wctomb( NULL, .. )としていたため、必ず変換可能とカウントされていたバグを修正
+							nUniBytes = wctomb( szMbChar, *(wchar_t*)(&pszWork[j]) );
 							if( -1 != nUniBytes ){
 								nUTF7CodeNum++;
+							}else{
+								nBadDecode++;
 							}
 						}
 					}else{
@@ -3102,6 +3110,11 @@ int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* p
 		}
 	}
 	*pnMojiNum = nMojiNum;
+
+	// 2005.07.11 Moca 1/3以上がデコードに失敗したら、あり得ない
+	if( nUTF7CodeNum / 2 < nBadDecode ){
+		bNeverUtf7 = true;
+	}
 
 	//	Nov. 03, 2003 あり得ないフラグがtrueなら必ず0
 	*pnUTF7CodeNum = bNeverUtf7 ? 0 : nUTF7CodeNum;
