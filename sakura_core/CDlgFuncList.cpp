@@ -378,6 +378,12 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		ListView_SetColumnWidth( hwndList, 0, ListView_GetColumnWidth( hwndList, 0 ) + 16 );
 		ListView_SetColumnWidth( hwndList, 1, ListView_GetColumnWidth( hwndList, 1 ) + 16 );
 		ListView_SetColumnWidth( hwndList, 2, ListView_GetColumnWidth( hwndList, 2 ) + 16 );
+
+		// 2005.07.05 ‚º‚Á‚Æ
+		DWORD dwExStyle  = ListView_GetExtendedListViewStyle( hwndList );
+		dwExStyle |= LVS_EX_FULLROWSELECT;
+		ListView_SetExtendedListViewStyle( hwndList, dwExStyle );
+
 		if( bSelected ){
 			ListView_GetItemRect( hwndList, 0, &rc, LVIR_BOUNDS );
 			ListView_Scroll( hwndList, 0, nSelectedLine * ( rc.bottom - rc.top ) );
