@@ -104,6 +104,18 @@ public:
 	void PrintMenubarMessage( const char* msg );
 	//	Dec. 4, 2002 genta 実体をCEditViewから移動
 	void SendStatusMessage( const char* msg );
+	//	Jul. 9, 2005 genta メニューバー右端には出したくない長めのメッセージを出す
+	void SendStatusMessage2( const char* msg );
+	/*!	SendStatusMessage2()が効き目があるかを予めチェック
+		@date 2005.07.09 genta
+		@note もしSendStatusMessage2()でステータスバー表示以外の処理を追加
+		する場合にはここを変更しないと新しい場所への出力が行われない．
+		
+		@sa SendStatusMessage2
+	*/
+	bool SendStatusMessage2IsEffective(void) const {
+		return NULL != m_hwndStatusBar;
+	}
 	void WindowTopMost( int ); // 2004.09.21 Moca
 
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */

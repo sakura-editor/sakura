@@ -325,6 +325,10 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nSelectColmFrom;		/* 範囲選択開始桁 */
 	int		m_nSelectLineTo;		/* 範囲選択終了行 */
 	int		m_nSelectColmTo;		/* 範囲選択終了桁 */
+	/* DrawSelectArea()に現在の選択範囲を教えて差分のみ描画するためのもの
+	   現在の選択範囲をOldへコピーした上で新しい選択範囲をSelectに設定して
+	   DrawSelectArea()を呼びだすことで新しい範囲が描かれる．
+	*/
 	int		m_nSelectLineFromOld;	/* 範囲選択開始行 */
 	int		m_nSelectColmFromOld;	/* 範囲選択開始桁 */
 	int		m_nSelectLineToOld;		/* 範囲選択終了行 */
@@ -432,6 +436,7 @@ protected:
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
 	void ChangeSelectAreaByCurrentCursorTEST( int, int, int&, int&, int&, int& );/* 現在のカーソル位置によって選択範囲を変更 */
+	void PrintSelectionInfoMsg(void);		// 選択情報データの作成	2005.07.09 genta
 	int  MoveCursorToPoint( int, int );							/* マウス等による座標指定によるカーソル移動 */
 	int  ScrollAtV( int );										/* 指定上端行位置へスクロール */
 	int  ScrollAtH( int );										/* 指定左端桁位置へスクロール */
@@ -463,6 +468,7 @@ protected:
 	void AddToCmdArr( const char* );
 	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
+	void SendStatusMessage2( const char* msg );					// Jul. 9, 2005 genta
 //  以下の二つはつかわなくなりました。 minfu 2002.04.10
 //	LRESULT RequestedReconversion( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える minfu 2002.03.27 */
 //	LRESULT RequestedReconversionW( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える for 95/NT 20020331 aroka */
