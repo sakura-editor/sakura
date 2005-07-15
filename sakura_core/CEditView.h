@@ -415,6 +415,20 @@ protected:
 	void OnXLBUTTONDOWN( WPARAM, int, int );					/* マウス左サイドボタン押下 */
 	void OnXRBUTTONDOWN( WPARAM, int, int );					/* マウス右サイドボタン押下 */
 	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );						/* マウスホイールのメッセージ処理 */
+	/*! 選択範囲を指定する(原点未選択)
+
+		@date 2005.06.24 Moca
+	*/
+	void SetSelectArea( int nLineFrom, int nColmFrom, int nLineTo, int nColmTo ){
+		m_nSelectLineBgnFrom = nLineFrom;
+		m_nSelectColmBgnFrom = nColmFrom;
+		m_nSelectLineBgnTo = nLineFrom;
+		m_nSelectColmBgnTo = nColmFrom;
+		m_nSelectLineFrom = nLineFrom;
+		m_nSelectColmFrom = nColmFrom;
+		m_nSelectLineTo = nLineTo;
+		m_nSelectColmTo = nColmTo;
+	}
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
 	void ChangeSelectAreaByCurrentCursorTEST( int, int, int&, int&, int&, int& );/* 現在のカーソル位置によって選択範囲を変更 */
