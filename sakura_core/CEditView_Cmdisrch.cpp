@@ -443,14 +443,8 @@ void CEditView::ISearchExec(bool bNext)
 		//検索結果あり
 		//キャレット移動
 		MoveCursor( nColmFrom, nLineFrom , TRUE, _CARETMARGINRATE / 3 );
-		m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-		m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-		m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
-		m_nSelectColmBgnTo = nColmFrom;		/* 範囲選択開始桁(原点) */
-		m_nSelectLineFrom =	nLineFrom;
-		m_nSelectColmFrom = nColmFrom;
-		m_nSelectLineTo = nLineTo;
-		m_nSelectColmTo = nColmTo;
+		//	2005.06.24 Moca
+		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nLineFrom );
 
 		m_bISearchWrap = false;
 		m_nISearchX1History[m_nISearchHistoryCount] = nColmFrom;
@@ -506,14 +500,8 @@ void CEditView::ISearchBack(void) {
 
 	MoveCursor( nColmFrom , nLineFrom , TRUE, _CARETMARGINRATE / 3 );
 	if(m_nISearchHistoryCount != 0){
-		m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-		m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-		m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
-		m_nSelectColmBgnTo = nColmFrom;		/* 範囲選択開始桁(原点) */
-		m_nSelectLineFrom =	nLineFrom;
-		m_nSelectColmFrom = nColmFrom;
-		m_nSelectLineTo = nLineTo;
-		m_nSelectColmTo = nColmTo;
+		//	2005.06.24 Moca
+		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nLineFrom );
 	}
 
 	Redraw();

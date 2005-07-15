@@ -1916,14 +1916,8 @@ void CEditView::Command_LineCutToStart( void )
 		return;
 	}
 	/* 選択範囲の変更 */
-	m_nSelectLineBgnFrom = nY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = nX;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = nY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = nX;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineFrom =	nY;
-	m_nSelectColmFrom = nX;
-	m_nSelectLineTo = m_nCaretPosY;
-	m_nSelectColmTo = m_nCaretPosX;
+	//	2005.06.24 Moca
+	SetSelectArea( nY, nX, m_nCaretPosX, m_nCaretPosY );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/*切り取り(選択範囲をクリップボードにコピーして削除) */
@@ -1963,14 +1957,8 @@ void CEditView::Command_LineCutToEnd( void )
 		return;
 	}
 	/* 選択範囲の変更 */
-	m_nSelectLineBgnFrom = m_nCaretPosY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = m_nCaretPosX;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = m_nCaretPosY;		/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = m_nCaretPosX;		/* 範囲選択開始桁(原点) */
-	m_nSelectLineFrom =	m_nCaretPosY;
-	m_nSelectColmFrom = m_nCaretPosX;
-	m_nSelectLineTo = nY;
-	m_nSelectColmTo = nX;
+	//	2005.06.24 Moca
+	SetSelectArea( m_nCaretPosY, m_nCaretPosX, nY, nX );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/*切り取り(選択範囲をクリップボードにコピーして削除) */
@@ -2002,14 +1990,8 @@ void CEditView::Command_LineDeleteToStart( void )
 		return;
 	}
 	/* 選択範囲の変更 */
-	m_nSelectLineBgnFrom = nY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = nX;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = nY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = nX;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineFrom =	nY;
-	m_nSelectColmFrom = nX;
-	m_nSelectLineTo = m_nCaretPosY;
-	m_nSelectColmTo = m_nCaretPosX;
+	//	2005.06.24 Moca
+	SetSelectArea( nY, nX, m_nCaretPosX, m_nCaretPosY );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/* 選択領域削除 */
@@ -2048,14 +2030,8 @@ void CEditView::Command_LineDeleteToEnd( void )
 		return;
 	}
 	/* 選択範囲の変更 */
-	m_nSelectLineBgnFrom = m_nCaretPosY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = m_nCaretPosX;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = m_nCaretPosY;		/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = m_nCaretPosX;		/* 範囲選択開始桁(原点) */
-	m_nSelectLineFrom =	m_nCaretPosY;
-	m_nSelectColmFrom = m_nCaretPosX;
-	m_nSelectLineTo = nY;
-	m_nSelectColmTo = nX;
+	//	2005.06.24 Moca
+	SetSelectArea( m_nCaretPosY, m_nCaretPosX, nX, nY );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/* 選択領域削除 */
@@ -2210,16 +2186,8 @@ void CEditView::Command_SELECTALL( void )
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
 	/* 全体を選択する */
-	m_nSelectLineBgnFrom = 0;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = 0;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = 0;		/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = 0;		/* 範囲選択開始桁(原点) */
-
-
-	m_nSelectLineFrom =	0;
-	m_nSelectColmFrom = 0;
-	m_nSelectLineTo = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	m_nSelectColmTo = 0;
+	//	2005.06.24 Moca
+	SetSelectArea( 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 );
 
 	/* 選択領域描画 */
 	DrawSelectArea();
@@ -2260,16 +2228,8 @@ bool CEditView::Command_SELECTWORD( void )
 		nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 
 		/* 選択範囲の変更 */
-		m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-		m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-		m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
-		m_nSelectColmBgnTo = nColmFrom;		/* 範囲選択開始桁(原点) */
-
-
-		m_nSelectLineFrom =	nLineFrom;
-		m_nSelectColmFrom = nColmFrom;
-		m_nSelectLineTo = nLineTo;
-		m_nSelectColmTo = nColmTo;
+		//	2005.06.24 Moca
+		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
 
 		/* 単語の先頭にカーソルを移動 */
 		MoveCursor( nColmTo, nLineTo, TRUE );
@@ -3317,15 +3277,8 @@ re_do:;							//	hor
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 		}else{
 			/* 選択範囲の変更 */
-			m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnTo = nColmFrom;		/* 範囲選択開始桁(原点) */
-
-			m_nSelectLineFrom =	nLineFrom;
-			m_nSelectColmFrom = nColmFrom;
-			m_nSelectLineTo = nLineTo;
-			m_nSelectColmTo = nColmTo;
+			//	2005.06.24 Moca
+			SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
 
 			if( bReDraw ){
 				/* 選択領域描画 */
@@ -3569,14 +3522,8 @@ re_do:;
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 		}else{
 			/* 選択範囲の変更 */
-			m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnTo = nLineFrom;		/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnTo = nColmFrom;		/* 範囲選択開始桁(原点) */
-			m_nSelectLineFrom =	nLineFrom;
-			m_nSelectColmFrom = nColmFrom;
-			m_nSelectLineTo = nLineTo;
-			m_nSelectColmTo = nColmTo;
+			//	2005.06.24 Moca
+			SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
 
 			if( bRedraw ){
 				/* 選択領域描画 */
@@ -9492,7 +9439,8 @@ void CEditView::Command_BRACKETPAIR( void )
 	bit2(out) : 見つかった位置         0:後ろ      1:前
 	*/
 	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) ){	// 02/09/18 ai
-		MoveCursor( nCol, nLine, true );
+		//	2005.06.24 Moca
+		MoveCursor( nCol, nLine, TRUE );
 	}
 	else{
 		//	失敗した場合は nCol/nLineには有効な値が入っていない.
@@ -9530,7 +9478,8 @@ void CEditView::Command_JUMPHIST_PREV( void )
 			m_cHistory->GetCurrent().GetPos(),
 			m_cHistory->GetCurrent().GetLine(),
 			&x, &y );
-		MoveCursor( x, y, true );
+		//	2005.06.24 Moca
+		MoveCursor( x, y, TRUE );
 	}
 }
 
@@ -9546,7 +9495,8 @@ void CEditView::Command_JUMPHIST_NEXT( void )
 			m_cHistory->GetCurrent().GetPos(),
 			m_cHistory->GetCurrent().GetLine(),
 			&x, &y );
-		MoveCursor( x, y, true );
+		//	2005.06.24 Moca
+		MoveCursor( x, y, TRUE );
 	}
 }
 //	To HERE Sep. 8, 2000 genta
