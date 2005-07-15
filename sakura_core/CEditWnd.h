@@ -109,6 +109,8 @@ public:
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */
 //#ifdef _DEBUG
 	void SetDebugModeON( void );	/* デバッグモニタモードに設定 */
+	// 2005.06.24 Moca
+	void SetDebugModeOFF( void );
 //#endif
 	/*
 	|| スタティックなメンバ関数
