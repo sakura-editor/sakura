@@ -4026,6 +4026,28 @@ void CEditWnd::SendStatusMessage( const char* msg )
 	}
 }
 
+/*!
+	@brief メッセージの表示
+	
+	指定されたメッセージをステータスバーに表示する．
+	メニューバー右端に入らないものや，桁位置表示を隠したくないものに使う
+	
+	呼び出し前にSendStatusMessage2IsEffective()で処理の有無を
+	確認することで無駄な処理を省くことが出来る．
+
+	@param msg [in] 表示するメッセージ
+	@date 2005.07.09 genta 新規作成
+	
+	@sa SendStatusMessage2IsEffective
+*/
+void CEditWnd::SendStatusMessage2( const char* msg )
+{
+	if( NULL != m_hwndStatusBar ){
+		// ステータスバーへ
+		::SendMessage( m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
+	}
+}
+
 /*! ファイル名変更通知
 
 	@author MIK

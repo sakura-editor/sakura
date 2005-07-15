@@ -2216,6 +2216,8 @@ void CEditView::DrawSelectArea( void )
 		::DeleteObject( hBrush );
 		::ReleaseDC( m_hWnd, hdc );
 	}
+	//	Jul. 9, 2005 genta 選択領域の情報を表示
+	PrintSelectionInfoMsg();
 	return;
 }
 
@@ -4142,54 +4144,6 @@ void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY 
 		m_nSelectLineTo,
 		m_nSelectColmTo
 	);
-#if 0
-	if( m_nSelectLineBgnFrom == m_nSelectLineBgnTo /* 範囲選択開始行(原点) */
-	 && m_nSelectColmBgnFrom == m_nSelectColmBgnTo ){
-		if( nCaretPosY == m_nSelectLineBgnFrom
-		 && nCaretPosX == m_nSelectColmBgnFrom ){
-			/* 選択解除 */
-			m_nSelectLineFrom = -1;
-			m_nSelectColmFrom  = -1;
-			m_nSelectLineTo = -1;
-			m_nSelectColmTo = -1;
-		}else
-		if( nCaretPosY < m_nSelectLineBgnFrom
-		 || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX < m_nSelectColmBgnFrom ) ){
-			m_nSelectLineFrom = nCaretPosY;
-			m_nSelectColmFrom = nCaretPosX;
-			m_nSelectLineTo = m_nSelectLineBgnFrom;
-			m_nSelectColmTo = m_nSelectColmBgnFrom;
-		}else{
-			m_nSelectLineFrom = m_nSelectLineBgnFrom;
-			m_nSelectColmFrom = m_nSelectColmBgnFrom;
-			m_nSelectLineTo = nCaretPosY;
-			m_nSelectColmTo = nCaretPosX;
-		}
-	}else{
-		/* 常時選択範囲の範囲内 */
-		if( ( nCaretPosY > m_nSelectLineBgnFrom || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX >= m_nSelectColmBgnFrom ) )
-		 && ( nCaretPosY < m_nSelectLineBgnTo || ( nCaretPosY == m_nSelectLineBgnTo && nCaretPosX < m_nSelectColmBgnTo ) )
-		){
-			m_nSelectLineFrom = m_nSelectLineBgnFrom;
-			m_nSelectColmFrom = m_nSelectColmBgnFrom;
-			m_nSelectLineTo = m_nSelectLineBgnTo;
-			m_nSelectColmTo = m_nSelectColmBgnTo;
-		}else
-		if( !( nCaretPosY > m_nSelectLineBgnFrom || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX >= m_nSelectColmBgnFrom ) ) ){
-			/* 常時選択範囲の前方向 */
-			m_nSelectLineFrom = nCaretPosY;
-			m_nSelectColmFrom  = nCaretPosX;
-			m_nSelectLineTo = m_nSelectLineBgnTo;
-			m_nSelectColmTo = m_nSelectColmBgnTo;
-		}else{
-			/* 常時選択範囲の後ろ方向 */
-			m_nSelectLineFrom = m_nSelectLineBgnFrom;
-			m_nSelectColmFrom = m_nSelectColmBgnFrom;
-			m_nSelectLineTo = nCaretPosY;
-			m_nSelectColmTo = nCaretPosX;
-		}
-	}
-#endif
 	/* 選択領域の描画 */
 	DrawSelectArea();
 	return;
@@ -5130,11 +5084,6 @@ void CEditView::CopySelectedAllLines(
 	return;
 }
 
-
-
-
-
-
 /* 選択エリアのテキストを指定方法で変換 */
 void CEditView::ConvSelectedArea( int nFuncCode )
 {
@@ -5929,8 +5878,91 @@ void CEditView::DrawCaretPosInfo( void )
 	return;
 }
 
+/*!	選択範囲情報メッセージの表示
 
+	@author genta
+	@date 2005.07.09 genta 新規作成
+*/
+void CEditView::PrintSelectionInfoMsg(void)
+{
+	//	出力されないなら計算を省略
+	if( ! m_pcEditDoc->m_pcEditWnd->SendStatusMessage2IsEffective() )
+		return;
 
+	if( ! IsTextSelected() ){
+		m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( "" );
+		return;
+	}
+
+	char msg[128];
+	int select_line = select_line = m_nSelectLineTo - m_nSelectLineFrom + 1;
+	if( m_bBeginBoxSelect ){
+		//	矩形の場合は幅と高さだけでごまかす
+		int select_col = m_nSelectColmFrom - m_nSelectColmTo;
+		if( select_col < 0 ){
+			select_col = -select_col;
+		}
+		wsprintf( msg, "%d Columns * %d lines selected.",
+			select_col, select_line );
+			
+	}
+	else {
+		//	通常の選択では選択範囲の中身を数える
+		int select_sum = 0;	//	バイト数合計
+		const char *pLine;	//	データを受け取る
+		int	nLineLen;		//	行の長さ
+		const CLayout*	pcLayout;
+
+		//	1行目
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen, &pcLayout );
+		if( pLine ){
+			//	1行だけ選択されている場合
+			if( m_nSelectLineFrom == m_nSelectLineTo ){
+				select_sum = LineColmnToIndex( pcLayout, m_nSelectColmTo )
+					- LineColmnToIndex( pcLayout, m_nSelectColmFrom );
+			}
+			else {	//	2行以上選択されている場合
+				select_sum = pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen()
+					- LineColmnToIndex( pcLayout, m_nSelectColmFrom );
+
+				//	GetSelectedDataと似ているが，先頭行と最終行は排除している
+				for( int nLineNum = m_nSelectLineFrom + 1;
+					nLineNum < m_nSelectLineTo && NULL != pLine; ++nLineNum ){
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+					select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen();
+				}
+
+				//	最終行の処理
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+				if( pLine ){
+					int last_line_chars = LineColmnToIndex( pcLayout, m_nSelectColmTo );
+					select_sum += last_line_chars;
+					if( last_line_chars == 0 ){
+						//	最終行の先頭にキャレットがある場合は
+						//	その行を行数に含めない
+						--select_line;
+					}
+				}
+				else
+				{
+					//	最終行が空行なら
+					//	その行を行数に含めない
+					--select_line;
+				}
+			}
+		}
+
+#ifdef _DEBUG
+		wsprintf( msg, "%d bytes (%d lines) selected. [%d:%d]-[%d:%d]",
+			select_sum, select_line,
+			m_nSelectColmFrom, m_nSelectLineFrom,
+			m_nSelectColmTo, m_nSelectLineTo );
+#else
+		wsprintf( msg, "%d bytes (%d lines) selected.", select_sum, select_line );
+#endif
+	}
+	m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( msg );
+}
 
 
 /* 設定変更を反映させる */
@@ -6028,6 +6060,9 @@ void CEditView::RedrawAll( void )
 
 	/* 親ウィンドウのタイトルを更新 */
 	SetParentCaption();
+
+	//	Jul. 9, 2005 genta	選択範囲の情報をステータスバーへ表示
+	PrintSelectionInfoMsg();
 
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
