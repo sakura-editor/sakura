@@ -2489,12 +2489,8 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					cMRU.Add( pfi );
 				}else{
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-						if( !m_cEditDoc.IsModified() &&	//	Jan. 22, 2002 genta
-							!m_cEditDoc.IsFilePathAvailable() &&	/* 現在編集中のファイルのパス */
-							//	Jun. 13, 2003 Moca GrepウィンドウへDropしたときにGrepウィンドウのまま
-							//	同じウィンドウで開かれてしまう問題を修正
-							!m_cEditDoc.m_bGrepMode					/* Grep結果ではない */  // 2003.06.13 Add
-						){
+						//	2005.06.24 Moca
+						if( m_cEditDoc.IsFileOpenInThisWindow() ){
 								/* ファイル読み込み */
 								m_cEditDoc.FileRead(
 										szFile,
@@ -3029,6 +3025,17 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		/* 親ウィンドウのタイトルを更新 */
 		m_cEditDoc.SetParentCaption();
 		return;
+	}
+	
+	// 2005.06.24 Moca
+	//! デバックモニタモードの解除
+	void CEditWnd::SetDebugModeOFF( void )
+	{
+		if( m_pShareData->m_hwndDebug == m_hWnd ){
+			m_pShareData->m_hwndDebug = NULL;
+			m_cEditDoc.m_bDebugMode = FALSE;
+			m_cEditDoc.SetParentCaption();
+		}
 	}
 //#endif
 

@@ -3429,6 +3429,12 @@ void CEditDoc::Init( void )
 	m_bGrepMode = FALSE;	/* Grepモード */
 	m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法
 
+	// 2005.06.24 Moca バグ修正
+	//	アウトプットウィンドウで「閉じて(無題)」を行ってもアウトプットウィンドウのまま
+	if( m_bDebugMode ){
+		m_pcEditWnd->SetDebugModeOFF();
+	}
+
 //	Sep. 10, 2002 genta
 //	アイコン設定はファイル名設定と一体化のためここからは削除
 
