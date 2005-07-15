@@ -174,6 +174,19 @@ public:
 	void SetModified( BOOL flag, bool redraw){
 		SetModified( flag != FALSE, redraw );
 	}
+	
+	/*! @brief このウィンドウで新しいファイルを開けるか
+
+		新しいウィンドウを開かずに現在のウィンドウを再利用できるかどうかのテストを行う．
+		変更済み，ファイルを開いている，Grepウィンドウ，アウトプットウィンドウの場合には
+		再利用不可．
+
+		@author Moca
+		@date 2005.06.24 Moca
+	*/
+	bool IsFileOpenInThisWindow( void ){
+		return !( IsModified() || IsFilePathAvailable() || m_bGrepMode || m_bDebugMode );
+	}
 
 	void AddToMRU(void); // Mar. 30, 2003 genta
 	// Mar. 31, 2003 genta ExpandParameter補助関数

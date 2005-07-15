@@ -1312,9 +1312,7 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 		/* ファイルが開かれていない */
 		/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 //@@@ 2001.12.26 YAZAKI Grep結果で無い場合も含める。
-		if( !IsModified() &&
-			!IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
-			!m_bGrepMode					/* Grep結果ではない */
+		if( IsFileOpenInThisWindow()
 		){
 			/* ファイル読み込み */
 			//	Oct. 03, 2004 genta コード確認は設定に依存
