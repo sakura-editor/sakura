@@ -1917,7 +1917,7 @@ void CEditView::Command_LineCutToStart( void )
 	}
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	SetSelectArea( nY, nX, m_nCaretPosX, m_nCaretPosY );
+	SetSelectArea( nY, nX, m_nCaretPosY, m_nCaretPosX );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/*切り取り(選択範囲をクリップボードにコピーして削除) */
@@ -1991,7 +1991,7 @@ void CEditView::Command_LineDeleteToStart( void )
 	}
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	SetSelectArea( nY, nX, m_nCaretPosX, m_nCaretPosY );
+	SetSelectArea( nY, nX, m_nCaretPosY, m_nCaretPosX );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/* 選択領域削除 */
@@ -2031,7 +2031,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 	}
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	SetSelectArea( m_nCaretPosY, m_nCaretPosX, nX, nY );
+	SetSelectArea( m_nCaretPosY, m_nCaretPosX, nY, nX );
 //	/* 選択領域描画 */
 //	DrawSelectArea();
 	/* 選択領域削除 */
