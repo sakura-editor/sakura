@@ -1283,7 +1283,10 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 		}
 		/* 文字コード種別 */
 		//	Oct. 03, 2004 genta コード確認は設定に依存
-		if( nCharCode != pfi->m_nCharCode &&
+		//	Jul. 20, 2005 genta コードの自動認識に失敗してnCharCodeが
+		//		AUTO_DETECTのままになってしまう場合を考慮して範囲チェック追加
+		if( nCharCode < CODE_CODEMAX &&
+			nCharCode != CODE_AUTODETECT && nCharCode != pfi->m_nCharCode &&
 			m_pShareData->m_Common.GetQueryIfCodeChange() ){
 			char*	pszCodeNameCur;
 			char*	pszCodeNameNew;
