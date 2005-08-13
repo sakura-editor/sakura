@@ -320,8 +320,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		::SendMessage( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 
 		//ツールチップを作成する。
+		//	2005.08.11 ryoji 「重ねて表示」のZ-orderがおかしくなるのでTOPMOST指定を解除
 		m_hwndToolTip = ::CreateWindowEx(
-			WS_EX_TOPMOST,
+			0,
 			TOOLTIPS_CLASS,
 			NULL,
 			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
@@ -334,11 +335,6 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 			m_hInstance,
 			NULL
 			);
-		::SetWindowPos(
-			m_hwndToolTip,
-			HWND_TOPMOST,
-			0, 0, 0, 0,
-			SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
 		RECT		rect;
 		TOOLINFO	ti;
