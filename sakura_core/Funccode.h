@@ -410,6 +410,17 @@
 #define F_EXPANDPARAMETER 40003 // 2003-02-21 鬼 コマンドラインパラメータ展開
 #define F_GETLINESTR      40004 // 指定行論理データを取得する 2003.06.25 Moca
 #define F_GETLINECOUNT    40005 // 論理行数を取得する 2003.06.25 Moca
+#define F_CHGTABWIDTH     40006 // タブサイズを取得、設定する 2004.03.16 zenryaku
+#define F_ISTEXTSELECTED  40007 // テキストが選択されているか 2005.7.30 maru
+#define F_GETSELLINEFROM  40008 // 選択開始行の取得 2005.7.30 maru
+#define F_GETSELCOLMFROM  40009 // 選択開始桁の取得 2005.7.30 maru
+#define F_GETSELLINETO    40010 // 選択終了行の取得 2005.7.30 maru
+#define F_GETSELCOLMTO    40011 // 選択終了桁の取得 2005.7.30 maru
+#define F_ISINSMODE       40012 // 挿入／上書きモードの取得 2005.7.30 maru
+#define F_GETCHARCODE     40013 // 文字コード取得 2005.07.31 maru
+#define F_GETLINECODE     40014 // 改行コード取得 2005.08.05 maru
+#define F_ISPOSSIBLEUNDO  40015 // Undo可能か調べる 2005.08.05 maru
+#define F_ISPOSSIBLEREDO  40016 // Redo可能か調べる 2005.08.05 maru
 
 //	2005.01.10 genta ISearch用補助コード
 #define F_ISEARCH_ADD_CHAR	0x10001	//	Incremental Searchへ1文字へ追加

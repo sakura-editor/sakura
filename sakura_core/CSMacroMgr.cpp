@@ -36,6 +36,18 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 	{F_EXPANDPARAMETER,	"ExpandParameter",	{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
 	{F_GETLINESTR, "GetLineStr", {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_BSTR, NULL }, // 指定論理行の取得 2003.06.01 Moca
 	{F_GETLINECOUNT, "GetLineCount", {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 全論理行数の取得 2003.06.01 Moca
+	{F_CHGTABWIDTH,			"ChangeTabWidth",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},  VT_I4, NULL }, //タブサイズ変更 2004.03.16 zenryaku
+	{F_ISTEXTSELECTED,		"IsTextSelected",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, //テキストが選択されているか 2005.7.30 maru
+	{F_GETSELLINEFROM,		"GetSelectLineFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択開始行の取得 2005.7.30 maru
+	{F_GETSELCOLMFROM,		"GetSelectColmFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELLINETO,		"GetSelectLineTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択終了行の取得 2005.7.30 maru
+	{F_GETSELCOLMTO,		"GetSelectColmTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_ISINSMODE,			"IsInsMode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 挿入／上書きモードの取得 2005.7.30 maru
+	{F_GETCHARCODE,			"GetCharCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 文字コード取得 2005.07.31 maru
+	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 改行コード取得 2005.08.05 maru
+	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // Undo可能か調べる 2005.08.05 maru
+	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // Redo可能か調べる 2005.08.05 maru
+	
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，

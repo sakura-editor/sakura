@@ -85,6 +85,8 @@ public:
 		@return タブ幅
 	 */
 	int GetTabSpace(void) const { return m_nTabSpace; }
+	//	zenryaku 
+	bool SetTabSpace(int nTab);
 	/*! 次のTAB位置までの幅
 		@param pos [in] 現在の位置
 		@return 次のTAB位置までの文字数．1～TAB幅
