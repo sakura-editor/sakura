@@ -576,7 +576,7 @@ void CShareData::ShareData_IO_Common( const bool bRead, CProfile& cProfile )
 	cProfile.IOProfileData( bRead, pszSecName, "bMenuIcon"					, common.m_bMenuIcon );//メニューにアイコンを表示する
 	cProfile.IOProfileData( bRead, pszSecName, "bAutoMIMEdecode"			, common.m_bAutoMIMEdecode );//ファイル読み込み時にMIMEのdecodeを行うか
 	cProfile.IOProfileData( bRead, pszSecName, "bQueryIfCodeChange"			, common.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うか
-	cProfile.IOProfileData( bRead, pszSecName, "bAlertIfFileNotExist"		, common.m_bQueryIfCodeChange );// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
+	cProfile.IOProfileData( bRead, pszSecName, "bAlertIfFileNotExist"		, common.m_bAlertIfFileNotExist );// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 	
 	
 	/* 「開く」ダイアログのサイズと位置 */
