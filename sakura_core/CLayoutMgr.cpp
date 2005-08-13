@@ -1027,6 +1027,20 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, int nShiftLines )
 }
 
 
+/*!	タブインデントのサイズを変更
+
+	@author zenryaku
+	@date 2004.03.16 新規作成
+
+	@todo 選択範囲の調整が行われていない．
+*/
+bool CLayoutMgr::SetTabSpace(int nTab)
+{
+	if( nTab < 1 || nTab > 64 ) { return false; }
+	m_nTabSpace = nTab;
+	return true;
+}
+
 
 
 

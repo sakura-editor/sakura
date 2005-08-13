@@ -756,6 +756,8 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 
 	@author 鬼
 	@date 2003.02.21 鬼
+	@date 2003.06.01 Moca 関数追加
+	@date 2005.08.05 maru,zenryaku 関数追加
 */
 bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result)
 {
@@ -840,6 +842,93 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			}else{
 				return false;
 			}
+		}
+		return true;
+	case F_CHGTABWIDTH:
+		//	2004.03.16 zenryaku マクロ追加
+		{
+			if( ArgSize != 1 ) return false;
+			if( Arguments[0].vt != VT_I4 ) return false;
+			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+			View->m_pcEditDoc->m_cLayoutMgr.SetTabSpace( Arguments[0].iVal );
+		}
+		return true;
+	case F_ISTEXTSELECTED:
+		//	2005.07.30 maru マクロ追加
+		{
+			if(View->IsTextSelected()) {
+				if(View->m_bBeginBoxSelect) {
+					Wrap( &Result )->Receive( 2 );	//矩形選択中
+				} else {
+					Wrap( &Result )->Receive( 1 );	//選択中
+				}
+			} else {
+				Wrap( &Result )->Receive( 0 );		//非選択中
+			}
+		}
+		return true;
+	case F_GETSELLINEFROM:
+		//	2005.07.30 maru マクロ追加
+		{
+			Wrap( &Result )->Receive( View->m_nSelectLineFrom + 1 );
+		}
+		return true;
+	case F_GETSELCOLMFROM:
+		//	2005.07.30 maru マクロ追加
+		{
+			Wrap( &Result )->Receive( View->m_nSelectColmFrom + 1 );
+		}
+		return true;
+	case F_GETSELLINETO:
+		//	2005.07.30 maru マクロ追加
+		{
+			Wrap( &Result )->Receive( View->m_nSelectLineTo + 1 );
+		}
+		return true;
+	case F_GETSELCOLMTO:
+		//	2005.07.30 maru マクロ追加
+		{
+			Wrap( &Result )->Receive( View->m_nSelectColmTo + 1);
+		}
+		return true;
+	case F_ISINSMODE:
+		//	2005.07.30 maru マクロ追加
+		{
+			Wrap( &Result )->Receive(View->m_pShareData->m_Common.m_bIsINSMode);
+		}
+		return true;
+	case F_GETCHARCODE:
+		//	2005.07.31 maru マクロ追加
+		{
+			Wrap( &Result )->Receive(View->m_pcEditDoc->m_nCharCode);
+		}
+		return true;
+	case F_GETLINECODE:
+		//	2005.08.04 maru マクロ追加
+		{
+			switch( View->m_pcEditDoc->GetNewLineCode() ){
+			case EOL_CRLF:
+				Wrap( &Result )->Receive( 0 );
+				break;
+			case EOL_CR:
+				Wrap( &Result )->Receive( 1 );
+				break;
+			case EOL_LF:
+				Wrap( &Result )->Receive( 2 );
+				break;
+			}
+		}
+		return true;
+	case F_ISPOSSIBLEUNDO:
+		//	2005.08.04 maru マクロ追加
+		{
+			Wrap( &Result )->Receive( View->m_pcEditDoc->IsEnableUndo() );
+		}
+		return true;
+	case F_ISPOSSIBLEREDO:
+		//	2005.08.04 maru マクロ追加
+		{
+			Wrap( &Result )->Receive( View->m_pcEditDoc->IsEnableRedo() );
 		}
 		return true;
 	default:
