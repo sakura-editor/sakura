@@ -534,18 +534,24 @@ void CWSHClient::Error(wchar_t* Description)
 }
 
 /////////////////////////////////////////////
+/*!
+	マクロコマンドの実行
 
+	@date 2005.06.27 zenryaku 戻り値の受け取りが無くてもエラーにせずに関数を実行する
+*/
 static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
 {
-	if(Result != NULL)
-		VariantInit(Result);
-
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
 
 	if(ID >= F_FUNCTION_FIRST)
 	{
-		if(Result == NULL) return E_FAIL;
-		return CMacro::HandleFunction(View, ID, Arguments->rgvarg, Arguments->cArgs, *Result) ? S_OK : E_FAIL;
+		VARIANT ret; // 2005.06.27 zenryaku 戻り値の受け取りが無くても関数を実行する
+		VariantInit(&ret);
+		
+		bool r = CMacro::HandleFunction(View, ID, Arguments->rgvarg, Arguments->cArgs, ret);
+		if(Result) {::VariantCopyInd(Result, &ret);}
+		VariantClear(&ret);
+		return r ? S_OK : E_FAIL;
 	}
 	else
 	{
