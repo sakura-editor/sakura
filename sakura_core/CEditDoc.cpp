@@ -3167,8 +3167,126 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 	}
 }
 
+/*!
+	レイアウトの変更に先立って，全てのViewの座標を物理座標に変換して保存する．
 
+	@return データを保存した配列へのポインタ
 
+	@note 取得した値はレイアウト変更後にCEditDoc::RestorePhysPosOfAllViewへ渡す．
+	渡し忘れるとメモリリークとなる．
+
+	@date 2005.08.11 genta 新規作成
+*/
+int* CEditDoc::SavePhysPosOfAllView(void)
+{
+	const int NUM_OF_VIEW = 4;
+	const int NUM_OF_POS = 5;
+	const int XY = 2;
+	
+	int* posary = new int[ NUM_OF_VIEW * NUM_OF_POS * XY ];
+	
+	for( int i = 0; i < NUM_OF_VIEW; ++i ){
+		m_cLayoutMgr.CaretPos_Log2Phys(
+			m_cEditViewArr[i].m_nCaretPosX,
+			m_cEditViewArr[i].m_nCaretPosY,
+			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
+			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ]
+		);
+		if( m_cEditViewArr[i].m_nSelectLineBgnFrom >= 0 ){
+			m_cLayoutMgr.CaretPos_Log2Phys(
+				m_cEditViewArr[i].m_nSelectColmBgnFrom,
+				m_cEditViewArr[i].m_nSelectLineBgnFrom,
+				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ]
+			);
+		}
+		if( m_cEditViewArr[i].m_nSelectLineBgnTo >= 0 ){
+			m_cLayoutMgr.CaretPos_Log2Phys(
+				m_cEditViewArr[i].m_nSelectColmBgnTo,
+				m_cEditViewArr[i].m_nSelectLineBgnTo,
+				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ]
+			);
+		}
+		if( m_cEditViewArr[i].m_nSelectLineFrom >= 0 ){
+			m_cLayoutMgr.CaretPos_Log2Phys(
+				m_cEditViewArr[i].m_nSelectColmFrom,
+				m_cEditViewArr[i].m_nSelectLineFrom,
+				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ]
+			);
+		}
+		if( m_cEditViewArr[i].m_nSelectLineTo >= 0 ){
+			m_cLayoutMgr.CaretPos_Log2Phys(
+				m_cEditViewArr[i].m_nSelectColmTo,
+				m_cEditViewArr[i].m_nSelectLineTo,
+				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ]
+			);
+		}
+	}
+	return posary;
+}
+
+/*!	座標の復元
+
+	CEditDoc::SavePhysPosOfAllViewで保存したデータを元に座標値を再計算する．
+
+	@date 2005.08.11 genta 新規作成
+*/
+void CEditDoc::RestorePhysPosOfAllView( int* posary )
+{
+	const int NUM_OF_VIEW = 4;
+	const int NUM_OF_POS = 5;
+	const int XY = 2;
+
+	for( int i = 0; i < NUM_OF_VIEW; ++i ){
+		int		nPosX;
+		int		nPosY;
+		m_cLayoutMgr.CaretPos_Phys2Log(
+			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
+			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ],
+			&nPosX,
+			&nPosY
+		);
+		m_cEditViewArr[i].MoveCursor( nPosX, nPosY, TRUE );
+		m_cEditViewArr[i].m_nCaretPosX_Prev = m_cEditViewArr[i].m_nCaretPosX;
+
+		if( m_cEditViewArr[i].m_nSelectLineBgnFrom >= 0 ){
+			m_cLayoutMgr.CaretPos_Phys2Log(
+				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ],
+				&m_cEditViewArr[i].m_nSelectColmBgnFrom,
+				&m_cEditViewArr[i].m_nSelectLineBgnFrom
+			);
+		}
+		if( m_cEditViewArr[i].m_nSelectLineBgnTo >= 0 ){
+			m_cLayoutMgr.CaretPos_Phys2Log(
+				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ],
+				&m_cEditViewArr[i].m_nSelectColmBgnTo,
+				&m_cEditViewArr[i].m_nSelectLineBgnTo
+			);
+		}
+		if( m_cEditViewArr[i].m_nSelectLineFrom >= 0 ){
+			m_cLayoutMgr.CaretPos_Phys2Log(
+				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ],
+				&m_cEditViewArr[i].m_nSelectColmFrom,
+				&m_cEditViewArr[i].m_nSelectLineFrom
+			);
+		}
+		if( m_cEditViewArr[i].m_nSelectLineTo >= 0 ){
+			m_cLayoutMgr.CaretPos_Phys2Log(
+				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ],
+				&m_cEditViewArr[i].m_nSelectColmTo,
+				&m_cEditViewArr[i].m_nSelectLineTo
+			);
+		}
+	}
+	delete[] posary;
+}
 
 /*! ビューに設定変更を反映させる
 
@@ -3207,22 +3325,7 @@ void CEditDoc::OnChangeSetting( void )
 	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, false );
 
-	/*
-	  カーソル位置変換
-	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	  →
-	  物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-	int		nX[4];
-	int		nY[4];
-	for( i = 0; i < 4; ++i ){
-		m_cLayoutMgr.CaretPos_Log2Phys(
-			m_cEditViewArr[i].m_nCaretPosX,
-			m_cEditViewArr[i].m_nCaretPosY,
-			&nX[i],
-			&nY[i]
-		);
-	}
+	int* posSaveAry = SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
 	Types& ref = GetDocumentAttribute();
@@ -3235,30 +3338,8 @@ void CEditDoc::OnChangeSetting( void )
 	/* ビューに設定変更を反映させる */
 	for( i = 0; i < 4; ++i ){
 		m_cEditViewArr[i].OnChangeSetting();
-		/*
-		  カーソル位置変換
-		  物理位置(行頭からのバイト数、折り返し無し行位置)
-		  →
-		  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-		*/
-		int		nPosX;
-		int		nPosY;
-		m_cLayoutMgr.CaretPos_Phys2Log(
-			nX[i],
-			nY[i],
-			&nPosX,
-			&nPosY
-		);
-		// 2004.04.03 Moca MoveCursor内でファイルの最後に移動するようにした
-//		if( nPosY >= m_cLayoutMgr.GetLineCount() ){
-			/*ファイルの最後に移動 */
-//			m_cEditViewArr[i].Command_GOFILEEND(FALSE);
-//			m_cEditViewArr[i].HandleCommand( F_GOFILEEND, 0, 0, 0, 0, 0 );
-//		}else{
-			m_cEditViewArr[i].MoveCursor( nPosX, nPosY, TRUE );
-			m_cEditViewArr[i].m_nCaretPosX_Prev = m_cEditViewArr[i].m_nCaretPosX;
-//		}
 	}
+	RestorePhysPosOfAllView( posSaveAry );
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
