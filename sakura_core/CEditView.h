@@ -285,7 +285,7 @@ public: /* テスト用にアクセス属性を変更 */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
-	static int		m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
+	static int		m_pnDx[MAXLINESIZE + 10];	/* 文字列描画用文字幅配列 */
 	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */

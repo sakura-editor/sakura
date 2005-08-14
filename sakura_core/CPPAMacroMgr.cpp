@@ -49,7 +49,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	CMemory cmemWork;
 
 	// バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
-	char	szLine[10240];	//	1行が10240以上だったら無条件にアウト
+	char	szLine[LINEREADBUFSIZE];	//	1行がLINEREADBUFSIZE以上だったら無条件にアウト
 	while( NULL != fgets( szLine, sizeof(szLine), hFile ) ){
 		int nLineLen = strlen( szLine );
 		cmemWork.Append(szLine, nLineLen);

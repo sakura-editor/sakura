@@ -2235,7 +2235,7 @@ int CEditDoc::ReadRuleFile( const char* pszFilename, oneRule* pcOneRule, int nMa
 	if( NULL == pFile ){
 		return 0;
 	}
-	char	szLine[10240];
+	char	szLine[LINEREADBUFSIZE];
 	const char*	pszDelimit = " /// ";
 	const char*	pszKeySeps = ",\0";
 	char*	pszWork;

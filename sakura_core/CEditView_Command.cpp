@@ -3324,7 +3324,7 @@ end_of_func:;
 			bRedo		// 最初の検索
 		){
 			nLineNum=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
-			nIdx=10240;
+			nIdx=MAXLINESIZE;
 			bRedo=FALSE;
 			goto re_do;	// 末尾から再検索
 		}
@@ -9173,7 +9173,7 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
 	if (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
 		//	最大値に
-		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = 10240;
+		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = MAXLINESIZE;
 	}
 	else {
 		//	現在のウィンドウ幅
