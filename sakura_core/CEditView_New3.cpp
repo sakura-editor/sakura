@@ -121,7 +121,7 @@ void CEditView::DispRulerEx( HDC hdc )
 
 	rc.left = m_nViewAlignLeft - 2;
 	rc.top = 2;
-	rc.right = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 2;
+	rc.right = m_nViewAlignLeft + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 2;
 	if( rc.right > m_nViewAlignLeft + m_nViewCx + 2 ){
 		rc.right = m_nViewAlignLeft + m_nViewCx + 2;
 	}
@@ -191,7 +191,7 @@ void CEditView::DispRulerEx( HDC hdc )
 
 	nToX = m_nViewAlignLeft + m_nViewCx;
 
-	nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	nToX = m_nViewAlignLeft + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	if( nToX > m_nViewAlignLeft + m_nViewCx ){
 		nToX = m_nViewAlignLeft + m_nViewCx;
 	}
@@ -202,8 +202,8 @@ void CEditView::DispRulerEx( HDC hdc )
 
 	for( i = m_nViewLeftCol;
 		i <= m_nViewLeftCol + m_nViewColNum + 1
-//	 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
-	 && i < m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+//	 && i <= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	 && i < m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 		i++
 	){
 		if( 0 < i && 0 == ( (i) % 10 ) ){

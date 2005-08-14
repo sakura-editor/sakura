@@ -2250,7 +2250,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, "お気に入りの設定(&O)..." );	//お気に入り	//@@@ 2003.04.08 MIK
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
-			if( m_cEditDoc.GetDocumentAttribute().m_nMaxLineSize == m_cEditDoc.ActiveView().m_nViewColNum ){
+			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+			if( m_cEditDoc.m_cLayoutMgr.GetMaxLineSize() == m_cEditDoc.ActiveView().m_nViewColNum ){
 				pszLabel = "折り返さない(&W)";
 			}else{
 				pszLabel = "現在のウィンドウ幅で折り返し(&W)";

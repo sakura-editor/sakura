@@ -1334,4 +1334,46 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 	return;
 }
 
+/*!	レイアウトパラメータの変更
+
+	具体的にはタブ幅と折り返し位置を変更する．
+	現在のドキュメントのレイアウトのみを変更し，共通設定は変更しない．
+
+	@date 2005.08.14 genta 新規作成
+*/
+void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineSize )
+{
+	HWND		hwndProgress = NULL;
+	if( bShowProgress && NULL != m_pcEditWnd ){
+		hwndProgress = m_pcEditWnd->m_hwndProgressBar;
+		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_SHOW );
+	}
+
+	//	座標の保存
+	int* posSave = SavePhysPosOfAllView();
+
+	//	レイアウトの更新
+	m_cLayoutMgr.ChangeLayoutParam( NULL, 
+		GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,
+		GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,
+		nTabSize, nMaxLineSize
+	);
+
+	//	座標の復元
+	RestorePhysPosOfAllView( posSave );
+
+	for( int i = 0; i < 4; i++ ){
+		if( m_cEditViewArr[i].m_hWnd ){
+			InvalidateRect( m_cEditViewArr[i].m_hWnd, NULL, TRUE );
+		}
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_HIDE );
+	}
+}
 /*[EOF]*/

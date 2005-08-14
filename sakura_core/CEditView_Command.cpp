@@ -995,7 +995,8 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 				}
 			}
 			//	キャレット位置が折り返し位置より右側だった場合の処理
-			if( nPosX >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+			if( nPosX >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
 				if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
 				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 				{
@@ -5353,8 +5354,9 @@ void CEditView::Command_INDENT( char cChar )
 {
 	// From Here 2001.12.03 hor
 	/* SPACEorTABインンデントで矩形選択桁がゼロの時は選択範囲を最大にする */
+	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if((cChar==SPACE || cChar==TAB) && m_bBeginBoxSelect && m_nSelectColmFrom==m_nSelectColmTo ){
-		m_nSelectColmTo=m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		m_nSelectColmTo=m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 		RedrawAll();
 		return;
 	}
@@ -5527,10 +5529,11 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		if( NULL != pnKey_CharCharsArr ){
 			delete [] pnKey_CharCharsArr;
 		}
-	// From Here 2001.12.03 hor
+	// From Here 2001.12.03 hor 
+		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 		rcSel.right += m_nCaretPosX-rcSel.left;
-		if( rcSel.right>m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
-			rcSel.right=m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		if( rcSel.right>m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+			rcSel.right=m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 		}
 	// To Here 2001.12.03 hor
 		rcSel.left = m_nCaretPosX;
@@ -9162,31 +9165,41 @@ void CEditView::Command_LOADKEYMACRO( void )
 
 
 
-/* 現在のウィンドウ幅で折り返し */
+/*! 現在のウィンドウ幅で折り返し
+
+	@date 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするように
+	@date 2002.04.08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
+	@date 2005.08.14 genta ここでの設定は共通設定に反映しない．
+*/
 void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 {
 	if( 10 > m_nViewColNum - 1 ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
+	
+	int newWidth;
 	//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
 	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
-	if (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
+	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
 		//	最大値に
-		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = MAXLINESIZE;
+		newWidth = MAXLINESIZE;
 	}
 	else {
 		//	現在のウィンドウ幅
-		m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		newWidth = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	}
+	m_pcEditDoc->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );
+
+	//	Aug. 14, 2005 genta 共通設定へは反映させない
 //	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
 
-	m_pcEditDoc->OnChangeSetting();	/* ビューに設定変更を反映させる */
+//	m_pcEditDoc->OnChangeSetting();	/* ビューに設定変更を反映させる */
 
 	/* 設定変更を反映させる */
-	CShareData::getInstance()->SendMessageToAllEditors(
-		MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, ::GetParent( m_hwndParent )
-	);	/* 全編集ウィンドウへメッセージをポストする */
+//	CShareData::getInstance()->SendMessageToAllEditors(
+//		MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)0, ::GetParent( m_hwndParent )
+//	);	/* 全編集ウィンドウへメッセージをポストする */
 
 	m_nViewLeftCol = 0;		/* 表示域の一番左の桁(0開始) */
 

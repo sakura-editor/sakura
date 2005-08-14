@@ -193,6 +193,9 @@ public:
 	const char* ExParam_SkipCond(const char* pszSource, int part);
 	int ExParam_Evaluate( const char* pCond );
 
+	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
+	void ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineSize );
+
 protected:
 	int				m_nSettingType;
 	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態
@@ -325,6 +328,10 @@ protected:
 	void DoFileLock( void );	/* ファイルの排他ロック */
 	void DoFileUnLock( void );	/* ファイルの排他ロック解除 */
 	//char			m_pszCaption[1024];	//@@@ YAZAKI
+	
+	//	Aug. 14, 2005 genta
+	int* SavePhysPosOfAllView(void);
+	void RestorePhysPosOfAllView( int* posary );
 };
 
 

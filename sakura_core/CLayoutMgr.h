@@ -85,13 +85,15 @@ public:
 		@return タブ幅
 	 */
 	int GetTabSpace(void) const { return m_nTabSpace; }
-	//	zenryaku 
-	bool SetTabSpace(int nTab);
 	/*! 次のTAB位置までの幅
 		@param pos [in] 現在の位置
 		@return 次のTAB位置までの文字数．1～TAB幅
 	 */
 	int GetActualTabSpace(int pos) const { return m_nTabSpace - pos % m_nTabSpace; }
+	//	Aug. 14, 2005 genta
+	int GetMaxLineSize(void) const { return m_nMaxLineSize; }
+	bool ChangeLayoutParam( HWND hwndProgress, int bSingleQuote, int bDoubleQuote,
+	int nTabSize, int nMaxLineSize );
 	
 protected:
 	int PrevOrNextWord( int, int, int*, int*, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
@@ -144,8 +146,6 @@ public:
 	void ReplaceData_CLayoutMgr(
 		LayoutReplaceArg*	pArg
 	);
-
-
 
 protected:
 	/*
