@@ -850,7 +850,8 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			if( ArgSize != 1 ) return false;
 			if( Arguments[0].vt != VT_I4 ) return false;
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-			View->m_pcEditDoc->m_cLayoutMgr.SetTabSpace( Arguments[0].iVal );
+			View->m_pcEditDoc->ChangeLayoutParam( false, 
+				Arguments[0].iVal, View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
 		}
 		return true;
 	case F_ISTEXTSELECTED:

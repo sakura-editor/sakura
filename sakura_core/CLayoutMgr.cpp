@@ -1026,24 +1026,6 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, int nShiftLines )
 	return;
 }
 
-
-/*!	タブインデントのサイズを変更
-
-	@author zenryaku
-	@date 2004.03.16 新規作成
-
-	@todo 選択範囲の調整が行われていない．
-*/
-bool CLayoutMgr::SetTabSpace(int nTab)
-{
-	if( nTab < 1 || nTab > 64 ) { return false; }
-	m_nTabSpace = nTab;
-	return true;
-}
-
-
-
-
 /* 現在位置の単語の範囲を調べる */
 int CLayoutMgr::WhereCurrentWord(
 	int			nLineNum,
@@ -1489,7 +1471,19 @@ checkloop:;
 	return;
 }
 
+bool CLayoutMgr::ChangeLayoutParam( HWND hwndProgress, int bSingleQuote, int bDoubleQuote,
+	int nTabSize, int nMaxLineSize )
+{
+	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
+	if( nMaxLineSize < MINLINESIZE || nMaxLineSize > MAXLINESIZE ){ return false; }
 
+	m_nTabSpace = nTabSize;
+	m_nMaxLineSize = nMaxLineSize;
+
+	DoLayout( hwndProgress, bSingleQuote, bDoubleQuote );
+
+	return true;
+}
 
 /* テスト用にレイアウト情報をダンプ */
 void CLayoutMgr::DUMP( void )

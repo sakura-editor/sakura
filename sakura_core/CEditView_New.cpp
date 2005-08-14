@@ -79,6 +79,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	//	May 9, 2000 genta
 	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
+	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+
 	int				i;
 	HFONT			hFontOld;
 	HBRUSH			hBrush;
@@ -172,7 +175,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		i = m_nViewTopLine + ( ( nTop - m_nViewAlignTop ) / nLineHeight );
 	}
 
-	int nMaxRollBackLineNum = 260 / TypeDataPtr->m_nMaxLineSize + 1;
+	int nMaxRollBackLineNum = 260 / nWrapWidth + 1;
 	int nRollBackLineNum = 0;
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
 	while( nRollBackLineNum < nMaxRollBackLineNum ){
@@ -265,7 +268,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 	/* 折り返し位置の表示 */
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bDisp ){
-		nX = m_nViewAlignLeft + ( TypeDataPtr->m_nMaxLineSize - m_nViewLeftCol ) * nCharWidth;
+		nX = m_nViewAlignLeft + ( nWrapWidth - m_nViewLeftCol ) * nCharWidth;
 		//	2003.10.15 Moca Windows 95/98では座標を下位16bit表現しか見ないので
 		//	折り返し位置が右に行きすぎると変な位置に線が引かれてしまうのを防ぐ
 		if( nX < 0x10000 ){
@@ -362,6 +365,9 @@ int CEditView::DispLineNew(
 
 	//	May 9, 2000 genta
 	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+
+	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 
 	int						nLineNumOrg = nLineNum;
 	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
@@ -1446,7 +1452,7 @@ searchnext:;
 		/* EOF記号の表示 */
 //		if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
 		if( nLineNum + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
-			nX < TypeDataPtr->m_nMaxLineSize
+			nX < nWrapWidth
 		){
 			if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
 				//	May 29, 2004 genta (advised by MIK) 共通関数化
@@ -1507,7 +1513,7 @@ end_of_line:;
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCount - 1, &nLineLen, &pcLayout );
 					nLineCols = LineIndexToColmn( pcLayout, nLineLen );
 					if( ( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ) ||
-						nLineCols >= TypeDataPtr->m_nMaxLineSize
+						nLineCols >= nWrapWidth
 					 ){
 						/* EOF記号の表示 */
 						if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){

@@ -635,7 +635,10 @@ inline void CEditView::DrawRulerCaret( HDC hdc )
 
 
 
-/*! ƒ‹[ƒ‰[•`‰æ */
+/*! ƒ‹[ƒ‰[•`‰æ
+
+	@date 2005.08.14 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
+*/
 void CEditView::DispRuler( HDC hdc )
 {
 
@@ -714,9 +717,9 @@ void CEditView::DispRuler( HDC hdc )
 		colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 
 
-		nToX = m_nViewAlignLeft + m_nViewCx;
-
-		nToX = m_nViewAlignLeft + (m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		//nToX = m_nViewAlignLeft + m_nViewCx;
+		//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
+		nToX = m_nViewAlignLeft + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 		if( nToX > m_nViewAlignLeft + m_nViewCx ){
 			nToX = m_nViewAlignLeft + m_nViewCx;
 		}
@@ -726,10 +729,10 @@ void CEditView::DispRuler( HDC hdc )
 
 		for( i = m_nViewLeftCol;
 			i <= m_nViewLeftCol + m_nViewColNum + 1
-		 && i <= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		 && i <= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 			i++
 		){
-			if( i == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+			if( i == m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
 				::MoveToEx( hdc, nX, nY, NULL );
 				::LineTo( hdc, nX, 0/*nY - 8*/ );
 			}

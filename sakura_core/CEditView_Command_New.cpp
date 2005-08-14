@@ -163,7 +163,8 @@ void CEditView::InsertData_CEditView(
 	if( pLine2 != NULL ){
 		*pnNewPos = LineIndexToColmn( pcLayout, *pnNewPos );
 	}
-	if( *pnNewPos >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+	if( *pnNewPos >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
 		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
 		 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{
@@ -2146,8 +2147,9 @@ void CEditView::Command_TRIM( BOOL bLeft )
 	if(!IsTextSelected()){	//	非選択時は行選択に変更
 		m_nSelectLineFrom = m_nCaretPosY;
 		m_nSelectColmFrom = 0;
-		m_nSelectLineTo   = m_nCaretPosY;
-		m_nSelectColmTo   = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		m_nSelectLineTo   = m_nCaretPosY; 
+		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+		m_nSelectColmTo   = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 		bBeDisableSelectArea = true;
 	}
 	if(bLeft){
@@ -2299,7 +2301,8 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		nLTO = m_nSelectLineTo;
 		nCTO = m_nSelectColmTo;
 		if( m_nSelectColmFrom==m_nSelectColmTo ){
-			m_nSelectColmTo=m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+			m_nSelectColmTo=m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 		}
 		if(m_nSelectColmFrom<m_nSelectColmTo){
 			nCF=m_nSelectColmFrom;

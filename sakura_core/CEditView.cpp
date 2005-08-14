@@ -1542,7 +1542,8 @@ int CEditView::OnHScroll( int nScrollCode, int nPos )
 		nScrollVal = ScrollAtH( 0 );
 		break;
 	case SB_RIGHT:
-		nScrollVal = ScrollAtH( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum );
+		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+		nScrollVal = ScrollAtH( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewColNum );
 		break;
 	}
 	return nScrollVal;
@@ -2531,7 +2532,7 @@ void CEditView::AdjustScrollBars( void )
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 
 //@@		::GetScrollInfo( m_hwndHScrollBar, SB_CTL, &si );
-//@@		if( si.nMax == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - 1
+//@@		if( si.nMax == m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - 1
 //@@		 && si.nPage == (UINT)m_nViewColNum
 //@@		 && si.nPos  == m_nViewLeftCol
 //@@	   /*&& si.nTrackPos == 1*/ ){
@@ -2540,7 +2541,8 @@ void CEditView::AdjustScrollBars( void )
 //			si.cbSize = sizeof( si );
 //			si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 			si.nMin  = 0;
-			si.nMax  = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - 1;	/* 折り返し文字数 */
+			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+			si.nMax  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - 1;
 			si.nPage = m_nViewColNum;		/* 表示域の桁数 */
 			si.nPos  = m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
 			si.nTrackPos = 1;
@@ -2621,7 +2623,8 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 	nScrollColNum = 0;
 	nScrollMarginRight = 4;
 	nScrollMarginLeft = 4;
-	if( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize > m_nViewColNum &&
+	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() > m_nViewColNum &&
 		nWk_CaretPosX > m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ){
 		nScrollColNum =
 			( m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ) - nWk_CaretPosX;
@@ -2815,7 +2818,8 @@ BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
 			if( pcLayout->m_cEol == EOL_NONE ){
 				nPosX2 = LineIndexToColmn( pcLayout, pcLayout->GetLength() );
 				// EOFだけ折り返されているか
-				if( nPosX2 >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){
+				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+				if( nPosX2 >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
 					nPosY2++;
 					nPosX2 = 0;
 				}
@@ -2980,11 +2984,12 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 //				}else{
 // To 2001.12.21 hor
 					nPosX = nNewX;
+					//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 					if( nPosX < 0 ){
 						nPosX = 0;
 					}else
-					if( nPosX > m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize ){	/* 折り返し文字数 */
-						nPosX = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+					if( nPosX > m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){	/* 折り返し文字数 */
+						nPosX = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 					}
 //				}
 			}
@@ -4390,9 +4395,10 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			if( NULL != pLine ){
 				nLineCols = LineIndexToColmn( pcLayout, nLineLen );
 				/* 改行で終わっているか */
+				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 				if( ( EOL_NONE != pcLayout->m_cEol.GetLen() )
 //				if( ( pLine[ nLineLen - 1 ] == '\n' || pLine[ nLineLen - 1 ] == '\r' )
-				 || nLineCols >= m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize
+				 || nLineCols >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize()
 				){
 					if( bSelect ){
 						if( !IsTextSelected() ){	/* テキストが選択されているか */
@@ -4614,8 +4620,9 @@ int CEditView::ScrollAtH( int nPos )
 	}else
 	//	Aug. 18, 2003 ryoji 変数のミスを修正
 	//	ウィンドウの幅をきわめて狭くしたときに編集領域が行番号から離れてしまうことがあった．
-	if( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum  < nPos ){
-		nPos = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize - m_nViewColNum ;
+	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewColNum  < nPos ){
+		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewColNum ;
 		//	May 29, 2004 genta 折り返し幅よりウィンドウ幅が大きいときにWM_HSCROLLが来ると
 		//	nPosが負の値になることがあり，その場合にスクロールバーから編集領域が
 		//	離れてしまう．
