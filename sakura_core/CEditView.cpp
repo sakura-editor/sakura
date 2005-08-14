@@ -92,7 +92,7 @@ VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
 
 
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
-int CEditView::m_pnDx[10240 + 10];
+int CEditView::m_pnDx[MAXLINESIZE + 10];
 
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {

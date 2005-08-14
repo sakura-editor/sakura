@@ -856,11 +856,11 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 //			if( pMNUD->iDelta > 0 ){
 //				--nVal;
 //			}
-//			if( nVal < 10 ){
-//				nVal = 10;
+//			if( nVal < MINLINESIZE ){
+//				nVal = MINLINESIZE;
 //			}
-//			if( nVal > 10240 ){
-//				nVal = 10240;
+//			if( nVal > MAXLINESIZE ){
+//				nVal = MAXLINESIZE;
 //			}
 //			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nVal, FALSE );
 //			return TRUE;

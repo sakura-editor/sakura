@@ -853,11 +853,11 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 			if( pMNUD->iDelta > 0 ){
 				--nVal;
 			}
-			if( nVal < 10 ){
-				nVal = 10;
+			if( nVal < MINLINESIZE ){
+				nVal = MINLINESIZE;
 			}
-			if( nVal > 10240 ){
-				nVal = 10240;
+			if( nVal > MAXLINESIZE ){
+				nVal = MAXLINESIZE;
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nVal, FALSE );
 			return TRUE;
@@ -1213,11 +1213,11 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	/* ê‹ÇËï‘Çµï∂éöêî */
 	m_Types.m_nMaxLineSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
-	if( m_Types.m_nMaxLineSize < 10 ){
-		m_Types.m_nMaxLineSize = 10;
+	if( m_Types.m_nMaxLineSize < MINLINESIZE ){
+		m_Types.m_nMaxLineSize = MINLINESIZE;
 	}
-	if( m_Types.m_nMaxLineSize > 10240 ){
-		m_Types.m_nMaxLineSize = 10240;
+	if( m_Types.m_nMaxLineSize > MAXLINESIZE ){
+		m_Types.m_nMaxLineSize = MAXLINESIZE;
 	}
 
 	/* ï∂éöÇÃåÑä‘ */

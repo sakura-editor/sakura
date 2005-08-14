@@ -174,7 +174,7 @@ protected:
 
 	class CLayoutMgr*	m_pLayoutMgr_Print;	/* 印刷用のレイアウト管理情報 */
 
-	int				m_pnDx[10240 + 10];	/* 文字列描画用文字幅配列 */
+	int				m_pnDx[MAXLINESIZE + 10];	/* 文字列描画用文字幅配列 */
 	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
 	static CPrint	m_cPrint;		//!< 現在のプリンタ情報
 };

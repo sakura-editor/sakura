@@ -51,7 +51,7 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 //	long	lPathLen;
 	long	i;
 	FILE*	pFile;
-	char	szLine[10240];
+	char	szLine[LINEREADBUFSIZE];
 	char*	pszDelimit = " /// ";
 	char*	pszWork;
 	int		nRes;

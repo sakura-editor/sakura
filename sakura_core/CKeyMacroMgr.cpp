@@ -161,7 +161,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	static const char MACRO_ERROR_TITLE[] = "Macro読み込みエラー";
 
 	// 一行ずつ読みこみ、コメント行を排除した上で、macroコマンドを作成する。
-	char	szLine[10240];
+	char	szLine[LINEREADBUFSIZE];
 	
 	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
 	for( ; NULL != fgets( szLine, sizeof(szLine), hFile ) ; ++line ){
