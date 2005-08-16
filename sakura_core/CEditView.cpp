@@ -5933,7 +5933,10 @@ void CEditView::PrintSelectionInfoMsg(void)
 					- LineColmnToIndex( pcLayout, m_nSelectColmFrom );
 
 				//	GetSelectedDataと似ているが，先頭行と最終行は排除している
-				for( int nLineNum = m_nSelectLineFrom + 1;
+				//	Aug. 16, 2005 aroka nLineNumはfor以降でも使われるのでforの前で宣言する
+				//	VC .NET以降でもMicrosoft拡張を有効にした標準動作はVC6と同じことに注意
+				int nLineNum;
+				for( nLineNum = m_nSelectLineFrom + 1;
 					nLineNum < m_nSelectLineTo && NULL != pLine; ++nLineNum ){
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 					select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen();
