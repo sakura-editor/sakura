@@ -1279,7 +1279,9 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	char*	pBase;
 
 	/* バックアップソースの存在チェック */
-	if( (_access( target_file, 0 )) == -1 ){
+	//	Aug. 21, 2005 genta 書き込みアクセス権がない場合も
+	//	ファイルがない場合と同様に何もしない
+	if( (_access( target_file, 2 )) == -1 ){
 		return 0;
 	}
 
@@ -1287,6 +1289,22 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	_splitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
+		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
+		if( (_access( m_pShareData->m_Common.m_szBackUpFolder, 0 )) == -1 ){
+			if( ::MYMESSAGEBOX(
+				m_hWnd,
+				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
+				"バックアップエラー",
+				"以下のバックアップフォルダが見つかりません．\n%s\n"
+				"バックアップを作成せずに上書き保存してよろしいですか．",
+				m_pShareData->m_Common.m_szBackUpFolder
+			) == IDYES ){
+				return 0;//	保存継続
+			}
+			else {
+				return 2;// 保存中断
+			}
+		}
 		strcpy( szPath, m_pShareData->m_Common.m_szBackUpFolder );
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szPath );
@@ -1438,7 +1456,9 @@ int CEditDoc::MakeBackUp( const char* target_file )
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				"バックアップ作成の確認",
 				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
-				IsFilePathAvailable() ? GetFilePath() : "（無題）",
+				//IsFilePathAvailable() ? GetFilePath() : "（無題）",
+				//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
+				target_file,
 				szPath
 			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
 		}	//@@@ 2001.12.11 add MIK
@@ -1531,7 +1551,8 @@ int CEditDoc::MakeBackUp( const char* target_file )
 
 	//::MessageBox( NULL, szPath, "直前のバックアップファイル", MB_OK );
 	/* バックアップの作成 */
-	if( ::CopyFile( GetFilePath(), szPath, FALSE ) ){
+	//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
+	if( ::CopyFile( target_file, szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
 		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
