@@ -1,6 +1,6 @@
 //	$Id$
 /*!	@file
-	@brief 共通設定ダイアログボックス、「バックアップ」ページ
+	@brief 共通設定ダイアログボックス、「ツールバー」ページ
 
 	@author Norio Nakatani
 	$Revision$
@@ -8,6 +8,9 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, jepro, MIK
+	Copyright (C) 2002, genta, MIK, YAZAKI
+	Copyright (C) 2003, Moca, KEITA
+	Copyright (C) 2005, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -15,6 +18,7 @@
 
 #include "CPropCommon.h"
 #include "CMenuDrawer.h" // 2002/2/10 aroka
+#include "CImageListMgr.h" // 2005/8/9 aroka
 #include "debug.h" // 2002/2/10 aroka
 
 
@@ -69,7 +73,7 @@ static const DWORD p_helpids[] = {	//11000
 INT_PTR CALLBACK CPropCommon::DlgProc_PROP_TOOLBAR(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p6, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( &CPropCommon::DispatchEvent_PROP_TOOLBAR, hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
@@ -143,8 +147,8 @@ int Listbox_ADDDATA(
 	return nIndex1;
 }
 
-/* p6 メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p6(
+/* PROP_TOOLBAR メッセージ処理 */
+INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -175,8 +179,8 @@ INT_PTR CPropCommon::DispatchEvent_p6(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p6 */
-		SetData_p6( hwndDlg );
+		/* ダイアログデータの設定 PROP_TOOLBAR */
+		SetData_PROP_TOOLBAR( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -223,9 +227,9 @@ INT_PTR CPropCommon::DispatchEvent_p6(
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( "p6 PSN_KILLACTIVE\n" );
-			/* ダイアログデータの取得 p6 */
-			GetData_p6( hwndDlg );
+//			MYTRACE( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
+			/* ダイアログデータの取得 PROP_TOOLBAR */
+			GetData_PROP_TOOLBAR( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -264,21 +268,25 @@ INT_PTR CPropCommon::DispatchEvent_p6(
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 //					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
 //						if( m_cShareData.m_tbMyButton[j].idCommand == nIndex1 ){
-					for( j = 0; j < m_pcMenuDrawer->m_nMyButtonNum; ++j ){
-						if( m_pcMenuDrawer->m_tbMyButton[j].idCommand == nIndex1 ){	//	jは、nIndex1で指定された機能コードを持つ
-				//	To Here Oct. 15, 2001 genta Lookupを使うように変更
-							break;
-						}
-					}
+// 2005/8/9 aroka CMenuDrawerのメンバ変数をカプセル化
+//					for( j = 0; j < m_pcMenuDrawer->m_nMyButtonNum; ++j ){
+//						if( m_pcMenuDrawer->m_tbMyButton[j].idCommand == nIndex1 ){	//	jは、nIndex1で指定された機能コードを持つ
+//				//	To Here Oct. 15, 2001 genta Lookupを使うように変更
+//							break;
+//						}
+//					}
+					int nIndex = m_pcMenuDrawer->FindIndexFromCommandId( nIndex1 );
 //jepro note: 次行不要???
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 //					if( j < m_cShareData.m_nMyButtonNum ){
-					if( j < m_pcMenuDrawer->m_nMyButtonNum ){
+// 2005/8/9 aroka CMenuDrawerのメンバ変数をカプセル化
+//					if( j < m_pcMenuDrawer->m_nMyButtonNum ){
+					if( nIndex >= 0 ){
 
 //						/* ツールバーボタンの情報をセット (リストボックス) */
 //						for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
 							//	From Here Apr. 13, 2002 genta
-							lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)j );
+							lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)nIndex );
 							if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
 								break;
 							}
@@ -309,6 +317,22 @@ INT_PTR CPropCommon::DispatchEvent_p6(
 					}
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, 0 );
+					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
+						break;
+					}
+					//	To Here Apr. 13, 2002 genta
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					break;
+
+// 2005/8/9 aroka 折返ボタンが押されたら、右のリストに「ツールバー折返」を追加する。
+				case IDC_BUTTON_INSERTWRAP:
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
+					if( LB_ERR == nIndex1 ){
+//						break;
+						nIndex1 = 0;
+					}
+					//	From Here Apr. 13, 2002 genta
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, MAX_TOOLBARBUTTONS );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
 					}
@@ -489,8 +513,8 @@ INT_PTR CPropCommon::DispatchEvent_p6(
 
 
 
-/* ダイアログデータの設定 p6 */
-void CPropCommon::SetData_p6( HWND hwndDlg )
+/* ダイアログデータの設定 PROP_TOOLBAR */
+void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 {
 	HWND		hwndCombo;
 	HWND		hwndResList;
@@ -544,8 +568,8 @@ void CPropCommon::SetData_p6( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p6 */
-int CPropCommon::GetData_p6( HWND hwndDlg )
+/* ダイアログデータの取得 PROP_TOOLBAR */
+int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 {
 	HWND	hwndResList;
 	int		i;
@@ -576,6 +600,82 @@ int CPropCommon::GetData_p6( HWND hwndDlg )
 	m_Common.m_bToolBarIsFlat = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TOOLBARISFLAT );
 
 	return TRUE;
+}
+
+/* ツールバーボタンリストのアイテム描画
+	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
+	@date 2005.08.09 aroka CPropCommon.cpp から移動
+*/
+void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
+{
+	char		szLabel[256];
+	TBBUTTON	tbb;
+	HBRUSH		hBrush;
+	RECT		rc;
+	RECT		rc0;
+	RECT		rc1;
+	RECT		rc2;
+
+
+//	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+	hBrush = ::GetSysColorBrush( COLOR_WINDOW );
+	::FillRect( pDis->hDC, &pDis->rcItem, hBrush );
+//	::DeleteObject( hBrush );
+
+	rc  = pDis->rcItem;
+	rc0 = pDis->rcItem;
+	rc0.left += 18;//20 //Oct. 18, 2000 JEPRO 行先頭のアイコンとそれに続くキャプションとの間を少し詰めた(20→18)
+	rc1 = rc0;
+	rc2 = rc0;
+
+	if( (int)pDis->itemID < 0 ){
+	}else{
+
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//		tbb = m_cShareData.m_tbMyButton[pDis->itemData];
+//		tbb = m_pcMenuDrawer->m_tbMyButton[pDis->itemData];
+		tbb = m_pcMenuDrawer->getButton(pDis->itemData);
+
+		if( (0 != tbb.idCommand) && (F_MENU_NOT_USED_FIRST > tbb.idCommand) ){
+			/* ビットマップの表示 灰色を透明描画 */
+			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
+		}
+
+		if( 0 == tbb.idCommand ){
+			strcpy( szLabel, "───────────" );	// nLength 未使用 2003/01/09 Moca
+		//	From Here Oct. 15, 2001 genta
+		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, sizeof( szLabel ) )){
+			wsprintf( szLabel, "%s", "-- UNKNOWN --" );
+		}
+		//	To Here Oct. 15, 2001 genta
+
+		/* アイテムが選択されている */
+		if( pDis->itemState & ODS_SELECTED ){
+//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT ) );
+			hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
+			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
+		}else{
+//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
+			hBrush = ::GetSysColorBrush( COLOR_WINDOW );
+			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_WINDOWTEXT ) );
+		}
+		rc1.left++;
+		rc1.top++;
+		rc1.right--;
+		rc1.bottom--;
+		::FillRect( pDis->hDC, &rc1, hBrush );
+//		::DeleteObject( hBrush );
+
+		::SetBkMode( pDis->hDC, TRANSPARENT );
+		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, strlen( szLabel ) );
+
+	}
+
+	/* アイテムにフォーカスがある */
+	if( pDis->itemState & ODS_FOCUS ){
+		::DrawFocusRect( pDis->hDC, &rc2 );
+	}
+	return;
 }
 
 

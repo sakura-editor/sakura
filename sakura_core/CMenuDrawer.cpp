@@ -7,8 +7,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, genta, Jepro
+	Copyright (C) 2001, jepro, MIK, Misaka, YAZAKI
+	Copyright (C) 2002, MIK, genta, YAZAKI, ai, Moca, hor, aroka
+	Copyright (C) 2003, MIK, genta, Moca
+	Copyright (C) 2004, kazika, genta
+	Copyright (C) 2005, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -564,6 +568,17 @@ CMenuDrawer::CMenuDrawer()
 			0					//	tbd[i].iString
 		);
 	}
+
+	// ツールバー改行用の仮想ボタン（実際は表示されない） // 20050809 aroka
+	SetTBBUTTONVal(
+		&m_tbMyButton[tbd_num],
+		0,
+		F_MENU_NOT_USED_FIRST,			//	tbd[i].idCommand,
+		TBSTATE_ENABLED|TBSTATE_WRAP,	//	tbd[i].fsState,
+		TBSTYLE_SEP,			//	tbd[i].fsStyle,
+		0,						//	tbd[i].dwData,
+		0						//	tbd[i].iString
+	);
 	m_nMyButtonNum = tbd_num + 1;	//	+ 1は、セパレータの分
 	return;
 }
@@ -1031,8 +1046,22 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 }
 
 
+/* ツールバーボタンリストのアイテム描画
+	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
+	@retval みつからなければ-1を返す。
+*/
+int CMenuDrawer::FindIndexFromCommandId( int idCommand )
+{
+	int nIndex = -1;
+	for( int i = 1; i < m_nMyButtonNum; i++ ){
+		if( m_tbMyButton[i].idCommand == idCommand ){
+			nIndex = i;
+			break;
+		}
+	}
 
-
+	return nIndex;
+}
 
 int CMenuDrawer::Find( int nFuncID )
 {

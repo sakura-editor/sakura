@@ -132,6 +132,7 @@
 #define IDC_EDIT_MIGEMO_DLL             1088
 #define IDC_CHECK_BACKUP_DAY            1089
 #define IDC_BUTTON_KEYWORDHELPFILE_REF  1089
+#define IDC_BUTTON_INSERTWRAP           1089
 #define IDC_EDIT_MIGEMO_DICT            1089
 #define IDC_RADIO_BACKUP_TYPE3          1090
 #define IDC_CHECK_AUTOSAVE              1091

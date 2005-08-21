@@ -30,7 +30,6 @@
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
 #include "funccode.h"	//Stonee, 2001/05/18
-#include "CImageListMgr.h" // 2002/2/10 aroka
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #if 1	//@@@ 2002.01.03 add MIK
@@ -381,129 +380,6 @@ void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 
 
 
-
-/* ツールバーボタンリストのアイテム描画
-	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
-*/
-void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
-{
-	char		szLabel[256];
-//	char		szFuncName[200];
-	TBBUTTON	tbb;
-//	int			nLength;
-	HBRUSH		hBrush;
-	RECT		rc;
-	RECT		rc0;
-	RECT		rc1;
-	RECT		rc2;
-//	SIZE		sizDimension;
-//	HDC			hdcCompatDC;
-//	HBITMAP		m_hbmpCompatBMPOld;
-
-
-//	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
-	hBrush = ::GetSysColorBrush( COLOR_WINDOW );
-	::FillRect( pDis->hDC, &pDis->rcItem, hBrush );
-//	::DeleteObject( hBrush );
-
-	rc  = pDis->rcItem;
-	rc0 = pDis->rcItem;
-	rc0.left += 18;//20 //Oct. 18, 2000 JEPRO 行先頭のアイコンとそれに続くキャプションとの間を少し詰めた(20→18)
-	rc1 = rc0;
-	rc2 = rc0;
-
-	if( (int)pDis->itemID < 0 ){
-	}else{
-
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//		tbb = m_cShareData.m_tbMyButton[pDis->itemData];
-		tbb = m_pcMenuDrawer->m_tbMyButton[pDis->itemData];
-
-		if( 0 != tbb.idCommand ){
-			/* ビットマップの表示 灰色を透明描画 */
-			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
-#if 0//////////////////////////////////
-			/* 再描画用コンパチブルＤＣ */
-			hdcCompatDC = ::CreateCompatibleDC( pDis->hDC );
-			/* ビットマップサイズ取得 */
-			::GetBitmapDimensionEx( m_hbmpToolButtons, &sizDimension );
-			/* ビットマップ選択 */
-			m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( hdcCompatDC, m_hbmpToolButtons );
-
-			/* ビットマップ描画 */
-			::BitBlt(
-				pDis->hDC,		// handle to destination device context
-				rc.left + 2,	// x-coordinate of destination rectangle's upper-left corner
-				rc.top  + 2,	// x-coordinate of destination rectangle's upper-left corner
-				16,	// width of destination rectangle
-//	Sept. 17, 2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更
-//				15,				// height of destination rectangle
-				16,				// height of destination rectangle
-				hdcCompatDC,	// handle to source device context
-				16 * tbb.iBitmap,// x-coordinate of source rectangle's upper-left corner
-				0,				// y-coordinate of source rectangle's upper-left corner
-				SRCCOPY 		// raster operation code
-			);
-//	Sept. 17,2000 JEPRO_16thdot アイコンの16dot目が表示されるように次行を変更する必要ある？
-//	とりあえずそのままで問題なさそうなので変更していない
-//	Sept. 21, 2000 JEPRO_16thdot やはり念のためここも変更してみた
-//			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 0, rc.top  + 0, 16 + 4, 15 + 4,
-//				::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-//			);
-//			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 1, rc.top  + 1, 16 + 2, 15 + 2,
-//				::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-//			);
-			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 0, rc.top  + 0, 16 + 4, 16 + 4,
-				::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-			);
-			CSplitBoxWnd::Draw3dRect( pDis->hDC, rc.left + 1, rc.top  + 1, 16 + 2, 16 + 2,
-				::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-			);
-
-			::SelectObject( hdcCompatDC, m_hbmpCompatBMPOld );
-			::DeleteDC( hdcCompatDC );
-#endif //////////////////////////////////
-		}
-
-		if( 0 == tbb.idCommand ){
-//			nLength = strlen( strcpy( szFuncName, "セパレータ"	) );
-//			nLength = strlen( strcpy( szFuncName, "---------------------" ) );
-//			nLength = strlen( strcpy( szLabel, "───────────" ) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータ
-			strcpy( szLabel, "───────────" );	// nLength 未使用 2003/01/09 Moca
-		//	From Here Oct. 15, 2001 genta
-		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, sizeof( szLabel ) )){
-			wsprintf( szLabel, "%s", "-- UNKNOWN --" );
-		}
-		//	To Here Oct. 15, 2001 genta
-
-		/* アイテムが選択されている */
-		if( pDis->itemState & ODS_SELECTED ){
-//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT ) );
-			hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
-		}else{
-//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
-			hBrush = ::GetSysColorBrush( COLOR_WINDOW );
-			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_WINDOWTEXT ) );
-		}
-		rc1.left++;
-		rc1.top++;
-		rc1.right--;
-		rc1.bottom--;
-		::FillRect( pDis->hDC, &rc1, hBrush );
-//		::DeleteObject( hBrush );
-
-		::SetBkMode( pDis->hDC, TRANSPARENT );
-		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, strlen( szLabel ) );
-
-	}
-
-	/* アイテムにフォーカスがある */
-	if( pDis->itemState & ODS_FOCUS ){
-		::DrawFocusRect( pDis->hDC, &rc2 );
-	}
-	return;
-}
 
 //	From Here Jun. 2, 2001 genta
 /*!

@@ -73,7 +73,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	void OnHelp( HWND , int );	/* ヘルプ */
-	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
+	//void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */// 20050809 aroka 未使用
 	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */
 	void SetData_p1( HWND );	/* ダイアログデータの設定 p1 */
 	int  GetData_p1( HWND );	/* ダイアログデータの取得 p1 */
