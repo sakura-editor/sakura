@@ -1057,7 +1057,7 @@ LRESULT CEditView::DispatchEvent(
 		/*
 		||子ウィンドウの破棄
 		*/
-		if( NULL != m_hwndHScrollBar ){
+		if( NULL != m_hwndVScrollBar ){	// Aug. 20, 2005 Aroka
 			DestroyWindow( m_hwndVScrollBar );
 			m_hwndVScrollBar = NULL;
 		}
