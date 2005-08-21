@@ -49,16 +49,18 @@ public:
 
 	//	Entry Point
 protected:
-	typedef migemo* (*Proc_migemo_open)(char* dict);
-	typedef void (*Proc_migemo_close)(migemo* object);
-	typedef unsigned char* ( *Proc_migemo_query)(migemo* object, unsigned char* query);
-	typedef void ( *Proc_migemo_release)(migemo* object, unsigned char* string);
-	typedef int ( *Proc_migemo_set_operator)(migemo* object, int index, unsigned char* op);
-	typedef const unsigned char* ( *Proc_migemo_get_operator)(migemo* object, int index);
-	typedef void ( *Proc_migemo_setproc_char2int)(migemo* object, MIGEMO_PROC_CHAR2INT proc);
-	typedef void ( *Proc_migemo_setproc_int2char)(migemo* object, MIGEMO_PROC_INT2CHAR proc);
-	typedef int ( *Proc_migemo_load)(migemo* obj, int dict_id, char* dict_file);
-	typedef int ( *Proc_migemo_is_enable)(migemo* obj);
+	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
+	//	影響を受けないようにする．
+	typedef migemo* (__cdecl *Proc_migemo_open)(char* dict);
+	typedef void (__cdecl *Proc_migemo_close)(migemo* object);
+	typedef unsigned char* (__cdecl *Proc_migemo_query)(migemo* object, unsigned char* query);
+	typedef void (__cdecl *Proc_migemo_release)(migemo* object, unsigned char* string);
+	typedef int (__cdecl *Proc_migemo_set_operator)(migemo* object, int index, unsigned char* op);
+	typedef const unsigned char* (__cdecl *Proc_migemo_get_operator)(migemo* object, int index);
+	typedef void (__cdecl *Proc_migemo_setproc_char2int)(migemo* object, MIGEMO_PROC_CHAR2INT proc);
+	typedef void (__cdecl *Proc_migemo_setproc_int2char)(migemo* object, MIGEMO_PROC_INT2CHAR proc);
+	typedef int (__cdecl *Proc_migemo_load)(migemo* obj, int dict_id, char* dict_file);
+	typedef int (__cdecl *Proc_migemo_is_enable)(migemo* obj);
 	
 	Proc_migemo_open                  m_migemo_open                ;
 	Proc_migemo_close                 m_migemo_close               ;
