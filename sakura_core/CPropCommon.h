@@ -122,7 +122,7 @@ protected:
 	*/
 	void OnHelp( HWND, int );	/* ヘルプ */
 	int	SearchIntArr( int , int* , int );
-	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
+//	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
 //	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */ // 2002.11.09 Moca 未使用
 	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
 
@@ -168,12 +168,14 @@ protected:
 
 	//==============================================================
 	//!	ツールバーページのDialog Procedure
+	// 20050809 aroka _p6から_PROP_TOOLBARに名前変更
 	static INT_PTR CALLBACK DlgProc_PROP_TOOLBAR(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for Toolbar page
-	INT_PTR DispatchEvent_p6( HWND, UINT, WPARAM, LPARAM );
-	void SetData_p6( HWND );	/* ダイアログデータの設定 p6 */
-	int  GetData_p6( HWND );	/* ダイアログデータの取得 p6 */
+	INT_PTR DispatchEvent_PROP_TOOLBAR( HWND, UINT, WPARAM, LPARAM );
+	void SetData_PROP_TOOLBAR( HWND );	/* ツールバー ダイアログデータの設定 */
+	int  GetData_PROP_TOOLBAR( HWND );	/* ツールバー ダイアログデータの取得 */
+	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
 
 	//==============================================================
 	//!	キーワードページのDialog Procedure

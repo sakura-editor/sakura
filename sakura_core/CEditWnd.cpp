@@ -347,6 +347,12 @@ HWND CEditWnd::Create(
 
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
 
+// 次のSetWindowLongPtr以降だとデバッグ中に落ちることがあったので順番を入れ替えた。 // 2005/8/9 aroka
+	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* 次回ウィンドウを開いたときツールバーを表示する */
+ 		/* ツールバー作成 */
+		CreateToolBar();
+	}
+
 //	if( NULL != m_hWnd ){
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
@@ -357,11 +363,6 @@ HWND CEditWnd::Create(
 		::ReleaseDC( m_hWnd, hdc );
 
 //	}
-
-	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* 次回ウィンドウを開いたときツールバーを表示する */
- 		/* ツールバー作成 */
-		CreateToolBar();
-	}
 
 	/* ステータスバー */
 	if( m_pShareData->m_Common.m_bDispSTATUSBAR ){	/* 次回ウィンドウを開いたときステータスバーを表示する */
@@ -666,11 +667,19 @@ void CEditWnd::CreateToolBar( void )
 		m_cIcons.SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
 		int count = 0;	//@@@ 2002.06.15 MIK
+		int prevCommand = 0; // 2005/8/9 aroka
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
 			nIdx = m_pShareData->m_Common.m_nToolBarButtonIdxArr[i];
-			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
+//			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
+			tbb = m_CMenuDrawer.getButton(nIdx);
 			//::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
 
+			// 仮想改行ボタンが来たら、直前のコマンドの状態を変更する 2005/8/9 aroka
+			if( tbb.fsState & TBSTATE_WRAP ){
+				::SendMessage( m_hwndToolBar, TB_SETSTATE, (WPARAM)prevCommand, (LPARAM)TBSTATE_WRAP );
+				// 仮想改行ボタンはツールバーへの追加をスキップする。
+				continue;
+			}
 			//@@@ 2002.06.15 MIK start
 			switch( tbb.fsStyle )
 			{
@@ -783,6 +792,8 @@ void CEditWnd::CreateToolBar( void )
 				break;
 			}
 			//@@@ 2002.06.15 MIK end
+			// 直前のコマンドIDを覚えておく 2005/8/9 aroka
+			prevCommand = tbb.idCommand;
 		}
 		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
@@ -1378,6 +1389,12 @@ LRESULT CEditWnd::DispatchEvent(
 		if( NULL != m_hwndToolBar ){
 			DestroyToolBar();
 			CreateToolBar();
+// ツールバーの行数が変わったときに画面が乱れないように 2005/8/9 aroka
+			RECT		rc;
+			::GetClientRect( m_hWnd, &rc );
+			::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+
 		}
 // Oct 10, 2000 ao ここまで
 
@@ -2587,7 +2604,10 @@ void CEditWnd::OnTimer(
 	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
 	if( !m_pPrintPreview && NULL != m_hwndToolBar ){
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
+// CMenuDrawerのメンバ変数をカプセル化 2005/8/9 aroka
+//			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
+			tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]);
+
 			/* 機能が利用可能か調べる */
 			::PostMessage(
 				m_hwndToolBar, TB_ENABLEBUTTON, tbb.idCommand,
@@ -4133,13 +4153,16 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 		{
 			//	描画
 			//	pnmh->dwItemSpec はコマンド番号なので，アイコン番号に変更する必要がある]
-			int nIconId = -1;
-			for( int i = 1; i < m_CMenuDrawer.m_nMyButtonNum; i++ ){
-				if( m_CMenuDrawer.m_tbMyButton[i].idCommand == pnmh->dwItemSpec ){
-					nIconId = m_CMenuDrawer.m_tbMyButton[i].iBitmap;
-					break;
-				}
-			}
+// CMenuDrawerのメンバ変数をカプセル化 2005/8/9 aroka
+//			int nIconId = -1;
+//			for( int i = 1; i < m_CMenuDrawer.m_nMyButtonNum; i++ ){
+//				if( m_CMenuDrawer.m_tbMyButton[i].idCommand == pnmh->dwItemSpec ){
+//					nIconId = m_CMenuDrawer.m_tbMyButton[i].iBitmap;
+//					break;
+//				}
+//			}
+			int nIndex = m_CMenuDrawer.FindIndexFromCommandId( pnmh->dwItemSpec );
+			int nIconId = m_CMenuDrawer.GetIconId( nIndex );
 
 			//	もしもアイコンがなかったら
 			if( nIconId < 0 ){
