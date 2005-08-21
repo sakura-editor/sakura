@@ -195,12 +195,14 @@ protected:
 	virtual int DeinitDll(void);
 
 	//	DLL Interfaceの受け皿
-	typedef int (*BREGEXP_BMatch)(const char*,const char *,const char *,BREGEXP **,char *);
-	typedef int (*BREGEXP_BSubst)(const char*,const char *,const char *,BREGEXP **,char *);
-	typedef int (*BREGEXP_BTrans)(const char*,char *,char *,BREGEXP **,char *);
-	typedef int (*BREGEXP_BSplit)(const char*,char *,char *,int,BREGEXP **,char *);
-	typedef void (*BREGEXP_BRegfree)(BREGEXP*);
-	typedef const char* (*BREGEXP_BRegexpVersion)(void);
+	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
+	//	影響を受けないようにする．
+	typedef int (__cdecl *BREGEXP_BMatch)(const char*,const char *,const char *,BREGEXP **,char *);
+	typedef int (__cdecl *BREGEXP_BSubst)(const char*,const char *,const char *,BREGEXP **,char *);
+	typedef int (__cdecl *BREGEXP_BTrans)(const char*,char *,char *,BREGEXP **,char *);
+	typedef int (__cdecl *BREGEXP_BSplit)(const char*,char *,char *,int,BREGEXP **,char *);
+	typedef void (__cdecl *BREGEXP_BRegfree)(BREGEXP*);
+	typedef const char* (__cdecl *BREGEXP_BRegexpVersion)(void);
 	// 2005.03.19 かろと 前方一致用新インターフェース
 	typedef int (*BREGEXP_BMatchEx)(const char*,const char*, const char *,const char *,BREGEXP **,char *);
 	typedef int (*BREGEXP_BSubstEx)(const char*,const char*, const char *,const char *,BREGEXP **,char *);
