@@ -143,27 +143,28 @@ SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c );
 #endif  /* MY_ICMP_MBS */
 
 // 2005.04.07 MIK strstrånä÷êîí«â¡
-SAKURA_CORE_API const char* __cdecl my_strstri( const char* s1, const char* s2 );
-SAKURA_CORE_API const char* __cdecl my_strstr( const char* s1, const char* s2 );
-SAKURA_CORE_API const char* __cdecl my_strchri( const char* s1, int c2 );
-SAKURA_CORE_API const char* __cdecl my_strchr( const char* s1, int c2 );
+//	Aug. 21, 2005 genta é¿ëÃÇ…ÇÕ__cdeclÇ™ñ≥Ç¢ÇÃÇ≈ÅCêÈåæÇ©ÇÁÇ‡çÌèú
+SAKURA_CORE_API const char* my_strstri( const char* s1, const char* s2 );
+SAKURA_CORE_API const char* my_strstr( const char* s1, const char* s2 );
+SAKURA_CORE_API const char* my_strchri( const char* s1, int c2 );
+SAKURA_CORE_API const char* my_strchr( const char* s1, int c2 );
 
-inline SAKURA_CORE_API char* __cdecl my_strstri( char* s1, const char* s2 )
+inline SAKURA_CORE_API char* my_strstri( char* s1, const char* s2 )
 {
 	return const_cast<char*>(my_strstri((const char*)s1, s2));
 }
 
-inline SAKURA_CORE_API char* __cdecl my_strstr( char* s1, const char* s2 )
+inline SAKURA_CORE_API char* my_strstr( char* s1, const char* s2 )
 {
 	return const_cast<char*>(my_strstr((const char*)s1, s2));
 }
 
-inline SAKURA_CORE_API char* __cdecl my_strchri( char* s1, int c2 )
+inline SAKURA_CORE_API char* my_strchri( char* s1, int c2 )
 {
 	return const_cast<char*>(my_strchri((const char*)s1, c2));
 }
 
-inline SAKURA_CORE_API char* __cdecl my_strchr( char* s1, int c2 )
+inline SAKURA_CORE_API char* my_strchr( char* s1, int c2 )
 {
 	return const_cast<char*>(my_strchr((const char*)s1, c2));
 }
