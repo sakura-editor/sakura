@@ -1507,7 +1507,8 @@ void CEditView::SmartIndent_CPP( char cChar )
 					}
 				}
 				if( i < nLineLen ){
-					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 					if( 1 == nCharChars && ( pLine[i] == ')' || pLine[i] == '}' ) ){
 						cChar = pLine[i];
 					}

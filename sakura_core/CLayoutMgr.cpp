@@ -1325,7 +1325,8 @@ void CLayoutMgr::CaretPos_Phys2Log(
 					// Sep. 23, 2002 genta ÉÅÉìÉoÅ[ä÷êîÇégÇ§ÇÊÇ§Ç…
 					nCharChars = GetActualTabSpace( nCaretPosX );
 				}else{
-					nCharChars = CMemory::MemCharNext( pData, nDataLen, &pData[i] ) - &pData[i];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( pData, nDataLen, i );
 				}
 				if( nCharChars == 0 ){
 					nCharChars = 1;
@@ -1448,7 +1449,8 @@ checkloop:;
 //			nEOLType = GetEOLType( &pData[i], nDataLen - i );
 //			nCharChars = 1;
 		}else{
-			nCharChars = CMemory::MemCharNext( pData, nDataLen, &pData[i] ) - &pData[i];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars = CMemory::GetSizeOfChar( pData, nDataLen, i );
 		}
 
 		if( nCharChars == 0 ){

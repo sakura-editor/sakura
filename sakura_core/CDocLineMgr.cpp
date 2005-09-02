@@ -6,6 +6,7 @@
 	@date 1998/03/05  新規作成
 	@date 2001/06/23 N.Nakatani 単語単位で検索する機能を実装
 	@date 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
+	@date 2005/09/25 D.S.Koba GetSizeOfCharで書き換え
 	$Revision$
 */
 /*
@@ -1441,7 +1442,8 @@ int	CDocLineMgr::WhereCurrentWord_2(
 
 	/* 文字種類が変わるまで後方へサーチ */
 	nIdxNext = nIdx;
-	nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
+	// 2005-09-02 D.S.Koba GetSizeOfChar
+	nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
 	while( nCharChars > 0 ){
 		nIdxNext += nCharChars;
 		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
@@ -1460,7 +1462,8 @@ int	CDocLineMgr::WhereCurrentWord_2(
 		if( nCharKind != nCharKindNext ){
 			break;
 		}
-		nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
 	}
 	*pnIdxTo = nIdxNext;
 
@@ -1491,7 +1494,8 @@ int CDocLineMgr::SearchNextWordPosition(
 	int nCharKind = WhatKindOfChar( pLine, nLineLen, nIdx );
 
 	int nIdxNext = nIdx;
-	int nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
+	// 2005-09-02 D.S.Koba GetSizeOfChar
+	int nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
 	while( nCharChars > 0 ){
 		nIdxNext += nCharChars;
 		int nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
@@ -1521,7 +1525,8 @@ int CDocLineMgr::SearchNextWordPosition(
 				return TRUE;
 			}
 		}
-		nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxNext] ) - &pLine[nIdxNext];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
 	}
 	return FALSE;
 }
@@ -1708,7 +1713,8 @@ int CDocLineMgr::SearchWord(
 					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 						// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
 						if (nCurLen == 0) {
-							nIdxPos += (CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxPos] ) - &pLine[nIdxPos] == 2 ? 2 : 1);
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nIdxPos += (CMemory::GetSizeOfChar( pLine, nLineLen, nIdxPos ) == 2 ? 2 : 1);
 						}
 						//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 						if( nHitPos >= nHitTo ){
@@ -1995,7 +2001,8 @@ void CDocLineMgr::CreateCharCharsArr(
 	int*	pnCharCharsArr;
 	pnCharCharsArr = new int[nSrcLen];
 	for( i = 0; i < nSrcLen; /*i++*/ ){
-		pnCharCharsArr[i] = CMemory::MemCharNext( (const char *)pszPattern, nSrcLen, (const char *)&pszPattern[i] ) - (const char *)&pszPattern[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		pnCharCharsArr[i] = CMemory::GetSizeOfChar( (const char *)pszPattern, nSrcLen, i );
 		if( 0 == pnCharCharsArr[i] ){
 			pnCharCharsArr[i] = 1;
 		}
@@ -2146,13 +2153,15 @@ char* CDocLineMgr::SearchString(
 		/* 線形探索 */
 		nCompareTo = nDesLen - nSrcLen;	//	Mar. 4, 2001 genta
 		for( nPos = nIdxPos; nPos <= nCompareTo; /*nPos++*/ ){
-			nCharChars = CMemory::MemCharNext( (const char *)pLine, nDesLen, (const char *)&pLine[nPos] ) - (const char *)&pLine[nPos];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars = CMemory::GetSizeOfChar( (const char *)pLine, nDesLen, nPos );
 			nCharChars1 = nCharChars;
 			for( i = 0; i < nSrcLen; /*i++*/ ){
 				if( NULL != pnCharCharsArr ){
 					nCharChars2 = pnCharCharsArr[i];
 				}else{
-					nCharChars2 = CMemory::MemCharNext( (const char *)pszPattern, nSrcLen, (const char *)&pszPattern[i] ) - (const char *)&pszPattern[i];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars2 = CMemory::GetSizeOfChar( (const char *)pszPattern, nSrcLen, i );
 				}
 				if( nCharChars1 != nCharChars2 ){
 					break;
@@ -2183,7 +2192,8 @@ char* CDocLineMgr::SearchString(
 				}else{
 					i+= nCharChars2;
 				}
-				nCharChars1 = CMemory::MemCharNext( (const char *)pLine, nDesLen, (const char *)&pLine[nPos + i] ) - (const char *)&pLine[nPos + i];
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				nCharChars1 = CMemory::GetSizeOfChar( (const char *)pLine, nDesLen, nPos + i );
 			}
 			if( i >= nSrcLen ){
 				return (char *)&pLine[nPos];
@@ -2212,7 +2222,8 @@ int	CDocLineMgr::WhatKindOfChar(
 {
 	int		nCharChars;
 	WORD	wChar;
-	nCharChars = CMemory::MemCharNext( pData, pDataLen, &pData[nIdx] ) - &pData[nIdx];
+	// 2005-09-02 D.S.Koba GetSizeOfChar
+	nCharChars = CMemory::GetSizeOfChar( pData, pDataLen, nIdx );
 	if( nCharChars == 0 ){
 		return CK_NULL;	/* NULL 0x0<=c<=0x0 */
 	}else

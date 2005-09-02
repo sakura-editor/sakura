@@ -1751,7 +1751,8 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 			if( 0 == nCharChars ){
 				nCharChars = 1;
 			}
@@ -2112,9 +2113,11 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		if( i >= nLineLen ){
 			continue;
 		}
-		nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pLine, nLineLen, i );
 		for( j = 0; j < nStartsLen; j+=nCharChars2 ){
-			nCharChars2 = CMemory::MemCharNext( pszStarts, nStartsLen, &pszStarts[j] ) - &pszStarts[j];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars2 = CMemory::GetSizeOfChar( pszStarts, nStartsLen, j );
 			if( nCharChars == nCharChars2 ){
 				if( 0 == memcmp( &pLine[i], &pszStarts[j], nCharChars ) ){
 					strncpy( szTitle, &pszStarts[j], nCharChars);	//	szTitleに保持。

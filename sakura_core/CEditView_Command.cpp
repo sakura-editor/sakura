@@ -2832,7 +2832,8 @@ void CEditView::Command_CHAR( char cChar )
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
 					nIdxTo = LineColmnToIndex( pcDocLine, m_nCaretPosX );
 					for( nPos = 0; nPos < /*nIdxTo*/nLineLen && nPos < nX; ){
-						nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+						// 2005-09-02 D.S.Koba GetSizeOfChar
+						nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
 
 						/* その他のインデント文字 */
 						if( 0 < nCharChars
@@ -3473,7 +3474,8 @@ void CEditView::Command_SEARCH_NEXT( bool bChangeCurRegexp, BOOL bRedraw, HWND h
 	if( b0Match ) {
 		// 現在、長さ０でマッチしている場合は物理行で１文字進める(無限マッチ対策)
 		if( nIdx < nLineLen ) {
-			nIdx += (CMemory::MemCharNext(pLine, nLineLen, pLine+nIdx) - (pLine+nIdx) == 2 ? 2 : 1);
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nIdx += (CMemory::GetSizeOfChar(pLine, nLineLen, nIdx) == 2 ? 2 : 1);
 		} else {
 			// 念のため行末は別処理
 			++nIdx;
@@ -7498,7 +7500,8 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				if (matchLen == 0) {
 					// ０文字マッチの時(無限置換にならないように１文字進める)
 					if (nIdxTo < nLen) {
-						nIdxTo += (CMemory::MemCharNext(pLine, nLen, pLine+nIdxTo) - (pLine+nIdxTo) == 2 ? 2 : 1);
+						// 2005-09-02 D.S.Koba GetSizeOfChar
+						nIdxTo += (CMemory::GetSizeOfChar(pLine, nLen, nIdxTo) == 2 ? 2 : 1);
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
@@ -7936,7 +7939,8 @@ void CEditView::Command_REPLACE_ALL( void )
 				if (matchLen == 0) {
 					// ０文字マッチの時(無限置換にならないように１文字進める)
 					if (nIdxTo < nLen) {
-						nIdxTo += (CMemory::MemCharNext(pLine, nLen, pLine+nIdxTo) - (pLine+nIdxTo) == 2 ? 2 : 1);
+						// 2005-09-02 D.S.Koba GetSizeOfChar
+						nIdxTo += (CMemory::GetSizeOfChar(pLine, nLen, nIdxTo) == 2 ? 2 : 1);
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので

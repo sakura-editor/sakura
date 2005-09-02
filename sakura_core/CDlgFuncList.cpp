@@ -741,7 +741,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			m = 0;
 			nWorkLen = lstrlen( pWork );
 			for( k = 0; k < nWorkLen; ++k ){
-				nCharChars = CMemory::MemCharNext( pWork, nWorkLen, &pWork[k] ) - &pWork[k];
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				nCharChars = CMemory::GetSizeOfChar( pWork, nWorkLen, k );
 				if( 1 == nCharChars && ':' == pWork[k] ){
 					//	Jan. 04, 2001 genta
 					//	C++‚Ì“‡‚Ì‚½‚ßA\‚É‰Á‚¦‚Ä::‚ðƒNƒ‰ƒX‹æØ‚è‚Æ‚Ý‚È‚·‚æ‚¤‚É

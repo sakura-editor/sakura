@@ -1207,7 +1207,8 @@ void CPrintPreview::Print_DrawLine(
 	int			nTabSpace = m_pParentWnd->m_cEditDoc.m_cLayoutMgr.GetTabSpace();
 
 	for( i = 0; i < nLineLen; ++i ){
-		nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 		if( 0 == nCharChars ){	//	0バイト文字？
 			nCharChars = 1;
 		}

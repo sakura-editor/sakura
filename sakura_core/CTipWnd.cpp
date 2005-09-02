@@ -143,7 +143,8 @@ void CTipWnd::ComputeWindowSize(
 	nTextLength = strlen( pszText );
 	nBgn = 0;
 	for( i = 0; i <= nTextLength; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pszText, nTextLength, (const char *)&pszText[i] ) - (const char*)&pszText[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pszText, nTextLength, i );
 		if( ( 1 == nCharChars && '\\' == pszText[i] && 'n' == pszText[i + 1]) || '\0' == pszText[i] ){
 			if( 0 < i - nBgn ){
 				char*	pszWork;
@@ -217,7 +218,8 @@ void CTipWnd::DrawTipText(
 	nBgn = 0;
 	for( i = 0; i <= nTextLength; ++i ){
 //		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, nTextLength, &pszText[i] );
-		nCharChars = CMemory::MemCharNext( (const char *)pszText, nTextLength, (const char *)&pszText[i] ) - (const char*)&pszText[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pszText, nTextLength, i );
 		if( ( 1 == nCharChars && '\\' == pszText[i] && 'n' == pszText[i + 1]) || '\0' == pszText[i] ){
 			if( 0 < i - nBgn ){
 				char*	pszWork;

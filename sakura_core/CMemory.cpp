@@ -1133,7 +1133,8 @@ void CMemory::SJISToEUC( void )
 	pDes = new unsigned char[nBufLen * 2];
 	nDesIdx = 0;
 	for( i = 0; i < nBufLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 1 ){
 			if( pBuf[i] >= (unsigned char)0x80 ){
 				/* 半角カタカナ */
@@ -1761,7 +1762,8 @@ void CMemory::ToLower( void )
 	int				nCharChars;
 	unsigned char	uc;
 	for( i = 0; i < nBufLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 1 ){
 			uc = (unsigned char)tolower( pBuf[i] );
 			pBuf[i] = uc;
@@ -1811,7 +1813,8 @@ void CMemory::ToUpper( void )
 	int				nCharChars;
 	unsigned char	uc;
 	for( i = 0; i < nBufLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 1 ){
 			uc = (unsigned char)toupper( pBuf[i] );
 			pBuf[i] = uc;
@@ -1991,16 +1994,19 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 	setlocale( LC_ALL, "Japanese" );
 	i = 0;
 	k = 0;
-	nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
+	// 2005-09-02 D.S.Koba GetSizeOfChar
+	nCharChars = CMemory::GetSizeOfChar( pBuf, nBufLen, i );
 	while( nCharChars > 0 && i < nBufLen ){
 		i += nCharChars;
 		k += 2;
-		nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pBuf, nBufLen, i );
 	}
 	pBufUnicode = new char[k + 1];
 	i = 0;
 	k = 0;
-	nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
+	// 2005-09-02 D.S.Koba GetSizeOfChar
+	nCharChars = CMemory::GetSizeOfChar( pBuf, nBufLen, i );
 	while( nCharChars > 0 && i < nBufLen ){
 		j = mbtowc( &wchar, &pBuf[i], nCharChars );
 		if( j == -1 || j == 0 ){
@@ -2017,7 +2023,8 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 			i += j;
 		}
 		k += 2;
-		nCharChars = CMemory::MemCharNext( pBuf, nBufLen, &pBuf[i] ) - &pBuf[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pBuf, nBufLen, i );
 	}
 	*ppBufUnicode = pBufUnicode;
 	return k;
@@ -2174,7 +2181,8 @@ void CMemory::ToZenkaku(
 	}
 	nBufDesLen = 0;
 	for( i = 0; i < nBufLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 1){
 			bHenkanOK = FALSE;
 			if( bHanKataOnly ){	/* 1== 半角カタカナにのみ作用する */
@@ -2311,7 +2319,8 @@ void CMemory::ToHankaku(
 	BOOL bHenkanOK;
 	bool bInHiraKata = false;				// 前の文字がカタカナorひらがなだったなら、trueとし、長音、濁点、半濁点を半角へ変換可能とする
 	for( i = 0; i < nBufLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 2 ){
 			uiSrc = pBuf[i + 1] | ( pBuf[i] << 8 );
 			
@@ -2759,7 +2768,8 @@ int CMemory::CheckKanjiCode_SJIS( const unsigned char* pBuf, int nBufLen, int*	p
 
 //	nDesIdx = 0;
 	for( i = 0; i < nBufLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pBuf, nBufLen, (const char *)&(pBuf[i]) ) - (const char*)&(pBuf[i]);
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 1 ){
 //			if( pBuf[i] >= (unsigned char)0x80 ){
 //				/* 半角カタカナ */
@@ -3588,5 +3598,29 @@ void CMemory::Empty( void )
 	return;
 }
 
+/*!
+	@param[in] pData 位置を求めたい文字列の先頭
+	@param[in] nDataLen 文字列長
+	@param[in] nIdx 位置(0オリジン)
+
+	@date 2005-09-02 D.S.Koba 作成
+
+	@note nIdxは予め文字の先頭位置とわかっていなければならない．
+	2バイト文字の2バイト目をnIdxに与えると正しい結果が得られない．
+*/
+int CMemory::GetSizeOfChar( const char* pData, const int nDataLen, const int nIdx )
+{
+	if( nIdx >= nDataLen ){
+		return 0;
+	}else if( nIdx == (nDataLen - 1) ){
+		return 1;
+	}
+	
+	if( _IS_SJIS_1( reinterpret_cast<const unsigned char*>(pData)[nIdx] )
+			&& _IS_SJIS_2( reinterpret_cast<const unsigned char*>(pData)[nIdx+1] ) ){
+		return 2;
+	}
+	return 1;
+}
 
 /*[EOF]*/
