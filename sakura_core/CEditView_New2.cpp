@@ -412,7 +412,8 @@ int CEditView::DispText( HDC hdc, int x, int y, const char* pData, int nLength )
 		if ( x < 0 ){
 			int nLeft = ( 0 - x ) / nCharWidth - 1;
 			while (nBefore < nLeft){
-				nBefore += CMemory::MemCharNext( pData, nLength, &pData[nBefore] ) - &pData[nBefore];
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				nBefore += CMemory::GetSizeOfChar( pData, nLength, nBefore );
 			}
 		}
 		if ( rcClip.right < x + nCharWidth * nLength ){
@@ -873,7 +874,8 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 		return false;
 //	PosX = LineColmnToIndex( cline, len, PosX );	不要
 
-	nCharSize = CMemory::MemCharNext( cline, len, cline + PosX ) - cline - PosX;
+	// 2005-09-02 D.S.Koba GetSizeOfChar
+	nCharSize = CMemory::GetSizeOfChar( cline, len, PosX );
 	m_nCharSize = nCharSize;	// 02/09/18 対括弧の文字サイズ設定 ai
 
 	if( nCharSize == 1 ){	//	1バイト文字

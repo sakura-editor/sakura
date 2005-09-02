@@ -744,7 +744,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -789,7 +790,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -1021,7 +1023,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -1069,7 +1072,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -1321,7 +1325,8 @@ searchnext:;
 					nCharChars = 1;
 				}
 				else{
-					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
 					if( 0 == nCharChars ){
 						nCharChars = 1;
 					}
@@ -1347,7 +1352,8 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
 						/* コントロールコード列の終端を探す */
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}

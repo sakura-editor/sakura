@@ -67,7 +67,8 @@ public:
 			m_nColumn_Delta = m_nTabSpace - ( m_nColumn % m_nTabSpace );
 		}
 		else{
-			m_nIndex_Delta = CMemory::MemCharNext( m_pLine, m_nLineLen, &m_pLine[m_nIndex] ) - &m_pLine[m_nIndex];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			m_nIndex_Delta = CMemory::GetSizeOfChar( m_pLine, m_nLineLen, m_nIndex );
 			if( 0 == m_nIndex_Delta ){
 				m_nIndex_Delta = 1;
 			}

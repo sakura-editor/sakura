@@ -64,7 +64,8 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			//nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 			if(	1 < nCharChars ){
 				i += (nCharChars - 1);
 				continue;
@@ -603,7 +604,8 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 		nMode = 0;
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 			if(	1 < nCharChars ){
 				break;
 			}
@@ -770,7 +772,8 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 		bDQuote	= false;
 		for( i = 0; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 			if(	0 == nCharChars ){
 				nCharChars = 1;
 			}

@@ -94,7 +94,8 @@ int CBlockComment::Match_CommentTo( int n, int nPos, int nLineLen, const char* p
 {
 	int i;
 	for( i = nPos; i <= nLineLen - m_nBlockToLen[n]; ++i ){
-		int nCharChars_2 = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		int nCharChars_2 = CMemory::GetSizeOfChar( (const char *)pLine, nLineLen, i );
 		if( 0 == nCharChars_2 ){
 			nCharChars_2 = 1;
 		}

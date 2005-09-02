@@ -4,6 +4,7 @@
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
+	@date   2005/09/02 D.S.Koba GetSizeOfCharで書き換え
 	$Revision$
 */
 /*
@@ -1290,7 +1291,8 @@ void CEditView::ShowEditCaret( void )
 					pLine[nIdxFrom] == TAB ){
 					nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 				}else{
-					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxFrom] ) - &pLine[nIdxFrom];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxFrom );
 					if( 0 < nCharChars ){
 						nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) * nCharChars;
 					}
@@ -1315,7 +1317,8 @@ void CEditView::ShowEditCaret( void )
 				pLine[nIdxFrom] == TAB ){
 				nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 			}else{
-				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nIdxFrom] ) - &pLine[nIdxFrom];
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxFrom );
 				if( 0 < nCharChars ){
 					nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) * nCharChars;
 				}
@@ -5767,7 +5770,8 @@ void CEditView::DrawCaretPosInfo( void )
 			//	Oct. 4, 2002 genta
 			//	文字位置のカウント方法が誤っていたのを修正
 			for( i = 0; i < nLineLen; ){
-				int nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				int nCharChars = CMemory::GetSizeOfChar( (const char *)pLine, nLineLen, i );
 				if ( nCharChars == 1 && pLine[i] == TAB ){
 					//	Sep. 23, 2002 genta LayoutMgrの値を使う
 					nPosX += m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace( nPosX );
@@ -5804,7 +5808,8 @@ void CEditView::DrawCaretPosInfo( void )
 				wsprintf( szText, "%s(%s)       %6d：%d", pCodeName, nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
-					nCharChars = CMemory::MemCharNext( (char *)pLine, nLineLen, (char *)&pLine[nIdxFrom] ) - (char *)&pLine[nIdxFrom];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( (char *)pLine, nLineLen, nIdxFrom );
 				}else{
 					nCharChars = pcLayout->m_cEol.GetLen();
 				}
@@ -5847,7 +5852,8 @@ void CEditView::DrawCaretPosInfo( void )
 			if( nIdxFrom >= nLineLen ){
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
-					nCharChars = CMemory::MemCharNext( (char *)pLine, nLineLen, (char *)&pLine[nIdxFrom] ) - (char *)&pLine[nIdxFrom];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( (char *)pLine, nLineLen, nIdxFrom );
 				}else{
 					nCharChars = pcLayout->m_cEol.GetLen();
 				}
@@ -9435,7 +9441,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -9477,7 +9484,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -9677,7 +9685,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -9722,7 +9731,8 @@ searchnext:;
 						int i;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -9794,7 +9804,8 @@ searchnext:;
 					nCharChars = 1;
 				}
 				else{
-					nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
 					if( 0 == nCharChars ){
 						nCharChars = 1;
 					}
@@ -9816,7 +9827,8 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
 						/* コントロールコード列の終端を探す */
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							nCharChars_2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}

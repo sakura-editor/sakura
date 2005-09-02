@@ -367,7 +367,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 		
 		for( ; i < nLineLen; ++i ){
 			/* 1ƒoƒCƒg•¶Žš‚¾‚¯‚ðˆ—‚·‚é */
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 			if( 1 < nCharChars ){
 				i += (nCharChars - 1);
 				continue;

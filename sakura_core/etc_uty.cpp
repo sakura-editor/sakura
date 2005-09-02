@@ -1743,7 +1743,8 @@ const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimi
 		return NULL;
 	}
 	for( i = nBgn; i + 1 < nTextLen; ++i ){
-		nCharChars = CMemory::MemCharNext( pText, nTextLen, &pText[i] ) - &pText[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pText, nTextLen, i );
 		if( 0 == nCharChars ){
 			nCharChars = 1;
 		}
@@ -1768,7 +1769,8 @@ int LimitStringLengthB( const char* pszData, int nDataLength, int nLimitLengthB,
 	int	nDesLen;
 	nDesLen = 0;
 	for( i = 0; i < nDataLength; ){
-		nCharChars = CMemory::MemCharNext( pszData, nDataLength, &pszData[i] ) - &pszData[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( pszData, nDataLength, i );
 		if( 0 == nCharChars ){
 			nCharChars = 1;
 		}
