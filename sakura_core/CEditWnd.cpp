@@ -7,10 +7,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, genta, jepro
-	Copyright (C) 2001, mik, hor
-	Copyright (C) 2002, YAZAKI, genta, aroka, MIK
-	Copyright (C) 2003, MIK, wmlhq, ryoji
+	Copyright (C) 2000-2001, genta, jepro, ao
+	Copyright (C) 2001, mik, Stonee, Misaka, hor, YAZAKI
+	Copyright (C) 2002, YAZAKI, genta, hor, aroka, minfu, 鬼, MIK, ai
+	Copyright (C) 2003, genta, MIK, Moca, wmlhq, ryoji, KEITA
+	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
+	Copyright (C) 2005, genta, MIK, Moca, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -623,6 +625,7 @@ void CEditWnd::DestroyStatusBar( void )
 
 /* ツールバー作成
 	@date @@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	@date 2005.08.29 aroka ツールバーの折り返し
 */
 void CEditWnd::CreateToolBar( void )
 {
@@ -667,19 +670,37 @@ void CEditWnd::CreateToolBar( void )
 		m_cIcons.SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
 		int count = 0;	//@@@ 2002.06.15 MIK
-		int prevCommand = 0; // 2005/8/9 aroka
+		int nToolBarButtonNum = 0;// 2005/8/29 aroka
+		//	From Here 2005.08.29 aroka
+		// はじめにツールバー構造体の配列を作っておく
+		TBBUTTON *pTbbArr = new TBBUTTON[m_pShareData->m_Common.m_nToolBarButtonNum];
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
 			nIdx = m_pShareData->m_Common.m_nToolBarButtonIdxArr[i];
-//			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
-			tbb = m_CMenuDrawer.getButton(nIdx);
-			//::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
-
-			// 仮想改行ボタンが来たら、直前のコマンドの状態を変更する 2005/8/9 aroka
-			if( tbb.fsState & TBSTATE_WRAP ){
-				::SendMessage( m_hwndToolBar, TB_SETSTATE, (WPARAM)prevCommand, (LPARAM)TBSTATE_WRAP );
-				// 仮想改行ボタンはツールバーへの追加をスキップする。
+			pTbbArr[nToolBarButtonNum] = m_CMenuDrawer.getButton(nIdx);
+			// セパレータが続くときはひとつにまとめる
+			// 折り返しボタンもTBSTYLE_SEP属性を持っているので
+			// 折り返しの前のセパレータは全て削除される．
+			if( (pTbbArr[nToolBarButtonNum].fsStyle & TBSTYLE_SEP) && (nToolBarButtonNum!=0)){
+				if( (pTbbArr[nToolBarButtonNum-1].fsStyle & TBSTYLE_SEP) ){
+					pTbbArr[nToolBarButtonNum-1] = pTbbArr[nToolBarButtonNum];
+					nToolBarButtonNum--;
+				}
+			}
+			// 仮想折返しボタンがきたら直前のボタンに折返し属性を付ける
+			if( pTbbArr[nToolBarButtonNum].fsState & TBSTATE_WRAP ){
+				if( nToolBarButtonNum!=0 ){
+					pTbbArr[nToolBarButtonNum-1].fsState |= TBSTATE_WRAP;
+				}
 				continue;
 			}
+			nToolBarButtonNum++;
+		}
+		//	To Here 2005.08.29 aroka
+
+		for( i = 0; i < nToolBarButtonNum; ++i ){
+			tbb = pTbbArr[i];
+			//::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
+
 			//@@@ 2002.06.15 MIK start
 			switch( tbb.fsStyle )
 			{
@@ -711,8 +732,11 @@ void CEditWnd::CreateToolBar( void )
 						
 						//セパレータ作る
 						memset( &my_tbb, 0, sizeof(my_tbb) );
-						my_tbb.fsStyle   = TBSTYLE_SEP;
+						my_tbb.fsStyle   = TBSTYLE_BUTTON;  //ボタンにしないと描画が乱れる 2005/8/29 aroka
 						my_tbb.idCommand = tbb.idCommand;	//同じIDにしておく
+						if( tbb.fsState & TBSTATE_WRAP ){   //折り返し 2005/8/29 aroka
+							my_tbb.fsState |=  TBSTATE_WRAP;
+						}
 						::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&my_tbb );
 						count++;
 
@@ -792,8 +816,6 @@ void CEditWnd::CreateToolBar( void )
 				break;
 			}
 			//@@@ 2002.06.15 MIK end
-			// 直前のコマンドIDを覚えておく 2005/8/9 aroka
-			prevCommand = tbb.idCommand;
 		}
 		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
@@ -801,6 +823,7 @@ void CEditWnd::CreateToolBar( void )
 			::SetWindowLong(m_hwndToolBar, GWL_STYLE, uToolType);
 			::InvalidateRect(m_hwndToolBar, NULL, TRUE);
 		}
+		delete []pTbbArr;// 2005/8/29 aroka
 	}
 	return;
 }
