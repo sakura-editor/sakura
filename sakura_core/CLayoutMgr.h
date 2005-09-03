@@ -222,6 +222,16 @@ private:
 	bool IsKinsokuTail( const char *pLine, int length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 	bool IsKutoTen( unsigned char c1, unsigned char c2 );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
 	bool IsKinsokuKuto( const char *pLine, int length );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
+	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
+	/*! 句読点ぶら下げの処理位置か
+		@date 2005-08-20 D.S.Koba
+		@date Sep. 3, 2005 genta 最適化
+	*/
+	bool IsKinsokuPosKuto(const int nRest, const int nCharChars ) const {
+		return nRest < nCharChars;
+	}
+	bool IsKinsokuPosHead(const int, const int, const int);	//!< 行頭禁則の処理位置か
+	bool IsKinsokuPosTail(const int, const int, const int);	//!< 行末禁則の処理位置か
 
 	//@@@ 2002.09.22 YAZAKI
 	bool CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine, BOOL bDispSSTRING, BOOL bDispWSTRING );
