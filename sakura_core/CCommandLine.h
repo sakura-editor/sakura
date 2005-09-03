@@ -33,26 +33,11 @@ public:
 	static CCommandLine* Instance(LPSTR cmd=NULL);
 
 private:
-	static void ParseCommandLine(
-		LPCSTR		pszCmdLineSrc,	//!< [in]コマンドライン文字列
-		bool*		pbGrepMode,	//!< [out] true: Grep Mode
-		bool*		pbGrepDlg,	//!< [out] true: Grep Dialog表示
-		CMemory*	pcmGrepKey,	//!< [out] GrepのKey
-		CMemory*	pcmGrepFile,
-		CMemory*	pcmGrepFolder,
-		bool*		pbGrepSubFolder,
-		bool*		pbGrepLoHiCase,
-		bool*		pbGrepRegularExp,
-		int *		pnGrepCharSet,
-		bool*		pbGrepOutputLine,
-		bool*		pbGrepWordOnly,
-		int	*		pnGrepOutputStyle,
-		bool*		pbDebugMode,
-		bool*		pbNoWindow,	//!< [out] TRUE: 編集Windowを開かない
-		FileInfo*	pfi,
-		bool*		pbReadOnly	//!< [out] TRUE: Read Only
-	);
-	static int CCommandLine::CheckCommandLine(
+	// 2005-08-24 D.S.Koba 引数削除
+	void ParseCommandLine( void );
+	
+	static int CheckCommandLine(
+
 		LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
 		char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
 	);
