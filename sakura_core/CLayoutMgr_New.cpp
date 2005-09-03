@@ -44,7 +44,6 @@
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
 		nPosXがインデントを含む幅を保持するように変更．nMaxLineSizeは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
-
 */
 void CLayoutMgr::DoLayout(
 		HWND	hwndProgress,
@@ -65,16 +64,12 @@ void CLayoutMgr::DoLayout(
 		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	*/
 	int			nPosX;
-	int			nCharChars;
-	int			nCharChars2;
 	int			nCOMMENTMODE;
 	int			nCOMMENTMODE_Prev;
 	int			nCOMMENTEND;
 	int			nWordBgn;
 	int			nWordLen;
 	int			nAllLineNum;
-	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
-	int			nCharChars3;	//@@@ 2002.04.17 MIK
 	int			nKinsokuType;	//@@@ 2002.04.20 MIK
 
 	int			nIndent;			//	インデント幅
@@ -109,11 +104,12 @@ void CLayoutMgr::DoLayout(
 //	pLine = m_pcDocLineMgr->GetFirstLinrStr( &nLineLen );
 	pCDocLine = m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
 
-// 2002/03/13 novice
-	if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
-		nCOMMENTMODE_Prev = COLORIDX_TEXT;
-	}
-	nCOMMENTMODE = nCOMMENTMODE_Prev;
+// 2005-08-20 D.S.Koba 削除
+//// 2002/03/13 novice
+//	if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
+//		nCOMMENTMODE_Prev = COLORIDX_TEXT;
+//	}
+//	nCOMMENTMODE = nCOMMENTMODE_Prev;
 	nCOMMENTEND = 0;
 	nAllLineNum = m_pcDocLineMgr->GetLineCount();
 
@@ -126,7 +122,6 @@ void CLayoutMgr::DoLayout(
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		nPosX = 0;
-		nCharChars = 0;
 		nBgn = 0;
 		nPos = 0;
 		nWordBgn = 0;
@@ -157,10 +152,6 @@ void CLayoutMgr::DoLayout(
 				pLayoutCalculated = m_pLayoutBot;
 			}
 
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
 
 			SEARCH_START:;
 			
@@ -198,6 +189,11 @@ void CLayoutMgr::DoLayout(
 				{
 //				if( 0 == nWordLen ){
 					/* 英単語の先頭か */
+					//int nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+					int nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					if( 0 == nCharChars ){
+						nCharChars = 1;
+					}
 					if( nPos >= nBgn &&
 						nCharChars == 1 &&
 //						( pLine[nPos] == '#' || __iscsym( pLine[nPos] ) )
@@ -205,19 +201,16 @@ void CLayoutMgr::DoLayout(
 					){
 						/* キーワード文字列の終端を探す */
 						int	i;
-						for( i = nPos + 1; i <= nLineLen - 1; ){
-							nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+						// 2005-08-27 D.S.Koba 簡略化
+						for( i = nPos + 1; i < nLineLen; ++i ){
+							//int nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+							int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars2 ){
 								nCharChars2 = 1;
 							}
-							if( nCharChars2 == 1 &&
-//								( pLine[i] == '#' || __iscsym( pLine[i] ) )
-								IS_KEYWORD_CHAR( pLine[i] )
-							){
-							}else{
+							if( nCharChars2 != 1 || !IS_KEYWORD_CHAR( pLine[i] ) ){
 								break;
 							}
-							i += nCharChars2;
 						}
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
@@ -248,25 +241,11 @@ void CLayoutMgr::DoLayout(
 				 && (nMaxLineSize - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
-					bKinsokuFlag = false;
-					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( nMaxLineSize - nPosX )
-					{
-					case 1:	// 1文字前
-						if( nCharChars2 == 2 )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					case 0:	// 
-						if( nCharChars2 == 1 || nCharChars2 == 2 )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					}
-
-					if( bKinsokuFlag && IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					
+					if( IsKinsokuPosKuto( nMaxLineSize - nPosX, nCharChars2 )
+						&& IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
 					{
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
@@ -281,48 +260,11 @@ void CLayoutMgr::DoLayout(
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
-					bKinsokuFlag = false;
-					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					nCharChars3 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2];
-					switch( nMaxLineSize - nPosX )
-					{
-					//    321012  ↓マジックナンバー
-					// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
-					// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
-					// 2  "る）": 22 "）"で折り返しのとき
-					// 2  "る)" : 21 ")"で折り返しのとき
-					// 1   "Z）": 12 "）"で折り返しのとき
-					// 1   "Z)" : 11 ")"で折り返しのとき
-					//↑何文字前か？
-					// ※ただし、"るZ"部分が禁則なら処理しない。
-					case 3:	// 3文字前
-						if( nCharChars2 == 2 && nCharChars3 == 2 )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					case 2:	// 2文字前
-						if( 2 == nCharChars2 /*&& nCharChars3 > 0*/ )
-						{
-							bKinsokuFlag = true;
-						}
-						else if( nCharChars2 == 1 )
-						{
-							if( nCharChars3 == 2 )
-							{
-								bKinsokuFlag = true;
-							}
-						}
-						break;
-					case 1:	// 1文字前
-						if( nCharChars2 == 1 /*&& nCharChars3 > 0*/ )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					}
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					int nCharChars3 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
 
-					if( bKinsokuFlag
+					if( IsKinsokuPosHead( nMaxLineSize - nPosX, nCharChars2, nCharChars3 )
 					 && IsKinsokuHead( &pLine[nPos+nCharChars2], nCharChars3 )
 					 && ! IsKinsokuHead( &pLine[nPos], nCharChars2 )	//1文字前が行頭禁則でない
 					 && ! IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )	//句読点でない
@@ -347,45 +289,12 @@ void CLayoutMgr::DoLayout(
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-					bKinsokuFlag = false;
-					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( nMaxLineSize - nPosX )
-					{
-					case 3:	// 3文字前
-						if( nCharChars2 == 2 )
-						{
-							if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
-							{
-								// "（あ": "あ"の2バイト目で折り返しのとき
-								bKinsokuFlag = true;
-							}
-						}
-						break;
-					case 2:	// 2文字前
-						if( nCharChars2 == 2 )
-						{
-							// "（あ": "あ"で折り返しのとき
-							bKinsokuFlag = true;
-						}
-						else if( nCharChars2 == 1 )
-						{
-							if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
-							{
-								// "(あ": "あ"の2バイト目で折り返しのとき
-								bKinsokuFlag = true;
-							}
-						}
-						break;
-					case 1:	// 1文字前
-						if( nCharChars2 == 1 )
-						{
-							// "(あ": "あ"で折り返しのとき
-							bKinsokuFlag = true;
-						}
-						break;
-					}
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					int nCharChars3 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
 
-					if( bKinsokuFlag && IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
+					if( IsKinsokuPosTail( nMaxLineSize - nPosX, nCharChars2, nCharChars3 )
+						&& IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
 					{
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
@@ -410,8 +319,8 @@ void CLayoutMgr::DoLayout(
 			
 			if( pLine[nPos] == TAB ){
 				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
-				nCharChars = GetActualTabSpace( nPosX );
-				if( nPosX + nCharChars > nMaxLineSize ){
+				int nCharChars2 = GetActualTabSpace( nPosX );
+				if( nPosX + nCharChars2 > nMaxLineSize ){
 					AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 					m_nLineTypeBot = nCOMMENTMODE;
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -421,16 +330,17 @@ void CLayoutMgr::DoLayout(
 					pLayoutCalculated = m_pLayoutBot;
 					continue;
 				}
-				nPosX += nCharChars;
-				nCharChars = 1;
-				nPos+= nCharChars;
+				nPosX += nCharChars2;
+				nCharChars2 = 1;
+				nPos+= nCharChars2;
 			}else{
-				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-				if( 0 == nCharChars ){
-					nCharChars = 1;
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+				if( 0 == nCharChars2 ){
+					nCharChars2 = 1;
 					break;	//@@@ 2002.04.16 MIK
 				}
-				if( nPosX + nCharChars > nMaxLineSize ){
+				if( nPosX + nCharChars2 > nMaxLineSize ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
 						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
@@ -446,8 +356,8 @@ void CLayoutMgr::DoLayout(
 						}	//@@@ 2002.04.14 MIK
 					}
 				}
-				nPos+= nCharChars;
-				nPosX += nCharChars;
+				nPos+= nCharChars2;
+				nPosX += nCharChars2;
 			}
 		}
 		if( nPos - nBgn > 0 ){
@@ -530,8 +440,6 @@ int CLayoutMgr::DoLayout_Range(
 		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	*/
 	int			nPosX;
-	int			nCharChars;
-	int			nCharChars2;
 	CLayout*	pLayout;
 	int			nModifyLayoutLinesNew;
 	int			nCOMMENTMODE;
@@ -540,8 +448,6 @@ int CLayoutMgr::DoLayout_Range(
 	bool		bNeedChangeCOMMENTMODE = false;	//@@@ 2002.09.23 YAZAKI bAddを名称変更
 	int			nWordBgn;
 	int			nWordLen;
-	bool		bKinsokuFlag;	//@@@ 2002.04.08 MIK
-	int			nCharChars3;	//@@@ 2002.04.17 MIK
 	int			nKinsokuType;	//@@@ 2002.04.20 MIK
 
 	int			nIndent;			//	インデント幅
@@ -570,7 +476,6 @@ int CLayoutMgr::DoLayout_Range(
 
 
 
-
 //	if( nCOMMENTMODE_Prev == 1 ){	/* 行コメントである */
 //		nCOMMENTMODE_Prev = 0;
 //	}
@@ -582,7 +487,6 @@ int CLayoutMgr::DoLayout_Range(
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		nPosX = 0;
-		nCharChars = 0;
 		nBgn = 0;
 		nPos = 0;
 		nWordBgn = 0;
@@ -611,10 +515,6 @@ int CLayoutMgr::DoLayout_Range(
 				pLayoutCalculated = pLayout;
 			}
 
-			nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-			if( 0 == nCharChars ){
-				nCharChars = 1;
-			}
 			SEARCH_START:;
 			
 			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
@@ -663,23 +563,27 @@ int CLayoutMgr::DoLayout_Range(
 				 && nKinsokuType == KINSOKU_TYPE_NONE )
 				{
 					/* 英単語の先頭か */
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					if( 0 == nCharChars ){
+						nCharChars = 1;
+					}
 					if( nPos >= nBgn &&
 						nCharChars == 1 &&
 						IS_KEYWORD_CHAR( pLine[nPos] )
 					){
 						/* キーワード文字列の終端を探す */
 						int	i;
-						for( i = nPos + 1; i <= nLineLen - 1; ){
-							nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[i] ) - &pLine[i];
+						// 2005-08-27 D.S.Koba 簡略化
+						for( i = nPos + 1; i < nLineLen; ++i ){
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars2 ){
 								nCharChars2 = 1;
 							}
-							if( nCharChars2 == 1 &&
-								IS_KEYWORD_CHAR( pLine[i] ) ){	//@@@ 2002.09.23 YAZAKI
-							}else{
+							if( nCharChars2 != 1 || !IS_KEYWORD_CHAR( pLine[i] ) ){
 								break;
 							}
-							i += nCharChars2;
 						}
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
@@ -719,25 +623,11 @@ int CLayoutMgr::DoLayout_Range(
 				 && (nMaxLineSize - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
-					bKinsokuFlag = false;
-					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( nMaxLineSize - nPosX )
-					{
-					case 1:	// 1文字前
-						if( nCharChars2 == 2 )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					case 0:	// 
-						if( nCharChars2 == 1 || nCharChars2 == 2 )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					}
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
 
-					if( bKinsokuFlag && IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
+					if( IsKinsokuPosKuto( nMaxLineSize - nPosX, nCharChars2 )
+						&& IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
 					{
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
@@ -752,48 +642,11 @@ int CLayoutMgr::DoLayout_Range(
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
-					bKinsokuFlag = false;
-					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					nCharChars3 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2];
-					switch( nMaxLineSize - nPosX )
-					{
-					//    321012  ↓マジックナンバー
-					// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
-					// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
-					// 2  "る）": 22 "）"で折り返しのとき
-					// 2  "る)" : 21 ")"で折り返しのとき
-					// 1   "Z）": 12 "）"で折り返しのとき
-					// 1   "Z)" : 11 ")"で折り返しのとき
-					//↑何文字前か？
-					// ※ただし、"るZ"部分が禁則なら処理しない。
-					case 3:	// 3文字前
-						if( nCharChars2 == 2 && nCharChars3 == 2 )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					case 2:	// 2文字前
-						if( 2 == nCharChars2 /*&& nCharChars3 > 0*/ )
-						{
-							bKinsokuFlag = true;
-						}
-						else if( nCharChars2 == 1 )
-						{
-							if( nCharChars3 == 2 )
-							{
-								bKinsokuFlag = true;
-							}
-						}
-						break;
-					case 1:	// 1文字前
-						if( nCharChars2 == 1 /*&& nCharChars3 > 0*/ )
-						{
-							bKinsokuFlag = true;
-						}
-						break;
-					}
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					int nCharChars3 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
 
-					if( bKinsokuFlag
+					if( IsKinsokuPosHead( nMaxLineSize - nPosX, nCharChars2, nCharChars3 )
 					 && IsKinsokuHead( &pLine[nPos+nCharChars2], nCharChars3 )
 					 && ! IsKinsokuHead( &pLine[nPos], nCharChars2 )	//1文字前が行頭禁則でない
 					 && ! IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )	//句読点でない
@@ -831,45 +684,12 @@ int CLayoutMgr::DoLayout_Range(
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-					bKinsokuFlag = false;
-					nCharChars2 = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
-					switch( nMaxLineSize - nPosX )
-					{
-					case 3:	// 3文字前
-						if( nCharChars2 == 2 )
-						{
-							if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
-							{
-								// "（あ": "あ"の2バイト目で折り返しのとき
-								bKinsokuFlag = true;
-							}
-						}
-						break;
-					case 2:	// 2文字前
-						if( nCharChars2 == 2 )
-						{
-							// "（あ": "あ"で折り返しのとき
-							bKinsokuFlag = true;
-						}
-						else if( nCharChars2 == 1 )
-						{
-							if( CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos+nCharChars2] ) - &pLine[nPos+nCharChars2] == 2 )
-							{
-								// "(あ": "あ"の2バイト目で折り返しのとき
-								bKinsokuFlag = true;
-							}
-						}
-						break;
-					case 1:	// 1文字前
-						if( nCharChars2 == 1 )
-						{
-							// "(あ": "あ"で折り返しのとき
-							bKinsokuFlag = true;
-						}
-						break;
-					}
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
+					int nCharChars3 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
 
-					if( bKinsokuFlag && IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
+					if( IsKinsokuPosTail( nMaxLineSize - nPosX, nCharChars2, nCharChars3 )
+						&& IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
 					{
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
@@ -905,6 +725,7 @@ int CLayoutMgr::DoLayout_Range(
 			if ( bGotoSEARCH_START )
 				goto SEARCH_START;
 
+			int nCharChars;
 			if( pLine[nPos] == TAB ){
 				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 				nCharChars = GetActualTabSpace( nPosX );
@@ -933,7 +754,8 @@ int CLayoutMgr::DoLayout_Range(
 				}
 				nPos++;
 			}else{
-				nCharChars = CMemory::MemCharNext( pLine, nLineLen, &pLine[nPos] ) - &pLine[nPos];
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
 				if( 0 == nCharChars ){
 					nCharChars = 1;
 					break;	//@@@ 2002.04.16 MIK
@@ -1035,6 +857,14 @@ int CLayoutMgr::DoLayout_Range(
 	return nModifyLayoutLinesNew;
 }
 
+/*!
+	行頭禁則文字に該当するかを調べる．
+
+	@param[in] pLine 調べる文字へのポインタ
+	@param[in] length 当該箇所の文字サイズ
+	@retval true 禁則文字に該当
+	@retval false 禁則文字に該当しない
+*/
 bool CLayoutMgr::IsKinsokuHead( const char *pLine, int length )
 {
 	const unsigned char	*p;
@@ -1053,6 +883,14 @@ bool CLayoutMgr::IsKinsokuHead( const char *pLine, int length )
 	return false;
 }
 
+/*!
+	行末禁則文字に該当するかを調べる．
+
+	@param[in] pLine 調べる文字へのポインタ
+	@param[in] length 当該箇所の文字サイズ
+	@retval true 禁則文字に該当
+	@retval false 禁則文字に該当しない
+*/
 bool CLayoutMgr::IsKinsokuTail( const char *pLine, int length )
 {
 	const unsigned char	*p;
@@ -1070,6 +908,15 @@ bool CLayoutMgr::IsKinsokuTail( const char *pLine, int length )
 
 	return false;
 }
+
+/*!
+	句読点か
+
+	@param[in] c1 調べる文字1バイト目
+	@param[in] c2 調べる文字2バイト目
+	@retval true 句読点である
+	@retval false 句読点でない
+*/
 
 bool CLayoutMgr::IsKutoTen( unsigned char c1, unsigned char c2 )
 {
@@ -1095,6 +942,14 @@ bool CLayoutMgr::IsKutoTen( unsigned char c1, unsigned char c2 )
 	return false;
 }
 
+/*!
+	禁則対象句読点に該当するかを調べる．
+
+	@param[in] pLine 調べる文字へのポインタ
+	@param[in] length 当該箇所の文字サイズ
+	@retval true 禁則文字に該当
+	@retval false 禁則文字に該当しない
+*/
 bool CLayoutMgr::IsKinsokuKuto( const char *pLine, int length )
 {
 	const unsigned char	*p;
@@ -1113,12 +968,114 @@ bool CLayoutMgr::IsKinsokuKuto( const char *pLine, int length )
 	return false;
 }
 
+///*!
+//	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離	
+//*/
+//bool CLayoutMgr::IsKinsokuPosKuto(const int nMaxLineSize, const int nPosX, const int nCharChars)
+//{
+//	switch( nMaxLineSize - nPosX )
+//	{
+//	case 1:	// 1文字前
+//		if( nCharChars == 2 ){
+//			return true;
+//		}
+//		break;
+//	case 0:	// 
+//		if( nCharChars == 1 || nCharChars == 2 ){
+//			return true;
+//		}
+//		break;
+//	}
+//	return false;
+//}
+
+/*!
+	@param[in] nRest 行の残り文字数
+	@param[in] nCharChars 現在位置の文字サイズ
+	@param[in] nCharChars2 現在位置の次の文字サイズ
+
+	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離
+*/
+bool CLayoutMgr::IsKinsokuPosHead(const int nRest,
+								  const int nCharChars, const int nCharChars2)
+{
+	switch( nRest )
+	{
+	//    321012  ↓マジックナンバー
+	// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
+	// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
+	// 2  "る）": 22 "）"で折り返しのとき
+	// 2  "る)" : 21 ")"で折り返しのとき
+	// 1   "Z）": 12 "）"で折り返しのとき
+	// 1   "Z)" : 11 ")"で折り返しのとき
+	//↑何文字前か？
+	// ※ただし、"るZ"部分が禁則なら処理しない。
+	case 3:	// 3文字前
+		if( nCharChars == 2 && nCharChars2 == 2 ){
+			return true;
+		}
+		break;
+	case 2:	// 2文字前
+		if( nCharChars == 2 /*&& nCharChars2 > 0*/ ){
+			return true;
+		}
+		else if( nCharChars == 1 && nCharChars2 == 2 ){
+			return true;
+		}
+		break;
+	case 1:	// 1文字前
+		if( nCharChars == 1 /*&& nCharChars2 > 0*/ ){
+			return true;
+		}
+		break;
+	}
+	return false;
+}
+
+/*!
+	@param[in] nRest 行の残り文字数
+	@param[in] nCharChars 現在位置の文字サイズ
+	@param[in] nCharChars2 現在位置の次の文字サイズ
+
+	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離
+*/
+bool CLayoutMgr::IsKinsokuPosTail(const int nRest,
+								  const int nCharChars, const int nCharChars2)
+{
+	switch( nRest )
+	{
+	case 3:	// 3文字前
+		if( nCharChars == 2 && nCharChars2 == 2){
+			// "（あ": "あ"の2バイト目で折り返しのとき
+			return true;
+		}
+		break;
+	case 2:	// 2文字前
+		if( nCharChars == 2 ){
+			// "（あ": "あ"で折り返しのとき
+			return true;
+		}else if( nCharChars == 1 && nCharChars2 == 2){
+			// "(あ": "あ"の2バイト目で折り返しのとき
+			return true;
+		}
+		break;
+	case 1:	// 1文字前
+		if( nCharChars == 1 ){
+			// "(あ": "あ"で折り返しのとき
+			return true;
+		}
+		break;
+	}
+	return false;
+}
+
 int CLayoutMgr::Match_Quote( char szQuote, int nPos, int nLineLen, const char* pLine )
 {
 	int nCharChars;
 	int i;
 	for( i = nPos; i < nLineLen; ++i ){
-		nCharChars = CMemory::MemCharNext( (const char *)pLine, nLineLen, (const char *)&pLine[i] ) - (const char *)&pLine[i];
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pLine, nLineLen, i );
 		if( 0 == nCharChars ){
 			nCharChars = 1;
 		}
