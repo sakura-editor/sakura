@@ -1086,13 +1086,15 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return TRUE;
 
+	// 2005.09.01 ryoji WM_ACTIVATEAPP をコメントアウト
+	//（タブまとめ表示時の起動時のウィンドウちらつきを抑制）
 		//	Jun. 2, 2000 genta
-	case WM_ACTIVATEAPP:
-		fActive = LOWORD(wParam);				// activation flag
-		if( fActive ){
-			::SetFocus( m_hWnd );
-		}
-		return 0;	//	should return zero. / Jun. 23, 2000 genta
+//	case WM_ACTIVATEAPP:
+//		fActive = LOWORD(wParam);				// activation flag
+//		if( fActive ){
+//			::SetFocus( m_hWnd );
+//		}
+//		return 0;	//	should return zero. / Jun. 23, 2000 genta
 	case WM_ACTIVATE:
 		fActive = LOWORD( wParam );				// activation flag
 		fMinimized = (BOOL) HIWORD( wParam );	// minimized flag
@@ -1603,7 +1605,35 @@ int	CEditWnd::OnClose( void )
 //	::SetForegroundWindow( m_hWnd );
 //	::SetActiveWindow( m_hWnd );
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	return m_cEditDoc.OnFileClose();
+	int nRet = m_cEditDoc.OnFileClose();
+	if( !nRet ) return nRet;
+
+	// 2005.09.01 ryoji タブまとめ表示の場合は次のウィンドウを前面に（終了時のウィンドウちらつきを抑制）
+	int i;
+	EditNode*	p = NULL;
+	int nCount = CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
+	if( nCount > 1 )
+	{
+		for( i = 0; i < nCount; i++ )
+		{
+			if( p[ i ].m_hWnd == m_hWnd )
+				break;
+		}
+
+		i = ( i >= nCount )? 0: i + 1;
+
+		HWND hwnd = p[ i ].m_hWnd;
+		if( !::IsWindowVisible( hwnd ) )
+		{
+			HWND hwnd = p[ i ].m_hWnd;
+			TabWnd_SucceedWindowPlacement( m_hWnd, hwnd );
+			::SetForegroundWindow( hwnd );
+			::BringWindowToTop( hwnd );
+		}
+	}
+	if( p ) delete []p;
+
+	return nRet;
 }
 
 
