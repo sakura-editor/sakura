@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2004, MIK
+	Copyright (C) 2005, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -81,7 +82,7 @@ protected:
 	/*
 	|| 実装ヘルパ系
 	*/
-	void Refresh( void );
+	void Refresh( HWND hWnd = NULL );	// 2005.09.01 ryoji 引数追加
 	int FindTabIndexByHWND( HWND hWnd );
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
 	int GetFirstOpenedWindow( void );
@@ -90,6 +91,24 @@ protected:
 	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );		/*!< WM_SIZE処理 */
 	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROY処理 */
 	virtual LRESULT OnNotify( HWND, UINT, WPARAM, LPARAM );		/*!< WM_NOTIFY処理 */
+	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );		/*!< WM_PAINT処理 */
+
+	// 2005.09.01 ryoji ドラッグアンドドロップでタブの順序変更を可能に
+	/* サブクラス化した Tab でのメッセージ処理 */
+	LRESULT OnTabLButtonDown( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_LBUTTONDOWN 処理 */
+	LRESULT OnTabLButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_LBUTTONUP 処理 */
+	LRESULT OnTabMouseMove( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_MOUSEMOVE 処理 */
+	LRESULT OnTabCaptureChanged( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_CAPTURECHANGED 処理 */
+	LRESULT OnTabRButtonDown( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_RBUTTONDOWN 処理 */
+	LRESULT OnTabRButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_RBUTTONUP 処理 */
+	LRESULT OnTabNotify( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_NOTIFY 処理 */
+
+	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< タブ順序変更処理 */
+
+	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
+
+	DragState m_eDragState;		 //!< ドラッグ状態
+	int	m_nSrcTab;				 //!< 移動元タブ
 };
 
 #endif /* _CTABWND_H_ */
