@@ -3849,8 +3849,11 @@ void CEditDoc::SetImeMode( int mode )
 	@li T  ファイルのタイムスタンプ(共通設定の時刻書式)
 	@li V  エディタのバージョン文字列
 	@li h  Grep検索キーの先頭32byte
+	@li S  サクラエディタのフルパス
+	@li M  現在実行しているマクロファイルパス
 
 	@date 2003.04.03 genta strncpy_ex導入によるfor文の削減
+	@date 2005.09.15 FILE 特殊文字S, M追加
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
 {
@@ -4095,6 +4098,42 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 					cmemDes.Append( "...", 3 );
 				}
 				q = strncpy_ex( q, q_max - q, cmemDes.GetPtr(), cmemDes.GetLength());
+				++p;
+			}
+			break;
+		case 'S':	//	Sep. 15, 2005 FILE
+			//	サクラエディタのフルパス
+			{
+				char	szPath[_MAX_PATH + 1];
+
+				::GetModuleFileName( ::GetModuleHandle( NULL ), szPath, sizeof(szPath) );
+				q = strncpy_ex( q, q_max - q, szPath, strlen(szPath) );
+				++p;
+			}
+			break;
+		case 'M':	//	Sep. 15, 2005 FILE
+			//	現在実行しているマクロファイルパスの取得
+			{
+				// 実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効 / STAND_KEYMACRO:標準マクロ)
+				switch( m_pcSMacroMgr->GetCurrentIdx() ){
+				case INVALID_MACRO_IDX:
+					break;
+				case STAND_KEYMACRO:
+					{
+						char* pszMacroFilePath = CShareData::getInstance()->GetShareData()->m_szKeyMacroFileName;
+						q = strncpy_ex( q, q_max - q, pszMacroFilePath, strlen(pszMacroFilePath) );
+					}
+					break;
+				default:
+					{
+						char szMacroFilePath[_MAX_PATH * 2];
+						int n = CShareData::getInstance()->GetMacroFilename( m_pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, sizeof(szMacroFilePath) );
+						if ( 0 < n ){
+							q = strncpy_ex( q, q_max - q, szMacroFilePath, strlen(szMacroFilePath) );
+						}
+					}
+					break;
+				}
 				++p;
 			}
 			break;

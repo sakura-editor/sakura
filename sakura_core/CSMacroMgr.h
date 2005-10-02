@@ -46,6 +46,8 @@ class CEditView;
 #define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）
 #define SAVED_KEYMACRO	0	//	保存されたマクロ
 
+const int INVALID_MACRO_IDX	= -2;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
+
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
 	int  	m_nFuncID;
@@ -136,9 +138,22 @@ public:
 	
 	BOOL IsSaveOk(void);
 
+	//	Sep. 15, 2005 FILE	実行中マクロのインデックス番号操作 (INVALID_MACRO_IDX:無効)
+	int GetCurrentIdx( void ) const {
+		return m_CurrentIdx;
+	}
+	void SetCurrentIdx( int idx ) {
+		m_CurrentIdx = idx;
+	}
+
 private:
 	DLLSHAREDATA*	m_pShareData;
 	CMacroManagerBase** Idx2Ptr(int idx);
+
+	/*!	実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効)
+		@date Sep. 15, 2005 FILE
+	*/
+	int m_CurrentIdx;
 
 public:
 	static MacroFuncInfo	m_MacroFuncInfoArr[];
