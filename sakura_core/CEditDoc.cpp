@@ -80,6 +80,7 @@ CEditDoc::CEditDoc() :
 	m_eWatchUpdate( CEditDoc::WU_QUERY ),
 	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
 	m_nSettingType( 0 ),	// Sep. 11, 2002 genta
+	m_bInsMode( true ),	// Oct. 2, 2005 genta
 	m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
@@ -121,6 +122,10 @@ CEditDoc::CEditDoc() :
 	//	m_FileTimeの初期化
 	m_FileTime.dwLowDateTime = 0;
 	m_FileTime.dwHighDateTime = 0;
+
+	//	Oct. 2, 2005 genta 挿入モード
+	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
+
 	return;
 }
 
@@ -3592,6 +3597,9 @@ void CEditDoc::Init( void )
 
 	//	May 12, 2000
 	m_cNewLineCode.SetType( EOL_CRLF );
+	
+	//	Oct. 2, 2005 genta 挿入モード
+	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
 
 	return;
 }

@@ -2894,7 +2894,7 @@ void CEditView::Command_CHAR( char cChar )
 				DeleteData( TRUE );
 			}
 		}else{
-			if( !m_pShareData->m_Common.m_bIsINSMode ){		/* 挿入／上書きモード */
+			if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){
 				BOOL bDelete = TRUE;
 				if( m_pShareData->m_Common.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
 					pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
@@ -3023,7 +3023,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 			DeleteData( TRUE );
 		}
 	}else{
-		if( !m_pShareData->m_Common.m_bIsINSMode ){		/* 挿入／上書きモード */
+		if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){
 			BOOL bDelete = TRUE;
 			if( m_pShareData->m_Common.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
 				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
@@ -3083,14 +3083,17 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 
 
 
-/* 挿入／上書きモード切り替え */
+/*! 挿入／上書きモード切り替え
+
+	@date 2005.10.02 genta InsMode関数化
+*/
 void CEditView::Command_CHGMOD_INS( void )
 {
 	/* 挿入モードか？ */
-	if( m_pShareData->m_Common.m_bIsINSMode ){
-		m_pShareData->m_Common.m_bIsINSMode = FALSE;
+	if( IsInsMode() ){
+		SetInsMode( false );
 	}else{
-		m_pShareData->m_Common.m_bIsINSMode = TRUE;
+		SetInsMode( true );
 	}
 	/* キャレットの表示・更新 */
 	ShowEditCaret();
@@ -5422,7 +5425,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 	if( m_bBeginBoxSelect ){
 		// From Here 2001.12.03 hor
 		/* 上書モードのときは選択範囲削除 */
-		if(!m_pShareData->m_Common.m_bIsINSMode){
+		if( ! IsInsMode() /* Oct. 2, 2005 genta */){
 			nSelectLineFromOld	= m_nSelectLineFrom;
 			nSelectColFromOld	= m_nSelectColmFrom;
 			nSelectLineToOld	= m_nSelectLineTo;

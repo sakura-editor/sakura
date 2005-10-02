@@ -2796,7 +2796,8 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 	//	To Here 2003.06.23 Moca
 	//	2003.07.21 genta
 	case F_CHGMOD_INS:
-		if( pShareData->m_Common.m_bIsINSMode != FALSE ){
+		//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
+		if( pcEditDoc->IsInsMode() ){
 			return TRUE;
 		}else{
 			return FALSE;

@@ -125,6 +125,10 @@ public:
 		return m_bSelectingLock|IsTextSelected();
 	};
 	//>> 2002/03/29 Azumaiya
+	//	Oct. 2, 2005 genta 挿入モードの設定・取得
+	bool IsInsMode() const;
+	void SetInsMode(bool);
+
 	/* メッセージディスパッチャ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void OnMove( int, int, int, int );

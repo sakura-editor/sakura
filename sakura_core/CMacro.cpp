@@ -895,7 +895,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	case F_ISINSMODE:
 		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
 		{
-			Wrap( &Result )->Receive(View->m_pShareData->m_Common.m_bIsINSMode);
+			Wrap( &Result )->Receive(View->IsInsMode() /* Oct. 2, 2005 genta */);
 		}
 		return true;
 	case F_GETCHARCODE:
