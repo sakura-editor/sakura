@@ -358,6 +358,9 @@ CSMacroMgr::CSMacroMgr()
 	}
 	//	Jun. 16, 2002 genta
 	m_pKeyMacro = NULL;
+
+	//	Sep. 15, 2005 FILE
+	SetCurrentIdx( INVALID_MACRO_IDX );
 }
 
 CSMacroMgr::~CSMacroMgr()
@@ -429,7 +432,11 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 		//	Jun. 16, 2002 genta
 		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
 		if( m_pKeyMacro != NULL ){
+			//	Sep. 15, 2005 FILE
+			SetCurrentIdx( idx );
 			m_pKeyMacro->ExecKeyMacro( pcEditView );
+			//	Sep. 15, 2005 FILE
+			SetCurrentIdx( INVALID_MACRO_IDX );
 			return TRUE;
 		}
 		else {
@@ -455,7 +462,12 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 			return FALSE;
 	}
 
+	//	Sep. 15, 2005 FILE
+	SetCurrentIdx( idx );
 	m_cSavedKeyMacro[idx]->ExecKeyMacro(pcEditView);
+	//	Sep. 15, 2005 FILE
+	SetCurrentIdx( INVALID_MACRO_IDX );
+
 	pcEditView->Redraw();	//	必要？
 	return TRUE;
 }
