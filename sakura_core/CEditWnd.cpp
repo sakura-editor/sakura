@@ -1625,7 +1625,6 @@ int	CEditWnd::OnClose( void )
 		HWND hwnd = p[ i ].m_hWnd;
 		if( !::IsWindowVisible( hwnd ) )
 		{
-			HWND hwnd = p[ i ].m_hWnd;
 			TabWnd_SucceedWindowPlacement( m_hWnd, hwnd );
 			::SetForegroundWindow( hwnd );
 			::BringWindowToTop( hwnd );
