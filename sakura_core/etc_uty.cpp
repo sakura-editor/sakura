@@ -333,6 +333,13 @@ end_of_func:;
 }
 #endif
 
+/*! ロングファイル名を取得する 
+
+	@param[in] pszFilePathSrc 変換元パス名
+	@param[out] pszFilePathDes 結果書き込み先 (長さMAX_PATHの領域が必要)
+
+	@date Oct. 2, 2005 genta GetFilePath APIを使って書き換え
+*/
 BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 {
 	int len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
@@ -343,8 +350,6 @@ BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 }
 
 #if 0
-/* ロングファイル名を取得する */
-//	Sep. 10, 2005 genta GetFilePath APIを使うように変更したので不要
 BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 {
 //	HANDLE			nFind;
