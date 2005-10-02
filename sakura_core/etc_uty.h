@@ -24,6 +24,10 @@
 #include <tchar.h>
 #include "global.h"
 #include <shlobj.h>
+
+#define WANT_GETLONGPATHNAME_WRAPPER
+#include <NewApis.h>
+
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
 class CMemory;// 2002/2/3 aroka ヘッダ軽量化
 class CEOL;// 2002/2/3 aroka ヘッダ軽量化
@@ -62,8 +66,9 @@ SAKURA_CORE_API BOOL CheckEXT( const char*, const char* );	/* 拡張子を調べる */
 SAKURA_CORE_API char* my_strtok( char*, int, int*, const char* );
 /* Shell Interface系(?) */
 SAKURA_CORE_API BOOL SelectDir(HWND, const char*, const char*, char* );	/* フォルダ選択ダイアログ */
-SAKURA_CORE_API ITEMIDLIST* CreateItemIDList( const char* );	/* パス名に対するアイテムＩＤリストを取得する */
-SAKURA_CORE_API BOOL DeleteItemIDList( ITEMIDLIST* );/* アイテムＩＤリストを削除する */
+//不要＆実装間違いのため
+//SAKURA_CORE_API ITEMIDLIST* CreateItemIDList( const char* );	/* パス名に対するアイテムＩＤリストを取得する */
+//SAKURA_CORE_API BOOL DeleteItemIDList( ITEMIDLIST* );/* アイテムＩＤリストを削除する */
 SAKURA_CORE_API BOOL ResolveShortcutLink(HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath);/* ショートカット(.lnk)の解決 */
 
 /*
