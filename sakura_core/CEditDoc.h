@@ -195,6 +195,10 @@ public:
 
 	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
 	void ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineSize );
+	
+	//	Oct. 2, 2005 genta 挿入モードの設定
+	bool IsInsMode() const { return m_bInsMode; }
+	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
 protected:
 	int				m_nSettingType;
@@ -221,6 +225,7 @@ public: /* テスト用にアクセス属性を変更 */
 	CLayoutMgr		m_cLayoutMgr;
 	int				m_nCharCode;				/* 文字コード種別 */
 	BOOL			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
+	bool			m_bInsMode;		//!< 挿入・上書きモード Oct. 2, 2005 genta
 
 	//	May 15, 2000 genta
 protected:

@@ -813,7 +813,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_IME_COMPOSITION:
-		if( m_pShareData->m_Common.m_bIsINSMode /* 挿入モードか？ */
+		if( IsInsMode() /* Oct. 2, 2005 genta */
 		 &&	lParam & GCS_RESULTSTR
 		){
 			HIMC hIMC;
@@ -865,7 +865,7 @@ LRESULT CEditView::DispatchEvent(
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
 	case WM_IME_CHAR:
-		if( FALSE == m_pShareData->m_Common.m_bIsINSMode ){ /* 上書きモードか？ */
+		if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){ /* 上書きモードか？ */
 			HandleCommand( F_IME_CHAR, TRUE, wParam, 0, 0, 0 );
 		}
 		return 0L;
@@ -1277,7 +1277,7 @@ void CEditView::ShowEditCaret( void )
 	/* キャレットの幅、高さを決定 */
 	if( 0 == m_pShareData->m_Common.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
 		nCaretHeight = m_nCharHeight;					/* キャレットの高さ */
-		if( m_pShareData->m_Common.m_bIsINSMode ){
+		if( IsInsMode() /* Oct. 2, 2005 genta */ ){
 			nCaretWidth = 2;
 		}else{
 			const CLayout* pcLayout;
@@ -1301,7 +1301,7 @@ void CEditView::ShowEditCaret( void )
 		}
 	}else
 	if( 1 == m_pShareData->m_Common.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
-		if( m_pShareData->m_Common.m_bIsINSMode ){
+		if( IsInsMode() /* Oct. 2, 2005 genta */ ){
 			nCaretHeight = m_nCharHeight / 2;			/* キャレットの高さ */
 		}else{
 			nCaretHeight = m_nCharHeight;				/* キャレットの高さ */
@@ -5870,7 +5870,7 @@ void CEditView::DrawCaretPosInfo( void )
 			wsprintf( szText_3, "    " );
 		}
 
-		if( m_pShareData->m_Common.m_bIsINSMode ){
+		if( IsInsMode() /* Oct. 2, 2005 genta */ ){
 			strcpy( szText_6, "挿入" );
 		}else{
 			strcpy( szText_6, "上書" );
@@ -9868,4 +9868,17 @@ end_of_line:;
 	return nColorIndex;
 }
 
+/*!	挿入モード取得
+
+	@date 2005.10.02 genta 管理方法変更のため関数化
+*/
+bool CEditView::IsInsMode(void) const
+{
+	return m_pcEditDoc->IsInsMode();
+}
+
+void CEditView::SetInsMode(bool mode)
+{
+	m_pcEditDoc->SetInsMode( mode );
+}
 /*[EOF]*/

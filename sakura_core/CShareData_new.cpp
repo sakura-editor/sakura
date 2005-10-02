@@ -371,7 +371,9 @@ void CShareData::ShareData_IO_Common( const bool bRead, CProfile& cProfile )
 	Common& common = m_pShareData->m_Common;
 
 	cProfile.IOProfileData( bRead, pszSecName, "nCaretType"				, common.m_nCaretType );
-	cProfile.IOProfileData( bRead, pszSecName, "bIsINSMode"				, common.m_bIsINSMode );
+	//	Oct. 2, 2005 genta
+	//	初期値を挿入モードに固定するため，設定の読み書きをやめる
+	//cProfile.IOProfileData( bRead, pszSecName, "bIsINSMode"				, common.m_bIsINSMode );
 	cProfile.IOProfileData( bRead, pszSecName, "bIsFreeCursorMode"		, common.m_bIsFreeCursorMode );
 	
 	cProfile.IOProfileData( bRead, pszSecName, "bStopsBothEndsWhenSearchWord"	, common.m_bStopsBothEndsWhenSearchWord );
