@@ -479,6 +479,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
 	m_hwndToolTip = NULL;
+	m_eDragState = DRAG_NONE;	//	2005.09.29 ryoji
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
