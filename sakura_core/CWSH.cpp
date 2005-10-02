@@ -179,16 +179,48 @@ public:
 	}
 };
 
-//IActiveScriptSite
-
-class CWSHSite: public ImplementsIUnknown<IActiveScriptSite>
+//IActiveScriptSite, IActiveScriptSiteWindow
+/*!
+	@date Sep. 15, 2005 FILE IActiveScriptSiteWindow実装．
+		マクロでMsgBoxを使用可能にする．
+*/
+class CWSHSite: public IActiveScriptSite, public IActiveScriptSiteWindow
 {
 private:
 	CWSHClient *m_Client;
 	ITypeInfo *m_TypeInfo;
+	ULONG m_RefCount;
 public:
-	CWSHSite(CWSHClient *AClient): ImplementsIUnknown<IActiveScriptSite>(), m_Client(AClient) 
+	CWSHSite(CWSHClient *AClient): m_RefCount(0), m_Client(AClient)
 	{
+	}
+
+	virtual ULONG _stdcall AddRef() {
+		return ++m_RefCount;
+	}
+
+	virtual ULONG _stdcall Release() {
+		if(--m_RefCount == 0)
+		{
+			delete this;
+			return 0;
+		}
+		return m_RefCount;
+	}
+
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(
+	    /* [in] */ REFIID iid,
+	    /* [out] */ void ** ppvObject)
+	{
+		*ppvObject = NULL;
+
+		if(iid == IID_IActiveScriptSiteWindow){
+			*ppvObject = static_cast<IActiveScriptSiteWindow*>(this);
+			++m_RefCount;
+			return S_OK;
+		}
+
+		return E_NOTIMPL;
 	}
 
 	virtual HRESULT STDMETHODCALLTYPE GetLCID( 
@@ -293,6 +325,21 @@ public:
 		cout << "OnLeaveScript" << endl;
 #endif
 		return S_OK; 
+	};
+
+	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
+	virtual HRESULT __stdcall GetWindow(
+	    /* [out] */ HWND *phwnd)
+	{
+		*phwnd = reinterpret_cast<CEditView*>(m_Client->m_Data)->m_pcEditDoc->m_hWnd;
+		return S_OK;
+	}
+
+	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
+	virtual HRESULT __stdcall EnableModeless(
+	    /* [in] */ BOOL fEnable)
+	{
+		return S_OK;
 	};
 };
 
