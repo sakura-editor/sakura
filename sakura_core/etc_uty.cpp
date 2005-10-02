@@ -16,6 +16,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+//	Sep. 10, 2005 genta GetLongPathNameのエミュレーション関数の実体生成のため
+#define COMPILE_NEWAPIS_STUBS
+
 #include <io.h>
 #include <memory.h>		// Apr. 03, 2003 genta
 #include "etc_uty.h"
@@ -105,7 +108,7 @@ BOOL SelectDir( HWND hWnd, const char* pszTitle, const char* pszInitFolder, char
 
 
 
-
+#if 0
 /* パス名に対するアイテムＩＤリストを作成する */
 ITEMIDLIST* CreateItemIDList( const char* pszPath )
 {
@@ -151,7 +154,7 @@ BOOL DeleteItemIDList( ITEMIDLIST* pIDL )
 	return TRUE;
 }
 
-
+#endif
 
 
 /* 拡張子を調べる */
@@ -258,7 +261,7 @@ char* GetHelpFilePath( char* pszHelpFile, unsigned int nMaxLen )
 
 
 
-# if 0
+#if 0
 //	Aug. 18, 2002 genta
 //	GetLongFileNameから呼び出されなくなったので不要
 /* 相対パス→絶対パス */
@@ -330,9 +333,18 @@ end_of_func:;
 }
 #endif
 
+BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
+{
+	int len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
+	if( len <= 0 || _MAX_PATH < len )
+		return FALSE;
+	
+	return TRUE;
+}
 
-
+#if 0
 /* ロングファイル名を取得する */
+//	Sep. 10, 2005 genta GetFilePath APIを使うように変更したので不要
 BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 {
 //	HANDLE			nFind;
@@ -469,6 +481,7 @@ BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 //-	}
 //-	return TRUE;
 }
+#endif
 
 
 
