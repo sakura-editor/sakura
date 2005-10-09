@@ -339,13 +339,25 @@ end_of_func:;
 	@param[out] pszFilePathDes 結果書き込み先 (長さMAX_PATHの領域が必要)
 
 	@date Oct. 2, 2005 genta GetFilePath APIを使って書き換え
+	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
+	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
 */
 BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 {
-	int len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
-	if( len <= 0 || _MAX_PATH < len )
-		return FALSE;
-	
+	TCHAR* name;
+	TCHAR szBuf[_MAX_PATH + 1];
+	int len = ::GetFullPathName( pszFilePathSrc, _MAX_PATH, szBuf, &name );
+	if( len <= 0 || _MAX_PATH <= len ){
+		len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
+		if( len <= 0 || _MAX_PATH < len ){
+			return FALSE;
+		}
+		return TRUE;
+	}
+	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
+	if( len <= 0 || _MAX_PATH < len ){
+		lstrcpy( pszFilePathDes, szBuf );
+	}
 	return TRUE;
 }
 
