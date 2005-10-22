@@ -7514,6 +7514,12 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				}
 				// 行末から検索文字列末尾までの文字数
 				int colDiff = nLen - nIdxTo;
+				//	Oct. 22, 2005 Karoto
+				//	\rを置換するとその後ろの\nが消えてしまう問題の対応
+				if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
+					// 改行にかかっていたら、行全体をINSTEXTする。
+					colDiff = 0;
+				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
@@ -7953,6 +7959,12 @@ void CEditView::Command_REPLACE_ALL( void )
 				}
 				// 行末から検索文字列末尾までの文字数
 				int colDiff =  nLen - nIdxTo;
+				//	Oct. 22, 2005 Karoto
+				//	\rを置換するとその後ろの\nが消えてしまう問題の対応
+				if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
+					// 改行にかかっていたら、行全体をINSTEXTする。
+					colDiff = 0;
+				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
