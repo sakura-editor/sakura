@@ -131,6 +131,9 @@ int CalcDirectoryDepth(const char* path);
 //	May 01, 2004 genta マルチモニタ対応のデスクトップ領域取得
 bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop);
 
+//	Oct. 22, 2005 genta
+bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime );
+
 // novice 2004/10/10
 int getCtrlKeyState(void);
 

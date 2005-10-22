@@ -892,29 +892,14 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 
 	/* 更新後のファイル時刻の取得
 	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
-	 * されないことがある。しかたがないのでいったんクローズして再オープ
-	 * ンして時刻を取得する。
+	 * されないことがある。
 	 */
-	DWORD dwFileAttribute = ::GetFileAttributes(pszPath);
-	if ( dwFileAttribute == (DWORD)-1 )
-	{
-		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;
-	}
-	HANDLE hFile;
-	hFile = ::CreateFile(
-						pszPath,			// 開くファイル名
-						GENERIC_READ,		// 読み込みモードで開く。
-						0,					// 共有しない。
-						NULL,				// ハンドルを継承しない。
-						OPEN_EXISTING,		// 存在するファイルを開く。
-						dwFileAttribute,	// ファイル属性。
-						NULL				// テンプレートファイルを使わない。
-						);
-	if ( hFile != INVALID_HANDLE_VALUE )
-	{
-		::GetFileTime( (HANDLE)hFile, NULL, NULL, pFileTime );
-		::CloseHandle(hFile);
-	}
+
+		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
+		FILETIME ftime;
+		if( GetLastWriteTimestamp( pszPath, ftime )){
+			*pFileTime = ftime;
+		}
 
 	}
 	catch(CError_FileOpen)
