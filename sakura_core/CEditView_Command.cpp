@@ -494,7 +494,7 @@ BOOL CEditView::HandleCommand(
 	case F_TAGJUMP_KEYWORD:	Command_TagJumpByTagsFileKeyword( (const char*)lparam1 );break;	/* @@ 2005.03.31 MIK キーワードを指定してダイレクトタグジャンプ機能 */
 	case F_COMPARE:			Command_COMPARE();break;						/* ファイル内容比較 */
 	case F_DIFF_DIALOG:		Command_Diff_Dialog();break;					/* DIFF差分表示(ダイアログ) */	//@@@ 2002.05.25 MIK
-	case F_DIFF:			Command_Diff( (const char*)lparam1, (const char*)lparam2, (int)lparam3 );break;		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+	case F_DIFF:			Command_Diff( (const char*)lparam1, (int)lparam2 );break;		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK	// 2005.10.03 maru
 	case F_DIFF_NEXT:		Command_Diff_Next();break;						/* DIFF差分表示(次へ) */		//@@@ 2002.05.25 MIK
 	case F_DIFF_PREV:		Command_Diff_Prev();break;						/* DIFF差分表示(前へ) */		//@@@ 2002.05.25 MIK
 	case F_DIFF_RESET:		Command_Diff_Reset();break;						/* DIFF差分表示(全解除) */		//@@@ 2002.05.25 MIK
