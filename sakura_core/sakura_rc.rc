@@ -322,10 +322,7 @@ BEGIN
                     IDC_STATIC,40,33,182,8,NOT WS_GROUP
     PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,166,7,59,14,0,0,
                     HIDC_BUTTON_CONTACT
-    LTEXT           "原作者ホームページ:",IDC_STATIC,12,48,61,8,NOT WS_GROUP
-    LTEXT           "http://hp.vector.co.jp/authors/VA016528/",
-                    IDC_STATIC_URL_ORG,80,48,126,9,SS_NOTIFY | NOT WS_GROUP | 
-                    WS_TABSTOP
+    LTEXT           "原作者: たけ(竹パンダ) さん",IDC_STATIC,12,48,120,8,NOT WS_GROUP
     LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,12,60,66,
                     8,NOT WS_GROUP
     LTEXT           "http://sakura-editor.sourceforge.net/",
