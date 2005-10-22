@@ -1360,14 +1360,14 @@ int CEditDoc::MakeBackUp( const char* target_file )
 //	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
 	case 4:	//	日付，時刻
 		{
-			HANDLE		hFile;
 			FILETIME	LastWriteTime,
 						LocalTime;
 			SYSTEMTIME	SystemTime;
 
-			hFile = ::CreateFile(target_file,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-			::GetFileTime(hFile,NULL,NULL,&LastWriteTime);			// ファイルのタイプスタンプを取得(更新日時のみ)
-			CloseHandle(hFile);
+			// 2005.10.20 ryoji FindFirstFileを使うように変更
+			if( ! GetLastWriteTimestamp( target_file, LastWriteTime )){
+				LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
+			}
 			::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
 			::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
 
@@ -3644,32 +3644,17 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && ( m_FileTime.dwLowDateTime != 0 || m_FileTime.dwHighDateTime != 0 ) 	/* 現在編集中のファイルのタイムスタンプ */
 
 	){
-		do {
-			/* ファイルスタンプをチェックする */
-//			MYTRACE( "ファイルスタンプをチェックする\n" );
+		/* ファイルスタンプをチェックする */
 
-			FILETIME	FileTimeNow;
-			HFILE		hFile;
-			BOOL		bWork;
-			LONG		lWork;
-
-			hFile = _lopen( GetFilePath(), OF_READ );
-			if( HFILE_ERROR == hFile ){
-				break;
-			}
-			bWork = ::GetFileTime( (HANDLE)hFile, NULL, NULL, &FileTimeNow );
-			_lclose( hFile );
-			if( 0 == bWork ){
-				break;
-			}
-			lWork = ::CompareFileTime( &m_FileTime, &FileTimeNow );
-			//	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
-			if( 0 != lWork ){
+		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
+		FILETIME ftime;
+		if( GetLastWriteTimestamp( GetFilePath(), ftime )){
+			if( 0 != ::CompareFileTime( &m_FileTime, &ftime ) )	//	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
+			{
 				bUpdate = TRUE;
-//				MYTRACE( "★更新されています★★★★★★★★★★★\n" );
-				m_FileTime = FileTimeNow;
+				m_FileTime = ftime;
 			}
-		} while(0);
+		}
 	}
 
 	//	From Here Dec. 4, 2002 genta

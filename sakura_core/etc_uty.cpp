@@ -2671,5 +2671,33 @@ int getCtrlKeyState(void)
 	return nIdx;
 }
 
+/*!	ファイルの更新日時を取得
 
+	@param[in] filename ファイルのパス
+	@param[out] ftime 更新日時を返す場所
+	@return true: 成功, false: FindFirstFile失敗
+
+	@author genta by assitance with ryoji
+	@date 2005.10.22 new
+
+	@note 書き込み後にファイルを再オープンしてタイムスタンプを得ようとすると
+	ファイルがまだロックされていることがあり，上書き禁止と誤認されることがある．
+	FindFirstFileを使うことでファイルのロック状態に影響されずにタイムスタンプを
+	取得できる．(ryoji)
+*/
+bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime )
+{
+	HANDLE hFindFile;
+	WIN32_FIND_DATA ffd;
+
+	hFindFile = ::FindFirstFile( filename, &ffd );
+	if( INVALID_HANDLE_VALUE != hFindFile )
+	{
+		::FindClose( hFindFile );
+		ftime = ffd.ftLastWriteTime;
+		return true;
+	}
+	//	ファイルが見つからなかった
+	return false;
+}
 /*[EOF]*/
