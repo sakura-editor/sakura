@@ -436,6 +436,24 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0);
 		}
 		break;
+	case F_DIFF:
+		//	Argument[0]とDiff差分表示。オプションはArgument[1]に。
+		//	Argument[1]:
+		//		次の数値の和。
+		//		0x0001 -i ignore-case         大文字小文字同一視
+		//		0x0002 -w ignore-all-space    空白無視
+		//		0x0004 -b ignore-space-change 空白変更無視
+		//		0x0008 -B ignore-blank-lines  空行無視
+		//		0x0010 -t expand-tabs         TAB-SPACE変換
+		//		0x0020    (編集中のファイルが旧ファイル)
+		//		0x0040    (DIFF差分がないときにメッセージ表示)
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"比較相手ファイルが指定されていません．" ));
+			break;
+		}
+		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
+		break;
 	case F_EXECCOMMAND:
 		//	Argument[0]を実行。オプションはArgument[1]に。
 		//	Argument[1]:

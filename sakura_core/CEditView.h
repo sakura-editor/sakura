@@ -750,7 +750,7 @@ void ReplaceData_CEditView(
 	bool Command_TagJumpByTagsFileKeyword( const char* keyword );	//	@@ 2005.03.31 MIK
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_Diff_Dialog( void );					/* DIFF差分表示ダイアログ */	//@@@ 2002.05.25 MIK
-	void Command_Diff( const char*, const char*, int );	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+	void Command_Diff( const char*, int );	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK	// 2005.10.03 maru
 	void Command_Diff_Next( void );						/* 次の差分へ */	//@@@ 2002.05.25 MIK
 	void Command_Diff_Prev( void );						/* 前の差分へ */	//@@@ 2002.05.25 MIK
 	void Command_Diff_Reset( void );					/* 差分の全解除 */	//@@@ 2002.05.25 MIK
