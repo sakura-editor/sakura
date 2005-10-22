@@ -82,21 +82,26 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	char			szMsg[2048];
 	char			szFile[_MAX_PATH];
-	WIN32_FIND_DATA	wfd;
+	//WIN32_FIND_DATA	wfd;
+	FILETIME		lastTime;
 	SYSTEMTIME		systimeL;
 
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
 	
+	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
 	//	2003.10.04 Moca ハンドルのクローズ忘れ
-	::ZeroMemory( &wfd, sizeof( wfd ));
-	HANDLE hFind = ::FindFirstFile( szFile, &wfd );
-	if( hFind != INVALID_HANDLE_VALUE ){
-		FindClose( hFind );
+	//::ZeroMemory( &wfd, sizeof( wfd ));
+	//HANDLE hFind = ::FindFirstFile( szFile, &wfd );
+	//if( hFind != INVALID_HANDLE_VALUE ){
+	//	FindClose( hFind );
+	//}
+	if( !GetLastWriteTimestamp( szFile, lastTime )){
+		lastTime.dwLowDateTime = lastTime.dwHighDateTime = 0;
 	}
-	
-	::FileTimeToLocalFileTime( &wfd.ftLastWriteTime, &wfd.ftLastWriteTime );
-	::FileTimeToSystemTime( &wfd.ftLastWriteTime, &systimeL );
+
+	::FileTimeToLocalFileTime( &lastTime, &lastTime );
+	::FileTimeToSystemTime( &lastTime, &systimeL );
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
@@ -145,7 +150,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_UR ) );
-	m_UrlOrgWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_ORG ) );
+
+	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
+	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_ORG ) );
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );
