@@ -7901,6 +7901,8 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 #endif
 
 	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+		//	Oct. 22, 2005 genta 上書き禁止(ファイルがロックされている)場合も不可
+		 && !( 0 != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL )
 		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読みとり専用のファイルにはドロップさせない
 	}else{
 		return E_UNEXPECTED;	//	Moca E_INVALIDARGから変更
