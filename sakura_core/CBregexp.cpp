@@ -37,6 +37,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include <stdio.h>
 #include <string.h>
 #include "CBregexp.h"

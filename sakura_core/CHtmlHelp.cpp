@@ -31,6 +31,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "CHtmlHelp.h"
 
 CHtmlHelp::~CHtmlHelp(void)

@@ -16,6 +16,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <io.h>

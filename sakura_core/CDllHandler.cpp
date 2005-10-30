@@ -29,6 +29,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "CDllHandler.h"
 
 CDllHandler::CDllHandler()

@@ -16,6 +16,7 @@
 */
 
 
+#include "stdafx.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CEditApp.h"

@@ -15,6 +15,7 @@
 */
 
 
+#include "stdafx.h"
 #include "CPropCommon.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"

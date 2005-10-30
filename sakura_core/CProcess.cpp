@@ -15,6 +15,7 @@
 */
 
 
+#include "stdafx.h"
 #include "CProcess.h"
 #include "debug.h"
 #include "etc_uty.h"

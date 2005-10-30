@@ -33,6 +33,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "CDlgFileUpdateQuery.h"
 #include "sakura_rc.h"
 

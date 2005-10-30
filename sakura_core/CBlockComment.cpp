@@ -13,6 +13,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#include "stdafx.h"
 #include "CBlockComment.h"
 #include "CMemory.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á

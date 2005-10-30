@@ -18,7 +18,7 @@ class CPrint;
 #ifndef _CPRINT_H_
 #define _CPRINT_H_
 
-#include <windows.h>
+#include <winspool.h>
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */

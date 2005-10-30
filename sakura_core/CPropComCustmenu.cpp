@@ -13,6 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include "CPropCommon.h"
 #include "CDlgInput1.h"
 #include "CDlgOpenFile.h"

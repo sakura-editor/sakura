@@ -32,6 +32,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include <windows.h>
 #include "CTabWnd.h"
 #include "debug.h"

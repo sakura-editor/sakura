@@ -29,6 +29,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "CSortedTagJumpList.h"
 #include "my_icmp.h"
 

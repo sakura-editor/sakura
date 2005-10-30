@@ -18,6 +18,7 @@
 
 //@@@ 2001.11.17 add start MIK
 
+#include "stdafx.h"
 #include "global.h"
 #include "CRegexKeyword.h"
 #include "CBregexp.h"

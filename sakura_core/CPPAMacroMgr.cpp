@@ -10,6 +10,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#include "stdafx.h"
 #include "CPPAMacroMgr.h"
 #include "CPPA.h"
 #include "CMemory.h"

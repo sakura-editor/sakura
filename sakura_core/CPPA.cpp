@@ -31,6 +31,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "CPPA.h"
 #include "CEditView.h"
 #include "Funccode.h"

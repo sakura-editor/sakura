@@ -30,6 +30,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "CDlgKeywordSelect.h"

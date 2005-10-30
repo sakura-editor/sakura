@@ -13,6 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include "CDlgOpenFile.h"
 #include "debug.h"
 #include "sakura_rc.h"
@@ -22,6 +23,8 @@
 #include "MY_SP.h"	// Jun. 23, 2002 genta
 #include "CFileExt.h"
 #include "my_icmp.h"
+#include <dlgs.h>    // stc3,...
+#include <cderr.h>   // FNERR...,CDERR...
 
 // オープンファイル CDlgOpenFile.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

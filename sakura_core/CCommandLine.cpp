@@ -16,6 +16,7 @@
 */
 
 
+#include "stdafx.h"
 #include "CCommandLine.h"
 #include "CMemory.h"
 #include "etc_uty.h"

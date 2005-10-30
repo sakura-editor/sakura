@@ -30,6 +30,7 @@
 
 
 
+#include "stdafx.h"
 #include <stdio.h>
 #include "sakura_rc.h"
 #include "global.h"

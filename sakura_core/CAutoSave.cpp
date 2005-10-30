@@ -32,6 +32,7 @@
 		   distribution.
 
 */
+#include "stdafx.h"
 #include "CAutoSave.h"
 
 //----------------------------------------------------------

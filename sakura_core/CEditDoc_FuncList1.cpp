@@ -14,6 +14,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include <string.h>
 #include "global.h"
 
