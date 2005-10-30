@@ -32,6 +32,7 @@
 */
 
 
+#include "stdafx.h"
 #include "CPropCommon.h"
 #include <memory.h>
 #include <stdlib.h>

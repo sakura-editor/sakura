@@ -16,6 +16,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include "CProcessFactory.h"
 #include "CControlProcess.h"
 #include "CNormalProcess.h"

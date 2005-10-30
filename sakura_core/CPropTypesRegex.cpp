@@ -17,6 +17,7 @@
 
 //@@@ 2001.11.17 add start MIK
 
+#include "stdafx.h"
 #include "sakura_rc.h"
 #include "CPropTypes.h"
 #include "debug.h"

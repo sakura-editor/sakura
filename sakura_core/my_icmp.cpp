@@ -51,6 +51,7 @@
 /*
  * ƒwƒbƒ_
  */
+#include "stdafx.h"
 #include <stdio.h>
 #include <limits.h>
 #include "my_icmp.h"

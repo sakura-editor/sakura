@@ -15,6 +15,7 @@
 */
 
 
+#include "stdafx.h"
 #include "CControlProcess.h"
 #include "CCommandLine.h"
 #include "CShareData.h"

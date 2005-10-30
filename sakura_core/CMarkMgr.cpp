@@ -32,6 +32,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "global.h"
 #include "CMarkMgr.h"
 

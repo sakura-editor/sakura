@@ -6,6 +6,7 @@
  * @date 2000/05/22
  *
  */
+#include "stdafx.h"
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>

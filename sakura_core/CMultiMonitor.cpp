@@ -30,6 +30,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#include "stdafx.h"
 #include <windows.h>
 #include "CMultiMonitor.h"
 #include "debug.h"

@@ -32,6 +32,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include "CFuncLookup.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 

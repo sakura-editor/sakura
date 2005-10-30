@@ -15,6 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include "funccode.h"
 #include "CMacro.h"
 #include "CEditApp.h"

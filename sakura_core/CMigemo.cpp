@@ -6,6 +6,7 @@
 	@date 2004.09.14 V‹Kì¬
 */
 
+#include "stdafx.h"
 #include "CMigemo.h"
 #include "Csharedata.h"
 #include "etc_uty.h"

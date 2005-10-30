@@ -31,6 +31,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>

@@ -19,6 +19,7 @@
 //	Sep. 10, 2005 genta GetLongPathNameのエミュレーション関数の実体生成のため
 #define COMPILE_NEWAPIS_STUBS
 
+#include "stdafx.h"
 #include <io.h>
 #include <memory.h>		// Apr. 03, 2003 genta
 #include "etc_uty.h"

@@ -11,6 +11,7 @@
 
 */
 
+#include "stdafx.h"
 #include "CWSH.h"
 #include "CWSHManager.h"
 #include "CMacroFactory.h"

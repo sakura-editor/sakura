@@ -27,6 +27,7 @@
 //#endif
 
 
+#include "stdafx.h"
 #include "charcode.h"
 #include "CDocLineMgr.h"
 #include "debug.h"

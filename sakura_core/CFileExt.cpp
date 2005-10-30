@@ -29,6 +29,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include <string.h>
 #include <malloc.h>
 #include "CFileExt.h"

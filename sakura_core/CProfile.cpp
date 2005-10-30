@@ -30,6 +30,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#include "stdafx.h"
 #ifdef USE_STREAM
 #  include <fstream>
 #else

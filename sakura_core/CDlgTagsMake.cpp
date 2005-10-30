@@ -29,6 +29,7 @@
 		   distribution.
 */
 
+#include "stdafx.h"
 #include <string.h>
 #include "sakura_rc.h"
 #include "CDlgTagsMake.h"

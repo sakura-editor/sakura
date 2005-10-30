@@ -17,6 +17,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include "sakura_rc.h"
 #include "CPropCommon.h"
 #include "debug.h"

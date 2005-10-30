@@ -20,6 +20,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #define ID_HOTKEY_TRAYMENU	0x1234
 
 #include <windows.h>
