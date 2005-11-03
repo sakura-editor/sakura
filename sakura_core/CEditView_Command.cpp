@@ -9,10 +9,11 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta, みつ
-	Copyright (C) 2001, Misaka, asa-o, novice, hor, YAZAKI
-	Copyright (C) 2002, hor, YAZAKI, genta, aroka, MIK
-	Copyright (C) 2003, MIK
-	Copyright (C) 2004, isearch
+	Copyright (C) 2001, MIK, Stonee, Misaka, asa-o, novice, hor, YAZAKI, Stonee, MIK
+	Copyright (C) 2002, hor, YAZAKI, novice, genta, aroka, Azumaiya, minfu, MIK, oak, すなふき, Moca
+	Copyright (C) 2003, MIK, genta, かろと, zenryaku, Moca, ryoji, naoh, KEITA, じゅうじ
+	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
+	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -9196,6 +9197,10 @@ void CEditView::Command_LOADKEYMACRO( void )
 	@date 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするように
 	@date 2002.04.08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
 	@date 2005.08.14 genta ここでの設定は共通設定に反映しない．
+	@date 2005.10.22 aroka 現在のウィンドウ幅→最大値→文書タイプの初期値 をトグルにする
+
+	@note 変更する順序を変更したときはCEditWnd::InitMenu()も変更すること
+	@sa CEditWnd::InitMenu()
 */
 void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 {
@@ -9207,15 +9212,23 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 	int newWidth;
 	//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
 	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
+	// 20051022 aroka 現在のウィンドウ幅→最大値→文書タイプの初期値 をトグルにするコマンド
+	// ウィンドウ幅==文書タイプ||最大値==文書タイプ の場合があるため判定順序に注意する。
 	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
 		//	最大値に
 		newWidth = MAXLINESIZE;
 	}
-	else {
+	else if(m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize){
 		//	現在のウィンドウ幅
 		newWidth = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	}
+	else { // 最大値
+		// 文書タイプ別設定の初期値に
+		newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+	}
+
 	m_pcEditDoc->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );
+	
 
 	//	Aug. 14, 2005 genta 共通設定へは反映させない
 //	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
