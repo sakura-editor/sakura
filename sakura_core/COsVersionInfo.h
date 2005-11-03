@@ -61,6 +61,16 @@ public:
 	BOOL IsWin32NT(){
 		return (m_cOsVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT);
 	}
+	
+	// 2005.10.31 ryoji
+	/*! Windowsプラットフォームかどうか調べる
+
+		@retval TRUE Windows platform
+		@retval FALSE non-Windows platform
+	*/
+	BOOL IsWin32Windows(){
+		return (m_cOsVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
+	}
 
 	/*	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );
 		が使用できないバージョンなら、TRUE
@@ -98,6 +108,26 @@ public:
 	BOOL IsLuna(){
 		return (m_cOsVersionInfo.dwMajorVersion >= 5 &&
 			m_cOsVersionInfo.dwMinorVersion >= 1 );
+	}
+
+	/*! Windows 2000以上か調べる
+
+		@retval TRUE Windows 2000 or later
+
+		@date 2005.10.26 ryoji
+	*/
+	BOOL IsWin2000orLater(){
+		return ( IsWin32NT() && (5 <= m_cOsVersionInfo.dwMajorVersion) );
+	}
+
+	/*! Windows Meか調べる
+
+		@retval TRUE Windows Me
+
+		@date 2005.10.26 ryoji
+	*/
+	BOOL IsWinMe(){
+		return ( IsWin32Windows() && (4 == m_cOsVersionInfo.dwMajorVersion) && ( 90 == m_cOsVersionInfo.dwMinorVersion ) );
 	}
 
 protected:

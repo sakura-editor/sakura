@@ -173,6 +173,7 @@
 #define IDC_COMBO_FILE                  1118
 #define IDC_COMBO_nSortType             1118
 #define IDC_COMBO_FOLDER                1119
+#define IDC_STATIC_STC32                1119
 #define IDC_COMBO_SETTINGNAME           1119
 #define IDC_COMBO_PAPER                 1120
 #define IDC_BUTTON_FOLDER               1121
