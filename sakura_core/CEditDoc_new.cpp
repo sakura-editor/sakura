@@ -1064,19 +1064,21 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 // From Here 2001.12.03 hor
 /*! ブックマークリスト作成（無理矢理！）
 
-	20020119 aroka
-	空行をマーク対象にするフラグ bMarkUpBlankLineEnable を導入しました。
+	@date 2002.01.19 aroka 空行をマーク対象にするフラグ bMarkUpBlankLineEnable を導入しました。
+	@date 2005.10.11 ryoji "ａ@" の右２バイトが全角空白と判定される問題の対処
+	@date 2005.11.03 genta 文字列長修正．右端のゴミを除去
 */
 void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 {
 	const char*	pLine;
 	int		nLineLen;
 	int		nLineCount;
-	int		i,j,nX,nY;
+	int		leftspace, pos_wo_space, k,nX,nY;
 	char*	pszText;
 	BOOL	bMarkUpBlankLineEnable = m_pShareData->m_Common.m_bMarkUpBlankLineEnable;	//! 空行をマーク対象にするフラグ 20020119 aroka
 	int		nNewLineLen	= m_cNewLineCode.GetLen();
 	int		nLineLast	= m_cDocLineMgr.GetLineCount();
+	int		nCharChars;
 
 	for( nLineCount = 0; nLineCount <  nLineLast; ++nLineCount ){
 		if(!m_cDocLineMgr.GetLineInfo(nLineCount)->IsBookMarked())continue;
@@ -1090,40 +1092,46 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 			  continue;
 			}
 		}// LTrim
-		for( i = 0; i < nLineLen; ++i ){
-			if( pLine[i] == ' ' ||
-				pLine[i] == '\t'){
+		for( leftspace = 0; leftspace < nLineLen; ++leftspace ){
+			if( pLine[leftspace] == ' ' ||
+				pLine[leftspace] == '\t'){
 				continue;
-			}else if( (unsigned char)pLine[i] == (unsigned char)0x81 && (unsigned char)pLine[i + 1] == (unsigned char)0x40 ){
-				++i;
+			}else if( (unsigned char)pLine[leftspace] == (unsigned char)0x81
+				&& (unsigned char)pLine[leftspace + 1] == (unsigned char)0x40 ){
+				++leftspace;
 				continue;
 			}
 			break;
 		}
 		
 		if( bMarkUpBlankLineEnable ){// 20020119 aroka
-			if(( i >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
-				( i >= nLineLen )) {
+			if(( leftspace >= nLineLen-nNewLineLen && nLineCount< nLineLast )||
+				( leftspace >= nLineLen )) {
 				continue;
 			}
 		}// RTrim
-		for( j=nLineLen ; j>=i ; --j ){
-			if( pLine[j] == CR ||
-				pLine[j] == LF ||
-				pLine[j] ==' ' ||
-				pLine[j] =='\t'||
-				pLine[j] =='\0'){
-				continue;
-			}else if( 1<j && (unsigned char)pLine[j-1] == (unsigned char)0x81 && (unsigned char)pLine[j] == (unsigned char)0x40 ){
-				--j;
-				continue;
-			}else{
-				break;
+		// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@" の右２バイトが全角空白と判定される問題の対処）
+		k = pos_wo_space = leftspace;
+		while( k < nLineLen ){
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, k );
+			if( 1 == nCharChars ){
+				if( !(pLine[k] == CR ||
+						pLine[k] == LF ||
+						pLine[k] == SPACE ||
+						pLine[k] == TAB ||
+						pLine[k] == '\0') )
+					pos_wo_space = k + nCharChars;
 			}
+			else if( 2 == nCharChars ){
+				if( !((unsigned char)pLine[k] == (unsigned char)0x81 && (unsigned char)pLine[k + 1] == (unsigned char)0x40) )
+					pos_wo_space = k + nCharChars;
+			}
+			k += nCharChars;
 		}
-		nLineLen=j-i+1;
+		//	Nov. 3, 2005 genta 文字列長計算式の修正
+		nLineLen = pos_wo_space - leftspace;
 		pszText = new char[nLineLen + 1];
-		memcpy( pszText, (const char *)&pLine[i], nLineLen );
+		memcpy( pszText, (const char *)&pLine[leftspace], nLineLen );
 		pszText[nLineLen] = '\0';
 		m_cLayoutMgr.CaretPos_Phys2Log(	0, nLineCount, &nX, &nY );
 		pcFuncInfoArr->AppendData( nLineCount+1, nY+1 , (char *)pszText, 0 );
