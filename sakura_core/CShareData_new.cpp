@@ -1117,6 +1117,7 @@ void CShareData::ShareData_IO_Types( const bool bRead, CProfile& cProfile )
 
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent"			, types.m_bAutoIndent );
 		cProfile.IOProfileData( bRead, pszSecName, "bAutoIndent_ZENSPACE"	, types.m_bAutoIndent_ZENSPACE );
+		cProfile.IOProfileData( bRead, pszSecName, "bRTrimPrevLine"			, types.m_bRTrimPrevLine );			// 2005.10.08 ryoji
 		cProfile.IOProfileData( bRead, pszSecName, "nIndentLayout"			, types.m_nIndentLayout );
 
 		/* êFê›íË I/O */

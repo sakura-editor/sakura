@@ -1107,6 +1107,9 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
 	}
 
+	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RTRIM_PREVLINE, m_Types.m_bRTrimPrevLine );
+
 	/* スマートインデント種別 */
 //	HWND	hwndCombo;
 //	int		nSelPos;
@@ -1297,6 +1300,9 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	/* 日本語空白もインデント */
 	m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+
+	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
+	m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE );
 
 	/* スマートインデント種別 */
 //	HWND	hwndCombo;

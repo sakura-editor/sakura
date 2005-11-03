@@ -274,6 +274,7 @@ struct Types {
 	//	2002/04/30 YAZAKI Commonから移動。
 	BOOL				m_bAutoIndent;					/* オートインデント */
 	BOOL				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	BOOL				m_bRTrimPrevLine;				/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
 	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
 	
 	//	Sep. 10, 2002 genta

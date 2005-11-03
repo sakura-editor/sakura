@@ -162,9 +162,12 @@ struct ARRHEAD {
 	
 	Version 60:
 	キーワード指定タグジャンプ履歴保存 2005/04/03 MIK
+
+	Version 61:
+	改行で行末の空白を削除するオプション(タイプ別設定) 2005/10/11 ryoji
 */
 
-const unsigned int uShareDataVersion = 60;
+const unsigned int uShareDataVersion = 61;
 
 /*
 ||	Singleton風
@@ -4635,6 +4638,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
 	pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
+	pShareData->m_Types[nIdx].m_bRTrimPrevLine = FALSE;			/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
 
 	pShareData->m_Types[nIdx].m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
