@@ -53,6 +53,7 @@ int				m_nHelpTopicID;
 BOOL			m_bReadOnly;		/* 読み取り専用か */
 BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 
+COsVersionInfo CDlgOpenFile::m_cOsVer;	// 2005.11.02 ryoji
 
 
 
@@ -131,12 +132,9 @@ UINT_PTR CALLBACK OFNHookProc(
 	LPARAM lParam 	// message parameter
 )
 {
-	HFONT					hFont;
 	POINT					po;
 //	RECT					rc0;
 	RECT					rc;
-	static HWND				hwndEdit1;
-	static HWND				hwndExplororList;
 	static OPENFILENAME*	pOf;
 	static HWND				hwndOpenDlg;
 	static HWND				hwndComboMRU;
@@ -157,6 +155,7 @@ UINT_PTR CALLBACK OFNHookProc(
 	WORD					wNotifyCode;
 	WORD					wID;
 	HWND					hwndCtl;
+	HWND					hwndFilebox;	// 2005.11.02 ryoji
 	int						nIdx;
 	int						nIdxSel;
 	int						fwSizeType;
@@ -204,14 +203,11 @@ UINT_PTR CALLBACK OFNHookProc(
 		hwndFrame = ::GetParent( hdlg );
 		::GetWindowRect( hwndFrame, &pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog );
 
-		::GetWindowRect( hwndEdit1, &rc );
+		// 2005.10.29 ryoji 最近のファイル／フォルダ コンボの右端を子ダイアログの右端に合わせる
+		::GetWindowRect( hwndComboMRU, &rc );
 		po.x = rc.left;
 		po.y = rc.top;
-		::ScreenToClient( hwndOpenDlg, &po );
-//		::GetWindowRect( hwndExplororList, &rc2 );
-//		po2.x = rc2.right;
-//		po2.y = rc2.bottom;
-//		::ScreenToClient( hwndOpenDlg, &po2 );
+		::ScreenToClient( hdlg, &po );
 		::SetWindowPos( hwndComboMRU, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		::SetWindowPos( hwndComboOPENFOLDER, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		return 0;
@@ -231,6 +227,9 @@ UINT_PTR CALLBACK OFNHookProc(
 		hwndComboOPENFOLDER = ::GetDlgItem( hdlg, IDC_COMBO_OPENFOLDER );
 		hwndComboEOL = ::GetDlgItem( hdlg, IDC_COMBO_EOL );
 		hwndCheckBOM = ::GetDlgItem( hdlg, IDC_CHECK_BOM );//	Jul. 26, 2003 ryoji BOMチェックボックス
+
+		// 2005.11.02 ryoji 初期レイアウト設定
+		CDlgOpenFile::InitLayout( hwndOpenDlg, hdlg, hwndComboCODES );
 
 		/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 		::SendMessage( hwndComboCODES, CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
@@ -345,28 +344,7 @@ UINT_PTR CALLBACK OFNHookProc(
 
 
 		/* 読み取り専用の初期値セット */
-		hwndEdit1 = ::GetDlgItem( hwndOpenDlg, edt1 );
-		hwndExplororList = ::GetDlgItem( hwndOpenDlg, lst1 );
-
 		::CheckDlgButton( hwndOpenDlg, chx1, m_bReadOnly );
-
-//		::ShowWindow( hwndEdit1, SW_HIDE );
-
-
-		::GetWindowRect( hwndEdit1, &rc );
-		po.x = rc.left;
-		po.y = rc.top;
-		::ScreenToClient( hwndOpenDlg, &po );
-		rc.left = po.x;
-		rc.top = po.y;
-
-		po.x = rc.right;
-		po.y = rc.bottom;
-		::ScreenToClient( hwndOpenDlg, &po );
-		rc.right = po.x;
-		rc.bottom = po.y;
-
-		hFont = (HFONT)::SendMessage( hdlg, WM_GETFONT, 0, 0 );
 
 		/* 最近開いたファイル コンボボックス初期値設定 */
 		//	2003.06.22 Moca m_ppszMRU がNULLの場合を考慮する
@@ -375,7 +353,6 @@ UINT_PTR CALLBACK OFNHookProc(
 				::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_ppszMRU[i] );
 			}
 		}
-		::SetWindowPos( hwndComboMRU, 0, rc.left, rc.top, rc.right - rc.left + 100, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		/* 最近開いたフォルダ コンボボックス初期値設定 */
 		//	2003.06.22 Moca m_ppszOPENFOLDER がNULLの場合を考慮する
 		if( NULL != m_ppszOPENFOLDER ){
@@ -383,7 +360,6 @@ UINT_PTR CALLBACK OFNHookProc(
 				::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_ppszOPENFOLDER[i] );
 			}
 		}
-		::SetWindowPos( hwndComboOPENFOLDER, 0, rc.left, rc.top, rc.right - rc.left + 100, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 
 
 //		::SetWindowLong( hwndOpenDlg, DWLP_USER, (LONG)pcDlgOpenFile );
@@ -513,22 +489,31 @@ UINT_PTR CALLBACK OFNHookProc(
 				break;
 			//	To Here Jul. 26, 2003 ryoji
 			case IDC_COMBO_MRU:
-				nIdx = ::SendMessage( (HWND) lParam, CB_GETCURSEL, 0, 0 );
-				if( CB_ERR != ::SendMessage( (HWND) lParam, CB_GETLBTEXT, nIdx, (LPARAM) (LPCSTR)szWork ) ){
-//					MYTRACE( "szWork=%s\n", szWork );
-					lRes = ::SendMessage( hwndOpenDlg, CDM_SETCONTROLTEXT, edt1,(LPARAM)(LPSTR)szWork );
-				}
-				break;
 			case IDC_COMBO_OPENFOLDER:
 				nIdx = ::SendMessage( (HWND) lParam, CB_GETCURSEL, 0, 0 );
 				if( CB_ERR != ::SendMessage( (HWND) lParam, CB_GETLBTEXT, nIdx, (LPARAM) (LPCSTR)szWork ) ){
 //					MYTRACE( "szWork=%s\n", szWork );
-					lRes = ::SendMessage( hwndOpenDlg, CDM_SETCONTROLTEXT, edt1,(LPARAM)(LPSTR)szWork );
-					::PostMessage( ::GetDlgItem( hwndOpenDlg, edt1), WM_KEYDOWN, VK_RETURN, (LPARAM)0 );
+					// 2005.11.02 ryoji ファイル名指定のコントロールを確認する
+					hwndFilebox = ::GetDlgItem( hwndOpenDlg, cmb13 );		// ファイル名コンボ（Windows 2000タイプ）
+					if( !::IsWindow( hwndFilebox ) )
+						hwndFilebox = ::GetDlgItem( hwndOpenDlg, edt1 );	// ファイル名エディット（レガシータイプ）
+					if( ::IsWindow( hwndFilebox ) ){
+						::SetWindowText( hwndFilebox, szWork );
+						if( IDC_COMBO_OPENFOLDER == wID )
+							::PostMessage( hwndFilebox, WM_KEYDOWN, VK_RETURN, (LPARAM)0 );
+					}
 				}
 				break;
 			}
 			break;	/* CBN_SELCHANGE */
+		case CBN_DROPDOWN:
+			switch( wID ){
+			case IDC_COMBO_MRU:
+			case IDC_COMBO_OPENFOLDER:
+				CDlgOpenFile::OnCmbDropdown( hwndCtl );
+				break;
+			}
+			break;	/* CBN_DROPDOWN */
 		}
 		break;	/* WM_COMMAND */
 
@@ -576,8 +561,7 @@ CDlgOpenFile::CDlgOpenFile()
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* OPENFILENAMEの初期化 */
-	memset( &m_ofn, 0, sizeof( OPENFILENAME ) );
-	m_ofn.lStructSize = sizeof( OPENFILENAME );
+	InitOfn( m_ofn );		// 2005.10.29 ryoji
 	m_ofn.nFilterIndex = 1;	//Jul. 09, 2001 JEPRO		/* 「開く」での最初のワイルドカード */
 
 //	::GetCurrentDirectory( _MAX_PATH, m_szInitialDir );	/* 「開く」での初期ディレクトリ */
@@ -696,12 +680,10 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
 
 	/* 構造体の初期化 */
-	m_ofn.lStructSize = sizeof( OPENFILENAME );
+	InitOfn( m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-	m_ofn.lpstrCustomFilter = NULL;
-	m_ofn.nMaxCustFilter = 0;
 	// From Here Jun. 23, 2002 genta
 	// 「開く」での初期フォルダチェック強化
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
@@ -725,10 +707,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	m_ofn.lpstrFile = pszPath;
 	// To Here Jun. 23, 2002 genta
 	m_ofn.nMaxFile = _MAX_PATH;
-	m_ofn.lpstrFileTitle = NULL;
-	m_ofn.nMaxFileTitle = 0;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-	m_ofn.lpstrTitle = NULL;
 //	m_ofn.Flags =
 //		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 //		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
@@ -736,13 +715,8 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
 		;
-	m_ofn.nFileOffset = 0;
-	m_ofn.nFileExtension = 0;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
-	m_ofn.lCustData = (LPARAM)this;
-	m_ofn.lpfnHook = OFNHookProc;
-	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 	if( ::GetOpenFileName( &m_ofn ) ){
 		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
 		if( bGetCurDirSuc ){
@@ -784,19 +758,14 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
 
 	/* 構造体の初期化 */
-	m_ofn.lStructSize = sizeof( OPENFILENAME );
+	InitOfn( m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-	m_ofn.lpstrCustomFilter = NULL;
-	m_ofn.nMaxCustFilter = 0;
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	m_ofn.lpstrFile = pszPath;
 	m_ofn.nMaxFile = _MAX_PATH;
-	m_ofn.lpstrFileTitle = NULL;
-	m_ofn.nMaxFileTitle = 0;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-	m_ofn.lpstrTitle = NULL;
 //	m_ofn.Flags =
 //		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 //		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
@@ -807,13 +776,8 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 	m_ofn.Flags =
 		OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT
 		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/;
-	m_ofn.nFileOffset = 0;
-	m_ofn.nFileExtension = 0;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
-	m_ofn.lCustData = (LPARAM)this;
-	m_ofn.lpfnHook = OFNHookProc;
-	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 	if( ::GetSaveFileName( &m_ofn ) ){
 		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
 		if( bGetCurDirSuc ){
@@ -852,19 +816,14 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	}
 
 	/* 構造体の初期化 */
-	m_ofn.lStructSize = sizeof( OPENFILENAME );
+	InitOfn( m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-	m_ofn.lpstrCustomFilter = NULL;
-	m_ofn.nMaxCustFilter = 0;
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	m_ofn.lpstrFile = pszPath;
 	m_ofn.nMaxFile = _MAX_PATH;
-	m_ofn.lpstrFileTitle = NULL;
-	m_ofn.nMaxFileTitle = 0;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-	m_ofn.lpstrTitle = NULL;
 //	m_ofn.Flags =
 //		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 //		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
@@ -878,14 +837,8 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 			m_ofn.Flags |= OFN_READONLY;
 		}
 	}
-	m_ofn.nFileOffset = 0;
-	m_ofn.nFileExtension = 0;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
-	m_ofn.lCustData = (LPARAM)this;
-	m_ofn.lpfnHook = OFNHookProc;
-	m_ofn.lpTemplateName = "IDD_FILEOPEN";
-//	m_ofn.lpTemplateName = MAKEINTRESOURCE( 149 );
 
 	m_nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
@@ -946,19 +899,14 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
 
 	/* 構造体の初期化 */
-	m_ofn.lStructSize = sizeof( OPENFILENAME );
+	InitOfn( m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-	m_ofn.lpstrCustomFilter = NULL;
-	m_ofn.nMaxCustFilter = 0;
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	m_ofn.lpstrFile = pszPath;
 	m_ofn.nMaxFile = _MAX_PATH;
-	m_ofn.lpstrFileTitle = NULL;
-	m_ofn.nMaxFileTitle = 0;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-	m_ofn.lpstrTitle = NULL;
 //	m_ofn.Flags =
 //		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
 //		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
@@ -968,13 +916,8 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	if( NULL != pnCharCode || NULL != pcEol ){
 		m_ofn.Flags = m_ofn.Flags | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK;
 	}
-	m_ofn.nFileOffset = 0;
-	m_ofn.nFileExtension = 0;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
-	m_ofn.lCustData = (LPARAM)this;
-	m_ofn.lpfnHook = OFNHookProc;
-	m_ofn.lpTemplateName = "IDD_FILEOPEN";
 
 	// 2002/08/22 カレントディレクトリを保存
 	TCHAR	szCurDir[_MAX_PATH];
@@ -1073,6 +1016,144 @@ void CDlgOpenFile::DlgOpenFail(void)
 	::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 		"ダイアログが開けません。\n\nエラー:%s", pszError
 	);
+}
+
+/*! OPENFILENAME 初期化
+
+	OPENFILENAME に CDlgOpenFile クラス用の初期規定値を設定する
+
+	@author ryoji
+	@date 2005.10.29
+*/
+void CDlgOpenFile::InitOfn( OPENFILENAMEZ& ofn )
+{
+	memset(&ofn, 0, sizeof(m_ofn));
+
+	ofn.lStructSize = IsOfnV5()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
+	ofn.lCustData = (LPARAM)this;
+	ofn.lpfnHook = OFNHookProc;
+	ofn.lpTemplateName = "IDD_FILEOPEN";
+}
+
+/*! 初期レイアウト設定処理
+
+	追加コントロールのレイアウトを変更する
+
+	@param hwndOpenDlg [in]		ファイルダイアログのウィンドウハンドル
+	@param hwndDlg [in]			子ダイアログのウィンドウハンドル
+	@param hwndBaseCtrl [in]	移動基準コントロール（ファイル名ボックスと左端を合わせるコントロール）のウィンドウハンドル
+
+	@author ryoji
+	@date 2005.11.02
+*/
+void CDlgOpenFile::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl )
+{
+	HWND hwndFilelabel;
+	HWND hwndFilebox;
+	HWND hwndCtrl;
+	RECT rcBase;
+	RECT rc;
+	POINT po;
+	int nLeft;
+	int nShift;
+	int nWidth;
+
+	// ファイル名ラベルとファイル名ボックスを取得する
+	if( !::IsWindow( hwndFilelabel = ::GetDlgItem( hwndOpenDlg, stc3 ) ) )		// ファイル名ラベル
+		return;
+	if( !::IsWindow( hwndFilebox = ::GetDlgItem( hwndOpenDlg, cmb13 ) ) ){		// ファイル名コンボ（Windows 2000タイプ）
+		if( !::IsWindow( hwndFilebox = ::GetDlgItem( hwndOpenDlg, edt1 ) ) )	// ファイル名エディット（レガシータイプ）
+			return;
+	}
+
+	// コントロールの基準位置、移動量を決定する
+	::GetWindowRect( hwndFilelabel, &rc );
+	nLeft = rc.left;						// 左端に揃えるコントロールの位置
+	::GetWindowRect( hwndFilebox, &rc );
+	::GetWindowRect( hwndBaseCtrl, &rcBase );
+	nShift = rc.left - rcBase.left;			// 左端以外のコントロールの右方向への相対移動量
+
+	// 追加コントロールをすべて移動する
+	// ・基準コントロールよりも左にあるものはファイル名ラベルに合わせて左端に移動
+	// ・その他は移動基準コントロール（ファイル名ボックスと左端を合わせるコントロール）と同じだけ右方向へ相対移動
+	hwndCtrl = ::GetWindow( hwndDlg, GW_CHILD );
+	while( hwndCtrl ){
+		if( ::GetDlgCtrlID(hwndCtrl) != stc32 ){
+			::GetWindowRect( hwndCtrl, &rc );
+			po.x = ( rc.right < rcBase.left )? nLeft: rc.left + nShift;
+			po.y = rc.top;
+			::ScreenToClient( hwndDlg, &po );
+			::SetWindowPos( hwndCtrl, 0, po.x, po.y, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+		}
+		hwndCtrl = ::GetWindow( hwndCtrl, GW_HWNDNEXT );
+	}
+
+
+	// 標準コントロールのプレースフォルダ（stc32）と子ダイアログの幅をオープンダイアログの幅にあわせる
+	//     WM_INITDIALOG を抜けるとさらにオープンダイアログ側で現在の位置関係からレイアウト調整が行われる
+	//     ここで以下の処理をやっておかないとコントロールが意図しない場所に動いてしまうことがある
+	//     （例えば、BOM のチェックボックスが画面外に飛んでしまうなど）
+
+	// オープンダイアログのクライアント領域の幅を取得する
+	::GetClientRect( hwndOpenDlg, &rc );
+	nWidth = rc.right - rc.left;
+
+	// 標準コントロールプレースフォルダの幅を変更する
+	hwndCtrl = ::GetDlgItem( hwndDlg, stc32 );
+	::GetWindowRect( hwndCtrl, &rc );
+	::SetWindowPos( hwndCtrl, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+
+	// 子ダイアログの幅を変更する
+	// ※この SetWindowPos() の中で WM_SIZE が発生する
+	::GetWindowRect( hwndDlg, &rc );
+	::SetWindowPos( hwndDlg, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+}
+
+/*! コンボボックスのドロップダウン時処理
+
+	コンボボックスがドロップダウンされる時に
+	ドロップダウンリストの幅をアイテム文字列の最大表示幅に合わせる
+
+	@param hwnd [in]		コンボボックスのウィンドウハンドル
+
+	@author ryoji
+	@date 2005.10.29
+*/
+void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
+{
+	HDC hDC;
+	HFONT hFont;
+	LONG nWidth;
+	RECT rc;
+	TCHAR *pszText;
+	SIZE sizeText;
+	int nTextLen;
+	int iItem;
+	int nItem;
+
+	hDC = ::GetDC( hwnd );
+	if( NULL == hDC )
+		return;
+	hFont = (HFONT)::SendMessage( hwnd, WM_GETFONT, 0, NULL );
+	hFont = (HFONT)::SelectObject( hDC, hFont );
+	nItem = ::SendMessage( hwnd, CB_GETCOUNT, 0, NULL );
+	::GetWindowRect( hwnd, &rc );
+	nWidth = rc.right - rc.left - 8;
+	for( iItem = 0; iItem < nItem; iItem++ ){
+		nTextLen = ::SendMessage( hwnd, CB_GETLBTEXTLEN, (WPARAM)iItem, NULL );
+		if( 0 < nTextLen ) {
+			pszText = new TCHAR[nTextLen + sizeof(TCHAR)];
+			::SendMessage( hwnd, CB_GETLBTEXT, (WPARAM)iItem, (LPARAM)pszText );
+			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
+				if ( nWidth < sizeText.cx )
+					nWidth = sizeText.cx;
+			}
+			delete []pszText;
+		}
+	}
+	::SendMessage( hwnd, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + 8), NULL );
+	::SelectObject( hDC, hFont );
+	::ReleaseDC( hwnd, hDC );
 }
 
 /*[EOF]*/

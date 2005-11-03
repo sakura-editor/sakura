@@ -21,6 +21,23 @@ class CDlgOpenFile;
 #include <windows.h>
 #include "CShareData.h"
 #include "CEol.h"
+#include "COsVersionInfo.h"	// 2005.11.02 ryoji
+
+// 2005.10.29 ryoji
+// Windows 2000 version of OPENFILENAME.
+// The new version has three extra members.
+// See commdlg.h
+#if (_WIN32_WINNT >= 0x0500)
+struct OPENFILENAMEZ : public OPENFILENAME {
+};
+#else
+struct OPENFILENAMEZ : public OPENFILENAME {
+  void *        pvReserved;
+  DWORD         dwReserved;
+  DWORD         FlagsEx;
+};
+#define OPENFILENAME_SIZE_VERSION_400 sizeof(OPENFILENAME)
+#endif // (_WIN32_WINNT >= 0x0500)
 
 
 /*!	ファイルオープンダイアログボックス
@@ -60,7 +77,7 @@ public:
 
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
 	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
-	OPENFILENAME	m_ofn;							/* 「ファイルを開く」ダイアログ用構造体 */
+	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
 	int				m_nCharCode;					/* 文字コード */
 //	char			m_szHelpFile[_MAX_PATH + 1];
 //	int				m_nHelpTopicID;
@@ -78,6 +95,19 @@ protected:
 
 	//	May 29, 2004 genta エラー処理をまとめる (advised by MIK)
 	void	DlgOpenFail(void);
+
+	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
+	static COsVersionInfo m_cOsVer;
+	BOOL IsOfnV5( void ) { return ( m_cOsVer.GetVersion() && (m_cOsVer.IsWin2000orLater() || m_cOsVer.IsWinMe()) ); }
+	void InitOfn( OPENFILENAMEZ& );
+
+	// 2005.11.02 ryoji 初期レイアウト設定処理
+	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
+
+	// 2005.10.29 ryoji コンボボックスのドロップダウン時処理
+	static void OnCmbDropdown( HWND hwnd );
+
+	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 };
 
 
