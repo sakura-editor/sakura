@@ -8,11 +8,13 @@
 	$Revision$
 */
 /*
-	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, genta
-	Copyright (C) 2001, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
-	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca
-	Copyright (C) 2003, MIK
+	Copyright (C) 1998-2002, Norio Nakatani
+	Copyright (C) 2000, genta, JEPRO, MIK
+	Copyright (C) 2001, genta, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca, minfu, KK, novice,ai, Azumaiya, genta
+	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
+	Copyright (C) 2004, genta, Moca, novice, noah
+	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, ‚©‚ë‚Æ
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -2007,7 +2009,7 @@ void CEditView::DrawSelectArea( void )
 	HRGN		hrgnNew = NULL;
 	HRGN		hrgnDraw = NULL;
 
-	m_bDrawSelectArea = TRUE;	// 02/12/13 ai
+	m_bDrawSelectArea = TRUE;	// 2002/12/13 ai
 
 //	MYTRACE( "DrawSelectArea()  m_bBeginBoxSelect=%s\n", m_bBeginBoxSelect?"TRUE":"FALSE" );
 	if( m_bBeginBoxSelect ){		/* ‹éŒ`”ÍˆÍ‘I‘ð’† */
