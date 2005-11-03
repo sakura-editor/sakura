@@ -213,7 +213,13 @@ void CCommandLine::ParseCommandLine( void )
 		if( !bFind && pszToken[0] != '-' ){
 			if( pszToken[0] == '\"' ){
 				CMemory cmWork;
-				cmWork.SetData( &pszToken[1],  lstrlen( pszToken ) - 2 );
+				//	Nov. 3, 2005 genta
+				//	末尾のクォーテーションが無い場合を考慮して，
+				//	最後がダブルクォートの場合のみ取り除く
+				//	ファイル名には使えない文字なのでファイル名に含まれている場合は考慮不要
+				//	またSHIFT-JISの2バイト目の考慮も不要
+				int len = lstrlen( pszToken + 1 );
+				cmWork.SetData( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
 				cmWork.Replace( "\"\"", "\"" );
 				strcpy( m_fi.m_szPath, cmWork.GetPtr() );	/* ファイル名 */
 			}else{
