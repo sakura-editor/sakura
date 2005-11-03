@@ -21,6 +21,7 @@
 #include <time.h>
 #include <string.h>	// Apr. 03, 2003 genta
 #include <io.h>
+#include <Cderr.h> // Nov. 3, 2005 genta
 #include "CEditDoc.h"
 #include "debug.h"
 #include "funccode.h"
