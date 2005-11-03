@@ -12,6 +12,7 @@
 	Copyright (C) 2001, MIK, hor
 	Copyright (C) 2002, hor, YAZAKI, novice, aroka
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -587,6 +588,7 @@ protected:
 		BOOL		bRedraw
 	);
 	void SmartIndent_CPP( char );	/* C/C++スマートインデント処理 */
+	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
 
 	/* カーソル移動系 */
 	//	Oct. 24, 2001 genta 機能拡張のため引数追加

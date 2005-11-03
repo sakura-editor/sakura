@@ -29,6 +29,7 @@
 #define HIDC_BUTTON_IMPORT              0x93f20493    // IDD_PROP_COLOR
 #define HIDC_BUTTON_INSERT              0x93ef0476    // IDD_PROP_CUSTMENU
 #define HIDC_BUTTON_INSERTSEPARATOR     0x93ef0440    // IDD_PROP_CUSTMENU
+#define HIDC_BUTTON_INSERTWRAP          0x93ef0440    // IDD_PROP_TOOLBAR
 #define HIDC_BUTTON_JUMP                0x8076056c    // IDD_JUMP
 #define HIDC_BUTTON_KEYWORDHELPFILE_REF \
                                         0x93fa0441    // IDD_PROPTYPESP2
@@ -133,6 +134,7 @@
 #define HIDC_CHECK_REGEX                0x80db057e    // IDD_PROP_REGEX
 #define HIDC_CHECK_REPEATEDSCROLLSMOOTH \
                                         0x806b0479    // IDD_PROP1P1
+#define HIDC_CHECK_RTRIM_PREVLINE       0x93ed03f5    // IDD_PROPTYPESP1
 #define HIDC_CHECK_RestoreBookmarks     0x806e0566    // IDD_PROP_FILE
 #define HIDC_CHECK_RestoreCurPosition   0x806e055f    // IDD_PROP_FILE
 #define HIDC_CHECK_SEARCHALL            0x93fb058b    // IDD_DIFF
