@@ -856,8 +856,9 @@ void ReplaceData_CEditView(
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
 
 	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile( const char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK
-
+	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
+	void ViewDiffInfo( const char*, const char*, int );		/* DIFF差分表示 */		//2005.10.29 maru
+	
 	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const char* [], const char* [], int, int, const char* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 
 // 2002/07/22 novice

@@ -4,6 +4,7 @@
 
 	@author MIK
 	@date	2002/05/25 ExecCmd を参考にDIFF実行結果を取り込む処理作成
+ 	@date	2005/10/29	maru Diff差分表示処理を分離し、ダイアログあり版・ダイアログなし版の両方からコール
 	$Revision$
 */
 /*
@@ -36,21 +37,50 @@
 #define	SAKURA_DIFF_TEMP_PREFIX	"sakura_diff_"
 
 /*!	差分表示
+	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
+	@author	maru
+	@date	2005/10/28 これまでのCommand_DiffはViewDiffInfoに名称変更
+*/
+void CEditView::Command_Diff( const char *szTmpFile2, int nFlgOpt )
+{
+	bool	bTmpFile1 = false;
+	char	szTmpFile1[_MAX_PATH * 2];
+
+	if( -1 == ::GetFileAttributes( szTmpFile2 ) )
+	{
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			_T( "差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。" ) );
+		return;
+	}
+
+	//自ファイル
+	if (m_pcEditDoc->IsModified() == FALSE ) strcpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
+	else return;
+
+	//差分表示
+	ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt);
+
+	//一時ファイルを削除する
+	if( bTmpFile1 ) unlink( szTmpFile1 );
+
+	return;
+
+}
+
+/*!	差分表示
 	@note	HandleCommandからの呼び出し対応(ダイアログあり版)
 	@author	MIK
 	@date	2002/05/25
 	@date	2002/11/09 編集中ファイルを許可
-	@date	2005/10/03 maru 自ファイルの処理をCommand_Diffへ移動
+	@date	2005/10/29 maru 一時ファイル作成処理をMakeDiffTmpFileへ移動
 */
 void CEditView::Command_Diff_Dialog( void )
 {
 	CDlgDiff	cDlgDiff;
-	bool	bTmpFile2;
+	bool	bTmpFile1 = false, bTmpFile2 = false;
+	char	szTmpFile1[_MAX_PATH * 2];
 	char	szTmpFile2[_MAX_PATH * 2];
-	char	*pszTmpName;
-
-	bTmpFile2 = false;
-	strcpy( szTmpFile2, "" );
 
 	//DIFF差分表示ダイアログを表示する
 	if( FALSE == cDlgDiff.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc,
@@ -59,59 +89,34 @@ void CEditView::Command_Diff_Dialog( void )
 	{
 		return;
 	}
-
-	//自ファイル処理を	Command_Diffへ引越し 2005.10.03 maru
-
+	
+	//自ファイル
+	if (m_pcEditDoc->IsModified() == FALSE ) strcpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
+	else return;
+		
 	//相手ファイル
-	if( cDlgDiff.m_bIsModifiedDst )	/* 相手先ファイルは編集中か？ */
+	if (cDlgDiff.m_bIsModifiedDst == FALSE ) strcpy( szTmpFile2, cDlgDiff.m_szFile2);
+	else if (MakeDiffTmpFile ( szTmpFile2, cDlgDiff.m_hWnd_Dst )) bTmpFile2 = true;
+	else 
 	{
-		/*
-		MessageBox( NULL,  
-			"差分コマンド実行は失敗しました。\nファイルを保存してから行ってください。", 
-			"DIFF差分表示",
-			MB_OK | MB_ICONEXCLAMATION );
+		if( bTmpFile1 ) unlink( szTmpFile1 );
 		return;
-		*/
-
-		pszTmpName = _tempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
-		if( NULL == pszTmpName )
-		{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。" );
-			goto finish;
-		}
-
-		strcpy( szTmpFile2, pszTmpName );
-		free( pszTmpName );
-		bTmpFile2 = true;
-
-		// 相手先編集中ファイルを一時ファイルに保存する
-		if( MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst ) == FALSE )
-		{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できないか、または行が長すぎます。" );
-			goto finish;
-		}
 	}
-	else
-	{
-		bTmpFile2 = false;
-		strcpy( szTmpFile2, cDlgDiff.m_szFile2 );
-		if( strlen( szTmpFile2 ) == 0 ) return;
-	}
-
-	/* 差分表示 */
-	//	2005.10.03 maru 引数変更
-	Command_Diff( szTmpFile2, cDlgDiff.m_nDiffFlgOpt );
-
-finish:;
+	
+	//差分表示
+	ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt);
+	
+	
 	//一時ファイルを削除する
+	if( bTmpFile1 ) unlink( szTmpFile1 );
 	if( bTmpFile2 ) unlink( szTmpFile2 );
 
 	return;
 }
 
 /*!	差分表示
+	@param	pszFile1	[in]	自ファイル名
 	@param	pszFile2	[in]	相手ファイル名
     @param  nFlgOpt     [in]    0b000000000
                                     ||||||+--- -i ignore-case         大文字小文字同一視
@@ -124,9 +129,12 @@ finish:;
 	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
 	@author	MIK
 	@date	2002/05/25
-	@date	2005/10/03 maru 比較対象の１つは自分自身として，引数から削除
+	@date	2005/10/28	旧Command_Diffから関数名の変更。
+						Command_Diff_Dialogだけでなく新Command_Diff
+						からも呼ばれる関数。maru
 */
-void CEditView::Command_Diff( 
+void CEditView::ViewDiffInfo( 
+	const char	*pszFile1,
 	const char	*pszFile2,
 	int			nFlgOpt )
 /*
@@ -138,12 +146,6 @@ void CEditView::Command_Diff(
 	bool	bFlgFile12,		//編集中のファイルが旧ファイル
 */
 {
-	// Command_Diff_Dialogから引越し From 2005.10.03 maru
-	bool	bTmpFile1 = false; // 一時ファイルの削除が必要か
-	char	szTmpFile1[_MAX_PATH * 2];
-	szTmpFile1[0] = '\0';
-	// Command_Diff_Dialogから引越し End 2005.10.03 maru
-
 	char	cmdline[1024];
 	HANDLE	hStdOutWrite, hStdOutRead;
 //	CDlgCancel	cDlgCancel;
@@ -161,38 +163,6 @@ void CEditView::Command_Diff(
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
 
-	// Command_Diff_Dialogから引越し From 2005.10.03 maru
-	//自ファイル
-	if( m_pcEditDoc->IsModified() )
-	{
-		char* pszTmpName = _tempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
-		if( NULL == pszTmpName )
-		{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。" );
-			return;
-		}
-
-		strcpy( szTmpFile1, pszTmpName );
-		free( pszTmpName );
-		bTmpFile1 = true;
-
-		// 編集中ファイルを一時ファイルに保存する
-		if( MakeDiffTmpFile( szTmpFile1, NULL ) == FALSE )
-		{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できないか、または行が長すぎます。" );
-			return;
-		}
-	}
-	else
-	{
-		bTmpFile1 = false;
-		strcpy( szTmpFile1, m_pcEditDoc->GetFilePath() );
-		if( strlen( szTmpFile1 ) == 0 ) return;
-	}
-	// Command_Diff_Dialogから引越し End 2005.10.03 maru
-
 	//	From Here Dec. 28, 2002 MIK
 	//	diff.exeの存在チェック
 	wsprintf( cmdline, "%s\\%s", szExeFolder, "diff.exe" );
@@ -200,7 +170,7 @@ void CEditView::Command_Diff(
 	{
 		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 			_T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
-		goto remove_temp_file;
+		return;
 	}
 
 	//今あるDIFF差分を消去する。
@@ -221,7 +191,7 @@ void CEditView::Command_Diff(
 	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE )
 	{
 		//エラー。対策無し
-		goto remove_temp_file;
+		return;
 	}
 
 	//継承不能にする
@@ -262,8 +232,8 @@ void CEditView::Command_Diff(
 					szExeFolder,	//sakura.exeパス
 					"diff.exe",		//diff.exe
 					szOption,		//diffオプション
-					( nFlgFile12 ? pszFile2 : szTmpFile1 ),
-					( nFlgFile12 ? szTmpFile1 : pszFile2 )
+					( nFlgFile12 ? pszFile2 : pszFile1 ),
+					( nFlgFile12 ? pszFile1 : pszFile2 )
 				);
 		}
 		else{
@@ -271,11 +241,12 @@ void CEditView::Command_Diff(
 					szExeFolder,	//sakura.exeパス
 					"diff.exe",		//diff.exe
 					szOption,		//diffオプション
-					( nFlgFile12 ? pszFile2 : szTmpFile1 ),
-					( nFlgFile12 ? szTmpFile1 : pszFile2 )
+					( nFlgFile12 ? pszFile2 : pszFile1 ),
+					( nFlgFile12 ? pszFile1 : pszFile2 )
 				);
 		}
 	}
+
 	//コマンドライン実行
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
@@ -456,9 +427,6 @@ finish:
 		if( m_pcEditDoc->m_nActivePaneIndex != v )
 			m_pcEditDoc->m_cEditViewArr[v].Redraw();
 	Redraw();
-
-remove_temp_file:
-	if( bTmpFile1 ) unlink( szTmpFile1 );	// Command_Diff_Dialogから引越し
 
 	return;
 }
@@ -707,13 +675,28 @@ void CEditView::Command_Diff_Reset( void )
 /*!	一時ファイルを作成する
 	@author	MIK
 	@date	2002/05/26
+	@date	2005/10/29	引数変更const char* → char*
+						一時ファイル名の取得処理もここでおこなう。maru
 */
-BOOL CEditView::MakeDiffTmpFile( const char* filename, HWND hWnd )
+BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 {
 	const char*	pLineData;
 	int		nLineLen;
 	int		y;
 	FILE	*fp;
+
+	char	*pszTmpName;
+	
+	pszTmpName = _tempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	if( NULL == pszTmpName )
+	{
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			"差分コマンド実行は失敗しました。" );
+		return FALSE;
+	}
+
+	strcpy( filename, pszTmpName );
+	free( pszTmpName );
 
 	//自分か？
 	if( NULL == hWnd )
@@ -733,6 +716,8 @@ BOOL CEditView::MakeDiffTmpFile( const char* filename, HWND hWnd )
 	fp = fopen( filename, "wb" );
 	if( NULL == fp )
 	{
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
 		return FALSE;
 	}
 
@@ -757,12 +742,18 @@ BOOL CEditView::MakeDiffTmpFile( const char* filename, HWND hWnd )
 		{
 			// 一時バッファを超えている
 			fclose( fp );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+				"差分コマンド実行は失敗しました。\n\n行が長すぎます。" );
+			unlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 			return FALSE;
 		}
 
 		if( 1 != fwrite( pLineData, nLineLen, 1, fp ) )
 		{
 			fclose( fp );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+				"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
+			unlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 			return FALSE;
 		}
 
