@@ -1898,7 +1898,7 @@ int CDocLineMgr::SearchWord(
 					);
 					if( NULL != pszRes ){
 						nHitPos = pszRes - pLine;
-						nIdxPos = CMemory::MemCharNext(pLine, nLineLen, pszRes) - pLine;	//	Azumaiya前方検索で選択範囲がおかしくなることがあるバグ修正
+						nIdxPos = nHitPos + nPatternLen;	// マッチ文字列長進めるように変更 2005.10.28 Karoto
 						if( nHitPos >= nHitTo ){
 							if( -1 != nHitPosOld ){
 								*pnLineNum = nLinePos;							/* マッチ行 */
