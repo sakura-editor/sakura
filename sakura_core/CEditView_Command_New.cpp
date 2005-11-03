@@ -10,6 +10,7 @@
 	Copyright (C) 2001, genta, asa-o, hor
 	Copyright (C) 2002, YAZAKI, hor, genta. aroka, MIK
 	Copyright (C) 2003, MIK
+	Copyright (C) 2005, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1561,11 +1562,20 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 
 		nDataLen = 0;
-		for( j = m_nCaretPosY_PHY; j >= 0 && NULL != ( pLine2 = m_pcEditDoc->m_cDocLineMgr.GetLineStr( j, &nLineLen2 ) ); --j ){
+		for( j = m_nCaretPosY_PHY; j >= 0; --j ){
+			pLine2 = m_pcEditDoc->m_cDocLineMgr.GetLineStr( j, &nLineLen2 );
 			if( j == m_nCaretPosY_PHY ){
+				// 2005.10.11 ryoji EOF のみの行もスマートインデントの対象にする
+				if( NULL == pLine2 ){
+					if( m_nCaretPosY_PHY == m_pcEditDoc->m_cDocLineMgr.GetLineCount() )
+						continue;	// EOF のみの行
+					break;
+				}
 				nCharChars = &pLine2[nWork] - CMemory::MemCharPrev( pLine2, nLineLen2, &pLine2[nWork] );
 				k = nWork - nCharChars;
 			}else{
+				if( NULL == pLine2 )
+					break;
 				nCharChars = &pLine2[nLineLen2] - CMemory::MemCharPrev( pLine2, nLineLen2, &pLine2[nLineLen2] );
 				k = nLineLen2 - nCharChars;
 			}
@@ -1638,15 +1648,35 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 
 			nDataLen = m;
-			pszData = new char[nDataLen + 2];
+			nCharChars = (m_pcEditDoc->GetDocumentAttribute().m_bInsSpace)? m_pcEditDoc->m_cLayoutMgr.GetTabSpace(): 1;
+			pszData = new char[nDataLen + nCharChars + 1];
 			memcpy( pszData, pLine2, nDataLen );
 			if( CR  == cChar
 			 || '{' == cChar
 			 || '(' == cChar
 			){
-				pszData[nDataLen] = '\t';
-				pszData[nDataLen + 1] = '\0';
-				++nDataLen;
+				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
+				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
+				if( m_pcEditDoc->GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
+					i = m = 0;
+					while( i < nDataLen ){
+						nCharChars = CMemory::GetSizeOfChar( pszData, nDataLen, i );
+						if( nCharChars == 1 && TAB == pszData[i] )
+							m += m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace(m);
+						else
+							m += nCharChars;
+						i += nCharChars;
+					}
+					nCharChars = m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace(m);
+					for( i = 0; i < nCharChars; i++ )
+						pszData[nDataLen + i] = SPACE;
+					pszData[nDataLen + nCharChars] = '\0';
+					nDataLen += nCharChars;
+				}else{
+					pszData[nDataLen] = TAB;
+					pszData[nDataLen + 1] = '\0';
+					++nDataLen;
+				}
 			}else{
 				pszData[nDataLen] = '\0';
 
@@ -1732,6 +1762,77 @@ void CEditView::SmartIndent_CPP( char cChar )
 		pszData = NULL;
 	}
 	return;
+}
+
+
+/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
+void CEditView::RTrimPrevLine( void )
+{
+	const char*	pLine;
+	int			nLineLen;
+	int			i;
+	int			j;
+	int			nXFm;
+	int			nYFm;
+	int			nXTo;
+	int			nYTo;
+	int			nCPX;
+	int			nCPY;
+	int			nCharChars;
+	int			nCaretPosX_PHY;
+	int			nCaretPosY_PHY;
+	COpe*		pcOpe = NULL;
+
+	nCaretPosX_PHY = m_nCaretPosX_PHY;
+	nCaretPosY_PHY = m_nCaretPosY_PHY;
+
+	if( m_nCaretPosY_PHY > 0 ){
+		pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStrWithoutEOL( m_nCaretPosY_PHY - 1, &nLineLen );
+		if( NULL != pLine && nLineLen > 0 ){
+			i = j = 0;
+			while( i < nLineLen ){
+				nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+				if( 1 == nCharChars ){
+					if( TAB != pLine[i] && SPACE != pLine[i])
+						j = i + nCharChars;
+				}
+				else if( 2 == nCharChars ){
+					if( !((unsigned char)pLine[i] == (unsigned char)0x81 && (unsigned char)pLine[i + 1] == (unsigned char)0x40) )
+						j = i + nCharChars;
+				}
+				i += nCharChars;
+			}
+			if( j < nLineLen ){
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( j, m_nCaretPosY_PHY - 1, &nXFm, &nYFm );
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nLineLen, m_nCaretPosY_PHY - 1, &nXTo, &nYTo );
+				if( !( nXFm >= nXTo && nYFm == nYTo) ){
+					ReplaceData_CEditView(
+						nYFm,		/* 削除範囲行  From レイアウト行番号 */
+						nXFm,		/* 削除範囲位置From レイアウト行桁位置 */
+						nYTo,		/* 削除範囲行  To   レイアウト行番号 */
+						nXTo,		/* 削除範囲位置To   レイアウト行桁位置 */
+						NULL,		/* 削除されたデータのコピー(NULL可能) */
+						NULL,		/* 挿入するデータ */
+						0,			/* 挿入するデータの長さ */
+						TRUE
+					);
+					m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nCaretPosX_PHY, nCaretPosY_PHY, &nCPX, &nCPY );
+					MoveCursor( nCPX, nCPY, TRUE );
+
+					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+						pcOpe = new COpe;
+						pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+						pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
+						pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
+						pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
+						pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
+						/* 操作の追加 */
+						m_pcOpeBlk->AppendOpe( pcOpe );
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -2179,6 +2280,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	int			i,j;
 	int			nPosDes;
 	CEOL		cEol;
+	int			nCharChars;
 
 	nBgn = 0;
 	nPosDes = 0;
@@ -2222,17 +2324,19 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	// RTRIM
 		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
-				for( j=nLineLen-1 ; j>=0 ; --j ){
-					if( pLine[j] ==' ' ||
-						pLine[j] =='\t'){
-						continue;
-					}else if( 0<j && (unsigned char)pLine[j-1] == (unsigned char)0x81 && (unsigned char)pLine[j] == (unsigned char)0x40 ){
-						--j;
-						continue;
-					}else{
-						++j;
-						break;
+				// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@" の右２バイトが全角空白と判定される問題の対処）
+				i = j = 0;
+				while( i < nLineLen ){
+					nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+					if( 1 == nCharChars ){
+						if( TAB != pLine[i] && SPACE != pLine[i])
+							j = i + nCharChars;
 					}
+					else if( 2 == nCharChars ){
+						if( !((unsigned char)pLine[i] == (unsigned char)0x81 && (unsigned char)pLine[i + 1] == (unsigned char)0x40) )
+							j = i + nCharChars;
+					}
+					i += nCharChars;
 				}
 				if(j>0){
 					memcpy( &pDes[nPosDes], (const char *)&pLine[0], j );
