@@ -2320,11 +2320,15 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, "お気に入りの設定(&O)..." );	//お気に入り	//@@@ 2003.04.08 MIK
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
+// 20051022 aroka タイプ別設定値に戻すコマンド追加
 			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 			if( m_cEditDoc.m_cLayoutMgr.GetMaxLineSize() == m_cEditDoc.ActiveView().m_nViewColNum ){
 				pszLabel = "折り返さない(&W)";
-			}else{
+			}else
+			if( m_cEditDoc.m_cLayoutMgr.GetMaxLineSize() == m_cEditDoc.GetDocumentAttribute().m_nMaxLineSize ){
 				pszLabel = "現在のウィンドウ幅で折り返し(&W)";
+			}else{
+				pszLabel = "タイプ別設定の幅で折り返し(&W)";
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );	//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , "現在のウィンドウ幅で折り返し(&W)" );	//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
