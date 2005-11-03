@@ -2527,7 +2527,8 @@ void CEditView::AdjustScrollBars( void )
 		//	Nov. 16, 2002 genta
 		//	縦スクロールバーがDisableになったときは必ず全体が画面内に収まるように
 		//	スクロールさせる
-		if( m_nViewRowNum > nAllLines ){
+		//	2005.11.01 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
+		if( m_nViewRowNum >= nAllLines ){
 			ScrollAtV( 0 );
 		}
 	}
