@@ -2717,6 +2717,7 @@ void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 
 	@author zenryaku
 	@date 2003.05.20 zenryaku 新規作成
+	@date 2004.04.19 zenryaku 空要素を判定
 	@date 2004.04.20 Moca コメント処理と、不明な終了タグを無視する処理を追加
 */
 void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
@@ -2749,7 +2750,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 			// 2004.04.20 Moca コメントを処理する
 			if( bCommentTag )
 			{
-				if( i < nLineLen - 4 && 0 == memcmp( "-->", pLine + i , 3 ) )
+				if( i < nLineLen - 3 && 0 == memcmp( "-->", pLine + i , 3 ) )
 				{
 					bCommentTag = FALSE;
 					i += 2;
@@ -2836,24 +2837,32 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						{
 							for(;i+j<nLineLen;j++)
 							{
-								if(pLine[i+j]=='>')
+								if(pLine[i+j]=='/' && pLine[i+j+1]=='>')
+								{
+									bEndTag	=	TRUE;
+									break;
+								}
+								else if(pLine[i+j]=='>')
 								{
 									break;
 								}
 							}
-							szTitle[k++]	=	' ';
-							for(j-=k-1;i+j+k<nLineLen && k<sizeof(szTitle)-1;k++)
+							if(!bEndTag)
 							{
-								if(pLine[i+j+k]=='<' || pLine[i+j+k]=='\r' || pLine[i+j+k]=='\n')
+								szTitle[k++]	=	' ';
+								for(j-=k-1;i+j+k<nLineLen && k<sizeof(szTitle)-1;k++)
 								{
-									break;
+									if(pLine[i+j+k]=='<' || pLine[i+j+k]=='\r' || pLine[i+j+k]=='\n')
+									{
+										break;
+									}
+									szTitle[k]	=	pLine[i+j+k];
 								}
-								szTitle[k]	=	pLine[i+j+k];
+							j += k-1;
 							}
-							j	+=	k-1;
 						}
 						szTitle[k]	=	'\0';
-						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,nDepth++);
+						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,(bEndTag ? nDepth : nDepth++));
 					}
 					else
 					{
