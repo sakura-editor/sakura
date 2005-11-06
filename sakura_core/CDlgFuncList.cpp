@@ -1444,7 +1444,10 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	RECT		rc;
 	LV_COLUMN	col;
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST1 );
-//	hwndTree = ::GetDlgItem( m_hWnd, IDC_TREE1 );
+	// 2005.10.21 zenryaku 1行選択
+	SendMessage(hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0,
+		SendMessage(hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) | LVS_EX_FULLROWSELECT);
+
 	::GetWindowRect( hwndList, &rc );
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 
@@ -1572,6 +1575,10 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 			case TVN_KEYDOWN:
 				Key2Command( ((LV_KEYDOWN *)lParam)->wVKey );
 				return TRUE;
+			case TVN_SELCHANGED:
+				// 2005.11.04 zenryaku 画面外の選択項目を追う
+				::SendMessage(hwndTree, TVM_ENSUREVISIBLE, 0, (LPARAM)((NMTREEVIEW*)lParam)->itemNew.hItem);
+				break;
 //			case NM_CLICK:
 			case NM_KILLFOCUS:
 				// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 4/4
