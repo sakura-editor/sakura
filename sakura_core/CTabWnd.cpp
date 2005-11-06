@@ -1120,11 +1120,21 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	@param bForeground [in] true: active and forground / false: active
 
 	@date 2004.08.27 Kazika 引数bForeground追加。bForegroundがfalseの場合はウィンドウをフォアグラウンドにしない。
+	@date 2005.11.05 ryoji Grepダイアログがフォーカスを失わないようにするため，
+		対象ウィンドウのプロセスが既にフォアグラウンドなら何もしないようにする．
  */
 void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 {
 	if ( bForeground )
 	{
+		// 2005.11.05 ryoji 対象ウィンドウのプロセスが既にフォアグラウンドなら切替え済みなので何もしないでおく
+		DWORD dwPid1, dwPid2;
+		::GetWindowThreadProcessId( hwnd, &dwPid1 );
+		::GetWindowThreadProcessId( ::GetForegroundWindow(), &dwPid2 );
+		if( dwPid1 == dwPid2 ){
+			return;
+		}
+
 		if( ::IsIconic( hwnd ) )
 		{
 			::ShowWindow( hwnd, SW_RESTORE );	// Nov. 7. 2003 MIK アイコン時は元のサイズに戻す
