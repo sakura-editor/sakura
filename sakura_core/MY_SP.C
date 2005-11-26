@@ -40,6 +40,10 @@
 #endif
 #endif	/* LSI_C */
 
+#if _MSC_VER >= 1400
+#pragma warning( disable : 4996 )
+#endif
+
 #include	<io.h>		/* access */
 #include	<string.h>	/* strncpy strlen */
 #include	<stdlib.h>	/* _MAX_PATH _MAX_DRIVE _MAX_DIR _MAX_FNAME _MAX_EXT */
