@@ -37,7 +37,7 @@ class ImplementsIUnknown: public Base
 private:
 	int m_RefCount;
 	ImplementsIUnknown(const ImplementsIUnknown &);
-	operator = (const ImplementsIUnknown &);
+	ImplementsIUnknown& operator = (const ImplementsIUnknown &);
 public:
 	#ifdef __BORLANDC__
 	#pragma argsused
