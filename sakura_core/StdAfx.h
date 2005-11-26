@@ -14,6 +14,10 @@
 // この位置にヘッダーを挿入してください
 #define WIN32_LEAN_AND_MEAN		// Windows ヘッダーから殆ど使用されないスタッフを除外します
 
+#if _MSC_VER >= 1400
+#pragma warning( disable : 4996 )
+#endif
+
 #include <windows.h>
 #include <commdlg.h> // PRINTDLG, 
 #include <comutil.h> // VT_BSTR,..
