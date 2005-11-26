@@ -18,6 +18,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#include "stdafx.h"
 #include <windows.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
