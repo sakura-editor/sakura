@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GR /GX /O2 /I "..\sakura_core" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /O2 /I "..\sakura_core" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "..\sakura_core" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "..\sakura_core" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -586,6 +586,7 @@ SOURCE=..\sakura_core\Debug.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\etc_uty.cpp
+# SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 
@@ -602,6 +603,7 @@ SOURCE=..\sakura_core\my_icmp.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\MY_SP.C
+# SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 
@@ -610,6 +612,7 @@ SOURCE=..\sakura_core\sakura_rc.rc
 # Begin Source File
 
 SOURCE=..\sakura_core\StdAfx.cpp
+# ADD CPP /Yc"stdafx.h"
 # End Source File
 # Begin Source File
 
