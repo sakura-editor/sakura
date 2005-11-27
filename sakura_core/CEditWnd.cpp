@@ -305,6 +305,7 @@ HWND CEditWnd::Create(
 	 && m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
 	{
 		//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
+		// FIXME: 非プライマリモニタまたはタスクバーを動かした後だとずれる
 		RECT	rcArea;
 		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcArea, 0 );
 		nWinCX = m_pShareData->m_TabWndWndpl.rcNormalPosition.right
@@ -413,35 +414,32 @@ HWND CEditWnd::Create(
 	::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 	::GetWindowRect( m_hWnd, &rcOrg );
 
+	// 2005.11.23 Moca マルチモニタ等で問題があったため計算方法変更
 	/* ウィンドウ位置調整 */
-	if( rcOrg.bottom >= rcDesktop.bottom ){
-		if( 0 > rcOrg.top - (rcOrg.bottom - rcDesktop.bottom ) ){
-			rcOrg.top = 0;
-		}else{
-			rcOrg.top -= rcOrg.bottom - rcDesktop.bottom;
-		}
+	if( rcOrg.bottom > rcDesktop.bottom ){
+		rcOrg.top -= rcOrg.bottom - rcDesktop.bottom;
 		rcOrg.bottom = rcDesktop.bottom;	//@@@ 2002.01.08
 	}
-	if( rcOrg.right >= rcDesktop.right ){
-		if( 0 > rcOrg.left - (rcOrg.right - rcDesktop.right ) ){
-			rcOrg.left = 0;
-		}else{
-			rcOrg.left -= rcOrg.right - rcDesktop.right;
-		}
+	if( rcOrg.right > rcDesktop.right ){
+		rcOrg.left -= rcOrg.right - rcDesktop.right;
 		rcOrg.right = rcDesktop.right;	//@@@ 2002.01.08
 	}
-	/* ウィンドウサイズ調整 */
+	
 	if( rcOrg.top < rcDesktop.top ){
+		rcOrg.bottom += rcDesktop.top - rcOrg.top;
 		rcOrg.top = rcDesktop.top;
 	}
 	if( rcOrg.left < rcDesktop.left ){
+		rcOrg.right += rcDesktop.left - rcOrg.left;
 		rcOrg.left = rcDesktop.left;
 	}
-	if( rcOrg.bottom >= rcDesktop.bottom ){
+
+	/* ウィンドウサイズ調整 */
+	if( rcOrg.bottom > rcDesktop.bottom ){
 		//rcOrg.bottom = rcDesktop.bottom - 1;	//@@@ 2002.01.08
 		rcOrg.bottom = rcDesktop.bottom;	//@@@ 2002.01.08
 	}
-	if( rcOrg.right >= rcDesktop.right ){
+	if( rcOrg.right > rcDesktop.right ){
 		//rcOrg.right = rcDesktop.right - 1;	//@@@ 2002.01.08
 		rcOrg.right = rcDesktop.right;	//@@@ 2002.01.08
 	}
@@ -1153,8 +1151,11 @@ LRESULT CEditWnd::DispatchEvent(
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowPos ){
 			if( SW_MAXIMIZE != m_pShareData->m_TabWndWndpl.showCmd &&
 			    SW_SHOWMINIMIZED != m_pShareData->m_TabWndWndpl.showCmd ){
-				m_pShareData->m_Common.m_nWinPosX = m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
-				m_pShareData->m_Common.m_nWinPosY = m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
+				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
+				RECT rcWork;
+				::GetWindowRect( hwnd, &rcWork);
+				m_pShareData->m_Common.m_nWinPosX = rcWork.left;
+				m_pShareData->m_Common.m_nWinPosY = rcWork.top;
 			}
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
