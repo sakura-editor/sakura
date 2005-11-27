@@ -2425,7 +2425,11 @@ void CDocLineMgr::ResetAllModifyFlag( void )
 }
 
 
-/* 全行データを返す */
+/* 全行データを返す
+	改行コードは、CFLF統一される。
+	@retval 全行データ。freeで開放しなければならない。
+	@note   Debug版のテストにのみ使用している。
+*/
 char* CDocLineMgr::GetAllData( int*	pnDataLen )
 {
 	int			nDataLen;
@@ -2435,7 +2439,7 @@ char* CDocLineMgr::GetAllData( int*	pnDataLen )
 
 	pDocLine = m_pDocLineTop;
 	nDataLen = 0;
-	while( NULL != pDocLine ){   
+	while( NULL != pDocLine ){
 		//	Oct. 7, 2002 YAZAKI
 		nDataLen += pDocLine->GetLengthWithoutEOL() + 2;	//	\r\nを追加して返すため+2する。
 		pDocLine = pDocLine->m_pNext;
@@ -2457,13 +2461,13 @@ char* CDocLineMgr::GetAllData( int*	pnDataLen )
 	while( NULL != pDocLine ){
 		//	Oct. 7, 2002 YAZAKI
 		nLineLen = pDocLine->GetLengthWithoutEOL();
-		if( 0 <= nLineLen ){
-			pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+		if( 0 < nLineLen ){
+			pLine = pDocLine->m_pLine->GetPtr();
 			memcpy( &pData[nDataLen], pLine, nLineLen );
 			nDataLen += nLineLen;
 		}
-		memcpy( &pData[nDataLen], "\r\n", 2 );
-		nDataLen += 2;
+		pData[nDataLen++] = '\r';
+		pData[nDataLen++] = '\n';
 		pDocLine = pDocLine->m_pNext;
 	}
 	pData[nDataLen] = '\0';

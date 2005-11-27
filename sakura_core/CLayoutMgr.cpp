@@ -14,10 +14,8 @@
 */
 #include "stdafx.h"
 #include "CLayoutMgr.h"
+#include "CShareData.h" // 2005.11.20 Moca
 
-/*** for TRACE()****
-#include <afx.h>
-***/
 #include "charcode.h"
 #include "debug.h"
 #include <commctrl.h>
@@ -57,6 +55,10 @@ CLayoutMgr::CLayoutMgr()
 	m_pszKinsokuTail_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 	m_pszKinsokuKuto_2 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+	// 2005.11.21 Moca 色分けフラグをメンバで持つ
+	m_bDispComment = FALSE; 
+	m_bDispSString = FALSE;
+	m_bDispWString = FALSE;
 
 	Init();
 	return;
@@ -117,6 +119,11 @@ void CLayoutMgr::SetLayoutInfo(
 
 	m_cLineComment = refType.m_cLineComment;	/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 	m_cBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+
+	// 2005.11.21 Moca 色分けフラグをメンバで持つ
+	m_bDispComment = refType.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp;
+	m_bDispSString = refType.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;
+	m_bDispWString = refType.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;
 
 	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
 	//	数が増えてきたらテーブルにすべき
@@ -269,7 +276,7 @@ void CLayoutMgr::SetLayoutInfo(
 	}	//@@@ 2002.04.08 MIK end
 
 	if( bDoRayout ){
-		DoLayout( hwndProgress, refType.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp, refType.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp );
+		DoLayout( hwndProgress );
 	}
 
 	return;
@@ -598,9 +605,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		int			*pnModifyLayoutLinesOld,
 		int			*pnModifyLayoutLinesNew,
 		int			*pnDeleteLayoutLines,
-		CMemory&	cmemDeleted,			/* 削除されたデータ */
-		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		CMemory&	cmemDeleted			/* 削除されたデータ */
 //		BOOL		bUndo			/* Undo操作かどうか */
 )
 {
@@ -701,9 +706,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		nRowNum,
 		nDelStartLogicalLine, nDelStartLogicalPos,
 		nCurrentLineType,
-		&nAddInsLineNum,
-		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		&nAddInsLineNum
 	);
 
 	*pnDeleteLayoutLines = nAllLinesOld - m_nLines + nAddInsLineNum;
@@ -727,9 +730,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		int*		pnModifyLayoutLinesOld,
 		int*		pnInsLineNum,		/* 挿入によって増えたレイアウト行の数 */
 		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
-		int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		int*		pnNewPos			/* 挿入された部分の次の位置のデータ位置 */
 //		BOOL		bUndo			/* Undo操作かどうか */
 )
 {
@@ -879,9 +880,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nRowNum,
 		nInsStartLogicalLine, nInsStartLogicalPos,
 		nCurrentLineType,
-		&nAddInsLineNum,
-		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		&nAddInsLineNum
 	);
 
 	*pnInsLineNum = m_nLines - nAllLinesOld + nAddInsLineNum;
@@ -1474,7 +1473,7 @@ checkloop:;
 	return;
 }
 
-bool CLayoutMgr::ChangeLayoutParam( HWND hwndProgress, int bSingleQuote, int bDoubleQuote,
+bool CLayoutMgr::ChangeLayoutParam( HWND hwndProgress,
 	int nTabSize, int nMaxLineSize )
 {
 	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
@@ -1483,7 +1482,7 @@ bool CLayoutMgr::ChangeLayoutParam( HWND hwndProgress, int bSingleQuote, int bDo
 	m_nTabSpace = nTabSize;
 	m_nMaxLineSize = nMaxLineSize;
 
-	DoLayout( hwndProgress, bSingleQuote, bDoubleQuote );
+	DoLayout( hwndProgress );
 
 	return true;
 }

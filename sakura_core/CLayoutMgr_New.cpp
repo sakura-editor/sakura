@@ -47,9 +47,7 @@
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
 */
 void CLayoutMgr::DoLayout(
-		HWND	hwndProgress,
-		BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		HWND	hwndProgress
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::DoLayout" );
@@ -314,7 +312,7 @@ void CLayoutMgr::DoLayout(
 			}	//if( KINSOKU_TYPE_NONE != nKinsokuTyoe ) 禁則処理中
 
 			//@@@ 2002.09.22 YAZAKI
-			bool bGotoSEARCH_START = CheckColorMODE( nCOMMENTMODE, nCOMMENTEND, nPos, nLineLen, pLine, bDispSSTRING, bDispWSTRING );
+			bool bGotoSEARCH_START = CheckColorMODE( nCOMMENTMODE, nCOMMENTEND, nPos, nLineLen, pLine );
 			if ( bGotoSEARCH_START )
 				goto SEARCH_START;
 			
@@ -424,9 +422,7 @@ int CLayoutMgr::DoLayout_Range(
 			int		nDelLogicalLineFrom,
 			int		nDelLogicalColFrom,
 			int		nCurrentLineType,
-			int*	pnExtInsLineNum,
-			BOOL	bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-			BOOL	bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+			int*	pnExtInsLineNum
 )
 {
 	int			nLineNumWork;
@@ -722,7 +718,7 @@ int CLayoutMgr::DoLayout_Range(
 			}	// if( nKinsokuType != KINSOKU_TYPE_NONE )
 
 			//@@@ 2002.09.22 YAZAKI
-			bool bGotoSEARCH_START = CheckColorMODE( nCOMMENTMODE, nCOMMENTEND, nPos, nLineLen, pLine, bDispSSTRING, bDispWSTRING );
+			bool bGotoSEARCH_START = CheckColorMODE( nCOMMENTMODE, nCOMMENTEND, nPos, nLineLen, pLine );
 			if ( bGotoSEARCH_START )
 				goto SEARCH_START;
 
@@ -1104,34 +1100,34 @@ int CLayoutMgr::Match_Quote( char szQuote, int nPos, int nLineLen, const char* p
 	return nLineLen;
 }
 
-bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine, BOOL bDispSSTRING, BOOL bDispWSTRING )
+bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine )
 {
 	switch( nCOMMENTMODE ){
 	case COLORIDX_TEXT: // 2002/03/13 novice
 		if( m_cLineComment.Match( nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 		}else
-		if( m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine ) ){
+		if( m_bDispComment && m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 0, nPos + (int)lstrlen( m_cBlockComment.getBlockCommentFrom(0) ), nLineLen, pLine );
+			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 0, nPos + m_cBlockComment.getBlockFromLen(0), nLineLen, pLine );
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 		}else
-		if( m_cBlockComment.Match_CommentFrom( 1, nPos, nLineLen, pLine ) ){
+		if( m_bDispComment &&  m_cBlockComment.Match_CommentFrom( 1, nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 1, nPos + (int)lstrlen( m_cBlockComment.getBlockCommentFrom(1) ), nLineLen, pLine );
+			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 1, nPos + m_cBlockComment.getBlockFromLen(1), nLineLen, pLine );
 //#endif
 		}else
-		if( bDispSSTRING && /* シングルクォーテーション文字列を表示する */
+		if( m_bDispSString && /* シングルクォーテーション文字列を表示する */
 			pLine[nPos] == '\''
 		){
 			nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 			/* シングルクォーテーション文字列の終端があるか */
 			nCOMMENTEND = Match_Quote( '\'', nPos + 1, nLineLen, pLine );
 		}else
-		if( pLine[nPos] == '"' &&
-			bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		if( m_bDispWString && /* ダブルクォーテーション文字列を表示する */
+			pLine[nPos] == '"'
 		){
 			nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 			/* ダブルクォーテーション文字列の終端があるか */

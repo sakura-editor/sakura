@@ -23,15 +23,16 @@ class CLayoutMgr;
 
 #include <windows.h>// 2002/2/10 aroka
 #include "global.h"// 2002/2/10 aroka
-#include "CShareData.h"
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
+
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
 class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
+struct Types;// 2005.11.20 Moca
 
 
 
@@ -51,8 +52,6 @@ struct LayoutReplaceArg {
 	int			nNewLine;				/*!< 挿入された部分の次の位置の行(レイアウト行) */
 	int			nNewPos;				/*!< 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
 
-	BOOL		bDispSSTRING;			/*!< シングルクォーテーション文字列を表示する */
-	BOOL		bDispWSTRING;			/*!< ダブルクォーテーション文字列を表示する */
 //	BOOL		bUndo;					/*!< Undo操作かどうか */	@date 2002/03/24 YAZAKI bUndo削除
 };
 
@@ -60,7 +59,10 @@ struct LayoutReplaceArg {
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-//! テキストのレイアウト情報管理
+/*!	@brief テキストのレイアウト情報管理
+
+	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
+*/
 class SAKURA_CORE_API CLayoutMgr
 {
 public:
@@ -92,8 +94,8 @@ public:
 	int GetActualTabSpace(int pos) const { return m_nTabSpace - pos % m_nTabSpace; }
 	//	Aug. 14, 2005 genta
 	int GetMaxLineSize(void) const { return m_nMaxLineSize; }
-	bool ChangeLayoutParam( HWND hwndProgress, int bSingleQuote, int bDoubleQuote,
-	int nTabSize, int nMaxLineSize );
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
+	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineSize );
 	
 protected:
 	int PrevOrNextWord( int, int, int*, int*, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
@@ -117,6 +119,7 @@ public:
 	void SetLayoutInfo( int, HWND, Types& refType );
 	
 	/* 行内文字削除 */
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	void DeleteData_CLayoutMgr(
 		int			nLineNum,
 		int			nDelPos,
@@ -124,11 +127,10 @@ public:
 		int			*pnModifyLayoutLinesOld,
 		int			*pnModifyLayoutLinesNew,
 		int			*pnDeleteLayoutLines,
-		CMemory&	cmemDeleted,			/* 削除されたデータ */
-		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		CMemory&	cmemDeleted			/* 削除されたデータ */
 	);
 	/* 文字列挿入 */
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	void InsertData_CLayoutMgr(
 		int			nLineNum,
 		int			nInsPos,
@@ -137,9 +139,7 @@ public:
 		int*		pnModifyLayoutLinesOld,
 		int*		pnInsLineNum,		/* 挿入によって増えたレイアウト行の数 */
 		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
-		int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-		BOOL		bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		BOOL		bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		int*		pnNewPos			/* 挿入された部分の次の位置のデータ位置 */
 	);
 
 	/* 文字列置換 */
@@ -160,10 +160,12 @@ protected:
 	|| 更新系
 	*/
 //	void SetMaxLineSize( int, int, int );	/* 折り返し文字数の変更／レイアウト情報再構築 */
-	void DoLayout( HWND, BOOL,BOOL );	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
+	void DoLayout( HWND );	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 //	void DoLayout( int, BOOL, HWND, BOOL, BOOL );	/* 新しい折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 //	int DoLayout3( CLayout* , int, int, int );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
-	int DoLayout_Range( CLayout* , int, int, int, int, int*, BOOL, BOOL );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
+	int DoLayout_Range( CLayout* , int, int, int, int, int* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLayout* DeleteLayoutAsLogical( CLayout*, int, int , int, int, int, int* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , int );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
@@ -192,6 +194,9 @@ protected:
 	char*			m_pszKinsokuKuto_1;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	char*			m_pszKinsokuKuto_2;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	int				m_nTabSpace;				/* TAB文字スペース */
+	BOOL			m_bDispComment;				/* コメントの色分け */		// 2005.11.21 Moca
+	BOOL			m_bDispSString;				/* シングルクォーテーションの色分け */		// 2005.11.21 Moca
+	BOOL			m_bDispWString;				/* ダブルクォーテーションの色分け */		// 2005.11.21 Moca
 	CLineComment	m_cLineComment;				/* 行コメントデリミタ */		//@@@ 2002.09.22 YAZAKI
 	CBlockComment	m_cBlockComment;			/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 	int				m_nStringType;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
@@ -234,7 +239,8 @@ private:
 	bool IsKinsokuPosTail(const int, const int, const int);	//!< 行末禁則の処理位置か
 
 	//@@@ 2002.09.22 YAZAKI
-	bool CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine, BOOL bDispSSTRING, BOOL bDispWSTRING );
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
+	bool CheckColorMODE( int& nCOMMENTMODE, int& nCOMMENTEND, int nPos, int nLineLen, const char* pLine );
 	int Match_Quote( char szQuote, int nPos, int nLineLen, const char* pLine );
 //	int getMaxLineSize( CLayout* pLayoutPrev );
 	

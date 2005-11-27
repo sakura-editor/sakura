@@ -178,9 +178,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		nRowNum,
 		nyFrom, nxFrom,
 		nCurrentLineType,
-		&nAddInsLineNum,
-		pArg->bDispSSTRING,	/* シングルクォーテーション文字列を表示する */
-		pArg->bDispWSTRING	/* ダブルクォーテーション文字列を表示する */
+		&nAddInsLineNum
 	);
 
 //	DUMP();
