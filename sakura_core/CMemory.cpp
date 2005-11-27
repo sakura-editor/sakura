@@ -2015,7 +2015,8 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 			pBufUnicode[k + 1] = pBuf[i];
 			++i;
 		}else{
-#if _DEBUG
+#if 0
+		// 2005.11.16 実用に耐えないほど速度低下するので無効化する
 			if( j != 2 ){
 				MYTRACE( "%dバイトのUnicode文字に変換された SJIS(?)=%x %x\n", j,pBuf[i],((nCharChars >= 2)?(pBuf[i + 1]):0) );
 			}
