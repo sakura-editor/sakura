@@ -37,7 +37,7 @@ class SAKURA_CORE_API CBlockComment
 
 public:
 	/*
-	||  Constructors：コンパイラ標準を使用。
+	||  Constructors
 	*/
 	CBlockComment();
 
@@ -50,6 +50,13 @@ public:
 	};
 	const char* getBlockCommentTo( const int n ){
 		return m_szBlockCommentTo[n];
+	};
+	//	2005.11.10 Moca アクセス関数追加
+	int getBlockFromLen( int n ) const {
+		return m_nBlockFromLen[n];
+	};
+	int getBlockToLen( int n ) const {
+		return m_nBlockToLen[n];
 	};
 };
 
