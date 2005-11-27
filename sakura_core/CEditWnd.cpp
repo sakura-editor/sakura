@@ -12,7 +12,7 @@
 	Copyright (C) 2002, YAZAKI, genta, hor, aroka, minfu, ‹S, MIK, ai
 	Copyright (C) 2003, genta, MIK, Moca, wmlhq, ryoji, KEITA
 	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
-	Copyright (C) 2005, genta, MIK, Moca, aroka
+	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
