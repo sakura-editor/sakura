@@ -9300,7 +9300,14 @@ int CEditView::GetColorIndex(
 		// 2002/2/10 aroka CMemory変更
 		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 		pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
-		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
+
+		// 2005.11.20 Moca 色が正しくないことがある問題に対処
+		const CLayout* pcLayoutLineFirst = pcLayout;
+		// 論理行の最初のレイアウト情報を取得する
+		while( 0 != pcLayoutLineFirst->m_nOffset ){
+			pcLayoutLineFirst = pcLayoutLineFirst->m_pPrev;
+		}
+		nCOMMENTMODE = pcLayoutLineFirst->m_nTypePrev;
 		nCOMMENTEND = 0;
 		pcLayout2 = pcLayout;
 
