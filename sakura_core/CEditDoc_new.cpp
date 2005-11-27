@@ -1369,11 +1369,7 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 	int* posSave = SavePhysPosOfAllView();
 
 	//	レイアウトの更新
-	m_cLayoutMgr.ChangeLayoutParam( NULL, 
-		GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,
-		GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp,
-		nTabSize, nMaxLineSize
-	);
+	m_cLayoutMgr.ChangeLayoutParam( NULL, nTabSize, nMaxLineSize );
 
 	//	座標の復元
 	RestorePhysPosOfAllView( posSave );

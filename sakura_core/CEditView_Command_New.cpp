@@ -151,9 +151,7 @@ void CEditView::InsertData_CEditView(
 		&nModifyLayoutLinesOld,
 		&nInsLineNum,
 		pnNewLine,			/* 挿入された部分の次の位置の行 */
-		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
+		pnNewPos			/* 挿入された部分の次の位置のデータ位置 */
 	);
 
 
@@ -327,9 +325,7 @@ void CEditView::DeleteData2(
 		&nModifyLayoutLinesOld,
 		&nModifyLayoutLinesNew,
 		&nDeleteLayoutLines,
-		*pcMem,
-		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp,	/* シングルクォーテーション文字列を表示する */
-		m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
+		*pcMem
 	);
 
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
@@ -1220,8 +1216,6 @@ void CEditView::ReplaceData_CEditView(
 //	LRArg.nModLineTo = 0;			/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 //	LRArg.nNewLine = 0;				/* 挿入された部分の次の位置の行(レイアウト行) */
 //	LRArg.nNewPos = 0;				/* 挿入された部分の次の位置のデータ位置(レイアウト桁位置) */
-	LRArg.bDispSSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;			/* シングルクォーテーション文字列を表示する */
-	LRArg.bDispWSTRING = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;			/* ダブルクォーテーション文字列を表示する */
 //	LRArg.bUndo = m_bDoing_UndoRedo;					/* Undo操作かどうか */
 	m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr(
 		&LRArg
