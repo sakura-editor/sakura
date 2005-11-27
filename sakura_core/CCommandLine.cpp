@@ -221,6 +221,7 @@ void CCommandLine::ParseCommandLine( void )
 				//	Nov. 27, 2005 genta
 				//	引数がダブルクォート1つの場合に，その1つを最初と最後の1つずつと
 				//	見間違えて，インデックス-1にアクセスしてしまうのを防ぐために長さをチェックする
+				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
 				int len = lstrlen( pszToken + 1 );
 				if( len > 0 ){
 					cmWork.SetData( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
@@ -233,6 +234,34 @@ void CCommandLine::ParseCommandLine( void )
 			}else{
 				strcpy( m_fi.m_szPath, pszToken );							/* ファイル名 */
 			}
+
+			// Nov. 11, 2005 susu
+			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
+			// 簡単なファイルチェックを行うように修正
+			if (!memcmp(m_fi.m_szPath, "file:///", 8)) {
+				char tmp_str[_MAX_PATH + 1];
+				strcpy(tmp_str, &(m_fi.m_szPath[8]));
+				strcpy(m_fi.m_szPath, tmp_str);
+			}
+			int len = strlen(m_fi.m_szPath);
+			for (int i = 0; i < len ; i ++) {
+				if ( (m_fi.m_szPath[i] == '<' ||	//	0x3C
+					  m_fi.m_szPath[i] == '>' ||	//	0x3E
+					  m_fi.m_szPath[i] == '?' ||	//	0x3F
+					  m_fi.m_szPath[i] == '"' ||	//	0x22
+					  m_fi.m_szPath[i] == '|' ||	//	0x7C
+					  m_fi.m_szPath[i] == '*' ||	//	0x2A
+					  0
+					 ) &&
+					( i ==0 || (i > 0 && ! _IS_SJIS_1( (unsigned char)(m_fi.m_szPath[i - 1] )) ))){
+						char msg_str[_MAX_PATH + 1];
+						sprintf( msg_str, "%s\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? \" < > | の文字は使えません。 ", m_fi.m_szPath );
+						MessageBox( NULL, msg_str, "FileNameError", MB_OK);
+						m_fi.m_szPath[0] = '\0';
+						break;
+				}
+			}
+
 		}else{
 			++pszToken;	//	先頭の'-'はskip
 			char *arg;
