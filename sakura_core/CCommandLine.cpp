@@ -218,10 +218,18 @@ void CCommandLine::ParseCommandLine( void )
 				//	最後がダブルクォートの場合のみ取り除く
 				//	ファイル名には使えない文字なのでファイル名に含まれている場合は考慮不要
 				//	またSHIFT-JISの2バイト目の考慮も不要
+				//	Nov. 27, 2005 genta
+				//	引数がダブルクォート1つの場合に，その1つを最初と最後の1つずつと
+				//	見間違えて，インデックス-1にアクセスしてしまうのを防ぐために長さをチェックする
 				int len = lstrlen( pszToken + 1 );
-				cmWork.SetData( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
-				cmWork.Replace( "\"\"", "\"" );
-				strcpy( m_fi.m_szPath, cmWork.GetPtr() );	/* ファイル名 */
+				if( len > 0 ){
+					cmWork.SetData( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
+					cmWork.Replace( "\"\"", "\"" );
+					strcpy( m_fi.m_szPath, cmWork.GetPtr() );	/* ファイル名 */
+				}
+				else {
+					m_fi.m_szPath[0] = '\0';
+				}
 			}else{
 				strcpy( m_fi.m_szPath, pszToken );							/* ファイル名 */
 			}
