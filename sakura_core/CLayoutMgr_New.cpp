@@ -1104,7 +1104,8 @@ bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, 
 {
 	switch( nCOMMENTMODE ){
 	case COLORIDX_TEXT: // 2002/03/13 novice
-		if( m_cLineComment.Match( nPos, nLineLen, pLine ) ){
+		// 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
+		if( m_bDispComment && m_cLineComment.Match( nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 		}else
 		if( m_bDispComment && m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine ) ){
