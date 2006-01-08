@@ -7,7 +7,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, genta, jepro
+	Copyright (C) 2000, genta, jepro
+	Copyright (C) 2001, genta
+	Copyright (C) 2002, YAZAKI, aroka, Moca
+	Copyright (C) 2005, MIK, Moca, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -309,6 +312,9 @@ protected:
 
 	//	Aug. 16, 2000 genta
 	void EnableBackupInput(HWND hwndDlg);	//	バックアップ設定のON/OFF
+	//	20051107 aroka
+	void UpdateBackupFile(HWND hwndDlg);	//	バックアップファイルの詳細設定
+
 	//	Aug. 21, 2000 genta
 	void EnableFilePropInput(HWND hwndDlg);	//	ファイル設定のON/OFF
 	//	Sept. 9, 2000 JEPRO		次行を追加

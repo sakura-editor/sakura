@@ -8,9 +8,11 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
-	Copyright (C) 2001, shoji masami, stonee, MIK, YAZAKI
-	Copyright (C) 2002, genta, aroka, hor, MIK, 鬼
-	Copyright (C) 2003, genta
+	Copyright (C) 2001, shoji masami, Misaka, stonee, MIK, YAZAKI
+	Copyright (C) 2002, genta, aroka, hor, MIK, 鬼, Moca, YAZAKI
+	Copyright (C) 2003, genta, matsumo, Moca, MIK
+	Copyright (C) 2004, genta, novice, Moca, MIK
+	Copyright (C) 2005, genta, D.S.Koba, Moca, ryoji, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1354,7 +1356,32 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 
 }
 
+/*!
+	ローカルドライブの判定
 
+	@param pszDrive [in] ドライブ名を含むパス名
+	
+	@retval true ローカルドライブ
+	@retval false リムーバブルドライブ．ネットワークドライブ．
+	
+	@author aroka
+	@date 2005.11.12 新規作成
+*/
+bool IsLocalDrive( const char* pszDrive )
+{
+	char	szDriveType[_MAX_DRIVE+1];	// "A:\ "登録用
+	long	lngRet;
+
+	if( isalpha(pszDrive[0]) ){
+		sprintf(szDriveType, "%c:\\", toupper(pszDrive[0]));
+		lngRet = GetDriveType( szDriveType );
+		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
+		{
+			return false;
+		}
+	}
+	return true;
+}
 
 void GetLineColm( const char* pLine, int* pnJumpToLine, int* pnJumpToColm )
 {
@@ -2701,4 +2728,82 @@ bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime )
 	//	ファイルが見つからなかった
 	return false;
 }
+
+
+/*!	日時をフォーマット
+
+	@param[out] 書式変換後の文字列
+	@param[in] バッファサイズ
+	@param[in] format 書式
+	@param[in] systime 書式化したい日時
+	@return bool true
+
+	@note  %Y %y %m %d %H %M %S の変換に対応
+
+	@author aroka
+	@date 2005.11.21 新規
+	
+	@todo 出力バッファのサイズチェックを行う
+*/
+bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime )
+{
+	char szTime[10];
+	const char *p = format;
+	char *q = szResult;
+	int len;
+	
+	while( *p ){
+		if( *p == '%' ){
+			++p;
+			switch(*p){
+			case 'Y':
+				len = wsprintf(szTime,"%d",systime.wYear);
+				strcpy( q, szTime );
+				break;
+			case 'y':
+				len = wsprintf(szTime,"%02d",(systime.wYear%100));
+				strcpy( q, szTime );
+				break;
+			case 'm':
+				len = wsprintf(szTime,"%02d",systime.wMonth);
+				strcpy( q, szTime );
+				break;
+			case 'd':
+				len = wsprintf(szTime,"%02d",systime.wDay);
+				strcpy( q, szTime );
+				break;
+			case 'H':
+				len = wsprintf(szTime,"%02d",systime.wHour);
+				strcpy( q, szTime );
+				break;
+			case 'M':
+				len = wsprintf(szTime,"%02d",systime.wMinute);
+				strcpy( q, szTime );
+				break;
+			case 'S':
+				len = wsprintf(szTime,"%02d",systime.wSecond);
+				strcpy( q, szTime );
+				break;
+				// A Z
+			case '%':
+			default:
+				*q = *p;
+				len = 1;
+				break;
+			}
+			q+=len;//q += strlen(szTime);
+			++p;
+			
+		}
+		else{
+			*q = *p;
+			q++;
+			p++;
+		}
+	}
+	*q = *p;
+	return true;
+}
+
+
 /*[EOF]*/

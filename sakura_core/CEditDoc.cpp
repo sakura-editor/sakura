@@ -8,9 +8,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, genta, mik, jepro
-	Copyright (C) 2002, YAZAKI, hor, genta, aroka, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, genta
+	Copyright (C) 2001, genta, YAZAKI, jepro, novice, asa-o, MIK,
+	Copyright (C) 2002, YAZAKI, hor, genta, aroka, frozen, Moca, start
+	Copyright (C) 2003, MIK, genta, ryoji, Moca, zenryaku, naoh, wmlhq
+	Copyright (C) 2004, genta, novice, Moca, MIK, zenryaku
+	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -43,6 +46,7 @@
 #include "CDlgFileUpdateQuery.h"
 #include <assert.h> /// 2002/11/2 frozen
 #include "my_icmp.h" // 2002/11/30 Moca 追加
+#include "my_sp.h" // 2005/11/22 aroka 追加
 
 
 #define IDT_ROLLMOUSE	1
@@ -1256,6 +1260,9 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 	return;
 }
 
+
+
+
 /*! バックアップの作成
 	@author genta
 	@date 2001.06.12 asa-o
@@ -1264,24 +1271,18 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 	@date 2004.06.05 genta バックアップ対象ファイルを引数で与えるように．
 		名前を付けて保存の時は自分のバックアップを作っても無意味なので．
 		また，バックアップも保存も行わない選択肢を追加．
+	@date 2005.11.26 aroka ファイル名生成をFormatBackUpPathに分離
 
 	@retval 0 バックアップ作成失敗．
 	@retval 1 バックアップ作成成功．
 	@retval 2 バックアップ作成失敗．保存中断指示．
 	@retval 3 ファイル操作エラーによるバックアップ作成失敗．
+	
+	@todo Advanced modeでの世代管理
 */
 int CEditDoc::MakeBackUp( const char* target_file )
 {
-	time_t	ltime;
-	struct	tm *today, *gmt, xmas = { 0, 0, 12, 25, 11, 93 };
-	char	szTime[64];
-	char	szForm[64];
 	char	szPath[_MAX_PATH];
-	char	szDrive[_MAX_DIR];
-	char	szDir[_MAX_DIR];
-	char	szFname[_MAX_FNAME];
-	char	szExt[_MAX_EXT];
-//	int		nLen;
 	int		nRet;
 	char*	pBase;
 
@@ -1291,9 +1292,6 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	if( (_access( target_file, 2 )) == -1 ){
 		return 0;
 	}
-
-	/* パスの分解 */
-	_splitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
@@ -1312,126 +1310,14 @@ int CEditDoc::MakeBackUp( const char* target_file )
 				return 2;// 保存中断
 			}
 		}
-		strcpy( szPath, m_pShareData->m_Common.m_szBackUpFolder );
-		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-		AddLastYenFromDirectoryPath( szPath );
 	}
-	else{
-		wsprintf( szPath, "%s%s", szDrive, szDir );
-	}
-	pBase = szPath + strlen( szPath );
 
-	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-	switch( m_pShareData->m_Common.GetBackupType() ){
-	case 1:
-		wsprintf( pBase, "%s.bak", szFname );
-		break;
-	case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
-		wsprintf( pBase, "%s%s.bak", szFname, szExt );
-		break;
-	case 2:	//	日付，時刻
-		_tzset();
-		_strdate( szTime );
-		time( &ltime );				/* システム時刻を得ます */
-		gmt = gmtime( &ltime );		/* 万国標準時に変換する */
-		today = localtime( &ltime );/* 現地時間に変換する */
-
-		strcpy( szForm, "" );
-		if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-			strcat( szForm, "%Y" );
-		}
-		if( m_pShareData->m_Common.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-			strcat( szForm, "%m" );
-		}
-		if( m_pShareData->m_Common.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-			strcat( szForm, "%d" );
-		}
-		if( m_pShareData->m_Common.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-			strcat( szForm, "%H" );
-		}
-		if( m_pShareData->m_Common.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-			strcat( szForm, "%M" );
-		}
-		if( m_pShareData->m_Common.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-			strcat( szForm, "%S" );
-		}
-		/* YYYYMMDD時分秒 形式に変換 */
-		strftime( szTime, sizeof( szTime ) - 1, szForm, today );
-		wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
-		break;
-//	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
-	case 4:	//	日付，時刻
-		{
-			FILETIME	LastWriteTime,
-						LocalTime;
-			SYSTEMTIME	SystemTime;
-
-			// 2005.10.20 ryoji FindFirstFileを使うように変更
-			if( ! GetLastWriteTimestamp( target_file, LastWriteTime )){
-				LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
-			}
-			::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
-			::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
-
-			strcpy( szTime, "" );
-			if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				wsprintf(szTime,"%d",SystemTime.wYear);
-			}
-			if( m_pShareData->m_Common.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				wsprintf(szTime,"%s%02d",szTime,SystemTime.wMonth);
-			}
-			if( m_pShareData->m_Common.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				wsprintf(szTime,"%s%02d",szTime,SystemTime.wDay);
-			}
-			if( m_pShareData->m_Common.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				wsprintf(szTime,"%s%02d",szTime,SystemTime.wHour);
-			}
-			if( m_pShareData->m_Common.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				wsprintf(szTime,"%s%02d",szTime,SystemTime.wMinute);
-			}
-			if( m_pShareData->m_Common.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				wsprintf(szTime,"%s%02d",szTime,SystemTime.wSecond);
-			}
-			wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
-		}
-		break;
-// 2001/06/12 End
-
-	case 3: //	?xx : xx = 00~99, ?は任意の文字
-	case 6: //	Jun.  5, 2005 genta 3の拡張子を残す版
-		//	Aug. 15, 2000 genta
-		//	ここでは作成するバックアップファイル名のみ生成する．
-		//	ファイル名のRotationは確認ダイアログの後で行う．
-		{
-			//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
-			char* ptr;
-			if( m_pShareData->m_Common.GetBackupType() == 3 ){
-				ptr = szExt;
-			}
-			else {
-				ptr = szExt + strlen( szExt );
-			}
-			*ptr   = '.';
-			*++ptr = m_pShareData->m_Common.GetBackupExtChar();
-			*++ptr = '0';
-			*++ptr = '0';
-			*++ptr = '\0';
-		}
-		wsprintf( pBase, "%s%s", szFname, szExt );
-		break;
-	}
+	FormatBackUpPath( szPath, target_file );
 
 	//@@@ 2002.03.23 start ネットワーク・リムーバブルドライブの場合はごみ箱に放り込まない
 	bool dustflag = false;
 	if( m_pShareData->m_Common.m_bBackUpDustBox ){
-		if( szPath[0] == '\\' && szPath[1] == '\\' ) dustflag = true;
-		else if( isalpha(szPath[0]) ){
-			char	szDriveType[_MAX_DRIVE+1];	// "A:\"登録用
-			long	lngRet;
-			sprintf(szDriveType, "%c:\\", toupper(szPath[0]));
-			lngRet = GetDriveType( szDriveType );
-			if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE ) dustflag = true;
-		}
+		dustflag = !IsLocalDrive( szPath );
 	}
 	//@@@ 2002.03.23 end
 
@@ -1489,7 +1375,7 @@ int CEditDoc::MakeBackUp( const char* target_file )
 		HANDLE			hFind;
 		WIN32_FIND_DATA	fData;
 
-		pBase = pBase + strlen( pBase ) - 2;	//	2: 拡張子の最後の2桁の意味
+		pBase = szPath + strlen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
 		//::MessageBox( NULL, pBase, "書き換え場所", MB_OK );
 
 		//------------------------------------------------------------------
@@ -1559,6 +1445,23 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	//::MessageBox( NULL, szPath, "直前のバックアップファイル", MB_OK );
 	/* バックアップの作成 */
 	//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
+	char	szDrive[_MAX_DIR];
+	char	szDir[_MAX_DIR];
+	char	szFname[_MAX_FNAME];
+	char	szExt[_MAX_EXT];
+	_splitpath( szPath, szDrive, szDir, szFname, szExt );
+	char szPath2[MAX_PATH];
+	wsprintf( szPath2, "%s%s", szDrive, szDir );
+		HANDLE			hFind;
+		WIN32_FIND_DATA	fData;
+
+	hFind = ::FindFirstFile( szPath2, &fData );
+	if( hFind == INVALID_HANDLE_VALUE ){
+		//	検索に失敗した == ファイルは存在しない
+		::CreateDirectory( szPath2, NULL );
+	}
+	::FindClose( hFind );
+
 	if( ::CopyFile( target_file, szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
@@ -1593,8 +1496,254 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	return 1;
 }
 
+/*! バックアップの作成
 
+	@param[out] szNewPath バックアップ先パス名
+	@param[in]  target_file バックアップ元パス名
 
+	@author aroka
+	@date 2005.11.29 aroka
+		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
+
+	@retval true
+	
+	@todo Advanced modeでの世代管理
+*/
+bool CEditDoc::FormatBackUpPath( char* szNewPath, const char* target_file )
+{
+	char	szDrive[_MAX_DIR];
+	char	szDir[_MAX_DIR];
+	char	szFname[_MAX_FNAME];
+	char	szExt[_MAX_EXT];
+
+	/* パスの分解 */
+	_splitpath( target_file, szDrive, szDir, szFname, szExt );
+
+	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
+		strcpy( szNewPath, m_pShareData->m_Common.m_szBackUpFolder );
+		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+		AddLastYenFromDirectoryPath( szNewPath );
+	}
+	else{
+		wsprintf( szNewPath, "%s%s", szDrive, szDir );
+	}
+
+	/* 相対フォルダを挿入 */
+	if( !m_pShareData->m_Common.m_bBackUpPathAdvanced ){
+		time_t	ltime;
+		struct	tm *today, *gmt;
+		char	szTime[64];
+		char	szForm[64];
+		char*	pBase;
+
+		pBase = szNewPath + strlen( szNewPath );
+
+		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+		switch( m_pShareData->m_Common.GetBackupType() ){
+		case 1:
+			wsprintf( pBase, "%s.bak", szFname );
+			break;
+		case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
+			wsprintf( pBase, "%s%s.bak", szFname, szExt );
+			break;
+		case 2:	//	日付，時刻
+			_tzset();
+			_strdate( szTime );
+			time( &ltime );				/* システム時刻を得ます */
+			gmt = gmtime( &ltime );		/* 万国標準時に変換する */
+			today = localtime( &ltime );/* 現地時間に変換する */
+
+			strcpy( szForm, "" );
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
+				strcat( szForm, "%Y" );
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
+				strcat( szForm, "%m" );
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
+				strcat( szForm, "%d" );
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
+				strcat( szForm, "%H" );
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
+				strcat( szForm, "%M" );
+			}
+			if( m_pShareData->m_Common.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
+				strcat( szForm, "%S" );
+			}
+			/* YYYYMMDD時分秒 形式に変換 */
+			strftime( szTime, sizeof( szTime ) - 1, szForm, today );
+			wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
+			break;
+	//	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
+		case 4:	//	日付，時刻
+			{
+				FILETIME	LastWriteTime,
+							LocalTime;
+				SYSTEMTIME	SystemTime;
+
+				// 2005.10.20 ryoji FindFirstFileを使うように変更
+				if( ! GetLastWriteTimestamp( target_file, LastWriteTime )){
+					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
+				}
+				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
+				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
+
+				strcpy( szTime, "" );
+				if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
+					wsprintf(szTime,"%d",SystemTime.wYear);
+				}
+				if( m_pShareData->m_Common.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
+					wsprintf(szTime,"%s%02d",szTime,SystemTime.wMonth);
+				}
+				if( m_pShareData->m_Common.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
+					wsprintf(szTime,"%s%02d",szTime,SystemTime.wDay);
+				}
+				if( m_pShareData->m_Common.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
+					wsprintf(szTime,"%s%02d",szTime,SystemTime.wHour);
+				}
+				if( m_pShareData->m_Common.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
+					wsprintf(szTime,"%s%02d",szTime,SystemTime.wMinute);
+				}
+				if( m_pShareData->m_Common.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
+					wsprintf(szTime,"%s%02d",szTime,SystemTime.wSecond);
+				}
+				wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
+			}
+			break;
+	// 2001/06/12 End
+
+		case 3: //	?xx : xx = 00~99, ?は任意の文字
+		case 6: //	Jun.  5, 2005 genta 3の拡張子を残す版
+			//	Aug. 15, 2000 genta
+			//	ここでは作成するバックアップファイル名のみ生成する．
+			//	ファイル名のRotationは確認ダイアログの後で行う．
+			{
+				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
+				char* ptr;
+				if( m_pShareData->m_Common.GetBackupType() == 3 ){
+					ptr = szExt;
+				}
+				else {
+					ptr = szExt + strlen( szExt );
+				}
+				*ptr   = '.';
+				*++ptr = m_pShareData->m_Common.GetBackupExtChar();
+				*++ptr = '0';
+				*++ptr = '0';
+				*++ptr = '\0';
+			}
+			wsprintf( pBase, "%s%s", szFname, szExt );
+			break;
+		}
+
+	}else{ // 詳細設定使用する
+		char szFormat[1024];
+
+		switch( m_pShareData->m_Common.GetBackupTypeAdv() ){
+		case 4:	//	ファイルの日付，時刻
+			{
+				FILETIME	LastWriteTime,
+							LocalTime;
+				SYSTEMTIME	SystemTime;
+
+				// 2005.10.20 ryoji FindFirstFileを使うように変更
+				if( ! GetLastWriteTimestamp( target_file, LastWriteTime )){
+					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
+				}
+				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
+				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
+
+				GetDateTimeFormat( szFormat, sizeof(szFormat), m_pShareData->m_Common.m_szBackUpPathAdvanced , SystemTime );
+			}
+			break;
+		case 2:	//	現在の日付，時刻
+		default:
+			{
+				time_t	ltime;
+				struct	tm *today;
+
+				time( &ltime );				/* システム時刻を得ます */
+				today = localtime( &ltime );/* 現地時間に変換する */
+
+				/* YYYYMMDD時分秒 形式に変換 */
+				strftime( szFormat, sizeof( szFormat ) - 1, m_pShareData->m_Common.m_szBackUpPathAdvanced , today );
+			}
+			break;
+		}
+
+		{
+			// make keys
+			// $0-$9に対応するフォルダ名を切り出し
+			char keybuff[1024];
+			strcpy( keybuff, szDir );
+			CutLastYenFromDirectoryPath( keybuff );
+
+			char *folders[10];
+			{
+				for( int idx=0; idx<10; ++idx ){
+					folders[idx] = 0;
+				}
+				folders[0] = szFname;
+
+				for( int idx=1; idx<10; ++idx ){
+					char *cp;
+					cp =sjis_strrchr2((unsigned char*)keybuff, '\\', '\\');
+					if( cp != NULL ){
+						folders[idx] = cp+1;
+						*cp = '\0';
+					}
+					else{
+						break;
+					}
+				}
+			}
+			{
+				// $0-$9を置換
+				//strcpy( szNewPath, "" );
+				char *q= szFormat;
+				char *q2 = szFormat;
+				while( *q ){
+					if( *q=='$' ){
+						++q;
+						if( isdigit(*q) ){
+							q[-1] = '\0';
+							strcat( szNewPath, q2 );
+							if( folders[*q-'0'] != 0 ){
+								strcat( szNewPath, folders[*q-'0'] );
+							}
+							q2 = q+1;
+						}
+					}
+					++q;
+				}
+				strcat( szNewPath, q2 );
+			}
+		}
+		{
+			char temp[1024];
+			char *cp;
+			while( strchr( szNewPath, '*' ) ){
+				strcpy( temp, szNewPath );
+				cp = strchr( temp, '*' );
+				*cp = 0;
+				wsprintf( szNewPath, "%s%s%s", temp, szExt+1, cp+1 );
+			}
+			//	??はバックアップ連番にしたいところではあるが，
+			//	連番処理は末尾の2桁にしか対応していないので
+			//	使用できない文字?を_に変換してお茶を濁す
+			while(( cp = strchr( szNewPath, '?' ) ) != NULL){
+				*cp = '_';
+//				strcpy( temp, szNewPath );
+//				cp = strchr( temp, '?' );
+//				*cp = 0;
+//				wsprintf( szNewPath, "%s00%s", temp, cp+2 );
+			}
+		}
+	}
+	return true;
+}
 
 /* ファイルの排他ロック */
 void CEditDoc::DoFileLock( void )

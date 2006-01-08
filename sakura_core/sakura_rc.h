@@ -562,6 +562,12 @@
 #define IDC_COMBO9                      1502
 #define IDC_CHECK_ANYWHERE              1502
 #define IDC_COMBO10                     1503
+#define IDC_EDIT_BACKUPFILE             1504
+#define IDC_LABEL_BACKUP_HELP           1505
+#define IDC_CHECK_BACKUP_ADVANCED       1506
+#define IDC_RADIO_BACKUP_DATETYPE1A     1507
+#define IDC_RADIO_BACKUP_DATETYPE2A     1508
+#define IDC_LABEL_BACKUP_HELP2          1509
 #define IDD_PROP_TOOLBAR                1539
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -596,9 +602,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        244
+#define _APS_NEXT_RESOURCE_VALUE        245
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1504
+#define _APS_NEXT_CONTROL_VALUE         1510
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif
