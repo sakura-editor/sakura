@@ -1617,6 +1617,7 @@ int CDocLineMgr::PrevOrNextWord(
 /*! 単語検索
 
 	@date 2003.05.22 かろと 行頭処理など見直し
+	@date 2005.11.26 かろと \rや.が\r\nにヒットしないように
 */
 /* 見つからない場合は０を返す */
 int CDocLineMgr::SearchWord(
@@ -1640,14 +1641,14 @@ int CDocLineMgr::SearchWord(
 	CDocLine*	pDocLine;
 	int			nLinePos;
 	int			nIdxPos;
+	int			nIdxPosOld;
 	const char*	pLine;
 	int			nLineLen;
 	char*		pszRes;
 	int			nHitTo;
 	int			nHitPos;
 	int			nHitPosOld;
-	int			nHitLenOld;
-	int			nRetVal;
+	int			nRetVal = 0;
 	int*		pnKey_CharCharsArr;
 	//	Jun. 10, 2003 Moca
 	//	lstrlenを毎回呼ばずにnPatternLenを使うようにする
@@ -1671,117 +1672,89 @@ int CDocLineMgr::SearchWord(
 
 	/* 1==正規表現 */
 	if( bRegularExp ){
+		nLinePos = nLineNum;		// 検索行＝検索開始行
+		pDocLine = GetLineInfo( nLinePos );
 		/* 0==前方検索 1==後方検索 */
 		if( 0 == bPrevOrNext ){
 			//
 			// 前方(↑)検索(正規表現)
 			//
-			nLinePos = nLineNum;		// 検索行
 			nHitTo = nIdx;				// 検索開始位置
 			nIdxPos = 0;
-			pDocLine = GetLineInfo( nLinePos );
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-				nHitPos		= -1;
-				//	Jun. 27, 2001 genta	正規表現ライブラリの違いを吸収するため変数追加
-				int nCurLen = 0;	//	マッチした長さ
+				nHitPos		= -1;	// -1:この行でマッチ位置なし
 				while( 1 ){
 					nHitPosOld = nHitPos;
-					//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-					nHitLenOld = nCurLen;
-					// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-					if( nIdxPos <= pDocLine->GetLengthWithoutEOL() 
-						&& pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
+					nIdxPosOld = nIdxPos;
+					if (	nIdxPos <= pDocLine->GetLengthWithoutEOL() 
+						&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
 						// 検索にマッチした！
 						nHitPos = pRegexp->GetIndex();
 						nIdxPos = pRegexp->GetLastIndex();
-						nCurLen = nIdxPos - nHitPos;
-					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 						// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
-						if (nCurLen == 0) {
+						if (nIdxPos == nHitPos) {
 							// 2005-09-02 D.S.Koba GetSizeOfChar
 							nIdxPos += (CMemory::GetSizeOfChar( pLine, nLineLen, nIdxPos ) == 2 ? 2 : 1);
 						}
-						//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 						if( nHitPos >= nHitTo ){
 							// マッチしたのは、カーソル位置以降だった
-							// すなわち、この行で１つ前にマッチした位置が、検索したかった位置
-							if( -1 != nHitPosOld ){
-								// この行で１つ前にマッチした位置が存在するので、それを返す
-								*pnLineNum = nLinePos;				/* マッチ行 */
-								*pnIdxFrom = nHitPosOld;			/* マッチ位置from */
-								*pnIdxTo = *pnIdxFrom + nHitLenOld;	/* マッチ位置to */
-								nRetVal = 1;
-								goto end_of_func;
-							}else{
-								// この行で１つ前にマッチした位置が存在しないので、前の行を検索へ
-								break;		// 前の行を検索へ
-							}
-						}
-					// From Here 2001.12.03 hor /^/ or /$/ で無限ループするのを回避
-						if( -1 != nHitPosOld && nHitPosOld==nHitPos ){
-							*pnLineNum = nLinePos;				/* マッチ行 */
-							*pnIdxFrom = nHitPosOld;			/* マッチ位置from */
-							*pnIdxTo = *pnIdxFrom + nHitLenOld;	/* マッチ位置to */
-							nRetVal = 1;
-							goto end_of_func;
-						}
-					// To Here 2001.12.03 hor
-					}else{
-						if( -1 != nHitPosOld ){
-							*pnLineNum = nLinePos;				/* マッチ行 */
-							*pnIdxFrom = nHitPosOld;			/* マッチ位置from */
-							*pnIdxTo = *pnIdxFrom + nHitLenOld;	/* マッチ位置to */
-							nRetVal = 1;
-							goto end_of_func;
-						}else{
+							// すでにマッチした位置があれば、それを返し、なければ前の行へ
 							break;
 						}
+					} else {
+						// マッチしなかった
+						// すでにマッチした位置があれば、それを返し、なければ前の行へ
+						break;
 					}
 				}
-				nLinePos--;
-				pDocLine = pDocLine->m_pPrev;
-				nIdxPos = 0;
-				if( NULL != pDocLine ){
-//					nHitTo = lstrlen( pDocLine->m_pLine->GetPtr() );
-//					nHitTo = pDocLine->m_pLine->GetLength();
-					nHitTo = pDocLine->m_pLine->GetLength() + 1;		// 前の行のNULL文字(\0)にもマッチさせるために+1 2003.05.16 かろと 
+				if ( -1 != nHitPosOld ) {
+					// この行でマッチした位置が存在するので、この行で検索終了
+					*pnIdxFrom = nHitPosOld;			/* マッチ位置from */
+					*pnIdxTo = nIdxPosOld;				/* マッチ位置to */
+					break;
+				} else {
+					// この行でマッチした位置が存在しないので、前の行を検索へ
+					nLinePos--;
+					pDocLine = pDocLine->m_pPrev;
+					nIdxPos = 0;
+					if( NULL != pDocLine ){
+//						nHitTo = pDocLine->m_pLine->GetLength();
+						nHitTo = pDocLine->m_pLine->GetLength() + 1;		// 前の行のNULL文字(\0)にもマッチさせるために+1 2003.05.16 かろと 
+					}
 				}
 			}
-			nRetVal = 0;
-			goto end_of_func;
-		}else{
+		} else {
 			//
 			// 後方検索(正規表現)
 			//
 			nIdxPos = nIdx;
-			nLinePos = nLineNum;
-			pDocLine = GetLineInfo( nLinePos );
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
-				//	From Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-				if( nIdxPos <= pDocLine->GetLengthWithoutEOL() && // 2002.02.08 hor $の次検索で次の行に移動できない問題を回避
-					pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
-// 行頭文字を検索すると endp[0]-pLineは０になるので、この条件では行頭文字の検索ができない不具合となる
-//					if(nIdxPos<(pRegexpData->endp[0]-pLine)){	// 2002.02.08 hor EOF直前の文字が何度もマッチしてしまう問題を回避
-// EOF行の直前にマッチする問題は、GetMatchInfo側で対応 2003.05.03 by かろと
-					*pnLineNum = nLinePos;								/* マッチ行 */
+				if(		nIdxPos <= pDocLine->GetLengthWithoutEOL() 
+					&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
+					// マッチした
 					*pnIdxFrom = pRegexp->GetIndex();					/* マッチ位置from */
 					*pnIdxTo = pRegexp->GetLastIndex();					/* マッチ位置to */
-				//  To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-				//	To Here Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-					nRetVal = 1;
-					goto end_of_func;
+					break;
 				}
-// 同上 2003.05.03
-//				}
 				++nLinePos;
 				pDocLine = pDocLine->m_pNext;
 				nIdxPos = 0;
 			}
-			nRetVal = 0;
-			goto end_of_func;
+		}
+		//
+		// 正規表現検索の後処理
+		if ( pDocLine != NULL ) {
+			// マッチした行がある
+			*pnLineNum = nLinePos;				/* マッチ行 */
+			nRetVal = 1;
+			// レイアウト行では改行文字内の位置を表現できないため、マッチ開始位置を補正
+			if (*pnIdxFrom > pDocLine->GetLengthWithoutEOL()) {
+				// \r\n改行時に\nにマッチすると置換できない不具合となるため
+				// 改行文字内でマッチした場合、改行文字の始めからマッチしたことにする
+				*pnIdxFrom = pDocLine->GetLengthWithoutEOL();
+			}
 		}
 	}else
 	/* 1==単語のみ検索 */
@@ -1886,6 +1859,7 @@ int CDocLineMgr::SearchWord(
 				nHitPos = -1;
 				while( 1 ){
 					nHitPosOld = nHitPos;
+					nIdxPosOld = nIdxPos;
 					pszRes = SearchString(
 						(const unsigned char *)pLine,
 						nLineLen,
@@ -1903,7 +1877,7 @@ int CDocLineMgr::SearchWord(
 							if( -1 != nHitPosOld ){
 								*pnLineNum = nLinePos;							/* マッチ行 */
 								*pnIdxFrom = nHitPosOld;						/* マッチ位置from */
-								*pnIdxTo = *pnIdxFrom + nPatternLen;			/* マッチ位置to */
+ 								*pnIdxTo = nIdxPosOld;							/* マッチ位置to */
 								nRetVal = 1;
 								goto end_of_func;
 							}else{
@@ -1914,7 +1888,7 @@ int CDocLineMgr::SearchWord(
 						if( -1 != nHitPosOld ){
 							*pnLineNum = nLinePos;							/* マッチ行 */
 							*pnIdxFrom = nHitPosOld;						/* マッチ位置from */
-							*pnIdxTo = *pnIdxFrom + nPatternLen;			/* マッチ位置to */
+							*pnIdxTo = nIdxPosOld;							/* マッチ位置to */
 							nRetVal = 1;
 							goto end_of_func;
 						}else{

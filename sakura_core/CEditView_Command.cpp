@@ -7419,62 +7419,32 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
-		int save_nSelectColmFrom;
-		int save_nSelectLineFrom;
-		int save_nSelectColmTo  ;
-		int save_nSelectLineTo  ;
-
 		// From Here 2001.12.03 hor
-		int colTmp, linTmp;
-		if(nReplaceTarget==1){	//挿入位置へ移動
-			save_nSelectColmFrom = m_nSelectColmFrom;
-			save_nSelectLineFrom = m_nSelectLineFrom;
-			save_nSelectColmTo   = m_nSelectColmTo;
-			save_nSelectLineTo   = m_nSelectLineTo;
-			colTmp = m_nSelectColmTo - m_nSelectColmFrom;
-			linTmp = m_nSelectLineTo - m_nSelectLineFrom;
-			m_nSelectColmFrom=-1;
-			m_nSelectLineFrom=-1;
-			m_nSelectColmTo	 =-1;
-			m_nSelectLineTo	 =-1;
-		}else
-		if(nReplaceTarget==2){	//追加位置へ移動
-			if(bRegularExp){
-				//検索後の文字が改行やったら次の行の先頭へ移動
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-					m_nSelectColmTo,
-					m_nSelectLineTo,
-					&colTmp,
-					&linTmp
-				);
-				int			nLineLen;
-				const CLayout* pcLayout;
-				const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
-				if( NULL != pLine &&
-					//	Jun. 18, 2005 かろと
-					//	改行の前にもう1文字あっても次の行に送られてしまっていた
-					colTmp > nLineLen - (pcLayout->m_cEol.GetLen()) ){
-					m_nSelectColmTo=0;
-					m_nSelectLineTo++;
-				}
+		int colTmp = 0;
+		int linTmp = 0;
+		if ( !bRegularExp ) {
+			// 正規表現時は 後方参照($&)で実現するので、正規表現は除外
+			if(nReplaceTarget==1){	//挿入位置へ移動
+				colTmp = m_nSelectColmTo - m_nSelectColmFrom;
+				linTmp = m_nSelectLineTo - m_nSelectLineFrom;
+				m_nSelectColmFrom=-1;
+				m_nSelectLineFrom=-1;
+				m_nSelectColmTo	 =-1;
+				m_nSelectLineTo	 =-1;
+			}else
+			if(nReplaceTarget==2){	//追加位置へ移動
+				// 正規表現を除外したので、「検索後の文字が改行やったら次の行の先頭へ移動」の処理を削除
+				m_nCaretPosX = m_nSelectColmTo;
+				m_nCaretPosY = m_nSelectLineTo;
+				m_nSelectColmFrom=-1;
+				m_nSelectLineFrom=-1;
+				m_nSelectColmTo	 =-1;
+				m_nSelectLineTo	 =-1;
 			}
-			save_nSelectColmFrom = m_nSelectColmFrom;
-			save_nSelectLineFrom = m_nSelectLineFrom;
-			save_nSelectColmTo   = m_nSelectColmTo;
-			save_nSelectLineTo   = m_nSelectLineTo;
-			m_nCaretPosX = m_nSelectColmTo;
-			m_nCaretPosY = m_nSelectLineTo;
-			m_nSelectColmFrom=-1;
-			m_nSelectLineFrom=-1;
-			m_nSelectColmTo	 =-1;
-			m_nSelectLineTo	 =-1;
-		}
-		else
-		{
-			save_nSelectColmFrom = m_nSelectColmFrom;
-			save_nSelectLineFrom = m_nSelectLineFrom;
-			save_nSelectColmTo   = m_nSelectColmTo;
-			save_nSelectLineTo   = m_nSelectLineTo;
+			else
+			{
+				// 位置指定ないので、何もしない
+			}
 		}
 		/* コマンドコードによる処理振り分け */
 		/* テキストを貼り付け */
@@ -7493,14 +7463,27 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			}
 
 			// 物理行、物理行長、物理行での検索マッチ位置
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(save_nSelectLineFrom);
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(m_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nIdx = LineColmnToIndex( pcLayout, save_nSelectColmFrom ) + pcLayout->m_nOffset;
+			int nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom ) + pcLayout->m_nOffset;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			// 正規表現で選択始点・終点への挿入を記述
 			//	Jun. 6, 2005 かろと
 			// →これでは「検索の後ろの文字が改行だったら次の行頭へ移動」が処理できない
-			cRegexp.Compile( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey.GetPtr(), nFlag);
+			// → Oct. 30, 「検索の後ろの文字が改行だったら・・」の処理をやめる（誰もしらないみたいなので）
+			// Nov. 9, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更(再)
+			CMemory cMemMatchStr = CMemory(_T("$&"), _tcslen(_T("$&")));
+			CMemory cMemRepKey2;
+			if (nReplaceTarget == 1) {	//選択始点へ挿入
+				cMemRepKey2 = cMemRepKey;
+				cMemRepKey2 += cMemMatchStr;
+			} else if (nReplaceTarget == 2) { // 選択終点へ挿入
+				cMemRepKey2 = cMemMatchStr;
+				cMemRepKey2 += cMemRepKey;
+			} else {
+				cMemRepKey2 = cMemRepKey;
+			}
+			cRegexp.Compile( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
 				// From Here Jun. 6, 2005 かろと
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
@@ -7516,8 +7499,6 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineFrom;
-					m_nSelectColmFrom = save_nSelectColmFrom;
 					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
 				}
 				// 行末から検索文字列末尾までの文字数
@@ -7574,16 +7555,12 @@ void CEditView::Command_REPLACE_ALL( void )
 	int			linDif = 0;		//置換後の行調整
 	int			colOld = 0;		//検索後の選択範囲次桁
 	int			linOld = 0;		//検索後の行
+	int			linOldLen = 0;	//検査後の行の長さ
 	int			lineCnt;		//置換前の行数
 	int			linPrev = 0;	//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
 	int			linNext;		//次回の検索行(矩形)
 	int			colTmp,linTmp,colLast,linLast;
 	int			bBeginBoxSelect; // 矩形選択？
-	const char*	pLine;
-	int			nLineLen;
-	const CLayout* pcLayout;
-	int			bLineOffset=FALSE;
-	int			bLineChecked=FALSE;
 
 	//2002.02.10 hor
 	int nPaste			= m_pcEditDoc->m_cDlgReplace.m_nPaste;
@@ -7755,14 +7732,21 @@ void CEditView::Command_REPLACE_ALL( void )
 		}
 
 		const CMemory	cMemRepKey( szREPLACEKEY, _tcslen(szREPLACEKEY) );
-		// Jun. 6, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更
-		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey.GetPtr(), nFlag);
+		// Nov. 9, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更(再)
+		CMemory cMemRepKey2;
+		CMemory cMemMatchStr = CMemory(_T("$&"), _tcslen(_T("$&")));
+		if (nReplaceTarget == 1 ) {	//選択始点へ挿入
+			cMemRepKey2 = cMemRepKey;
+			cMemRepKey2 += cMemMatchStr;
+		} else if (nReplaceTarget == 2) { // 選択終点へ挿入
+			cMemRepKey2 = cMemMatchStr;
+			cMemRepKey2 += cMemRepKey;
+		} else {
+			cMemRepKey2 = cMemRepKey;
+		}
+		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
 	}
 
-	int save_nSelectColmFrom;
-	int save_nSelectLineFrom;
-	int save_nSelectColmTo  ;
-	int save_nSelectLineTo  ;
 	/* テキストが選択されているか */
 	while( IsTextSelected() )
 	{
@@ -7845,6 +7829,8 @@ void CEditView::Command_REPLACE_ALL( void )
 									&colOld,
 									&linOld
 									);
+				// 置換前の行の長さ(改行は１文字と数える)を保存しておいて、置換前後で行位置が変わった場合に使用
+				linOldLen = rDocLineMgr.GetLineInfo(linOld)->GetLengthWithoutEOL() + 1;
 				// 行は範囲内？
 				if ((linToP+linDif == linOld && colToP+colDif < colOld) ||
 					(linToP+linDif <  linOld)) {
@@ -7853,69 +7839,31 @@ void CEditView::Command_REPLACE_ALL( void )
 			}
 		}
 
-		if( nReplaceTarget == 1 )	//挿入位置セット
-		{
-			save_nSelectColmFrom = m_nSelectColmFrom;
-			save_nSelectLineFrom = m_nSelectLineFrom;
-			save_nSelectColmTo   = m_nSelectColmTo;
-			save_nSelectLineTo   = m_nSelectLineTo;
-			colTmp = m_nSelectColmTo - m_nSelectColmFrom;
-			linTmp = m_nSelectLineTo - m_nSelectLineFrom;
-			m_nSelectColmFrom=-1;
-			m_nSelectLineFrom=-1;
-			m_nSelectColmTo	 =-1;
-			m_nSelectLineTo	 =-1;
-		}
-		else if( nReplaceTarget == 2 )	//追加位置セット
-		{
-			if( !bLineChecked )
+		colTmp = 0;
+		linTmp = 0;
+		if ( !bRegularExp ) {
+			// 正規表現時は 後方参照($&)で実現するので、正規表現は除外
+			if( nReplaceTarget == 1 )	//挿入位置セット
 			{
-				//検索後の位置が改行やったら次の行の先頭にオフセット
-				rLayoutMgr.CaretPos_Log2Phys(
-										m_nSelectColmTo,
-										m_nSelectLineTo,
-										&colTmp,
-										&linTmp
-										);
-				if( bRegularExp )
-				{
-					pLine = rLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
-					if( NULL != pLine &&
-						//	Jun. 18, 2005 かろと
-						//	改行の前にもう1文字あっても次の行に送られてしまっていた
-						colTmp > nLineLen - (pcLayout->m_cEol.GetLen()) ){
-						bLineOffset=TRUE;
-					}
-				}
-
-				bLineChecked=TRUE;
+				colTmp = m_nSelectColmTo - m_nSelectColmFrom;
+				linTmp = m_nSelectLineTo - m_nSelectLineFrom;
+                m_nSelectColmFrom=-1;
+                m_nSelectLineFrom=-1;
+                m_nSelectColmTo	 =-1;
+                m_nSelectLineTo	 =-1;
 			}
-
-			if ( bLineOffset )
+			else if( nReplaceTarget == 2 )	//追加位置セット
 			{
-				m_nCaretPosX = 0;
-				m_nCaretPosY ++;
-				m_nCaretPosX_PHY = 0;
-				m_nCaretPosY_PHY ++;
-			}
-			else
-			{
+				// 正規表現を除外したので、「検索後の文字が改行やったら次の行の先頭へ移動」の処理を削除
 				m_nCaretPosX = m_nSelectColmTo;
 				m_nCaretPosY = m_nSelectLineTo;
+			    m_nSelectColmFrom=-1;
+			    m_nSelectLineFrom=-1;
+			    m_nSelectColmTo	 =-1;
+			    m_nSelectLineTo	 =-1;
+		    } else {
+				// 位置指定ないので、何もしない
 			}
-			save_nSelectColmFrom = m_nSelectColmFrom;
-			save_nSelectLineFrom = m_nSelectLineFrom;
-			save_nSelectColmTo   = m_nSelectColmTo;
-			save_nSelectLineTo   = m_nSelectLineTo;
-			m_nSelectColmFrom=-1;
-			m_nSelectLineFrom=-1;
-			m_nSelectColmTo	 =-1;
-			m_nSelectLineTo	 =-1;
-		} else {
-			save_nSelectColmFrom = m_nSelectColmFrom;
-			save_nSelectLineFrom = m_nSelectLineFrom;
-			save_nSelectColmTo   = m_nSelectColmTo;
-			save_nSelectLineTo   = m_nSelectLineTo;
 		}
 
 		/* コマンドコードによる処理振り分け */
@@ -7942,9 +7890,9 @@ void CEditView::Command_REPLACE_ALL( void )
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
 		{
 			// 物理行、物理行長、物理行での検索マッチ位置
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(save_nSelectLineFrom);
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(m_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nIdx = LineColmnToIndex( pcLayout, save_nSelectColmFrom ) + pcLayout->m_nOffset;
+			int nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom ) + pcLayout->m_nOffset;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
 				// From Here Jun. 6, 2005 かろと
@@ -7961,8 +7909,6 @@ void CEditView::Command_REPLACE_ALL( void )
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					m_nSelectLineFrom = m_nSelectLineTo = save_nSelectLineFrom;
-					m_nSelectColmFrom = save_nSelectColmFrom;
 					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
 				}
 				// 行末から検索文字列末尾までの文字数
@@ -8020,12 +7966,27 @@ void CEditView::Command_REPLACE_ALL( void )
 			}
 			else
 			{
+				// 置換前の検索文字列の最終位置は colOld, linOld
+				// 置換後のカーソル位置
 				colTmp = m_nCaretPosX_PHY;
 				linTmp = m_nCaretPosY_PHY;
-				linDif += rDocLineMgr.GetLineCount() - lineCnt;
+				int linDif_thistime = rDocLineMgr.GetLineCount() - lineCnt;	// 今回置換での行数変化
+				linDif += linDif_thistime;
 				if( linToP + linDif == linTmp)
 				{
+					// 最終行で置換した時、又は、置換の結果、選択エリア最終行まで到達した時
+					// 最終行なので、置換前後の文字数の増減で桁位置を調整する
 					colDif += colTmp - colOld;
+					// 但し、以下の場合は置換前後で行が異なってしまうので、行の長さで補正する必要がある
+					// １）最終行直前で行連結が起こり、行が減っている場合（行連結なので、桁位置は置換後のカーソル桁位置分増加する）
+					// 　　colTmp-colOldだと、\r\n → "" 置換で行連結した場合に、桁位置が負になり失敗する（負とは前行の後ろの方になることなので補正する）
+					// 　　今回置換での行数の変化(linDif_thistime)で、最終行が行連結されたかどうかを見ることにする
+					// ２）改行を置換した（linTmp!=linOld）場合、改行を置換すると置換後の桁位置が次行の桁位置になっているため
+					//     colTmp-colOldだと、負の数となり、\r\n → \n や \n → "abc" などで桁位置がずれる
+					//     これも前行の長さで調整する必要がある
+					if (linDif_thistime < 0 || linTmp != linOld) {
+						colDif += linOldLen;
+					}
 				}
 			}
 		}
