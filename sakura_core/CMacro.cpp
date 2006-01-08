@@ -777,9 +777,12 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	@date 2003.02.21 鬼
 	@date 2003.06.01 Moca 関数追加
 	@date 2005.08.05 maru,zenryaku 関数追加
+	@date 2005.11.29 FILE VariantChangeType対応
 */
 bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result)
 {
+	Variant varCopy;	// VT_BYREFだと困るのでコピー用
+
 	//2003-02-21 鬼
 	switch(ID)
 	{
@@ -810,12 +813,12 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		// 2003.02.24 Moca
 		{
 			if(ArgSize != 1) return false;
-			if(Arguments[0].vt != VT_BSTR) return false;
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			//void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);
 			//pszSourceを展開して、pszBufferにコピー
 			char *Source;
 			int SourceLength;
-			Wrap(&Arguments[0].bstrVal)->Get(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
 			char Buffer[2048];
 			View->m_pcEditDoc->ExpandParameter(Source, Buffer, 2047);
 			delete[] Source;
@@ -827,14 +830,14 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		//	2003.06.01 Moca マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if( Arguments[0].vt != VT_I4 ) return false;
-			if( -1 < Arguments[0].lVal ){
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if( -1 < varCopy.Data.lVal ){
 				const char *Buffer;
 				int nLength, nLine;
-				if( 0 == Arguments[0].lVal ){
+				if( 0 == varCopy.Data.lVal ){
 					nLine = View->m_nCaretPosY_PHY;
 				}else{
-					nLine = Arguments[0].lVal - 1;
+					nLine = varCopy.Data.lVal - 1;
 				}
 				Buffer = View->m_pcEditDoc->m_cDocLineMgr.GetLineStr( nLine, &nLength );
 				if( Buffer != NULL ){
@@ -853,8 +856,8 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		//	2003.06.01 Moca マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if( Arguments[0].vt != VT_I4 ) return false;
-			if( 0 == Arguments[0].lVal ){
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if( 0 == varCopy.Data.lVal ){
 				int nLineCount;
 				nLineCount = View->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 				Wrap( &Result )->Receive( nLineCount );
@@ -867,10 +870,10 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		//	2004.03.16 zenryaku マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if( Arguments[0].vt != VT_I4 ) return false;
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 			View->m_pcEditDoc->ChangeLayoutParam( false, 
-				Arguments[0].iVal, View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+				varCopy.Data.iVal, View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
 		}
 		return true;
 	case F_ISTEXTSELECTED:
