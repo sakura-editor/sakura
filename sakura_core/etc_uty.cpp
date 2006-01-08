@@ -1359,13 +1359,18 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 /*!
 	ローカルドライブの判定
 
-	@param pszDrive [in] ドライブ名を含むパス名
+	@param[in] pszDrive ドライブ名を含むパス名
 	
 	@retval true ローカルドライブ
 	@retval false リムーバブルドライブ．ネットワークドライブ．
 	
-	@author aroka
-	@date 2005.11.12 新規作成
+	@author MIK
+	@date 2001.03.29 MIK 新規作成
+	@date 2001.12.23 YAZAKI MRUの別クラス化に伴う関数化
+	@date 2002.01.28 genta 戻り値の型をBOOLからboolに変更．
+	@date 2005.11.12 aroka 文字判定部変更
+	@date 2006.01.08 genta CMRU::IsRemovableDriveとCEditDoc::IsLocalDriveが
+		実質的に同じものだった
 */
 bool IsLocalDrive( const char* pszDrive )
 {
