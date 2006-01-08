@@ -134,6 +134,9 @@ bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop);
 //	Oct. 22, 2005 genta
 bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime );
 
+// 20051121 aroka
+bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime );
+
 // novice 2004/10/10
 int getCtrlKeyState(void);
 
@@ -166,6 +169,9 @@ inline bool _IS_REL_PATH(const char* path)
 	}
 	return ret;
 }
+
+// 2005.11.26 aroka
+bool IsLocalDrive( const char* pszDrive );
 
 #endif /* _ETC_UTY_H_ */
 

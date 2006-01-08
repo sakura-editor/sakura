@@ -8,8 +8,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, jepro, genta, MIK
+	Copyright (C) 2001, jepro, genta, asa-o, MIK, YAZAKI, hor
+	Copyright (C) 2002, genta, ai, Moca, MIK, YAZAKI, hor, KK
+	Copyright (C) 2003, Moca, aroka, MIK, genta, wmlhq, sui
+	Copyright (C) 2004, Moca, novice, genta, isearch, MIK
+	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -165,9 +169,13 @@ struct ARRHEAD {
 
 	Version 61:
 	改行で行末の空白を削除するオプション(タイプ別設定) 2005/10/11 ryoji
+
+	Version 62:
+	バックアップフォルダ 2005.11.07 aroka
+	
 */
 
-const unsigned int uShareDataVersion = 61;
+const unsigned int uShareDataVersion = 62;
 
 /*
 ||	Singleton風
@@ -386,7 +394,9 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
 		m_pShareData->m_Common.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
 		m_pShareData->m_Common.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
-		m_pShareData->m_Common.m_bBackUpDustBox = FALSE;	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		m_pShareData->m_Common.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		m_pShareData->m_Common.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+		m_pShareData->m_Common.m_szBackUpPathAdvanced[0] = '\0';	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
 		m_pShareData->m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
 
@@ -645,7 +655,7 @@ void CShareData::SetKeyNameArrVal(
 
 
 /* KEYDATA配列にデータをセット */
-void CShareData::SetKeyNameArrVal(
+/*void CShareData::SetKeyNameArrVal(  // 20050818 aroka 未使用なので削除
 	DLLSHAREDATA*	pShareData,
 	int				nIdx,
 	short			nKeyCode,
@@ -656,6 +666,7 @@ void CShareData::SetKeyNameArrVal(
 	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
 	return;
  }
+*/
 
 
 

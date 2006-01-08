@@ -8,6 +8,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000, genta
+	Copyright (C) 2001, genta, MIK, hor
+	Copyright (C) 2002, genta, Moca, YAZAKI
+	Copyright (C) 2003, genta, ryoji, zenryaku, naoh
+	Copyright (C) 2004, Moca, novice, genta
+	Copyright (C) 2005, Moca, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,27 +23,31 @@
 #define _CEDITDOC_H_
 
 
-#include <windows.h>
-#include "CDocLineMgr.h"
-#include "CLayoutMgr.h"
-#include "COpeBuf.h"
+#include "global.h"
+#include "CAutoSave.h"
 #include "CDlgFind.h"
-#include "CDlgReplace.h"
-#include "CShareData.h"
-#include "CEditView.h"
-#include "CSplitterWnd.h"
-#include "CDlgOpenFile.h"
+#include "CDlgFuncList.h"
 #include "CDlgGrep.h"
 #include "CDlgJump.h"
+#include "CDlgOpenFile.h"
+#include "CDlgReplace.h"
+#include "CDocLineMgr.h"
+#include "CEditView.h"
+#include "CEol.h"
+#include "CFuncLookup.h"
+#include "CHokanMgr.h"
+#include "CLayoutMgr.h"
+#include "COpeBuf.h"
 #include "CPropCommon.h"
 #include "CPropTypes.h"
-#include "CDlgFuncList.h"
-#include "CHokanMgr.h"
-#include "CAutoSave.h"
-#include "CFuncLookup.h"
+#include "CShareData.h"
+#include "CSplitterWnd.h"
+//#include <windows.h>
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
+struct FileInfo; // 20050705 aroka
+class CFuncInfoArr;
 struct oneRule; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 
 //! 文書関連情報の管理
@@ -337,6 +347,9 @@ protected:
 	//	Aug. 14, 2005 genta
 	int* SavePhysPosOfAllView(void);
 	void RestorePhysPosOfAllView( int* posary );
+
+	// 2005.11.21 aroka
+	bool FormatBackUpPath( char* szNewPath, const char* target_file );	/* バックアップパスの作成 */
 };
 
 

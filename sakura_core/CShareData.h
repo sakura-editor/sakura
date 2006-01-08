@@ -8,8 +8,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, jepro, genta
+	Copyright (C) 2001, jepro, genta, asa-o, MIK, YAZAKI, hor
+	Copyright (C) 2002, genta, aroka, Moca, MIK, YAZAKI, hor
+	Copyright (C) 2003, Moca, aroka, MIK, genta
+	Copyright (C) 2004, Moca, novice, genta
+	Copyright (C) 2005, MIK, genta, ryoji, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -363,6 +367,10 @@ struct Common {
 	int		GetAutoBackupInterval(void) const { return m_nBackUpType_Opt3; }
 	void	SetAutoBackupInterval(int i){ m_nBackUpType_Opt3 = i; }
 
+	//	Backup詳細設定のアクセス関数
+	int		GetBackupTypeAdv(void) const { return m_nBackUpType_Opt4; }
+	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
+
 	//	Oct. 27, 2000 genta
 	//	カーソル位置を復元するかどうか
 	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition != 0; }
@@ -430,6 +438,8 @@ struct Common {
 	int 				m_nBackUpType_Opt5;				/* バックアップファイル名：オプション5 */
 	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
 	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+	BOOL				m_bBackUpPathAdvanced;				/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+	char				m_szBackUpPathAdvanced[_MAX_PATH];	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 	int					m_nFileShareMode;				/* ファイルの排他制御モード */
 	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
@@ -706,7 +716,7 @@ public:
 		DLLSHAREDATA*, int, short, char*,
 		short, short, short, short,
 		short, short, short, short );									/* KEYDATA配列にデータをセット */
-	static void SetKeyNameArrVal( DLLSHAREDATA*, int, short, char* );	/* KEYDATA配列にデータをセット */
+//	static void SetKeyNameArrVal( DLLSHAREDATA*, int, short, char* );	/* KEYDATA配列にデータをセット */ // 20050818 aroka 未使用なので削除
 	static LONG MY_RegSetVal(
 		HKEY hKey,				// handle of key to set value for
 		LPCTSTR lpValueName,	// address of value to set

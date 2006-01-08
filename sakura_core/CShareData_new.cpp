@@ -9,11 +9,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, genta
-	Copyright (C) 2001, Stonee, jepro, mik, asa-o, YAZAKI
-	Copyright (C) 2002, YAZAKI, hor, aroka, MIK
-	Copyright (C) 2003, MIK
-	Copyright (C) 2004, MIK
+	Copyright (C) 2000, genta, jepro
+	Copyright (C) 2001, genta, Stonee, jepro, mik, asa-o, YAZAKI, hor
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, genta, Moca
+	Copyright (C) 2003, MIK, genta, Moca
+	Copyright (C) 2004, MIK, Moca, D.S.Koba, genta
+	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -438,7 +439,11 @@ void CShareData::ShareData_IO_Common( const bool bRead, CProfile& cProfile )
 	cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt1"		, common.m_nBackUpType_Opt1 );
 	cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt2"		, common.m_nBackUpType_Opt2 );
 	cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt3"		, common.m_nBackUpType_Opt3 );
+	cProfile.IOProfileData( bRead, pszSecName, "bBackUpType2_Opt4"		, common.m_nBackUpType_Opt4 );
 	cProfile.IOProfileData( bRead, pszSecName, "bBackUpDustBox"			, common.m_bBackUpDustBox );	//@@@ 2001.12.11 add MIK
+	cProfile.IOProfileData( bRead, pszSecName, "bBackUpPathAdvanced"	, common.m_bBackUpPathAdvanced );	/* 20051107 aroka */
+	cProfile.IOProfileData( bRead, pszSecName, "szBackUpPathAdvanced"	,
+		common.m_szBackUpPathAdvanced, sizeof( common.m_szBackUpPathAdvanced ));	/* 20051107 aroka */
 	cProfile.IOProfileData( bRead, pszSecName, "nFileShareMode"			, common.m_nFileShareMode );
 	cProfile.IOProfileData( bRead, pszSecName, "szExtHelp",
 		common.m_szExtHelp, sizeof( common.m_szExtHelp ));
@@ -936,6 +941,10 @@ void CShareData::ShareData_IO_Types( const bool bRead, CProfile& cProfile )
 					&types.m_bWordWrap,
 					&types.m_nCurrentPrintSetting
 				 );
+			}
+			// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
+			if( types.m_nMaxLineSize < MINLINESIZE ){
+				types.m_nMaxLineSize = MINLINESIZE;
 			}
 		}else{
 			wsprintf( szKeyData, pszForm,

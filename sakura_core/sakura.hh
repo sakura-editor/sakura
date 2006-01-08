@@ -309,6 +309,7 @@
 #define HIDC_CHECK_BACKUP_DUSTBOX				10019 //バックアップをごみ箱に放り込む	//@@@ 2002.01.03
 #define HIDC_EDIT_BACKUPFOLDER					10040 //保存フォルダ名
 #define HIDC_EDIT_BACKUP_3						10041 //世代数
+#define HIDC_EDIT_BACKUPFILE					10042 //保存ファイル名
 #define HIDC_RADIO_BACKUP_TYPE1					10060 //バックアップの種類（拡張子）
 //#define HIDC_RADIO_BACKUP_TYPE3					10061 //バックアップの種類（日付・時刻）
 //#define HIDC_RADIO_BACKUP_TYPE2					10062 //バックアップの種類（連番）
