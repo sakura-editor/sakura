@@ -206,7 +206,7 @@ void CMRU::Add( FileInfo* pFileInfo )
 	_splitpath( pFileInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
 
 	//	リムーバブルなら非登録？
-	if (/* 「リムーバブルなら登録しない」オン && */ IsRemovableDrive( szDrive ) ){
+	if (/* 「リムーバブルなら登録しない」オン && */ ! IsLocalDrive( szDrive ) ){
 		return;
 	}
 
@@ -219,6 +219,9 @@ void CMRU::Add( FileInfo* pFileInfo )
 
 	m_cRecent.AppendItem( (char*)pFileInfo );
 }
+
+#if 0
+// etc_uty.cppのIsLocalDrive()へ統合
 
 /*!
 	リムーバブルドライブの判定
@@ -253,5 +256,5 @@ bool CMRU::IsRemovableDrive( const char* pszDrive )
 	}
 	return false;
 }
-
+#endif
 /*EOF*/
