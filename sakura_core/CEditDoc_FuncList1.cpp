@@ -79,13 +79,30 @@ static bool C_IsOperator( char* szStr, int nLen	)
 
 /*!
 	改行直前を \ でエスケープしているかどうか判定
+
+	@date 2005.12.06 じゅうじ 最後の1文字しか見ないと2バイトコードの後半がバックスラッシュの場合に誤認する
 */
 static bool C_IsLineEsc(const char *s, int len)
 {
-	if( len > 3 && s[len - 3] == '\\' && s[len - 2] == '\r' && s[len - 1] == '\n' ) {return(true);}
-	if( len > 3 && s[len - 3] == '\\' && s[len - 2] == '\n' && s[len - 1] == '\r' ) {return(true);}
-	if( len > 2 && s[len - 2] == '\\' && s[len - 1] == '\n' ) {return(true);}
-	if( len > 2 && s[len - 2] == '\\' && s[len - 1] == '\r' ) {return(true);}
+	int 	nchar;
+
+	if ( len > 0 && s[len-1] == '\n' ) len--;
+	if ( len > 0 && s[len-1] == '\r' ) len--;
+	if ( len > 0 && s[len-1] == '\n' ) len--;
+
+	if ( len > 0 && s[len-1] == '\\' ) {
+		if ( len == 1 ) {
+			return(true);
+		} else if ( len == 2 ) {
+			if ( CMemory::GetSizeOfChar( s, 2 , 0 ) == 1 )
+				return(true);
+		} else {				/* 残り３バイト以上	*/
+			if ( CMemory::GetSizeOfChar( s, len , len-2 ) == 1 )
+				return(true);
+			if ( CMemory::GetSizeOfChar( s, len , len-3 ) == 2 )
+				return(true);
+		}
+	}
 	return(false);
 }
 
@@ -356,7 +373,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 		//	From Here Aug. 10, 2004 genta
 		//	プリプロセス処理
 		//	コメント中でなければプリプロセッサ指令を先に判定させる
-		if( 8 != nMode ){
+		if( 8 != nMode && 10 != nMode ){	/* chg 2005/12/6 じゅうじ 次の行が空白でもよい	*/
 			i = cCppPMng.ScanLine( pLine, nLineLen );
 		}
 		else {
@@ -374,6 +391,32 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 				i += (nCharChars - 1);
 				continue;
 			}
+/* del start 2005/12/6 じゅうじ	*/
+			/* エスケープシーケンスは常に取り除く */
+			/* シングルクォーテーション文字列読み込み中 */
+			/* ダブルクォーテーション文字列読み込み中 */
+			// いずれもコメント処理の後へ移動
+/* del end 2005/12/6 じゅうじ	*/
+			/* コメント読み込み中 */
+			if( 8 == nMode ){
+				if( i < nLineLen - 1 && '*' == pLine[i] &&  '/' == pLine[i + 1] ){
+					++i;
+					nMode = 0;
+					continue;
+				}else{
+				}
+			}else
+			/* ラインコメント読み込み中 */
+			// 2003/06/24 zenryaku
+			if( 10 == nMode)
+			{
+				if(!C_IsLineEsc(pLine, nLineLen)){
+					nMode = 0;
+				}
+				i = nLineLen;
+				continue;
+			}else
+/* add start 2005/12/6 じゅうじ	*/
 			/* エスケープシーケンスは常に取り除く */
 			if( '\\' == pLine[i] ){
 				++i;
@@ -394,25 +437,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 				}else{
 				}
 			}else
-			/* コメント読み込み中 */
-			if( 8 == nMode ){
-				if( i < nLineLen - 1 && '*' == pLine[i] &&  '/' == pLine[i + 1] ){
-					++i;
-					nMode = 0;
-					continue;
-				}else{
-				}
-			}else
-			/* ラインコメント読み込み中 */
-			// 2003/06/24 zenryaku
-			if( 10 == nMode)
-			{
-				if(!C_IsLineEsc(pLine, nLineLen)){
-					nMode = 0;
-				}
-				i = nLineLen;
-				continue;
-			}else
+/* add end 2005/12/6 じゅうじ	*/
 			/* 単語読み込み中 */
 			if( 1 == nMode ){
 				if( C_IsWordChar( pLine[i] ) ){
