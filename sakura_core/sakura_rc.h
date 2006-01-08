@@ -370,6 +370,7 @@
 #define IDC_RADIO_DIFF_DST2             1327
 #define IDC_EDIT_TAG_MAKE_CMDLINE       1327
 #define IDC_EDIT_WX                     1327
+#define IDC_EDIT_VERTLINE               1327
 #define IDC_COMBO_m_szCommand           1328
 #define IDC_EDIT_WY                     1328
 #define IDC_CHECK_GETSTDOUT             1329

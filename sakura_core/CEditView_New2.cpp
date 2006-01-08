@@ -684,6 +684,8 @@ void CEditView::DispRuler( HDC hdc )
 		int			nROP_Old;
 		COLORREF	colTextOld;
 		int			nToX;
+		const Types&	typeData = m_pcEditDoc->GetDocumentAttribute();
+		const int	nMaxLineSize = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 
 		/* LOGFONT‚Ì‰Šú‰» */
 		memset( &lf, 0, sizeof(LOGFONT) );
@@ -705,7 +707,7 @@ void CEditView::DispRuler( HDC hdc )
 		hFontOld = (HFONT)::SelectObject( hdc, hFont );
 		::SetBkMode( hdc, TRANSPARENT );
 
-		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
+		hBrush = ::CreateSolidBrush( typeData.m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
 		rc.left = 0;
 		rc.top = 0;
 		rc.right = m_nViewAlignLeft + m_nViewCx;
@@ -716,14 +718,15 @@ void CEditView::DispRuler( HDC hdc )
 		nX = m_nViewAlignLeft;
 		nY = m_nViewAlignTop - m_nTopYohaku - 2;
 
-		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+		colTextOld = ::SetTextColor( hdc, typeData.m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 
 
 		//nToX = m_nViewAlignLeft + m_nViewCx;
 		//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-		nToX = m_nViewAlignLeft + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		//	2005.11.10 Moca 1dot‘«‚è‚È‚¢
+		nToX = m_nViewAlignLeft + (nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth + typeData.m_nColmSpace ) + 1;
 		if( nToX > m_nViewAlignLeft + m_nViewCx ){
 			nToX = m_nViewAlignLeft + m_nViewCx;
 		}
@@ -733,10 +736,10 @@ void CEditView::DispRuler( HDC hdc )
 
 		for( i = m_nViewLeftCol;
 			i <= m_nViewLeftCol + m_nViewColNum + 1
-		 && i <= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+		 && i <= nMaxLineSize;
 			i++
 		){
-			if( i == m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+			if( i == nMaxLineSize ){
 				::MoveToEx( hdc, nX, nY, NULL );
 				::LineTo( hdc, nX, 0/*nY - 8*/ );
 			}
@@ -753,7 +756,7 @@ void CEditView::DispRuler( HDC hdc )
 				::MoveToEx( hdc, nX, nY, NULL );
 				::LineTo( hdc, nX, nY - 3 );
 			}
-			nX += ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+			nX += ( m_nCharWidth + typeData.m_nColmSpace );
 		}
 		::SetTextColor( hdc, colTextOld );
 		::SelectObject( hdc, hPenOld );
@@ -764,8 +767,8 @@ void CEditView::DispRuler( HDC hdc )
 		 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
 		){
 			//	Aug. 18, 2000 ‚ ‚¨
-			rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
-			rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+			rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + typeData.m_nColmSpace ) + 1;
+			rc.right = rc.left + m_nCharWidth + typeData.m_nColmSpace - 1;
 			rc.top = 0;
 			rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 

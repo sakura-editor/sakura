@@ -851,6 +851,8 @@ void ReplaceData_CEditView(
 	void DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, int bBold, COLORREF pColor );
 	//	EOF•`‰æŠÖ”	//	2004.05.29 genta
 	int  DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, UINT fuOptions, const ColorInfo& EofColInfo );
+	//	w’èŒ…cü•`‰æŠÖ”	// 2005.11.08 Moca
+	void DispVerticalLines( HDC );
 
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//Œ»İs‚ğ—š—ğ‚É’Ç‰Á‚·‚é

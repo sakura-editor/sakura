@@ -311,45 +311,46 @@ SAKURA_CORE_API enum enumColorIndexType {
 	COLORIDX_CTRLCODE	= 8,	/* コントロールコード */
 	COLORIDX_CRLF		= 9,	/* 改行記号 */
 	COLORIDX_WRAP		= 10,	/* 折り返し記号 */
-	COLORIDX_EOF		= 11,	/* EOF記号 */
-	COLORIDX_DIGIT		= 12,	/* 半角数値 */	//@@@ 2001.02.17 by MIK	//色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
-	COLORIDX_SEARCH		= 13,	/* 検索文字列 */
-	COLORIDX_KEYWORD1	= 14,	/* 強調キーワード1 */ // 2002/03/13 novice
-	COLORIDX_KEYWORD2	= 15,	/* 強調キーワード2 */ // 2002/03/13 novice	//MIK ADDED
-	COLORIDX_KEYWORD3   = 16,	/* 強調キーワード3 */ // 2005.01.13 MIK 3-10 added
-	COLORIDX_KEYWORD4   = 17,	/* 強調キーワード4 */
-	COLORIDX_KEYWORD5   = 18,	/* 強調キーワード5 */
-	COLORIDX_KEYWORD6   = 19,	/* 強調キーワード6 */
-	COLORIDX_KEYWORD7   = 20,	/* 強調キーワード7 */
-	COLORIDX_KEYWORD8   = 21,	/* 強調キーワード8 */
-	COLORIDX_KEYWORD9   = 22,	/* 強調キーワード9 */
-	COLORIDX_KEYWORD10  = 23,	/* 強調キーワード10 */
-	COLORIDX_COMMENT	= 24,	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
-	COLORIDX_SSTRING	= 25,	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
-	COLORIDX_WSTRING	= 26,	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
-	COLORIDX_URL		= 27,	/* URL */								//Dec. 4, 2000 shifted by MIK
-	COLORIDX_REGEX1		= 28,	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX2		= 29,	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX3		= 30,	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX4		= 31,	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX5		= 32,	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX6		= 33,	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX7		= 34,	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX8		= 35,	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX9		= 36,	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX10	= 37,	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
-	COLORIDX_DIFF_APPEND = 38,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
-	COLORIDX_DIFF_CHANGE = 39,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
-	COLORIDX_DIFF_DELETE = 40,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
-	COLORIDX_BRACKET_PAIR = 41,	/* 対括弧 */	// 02/09/18 ai Add
-	COLORIDX_MARK		= 42,	/* ブックマーク */	// 02/10/16 ai Add
+	COLORIDX_VERTLINE	= 11,	/* 指定桁縦線 */	// 2005.11.08 Moca
+	COLORIDX_EOF		= 12,	/* EOF記号 */
+	COLORIDX_DIGIT		= 13,	/* 半角数値 */	//@@@ 2001.02.17 by MIK	//色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
+	COLORIDX_SEARCH		= 14,	/* 検索文字列 */
+	COLORIDX_KEYWORD1	= 15,	/* 強調キーワード1 */ // 2002/03/13 novice
+	COLORIDX_KEYWORD2	= 16,	/* 強調キーワード2 */ // 2002/03/13 novice	//MIK ADDED
+	COLORIDX_KEYWORD3   = 17,	/* 強調キーワード3 */ // 2005.01.13 MIK 3-10 added
+	COLORIDX_KEYWORD4   = 18,	/* 強調キーワード4 */
+	COLORIDX_KEYWORD5   = 19,	/* 強調キーワード5 */
+	COLORIDX_KEYWORD6   = 20,	/* 強調キーワード6 */
+	COLORIDX_KEYWORD7   = 21,	/* 強調キーワード7 */
+	COLORIDX_KEYWORD8   = 22,	/* 強調キーワード8 */
+	COLORIDX_KEYWORD9   = 23,	/* 強調キーワード9 */
+	COLORIDX_KEYWORD10  = 24,	/* 強調キーワード10 */
+	COLORIDX_COMMENT	= 25,	/* 行コメント */						//Dec. 4, 2000 shifted by MIK
+	COLORIDX_SSTRING	= 26,	/* シングルクォーテーション文字列 */	//Dec. 4, 2000 shifted by MIK
+	COLORIDX_WSTRING	= 27,	/* ダブルクォーテーション文字列 */		//Dec. 4, 2000 shifted by MIK
+	COLORIDX_URL		= 28,	/* URL */								//Dec. 4, 2000 shifted by MIK
+	COLORIDX_REGEX1		= 29,	/* 正規表現キーワード1 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX2		= 30,	/* 正規表現キーワード2 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX3		= 31,	/* 正規表現キーワード3 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX4		= 32,	/* 正規表現キーワード4 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX5		= 33,	/* 正規表現キーワード5 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX6		= 34,	/* 正規表現キーワード6 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX7		= 35,	/* 正規表現キーワード7 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX8		= 36,	/* 正規表現キーワード8 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX9		= 37,	/* 正規表現キーワード9 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX10	= 38,	/* 正規表現キーワード10 */  //@@@ 2001.11.17 add MIK
+	COLORIDX_DIFF_APPEND = 39,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_CHANGE = 40,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_DELETE = 41,	/* DIFF追加 */	//@@@ 2002.06.01 MIK
+	COLORIDX_BRACKET_PAIR = 42,	/* 対括弧 */	// 02/09/18 ai Add
+	COLORIDX_MARK		= 43,	/* ブックマーク */	// 02/10/16 ai Add
 
 	//カラーの最後
-	COLORIDX_LAST		= 43,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/10/16 ai Mod 34→35 */
+	COLORIDX_LAST		= 44,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/10/16 ai Mod 34→35 */
 
 	//カラー表示制御用
-	COLORIDX_BLOCK1		= 44,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */
-	COLORIDX_BLOCK2		= 45	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
+	COLORIDX_BLOCK1		= 45,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */
+	COLORIDX_BLOCK2		= 46	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
 
 	//1000-1099 : カラー表示制御用(正規表現キーワード)
 };

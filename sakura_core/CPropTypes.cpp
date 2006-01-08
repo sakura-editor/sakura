@@ -12,7 +12,7 @@
 	Copyright (C) 2001, genta, MIK, hor, Stonee, asa-o
 	Copyright (C) 2002, YAZAKI, aroka, MIK
 	Copyright (C) 2003, MIK
-	Copyright (C) 2005, MIK, genta
+	Copyright (C) 2005, MIK, genta, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -345,6 +345,12 @@ CPropTypes::CPropTypes()
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = 0;
 
+	// 2005.11.30 Moca カスタム色を設定・保持
+	int i;
+	for( i = 0; i < sizeof(m_dwCustColors)/sizeof(m_dwCustColors[0]); i++ ){
+		m_dwCustColors[i] = RGB( 255, 255, 255 );
+	}
+	
 	/* ヘルプファイルのフルパスを返す */
 	::GetHelpFilePath( m_szHelpFile );
 
@@ -381,19 +387,14 @@ void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )
 
 
 /* 色選択ダイアログ */
-BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor )
+BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
-	int				i;
 	CHOOSECOLOR		cc;
-	DWORD			dwCustColors[16];
-	for( i = 0; i < 16; i++ ){
-		dwCustColors[i] = (DWORD)RGB( 255, 255, 255 );
-	}
 	cc.lStructSize = sizeof( cc );
 	cc.hwndOwner = hwndParent;
 	cc.hInstance = NULL;
 	cc.rgbResult = *pColor;
-	cc.lpCustColors = (LPDWORD) dwCustColors;
+	cc.lpCustColors = pCustColors;
 	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
 	cc.lCustData = NULL;
 	cc.lpfnHook = NULL;
@@ -574,6 +575,9 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 
 	m_nMaxLineSize_org = m_Types.m_nMaxLineSize;
 
+	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
+	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT;
+	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_colBACK;
 
 	nIdx = 0;
 	memset( &psp[nIdx], 0, sizeof( PROPSHEETPAGE ) );
@@ -1970,7 +1974,9 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		/* 前景色見本 矩形 */
 		if( rcItem.right - 27 <= xPos && xPos <= rcItem.right - 27 + 12 ){
 			/* 色選択ダイアログ */
-			if( CPropTypes::SelectColor( hwnd, &pColorInfo->m_colTEXT ) ){
+			// 2005.11.30 Moca カスタム色保持
+			DWORD* pColors = (DWORD*)::GetProp( hwnd, "ptrCustomColors" );
+			if( CPropTypes::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 			}
@@ -1978,10 +1984,18 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		/* 前景色見本 矩形 */
 		if( rcItem.right - 13 <= xPos && xPos <= rcItem.right - 13 + 12 && nIndex != COLORIDX_UNDERLINE ){	/* カーソル行アンダーライン */
 			/* 色選択ダイアログ */
-			if( CPropTypes::SelectColor( hwnd, &pColorInfo->m_colBACK ) ){
+			// 2005.11.30 Moca カスタム色保持
+			DWORD* pColors = (DWORD*)::GetProp( hwnd, "ptrCustomColors" );
+			if( CPropTypes::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 			}
+		}
+		break;
+	// 2005.11.30 Moca カスタム色保持
+	case WM_DESTROY:
+		if( ::GetProp( hwnd, "ptrCustomColors" ) ){
+			::RemoveProp( hwnd, "ptrCustomColors" );
 		}
 		break;
 	}
@@ -2030,7 +2044,9 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 		/* 色リストをフック */
 		// Modified by KEITA for WIN64 2003.9.6
 		m_wpColorListProc = (WNDPROC) ::SetWindowLongPtr( hwndListColor, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc );
-
+		// 2005.11.30 Moca カスタム色を保持
+		::SetProp( hwndListColor, "ptrCustomColors", m_dwCustColors );
+		
 		return TRUE;
 
 	case WM_COMMAND:
@@ -2154,7 +2170,7 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 
 			case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
 				/* 色選択ダイアログ */
-				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT ) ){
+				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT, m_dwCustColors ) ){
 					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 				}
 				/* 現在選択されている色タイプ */
@@ -2162,7 +2178,7 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 				return TRUE;
 			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
 				/* 色選択ダイアログ */
-				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK ) ){
+				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK, m_dwCustColors ) ){
 					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 				}
 				/* 現在選択されている色タイプ */
@@ -2499,6 +2515,41 @@ void CPropTypes::SetData_p3_new( HWND hwndDlg )
 	EnableTypesPropInput( hwndDlg );
 	//	To Here Sept. 10, 2000
 
+
+	// from here 2005.11.30 Moca 指定位置縦線の設定
+	TCHAR szVertLine[MAX_VERTLINES * 15] = "";
+	int offset = 0;
+	for( i = 0; i < MAX_VERTLINES && m_Types.m_nVertLineIdx[i] != 0; i++ ){
+		int nXCol = m_Types.m_nVertLineIdx[i];
+		int nXColEnd = nXCol;
+		int nXColAdd = 1;
+		if( nXCol < 0 ){
+			if( i < MAX_VERTLINES - 2 ){
+				nXCol = -nXCol;
+				nXColEnd = m_Types.m_nVertLineIdx[++i];
+				nXColAdd = m_Types.m_nVertLineIdx[++i];
+				if( nXColEnd < nXCol || nXColAdd <= 0 ){
+					continue;
+				}
+				if(offset){
+					szVertLine[offset] = ',';
+					szVertLine[offset+1] = '\0';
+					offset += 1;
+				}
+				offset += wsprintf( &szVertLine[offset], "%d(%d,%d)", nXColAdd, nXCol, nXColEnd );
+			}
+		}else{
+			if(offset){
+				szVertLine[offset] = ',';
+				szVertLine[offset+1] = '\0';
+				offset += 1;
+			}
+			offset += wsprintf( &szVertLine[offset], "%d", nXCol );
+		}
+	}
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_VERTLINE ), EM_LIMITTEXT, (WPARAM)(MAX_VERTLINES * 15), 0 );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_VERTLINE, szVertLine );
+	// to here 2005.11.30 Moca 指定位置縦線の設定
 	return;
 }
 
@@ -2598,6 +2649,65 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar, 2 );
 	m_Types.m_cLineTermChar = szLineTermChar[0];
 
+
+	// from here 2005.11.30 Moca 指定位置縦線の設定
+	TCHAR szVertLine[MAX_VERTLINES * 15];
+	::GetDlgItemText( hwndDlg, IDC_EDIT_VERTLINE, szVertLine, MAX_VERTLINES * 15 );
+
+	int offset = 0;
+	i = 0;
+	while( i < MAX_VERTLINES ){
+		int value = 0;
+		for(; '0' <= szVertLine[offset] && szVertLine[offset] <= '9';  offset++){
+			value = szVertLine[offset] - '0' + value * 10;
+		}
+		if( value <= 0 ){
+			break;
+		}
+		if( szVertLine[offset] == '(' ){
+			offset++;
+			int valueBegin = 0;
+			int valueEnd = 0;
+			for(; '0' <= szVertLine[offset] && szVertLine[offset] <= '9';  offset++){
+				valueBegin = szVertLine[offset] - '0' + valueBegin * 10;
+			}
+			if( valueBegin <= 0 ){
+				break;
+			}
+			if( szVertLine[offset] == ',' ){
+				offset++;
+			}else if( szVertLine[offset] != ')' ){
+				break;
+			}
+			for(; '0' <= szVertLine[offset] && szVertLine[offset] <= '9';  offset++){
+				valueEnd = szVertLine[offset] - '0' + valueEnd * 10;
+			}
+			if( valueEnd <= 0 ){
+				valueEnd = MAXLINESIZE;
+			}
+			if( szVertLine[offset] != ')' ){
+				break;
+			}
+			offset++;
+			if(i + 2 < MAX_VERTLINES){
+				m_Types.m_nVertLineIdx[i++] = -valueBegin;
+				m_Types.m_nVertLineIdx[i++] = valueEnd;
+				m_Types.m_nVertLineIdx[i++] = value;
+			}else{
+				break;
+			}
+		}else{
+			m_Types.m_nVertLineIdx[i++] = value;
+		}
+		if( szVertLine[offset] != ',' ){
+			break;
+		}
+		offset++;
+	}
+	if( i < MAX_VERTLINES ){
+		m_Types.m_nVertLineIdx[i] = 0;
+	}
+	// to here 2005.11.30 Moca 指定位置縦線の設定
 	return TRUE;
 }
 
