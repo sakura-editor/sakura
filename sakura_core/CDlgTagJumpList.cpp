@@ -42,7 +42,7 @@
 #include "CDialog.h"
 #include "CDlgTagJumpList.h"
 #include "CSortedTagJumpList.h"
-#include <Shlwapi.h>
+//#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "CRecent.h"
 #include "etc_uty.h"
 #include "debug.h"
