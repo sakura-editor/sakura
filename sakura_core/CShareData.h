@@ -79,6 +79,7 @@ enum maxdata{
 	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
 	MAX_TAGJUMP_KEYWORD			= 30,	//タグジャンプ用キーワード最大登録数2005.04.04 MIK
 	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) タイプ別設定毎のキーワードセット数
+	MAX_VERTLINES = 10,	// 2005.11.08 Moca 指定桁縦線
 };
 
 
@@ -238,6 +239,7 @@ struct Types {
 	int					m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
 	char				m_cLineTermChar;				/*!< 行番号区切り文字 */
+	int					m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
 
 	BOOL				m_bWordWrap;					/*!< 英文ワードラップをする */
 	BOOL				m_bKinsokuHead;					/*!< 行頭禁則をする */	//@@@ 2002.04.08 MIK
@@ -501,6 +503,7 @@ struct Common {
 	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
 	int					m_nRulerType;				/* ルーラーのタイプ */
 	int					m_nLineNumRightSpace;		// 行番号の右のスペース Sep. 18, 2002 genta
+	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
 
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
 	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */

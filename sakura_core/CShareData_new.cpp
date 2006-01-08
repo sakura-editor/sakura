@@ -558,6 +558,7 @@ void CShareData::ShareData_IO_Common( const bool bRead, CProfile& cProfile )
 	cProfile.IOProfileData( bRead, pszSecName, "nRulerType"					, common.m_nRulerType );/* ルーラーのタイプ */
 	//	Sep. 18, 2002 genta 追加
 	cProfile.IOProfileData( bRead, pszSecName, "nLineNumberRightSpace"		, common.m_nLineNumRightSpace );/* 行番号の右側の隙間 */
+	cProfile.IOProfileData( bRead, pszSecName, "nVertLineOffset"			, common.m_nVertLineOffset ); // 2005.11.10 Moca
 	cProfile.IOProfileData( bRead, pszSecName, "bCopyAndDisablSelection"	, common.m_bCopyAndDisablSelection );/* コピーしたら選択解除 */
 	cProfile.IOProfileData( bRead, pszSecName, "bHtmlHelpIsSingle"			, common.m_bHtmlHelpIsSingle );/* HtmlHelpビューアはひとつ */
 	cProfile.IOProfileData( bRead, pszSecName, "bCompareAndTileHorz"		, common.m_bCompareAndTileHorz );/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
@@ -1132,6 +1133,14 @@ void CShareData::ShareData_IO_Types( const bool bRead, CProfile& cProfile )
 		/* 色設定 I/O */
 		IO_ColorSet( &cProfile, bRead, pszSecName, types.m_ColorInfoArr  );
 
+		// 2005.11.08 Moca 指定桁縦線
+		for(j = 0; j < MAX_VERTLINES; j++ ){
+			wsprintf( szKeyName, "nVertLineIdx%d", j + 1 );
+			cProfile.IOProfileData( bRead, pszSecName, szKeyName, types.m_nVertLineIdx[j] );
+			if( types.m_nVertLineIdx[j] == 0 ){
+				break;
+			}
+		}
 
 //@@@ 2001.11.17 add start MIK
 		{	//正規表現キーワード

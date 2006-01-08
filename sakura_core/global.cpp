@@ -137,6 +137,7 @@ const char* const colorIDXKeyName[] =
 	"CTL",
 	"EOL",
 	"RAP",
+	"VER",  // 2005.11.08 Moca w’èŒ…cü
 	"EOF",
 	"NUM",	//@@@ 2001.02.17 by MIK ”¼Šp”’l‚Ì‹­’²
 	"FND",

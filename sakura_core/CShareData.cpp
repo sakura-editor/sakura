@@ -172,10 +172,13 @@ struct ARRHEAD {
 
 	Version 62:
 	バックアップフォルダ 2005.11.07 aroka
-	
+
+	Version 63:
+	指定桁縦線表示追加 2005.11.08 Moca
+
 */
 
-const unsigned int uShareDataVersion = 62;
+const unsigned int uShareDataVersion = 63;
 
 /*
 ||	Singleton風
@@ -503,6 +506,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nRulerType = 0;					/* ルーラーのタイプ */
 		//	Sep. 18, 2002 genta
 		m_pShareData->m_Common.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
+		m_pShareData->m_Common.m_nVertLineOffset = -1;				// 2005.11.10 Moca 指定桁縦線
 		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
@@ -4670,6 +4674,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		"コントロールコード",				TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 251, 240 ),
 		"改行記号",							TRUE , FALSE, FALSE, RGB( 0, 128, 255 )		, RGB( 255, 251, 240 ),
 		"折り返し記号",						TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 251, 240 ),
+		"指定桁縦線",						FALSE, FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2005.11.08 Moca
 		"EOF記号",							TRUE , FALSE, FALSE, RGB( 0, 255, 255 )		, RGB( 0, 0, 0 ),
 //#ifdef COMPILE_COLOR_DIGIT
 		"半角数値",							FALSE, FALSE, FALSE, RGB( 235, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
@@ -4748,6 +4753,11 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseRegexKeyword = FALSE;
 //		pShareData->m_Types[nIdx].m_nRegexKeyMagicNumber = 1;
 //@@@ 2001.11.17 add end MIK
+
+	// 2005.11.08 Moca 指定位置縦線の設定
+	for( i = 0; i < MAX_VERTLINES; i++ ){
+		pShareData->m_Types[nIdx].m_nVertLineIdx[i] = 0;
+	}
 
 	static char* pszTypeNameArr[] = {
 		"基本",
@@ -4833,6 +4843,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
 	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	
 
 //		nIdx = 0;
 	/* テキスト */
@@ -4891,6 +4902,13 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	strcpy( pShareData->m_Types[5].m_szIndentChars, "*" );			/* その他のインデント対象文字 */
 	pShareData->m_Types[5].m_nKeyWordSetIdx[0] = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
 	pShareData->m_Types[5].m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
+
+	// 2005.11.08 Moca 指定桁縦線
+	pShareData->m_Types[5].m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = TRUE;
+	pShareData->m_Types[5].m_nVertLineIdx[0] = 7;
+	pShareData->m_Types[5].m_nVertLineIdx[1] = 8;
+	pShareData->m_Types[5].m_nVertLineIdx[2] = 12;
+	pShareData->m_Types[5].m_nVertLineIdx[3] = 73;
 
 
 	/* Java */

@@ -200,7 +200,6 @@
 #define HIDC_COMBO_PLSQLBLOCKS          0x8076048c    // IDD_JUMP
 #define HIDC_COMBO_REGEX_COLOR          0x80db0580    // IDD_PROP_REGEX
 #define HIDC_COMBO_SET                  0x93f2049b    // IDD_PROP_COLOR
-#define HIDC_COMBO_SET2                 0x93f2049c    // IDD_PROP_COLOR
 #define HIDC_COMBO_SETTINGNAME          0x80ae045f    // IDD_PRINTSETTING
 #define HIDC_COMBO_SMARTINDENT          0x93ed0516    // IDD_PROPTYPESP1
 #define HIDC_COMBO_TEXT                 0x806d03fd    // IDD_FIND

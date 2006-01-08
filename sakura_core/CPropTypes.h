@@ -48,7 +48,7 @@ public:
 	INT_PTR DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );	/* p2 メッセージ処理 支援タブ */ // 2001/06/14 asa-o
 	INT_PTR DispatchEvent_p3( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	INT_PTR DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
-	static BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
+	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	/* 色選択ダイアログ */
 	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
 
 private:
@@ -67,6 +67,9 @@ private:
 	int				m_nCurrentColorType;		/* 現在選択されている色タイプ */
 	DLLSHAREDATA*	m_pShareData;
 	int		m_nSet[ MAX_KEYWORDSET_PER_TYPE ];	//	2005.01.13 MIK keyword set index
+
+	// フォントDialogカスタムパレット
+	DWORD			m_dwCustColors[16];
 
 protected:
 	/*

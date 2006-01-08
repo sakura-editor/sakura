@@ -266,18 +266,19 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	::SelectObject( hdc, hFontOld );
 
 
+	// 2005.11.08 Moca 
+	DispVerticalLines( hdc );
 
 	/* 折り返し位置の表示 */
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bDisp ){
-		nX = m_nViewAlignLeft + ( nWrapWidth - m_nViewLeftCol ) * nCharWidth;
-		//	2003.10.15 Moca Windows 95/98では座標を下位16bit表現しか見ないので
-		//	折り返し位置が右に行きすぎると変な位置に線が引かれてしまうのを防ぐ
-		if( nX < 0x10000 ){
+		int nXPos = m_nViewAlignLeft + ( nWrapWidth - m_nViewLeftCol ) * nCharWidth;
+		//	2005.11.08 Moca 作画条件変更
+		if( m_nViewAlignLeft < nXPos && nXPos < m_nViewCx + m_nViewAlignLeft ){
 			/* 折り返し記号の色のペンを作成 */
 			hPen = ::CreatePen( PS_SOLID, 0, TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_colTEXT );
 			hPenOld = (HPEN)::SelectObject( hdc, hPen );
-			::MoveToEx( hdc, nX, m_nViewAlignTop, NULL );
-			::LineTo( hdc, nX, m_nViewAlignTop + m_nViewCy );
+			::MoveToEx( hdc, nXPos, m_nViewAlignTop, NULL );
+			::LineTo( hdc, nXPos, m_nViewAlignTop + m_nViewCy );
 			::SelectObject( hdc, hPenOld );
 			::DeleteObject( hPen );
 		}
@@ -1820,5 +1821,64 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 	
 	return szEOFlen;
 }
+
+
+/*!	指定桁縦線の描画
+	@date 2005.11.08 Moca 新規作成
+*/
+void CEditView::DispVerticalLines( HDC hdc )
+{
+	const Types&	typeData = m_pcEditDoc->GetDocumentAttribute();
+	if( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp == FALSE ){
+		return;
+	}
+	const int nPosXRight = m_nViewCx + m_nViewAlignLeft;
+	const int nCharWidth = m_nCharWidth + typeData.m_nColmSpace;
+	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	const int nPosXOffset = m_pShareData->m_Common.m_nVertLineOffset + m_nViewAlignLeft;
+	HPEN hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_colTEXT );
+	HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
+	int k;
+	for( k = 0; k < MAX_VERTLINES && typeData.m_nVertLineIdx[k] != 0; k++ ){
+		// nXColは1開始。m_nViewLeftColは0開始なので注意。
+		int nXCol = typeData.m_nVertLineIdx[k];
+		int nXColEnd = nXCol;
+		int nXColAdd = 1;
+		// nXColがマイナスだと繰り返し。k+1を終了値、k+2をステップ幅として利用する
+		if( nXCol < 0 ){
+			if( k < MAX_VERTLINES - 2 ){
+				nXCol = -nXCol;
+				nXColEnd = typeData.m_nVertLineIdx[++k];
+				nXColAdd = typeData.m_nVertLineIdx[++k];
+				if( nXColEnd < nXCol || nXColAdd <= 0 ){
+					continue;
+				}
+				// 作画範囲の始めまでスキップ
+				if( nXCol < m_nViewLeftCol ){
+					nXCol = m_nViewLeftCol + nXColAdd - (m_nViewLeftCol - nXCol) % nXColAdd;
+				}
+			}else{
+				k += 2;
+				continue;
+			}
+		}
+		for(; nXCol <= nXColEnd; nXCol += nXColAdd ){
+			if( nWrapWidth < nXCol ){
+				break;
+			}
+			int nPosX = nPosXOffset + ( nXCol - 1 - m_nViewLeftCol ) * nCharWidth;
+			if( nPosXRight < nPosX ){
+				break;
+			}
+			if( m_nViewAlignLeft < nPosX ){
+				::MoveToEx( hdc, nPosX, m_nViewAlignTop, NULL );
+				::LineTo( hdc, nPosX, m_nViewAlignTop + m_nViewCy );
+			}
+		}
+	}
+	::SelectObject( hdc, hPenOld );
+	::DeleteObject( hPen );
+}
+
 
 /*[EOF]*/
