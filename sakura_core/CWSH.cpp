@@ -606,47 +606,29 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 		int ArgCount = Arguments->cArgs;
 		if(ArgCount > 4) ArgCount = 4;
 
-		char *StrArgs[4];
+		//	Nov. 29, 2005 FILE 引数を文字列で取得する
+		char *StrArgs[4] = {NULL, NULL, NULL, NULL}, *S = NULL;	// 初期化必須
+		Variant varCopy;										// VT_BYREFだと困るのでコピー用
+		int Len;
 		for(int I = 0; I < ArgCount; ++I)
 		{
-			char *S;
-			switch(Arguments->rgvarg[I].vt)
+			if(VariantChangeType(&varCopy.Data, &(Arguments->rgvarg[I]), 0, VT_BSTR) == S_OK)
 			{
-			case VT_INT:
-			{
-				S = new char[40]; //これだけあれば大丈夫かと
-				wsprintf(S, "%d", Arguments->rgvarg[I].intVal);
-				break;
+				Wrap(&varCopy.Data.bstrVal)->Get(&S, &Len);
 			}
-			case VT_UINT:
+			else
 			{
-				S = new char[40]; //これだけあれば大丈夫かと
-				wsprintf(S, "%u", Arguments->rgvarg[I].uintVal);
-				break;
-			}
-			case VT_I4:
-			{
-				S = new char[40]; //これだけあれば大丈夫かと
-				wsprintf(S, "%d", Arguments->rgvarg[I].lVal);
-				break;
-			}
-			case VT_BSTR:
-			{
-				int Len;
-				Wrap(&Arguments->rgvarg[I].bstrVal)->Get(&S, &Len);
-				break;
-			}
-			default:
 				S = new char[1];
 				S[0] = 0;
 			}
 			StrArgs[ArgCount - I - 1] = S;
 		}
-		
+
 		CMacro::HandleCommand(View, ID, const_cast<char const **>(StrArgs), ArgCount);
-		
+
+		//	Nov. 29, 2005 FILE 配列の破棄なので、[括弧]を追加
 		for(int J = 0; J < ArgCount; ++J)
-			delete StrArgs[J];
+			delete [] StrArgs[J];
 
 		return S_OK;
 	}
