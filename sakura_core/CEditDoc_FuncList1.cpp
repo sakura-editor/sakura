@@ -84,8 +84,6 @@ static bool C_IsOperator( char* szStr, int nLen	)
 */
 static bool C_IsLineEsc(const char *s, int len)
 {
-	int 	nchar;
-
 	if ( len > 0 && s[len-1] == '\n' ) len--;
 	if ( len > 0 && s[len-1] == '\r' ) len--;
 	if ( len > 0 && s[len-1] == '\n' ) len--;
