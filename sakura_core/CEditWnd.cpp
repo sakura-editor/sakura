@@ -2323,15 +2323,28 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
 // 20051022 aroka タイプ別設定値に戻すコマンド追加
 			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-			if( m_cEditDoc.m_cLayoutMgr.GetMaxLineSize() == m_cEditDoc.ActiveView().m_nViewColNum ){
-				pszLabel = "折り返さない(&W)";
-			}else
-			if( m_cEditDoc.m_cLayoutMgr.GetMaxLineSize() == m_cEditDoc.GetDocumentAttribute().m_nMaxLineSize ){
-				pszLabel = "現在のウィンドウ幅で折り返し(&W)";
-			}else{
-				pszLabel = "タイプ別設定の幅で折り返し(&W)";
+			//	Jan.  8, 2006 genta 共通関数化
+			{
+				int width;
+				CEditView::TOGGLE_WRAP_ACTION mode = m_cEditDoc.ActiveView().GetWrapMode( width );
+				if( mode == CEditView::TGWRAP_NONE ){
+					pszLabel = "幅の変更は出来ません(&W)";
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , pszLabel );
+				}
+				else {
+					if( mode == CEditView::TGWRAP_FULL ){
+						pszLabel = "折り返さない(&W)";
+					}
+					else if( mode == CEditView::TGWRAP_WINDOW ){
+						pszLabel = "現在のウィンドウ幅で折り返し(&W)";
+					}
+					else {	// TGWRAP_PROP
+						pszLabel = "タイプ別設定の幅で折り返し(&W)";
+					}
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );
+				}
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );	//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+			//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , "現在のウィンドウ幅で折り返し(&W)" );	//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			// 2003.06.08 Moca 追加
@@ -2498,12 +2511,11 @@ end_of_func_IsEnable:;
 	for (nPos = 0; nPos < cMenuItems; nPos++) {
 		id = ::GetMenuItemID(hMenu, nPos);
 		/* 機能が利用可能か調べる */
-		if( IsFuncEnable( &m_cEditDoc, m_pShareData, id ) ){
-			fuFlags = MF_BYCOMMAND | MF_ENABLED;
-		}else{
+		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
+		if( ! IsFuncEnable( &m_cEditDoc, m_pShareData, id ) ){
 			fuFlags = MF_BYCOMMAND | MF_GRAYED;
+			::EnableMenuItem(hMenu, id, fuFlags);
 		}
-		::EnableMenuItem(hMenu, id, fuFlags);
 
 		/* 機能がチェック状態か調べる */
 		if( IsFuncChecked( &m_cEditDoc, m_pShareData, id ) ){

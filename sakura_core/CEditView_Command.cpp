@@ -9150,8 +9150,85 @@ void CEditView::Command_LOADKEYMACRO( void )
 	return;
 }
 
+/*!	@brief 折り返しの動作を決定
 
+	トグルコマンド「現在のウィンドウ幅で折り返し」を行った場合の動作を決定する
+	
+	@retval TGWRAP_NONE No action
+	@retval TGWRAP_FULL 最大値
+	@retval TGWRAP_WINDOW ウィンドウ幅
+	@retval TGWRAP_PROP 設定値
 
+	@date 2006.01.08 genta メニュー表示で同一の判定を使うため，Command_WRAPWINDOWWIDTH()より分離．
+	@date 2006.01.08 genta 判定条件を見直し
+*/
+CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
+{
+	//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
+	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
+	// 20051022 aroka 現在のウィンドウ幅→最大値→文書タイプの初期値 をトグルにするコマンド
+	// ウィンドウ幅==文書タイプ||最大値==文書タイプ の場合があるため判定順序に注意する。
+	/*	Jan.  8, 2006 genta
+		じゅうじさんの要望により判定方法を再考．現在の幅に合わせるのを最優先に．
+	
+		基本動作： 設定値→ウィンドウ幅
+			→(ウィンドウ幅と合っていなければ)→ウィンドウ幅→上へ戻る
+			→(ウィンドウ幅と合っていたら)→最大値→設定値
+			ただし，最大値==設定値の場合には最大値→設定値の遷移が省略されて上に戻る
+			
+			ウィンドウ幅が極端に狭い場合にはウィンドウ幅に合わせることは出来ないが，
+			設定値と最大値のトグルは可能．
+
+		1)現在の折り返し幅==ウィンドウ幅 : 最大値
+		2)現在の折り返し幅!=ウィンドウ幅
+		3)→ウィンドウ幅が極端に狭い場合
+		4)　└→折り返し幅!=最大値 : 最大値
+		5)　└→折り返し幅==最大値
+		6)　　　└→最大値==設定値 : 変更不能
+		7)　　　└→最大値!=設定値 : 設定値
+		8)→ウィンドウ幅が十分にある
+		9)　└→折り返し幅==最大値
+		a)　　　└→最大値!=設定値 : 設定値
+	 	b)　　　└→最大値==設定値 : ウィンドウ幅
+		c)　└→ウィンドウ幅
+	*/
+	
+	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_nViewColNum ){
+		// a)
+		newWidth = MAXLINESIZE;
+		return TGWRAP_FULL;
+	}
+	else if( 10 > m_nViewColNum - 1 ){ // 2)
+		// 3)
+		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() != MAXLINESIZE ){
+			// 4)
+			newWidth = MAXLINESIZE;
+			return TGWRAP_FULL;
+		}
+		else if( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == MAXLINESIZE ){ // 5)
+			// 6)
+			return TGWRAP_NONE;
+		}
+		else { // 7)
+			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+			return TGWRAP_PROP;
+		}
+	}
+	else { // 8)
+		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == MAXLINESIZE && // 9)
+			m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize != MAXLINESIZE ){
+			// a)
+			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+			return TGWRAP_PROP;
+			
+		}
+		else {	// b) c)
+			//	現在のウィンドウ幅
+			newWidth = m_nViewColNum;
+			return TGWRAP_WINDOW;
+		}
+	}
+}
 
 /*! 現在のウィンドウ幅で折り返し
 
@@ -9165,27 +9242,11 @@ void CEditView::Command_LOADKEYMACRO( void )
 */
 void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 {
-	if( 10 > m_nViewColNum - 1 ){
-		::MessageBeep( MB_ICONHAND );
-		return;
-	}
-	
+	// Jan. 8, 2006 genta 判定処理をGetWrapMode()へ移動
 	int newWidth;
-	//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
-	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
-	// 20051022 aroka 現在のウィンドウ幅→最大値→文書タイプの初期値 をトグルにするコマンド
-	// ウィンドウ幅==文書タイプ||最大値==文書タイプ の場合があるため判定順序に注意する。
-	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
-		//	最大値に
-		newWidth = MAXLINESIZE;
-	}
-	else if(m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize){
-		//	現在のウィンドウ幅
-		newWidth = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	}
-	else { // 最大値
-		// 文書タイプ別設定の初期値に
-		newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+	
+	if( GetWrapMode( newWidth ) == TGWRAP_NONE ){
+		return;
 	}
 
 	m_pcEditDoc->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );

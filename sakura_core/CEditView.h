@@ -205,6 +205,15 @@ public:
 	//	Jan. 10, 2005 インクリメンタルサーチ
 	bool IsISearchEnabled(int nCommand) const;
 
+	//	Jan.  8, 2006 genta 折り返しトグル動作判定
+	enum TOGGLE_WRAP_ACTION {
+		TGWRAP_NONE = 0,
+		TGWRAP_FULL,
+		TGWRAP_WINDOW,
+		TGWRAP_PROP,
+	};
+	TOGGLE_WRAP_ACTION GetWrapMode( int& );
+
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
 	BOOL			m_bDrawSWITCH;
