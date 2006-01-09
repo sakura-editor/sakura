@@ -1717,8 +1717,12 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 	ListView_EnsureVisible( hwndList,
 		ListView_GetItemCount(hwndList) - 1,
 		FALSE );
+	
+	//	Jan.  9, 2006 genta 先頭から1つ目と2つ目の関数が
+	//	選択された場合にスクロールされなかった
+	int keypos = ListView_GetNextItem(hwndList, -1, LVNI_FOCUSED) - 2;
 	ListView_EnsureVisible( hwndList,
-		ListView_GetNextItem(hwndList, -1, LVNI_FOCUSED) - 2,
+		keypos >= 0 ? keypos : 0,
 		FALSE );
 }
 
