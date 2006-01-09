@@ -64,12 +64,14 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	);
 
 	/* 基底クラスメンバ呼び出し */
+	// 2006.01.09 ryoji 初期状態を不可視にする
+	//	実質的には見えないCTipWndが最前面にあると判断されてしまう場合があるため
 	CWnd::Create(
 		/* CreateWindowEx()用 */
 		WS_EX_TOOLWINDOW, // extended window style	// 2002/2/3 GAE
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
-		WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN | WS_BORDER, // window style
+		WS_POPUP | WS_CLIPCHILDREN | WS_BORDER, // window style
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
 		CW_USEDEFAULT, // window width
@@ -86,6 +88,16 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	return;
 }
 
+/*!	CreateWindowの後
+
+	CWnd::AfterCreateWindowでウィンドウを表示するようになっているのを
+	動かなくするための空関数
+
+	@date 2006.01.09 genta 新規作成
+*/
+void CTipWnd::AfterCreateWindow( void )
+{
+}
 
 /* Tipを表示 */
 void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
