@@ -66,10 +66,11 @@ protected:
 	void DrawTipText( HDC, HFONT, const char* );	/* ウィンドウのテキストを表示 */
 
 	/* 仮想関数 */
+	//	Jan. 9, 2006 genta
+	virtual void AfterCreateWindow( void );
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );/* 描画処理 */
-
 };
 
 
