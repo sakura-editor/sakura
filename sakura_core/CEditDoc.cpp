@@ -1682,12 +1682,14 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, const char* target_file )
 
 			char *folders[10];
 			{
-				for( int idx=0; idx<10; ++idx ){
+				//	Jan. 9, 2006 genta VC6‘Îô
+				int idx;
+				for( idx=0; idx<10; ++idx ){
 					folders[idx] = 0;
 				}
 				folders[0] = szFname;
 
-				for( int idx=1; idx<10; ++idx ){
+				for( idx=1; idx<10; ++idx ){
 					char *cp;
 					cp =sjis_strrchr2((unsigned char*)keybuff, '\\', '\\');
 					if( cp != NULL ){
