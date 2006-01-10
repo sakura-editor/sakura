@@ -205,10 +205,12 @@ void CMRU::Add( FileInfo* pFileInfo )
 
 	_splitpath( pFileInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
 
+	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
+	//	一応無効化する．
 	//	リムーバブルなら非登録？
-	if (/* 「リムーバブルなら登録しない」オン && */ ! IsLocalDrive( szDrive ) ){
-		return;
-	}
+	//if (/* 「リムーバブルなら登録しない」オン && */ ! IsLocalDrive( szDrive ) ){
+	//	return;
+	//}
 
 	//	szFolder作成
 	strcpy( szFolder, szDrive );
