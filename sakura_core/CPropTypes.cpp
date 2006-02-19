@@ -8,11 +8,11 @@
 */
 /*
 	Copyright (C) 1998-2002, Norio Nakatani
-	Copyright (C) 2000-2001, jepro
-	Copyright (C) 2001, genta, MIK, hor, Stonee, asa-o
-	Copyright (C) 2002, YAZAKI, aroka, MIK
-	Copyright (C) 2003, MIK
-	Copyright (C) 2005, MIK, genta, Moca
+	Copyright (C) 2000, jepro, genta
+	Copyright (C) 2001, jepro, genta, MIK, hor, Stonee, asa-o
+	Copyright (C) 2002, YAZAKI, aroka, MIK, genta, こおり, Moca
+	Copyright (C) 2003, MIK, zenryaku, Moca, naoh, KEITA, genta
+	Copyright (C) 2005, MIK, genta, Moca, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1633,6 +1633,8 @@ void CPropTypes::p3_Import_Colors( HWND hwndDlg )
 //	HWND			hwndCtrl;
 	CProfile		cProfile;
 
+	cProfile.SetReadingMode();
+
 	strcpy( szPath, "" );
 	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 
@@ -1772,7 +1774,7 @@ void CPropTypes::p3_Import_Colors( HWND hwndDlg )
 		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
 		strcpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
 	}
-	CShareData::IO_ColorSet( &cProfile, TRUE, STR_COLORDATA_SECTION, ColorInfoArr );
+	CShareData::IO_ColorSet( &cProfile, STR_COLORDATA_SECTION, ColorInfoArr );
 
 
 //complete:;
@@ -1804,6 +1806,8 @@ void CPropTypes::p3_Export_Colors( HWND hwndDlg )
 //	short			m_nColorInfoArrNum;				/* キー割り当て表の有効データ数 */
 //	KEYDATA			pKeyNameArr[100];				/* キー割り当て表 */
 	CProfile		cProfile;
+
+	cProfile.SetWritingMode();
 
 	strcpy( szPath, "" );
 	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
@@ -1851,7 +1855,7 @@ void CPropTypes::p3_Export_Colors( HWND hwndDlg )
 //	_lclose( hFile );
 
 	/* 色設定 I/O */
-	CShareData::IO_ColorSet( &cProfile, FALSE, STR_COLORDATA_SECTION, m_Types.m_ColorInfoArr );
+	CShareData::IO_ColorSet( &cProfile, STR_COLORDATA_SECTION, m_Types.m_ColorInfoArr );
 //	cProfile.WriteProfile( szPath, STR_COLORDATA_HEAD2 );
 #ifndef STR_COLORDATA_HEAD3
 	cProfile.WriteProfile( szPath, STR_COLORDATA_HEAD21 );	//Nov. 2, 2000 JEPRO 変更 [注]. 0.3.9.0:ur3β10以降、設定項目の番号を入れ替えたため
