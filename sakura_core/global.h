@@ -7,9 +7,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
-	Copyright (C) 2005, MIK
+	Copyright (C) 2000, Stonee, genta, jepro, MIK
+	Copyright (C) 2001, jepro, hor, MIK
+	Copyright (C) 2002, MIK, genta, aroka, YAZAKI, Moca, KK, novice
+	Copyright (C) 2003, MIK, genta, zenryaku, naoh
+	Copyright (C) 2004, Kazika
+	Copyright (C) 2005, MIK, Moca, genta
+	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -258,6 +262,13 @@ SAKURA_CORE_API enum enumEOLLen {
 	LEN_EOL_LF				= 1,
 	LEN_EOL_CR				= 1
 //	LEN_EOL_UNKNOWN		0
+};
+
+/* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
+SAKURA_CORE_API enum enumShowDlg {
+	SHOW_NORMAL			= 0,
+	SHOW_RELOAD			= 1,
+	SHOW_TOGGLE			= 2,
 };
 
 

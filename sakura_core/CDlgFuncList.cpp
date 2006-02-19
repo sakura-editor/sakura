@@ -9,8 +9,13 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, Stonee, JEPRO, genta, hor
-	Copyright (C) 2002, genta, MIK, aroka
-	Copyright (C) 2003, zenryaku
+	Copyright (C) 2000, genta
+	Copyright (C) 2001, Stonee, JEPRO, genta, hor
+	Copyright (C) 2002, MIK, aroka, hor, genta, YAZAKI, Moca, frozen
+	Copyright (C) 2003, zenryaku, Moca, naoh, little YOSHI, genta,
+	Copyright (C) 2004, zenryaku, Moca, novice
+	Copyright (C) 2005, genta, zenryaku, ぜっと, D.S.Koba
+	Copyright (C) 2006, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -30,6 +35,7 @@
 #include "mymessage.h"// 2002/2/3 aroka
 #include "Keycode.h"// 2002/2/10 aroka ヘッダ整理
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "CEditWnd.h"	//	2006/2/11 aroka 追加
 
 //アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -397,6 +403,9 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable, m_pShareData->m_Common.m_bMarkUpBlankLineEnable );
 	/* アウトライン ジャンプしたらフォーカスを移す */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump, m_pShareData->m_Common.m_bFunclistSetFocusOnJump );
+
+	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
+	::CheckDlgButton( m_hWnd, IDC_BUTTON_WINSIZE, m_pShareData->m_Common.m_bRememberOutlineWindowPos );
 
 	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
 	if(m_pShareData->m_Common.m_bAutoCloseDlgFuncList){
@@ -1474,6 +1483,21 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.iSubItem = 2;
 	ListView_InsertColumn( hwndList, 2, &col);
 
+	/* アウトライン位置とサイズを初期化する */ // 20060201 aroka
+	if( m_lParam != NULL ){
+		CEditView* pcEditView=(CEditView*)m_lParam;
+		if( m_pShareData->m_Common.m_bRememberOutlineWindowPos ){
+			WINDOWPLACEMENT cWindowPlacement;
+			cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
+			if (::GetWindowPlacement( pcEditView->m_pcEditDoc->m_pcEditWnd->m_hWnd, &cWindowPlacement )){
+				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
+				m_xPos = m_pShareData->m_Common.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
+				m_yPos = m_pShareData->m_Common.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
+				m_nWidth =  m_pShareData->m_Common.m_widthOutlineWindow;
+				m_nHeight = m_pShareData->m_Common.m_heightOutlineWindow;
+			}
+		}
+	}
 	/* 基底クラスメンバ */
 	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
@@ -1501,6 +1525,11 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		// Windowsクリップボードにコピー 
 		// 2004.02.17 Moca 関数化
 		SetClipboardText( m_hWnd, m_cmemClipText.GetPtr(), m_cmemClipText.GetLength() );
+		return TRUE;
+	case IDC_BUTTON_WINSIZE:
+		{// ウィンドウの位置とサイズを記憶 // 20060201 aroka
+			m_pShareData->m_Common.m_bRememberOutlineWindowPos = ::IsDlgButtonChecked( m_hWnd, IDC_BUTTON_WINSIZE );
+		}
 		return TRUE;
 	//2002.02.08 オプション切替後List/Treeにフォーカス移動
 	case IDC_CHECK_bAutoCloseDlgFuncList:
@@ -1740,6 +1769,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		{IDC_CHECK_bFunclistSetFocusOnJump, 1},
 		{IDC_CHECK_bMarkUpBlankLineEnable , 1},
 		{IDC_CHECK_bAutoCloseDlgFuncList, 1},
+		{IDC_BUTTON_WINSIZE, 2}, // 20060201 aroka
 		{IDC_BUTTON_COPY, 2},
 		{IDOK, 2},
 		{IDCANCEL, 2},
@@ -1789,7 +1819,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 				nHeight - nHeightCheckBox - nHeightMargin,
 				0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 			break;
-// 2002/11/1 fozen ここから
+// 2002/11/1 frozen ここから
 		case 2:
 			::SetWindowPos( hwndCtrl, NULL,
 				rc.left,
@@ -1803,11 +1833,12 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 				SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 			break;
 		}
-// 2002/11/1 fozen ここまで
+// 2002/11/1 frozen ここまで
 		::InvalidateRect( hwndCtrl, NULL, TRUE );
 	}
 	return TRUE;
 }
+
 int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	if( lParam1< lParam2 )
@@ -1817,6 +1848,31 @@ int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSo
 	else
 		return 0;
 }
+
+BOOL CDlgFuncList::OnDestroy( void )
+{
+	CDialog::OnDestroy();
+
+	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
+	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
+	CEditView* pcEditView=(CEditView*)m_lParam;
+	if( m_pShareData->m_Common.m_bRememberOutlineWindowPos ){
+		/* 親のウィンドウ位置・サイズを記憶 */
+		WINDOWPLACEMENT cWindowPlacement;
+		cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
+		if (::GetWindowPlacement( pcEditView->m_pcEditDoc->m_pcEditWnd->m_hWnd, &cWindowPlacement )){
+			/* ウィンドウ位置・サイズを記憶 */
+			m_pShareData->m_Common.m_xOutlineWindowPos = m_xPos - cWindowPlacement.rcNormalPosition.left;
+			m_pShareData->m_Common.m_yOutlineWindowPos = m_yPos - cWindowPlacement.rcNormalPosition.top;
+			m_pShareData->m_Common.m_widthOutlineWindow = m_nWidth;
+			m_pShareData->m_Common.m_heightOutlineWindow = m_nHeight;
+		}
+
+	}
+	return TRUE;
+}
+
+
 BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	int nSelect = ::SendMessage(hwndCtl,CB_GETCURSEL, 0, 0L);
@@ -1908,9 +1964,10 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 		nFuncCode=(m_nListType==OUTLINE_BOOKMARK)?F_BOOKMARK_VIEW:F_OUTLINE;
 		/*FALLTHROUGH*/
 	case F_OUTLINE:
+	case F_OUTLINE_TOGGLE: // 20060201 aroka フォーカスがあるときはリロード
 	case F_BOOKMARK_VIEW:
 		pcEditView=(CEditView*)m_lParam;
-		pcEditView->HandleCommand( nFuncCode, TRUE, TRUE, 0, 0, 0 );
+		pcEditView->HandleCommand( nFuncCode, TRUE, SHOW_RELOAD, 0, 0, 0 ); // 引数の変更 20060201 aroka
 
 		// 2002.11.11 Moca CEditView::HandleCommand→Readrawと回ってくるため更新しなくてよい
 //		m_nListType=(nFuncCode==F_BOOKMARK_VIEW)?OUTLINE_BOOKMARK:pcEditView->m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;

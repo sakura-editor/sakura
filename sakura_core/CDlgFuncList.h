@@ -10,7 +10,10 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, hor
-	Copyright (C) 2002, aroka
+	Copyright (C) 2002, aroka, hor, YAZAKI, frozen
+	Copyright (C) 2003, little YOSHI
+	Copyright (C) 2005, genta
+	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -56,6 +59,7 @@ protected:
 	BOOL OnBnClicked( int );
 	BOOL OnNotify( WPARAM, LPARAM );
 	BOOL OnSize( WPARAM, LPARAM );
+	BOOL OnDestroy(void); // 20060201 aroka
 	BOOL OnCbnSelChange( HWND hwndCtl, int wID ); // 2002/11/1 frozen
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
@@ -99,11 +103,11 @@ private:
 	// (無理矢理なのでどなたか修正お願いします)
 	bool m_bWaitTreeProcess;
 
-	// 2002/11/1 fozen
+	// 2002/11/1 frozen
 	//! ツリービューをソートする基準
 	// 0 デフォルト(ノードに関連づけれられた値順)
 	// 1 アルファベット順
-	int m_nSortType;	
+	int m_nSortType;
 };
 
 
