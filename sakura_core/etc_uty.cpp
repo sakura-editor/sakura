@@ -8,11 +8,12 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
-	Copyright (C) 2001, shoji masami, Misaka, stonee, MIK, YAZAKI
+	Copyright (C) 2001, shoji masami, Misaka, Stonee, MIK, YAZAKI
 	Copyright (C) 2002, genta, aroka, hor, MIK, ‹S, Moca, YAZAKI
 	Copyright (C) 2003, genta, matsumo, Moca, MIK
 	Copyright (C) 2004, genta, novice, Moca, MIK
 	Copyright (C) 2005, genta, D.S.Koba, Moca, ryoji, aroka
+	Copyright (C) 2006, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -2809,6 +2810,5 @@ bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SY
 	*q = *p;
 	return true;
 }
-
 
 /*[EOF]*/
