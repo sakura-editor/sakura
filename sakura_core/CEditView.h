@@ -8,11 +8,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, genta
-	Copyright (C) 2001, MIK, hor
-	Copyright (C) 2002, hor, YAZAKI, novice, aroka
-	Copyright (C) 2003, MIK
-	Copyright (C) 2005, ryoji
+	Copyright (C) 2000-2001, genta, jepro
+	Copyright (C) 2001, asa-o, MIK, hor, Mikasa, Stonee, YAZAKI
+	Copyright (C) 2002, genta, hor, YAZAKI, Azumaiya, KK, novice, minfu, ai, aroka
+	Copyright (C) 2003, genta, MIK, Moca
+	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
+	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
+	Copyright (C) 2006, genta, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -749,7 +751,8 @@ void ReplaceData_CEditView(
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
 // From Here 2001.12.03 hor
 //	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
-	BOOL Command_FUNCLIST( BOOL ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */
+//	BOOL Command_FUNCLIST( BOOL ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */
+	BOOL Command_FUNCLIST( int ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */ // 20060201 aroka
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
