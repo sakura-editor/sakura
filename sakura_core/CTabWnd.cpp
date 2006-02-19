@@ -52,6 +52,38 @@
 #endif
 //#endif
 
+// 2006.01.30 ryoji タブのサイズ／位置に関する定義
+#define TAB_WINDOW_HEIGHT	24
+#define TAB_MARGIN_TOP		3
+#define TAB_MARGIN_LEFT		1
+#define TAB_MARGIN_RIGHT	20
+#define TAB_ITEM_HEIGHT		(TAB_WINDOW_HEIGHT - 5)
+#define MAX_TABITEM_WIDTH	200
+#define MIN_TABITEM_WIDTH	60
+#define CX_SMICON			16
+#define CY_SMICON			16
+
+// 2006.02.01 ryoji タブ一覧メニュー用データ
+typedef struct {
+	int iItem;
+	int iImage;
+	TCHAR szText[_MAX_PATH];
+} TABMENU_DATA;
+
+/*!	タブ一覧メニュー用データの qsort() コールバック処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+static int compTABMENU_DATA( const void *arg1, const void *arg2 )
+{
+	int ret;
+
+	ret = ::lstrcmp( ((TABMENU_DATA*)arg1)->szText, ((TABMENU_DATA*)arg2)->szText );
+	if( 0 == ret )
+		ret = ((TABMENU_DATA*)arg1)->iItem - ((TABMENU_DATA*)arg2)->iItem;
+	return ret;
+}
+
+
 WNDPROC	gm_pOldWndProc = NULL;
 
 /* TabWndウィンドウメッセージのコールバック関数 */
@@ -103,6 +135,14 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 
 	case WM_RBUTTONUP:
 		return OnTabRButtonUp( wParam, lParam );
+		break;
+
+	case WM_MBUTTONDOWN:
+		return OnTabMButtonDown( wParam, lParam );
+		break;
+
+	case WM_MBUTTONUP:
+		return OnTabMButtonUp( wParam, lParam );
 		break;
 
 	case WM_NOTIFY:
@@ -174,10 +214,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		break;
 	}
 
-	if( ::GetCapture() == m_hwndTab )
-		::ReleaseCapture();
-
-	m_eDragState = DRAG_NONE;	// ドラッグ状態をリセット
+	BreakDrag();	// 2006.01.28 ryoji ドラッグ状態を解除する(関数化)
 
 	return 0L;
 }
@@ -229,58 +266,35 @@ LRESULT CTabWnd::OnTabCaptureChanged( WPARAM wParam, LPARAM lParam )
 /*! タブ部 WM_RBUTTONDOWN 処理 */
 LRESULT CTabWnd::OnTabRButtonDown( WPARAM wParam, LPARAM lParam )
 {
-	// ドラッグ状態をリセットする
-	if( ::GetCapture() == m_hwndTab )
-		::ReleaseCapture();
-	m_eDragState = DRAG_NONE;
+	BreakDrag();	// 2006.01.28 ryoji ドラッグ状態を解除する(関数化)
 
-	return 1L;
+	return 0L;	// 2006.01.28 ryoji OnTabMButtonDown にあわせて 0 を返すように変更
 }
 
 /*! タブ部 WM_RBUTTONUP 処理 */
 LRESULT CTabWnd::OnTabRButtonUp( WPARAM wParam, LPARAM lParam )
 {
-	int		i;
-	RECT	rc;
-	int		x, y;
-	int		nCount;
-	TCITEM	tcitem;
-	int		nId;
+	// 2006.01.28 ryoji タブのカスタムメニュー表示コマンドを実行する(関数化)
+	return ExecTabCommand( F_CUSTMENU_BASE + CUSTMENU_INDEX_FOR_TABWND, MAKEPOINTS(lParam) );
+}
 
-	x = LOWORD( lParam );
-	y = HIWORD( lParam );
+/*! タブ部 WM_MBUTTONDOWN 処理
+	@date 2006.01.28 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnTabMButtonDown( WPARAM wParam, LPARAM lParam )
+{
+	BreakDrag();	// 2006.01.28 ryoji ドラッグ状態を解除する(関数化)
 
-	nCount = TabCtrl_GetItemCount( m_hwndTab );
-	for( i = 0; i < nCount; i++ )
-	{
-		if( TabCtrl_GetItemRect( m_hwndTab, i, &rc ) )
-		{
-			if( rc.left <= x && x <= rc.right
-			 && rc.top  <= y && y <= rc.bottom )
-			{
-				tcitem.mask   = TCIF_PARAM;
-				tcitem.lParam = (LPARAM)NULL;
-				if( TabCtrl_GetItem( m_hwndTab, i, &tcitem ) )
-				{
-					switch( CUSTMENU_INDEX_FOR_TABWND ){
-					case 0:  nId = F_MENU_RBUTTON; break;	//break漏れ
-					default: nId = F_CUSTMENU_BASE + CUSTMENU_INDEX_FOR_TABWND; break;	//break漏れ
-					}
+	return 0L;	// フォーカスがタブに移らないよう、ここでは 0 を返す
+}
 
-					//対象ウインドウをアクティブにする。
-					ShowHideWindow( (HWND)tcitem.lParam, TRUE );
-
-					//コマンドを対象ウインドウに送る。
-					::SendMessage( (HWND)tcitem.lParam, WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)NULL );
-					return 0L;
-				}
-
-				break;	//打ち切り
-			}
-		}
-	}
-
-	return 1L;
+/*! タブ部 WM_MBUTTONUP 処理
+	@date 2006.01.28 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnTabMButtonUp( WPARAM wParam, LPARAM lParam )
+{
+	// ウィンドウを閉じるコマンドを実行する
+	return ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
 }
 
 /*! タブ部 WM_NOTIFY 処理
@@ -445,9 +459,41 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 	return TRUE;
 }
 
+/*! タブ部 コマンド実行処理
+	@date 2006.01.28 ryoji 新規作成
+*/
+LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
+{
+	// マウス位置(pt)のタブを取得する
+	TCHITTESTINFO	hitinfo;
+	hitinfo.pt.x = pts.x;
+	hitinfo.pt.y = pts.y;
+	int nTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
+	if( nTab < 0 )
+		return 1L;
+
+	// 対象ウィンドウを取得する
+	TCITEM	tcitem;
+	tcitem.mask   = TCIF_PARAM;
+	tcitem.lParam = (LPARAM)0;
+	if( !TabCtrl_GetItem( m_hwndTab, nTab, &tcitem ) )
+		return 1L;
+	HWND hWnd = (HWND)tcitem.lParam;
+
+	// 対象ウインドウをアクティブにする。
+	ShowHideWindow( hWnd, TRUE );
+
+	// コマンドを対象ウインドウに送る。
+	::PostMessage( hWnd, WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
+
+	return 0L;
+}
+
 
 CTabWnd::CTabWnd()
-  : m_eDragState( DRAG_NONE )
+  : m_eDragState( DRAG_NONE ),
+    m_bHovering( FALSE ),	//	2006.02.01 ryoji
+    m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
 {
 	strcat( m_szClassInheritances, _T("::CTabWnd") );
 
@@ -461,6 +507,12 @@ CTabWnd::CTabWnd()
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
 	m_hwndToolTip = NULL;
+	m_hIml = NULL;
+
+	// 2006.02.17 ryoji ImageList_Duplicate() のアドレスを取得する
+	// （IE4.0 未満の環境でも動作可能なように動的ロード）
+    HINSTANCE hinst = ::GetModuleHandle(TEXT("comctl32"));
+    *(FARPROC*)&m_RealImageList_Duplicate = ::GetProcAddress(hinst, "ImageList_Duplicate");
 
 	return;
 }
@@ -481,6 +533,8 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	gm_pOldWndProc = NULL;
 	m_hwndToolTip = NULL;
 	m_eDragState = DRAG_NONE;	//	2005.09.29 ryoji
+	m_bHovering = FALSE;			// 2006.02.01 ryoji
+	m_bListBtnHilighted = FALSE;	// 2006.02.01 ryoji
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
@@ -488,7 +542,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		NULL,								// Handle to the class icon.
 		NULL,								//Handle to a small icon
 		::LoadCursor( NULL, IDC_ARROW ),	// Handle to the class cursor.
-		(HBRUSH)(COLOR_3DFACE + 1),			// Handle to the class background brush.
+		// 2006.01.30 ryoji 背景は WM_PAINT で描画するほうがちらつかない（と思う）
+		//(HBRUSH)(COLOR_3DFACE + 1),			// Handle to the class background brush.
+		NULL,								// Handle to the class background brush.
 		NULL,								// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
 		m_pszClassName						// Pointer to a null-terminated string or is an atom.
 	);
@@ -500,10 +556,12 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		m_pszClassName,						// Pointer to a null-terminated string or is an atom.
 		m_pszClassName,						// pointer to window name
 		WS_CHILD | WS_VISIBLE,				// window style
+		// 2006.01.30 ryoji 初期配置見直し
+		// ※タブ非表示 -> 表示切替で編集ウィンドウにゴミが表示されることがあるので初期幅はゼロに
 		CW_USEDEFAULT,						// horizontal position of window
 		0,									// vertical position of window
-		100,								// window width
-		::GetSystemMetrics( SM_CYMENU ) + 2,	// window height // 2005.09.01 ryoji '+ 2'
+		0,									// window width
+		TAB_WINDOW_HEIGHT,					// window height
 		NULL								// handle to menu, or child-window identifier
 	);
 
@@ -513,10 +571,11 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		_T(""),
 		//	2004.05.22 MIK 消えるTAB対策でWS_CLIPSIBLINGS追加
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
-		CW_USEDEFAULT,
-		0 + 2,	// 2005.09.01 ryoji '+ 2'
-		100,
-		::GetSystemMetrics( SM_CYMENU ),	
+		// 2006.01.30 ryoji 初期配置見直し
+		TAB_MARGIN_LEFT,
+		TAB_MARGIN_TOP,
+		0,
+		TAB_WINDOW_HEIGHT,
 		m_hWnd,
 		(HMENU)NULL,
 		m_hInstance,
@@ -533,10 +592,11 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
 		//	Feb. 14, 2004 MIK マルチライン化の変更混入戻し
 		lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
-		lngStyle |= TCS_TABS | TCS_SINGLELINE;
+		lngStyle |= TCS_TABS | TCS_SINGLELINE | TCS_FOCUSNEVER | TCS_FIXEDWIDTH | TCS_FORCELABELLEFT;	// 2006.01.28 ryoji
 		//lngStyle &= ~(TCS_BUTTONS | TCS_SINGLELINE);	//2004.01.31
 		//lngStyle |= TCS_TABS | TCS_MULTILINE;
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
+		TabCtrl_SetItemSize( m_hwndTab, MAX_TABITEM_WIDTH, TAB_ITEM_HEIGHT );	// 2006.01.28 ryoji
 
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
@@ -641,7 +701,11 @@ LRESULT CTabWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	::GetWindowRect( m_hWnd, &rcParent );
 
-	::MoveWindow( m_hwndTab, 1, 1 + 2, rcParent.right - rcParent.left - 2, rcParent.bottom - rcParent.top - 2, TRUE );	// 2005.09.01 ryoji '+ 2'
+	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcParent.right - rcParent.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), TAB_WINDOW_HEIGHT, TRUE );	// 2005.01.30 ryoji
+
+	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
+
+	::InvalidateRect( m_hWnd, NULL, FALSE );	//	2006.02.01 ryoji
 
 	return 0L;
 }
@@ -663,7 +727,190 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		m_hFont = NULL;
 	}
 
+	// 2006.01.28 ryoji イメージリストを削除
+	if( NULL != m_hIml )
+	{
+		ImageList_Destroy( m_hIml );
+		m_hIml = NULL;
+	}
+
+	::KillTimer( hwnd, 1 );	//	2006.02.01 ryoji
+
 	m_hWnd = NULL;
+
+	return 0L;
+}
+
+/*!	WM_LBUTTONDOWN処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return OnListBtnClick( MAKEPOINTS(lParam), TRUE );
+}
+
+/*!	WM_RBUTTONDOWN処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return OnListBtnClick( MAKEPOINTS(lParam), FALSE );
+}
+
+/*!	WM_MEASUREITEM処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	MEASUREITEMSTRUCT* lpmis = (MEASUREITEMSTRUCT*)lParam;
+	if( lpmis->CtlType == ODT_MENU )
+	{
+		TABMENU_DATA* pData = (TABMENU_DATA*)lpmis->itemData;
+
+		HDC hdc = ::GetDC( hwnd );
+		HFONT hfnt = CreateMenuFont();
+		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
+		SIZE size;
+
+		::GetTextExtentPoint32( hdc, pData->szText, ::lstrlen(pData->szText), &size );
+
+		lpmis->itemHeight = ::GetSystemMetrics( SM_CYMENU );
+		lpmis->itemWidth = size.cx + CX_SMICON + 8;
+
+		::SelectObject( hdc, hfntOld );
+		::DeleteObject( hfnt );
+		::ReleaseDC( hwnd, hdc );
+	}
+
+	return 0L;
+}
+
+/*!	WM_DRAWITEM処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
+	if( lpdis->CtlType == ODT_MENU )
+	{
+		// タブ一覧メニューを描画する
+		TABMENU_DATA* pData = (TABMENU_DATA*)lpdis->itemData;
+
+		HDC hdc = lpdis->hDC;
+		RECT rcItem = lpdis->rcItem;
+
+		// 状態に従ってテキストと背景色を決める
+		COLORREF clrText;
+		COLORREF clrBk;
+		if (lpdis->itemState & ODS_SELECTED)
+		{
+			clrText = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
+			clrBk = COLOR_HIGHLIGHT;
+		}
+		else
+		{
+			clrText = ::GetSysColor( COLOR_MENUTEXT );
+			clrBk = COLOR_MENU;
+		}
+
+		// 背景描画
+		::FillRect( hdc, &rcItem, (HBRUSH)(clrBk + 1) );
+
+		// アイコン描画
+		if( NULL != m_hIml && 0 <= pData->iImage )
+		{
+			int top = rcItem.top + ( rcItem.bottom - rcItem.top - CY_SMICON ) / 2;
+			ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + 2, top, ILD_TRANSPARENT );
+		}
+
+		// テキスト描画
+		COLORREF clrTextOld = ::SetTextColor( hdc, clrText );
+		int iBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
+		HFONT hfnt = CreateMenuFont();
+		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
+		RECT rcText = rcItem;
+		rcText.left += (CX_SMICON + 8);
+
+		::DrawText( hdc, pData->szText, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
+
+		::SetTextColor( hdc, clrTextOld );
+		::SetBkMode( hdc, iBkModeOld );
+		::SelectObject( hdc, hfntOld );
+		::DeleteObject( hfnt );
+
+		// チェック状態なら外枠描画
+		if( lpdis->itemState & ODS_CHECKED )
+		{
+			HPEN hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_HIGHLIGHT ) );
+			HBRUSH hbr = (HBRUSH)::GetStockObject( NULL_BRUSH );
+			HPEN hpenOld = (HPEN)::SelectObject( hdc, hpen );
+			HBRUSH hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
+
+			::Rectangle( hdc, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom );
+
+			::SelectObject( hdc, hpenOld );
+			::SelectObject( hdc, hbrOld );
+			::DeleteObject( hpen );
+		}
+	}
+
+	return 0L;
+}
+
+/*!	WM_MOUSEMOVE処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	// カーソルがウィンドウ内に入ったらタイマー起動
+	// ウィンドウ外に出たらタイマー削除
+	POINT pt;
+	RECT rc;
+	BOOL bHovering;
+
+	pt.x = LOWORD( lParam );
+	pt.y = HIWORD( lParam );
+	::GetClientRect( hwnd, &rc );
+	bHovering = ::PtInRect( &rc, pt );
+	if( bHovering != m_bHovering )
+	{
+		m_bHovering = bHovering;
+		if( m_bHovering )
+			::SetTimer( hwnd, 1, 200, NULL );
+		else
+			::KillTimer( hwnd, 1 );
+	}
+
+	// カーソルがボタン上を出入りするときに再描画
+	RECT rcBtn;
+	GetListBtnRect( &rc, &rcBtn );
+	bHovering = ::PtInRect( &rcBtn, pt );
+	if( bHovering != m_bListBtnHilighted )
+	{
+		m_bListBtnHilighted = bHovering;
+		::InvalidateRect( hwnd, &rcBtn, FALSE );
+	}
+
+	return 0L;
+}
+
+/*!	WM_TIMER処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	if( wParam == 1 )
+	{
+		// カーソルがウィンドウ外にある場合にも WM_MOUSEMOVE を送る
+		POINT pt;
+		RECT rc;
+
+		::GetCursorPos( &pt );
+		::ScreenToClient( hwnd, &pt );
+		::GetClientRect( hwnd, &rc );
+		if( !::PtInRect( &rc, pt ) )
+			::SendMessage( hwnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
+	}
 
 	return 0L;
 }
@@ -671,6 +918,8 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 /*!	WM_PAINT処理
 
 	@date 2005.09.01 ryoji タブの上に境界線を追加
+	@date 2006.01.30 ryoji 背景描画処理を追加（背景ブラシは NULL に変更）
+	@date 2006.02.01 ryoji 一覧ボタンの描画処理を追加
 */
 LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -680,8 +929,14 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	hdc = ::BeginPaint( hwnd, &ps );
 
-	// 上側に境界線を描画する
+	// 背景を描画する
 	::GetClientRect( hwnd, &rc );
+	::FillRect( hdc, &rc, (HBRUSH)(COLOR_3DFACE + 1) );
+
+	// タブ一覧ボタンを描画する
+	DrawListBtn( hdc, &rc );
+
+	// 上側に境界線を描画する
 	::DrawEdge(hdc, &rc, EDGE_ETCHED, BF_TOP);
 
 	::EndPaint( hwnd, &ps );
@@ -709,10 +964,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 	HWND	hwndUpDown;
 	DWORD nScrollPos;
 
-	// 2005.09.01 ryoji ドラッグ状態を解除する
-	if( ::GetCapture() == m_hwndTab )
-		::ReleaseCapture();
-	m_eDragState = DRAG_NONE;
+	BreakDrag();	// 2006.01.28 ryoji ドラッグ状態を解除する(関数化)
 
 	nCount = TabCtrl_GetItemCount( m_hwndTab );
 	if( nCount <= 0 )
@@ -736,6 +988,11 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName;
 			tcitem.lParam  = (LPARAM)lParam;
+
+			// 2006.01.28 ryoji タブにアイコンイメージを追加する
+			tcitem.mask |= TCIF_IMAGE;
+			tcitem.iImage = GetImageIndex( NULL );
+
 			TabCtrl_InsertItem( m_hwndTab, nCount, &tcitem );
 			nIndex = nCount;
 		}
@@ -852,12 +1109,18 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			{
 				_tcscpy( szName_amp, _T("(無題)") );
 			}
-			cRecentEditNode.Terminate();
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName_amp;
 			tcitem.lParam  = (LPARAM)lParam;
+
+			// 2006.01.28 ryoji タブのアイコンイメージを変更する
+			tcitem.mask |= TCIF_IMAGE;
+			tcitem.iImage = GetImageIndex( p );
+
 			TabCtrl_SetItem( m_hwndTab, nIndex, &tcitem );
+
+			cRecentEditNode.Terminate();
 		}
 		else
 		{
@@ -923,6 +1186,8 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( bFlag ) ::ShowWindow( m_hwndTab, SW_SHOW );
 	}
 
+	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
+
 	//更新
 	::InvalidateRect( m_hwndTab, NULL, TRUE );
 
@@ -954,8 +1219,9 @@ int CTabWnd::FindTabIndexByHWND( HWND hWnd )
 /*! タブリストを再表示する
 
 	@date 2004.06.19 genta &が含まれているファイル名が正しく表示されない
+	@date 2006.02.06 ryoji 選択タブを指定するHWND引数およびその処理は不要なので削除（自ウィンドウを常時選択）
 */
-void CTabWnd::Refresh( HWND hWnd /* = NULL */ )
+void CTabWnd::Refresh( void )
 {
 	int			i;
 	int			nIndex;
@@ -974,19 +1240,6 @@ void CTabWnd::Refresh( HWND hWnd /* = NULL */ )
 	hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
 	nScrollPos = ( hwndUpDown != NULL )? LOWORD( ::SendMessage( hwndUpDown, UDM_GETPOS, (WPARAM)0, (LPARAM)0 ) ): 0;
 
-	// 2005.09.01 ryoji パラメータ hWnd によるウィンドウ指定追加
-	if( NULL == hWnd )	// 現在の選択を維持する
-	{
-		i = TabCtrl_GetCurSel( m_hwndTab );
-		if ( 0 <= i )
-		{
-			tcitem.mask   = TCIF_PARAM;
-			tcitem.lParam = (LPARAM)0;
-			TabCtrl_GetItem( m_hwndTab, i, &tcitem );
-			hWnd = (HWND)tcitem.lParam;
-		}
-	}
-
 	::SendMessage( m_hwndTab, WM_SETREDRAW, (WPARAM)FALSE, (LPARAM)0 );	// 2005.09.01 ryoji 再描画禁止
 
 	TabCtrl_DeleteAllItems( m_hwndTab );
@@ -997,7 +1250,7 @@ void CTabWnd::Refresh( HWND hWnd /* = NULL */ )
 	nIndex = -1;
 	for( i = 0; i < nCount; i++ )
 	{
-		if( hWnd == p[ i ].m_hWnd ) nIndex = i;
+		if( m_hwndParent == p[ i ].m_hWnd ) nIndex = i;
 
 		if( p[ i ].m_szTabCaption[0] )
 		{
@@ -1014,6 +1267,11 @@ void CTabWnd::Refresh( HWND hWnd /* = NULL */ )
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 		tcitem.pszText = szName_amp;
 		tcitem.lParam  = (LPARAM)p[ i ].m_hWnd;
+
+		// 2006.01.28 ryoji タブにアイコンを追加する
+		tcitem.mask |= TCIF_IMAGE;
+		tcitem.iImage = GetImageIndex( &p[ i ] );
+
 		TabCtrl_InsertItem( m_hwndTab, i, &tcitem );
 	}
 
@@ -1122,7 +1380,7 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	@date 2004.08.27 Kazika 引数bForeground追加。bForegroundがfalseの場合はウィンドウをフォアグラウンドにしない。
 	@date 2005.11.05 ryoji Grepダイアログがフォーカスを失わないようにするため，
 		対象ウィンドウのプロセスが既にフォアグラウンドなら何もしないようにする．
- */
+*/
 void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 {
 	if ( bForeground )
@@ -1161,6 +1419,344 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 	}
 
 	return;
+}
+
+/*! タブのレイアウト調整処理
+	@date 2006.01.28 ryoji 新規作成
+*/
+void CTabWnd::LayoutTab( void )
+{
+	// アイコンの表示を切り替える
+	HIMAGELIST hImg = TabCtrl_GetImageList( m_hwndTab );
+	if( NULL == hImg && m_pShareData->m_Common.m_bDispTabIcon )
+		TabCtrl_SetImageList( m_hwndTab, m_hIml );
+	else if( NULL != hImg && !m_pShareData->m_Common.m_bDispTabIcon )
+		TabCtrl_SetImageList( m_hwndTab, NULL );
+
+	// タブのアイテム幅の等幅を切り替える
+	UINT lStyle;
+	lStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
+	if( (lStyle & TCS_FIXEDWIDTH) && !m_pShareData->m_Common.m_bSameTabWidth )
+	{
+		lStyle &= ~(TCS_FIXEDWIDTH | TCS_FORCELABELLEFT);
+		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
+		return;
+	}
+	else if( !(lStyle & TCS_FIXEDWIDTH) && m_pShareData->m_Common.m_bSameTabWidth )
+	{
+		lStyle |= TCS_FIXEDWIDTH | TCS_FORCELABELLEFT;
+		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
+	}
+
+	if( !m_pShareData->m_Common.m_bSameTabWidth )
+		return;	// アイテム幅の調整は不要
+
+	// タブのアイテム幅を調整する
+	RECT rcTab;
+	int nCount;
+	int cx;
+
+	::GetClientRect( m_hwndTab, &rcTab );
+	nCount = TabCtrl_GetItemCount( m_hwndTab );
+	if( 0 < nCount )
+	{
+		cx = (rcTab.right - rcTab.left - 8) / nCount;
+		if( MAX_TABITEM_WIDTH < cx )
+			cx = MAX_TABITEM_WIDTH;
+		else if( MIN_TABITEM_WIDTH > cx )
+			cx = MIN_TABITEM_WIDTH;
+		TabCtrl_SetItemSize( m_hwndTab, cx, TAB_ITEM_HEIGHT );
+	}
+}
+
+/*! イメージリストの複製処理
+	@date 2006.02.17 ryoji 新規作成
+*/
+HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
+{
+	// 本物の ImageList_Duplicate() があればそれを呼び出す
+	if( m_RealImageList_Duplicate )
+		return m_RealImageList_Duplicate( himl );
+
+	// 本物の ImageList_Duplicate() の代替処理
+	// 新しいイメージリストを作成してアイコン単位でコピーする
+	//（この場合、多色アイコンは綺麗には表示されないかもしれない）
+	HIMAGELIST hImlNew;
+	hImlNew = ImageList_Create( CX_SMICON, CY_SMICON, ILC_COLOR32 | ILC_MASK, 4, 4 );
+	if( hImlNew )
+	{
+		ImageList_SetBkColor( hImlNew, CLR_NONE );
+		int nCount = ImageList_GetImageCount( himl );
+		int i;
+		for( i = 0; i < nCount; i++ )
+		{
+			HICON hIcon = ImageList_GetIcon( himl, i, ILD_TRANSPARENT );
+			if( NULL == hIcon )
+			{
+				ImageList_Destroy( hImlNew );
+				return NULL;
+			}
+			int iIcon = ImageList_AddIcon( hImlNew, hIcon );
+			::DestroyIcon( hIcon );
+			if( 0 > iIcon )
+			{
+				ImageList_Destroy( hImlNew );
+				return NULL;
+			}
+		}
+	}
+	return hImlNew;
+}
+
+/*! イメージリストのインデックス取得処理
+	@date 2006.01.28 ryoji 新規作成
+*/
+int CTabWnd::GetImageIndex( EditNode* pNode )
+{
+	SHFILEINFO sfi;
+	HIMAGELIST hImlSys;
+	HIMAGELIST hImlNew;
+
+	if( NULL == m_hIml )
+	{
+		// システムイメージリストを取得する
+		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
+		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
+		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
+
+		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".0"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
+		if( NULL == hImlSys )
+			return -1;
+		::DestroyIcon( sfi.hIcon );
+		m_iIconApp = sfi.iIcon;
+
+		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".1"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_OPENICON );
+		if( NULL == hImlSys )
+			return -1;
+		::DestroyIcon( sfi.hIcon );
+		m_iIconGrep = sfi.iIcon;
+
+		// システムイメージリストを複製する
+		hImlNew = ImageList_Duplicate( hImlSys );
+		if( NULL == hImlNew )
+			return -1;
+		ImageList_SetBkColor( hImlNew, CLR_NONE );
+
+		// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
+		// （利用しないアイコンと差し替える）
+		m_hIconApp = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
+		ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
+		m_hIconGrep = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
+		ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+
+		// タブにアイコンイメージを設定する
+		if( m_pShareData->m_Common.m_bDispTabIcon )
+			TabCtrl_SetImageList( m_hwndTab, hImlNew );
+
+		// 新しいイメージリストを記憶する
+		m_hIml = hImlNew;
+
+		// 拡張子マップをクリアする
+		m_mapExt.clear();
+	}
+
+	if( pNode )
+	{
+		if( pNode->m_szFilePath[0] )
+		{
+			// 拡張子を取り出す
+			TCHAR szExt[_MAX_EXT];
+			_tsplitpath( pNode->m_szFilePath, NULL, NULL, NULL, szExt );
+
+			// 拡張子に対応したイメージインデックスを検索する
+			ExtMap::iterator iIter = m_mapExt.find( szExt );
+			if( iIter != m_mapExt.end() )	// マップに登録済みか ?
+			{
+				return (*iIter).second;	// 登録済みのインデックスを返す
+			}
+			else
+			{
+				// 拡張子に関連付けられたアイコンを取得してイメージリストとマップに登録する
+				hImlSys = (HIMAGELIST)::SHGetFileInfo( szExt, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
+				if( NULL == hImlSys )
+					return -1;
+				::DestroyIcon( sfi.hIcon );
+				if( ImageList_GetImageCount( m_hIml ) > sfi.iIcon )
+				{
+					// 拡張子マップに登録する
+					m_mapExt[szExt] = sfi.iIcon;
+					return sfi.iIcon;	// インデックスを返す
+				}
+
+				// システムイメージリストを複製する
+				hImlNew = ImageList_Duplicate( hImlSys );
+				if( NULL == hImlNew )
+					return -1;
+				ImageList_SetBkColor( hImlNew, CLR_NONE );
+
+				// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
+				// （利用しないアイコンと差し替える）
+				ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
+				ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+
+				// タブにアイコンイメージを設定する
+				if( m_pShareData->m_Common.m_bDispTabIcon )
+					TabCtrl_SetImageList( m_hwndTab, hImlNew );
+
+				// 新しいイメージリストを記憶する
+				if( NULL != m_hIml )
+					ImageList_Destroy( m_hIml );
+				m_hIml = hImlNew;
+
+				// 拡張子マップに登録する
+				m_mapExt[szExt] = sfi.iIcon;
+				return sfi.iIcon;	// インデックスを返す
+			}
+		}
+		else if( pNode->m_bIsGrep )
+			return m_iIconGrep;	// grepアイコンのインデックスを返す
+	}
+
+	return m_iIconApp;	// アプリケーションアイコンのインデックスを返す
+}
+
+/*! 一覧ボタン描画処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
+{
+	const POINT ptBase[4] = { {4, 7}, {7, 10}, {8, 10}, {11, 7} };	// 描画イメージ形状
+	POINT pt[4];
+	int i;
+	HPEN hpen, hpenOld;
+	HBRUSH hbr, hbrOld;
+
+	RECT rcListBtn;
+	GetListBtnRect( lprcClient, &rcListBtn );
+	if( m_bListBtnHilighted )
+	{
+		hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_HIGHLIGHT ) );
+		hbr = (HBRUSH)::GetSysColorBrush( COLOR_MENU );
+		hpenOld = (HPEN)::SelectObject( hdc, hpen );
+		hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
+		::Rectangle( hdc, rcListBtn.left, rcListBtn.top, rcListBtn.right, rcListBtn.bottom );
+		::SelectObject( hdc, hpenOld );
+		::SelectObject( hdc, hbrOld );
+		::DeleteObject( hpen );
+	}
+
+	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
+	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( nIndex ) );
+	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
+	hpenOld = (HPEN)::SelectObject( hdc, hpen );
+	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
+	for( i = 0; i < sizeof(pt)/sizeof(pt[0]); i++ )
+	{
+		pt[i].x = ptBase[i].x + rcListBtn.left;
+		pt[i].y = ptBase[i].y + rcListBtn.top;
+	}
+	::Polygon( hdc, pt, sizeof(pt)/sizeof(pt[0]) );
+	::SelectObject( hdc, hpenOld );
+	::SelectObject( hdc, hbrOld );
+	::DeleteObject( hpen );
+}
+
+/*! 一覧ボタンの矩形取得処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
+{
+	const RECT rcListBtnBase = { 0, 0, 16, 16 };
+	*lprc = rcListBtnBase;
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 2, lprcClient->top + TAB_MARGIN_TOP + 2 );
+}
+
+/*!	一覧ボタンクリック処理
+	@date 2006.02.01 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnListBtnClick( POINTS pts, BOOL bLeft )
+{
+	POINT pt;
+	RECT rc;
+	RECT rcBtn;
+
+	pt.x = pts.x;
+	pt.y = pts.y;
+	::GetClientRect( m_hWnd, &rc );
+	GetListBtnRect( &rc, &rcBtn );
+	if( ::PtInRect( &rcBtn, pt ) )
+	{
+		int nCount = TabCtrl_GetItemCount( m_hwndTab );
+		if( 0 >= nCount )
+			return 0L;
+
+		// 各タブアイテムからメニューに表示する文字を取得する
+		TABMENU_DATA* pData = new TABMENU_DATA[nCount];
+		CRecent	cRecentEditNode;
+		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+		TCITEM tcitem;
+		int i;
+		for( i = 0; i < nCount; i++ )
+		{
+			tcitem.mask = TCIF_PARAM | TCIF_TEXT | TCIF_IMAGE;
+			tcitem.lParam = (LPARAM)0;
+			tcitem.pszText = pData[i].szText;
+			tcitem.cchTextMax = sizeof(pData[i].szText);
+			TabCtrl_GetItem( m_hwndTab, i, &tcitem );
+			pData[i].szText[sizeof(pData[i].szText) - 1] = _T('\0');	// バッファ不足の場合への対策
+			pData[i].iItem = i;
+			pData[i].iImage = tcitem.iImage;
+
+			// マウス左ボタンではタブに表示されている文字をそのままメニュー文字に使い、
+			// マウス右ボタンではファイルに関してフルパス名をメニュー文字に使う
+			if( !bLeft )
+			{
+				EditNode *pNode = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&tcitem.lParam ) );
+				if( pNode && pNode->m_szFilePath[0] )
+					::lstrcpyn( pData[i].szText, pNode->m_szFilePath, sizeof(pData[i].szText) );
+			}
+		}
+		cRecentEditNode.Terminate();
+
+		// 表示文字でソートする
+		qsort( pData, nCount, sizeof(pData[0]), compTABMENU_DATA );
+
+		// メニューを作成する
+		int iTabSel = TabCtrl_GetCurSel( m_hwndTab );
+		int iMenuSel = -1;
+		HMENU hMenu = ::CreatePopupMenu();
+		for( i = 0; i < nCount; i++ )
+		{
+			UINT uFlags = MF_BYPOSITION | MF_OWNERDRAW;
+			::InsertMenu( hMenu, i, uFlags, pData[i].iItem + 100, (LPCTSTR)&pData[i] );
+			if( pData[i].iItem == iTabSel )
+				iMenuSel = i;
+		}
+
+		// 選択タブに対応するメニューをチェック状態にする
+		if( 0 <= iMenuSel && iMenuSel < nCount )
+			::CheckMenuRadioItem( hMenu, 0, nCount - 1, iMenuSel, MF_BYPOSITION );
+
+		// メニューを表示する
+		pt.x = rcBtn.left;
+		pt.y = rcBtn.bottom;
+		::ClientToScreen( m_hWnd, &pt );
+		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD, pt.x, pt.y, 0, m_hWnd, NULL);
+		::DestroyMenu( hMenu );
+
+		// メニュー選択されたタブのウインドウをアクティブにする
+		if( 100 <= nId )
+		{
+			tcitem.mask   = TCIF_PARAM;
+			tcitem.lParam = (LPARAM)0;
+			TabCtrl_GetItem( m_hwndTab, nId - 100, &tcitem );
+
+			ShowHideWindow( (HWND)tcitem.lParam, TRUE );
+		}
+		delete []pData;
+	}
+
+	return 0L;
 }
 
 /*[EOF]*/
