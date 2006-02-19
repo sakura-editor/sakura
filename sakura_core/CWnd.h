@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 2000-2001, Norio Nakatani
 	Copyright (C) 2003, MIK
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -91,6 +92,7 @@ protected:
 	virtual DECLH( OnMeasureItem	);	// WM_MEASUREITEM
 	virtual DECLH( OnMenuChar		);	// WM_MENUCHAR
 	virtual DECLH( OnNotify			);	// WM_NOTIFY	//@@@ 2003.05.31 MIK
+	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
 
 //	virtual DECLH( OnNcCreate			);	// WM_NCCREATE
 //	virtual DECLH( OnNcCalcSize			);	// WM_NCCALCSIZE
