@@ -7,6 +7,11 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, genta
+	Copyright (C) 2002, YAZAKI, MIK, Moca
+	Copyright (C) 2003, MIK, KEITA
+	Copyright (C) 2004, novice
+	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -222,15 +227,8 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 //		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)this );
 //	}
 	::ShowWindow( m_hWnd, SW_SHOW );
-	if( NULL != m_hWnd ){
-		/* タイマーを起動 */
-//		if( 0 == ::SetTimer( m_hWnd, IDT_FUNCWND, TIMER_TIMEOUT, (TIMERPROC)CFuncKeyWndTimerProc ) ){
-		if( 0 == ::SetTimer( m_hWnd, IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
-			::MYMESSAGEBOX(	m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
-			);
-		}
-	}
+	Timer_ONOFF( TRUE ); // 20060126 aroka
+
 	::InvalidateRect( m_hWnd, NULL, TRUE );
 
 	return m_hWnd;
@@ -377,7 +375,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		return 0;
 	}
 
-	if( GetActiveWindow() != m_hwndParent ) {	//	2002/06/02 MIK
+	if( ::GetActiveWindow() != m_hwndParent ) {	//	2002/06/02 MIK
 		return 0;
 	}
 
@@ -442,13 +440,13 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 
-// WM_DSESTROY処理
+// WM_DESTROY処理
 LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	int i;
 
 	/* タイマーを削除 */
-	::KillTimer( hwnd, IDT_FUNCWND );
+	Timer_ONOFF( FALSE ); // 20060126 aroka
 
 	/* ボタンを削除 */
 	for( i = 0; i < sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] ); ++i ){
@@ -587,6 +585,31 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 		m_bSizeBox = TRUE;
 		OnSize( NULL, 0, 0, 0 );
+	}
+	return;
+}
+
+
+
+// タイマーの更新を開始／停止する。 20060126 aroka
+// ファンクションキー表示はタイマーにより更新しているが、
+// アプリのフォーカスが外れたときに親ウィンドウからON/OFFを
+//	呼び出してもらうことにより、余計な負荷を停止したい。
+void CFuncKeyWnd::Timer_ONOFF( BOOL bStart )
+{
+	if( NULL != m_hWnd ){
+		if( bStart ){
+			/* タイマーを起動 */
+			if( 0 == ::SetTimer( m_hWnd, IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
+				::MYMESSAGEBOX(	m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+					"CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+				);
+			}
+		} else {
+			/* タイマーを削除 */
+			::KillTimer( m_hWnd, IDT_FUNCWND );
+			m_nCurrentKeyState = -1;
+		}
 	}
 	return;
 }
