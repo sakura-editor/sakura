@@ -8,7 +8,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 200, genta, jepro
+	Copyright (C) 2000, genta, jepro
+	Copyright (C) 2001, genta, jepro
+	Copyright (C) 2002, MIK, genta, aroka
+	Copyright (C) 2003, Moca
+	Copyright (C) 2004, Moca
+	Copyright (C) 2005, genta
+	Copyright (C) 2006, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -37,10 +43,13 @@ const DWORD p_helpids[] = {	//12900
 };	//@@@ 2002.01.07 add end MIK
 
 //	From Here Feb. 7, 2002 genta
+// 2006.01.17 Moca COMPILER_VERÇí«â¡
 #if defined(__BORLANDC__)
 #  define COMPILER_TYPE "B"
+#  define COMPILER_VER  __BORLANDC__ 
 #elif defined(__GNUG__)
 #  define COMPILER_TYPE "G"
+#  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
 #elif defined(_MSC_VER)
 #  if defined(_M_IA64)
 #    define COMPILER_TYPE "V_I64"
@@ -49,8 +58,10 @@ const DWORD p_helpids[] = {	//12900
 #  else
 #    define COMPILER_TYPE "V"
 #  endif
+#  define COMPILER_VER _MSC_VER
 #else
 #  define COMPILER_TYPE "U"
+#  define COMPILER_VER 0
 #endif
 //	To Here Feb. 7, 2002 genta
 
@@ -112,16 +123,18 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetAppVersionInfo( NULL, VS_VERSION_INFO,
 		&dwVersionMS, &dwVersionLS );
 
-	wsprintf( szMsg, "Ver. %d.%d.%d.%d " COMPILER_TYPE,
+	int ComPiler_ver = COMPILER_VER;
+	wsprintf( szMsg, "Ver. %d.%d.%d.%d (" COMPILER_TYPE " %d)",
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS )
+		LOWORD( dwVersionLS ),
+		ComPiler_ver
 	);
 	::SetDlgItemText( m_hWnd, IDC_STATIC_VER, szMsg );
 
 	/* çXêVì˙èÓïÒ */
-	wsprintf( szMsg, "Last Update: %d/%d/%d %02d:%02d:%02d",
+	wsprintf( szMsg, "Last Modified: %d/%d/%d %02d:%02d:%02d",
 		systimeL.wYear,
 		systimeL.wMonth,
 		systimeL.wDay,
