@@ -9,7 +9,10 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, genta, MIK, asa-o
-	Copyright (C) 2003, MIK
+	Copyright (C) 2002, YAZAKI, genta, Moca
+	Copyright (C) 2003, MIK, KEITA
+	Copyright (C) 2004, Moca
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -328,6 +331,8 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
 	::SetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption );
 	//To Here@@@ 2003.06.13 MIK
+	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
@@ -412,6 +417,8 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	m_Common.m_bDispTabWndMultiWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin );
 	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption, sizeof( m_Common.m_szTabWndCaption ) );
 	//To Here@@@ 2003.06.13 MIK
+	m_Common.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
+	m_Common.m_bDispTabIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabIcon );		// 2006.01.28 ryoji
 
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
