@@ -13,7 +13,8 @@
 	Copyright (C) 2002, hor, YAZAKI, novice, genta, aroka, Azumaiya, minfu, MIK, oak, すなふき, Moca
 	Copyright (C) 2003, MIK, genta, かろと, zenryaku, Moca, ryoji, naoh, KEITA, じゅうじ
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
-	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka
+	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
+	Copyright (C) 2006, genta, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -487,7 +488,8 @@ BOOL CEditView::HandleCommand(
 	case F_GREP:			Command_GREP();break;							//Grep
 	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
-	case F_OUTLINE:			bRet = Command_FUNCLIST( (BOOL)lparam1 );break;	//アウトライン解析
+	case F_OUTLINE:			bRet = Command_FUNCLIST( (int)lparam1 );break;	//アウトライン解析
+	case F_OUTLINE_TOGGLE:	bRet = Command_FUNCLIST( SHOW_TOGGLE );break;	//アウトライン解析(toggle) // 20060201 aroka
 	case F_TAGJUMP:			Command_TAGJUMP(lparam1 != 0);break;			/* タグジャンプ機能 */ //	Apr. 03, 2003 genta 引数追加
 	case F_TAGJUMP_CLOSE:	Command_TAGJUMP(true);break;					/* タグジャンプ(元ウィンドウclose) *///	Apr. 03, 2003 genta
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
@@ -4732,7 +4734,7 @@ void CEditView::Command_CODECNV_AUTO2SJIS( void )
 	2002/3/13 YAZAKI nOutlineTypeとnListTypeを統合。
 */
 //BOOL CEditView::Command_FUNCLIST( BOOL bCheckOnly )	//	2001.12.03 hor ブックマーク用のフラグを追加
-BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
+BOOL CEditView::Command_FUNCLIST( int nAction/*nReLoad,bCheckOnly*/, int nOutlineType ) // トグル用のフラグに変更 20060201 aroka
 {
 //	if( bCheckOnly ){
 //		return TRUE;
@@ -4748,16 +4750,36 @@ BOOL CEditView::Command_FUNCLIST( BOOL nReLoad/*bCheckOnly*/, int nOutlineType )
 		nOutlineType = m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
 	}
 
-	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && !nReLoad ){
-		/* アクティブにする */
-//		m_pcEditDoc->m_cDlgFuncList.m_nCurLine = m_nCaretPosY + 1;	// 2002/04/18 YAZAKI
-		//	Oct. 5, 2002 genta
-		//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
-		if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
-			ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
-			return TRUE;
+	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && nAction != SHOW_RELOAD ){
+		switch(nAction ){
+		case SHOW_NORMAL: // アクティブにする
+			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
+			if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
+				ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
+				return TRUE;
+			}
+			break;
+		case SHOW_TOGGLE: // 閉じる
+			//	開いているものと種別が同じなら閉じる．異なれば再解析
+			if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
+				::SendMessage( m_pcEditDoc->m_cDlgFuncList.m_hWnd, WM_CLOSE, 0, 0 );
+				return TRUE;
+			}
+			break;
+		default:
+			break;
 		}
 	}
+//	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && !nReLoad ){
+//		/* アクティブにする */
+////		m_pcEditDoc->m_cDlgFuncList.m_nCurLine = m_nCaretPosY + 1;	// 2002/04/18 YAZAKI
+//		//	Oct. 5, 2002 genta
+//		//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
+//		if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
+//			ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
+//			return TRUE;
+//		}
+//	}
 
 	/* 解析結果データを空にする */
 	cFuncInfoArr.Empty();
@@ -6881,6 +6903,10 @@ void CEditView::Command_BIND_WINDOW( void )
 		//タブウィンドウの設定を変更
 		m_pShareData->m_Common.m_bDispTabWndMultiWin = !m_pShareData->m_Common.m_bDispTabWndMultiWin;
 
+		// 2006.02.07 ryoji ウインドウ情報を更新する
+		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+		::GetWindowPlacement( m_pcEditDoc->m_pcEditWnd->m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+
 		//Start 2004.08.27 Kazika 変更
 		//タブウィンドウの設定を変更をブロードキャストする
 		CShareData::getInstance()->PostMessageToAllEditors(
@@ -6938,6 +6964,8 @@ void CEditView::Command_CASCADE( void )
 
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
+				if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) )	// 2006.02.06 ryoji 可視化だけしておく
+					::ShowWindow( pEditNodeArr[i].m_hWnd, SW_SHOWNA );
 				continue;
 			}
 			//	Mar. 20, 2004 genta
@@ -7077,6 +7105,8 @@ void CEditView::Command_TILE_H( void )
 		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
+				if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) )	// 2006.02.06 ryoji 可視化だけしておく
+					::ShowWindow( pEditNodeArr[i].m_hWnd, SW_SHOWNA );
 				continue;
 			}
 			//	From Here Jul. 28, 2002 genta
@@ -7140,6 +7170,8 @@ void CEditView::Command_TILE_V( void )
 		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
+				if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) )	// 2006.02.06 ryoji 可視化だけしておく
+					::ShowWindow( pEditNodeArr[i].m_hWnd, SW_SHOWNA );
 				continue;
 			}
 			//	From Here Jul. 28, 2002 genta
