@@ -7,9 +7,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, jepro
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, jepro
+	Copyright (C) 2001, jepro, MIK, Stonee, asa-o, Misaka, genta, hor
+	Copyright (C) 2002, aroka, minfu, MIK, ai, genta
+	Copyright (C) 2003, genta, MIK, Moca
+	Copyright (C) 2004, genta, isearch
+	Copyright (C) 2005, genta, MIK
+	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -290,6 +294,7 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_GREP_DIALOG		,	//Grep
 	F_JUMP_DIALOG		,	//指定行ヘジャンプ
 	F_OUTLINE			,	//アウトライン解析
+	F_OUTLINE_TOGGLE	,	//アウトライン解析(toggle) // 20060201 aroka
 	F_TAGJUMP			,	//タグジャンプ機能
 	F_TAGJUMP_CLOSE		,	//閉じてタグジャンプ(元ウィンドウを閉じる) // Apr. 03, 2003 genta
 	F_TAGJUMPBACK		,	//タグジャンプバック機能
