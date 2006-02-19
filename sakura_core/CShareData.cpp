@@ -10,10 +10,11 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, jepro, genta, MIK
 	Copyright (C) 2001, jepro, genta, asa-o, MIK, YAZAKI, hor
-	Copyright (C) 2002, genta, ai, Moca, MIK, YAZAKI, hor, KK
+	Copyright (C) 2002, genta, ai, Moca, MIK, YAZAKI, hor, KK, aroka
 	Copyright (C) 2003, Moca, aroka, MIK, genta, wmlhq, sui
 	Copyright (C) 2004, Moca, novice, genta, isearch, MIK
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
+	Copyright (C) 2006, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -176,9 +177,13 @@ struct ARRHEAD {
 	Version 63:
 	指定桁縦線表示追加 2005.11.08 Moca
 
+	Version 64:
+	タブの機能拡張(等幅、アイコン表示) 2006/01/28 ryoji
+	アウトプットウィンドウ位置 2006.02.01 aroka
+
 */
 
-const unsigned int uShareDataVersion = 63;
+const unsigned int uShareDataVersion = 64;
 
 /*
 ||	Singleton風
@@ -455,6 +460,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		strcpy( m_pShareData->m_Common.m_szTabWndCaption,
 			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+		m_pShareData->m_Common.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
+		m_pShareData->m_Common.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
@@ -4802,7 +4809,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		"dpr,pas",
 		"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo",		//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
 		"cgi,pl,pm",			//Jul. 08, 2001 JEPRO 追加
-		"bas,frm,cls,ctl,pag,dob,dsr",	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加
+		"bas,frm,cls,ctl,pag,dob,dsr,vb",	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加 // Feb. 19, 2006 genta .vb追加
 		"rtf",					//Jul. 10, 2001 JEPRO 追加
 		"ini,inf,cnf,kwd,col",	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
 		"",						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした

@@ -13,7 +13,8 @@
 	Copyright (C) 2002, genta, aroka, Moca, MIK, YAZAKI, hor
 	Copyright (C) 2003, Moca, aroka, MIK, genta
 	Copyright (C) 2004, Moca, novice, genta
-	Copyright (C) 2005, MIK, genta, ryoji, aroka
+	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
+	Copyright (C) 2006, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -143,6 +144,8 @@ struct EditNode {
 	int				m_nIndex;
 	HWND			m_hWnd;
 	char			m_szTabCaption[_MAX_PATH];	/*!< タブウインドウ用：キャプション名 */	//@@@ 2003.05.31 MIK
+	char			m_szFilePath[_MAX_PATH];	/*!< タブウインドウ用：ファイル名 */		//@@@ 2006.01.28 ryoji
+	BOOL			m_bIsGrep;					/*!< Grepのウィンドウか */					//@@@ 2006.01.28 ryoji
 };
 
 //! 印刷設定
@@ -462,6 +465,8 @@ struct Common {
 	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
 	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
 	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
+	BOOL				m_bSameTabWidth;				//タブを等幅にする			//@@@ 2006.01.28 ryoji
+	BOOL				m_bDispTabIcon;					//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 
 	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
@@ -549,6 +554,12 @@ struct Common {
 
 //	int					m_nTagDepth;	//ダイレクトタグジャンプ階層
 
+	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
+	int					m_bRememberOutlineWindowPos;
+	int					m_widthOutlineWindow;
+	int					m_heightOutlineWindow;
+	int					m_xOutlineWindowPos;
+	int					m_yOutlineWindowPos;
 }; /* Common */
 
 //! 共有データ領域
@@ -736,7 +747,7 @@ public:
 	BOOL LoadShareData( void );	/* 共有データのロード */
 	void SaveShareData( void );	/* 共有データの保存 */
 	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
-	static void IO_ColorSet( CProfile* , bool , const char* , ColorInfo* );	/* 色設定 I/O */
+	static void IO_ColorSet( CProfile* , const char* , ColorInfo* );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 
 //	int			m_nStdToolBarButtons; 2004.03.30 Moca 未使用
 
@@ -800,22 +811,23 @@ protected:
 	void InitTypeConfig(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);
 	
-	void ShareData_IO_Mru( const bool, CProfile& );
-	void ShareData_IO_Keys( const bool, CProfile& );
-	void ShareData_IO_Grep( const bool, CProfile& );
-	void ShareData_IO_Folders( const bool, CProfile& );
-	void ShareData_IO_Cmd( const bool, CProfile& );
-	void ShareData_IO_Nickname( const bool, CProfile& );
-	void ShareData_IO_Common( const bool, CProfile& );
-	void ShareData_IO_Toolbar( const bool, CProfile& );
-	void ShareData_IO_CustMenu( const bool, CProfile& );
-	void ShareData_IO_Font( const bool, CProfile& );
-	void ShareData_IO_KeyBind( const bool, CProfile& );
-	void ShareData_IO_Print( const bool, CProfile& );
-	void ShareData_IO_Types( const bool, CProfile& );
-	void ShareData_IO_KeyWords( const bool, CProfile& );
-	void ShareData_IO_Macro( const bool, CProfile& );
-	void ShareData_IO_Other( const bool, CProfile& );
+	// Feb. 12, 2006 D.S.Koba
+	void ShareData_IO_Mru( CProfile& );
+	void ShareData_IO_Keys( CProfile& );
+	void ShareData_IO_Grep( CProfile& );
+	void ShareData_IO_Folders( CProfile& );
+	void ShareData_IO_Cmd( CProfile& );
+	void ShareData_IO_Nickname( CProfile& );
+	void ShareData_IO_Common( CProfile& );
+	void ShareData_IO_Toolbar( CProfile& );
+	void ShareData_IO_CustMenu( CProfile& );
+	void ShareData_IO_Font( CProfile& );
+	void ShareData_IO_KeyBind( CProfile& );
+	void ShareData_IO_Print( CProfile& );
+	void ShareData_IO_Types( CProfile& );
+	void ShareData_IO_KeyWords( CProfile& );
+	void ShareData_IO_Macro( CProfile& );
+	void ShareData_IO_Other( CProfile& );
 };
 
 
