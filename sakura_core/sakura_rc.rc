@@ -318,7 +318,7 @@ BEGIN
     LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,79,7,60,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
-    LTEXT           "Copyright (C) 1998-2004  by Norio Nakatani && Collaborators",
+    LTEXT           "Copyright (C) 1998-2006  by Norio Nakatani && Collaborators",
                     IDC_STATIC,40,33,182,8,NOT WS_GROUP
     PUSHBUTTON      "原作者連絡先(&A)...",IDC_BUTTON_CONTACT,166,7,59,14,0,0,
                     HIDC_BUTTON_CONTACT
@@ -385,11 +385,13 @@ BEGIN
     CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,0,
                     0,222,205,0,HIDC_LIST1
-    PUSHBUTTON      "コピー(&C)",IDC_BUTTON_COPY,0,235,50,14,WS_DISABLED,0,
+    CONTROL         "■",IDC_BUTTON_WINSIZE,"Button",BS_AUTOCHECKBOX|BS_PUSHLIKE,0,235,10,14,0,
+                    HIDC_BUTTON_HELP
+    PUSHBUTTON      "コピー(&C)",IDC_BUTTON_COPY,12,235,50,14,WS_DISABLED,0,
                     HIDC_BUTTON_COPY
-    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,53,235,50,14,0,0,HIDOK
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,107,235,50,14,0,0,HIDCANCEL
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,162,235,50,14,0,0,
+    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,64,235,50,14,0,0,HIDOK
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,116,235,50,14,0,0,HIDCANCEL
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,168,235,50,14,0,0,
                     HIDC_BUTTON_HELP
     CONTROL         "自動的に閉じる(&D)",IDC_CHECK_bAutoCloseDlgFuncList,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,255,65,10,0,
@@ -1260,11 +1262,11 @@ BEGIN
     DEFPUSHBUTTON   "閉じる(&C)",IDOK,300,170,50,14
 END
 
-IDD_PROP_WIN DIALOGEX 0, 0, 270, 213
+IDD_PROP_WIN DIALOGEX 0, 0, 271, 225
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "ツールバー表示(&T)",IDC_CHECK_DispTOOLBAR,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,13,71,10,0,
@@ -1275,16 +1277,17 @@ BEGIN
     CONTROL         "ステータスバー表示(&S)",IDC_CHECK_DispSTATUSBAR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,37,83,10,0,
                     HIDC_CHECK_DispSTATUSBAR
-    CONTROL         "タブ表示",IDC_CHECK_DispTabWnd,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,102,11,41,10,0,HIDC_CHECK_DispTabWnd
-    CONTROL         "まとめない",IDC_CHECK_DispTabWndMultiWin,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,111,25,47,10,0,
+    CONTROL         "タブ表示(&D)",IDC_CHECK_DispTabWnd,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,102,11,50,10,0,
+                    HIDC_CHECK_DispTabWnd
+    CONTROL         "まとめない(&N)",IDC_CHECK_DispTabWndMultiWin,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,111,25,56,10,0,
                     HIDC_CHECK_DispTabWndMultiWin
     CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,176,11,85,10,0,
                     HIDC_CHECK_bScrollBarHorz
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,176,24,85,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,176,25,85,10,0,
                     HIDC_CHECK_bMenuIcon
     PUSHBUTTON      "位置と大きさの設定(&W)...",IDC_BUTTON_WINSIZE,181,35,79,
                     14
@@ -1293,60 +1296,65 @@ BEGIN
     EDITTEXT        IDC_EDIT_nRulerHeight,96,61,28,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_nRulerHeight
     CONTROL         "Spin1",IDC_SPIN_nRulerHeight,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,61,7,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,119,61,10,
                     12
-    LTEXT           "ドット",IDC_STATIC,126,63,15,8
-    LTEXT           "ルーラーとテキストの隙間(&P)",IDC_STATIC,8,78,86,8
+    LTEXT           "ドット",IDC_STATIC,128,63,15,8
+    LTEXT           "ルーラーとテキストの隙間(&P)",IDC_STATIC,7,78,86,8
     EDITTEXT        IDC_EDIT_nRulerBottomSpace,96,76,28,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_nRulerBottomSpace
     CONTROL         "Spin1",IDC_SPIN_nRulerBottomSpace,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,76,7,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,119,76,10,
                     12
-    LTEXT           "ドット",IDC_STATIC,126,78,15,8
+    LTEXT           "ドット",IDC_STATIC,128,78,15,8
     LTEXT           "行番号とテキストの隙間(&L)",IDC_STATIC,7,93,79,8
     EDITTEXT        IDC_EDIT_nLineNumberRightSpace,96,91,28,12,
                     ES_AUTOHSCROLL,0,HIDC_EDIT_nLineNumberRightSpace
     CONTROL         "Spin1",IDC_SPIN_nLineNumberRightSpace,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,143,91,7,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,119,91,10,
                     12
-    LTEXT           "ドット",IDC_STATIC,126,93,15,8
-    GROUPBOX        "",IDC_STATIC,3,52,143,57
-    CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,192,76,30,10,
-                    0,HIDC_RADIO_FUNCKEYWND_PLACE1
-    CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
-                    BS_AUTORADIOBUTTON,224,76,30,10,0,
-                    HIDC_RADIO_FUNCKEYWND_PLACE2
-    LTEXT           "グループボタン数(&G)",IDC_STATIC,166,93,62,10
-    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,231,91,28,12,ES_AUTOHSCROLL | 
-                    ES_NUMBER,0,HIDC_EDIT_FUNCKEYWND_GROUPNUM
-    CONTROL         "Spin1",IDC_SPIN_FUNCKEYWND_GROUPNUM,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,260,91,7,
-                    12
-    GROUPBOX        "ファンクションキー",IDC_STATIC,160,60,107,49
+    LTEXT           "ドット",IDC_STATIC,128,93,15,8
+    GROUPBOX        "",IDC_STATIC,3,52,145,57
     CONTROL         "垂直スクロールの同期をとる(&V)",
                     IDC_CHECK_SplitterWndVScroll,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,122,107,10
+                    WS_GROUP | WS_TABSTOP,8,126,107,10
     CONTROL         "水平スクロールの同期をとる(&H)",
                     IDC_CHECK_SplitterWndHScroll,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,120,122,107,10
-    GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,112,264,24,WS_GROUP
-    LTEXT           "アクティブ時",IDC_STATIC,7,152,50,10
-    EDITTEXT        IDC_WINCAPTION_ACTIVE,60,149,201,14,ES_AUTOHSCROLL
-    LTEXT           "非アクティブ時",IDC_STATIC,7,165,50,10
-    EDITTEXT        IDC_WINCAPTION_INACTIVE,60,166,201,14,ES_AUTOHSCROLL
-    GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,4,180,264,22,
-                    NOT WS_VISIBLE | WS_GROUP
-    EDITTEXT        IDC_TABWND_CAPTION,60,183,201,14,ES_AUTOHSCROLL,0,
+                    WS_TABSTOP,8,139,107,10
+    GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,114,145,39,WS_GROUP
+    LTEXT           "位置",IDC_STATIC,159,82,19,10
+    CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,82,30,10,
+                    0,HIDC_RADIO_FUNCKEYWND_PLACE1
+    CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
+                    BS_AUTORADIOBUTTON,215,82,30,10,0,
+                    HIDC_RADIO_FUNCKEYWND_PLACE2
+    LTEXT           "グループボタン数(&G)",IDC_STATIC,159,95,62,10
+    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,224,94,28,12,ES_AUTOHSCROLL | 
+                    ES_NUMBER,0,HIDC_EDIT_FUNCKEYWND_GROUPNUM
+    CONTROL         "Spin1",IDC_SPIN_FUNCKEYWND_GROUPNUM,"msctls_updown32",
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,252,94,10,
+                    12
+    GROUPBOX        "ファンクションキー",IDC_STATIC,154,70,113,39
+    CONTROL         "等幅(&Q)",IDC_CHECK_SameTabWidth,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,159,126,39,10
+    CONTROL         "アイコン表示(&C)",IDC_CHECK_DispTabIcon,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,159,140,62,10
+    GROUPBOX        "タブ",IDC_STATIC,154,114,113,39,WS_GROUP
+    LTEXT           "アクティブ時(&1)",IDC_STATIC,7,171,45,8
+    EDITTEXT        IDC_WINCAPTION_ACTIVE,60,168,201,14,ES_AUTOHSCROLL
+    LTEXT           "非アクティブ時(&2)",IDC_STATIC,7,188,52,8
+    EDITTEXT        IDC_WINCAPTION_INACTIVE,60,185,201,14,ES_AUTOHSCROLL
+    LTEXT           "タブ(&3)",IDC_STATIC,7,204,22,10
+    EDITTEXT        IDC_TABWND_CAPTION,60,202,201,14,ES_AUTOHSCROLL,0,
                     HIDC_TABWND_CAPTION
+    GROUPBOX        "タイトルバー",IDC_STATIC,3,157,264,63
     CONTROL         "スタイル-1",IDC_RADIO_nRulerType_0,"Button",
-                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,8,189,47,
+                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,8,206,45,
                     10
     CONTROL         "スタイル-2",IDC_RADIO_nRulerType_1,"Button",
-                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,64,189,47,10
-    GROUPBOX        "タイトルバー",IDC_STATIC,3,138,264,63
-    LTEXT           "タブ",IDC_STATIC,7,182,50,10
-    LTEXT           "位置",IDC_STATIC,167,76,19,10
+                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,54,206,47,10
+    GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,5,197,257,22,
+                    NOT WS_VISIBLE | WS_GROUP
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 270, 213
@@ -2218,10 +2226,10 @@ BEGIN
 
     IDD_PROP_WIN, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 263
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 269
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 222
     END
 
     IDD_PROP_EDIT, DIALOG
@@ -2427,7 +2435,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,5,9,1
- PRODUCTVERSION 1,5,9,1
+ PRODUCTVERSION 1,5,9,90
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2451,7 +2459,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.5.9.1\0"
+            VALUE "ProductVersion", "1.5.9.2\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -2816,6 +2824,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_OUTLINE               "アウトライン解析"
+    F_OUTLINE_TOGGLE        "アウトライン解析(トグル)"
     F_TAGJUMP               "タグジャンプ"
     F_TAGJUMPBACK           "タグジャンプバック"
     F_TAGJUMP_LIST          "ダイレクトタグジャンプ一覧"
@@ -2992,7 +3001,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_AUTHOR_PAGE         "http://hp.vector.co.jp/authors/VA016528/"
     IDS_AUTHOR_MAIL         "hippie@mcn.ne.jp"
-    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n無償で利用できますが，著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\nソースコードの利用に対する詳細なライセンスは現在検討中です．"
+    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n商用・非商用を問わず無償で利用できますが，ソースコードの著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\n"
 END
 
 #endif    // 日本語 resources
