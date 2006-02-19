@@ -106,6 +106,7 @@
 #define IDC_RADIO_FUNCKEYWND_PLACE2     1079
 #define IDC_CHECK_BACKUP_YEAR           1080
 #define IDC_CHECK_ALT                   1080
+#define IDC_CHECK_DispTabIcon           1080
 #define IDC_CHECK_BACKUP_HOUR           1081
 #define IDC_CHECK_BACKUP_MIN            1082
 #define IDC_CHECK_BACKUP_SEC            1083
@@ -442,6 +443,7 @@
 #define IDC_BUTTON_REGEX_UPD            1399
 #define IDC_CHK_WORD                    1400
 #define IDC_BUTTON_REGEX_DEL            1400
+#define IDC_CHECK_SameTabWidth          1400
 #define IDC_MACRODIR                    1401
 #define IDC_MACRODIRREF                 1402
 #define IDC_BUTTON_MENUNAME             1403
