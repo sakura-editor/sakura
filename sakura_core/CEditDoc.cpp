@@ -10,10 +10,11 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta
 	Copyright (C) 2001, genta, YAZAKI, jepro, novice, asa-o, MIK,
-	Copyright (C) 2002, YAZAKI, hor, genta, aroka, frozen, Moca, start
+	Copyright (C) 2002, YAZAKI, hor, genta, aroka, frozen, Moca
 	Copyright (C) 2003, MIK, genta, ryoji, Moca, zenryaku, naoh, wmlhq
 	Copyright (C) 2004, genta, novice, Moca, MIK, zenryaku
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
+	Copyright (C) 2006, genta, ryoji, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1254,7 +1255,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
 	ExpandParameter( m_pShareData->m_Common.m_szTabWndCaption, pszCap, sizeof( pszCap ));
-	m_pcEditWnd->ChangeFileNameNotify( pszCap );
+	m_pcEditWnd->ChangeFileNameNotify( pszCap, m_szFilePath, m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	//@@@ To Here 2003.06.13 MIK
 
 	return;
@@ -3200,6 +3201,10 @@ void  CEditDoc::SetActivePane( int nIndex )
 		/* モードレス時：検索対象となるビューの変更 */
 		m_cHokanMgr.ChangeView( (LPARAM)&m_cEditViewArr[m_nActivePaneIndex] );
 	}
+	if( NULL != m_cDlgFuncList.m_hWnd ){	/* 「アウトライン」ダイアログ */ // 20060201 aroka
+		/* モードレス時：現在位置表示の対象となるビューの変更 */
+		m_cDlgFuncList.ChangeView( (LPARAM)&m_cEditViewArr[m_nActivePaneIndex] );
+	}
 
 	//	2002/05/08 YAZAKI OnKillFocus()とOnSetFocus()で、アンダーラインを制御するようにした。
 	//	2001/06/20 Start by asa-o:	アクティブでないペインのカーソルアンダーバーを非表示
@@ -3492,7 +3497,7 @@ void CEditDoc::OnChangeSetting( void )
 
 	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	pCEditWnd->m_CFuncKeyWnd.m_nCurrentKeyState = -1;
+	pCEditWnd->m_CFuncKeyWnd.Timer_ONOFF( FALSE ); // 20060126 aroka
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_hwndProgressBar;
