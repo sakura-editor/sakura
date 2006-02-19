@@ -8,11 +8,12 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, jepro, ao
-	Copyright (C) 2001, mik, Stonee, Misaka, hor, YAZAKI
+	Copyright (C) 2001, MIK, Stonee, Misaka, hor, YAZAKI
 	Copyright (C) 2002, YAZAKI, genta, hor, aroka, minfu, 鬼, MIK, ai
 	Copyright (C) 2003, genta, MIK, Moca, wmlhq, ryoji, KEITA
 	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
+	Copyright (C) 2006, genta, ryoji, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -49,6 +50,7 @@
 #include "CRunningTimer.h"
 
 
+#define IDT_TOOLBAR1	455  // 20060128 aroka
 #define IDT_TOOLBAR		456
 #define ID_TOOLBAR		100
 
@@ -98,7 +100,8 @@ LRESULT CALLBACK CEditWndProc(
 /*
 ||  タイマーメッセージのコールバック関数
 ||
-||	ツールバーの状態更新のためにタイマーを使用しています
+||	自動保存の更新のためにタイマーを使用しています
+||	ツールバー更新のタイマーはCToolbarTimerProcへ分離した。 20060128 aroka
 */
 VOID CALLBACK CEditWndTimerProc(
 	HWND hwnd,		// handle of window for timer messages
@@ -112,6 +115,27 @@ VOID CALLBACK CEditWndTimerProc(
 	pCEdit = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( NULL != pCEdit ){
 		pCEdit->OnTimer( hwnd, uMsg, idEvent, dwTime );
+	}
+	return;
+}
+
+/*
+||  タイマーメッセージのコールバック関数（２）
+||
+||	ツールバーの状態更新のためにタイマーを使用しています
+||	@date 20060128 aroka
+*/
+VOID CALLBACK CToolbarTimerProc(
+	HWND hwnd,		// handle of window for timer messages
+	UINT uMsg,		// WM_TIMER message
+	UINT_PTR idEvent,	// timer identifier
+	DWORD dwTime 	// current system time
+)
+{
+	CEditWnd*	pCEdit;
+	pCEdit = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
+	if( NULL != pCEdit ){
+		pCEdit->OnToolbarTimer( hwnd, uMsg, idEvent, dwTime );
 	}
 	return;
 }
@@ -497,12 +521,14 @@ HWND CEditWnd::Create(
 		}
 		//	Aug. 29, 2003 wmlhq
 		m_nTimerCount = 0;
-		/* タイマーを起動 */
-		if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, (TIMERPROC)CEditWndTimerProc ) ){
+		/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
+		if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR1, 500, (TIMERPROC)CEditWndTimerProc ) ){
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 				"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
 			);
 		}
+		// ツールバーのタイマーを分離した 20060128 aroka
+		Timer_ONOFF( TRUE );
 //	}
 	::InvalidateRect( m_hWnd, NULL, TRUE );
 	if( NULL != pszPath ){
@@ -1130,7 +1156,8 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 		}
 		m_cEditDoc.SetParentCaption( !bIsActive );
-
+		m_CFuncKeyWnd.Timer_ONOFF( bIsActive ); // 20060126 aroka
+		this->Timer_ONOFF( bIsActive ); // 20060128 aroka
 
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
@@ -1625,6 +1652,19 @@ int	CEditWnd::OnClose( void )
 		i = ( i >= nCount )? 0: i + 1;
 
 		HWND hwnd = p[ i ].m_hWnd;
+		{
+			// 2006.01.28 ryoji
+			// タブまとめ表示でこの画面が非表示から表示に変わってすぐ閉じる場合(タブの中クリック時等)、
+			// 以前のウィンドウが消えるよりも先に一気にここまで処理が進んでしまうと
+			// あとで画面がちらつくので、以前のウィンドウが消えるのをちょっとだけ待つ
+			if( m_pShareData->m_Common.m_bDispTabWnd
+				&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+			{
+				int iWait = 0;
+				while( ::IsWindowVisible( hwnd ) && iWait++ < 20 )
+					::Sleep(1);
+			}
+		}
 		if( !::IsWindowVisible( hwnd ) )
 		{
 			TabWnd_SucceedWindowPlacement( m_hWnd, hwnd );
@@ -2655,6 +2695,7 @@ end_of_drop_query:;
 /*! タイマーの処理
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
+	@date 2006.01.28 aroka ツールバー更新を OnToolbarTimerに移動した
 */
 void CEditWnd::OnTimer(
 	HWND		hwnd,		// handle of window for timer messages
@@ -2664,6 +2705,36 @@ void CEditWnd::OnTimer(
 )
 {
 	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
+	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
+	m_nTimerCount++;
+	if( 6 < m_nTimerCount ){
+		m_nTimerCount = 0;
+	}
+
+	// 2006.01.28 aroka ツールバー更新関連は OnToolbarTimerに移動した。
+	
+	//	Aug. 29, 2003 wmlhq, ryoji
+	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
+		/* ファイルのタイムスタンプのチェック処理 */
+		m_cEditDoc.CheckFileTimeStamp() ;
+	}
+
+	m_cEditDoc.CheckAutoSave();
+	return;
+}
+
+/*! ツールバー更新用タイマーの処理 
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
+	@date 2006.01.28 aroka OnTimerから分離
+*/
+void CEditWnd::OnToolbarTimer(
+	HWND		hwnd,		// handle of window for timer messages
+	UINT		uMsg,		// WM_TIMER message
+	UINT		idEvent,	// timer identifier
+	DWORD		dwTime 		// current system time
+)
+{
 	int			i;
 	TBBUTTON	tbb;
 	m_nTimerCount++;
@@ -2674,8 +2745,6 @@ void CEditWnd::OnTimer(
 	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
 	if( !m_pPrintPreview && NULL != m_hwndToolBar ){
 		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-// CMenuDrawerのメンバ変数をカプセル化 2005/8/9 aroka
-//			tbb = m_CMenuDrawer.m_tbMyButton[m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]];
 			tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]);
 
 			/* 機能が利用可能か調べる */
@@ -2691,13 +2760,6 @@ void CEditWnd::OnTimer(
 		}
 	}
 
-	//	Aug. 29, 2003 wmlhq, ryoji
-	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
-		/* ファイルのタイムスタンプのチェック処理 */
-		m_cEditDoc.CheckFileTimeStamp() ;
-	}
-
-	m_cEditDoc.CheckAutoSave();
 	return;
 }
 
@@ -2840,6 +2902,9 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 	case F_ISEARCH_MIGEMO_NEXT:
 	case F_ISEARCH_MIGEMO_PREV:
 		return pcEditDoc->ActiveView().IsISearchEnabled( nId );
+	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
+		// ToDo:ブックマークリストが出ているときもへこんでしまう。
+		return (pcEditDoc->m_cDlgFuncList.m_hWnd != NULL);
 	}
 	//End 2004.07.14 Kazika
 
@@ -4144,14 +4209,16 @@ void CEditWnd::SendStatusMessage2( const char* msg )
 
 	@author MIK
 	@date 2003.05.31 新規作成
+	@date 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 */
-void CEditWnd::ChangeFileNameNotify( const char *pszFile )
+void CEditWnd::ChangeFileNameNotify( const char *pszTabCaption, const char *pszFilePath, BOOL bIsGrep )
 {
 	CRecent	cRecentEditNode;
 	EditNode	*p;
 	int		nIndex;
 
-	if( NULL == pszFile ) pszFile = "";	//ガード
+	if( NULL == pszTabCaption ) pszTabCaption = "";	//ガード
+	if( NULL == pszFilePath ) pszFilePath = "";		//ガード 2006.01.28 ryoji
 
 	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 	nIndex = cRecentEditNode.FindItem( (const char*)&m_hWnd );
@@ -4161,8 +4228,15 @@ void CEditWnd::ChangeFileNameNotify( const char *pszFile )
 		if( p )
 		{
 			int	size = sizeof( p->m_szTabCaption ) - 1;
-			strncpy( p->m_szTabCaption, pszFile, size );
+			strncpy( p->m_szTabCaption, pszTabCaption, size );
 			p->m_szTabCaption[ size ] = '\0';
+
+			// 2006.01.28 ryoji ファイル名、Grepモード追加
+			size = sizeof( p->m_szFilePath ) - 1;
+			strncpy( p->m_szFilePath, pszFilePath, size );
+			p->m_szFilePath[ size ] = '\0';
+
+			p->m_bIsGrep = bIsGrep;
 		}
 	}
 	cRecentEditNode.Terminate();
@@ -4280,5 +4354,28 @@ void CEditWnd::WindowTopMost( int top )
 		break;
 	}
 }
+
+// タイマーの更新を開始／停止する。 20060128 aroka
+// ツールバー表示はタイマーにより更新しているが、
+// アプリのフォーカスが外れたときにウィンドウからON/OFFを
+//	呼び出してもらうことにより、余計な負荷を停止したい。
+void CEditWnd::Timer_ONOFF( BOOL bStart )
+{
+	if( NULL != m_hWnd ){
+		if( bStart ){
+			/* タイマーを起動 */
+			if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, (TIMERPROC)CToolbarTimerProc ) ){
+				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+					"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+				);
+			}
+		} else {
+			/* タCマーを削除 */
+			::KillTimer( m_hWnd, IDT_TOOLBAR );
+		}
+	}
+	return;
+}
+
 
 /*[EOF]*/
