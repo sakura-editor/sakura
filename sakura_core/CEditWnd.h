@@ -10,8 +10,11 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001-2002, YAZAKI
-	Copyright (C) 2002, aroka
-	Copyright (C) 2003, MIK
+	Copyright (C) 2002, aroka, genta, MIK
+	Copyright (C) 2003, MIK, genta, wmlhq
+	Copyright (C) 2004, Moca
+	Copyright (C) 2005, genta, Moca
+	Copyright (C) 2006, ryoji, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -71,7 +74,9 @@ public:
 	LRESULT OnHScroll( WPARAM, LPARAM );
 	LRESULT OnVScroll( WPARAM, LPARAM );
 
+	// ツールバー更新用と自動保存用のタイマーを分離した 20060128 aroka
 	void OnTimer( HWND, UINT, UINT, DWORD );	/* タイマーの処理 */
+	void OnToolbarTimer( HWND, UINT, UINT, DWORD );	/* タイマーの処理 20060128 aroka */
 	void OnCommand( WORD, WORD , HWND );
 
 	void CreateToolBar( void );			/* ツールバー作成 */
@@ -95,7 +100,7 @@ public:
 	void GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const;
 	bool GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const;
 
-	void ChangeFileNameNotify( const char *pszFile );	//ファイル名変更通知	//@@@ 2003.05.31 MIK
+	void ChangeFileNameNotify( const char *pszTabCaption, const char *pszFilePath, BOOL m_bIsGrep );	//ファイル名変更通知	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	void TabWnd_SucceedWindowPlacement( HWND hwndSrc, HWND hwndDst );	//ウインドウ位置情報継承	//@@@ 2003.06.14 MIK
 
 	//	Dec. 4, 2002 genta
@@ -220,6 +225,7 @@ private:
 
 	int m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
 
+	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
 public:
 	void OnSysMenuTimer();
 };
