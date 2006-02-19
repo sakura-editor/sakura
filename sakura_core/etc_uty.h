@@ -10,7 +10,10 @@
 	Copyright (C) 2001-2002, genta
 	Copyright (C) 2001, shoji masami, Stonee, MIK
 	Copyright (C) 2002, aroka, hor, MIK
-	Copyright (C) 2003, genta
+	Copyright (C) 2003, genta, Moca
+	Copyright (C) 2004, genta, novice
+	Copyright (C) 2005, genta, aroka
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
