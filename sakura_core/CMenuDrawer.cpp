@@ -8,11 +8,12 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta, Jepro
-	Copyright (C) 2001, jepro, MIK, Misaka, YAZAKI
+	Copyright (C) 2001, jepro, MIK, Misaka, YAZAKI, hor, genta
 	Copyright (C) 2002, MIK, genta, YAZAKI, ai, Moca, hor, aroka
 	Copyright (C) 2003, MIK, genta, Moca
-	Copyright (C) 2004, kazika, genta
-	Copyright (C) 2005, aroka
+	Copyright (C) 2004, kazika, genta, Moca, isearch
+	Copyright (C) 2005, genta, MIK, aroka
+	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -359,7 +360,7 @@ CMenuDrawer::CMenuDrawer()
 /* 221 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 222 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 223 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 224 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 224 */		F_OUTLINE_TOGGLE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//アウトライン解析(toggle) // 20060201 aroka
 
 /* 検索系(8段目32個: 225-256) */
 /* 225 */		F_SEARCH_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//検索(単語検索ダイアログ)
