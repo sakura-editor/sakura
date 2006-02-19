@@ -13,8 +13,9 @@
 	Copyright (C) 2001, genta, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
 	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca, minfu, KK, novice,ai, Azumaiya, genta
 	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
-	Copyright (C) 2004, genta, Moca, novice, noah
-	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと
+	Copyright (C) 2004, genta, Moca, novice, noah, isearch, fotomo
+	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
+	Copyright (C) 2006, Moca, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -98,119 +99,23 @@ VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
 int CEditView::m_pnDx[MAXLINESIZE + 10];
 
+/*
+	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
+	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
+*/
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {
-//	STGMEDIUM	stgMedium;
 	FORMATETC	fe;
 	BOOL		bRes;
-//初期形
-//	fe.cfFormat = cfFormat;
-//	fe.ptd = NULL;
-//	fe.dwAspect = DVASPECT_CONTENT;
-//	fe.lindex = -1;
-//	fe.tymed = (TYMED)-1;
-//	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
 
-
-/*
-	TYMED_HGLOBAL	= 1,
-	TYMED_FILE		= 2,
-	TYMED_ISTREAM	= 4,
-	TYMED_ISTORAGE	= 8,
-	TYMED_GDI		= 16,
-	TYMED_MFPICT	= 32,
-	TYMED_ENHMF		= 64,
-	TYMED_NULL		= 0
-*/
-//	MYTRACE( "=====================\n" );
-
+	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
+	//  tymed = TYMED_HGLOBALを指定すれば問題ない
 	fe.cfFormat = cfFormat;
 	fe.ptd = NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_FILE;
+	fe.tymed = TYMED_HGLOBAL;
 	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_ISTREAM;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_ISTORAGE;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_GDI;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_MFPICT;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_ENHMF;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_NULL;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-	if( bRes ){
-		return FALSE;
-	}
-
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = (TYMED)TYMED_HGLOBAL;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-//	MYTRACE( "bRes= %d\n", bRes );
-
-//	MYTRACE( "=====================\n" );
 	return bRes;
 }
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
@@ -220,7 +125,8 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	fe.ptd = NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
-	fe.tymed = (TYMED)-1;
+	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
+	fe.tymed = TYMED_HGLOBAL;
 
 	HGLOBAL hDest = NULL;
 	STGMEDIUM stgMedium;
@@ -2554,6 +2460,10 @@ void CEditView::AdjustScrollBars( void )
 			si.nPos  = m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
 			si.nTrackPos = 1;
 			::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
+		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
+		if( m_nViewColNum >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+			ScrollAtH( 0 );
+		}
 //@@		}
 	}
 
@@ -4681,16 +4591,20 @@ int CEditView::ScrollAtH( int nPos )
 			::UpdateWindow( m_hWnd );
 		}
 	}
+	//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
+	// 先にAdjustScrollBarsを呼んでしまうと、二度目はここまでこないので、
+	// DispRulerが呼ばれない。そのため、順序を入れ替えた。
+	m_bRedrawRuler = true; // ルーラーを再描画する。
+	HDC hdc = ::GetDC( m_hWnd );
+	DispRuler( hdc );
+	::ReleaseDC( m_hWnd, hdc );
+
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
 
 	/* キャレットの表示・更新 */
 	ShowEditCaret();
 
-	/* ルーラー再描画 */
-	HDC hdc = ::GetDC( m_hWnd );
-	DispRuler( hdc );
-	::ReleaseDC( m_hWnd, hdc );
 	return -nScrollColNum;	//方向が逆なので符号反転が必要
 }
 
