@@ -39,6 +39,8 @@ class CTabWnd;
 #include "CWnd.h"
 #include "CEditDoc.h"
 #include "CShareData.h"
+#include <string>
+#include <map>
 
 //! ファンクションキーウィンドウ
 class SAKURA_CORE_API CTabWnd : public CWnd
@@ -82,7 +84,7 @@ protected:
 	/*
 	|| 実装ヘルパ系
 	*/
-	void Refresh( HWND hWnd = NULL );	// 2005.09.01 ryoji 引数追加
+	void Refresh( void );	// 2006.02.06 ryoji 引数削除
 	int FindTabIndexByHWND( HWND hWnd );
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
 	int GetFirstOpenedWindow( void );
@@ -92,6 +94,12 @@ protected:
 	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROY処理 */
 	virtual LRESULT OnNotify( HWND, UINT, WPARAM, LPARAM );		/*!< WM_NOTIFY処理 */
 	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );		/*!< WM_PAINT処理 */
+	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDOWN処理 */
+	virtual LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_RBUTTONDOWN処理 */
+	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MOUSEMOVE処理 */
+	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );		/*!< WM_TIMER処理 */
+	virtual LRESULT OnMeasureItem( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MEASUREITEM処理 */
+	virtual LRESULT OnDrawItem( HWND, UINT, WPARAM, LPARAM );		/*!< WM_DRAWITEM処理 */
 
 	// 2005.09.01 ryoji ドラッグアンドドロップでタブの順序変更を可能に
 	/* サブクラス化した Tab でのメッセージ処理 */
@@ -101,14 +109,47 @@ protected:
 	LRESULT OnTabCaptureChanged( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_CAPTURECHANGED 処理 */
 	LRESULT OnTabRButtonDown( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_RBUTTONDOWN 処理 */
 	LRESULT OnTabRButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_RBUTTONUP 処理 */
+	LRESULT OnTabMButtonDown( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_MBUTTONDOWN 処理 */
+	LRESULT OnTabMButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_MBUTTONUP 処理 */
 	LRESULT OnTabNotify( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_NOTIFY 処理 */
 
+	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; }	/*!< ドラッグ状態解除処理 */
 	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< タブ順序変更処理 */
+	LRESULT ExecTabCommand( int nId, POINTS pts );	/*!< タブ部 コマンド実行処理 */
+	void LayoutTab( void );							/*!< タブのレイアウト調整処理 */
 
 	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
 
 	DragState m_eDragState;		 //!< ドラッグ状態
 	int	m_nSrcTab;				 //!< 移動元タブ
+
+	// 2006.01.28 ryoji タブへのアイコン表示を可能に
+	HIMAGELIST (WINAPI *m_RealImageList_Duplicate)(HIMAGELIST himl);
+	HIMAGELIST m_hIml;								/*!< イメージリスト */
+	HICON m_hIconApp;								/*!< アプリケーションアイコン */
+	HICON m_hIconGrep;								/*!< Grepアイコン */
+	int m_iIconApp;									/*!< アプリケーションアイコンのインデックス */
+	int m_iIconGrep;								/*!< Grepアイコンのインデックス */
+	typedef std::basic_string<TCHAR> tstring;
+	typedef std::map<tstring, int> ExtMap;
+	ExtMap m_mapExt;								/*!< 拡張子マップ */
+	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< イメージリストの複製処理 */
+	int GetImageIndex( EditNode* pNode );			/*!< イメージリストのインデックス取得処理 */
+
+	// 2006.02.01 ryoji タブ一覧を追加
+	void DrawListBtn( HDC hdc, const LPRECT lprcClient );			/*!< 一覧ボタン描画処理 */
+	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
+	LRESULT OnListBtnClick( POINTS pts, BOOL bLeft );				/*!< 一覧ボタンクリック処理 */
+	BOOL m_bHovering;
+	BOOL m_bListBtnHilighted;
+	HFONT CreateMenuFont( void )
+	{
+		// メニュー用フォント作成
+		NONCLIENTMETRICS	ncm;
+		ncm.cbSize = sizeof( NONCLIENTMETRICS );
+		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), (PVOID)&ncm, 0 );
+		return ::CreateFontIndirect( &ncm.lfMenuFont );
+	}
 };
 
 #endif /* _CTABWND_H_ */
