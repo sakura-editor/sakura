@@ -7,8 +7,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, jepro, genta
+	Copyright (C) 2001, jepro, MIK, Stonee, asa-o, Misaka, hor
+	Copyright (C) 2002, aroka, YAZAKI, minfu, MIK, ai, genta
+	Copyright (C) 2003, 鬼, genta, MIK, Moca
+	Copyright (C) 2004, genta, zenryaku, kazika, Moca, isearch
+	Copyright (C) 2005, genta, MIK, maru
+	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -246,6 +251,7 @@
 #define F_JUMP_DIALOG		30920	//指定行へジャンプ
 #define F_JUMP				30921	//指定行へジャンプ
 #define F_OUTLINE			30930	//アウトライン解析
+#define F_OUTLINE_TOGGLE	30931	//アウトライン解析(toggle) // 20060201 aroka
 #define F_TAGJUMP			30940	//タグジャンプ機能
 #define F_TAGJUMPBACK		30941	//タグジャンプバック機能
 #define	F_TAGJUMP_LIST		30942	//タグジャンプリスト	//@@@ 2003.04.13 MIK
