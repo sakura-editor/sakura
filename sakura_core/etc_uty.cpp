@@ -422,6 +422,20 @@ void GetAppVersionInfo(
 /* アクティブにする */
 void ActivateFrameWindow( HWND hwnd )
 {
+	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
+	CShareData* pInstance;
+	DLLSHAREDATA* pShareData;
+	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
+		if( pInstance->IsEditWnd( hwnd ) ){
+			if( pShareData->m_TabWndWndpl.length == sizeof( pShareData->m_TabWndWndpl )
+				&& TRUE  == pShareData->m_Common.m_bDispTabWnd
+				&& FALSE == pShareData->m_Common.m_bDispTabWndMultiWin )
+			{
+				::SetWindowPlacement( hwnd, &(pShareData->m_TabWndWndpl) );
+			}
+		}
+	}
+
 	if( ::IsIconic( hwnd ) ){
 		::ShowWindow( hwnd, SW_RESTORE );
 	}

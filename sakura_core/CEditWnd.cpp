@@ -1667,9 +1667,7 @@ int	CEditWnd::OnClose( void )
 		}
 		if( !::IsWindowVisible( hwnd ) )
 		{
-			TabWnd_SucceedWindowPlacement( m_hWnd, hwnd );
-			::SetForegroundWindow( hwnd );
-			::BringWindowToTop( hwnd );
+			ActivateFrameWindow( hwnd );
 		}
 	}
 	if( p ) delete []p;
@@ -1727,8 +1725,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			if( wID - IDM_SELWINDOW >= 0 &&
 				wID - IDM_SELWINDOW < m_pShareData->m_nEditArrNum ){
 				hwndWork = m_pShareData->m_pEditArr[wID - IDM_SELWINDOW].m_hWnd;
-				
-				//TabWnd_SucceedWindowPlacement( m_hWnd, hwndWork );	//@@@ 2003.06.13 MIK
 				
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
@@ -2610,7 +2606,6 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 					/* アクティブにする */
-					//TabWnd_SucceedWindowPlacement( m_hWnd, hWndOwner );	//@@@ 2003.06.13 MIK
 					ActivateFrameWindow( hWndOwner );
 					/* MRUリストへの登録 */
 					CMRU cMRU;
@@ -4243,29 +4238,6 @@ void CEditWnd::ChangeFileNameNotify( const char *pszTabCaption, const char *pszF
 
 	//ファイル名変更通知をブロードキャストする。
 	CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_FILE, (LPARAM)m_hWnd, m_hWnd );
-
-	return;
-}
-
-/*! ウインドウ位置情報を継承する
-
-	@author MIK
-	@date 2003.05.31 新規作成
-*/
-void CEditWnd::TabWnd_SucceedWindowPlacement( HWND hwndSrc, HWND hwndDst )
-{
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
-	{
-		//ウインドウ情報を取得する。
-		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-		::GetWindowPlacement( hwndSrc, &(m_pShareData->m_TabWndWndpl) );
-
-//		if( SW_MINIMIZE == m_pShareData->m_TabWndWndpl.showCmd ) m_pShareData->m_TabWndWndpl.showCmd = SW_RESTORE;
-//		if( SW_HIDE     == m_pShareData->m_TabWndWndpl.showCmd ) m_pShareData->m_TabWndWndpl.showCmd = SW_SHOW;
-
-		::SetWindowPlacement( hwndDst, &(m_pShareData->m_TabWndWndpl) );
-	}
 
 	return;
 }

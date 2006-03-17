@@ -3301,7 +3301,6 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 				}
 				/* 次のウィンドウをアクティブにする */
 				hwndWork = pEditNodeArr[j].m_hWnd;
-				m_pcEditWnd->TabWnd_SucceedWindowPlacement( m_hwndParent, hwndWork );	//@@@ 2003.06.23 MIK
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
 //				if( ::IsIconic( hwndWork ) ){
@@ -3340,7 +3339,6 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 				}
 				/* 次のウィンドウをアクティブにする */
 				hwndWork = pEditNodeArr[j].m_hWnd;
-				m_pcEditWnd->TabWnd_SucceedWindowPlacement( m_hwndParent, hwndWork );	//@@@ 2003.06.23 MIK
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
 //				if( ::IsIconic( hwndWork ) ){
