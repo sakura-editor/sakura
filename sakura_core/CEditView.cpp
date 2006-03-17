@@ -106,7 +106,6 @@ int CEditView::m_pnDx[MAXLINESIZE + 10];
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {
 	FORMATETC	fe;
-	BOOL		bRes;
 
 	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
 	//  tymed = TYMED_HGLOBALを指定すれば問題ない
@@ -115,8 +114,8 @@ BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
 	fe.tymed = TYMED_HGLOBAL;
-	bRes = SUCCEEDED( pDataObject->QueryGetData( &fe ) );
-	return bRes;
+	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
+	return S_OK == pDataObject->QueryGetData( &fe );
 }
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {
@@ -130,7 +129,8 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 
 	HGLOBAL hDest = NULL;
 	STGMEDIUM stgMedium;
-	if( SUCCEEDED( pDataObject->GetData( &fe, &stgMedium ) ) ){
+	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
+	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
 		if( stgMedium.pUnkForRelease == NULL ){
 			if( stgMedium.tymed == TYMED_HGLOBAL )
 				hDest = stgMedium.hGlobal;
