@@ -686,8 +686,9 @@ void CProfile::DUMP( void )
 #ifdef _DEBUG
 	std::vector< Section >::iterator iter;
 	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
-	MAP_STR_STR_ITER mapiter;
-	MAP_STR_STR_ITER mapiterEnd;
+	//	2006.02.20 ryoji: MAP_STR_STR_ITERíœŽž‚ÌC³˜R‚ê‚É‚æ‚éƒRƒ“ƒpƒCƒ‹ƒGƒ‰[C³
+	MAP_STR_STR::iterator mapiter;
+	MAP_STR_STR::iterator mapiterEnd;
 	MYTRACE( "\n\nCProfile::DUMP()======================" );
 	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
 		MYTRACE( "\n¡strSectionName=%s", iter->strSectionName.c_str() );
