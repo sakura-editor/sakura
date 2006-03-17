@@ -101,7 +101,6 @@ public:
 	bool GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const;
 
 	void ChangeFileNameNotify( const char *pszTabCaption, const char *pszFilePath, BOOL m_bIsGrep );	//ファイル名変更通知	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
-	void TabWnd_SucceedWindowPlacement( HWND hwndSrc, HWND hwndDst );	//ウインドウ位置情報継承	//@@@ 2003.06.14 MIK
 
 	//	Dec. 4, 2002 genta
 	//	メニューバーへのメッセージ表示機能をCEditWndより移管
