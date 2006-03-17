@@ -655,6 +655,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&ti );
 		TabCtrl_SetToolTips( m_hwndTab, m_hwndToolTip ); 
 
+		// 2006.02.22 ryoji イメージリストを初期化する
+		InitImageList();
+
 		//TabCtrl_DeleteAllItems( m_hwndTab );
 		//::ShowWindow( m_hwndTab, SW_HIDE );
 		Refresh();
@@ -1429,9 +1432,14 @@ void CTabWnd::LayoutTab( void )
 	// アイコンの表示を切り替える
 	HIMAGELIST hImg = TabCtrl_GetImageList( m_hwndTab );
 	if( NULL == hImg && m_pShareData->m_Common.m_bDispTabIcon )
-		TabCtrl_SetImageList( m_hwndTab, m_hIml );
+	{
+		if( NULL != InitImageList() )
+			Refresh();
+	}
 	else if( NULL != hImg && !m_pShareData->m_Common.m_bDispTabIcon )
-		TabCtrl_SetImageList( m_hwndTab, NULL );
+	{
+		InitImageList();
+	}
 
 	// タブのアイテム幅の等幅を切り替える
 	UINT lStyle;
@@ -1467,6 +1475,114 @@ void CTabWnd::LayoutTab( void )
 			cx = MIN_TABITEM_WIDTH;
 		TabCtrl_SetItemSize( m_hwndTab, cx, TAB_ITEM_HEIGHT );
 	}
+}
+
+/*! イメージリストの初期化処理
+	@date 2006.02.22 ryoji 新規作成
+*/
+HIMAGELIST CTabWnd::InitImageList( void )
+{
+	SHFILEINFO sfi;
+	HIMAGELIST hImlSys;
+	HIMAGELIST hImlNew;
+
+	hImlNew = NULL;
+	if( m_pShareData->m_Common.m_bDispTabIcon )
+	{
+		// システムイメージリストを取得する
+		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
+		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
+		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
+
+		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".0"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
+		if( NULL == hImlSys )
+			goto l_end;
+		m_iIconApp = sfi.iIcon;
+
+		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".1"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_OPENICON );
+		if( NULL == hImlSys )
+			goto l_end;
+		m_iIconGrep = sfi.iIcon;
+
+		// システムイメージリストを複製する
+		hImlNew = ImageList_Duplicate( hImlSys );
+		if( NULL == hImlNew )
+			goto l_end;
+		ImageList_SetBkColor( hImlNew, CLR_NONE );
+
+		// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
+		// （利用しないアイコンと差し替える）
+		m_hIconApp = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
+		ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
+		m_hIconGrep = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
+		ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+	}
+
+l_end:
+	// タブに新しいアイコンイメージを設定する
+	TabCtrl_SetImageList( m_hwndTab, hImlNew );
+
+	// 新しいイメージリストを記憶する
+	if( NULL != m_hIml )
+		ImageList_Destroy( m_hIml );
+	m_hIml = hImlNew;
+
+	return m_hIml;	// 新しいイメージリストを返す
+}
+
+/*! イメージリストのインデックス取得処理
+	@date 2006.01.28 ryoji 新規作成
+*/
+int CTabWnd::GetImageIndex( EditNode* pNode )
+{
+	SHFILEINFO sfi;
+	HIMAGELIST hImlSys;
+	HIMAGELIST hImlNew;
+
+	if( NULL == m_hIml )
+		return -1;	// イメージリストを使っていない
+
+	if( pNode )
+	{
+		if( pNode->m_szFilePath[0] )
+		{
+			// 拡張子を取り出す
+			TCHAR szExt[_MAX_EXT];
+			_tsplitpath( pNode->m_szFilePath, NULL, NULL, NULL, szExt );
+
+			// 拡張子に関連付けられたアイコンイメージのインデックスを取得する
+			hImlSys = (HIMAGELIST)::SHGetFileInfo( szExt, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
+			if( NULL == hImlSys )
+				return -1;
+			if( ImageList_GetImageCount( m_hIml ) > sfi.iIcon )
+				return sfi.iIcon;	// インデックスを返す
+
+			// システムイメージリストを複製する
+			hImlNew = ImageList_Duplicate( hImlSys );
+			if( NULL == hImlNew )
+				return -1;
+			ImageList_SetBkColor( hImlNew, CLR_NONE );
+
+			// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
+			// （利用しないアイコンと差し替える）
+			ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
+			ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+
+			// タブにアイコンイメージを設定する
+			if( m_pShareData->m_Common.m_bDispTabIcon )
+				TabCtrl_SetImageList( m_hwndTab, hImlNew );
+
+			// 新しいイメージリストを記憶する
+			ImageList_Destroy( m_hIml );
+			m_hIml = hImlNew;
+
+			return sfi.iIcon;	// インデックスを返す
+		}
+		else if( pNode->m_bIsGrep )
+			return m_iIconGrep;	// grepアイコンのインデックスを返す
+	}
+
+	return m_iIconApp;	// アプリケーションアイコンのインデックスを返す
 }
 
 /*! イメージリストの複製処理
@@ -1506,118 +1622,6 @@ HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 		}
 	}
 	return hImlNew;
-}
-
-/*! イメージリストのインデックス取得処理
-	@date 2006.01.28 ryoji 新規作成
-*/
-int CTabWnd::GetImageIndex( EditNode* pNode )
-{
-	SHFILEINFO sfi;
-	HIMAGELIST hImlSys;
-	HIMAGELIST hImlNew;
-
-	if( NULL == m_hIml )
-	{
-		// システムイメージリストを取得する
-		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
-		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
-		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
-
-		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".0"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
-		if( NULL == hImlSys )
-			return -1;
-		::DestroyIcon( sfi.hIcon );
-		m_iIconApp = sfi.iIcon;
-
-		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".1"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_OPENICON );
-		if( NULL == hImlSys )
-			return -1;
-		::DestroyIcon( sfi.hIcon );
-		m_iIconGrep = sfi.iIcon;
-
-		// システムイメージリストを複製する
-		hImlNew = ImageList_Duplicate( hImlSys );
-		if( NULL == hImlNew )
-			return -1;
-		ImageList_SetBkColor( hImlNew, CLR_NONE );
-
-		// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
-		// （利用しないアイコンと差し替える）
-		m_hIconApp = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
-		ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
-		m_hIconGrep = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
-		ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
-
-		// タブにアイコンイメージを設定する
-		if( m_pShareData->m_Common.m_bDispTabIcon )
-			TabCtrl_SetImageList( m_hwndTab, hImlNew );
-
-		// 新しいイメージリストを記憶する
-		m_hIml = hImlNew;
-
-		// 拡張子マップをクリアする
-		m_mapExt.clear();
-	}
-
-	if( pNode )
-	{
-		if( pNode->m_szFilePath[0] )
-		{
-			// 拡張子を取り出す
-			TCHAR szExt[_MAX_EXT];
-			_tsplitpath( pNode->m_szFilePath, NULL, NULL, NULL, szExt );
-
-			// 拡張子に対応したイメージインデックスを検索する
-			ExtMap::iterator iIter = m_mapExt.find( szExt );
-			if( iIter != m_mapExt.end() )	// マップに登録済みか ?
-			{
-				return (*iIter).second;	// 登録済みのインデックスを返す
-			}
-			else
-			{
-				// 拡張子に関連付けられたアイコンを取得してイメージリストとマップに登録する
-				hImlSys = (HIMAGELIST)::SHGetFileInfo( szExt, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
-				if( NULL == hImlSys )
-					return -1;
-				::DestroyIcon( sfi.hIcon );
-				if( ImageList_GetImageCount( m_hIml ) > sfi.iIcon )
-				{
-					// 拡張子マップに登録する
-					m_mapExt[szExt] = sfi.iIcon;
-					return sfi.iIcon;	// インデックスを返す
-				}
-
-				// システムイメージリストを複製する
-				hImlNew = ImageList_Duplicate( hImlSys );
-				if( NULL == hImlNew )
-					return -1;
-				ImageList_SetBkColor( hImlNew, CLR_NONE );
-
-				// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
-				// （利用しないアイコンと差し替える）
-				ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
-				ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
-
-				// タブにアイコンイメージを設定する
-				if( m_pShareData->m_Common.m_bDispTabIcon )
-					TabCtrl_SetImageList( m_hwndTab, hImlNew );
-
-				// 新しいイメージリストを記憶する
-				if( NULL != m_hIml )
-					ImageList_Destroy( m_hIml );
-				m_hIml = hImlNew;
-
-				// 拡張子マップに登録する
-				m_mapExt[szExt] = sfi.iIcon;
-				return sfi.iIcon;	// インデックスを返す
-			}
-		}
-		else if( pNode->m_bIsGrep )
-			return m_iIconGrep;	// grepアイコンのインデックスを返す
-	}
-
-	return m_iIconApp;	// アプリケーションアイコンのインデックスを返す
 }
 
 /*! 一覧ボタン描画処理
@@ -1724,11 +1728,11 @@ LRESULT CTabWnd::OnListBtnClick( POINTS pts, BOOL bLeft )
 		// メニューを作成する
 		int iTabSel = TabCtrl_GetCurSel( m_hwndTab );
 		int iMenuSel = -1;
+		UINT uFlags = MF_BYPOSITION | (m_hIml? MF_OWNERDRAW:  MF_STRING);
 		HMENU hMenu = ::CreatePopupMenu();
 		for( i = 0; i < nCount; i++ )
 		{
-			UINT uFlags = MF_BYPOSITION | MF_OWNERDRAW;
-			::InsertMenu( hMenu, i, uFlags, pData[i].iItem + 100, (LPCTSTR)&pData[i] );
+			::InsertMenu( hMenu, i, uFlags, pData[i].iItem + 100, m_hIml? (LPCTSTR)&pData[i]: pData[i].szText );
 			if( pData[i].iItem == iTabSel )
 				iMenuSel = i;
 		}

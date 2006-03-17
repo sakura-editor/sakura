@@ -130,11 +130,9 @@ protected:
 	HICON m_hIconGrep;								/*!< Grepアイコン */
 	int m_iIconApp;									/*!< アプリケーションアイコンのインデックス */
 	int m_iIconGrep;								/*!< Grepアイコンのインデックス */
-	typedef std::basic_string<TCHAR> tstring;
-	typedef std::map<tstring, int> ExtMap;
-	ExtMap m_mapExt;								/*!< 拡張子マップ */
-	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< イメージリストの複製処理 */
+	HIMAGELIST InitImageList( void );				/*!< イメージリストの初期化処理 */
 	int GetImageIndex( EditNode* pNode );			/*!< イメージリストのインデックス取得処理 */
+	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< イメージリストの複製処理 */
 
 	// 2006.02.01 ryoji タブ一覧を追加
 	void DrawListBtn( HDC hdc, const LPRECT lprcClient );			/*!< 一覧ボタン描画処理 */
