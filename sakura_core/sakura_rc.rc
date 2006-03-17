@@ -315,7 +315,7 @@ BEGIN
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
                     30,7,42,8
-    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,79,7,60,8,NOT WS_GROUP
+    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,76,7,88,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
     LTEXT           "Copyright (C) 1998-2006  by Norio Nakatani && Collaborators",
