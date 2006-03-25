@@ -1,22 +1,47 @@
+# $Id$
 # Makefile for Sakura Editor
-# 	Output - sakurabc.exe
-# 	Compiler - borland C++ free compiler 5.5.1
-# 	Base Version - Release 1.2.104.1 (2001 Dec 19)
-# 	Usage - 'make -f sakurabc.mak [Option]'
+# 	Output - sakura.exe
+# 	Compiler - borland C++ free compiler 5.5.1 (with borland make)
+# 	Compiler - MS Visual C++ Toolkit 2003 + MS Platform SDK (with nmake)
 # 	Option - '-DDEBUG'	'-DTRACE'
-# 	Target - all(default) tall tool
+#
+#	2006.03.25 Directory auto creation (Thanks to Nam san)
+
+!undef BCC
+
+## Directory and files
+OUTDIR=..\sakura
+SRCDIR=..\sakura_core
+TOOLDIR=..\btool
+
+#
+#	Compile options
 #
 
-## CPP Options
-CPPFLAGS=-I..\sakura_core  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -M -D_MBCS
-RFLAGS=-dDS_SETFOREGROUND=0x200L
+!if "$(CC)"=="bcc32"
+!MESSAGE Compile for Borland C++
+#------------------------------------------
+# Definitions for Borland C++
+#------------------------------------------
+# BCC: Flag for bcc
+BCC=1
+
+# compatibility option
+CC_OBJFILEOPT=-o
+CC_EXEFILEOPT=-e
+
+## (BCC) CPP Options
+CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -M -D_MBCS -tW
+RFLAGS=-dDS_SETFOREGROUND=0x200L -i$(SRCDIR)
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 
-## Optimizing Options	// DEBUG,TRACE,RELEASE
+## (BCC) Optimizing Options	// DEBUG,TRACE,RELEASE
 !ifdef DEBUG
 OPTFLAGS=-Od -v -y -N -D_DEBUG $(WARNINGS)
+OBJDIR=.\Debug_bcc
 !else
 OPTFLAGS=-5 -O1 -Octv -d
+OBJDIR=.\Release_bcc
 !ifdef TRACE
 OPTFLAGS=-v -y $(OPTFLAGS) $(WARNINGS)
 !else
@@ -24,196 +49,251 @@ OPTFLAGS=$(OPTFLAGS) -DNDEBUG -w-8004  -w-8057
 !endif
 !endif
 
+!elseif "$(CC)"=="cl"
+#------------------------------------------
+# Micrsoft Optimizing Compiler
+#------------------------------------------
+!ifdef DEBUG
+OPTFLAGS=/W3 /GR /GX /GS /Od /D "DEBUG" /D "_DEBUG" /Zi
+OBJDIR=.\Debug_one
+!else
+OPTFLAGS=/W3 /GR /GX /O1 /D "NDEBUG" 
+OBJDIR=.\Release_one
+!endif
+
+RC=rc.exe
+CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
+RFLAGS=/l 0x411 /d "NDEBUG" /I "$(SRCDIR)"
+LFLAGS=/subsystem:windows /machine:x86
+
+# compatibility option
+CC_OBJFILEOPT=/Fo
+CC_EXEFILEOPT=/Fe
+
+!else
+#other compiler
+!ERROR Compiler $(CC) is not supported.
+
+!endif
+
 #DEF=EXPORT_SAKURA_DLL
 
-
-## Directory and files
-OUTDIR=..\sakura
-SRCDIR=..\sakura_core
-TOOLDIR=..\btool
+LIBS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comctl32.lib Imm32.lib mpr.lib
 
 OBJS =\
-	$(SRCDIR)\CAutoSave.obj \
-	$(SRCDIR)\CBlockComment.obj \
-	$(SRCDIR)\CCommandLine.obj \
-	$(SRCDIR)\CControlProcess.obj \
-	$(SRCDIR)\CDialog.obj \
-	$(SRCDIR)\CDicMgr.obj \
-	$(SRCDIR)\CDlgAbout.obj \
-	$(SRCDIR)\CDlgCancel.obj \
-	$(SRCDIR)\CDlgCompare.obj \
-	$(SRCDIR)\CDlgCtrlCode.obj \
-	$(SRCDIR)\CDlgDiff.obj \
-	$(SRCDIR)\CDlgDebug.obj \
-	$(SRCDIR)\CDlgExec.obj \
-	$(SRCDIR)\CDlgFavorite.obj \
-	$(SRCDIR)\CDlgFileUpdateQuery.obj \
-	$(SRCDIR)\CDlgFind.obj \
-	$(SRCDIR)\CDlgFuncList.obj \
-	$(SRCDIR)\CDlgGrep.obj \
-	$(SRCDIR)\CDlgInput1.obj \
-	$(SRCDIR)\CDlgJump.obj \
-	$(SRCDIR)\CDlgKeywordSelect.obj \
-	$(SRCDIR)\CDlgOpenFile.obj \
-	$(SRCDIR)\CDlgPrintPage.obj \
-	$(SRCDIR)\CDlgPrintSetting.obj \
-	$(SRCDIR)\CDlgProperty.obj \
-	$(SRCDIR)\CDlgReplace.obj \
-	$(SRCDIR)\CDlgTagJumpList.obj \
-	$(SRCDIR)\CDlgTagsMake.obj \
-	$(SRCDIR)\CDlgTypeList.obj \
-	$(SRCDIR)\CDlgWinSize.obj \
-	$(SRCDIR)\CDllHandler.obj \
-	$(SRCDIR)\CDocLine.obj \
-	$(SRCDIR)\CDocLineMgr.obj \
-	$(SRCDIR)\CDocLineMgr_New.obj \
-	$(SRCDIR)\CDropTarget.obj \
-	$(SRCDIR)\CEditApp.obj \
-	$(SRCDIR)\CEditDoc.obj \
-	$(SRCDIR)\CEditDoc_FuncList1.obj \
-	$(SRCDIR)\CEditDoc_new.obj \
-	$(SRCDIR)\CEditView.obj \
-	$(SRCDIR)\CEditView_Cmdgrep.obj \
-	$(SRCDIR)\CEditView_CmdHokan.obj \
-	$(SRCDIR)\CEditView_Cmdisrch.obj \
-	$(SRCDIR)\CEditView_Command.obj \
-	$(SRCDIR)\CEditView_Command_New.obj \
-	$(SRCDIR)\CEditView_Diff.obj \
-	$(SRCDIR)\CEditView_New.obj \
-	$(SRCDIR)\CEditView_New2.obj \
-	$(SRCDIR)\CEditView_New3.obj \
-	$(SRCDIR)\CEditWnd.obj \
-	$(SRCDIR)\CEol.obj \
-	$(SRCDIR)\CFileExt.obj \
-	$(SRCDIR)\CFileWrite.obj \
-	$(SRCDIR)\CFileLoad.obj \
-	$(SRCDIR)\CFuncInfo.obj \
-	$(SRCDIR)\CFuncInfoArr.obj \
-	$(SRCDIR)\CFuncKeyWnd.obj \
-	$(SRCDIR)\CFuncLookup.obj \
-	$(SRCDIR)\CHokanMgr.obj \
-	$(SRCDIR)\CHtmlHelp.obj \
-	$(SRCDIR)\CImageListMgr.obj \
-	$(SRCDIR)\CKeyBind.obj \
-	$(SRCDIR)\CKeyMacroMgr.obj \
-	$(SRCDIR)\CKeyWordSetMgr.obj \
-	$(SRCDIR)\CLayout.obj \
-	$(SRCDIR)\CLayoutMgr.obj \
-	$(SRCDIR)\CLayoutMgr_New.obj \
-	$(SRCDIR)\CLayoutMgr_New2.obj \
-	$(SRCDIR)\CLineComment.obj \
-	$(SRCDIR)\CMacro.obj \
-	$(SRCDIR)\CMacroFactory.obj \
-	$(SRCDIR)\CMacroManagerBase.obj \
-	$(SRCDIR)\CMarkMgr.obj \
-	$(SRCDIR)\CMemory.obj \
-	$(SRCDIR)\CMenuDrawer.obj \
-	$(SRCDIR)\CMigemo.obj \
-	$(SRCDIR)\CMRU.obj \
-	$(SRCDIR)\CMRUFolder.obj \
-	$(SRCDIR)\CMultiMonitor.obj \
-	$(SRCDIR)\CNormalProcess.obj \
-	$(SRCDIR)\COpe.obj \
-	$(SRCDIR)\COpeBlk.obj \
-	$(SRCDIR)\COpeBuf.obj \
-	$(SRCDIR)\CPPA.obj \
-	$(SRCDIR)\CPPAMacroMgr.obj \
-	$(SRCDIR)\CPrint.obj \
-	$(SRCDIR)\CPrintPreview.obj \
-	$(SRCDIR)\CProcess.obj \
-	$(SRCDIR)\CProcessFactory.obj \
-	$(SRCDIR)\CProfile.obj \
-	$(SRCDIR)\CPropComBackup.obj \
-	$(SRCDIR)\CPropComCustmenu.obj \
-	$(SRCDIR)\CPropComEdit.obj \
-	$(SRCDIR)\CPropComFile.obj \
-	$(SRCDIR)\CPropComFileName.obj \
-	$(SRCDIR)\CPropComFormat.obj \
-	$(SRCDIR)\CPropComGrep.obj \
-	$(SRCDIR)\CPropComHelper.obj \
-	$(SRCDIR)\CPropComKeybind.obj \
-	$(SRCDIR)\CPropComKeyword.obj \
-	$(SRCDIR)\CPropCommon.obj \
-	$(SRCDIR)\CPropComMacro.obj \
-	$(SRCDIR)\CPropComToolbar.obj \
-	$(SRCDIR)\CPropComUrl.obj \
-	$(SRCDIR)\CPropComWin.obj \
-	$(SRCDIR)\CPropTypes.obj \
-	$(SRCDIR)\CPropTypesRegex.obj \
-	$(SRCDIR)\CRunningTimer.obj \
-	$(SRCDIR)\CRecent.obj \
-	$(SRCDIR)\CRegexKeyword.obj \
-	$(SRCDIR)\CShareData_new.obj \
-	$(SRCDIR)\CShareData.obj \
-	$(SRCDIR)\CSMacroMgr.obj \
-	$(SRCDIR)\CSortedTagJumpList.obj \
-	$(SRCDIR)\CSplitBoxWnd.obj \
-	$(SRCDIR)\CSplitterWnd.obj \
-	$(SRCDIR)\CTabWnd.obj \
-	$(SRCDIR)\CTipWnd.obj \
-	$(SRCDIR)\CWnd.obj \
-	$(SRCDIR)\CWaitCursor.obj \
-	$(SRCDIR)\CWSH.obj \
-	$(SRCDIR)\CBregexp.obj \
-	$(SRCDIR)\Debug.obj \
-	$(SRCDIR)\etc_uty.obj \
-	$(SRCDIR)\Funccode.obj \
-	$(SRCDIR)\global.obj \
-	$(SRCDIR)\my_icmp.obj \
-	$(SRCDIR)\MY_SP.obj \
-	$(SRCDIR)\StdAfx.obj \
-	$(SRCDIR)\WinMain.obj \
+	$(OBJDIR)\CAutoSave.obj \
+	$(OBJDIR)\CBlockComment.obj \
+	$(OBJDIR)\CCommandLine.obj \
+	$(OBJDIR)\CControlProcess.obj \
+	$(OBJDIR)\CDialog.obj \
+	$(OBJDIR)\CDicMgr.obj \
+	$(OBJDIR)\CDlgAbout.obj \
+	$(OBJDIR)\CDlgCancel.obj \
+	$(OBJDIR)\CDlgCompare.obj \
+	$(OBJDIR)\CDlgCtrlCode.obj \
+	$(OBJDIR)\CDlgDiff.obj \
+	$(OBJDIR)\CDlgDebug.obj \
+	$(OBJDIR)\CDlgExec.obj \
+	$(OBJDIR)\CDlgFavorite.obj \
+	$(OBJDIR)\CDlgFileUpdateQuery.obj \
+	$(OBJDIR)\CDlgFind.obj \
+	$(OBJDIR)\CDlgFuncList.obj \
+	$(OBJDIR)\CDlgGrep.obj \
+	$(OBJDIR)\CDlgInput1.obj \
+	$(OBJDIR)\CDlgJump.obj \
+	$(OBJDIR)\CDlgKeywordSelect.obj \
+	$(OBJDIR)\CDlgOpenFile.obj \
+	$(OBJDIR)\CDlgPrintPage.obj \
+	$(OBJDIR)\CDlgPrintSetting.obj \
+	$(OBJDIR)\CDlgProperty.obj \
+	$(OBJDIR)\CDlgReplace.obj \
+	$(OBJDIR)\CDlgTagJumpList.obj \
+	$(OBJDIR)\CDlgTagsMake.obj \
+	$(OBJDIR)\CDlgTypeList.obj \
+	$(OBJDIR)\CDlgWinSize.obj \
+	$(OBJDIR)\CDllHandler.obj \
+	$(OBJDIR)\CDocLine.obj \
+	$(OBJDIR)\CDocLineMgr.obj \
+	$(OBJDIR)\CDocLineMgr_New.obj \
+	$(OBJDIR)\CDropTarget.obj \
+	$(OBJDIR)\CEditApp.obj \
+	$(OBJDIR)\CEditDoc.obj \
+	$(OBJDIR)\CEditDoc_FuncList1.obj \
+	$(OBJDIR)\CEditDoc_new.obj \
+	$(OBJDIR)\CEditView.obj \
+	$(OBJDIR)\CEditView_Cmdgrep.obj \
+	$(OBJDIR)\CEditView_CmdHokan.obj \
+	$(OBJDIR)\CEditView_Cmdisrch.obj \
+	$(OBJDIR)\CEditView_Command.obj \
+	$(OBJDIR)\CEditView_Command_New.obj \
+	$(OBJDIR)\CEditView_Diff.obj \
+	$(OBJDIR)\CEditView_New.obj \
+	$(OBJDIR)\CEditView_New2.obj \
+	$(OBJDIR)\CEditView_New3.obj \
+	$(OBJDIR)\CEditWnd.obj \
+	$(OBJDIR)\CEol.obj \
+	$(OBJDIR)\CFileExt.obj \
+	$(OBJDIR)\CFileWrite.obj \
+	$(OBJDIR)\CFileLoad.obj \
+	$(OBJDIR)\CFuncInfo.obj \
+	$(OBJDIR)\CFuncInfoArr.obj \
+	$(OBJDIR)\CFuncKeyWnd.obj \
+	$(OBJDIR)\CFuncLookup.obj \
+	$(OBJDIR)\CHokanMgr.obj \
+	$(OBJDIR)\CHtmlHelp.obj \
+	$(OBJDIR)\CImageListMgr.obj \
+	$(OBJDIR)\CKeyBind.obj \
+	$(OBJDIR)\CKeyMacroMgr.obj \
+	$(OBJDIR)\CKeyWordSetMgr.obj \
+	$(OBJDIR)\CLayout.obj \
+	$(OBJDIR)\CLayoutMgr.obj \
+	$(OBJDIR)\CLayoutMgr_New.obj \
+	$(OBJDIR)\CLayoutMgr_New2.obj \
+	$(OBJDIR)\CLineComment.obj \
+	$(OBJDIR)\CMacro.obj \
+	$(OBJDIR)\CMacroFactory.obj \
+	$(OBJDIR)\CMacroManagerBase.obj \
+	$(OBJDIR)\CMarkMgr.obj \
+	$(OBJDIR)\CMemory.obj \
+	$(OBJDIR)\CMenuDrawer.obj \
+	$(OBJDIR)\CMigemo.obj \
+	$(OBJDIR)\CMRU.obj \
+	$(OBJDIR)\CMRUFolder.obj \
+	$(OBJDIR)\CMultiMonitor.obj \
+	$(OBJDIR)\CNormalProcess.obj \
+	$(OBJDIR)\COpe.obj \
+	$(OBJDIR)\COpeBlk.obj \
+	$(OBJDIR)\COpeBuf.obj \
+	$(OBJDIR)\CPPA.obj \
+	$(OBJDIR)\CPPAMacroMgr.obj \
+	$(OBJDIR)\CPrint.obj \
+	$(OBJDIR)\CPrintPreview.obj \
+	$(OBJDIR)\CProcess.obj \
+	$(OBJDIR)\CProcessFactory.obj \
+	$(OBJDIR)\CProfile.obj \
+	$(OBJDIR)\CPropComBackup.obj \
+	$(OBJDIR)\CPropComCustmenu.obj \
+	$(OBJDIR)\CPropComEdit.obj \
+	$(OBJDIR)\CPropComFile.obj \
+	$(OBJDIR)\CPropComFileName.obj \
+	$(OBJDIR)\CPropComFormat.obj \
+	$(OBJDIR)\CPropComGrep.obj \
+	$(OBJDIR)\CPropComHelper.obj \
+	$(OBJDIR)\CPropComKeybind.obj \
+	$(OBJDIR)\CPropComKeyword.obj \
+	$(OBJDIR)\CPropCommon.obj \
+	$(OBJDIR)\CPropComMacro.obj \
+	$(OBJDIR)\CPropComToolbar.obj \
+	$(OBJDIR)\CPropComUrl.obj \
+	$(OBJDIR)\CPropComWin.obj \
+	$(OBJDIR)\CPropTypes.obj \
+	$(OBJDIR)\CPropTypesRegex.obj \
+	$(OBJDIR)\CRunningTimer.obj \
+	$(OBJDIR)\CRecent.obj \
+	$(OBJDIR)\CRegexKeyword.obj \
+	$(OBJDIR)\CShareData_new.obj \
+	$(OBJDIR)\CShareData.obj \
+	$(OBJDIR)\CSMacroMgr.obj \
+	$(OBJDIR)\CSortedTagJumpList.obj \
+	$(OBJDIR)\CSplitBoxWnd.obj \
+	$(OBJDIR)\CSplitterWnd.obj \
+	$(OBJDIR)\CTabWnd.obj \
+	$(OBJDIR)\CTipWnd.obj \
+	$(OBJDIR)\CWnd.obj \
+	$(OBJDIR)\CWaitCursor.obj \
+	$(OBJDIR)\CWSH.obj \
+	$(OBJDIR)\CBregexp.obj \
+	$(OBJDIR)\Debug.obj \
+	$(OBJDIR)\etc_uty.obj \
+	$(OBJDIR)\Funccode.obj \
+	$(OBJDIR)\global.obj \
+	$(OBJDIR)\my_icmp.obj \
+	$(OBJDIR)\MY_SP.obj \
+	$(OBJDIR)\StdAfx.obj \
+	$(OBJDIR)\WinMain.obj \
 
 ## Targets
+!ifdef BCC
 all : tool tall
 
-
 ## Tool for Borland C++
-tool : $(TOOLDIR)\mrc2brc.exe
+tool : "$(OBJDIR)" $(OBJDIR)\mrc2brc.exe
 
-$(TOOLDIR)\mrc2brc.exe : $(TOOLDIR)\mrc2brc.obj $(TOOLDIR)\RcCvt.obj
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) -WC -e$(TOOLDIR)\$. $**
+$(OBJDIR)\mrc2brc.exe : $(OBJDIR)\mrc2brc.obj $(OBJDIR)\RcCvt.obj
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) -WC -e$@ $**
+
+$(OBJDIR)\sakurabc.rc : $(SRCDIR)\sakura_rc.rc
+	$(OBJDIR)\mrc2brc	$** $@ > $(OBJDIR)\mrc2brc.log
+
+# TEMPRC: input file for resource compiler
+TEMPRC=$(OBJDIR)\sakurabc.rc
+
+# bcc32 needs response file due to limitation of commandline length
+# bcc32 doesn't accept resource file
+
+
+!else
+all : tall
+
+TEMPRC=$(SRCDIR)\sakura_rc.rc
+!endif
+
 
 ## Editor includes sakura_core
-tall : $(SRCDIR)\sakurabc.rc sakura_rc.exe
-	brc32 $(RFLAGS) $** 
-	move /y sakura_rc.exe sakura.exe
-	move /y sakura_rc.map sakura.map
+tall : "$(OBJDIR)" $(OBJDIR)\sakura.exe
 
-# 2005.03.09 Karoto : Use response file
-#
-sakura_rc.exe : $(OBJS)
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) -W -e$(OUTDIR)\$. @&&! 
+!ifdef BCC
+$(OBJDIR)\sakura_norc.exe : $(OBJS)
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_EXEFILEOPT)$@ @&&%
 $**
-!
+%
 
-$(SRCDIR)\sakurabc.rc : $(SRCDIR)\sakura_rc.rc
-	$(TOOLDIR)\mrc2brc	$** $:\$. > $(TOOLDIR)\mrc2brc.log
+$(OBJDIR)\sakura.exe : $(TEMPRC) $(OBJDIR)\sakura_norc.exe
+	brc32 $(RFLAGS) $**
+	move /y $(OBJDIR)\sakura_norc.exe $@
+	move /y $(OBJDIR)\sakura_norc.map $(@:exe=map)
 
+!else
+$(OBJDIR)\sakura_rc.res : $(TEMPRC)
+	$(RC) $(RFLAGS) /fo$@ $** 
 
-.cpp.obj :
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) -o$@ -c $<
+$(OBJDIR)\sakura.exe : $(OBJDIR)\sakura_rc.res $(OBJS)
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_EXEFILEOPT)$@ $** /link $(LFLAGS) $(LIBS)
+!endif
 
-.c.obj :
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) -o$@ -c $<
+"$(OBJDIR)":
+    if not exist "$(OBJDIR)/" mkdir "$(OBJDIR)"
+
+{$(SRCDIR)}.cpp{$(OBJDIR)}.obj :
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_OBJFILEOPT)$(OBJDIR)\$(@F) -c $<
+
+{$(SRCDIR)}.c{$(OBJDIR)}.obj :
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_OBJFILEOPT)$(OBJDIR)\$(@F) -c $<
+
+{$(TOOLDIR)}.cpp{$(OBJDIR)}.obj :
+	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_OBJFILEOPT)$(OBJDIR)\$(@F) -c $<
 
 cleanall : clean
-	erase $(TOOLDIR)\mrc2brc.exe
-	erase $(TOOLDIR)\mrc2brc.map
-	erase $(TOOLDIR)\mrc2brc.tds
-	erase $(TOOLDIR)\mrc2brc.log
-	erase $(TOOLDIR)\*.obj
+	erase $(OBJDIR)\mrc2brc.exe
+	erase $(OBJDIR)\mrc2brc.map
+	erase $(OBJDIR)\mrc2brc.tds
+	erase $(OBJDIR)\mrc2brc.log
 
 clean : clobber
-	erase $(OUTDIR)\*.exe
+	erase $(OBJDIR)\*.exe
 
 clobber :
-	erase $(SRCDIR)\sakurabc.res
-	erase $(SRCDIR)\sakurabc.rc
-	erase $(SRCDIR)\*.obj
-	erase $(OUTDIR)\*.map
-	erase $(OUTDIR)\*.tds
+	-erase $(OBJDIR)\*.res
+	-erase $(OBJDIR)\sakurabc.rc
+	-erase $(OBJDIR)\*.obj
+	-erase $(OBJDIR)\*.map
+	-erase $(OBJDIR)\*.tds
+	-erase $(OBJDIR)\*.pch
+	-erase $(OBJDIR)\*.idb
 
-#	echo "*$* :$: .$. &$& @$@ **$** ?$?"
-
+#test : .\aXX
+#	@echo "*$* @@$@@ @$@ **$** ?$? @D$(@D) @B$(@B) "
+#
+#.\aXX : 
+#	@echo "aaa"
 
