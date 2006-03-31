@@ -1727,11 +1727,14 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, const char* target_file )
 		{
 			char temp[1024];
 			char *cp;
+			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
+			char *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
+
 			while( strchr( szNewPath, '*' ) ){
 				strcpy( temp, szNewPath );
 				cp = strchr( temp, '*' );
 				*cp = 0;
-				wsprintf( szNewPath, "%s%s%s", temp, szExt+1, cp+1 );
+				wsprintf( szNewPath, "%s%s%s", temp, ep, cp+1 );
 			}
 			//	??はバックアップ連番にしたいところではあるが，
 			//	連番処理は末尾の2桁にしか対応していないので
