@@ -2383,7 +2383,6 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	int			nLineLen;
 	int			i,j;
 	CMemory		cmemBuf;
-	char*		pszData=NULL;
 	std::vector<SORTTABLE> sta;
 	COpe*		pcOpe = NULL;
 
@@ -2428,8 +2427,9 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		// カーソル位置が行頭じゃない ＆ 選択範囲の終端に改行コードがある場合は
 		// その行も選択範囲に加える
 		if ( nSelectColToOld > 0 ) {
-			const CLayout* pcLayout=m_pcEditDoc->m_cLayoutMgr.Search(nSelectLineToOld);
-			if( NULL != pcLayout && EOL_NONE != pcLayout->m_cEol ){
+			// 2006.03.31 Moca nSelectLineToOldは、物理行なのでLayout系からDocLine系に修正
+			const CDocLine* pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( nSelectLineToOld );
+			if( NULL != pcDocLine && EOL_NONE != pcDocLine->m_cEol ){
 				++nSelectLineToOld;
 			}
 		}
@@ -2450,14 +2450,11 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		if( bBeginBoxSelectOld ){
 			nColmFrom = LineColmnToIndex( pcDocLine, nCF );
 			nColmTo   = LineColmnToIndex( pcDocLine, nCT );
-			if(nColmTo<nLineLen){
-				j=nColmTo-nColmFrom;
-				pszData=new char[j+1];	// Dec. 19, 2001 genta 1バイト不足していたよ
-				memcpy( pszData, &pLine[nColmFrom], j );
-				pszData[j]='\0';
-				pst->sKey1=pszData;
+			if(nColmTo<nLineLen){	// BOX選択範囲の右端が行内に収まっている場合
+				// 2006.03.31 genta std::string::assignを使って一時変数削除
+				pst->sKey1.assign( &pLine[nColmFrom], nColmTo-nColmFrom );
 			}else
-			if(nColmFrom<nLineLen){
+			if(nColmFrom<nLineLen){	// BOX選択範囲の右端が行末より右にはみ出している場合
 				pst->sKey1=&pLine[nColmFrom];
 			}
 			pst->sKey2=pLine;
@@ -2466,7 +2463,6 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		}
 		sta.push_back(pst);
 	}
-	if( NULL != pszData ) delete [] pszData;
 	if(bAsc){
 		std::stable_sort(sta.begin(), sta.end(), SortByKeyAsc);
 	}else{
