@@ -2137,36 +2137,58 @@ void CEditView::DrawSelectArea( void )
 
 
 
-/* 指定行の選択領域の描画 */
+/*! 選択領域の中の指定行の描画
+
+	@param[in] hdc 描画領域のDevice Context Handle
+	@param[in] nLineNum 描画対象行(レイアウト行)
+	@param[in] nFromLine 選択開始行(レイアウト座標)
+	@param[in] nFromCol  選択開始桁(レイアウト座標)
+	@param[in] nToLine   選択終了行(レイアウト座標)
+	@param[in] nToCol    選択終了桁(レイアウト座標)
+
+	複数行に渡る選択範囲のうち，nLineNumで指定された1行分だけを描画する．
+	選択範囲は固定されたままnLineNumのみが必要行分変化しながら呼びだされる．
+
+	@date 2006.03.29 Moca 3000桁制限を撤廃．
+
+*/
 void CEditView::DrawSelectAreaLine(
 		HDC hdc, int nLineNum, int nFromLine, int nFromCol, int nToLine, int nToCol
 )
 {
 //	MYTRACE( "CEditView::DrawSelectAreaLine()\n" );
-	const char*		pLine;
-	int				nLineLen;
 	RECT			rcClip;
-	int				nSelectFrom;
-	int				nSelectTo;
-	const CLayout*	pcLayout;
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-
-	int nPosX = 0;
-	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-	while( !it.end() ){
-		it.scanNext();
-		if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
-			nPosX ++;
-			break;
-		}
-		it.addDelta();
-	}
-	nPosX += it.getColumn();
+	int				nSelectFrom;	// 描画行の選択開始桁位置
+	int				nSelectTo;		// 描画行の選択開始終了位置
 
 	if( nFromLine == nToLine ){
-			nSelectFrom = nFromCol;
-			nSelectTo	= nToCol;
+		nSelectFrom = nFromCol;
+		nSelectTo	= nToCol;
 	}else{
+		// 2006.03.29 Moca 行末までの長さを求める位置を上からここに移動
+		int nPosX = 0;
+		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+		CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+		while( !it.end() ){
+			it.scanNext();
+			if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
+				nPosX ++;
+				break;
+			}
+			// 2006.03.28 Moca 画面外まで求めたら打ち切る
+			if( it.getColumn() > m_nViewLeftCol + m_nViewColNum ){
+#ifdef _DEBUG
+				TCHAR szHoge[1024];
+				wsprintf( szHoge, "break %d > %d  len=%d\n", it.getColumn(),
+					m_nViewLeftCol + m_nViewColNum, pcLayout->GetLengthWithoutEOL() );
+				::OutputDebugString( szHoge );
+#endif
+				break;
+			}
+			it.addDelta();
+		}
+		nPosX += it.getColumn();
+		
 		if( nLineNum == nFromLine ){
 			nSelectFrom = nFromCol;
 			nSelectTo	= nPosX;
@@ -2179,29 +2201,31 @@ void CEditView::DrawSelectAreaLine(
 			nSelectTo	= nPosX;
 		}
 	}
+	
+	// 2006.03.28 Moca ウィンドウ幅が大きいと正しく反転しない問題を修正
 	if( nSelectFrom < m_nViewLeftCol ){
 		nSelectFrom = m_nViewLeftCol;
 	}
-	if( nSelectTo < m_nViewLeftCol ){
-		nSelectTo = m_nViewLeftCol;
+	int		nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+	int		nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
+	rcClip.left		= (m_nViewAlignLeft - m_nViewLeftCol * nCharWidth) + nSelectFrom * nCharWidth;
+	rcClip.right	= (m_nViewAlignLeft - m_nViewLeftCol * nCharWidth) + nSelectTo   * nCharWidth;
+	rcClip.top		= (nLineNum - m_nViewTopLine) * nLineHeight + m_nViewAlignTop;
+	rcClip.bottom	= rcClip.top + nLineHeight;
+	if( rcClip.right > m_nViewAlignLeft + m_nViewCx ){
+		rcClip.right = m_nViewAlignLeft + m_nViewCx;
 	}
-	rcClip.left		= (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nSelectFrom * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	rcClip.right	= (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nSelectTo   * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	rcClip.top		= ( nLineNum - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-	rcClip.bottom	= rcClip.top + m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
-	if( rcClip.right - rcClip.left > 3000 ){
-		rcClip.right = rcClip.left + 3000;
-	}
-//	::Rectangle( hdc, rcClip.left, rcClip.top, rcClip.right + 1, rcClip.bottom + 1 );
 	//	必要なときだけ。
 	if ( rcClip.right != rcClip.left ){
 		m_cUnderLine.CaretUnderLineOFF( TRUE );	//	YAZAKI
-
-		HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
-		::PaintRgn( hdc, hrgnDraw );
-		::DeleteObject( hrgnDraw );
+		
+		// 2006.03.28 Moca 表示域内のみ処理する
+		if( nSelectFrom <= m_nViewLeftCol + m_nViewColNum && m_nViewLeftCol < nSelectTo ){
+			HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
+			::PaintRgn( hdc, hrgnDraw );
+			::DeleteObject( hrgnDraw );
+		}
 	}
-
 
 //	::Rectangle( hdc, rcClip.left, rcClip.top, rcClip.right + 1, rcClip.bottom + 1);
 //	::FillRect( hdc, &rcClip, hBrushTextCol );

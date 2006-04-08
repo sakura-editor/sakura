@@ -471,11 +471,16 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 					}
 				}
 			}
+			// 2006.03.28 Moca 表示域外なら何もしない
+			if( m_nViewLeftCol + m_nViewColNum < nSelectFrom ){
+				return;
+			}
+			if( nSelectTo <= m_nViewLeftCol ){
+				return;
+			}
+
 			if( nSelectFrom < m_nViewLeftCol ){
 				nSelectFrom = m_nViewLeftCol;
-			}
-			if( nSelectTo < m_nViewLeftCol ){
-				nSelectTo = m_nViewLeftCol;
 			}
 			rcClip.left   = x + nSelectFrom * ( nCharWidth );
 			rcClip.right  = x + nSelectTo   * ( nCharWidth );
@@ -490,9 +495,11 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 			{
 				rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
 			}
-			if( rcClip.right - rcClip.left > 3000 ){
-				rcClip.right = rcClip.left + 3000;
+			// 2006.03.28 Moca ウィンドウ幅が大きいと正しく反転しない問題を修正
+			if( rcClip.right > m_nViewAlignLeft + m_nViewCx ){
+				rcClip.right = m_nViewAlignLeft + m_nViewCx;
 			}
+			
 			hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
 			nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
 			hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
