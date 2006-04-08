@@ -14,7 +14,7 @@
 	Copyright (C) 2003, Moca, aroka, MIK, genta, wmlhq, sui
 	Copyright (C) 2004, Moca, novice, genta, isearch, MIK
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, ‚è‚ñ‚², aroka
-	Copyright (C) 2006, aroka, ryoji
+	Copyright (C) 2006, aroka, ryoji, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

@@ -9,8 +9,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, jepro
-	Copyright (C) 2001, asa-o, MIK, hor, Mikasa, Stonee, YAZAKI
-	Copyright (C) 2002, genta, hor, YAZAKI, Azumaiya, KK, novice, minfu, ai, aroka
+	Copyright (C) 2001, asa-o, MIK, hor, Misaka, Stonee, YAZAKI
+	Copyright (C) 2002, genta, hor, YAZAKI, Azumaiya, KK, novice, minfu, ai, aroka, MIK
 	Copyright (C) 2003, genta, MIK, Moca
 	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru

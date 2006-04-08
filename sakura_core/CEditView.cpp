@@ -11,9 +11,9 @@
 	Copyright (C) 1998-2002, Norio Nakatani
 	Copyright (C) 2000, genta, JEPRO, MIK
 	Copyright (C) 2001, genta, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
-	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca, minfu, KK, novice,ai, Azumaiya, genta
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca, minfu, KK, novice, ai, Azumaiya, genta
 	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
-	Copyright (C) 2004, genta, Moca, novice, noah, isearch, fotomo
+	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka
 
@@ -4263,7 +4263,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	}
 
 	/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
-	//	2004.09.20 noah 外部コマンドの出力からTagjumpできるように
+	//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
 	if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_bGTJW_LDBLCLK ){
 		/* タグジャンプ機能 */
 		Command_TAGJUMP();

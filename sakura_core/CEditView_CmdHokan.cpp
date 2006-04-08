@@ -8,6 +8,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000, jepro
+	Copyright (C) 2001, asa-o
+	Copyright (C) 2003, Moca
+	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
 
 	This source code is designed for sakura editor.

@@ -357,7 +357,7 @@ SAKURA_CORE_API enum enumColorIndexType {
 	COLORIDX_MARK		= 43,	/* ブックマーク */	// 02/10/16 ai Add
 
 	//カラーの最後
-	COLORIDX_LAST		= 44,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 02/10/16 ai Mod 34→35 */
+	COLORIDX_LAST		= 44,	//Dec. 4, 2000 @@@2001.02.17 renumber by MIK				/* 2002/10/16 ai Mod 34→35 */
 
 	//カラー表示制御用
 	COLORIDX_BLOCK1		= 45,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */

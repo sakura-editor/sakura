@@ -6,6 +6,8 @@
 */
 /*
 	Copyright (C) 1998-2001, YAZAKI
+	Copyright (C) 2000, jepro
+	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
 
 	This software is provided 'as-is', without any express or implied

@@ -12,6 +12,7 @@
 /*
 	Copyright (C) 2003, D.S.Koba
 	Copyright (C) 2004, D.S.Koba, MIK, genta
+	Copyright (C) 2006, D.S.Koba, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

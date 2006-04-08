@@ -7,7 +7,10 @@
 	@date 2002”N3ŒŽ3“ú
 */
 /*
-	Copyright (C) 2001, YAZAKI
+	Copyright (C) 2001, YAZAKI, shoji masami
+	Copyright (C) 2002, YAZAKI, minfu
+	Copyright (C) 2003, genta
+	Copyright (C) 2005, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

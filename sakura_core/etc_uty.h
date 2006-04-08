@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001-2002, genta
 	Copyright (C) 2001, shoji masami, Stonee, MIK
-	Copyright (C) 2002, aroka, hor, MIK
+	Copyright (C) 2002, aroka, hor, MIK, YAZAKI
 	Copyright (C) 2003, genta, Moca
 	Copyright (C) 2004, genta, novice
 	Copyright (C) 2005, genta, aroka

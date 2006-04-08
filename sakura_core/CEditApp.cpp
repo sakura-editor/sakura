@@ -12,9 +12,12 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, stonee, jepro, genta, aroka, hor
-	Copyright (C) 2002, MIK
-	Copyright (C) 2003, MIK
+	Copyright (C) 2000, jepro, genta
+	Copyright (C) 2001, Stonee, jepro, genta, aroka, hor, YAZAKI
+	Copyright (C) 2002, MIK, Moca, genta, YAZAKI, towest
+	Copyright (C) 2003, MIK, Moca, KEITA, genta, aroka
+	Copyright (C) 2004, Moca
+	Copyright (C) 2005, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

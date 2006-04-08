@@ -13,8 +13,10 @@
 */
 /*
 	Copyright (C) 2001-2002, genta
-	Copyright (C) 2002, novice, hor
+	Copyright (C) 2002, novice, hor, Azumaiya
 	Copyright (C) 2003, ‚©‚ë‚Æ
+	Copyright (C) 2005, ‚©‚ë‚Æ
+	Copyright (C) 2006, ‚©‚ë‚Æ
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

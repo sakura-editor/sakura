@@ -10,6 +10,7 @@
 */
 /*
 	Copyright (C) 2002-2005, MIK
+	Copyright (C) 2002, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

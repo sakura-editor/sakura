@@ -8,7 +8,6 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2001, Stonee, JEPRO, genta, hor
 	Copyright (C) 2000, genta
 	Copyright (C) 2001, Stonee, JEPRO, genta, hor
 	Copyright (C) 2002, MIK, aroka, hor, genta, YAZAKI, Moca, frozen

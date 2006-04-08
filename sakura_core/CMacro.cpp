@@ -9,7 +9,11 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, hor
-	Copyright (C) 2003, ‹S
+	Copyright (C) 2002, YAZAKI, aroka, genta, Moca, hor
+	Copyright (C) 2003, ‹S, ryoji, Moca
+	Copyright (C) 2004, genta, zenryaku
+	Copyright (C) 2005, MIK, genta, maru, zenryaku, FILE
+	Copyright (C) 2006, ‚©‚ë‚Æ
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

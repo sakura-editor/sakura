@@ -5,7 +5,11 @@
 	@date 2002”N4ŒŽ28“ú
 */
 /*
-	Copyright (C) 2002, ‹S
+	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2003, FILE
+	Copyright (C) 2004, genta
+	Copyright (C) 2005, FILE, zenryaku
+
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 

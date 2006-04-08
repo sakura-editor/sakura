@@ -8,7 +8,6 @@
 */
 /*
 	Copyright (C) 2000-2001, Norio Nakatani
-	Copyright (C) 2003, MIK
 	Copyright (C) 2000, genta
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji

@@ -9,8 +9,8 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, genta, MIK, asa-o
-	Copyright (C) 2002, YAZAKI, genta, Moca
-	Copyright (C) 2003, MIK, KEITA
+	Copyright (C) 2002, YAZAKI, genta, Moca, aroka
+	Copyright (C) 2003, MIK, KEITA, genta
 	Copyright (C) 2004, Moca
 	Copyright (C) 2006, ryoji
 

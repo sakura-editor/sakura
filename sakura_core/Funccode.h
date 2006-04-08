@@ -13,7 +13,7 @@
 	Copyright (C) 2003, ‹S, genta, MIK, Moca
 	Copyright (C) 2004, genta, zenryaku, kazika, Moca, isearch
 	Copyright (C) 2005, genta, MIK, maru
-	Copyright (C) 2006, aroka
+	Copyright (C) 2006, aroka, ‚©‚ë‚Æ
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

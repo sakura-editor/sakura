@@ -7,9 +7,10 @@
 	$Revision$
 */
 /*
-	Copyright (C) 2003, MIK
-	Copyright (C) 2004, Moca, MIK
+	Copyright (C) 2003, MIK, KEITA
+	Copyright (C) 2004, Moca, MIK, genta, Kazika
 	Copyright (C) 2005, ryoji
+	Copyright (C) 2006, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
