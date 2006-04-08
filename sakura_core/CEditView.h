@@ -739,7 +739,8 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
-	void Command_REPLACE_ALL( void );					/* すべて置換(実行) */
+	enum REPLACE_ALL_MODE { REP_NORMAL = 0, REP_LINE = 1 };
+	void Command_REPLACE_ALL( int nMode = REP_NORMAL );	/* すべて置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_JUMP_SRCHSTARTPOS( void );				/* 検索開始位置へ戻る */	// 02/06/26 ai
 

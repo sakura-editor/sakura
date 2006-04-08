@@ -76,14 +76,18 @@ typedef struct bregexp {
 	@note このクラスはThread Safeではない。
 
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
+	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
 class SAKURA_CORE_API CBregexp : public CDllHandler {
 public:
 	CBregexp();
 	virtual ~CBregexp();
 
+	// 2006.01.22 かろと オプション追加・名称変更
 	enum Option {
-		bIgnoreCase = 1			//!< 大文字小文字無視オプション
+		optNothing = 0,					//!< オプションなし
+		optCaseSensitive = 1,			//!< 大文字小文字区別オプション(/iをつけない)
+		optGlobal = 2					//!< 全域オプション(/g)
 	};
 	//! 検索パターン定義
 	enum Pattern {
@@ -105,10 +109,10 @@ public:
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
-	bool Compile(const char *szPattern, int bOption = 0) {
-		return Compile(szPattern, NULL, bOption);
+	bool Compile(const char *szPattern, int nOption = 0) {
+		return Compile(szPattern, NULL, nOption);
 	}
-	bool Compile(const char *szPattern0, const char *szPattern1, int bOption = 0);	//!< Replace用
+	bool Compile(const char *szPattern0, const char *szPattern1, int nOption = 0);	//!< Replace用
 	bool Match(const char *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
 	bool Replace(const char *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する
 
@@ -234,8 +238,8 @@ private:
 
 	//! 検索パターン作成
 	int CheckPattern( const char *szPattern );
-	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int bOption );
-	char* MakePattern( const char* szPattern, const char* szPattern2, int bOption );
+	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int nOption );
+	char* MakePattern( const char* szPattern, const char* szPattern2, int nOption );
 	//	メンバ変数
 	BREGEXP*			m_pRegExp;			//!< コンパイル構造体
 	int					m_ePatType;			//!< 検索文字列パターン種別

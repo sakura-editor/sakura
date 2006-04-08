@@ -96,6 +96,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 		break;
 	case F_REPLACE:
 	case F_REPLACE_ALL:
+	case F_REPLACE_ALL_LINE: //	2006.03.31 かろと全て行置換
 		{
 			AddParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
 			AddParam( pcEditView->m_pShareData->m_szREPLACEKEYArr[0] );	//	lParamを追加。
@@ -276,6 +277,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			break;
 		case F_REPLACE:
 		case F_REPLACE_ALL:
+		case F_REPLACE_ALL_LINE:  //	2006.03.31 かろと全て行置換
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
@@ -475,6 +477,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	/* はじめの2つの引数は文字列。3つ目は数値 */
 	case F_REPLACE:
 	case F_REPLACE_ALL:
+	case F_REPLACE_ALL_LINE:	 //	2006.03.31 かろと全て行置換
 		//	Argument[0]を、Argument[1]に置換。オプションはArgument[2]に（入れる予定）
 		//	Argument[2]:
 		//		次の数値の和。
@@ -532,7 +535,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				//	置換する時は選べない
 				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= 0;
 			}
-			else if (Index == F_REPLACE_ALL) {
+			else if (Index == F_REPLACE_ALL || Index == F_REPLACE_ALL_LINE) { // 2006.03.31 かろと全て行置換
 				//	全置換の時は選べる？
 				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}

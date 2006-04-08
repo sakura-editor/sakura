@@ -228,6 +228,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_REPLACE_DIALOG,			"ReplaceDialog",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //置換(置換ダイアログ)
 	{F_REPLACE,					"Replace",			{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //置換(実行)
 	{F_REPLACE_ALL,				"ReplaceAll",		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //すべて置換(実行)
+	{F_REPLACE_ALL_LINE,		"ReplaceAllLine",	{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //すべて行置換(実行) //	2006.03.31 かろと
 	{F_SEARCH_CLEARMARK,		"SearchClearMark",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索マークのクリア
 	{F_JUMP_SRCHSTARTPOS,		"SearchStartPos",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索開始位置へ戻る			// 02/06/26 ai
 	{F_GREP,					"Grep",				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	NULL}, //Grep
@@ -866,6 +867,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_SEARCH_PREV				://前を検索
 	case F_REPLACE					://置換(実行)
 	case F_REPLACE_ALL				://すべて置換(実行)
+	case F_REPLACE_ALL_LINE			://すべて行置換(実行)
 	case F_SEARCH_CLEARMARK			://検索マークのクリア
 	case F_JUMP_SRCHSTARTPOS		://検索開始位置へ戻る		// 02/06/26 ai
 	case F_GREP						://Grep

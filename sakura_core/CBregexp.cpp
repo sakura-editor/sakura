@@ -176,16 +176,16 @@ int CBregexp::CheckPattern(const char *szPattern)
 ** @param[in] szPattern 検索パターン
 ** @param[in] szPattern2 置換パターン(NULLなら検索)
 ** @param[in] szAdd2	置換パターンの後ろに付け加えるパターン($1など) 
-** @param[in] bOption	検索オプション
+** @param[in] nOption	検索オプション
 **
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
 ** 
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int bOption ) 
+char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int nOption ) 
 {
-	static const char DELIMITER = '\xFF';		//<! デリミタ
+	static const char DELIMITER = '\xFF';		//!< デリミタ
 	int nLen;									//!< szPatternの長さ
 	int nLen2;									//!< szPattern2 + szAdd2 の長さ
 
@@ -216,8 +216,13 @@ char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, c
 	}
 	*pPat++ = 'k';			// 漢字対応
 	*pPat++ = 'm';			// 複数行対応(但し、呼び出し側が複数行対応でない)
-	if( !(bOption & bIgnoreCase) ) {		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
-		*pPat++ = 'i';		// 同上
+	// 2006.01.22 かろと 論理逆なので bIgnoreCase -> optCaseSensitiveに変更
+	if( !(nOption & optCaseSensitive) ) {		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+		*pPat++ = 'i';		// 大文字小文字を同一視(無視)する
+	}
+	// 2006.01.22 かろと 行単位置換のために、全域オプション追加
+	if( (nOption & optGlobal) ) {
+		*pPat++ = 'g';			// 全域(global)オプション、行単位の置換をする時に使用する
 	}
 	*pPat = '\0';
 	return szNPattern;
@@ -236,14 +241,14 @@ char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, c
 ** 
 ** @param[in] szPattern 検索パターン
 ** @param[in] szPattern2 置換パターン(NULLなら検索)
-** @param[in] bOption 検索オプション
+** @param[in] nOption 検索オプション
 **
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
 **
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int bOption ) 
+char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int nOption ) 
 {
 	static const char CRLF[] = "\r\n";			//!< 復帰・改行
 	static const char CR[] = "\r";				//!< 復帰
@@ -260,7 +265,7 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	nLen = CheckPattern( szPattern );
 	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
 		bool bJustDollar = false;			// 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
-		szNPattern = MakePatternSub(szPattern, NULL, NULL, bOption);
+		szNPattern = MakePatternSub(szPattern, NULL, NULL, nOption);
 		int matched = BMatch( szNPattern, CRLF, CRLF+sizeof(CRLF)-1, &sReg, szMsg );
 		if( matched >= 0 ) {
 			// szNPatternが不正なパターン等のエラーでなかった
@@ -305,7 +310,7 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 		}
 	}
 
-	szNPattern = MakePatternSub( szPattern, szPattern2, szAdd2, bOption );
+	szNPattern = MakePatternSub( szPattern, szPattern2, szAdd2, nOption );
 	if( sReg != NULL ) {
 		BRegfree(sReg);
 	}
@@ -317,14 +322,14 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	JRE32のエミュレーション関数．空の文字列に対して検索・置換を行うことにより
 	BREGEXP構造体の生成のみを行う．
 
-	@param[in] szPattern0 検索or置換パターン
-	@param[in] szPattern1 置換後文字列パターン(検索時はNULL)
-	@param[in] bOption 		0x01：大文字小文字の区別をする。
+	@param[in] szPattern0	検索or置換パターン
+	@param[in] szPattern1	置換後文字列パターン(検索時はNULL)
+	@param[in] nOption		検索・置換オプション
 
 	@retval true 成功
 	@retval false 失敗
 */
-bool CBregexp::Compile( const char *szPattern0, const char *szPattern1, int bOption )
+bool CBregexp::Compile( const char *szPattern0, const char *szPattern1, int nOption )
 {
 
 	//	DLLが利用可能でないときはエラー終了
@@ -336,7 +341,7 @@ bool CBregexp::Compile( const char *szPattern0, const char *szPattern1, int bOpt
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	char *szNPattern = MakePattern( szPattern0, szPattern1, bOption );
+	char *szNPattern = MakePattern( szPattern0, szPattern1, nOption );
 	m_szMsg[0] = '\0';		//!< エラー解除
 	if (szPattern1 == NULL) {
 		// 検索実行

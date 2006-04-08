@@ -503,8 +503,9 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
+	case IDC_BUTTON_REPLACEALL_LINE: /* すべて行置換 2006.01.22 かろと */
 		if( 0 < GetData() ){
-
+			TCHAR *szUnit = _T("");	// 置換数表示の単位 2006.04.02 かろと
 			// 置換開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
 				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
@@ -512,15 +513,21 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 
-			pcEditView->HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
+			/* すべて行置換時の処置追加 2006.01.22 かろと */
+			if ( wID == IDC_BUTTON_REPLACEALL_LINE ) {
+				pcEditView->HandleCommand( F_REPLACE_ALL_LINE, TRUE, 0, 0, 0, 0 );
+				szUnit = _T("行");
+			} else {
+				pcEditView->HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
+				szUnit = _T("箇所");
+			}
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 			/* アクティブにする */
 			ActivateFrameWindow( m_hWnd );
 
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME,
-				"%d箇所を置換しました。", m_nReplaceCnt/*nReplaceNum*/
-			);
+				"%d%sを置換しました。", m_nReplaceCnt, szUnit);
 
 //			nNewPos = 100;
 // 			::SendMessage( ::GetDlgItem( m_hWnd, IDC_PROGRESS_REPLACE ), PBM_SETPOS, nNewPos, 0 );
