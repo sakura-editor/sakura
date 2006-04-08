@@ -475,7 +475,8 @@ BOOL CEditView::HandleCommand(
 		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
 		break;
 	case F_REPLACE:				Command_REPLACE( (HWND)lparam1 );break;			//置換実行 @@@ 2002.2.2 YAZAKI
-	case F_REPLACE_ALL:			Command_REPLACE_ALL();break;		//すべて置換実行 2002.2.8 hor
+	case F_REPLACE_ALL:			Command_REPLACE_ALL(REP_NORMAL);break;		//すべて置換実行(通常) 2002.2.8 hor 2006.04.02 かろと
+	case F_REPLACE_ALL_LINE:	Command_REPLACE_ALL(REP_LINE);break;		//すべて置換実行(行単位) 2006.1.22 かろと
 	case F_SEARCH_CLEARMARK:	Command_SEARCH_CLEARMARK();break;	//検索マークのクリア
 	case F_GREP_DIALOG:	//Grepダイアログの表示
 		/* 再帰処理対策 */
@@ -7568,8 +7569,11 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 /*! すべて置換実行
 
 	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理など見直し
+	@date 2006.03.31 かろと 行置換機能追加
+
+	@param[in]	nMode	置換モード(REP_NORMAL:通常,REP_LINE:行)
 */
-void CEditView::Command_REPLACE_ALL( void )
+void CEditView::Command_REPLACE_ALL( int nMode )
 {
 	int			nNewPos;
 	int			nReplaceNum;
@@ -7599,7 +7603,6 @@ void CEditView::Command_REPLACE_ALL( void )
 	int nReplaceTarget	= m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
 	int	bRegularExp		= m_pShareData->m_Common.m_bRegularExp;
 	int bSelectedArea	= m_pShareData->m_Common.m_bSelectedArea;
-	int nFlag			= m_pShareData->m_Common.m_bLoHiCase & 0x01;
 
 	m_pcEditDoc->m_cDlgReplace.m_bCanceled=false;
 	m_pcEditDoc->m_cDlgReplace.m_nReplaceCnt=0;
@@ -7776,6 +7779,9 @@ void CEditView::Command_REPLACE_ALL( void )
 		} else {
 			cMemRepKey2 = cMemRepKey;
 		}
+		// 正規表現オプションの設定2006.04.01 かろと
+		int nFlag = (m_pShareData->m_Common.m_bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
+		nFlag |= (nMode == REP_LINE ? CBregexp::optGlobal : CBregexp::optNothing);
 		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
 	}
 
@@ -7922,34 +7928,41 @@ void CEditView::Command_REPLACE_ALL( void )
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
 		{
 			// 物理行、物理行長、物理行での検索マッチ位置
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(m_nSelectLineFrom);
+			const CLayout* pcLayout = rLayoutMgr.Search(m_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
 			int nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom ) + pcLayout->m_nOffset;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
+			int colDiff = 0;
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
-				// From Here Jun. 6, 2005 かろと
-				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
-				// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
-				// そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
-				int matchLen = cRegexp.GetMatchLen();
-				int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
-				if (matchLen == 0) {
-					// ０文字マッチの時(無限置換にならないように１文字進める)
-					if (nIdxTo < nLen) {
-						// 2005-09-02 D.S.Koba GetSizeOfChar
-						nIdxTo += (CMemory::GetSizeOfChar(pLine, nLen, nIdxTo) == 2 ? 2 : 1);
-					}
-					// 無限置換しないように、１文字増やしたので１文字選択に変更
-					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
-				}
-				// 行末から検索文字列末尾までの文字数
-				int colDiff =  nLen - nIdxTo;
-				//	Oct. 22, 2005 Karoto
-				//	\rを置換するとその後ろの\nが消えてしまう問題の対応
-				if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
-					// 改行にかかっていたら、行全体をINSTEXTする。
-					colDiff = 0;
+				if ( nMode == REP_LINE ) { //2006.04.01 かろと
+					// 行単位での置換処理
+					// 選択範囲を物理行末までにのばす
+					rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );
+				} else {
+				    // From Here Jun. 6, 2005 かろと
+				    // 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
+				    // キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
+				    // そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
+				    int matchLen = cRegexp.GetMatchLen();
+				    int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
+				    if (matchLen == 0) {
+					    // ０文字マッチの時(無限置換にならないように１文字進める)
+					    if (nIdxTo < nLen) {
+						    // 2005-09-02 D.S.Koba GetSizeOfChar
+						    nIdxTo += (CMemory::GetSizeOfChar(pLine, nLen, nIdxTo) == 2 ? 2 : 1);
+					    }
+					    // 無限置換しないように、１文字増やしたので１文字選択に変更
+					    // 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
+					    m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
+				    }
+				    // 行末から検索文字列末尾までの文字数
+					colDiff =  nLen - nIdxTo;
+				    //	Oct. 22, 2005 Karoto
+				    //	\rを置換するとその後ろの\nが消えてしまう問題の対応
+				    if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
+					    // 改行にかかっていたら、行全体をINSTEXTする。
+					    colDiff = 0;
+				    }
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
