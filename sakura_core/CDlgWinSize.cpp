@@ -7,7 +7,7 @@
 	$Revision$
 */
 /*
-	Copyright (C) 2004, genta
+	Copyright (C) 2004, genta, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

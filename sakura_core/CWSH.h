@@ -10,7 +10,8 @@
 	@li GetIDsOfNamesの最適化 → std::mapを使えば楽そう…しかし私はSTLに疎いので(;_;
 */
 /*
-	Copyright (C) 2002, 鬼
+	Copyright (C) 2002, 鬼, genta
+
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 

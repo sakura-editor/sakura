@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, YAZAKI
+	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2006, aroka
 
 	This source code is designed for sakura editor.

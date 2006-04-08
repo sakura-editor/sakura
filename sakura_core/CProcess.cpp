@@ -9,6 +9,7 @@
 */
 /*
 	Copyright (C) 2002, aroka V‹Kì¬
+	Copyright (C) 2004, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

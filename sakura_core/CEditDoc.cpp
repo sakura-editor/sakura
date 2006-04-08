@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta
 	Copyright (C) 2001, genta, YAZAKI, jepro, novice, asa-o, MIK,
-	Copyright (C) 2002, YAZAKI, hor, genta, aroka, frozen, Moca
+	Copyright (C) 2002, YAZAKI, hor, genta, aroka, frozen, Moca, MIK
 	Copyright (C) 2003, MIK, genta, ryoji, Moca, zenryaku, naoh, wmlhq
 	Copyright (C) 2004, genta, novice, Moca, MIK, zenryaku
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka

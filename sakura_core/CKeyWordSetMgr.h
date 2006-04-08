@@ -11,6 +11,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, MIK
+	Copyright (C) 2001, jepro
+	Copyright (C) 2004, Moca
 	Copyright (C) 2005, Moca
 
 	This software is provided 'as-is', without any express or implied

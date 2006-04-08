@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 2004, isearch
-	Copyright (C) 2005, genta
+	Copyright (C) 2005, genta, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

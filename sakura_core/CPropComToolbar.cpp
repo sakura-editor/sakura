@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, jepro, MIK
-	Copyright (C) 2002, genta, MIK, YAZAKI
+	Copyright (C) 2002, genta, MIK, YAZAKI, aroka
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2005, aroka
 

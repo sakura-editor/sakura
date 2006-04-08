@@ -7,8 +7,10 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000, genta
+	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, MIK
-	Copyright (C) 2005, aroka
+	Copyright (C) 2005, aroka, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

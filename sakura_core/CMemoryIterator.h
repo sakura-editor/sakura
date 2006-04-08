@@ -8,6 +8,8 @@
 */
 /*
 	Copyright (C) 2002, Yazaki
+	Copyright (C) 2003, genta
+	Copyright (C) 2005, D.S.Koba
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

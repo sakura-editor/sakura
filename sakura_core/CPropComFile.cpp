@@ -8,6 +8,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, MIK, jepro
+	Copyright (C) 2002, YAZAKI, MIK, aroka, hor
+	Copyright (C) 2004, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

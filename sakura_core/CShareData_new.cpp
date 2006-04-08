@@ -15,7 +15,7 @@
 	Copyright (C) 2003, MIK, genta, Moca
 	Copyright (C) 2004, MIK, Moca, D.S.Koba, genta
 	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka, Moca
-	Copyright (C) 2006, aroka, ryoji
+	Copyright (C) 2006, aroka, ryoji, D.S.Koba
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

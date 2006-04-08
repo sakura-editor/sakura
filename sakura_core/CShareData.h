@@ -14,7 +14,7 @@
 	Copyright (C) 2003, Moca, aroka, MIK, genta
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
-	Copyright (C) 2006, aroka, ryoji
+	Copyright (C) 2006, aroka, ryoji, D.S.Koba
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -50,7 +50,7 @@ enum maxdata{
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
 	MAX_TYPES					=  20,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした
-	MAX_TOOLBARBUTTONS			= 384,	//Oct. 22, 2000 JEPORO アイコンの最大登録数を128個増やした(256→384)
+	MAX_TOOLBARBUTTONS			= 384,	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)
 	MAX_CUSTOM_MENU				=  25,
 	MAX_CUSTOM_MENU_NAME_LEN	=  32,
 	MAX_CUSTOM_MENU_ITEMS		=  48,

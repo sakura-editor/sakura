@@ -8,6 +8,9 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2001, jepro, Stonee
+	Copyright (C) 2002, Moca, genta, aroka
+	Copyright (C) 2005, D.S.Koba
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

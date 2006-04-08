@@ -8,9 +8,13 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, genta, mik, asa-o
-	Copyright (C) 2001, hor, MIK 
-	Copyright (C) 2002, YAZAKI, aroka, MIK
+	Copyright (C) 2000, genta, MIK, asa-o, ao
+	Copyright (C) 2001, hor, MIK, genta, asa-o
+	Copyright (C) 2002, YAZAKI, aroka, MIK, novice, hor, ai, KK
+	Copyright (C) 2003, Moca, ai, ‚©‚ë‚Æ
+	Copyright (C) 2004, genta
+	Copyright (C) 2005, genta, MIK, Moca, ‚©‚ë‚Æ, ryoji, zenryaku, D.S.Koba
+	Copyright (C) 2006, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

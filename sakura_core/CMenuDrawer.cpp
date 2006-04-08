@@ -11,7 +11,7 @@
 	Copyright (C) 2001, jepro, MIK, Misaka, YAZAKI, hor, genta
 	Copyright (C) 2002, MIK, genta, YAZAKI, ai, Moca, hor, aroka
 	Copyright (C) 2003, MIK, genta, Moca
-	Copyright (C) 2004, kazika, genta, Moca, isearch
+	Copyright (C) 2004, Kazika, genta, Moca, isearch
 	Copyright (C) 2005, genta, MIK, aroka
 	Copyright (C) 2006, aroka
 

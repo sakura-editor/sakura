@@ -12,7 +12,8 @@
 	@li Ä•`‰æ‚Ì‘ã‚í‚è‚ÉShowEditCaret ¨ protected‚Å‚·‚æ[
 */
 /*
-	Copyright (C) 2002, ‹S
+	Copyright (C) 2002, ‹S, genta
+
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 

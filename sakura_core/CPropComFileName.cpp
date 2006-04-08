@@ -8,7 +8,10 @@
 
 */
 /*
-	Copyright (C) 2002-2003, Moca
+	Copyright (C) 2001, MIK
+	Copyright (C) 2002, Moca, YAZAKI
+	Copyright (C) 2003, Moca, KEITA
+	Copyright (C) 2004, D.S.Koba
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

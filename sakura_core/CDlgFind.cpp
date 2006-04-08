@@ -10,7 +10,8 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, JEPRO, hor, Stonee
-	Copyright (C) 2002, MIK, hor
+	Copyright (C) 2002, MIK, hor, YAZAKI, genta
+	Copyright (C) 2005, zenryaku
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

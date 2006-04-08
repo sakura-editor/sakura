@@ -10,8 +10,10 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, mik, misaka, Stonee, hor
-	Copyright (C) 2002, Moca, sui
-	Copyright (C) 2003, ‚©‚ë‚Æ
+	Copyright (C) 2002, Moca, sui, aroka, genta
+	Copyright (C) 2003, genta, Moca, ‚©‚ë‚Æ
+	Copyright (C) 2004, Moca
+	Copyright (C) 2005, Moca, D.S.Koba
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

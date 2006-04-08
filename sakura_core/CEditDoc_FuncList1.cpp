@@ -8,7 +8,11 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2000, genta
+	Copyright (C) 2001, genta
 	Copyright (C) 2002, frozen
+	Copyright (C) 2003, zenryaku
+	Copyright (C) 2005, genta, D.S.Koba, ‚¶‚ã‚¤‚¶
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

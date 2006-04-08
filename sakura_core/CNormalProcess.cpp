@@ -10,6 +10,9 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2002, aroka CProcess‚æ‚è•ª—£
+	Copyright (C) 2002, YAZAKI, Moca, genta
+	Copyright (C) 2003, genta, Moca, MIK
+	Copyright (C) 2004, Moca, naoh
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

@@ -8,7 +8,9 @@
 
 */
 /*
-	Copyright (C) 2001, genta
+	Copyright (C) 2001, genta, MIK
+	Copyright (C) 2002, YAZAKI, MIK, genta, novice
+	Copyright (C) 2003, Moca, KEITA
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
