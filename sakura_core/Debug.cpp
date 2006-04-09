@@ -1,11 +1,10 @@
-//	$Id$
 /*!	@file
 	@brief ƒfƒoƒbƒO—pŠÖ”
 
 	@author Norio Nakatani
+
 	@date 2001/06/23 N.Nakatani DebugOut()‚É”÷–­`‚ÈC³
 	@date 2002/01/17 aroka Œ^‚ÌC³
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

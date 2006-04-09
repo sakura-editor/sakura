@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 編集ウィンドウ（外枠）管理クラス
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

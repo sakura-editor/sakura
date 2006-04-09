@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief アウトライン解析ダイアログボックス
 
 	@author Norio Nakatani
 	@date 1998/06/23 新規作成
 	@date 1998/12/04 再作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

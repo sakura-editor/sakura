@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief 強調キーワード選択ダイアログ
 
 	@author MIK
 	@date 2005/01/13 作成
-	$Revision$
 */
 /*
 	Copyright (C) 2005, MIK, genta

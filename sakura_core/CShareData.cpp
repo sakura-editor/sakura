@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief プロセス間共有データへのアクセス
 
 	@author Norio Nakatani
 	@date 1998/05/26  新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief 文書ウィンドウの管理
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

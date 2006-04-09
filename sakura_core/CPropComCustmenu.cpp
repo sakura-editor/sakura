@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	共通設定ダイアログボックス、「カスタムメニュー」ページ
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

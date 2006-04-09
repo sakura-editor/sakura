@@ -1,11 +1,8 @@
-//	$Id$
 /*!	@file
 	共通設定ダイアログボックス、「マクロ」ページ
 
 	@author genta
 	@date Jun. 2, 2001 genta
-	$Revision$
-
 */
 /*
 	Copyright (C) 2001, genta, MIK

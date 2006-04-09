@@ -1,6 +1,6 @@
-// $Id$
 /*!	@file
 	@brief WSH Manager
+
 	@author ‹S, genta
 	@date 2002”N4ŒŽ28“ú,5ŒŽ3“ú,5ŒŽ5“ú,5ŒŽ6“ú,5ŒŽ13“ú,5ŒŽ16“ú
 	@date 2002.08.25 genta CWSH.h‚æ‚è•ª—£

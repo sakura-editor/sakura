@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 文字コード定数の定義
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,10 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief アウトライン解析ダイアログボックス
 
 	@author Norio Nakatani
+
 	@date 2001/06/23 N.Nakatani Visual Basicのアウトライン解析
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

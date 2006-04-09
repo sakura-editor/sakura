@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief タグファイル作成ダイアログボックス
 
 	@author MIK
-	$Revision$
+	@date 2003.5.12
 */
 /*
 	Copyright (C) 2003, MIK

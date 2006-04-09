@@ -1,10 +1,8 @@
-// $Id$
 /*!	@file
 	@brief CLayoutとCDocLineのイテレータ
 
 	@author Yazaki
 	@date 2002/09/25 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 2002, Yazaki

@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 印刷設定ダイアログ
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief ç≈ãﬂégÇ¡ÇΩÉäÉXÉg
 
@@ -8,7 +7,6 @@
 	@date Apr. 05, 2003
 	@date Apr. 03, 2005
 
-	$Revision$
 */
 /*
 	Copyright (C) 2003, MIK

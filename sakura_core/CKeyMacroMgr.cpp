@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief キーボードマクロ
 
@@ -6,7 +5,6 @@
 
 	@date 20011229 aroka バグ修正、コメント追加
 	YAZAKI 組替え
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

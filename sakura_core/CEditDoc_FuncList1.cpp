@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief アウトライン解析
 
 	@author genta
 	@date	2004.08.08 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

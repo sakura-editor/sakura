@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief プロセス基底クラス
 
 	@author aroka
 	@date 2002/01/07 作成
 	@date 2002/01/17 修正
-	$Revision$
 */
 /*
 	Copyright (C) 2002, aroka 新規作成

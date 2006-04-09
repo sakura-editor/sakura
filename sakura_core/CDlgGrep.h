@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief GREPダイアログボックス
 
 	@author Norio Nakatani
 	@date 1998.09/07  新規作成
 	@date 1999.12/05 再作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

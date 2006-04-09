@@ -1,11 +1,8 @@
-// $Id$
 //
 /*!	@file
 	@brief 現在行のマークを管理する
 
 	@author genta
-	$Revision$
-
 */
 /*
 	Copyright (C) 2000-2001, genta

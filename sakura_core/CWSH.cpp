@@ -1,6 +1,6 @@
-//	$Id$
 /*!	@file
 	@brief WSH Handler
+
 	@author ‹S
 	@date 2002”N4ŒŽ28“ú
 */

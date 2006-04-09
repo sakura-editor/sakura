@@ -1,13 +1,10 @@
-//	$Id$
 /*!	@file
 	@brief マクロ
 
 	@author Norio Nakatani
 	@author genta
-	
-	@date Sep. 29, 2001
+	@date Sep. 29, 2001 作成
 	@date 20011229 aroka バグ修正、コメント追加
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

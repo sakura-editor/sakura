@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief 検索ダイアログボックス
 
 	@author Norio Nakatani
 	@date	1998/12/12 再作成
 	@date 2001/06/23 N.Nakatani 単語単位で検索する機能を実装
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief アウトライン解析  データ要素
 
 	@author Norio Nakatani
 	@date	1998/06/23 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,11 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief ImageList‚ÌŽæ‚èˆµ‚¢
 
 	@author genta
 	@date Oct. 11, 2000 genta
-	$Revision$
-
 */
 /*
 	Copyright (C) 2000-2001, genta

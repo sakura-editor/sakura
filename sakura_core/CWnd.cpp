@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
-	ウィンドウの基本クラス
+	@brief ウィンドウの基本クラス
 
 	@author Norio Nakatani
 	@date 2000/01/11 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 2000-2001, Norio Nakatani

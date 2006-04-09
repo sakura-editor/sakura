@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief メモリバッファクラス
 
 	@author Norio Nakatani
 	@date 1998/03/06 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

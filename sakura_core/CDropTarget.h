@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief Drag & Drop
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku

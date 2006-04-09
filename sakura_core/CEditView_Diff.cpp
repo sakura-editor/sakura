@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief DIFF差分表示
 
 	@author MIK
 	@date	2002/05/25 ExecCmd を参考にDIFF実行結果を取り込む処理作成
  	@date	2005/10/29	maru Diff差分表示処理を分離し、ダイアログあり版・ダイアログなし版の両方からコール
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

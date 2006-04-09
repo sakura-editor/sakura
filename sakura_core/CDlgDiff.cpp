@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief DIFF差分表示ダイアログボックス
 
 	@author MIK
-	$Revision$
+	@date 2002.5.27
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

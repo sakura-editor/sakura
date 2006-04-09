@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief アプリケーション定義のメッセージ
 	
@@ -6,7 +5,6 @@
 
 	@author Norio Nakatani
 	@date 1998/5/15 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

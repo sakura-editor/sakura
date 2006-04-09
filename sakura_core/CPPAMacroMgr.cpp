@@ -2,7 +2,7 @@
 	@brief キーボードマクロ
 
 	@author YAZAKI
-
+	@date 2002年1月26日
 */
 /*
 	Copyright (C) 2002, YAZAKI, genta

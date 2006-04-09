@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief CEditViewクラスのインクリメンタルサーチ関連コマンド処理系関数群
 
+	@author genta
 	@date	2005/01/10 作成
-	$Revision$
 */
 /*
 	Copyright (C) 2004, isearch

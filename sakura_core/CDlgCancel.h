@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief キャンセルボタンダイアログ
 
 	@author Norio Nakatani
 	@date 1998/09/09 作成
     @date 1999/12/02 再作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

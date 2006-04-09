@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief Dialog Box基底クラスヘッダファイル
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

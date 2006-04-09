@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief キー割り当てに関するクラス
 
 	@author Norio Nakatani
 	@date 1998/03/25 新規作成
 	@date 1998/05/16 クラス内にデータを持たないように変更
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

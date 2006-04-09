@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief ファンクションキーウィンドウ
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

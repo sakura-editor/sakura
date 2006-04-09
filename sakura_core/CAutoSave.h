@@ -1,11 +1,7 @@
-//	$Id$
-//
-//	CAutoSave.h
 /*!	@file
 	@brief ƒtƒ@ƒCƒ‹‚ÌŽ©“®•Û‘¶
 
 	@author genta
-	@version $Revision$
 	@date 2000
 */
 /*

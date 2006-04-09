@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief 編集ウィンドウ（外枠）管理クラス
 
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
 	@date 2002/01/14 YAZAKI PrintPreviewの分離
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

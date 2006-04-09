@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief オープンダイアログ用ファイル拡張子管理
 
 	@author MIK
-	$Revision$
+	@date 2003.5.12
 */
 /*
 	Copyright (C) 2003, MIK

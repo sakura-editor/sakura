@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief テキストのレイアウト情報管理
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

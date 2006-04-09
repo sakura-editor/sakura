@@ -1,3 +1,13 @@
+/*!	@file
+	@brief my_icmp/my_string‚ÌShift_JIS‚ÆUnicode‚ğØ‚è‘Ö‚¦‚é‚½‚ß‚Ì’è‹`
+
+	@author 
+	@date 2003/2/17 V‹K“o˜^
+*/
+/*
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
+*/
 /*
 	my_icmp/my_string‚ÌShift_JIS‚ÆUnicode‚ğØ‚è‘Ö‚¦‚é‚½‚ß‚Ì’è‹`
 */

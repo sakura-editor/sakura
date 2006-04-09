@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief BREGEXP Library Handler
 
@@ -9,8 +8,6 @@
 	@date Jan. 05, 2002 genta コメント追加
 	@date 2002/2/1 hor
 	@date Jul. 25, 2002 genta 行頭条件の考慮を追加
-
-	$Revision$
 */
 /*
 	Copyright (C) 2001-2002, genta

@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief •¶‘ŠÖ˜Aî•ñ‚ÌŠÇ—
 
 	@author Norio Nakatani
 	@date	1998/03/13 ì¬
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

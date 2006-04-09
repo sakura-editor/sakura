@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief 行データの管理
 
 	@author Norio Nakatani
 	@date 1999/12/17  新規作成
 	@date 2001/12/03  hor Bookmark機能追加
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
