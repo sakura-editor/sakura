@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief コントロールコード入力ダイアログボックス
 
 	@author MIK
-	$Revision$
+	@date 2002.6.2
 */
 /*
 	Copyright (C) 2002-2003, MIK

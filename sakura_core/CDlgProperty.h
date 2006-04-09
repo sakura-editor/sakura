@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief ファイルプロパティダイアログ
 
 	@author Norio Nakatani
 	@date 1999/02/31 新規作成
 	@date 1999/12/05 再作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

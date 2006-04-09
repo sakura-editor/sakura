@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	タイプ別設定正規表現キーワードダイアログボックス
 
 	@author MIK
 	@date 2001/11/17  新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 2001, MIK, Stonee

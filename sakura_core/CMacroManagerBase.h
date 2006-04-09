@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief マクロエンジン
 
 	@author genta
-	$Revision$
+	@date 2002.4.29
 */
 /*
 	Copyright (C) 2002, genta

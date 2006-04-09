@@ -1,6 +1,6 @@
-// $Id$
 /*!	@file
 	@brief OLE Type wrapper
+
 	@author ‹S
 	@date 2003.0221
 */

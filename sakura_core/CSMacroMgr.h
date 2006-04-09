@@ -1,11 +1,8 @@
-//	$Id$
 /*!	@file
-	キーボードマクロ(直接実行用)
+	@brief キーボードマクロ(直接実行用)
 
 	@author genta
-	
-	@date Sep. 29, 2001
-	$Revision$
+	@date Sep. 29, 2001 作成
 */
 /*
 	Copyright (C) 2001, genta

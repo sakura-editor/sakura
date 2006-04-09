@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief タブウィンドウ
 
 	@author MIK
-	$Revision$
+	@date 2003.5.30
 */
 /*
 	Copyright (C) 2003, MIK

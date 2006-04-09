@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief INIファイル入出力
 
 	@author D.S.Koba
-	$Revision$
 	@date 2003-10-21 D.S.Koba メンバ関数の名前と引数をそのままにしてメンバ変数，関数の中身を書き直し
 	@date 2004-01-10 D.S.Koba 返値をBOOLからboolへ変更。IOProfileDataを型別の関数に分け，引数を減らす
 	@date 2006-02-11 D.S.Koba 読み込み/書き出しを引数でなく，メンバで判別

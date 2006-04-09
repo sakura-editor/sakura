@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief コントロールプロセスクラスヘッダファイル
 
 	@author aroka
 	@date	2002/01/08 作成
-	$Revision$
 */
 /*
 	Copyright (C) 2002, aroka 新規作成, YAZAKI

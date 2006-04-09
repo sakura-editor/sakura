@@ -1,10 +1,8 @@
-// $Id$
 /*!	@file
 	@brief メモリバッファクラスへのファイル入力クラス
 
 	@author Moca
 	@date 2002/08/30 新規作成
-
 */
 /*
 	Copyright (C) 2002, Moca, genta

@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief ツールチップ
 
 	@author Norio Nakatani
 	@date 1998/10/30 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

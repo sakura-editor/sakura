@@ -1,4 +1,3 @@
-//	$Id$
 /*! @file
 	@brief 更新通知及び確認ダイアログ
 
@@ -6,8 +5,6 @@
 
 	@author genta
 	@date 2002.12.04
-
-	$Revision$
 */
 /*
 	Copyright (C) 2002, genta

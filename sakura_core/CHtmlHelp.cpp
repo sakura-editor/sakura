@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief HtmpHelp“®“Iƒ[ƒh
 	

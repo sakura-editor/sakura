@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief 行データの管理
 
@@ -7,7 +6,6 @@
 	@date 2001/06/23 N.Nakatani 単語単位で検索する機能を実装
 	@date 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
 	@date 2005/09/25 D.S.Koba GetSizeOfCharで書き換え
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

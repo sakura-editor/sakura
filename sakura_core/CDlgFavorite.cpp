@@ -2,7 +2,7 @@
 	@brief お気に入り設定ダイアログボックス
 
 	@author MIK
-	$Revision$
+	@date 2003.4.8
 */
 /*
 	Copyright (C) 2003, MIK

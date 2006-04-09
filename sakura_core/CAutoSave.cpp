@@ -1,12 +1,8 @@
-//	$Id$
-//
-//	CAutoSave.cpp
 /*! @file
 	@brief ƒtƒ@ƒCƒ‹‚ÌŽ©“®•Û‘¶
 
 	@author genta
 	@date 2000
-	$Revision$
 */
 /*
 	Copyright (C) 2000-2001, genta

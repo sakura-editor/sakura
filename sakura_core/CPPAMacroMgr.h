@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief PPA.DLLƒ}ƒNƒ
 
 	@author YAZAKI
-	$Revision$
+	@date 2002”N1Œ26“ú
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,6 +1,6 @@
-// $Id$
 /*!	@file
 	@brief WSH Handler
+
 	@author 鬼
 	@date 2002年4月28日,5月3日,5月5日,5月6日,5月13日,5月16日
 	@date 2002.08.25 genta リンクエラー回避のためCWSHManager.hにエディタの

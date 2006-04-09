@@ -1,11 +1,15 @@
-/*! 
- * @file CFileWrite.h
- * @brief ファイル書き込み用クラス
- *
- * @author Frozen
- * @date 2000/05/22
- *
- */
+/*!	@file CFileWrite.h
+	@brief ファイル書き込み用クラス
+
+	@author Frozen
+	@date 2000/05/22 新規作成
+*/
+/*
+	Copyright (C) 2000, Frozen
+
+	This source code is designed for sakura editor.
+	Please contact the copyright holder to use this code for other purpose.
+*/
 #ifndef FILE_WRITE_H
 #define FILE_WRITE_H
 

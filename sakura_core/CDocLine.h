@@ -1,11 +1,10 @@
-//	$Id$
 /*!	@file
 	@brief 文書データ1行
 
 	@author Norio Nakatani
+
 	@date 2001/12/03 hor しおり(bookmark)機能追加に伴うメンバー追加
 	@date 2001/12/18 hor bookmark, 修正フラグのアクセス関数化
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

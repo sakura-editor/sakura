@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief 文書ウィンドウの管理
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
 	@date   2005/09/02 D.S.Koba GetSizeOfCharで書き換え
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2002, Norio Nakatani

@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief 共通設定ダイアログボックス、「全般」ページ
 
 	@author Norio Nakatani
 	@date 1998/12/24 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2002, Norio Nakatani

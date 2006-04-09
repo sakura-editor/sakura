@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 砂時計カーソル
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

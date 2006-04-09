@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief ウィンドウの位置と大きさダイアログ
 
 	@author Moca
 	@date 2004/05/13 作成
-	$Revision$
 */
 /*
 	Copyright (C) 2004, Moca

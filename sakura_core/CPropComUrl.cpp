@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 共通設定ダイアログボックス、「クリッカブルURL」ページ
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

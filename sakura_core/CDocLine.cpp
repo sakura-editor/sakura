@@ -1,10 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 文書データ1行
 
 	@author Norio Nakatani
-	
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

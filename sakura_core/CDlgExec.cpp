@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 外部コマンド実行ダイアログ
 
 	@author Norio Nakatani
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief ブロックコメントデリミタを管理する
 
 	@author Yazaki
 	@date 2002/09/17 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 2002, Yazaki

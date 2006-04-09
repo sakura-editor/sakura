@@ -1,11 +1,16 @@
-/*! 
- * @file CFileWrite.cpp
- * @brief ファイル書き込み用クラス
- *
- * @author Frozen
- * @date 2000/05/22
- *
- */
+/*!	@file
+	@brief ファイル書き込み用クラス
+
+	@author Frozen
+	@date 2000/05/22 新規作成
+*/
+/*
+	Copyright (C) 2000, Frozen
+	Copyright (C) 2003, genta
+
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
+*/
 #include "stdafx.h"
 #include <windows.h>
 #include <tchar.h>

@@ -1,11 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief 独自比較関数
 
 	@author MIK
 	@date Jan. 11, 2002
 	@date Feb. 02, 2002  内部処理を統一、全角アルファベット同一視に対応
-	$Revision$
 */
 /*
 	Copyright (C) 2002, MIK

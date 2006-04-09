@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief CEditViewクラスのコマンド処理系関数群
 
 	@author Norio Nakatani
 	@date	1998/07/17 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,10 +1,8 @@
-//	e$Id$
 /*!	@file
 	@brief バージョン情報ダイアログ
 
 	@author Norio Nakatani
 	@date	1998/3/13 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

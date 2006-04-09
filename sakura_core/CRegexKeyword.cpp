@@ -1,13 +1,11 @@
-//	$Id$
 /*!	@file
-	CRegexKeyword Library
+	@brief CRegexKeyword Library
 
 	正規表現キーワードを扱う。
 	BREGEXP.DLLを利用する。
 
 	@author MIK
 	@date Nov. 17, 2001
-	$Revision$
 */
 /*
 	Copyright (C) 2001, MIK

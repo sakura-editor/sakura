@@ -1,10 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief タブウィンドウ
 
 	@author MIK
+	@date 2003.5.30
 	@date 2004.01.27 break漏れ対応。TCHAR化。タブ表示が崩れる(?)の対応。
-	$Revision$
 */
 /*
 	Copyright (C) 2003, MIK, KEITA

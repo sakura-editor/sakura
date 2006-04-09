@@ -2,8 +2,7 @@
 	@brief タグジャンプリストダイアログボックス
 
 	@author MIK
-	$Revision$
-	
+	@date 2003.4.13
 	@date 2005.03.31 MIK キーワード指定TagJump対応のため大幅に変更
 */
 /*

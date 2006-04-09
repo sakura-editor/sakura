@@ -1,10 +1,9 @@
-//	$Id$
 /*!	@file
 	@brief 分割ボックスウィンドウクラス
 
 	@author Norio Nakatani
+
 	@date 2002/2/3 aroka 未使用コード除去
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

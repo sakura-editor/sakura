@@ -1,11 +1,8 @@
-//	$Id$
 /*!	@file
-	共通設定ダイアログボックス、『ファイル名表示』プロパティ
+	共通設定ダイアログボックス、「ファイル名表示」ページ
 
 	@author Moca
 	@date 2002.12.09 Moca CPropTypesRegex.cppを参考にして作成
-	$Revision$
-
 */
 /*
 	Copyright (C) 2001, MIK

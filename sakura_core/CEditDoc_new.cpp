@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
-	•¶‘ŠÖ˜Aî•ñ‚ÌŠÇ—
+	@brief •¶‘ŠÖ˜Aî•ñ‚ÌŠÇ—
 
 	@author Norio Nakatani
-	$Revision$
 	
 	@date aroka Œx‘Îô‚Å•Ï”œ‹
 */

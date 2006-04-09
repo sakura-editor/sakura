@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief 強調キーワード管理
 
@@ -6,7 +5,6 @@
 
 	@date 2000.12.01 MIK binary search
 	@date 2005.01.26 Moca キーワード数可変化
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

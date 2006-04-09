@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief コントロールプロセスクラス
 
 	@author aroka
 	@date 2002/01/07 Create
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

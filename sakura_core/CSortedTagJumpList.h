@@ -1,9 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief タグジャンプリスト
 
 	@author MIK
-	$Revision$
+	@date 2005.3.31
 */
 /*
 	Copyright (C) 2005, MIK, genta

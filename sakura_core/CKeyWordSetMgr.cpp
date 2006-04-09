@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief 強調キーワード管理
 
 	@author Norio Nakatani
-	$Revision$
 	
 	@date 2000.12.01 MIK binary search
 	@date 2004.07.29-2005.01.27 Moca キーワードの可変長記憶

@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief テキストのレイアウト情報管理
 
@@ -6,7 +5,6 @@
 	@date 1998/03/06 新規作成
 	@date 1998/04/14 データの削除を実装
 	@date 1999/12/20 データの置換を実装
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

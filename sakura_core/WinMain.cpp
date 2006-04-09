@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief Entry Point
 
@@ -7,7 +6,6 @@
 	@date	2001/06/26 genta ワード単位のGrepのためのコマンドライン処理追加
 	@date	2002/01/08 aroka 処理の流れを整理、未使用コードを削除
 	@date	2002/01/18 aroka 虫取り＆リリース
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

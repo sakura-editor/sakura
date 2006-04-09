@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief 分割線ウィンドウクラス
 
 	@author Norio Nakatani
 	@date 1998/07/07 新規作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

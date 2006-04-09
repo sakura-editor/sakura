@@ -1,9 +1,7 @@
-//	$Id$
 /*!	@file
 	@brief プロセス間共有データのファイルへ／からの入出力
 
 	@author Norio Nakatani
-	$Revision$
 
 	@date 2005.04.07 D.S.Koba 各セクションの入出力を関数として分離
 */

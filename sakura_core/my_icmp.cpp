@@ -1,4 +1,3 @@
-//	$Id$
 /*!	@file
 	@brief 独自文字列比較関数
 
@@ -6,7 +5,6 @@
 	@date Jan. 11, 2002
 	@date Feb. 02, 2002  内部処理を統一、全角アルファベット同一視に対応
 	@date Apr. 07, 2005  MIK strstr系関数を追加
-	$Revision$
 */
 /*
 	Copyright (C) 2002-2005, MIK

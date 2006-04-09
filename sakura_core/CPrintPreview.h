@@ -3,7 +3,6 @@
 
 	@author YAZAKI
 	@date 2002/1/11 V‹Kì¬
-	$Revision$
 */
 /*
 	Copyright (C) 2002, YAZAKI

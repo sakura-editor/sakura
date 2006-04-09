@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief CEOLƒNƒ‰ƒX‚ÌÀ‘•
 
 	@author genta
 	@date 2000/05/15 V‹Kì¬ genta
-	$Revision$
 */
 /*
 	Copyright (C) 2000-2001, genta

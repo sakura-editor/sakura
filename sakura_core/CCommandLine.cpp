@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief コマンドラインパーサ
 
 	@author aroka
 	@date	2002/01/08 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani

@@ -1,11 +1,10 @@
-//	$Id$
 /*!	@file
 	@brief Migemo関連
 
 	C/Migemoアクセス関数
+
 	@author isearch
 	@date 2004.09.14 新規作成
-
 */
 /*
 	Copyright (C) 2004, isearch

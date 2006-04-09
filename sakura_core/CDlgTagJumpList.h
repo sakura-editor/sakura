@@ -2,7 +2,7 @@
 	@brief タグジャンプリストダイアログボックス
 
 	@author MIK
-	$Revision$
+	@date 2003.4.13
 */
 /*
 	Copyright (C) 2003, MIK

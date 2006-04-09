@@ -1,10 +1,8 @@
-//	$Id$
 /*!	@file
 	@brief CEditViewクラスのgrep関連コマンド処理系関数群
 
 	@author genta
 	@date	2005/01/10 作成
-	$Revision$
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
