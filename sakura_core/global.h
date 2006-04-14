@@ -11,7 +11,7 @@
 	Copyright (C) 2003, MIK, genta, zenryaku, naoh
 	Copyright (C) 2004, Kazika
 	Copyright (C) 2005, MIK, Moca, genta
-	Copyright (C) 2006, aroka
+	Copyright (C) 2006, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -121,16 +121,21 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 #endif
 
 //20020108 aroka コントロールプロセスと起動処理のためにミューテックス名を追加
+// 2006.04.10 ryoji コントロールプロセス初期化完了を示すイベントフラグ名を追加
 #ifdef _DEBUG
-	#ifndef	GSTR_MUTEX_SAKURA
+	#ifndef	GSTR_SYNCOBJ_SAKURA
+	#define	GSTR_SYNCOBJ_SAKURA
 	#define	GSTR_MUTEX_SAKURA "MutexSakuraEditor_DEBUG"
 	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP_DEBUG")
+	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized_DEBUG")
 	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit_DEBUG")
 	#endif
 #else
-	#ifndef	GSTR_MUTEX_SAKURA
+	#ifndef	GSTR_SYNCOBJ_SAKURA
+	#define	GSTR_SYNCOBJ_SAKURA
 	#define	GSTR_MUTEX_SAKURA "MutexSakuraEditor"
 	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP")
+	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized")
 	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit")
 	#endif
 #endif

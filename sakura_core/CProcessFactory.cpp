@@ -9,6 +9,7 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, masami shoji
 	Copyright (C) 2002, aroka WinMainより分離
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -37,6 +38,7 @@ class CProcess;
 	
 	@author aroka
 	@date 2002/01/08
+	@date 2006/04/10 ryoji
 */
 CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 {
@@ -46,6 +48,16 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 	if( !IsValidVersion() ){
 		return 0;
 	}
+
+	// プロセスクラスを生成する
+	//
+	// Note: 以下の処理において使用される IsExistControlProcess() は、コントロールプロセスが
+	// 存在しない場合だけでなく、コントロールプロセスが起動して ::CreateMutex() を実行するまで
+	// の間も false（コントロールプロセス無し）を返す。
+	// 従って、複数のノーマルプロセスが同時に起動した場合などは複数のコントロールプロセスが
+	// 起動されることもある。
+	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
+	//
 	if( IsStartingControlProcess() ){
 		if( !IsExistControlProcess() ){
 			process = new CControlProcess( hInstance, lpCmdLine );
@@ -54,7 +66,7 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 		if( !IsExistControlProcess() ){
 			StartControlProcess();
 		}
-		if( IsExistControlProcess() ){
+		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
 			process = new CNormalProcess( hInstance, lpCmdLine );
 		}
 	}
@@ -109,35 +121,22 @@ bool CProcessFactory::IsStartingControlProcess()
 }
 
 /*!
-	ミューテックスを取得し、コントロールプロセスの有無を調べる。
+	コントロールプロセスの有無を調べる。
 	
 	@author aroka
 	@date 2002/01/03
+	@date 2006/04/10 ryoji
 */
 bool CProcessFactory::IsExistControlProcess()
 {
-	HANDLE hMutexCP;
-	hMutexCP = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA_CP );
-	if( NULL == hMutexCP ){
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateMutex()失敗。\n終了します。"));
-		::ExitProcess(1);
-	}
-	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
-		DWORD dwRet = ::WaitForSingleObject( hMutexCP, 0 );
-		if( WAIT_TIMEOUT == dwRet ){// あるけどロックされてる
-			::CloseHandle( hMutexCP );
-			return true;
-		}
-		// ロックされていなかった
-		::ReleaseMutex( hMutexCP );
+ 	HANDLE hMutexCP;
+	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, GSTR_MUTEX_SAKURA_CP );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
+	if( NULL != hMutexCP ){
 		::CloseHandle( hMutexCP );
-		return false;
+		return true;	// コントロールプロセスが見つかった
 	}
-	// なかった
-	::CloseHandle( hMutexCP );
-	return false;
+
+	return false;	// コントロールプロセスは存在していないか、まだ CreateMutex() してない
 }
 
 //	From Here Aug. 28, 2001 genta
@@ -196,7 +195,11 @@ bool CProcessFactory::StartControlProcess()
 		return false;
 	}
 
-	//	起動したプロセスが完全に立ち上がるまでちょっと待つ．
+	// 起動したプロセスが完全に立ち上がるまでちょっと待つ．
+	//
+	// Note: この待ちにより、ここで起動したコントロールプロセスが競争に生き残れなかった場合でも、
+	// 唯一生き残ったコントロールプロセスが多重起動防止用ミューテックスを作成しているはず。
+	//
 	int nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
 	if( 0 != nResult ){
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -212,6 +215,49 @@ bool CProcessFactory::StartControlProcess()
 	return true;
 }
 //	To Here Aug. 28, 2001 genta
+
+/*!
+	@brief コントロールプロセスの初期化完了イベントを待つ。
+
+	@author ryoji by assitance with karoto
+	@date 2006/04/10
+*/
+bool CProcessFactory::WaitForInitializedControlProcess()
+{
+	// 初期化完了イベントを待つ
+	//
+	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
+	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
+	//
+	if( !IsExistControlProcess() ){
+		// コントロールプロセスが多重起動防止用のミューテックス作成前に異常終了した場合など
+		return false;
+	}
+
+	HANDLE hEvent;
+	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, GSTR_EVENT_SAKURA_CP_INITIALIZED );
+	if( NULL == hEvent ){
+		// 動作中のコントロールプロセスを旧バージョンとみなし、イベントを待たずに処理を進める
+		//
+		// Note: Ver1.5.9.91以前のバージョンは初期化完了イベントを作らない。
+		// このため、コントロールプロセスが常駐していないときに複数ウィンドウをほぼ
+		// 同時に起動すると、競争に生き残れなかったコントロールプロセスの親プロセスや、
+		// 僅かに出遅れてコントロールプロセスを作成しなかったプロセスでも、
+		// コントロールプロセスの初期化処理を追い越してしまい、異常終了したり、
+		// 「タブバーが表示されない」のような問題が発生していた。
+		//
+		return true;
+	}
+	DWORD dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
+	if( WAIT_TIMEOUT == dwRet ){	// コントロールプロセスの初期化が終了しない
+		::CloseHandle( hEvent );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			_T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
+		return false;
+	}
+	::CloseHandle( hEvent );
+	return true;
+}
 
 
 /*[EOF]*/
