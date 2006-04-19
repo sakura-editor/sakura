@@ -29,7 +29,12 @@
 //#endif
 
 
-//! 書式付きデバッガ出力
+/*! @brief 書式付きデバッガ出力
+
+	@param[in] lpFmt printfの書式付き文字列
+
+	引数で与えられた情報をDebugStringとして出力する．
+*/
 void DebugOut( LPCTSTR lpFmt, ...)
 {
 	static TCHAR szText[16000];
@@ -46,7 +51,16 @@ void DebugOut( LPCTSTR lpFmt, ...)
 
 
 
-//! 書式付きメッセージボックス
+/*! @brief 書式付きメッセージボックス
+
+	@param[in] hWndParent 親ウィンドウのハンドル
+	@param[in] nStyle メッセージボックスの形式(アイコン，ボタンなどをMB_xx定数の論理和で与える)
+	@param[in] pszTitle ダイアログボックスのタイトル
+	@param[in] lpFmt printfの書式指定文字列
+
+	引数で与えられた情報をダイアログボックスで表示する．
+	デバッグ目的以外でも使用できる．
+*/
 int DebugOutDialog(
 	HWND	hWndParent,
 	UINT	nStyle,

@@ -23,7 +23,11 @@ SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 
 //void MYASSERT( LPCTSTR, long, BOOL );
 
-
+/*
+	MYTRACEはリリースモードではコンパイルエラーとなるようにしてあるので，
+	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
+	
+*/
 #ifdef _DEBUG
 	#define MYTRACE DebugOut
 #endif
@@ -56,6 +60,7 @@ SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 */
 
 #ifdef _DEBUG
+	//!	設定している場所はあるが，参照している場所がない変数
 	SAKURA_CORE_API extern int gm_ProfileOutput;
 #endif
 

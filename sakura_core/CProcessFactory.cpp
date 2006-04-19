@@ -1,3 +1,4 @@
+//	この行は文字化け対策用です．消さないでください
 /*!	@file
 	@brief プロセス生成クラス
 
@@ -35,6 +36,9 @@ class CProcess;
 	
 	コマンドライン、コントロールプロセスの有無を判定し、
 	適当なプロセスクラスを生成する。
+	
+	@param[in] hInstance インスタンスハンドル
+	@param[in] lpCmdLine コマンドライン文字列
 	
 	@author aroka
 	@date 2002/01/08
@@ -76,6 +80,9 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 
 /*!
 	@brief Windowsバージョンのチェック
+	
+	Windows 95以上，Windows NT4.0以上であることを確認する．
+	Windows 95系では残りリソースのチェックも行う．
 	
 	@author aroka
 	@date 2002/01/03
