@@ -112,7 +112,7 @@ BOOL CDlgWinSize::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-/*! ダイアログデータの設定
+/*! @brief ダイアログボックスにデータを設定
 */
 void CDlgWinSize::SetData( void )
 {
@@ -158,7 +158,7 @@ void CDlgWinSize::SetData( void )
 }
 
 
-/*! ダイアログデータの設定
+/*! ダイアログボックスのデータを読み出す
 */
 int CDlgWinSize::GetData( void )
 {

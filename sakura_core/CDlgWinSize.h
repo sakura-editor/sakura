@@ -33,6 +33,11 @@
 
 #include "CDialog.h"
 
+/*!	@brief 位置と大きさの設定ダイアログ
+
+	共通設定のウィンドウ設定で，ウィンドウ位置を指定するために補助的に
+	使用されるダイアログボックス
+*/
 class CDlgWinSize : public CDialog
 {
 public:
@@ -50,9 +55,9 @@ protected:
 
 	void RenewItemState( void );
 
-	int m_nSaveWinSize;
-	int m_nSaveWinPos;
-	int m_nWinSizeType;
+	int m_nSaveWinSize;	//!< ウィンドウサイズの保存: 0/デフォルト，1/継承，2/指定
+	int m_nSaveWinPos;	//!< ウィンドウ位置の保存: 0/デフォルト，1/継承，2/指定
+	int m_nWinSizeType;	//!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
 	RECT m_rc;
 };
 
