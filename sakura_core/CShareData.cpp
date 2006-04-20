@@ -3615,6 +3615,7 @@ static const char*	ppszKeyWordsPERL[] = {
 	"open",
 	"opendir",
 	"ord",
+	"our",	// 2006.04.20 genta
 	"pack",
 	"package",
 	"pipe",
