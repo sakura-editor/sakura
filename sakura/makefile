@@ -159,7 +159,6 @@ OBJS =\
 	$(OBJDIR)\CMigemo.obj \
 	$(OBJDIR)\CMRU.obj \
 	$(OBJDIR)\CMRUFolder.obj \
-	$(OBJDIR)\CMultiMonitor.obj \
 	$(OBJDIR)\CNormalProcess.obj \
 	$(OBJDIR)\COpe.obj \
 	$(OBJDIR)\COpeBlk.obj \

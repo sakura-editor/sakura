@@ -11,7 +11,7 @@
 	Copyright (C) 2003, genta, matsumo, Moca, MIK
 	Copyright (C) 2004, genta, novice, Moca, MIK
 	Copyright (C) 2005, genta, D.S.Koba, Moca, ryoji, aroka
-	Copyright (C) 2006, genta
+	Copyright (C) 2006, genta, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -19,6 +19,8 @@
 
 //	Sep. 10, 2005 genta GetLongPathNameのエミュレーション関数の実体生成のため
 #define COMPILE_NEWAPIS_STUBS
+// 2006.04.21 ryoji マルチモニタのエミュレーション関数の実体生成のため
+#define COMPILE_MULTIMON_STUBS
 
 #include "stdafx.h"
 #include <io.h>
@@ -38,7 +40,6 @@
 #include "CShareData.h"
 #include "CMRU.h"
 #include "CMRUFolder.h"
-#include "CMultiMonitor.h"	//	2004.05.01 genta
 #include "Keycode.h"// novice 2004/10/10
 
 //	CShareDataへ移動
@@ -2680,15 +2681,57 @@ int CalcDirectoryDepth(const char* path)
 	return depth;
 }
 
-//	From Here May 01, 2004 genta MutiMonitor
-CMultiMonitor	g_MultiMonitor;
 
-bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop)
+/*!
+	指定したウィンドウ／長方形領域／点／モニタに対応するモニタ作業領域を取得する
+
+	モニタ作業領域：画面全体からシステムのタスクバーやアプリケーションのツールバーが占有する領域を除いた領域
+
+	@param hWnd/prc/pt/hMon [in] 目的のウィンドウ／長方形領域／点／モニタ
+	@param prcWork [out] モニタ作業領域
+	@param prcMonitor [out] モニタ画面全体
+
+	@retval true 対応するモニタはプライマリモニタ
+	@retval false 対応するモニタは非プライマリモニタ
+
+	@note 出力パラメータの prcWork や prcMonior に NULL を指定した場合、
+	該当する領域情報は出力しない。呼び出し元は欲しいものだけを指定すればよい。
+*/
+//	From Here May 01, 2004 genta MutiMonitor
+bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
 {
-	return g_MultiMonitor.GetMonitorWorkRect( hWnd, rcDesktop );
+	// 2006.04.21 ryoji Windows API 形式の関数呼び出しに変更（スタブに PSDK の MultiMon.h を利用）
+	HMONITOR hMon = ::MonitorFromWindow( hWnd, MONITOR_DEFAULTTONEAREST );
+	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
 }
 //	To Here May 01, 2004 genta
 
+//	From Here 2006.04.21 ryoji MutiMonitor
+bool GetMonitorWorkRect(LPCRECT prc, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+{
+	HMONITOR hMon = ::MonitorFromRect( prc, MONITOR_DEFAULTTONEAREST );
+	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
+}
+
+bool GetMonitorWorkRect(POINT pt, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+{
+	HMONITOR hMon = ::MonitorFromPoint( pt, MONITOR_DEFAULTTONEAREST );
+	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
+}
+
+bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+{
+	MONITORINFO mi;
+	::ZeroMemory( &mi, sizeof( mi ));
+	mi.cbSize = sizeof( mi );
+	::GetMonitorInfo( hMon, &mi );
+	if( NULL != prcWork )
+		*prcWork = mi.rcWork;		// work area rectangle of the display monitor
+	if( NULL != prcMonitor )
+		*prcMonitor = mi.rcMonitor;	// display monitor rectangle
+	return ( mi.dwFlags == MONITORINFOF_PRIMARY ) ? true : false;
+}
+//	To Here 2006.04.21 ryoji MutiMonitor
 
 // novice 2004/10/10 マウスサイドボタン対応
 /*!
