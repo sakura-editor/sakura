@@ -28,6 +28,7 @@
 
 #define WANT_GETLONGPATHNAME_WRAPPER
 #include <NewApis.h>
+#include <multimon.h>
 
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
 class CMemory;// 2002/2/3 aroka ヘッダ軽量化
@@ -130,7 +131,10 @@ HFILE _lopen_absexe(LPCSTR fname, int mode); // 2003.06.23 Moca
 int CalcDirectoryDepth(const char* path);
 
 //	May 01, 2004 genta マルチモニタ対応のデスクトップ領域取得
-bool GetMonitorWorkRect(HWND hWnd, LPRECT rcDesktop);
+bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji パラメータ prcMonitor を追加
+bool GetMonitorWorkRect(LPCRECT prc, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji
+bool GetMonitorWorkRect(POINT pt, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji
+bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
 
 //	Oct. 22, 2005 genta
 bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime );

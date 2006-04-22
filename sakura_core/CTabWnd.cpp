@@ -1742,10 +1742,16 @@ LRESULT CTabWnd::OnListBtnClick( POINTS pts, BOOL bLeft )
 			::CheckMenuRadioItem( hMenu, 0, nCount - 1, iMenuSel, MF_BYPOSITION );
 
 		// メニューを表示する
+		// 2006.04.21 ryoji マルチモニタ対応の修正
 		pt.x = rcBtn.left;
 		pt.y = rcBtn.bottom;
 		::ClientToScreen( m_hWnd, &pt );
-		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD, pt.x, pt.y, 0, m_hWnd, NULL);
+		RECT rcWork;
+		GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
+		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+									( pt.x > rcWork.left )? pt.x: rcWork.left,
+									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+									0, m_hWnd, NULL);
 		::DestroyMenu( hMenu );
 
 		// メニュー選択されたタブのウインドウをアクティブにする
