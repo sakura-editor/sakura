@@ -831,6 +831,7 @@ void ReplaceData_CEditView(
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
 	void Command_WINTOPMOST( LPARAM );		// 常に手前に表示 2004.09.21 Moca
+	void Command_FILELIST( void );		/* ファイル一覧ポップアップ表示処理 */	// 2006.03.23 fon
 
 	/* 支援 */
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離

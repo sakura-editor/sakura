@@ -379,6 +379,7 @@
 #define F_TOPMOST			31334	//常に手前に表示 // 2004-09-21 Moca
 #define F_NEXTWINDOW		31340	//次のウィンドウ
 #define F_PREVWINDOW		31341	//前のウィンドウ
+#define F_FILELIST			31336	//開いているファイル一覧ポップアップ表示	// 2006.03.23 fon
 #define F_MAXIMIZE_V		31350	//縦方向に最大化
 #define F_MINIMIZE_ALL		31351	//すべて最小化		//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 #define F_MAXIMIZE_H		31352	//横方向に最大化	//2001.02.10 by MIK

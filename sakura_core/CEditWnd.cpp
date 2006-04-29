@@ -1831,10 +1831,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	UINT		fuFlags;
 	int			i;
 	BOOL		bRet;
-	char		szMemu[280];
 	int			nRowNum;
-	EditNode*	pEditNodeArr;
-	FileInfo*	pfi;
 
 	HMENU		hMenuPopUp;
 	HMENU		hMenuPopUp_2;
@@ -2433,6 +2430,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, "次のウィンドウ(&N)" );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILELIST		, "ファイル一覧(&L)" );		// 2006.03.23 fon
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW		, "結合して表示(&B)" );		//2004.07.14 Kazika 新規追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
@@ -2447,69 +2445,13 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REDRAW			, "再描画(&R)" );			//Oct. 22, 2000 JEPRO コメントアウトされていたのを復活させた
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_OUTPUT		, "アウトプット(&U)" );		//Sept. 13, 2000 JEPRO アクセスキー変更(O→U)
-
-			/* 現在開いている編集窓のリストをメニューにする */
+// 2006.03.23 fon CHG-start>>
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );		/* セパレータ */
+			EditNode*	pEditNodeArr;
 			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			if( nRowNum > 0 ){
-				/* セパレータ */
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-				CShareData::getInstance()->TransformFileName_MakeCache();
-				for( i = 0; i < nRowNum; ++i ){
-					/* トレイからエディタへの編集ファイル名要求通知 */
-					::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-					if( pfi->m_bIsGrep ){
-						/* データを指定バイト数以内に切り詰める */
-						CMemory		cmemDes;
-						int			nDesLen;
-						const char*	pszDes;
-						LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
-						pszDes = cmemDes.GetPtr();
-						nDesLen = lstrlen( pszDes );
-//	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
-//		i >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
-						wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
-							pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "・・・":""
-						);
-					}else
-					if( pEditNodeArr[i].m_hWnd == m_pShareData->m_hwndDebug ){
-//		i >= 10 + 26 の時の考慮を省いた(に近い)が出力ファイル数が36個を越えることはまずないので事実上OKでしょう
-						wsprintf( szMemu, "&%c アウトプット", ((1 + i) <= 9)?('1' + i):('A' + i - 9) );
-
-					}else{
-//		From Here Jan. 23, 2001 JEPRO
-//		ファイル名やパス名に'&'が使われているときに履歴等でキチンと表示されない問題を修正(&を&&に置換するだけ)
-//<----- From Here Added
-						char	szFile2[_MAX_PATH * 2];
-						if( '\0' == pfi->m_szPath[0] ){
-							strcpy( szFile2, "(無題)" );
-						}else{
-							char buf[_MAX_PATH];
-							CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
-							dupamp( buf, szFile2 );
-						}
-						wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
-							szFile2,
-							pfi->m_bIsModified ? "*":" "
-						);
-//-----> To Here Added
-//		To Here Jan. 23, 2001
-
-//	To Here Oct. 4, 2000
-						// SJIS以外の文字コードの種別を表示する
-						// gm_pszCodeNameArr_3 からコピーするように変更
-						if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
-						}
-					}
-					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu );
-					if( m_hWnd == pEditNodeArr[i].m_hWnd ){
-						::CheckMenuItem( hMenu, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, MF_BYCOMMAND | MF_CHECKED );
-					}
-				}
-				delete [] pEditNodeArr;
-			}
-
+			FileListMenu(hMenu, pEditNodeArr, nRowNum, false);
+			delete [] pEditNodeArr;
+//<< 2006.03.23 fon CHG-end
 			break;
 
 //		case 8://case 6: (Oct. 22, 2000 JEPRO [移動]と[選択]を新設したため番号を2つシフトした)
@@ -4350,6 +4292,106 @@ void CEditWnd::Timer_ONOFF( BOOL bStart )
 		}
 	}
 	return;
+}
+
+/*!	@brief 任意の場所にファイル名一覧をポップアップ表示
+	@date 2006.03.23 fon OnListBtnClickをベースに新規作成
+*/
+LRESULT CEditWnd::PopupFileList( BOOL bFull )
+{
+	POINT pt;
+	GetCursorPos( &pt );
+
+	if(m_pShareData->m_Common.m_bDispTabWnd){
+		//任意の場所にファイル名一覧をポップアップ表示する
+		bFull = FALSE;	//ファイル名のみ
+		m_cTabWnd.TabListMenu( pt, bFull );
+	}
+	else{
+		EditNode*	pEditNodeArr;
+		HMENU hMenu = ::CreatePopupMenu();	// 2006.03.23 fon
+		int nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+		FileListMenu( hMenu, pEditNodeArr, nRowNum, TRUE );
+		// メニューを表示する
+		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD, pt.x, pt.y, 0, m_hWnd, NULL);
+		delete [] pEditNodeArr;
+		::DestroyMenu( hMenu );
+		::SendMessage( m_hWnd, WM_COMMAND, (WPARAM)nId, (LPARAM)NULL );
+	}
+		return 0L;
+}
+
+/*! @brief 現在開いている編集窓のリストをメニューにする 
+	@date  2006.03.23 fon CEditWnd::InitMenuから移動。////が元からあるコメント。//>は追加コメントアウト。
+*/
+LRESULT CEditWnd::FileListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
+{
+	int			i;
+	char		szMemu[280];
+//>	EditNode*	pEditNodeArr;
+	FileInfo*	pfi;
+
+//>	int	nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	if( nRowNum > 0 ){
+//>		/* セパレータ */
+//>		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+		CShareData::getInstance()->TransformFileName_MakeCache();
+		for( i = 0; i < nRowNum; ++i ){
+			/* トレイからエディタへの編集ファイル名要求通知 */
+			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
+			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			if( pfi->m_bIsGrep ){
+				/* データを指定バイト数以内に切り詰める */
+				CMemory		cmemDes;
+				int			nDesLen;
+				const char*	pszDes;
+				LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
+				pszDes = cmemDes.GetPtr();
+				nDesLen = lstrlen( pszDes );
+////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
+////		i >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
+				wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
+					pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "・・・":""
+				);
+			}else
+			if( pEditNodeArr[i].m_hWnd == m_pShareData->m_hwndDebug ){
+////		i >= 10 + 26 の時の考慮を省いた(に近い)が出力ファイル数が36個を越えることはまずないので事実上OKでしょう
+				wsprintf( szMemu, "&%c アウトプット", ((1 + i) <= 9)?('1' + i):('A' + i - 9) );
+
+			}else{
+////		From Here Jan. 23, 2001 JEPRO
+////		ファイル名やパス名に'&'が使われているときに履歴等でキチンと表示されない問題を修正(&を&&に置換するだけ)
+////<----- From Here Added
+				char	szFile2[_MAX_PATH * 2];
+				if( '\0' == pfi->m_szPath[0] ){
+					strcpy( szFile2, "(無題)" );
+				}else{
+					char buf[_MAX_PATH];
+					CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
+					dupamp( buf, szFile2 );
+				}
+				wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
+					szFile2,
+					pfi->m_bIsModified ? "*":" "
+				);
+////-----> To Here Added
+////		To Here Jan. 23, 2001
+
+////	To Here Oct. 4, 2000
+				// SJIS以外の文字コードの種別を表示する
+				// gm_pszCodeNameArr_3 からコピーするように変更
+				if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+					strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+				}
+			}
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu );
+			if( m_hWnd == pEditNodeArr[i].m_hWnd ){
+				::CheckMenuItem( hMenu, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, MF_BYCOMMAND | MF_CHECKED );
+			}
+		}
+//>		delete [] pEditNodeArr;
+	}
+	return 0L;
 }
 
 

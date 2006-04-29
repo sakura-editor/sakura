@@ -633,6 +633,7 @@ BOOL CEditView::HandleCommand(
 	case F_REDRAW:			Command_REDRAW();break;			/* 再描画 */
 	case F_WIN_OUTPUT:		Command_WIN_OUTPUT();break;		//アウトプットウィンドウ表示
 	case F_TOPMOST:			Command_WINTOPMOST( lparam1 );break;	//常に手前に表示 Moca
+	case F_FILELIST:		Command_FILELIST();break;		/* ファイル一覧ポップアップ表示処理 */	// 2006.03.23 fon
 
 	/* 支援 */
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完

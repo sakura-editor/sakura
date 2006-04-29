@@ -127,6 +127,9 @@ public:
 	// 2005.06.24 Moca
 	void SetDebugModeOFF( void );
 //#endif
+	LRESULT PopupFileList( BOOL bFull );	/*!< ファイル一覧ポップアップ表示処理 */	// 2006.03.23 fon
+	LRESULT FileListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ファイル一覧メニュー作成処理 */	// 2006.03.23 fon
+
 	/*
 	|| スタティックなメンバ関数
 	*/
