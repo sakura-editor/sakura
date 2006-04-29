@@ -465,6 +465,7 @@ struct Common {
 	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL				m_bSameTabWidth;				//タブを等幅にする			//@@@ 2006.01.28 ryoji
 	BOOL				m_bDispTabIcon;					//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
+	BOOL				m_bListSort;					//タブ一覧をソートする	//@@@ 2006.03.23 fon
 
 	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる

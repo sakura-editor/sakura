@@ -316,6 +316,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_TILE_H,					"TileWinH",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左右に並べて表示
 	{F_NEXTWINDOW,				"NextWindow",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のウィンドウ
 	{F_PREVWINDOW,				"PrevWindow",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のウィンドウ
+	{F_FILELIST,				"WindowList",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイル一覧ポップアップ表示	// 2006.03.23 fon
 	{F_MAXIMIZE_V,				"MaximizeV",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //縦方向に最大化
 	{F_MAXIMIZE_H,				"MaximizeH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //横方向に最大化 //2001.02.10 by MIK
 	{F_MINIMIZE_ALL,			"MinimizeAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一

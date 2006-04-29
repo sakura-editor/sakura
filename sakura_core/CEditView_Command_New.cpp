@@ -2845,4 +2845,18 @@ void CEditView::Command_SET_QUOTESTRING( const char* quotestr )
 	m_pShareData->m_Common.m_szInyouKigou[ sizeof( m_pShareData->m_Common.m_szInyouKigou ) - 1 ] = '\0';
 }
 
+/*!	@brief ファイルリスト一覧ポップアップ表示処理（ファイル名のみ）
+	@date  2006.03.23 fon 新規作成
+*/
+void CEditView::Command_FILELIST( void )
+{
+	CEditWnd	*pCEditWnd;
+	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
+
+	//マウスカーソルの位置にファイル名一覧をポップアップ表示する
+	pCEditWnd->PopupFileList(false);
+
+}
+
+
 /*[EOF]*/

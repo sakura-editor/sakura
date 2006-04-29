@@ -62,6 +62,7 @@ public:
 	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
 
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	LRESULT TabListMenu( POINT pt, BOOL bLeft );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
 
 	/*
 	|| メンバ変数
