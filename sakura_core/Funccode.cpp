@@ -11,7 +11,7 @@
 	Copyright (C) 2003, genta, MIK, Moca
 	Copyright (C) 2004, genta, isearch
 	Copyright (C) 2005, genta, MIK
-	Copyright (C) 2006, aroka, ryoji
+	Copyright (C) 2006, aroka, ryoji, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -406,7 +406,7 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_WIN_CLOSEALL		,	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
 	F_NEXTWINDOW		,	//次のウィンドウ
 	F_PREVWINDOW		,	//前のウィンドウ
- 	F_FILELIST			,	//開いているファイル一覧ポップアップ表示	// 2006.03.23 fon
+ 	F_WINLIST			,	//開いているウィンドウ一覧ポップアップ表示	// 2006.03.23 fon
 	F_BIND_WINDOW		,	//結合して表示	// 2006.04.22 ryoji
 	F_CASCADE			,	//重ねて表示
 	F_TILE_V			,	//上下に並べて表示

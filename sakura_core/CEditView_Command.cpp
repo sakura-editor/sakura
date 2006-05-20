@@ -12,7 +12,7 @@
 	Copyright (C) 2003, MIK, genta, かろと, zenryaku, Moca, ryoji, naoh, KEITA, じゅうじ
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, かろと
+	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -73,6 +73,11 @@ BOOL CEditView::HandleCommand(
 	BOOL	bRet = TRUE;
 	BOOL	bRepeat = FALSE;
 	int		nFuncID;
+
+	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
+	//	下位16ビットのみを取り出す
+	int	nCommandFrom = HIWORD( nCommand );
+	nCommand = LOWORD( nCommand );
 
 	//	Oct. 30, 2004 genta
 	//	漢字の上下バイトが１つのWM_IME_CHARではなく別々のWM_CHARにて来る
@@ -633,7 +638,7 @@ BOOL CEditView::HandleCommand(
 	case F_REDRAW:			Command_REDRAW();break;			/* 再描画 */
 	case F_WIN_OUTPUT:		Command_WIN_OUTPUT();break;		//アウトプットウィンドウ表示
 	case F_TOPMOST:			Command_WINTOPMOST( lparam1 );break;	//常に手前に表示 Moca
-	case F_FILELIST:		Command_FILELIST();break;		/* ファイル一覧ポップアップ表示処理 */	// 2006.03.23 fon
+	case F_WINLIST:			Command_WINLIST( nCommandFrom );break;		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
 
 	/* 支援 */
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完

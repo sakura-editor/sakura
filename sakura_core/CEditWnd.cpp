@@ -11,7 +11,7 @@
 	Copyright (C) 2003, genta, MIK, Moca, wmlhq, ryoji, KEITA
 	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
-	Copyright (C) 2006, genta, ryoji, aroka
+	Copyright (C) 2006, genta, ryoji, aroka, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1688,6 +1688,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
 	case 0:
+	case CMD_FROM_MOUSE: // 2006.05.19 genta マウスから呼びだされた場合
 		switch( wID ){
 		case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
 			/* サクラエディタの全終了 */
@@ -1765,7 +1766,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
 
 				/* コマンドコードによる処理振り分け */
-				m_cEditDoc.HandleCommand( wID );
+				//	May 19, 2006 genta 上位ビットを渡す
+				m_cEditDoc.HandleCommand( MAKELONG( wID, wNotifyCode ));
 			}
 			break;
 		}
@@ -1782,7 +1784,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			m_pShareData->m_pKeyNameArr
 		);
 //		MYTRACE( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
-		m_cEditDoc.HandleCommand( nFuncCode );
+		m_cEditDoc.HandleCommand( MAKELONG( nFuncCode, wNotifyCode ) );
 		break;
 
 	case CBN_SETFOCUS:
@@ -2430,7 +2432,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, "次のウィンドウ(&N)" );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILELIST		, "ファイル一覧(&L)" );		// 2006.03.23 fon
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINLIST			, "ウィンドウ一覧(&W)..." );		// 2006.03.23 fon
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW		, "結合して表示(&B)" );		//2004.07.14 Kazika 新規追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
@@ -2449,7 +2451,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );		/* セパレータ */
 			EditNode*	pEditNodeArr;
 			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			FileListMenu(hMenu, pEditNodeArr, nRowNum, false);
+			WinListMenu(hMenu, pEditNodeArr, nRowNum, false);
 			delete [] pEditNodeArr;
 //<< 2006.03.23 fon CHG-end
 			break;
@@ -4294,16 +4296,35 @@ void CEditWnd::Timer_ONOFF( BOOL bStart )
 	return;
 }
 
-/*!	@brief 任意の場所にファイル名一覧をポップアップ表示
+/*!	@brief ウィンドウ一覧をポップアップ表示
+
+	@param[in] bFull true: Full Path表示
+	@param[in] fromMouse true: マウスから実行された
+
 	@date 2006.03.23 fon OnListBtnClickをベースに新規作成
+	@date 2006.05.10 ryoji ポップアップ位置変更、その他微修正
 */
-LRESULT CEditWnd::PopupFileList( BOOL bFull )
+LRESULT CEditWnd::PopupWinList( BOOL bFull, bool fromMouse )
 {
 	POINT pt;
-	GetCursorPos( &pt );
 
-	if(m_pShareData->m_Common.m_bDispTabWnd){
-		//任意の場所にファイル名一覧をポップアップ表示する
+	// ポップアップ位置をアクティブビューの上辺に設定
+	RECT rc;
+	
+	if( fromMouse ){
+		::GetCursorPos( &pt );	// マウスカーソル位置に変更
+	}
+	else {
+		::GetWindowRect( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd, &rc );
+		pt.x = rc.right - 150;
+		if( pt.x < rc.left )
+			pt.x = rc.left;
+		pt.y = rc.top;
+	}
+
+	// ウィンドウ一覧メニューをポップアップ表示する
+	// （いずれはメニューをダイアログに変更していろいろ操作できるようにしたいところ）
+	if( NULL != m_cTabWnd.m_hWnd ){
 		bFull = FALSE;	//ファイル名のみ
 		m_cTabWnd.TabListMenu( pt, bFull );
 	}
@@ -4311,20 +4332,26 @@ LRESULT CEditWnd::PopupFileList( BOOL bFull )
 		EditNode*	pEditNodeArr;
 		HMENU hMenu = ::CreatePopupMenu();	// 2006.03.23 fon
 		int nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-		FileListMenu( hMenu, pEditNodeArr, nRowNum, TRUE );
+		WinListMenu( hMenu, pEditNodeArr, nRowNum, TRUE );
 		// メニューを表示する
-		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD, pt.x, pt.y, 0, m_hWnd, NULL);
+		RECT rcWork;
+		GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
+		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+									( pt.x > rcWork.left )? pt.x: rcWork.left,
+									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+									0, m_hWnd, NULL);
 		delete [] pEditNodeArr;
 		::DestroyMenu( hMenu );
 		::SendMessage( m_hWnd, WM_COMMAND, (WPARAM)nId, (LPARAM)NULL );
 	}
-		return 0L;
+
+	return 0L;
 }
 
 /*! @brief 現在開いている編集窓のリストをメニューにする 
 	@date  2006.03.23 fon CEditWnd::InitMenuから移動。////が元からあるコメント。//>は追加コメントアウト。
 */
-LRESULT CEditWnd::FileListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
+LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
 {
 	int			i;
 	char		szMemu[280];

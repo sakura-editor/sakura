@@ -3269,7 +3269,12 @@ BOOL CEditDoc::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 	return FALSE;
 }
 
-/* コマンドコードによる処理振り分け */
+/*! コマンドコードによる処理振り分け
+
+	@param[in] nCommand MAKELONG( コマンドコード，送信元識別子 )
+
+	@date 2006.05.19 genta 上位16bitに送信元の識別子が入るように変更
+*/
 BOOL CEditDoc::HandleCommand( int nCommand )
 {
 	int				i;
@@ -3278,7 +3283,9 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 	int				nPane;
 	HWND			hwndWork;
 	EditNode*		pEditNodeArr;
-	switch( nCommand ){
+	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
+	//	下位16ビットのみを取り出す
+	switch( LOWORD( nCommand )){
 	case F_PREVWINDOW:	//前のウィンドウ
 		nPane = m_cSplitterWnd.GetPrevPane();
 		if( -1 != nPane ){

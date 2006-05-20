@@ -11,7 +11,7 @@
 	Copyright (C) 2003, MIK, Moca
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, ryoji, genta, D.S.Koba
-	Copyright (C) 2006, genta, Moca
+	Copyright (C) 2006, genta, Moca, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -2845,16 +2845,17 @@ void CEditView::Command_SET_QUOTESTRING( const char* quotestr )
 	m_pShareData->m_Common.m_szInyouKigou[ sizeof( m_pShareData->m_Common.m_szInyouKigou ) - 1 ] = '\0';
 }
 
-/*!	@brief ファイルリスト一覧ポップアップ表示処理（ファイル名のみ）
+/*!	@brief ウィンドウ一覧ポップアップ表示処理（ファイル名のみ）
 	@date  2006.03.23 fon 新規作成
+	@date  2006.05.19 genta コマンド実行要因を表す引数追加
 */
-void CEditView::Command_FILELIST( void )
+void CEditView::Command_WINLIST( int nCommandFrom )
 {
 	CEditWnd	*pCEditWnd;
 	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
 
-	//マウスカーソルの位置にファイル名一覧をポップアップ表示する
-	pCEditWnd->PopupFileList(false);
+	//マウスカーソルの位置にウィンドウ一覧をポップアップ表示する
+	pCEditWnd->PopupWinList(false, nCommandFrom == CMD_FROM_MOUSE );
 
 }
 

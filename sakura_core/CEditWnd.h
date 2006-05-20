@@ -13,7 +13,7 @@
 	Copyright (C) 2003, MIK, genta, wmlhq
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta, Moca
-	Copyright (C) 2006, ryoji, aroka
+	Copyright (C) 2006, ryoji, aroka, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -127,8 +127,8 @@ public:
 	// 2005.06.24 Moca
 	void SetDebugModeOFF( void );
 //#endif
-	LRESULT PopupFileList( BOOL bFull );	/*!< ファイル一覧ポップアップ表示処理 */	// 2006.03.23 fon
-	LRESULT FileListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ファイル一覧メニュー作成処理 */	// 2006.03.23 fon
+	LRESULT PopupWinList( BOOL bFull, bool fromMouse );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon
+	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
 
 	/*
 	|| スタティックなメンバ関数

@@ -9,7 +9,7 @@
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2004, Moca, MIK, genta, Kazika
 	Copyright (C) 2005, ryoji
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, fon
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -1676,7 +1676,7 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 }
 
 
-/*!	ファイル一覧表示処理
+/*!	タブ一覧表示処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.03.23 fon OnListBtnClickから移動(行頭の//>が変更部)
 */
@@ -1725,7 +1725,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bFull )
 	cRecentEditNode.Terminate();
 
 	// 表示文字でソートする
-	if(m_pShareData->m_Common.m_bListSort){							// 2006.03.23 fon 変更
+	if(m_pShareData->m_Common.m_bSortTabList){							// 2006.03.23 fon 変更
 		qsort( pData, nCount, sizeof(pData[0]), compTABMENU_DATA );
 	}
 
