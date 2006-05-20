@@ -573,7 +573,7 @@
 #define IDC_RADIO_BACKUP_DATETYPE2A     1508
 #define IDC_LABEL_BACKUP_HELP2          1509
 #define IDD_PROP_TOOLBAR                1539
-#define IDC_CHECK_ListSort              1540
+#define IDC_CHECK_SortTabList           1540
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_AUTHOR_MAIL                 4055

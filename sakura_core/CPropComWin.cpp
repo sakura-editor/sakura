@@ -10,7 +10,7 @@
 	Copyright (C) 2002, YAZAKI, genta, Moca, aroka
 	Copyright (C) 2003, MIK, KEITA, genta
 	Copyright (C) 2004, Moca
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -331,7 +331,7 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	//To Here@@@ 2003.06.13 MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ListSort, m_Common.m_bListSort );			//@@@ 2006.03.23 fon
+	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_bSortTabList );			//@@@ 2006.03.23 fon
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
@@ -418,7 +418,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	//To Here@@@ 2003.06.13 MIK
 	m_Common.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
 	m_Common.m_bDispTabIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabIcon );		// 2006.01.28 ryoji
-	m_Common.m_bListSort = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ListSort );				// 2006.03.23 fon
+	m_Common.m_bSortTabList = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SortTabList );		// 2006.03.23 fon
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	m_Common.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );

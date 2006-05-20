@@ -179,9 +179,12 @@ struct ARRHEAD {
 	タブの機能拡張(等幅、アイコン表示) 2006/01/28 ryoji
 	アウトプットウィンドウ位置 2006.02.01 aroka
 
+	Version 65:
+	タブ一覧をソートする 2006/05/10 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 64;
+const unsigned int uShareDataVersion = 65;
 
 /*
 ||	Singleton風
@@ -460,6 +463,7 @@ bool CShareData::Init( void )
 			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
 		m_pShareData->m_Common.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
+		m_pShareData->m_Common.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる

@@ -1340,9 +1340,9 @@ BEGIN
     CONTROL         "等幅(&Q)",IDC_CHECK_SameTabWidth,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,159,126,39,10
     CONTROL         "アイコン表示(&C)",IDC_CHECK_DispTabIcon,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,200,126,67,10
+    CONTROL         "タブ一覧ソート(&^)",IDC_CHECK_SortTabList,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,159,140,62,10
-    CONTROL         "タブ一覧ソート(&S)",IDC_CHECK_ListSort,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,195,126,67,10
     GROUPBOX        "タブ",IDC_STATIC,154,114,113,39,WS_GROUP
     LTEXT           "アクティブ時(&1)",IDC_STATIC,7,171,45,8
     EDITTEXT        IDC_WINCAPTION_ACTIVE,60,168,201,14,ES_AUTOHSCROLL
@@ -2924,7 +2924,7 @@ BEGIN
     F_TOPMOST               "常に手前に表示"
     F_NEXTWINDOW            "次のウィンドウ"
     F_PREVWINDOW            "前のウィンドウ"
-    F_FILELIST              "ファイル一覧"
+    F_WINLIST               "ウィンドウ一覧"
 END
 
 STRINGTABLE DISCARDABLE 

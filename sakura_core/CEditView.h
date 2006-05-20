@@ -12,7 +12,7 @@
 	Copyright (C) 2003, genta, MIK, Moca
 	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
-	Copyright (C) 2006, genta, aroka
+	Copyright (C) 2006, genta, aroka, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -61,6 +61,10 @@ typedef struct tagRECONVERTSTRING {
     DWORD dwTargetStrOffset;
 } RECONVERTSTRING, *PRECONVERTSTRING;
 #endif // RECONVERTSTRING
+
+///	マウスからコマンドが実行された場合の上位ビット
+///	@date 2006.05.19 genta
+const int CMD_FROM_MOUSE = 2;
 
 class CEditView;
 
@@ -831,7 +835,7 @@ void ReplaceData_CEditView(
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
 	void Command_WINTOPMOST( LPARAM );		// 常に手前に表示 2004.09.21 Moca
-	void Command_FILELIST( void );		/* ファイル一覧ポップアップ表示処理 */	// 2006.03.23 fon
+	void Command_WINLIST( int nCommandFrom );		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
 
 	/* 支援 */
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
