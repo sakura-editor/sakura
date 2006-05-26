@@ -473,6 +473,13 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 					}
 				}
 			}
+			// 2006.05.24 Moca 矩形選択/フリーカーソル選択(選択開始/終了行)で
+			// To < From になることがある。必ず From < To になるように入れ替える。
+			if( nSelectTo < nSelectFrom ){
+				int t = nSelectFrom;
+				nSelectFrom = nSelectTo;
+				nSelectTo = t;
+			}
 			// 2006.03.28 Moca 表示域外なら何もしない
 			if( m_nViewLeftCol + m_nViewColNum < nSelectFrom ){
 				return;

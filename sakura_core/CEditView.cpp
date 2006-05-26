@@ -2198,6 +2198,13 @@ void CEditView::DrawSelectAreaLine(
 			nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
 			nSelectTo	= nPosX;
 		}
+		// 2006.05.24 Mocaフリーカーソル選択(選択開始/終了行)で
+		// To < From になることがある。必ず From < To になるように入れ替える。
+		if( nSelectTo < nSelectFrom ){
+			int t = nSelectFrom;
+			nSelectFrom = nSelectTo;
+			nSelectTo = t;
+		}
 	}
 	
 	// 2006.03.28 Moca ウィンドウ幅が大きいと正しく反転しない問題を修正
