@@ -11,7 +11,7 @@
 	Copyright (C) 2003, genta, MIK, Moca, wmlhq, ryoji, KEITA
 	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
-	Copyright (C) 2006, genta, ryoji, aroka, fon
+	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -4273,6 +4273,18 @@ void CEditWnd::WindowTopMost( int top )
 		break;
 	}
 }
+
+/*!
+ツールバーの検索ボックスにフォーカスを移動する.
+	@date 2006.06.04 yukihane 新規作成
+*/
+void CEditWnd::SetFocusSearchBox( void ) const
+{
+	if( m_hwndSearchBox ){
+		::SetFocus(m_hwndSearchBox);
+	}
+}
+
 
 // タイマーの更新を開始／停止する。 20060128 aroka
 // ツールバー表示はタイマーにより更新しているが、

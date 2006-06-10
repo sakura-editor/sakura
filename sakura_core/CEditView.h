@@ -12,7 +12,7 @@
 	Copyright (C) 2003, genta, MIK, Moca
 	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
-	Copyright (C) 2006, genta, aroka, fon
+	Copyright (C) 2006, genta, aroka, fon, yukihane
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -736,6 +736,7 @@ void ReplaceData_CEditView(
 	void Command_UUDECODE( void );				/* uudecodeして保存 */	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
 	/* 検索系 */
+	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
 	void Command_SEARCH_NEXT( bool, BOOL, HWND, const char* );/* 次を検索 */
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
