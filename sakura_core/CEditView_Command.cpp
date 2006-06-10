@@ -12,7 +12,7 @@
 	Copyright (C) 2003, MIK, genta, かろと, zenryaku, Moca, ryoji, naoh, KEITA, じゅうじ
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon
+	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -466,7 +466,7 @@ BOOL CEditView::HandleCommand(
 
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		Command_SEARCH_DIALOG();break;												//検索(単語検索ダイアログ)
-	case F_SEARCH_BOX:			Command_SEARCH_DIALOG();break;		// Jan. 13, 2003 MIK					//検索(単語検索ダイアログ)
+	case F_SEARCH_BOX:			Command_SEARCH_BOX();break;		// Jan. 13, 2003 MIK					//検索(ボックス)	// 2006.06.04 yukihane Command_SEARCH_BOX()
 	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( true, bRedraw, (HWND)lparam1, (const char*)lparam2 );break;	//次を検索
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
 	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)
@@ -3118,7 +3118,16 @@ void CEditView::Command_CHGMOD_INS( void )
 }
 
 
-
+/*!
+検索(ボックス)コマンド実行.
+ツールバーの検索ボックスにフォーカスを移動する.
+	@date 2006.06.04 yukihane 新規作成
+*/
+void CEditView::Command_SEARCH_BOX( void )
+{
+	const CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
+	pCEditWnd->SetFocusSearchBox();
+}
 
 /* 検索(単語検索ダイアログ) */
 void CEditView::Command_SEARCH_DIALOG( void )

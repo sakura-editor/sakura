@@ -13,7 +13,7 @@
 	Copyright (C) 2003, MIK, genta, wmlhq
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta, Moca
-	Copyright (C) 2006, ryoji, aroka, fon
+	Copyright (C) 2006, ryoji, aroka, fon, yukihane
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -120,6 +120,8 @@ public:
 		return NULL != m_hwndStatusBar;
 	}
 	void WindowTopMost( int ); // 2004.09.21 Moca
+
+	void SetFocusSearchBox( void ) const;			/* ツールバー検索ボックスへフォーカスを移動 */	// 2006.06.04 yukihane
 
 //	void MyAppendMenu( HMENU, int, int, char* );	/* メニュー項目を追加 */
 //#ifdef _DEBUG
