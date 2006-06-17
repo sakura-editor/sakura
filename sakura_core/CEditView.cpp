@@ -13,7 +13,7 @@
 	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
-	Copyright (C) 2006, Moca, aroka
+	Copyright (C) 2006, Moca, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -5847,6 +5847,7 @@ void CEditView::DrawCaretPosInfo( void )
 
 	@author genta
 	@date 2005.07.09 genta 新規作成
+	@date 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策を追加
 */
 void CEditView::PrintSelectionInfoMsg(void)
 {
@@ -5860,7 +5861,20 @@ void CEditView::PrintSelectionInfoMsg(void)
 	}
 
 	char msg[128];
-	int select_line = select_line = m_nSelectLineTo - m_nSelectLineFrom + 1;
+	//	From here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
+	int nLineCount = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+	if( m_nSelectLineFrom >= nLineCount ){	// 先頭行が実在しない
+		m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( "" );
+		return;
+	}
+	int select_line;
+	if( m_nSelectLineTo >= nLineCount ){	// 最終行が実在しない
+		select_line = nLineCount - m_nSelectLineFrom + 1;
+	}
+	else {
+		select_line = m_nSelectLineTo - m_nSelectLineFrom + 1;
+	}
+	//	To here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
 	if( m_bBeginBoxSelect ){
 		//	矩形の場合は幅と高さだけでごまかす
 		int select_col = m_nSelectColmFrom - m_nSelectColmTo;
@@ -5895,8 +5909,11 @@ void CEditView::PrintSelectionInfoMsg(void)
 				//	VC .NET以降でもMicrosoft拡張を有効にした標準動作はVC6と同じことに注意
 				int nLineNum;
 				for( nLineNum = m_nSelectLineFrom + 1;
-					nLineNum < m_nSelectLineTo && NULL != pLine; ++nLineNum ){
+					nLineNum < m_nSelectLineTo; ++nLineNum ){
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+					//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
+					if( NULL == pLine )
+						break;
 					select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen();
 				}
 
