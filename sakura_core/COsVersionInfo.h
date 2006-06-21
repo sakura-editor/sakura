@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI, minfu
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, ryoji
+	Copyright (C) 2006, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -109,8 +110,8 @@ public:
 		@date 2003.09.06 genta
 	*/
 	BOOL IsLuna(){
-		return (m_cOsVersionInfo.dwMajorVersion >= 5 &&
-			m_cOsVersionInfo.dwMinorVersion >= 1 );
+		return ( m_cOsVersionInfo.dwMajorVersion >= 6 ||	// 2006.06.17 ryoji Ver 6.0, 7.0,...‚àŠÜ‚ß‚é
+			(m_cOsVersionInfo.dwMajorVersion >= 5 && m_cOsVersionInfo.dwMinorVersion >= 1) );
 	}
 
 	/*! Windows 2000ˆÈã‚©’²‚×‚é
