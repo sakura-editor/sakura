@@ -1591,13 +1591,18 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 {
 	// 本物の ImageList_Duplicate() があればそれを呼び出す
+	HIMAGELIST hImlNew;
 	if( m_RealImageList_Duplicate )
-		return m_RealImageList_Duplicate( himl );
+	{
+		hImlNew = m_RealImageList_Duplicate( himl );
+		if( NULL != hImlNew )
+			return hImlNew;
+		m_RealImageList_Duplicate = NULL;	// 2006.06.20 ryoji 失敗時は代替処理に切り替え
+	}
 
 	// 本物の ImageList_Duplicate() の代替処理
 	// 新しいイメージリストを作成してアイコン単位でコピーする
 	//（この場合、多色アイコンは綺麗には表示されないかもしれない）
-	HIMAGELIST hImlNew;
 	hImlNew = ImageList_Create( CX_SMICON, CY_SMICON, ILC_COLOR32 | ILC_MASK, 4, 4 );
 	if( hImlNew )
 	{
