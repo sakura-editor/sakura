@@ -149,6 +149,7 @@ public:
 	char*			m_pszAppName;
 	CEditDoc		m_cEditDoc;
 	HWND			m_hwndParent;
+    HWND			m_hwndReBar;	// Rebar ウィンドウ	//@@@ 2006.06.17 ryoji
     HWND			m_hwndToolBar;
 	HWND			m_hwndStatusBar;
 	HWND			m_hwndProgressBar;
