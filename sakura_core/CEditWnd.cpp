@@ -70,6 +70,11 @@
 	#define WM_MOUSEWHEEL	0x020A
 #endif
 
+// 2006.06.17 ryoji WM_THEMECHANGED
+#ifndef	WM_THEMECHANGED
+#define WM_THEMECHANGED		0x031A
+#endif
+
 #define		YOHAKU_X		4		/* ウィンドウ内の枠と紙の隙間最小値 */
 #define		YOHAKU_Y		4		/* ウィンドウ内の枠と紙の隙間最小値 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
@@ -155,6 +160,7 @@ CEditWnd::CEditWnd() :
 	m_hWnd( NULL ),
 	m_bDragMode( FALSE ),
 	m_hwndParent( NULL ),
+	m_hwndReBar( NULL ),	// 2006.06.17 ryoji
 	m_hwndToolBar( NULL ),
 	m_hwndStatusBar( NULL ),
 	m_hwndProgressBar( NULL ),
@@ -367,6 +373,8 @@ HWND CEditWnd::Create(
 	if( NULL == hWnd ){
 		return NULL;
 	}
+
+	MyInitCommonControls();	// 2006.06.19 ryoji コモンコントロールの初期化を CreateToolBar() から移動
 
 
 	m_cIcons.Create( m_hInstance, m_hWnd );	//	CreateImage List
@@ -649,9 +657,12 @@ void CEditWnd::DestroyStatusBar( void )
 /* ツールバー作成
 	@date @@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2005.08.29 aroka ツールバーの折り返し
+	@date 2006.06.17 ryoji ビジュアルスタイルが有効の場合はツールバーを Rebar に入れてサイズ変更時のちらつきを無くす
 */
 void CEditWnd::CreateToolBar( void )
 {
+	REBARINFO		rbi;
+	REBARBANDINFO	rbBand;
 	int				nFlag;
 	TBBUTTON		tbb;
 	int				i;
@@ -659,13 +670,45 @@ void CEditWnd::CreateToolBar( void )
 	UINT			uToolType;
 	nFlag = 0;
 
+	// 2006.06.17 ryoji
+	// Rebar ウィンドウの作成
+	if( IsVisualStyle() ){	// ビジュアルスタイル有効
+		m_hwndReBar = ::CreateWindowEx(
+			WS_EX_TOOLWINDOW,
+			REBARCLASSNAME,
+			NULL,
+			WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
+			RBS_BANDBORDERS | CCS_NODIVIDER,
+			0, 0, 0, 0,
+			m_hWnd,
+			NULL,
+			m_hInstance,
+			NULL);
+
+		if( NULL == m_hwndReBar ){
+			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+				"Rebar の作成に失敗しました。"
+			);
+			return;
+		}
+
+		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
+			PreventVisualStyle( m_hwndReBar );	// ビジュアルスタイル非適用のフラットな Rebar にする
+		}
+
+		::ZeroMemory(&rbi, sizeof(REBARINFO));
+		rbi.cbSize = sizeof(REBARINFO);
+		::SendMessage(m_hwndReBar, RB_SETBARINFO, 0, (LPARAM)&rbi);
+
+		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ツールバーへの追加スタイル
+	}
+
 	/* ツールバーウィンドウの作成 */
-	::InitCommonControls();
 	m_hwndToolBar = ::CreateWindowEx(
 		0,
 		TOOLBARCLASSNAME,
 		NULL,
-		WS_CHILD | WS_VISIBLE | /*WS_BORDER | */
+		WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加
 /*		WS_EX_WINDOWEDGE| */
 		TBSTYLE_TOOLTIPS |
 //		TBSTYLE_WRAPABLE |
@@ -686,6 +729,7 @@ void CEditWnd::CreateToolBar( void )
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 			"ツールバーの作成に失敗しました。"
 		);
+		DestroyToolBar();	// 2006.06.17 ryoji
 	}else{
 		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0 );
 		//	Oct. 12, 2000 genta
@@ -848,6 +892,27 @@ void CEditWnd::CreateToolBar( void )
 		}
 		delete []pTbbArr;// 2005/8/29 aroka
 	}
+
+	// 2006.06.17 ryoji
+	// ツールバーを Rebar に入れる
+	if( m_hwndReBar && m_hwndToolBar ){
+		// ツールバーの高さを取得する
+		DWORD dwBtnSize = ::SendMessage( m_hwndToolBar, TB_GETBUTTONSIZE, 0, 0 );
+		DWORD dwRows = ::SendMessage( m_hwndToolBar, TB_GETROWS, 0, 0 );
+
+		// バンド情報を設定する
+		rbBand.cbSize = sizeof(REBARBANDINFO);
+		rbBand.fMask  = RBBIM_STYLE | RBBIM_CHILD | RBBIM_CHILDSIZE | RBBIM_SIZE;
+		rbBand.fStyle = RBBS_CHILDEDGE;
+		rbBand.hwndChild  = m_hwndToolBar;	// ツールバー
+		rbBand.cxMinChild = 0;
+		rbBand.cyMinChild = HIWORD(dwBtnSize) * dwRows;
+		rbBand.cx         = 250;
+
+		// バンドを追加する
+		::SendMessage( m_hwndReBar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rbBand );
+	}
+
 	return;
 }
 
@@ -874,6 +939,13 @@ void CEditWnd::DestroyToolBar( void )
 
 		//if( m_cTabWnd.m_hWnd ) ::UpdateWindow( m_cTabWnd.m_hWnd );
 		//if( m_CFuncKeyWnd.m_hWnd ) ::UpdateWindow( m_CFuncKeyWnd.m_hWnd );
+	}
+
+	// 2006.06.17 ryoji Rebar を破棄する
+	if( m_hwndReBar )
+	{
+		::DestroyWindow( m_hwndReBar );
+		m_hwndReBar = NULL;
 	}
 
 	return;
@@ -1419,6 +1491,18 @@ LRESULT CEditWnd::DispatchEvent(
 		::PostQuitMessage( 0 );
 
 		return 0L;
+
+	case WM_THEMECHANGED:
+		// 2006.06.17 ryoji
+		// ビジュアルスタイル／クラシックスタイルが切り替わったらツールバーを再作成する
+		// （ビジュアルスタイル: Rebar 有り、クラシックスタイル: Rebar 無し）
+		if( NULL != m_hwndToolBar ){
+			if( IsVisualStyle() == (NULL == m_hwndReBar) ){
+				::SendMessage( m_hWnd, MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)NULL );	// 設定変更通知 
+			}
+		}
+		return 0L;
+
 	case MYWM_CLOSE:
 		/* エディタへの全終了要求 */
 		if( FALSE != ( nRet = OnClose()) ){	// Jan. 23, 2002 genta 警告抑制
@@ -3168,6 +3252,10 @@ void CEditWnd::OnHelp_MenuItem( HWND hwndParent, int nFuncID )
 void CEditWnd::PrintPreviewModeONOFF( void )
 {
 	HMENU	hMenu;
+	HWND	hwndToolBar;
+
+	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
+	hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
 
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -3179,7 +3267,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 
 		/*	通常モードに戻す	*/
 		::ShowWindow( m_cEditDoc.m_hWnd, SW_SHOW );
-		::ShowWindow( m_hwndToolBar, SW_SHOW );
+		::ShowWindow( hwndToolBar, SW_SHOW );	// 2006.06.17 ryoji
 		::ShowWindow( m_hwndStatusBar, SW_SHOW );
 		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_SHOW );
 		::ShowWindow( m_cTabWnd.m_hWnd, SW_SHOW );	//@@@ 2003.06.25 MIK
@@ -3202,7 +3290,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::DrawMenuBar( m_hWnd );
 
 		::ShowWindow( m_cEditDoc.m_hWnd, SW_HIDE );
-		::ShowWindow( m_hwndToolBar, SW_HIDE );
+		::ShowWindow( hwndToolBar, SW_HIDE );	// 2006.06.17 ryoji
 		::ShowWindow( m_hwndStatusBar, SW_HIDE );
 		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_HIDE );
 		::ShowWindow( m_cTabWnd.m_hWnd, SW_HIDE );	//@@@ 2003.06.25 MIK
@@ -3244,6 +3332,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 /* WM_SIZE 処理 */
 LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 {
+	HWND		hwndToolBar;
 	int			cx;
 	int			cy;
 	int			nToolBarHeight;
@@ -3303,11 +3392,12 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 	nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
 
-
+	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
+	hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
 	nToolBarHeight = 0;
-	if( NULL != m_hwndToolBar ){
-		::SendMessage( m_hwndToolBar, WM_SIZE, wParam, lParam );
-		::GetWindowRect( m_hwndToolBar, &rc );
+	if( NULL != hwndToolBar ){
+		::SendMessage( hwndToolBar, WM_SIZE, wParam, lParam );
+		::GetWindowRect( hwndToolBar, &rc );
 		nToolBarHeight = rc.bottom - rc.top;
 	}
 	nFuncKeyWndHeight = 0;
@@ -3376,7 +3466,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		}
 		::ReleaseDC( m_hwndStatusBar, hdc );
 
-
+		::UpdateWindow( m_hwndStatusBar );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
 		::GetWindowRect( m_hwndStatusBar, &rc );
 		nStatusBarHeight = rc.bottom - rc.top;
 	}
@@ -3428,6 +3518,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 			}
 			m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 		}
+		::UpdateWindow( m_CFuncKeyWnd.m_hWnd );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
 	}
 
 	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )

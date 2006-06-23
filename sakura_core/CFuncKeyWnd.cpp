@@ -9,7 +9,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, Moca
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2004, novice
-	Copyright (C) 2006, aroka
+	Copyright (C) 2006, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -190,7 +190,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
-		WS_CHILD | WS_VISIBLE, // window style
+		WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN ’Ç‰Á
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
 		100, // window width

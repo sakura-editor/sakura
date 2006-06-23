@@ -4600,7 +4600,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	/* ツールバーボタンの数 */
 	pShareData->m_Common.m_nToolBarButtonNum = sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]);
-	pShareData->m_Common.m_bToolBarIsFlat = TRUE;			/* フラットツールバーにする／しない */
+	pShareData->m_Common.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 	
 }
 

@@ -41,6 +41,7 @@
 #include "CMRU.h"
 #include "CMRUFolder.h"
 #include "Keycode.h"// novice 2004/10/10
+#include <Shlwapi.h>	// 2006.06.17 ryoji
 
 //	CShareDataへ移動
 /* 日付をフォーマット */
@@ -2864,6 +2865,158 @@ bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SY
 	}
 	*q = *p;
 	return true;
+}
+
+/*!	シェルやコモンコントロール DLL のバージョン番号を取得
+
+	@param[in] lpszDllName DLL ファイルのパス
+	@return DLL のバージョン番号（失敗時は 0）
+
+	@author ? (from MSDN Library document)
+	@date 2006.06.17 ryoji MSDNライブラリから引用
+*/
+DWORD GetDllVersion(LPCTSTR lpszDllName)
+{
+	HINSTANCE hinstDll;
+	DWORD dwVersion = 0;
+
+	/* For security purposes, LoadLibrary should be provided with a
+	   fully-qualified path to the DLL. The lpszDllName variable should be
+	   tested to ensure that it is a fully qualified path before it is used. */
+	hinstDll = LoadLibrary(lpszDllName);
+
+	if(hinstDll)
+	{
+		DLLGETVERSIONPROC pDllGetVersion;
+		pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll,
+						  "DllGetVersion");
+
+		/* Because some DLLs might not implement this function, you
+		must test for it explicitly. Depending on the particular
+		DLL, the lack of a DllGetVersion function can be a useful
+		indicator of the version. */
+
+		if(pDllGetVersion)
+		{
+			DLLVERSIONINFO dvi;
+			HRESULT hr;
+
+			ZeroMemory(&dvi, sizeof(dvi));
+			dvi.cbSize = sizeof(dvi);
+
+			hr = (*pDllGetVersion)(&dvi);
+
+			if(SUCCEEDED(hr))
+			{
+			   dwVersion = PACKVERSION(dvi.dwMajorVersion, dvi.dwMinorVersion);
+			}
+		}
+
+		FreeLibrary(hinstDll);
+	}
+	return dwVersion;
+}
+
+/*!	Comctl32.dll のバージョン番号を取得
+
+	@return Comctl32.dll のバージョン番号（失敗時は 0）
+
+	@author ryoji
+	@date 2006.06.17 ryoji 新規
+*/
+static DWORD s_dwComctl32Version = PACKVERSION(0, 0);
+DWORD GetComctl32Version()
+{
+	if( PACKVERSION(0, 0) == s_dwComctl32Version )
+		s_dwComctl32Version = GetDllVersion(_T("Comctl32.dll"));
+	return s_dwComctl32Version;
+}
+
+/*!	画面設定がビジュアルスタイル指定になっているかどうかを示す
+
+	@return ビジュアルスタイル指定(TURE)／クラッシックスタイル指定(FALSE)
+
+	@author ryoji
+	@date 2006.06.17 ryoji 新規
+*/
+BOOL fnIsThemeActive()
+{
+	HINSTANCE hDll;
+	BOOL (CALLBACK *pfnIsThemeActive)();
+	BOOL bThemeActive = false;
+
+	hDll = ::LoadLibrary(_T("UXTHEME"));
+	if( NULL != hDll ){
+		*(FARPROC*)&pfnIsThemeActive = ::GetProcAddress( hDll, "IsThemeActive" );
+		if( NULL != pfnIsThemeActive ){
+			bThemeActive = pfnIsThemeActive();
+		}
+		::FreeLibrary(hDll);
+	}
+	return bThemeActive;
+}
+
+/*!	自分が現在ビジュアルスタイル表示状態かどうかを示す
+	Win32 API の IsAppThemed() はこれとは一致しない（IsAppThemed() と IsThemeActive() との差異は不明）
+
+	@return ビジュアルスタイル表示状態(TRUE)／クラッシック表示状態(FALSE)
+
+	@author ryoji
+	@date 2006.06.17 ryoji 新規
+*/
+BOOL IsVisualStyle()
+{
+	// ロードした Comctl32.dll が Ver 6 以上で画面設定がビジュアルスタイル指定になっている場合だけ
+	// ビジュアルスタイル表示になる（マニフェストで指定しないと Comctl32.dll は 6 未満になる）
+	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && fnIsThemeActive() );
+}
+
+/*!	指定ウィンドウでビジュアルスタイルを使わないようにする
+
+	@param[in] hWnd ウィンドウ
+
+	@author ryoji
+	@date 2006.06.23 ryoji 新規
+*/
+void PreventVisualStyle( HWND hWnd )
+{
+	HINSTANCE hDll;
+	HRESULT (CALLBACK *pfnSetWindowTheme)( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList );
+
+	hDll = ::LoadLibrary(_T("UXTHEME"));
+	if( NULL != hDll ){
+		*(FARPROC*)&pfnSetWindowTheme = ::GetProcAddress( hDll, "SetWindowTheme" );
+		if( NULL != pfnSetWindowTheme ){
+			pfnSetWindowTheme( hWnd, L"", L"" );
+		}
+		::FreeLibrary(hDll);
+	}
+}
+
+/*!	コモンコントロールを初期化する
+
+	@author ryoji
+	@date 2006.06.21 ryoji 新規
+*/
+void MyInitCommonControls()
+{
+	BOOL (WINAPI *pfnInitCommonControlsEx)(LPINITCOMMONCONTROLSEX);
+
+	BOOL bInit = FALSE;
+	HINSTANCE hDll = ::GetModuleHandle(_T("COMCTL32"));
+	if( NULL != hDll ){
+		*(FARPROC*)&pfnInitCommonControlsEx = ::GetProcAddress( hDll, "InitCommonControlsEx" );
+		if( NULL != pfnInitCommonControlsEx ){
+			INITCOMMONCONTROLSEX icex;
+			icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+			icex.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
+			bInit = pfnInitCommonControlsEx( &icex );
+		}
+	}
+
+	if( !bInit ){
+		::InitCommonControls();
+	}
 }
 
 /*[EOF]*/
