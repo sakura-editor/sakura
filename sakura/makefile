@@ -107,6 +107,7 @@ OBJS =\
 	$(OBJDIR)\CDlgPrintSetting.obj \
 	$(OBJDIR)\CDlgProperty.obj \
 	$(OBJDIR)\CDlgReplace.obj \
+	$(OBJDIR)\CDlgSameColor.obj \
 	$(OBJDIR)\CDlgTagJumpList.obj \
 	$(OBJDIR)\CDlgTagsMake.obj \
 	$(OBJDIR)\CDlgTypeList.obj \

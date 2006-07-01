@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI, aroka, MIK, genta, こおり, Moca
 	Copyright (C) 2003, MIK, zenryaku, Moca, naoh, KEITA, genta
 	Copyright (C) 2005, MIK, genta, Moca, ryoji
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -29,6 +30,7 @@
 #include "CProfile.h"
 #include "CShareData.h"
 #include "funccode.h"	//Stonee, 2001/05/18
+#include "CDlgSameColor.h"	// 2006.04.26 ryoji
 
 struct TYPE_NAME {
 	int		nMethod;
@@ -2027,7 +2029,6 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 	int					nIndex;
 	static HWND			hwndListColor;
 	LPDRAWITEMSTRUCT	pDis;
-	int					i;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -2153,19 +2154,21 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_BUTTON_SAMETEXTCOLOR: /* 文字色統一 */
-				for( i = 0; i < COLORIDX_LAST; ++i ){
-					if( i != m_nCurrentColorType ){
-						m_Types.m_ColorInfoArr[i].m_colTEXT = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT;
-					}
+				{
+					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
+					CDlgSameColor cDlgSameColor;
+					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT;
+					cDlgSameColor.DoModal( ::GetModuleHandle(NULL), hwndDlg, wID, &m_Types, cr );
 				}
 				::InvalidateRect( hwndListColor, NULL, TRUE );
 				return TRUE;
 
 			case IDC_BUTTON_SAMEBKCOLOR:	/* 背景色統一 */
-				for( i = 0; i < COLORIDX_LAST; ++i ){
-					if( i != m_nCurrentColorType ){
-						m_Types.m_ColorInfoArr[i].m_colBACK = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK;
-					}
+				{
+					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
+					CDlgSameColor cDlgSameColor;
+					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK;
+					cDlgSameColor.DoModal( ::GetModuleHandle(NULL), hwndDlg, wID, &m_Types, cr );
 				}
 				::InvalidateRect( hwndListColor, NULL, TRUE );
 				return TRUE;
@@ -2787,13 +2790,9 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		::LineTo( pDis->hDC, rc1.left + sz.cx,	rc1.bottom - 1 );
 	}
 
-	/* アイテムのフォーカスが変化した */
-	if( pDis->itemAction & ODA_FOCUS ){
-		/* アイテムにフォーカスがある */
-		if( pDis->itemState & ODS_FOCUS ){
-		}else{
-			::DrawFocusRect( pDis->hDC, &pDis->rcItem );
-		}
+	/* アイテムにフォーカスがある */	// 2006.05.01 ryoji 描画条件の不正を修正
+	if( pDis->itemState & ODS_FOCUS ){
+		::DrawFocusRect( pDis->hDC, &pDis->rcItem );
 	}
 
 	/* 「色分け/表示する」のチェック */
@@ -2803,6 +2802,10 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	rc1.right = rc1.left + 12;
 	rc1.bottom = rc1.top + 12;
 	if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
+		// 2006.04.26 ryoji テキスト色を使う（「ハイコントラスト黒」のような設定でも見えるように）
+		hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor( COLOR_WINDOWTEXT ) );
+		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
+
 		::MoveToEx( pDis->hDC,	rc1.left + 2, rc1.top + 6, NULL );
 		::LineTo( pDis->hDC,	rc1.left + 5, rc1.bottom - 3 );
 		::LineTo( pDis->hDC,	rc1.right - 2, rc1.top + 4 );
@@ -2816,6 +2819,9 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		::MoveToEx( pDis->hDC,	rc1.left + 2, rc1.top + 6, NULL );
 		::LineTo( pDis->hDC,	rc1.left + 5, rc1.bottom - 3 );
 		::LineTo( pDis->hDC,	rc1.right - 2, rc1.top + 4 );
+
+		::SelectObject( pDis->hDC, hPenOld );
+		::DeleteObject( hPen );
 	}
 //	return;
 
