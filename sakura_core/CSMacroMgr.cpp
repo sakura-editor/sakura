@@ -322,6 +322,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_MINIMIZE_ALL,			"MinimizeAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	{F_REDRAW,					"ReDraw",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //再描画
 	{F_WIN_OUTPUT,				"ActivateWinOutput",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトプットウィンドウ表示
+	{F_TRACEOUT,				"TraceOut",				{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //マクロ用アウトプットウィンドウに出力	2006.04.26 maru
 	{F_TOPMOST,					"WindowTopMost",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //常に手前に表示
 
 	/* 支援 */
@@ -957,6 +958,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_MINIMIZE_ALL				://すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	case F_REDRAW					://再描画
 	case F_WIN_OUTPUT				://アウトプットウィンドウ表示
+//	case F_TRACEOUT					://マクロ用アウトプットウィンドウに表示	2006.04.26 maru
 	case F_TOPMOST					://常に手前に表示
 
 	/* 支援 */
