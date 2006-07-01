@@ -2860,4 +2860,26 @@ void CEditView::Command_WINLIST( int nCommandFrom )
 }
 
 
+/*!	@brief マクロ用アウトプットウインドウに表示
+	@date 2006.04.26 maru 新規作成
+*/
+void CEditView::Command_TRACEOUT( const char* outputstr, int nFlgOpt )
+{
+	if( outputstr == NULL )
+		return;
+
+	// 0x01 ExpandParameterによる文字列展開有無
+	if (nFlgOpt & 0x01) {
+		char Buffer[2048];
+		m_pcEditDoc->ExpandParameter(outputstr, Buffer, 2047);
+		CShareData::getInstance()->TraceOut( "%s", Buffer );
+	} else {
+		CShareData::getInstance()->TraceOut( "%s", outputstr );
+	}
+
+	// 0x02 改行コードの有無
+	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOut( "\r\n" );
+
+}
+
 /*[EOF]*/

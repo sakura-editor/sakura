@@ -835,6 +835,7 @@ void ReplaceData_CEditView(
 	void Command_MINIMIZE_ALL( void );	/* すべて最小化 */
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
+	void Command_TRACEOUT( const char* outputstr , int );	//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
 	void Command_WINTOPMOST( LPARAM );		// 常に手前に表示 2004.09.21 Moca
 	void Command_WINLIST( int nCommandFrom );		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
 

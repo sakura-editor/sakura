@@ -476,6 +476,21 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
+	case F_TRACEOUT:		// 2006.05.01 マクロ用アウトプットウインドウに出力
+		//	Argument[0]を出力。オプションはArgument[1]に。
+		//	Argument[1]:
+		//		次の数値の和。
+		//		0x01	ExpandParameterによる文字列展開を行う
+		//		0x02	テキスト末尾に改行コードを付加しない
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"出力テキストが指定されていません．" ));
+			break;
+		}
+		{
+			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)(Argument[1] != NULL ? atoi(Argument[1]) : 0 ), 0, 0);
+		}
+		break;
 	/* はじめの2つの引数は文字列。3つ目は数値 */
 	case F_REPLACE:
 	case F_REPLACE_ALL:
