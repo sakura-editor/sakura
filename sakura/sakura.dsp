@@ -201,6 +201,10 @@ SOURCE=..\sakura_core\CDlgReplace.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CDlgSameColor.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDlgTagJumpList.cpp
 # End Source File
 # Begin Source File
@@ -725,6 +729,10 @@ SOURCE=..\sakura_core\CDlgProperty.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgReplace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CDlgSameColor.h
 # End Source File
 # Begin Source File
 
