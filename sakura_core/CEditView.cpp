@@ -9163,17 +9163,22 @@ void CEditView::DrawBracketPair( bool bDraw )
 				crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
 				SetCurrentColor( hdc, nColorIndex );
 
+				int nHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
 				nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-				nTop  = ( nLine - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+				nTop  = ( nLine - m_nViewTopLine ) * nHeight + m_nViewAlignTop;
 
 				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
 				//             選択範囲内に反転表示されない部分がある問題の修正
 				if( /*bDraw &&*/ ( nCol == m_nCaretPosX ) && ( m_bCaretShowFlag == true ) ){
 					HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
+					// 2006.04.30 Moca 対括弧の縦線対応
+					DispVerticalLines( hdc, nTop, nTop + nHeight, nCol, nCol + m_nCharSize );
 					ShowCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 				}else{
 					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
+					// 2006.04.30 Moca 対括弧の縦線対応
+					DispVerticalLines( hdc, nTop, nTop + nHeight, nCol, nCol + m_nCharSize );
 				}
 
 				if( NULL != m_hFontOld ){
