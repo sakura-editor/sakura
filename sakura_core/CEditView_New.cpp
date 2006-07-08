@@ -95,7 +95,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	BOOL			bEOF;
 	int				nLineHeight = m_nCharHeight + TypeDataPtr->m_nLineSpace;
 	int				nCharWidth = m_nCharWidth + TypeDataPtr->m_nColmSpace;
-	int				nLineTo = m_nViewTopLine + m_nViewRowNum + 1;
+	int				nLineTo;
 	int				nX = m_nViewAlignLeft - m_nViewLeftCol * nCharWidth;
 	int				nY;
 	BOOL			bDispBkBitmap = /*TRUE*/FALSE;
@@ -258,16 +258,15 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 //#endif
 			::FillRect( hdc, &rcBack, hBrush );
 			::DeleteObject( hBrush );
+
+			// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
+			DispVerticalLines( hdc, nY, pPs->rcPaint.bottom, 0, -1 );
 		}
 	}
 
 	::SetTextColor( hdc, crTextOld );
 	::SetBkColor( hdc, crBackOld );
 	::SelectObject( hdc, hFontOld );
-
-
-	// 2005.11.08 Moca 
-	DispVerticalLines( hdc );
 
 	/* 折り返し位置の表示 */
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bDisp ){
@@ -329,6 +328,17 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 //@@@ 2001.02.17 Start by MIK
 /*! 行のテキスト／選択状態の描画
+	1回で1論理行分を作画する。
+	@param          hdc            作画対象
+	@param          pcLayout       表示を開始するレイアウト
+	@param[in,out]  nLineNum       作画するレイアウト行番号(0開始), 次の物理行に対応するレイアウト行番号
+	@param          x              レイアウト0桁目の作画座標x
+	@param[in,out]  y              作画座標y, 次の作画座標y
+	@param          bDispBkBitmap  背景にビットマップを使用する(事実上は常にFALSE。TRUEの場合背景作画しない)
+	@param          nLineTo        作画終了するレイアウト行番号
+	@param          bSelected      選択中か
+	@return EOFを作画したらtrue
+
 	@par nCOMMENTMODE
 	関数内部で状態遷移のために使われる変数nCOMMENTMODEと状態の関係。
 
@@ -577,22 +587,6 @@ searchnext:;
 						}
 
 						/* 改行記号の表示 */
-						if( bSearchStringMode ){
-							nColorIdx = COLORIDX_SEARCH;
-						}else{
-							nColorIdx = COLORIDX_CRLF;
-						}
-						HFONT	hFontOld;
-						/* フォントを選ぶ */
-						hFontOld = (HFONT)::SelectObject( hdc,
-							ChooseFontHandle(
-								TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont,
-								TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bUnderLine
-							)
-						);
-						colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );	/* TAB文字の色 */
-						colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );		/* TAB文字背景の色 */
-
 						rcClip2.left = x + nX * ( nCharWidth );
 						// Jul. 20, 2003 ryoji 横スクロール時に改行コードが欠けないように
 						rcClip2.right = rcClip2.left + ( nCharWidth ) * ( 2 );
@@ -603,11 +597,25 @@ searchnext:;
 							rcClip2.left < m_nViewAlignLeft + m_nViewCx && rcClip2.right > m_nViewAlignLeft ){
 							rcClip2.top = y;
 							rcClip2.bottom = y + nLineHeight;
+							// 2006.04.30 Moca 色選択を括弧内に移動
+							if( bSearchStringMode ){
+								nColorIdx = COLORIDX_SEARCH;
+							}else{
+								nColorIdx = COLORIDX_CRLF;
+							}
+							HFONT	hFontOld;
+							/* フォントを選ぶ */
+							hFontOld = (HFONT)::SelectObject( hdc,
+								ChooseFontHandle(
+									TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bFatFont,
+									TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bUnderLine
+								)
+							);
+							colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT ); /* CRLFの色 */
 							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );	/* CRLF背景の色 */
 							//	2003.08.17 ryoji 改行文字が欠けないように
 							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
 								&rcClip2, (const char *)"  ", 2, m_pnDx );
-							::SetBkColor( hdc, colBkColorOld );
 							/* 改行記号の表示 */
 							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_CRLF].m_bDisp ){
 								nPosX = x + nX * ( nCharWidth );
@@ -624,14 +632,16 @@ searchnext:;
 								::DeleteObject(hRgn);
 								//	To Here 2003.08.17 ryoji 改行文字が欠けないように
 							}
+							::SelectObject( hdc, hFontOld );
+							::SetTextColor( hdc, colTextColorOld );
+							::SetBkColor( hdc, colBkColorOld );
 						}
-						::SelectObject( hdc, hFontOld );
-						::SetTextColor( hdc, colTextColorOld );
-						::SetBkColor( hdc, colBkColorOld );
 
 						nX++;
 
 
+						// 2006.04.29 Moca 選択処理のため縦線処理を追加
+						DispVerticalLines( hdc, y, y + nLineHeight, 0, -1 );
 						if( bSelected ){
 							/* テキスト反転 */
 							DispTextSelected( hdc, nLineNum, x, y, nX );
@@ -1235,7 +1245,7 @@ searchnext:;
 									nColorIdx = COLORIDX_ZENSPACE;
 								}
 								colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colTEXT );	/* 全角スペース文字の色 */
-								colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );		/* 全角スペース文字背景の色 */
+							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIdx].m_colBACK );		/* 全角スペース文字背景の色 */
 
 
 								HFONT	hFontOld;
@@ -1382,7 +1392,7 @@ searchnext:;
 					}
 				}
 				nPos+= nCharChars;
-			} //end of while( nPos - nLineBgn < pcLayout2->m_nLength ){
+			} //end of while( nPos - nLineBgn < pcLayout2->m_nLength )
 			if( nPos >= nLineLen ){
 				break;
 			}
@@ -1441,56 +1451,60 @@ searchnext:;
 							&rcClip2, " ", 1, m_pnDx );
 					}
 				}
+				// 2006.04.29 Moca 選択処理のため縦線処理を追加
+				DispVerticalLines( hdc, y, y + nLineHeight,  0, -1 );
 				if( bSelected ){
 					/* テキスト反転 */
 					DispTextSelected( hdc, nLineNum, x, y, nX );
 				}
 			}
-
 		}
-		if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
+		
+		if( y >= m_nViewAlignTop ){
 			/* テキスト表示 */
 			nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
+			/* EOF記号の表示 */
+			if( nLineNum + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
+				nX < nWrapWidth
+			){
+				if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
+					//	May 29, 2004 genta (advised by MIK) 共通関数化
+					nX += DispEOF( hdc, x + nX * ( nCharWidth ), y, nCharWidth, nLineHeight, fuOptions,
+						TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
+				}
+				bEOF = TRUE;
+			}
+			if( bDispBkBitmap ){
+			}else{
+				/* 行末背景描画 */
+				rcClip.left = x + nX * ( nCharWidth );
+				rcClip.right = m_nViewAlignLeft + m_nViewCx;
+				rcClip.top = y;
+				rcClip.bottom = y + nLineHeight;
+				if( rcClip.left < m_nViewAlignLeft ){
+					rcClip.left = m_nViewAlignLeft;
+				}
+				if( rcClip.left < rcClip.right &&
+					rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
+					hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+					::FillRect( hdc, &rcClip, hBrush );
+					::DeleteObject( hBrush );
+				}
+			}
+			// 2006.04.29 Moca 選択処理のため縦線処理を追加
+			DispVerticalLines( hdc, y, y + nLineHeight,  0, -1 );
 			if( bSelected ){
 				/* テキスト反転 */
 				DispTextSelected( hdc, nLineNum, x, y, nX );
 			}
 		}
-
-		/* EOF記号の表示 */
-//		if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
-		if( nLineNum + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
-			nX < nWrapWidth
-		){
-			if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
-				//	May 29, 2004 genta (advised by MIK) 共通関数化
-				nX += DispEOF( hdc, x + nX * ( nCharWidth ), y, nCharWidth, nLineHeight, fuOptions,
-					TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
-			}
-			bEOF = TRUE;
-		}
-		if( bDispBkBitmap ){
-		}else{
-			/* 行末背景描画 */
-			rcClip.left = x + nX * ( nCharWidth );
-			rcClip.right = m_nViewAlignLeft + m_nViewCx;
-			rcClip.top = y;
-			rcClip.bottom = y + nLineHeight;
-			if( rcClip.left < m_nViewAlignLeft ){
-				rcClip.left = m_nViewAlignLeft;
-			}
-			if( rcClip.left < rcClip.right &&
-				rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
-				hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-				::FillRect( hdc, &rcClip, hBrush );
-				::DeleteObject( hBrush );
-			}
-		}
 end_of_line:;
 		nLineNum++;
 		y += nLineHeight;
-	}else{
+	}else{ // NULL == pLineの場合
 		if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
+			int nYPrev = y;
+			
 			if( bDispBkBitmap ){
 			}else{
 				/* 背景描画 */
@@ -1534,6 +1548,8 @@ end_of_line:;
 					}
 				}
 			}
+			// 2006.04.29 Moca 選択処理のため縦線処理を追加
+			DispVerticalLines( hdc, nYPrev, nYPrev + nLineHeight,  0, -1 );
 		}
 	}
 
@@ -1821,23 +1837,54 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 	
 	return szEOFlen;
 }
-
+// 　　　
 
 /*!	指定桁縦線の描画
+	@param hdc     作画するウィンドウのDC
+	@param nTop    線を引く上端のクライアント座標y
+	@param nButtom 線を引く下端のクライアント座標y
+	@param nColLeft  線を引く範囲の左桁の指定
+	@param nColRight 線を引く範囲の右桁の指定(-1で未指定)
+
 	@date 2005.11.08 Moca 新規作成
+	@date 2006.04.29 Moca 太線・点線のサポート。選択中の反転対策に行ごとに作画するように変更
+	    縦線の色がテキストの背景色と同じ場合は、縦線の背景色をEXORで作画する
+	@note Common::m_nVertLineOffsetにより、指定桁の前の文字の上に作画されることがある。
 */
-void CEditView::DispVerticalLines( HDC hdc )
+void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol, int nRightCol )
 {
 	const Types&	typeData = m_pcEditDoc->GetDocumentAttribute();
 	if( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp == FALSE ){
 		return;
 	}
-	const int nPosXRight = m_nViewCx + m_nViewAlignLeft;
-	const int nCharWidth = m_nCharWidth + typeData.m_nColmSpace;
-	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	nLeftCol = max( m_nViewLeftCol, nLeftCol );
+	const int nWrapWidth  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	const int nCharWidth  = m_nCharWidth + typeData.m_nColmSpace;
+	if( nRightCol < 0 ){
+		nRightCol = nWrapWidth;
+	}
 	const int nPosXOffset = m_pShareData->m_Common.m_nVertLineOffset + m_nViewAlignLeft;
-	HPEN hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_colTEXT );
+	const int nPosXLeft   = max( m_nViewAlignLeft + (nLeftCol  - m_nViewLeftCol) * nCharWidth, m_nViewAlignLeft );
+	const int nPosXRight  = min( m_nViewAlignLeft + (nRightCol - m_nViewLeftCol) * nCharWidth, m_nViewCx + m_nViewAlignLeft );
+	const int nLineHeight = m_nCharHeight + typeData.m_nLineSpace;
+	bool bOddLine = ((((nLineHeight % 2) ? m_nViewTopLine : 0) + m_nViewAlignTop + nTop) % 2 == 1);
+
+	// 太線
+	const BOOL bBold = typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bFatFont;
+	// ドット線(下線属性を転用/テスト用)
+	const BOOL bDot = typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bUnderLine;
+	const bool bExorPen = ( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_colTEXT 
+		== typeData.m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+	HPEN hPen;
+	int nROP_Old = 0;
+	if( bExorPen ){
+		hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_colBACK );
+		nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
+	}else{
+		hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_colTEXT );
+	}
 	HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
+
 	int k;
 	for( k = 0; k < MAX_VERTLINES && typeData.m_nVertLineIdx[k] != 0; k++ ){
 		// nXColは1開始。m_nViewLeftColは0開始なので注意。
@@ -1867,14 +1914,48 @@ void CEditView::DispVerticalLines( HDC hdc )
 				break;
 			}
 			int nPosX = nPosXOffset + ( nXCol - 1 - m_nViewLeftCol ) * nCharWidth;
-			if( nPosXRight < nPosX ){
+			// 2006.04.30 Moca 線の引く範囲・方法を変更
+			// 太線の場合、半分だけ作画する可能性がある。
+			int nPosXBold = nPosX;
+			if( bBold ){
+				nPosXBold -= 1;
+			}
+			if( nPosXRight <= nPosXBold ){
 				break;
 			}
-			if( m_nViewAlignLeft < nPosX ){
-				::MoveToEx( hdc, nPosX, m_nViewAlignTop, NULL );
-				::LineTo( hdc, nPosX, m_nViewAlignTop + m_nViewCy );
+			if( nPosXLeft <= nPosX ){
+				if( bDot ){
+					// 点線で作画。1ドットの線を作成
+					int y = nTop;
+					// スクロールしても線が切れないように座標を調整
+					if( bOddLine ){
+						y++;
+					}
+					for( ; y < nBottom; y += 2 ){
+						if( nPosX < nPosXRight ){
+							::MoveToEx( hdc, nPosX, y, NULL );
+							::LineTo( hdc, nPosX, y + 1 );
+						}
+						if( bBold && nPosXLeft <= nPosXBold ){
+							::MoveToEx( hdc, nPosXBold, y, NULL );
+							::LineTo( hdc, nPosXBold, y + 1 );
+						}
+					}
+				}else{
+					if( nPosX < nPosXRight ){
+						::MoveToEx( hdc, nPosX, nTop, NULL );
+						::LineTo( hdc, nPosX, nBottom );
+					}
+					if( bBold && nPosXLeft <= nPosXBold ){
+						::MoveToEx( hdc, nPosXBold, nTop, NULL );
+						::LineTo( hdc, nPosXBold, nBottom );
+					}
+				}
 			}
 		}
+	}
+	if( bExorPen ){
+		::SetROP2( hdc, nROP_Old );
 	}
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
