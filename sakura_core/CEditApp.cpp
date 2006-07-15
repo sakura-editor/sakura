@@ -16,6 +16,7 @@
 	Copyright (C) 2003, MIK, Moca, KEITA, genta, aroka
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -471,7 +472,6 @@ LRESULT CEditApp::DispatchEvent(
 	HWND			hwndWork;
 	//static CDlgGrep	cDlgGrep;  //Stonee, 2001/03/21 Grepを多重起動したときエラーになるのでGrep部分を別関数にした
 	LPHELPINFO		lphi;
-//	HWND			hwndExitingDlg;
 
 //	CEditWnd*	pCEditWnd_Test;
 //	char*		pszCmdLine;
@@ -711,6 +711,17 @@ LRESULT CEditApp::DispatchEvent(
 			wHotKeyMods,
 			wHotKeyCode
 		);
+
+		// 2006.07.09 ryoji 最後の方でシャットダウンするアプリケーションにする
+		BOOL (WINAPI *pfnSetProcessShutdownParameters)( DWORD dwLevel, DWORD dwFlags );
+		HINSTANCE hDll;
+		hDll = ::GetModuleHandle(_T("KERNEL32"));
+		if( NULL != hDll ){
+			*(FARPROC*)&pfnSetProcessShutdownParameters = ::GetProcAddress( hDll, "SetProcessShutdownParameters" );
+			if( NULL != pfnSetProcessShutdownParameters ){
+				pfnSetProcessShutdownParameters( 0x180, 0 );
+			}
+		}
 		return 0L;
 
 //	case WM_QUERYENDSESSION:
@@ -1281,51 +1292,14 @@ LRESULT CEditApp::DispatchEvent(
 		//	メッセージループの後ろの処理をここで完了させる必要がある．
 		case WM_ENDSESSION:
 			//	もしWindowsの終了が中断されたのなら何もしない
-			if( wParam != TRUE )	return 0;
-
-			//	ホットキーの破棄
-			::UnregisterHotKey( m_hWnd, ID_HOTKEY_TRAYMENU );
-
-			//	どうせExplorerも終了するのでトレイアイコンは処理しない．
-
-			//	終了処理中に新しいウィンドウを作るのもいやな感じなので
-			//	オプションに関わらず終了ダイアログの表示は行わない
-
-			//	共有データの保存(重要)
-			CShareData::getInstance()->SaveShareData();
+			if( wParam == TRUE )
+				OnDestroy();	// 2006.07.09 ryoji WM_DESTROY と同じ処理をする（トレイアイコンの破棄などもNT系では必要）
 
 			return 0;	//	もうこのプロセスに制御が戻ることはない
 		//	To Here Jan. 31, 2000 genta
 		case WM_DESTROY:
-			::UnregisterHotKey( m_hWnd, ID_HOTKEY_TRAYMENU );
+			OnDestroy();
 
-
-
-//			/* 終了ダイアログを表示する */
-//			if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
-//				/* 終了中ダイアログの表示 */
-//				hwndExitingDlg = ::CreateDialog(
-//					m_hInstance,
-//					MAKEINTRESOURCE( IDD_EXITING ),
-//					m_hWnd/*::GetDesktopWindow()*/,
-//					(DLGPROC)ExitingDlgProc
-//				);
-//				::ShowWindow( hwndExitingDlg, SW_SHOW );
-//			}
-//
-//			/* 共有データの保存 */
-//			m_cShareData.SaveShareData();
-//
-//			/* 終了ダイアログを表示する */
-//			if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
-//				/* 終了中ダイアログの破棄 */
-//				::DestroyWindow( hwndExitingDlg );
-//			}
-
-			if( m_bCreatedTrayIcon ){	/* トレイにアイコンを作った */
-				TrayMessage( hwnd, NIM_DELETE, 0, NULL, NULL );
-			}
-			m_hWnd = NULL;
 			/* Windows にスレッドの終了を要求します。*/
 			::PostQuitMessage( 0 );
 			return 0L;
@@ -1898,5 +1872,78 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	m_bUseTrayMenu = false;
 
 	return nId;
+}
+
+/*!
+	@brief WM_DESTROY 処理
+	@date 2006.07.09 ryoji 新規作成
+*/
+void CEditApp::OnDestroy()
+{
+	HWND hwndExitingDlg;
+
+	if (m_hWnd == NULL)
+		return;	// 既に破棄されている
+
+	// ホットキーの破棄
+	::UnregisterHotKey( m_hWnd, ID_HOTKEY_TRAYMENU );
+
+	// 2006.07.09 ryoji 共有データ保存を CControlProcess::Terminate() から移動
+	//
+	// 「タスクトレイに常駐しない」設定でエディタ画面（Normal Process）を立ち上げたまま
+	// セッション終了するような場合でも共有データ保存が行われなかったり中断されることが
+	// 無いよう、ここでウィンドウが破棄される前に保存する
+	//
+
+	/* 終了ダイアログを表示する */
+	if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
+		/* 終了中ダイアログの表示 */
+		hwndExitingDlg = ::CreateDialog(
+			m_hInstance,
+			MAKEINTRESOURCE( IDD_EXITING ),
+			m_hWnd/*::GetDesktopWindow()*/,
+			(DLGPROC)ExitingDlgProc
+		);
+		::ShowWindow( hwndExitingDlg, SW_SHOW );
+	}
+
+	/* 共有データの保存 */
+	CShareData::getInstance()->SaveShareData();
+
+	/* 終了ダイアログを表示する */
+	if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
+		/* 終了中ダイアログの破棄 */
+		::DestroyWindow( hwndExitingDlg );
+	}
+
+	if( m_bCreatedTrayIcon ){	/* トレイにアイコンを作った */
+		TrayMessage( m_hWnd, NIM_DELETE, 0, NULL, NULL );
+	}
+
+	/* アクセラレータテーブルの削除 */
+	if( m_pShareData->m_hAccel != NULL ){
+		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
+		m_pShareData->m_hAccel = NULL;
+	}
+
+	m_hWnd = NULL;
+}
+
+/*!
+	@brief 終了ダイアログ用プロシージャ
+	@date 2006.07.02 ryoji CControlProcess から移動
+*/
+INT_PTR CALLBACK CEditApp::ExitingDlgProc(
+	HWND	hwndDlg,	// handle to dialog box
+	UINT	uMsg,		// message
+	WPARAM	wParam,		// first message parameter
+	LPARAM	lParam		// second message parameter
+)
+{
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		return TRUE;
+	}
+	return FALSE;
 }
 /*[EOF]*/

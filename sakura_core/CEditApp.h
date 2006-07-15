@@ -14,6 +14,7 @@
 	Copyright (C) 2001, Stonee, aroka, genta
 	Copyright (C) 2002, MIK, YAZAKI, aroka
 	Copyright (C) 2003, genta
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -57,6 +58,7 @@ public:
 	bool CreateTrayIcon( HWND );	// 20010412 by aroka
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
 	void MessageLoop( void );	/* メッセージループ */
+	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
 
@@ -100,6 +102,12 @@ protected:
 	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
 	void OnNewEditor( void ); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
+	static INT_PTR CALLBACK ExitingDlgProc(	/*!< 終了ダイアログ用プロシージャ */	// 2006.07.02 ryoji CControlProcess から移動
+		HWND	hwndDlg,	// handle to dialog box
+		UINT	uMsg,		// message
+		WPARAM	wParam,		// first message parameter
+		LPARAM	lParam		// second message parameter
+	);
 };
 
 
