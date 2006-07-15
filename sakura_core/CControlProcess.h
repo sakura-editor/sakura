@@ -42,12 +42,6 @@ public:
 		m_hEventCPInitialized( NULL )
 	{}
 
-	static INT_PTR CALLBACK ExitingDlgProc(
-		HWND	hwndDlg,	// handle to dialog box
-		UINT	uMsg,		// message
-		WPARAM	wParam,		// first message parameter
-		LPARAM	lParam		// second message parameter
-	);
 	virtual ~CControlProcess();
 protected:
 	CControlProcess();

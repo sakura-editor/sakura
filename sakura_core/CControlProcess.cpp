@@ -28,22 +28,6 @@
 
 
 
-/*!
-	@brief コントロールプロセス終了ダイアログ用プロシージャ
-*/
-INT_PTR CALLBACK CControlProcess::ExitingDlgProc(
-	HWND	hwndDlg,	// handle to dialog box
-	UINT	uMsg,		// message
-	WPARAM	wParam,		// first message parameter
-	LPARAM	lParam		// second message parameter
-)
-{
-	switch( uMsg ){
-	case WM_INITDIALOG:
-		return TRUE;
-	}
-	return FALSE;
-}
 //-------------------------------------------------
 
 
@@ -150,38 +134,11 @@ bool CControlProcess::MainLoop()
 	
 	@author aroka
 	@date 2002/01/07
+	@date 2006/07/02 ryoji 共有データ保存を CEditApp へ移動
 */
 void CControlProcess::Terminate()
 {
-	/* 終了ダイアログを表示する */
-	HWND hwndExitingDlg;
-	if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
-		/* 終了中ダイアログの表示 */
-		hwndExitingDlg = ::CreateDialog(
-			m_hInstance,
-			MAKEINTRESOURCE( IDD_EXITING ),
-			/*m_hWnd*/::GetDesktopWindow(),
-			(DLGPROC)CControlProcess::ExitingDlgProc
-		);
-		::ShowWindow( hwndExitingDlg, SW_SHOW );
-	}
-
-	/* 共有データの保存 */
-	m_cShareData.SaveShareData();
-
-	/* 終了ダイアログを表示する */
-	if( FALSE != m_pShareData->m_Common.m_bDispExitingDialog ){
-		/* 終了中ダイアログの破棄 */
-		::DestroyWindow( hwndExitingDlg );
-	}
-
 	m_pShareData->m_hwndTray = NULL;
-	/* アクセラレータテーブルの削除 */
-	if( m_pShareData->m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-		m_pShareData->m_hAccel = NULL;
-	}
-
 }
 
 CControlProcess::~CControlProcess()
