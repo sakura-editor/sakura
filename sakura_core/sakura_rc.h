@@ -248,7 +248,6 @@
 #define IDC_CHECK_USEKEYWORDHELP        1202
 #define IDC_BUTTON_HOKANFILE_REF        1203
 #define IDC_STATIC_UPDATE               1204
-#define IDC_BUTTON_CONTACT              1207
 #define IDC_LIST_COLORS                 1211
 #define IDC_CHECK_DISP                  1212
 #define IDC_CHECK_FAT                   1213
