@@ -29,7 +29,6 @@
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
 const DWORD p_helpids[] = {	//12900
-	IDC_BUTTON_CONTACT,		HIDC_ABOUT_BUTTON_CONTACT,
 	IDOK,					HIDOK_ABOUT,
 	IDC_EDIT_ABOUT,			HIDC_ABOUT_EDIT_ABOUT,
 //	IDC_STATIC_URL_UR,		12970,
@@ -174,10 +173,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgAbout::OnBnClicked( int wID )
 {
 	switch( wID ){
-	case IDC_BUTTON_CONTACT:
-		/* 「原作者連絡先」のヘルプ */	//Jan. 12, 2001 jepro `作者'の前に`原'を付けた
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 8 );
-		return TRUE;
+	//	2006.07.27 genta 原作者連絡先のボタンを削除 (ヘルプから削除されているため)
 	case IDC_STATIC_URL_UR:
 	case IDC_STATIC_URL_ORG:
 		//	Web Browserの起動
