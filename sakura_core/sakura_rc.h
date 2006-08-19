@@ -94,7 +94,7 @@
 #define IDC_CHK_FROMTHISTEXT            1076
 #define IDC_CHECK_TOOLBARISFLAT         1076
 #define IDC_CHECK_RELOADWHENEXECUTE     1076
-#define IDC_CHCEK_DOCICON               1076
+#define IDC_CHECK_DOCICON               1076
 #define IDC_CHECK_LCPOS2                1077
 #define IDC_CHECK_SplitterWndHScroll    1077
 #define IDC_RADIO_BACKUP_TYPE1          1078
@@ -532,7 +532,7 @@
 #define IDC_STATIC_FAVORITE_MSG         1476
 #define IDC_CHECK_REALTIMEVIEW          1477
 #define IDC_CHECK_BOM                   1478
-#define IDC_CHECH_GREPREALTIME          1479
+#define IDC_CHECK_GREPREALTIME          1479
 #define IDC_RADIO_WINSIZE_DEF           1480
 #define IDC_RADIO_WINSIZE_SAVE          1481
 #define IDC_RADIO_WINSIZE_SET           1482

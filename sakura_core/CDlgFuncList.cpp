@@ -14,6 +14,7 @@
 	Copyright (C) 2004, zenryaku, Moca, novice
 	Copyright (C) 2005, genta, zenryaku, ぜっと, D.S.Koba
 	Copyright (C) 2006, genta, aroka
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -48,6 +49,7 @@ const DWORD p_helpids[] = {	//12200
 	IDC_CHECK_bFunclistSetFocusOnJump	,HIDC_FL_CHECK_bFunclistSetFocusOnJump,	//ジャンプでフォーカス移動する
 	IDC_CHECK_bMarkUpBlankLineEnable	,HIDC_FL_CHECK_bMarkUpBlankLineEnable,	//空行を無視する
 	IDC_COMBO_nSortType,			HIDC_COMBO_nSortType,	//順序
+	IDC_BUTTON_WINSIZE,				HIDC_FL_BUTTON_WINSIZE,	//ウィンドウ位置保存	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK

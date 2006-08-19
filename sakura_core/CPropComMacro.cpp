@@ -8,6 +8,7 @@
 	Copyright (C) 2001, genta, MIK
 	Copyright (C) 2002, YAZAKI, MIK, genta, novice
 	Copyright (C) 2003, Moca, KEITA
+	Copyright (C) 2006, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -50,6 +51,7 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_MACRONAME,		HIDC_MACRONAME,		//マクロ名
 	IDC_MACROLIST,		HIDC_MACROLIST,		//マクロリスト
 	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロ一覧
+	IDC_CHECK_RELOADWHENEXECUTE,	HIDC_CHECK_RELOADWHENEXECUTE,	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
 //	IDC_STATIC,			-1,
 	0, 0
 };
