@@ -8,6 +8,7 @@
 	Copyright (C) 2001, MIK, genta
 	Copyright (C) 2002, YAZAKI, MIK
 	Copyright (C) 2003, KEITA
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,6 +24,7 @@ static const DWORD p_helpids[] = {	//10500
 	IDC_CHECK_bGrepExitConfirm,		HIDC_CHECK_bGrepExitConfirm,	//GREPの保存確認
 	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//タグジャンプ（エンターキー）
 	IDC_CHECK_GTJW_LDBLCLK,			HIDC_CHECK_GTJW_LDBLCLK,		//タグジャンプ（ダブルクリック）
+	IDC_CHECK_GREPREALTIME,			HIDC_CHECK_GREPREALTIME,		//リアルタイムで表示する	// 2006.08.08 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -132,7 +134,7 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bGrepExitConfirm, m_Common.m_bGrepExitConfirm );
 
 	/* Grep結果のリアルタイム表示 */
-	::CheckDlgButton( hwndDlg, IDC_CHECH_GREPREALTIME, m_Common.m_bGrepRealTimeView );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_GREPREALTIME, m_Common.m_bGrepRealTimeView );	// 2006.08.08 ryoji ID修正
 
 
 	/* Grepモード: エンターキーでタグジャンプ */
@@ -157,7 +159,7 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 	m_Common.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );
 
 	/* Grep結果のリアルタイム表示 */
-	m_Common.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECH_GREPREALTIME );
+	m_Common.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GREPREALTIME );	// 2006.08.08 ryoji ID修正
 
 	/* Grepモード: エンターキーでタグジャンプ */
 	m_Common.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );

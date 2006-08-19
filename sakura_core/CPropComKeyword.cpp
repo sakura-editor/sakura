@@ -10,6 +10,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, genta
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2005, genta, Moca
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -42,6 +43,8 @@ static const DWORD p_helpids[] = {	//10800
 	IDC_CHECK_KEYWORDCASE,			HIDC_CHECK_KEYWORDCASE,		//キーワードの英大文字小文字区別
 	IDC_COMBO_SET,					HIDC_COMBO_SET,				//強調キーワードセット名
 	IDC_LIST_KEYWORD,				HIDC_LIST_KEYWORD,			//キーワード一覧
+	IDC_BUTTON_KEYCLEAN		,		HIDC_BUTTON_KEYCLEAN,		//キーワード整理	// 2006.08.06 ryoji
+	IDC_BUTTON_KEYSETRENAME,		HIDC_BUTTON_KEYSETRENAME,	//セットの名称変更	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };

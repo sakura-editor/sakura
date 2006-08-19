@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated Help ID include file.
+// Microsoft Developer Studio generated Help ID include file.
 // Used by sakura_rc.rc
 //
 #define HIDCANCEL                       0x80a80002    // IDD_COMPARE
@@ -12,7 +12,6 @@
 #define HIDC_BUTTON_CLEAR               0x80e305b9    // IDD_FAVORITE
 #define HIDC_BUTTON_CLEAR_MRU_FILE      0x806b04a3    // IDD_PROP1P1
 #define HIDC_BUTTON_CLEAR_MRU_FOLDER    0x806b03f8    // IDD_PROP1P1
-#define HIDC_BUTTON_CONTACT             0x807304b7    // IDD_ABOUT
 #define HIDC_BUTTON_COPY                0x807a047d    // IDD_FUNCLIST
 #define HIDC_BUTTON_CURRENTFOLDER       0x808404fd    // IDD_GREP
 #define HIDC_BUTTON_DELETE              0x93ef043f    // IDD_PROP_CUSTMENU
@@ -29,11 +28,14 @@
 #define HIDC_BUTTON_IMPORT              0x93f20493    // IDD_PROP_COLOR
 #define HIDC_BUTTON_INSERT              0x93ef0476    // IDD_PROP_CUSTMENU
 #define HIDC_BUTTON_INSERTSEPARATOR     0x93ef0440    // IDD_PROP_CUSTMENU
-#define HIDC_BUTTON_INSERTWRAP          0x93ef0440    // IDD_PROP_TOOLBAR
+#define HIDC_BUTTON_INSERTWRAP          0x86030441    // IDD_PROP_TOOLBAR
 #define HIDC_BUTTON_JUMP                0x8076056c    // IDD_JUMP
+#define HIDC_BUTTON_KEYCLEAN            0x809905da    // IDD_PROP_KEYWORD
+#define HIDC_BUTTON_KEYSETRENAME        0x809905d9    // IDD_PROP_KEYWORD
 #define HIDC_BUTTON_KEYWORDHELPFILE_REF \
                                         0x93fa0441    // IDD_PROPTYPESP2
 #define HIDC_BUTTON_KEYWORDHELPFONT     0x93f1044a    // IDD_PROP_HELPER
+#define HIDC_BUTTON_KEYWORD_SELECT      0x93f205d7    // IDD_PROP_COLOR
 #define HIDC_BUTTON_OPENEXTHTMLHELP     0x93f10449    // IDD_PROP_HELPER
 #define HIDC_BUTTON_OPENHELP1           0x93f10448    // IDD_PROP_HELPER
 #define HIDC_BUTTON_OPENMDICT           0x93f1044c    // IDD_PROP_HELPER
@@ -66,22 +68,28 @@
                                         0x93fa058f    // IDD_PROPTYPESP2
 #define HIDC_BUTTON_TYPEOPENHELP        0x93fa058e    // IDD_PROPTYPESP2
 #define HIDC_BUTTON_UP                  0x93ef0477    // IDD_PROP_CUSTMENU
+#define HIDC_BUTTON_WINSIZE             0x807a05d3    // IDD_FUNCLIST
+#define HIDC_CHECK_DOCICON              0x93ed0434    // IDD_PROPTYPESP1
+#define HIDC_CHECK_GREPREALTIME         0x93f705c7    // IDD_PROP_GREP
 #define HIDC_CHECK_ADDCRLFWHENCOPY      0x93f5045c    // IDD_PROP_EDIT
 #define HIDC_CHECK_ALT                  0x93f30438    // IDD_PROP_KEYBIND
 #define HIDC_CHECK_ANYWHERE             0x80e405de    // IDD_TAGJUMPLIST
 #define HIDC_CHECK_AUTOSAVE             0x806e0443    // IDD_PROP_FILE
+#define HIDC_CHECK_AlertIfFileNotExist  0x806e05d5    // IDD_PROP_FILE
 #define HIDC_CHECK_AutoMIMEDecode       0x806e0565    // IDD_PROP_FILE
 #define HIDC_CHECK_BACKUP               0x93f80434    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUPDIALOG         0x93f8043c    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUPFOLDER         0x93f8043d    // IDD_PROP_BACKUP
+#define HIDC_CHECK_BACKUP_ADVANCED      0x93f805e2    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_DAY           0x93f80441    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_DUSTBOX       0x93f80443    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_HOUR          0x93f80439    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_MIN           0x93f8043a    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_MONTH         0x93f80440    // IDD_PROP_BACKUP
-#define HIDC_CHECK_BACKUP_RETAINEXT     0x93f80444    // IDD_PROP_BACKUP
+#define HIDC_CHECK_BACKUP_RETAINEXT     0x93f80559    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_SEC           0x93f8043b    // IDD_PROP_BACKUP
 #define HIDC_CHECK_BACKUP_YEAR          0x93f80438    // IDD_PROP_BACKUP
+#define HIDC_CHECK_BOM                  0xffff05c6    // "IDD_FILEOPEN"
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA \
                                         0x93f5050b    // IDD_PROP_EDIT
 #define HIDC_CHECK_CTRL                 0x93f3045b    // IDD_PROP_KEYBIND
@@ -97,8 +105,9 @@
 #define HIDC_CHECK_DispFUNCKEYWND       0x93f404a7    // IDD_PROP_WIN
 #define HIDC_CHECK_DispSTATUSBAR        0x93f40501    // IDD_PROP_WIN
 #define HIDC_CHECK_DispTOOLBAR          0x93f40444    // IDD_PROP_WIN
+#define HIDC_CHECK_DispTabIcon          0x93f40438    // IDD_PROP_WIN
 #define HIDC_CHECK_DispTabWnd           0x93f40502    // IDD_PROP_WIN
-#define HIDC_CHECK_DispTabWndMultiWin   0x93f40503    // IDD_PROP_WIN
+#define HIDC_CHECK_DispTabWndMultiWin   0x93f40591    // IDD_PROP_WIN
 #define HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE \
                                         0x806e0507    // IDD_PROP_FILE
 #define HIDC_CHECK_EXCVLUSIVE_NO        0x806e042d    // IDD_PROP_FILE
@@ -132,7 +141,9 @@
 #define HIDC_CHECK_PS_KINSOKUKUTO       0x80ae04f3    // IDD_PRINTSETTING
 #define HIDC_CHECK_PS_KINSOKURET        0x80ae04f2    // IDD_PRINTSETTING
 #define HIDC_CHECK_PS_KINSOKUTAIL       0x80ae04f1    // IDD_PRINTSETTING
+#define HIDC_CHECK_QueryIfCodeChange    0x806e05d4    // IDD_PROP_FILE
 #define HIDC_CHECK_REGEX                0x80db057e    // IDD_PROP_REGEX
+#define HIDC_CHECK_RELOADWHENEXECUTE    0x80d90434    // IDD_PROP_MACRO
 #define HIDC_CHECK_REPEATEDSCROLLSMOOTH \
                                         0x806b0479    // IDD_PROP1P1
 #define HIDC_CHECK_RTRIM_PREVLINE       0x93ed03f5    // IDD_PROPTYPESP1
@@ -145,6 +156,8 @@
                                         0x806b03f5    // IDD_PROP1P1
 #define HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD \
                                         0x806b03f4    // IDD_PROP1P1
+#define HIDC_CHECK_SameTabWidth         0x93f40578    // IDD_PROP_WIN
+#define HIDC_CHECK_SortTabList          0x93f40604    // IDD_PROP_WIN
 #define HIDC_CHECK_TAB_ARROW            0x93ed05b0    // IDD_PROPTYPESP1
 #define HIDC_CHECK_TAG_MAKE_RECURSE     0x80e505c0    // IDD_TAG_MAKE
 #define HIDC_CHECK_TILE_H               0x80a80510    // IDD_COMPARE
@@ -209,6 +222,7 @@
 #define HIDC_EDIT1                      0x809a043e    // IDD_INPUT1
 #define HIDC_EDIT_ABOUT                 0x80730576    // IDD_ABOUT
 #define HIDC_EDIT_AUTOBACKUP_INTERVAL   0x806e0444    // IDD_PROP_FILE
+#define HIDC_EDIT_BACKUPFILE            0x93f805e0    // IDD_PROP_BACKUP
 #define HIDC_EDIT_BACKUPFOLDER          0x93f8043e    // IDD_PROP_BACKUP
 #define HIDC_EDIT_BACKUP_3              0x93f8052f    // IDD_PROP_BACKUP
 #define HIDC_EDIT_BLOCKCOMMENT_FROM     0x93f2043e    // IDD_PROP_COLOR
@@ -227,6 +241,7 @@
 #define HIDC_EDIT_FROM                  0x80c10535    // IDD_PRINTPAGE
 #define HIDC_EDIT_FUNCKEYWND_GROUPNUM   0x93f40597    // IDD_PROP_WIN
 #define HIDC_EDIT_HOKANFILE             0x93fa04b1    // IDD_PROPTYPESP2
+#define HIDC_EDIT_INDENTCHARS           0x93ed0456    // IDD_PROPTYPESP1
 #define HIDC_EDIT_INYOUKIGOU            0x93f004aa    // IDD_PROP_FORMAT
 #define HIDC_EDIT_KEYSFUNC              0x93f304f9    // IDD_PROP_KEYBIND
 #define HIDC_EDIT_KEYWORDHELPFILE       0x93fa0440    // IDD_PROPTYPESP2
@@ -251,6 +266,7 @@
 #define HIDC_EDIT_MIDASHIKIGOU          0x93f004a9    // IDD_PROP_FORMAT
 #define HIDC_EDIT_MIGEMO_DICT           0x93f10441    // IDD_PROP_HELPER
 #define HIDC_EDIT_MIGEMO_DLL            0x93f10440    // IDD_PROP_HELPER
+#define HIDC_EDIT_OUTLINERULEFILE       0x93ed0592    // IDD_PROPTYPESP1
 #define HIDC_EDIT_PLSQL_E1              0x8076043e    // IDD_JUMP
 #define HIDC_EDIT_REGEX                 0x80db057c    // IDD_PROP_REGEX
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM \
@@ -266,6 +282,7 @@
 #define HIDC_EDIT_TYPEEXTHTMLHELP       0x93fa058d    // IDD_PROPTYPESP2
 #define HIDC_EDIT_TYPEEXTS              0x93ed0455    // IDD_PROPTYPESP1
 #define HIDC_EDIT_TYPENAME              0x93ed043e    // IDD_PROPTYPESP1
+#define HIDC_EDIT_VERTLINE              0x93f2052f    // IDD_PROP_COLOR
 #define HIDC_EDIT_nDropFileNumMax       0x806e0512    // IDD_PROP_FILE
 #define HIDC_EDIT_nLineNumberRightSpace \
                                         0x93f40456    // IDD_PROP_WIN
@@ -300,7 +317,7 @@
 #define HIDC_LIST_TYPES                 0x80930481    // IDD_TYPELIST
 #define HIDC_MACRODIR                   0x80d90579    // IDD_PROP_MACRO
 #define HIDC_MACRODIRREF                0x80d9057a    // IDD_PROP_MACRO
-#define HIDC_MACROLIST                  0x80e20574    // IDD_PROP_MACRO
+#define HIDC_MACROLIST                  0x80d90574    // IDD_PROP_MACRO
 #define HIDC_MACRONAME                  0x80d90575    // IDD_PROP_MACRO
 #define HIDC_MACROPATH                  0x80d9052f    // IDD_PROP_MACRO
 #define HIDC_MACRO_REG                  0x80d90571    // IDD_PROP_MACRO
@@ -331,6 +348,8 @@
 #define HIDC_RADIO_LINETERMTYPE0        0x93f204c5    // IDD_PROP_COLOR
 #define HIDC_RADIO_LINETERMTYPE1        0x93f204c6    // IDD_PROP_COLOR
 #define HIDC_RADIO_LINETERMTYPE2        0x93f204c2    // IDD_PROP_COLOR
+#define HIDC_RADIO_OUTLINEDEFAULT       0x93ed052c    // IDD_PROPTYPESP1
+#define HIDC_RADIO_OUTLINERULEFILE      0x93ed052d    // IDD_PROPTYPESP1
 #define HIDC_RADIO_OUTPUTLINE           0x8084046c    // IDD_GREP
 #define HIDC_RADIO_OUTPUTMARKED         0x80840436    // IDD_GREP
 #define HIDC_RADIO_OUTPUTSTYLE1         0x80840486    // IDD_GREP

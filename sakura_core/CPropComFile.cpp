@@ -7,7 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta, MIK, jepro
 	Copyright (C) 2002, YAZAKI, MIK, aroka, hor
-	Copyright (C) 2004, genta
+	Copyright (C) 2004, genta, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -36,6 +36,8 @@ static const DWORD p_helpids[] = {	//01310
 	IDC_SPIN_AUTOBACKUP_INTERVAL,			HIDC_EDIT_AUTOBACKUP_INTERVAL,
 	IDC_SPIN_nDropFileNumMax,				HIDC_EDIT_nDropFileNumMax,
 	IDC_CHECK_RestoreBookmarks,				HIDC_CHECK_RestoreBookmarks,			// 2002.01.16 hor ブックマークの復元
+	IDC_CHECK_QueryIfCodeChange,			HIDC_CHECK_QueryIfCodeChange,			//前回と異なる文字コードのとき問い合わせを行う	// 2006.08.06 ryoji
+	IDC_CHECK_AlertIfFileNotExist,			HIDC_CHECK_AlertIfFileNotExist,			//開こうとしたファイルが存在しないとき警告する	// 2006.08.06 ryoji
 //	IDC_STATIC,								-1,
 	0, 0
 };

@@ -39,6 +39,7 @@ static const DWORD p_helpids[] = {	//13100
 	IDC_COMBO_MRU,			HIDC_OPENDLG_COMBO_MRU,			//最近のファイル
 	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダ
 	IDC_COMBO_EOL,			HIDC_OPENDLG_COMBO_EOL,			//改行コード
+	IDC_CHECK_BOM,			HIDC_OPENDLG_CHECK_BOM,			//BOM	// 2006.08.06 ryoji
 //	IDC_STATIC,				-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK

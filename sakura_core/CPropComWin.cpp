@@ -47,6 +47,10 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_WINCAPTION_ACTIVE,			HIDC_WINCAPTION_ACTIVE,			//アクティブ時	//@@@ 2003.06.15 MIK
 	IDC_WINCAPTION_INACTIVE,		HIDC_WINCAPTION_INACTIVE,		//非アクティブ時	//@@@ 2003.06.15 MIK
 	IDC_TABWND_CAPTION,				HIDC_TABWND_CAPTION,			//タブウインドウキャプション	//@@@ 2003.06.15 MIK
+	IDC_BUTTON_WINSIZE,				HIDC_BUTTON_WINSIZE,			//位置と大きさの設定	// 2006.08.06 ryoji
+	IDC_CHECK_SameTabWidth,			HIDC_CHECK_SameTabWidth,		//等幅	// 2006.08.06 ryoji
+	IDC_CHECK_DispTabIcon,			HIDC_CHECK_DispTabIcon,			//アイコン表示	// 2006.08.06 ryoji
+	IDC_CHECK_SortTabList,			HIDC_CHECK_SortTabList,			//タブ一覧ソート	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };

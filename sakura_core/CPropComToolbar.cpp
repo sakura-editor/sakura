@@ -9,6 +9,7 @@
 	Copyright (C) 2002, genta, MIK, YAZAKI, aroka
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2005, aroka
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -35,6 +36,7 @@ static const DWORD p_helpids[] = {	//11000
 	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND_TOOLBAR,			//機能の種別
 	IDC_LIST_FUNC,					HIDC_LIST_FUNC_TOOLBAR,					//機能一覧
 	IDC_LIST_RES,					HIDC_LIST_RES_TOOLBAR,					//ツールバー一覧
+	IDC_BUTTON_INSERTWRAP,			HIDC_BUTTON_INSERTWRAP,					//ツールバー折返	// 2006.08.06 ryoji
 	IDC_LABEL_MENUFUNCKIND,			-1,
 	IDC_LABEL_MENUFUNC,				-1,
 	IDC_LABEL_TOOLBAR,				-1,

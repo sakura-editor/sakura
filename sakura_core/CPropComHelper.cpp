@@ -9,6 +9,7 @@
 	Copyright (C) 2001, genta, MIK, jepro, asa-o
 	Copyright (C) 2002, YAZAKI, MIK, genta
 	Copyright (C) 2003, Moca, KEITA
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -42,6 +43,10 @@ static const DWORD p_helpids[] = {	//10600
 	IDC_EDIT_EXTHELP1,				HIDC_EDIT_EXTHELP1,				//外部ヘルプファイル名
 	IDC_EDIT_EXTHTMLHELP,			HIDC_EDIT_EXTHTMLHELP,			//外部HTMLヘルプファイル名
 	IDC_BUTTON_KEYWORDHELPFONT,		HIDC_BUTTON_KEYWORDHELPFONT,	//キーワードヘルプのフォント
+	IDC_EDIT_MIGEMO_DLL,			HIDC_EDIT_MIGEMO_DLL,			//Migemo DLLファイル名	// 2006.08.06 ryoji
+	IDC_BUTTON_OPENMDLL,			HIDC_BUTTON_OPENMDLL,			//Migemo DLLファイル参照	// 2006.08.06 ryoji
+	IDC_EDIT_MIGEMO_DICT,			HIDC_EDIT_MIGEMO_DICT,			//Migemo 辞書ファイル名	// 2006.08.06 ryoji
+	IDC_BUTTON_OPENMDICT,			HIDC_BUTTON_OPENMDICT,			//Migemo 辞書ファイル参照	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };

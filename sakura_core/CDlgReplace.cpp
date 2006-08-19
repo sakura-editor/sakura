@@ -8,7 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta, Stonee, hor, YAZAKI
 	Copyright (C) 2002, MIK, hor, novice, genta, aroka, YAZAKI
-	Copyright (C) 2006, かろと
+	Copyright (C) 2006, かろと, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -49,6 +49,7 @@ const DWORD p_helpids[] = {	//11900
 	IDC_STATIC_JRE32VER,			HIDC_REP_STATIC_JRE32VER,			//正規表現バージョン
 	IDC_BUTTON_SETMARK,				HIDC_REP_BUTTON_SETMARK,			//2002.01.16 hor 検索該当行をマーク
 	IDC_CHECK_SEARCHALL,			HIDC_REP_CHECK_SEARCHALL,			//2002.01.26 hor 先頭（末尾）から再検索
+	IDC_BUTTON_REPLACEALL_LINE,		HIDC_REP_BUTTON_REPLACEALL_LINE,	//すべて行置換	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
