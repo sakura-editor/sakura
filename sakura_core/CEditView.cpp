@@ -13,7 +13,7 @@
 	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
-	Copyright (C) 2006, Moca, aroka, ryoji
+	Copyright (C) 2006, Moca, aroka, ryoji, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -76,7 +76,7 @@
 #define IMR_CONFIRMRECONVERTSTRING             0x0005
 #endif // IMR_CONFIRMRECONVERTSTRING
 
-
+const int STRNCMP_MAX = 100;	/* MAXキーワード長：strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 
 CEditView*	g_m_pcEditView;
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
@@ -3582,83 +3582,17 @@ VOID CEditView::OnTimer(
 {
 	POINT		po;
 	RECT		rc;
-	CMemory		cmemCurText;
-	CMemory*	pcmemRefText;
-	char*		pszWork;
-	int			nWorkLength;
-	int			i;
 
 	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 		if( m_bDragSource ){
 			return;
 		}
 	}
-	if( !m_bBeginSelect ){	/* 範囲選択中 */
-		//	2001/06/14 asa-o 参照するデータの変更
-//		if( m_pShareData->m_Common.m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
-		if( m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
-			if( m_nCaretWidth > 0 ){ //フォーカスがあるとき
-				/* ウィンドウ内にマウスカーソルがあるか？ */
-				GetCursorPos( &po );
-				GetWindowRect( m_hWnd, &rc );
-				if( !PtInRect( &rc, po ) ){
-					return;
-				}
-				/*  */
-				if( m_bInMenuLoop == FALSE	&&	/* メニュー モーダル ループに入っていない */
-					0 != m_dwTipTimer		&&	/* 辞書Tipを表示していない */
-					300 < ::GetTickCount() - m_dwTipTimer	/* 一定時間以上、マウスが固定されている */
-				){
-					/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-					if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
-						pszWork = cmemCurText.GetPtr();
-						nWorkLength	= lstrlen( pszWork );
-						for( i = 0; i < nWorkLength; ++i ){
-							if( pszWork[i] == '\0' ||
-								pszWork[i] == CR ||
-								pszWork[i] == LF ){
-								break;
-							}
-						}
-						char*	pszBuf = new char[i + 1];
-						memcpy( pszBuf, pszWork, i );
-						pszBuf[i] = '\0';
-						cmemCurText.SetData( pszBuf, i );
-						delete [] pszBuf;
-
-						/* 既に検索済みか */
-						if( CMemory::IsEqual( cmemCurText, m_cTipWnd.m_cKey ) ){
-							/* 該当するキーがなかった */
-							if( !m_cTipWnd.m_KeyWasHit ){
-								goto end_of_search;
-							}
-						}else{
-							m_cTipWnd.m_cKey = cmemCurText;
-							/* 検索実行 */
-							//	2001/06/14 asa-o 参照するデータの変更
-//							if( m_cDicMgr.Search( cmemCurText.GetPtr(), &pcmemRefText, m_pShareData->m_Common.m_szKeyWordHelpFile ) ){
-							if( m_cDicMgr.Search( cmemCurText.GetPtr(), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
-								/* 該当するキーがある */
-								m_cTipWnd.m_KeyWasHit = TRUE;
-								pszWork = pcmemRefText->GetPtr();
-//								m_cTipWnd.m_cInfo.SetData( pszWork, lstrlen( pszWork ) );
-								m_cTipWnd.m_cInfo.SetDataSz( pszWork );
-								delete pcmemRefText;
-							}else{
-								/* 該当するキーがなかった */
-								m_cTipWnd.m_KeyWasHit = FALSE;
-								goto end_of_search;
-							}
-						}
-						m_dwTipTimer = 0;	/* 辞書Tipを表示している */
-						m_poTipCurPos = po;	/* 現在のマウスカーソル位置 */
-
-						/* 辞書Tipを表示 */
-						m_cTipWnd.Show( po.x, po.y + m_nCharHeight, NULL );
-					}
-					end_of_search:;
-				}
-			}
+	/* 範囲選択中でない場合 */
+	if(!m_bBeginSelect){
+		if(TRUE == KeyWordHelpSearchDict( LID_SKH_ONTIMER, &po, &rc ) ){	// 2006.04.10 fon
+			/* 辞書Tipを表示 */
+			m_cTipWnd.Show( po.x, po.y + m_nCharHeight, NULL );
 		}
 	}else{
 		::GetCursorPos( &po );
@@ -3700,6 +3634,167 @@ VOID CEditView::OnTimer(
 	return;
 }
 
+/*! キーワード辞書検索の前提条件チェックと、検索
+
+	@date 2006.04.10 fon OnTimer, CreatePopUpMenu_Rから分離
+*/
+BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
+{
+	CMemory		cmemCurText;
+	char*		pszWork;
+	int			nWorkLength;
+	int			i;
+
+	/* キーワードヘルプを使用するか？ */
+	if( !m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp )	/* キーワードヘルプ機能を使用する */	// 2006.04.10 fon
+		goto end_of_search;
+	/* フォーカスがあるか？ */
+	if( !(m_nCaretWidth > 0) ) 
+		goto end_of_search;
+	/* ウィンドウ内にマウスカーソルがあるか？ */
+	GetCursorPos( po );
+	GetWindowRect( m_hWnd, rc );
+	if( !PtInRect( rc, *po ) )
+		goto end_of_search;
+	switch(nID){
+	case LID_SKH_ONTIMER:
+		/* 右コメントの１～３でない場合 */
+		if(!( m_bInMenuLoop == FALSE	&&			/* １．メニュー モーダル ループに入っていない */
+			0 != m_dwTipTimer			&&			/* ２．辞書Tipを表示していない */
+			300 < ::GetTickCount() - m_dwTipTimer	/* ３．一定時間以上、マウスが固定されている */
+		) )	goto end_of_search;
+		break;
+	case LID_SKH_POPUPMENU_R:
+		if(!( m_bInMenuLoop == FALSE	//&&			/* １．メニュー モーダル ループに入っていない */
+		//	0 != m_dwTipTimer			&&			/* ２．辞書Tipを表示していない */
+		//	1000 < ::GetTickCount() - m_dwTipTimer	/* ３．一定時間以上、マウスが固定されている */
+		) )	goto end_of_search;
+		break;
+	default:
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("作者に教えて欲しいエラー"),
+		_T("CEditView::KeyWordHelpSearchDict\nnID=%d") );
+	}
+	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
+	if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+		pszWork = cmemCurText.GetPtr();
+		nWorkLength	= lstrlen( pszWork );
+		for( i = 0; i < nWorkLength; ++i ){
+			if( pszWork[i] == '\0' ||
+				pszWork[i] == CR ||
+				pszWork[i] == LF ){
+				break;
+			}
+		}
+		char*	pszBuf = new char[i + 1];
+		memcpy( pszBuf, pszWork, i );
+		pszBuf[i] = '\0';
+		cmemCurText.SetData( pszBuf, i );
+		delete [] pszBuf;
+	}/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
+	else if(m_pShareData->m_Common.m_bUseCaretKeyWord){
+		if(!GetCurrentWord(&cmemCurText))
+			goto end_of_search;
+	}else
+		goto end_of_search;
+
+	if( CMemory::IsEqual( cmemCurText, m_cTipWnd.m_cKey ) &&	/* 既に検索済みか */
+		(!m_cTipWnd.m_KeyWasHit) )								/* 該当するキーがなかった */
+		goto end_of_search;
+	m_cTipWnd.m_cKey = cmemCurText;
+
+	/* 検索実行 */
+	if( FALSE == KeySearchCore(&m_cTipWnd.m_cKey) )
+		goto end_of_search;
+	m_dwTipTimer = 0;		/* 辞書Tipを表示している */
+	m_poTipCurPos = *po;	/* 現在のマウスカーソル位置 */
+	return TRUE;			/* ここまで来ていればヒット・ワード */
+
+	/* キーワードヘルプ表示処理終了 */
+	end_of_search:
+	return FALSE;
+}
+
+/*! キーワード辞書検索処理メイン
+
+	@date 2006.04.10 fon KeyWordHelpSearchDictから分離
+*/
+BOOL CEditView::KeySearchCore( const CMemory* pcmemCurText )
+{
+	CMemory*	pcmemRefKey;
+	CMemory*	pcmemRefText;
+	LPSTR		pszWork;
+	int			nCmpLen = STRNCMP_MAX; // 2006.04.10 fon
+	int			nLine; // 2006.04.10 fon
+
+
+	int nTypeNo = m_pcEditDoc->GetDocumentType();
+	m_cTipWnd.m_cInfo.SetDataSz( "" );	/* tooltipバッファ初期化 */
+	/* 1行目にキーワード表示の場合 */
+	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
+		m_cTipWnd.m_cInfo.AppendSz( "[ " );
+		m_cTipWnd.m_cInfo.AppendSz( pcmemCurText->GetPtr() );
+		m_cTipWnd.m_cInfo.AppendSz( " ]" );
+	}
+	/* 途中まで一致を使う場合 */
+	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix)
+		nCmpLen = lstrlen( pcmemCurText->GetPtr() );	// 2006.04.10 fon
+	m_cTipWnd.m_KeyWasHit = FALSE;
+	for(int i=0;i<m_pShareData->m_Types[nTypeNo].m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
+		if( 1 == m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_nUse ){
+			if(m_cDicMgr.Search( pcmemCurText->GetPtr(), nCmpLen, &pcmemRefKey, &pcmemRefText, m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath, &nLine )){	// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
+				/* 該当するキーがある */
+				pszWork = pcmemRefText->GetPtr();
+				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
+				if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
+					/* バッファに前のデータが詰まっていたらseparator挿入 */
+					if(m_cTipWnd.m_cInfo.GetLength() != 0)
+						m_cTipWnd.m_cInfo.AppendSz( "\n--------------------\n■" );
+					else
+						m_cTipWnd.m_cInfo.AppendSz( "■" );	/* 先頭の場合 */
+					/* 辞書のパス挿入 */
+					m_cTipWnd.m_cInfo.AppendSz( m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath );
+					m_cTipWnd.m_cInfo.AppendSz( "\n" );
+					/* 前方一致でヒットした単語を挿入 */
+					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+						m_cTipWnd.m_cInfo.AppendSz( pcmemRefKey->GetPtr() );
+						m_cTipWnd.m_cInfo.AppendSz( " >>\n" );
+					}/* 調査した「意味」を挿入 */
+					m_cTipWnd.m_cInfo.AppendSz( pszWork );
+					delete pcmemRefText;
+					delete pcmemRefKey;	// 2006.07.02 genta
+					/* タグジャンプ用の情報を残す */
+					if(FALSE == m_cTipWnd.m_KeyWasHit){
+						m_cTipWnd.m_nSearchDict=i;	/* 辞書を開くとき最初にヒットした辞書を開く */
+						m_cTipWnd.m_nSearchLine=nLine;
+						m_cTipWnd.m_KeyWasHit = TRUE;
+					}
+				}else{	/* 最初のヒット項目のみ返す場合 */
+					/* キーワードが入っていたらseparator挿入 */
+					if(m_cTipWnd.m_cInfo.GetLength() != 0)
+						m_cTipWnd.m_cInfo.AppendSz( "\n--------------------\n" );
+					/* 前方一致でヒットした単語を挿入 */
+					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+						m_cTipWnd.m_cInfo.AppendSz( pcmemRefKey->GetPtr() );
+						m_cTipWnd.m_cInfo.AppendSz( " >>\n" );
+					}/* 調査した「意味」を挿入 */
+					m_cTipWnd.m_cInfo.AppendSz( pszWork );
+					delete pcmemRefText;
+					delete pcmemRefKey;	// 2006.07.02 genta
+					/* タグジャンプ用の情報を残す */
+					m_cTipWnd.m_nSearchDict=i;
+					m_cTipWnd.m_nSearchLine=nLine;
+					m_cTipWnd.m_KeyWasHit = TRUE;
+					return TRUE;
+				}
+			}
+		}
+	}
+	if(m_cTipWnd.m_KeyWasHit == TRUE){
+			return TRUE;
+	}
+	/* 該当するキーがなかった場合 */
+	return FALSE;
+}
 
 
 /* マウス移動のメッセージ処理 */
@@ -5505,9 +5600,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 //	int			nPos;
 	RECT		rc;
 	CMemory		cmemCurText;
-	CMemory*	pcmemRefText;
 	char*		pszWork;
-	int			nWorkLength;
 	int			i;
 	int			nMenuIdx;
 	char		szLabel[300];
@@ -5559,86 +5652,24 @@ int	CEditView::CreatePopUpMenu_R( void )
 		}
 	}
 
-
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
-		//	2001/06/14 asa-o 参照するデータの変更
-//		if( m_pShareData->m_Common.m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
-		if( m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp ){
-			if( m_nCaretWidth > 0 ){					//フォーカスがあるとき
-				/* ウィンドウ内にマウスカーソルがあるか？ */
-				GetCursorPos( &po );
-				GetWindowRect( m_hWnd, &rc );
-				if( PtInRect( &rc, po ) ){
-					if( m_bInMenuLoop == FALSE	//&&				/* メニュー モーダル ループに入っていない */
-						//0 != m_dwTipTimer		&&					/* 辞書Tipを表示していない */
-						//1000 < ::GetTickCount() - m_dwTipTimer	/* 一定時間以上、マウスが固定されている */
-					){
-						/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-						if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
-							pszWork = cmemCurText.GetPtr();
-							nWorkLength	= lstrlen( pszWork );
-							for( i = 0; i < nWorkLength; ++i ){
-								if( pszWork[i] == '\0' ||
-									pszWork[i] == CR ||
-									pszWork[i] == LF ){
-									break;
-								}
-							}
-							char*	pszBuf = new char[i + 1];
-							memcpy( pszBuf, pszWork, i );
-							pszBuf[i] = '\0';
-							cmemCurText.SetData( pszBuf, i );
-							delete [] pszBuf;
-
-
-							/* 既に検索済みか */
-							if( CMemory::IsEqual( cmemCurText, m_cTipWnd.m_cKey ) ){
-								/* 該当するキーがなかった */
-								if( !m_cTipWnd.m_KeyWasHit ){
-									goto end_of_search;
-								}
-							}else{
-								m_cTipWnd.m_cKey = cmemCurText;
-								/* 検索実行 */
-								//	2001/06/14 asa-o 参照するデータの変更
-	//							if( m_cDicMgr.Search( cmemCurText.GetPtr(), &pcmemRefText, m_pShareData->m_Common.m_szKeyWordHelpFile ) ){
-								if( m_cDicMgr.Search( cmemCurText.GetPtr(), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
-									/* 該当するキーがある */
-									m_cTipWnd.m_KeyWasHit = TRUE;
-									pszWork = pcmemRefText->GetPtr();
-//									m_cTipWnd.m_cInfo.SetData( pszWork, lstrlen( pszWork ) );
-									m_cTipWnd.m_cInfo.SetDataSz( pszWork );
-									delete pcmemRefText;
-								}else{
-									/* 該当するキーがなかった */
-									m_cTipWnd.m_KeyWasHit = FALSE;
-									goto end_of_search;
-								}
-							}
-							m_dwTipTimer = 0;	/* 辞書Tipを表示している */
-							m_poTipCurPos = po;	/* 現在のマウスカーソル位置 */
-	//						/* 辞書Tipを表示 */
-	//						m_cTipWnd.Show( po.x, po.y + m_nCharHeight, NULL );
-							pszWork = m_cTipWnd.m_cInfo.GetPtr();
-							// 2002.05.25 Moca &の考慮を追加 
-							char*	pszShortOut = new char[160 + 1];
-							if( 80 < lstrlen( pszWork ) ){
-								char*	pszShort = new char[80 + 1];
-								memcpy( pszShort, pszWork, 80 );
-								pszShort[80] = '\0';
-								dupamp( (const char*)pszShort, pszShortOut );
-								delete [] pszShort;
-							}else{
-								dupamp( (const char*)pszWork, pszShortOut );
-							}
-							::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, pszShortOut );
-							delete [] pszShortOut;
-							::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-						}
-						end_of_search:;
-					}
-				}
+		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
+			pszWork = m_cTipWnd.m_cInfo.GetPtr();
+			// 2002.05.25 Moca &の考慮を追加 
+			char*	pszShortOut = new char[160 + 1];
+			if( 80 < lstrlen( pszWork ) ){
+				char*	pszShort = new char[80 + 1];
+				memcpy( pszShort, pszWork, 80 );
+				pszShort[80] = '\0';
+				dupamp( (const char*)pszShort, pszShortOut );
+				delete [] pszShort;
+			}else{
+				dupamp( (const char*)pszWork, pszShortOut );
 			}
+			::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, "キーワードの説明をクリップボードにコピー(&K)" );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
+			delete [] pszShortOut;
+			::InsertMenu( hMenu, 1, MF_BYPOSITION, IDM_JUMPDICT, "キーワード辞書を開く(&J)" );	// 2006.04.10 fon
+			::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 		}
 	}
 	po.x = 0;
@@ -7561,6 +7592,42 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 		return 0;
 	}
 }
+/*!
+	キャレット位置の単語を取得
+	単語区切り
+
+	@param[out] pcmemWord キャレット位置の単語
+	@return true: 成功，false: 失敗
+	
+	@date 2006.03.24 fon (CEditView::Command_SELECTWORDを流用)
+*/
+BOOL CEditView::GetCurrentWord(
+		CMemory* pcmemWord
+)
+{
+	int				nLineFrom;
+	int				nColmFrom;
+	int				nLineTo;
+	int				nColmTo;
+	int				nIdx;
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	if( NULL == pcLayout ){
+		return false;	/* 単語選択に失敗 */
+	}
+	/* 指定された桁に対応する行のデータ内の位置を調べる */
+	nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
+
+	/* 現在位置の単語の範囲を調べる */
+	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+		m_nCaretPosY, nIdx,
+		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, pcmemWord, NULL ) ){
+		return true;	/* 単語選択に成功 */
+	}
+	else {
+		return false;	/* 単語選択に失敗 */
+	}
+}
+
 
 /* 指定カーソル位置が選択エリア内にあるか
 	【戻り値】

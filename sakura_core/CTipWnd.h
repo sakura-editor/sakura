@@ -8,7 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, asa-o
 	Copyright (C) 2002, aroka
-	Copyright (C) 2006, genta
+	Copyright (C) 2006, genta, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -55,6 +55,8 @@ protected: // 2002/2/10 aroka アクセス権変更
 public:
 	CMemory		m_cKey;			/* キーの内容データ */
 	BOOL		m_KeyWasHit;	/* キーがヒットしたか */
+	int			m_nSearchLine;	/* 辞書のヒット行 */	// 2006.04.10 fon
+	int			m_nSearchDict;	/* ヒット辞書番号 */	// 2006.04.10 fon
 
 	CMemory		m_cInfo;		/* Tipの内容データ */
 

@@ -182,9 +182,13 @@ struct ARRHEAD {
 	Version 65:
 	タブ一覧をソートする 2006/05/10 ryoji
 
+	Version 66:
+	キーワードヘルプ機能拡張 2006.04.10 fon
+		キーワードヘルプ機能設定を別タブに移動, 辞書の複数化に対応, キャレット位置キーワード検索追加
+
 */
 
-const unsigned int uShareDataVersion = 65;
+const unsigned int uShareDataVersion = 66;
 
 /*
 ||	Singleton風
@@ -387,6 +391,7 @@ bool CShareData::Init( void )
 
 		m_pShareData->m_Common.m_bFontIs_FIXED_PITCH = TRUE;				/* 現在のフォントは固定幅フォントである */
 
+//		m_pShareData->m_Common.m_bUseCaretKeyWord = FALSE;		/* キャレット位置の単語を辞書検索-機能OFF */	// 2006.03.24 fon sakura起動ごとFALSEとし、初期化しない
 
 
 		/* バックアップ */
@@ -4646,8 +4651,6 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	// 2001/06/14 Start by asa-o
 	strcpy( pShareData->m_Types[nIdx].m_szHokanFile, "" );		/* 入力補完 単語ファイル */
-	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;			/* キーワードヘルプを使用する */
-	strcpy( pShareData->m_Types[nIdx].m_szKeyWordHelpFile, "" );	/* 辞書ファイル */
 	// 2001/06/14 End
 
 	// 2001/06/19 asa-o
@@ -4763,6 +4766,19 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseRegexKeyword = FALSE;
 //		pShareData->m_Types[nIdx].m_nRegexKeyMagicNumber = 1;
 //@@@ 2001.11.17 add end MIK
+
+//@@@ 2006.04.10 fon ADD-start
+	for(i = 0; i < MAX_KEYHELP_FILE; i++){
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_nUse = 0;
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = '\0';
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = '\0';
+	}
+	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;	/* 辞書選択機能の使用可否 */
+	pShareData->m_Types[nIdx].m_nKeyHelpNum = 0;			/* 登録辞書数 */
+	pShareData->m_Types[nIdx].m_bUseKeyHelpAllSearch = FALSE;	/* ヒットした次の辞書も検索(&A) */
+	pShareData->m_Types[nIdx].m_bUseKeyHelpKeyDisp = FALSE;		/* 1行目にキーワードも表示する(&W) */
+	pShareData->m_Types[nIdx].m_bUseKeyHelpPrefix = FALSE;		/* 選択範囲で前方一致検索(&P) */
+//@@@ 2006.04.10 fon ADD-end
 
 	// 2005.11.08 Moca 指定位置縦線の設定
 	for( i = 0; i < MAX_VERTLINES; i++ ){

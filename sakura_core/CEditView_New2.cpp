@@ -1411,8 +1411,6 @@ void CEditView::AddCurrentLineToHistory( void )
 bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
 {
 	CMemory		cmemCurText;
-	CMemory*	pcmemRefText;
-	LPSTR		pszWork;
 	RECT		rcTipWin,
 				rcDesktop;
 
@@ -1431,18 +1429,8 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin)
 			}else{
 				m_cTipWnd.m_cKey = cmemCurText;
 				/* 検索実行 */
-				if( m_cDicMgr.Search( cmemCurText.GetPtr(), &pcmemRefText, m_pcEditDoc->GetDocumentAttribute().m_szKeyWordHelpFile ) ){
-					/* 該当するキーがある */
-					m_cTipWnd.m_KeyWasHit = TRUE;
-					pszWork = pcmemRefText->GetPtr();
-//								m_cTipWnd.m_cInfo.SetData( pszWork, lstrlen( pszWork ) );
-					m_cTipWnd.m_cInfo.SetDataSz( pszWork );
-					delete pcmemRefText;
-				}else{
-					/* 該当するキーがなかった */
-					m_cTipWnd.m_KeyWasHit = FALSE;
-					return false;
-				}
+				if(FALSE == KeySearchCore(&m_cTipWnd.m_cKey))	// 2006.04.10 fon
+					return FALSE;
 			}
 			m_dwTipTimer = 0;	/* 辞書Tipを表示している */
 

@@ -521,6 +521,10 @@ SOURCE=..\sakura_core\CPropTypes.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CPropTypesKeyHelp.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CPropTypesRegex.cpp
 # End Source File
 # Begin Source File

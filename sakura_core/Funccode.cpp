@@ -424,6 +424,7 @@ const int nFincList_Win_Num = sizeof( pnFuncList_Win ) / sizeof( pnFuncList_Win[
 /* 支援 */
 const int pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 	F_HOKAN						,	/* 入力補完 */
+	F_TOGGLE_KEY_SEARCH			,	/* キャレット位置の単語を辞書検索する機能ON/OFF */	// 2006.03.24 fon
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 	F_HELP_CONTENTS				,	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
 	F_HELP_SEARCH				,	/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加

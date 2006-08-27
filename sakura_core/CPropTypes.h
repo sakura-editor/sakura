@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, MIK, aroka, genta
+	Copyright (C) 2006, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -52,6 +53,7 @@ public:
 	INT_PTR DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
 	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	/* 色選択ダイアログ */
 	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
+	INT_PTR DispatchEvent_KeyHelp( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 キーワード辞書選択 */	//@@@ 2006.04.10 fon
 
 private:
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
@@ -106,6 +108,13 @@ protected:
 	BOOL RegexKakomiCheck(const char *s);	//@@@ 2001.11.17 add MIK
 
 	void RearrangeKeywordSet( HWND );	// Jan. 23, 2005 genta キーワードセット再配置
+
+	// 2006.04.10 fon
+	void SetData_KeyHelp( HWND );	/* ダイアログデータの設定 キーワード辞書選択 */
+	int  GetData_KeyHelp( HWND );	/* ダイアログデータの取得 キーワード辞書選択 */
+	BOOL Import_KeyHelp( HWND );	//@@@ 2006.04.10 fon
+	BOOL Export_KeyHelp( HWND );	//@@@ 2006.04.10 fon
+	static INT_PTR CALLBACK PropTypesKeyHelp( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 public:
 	//	Jan. 23, 2005 genta

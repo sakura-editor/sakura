@@ -65,6 +65,8 @@ enum maxdata{
 	MAX_CMDARR					= 32,
 	MAX_REGEX_KEYWORD			= 100,	//@@@ 2001.11.17 add MIK
 
+	MAX_KEYHELP_FILE			= 20,	//@@@ 2006.04.10 fon
+
 	MAX_MARKLINES_LEN			= 1023,	// 2002.01.18 hor
 	MAX_DOCTYPE_LEN				= 7,
 	MAX_TRANSFORM_FILENAME		= 16,	/// 2002.11.24 Moca
@@ -212,6 +214,14 @@ struct RegexKeywordInfo {
 };
 //@@@ 2001.11.17 add end MIK
 
+//@@@ 2006.04.10 fon ADD-start
+const int DICT_ABOUT_LEN = 50; /*!< 辞書の説明の最大長 -1 */
+struct KeyHelpInfo {
+	int		m_nUse;						/*!< 辞書を 使用する/しない */
+	char	m_szAbout[DICT_ABOUT_LEN];	/*!< 辞書の説明(辞書ファイルの1行目から生成) */
+	char	m_szPath[_MAX_PATH];		/*!< ファイルパス */
+};
+//@@@ 2006.04.10 fon ADD-end
 
 //! タイプ別設定
 struct Types {
@@ -258,12 +268,10 @@ struct Types {
 	int					m_nSmartIndent;					/*!< スマートインデント種別 */
 	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
 
-	//	2001/06/14 asa-o 補完とキーワードヘルプのタイプ別設定
+	//	2001/06/14 asa-o 補完のタイプ別設定
 	char				m_szHokanFile[_MAX_PATH];		/*!< 入力補完 単語ファイル */
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	int					m_bUseHokanByFile;				/*!< 入力補完 開いているファイル内から候補を探す */
-	int					m_bUseKeyWordHelp;				/*!< キーワードヘルプを使用する */
-	char				m_szKeyWordHelpFile[_MAX_PATH];	/*!< キーワードヘルプ 辞書ファイル */
 	//	2001/06/19 asa-o
 	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
 
@@ -277,6 +285,15 @@ struct Types {
 	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
 	struct RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
 //@@@ 2001.11.17 add end MIK
+
+//@@@ 2006.04.10 fon ADD-start
+	BOOL				m_bUseKeyWordHelp;			/* キーワード辞書セレクト機能を使うか */
+	int					m_nKeyHelpNum;					/* キーワード辞書の冊数 */
+	struct	KeyHelpInfo	m_KeyHelpArr[MAX_KEYHELP_FILE];	/* キーワード辞書ファイル */
+	BOOL				m_bUseKeyHelpAllSearch;			/* ヒットした次の辞書も検索(&A) */
+	BOOL				m_bUseKeyHelpKeyDisp;			/* 1行目にキーワードも表示する(&W) */
+	BOOL				m_bUseKeyHelpPrefix;			/* 選択範囲で前方一致検索(&P) */
+//@@@ 2006.04.10 fon ADD-end
 
 	//	2002/04/30 YAZAKI Commonから移動。
 	BOOL				m_bAutoIndent;					/* オートインデント */
@@ -447,6 +464,7 @@ struct Common {
 	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
 	LOGFONT				m_lf_kh;						/* キーワードヘルプのフォント情報 */		// ai 02/05/21 Add
+	BOOL				m_bUseCaretKeyWord;				/* キャレット位置の単語を辞書検索 */		// 2006.03.24 fon
 
 	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
 	int					m_nToolBarButtonIdxArr[MAX_TOOLBARBUTTONS];	/* ツールバーボタン構造体 */

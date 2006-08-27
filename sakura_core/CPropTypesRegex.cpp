@@ -956,6 +956,4 @@ BOOL CPropTypes::RegexKakomiCheck(const char *s)
 }
 
 //@@@ 2001.11.17 add end MIK
-
-
 /*[EOF]*/

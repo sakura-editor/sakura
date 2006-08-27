@@ -13,7 +13,7 @@
 	Copyright (C) 2003, MIK, genta, Moca
 	Copyright (C) 2004, MIK, Moca, D.S.Koba, genta
 	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka, Moca
-	Copyright (C) 2006, aroka, ryoji, D.S.Koba
+	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -500,6 +500,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	}// Keword Help Font
 	// ai 02/05/23 Add S
+//	cProfile.IOProfileData( pszSecName, "bClickKeySearch"		, common.m_bUseCaretKeyWord );	// 2006.03.24 fon sakura起動ごとFALSEとし、初期化しない
 	
 	
 	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"			, common.m_nMRUArrNum_MAX );
@@ -1106,15 +1107,11 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 		//	Nov. 20, 2000 genta
 		cProfile.IOProfileData( pszSecName, "nImeState"			, types.m_nImeState );	//	IME制御
 
-		//	2001/06/14 Start By asa-o: タイプ別の補完ファイルとキーワードヘルプ
+		//	2001/06/14 Start By asa-o: タイプ別の補完ファイル
 		//	Oct. 5, 2002 genta sizeof()で誤ってポインタのサイズを取得していたのを修正
 		cProfile.IOProfileData( pszSecName, "szHokanFile"		,
 			types.m_szHokanFile,
 			sizeof( m_pShareData->m_Types[0].m_szHokanFile ));		//	補完ファイル
-		cProfile.IOProfileData( pszSecName, "bUseKeyWordHelp"	, types.m_bUseKeyWordHelp );	//	キーワードヘルプを使用する
-		cProfile.IOProfileData( pszSecName, "szKeyWordHelpFile"	, 
-			types.m_szKeyWordHelpFile,
-			sizeof( m_pShareData->m_Types[0].m_szKeyWordHelpFile ));	//	キーワードヘルプ 辞書ファイル
 		//	2001/06/14 End
 
 		//	2001/06/19 asa-o
@@ -1208,6 +1205,59 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 			types.m_szKinsokuTail,
 			sizeof( m_pShareData->m_Types[0].m_szKinsokuTail ));
 		cProfile.IOProfileData( pszSecName, "bUseDocumentIcon"	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta 変数名誤り修正
+
+//@@@ 2006.04.10 fon ADD-start
+		{	/* キーワード辞書 */
+			static const char* pszForm = "%d,%s,%s";
+			char	*pH, *pT;	/* <pH>keyword<pT> */
+			cProfile.IOProfileData( pszSecName, "bUseKeyWordHelp", types.m_bUseKeyWordHelp );	/* キーワード辞書選択を使用するか？ */
+//			cProfile.IOProfileData( pszSecName, "nKeyHelpNum", types.m_nKeyHelpNum );				/* 登録辞書数 */
+			cProfile.IOProfileData( pszSecName, "bUseKeyHelpAllSearch", types.m_bUseKeyHelpAllSearch );	/* ヒットした次の辞書も検索(&A) */
+			cProfile.IOProfileData( pszSecName, "bUseKeyHelpKeyDisp", types.m_bUseKeyHelpKeyDisp );		/* 1行目にキーワードも表示する(&W) */
+			cProfile.IOProfileData( pszSecName, "bUseKeyHelpPrefix", types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
+			for(j = 0; j < MAX_KEYHELP_FILE; j++){
+				wsprintf( szKeyName, "KDct[%02d]", j );
+				/* 読み出し */
+				if( cProfile.IsReadingMode() ){
+					types.m_KeyHelpArr[j].m_nUse = 0;
+					types.m_KeyHelpArr[j].m_szAbout[0] = '\0';
+					types.m_KeyHelpArr[j].m_szPath[0] = '\0';
+					if( true == cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
+						pH = szKeyData;
+						if( NULL != (pT=strchr(pH, ',')) ){
+							*pT = '\0';
+							types.m_KeyHelpArr[j].m_nUse = atoi( pH );
+							pH = pT+1;
+							if( NULL != (pT=strchr(pH, ',')) ){
+								*pT = '\0';
+								strcpy( types.m_KeyHelpArr[j].m_szAbout, pH );
+								pH = pT+1;
+								if( NULL != (*pH) ){
+									strcpy( types.m_KeyHelpArr[j].m_szPath, pH );
+									types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
+								}
+							}
+						}
+					}
+				}/* 書き込み */
+				else{
+					if(lstrlen(types.m_KeyHelpArr[j].m_szPath)){
+						wsprintf( szKeyData, pszForm,
+							types.m_KeyHelpArr[j].m_nUse,
+							types.m_KeyHelpArr[j].m_szAbout,
+							types.m_KeyHelpArr[j].m_szPath
+						);
+						cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
+					}
+				}
+			}
+			/* 旧バージョンiniファイルの読み出しサポート */
+			if( cProfile.IsReadingMode() ){
+				cProfile.IOProfileData( pszSecName, "szKeyWordHelpFile",
+				types.m_KeyHelpArr[0].m_szPath, sizeof( types.m_KeyHelpArr[0].m_szPath ) );
+			}
+		}
+//@@@ 2006.04.10 fon ADD-end
 
 	}/* for */
 }

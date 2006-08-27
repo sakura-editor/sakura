@@ -389,6 +389,7 @@
 
 /* 支援 */
 #define F_HOKAN				31430		/* 入力補完 */
+#define F_TOGGLE_KEY_SEARCH	31431		/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 //Sept. 16, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 #define F_HELP_CONTENTS		31440		/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
 #define F_HELP_SEARCH		31441		/* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加

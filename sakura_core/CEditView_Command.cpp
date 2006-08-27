@@ -645,6 +645,7 @@ BOOL CEditView::HandleCommand(
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完
 	case F_HELP_CONTENTS:	Command_HELP_CONTENTS();break;	/* ヘルプ目次 */				//Nov. 25, 2000 JEPRO 追加
 	case F_HELP_SEARCH:		Command_HELP_SEARCH();break;	/* ヘルプトキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
+	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch();break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 	case F_MENU_ALLFUNC:									/* コマンド一覧 */
 		/* 再帰処理対策 */
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
@@ -4952,6 +4953,22 @@ void CEditView::Command_HELP_SEARCH( void )
 
 
 
+/*! キャレット位置の単語を辞書検索ON-OFF
+
+	@date 2006.03.24 fon 新規作成
+*/
+void CEditView::Command_ToggleKeySearch( void )
+{	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
+	if(TRUE == m_pShareData->m_Common.m_bUseCaretKeyWord ){
+		m_pShareData->m_Common.m_bUseCaretKeyWord = FALSE;
+	}else{
+		m_pShareData->m_Common.m_bUseCaretKeyWord = TRUE;
+	}
+}
+
+
+
+
 /* コマンド一覧 */
 void CEditView::Command_MENU_ALLFUNC( void )
 {
@@ -5320,8 +5337,14 @@ void CEditView::Command_MENU_RBUTTON( void )
 //		::EmptyClipboard();
 //		::SetClipboardData( CF_OEMTEXT, hgClip );
 //		::CloseClipboard();
-
 		break;
+
+	case IDM_JUMPDICT:
+		/* キーワード辞書ファイルを開く */
+		if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp)		/* キーワード辞書セレクトを使用する */	// 2006.04.10 fon
+			TagJumpSub( m_pShareData->m_Types[m_pcEditDoc->GetDocumentType()].m_KeyHelpArr[m_cTipWnd.m_nSearchDict].m_szPath, m_cTipWnd.m_nSearchLine, 1, 0 );
+		break;
+
 	default:
 		/* コマンドコードによる処理振り分け */
 //		HandleCommand( nId, TRUE, 0, 0, 0, 0 );
