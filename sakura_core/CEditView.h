@@ -48,6 +48,9 @@ class CMigemo;	// 2004.09.14 isearch
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
 #endif
+#ifndef IDM_JUMPDICT
+#define IDM_JUMPDICT 2001	// 2006.04.10 fon
+#endif
 
 #if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
 typedef struct tagRECONVERTSTRING {
@@ -206,6 +209,16 @@ public:
 	void ShowEditCaret( void );									/* キャレットの表示・更新 */
 	int HokanSearchByFile( const char*, BOOL, CMemory**, int, int ); // 2003.06.25 Moca
 
+	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
+		@date 2006.04.10 fon 新規作成
+	*/
+	enum LID_SKH {
+		LID_SKH_ONTIMER		= 1,	/*!< CEditView::OnTimer */
+		LID_SKH_POPUPMENU_R = 2,	/*!< CEditView::CreatePopUpMenu_R */
+	};
+	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
+	BOOL KeySearchCore( const CMemory* pcmemCurText );	// 2006.04.10 fon
+	
 	//	Jan. 10, 2005 インクリメンタルサーチ
 	bool IsISearchEnabled(int nCommand) const;
 
@@ -392,6 +405,7 @@ protected:
 	BOOL MyGetClipboardData( CMemory&, BOOL* );			/* クリップボードからデータを取得 */
 	BOOL MySetClipboardData( const char*, int, BOOL );	/* クリップボードにデータを設定 */
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
+	BOOL GetCurrentWord( CMemory* );					/* キャレット位置の単語を取得 */	// 2006.03.24 fon
 //	void PrintBitmap( HDC, int, int, const char* );		/* ビットマップファイル表示 */
 //	HANDLE OpenDIB ( LPCSTR );							/* DIBファイルを開いてメモリDIBを作成 */
 //	HANDLE ReadDibBitmapInfo ( int );					/* DIB形式のファイルを読む */
@@ -843,6 +857,7 @@ void ReplaceData_CEditView(
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
 	void PreprocessCommand_hokan( int nCommand );
 	void PostprocessCommand_hokan(void);
+	void Command_ToggleKeySearch( void );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 
 	void ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided );	//	補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void Command_HOKAN( void );			/* 入力補完 */

@@ -245,7 +245,6 @@
 #define IDC_STATIC_KENSUU               1197
 #define IDC_STATIC_MYICON               1198
 #define IDC_EDIT_HOKANFILE              1201
-#define IDC_CHECK_USEKEYWORDHELP        1202
 #define IDC_BUTTON_HOKANFILE_REF        1203
 #define IDC_STATIC_UPDATE               1204
 #define IDC_LIST_COLORS                 1211
@@ -339,6 +338,7 @@
 #define IDC_CHECK_bAutoCloseDlgReplace  1307
 #define IDC_CHECK_bMarkUpBlankLineEnable 1307
 #define IDC_CHECK_bFunclistSetFocusOnJump 1308
+#define IDC_CHECK_CLICKKEYSEARCH        1309
 #define IDC_STATIC_CURFILE              1310
 #define IDC_PROGRESS                    1311
 #define IDC_LIST_WORDS                  1312
@@ -605,6 +605,31 @@
 #define IDD_DIFF                        5115
 #define IDD_CTRLCODE                    5116
 #define IDD_WINPOSSIZE                  5117
+#define IDD_PROP_KEYHELP                5119
+#define IDC_FRAME_KEYHELP               5120
+#define IDC_LIST_KEYHELP                5121
+#define IDC_LABEL_KEYHELP_KEYWORD       5122
+#define IDC_EDIT_KEYHELP                5123
+#define IDC_LABEL_KEYHELP_TITLE         5124
+#define IDC_COMBO_KEYHELP_COLOR         5125
+#define IDC_BUTTON_KEYHELP_INS          5126
+#define IDC_BUTTON_KEYHELP_ADD          5127
+#define IDC_BUTTON_KEYHELP_UPD          5128
+#define IDC_BUTTON_KEYHELP_DEL          5129
+#define IDC_BUTTON_KEYHELP_TOP          5130
+#define IDC_BUTTON_KEYHELP_UP           5131
+#define IDC_BUTTON_KEYHELP_DOWN         5132
+#define IDC_BUTTON_KEYHELP_LAST         5133
+#define IDC_BUTTON_KEYHELP_IMPORT       5134
+#define IDC_BUTTON_KEYHELP_EXPORT       5135
+#define IDC_LABEL_KEYHELP_ABOUT         5136
+#define IDC_CHECK_KEYHELP               5137
+#define IDC_CHECK_TYPE_KEYHELPUSE       5138
+#define IDC_LABEL_KEYHELP_PRIOR         5139
+#define IDC_BUTTON_KEYHELP_REF          5140
+#define IDC_CHECK_KEYHELP_ALLSEARCH     5141
+#define IDC_CHECK_KEYHELP_KEYDISP       5142
+#define IDC_CHECK_KEYHELP_PREFIX        5143
 #define IDC_EXECINFO                    -1
 
 // Next default values for new objects

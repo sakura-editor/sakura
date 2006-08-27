@@ -187,6 +187,7 @@ OBJS =\
 	$(OBJDIR)\CPropComUrl.obj \
 	$(OBJDIR)\CPropComWin.obj \
 	$(OBJDIR)\CPropTypes.obj \
+	$(OBJDIR)\CPropTypesKeyHelp.obj \
 	$(OBJDIR)\CPropTypesRegex.obj \
 	$(OBJDIR)\CRunningTimer.obj \
 	$(OBJDIR)\CRecent.obj \

@@ -8,6 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka, Moca
 	Copyright (C) 2003, Moca
+	Copyright (C) 2006, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -38,12 +39,20 @@ CDicMgr::~CDicMgr()
 
 
 
-/*
-||  キーワードの検索
-||
-||  最初に見つかったキーワードの意味を返す
+/*!
+	キーワードの検索
+	最初に見つかったキーワードの意味を返す
+	
+	@param[in] pszKey 検索キーワード
+	@param[in] nCmpLen 検索キーワードの長さ
+	@param[out] ppcmemKey 見つかったキーワード．呼び出し元の責任で解放する．
+	@param[out] ppcmemMean 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
+	@param[in] pszKeyWordHelpFile キーワードヘルプファイルのパス名
+	@param[out] pLine 見つかったキーワードのキーワードヘルプファイル内での行番号
+
+	@date 2006.04.10 fon 検索ヒット行を返す引数pLineを追加
 */
-BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszKeyWordHelpFile )
+BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey, CMemory** ppcmemMean, const char* pszKeyWordHelpFile, int *pLine )
 {
 #ifdef _DEBUG
 	CRunningTimer cRunningTimer( (const char*)"CDicMgr::Search" );
@@ -69,7 +78,7 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 	if( NULL == pFile ){
 		return FALSE;
 	}
-	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
+	for(int line=1 ;NULL != fgets( szLine, sizeof(szLine), pFile ); line++ ){	// 2006.04.10 fon
 		pszWork = strstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != ';' ){
 			*pszWork = '\0';
@@ -78,7 +87,7 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 			/* 最初のトークンを取得します。 */
 			pszToken = strtok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
-				nRes = _stricmp( pszKey, pszToken );
+				nRes = _strnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
 					for( i = 0; i < (int)lstrlen(pszWork); ++i ){
 						if( pszWork[i] == '\r' ||
@@ -87,10 +96,16 @@ BOOL CDicMgr::Search( const char* pszKey, CMemory** ppcmemMean, const char* pszK
 							break;
 						}
 					}
+					//キーワードのセット
+					*ppcmemKey = new CMemory;	// 2006.04.10 fon
+					(*ppcmemKey)->SetDataSz( pszToken );
+					//意味のセット
 					*ppcmemMean = new CMemory;
 //					(*ppcmemMean)->SetData( pszWork, lstrlen(pszWork) );
 					(*ppcmemMean)->SetDataSz( pszWork );
+
 					fclose( pFile );
+					*pLine = line;	// 2006.04.10 fon
 					return TRUE;
 				}
 				pszToken = strtok( NULL, pszKeySeps );

@@ -377,6 +377,7 @@
 #define HIDC_CHECK_m_bHokanKey_SPACE			10615 //候補決定キー（Space）
 //#define HIDC_CHECK_USEKEYWORDHELP				10616 //キーワードヘルプ機能				//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_CHECK_HTMLHELPISSINGLE				10617 //ビューアの複数起動
+#define HIDC_CHECK_CLICKKEYSEARCH				10618 //キャレット位置の単語を辞書検索		// 2006.03.24 fon
 //#define HIDC_EDIT_HOKANFILE						10640 //単語ファイル名					//Jul. 05, 2001 JEPRO タイプ別に移動
 //#define HIDC_EDIT_KEYWORDHELPFILE				10641 //辞書ファイル名						//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_EDIT_EXTHELP1						10642 //外部ヘルプファイル名
@@ -523,9 +524,7 @@
 #define HIDC_BUTTON_KEYWORD_SELECT				11467 //強調キーワード2～10	// 2006.08.06 ryoji
 #define HIDC_EDIT_VERTLINE						11468 //縦線の桁指定	// 2006.08.06 ryoji
 #define HIDC_BUTTON_HOKANFILE_REF				11500 //入力補完 単語ファイル参照		//Jul. 05, 2001 JEPRO 共通から移動・変更
-#define HIDC_BUTTON_KEYWORDHELPFILE_REF			11501 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANLOHICASE				11510 //入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO 共通から移動・変更
-#define HIDC_CHECK_USEKEYWORDHELP				11511 //キーワードヘルプ機能			//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANBYFILE					11512 //現在のファイルから入力補完		// 2003.06.25 Moca
 #define HIDC_EDIT_HOKANFILE						11540 //単語ファイル名					//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_EDIT_KEYWORDHELPFILE				11541 //辞書ファイル名					//Jul. 05, 2001 JEPRO 共通から移動・変更

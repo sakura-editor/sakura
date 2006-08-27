@@ -11,7 +11,7 @@
 	Copyright (C) 2002, YAZAKI, aroka, MIK, genta, こおり, Moca
 	Copyright (C) 2003, MIK, zenryaku, Moca, naoh, KEITA, genta
 	Copyright (C) 2005, MIK, genta, Moca, ryoji
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, fon
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -202,12 +202,9 @@ static const DWORD p_helpids2[] = {	//11400
 };
 static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
-	IDC_BUTTON_KEYWORDHELPFILE_REF,	HIDC_BUTTON_KEYWORDHELPFILE_REF,	//キーワードヘルプファイル参照
 	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
-	IDC_CHECK_USEKEYWORDHELP,		HIDC_CHECK_USEKEYWORDHELP,			//キーワードヘルプ機能
 	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
 	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
-	IDC_EDIT_KEYWORDHELPFILE,		HIDC_EDIT_KEYWORDHELPFILE,			//辞書ファイル名
 	IDC_EDIT_TYPEEXTHELP,			HIDC_EDIT_TYPEEXTHELP,				//外部ヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENHELP,		HIDC_BUTTON_TYPEOPENHELP,			//外部ヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_EDIT_TYPEEXTHTMLHELP,		HIDC_EDIT_TYPEEXTHTMLHELP,			//外部HTMLヘルプファイル名	// 2006.08.06 ryoji
@@ -659,6 +656,20 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].pfnCallback = NULL;
 	nIdx++;
 	// 2001.11.17 add end MIK
+
+	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
+	memset( &psp[nIdx], 0, sizeof( PROPSHEETPAGE ) );
+	psp[nIdx].dwSize = sizeof( PROPSHEETPAGE );
+	psp[nIdx].dwFlags = PSP_USETITLE | PSP_HASHELP;
+	psp[nIdx].hInstance = m_hInstance;
+	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_KEYHELP );
+	psp[nIdx].pszIcon = NULL;
+	psp[nIdx].pfnDlgProc = (DLGPROC)PropTypesKeyHelp;
+	psp[nIdx].pszTitle = "キーワードヘルプ";
+	psp[nIdx].lParam = (LPARAM)this;
+	psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+	// 2006.04.10 fon ADD-end
 
 	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
 #ifdef _WIN64
@@ -1429,45 +1440,6 @@ INT_PTR CPropTypes::DispatchEvent_p2(
 					}
 				}
 				return TRUE;
-
-			//	From Here Sept. 12, 2000 JEPRO
-			case IDC_CHECK_USEKEYWORDHELP:	/* キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする */
-				::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Types.m_bUseKeyWordHelp );
-				if( BST_CHECKED == m_Types.m_bUseKeyWordHelp ){
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), TRUE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), TRUE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), TRUE );
-				}else{
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), FALSE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), FALSE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), FALSE );
-				}
-				return TRUE;
-			//	To Here Sept. 12, 2000
-
-			case IDC_BUTTON_KEYWORDHELPFILE_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
-				{
-					CDlgOpenFile	cDlgOpenFile;
-					char			szPath[_MAX_PATH + 1];
-					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
-					if( _IS_REL_PATH( m_Types.m_szKeyWordHelpFile ) ){
-						GetExecutableDir( szPath, m_Types.m_szKeyWordHelpFile );
-					}else{
-						strcpy( szPath, m_Types.m_szKeyWordHelpFile );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						m_hInstance,
-						hwndDlg,
-						"*.*",
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						strcpy( m_Types.m_szKeyWordHelpFile, szPath );
-						::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile );
-					}
-				}
-				return TRUE;
 			case IDC_BUTTON_TYPEOPENHELP:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
@@ -1572,23 +1544,6 @@ void CPropTypes::SetData_p2( HWND hwndDlg )
 	// 2003.06.25 Moca ファイルからの補完機能
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANBYFILE, m_Types.m_bUseHokanByFile );
 
-	/* キーワードヘルプを使用する  */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Types.m_bUseKeyWordHelp );
-//	From Here Sept. 12, 2000 JEPRO キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする
-	if( BST_CHECKED == m_Types.m_bUseKeyWordHelp ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), TRUE );
-	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), FALSE );
-	}
-//	To Here Sept. 12, 2000
-
-	/* キーワードヘルプ 辞書ファイル */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile );
-
 	//@@@ 2002.2.2 YAZAKI
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
@@ -1608,15 +1563,8 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 
 	m_Types.m_bUseHokanByFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANBYFILE );
 
-
 	/* 入力補完 単語ファイル */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, sizeof( m_Types.m_szHokanFile ));
-
-	/* キーワードヘルプを使用する */
-	m_Types.m_bUseKeyWordHelp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEKEYWORDHELP );
-
-	/* キーワードヘルプ 辞書ファイル */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Types.m_szKeyWordHelpFile, sizeof( m_Types.m_szKeyWordHelpFile ));
 
 	//@@@ 2002.2.2 YAZAKI
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, sizeof( m_Types.m_szExtHelp ));
