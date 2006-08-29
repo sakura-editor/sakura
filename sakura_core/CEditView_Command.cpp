@@ -6533,7 +6533,8 @@ bool CEditView::Command_TagsMake( void )
 	//コマンドライン文字列作成(MAX:1024)
 	if (cOsVer.IsWin32NT())
 	{
-		wsprintf( cmdline, "cmd.exe /C \"\"%s\\%s\" %s\"",
+		//	2006.08.04 genta add /D to disable autorun
+		wsprintf( cmdline, "cmd.exe /D /C \"\"%s\\%s\" %s\"",
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
 				options			//ctagsオプション
@@ -6627,7 +6628,6 @@ bool CEditView::Command_TagsMake( void )
 
 						work[ read_cnt ] = '\0';	// Nov. 15, 2003 genta 表示用に0終端する
 						::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-						"\"tags\" はタグファイルではないため上書き出来ません。\n"
 						"タグ作成コマンド実行は失敗しました。\n\n%s", work ); // 2003.11.09 じゅうじ
 
 						return true;
