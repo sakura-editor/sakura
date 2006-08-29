@@ -26,6 +26,7 @@
 #include "CDocLineMgr.h"/// 2002/2/10 aroka
 #include "CMemory.h"/// 2002/2/10 aroka
 #include "etc_uty.h" // Oct. 5, 2002 genta
+#include "CMemoryIterator.h" // 2006.07.29 genta
 
 
 
@@ -593,6 +594,40 @@ bool CLayoutMgr::IsEndOfLine( int nLine, int nPos )
 	return false;
 }
 
+/*!	@brief ファイル末尾のレイアウト位置を取得する
+
+	ファイル末尾まで選択する場合に正確な位置情報を与えるため
+
+	既存の関数では物理行からレイアウト位置を変換する必要があり，
+	処理に無駄が多いため，専用関数を作成
+	
+	@date 2006.07.29 genta
+*/
+void CLayoutMgr::GetEndLayoutPos(int& lX, int& lY)
+{
+	if( 0 == m_nLines || m_pLayoutBot == NULL ){
+		// データが空
+		lX = 0; lY = 0;
+		return;
+	}
+
+	CLayout *btm = m_pLayoutBot;
+	if( btm->m_cEol != EOL_NONE ){
+		//	末尾に改行がある
+		lX = 0;
+		lY = GetLineCount();
+	}
+	else {
+		CMemoryIterator<CLayout> it( btm, GetTabSpace() );
+		int nPosX = 0;
+		while( !it.end() ){
+			it.scanNext();
+			it.addDelta();
+		}
+		lX = it.getColumn();
+		lY = GetLineCount() - 1;
+	}
+}
 
 
 /*!	行内文字削除

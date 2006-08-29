@@ -97,6 +97,8 @@ public:
 	int GetMaxLineSize(void) const { return m_nMaxLineSize; }
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineSize );
+	// Jul. 29, 2006 genta
+	void GetEndLayoutPos(int& lX, int& lY);
 	
 protected:
 	int PrevOrNextWord( int, int, int*, int*, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
