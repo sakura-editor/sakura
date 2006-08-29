@@ -2199,7 +2199,12 @@ void CEditView::Command_SELECTALL( void )
 
 	/* 全体を選択する */
 	//	2005.06.24 Moca
-	SetSelectArea( 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 );
+	//SetSelectArea( 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 );
+	//	Jul. 29, 2006 genta 選択位置の末尾を正確に取得する
+	//	マクロから取得した場合に正しい範囲が取得できないため
+	int nX, nY;
+	m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos(nX, nY);
+	SetSelectArea( 0, 0, nY, nX );
 
 	/* 選択領域描画 */
 	DrawSelectArea();
