@@ -80,6 +80,32 @@
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
 
+
+/*! サブクラス化したツールバーのウィンドウプロシージャ
+	@author ryoji
+	@date 2006.09.06 ryoji
+*/
+static WNDPROC g_pOldToolBarWndProc;	// ツールバーの本来のウィンドウプロシージャ
+
+static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	switch( msg )
+	{
+	// WinXP Visual Style のときにツールバー上でのマウス左右ボタン同時押しで無応答になる
+	//（マウスをキャプチャーしたまま放さない） 問題を回避するために右ボタンを無視する
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+		return 0L;				// 右ボタンの UP/DOWN は本来のウィンドウプロシージャに渡さない
+
+	case WM_DESTROY:
+		// サブクラス化解除
+		::SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)g_pOldToolBarWndProc );
+		break;
+	}
+	return ::CallWindowProc( g_pOldToolBarWndProc, hWnd, msg, wParam, lParam );
+}
+
+
 //	/* メッセージループ */
 //	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
 
@@ -731,6 +757,9 @@ void CEditWnd::CreateToolBar( void )
 		);
 		DestroyToolBar();	// 2006.06.17 ryoji
 	}else{
+		// 2006.09.06 ryoji ツールバーをサブクラス化する
+		g_pOldToolBarWndProc = (WNDPROC)::SetWindowLongPtr( m_hwndToolBar, GWLP_WNDPROC, (LONG_PTR)ToolBarWndProc );
+
 		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0 );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
