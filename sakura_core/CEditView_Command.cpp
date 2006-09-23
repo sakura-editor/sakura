@@ -12,7 +12,7 @@
 	Copyright (C) 2003, MIK, genta, かろと, zenryaku, Moca, ryoji, naoh, KEITA, じゅうじ
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane
+	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -524,7 +524,8 @@ BOOL CEditView::HandleCommand(
 	case F_CHGMOD_EOL_CRLF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CRLF, 0, 0, 0 );break;	//入力する改行コードをCRLFに設定
 	case F_CHGMOD_EOL_LF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_LF, 0, 0, 0 );break;	//入力する改行コードをLFに設定
 	case F_CHGMOD_EOL_CR:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CR, 0, 0, 0 );break;	//入力する改行コードをCRに設定
-	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (enumEOLType)lparam1 );	//入力する改行コードを設定
+	// 2006.09.03 Moca F_CHGMOD_EOLで break 忘れの修正
+	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (enumEOLType)lparam1 );break;	//入力する改行コードを設定
 	// To Here 2003.06.23 Moca
 	case F_CANCEL_MODE:		Command_CANCEL_MODE();break;	//各種モードの取り消し
 
