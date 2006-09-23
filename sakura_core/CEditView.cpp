@@ -4060,18 +4060,12 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	/* マウスホイールによるスクロール行数をレジストリから取得 */
 	nRollLineNum = 6;
 	/* レジストリの存在チェック */
-	HKEY hkReg;
-	DWORD dwType;
-	DWORD dwDataLen;	// size of value data
-	char szValStr[1024];
-	if( ERROR_SUCCESS == ::RegOpenKeyEx( HKEY_CURRENT_USER, "Control Panel\\desktop", 0, KEY_READ, &hkReg ) ){
-		dwType = REG_SZ;
-		dwDataLen = sizeof( szValStr ) - 1;
-		if( ERROR_SUCCESS == ::RegQueryValueEx( hkReg, "WheelScrollLines", NULL, &dwType, (unsigned char *)szValStr, &dwDataLen ) ){
-//			MYTRACE( "szValStr=[%s]\n", szValStr );
-			nRollLineNum = ::atoi( szValStr );
-		}
-		::RegCloseKey( hkReg );
+	// 2006.06.03 Moca ReadRegistry に書き換え
+	unsigned int uDataLen;	// size of value data
+	char szValStr[256];
+	uDataLen = sizeof(szValStr) - 1;
+	if( ReadRegistry( HKEY_CURRENT_USER, "Control Panel\\desktop", "WheelScrollLines", szValStr, uDataLen ) ){
+		nRollLineNum = ::atoi( szValStr );
 	}
 	if( -1 == nRollLineNum ){/* 「1画面分スクロールする」 */
 		nRollLineNum = m_nViewRowNum;	// 表示域の行数
