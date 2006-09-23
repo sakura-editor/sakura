@@ -2499,6 +2499,54 @@ void CEditView::AdjustScrollBars( void )
 	return;
 }
 
+/*!	@brief 選択を考慮した行桁指定によるカーソル移動
+
+	選択状態チェック→カーソル移動→選択領域更新という処理が
+	あちこちのコマンドにあるのでまとめることにした．
+	また，戻り値はほとんど使われていないのでvoidにした．
+
+	選択状態を考慮してカーソルを移動する．
+	非選択が指定された場合には既存選択範囲を解除して移動する．
+	選択が指定された場合には選択範囲の開始・変更を併せて行う．
+	インタラクティブ操作を前提とするため，必要に応じたスクロールを行う．
+	カーソル移動後は上下移動でもカラム位置を保つよう，
+	m_nCaretPosX_Prevの更新も併せて行う．
+
+	@param nWk_CaretPosX	[in] 移動先桁位置(0～)
+	@param nWk_CaretPosY	[in] 移動先行位置(0～)
+	@param bSelect			[in] TRUE: 選択する/ FALSE: 選択解除
+	@param nCaretMarginRate	[in] 縦スクロール開始位置を決める値
+
+
+	@date 2006.07.09 genta 新規作成
+*/
+void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bSelect, int nCaretMarginRate )
+{
+	if( bSelect ){
+		if( !IsTextSelected() ){	/* テキストが選択されているか */
+			/* 現在のカーソル位置から選択を開始する */
+			BeginSelectArea();
+		}
+	}else{
+		if( IsTextSelected() ){	/* テキストが選択されているか */
+			/* 現在の選択範囲を非選択状態に戻す */
+			DisableSelectArea( TRUE );
+		}
+	}
+	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, TRUE );
+	m_nCaretPosX_Prev = m_nCaretPosX;
+	if( bSelect ){
+		/*	現在のカーソル位置によって選択範囲を変更．
+		
+			2004.04.02 Moca 
+			キャレット位置が不正だった場合にMoveCursorの移動結果が
+			引数で与えた座標とは異なることがあるため，
+			nPosX, nPosYの代わりに実際の移動結果を使うように．
+		*/
+		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+	}
+	
+}
 
 
 

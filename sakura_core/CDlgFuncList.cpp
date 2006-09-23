@@ -1920,7 +1920,9 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )	//2002.02.08 hor 引数追加
 			poCaret.x = 0;
 			poCaret.y = nLineTo - 1;
 			memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
-			::SendMessage( ::GetParent( ::GetParent( m_hwndParent ) ), MYWM_SETCARETPOS, 0, 0 );
+			//	2006.07.09 genta 移動時に選択状態を保持するように
+			::SendMessage( ::GetParent( ::GetParent( m_hwndParent ) ),
+				MYWM_SETCARETPOS, 0, PM_SETCARETPOS_KEEPSELECT );
 			if( bCheckAutoClose ){
 				/* アウトライン ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
