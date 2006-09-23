@@ -799,16 +799,23 @@ static char* strcnv(char *str)
 /*! フルパスからファイル名を返す
 
 	@date 2006.04.10 fon 新規作成
+	@date 2006.09.14 genta ディレクトリがない場合に最初の1文字が切れないように
 */
 static char* GetFileName(const char *fullpath)
 {
-	char *p1 = (char *)fullpath;
-	char *p2 = p1;
-	while(NULL != p2){
-		p1 = p2+1;
-		p2 = strchr(p1,'\\');
+	char *p, *pszName;
+	pszName = p = (char *)fullpath;
+	while( *p != '\0'  ){
+		if( _IS_SJIS_1( (unsigned char)*p ) && _IS_SJIS_2( (unsigned char)p[1] ) ){
+			p+=2;
+		}else if( *p == '\\' ){
+			pszName = p + 1;
+			p++;
+		}else{
+			p++;
+		}
 	}
-	return p1;
+	return pszName;
 }
 
 /*[EOF]*/
