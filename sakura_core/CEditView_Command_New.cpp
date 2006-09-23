@@ -2117,15 +2117,8 @@ re_do:;								// hor
 	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, 1 /* 後方検索 */, &nY)){
 		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
-		if(m_bSelectingLock){
-			if(!IsTextSelected()) BeginSelectArea();
-		}else{
-			if( IsTextSelected()) DisableSelectArea( TRUE );
-		}
-		MoveCursor( nX, nY, TRUE );
-		if(m_bSelectingLock){
-			ChangeSelectAreaByCurrentCursor( nX, nY );
-		}
+		//	2006.07.09 genta 新規関数にまとめた
+		MoveCursorSelecting( nX, nY, m_bSelectingLock );
 	}
     // 2002.01.26 hor
 	if(m_pShareData->m_Common.m_bSearchAll){
@@ -2166,15 +2159,8 @@ re_do:;								// hor
 	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, 0 /* 前方検索 */, &nY)){
 		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
-		if(m_bSelectingLock){
-			if(!IsTextSelected()) BeginSelectArea();
-		}else{
-			if( IsTextSelected()) DisableSelectArea( TRUE );
-		}
-		MoveCursor( nX, nY, TRUE );
-		if(m_bSelectingLock){
-			ChangeSelectAreaByCurrentCursor( nX, nY );
-		}
+		//	2006.07.09 genta 新規関数にまとめた
+		MoveCursorSelecting( nX, nY, m_bSelectingLock );
 	}
     // 2002.01.26 hor
 	if(m_pShareData->m_Common.m_bSearchAll){
@@ -2768,21 +2754,12 @@ void CEditView::Command_JUMP_SRCHSTARTPOS(void)
 	{
 		int x, y;
 		/* 範囲選択中か */
-		if( IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
-		}
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
 			m_nSrchStartPosX_PHY,
 			m_nSrchStartPosY_PHY,
 			&x, &y );
-		MoveCursor( x, y, TRUE );
-		//	2004.04.03 Moca
-		/*
-			検索開始位置に戻ったあとのカーソル上下移動で
-			戻る前の桁位置にカーソルが移動しないように．
-		*/	
-		m_nCaretPosX_Prev = m_nCaretPosX;
+		//	2006.07.09 genta 選択状態を保つ
+		MoveCursorSelecting( x, y, m_bSelectingLock );
 	}
 	else
 	{

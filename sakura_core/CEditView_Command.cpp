@@ -1197,18 +1197,7 @@ void CEditView::Command_GOLINETOP( int bSelect, int lparam )
 	if( lparam & 4 ){
 		bSelect = TRUE;
 	}
-	
-	if( bSelect ){
-		if( !IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在のカーソル位置から選択を開始する */
-			BeginSelectArea();
-		}
-	}else{
-		if( IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
-		}
-	}
+
 	if ( lparam & 8 ){
 		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
@@ -1255,12 +1244,8 @@ void CEditView::Command_GOLINETOP( int bSelect, int lparam )
 		}
 	}
 
-	MoveCursor( nCaretPosX, nCaretPosY, TRUE );
-	m_nCaretPosX_Prev = nCaretPosX;
-	if( bSelect ){
-		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( nCaretPosX, m_nCaretPosY );
-	}
+	//	2006.07.09 genta 新規関数にまとめた
+	MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect );
 }
 
 
@@ -1322,35 +1307,14 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 /* ファイルの先頭に移動 */
 void CEditView::Command_GOFILETOP( int bSelect )
 {
-	if( bSelect ){
-		if( !IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在のカーソル位置から選択を開始する */
-			BeginSelectArea();
-		}
-		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, 0 );
-	}else{
-		if( IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
-		}
-	}
 	/* 先頭へカーソルを移動 */
 	//	Sep. 8, 2000 genta
 	AddCurrentLineToHistory();
 
 	if ( !m_bBeginBoxSelect )	m_nCaretPosX = 0;	//	通常は、(0, 0)へ移動。ボックス選択中は、(m_nCaretPosX, 0)へ移動
 
-	MoveCursor( m_nCaretPosX, 0, TRUE );
-	m_nCaretPosX_Prev = m_nCaretPosX;
-
-	//	Feb. 21, 2004 gis_dur 選択しながら文書先頭へ移動すると
-	//	選択範囲が変になる
-	if( bSelect ){
-		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, 0 );
-	}
-	return;
+	//	2006.07.09 genta 新規関数にまとめた
+	MoveCursorSelecting( m_nCaretPosX, 0, bSelect );
 }
 
 
@@ -4097,16 +4061,10 @@ void CEditView::Command_JUMP( void )
 				nLineNum = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 			}
 		}
-		/* 範囲選択中か */
-		if( IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
-		}
-		/* カーソルを選択開始位置に移動 */
 		//	Sep. 8, 2000 genta
 		AddCurrentLineToHistory();
-		MoveCursor( 0, nLineNum - 1, TRUE, _CARETMARGINRATE / 3 );
-		m_nCaretPosX_Prev = m_nCaretPosX;
+		//	2006.07.09 genta 選択状態を解除しないように
+		MoveCursorSelecting( 0, nLineNum - 1, m_bSelectingLock, _CARETMARGINRATE / 3 );
 		return;
 	}
 	if( 0 >= nLineNum ){
@@ -4247,17 +4205,10 @@ void CEditView::Command_JUMP( void )
 		&nPosX,
 		&nPosY
 	);
-	/* 範囲選択中か */
-	if( IsTextSelected() ){	/* テキストが選択されているか */
-		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
-	}
-	/* カーソルを選択開始位置に移動 */
 	//	Sep. 8, 2000 genta
 	AddCurrentLineToHistory();
-	MoveCursor( nPosX, nPosY, TRUE, _CARETMARGINRATE / 3 );
-	m_nCaretPosX_Prev = m_nCaretPosX;
-	return;
+	//	2006.07.09 genta 選択状態を解除しないように
+	MoveCursorSelecting( nPosX, nPosY, m_bSelectingLock, _CARETMARGINRATE / 3 );
 }
 
 
@@ -9602,7 +9553,8 @@ void CEditView::Command_BRACKETPAIR( void )
 	*/
 	if( SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) ){	// 02/09/18 ai
 		//	2005.06.24 Moca
-		MoveCursor( nCol, nLine, TRUE );
+		//	2006.07.09 genta 表示更新漏れ：新規関数にて対応
+		MoveCursorSelecting( nCol, nLine, m_bSelectingLock );
 	}
 	else{
 		//	失敗した場合は nCol/nLineには有効な値が入っていない.
@@ -9641,7 +9593,9 @@ void CEditView::Command_JUMPHIST_PREV( void )
 			m_cHistory->GetCurrent().GetLine(),
 			&x, &y );
 		//	2005.06.24 Moca
-		MoveCursor( x, y, TRUE );
+		//MoveCursor( x, y, TRUE );
+		//	2006.07.09 genta 選択を考慮
+		MoveCursorSelecting( x, y, m_bSelectingLock );
 	}
 }
 
@@ -9658,7 +9612,9 @@ void CEditView::Command_JUMPHIST_NEXT( void )
 			m_cHistory->GetCurrent().GetLine(),
 			&x, &y );
 		//	2005.06.24 Moca
-		MoveCursor( x, y, TRUE );
+		//MoveCursor( x, y, TRUE );
+		//	2006.07.09 genta 選択を考慮
+		MoveCursorSelecting( x, y, m_bSelectingLock );
 	}
 }
 //	To HERE Sep. 8, 2000 genta

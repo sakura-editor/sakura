@@ -149,6 +149,8 @@ public:
 	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
 	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
 	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
+	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
+	void MoveCursorSelecting( int, int, BOOL, int = _CARETMARGINRATE );
 	BOOL GetAdjustCursorPos( int *, int *);	// 正しいカーソル位置を算出する
 	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
 	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */

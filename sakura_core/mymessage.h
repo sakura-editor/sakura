@@ -53,6 +53,12 @@
 
 /*! カーソル位置変更通知 */
 #define	MYWM_SETCARETPOS	(WM_APP+204)
+/// MYWM_SETCARETPOSメッセージのLPARAM
+enum e_PM_SETCARETPOS_SELECTSTATE {
+	PM_SETCARETPOS_NOSELECT		= 0, /*!<選択解除 */
+	PM_SETCARETPOS_SELECT		= 1, /*!<選択開始・変更 */
+	PM_SETCARETPOS_KEEPSELECT	= 2, /*!<現在の選択状態を保って移動 */
+};
 
 /*! カーソル位置取得要求 */
 #define	MYWM_GETCARETPOS	(WM_APP+205)

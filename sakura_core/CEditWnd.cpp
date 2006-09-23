@@ -1606,32 +1606,36 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case MYWM_SETCARETPOS:	/* カーソル位置変更通知 */
-		ppoCaret = (POINT*)m_pShareData->m_szWork;
-		/* 範囲選択中か */
-		if( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].DisableSelectArea( TRUE );
-		}
-		/*
-		カーソル位置変換
-		 物理位置(行頭からのバイト数、折り返し無し行位置)
-		→
-		 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-		*/
-		m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
-			ppoCaret->x,
-			ppoCaret->y,
-			&nCaretPosX,
-			&nCaretPosY
-		);
-		/* カーソル移動 */
-		if( nCaretPosY >= m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
-			/*ファイルの最後に移動 */
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, FALSE, 0, 0, 0, 0 );
-		}else{
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE, _CARETMARGINRATE / 3 );
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX_Prev =
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX;
+		{
+			//	2006.07.09 genta LPARAMに新たな意味を追加
+			//	bit 0 (MASK 1): (bit 1==0のとき) 0/選択クリア, 1/選択開始・変更
+			//	bit 1 (MASK 2): 0: bit 0の設定に従う．1:現在の選択ロックs状態を継続
+			//	既存の実装では どちらも0なので強制解除と解釈される．
+			//	呼び出し時はe_PM_SETCARETPOS_SELECTSTATEの値を使うこと．
+			int bSelect = lParam & 1;
+			if( lParam & 2 ){
+				// 現在の状態をKEEP
+				bSelect = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSelectingLock;
+			}
+			
+			ppoCaret = (POINT*)m_pShareData->m_szWork;
+			//	2006.07.09 genta 強制解除しない
+			/*
+			カーソル位置変換
+			 物理位置(行頭からのバイト数、折り返し無し行位置)
+			→
+			 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+			*/
+			m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
+				ppoCaret->x,
+				ppoCaret->y,
+				&nCaretPosX,
+				&nCaretPosY
+			);
+			//	2006.07.09 genta 選択範囲を考慮して移動
+			//	MoveCursorの位置調整機能があるので，最終行以降への
+			//	移動指示の調整もMoveCursorにまかせる
+			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
 		}
 		return 0L;
 
