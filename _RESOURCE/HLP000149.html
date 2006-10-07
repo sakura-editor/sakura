@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>改行コードについて</TITLE>
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>改行コードについて</h2>
+■<font color="blue">取り扱える改行コード</font><br>
+複数の改行コードが混在したファイルも取り扱えるようにする<br>
+<div class=li200>
+<strike>CR00LF00	( 0d 00 0a 00 )</strike>	<img src="images/hint.png">廃止しました。(sakura:1.3.4.1)<br>
+CRLF	( 0d 0a )<br>
+LFCR	( 0a 0d )<br>
+CR	( 0d )<br>
+LF	( 0a )<br>
+</div><br>
+■<font color="blue">ファイル読み込み時の処理</font><br>
+ファイルを読み込む際は改行単位で行バッファに追加していく。<br>
+<div class=li200>
+・ファイルの先頭から1バイトずつサーチし、CRかLFが出現するまでループする。<br>
+・取り扱える改行コードのどれに該当するのか調べる。<br>
+・行テキストと改行コードの情報を行バッファに格納する。<br>
+・ファイルの終わりまで繰り返す。<br>
+・ファイルの最後に改行なしの行がある場合も、行テキストと改行コードなしの情報を行バッファに格納する。<br>
+・改行コードの種類を判別する。これにより、編集時にEnter等で挿入される改行コードを決定する。<br>
+<strike>・複数の改行コードが検出された場合は、編集時にEnter等で挿入される改行コードを、ユーザーが一覧から一つ選択する。<br>
+<b><font color="blue">現在は選択できない(「挿入すべき改行コード」をデータとして内部的に保持しているが、変更するインターフェイスが用意されていないので)。</font><br>
+・デフォルトでは“そのファイルを開いた時、１行目の末尾に使われていた改行コード”になる。</b></strike><br>
+<br>
+<b><font color="blue">ファイルを開いた後、変更するコマンドを追加しました。</font></b><br>
+</div><br>
+■<font color="blue">表示レイアウト情報作成時の処理</font><br>
+・行バッファから以下の情報をもとに、表示レイアウト情報を作成する（レイアウトバッファ）<br>
+  TAB幅、コメント記号、文字列記述方法、折り返し桁数、等<br>
+<br>
+■<font color="blue">クリップボードへコピーする処理</font><br>
+<font color="green">矩形選択時</font><br>
+<div class=li200>"<font color="red">MSDEVColumnSelect</font>"形式のデータをクリップボードに格納<br>
+データ内容不定<br>
+<font color="red">CF_TEXT</font>形式のデータをクリップボードに格納<b><font color="blue">現在はCF_OEMTEXT形式</font></b><br>
+選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加<br>
+すべての改行コードをCRLFに統一<br>
+null文字(0x00)をスペース(0x20)に変換<br>
+"<font color="red">SAKURAClip</font>"形式のデータをクリップボードに格納<br>
+先頭0～3の4バイトがint型のデータ長(n)<br>
+先頭4～4 + n - 1 のnバイトがデータ(バイナリ含む)<br>
+選択領域の各行が改行を含む場合はそのまま、改行を含まない場合はCRLFを付加<br>
+</div><br>
+<font color="green">線形選択時</font><br>
+<div class=li200><font color="red">CF_TEXT</font>形式のデータをクリップボードに格納<b><font color="blue">現在はCF_OEMTEXT形式</font></b><br>
+すべての改行コードをCRLFに<strike>統一する。</strike><b><font color="blue">統一しない。</font></b><br>
+null文字(0x00)をスペース(0x20)に<strike>変換する。</strike><b><font color="blue">変換しない。</font></b><br>
+"<font color="red">SAKURAClip</font>"形式のデータをクリップボードに格納<br>
+先頭0～3の4バイトがint型のデータ長(n)<br>
+先頭4～4 + n - 1 のnバイトがデータ(バイナリ含む)<br>
+</div><br>
+■<font color="blue">クリップボードから貼り付ける処理</font><br>
+<div class=li200>クリップボードの形式を調べる<br>
+・"<font color="red">MSDEVColumnSelect</font>"形式がある場合は矩形貼り付けとする<br>
+・"<font color="red">SAKURAClip</font>"形式がある場合は、そのデータを取り出しそのまま貼り付けデータとする。<br>
+<font color="red">CF_TEXT</font>形式のデータがある場合、そのデータを取り出しそのまま貼り付けデータとする。<b><font color="blue">現在はCF_OEMTEXT形式</font></b><br>
+すべての改行コードは [Enter] キー入力時に挿入される改行コードに<strike>統一する。</strike><b><font color="blue">統一しない。</font></b><br>
+</div><br>
+■<font color="blue">[Enter] キー入力時の処理</font><br>
+<div class=li200>挿入される改行コードの種類はファイル読み込み時に決定する。<br>
+[Enter] キー入力時は、その改行コードに変換して格納する。<br>
+<br>
+<font color="blue">アンドゥ・リドゥバッファへの改行コード格納形式</font><br>
+前バージョンは改行コードを\rで表現していた。<br>
+新バージョンはCRLFやLFCR等をそのまま格納する。<br>
+バッファからの取り出し処理の際、複数種類の改行コードを判別する。<br>
+</div><br>
+</BODY></HTML>

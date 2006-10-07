@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>マクロについて</TITLE>
+<META NAME="MS-HKWD" CONTENT="マクロについて">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>マクロについて</h2>
+<a href="HLP000125.html">キーマクロ</a>によってユーザの操作をマクロとして記録することができますが、この他にマクロファイルを直接記述することによって、キーマクロで記録されないいくつかの機能が使えるようになります。<br>
+<br>
+<img src="images/hint.png">マクロの実行に<b>PPA.DLL</b>を使用できるようになりました。(sakura:1.2.106.1 以降)<br>
+PPAから利用する場合、「<b>S_関数名</b>」と、S_をつけてください。<br>
+<div class=li200>
+S_InsText("string") // 文字列挿入<br>
+S_ExecCommand( "command" ) // コマンド実行<br>
+S_Up(行数) // 指定行数上に<br>
+S_GoLineTop(flag) // 1: 空白に関係なく桁位置1に移動，8: 選択して移動<br>
+</div><br>
+【例】<br>
+<div class=li200>//一行挿入のマクロ<br>
+S_GoLineTop(1);	/* 行頭に移動(折り返し単位) */<br>
+S_Char(13);	/* 文字入力 */<br>
+S_Up();	/* カーソル上移動 */<br>
+</div><br>
+●PPA.DLL<br>
+PPA.DLLがインストールされている場合、マクロで制御構文や変数が利用できます。<br>
+ダウンロードは以下のサイトから可能です。<br>
+<div class=li200>
+<a href="http://homepage1.nifty.com/ht_deko/junkbox.html#PPA" target=_blank>http://homepage1.nifty.com/ht_deko/junkbox.html#PPA</a><br>
+</div><br>
+<img src="images/hint.png">マクロの実行に<b>WSH</b>を使用できるようになりました。(sakura:1.3.3.0以降)<br>
+Windows95系OSでWSHが一応動くようになりました。(sakura:1.4.3.4以降)<br>
+<br>
+WSHから利用する場合、「<b>Editor.関数名</b>」と、オブジェクト名をつけてください。<br>
+<div class=li200>エディタを操作するためのオブジェクトは Editor です。メソッド名及びその引数はキーボードマクロと同じです。<br>
+WScript オブジェクトはいきなりは使えません。CreateObjectでオブジェクトを取得して使ってください。<br>
+ウィンドウを出すMessageBox, InputBoxは使えません。<br>
+</div><br>
+<img src="images/hint.png">VBScriptからMsgBox, Inputが使用できるようになりました。(sakura:1.5.7.0以降)<br>
+</BODY></HTML>

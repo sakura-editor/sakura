@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>コントロールコード</TITLE>
+<META NAME="MS-HKWD" CONTENT="コントロールコード">
+<META NAME="MS-HKWD" CONTENT="コントロールコード入力">
+<META NAME="MS-HKWD" CONTENT="CtrlCodeDialog">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>コントロールコード</h2>
+キーボードからでは入力の困難なコントロールコードをカーソル位置に挿入します。<br>
+CR/LFは改行コードに変換されます。<br>
+<br>
+<img src="images/ControlCode.png"><br>
+<br>
+<img src="images/hint.png">ヒント<br>
+ダイアログの「表記」の列の文字を押すとその文字に対応するコードを挿入することができます。<br>
+例えば @ を入力すると NULL が挿入されます。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: CtrlCodeDialog( );<br>
+・記録:	×<br>
+</BODY></HTML>

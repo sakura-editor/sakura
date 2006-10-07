@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>開く</TITLE>
+<META NAME="MS-HKWD" CONTENT="開く">
+<META NAME="MS-HKWD" CONTENT="FileOpen">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>開く</h2>
+ディスクにあるファイルを開くことができます。<br>
+<br>
+<img src="images/OpenFile.png"><br>
+<br>
+・<b>[読み取り専用ファイルとして開く]</b><br>
+これをチェックすると、開いたファイルを編集することはできません。<br>
+閲覧目的でファイルを開きたい場合、大事なファイルをうっかり編集してしまわないようにチェックするといいでしょう。<br>
+<br>
+・<b>[文字コードセット]</b><br>
+<a href="HLP000271.html">文字コードセット</a>は、以下の中から選択できます。<br>
+開くときの文字コード指定は、開くファイルがどの文字コードセットで書かれているのかを指定します。<br>
+<br>
+また自動判定機能を使えば、文字コードセットの違いを意識せずに、読み込みや編集・保存ができます。<br>
+<div class=li200>
+◆<b>自動選択</b><br>
+デフォルトです。<br>
+文字コードセットを自動的に認識します。<br>
+ファイルの先頭をある程度まで読み込み、各文字コードセット特有のデータの出現数を調べ、文字コードセットを判断します。<br>
+文字コードの認識を間違えることがあるかもしれません。<br>
+認識処理を行うため、読み込みに時間が掛かります。<br>
+最近のパソコンの動作速度ならば、十分な速度が得られると思います。<br>
+<b>Shift_JISのファイルでも、半角カタカナが含まれている場合、EUCと区別がつかないため、よく間違えます。<br>
+半角カタカナらしき箇所が文字化けしている場合、たぶんまず間違いなくほとんどがこのケースだと思います。<br>
+半角カタカナを使わなくしたりEUCを撲滅したりして下さい。</b><br>
+<br>
+◆<b>SJIS</b><br>
+Shift_JISのファイルとして読み込みます。<br>
+Shift_JISはWindowsの標準的な文字コードなので、変換をせずに読み込みます。<br>
+文字コードの変換を行いたくない場合は、これを選んで下さい。<br>
+<br>
+◆<b>JIS</b><br>
+JISコードのファイルとして読み込みます。<br>
+ファイルを読み込んだら内部的にShift_JISに変換して管理します。<br>
+<br>
+◆<b>EUC</b><br>
+EUCコードのファイルとして読み込みます。<br>
+ファイルを読み込んだら内部的にShift_JISに変換して管理します。<br>
+<br>
+◆<b>Unicode</b><br>
+Unicodeなコードのファイルとして読み込みます。<br>
+ファイルを読み込んだら内部的にShift_JISに変換して管理します。<br>
+たぶん日本語しか処理できません。<br>
+よく知りません。<br>
+<br>
+◆<b>UnicodeBE</b><br>
+Unicode(Big Endian)なコードのファイルとして読み込みます。<br>
+ファイルを読み込んだら内部的にShift_JISに変換して管理します。<br>
+たぶん日本語しか処理できません。<br>
+よく知りません。<br>
+<br>
+◆<b>UTF-8</b><br>
+Unicode(UTF-8)なコードのファイルとして読み込みます。<br>
+ファイルを読み込んだら内部的にShift_JISに変換して管理します。<br>
+たぶん日本語しか処理できません。<br>
+よく知りません。<br>
+<br>
+◆<b>UTF-7</b><br>
+Unicode(UTF-7)なコードのファイルとして読み込みます。<br>
+ファイルを読み込んだら内部的にShift_JISに変換して管理します。<br>
+たぶん日本語しか処理できません。<br>
+よく知りません。<br>
+</div><br>
+・<b>[最近のファイル]</b><br>
+最近使ったファイルの一覧を<b>アルファベット順</b>に見ることができます。<br>
+<br>
+・<b>[最近のフォルダ]</b><br>
+最近使ったフォルダの一覧を<b>アルファベット順</b>に見ることができます。<br>
+フォルダを選択すると、現在のフォルダが変化します。<br>
+<br>
+・<b>[ファイルの種類]</b><br>
+ファイルの種類には、すべてのファイル、テキストファイル以外に、タイプ別設定で設定しているタイプ（拡張子）がセットされています。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+<a href="HLP000275.html">開く（ドロップダウン）</a>をツールバーに登録すると開くボタンの横に、最近使ったファイルのドロップダウンメニューが表示され直接選択できます。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+ダイアログ表示時にプレースバーを表示します。(sakura:1.5.8.0以降)<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文:	FileOpen( str1 : String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
+・記録:	×<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+開くのダイアログをマクロで出すことはできません。<br>
+またマクロで文字コードを指定することもできません。<br>
+</BODY></HTML>

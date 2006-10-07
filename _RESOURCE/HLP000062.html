@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>置換</TITLE>
+<META NAME="MS-HKWD" CONTENT="置換">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>置換</h2>
+文字列置換用のダイアログを開きます。文字列の置換を行います。<br>
+検索にもあるオプションは、<a href="HLP000059.html">検索</a>と同じです。<br>
+<div class=li200>
+<b>(置換前)</b> …… 置換前の文字列を指定します。<br>
+<b>(置換後)</b> …… 置換後の文字列を指定します。<br>
+□<b>クリップボードから貼り付ける</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換後の文字列のかわりに、クリップボードのテキストで代用します。<br>
+□<b>単語単位で探す</b><br>
+□<b>英大文字と小文字を区別する</b><br>
+□<a href="HLP000006.html"><b>正規表現</b></a> 	※<br>
+■<b>見つからないときにメッセージを表示</b><br>
+■<b>置換ダイアログを自動的に閉じる</b><br>
+□<b>先頭（末尾）から再検索する</b><br>
+</div><br>
+<b>&lt;置換対象&gt;</b><br>
+置換前の文字列と、置換後の文字列の扱いを設定します。<br>
+<div class=li200>◎<b>選択文字列</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列を、置換後の文字列に置き換えます。<br>
+○<b>選択始点挿入</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列の前に、置換後の文字列を挿入します。<br>
+○<b>選択終点追加</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列の後に、置換後の文字列を追加します。<br>
+</div><br>
+<b>&lt;範囲&gt;</b><br>
+<div class=li200>○<b>選択範囲</b><br>
+◎<b>ファイル全体</b><br>
+</div><br>
+<div class=li200>
+<b>[上検索]</b> ボタン …… カーソル位置よりも前を検索します。<br>
+<b>[下検索]</b> ボタン …… カーソル位置よりも後ろを検索します。<br>
+<b>[該当行マーク]</b> ボタン …… 検索した行をすべてブックマークに設定します。<br>
+<b>[置換]</b> ボタン …… 下検索で見つかった検索語を置換し、次の検索語に移動します。<br>
+<b>[すべて置換]</b> ボタン … ファイル全体で見つかった検索語をすべて置換します。[置換]の繰り返し実行と同じ動作です。<br>
+<b>[すべて行置換]</b> ボタン … ファイル全体で見つかった検索語をすべて置換します。(sakura:1.5.10.0以降)<br>
+</div><br>
+<img src="images/Replace.png"><br>
+<br>
+<img src="images/hint.png">ヒント<br>
+「すべて置換」と「すべて行置換」では行頭を含む置換による削除操作で、結果が異なります。<br>
+  (例)「ababab」に対して「^ab」を「」に置換すると<br>
+  <b>[すべて置換]</b>	「ababab」が削除されます。<br>
+  <b>[すべて行置換]</b>	行頭の「ab」だけが削除されます。<br>
+<br>
+<font color="blue">※正規表現は、<a href="HLP000006.html">BREGEXP.DLL</a>というフリーソフトウェアによって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ReplaceDialog( );<br>
+・記録:	実行した[<a href="HLP000061.html">上検索</a>]、[<a href="HLP000060.html">下検索</a>]、[<a href="HLP000292.html">置換</a>]、[<a href="HLP000293.html">すべて置換</a>]、[<a href="HLP000296.html">すべて行置換</a>]で記録<br>
+</BODY></HTML>

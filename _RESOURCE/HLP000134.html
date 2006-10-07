@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>ステータスバーを表示</TITLE>
+<META NAME="MS-HKWD" CONTENT="ステータスバーを表示">
+<META NAME="MS-HKWD" CONTENT="表示中のステータスバーを隠す">
+<META NAME="MS-HKWD" CONTENT="ステータスバーの表示／非表示">
+<META NAME="MS-HKWD" CONTENT="ShowStatusbar">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>ステータスバーを表示、表示中のステータスバーを隠す</h2>
+ステータスバーの表示／非表示を切り替えます。<br>
+<br>
+ステータスバー上のマウスクリックに対応しています。(sakura:1.4.3.7以降)<br>
+<div class=li200><a href="HLP000046.html">挿入／上書きの切り替え</a>，<a href="HLP000125.html">マクロの記録開始・終了</a>がダブルクリックで行えます。<br>
+<a href="HLP000285.html">入力改行コード</a>位置での右クリックでメニューが表示されます。<br>
+</div><br>
+選択中に範囲の行数・バイト数がステータスバーに表示されます。ただし、ステータスバー非表示時は、メニュー横に表示されません。 (sakura:1.5.4.0以降)<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ShowStatusbar( );<br>
+・記録:	×<br>
+</BODY></HTML>

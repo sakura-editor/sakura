@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>コマンドラインオプション</TITLE>
+<META NAME="MS-HKWD" CONTENT="コマンドラインオプション">
+<META NAME="MS-HKWD" CONTENT="起動時オプション">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>コマンドラインオプション</h2>
+ここに挙げたコマンドラインオプションは、サクラエディタが内部的に使用するものです。<br>
+<div class=li200>
+・<font color="red">誤った指定をした場合等の動作は全く保証しません</font>。<br>
+・<font color="red">オプションは英大文字小文字を区別します</font>。<br>
+・<font color="blue">オプションで使う'='(イコール)の代わりに':'(コロン)を使うこともできます。</font><br>
+Windows95/98でオプションを環境変数に設定する場合は'='が使えないので':'を使って下さい。<br>
+</div><br>
+------------------------------<br>
+■ファイルオープンに関するオプション<br>
+------------------------------<br>
+<div class=li200>
+[ファイル名]	編集するファイルを指定。一つだけ指定可能。""で囲ったほうがいいです。<br>
+-X=	ファイルを開いたときのカーソルの桁位置を指定<br>
+-Y=	ファイルを開いたときのカーソルの行位置を指定<br>
+-VX=	スクロール：ウィンドウ左端の桁位置<br>
+-VY=	スクロール：ウィンドウ上端の行位置<br>
+-CODE=	文字コード種別 (0=SJIS, 1=JIS, 2=EUC, 3=Unicode, 4=UTF-8, 5=UTF-7, 6=UnicodeBE, 99=自動判別)<br>
+-TYPE=	タイプ別設定の強制指定。拡張子で指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例) -TYPE=txt&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定をテキストで開く<br>
+-R	読み取り専用で開く<br>
+-SX=	ウィンドウの幅を指定します。<br>
+-SY=	ウィンドウの高さを指定します。<br>
+-WX=	ウィンドウ位置のX座標(1開始)。<br>
+-WY=	ウィンドウ位置のY座標(1開始)。<br>
+</div><br>
+------------------------------<br>
+■単独で使用するオプション<br>
+------------------------------<br>
+<div class=li200>
+-NOWIN		タスクトレイのみ起動。既にサクラエディタが起動している場合は無効<br>
+-DEBUGMODE	アウトプット用のウィンドウとして起動<br>
+</div><br>
+Windowsの起動と同時にサクラエディタを常駐したい場合、ショートカットのプロパティでリンク先のexeに -NOWIN を指定してスタートアップフォルダに入れておくといいでしょう。<br>
+<br>
+------------------------------<br>
+■Grepに関するオプション<br>
+------------------------------<br>
+<div class=li200>
+-GREPMODE	Grep実行モードで起動<br>
+&nbsp;&nbsp;&nbsp;&nbsp;以下のオプションは -GREPMODE と同時に指定します<br>
+-GKEY=	Grepの検索条件<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"'で囲む。条件中の'"'は二つの連続した'"'にする<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例) -GKEY="printf("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;「printf(」を検索<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例) -GKEY="printf( ""%s"&nbsp;&nbsp;&nbsp;&nbsp;「printf( "%s」を検索<br>
+-GFILE=	Grepの検索対象のファイル<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'"'で囲む。条件中の'"'は二つの連続した'"'にする<br>
+-GFOLDER=	Grepの検索対象のフォルダ<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'"'で囲む。条件中の'"'は二つの連続した'"'にする<br>
+-GREPDLG	サクラエディタが起動すると同時にGrepダイアログを表示します。<br>
+-GCODE=	Grepでの文字コードを指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-CODEと同じように数字で指定します。<br>
+-GOPT=	[S][L][R][P][W][1|2][K]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Grepのオプション<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[S] サブフォルダからも検索<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[L] 大文字と小文字を区別<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[R] 正規表現<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[P] 該当行を出力／該当部分だけ出力<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[W] 単語単位で探す<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[1|2] 結果出力形式。1か2のどちらかを指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(1=ノーマル、2=ファイル毎)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[K] -GCODE=99と同じ意味です。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;互換性のためだけに残されています。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例) -GOPT=SRK<br>
+</div><br>
+-------------------------------------------------------------<br>
+<img src="images/hint.png">ヒント<br>
+エクスプローラ(フォルダウィンドウ)の送るメニューや、IEのソースの表示ではコマンドラインオプションを設定しても、無視されてしまいます。これを回避するにはヘルパーアプリケーションが必要です。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+数字等を指定するコマンドラインオプションは-CODE="4"のようにダブルクオートで囲って指定できません。(sakura:1.3.5.6まで)<br>
+</BODY></HTML>

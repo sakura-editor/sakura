@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>標準アイコンの変更手順</TITLE>
+<META NAME="MS-HKWD" CONTENT="標準アイコンの変更手順">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>標準アイコンの変更手順</h2>
+メニューやツールバーで使われるアイコンを標準のアイコン以外にしたい場合は、公開されているサクラエディタのソースファイル内にある mytool.bmp と同形式のビットマップ・ファイルをサクラエディタのインストールフォルダに my_icons.bmp というファイル名でおくだけです。<br>
+サクラエディタは起動時にまずこのファイルがあるかどうかチェックし、あればそれを、なければ自分自身が持っているものをアイコンとして使うようになっています。<br>
+<br>
+なお、mytool.bmpを自分用に改変した場合、そのファイル（my_icons.bmp）の取り扱いに注意して下さい。<br>
+個人使用の範囲では問題ありませんが、そのファイルを再配布しようと考えている場合は著作権に抵触しないか、特にキャプチャリングソフトなどを使って作成した全く同一のアイコン、あるいは色だけ変更したアイコンは著作権の侵害になる恐れがありますので、再配布可能かどうかをアイコンの著作権者に予め問い合わせるようにして下さい。<br>
+<br>
+ビットマップファイルの作り方そのものはここでは説明しません（結構面倒です）が、Windowsに標準で入っている『ペイント』を使うことができます。mytool.bmpの中で変更したいアイコンの位置に、自分で用意したアイコンを上書きします。一つ一つのアイコンは16x16ドットでできていますので、アイコンの移動・変更は横線や目印を参考にして慎重に行なって下さい。<br>
+この作業によってできるのは<font color="red">現在ある標準のアイコンを変更することだけ</font>です。<br>
+アイコンが割り当てられていない機能にアイコンを新規に追加することはできません。<br>
+</BODY></HTML>

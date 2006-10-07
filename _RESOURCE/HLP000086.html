@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>共通設定 『強調キーワード』プロパティ</TITLE>
+<META NAME="MS-HKWD" CONTENT="共通設定 『強調キーワード』プロパティ">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>共通設定 『強調キーワード』プロパティ</h2>
+ <a href="HLP000081.html">『全般』</a>   <a href="HLP000146.html">『ウィンドウ』</a>   <a href="HLP000144.html">『編集』</a>   <a href="HLP000083.html">『ファイル』</a>   <a href="HLP000145.html">『バックアップ』</a>   <a href="HLP000082.html">『書式』</a>   <a href="HLP000147.html">『クリッカブルURL』</a>   <a href="HLP000148.html">『Grep』</a>   <a href="HLP000084.html">『キー割り当て』</a>   <a href="HLP000087.html">『カスタムメニュー』</a>   <a href="HLP000085.html">『ツールバー』</a>   <a href="HLP000086.html">『強調キーワード』</a>   <a href="HLP000088.html">『支援』</a>   <a href="HLP000201.html">『マクロ』</a>   <a href="HLP000277.html">『ファイル名表示』</a><br>
+<img src="images/ComKeyword.png"><br>
+<br>
+<b>キーワード設定の概要</b><br>
+<div class=li200>
+※キーワードのセットという概念がある。<br>
+※キーワードのセットごとに、キーワードのリストを持つ。<br>
+※キーワードのセットごとに、大文字小文字区別か否かを設定する。<br>
+※ファイルタイプごとに、どのキーワードセットを参照するのか設定可能（<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>）。<br>
+※現在は、強調キーワードには<b>英字</b>、<b>アンダースコア</b>、<b>数字</b>、<b>"#"</b>、<b>"$"</b>、<b>"@"</b>、<b>"\"</b>のいずれかしか使えません。それ以外の文字を使うと、単語の区切りが正しく認識されません。<br>
+（将来、改善する予定ですが・・・。）<br>
+</div><br>
+<b>[セット名]</b>コンボボックス<br>
+現在登録されているセットから、キーワードを編集したいセットを選択します。<br>
+<br>
+<b>[変更]</b>ボタン<br>
+強調キーワードのセット名を変更します。<br>
+<br>
+<b>[セット追加]</b>ボタン<br>
+新しいセットを作成します。全部で<b>20</b>セットまで登録できます。<br>
+<br>
+<b>[セット削除]</b>ボタン<br>
+現在選択されているセットを削除します。<br>
+<br>
+<b>[強調キーワード]</b>リスト<br>
+現在選択されているセットの、キーワードを一覧表示しています。<br>
+リストで選択されているキーワードをもう一度クリックすると、リスト中で直接編集できます。<br>
+<br>
+リストの中のキーワードをダブルクリックしても、編集できます。<br>
+リストで項目を選択した状態で [Space] キーを押すと、キーワードを編集できます。<br>
+リストで項目を選択した状態で [Del] キーを押すと、キーワードを削除できます。<br>
+<br>
+<b>[追加]</b>ボタン<br>
+新しいキーワードを追加します。1セットあたりに追加できるキーワードの数は、[削除]ボタンの右側に表示されます。<br>
+<br>
+<b>[編集]</b>ボタン<br>
+リストで選択されているキーワードを編集します。<br>
+リストで項目を選択した状態で [Space] キーを押しても、キーワードを編集できます。<br>
+<br>
+<b>[削除]</b>ボタン<br>
+リストで選択されているキーワードを削除します。<br>
+リストで項目を選択した状態で [Del] キーを押しても、キーワードを削除できます。<br>
+<br>
+■<b>キーワードの英大文字小文字区別</b><br>
+強調キーワードを捜すときに、英大文字小文字区別をするかどうかを設定します。<br>
+現在選択されているセットの単語すべてに影響します。<br>
+<br>
+<b>[整理]</b>ボタン<br>
+強調キーワードとして使用できないキーワードを削除します。<br>
+<br>
+<b>[インポート]</b>ボタン<br>
+単語リストファイルを読み込んで、キーワードの一覧へ「追加」します。<br>
+<div class=li200>
+※重複したキーワードは追加されません。<br>
+※長さが<b>100</b>バイトを超えるキーワードは、<b>100</b>バイトに切り詰められて追加されます。<br>
+※1セットあたり、<b>1000</b>個までのキーワードを登録できます。<br>
+※パッケージ同梱のキーワードサンプルも参考にして下さい。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CPP.kwd    &nbsp;&nbsp;&nbsp;&nbsp;--- C/C++のキーワードのサンプル<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PLSQL.kwd&nbsp;&nbsp;&nbsp;&nbsp;--- PL/SQLのキーワードのサンプル<br>
+&nbsp;&nbsp;&nbsp;&nbsp;HTML.kwd  &nbsp;&nbsp;&nbsp;&nbsp;--- HTMLのキーワードのサンプル<br>
+</div><br>
+<b>[エクスポート]</b>ボタン<br>
+現在選択されているセットのキーワードを、単語リストファイルとして書き出します。<br>
+</BODY></HTML>

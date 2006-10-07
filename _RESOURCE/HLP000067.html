@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>Grep</TITLE>
+<META NAME="MS-HKWD" CONTENT="Grep">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>Grep</h2>
+ディスクにある複数のファイルから、指定した文字列を検索することができます。<br>
+指定したフォルダの下層のフォルダを全て検索することもできます。<br>
+<div class=li200>
+・検索結果は、別のウィンドウが作成されて、そこに表示されます。<br>
+・検索結果から、条件と一致した箇所に直接ジャンプ（<a href="HLP000065.html">タグジャンプ</a>）することができます。<br>
+・<a href="HLP000148.html">共通設定 『Grep』プロパティ</a>の設定によっては、GREP結果から行をダブルクリック・Enterすることでも、該当する場所にジャンプします。<br>
+</div><div class=li200>
+<b>(条件)</b> …… 検索条件を指定します。何も指定せずに実行すると、ファイル名検索ができます。ただし、フォルダ名検索はできません。<br>
+<b>(ファイル)</b> … 検索対象となるファイル指定します。ワイルドカードが使えます。<br>
+カンマ、スペース、セミコロン(, ;)のどれかで区切ると複数の条件を指定できます。<br>
+ファイル名に(, ;)を含む場合は、ダブルクオーテーションで囲うことで、ひとつのファイル名として扱えます。<br>
+ファイルパターンの先頭に!を付ける(例: !*.obj)と，そのパターンに当たるファイルをGrep対象から外します。<br>
+  指定位置にかかわらず除外指定は検索指定より優先されます． <br>
+何も指定しない場合は、「*.*」を指定したことになります。<br>
+<b>(フォルダ)</b> … 検索対象ファイルのあるフォルダを指定します。<br>
+</div><br>
+<b>[現フォルダ]ボタン</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルのフォルダが指定されます。<br>
+<div class=li200>
+□<b>単語単位で探す</b><br>
+■<b>サブフォルダからも検索する</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;指定フォルダの下層フォルダからも検索するかどうかを指定します。<br>
+□<b>現在編集中のファイルから検索</b>	※<br>
+&nbsp;&nbsp;&nbsp;&nbsp;現在編集中のファイルのみを検索対象に指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;編集中の内容ではなく、最後に保存されたファイル内容から検索して一覧を作成します。<br>
+□<b>英大文字と小文字を区別する</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;半角英字の大文字と小文字を区別して検索するかどうかを指定します。<br>
+□<b>正規表現</b> … 検索条件に、<a href="HLP000006.html">正規表現</a>を使うかどうかを指定します。<br>
+□<b>文字コードセット</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;検索対象となるファイルの<a href="HLP000271.html">文字コードセット</a>を選択します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>自動選択</b>、SJIS、JIS、EUC、Unicode、UnicodeBE、UTF-8、UTF-7から選択します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;どの文字コードを選択しても、検索時には、SJISに変換してから検索します。<br>
+</div><br>
+<b>&lt;結果出力&gt;</b> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索結果」に指定した色でハイライト表示されます。<br>
+<div class=li200>◎<b>該当行</b>	… 合致した箇所のある行全体を表示します。<br>
+○<b>該当部分</b>	… 合致した箇所のある行のうち先頭の合致箇所だけを表示します。<br>
+</div><br>
+<img src="images/hint.png">ヒント<br>
+単語単位で検索したときは、すべての合致箇所が表示されます。<br>
+<br>
+<b>&lt;結果出力形式&gt;</b> … 検索条件の結果の出力形式を選べます。<br>
+<div class=li200>
+◎<b>ノーマル</b>  	… 一つづつ列挙して出力します。<br>
+○<b>ファイル毎</b>	… ファイル毎にまとめて出力します。いわゆるWZ風の形式です。<br>
+</div><br>
+<img src="images/Grep.png"><br>
+<br>
+<font color="blue">※正規表現は、<a href="HLP000006.html">BREGEXP.DLL</a>というフリーソフトウェアによって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
+<br>
+Grepで「条件」を指定せずに実行すると、ファイル名検索ができます。<br>
+ただし、フォルダ名検索はできません。<br>
+<br>
+「文字コードセット自動判別チェックボタン」は廃止されました。<br>
+替わりに「文字コードセット」で{自動選択}を選んでください。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: Grep( str1 :String, str2 :String, str3 :String, int4 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするファイル名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str3&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするフォルダ名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int4&nbsp;&nbsp;&nbsp;&nbsp;オプション（省略可能）<br>
+・記録:	○<br>
+・解説<br>
+オプションには以下の値の組み合わせを指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;サブフォルダからも検索する（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;<i>この編集中のテキストから検索する（未実装）</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;英大文字と英小文字を区別する（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000006.html">正規表現</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;文字コード自動判別<br>
+「結果出力」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;該当行<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;該当部分（省略時規定値）<br>
+「出力形式」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;ノーマル（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;ファイル毎<br>
+「<a href="HLP000271.html">文字コードセット</a>」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0000&nbsp;&nbsp;&nbsp;&nbsp;SJIS（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0100&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0200&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0300&nbsp;&nbsp;&nbsp;&nbsp;UNICODE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0400&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0500&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0600&nbsp;&nbsp;&nbsp;&nbsp;UNICODE(BigEndian)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;自動選択<br>
+文字コード自動判別を設定した場合と文字コードセットを 自動選択にした場合の動作は同じです。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+キーマクロ中では 10進数の定数表記しか受け付けません。<br>
+オプションは10進数に直して記述してください。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+Grepのダイアログをマクロで出すことはできません。<br>
+</BODY></HTML>

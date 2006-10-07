@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>PPAマクロとWSHマクロ</TITLE>
+<META NAME="MS-HKWD" CONTENT="PPAマクロとWSHマクロ">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>PPAマクロとWSHマクロ</h2>
+ここでは、PPAとWSHそれぞれの情報を記載してあります。<br>
+<b>■ PPAマクロ</b><br>
+PPAでは、デバッグ用文字列型変数<b>UserErrorMes</b>を利用できます。<br>
+この変数に書き込んでおくと、PPAがエラーを返したときに表示されるメッセージボックスに、この変数の内容も表示されます。(sakur:1.4.2.0以降)<br>
+<br>
+IsDefine( 'sakura-editor' );<br>
+を利用すると、マクロを実行しているのがサクラエディタかどうか判別できます。(sakura:1.4.2.0以降)<br>
+<br>
+sakura:1.4.2.0以降では、PPA.DLL ver1.23 以上である必要があります。<br>
+それ以前のsakuraでは PPA.DLL ver1.0が必要です。<br>
+<br>
+PPAでは、文字列型の中にNULを含める事ができません。選択文字列にNULが含まれていた場合は、NULの手前までしかアクセスできません。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の使用も可能です。<br>
+文字列はシングルクォーテーションで括り、シングルクォーテーション文字そのものは '' と記述します。\ という文字は \ のままです。<br>
+<br>
+<b>■ WSHマクロ</b><br>
+WSHがインストールされている必要があります。<br>
+WSHとはWindows Scripting Host の略で、Windows98以降であれば、標準でインストールされています。<br>
+.vbs, .jsの他、追加のエンジンをインストールしていれば、それも使えることがあります。<br>
+しかしながら、エディタ側の問題で、正常に動作しない環境や、エンジンがあるようです。<br>
+サクラエディタのメソッドは<b>Editor</b>です。<br>
+<br>
+WScriptオブジェクト自体は、公開されていないため、利用できません。<br>
+WScript.Shell オブジェクトなどはいきなりは使えませんので、<br>
+CreateObject/ActiveXObjectでオブジェクトを取得して使ってください。<br>
+また、サクラエディタのEditorは、WScript.exeなどからCreateObjectできません。<br>
+</BODY></HTML>

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>外部コマンド実行</TITLE>
+<META NAME="MS-HKWD" CONTENT="外部コマンド実行">
+<META NAME="MS-HKWD" CONTENT="ExecCommand">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>外部コマンド実行</h2>
+外部コマンドを実行します。<br>
+$Fで、現在編集中のファイル名を外部コマンドに渡せます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;例： c:\foo.exe $F<br>
+利用できる特殊文字の一覧は<a href="HLP000284.html">ExpandParameter</a>をご覧ください。<br>
+<br>
+ファイル名に空白が含まれている場合、そのままではエラーになる場合があるので、<br>
+&nbsp;&nbsp;&nbsp;&nbsp;c:\foo.exe "$F"<br>
+のように引用符で囲んで記述します。<br>
+<br>
+<b>標準出力を得る</b><br>
+実行結果を、アウトプットウィンドウに表示します。<br>
+このとき、ほかのウィンドウで同時に標準出力を得るにチェックして実行しないでください。<br>
+また、タグジャンプなども控えてください。(出力が化ける事があります)<br>
+GUIアプリケーションは、「標準出力を得る」にチェックしないでください。画面に表示されません。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ExecCommand( str1 :String, int2 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;実行するコマンド文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;実行制御オプション（省略可能）<br>
+・記録:	○<br>
+・解説<br>
+実行制御オプションには、以下の値のいずれかを設定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;標準出力を得ません（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;標準出力を得ます<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+外部コマンド実行のダイアログをマクロで出すことはできません。<br>
+</BODY></HTML>

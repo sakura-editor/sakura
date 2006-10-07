@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>入力補完機能</TITLE>
+<META NAME="MS-HKWD" CONTENT="入力補完機能">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>入力補完機能</h2>
+現在のカーソル位置の左にある単語を補完します。<br>
+<br>
+<b>■入力補完機能を使うための準備</b><br>
+次のような、単語を列挙したテキストファイルを作成し、<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>で、単語を列挙したテキストファイルを設定します。<br>
+<br>
+-----ここから-----<br>
+Apple<br>
+Orange<br>
+Strawberry<br>
+-----ここまで-----<br>
+<br>
+<b>■入力補完機能を使う</b><br>
+<b>1</b>	［Ctrl］を押しながら［/］を押したり、［Ctrl］を押しながら［Space］を押します。<br>
+<div class=li200>入力補完が始まり、カーソル左側の単語を元に、補完候補が表示されます。<br>
+このとき、キーワードヘルプの設定されている単語であれば、対応するヘルプ文字列が脇に表示されます。<br>
+<br>
+また<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>の「編集中のファイルから候補を探す」を設定すると、そのウィンドウで編集中のデータから、単語を選出して候補に加えます。<br>
+単語ファイルと併用する事ができます。<br>
+</div><br>
+<img src="images/hint.png">ヒント<br>
+・	補完候補が一つの場合は、補完候補は表示されずに、補完されます。<br>
+・	サーチする時に英大文字小文字を区別するかどうかは、<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>で設定できます。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+・	\を入力して\で始まる単語を補完候補として表示することはできますが、\hを入力して\hogehogeをサーチすることはできません。これは、記号が入力されると単語の区切りとみなされるためです。<br>
+・	補完候補が見つからない場合は、何も起こりません。<br>
+<br>
+<b>2</b>	候補が表示されているときのキー操作は以下の通りです。<br>
+<div class=li200>
+［↑］・［↓］・［Space］・［Shift］＋［Space］・［クリック］：補完候補を選択します。<br>
+［→］・［Enter］・［ダブルクリック］：選択した候補で補完します。<br>
+［Esc］：補完せずに、補完を終了します。<br>
+</div><br>
+<img src="images/hint.png">ヒント<br>
+補完確定キーは、<a href="HLP000088.html">共通設定 『支援』プロパティ</a>で選択することができます。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+既に入力した部分も含めて補完されます。例えば、Apと入力してappleを選択して補完すると、appleとなります。<br>
+<br>
+逐次入力補完は、現在廃止されています。<br>
+<br>
+<b>補完候補が表示されたところ</b><br>
+<img src="images/Hokan.png"><br>
+</BODY></HTML>

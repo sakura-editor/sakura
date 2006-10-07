@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>保存して閉じる</TITLE>
+<META NAME="MS-HKWD" CONTENT="保存して閉じる">
+<META NAME="MS-HKWD" CONTENT="FileCloseOpen">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>保存して閉じる</h2>
+現在編集しているテキストを上書きで保存し、現在のウィンドウを閉じて、編集を終わらせます。(sakura:1.4.4.0以降)<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+マクロから使うことはできません。<br>
+<a href="HLP000020.html">上書き保存</a>(FileSave)と<a href="HLP000018.html">閉じる</a>(WinClose)を使用してください。<br>
+</BODY></HTML>

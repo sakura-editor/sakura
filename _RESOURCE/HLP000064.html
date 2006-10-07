@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>アウトライン解析</TITLE>
+<META NAME="MS-HKWD" CONTENT="アウトライン解析">
+<META NAME="MS-HKWD" CONTENT="Outline">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>アウトライン解析</h2>
+編集中のテキストから、特定の見出し記号や、関数の位置等を解析して一覧表示します。<br>
+<a href="HLP000074.html">タイプ別設定 『スクリーン』プロパティ</a>により、解析方法を選択できます。<br>
+各アウトライン解析の説明は、上記のページを参照してください。<br>
+また、解析した結果の一覧から、選択した位置へ直接ジャンプすることができます。<br>
+<div class=li200>
+・正しく解析されるとは限りません。決して厳密な構文解析をしているわけではありません。<br>
+・<b>[コピー] </b>ボタンを押すと、解析情報をテキスト化しクリップボードにコピーします。<br>
+関数一覧等は<a href="HLP000065.html">タグジャンプ</a>可能なリスト、テキストトピックは文書の目次作成等に利用できるかもしれません。<br>
+・テキストトピックに使用する『見出し記号』は、カスタマイズ可能です（<a href="HLP000082.html">共通設定 『書式』プロパティ</a>）<br>
+</div><br>
+<b>■アウトライン解析ダイアログについて</b><br>
+<div class=li200>
+アウトライン解析ダイアログのタイトルは、解析方法によって異なります。<br>
+ダイアログボックス上で、「アウトライン解析」のショートカットキー(デフォルトではF11)で、再解析を行えます。<br>
+また、「<a href="HLP000209.html">ブックマーク一覧</a>」のショートカットキー(デフォルトではAlt+F2)を押すと、「ブックマーク一覧」に切り替わります。<br>
+<br>
+・<b>（解析結果の一覧）</b><br>
+解析結果が、アウトライン解析の種類によって、ツリーかリストで一覧表示されます。<br>
+項目をダブルクリックするか、選択してEnterキーを押すと、選択した項目に対応した位置にカーソルが移動します。<br>
+<br>
+・<b>順序</b><br>
+ツリーの場合に表示されます。<br>
+‐デフォルト<br>
+&nbsp;&nbsp;&nbsp;&nbsp;アウトライン解析の規定の順番で並べます。大抵は、行番号順です。<br>
+‐アルファベット順<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ツリーの同一階層のなかで、項目名順に並べます。大文字小文字を区別します。<br>
+<br>
+・<b>自動的に閉じる</b><br>
+［ジャンプ］ボタンを押したり、項目をダブルクリックして、カーソルを移動したときに、アウトライン解析ダイアログを自動的に閉じます。<br>
+<br>
+・<b>フォーカスを移す</b><br>
+［ジャンプ］ボタンを押したり、項目をダブルクリックして、カーソルを移動したときに、編集ウィンドウにフォーカスを移します。<br>
+<br>
+・<b>［■］</b>ボタン<br>
+押し下げられていると、アウトライン解析ダイアログのウインドウ位置とサイズを記憶します。(sakura:1.5.9.90以降)<br>
+<br>
+・<b>［コピー］</b>ボタン<br>
+解析結果の一覧をクリップボードにコピーします。<br>
+クリップボードにコピーされる内容は、解析方法によって異なります。<br>
+関数一覧等はタグジャンプ可能なリスト、テキストトピックは文書の目次作成等に利用できるかもしれません。<br>
+<br>
+・<b>［ジャンプ］</b>ボタン<br>
+解析結果の一覧で選択している行に、カーソルを移動します。<br>
+</div><br>
+<img src="images/Outline.png"><br>
+<br>
+<img src="images/Outline_CPP.png"><br>
+<br>
+<img src="images/Outline_PLSQL.png"><br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: Outline( );<br>
+・記録:	×<br>
+</BODY></HTML>

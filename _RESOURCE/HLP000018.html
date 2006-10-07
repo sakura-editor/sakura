@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>閉じる</TITLE>
+<META NAME="MS-HKWD" CONTENT="閉じる">
+<META NAME="MS-HKWD" CONTENT="WinClose">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>閉じる</h2>
+現在のウィンドウを閉じて、編集を終わらせます。<br>
+テキストが変更されている場合は、以下のように、保存するか否かの確認ダイアログが出ます。<br>
+<div class=li200>
+(1)　[はい] を選ぶと、保存してウィンドウを閉じます。<br>
+(2)　[いいえ] を選ぶと、保存せずにウィンドウを閉じます（破棄されます）。<br>
+(3)　[キャンセル] を選ぶと、編集を続けることができます。<br>
+</div><br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: WinClose( );<br>
+・記録:	×<br>
+</BODY></HTML>

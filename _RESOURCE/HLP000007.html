@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>マウスによる範囲選択</TITLE>
+<META NAME="MS-HKWD" CONTENT="マウスによる範囲選択">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>マウスによる範囲選択</h2>
+・範囲選択<br>
+<b>クリック</b>し、そのままドラッグすると、範囲選択ができます。<br>
+<br>
+・矩形の範囲選択<br>
+<b>Alt+クリック</b>をし、そのままドラッグすると、矩形の範囲選択ができます。<br>
+<br>
+・単語単位の範囲選択<br>
+<a href="HLP000084.html">共通設定 『キー割り当て』プロパティ</a>の設定で、<font color="blue"><b>ダブルクリック</b>が<b>現在位置の単語選択</b>に設定されている場合</font>(デフォルトでは設定されています)<b>ダブルクリック</b>をすると、クリック位置の単語が選択されます。<br>
+そのままドラッグすると、単語単位の範囲選択ができます。<br>
+<br>
+<b>Ctrl+クリック</b>をすると、クリック位置の単語が選択されます。<br>
+そのままドラッグすると、単語単位の範囲選択ができます。<br>
+<br>
+・カーソル位置からの範囲選択<br>
+<b>Shift+クリック</b>をすると、カーソル位置からクリック位置までの範囲が選択されます。<br>
+範囲が選択された状態で、<b>Shift+クリック</b>をすると、選択開始位置からクリック位置までの範囲が選択されます。<br>
+そのままドラッグすれば、選択範囲を変更できます。<br>
+<br>
+・カーソル位置からの単語単位の範囲選択<br>
+<b>Shift+Ctrl+クリック</b>をすると、カーソル位置の単語からクリック位置の単語を含む範囲が選択されます。<br>
+範囲が選択された状態で、<b>Shift+Ctrl+クリック</b>をすると、選択開始位置の単語からクリック位置の単語を含む範囲が選択されます。<br>
+そのままドラッグすれば、単語単位の範囲選択ができます。<br>
+<br>
+・行選択<br>
+ウィンドウ左端の数ドットの幅のエリアや行番号のエリアを<b>左ボタン</b>でクリックすると、クリックした行全体が選択されます。<br>
+そのままドラッグすると、範囲選択ができます。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+ウィンドウ左端の数ドットの幅のエリアや行番号のエリアは、マウスによる行単位選択に使用できます。<br>
+</BODY></HTML>

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>正規表現ライブラリについて</TITLE>
+<META NAME="MS-HKWD" CONTENT="正規表現ライブラリについて">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>正規表現ライブラリについて</h2>
+検索条件などに正規表現を利用するには、正規表現機能を提供するライブラリをインストールする必要があります。<br>
+現在利用可能と思われる正規表現ライブラリは以下の通りです。お持ちでない方は別途入手してご利用下さい。<br>
+<br>
+■Perl5互換の正規表現<br>
+<div class=li200>
+・BREGEXP.DLL<br>
+馬場氏(ハンドル名 babaq)作成のPerl5互換の正規表現ライブラリです。<br>
+<br>
+<center><a href="http://www.hi-ho.ne.jp/babaq/bregexp.html" target=_blank>http://www.hi-ho.ne.jp/babaq/bregexp.html</a></center>
+<br>
+Project Sakura-Editorから先読み置換対応のため修正されたバージョンが配布されています。<br>
+<br>
+<center><a href="http://sourceforge.net/project/showfiles.php?group_id=12488&amp;package_id=66411" target=_blank>http://sourceforge.net/project/showfiles.php?group_id=12488&amp;package_id=66411</a></center>
+<br>
+</div><br>
+------------------------------------<br>
+※ Project Sakura-Editorでは馬場氏からBREGEXP.DLLの再配布を正式にご許可頂いております。<br>
+サクラエディタのパッケージ版にはBREGEXP.DLL(先読み置換対応版)が同梱されます。<br>
+<br>
+<img src="images/hint.png"><b>正規表現ライブラリ JRE32.DLLについて</b><br>
+サクラエディタではライセンスの移行(オープンソース化)準備に伴い、JRE32.DLLによる正規表現のサポートを停止いたしました。<br>
+JRE32.DLLをご利用になる場合は、JRE32.DLL対応の最終版であるver. UR1.2.34.3をご利用下さい。<br>
+<br>
+<b>◆使える（かもしれない）メタキャラクタ</b><br>
+<div class=li200>
+\	次のメタ文字・数量子を普通の文字として扱います。<br>
+^	行頭 ※サクラエディタでは、制限があります。<br>
+.	\nを除く任意の1文字 <b>[.\n]</b>と同じ<br>
+$	行末 <br>
+|	パターンの論理和<br>
+( )	パターンをグループ化<br>
+[ ]	キャラクタクラス<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>[A-Z]</b>は、「A」から「Z」までの文字のどれか1つとマッチします。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>[ABC]</b>は、AかBかCのどれかにマッチします。<b>A|B|C</b>とほぼ同じです。<br>
+[^ ]	指定された範囲以外の1文字にマッチします。<br>
+</div><br>
+<b>◆使える（かもしれない）直前のパターンの数量子</b><br>
+<div class=li200>
+*	直前のパターンの0回以上の繰り返し(最大一致)<br>
++	直前のパターンの1回以上の繰り返し(最大一致)<br>
+*?	直前のパターンの0回以上の繰り返し(最小一致)<br>
++?	直前のパターンの1回以上の繰り返し(最小一致)<br>
+?	直前のパターンが0回または1回現われる<br>
+{n}	直前のパターンの n 回の繰り返し<br>
+{n,m}	直前のパターンが n 回以上、 m 回以下の繰り返し(最大一致)<br>
+{n,m}?	直前のパターンが n 回以上、 m 回以下の繰り返し(最小一致)<br>
+</div><br>
+<b>◆使える（かもしれない）エスケープシーケンス</b><br>
+<div class=li200>
+\w	英単語の構成文字 <b>[0-9A-Za-z_]</b>と同じ<br>
+\W	単語の構成文字以外<br>
+\s	空白文字にマッチ<br>
+\S	空白文字以外<br>
+\d	数字<br>
+\D	数字以外<br>
+\b	単語の境界(SJIS未対応)<br>
+\B	単語の境界以外<br>
+\A	文字列の最初<br>
+\Z	文字列の最後<br>
+\t	水平タブコード<br>
+\n	ラインフィード(LF)<br>
+\r	キャリッジリターン(CR)<br>
+\f	フォームフィード<br>
+\e	エスケープコード<br>
+\a	ベル<br>
+\<font color="blue">ooo</font>	oに8進数で文字コードを指定する (<font color="blue">o</font>は1～3桁)<br>
+\x<font color="blue">hh</font>	hに16進数で文字コードを指定する (<font color="blue">h</font>は1～2桁)<br>
+\c<font color="blue">[</font>	コントロール文字(<font color="blue">[</font>はコントロール文字)<br>
+\<font color="blue">n</font>	( )でグループ化した文字列を指定する(<font color="blue">n</font>は1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換文字列などに使用できます<br>
+</div><br>
+<b>最大一致、最小一致</b><br>
+正規表現Aを<b>[A-Z_]*PROC </b>、正規表現Bを<b>[A-Z_]*?PROC </b>とします。<br>
+&nbsp;&nbsp;&nbsp;&nbsp; SAKURA_COLLBACKPROC_BREXP_PROC<br>
+という文字列中で、最初にマッチするのは以下のようになります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Aの場合: SAKURA_COLLBACKPROC_BREXP_PROC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Bの場合: SAKURA_COLLBACKPROC<br>
+すなわち、最大一致では、指定された文字列でもっとも長くパターンにマッチしたものを選びます。<br>
+最小一致では、もっとも短いマッチした文字列(0を含む)を選びます。<br>
+<br>
+<b>正規表現の制限</b><br>
+<b>^■</b>(行頭の■を検索)や、<b>(^■)|(^○)</b>は正しく動きます。<br>
+<b>(^■)|(【.*?】)</b>の、後ろ半分の<b>(【.*?】) </b>は、正しく動きません。<br>
+<br>
+<b>改行の検索</b><br>
+サクラエディタで改行(CRLF)を検索する場合は、<br>
+<b>\r\n </b>  で検索して下さい。<br>
+改行(CR,LF,CRLFのすべて)を検索する場合は、<br>
+<b>[\r\n]+ </b> のように指定してください。<br>
+改行(CR,LF,CRLF,LFCR)と、最終行の行末を検索する場合は、<br>
+<b>$ </b> と指定してください。<br>
+<br>
+■正規表現のテスト<br>
+この行の【ここは検索にヒットします。】<br>
+  【ここも検索にヒットします。】　■正規表現のテスト<br>
+■正規表現のテスト  【ここは正規表現にヒットしません。】<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+正規表現を検索、置換、Grepで利用する場合、「/」をエスケープしたり、「/」で囲ったりする必要はありません。<br>
+<br>
+<img src="images/hint.png">追加情報<br>
+検索、置換、Grepでは、Brexpに渡す文字列を以下のようにしています。[0xFF]は、\xffとします。<br>
+検索時のオプションは「m[0xFF]Pattern[0xFF]km」です。<br>
+置換時のオプションは「s[0xFF]PatternBefore[0xFF]PatternAfter[0xFF]km」です。<br>
+また大文字小文字を区別する場合は最後に「i」が付加されます。<br>
+(mオプションが付いていますが、改行をまたいだ検索はできません。)<br>
+</BODY></HTML>

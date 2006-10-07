@@ -1,0 +1,393 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>サクラエディタ  ヘルプ目次</TITLE>
+<META NAME="MS-HKWD" CONTENT="サクラエディタ  ヘルプ目次">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<br>
+<center>----------------------------------------------------</center>
+<center>サクラエディタ   Ver 1.5.12.0</center>
+<center>ヘルプファイル最終更新日 2006/09/23</center>
+<center><a href="http://sakura-editor.sourceforge.net/" target=_blank>http://sakura-editor.sourceforge.net/</a></center>
+<center>----------------------------------------------------</center>
+サクラエディタ(旧称:テキストエディタ)は、「たけ(竹パンダ)」さんのテキストエディタSAKURAの公開ソース(2000/02/21付)を元に不具合修正および機能拡張を行ったものです。<br>
+本ヘルプは、オリジナルのヘルプを元に、共同開発版で修正・変更された点について記述を加えています。<br>
+<br>
+サクラエディタの配布条件については「<a href="HLP000004.html">使用条件等</a>」をご覧下さい。<br>
+このヘルプファイル自身の配布条件については、「<a href="HLP_LISENCE.html">このヘルプファイルについて</a>」をご覧下さい。<br>
+<br>
+１．サクラエディタ概要<br>
+<div class=li200>■<a href="HLP000002.html">機能概要</a><br>
+■<a href="HLP000003.html">動作環境</a><br>
+■<a href="HLP000004.html">使用条件等</a><br>
+■<a href="HLP000005.html">インストール／アンインストール手順</a><br>
+■<a href="HLP000006.html">正規表現ライブラリについて</a><br>
+■<a href="HLP000008.html">インクリメンタルサーチについて</a><br>
+■<a href="HLP000112.html">最新バージョンのダウンロード</a><br>
+</div><br>
+２．基本的な使い方<br>
+<div class=li200>■<a href="HLP000133.html">メニュー項目のヘルプ</a><br>
+■<a href="HLP000011.html">通常選択</a><br>
+■<a href="HLP000012.html">行選択</a><br>
+■<a href="HLP000013.html">単語選択</a><br>
+■<a href="HLP000014.html">矩形選択</a><br>
+■<a href="HLP000007.html">マウスによる範囲選択</a><br>
+■<a href="HLP000113.html">TABインデント、逆TABインデント</a><br>
+■<a href="HLP000114.html">SPACEインデント、逆SPACEインデント</a><br>
+■<a href="HLP000115.html">矩形編集</a><br>
+■<a href="HLP000104.html">入力補完機能</a><br>
+■<a href="HLP000105.html">キーワードヘルプ</a><br>
+■<a href="HLP000129.html">クリッカブルURL</a><br>
+■<a href="HLP000135.html">ドラッグ &amp; ドロップ編集</a><br>
+■<a href="HLP000259.html">アイコンからドラッグ &amp; ドロップ</a><br>
+■<a href="HLP000010.html">標準アイコンの変更手順</a><br>
+■<a href="HLP000260.html">カスタムアイコンについて</a><br>
+■<a href="HLP000261.html">あると便利なツール、ファイル</a><br>
+</div><br>
+３．コマンド概要<br>
+<div class=li200>■<a href="HLP000016.html">「ファイル(F)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000025.html">新規作成</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000015.html">開く</a>(O)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000020.html">上書き保存</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000021.html">名前を付けて保存</a>(A)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000313.html">すべて上書き保存</a>(Z)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000287.html">保存して閉じる</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000018.html">閉じる</a>(C)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000017.html">閉じて(無題)</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000119.html">閉じて開く</a>(L)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・開き直す(W)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000283.html">開き直す</a>(W)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000156.html">SJISで開き直す</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000157.html">JISで開き直す</a>(J)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000158.html">EUCで開き直す</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000159.html">Unicodeで開き直す</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000256.html">UnicodeBEで開き直す</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000160.html">UTF-8で開き直す</a>(8)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000161.html">UTF-7で開き直す</a>(7)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000162.html">印刷</a>(P)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000120.html">印刷プレビュー</a>(V)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000122.html">ページ設定</a>(U)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000022.html">ファイルのプロパティ</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000121.html">ブラウズ</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000029.html">最近使ったファイル</a><img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000023.html">最近使ったフォルダ</a><img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000019.html">すべてのウィンドウを閉じる</a>(Q)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000028.html">サクラエディタの全終了</a>(X)<br>
+<br>
+■<a href="HLP000031.html">「編集(E)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000032.html">元に戻す</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000033.html">やり直し</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000034.html">切り取り</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000035.html">コピー</a>(P)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000039.html">貼り付け</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000041.html">削除</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000044.html">すべて選択</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000218.html">再変換</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000163.html">CRLF改行でコピー</a>(L)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000219.html">折り返し位置に改行をつけてコピー</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000040.html">矩形貼り付け</a>(X)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000042.html">カーソル前を削除</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・挿入(I)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000164.html">日付</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000165.html">時刻</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000255.html">コントロールコード</a>(C)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・高度な操作(V)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000166.html">単語の左端まで削除</a>(L)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000167.html">単語の右端まで削除</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000045.html">現在位置の単語選択</a>(W)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000169.html">単語切り取り</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000168.html">単語削除</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000172.html">行頭まで切り取り(改行単位)</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000173.html">行末まで切り取り(改行単位)</a>(K)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000170.html">行頭まで削除(改行単位)</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000171.html">行末まで削除(改行単位)</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000174.html">行切り取り(折り返し単位)</a>(X)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000137.html">行削除(折り返し単位)</a>(Y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000043.html">行の二重化(折り返し単位)</a>(2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000113.html">TABインデント</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000113.html">逆TABインデント</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000114.html">SPACEインデント</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000114.html">逆SPACEインデント</a>(P)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000036.html">選択範囲内全行コピー</a>(@)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000037.html">選択範囲内全行引用符付きコピー</a>(.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000038.html">選択範囲内全行行番号付きコピー</a>(;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000303.html">このファイル名をコピー</a>(-)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000056.html">このファイルのパス名をコピー</a>(\)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000175.html">このファイルのパス名とカーソル位置をコピー</a>(^)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・移動(O)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000220.html">カーソル上移動(２行ごと)</a>(Q)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000221.html">カーソル下移動(２行ごと)</a>(K)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000222.html">単語の左端に移動</a>(L)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000223.html">単語の右端に移動</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000263.html">前の段落に移動</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000262.html">次の段落に移動</a>(Z)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000224.html">行頭に移動(折り返し単位)</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000225.html">行末に移動(折り返し単位)</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000226.html">１ページアップ</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000227.html">１ページダウン</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000228.html">ファイルの先頭に移動</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000229.html">ファイルの最後に移動</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000230.html">カーソル行をウィンドウ中央へ</a>(C)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000063.html">指定行へジャンプ</a>(J)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000264.html">検索開始位置へ戻る</a>(I)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000231.html">移動履歴: 前へ</a>(P)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000232.html">移動履歴: 次へ</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000265.html">現在位置を移動履歴に登録</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・選択(S)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000045.html">現在位置の単語選択</a>(W)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000044.html">すべて選択</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000233.html">範囲選択開始</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000234.html">(選択)カーソル上移動(２行ごと)</a>(Q)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000235.html">(選択)カーソル下移動(２行ごと)</a>(K)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000236.html">(選択)単語の左端に移動</a>(L)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000237.html">(選択)単語の右端に移動</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000274.html">(選択)前の段落に移動</a>(2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000273.html">(選択)次の段落に移動</a>(3)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000238.html">(選択)行頭に移動(折り返し単位)</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000239.html">(選択)行末に移動(折り返し単位)</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000240.html">(選択)１ページアップ</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000241.html">(選択)１ページダウン</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000242.html">(選択)ファイルの先頭に移動</a>(1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000243.html">(選択)ファイルの最後に移動</a>(9)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000244.html">矩形範囲択開始</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・整形(K)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000210.html">左(先頭)の空白を削除</a>(L)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000211.html">右(末尾)の空白を削除</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000212.html">選択行の昇順ソート</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000213.html">選択行の降順ソート</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000214.html">連続した重複行の削除(uniq)</a>(U)<br>
+<br>
+■<a href="HLP000131.html">「変換(C)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000047.html">英大文字→英小文字</a>(L)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000048.html">英小文字→英大文字</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000049.html">全角→半角</a>(F)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000258.html">全角カタカナ→半角カタカナ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000215.html">全角英数→半角英数</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000200.html">半角英数→全角英数</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000050.html">半角＋全ひら→全角・カタカナ</a>(Z)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000051.html">半角＋全カタ→全角・ひらがな</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000123.html">半角カタカナ→全角カタカナ</a>(K)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000124.html">半角カタカナ→全角ひらがな</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000182.html">TAB→空白</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000196.html">空白→TAB</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・文字コード変換(C)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000178.html">自動判別→SJISコード変換</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000052.html">E-Mail(JIS→SJIS)コード変換</a>(M)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000053.html">EUC→SJISコード変換</a>(W)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000179.html">Unicode→SJISコード変換</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000257.html">UnicodeBE→SJISコード変換</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000142.html">UTF-8→SJISコード変換</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000143.html">UTF-7→SJISコード変換</a>(F)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000117.html">SJIS→JISコード変換</a>(J)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000118.html">SJIS→EUCコード変換</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000180.html">SJIS→UTF-8コード変換</a>(8)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000181.html">SJIS→UTF-7コード変換</a>(7)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000054.html">Base64デコードして保存</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000055.html">uudecodeして保存</a>(D)<br>
+<br>
+■<a href="HLP000058.html">「検索(S)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000059.html">検索</a>(F)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000061.html">次を検索</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000060.html">前を検索</a>(P)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000062.html">置換</a>(R)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000136.html">検索マークの切替え</a>(C)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000264.html">検索開始位置へ戻る</a>(I)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・インクリメンタルサーチ(S)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000304.html">前方インクリメンタルサーチ</a>(F)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000305.html">後方インクリメンタルサーチ</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000306.html">正規表現前方インクリメンタルサーチ</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000307.html">正規表現後方インクリメンタルサーチ</a>(X)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000308.html">MIGEMO前方インクリメンタルサーチ</a>(M)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000309.html">MIGEMO後方インクリメンタルサーチ</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・ブックマーク(M)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000205.html">ブックマーク設定・解除</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000206.html">次のブックマークへ</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000207.html">前のブックマークへ</a>(Z)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000208.html">ブックマークの全解除</a>(X)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000209.html">ブックマークの一覧</a>(V)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000067.html">Grep</a>(G)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000063.html">指定行へジャンプ</a>(J)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000064.html">アウトライン解析</a>(L)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000065.html">タグジャンプ</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000066.html">タグジャンプバック</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000280.html">タグファイルの作成</a>...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000281.html">ダイレクトタグジャンプ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000310.html">キーワードを指定してタグジャンプ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000192.html">同名のC/C++ヘッダ(ソース)を開く</a>(C)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000116.html">ファイル内容比較</a>(@)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000251.html">DIFF差分表示</a>(D)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000252.html">次の差分へ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000253.html">前の差分へ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000254.html">差分表示の全解除</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000183.html">対括弧の検索</a>([)<br>
+<br>
+■<a href="HLP000068.html">「ツール(T)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000125.html">キーマクロの記録開始／終了</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000127.html">キーマクロの保存</a>(M)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000128.html">キーマクロの読み込み</a>(A)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000126.html">キーマクロの実行</a>(D)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000202.html">登録済みマクロ</a>(B)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000103.html">外部コマンド実行</a>(X)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000132.html">SQL*Plusをアクティブ表示</a>(P)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000027.html">SQL*Plusで実行</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000111.html">入力補完</a>(/)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・カスタムメニュー(U)<img src="images/Delta.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000195.html">右クリックメニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000186.html">メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000186.html">タブメニュー</a><br>
+<br>
+■<a href="HLP000500.html">「設定(O)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000069.html">ツールバーを表示</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000070.html">ファンクションキーを表示</a>(K)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000282.html">タブを表示</a>(M)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000134.html">ステータスバーを表示</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000072.html">タイプ別設定一覧</a>(L)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000073.html">タイプ別設定</a>(Y)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000074.html">『スクリーン』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000075.html">『カラー』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000197.html">『支援』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000203.html">『正規表現キーワード』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000076.html">共通設定</a>(C)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000081.html">『全般』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000146.html">『ウィンドウ』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000286.html">『ウィンドウの位置と大きさ』</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000144.html">『編集』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000083.html">『ファイル』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000145.html">『バックアップ』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000082.html">『書式』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000147.html">『クリッカブルURL』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000148.html">『Grep』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000084.html">『キー割り当て』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000087.html">『カスタムメニュー』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000085.html">『ツールバー』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000086.html">『強調キーワード』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000088.html">『支援』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000201.html">『マクロ』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000277.html">『ファイル名表示』プロパティ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000071.html">フォント設定</a>(F)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000279.html">お気に入りの設定</a>(O)...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000184.html">現在のウィンドウ幅で折り返し</a>(W)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000046.html">挿入／上書きモード</a>(I)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000249.html">読み取り専用</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000285.html">入力改行コード指定</a>(E)<img src="images/Delta.png"><br>
+<br>
+■<a href="HLP000090.html">「ウィンドウ(W)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000093.html">上下に分割</a>(-)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000094.html">左右に分割</a>(I)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000095.html">縦横に分割</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000018.html">閉じる</a>(C)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000019.html">すべて閉じる</a>(Q)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000092.html">次のウィンドウ</a>(N)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000091.html">前のウィンドウ</a>(P)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000311.html">結合して表示</a>(B)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000138.html">重ねて表示</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000140.html">上下に並べて表示</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000139.html">左右に並べて表示</a>(T)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000312.html">常に手前に表示</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000141.html">縦方向に最大化</a>(X)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000098.html">横方向に最大化</a>(Y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000096.html">すべて最小化</a>(M)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000187.html">再描画</a>(R)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000188.html">アウトプット</a>(U)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000314.html">ウィンドウ一覧</a>(W)<br>
+<br>
+■<a href="HLP000099.html">「ヘルプ(H)」メニュー</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000100.html">目次</a>(O)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000101.html">キーワード検索</a>(S)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000189.html">コマンド一覧</a>(M)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000057.html">キー割り当て一覧をコピー</a>(Q)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000190.html">外部ヘルプ1</a>(E)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000191.html">外部HTMLヘルプ</a>(H)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000102.html">バージョン情報</a>(A)<br>
+<br>
+■メニューに入ってないコマンド<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000288.html">文字入力</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000289.html">カーソル移動</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000290.html">(選択)カーソル</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000194.html">各種モードの取り消し</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000024.html">同名のC/C++ヘッダファイルを開く</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000026.html">同名のC/C++ソースファイルを開く</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000198.html">テキストを１行下へスクロール</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000199.html">テキストを１行上へスクロール</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000245.html">半ページアップ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000246.html">半ページダウン</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000247.html">(選択)半ページアップ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000248.html">(選択)半ページダウン</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000275.html">開く（ドロップダウン）</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000276.html">検索（ボックス）</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000292.html">置換(実行)</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000291.html">閉じてタグジャンプ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000293.html">すべて置換(実行)</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000296.html">すべて行置換(実行)</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000294.html">指定パターンに一致する行をマーク</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000295.html">最後にテキストを追加</a><br>
+</div><br>
+４．デフォルト設定値 (インストール時)<br>
+<div class=li200>■<a href="HLP000300.html">タイプ</a><br>
+■<a href="HLP000107.html">キー割り当て一覧 (キー別)</a><br>
+■<a href="HLP000193.html">コマンド一覧 (機能別)</a><br>
+</div><br>
+５．仕様等<br>
+<div class=li200>■<a href="HLP000149.html">改行コードについて</a><br>
+■<a href="HLP000109.html">コマンドラインオプション</a><br>
+■<a href="HLP000250.html">単語について</a><br>
+■<a href="HLP000271.html">文字コードセットのエンコードについて</a><br>
+■<a href="HLP000272.html">メタ文字列の仕様</a><br>
+■<a href="HLP000284.html">ExpandParameter</a><br>
+■<a href="HLP000301.html">スマートインデント</a><br>
+■<a href="HLP000278.html">ダイレクトタグジャンプの使い方</a><br>
+</div><br>
+６．マクロ<br>
+<div class=li200>■<a href="HLP000204.html">マクロについて</a><br>
+■<a href="HLP000266.html">拡張子</a><br>
+■<a href="HLP000267.html">キーボードマクロ</a><br>
+■<a href="HLP000269.html">PPAマクロとWSHマクロ</a><br>
+■<a href="HLP000268.html">PPA/WSH専用マクロ関数</a><br>
+■<a href="HLP000270.html">記載例</a><br>
+</div><br>
+７．<a href="HLP_UR000.html">サクラエディタについて</a><br>
+<div class=li200>■<a href="HLP_UR012.html">変更履歴(-2006/09/23)</a><br>
+■<a href="HLP_UR011.html">変更履歴(-2004/08/19)</a><br>
+■<a href="HLP_UR010.html">変更履歴(-2003/06/26)</a><br>
+■<a href="HLP_UR009.html">変更履歴(-2002/12/24)</a><br>
+■<a href="HLP_UR008.html">変更履歴(-2002/04/27)</a><br>
+■<a href="HLP_UR007.html">変更履歴(-2002/02/11)</a><br>
+■<a href="HLP_UR006.html">変更履歴(-2001/12/01)</a><br>
+■<a href="HLP_UR005.html">変更履歴(-2001/05/28)</a><br>
+■<a href="HLP_UR004.html">変更履歴(-2001/03/30)</a><br>
+■<a href="HLP_UR003.html">変更履歴(-2000/11/15)</a><br>
+■<a href="HLP_UR002.html">変更履歴(-2000/09/28)</a><br>
+■<a href="HLP_UR001.html">変更履歴(-2000/05/12)</a><br>
+■<a href="HLP000009.html">「テキストエディタ」リリース履歴(-2000.02.17)</a><br>
+</div><br>
+８．<a href="HLP_LISENCE.html">このヘルプファイルについて/GNU Free Documentation License</a><br>
+<div class=li200>■<a href="HLP_HISTORY.html">ヘルプファイル更新履歴</a><br>
+</div><br>
+<pre>
+-------------------------
+Copyright (c)  2001-2006  Project Sakura-Editor.
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1
+or any later version published by the Free Software Foundation.
+A copy of the license is included in the section entitled "GNU
+Free Documentation License".
+-------------------------
+</pre>
+</BODY></HTML>

@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>インストール／アンインストール手順</TITLE>
+<META NAME="MS-HKWD" CONTENT="インストール">
+<META NAME="MS-HKWD" CONTENT="アンインストール">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>インストール／アンインストール手順</h2>
+<b>■インストール</b><br>
+配布ファイルは zip形式にて圧縮されています。<br>
+解凍方法についてはここでは説明しません。<br>
+<div class=li200>
+・以前のバージョンのサクラエディタがインストールされている場合、実行中のサクラエディタを常駐も含めてすべて終了させます。<br>
+・任意のフォルダを作成し、そのフォルダに配布ファイルを解凍します。更新の場合は通常、上書きで構いません。<br>
+・エディタの本体である sakura.exe を実行すれば使えます。<br>
+・ショートカット作成などは手作業で行って下さい。<br>
+</div><br>
+なお、新バージョンに更新したことによってそれまで使えていた機能が動作しなくなる場合があります。<br>
+旧バージョンの圧縮ファイルを保存してない場合はそのような不具合に備えて旧バージョンのバイナリと設定ファイル sakura.ini をバックアップしておくことをお勧めします。<br>
+この場合sakura.exeを単に別フォルダに移動しただけでは、ショートカットがリンク先を自動変更して旧バージョンを起動してしまうことがあるのでファイル名を変更したほうがいいでしょう。<br>
+<pre>
+サクラエディタ用ファイル一式
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>sakura.exe</td><td>サクラエディタ  本体</td></tr>
+<tr><td>bregexp.dll</td><td>正規表現ライブラリ</td></tr>
+<tr><td>sakura.hlp</td><td>サクラエディタ  オンラインヘルプ</td></tr>
+<tr><td>sakura.cnt</td><td>サクラエディタ  オンラインヘルプ 目次ファイル</td></tr>
+<tr><td>sakuext.exe</td><td>サクラエディタ用関連づけ設定ツール (すい氏 ご提供)</td></tr>
+<tr><td>sakuext.txt</td><td>sakuext.exeの使用説明</td></tr>
+<tr><td>uninstall.exe</td><td>アンインストーラ</td></tr>
+<tr><td>sakura.exe.manifest</td><td>XP用manifestファイル</td></tr>
+</tbody></table>
+
+&lt;keyword&gt;フォルダ
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>ABAP4.kwd</td><td>ABAP4用強調キーワード</td></tr>
+<tr><td>COBOL.kwd</td><td>COBOL用強調キーワード</td></tr>
+<tr><td>HSP.KWD</td><td>HSP用強調キーワード</td></tr>
+<tr><td>JavaScript.kwd</td><td>JavaScript用強調キーワード</td></tr>
+<tr><td>PHP.KWD</td><td>PHP用強調キーワード</td></tr>
+<tr><td>PPA.KWD</td><td>PPA用強調キーワード</td></tr>
+<tr><td>Perl.kwd</td><td>Perl 一般的な予約語と関数　(ふゆ^2氏 ご提供)</td></tr>
+<tr><td>Perlvar.kwd</td><td>Perl '$' が頭につく予約変数　(ふゆ^2氏 ご提供)</td></tr>
+<tr><td>S_MAC.KWD</td><td>サクラエディタマクロ用強調キーワード</td></tr>
+<tr><td>TTL.KWD</td><td>Tera Term Pro 2.3 MACRO用強調キーワード</td></tr>
+<tr><td>TeX.kwd</td><td>TeX キーワード　(tatei氏 ご提供)</td></tr>
+<tr><td>VBScript.kwd</td><td>VBScript用強調キーワード</td></tr>
+<tr><td>awk.kwd</td><td>AWK キーワード　(すい氏 ご提供)</td></tr>
+<tr><td>batch.kwd</td><td>MS-DOSバッチ用キーワード　(すい氏 ご提供)</td></tr>
+<tr><td>corba.kwd</td><td>CORBA IDL用キーワード　(げんた氏 ご提供)</td></tr>
+<tr><td>cpp.kwd</td><td>C/C++用強調キーワード</td></tr>
+<tr><td>csharp.kwd</td><td>C#用強調キーワード</td></tr>
+<tr><td>html.kwd</td><td>HTML用強調キーワード</td></tr>
+<tr><td>java.kwd</td><td>Java用強調キーワード</td></tr>
+<tr><td>pascal.kwd</td><td>Pascal用強調キーワード　(n-tack氏 ご提供)</td></tr>
+<tr><td>pli.kwd</td><td>PL/I用キーワード</td></tr>
+<tr><td>plsql.kwd</td><td>PL/SQL用強調キーワード</td></tr>
+<tr><td>python.kwd</td><td>Python用強調キーワード</td></tr>
+<tr><td>rtf.kwd</td><td>RTF用強調キーワード</td></tr>
+<tr><td>ruby.kwd</td><td>Ruby用強調キーワード</td></tr>
+<tr><td>tsql.kwd</td><td>Transact-SQL用強調キーワード</td></tr>
+<tr><td>tsql2.kwd</td><td>Transact-SQL用強調キーワード　(第二キーワード)</td></tr>
+<tr><td>uwsc.kwd</td><td>UWSC用強調キーワード</td></tr>
+<tr><td>verilog.kwd</td><td>Verilog用強調キーワード</td></tr>
+</tbody></table>
+
+ソースと共に配布されているドキュメント
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>BugsInfo.txt</td><td>バグ／フィックス情報　 (開発メモ その１)</td></tr>
+<tr><td>request.txt</td><td>要望 　(開発メモ その２)</td></tr>
+</tbody></table>
+</pre>
+<b>■サクラエディタが作成する作業ファイルについて</b><br>
+サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダに以下のファイルが作成されます。<br>
+<pre>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>sakura.ini </td><td>サクラエディタ用の設定ファイルです。</td></tr>
+<tr><td>sakura.GID </td><td>ヘルプの表示用に作られる。ヘルプを参照すると作成されます。</td></tr>
+</tbody></table>
+</pre>
+<br>
+キーマクロの記録を使うと、共通設定のマクロ一覧のフォルダに「RecKey.mac」というファイルが作成されます。<br>
+<br>
+<b>■アンインストール</b><br>
+<div class=li200>
+・実行中のサクラエディタを常駐も含めてすべて終了させます。<br>
+・エクスプローラなどから、sakura.exe のあるフォルダ(インストール時に作成したフォルダ)をまるごと削除します。sakura.ini というファイルはサクラエディタの設定ファイルです。<br>
+設定を残したい場合は、sakura.ini のバックアップを取っておくと役に立つことがあるかもしれません。<br>
+</div><br>
+<font color="blue">インストーラを利用した場合は、インストーラがインストール情報をレジストリに書き込むため、プログラムの追加と削除(アプリケーションの追加と削除)からアンインストールしてください。</font><br>
+<br>
+<font color="blue">インストーラを利用しない場合は、サクラエディタは<b>レジストリへの書き込みは一切致しません</b>ので、アンインストールにあたりレジストリを操作する必要はありません。</font><br>
+</BODY></HTML>

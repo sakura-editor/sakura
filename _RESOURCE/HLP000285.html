@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>入力改行コード指定</TITLE>
+<META NAME="MS-HKWD" CONTENT="入力改行コード指定">
+<META NAME="MS-HKWD" CONTENT="ChgmodEOL">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>入力改行コード指定</h2>
+Enterキーを押したときに入力される改行コードを指定します。<br>
+起動時は、CRLFになっています。<br>
+ファイルを開いた場合は、そのファイルの１行目の改行コードに自動設定されます。<br>
+入力済みの改行コードは、元の改行コードを保持します。<br>
+<a href="HLP000021.html">名前をつけて保存</a>で指定しない限り、自動変換されることはありません。<br>
+詳しくは、<a href="HLP000149.html">改行コードについて</a>をご覧下さい。<br>
+<div class=li200>
+ステータスバー上の入力改行コード位置での右クリックで切り替えのメニューが出ます。(sakura:1.4.3.7以降)<br>
+</div><br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ChgmodEOL( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;改行コード<br>
+・記録:	指定改行コードのパラメータ付で記録<br>
+・解説<br>
+改行コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;変更しない<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;CRLF(Windows)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;LFCR<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;LF(UNIX)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;CR(Mac)<br>
+</BODY></HTML>

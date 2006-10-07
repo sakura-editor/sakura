@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>名前を付けて保存</TITLE>
+<META NAME="MS-HKWD" CONTENT="名前を付けて保存">
+<META NAME="MS-HKWD" CONTENT="FileSaveAs">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>名前を付けて保存</h2>
+現在編集しているテキストにファイル名を付けて保存します。<br>
+<br>
+<img src="images/FileSave.png"><br>
+<br>
+・<b>[文字コードセット]</b><br>
+保存するときの<a href="HLP000271.html">文字コードセット</a>を、表示された中から選択することができます。<br>
+SJIS、JIS、EUC、Unicode、UnicodeBE、UTF-8、UTF-7の中から選択することができます。<br>
+<br>
+・<b>[改行コード]</b><br>
+ファイルを保存するときに、統一する改行コードを指定します。<br>
+変換なしを選ぶと、統一せずに、編集中の各行の改行コードのまま保存します。<br>
+CR+LF(Windows)、LF (UNIX)、CR (Mac)の中から選択することができます。<br>
+<br>
+・<b>[BOM]</b><br>
+BOMを付加する場合にチェックしてください。<br>
+文字コードセットで、Unicode、UnicodeBE、UTF-8を選んだ場合のみ利用可能です。<br>
+<br>
+・<b>[最近のファイル]</b><br>
+最近使ったファイルの一覧を<b>アルファベット順</b>に見ることができます。<br>
+<br>
+・<b>[最近のフォルダ]</b><br>
+最近使ったフォルダの一覧を<b>アルファベット順</b>に見ることができます。<br>
+フォルダを選択すると、現在のフォルダが変化します。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+ダイアログ表示時にプレースバーを表示します。(sakura:1.5.8.0以降)<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文:	FileSaveAs( str1 :String, int2 :Integer, int3 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能）<br>
+・記録:	×<br>
+・解説<br>
+文字コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;SJIS（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;UNICODE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;UNICODE(BigEndian)<br>
+改行コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;変更しない（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;CRLF(Windows)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;LF(UNIX)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;CR(Mac)<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+名前を付けて保存のダイアログをマクロで出すことはできません。<br>
+</BODY></HTML>
