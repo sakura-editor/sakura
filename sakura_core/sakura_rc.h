@@ -630,7 +630,7 @@
 #define IDC_CHECK_KEYHELP_ALLSEARCH     5141
 #define IDC_CHECK_KEYHELP_KEYDISP       5142
 #define IDC_CHECK_KEYHELP_PREFIX        5143
-#define IDC_EXECINFO                    -1
+#define IDC_STATIC	                    -1
 
 // Next default values for new objects
 // 

@@ -12,9 +12,10 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
 #include "funccode.h"
-#include "afxres.h"
-#include "Dlgs.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -41,9 +42,10 @@ END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "#include ""funccode.h""\r\n"
-    "#include ""afxres.h""\r\n"
-    "#include ""Dlgs.h""\r\n"
     "\0"
 END
 
