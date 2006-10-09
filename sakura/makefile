@@ -54,17 +54,19 @@ OPTFLAGS=$(OPTFLAGS) -DNDEBUG -w-8004  -w-8057
 # Micrsoft Optimizing Compiler
 #------------------------------------------
 !ifdef DEBUG
-OPTFLAGS=/W3 /GR /GX /GS /Od /D "DEBUG" /D "_DEBUG" /Zi
+OPTFLAGS=/W3 /GR /GX /GS /Od /MLd /D "DEBUG" /D "_DEBUG" /Zi
 OBJDIR=.\Debug_one
+OPTLIBS=libcd.lib libcpd.lib
 !else
-OPTFLAGS=/W3 /GR /GX /O1 /D "NDEBUG" 
+OPTFLAGS=/W3 /GR /GX /O1 /ML /D "NDEBUG" 
 OBJDIR=.\Release_one
+OPTLIBS=libc.lib libcp.lib
 !endif
 
 RC=rc.exe
 CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
 RFLAGS=/l 0x411 /d "NDEBUG" /I "$(SRCDIR)"
-LFLAGS=/subsystem:windows /machine:x86
+LFLAGS=/subsystem:windows /machine:x86 /map
 
 # compatibility option
 CC_OBJFILEOPT=/Fo
@@ -259,7 +261,9 @@ $(OBJDIR)\sakura_rc.res : $(TEMPRC)
 	$(RC) $(RFLAGS) /fo$@ $** 
 
 $(OBJDIR)\sakura.exe : $(OBJDIR)\sakura_rc.res $(OBJS)
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_EXEFILEOPT)$@ $** /link $(LFLAGS) $(LIBS)
+	$(CC) @<<
+$(CPPFLAGS) $(OPTFLAGS) $(CC_EXEFILEOPT)$@ $** /link $(LFLAGS) $(LIBS) $(OPTLIBS)
+<<
 !endif
 
 "$(OBJDIR)":
@@ -291,6 +295,8 @@ clobber :
 	-erase $(OBJDIR)\*.tds
 	-erase $(OBJDIR)\*.pch
 	-erase $(OBJDIR)\*.idb
+	-erase $(OBJDIR)\*.pdb
+	-erase $(OBJDIR)\*.ilk
 
 #test : .\aXX
 #	@echo "*$* @@$@@ @$@ **$** ?$? @D$(@D) @B$(@B) "
