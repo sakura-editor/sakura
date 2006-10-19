@@ -8,7 +8,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, MIK
-	Copyright (C) 2006, genta
+	Copyright (C) 2006, genta, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -419,7 +419,7 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_TAGJUMP_LIST ) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_TAGJUMP_LIST ) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 
 	case IDOK:			/* 左右に表示 */

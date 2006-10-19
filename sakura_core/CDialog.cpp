@@ -415,13 +415,13 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 {
 	HELPINFO *p = (HELPINFO *)lParam;
-	::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );
+	MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
 
 BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
 {
-	::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );
+	MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
 

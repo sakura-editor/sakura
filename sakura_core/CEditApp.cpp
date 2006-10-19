@@ -855,7 +855,7 @@ LRESULT CEditApp::DispatchEvent(
 						char	szHelp[_MAX_PATH + 1];
 						/* ヘルプファイルのフルパスを返す */
 						::GetHelpFilePath( szHelp );
-						::WinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );
+						MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					}
 					break;
 //				case F_MENU_ALLFUNC:	//Jan. 12, 2001 JEPRO コマンド一覧は右クリックメニューから一応除外

@@ -8,6 +8,7 @@
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, MIK
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,6 +23,7 @@ class CDialog;
 #include <dbt.h>
 #include "CShareData.h"
 #include "global.h"
+#include "etc_uty.h"
 
 
 /*-----------------------------------------------------------------------

@@ -23,6 +23,8 @@
 #define COMPILE_MULTIMON_STUBS
 
 #include "stdafx.h"
+#include <Shlwapi.h>	// 2006.06.17 ryoji
+#include <HtmlHelp.h>
 #include <io.h>
 #include <memory.h>		// Apr. 03, 2003 genta
 #include "etc_uty.h"
@@ -41,7 +43,113 @@
 #include "CMRU.h"
 #include "CMRUFolder.h"
 #include "Keycode.h"// novice 2004/10/10
-#include <Shlwapi.h>	// 2006.06.17 ryoji
+
+/*!	WinHelp のかわりに HtmlHelp を呼び出す
+
+	@author ryoji
+	@date 2006.07.22 ryoji 新規
+*/
+BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData)
+{
+	UINT uCommandOrg = uCommand;	// WinHelp のコマンド
+	bool bDesktop = false;	// デスクトップを親にしてヘルプ画面を出すかどうか
+	HH_POPUP hp;	// ポップアップヘルプ用の構造体
+
+	// Note: HH_TP_HELP_CONTEXTMENU や HELP_WM_HELP ではヘルプコンパイル時の
+	// トピックファイルを Cshelp.txt 以外にしている場合、
+	// そのファイル名を .chm パス名に追加指定する必要がある。
+	//     例）sakura.chm::/xxx.txt
+
+	switch( uCommandOrg )
+	{
+	case HELP_COMMAND:	// [ヘルプ]-[目次]
+	case HELP_CONTENTS:
+		uCommand = HH_DISPLAY_TOC;
+		hwndCaller = ::GetDesktopWindow();
+		bDesktop = true;
+		break;
+	case HELP_KEY:	// [ヘルプ]-[キーワード検索]
+		uCommand = HH_DISPLAY_INDEX;
+		hwndCaller = ::GetDesktopWindow();
+		bDesktop = true;
+		break;
+	case HELP_CONTEXT:	// メニュー上での[F1]キー／ダイアログの[ヘルプ]ボタン
+		uCommand = HH_HELP_CONTEXT;
+		hwndCaller = ::GetDesktopWindow();
+		bDesktop = true;
+		break;
+	case HELP_CONTEXTMENU:	// コントロール上での右クリック
+	case HELP_WM_HELP:		// [？]ボタンを押してコントロールをクリック／コントロールにフォーカスを置いて[F1]キー
+		uCommand = HH_DISPLAY_TEXT_POPUP;
+		{
+			// ポップアップヘルプ用の構造体に値をセットする
+			HWND hwndCtrl;	// ヘルプ表示対象のコントロール
+			int nCtrlID;	// 対象コントロールの ID
+			DWORD* pHelpIDs;	// コントロール ID とヘルプ ID の対応表へのポインタ
+
+			memset(&hp, 0, sizeof(HH_POPUP));	// 構造体をゼロクリア
+			hp.cbStruct = sizeof(HH_POPUP);
+			hp.pszFont = TEXT("ＭＳ Ｐゴシック, 9");
+			hp.clrForeground = hp.clrBackground = -1;
+			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
+			if( uCommandOrg == HELP_CONTEXTMENU ){
+				// マウスカーソル位置から対象コントロールと表示位置を求める
+				if( !::GetCursorPos(&hp.pt) )
+					return FALSE;
+				hwndCtrl = ::WindowFromPoint(hp.pt);
+			}
+			else{
+				// 対象コントロールは hwndCaller
+				// [F1]キーの場合もあるので対象コントロールの位置から表示位置を決める
+				RECT rc;
+				hwndCtrl = hwndCaller;
+				if( !::GetWindowRect( hwndCtrl, &rc ) )
+					return FALSE;
+				hp.pt.x = (rc.left + rc.right) / 2;
+				hp.pt.y = rc.top;
+			}
+			// 対象コントロールに対応するヘルプ ID を探す
+			nCtrlID = ::GetDlgCtrlID( hwndCtrl );
+			if( nCtrlID <= 0 )
+				return FALSE;
+			pHelpIDs = (DWORD*)dwData;
+			while( true ){
+				if( *pHelpIDs == 0 )
+					return FALSE;	// 見つからなかった
+				if( *pHelpIDs == nCtrlID )
+					break;			// 見つかった
+				pHelpIDs += 2;
+			}
+			hp.idString = *(pHelpIDs + 1);	// 見つけたヘルプ ID を設定する
+			dwData = (DWORD_PTR)&hp;	// 引数をポップアップヘルプ用の構造体に差し替える
+		}
+		break;
+	default:
+		return FALSE;
+	}
+
+	if( IsFileExists( lpszHelp, true ) ){
+		// HTML ヘルプを呼び出す
+		HWND hWnd = OpenHtmlHelp( hwndCaller, lpszHelp, uCommand, dwData );
+		if (bDesktop && hWnd != NULL){
+			::SetForegroundWindow( hWnd );	// ヘルプ画面を手前に出す
+		}
+	}
+	else {
+		if( uCommandOrg == HELP_CONTEXTMENU)
+			return FALSE;	// 右クリックでは何もしないでおく
+
+		// オンラインヘルプを呼び出す
+		if( uCommandOrg != HELP_CONTEXT )
+			dwData = 1;	// 目次ページ
+
+		TCHAR buf[256];
+		_stprintf( buf, TEXT("http://sakura-editor.sourceforge.net/cgi-bin/hid.cgi?%d"), dwData );
+		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+	}
+
+	return TRUE;
+}
 
 //	CShareDataへ移動
 /* 日付をフォーマット */
@@ -176,7 +284,7 @@ TCHAR* my_strtok( TCHAR* pBuffer, int nLen, int* pnOffset, const TCHAR* pDelimit
     
     @return パスを格納したバッファのポインタ
  
-    @note 実行ファイルと同じ位置の sakura.hlp ファイルを返す。
+    @note 実行ファイルと同じ位置の sakura.chm ファイルを返す。
         パスが UNC のときは _MAX_PATH に収まらない可能性がある。
         
  
@@ -201,13 +309,13 @@ char* GetHelpFilePath( char* pszHelpFile, unsigned int nMaxLen )
 	}
 
 	_splitpath( szHelpFile, szDrive, szDir, NULL, NULL );
-	if( strlen(szDrive) + strlen(szDir) + strlen("sakura.hlp") > nMaxLen ){
+	if( strlen(szDrive) + strlen(szDir) + strlen("sakura.chm") > nMaxLen ){
 		*pszHelpFile = '\0';
 		return pszHelpFile;
 	}
 	strcpy( szHelpFile, szDrive );
 	strcat( szHelpFile, szDir );
-	strcat( szHelpFile, "sakura.hlp" );
+	strcat( szHelpFile, "sakura.chm" );
 	strncpy( pszHelpFile, szHelpFile, nMaxLen );
 	return pszHelpFile;
 }
@@ -1805,6 +1913,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_FILEOPEN_DROPDOWN:	return HLP000015;			//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 	case F_FILESAVE:			return HLP000020;			//上書き保存
 	case F_FILESAVEAS_DIALOG:	return HLP000021;			//名前を付けて保存
+	case F_FILESAVEALL:			return HLP000313;			//すべて上書き保存	// 2006.10.05 ryoji
+	case F_FILESAVECLOSE:		return HLP000287;			//保存して閉じる	// 2006.10.05 ryoji
 	case F_FILECLOSE:			return HLP000017;			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	case F_FILECLOSE_OPEN:		return HLP000119;			//閉じて開く
 	case F_FILE_REOPEN:			return HLP000283;			//開き直す	//@@@ 2003.06.15 MIK
@@ -1856,10 +1966,10 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 
 	/* カーソル移動系 */
-//	case F_UP:				return ;	//カーソル上移動
-//	case F_DOWN:			return ;	//カーソル下移動
-//	case F_LEFT:			return ;	//カーソル左移動
-//	case F_RIGHT:			return ;	//カーソル右移動
+	case F_UP:				return HLP000289;	//カーソル上移動	// 2006.10.11 ryoji
+	case F_DOWN:			return HLP000289;	//カーソル下移動	// 2006.10.11 ryoji
+	case F_LEFT:			return HLP000289;	//カーソル左移動	// 2006.10.11 ryoji
+	case F_RIGHT:			return HLP000289;	//カーソル右移動	// 2006.10.11 ryoji
 	case F_UP2:				return HLP000220;	//カーソル上移動(２行ごと)
 	case F_DOWN2:			return HLP000221;	//カーソル下移動(２行ごと)
 	case F_WORDLEFT:		return HLP000222;	//単語の左端に移動
@@ -1888,10 +1998,10 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
 	case F_SELECTALL:		return HLP000044;	//すべて選択
 	case F_BEGIN_SEL:		return HLP000233;	//範囲選択開始
-//	case F_UP_SEL:			return ;	//(範囲選択)カーソル上移動
-//	case F_DOWN_SEL:		return ;	//(範囲選択)カーソル下移動
-//	case F_LEFT_SEL:		return ;	//(範囲選択)カーソル左移動
-//	case F_RIGHT_SEL:		return ;	//(範囲選択)カーソル右移動
+	case F_UP_SEL:			return HLP000290;	//(範囲選択)カーソル上移動	// 2006.10.11 ryoji
+	case F_DOWN_SEL:		return HLP000290;	//(範囲選択)カーソル下移動	// 2006.10.11 ryoji
+	case F_LEFT_SEL:		return HLP000290;	//(範囲選択)カーソル左移動	// 2006.10.11 ryoji
+	case F_RIGHT_SEL:		return HLP000290;	//(範囲選択)カーソル右移動	// 2006.10.11 ryoji
 	case F_UP2_SEL:			return HLP000234;	//(範囲選択)カーソル上移動(２行ごと)
 	case F_DOWN2_SEL:		return HLP000235;	//(範囲選択)カーソル下移動(２行ごと)
 	case F_WORDLEFT_SEL:	return HLP000236;	//(範囲選択)単語の左端に移動
@@ -2002,11 +2112,14 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_GREP_DIALOG:			return HLP000067;	//Grep
 	case F_JUMP_DIALOG:			return HLP000063;	//指定行へジャンプ
 	case F_OUTLINE:				return HLP000064;	//アウトライン解析
+	case F_OUTLINE_TOGGLE:		return HLP000317;	//アウトライン解析(トグル)	// 2006.10.11 ryoji
 	case F_TAGJUMP:				return HLP000065;	//タグジャンプ機能
 	case F_TAGJUMPBACK:			return HLP000066;	//タグジャンプバック機能
 	case F_TAGS_MAKE:			return HLP000280;	//タグファイルの作成	//@@@ 2003.04.13 MIK
 	case F_TAGJUMP_LIST:		return HLP000281;	//タグジャンプ一覧	//@@@ 2003.04.17 MIK
 	case F_DIRECT_TAGJUMP:		return HLP000281;	//ダイレクトタグジャンプ	//@@@ 2003.04.17 MIK
+	case F_TAGJUMP_CLOSE:		return HLP000291;	//閉じてタグジャンプ(元ウィンドウclose)	// 2006.10.11 ryoji
+	case F_TAGJUMP_KEYWORD:		return HLP000310;	//キーワードを指定してタグジャンプ	// 2006.10.05 ryoji
 	case F_COMPARE:				return HLP000116;	//ファイル内容比較
 	case F_DIFF_DIALOG:			return HLP000251;	//DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
 //	case F_DIFF:				return HLP000251;	//DIFF差分表示	//@@@ 2002.05.25 MIK
@@ -2019,6 +2132,12 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_BOOKMARK_PREV:		return HLP000207;	//前のブックマークへ
 	case F_BOOKMARK_RESET:		return HLP000208;	//ブックマークの全解除
 	case F_BOOKMARK_VIEW:		return HLP000209;	//ブックマークの一覧
+	case F_ISEARCH_NEXT:		return HLP000304;	//前方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_PREV:		return HLP000305;	//後方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_REGEXP_NEXT:	return HLP000306;	//正規表現前方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_REGEXP_PREV:	return HLP000307;	//正規表現後方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_MIGEMO_NEXT:	return HLP000308;	//MIGEMO前方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_MIGEMO_PREV:	return HLP000309;	//MIGEMO後方インクリメンタルサーチ	// 2006.10.05 ryoji
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		return HLP000046;	//挿入／上書きモード切り替え
@@ -2041,6 +2160,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TYPE_COLOR:		return HLP000075;	/* タイプ別設定『カラー』 */
 	case F_TYPE_HELPER:		return HLP000197;	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
 	case F_TYPE_REGEX_KEYWORD:	return HLP000203;	/* タイプ別設定『正規表現キーワード』 */	//@@@ 2001.11.17 add MIK
+	case F_TYPE_KEYHELP:	return HLP000315;	/* タイプ別設定『キーワードヘルプ』 */	// 2006.10.06 ryoji 追加
 	case F_OPTION_GENERAL:	return HLP000081;	/* 共通設定『全般』 */
 	case F_OPTION_WINDOW:	return HLP000146;	/* 共通設定『ウィンドウ』 */
 	case F_OPTION_EDIT:		return HLP000144;	/* 共通設定『編集』 */
@@ -2108,9 +2228,12 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_WIN_CLOSEALL:	return HLP000019;	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
 	case F_NEXTWINDOW:		return HLP000092;	//次のウィンドウ
 	case F_PREVWINDOW:		return HLP000091;	//前のウィンドウ
+	case F_WINLIST:			return HLP000314;	//ウィンドウ一覧	// 2006.10.05 ryoji
+	case F_BIND_WINDOW:		return HLP000311;	//結合して表示	// 2006.10.05 ryoji
 	case F_CASCADE:			return HLP000138;	//重ねて表示
 	case F_TILE_V:			return HLP000140;	//上下に並べて表示
 	case F_TILE_H:			return HLP000139;	//左右に並べて表示
+	case F_TOPMOST:			return HLP000312;	//常に手前に表示	// 2006.10.05 ryoji
 	case F_MAXIMIZE_V:		return HLP000141;	//縦方向に最大化
 	case F_MAXIMIZE_H:		return HLP000098;	//横方向に最大化	//2001.02.10 by MIK
 	case F_MINIMIZE_ALL:	return HLP000096;	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
@@ -2120,6 +2243,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 	/* 支援 */
 	case F_HOKAN:			return HLP000111;	/* 入力補完機能 */
+	case F_TOGGLE_KEY_SEARCH:	return HLP000318;	//キャレット位置辞書検索機能ON/OFF	// 2006.10.11 ryoji
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO	//ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 	case F_HELP_CONTENTS:	return HLP000100;	//ヘルプ目次			//Nov. 25, 2000 JEPRO
 	case F_HELP_SEARCH:		return HLP000101;	//ヘルプキーワード検索	//Nov. 25, 2000 JEPRO「トピックの」→「キーワード」に変更
@@ -2140,6 +2264,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 			return HLP000023;	//最近使ったフォルダ
 		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
 			return HLP000097;	//ウィンドウリスト
+		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){
+			return HLP000202;	//登録済みマクロ	// 2006.10.08 ryoji
 		}
 		// To Here 2003.09.23 Moca
 		return 0;
@@ -2438,11 +2564,11 @@ void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
 	COsVersionInfo cOsVer;
 	if ( cOsVer.HasWinHelpContentsProblem() ){
 		/* 目次ページを表示する */
-		::WinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );
+		MyWinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return;
 	}
 	/* 目次タブを表示する */
-	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );
+	MyWinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 

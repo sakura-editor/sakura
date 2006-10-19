@@ -8,6 +8,7 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, Stonee
 	Copyright (C) 2002, MIK
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -67,7 +68,7 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「タイプ別設定一覧」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	//	Nov. 29, 2000	From Here	genta
 	//	適用する型の一時的変更

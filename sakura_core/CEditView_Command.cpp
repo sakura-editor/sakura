@@ -4902,7 +4902,7 @@ void CEditView::Command_HELP_SEARCH( void )
 	char	szHelp[_MAX_PATH + 1];
 	/* ヘルプファイルのフルパスを返す */
 	::GetHelpFilePath( szHelp );
-	::WinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );
+	MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 //To Here Nov. 25, 2000

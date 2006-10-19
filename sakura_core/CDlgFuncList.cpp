@@ -13,8 +13,7 @@
 	Copyright (C) 2003, zenryaku, Moca, naoh, little YOSHI, genta,
 	Copyright (C) 2004, zenryaku, Moca, novice
 	Copyright (C) 2005, genta, zenryaku, ぜっと, D.S.Koba
-	Copyright (C) 2006, genta, aroka
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, genta, aroka, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1510,7 +1509,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「アウトライン解析」のヘルプ */
 		//Apr. 5, 2001 JEPRO 修正漏れを追加 (Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした)
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_OUTLINE) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_OUTLINE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDOK:
 		return OnJump();

@@ -10,6 +10,7 @@
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, YAZAKI, aroka, Moca
 	Copyright (C) 2005, MIK, Moca, aroka
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -23,6 +24,7 @@ class CPropCommon;
 #include "CShareData.h"
 #include "sakura_rc.h"
 #include "CFuncLookup.h"
+#include "etc_uty.h"
 class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
