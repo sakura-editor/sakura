@@ -35,6 +35,8 @@ class CMemory;// 2002/2/3 aroka ヘッダ軽量化
 class CEOL;// 2002/2/3 aroka ヘッダ軽量化
 class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 
+BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
+
 //@@@ 2002.2.9 YAZAKI CShareDataに移動
 //SAKURA_CORE_API const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat );/* 日付をフォーマット */
 //SAKURA_CORE_API const char* MyGetTimeFormat( SYSTEMTIME &systime, char* pszDest, int nDestLen, int nTimeFormatType, const char* pszTimeFormat );/* 時刻をフォーマット */

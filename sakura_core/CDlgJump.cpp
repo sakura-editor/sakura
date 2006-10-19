@@ -10,6 +10,7 @@
 	Copyright (C) 2001, jepro, Stonee
 	Copyright (C) 2002, aroka, MIK, YAZAKI
 	Copyright (C) 2004, genta
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -135,7 +136,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「指定行へジャンプ」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_JUMP_DIALOG) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_JUMP_DIALOG) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_CHECK_PLSQL:		/* PL/SQLソースの有効行か */
 		if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PLSQL ) ){

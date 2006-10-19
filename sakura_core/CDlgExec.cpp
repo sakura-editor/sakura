@@ -8,6 +8,7 @@
 	Copyright (C) 2000, jepro
 	Copyright (C) 2001, jepro, Stonee
 	Copyright (C) 2002, aroka, YAZAKI, MIK
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -141,7 +142,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECCOMMAND_DIALOG) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECCOMMAND_DIALOG) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		break;
 
 	//From Here Mar. 28, 2001 JEPRO

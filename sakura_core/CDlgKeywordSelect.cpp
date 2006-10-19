@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2005, MIK
+	Copyright (C) 2006, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,7 +34,19 @@
 #include "sakura.hh"
 #include "CDlgKeywordSelect.h"
 
-static const DWORD p_helpids[] = {
+static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
+	IDOK,				HIDOK_KEYWORD_SELECT,
+	IDCANCEL,			HIDCANCEL_KEYWORD_SELECT,
+	IDC_COMBO1,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO2,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO3,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO4,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO5,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO6,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO7,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO8,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO9,			HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO10,		HIDC_COMBO_KEYWORD_SELECT,
 	0, 0
 };
 

@@ -5,7 +5,7 @@
 	@date 2006/04/10 新規作成
 */
 /*
-	Copyright (C) 2006, fon
+	Copyright (C) 2006, fon, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -38,7 +38,25 @@
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
 
 #include "sakura.hh"
-static const DWORD p_helpids[] = {
+static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
+	IDC_CHECK_KEYHELP,				HIDC_CHECK_KEYHELP,				//キーワードヘルプ機能を使う
+//	IDC_FRAME_KEYHELP,				HIDC_LIST_KEYHELP,				//辞書ファイル一覧(&L)		
+	IDC_LIST_KEYHELP,				HIDC_LIST_KEYHELP,				//SysListView32
+	IDC_BUTTON_KEYHELP_UPD,			HIDC_BUTTON_KEYHELP_UPD,		//更新(&E)
+//	IDC_LABEL_KEYHELP_KEYWORD,		HIDC_EDIT_KEYHELP,				//辞書ファイル
+	IDC_EDIT_KEYHELP,				HIDC_EDIT_KEYHELP,				//EDITTEXT
+	IDC_BUTTON_KEYHELP_REF,			HIDC_BUTTON_KEYHELP_REF,		//参照(&O)...
+	IDC_BUTTON_KEYHELP_TOP,			HIDC_BUTTON_KEYHELP_TOP,		//先頭(&T)
+	IDC_BUTTON_KEYHELP_UP,			HIDC_BUTTON_KEYHELP_UP,			//上へ(&U)
+	IDC_BUTTON_KEYHELP_DOWN,		HIDC_BUTTON_KEYHELP_DOWN,		//下へ(&G)
+	IDC_BUTTON_KEYHELP_LAST,		HIDC_BUTTON_KEYHELP_LAST,		//最終(&B)
+	IDC_BUTTON_KEYHELP_INS,			HIDC_BUTTON_KEYHELP_INS,		//挿入(&S)
+	IDC_BUTTON_KEYHELP_DEL,			HIDC_BUTTON_KEYHELP_DEL,		//削除(&D)
+	IDC_CHECK_KEYHELP_ALLSEARCH,	HIDC_CHECK_KEYHELP_ALLSEARCH,	//全辞書検索する(&A)
+	IDC_CHECK_KEYHELP_KEYDISP,		HIDC_CHECK_KEYHELP_KEYDISP,		//キーワードも表示する(&W)
+	IDC_CHECK_KEYHELP_PREFIX,		HIDC_CHECK_KEYHELP_PREFIX,		//前方一致検索(&P)
+	IDC_BUTTON_KEYHELP_IMPORT,		HIDC_BUTTON_KEYHELP_IMPORT,		//インポート
+	IDC_BUTTON_KEYHELP_EXPORT,		HIDC_BUTTON_KEYHELP_EXPORT,		//エクスポート
 	0, 0
 };
 
@@ -506,11 +524,11 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 	case WM_HELP:
 		{	HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
+			MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}return TRUE;
 
 	case WM_CONTEXTMENU:	/* Context Menu */
-		::WinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
+		MyWinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	}
 	return FALSE;

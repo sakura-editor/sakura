@@ -10,6 +10,7 @@
 	Copyright (C) 2002, aroka, MIK, Moca
 	Copyright (C) 2003, MIK, genta
 	Copyright (C) 2004, MIK, genta, じゅうじ
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -48,6 +49,8 @@ const DWORD p_helpids[] = {	//13200
 	IDCANCEL,					HIDC_DIFF_IDCANCEL,
 	IDC_BUTTON_HELP,			HIDC_BUTTON_DIFF_HELP,
 	IDC_CHECK_DIFF_EXEC_STATE,	HIDC_CHECK_DIFF_EXEC_STATE,	//DIFF差分が見つからないときにメッセージを表示  2003.05.12 MIK
+	IDC_CHECK_NOTIFYNOTFOUND,	HIDC_CHECK_DIFF_NOTIFYNOTFOUND,	// 見つからないときにメッセージを表示	// 2006.10.10 ryoji
+	IDC_CHECK_SEARCHALL,		HIDC_CHECK_DIFF_SEARCHALL,		// 先頭（末尾）から再検索する	// 2006.10.10 ryoji
 //	IDC_FRAME_DIFF_SEARCH_MSG,	HIDC_FRAME_DIFF_SEARCH_MSG,
 //	IDC_STATIC,						-1,
 	0, 0
@@ -87,7 +90,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_DIFF_DIALOG) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_DIFF_DIALOG) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 
 	case IDC_BUTTON_DIFF_DST:	/* 参照 */

@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2006, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -52,6 +53,7 @@ const DWORD p_helpids[] = {
 	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPファイル
 	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPフォルダ
 	IDC_LIST_FAVORITE_CMD,			HIDC_LIST_FAVORITE_CMD,			//コマンド
+	IDC_BUTTON_CLEAR,				HIDC_BUTTON_FAVORITE_CLEAR,		//履歴のクリア	// 2006.10.10 ryoji
 	IDOK,							HIDC_FAVORITE_IDOK,				//OK
 	IDCANCEL,						HIDC_FAVORITE_IDCANCEL,			//キャンセル
 	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ヘルプ
@@ -380,7 +382,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
-		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_FAVORITE ) );
+		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_FAVORITE ) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 
 	case IDOK:

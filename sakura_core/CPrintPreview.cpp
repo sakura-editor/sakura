@@ -9,6 +9,7 @@
 	Copyright (C) 2002, YAZAKI, aroka, MIK, genta
 	Copyright (C) 2003, genta, かろと, おきた, KEITA
 	Copyright (C) 2005, D.S.Koba
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1594,7 +1595,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 				::GetHelpFilePath( szHelpFile );
 				/* 印刷プレビューのヘルプ */
 				//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-				::WinHelp( hwndDlg, szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PREVIEW) );
+				MyWinHelp( hwndDlg, szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PREVIEW) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case IDOK:
 				/* 印刷実行 */

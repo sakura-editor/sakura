@@ -1827,7 +1827,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				char	szHelp[_MAX_PATH + 1];
 				/* ヘルプファイルのフルパスを返す */
 				::GetHelpFilePath( szHelp );
-				::WinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );
+				MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 			}
 			break;
 		case F_ABOUT:	//Dec. 25, 2000 JEPRO F_に変更
@@ -3273,7 +3273,7 @@ void CEditWnd::OnHelp_MenuItem( HWND hwndParent, int nFuncID )
 	/* 機能IDに対応するヘルプコンテキスト番号を返す */
 	nHelpContextID = FuncID_To_HelpContextID( nFuncID );
 	if( 0 != nHelpContextID ){
-		::WinHelp( hwndParent, szHelpFile, HELP_CONTEXT, nHelpContextID );
+		MyWinHelp( hwndParent, szHelpFile, HELP_CONTEXT, nHelpContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 	return;
 }

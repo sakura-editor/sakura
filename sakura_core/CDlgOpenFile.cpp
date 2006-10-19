@@ -11,6 +11,7 @@
 	Copyright (C) 2003, MIK, KEITA, Moca, ryoji
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -98,7 +99,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			switch( wID ){
 			case pshHelp:
 				/* ヘルプ */
-				::WinHelp( hwnd, m_szHelpFile, HELP_CONTEXT, m_nHelpTopicID );
+				MyWinHelp( hwnd, m_szHelpFile, HELP_CONTEXT, m_nHelpTopicID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case chx1:	// The read-only check box
 				m_bReadOnly = ::IsDlgButtonChecked( hwnd , chx1 );
@@ -525,13 +526,13 @@ UINT_PTR CALLBACK OFNHookProc(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			::WinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );
+			MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		::WinHelp( hdlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );
+		MyWinHelp( hdlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	//@@@ 2002.01.08 add end
 

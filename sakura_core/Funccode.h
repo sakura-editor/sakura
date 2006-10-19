@@ -11,7 +11,7 @@
 	Copyright (C) 2003, 鬼, genta, MIK, Moca
 	Copyright (C) 2004, genta, zenryaku, kazika, Moca, isearch
 	Copyright (C) 2005, genta, MIK, maru
-	Copyright (C) 2006, aroka, かろと, fon
+	Copyright (C) 2006, aroka, かろと, fon, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -301,6 +301,7 @@
 #define F_TYPE_COLOR		31116	/* タイプ別設定『カラー』 */
 #define F_TYPE_HELPER		31117	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
 #define F_TYPE_REGEX_KEYWORD	31118	/* タイプ別設定『正規表現キーワード』 */	//@@@ 2001.11.17 add MIK
+#define F_TYPE_KEYHELP		31119	/* タイプ別設定『キーワードヘルプ』 */	// 2006.10.06 ryoji 追加
 #define F_OPTION_GENERAL	32000	/* 共通設定『全般』 */
 #define F_OPTION_WINDOW		32001	/* 共通設定『ウィンドウ』 */
 #define F_OPTION_EDIT		32002	/* 共通設定『編集』 */
