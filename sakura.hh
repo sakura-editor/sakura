@@ -67,6 +67,7 @@
 #define HLP000164	164 //日付挿入
 #define HLP000165	165 //時刻挿入
 #define HLP000255	255	//コントロールコードの入力
+#define HLP000289	289 //カーソル移動	// 2006.10.11 ryoji
 #define HLP000220	220 //カーソル上移動（2行ごと）
 #define HLP000221	221 //カーソル下移動（2行ごと）
 #define HLP000222	222 //単語の左端に移動
@@ -150,11 +151,13 @@
 #define HLP000067	67 //Grep
 #define HLP000063	63 //指定行へジャンプ
 #define HLP000064	64 //アウトライン解析
+#define HLP000317	317 //アウトライン解析(トグル)	// 2006.10.11 ryoji
 #define HLP000065	65 //タグジャンプ
 #define HLP000066	66 //タグジャンプバック
 #define HLP000278	278 //タグジャンプ一覧
 #define HLP000280	280 //タグファイルの作成
 #define HLP000281	281 //ダイレクトタグジャンプ
+#define HLP000291	291 //閉じてタグジャンプ(元ウィンドウclose)	// 2006.10.11 ryoji
 #define HLP000310	310 //キーワードを指定してタグジャンプ	// 2006.10.05 ryoji
 #define HLP000111	111 //入力補完
 #define HLP000116	116 //ファイル内容比較
@@ -259,6 +262,7 @@
 #define HLP000218	218 //再変換
 #define HLP000219	219 //折り返し位置に改行をつけてコピー
 #define HLP000233	233 //範囲選択開始
+#define HLP000290	290 //（選択）カーソル移動	// 2006.10.11 ryoji
 #define HLP000234	234 //（選択）カーソル上移動（2行ごと）
 #define HLP000235	235 //（選択）カーソル下移動（2行ごと）
 #define HLP000236	236 //（選択）単語の左端に移動
@@ -286,6 +290,7 @@
 #define HLP000254	254	//差分表示の全解除
 #define HLP000286	286	//ウィンドウの位置と大きさ
 #define HLP000316	316	//文字色／背景色統一	// 2006.10.07 ryoji
+#define HLP000318	318	//キャレット位置辞書検索機能ON/OFF	// 2006.10.11 ryoji
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
@@ -698,6 +703,12 @@
 #define HIDC_PS_CHECK_KINSOKUTAIL	12520	//行末禁則	//@@@ 2002.04.09 MIK
 #define HIDC_PS_CHECK_KINSOKURET	12521	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
 #define HIDC_PS_CHECK_KINSOKUKUTO	12522	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
+#define HIDC_PS_EDIT_HEAD1		12523	//ヘッダー(左寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_HEAD2		12524	//ヘッダー(中央寄せ)	// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_HEAD3		12525	//ヘッダー(右寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_FOOT1		12526	//フッター(左寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_FOOT2		12527	//フッター(中央寄せ)	// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_FOOT3		12528	//フッター(右寄せ)		// 2006.10.11 ryoji
 
 //プロパティ
 #define HIDOK_PROP				12600	//
@@ -762,6 +773,8 @@
 #define HIDC_DIFF_IDCANCEL			13214	//キャンセル
 #define HIDC_BUTTON_DIFF_HELP		13215	//ヘルプ
 #define HIDC_CHECK_DIFF_EXEC_STATE	13216	//DIFF差分がないときにメッセージ表示
+#define HIDC_CHECK_DIFF_NOTIFYNOTFOUND	13217	// 見つからないときにメッセージを表示	// 2006.10.10 ryoji
+#define HIDC_CHECK_DIFF_SEARCHALL		13218	// 先頭（末尾）から再検索する	// 2006.10.10 ryoji//コントロールコード
 
 //コントロールコード
 #define HIDC_LIST_CTRLCODE			13300
@@ -796,6 +809,7 @@
 #define	HIDC_LIST_FAVORITE_GREPFILE	13515
 #define	HIDC_LIST_FAVORITE_GREPFOLDER	13516
 #define	HIDC_LIST_FAVORITE_CMD		13517
+#define	HIDC_BUTTON_FAVORITE_CLEAR	13518	//履歴のクリア	// 2006.10.10 ryoji
 
 //タグジャンプリスト
 #define	HIDC_LIST_TAGJUMPLIST		13600
@@ -826,6 +840,41 @@
 #define	HIDC_RADIO_WINPOS_SAVE	13810
 #define	HIDC_RADIO_WINPOS_SET	13811
 #define	HIDC_COMBO_WINTYPE		13812
+#define HIDOK_WINSIZE				13813	// 2006.10.10 ryoji
+#define HIDC_BUTTON_WINSIZE_HELP	13814	// 2006.10.10 ryoji
+
+//タイプ別設定「キーワードヘルプ」タブ	// 2006.10.10 ryoji
+#define HIDC_CHECK_KEYHELP				13900		//キーワードヘルプ機能を使う
+#define HIDC_LIST_KEYHELP				13901		//辞書ファイル一覧(&L)
+#define HIDC_BUTTON_KEYHELP_UPD			13902		//更新(&E)
+#define HIDC_EDIT_KEYHELP				13903		//辞書ファイル
+#define HIDC_BUTTON_KEYHELP_REF			13904		//参照(&O)...
+#define HIDC_BUTTON_KEYHELP_TOP			13905		//先頭(&T)
+#define HIDC_BUTTON_KEYHELP_UP			13906		//上へ(&U)
+#define HIDC_BUTTON_KEYHELP_DOWN		13907		//下へ(&G)
+#define HIDC_BUTTON_KEYHELP_LAST		13908		//最終(&B)
+#define HIDC_BUTTON_KEYHELP_INS			13909		//挿入(&S)
+#define HIDC_BUTTON_KEYHELP_DEL			13910		//削除(&D)
+#define HIDC_CHECK_KEYHELP_ALLSEARCH	13911		//全辞書検索する(&A)
+#define HIDC_CHECK_KEYHELP_KEYDISP		13912		//キーワードも表示する(&W)
+#define HIDC_CHECK_KEYHELP_PREFIX		13913		//前方一致検索(&P)
+#define HIDC_BUTTON_KEYHELP_IMPORT		13914		//インポート
+#define HIDC_BUTTON_KEYHELP_EXPORT		13915		//エクスポート
+
+//文字色／背景色設定ダイアログ	// 2006.10.10 ryoji
+#define HIDOK_SAMECOLOR					14000		// OK
+#define HIDCANCEL_SAMECOLOR				14001		// キャンセル
+#define HIDC_BUTTON_SAMECOLOR_HELP		14002		// ヘルプ
+#define HIDC_LIST_SAMECOLOR_COLORS		14003		// 変更対象の色
+#define HIDC_BUTTON_SAMECOLOR_SELALL	14004		// 全チェック
+#define HIDC_BUTTON_SAMECOLOR_SELNOTING	14005		// 全解除
+#define HIDC_LIST_SAMECOLOR_ITEMINFO	14006		// 選択中の色に対応する項目のリスト
+#define HIDC_STATIC_COLOR				14007		// 統一色
+
+//強調キーワードの設定ダイアログ	// 2006.10.10 ryoji
+#define HIDOK_KEYWORD_SELECT			14100		// OK
+#define HIDCANCEL_KEYWORD_SELECT		14101		// キャンセル
+#define HIDC_COMBO_KEYWORD_SELECT		14102		// 強調キーワード1～10
 
 
 #define HIDC_STATIC								19999 //不明
