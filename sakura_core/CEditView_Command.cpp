@@ -1311,10 +1311,8 @@ void CEditView::Command_GOFILETOP( int bSelect )
 	//	Sep. 8, 2000 genta
 	AddCurrentLineToHistory();
 
-	if ( !m_bBeginBoxSelect )	m_nCaretPosX = 0;	//	通常は、(0, 0)へ移動。ボックス選択中は、(m_nCaretPosX, 0)へ移動
-
 	//	2006.07.09 genta 新規関数にまとめた
-	MoveCursorSelecting( m_nCaretPosX, 0, bSelect );
+	MoveCursorSelecting( (!m_bBeginBoxSelect)? 0: m_nCaretPosX, 0, bSelect );	//	通常は、(0, 0)へ移動。ボックス選択中は、(m_nCaretPosX, 0)へ移動
 }
 
 
