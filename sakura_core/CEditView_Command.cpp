@@ -8335,9 +8335,9 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( _tcschr( m_pcEditDoc->GetFilePath(), SPACE ) ? TRUE : FALSE ){
-			wsprintf( szPath, "@\"%s\"\r", m_pcEditDoc->GetFilePath() );
+			wsprintf( szPath, "@\"%s\"\r\n", m_pcEditDoc->GetFilePath() );
 		}else{
-			wsprintf( szPath, "@%s\r", m_pcEditDoc->GetFilePath() );
+			wsprintf( szPath, "@%s\r\n", m_pcEditDoc->GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		MySetClipboardData( szPath, lstrlen( szPath ), FALSE );
