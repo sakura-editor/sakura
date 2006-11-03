@@ -11,6 +11,7 @@
 	Copyright (C) 2003, ryoji
 	Copyright (C) 2004, genta, MIK
 	Copyright (C) 2005, ryoji
+	Copyright (C) 2006, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -109,6 +110,12 @@ protected:
 
 	// 2005.10.29 ryoji コンボボックスのドロップダウン時処理
 	static void OnCmbDropdown( HWND hwnd );
+
+	// 2006.09.03 Moca ファイルダイアログのエラー回避
+	//! リトライ機能付き GetOpenFileName
+	BOOL GetOpenFileNameRecover( OPENFILENAMEZ& ofn );
+	//! リトライ機能付き GetOpenFileName
+	BOOL GetSaveFileNameRecover( OPENFILENAMEZ& ofn );
 
 	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 };

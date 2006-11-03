@@ -11,7 +11,7 @@
 	Copyright (C) 2003, MIK, KEITA, Moca, ryoji
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -722,7 +722,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 		;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
-	if( ::GetOpenFileName( &m_ofn ) ){
+	if( GetOpenFileNameRecover( m_ofn ) ){
 		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
 		if( bGetCurDirSuc ){
 			::SetCurrentDirectory( szCurDir );
@@ -783,7 +783,7 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
-	if( ::GetSaveFileName( &m_ofn ) ){
+	if( GetSaveFileNameRecover( m_ofn ) ){
 		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
 		if( bGetCurDirSuc ){
 			::SetCurrentDirectory( szCurDir );
@@ -860,7 +860,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	}
 
 
-	if( ::GetOpenFileName( &m_ofn ) ){
+	if( GetOpenFileNameRecover( m_ofn ) ){
 
 //		MYTRACE( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */
 
@@ -955,7 +955,7 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	}
 
 	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS_DIALOG);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
-	if( ::GetSaveFileName( &m_ofn ) ){
+	if( GetSaveFileNameRecover( m_ofn ) ){
 
 //		MYTRACE( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */
 
@@ -1159,6 +1159,42 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 	::SendMessage( hwnd, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + 8), NULL );
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwnd, hDC );
+}
+
+/*! リトライ機能付き GetOpenFileName
+	@author Moca
+	@date 2006.09.03 新規作成
+*/
+BOOL CDlgOpenFile::GetOpenFileNameRecover( OPENFILENAMEZ& ofn )
+{
+	BOOL ret;
+	ret = ::GetOpenFileName( &ofn );
+	if( FALSE == ret  ){
+		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
+			strcpy( ofn.lpstrFile, "" );
+			ofn.lpstrInitialDir = "";
+			ret = ::GetOpenFileName( &ofn );
+		}
+	}
+	return ret;
+}
+
+/*! リトライ機能付き GetSaveFileName
+	@author Moca
+	@date 2006.09.03 新規作成
+*/
+BOOL CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ& ofn )
+{
+	BOOL ret;
+	ret = ::GetSaveFileName( &ofn );
+	if( FALSE == ret  ){
+		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
+			strcpy( ofn.lpstrFile, "" );
+			ofn.lpstrInitialDir = "";
+			ret = ::GetSaveFileName( &ofn );
+		}
+	}
+	return ret;
 }
 
 /*[EOF]*/
