@@ -172,7 +172,6 @@ protected:
 	CLayout* DeleteLayoutAsLogical( CLayout*, int, int , int, int, int, int* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , int );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
-
 	/*
 	|| メンバ変数
 	*/
@@ -210,6 +209,11 @@ protected:
 
 	int				m_nPrevReferLine;
 	CLayout*		m_pLayoutPrevRefer;
+	
+	// 2006.10.01 Moca EOFカーソル位置を記憶する(DoLayout/DoLayout_Rangeで無効にする)
+	int				m_nEOFLine; //!< EOF行数
+	int				m_nEOFColumn; //!< EOF幅位置
+
 	//	Jul. 20, 2003 genta
 	//	タイプ別の設定を取得するためにCEditDocへの参照が必要
 	CEditDoc*		m_pcEditDoc;

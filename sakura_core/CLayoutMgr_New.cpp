@@ -844,6 +844,9 @@ int CLayoutMgr::DoLayout_Range(
 	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
 	if( nCurLine == m_pcDocLineMgr->GetLineCount() ){
 		m_nLineTypeBot = nCOMMENTMODE_Prev;
+		// 2006.10.01 Moca 最終行が変更された。EOF位置情報を破棄する。
+		m_nEOFColumn = -1;
+		m_nEOFLine = -1;
 	}
 
 // 1999.12.22 レイアウト情報がなくなる訳ではないので

@@ -1891,7 +1891,10 @@ void CEditView::TraceRgn( HRGN hrgn )
 
 
 
-/* 選択領域の描画 */
+/*! 選択領域の描画
+
+	@date 2006.10.01 Moca 重複コード削除．矩形作画改善．
+*/
 void CEditView::DrawSelectArea( void )
 {
 	if( !m_bDrawSWITCH ){
@@ -1902,18 +1905,15 @@ void CEditView::DrawSelectArea( void )
 	int			nFromCol;
 	int			nToLine;
 	int			nToCol;
-	HDC			hdc;
-	HBRUSH		hBrush;
-	HBRUSH		hBrushOld;
-	int			nROP_Old;
 	int			nLineNum;
-	RECT		rcOld;
-	RECT		rcNew;
-	HRGN		hrgnOld = NULL;
-	HRGN		hrgnNew = NULL;
-	HRGN		hrgnDraw = NULL;
 
 	m_bDrawSelectArea = TRUE;	// 2002/12/13 ai
+
+	// 2006.10.01 Moca 重複コード統合
+	HDC         hdc = ::GetDC( m_hWnd );
+	HBRUSH      hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
+	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
+	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
 
 //	MYTRACE( "DrawSelectArea()  m_bBeginBoxSelect=%s\n", m_bBeginBoxSelect?"TRUE":"FALSE" );
 	if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
@@ -1927,10 +1927,14 @@ void CEditView::DrawSelectArea( void )
 		//	return;
 		//}
 
-		hdc = ::GetDC( m_hWnd );
-		hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
-		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
-		nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
+		const int nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
+		const int nCharHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+
+		RECT  rcOld;
+		RECT  rcNew;
+		HRGN  hrgnOld = NULL;
+		HRGN  hrgnNew = NULL;
+		HRGN  hrgnDraw = NULL;
 
 		/* 2点を対角とする矩形を求める */
 		TwoPointToRect(
@@ -1955,10 +1959,10 @@ void CEditView::DrawSelectArea( void )
 		if( rcOld.bottom > m_nViewTopLine + m_nViewRowNum ){
 			rcOld.bottom = m_nViewTopLine + m_nViewRowNum;
 		}
-		rcOld.left		= (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + rcOld.left  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		rcOld.right		= (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + rcOld.right * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		rcOld.top		= ( rcOld.top - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-		rcOld.bottom	= ( rcOld.bottom + 1 - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+		rcOld.left		= (m_nViewAlignLeft - m_nViewLeftCol * nCharWidth) + rcOld.left  * nCharWidth;
+		rcOld.right		= (m_nViewAlignLeft - m_nViewLeftCol * nCharWidth) + rcOld.right * nCharWidth;
+		rcOld.top		= ( rcOld.top - m_nViewTopLine ) * nCharHeight + m_nViewAlignTop;
+		rcOld.bottom	= ( rcOld.bottom + 1 - m_nViewTopLine ) * nCharHeight + m_nViewAlignTop;
 		hrgnOld = ::CreateRectRgnIndirect( &rcOld );
 
 		/* 2点を対角とする矩形を求める */
@@ -1984,54 +1988,46 @@ void CEditView::DrawSelectArea( void )
 		if( rcNew.bottom > m_nViewTopLine + m_nViewRowNum ){
 			rcNew.bottom = m_nViewTopLine + m_nViewRowNum;
 		}
-		rcNew.left		= (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + rcNew.left  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		rcNew.right		= (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )) + rcNew.right * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		rcNew.top		= ( rcNew.top - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-		rcNew.bottom	= ( rcNew.bottom + 1 - m_nViewTopLine ) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
+		rcNew.left		= (m_nViewAlignLeft - m_nViewLeftCol * nCharWidth) + rcNew.left  * nCharWidth;
+		rcNew.right		= (m_nViewAlignLeft - m_nViewLeftCol * nCharWidth) + rcNew.right * nCharWidth;
+		rcNew.top		= (rcNew.top - m_nViewTopLine) * nCharHeight + m_nViewAlignTop;
+		rcNew.bottom	= (rcNew.bottom + 1 - m_nViewTopLine) * nCharHeight + m_nViewAlignTop;
 		hrgnNew = ::CreateRectRgnIndirect( &rcNew );
 
-		if( rcNew.left <= rcNew.right ){
+		// 矩形作画。
+		{
 			/* ::CombineRgn()の結果を受け取るために、適当なリージョンを作る */
 			hrgnDraw = ::CreateRectRgnIndirect( &rcNew );
 
 			/* 旧選択矩形と新選択矩形のリージョンを結合し､ 重なりあう部分だけを除去します */
 			if( NULLREGION != ::CombineRgn( hrgnDraw, hrgnOld, hrgnNew, RGN_XOR ) ){
-				::PaintRgn( hdc, hrgnDraw );
 
 				// 2002.02.16 hor
 				// 結合後のエリアにEOFが含まれる場合はEOF以降の部分を除去します
+				// 2006.10.01 Moca リーソースリークを修正したら、チラつくようになったため、
+				// 抑えるために EOF以降をリージョンから削除して1度の作画にする
+
+				// 2006.10.01 Moca Start EOF位置計算をGetEndLayoutPosに書き換え。
 				int  nLastLen;
-				int  nLastLine=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
-				const char* pLine;
-				const CLayout* pcLayout;
-				if(m_nViewTopLine+m_nViewRowNum+1>=nLastLine) {
-					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLastLine, &nLastLen ,&pcLayout);
-					if( NULL != pcLayout && EOL_NONE != pcLayout->m_cEol ){
-						nLastLine++;
-						nLastLen=0;
-					}
-					if(m_nSelectLineFrom>=nLastLine || m_nSelectLineTo>=nLastLine ||
-						m_nSelectLineFromOld>=nLastLine || m_nSelectLineToOld>=nLastLine){
-						//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
-						//	最終行にTABが入っていると反転範囲が不足する．
-						rcNew.left = m_nViewAlignLeft +
-							( m_nViewLeftCol + LineIndexToColmn( pcLayout, nLastLen ))
-							* ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-						rcNew.right = m_nViewAlignLeft + m_nViewCx;
-						rcNew.top = ( nLastLine - m_nViewTopLine) * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) + m_nViewAlignTop;
-						rcNew.bottom = rcNew.top + ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
-						hrgnNew = ::CreateRectRgnIndirect( &rcNew );
-						if( NULLREGION != ::CombineRgn( hrgnDraw, hrgnDraw, hrgnNew, RGN_AND ) ){
-							::PaintRgn( hdc, hrgnDraw );
-						}
-					}
+				int  nLastLine;
+				m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( nLastLen, nLastLine );
+				// 2006.10.01 Moca End
+				if(m_nSelectLineFrom>=nLastLine || m_nSelectLineTo>=nLastLine ||
+					m_nSelectLineFromOld>=nLastLine || m_nSelectLineToOld>=nLastLine){
+					//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
+					//	最終行にTABが入っていると反転範囲が不足する．
+					//	2006.10.01 Moca GetEndLayoutPosで処理するためColumnToIndexは不要に。
+					rcNew.left = m_nViewAlignLeft + (m_nViewLeftCol + nLastLen) * nCharWidth;
+					rcNew.right = m_nViewAlignLeft + m_nViewCx;
+					rcNew.top = (nLastLine - m_nViewTopLine) * nCharHeight + m_nViewAlignTop;
+					rcNew.bottom = rcNew.top + nCharHeight;
+					// 2006.10.01 Moca GDI(リージョン)リソースリーク修正
+					HRGN hrgnEOFNew = ::CreateRectRgnIndirect( &rcNew );
+					::CombineRgn( hrgnDraw, hrgnDraw, hrgnEOFNew, RGN_DIFF );
+					::DeleteObject( hrgnEOFNew );
 				}
-
+				::PaintRgn( hdc, hrgnDraw );
 			}
-		}else{
-			hrgnDraw = hrgnOld;
-			::PaintRgn( hdc, hrgnDraw );
-
 		}
 
 		//////////////////////////////////////////
@@ -2048,15 +2044,7 @@ void CEditView::DrawSelectArea( void )
 		if( NULL != hrgnOld ){
 			::DeleteObject( hrgnOld );
 		}
-		::SetROP2( hdc, nROP_Old );
-		::SelectObject( hdc, hBrushOld );
-		::DeleteObject( hBrush );
-		::ReleaseDC( m_hWnd, hdc );
 	}else{
-		hdc = ::GetDC( m_hWnd );
-		hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
-		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
-		nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
 
 		/* 現在描画されている範囲と始点が同じ */
 		if( m_nSelectLineFrom == m_nSelectLineFromOld &&
@@ -2122,11 +2110,12 @@ void CEditView::DrawSelectArea( void )
 				}
 			}
 		}
-		::SetROP2( hdc, nROP_Old );
-		::SelectObject( hdc, hBrushOld );
-		::DeleteObject( hBrush );
-		::ReleaseDC( m_hWnd, hdc );
 	}
+	// 2006.10.01 Moca 重複コード統合
+	::SetROP2( hdc, nROP_Old );
+	::SelectObject( hdc, hBrushOld );
+	::DeleteObject( hBrush );
+	::ReleaseDC( m_hWnd, hdc );
 	//	Jul. 9, 2005 genta 選択領域の情報を表示
 	PrintSelectionInfoMsg();
 	return;

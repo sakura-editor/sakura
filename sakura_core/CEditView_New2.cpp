@@ -431,7 +431,17 @@ int CEditView::DispText( HDC hdc, int x, int y, const char* pData, int nLength )
 }
 
 
-/* テキスト反転 */
+/* テキスト反転
+
+	@param hdc 作画対象ビットマップを含むデバイス
+	@param nLineNum 反転処理対象レイアウト行番号(0開始)
+	@param x        レイアウト0桁目の左端座標
+	@param y        対象行の上端座標
+	@param nX       対象行の終了桁位置。　[ABC\n]なら改行の後ろで4
+	@note	CCEditView::DispLineNew() での作画(WM_PAINT)時に、1レイアウト行をまとめて反転処理するための関数。
+	範囲選択の随時更新は、CEditView::DrawSelectArea() が選択・反転解除を行う。
+	
+*/
 void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 {
 //	MYTRACE( "CEditView::DispTextSelected()\n" );
@@ -452,9 +462,24 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 	/* 選択範囲内の行かな */
 //	if( IsTextSelected() ){
 		if( nLineNum >= m_nSelectLineFrom && nLineNum <= m_nSelectLineTo ){
-			if( m_bBeginBoxSelect){		/* 矩形範囲選択中 */
+			if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
 				nSelectFrom = m_nSelectColmFrom;
 				nSelectTo   = m_nSelectColmTo;
+				// 2006.09.30 Moca From 矩形選択時[EOF]とその右側は反転しないように修正。処理を追加
+				if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 <= nLineNum ){
+					int EndX = 0;
+					int EndY = 0;
+					m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( EndX, EndY );
+					if( EndY == nLineNum ){
+						if( EndX < nSelectFrom ){
+							nSelectFrom = EndX;
+						}
+						if( EndX < nSelectTo ){
+							nSelectTo = EndX;
+						}
+					}
+				}
+				// 2006.09.30 Moca To
 			}else{
 				if( m_nSelectLineFrom == m_nSelectLineTo ){
 						nSelectFrom = m_nSelectColmFrom;
@@ -1512,3 +1537,4 @@ int CEditView::DispCtrlCode( HDC hdc, int x, int y, const unsigned char* pData, 
 
 
 /*[EOF]*/
+ 

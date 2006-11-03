@@ -312,6 +312,9 @@ void CLayoutMgr::Init()
 //	m_pszLineComment = NULL;			/* 行コメントデリミタ */
 //	m_pszBlockCommentFrom = NULL;		/* ブロックコメントデリミタ(From) */
 //	m_pszBlockCommentTo = NULL;			/* ブロックコメントデリミタ(To) */
+	// 2006.10.07 Moca EOFレイアウト位置記憶
+	m_nEOFLine = -1;
+	m_nEOFColumn = -1;
 	return;
 }
 
@@ -602,12 +605,21 @@ bool CLayoutMgr::IsEndOfLine( int nLine, int nPos )
 	処理に無駄が多いため，専用関数を作成
 	
 	@date 2006.07.29 genta
+	@date 2006.10.01 Moca メンバで保持するように。データ変更時には、DoLayout/DoLayout_Rangeで無効にする。
 */
 void CLayoutMgr::GetEndLayoutPos(int& lX, int& lY)
 {
+	if( -1 != m_nEOFLine ){
+		lX = m_nEOFColumn;
+		lY = m_nEOFLine;
+		return;
+	}
+
 	if( 0 == m_nLines || m_pLayoutBot == NULL ){
 		// データが空
 		lX = 0; lY = 0;
+		m_nEOFColumn = lX;
+		m_nEOFLine = lY;
 		return;
 	}
 
@@ -626,7 +638,15 @@ void CLayoutMgr::GetEndLayoutPos(int& lX, int& lY)
 		}
 		lX = it.getColumn();
 		lY = GetLineCount() - 1;
+		// 2006.10.01 Moca Start [EOF]のみのレイアウト行処理が抜けていたバグを修正
+		if( GetMaxLineSize() <= lX ){
+			lX = 0;
+			lY++;
+		}
+		// 2006.10.01 Moca End
 	}
+	m_nEOFColumn = lX;
+	m_nEOFLine = lY;
 }
 
 
