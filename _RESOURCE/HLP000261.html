@@ -9,6 +9,11 @@
 <BODY>
 <script type="text/javascript">
 <!--
+document.writeln('<OBJECT id="hhctrl" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"');
+document.writeln(' codebase="hhctrl.ocx#Version=4,74,8793,0" width="0" height="0">');
+document.writeln('</OBJECT>');
+
 document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
 document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
 document.writeln(' <PARAM name="Command" value="Close"> ');
@@ -49,11 +54,11 @@ b   <a href="HLP000260.html">カスタムアイコンファイル</a>(my_appicon.ico, my_gre
 ■インポート・エクスポートするもの<br>
 一度インポートすれば、設定ファイルに書きこまれます。<br>
 <div class=li200>
-t* <a href="HLP000401.html">強調キーワードファイル</a>(*.kwd / *.*)<br>
-i  <a href="HLP000402.html">正規表現キーワード</a>(*.rkw / *.*)<br>
-i  <a href="HLP000403.html">色設定ファイル</a>(*.col / *.*)<br>
-i  <a href="HLP000404.html">キー割り当てファイル</a>(*.key / *.*)<br>
-b  <a href="HLP000405.html">カスタムメニュー設定ファイル</a>(*.mnu / *.*)<br>
+t* <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\n共通設定『強調キーワード』プロパティでインポート、エクスポート可能。\n拡張子は*.kwdです。','ＭＳゴシック,11',9,9,-1,-1)">強調キーワードファイル</a>(*.kwd / *.*)<br>
+i  <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\nタイプ別設定『正規表現キーワード』プロパティでインポート、エクスポート可能。\n拡張子は*.rkwです。','ＭＳゴシック,11',9,9,-1,-1)">正規表現キーワード</a>(*.rkw / *.*)<br>
+i  <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\nタイプ別設定『カラー』プロパティでインポート、エクスポートできます。\n拡張子は*.colです。','ＭＳゴシック,11',9,9,-1,-1)">色設定ファイル</a>(*.col / *.*)<br>
+i  <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\n共通設定『キー割り当て』プロパティでインポート、エクスポート可能。\n拡張子は*.keyです。','ＭＳゴシック,11',9,9,-1,-1)">キー割り当てファイル</a>(*.key / *.*)<br>
+b  <a href="javascript:id=hhctrl.TextPopup('右クリックメニュー、カスタムメニューの設定を記録するファイル。\nバイナリファイルなのでエディタで編集・閲覧不可。\n共通設定『カスタムメニュー』プロパティでインポート、エクスポート可能。\n拡張子は*.mnuです。','ＭＳゴシック,11',9,9,-1,-1)">カスタムメニュー設定ファイル</a>(*.mnu / *.*)<br>
 </div><br>
 ■拡張ツール<br>
 エディタの機能のうちのいくつかは外部ツールを必要とします。バイナリとは別に以下のツールも併せてダウンロードしてください。<br>
