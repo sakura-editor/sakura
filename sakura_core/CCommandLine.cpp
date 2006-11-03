@@ -10,6 +10,7 @@
 	Copyright (C) 2002, aroka CEditAppより分離
 	Copyright (C) 2002, genta, Moca
 	Copyright (C) 2005, D.S.Koba, genta, susu
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,6 +25,8 @@
 #include <io.h>
 #include <string.h>
 #include "CRunningTimer.h"
+// 関数をマクロ再定義するので my_icmp.h は最後に置く	// 2006.10.25 ryoji
+#include "my_icmp.h"
 
 CCommandLine* CCommandLine::_instance = NULL;
 
@@ -58,6 +61,7 @@ CCommandLine* CCommandLine::_instance = NULL;
 
 	@author genta
 	@date Apr. 6, 2001
+	@date 2006.10.25 ryoji オプション文字列の大文字小文字を区別しない
 */
 int CCommandLine::CheckCommandLine(
 	LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
@@ -118,7 +122,7 @@ int CCommandLine::CheckCommandLine(
 			//	オプション部分の長さチェック
 			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&
 			//	文字列の比較
-			memcmp( str, ptr->opt, ptr->len ) == 0 ){
+			_memicmp( str, ptr->opt, ptr->len ) == 0 ){		// 2006.10.25 ryoji memcmp() -> _memicmp()
 			*arg = str + ptr->len + 1;
 			return ptr->value;
 		}
@@ -128,7 +132,7 @@ int CCommandLine::CheckCommandLine(
 	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ ){
 		if( len == ptr->len &&	//	長さチェック
 			//	文字列の比較
-			memcmp( str, ptr->opt, ptr->len ) == 0 ){
+			_memicmp( str, ptr->opt, ptr->len ) == 0 ){		// 2006.10.25 ryoji memcmp() -> _memicmp()
 			return ptr->value;
 		}
 	}
