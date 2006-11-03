@@ -300,6 +300,7 @@ LRESULT CTabWnd::OnTabMButtonUp( WPARAM wParam, LPARAM lParam )
 /*! タブ部 WM_NOTIFY 処理
 
 	@date 2005.09.01 ryoji 関数化
+	@date 2006.10.31 ryoji ツールチップのフルパス名を簡易表示する
 */
 LRESULT CTabWnd::OnTabNotify( WPARAM wParam, LPARAM lParam )
 {
@@ -325,7 +326,10 @@ LRESULT CTabWnd::OnTabNotify( WPARAM wParam, LPARAM lParam )
 
 					if( pfi->m_szPath[0] )
 					{
-						_tcsncpy( m_szTextTip1, pfi->m_szPath, sizeof( m_szTextTip1 ) / sizeof( TCHAR ) );
+						// フルパス名を簡易表示する	// 2006.10.31 ryoji
+						TCHAR szText[_MAX_PATH];
+						CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, szText, _MAX_PATH );
+						_tcsncpy( m_szTextTip1, szText, sizeof( m_szTextTip1 ) / sizeof( TCHAR ) );
 						m_szTextTip1[ (sizeof( m_szTextTip1 ) / sizeof( TCHAR )) - 1 ] = _T('\0');
 					}
 					else if( pfi->m_bIsGrep )
@@ -1684,6 +1688,7 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 /*!	タブ一覧表示処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.03.23 fon OnListBtnClickから移動(行頭の//>が変更部)
+	@date 2006.10.31 ryoji メニューのフルパス名を簡易表示する
 */
 LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bFull )
 {
@@ -1724,7 +1729,14 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bFull )
 		{
 			EditNode *pNode = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&tcitem.lParam ) );
 			if( pNode && pNode->m_szFilePath[0] )
-				::lstrcpyn( pData[i].szText, pNode->m_szFilePath, sizeof(pData[i].szText) );
+			{
+				// フルパス名を簡易表示する	// 2006.10.31 ryoji
+				TCHAR szText[_MAX_PATH];
+				TCHAR szText_amp[_MAX_PATH * 2];
+				CShareData::getInstance()->GetTransformFileNameFast( pNode->m_szFilePath, szText, _MAX_PATH );
+				dupamp( szText, szText_amp );	// &を&&に置き換える
+				::lstrcpyn( pData[i].szText, szText_amp, sizeof(pData[i].szText) );
+			}
 		}
 	}
 	cRecentEditNode.Terminate();
