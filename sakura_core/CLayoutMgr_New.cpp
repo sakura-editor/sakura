@@ -481,6 +481,11 @@ int CLayoutMgr::DoLayout_Range(
 
 	nModifyLayoutLinesNew = 0;
 
+	// 2006.12.01 Moca 途中にまで再構築した場合にEOF位置がずれたまま
+	//	更新されないので，範囲にかかわらず必ずリセットする．
+	m_nEOFColumn = -1;
+	m_nEOFLine = -1;
+
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
 		nPosX = 0;
