@@ -12,7 +12,7 @@
 	Copyright (C) 2003, Moca, ai, かろと
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, genta, MIK, Moca, かろと, ryoji, zenryaku, D.S.Koba
-	Copyright (C) 2006, Moca
+	Copyright (C) 2006, Moca, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -160,8 +160,10 @@ void CEditView::DispLineNumber(
 
 		if( m_pcEditDoc->IsModified()	/* ドキュメントが無変更の状態か */
 		 && pCDocLine->IsModifyed() ){		/* 変更フラグ */
-//			if( 0 == pCDocLine->m_nModifyCount ){	/* 変更回数 */
+			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_GYOU_MOD].m_bDisp )	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
+//			if( 0 == pCDocLine->m_nModifyCount ){	/* 変更回数 */
+//				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 //			}
 //		}else{
 //			if( /* FALSE == m_pcEditDoc->IsModified() && --*/ /* ドキュメントが無変更の状態か */
