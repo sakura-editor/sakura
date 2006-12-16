@@ -1453,6 +1453,12 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 					&pColorInfoArr[j].m_colBACK,
 					&pColorInfoArr[j].m_bUnderLine
 				 );
+			}else{
+				// 2006.12.07 ryoji
+				// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
+				// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
+				if( COLORIDX_CARET == j )
+					pColorInfoArr[j].m_colTEXT = pColorInfoArr[COLORIDX_TEXT].m_colTEXT;
 			}
 		}else{
 			wsprintf( szKeyData, pszForm,

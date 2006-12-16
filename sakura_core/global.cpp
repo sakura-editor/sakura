@@ -129,6 +129,8 @@ const char* const colorIDXKeyName[] =
 {
 	"TXT",
 	"RUL",
+	"CAR",	// キャレット		// 2006.12.07 ryoji
+	"IME",	// IMEキャレット	// 2006.12.07 ryoji
 	"UND",
 	"LNO",
 	"MOD",

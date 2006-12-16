@@ -12,7 +12,7 @@
 	Copyright (C) 2003, genta, MIK, Moca
 	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
-	Copyright (C) 2006, genta, aroka, fon, yukihane
+	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -208,6 +208,8 @@ public:
 // 2002/01/19 novice public属性に変更
 	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	//	Aug. 25, 2002 genta protected->publicに移動
+	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
+	void CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int nHeight );		/* キャレットの作成 */	// 2006.12.07 ryoji
 	void ShowEditCaret( void );									/* キャレットの表示・更新 */
 	int HokanSearchByFile( const char*, BOOL, CMemory**, int, int ); // 2003.06.25 Moca
 
@@ -334,6 +336,9 @@ public: /* テスト用にアクセス属性を変更 */
 	/* 入力状態 */
 	int		m_nCaretWidth;			/* キャレットの幅 */
 	int		m_nCaretHeight;			/* キャレットの高さ */
+	COLORREF	m_crCaret;			/* キャレットの色 */			// 2006.12.07 ryoji
+	COLORREF	m_crBack;			/* テキストの背景色 */			// 2006.12.07 ryoji
+	HBITMAP	m_hbmpCaret;			/* キャレットのビットマップ */	// 2006.11.28 ryoji
 	CCaretUnderLine m_cUnderLine;	/* アンダーライン */
 	int		m_nOldUnderLineY;
 

@@ -412,11 +412,6 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				//挿入するキー情報を取得する。
 				memset(szColorIndex, 0, sizeof(szColorIndex));
 				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
-				if( strcmp(szColorIndex, "カーソル行アンダーライン") == 0 )
-				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "カーソル行アンダーラインは指定できません。");
-					return FALSE;
-				}
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -481,11 +476,6 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				//追加するキー情報を取得する。
 				memset(szColorIndex, 0, sizeof(szColorIndex));
 				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
-				if( strcmp(szColorIndex, "カーソル行アンダーライン") == 0 )
-				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "カーソル行アンダーラインは指定できません。");
-					return FALSE;
-				}
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -553,11 +543,6 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				//追加するキー情報を取得する。
 				memset(szColorIndex, 0, sizeof(szColorIndex));
 				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
-				if( strcmp(szColorIndex, "カーソル行アンダーライン") == 0 )
-				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "カーソル行アンダーラインは指定できません。");
-					return FALSE;
-				}
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -736,7 +721,10 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 					k = 0;
 					for( i = 0; i < COLORIDX_LAST; i++ )
 					{
-						if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_UNDERLINE )
+						if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
+							|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
+							|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
+							)
 						{
 							k++;
 							continue;
@@ -760,7 +748,10 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
 						//if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") != 0)
-						if( m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_UNDERLINE )
+						if( m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
+							&& m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
+							&& m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
+							)
 						{
 							if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
@@ -815,7 +806,10 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
 		//if( strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") == 0 )
-		if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_UNDERLINE )
+		if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
+			|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
+			|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
+			)
 		{
 			k++;
 			continue;

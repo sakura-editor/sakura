@@ -186,9 +186,12 @@ struct ARRHEAD {
 	キーワードヘルプ機能拡張 2006.04.10 fon
 		キーワードヘルプ機能設定を別タブに移動, 辞書の複数化に対応, キャレット位置キーワード検索追加
 
+	Version 67:
+	キャレット色指定を追加 2006.12.07 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 66;
+const unsigned int uShareDataVersion = 67;
 
 /*
 ||	Singleton風
@@ -4678,6 +4681,8 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	//Oct. 8, 2000 JEPRO 背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
 		"テキスト",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),
 		"ルーラー",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 ),
+		"カーソル",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
+		"カーソル(IME ON)",					TRUE , FALSE, FALSE, RGB( 255, 0, 0 )		, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
 		"カーソル行アンダーライン",			TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
 		"行番号",							TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
 		"行番号(変更行)",					TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
