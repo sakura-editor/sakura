@@ -1722,6 +1722,12 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_LBUTTONDBLCLK:
 		return OnLButtonDblClk(wParam, lParam);
 
+	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
+		if( wParam == IMN_SETCONVERSIONMODE || wParam == IMN_SETOPENSTATUS){
+			m_cEditDoc.ActiveView().ShowEditCaret();
+		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
 	default:
 // << 20020331 aroka Ä•ÏŠ·‘Î‰ž for 95/NT
 		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){

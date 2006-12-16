@@ -158,7 +158,10 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		// タイプ別設定から背景色を重複しないように取り出す
 		::SetWindowText( m_hWnd, _T("背景色統一") );
 		for( i = 0; i < COLORIDX_LAST; ++i ){
-			if( COLORIDX_UNDERLINE == i )	// カーソル行アンダーラインの背景色は除外
+			if( COLORIDX_CARET == i			// キャレット		// 2006.12.07 ryoji
+				|| COLORIDX_CARET_IME == i	// IMEキャレット	// 2006.12.07 ryoji
+				|| COLORIDX_UNDERLINE == i	// カーソル行アンダーライン
+				)
 				continue;
 			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_colBACK ){
 				_ultot( m_pTypes->m_ColorInfoArr[i].m_colBACK, szText, 10 );
@@ -358,7 +361,10 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 
 		case IDC_BUTTON_SAMEBKCOLOR:
 			for( j = 0; j < COLORIDX_LAST; ++j ){
-				if( COLORIDX_UNDERLINE == j )	// カーソル行アンダーラインの背景色は除外
+			if( COLORIDX_CARET == j			// キャレット		// 2006.12.07 ryoji
+				|| COLORIDX_CARET_IME == j	// IMEキャレット	// 2006.12.07 ryoji
+				|| COLORIDX_UNDERLINE == j	// カーソル行アンダーライン
+				)
 					continue;
 				if( cr == m_pTypes->m_ColorInfoArr[j].m_colBACK ){
 					::SendMessage( hwndListInfo, LB_ADDSTRING, (WPARAM)0, (LPARAM)m_pTypes->m_ColorInfoArr[j].m_szName);

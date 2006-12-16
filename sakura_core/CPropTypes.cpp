@@ -1886,10 +1886,13 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		::SendMessage( ::GetParent( hwnd ), WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwnd );
 		pColorInfo = (ColorInfo*)::SendMessage( hwnd, LB_GETITEMDATA, nIndex, 0 );
 		/* 下線 */
-		if( nIndex != COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
-		 && nIndex != COLORIDX_TEXT			/* テキスト */
-		 && nIndex != COLORIDX_RULER		/* ルーラー */
-		){
+		if( nIndex != COLORIDX_TEXT			/* テキスト */
+			&& nIndex != COLORIDX_RULER		/* ルーラー */
+			&& nIndex != COLORIDX_CARET		/* キャレット */	// 2006.12.07 ryoji
+			&& nIndex != COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
+			&& nIndex != COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
+			)
+		{
 			if( pColorInfo->m_bUnderLine ){	/* 下線で表示 */
 				pColorInfo->m_bUnderLine = FALSE;
 				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, FALSE );
@@ -1907,10 +1910,13 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		}
 		pColorInfo = (ColorInfo*)::SendMessage( hwnd, LB_GETITEMDATA, nIndex, 0 );
 		/* 太字で表示 */
-		if( nIndex != COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
-		 && nIndex != COLORIDX_TEXT			/* テキスト */
-		 && nIndex != COLORIDX_RULER		/* ルーラー */
-		){
+		if( nIndex != COLORIDX_TEXT			/* テキスト */
+			&& nIndex != COLORIDX_RULER		/* ルーラー */
+			&& nIndex != COLORIDX_CARET		/* キャレット */	// 2006.12.07 ryoji
+			&& nIndex != COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
+			&& nIndex != COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
+			)
+		{
 			if( pColorInfo->m_bFatFont ){	/* 太字で表示 */
 				pColorInfo->m_bFatFont = FALSE;
 				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, FALSE );
@@ -1927,7 +1933,11 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		}
 		pColorInfo = (ColorInfo*)::SendMessage( hwnd, LB_GETITEMDATA, nIndex, 0 );
 		/* 色分け/表示 する */
-		if( 2 <= xPos && xPos <= 16 && nIndex != COLORIDX_TEXT ){	/* テキスト */
+		if( 2 <= xPos && xPos <= 16
+			&& nIndex != COLORIDX_TEXT	/* テキスト */
+			&& nIndex != COLORIDX_CARET		/* キャレット */	// 2006.12.07 ryoji
+			)
+		{
 			if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
 				pColorInfo->m_bDisp = FALSE;
 			}else{
@@ -1951,7 +1961,12 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			}
 		}else
 		/* 前景色見本 矩形 */
-		if( rcItem.right - 13 <= xPos && xPos <= rcItem.right - 13 + 12 && nIndex != COLORIDX_UNDERLINE ){	/* カーソル行アンダーライン */
+		if( rcItem.right - 13 <= xPos && xPos <= rcItem.right - 13 + 12
+			&& nIndex != COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
+			&& nIndex != COLORIDX_CARET_IME		/* IMEキャレット */	// 2006.12.07 ryoji
+			&& nIndex != COLORIDX_UNDERLINE		/* カーソル行アンダーライン */
+			)
+		{
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, "ptrCustomColors" );
@@ -2027,6 +2042,34 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 				nIndex = ::SendMessage( hwndListColor, LB_GETCURSEL, 0, 0 );
 				m_nCurrentColorType = nIndex;		/* 現在選択されている色タイプ */
 				switch( m_nCurrentColorType ){
+				case COLORIDX_TEXT:	/* テキスト */
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ), FALSE );
+
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ), TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ), TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ), TRUE );
+
+//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), SW_HIDE );
+//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ), SW_HIDE );
+//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ), SW_SHOW );
+//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), SW_SHOW );
+//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ), SW_SHOW );
+//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ), SW_SHOW );
+					break;
+				case COLORIDX_CARET:		/* キャレット */	// 2006.12.07 ryoji
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ), FALSE );
+
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ), TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ), FALSE );
+					break;
+				case COLORIDX_CARET_IME:	/* IMEキャレット */	// 2006.12.07 ryoji
 				case COLORIDX_UNDERLINE:	/* カーソル行アンダーライン */
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), TRUE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ), FALSE );
@@ -2044,23 +2087,6 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 //					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), SW_HIDE );
 //					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ), SW_SHOW );
 //					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ), SW_HIDE );
-					break;
-				case COLORIDX_TEXT:	/* テキスト */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), FALSE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ), FALSE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ), FALSE );
-
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ), TRUE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), TRUE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ), TRUE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ), TRUE );
-
-//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), SW_HIDE );
-//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ), SW_HIDE );
-//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ), SW_SHOW );
-//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), SW_SHOW );
-//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ), SW_SHOW );
-//					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ), SW_SHOW );
 					break;
 //				case COLORIDX_CRLF:	/* CRLF */
 //					::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ), SW_SHOW );
@@ -2793,7 +2819,10 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 	// 2002/11/02 Moca 比較方法変更
 //	if( 0 != strcmp( "カーソル行アンダーライン", pColorInfo->m_szName ) )
-	if( COLORIDX_UNDERLINE != pColorInfo->m_nColorIdx )
+	if( COLORIDX_CARET != pColorInfo->m_nColorIdx			/* キャレット */	// 2006.12.07 ryoji
+		&& COLORIDX_CARET_IME != pColorInfo->m_nColorIdx	/* IMEキャレット */	// 2006.12.07 ryoji
+		&& COLORIDX_UNDERLINE != pColorInfo->m_nColorIdx	/* カーソル行アンダーライン */
+		)
 	{
 		/* 背景色 見本矩形 */
 		rc1 = pDis->rcItem;

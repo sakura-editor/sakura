@@ -13,7 +13,7 @@
 	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
-	Copyright (C) 2006, Moca, aroka, ryoji, fon
+	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -272,6 +272,10 @@ CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
 
 	m_nCaretWidth = 0;			/* キャレットの幅 */
 	m_nCaretHeight = 0;			/* キャレットの高さ */
+	m_crCaret = -1;				/* キャレットの色 */			// 2006.12.16 ryoji
+	m_crBack = -1;				/* テキストの背景色 */			// 2006.12.16 ryoji
+	m_hbmpCaret = NULL;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
+
 	m_bSelectingLock = FALSE;	/* 選択状態のロック */
 	m_bBeginSelect = FALSE;		/* 範囲選択中 */
 	m_bBeginBoxSelect = FALSE;	/* 矩形範囲選択中 */
@@ -394,6 +398,10 @@ CEditView::~CEditView()
 	DeleteObject( m_hFont_HAN_FAT );
 	DeleteObject( m_hFont_HAN_UL );
 	DeleteObject( m_hFont_HAN_FAT_UL );
+
+	// キャレット用ビットマップ	// 2006.11.28 ryoji
+	if( m_hbmpCaret != NULL )
+		DeleteObject( m_hbmpCaret );
 
 	if( m_hWnd != NULL ){
 		DestroyWindow( m_hWnd );
@@ -1143,6 +1151,93 @@ void CEditView::OnSize( int cx, int cy )
 }
 
 
+/*!	IME ONか
+
+	@date  2006.12.04 ryoji 新規作成（関数化）
+*/
+bool CEditView::IsImeON( void )
+{
+	bool bRet;
+	HIMC	hIme;
+	DWORD	conv, sent;
+
+	//	From here Nov. 26, 2006 genta
+	hIme = ImmGetContext( m_hwndParent );
+	if( ImmGetOpenStatus( hIme ) != FALSE ){
+		ImmGetConversionStatus( hIme, &conv, &sent );
+//#ifdef _DEBUG
+//	MYTRACE( "ImeMode = %X\n", conv );
+//#endif
+		if(( conv & IME_CMODE_NOCONVERSION ) == 0 ){
+			bRet = true;
+		}
+		else {
+			bRet = false;
+		}
+	}
+	else {
+		bRet = false;
+	}
+	ImmReleaseContext( m_hwndParent, hIme );
+	//	To here Nov. 26, 2006 genta
+
+	return bRet;
+}
+
+
+/*!	キャレットの作成
+
+	@param nCaretColor [in]	キャレットの色種別 (0:通常, 1:IME ON)
+	@param nWidth [in]		キャレット幅
+	@param nHeight [in]		キャレット高
+
+	@date 2006.12.07 ryoji 新規作成
+*/
+void CEditView::CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int nHeight )
+{
+	//
+	// キャレット用のビットマップを作成する
+	//
+	// Note: ウィンドウ互換のメモリ DC 上で PatBlt を用いてキャレット色と背景色を XOR 結合
+	//       することで，目的のビットマップを得る．
+	//       ※ 256 色環境では RGB 値を単純に直接演算してもキャレット色を出すための正しい
+	//          ビットマップ色は得られない．
+	//       参考: [HOWTO] キャレットの色を制御する方法
+	//             http://support.microsoft.com/kb/84054/ja
+	//
+
+	HBITMAP hbmpCaret;	// キャレット用のビットマップ
+
+	HDC hdc = ::GetDC( m_hWnd );
+
+	hbmpCaret = ::CreateCompatibleBitmap( hdc, nWidth, nHeight );
+	HDC hdcMem = ::CreateCompatibleDC( hdc );
+	HBITMAP hbmpOld = (HBITMAP)::SelectObject( hdcMem, hbmpCaret );
+	HBRUSH hbrCaret = ::CreateSolidBrush( crCaret );
+	HBRUSH hbrBack = ::CreateSolidBrush( crBack );
+	HBRUSH hbrOld = (HBRUSH)::SelectObject( hdcMem, hbrCaret );
+	::PatBlt( hdcMem, 0, 0, nWidth, nHeight, PATCOPY );
+	::SelectObject( hdcMem, hbrBack );
+	::PatBlt( hdcMem, 0, 0, nWidth, nHeight, PATINVERT );
+	::SelectObject( hdcMem, hbrOld );
+	::SelectObject( hdcMem, hbmpOld );
+	::DeleteObject( hbrCaret );
+	::DeleteObject( hbrBack );
+	::DeleteDC( hdcMem );
+
+	::ReleaseDC( m_hWnd, hdc );
+
+	// 以前のビットマップを破棄する
+	if( m_hbmpCaret != NULL )
+		::DeleteObject( m_hbmpCaret );
+	m_hbmpCaret = hbmpCaret;
+
+	// キャレットを作成する
+	::CreateCaret( m_hWnd, hbmpCaret, nWidth, nHeight );
+	return;
+}
+
+
 /* キャレットの表示・更新 */
 void CEditView::ShowEditCaret( void )
 {
@@ -1237,19 +1332,26 @@ void CEditView::ShowEditCaret( void )
 #if 0
 	hdc = ::GetDC( m_hWnd );
 #endif
+	//	キャレット色の取得
+	ColorInfo* ColorInfoArr = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr;
+	int nCaretColor = ( ColorInfoArr[COLORIDX_CARET_IME].m_bDisp && IsImeON() )? COLORIDX_CARET_IME: COLORIDX_CARET;
+	COLORREF crCaret = ColorInfoArr[nCaretColor].m_colTEXT;
+	COLORREF crBack = ColorInfoArr[COLORIDX_TEXT].m_colBACK;
+
 	if( m_nCaretWidth == 0 ){
 		/* キャレットがなかった場合 */
 		/* キャレットの作成 */
-		::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
+		CreateEditCaret( crCaret, crBack, nCaretWidth, nCaretHeight );	// 2006.12.07 ryoji
 		m_bCaretShowFlag = false; // 2002/07/22 novice
 	}else{
-		if( m_nCaretWidth != nCaretWidth || m_nCaretHeight != nCaretHeight ){
-			/* キャレットはあるが、大きさが変わった場合 */
+		if( m_nCaretWidth != nCaretWidth || m_nCaretHeight != nCaretHeight ||
+			m_crCaret != crCaret || m_crBack != crBack ){
+			/* キャレットはあるが、大きさや色が変わった場合 */
 			/* 現在のキャレットを削除 */
 			::DestroyCaret();
 
 			/* キャレットの作成 */
-			::CreateCaret( m_hWnd, (HBITMAP)NULL, nCaretWidth, nCaretHeight );
+			CreateEditCaret( crCaret, crBack, nCaretWidth, nCaretHeight );	// 2006.12.07 ryoji
 			m_bCaretShowFlag = false; // 2002/07/22 novice
 		}else{
 			/* キャレットはあるし、大きさも変わっていない場合 */
@@ -1268,6 +1370,8 @@ void CEditView::ShowEditCaret( void )
 
 	m_nCaretWidth = nCaretWidth;
 	m_nCaretHeight = nCaretHeight;	/* キャレットの高さ */
+	m_crCaret = crCaret;	//	2006.12.07 ryoji
+	m_crBack = crBack;		//	2006.12.07 ryoji
 	SetIMECompFormPos();
 
 #if 0
