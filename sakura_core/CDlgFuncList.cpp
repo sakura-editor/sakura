@@ -13,7 +13,7 @@
 	Copyright (C) 2003, zenryaku, Moca, naoh, little YOSHI, genta,
 	Copyright (C) 2004, zenryaku, Moca, novice
 	Copyright (C) 2005, genta, zenryaku, ぜっと, D.S.Koba
-	Copyright (C) 2006, genta, aroka, ryoji
+	Copyright (C) 2006, genta, aroka, ryoji, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -998,7 +998,10 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 void CDlgFuncList::SetListVB (void)
 {
 	int				i;
-	char			szText[2048], szType[128], szOption[256];
+	char			szText[2048];
+	char			szTypeOption[256]; // 2006.12.12 Moca wsprintfの入出力で同一変数を使わないための作業領域追加
+	char			szType[64];
+	char			szOption[64];
 	CFuncInfo*		pcFuncInfo;
 	LV_ITEM			item;
 	HWND			hwndList;
@@ -1065,7 +1068,8 @@ void CDlgFuncList::SetListVB (void)
 		memset(szOption, '\0', sizeof(szOption));
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
-			strcpy(szOption, "静的");
+			// 2006.12.12 Moca 末尾にスペース追加
+			strcpy(szOption, "静的 ");
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
@@ -1084,8 +1088,9 @@ void CDlgFuncList::SetListVB (void)
 				strcpy(szType, "関数");
 				break;
 
-			case 2:		// ステータス(Sub)
-				strcpy(szType, "ステータス");
+			// 2006.12.12 Moca ステータス→プロシージャに変更
+			case 2:		// プロシージャ(Sub)
+				strcpy(szType, "プロシージャ");
 				break;
 
 			case 3:		// プロパティ 取得(Property Get)
@@ -1126,14 +1131,14 @@ void CDlgFuncList::SetListVB (void)
 		}
 
 		if ( 0 == pcFuncInfo->m_nInfo ) {
-			memset(szText, '\0', sizeof(szText));
+			memset(szTypeOption, '\0', sizeof(szText));
 		} else
 		if ( 0 == strlen(szOption) ) {
-			wsprintf(szText, "%s", szType);
+			wsprintf(szTypeOption, "%s", szType);
 		} else {
-			wsprintf(szText, "%s（%s）", szType, szOption);
+			wsprintf(szTypeOption, "%s（%s）", szType, szOption);
 		}
-		item.pszText = szText;
+		item.pszText = szTypeOption;
 		item.iItem = i;
 		item.iSubItem = 2;
 		ListView_SetItem( hwndList, &item);
@@ -1141,6 +1146,7 @@ void CDlgFuncList::SetListVB (void)
 		/* クリップボードにコピーするテキストを編集 */
 		if(lstrlen(item.pszText)){
 			// 検出結果の種類(関数,,,)があるとき
+			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			wsprintf( szText, "%s(%d): %s(%s)\r\n",
 				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
@@ -1155,7 +1161,7 @@ void CDlgFuncList::SetListVB (void)
 				pcFuncInfo->m_cmemFuncName.GetPtr()			/* 検出結果 */
 			);
 		}
-		m_cmemClipText.AppendSz( (const char *)szText );	/* クリップボードコピー用テキスト */
+		m_cmemClipText.AppendSz( szText );	/* クリップボードコピー用テキスト */
 	}
 
 	//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
