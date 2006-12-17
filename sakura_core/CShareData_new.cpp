@@ -591,6 +591,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bQueryIfCodeChange"			, common.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うか
 	cProfile.IOProfileData( pszSecName, "bAlertIfFileNotExist"		, common.m_bAlertIfFileNotExist );// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 	
+	cProfile.IOProfileData( pszSecName, "bNoFilterSaveNew"			, common.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示	// 2006.11.16 ryoji
+	cProfile.IOProfileData( pszSecName, "bNoFilterSaveFile"			, common.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
 	
 	/* 「開く」ダイアログのサイズと位置 */
 	const char* pszKeyName = "rcOpenDialog";

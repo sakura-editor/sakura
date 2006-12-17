@@ -577,6 +577,10 @@ struct Common {
 	int					m_heightOutlineWindow;
 	int					m_xOutlineWindowPos;
 	int					m_yOutlineWindowPos;
+
+	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+	BOOL				m_bNoFilterSaveNew;		// 新規から保存時は全ファイル表示
+	BOOL				m_bNoFilterSaveFile;	// 新規以外から保存時は全ファイル表示
 }; /* Common */
 
 //! 共有データ領域

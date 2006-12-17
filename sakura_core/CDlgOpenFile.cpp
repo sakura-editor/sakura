@@ -405,6 +405,68 @@ UINT_PTR CALLBACK OFNHookProc(
 
 		switch( pofn->hdr.code ){
 		case CDN_FILEOK:
+			// 拡張子の補完を自前で行う	// 2006.11.10 ryoji
+			if( m_bIsSaveDialog ){
+				TCHAR szDefExt[_MAX_EXT];	// 補完する拡張子
+				TCHAR szBuf[_MAX_PATH + _MAX_EXT];	// ワーク
+				LPTSTR pszCur, pszNext;
+				int i;
+
+				CommDlg_OpenSave_GetSpec(hwndOpenDlg, szBuf, _MAX_PATH);	// ファイル名入力ボックス内の文字列
+				pszCur = szBuf;
+				while( *pszCur == _T(' ') )	// 空白を読み飛ばす
+					pszCur = ::CharNext(pszCur);
+				if( *pszCur == _T('\"') ){	// 二重引用部で始まっている
+					::lstrcpyn(pcDlgOpenFile->m_szPath, pOf->lpstrFile, _MAX_PATH);
+				}
+				else{
+					_tsplitpath( pOf->lpstrFile, NULL, NULL, NULL, szDefExt );
+					if( szDefExt[0] == _T('.') && szDefExt[1] != _T('\0') ){	// 既に拡張子がついている
+						::lstrcpyn(pcDlgOpenFile->m_szPath, pOf->lpstrFile, _MAX_PATH);
+					}
+					else{
+						switch( pOf->nFilterIndex )	// 選択されているファイルの種類
+						{
+						case 1:		// ユーザー定義
+							pszCur = pcDlgOpenFile->m_szDefaultWildCard;
+							while( *pszCur != _T('.') && *pszCur != _T('\0') )	// '.'まで読み飛ばす
+								pszCur = ::CharNext(pszCur);
+							i = 0;
+							while( *pszCur != _T(';') && *pszCur != _T('\0') ){	// ';'までコピーする
+								pszNext = ::CharNext(pszCur);
+								while( pszCur < pszNext )
+									szDefExt[i++] = *pszCur++;
+							}
+							szDefExt[i] = _T('\0');
+							if( ::lstrlen(szDefExt) < 2 || szDefExt[1] == _T('*') )	// 無効な拡張子?
+								szDefExt[0] = _T('\0');
+							break;
+						case 2:		// *.txt
+							::lstrcpy(szDefExt, _T(".txt"));
+							break;
+						case 3:		// *.*
+						default:	// 不明
+							szDefExt[0] = _T('\0');
+							break;
+						}
+						::lstrcpyn(szBuf, pOf->lpstrFile, _MAX_PATH + 1);
+						::lstrcat(szBuf, szDefExt);
+						::lstrcpyn(pcDlgOpenFile->m_szPath, szBuf, _MAX_PATH);
+					}
+				}
+
+				// ファイルの上書き確認を自前で行う	// 2006.11.10 ryoji
+				if( IsFileExists(pcDlgOpenFile->m_szPath, true) ){
+					TCHAR szText[_MAX_PATH + 100];
+					::lstrcpyn(szText, pcDlgOpenFile->m_szPath, _MAX_PATH);
+					::lstrcat(szText, _T(" は既に存在します。\r\n上書きしますか？"));
+					if( IDYES != ::MessageBox( hwndOpenDlg, szText, _T("名前を付けて保存"), MB_YESNO | MB_ICONEXCLAMATION) ){
+						::SetWindowLong( hdlg, DWL_MSGRESULT, TRUE );
+						return TRUE;
+					}
+				}
+			}
+
 			/* 文字コード選択コンボボックス 値を取得 */
 			nIdx = ::SendMessage( hwndComboCODES, CB_GETCURSEL, 0, 0 );
 			lRes = ::SendMessage( hwndComboCODES, CB_GETITEMDATA, nIdx, 0 );
@@ -580,7 +642,7 @@ CDlgOpenFile::CDlgOpenFile()
 
 
 
-	strcpy( m_szDefaultWildCard, "*.*" );	/*「開く」での最初のワイルドカード */
+	strcpy( m_szDefaultWildCard, "*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	/* ヘルプファイルのフルパスを返す */
 	::GetHelpFilePath( m_szHelpFile );
@@ -637,7 +699,7 @@ void CDlgOpenFile::Create(
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 
-	/* ユーザー定義ワイルドカード */
+	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
 		strcpy( m_szDefaultWildCard, pszUserWildCard );
 	}
@@ -892,6 +954,11 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2003.07.26 ryoji BOMパラメータ追加
 	@date 2005/02/20 novice 拡張子を省略したら補完する
+	@date 2006.11.10 ryoji フックを使う場合は拡張子の補完を自前で行う
+		Windowsで関連付けが無いような拡張子を指定して保存すると、明示的に
+		拡張子入力してあるのにデフォルト拡張子が補完されてしまうことがある。
+			例）hoge.abc -> hoge.abc.txt
+		自前で補完することでこれを回避する。（実際の処理はフックプロシージャの中）
 */
 BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBom )
 {
@@ -902,6 +969,10 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	cFileExt.AppendExtRaw( "ユーザー指定",     m_szDefaultWildCard );
 	cFileExt.AppendExtRaw( "テキストファイル", "*.txt" );
 	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
+
+	// ファイル名の初期設定	// 2006.11.10 ryoji
+	if( pszPath[0] == '\0' )
+		::lstrcpyn(pszPath, _T("無題"), _MAX_PATH);
 
 	/* 構造体の初期化 */
 	InitOfn( m_ofn );		// 2005.10.29 ryoji
@@ -920,9 +991,13 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/ | OFN_SHOWHELP | OFN_ENABLESIZING;
 	if( NULL != pnCharCode || NULL != pcEol ){
 		m_ofn.Flags = m_ofn.Flags | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK;
+		m_ofn.Flags &= ~OFN_OVERWRITEPROMPT;	// 2006.11.10 ryoji 上書き確認もフックの中で自前で処理する
 	}
+
+
 // 2005/02/20 novice 拡張子を省略したら補完する
-	m_ofn.lpstrDefExt = "";
+//	m_ofn.lpstrDefExt = "";
+	m_ofn.lpstrDefExt = (m_ofn.Flags & OFN_ENABLEHOOK)? NULL: _T("");	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
 
 	// 2002/08/22 カレントディレクトリを保存
 	TCHAR	szCurDir[_MAX_PATH];
@@ -956,6 +1031,8 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 
 	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS_DIALOG);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 	if( GetSaveFileNameRecover( m_ofn ) ){
+		if( m_ofn.Flags & OFN_ENABLEHOOK )
+			::lstrcpyn(pszPath, m_szPath, _MAX_PATH);	// 自前で拡張子の補完を行ったときのファイルパス	// 2006.11.10 ryoji
 
 //		MYTRACE( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */
 

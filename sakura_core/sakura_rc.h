@@ -576,6 +576,8 @@
 #define IDC_BUTTON_SELALL               1511
 #define IDC_BUTTON_SELNOTING            1512
 #define IDC_LIST_ITEMINFO               1514
+#define IDC_CHECK_NoFilterSaveNew       1515
+#define IDC_CHECK_NoFilterSaveFile      1516
 #define IDD_PROP_TOOLBAR                1539
 #define IDC_CHECK_SortTabList           1540
 #define IDM_POPLAST                     4047
@@ -630,7 +632,7 @@
 #define IDC_CHECK_KEYHELP_ALLSEARCH     5141
 #define IDC_CHECK_KEYHELP_KEYDISP       5142
 #define IDC_CHECK_KEYHELP_PREFIX        5143
-#define IDC_STATIC	                    -1
+#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
@@ -638,7 +640,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        245
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1515
+#define _APS_NEXT_CONTROL_VALUE         1517
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

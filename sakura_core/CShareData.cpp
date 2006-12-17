@@ -189,9 +189,12 @@ struct ARRHEAD {
 	Version 67:
 	キャレット色指定を追加 2006.12.07 ryoji
 
+	Version 68:
+	ファイルダイアログのフィルタ設定 2006.11.16 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 67;
+const unsigned int uShareDataVersion = 68;
 
 /*
 ||	Singleton風
@@ -566,6 +569,10 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bQueryIfCodeChange = TRUE;
 		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 		m_pShareData->m_Common.m_bAlertIfFileNotExist = FALSE;
+
+		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+		m_pShareData->m_Common.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
+		m_pShareData->m_Common.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
 
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */

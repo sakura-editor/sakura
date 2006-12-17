@@ -39,6 +39,8 @@ static const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_RestoreBookmarks,				HIDC_CHECK_RestoreBookmarks,			// 2002.01.16 hor ブックマークの復元
 	IDC_CHECK_QueryIfCodeChange,			HIDC_CHECK_QueryIfCodeChange,			//前回と異なる文字コードのとき問い合わせを行う	// 2006.08.06 ryoji
 	IDC_CHECK_AlertIfFileNotExist,			HIDC_CHECK_AlertIfFileNotExist,			//開こうとしたファイルが存在しないとき警告する	// 2006.08.06 ryoji
+	IDC_CHECK_NoFilterSaveNew,				HIDC_CHECK_NoFilterSaveNew,				// 新規から保存時は全ファイル表示	// 2006.11.16 ryoji
+	IDC_CHECK_NoFilterSaveFile,				HIDC_CHECK_NoFilterSaveFile,			// 新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
 //	IDC_STATIC,								-1,
 	0, 0
 };
@@ -295,6 +297,10 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告するかどうかのフラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AlertIfFileNotExist, m_Common.GetAlertIfFileNotExist() );
 
+	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+
 	EnableFilePropInput(hwndDlg);
 	return;
 }
@@ -377,6 +383,10 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	m_Common.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
 	m_Common.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) == TRUE );
+
+	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+	m_Common.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	m_Common.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	return TRUE;
 }
