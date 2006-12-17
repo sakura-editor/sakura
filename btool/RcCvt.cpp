@@ -137,5 +137,9 @@ bool RcCvt::include(char*linestr)
 	{
 		strcpy( linestr, "\n" );
 	}
+	else if( strstr( linestr, "windows.h" ) != NULL )	//2006.11.14 ryoji
+	{
+		strcpy( linestr, "\n" );
+	}
 	return true;
 }
