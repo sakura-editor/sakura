@@ -519,6 +519,15 @@ BOOL CEditDoc::FileRead(
 	//	CODE_AUTODETECTはこの範囲から外れているから個別にチェック
 	if( ( -1 <= nCharCode && nCharCode < CODE_CODEMAX ) || nCharCode == CODE_AUTODETECT )
 		m_nCharCode = nCharCode;
+	
+	// From Here Dec. 17, 2006 maru Add
+	/* ファイルが存在しない */
+	if( FALSE == bFileIsExist &&
+		CODE_AUTODETECT == m_nCharCode	/* 文字コード自動判別 */
+	){
+		m_nCharCode = 0;
+	}
+	// To Here Dec. 17, 2006 maru Add
 
 	/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -532,37 +541,43 @@ BOOL CEditDoc::FileRead(
 			/* 前回に指定された文字コード種別に変更する */
 			m_nCharCode = fi.m_nCharCode;
 		}
-		/* ファイルが存在しない */
-		if( FALSE == bFileIsExist &&
-			CODE_AUTODETECT == m_nCharCode	/* 文字コード自動判別 */
-		){
-			m_nCharCode = 0;
-		}
-		if( CODE_AUTODETECT == m_nCharCode ){	/* 文字コード自動判別 */
-			/*
-			|| ファイルの日本語コードセット判別
-			||
-			|| 【戻り値】
-			||	SJIS	0
-			||	JIS		1
-			||	EUC		2
-			||	Unicode	3
-			||	エラー	-1
-			*/
-			m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
-			if( -1 == m_nCharCode ){
-				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-					"%s\n文字コードの判別処理でエラーが発生しました。",
-					pszPath
-				);
-				//	Sep. 10, 2002 genta
-				SetFilePath( "" );
-				bRet = FALSE;
-				goto end_of_func;
+//	if以下もelse以下も同じ内容になっていたので外だし Dec. 17, 2006 maru
+//		/* ファイルが存在しない */
+//		if( FALSE == bFileIsExist &&
+//			CODE_AUTODETECT == m_nCharCode	/* 文字コード自動判別 */
+//		){
+//			m_nCharCode = 0;
+//		}
+		if( CODE_AUTODETECT == m_nCharCode ){	// 文字コード指定の再オープンなら自動判別しない
+			/* 前回と異なる文字コードのとき問い合わせを行う */
+			if( !bConfirmCodeChange )			// ADD じゅうじ 2006/12/16
+				m_nCharCode = fi.m_nCharCode;
+			else{
+//			if( CODE_AUTODETECT == m_nCharCode )	/* 文字コード自動判別 */
+				/*
+				|| ファイルの日本語コードセット判別
+				||
+				|| 【戻り値】
+				||	SJIS	0
+				||	JIS		1
+				||	EUC		2
+				||	Unicode	3
+				||	エラー	-1
+				*/
+				m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
+				if( -1 == m_nCharCode ){
+					::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+						"%s\n文字コードの判別処理でエラーが発生しました。",
+						pszPath
+					);
+					//	Sep. 10, 2002 genta
+					SetFilePath( "" );
+					bRet = FALSE;
+					goto end_of_func;
+				}
 			}
-		}
-		if( m_nCharCode != fi.m_nCharCode ){
-			if( bConfirmCodeChange ){
+			if( m_nCharCode != fi.m_nCharCode ){	// MRU の文字コードと判別が異なる
+//			if( bConfirmCodeChange )			// DEL じゅうじ 2006/12/16
 				char*	pszCodeName = NULL;
 				char*	pszCodeNameNew = NULL;
 
@@ -609,12 +624,13 @@ BOOL CEditDoc::FileRead(
 		}
 	}else{
 		bIsExistInMRU = FALSE;
-		/* ファイルが存在しない */
-		if( FALSE == bFileIsExist &&
-			CODE_AUTODETECT == m_nCharCode		/* 文字コード自動判別 */
-		){
-			m_nCharCode = 0;
-		}
+//	if以下もelse以下も同じ内容になっていたので外だし Dec. 17, 2006 maru
+//		/* ファイルが存在しない */
+//		if( FALSE == bFileIsExist &&
+//			CODE_AUTODETECT == m_nCharCode		/* 文字コード自動判別 */
+//		){
+//			m_nCharCode = 0;
+//		}
 		if( CODE_AUTODETECT == m_nCharCode ){	/* 文字コード自動判別 */
 			/*
 			|| ファイルの日本語コードセット判別

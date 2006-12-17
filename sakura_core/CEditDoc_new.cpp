@@ -1283,24 +1283,25 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 //		pfi = (FileInfo*)m_pShareData->m_szWork;
 		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
-		int		nCharCodeNew;
-		if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
-			/* ファイルの日本語コードセット判別
-				エラー	-1 */
-			nCharCodeNew = CMemory::CheckKanjiCodeOfFile( pszPath );
-			if( -1 == nCharCodeNew ){
-
-			}else{
-				nCharCode = nCharCodeNew;
-			}
-		}
+//	From Here Dec. 17, 2006 maru 自動認識優先の動作は無くなったので自動認識結果は意識しない
+//		int		nCharCodeNew;
+//		if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
+//			/* ファイルの日本語コードセット判別
+//				エラー	-1 */
+//			nCharCodeNew = CMemory::CheckKanjiCodeOfFile( pszPath );
+//			if( -1 == nCharCodeNew ){
+//
+//			}else{
+//				nCharCode = nCharCodeNew;
+//			}
+//		}
 		/* 文字コード種別 */
 		//	Oct. 03, 2004 genta コード確認は設定に依存
 		//	Jul. 20, 2005 genta コードの自動認識に失敗してnCharCodeが
 		//		AUTO_DETECTのままになってしまう場合を考慮して範囲チェック追加
-		if( nCharCode < CODE_CODEMAX &&
-			nCharCode != CODE_AUTODETECT && nCharCode != pfi->m_nCharCode &&
-			m_pShareData->m_Common.GetQueryIfCodeChange() ){
+ 		if( nCharCode < CODE_CODEMAX &&
+			nCharCode != CODE_AUTODETECT && nCharCode != pfi->m_nCharCode ){
+//	To Here Dec. 17, 2006 maru 自動認識優先の動作は無くなったので自動認識結果は意識しない
 			char*	pszCodeNameCur;
 			char*	pszCodeNameNew;
 
