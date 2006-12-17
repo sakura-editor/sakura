@@ -1073,15 +1073,15 @@ void CDlgFuncList::SetListVB (void)
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				strncat(szOption, "プライベート", sizeof(szText) - strlen(szText));
+				strncat(szOption, "プライベート", sizeof(szOption) - strlen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			case 3  :	// フレンド(Friend)
-				strncat(szOption, "フレンド", sizeof(szText) - strlen(szText));
+				strncat(szOption, "フレンド", sizeof(szOption) - strlen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			default :	// パブリック(Public)
-				strncat(szOption, "パブリック", sizeof(szText) - strlen(szText));
+				strncat(szOption, "パブリック", sizeof(szOption) - strlen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
 		switch (pcFuncInfo->m_nInfo & 0x0f) {
 			case 1:		// 関数(Function)
@@ -1131,7 +1131,7 @@ void CDlgFuncList::SetListVB (void)
 		}
 
 		if ( 0 == pcFuncInfo->m_nInfo ) {
-			memset(szTypeOption, '\0', sizeof(szText));
+			szTypeOption[0] = '\0';	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else
 		if ( 0 == strlen(szOption) ) {
 			wsprintf(szTypeOption, "%s", szType);
