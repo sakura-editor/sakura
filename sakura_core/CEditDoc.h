@@ -12,6 +12,7 @@
 	Copyright (C) 2003, genta, ryoji, zenryaku, naoh
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, Moca, genta, aroka
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -291,7 +292,6 @@ public:
 //	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
-	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
 //	2004.03.28 Moca 未使用変数削除
 
 //	2004.02.16 Moca メンバから外す

@@ -240,72 +240,80 @@ BEGIN
                     HIDC_BUTTON_HELP
 END
 
-IDD_PROP_FILE DIALOGEX 0, 0, 270, 213
+IDD_PROP_FILE DIALOGEX 0, 0, 271, 221
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "排他制御しない(&N)",IDC_CHECK_EXCVLUSIVE_NO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,8,18,70,10,0,
+                    BS_AUTORADIOBUTTON | WS_GROUP,8,16,70,10,0,
                     HIDC_CHECK_EXCVLUSIVE_NO
     CONTROL         "他プロセスからの上書きを禁止する(&P)",
                     IDC_CHECK_EXCVLUSIVE_WRITE,"Button",BS_AUTORADIOBUTTON,8,
-                    33,127,10,0,HIDC_CHECK_EXCVLUSIVE_WRITE
+                    31,127,10,0,HIDC_CHECK_EXCVLUSIVE_WRITE
     CONTROL         "他プロセスからの読み書きを禁止する(&R)",
                     IDC_CHECK_EXCVLUSIVE_READWRITE,"Button",
-                    BS_AUTORADIOBUTTON,8,48,134,10,0,
+                    BS_AUTORADIOBUTTON,8,46,134,10,0,
                     HIDC_CHECK_EXCVLUSIVE_READWRITE
     CONTROL         "更新の監視(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,83,18,60,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,83,16,60,10,0,
                     HIDC_CHECK_bCheckFileTimeStamp
-    GROUPBOX        "ファイルの排他制御",IDC_STATIC,3,3,150,65,WS_GROUP
+    GROUPBOX        "ファイルの排他制御",IDC_STATIC,3,3,150,57,WS_GROUP
     CONTROL         "無変更でも上書きする(&S)",
                     IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,165,18,89,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,165,16,89,10,0,
                     HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE
     CONTROL         "自動的に保存する(&U)",IDC_CHECK_AUTOSAVE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,165,33,78,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,165,31,78,10,0,
                     HIDC_CHECK_AUTOSAVE
-    LTEXT           "間隔は(&I)",IDC_LABEL_AUTOSAVE,176,49,27,8,NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_AUTOBACKUP_INTERVAL,205,47,30,12,0,0,
+    LTEXT           "間隔は(&I)",IDC_LABEL_AUTOSAVE,176,47,27,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_AUTOBACKUP_INTERVAL,205,45,30,12,0,0,
                     HIDC_EDIT_AUTOBACKUP_INTERVAL
     CONTROL         "Spin1",IDC_SPIN_AUTOBACKUP_INTERVAL,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,256,47,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,256,45,9,
                     12
-    GROUPBOX        "ファイルの保存",IDC_STATIC,160,3,107,65,WS_GROUP
-    LTEXT           "分ごと",IDC_LABEL_AUTOSAVE2,237,49,19,8,NOT WS_GROUP
+    LTEXT           "分ごと",IDC_LABEL_AUTOSAVE2,237,47,19,8,NOT WS_GROUP
+    GROUPBOX        "ファイルの保存",IDC_STATIC,160,3,107,57,WS_GROUP
+    CONTROL         "新規から保存時は全ファイル表示(&O)",
+                    IDC_CHECK_NoFilterSaveNew,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,77,118,10
+    CONTROL         "新規以外から保存時は全ファイル表示(&F)",
+                    IDC_CHECK_NoFilterSaveFile,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,130,77,133,10
+    GROUPBOX        "「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示",
+                    IDC_STATIC,3,65,264,28
     CONTROL         "ファイルのドロップは「閉じて開く」にする(&L)",
                     IDC_CHECK_bDropFileAndClose,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,88,135,10,0,
+                    WS_GROUP | WS_TABSTOP,8,110,135,10,0,
                     HIDC_CHECK_bDropFileAndClose
     LTEXT           "ファイルのドロップは一度に&MAX",IDC_LABEL_AUTOSAVE3,18,
-                    104,94,8,NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_nDropFileNumMax,114,102,25,12,ES_AUTOHSCROLL,0,
+                    126,94,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_nDropFileNumMax,114,124,25,12,ES_AUTOHSCROLL,0,
                     HIDC_EDIT_nDropFileNumMax
     CONTROL         "Spin1",IDC_SPIN_nDropFileNumMax,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,179,102,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,179,124,9,
                     12
-    GROUPBOX        "ファイルオープン",IDC_STATIC,3,73,264,124,WS_GROUP
-    LTEXT           "個までとする",IDC_LABEL_AUTOSAVE4,141,104,38,8,NOT 
+    LTEXT           "個までとする",IDC_LABEL_AUTOSAVE4,141,126,38,8,NOT 
                     WS_GROUP
     LTEXT           "←注：ドロップファイルは1つのみ有効",IDC_LANEL_NOTE,150,
-                    89,106,8
+                    111,106,8
     CONTROL         "ファイルを開いたときにカーソル位置を復元する(&C)",
                     IDC_CHECK_RestoreCurPosition,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,118,162,10,0,HIDC_CHECK_RestoreCurPosition
+                    WS_TABSTOP,8,140,162,10,0,HIDC_CHECK_RestoreCurPosition
     CONTROL         "ファイルを開いたときにブックマークを復元する(&B)",
                     IDC_CHECK_RestoreBookmarks,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,133,214,10,0,HIDC_CHECK_RestoreBookmarks
+                    WS_TABSTOP,8,155,214,10,0,HIDC_CHECK_RestoreBookmarks
     CONTROL         "ファイルを開いたときにMIMEエンコードされたヘッダをデコードする(&D)",
                     IDC_CHECK_AutoMIMEDecode,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,149,214,10,0,HIDC_CHECK_AutoMIMEDecode
+                    WS_TABSTOP,8,169,214,10,0,HIDC_CHECK_AutoMIMEDecode
     CONTROL         "前回と異なる文字コードのとき問い合わせを行う(&Q)",
                     IDC_CHECK_QueryIfCodeChange,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,163,223,13,0,HIDC_CHECK_QueryIfCodeChange
+                    WS_TABSTOP,8,182,223,13,0,HIDC_CHECK_QueryIfCodeChange
     CONTROL         "開こうとしたファイルが存在しないとき警告する(&E)",
                     IDC_CHECK_AlertIfFileNotExist,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,179,223,10,0,HIDC_CHECK_AlertIfFileNotExist
+                    WS_TABSTOP,8,198,223,10,0,HIDC_CHECK_AlertIfFileNotExist
+    GROUPBOX        "ファイルオープン",IDC_STATIC,3,97,264,117,WS_GROUP
 END
 
 IDD_ABOUT DIALOGEX 0, 0, 231, 203
@@ -2144,10 +2152,10 @@ BEGIN
 
     IDD_PROP_FILE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 263
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 218
     END
 
     IDD_ABOUT, DIALOG

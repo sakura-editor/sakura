@@ -11,7 +11,7 @@
 	Copyright (C) 2003, ryoji
 	Copyright (C) 2004, genta, MIK
 	Copyright (C) 2005, ryoji
-	Copyright (C) 2006, Moca
+	Copyright (C) 2006, Moca, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -79,7 +79,7 @@ public:
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 
-	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード */
+	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
 	int				m_nCharCode;					/* 文字コード */
@@ -91,6 +91,8 @@ public:
 	//	Jul. 26, 2003 ryoji BOM
 	BOOL			m_bBom;	//!< BOMを付けるかどうか
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
+
+	TCHAR			m_szPath[_MAX_PATH];	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
 
 protected:
 	/*

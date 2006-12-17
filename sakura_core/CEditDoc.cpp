@@ -101,8 +101,6 @@ CEditDoc::CEditDoc() :
 	//int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	//SetDocumentType( doctype, true );
 
-	strcpy( m_szDefaultWildCard, "*.*" );				/* 「開く」での最初のワイルドカード */
-
 
 	/* レイアウト管理情報の初期化 */
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
@@ -1023,7 +1021,7 @@ BOOL CEditDoc::OpenFileDialog(
 	m_cDlgOpenFile.Create(
 		m_hInstance,
 		hwndParent,
-		m_szDefaultWildCard,
+		"*.*",
 		pszDefFolder,
 		(const char **)ppszMRU,
 		(const char **)ppszOPENFOLDER
@@ -1050,6 +1048,7 @@ BOOL CEditDoc::OpenFileDialog(
 	@date 2001.02.09 genta	改行コードを示す引数追加
 	@date 2003.03.30 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
 	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
+	@date 2006.11.10 ryoji	ユーザー指定の拡張子を状況依存で変化させる
 */
 BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBomExist )
 {
@@ -1057,6 +1056,8 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL
 	char**	ppszOPENFOLDER;	//	最近のフォルダ
 	const char*	pszDefFolder; // デフォルトフォルダ
 	char*	pszCurDir = NULL;
+	char	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
+	char	szExt[_MAX_EXT];
 	BOOL	bret;
 
 	/* MRUリストのファイルのリスト */
@@ -1085,10 +1086,22 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL
 		}else{
 			pszDefFolder = pszCurDir;
 		}
+		strcpy(szDefaultWildCard, "*.txt");
+		if( m_pShareData->m_Common.m_bNoFilterSaveNew )
+			strcat(szDefaultWildCard, ";*.*");	// 全ファイル表示
 	}else{
 		pszDefFolder = GetFilePath();
+		_splitpath(GetFilePath(), NULL, NULL, NULL, szExt);
+		if( szExt[0] == _T('.') && szExt[1] != _T('\0') ){
+			strcpy(szDefaultWildCard, "*");
+			strcat(szDefaultWildCard, szExt);
+			if( m_pShareData->m_Common.m_bNoFilterSaveFile )
+				strcat(szDefaultWildCard, ";*.*");	// 全ファイル表示
+		}else{
+			strcpy(szDefaultWildCard, "*.*");
+		}
 	}
-	m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, m_szDefaultWildCard, pszDefFolder,
+	m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, szDefaultWildCard, pszDefFolder,
 		(const char **)ppszMRU, (const char **)ppszOPENFOLDER );
 
 	/* ダイアログを表示 */
