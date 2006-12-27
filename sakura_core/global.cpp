@@ -125,55 +125,55 @@ const unsigned char gm_keyword_char[256] = {
   @note 数値による内部的対応はglobal.hで行っているので参照のこと。(Mar. 7, 2001 jepro)
   CShareDataからglobalに移動
 */
-const char* const colorIDXKeyName[] =
+const ColorAttributeData g_ColorAttributeArr[] =
 {
-	"TXT",
-	"RUL",
-	"CAR",	// キャレット		// 2006.12.07 ryoji
-	"IME",	// IMEキャレット	// 2006.12.07 ryoji
-	"UND",
-	"LNO",
-	"MOD",
-	"TAB",
-	"SPC",	//2002.04.28 Add By KK
-	"ZEN",
-	"CTL",
-	"EOL",
-	"RAP",
-	"VER",  // 2005.11.08 Moca 指定桁縦線
-	"EOF",
-	"NUM",	//@@@ 2001.02.17 by MIK 半角数値の強調
-	"FND",
-	"KW1",
-	"KW2",
-	"KW3",	//@@@ 2003.01.13 by MIK 強調キーワード3-10
-	"KW4",
-	"KW5",
-	"KW6",
-	"KW7",
-	"KW8",
-	"KW9",
-	"KWA",
-	"CMT",
-	"SQT",
-	"WQT",
-	"URL",
-	"RK1",	//@@@ 2001.11.17 add MIK
-	"RK2",	//@@@ 2001.11.17 add MIK
-	"RK3",	//@@@ 2001.11.17 add MIK
-	"RK4",	//@@@ 2001.11.17 add MIK
-	"RK5",	//@@@ 2001.11.17 add MIK
-	"RK6",	//@@@ 2001.11.17 add MIK
-	"RK7",	//@@@ 2001.11.17 add MIK
-	"RK8",	//@@@ 2001.11.17 add MIK
-	"RK9",	//@@@ 2001.11.17 add MIK
-	"RKA",	//@@@ 2001.11.17 add MIK
-	"DFA",	//DIFF追加	//@@@ 2002.06.01 MIK
-	"DFC",	//DIFF変更	//@@@ 2002.06.01 MIK
-	"DFD",	//DIFF削除	//@@@ 2002.06.01 MIK
-	"BRC",	//対括弧	// 02/09/18 ai Add
-	"MRK",	//ブックマーク	// 02/10/16 ai Add
-	"LAST"	// Not Used
+	{"TXT", COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_EFFECTS},
+	{"RUL", COLOR_ATTRIB_NO_EFFECTS},
+	{"CAR", COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
+	{"IME", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
+	{"UND", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
+	{"LNO", 0},
+	{"MOD", 0},
+	{"TAB", 0},
+	{"SPC", 0},	//2002.04.28 Add By KK
+	{"ZEN", 0},
+	{"CTL", 0},
+	{"EOL", 0},
+	{"RAP", 0},
+	{"VER", 0},  // 2005.11.08 Moca 指定桁縦線
+	{"EOF", 0},
+	{"NUM", 0},	//@@@ 2001.02.17 by MIK 半角数値の強調
+	{"FND", 0},
+	{"KW1", 0},
+	{"KW2", 0},
+	{"KW3", 0},	//@@@ 2003.01.13 by MIK 強調キーワード3-10
+	{"KW4", 0},
+	{"KW5", 0},
+	{"KW6", 0},
+	{"KW7", 0},
+	{"KW8", 0},
+	{"KW9", 0},
+	{"KWA", 0},
+	{"CMT", 0},
+	{"SQT", 0},
+	{"WQT", 0},
+	{"URL", 0},
+	{"RK1", 0},	//@@@ 2001.11.17 add MIK
+	{"RK2", 0},	//@@@ 2001.11.17 add MIK
+	{"RK3", 0},	//@@@ 2001.11.17 add MIK
+	{"RK4", 0},	//@@@ 2001.11.17 add MIK
+	{"RK5", 0},	//@@@ 2001.11.17 add MIK
+	{"RK6", 0},	//@@@ 2001.11.17 add MIK
+	{"RK7", 0},	//@@@ 2001.11.17 add MIK
+	{"RK8", 0},	//@@@ 2001.11.17 add MIK
+	{"RK9", 0},	//@@@ 2001.11.17 add MIK
+	{"RKA", 0},	//@@@ 2001.11.17 add MIK
+	{"DFA", 0},	//DIFF追加	//@@@ 2002.06.01 MIK
+	{"DFC", 0},	//DIFF変更	//@@@ 2002.06.01 MIK
+	{"DFD", 0},	//DIFF削除	//@@@ 2002.06.01 MIK
+	{"BRC", 0},	//対括弧	// 02/09/18 ai Add
+	{"MRK", 0},	//ブックマーク	// 02/10/16 ai Add
+	{"LAST", 0}	// Not Used
 };
 
 

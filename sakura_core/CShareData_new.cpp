@@ -1443,7 +1443,7 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 #ifndef STR_COLORDATA_HEAD3
 		wsprintf( szKeyName, "CI[%02d]", j );
 #else
-		wsprintf( szKeyName, "C[%s]", colorIDXKeyName[j] );	//Stonee, 2001/01/12, 2001/01/15
+		wsprintf( szKeyName, "C[%s]", g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 #endif
 		if( pcProfile->IsReadingMode() ){
 			if( true == pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
@@ -1462,6 +1462,15 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 				if( COLORIDX_CARET == j )
 					pColorInfoArr[j].m_colTEXT = pColorInfoArr[COLORIDX_TEXT].m_colTEXT;
 			}
+			// 2006.12.18 ryoji
+			// ñµèÇê›íËÇ™Ç†ÇÍÇŒèCïúÇ∑ÇÈ
+			unsigned int fAttribute = g_ColorAttributeArr[j].fAttribute;
+			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
+				pColorInfoArr[j].m_bDisp = TRUE;
+			if( 0 != (fAttribute & COLOR_ATTRIB_NO_BOLD) )
+				pColorInfoArr[j].m_bFatFont = FALSE;
+			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
+				pColorInfoArr[j].m_bUnderLine = FALSE;
 		}else{
 			wsprintf( szKeyData, pszForm,
 				pColorInfoArr[j].m_bDisp,

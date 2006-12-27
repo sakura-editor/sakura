@@ -270,7 +270,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 	HWND	hwndCtl, hwndList;
 	int	idCtrl;
 	NMHDR*	pNMHDR;
-	int	nIndex, nIndex2, i, j, k, nRet;
+	int	nIndex, nIndex2, i, j, nRet;
 	LV_ITEM	lvi;
 	LV_COLUMN	col;
 	RECT		rc;
@@ -717,25 +717,18 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				{
 					/* 初期値を設定する */
 					::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, "//k" );	/* 正規表現 */
-					j = 0;
-					k = 0;
-					for( i = 0; i < COLORIDX_LAST; i++ )
+					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
+					for( i = 0, j = 0; i < COLORIDX_LAST; i++ )
 					{
-						if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
-							|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
-							|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
-							)
+						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 						{
-							k++;
-							continue;
+							if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
+							{
+								::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
+								break;
+							}
+							j++;
 						}
-						if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 ) j = i;
-					}
-					j -= k;	//スキップした分を差し引く
-					if( j >= 0 )
-					{
-						hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
-						::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
 					}
 					return FALSE;
 				}
@@ -747,11 +740,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
-						//if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") != 0)
-						if( m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
-							&& m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
-							&& m_Types.m_ColorInfoArr[i].m_nColorIdx != COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
-							)
+						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 						{
 							if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
@@ -790,7 +779,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 void CPropTypes::SetData_Regex( HWND hwndDlg )
 {
 	HWND		hwndWork;
-	int		i, nItem, j, k;
+	int			i, j;
 	LV_ITEM		lvi;
 	DWORD		dwStyle;
 
@@ -801,26 +790,15 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	/* 色種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 	::SendMessage( hwndWork, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );  /* コンボボックスを空にする */
-	j = 0;
-	k = 0;
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
-		//if( strcmp(m_Types.m_ColorInfoArr[i].m_szName, "カーソル行アンダーライン") == 0 )
-		if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET			/* キャレット */	// 2006.12.07 ryoji
-			|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_CARET_IME	/* IMEキャレット */	// 2006.12.07 ryoji
-			|| m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_UNDERLINE	/* カーソル行アンダーライン */
-			)
+		if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 		{
-			k++;
-			continue;
+			j = ::SendMessage( hwndWork, CB_ADDSTRING, (WPARAM)0, (LPARAM)(char*)m_Types.m_ColorInfoArr[i].m_szName );
+			if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
+				::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
 		}
-		nItem = ::SendMessage( hwndWork, CB_ADDSTRING, (WPARAM)0, (LPARAM)(char*)m_Types.m_ColorInfoArr[i].m_szName );
-		//if( strcmp(m_Types.m_ColorInfoArr[i].m_szName, "正規表現キーワード1") == 0 ) j = i;
-		if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 ) j = i;
 	}
-	j -= k;	//スキップした分を差し引く
-	if( j >= 0 )
-		::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
 
 	if( m_Types.m_bUseRegexKeyword )
 		CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_CHECKED );
