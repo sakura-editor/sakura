@@ -2581,7 +2581,7 @@ SAKURA_CORE_API int GetColorIndexByName( const char *name )
 	int	i;
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
-		if( strcmp( name, (const char*)colorIDXKeyName[i] ) == 0 ) return i;
+		if( strcmp( name, (const char*)g_ColorAttributeArr[i].szName ) == 0 ) return i;
 	}
 	return -1;
 }
@@ -2591,7 +2591,7 @@ SAKURA_CORE_API int GetColorIndexByName( const char *name )
  */
 SAKURA_CORE_API const char* GetColorNameByIndex( int index )
 {
-	return colorIDXKeyName[index];
+	return g_ColorAttributeArr[index].szName;
 }
 
 /*!

@@ -311,7 +311,7 @@ SAKURA_CORE_API enum enumSmartIndentType {
 
 
 // Stonee 注： 2000/01/12
-// ここを変更したときは、global.cpp のcolorIDXKeyNameの定義も変更して下さい。
+// ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
 //	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
 SAKURA_CORE_API enum enumColorIndexType {
 	COLORIDX_TEXT		= 0,	/* テキスト */
@@ -402,7 +402,22 @@ SAKURA_CORE_API	enum enumBarChangeNotifyType {
 
 
 /*!< 色タイプ */
-SAKURA_CORE_API extern const char* const colorIDXKeyName[];
+//@@@ From Here 2006.12.18 ryoji
+#define COLOR_ATTRIB_FORCE_DISP		0x00000001
+//#define COLOR_ATTRIB_NO_TEXT		0x00000010	予約値
+#define COLOR_ATTRIB_NO_BACK		0x00000020
+#define COLOR_ATTRIB_NO_BOLD		0x00000100
+#define COLOR_ATTRIB_NO_UNDERLINE	0x00000200
+//#define COLOR_ATTRIB_NO_ITALIC		0x00000400	予約値
+#define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
+
+typedef struct ColorAttributeData_t{
+	char* szName;
+	unsigned int fAttribute;
+} ColorAttributeData;
+
+SAKURA_CORE_API extern const ColorAttributeData g_ColorAttributeArr[];
+//@@@ To Here 2006.12.18 ryoji
 
 /*!< 設定値の上限・下限 */
 //	ルーラの高さ
