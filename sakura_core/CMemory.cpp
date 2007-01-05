@@ -45,6 +45,7 @@
 #include "etc_uty.h"
 #include "CEol.h"// 2002/2/3 aroka
 #include "charcode.h"
+#include "CESI.h"  // 2006.12.16  rastiv
 #include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 //#ifdef _DEBUG
@@ -62,7 +63,7 @@
 #define MIME_BASE64	1
 #define MIME_QUOTED	2
 
-#define UUDECODE_CHAR(c) ((((unsigned char)c) - ((unsigned char)32)) & (unsigned char)0x3f)
+// #define UUDECODE_CHAR(c) ((((unsigned char)c) - ((unsigned char)32)) & (unsigned char)0x3f)
 
 /* 文字種別 */
 #define CHAR_ASCII		0	/* ASCII文字 */
@@ -662,42 +663,14 @@ void CMemory::JIStoSJIS( bool bMIMEdecode )
 /* 文字がBase64のデータか */
 int CMemory::IsBASE64Char( char cData )
 {
-#if 0
-	static const char	szBASE64CODE[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	int					nBASE64CODE_Num = sizeof( szBASE64CODE ) / sizeof( szBASE64CODE[0] );
-	int					k;
-	for( k = 0; k < nBASE64CODE_Num; ++k ){
-		if( cData == szBASE64CODE[k] ){
-			break;
+	int nret = -1;
+	if( (unsigned char)cData < 0x80 ){
+		nret = Charcode::BASE64VAL[cData];
+		if( nret == 0xff ){
+			nret = -1;
 		}
 	}
-	if( k < nBASE64CODE_Num ){
-		return k;
-	}else{
-		return -1;
-	}
-#else
-	static const int NA = -1;
-	static const int nBASE64Table[] = {
-					62, NA, NA, NA, 63,	//	+,-./
-		52, 53, 54, 55, 56, 57, 58, 59,	//	01234567
-		60, 61, NA, NA, NA, NA, NA, NA,	//	89:;<=>?
-		NA,  0,  1,  2,  3,  4,  5,  6,	//	@ABCDEFG
-		 7,  8,  9, 10, 11, 12, 13, 14,	//	HIJKLMNO
-		15, 16, 17, 18, 19, 20, 21, 22,	//	PQRSTUVW
-		23, 24, 25, NA, NA, NA, NA, NA,	//	XYZ[\]^_
-		NA, 26, 27, 28, 29, 30, 31, 32,	//	`abcdefg
-		33, 34, 35, 36, 37, 38, 39, 40,	//	hijklmno
-		41, 42, 43, 44, 45, 46, 47, 48,	//	pqrstuvw
-		49, 50, 51						//	xyz
-	};
-	//	Oct. 10, 2000 genta
-	if( cData < '+' || 'z' < cData ){
-		return  -1;
-	}
-	return nBASE64Table[cData - '+'];
-
-#endif
+	return nret;
 }
 
 // BASE64 => デコード後
@@ -1085,7 +1058,7 @@ void CMemory::EUCToSJIS( void )
 			nPtr += 2;
 		}else
 		/* EUC漢字コードか? */
-		if( nPtr < nBufLen - 1 && IsEUCKan1(pBuf[nPtr]) && IsEUCKan2(pBuf[nPtr + 1L]) ){
+		if( nPtr < nBufLen - 1 && Charcode::IsEucKan1(pBuf[nPtr]) && Charcode::IsEucKan2(pBuf[nPtr + 1L]) ){
 			/* 通常のJISコードに変換 */
 			pBuf[nPtr	  ] &= 0x7f;
 			pBuf[nPtr + 1L] &= 0x7f;
@@ -1505,23 +1478,13 @@ void CMemory::UTF7ToSJIS( void )
 	         !"#$%&*;<=>@[\]^_`{|}
 	とりあえず無条件でオプションは直接変換できないと判断する
 */
-int CMemory::IsUTF7Direct( wchar_t wc ){
-	if( L'z' <  wc ){ // パフォーマンス
-	}else
-	if( L'a'  <= wc && L'z' >= wc ||
-		L'A'  <= wc && L'Z' >= wc ||
-		L','  <= wc && L':' >= wc ||
-		L'\'' <= wc && L')' >= wc ||
-		L'?'    == wc ||
-		L'\x20' == wc || // SP
-		L'\x09' == wc || // TAB
-		L'\x0d' == wc || // CR
-		L'\x0a' == wc    // LF
-		)
-	{
-		return 1;
+int CMemory::IsUTF7Direct( wchar_t wc )
+{
+	int nret = 0;
+	if( (wc & 0xff00) == 0 ){
+		nret = Charcode::IsUtf7SetDChar( (unsigned char)wc );
 	}
-	return 0;
+	return nret;
 }
 
 
@@ -1726,32 +1689,6 @@ void CMemory::UnicodeToUTF7( void )
 
 
 
-/************************************************************************
-*
-* EUC全角コードの1バイト目ならTRUEをかえす
-*
-************************************************************************/
-int CMemory::IsEUCKan1( unsigned char c )
-{
-	/* EUC全角コードの1バイト目ならTRUEをかえす */
-	if( c >= 0xa1 && c <= 0xfe ){
-		return TRUE;
-	}
-	return FALSE;
-}
-/************************************************************************
-*
-*  EUC全角コードの2バイト目ならTRUEをかえす
-*
-************************************************************************/
-int CMemory::IsEUCKan2( unsigned char c )
-{
-	/* EUC全角コードの2バイト目ならTRUEをかえす */
-	if( c >= 0xa1 && c <= 0xfe ){
-		return TRUE;
-	}
-	return FALSE;
-}
 
 
 /* 英大文字→英小文字 */
@@ -2466,7 +2403,13 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 	_lclose( hFile );
 
 	/* 日本語コードセット判別 */
-	nCodeType = CheckKanjiCode( pBuf, nBufLen );
+// From Here 2006.09.22  rastiv
+	nCodeType = Charcode::DetectUnicodeBom( (const char *)pBuf, nBufLen );
+	if( nCodeType == 0 ){
+		// Unicode BOM は検出されませんでした．
+		nCodeType = CheckKanjiCode( (const unsigned char *)pBuf, nBufLen );
+	}
+// To Here
 
 	if( NULL != hgData ){
 		::GlobalUnlock( hgData );
@@ -2474,7 +2417,6 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 		hgData = NULL;
 	}
 	return nCodeType;
-
 }
 
 
@@ -2482,656 +2424,43 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 || 日本語コードセット判別
 ||
 || 【戻り値】
-||	SJIS	0
-||	JIS		1
-||	EUC		2
-||	Unicode	3
-||	UTF-8	4
-||	UTF-7	5
+||	SJIS		0
+||	JIS			1
+||	EUC			2
+||	Unicode		3
+||	UTF-8		4
+||	UTF-7		5
 ||	UnicodeBE	6
-||	エラー	-1
-||	エラー以外は enumCodeType を使う
 */
+
+// 2006.12.16  rastiv   アルゴリズムを改定．
 int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 {
-	int			nEUCMojiNum, nEUCCodeNum;
-	int			nSJISMojiNum, nSJISCodeNum;
-//	int			nUNICODEMojiNum, nUNICODECodeNum;
-	int			nJISMojiNum, nJISCodeNum;
-	int			nUTF8MojiNum, nUTF8CodeNum;
-	int			nUTF7MojiNum, nUTF7CodeNum;
-	int			nUnicodeBom;
-
-	nUnicodeBom = IsUnicodeBom( pBuf, nBufLen );
-	if( 0 != nUnicodeBom ){
-		return nUnicodeBom; /* Unicode or UnicodeBE or UTF-8 */
+	CESI cesi;
+	WCCODE_INFO wci;
+	MBCODE_INFO mbci;
+	int nPt;	// 
+	
+	if( !cesi.ScanEncoding((const char *)pBuf, nBufLen) ){
+		// スキャンに失敗しました．
+		return CODE_SJIS;  // ←デフォルト文字コードを返却．
 	}
-
-// IsUnicodeBomにゆだねる
-#if 0
-	/*
-	||日本語コードセット判別: Unicodeか？
-	*/
-	CMemory::CheckKanjiCode_UNICODE( pBuf, nBufLen, &nUNICODEMojiNum, &nUNICODECodeNum );
-		if( 0 < nUNICODEMojiNum && nUNICODEMojiNum == nUNICODECodeNum ){
-			return CODE_UNICODE; /* Unicode */
-		}
-#endif
-	/*
-	||日本語コードセット判別: EUCか？
-	*/
-	CMemory::CheckKanjiCode_EUC( pBuf, nBufLen, &nEUCMojiNum, &nEUCCodeNum );
-	/*
-	||日本語コードセット判別: SJISか？
-	*/
-	CMemory::CheckKanjiCode_SJIS( pBuf, nBufLen, &nSJISMojiNum, &nSJISCodeNum );
-	/*
-	||日本語コードセット判別: JISか？
-	*/
-	CMemory::CheckKanjiCode_JIS( pBuf, nBufLen, &nJISMojiNum, &nJISCodeNum );
-	/*
-	||日本語コードセット判別: UTF-8か？
-	*/
-	CMemory::CheckKanjiCode_UTF8( pBuf, nBufLen, &nUTF8MojiNum, &nUTF8CodeNum );
-	/*
-	||日本語コードセット判別: UTF-7か？
-	*/
-	CMemory::CheckKanjiCode_UTF7( pBuf, nBufLen, &nUTF7MojiNum, &nUTF7CodeNum );
-
-	if( nEUCCodeNum > 0
-	 && nEUCCodeNum >= nSJISCodeNum
-	 && nEUCCodeNum >= nJISCodeNum
-	 && nEUCCodeNum >= nUTF8CodeNum
-	 && nEUCCodeNum >= nUTF7CodeNum
-	){
-		return CODE_EUC; /* EUC */
-	}
-	if( nUTF7CodeNum > 0
-	 && nUTF7CodeNum >= nSJISCodeNum
-	 && nUTF7CodeNum >= nJISCodeNum
-	 && nUTF7CodeNum >= nEUCCodeNum
-	 && nUTF7CodeNum >= nUTF8CodeNum
-	){
-		return CODE_UTF7; /* UTF-7 */
-	}
-	if( nUTF8CodeNum > 0
-	 && nUTF8CodeNum >= nSJISCodeNum
-	 && nUTF8CodeNum >= nJISCodeNum
-	 && nUTF8CodeNum >= nEUCCodeNum
-	 && nUTF8CodeNum >= nUTF7CodeNum
-	){
-		return CODE_UTF8; /* UTF-8 */
-	}
-	if( nJISCodeNum > 0
-	 && nJISCodeNum >= nEUCCodeNum
-	 && nJISCodeNum >= nSJISCodeNum
-	 && nJISCodeNum >= nUTF8CodeNum
-	 && nJISCodeNum >= nUTF7CodeNum
-	){
-		return CODE_JIS; /* JIS */
-	}
-//	if( nSJISCodeNum > 0
-//	 && nSJISCodeNum >= nEUCCodeNum
-//	 && nSJISCodeNum >= nJISCodeNum
-//	 && nSJISCodeNum >= nUTF8CodeNum
-//	 && nSJISCodeNum >= nUTF7CodeNum
-//	){
-		return 0; /* SJIS */
-//	}
+	
+	nPt = cesi.DetectUnicode( &wci );
+	if( 0 != nPt ){
+		// UNICODE が検出されました.
+		return wci.eCodeID;
+	}//else{
+		nPt = cesi.DetectMultibyte( &mbci );
+		//nPt := 特有バイト数 － 不正バイト数
+		if( 0 < nPt ){
+			return mbci.eCodeID;
+		}//else{
+			return CODE_SJIS;  // ←デフォルト文字コードを返却．
+		//}
+	//}
 }
 
-
-
-/*
-||日本語コードセット判別: Unicodeか？
-|| エラーの場合、FALSEを返す
-*/
-int CMemory::CheckKanjiCode_UNICODE( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUNICODECodeNum )
-{
-	int				nMojiNum;
-	int				nUNICODECodeNum;
-
-	*pnMojiNum = 0;
-	*pnUNICODECodeNum = 0;
-	nMojiNum = 0;
-	nUNICODECodeNum = 0;
-
-	if( nBufLen < 2 ){
-		return TRUE;
-	}
-
-	if( (unsigned char)(pBuf[0	  ]) == (unsigned char)0xff &&
-		(unsigned char)(pBuf[0 + 1]) == (unsigned char)0xfe ){
-		nMojiNum = 1;
-		nUNICODECodeNum = 1;
-	}
-#if 0
-	int				i;
-	// 追加はしたが 効率から考えて未使用 Moca, 2002/05/26
-	// U+fffe,U+ffffはUnicode文字ではない
-	for( i = 1; i < nBufLen ; i+= 2 ){
-		if( (unsigned char)(pBuf[i    ]) == (unsigned char)0xff &&
-			(unsigned char)(pBuf[i - 1]) == (unsigned char)0xff ||
-			(unsigned char)(pBuf[i - 1]) == (unsigned char)0xfe ){
-			nMojiNum = 0;
-			nUNICODECodeNum = 0;
-			break;
-		}
-		// サロゲート領域(UTF-16)のU+xxxxffffもUnicode文字ではない
-		// UTF16LE = xx111111 110110xx 11111111 11011111
-		else if( 4 <= i &&
-			pBuf[i    ] == (unsigned char)0xdf && 
-			pBuf[i - 1] == (unsigned char)0xff &&
-			pBuf[i - 2] & (unsigned char)0xfc == (unsigned char)0xd8 &&
-			pBuf[i - 3] & (unsigned char)0x3f == (unsigned char)0x3f
-		){
-			nMojiNum = 0;
-			nUNICODECodeNum = 0;
-			break;
-		}
-	}
-#endif
-	*pnMojiNum = nMojiNum;
-	*pnUNICODECodeNum = nUNICODECodeNum;
-	return TRUE;
-}
-
-/*
-||日本語コードセット判別: UnicodeBEか？
-|| エラーの場合、FALSEを返す
-*/
-
-int CMemory::CheckKanjiCode_UNICODEBE( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUNICODEBECodeNum ){
-	int		nMojiNum;
-	int		nUNICODEBECodeNum;
-
-	*pnMojiNum = 0;
-	*pnUNICODEBECodeNum = 0;
-	nMojiNum = 0;
-	nUNICODEBECodeNum = 0;
-
-	if( nBufLen < 2 ){
-		return TRUE;
-	}
-
-	if( pBuf[0    ] == (unsigned char)0xfe &&
-		pBuf[0 + 1] == (unsigned char)0xff ){
-		nMojiNum = 1;
-		nUNICODEBECodeNum = 1;
-	}
-	*pnMojiNum = nMojiNum;
-	*pnUNICODEBECodeNum = nUNICODEBECodeNum;
-	return TRUE;
-}
-
-/*
-||日本語コードセット判別: EUCか？
-|| エラーの場合、FALSEを返す
-*/
-int CMemory::CheckKanjiCode_EUC( const unsigned char* pBuf, int nBufLen, int*	pnMojiNum, int* pnEUCCodeNum )
-{
-	int				nPtr;
-	int				nMojiNum;
-	int				nEUCCodeNum;
-	char			pTest[3];
-	unsigned int	sCode;
-
-	*pnMojiNum = 0;
-	*pnEUCCodeNum = 0;
-	nMojiNum = 0;
-	nEUCCodeNum = 0;
-
-	pTest[2] = '\0';
-	nPtr = 0;
-	while( nPtr < nBufLen ){
-		/* EUC漢字コードか? */
-		if( (unsigned char)pBuf[nPtr] == (unsigned char)0x8e ){
-			/* 半角カタカナ */
-//			pszDes[nPtrDes] = pBuf[nPtr + 1];
-			nMojiNum++;
-			nEUCCodeNum++;
-
-//			nPtrDes++;
-			nPtr += 2;
-		}else
-		if( nPtr < nBufLen - 1 && IsEUCKan1( pBuf[nPtr] ) && IsEUCKan2( pBuf[nPtr + 1L] ) ){
-			/* 通常のJISコードに変換 */
-			pTest[0] = pBuf[nPtr	 ] & 0x7f;
-			pTest[1] = pBuf[nPtr + 1L] & 0x7f;
-
-			/* SJISコードに変換 */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			sCode = (unsigned short)_mbcjistojms(
-				(unsigned int)
-				(((unsigned short)pTest[0] << 8) |
-				 ((unsigned short)pTest[1]))
-			);
-			if( sCode != 0 ){
-				pTest[0] = (unsigned char)(sCode >> 8);
-				pTest[1] = (unsigned char)(sCode);
-//				nPtrDes += 2;;
-				nPtr += 2;
-
-				if( IsZenHiraOrKata( sCode ) ){
-					nEUCCodeNum++;
-				}
-
-			}else{
-//				pszDes[nPtrDes] = pBuf[nPtr];
-//				nPtrDes++;
-				nPtr++;
-			}
-
-
-
-
-
-
-
-			nMojiNum++;
-
-//			nPtrDes += 2;;
-//			nPtr += 2;
-		}else{
-//			pszDes[nPtrDes] = pBuf[nPtr];
-//			nPtrDes++;
-			nMojiNum++;
-			nPtr++;
-		}
-	}
-	*pnMojiNum = nMojiNum;
-	*pnEUCCodeNum = nEUCCodeNum;
-	return TRUE;
-}
-
-
-
-/*
-||日本語コードセット判別: SJISか？
-|| エラーの場合、FALSEを返す
-*/
-int CMemory::CheckKanjiCode_SJIS( const unsigned char* pBuf, int nBufLen, int*	pnMojiNum, int* pnSJISCodeNum )
-{
-	int				nPtr;
-	int				nMojiNum;
-	int				nSJISCodeNum;
-	int				i;
-	int				nCharChars;
-	unsigned short	sCode;
-	wchar_t			wchar;
-	int				j;
-
-	*pnMojiNum = 0;
-	*pnSJISCodeNum = 0;
-	nMojiNum = 0;
-	nSJISCodeNum = 0;
-
-
-	nPtr = 0;
-
-//	nDesIdx = 0;
-	for( i = 0; i < nBufLen; ++i ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CMemory::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
-		if( nCharChars == 1 ){
-//			if( pBuf[i] >= (unsigned char)0x80 ){
-//				/* 半角カタカナ */
-//				nMojiNum++;
-//				nSJISCodeNum++;
-//			}else{
-				nMojiNum++;
-//			}
-		}else
-		if( nCharChars == 2 ){
-			/* 全角文字 */
-			j = mbtowc( &wchar, (const char*)&pBuf[i], nCharChars );
-
-			sCode =	(unsigned short)_mbcjmstojis(
-				(unsigned int)
-				(((unsigned short)pBuf[i	] << 8) |
-				 ((unsigned short)pBuf[i + 1]))
-			);
-			if( !( j == -1 || j == 0 )
-			 && sCode != 0
-			){
-				nMojiNum++;
-
-				sCode =
-					(((unsigned short)pBuf[i	] << 8) |
-					 ((unsigned short)pBuf[i + 1]));
-				if( 0xe380 > sCode ){
-//				if( IsZenHiraOrKata( sCode ) ){
-					nSJISCodeNum++;
-				}
-
-
-
-//				pDes[nDesIdx	] = (unsigned char)0x80 | (unsigned char)(sCode >> 8);
-//				pDes[nDesIdx + 1] = (unsigned char)0x80 | (unsigned char)(sCode);
-//				nDesIdx += 2;
-				++i;
-			}else{
-//				pDes[nDesIdx	] = pBuf[i];
-//				pDes[nDesIdx + 1] = pBuf[i + 1];
-//				nDesIdx += 2;
-				nMojiNum++;
-				++i;
-			}
-		}else
-		if( nCharChars > 0 ){
-			nMojiNum++;
-			i += nCharChars - 1;
-		}
-	}
-	*pnMojiNum = nMojiNum;
-	*pnSJISCodeNum = nSJISCodeNum;
-	return TRUE;
-}
-
-
-/*
-||日本語コードセット判別: JISか？
-|| エラーの場合、FALSEを返す
-*/
-int CMemory::CheckKanjiCode_JIS( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnJISCodeNum )
-
-{
-//	int				nPtr;
-	int				nMojiNum;
-	int				nJISCodeNum;
-	int				i;
-//	int				nCharChars;
-//	unsigned int	sCode;
-	BOOL			bJISKAN, b8BITCODE, nWorkBgn, nWorkLen;
-
-	*pnMojiNum = 0;
-	*pnJISCodeNum = 0;
-	nMojiNum = 0;
-	nJISCodeNum = 0;
-
-	bJISKAN = FALSE;
-	b8BITCODE = FALSE;
-	for( i = 0; i < nBufLen; i++ ){
-		if( i <= nBufLen - 3	 &&
-			 pBuf[i + 0] == 0x1b &&
-			 pBuf[i + 1] == '$'  &&
-			(pBuf[i + 2] == 'B' || pBuf[i + 2] == '@') ){
-			b8BITCODE = FALSE;
-			bJISKAN = TRUE;
-			i += 2;
-			nWorkBgn = i + 1;
-
-			nMojiNum += 3;
-//			nJISCodeNum++;
-
-			continue;
-		}
-		if( i <= nBufLen - 3	&&
-			pBuf[i + 0] == 0x1b	&&
-			pBuf[i + 1] == '('	&&
-			pBuf[i + 2] == 'I' ){
-			if( bJISKAN == TRUE && 0 < i - nWorkBgn ){
-				nWorkLen = i - nWorkBgn;
-
-				nMojiNum += ( nWorkLen / 2 );
-				nJISCodeNum += ( nWorkLen / 2 );
-				bJISKAN = FALSE;
-			}
-			b8BITCODE = TRUE;
-			i += 2;
-			nMojiNum += 3;
-			continue;
-		}
-		if( i <= nBufLen - 3	 &&
-			 pBuf[i + 0] == 0x1b &&
-			 pBuf[i + 1] == '('  &&
-			(pBuf[i + 2] == 'B' || pBuf[i + 2] == 'J') ){
-			b8BITCODE = FALSE;
-			nMojiNum += 3;
-			if( bJISKAN == TRUE ){
-				nWorkLen = i - nWorkBgn;
-				nMojiNum += ( nWorkLen / 2 );
-				nJISCodeNum += ( nWorkLen / 2 );
-				bJISKAN = FALSE;
-				i += 2;
-				continue;
-			}else
-			if( b8BITCODE ){
-				b8BITCODE = FALSE;
-				i += 2;
-				continue;
-			}else{
-				i += 2;
-				continue;
-			}
-		}else{
-			if( b8BITCODE ){
-				nMojiNum++;
-				nJISCodeNum++;
-			}else{
-				if( bJISKAN == TRUE ){
-					continue;
-				}else{
-					nMojiNum++;
-				}
-			}
-		}
-	}
-	*pnMojiNum = nMojiNum;
-	*pnJISCodeNum = nJISCodeNum;
-	return TRUE;
-}
-
-
-
-
-
-/*
-||日本語コードセット判別: UTF-8か？
-|| エラーの場合、FALSEを返す
-*/
-int CMemory::CheckKanjiCode_UTF8( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUTF8CodeNum )
-{
-	int				nMojiNum;
-	int				nUTF8CodeNum;
-	int				i;
-	int				j;
-	unsigned char	pDes[64];
-	int				nUTF8Bytes;
-	int				nUNICODEBytes;
-	unsigned char	pWork[100];
-	unsigned short*	pusTest;
-	unsigned short	usTest;
-
-	*pnMojiNum = 0;
-	*pnUTF8CodeNum = 0;
-	nMojiNum = 0;
-	nUTF8CodeNum = 0;
-
-	setlocale( LC_ALL, "Japanese" );
-	for( i = 0; i < nBufLen; ){
-		/* UTF-8の文字か */
-		nUTF8Bytes = IsUTF8( (const unsigned char *)&pBuf[i], nBufLen - i );
-		switch( nUTF8Bytes ){
-		case 1:
-		case 2:
-		case 3:
-			nUNICODEBytes = DecodeUTF8toUnicode( (const unsigned char *)&pBuf[i], nUTF8Bytes, pWork );
-			if( 2 == nUNICODEBytes ){
-				j = wctomb( (char*)pDes, ((wchar_t*)pWork)[0] );
-				if( -1 == j ){
-				}else
-				if( 2 == j ){
-//					nUTF8CodeNum += nUTF8Bytes;
-					pusTest = (unsigned short*)pDes;
-
-					usTest = (((unsigned short)pDes[0] << 8) |
-							 ( (unsigned short)pDes[1]) );
-
-//					MYTRACE( "*pusTest=%xh\n", *pusTest );
-//					MYTRACE( "usTest=%xh\n", usTest );
-					if( IsZenHiraOrKata( usTest ) ){
-//						nUTF8CodeNum++;
-						nUTF8CodeNum += nUTF8Bytes;
-					}
-				}
-			}else{
-			}
-			i += nUTF8Bytes;
-			break;
-		default:
-			++i;
-			break;
-		}
-		nMojiNum++;
-	}
-	*pnMojiNum = nMojiNum;
-	*pnUTF8CodeNum = nUTF8CodeNum;
-	return TRUE;
-}
-
-
-
-
-
-
-/*!	@brief 日本語コードセット判別: UTF-7か？
-
-	@param pBuf [in] 判定するデータへのポインタ
-	@param nBufLen [in] データサイズ
-	@param pnMojiNum [out] UTF-7に特有な文字の数
-	@param pnUTF7CodeNum [out] UTF7らしさ
-
-	@return エラーの場合、FALSEを返すことになっているが，必ずTRUEを返す．
-
-	@date 2001.04.01 genta +-の判定をUTF7らしさに加えないように
-	@date 2003.11.03 genta UTF7であり得ない文字として'=','\','~'を考慮するように．
-	@date 2005.07.11 Moca 文字判定のバグ修正．1/3以上失敗した場合はUTF-7らしさを0に
-
-	@note 文字数のカウントが正確とは言えないが，とりあえず無視
-
-*/
-int CMemory::CheckKanjiCode_UTF7( const unsigned char* pBuf, int nBufLen, int* pnMojiNum, int* pnUTF7CodeNum )
-{
-	int			nMojiNum;
-	int			nUTF7CodeNum;
-	int			i;
-	int			j;
-//	int			nBufLen;
-	char*		pszWork;
-	int			nWorkLen;
-//	int			k;
-	BOOL		bBASE64;
-	int			nBgn;
-	CMemory		cmemWork;
-	char		cWork;
-	int			nUniBytes;
-	int			nBadDecode;
-
-	*pnMojiNum = 0;
-	*pnUTF7CodeNum = 0;
-	nMojiNum = 0;
-	nUTF7CodeNum = 0;
-	nBadDecode = 0;
-
-	//	Nov. 03, 2003 genta
-	//	積算値に関わらず絶対にUTF-7ではあり得ない
-	//	カウンタの0クリアではその後にUTF7らしき物が出てくるとカウンタが増加する
-	bool bNeverUtf7 = false;
-
-	setlocale( LC_ALL, "Japanese" );
-//	k = 0;
-	bBASE64 = FALSE;
-	for( i = 0; i < nBufLen; ++i ){
-		if( !bBASE64 ){
-			// Nov. 03, 2003 最後に+があるとバッファオーバーフローするので2文字分余裕を見る
-			if( i < nBufLen - 2
-				&& '+' == pBuf[i]
-				&& '-' == pBuf[i + 1]
-				){
-				//	Apr. 1, 2001 genta
-				//	+のエンコードはUTF-7のポイント対象外とする
-				//	nUTF7CodeNum++;
-				++i;
-			}else
-			if( i < nBufLen - 2
-				&& '+' == pBuf[i]
-				&& -1 != IsBASE64Char( pBuf[i + 1] )	/* 文字がBase64のデータか */
-				){
-				nBgn = i + 1;
-				bBASE64 = TRUE;
-			//	Nov. 03, 2003 genta =\~が入っていたらUTF-7ではあり得ない
-			}else if( pBuf[i] & 0x80 || pBuf[i] == '=' || pBuf[i] == '\\' || pBuf[i] == '~' ){
-				//	あり得ないフラグをたてる
-				bNeverUtf7 = true;
-			}else{
-//				k++;
-				nMojiNum++;
-			}
-		}else{
-			if( '-' == pBuf[i] ){
-				nWorkLen = i - nBgn;
-				if( 3 <= nWorkLen ){
-					pszWork = new char [nWorkLen + 1];
-					memcpy( pszWork, &pBuf[nBgn], nWorkLen );
-					pszWork[nWorkLen] = '\0';
-					// Base64デコード
-					nWorkLen = MemBASE64_Decode( (unsigned char *)pszWork, nWorkLen );
-					if( 0 == nWorkLen % 2 ){
-						char szMbChar[MB_LEN_MAX];
-						nMojiNum += (nWorkLen / 2);
-						/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
-						for( j = 0; j < nWorkLen; j += 2 ){
-							cWork = pszWork[j + 1];
-							pszWork[j + 1] = pszWork[j];
-							pszWork[j] = cWork;
-							// SJISに変換可能なUnicode文字か
-							// 2004.11.20-2005.01.25 Moca wctomb( NULL, .. )としていたため、必ず変換可能とカウントされていたバグを修正
-							nUniBytes = wctomb( szMbChar, *(wchar_t*)(&pszWork[j]) );
-							if( -1 != nUniBytes ){
-								nUTF7CodeNum++;
-							}else{
-								nBadDecode++;
-							}
-						}
-					}else{
-#ifdef _DEBUG
-						MYTRACE( "★★★★2の倍数でない長さのUnicodeデータ列 nWorkLen=%d\n", nWorkLen );
-#endif
-					}
-					delete [] pszWork;
-//					k += nWorkLen;
-				}else{
-//					k++;
-					nMojiNum++;
-				}
-				bBASE64 = FALSE;
-			}else
-			if( CR == pBuf[i] || LF == pBuf[i] ){
-				bBASE64 = FALSE;
-			}else{
-				if( -1 == IsBASE64Char( pBuf[i] )  ){	/* 文字がBase64のデータか */
-					bBASE64 = FALSE;
-					//	Oct. 10, 2000 genta 8bitコードが入っていたらUTF-7ではあり得ない
-					//	Nov. 03, 2003 genta =\~が入っていたらUTF-7ではあり得ない
-					if( pBuf[i] & 0x80 || pBuf[i] == '=' || pBuf[i] == '\\' || pBuf[i] == '~' ){
-						//	あり得ないフラグをたてる
-						bNeverUtf7 = true;
-					}
-				}
-			}
-		}
-	}
-	*pnMojiNum = nMojiNum;
-
-	// 2005.07.11 Moca 1/3以上がデコードに失敗したら、あり得ない
-	if( nUTF7CodeNum / 2 < nBadDecode ){
-		bNeverUtf7 = true;
-	}
-
-	//	Nov. 03, 2003 あり得ないフラグがtrueなら必ず0
-	*pnUTF7CodeNum = bNeverUtf7 ? 0 : nUTF7CodeNum;
-	return TRUE;
-}
 
 
 
@@ -3143,14 +2472,13 @@ void CMemory::AUTOToSJIS( void )
 	|| 日本語コードセット判別
 	||
 	|| 【戻り値】
-	||	SJIS	0
-	||	JIS		1
-	||	EUC		2
-	||	Unicode	3
-	||	UTF-8	4
-	||	UTF-7	5
-	||	UnicodeBE 6
-	||	エラー	-1
+	||	SJIS		0
+	||	JIS			1
+	||	EUC			2
+	||	Unicode		3
+	||	UTF-8		4
+	||	UTF-7		5
+	||	UnicodeBE	6
 	*/
 	nCodeType = CheckKanjiCode( (const unsigned char*)m_pData, m_nDataLen );
 	switch( nCodeType ){
@@ -3165,68 +2493,6 @@ void CMemory::AUTOToSJIS( void )
 }
 
 
-
-int CMemory::IsZenHiraOrKata( unsigned short usSrc )
-{
-	/* 全角カタカナ */
-	if( ((unsigned short)0x8340 <= usSrc && usSrc <= (unsigned short)0x837e ) /* ァ～ミ */
-	 || ((unsigned short)0x8380 <= usSrc && usSrc <= (unsigned short)0x8393 ) /* ム～ン */
-	/* 全角ひらがな */
-	 || ((unsigned short)0x829f <= usSrc && usSrc <= (unsigned short)0x82dd ) /* ぁ～み */
-	 || ((unsigned short)0x82de <= usSrc && usSrc <= (unsigned short)0x82f1 ) /* む～ん */
-	){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
-}
-
-
-
-/* ! 文字列の先頭にUnicode系BOMが付いているか？
-
-	@retval	0	なし,未検出
-	@retval	3	(CODE_UNICODE)	Unicode
-	@retval	4	(CODE_UTF8)		UTF-8
-	@retval	6	(CODE_UNICODEBE) UnicodeBE
-
-*/
-int CMemory::IsUnicodeBom( const unsigned char* pBuf, int nBufLen )
-{
-	if( NULL == pBuf ){
-		return 0;
-	}
-#if 0
-//	UTF-32 / UCS-4用
-	if( 4 <= nBufLen ){
-		unsigned int* pUCS4Buf = (unsigned int*)pBuf;
-		if( pUCS4Buf[0] == (unsigned int)0xfffe0000 ){
-			return ??? // CODE_UTF32BE;
-		}
-		if( pUCS4Buf[0] == (unsigned int)0x0000feff ){
-			return ??? // CODE_UTF32LE;
-		}
-	}
-#endif
-	if( 2 <= nBufLen ){
-		if( pBuf[0] == (unsigned char)0xff &&
-			pBuf[1] == (unsigned char)0xfe ){
-			return CODE_UNICODE;
-		}
-		if( pBuf[0] == (unsigned char)0xfe &&
-			pBuf[1] == (unsigned char)0xff ){
-			return CODE_UNICODEBE;
-		}
-		if( 3 <= nBufLen ){
-			if( pBuf[0] == (unsigned char)0xef &&
-				pBuf[1] == (unsigned char)0xbb &&
-				pBuf[2] == (unsigned char)0xbf ){
-				return CODE_UTF8;
-			}
-		}
-	}
-	return 0;
-}
 
 
 

@@ -305,6 +305,10 @@ SOURCE=..\sakura_core\CEol.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CESI.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CFileExt.cpp
 # End Source File
 # Begin Source File
@@ -330,6 +334,10 @@ SOURCE=..\sakura_core\CFuncKeyWnd.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\CFuncLookup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\charcode.cpp
 # End Source File
 # Begin Source File
 
@@ -789,6 +797,10 @@ SOURCE=..\sakura_core\CEditWnd.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CEol.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CESI.h
 # End Source File
 # Begin Source File
 

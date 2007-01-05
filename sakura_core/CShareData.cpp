@@ -29,6 +29,7 @@
 #include "CRunningTimer.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 #include "my_tchar.h" // 2003/01/06 Moca
+#include "charcode.h"  // 2006/06/28 rastiv
 
 struct ARRHEAD {
 	int		nLength;

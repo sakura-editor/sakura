@@ -38,6 +38,7 @@
 #include "CBregexp.h"// 2002/2/3 aroka
 #include "COsVersionInfo.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
+#include "charcode.h"  // 2006/08/28 rastiv
 
 #include "CShareData.h"
 #include "CMRU.h"

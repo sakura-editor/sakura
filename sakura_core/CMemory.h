@@ -103,10 +103,6 @@ public:
 //	static const char* MemCharNext( /*const char*, int,*/ const char* );	/* ポインタで示した文字の次にある文字の位置を返します */
 	static const char* MemCharNext( const char*, int, const char* );	/* ポインタで示した文字の次にある文字の位置を返します */
 	static const char* MemCharPrev( const char*, int, const char* );	/* ポインタで示した文字の直前にある文字の位置を返します */
-	static int MemSJISToUnicode( char**, const char*, int );	/* ASCII&SJIS文字列をUnicode に変換 */
-	static int MemUnicodeToSJIS( char**, const char*, int );	/* Unicode文字列をASCII&SJIS に変換 */
-	static int DecodeUTF8toUnicode( const unsigned char*, int, unsigned char* );
-	static int IsUTF8( const unsigned char*, int ); /* UTF-8の文字か */
 	void ToZenkaku( int, int );	/* 半角→全角 */
 	void ToHankaku( int nMode );	/* 全角→半角 */
 
@@ -114,23 +110,6 @@ public:
 	static int CheckKanjiCodeOfFile( const char* );
 	/* 日本語コードセット判別 */
 	static int CheckKanjiCode( const unsigned char*, int );
-	/* 日本語コードセット判別: EUCか？ */
-	static int CheckKanjiCode_EUC( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別: SJISか？ */
-	static int CheckKanjiCode_SJIS( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別: Unicodeか？ */
-	static int CheckKanjiCode_UNICODE( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別: UnicodeBEか？ */
-	static int CheckKanjiCode_UNICODEBE( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別: JISか？ */
-	static int CMemory::CheckKanjiCode_JIS( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別: UTF-8Sか？ */
-	static int CheckKanjiCode_UTF8( const unsigned char*, int, int*, int* );
-	/* 日本語コードセット判別: UTF-7Sか？ */
-	static int CheckKanjiCode_UTF7( const unsigned char*, int, int*, int* );
-	static int IsZenHiraOrKata( unsigned short );
-	/* Unicode系BOMチェック */
-	static int IsUnicodeBom( const unsigned char*, int );
 
 
 	/*
@@ -180,14 +159,16 @@ protected: // 2002/2/10 aroka アクセス権変更
 //	void Init( void );
 	void Empty( void );
 	void AddData( const char*, int );
-	static int IsEUCKan1(unsigned char );	/* EUC全角コードの１バイト目か */
-	static int IsEUCKan2(unsigned char );	/* EUC全角コードの２バイト目か */
+	static int MemSJISToUnicode( char**, const char*, int );	/* ASCII&SJIS文字列をUnicode に変換 */
+	static int MemUnicodeToSJIS( char**, const char*, int );	/* Unicode文字列をASCII&SJIS に変換 */
+	long MemJIStoSJIS(unsigned char*, long );	/* JIS→SJIS変換 */
+	long MemSJIStoJIS( unsigned char*, long );	/* SJIS→JIS変換 */
+	static int DecodeUTF8toUnicode( const unsigned char*, int, unsigned char* );
 	static long MemBASE64_Decode( unsigned char*, long );	/* Base64デコード */
 	int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64エンコード */
 	long QuotedPrintable_Decode(char*, long );	/* Quoted-Printableデコード */
-	long MemJIStoSJIS(unsigned char*, long );	/* JIS→SJIS変換 */
 	int StrSJIStoJIS( CMemory*, unsigned char*, int );	/* SJIS→JISで新メモリ確保 */
-	long MemSJIStoJIS( unsigned char*, long );	/* SJIS→JIS変換 */
+	static int IsUTF8( const unsigned char*, int ); /* UTF-8の文字か */
 	static int IsBASE64Char( char );	/* 文字がBaseE64のデータか */
 	static int IsUTF7Direct( wchar_t ); /* Unicode文字がUTF7で直接エンコードできるか */ // 2002.10.25 Moca
 	//	Oct. 3, 2002 genta

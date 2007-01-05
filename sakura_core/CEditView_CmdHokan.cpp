@@ -21,6 +21,7 @@
 #include "CEditDoc.h"
 #include "debug.h"
 #include "etc_uty.h"
+#include "charcode.h"  // 2006.06.28 rastiv
 
 /*!
 	@brief コマンド受信前補完処理

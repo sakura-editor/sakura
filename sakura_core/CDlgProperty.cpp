@@ -21,6 +21,7 @@
 #include "etc_uty.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "global.h"		// Moca, 2002/05/26
+#include "charcode.h"	// rastiv, 2006/06/28
 
 // プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -69,7 +70,8 @@ void CDlgProperty::SetData( void )
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
 	CMemory			cmemProp;
 //	char*			pWork;
-	char			szWork[100];
+//	char			szWork[100];
+	char			szWork[500];
 
 //	gm_pszCodeNameArr_1[] を参照するように変更 Moca, 2002/05/26
 #if 0
@@ -225,17 +227,13 @@ void CDlgProperty::SetData( void )
 
 
 #ifdef _DEBUG/////////////////////////////////////////////////////
-	int		nEUCMojiNum, nEUCCodeNum;
-	int		nSJISMojiNum, nSJISCodeNum;
-	int		nUNICODEMojiNum, nUNICODECodeNum;
-	int		nUNICODEBEMojiNum, nUNICODEBECodeNum;
-	int		nJISMojiNum, nJISCodeNum;
-	int		nUTF8MojiNum, nUTF8CodeNum;
-	int		nUTF7MojiNum, nUTF7CodeNum;
-
+	MBCODE_INFO		mbci_tmp;
+	UNICODE_INFO	uci_tmp;
+	
 	HFILE					hFile;
 	HGLOBAL					hgData;
-	const unsigned char*	pBuf;
+//	const unsigned char*	pBuf;
+	const char*				pBuf;
 	int						nBufLen;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
@@ -253,98 +251,64 @@ void CDlgProperty::SetData( void )
 		_lclose( hFile );
 		goto end_of_CodeTest;
 	}
-	pBuf = (const unsigned char*)::GlobalLock( hgData );
+//	pBuf = (const unsigned char*)::GlobalLock( hgData );
+	pBuf = (const char*)::GlobalLock( hgData );
 	_lread( hFile, (void *)pBuf, nBufLen );
 	_lclose( hFile );
 
+// From Here  2006.12.17  rastiv
 	/*
 	||ファイルの日本語コードセット判別: Unicodeか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UNICODE( pBuf, nBufLen, &nUNICODEMojiNum, &nUNICODECodeNum ) ){
-		if( nUNICODECodeNum!=0 && nUNICODEMojiNum != 0 ){
-			wsprintf( szWork, "Unicodeコード検査：文字数%d  Unicode特有文字数%d (%d%%)\r\n", nUNICODEMojiNum, nUNICODECodeNum, nUNICODECodeNum*100/nUNICODEMojiNum );
-		}else{
-			wsprintf( szWork, "Unicodeコード検査：文字数%d  Unicode特有文字数%d (0%%)\r\n", nUNICODEMojiNum, nUNICODECodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
 	/*
 	||ファイルの日本語コードセット判別: UnicodeBEか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UNICODEBE( pBuf, nBufLen, &nUNICODEBEMojiNum, &nUNICODEBECodeNum ) ){
-		if( nUNICODEBECodeNum!=0 && nUNICODEBEMojiNum != 0 ){
-			wsprintf( szWork, "UnicodeBEコード検査：文字数%d  UnicodeBE特有文字数%d (%d%%)\r\n", nUNICODEBEMojiNum, nUNICODEBECodeNum, nUNICODEBECodeNum*100/nUNICODEBEMojiNum );
-		}else{
-			wsprintf( szWork, "UnicodeBEコード検査：文字数%d  UnicodeBE特有文字数%d (0%%)\r\n", nUNICODEBEMojiNum, nUNICODEBECodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
+	Charcode::GetEncdInf_Uni( pBuf, nBufLen, &uci_tmp );
+	wsprintf( szWork, "Unicodeコード調査：改行バイト数=%d  BE改行バイト数=%d ASCII改行バイト数=%d\r\n"
+		, uci_tmp.Uni.nCRorLF, uci_tmp.UniBe.nCRorLF, uci_tmp.nCRorLF_ascii );
+	cmemProp.AppendSz( szWork );
+	
 	/*
 	||ファイルの日本語コードセット判別: EUCか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_EUC( pBuf, nBufLen, &nEUCMojiNum, &nEUCCodeNum ) ){
-		if( nEUCCodeNum!=0 && nEUCMojiNum != 0 ){
-			wsprintf( szWork, "EUCコード検査：文字数%d  EUC特有文字数%d (%d%%)\r\n", nEUCMojiNum, nEUCCodeNum, nEUCCodeNum*100/nEUCMojiNum );
-		}else{
-			wsprintf( szWork, "EUCコード検査：文字数%d  EUC特有文字数%d (0%%)\r\n", nEUCMojiNum, nEUCCodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
+	Charcode::GetEncdInf_EucJp( pBuf, nBufLen, &mbci_tmp );
+	wsprintf( szWork, "EUCJPコード検査：特有バイト数=%d  ポイント数=%d\r\n"
+		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
+	cmemProp.AppendSz( szWork );
+	
 	/*
 	||ファイルの日本語コードセット判別: SJISか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_SJIS( pBuf, nBufLen, &nSJISMojiNum, &nSJISCodeNum ) ){
-		if( nSJISCodeNum!=0 && nSJISMojiNum != 0 ){
-			wsprintf( szWork, "SJISコード検査：文字数%d  SJIS特有文字数%d (%d%%)\r\n", nSJISMojiNum, nSJISCodeNum, nSJISCodeNum*100/nSJISMojiNum );
-		}else{
-			wsprintf( szWork, "SJISコード検査：文字数%d  SJIS特有文字数%d (0%%)\r\n", nSJISMojiNum, nSJISCodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
-
-
+	Charcode::GetEncdInf_SJis( pBuf, nBufLen, &mbci_tmp );
+	wsprintf( szWork, "SJISコード検査：特有バイト数=%d  ポイント数=%d\r\n"
+		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
+	cmemProp.AppendSz( szWork );
+	
 	/*
 	||ファイルの日本語コードセット判別: JISか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_JIS( pBuf, nBufLen, &nJISMojiNum, &nJISCodeNum ) ){
-		if( nJISCodeNum!=0 && nJISMojiNum != 0 ){
-			wsprintf( szWork, "JISコード検査：文字数%d  JIS特有文字数%d (%d%%)\r\n", nJISMojiNum, nJISCodeNum, nJISCodeNum*100/nJISMojiNum );
-		}else{
-			wsprintf( szWork, "JISコード検査：文字数%d  JIS特有文字数%d (0%%)\r\n", nJISMojiNum, nJISCodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
+	Charcode::GetEncdInf_Jis( pBuf, nBufLen, &mbci_tmp );
+	wsprintf( szWork, "JISコード検査：特有バイト数=%d  ポイント数=%d\r\n"
+		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
+	cmemProp.AppendSz( szWork );
 
 	/*
 	||ファイルの日本語コードセット判別: UTF-8Sか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UTF8( pBuf, nBufLen, &nUTF8MojiNum, &nUTF8CodeNum ) ){
-		if( nUTF8CodeNum!=0 && nUTF8MojiNum != 0 ){
-			wsprintf( szWork, "UTF-8コード検査：文字数%d  UTF-8特有文字数%d (%d%%)\r\n", nUTF8MojiNum, nUTF8CodeNum, nUTF8CodeNum*100/nUTF8MojiNum );
-		}else{
-			wsprintf( szWork, "UTF-8コード検査：文字数%d  UTF-8特有文字数%d (0%%)\r\n", nUTF8MojiNum, nUTF8CodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
+	Charcode::GetEncdInf_Utf8( pBuf, nBufLen, &mbci_tmp );
+	wsprintf( szWork, "UTF-8コード検査：特有バイト数=%d  ポイント数=%d\r\n"
+		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
+	cmemProp.AppendSz( szWork );
 
 	/*
 	||ファイルの日本語コードセット判別: UTF-7Sか？
-	|| エラーの場合、FALSEを返す
 	*/
-	if( CMemory::CheckKanjiCode_UTF7( pBuf, nBufLen, &nUTF7MojiNum, &nUTF7CodeNum ) ){
-		if( nUTF7CodeNum!=0 && nUTF7MojiNum != 0 ){
-			wsprintf( szWork, "UTF-7コード検査：文字数%d  UTF-7特有文字数%d (%d%%)\r\n", nUTF7MojiNum, nUTF7CodeNum, nUTF7CodeNum*100/nUTF7MojiNum );
-		}else{
-			wsprintf( szWork, "UTF-7コード検査：文字数%d  UTF-7特有文字数%d (0%%)\r\n", nUTF7MojiNum, nUTF7CodeNum );
-		}
-		cmemProp.AppendSz( szWork );
-	}
+	Charcode::GetEncdInf_Utf7( pBuf, nBufLen, &mbci_tmp );
+	wsprintf( szWork, "UTF-7コード検査：特有バイト数=%d  ポイント数=%d\r\n"
+		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
+	cmemProp.AppendSz( szWork );
+// To Here rastiv 2006.12.17
+
 	if( NULL != hgData ){
 		::GlobalUnlock( hgData );
 		::GlobalFree( hgData );

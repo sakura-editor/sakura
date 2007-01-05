@@ -40,6 +40,7 @@
 #include "CMemory.h"
 #include "CEOL.h"
 #include "CFileLoad.h"
+#include "charcode.h"
 #ifdef _DEBUG
 #include "Debug.h"
 #endif
@@ -150,7 +151,8 @@ enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BO
 	m_nFlag = nFlag;
 
 	// From Here Jun. 08, 2003 Moca BOMの除去
-	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
+//-	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
+	nBomCode = Charcode::DetectUnicodeBom( (const char *)m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
 	m_nFileDataLen = m_nFileSize;
 	if( nBomCode != 0 && nBomCode == m_CharCode ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す

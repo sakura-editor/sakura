@@ -147,6 +147,7 @@ bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SY
 // novice 2004/10/10
 int getCtrlKeyState(void);
 
+#if 0 /// 2006.06.28 rastiv charcode.cpp へ移動
 // Oct. 5, 2002 genta CMemory.cppより移動
 /*! Shift_JIS の漢字の1バイト目？ の判定 */
 inline bool _IS_SJIS_1(unsigned int ch)
@@ -160,6 +161,7 @@ inline bool _IS_SJIS_2(unsigned int ch)
 {
 	return ( ch >=0x040 )&&( ch <=0x07E || (( ch >=0x080 )&&( ch <=0x0FC )));
 }
+#endif
 
 /*! 相対パスか判定する
 	@author Moca
