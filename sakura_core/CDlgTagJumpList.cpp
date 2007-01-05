@@ -47,6 +47,7 @@
 #include "etc_uty.h"
 #include "debug.h"
 #include "my_icmp.h"
+#include "charcode.h"  // 2006.06.28 rastiv
 
 #include "sakura.hh"
 const DWORD p_helpids[] = {

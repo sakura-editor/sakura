@@ -135,6 +135,7 @@ OBJS =\
 	$(OBJDIR)\CEditView_New3.obj \
 	$(OBJDIR)\CEditWnd.obj \
 	$(OBJDIR)\CEol.obj \
+	$(OBJDIR)\CESI.obj \
 	$(OBJDIR)\CFileExt.obj \
 	$(OBJDIR)\CFileWrite.obj \
 	$(OBJDIR)\CFileLoad.obj \
@@ -142,6 +143,7 @@ OBJS =\
 	$(OBJDIR)\CFuncInfoArr.obj \
 	$(OBJDIR)\CFuncKeyWnd.obj \
 	$(OBJDIR)\CFuncLookup.obj \
+	$(OBJDIR)\charcode.obj \
 	$(OBJDIR)\CHokanMgr.obj \
 	$(OBJDIR)\CHtmlHelp.obj \
 	$(OBJDIR)\CImageListMgr.obj \
@@ -303,4 +305,5 @@ clobber :
 #
 #.\aXX : 
 #	@echo "aaa"
+
 

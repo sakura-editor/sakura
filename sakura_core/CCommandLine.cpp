@@ -27,6 +27,7 @@
 #include "CRunningTimer.h"
 // 関数をマクロ再定義するので my_icmp.h は最後に置く	// 2006.10.25 ryoji
 #include "my_icmp.h"
+#include "charcode.h"  // 2006.06.28 rastiv
 
 CCommandLine* CCommandLine::_instance = NULL;
 

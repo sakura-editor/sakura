@@ -36,6 +36,7 @@
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
+#include "charcode.h"
 
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
