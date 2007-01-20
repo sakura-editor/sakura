@@ -14,6 +14,7 @@
 	Copyright (C) 2004, MIK, Moca, D.S.Koba, genta
 	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -391,6 +392,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_bRegularExp );
 	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_bLoHiCase );
 	cProfile.IOProfileData( pszSecName, "bSearchWordOnly"		, common.m_bWordOnly );
+	cProfile.IOProfileData( pszSecName, "bSearchConsecutiveAll"		, common.m_bConsecutiveAll );	// 2007.01.16 ryoji
 	cProfile.IOProfileData( pszSecName, "bSearchNOTIFYNOTFOUND"	, common.m_bNOTIFYNOTFOUND );
 	// 2002.01.26 hor
 	cProfile.IOProfileData( pszSecName, "bSearchAll"				, common.m_bSearchAll );

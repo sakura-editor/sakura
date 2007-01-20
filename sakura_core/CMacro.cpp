@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, zenryaku, FILE
 	Copyright (C) 2006, かろと
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -98,7 +99,6 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 		break;
 	case F_REPLACE:
 	case F_REPLACE_ALL:
-	case F_REPLACE_ALL_LINE: //	2006.03.31 かろと全て行置換
 		{
 			AddParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
 			AddParam( pcEditView->m_pShareData->m_szREPLACEKEYArr[0] );	//	lParamを追加。
@@ -113,6 +113,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 			lFlag |= pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
 			lFlag |= pcEditView->m_pShareData->m_Common.m_bSelectedArea		? 0x80 : 0x00;	//	置換する時は選べない
 			lFlag |= pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
+			lFlag |= pcEditView->m_pShareData->m_Common.m_bConsecutiveAll	? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddParam( lFlag );
 		}
 		break;
@@ -279,7 +280,6 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			break;
 		case F_REPLACE:
 		case F_REPLACE_ALL:
-		case F_REPLACE_ALL_LINE:  //	2006.03.31 かろと全て行置換
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
 			cmemWork.SetData( pText, nTextLen );
@@ -494,7 +494,6 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	/* はじめの2つの引数は文字列。3つ目は数値 */
 	case F_REPLACE:
 	case F_REPLACE_ALL:
-	case F_REPLACE_ALL_LINE:	 //	2006.03.31 かろと全て行置換
 		//	Argument[0]を、Argument[1]に置換。オプションはArgument[2]に（入れる予定）
 		//	Argument[2]:
 		//		次の数値の和。
@@ -514,6 +513,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x100	見つかった文字列の前に挿入
 		//		0x200	見つかった文字列の後に追加
 		//		**********************************
+		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
 		//	各値をShareDataに設定してコマンドを発行し、ShareDataの値を元に戻す。
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
@@ -548,15 +548,16 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->m_pShareData->m_Common.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
 //			pcEditView->m_pShareData->m_Common.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
 			if (Index == F_REPLACE) {
 				//	置換する時は選べない
 				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= 0;
 			}
-			else if (Index == F_REPLACE_ALL || Index == F_REPLACE_ALL_LINE) { // 2006.03.31 かろと全て行置換
+			else if (Index == F_REPLACE_ALL) {
 				//	全置換の時は選べる？
 				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
-			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget	= lFlag >> 8;	//	8bitシフト（0x100で割り算）
+			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
 			//	コマンド発行
 			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0);
 		}

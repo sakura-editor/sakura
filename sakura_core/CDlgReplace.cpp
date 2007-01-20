@@ -9,6 +9,7 @@
 	Copyright (C) 2001, genta, Stonee, hor, YAZAKI
 	Copyright (C) 2002, MIK, hor, novice, genta, aroka, YAZAKI
 	Copyright (C) 2006, かろと, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -49,7 +50,7 @@ const DWORD p_helpids[] = {	//11900
 	IDC_STATIC_JRE32VER,			HIDC_REP_STATIC_JRE32VER,			//正規表現バージョン
 	IDC_BUTTON_SETMARK,				HIDC_REP_BUTTON_SETMARK,			//2002.01.16 hor 検索該当行をマーク
 	IDC_CHECK_SEARCHALL,			HIDC_REP_CHECK_SEARCHALL,			//2002.01.26 hor 先頭（末尾）から再検索
-	IDC_BUTTON_REPLACEALL_LINE,		HIDC_REP_BUTTON_REPLACEALL_LINE,	//すべて行置換	// 2006.08.06 ryoji
+	IDC_CHECK_CONSECUTIVEALL,		HIDC_REP_CHECK_CONSECUTIVEALL,		//「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -58,6 +59,7 @@ CDlgReplace::CDlgReplace()
 {
 	m_bLoHiCase = FALSE;		/* 英大文字と英小文字を区別する */
 	m_bWordOnly = FALSE;		/* 一致する単語のみ検索する */
+	m_bConsecutiveAll = FALSE;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	m_bRegularExp = FALSE;		/* 正規表現 */
 	m_bSelectedArea = FALSE;	/* 選択範囲内置換 */
 	m_szText[0] = '\0';			/* 検索文字列 */
@@ -75,6 +77,7 @@ HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lPara
 	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			/* 1==正規表現 */
 	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				/* 1==英大文字小文字の区別 */
 	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				/* 1==単語のみ検索 */
+	m_bConsecutiveAll = m_pShareData->m_Common.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	m_bSelectedArea = m_pShareData->m_Common.m_bSelectedArea;		/* 選択範囲内置換 */
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bSelected = bSelected;
@@ -122,6 +125,9 @@ void CDlgReplace::SetData( void )
 	/* 単語単位で探す */
 	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
 
+	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+	::CheckDlgButton( m_hWnd, IDC_CHECK_CONSECUTIVEALL, m_bConsecutiveAll );
+
 // From Here 2001.12.03 hor
 //	/* 選択範囲内置換 */
 //	if( m_pShareData->m_Common.m_bSelectedArea ){
@@ -149,6 +155,9 @@ void CDlgReplace::SetData( void )
 	}
 	else {
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 0 );
+
+		/*「すべて置換」は置換の繰返し */
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_CONSECUTIVEALL ), FALSE );	// 2007.01.16 ryoji
 	}
 	// To Here Jun. 29, 2001 genta
 
@@ -198,6 +207,9 @@ int CDlgReplace::GetData( void )
 	/* 単語単位で探す */
 	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
 
+	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+	m_bConsecutiveAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_CONSECUTIVEALL );
+
 	/* 正規表現 */
 	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
 	/* 選択範囲内置換 */
@@ -208,6 +220,7 @@ int CDlgReplace::GetData( void )
 	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;			/* 1==正規表現 */
 	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;				/* 1==英大文字小文字の区別 */
 	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;				/* 1==単語のみ検索 */
+	m_pShareData->m_Common.m_bConsecutiveAll = m_bConsecutiveAll;	/* 1==「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	m_pShareData->m_Common.m_bSelectedArea = m_bSelectedArea;		/* 選択範囲内置換 */
 	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
 
@@ -397,6 +410,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				/* 単語単位で探す */
 				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), FALSE );
 
+				/*「すべて置換」は置換の繰返し */
+				::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_CONSECUTIVEALL ), TRUE );	// 2007.01.16 ryoji
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
@@ -409,6 +424,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 単語単位で探す */
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ), TRUE );
 
+			/*「すべて置換」は置換の繰返し */
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_CONSECUTIVEALL ), FALSE );	// 2007.01.16 ryoji
 		}
 		return TRUE;
 //	case IDOK:			/* 下検索 */
@@ -503,9 +520,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
-	case IDC_BUTTON_REPLACEALL_LINE: /* すべて行置換 2006.01.22 かろと */
 		if( 0 < GetData() ){
-			TCHAR *szUnit = _T("");	// 置換数表示の単位 2006.04.02 かろと
 			// 置換開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
 				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
@@ -513,21 +528,15 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 
-			/* すべて行置換時の処置追加 2006.01.22 かろと */
-			if ( wID == IDC_BUTTON_REPLACEALL_LINE ) {
-				pcEditView->HandleCommand( F_REPLACE_ALL_LINE, TRUE, 0, 0, 0, 0 );
-				szUnit = _T("行");
-			} else {
-				pcEditView->HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
-				szUnit = _T("箇所");
-			}
+			/* すべて行置換時の処置は「すべて置換」は置換の繰返しオプションOFFの場合にして削除 2007.01.16 ryoji */
+			pcEditView->HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 			/* アクティブにする */
 			ActivateFrameWindow( m_hWnd );
 
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME,
-				"%d%sを置換しました。", m_nReplaceCnt, szUnit);
+				"%d箇所を置換しました。", m_nReplaceCnt);
 
 //			nNewPos = 100;
 // 			::SendMessage( ::GetDlgItem( m_hWnd, IDC_PROGRESS_REPLACE ), PBM_SETPOS, nNewPos, 0 );

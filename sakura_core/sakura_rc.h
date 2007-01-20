@@ -190,7 +190,7 @@
 #define IDC_RADIO_SELECTEDAREA          1133
 #define IDC_BUTTON_REPALCEALL           1134
 #define IDC_BUTTON_SEARCHPREV           1135
-#define IDC_BUTTON_REPLACEALL_LINE      1136
+#define IDC_CHECK_CONSECUTIVEALL        1136
 #define IDC_BUTTON_SEARCHNEXT           1137
 #define IDC_LIST_RES                    1138
 #define IDC_BUTTON_SETMARK              1138

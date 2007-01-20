@@ -16,6 +16,7 @@
 	Copyright (C) 2003, かろと
 	Copyright (C) 2005, かろと
 	Copyright (C) 2006, かろと
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -428,10 +429,11 @@ bool CBregexp::Match( const char* target, int len, int nStart )
 	@param[in] nLen 置換対象データ長
 	@param[in] nStart 置換開始位置(0からnLen未満)
 
-	@retval true 成功
-	@retval false 失敗
+	@retval 置換個数
+
+	@date	2007.01.16 ryoji 戻り値を置換個数に変更
 */
-bool CBregexp::Replace(const char *szTarget, int nLen, int nStart)
+int CBregexp::Replace(const char *szTarget, int nLen, int nStart)
 {
 	int result;
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
@@ -442,10 +444,15 @@ bool CBregexp::Replace(const char *szTarget, int nLen, int nStart)
 
 	//	From Here 2003.05.03 かろと
 	// nLenが０だと、BSubst()が置換に失敗してしまうので、代用データ(m_tmpBuf)を使う
-	if( nLen == 0 ) {
-		szTarget = m_tmpBuf;
-		nLen = 1;
-	}
+	//
+	// 2007.01.19 ryoji 代用データ使用をコメントアウト
+	// 使用すると現状では結果に１バイト余分なゴミが付加される
+	// 置換に失敗するのはnLenが０に限らず nLen = nStart のとき（行頭マッチだけ対策しても．．．）
+	//
+	//if( nLen == 0 ) {
+	//	szTarget = m_tmpBuf;
+	//	nLen = 1;
+	//}
 	//	To Here 2003.05.03 かろと
 
 	m_szMsg[0] = '\0';		//!< エラー解除
@@ -459,14 +466,14 @@ bool CBregexp::Replace(const char *szTarget, int nLen, int nStart)
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
 	if( m_szMsg[0] ) {
-		return false;
+		return 0;
 	}
 
-	if( !result ) {
+	if( result < 0 ) {
 		// 置換するものがなかった
-		return false;
+		return 0;
 	}
-	return true;
+	return result;
 }
 //>> 2002/03/27 Azumaiya
 

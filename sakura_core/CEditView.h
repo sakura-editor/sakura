@@ -13,6 +13,7 @@
 	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
 	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -765,8 +766,7 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
-	enum REPLACE_ALL_MODE { REP_NORMAL = 0, REP_LINE = 1 };
-	void Command_REPLACE_ALL( int nMode = REP_NORMAL );	/* すべて置換(実行) */
+	void Command_REPLACE_ALL();							/* すべて置換(実行) */
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_JUMP_SRCHSTARTPOS( void );				/* 検索開始位置へ戻る */	// 02/06/26 ai
 
