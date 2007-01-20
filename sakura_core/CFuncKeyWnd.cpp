@@ -226,6 +226,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 //	}
 	::ShowWindow( m_hWnd, SW_SHOW );
 	Timer_ONOFF( TRUE ); // 20060126 aroka
+	OnTimer( m_hWnd, WM_TIMER, IDT_FUNCWND, ::GetTickCount() );	// 初回更新	// 2006.12.20 ryoji
 
 	::InvalidateRect( m_hWnd, NULL, TRUE );
 
@@ -373,7 +374,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		return 0;
 	}
 
-	if( ::GetActiveWindow() != m_hwndParent ) {	//	2002/06/02 MIK
+	if( ::GetActiveWindow() != m_hwndParent && m_nCurrentKeyState != -1 ) {	//	2002/06/02 MIK	// 2006.12.20 ryoji 初回更新は処理する
 		return 0;
 	}
 

@@ -82,6 +82,13 @@ public:
 	void DestroyToolBar( void );		/* ツールバー破棄 */
 	void CreateStatusBar( void );		/* ステータスバー作成 */
 	void DestroyStatusBar( void );		/* ステータスバー破棄 */
+
+	void LayoutToolBar( void );			/* ツールバーの配置処理 */			// 2006.12.19 ryoji
+	void LayoutFuncKey( void );			/* ファンクションキーの配置処理 */	// 2006.12.19 ryoji
+	void LayoutTabBar( void );			/* タブバーの配置処理 */			// 2006.12.19 ryoji
+	void LayoutStatusBar( void );		/* ステータスバーの配置処理 */		// 2006.12.19 ryoji
+	void EndLayoutBars( void );			/* バーの配置終了処理 */			// 2006.12.19 ryoji
+
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューのバーはCPrintPreviewに移動
 
 	void InitMenu( HMENU, UINT, BOOL );
