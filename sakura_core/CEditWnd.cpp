@@ -980,6 +980,90 @@ void CEditWnd::DestroyToolBar( void )
 	return;
 }
 
+/*! ツールバーの配置処理
+	@date 2006.12.19 ryoji 新規作成
+*/
+void CEditWnd::LayoutToolBar( void )
+{
+	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* ツールバーを表示する */
+		if( NULL == m_hwndToolBar ){
+			CreateToolBar();
+		}
+	}else{
+		DestroyToolBar();
+	}
+}
+
+/*! ステータスバーの配置処理
+	@date 2006.12.19 ryoji 新規作成
+*/
+void CEditWnd::LayoutStatusBar( void )
+{
+	if( m_pShareData->m_Common.m_bDispSTATUSBAR ){	/* ステータスバーを表示する */
+		if( NULL == m_hwndStatusBar ){
+			/* ステータスバー作成 */
+			CreateStatusBar();
+		}
+	}else{
+		/* ステータスバー破棄 */
+		DestroyStatusBar();
+	}
+}
+
+/*! ファンクションキーの配置処理
+	@date 2006.12.19 ryoji 新規作成
+*/
+void CEditWnd::LayoutFuncKey( void )
+{
+	BOOL		bSizeBox;
+
+	if( m_pShareData->m_Common.m_bDispFUNCKEYWND ){	/* ファンクションキーを表示する */
+		if( NULL == m_CFuncKeyWnd.m_hWnd ){
+			if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
+				bSizeBox = FALSE;
+			}else{
+				bSizeBox = TRUE;
+				/* ステータスバーがあるときはサイズボックスを表示しない */
+				if( NULL != m_hwndStatusBar ){
+					bSizeBox = FALSE;
+				}
+			}
+			m_CFuncKeyWnd.Open( m_hInstance, m_hWnd, &m_cEditDoc, bSizeBox );
+		}
+	}else{
+		m_CFuncKeyWnd.Close();
+	}
+}
+
+/*! タブバーの配置処理
+	@date 2006.12.19 ryoji 新規作成
+*/
+void CEditWnd::LayoutTabBar( void )
+{
+	if( m_pShareData->m_Common.m_bDispTabWnd ){	/* タブバーを表示する */
+		if( NULL == m_cTabWnd.m_hWnd ){
+			m_cTabWnd.Open( m_hInstance, m_hWnd );
+		}
+	}else{
+		m_cTabWnd.Close();
+	}
+}
+
+/*! バーの配置終了処理
+	@date 2006.12.19 ryoji 新規作成
+*/
+void CEditWnd::EndLayoutBars( void )
+{
+	RECT		rc;
+
+	m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
+	::GetClientRect( m_hWnd, &rc );
+	::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+	::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
+
+	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+}
+
 
 //複数プロセス版
 /* メッセージループ */
@@ -1270,8 +1354,16 @@ LRESULT CEditWnd::DispatchEvent(
 
 	//From here 2003.05.31 MIK
 	case WM_MOVE:
-		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+		{
+			EditNode* p = NULL;
+			CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
+			if( NULL != p && p[ 0 ].m_hWnd == m_hWnd ){	// 一番手前のウィンドウ	// 2006.12.19 ryoji
+				m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+				::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+			}
+			if( p ) delete []p;
+		}
+
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowPos ){
@@ -1527,7 +1619,9 @@ LRESULT CEditWnd::DispatchEvent(
 		// （ビジュアルスタイル: Rebar 有り、クラシックスタイル: Rebar 無し）
 		if( NULL != m_hwndToolBar ){
 			if( IsVisualStyle() == (NULL == m_hwndReBar) ){
-				::SendMessage( m_hWnd, MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)NULL );	// 設定変更通知 
+				DestroyToolBar();
+				LayoutToolBar();
+				EndLayoutBars();
 			}
 		}
 		return 0L;
@@ -1550,32 +1644,55 @@ LRESULT CEditWnd::DispatchEvent(
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
 // Oct 10, 2000 ao
-/* 設定変更時、ツールバーを再作成するようにする */
-		if( NULL != m_hwndToolBar ){
-			DestroyToolBar();
-			CreateToolBar();
-// ツールバーの行数が変わったときに画面が乱れないように 2005/8/9 aroka
-			RECT		rc;
-			::GetClientRect( m_hWnd, &rc );
-			::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
-
-		}
+/* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
+		DestroyToolBar();
+		LayoutToolBar();
 // Oct 10, 2000 ao ここまで
 
-		if( NULL != m_CFuncKeyWnd.m_hWnd ){
-			BOOL bSizeBox;
-			if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-				/* サイズボックスの表示／非表示切り替え */
-				bSizeBox = FALSE;
-			}else{
-				bSizeBox = TRUE;
-				/* ステータスパーを表示している場合はサイズボックスを表示しない */
-				if( NULL != m_hwndStatusBar ){
-					bSizeBox = FALSE;
+		// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
+		m_CFuncKeyWnd.Close();
+		LayoutFuncKey();
+
+		// タブバーの表示／非表示切り替え	// 2006.12.19 ryoji
+		LayoutTabBar();
+
+		// ステータスバーの表示／非表示切り替え	// 2006.12.19 ryoji
+		LayoutStatusBar();
+
+		// 水平スクロールバーの表示／非表示切り替え	// 2006.12.19 ryoji
+		{
+			int i;
+			bool b1;
+			bool b2;
+			b1 = (m_pShareData->m_Common.m_bScrollBarHorz == FALSE);
+			for( i = 0; i < 4; i++ )
+			{
+				b2 = (m_cEditDoc.m_cEditViewArr[i].m_hwndHScrollBar == NULL);
+				if( b1 != b2 )		/* 水平スクロールバーを使う */
+				{
+					m_cEditDoc.m_cEditViewArr[i].DestroyScrollBar();
+					m_cEditDoc.m_cEditViewArr[i].CreateScrollBar();
 				}
 			}
-			m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
+		}
+
+		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
+		EndLayoutBars();
+
+		if( m_hWnd != (HWND)lParam )
+		{
+			if( m_pShareData->m_Common.m_bDispTabWnd
+				&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+			{
+				::ShowWindow(m_hWnd, SW_HIDE);
+			}
+			else
+			{
+				// ::ShowWindow( hwnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+				::SetWindowPos( hwnd, NULL,0,0,0,0,
+								SWP_SHOWWINDOW | SWP_NOACTIVATE
+								| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
+			}
 		}
 
 		//	Aug, 21, 2000 genta
@@ -1688,7 +1805,6 @@ LRESULT CEditWnd::DispatchEvent(
 		m_cTabWnd.TabWindowNotify( wParam, lParam );
 		return 0L;
 
-/* 無限ループになるので削除
 	//バーの表示・非表示	//@@@ 2003.06.10 MIK
 	case MYWM_BAR_CHANGE_NOTIFY:
 		if( m_hWnd != (HWND)lParam )
@@ -1696,21 +1812,33 @@ LRESULT CEditWnd::DispatchEvent(
 			switch( wParam )
 			{
 			case MYBCN_TOOLBAR:
-				m_cEditDoc.HandleCommand( F_SHOWTOOLBAR );
+				LayoutToolBar();	// 2006.12.19 ryoji
 				break;
 			case MYBCN_FUNCKEY:
-				m_cEditDoc.HandleCommand( F_SHOWFUNCKEY );
+				LayoutFuncKey();	// 2006.12.19 ryoji
 				break;
 			case MYBCN_TAB:
-				m_cEditDoc.HandleCommand( F_SHOWTAB );
+				LayoutTabBar();		// 2006.12.19 ryoji
+				if( m_pShareData->m_Common.m_bDispTabWnd
+					&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+				{
+					::ShowWindow(m_hWnd, SW_HIDE);
+				}
+				else
+				{
+					// ::ShowWindow( hwnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+					::SetWindowPos( hwnd, NULL,0,0,0,0,
+									SWP_SHOWWINDOW | SWP_NOACTIVATE
+									| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
+				}
 				break;
 			case MYBCN_STATUSBAR:
-				m_cEditDoc.HandleCommand( F_SHOWSTATUSBAR );
+				LayoutStatusBar();		// 2006.12.19 ryoji
 				break;
 			}
+			EndLayoutBars();	// 2006.12.19 ryoji
 		}
 		return 0L;
-*/
 
 	//by 鬼 (2) MYWM_CHECKSYSMENUDBLCLKは不要に, WM_LBUTTONDBLCLK追加
 	case WM_NCLBUTTONDOWN:
@@ -3420,8 +3548,15 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	//ウインドウ情報を最新に更新する。
 	//if( 0 == m_pShareData->m_TabWndWndpl.length )
 	//{
-		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+	{
+		EditNode* p = NULL;
+		CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
+		if( NULL != p && p[ 0 ].m_hWnd == m_hWnd ){	// 一番手前のウィンドウ	// 2006.12.19 ryoji
+			m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+			::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+		}
+		if( p ) delete []p;
+	}
 	//}
 	//To Here 2003.05.31 MIK
 

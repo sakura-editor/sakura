@@ -4236,7 +4236,7 @@ void CEditView::Command_FONT( void )
 		CShareData::getInstance()->PostMessageToAllEditors(
 //		m_cShareData.SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
-			(WPARAM)0, (LPARAM)0, hwndFrame
+			(WPARAM)0, (LPARAM)hwndFrame, hwndFrame
 		);
 
 		/* キャレットの表示 */
@@ -8787,105 +8787,58 @@ end_of_compare:;
 
 
 
-/* ツールバーの表示/非表示 */
+/*! ツールバーの表示/非表示
+
+	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutToolBar(), CEditWnd::EndLayoutBars() で行うように変更
+*/
 void CEditView::Command_SHOWTOOLBAR( void )
 {
-	//HWND		hwndFrame;
-	RECT		rc;
-	//hwndFrame = ::GetParent( m_hwndParent );
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	if( NULL == pCEditWnd->m_hwndToolBar ){
-		/* ツールバー作成 */
-		pCEditWnd->CreateToolBar();
-		m_pShareData->m_Common.m_bDispTOOLBAR = TRUE;	/* 次回ウィンドウを開いたときツールバーを表示する */
-	}else{
-		//::DestroyWindow( pCEditWnd->m_hwndToolBar );
-		pCEditWnd->DestroyToolBar();
-		//pCEditWnd->m_hwndToolBar = NULL;
-		m_pShareData->m_Common.m_bDispTOOLBAR = FALSE;	/* 次回ウィンドウを開いたときツールバーを表示しない */	//Sept. 9, 2000 jepro 「表示する」となっていたのを修正
-	}
-//	/* 変更フラグ(共通設定の全体) のセット */
-//	m_pShareData->m_nCommonModify = TRUE;
-	// 2004.07.12 Moca ツールバー表示時、クライアント領域にごみが残るバグの修正
-	m_pcEditDoc->m_cSplitterWnd.DoSplit( -1, -1 );
 
-	::GetClientRect( pCEditWnd->m_hWnd, &rc );
-	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-	SetIMECompFormPos();	//	2002/05/30 YAZAKI ツールバーの表示/非表示を変更すると、変換位置がずれるバグ修正
+	m_pShareData->m_Common.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_hwndToolBar)? TRUE: FALSE);	/* ツールバー表示 */
+	pCEditWnd->LayoutToolBar();
+	pCEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
-	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TOOLBAR, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
-
-	return;
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TOOLBAR, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
 }
 
 
 
 
-/* ステータスバーの表示/非表示 */
+/*! ステータスバーの表示/非表示
+
+	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutStatusBar(), CEditWnd::EndLayoutBars() で行うように変更
+*/
 void CEditView::Command_SHOWSTATUSBAR( void )
 {
-	//HWND		hwndFrame;
-	RECT		rc;
-	//hwndFrame = ::GetParent( m_hwndParent );
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	if( NULL == pCEditWnd->m_hwndStatusBar ){
-		/* ステータスバー作成 */
-		pCEditWnd->CreateStatusBar();
-		m_pShareData->m_Common.m_bDispSTATUSBAR = TRUE;	/* 次回ウィンドウを開いたときステータスバーを表示する */
-	}else{
-		/* ステータスバー破棄 */
-		pCEditWnd->DestroyStatusBar();
-		m_pShareData->m_Common.m_bDispSTATUSBAR = FALSE;	/* 次回ウィンドウを開いたときステータスバーを表示しない */	//Sept. 9, 2000 jepro 「表示する」となっていたのを修正
-	}
-//	/* 変更フラグ(共通設定の全体) のセット */
-//	m_pShareData->m_nCommonModify = TRUE;
-	::GetClientRect( pCEditWnd->m_hWnd, &rc );
-	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-	::RedrawWindow( pCEditWnd->m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );
+
+	m_pShareData->m_Common.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_hwndStatusBar)? TRUE: FALSE);	/* ステータスバー表示 */
+	pCEditWnd->LayoutStatusBar();
+	pCEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
-	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_STATUSBAR, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
-
-	return;
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_STATUSBAR, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
 }
 
 
 
 
-/* ファンクションキーの表示/非表示 */
+/*! ファンクションキーの表示/非表示
+
+	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutFuncKey(), CEditWnd::EndLayoutBars() で行うように変更
+*/
 void CEditView::Command_SHOWFUNCKEY( void )
 {
-	//HWND		hwndFrame;
-	RECT		rc;
-	BOOL		bSizeBox;
-	//hwndFrame = ::GetParent( m_hwndParent );
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	if( NULL == pCEditWnd->m_CFuncKeyWnd.m_hWnd ){
-		m_pShareData->m_Common.m_bDispFUNCKEYWND = TRUE;	/* 次回ウィンドウを開いたときファンクションキーを表示する */
-		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-			bSizeBox = FALSE;
-		}else{
-			bSizeBox = TRUE;
-			/* ステータスバーがあるときはサイズボックスを表示しない */
-			if( NULL != pCEditWnd->m_hwndStatusBar ){
-				bSizeBox = FALSE;
-			}
-		}
-		pCEditWnd->m_CFuncKeyWnd.Open( m_hInstance, pCEditWnd->m_hWnd, m_pcEditDoc, bSizeBox );
-	}else{
-		pCEditWnd->m_CFuncKeyWnd.Close();
-		m_pShareData->m_Common.m_bDispFUNCKEYWND = FALSE;	/* 次回ウィンドウを開いたときファンクションキーを表示しない */	//Sept. 9, 2000 jepro 「表示する」となっていたのを修正
-	}
-	m_pcEditDoc->m_cSplitterWnd.DoSplit( -1, -1 );
-	::GetClientRect( pCEditWnd->m_hWnd, &rc );
-	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 
-	SetIMECompFormPos();	//	2004/05/18 MIK 変換位置がずれるバグ修正
+	m_pShareData->m_Common.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
+	pCEditWnd->LayoutFuncKey();
+	pCEditWnd->EndLayoutBars();
+
 	//全ウインドウに変更を通知する。
-	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_FUNCKEY, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
-
-	return;
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_FUNCKEY, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
 }
 
 //@@@ From Here 2003.06.10 MIK
@@ -8893,33 +8846,26 @@ void CEditView::Command_SHOWFUNCKEY( void )
 
 	@author MIK
 	@date 2003.06.10 新規作成
+	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutTabBar(), CEditWnd::EndLayoutBars() で行うように変更
  */
 void CEditView::Command_SHOWTAB( void )
 {
-	RECT		rc;
-	CEditWnd	*pCEditWnd;
+	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
-	if( NULL == pCEditWnd->m_cTabWnd.m_hWnd )
-	{
-		m_pShareData->m_Common.m_bDispTabWnd = TRUE;	/* 次回ウィンドウを開いたとき表示する */
-		pCEditWnd->m_cTabWnd.Open( m_hInstance, pCEditWnd->m_hWnd );
-	}
-	else
-	{
-		pCEditWnd->m_cTabWnd.Close();
-		m_pShareData->m_Common.m_bDispTabWnd = FALSE;	/* 次回ウィンドウを開いたとき表示しない */
-	}
+	m_pShareData->m_Common.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.m_hWnd)? TRUE: FALSE);	/* タブバー表示 */
+	pCEditWnd->LayoutTabBar();
+	pCEditWnd->EndLayoutBars();
 
-	::GetClientRect( pCEditWnd->m_hWnd, &rc );
-	::SendMessage( pCEditWnd->m_hWnd, WM_SIZE, pCEditWnd->m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-
-	SetIMECompFormPos();	//	2004/05/18 MIK 変換位置がずれるバグ修正
+// pCEditWnd->EndLayoutBars()の中でWM_SIZEが送られるのでウインドウ情報更新の処理はここでは不要
+	//if( m_pShareData->m_Common.m_bDispTabWnd )
+	//{
+	//	// ウインドウ情報を更新する
+	//	m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+	//	::GetWindowPlacement( m_pcEditDoc->m_pcEditWnd->m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+	//}
 
 	//全ウインドウに変更を通知する。
-	//CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TAB, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
-
-	return;
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TAB, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
 }
 //@@@ To Here 2003.06.10 MIK
 

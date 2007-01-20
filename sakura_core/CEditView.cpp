@@ -443,7 +443,6 @@ BOOL CEditView::Create(
 )
 {
 	WNDCLASS	wc;
-	SCROLLINFO	si;
 	HDC			hdc;
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
@@ -532,6 +531,46 @@ BOOL CEditView::Create(
 	m_pcsbwHSplitBox = new CSplitBoxWnd;
 	m_pcsbwHSplitBox->Create( m_hInstance, m_hWnd, FALSE );
 
+	/* スクロールバー作成 */
+	CreateScrollBar();		// 2006.12.19 ryoji
+
+	SetFont();
+	/* スクロールバーの状態を更新する */
+//	AdjustScrollBars();
+
+	if( bShow ){
+		ShowWindow( m_hWnd, SW_SHOW );
+	}
+
+	/* 親ウィンドウのタイトルを更新 */
+	SetParentCaption();
+
+//	/* 入力補完ウィンドウ作成 */
+//	m_cHokanMgr.DoModeless( m_hInstance , m_hWnd, (LPARAM)this );
+
+	/* キーボードの現在のリピート間隔を取得 */
+	int nKeyBoardSpeed;
+	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );
+//	nKeyBoardSpeed *= 2;
+	/* タイマー起動 */
+	if( 0 == ::SetTimer( m_hWnd, IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc ) ){
+		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			"CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+		);
+	}
+
+	/* アンダーライン */
+	m_cUnderLine.SetView( this );
+	return TRUE;
+}
+
+
+/*! スクロールバー作成
+	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
+*/
+BOOL CEditView::CreateScrollBar( void )
+{
+	SCROLLINFO	si;
 
 	/* スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
@@ -619,39 +658,34 @@ BOOL CEditView::Create(
 			(LPVOID) NULL						/* pointer not needed */
 		);
 	}
-
-	SetFont();
-	/* スクロールバーの状態を更新する */
-//	AdjustScrollBars();
-
-	if( bShow ){
-		ShowWindow( m_hWnd, SW_SHOW );
-	}
-
-	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
-
-//	/* 入力補完ウィンドウ作成 */
-//	m_cHokanMgr.DoModeless( m_hInstance , m_hWnd, (LPARAM)this );
-
-	/* キーボードの現在のリピート間隔を取得 */
-	int nKeyBoardSpeed;
-	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );
-//	nKeyBoardSpeed *= 2;
-	/* タイマー起動 */
-	if( 0 == ::SetTimer( m_hWnd, IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc ) ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			"CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
-		);
-	}
-
-	/* アンダーライン */
-	m_cUnderLine.SetView( this );
 	return TRUE;
 }
 
 
 
+/*! スクロールバー破棄
+	@date 2006.12.19 ryoji 新規作成
+*/
+void CEditView::DestroyScrollBar( void )
+{
+	if( m_hwndVScrollBar )
+	{
+		::DestroyWindow( m_hwndVScrollBar );
+		m_hwndVScrollBar = NULL;
+	}
+
+	if( m_hwndHScrollBar )
+	{
+		::DestroyWindow( m_hwndHScrollBar );
+		m_hwndHScrollBar = NULL;
+	}
+
+	if( m_hwndSizeBox )
+	{
+		::DestroyWindow( m_hwndSizeBox );
+		m_hwndSizeBox = NULL;
+	}
+}
 
 
 

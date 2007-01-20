@@ -118,6 +118,8 @@ public:
 	~CEditView();
 	/* 初期化系メンバ関数 */
 	BOOL Create( HINSTANCE, HWND, CEditDoc*, int,/* BOOL,*/ BOOL );
+	BOOL CreateScrollBar( void );		/* スクロールバー作成 */	// 2006.12.19 ryoji
+	void DestroyScrollBar( void );		/* スクロールバー破棄 */	// 2006.12.19 ryoji
 	/* 状態 */
 	//<< 2002/03/29 Azumaiya インライン関数化
 	BOOL IsTextSelected( void )		/* テキストが選択されているか */
