@@ -530,14 +530,16 @@ BEGIN
                     HIDC_CHK_REGULAREXP
     LTEXT           "",IDC_STATIC_JRE32VER,16,85,138,8,0,0,
                     HIDC_STATIC_JRE32VER
+    CONTROL         "「すべて置換」は置換の繰返し(&I)",IDC_CHECK_CONSECUTIVEALL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,95,118,10
     CONTROL         "見つからないときにメッセージを表示(&M)",
                     IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,96,130,9,0,HIDC_CHECK_NOTIFYNOTFOUND
+                    WS_TABSTOP,5,107,130,9,0,HIDC_CHECK_NOTIFYNOTFOUND
     CONTROL         "置換ダイアログを自動的に閉じる(&L)",
                     IDC_CHECK_bAutoCloseDlgReplace,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,107,118,9,0,HIDC_CHECK_bAutoCloseDlgReplace
+                    WS_TABSTOP,5,118,118,9,0,HIDC_CHECK_bAutoCloseDlgReplace
     CONTROL         "先頭（末尾）から再検索する(&Z)",IDC_CHECK_SEARCHALL,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,118,113,9,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,129,113,9,0,
                     HIDC_CHECK_SEARCHALL
     GROUPBOX        "置換対象",IDC_STATIC,156,38,66,50,WS_GROUP
     CONTROL         "選択文字(&0)",IDC_RADIO_REPLACE,"Button",
@@ -566,8 +568,6 @@ BEGIN
                     HIDC_BUTTON_REPALCE
     PUSHBUTTON      "すべて置換(&A)",IDC_BUTTON_REPALCEALL,227,73,52,14,0,0,
                     HIDC_BUTTON_REPALCEALL
-    PUSHBUTTON      "すべて行置換",IDC_BUTTON_REPLACEALL_LINE,226,89,52,14,0,
-                    0,HIDC_BUTTON_REPLACEALL_LINE
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,227,110,52,14,WS_GROUP,0,
                     HIDCANCEL
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,227,127,52,14,0,0,
@@ -2200,7 +2200,7 @@ BEGIN
     BEGIN
         LEFTMARGIN, 4
         RIGHTMARGIN, 278
-        BOTTOMMARGIN, 128
+        BOTTOMMARGIN, 141
     END
 
     IDD_PROP_TOOLBAR, DIALOG

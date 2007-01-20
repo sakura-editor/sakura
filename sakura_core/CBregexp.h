@@ -16,6 +16,7 @@
 	Copyright (C) 2003, かろと
 	Copyright (C) 2005, かろと, aroka
 	Copyright (C) 2006, かろと
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -114,7 +115,7 @@ public:
 	}
 	bool Compile(const char *szPattern0, const char *szPattern1, int nOption = 0);	//!< Replace用
 	bool Match(const char *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
-	bool Replace(const char *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する
+	int Replace(const char *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
 
 	//-----------------------------------------
 	// 2005.03.19 かろと クラス内部を隠蔽

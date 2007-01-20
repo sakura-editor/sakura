@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, zenryaku, kazika, Moca, isearch
 	Copyright (C) 2005, genta, MIK, maru
 	Copyright (C) 2006, aroka, かろと, fon, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -246,7 +247,6 @@
 #define F_SEARCH_BOX		30908	//検索(ボックス)	//@@@ 2002.06.15 MIK
 #define F_GREP_DIALOG		30910	//Grep
 #define F_GREP				30911	//Grep
-#define F_REPLACE_ALL_LINE	30912	//すべて置換行単位(実行) // 2006.1.22 かろと
 #define F_JUMP_DIALOG		30920	//指定行へジャンプ
 #define F_JUMP				30921	//指定行へジャンプ
 #define F_OUTLINE			30930	//アウトライン解析

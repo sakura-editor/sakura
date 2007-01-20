@@ -13,6 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta, isearch, MIK
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -193,9 +194,12 @@ struct ARRHEAD {
 	Version 68:
 	ファイルダイアログのフィルタ設定 2006.11.16 ryoji
 
+	Version 69:
+	「すべて置換」は置換の繰返し 2006.11.16 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 68;
+const unsigned int uShareDataVersion = 69;
 
 /*
 ||	Singleton風
@@ -436,6 +440,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bRegularExp = 0;				/* 1==正規表現 */
 		m_pShareData->m_Common.m_bLoHiCase = 0;					/* 1==英大文字小文字の区別 */
 		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
+		m_pShareData->m_Common.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
 		m_pShareData->m_Common.m_szExtHelp[0] = '\0';			/* 外部ヘルプ１ */
 		m_pShareData->m_Common.m_szExtHtmlHelp[0] = '\0';		/* 外部HTMLヘルプ */

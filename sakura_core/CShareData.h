@@ -13,6 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -433,6 +434,7 @@ struct Common {
 	int					m_bRegularExp;					/* 検索／置換  1==正規表現 */
 	int					m_bLoHiCase;					/* 検索／置換  1==英大文字小文字の区別 */
 	int					m_bWordOnly;					/* 検索／置換  1==単語のみ検索 */
+	int					m_bConsecutiveAll;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
 	int					m_bSelectedArea;				/* 置換  選択範囲内置換 */
 	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */

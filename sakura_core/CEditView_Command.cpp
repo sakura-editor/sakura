@@ -13,6 +13,7 @@
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -478,8 +479,7 @@ BOOL CEditView::HandleCommand(
 		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
 		break;
 	case F_REPLACE:				Command_REPLACE( (HWND)lparam1 );break;			//置換実行 @@@ 2002.2.2 YAZAKI
-	case F_REPLACE_ALL:			Command_REPLACE_ALL(REP_NORMAL);break;		//すべて置換実行(通常) 2002.2.8 hor 2006.04.02 かろと
-	case F_REPLACE_ALL_LINE:	Command_REPLACE_ALL(REP_LINE);break;		//すべて置換実行(行単位) 2006.1.22 かろと
+	case F_REPLACE_ALL:			Command_REPLACE_ALL();break;		//すべて置換実行(通常) 2002.2.8 hor 2006.04.02 かろと
 	case F_SEARCH_CLEARMARK:	Command_SEARCH_CLEARMARK();break;	//検索マークのクリア
 	case F_GREP_DIALOG:	//Grepダイアログの表示
 		/* 再帰処理対策 */
@@ -7514,6 +7514,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
 				// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
 				// そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
+				CLayoutMgr& rLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
 				int matchLen = cRegexp.GetMatchLen();
 				int nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
 				if (matchLen == 0) {
@@ -7524,7 +7525,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
+					rLayoutMgr.CaretPos_Phys2Log( nIdxTo, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 行位置も取得する
 				}
 				// 行末から検索文字列末尾までの文字数
 				int colDiff = nLen - nIdxTo;
@@ -7533,6 +7534,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
 					// 改行にかかっていたら、行全体をINSTEXTする。
 					colDiff = 0;
+					rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
@@ -7562,10 +7564,9 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 
 	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理など見直し
 	@date 2006.03.31 かろと 行置換機能追加
-
-	@param[in]	nMode	置換モード(REP_NORMAL:通常,REP_LINE:行)
+	@date 2007.01.16 ryoji 行置換機能を全置換のオプションに変更
 */
-void CEditView::Command_REPLACE_ALL( int nMode )
+void CEditView::Command_REPLACE_ALL()
 {
 	int			nNewPos;
 	int			nReplaceNum;
@@ -7595,6 +7596,7 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 	int nReplaceTarget	= m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
 	int	bRegularExp		= m_pShareData->m_Common.m_bRegularExp;
 	int bSelectedArea	= m_pShareData->m_Common.m_bSelectedArea;
+	int bConsecutiveAll	= m_pShareData->m_Common.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 
 	m_pcEditDoc->m_cDlgReplace.m_bCanceled=false;
 	m_pcEditDoc->m_cDlgReplace.m_nReplaceCnt=0;
@@ -7773,7 +7775,7 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
 		int nFlag = (m_pShareData->m_Common.m_bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
-		nFlag |= (nMode == REP_LINE ? CBregexp::optGlobal : CBregexp::optNothing);
+		nFlag |= (bConsecutiveAll ? CBregexp::optNothing : CBregexp::optGlobal);	// 2007.01.16 ryoji
 		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetPtr(), nFlag);
 	}
 
@@ -7862,8 +7864,13 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 				// 置換前の行の長さ(改行は１文字と数える)を保存しておいて、置換前後で行位置が変わった場合に使用
 				linOldLen = rDocLineMgr.GetLineInfo(linOld)->GetLengthWithoutEOL() + 1;
 				// 行は範囲内？
-				if ((linToP+linDif == linOld && colToP+colDif < colOld) ||
-					(linToP+linDif <  linOld)) {
+				// 2007.01.19 ryoji 条件追加: 選択終点が行頭(colToP == 0)になっている場合は前の行の行末までを選択範囲とみなす
+				// （選択始点が行頭ならその行頭は選択範囲に含み、終点が行頭ならその行頭は選択範囲に含まない、とする）
+				// 論理的に少し変と指摘されるかもしれないが、実用上はそのようにしたほうが望ましいケースが多いと思われる。
+				// ※行選択で行末までを選択範囲にしたつもりでも、UI上は次の行の行頭にカーソルが行く
+				// ※終点の行頭を「^」にマッチさせたかったら１文字以上選択してね、ということで．．．
+				if ((linToP+linDif == linOld && (colToP+colDif < colOld || colToP == 0))
+					|| linToP+linDif < linOld) {
 					break;
 				}
 			}
@@ -7925,8 +7932,37 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 			int nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom ) + pcLayout->m_nOffset;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			int colDiff = 0;
-			if( cRegexp.Replace(pLine, nLen, nIdx) ){
-				if ( nMode == REP_LINE ) { //2006.04.01 かろと
+			if( !bConsecutiveAll ){	// 一括置換
+				// 2007.01.16 ryoji
+				// 選択範囲置換の場合は行内の選択範囲末尾まで置換範囲を縮め，
+				// その位置を記憶する．
+				if( bSelectedArea ){
+					if( bBeginBoxSelect ){	// 矩形選択
+						int wk;
+						rLayoutMgr.CaretPos_Log2Phys(
+											colTo,
+											linOld,
+											&colToP,
+											&wk
+											);
+						if( nLen - pcLayout->m_pCDocLine->m_cEol.GetLen() > colToP + colDif )
+							nLen = colToP + colDif;
+					} else {	// 通常の選択
+						if( linToP+linDif == linOld ){
+							if( nLen - pcLayout->m_pCDocLine->m_cEol.GetLen() > colToP + colDif )
+								nLen = colToP + colDif;
+						}
+					}
+				}
+
+				if(pcLayout->m_pCDocLine->GetLengthWithoutEOL() < nLen)
+					colOld = pcLayout->m_pCDocLine->GetLengthWithoutEOL() + 1;
+				else
+					colOld = nLen;
+			}
+			if( int nReplace = cRegexp.Replace(pLine, nLen, nIdx) ){
+				nReplaceNum += nReplace;
+				if ( !bConsecutiveAll ) { // 2006.04.01 かろと	// 2007.01.16 ryoji
 					// 行単位での置換処理
 					// 選択範囲を物理行末までにのばす
 					rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );
@@ -7945,23 +7981,23 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 					    }
 					    // 無限置換しないように、１文字増やしたので１文字選択に変更
 					    // 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					    m_nSelectColmTo = LineIndexToColmn( pcLayout, nIdxTo );
+						rLayoutMgr.CaretPos_Phys2Log( nIdxTo, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 行位置も取得する
 				    }
 				    // 行末から検索文字列末尾までの文字数
 					colDiff =  nLen - nIdxTo;
+					colOld = nIdxTo;	// 2007.01.19 ryoji 追加
 				    //	Oct. 22, 2005 Karoto
 				    //	\rを置換するとその後ろの\nが消えてしまう問題の対応
 				    if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
 					    // 改行にかかっていたら、行全体をINSTEXTする。
 					    colDiff = 0;
+						rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
+						colOld = pcLayout->m_pCDocLine->GetLengthWithoutEOL() + 1;	// 2007.01.19 ryoji 追加
 				    }
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
-			} else {
-				// ここに来たら実際に置換は行われていないので、１減算して置換個数が増えないように調整 2003.07.11 かろと
-				--nReplaceNum;
 			}
 		}
 		else
@@ -7970,6 +8006,7 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 			** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18 かろと
 			*/
 			Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
+			++nReplaceNum;
 		}
 
 		// 挿入後の位置調整
@@ -8028,8 +8065,6 @@ void CEditView::Command_REPLACE_ALL( int nMode )
 			}
 		}
 		// To Here 2001.12.03 hor
-
-		++nReplaceNum;
 
 		/* 次を検索 */
 		// 2004.05.30 Moca 現在の検索文字列を使って検索する
