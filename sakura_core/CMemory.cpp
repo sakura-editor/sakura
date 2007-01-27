@@ -1691,7 +1691,7 @@ void CMemory::UnicodeToUTF7( void )
 
 
 
-/* 英大文字→英小文字 */
+/* 小文字 */
 void CMemory::ToLower( void )
 {
 	unsigned char*	pBuf = (unsigned char*)m_pData;
@@ -1742,7 +1742,7 @@ void CMemory::ToLower( void )
 
 
 
-/* 英小文字→英大文字 */
+/* 大文字 */
 void CMemory::ToUpper( void )
 {
 	unsigned char*	pBuf = (unsigned char*)m_pData;
@@ -2268,7 +2268,9 @@ void CMemory::ToHankaku(
 				bHenkanOK = TRUE;
 			}
 			if( nMode & TO_KATAKANA ){	/* カタカナに作用する */
-				if( 0x8340 <= uiSrc && uiSrc <= 0x8396 ){
+				if( ( 0x8340 <= uiSrc && uiSrc <= 0x8396 )
+				// 2007.01.26 maru ToZenkakuの動作に合わせてカナ記号も変換対象に含める(。「」、・)
+				||( 0x8141==uiSrc || 0x8142==uiSrc || 0x8145==uiSrc || 0x8175==uiSrc || 0x8176==uiSrc) ){
 					bHenkanOK = TRUE;
 					bInHiraKata = true;
 				} else {
@@ -2302,15 +2304,25 @@ void CMemory::ToHankaku(
 				}
 			}
 			if ( nMode & TO_EISU ){		/* 英数に作用する */
-				if( 0x824F <= uiSrc && uiSrc <= 0x8258){	//	数字
+				/* From Here 2007.01.16 maru 7bitのASCII範囲を対象とするように変更 */
+				if( 0x8140 <= uiSrc && uiSrc <= 0x8197){
+					switch(uiSrc){	/* カナ記号が変換されないように */
+					case 0x8141:	// 、
+					case 0x8142:	// 。
+					case 0x8145:	// ・
+					case 0x814a:	// ゛
+					case 0x814b:	// ゜
+					case 0x8175:	//「
+					case 0x8176:	// 」
+						break;
+					default:
+						bHenkanOK = TRUE;
+					}
+				}
+				else if( 0x824f <= uiSrc && uiSrc <= 0x829a){	//	英数字
 					bHenkanOK = TRUE;
 				}
-				else if( 0x8260 <= uiSrc && uiSrc <= 0x8279){	//	英大文字
-					bHenkanOK = TRUE;
-				}
-				else if( 0x8281 <= uiSrc && uiSrc <= 0x829A){	//	英大文字
-					bHenkanOK = TRUE;
-				}
+				/* From Here 2007.01.16 maru 7bitのASCII範囲を対象とするように変更 */
 			}
 			if (bHenkanOK == TRUE){
 				uiDes = _mbctombb( uiSrc );

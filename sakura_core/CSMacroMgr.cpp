@@ -196,8 +196,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_CTRL_CODE_DIALOG,		"CtrlCodeDialog",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 
 	/* 変換系 */
-	{F_TOLOWER,		 			"ToLower",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英大文字→英小文字
-	{F_TOUPPER,		 			"ToUpper",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //英小文字→英大文字
+	{F_TOLOWER,		 			"ToLower",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //小文字
+	{F_TOUPPER,		 			"ToUpper",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //大文字
 	{F_TOHANKAKU,		 		"ToHankaku",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角→半角 */
 	{F_TOHANKATA,		 		"ToHankata",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	{F_TOZENEI,		 			"ToZenEi",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角英数→全角英数 */			//July. 30, 2001 Misaka
@@ -838,8 +838,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_CTRL_CODE_DIALOG			://コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 
 	/* 変換系 */
-	case F_TOLOWER		 			://英大文字→英小文字
-	case F_TOUPPER		 			://英小文字→英大文字
+	case F_TOLOWER		 			://小文字
+	case F_TOUPPER		 			://大文字
 	case F_TOHANKAKU		 		:/* 全角→半角 */
 	case F_TOHANKATA		 		:/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	case F_TOZENEI			 		:/* 半角英数→全角英数 */			//July. 30, 2001 Misaka

@@ -74,8 +74,8 @@ public:
 	*/
 	void Replace( char*, char* );	/* 文字列置換 */
 	void Replace_j( char*, char* );	/* 文字列置換（日本語考慮版） */
-	void ToLower( void );	/* 英大文字→英小文字 */
-	void ToUpper( void );	/* 英小文字→英大文字 */
+	void ToLower( void );	/* 小文字 */
+	void ToUpper( void );	/* 大文字 */
 
 	void AUTOToSJIS( void );	/* 自動判別→SJISコード変換 */
 	void SJIStoJIS( void );		/* SJIS→JISコード変換 */
