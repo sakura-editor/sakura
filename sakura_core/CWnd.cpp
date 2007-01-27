@@ -192,6 +192,7 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	CALLH( WM_MENUCHAR			, OnMenuChar		);
 	CALLH( WM_NOTIFY			, OnNotify			);	//@@@ 2003.05.31 MIK
 	CALLH( WM_DRAWITEM			, OnDrawItem		);	// 2006.02.01 ryoji
+	CALLH( WM_CAPTURECHANGED	, OnCaptureChanged	);	// 2006.11.30 ryoji
 
 //	CALLH( WM_NCCREATE			, OnNcCreate		);
 	CALLH( WM_NCDESTROY			, OnNcDestroy		);

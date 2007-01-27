@@ -92,6 +92,11 @@ public:
 	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
 	void OpenFile( const char *filename = NULL, int nCharCode = CODE_AUTODETECT,
 		BOOL bReadOnly = FALSE );	//	Oct. 9, 2004 genta CEditViewより移動
+	void FileClose( void );	/* 閉じて(無題) */	// 2006.12.30 ryoji
+	void FileCloseOpen( const char *filename = NULL, int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );	/* 閉じて開く */	// 2006.12.30 ryoji
+	BOOL FileSave( bool warnbeep = true, bool askname = true );	/* 上書き保存 */	// 2006.12.30 ryoji
+	BOOL FileSaveAs_Dialog( void );				/* 名前を付けて保存ダイアログ */	// 2006.12.30 ryoji
+	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
 
 	int MakeBackUp( const char* target_file );	/* バックアップの作成 */
 	void SetParentCaption( BOOL = FALSE );	/* 親ウィンドウのタイトルを更新 */

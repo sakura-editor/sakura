@@ -65,8 +65,8 @@ public:
 	static bool OpenNewEditor( HINSTANCE, HWND, const char*, int, BOOL, bool sync = false, const char* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
 	static bool OpenNewEditor2( HINSTANCE, HWND , const FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
 
-	static BOOL CloseAllEditor( void );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-	static void TerminateApplication( void );	/* サクラエディタの全終了 */
+	static BOOL CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更	// 2006.12.25 ryoji 引数追加
+	static void TerminateApplication( HWND hWndFrom );	/* サクラエディタの全終了 */	// 2006.12.25 ryoji 引数追加
 
 	/*
 	|| メンバ変数

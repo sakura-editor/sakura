@@ -56,12 +56,13 @@
 #define TAB_WINDOW_HEIGHT	24
 #define TAB_MARGIN_TOP		3
 #define TAB_MARGIN_LEFT		1
-#define TAB_MARGIN_RIGHT	20
+#define TAB_MARGIN_RIGHT	42
 #define TAB_ITEM_HEIGHT		(TAB_WINDOW_HEIGHT - 5)
 #define MAX_TABITEM_WIDTH	200
 #define MIN_TABITEM_WIDTH	60
 #define CX_SMICON			16
 #define CY_SMICON			16
+static const RECT rcBtnBase = { 0, 0, 16, 16 };
 
 // 2006.02.01 ryoji タブ一覧メニュー用データ
 typedef struct {
@@ -497,7 +498,9 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 CTabWnd::CTabWnd()
   : m_eDragState( DRAG_NONE ),
     m_bHovering( FALSE ),	//	2006.02.01 ryoji
-    m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
+    m_bListBtnHilighted( FALSE ),	//	2006.02.01 ryoji
+    m_bCloseBtnHilighted( FALSE ),	//	2006.10.21 ryoji
+    m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
 {
 	strcat( m_szClassInheritances, _T("::CTabWnd") );
 
@@ -539,6 +542,8 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	m_eDragState = DRAG_NONE;	//	2005.09.29 ryoji
 	m_bHovering = FALSE;			// 2006.02.01 ryoji
 	m_bListBtnHilighted = FALSE;	// 2006.02.01 ryoji
+	m_bCloseBtnHilighted = FALSE;	// 2006.10.21 ryoji
+	m_eCaptureSrc = CAPT_NONE;	// 2006.11.30 ryoji
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
@@ -748,20 +753,114 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
+/*!	WM_CAPTURECHANGED処理
+	@date 2006.11.30 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	if( m_eCaptureSrc != CAPT_NONE )
+		m_eCaptureSrc = CAPT_NONE;
+
+	return 0L;
+}
+
 /*!	WM_LBUTTONDOWN処理
 	@date 2006.02.01 ryoji 新規作成
+	@date 2006.11.30 ryoji タブ一覧ボタンクリック関数を廃止して処理取り込み
+	                       閉じるボタン上ならキャプチャー開始
 */
 LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return OnListBtnClick( MAKEPOINTS(lParam), TRUE );
+	POINT pt;
+	RECT rc;
+	RECT rcBtn;
+
+	pt.x = LOWORD(lParam);
+	pt.y = HIWORD(lParam);
+	::GetClientRect( m_hWnd, &rc );
+
+	// タブ一覧ボタン上ならタブ一覧メニュー（タブ名）を表示する
+	GetListBtnRect( &rc, &rcBtn );
+	if( ::PtInRect( &rcBtn, pt ) )
+	{
+		pt.x = rcBtn.left;
+		pt.y = rcBtn.bottom;
+		::ClientToScreen( m_hWnd, &pt );
+		TabListMenu( pt, FALSE );	// タブ一覧メニュー（タブ名）
+	}
+	else
+	{
+		// 閉じるボタン上ならキャプチャー開始
+		GetCloseBtnRect( &rc, &rcBtn );
+		if( ::PtInRect( &rcBtn, pt ) )
+		{
+			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャー元は閉じるボタン
+			::SetCapture( m_hWnd );
+		}
+	}
+
+	return 0L;
+}
+
+/*!	WM_LBUTTONUP処理
+	@date 2006.11.30 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	POINT pt;
+	RECT rc;
+	RECT rcBtn;
+
+	pt.x = LOWORD(lParam);
+	pt.y = HIWORD(lParam);
+	::GetClientRect( m_hWnd, &rc );
+
+	if( ::GetCapture() == m_hWnd )	// 自ウィンドウがマウスキャプチャーしている?
+	{
+		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャー元は閉じるボタン?
+		{
+			// 閉じるボタン上ならタブを閉じる
+			GetCloseBtnRect( &rc, &rcBtn );
+			if( ::PtInRect( &rcBtn, pt ) )
+			{
+				int nId = ( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )? F_WINCLOSE: F_WIN_CLOSEALL;
+				::PostMessage( m_hwndParent, WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
+			}
+		}
+
+		// キャプチャー解除
+		m_eCaptureSrc = CAPT_NONE;
+		::ReleaseCapture();
+	}
+
+	return 0L;
 }
 
 /*!	WM_RBUTTONDOWN処理
 	@date 2006.02.01 ryoji 新規作成
+	@date 2006.11.30 ryoji タブ一覧ボタンクリック関数を廃止して処理取り込み
 */
 LRESULT CTabWnd::OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return OnListBtnClick( MAKEPOINTS(lParam), FALSE );
+	POINT pt;
+	RECT rc;
+	RECT rcBtn;
+
+	pt.x = LOWORD(lParam);
+	pt.y = HIWORD(lParam);
+	::GetClientRect( m_hWnd, &rc );
+
+	// タブ一覧ボタン上ならタブ一覧メニュー（フルパス）を表示する	// 2006.11.30 ryoji
+	GetListBtnRect( &rc, &rcBtn );
+	if( ::PtInRect( &rcBtn, pt ) )
+	{
+		pt.x = rcBtn.left;
+		pt.y = rcBtn.bottom;
+		::ClientToScreen( m_hWnd, &pt );
+		TabListMenu( pt, TRUE );	// タブ一覧メニュー（フルパス）
+	}
+
+	return 0L;
 }
 
 /*!	WM_MEASUREITEM処理
@@ -897,6 +996,13 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		m_bListBtnHilighted = bHovering;
 		::InvalidateRect( hwnd, &rcBtn, FALSE );
 	}
+	GetCloseBtnRect( &rc, &rcBtn );
+	bHovering = ::PtInRect( &rcBtn, pt );
+	if( bHovering != m_bCloseBtnHilighted )
+	{
+		m_bCloseBtnHilighted = bHovering;
+		::InvalidateRect( hwnd, &rcBtn, FALSE );
+	}
 
 	return 0L;
 }
@@ -927,6 +1033,7 @@ LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	@date 2005.09.01 ryoji タブの上に境界線を追加
 	@date 2006.01.30 ryoji 背景描画処理を追加（背景ブラシは NULL に変更）
 	@date 2006.02.01 ryoji 一覧ボタンの描画処理を追加
+	@date 2006.10.21 ryoji 閉じるボタンの描画処理を追加
 */
 LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -940,8 +1047,9 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	::GetClientRect( hwnd, &rc );
 	::FillRect( hdc, &rc, (HBRUSH)(COLOR_3DFACE + 1) );
 
-	// タブ一覧ボタンを描画する
+	// ボタンを描画する
 	DrawListBtn( hdc, &rc );
+	DrawCloseBtn( hdc, &rc );	// 2006.10.21 ryoji 追加
 
 	// 上側に境界線を描画する
 	::DrawEdge(hdc, &rc, EDGE_ETCHED, BF_TOP);
@@ -1197,6 +1305,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 	//更新
 	::InvalidateRect( m_hwndTab, NULL, TRUE );
+	::InvalidateRect( m_hWnd, NULL, TRUE );		// 2006.10.21 ryoji タブ内ボタン再描画のために追加
 
 	return;
 }
@@ -1633,42 +1742,126 @@ HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 	return hImlNew;
 }
 
-/*! 一覧ボタン描画処理
-	@date 2006.02.01 ryoji 新規作成
+/*! ボタン背景描画処理
+	@date 2006.10.21 ryoji 新規作成
 */
-void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
+void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 {
-	const POINT ptBase[4] = { {4, 7}, {7, 10}, {8, 10}, {11, 7} };	// 描画イメージ形状
-	POINT pt[4];
-	int i;
 	HPEN hpen, hpenOld;
 	HBRUSH hbr, hbrOld;
 
-	RECT rcListBtn;
-	GetListBtnRect( lprcClient, &rcListBtn );
-	if( m_bListBtnHilighted )
+	if( bBtnHilighted )
 	{
 		hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_HIGHLIGHT ) );
 		hbr = (HBRUSH)::GetSysColorBrush( COLOR_MENU );
 		hpenOld = (HPEN)::SelectObject( hdc, hpen );
 		hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
-		::Rectangle( hdc, rcListBtn.left, rcListBtn.top, rcListBtn.right, rcListBtn.bottom );
+		::Rectangle( hdc, lprcBtn->left, lprcBtn->top, lprcBtn->right, lprcBtn->bottom );
 		::SelectObject( hdc, hpenOld );
 		::SelectObject( hdc, hbrOld );
 		::DeleteObject( hpen );
 	}
+}
+
+/*! 一覧ボタン描画処理
+	@date 2006.02.01 ryoji 新規作成
+	@date 2006.10.21 ryoji 背景描画を関数呼び出しに変更
+*/
+void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
+{
+	const POINT ptBase[4] = { {4, 8}, {7, 11}, {8, 11}, {11, 8} };	// 描画イメージ形状
+	POINT pt[4];
+	int i;
+	HPEN hpen, hpenOld;
+	HBRUSH hbr, hbrOld;
+
+	RECT rcBtn;
+	GetListBtnRect( lprcClient, &rcBtn );
+	DrawBtnBkgnd( hdc, &rcBtn, m_bListBtnHilighted );	// 2006.10.21 ryoji
 
 	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( nIndex ) );
 	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
 	hpenOld = (HPEN)::SelectObject( hdc, hpen );
 	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
-	for( i = 0; i < sizeof(pt)/sizeof(pt[0]); i++ )
+	for( i = 0; i < sizeof(ptBase)/sizeof(ptBase[0]); i++ )
 	{
-		pt[i].x = ptBase[i].x + rcListBtn.left;
-		pt[i].y = ptBase[i].y + rcListBtn.top;
+		pt[i].x = ptBase[i].x + rcBtn.left;
+		pt[i].y = ptBase[i].y + rcBtn.top;
 	}
 	::Polygon( hdc, pt, sizeof(pt)/sizeof(pt[0]) );
+	::SelectObject( hdc, hpenOld );
+	::SelectObject( hdc, hbrOld );
+	::DeleteObject( hpen );
+}
+
+/*! 閉じるボタン描画処理
+	@date 2006.10.21 ryoji 新規作成
+*/
+void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
+{
+	const POINT ptBase1[6][2] =	// [x]描画イメージ形状（直線6本）
+	{
+		{{4, 5}, {12, 13}},
+		{{4, 4}, {13, 13}},
+		{{5, 4}, {13, 12}},
+		{{11, 4}, {3, 12}},
+		{{12, 4}, {3, 13}},
+		{{12, 5}, {4, 13}}
+	};
+	const POINT ptBase2[10][2] = // [xx]描画イメージ形状（矩形10個）
+	{
+		{{3, 4}, {5, 6}},
+		{{6, 4}, {8, 6}},
+		{{4, 6}, {7, 10}},
+		{{3, 10}, {5, 12}},
+		{{6, 10}, {8, 12}},
+		{{9, 4}, {11, 6}},
+		{{12, 4}, {14, 6}},
+		{{10, 6}, {13, 10}},
+		{{9, 10}, {11, 12}},
+		{{12, 10}, {14, 12}}
+	};
+
+	POINT pt[2];
+	int i;
+	HPEN hpen, hpenOld;
+	HBRUSH hbr, hbrOld;
+
+	RECT rcBtn;
+	GetCloseBtnRect( lprcClient, &rcBtn );
+	DrawBtnBkgnd( hdc, &rcBtn, m_bCloseBtnHilighted );
+
+	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
+	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( nIndex ) );
+	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
+	hpenOld = (HPEN)::SelectObject( hdc, hpen );
+	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		// [x]を描画（直線6本）
+		for( i = 0; i < sizeof(ptBase1)/sizeof(ptBase1[0]); i++ )
+		{
+			pt[0].x = ptBase1[i][0].x + rcBtn.left;
+			pt[0].y = ptBase1[i][0].y + rcBtn.top;
+			pt[1].x = ptBase1[i][1].x + rcBtn.left;
+			pt[1].y = ptBase1[i][1].y + rcBtn.top;
+			::MoveToEx( hdc, pt[0].x, pt[0].y, NULL );
+			::LineTo( hdc, pt[1].x, pt[1].y );
+		}
+	}
+	else
+	{
+		 // [xx]を描画（矩形10個）
+		for( i = 0; i < sizeof(ptBase2)/sizeof(ptBase2[0]); i++ )
+		{
+			pt[0].x = ptBase2[i][0].x + rcBtn.left;
+			pt[0].y = ptBase2[i][0].y + rcBtn.top;
+			pt[1].x = ptBase2[i][1].x + rcBtn.left;
+			pt[1].y = ptBase2[i][1].y + rcBtn.top;
+			::Rectangle( hdc, pt[0].x, pt[0].y, pt[1].x, pt[1].y );
+		}
+	}
 	::SelectObject( hdc, hpenOld );
 	::SelectObject( hdc, hbrOld );
 	::DeleteObject( hpen );
@@ -1679,9 +1872,17 @@ void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
 */
 void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
-	const RECT rcListBtnBase = { 0, 0, 16, 16 };
-	*lprc = rcListBtnBase;
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 2, lprcClient->top + TAB_MARGIN_TOP + 2 );
+	*lprc = rcBtnBase;
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4, lprcClient->top + TAB_MARGIN_TOP + 2 );
+}
+
+/*! 閉じるボタンの矩形取得処理
+	@date 2006.10.21 ryoji 新規作成
+*/
+void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
+{
+	*lprc = rcBtnBase;
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4 + 18, lprcClient->top + TAB_MARGIN_TOP + 2 );
 }
 
 
@@ -1783,37 +1984,6 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bFull )
 	}
 	delete []pData;
 //>	}
-	return 0L;
-}
-
-
-/*!	@brief 一覧ボタンクリック処理
-	@date 2006.02.01 ryoji 新規作成
-	@date 2006.03.23 fon TabListMenuに本体移動
-*/
-LRESULT CTabWnd::OnListBtnClick( POINTS pts, BOOL bLeft )
-{
-	POINT pt;
-	RECT rc;
-	RECT rcBtn;
-	BOOL bFull;
-
-	pt.x = pts.x;
-	pt.y = pts.y;
-	::GetClientRect( m_hWnd, &rc );
-	GetListBtnRect( &rc, &rcBtn );
-	if( ::PtInRect( &rcBtn, pt ) ){
-		pt.x = rcBtn.left;
-		pt.y = rcBtn.bottom;
-		::ClientToScreen( m_hWnd, &pt );
-
-		if( bLeft )
-			bFull = FALSE;	// L_Click:ファイル名のみ
-		else
-			bFull = TRUE;	// R:フルパス
-		TabListMenu( pt, bFull );
-	}
-
 	return 0L;
 }
 
