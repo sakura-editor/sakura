@@ -197,9 +197,12 @@ struct ARRHEAD {
 	Version 69:
 	「すべて置換」は置換の繰返し 2006.11.16 ryoji
 
+	Version 70:
+	[すべて閉じる]で他に編集用のウィンドウがあれば確認する 2006.12.25 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 69;
+const unsigned int uShareDataVersion = 70;
 
 /*
 ||	Singleton風
@@ -450,6 +453,7 @@ bool CShareData::Init( void )
 
 		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
 
+		m_pShareData->m_Common.m_bCloseAllConfirm = FALSE;		/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 		m_pShareData->m_Common.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
 		m_pShareData->m_Common.m_nRepeatedScrollLineNum = 3;	/* キーリピート時のスクロール行数 */
 		m_pShareData->m_Common.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
@@ -4352,7 +4356,8 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//	Ctrl+F4に割り当てられていた「縦横に分割」を「閉じて(無題)」に変更し Shift+Ctrl+F4 に「閉じて開く」を追加
 		//Jan. 14, 2001 Ctrl+Alt+F4 に「テキストエディタの全終了」を追加
 		//Jun. 2001「サクラエディタの全終了」に改称
-		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, F_FILECLOSE, F_FILECLOSE_OPEN, F_WINCLOSE, F_WIN_CLOSEALL, F_EXITALL, 0 },
+		//2006.10.21 ryoji Alt+F4 には何も割り当てない（デフォルトのシステムコマンド「閉じる」が実行されるように）
+		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, F_FILECLOSE, F_FILECLOSE_OPEN, 0, F_WIN_CLOSEALL, F_EXITALL, 0 },
 	//	From Here Sept. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
 	//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND_DIALOG, 0, 0, 0, 0, 0 },
 	//	To Here Sept. 20, 2000

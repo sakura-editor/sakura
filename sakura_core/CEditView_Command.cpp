@@ -247,19 +247,9 @@ BOOL CEditView::HandleCommand(
 		}
 		break;
 	case F_FILECLOSE:										//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
-		/* 再帰処理対策 */
-		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-			delete m_pcOpeBlk;
-			m_pcOpeBlk = NULL;
-		}
 		Command_FILECLOSE();
 		break;
 	case F_FILECLOSE_OPEN:	/* 閉じて開く */
-		/* 再帰処理対策 */
-		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-			delete m_pcOpeBlk;
-			m_pcOpeBlk = NULL;
-		}
 		Command_FILECLOSE_OPEN();
 		break;
 	case F_FILE_REOPEN:			Command_FILE_REOPEN( m_pcEditDoc->m_nCharCode, lparam1 );break;//	Dec. 4, 2002 genta
@@ -278,11 +268,6 @@ BOOL CEditView::HandleCommand(
 	case F_OPEN_CCPP:			bRet = Command_OPEN_CCPP( (BOOL)lparam1, TRUE );break;		/* 同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	case F_ACTIVATE_SQLPLUS:	Command_ACTIVATE_SQLPLUS();break;		/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:									/* Oracle SQL*Plusで実行 */
-		/* 再帰処理対策 */
-		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-			delete m_pcOpeBlk;
-			m_pcOpeBlk = NULL;
-		}
 		Command_PLSQL_COMPILE_ON_SQLPLUS();
 		break;
 	case F_BROWSE:				Command_BROWSE();break;				/* ブラウズ */
@@ -622,11 +607,6 @@ BOOL CEditView::HandleCommand(
 	case F_WINCLOSE:		Command_WINCLOSE();break;	//ウィンドウを閉じる
 	case F_WIN_CLOSEALL:	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」を左記のように変更
 		//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
-		/* 再帰処理対策 */
-		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-			delete m_pcOpeBlk;
-			m_pcOpeBlk = NULL;
-		}
 		Command_FILECLOSEALL();
 		break;
 	case F_BIND_WINDOW:		Command_BIND_WINDOW();break;	//結合して表示 2004.07.14 Kazika 新規追加
@@ -3716,20 +3696,7 @@ void CEditView::Command_FILEOPEN( const char *filename, int nCharCode, BOOL bRea
 /* 閉じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 void CEditView::Command_FILECLOSE( void )
 {
-	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	if( !m_pcEditDoc->OnFileClose() ){
-		return;
-	}
-	/* 既存データのクリア */
-	m_pcEditDoc->Init();
-
-	/* 全ビューの初期化 */
-	m_pcEditDoc->InitAllView();
-
-	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
-
-	return;
+	m_pcEditDoc->FileClose();
 }
 
 
@@ -3742,36 +3709,7 @@ void CEditView::Command_FILECLOSE( void )
 */
 void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOOL bReadOnly )
 {
-	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	if( !m_pcEditDoc->OnFileClose() ){
-		return;
-	}
-
-	// Mar. 30, 2003 genta
-	char	pszPath[_MAX_PATH];
-
-	if( filename == NULL ){
-		pszPath[0] = '\0';
-		if( !m_pcEditDoc->OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
-			return;
-		}
-	}
-
-	/* 既存データのクリア */
-	m_pcEditDoc->Init();
-
-	/* 全ビューの初期化 */
-	m_pcEditDoc->InitAllView();
-
-	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
-
-	/* ファイルを開く */
-	// Mar. 30, 2003 genta
-	// Oct.  9, 2004 genta CEditDocへ移動したことによる変更
-	m_pcEditDoc->OpenFile(( filename ? filename : pszPath ), nCharCode, bReadOnly );
-
-	return;
+	m_pcEditDoc->FileCloseOpen( filename, nCharCode, bReadOnly );
 }
 
 
@@ -3789,89 +3727,13 @@ void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOO
 */
 BOOL CEditView::Command_FILESAVE( bool warnbeep, bool askname )
 {
-
-	/* 無変更でも上書きするか */
-	if( FALSE == m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite
-	 && !m_pcEditDoc->IsModified()	// 変更フラグ
-	 ){
-	 	//	Feb. 28, 2004 genta
-	 	//	保存不要でも警告音を出して欲しくない場合がある
-	 	if( warnbeep ){
-			::MessageBeep( MB_ICONHAND );
-		}
-		return TRUE;
-	}
-
-	if( !m_pcEditDoc->IsFilePathAvailable() ){
-		if( ! askname ){
-			return FALSE;
-		}
-		//	Feb. 28, 2004 genta SAVEASの結果が正しく返されていなかった
-		//	次の処理と組み合わせるときに問題が生じる
-		return Command_FILESAVEAS_DIALOG();
-	}
-	else {
-		//	Jun.  5, 2004 genta
-		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
-		if( m_pcEditDoc->m_bReadOnly ){	/* 読み取り専用モード */
-			if( warnbeep ){
-				::MessageBeep( MB_ICONHAND );
-				MYMESSAGEBOX(
-					m_hWnd,
-					MB_OK | MB_ICONSTOP | MB_TOPMOST,
-					GSTR_APPNAME,
-					"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n"
-					"名前を付けて保存をすればいいと思います。",
-					m_pcEditDoc->IsFilePathAvailable() ? m_pcEditDoc->GetFilePath() : "（無題）"
-				);
-			}
-			return FALSE;
-		}
-
-		if( m_pcEditDoc->SaveFile( m_pcEditDoc->GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
-			/* キャレットの行桁位置を表示する */
-			DrawCaretPosInfo();
-			return TRUE;
-		}
-	}
-	return FALSE;
+	return 	m_pcEditDoc->FileSave( warnbeep, askname );
 }
 
 /* 名前を付けて保存ダイアログ */
 BOOL CEditView::Command_FILESAVEAS_DIALOG()
 {
-	//	Aug. 16, 2000 genta
-	//	現在のファイル名を初期値で与えない
-	//	May 18, 2001 genta
-	//	現在のファイル名を与えないのは上書き禁止の時のみ
-	//	そうでない場合には現在のファイル名を初期値として設定する。
-	char szPath[_MAX_PATH + 1];
-	if( m_pcEditDoc->IsReadOnly() )
-		szPath[0] = '\0';
-	else
-		strcpy( szPath, m_pcEditDoc->GetFilePath() );
-
-	//	Feb. 9, 2001 genta
-	//	Jul. 26, 2003 ryoji BOMの有無を与えるパラメータ
-	if( m_pcEditDoc->SaveFileDialog( szPath, &m_pcEditDoc->m_nCharCode, &m_pcEditDoc->m_cSaveLineCode, &m_pcEditDoc->m_bBomExist ) ){
-		//	Jun.  5, 2004 genta
-		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
-		//	同名で上書きされるのを防ぐ
-		if( m_pcEditDoc->m_bReadOnly && strcmp( szPath, m_pcEditDoc->GetFilePath()) == 0 ){
-			::MessageBeep( MB_ICONHAND );
-			MYMESSAGEBOX(
-				m_hWnd,
-				MB_OK | MB_ICONSTOP | MB_TOPMOST,
-				GSTR_APPNAME,
-				"読み取り専用モードでは同一ファイルへの上書き保存はできません。"
-			);
-		}
-		else {
-			Command_FILESAVEAS( szPath );
-			return TRUE;
-		}
-	}
-	return FALSE;
+	return 	m_pcEditDoc->FileSaveAs_Dialog();
 }
 
 
@@ -3880,16 +3742,7 @@ BOOL CEditView::Command_FILESAVEAS_DIALOG()
 */
 BOOL CEditView::Command_FILESAVEAS( const char *filename )
 {
-	if( m_pcEditDoc->SaveFile( filename ) ){
-		/* キャレットの行桁位置を表示する */
-		DrawCaretPosInfo();
-		m_pcEditDoc->OnChangeSetting();	//	タイプ別設定の変更を指示。
-		//	再オープン
-		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
-		m_pcEditDoc->ReloadCurrentFile( m_pcEditDoc->m_nCharCode, FALSE );
-		return TRUE;
-	}
-	return FALSE;
+	return 	m_pcEditDoc->FileSaveAs( filename );
 }
 
 /*!	全て上書き保存
@@ -6276,13 +6129,6 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 		strcpy( szJumpToFile, szWork );
 	}
 
-	//	Apr. 2003 genta 閉じるかどうかは引数による
-	//	grep結果からEnterでジャンプするところにCtrl判定移動
-	if( bClose )
-	{
-		Command_WINCLOSE();	//	挑戦するだけ。
-	}
-
 // 2004/06/21 novice タグジャンプ機能追加
 // 2004/07/05 みちばな
 // 同一ファイルだとSendMesssageで m_nCaretPosX,m_nCaretPosYが更新されてしまい、
@@ -6349,6 +6195,14 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 		//	Tag Jump Backが動作しなくなっていたのを修正
 		if( FALSE == CShareData::getInstance()->IsPathOpened( (const char*)szJumpToFile, &hwndOwner ) )
 			return false;
+	}
+
+	// 2006.12.30 ryoji 閉じる処理は最後に（処理位置移動）
+	//	Apr. 2003 genta 閉じるかどうかは引数による
+	//	grep結果からEnterでジャンプするところにCtrl判定移動
+	if( bClose )
+	{
+		Command_WINCLOSE();	//	挑戦するだけ。
 	}
 
 // 2004/06/21 novice タグジャンプ機能追加
@@ -8351,9 +8205,11 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		switch( nRet ){
 		case IDYES:
 			if( m_pcEditDoc->IsFilePathAvailable() ){
-				nBool = HandleCommand( F_FILESAVE, TRUE, 0, 0, 0, 0 );
+				//nBool = HandleCommand( F_FILESAVE, TRUE, 0, 0, 0, 0 );
+				nBool = Command_FILESAVE();
 			}else{
-				nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
+				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
+				nBool = Command_FILESAVEAS_DIALOG();
 			}
 			if( FALSE == nBool ){
 				return;
@@ -8467,7 +8323,7 @@ void CEditView::Command_PROPERTY_FILE( void )
 /* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 void CEditView::Command_EXITALL( void )
 {
-	CEditApp::TerminateApplication();
+	CEditApp::TerminateApplication( ::GetParent(m_hwndParent) );	// 2006.12.25 ryoji 引数追加
 	return;
 }
 
@@ -8477,7 +8333,7 @@ void CEditView::Command_EXITALL( void )
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 void CEditView::Command_FILECLOSEALL( void )
 {
-	CEditApp::CloseAllEditor();
+	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent) );	// 2006.12.25 ryoji 引数追加
 	return;
 }
 
@@ -8488,6 +8344,13 @@ void CEditView::Command_FILECLOSEALL( void )
 void CEditView::Command_WINCLOSE( void )
 {
 	/* 閉じる */
+	// タブまとめ表示で残ウィンドウが１個の場合は「閉じて無題」	// 2006.10.21 ryoji
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+		if( 1 == CShareData::getInstance()->GetEditorWindowsNum() ){
+			Command_FILECLOSE();
+			return;
+		}
+	}
 	::PostMessage( ::GetParent( m_hwndParent ), WM_CLOSE, 0, 0 );
 	return;
 }

@@ -92,6 +92,7 @@ protected:
 	virtual DECLH( OnMenuChar		);	// WM_MENUCHAR
 	virtual DECLH( OnNotify			);	// WM_NOTIFY	//@@@ 2003.05.31 MIK
 	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
+	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
 //	virtual DECLH( OnNcCreate			);	// WM_NCCREATE
 //	virtual DECLH( OnNcCalcSize			);	// WM_NCCALCSIZE

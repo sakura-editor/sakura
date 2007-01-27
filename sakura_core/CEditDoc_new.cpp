@@ -1386,4 +1386,186 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
 }
+
+/* 閉じて(無題)
+
+	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
+*/
+void CEditDoc::FileClose( void )
+{
+	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
+	if( !OnFileClose() ){
+		return;
+	}
+	/* 既存データのクリア */
+	Init();
+
+	/* 全ビューの初期化 */
+	InitAllView();
+
+	/* 親ウィンドウのタイトルを更新 */
+	SetParentCaption();
+
+	return;
+}
+
+/* 閉じて開く
+
+	@param filename	[in] ファイル名
+	@param nCharCode	[in] 文字コード
+	@param bReadOnly	[in] 読み取り専用か
+
+	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
+*/
+void CEditDoc::FileCloseOpen( const char *filename, int nCharCode, BOOL bReadOnly )
+{
+	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
+	if( !OnFileClose() ){
+		return;
+	}
+
+	// Mar. 30, 2003 genta
+	char	pszPath[_MAX_PATH];
+
+	if( filename == NULL ){
+		pszPath[0] = '\0';
+		if( !OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+			return;
+		}
+	}
+
+	/* 既存データのクリア */
+	Init();
+
+	/* 全ビューの初期化 */
+	InitAllView();
+
+	/* 親ウィンドウのタイトルを更新 */
+	SetParentCaption();
+
+	/* ファイルを開く */
+	// Mar. 30, 2003 genta
+	// Oct.  9, 2004 genta CEditDocへ移動したことによる変更
+	OpenFile(( filename ? filename : pszPath ), nCharCode, bReadOnly );
+}
+
+/*! 上書き保存
+
+	@param warnbeep [in] true: 保存不要 or 保存禁止のときに警告を出す
+	@param askname	[in] true: ファイル名未設定の時に入力を促す
+
+	@date 2006.12.30 ryoji CEditView::Command_FILESAVE()から処理本体を切り出し
+*/
+BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
+{
+
+	/* 無変更でも上書きするか */
+	if( FALSE == m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite
+	 && !IsModified()	// 変更フラグ
+	 ){
+	 	//	Feb. 28, 2004 genta
+	 	//	保存不要でも警告音を出して欲しくない場合がある
+	 	if( warnbeep ){
+			::MessageBeep( MB_ICONHAND );
+		}
+		return TRUE;
+	}
+
+	if( !IsFilePathAvailable() ){
+		if( ! askname ){
+			return FALSE;
+		}
+		//	Feb. 28, 2004 genta SAVEASの結果が正しく返されていなかった
+		//	次の処理と組み合わせるときに問題が生じる
+		//return Command_FILESAVEAS_DIALOG();
+		FileSaveAs_Dialog();
+	}
+	else {
+		//	Jun.  5, 2004 genta
+		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
+		if( m_bReadOnly ){	/* 読み取り専用モード */
+			if( warnbeep ){
+				::MessageBeep( MB_ICONHAND );
+				MYMESSAGEBOX(
+					m_hWnd,
+					MB_OK | MB_ICONSTOP | MB_TOPMOST,
+					GSTR_APPNAME,
+					"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n"
+					"名前を付けて保存をすればいいと思います。",
+					IsFilePathAvailable() ? GetFilePath() : "（無題）"
+				);
+			}
+			return FALSE;
+		}
+
+		if( SaveFile( GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
+			/* キャレットの行桁位置を表示する */
+			m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+/*! 名前を付けて保存ダイアログ
+
+	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS_DIALOG()から処理本体を切り出し
+*/
+BOOL CEditDoc::FileSaveAs_Dialog( void )
+{
+	//	Aug. 16, 2000 genta
+	//	現在のファイル名を初期値で与えない
+	//	May 18, 2001 genta
+	//	現在のファイル名を与えないのは上書き禁止の時のみ
+	//	そうでない場合には現在のファイル名を初期値として設定する。
+	char szPath[_MAX_PATH + 1];
+	if( IsReadOnly() )
+		szPath[0] = '\0';
+	else
+		strcpy( szPath, GetFilePath() );
+
+	//	Feb. 9, 2001 genta
+	//	Jul. 26, 2003 ryoji BOMの有無を与えるパラメータ
+	if( SaveFileDialog( szPath, &m_nCharCode, &m_cSaveLineCode, &m_bBomExist ) ){
+		//	Jun.  5, 2004 genta
+		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
+		//	同名で上書きされるのを防ぐ
+		if( m_bReadOnly && strcmp( szPath, GetFilePath()) == 0 ){
+			::MessageBeep( MB_ICONHAND );
+			MYMESSAGEBOX(
+				m_hWnd,
+				MB_OK | MB_ICONSTOP | MB_TOPMOST,
+				GSTR_APPNAME,
+				"読み取り専用モードでは同一ファイルへの上書き保存はできません。"
+			);
+		}
+		else {
+			//Command_FILESAVEAS( szPath );
+			FileSaveAs( szPath );
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+/* 名前を付けて保存
+
+	@param filename	[in] ファイル名
+
+	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
+*/
+BOOL CEditDoc::FileSaveAs( const char *filename )
+{
+	if( SaveFile( filename ) ){
+		/* キャレットの行桁位置を表示する */
+		m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+		OnChangeSetting();	//	タイプ別設定の変更を指示。
+		//	再オープン
+		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
+		ReloadCurrentFile( m_nCharCode, FALSE );
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /*[EOF]*/

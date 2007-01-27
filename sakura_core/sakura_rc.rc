@@ -116,7 +116,7 @@ BEGIN
             MENUITEM "-----dummy--------",          IDM_POPLAST2
         END
         MENUITEM SEPARATOR
-        MENUITEM "すべてのウィンドウを閉じる(&Q)", F_WIN_CLOSEALL
+        MENUITEM "すべて閉じる(&Q)", F_WIN_CLOSEALL
         MENUITEM "サクラエディタの全終了(&X)",  F_EXITALL
     END
 END
@@ -192,9 +192,12 @@ BEGIN
                     12
     PUSHBUTTON      "履歴をクリア(&L)...",IDC_BUTTON_CLEAR_MRU_FOLDER,200,
                     130,61,14,0,0,HIDC_BUTTON_CLEAR_MRU_FOLDER
-    CONTROL         "終了の確認をする(&V)",IDC_CHECK_EXITCONFIRM,"Button",
+    CONTROL         "[すべて閉じる]で他に編集用の\nウィンドウがあれば確認する(&U)",IDC_CHECK_CLOSEALLCONFIRM,"Button",
                     BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_GROUP | 
-                    WS_TABSTOP,154,161,74,10,0,HIDC_CHECK_EXITCONFIRM
+                    WS_TABSTOP,154,161,111,19,0
+    CONTROL         "全終了の確認をする(&V)",IDC_CHECK_EXITCONFIRM,"Button",
+                    BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_GROUP | 
+                    WS_TABSTOP,154,180,102,10,0,HIDC_CHECK_EXITCONFIRM
 END
 
 IDD_FIND DIALOGEX 30, 0, 277, 93
@@ -2652,7 +2655,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
     F_WINCLOSE              "閉じる"
-    F_WIN_CLOSEALL          "すべてのウィンドウを閉じる"
+    F_WIN_CLOSEALL          "すべて閉じる"
 END
 
 STRINGTABLE DISCARDABLE 

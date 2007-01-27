@@ -388,6 +388,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAddCRLFWhenCopy"		, common.m_bAddCRLFWhenCopy );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScrollLineNum"	, common.m_nRepeatedScrollLineNum );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScroll_Smooth"	, common.m_nRepeatedScroll_Smooth );
+	cProfile.IOProfileData( pszSecName, "bCloseAllConfirm"		, common.m_bCloseAllConfirm );	/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 	cProfile.IOProfileData( pszSecName, "bExitConfirm"			, common.m_bExitConfirm );
 	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_bRegularExp );
 	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_bLoHiCase );

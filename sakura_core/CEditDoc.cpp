@@ -3692,7 +3692,8 @@ BOOL CEditDoc::OnFileClose( void )
 //				if( IsFilePathAvailable() ){
 //					nBool = HandleCommand( F_FILESAVE );
 //				}else{
-					nBool = HandleCommand( F_FILESAVEAS_DIALOG );
+					//nBool = HandleCommand( F_FILESAVEAS_DIALOG );
+					nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
 //				}
 				return nBool;
 			case IDNO:
@@ -3713,9 +3714,11 @@ BOOL CEditDoc::OnFileClose( void )
 			switch( nRet ){
 			case IDYES:
 				if( IsFilePathAvailable() ){
-					nBool = HandleCommand( F_FILESAVE );
+					//nBool = HandleCommand( F_FILESAVE );
+					nBool = FileSave();	// 2006.12.30 ryoji
 				}else{
-					nBool = HandleCommand( F_FILESAVEAS_DIALOG );
+					//nBool = HandleCommand( F_FILESAVEAS_DIALOG );
+					nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
 				}
 				return nBool;
 			case IDNO:

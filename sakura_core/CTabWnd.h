@@ -95,7 +95,9 @@ protected:
 	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROY処理 */
 	virtual LRESULT OnNotify( HWND, UINT, WPARAM, LPARAM );		/*!< WM_NOTIFY処理 */
 	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );		/*!< WM_PAINT処理 */
+	virtual LRESULT OnCaptureChanged( HWND, UINT, WPARAM, LPARAM );	/*!< WM_CAPTURECHANGED 処理 */
 	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDOWN処理 */
+	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONUP処理 */
 	virtual LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_RBUTTONDOWN処理 */
 	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MOUSEMOVE処理 */
 	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );		/*!< WM_TIMER処理 */
@@ -136,11 +138,16 @@ protected:
 	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< イメージリストの複製処理 */
 
 	// 2006.02.01 ryoji タブ一覧を追加
+	void DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted );	/*!< ボタン背景描画処理 */	// 2006.10.21 ryoji
 	void DrawListBtn( HDC hdc, const LPRECT lprcClient );			/*!< 一覧ボタン描画処理 */
+	void DrawCloseBtn( HDC hdc, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
-	LRESULT OnListBtnClick( POINTS pts, BOOL bLeft );				/*!< 一覧ボタンクリック処理 */
+	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
 	BOOL m_bHovering;
 	BOOL m_bListBtnHilighted;
+	BOOL m_bCloseBtnHilighted;		//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
+	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
+	CaptureSrc m_eCaptureSrc;		 //!< キャプチャー元
 	HFONT CreateMenuFont( void )
 	{
 		// メニュー用フォント作成

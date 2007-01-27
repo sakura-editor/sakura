@@ -1396,6 +1396,15 @@ LRESULT CEditWnd::DispatchEvent(
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	//To here 2003.06.25 MIK
 */
+	case WM_SYSCOMMAND:
+		// タブまとめ表示の場合は「すべて閉じる」	// 2006.10.21 ryoji
+		if( wParam == SC_CLOSE ){
+			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+				::PostMessage( m_hWnd, WM_COMMAND, MAKEWPARAM( F_WIN_CLOSEALL, 0 ), (LPARAM)NULL );
+				return 0L;
+			}
+		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	case WM_IME_COMPOSITION:
 		if ( lParam & GCS_RESULTSTR ) {
 			/* メッセージの配送 */
@@ -1943,7 +1952,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		switch( wID ){
 		case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
 			/* サクラエディタの全終了 */
-			CEditApp::TerminateApplication();
+			CEditApp::TerminateApplication( m_hWnd );	// 2006.12.25 ryoji 引数追加
 			break;
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 		case F_HELP_CONTENTS:
@@ -2184,7 +2193,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, "すべてのウィンドウを閉じる(&Q)" );	//Feb/ 19, 2001 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, "すべて閉じる(&Q)" );	//Feb/ 19, 2001 JEPRO 追加	// 2006.10.21 ryoji 表示文字列変更
 			//	Jun. 9, 2001 genta ソフトウェア名改称
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL			, "サクラエディタの全終了(&X)" );	//Sept. 11, 2000 jepro キャプションを「アプリケーション終了」から変更	//Dec. 26, 2000 JEPRO F_に変更
 			break;
