@@ -21,49 +21,106 @@ if (window.event.keyCode == 27)
 aaHHCtlCloseWin.Click(); }
 // -->
 </script>
-<h2>変更履歴(2006/11/04～)</h2>
+
+<h2>変更履歴(2007/01/27～)</h2>
+Jan. 27, 2007 (1.5.15.0)<br>
+<br>
+[機能追加]<br>
+<ul>
+	<li>複数の編集ウィンドウを閉じようとするとき確認するオプション(svn:1050 patches:1581422 ryoji)</li>
+</ul>
+[仕様変更]<br>
+<ul>
+	<li>ウィンドウ表示設定の全ウィンドウへの即時反映(svn:1048 patches:1619459 ryoji)</li>
+	<li>「共通設定」→「ウィンドウ」の『次に開くウィンドウ』の設定の部分において，従来はツールバー，ファンクションキー，ステータスバー，タブ，水平スクロールバーはウィンドウを開き直すまで変更が反映されなかった．また，「ツール(T)」メニューでの表示・非表示設定も他の編集ウィンドウには反映されなかった．</li>
+		参考 data:5681 data:5284
+	<li>置換ダイアログの改善．「すべて行置換」の意味がわかりにくかったのでオプションの1つとして整理した．(svn:1049 patches:1636751 data:5738 ryoji)</li>
+	<li>マクロReplaceAllの標準動作をReplaceAllLine相当とし，ReplaceAllLinesは廃止．(svn:1049 patches:1636751 ryoji)</li>
+		<ul>
+			2つの動作の差は，位置指定(行頭指定^や単語区切り指定\b)を含むパターンを消去(置換後の文字列が空)の場合に出ます．<br>
+			<li><b>従来のReplaceAll</b>:
+			置換後にキャレットがその位置にとどまるイメージのため，パターンが連続すると2つ目も区切りにマッチします．<br></li>
+			<li><b>新しいReplaceAll</b>:
+			最初に1行全体でマッチする部分を決定した後に置換を行うので，初期状態で指定位置になかった2つ目が置換されることはありません．<br>
+			これは旧ReplaceAllLines(今回廃止)と同じ動作です．従来のReplaceAllと同様の動作をさせるには，新しく追加したオプション値0x400を指定します．<br></li>
+		</ul>
+	<li>閉じるボタン[X]押下時の挙動変更(svn:1050 patches:1581422 ryoji)</li>
+	<ul>
+		<li>TABまとめモード(1ウィンドウ)では全て閉じる．タブバーに1ファイルだけ閉じるボタン[X]を追加．</li>
+		<li>TABまとめないモードでは当該ファイルのみ閉じる．タブバーに全て閉じるボタン[XX]を追加．</li>
+		<li>ALF+F4のデフォルトキー割り当てを解除</li>
+	</ul>
+	<li>半角全角変換の対象見直しとメニュー名称変更(svn:1051 patches:1636004 data:5744 maru)</li>
+	<ul>
+		<li>全角英数→半角英数の変換に英数記号を含める．対象文字：！”＃＄％＆’（）＊＋，－．／：；＜＝＞？＠［￥］＾＿｛｜｝￣</li>
+		<li>全角カタカナ→半角カタカナの変換に半角かな記号を含める．対象文字：。「」、・</li>
+		<li>上記2つの変更により，半角→全角→半角と元に戻せるようになった．</li>
+		<li>変換メニューの名称及び並び順を見直し．アクセスキーを付与．</li>
+	</ul>
+</ul>
+
+[バグ修正]<br>
+<ul>
+	<li>設定画面をOKで閉じるとファンクションキー表示がShiftやCtrlに反応しなくなる(svn:1048 patches:1619459 ryoji)</li>
+	<li>0幅マッチに対する置換が折り返し以降の位置で不正な結果となる(svn:1049 patches:1636751 ryoji)</li>
+	<li>選択範囲の置換において，最終行の一部のみが選択されている場合，最終行の選択範囲以降も処理されてしまうことがある．(svn:1049 patches:1636751 ryoji)</li>
+</ul>
+
+[その他変更]<br>
+<ul>
+	<li>カラー設定の対応可否をフラグにして配列化(svn:1046 patches:1617381 ryoji)</li>
+	<li>漢字コードの自動判別改善(svn:1047 patches:1513775 ラスティブ)</li>
+</ul>
+<br>
 Dec. 20, 2006 (1.5.14.0)<br>
 <br>
 [機能追加]<br>
-<div class=li200>
-・svn:1027IME ON/OFFでキャレット色変更 patches:1610867 data:5626 (ryoji)<br>
-・svn:1033新規保存時に拡張子を補完 patches:1590760 data:5579 (ryoji)<br>
-</div><br>
+<ul>
+	<li>svn:1027IME ON/OFFでキャレット色変更 patches:1610867 data:5626 (ryoji)</li>
+	<li>svn:1033新規保存時に拡張子を補完 patches:1590760 data:5579 (ryoji)</li>
+</ul>
+<br>
 [仕様変更]<br>
-<div class=li200>
-・svn:1034前回開いたときの文字コードを自動認識よりも優先する patches:1616869 data:5683 (じゅうじ)<br>
-</div><br>
+<ul>
+	<li>svn:1034前回開いたときの文字コードを自動認識よりも優先する patches:1616869 data:5683 (じゅうじ)</li>
+</ul>
+<br>
 [バグ修正]<br>
-<div class=li200>
-・svn:1026「行番号(変更行)」チェックをOFFにしても指定色が反映される問題の修正 patches:1613975 data:2610 (ryoji)<br>
-・svn:1028Visual Basicのアウトライン解析でクリップボードにコピーされる文字列がおかしい． patches:1613375 (もか)<br>
-・svn:1030環境変数INCLUDEにwindows.hへのパスが指定されていないとBCCでリソースコンパイルに失敗する patches:1596335 (ryoji)<br>
-・svn:1031バッファオーバーラン(patches:1613375で混入)の修正． patches:1617078 dev:4644 (げんた)<br>
-</div><br>
+<ul>
+	<li>svn:1026「行番号(変更行)」チェックをOFFにしても指定色が反映される問題の修正 patches:1613975 data:2610 (ryoji)</li>
+	<li>svn:1028Visual Basicのアウトライン解析でクリップボードにコピーされる文字列がおかしい． patches:1613375 (もか)</li>
+	<li>svn:1030環境変数INCLUDEにwindows.hへのパスが指定されていないとBCCでリソースコンパイルに失敗する patches:1596335 (ryoji)</li>
+	<li>svn:1031バッファオーバーラン(patches:1613375で混入)の修正． patches:1617078 dev:4644 (げんた)</li>
+</ul>
+<br>
 Dec. 03, 2006 (1.5.13.1)<br>
 <br>
 [バグ修正]<br>
-<div class=li200>
-・svn:1023EOFの位置キャッシュが，条件により正しく更新しない patches:1557887 data:5640 (もか)<br>
-</div><br>
+<ul>
+	<li>svn:1023EOFの位置キャッシュが，条件により正しく更新しない patches:1557887 data:5640 (もか)</li>
+</ul>
+<br>
 Nov. 4, 2006 (1.5.13.0)<br>
 <br>
 [仕様変更]<br>
-<div class=li200>
-・svn:1009 ヘルプをHtmlHelpに変更 patches:1571506 patches:1526879 (ryoji)<br>
-</div><br>
+<ul>
+	<li>svn:1009 ヘルプをHtmlHelpに変更 patches:1571506 patches:1526879 (ryoji)</li>
+</ul>
+<br>
 [バグ修正]<br>
-<div class=li200>
-・svn:1011 [Ctrl]+[Shift]+[Home]で選択範囲不正 patches:1582165 data:5505 (ryoji)<br>
-・svn:1012 SQL*PlusでSQLプロンプトにごみが残る対策 patches:1583031 dev:4614 (maru)<br>
-・svn:1013 外部コマンド実行で\が重複するパスを与えるとFile Open Dialogが開けなくなるpatches:1557865 (もか)<br>
-・svn:1014 EOFを含む矩形範囲選択でEOF以降が反転．特にEOFのみ折り返された場合に顕著．patches:1557887 (もか)<br>
-・svn:1016 タブ一覧フルパス表示で文字列に&が含まれていると正しく表示されないpatches:1587922 (ryoji)<br>
-</div><br>
+<ul>
+	<li>svn:1011 [Ctrl]+[Shift]+[Home]で選択範囲不正 patches:1582165 data:5505 (ryoji)</li>
+	<li>svn:1012 SQL*PlusでSQLプロンプトにごみが残る対策 patches:1583031 dev:4614 (maru)</li>
+	<li>svn:1013 外部コマンド実行で\が重複するパスを与えるとFile Open Dialogが開けなくなるpatches:1557865 (もか)</li>
+	<li>svn:1014 EOFを含む矩形範囲選択でEOF以降が反転．特にEOFのみ折り返された場合に顕著．patches:1557887 (もか)</li>
+	<li>svn:1016 タブ一覧フルパス表示で文字列に&が含まれていると正しく表示されないpatches:1587922 (ryoji)</li>
+</ul>
+<br>
 [その他変更]<br>
-<div class=li200>
-・svn:1004 VC++Toolkit2003,2005EE用の環境ファイル修正 patches:1558786 (ryoji)<br>
-・svn:1015 コマンドラインオプションの大文字小文字を区別しない．(オプションに付くパラメータは区別される)dev:4617patches:1584411(ryoji)<br>
-・svn:1016 タブ一覧フルパス表示及びタブToolTipでパスの簡易表示を行うようにpatches:1587922(ryoji)<br>
-</div><br>
+<ul>
+<li>svn:1004 VC++Toolkit2003,2005EE用の環境ファイル修正 patches:1558786 (ryoji)</li>
+<li>svn:1015 コマンドラインオプションの大文字小文字を区別しない．(オプションに付くパラメータは区別される)dev:4617patches:1584411(ryoji)</li>
+<li>svn:1016 タブ一覧フルパス表示及びタブToolTipでパスの簡易表示を行うようにpatches:1587922(ryoji)</li>
+</ul>
+<br>
 </BODY></HTML>
