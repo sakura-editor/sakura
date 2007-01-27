@@ -424,8 +424,8 @@ BOOL CEditView::HandleCommand(
     case F_CTRL_CODE_DIALOG:		Command_CtrlCode_Dialog();break;	/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 
 	/* 変換 */
-	case F_TOLOWER:					Command_TOLOWER();break;				/* 英大文字→英小文字 */
-	case F_TOUPPER:					Command_TOUPPER();break;				/* 英小文字→英大文字 */
+	case F_TOLOWER:					Command_TOLOWER();break;				/* 小文字 */
+	case F_TOUPPER:					Command_TOUPPER();break;				/* 大文字 */
 	case F_TOHANKAKU:				Command_TOHANKAKU();break;				/* 全角→半角 */
 	case F_TOHANKATA:				Command_TOHANKATA();break;				/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	case F_TOZENEI:					Command_TOZENEI();break;				/* 全角→半角 */					//July. 30, 2001 Misaka
@@ -4307,7 +4307,7 @@ void CEditView::Command_DUPLICATELINE( void )
 
 
 
-/* 英大文字→英小文字 */
+/* 小文字 */
 void CEditView::Command_TOLOWER( void )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
@@ -4318,7 +4318,7 @@ void CEditView::Command_TOLOWER( void )
 
 
 
-/* 英小文字→英大文字 */
+/* 大文字 */
 void CEditView::Command_TOUPPER( void )
 {
 	/* 選択エリアのテキストを指定方法で変換 */

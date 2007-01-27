@@ -249,14 +249,16 @@ const int nFincList_Insert_Num = sizeof( pnFuncList_Insert ) / sizeof( pnFuncLis
 
 /* 変換系 */
 const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
-	F_TOLOWER				,	//英大文字→英小文字
-	F_TOUPPER				,	//英小文字→英大文字
+	F_TOLOWER				,	//小文字
+	F_TOUPPER				,	//大文字
 	F_TOHANKAKU				,	/* 全角→半角 */
-	F_TOHANKATA				,	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
-	F_TOZENEI				,	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
-	F_TOHANEI				,	/* 全角英数→半角英数 */
+	// From Here 2007.01.24 maru 並び順変更
 	F_TOZENKAKUKATA			,	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	F_TOZENKAKUHIRA			,	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+	F_TOZENEI				,	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	F_TOHANEI				,	/* 全角英数→半角英数 */
+	F_TOHANKATA				,	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
+	// To Here 2007.01.24 maru 並び順変更
 	F_HANKATATOZENKAKUKATA	,	/* 半角カタカナ→全角カタカナ */
 	F_HANKATATOZENKAKUHIRA	,	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE			,	/* TAB→空白 */

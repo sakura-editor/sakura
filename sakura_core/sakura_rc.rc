@@ -2870,8 +2870,8 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_TOLOWER               "英大文字→英小文字"
-    F_TOUPPER               "英小文字→英大文字"
+    F_TOLOWER               "小文字"
+    F_TOUPPER               "大文字"
     F_TOHANKAKU             "全角→半角"
     F_TOZENKAKUKATA         "半角＋全ひら→全角・カタカナ"
     F_TOZENKAKUHIRA         "半角＋全カタ→全角・ひらがな"
@@ -3136,4 +3136,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

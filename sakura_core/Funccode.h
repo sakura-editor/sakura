@@ -208,8 +208,8 @@
 
 
 /* 変換系 */
-#define F_TOLOWER				30800	//英大文字→英小文字
-#define F_TOUPPER				30801	//英小文字→英大文字
+#define F_TOLOWER				30800	//小文字
+#define F_TOUPPER				30801	//大文字
 #define F_TOHANKAKU				30810	/* 全角→半角 */
 #define F_TOHANKATA				30817	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 #define F_TOZENKAKUKATA			30811	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更

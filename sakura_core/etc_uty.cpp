@@ -2076,8 +2076,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 
 	/* 変換系 */
-	case F_TOLOWER:					return HLP000047;	//英大文字→英小文字
-	case F_TOUPPER:					return HLP000048;	//英小文字→英大文字
+	case F_TOLOWER:					return HLP000047;	//小文字
+	case F_TOUPPER:					return HLP000048;	//大文字
 	case F_TOHANKAKU:				return HLP000049;	/* 全角→半角 */
 	case F_TOHANKATA:				return HLP000258;	//全角カタカナ→半角カタカナ
 	case F_TOZENKAKUKATA:			return HLP000050;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更

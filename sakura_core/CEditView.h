@@ -733,8 +733,8 @@ void ReplaceData_CEditView(
 	void Command_INS_TIME( void );	//時刻挿入
 
 	/* 変換系 */
-	void Command_TOLOWER( void );				/* 英大文字→英小文字 */
-	void Command_TOUPPER( void );				/* 英小文字→英大文字 */
+	void Command_TOLOWER( void );				/* 小文字 */
+	void Command_TOUPPER( void );				/* 大文字 */
 	void Command_TOZENKAKUKATA( void );			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	void Command_TOZENKAKUHIRA( void );			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
 	void Command_TOHANKAKU( void );				/* 全角→半角 */

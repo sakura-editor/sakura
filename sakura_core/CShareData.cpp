@@ -4364,9 +4364,9 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//Oct. 28, 2000 F5 は「再描画」に変更	//Jan. 14, 2001 Alt+F5 に「uudecodeして保存」, Ctrl+ Alt+F5 に「TAB→空白」を追加
 		//	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
 		{ VK_F5,"F5", F_REDRAW, 0, F_EXECCOMMAND_DIALOG, 0, F_UUDECODE, 0, F_TABTOSPACE, F_SPACETOTAB },
-		//Jan. 14, 2001 JEPRO	Ctrl+F6 に「英大文字→英小文字」, Alt+F6 に「Base64デコードして保存」を追加
+		//Jan. 14, 2001 JEPRO	Ctrl+F6 に「小文字」, Alt+F6 に「Base64デコードして保存」を追加
 		{ VK_F6,"F6", F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, 0, F_BASE64DECODE, 0, 0, 0 },
-		//Jan. 14, 2001 JEPRO	Ctrl+F7 に「英小文字→英大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加
+		//Jan. 14, 2001 JEPRO	Ctrl+F7 に「大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加
 		{ VK_F7,"F7", F_CUT, 0, F_TOUPPER, 0, F_CODECNV_UTF72SJIS, F_CODECNV_SJIS2UTF7, F_FILE_REOPEN_UTF7, 0 },
 		//Nov. 9, 2000 JEPRO	Shift+F8 に「CRLF改行でコピー」を追加
 		//Jan. 14, 2001 JEPRO	Ctrl+F8 に「全角→半角」, Alt+F8 に「UTF-8→SJISコード変換」, Shift+Alt+F8 に「SJIS→UTF-8コード変換」, Ctrl+Alt+F8 に「UTF-8で開き直す」を追加
@@ -4495,7 +4495,7 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		{ 'J', "J",0, 0, F_JUMP_DIALOG, 0, 0, 0, 0, 0 },
 		//Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
 		{ 'K', "K",0, 0, F_LineCutToEnd, F_LineDeleteToEnd, 0, 0, 0, 0 },
-		//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「英大文字→英小文字」, Shift+Ctrl+Alt+L に「英小文字→英大文字」を追加
+		//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「小文字」, Shift+Ctrl+Alt+L に「大文字」を追加
 		//Jan. 16, 2001 Ctrl+L を「カーソル行をウィンドウ中央へ」→「キーマクロの読み込み」に変更し「カーソル行をウィンドウ中央へ」は Ctrl+H に移動
 		//2001.12.03 hor Alt+L を「LTRIM」に割当
 		{ 'L', "L",0, 0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, 0, F_TOLOWER, F_TOUPPER },
