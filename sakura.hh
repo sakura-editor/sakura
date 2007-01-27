@@ -369,6 +369,8 @@
 #define HIDC_CHECK_RestoreBookmarks				10342 //ブックマークの復元
 #define HIDC_CHECK_QueryIfCodeChange			10343 //前回と異なる文字コードのとき問い合わせを行う	// 2006.08.06 ryoji
 #define HIDC_CHECK_AlertIfFileNotExist			10344 //開こうとしたファイルが存在しないとき警告する	// 2006.08.06 ryoji
+#define HIDC_CHECK_NoFilterSaveNew				10345 //新規から保存時は全ファイル表示	// 2006.11.16 ryoji
+#define HIDC_CHECK_NoFilterSaveFile				10346 //新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
 #define HIDC_EDIT_DFORM							10440 //日付書式
 #define HIDC_EDIT_TFORM							10441 //時刻書式
 #define HIDC_EDIT_DFORM_EX						10442 //日付書式（表示例）
@@ -615,7 +617,7 @@
 #define HIDC_REP_STATIC_JRE32VER		11919	//正規表現バージョン
 #define HIDC_REP_BUTTON_SETMARK			11920   //検索該当行をマーク
 #define HIDC_REP_CHECK_SEARCHALL		11921   //先頭（末尾）から再検索
-#define HIDC_REP_BUTTON_REPLACEALL_LINE	11922   //すべて行置換	// 2006.08.06 ryoji
+#define HIDC_REP_CHECK_CONSECUTIVEALL	11922   //「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 
 //GREP
 #define HIDC_GREP_BUTTON_FOLDER			12000	//フォルダ
