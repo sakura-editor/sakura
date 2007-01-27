@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>タブ表示</TITLE>
+<META NAME="MS-HKWD" CONTENT="タブ表示">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>タブ表示</h2>
+
+<div class=li200>
+・タブ表示は<a href="HLP000146.html">共通設定 『ウィンドウ』プロパティ</a>で設定できます。<br>
+・タブ上で右クリックすると「タブメニュー」が開かれます。<br>
+・２つの表示モードがあり、<a href="HLP000146.html">共通設定 『ウィンドウ』プロパティ</a>の基本設定「まとめない」で切り替えます。<br>
+</div><br>
+
+<h3>タブバー</h3>
+タブバーの右端には[▼]ボタンと、[×]ボタンまたは[XX]ボタンがあります。<br>
+<b>[▼]ボタン</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000097.html">ウィンドウリスト</a>を表示します。<br>
+<b>[×]ボタン</b>(sakura:1.5.15.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;「まとめない」無効のときに表示され、現在のタブを閉じる動作です。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;タイトルバーの[×]ボタンは「<a href="HLP000019.html">すべて閉じる</a>」の動作になります。<br>
+<b>[XX]ボタン</b>(sakura:1.5.15.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;「まとめない」ときに表示され、「<a href="HLP000019.html">すべて閉じる</a>」の動作になります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;タイトルバーの[×]ボタンは、現在のタブを閉じます。（タブ非表示時と同様の動作）<br>
+
+<br>
+<img src="images/TabView1.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>【図1】「まとめない」が無効</b><br>
+<br>
+<img src="images/TabView2.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>【図2】「まとめない」が有効</b><br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+sakura:1.5.15.0より前のバージョンではタイトルバーの[×]ボタンを押しても編集中のウィンドウしか閉じませんが、これは仕様です。すべてのウィンドウを閉じる場合にはファイルメニュー「すべてのウィンドウを閉じる」をお使いください。
+<br>
+
+</BODY></HTML>

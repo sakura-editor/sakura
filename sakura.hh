@@ -442,6 +442,7 @@
 #define HIDC_CHECK_EXITCONFIRM					10916 //終了の確認
 #define HIDC_CHECK_STOPS_WORD					10917 //単語単位で移動するときに単語の両端に止まる
 #define HIDC_CHECK_STOPS_PARAGRAPH				10918 //段落単位で移動するときに段落の両端に止まる
+#define HIDC_CHECK_CLOSEALLCONFIRM				10919 //[すべて閉じる]で他に編集用のウィンドウがあれば確認する	// 2006.12.25 ryoji
 #define HIDC_HOTKEY_TRAYMENU					10940 //左クリックメニューのショートカットキー
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM			10941 //スクロール行数
 #define HIDC_EDIT_MAX_MRU_FILE					10942 //ファイル履歴の最大数
