@@ -22,6 +22,7 @@
 #define HLP000115	115 //矩形編集
 #define HLP000104	104 //入力補完機能
 #define HLP000105	105 //キーワードヘルプ
+#define HLP000106	106 //タブ表示
 #define HLP000129	129 //クリッカブルURL
 #define HLP000135	135 //ドラッグ & ドロップ編集
 #define HLP000016	16 //「ファイル(F)」メニューの一覧

@@ -2312,6 +2312,7 @@ void CMemory::ToHankaku(
 					case 0x8145:	// ÅE
 					case 0x814a:	// ÅJ
 					case 0x814b:	// ÅK
+					case 0x815b:	// Å[
 					case 0x8175:	//Åu
 					case 0x8176:	// Åv
 						break;
