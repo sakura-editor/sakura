@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -407,6 +408,16 @@ HWND CEditWnd::Create(
 
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
 
+	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
+	// （m_cEditDoc メンバーの初期化を優先）
+	if( FALSE == m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons/*, 1, 1, 0, 0*/ ) ){
+		::MessageBox(
+			m_hWnd,
+			"クライアントウィンドウの作成に失敗しました", GSTR_APPNAME,
+			MB_OK
+		);
+	}
+
 // 次のSetWindowLongPtr以降だとデバッグ中に落ちることがあったので順番を入れ替えた。 // 2005/8/9 aroka
 	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* 次回ウィンドウを開いたときツールバーを表示する */
  		/* ツールバー作成 */
@@ -452,14 +463,6 @@ HWND CEditWnd::Create(
 		m_cTabWnd.Open( hInstance, m_hWnd );
 	}
 	//To Here 2003.05.31 MIK
-
-	if( FALSE == m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons/*, 1, 1, 0, 0*/ ) ){
-		::MessageBox(
-			m_hWnd,
-			"クライアントウィンドウの作成に失敗しました", GSTR_APPNAME,
-			MB_OK
-		);
-	}
 
 	/* デスクトップからはみ出さないようにする */
 	RECT	rcOrg;
