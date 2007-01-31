@@ -14,6 +14,7 @@
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -8730,10 +8731,11 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		//エラー。対策無し
 		return;
 	}
-	//継承不能にする
+	//hStdOutReadのほうは子プロセスでは使用されないので継承不能にする（子プロセスのリソースを無駄に増やさない）
 	DuplicateHandle( GetCurrentProcess(), hStdOutRead,
-				GetCurrentProcess(), NULL,
-				0, FALSE, DUPLICATE_SAME_ACCESS );
+				GetCurrentProcess(), &hStdOutRead,					// 新しい継承不能ハンドルを受け取る	// 2007.01.31 ryoji
+				0, FALSE,
+				DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS );	// 元の継承可能ハンドルは DUPLICATE_CLOSE_SOURCE で閉じる	// 2007.01.31 ryoji
 
 	//CreateProcessに渡すSTARTUPINFOを作成
 	STARTUPINFO	sui;
