@@ -17,6 +17,7 @@
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1491,6 +1492,11 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 			CloseHandle( p.hThread );
 			CloseHandle( p.hProcess );
 			return false;
+		}
+	}else{
+		// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つ	// 2007.02.03 ryoji
+		if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
+			WaitForInputIdle( p.hProcess, 3000 );
 		}
 	}
 

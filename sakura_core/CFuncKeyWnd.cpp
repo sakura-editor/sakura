@@ -10,6 +10,7 @@
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2004, novice
 	Copyright (C) 2006, aroka, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -193,7 +194,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
-		100, // window width
+		0, // window width	// 2007.02.05 ryoji 100->0（半端なサイズで一瞬表示されるより見えないほうがいい）
 		::GetSystemMetrics( SM_CYMENU ), // window height
 		NULL // handle to menu, or child-window identifier
 	);
@@ -501,27 +502,22 @@ int CFuncKeyWnd::CalcButtonSize( void )
 
 
 
-/*! ボタンの生成 */
+/*! ボタンの生成
+	@date 2007.02.05 ryoji ボタンの水平位置・幅の設定処理を削除（OnSizeで再配置されるので不要）
+*/
 void CFuncKeyWnd::CreateButtons( void )
 {
-//	HWND	hwndButton;
 	RECT	rcParent;
 	int		nButtonHeight;
-	int		nButtonWidth;
 	int		i;
-	int		nX;
 
 	::GetWindowRect( m_hWnd, &rcParent );
 	nButtonHeight = nButtonHeight = rcParent.bottom - rcParent.top - 2;
-
-	/* ボタンのサイズを計算 */
-	nButtonWidth = CalcButtonSize();
 
 	for( i = 0; i < sizeof(	m_nFuncCodeArr ) / sizeof(	m_nFuncCodeArr[0] ); ++i ){
 		m_nFuncCodeArr[i] = 0;
 	}
 
-	nX = 1;
 	for( i = 0; i < sizeof( m_hwndButtonArr ) / sizeof( m_hwndButtonArr[0] ); ++i ){
 		m_hwndButtonArr[i] = ::CreateWindow(
 			"BUTTON",	// predefined class
@@ -530,9 +526,9 @@ void CFuncKeyWnd::CreateButtons( void )
 			,			// styles
 			// Size and position values are given explicitly, because
 			// the CW_USEDEFAULT constant gives zero values for buttons.
-			nX,			// starting x position
+			0,			// starting x position
 			0 + 1,		// starting y position
-			nButtonWidth,		// button width
+			0,			// button width
 			nButtonHeight,		// button height
 			m_hWnd,		// parent window
 			NULL,		// No menu
@@ -542,8 +538,6 @@ void CFuncKeyWnd::CreateButtons( void )
 		);
 		/* フォント変更 */
 		::SendMessage( m_hwndButtonArr[i], WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
-
-		nX += nButtonWidth + 1;
 	}
 	m_nCurrentKeyState = -1;
 	return;
