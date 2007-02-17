@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI, aroka, MIK, Moca, こおり
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, genta, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -419,11 +420,12 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ "全般", 			IDD_PROP1P1,		DlgProc_PROP_GENERAL },
 		{ "ウィンドウ",		IDD_PROP_WIN,		DlgProc_PROP_WIN },
+		//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
+		{ "タブバー",		IDD_PROP_TAB,		DlgProc_PROP_TAB },
 		{ "編集",			IDD_PROP_EDIT,		DlgProc_PROP_EDIT },
 		{ "ファイル",		IDD_PROP_FILE,		DlgProc_PROP_FILE },
 		{ "バックアップ",	IDD_PROP_BACKUP,	DlgProc_PROP_BACKUP },
 		{ "書式",			IDD_PROP_FORMAT,	DlgProc_PROP_FORMAT },
-		{ "クリッカブルURL",IDD_PROP_URL,		DlgProc_PROP_URL },
 		{ "Grep",			IDD_PROP_GREP,		DlgProc_PROP_GREP },
 		{ "キー割り当て",	IDD_PROP_KEYBIND,	DlgProc_PROP_KEYBIND },
 		{ "カスタムメニュー",IDD_PROP_CUSTMENU,	DlgProc_PROP_CUSTMENU },
@@ -1082,8 +1084,8 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	case IDD_PROP_WIN:
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_WINDOW);
 		break;
-	case IDD_PROP_URL:
-		nContextID = ::FuncID_To_HelpContextID(F_OPTION_URL);
+	case IDD_PROP_TAB:
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_TAB);
 		break;
 	case IDD_PROP_GREP:
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_GREP);

@@ -13,7 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta, isearch, MIK
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -200,9 +200,13 @@ struct ARRHEAD {
 	Version 70:
 	[すべて閉じる]で他に編集用のウィンドウがあれば確認する 2006.12.25 ryoji
 
+	Version 71:
+	タブを閉じる動作を制御するオプション2つを追加 2007.02.11 genta
+		m_bRetainEmptyTab, m_bCloseOneWinInTabMode
+
 */
 
-const unsigned int uShareDataVersion = 70;
+const unsigned int uShareDataVersion = 71;
 
 /*
 ||	Singleton風
@@ -485,6 +489,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
+		m_pShareData->m_Common.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
+		m_pShareData->m_Common.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
@@ -912,8 +918,13 @@ void CShareData::SaveShareData( void )
 
 
 
-/* 全編集ウィンドウへ終了要求を出す */
-BOOL CShareData::RequestCloseAllEditor( void )
+/* 全編集ウィンドウへ終了要求を出す
+
+	@param bExit [in] TRUE: 編集の全終了 / FALSE: すべて閉じる
+
+	@date 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
+*/
+BOOL CShareData::RequestCloseAllEditor( BOOL bExit )
 {
 	HWND*	phWndArr;
 	int		i;
@@ -933,7 +944,7 @@ BOOL CShareData::RequestCloseAllEditor( void )
 			/* アクティブにする */
 			ActivateFrameWindow( phWndArr[i] );
 			/* トレイからエディタへの終了要求 */
-			if( !::SendMessage( phWndArr[i], MYWM_CLOSE, 0, 0 ) ){
+			if( !::SendMessage( phWndArr[i], MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 				delete [] phWndArr;
 				return FALSE;
 			}
@@ -4357,7 +4368,8 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//Jan. 14, 2001 Ctrl+Alt+F4 に「テキストエディタの全終了」を追加
 		//Jun. 2001「サクラエディタの全終了」に改称
 		//2006.10.21 ryoji Alt+F4 には何も割り当てない（デフォルトのシステムコマンド「閉じる」が実行されるように）
-		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, F_FILECLOSE, F_FILECLOSE_OPEN, 0, F_WIN_CLOSEALL, F_EXITALL, 0 },
+		//2007.02.13 ryoji Shift+Ctrl+F4をF_WIN_CLOSEALLからF_EXITALLEDITORSに変更
+		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, F_FILECLOSE, F_FILECLOSE_OPEN, 0, F_EXITALLEDITORS, F_EXITALL, 0 },
 	//	From Here Sept. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
 	//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND_DIALOG, 0, 0, 0, 0, 0 },
 	//	To Here Sept. 20, 2000

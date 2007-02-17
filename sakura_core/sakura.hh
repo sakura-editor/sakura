@@ -52,6 +52,7 @@
 #define HLP000022	22 //ファイルのプロパティ
 #define HLP000029	29 //最近使ったファイル
 #define HLP000023	23 //最近使ったフォルダ
+#define HLP000030	30 //編集の全終了	// 2007.02.13 ryoji
 #define HLP000028	28 //サクラエディタの全終了
 #define HLP000031	31 //「編集(E)」メニューの一覧
 #define HLP000032	32 //元に戻す(Undo)
@@ -189,11 +190,12 @@
 #define HLP000076	76 //共通設定
 #define HLP000081	81 //共通設定 『全般』プロパティ
 #define HLP000146	146 //共通設定 『ウィンドウ』プロパティ
+#define HLP000150	150 //共通設定 『タブバー』プロパティ	// 2007.02.13 ryoji
 #define HLP000144	144 //共通設定 『編集』プロパティ
 #define HLP000083	83 //共通設定 『ファイル』プロパティ
 #define HLP000145	145 //共通設定 『バックアップ』プロパティ
 #define HLP000082	82 //共通設定 『書式』プロパティ
-#define HLP000147	147 //共通設定 『クリッカブルURL』プロパティ
+//#define HLP000147	147 //共通設定 『クリッカブルURL』プロパティ	// 2007.02.13 ryoji 廃止
 #define HLP000148	148 //共通設定 『Grep』プロパティ
 #define HLP000084	84 //共通設定 『キー割り当て』プロパティ
 #define HLP000087	87 //共通設定 『カスタムメニュー』プロパティ
@@ -484,6 +486,8 @@
 #define HIDC_CHECK_SameTabWidth					11270 //等幅	// 2006.08.06 ryoji
 #define HIDC_CHECK_DispTabIcon					11271 //アイコン表示	// 2006.08.06 ryoji
 #define HIDC_CHECK_SortTabList					11272 //タブ一覧ソート	// 2006.08.06 ryoji
+#define HIDC_CHECK_RetainEmptyWindow			11273 //最後のファイルを閉じたとき(無題)文書を残す	// 2007.02.13 ryoji
+#define HIDC_CHECK_CloseOneWin					11274 //ウィンドウの閉じるボタンは現在のファイルのみ閉じる	// 2007.02.13 ryoji
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK

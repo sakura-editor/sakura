@@ -567,6 +567,7 @@ protected:
 	void Command_BROWSE( void );				/* ブラウズ */
 	void Command_READONLY( void );				/* 読み取り専用 */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
+	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */

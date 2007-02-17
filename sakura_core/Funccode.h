@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta, zenryaku, kazika, Moca, isearch
 	Copyright (C) 2005, genta, MIK, maru
 	Copyright (C) 2006, aroka, かろと, fon, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -58,6 +58,7 @@
 #define F_BROWSE					30180	//ブラウズ
 #define F_READONLY					30185	/* ファイルのプロパティ */
 #define F_PROPERTY_FILE				30190	/* ファイルのプロパティ */
+#define F_EXITALLEDITORS			30194	/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 #define F_EXITALL					30195	/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 #define F_NOWOPENFILE				30197	//現在開いているファイル
 #define F_RECENTFILE				30198	//最近使ったファイル
@@ -308,7 +309,7 @@
 #define F_OPTION_FILE		32003	/* 共通設定『ファイル』 */
 #define F_OPTION_BACKUP		32004	/* 共通設定『バックアップ』 */
 #define F_OPTION_FORMAT		32005	/* 共通設定『書式』 */
-#define F_OPTION_URL		32006	/* 共通設定『クリッカブルURL』 */
+//#define F_OPTION_URL		32006	/* 共通設定『クリッカブルURL』 */
 #define F_OPTION_GREP		32007	/* 共通設定『Grep』 */
 #define F_OPTION_KEYBIND	32008	/* 共通設定『キー割り当て』 */
 #define F_OPTION_CUSTMENU	32009	/* 共通設定『カスタムメニュー』 */
@@ -318,6 +319,7 @@
 //To here  Stonee, 2001/05/18
 #define F_OPTION_MACRO		32013	/* 共通設定『マクロ』 */
 #define F_OPTION_FNAME		32014	/* 共通設定『ファイル名表示』 */
+#define F_OPTION_TAB		32015	/* 共通設定『タブ』*/ // Feb. 11, 2007 genta 追加
 
 #define F_FONT				31120	/* フォント設定 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更

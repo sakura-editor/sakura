@@ -513,11 +513,11 @@ SOURCE=..\sakura_core\CPropCommon.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CPropComToolbar.cpp
+SOURCE=..\sakura_core\CPropComTab.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CPropComUrl.cpp
+SOURCE=..\sakura_core\CPropComToolbar.cpp
 # End Source File
 # Begin Source File
 

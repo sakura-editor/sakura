@@ -1400,11 +1400,18 @@ LRESULT CEditWnd::DispatchEvent(
 	//To here 2003.06.25 MIK
 */
 	case WM_SYSCOMMAND:
-		// タブまとめ表示の場合は「すべて閉じる」	// 2006.10.21 ryoji
+		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
+		//	Feb. 11, 2007 genta 動作を選べるように(MDI風と従来動作)
 		if( wParam == SC_CLOSE ){
 			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
-				::PostMessage( m_hWnd, WM_COMMAND, MAKEWPARAM( F_WIN_CLOSEALL, 0 ), (LPARAM)NULL );
-				return 0L;
+				if( !m_pShareData->m_Common.m_bTab_CloseOneWin ){
+					::PostMessage( m_hWnd, WM_COMMAND, MAKEWPARAM( F_EXITALLEDITORS, 0 ), (LPARAM)NULL );	// 編集の全終了
+					return 0L;
+				}
+				else if( m_pShareData->m_Common.m_bTab_RetainEmptyWin ){
+					::PostMessage( m_hWnd, MYWM_CLOSE, MAKEWPARAM( 0, 0 ), (LPARAM)NULL );	// (無題)を残す
+					return 0L;
+				}
 			}
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -1639,8 +1646,21 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case MYWM_CLOSE:
-		/* エディタへの全終了要求 */
+		/* エディタへの終了要求 */
 		if( FALSE != ( nRet = OnClose()) ){	// Jan. 23, 2002 genta 警告抑制
+			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
+			if( !(BOOL)wParam ){	// 全終了要求でない場合
+				// タブまとめ表示で(無題)を残す指定の場合、残ウィンドウが１個なら新規エディタを起動して終了する
+				if( m_pShareData->m_Common.m_bDispTabWnd &&
+					!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
+					m_pShareData->m_Common.m_bTab_RetainEmptyWin
+					){
+					if( 1 == CShareData::getInstance()->GetEditorWindowsNum() ){
+						CShareData::getInstance()->DeleteEditWndList( m_hWnd );	// 新規エディタのタブには自分を表示させない
+						CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, TRUE );
+					}
+				}
+			}
 			DestroyWindow( hwnd );
 		}
 		return nRet;
@@ -2196,7 +2216,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, "すべて閉じる(&Q)" );	//Feb/ 19, 2001 JEPRO 追加	// 2006.10.21 ryoji 表示文字列変更
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, "編集の全終了(&Q)" );	//Feb/ 19, 2001 JEPRO 追加	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 			//	Jun. 9, 2001 genta ソフトウェア名改称
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL			, "サクラエディタの全終了(&X)" );	//Sept. 11, 2000 jepro キャプションを「アプリケーション終了」から変更	//Dec. 26, 2000 JEPRO F_に変更
 			break;
@@ -2576,7 +2596,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel );	//これのみ
 				pszLabel = "ファンクションキーを表示(&K)";		//これのみ表示
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel );	//これのみ
-				pszLabel = "タブを表示";		//これのみ表示	//@@@ 2003.06.10 MIK
+				pszLabel = "タブバーを表示";		//これのみ表示	//@@@ 2003.06.10 MIK	// 2007.02.13 ryoji 「タブ」→「タブバー」
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel );	//これのみ	//@@@ 2003.06.10 MIK
 				pszLabel = "ステータスバーを表示(&S)";			//これのみ表示
 //	To Here Sept.17, 2000 JEPRO
@@ -2597,9 +2617,9 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel );	//これのみ
 				//@@@ 2003.06.10 MIK
 				if( NULL == m_cTabWnd.m_hWnd ){
-					pszLabel = "タブを表示(&M)";	//これのみ表示
+					pszLabel = "タブバーを表示(&M)";	//これのみ表示	// 2007.02.13 ryoji 「タブ」→「タブバー」
 				}else{
-					pszLabel = "表示中のタブを隠す(&M)";
+					pszLabel = "表示中のタブバーを隠す(&M)";	// 2007.02.13 ryoji 「タブ」→「タブバー」
 				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel );	//これのみ
 				if( m_hwndStatusBar == NULL ){
@@ -2700,7 +2720,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINLIST			, "ウィンドウ一覧(&W)..." );		// 2006.03.23 fon
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW		, "結合して表示(&B)" );		//2004.07.14 Kazika 新規追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW		, "ひとつにまとめて表示(&B)" );		//2004.07.14 Kazika 新規追加	// 2007.02.13 ryoji 「結合して表示」→「ひとつにまとめて表示」
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, "上下に並べて表示(&H)" );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, "左右に並べて表示(&T)" );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)

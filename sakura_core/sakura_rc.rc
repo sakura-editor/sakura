@@ -116,7 +116,7 @@ BEGIN
             MENUITEM "-----dummy--------",          IDM_POPLAST2
         END
         MENUITEM SEPARATOR
-        MENUITEM "すべて閉じる(&Q)", F_WIN_CLOSEALL
+        MENUITEM "編集の全終了(&Q)",            F_EXITALLEDITORS
         MENUITEM "サクラエディタの全終了(&X)",  F_EXITALL
     END
 END
@@ -127,7 +127,7 @@ END
 // Dialog
 //
 
-IDD_PROP1P1 DIALOGEX 0, 0, 277, 235
+IDD_PROP1P1 DIALOGEX 0, 0, 270, 212
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -192,12 +192,14 @@ BEGIN
                     12
     PUSHBUTTON      "履歴をクリア(&L)...",IDC_BUTTON_CLEAR_MRU_FOLDER,200,
                     130,61,14,0,0,HIDC_BUTTON_CLEAR_MRU_FOLDER
-    CONTROL         "[すべて閉じる]で他に編集用の\nウィンドウがあれば確認する(&U)",IDC_CHECK_CLOSEALLCONFIRM,"Button",
-                    BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_GROUP | 
-                    WS_TABSTOP,154,161,111,19,0
-    CONTROL         "全終了の確認をする(&V)",IDC_CHECK_EXITCONFIRM,"Button",
-                    BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_GROUP | 
-                    WS_TABSTOP,154,180,102,10,0,HIDC_CHECK_EXITCONFIRM
+    CONTROL         "同時に複数の編集用ウィンドウを\n閉じるとき確認(&U)",
+                    IDC_CHECK_CLOSEALLCONFIRM,"Button",BS_AUTOCHECKBOX | 
+                    BS_TOP | BS_MULTILINE | WS_GROUP | WS_TABSTOP,150,161,
+                    117,19
+    CONTROL         "サクラエディタの全終了で編集用\nウィンドウを閉じるとき確認(&V)",
+                    IDC_CHECK_EXITCONFIRM,"Button",BS_AUTOCHECKBOX | BS_TOP | 
+                    BS_MULTILINE | WS_GROUP | WS_TABSTOP,150,180,117,19,0,
+                    HIDC_CHECK_EXITCONFIRM
 END
 
 IDD_FIND DIALOGEX 30, 0, 277, 93
@@ -844,7 +846,7 @@ BEGIN
                     HIDC_BUTTON_EXPORT
 END
 
-IDD_PROP_FORMAT DIALOGEX 0, 0, 270, 213
+IDD_PROP_FORMAT DIALOGEX 0, 0, 271, 185
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -1288,7 +1290,7 @@ BEGIN
     DEFPUSHBUTTON   "閉じる(&C)",IDOK,300,170,50,14
 END
 
-IDD_PROP_WIN DIALOGEX 0, 0, 271, 225
+IDD_PROP_WIN DIALOGEX 0, 0, 271, 209
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -1303,20 +1305,16 @@ BEGIN
     CONTROL         "ステータスバー表示(&S)",IDC_CHECK_DispSTATUSBAR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,37,83,10,0,
                     HIDC_CHECK_DispSTATUSBAR
-    CONTROL         "タブバー表示(&D)",IDC_CHECK_DispTabWnd,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,102,11,67,10,0,
-                    HIDC_CHECK_DispTabWnd
-    CONTROL         "まとめない(&N)",IDC_CHECK_DispTabWndMultiWin,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,111,25,56,10,0,
-                    HIDC_CHECK_DispTabWndMultiWin
     CONTROL         "水平スクロールバー(&R)",IDC_CHECK_bScrollBarHorz,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,176,11,85,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,96,13,83,10,0,
                     HIDC_CHECK_bScrollBarHorz
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,176,25,85,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,182,13,82,10,0,
                     HIDC_CHECK_bMenuIcon
-    PUSHBUTTON      "位置と大きさの設定(&W)...",IDC_BUTTON_WINSIZE,181,35,79,
+    PUSHBUTTON      "位置と大きさの設定(&W)...",IDC_BUTTON_WINSIZE,185,35,79,
                     14,0,0,HIDC_BUTTON_WINSIZE
+    LTEXT           "タブバー表示は\n[タブバー]タブにあります",
+                    IDC_STATIC,99,30,83,17
     GROUPBOX        "基本設定",IDC_STATIC,3,3,264,49,WS_GROUP
     LTEXT           "ルーラーの高さ(&E)",IDC_STATIC,7,68,55,8
     EDITTEXT        IDC_EDIT_nRulerHeight,96,66,28,12,ES_AUTOHSCROLL,0,
@@ -1347,48 +1345,28 @@ BEGIN
                     IDC_CHECK_SplitterWndHScroll,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,139,107,10
     GROUPBOX        "分割ウィンドウ",IDC_STATIC,3,114,145,39,WS_GROUP
-    LTEXT           "位置",IDC_STATIC,159,82,19,10
+    LTEXT           "位置",IDC_STATIC,159,68,19,10
     CONTROL         "上(&O)",IDC_RADIO_FUNCKEYWND_PLACE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,82,30,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,183,68,30,10,
                     0,HIDC_RADIO_FUNCKEYWND_PLACE1
     CONTROL         "下(&B)",IDC_RADIO_FUNCKEYWND_PLACE2,"Button",
-                    BS_AUTORADIOBUTTON,215,82,30,10,0,
+                    BS_AUTORADIOBUTTON,215,68,30,10,0,
                     HIDC_RADIO_FUNCKEYWND_PLACE2
-    LTEXT           "グループボタン数(&G)",IDC_STATIC,159,95,62,10
-    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,224,94,28,12,ES_AUTOHSCROLL | 
+    LTEXT           "グループボタン数(&G)",IDC_STATIC,159,81,67,10
+    EDITTEXT        IDC_EDIT_FUNCKEYWND_GROUPNUM,226,80,28,12,ES_AUTOHSCROLL | 
                     ES_NUMBER,0,HIDC_EDIT_FUNCKEYWND_GROUPNUM
     CONTROL         "Spin1",IDC_SPIN_FUNCKEYWND_GROUPNUM,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,252,94,10,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,252,80,10,
                     12
-    GROUPBOX        "ファンクションキー",IDC_STATIC,154,70,113,39
-    CONTROL         "等幅(&Q)",IDC_CHECK_SameTabWidth,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,159,126,39,10,0,
-                    HIDC_CHECK_SameTabWidth
-    CONTROL         "アイコン表示(&C)",IDC_CHECK_DispTabIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,200,126,67,10,0,
-                    HIDC_CHECK_DispTabIcon
-    CONTROL         "タブ一覧ソート(&^)",IDC_CHECK_SortTabList,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,159,140,62,10,0,
-                    HIDC_CHECK_SortTabList
-    GROUPBOX        "タブバー",IDC_STATIC,154,114,113,39,WS_GROUP
-    LTEXT           "アクティブ時(&1)",IDC_STATIC,7,171,45,8
-    EDITTEXT        IDC_WINCAPTION_ACTIVE,60,168,201,14,ES_AUTOHSCROLL
-    LTEXT           "非アクティブ時(&2)",IDC_STATIC,7,188,52,8
-    EDITTEXT        IDC_WINCAPTION_INACTIVE,60,185,201,14,ES_AUTOHSCROLL
-    LTEXT           "タブ(&3)",IDC_STATIC,7,204,22,10
-    EDITTEXT        IDC_TABWND_CAPTION,60,202,201,14,ES_AUTOHSCROLL,0,
-                    HIDC_TABWND_CAPTION
-    GROUPBOX        "タイトルバー",IDC_STATIC,3,157,264,63
-    CONTROL         "スタイル-1",IDC_RADIO_nRulerType_0,"Button",
-                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,8,206,45,
-                    10
-    CONTROL         "スタイル-2",IDC_RADIO_nRulerType_1,"Button",
-                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,54,206,47,10
-    GROUPBOX        "★★★非公開テスト機能用★★★",IDC_STATIC,5,197,257,22,
-                    NOT WS_VISIBLE | WS_GROUP
+    GROUPBOX        "ファンクションキー",IDC_STATIC,154,56,113,39
+    LTEXT           "アクティブ時(&1)",IDC_STATIC,7,171,59,8
+    EDITTEXT        IDC_WINCAPTION_ACTIVE,67,168,194,14,ES_AUTOHSCROLL
+    LTEXT           "非アクティブ時(&2)",IDC_STATIC,7,188,58,8
+    EDITTEXT        IDC_WINCAPTION_INACTIVE,67,185,194,14,ES_AUTOHSCROLL
+    GROUPBOX        "タイトルバー",IDC_STATIC,3,157,264,47
 END
 
-IDD_PROP_EDIT DIALOGEX 0, 0, 270, 213
+IDD_PROP_EDIT DIALOGEX 0, 0, 271, 160
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -1415,21 +1393,47 @@ BEGIN
                     WS_GROUP | WS_TABSTOP,8,128,100,10,0,
                     HIDC_CHECK_bNotOverWriteCRLF
     GROUPBOX        "上書きモード",IDC_STATIC,3,113,130,35,WS_GROUP
+    CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,147,19,89,10,0,
+                    HIDC_CHECK_bSelectClickedURL
+    GROUPBOX        "クリッカブルURL",IDC_STATIC,139,7,125,35,WS_GROUP
 END
 
-IDD_PROP_URL DIALOGEX 0, 0, 270, 49
+IDD_PROP_TAB DIALOGEX 0, 0, 271, 160
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,18,89,10,0,
-                    HIDC_CHECK_bSelectClickedURL
-    GROUPBOX        "クリッカブルURL",-1,3,3,264,35,WS_GROUP
+    CONTROL         "タブバーを表示する(&D)",IDC_CHECK_DispTabWnd,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,11,111,10,0,
+                    HIDC_CHECK_DispTabWnd
+    CONTROL         "ウィンドウをひとつにまとめる(&B)",
+                    IDC_CHECK_DispTabWndMultiWin,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,15,40,239,10,0,HIDC_CHECK_DispTabWndMultiWin
+    CONTROL         "最後のファイルを閉じたとき(無題)文書を残す(&R)",
+                    IDC_CHECK_RetainEmptyWindow,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,53,226,12
+    CONTROL         "ウィンドウの閉じるボタンは現在のファイルのみ閉じる(&C)",
+                    IDC_CHECK_CloseOneWin,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,68,226,9
+    GROUPBOX        "動作モード",IDC_STATIC,7,27,258,55
+    CONTROL         "アイコン表示(&I)",IDC_CHECK_DispTabIcon,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,102,63,10,0,
+                    HIDC_CHECK_DispTabIcon
+    CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,102,39,10,0,
+                    HIDC_CHECK_SameTabWidth
+    CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,116,90,10,0,
+                    HIDC_CHECK_SortTabList
+    LTEXT           "タイトル(&T)",IDC_STATIC,15,134,40,10
+    EDITTEXT        IDC_TABWND_CAPTION,56,132,203,14,ES_AUTOHSCROLL,0,
+                    HIDC_TABWND_CAPTION
+    GROUPBOX        "タブの外観",IDC_STATIC,8,89,257,64,WS_GROUP
 END
 
-IDD_PROP_GREP DIALOGEX 0, 0, 271, 139
+IDD_PROP_GREP DIALOGEX 0, 0, 271, 126
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -1452,7 +1456,7 @@ BEGIN
                     HIDC_CHECK_GREPREALTIME
 END
 
-IDD_PROP_BACKUP DIALOGEX 0, 0, 270, 229
+IDD_PROP_BACKUP DIALOGEX 0, 0, 271, 216
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -2141,9 +2145,9 @@ BEGIN
     IDD_PROP1P1, DIALOG
     BEGIN
         LEFTMARGIN, 3
-        RIGHTMARGIN, 264
+        RIGHTMARGIN, 265
         TOPMARGIN, 7
-        BOTTOMMARGIN, 187
+        BOTTOMMARGIN, 206
     END
 
     IDD_FIND, DIALOG
@@ -2158,7 +2162,7 @@ BEGIN
         LEFTMARGIN, 1
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 217
     END
 
     IDD_ABOUT, DIALOG
@@ -2252,9 +2256,9 @@ BEGIN
     IDD_PROP_FORMAT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 263
+        RIGHTMARGIN, 264
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 178
     END
 
     IDD_REPLACERUNNING, DIALOG
@@ -2270,7 +2274,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 263
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 210
     END
 
     IDD_PROP_COLOR, DIALOG
@@ -2333,23 +2337,23 @@ BEGIN
         LEFTMARGIN, 2
         RIGHTMARGIN, 269
         TOPMARGIN, 2
-        BOTTOMMARGIN, 222
+        BOTTOMMARGIN, 206
     END
 
     IDD_PROP_EDIT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 263
+        RIGHTMARGIN, 264
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 153
     END
 
-    IDD_PROP_URL, DIALOG
+    IDD_PROP_TAB, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 263
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 42
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 270
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 158
     END
 
     IDD_PROP_GREP, DIALOG
@@ -2357,15 +2361,15 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 265
         TOPMARGIN, 7
-        BOTTOMMARGIN, 132
+        BOTTOMMARGIN, 119
     END
 
     IDD_PROP_BACKUP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 263
+        RIGHTMARGIN, 264
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 213
     END
 
     IDD_EXEC, DIALOG
@@ -2683,6 +2687,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_EXITALLEDITORS        "編集の全終了"
     F_EXITALL               "サクラエディタの全終了"
     F_CHAR                  "文字入力"
     F_IME_CHAR              "全角文字入力"
@@ -2982,7 +2987,7 @@ BEGIN
     F_SHOWTOOLBAR           "ツールバーの表示／非表示"
     F_SHOWFUNCKEY           "ファンクションキーの表示／非表示"
     F_SHOWSTATUSBAR         "ステータスバーの表示／非表示"
-    F_SHOWTAB               "タブの表示／非表示"
+    F_SHOWTAB               "タブバーの表示／非表示"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3028,7 +3033,7 @@ BEGIN
     F_CASCADE               "重ねて表示"
     F_TILE_V                "上下に並べて表示"
     F_TILE_H                "左右に並べて表示"
-    F_BIND_WINDOW           "結合して表示"
+    F_BIND_WINDOW           "ひとつにまとめて表示"
     F_TOPMOST               "常に手前に表示"
     F_WINLIST               "ウィンドウ一覧"
     F_NEXTWINDOW            "次のウィンドウ"

@@ -90,6 +90,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_BROWSE,						"Browse",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブラウズ
 	{F_READONLY,					"ReadOnly",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //読み取り専用
 	{F_PROPERTY_FILE,				"PropertyFile",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルのプロパティ
+	{F_EXITALLEDITORS,				"ExitAllEditors",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //編集の全終了	// 2007.02.13 ryoji 追加
 	{F_EXITALL,						"ExitAll",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */
@@ -717,6 +718,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_PLSQL_COMPILE_ON_SQLPLUS	:/* Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
 ///	case F_BROWSE					://ブラウズ
 //	case F_PROPERTY_FILE			://ファイルのプロパティ
+//	case F_EXITALLEDITORS			://編集の全終了	// 2007.02.13 ryoji 追加
 //	case F_EXITALL					://サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 
 	/* 編集系 */

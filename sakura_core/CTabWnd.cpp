@@ -10,6 +10,7 @@
 	Copyright (C) 2004, Moca, MIK, genta, Kazika
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji, fon
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -823,7 +824,18 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			GetCloseBtnRect( &rc, &rcBtn );
 			if( ::PtInRect( &rcBtn, pt ) )
 			{
-				int nId = ( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )? F_WINCLOSE: F_WIN_CLOSEALL;
+				int nId;
+				if( m_pShareData->m_Common.m_bDispTabWnd &&
+					!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
+					!m_pShareData->m_Common.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加
+					)
+				{
+					nId = F_WINCLOSE;	// 閉じる（タイトルバーの閉じるボタンは編集の全終了）
+				}
+				else
+				{
+					nId = F_EXITALLEDITORS;	// 編集の全終了（タイトルバーの閉じるボタンは１個だけ閉じる）
+				}
 				::PostMessage( m_hwndParent, WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
 			}
 		}
@@ -1837,7 +1849,10 @@ void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
 	hpenOld = (HPEN)::SelectObject( hdc, hpen );
 	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd &&
+		!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
+		!m_pShareData->m_Common.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加（ウィンドウの閉じるボタンは全部閉じる）
+		)
 	{
 		// [x]を描画（直線6本）
 		for( i = 0; i < sizeof(ptBase1)/sizeof(ptBase1[0]); i++ )
