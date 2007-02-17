@@ -273,6 +273,7 @@ BOOL CEditView::HandleCommand(
 	case F_BROWSE:				Command_BROWSE();break;				/* ブラウズ */
 	case F_READONLY:			Command_READONLY();break;			/* 読み取り専用 */
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
+	case F_EXITALLEDITORS:		Command_EXITALLEDITORS();break;		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
 
 	/* 編集系 */
@@ -8320,6 +8321,13 @@ void CEditView::Command_PROPERTY_FILE( void )
 
 
 
+/* 編集の全終了 */	// 2007.02.13 ryoji 追加
+void CEditView::Command_EXITALLEDITORS( void )
+{
+	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE );
+	return;
+}
+
 /* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 void CEditView::Command_EXITALL( void )
 {
@@ -8333,7 +8341,7 @@ void CEditView::Command_EXITALL( void )
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 void CEditView::Command_FILECLOSEALL( void )
 {
-	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent) );	// 2006.12.25 ryoji 引数追加
+	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), FALSE );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	return;
 }
 
@@ -8344,14 +8352,7 @@ void CEditView::Command_FILECLOSEALL( void )
 void CEditView::Command_WINCLOSE( void )
 {
 	/* 閉じる */
-	// タブまとめ表示で残ウィンドウが１個の場合は「閉じて無題」	// 2006.10.21 ryoji
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
-		if( 1 == CShareData::getInstance()->GetEditorWindowsNum() ){
-			Command_FILECLOSE();
-			return;
-		}
-	}
-	::PostMessage( ::GetParent( m_hwndParent ), WM_CLOSE, 0, 0 );
+	::PostMessage( ::GetParent( m_hwndParent ), MYWM_CLOSE, FALSE, 0 );	// 2007.02.13 ryoji WM_CLOSE→MYWM_CLOSEに変更
 	return;
 }
 

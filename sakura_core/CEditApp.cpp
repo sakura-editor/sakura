@@ -1071,11 +1071,10 @@ LRESULT CEditApp::DispatchEvent(
 					CShareData::getInstance()->PostMessageToAllEditors(
 						WM_COMMAND, MAKELONG( F_FILESAVE_QUIET, 0 ), (LPARAM)0, NULL);
 					break;
-				case F_WIN_CLOSEALL:	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
-					/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-					CEditApp::CloseAllEditor( TRUE, m_hWnd );	// 2006.12.25 ryoji 引数追加
+				case F_EXITALLEDITORS:	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	// 2007.02.13 ryoji →F_EXITALLEDITORS
+					/* 編集の全終了 */
+					CEditApp::CloseAllEditor( TRUE, m_hWnd, TRUE );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 					break;
-//				case IDM_EXITALL:
 				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
 					/* サクラエディタの全終了 */
 					CEditApp::TerminateApplication( m_hWnd );	// 2006.12.25 ryoji 引数追加
@@ -1272,7 +1271,7 @@ LRESULT CEditApp::DispatchEvent(
 
 		case WM_QUERYENDSESSION:
 			/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-			if( CloseAllEditor( FALSE, m_hWnd ) ){	// 2006.12.25 ryoji 引数追加
+			if( CloseAllEditor( FALSE, m_hWnd, TRUE ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 				//	Jan. 31, 2000 genta
 				//	この時点ではWindowsの終了が確定していないので常駐解除すべきではない．
 				//	DestroyWindow( hwnd );
@@ -1282,7 +1281,7 @@ LRESULT CEditApp::DispatchEvent(
 			}
 		case WM_CLOSE:
 			/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-			if( CloseAllEditor( FALSE, m_hWnd ) ){	// 2006.12.25 ryoji 引数追加
+			if( CloseAllEditor( FALSE, m_hWnd, TRUE ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 				DestroyWindow( hwnd );
 			}
 			return 0L;
@@ -1590,7 +1589,7 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 	}
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	BOOL bCheckConfirm = (pShareData->m_Common.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
-	if( CloseAllEditor( bCheckConfirm, hWndFrom ) ){	// 2006.12.25 ryoji 引数追加
+	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 		::PostMessage( pShareData->m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
@@ -1603,12 +1602,14 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 
 	@param bCheckConfirm [in] [すべて閉じる]確認オプションに従って問い合わせをするかどうか
 	@param hWndFrom [in] 呼び出し元のウィンドウハンドル
+	@param bExit [in] TRUE: 編集の全終了 / FALSE: すべて閉じる
 
 	@date Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2006.12.25 ryoji 複数の編集ウィンドウを閉じるときの確認（引数追加）
+	@date 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
 */
-BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom )
+BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit )
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();	/* 共有データ構造体のアドレスを返す */
 
@@ -1620,7 +1621,7 @@ BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom )
 				NULL,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
-				"現在開いている編集用のウィンドウをすべて閉じますか?"
+				"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
 			) ){
 				return FALSE;
 			}
@@ -1628,7 +1629,7 @@ BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom )
 	}
 
 	/* 全編集ウィンドウへ終了要求を出す */
-	if( !CShareData::getInstance()->RequestCloseAllEditor() ){
+	if( !CShareData::getInstance()->RequestCloseAllEditor( bExit ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 		return FALSE;
 	}else{
 		return TRUE;
@@ -1703,8 +1704,6 @@ int	CEditApp::CreatePopUpMenu_L( void )
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, "すべて上書き保存(&Z)", FALSE );	// Jan. 24, 2005 genta
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL, "すべて閉じる(&Q)", FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更
-
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
@@ -1763,12 +1762,13 @@ int	CEditApp::CreatePopUpMenu_L( void )
 			}
 		}
 	}
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, "編集の全終了(&Q)", FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 	if( j == 0 ){
-		::EnableMenuItem( hMenu, F_WIN_CLOSEALL, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+		::EnableMenuItem( hMenu, F_EXITALLEDITORS, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	// 2007.02.13 ryoji →F_EXITALLEDITORS
 		::EnableMenuItem( hMenu, F_FILESAVEALL, MF_BYCOMMAND | MF_GRAYED );	// Jan. 24, 2005 genta
 	}
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	//	Jun. 9, 2001 genta ソフトウェア名改称
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, "サクラエディタの全終了(&X)", FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 

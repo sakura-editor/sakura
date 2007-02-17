@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, novice, Moca, MIK
 	Copyright (C) 2005, genta, D.S.Koba, Moca, ryoji, aroka
 	Copyright (C) 2006, genta, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1938,7 +1939,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_READONLY:			return HLP000249;			//読み取り専用
 	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
 
-//	case IDM_EXITALL:			return 28;			//テキストエディタの全終了
+	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
 	case F_EXITALL:			return HLP000028;				//サクラエディタの全終了	//Dec. 26, 2000 JEPRO F_に変更
 
 
@@ -2164,11 +2165,12 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TYPE_KEYHELP:	return HLP000315;	/* タイプ別設定『キーワードヘルプ』 */	// 2006.10.06 ryoji 追加
 	case F_OPTION_GENERAL:	return HLP000081;	/* 共通設定『全般』 */
 	case F_OPTION_WINDOW:	return HLP000146;	/* 共通設定『ウィンドウ』 */
+	case F_OPTION_TAB:		return HLP000150;	/* 共通設定『タブバー』 */	// 2007.02.13 ryoji 追加
 	case F_OPTION_EDIT:		return HLP000144;	/* 共通設定『編集』 */
 	case F_OPTION_FILE:		return HLP000083;	/* 共通設定『ファイル』 */
 	case F_OPTION_BACKUP:	return HLP000145;	/* 共通設定『バックアップ』 */
 	case F_OPTION_FORMAT:	return HLP000082;	/* 共通設定『書式』 */
-	case F_OPTION_URL:		return HLP000147;	/* 共通設定『クリッカブルURL』 */
+//	case F_OPTION_URL:		return HLP000147;	/* 共通設定『クリッカブルURL』 */
 	case F_OPTION_GREP:		return HLP000148;	/* 共通設定『Grep』 */
 	case F_OPTION_KEYBIND:	return HLP000084;	/* 共通設定『キー割り当て』 */
 	case F_OPTION_CUSTMENU:	return HLP000087;	/* 共通設定『カスタムメニュー』 */

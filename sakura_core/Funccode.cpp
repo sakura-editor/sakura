@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, isearch
 	Copyright (C) 2005, genta, MIK
 	Copyright (C) 2006, aroka, ryoji, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -90,7 +91,7 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_BROWSE			,	//ブラウズ
 	F_READONLY			,	//読み取り専用
 	F_PROPERTY_FILE		,	/* ファイルのプロパティ */
-	F_WIN_CLOSEALL		,	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Oct.17,2000 コマンド本家は「ウィンドウ系」	//Feb. 18, 2001	JEPRO 上から移動した
+	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 };
 const int nFincList_File_Num = sizeof( pnFuncList_File ) / sizeof( pnFuncList_File[0] );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)

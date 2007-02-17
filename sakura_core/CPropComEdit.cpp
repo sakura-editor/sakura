@@ -10,6 +10,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -29,6 +30,8 @@ static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_DRAGDROP,					HIDC_CHECK_DRAGDROP,					//Drag&Drop編集する
 	IDC_CHECK_DROPSOURCE,				HIDC_CHECK_DROPSOURCE,					//ドロップ元にする
 	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//上書きモード
+	//	2007.02.11 genta クリッカブルURLをこのページに移動
+	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//クリッカブルURL
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -196,6 +199,9 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 
 	/* 改行は上書きしない */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bNotOverWriteCRLF, m_Common.m_bNotOverWriteCRLF );
+
+	//	URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_bSelectClickedURL );
 	return;
 }
 
@@ -222,6 +228,9 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 
 	/* 改行は上書きしない */
 	m_Common.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );
+
+	/* URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
+	m_Common.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
 	return TRUE;
 }
 

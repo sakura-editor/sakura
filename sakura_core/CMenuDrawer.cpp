@@ -12,6 +12,7 @@
 	Copyright (C) 2004, Kazika, genta, Moca, isearch
 	Copyright (C) 2005, genta, MIK, aroka
 	Copyright (C) 2006, aroka, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -151,7 +152,7 @@ CMenuDrawer::CMenuDrawer()
 /* 28 */		F_FILESAVECLOSE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//保存して閉じる Feb. 28, 2004 genta
 /* 29 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 30 */		F_FILESAVEALL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全て上書き保存 Jan. 24, 2005 genta
-/* 31 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 31 */		F_EXITALLEDITORS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//編集の全終了	// 2007.02.13 ryoji 追加
 /* 32 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* 編集系(2段目32個: 32-64) */

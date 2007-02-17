@@ -14,7 +14,7 @@
 	Copyright (C) 2004, MIK, Moca, D.S.Koba, genta
 	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -520,6 +520,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bSameTabWidth"			, common.m_bSameTabWidth );	// 2006.01.28 ryoji タブを等幅にする
 	cProfile.IOProfileData( pszSecName, "bDispTabIcon"			, common.m_bDispTabIcon );	// 2006.01.28 ryoji タブにアイコンを表示する
 	cProfile.IOProfileData( pszSecName, "bSortTabList"			, common.m_bSortTabList );	// 2006.05.10 ryoji タブ一覧をソートする
+	cProfile.IOProfileData( pszSecName, "bTab_RetainEmptyWin"	, common.m_bTab_RetainEmptyWin );	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
+	cProfile.IOProfileData( pszSecName, "bTab_CloseOneWin"	, common.m_bTab_CloseOneWin );	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_bSplitterWndHScroll );

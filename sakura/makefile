@@ -187,8 +187,8 @@ OBJS =\
 	$(OBJDIR)\CPropComKeyword.obj \
 	$(OBJDIR)\CPropCommon.obj \
 	$(OBJDIR)\CPropComMacro.obj \
+	$(OBJDIR)\CPropComTab.obj \
 	$(OBJDIR)\CPropComToolbar.obj \
-	$(OBJDIR)\CPropComUrl.obj \
 	$(OBJDIR)\CPropComWin.obj \
 	$(OBJDIR)\CPropTypes.obj \
 	$(OBJDIR)\CPropTypesKeyHelp.obj \

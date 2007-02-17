@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI, aroka, Moca
 	Copyright (C) 2005, MIK, Moca, aroka
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, genta, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -31,11 +32,11 @@ class CMenuDrawer;// 2002/2/10 aroka to here
 
 #define ID_PAGENUM_ZENPAN	0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
 #define ID_PAGENUM_WIN		1	//Oct. 25, 2000 JEPRO  5→ 1 に変更
-#define ID_PAGENUM_EDIT		2
-#define ID_PAGENUM_FILE		3
-#define ID_PAGENUM_BACKUP	4
-#define ID_PAGENUM_FORMAT	5	//Oct. 25, 2000 JEPRO  1→ 5 に変更
-#define ID_PAGENUM_URL		6
+#define ID_PAGENUM_TAB		2	//Feb. 11, 2007 genta URLと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
+#define ID_PAGENUM_EDIT		3
+#define ID_PAGENUM_FILE		4
+#define ID_PAGENUM_BACKUP	5
+#define ID_PAGENUM_FORMAT	6	//Oct. 25, 2000 JEPRO  1→ 5 に変更
 #define ID_PAGENUM_GREP		7
 #define ID_PAGENUM_KEYBOARD	8
 #define ID_PAGENUM_CUSTMENU	9	//Oct. 25, 2000 JEPRO 11→ 9 に変更
@@ -241,13 +242,14 @@ protected:
 	int GetData_PROP_WIN( HWND );
 
 	//==============================================================
-	//!	クリッカブルURLページのDialog Procedure
-	static INT_PTR CALLBACK DlgProc_PROP_URL(
+	//!	タブ動作ページのDialog Procedure
+	static INT_PTR CALLBACK DlgProc_PROP_TAB(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	//! Message Handler for clickable URL page
-	INT_PTR DispatchEvent_PROP_URL( HWND, UINT, WPARAM, LPARAM );
-	void SetData_PROP_URL( HWND );
-	int GetData_PROP_URL( HWND );
+	//! Message Handler for TAB page
+	INT_PTR DispatchEvent_PROP_TAB( HWND, UINT, WPARAM, LPARAM );
+	void SetData_PROP_TAB( HWND );
+	int GetData_PROP_TAB( HWND );
+	void EnableTabPropInput(HWND hwndDlg);
 
 	//==============================================================
 	//!	編集ページのDialog Procedure

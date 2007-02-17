@@ -11,6 +11,7 @@
 	Copyright (C) 2003, MIK, KEITA, genta
 	Copyright (C) 2004, Moca
 	Copyright (C) 2006, ryoji, fon
+	Copyright (C) 2007, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -26,8 +27,6 @@
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispFUNCKEYWND,		HIDC_CHECK_DispFUNCKEYWND,		//ファンクションキー表示
-	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//タブウインドウ表示	//@@@ 2003.05.31 MIK
-	IDC_CHECK_DispTabWndMultiWin,	HIDC_CHECK_DispTabWndMultiWin,	//タブウインドウ表示	//@@@ 2003.05.31 MIK
 	IDC_CHECK_DispSTATUSBAR,		HIDC_CHECK_DispSTATUSBAR,		//ステータスバー表示
 	IDC_CHECK_DispTOOLBAR,			HIDC_CHECK_DispTOOLBAR,			//ツールバー表示
 	IDC_CHECK_bScrollBarHorz,		HIDC_CHECK_bScrollBarHorz,		//水平スクロールバー
@@ -46,11 +45,8 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_SPIN_FUNCKEYWND_GROUPNUM,	HIDC_EDIT_FUNCKEYWND_GROUPNUM,
 	IDC_WINCAPTION_ACTIVE,			HIDC_WINCAPTION_ACTIVE,			//アクティブ時	//@@@ 2003.06.15 MIK
 	IDC_WINCAPTION_INACTIVE,		HIDC_WINCAPTION_INACTIVE,		//非アクティブ時	//@@@ 2003.06.15 MIK
-	IDC_TABWND_CAPTION,				HIDC_TABWND_CAPTION,			//タブウインドウキャプション	//@@@ 2003.06.15 MIK
 	IDC_BUTTON_WINSIZE,				HIDC_BUTTON_WINSIZE,			//位置と大きさの設定	// 2006.08.06 ryoji
-	IDC_CHECK_SameTabWidth,			HIDC_CHECK_SameTabWidth,		//等幅	// 2006.08.06 ryoji
-	IDC_CHECK_DispTabIcon,			HIDC_CHECK_DispTabIcon,			//アイコン表示	// 2006.08.06 ryoji
-	IDC_CHECK_SortTabList,			HIDC_CHECK_SortTabList,			//タブ一覧ソート	// 2006.08.06 ryoji
+	//	Feb. 11, 2007 genta TAB関連は「タブバー」シートへ移動
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -237,19 +233,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 				EnableWinPropInput( hwndDlg );
 				break;
 
-			//@@@ 2003.06.13 MIK
-			case IDC_CHECK_DispTabWnd:
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd ) )
-				{
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), TRUE );
-					//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), TRUE );
-				}
-				else
-				{
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
-					//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
-				}
-				break;
 			// From Here 2004.05.13 Moca 「位置と大きさの設定」ボタン
 			//	ウィンドウ設定ダイアログにて起動時のウィンドウ状態指定
 			case IDC_BUTTON_WINSIZE:
@@ -322,20 +305,10 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, m_Common.m_nFUNCKEYWND_GroupNum, FALSE );
 
 	//From Here@@@ 2003.06.13 MIK
-	/* 次回ウィンドウを開いたときタブを表示する */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, m_Common.m_bDispTabWndMultiWin );	//@@@ 2003.05.31 MIK
-	if( FALSE == m_Common.m_bDispTabWnd )
-	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
-		//::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
-	}
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
-	::SetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption );
+	//	Feb. 12, 2007 genta TAB関連は「タブバー」シートへ移動
+
 	//To Here@@@ 2003.06.13 MIK
-	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_bSortTabList );			//@@@ 2006.03.23 fon
+	//	Feb. 11, 2007 genta TAB関連は「タブバー」シートへ移動
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispSTATUSBAR, m_Common.m_bDispSTATUSBAR );
@@ -415,14 +388,8 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	}
 
 	//From Here@@@ 2003.06.13 MIK
-	/* 次回ウィンドウを開いたときタブを表示する */
-	m_Common.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
-	m_Common.m_bDispTabWndMultiWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin );
-	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption, sizeof( m_Common.m_szTabWndCaption ) );
+	//	Feb. 12, 2007 genta TAB関連は「タブバー」シートへ移動
 	//To Here@@@ 2003.06.13 MIK
-	m_Common.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
-	m_Common.m_bDispTabIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabIcon );		// 2006.01.28 ryoji
-	m_Common.m_bSortTabList = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SortTabList );		// 2006.03.23 fon
 
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	m_Common.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );

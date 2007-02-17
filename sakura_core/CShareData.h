@@ -483,6 +483,9 @@ struct Common {
 
 	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
 	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
+	BOOL				m_bTab_RetainEmptyWin;			//!< 最後の文書が閉じられたとき(無題)を残す
+	BOOL				m_bTab_CloseOneWin;		//!< タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる
+
 	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL				m_bSameTabWidth;				//タブを等幅にする			//@@@ 2006.01.28 ryoji
 	BOOL				m_bDispTabIcon;					//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
@@ -743,7 +746,7 @@ public:
 	BOOL AddEditWndList( HWND );								/* 編集ウィンドウの登録 */
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 
-	BOOL RequestCloseAllEditor( void );							/* 全編集ウィンドウへ終了要求を出す */
+	BOOL RequestCloseAllEditor( BOOL bExit );					/* 全編集ウィンドウへ終了要求を出す */	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
 	BOOL IsPathOpened( const char*, HWND* );					/* 指定ファイルが開かれているか調べる */
 	int GetEditorWindowsNum( void );							/* 現在の編集ウィンドウの数を調べる */
 	BOOL PostMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージをポストする */
