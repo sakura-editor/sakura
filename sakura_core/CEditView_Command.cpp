@@ -8511,7 +8511,8 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 	m_pShareData->m_nKeyNameArrNum,
 	m_pShareData->m_pKeyNameArr,
 	cMemKeyList,
-	&m_pcEditDoc->m_cFuncLookup	//	Oct. 31, 2001 genta 追加
+	&m_pcEditDoc->m_cFuncLookup,	//	Oct. 31, 2001 genta 追加
+	FALSE	// 2007.02.22 ryoji 追加
 	 );
 
 	// Windowsクリップボードにコピー
