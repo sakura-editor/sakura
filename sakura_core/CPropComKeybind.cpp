@@ -9,6 +9,7 @@
 	Copyright (C) 2002, MIK, YAZAKI, aroka
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -342,7 +343,11 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
 //				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				/* 機能に対応するキー名の取得(複数) */
-				nAssignedKeyNum =  CKeyBind::GetKeyStrList( m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr, &ppcAssignedKeyList, nFuncCode );	/* 機能に対応するキー名の取得(複数) */
+				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
+					m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr,
+					&ppcAssignedKeyList, nFuncCode,
+					FALSE	// 2007.02.22 ryoji デフォルト機能は取得しない
+				);	
 				/* 割り当てキーリストをクリアして値の設定 */
 				::SendMessage( hwndAssignedkeyList, LB_RESETCONTENT, 0, 0 );
 				if( 0 < nAssignedKeyNum){

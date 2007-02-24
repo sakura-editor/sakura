@@ -4369,7 +4369,8 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//Jun. 2001「サクラエディタの全終了」に改称
 		//2006.10.21 ryoji Alt+F4 には何も割り当てない（デフォルトのシステムコマンド「閉じる」が実行されるように）
 		//2007.02.13 ryoji Shift+Ctrl+F4をF_WIN_CLOSEALLからF_EXITALLEDITORSに変更
-		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, F_FILECLOSE, F_FILECLOSE_OPEN, 0, F_EXITALLEDITORS, F_EXITALL, 0 },
+		//2007.02.22 ryoji Ctrl+F4 への割り当てを削除（デフォルトのコマンドを実行）
+		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, 0, F_FILECLOSE_OPEN, 0, F_EXITALLEDITORS, F_EXITALL, 0 },
 	//	From Here Sept. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
 	//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND_DIALOG, 0, 0, 0, 0, 0 },
 	//	To Here Sept. 20, 2000

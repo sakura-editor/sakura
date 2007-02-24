@@ -47,6 +47,7 @@
 #include "CSMacroMgr.h" // Jun. 16, 2002 genta
 #include "COsVersioninfo.h"	// Sep. 6, 2003 genta
 #include "CRunningTimer.h"
+#include "KeyCode.h"
 
 
 #define IDT_TOOLBAR1	455  // 20060128 aroka
@@ -1402,17 +1403,10 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 		//	Feb. 11, 2007 genta 動作を選べるように(MDI風と従来動作)
+		// 2007.02.22 ryoji Alt+F4 のデフォルト機能でモード毎の動作が得られるようになった
 		if( wParam == SC_CLOSE ){
-			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
-				if( !m_pShareData->m_Common.m_bTab_CloseOneWin ){
-					::PostMessage( m_hWnd, WM_COMMAND, MAKEWPARAM( F_EXITALLEDITORS, 0 ), (LPARAM)NULL );	// 編集の全終了
-					return 0L;
-				}
-				else if( m_pShareData->m_Common.m_bTab_RetainEmptyWin ){
-					::PostMessage( m_hWnd, MYWM_CLOSE, MAKEWPARAM( 0, 0 ), (LPARAM)NULL );	// (無題)を残す
-					return 0L;
-				}
-			}
+			OnCommand( 0, CKeyBind::GetDefFuncCode( VK_F4, _ALT ), NULL );
+			return 0L;
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	case WM_IME_COMPOSITION:

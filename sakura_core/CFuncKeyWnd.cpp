@@ -383,7 +383,6 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //	int			nFuncId;
 	int			i;
 	int			nFuncCode;
-	int			nOffF1;
 
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
@@ -392,20 +391,14 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	if( nIdx != m_nCurrentKeyState ){
 		m_nTimerCount = TIMER_CHECKFUNCENABLE + 1;
 
-		/* [F1]キーの位置を捜す */
-		for( i = 0; i < m_pShareData->m_nKeyNameArrNum; ++i ){
-			if( VK_F1 == m_pShareData->m_pKeyNameArr[i].m_nKeyCode ){
-				break;
-			}
-		}
-		if( i >= m_pShareData->m_nKeyNameArrNum ){
-			m_nCurrentKeyState = nIdx;
-			return 0;
-		}
-		nOffF1 = i;
 		/* ファンクションキーの機能名を取得 */
 		for( i = 0; i < sizeof( m_szFuncNameArr ) / sizeof( m_szFuncNameArr[0] ); ++i ){
-			nFuncCode = m_pShareData->m_pKeyNameArr[nOffF1 + i].m_nFuncCodeArr[nIdx];
+			// 2007.02.22 ryoji CKeyBind::GetFuncCode()を使う
+			nFuncCode = CKeyBind::GetFuncCode(
+					(((VK_F1 + i) | ((WORD)((BYTE)(nIdx))) << 8)),
+					m_pShareData->m_nKeyNameArrNum,
+					m_pShareData->m_pKeyNameArr
+			);
 			if( nFuncCode != m_nFuncCodeArr[i] ){
 				m_nFuncCodeArr[i] = nFuncCode;
 				if( 0 == m_nFuncCodeArr[i] ){

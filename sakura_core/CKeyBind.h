@@ -59,12 +59,22 @@ public:
 	||  参照系メンバ関数
 	*/
 	static HACCEL CreateAccerelator( int, KEYDATA* );
-	static int GetFuncCode( WORD, int, KEYDATA* );
+	static int GetFuncCode( WORD nAccelCmd, int nKeyNameArrNum, KEYDATA* pKeyNameArr, BOOL bGetDefFuncCode = TRUE );
+	static int GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode = TRUE )	/* 特定のキー情報から機能コードを取得する */	// 2007.02.24 ryoji
+	{
+		if( 0 != KeyData.m_nFuncCodeArr[nState] )
+			return KeyData.m_nFuncCodeArr[nState];
+		if( bGetDefFuncCode )
+			return GetDefFuncCode( KeyData.m_nKeyCode, nState );
+		return 0;
+	};
+	static int GetDefFuncCode( int nKeyCode, int nState );	/* キーのデフォルト機能を取得する */	// 2007.02.22 ryoji
+
 	//! キー割り当て一覧を作成する
-	static int CreateKeyBindList( HINSTANCE, int, KEYDATA*, CMemory&, CFuncLookup* );
-	static int GetKeyStr( HINSTANCE, int, KEYDATA*, CMemory&, int );	/* 機能に対応するキー名の取得 */
-	static int CKeyBind::GetKeyStrList( HINSTANCE, int, KEYDATA*, CMemory***, int );	/* 機能に対応するキー名の取得(複数) */
-	static char* GetMenuLabel( HINSTANCE, int, KEYDATA*, int, char*, BOOL );	/* メニューラベルの作成 */
+	static int CreateKeyBindList( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CMemory& cMemList, CFuncLookup* pcFuncLookup, BOOL bGetDefFuncCode = TRUE );
+	static int GetKeyStr( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CMemory& cMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得 */
+	static int GetKeyStrList( HINSTANCE	hInstance, int nKeyNameArrNum,KEYDATA* pKeyNameArr, CMemory*** pppcMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得(複数) */
+	static char* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, char* pszLabel, BOOL bKeyStr, BOOL bGetDefFuncCode = TRUE );	/* メニューラベルの作成 */
 
 	/*
 	||  更新系メンバ関数
