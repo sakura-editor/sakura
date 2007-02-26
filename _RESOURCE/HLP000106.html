@@ -3,8 +3,8 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>タブ表示</TITLE>
-<META NAME="MS-HKWD" CONTENT="タブ表示">
+<TITLE>タブバー</TITLE>
+<META NAME="MS-HKWD" CONTENT="タブバー">
 </HEAD>
 <BODY>
 <script type="text/javascript">
@@ -21,34 +21,36 @@ if (window.event.keyCode == 27)
 aaHHCtlCloseWin.Click(); }
 // -->
 </script>
-<h2>タブ表示</h2>
+<h2>タブバー</h2>
 
-<div class=li200>
-・タブ表示は<a href="HLP000146.html">共通設定 『ウィンドウ』プロパティ</a>で設定できます。<br>
-・タブ上で右クリックすると「タブメニュー」が開かれます。<br>
-・２つの表示モードがあり、<a href="HLP000146.html">共通設定 『ウィンドウ』プロパティ</a>の基本設定「まとめない」で切り替えます。<br>
-</div><br>
-
-<h3>タブバー</h3>
+<a href="HLP000146.html">共通設定 『タブバー』プロパティ</a>の設定により、タブ型エディタのような動作になります。<br>
 タブバーの右端には[▼]ボタンと、[×]ボタンまたは[XX]ボタンがあります。<br>
+<br>
 <b>[▼]ボタン</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000097.html">ウィンドウリスト</a>を表示します。<br>
 <b>[×]ボタン</b>(sakura:1.5.15.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;「まとめない」無効のときに表示され、現在のタブを閉じる動作です。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;タイトルバーの[×]ボタンは「<a href="HLP000019.html">すべて閉じる</a>」の動作になります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;現在のタブを閉じる動作です。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;このときウィンドウの[×](閉じる)ボタンはウィンドウを閉じる動作になります。『<a href="HLP000030.html">編集の全終了</a>』に相当します。<br>
 <b>[XX]ボタン</b>(sakura:1.5.15.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;「まとめない」ときに表示され、「<a href="HLP000019.html">すべて閉じる</a>」の動作になります。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;タイトルバーの[×]ボタンは、現在のタブを閉じます。（タブ非表示時と同様の動作）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ウィンドウを閉じる動作です。『<a href="HLP000030.html">編集の全終了</a>』に相当します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;このときウィンドウの[×](閉じる)ボタンは、現在のタブを閉じる動作になります。<br>
 
 <br>
 <img src="images/TabView1.png"><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>【図1】「まとめない」が無効</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>【図1】ウィンドウをひとつにまとめる設定のとき</b><br>
 <br>
 <img src="images/TabView2.png"><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>【図2】「まとめない」が有効</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>【図2】ウィンドウをまとめない設定のとき</b><br>
 <br>
-<img src="images/note.png"><b>注意</b><br>
-sakura:1.5.15.0より前のバージョンではタイトルバーの[×]ボタンを押しても編集中のウィンドウしか閉じませんが、これは仕様です。すべてのウィンドウを閉じる場合にはファイルメニュー「すべてのウィンドウを閉じる」をお使いください。
+<img src="images/hint.png">ヒント<br>
+<Ul>
+<li><a href = "HLP000019.html">『すべて閉じる』</a>は<a href = "HLP000018.html">『閉じる』</a>の一括実行です。よってウィンドウも閉じるかどうかは設定に左右されます。</li>
+<li><a href = "HLP000030.html">『編集の全終了』</a>はすべてのタブおよびウィンドウを閉じます。タスクトレイを使わない設定のときは<a href = "HLP000028.html">『サクラエディタの全終了』</a>と同じ結果が得られます。</li>
+<li><a href = "HLP000028.html">『サクラエディタの全終了』</a>は、各設定内容にかかわらず、すべてのタブ・ウィンドウ・コントロールプロセスを終了します。</li>
+</ul>
 <br>
 
+<img src="images/hint.png">ヒント<br>
+一般のタブ型アプリケーションでは、すべてのタブを閉じたときにウィンドウ自体は閉じられることはなく、新規のタブがひとつ開かれます。またウィンドウの[×]ボタン、つまりタイトルバーにある最大化ボタンの右の閉じるボタンでは、すべてのタブおよびウィンドウを閉じる動作になります。
+サクラエディタでもタブバー表示時のデフォルトでは、これに準ずる動作になっていますが、タブバーの設定により動作が変わります。
 </BODY></HTML>

@@ -3,7 +3,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>変更履歴(2007/01/31～)</TITLE>
+<TITLE>変更履歴(2007/02/27～)</TITLE>
 <META NAME="MS-HKWD" CONTENT="変更履歴">
 </HEAD>
 <BODY>
@@ -22,7 +22,22 @@ aaHHCtlCloseWin.Click(); }
 // -->
 </script>
 
-<h2>変更履歴(2007/01/31～)</h2>
+<h2>変更履歴(2007/02/27～)</h2>
+<h3>Feb. 25, 2007 (1.5.15.2)</h3>
+[仕様変更]<br>
+<ul>
+	<li>共通設定画面の修正：「タブバー」の追加，「クリッカブルURL」の「編集」シートへの移動，その他(svn:1065 patches:1651116 data:5838 ryoji genta)</li>
+	<li>タブモードにて最後のファイルを閉じたときの動作をオプション化(svn:1066 patches:1658318 data:5838 genta ryoji)</li>
+	<li>タブモードにてウィンドウを閉じるボタンの動作をオプション化(svn:1066 patches:1658318 data:5834 genta)</li>
+	<li>「編集の全終了」コマンド追加．1.5.14.0以前の「すべて閉じる」(もしくは「すべてのウィンドウを閉じる」)に相当するもの．すべてのタブを閉じてもウィンドウがひとつ残る設定のときでもウィンドウを閉じる点で「すべて閉じる」とは異なる．(svn:1066 patches:1658318 data:5838 ryoji)</li>
+	<li>「閉じて(無題)」にて，現在のプロセスは一旦終了して，新しいプロセスを起動するように(svn:1066 patches:1658318 data:5838 ryoji)</li>
+</ul>
+[その他変更]<br>
+<ul>
+	<li>新しいタブを作成するとき，追加のタブが現れるまで非アクティブになる現象の対策(svn:1065 patches:1651116 ryoji)</li>
+	<li>ファンクションキーを作成するときに，一瞬表示される未完成のファンクションキーの対策(svn:1065 patches:1651116 ryoji)</li>
+</ul>
+
 <h3>Jan. 31, 2007 (1.5.15.1 )</h3>
 [バグ修正]<br>
 <ul>
