@@ -1405,6 +1405,11 @@ LRESULT CEditWnd::DispatchEvent(
 		//	Feb. 11, 2007 genta 動作を選べるように(MDI風と従来動作)
 		// 2007.02.22 ryoji Alt+F4 のデフォルト機能でモード毎の動作が得られるようになった
 		if( wParam == SC_CLOSE ){
+			// 印刷プレビューモードでウィンドウを閉じる操作のときはプレビューを閉じる	// 2007.03.04 ryoji
+			if( m_pPrintPreview ){
+				PrintPreviewModeONOFF();	// 印刷プレビューモードのオン/オフ
+				return 0L;
+			}
 			OnCommand( 0, CKeyBind::GetDefFuncCode( VK_F4, _ALT ), NULL );
 			return 0L;
 		}
