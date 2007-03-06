@@ -85,7 +85,10 @@ bool RcCvt::convert(void)
 {
 	while( !feof(fpi) )
 	{
-		fgets(buffer, nLine, fpi );
+		//	2007.04.03 genta ファイル末尾で読み込みエラーになると最終行が重複して出力される
+		if( NULL == fgets(buffer, nLine, fpi )){
+			break;
+		}
 		
 		if( strncmp( buffer, "FONT", 4 ) == 0 ){
 			font(buffer);
