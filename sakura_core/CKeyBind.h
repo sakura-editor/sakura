@@ -60,14 +60,7 @@ public:
 	*/
 	static HACCEL CreateAccerelator( int, KEYDATA* );
 	static int GetFuncCode( WORD nAccelCmd, int nKeyNameArrNum, KEYDATA* pKeyNameArr, BOOL bGetDefFuncCode = TRUE );
-	static int GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode = TRUE )	/* 特定のキー情報から機能コードを取得する */	// 2007.02.24 ryoji
-	{
-		if( 0 != KeyData.m_nFuncCodeArr[nState] )
-			return KeyData.m_nFuncCodeArr[nState];
-		if( bGetDefFuncCode )
-			return GetDefFuncCode( KeyData.m_nKeyCode, nState );
-		return 0;
-	};
+	static int GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode = TRUE );	/* 特定のキー情報から機能コードを取得する */	// 2007.02.24 ryoji
 	static int GetDefFuncCode( int nKeyCode, int nState );	/* キーのデフォルト機能を取得する */	// 2007.02.22 ryoji
 
 	//! キー割り当て一覧を作成する
