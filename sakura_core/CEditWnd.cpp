@@ -4125,6 +4125,27 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	HMENU		hMenuPopUp;
 	POINT		po;
 	RECT		rc;
+	int			nIndex;
+
+	// メニュー表示位置を決める	// 2007.03.25 ryoji
+	// ※ TBN_DROPDOWN 時の NMTOOLBAR::iItem や NMTOOLBAR::rcButton にはドロップダウンメニュー(開く)ボタンが
+	//    複数あるときはどれを押した時も１個目のボタン情報が入るようなのでマウス位置からボタン位置を求める
+	::GetCursorPos( &po );
+	::ScreenToClient( hwnd, &po );
+	nIndex = ::SendMessage( hwnd, TB_HITTEST, (WPARAM)0, (LPARAM)&po );
+	if( nIndex < 0 ){
+		return 0;
+	}
+	::SendMessage( hwnd, TB_GETITEMRECT, (WPARAM)nIndex, (LPARAM)&rc );
+	po.x = rc.left;
+	po.y = rc.bottom;
+	::ClientToScreen( hwnd, &po );
+	GetMonitorWorkRect( po, &rc );
+	if( po.x < rc.left )
+		po.x = rc.left;
+	if( po.y < rc.top )
+		po.y = rc.top;
+
 
 	m_CMenuDrawer.ResetContents();
 
@@ -4155,23 +4176,6 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, "新規作成(&N)", FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, "開く(&O)...", FALSE );
 
-	po.x = 0;
-	po.y = 0;
-	::GetCursorPos( &po );
-
-	rc.left   = 0;
-	rc.right  = 0;
-	rc.top    = 0;
-	rc.bottom = 0;
-	::GetWindowRect( hwnd, &rc );
-	po.x = po.x /*rc.left*/;
-	po.y = rc.bottom - 2;
-
-	rc.left   = 0;
-	rc.right  = 0;
-	rc.top    = 0;
-	rc.bottom = 0;
-
 	nId = ::TrackPopupMenu(
 		hMenu,
 		TPM_TOPALIGN
@@ -4183,7 +4187,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 		po.y,
 		0,
 		hwnd,
-		&rc
+		NULL
 	);
 
 	::DestroyMenu( hMenu );
@@ -4531,13 +4535,14 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			if( nIconId < 0 ){
 				nIconId = 348; // なんとなく(i)アイコン
 			}
-			//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
-			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;
+
+			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_cIcons.cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
+			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
 			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
 			
 
 			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
-			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + 3 + shift, pnmh->rc.top + 3 + shift,
+			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
 				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
 		}
