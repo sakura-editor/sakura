@@ -440,4 +440,24 @@ int CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 }
 
 
+/*! 特定のキー情報から機能コードを取得する
+
+	@param KeyData [in] キー情報
+	@param nState [in] Shift,Ctrl,Altキー状態
+	@param bGetDefFuncCode [in] デフォルト機能を取得するかどうか
+
+	@return 機能番号
+
+	@date 2007.03.07 ryoji インライン関数から通常の関数に変更（BCCの最適化バグ対策）
+*/
+int CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode )
+{
+	if( 0 != KeyData.m_nFuncCodeArr[nState] )
+		return KeyData.m_nFuncCodeArr[nState];
+	if( bGetDefFuncCode )
+		return GetDefFuncCode( KeyData.m_nKeyCode, nState );
+	return 0;
+};
+
+
 /*[EOF]*/
