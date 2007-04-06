@@ -215,10 +215,6 @@ bool CNormalProcess::Initialize()
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewLeftCol = fi.m_nViewLeftCol;
 			}
 
-			//	Nov. 6, 2000 genta
-			//	キャレット位置の復元のため
-			//	m_nCaretPosX_Prevの用途は不明だが，何も設定しないのはまずいのでとりあえず 0
-			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
 			//	Oct. 19, 2001 genta
 			//	0も位置としては有効な値なので判定に含めなくてはならない
