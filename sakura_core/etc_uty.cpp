@@ -45,6 +45,7 @@
 #include "CMRU.h"
 #include "CMRUFolder.h"
 #include "Keycode.h"// novice 2004/10/10
+#include "CUxTheme.h"	// 2007.04.01 ryoji
 
 /*!	WinHelp のかわりに HtmlHelp を呼び出す
 
@@ -3061,29 +3062,6 @@ DWORD GetComctl32Version()
 	return s_dwComctl32Version;
 }
 
-/*!	画面設定がビジュアルスタイル指定になっているかどうかを示す
-
-	@return ビジュアルスタイル指定(TURE)／クラッシックスタイル指定(FALSE)
-
-	@author ryoji
-	@date 2006.06.17 ryoji 新規
-*/
-BOOL fnIsThemeActive()
-{
-	HINSTANCE hDll;
-	BOOL (CALLBACK *pfnIsThemeActive)();
-	BOOL bThemeActive = false;
-
-	hDll = ::LoadLibrary(_T("UXTHEME"));
-	if( NULL != hDll ){
-		*(FARPROC*)&pfnIsThemeActive = ::GetProcAddress( hDll, "IsThemeActive" );
-		if( NULL != pfnIsThemeActive ){
-			bThemeActive = pfnIsThemeActive();
-		}
-		::FreeLibrary(hDll);
-	}
-	return bThemeActive;
-}
 
 /*!	自分が現在ビジュアルスタイル表示状態かどうかを示す
 	Win32 API の IsAppThemed() はこれとは一致しない（IsAppThemed() と IsThemeActive() との差異は不明）
@@ -3097,7 +3075,7 @@ BOOL IsVisualStyle()
 {
 	// ロードした Comctl32.dll が Ver 6 以上で画面設定がビジュアルスタイル指定になっている場合だけ
 	// ビジュアルスタイル表示になる（マニフェストで指定しないと Comctl32.dll は 6 未満になる）
-	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && fnIsThemeActive() );
+	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance().IsThemeActive() );
 }
 
 /*!	指定ウィンドウでビジュアルスタイルを使わないようにする
@@ -3109,17 +3087,8 @@ BOOL IsVisualStyle()
 */
 void PreventVisualStyle( HWND hWnd )
 {
-	HINSTANCE hDll;
-	HRESULT (CALLBACK *pfnSetWindowTheme)( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList );
-
-	hDll = ::LoadLibrary(_T("UXTHEME"));
-	if( NULL != hDll ){
-		*(FARPROC*)&pfnSetWindowTheme = ::GetProcAddress( hDll, "SetWindowTheme" );
-		if( NULL != pfnSetWindowTheme ){
-			pfnSetWindowTheme( hWnd, L"", L"" );
-		}
-		::FreeLibrary(hDll);
-	}
+	CUxTheme::getInstance().SetWindowTheme( hWnd, L"", L"" );
+	return;
 }
 
 /*!	コモンコントロールを初期化する

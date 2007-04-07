@@ -581,6 +581,10 @@ SOURCE=..\sakura_core\CTipWnd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CUxTheme.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CWaitCursor.cpp
 # End Source File
 # Begin Source File
@@ -1005,6 +1009,10 @@ SOURCE=..\sakura_core\CTabWnd.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CTipWnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CUxTheme.h
 # End Source File
 # Begin Source File
 

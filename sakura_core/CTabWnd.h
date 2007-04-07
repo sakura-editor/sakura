@@ -147,6 +147,7 @@ protected:
 	void DrawCloseBtn( HDC hdc, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
 	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
+	BOOL m_bVisualStyle;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
 	BOOL m_bHovering;
 	BOOL m_bListBtnHilighted;
 	BOOL m_bCloseBtnHilighted;		//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji

@@ -186,7 +186,6 @@ bool IsLocalDrive( const char* pszDrive );
 #define PACKVERSION( major, minor ) MAKELONG( minor, major )
 DWORD GetDllVersion( LPCTSTR lpszDllName );	// シェルやコモンコントロール DLL のバージョン番号を取得	// 2006.06.17 ryoji
 DWORD GetComctl32Version();					// Comctl32.dll のバージョン番号を取得						// 2006.06.17 ryoji
-BOOL fnIsThemeActive();						// 画面設定がビジュアルスタイル指定になっているかどうかを示す	// 2006.06.17 ryoji
 BOOL IsVisualStyle();						// 自分が現在ビジュアルスタイル表示状態かどうかを示す		// 2006.06.17 ryoji
 void PreventVisualStyle( HWND hWnd );		// 指定ウィンドウでビジュアルスタイルを使わないようにする	// 2006.06.23 ryoji
 void MyInitCommonControls();				// コモンコントロールを初期化する							// 2006.06.21 ryoji
