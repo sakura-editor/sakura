@@ -4614,20 +4614,20 @@ void CEditWnd::Timer_ONOFF( BOOL bStart )
 
 /*!	@brief ウィンドウ一覧をポップアップ表示
 
-	@param[in] bFull true: Full Path表示
-	@param[in] fromMouse true: マウスから実行された
+	@param[in] bMousePos true: マウス位置にポップアップ表示する
 
 	@date 2006.03.23 fon OnListBtnClickをベースに新規作成
 	@date 2006.05.10 ryoji ポップアップ位置変更、その他微修正
+	@data 2007.02.28 ryoji フルパス指定のパラメータを削除
 */
-LRESULT CEditWnd::PopupWinList( BOOL bFull, bool fromMouse )
+LRESULT CEditWnd::PopupWinList( bool bMousePos )
 {
 	POINT pt;
 
 	// ポップアップ位置をアクティブビューの上辺に設定
 	RECT rc;
 	
-	if( fromMouse ){
+	if( bMousePos ){
 		::GetCursorPos( &pt );	// マウスカーソル位置に変更
 	}
 	else {
@@ -4639,10 +4639,8 @@ LRESULT CEditWnd::PopupWinList( BOOL bFull, bool fromMouse )
 	}
 
 	// ウィンドウ一覧メニューをポップアップ表示する
-	// （いずれはメニューをダイアログに変更していろいろ操作できるようにしたいところ）
 	if( NULL != m_cTabWnd.m_hWnd ){
-		bFull = FALSE;	//ファイル名のみ
-		m_cTabWnd.TabListMenu( pt, bFull );
+		m_cTabWnd.TabListMenu( pt );
 	}
 	else{
 		EditNode*	pEditNodeArr;

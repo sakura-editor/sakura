@@ -57,7 +57,7 @@
 #define TAB_WINDOW_HEIGHT	24
 #define TAB_MARGIN_TOP		3
 #define TAB_MARGIN_LEFT		1
-#define TAB_MARGIN_RIGHT	42
+#define TAB_MARGIN_RIGHT	47
 #define TAB_ITEM_HEIGHT		(TAB_WINDOW_HEIGHT - 5)
 #define MAX_TABITEM_WIDTH	200
 #define MIN_TABITEM_WIDTH	60
@@ -648,22 +648,25 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 			NULL
 			);
 
-		RECT		rect;
-		TOOLINFO	ti;
-		::GetClientRect( m_hwndTab, &rect );
-		ti.cbSize      = sizeof( TOOLINFO );
-		ti.uFlags      = TTF_SUBCLASS;
-		ti.hwnd        = m_hWnd; //m_hwndTab;
-		ti.hinst       = m_hInstance;
-		ti.uId         = 0;
-		ti.lpszText    = LPSTR_TEXTCALLBACK;
-		ti.rect.left   = 0; //rect.left;
-		ti.rect.top    = 0; //rect.top;
-		ti.rect.right  = 0; //rect.right;
-		ti.rect.bottom = 0; //rect.bottom;
+		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）	// 2007.03.03 ryoji
+		::SendMessage( m_hwndToolTip, TTM_SETMAXTIPWIDTH, 0, (LPARAM)SHRT_MAX );
 
+		// タブバーにツールチップを追加する
+		TOOLINFO	ti;
+		ti.cbSize      = sizeof( TOOLINFO );
+		ti.uFlags      = TTF_SUBCLASS | TTF_IDISHWND;	// TTF_IDISHWND: uId は HWND で rect は無視（HWND 全体）
+		ti.hwnd        = m_hWnd;
+		ti.hinst       = m_hInstance;
+		ti.uId         = (UINT)m_hWnd;
+		ti.lpszText    = NULL;
+		ti.rect.left   = 0;
+		ti.rect.top    = 0;
+		ti.rect.right  = 0;
+		ti.rect.bottom = 0;
 		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&ti );
-		TabCtrl_SetToolTips( m_hwndTab, m_hwndToolTip ); 
+
+		// タブバー内のタブコントロールにツールチップを追加する
+		TabCtrl_SetToolTips( m_hwndTab, m_hwndToolTip );
 
 		// 2006.02.22 ryoji イメージリストを初期化する
 		InitImageList();
@@ -787,7 +790,7 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		pt.x = rcBtn.left;
 		pt.y = rcBtn.bottom;
 		::ClientToScreen( m_hWnd, &pt );
-		TabListMenu( pt, FALSE );	// タブ一覧メニュー（タブ名）
+		TabListMenu( pt, FALSE, FALSE );	// タブ一覧メニュー（タブ名）
 	}
 	else
 	{
@@ -869,7 +872,7 @@ LRESULT CTabWnd::OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		pt.x = rcBtn.left;
 		pt.y = rcBtn.bottom;
 		::ClientToScreen( m_hWnd, &pt );
-		TabListMenu( pt, TRUE );	// タブ一覧メニュー（フルパス）
+		TabListMenu( pt, FALSE, TRUE );	// タブ一覧メニュー（フルパス）
 	}
 
 	return 0L;
@@ -977,6 +980,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 /*!	WM_MOUSEMOVE処理
 	@date 2006.02.01 ryoji 新規作成
+	@date 2007.03.05 ryoji ボタンの出入りでツールチップを更新する
 */
 LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1001,19 +1005,62 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	// カーソルがボタン上を出入りするときに再描画
 	RECT rcBtn;
+	LPTSTR pszTip = (LPTSTR)-1L;
+
 	GetListBtnRect( &rc, &rcBtn );
 	bHovering = ::PtInRect( &rcBtn, pt );
 	if( bHovering != m_bListBtnHilighted )
 	{
 		m_bListBtnHilighted = bHovering;
 		::InvalidateRect( hwnd, &rcBtn, FALSE );
+
+		// ツールチップ用の文字列作成	// 2007.03.05 ryoji
+		pszTip = NULL;	// ボタンの外に出るときは消す
+		if( m_bListBtnHilighted )	// ボタンに入ってきた?
+		{
+			pszTip = m_szTextTip1;
+			_tcscpy( m_szTextTip1, _T("左クリック: タブ名一覧\n右クリック: パス名一覧") );
+		}
 	}
+
 	GetCloseBtnRect( &rc, &rcBtn );
 	bHovering = ::PtInRect( &rcBtn, pt );
 	if( bHovering != m_bCloseBtnHilighted )
 	{
 		m_bCloseBtnHilighted = bHovering;
 		::InvalidateRect( hwnd, &rcBtn, FALSE );
+
+		// ツールチップ用の文字列作成	// 2007.03.05 ryoji
+		pszTip = NULL;	// ボタンの外に出るときは消す
+		if( m_bCloseBtnHilighted )	// ボタンに入ってきた?
+		{
+			pszTip = m_szTextTip1;
+			if( m_pShareData->m_Common.m_bDispTabWnd &&
+				!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
+				!m_pShareData->m_Common.m_bTab_CloseOneWin
+				)
+			{
+				_tcscpy( m_szTextTip1, _T("タブを閉じる") );
+			}
+			else
+			{
+				::LoadString( m_hInstance, F_EXITALLEDITORS, m_szTextTip1, sizeof(m_szTextTip1)/sizeof(TCHAR) );
+				m_szTextTip1[sizeof(m_szTextTip1)/sizeof(TCHAR) - 1] = _T('\0');
+			}
+		}
+	}
+
+	// ツールチップ更新	// 2007.03.05 ryoji
+	if( pszTip != (LPTSTR)-1L )	// ボタンへの出入りがあった?
+	{
+		TOOLINFO ti;
+		::ZeroMemory( &ti, sizeof(ti) );
+		ti.cbSize       = sizeof( TOOLINFO );
+		ti.hwnd         = m_hWnd;
+		ti.hinst        = m_hInstance;
+		ti.uId          = (UINT)m_hWnd;
+		ti.lpszText     = pszTip;
+		::SendMessage( m_hwndToolTip, TTM_UPDATETIPTEXT, (WPARAM)0, (LPARAM)&ti );
 	}
 
 	return 0L;
@@ -1842,6 +1889,15 @@ void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 
 	RECT rcBtn;
 	GetCloseBtnRect( lprcClient, &rcBtn );
+
+	// ボタンの左側にセパレータを描画する	// 2007.02.27 ryoji
+	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_3DSHADOW ) );
+	hpenOld = (HPEN)::SelectObject( hdc, hpen );
+	::MoveToEx( hdc, rcBtn.left - 4, rcBtn.top + 1, NULL );
+	::LineTo( hdc, rcBtn.left - 4, rcBtn.bottom - 1 );
+	::SelectObject( hdc, hpenOld );
+	::DeleteObject( hpen );
+
 	DrawBtnBkgnd( hdc, &rcBtn, m_bCloseBtnHilighted );
 
 	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
@@ -1897,108 +1953,130 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4 + 18, lprcClient->top + TAB_MARGIN_TOP + 2 );
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4 + (rcBtnBase.right - rcBtnBase.left) + 7, lprcClient->top + TAB_MARGIN_TOP + 2 );
 }
 
 
 /*!	タブ一覧表示処理
+
+	@param pt [in] 表示位置
+	@param bSel [in] 表示切替メニューを追加する
+	@param bFull [in] パス名で表示する（bSelがTRUEの場合は無効）
+
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.03.23 fon OnListBtnClickから移動(行頭の//>が変更部)
 	@date 2006.10.31 ryoji メニューのフルパス名を簡易表示する
+	@date 2007.02.28 ryoji タブ名一覧／パス名一覧の表示をメニュー自身で切り替える
 */
-LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bFull )
+LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FALSE*/ )
 {
-//>	POINT pt;
-//>	RECT rc;
-//>	RECT rcBtn;
+	bool bRepeat;
 
-//>	pt.x = pts.x;
-//>	pt.y = pts.y;
-//>	::GetClientRect( m_hWnd, &rc );
-//>	GetListBtnRect( &rc, &rcBtn );
-//>	if( ::PtInRect( &rcBtn, pt ) )
-//>	{
-	int nCount = TabCtrl_GetItemCount( m_hwndTab );
-	if( 0 >= nCount )
-		return 0L;
+	if( bSel )
+		bFull = m_pShareData->m_Common.m_bTab_ListFull;
 
-	// 各タブアイテムからメニューに表示する文字を取得する
-	TABMENU_DATA* pData = new TABMENU_DATA[nCount];
-	CRecent	cRecentEditNode;
-	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
-	TCITEM tcitem;
-	int i;
-	for( i = 0; i < nCount; i++ )
+	do
 	{
-		tcitem.mask = TCIF_PARAM | TCIF_TEXT | TCIF_IMAGE;
-		tcitem.lParam = (LPARAM)0;
-		tcitem.pszText = pData[i].szText;
-		tcitem.cchTextMax = sizeof(pData[i].szText);
-		TabCtrl_GetItem( m_hwndTab, i, &tcitem );
-		pData[i].szText[sizeof(pData[i].szText) - 1] = _T('\0');	// バッファ不足の場合への対策
-		pData[i].iItem = i;
-		pData[i].iImage = tcitem.iImage;
+		int nCount = TabCtrl_GetItemCount( m_hwndTab );
+		if( 0 >= nCount )
+			return 0L;
 
-		// マウス左ボタンではタブに表示されている文字をそのままメニュー文字に使い、
-		// マウス右ボタンではファイルに関してフルパス名をメニュー文字に使う
-		if( bFull )
+		// 各タブアイテムからメニューに表示する文字を取得する
+		TABMENU_DATA* pData = new TABMENU_DATA[nCount];
+		CRecent	cRecentEditNode;
+		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+		TCITEM tcitem;
+		int i;
+		for( i = 0; i < nCount; i++ )
 		{
-			EditNode *pNode = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&tcitem.lParam ) );
-			if( pNode && pNode->m_szFilePath[0] )
+			tcitem.mask = TCIF_PARAM | TCIF_TEXT | TCIF_IMAGE;
+			tcitem.lParam = (LPARAM)0;
+			tcitem.pszText = pData[i].szText;
+			tcitem.cchTextMax = sizeof(pData[i].szText);
+			TabCtrl_GetItem( m_hwndTab, i, &tcitem );
+			pData[i].szText[sizeof(pData[i].szText) - 1] = _T('\0');	// バッファ不足の場合への対策
+			pData[i].iItem = i;
+			pData[i].iImage = tcitem.iImage;
+
+			// パス名指定ならメニューに表示する文字列をフルパス名に置き換える
+			if( bFull )
 			{
-				// フルパス名を簡易表示する	// 2006.10.31 ryoji
-				TCHAR szText[_MAX_PATH];
-				TCHAR szText_amp[_MAX_PATH * 2];
-				CShareData::getInstance()->GetTransformFileNameFast( pNode->m_szFilePath, szText, _MAX_PATH );
-				dupamp( szText, szText_amp );	// &を&&に置き換える
-				::lstrcpyn( pData[i].szText, szText_amp, sizeof(pData[i].szText) );
+				EditNode *pNode = (EditNode*)cRecentEditNode.GetItem( cRecentEditNode.FindItem( (const char*)&tcitem.lParam ) );
+				if( pNode && pNode->m_szFilePath[0] )
+				{
+					// フルパス名を簡易表示する	// 2006.10.31 ryoji
+					TCHAR szText[_MAX_PATH];
+					TCHAR szText_amp[_MAX_PATH * 2];
+					CShareData::getInstance()->GetTransformFileNameFast( pNode->m_szFilePath, szText, _MAX_PATH );
+					dupamp( szText, szText_amp );	// &を&&に置き換える
+					::lstrcpyn( pData[i].szText, szText_amp, sizeof(pData[i].szText) );
+				}
 			}
 		}
-	}
-	cRecentEditNode.Terminate();
+		cRecentEditNode.Terminate();
 
-	// 表示文字でソートする
-	if(m_pShareData->m_Common.m_bSortTabList){							// 2006.03.23 fon 変更
-		qsort( pData, nCount, sizeof(pData[0]), compTABMENU_DATA );
-	}
+		// 表示文字でソートする
+		if(m_pShareData->m_Common.m_bSortTabList){							// 2006.03.23 fon 変更
+			qsort( pData, nCount, sizeof(pData[0]), compTABMENU_DATA );
+		}
 
-	// メニューを作成する
-	int iTabSel = TabCtrl_GetCurSel( m_hwndTab );
-	int iMenuSel = -1;
-	UINT uFlags = MF_BYPOSITION | (m_hIml? MF_OWNERDRAW:  MF_STRING);
-	HMENU hMenu = ::CreatePopupMenu();
-	for( i = 0; i < nCount; i++ )
-	{
-		::InsertMenu( hMenu, i, uFlags, pData[i].iItem + 100, m_hIml? (LPCTSTR)&pData[i]: pData[i].szText );
-		if( pData[i].iItem == iTabSel )
-			iMenuSel = i;
-	}
+		// メニューを作成する
+		// 2007.02.28 ryoji 表示切替をメニューに追加
+		int iTabSel = TabCtrl_GetCurSel( m_hwndTab );
+		int iMenuSel = -1;
+		UINT uFlags = MF_BYPOSITION | (m_hIml? MF_OWNERDRAW:  MF_STRING);
+		HMENU hMenu = ::CreatePopupMenu();
+		int iAdd = 0;
+		if( bSel )	// 表示切替メニューを追加する
+		{
+			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 999, bFull? _T("タブ名一覧に切替える(&W)"): _T("パス名一覧に切替える(&W)") );
+			::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			iAdd = 2;
+		}
+		for( i = 0; i < nCount; i++ )
+		{
+			::InsertMenu( hMenu, i + iAdd, uFlags, pData[i].iItem + 100, m_hIml? (LPCTSTR)&pData[i]: pData[i].szText );
+			if( pData[i].iItem == iTabSel )
+				iMenuSel = i + iAdd;
+		}
 
-	// 選択タブに対応するメニューをチェック状態にする
-	if( 0 <= iMenuSel && iMenuSel < nCount )
-		::CheckMenuRadioItem( hMenu, 0, nCount - 1, iMenuSel, MF_BYPOSITION );
+		// 選択タブに対応するメニューをチェック状態にする
+		if( iAdd <= iMenuSel && iMenuSel < nCount + iAdd )
+			::CheckMenuRadioItem( hMenu, iAdd, nCount + iAdd - 1, iMenuSel, MF_BYPOSITION );
 
-	// メニューを表示する
-	// 2006.04.21 ryoji マルチモニタ対応の修正
-	RECT rcWork;
-	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
-	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
-								( pt.x > rcWork.left )? pt.x: rcWork.left,
-								( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-								0, m_hWnd, NULL);
-	::DestroyMenu( hMenu );
+		// メニューを表示する
+		// 2006.04.21 ryoji マルチモニタ対応の修正
+		RECT rcWork;
+		GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
+		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+									( pt.x > rcWork.left )? pt.x: rcWork.left,
+									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+									0, m_hWnd, NULL);
+		::DestroyMenu( hMenu );
 
-	// メニュー選択されたタブのウインドウをアクティブにする
-	if( 100 <= nId )
-	{
-		tcitem.mask   = TCIF_PARAM;
-		tcitem.lParam = (LPARAM)0;
-		TabCtrl_GetItem( m_hwndTab, nId - 100, &tcitem );
+		// メニュー選択されたタブのウインドウをアクティブにする
+		bRepeat = false;
+		if( 999 == nId )	// 表示切替
+		{
+			bFull = !bFull;
+			bRepeat = true;
+		}
+		else if( 100 <= nId )
+		{
+			tcitem.mask   = TCIF_PARAM;
+			tcitem.lParam = (LPARAM)0;
+			TabCtrl_GetItem( m_hwndTab, nId - 100, &tcitem );
 
-		ShowHideWindow( (HWND)tcitem.lParam, TRUE );
-	}
-	delete []pData;
-//>	}
+			ShowHideWindow( (HWND)tcitem.lParam, TRUE );
+		}
+
+		delete []pData;
+
+	} while( bRepeat );
+
+	if( bSel )
+		m_pShareData->m_Common.m_bTab_ListFull = bFull;
+
 	return 0L;
 }
 

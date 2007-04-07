@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, ryoji, genta, D.S.Koba
 	Copyright (C) 2006, genta, Moca, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -2831,8 +2832,8 @@ void CEditView::Command_WINLIST( int nCommandFrom )
 	CEditWnd	*pCEditWnd;
 	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
 
-	//マウスカーソルの位置にウィンドウ一覧をポップアップ表示する
-	pCEditWnd->PopupWinList(false, nCommandFrom == CMD_FROM_MOUSE );
+	//ウィンドウ一覧をポップアップ表示する
+	pCEditWnd->PopupWinList( nCommandFrom != 1 );	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
 
 }
 

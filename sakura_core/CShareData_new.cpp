@@ -522,6 +522,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bSortTabList"			, common.m_bSortTabList );	// 2006.05.10 ryoji タブ一覧をソートする
 	cProfile.IOProfileData( pszSecName, "bTab_RetainEmptyWin"	, common.m_bTab_RetainEmptyWin );	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
 	cProfile.IOProfileData( pszSecName, "bTab_CloseOneWin"	, common.m_bTab_CloseOneWin );	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
+	cProfile.IOProfileData( pszSecName, "bTab_ListFull"			, common.m_bTab_ListFull );	// タブ一覧をフルパス表示する	// 2007.02.28 ryoji
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_bSplitterWndHScroll );

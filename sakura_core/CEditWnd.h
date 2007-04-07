@@ -14,6 +14,7 @@
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta, Moca
 	Copyright (C) 2006, ryoji, aroka, fon, yukihane
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -136,7 +137,7 @@ public:
 	// 2005.06.24 Moca
 	void SetDebugModeOFF( void );
 //#endif
-	LRESULT PopupWinList( BOOL bFull, bool fromMouse );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon
+	LRESULT PopupWinList( bool bMousePos );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon	// 2007.02.28 ryoji フルパス指定のパラメータを削除
 	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
 
 	/*
