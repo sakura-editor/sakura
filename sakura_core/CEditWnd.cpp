@@ -419,11 +419,11 @@ HWND CEditWnd::Create(
 		);
 	}
 
+	// 2007.03.08 ryoji 各種バーの作成を Layoutxxx(), EndLayoutBars() で簡素化
+
 // 次のSetWindowLongPtr以降だとデバッグ中に落ちることがあったので順番を入れ替えた。 // 2005/8/9 aroka
-	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* 次回ウィンドウを開いたときツールバーを表示する */
- 		/* ツールバー作成 */
-		CreateToolBar();
-	}
+	/* ツールバー */
+	LayoutToolBar();
 
 //	if( NULL != m_hWnd ){
 		// Modified by KEITA for WIN64 2003.9.6
@@ -437,33 +437,16 @@ HWND CEditWnd::Create(
 //	}
 
 	/* ステータスバー */
-	if( m_pShareData->m_Common.m_bDispSTATUSBAR ){	/* 次回ウィンドウを開いたときステータスバーを表示する */
-		/* ステータスバー作成 */
-		CreateStatusBar();
-	}
+	LayoutStatusBar();
 
 	/* ファンクションキー バー */
-	if( m_pShareData->m_Common.m_bDispFUNCKEYWND ){	/* 次回ウィンドウを開いたときファンクションキーを表示する */
-		BOOL bSizeBox;
-		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-			bSizeBox = FALSE;
-		}else{
-			bSizeBox = TRUE;
-			/* ステータスパーを表示している場合はサイズボックスを表示しない */
-			if( NULL != m_hwndStatusBar ){
-				bSizeBox = FALSE;
-			}
-		}
-		m_CFuncKeyWnd.Open( hInstance, m_hWnd, &m_cEditDoc, bSizeBox );
-	}
+	LayoutFuncKey();
 
-	//From Here 2003.05.31 MIK
-	//タブウインドウ
-	if( m_pShareData->m_Common.m_bDispTabWnd )
-	{
-		m_cTabWnd.Open( hInstance, m_hWnd );
-	}
-	//To Here 2003.05.31 MIK
+	/* タブウインドウ */
+	LayoutTabBar();
+
+	/* バーの配置終了 */
+	EndLayoutBars( FALSE );
 
 	/* デスクトップからはみ出さないようにする */
 	RECT	rcOrg;
@@ -622,7 +605,7 @@ void CEditWnd::CreateStatusBar( void )
 
 	/* ステータスバー */
 	m_hwndStatusBar = ::CreateStatusWindow(
-		WS_CHILD | WS_VISIBLE | WS_EX_RIGHT | SBARS_SIZEGRIP,
+		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
 		"",
 		m_hWnd,
 		IDW_STATUSBAR
@@ -707,7 +690,7 @@ void CEditWnd::CreateToolBar( void )
 			WS_EX_TOOLWINDOW,
 			REBARCLASSNAME,
 			NULL,
-			WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
+			WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |	// 2007.03.08 ryoji WS_VISIBLE 除去
 			RBS_BANDBORDERS | CCS_NODIVIDER,
 			0, 0, 0, 0,
 			m_hWnd,
@@ -738,7 +721,7 @@ void CEditWnd::CreateToolBar( void )
 		0,
 		TOOLBARCLASSNAME,
 		NULL,
-		WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加
+		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加	// 2007.03.08 ryoji WS_VISIBLE 除去
 /*		WS_EX_WINDOWEDGE| */
 		TBSTYLE_TOOLTIPS |
 //		TBSTYLE_WRAPABLE |
@@ -944,6 +927,7 @@ void CEditWnd::CreateToolBar( void )
 
 		// バンドを追加する
 		::SendMessage( m_hwndReBar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rbBand );
+		::ShowWindow( m_hwndToolBar, SW_SHOW );
 	}
 
 	return;
@@ -1055,17 +1039,31 @@ void CEditWnd::LayoutTabBar( void )
 
 /*! バーの配置終了処理
 	@date 2006.12.19 ryoji 新規作成
+	@data 2007.03.04 ryoji 印刷プレビュー時はバーを隠す
 */
-void CEditWnd::EndLayoutBars( void )
+void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 {
-	RECT		rc;
+	int nCmdShow = m_pPrintPreview? SW_HIDE: SW_SHOW;
+	HWND hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
+	if( NULL != hwndToolBar )
+		::ShowWindow( hwndToolBar, nCmdShow );
+	if( NULL != m_hwndStatusBar )
+		::ShowWindow( m_hwndStatusBar, nCmdShow );
+	if( NULL != m_CFuncKeyWnd.m_hWnd )
+		::ShowWindow( m_CFuncKeyWnd.m_hWnd, nCmdShow );
+	if( NULL != m_cTabWnd.m_hWnd )
+		::ShowWindow( m_cTabWnd.m_hWnd, nCmdShow );
 
-	m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
-	::GetClientRect( m_hWnd, &rc );
-	::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-	::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
+	if( bAdjust )
+	{
+		RECT		rc;
+		m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
+		::GetClientRect( m_hWnd, &rc );
+		::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+		::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
 
-	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+	}
 }
 
 
@@ -4368,6 +4366,9 @@ void CEditWnd::InitMenubarMessageFont(void)
 */
 void CEditWnd::PrintMenubarMessage( const char* msg )
 {
+	if( NULL == ::GetMenu( m_hWnd ) )	// 2007.03.08 ryoji 追加
+		return;
+
 	HDC		hdc;
 	POINT	po,poFrame;
 	RECT	rc,rcFrame;
