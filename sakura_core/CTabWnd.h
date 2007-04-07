@@ -9,6 +9,7 @@
 	Copyright (C) 2004, MIK, Kazika
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji, fon
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -62,7 +63,7 @@ public:
 	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
 
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	LRESULT TabListMenu( POINT pt, BOOL bLeft );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
+	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
 
 	/*
 	|| メンバ変数

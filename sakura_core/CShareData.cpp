@@ -204,9 +204,12 @@ struct ARRHEAD {
 	タブを閉じる動作を制御するオプション2つを追加 2007.02.11 genta
 		m_bRetainEmptyTab, m_bCloseOneWinInTabMode
 
+	Version 72:
+	タブ一覧をフルパス表示する 2007.02.28 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 71;
+const unsigned int uShareDataVersion = 72;
 
 /*
 ||	Singleton風
@@ -491,6 +494,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
 		m_pShareData->m_Common.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
 		m_pShareData->m_Common.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
+		m_pShareData->m_Common.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
