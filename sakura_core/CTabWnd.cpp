@@ -53,6 +53,11 @@
 #endif
 //#endif
 
+// 2007.04.01 ryoji WM_THEMECHANGED
+#ifndef	WM_THEMECHANGED
+#define WM_THEMECHANGED		0x031A
+#endif
+
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 #define TAB_WINDOW_HEIGHT	24
 #define TAB_MARGIN_TOP		3
@@ -117,38 +122,37 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 	{
 	case WM_LBUTTONDOWN:
 		return OnTabLButtonDown( wParam, lParam );
-		break;
 
 	case WM_LBUTTONUP:
 		return OnTabLButtonUp( wParam, lParam );
-		break;
 
 	case WM_MOUSEMOVE:
 		return OnTabMouseMove( wParam, lParam );
-		break;
 
 	case WM_CAPTURECHANGED:
 		return OnTabCaptureChanged( wParam, lParam );
-		break;
 
 	case WM_RBUTTONDOWN:
 		return OnTabRButtonDown( wParam, lParam );
-		break;
 
 	case WM_RBUTTONUP:
 		return OnTabRButtonUp( wParam, lParam );
-		break;
 
 	case WM_MBUTTONDOWN:
 		return OnTabMButtonDown( wParam, lParam );
-		break;
 
 	case WM_MBUTTONUP:
 		return OnTabMButtonUp( wParam, lParam );
-		break;
 
 	case WM_NOTIFY:
 		return OnTabNotify( wParam, lParam );
+
+	case WM_HSCROLL:
+		::InvalidateRect( m_hWnd, NULL, TRUE );	// アクティブタブの位置が変わるのでトップバンドを更新する	// 2006.03.27 ryoji
+		break;
+
+	case WM_THEMECHANGED:
+		m_bVisualStyle = ::IsVisualStyle();
 		break;
 
 	//default:
@@ -250,7 +254,6 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 
 	default:
 		return 1L;
-		break;
 	}
 
 	return 0L;
@@ -497,7 +500,8 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 
 CTabWnd::CTabWnd()
-  : m_eDragState( DRAG_NONE ),
+  : m_bVisualStyle( FALSE ),		// 2007.04.01 ryoji
+    m_eDragState( DRAG_NONE ),
     m_bHovering( FALSE ),	//	2006.02.01 ryoji
     m_bListBtnHilighted( FALSE ),	//	2006.02.01 ryoji
     m_bCloseBtnHilighted( FALSE ),	//	2006.10.21 ryoji
@@ -540,6 +544,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
 	m_hwndToolTip = NULL;
+	m_bVisualStyle = ::IsVisualStyle();	// 2007.04.01 ryoji
 	m_eDragState = DRAG_NONE;	//	2005.09.29 ryoji
 	m_bHovering = FALSE;			// 2006.02.01 ryoji
 	m_bListBtnHilighted = FALSE;	// 2006.02.01 ryoji
@@ -1090,6 +1095,7 @@ LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	@date 2006.01.30 ryoji 背景描画処理を追加（背景ブラシは NULL に変更）
 	@date 2006.02.01 ryoji 一覧ボタンの描画処理を追加
 	@date 2006.10.21 ryoji 閉じるボタンの描画処理を追加
+	@date 2007.03.27 ryoji Windowsクラシックスタイルの場合はアクティブタブの上部にトップバンドを描画する
 */
 LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1109,6 +1115,51 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	// 上側に境界線を描画する
 	::DrawEdge(hdc, &rc, EDGE_ETCHED, BF_TOP);
+
+	// Windowsクラシックスタイルの場合はアクティブタブの上部にトップバンドを描画する	// 2006.03.27 ryoji
+	if( !m_bVisualStyle )
+	{
+		int nCurSel = TabCtrl_GetCurSel( m_hwndTab );
+		if( nCurSel >= 0 )
+		{
+			POINT pt;
+			RECT rcCurSel;
+
+			TabCtrl_GetItemRect( m_hwndTab, nCurSel, &rcCurSel );
+			pt.x = rcCurSel.left;
+			pt.y = 0;
+			::ClientToScreen( m_hwndTab, &pt );
+			::ScreenToClient( m_hWnd, &pt );
+			rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left) - 1;
+			rcCurSel.left = pt.x + 1;
+			rcCurSel.top = rc.top + TAB_MARGIN_TOP - 2;
+			rcCurSel.bottom = rc.top + TAB_MARGIN_TOP;
+
+			if( rcCurSel.left < rc.left + TAB_MARGIN_LEFT )
+				rcCurSel.left = rc.left + TAB_MARGIN_LEFT;	// 左端限界値
+
+			HWND hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
+			if( hwndUpDown && ::IsWindowVisible( hwndUpDown ) )
+			{
+				POINT ptREnd;
+				RECT rcUpDown;
+
+				::GetWindowRect( hwndUpDown, &rcUpDown );
+				ptREnd.x = rcUpDown.left;
+				ptREnd.y = 0;
+				::ScreenToClient( m_hWnd, &ptREnd );
+				if( rcCurSel.right > ptREnd.x )
+					rcCurSel.right = ptREnd.x;	// 右端限界値
+			}
+
+			if( rcCurSel.left < rcCurSel.right )
+			{
+				HBRUSH hBr = ::CreateSolidBrush( RGB( 255, 128, 0 ) );
+				::FillRect( hdc, &rcCurSel, hBr );
+				::DeleteObject( hBr );
+			}
+		}
+	}
 
 	::EndPaint( hwnd, &ps );
 

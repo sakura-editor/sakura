@@ -204,6 +204,7 @@ OBJS =\
 	$(OBJDIR)\CSplitterWnd.obj \
 	$(OBJDIR)\CTabWnd.obj \
 	$(OBJDIR)\CTipWnd.obj \
+	$(OBJDIR)\CUxTheme.obj \
 	$(OBJDIR)\CWnd.obj \
 	$(OBJDIR)\CWaitCursor.obj \
 	$(OBJDIR)\CWSH.obj \
