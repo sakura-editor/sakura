@@ -91,6 +91,9 @@ protected:
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
 	int GetFirstOpenedWindow( void );
 
+	/* 仮想関数 */
+	virtual void AfterCreateWindow( void ){}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
+
 	/* 仮想関数 メッセージ処理 */
 	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );		/*!< WM_SIZE処理 */
 	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROY処理 */

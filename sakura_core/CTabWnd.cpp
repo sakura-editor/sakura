@@ -565,7 +565,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		0,									// extended window style
 		m_pszClassName,						// Pointer to a null-terminated string or is an atom.
 		m_pszClassName,						// pointer to window name
-		WS_CHILD | WS_VISIBLE,				// window style
+		WS_CHILD/* | WS_VISIBLE*/,			// window style	// 2007.03.08 ryoji WS_VISIBLE 除去
 		// 2006.01.30 ryoji 初期配置見直し
 		// ※タブ非表示 -> 表示切替で編集ウィンドウにゴミが表示されることがあるので初期幅はゼロに
 		CW_USEDEFAULT,						// horizontal position of window
@@ -675,9 +675,6 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		//::ShowWindow( m_hwndTab, SW_HIDE );
 		Refresh();
 	}
-
-	::ShowWindow( m_hWnd, SW_SHOW );
-	::InvalidateRect( m_hWnd, NULL, TRUE );
 
 	return m_hWnd;
 }

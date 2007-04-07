@@ -191,7 +191,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
-		WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加
+		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加	// 2007.03.08 ryoji WS_VISIBLE 除去
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
 		0, // window width	// 2007.02.05 ryoji 100->0（半端なサイズで一瞬表示されるより見えないほうがいい）
@@ -216,7 +216,6 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 			m_hInstance,				/* instance owning this window	*/
 			(LPVOID) NULL				/* pointer not needed			*/
 		);
-		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 	}
 
 	/* ボタンの生成 */
@@ -225,11 +224,8 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 //	if( NULL != m_hWnd ){
 //		::SetWindowLong( m_hWnd, GWL_USERDATA, (LONG)this );
 //	}
-	::ShowWindow( m_hWnd, SW_SHOW );
 	Timer_ONOFF( TRUE ); // 20060126 aroka
 	OnTimer( m_hWnd, WM_TIMER, IDT_FUNCWND, ::GetTickCount() );	// 初回更新	// 2006.12.20 ryoji
-
-	::InvalidateRect( m_hWnd, NULL, TRUE );
 
 	return m_hWnd;
 }
@@ -240,8 +236,10 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 /* ウィンドウ クローズ */
 void CFuncKeyWnd::Close( void )
 {
-	::DestroyWindow( m_hWnd );
-	m_hWnd = NULL;
+	if( m_hWnd ){
+		::DestroyWindow( m_hWnd );
+		m_hWnd = NULL;
+	}
 }
 
 

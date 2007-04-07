@@ -88,7 +88,7 @@ public:
 	void LayoutFuncKey( void );			/* ファンクションキーの配置処理 */	// 2006.12.19 ryoji
 	void LayoutTabBar( void );			/* タブバーの配置処理 */			// 2006.12.19 ryoji
 	void LayoutStatusBar( void );		/* ステータスバーの配置処理 */		// 2006.12.19 ryoji
-	void EndLayoutBars( void );			/* バーの配置終了処理 */			// 2006.12.19 ryoji
+	void EndLayoutBars( BOOL bAdjust = TRUE );	/* バーの配置終了処理 */	// 2006.12.19 ryoji
 
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューのバーはCPrintPreviewに移動
 
