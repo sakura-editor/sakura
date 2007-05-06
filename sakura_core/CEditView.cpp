@@ -210,7 +210,9 @@ VOID CALLBACK EditViewTimerProc(
 
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView() : m_cHistory( new CAutoMarkMgr ) //,
+CEditView::CEditView() :
+	m_cHistory( new CAutoMarkMgr ),
+	m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 // 20020331 aroka 再変換対応 for 95/NT
 // 2002.04.09 コンストラクタのなかに移動しました。 minfu
 //	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
@@ -5866,10 +5868,13 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 
 
-/* 親ウィンドウのタイトルを更新 */
-void CEditView::SetParentCaption( BOOL bKillFocus )
+/*! 親ウィンドウのタイトルを更新
+
+	@date 2007.03.08 ryoji bKillFocusパラメータを除去
+*/
+void CEditView::SetParentCaption( void )
 {
-	m_pcEditDoc->SetParentCaption( bKillFocus );
+	m_pcEditDoc->SetParentCaption();
 	return;
 }
 

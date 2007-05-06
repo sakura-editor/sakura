@@ -224,6 +224,7 @@ private:
 	HFONT	m_fontSearchBox;
 	void	ProcSearchBox( MSG* );	//検索(ボックス)
 	int		m_nCurrentFocus;
+	BOOL	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	
 	//	Jul. 21, 2003 genta ToolBarのOwner Draw
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
@@ -240,6 +241,7 @@ private:
 	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
 public:
 	void OnSysMenuTimer();
+	BOOL IsActiveApp() const { return m_bIsActiveApp; };	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 };
 
 
