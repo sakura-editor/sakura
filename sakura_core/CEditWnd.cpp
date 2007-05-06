@@ -205,6 +205,7 @@ CEditWnd::CEditWnd() :
 	m_hwndSearchBox( NULL ),
 	m_fontSearchBox( NULL ),
 	m_nCurrentFocus( 0 ),
+	m_bIsActiveApp( FALSE ),
 	m_IconClicked(icNone) //by 鬼(2)
 {
 	//	Dec. 4, 2002 genta
@@ -530,6 +531,15 @@ HWND CEditWnd::Create(
 //	if( NULL != m_hWnd ){
 		/* ドロップされたファイルを受け入れる */
 		::DragAcceptFiles( m_hWnd, TRUE );
+
+		m_bIsActiveApp = ( ::GetActiveWindow() == m_hWnd );	// 2007.03.08 ryoji
+
+		// 表示直後の位置記憶	// 2007.04.08 ryoji
+		// Note. WM_SETFOCUS では CShareData::AddEditWndList() を呼ばないようにしたので
+		//       ::ShowWindow() 時の WM_SIZE では位置記憶されていない
+		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
+		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+
 		/* 編集ウィンドウリストへの登録 */
 		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd ) ){
 			wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
@@ -538,6 +548,7 @@ HWND CEditWnd::Create(
 			m_hWnd = hWnd = NULL;
 			return hWnd;
 		}
+
 		//	Aug. 29, 2003 wmlhq
 		m_nTimerCount = 0;
 		/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
@@ -1126,11 +1137,6 @@ LRESULT CEditWnd::DispatchEvent(
 	LPTOOLTIPTEXT		lptip;
 	int					nPane;
 	FileInfo*			pfi;
-	WORD				fActive;
-	BOOL				fMinimized;
-	HWND				hwndTarget;
-	HWND				hwndActive;
-	BOOL				bIsActive;
 	int					nCaretPosX;
 	int					nCaretPosY;
 	POINT*				ppoCaret;
@@ -1296,55 +1302,28 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return TRUE;
 
-	// 2005.09.01 ryoji WM_ACTIVATEAPP をコメントアウト
-	//（タブまとめ表示時の起動時のウィンドウちらつきを抑制）
-		//	Jun. 2, 2000 genta
-//	case WM_ACTIVATEAPP:
-//		fActive = LOWORD(wParam);				// activation flag
-//		if( fActive ){
-//			::SetFocus( m_hWnd );
-//		}
-//		return 0;	//	should return zero. / Jun. 23, 2000 genta
-	case WM_ACTIVATE:
-		fActive = LOWORD( wParam );				// activation flag
-		fMinimized = (BOOL) HIWORD( wParam );	// minimized flag
-		hwndTarget = (HWND) lParam;				// window handle
+	case WM_ACTIVATEAPP:
+		m_bIsActiveApp = (BOOL)wParam;	// 自アプリがアクティブかどうか
 
-//		MYTRACE( "WM_ACTIVATE " );
- 		switch( fActive ){
-		case WA_ACTIVE:
-//			MYTRACE( " WA_ACTIVE\n" );
-			bIsActive = TRUE;
-			break;
-		case WA_CLICKACTIVE:
-//			MYTRACE( " WA_CLICKACTIVE\n" );
-			bIsActive = TRUE;
-			break;
-		case WA_INACTIVE:
-//			MYTRACE( " WA_INACTIVE\n" );
-			bIsActive = FALSE;
-			break;
-		}
-		if( !bIsActive ){
-			hwndActive = hwndTarget;
-			while( hwndActive != NULL ){
-				hwndActive = ::GetParent( hwndActive );
-				if( hwndActive == m_hWnd ){
-					bIsActive = TRUE;
-					break;
-				}
+		// アクティブ化なら編集ウィンドウリストの先頭に移動する		// 2007.04.08 ryoji WM_SETFOCUS から移動
+		if( m_bIsActiveApp ){
+			// アクティブ化が編集ウィンドウでない場合（ダイアログ等の場合）は一旦編集ウィンドウをアクティブ化して戻す
+			// ・CDlgFuncListダイアログを閉じたときに以前のアクティブウィンドウではなく編集ウィンドウがアクティブになるように
+			// ・タブまとめ表示の場合はこれで編集ウィンドウが非表示→表示に切替わるのでリスト移動処理で画面が一時的に消えることもなくなる
+			HWND hwndActive = ::GetActiveWindow();
+			if( hwndActive != m_hWnd ){
+				ActivateFrameWindow( m_hWnd );		// 編集ウィンドウをアクティブ化
+				::SetActiveWindow( hwndActive );	// アクティブウィンドウを元に戻す
 			}
+			CShareData::getInstance()->AddEditWndList( m_hWnd );	// リスト移動処理
 		}
-		if( !bIsActive ){
-			if( m_hWnd == ::GetWindow( hwndTarget, GW_OWNER ) ){
-				bIsActive = TRUE;
-			}
-		}
-		m_cEditDoc.SetParentCaption( !bIsActive );
-		m_CFuncKeyWnd.Timer_ONOFF( bIsActive ); // 20060126 aroka
-		this->Timer_ONOFF( bIsActive ); // 20060128 aroka
 
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		// キャプション設定、タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
+		m_cEditDoc.SetParentCaption();
+		m_CFuncKeyWnd.Timer_ONOFF( m_bIsActiveApp ); // 20060126 aroka
+		this->Timer_ONOFF( m_bIsActiveApp ); // 20060128 aroka
+
+		return 0L;
 
 	case WM_SIZE:
 //		MYTRACE( "WM_SIZE\n" );
@@ -1443,8 +1422,6 @@ LRESULT CEditWnd::DispatchEvent(
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
 
-		/* 編集ウィンドウリストへの登録 */
-		CShareData::getInstance()->AddEditWndList( m_hWnd );
 		/* メッセージの配送 */
 		lRes = m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 

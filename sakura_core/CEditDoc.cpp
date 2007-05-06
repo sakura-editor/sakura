@@ -13,6 +13,7 @@
 	Copyright (C) 2004, genta, novice, Moca, MIK, zenryaku
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 	Copyright (C) 2006, genta, ryoji, aroka
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1245,9 +1246,9 @@ BOOL CEditDoc::IsEnablePaste( void )
 
 /*! 親ウィンドウのタイトルを更新
 
-	@param bKillFocus [in] true: Activeの表示 / false: Inactiveの表示
+	@date 2007.03.08 ryoji bKillFocusパラメータを除去
 */
-void CEditDoc::SetParentCaption( BOOL bKillFocus )
+void CEditDoc::SetParentCaption( void )
 {
 	if( NULL == m_hWnd ){
 		return;
@@ -1267,7 +1268,7 @@ void CEditDoc::SetParentCaption( BOOL bKillFocus )
 //	}
 
 	// From Here Apr. 04, 2003 genta / Apr.05 ShareDataのパラメータ利用に
-	if( bKillFocus ){
+	if( !m_pcEditWnd->IsActiveApp() ){	// 2007.03.08 ryoji bKillFocusをIsActiveApp()に変更
 		ExpandParameter( m_pShareData->m_Common.m_szWindowCaptionInactive,
 			pszCap, sizeof( pszCap ));
 	}

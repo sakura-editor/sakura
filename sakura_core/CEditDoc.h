@@ -13,6 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, Moca, genta, aroka
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -99,7 +100,7 @@ public:
 	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
 
 	int MakeBackUp( const char* target_file );	/* バックアップの作成 */
-	void SetParentCaption( BOOL = FALSE );	/* 親ウィンドウのタイトルを更新 */
+	void SetParentCaption( void );	/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
