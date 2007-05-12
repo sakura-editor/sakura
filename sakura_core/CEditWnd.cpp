@@ -50,8 +50,10 @@
 #include "KeyCode.h"
 
 
-#define IDT_TOOLBAR1	455  // 20060128 aroka
+#define IDT_EDIT		455  // 20060128 aroka
 #define IDT_TOOLBAR		456
+#define IDT_CAPTION		457
+#define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
 
@@ -128,61 +130,6 @@ LRESULT CALLBACK CEditWndProc(
 }
 
 
-/*
-||  タイマーメッセージのコールバック関数
-||
-||	自動保存の更新のためにタイマーを使用しています
-||	ツールバー更新のタイマーはCToolbarTimerProcへ分離した。 20060128 aroka
-*/
-VOID CALLBACK CEditWndTimerProc(
-	HWND hwnd,		// handle of window for timer messages
-	UINT uMsg,		// WM_TIMER message
-	UINT_PTR idEvent,	// timer identifier
-	DWORD dwTime 	// current system time
-)
-{
-	CEditWnd*	pCEdit;
-	// Modified by KEITA for WIN64 2003.9.6
-	pCEdit = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	if( NULL != pCEdit ){
-		pCEdit->OnTimer( hwnd, uMsg, idEvent, dwTime );
-	}
-	return;
-}
-
-/*
-||  タイマーメッセージのコールバック関数（２）
-||
-||	ツールバーの状態更新のためにタイマーを使用しています
-||	@date 20060128 aroka
-*/
-VOID CALLBACK CToolbarTimerProc(
-	HWND hwnd,		// handle of window for timer messages
-	UINT uMsg,		// WM_TIMER message
-	UINT_PTR idEvent,	// timer identifier
-	DWORD dwTime 	// current system time
-)
-{
-	CEditWnd*	pCEdit;
-	pCEdit = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	if( NULL != pCEdit ){
-		pCEdit->OnToolbarTimer( hwnd, uMsg, idEvent, dwTime );
-	}
-	return;
-}
-
-//by 鬼(2)
-void CALLBACK SysMenuTimer(HWND Wnd, UINT Msg, UINT_PTR Event, DWORD Time)
-{
-	CEditWnd *WndObj;
-	// Modified by KEITA for WIN64 2003.9.6
-	WndObj = (CEditWnd*)GetWindowLongPtr(Wnd, GWLP_USERDATA);
-	if(WndObj != NULL)
-		WndObj->OnSysMenuTimer();
-
-	KillTimer(Wnd, Event);
-}
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd() :
 	m_hWnd( NULL ),
@@ -202,6 +149,7 @@ CEditWnd::CEditWnd() :
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	m_pPrintPreview( NULL ),
 	m_pszAppName( GSTR_EDITWINDOWNAME ),
+	m_pszLastCaption( NULL ),
 	m_hwndSearchBox( NULL ),
 	m_fontSearchBox( NULL ),
 	m_nCurrentFocus( 0 ),
@@ -225,6 +173,8 @@ CEditWnd::CEditWnd() :
 
 CEditWnd::~CEditWnd()
 {
+	delete []m_pszLastCaption;
+
 	//	Dec. 4, 2002 genta
 	/* キャレットの行桁位置表示用フォント */
 	::DeleteObject( m_hFontCaretPosInfo );
@@ -552,7 +502,7 @@ HWND CEditWnd::Create(
 		//	Aug. 29, 2003 wmlhq
 		m_nTimerCount = 0;
 		/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
-		if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR1, 500, (TIMERPROC)CEditWndTimerProc ) ){
+		if( 0 == ::SetTimer( m_hWnd, IDT_EDIT, 500, NULL ) ){
 			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 				"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
 			);
@@ -1862,6 +1812,31 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
+	case WM_NCACTIVATE:
+		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（１）	// 2007.04.03 ryoji
+		// 前面にいるのが編集ウィンドウならアクティブ状態を保持する
+		if( m_pShareData->m_bEditWndChanging && CShareData::IsEditWnd(::GetForegroundWindow()) ){
+			wParam = TRUE;	// アクティブ
+		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
+	case WM_SETTEXT:
+		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
+		// タイマーを使用してタイトルの変更を遅延する
+		if( m_pShareData->m_bEditWndChanging ){
+			delete []m_pszLastCaption;
+			m_pszLastCaption = new TCHAR[ ::lstrlen((LPCTSTR)lParam) + 1 ];
+			::lstrcpy( m_pszLastCaption, (LPCTSTR)lParam );	// 変更後のタイトルを記憶しておく
+			::SetTimer( m_hWnd, IDT_CAPTION, 50, NULL );
+			return 0L;
+		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
+	case WM_TIMER:
+		if( !OnTimer(wParam, lParam) )
+			return 0L;
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
 		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
@@ -2888,18 +2863,40 @@ end_of_drop_query:;
 		return;
 }
 
+/*! WM_TIMER 処理 
+	@date 2007.04.03 ryoji 新規
+*/
+LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
+{
+	// タイマー ID で処理を振り分ける
+	switch( wParam )
+	{
+	case IDT_EDIT:
+		OnEditTimer();
+		break;
+	case IDT_TOOLBAR:
+		OnToolbarTimer();
+		break;
+	case IDT_CAPTION:
+		OnCaptionTimer();
+		break;
+	case IDT_SYSMENU:
+		OnSysMenuTimer();
+		break;
+	default:
+		return 1L;
+	}
+
+	return 0L;
+}
 
 /*! タイマーの処理
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
 	@date 2006.01.28 aroka ツールバー更新を OnToolbarTimerに移動した
+	@date 2007.04.03 ryoji パラメータ無しにした
 */
-void CEditWnd::OnTimer(
-	HWND		hwnd,		// handle of window for timer messages
-	UINT		uMsg,		// WM_TIMER message
-	UINT		idEvent,	// timer identifier
-	DWORD		dwTime 		// current system time
-)
+void CEditWnd::OnEditTimer( void )
 {
 	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
 	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
@@ -2920,17 +2917,13 @@ void CEditWnd::OnTimer(
 	return;
 }
 
-/*! ツールバー更新用タイマーの処理 
+/*! ツールバー更新用タイマーの処理
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
 	@date 2006.01.28 aroka OnTimerから分離
+	@date 2007.04.03 ryoji パラメータ無しにした
 */
-void CEditWnd::OnToolbarTimer(
-	HWND		hwnd,		// handle of window for timer messages
-	UINT		uMsg,		// WM_TIMER message
-	UINT		idEvent,	// timer identifier
-	DWORD		dwTime 		// current system time
-)
+void CEditWnd::OnToolbarTimer( void )
 {
 	int			i;
 	TBBUTTON	tbb;
@@ -2958,6 +2951,51 @@ void CEditWnd::OnToolbarTimer(
 	}
 
 	return;
+}
+
+/*! キャプション更新用タイマーの処理
+	@date 2007.04.03 ryoji 新規
+*/
+void CEditWnd::OnCaptionTimer( void )
+{
+	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
+	// まだ切替中ならタイマー継続
+	if( !m_pShareData->m_bEditWndChanging ){
+		::KillTimer( m_hWnd, IDT_CAPTION );
+		::SetWindowText( m_hWnd, m_pszLastCaption );
+	}
+}
+
+/*! システムメニュー表示用タイマーの処理
+	@date 2007.04.03 ryoji パラメータ無しにした
+	                       以前はコールバック関数でやっていたKillTimer()をここで行うようにした
+*/
+void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
+{
+	::KillTimer( m_hWnd, IDT_SYSMENU );	// 2007.04.03 ryoji
+
+	if(m_IconClicked == icClicked)
+	{
+		ReleaseCapture();
+
+		//システムメニュー表示
+		// 2006.04.21 ryoji マルチモニタ対応の修正
+		HMENU SysMenu = GetSystemMenu(m_hWnd, FALSE);
+		RECT R;
+		GetWindowRect(m_hWnd, &R);
+		POINT pt;
+		pt.x = R.left + GetSystemMetrics(SM_CXFRAME);
+		pt.y = R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME);
+		GetMonitorWorkRect( pt, &R );
+		DWORD Cmd = TrackPopupMenu(SysMenu, TPM_RETURNCMD | TPM_LEFTBUTTON |
+						TPM_LEFTALIGN | TPM_TOPALIGN,
+						(pt.x > R.left)? pt.x: R.left,
+						(pt.y < R.bottom)? pt.y: R.bottom,
+						0, m_hWnd, NULL);
+		if(Cmd != 0)
+			SendMessage(m_hWnd, WM_SYSCOMMAND, Cmd, 0);
+	}
+	m_IconClicked = icNone;
 }
 
 /* 機能がチェック状態か調べる */
@@ -3800,7 +3838,7 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 
 	return 0;
 }
-#define IDT_SYSMENU 1357
+
 LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 {
 	//by 鬼 2002/04/18
@@ -3810,7 +3848,7 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 		{
 			m_IconClicked = icClicked;
 			//by 鬼(2) タイマー(IDは適当です)
-			SetTimer(m_hWnd, IDT_SYSMENU, GetDoubleClickTime(), SysMenuTimer);
+			SetTimer(m_hWnd, IDT_SYSMENU, GetDoubleClickTime(), NULL);
 		}
 		return 0;
 	}
@@ -4064,32 +4102,6 @@ LRESULT CEditWnd::OnLButtonDblClk(WPARAM wp, LPARAM lp) //by 鬼(2)
 	}
 
 	return Result;
-}
-
-void CEditWnd::OnSysMenuTimer() //by 鬼(2)
-{
-	if(m_IconClicked == icClicked)
-	{
-		ReleaseCapture();
-
-		//システムメニュー表示
-		// 2006.04.21 ryoji マルチモニタ対応の修正
-		HMENU SysMenu = GetSystemMenu(m_hWnd, FALSE);
-		RECT R;
-		GetWindowRect(m_hWnd, &R);
-		POINT pt;
-		pt.x = R.left + GetSystemMetrics(SM_CXFRAME);
-		pt.y = R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME);
-		GetMonitorWorkRect( pt, &R );
-		DWORD Cmd = TrackPopupMenu(SysMenu, TPM_RETURNCMD | TPM_LEFTBUTTON |
-						TPM_LEFTALIGN | TPM_TOPALIGN,
-						(pt.x > R.left)? pt.x: R.left,
-						(pt.y < R.bottom)? pt.y: R.bottom,
-						0, m_hWnd, NULL);
-		if(Cmd != 0)
-			SendMessage(m_hWnd, WM_SYSCOMMAND, Cmd, 0);
-	}
-	m_IconClicked = icNone;
 }
 
 /*! ドロップダウンメニュー(開く) */	//@@@ 2002.06.15 MIK
@@ -4577,7 +4589,7 @@ void CEditWnd::Timer_ONOFF( BOOL bStart )
 	if( NULL != m_hWnd ){
 		if( bStart ){
 			/* タイマーを起動 */
-			if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, (TIMERPROC)CToolbarTimerProc ) ){
+			if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, NULL ) ){
 				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 					"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
 				);

@@ -615,6 +615,7 @@ struct DLLSHAREDATA {
 	//From Here 2003.05.31 MIK
 	WINDOWPLACEMENT		m_TabWndWndpl;					//タブウインドウ時のウインドウ情報
 	//To Here 2003.05.31 MIK
+	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;

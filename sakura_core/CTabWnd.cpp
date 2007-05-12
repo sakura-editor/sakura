@@ -1393,6 +1393,10 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		break;
 	//End 2004.08.27 Kazika
 
+	case TWNT_WNDPL_ADJUST:	// ウィンドウ位置合わせ	// 2007.04.03 ryoji
+		AdjustWindowPlacement();
+		return;
+
 	default:
 		break;
 	}
@@ -1527,29 +1531,91 @@ void CTabWnd::Refresh( void )
 	return;
 }
 
+
+/*!	編集ウィンドウの位置合わせ
+
+	@author ryoji
+	@date 2007.04.03 新規作成
+*/
+void CTabWnd::AdjustWindowPlacement( void )
+{
+	// タブまとめ表示の場合は編集ウィンドウの表示位置を復元する
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		HWND hwnd = m_hwndParent;	// 自身の編集ウィンドウ
+		WINDOWPLACEMENT wp = m_pShareData->m_TabWndWndpl;
+		if( wp.length == sizeof( WINDOWPLACEMENT ) && !::IsWindowVisible( hwnd ) )	// 可視化するときだけ引き継ぐ
+		{
+			// なるべく画面を手前に出さずに可視化する
+			// Note. 非アクティブスレッドから実行するのであればアクティブ化指定でも手前には出ない
+			// Note. SW_xxxxx の中には「アクティブ化無しの最大化」指定は存在しない
+			// Note. 不可視の状態からいきなり手前に出てしまうと次のような現象が起きる
+			//  ・画面描画される際、クライアント領域全体が一時的に真っ白になる（Vista Aero）
+			//  ・最大化切替（SW_SHOWMAXIMIZED）の際、以前に通常表示だった画面のステータスバーやファンクションキーが一時的に通常サイズで表示される
+
+			// ウィンドウを背後に配置する（WS_EX_TOPMOSTは解除される．SWP_NOOWNERZORDER 指定することで owner/owned ウィンドウの WS_EX_TOPMOST は解除しない）
+			LONG_PTR lExStyle = ::GetWindowLongPtr( hwnd, GWL_EXSTYLE );
+			::SetWindowPos( hwnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
+			if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
+			{
+				WINDOWPLACEMENT wpCur;
+				wpCur.length = sizeof( WINDOWPLACEMENT );
+				::GetWindowPlacement( hwnd, &wpCur );
+				if( !::EqualRect( &wp.rcNormalPosition, &wpCur.rcNormalPosition ) )
+				{
+					// ウィンドウの通常サイズが目的のサイズと違っているときは一旦通常サイズで表示してから最大化する
+					// Note. マルチモニタで以前に別モニタで最大化されていた画面は一旦通常サイズに戻しておかないと元の別モニタ側に表示されてしまう
+					wp.showCmd = SW_SHOWNOACTIVATE;
+					::SetWindowPlacement( hwnd, &wp );	// 通常サイズ表示
+					wp.showCmd = SW_SHOWMAXIMIZED;
+				}
+				else
+				{
+					wp.showCmd = SW_SHOWNA;
+				}
+			}
+			else if( wp.showCmd != SW_SHOWMAXIMIZED )
+			{
+				wp.showCmd = SW_SHOWNOACTIVATE;
+			}
+			::SetWindowPlacement( hwnd, &wp );	// 位置を復元する
+			::UpdateWindow( hwnd );	// 強制描画
+
+			// 以前が WS_EX_TOPMOST だった場合は元に戻す
+			if( lExStyle & WS_EX_TOPMOST )
+				::SetWindowPos( hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+		}
+	}
+}
+
 void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 {
 	if( NULL == hwnd ) return;
 
 	if( bDisp )
 	{
-		if( m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
+		if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 		{
-			//ウインドウ情報を引き継ぐ。
-			m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-			::SetWindowPlacement( hwnd, &(m_pShareData->m_TabWndWndpl) );
+			if( m_pShareData->m_bEditWndChanging )
+				return;	// 切替の最中(busy)は要求を無視する
+			m_pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
+
+			// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
+			DWORD dwResult;
+			::SendMessageTimeout( hwnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
+				SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
 		}
 
 		TabWnd_ActivateFrameWindow( hwnd );
+
+		m_pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
 	}
 	else
 	{
-		if( m_pShareData->m_Common.m_bDispTabWnd )
+		if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 		{
-			if( m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
-			{
-				::ShowWindow( hwnd, SW_HIDE );
-			}
+			::ShowWindow( hwnd, SW_HIDE );
 		}
 	}
 

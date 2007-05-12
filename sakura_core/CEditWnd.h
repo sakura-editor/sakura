@@ -74,11 +74,6 @@ public:
 	LRESULT OnHScroll( WPARAM, LPARAM );
 	LRESULT OnVScroll( WPARAM, LPARAM );
 
-	// ツールバー更新用と自動保存用のタイマーを分離した 20060128 aroka
-	void OnTimer( HWND, UINT, UINT, DWORD );	/* タイマーの処理 */
-	void OnToolbarTimer( HWND, UINT, UINT, DWORD );	/* タイマーの処理 20060128 aroka */
-	void OnCommand( WORD, WORD , HWND );
-
 	void CreateToolBar( void );			/* ツールバー作成 */
 	void DestroyToolBar( void );		/* ツールバー破棄 */
 	void CreateStatusBar( void );		/* ステータスバー作成 */
@@ -236,11 +231,18 @@ private:
 	int			m_nCaretPosInfoCharHeight;	/*!< キャレットの行桁位置表示用フォントの高さ */
 	int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 
+	LPTSTR		m_pszLastCaption;
 	int m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
 
+	// ツールバー更新用と自動保存用のタイマーを分離した 20060128 aroka
+	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER 処理	// 2007.04.03 ryoji
+	void OnEditTimer( void );	/* タイマーの処理 */
+	void OnToolbarTimer( void );	/* タイマーの処理 20060128 aroka */
+	void OnCaptionTimer( void );
+	void OnSysMenuTimer( void );
+	void OnCommand( WORD, WORD , HWND );
 	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
 public:
-	void OnSysMenuTimer();
 	BOOL IsActiveApp() const { return m_bIsActiveApp; };	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 };
 

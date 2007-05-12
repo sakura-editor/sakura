@@ -59,8 +59,6 @@ public:
 	HWND Open( HINSTANCE, HWND );		/*!< ウィンドウ オープン */
 	void Close( void );					/*!< ウィンドウ クローズ */
 	void TabWindowNotify( WPARAM wParam, LPARAM lParam );
-	void ForceActiveWindow( HWND hwnd );
-	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
 
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
@@ -86,10 +84,13 @@ protected:
 	/*
 	|| 実装ヘルパ系
 	*/
-	void Refresh( void );	// 2006.02.06 ryoji 引数削除
 	int FindTabIndexByHWND( HWND hWnd );
+	void Refresh( void );	// 2006.02.06 ryoji 引数削除
+	void AdjustWindowPlacement( void );							/*!< 編集ウィンドウの位置合わせ */	// 2007.04.03 ryoji
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
 	int GetFirstOpenedWindow( void );
+	void ForceActiveWindow( HWND hwnd );
+	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
 
 	/* 仮想関数 */
 	virtual void AfterCreateWindow( void ){}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない

@@ -32,6 +32,7 @@
 #include "debug.h"
 #include "CMemory.h"
 #include "funccode.h"	//Stonee, 2001/02/23
+#include "mymessage.h"	// 2007.04.03 ryoji
 
 #include "WINNETWK.H"	//Stonee, 2001/12/21
 #include "sakura.hh"	//YAZAKI, 2001/12/11
@@ -534,15 +535,19 @@ void GetAppVersionInfo(
 void ActivateFrameWindow( HWND hwnd )
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
-	CShareData* pInstance;
-	DLLSHAREDATA* pShareData;
+	CShareData* pInstance = NULL;
+	DLLSHAREDATA* pShareData = NULL;
 	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
-		if( pInstance->IsEditWnd( hwnd ) ){
-			if( pShareData->m_TabWndWndpl.length == sizeof( pShareData->m_TabWndWndpl )
-				&& TRUE  == pShareData->m_Common.m_bDispTabWnd
-				&& FALSE == pShareData->m_Common.m_bDispTabWndMultiWin )
-			{
-				::SetWindowPlacement( hwnd, &(pShareData->m_TabWndWndpl) );
+		if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ) {
+			if( pInstance->IsEditWnd( hwnd ) ){
+				if( pShareData->m_bEditWndChanging )
+					return;	// 切替の最中(busy)は要求を無視する
+				pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
+
+				// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
+				DWORD dwResult;
+				::SendMessageTimeout( hwnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
+					SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
 			}
 		}
 	}
@@ -558,6 +563,10 @@ void ActivateFrameWindow( HWND hwnd )
 	}
 	::SetForegroundWindow( hwnd );
 	::BringWindowToTop( hwnd );
+
+	if( pShareData )
+		pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
+
 	return;
 }
 

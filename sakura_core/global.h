@@ -12,6 +12,7 @@
 	Copyright (C) 2004, Kazika
 	Copyright (C) 2005, MIK, Moca, genta
 	Copyright (C) 2006, aroka, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -384,6 +385,7 @@ SAKURA_CORE_API enum enumTabWndNotifyType {
 	TWNT_FILE		= 4,		//ファイル名変更
 	TWNT_MODE_ENABLE= 5,		//タブモード有効化	//2004.07.14 Kazika 追加
 	TWNT_MODE_DISABLE= 6,		//タブモード無効化	//2004.08.27 Kazika 追加
+	TWNT_WNDPL_ADJUST= 7,		//ウィンドウ位置合わせ	// 2007.04.03 ryoji 追加
 };
 
 /*! バーの表示・非表示 */
