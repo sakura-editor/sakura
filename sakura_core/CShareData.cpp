@@ -207,9 +207,12 @@ struct ARRHEAD {
 	Version 72:
 	タブ一覧をフルパス表示する 2007.02.28 ryoji
 
+	Version 73:
+	編集ウィンドウ切替中 2007.04.03 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 72;
+const unsigned int uShareDataVersion = 73;
 
 /*
 ||	Singleton風
@@ -316,6 +319,7 @@ bool CShareData::Init( void )
 		//タブウインドウ情報
 		m_pShareData->m_TabWndWndpl.length = 0;
 		//To Here 2003.05.31 MIK
+		m_pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
 		m_pShareData->m_Common.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する

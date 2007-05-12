@@ -1084,15 +1084,6 @@ LRESULT CEditApp::DispatchEvent(
 						nId - IDM_SELWINDOW  < m_pShareData->m_nEditArrNum ){
 						hwndWork = m_pShareData->m_pEditArr[nId - IDM_SELWINDOW].m_hWnd;
 
-						//@@@ 2003.06.25 MIK
-						//	ウィンドウ位置を復元
-						if( m_pShareData->m_TabWndWndpl.length 
-						 && TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-						 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
-						{
-							::SetWindowPlacement( hwndWork, &(m_pShareData->m_TabWndWndpl) );
-						}
-
 						/* アクティブにする */
 						ActivateFrameWindow( hwndWork );
 //						if( ::IsIconic( hwndWork ) ){
