@@ -2620,7 +2620,16 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			// Feb. 28, 2004 genta 編集メニューから移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CHGMOD_INS	, "挿入／上書きモード(&I)" );	//Nov. 9, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_READONLY					, "読み取り専用(&R)" );
-
+			if ( FALSE == m_pShareData->m_Common.m_bMenuIcon ){
+				pszLabel = "キーワードヘルプ自動表示(&H)";
+			}
+			else if( IsFuncChecked( &m_cEditDoc, m_pShareData, F_TOGGLE_KEY_SEARCH ) ){
+				pszLabel = "キーワードヘルプ自動表示しない(&H)";
+			}
+			else {
+				pszLabel = "キーワードヘルプ自動表示する(&H)";
+			}
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOGGLE_KEY_SEARCH, pszLabel );
 			hMenuPopUp = ::CreatePopupMenu();
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, "入力改行コード指定(&CRLF)" ); // 入力改行コード指定(CRLF)
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF, "入力改行コード指定(&LF)" ); // 入力改行コード指定(LF)
@@ -3115,6 +3124,14 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 		if( pcEditDoc->IsInsMode() ){
 			return TRUE;
 		}else{
+			return FALSE;
+		}
+	case F_TOGGLE_KEY_SEARCH:
+		//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
+		if( pShareData->m_Common.m_bUseCaretKeyWord ){
+			return TRUE;
+		}
+		else {
 			return FALSE;
 		}
 	//Start 2004.07.14 Kazika 追加

@@ -5151,7 +5151,8 @@ void CEditView::Command_MENU_RBUTTON( void )
 	case IDM_JUMPDICT:
 		/* キーワード辞書ファイルを開く */
 		if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp)		/* キーワード辞書セレクトを使用する */	// 2006.04.10 fon
-			TagJumpSub( m_pShareData->m_Types[m_pcEditDoc->GetDocumentType()].m_KeyHelpArr[m_cTipWnd.m_nSearchDict].m_szPath, m_cTipWnd.m_nSearchLine, 1, 0 );
+			//	Feb. 17, 2007 genta 相対パスを実行ファイル基準で開くように
+			TagJumpSub( m_pShareData->m_Types[m_pcEditDoc->GetDocumentType()].m_KeyHelpArr[m_cTipWnd.m_nSearchDict].m_szPath, m_cTipWnd.m_nSearchLine, 1, 0, true );
 		break;
 
 	default:
@@ -6109,8 +6110,9 @@ next_line:
 	@date	2003.04.13	新規作成
 	@date	2003.04.21 genta bClose追加
 	@date	2004.05.29 Moca 0以下が指定されたときは、善処する
+	@date	2007.02.17 genta 相対パスの基準ディレクトリ指示を追加
 */
-bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm, bool bClose )
+bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm, bool bClose, bool bRelFromExe )
 {
 	HWND	hwndOwner;
 	POINT	poCaret;
@@ -6122,7 +6124,14 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 	// 参照元ウィンドウ保存
 	tagJump.hwndReferer = m_pcEditDoc->m_hwndParent;
 
-	strcpy( szJumpToFile, pszFileName );
+	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
+	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
+	if( bRelFromExe && _IS_REL_PATH( pszFileName ) ){
+		GetExecutableDir( szJumpToFile, pszFileName );
+	}
+	else {
+		strcpy( szJumpToFile, pszFileName );
+	}
 
 	/* ロングファイル名を取得する */
 	if( TRUE == ::GetLongFileName( szJumpToFile, szWork ) )
