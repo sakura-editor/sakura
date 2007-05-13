@@ -295,7 +295,7 @@
 #define F_TYPE_LIST			31110	/* タイプ別設定一覧 */
 #define F_OPTION_TYPE		31111	/* タイプ別設定 */
 #define F_OPTION			31112	/* 共通設定 */
-#define	F_FAVORITE			31113	//お気に入りの設定	//@@@ 2003.04.08 MIK
+#define	F_FAVORITE			31113	//履歴の管理	//@@@ 2003.04.08 MIK
 
 //From here 設定ダイアログ用の機能番号を用意  Stonee, 2001/05/18
 #define F_TYPE_SCREEN		31115	/* タイプ別設定『スクリーン』 */

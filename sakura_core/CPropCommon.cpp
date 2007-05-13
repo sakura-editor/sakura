@@ -996,7 +996,7 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 		m_Common.m_nMRUArrNum_MAX = MAX_MRU;
 	}
 
-	{	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.09 MIK
+	{	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.09 MIK
 		CRecent	cRecentFile;
 		cRecentFile.EasyCreate( RECENT_FOR_FILE );
 		cRecentFile.UpdateView();
@@ -1012,7 +1012,7 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 		m_Common.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER;
 	}
 
-	{	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.09 MIK
+	{	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.09 MIK
 		CRecent	cRecentFolder;
 		cRecentFolder.EasyCreate( RECENT_FOR_FOLDER );
 		cRecentFolder.UpdateView();

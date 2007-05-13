@@ -525,7 +525,7 @@ BOOL CEditView::HandleCommand(
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	Command_WRAPWINDOWWIDTH();break;/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-	case F_FAVORITE:		Command_Favorite();break;		//お気に入り	//@@@ 2003.04.08 MIK
+	case F_FAVORITE:		Command_Favorite();break;		//履歴の管理	//@@@ 2003.04.08 MIK
 	//	Jan. 29, 2005 genta 引用符の設定
 	case F_SET_QUOTESTRING:	Command_SET_QUOTESTRING((const char*)lparam1);	break;
 

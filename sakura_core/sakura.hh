@@ -204,7 +204,7 @@
 #define HLP000088	88 //共通設定 『支援』プロパティ
 #define HLP000201	201 //共通設定 『マクロ』プロパティ
 #define HLP000277	277 //共通設定『ファイル名表示』タブ
-#define HLP000279	279 //お気に入りの設定
+#define HLP000279	279 //履歴の管理
 #define HLP000071	71 //フォント設定
 #define HLP000184	184 //現在のウィンドウ幅で折り返し
 #define HLP000125	125 //キーマクロの記録開始／終了
@@ -804,7 +804,7 @@
 #define HIDC_BUTTON_FNAME_LAST		13410	// 最終
 //#define HIDC_CHECK_FNAME,	13411	// ファイル名を簡易表示する
 
-//お気に入りの設定	//@@@ 2003.04.08 MIK
+//履歴の管理	//@@@ 2003.04.08 MIK
 //#define	HIDC_FAVORITE_DIALOG		13500	//ダイアログ用
 #define	HIDC_FAVORITE_IDOK			13501
 #define	HIDC_FAVORITE_IDCANCEL		13502

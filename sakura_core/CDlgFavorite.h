@@ -1,5 +1,5 @@
 /*!	@file
-	@brief お気に入り設定ダイアログボックス
+	@brief 履歴の管理ダイアログボックス
 
 	@author MIK
 	@date 2003.4.8

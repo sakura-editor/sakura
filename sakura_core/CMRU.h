@@ -72,7 +72,7 @@ protected:
 	bool IsRemovableDrive( const char* pszDrive );
 
 private:
-	CRecent	m_cRecent;	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+	CRecent	m_cRecent;	//—š—ð	//@@@ 2003.04.08 MIK
 
 };
 #endif
