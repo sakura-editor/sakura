@@ -677,14 +677,15 @@ int CDlgTagJumpList::SearchBestTag( void )
 /*!
 	タグファイルからキーワードにマッチするデータを抽出し，
 	m_cListに設定する
-	
+
+	@date 2007.03.13 genta バッファオーバーラン暫定対処でバッファサイズ変更
 */
 void CDlgTagJumpList::find_key( const char* keyword )
 {
 	char	szCurrentPath[1024];	//カレントフォルダ
 	char	szTagFile[1024];		//タグファイル
-	char	szLineData[MAX_TAG_STRING_LENGTH*4];		//行バッファ
-	char	s[5][MAX_TAG_STRING_LENGTH];
+	char	szLineData[1024];		//行バッファ
+	char	s[5][1024];
 	int		n2;
 	int	length = strlen( keyword );
 	int	nMatch;
