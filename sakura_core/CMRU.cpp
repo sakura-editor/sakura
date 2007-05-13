@@ -21,7 +21,7 @@
 #include "global.h"
 #include <stdio.h>
 #include "CMRU.h"
-#include "CRecent.h"	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+#include "CRecent.h"	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
 #include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 
@@ -33,7 +33,7 @@ CMRU::CMRU()
 	//	‰Šú‰»B
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
 	(void)m_cRecent.EasyCreate( RECENT_FOR_FILE );
 }
 

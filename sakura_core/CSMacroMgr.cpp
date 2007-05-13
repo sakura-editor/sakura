@@ -272,7 +272,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_OPTION,					"OptionCommon",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定 */
 	{F_FONT,					"SelectFont",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* フォント設定 */
 	{F_WRAPWINDOWWIDTH,			"WrapWindowWidth",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-	{F_FAVORITE,				"OptionFavorite",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* お気に入りの設定 */	//@@@ 2003.04.08 MIK
+	{F_FAVORITE,				"OptionFavorite",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 履歴の管理 */	//@@@ 2003.04.08 MIK
 	{F_SET_QUOTESTRING,			"SetMsgQuoteStr",	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定→書式→引用符の設定 */	//Jan. 29, 2005 genta
 
 
@@ -913,7 +913,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_OPTION					:/* 共通設定 */
 //	case F_FONT						:/* フォント設定 */
 //	case F_WRAPWINDOWWIDTH			:/* 現在のウィンドウ幅で折り返し */	//Oct. 15, 2000 JEPRO
-//	case F_FAVORITE					:/* お気に入りの設定 */	//@@@ 2003.04.08 MIK
+//	case F_FAVORITE					:/* 履歴の管理 */	//@@@ 2003.04.08 MIK
 
 	case F_EXECCOMMAND				:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
 

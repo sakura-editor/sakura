@@ -68,7 +68,7 @@ protected:
 	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
 
 private:
-	CRecent	m_cRecent;	//お気に入り	//@@@ 2003.04.08 MIK
+	CRecent	m_cRecent;	//履歴	//@@@ 2003.04.08 MIK
 };
 
 #endif

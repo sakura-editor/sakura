@@ -1932,7 +1932,7 @@ END
 IDD_FAVORITE DIALOGEX 0, 0, 271, 255
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "お気に入りの設定"
+CAPTION "履歴の管理"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     CONTROL         "List1",IDC_LIST_FAVORITE_FILE,"SysListView32",
@@ -2991,7 +2991,7 @@ BEGIN
     F_TYPE_LIST             "タイプ別設定一覧"
     F_OPTION_TYPE           "タイプ別設定"
     F_OPTION                "共通設定"
-    F_FAVORITE              "お気に入りの設定"
+    F_FAVORITE              "履歴の管理"
 END
 
 STRINGTABLE DISCARDABLE 

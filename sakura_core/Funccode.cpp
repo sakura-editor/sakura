@@ -346,7 +346,7 @@ const int pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 	F_FONT				,	/* フォント設定 */
 	F_WRAPWINDOWWIDTH	,	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	F_PRINT_PAGESETUP	,	//印刷ページ設定				//Sept. 14, 2000 JEPRO 「印刷のページレイアウトの設定」を「印刷ページ設定」に変更	//Oct. 17, 2000 コマンド本家は「ファイル操作系」
-	F_FAVORITE				//お気に入りの設定	//@@@ 2003.04.08 MIK
+	F_FAVORITE				//履歴の管理	//@@@ 2003.04.08 MIK
 };
 int		nFincList_Set_Num = sizeof( pnFuncList_Set ) / sizeof( pnFuncList_Set[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 

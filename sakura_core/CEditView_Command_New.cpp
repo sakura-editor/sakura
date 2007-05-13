@@ -36,7 +36,7 @@
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "CEditWnd.h"
 #include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
-#include "CDlgFavorite.h"	//お気に入り	//@@@ 2003.04.08 MIK
+#include "CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -2770,7 +2770,7 @@ void CEditView::Command_JUMP_SRCHSTARTPOS(void)
 	return;
 }
 
-/*!	お気に入りの設定(ダイアログ)
+/*!	履歴の管理(ダイアログ)
 	@author	MIK
 	@date	2003/04/07
 */
