@@ -264,7 +264,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				}
 				/* 指定したパスに辞書があるかチェックする */
 				FILE* fp;
-				if( (fp=fopen(szPath,"r")) == NULL ){
+				if( (fp=fopen_absexe(szPath,"r")) == NULL ){	// 2006.02.01 genta 本体からの相対パスを受け付ける
 					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
 					return FALSE;
 				}
@@ -691,15 +691,31 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 	GetData_KeyHelp(hwndDlg);
+	
+	int invalid_record = 0; // 不正な行
 	/* データ取得 */
 	for(i=0; (NULL!=fgets(buff,sizeof(buff),fp))&&(i<MAX_KEYHELP_FILE); ){
 		for(j = strlen(buff) - 1; j >= 0; j--){
 			if( buff[j] == '\r' || buff[j] == '\n' ) buff[j] = '\0';
 		}
+		// 2007.02.03 genta コメントみたいな行は黙ってスキップ
+		if( buff[0] == '\n' ||
+			buff[0] == '#' ||
+			buff[0] == ';' ||
+			( buff[0] == '/' && buff[1] == '/' )){
+				//	2007.02.03 genta 処理を継続
+				continue;
+			}
+		
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
-		if( strlen(buff) < 10 ) continue;
-		if( memcmp(buff, "KDct[", 5) != 0 ) continue;
-		if( memcmp(&buff[7], "]=", 2) != 0 ) continue;
+		if( strlen(buff) < 10 ||
+			memcmp(buff, "KDct[", 5) != 0 ||
+			memcmp(&buff[7], "]=", 2) != 0 ||
+			0 ){
+			//	2007.02.03 genta 処理を継続
+			++invalid_record;
+			continue;
+		}
 
 		char *p1, *p2, *p3;
 		p1 = &buff[9];
@@ -714,24 +730,39 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 		}/* 結果の確認 */
 		if( (p3==NULL) ||			//カンマが1個足りない
 			(p3==p1) ||				//カンマが2個足りない
-			(NULL!=strstr(p3,","))	//カンマが多すぎる
-		)break;
+			//	2007.02.03 genta ファイル名にカンマがあるかもしれない
+			0 //(NULL!=strstr(p3,","))	//カンマが多すぎる
+		){
+			//	2007.02.03 genta 処理を継続
+			++invalid_record;
+			continue;
+		}
 		/* valueのチェック */
 		//ON/OFF
-		if( (unsigned int)atoi(p1) > 1)break;
-		//About
-		if(strlen(p2)>DICT_ABOUT_LEN){
-			::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "辞書の説明は%d文字以内にしてください。\n", DICT_ABOUT_LEN );
-			break;
+		//	2007.02.03 genta 1でなければ1にする
+		unsigned int b_enable_flag = (unsigned int)atoi(p1);
+		if( b_enable_flag > 1){
+			b_enable_flag = 1;
 		}
 		//Path
 		FILE* fp2;
-		if( (fp2=fopen(p3,"r")) == NULL )
-			break;
+		if( (fp2=fopen_absexe(p3,"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く
+			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
+			p2 = "【辞書ファイルが見つかりません】";
+			b_enable_flag = 0;
+		}
 		else
 			fclose(fp2);
+
+		//About
+		if(strlen(p2)>DICT_ABOUT_LEN){
+			::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "辞書の説明は%d文字以内にしてください。\n", DICT_ABOUT_LEN );
+			++invalid_record;
+			continue;
+		}
+
 		//良さそうなら
-		m_Types.m_KeyHelpArr[i].m_nUse = atoi(p1);
+		m_Types.m_KeyHelpArr[i].m_nUse = b_enable_flag;	// 2007.02.03 genta
 		strcpy(m_Types.m_KeyHelpArr[i].m_szAbout, p2);
 		strcpy(m_Types.m_KeyHelpArr[i].m_szPath, p3);
 		i++;
@@ -739,6 +770,12 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	fclose(fp);
 	/*データのセット*/
 	SetData_KeyHelp(hwndDlg);
+	// 2007.02.03 genta 失敗したら警告する
+	if( invalid_record > 0 ){
+		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
+		"一部のデータが読み込めませんでした\n不正な行数: %d",
+		invalid_record );
+	}
 	return TRUE;
 }
 

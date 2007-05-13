@@ -42,7 +42,8 @@ static const DWORD p_helpids[] = {	//10600
 	IDC_CHECK_HTMLHELPISSINGLE,		HIDC_CHECK_HTMLHELPISSINGLE,	//ビューアの複数起動
 	IDC_EDIT_EXTHELP1,				HIDC_EDIT_EXTHELP1,				//外部ヘルプファイル名
 	IDC_EDIT_EXTHTMLHELP,			HIDC_EDIT_EXTHTMLHELP,			//外部HTMLヘルプファイル名
-	IDC_CHECK_CLICKKEYSEARCH,		HIDC_CHECK_CLICKKEYSEARCH,		//キャレット位置の単語を辞書検索	// 2006.03.24 fon
+	//	2007.02.04 genta カーソル位置の単語の辞書検索は共通設定から外した
+	//IDC_CHECK_CLICKKEYSEARCH,		HIDC_CHECK_CLICKKEYSEARCH,		//キャレット位置の単語を辞書検索	// 2006.03.24 fon
 	IDC_BUTTON_KEYWORDHELPFONT,		HIDC_BUTTON_KEYWORDHELPFONT,	//キーワードヘルプのフォント
 	IDC_EDIT_MIGEMO_DLL,			HIDC_EDIT_MIGEMO_DLL,			//Migemo DLLファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_OPENMDLL,			HIDC_BUTTON_OPENMDLL,			//Migemo DLLファイル参照	// 2006.08.06 ryoji
@@ -395,9 +396,6 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 //	::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Common.m_szKeyWordHelpFile );
 //	2001/06/14 End
 
-	/* キャレット位置の単語を辞書検索 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_CLICKKEYSEARCH, m_Common.m_bUseCaretKeyWord );	// 2006.03.24 fon
-
 	/* 外部ヘルプ１ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp );
 
@@ -441,9 +439,6 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 
 	/* キーワードヘルプを使用する */
 //	m_Common.m_bUseKeyWordHelp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEKEYWORDHELP );
-
-	/* キャレット位置の単語を辞書検索 */
-	m_Common.m_bUseCaretKeyWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CLICKKEYSEARCH );	// 2006.03.24 fon
 
 	/* キーワードヘルプ 辞書ファイル */
 //	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Common.m_szKeyWordHelpFile, MAX_PATH - 1 );

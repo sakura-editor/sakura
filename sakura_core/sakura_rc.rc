@@ -928,10 +928,6 @@ BEGIN
                     IDC_CHECK_HTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,105,101,10,0,HIDC_CHECK_HTMLHELPISSINGLE
     GROUPBOX        "キーワードヘルプ",IDC_STATIC,3,123,264,33,WS_GROUP
-    CONTROL         "キャレット位置の単語を辞書検索(&M)",
-                    IDC_CHECK_CLICKKEYSEARCH,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,138,152,10,0,
-                    HIDC_CHECK_CLICKKEYSEARCH
     PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_KEYWORDHELPFONT,212,136,51,
                     14,0,0,HIDC_BUTTON_KEYWORDHELPFONT
     LTEXT           "DLL(&M)",IDC_STATIC,7,172,22,8
@@ -3056,7 +3052,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_HOKAN                 "入力補完"
-    F_TOGGLE_KEY_SEARCH     "キャレット位置辞書検索機能ON/OFF"
+    F_TOGGLE_KEY_SEARCH     "キーワードヘルプ自動表示"
 END
 
 STRINGTABLE DISCARDABLE 
