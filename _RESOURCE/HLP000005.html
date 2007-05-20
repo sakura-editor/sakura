@@ -23,26 +23,55 @@ aaHHCtlCloseWin.Click(); }
 // -->
 </script>
 <h2>インストール／アンインストール手順</h2>
-<b>■インストール</b><br>
+<h3>インストール</h3>
+<b>■単体配布版インストール</b><br>
 配布ファイルは zip形式にて圧縮されています。<br>
 解凍方法についてはここでは説明しません。<br>
-<div class=li200>
-・以前のバージョンのサクラエディタがインストールされている場合、実行中のサクラエディタを常駐も含めてすべて終了させます。<br>
-・任意のフォルダを作成し、そのフォルダに配布ファイルを解凍します。更新の場合は通常、上書きで構いません。<br>
-・エディタの本体である sakura.exe を実行すれば使えます。<br>
-・ショートカット作成などは手作業で行って下さい。<br>
-</div><br>
-なお、新バージョンに更新したことによってそれまで使えていた機能が動作しなくなる場合があります。<br>
-旧バージョンの圧縮ファイルを保存してない場合はそのような不具合に備えて旧バージョンのバイナリと設定ファイル sakura.ini をバックアップしておくことをお勧めします。<br>
-この場合sakura.exeを単に別フォルダに移動しただけでは、ショートカットがリンク先を自動変更して旧バージョンを起動してしまうことがあるのでファイル名を変更したほうがいいでしょう。<br>
-<br>
-<b>■アンインストール</b><br>
-<font color="blue">インストーラを利用しない場合は、サクラエディタは<b>レジストリへの書き込みは一切致しません</b>ので、アンインストールにあたりレジストリを操作する必要はありません。</font><br>
+<ol>
+<li>以前のバージョンのサクラエディタがインストールされている場合、実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
+<li>任意のフォルダを作成し、そのフォルダに配布ファイル<em>sakura_xxxx-xx-xx.zip</em>を解凍します。更新の場合は通常、上書きで構いません。</li>
+<li>エディタの本体である <em>sakura.exe</em> を実行すれば使えます。</li>
+<li>ショートカット作成などは手作業で行って下さい。</li>
+</ol><br>
 
-<h3>インストーラ(パッケージ版)をご利用の場合</h3>
-<b>■インストール</b><br>
-<pre>
-サクラエディタ用ファイル一式
+<b>■パッケージ版インストール</b><br>
+<font color="blue">パッケージ版（インストーラ）を利用した場合には、アンインストール情報などをレジストリに書き込みします。</font><br>
+<br>
+<ol>
+<li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
+<li>ダウンロードした<em>sinstx-x-xx-x.exe</em>を実行し、ウィザードに従ってください。</li>
+</ol><br>
+
+<img src="images/note.png"><b>注意</b><br>
+新バージョンに更新したことによってそれまで使えていた機能が動作しなくなる場合があります。<br>
+旧バージョンの実行ファイル<em>sakura.exe</em>と設定ファイル<em>sakura.ini</em>をバックアップしておくことをお勧めします。<br>
+この場合<em>sakura.exe</em>を単に別フォルダに移動しただけでは、ショートカットがリンク先を自動変更して旧バージョンを起動してしまうことがあるのでファイル名を変更したほうがいいでしょう。<br>
+<br>
+
+<h3>アンインストール</h3>
+<b>■単体配布版アンインストール</b><br>
+<ol>
+<li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
+<li><em>sakura.exe</em>のフォルダを丸ごと削除します。</li>
+<li>自分で作成したショートカットなども削除してください。</li>
+</ol>
+<div class=li200>
+サクラエディタはレジストリへの書き込みは一切致しませんので、アンインストールにあたりレジストリを操作する必要はありません。<br>
+</div>
+<br>
+<b>■パッケージ版アンインストール</b><br>
+<ol>
+<li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
+<li>プログラムの追加と削除(アプリケーションの追加と削除)からアンインストールしてください。</li>
+</ol>
+<br>
+
+<img src="images/hint.png">ヒント<br>
+<em>sakura.ini</em> というファイルはサクラエディタの設定ファイルです。<br>
+設定を残したい場合は、<em>sakura.ini</em> のバックアップを取っておくと役に立つことがあるかもしれません。
+
+
+<h3>パッケージ版ファイル一式</h3>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>sakura.exe</td><td>サクラエディタ  本体</td></tr>
 <tr><td>bregexp.dll</td><td>正規表現ライブラリ</td></tr>
@@ -51,7 +80,7 @@ aaHHCtlCloseWin.Click(); }
 <tr><td>sakuext.txt</td><td>sakuext.exeの使用説明</td></tr>
 <tr><td>uninstall.exe</td><td>アンインストーラ</td></tr>
 <tr><td>sakura.exe.manifest</td><td>XP用manifestファイル</td></tr>
-</tbody></table>
+</table>
 
 &lt;keyword&gt;フォルダ
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
@@ -84,31 +113,22 @@ aaHHCtlCloseWin.Click(); }
 <tr><td>tsql2.kwd</td><td>Transact-SQL用強調キーワード　(第二キーワード)</td></tr>
 <tr><td>uwsc.kwd</td><td>UWSC用強調キーワード</td></tr>
 <tr><td>verilog.kwd</td><td>Verilog用強調キーワード</td></tr>
-</tbody></table>
+</table>
+<br>
 
-ソースと共に配布されているドキュメント
-<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>BugsInfo.txt</td><td>バグ／フィックス情報　 (開発メモ その１)</td></tr>
-<tr><td>request.txt</td><td>要望 　(開発メモ その２)</td></tr>
-</tbody></table>
-</pre>
 <b>■サクラエディタが作成する作業ファイルについて</b><br>
 サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダに以下のファイルが作成されます。<br>
-<pre>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>sakura.ini </td><td>サクラエディタ用の設定ファイルです。</td></tr>
-<tr><td>sakura.GID </td><td>ヘルプの表示用に作られる。ヘルプを参照すると作成されます。</td></tr>
-</tbody></table>
-</pre>
+</table>
 <br>
 キーマクロの記録を使うと、共通設定のマクロ一覧のフォルダに「RecKey.mac」というファイルが作成されます。<br>
 <br>
-<b>■アンインストール</b><br>
-<div class=li200>
-・実行中のサクラエディタを常駐も含めてすべて終了させます。<br>
-・エクスプローラなどから、sakura.exe のあるフォルダ(インストール時に作成したフォルダ)をまるごと削除します。sakura.ini というファイルはサクラエディタの設定ファイルです。<br>
-設定を残したい場合は、sakura.ini のバックアップを取っておくと役に立つことがあるかもしれません。<br>
-</div><br>
-<font color="blue">インストーラを利用した場合は、インストーラがインストール情報をレジストリに書き込むため、プログラムの追加と削除(アプリケーションの追加と削除)からアンインストールしてください。</font><br>
-<br>
+
+■ソースと共に配布されているドキュメント<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>BugsInfo.txt</td><td>バグ／フィックス情報　 (開発メモ その１)</td></tr>
+<tr><td>request.txt</td><td>要望 　(開発メモ その２)</td></tr>
+</table>
+
 </BODY></HTML>
