@@ -2989,20 +2989,14 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 
 		//システムメニュー表示
 		// 2006.04.21 ryoji マルチモニタ対応の修正
-		HMENU SysMenu = GetSystemMenu(m_hWnd, FALSE);
+		// 2007.05.13 ryoji 0x0313メッセージをポストする方式に変更（TrackPopupMenuだとメニュー項目の有効／無効状態が不正になる問題対策）
 		RECT R;
 		GetWindowRect(m_hWnd, &R);
 		POINT pt;
 		pt.x = R.left + GetSystemMetrics(SM_CXFRAME);
 		pt.y = R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME);
 		GetMonitorWorkRect( pt, &R );
-		DWORD Cmd = TrackPopupMenu(SysMenu, TPM_RETURNCMD | TPM_LEFTBUTTON |
-						TPM_LEFTALIGN | TPM_TOPALIGN,
-						(pt.x > R.left)? pt.x: R.left,
-						(pt.y < R.bottom)? pt.y: R.bottom,
-						0, m_hWnd, NULL);
-		if(Cmd != 0)
-			SendMessage(m_hWnd, WM_SYSCOMMAND, Cmd, 0);
+		::PostMessage( m_hWnd, 0x0313, 0, MAKELPARAM( (pt.x > R.left)? pt.x: R.left, (pt.y < R.bottom)? pt.y: R.bottom ));
 	}
 	m_IconClicked = icNone;
 }
