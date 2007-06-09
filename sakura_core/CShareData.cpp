@@ -382,7 +382,19 @@ bool CShareData::Init( void )
 			必要になるまで遅らせるために、CPrintに、CShareDataを操作する権限を与える。
 			YAZAKI.
 		*/
-		CPrint::Initialize();	//	初期化命令。
+		{
+			/*
+				2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
+			*/
+			char szSettingName[64];
+			i = 0;
+			wsprintf( szSettingName, "印刷設定 %d", i + 1 );
+			CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
+		}
+		for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
+			m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
+			wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+		}
 
 		//	Jan. 30, 2005 genta 関数として独立
 		InitKeyAssign( m_pShareData );

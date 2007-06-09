@@ -278,7 +278,6 @@
 #define IDC_COMBO_FONT_HAN              1244
 #define IDC_COMBO_FONT_ZEN              1245
 #define IDC_SPIN_DANSPACE               1247
-#define IDC_COMBO_PAPERORIENT           1258
 #define IDC_EDIT_FONTWIDTH              1259
 #define IDC_EDIT_DANSUU                 1260
 #define IDC_CHECK_WORDWRAP              1261
@@ -353,7 +352,7 @@
 #define IDC_EDIT_TFORM_EX               1322
 #define IDC_EDIT_DFORM                  1323
 #define IDC_RADIO_ALL                   1324
-#define IDC_RADIO_PORTLAIT              1324
+#define IDC_RADIO_PORTRAIT              1324
 #define IDC_RADIO_BACKUP_DATETYPE1      1324
 #define IDC_RADIO_REPLACE               1324
 #define IDC_RADIO_DIFF_FILE1            1324
@@ -579,6 +578,8 @@
 #define IDC_CHECK_NoFilterSaveNew       1515
 #define IDC_CHECK_NoFilterSaveFile      1516
 #define IDC_CHECK_CLOSEALLCONFIRM       1517
+#define IDC_CHECK_ANTIALIAS             1518
+#define IDC_BUTTON_DIRECTPAGE           1519
 #define IDC_CHECK_RetainEmptyWindow     1518
 #define IDC_CHECK_CloseOneWin           1519
 #define IDC_CHECK_bCaretTextForSearch   1520
@@ -591,14 +592,10 @@
 #define IDM_POPLAST2                    4064
 #define ID_IS4072                       4072
 #define IDD_PROPTYPESP1                 5101
-#define IDD_PROP1P8                     5103
 #define IDD_PROP_CUSTMENU               5103
-#define IDD_PROP1P9                     5104
 #define IDD_PROP_FORMAT                 5104
 #define IDD_PROP_HELPER                 5105
-#define IDD_PROP1P3_NEW                 5106
 #define IDD_PROP_COLOR                  5106
-#define IDD_PROP1P5_NEW                 5107
 #define IDD_PROP_KEYBIND                5107
 #define IDD_PROP_WIN                    5108
 #define IDD_PROP_EDIT                   5109

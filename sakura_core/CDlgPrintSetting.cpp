@@ -2,6 +2,9 @@
 	@brief 印刷設定ダイアログ
 
 	@author Norio Nakatani
+	
+	@date 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化．
+		用紙名一覧の重複削除．
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -16,6 +19,7 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include "CDlgPrintSetting.h"
+#include "CPrint.h"
 #include "CDlgInput1.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
@@ -35,7 +39,6 @@ const DWORD p_helpids[] = {	//12500
 	IDC_COMBO_FONT_ZEN,				HIDC_PS_COMBO_FONT_ZEN,		//全角フォント
 	IDC_COMBO_SETTINGNAME,			HIDC_PS_COMBO_SETTINGNAME,	//ページ設定
 	IDC_COMBO_PAPER,				HIDC_PS_COMBO_PAPER,		//用紙サイズ
-	IDC_COMBO_PAPERORIENT,			HIDC_PS_COMBO_PAPERORIENT,	//用紙向き
 	IDC_EDIT_FONTWIDTH,				HIDC_PS_EDIT_FONTWIDTH,		//フォント幅
 	IDC_EDIT_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//行送り
 	IDC_EDIT_DANSUU,				HIDC_PS_EDIT_DANSUU,		//段数
@@ -136,7 +139,6 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_FONT_HAN ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_FONT_ZEN ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 
 	::SetTimer( m_hWnd, IDT_PRINTSETTING, 500, NULL );
 
@@ -261,95 +263,7 @@ void CDlgPrintSetting::SetData( void )
 	HDC		hdc;
 	HWND	hwndComboFont;
 	HWND	hwndComboPaper;
-	HWND	hwndComboPaperOrient;
 	HWND	hwndComboSettingName;
-	const char*	pszPaperNameArr[] = {
-		"A4 (210 x 297 mm)",
-		"A3 (297 x 420 mm)",
-		"A4 small(210 x 297 mm)",
-		"A5 (148 x 210 mm)",
-		"B4 (250 x 354 mm)",
-		"B5 (182 x 257 mm)",
-		"Quarto(215 x 275 mm)",
-		"DL Envelope(110 x 220 mm)",
-		"C5 Envelope(162 x 229 mm)",
-		"C3 Envelope(324 x 458 mm)",
-		"C4 Envelope(229 x 324 mm)",
-		"C6 Envelope(114 x 162 mm)",
-		"C65 Envelope(114 x 229 mm)",
-		"B4 Envelope(250 x 353 mm)",
-		"B5 Envelope(176 x 250 mm)",
-		"B6 Envelope(176 x 125 mm)",
-		"Italy Envelope(110 x 230 mm)",
-		"Letter; 8 1/2x11 inch",
-		"Legal; 8 1/2x14 inch",
-		"C sheet; 17x22 inch",
-		"D sheet; 22x34 inch",
-		"E sheet; 34x44 inch",
-		"Letter Small; 8 1/2x11 inch",
-		"Tabloid; 11x17 inch",
-		"Ledger; 17x11 inch",
-		"Statement; 5 1/2x8 1/2 inch",
-		"Executive; 7 1/4x10 1/2 inch",
-		"Folio; 8 1/2x13 inch",
-		"10x14 inch sheet",
-		"11x17 inch sheet",
-		"Note;  8 1/2x11 inch",
-		"#9 Envelope; 3 7/8x8 7/8 inch",
-		"#10 Envelope; 4 1/8x9 1/2 inch",
-		"#11 Envelope; 4 1/2x10 3/8 inch",
-		"#12 Envelope; 4 3/4x11 inch",
-		"#14 Envelope; 5x11 1/2 inch",
-		"Monarch Envelope; 3 7/8x7 1/2 inch",
-		"6 3/4 Envelope; 3 5/8x6 1/2 inch",
-		"US Std Fanfold; 14 7/8x11 inch",
-		"German Std Fanfold; 8 1/2x12 inch",
-		"German Legal Fanfold; 8 1/2x13 inch"
-	};
-	int		nPaperNameArrNum = sizeof( pszPaperNameArr ) / sizeof( pszPaperNameArr[0] );
-	int		nPaperIdArr[] = {
-		DMPAPER_A4		,
-		DMPAPER_A3		,
-		DMPAPER_A4SMALL	,
-		DMPAPER_A5		,
-		DMPAPER_B4		,
-		DMPAPER_B5		,
-		DMPAPER_QUARTO	,
-		DMPAPER_ENV_DL	,
-		DMPAPER_ENV_C5	,
-		DMPAPER_ENV_C3	,
-		DMPAPER_ENV_C4	,
-		DMPAPER_ENV_C6	,
-		DMPAPER_ENV_C65	,
-		DMPAPER_ENV_B4	,
-		DMPAPER_ENV_B5	,
-		DMPAPER_ENV_B6	,
-		DMPAPER_ENV_ITALY,
-		DMPAPER_LETTER,
-		DMPAPER_LEGAL,
-		DMPAPER_CSHEET,
-		DMPAPER_DSHEET,
-		DMPAPER_ESHEET,
-		DMPAPER_LETTERSMALL,
-		DMPAPER_TABLOID,
-		DMPAPER_LEDGER,
-		DMPAPER_STATEMENT,
-		DMPAPER_EXECUTIVE,
-		DMPAPER_FOLIO,
-		DMPAPER_10X14,
-		DMPAPER_11X17,
-		DMPAPER_NOTE,
-		DMPAPER_ENV_9,
-		DMPAPER_ENV_10,
-		DMPAPER_ENV_11,
-		DMPAPER_ENV_12,
-		DMPAPER_ENV_14,
-		DMPAPER_ENV_MONARCH,
-		DMPAPER_ENV_PERSONAL,
-		DMPAPER_FANFOLD_US,
-		DMPAPER_FANFOLD_STD_GERMAN,
-		DMPAPER_FANFOLD_LGL_GERMAN
-	};
 	int	i;
 	int	nItemIdx;
 	int	nSelectIdx;
@@ -372,64 +286,13 @@ void CDlgPrintSetting::SetData( void )
 	/* 用紙サイズ一覧 */
 	hwndComboPaper = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER );
 	::SendMessage( hwndComboPaper, CB_RESETCONTENT, 0, 0 );
-	for( i = 0; i < nPaperNameArrNum; ++i ){
-		nItemIdx = ::SendMessage( hwndComboPaper, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)pszPaperNameArr[i] );
-		::SendMessage( hwndComboPaper, CB_SETITEMDATA, nItemIdx, (LPARAM)nPaperIdArr[i] );
+	// 2006.08.14 Moca 用紙名一覧の重複削除
+	for( i = 0; i < CPrint::m_nPaperInfoArrNum; ++i ){
+		nItemIdx = ::SendMessage( hwndComboPaper, CB_ADDSTRING, 0, (LPARAM)CPrint::m_paperInfoArr[i].m_pszName );
+		::SendMessage( hwndComboPaper, CB_SETITEMDATA, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
 	}
 
-	/* 用紙方向一覧 */
-	hwndComboPaperOrient = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT );
-	::SendMessage( hwndComboPaperOrient, CB_RESETCONTENT, 0, 0 );
-	nItemIdx = ::SendMessage( hwndComboPaperOrient, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)"縦↑" );
-	::SendMessage( hwndComboPaperOrient, CB_SETITEMDATA, nItemIdx, (LPARAM)DMORIENT_PORTRAIT );
-	nItemIdx = ::SendMessage( hwndComboPaperOrient, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)"横→" );
-	::SendMessage( hwndComboPaperOrient, CB_SETITEMDATA, nItemIdx, (LPARAM)DMORIENT_LANDSCAPE );
 
-/*
-ｷ	DMPAPER_A4   A4 sheet、210 × 297 mm
-ｷ	DMPAPER_A3   A3 sheet、297 × 420 mm
-ｷ	DMPAPER_A4SMALL   A4 small sheet、210 × 297 mm
-ｷ	DMPAPER_A5   A5 sheet、148 × 210 mm
-ｷ	DMPAPER_B4   B4 sheet、250 × 354 mm
-ｷ	DMPAPER_B5   B5 sheet、182 × 257 mm
-ｷ	DMPAPER_QUARTO   Quarto、215 × 275 mm
-ｷ	DMPAPER_ENV_DL   DL Envelope、110 × 220 mm
-ｷ	DMPAPER_ENV_C5   C5 Envelope、162 × 229 mm
-ｷ	DMPAPER_ENV_C3   C3 Envelope、324 × 458 mm
-ｷ	DMPAPER_ENV_C4   C4 Envelope、229 × 324 mm
-ｷ	DMPAPER_ENV_C6   C6 Envelope、114 × 162 mm
-ｷ	DMPAPER_ENV_C65   C65 Envelope、114 × 229 mm
-ｷ	DMPAPER_ENV_B4   B4 Envelope、250 × 353 mm
-ｷ	DMPAPER_ENV_B5   B5 Envelope、176 × 250 mm
-ｷ	DMPAPER_ENV_B6   B6 Envelope、176 × 125 mm
-ｷ	DMPAPER_ENV_ITALY   Italy Envelope、110 × 230 mm
-
-ｷ	DMPAPER_LETTER   Letter、8 1/2 × 11 inch
-ｷ	MPAPER_LEGAL   Legal、8 1/2 × 14 inch
-ｷ	DMPAPER_CSHEET   C sheet、17 × 22 inch
-ｷ	DMPAPER_DSHEET   D sheet、22 × 34 inch
-ｷ	DMPAPER_ESHEET   E sheet、34 × 44 inch
-ｷ	DMPAPER_LETTERSMALL   Letter Small、8 1/2 × 11 inch
-ｷ	DMPAPER_TABLOID   Tabloid、11 × 17 inch
-ｷ	DMPAPER_LEDGER   Ledger、17 × 11 inch
-ｷ	DMPAPER_STATEMENT   Statement、5 1/2 × 8 1/2 inch
-ｷ	DMPAPER_EXECUTIVE   Executive、7 1/4 × 10 1/2 inch
-ｷ	DMPAPER_FOLIO   Folio、8 1/2 × 13 inch
-ｷ	DMPAPER_10X14   10 × 14 inch sheet
-ｷ	DMPAPER_11X17   11 × 17 inch sheet
-ｷ	DMPAPER_NOTE   Note、 8 1/2 × 11 inch
-ｷ	DMPAPER_ENV_9   #9 Envelope、3 7/8 × 8 7/8 inch
-ｷ	DMPAPER_ENV_10   #10 Envelope、4 1/8 × 9 1/2 inch
-ｷ	DMPAPER_ENV_11   #11 Envelope、4 1/2 × 10 3/8 inch
-ｷ	DMPAPER_ENV_12   #12 Envelope、4 3/4 × 11 inch
-ｷ	DMPAPER_ENV_14   #14 Envelope、5 × 11 1/2 inch
-ｷ	DMPAPER_ENV_MONARCH   Monarch Envelope、3 7/8 × 7 1/2 inch
-ｷ	DMPAPER_ENV_PERSONAL   6 3/4 Envelope、3 5/8 × 6 1/2 inch
-ｷ	DMPAPER_FANFOLD_US   US Std Fanfold、14 7/8 × 11 inch
-ｷ	DMPAPER_FANFOLD_STD_GERMAN   German Std Fanfold、8 1/2 × 12 inch
-ｷ	DMPA PER_FANFOLD_LGL_GERMAN   German Legal Fanfold、8 1/2 × 13 inch
-
-*/
 	/* 印刷設定名一覧 */
 	hwndComboSettingName = ::GetDlgItem( m_hWnd, IDC_COMBO_SETTINGNAME );
 	::SendMessage( hwndComboSettingName, CB_RESETCONTENT, 0, 0 );
@@ -480,12 +343,13 @@ int CDlgPrintSetting::GetData( void )
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
 		::SendMessage( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
 
-	/* 用紙方向一覧 */
-	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT );
-	nIdx1 = ::SendMessage( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation =
-		::SendMessage( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
-
+	// 用紙の向き
+	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
+	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_PORTRAIT ) ){
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;
+	}else{
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_LANDSCAPE;
+	}
 
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth = ::GetDlgItemInt( m_hWnd, IDC_EDIT_FONTWIDTH, NULL, FALSE );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth * 2;
@@ -686,15 +550,12 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 		}
 	}
 
-	/* 用紙方向一覧 */
-	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPERORIENT );
-	nItemNum = ::SendMessage( hwndCtrl, CB_GETCOUNT, 0, 0 );
-	for( i = 0; i < nItemNum; ++i ){
-		nItemData = ::SendMessage( hwndCtrl, CB_GETITEMDATA, i, 0 );
-		if( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation == nItemData ){
-			::SendMessage( hwndCtrl, CB_SETCURSEL, i, 0 );
-			break;
-		}
+	// 用紙の向き
+	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
+	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation == DMORIENT_PORTRAIT ){
+		::CheckDlgButton( m_hWnd, IDC_RADIO_PORTRAIT, BST_CHECKED );
+	}else{
+		::CheckDlgButton( m_hWnd, IDC_RADIO_LANDSCAPE, BST_CHECKED );
 	}
 
 	// 行頭禁則	//@@@ 2002.04.09 MIK
