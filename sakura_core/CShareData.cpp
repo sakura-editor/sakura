@@ -210,9 +210,12 @@ struct ARRHEAD {
 	Version 73:
 	編集ウィンドウ切替中 2007.04.03 ryoji
 
+	Version 74:
+	カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 73;
+const unsigned int uShareDataVersion = 74;
 
 /*
 ||	Singleton風
@@ -476,6 +479,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
 		m_pShareData->m_Common.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
 		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;				/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
+		m_pShareData->m_Common.m_bCaretTextForSearch = TRUE;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 

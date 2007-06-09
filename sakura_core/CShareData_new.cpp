@@ -405,6 +405,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	// 2002/09/21 Moca 追加
 	cProfile.IOProfileData( pszSecName, "nGrepCharSet"			, common.m_nGrepCharSet );
 	cProfile.IOProfileData( pszSecName, "bGrepRealTime"			, common.m_bGrepRealTimeView ); // 2003.06.16 Moca
+	cProfile.IOProfileData( pszSecName, "bCaretTextForSearch"	, common.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
 	
 	cProfile.IOProfileData( pszSecName, "bGTJW_RETURN"			, common.m_bGTJW_RETURN );
 	cProfile.IOProfileData( pszSecName, "bGTJW_LDBLCLK"			, common.m_bGTJW_LDBLCLK );

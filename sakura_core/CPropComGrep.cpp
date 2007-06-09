@@ -21,6 +21,7 @@
 #if 1	//@@@ 2002.01.03 add MIK
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	//10500
+	IDC_CHECK_bCaretTextForSearch,	HIDC_CHECK_bCaretTextForSearch,	//カーソル位置の文字列をデフォルトの検索文字列にする	// 2006.08.23 ryoji
 	IDC_CHECK_bGrepExitConfirm,		HIDC_CHECK_bGrepExitConfirm,	//GREPの保存確認
 	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//タグジャンプ（エンターキー）
 	IDC_CHECK_GTJW_LDBLCLK,			HIDC_CHECK_GTJW_LDBLCLK,		//タグジャンプ（ダブルクリック）
@@ -130,6 +131,9 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 //	BOOL	m_bGrepExitConfirm;	/* Grepモードで保存確認するか */
 
 
+	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_bCaretTextForSearch );
+
 	/* Grepモードで保存確認するか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bGrepExitConfirm, m_Common.m_bGrepExitConfirm );
 
@@ -154,6 +158,9 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_GREP;
+
+	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+	m_Common.m_bCaretTextForSearch = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCaretTextForSearch );
 
 	/* Grepモードで保存確認するか */
 	m_Common.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );

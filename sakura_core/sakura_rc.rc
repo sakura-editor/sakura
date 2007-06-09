@@ -1429,27 +1429,32 @@ BEGIN
     GROUPBOX        "タブの外観",IDC_STATIC,8,89,257,64,WS_GROUP
 END
 
-IDD_PROP_GREP DIALOGEX 0, 0, 271, 126
+IDD_PROP_GREP DIALOGEX 0, 0, 271, 167
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Grep",IDC_STATIC,3,3,264,53,WS_GROUP
+    CONTROL         "カーソル位置の文字列をデフォルトの検索文字列にする(&C)",
+                    IDC_CHECK_bCaretTextForSearch,"Button",BS_AUTOCHECKBOX | 
+                    BS_TOP | WS_GROUP | WS_TABSTOP,8,21,204,10,0
+    GROUPBOX        "検索／置換／Grep",IDC_STATIC,3,7,264,33,WS_GROUP
     CONTROL         "Grepモードで保存確認する(&V)",
                     IDC_CHECK_bGrepExitConfirm,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,18,103,10,0,HIDC_CHECK_bGrepExitConfirm
+                    WS_GROUP | WS_TABSTOP,8,59,103,10,0,
+                    HIDC_CHECK_bGrepExitConfirm
+    CONTROL         "リアルタイムで表示する(&R)",IDC_CHECK_GREPREALTIME,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,76,101,10,0,
+                    HIDC_CHECK_GREPREALTIME
+    GROUPBOX        "Grep",IDC_STATIC,3,44,264,53,WS_GROUP
     CONTROL         "エンターキーでタグジャンプ(&E)",IDC_CHECK_GTJW_RETURN,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,78,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,119,
                     104,10,0,HIDC_CHECK_GTJW_RETURN
     CONTROL         "ダブルクリックでタグジャンプ(&W)",
                     IDC_CHECK_GTJW_LDBLCLK,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,93,109,10,0,HIDC_CHECK_GTJW_LDBLCLK
-    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,63,264,50,
+                    WS_TABSTOP,8,134,109,10,0,HIDC_CHECK_GTJW_LDBLCLK
+    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,104,264,50,
                     WS_GROUP
-    CONTROL         "リアルタイムで表示する(&R)",IDC_CHECK_GREPREALTIME,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,35,101,10,0,
-                    HIDC_CHECK_GREPREALTIME
 END
 
 IDD_PROP_BACKUP DIALOGEX 0, 0, 271, 216
@@ -2357,7 +2362,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 265
         TOPMARGIN, 7
-        BOTTOMMARGIN, 119
+        BOTTOMMARGIN, 160
     END
 
     IDD_PROP_BACKUP, DIALOG

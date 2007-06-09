@@ -426,7 +426,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ "ファイル",		IDD_PROP_FILE,		DlgProc_PROP_FILE },
 		{ "バックアップ",	IDD_PROP_BACKUP,	DlgProc_PROP_BACKUP },
 		{ "書式",			IDD_PROP_FORMAT,	DlgProc_PROP_FORMAT },
-		{ "Grep",			IDD_PROP_GREP,		DlgProc_PROP_GREP },
+		{ "検索",			IDD_PROP_GREP,		DlgProc_PROP_GREP },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
 		{ "キー割り当て",	IDD_PROP_KEYBIND,	DlgProc_PROP_KEYBIND },
 		{ "カスタムメニュー",IDD_PROP_CUSTMENU,	DlgProc_PROP_CUSTMENU },
 		{ "ツールバー",		IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },

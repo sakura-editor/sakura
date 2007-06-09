@@ -9,6 +9,7 @@
 	Copyright (C) 2002, Moca
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, genta
+	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -55,7 +56,7 @@ void CEditView::Command_GREP_DIALOG( void )
 	CMemory		cmemCurText;
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	GetCurrentTextForSearch( cmemCurText );
+	GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	/* キーがないなら、履歴からとってくる */
 	if( 0 == cmemCurText.GetLength() ){

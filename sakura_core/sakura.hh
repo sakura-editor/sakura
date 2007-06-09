@@ -384,6 +384,7 @@
 #define HIDC_RADIO_DFORM_1						10461 //日付書式（カスタム）
 #define HIDC_RADIO_TFORM_0						10462 //時刻書式（標準）
 #define HIDC_RADIO_TFORM_1						10463 //時刻書式（カスタム）
+#define HIDC_CHECK_bCaretTextForSearch			10500 //カーソル位置の文字列をデフォルトの検索文字列にする	// 2006.08.23 ryoji
 #define HIDC_CHECK_bGrepExitConfirm				10510 //GREPの保存確認
 #define HIDC_CHECK_GTJW_RETURN					10511 //タグジャンプ（エンターキー）
 #define HIDC_CHECK_GTJW_LDBLCLK					10512 //タグジャンプ（ダブルクリック）

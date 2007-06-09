@@ -405,6 +405,7 @@ public: /* テスト用にアクセス属性を変更 */
 	||  実装ヘルパ関数
 	*/
 	void GetCurrentTextForSearch( CMemory& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+	void GetCurrentTextForSearchDlg( CMemory& );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
 	void DestroyCaret( void ){	/* キャレットを破棄する（内部的にも破棄）*/
 		::DestroyCaret();
 		m_nCaretWidth = 0;
