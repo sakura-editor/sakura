@@ -444,6 +444,7 @@ struct Common {
 	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
 	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
 	int					m_bGrepRealTimeView;			/* 2003.06.16 Moca Grep結果のリアルタイム表示 */
+	BOOL				m_bCaretTextForSearch;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 
 	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
 	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */

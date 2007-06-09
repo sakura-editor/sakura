@@ -8543,6 +8543,27 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 }
 
 
+/*!	現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用）
+	@date 2006.08.23 ryoji 新規作成
+*/
+void CEditView::GetCurrentTextForSearchDlg( CMemory& cmemCurText )
+{
+	cmemCurText.SetDataSz( "" );
+
+	if( IsTextSelected() ){	// テキストが選択されている
+		GetCurrentTextForSearch( cmemCurText );
+	}
+	else{	// テキストが選択されていない
+		if( m_pShareData->m_Common.m_bCaretTextForSearch ){
+			GetCurrentTextForSearch( cmemCurText );	// カーソル位置単語を取得
+		}
+		else{
+			cmemCurText.SetDataSz( m_pShareData->m_szSEARCHKEYArr[0] );	// 履歴からとってくる
+		}
+	}
+}
+
+
 /* カーソル行アンダーラインのON */
 void CCaretUnderLine::CaretUnderLineON( BOOL bDraw )
 {

@@ -3087,7 +3087,7 @@ void CEditView::Command_SEARCH_DIALOG( void )
 	CMemory		cmemCurText;
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	GetCurrentTextForSearch( cmemCurText );
+	GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	/* 検索文字列を初期化 */
 	strcpy( m_pcEditDoc->m_cDlgFind.m_szText, cmemCurText.GetPtr() );
@@ -7220,10 +7220,12 @@ void CEditView::Command_REPLACE_DIALOG( void )
 //	}
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	GetCurrentTextForSearch( cmemCurText );
+	GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	/* 検索文字列を初期化 */
 	strcpy( m_pcEditDoc->m_cDlgReplace.m_szText, cmemCurText.GetPtr() );
+	strncpy( m_pcEditDoc->m_cDlgReplace.m_szText2, m_pShareData->m_szREPLACEKEYArr[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
+	m_pcEditDoc->m_cDlgReplace.m_szText2[MAX_PATH - 1] = '\0';
 
 	if ( IsTextSelected() && m_nSelectLineFrom!=m_nSelectLineTo ) {
 		bSelected = TRUE;	//選択範囲をチェックしてダイアログ表示
