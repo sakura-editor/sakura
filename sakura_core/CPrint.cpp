@@ -2,6 +2,8 @@
 	@brief 印刷
 
 	@author Norio Nakatani
+	
+	@date 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,6 +22,57 @@
 #include "debug.h" // 2002/2/10 aroka
 #include "CShareData.h"
 #include <winspool.h>
+
+
+// 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
+const PAPER_INFO CPrint::m_paperInfoArr[] = {
+	// 	用紙ID, 幅
+	{DMPAPER_A4,                  2100,  2970, "A4 (210 x 297 mm)"},
+	{DMPAPER_A3,                  2970,  4200, "A3 (297 x 420 mm)"},
+	{DMPAPER_A4SMALL,             2100,  2970, "A4 small(210 x 297 mm)"},
+	{DMPAPER_A5,                  1480,  2100, "A5 (148 x 210 mm)"},
+	{DMPAPER_B4,                  2500,  3540, "B4 (250 x 354 mm)"},
+	{DMPAPER_B5,                  1820,  2570, "B5 (182 x 257 mm)"},
+	{DMPAPER_QUARTO,              2150,  2750, "Quarto(215 x 275 mm)"},
+	{DMPAPER_ENV_DL,              1100,  2200, "DL Envelope(110 x 220 mm)"},
+	{DMPAPER_ENV_C5,              1620,  2290, "C5 Envelope(162 x 229 mm)"},
+	{DMPAPER_ENV_C3,              3240,  4580, "C3 Envelope(324 x 458 mm)"},
+	{DMPAPER_ENV_C4,              2290,  3240, "C4 Envelope(229 x 324 mm)"},
+	{DMPAPER_ENV_C6,              1140,  1620, "C6 Envelope(114 x 162 mm)"},
+	{DMPAPER_ENV_C65,             1140,  2290, "C65 Envelope(114 x 229 mm)"},
+	{DMPAPER_ENV_B4,              2500,  3530, "B4 Envelope(250 x 353 mm)"},
+	{DMPAPER_ENV_B5,              1760,  2500, "B5 Envelope(176 x 250 mm)"},
+	{DMPAPER_ENV_B6,              1760,  1250, "B6 Envelope(176 x 125 mm)"},
+	{DMPAPER_ENV_ITALY,           1100,  2300, "Italy Envelope(110 x 230 mm)"},
+	{DMPAPER_LETTER,              2159,  2794, "Letter (8 1/2 x 11 inch)"},
+	{DMPAPER_LEGAL,               2159,  3556, "Legal  (8 1/2 x 14 inch)"},
+	{DMPAPER_CSHEET,              4318,  5588, "C sheet (17 x 22 inch)"},
+	{DMPAPER_DSHEET,              5588,  8634, "D sheet (22 x 34 inch)"},
+	{DMPAPER_ESHEET,              8634, 11176, "E sheet (34 x 44 inch)"},
+	{DMPAPER_LETTERSMALL,         2159,  2794, "Letter Small (8 1/2 x 11 inch)"},
+	{DMPAPER_TABLOID,             2794,  4318, "Tabloid (11 x 17 inch)"},
+	{DMPAPER_LEDGER,              4318,  2794, "Ledger  (17 x 11 inch)"},
+	{DMPAPER_STATEMENT,           1397,  2159, "Statement (5 1/2 x 8 1/2 inch)"},
+	{DMPAPER_EXECUTIVE,           1841,  2667, "Executive (7 1/4 x 10 1/2 inch)"},
+	{DMPAPER_FOLIO,               2159,  3302, "Folio (8 1/2 x 13 inch)"},
+	{DMPAPER_10X14,               2540,  3556, "10x14 inch sheet"},
+	{DMPAPER_11X17,               2794,  4318, "11x17 inch sheet"},
+	{DMPAPER_NOTE,                2159,  2794, "Note (8 1/2 x 11 inch)"},
+	{DMPAPER_ENV_9,                984,  2254, "#9 Envelope  (3 7/8 x 8 7/8 inch)"},
+	{DMPAPER_ENV_10,              1047,  2413, "#10 Envelope (4 1/8 x 9 1/2 inch)"},
+	{DMPAPER_ENV_11,              1143,  2635, "#11 Envelope (4 1/2 x 10 3/8 inch)"},
+	{DMPAPER_ENV_12,              1206,  2794, "#12 Envelope (4 3/4 x 11 inch)"},
+	{DMPAPER_ENV_14,              1270,  2921, "#14 Envelope (5 x 11 1/2 inch)"},
+	{DMPAPER_ENV_MONARCH,          984,  1905, "Monarch Envelope (3 7/8 x 7 1/2 inch)"},
+	{DMPAPER_ENV_PERSONAL,         920,  1651, "6 3/4 Envelope (3 5/8 x 6 1/2 inch)"},
+	{DMPAPER_FANFOLD_US,          3778,  2794, "US Std Fanfold (14 7/8 x 11 inch)"},
+	{DMPAPER_FANFOLD_STD_GERMAN,  2159,  3048, "German Std Fanfold   (8 1/2 x 12 inch)"},
+	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, "German Legal Fanfold (8 1/2 x 13 inch)"},
+};
+
+const int CPrint::m_nPaperInfoArrNum = sizeof( m_paperInfoArr ) / sizeof( m_paperInfoArr[0] );
+
+
 
 CPrint::CPrint( void )
 {
@@ -339,177 +392,17 @@ BOOL CPrint::GetPaperSize(
 
 
 	if( pDEVMODE->dmFields &  DM_PAPERSIZE ){
-		switch( pDEVMODE->dmPaperSize ){
-		case DMPAPER_A4:	//	DMPAPER_A4					A4 sheet、210 × 297 mm
-			*pnPaperAllWidth =  10 * 210;
-			*pnPaperAllHeight = 10 * 297;
-			break;
-		case DMPAPER_A3:	//	DMPAPER_A3					A3 sheet、297 × 420 mm
-			*pnPaperAllWidth =  10 * 297;
-			*pnPaperAllHeight = 10 * 420;
-			break;
-		case DMPAPER_A4SMALL:	//	DMPAPER_A4SMALL			A4 small sheet、210 × 297 mm
-			*pnPaperAllWidth =  10 * 210;
-			*pnPaperAllHeight = 10 * 297;
-			break;
-		case DMPAPER_A5:	//	DMPAPER_A5					A5 sheet、148 × 210 mm
-			*pnPaperAllWidth =  10 * 148;
-			*pnPaperAllHeight = 10 * 210;
-			break;
-		case DMPAPER_B4:	//	DMPAPER_B4					B4 sheet、250 × 354 mm
-			*pnPaperAllWidth =  10 * 250;
-			*pnPaperAllHeight = 10 * 354;
-			break;
-		case DMPAPER_B5:	//	DMPAPER_B5					B5 sheet、182 × 257 mm
-			*pnPaperAllWidth =  10 * 182;
-			*pnPaperAllHeight = 10 * 257;
-			break;
-		case DMPAPER_QUARTO:	//	DMPAPER_QUARTO			Quarto、215 × 275 mm
-			*pnPaperAllWidth =  10 * 215;
-			*pnPaperAllHeight = 10 * 275;
-			break;
-		case DMPAPER_ENV_DL:	//	DMPAPER_ENV_DL			DL Envelope、110 × 220 mm
-			*pnPaperAllWidth =  10 * 110;
-			*pnPaperAllHeight = 10 * 220;
-			break;
-		case DMPAPER_ENV_C5:	//	DMPAPER_ENV_C5			C5 Envelope、162 × 229 mm
-			*pnPaperAllWidth =  10 * 162;
-			*pnPaperAllHeight = 10 * 229;
-			break;
-		case DMPAPER_ENV_C3:	//	DMPAPER_ENV_C3			C3 Envelope、324 × 458 mm
-			*pnPaperAllWidth =  10 * 324;
-			*pnPaperAllHeight = 10 * 458;
-			break;
-		case DMPAPER_ENV_C4:	//	DMPAPER_ENV_C4			C4 Envelope、229 × 324 mm
-			*pnPaperAllWidth =  10 * 229;
-			*pnPaperAllHeight = 10 * 324;
-			break;
-		case DMPAPER_ENV_C6:	//	DMPAPER_ENV_C6			C6 Envelope、114 × 162 mm
-			*pnPaperAllWidth =  10 * 114;
-			*pnPaperAllHeight = 10 * 162;
-			break;
-		case DMPAPER_ENV_C65:	//	DMPAPER_ENV_C65			C65 Envelope、114 × 229 mm
-			*pnPaperAllWidth =  10 * 114;
-			*pnPaperAllHeight = 10 * 229;
-			break;
-		case DMPAPER_ENV_B4:	//	DMPAPER_ENV_B4			B4 Envelope、250 × 353 mm
-			*pnPaperAllWidth =  10 * 250;
-			*pnPaperAllHeight = 10 * 353;
-			break;
-		case DMPAPER_ENV_B5:	//	DMPAPER_ENV_B5			B5 Envelope、176 × 250 mm
-			*pnPaperAllWidth =  10 * 176;
-			*pnPaperAllHeight = 10 * 250;
-			break;
-		case DMPAPER_ENV_B6:	//	DMPAPER_ENV_B6			B6 Envelope、176 × 125 mm
-			*pnPaperAllWidth =  10 * 176;
-			*pnPaperAllHeight = 10 * 125;
-			break;
-		case DMPAPER_ENV_ITALY:	//	DMPAPER_ENV_ITALY		Italy Envelope、110 × 230 mm
-			*pnPaperAllWidth =  10 * 110;
-			*pnPaperAllHeight = 10 * 230;
-			break;
-		case DMPAPER_FOLIO:	//	DMPAPER_FOLIO				Folio、8 1/2 × 13 inch
-			*pnPaperAllWidth =  2159;
-			*pnPaperAllHeight = 3302;
-			break;
-		case DMPAPER_CSHEET:	//	DMPAPER_CSHEET			C sheet、17 × 22 inch
-			*pnPaperAllWidth = 4318;
-			*pnPaperAllHeight = 5588;
-			break;
-		case DMPAPER_DSHEET:	//	DMPAPER_DSHEET			D sheet、22 × 34 inch
-			*pnPaperAllWidth = 5588;
-			*pnPaperAllHeight = 8634;
-			break;
-		case DMPAPER_ESHEET:	//	DMPAPER_ESHEET			E sheet、34 × 44 inch
-			*pnPaperAllWidth = 8634;
-			*pnPaperAllHeight = 11176;
-			break;
-		case DMPAPER_LETTERSMALL:	//	DMPAPER_LETTERSMALL	Letter Small、8 1/2 × 11 inch
-			*pnPaperAllWidth =  2159;
-			*pnPaperAllHeight = 2794;
-			break;
-		case DMPAPER_TABLOID:	//	DMPAPER_TABLOID			Tabloid、11 × 17 inch
-			*pnPaperAllWidth = 2794;
-			*pnPaperAllHeight = 4318;
-			break;
-		case DMPAPER_LEDGER:	//	DMPAPER_LEDGER			Ledger、17 × 11 inch
-			*pnPaperAllWidth = 4318;
-			*pnPaperAllHeight = 2794;
-			break;
-		case DMPAPER_STATEMENT:	//	DMPAPER_STATEMENT		Statement、5 1/2 × 8 1/2 inch
-			*pnPaperAllWidth = 1397;
-			*pnPaperAllHeight =  2159;
-			break;
-		case DMPAPER_EXECUTIVE:	//	DMPAPER_EXECUTIVE		Executive、7 1/4 × 10 1/2 inch
-			*pnPaperAllWidth = 1841;
-			*pnPaperAllHeight = 2667;
-			break;
-		case DMPAPER_LETTER:	//	DMPAPER_LETTER			Letter、8 1/2 × 11 inch
-			*pnPaperAllWidth = 2159;
-			*pnPaperAllHeight = 2794;
-			break;
-		case DMPAPER_LEGAL:	//	MPAPER_LEGAL				Legal、8 1/2 × 14 inch
-			*pnPaperAllWidth =  2159;
-			*pnPaperAllHeight = 3556;
-			break;
-		case DMPAPER_10X14:	//	DMPAPER_10X14				10 × 14 inch sheet
-			*pnPaperAllWidth = 2540;
-			*pnPaperAllHeight = 3556;
-			break;
-		case DMPAPER_11X17:	//	DMPAPER_11X17				11 × 17 inch sheet
-			*pnPaperAllWidth = 2794;
-			*pnPaperAllHeight = 4318;
-			break;
-		case DMPAPER_NOTE:	//	DMPAPER_NOTE				Note、 8 1/2 × 11 inch
-			*pnPaperAllWidth =  2159;
-			*pnPaperAllHeight = 2794;
-			break;
-		case DMPAPER_ENV_9:	//	DMPAPER_ENV_9				#9 Envelope、3 7/8 × 8 7/8 inch
-			*pnPaperAllWidth = 984;
-			*pnPaperAllHeight = 2254;
-			break;
-		case DMPAPER_ENV_10:	//	DMPAPER_ENV_10			#10 Envelope、4 1/8 × 9 1/2 inch
-			*pnPaperAllWidth = 1047;
-			*pnPaperAllHeight = 2413;
-			break;
-		case DMPAPER_ENV_11:	//	DMPAPER_ENV_11			#11 Envelope、4 1/2 × 10 3/8 inch
-			*pnPaperAllWidth = 1143;
-			*pnPaperAllHeight = 2635;
-			break;
-		case DMPAPER_ENV_12:	//	DMPAPER_ENV_12			#12 Envelope、4 3/4 × 11 inch
-			*pnPaperAllWidth = 1206;
-			*pnPaperAllHeight = 2794;
-			break;
-		case DMPAPER_ENV_14:	//	DMPAPER_ENV_14			#14 Envelope、5 × 11 1/2 inch
-			*pnPaperAllWidth = 1270;
-			*pnPaperAllHeight = 2921;
-			break;
-		case DMPAPER_ENV_MONARCH:	//	DMPAPER_ENV_MONARCH	Monarch Envelope、3 7/8 × 7 1/2 inch
-			*pnPaperAllWidth = 984;
-			*pnPaperAllHeight = 1905;
-			break;
-		case DMPAPER_ENV_PERSONAL:	//	DMPAPER_ENV_PERSONAL	6 3/4 Envelope、3 5/8 × 6 1/2 inch
-			*pnPaperAllWidth = 920;
-			*pnPaperAllHeight = 1651;
-			break;
-		case DMPAPER_FANFOLD_US:	//	DMPAPER_FANFOLD_US	US Std Fanfold、14 7/8 × 11 inch
-			*pnPaperAllWidth = 3778;
-			*pnPaperAllHeight = 2794;
-			break;
-		case DMPAPER_FANFOLD_STD_GERMAN:	//	DMPAPER_FANFOLD_STD_GERMAN	German Std Fanfold、8 1/2 × 12 inch
-			*pnPaperAllWidth =  2159;
-			*pnPaperAllHeight = 3048;
-			break;
-		case DMPAPER_FANFOLD_LGL_GERMAN:	//	DMPA PER_FANFOLD_LGL_GERMAN	German Legal Fanfold、8 1/2 × 13 inch
-			*pnPaperAllWidth =  2159;
-			*pnPaperAllHeight = 3302;
-			break;
-		default:
-		// 2001.12.21 hor マウスでクリックしたままリスト外に出るとここにくるけど、
-		//	異常ではないので FALSE を返すことにする
-		//	::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-		//	"不明な用紙。処理できません。\nプログラムバグ。\n%s"
-		//	);
+		// 2006.08.14 Moca swich/caseテーブルを廃止して 用紙情報を統合
+		const PAPER_INFO* pi = FindPaperInfo( pDEVMODE->dmPaperSize );
+		if( NULL != pi ){
+			*pnPaperAllWidth = pi->m_nAllWidth;
+			*pnPaperAllHeight = pi->m_nAllHeight;
+		}else{
+			// 2001.12.21 hor マウスでクリックしたままリスト外に出るとここにくるけど、
+			//	異常ではないので FALSE を返すことにする
+			//	::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			//	"不明な用紙。処理できません。\nプログラムバグ。\n%s"
+			//	);
 			return FALSE;
 		}
 	}
@@ -623,101 +516,10 @@ void CPrint::PrintClose( HDC hdc )
 /* 用紙の名前を取得 */
 char* CPrint::GetPaperName( int nPaperSize, char* pszPaperName )
 {
-	const char*	pszPaperNameArr[] = {
-		"A4 (210x297 mm)",
-		"A3 (297x420 mm)",
-		"A4 small(210x297 mm)",
-		"A5 (148x210 mm)",
-		"B4 (250x354 mm)",
-		"B5 (182x257 mm)",
-		"Quarto(215x275 mm)",
-		"DL Envelope(110x220 mm)",
-		"C5 Envelope(162x229 mm)",
-		"C3 Envelope(324x458 mm)",
-		"C4 Envelope(229x324 mm)",
-		"C6 Envelope(114x162 mm)",
-		"C65 Envelope(114x229 mm)",
-		"B4 Envelope(250x353 mm)",
-		"B5 Envelope(176x250 mm)",
-		"B6 Envelope(176x125 mm)",
-		"Italy Envelope(110x230 mm)",
-		"Letter; 8 1/2x11 inch",
-		"Legal; 8 1/2x14 inch",
-		"C sheet; 17x22 inch",
-		"D sheet; 22x34 inch",
-		"E sheet; 34x44 inch",
-		"Letter Small; 8 1/2x11 inch",
-		"Tabloid; 11x17 inch",
-		"Ledger; 17x11 inch",
-		"Statement; 5 1/2x8 1/2 inch",
-		"Executive; 7 1/4x10 1/2 inch",
-		"Folio; 8 1/2x13 inch",
-		"10x14 inch sheet",
-		"11x17 inch sheet",
-		"Note;  8 1/2x11 inch",
-		"#9 Envelope; 3 7/8x8 7/8 inch",
-		"#10 Envelope; 4 1/8x9 1/2 inch",
-		"#11 Envelope; 4 1/2x10 3/8 inch",
-		"#12 Envelope; 4 3/4x11 inch",
-		"#14 Envelope; 5x11 1/2 inch",
-		"Monarch Envelope; 3 7/8x7 1/2 inch",
-		"6 3/4 Envelope; 3 5/8x6 1/2 inch",
-		"US Std Fanfold; 14 7/8x11 inch",
-		"German Std Fanfold; 8 1/2x12 inch",
-		"German Legal Fanfold; 8 1/2x13 inch",
-	};
-	int		nPaerNameArrNum = sizeof( pszPaperNameArr ) / sizeof( pszPaperNameArr[0] );
-	const int	nPaperIdArr[] = {
-		DMPAPER_A4		,
-		DMPAPER_A3		,
-		DMPAPER_A4SMALL	,
-		DMPAPER_A5		,
-		DMPAPER_B4		,
-		DMPAPER_B5		,
-		DMPAPER_QUARTO	,
-		DMPAPER_ENV_DL	,
-		DMPAPER_ENV_C5	,
-		DMPAPER_ENV_C3	,
-		DMPAPER_ENV_C4	,
-		DMPAPER_ENV_C6	,
-		DMPAPER_ENV_C65	,
-		DMPAPER_ENV_B4	,
-		DMPAPER_ENV_B5	,
-		DMPAPER_ENV_B6	,
-		DMPAPER_ENV_ITALY,
-		DMPAPER_LETTER,
-		DMPAPER_LEGAL,
-		DMPAPER_CSHEET,
-		DMPAPER_DSHEET,
-		DMPAPER_ESHEET,
-		DMPAPER_LETTERSMALL,
-		DMPAPER_TABLOID,
-		DMPAPER_LEDGER,
-		DMPAPER_STATEMENT,
-		DMPAPER_EXECUTIVE,
-		DMPAPER_FOLIO,
-		DMPAPER_10X14,
-		DMPAPER_11X17,
-		DMPAPER_NOTE,
-		DMPAPER_ENV_9,
-		DMPAPER_ENV_10,
-		DMPAPER_ENV_11,
-		DMPAPER_ENV_12,
-		DMPAPER_ENV_14,
-		DMPAPER_ENV_MONARCH,
-		DMPAPER_ENV_PERSONAL,
-		DMPAPER_FANFOLD_US,
-		DMPAPER_FANFOLD_STD_GERMAN,
-		DMPAPER_FANFOLD_LGL_GERMAN
-	};
-	int i;
-	for( i = 0; i < nPaerNameArrNum; ++i ){
-		if( nPaperIdArr[i] == nPaperSize ){
-			break;
-		}
-	}
-	if( i < nPaerNameArrNum ){
-		strcpy( pszPaperName, pszPaperNameArr[i] );
+	// 2006.08.14 Moca 用紙情報の統合
+	const PAPER_INFO* paperInfo = FindPaperInfo( nPaperSize );
+	if( NULL != paperInfo ){
+		strcpy( pszPaperName, paperInfo->m_pszName );
 	}else{
 		strcpy( pszPaperName, "不明" );
 	}
@@ -727,49 +529,65 @@ char* CPrint::GetPaperName( int nPaperSize, char* pszPaperName )
 
 }
 
-void CPrint::Initialize()
+/*!
+	用紙情報の取得
+	@date 2006.08.14 Moca 新規作成 用紙情報の統合
+*/
+const PAPER_INFO* CPrint::FindPaperInfo( int id )
 {
-	/* 時間がかからないものだけ初期化 */
-	int i = 0;
-	DLLSHAREDATA*	m_pShareData = CShareData::getInstance()->GetShareData();
-	wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceHan, "ＭＳ 明朝" );				/* 印刷フォント */
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szPrintFontFaceZen, "ＭＳ 明朝" );				/* 印刷フォント */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintFontWidth = 12;  								/* 印刷フォント幅(1/10mm単位) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintFontHeight = m_pShareData->m_PrintSettingArr[i].m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintDansuu = 1;			/* 段組の段数 */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintDanSpace = 70; 		/* 段と段の隙間(1/10mm) */
-	m_pShareData->m_PrintSettingArr[i].m_bPrintWordWrap = TRUE;		/* 英文ワードラップする */
-	m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuHead = FALSE;		/* 行頭禁則する */	//@@@ 2002.04.09 MIK
-	m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuTail = FALSE;		/* 行末禁則する */	//@@@ 2002.04.09 MIK
-	m_pShareData->m_PrintSettingArr[i].m_bPrintKinsokuRet = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	m_pShareData->m_PrintSettingArr[i].m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginBY = 200;		/* 印刷用紙マージン 下(1/10mm単位) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginLX = 200;		/* 印刷用紙マージン 左(1/10mm単位) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintMarginRX = 100;		/* 印刷用紙マージン 右(1/10mm単位) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;	/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
-	m_pShareData->m_PrintSettingArr[i].m_nPrintPaperSize = DMPAPER_A4;	/* 用紙サイズ */
+	for( int i = 0; i < m_nPaperInfoArrNum; ++i ){
+		if( m_paperInfoArr[i].m_nId == id ){
+			return &(m_paperInfoArr[i]);
+		}
+	}
+	return NULL;
+}
+
+
+/*!	@brief PRINTSETTINGの初期化
+
+	ここではm_mdmDevModeの プリンタ設定は取得・初期化しない
+
+	@date 2006.08.14 Moca  Initializeから名称変更。初期化単位をShareDate全てからPRINTSETTING単位に変更．
+		本関数からDLLSHAREDATAへアクセスする代わりに，CShareDataからPPRINTSETTING単位で逐一渡してもらう．
+*/
+void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const char* settingName )
+{
+	strcpy( pPrintSetting.m_szPrintSettingName, settingName );	/* 印刷設定の名前 */
+	strcpy( pPrintSetting.m_szPrintFontFaceHan, "ＭＳ 明朝" );				/* 印刷フォント */
+	strcpy( pPrintSetting.m_szPrintFontFaceZen, "ＭＳ 明朝" );				/* 印刷フォント */
+	pPrintSetting.m_nPrintFontWidth = 12;  								/* 印刷フォント幅(1/10mm単位) */
+	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
+	pPrintSetting.m_nPrintDansuu = 1;			/* 段組の段数 */
+	pPrintSetting.m_nPrintDanSpace = 70; 		/* 段と段の隙間(1/10mm) */
+	pPrintSetting.m_bPrintWordWrap = TRUE;		/* 英文ワードラップする */
+	pPrintSetting.m_bPrintKinsokuHead = FALSE;		/* 行頭禁則する */	//@@@ 2002.04.09 MIK
+	pPrintSetting.m_bPrintKinsokuTail = FALSE;		/* 行末禁則する */	//@@@ 2002.04.09 MIK
+	pPrintSetting.m_bPrintKinsokuRet = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	pPrintSetting.m_bPrintKinsokuKuto = FALSE;		// 2006.08.14 Moca 初期化ミス
+	pPrintSetting.m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
+	pPrintSetting.m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
+	pPrintSetting.m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */
+	pPrintSetting.m_nPrintMarginBY = 200;		/* 印刷用紙マージン 下(1/10mm単位) */
+	pPrintSetting.m_nPrintMarginLX = 200;		/* 印刷用紙マージン 左(1/10mm単位) */
+	pPrintSetting.m_nPrintMarginRX = 100;		/* 印刷用紙マージン 右(1/10mm単位) */
+	pPrintSetting.m_nPrintPaperOrientation = DMORIENT_PORTRAIT;	/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
+	pPrintSetting.m_nPrintPaperSize = DMPAPER_A4;	/* 用紙サイズ */
 	/* プリンタ設定 DEVMODE用 */
 	/* プリンタ設定を取得するのはコストがかかるので、後ほど */
-	//	m_cPrint.GetDefaultPrinterInfo( &(m_pShareData->m_PrintSettingArr[i].m_mdmDevMode) );
-	m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[0] = TRUE;
-	m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[1] = FALSE;
-	m_pShareData->m_PrintSettingArr[i].m_bHeaderUse[2] = FALSE;
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[0], "$f" );
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[1], "" );
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szHeaderForm[2], "" );
-	m_pShareData->m_PrintSettingArr[i].m_bFooterUse[0] = TRUE;
-	m_pShareData->m_PrintSettingArr[i].m_bFooterUse[1] = FALSE;
-	m_pShareData->m_PrintSettingArr[i].m_bFooterUse[2] = FALSE;
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[0], "" );
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[1], "- $p -" );
-	strcpy( m_pShareData->m_PrintSettingArr[i].m_szFooterForm[2], "" );
-	for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
-		m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-		wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
-	}
+	//	m_cPrint.GetDefaultPrinterInfo( &(pPrintSetting.m_mdmDevMode) );
+	pPrintSetting.m_bHeaderUse[0] = TRUE;
+	pPrintSetting.m_bHeaderUse[1] = FALSE;
+	pPrintSetting.m_bHeaderUse[2] = FALSE;
+	strcpy( pPrintSetting.m_szHeaderForm[0], "$f" );
+	strcpy( pPrintSetting.m_szHeaderForm[1], "" );
+	strcpy( pPrintSetting.m_szHeaderForm[2], "" );
+	pPrintSetting.m_bFooterUse[0] = TRUE;
+	pPrintSetting.m_bFooterUse[1] = FALSE;
+	pPrintSetting.m_bFooterUse[2] = FALSE;
+	strcpy( pPrintSetting.m_szFooterForm[0], "" );
+	strcpy( pPrintSetting.m_szFooterForm[1], "- $p -" );
+	strcpy( pPrintSetting.m_szFooterForm[2], "" );
 }
 
 /*[EOF]*/

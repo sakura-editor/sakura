@@ -44,9 +44,11 @@ public:
 	void OnPreviewGoPage( int nPage );	/* プレビュー ページ指定 */
 	void OnPreviewGoPreviousPage(){ OnPreviewGoPage( m_nCurPageNum - 1 ); }		//	前のページへ
 	void OnPreviewGoNextPage(){ OnPreviewGoPage( m_nCurPageNum + 1 ); }		//	前のページへ
+	void OnPreviewGoDirectPage( void );
 	void OnPreviewZoom( BOOL bZoomUp );
 	void OnPrint( void );	/* 印刷実行 */
 	BOOL OnPrintPageSetting( void );
+	void OnCheckAntialias( void );
 
 	/*
 	||	コントロール
@@ -94,8 +96,10 @@ protected:
 		int			y,
 		const char*	pLine,
 		int			nLineLen,
+		int			nIndent, // 折り返しインデント桁数 // 2006.08.14 Moca
 		HFONT		hFontZen
 	);
+
 
 public:
 	//	フォント列挙
@@ -132,6 +136,12 @@ public:
 protected:
 	CEditWnd*		m_pParentWnd;	//	親のCEditDoc*。
 	
+	// 2006.08.17 Moca YAZAKIさんのメモの通りDC/BMPをCEditDocからCPrintPreviewへ移動
+	HDC				m_hdcCompatDC;	//!< 再描画用コンパチブルDC
+	HBITMAP			m_hbmpCompatBMP;	//!< 再描画用メモリBMP
+	HBITMAP			m_hbmpCompatBMPOld;	//!< 再描画用メモリBMP(OLD)
+	int				m_nbmpCompatScale;	//!< BMPの画面の10(COMPAT_BMP_BASE)ピクセル幅あたりのBMPのピクセル幅
+
 	/*	コントロール制御用	*/
 	//	操作バー
 	HWND			m_hwndPrintPreviewBar;	/* 印刷プレビュー 操作バー */

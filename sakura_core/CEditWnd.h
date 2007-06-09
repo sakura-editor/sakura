@@ -185,9 +185,7 @@ public:
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
 	//	変数を移動
 	//	うまくやれば、以下もPrintPreviewへ行きそう
-	HDC				m_hdcCompatDC;	/* 再描画用コンパチブルＤＣ */
-	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
-	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
+	//  2006.08.14 Moca DC,BMPをPrintPreviewへ移動
 
 	//	Oct. 12, 2000 genta
 	CImageListMgr	m_cIcons;	//	Image List

@@ -139,9 +139,6 @@ CEditWnd::CEditWnd() :
 	m_hwndToolBar( NULL ),
 	m_hwndStatusBar( NULL ),
 	m_hwndProgressBar( NULL ),
-	m_hdcCompatDC( NULL ),			/* 再描画用コンパチブルＤＣ */
-	m_hbmpCompatBMP( NULL ),		/* 再描画用メモリＢＭＰ */
-	m_hbmpCompatBMPOld( NULL ),		/* 再描画用メモリＢＭＰ(OLD) */
 // 20020331 aroka 再変換対応 for 95/NT
 	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
 	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ),
@@ -179,16 +176,6 @@ CEditWnd::~CEditWnd()
 	/* キャレットの行桁位置表示用フォント */
 	::DeleteObject( m_hFontCaretPosInfo );
 
-	/* 再描画用メモリＢＭＰ */
-	if( m_hbmpCompatBMP != NULL ){
-		/* 再描画用メモリＢＭＰ(OLD) */
-		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
-		::DeleteObject( m_hbmpCompatBMP );
-	}
-	/* 再描画用コンパチブルＤＣ */
-	if( m_hdcCompatDC != NULL ){
-		::DeleteDC( m_hdcCompatDC );
-	}
 
 	if( NULL != m_hWnd ){
 		m_hWnd = NULL;
@@ -380,10 +367,6 @@ HWND CEditWnd::Create(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
 
-		/* 再描画用コンパチブルＤＣ */
-		HDC hdc = ::GetDC( m_hWnd );
-		m_hdcCompatDC = ::CreateCompatibleDC( hdc );
-		::ReleaseDC( m_hWnd, hdc );
 
 //	}
 
