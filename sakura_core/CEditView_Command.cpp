@@ -6764,6 +6764,14 @@ void CEditView::Command_BIND_WINDOW( void )
 		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
 		::GetWindowPlacement( m_pcEditDoc->m_pcEditWnd->m_hWnd, &(m_pShareData->m_TabWndWndpl) );
 
+		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
+		if( !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+		{
+			m_pcEditDoc->m_pcEditWnd->WindowTopMost(
+				( (DWORD)::GetWindowLongPtr( m_pcEditDoc->m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+			);
+		}
+
 		//Start 2004.08.27 Kazika 変更
 		//タブウィンドウの設定を変更をブロードキャストする
 		CShareData::getInstance()->PostMessageToAllEditors(
@@ -8766,6 +8774,14 @@ void CEditView::Command_SHOWTAB( void )
 	m_pShareData->m_Common.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.m_hWnd)? TRUE: FALSE);	/* タブバー表示 */
 	pCEditWnd->LayoutTabBar();
 	pCEditWnd->EndLayoutBars();
+
+	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		m_pcEditDoc->m_pcEditWnd->WindowTopMost(
+			( (DWORD)::GetWindowLongPtr( m_pcEditDoc->m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+		);
+	}
 
 // pCEditWnd->EndLayoutBars()の中でWM_SIZEが送られるのでウインドウ情報更新の処理はここでは不要
 	//if( m_pShareData->m_Common.m_bDispTabWnd )
