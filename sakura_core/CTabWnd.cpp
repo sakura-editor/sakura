@@ -1224,17 +1224,20 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( (HWND)lParam == m_hwndParent )
 		{
 			//自分ならアクティブに
-			ShowHideWindow( (HWND)lParam, TRUE );
+			ShowHideWindow( m_hwndParent, TRUE );
 			//ここに来たということはすでにアクティブ
 			//コマンド実行時のアウトプットで問題があるのでアクティブにする
 
 			TabCtrl_SetCurSel( m_hwndTab, nIndex );
+
+			// 自分以外を隠す
+			HideOtherWindows( m_hwndParent );
 		}
-		else
-		{
-			//自分に用がなければ隠す。
-			ShowHideWindow( m_hwndParent, FALSE );
-		}
+//		else
+//		{
+//			//自分に用がなければ隠す。
+//			ShowHideWindow( m_hwndParent, FALSE );
+//		}
 		break;
 
 	case TWNT_DEL:	//ウインドウ削除
@@ -1281,9 +1284,9 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			if( (HWND)lParam == m_hwndParent )
 			{
 				//自分ならアクティブに
-				if( FALSE == ::IsWindowVisible( (HWND)lParam ) )
+				if( FALSE == ::IsWindowVisible( m_hwndParent ) )
 				{
-					ShowHideWindow( (HWND)lParam, TRUE );
+					ShowHideWindow( m_hwndParent, TRUE );
 				}
 				//ここに来たということはすでにアクティブ
 
@@ -1293,12 +1296,16 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 				nScrollPos = ( hwndUpDown != NULL )? LOWORD( ::SendMessage( hwndUpDown, UDM_GETPOS, (WPARAM)0, (LPARAM)0 ) ): 0;
 				TabCtrl_SetCurSel( m_hwndTab, nScrollPos );
 				TabCtrl_SetCurSel( m_hwndTab, nIndex );
+
+				// 自分以外を隠す
+				// （連続切替時に TWNT_ORDER が大量発生・交錯して？画面がすべて消えてしまったりするのを防ぐ）
+				HideOtherWindows( m_hwndParent );
 			}
-			else
-			{
-				//自分に用がなければ隠す。
-				ShowHideWindow( m_hwndParent, FALSE );
-			}
+//			else
+//			{
+//				//自分に用がなければ隠す。
+//				ShowHideWindow( m_hwndParent, FALSE );
+//			}
 		}
 		else
 		{
@@ -1366,12 +1373,15 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 				//自分ならアクティブに
 				//ShowHideWindow( (HWND)lParam, TRUE );
 				//自分はもともとアクティブのはず……
+
+				// 自分以外を隠す
+				HideOtherWindows( m_hwndParent );
 			}
-			else
-			{
-				//自分に用がなければ隠す。
-				ShowHideWindow( m_hwndParent, FALSE );
-			}
+//			else
+//			{
+//				//自分に用がなければ隠す。
+//				ShowHideWindow( m_hwndParent, FALSE );
+//			}
 			//TabCtrl_SetCurSel( m_hwndTab, nIndex );
 		}
 		break;
@@ -1553,9 +1563,14 @@ void CTabWnd::AdjustWindowPlacement( void )
 			//  ・画面描画される際、クライアント領域全体が一時的に真っ白になる（Vista Aero）
 			//  ・最大化切替（SW_SHOWMAXIMIZED）の際、以前に通常表示だった画面のステータスバーやファンクションキーが一時的に通常サイズで表示される
 
-			// ウィンドウを背後に配置する（WS_EX_TOPMOSTは解除される．SWP_NOOWNERZORDER 指定することで owner/owned ウィンドウの WS_EX_TOPMOST は解除しない）
-			LONG_PTR lExStyle = ::GetWindowLongPtr( hwnd, GWL_EXSTYLE );
-			::SetWindowPos( hwnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+			// ウィンドウを背後に配置する
+			int nIdx = GetFirstOpenedWindow();
+			if( nIdx >= 0 )
+			{
+				// Note. WS_EX_TOPMOST については hwndInsertAfter ウィンドウの状態が引き継がれる
+				HWND hwndInsertAfter = m_pShareData->m_pEditArr[nIdx].m_hWnd;
+				::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+			}
 
 			if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
 			{
@@ -1581,10 +1596,6 @@ void CTabWnd::AdjustWindowPlacement( void )
 			}
 			::SetWindowPlacement( hwnd, &wp );	// 位置を復元する
 			::UpdateWindow( hwnd );	// 強制描画
-
-			// 以前が WS_EX_TOPMOST だった場合は元に戻す
-			if( lExStyle & WS_EX_TOPMOST )
-				::SetWindowPos( hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 		}
 	}
 }
@@ -1620,6 +1631,33 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 	}
 
 	return;
+}
+
+/*!	他の編集ウィンドウを隠す
+
+	@param hwndExclude [in] 非表示化から除外するウィンドウ
+
+	@author ryoji
+	@date 2007.05.17 新規作成
+*/
+void CTabWnd::HideOtherWindows( HWND hwndExclude )
+{
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	{
+		HWND hwnd;
+		int	i;
+		for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+		{
+			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
+			if( CShareData::getInstance()->IsEditWnd( hwnd ) )
+			{
+				if( hwnd != hwndExclude && ::IsWindowVisible( hwnd ) )
+				{
+					::ShowWindow( hwnd, SW_HIDE );
+				}
+			}
+		}
+	}
 }
 
 int CTabWnd::GetFirstOpenedWindow( void )

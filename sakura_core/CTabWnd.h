@@ -88,6 +88,7 @@ protected:
 	void Refresh( void );	// 2006.02.06 ryoji 引数削除
 	void AdjustWindowPlacement( void );							/*!< 編集ウィンドウの位置合わせ */	// 2007.04.03 ryoji
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
+	void HideOtherWindows( HWND hwndExclude );					/*!< 他の編集ウィンドウを隠す */	// 2007.05.17 ryoji
 	int GetFirstOpenedWindow( void );
 	void ForceActiveWindow( HWND hwnd );
 	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加

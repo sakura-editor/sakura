@@ -426,6 +426,18 @@ HWND CEditWnd::Create(
 	 && m_pShareData->m_TabWndWndpl.length
 	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
+		// 現在の先頭ウィンドウから WS_EX_TOPMOST 状態を引き継ぐ	// 2007.05.18 ryoji
+		HWND hwnd;
+		int i;
+		for( i = 0; i < m_pShareData->m_nEditArrNum; i++ ){
+			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
+			if( hwnd != m_hWnd && CShareData::getInstance()->IsEditWnd( hwnd ) ){
+				DWORD dwExStyle = (DWORD)::GetWindowLongPtr( hwnd, GWL_EXSTYLE );
+				::SetWindowPos( m_hWnd, (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+				break;
+			}
+		}
+
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
 		if( m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED )
@@ -1565,6 +1577,7 @@ LRESULT CEditWnd::DispatchEvent(
 					if( 1 == CShareData::getInstance()->GetEditorWindowsNum() ){
 						CShareData::getInstance()->DeleteEditWndList( m_hWnd );	// 新規エディタのタブには自分を表示させない
 						CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, TRUE );
+						WindowTopMost( ( (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2 );	// 新規エディタに WS_EX_TOPMOST 状態を引き継ぐ	// 2007.05.18 ryoji
 					}
 				}
 			}
@@ -1627,10 +1640,19 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			else
 			{
-				// ::ShowWindow( hwnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
-				::SetWindowPos( hwnd, NULL,0,0,0,0,
+				// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+				::SetWindowPos( m_hWnd, NULL,0,0,0,0,
 								SWP_SHOWWINDOW | SWP_NOACTIVATE
 								| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
+			}
+		}
+		else
+		{
+			if( m_pShareData->m_Common.m_bDispTabWnd
+				&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+			{
+				// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
+				WindowTopMost( ((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
 			}
 		}
 
@@ -4551,14 +4573,32 @@ void CEditWnd::WindowTopMost( int top )
 			top = 1;
 		}
 	}
-	
+
+	HWND hwndInsertAfter;
 	switch( top ){
 	case 1:
-		::SetWindowPos( m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		hwndInsertAfter = HWND_TOPMOST;
 		break;
 	case 2:
-		::SetWindowPos( m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		hwndInsertAfter = HWND_NOTOPMOST;
 		break;
+	default:
+		return;
+	}
+
+	::SetWindowPos( m_hWnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
+	// タブまとめ時は WS_EX_TOPMOST 状態を全ウィンドウで同期する	// 2007.05.18 ryoji
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+		HWND hwnd;
+		int i;
+		for( i = 0, hwndInsertAfter = m_hWnd; i < m_pShareData->m_nEditArrNum; i++ ){
+			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
+			if( hwnd != m_hWnd && CShareData::getInstance()->IsEditWnd( hwnd ) ){
+				::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+				hwndInsertAfter = hwnd;
+			}
+		}
 	}
 }
 
