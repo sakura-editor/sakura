@@ -583,6 +583,7 @@
 #define IDC_CHECK_RetainEmptyWindow     1518
 #define IDC_CHECK_CloseOneWin           1519
 #define IDC_CHECK_bCaretTextForSearch   1520
+#define IDC_CHECK_ChgWndByWheel         1521
 #define IDD_PROP_TOOLBAR                1539
 #define IDC_CHECK_SortTabList           1540
 #define IDM_POPLAST                     4047
@@ -641,7 +642,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        245
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1521
+#define _APS_NEXT_CONTROL_VALUE         1522
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

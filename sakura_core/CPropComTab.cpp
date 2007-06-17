@@ -27,6 +27,7 @@ static const DWORD p_helpids[] = {
 	IDC_TABWND_CAPTION,				HIDC_TABWND_CAPTION,			//タブウインドウキャプション	//@@@ 2003.06.15 MIK
 	IDC_CHECK_RetainEmptyWindow,	HIDC_CHECK_RetainEmptyWindow,	//最後のファイルを閉じたとき(無題)文書を残す	// 2007.02.13 ryoji
 	IDC_CHECK_CloseOneWin,			HIDC_CHECK_CloseOneWin,			//ウィンドウの閉じるボタンは現在のファイルのみ閉じる	// 2007.02.13 ryoji
+	IDC_CHECK_ChgWndByWheel,		HIDC_CHECK_ChgWndByWheel,		//マウスホイールでウィンドウ切り替え 2007.04.03 ryoji
 	0, 0
 };
 
@@ -135,7 +136,8 @@ void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
 	//	Feb. 11, 2007 genta 新規作成
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_bTab_RetainEmptyWin );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CloseOneWin, m_Common.m_bTab_CloseOneWin );
-	
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ChgWndByWheel, m_Common.m_bChgWndByWheel );	// 2007.04.03 ryoji
+
 	EnableTabPropInput(hwndDlg);
 	return;
 }
@@ -155,6 +157,7 @@ int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
 	//	Feb. 11, 2007 genta 新規作成
 	m_Common.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
 	m_Common.m_bTab_CloseOneWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CloseOneWin );
+	m_Common.m_bChgWndByWheel = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ChgWndByWheel );	// 2007.04.03 ryoji
 
 	return TRUE;
 }
@@ -174,6 +177,7 @@ void CPropCommon::EnableTabPropInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow  ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin        ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), FALSE );	// 2007.04.03 ryoji
 	}
 	else
 	{
@@ -182,6 +186,7 @@ void CPropCommon::EnableTabPropInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), TRUE );	// 2007.04.03 ryoji
 		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) )
 		{
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), TRUE );

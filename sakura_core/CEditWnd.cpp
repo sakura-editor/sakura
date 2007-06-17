@@ -3981,6 +3981,46 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューモードか */
 	if( !m_pPrintPreview ){
+		// 2006.03.26 ryoji by assitance with John タブ上ならウィンドウ切り替え
+		if( m_pShareData->m_Common.m_bChgWndByWheel && NULL != m_cTabWnd.m_hwndTab )
+		{
+			POINT pt;
+			pt.x = (short)LOWORD( lParam );
+			pt.y = (short)HIWORD( lParam );
+			int nDelta = (short)HIWORD( wParam );
+			HWND hwnd = ::WindowFromPoint( pt );
+			if( (hwnd == m_cTabWnd.m_hwndTab || hwnd == m_cTabWnd.m_hWnd) )
+			{
+				// 現在開いている編集窓のリストを得る
+				EditNode* pEditNodeArr;
+				int nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+				if(  nRowNum > 0 )
+				{
+					// 自分のウィンドウを調べる
+					int i;
+					int j = 0;
+					for( i = 0; i < nRowNum; ++i )
+					{
+						if( m_hWnd == pEditNodeArr[i].m_hWnd )
+						{
+							j = i;
+							break;
+						}
+					}
+					if( nDelta < 0 )
+						j = ( j == nRowNum - 1 )? 0: j + 1;	// 次のウィンドウ
+					else
+						j = ( j == 0 )? nRowNum - 1: j - 1;	// 前のウィンドウ
+
+					/* 次の（or 前の）ウィンドウをアクティブにする */
+					ActivateFrameWindow( pEditNodeArr[j].m_hWnd );
+
+					delete []pEditNodeArr;
+				}
+				return 0;
+			}
+		}
+
 		/* メッセージの配送 */
 		return m_cEditDoc.DispatchEvent( m_hWnd, WM_MOUSEWHEEL, wParam, lParam );
 	}

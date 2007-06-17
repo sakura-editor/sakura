@@ -213,9 +213,12 @@ struct ARRHEAD {
 	Version 74:
 	カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
 
+	Version 75:
+	マウスホイールでウィンドウ切り替え 2006.03.26 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 74;
+const unsigned int uShareDataVersion = 75;
 
 /*
 ||	Singleton風
@@ -515,6 +518,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
 		m_pShareData->m_Common.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
 		m_pShareData->m_Common.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
+		m_pShareData->m_Common.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
