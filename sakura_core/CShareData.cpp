@@ -13,7 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta, isearch, MIK
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
-	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2007, ryoji, genta, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -984,9 +984,14 @@ BOOL CShareData::RequestCloseAllEditor( BOOL bExit )
 
 
 
+/*!
+	@brief	指定ファイルが開かれているか調べる
+	
+	指定のファイルが開かれている場合は開いているウィンドウのハンドルを返す
 
-/* 指定ファイルが開かれているか調べる */
-/* 開かれている場合は開いているウィンドウのハンドルも返す */
+	@retval	TRUE すでに開いていた
+	@retval	FALSE 開いていなかった
+*/
 BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 {
 	int			i;
@@ -1013,6 +1018,73 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 	return FALSE;
 }
 
+/*!
+	@brief	指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認
+
+	もしすでに開いていればアクティブにして、ウィンドウのハンドルを返す。
+	さらに、文字コードが異なるときのワーニングも処理する。
+	あちこちに散らばった多重オープン処理を集結させるのが目的。
+
+	@retval	開かれている場合は開いているウィンドウのハンドル
+
+	@note	CEditDoc::FileReadに先立って実行されることもあるが、
+			CEditDoc::FileReadからも実行される必要があることに注意。
+			(フォルダ指定の場合やCEditDoc::FileReadが直接実行される場合もあるため)
+
+	@retval	TRUE すでに開いていた
+	@retval	FALSE 開いていなかった
+
+	@date 2007.03.12 maru 新規作成
+*/
+BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharCode ){
+
+	if( IsPathOpened( pszPath, phwndOwner ) ){
+		FileInfo*		pfi;
+		CMRU			cMRU;
+		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
+		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+
+		if(nCharCode != CODE_AUTODETECT){
+			char*	pszCodeNameCur = NULL;
+			char*	pszCodeNameNew = NULL;
+			if(-1 < nCharCode && nCharCode < CODE_CODEMAX){
+				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+			}
+			if(-1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+			}
+
+			if(NULL != pszCodeNameCur && NULL != pszCodeNameNew){
+				if(nCharCode != pfi->m_nCharCode){
+					::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+						"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\nファイルメニューから「開き直す」を使用してください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
+						pszPath, pszCodeNameCur, pszCodeNameNew
+					);
+				}
+			}
+			else{
+				::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+					"%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]",
+					pszPath,
+					pfi->m_nCharCode, NULL==pszCodeNameCur?"不明":pszCodeNameCur,
+					nCharCode,        NULL==pszCodeNameNew?"不明":pszCodeNameNew
+				);
+			}
+		}
+		
+		/* 開いているウィンドウをアクティブにする */
+		/* アクティブにする */
+		ActivateFrameWindow( *phwndOwner );
+
+		/* MRUリストへの登録 */
+		cMRU.Add( pfi );
+		return TRUE;
+	}
+	else {
+		return FALSE;
+	}
+
+}
 
 
 

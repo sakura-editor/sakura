@@ -1248,6 +1248,7 @@ void CEditDoc::AddToMRU(void)
 	cMRU.Add( &fi );
 }
 
+
 /*!	@brief 指定されたファイルを開く
 
 	現在の編集状況に応じて，現在のウィンドウに読み込むか，新しいウィンドウを開くか
@@ -1259,12 +1260,12 @@ void CEditDoc::AddToMRU(void)
 
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
 	@date 2004.10.09 CEditViewより移動
+	@date 2007.03.12 maru 重複コード(多重オープン処理部分など)をCShareData::IsPathOpenedに移動
 */
 void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 {
 	char		pszPath[_MAX_PATH];
 	BOOL		bOpened;
-	FileInfo*	pfi;
 	HWND		hWndOwner;
 
 	/* 「ファイルを開く」ダイアログ */
@@ -1278,53 +1279,8 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 		strncpy( pszPath, filename, _MAX_PATH - 1 );
 	}
 	/* 指定ファイルが開かれているか調べる */
-	if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
-		::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-//		pfi = (FileInfo*)m_pShareData->m_szWork;
-		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-//	From Here Dec. 17, 2006 maru 自動認識優先の動作は無くなったので自動認識結果は意識しない
-//		int		nCharCodeNew;
-//		if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
-//			/* ファイルの日本語コードセット判別
-//				エラー	-1 */
-//			nCharCodeNew = CMemory::CheckKanjiCodeOfFile( pszPath );
-//			if( -1 == nCharCodeNew ){
-//
-//			}else{
-//				nCharCode = nCharCodeNew;
-//			}
-//		}
-		/* 文字コード種別 */
-		//	Oct. 03, 2004 genta コード確認は設定に依存
-		//	Jul. 20, 2005 genta コードの自動認識に失敗してnCharCodeが
-		//		AUTO_DETECTのままになってしまう場合を考慮して範囲チェック追加
- 		if( nCharCode < CODE_CODEMAX &&
-			nCharCode != CODE_AUTODETECT && nCharCode != pfi->m_nCharCode ){
-//	To Here Dec. 17, 2006 maru 自動認識優先の動作は無くなったので自動認識結果は意識しない
-			char*	pszCodeNameCur;
-			char*	pszCodeNameNew;
-
-			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-			if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
-			}
-			if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
-				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
-			}
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-				"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてから開いてください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
-				pszPath, pszCodeNameCur, pszCodeNameNew
-			);
-		}
-		/* 自分が開いているか */
-		if( 0 == strcmp( GetFilePath(), pszPath ) ){
-			/* 何もしない */
-		}else{
-			/* 開いているウィンドウをアクティブにする */
-			/* アクティブにする */
-			ActivateFrameWindow( hWndOwner );
-		}
+	if( CShareData::getInstance()->IsPathOpened(pszPath, &hWndOwner, nCharCode) ){		// 開いていればアクティブにする
+		/* 2007.03.12 maru 開いていたときの処理はCShareData::IsPathOpenedに移動 */
 	}else{
 		/* ファイルが開かれていない */
 		/* 変更フラグがオフで、ファイルを読み込んでいない場合 */

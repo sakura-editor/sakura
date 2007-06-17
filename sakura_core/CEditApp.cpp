@@ -965,7 +965,7 @@ LRESULT CEditApp::DispatchEvent(
 						int				nCharCode;
 						BOOL			bReadOnly;
 						HWND			hWndOwner;
-						FileInfo*		pfi;
+//						FileInfo*		pfi;
 //						int				i;
 //						int				j;
 						char**			ppszMRU;
@@ -1010,48 +1010,8 @@ LRESULT CEditApp::DispatchEvent(
 						delete [] ppszMRU;
 						delete [] ppszOPENFOLDER;
 						/* 指定ファイルが開かれているか調べる */
-						if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner ) ){
-							::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-//							pfi = (FileInfo*)m_pShareData->m_szWork;
-							pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-							int nCharCodeNew;
-							if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
-								/*
-								|| ファイルの日本語コードセット判別
-								||
-								|| 【戻り値】
-								||	SJIS	0
-								||	JIS		1
-								||	EUC		2
-								||	Unicode	3
-								||	エラー	-1
-								*/
-								nCharCodeNew = CMemory::CheckKanjiCodeOfFile( szPath );
-								if( -1 == nCharCodeNew ){
-
-								}else{
-									nCharCode = nCharCodeNew;
-								}
-							}
-							if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
-								char*	pszCodeNameCur = "";
-								char*	pszCodeNameNew = "";
-								// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-								if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-									pszCodeNameCur = (char *)gm_pszCodeNameArr_1[pfi->m_nCharCode];
-								}
-								if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
-									pszCodeNameNew = (char *)gm_pszCodeNameArr_1[nCharCode];
-								}
-								::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-									"%s\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてからでないと開けません。\n\n現在の文字コードセット＝%s\n新しい文字コードセット＝%s",
-									szPath, pszCodeNameCur, pszCodeNameNew
-								);
-							}
-							/* 開いているウィンドウをアクティブにする */
-							/* アクティブにする */
-							ActivateFrameWindow( hWndOwner );
+						if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner, nCharCode )){
+							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
 						}else{
 							if( strchr( szPath, ' ' ) ){
 								char	szFile2[_MAX_PATH + 3];
@@ -1135,7 +1095,7 @@ LRESULT CEditApp::DispatchEvent(
 							int				nCharCode;
 							BOOL			bReadOnly;
 							HWND			hWndOwner;
-							FileInfo*		pfi;
+//							FileInfo*		pfi;
 //							int				i;
 //							int				j;
 							char**			ppszMRU;
@@ -1182,55 +1142,9 @@ LRESULT CEditApp::DispatchEvent(
 							delete [] ppszMRU;
 							delete [] ppszOPENFOLDER;
 							/* 指定ファイルが開かれているか調べる */
-							if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner ) ){
-								::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-								pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-								int nCharCodeNew;
-								if( CODE_AUTODETECT == nCharCode ){	/* 文字コード自動判別 */
-									/*
-									|| ファイルの日本語コードセット判別
-									||
-									|| 【戻り値】
-									||	SJIS	0
-									||	JIS		1
-									||	EUC		2
-									||	Unicode	3
-									||	エラー	-1
-									*/
-									nCharCodeNew = CMemory::CheckKanjiCodeOfFile( szPath );
-									if( -1 == nCharCodeNew ){
-
-									}else{
-										nCharCode = nCharCodeNew;
-									}
-								}
-								if( nCharCode != pfi->m_nCharCode ){	/* 文字コード種別 */
-									char*	pszCodeNameCur = "";
-									char*	pszCodeNameNew = "";
-									// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-									if( -1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-										pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
-									}
-									if( -1 < nCharCode && nCharCode < CODE_CODEMAX ){
-										pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
-									}
-									::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-										"%s\n\n既に開いているファイルを違う文字コードで開く場合は、\n一旦閉じてからでないと開けません。\n\n現在の文字コードセット＝%s\n新しい文字コードセット＝%s",
-										szPath, pszCodeNameCur, pszCodeNameNew
-									);
-								}
-								/* 開いているウィンドウをアクティブにする */
-								/* アクティブにする */
-								ActivateFrameWindow( hWndOwner );
-//								if( ::IsIconic( hWndOwner ) ){
-//									::ShowWindow( hWndOwner, SW_RESTORE );
-//								}else{
-//									::ShowWindow( hWndOwner, SW_SHOW );
-//								}
-//								::SetForegroundWindow( hWndOwner );
-//								::SetActiveWindow( hWndOwner );
-							}else{
+							if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner, nCharCode )){
+								// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
+							} else {
 								if( strchr( szPath, ' ' ) ){
 									char	szFile2[_MAX_PATH + 3];
 									wsprintf( szFile2, "\"%s\"", szPath );
