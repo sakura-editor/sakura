@@ -13,7 +13,7 @@
 	Copyright (C) 2004, genta, novice, Moca, MIK, zenryaku
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 	Copyright (C) 2006, genta, ryoji, aroka
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -364,18 +364,33 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 
 /*! ファイルを開く
 
-	@date 2004.06.18 moca ファイルが開けなかった場合にpbOpenedがFALSEに初期化されていなかった．
-	
 	@return 成功: TRUE/pbOpened==FALSE,
 			既に開かれている: FALSE/pbOpened==TRUE
 			失敗: FALSE/pbOpened==FALSE
 
 	@note genta 近いうちに見直した方がいいな．
+
+	@date 2000.01.18 システム属性のファイルが開けない問題
+	@date 2000.05,12 genta 改行コードの設定
+	@date 2000.10.25 genta 文字コードの異常な値をチェック
+	@date 2000.11.20 genta IME状態の設定
+	@date 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+	@date 2002.01.16 hor ブックマーク復元
+	@date 2002.10.19 genta 読み取り不可のファイルは文字コード判別で失敗する
+	@date 2003.03.28 MIK 改行の真ん中にカーソルが来ないように
+	@date 2003.07.26 ryoji BOM引数追加
+	@date 2002.05.26 Moca gm_pszCodeNameArr_1 を使うように変更
+	@date 2004.06.18 moca ファイルが開けなかった場合にpbOpenedがFALSEに初期化されていなかった．
+	@date 2004.10.09 genta 存在しないファイルを開こうとしたときに
+					フラグに応じて警告を出す（以前の動作）ように
+	@date 2006.12.16 じゅうじ 前回の文字コードを優先する
+	@date 2007.03.12 maru ファイルが存在しなくても前回の文字コードを継承
+						多重オープン処理をCEditDoc::IsPathOpenedに移動
 */
 BOOL CEditDoc::FileRead(
 	char*	pszPath,	//!< [in/out]
 	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
-	int		nCharCode,			/*!< [in] 文字コード自動判別 */
+	int		nCharCode,			/*!< [in] 文字コード種別 */
 	BOOL	bReadOnly,			/*!< [in] 読み取り専用か */
 	BOOL	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
 )
@@ -384,7 +399,7 @@ BOOL CEditDoc::FileRead(
 	HWND			hWndOwner;
 	BOOL			bRet;
 	FileInfo		fi;
-	FileInfo*		pfi;
+//	FileInfo*		pfi;
 	HWND			hwndProgress;
 	CWaitCursor		cWaitCursor( m_hWnd );
 	BOOL			bIsExistInMRU;
@@ -483,21 +498,9 @@ BOOL CEditDoc::FileRead(
 		);
 		return FALSE;
 	}
-
 	/* 指定ファイルが開かれているか調べる */
-	if( CShareData::getInstance()->IsPathOpened( pszPath, &hWndOwner ) ){
-		::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-//		pfi = (FileInfo*)m_pShareData->m_szWork;
-		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
-		/* アクティブにする */
-		ActivateFrameWindow( hWndOwner );
-
+	if( CShareData::getInstance()->IsPathOpened(pszPath, &hWndOwner, nCharCode) ){	/* 2007.03.12 maru 多重オープン処理はIsPathOpenedにまとめる */
 		*pbOpened = TRUE;
-		/* MRUリストへの登録 */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-		cMRU.Add( pfi );
-
 		bRet = FALSE;
 		goto end_of_func;
 	}
@@ -521,133 +524,84 @@ BOOL CEditDoc::FileRead(
 	if( ( -1 <= nCharCode && nCharCode < CODE_CODEMAX ) || nCharCode == CODE_AUTODETECT )
 		m_nCharCode = nCharCode;
 	
-	// From Here Dec. 17, 2006 maru Add
-	/* ファイルが存在しない */
-	if( FALSE == bFileIsExist &&
-		CODE_AUTODETECT == m_nCharCode	/* 文字コード自動判別 */
-	){
-		m_nCharCode = 0;
-	}
-	// To Here Dec. 17, 2006 maru Add
-
 	/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	if ( cMRU.GetFileInfo( pszPath, &fi ) ){
 		bIsExistInMRU = TRUE;
 
-//		m_cDlgJump.m_bPLSQL = fi.m_bPLSQL;			/* 行ジャンプが PL/SQLモードか */
-//		m_cDlgJump.m_nPLSQL_E1 = fi.m_nPLSQL_E1;	/* 行ジャンプが PL/SQLモードのときの基点 */
-
 		if( -1 == m_nCharCode ){
 			/* 前回に指定された文字コード種別に変更する */
 			m_nCharCode = fi.m_nCharCode;
 		}
-//	if以下もelse以下も同じ内容になっていたので外だし Dec. 17, 2006 maru
-//		/* ファイルが存在しない */
-//		if( FALSE == bFileIsExist &&
-//			CODE_AUTODETECT == m_nCharCode	/* 文字コード自動判別 */
-//		){
-//			m_nCharCode = 0;
-//		}
-		if( CODE_AUTODETECT == m_nCharCode ){	// 文字コード指定の再オープンなら自動判別しない
-			/* 前回と異なる文字コードのとき問い合わせを行う */
-			if( !bConfirmCodeChange )			// ADD じゅうじ 2006/12/16
-				m_nCharCode = fi.m_nCharCode;
-			else{
-//			if( CODE_AUTODETECT == m_nCharCode )	/* 文字コード自動判別 */
-				/*
-				|| ファイルの日本語コードセット判別
-				||
-				|| 【戻り値】
-				||	SJIS	0
-				||	JIS		1
-				||	EUC		2
-				||	Unicode	3
-				||	エラー	-1
-				*/
-				m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
-				if( -1 == m_nCharCode ){
-					::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-						"%s\n文字コードの判別処理でエラーが発生しました。",
-						pszPath
-					);
-					//	Sep. 10, 2002 genta
-					SetFilePath( "" );
-					bRet = FALSE;
-					goto end_of_func;
-				}
-			}
-			if( m_nCharCode != fi.m_nCharCode ){	// MRU の文字コードと判別が異なる
-//			if( bConfirmCodeChange )			// DEL じゅうじ 2006/12/16
-				char*	pszCodeName = NULL;
-				char*	pszCodeNameNew = NULL;
-
-				// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-				if( -1 < fi.m_nCharCode && fi.m_nCharCode < CODE_CODEMAX ){
-					pszCodeName = (char*)gm_pszCodeNameArr_1[fi.m_nCharCode];
-				}
-				if( -1 < m_nCharCode && m_nCharCode < CODE_CODEMAX ){
-					pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
-				}
-				if( pszCodeName != NULL ){
-					::MessageBeep( MB_ICONQUESTION );
-					nRet = MYMESSAGEBOX(
-						m_hWnd,
-						MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-						"文字コード情報",
-						"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません",
-						GetFilePath(), pszCodeName, pszCodeName, pszCodeNameNew
-					);
-					if( IDYES == nRet ){
-						/* 前回に指定された文字コード種別に変更する */
-						m_nCharCode = fi.m_nCharCode;
-					}else
-					if( IDCANCEL == nRet ){
-						m_nCharCode = 0;
-						//	Sep. 10, 2002 genta
-						SetFilePath( "" );
-						bRet = FALSE;
-						goto end_of_func;
-					}
-				}else{
-					MYMESSAGEBOX(
-						m_hWnd,
-						MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
-						"バグじゃぁあああ！！！",
-						"【対処】エラーの出た状況を作者に連絡してください。"
-					);
-					//	Sep. 10, 2002 genta
-					SetFilePath( "" );
-					bRet = FALSE;
-					goto end_of_func;
-				}
-			}
+		
+		if( !bConfirmCodeChange && ( CODE_AUTODETECT == m_nCharCode ) ){	// 文字コード指定の再オープンなら前回を無視
+			m_nCharCode = fi.m_nCharCode;
 		}
-	}else{
+		if( (FALSE == bFileIsExist) && (CODE_AUTODETECT == m_nCharCode) ){
+			/* 存在しないファイルの文字コード指定なしなら前回を継承 */
+			m_nCharCode = fi.m_nCharCode;
+		}
+	} else {
 		bIsExistInMRU = FALSE;
-//	if以下もelse以下も同じ内容になっていたので外だし Dec. 17, 2006 maru
-//		/* ファイルが存在しない */
-//		if( FALSE == bFileIsExist &&
-//			CODE_AUTODETECT == m_nCharCode		/* 文字コード自動判別 */
-//		){
-//			m_nCharCode = 0;
-//		}
-		if( CODE_AUTODETECT == m_nCharCode ){	/* 文字コード自動判別 */
-			/*
-			|| ファイルの日本語コードセット判別
-			||
-			|| 【戻り値】
-			||	SJIS	0
-			||	JIS		1
-			||	EUC		2
-			||	Unicode	3
-			||	エラー	-1
-			*/
+	}
+
+	/* 文字コード自動判別 */
+	if( CODE_AUTODETECT == m_nCharCode ) {
+		if( FALSE == bFileIsExist ){	/* ファイルが存在しない */
+			m_nCharCode = 0;
+		} else {
 			m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
 			if( -1 == m_nCharCode ){
 				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 					"%s\n文字コードの判別処理でエラーが発生しました。",
 					pszPath
+				);
+				//	Sep. 10, 2002 genta
+				SetFilePath( "" );
+				bRet = FALSE;
+				goto end_of_func;
+			}
+		}
+	}
+	/* 文字コードが異なるときに確認する */
+	if( bConfirmCodeChange && bIsExistInMRU ){
+		if (m_nCharCode != fi.m_nCharCode ) {	// MRU の文字コードと判別が異なる
+			char*	pszCodeName = NULL;
+			char*	pszCodeNameNew = NULL;
+
+			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
+			if( -1 < fi.m_nCharCode && fi.m_nCharCode < CODE_CODEMAX ){
+				pszCodeName = (char*)gm_pszCodeNameArr_1[fi.m_nCharCode];
+			}
+			if( -1 < m_nCharCode && m_nCharCode < CODE_CODEMAX ){
+				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
+			}
+			if( pszCodeName != NULL ){
+				::MessageBeep( MB_ICONQUESTION );
+				nRet = MYMESSAGEBOX(
+					m_hWnd,
+					MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+					"文字コード情報",
+					"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません",
+					GetFilePath(), pszCodeName, pszCodeName, pszCodeNameNew
+				);
+				if( IDYES == nRet ){
+					/* 前回に指定された文字コード種別に変更する */
+					m_nCharCode = fi.m_nCharCode;
+				}else
+				if( IDCANCEL == nRet ){
+					m_nCharCode = 0;
+					//	Sep. 10, 2002 genta
+					SetFilePath( "" );
+					bRet = FALSE;
+					goto end_of_func;
+				}
+			}else{
+				MYMESSAGEBOX(
+					m_hWnd,
+					MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
+					"バグじゃぁあああ！！！",
+					"【対処】エラーの出た状況を作者に連絡してください。"
 				);
 				//	Sep. 10, 2002 genta
 				SetFilePath( "" );

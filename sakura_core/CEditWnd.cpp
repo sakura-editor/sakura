@@ -1974,7 +1974,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				FileInfo checkFileInfo;
 				cMRU.GetFileInfo(wID - IDM_SELMRU, &checkFileInfo);
 				//	Oct.  9, 2004 genta 共通関数化
-				m_cEditDoc.OpenFile( checkFileInfo.m_szPath );
+				m_cEditDoc.OpenFile( checkFileInfo.m_szPath, checkFileInfo.m_nCharCode);
 
 			}else
 			if( wID - IDM_SELOPENFOLDER >= 0 &&
@@ -1995,7 +1995,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 						return;
 					}
 					//	Oct.  9, 2004 genta 共通関数化
-					m_cEditDoc.OpenFile( szPath );
+					m_cEditDoc.OpenFile( szPath, nCharCode, bReadOnly );
 				}
 			}else{
 				//ビューにフォーカスを移動しておく
@@ -2816,7 +2816,9 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 								);
 								hWndOwner = m_hWnd;
 								/* アクティブにする */
-								ActivateFrameWindow( hWndOwner );
+								// 2007.06.17 maru すでに開いているかチェック済みだが
+								// ドロップされたのはフォルダかもしれないので再チェック
+								if(FALSE==bOpened) ActivateFrameWindow( hWndOwner );
 						}else{
 								/* ファイルをドロップしたときは閉じて開く */
 								if( m_pShareData->m_Common.m_bDropFileAndClose ){

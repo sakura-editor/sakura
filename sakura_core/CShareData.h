@@ -13,7 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -752,6 +752,7 @@ public:
 
 	BOOL RequestCloseAllEditor( BOOL bExit );					/* 全編集ウィンドウへ終了要求を出す */	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
 	BOOL IsPathOpened( const char*, HWND* );					/* 指定ファイルが開かれているか調べる */
+	BOOL IsPathOpened( const char*, HWND*, int );				/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
 	int GetEditorWindowsNum( void );							/* 現在の編集ウィンドウの数を調べる */
 	BOOL PostMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージをポストする */
 	BOOL SendMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージを送るする */
