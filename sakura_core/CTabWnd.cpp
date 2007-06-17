@@ -758,6 +758,16 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	return 0L;
 }
+ 
+/*! WM_LBUTTONDBLCLK処理
+	@date 2006.03.26 ryoji 新規作成
+*/
+LRESULT CTabWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	// 新規作成コマンドを実行する
+	::SendMessage( m_hwndParent, WM_COMMAND, MAKEWPARAM( F_FILENEW, 0 ), (LPARAM)NULL );
+	return 0L;
+}
 
 /*!	WM_CAPTURECHANGED処理
 	@date 2006.11.30 ryoji 新規作成

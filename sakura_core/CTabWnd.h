@@ -105,6 +105,7 @@ protected:
 	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDOWNˆ— */
 	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONUPˆ— */
 	virtual LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_RBUTTONDOWNˆ— */
+	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDBLCLKˆ— */
 	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MOUSEMOVEˆ— */
 	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );		/*!< WM_TIMERˆ— */
 	virtual LRESULT OnMeasureItem( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MEASUREITEMˆ— */
