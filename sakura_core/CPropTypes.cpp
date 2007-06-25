@@ -846,17 +846,6 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 //				}
 //				return TRUE;
 
-				case IDC_CHECK_INDENT:	/* オートインデント */
-//				MYTRACE( "IDC_CHECK_INDENT\n" );
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
-					/* 日本語空白もインデント */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), TRUE );
-				}else{
-					/* 日本語空白もインデント */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
-				}
-				return TRUE;
-
 				case IDC_CHECK_TAB_ARROW:
 				// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW ) ){
@@ -1133,11 +1122,6 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 
 	/* 日本語空白もインデント */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
-
-	if( !m_Types.m_bAutoIndent ){
-		/* 日本語空白もインデント */
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
-	}
 
 	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RTRIM_PREVLINE, m_Types.m_bRTrimPrevLine );
