@@ -13,7 +13,7 @@
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1161,6 +1161,7 @@ void CEditView::Command_DOWN2( int bSelect )
 	@date Oct. 29, 2001 genta マクロ用機能拡張(パラメータ追加) + goto排除
 	@date May. 15, 2002 oak   改行単位移動
 	@date Oct.  7, 2002 YAZAKI 冗長な引数 bLineTopOnly を削除
+	@date Jun. 18, 2007 maru 行頭判定に全角空白のインデント設定も考慮する
 */
 void CEditView::Command_GOLINETOP( int bSelect, int lparam )
 {
@@ -1199,24 +1200,40 @@ void CEditView::Command_GOLINETOP( int bSelect, int lparam )
 		const char*		pLine;
 		int				nLineLen;
 		const CLayout*	pcLayout;
+		BOOL			bZenSpace;
+		
+		bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
+		
 		do {
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ++nPosY, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				return;
 			}
 			for( nPos = 0; nPos < nLineLen; ++nPos ){
-				if( ' ' != pLine[nPos] && '\t' != pLine[nPos] ){
-					if( CR == pLine[nPos] || LF == pLine[nPos] ){
-						nPos = nLineLen;
+				if(' ' == pLine[nPos]) continue;
+				if('\t' == pLine[nPos]) continue;
+				
+				/* 2007.06.18 maru 全角空白もインデントの設定になっていれば行頭判定に考慮する */
+				if( TRUE == bZenSpace && nPos+1 < nLineLen ){
+					if( (char)0x81 == pLine[nPos] && (char)0x40 == pLine[nPos+1] ){
+						nPos++;
+						continue;
 					}
-					break;
 				}
+				if( CR == pLine[nPos] || LF == pLine[nPos] ){
+					nPos = 0;	/* 空白またはタブおよび改行だけの行だった */
+				}
+				break;
 			}
 		} while (( lparam & 8 ) && (nPos >= nLineLen) && (m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 > nPosY) );
 		if( nPos >= nLineLen ){
+			/* 折り返し単位の行頭を探して物理行末まで到達した
+			または、最終行のため改行コードに遭遇せずに行末に到達した */
 			nPos = 0;
-			nPosY = nCaretPosY;
 		}
+		
+		if(0 == nPos) nPosY = nCaretPosY;	/* 物理行の移動なし */
+		
 		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 		nPos = LineIndexToColmn( pcLayout, nPos );
 		if( (m_nCaretPosX != nPos) || (m_nCaretPosY != nPosY) ){
