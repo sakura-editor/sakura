@@ -315,6 +315,9 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 		m_hInstance,						// handle to application instance
 		NULL								// pointer to window-creation data
 	);
+
+	// 最前面にする（トレイからのポップアップウィンドウが最前面になるように）
+	::SetWindowPos( m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 //	m_hWnd = hWnd;
 //	MYMESSAGEBOX( "m_hWnd=%08xH \n", m_hWnd );
 	MY_TRACETIME( cRunningTimer, "Window is created" );
@@ -1483,7 +1486,7 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 	if( pShareData->m_Common.m_bExitConfirm ){	//終了時の確認
 		if( 0 < CShareData::getInstance()->GetEditorWindowsNum() ){
 			if( IDYES != ::MYMESSAGEBOX(
-				NULL,
+				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
 				"現在開いている編集用のウィンドウをすべて閉じて終了しますか?"
@@ -1523,7 +1526,7 @@ BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit )
 		int nCount = CShareData::getInstance()->IsEditWnd( hWndFrom )? 1: 0;	// 呼び出し元が編集ウィンドウなら編集ウィンドウが複数の場合に確認する
 		if( nCount < CShareData::getInstance()->GetEditorWindowsNum() ){
 			if( IDYES != ::MYMESSAGEBOX(
-				NULL,
+				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
 				"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
