@@ -3,9 +3,9 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>ウィンドウ一覧</TITLE>
-<META NAME="MS-HKWD" CONTENT="ウィンドウ一覧">
-<META NAME="MS-HKWD" CONTENT="WindowList">
+<TITLE>グループを閉じる</TITLE>
+<META NAME="MS-HKWD" CONTENT="グループを閉じる">
+<META NAME="MS-HKWD" CONTENT="GroupClose">
 </HEAD>
 <BODY>
 <script type="text/javascript">
@@ -22,20 +22,17 @@ if (window.event.keyCode == 27)
 aaHHCtlCloseWin.Click(); }
 // -->
 </script>
-<h2>ウィンドウ一覧</h2>
-開いているウィンドウの一覧がポップアップメニュー表示され、リストから選んだウィンドウがアクティブになります。(sakura:1.5.9.90以降)<br>
-タブ名一覧とパス名一覧を切り替えできます。<br>
-グループ化設定のときは、グループ単位でセパレータで区切られて表示します。<br>
+<h2>グループを閉じる</h2>
+現在のグループで開いているすべてのウィンドウを閉じます。<br>
+タブモードにおけるデフォルト設定のとき、ウィンドウのタイトルバー[×]と同じ動作です。<br>
+グループがひとつしかないときは<a href="HLP000030.html">編集の全終了</a>と同じ動作です。<br>
 <br>
-<img src="images/WindowList.png"><br>
-<br>
+<img src="images/note.png"><b>注意</b><br>
+<a href="HLP000150.html">共通設定 『タブバー』プロパティ</a>にて「タブバーを表示する」と「ウィンドウをまとめてグループ化する」が共に有効のときのみ実行可能です。<br>
 
-<img src="images/hint.png">ヒント<br>
-<a href="HLP000106.html">タブバー</a>の右端のボタン[▼]でも同様の操作が可能です。<br>
-タブ名表示とパス名表示の切り替えはそれぞれ左／右クリックです。<br>
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
-・構文:	WindowList();<br>
+・構文: GroupClose( );<br>
 ・記録:	×<br>
-<br>
+
 </BODY></HTML>
