@@ -216,14 +216,40 @@ struct ARRHEAD {
 	Version 75:
 	マウスホイールでウィンドウ切り替え 2006.03.26 ryoji
 
+	Version 76:
+	タブのグループ化 2007.06.20 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 75;
+const unsigned int uShareDataVersion = 76;
 
 /*
 ||	Singleton風
 */
 CShareData* CShareData::_instance = NULL;
+
+/*! @brief CShareData::m_pEditArr保護用Mutex
+
+	複数のエディタが非同期に一斉動作しているときでも、CShareData::m_pEditArrを
+	安全に操作できるよう操作中はMutexをLock()する。
+
+	@par（非同期一斉動作の例）
+		多数のウィンドウを表示していてグループ化を有効にしたタスクバーで「グループを閉じる」操作をしたとき
+
+	@par（保護する箇所の例）
+		CShareData::AddEditWndList(): エントリの追加／並び替え
+		CShareData::DeleteEditWndList(): エントリの削除
+		CShareData::GetOpenedWindowArr(): 配列のコピー作成
+
+	下手にどこにでも入れるとデッドロックする危険があるので入れるときは慎重に。
+	（Lock()期間中にSendMessage()などで他ウィンドウの操作をすると危険性大）
+	CShareData::m_pEditArrを直接参照したり変更するような箇所には潜在的な危険があるが、
+	対話型で順次操作している範囲であればまず問題は起きない。
+
+	@date 2007.07.05 ryoji 新規導入
+	@date 2007.07.07 genta CShareDataのメンバへ移動
+*/
+CMutex CShareData::g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
 
 CShareData* CShareData::getInstance()
 {
@@ -262,6 +288,8 @@ bool CShareData::Init( void )
 
 	if (CShareData::_instance == NULL)	//	Singleton風
 		CShareData::_instance = this;
+
+	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
 	int		i;
 	int		j;
@@ -319,12 +347,9 @@ bool CShareData::Init( void )
 		m_pShareData->m_hAccel = NULL;
 		m_pShareData->m_hwndDebug = NULL;
 		m_pShareData->m_nSequences = 0;					/* ウィンドウ連番 */
+		m_pShareData->m_nGroupSequences = 0;			/* タブグループ連番 */	// 2007.06.20 ryoji
 		m_pShareData->m_nEditArrNum = 0;
 
-		//From Here 2003.05.31 MIK
-		//タブウインドウ情報
-		m_pShareData->m_TabWndWndpl.length = 0;
-		//To Here 2003.05.31 MIK
 		m_pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
 		m_pShareData->m_Common.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
@@ -797,11 +822,15 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 
 
 
-/*! 編集ウィンドウリストへの登録
+/** 編集ウィンドウリストへの登録
+
+	@param hWnd [in] 登録する編集ウィンドウのハンドル
+	@param nGroup [in] 新規登録の場合のグループID
 
 	@date 2003.06.28 MIK CRecent利用で書き換え
+	@date 2007.06.20 ryoji 新規ウィンドウにはグループIDを付与する
 */
-BOOL CShareData::AddEditWndList( HWND hWnd )
+BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 {
 //	int		i;
 //	int		j;
@@ -846,6 +875,8 @@ BOOL CShareData::AddEditWndList( HWND hWnd )
 	memset( &MyEditNode, 0, sizeof( MyEditNode ) );
 	MyEditNode.m_hWnd = hWnd;
 
+	{	// 2007.07.07 genta Lock領域
+	LockGuard<CMutex> guard( g_cEditArrMutex );
 	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 
 	//登録済みか？
@@ -876,14 +907,32 @@ BOOL CShareData::AddEditWndList( HWND hWnd )
 
 		//連番を更新する。
 		MyEditNode.m_nIndex = m_pShareData->m_nSequences;
+
+		/* タブグループ連番 */
+		if( nGroup > 0 )
+		{
+			MyEditNode.m_nGroup = nGroup;	// 指定のグループ
+		}
+		else
+		{
+			p = (EditNode*)cRecentEditNode.GetItem( 0 );
+			if( NULL == p )
+				MyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+			else
+				MyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
+		}
+
+		MyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
+		MyEditNode.m_bClosing = FALSE;
 	}
 
 	//追加または先頭に移動する。
 	cRecentEditNode.AppendItem( (const char*)&MyEditNode );
 	cRecentEditNode.Terminate();
+	}	// 2007.07.07 genta Lock領域終わり
 
 	//ウインドウ登録メッセージをブロードキャストする。
-	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)nSubCommand, (LPARAM)hWnd, hWnd );
+	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)nSubCommand, (LPARAM)hWnd, hWnd, GetGroupId( hWnd ) );
 
 	return TRUE;
 }
@@ -892,9 +941,10 @@ BOOL CShareData::AddEditWndList( HWND hWnd )
 
 
 
-/*! 編集ウィンドウリストからの削除
+/** 編集ウィンドウリストからの削除
 
 	@date 2003.06.28 MIK CRecent利用で書き換え
+	@date 2007.07.05 ryoji mutexで保護
 */
 void CShareData::DeleteEditWndList( HWND hWnd )
 {
@@ -915,16 +965,154 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 //	}
 //	m_pShareData->m_nEditArrNum--;
 
+	int nGroup = GetGroupId( hWnd );
+
 	//ウインドウをリストから削除する。
-	CRecent	cRecentEditNode;
-	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
-	cRecentEditNode.DeleteItem( (const char*)&hWnd );
-	cRecentEditNode.Terminate();
+	{	// 2007.07.07 genta Lock領域
+		LockGuard<CMutex> guard( g_cEditArrMutex );
+		CRecent	cRecentEditNode;
+		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+		cRecentEditNode.DeleteItem( (const char*)&hWnd );
+		cRecentEditNode.Terminate();
+	}
 
 	//ウインドウ削除メッセージをブロードキャストする。
-	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_DEL, (LPARAM)hWnd, hWnd );
+	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_DEL, (LPARAM)hWnd, hWnd, nGroup );
 
 	return;
+}
+
+/** グループをIDリセットする
+
+	@date 2007.06.20 ryoji
+*/
+void CShareData::ResetGroupId( void )
+{
+	int nGroup;
+	int	i;
+
+	nGroup = ++m_pShareData->m_nGroupSequences;
+	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	{
+		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) )
+		{
+			m_pShareData->m_pEditArr[i].m_nGroup = nGroup;
+		}
+	}
+}
+
+/** 編集ウィンドウ情報を取得する
+
+	@date 2007.06.20 ryoji
+
+	@warning この関数はm_pEditArr内の要素へのポインタを返す．
+	m_pEditArrが変更された後ではアクセスしないよう注意が必要．
+*/
+EditNode* CShareData::GetEditNode( HWND hWnd )
+{
+	int	i;
+
+	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	{
+		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd )
+		{
+			if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) )
+				return &m_pShareData->m_pEditArr[i];
+		}
+	}
+
+	return NULL;
+}
+
+/** グループIDを取得する
+
+	@date 2007.06.20 ryoji
+*/
+int CShareData::GetGroupId( HWND hWnd )
+{
+	EditNode* pEditNode;
+	pEditNode = GetEditNode( hWnd );
+	return (pEditNode != NULL)? pEditNode->m_nGroup: -1;
+}
+
+/** 同一グループかどうかを調べる
+
+	@param[in] hWnd1 比較するウィンドウ1
+	@param[in] hWnd2 比較するウィンドウ2
+	
+	@return 2つのウィンドウが同一グループに属していればtrue
+
+	@date 2007.06.20 ryoji
+*/
+bool CShareData::IsSameGroup( HWND hWnd1, HWND hWnd2 )
+{
+	int nGroup1;
+	int nGroup2;
+
+	if( hWnd1 == hWnd2 )
+		return true;
+
+	nGroup1 = GetGroupId( hWnd1 );
+	if( nGroup1 < 0 )
+		return false;
+
+	nGroup2 = GetGroupId( hWnd2 );
+	if( nGroup2 < 0 )
+		return false;
+
+	return ( nGroup1 == nGroup2 );
+}
+
+/** 指定位置の編集ウィンドウ情報を取得する
+
+	@date 2007.06.20 ryoji
+*/
+EditNode* CShareData::GetEditNodeAt( int nGroup, int nIndex )
+{
+	int	i;
+	int iIndex;
+
+	iIndex = 0;
+	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	{
+		if( nGroup == 0 || nGroup == m_pShareData->m_pEditArr[i].m_nGroup )
+		{
+			if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) )
+			{
+				if( iIndex == nIndex )
+					return &m_pShareData->m_pEditArr[i];
+				iIndex++;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+/** 先頭の編集ウィンドウ情報を取得する
+
+	@date 2007.06.20 ryoji
+*/
+EditNode* CShareData::GetTopEditNode( HWND hWnd )
+{
+	int nGroup;
+
+	nGroup = GetGroupId( hWnd );
+	return GetEditNodeAt( nGroup, 0 );
+}
+
+/** 先頭の編集ウィンドウを取得する
+
+	@return 与えられたエディタウィンドウと同一グループに属す
+	先頭ウィンドウのハンドル
+
+	@date 2007.06.20 ryoji
+*/
+HWND CShareData::GetTopEditWnd( HWND hWnd )
+{
+	EditNode* p = GetTopEditNode( hWnd );
+
+	return ( p != NULL )? p->m_hWnd: NULL;
 }
 
 /* 共有データのロード */
@@ -946,39 +1134,40 @@ void CShareData::SaveShareData( void )
 
 
 
-/* 全編集ウィンドウへ終了要求を出す
+/** 全編集ウィンドウへ終了要求を出す
 
 	@param bExit [in] TRUE: 編集の全終了 / FALSE: すべて閉じる
+	@param nGroup [in] グループ指定（0:全グループ）
 
 	@date 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
+	@date 2007.06.22 ryoji nGroup引数を追加
 */
-BOOL CShareData::RequestCloseAllEditor( BOOL bExit )
+BOOL CShareData::RequestCloseAllEditor( BOOL bExit, int nGroup )
 {
-	HWND*	phWndArr;
+	EditNode*	pWndArr;
 	int		i;
-	int		j;
+	int		n;
 
-	j = m_pShareData->m_nEditArrNum;
-	if( 0 == j ){
+	n = GetOpenedWindowArr( &pWndArr, FALSE );
+	if( 0 == n ){
 		return TRUE;
 	}
-	phWndArr = new HWND[j];
-	for( i = 0; i < j; ++i ){
-		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
-	}
-	for( i = 0; i < j; ++i ){
-		if( IsEditWnd( phWndArr[i] ) ){
-			/* ウィンドウをアクティブにする */
-			/* アクティブにする */
-			ActivateFrameWindow( phWndArr[i] );
-			/* トレイからエディタへの終了要求 */
-			if( !::SendMessage( phWndArr[i], MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
-				delete [] phWndArr;
-				return FALSE;
+
+	for( i = 0; i < n; ++i ){
+		if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
+			if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+				/* アクティブにする */
+				ActivateFrameWindow( pWndArr[i].m_hWnd );
+				/* トレイからエディタへの終了要求 */
+				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
+					delete []pWndArr;
+					return FALSE;
+				}
 			}
 		}
 	}
-	delete [] phWndArr;
+
+	delete []pWndArr;
 	return TRUE;
 }
 
@@ -999,7 +1188,7 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 	*phwndOwner = NULL;
 
 	/* 現在の編集ウィンドウの数を調べる */
-	if( 0 ==  GetEditorWindowsNum() ){
+	if( 0 ==  GetEditorWindowsNum( 0 ) ){
 		return FALSE;
 	}
 	
@@ -1089,14 +1278,22 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharC
 
 
 
-/* 現在の編集ウィンドウの数を調べる */
-int CShareData::GetEditorWindowsNum( void )
+/** 現在の編集ウィンドウの数を調べる
+
+	@param nGroup [in] グループ指定（0:全グループ）
+
+	@date 2007.06.22 ryoji nGroup引数を追加
+*/
+int CShareData::GetEditorWindowsNum( int nGroup )
 {
 	int		i;
 	int		j;
+
 	j = 0;
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+			if( nGroup != 0 && nGroup != GetGroupId( m_pShareData->m_pEditArr[i].m_hWnd ) )
+				continue;
 			j++;
 		}
 	}
@@ -1106,85 +1303,110 @@ int CShareData::GetEditorWindowsNum( void )
 
 
 
-/*! 全編集ウィンドウへメッセージをポストする
+/** 全編集ウィンドウへメッセージをポストする
 
-	@date 2005.01.24 genta m_hWndLast == NULLのとき全くメッセージが送られなかった
+	@param nGroup [in] グループ指定（0:全グループ）
+
+	@date 2005.01.24 genta hWndLast == NULLのとき全くメッセージが送られなかった
+	@date 2007.06.22 ryoji nGroup引数を追加、グループ単位で順番に送る
 */
 BOOL CShareData::PostMessageToAllEditors(
 	UINT		uMsg,		/*!< ポストするメッセージ */
 	WPARAM		wParam,		/*!< 第1メッセージ パラメータ */
 	LPARAM		lParam,		/*!< 第2メッセージ パラメータ */
-	HWND		m_hWndLast	/*!< 最後に送りたいウィンドウ */
+	HWND		hWndLast,	/*!< 最後に送りたいウィンドウ */
+	int			nGroup/* = 0*/	/*!< 送りたいグループ */
  )
 {
-	HWND*	phWndArr;
+	EditNode*	pWndArr;
 	int		i;
-	int		j;
-	j = m_pShareData->m_nEditArrNum;
-	if( 0 == j ){
+	int		n;
+
+	n = GetOpenedWindowArr( &pWndArr, FALSE );
+	if( 0 == n ){
 		return TRUE;
 	}
-	phWndArr = new HWND[j];
-	for( i = 0; i < j; ++i ){
-		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
-	}
-	for( i = 0; i < j; ++i ){
-		//	Jan. 24, 2005 genta m_hWndLast == NULLのときにメッセージが送られるように
-		if( m_hWndLast == NULL ||
-			( NULL != m_hWndLast && phWndArr[i] != m_hWndLast ) ){
-			if( IsEditWnd( phWndArr[i] ) ){
-				/* トレイからエディタへメッセージをポスト */
-				::PostMessage( phWndArr[i], uMsg, wParam, lParam );
+
+	// hWndLast以外へのメッセージ
+	for( i = 0; i < n; ++i ){
+		//	Jan. 24, 2005 genta hWndLast == NULLのときにメッセージが送られるように
+		if( hWndLast == NULL || hWndLast != pWndArr[i].m_hWnd ){
+			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
+				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+					/* メッセージをポスト */
+					::PostMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
+				}
 			}
 		}
 	}
-	if( NULL != m_hWndLast && IsEditWnd( m_hWndLast ) ){
-		/* トレイからエディタへメッセージをポスト */
-		::PostMessage( m_hWndLast, uMsg, wParam, lParam );
+
+	// hWndLastへのメッセージ
+	for( i = 0; i < n; ++i ){
+		if( hWndLast == pWndArr[i].m_hWnd ){
+			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
+				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+					/* メッセージをポスト */
+					::PostMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
+				}
+			}
+		}
 	}
-	delete [] phWndArr;
+
+	delete []pWndArr;
 	return TRUE;
 }
 
 
-/*! 全編集ウィンドウへメッセージを送る
+/** 全編集ウィンドウへメッセージを送る
+
+	@param nGroup [in] グループ指定（0:全グループ）
 
 	@date 2005.01.24 genta m_hWndLast == NULLのとき全くメッセージが送られなかった
+	@date 2007.06.22 ryoji nGroup引数を追加、グループ単位で順番に送る
 */
 BOOL CShareData::SendMessageToAllEditors(
 	UINT		uMsg,		/* ポストするメッセージ */
 	WPARAM		wParam,		/* 第1メッセージ パラメータ */
 	LPARAM		lParam,		/* 第2メッセージ パラメータ */
-	HWND		m_hWndLast	/* 最後に送りたいウィンドウ */
+	HWND		hWndLast,	/* 最後に送りたいウィンドウ */
+	int			nGroup/* = 0*/	/*!< 送りたいグループ */
  )
 {
-	HWND*	phWndArr;
+	EditNode*	pWndArr;
 	int		i;
-	int		j;
+	int		n;
 
-	j = m_pShareData->m_nEditArrNum;
-	if( 0 == j ){
+	n = GetOpenedWindowArr( &pWndArr, FALSE );
+	if( 0 == n ){
 		return TRUE;
 	}
-	phWndArr = new HWND[j];
-	for( i = 0; i < j; ++i ){
-		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
-	}
-	for( i = 0; i < j; ++i ){
-		//	Jan. 24, 2005 genta m_hWndLast == NULLのときにメッセージが送られるように
-		if( m_hWndLast == NULL ||
-			( NULL != m_hWndLast && phWndArr[i] != m_hWndLast ) ){
-			if( IsEditWnd( phWndArr[i] ) ){
-				/* トレイからエディタへメッセージをポスト */
-				::SendMessage( phWndArr[i], uMsg, wParam, lParam );
+
+	// hWndLast以外へのメッセージ
+	for( i = 0; i < n; ++i ){
+		//	Jan. 24, 2005 genta hWndLast == NULLのときにメッセージが送られるように
+		if( hWndLast == NULL || hWndLast != pWndArr[i].m_hWnd ){
+			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
+				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+					/* メッセージを送る */
+					::SendMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
+				}
 			}
 		}
 	}
-	if( NULL != m_hWndLast && IsEditWnd( m_hWndLast ) ){
-		/* トレイからエディタへメッセージをポスト */
-		::SendMessage( m_hWndLast, uMsg, wParam, lParam );
+
+	// hWndLastへのメッセージ
+	for( i = 0; i < n; ++i ){
+		if( hWndLast == pWndArr[i].m_hWnd ){
+			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
+				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+					/* メッセージを送る */
+					::SendMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
+				}
+			}
+		}
 	}
-	delete [] phWndArr;
+
+	delete []pWndArr;
 	return TRUE;
 }
 
@@ -1193,6 +1415,9 @@ BOOL CShareData::SendMessageToAllEditors(
 BOOL CShareData::IsEditWnd( HWND hWnd )
 {
 	char	szClassName[64];
+	if( hWnd == NULL ){	// 2007.06.20 ryoji 条件追加
+		return FALSE;
+	}
 	if( !::IsWindow( hWnd ) ){
 		return FALSE;
 	}
@@ -1207,158 +1432,284 @@ BOOL CShareData::IsEditWnd( HWND hWnd )
 
 }
 
-/*! 現在開いている編集ウィンドウの配列を返す
+// GetOpenedWindowArr用静的変数／構造体
+static BOOL s_bSort;	// ソート指定
+static BOOL s_bGSort;	// グループ指定
+struct EditNodeEx{	// 拡張構造体
+	EditNode* p;	// 編集ウィンドウ配列要素へのポインタ
+	int nGroupMru;	// グループ単位のMRU番号
+};
 
-	@param ppEditNode [out] 配列を受け取るポインタ
-	@param bSort [in]	true: ソートあり / false: ソート無し
+// GetOpenedWindowArr用ソート関数
+static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
+{
+	// 異なるグループのときはグループ比較する
+	int nGroup1;
+	int nGroup2;
+
+	if( s_bGSort )
+	{
+		// オリジナルのグループ番号のほうを見る
+		nGroup1 = ((EditNodeEx*)e1)->p->m_nGroup;
+		nGroup2 = ((EditNodeEx*)e2)->p->m_nGroup;
+	}
+	else
+	{
+		// グループのMRU番号のほうを見る
+		nGroup1 = ((EditNodeEx*)e1)->nGroupMru;
+		nGroup2 = ((EditNodeEx*)e2)->nGroupMru;
+	}
+	if( nGroup1 != nGroup2 )
+	{
+		return nGroup1 - nGroup2;	// グループ比較
+	}
+
+	// グループ比較が行われなかったときはウィンドウ比較する
+	if( s_bSort )
+		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ウィンドウ番号比較
+	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
+}
+
+/** 現在開いている編集ウィンドウの配列を返す
+
+	@param[out] ppEditNode 配列を受け取るポインタ
+		戻り値が0の場合はNULLが返されるが，それを期待しないこと．
+		また，不要になったらdelete []しなくてはならない．
+	@param[in] bSort TRUE: ソートあり / FALSE: ソート無し
+	@param[in]bGSort TRUE: グループソートあり / FALSE: グループソート無し
+
+	もとの編集ウィンドウリストはソートしなければウィンドウのMRU順に並んでいる
+	-------------------------------------------------
+	bSort	bGSort	処理結果
+	-------------------------------------------------
+	FALSE	FALSE	グループMRU順－ウィンドウMRU順
+	TRUE	FALSE	グループMRU順－ウィンドウ番号順
+	FALSE	TRUE	グループ番号順－ウィンドウMRU順
+	TRUE	TRUE	グループ番号順－ウィンドウ番号順
+	-------------------------------------------------
 
 	@return 配列の要素数を返す
-	@note 要素数>0 の場合は呼び出し側で配列をdeleteしてください
+	@note 要素数>0 の場合は呼び出し側で配列をdelete []してください
 
 	@date 2003.06.28 MIK CRecent利用で書き換え
+	@date 2007.06.20 ryoji bGroup引数追加、ソート処理を自前のものからqsortに変更
 */
-int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort )
+int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
-//	int			nRowNum;
-//	int			i;
-//	int			j;
-//	int			k;
-//	int			nMinIdx;
-//	int			nMin;
-//	HWND*		phWndArr;
-//
-//	nRowNum = 0;
-//	// phWndArr = NULL;
-//	*ppEditNode = NULL;
-//	j = 0;
-//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-//		if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-//			j++;
-//		}
-//	}
-//	if( j > 0 ){
-//		phWndArr = new HWND[j];
-//		*ppEditNode = new EditNode[j];
-//		nRowNum = 0;
-//		for( i = 0;i < j; ++i ){
-//			phWndArr[i] = NULL;
-//		}
-//		k = 0;
-//		for( i = 0; i < m_pShareData->m_nEditArrNum && k < j; ++i ){
-//			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-//				phWndArr[k] = m_pShareData->m_pEditArr[i].m_hWnd;
-//				k++;
-//			}
-//		}
-//		if( bSort ){
-//			while( 1 ){
-//				nMinIdx = 99999;
-//				nMin = 99999;
-//				for( i = 0; i < j; ++i ){
-//					if( phWndArr[i] != NULL &&
-//						nMin > ::GetWindowLongPtr( phWndArr[i], sizeof(LONG_PTR) )
-//					){
-//						nMinIdx = i;
-//						nMin = ::GetWindowLongPtr( phWndArr[i], sizeof(LONG_PTR) );
-//					}
-//				}
-//				if( nMinIdx != 99999 ){
-//					i = nMinIdx;
-//					(*ppEditNode)[nRowNum].m_nIndex = i;
-//					(*ppEditNode)[nRowNum].m_hWnd = m_pShareData->m_pEditArr[i].m_hWnd;
-//					nRowNum++;
-//					phWndArr[i] = NULL;
-//				}else{
-//					break;
-//				}
-//			}
-//		}else{
-//			for( i = 0; i < k; ++i ){
-//				(*ppEditNode)[i].m_nIndex = i;
-//				(*ppEditNode)[i].m_hWnd = phWndArr[i];
-//			}
-//			nRowNum = k;
-//		}
-//
-//		delete [] phWndArr;
-//	}
-//	return nRowNum;
+	int nRet;
 
+	LockGuard<CMutex> guard( g_cEditArrMutex );
+	nRet = GetOpenedWindowArrCore( ppEditNode, bSort, bGSort );
+
+	return nRet;
+}
+
+// GetOpenedWindowArr関数コア処理部
+int CShareData::GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
+{
 	//編集ウインドウ数を取得する。
+	EditNodeEx *pNode;	// ソート処理用の拡張リスト
 	int		nRowNum;	//編集ウインドウ数
-	int		nCount;		//実際の追加数
-	int		nInsert;	//挿入ポイント
-	int		i, j, k;
-	int		*pnIndex;
+	int		i;
 
 	//編集ウインドウ数を取得する。
-	nRowNum = GetEditorWindowsNum();
-	if( nRowNum <= 0 )
-	{
-		*ppEditNode = NULL;
+	*ppEditNode = NULL;
+	if( m_pShareData->m_nEditArrNum <= 0 )
 		return 0;
-	}
 
 	//編集ウインドウリスト格納領域を作成する。
-	*ppEditNode = new EditNode[ nRowNum ];
-	if( NULL == *ppEditNode ) return 0;
-	pnIndex = new int[ nRowNum ];
-	if( NULL == pnIndex )
+	*ppEditNode = new EditNode[ m_pShareData->m_nEditArrNum ];
+	if( NULL == *ppEditNode )
+		return 0;
+
+	// 拡張リストを作成する
+	pNode = new EditNodeEx[ m_pShareData->m_nEditArrNum ];
+	if( NULL == pNode )
 	{
-		delete [] *ppEditNode;
+		delete [](*ppEditNode);
 		*ppEditNode = NULL;
 		return 0;
 	}
 
-	nCount = 0;
+	// 拡張リストの各要素に編集ウィンドウリストの各要素へのポインタを格納する
+	nRowNum = 0;
 	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
 	{
-		//編集ウインドウか？
 		if( IsEditWnd( m_pShareData->m_pEditArr[ i ].m_hWnd ) )
 		{
-			nInsert = nCount;
-			if( bSort )
+			pNode[ nRowNum ].p = &m_pShareData->m_pEditArr[ i ];	// ポインタ格納
+			pNode[ nRowNum ].nGroupMru = -1;	// グループ単位のMRU番号初期化
+			nRowNum++;
+		}
+	}
+	if( nRowNum <= 0 )
+	{
+		delete []pNode;
+		delete [](*ppEditNode);
+		*ppEditNode = NULL;
+		return 0;
+	}
+
+	// 拡張リスト上でグループ単位のMRU番号をつける
+	if( !bGSort )
+	{
+		int iGroupMru = 0;	// グループ単位のMRU番号
+		int nGroup = -1;
+		for( i = 0; i < nRowNum; i++ )
+		{
+			if( pNode[ i ].nGroupMru == -1 && nGroup != pNode[ i ].p->m_nGroup )
 			{
-				//挿入ポイントを探す。
-				for( j = 0; j < nCount; j++ )
+				nGroup = pNode[ i ].p->m_nGroup;
+				iGroupMru++;
+				pNode[ i ].nGroupMru = iGroupMru;	// MRU番号付与
+
+				// 同一グループのウィンドウに同じMRU番号をつける
+				int j;
+				for( j = i + 1; j < nRowNum; j++ )
 				{
-					if( (*ppEditNode)[ j ].m_nIndex > m_pShareData->m_pEditArr[ i ].m_nIndex )
-					{
-						nInsert = j;
-						break;
-					}
-				}
-				
-				//後ろにずらす。
-				for( k = nCount; k > j; k-- )
-				{
-					(*ppEditNode)[ k ] = (*ppEditNode)[ k - 1 ];
-					pnIndex[ k ] = pnIndex[ k - 1 ];
+					if( pNode[ j ].p->m_nGroup == nGroup )
+						pNode[ j ].nGroupMru = iGroupMru;
 				}
 			}
-
-			//情報をコピーする。
-			(*ppEditNode)[ nInsert ] = m_pShareData->m_pEditArr[ i ];
-			pnIndex[ nInsert ] = i;
-
-			nCount++;
 		}
-
-		if( nCount >= nRowNum ) break;	//ガード
 	}
 
-	//インデックスを付ける。
-	//このインデックスは m_pEditArr の配列番号です。
+	// 拡張リストをソートする
+	// Note. グループが１個だけの場合は従来（bGSort 引数無し）と同じ結果が得られる
+	//       （グループ化する設定でなければグループは１個）
+	s_bSort = bSort;
+	s_bGSort = bGSort;
+	qsort( pNode, nRowNum, sizeof(EditNodeEx), cmpGetOpenedWindowArr );
+
+	// 拡張リストのソート結果をもとに編集ウインドウリスト格納領域に結果を格納する
 	for( i = 0; i < nRowNum; i++ )
 	{
-		(*ppEditNode)[ i ].m_nIndex = pnIndex[ i ];
+		(*ppEditNode)[i] = *pNode[i].p;
+
+		//インデックスを付ける。
+		//このインデックスは m_pEditArr の配列番号です。
+		(*ppEditNode)[i].m_nIndex = pNode[i].p - m_pShareData->m_pEditArr;	// ポインタ減算＝配列番号
 	}
 
-	delete [] pnIndex;
+	delete []pNode;
 
 	return nRowNum;
 }
 
+/** ウィンドウの並び替え
+
+	@param[in] hSrcTab 移動するウィンドウ
+	@param[in] hSrcTab 移動先ウィンドウ
+
+	@author ryoji
+	@date 2007.07.07 genta ウィンドウ配列操作部をCTabWndより移動
+*/
+bool CShareData::ReorderTab( HWND hwndSrc, HWND hwndDst )
+{
+	EditNode	*p = NULL;
+	int			nCount;
+	int			i;
+
+	int nSrcTab = -1;
+	int nDstTab = -1;
+	LockGuard<CMutex> guard( g_cEditArrMutex );
+	nCount = GetOpenedWindowArrCore( &p, TRUE );	// ロックは自分でやっているので直接コア部呼び出し
+	for( i = 0; i < nCount; i++ )
+	{
+		if( hwndSrc == p[i].m_hWnd )
+			nSrcTab = i;
+		if( hwndDst == p[i].m_hWnd )
+			nDstTab = i;
+	}
+
+	if( 0 > nSrcTab || 0 > nDstTab || nSrcTab == nDstTab )
+	{
+		if( p ) delete []p;
+		return false;
+	}
+
+	// タブの順序を入れ替えるためにウィンドウのインデックスを入れ替える
+	int nArr0, nArr1;
+	int	nIndex;
+
+	nArr0 = p[ nDstTab ].m_nIndex;
+	nIndex = m_pShareData->m_pEditArr[ nArr0 ].m_nIndex;
+	if( nSrcTab < nDstTab )
+	{
+		// タブ左方向ローテート
+		for( i = nDstTab - 1; i >= nSrcTab; i-- )
+		{
+			nArr1 = p[ i ].m_nIndex;
+			m_pShareData->m_pEditArr[ nArr0 ].m_nIndex = m_pShareData->m_pEditArr[ nArr1 ].m_nIndex;
+			nArr0 = nArr1;
+		}
+	}
+	else
+	{
+		// タブ右方向ローテート
+		for( i = nDstTab + 1; i <= nSrcTab; i++ )
+		{
+			nArr1 = p[ i ].m_nIndex;
+			m_pShareData->m_pEditArr[ nArr0 ].m_nIndex = m_pShareData->m_pEditArr[ nArr1 ].m_nIndex;
+			nArr0 = nArr1;
+		}
+	}
+	m_pShareData->m_pEditArr[ nArr0 ].m_nIndex = nIndex;
+
+	if( p ) delete []p;
+	return true;
+}
+
+/** タブ移動に伴うウィンドウ処理
+
+	@param[in] hwndSrc 移動するウィンドウ
+	@param[in] hwndDst 移動先ウィンドウ．新規独立時はNULL．
+	@param[in] bSrcIsTop 移動するウィンドウが可視ウィンドウならtrue
+	@param[in] notifygroups タブの更新が必要なグループのグループID．int[2]を呼び出し元で用意する．
+
+	@return 更新されたhwndDst (移動先が既に閉じられた場合などにNULLに変更されることがある)
+
+	@author ryoji
+	@date 2007.07.07 genta CTabWnd::SeparateGroup()より独立
+*/
+HWND CShareData::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] )
+{
+	LockGuard<CMutex> guard( g_cEditArrMutex );
+
+	EditNode* pSrcEditNode = GetEditNode( hwndSrc );
+	EditNode* pDstEditNode = GetEditNode( hwndDst );
+	int nSrcGroup = pSrcEditNode->m_nGroup;
+	int nDstGroup;
+	if( pDstEditNode == NULL )
+	{
+		hwndDst = NULL;
+		nDstGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+	}
+	else
+	{
+		nDstGroup = pDstEditNode->m_nGroup;	// 既存グループ
+	}
+
+	pSrcEditNode->m_nGroup = nDstGroup;
+	pSrcEditNode->m_nIndex = ++m_pShareData->m_nSequences;	// タブ並びの最後（起動順の最後）にもっていく
+
+	// 非表示のタブを既存グループに移動するときは非表示のままにするので
+	// 内部情報も先頭にはならないよう、必要なら先頭ウィンドウと位置を交換する。
+	if( !bSrcIsTop && pDstEditNode != NULL )
+	{
+		if( pSrcEditNode < pDstEditNode )
+		{
+			EditNode en = *pDstEditNode;
+			*pDstEditNode = *pSrcEditNode;
+			*pSrcEditNode = en;
+		}
+	}
+	
+	notifygroups[0] = nSrcGroup;
+	notifygroups[1] = nDstGroup;
+	
+	return hwndDst;
+}
 
 /*!
 	アウトプットウインドウに出力
@@ -1372,7 +1723,11 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	if( NULL == m_pShareData->m_hwndDebug
 	|| !IsEditWnd( m_pShareData->m_hwndDebug )
 	){
-		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE, true );
+		// 2007.06.26 ryoji
+		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
+		// （m_hwndTraceOutSource は CEditWnd::Create() で予め設定）
+		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
+		CEditApp::OpenNewEditor( NULL, m_hwndTraceOutSource, "-DEBUGMODE", CODE_SJIS, FALSE, true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
@@ -5280,7 +5635,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'A';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'B';
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'R';	// 2007.06.26 ryoji B -> R
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE_OPEN;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'L';
@@ -5290,6 +5645,24 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '0';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVELEFT;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '1';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_SEPARATE;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'E';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTNEXT;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'X';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTPREV;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'V';
 	n++;
 	rCommon.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
 }

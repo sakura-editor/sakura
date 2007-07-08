@@ -11,6 +11,7 @@
 	Copyright (C) 2002, genta, Moca
 	Copyright (C) 2005, D.S.Koba, genta, susu
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -52,6 +53,7 @@ CCommandLine* CCommandLine::_instance = NULL;
 #define CMDLINEOPT_GFOLDER		103
 #define CMDLINEOPT_GOPT			104
 #define CMDLINEOPT_GCODE		105
+#define CMDLINEOPT_GROUP		500
 
 /*!
 	コマンドラインのチェックを行って、オプション番号と
@@ -111,6 +113,7 @@ int CCommandLine::CheckCommandLine(
 		{"GFOLDER", 7,		CMDLINEOPT_GFOLDER},
 		{"GOPT", 4,			CMDLINEOPT_GOPT},
 		{"GCODE", 5,		CMDLINEOPT_GCODE},	// 2002/09/21 Moca 追加
+		{"GROUP", 5,		CMDLINEOPT_GROUP},	// 2007.06.26 ryoji
 		{NULL, 0, 0}
 	};
 
@@ -359,6 +362,9 @@ void CCommandLine::ParseCommandLine( void )
 			// 2002/09/21 Moca Grepでの文字コードセット 追加
 			case CMDLINEOPT_GCODE:
 				m_gi.nGrepCharSet = AtoiOptionInt( arg );	break;
+			case CMDLINEOPT_GROUP:	// GROUP	// 2007.06.26 ryoji
+				m_nGroup = AtoiOptionInt( arg );
+				break;
 			case CMDLINEOPT_DEBUGMODE:
 				m_bDebugMode = true;
 				break;
@@ -417,6 +423,7 @@ CCommandLine::CCommandLine(LPSTR cmd) :
 	m_gi.bGrepWordOnly		= false;
 	m_gi.nGrepOutputStyle	= 1;
 	m_bReadOnly				= false;
+	m_nGroup				= 0;		// 2007.06.26 ryoji
 	
 	ParseCommandLine();
 }

@@ -1404,7 +1404,7 @@ BEGIN
     CONTROL         "タブバーを表示する(&D)",IDC_CHECK_DispTabWnd,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,11,111,10,0,
                     HIDC_CHECK_DispTabWnd
-    CONTROL         "ウィンドウをひとつにまとめる(&B)",
+    CONTROL         "ウィンドウをまとめてグループ化する(&B)",
                     IDC_CHECK_DispTabWndMultiWin,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,15,40,239,10,0,HIDC_CHECK_DispTabWndMultiWin
     CONTROL         "最後のファイルを閉じたとき(無題)文書を残す(&R)",
@@ -2623,6 +2623,10 @@ IDC_CURSOR_MOVEARROW    CURSOR  DISCARDABLE     "../resource/cursor_move.cur"
 IDC_CURSOR_RVARROW      CURSOR  DISCARDABLE     "../resource/cursor_rvarrow.cur"
 IDC_CURSOR_ISEARCH_F    CURSOR  DISCARDABLE     "../resource/cursor_isf.cur"
 IDC_CURSOR_ISEARCH_B    CURSOR  DISCARDABLE     "../resource/cursor_isb.cur"
+IDC_CURSOR_TAB_LEFT     CURSOR  DISCARDABLE     "../resource/cursor_tab_left.cur"
+IDC_CURSOR_TAB_RIGHT    CURSOR  DISCARDABLE     "../resource/cursor_tab_right.cur"
+IDC_CURSOR_TAB_SEPARATE CURSOR  DISCARDABLE     "../resource/cursor_tab_separate.cur"
+IDC_CURSOR_TAB_JOIN     CURSOR  DISCARDABLE     "../resource/cursor_tab_join.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3037,7 +3041,7 @@ BEGIN
     F_CASCADE               "重ねて表示"
     F_TILE_V                "上下に並べて表示"
     F_TILE_H                "左右に並べて表示"
-    F_BIND_WINDOW           "ひとつにまとめて表示"
+    F_BIND_WINDOW           "グループ化"
     F_TOPMOST               "常に手前に表示"
     F_WINLIST               "ウィンドウ一覧"
     F_NEXTWINDOW            "次のウィンドウ"
@@ -3055,6 +3059,14 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_REDRAW                "再描画"
     F_WIN_OUTPUT            "アウトプットウィンドウ表示"
+    F_GROUPCLOSE            "グループを閉じる"
+    F_NEXTGROUP             "次のグループ"
+    F_PREVGROUP             "前のグループ"
+    F_TAB_MOVERIGHT         "タブを右に移動"
+    F_TAB_MOVELEFT          "タブを左に移動"
+    F_TAB_SEPARATE          "新規グループ"
+    F_TAB_JOINTNEXT         "次のグループに移動"
+    F_TAB_JOINTPREV         "前のグループに移動"
 END
 
 STRINGTABLE DISCARDABLE 

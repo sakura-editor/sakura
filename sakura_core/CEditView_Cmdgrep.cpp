@@ -168,7 +168,7 @@ void CEditView::Command_GREP( void )
 		}
 //		MYTRACE( "pCmdLine=[%s]\n", pCmdLine );
 		/* 新規編集ウィンドウの追加 ver 0 */
-		CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
+		CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pCmdLine, 0, FALSE );
 		delete [] pCmdLine;
 		delete [] pOpt;
 		/*======= Grepの実行 =============*/

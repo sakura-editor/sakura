@@ -431,7 +431,7 @@ int CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 			nDefFuncCode = F_WINCLOSE;	// 閉じる
 			if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
 				if( !pShareData->m_Common.m_bTab_CloseOneWin ){
-					nDefFuncCode = F_EXITALLEDITORS;	// 編集の全終了
+					nDefFuncCode = F_GROUPCLOSE;	// グループを閉じる	// 2007.06.20 ryoji
 				}
 			}
 		}

@@ -53,6 +53,10 @@
 #define IDC_CURSOR_ISEARCH_B            242
 #define IDD_DIALOG_KEYWORD_SELECT       243
 #define IDD_SAMECOLOR                   244
+#define IDC_CURSOR_TAB_LEFT             245
+#define IDC_CURSOR_TAB_RIGHT            246
+#define IDC_CURSOR_TAB_SEPARATE         247
+#define IDC_CURSOR_TAB_JOIN             248
 #define IDC_HIDE                        1000
 #define IDC_CHK_LOHICASE                1006
 #define IDC_CHECK_INDENT                1009
@@ -640,7 +644,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        245
+#define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         4073
 #define _APS_NEXT_CONTROL_VALUE         1522
 #define _APS_NEXT_SYMED_VALUE           103

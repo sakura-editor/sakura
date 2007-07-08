@@ -30,6 +30,12 @@
 #include <NewApis.h>
 #include <multimon.h>
 
+#ifndef GA_PARENT
+#define GA_PARENT		1
+#define GA_ROOT			2
+#define GA_ROOTOWNER	3
+#endif
+
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
 class CMemory;// 2002/2/3 aroka ヘッダ軽量化
 class CEOL;// 2002/2/3 aroka ヘッダ軽量化
@@ -137,6 +143,8 @@ bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor = NULL);		/
 bool GetMonitorWorkRect(LPCRECT prc, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji
 bool GetMonitorWorkRect(POINT pt, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji
 bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
+
+HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
 
 //	Oct. 22, 2005 genta
 bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime );
