@@ -39,6 +39,8 @@ class CShareData;
 #include "funccode.h"
 #include "CMemory.h"
 
+#include "CMutex.h"	// 2007.07.07 genta
+
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 
@@ -143,10 +145,13 @@ struct GrepInfo {
 
 struct EditNode {
 	int				m_nIndex;
+	int				m_nGroup;					/*!< グループID */							//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
 	char			m_szTabCaption[_MAX_PATH];	/*!< タブウインドウ用：キャプション名 */	//@@@ 2003.05.31 MIK
 	char			m_szFilePath[_MAX_PATH];	/*!< タブウインドウ用：ファイル名 */		//@@@ 2006.01.28 ryoji
 	BOOL			m_bIsGrep;					/*!< Grepのウィンドウか */					//@@@ 2006.01.28 ryoji
+	UINT			m_showCmdRestore;			/*!< 元のサイズに戻すときのサイズ種別 */	//@@@ 2007.06.20 ryoji
+	BOOL			m_bClosing;					/*!< 終了中か（「最後のファイルを閉じても(無題)を残す」用） */	//@@@ 2007.06.20 ryoji
 };
 
 //! 印刷設定
@@ -610,12 +615,13 @@ struct DLLSHAREDATA {
 	HWND				m_hwndDebug;
 	HACCEL				m_hAccel;
 	LONG				m_nSequences;	/* ウィンドウ連番 */
+	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
 	/**** 共通作業域(保存する) ****/
 	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
 
 	//From Here 2003.05.31 MIK
-	WINDOWPLACEMENT		m_TabWndWndpl;					//タブウインドウ時のウインドウ情報
+	//WINDOWPLACEMENT		m_TabWndWndpl;					//タブウインドウ時のウインドウ情報
 	//To Here 2003.05.31 MIK
 	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
@@ -732,6 +738,7 @@ public:
 
 protected:
 	static CShareData* _instance;
+	static CMutex g_cEditArrMutex;
 
 public:
 	/*
@@ -747,16 +754,26 @@ public:
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
 	int GetDocumentType( const char* pszFilePath );				/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	int GetDocumentTypeExt( const char* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
-	BOOL AddEditWndList( HWND );								/* 編集ウィンドウの登録 */
+	BOOL AddEditWndList( HWND, int nGroup = 0 );				/* 編集ウィンドウの登録 */	// 2007.06.26 ryoji nGroup引数追加
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
+	void ResetGroupId( void );									/* グループをIDリセットする */
+	EditNode* GetEditNode( HWND hWnd );							/* 編集ウィンドウ情報を取得する */
+	int GetGroupId( HWND hWnd );								/* グループIDを取得する */
+	bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */
+	bool ReorderTab( HWND hSrcTab, HWND hDstTab );				/* タブ移動に伴うウィンドウの並び替え 2007.07.07 genta */
+	HWND SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] );/* タブ分離に伴うウィンドウ処理 2007.07.07 genta */
+	EditNode* GetEditNodeAt( int nGroup, int nIndex );			/* 指定位置の編集ウィンドウ情報を取得する */
+	EditNode* GetTopEditNode( HWND hWnd );						/* 先頭の編集ウィンドウ情報を取得する */
+	HWND GetTopEditWnd( HWND hWnd );							/* 先頭の編集ウィンドウを取得する */
+	bool IsTopEditWnd( HWND hWnd ){ return (GetTopEditWnd( hWnd ) == hWnd); }	/* 先頭の編集ウィンドウかどうかを調べる */
 
-	BOOL RequestCloseAllEditor( BOOL bExit );					/* 全編集ウィンドウへ終了要求を出す */	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
+	BOOL RequestCloseAllEditor( BOOL bExit, int nGroup );		/* 全編集ウィンドウへ終了要求を出す */	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加	// 2007.06.20 ryoji nGroup引数追加
 	BOOL IsPathOpened( const char*, HWND* );					/* 指定ファイルが開かれているか調べる */
 	BOOL IsPathOpened( const char*, HWND*, int );				/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
-	int GetEditorWindowsNum( void );							/* 現在の編集ウィンドウの数を調べる */
-	BOOL PostMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージをポストする */
-	BOOL SendMessageToAllEditors( UINT, WPARAM, LPARAM, HWND );	/* 全編集ウィンドウへメッセージを送るする */
-	int GetOpenedWindowArr( EditNode** , BOOL );				/* 現在開いている編集ウィンドウの配列を返す */
+	int GetEditorWindowsNum( int nGroup );						/* 現在の編集ウィンドウの数を調べる */	// 2007.06.20 ryoji nGroup引数追加
+	BOOL PostMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージをポストする */	// 2007.06.20 ryoji nGroup引数追加
+	BOOL SendMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージを送るする */	// 2007.06.20 ryoji nGroup引数追加
+	int GetOpenedWindowArr( EditNode** , BOOL, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
 	static BOOL IsEditWnd( HWND );								/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 	static void SetKeyNameArrVal(
 		DLLSHAREDATA*, int, short, char*,
@@ -776,6 +793,7 @@ public:
 		DWORD cbData 			// size of value data
 	);
 	void TraceOut( LPCTSTR lpFmt, ...);	/* デバッグモニタに出力 */
+	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut起動元ウィンドウの設定 */
 	BOOL LoadShareData( void );	/* 共有データのロード */
 	void SaveShareData( void );	/* 共有データの保存 */
 	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
@@ -823,6 +841,7 @@ protected:
 	*/
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
+	HWND			m_hwndTraceOutSource;	// TraceOut()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 
 //	long GetModuleDir(char* , long );	/* この実行ファイルのあるディレクトリを返します */
 	/* MRUとOPENFOLDERリストの存在チェックなど
@@ -860,6 +879,8 @@ protected:
 	void ShareData_IO_KeyWords( CProfile& );
 	void ShareData_IO_Macro( CProfile& );
 	void ShareData_IO_Other( CProfile& );
+
+	int GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 };
 
 

@@ -1104,7 +1104,12 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 		// ShareData に 設定を適用・コピーする
+		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
+		BOOL bGroup = (m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin);
 		m_cPropCommon.ApplyData();
+		if( bGroup != (m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ) ){
+			CShareData::getInstance()->ResetGroupId();
+		}
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
@@ -3258,11 +3263,13 @@ BOOL CEditDoc::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 	@param[in] nCommand MAKELONG( コマンドコード，送信元識別子 )
 
 	@date 2006.05.19 genta 上位16bitに送信元の識別子が入るように変更
+	@date 2007.06.20 ryoji グループ内で巡回するように変更
 */
 BOOL CEditDoc::HandleCommand( int nCommand )
 {
 	int				i;
 	int				j;
+	int				nGroup;
 	int				nRowNum;
 	int				nPane;
 	HWND			hwndWork;
@@ -3279,31 +3286,41 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if(  nRowNum > 0 ){
 				/* 自分のウィンドウを調べる */
-				for( i = 0; i < nRowNum; ++i ){
-					j = 0;
-					if( m_hwndParent == pEditNodeArr[i].m_hWnd ){
-						j = i;
+				nGroup = 0;
+				for( i = 0; i < nRowNum; ++i )
+				{
+					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
+					{
+						nGroup = pEditNodeArr[i].m_nGroup;
 						break;
 					}
 				}
-				if( j == 0 ){
-					j = nRowNum - 1;
-				}else{
-					j--;
+				if( i < nRowNum )
+				{
+					// 前のウィンドウ
+					for( j = i - 1; j >= 0; --j )
+					{
+						if( nGroup == pEditNodeArr[j].m_nGroup )
+							break;
+					}
+					if( j < 0 )
+					{
+						for( j = nRowNum - 1; j > i; --j )
+						{
+							if( nGroup == pEditNodeArr[j].m_nGroup )
+								break;
+						}
+					}
+					if( i != j )
+					{
+						/* 次のウィンドウをアクティブにする */
+						hwndWork = pEditNodeArr[j].m_hWnd;
+						/* アクティブにする */
+						ActivateFrameWindow( hwndWork );
+						/* 最後のペインをアクティブにする */
+						::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
+					}
 				}
-				/* 次のウィンドウをアクティブにする */
-				hwndWork = pEditNodeArr[j].m_hWnd;
-				/* アクティブにする */
-				ActivateFrameWindow( hwndWork );
-//				if( ::IsIconic( hwndWork ) ){
-//					::ShowWindow( hwndWork, SW_RESTORE );
-//				}else{
-//					::ShowWindow( hwndWork, SW_SHOW );
-//				}
-//				::SetForegroundWindow( hwndWork );
-//				::SetActiveWindow( hwndWork );
-				/* 最後のペインをアクティブにする */
-				::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
 				delete [] pEditNodeArr;
 			}
 		}
@@ -3317,32 +3334,41 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if(  nRowNum > 0 ){
 				/* 自分のウィンドウを調べる */
-				for( i = 0; i < nRowNum; ++i ){
-					j = 0;
-					if( m_hwndParent == pEditNodeArr[i].m_hWnd ){
-						j = i;
+				nGroup = 0;
+				for( i = 0; i < nRowNum; ++i )
+				{
+					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
+					{
+						nGroup = pEditNodeArr[i].m_nGroup;
 						break;
 					}
 				}
-				if( j == nRowNum - 1 ){
-					j = 0;
-				}else{
-					++j;
+				if( i < nRowNum )
+				{
+					// 次のウィンドウ
+					for( j = i + 1; j < nRowNum; ++j )
+					{
+						if( nGroup == pEditNodeArr[j].m_nGroup )
+							break;
+					}
+					if( j >= nRowNum )
+					{
+						for( j = 0; j < i; ++j )
+						{
+							if( nGroup == pEditNodeArr[j].m_nGroup )
+								break;
+						}
+					}
+					if( i != j )
+					{
+						/* 次のウィンドウをアクティブにする */
+						hwndWork = pEditNodeArr[j].m_hWnd;
+						/* アクティブにする */
+						ActivateFrameWindow( hwndWork );
+						/* 最初のペインをアクティブにする */
+						::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
+					}
 				}
-				/* 次のウィンドウをアクティブにする */
-				hwndWork = pEditNodeArr[j].m_hWnd;
-				/* アクティブにする */
-				ActivateFrameWindow( hwndWork );
-//				if( ::IsIconic( hwndWork ) ){
-//					::ShowWindow( hwndWork, SW_RESTORE );
-//				}else{
-//					::ShowWindow( hwndWork, SW_SHOW );
-//				}
-//				::SetForegroundWindow( hwndWork );
-//				::SetActiveWindow( hwndWork );
-
-				/* 最初のペインをアクティブにする */
-				::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
 				delete [] pEditNodeArr;
 			}
 		}

@@ -325,6 +325,14 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_WIN_OUTPUT,				"ActivateWinOutput",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトプットウィンドウ表示
 	{F_TRACEOUT,				"TraceOut",				{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //マクロ用アウトプットウィンドウに出力	2006.04.26 maru
 	{F_TOPMOST,					"WindowTopMost",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //常に手前に表示
+	{F_GROUPCLOSE,				"GroupClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //グループを閉じる	// 2007.06.20 ryoji
+	{F_NEXTGROUP,				"NextGroup",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のグループ	// 2007.06.20 ryoji
+	{F_PREVGROUP,				"PrevGroup",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のグループ	// 2007.06.20 ryoji
+	{F_TAB_MOVERIGHT,			"TabMoveRight",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タブを右に移動	// 2007.06.20 ryoji
+	{F_TAB_MOVELEFT,			"TabMoveLeft",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タブを左に移動	// 2007.06.20 ryoji
+	{F_TAB_SEPARATE,			"TabSeparate",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規グループ	// 2007.06.20 ryoji
+	{F_TAB_JOINTNEXT,			"TabJointNext",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のグループに移動	// 2007.06.20 ryoji
+	{F_TAB_JOINTPREV,			"TabJointPrev",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のグループに移動	// 2007.06.20 ryoji
 
 	/* 支援 */
 	{F_HOKAN,					"Complete",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 入力補完 */	//Oct. 15, 2000 JEPRO 入ってなかったので英名を付けて入れてみた
@@ -961,6 +969,14 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_WIN_OUTPUT				://アウトプットウィンドウ表示
 //	case F_TRACEOUT					://マクロ用アウトプットウィンドウに表示	2006.04.26 maru
 	case F_TOPMOST					://常に手前に表示
+//	case F_GROUPCLOSE				://グループを閉じる	// 2007.06.20 ryoji
+//	case F_NEXTGROUP				://次のグループ	// 2007.06.20 ryoji
+//	case F_PREVGROUP				://前のグループ	// 2007.06.20 ryoji
+//	case F_TAB_MOVERIGHT			://タブを右に移動	// 2007.06.20 ryoji
+//	case F_TAB_MOVELEFT				://タブを左に移動	// 2007.06.20 ryoji
+//	case F_TAB_SEPARATE				://新規グループ	// 2007.06.20 ryoji
+//	case F_TAB_JOINTNEXT			://次のグループに移動	// 2007.06.20 ryoji
+//	case F_TAB_JOINTPREV			://前のグループに移動	// 2007.06.20 ryoji
 
 	/* 支援 */
 //  case F_HOKAN					:/* 入力補完 */				//Oct. 15, 2000 JEPRO 入ってなかったので入れてみた

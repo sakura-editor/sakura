@@ -1036,7 +1036,7 @@ LRESULT CEditApp::DispatchEvent(
 					break;
 				case F_EXITALLEDITORS:	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	// 2007.02.13 ryoji →F_EXITALLEDITORS
 					/* 編集の全終了 */
-					CEditApp::CloseAllEditor( TRUE, m_hWnd, TRUE );	// 2006.12.25, 2007.02.13 ryoji 引数追加
+					CEditApp::CloseAllEditor( TRUE, m_hWnd, TRUE, 0 );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 					break;
 				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
 					/* サクラエディタの全終了 */
@@ -1179,7 +1179,7 @@ LRESULT CEditApp::DispatchEvent(
 
 		case WM_QUERYENDSESSION:
 			/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-			if( CloseAllEditor( FALSE, m_hWnd, TRUE ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
+			if( CloseAllEditor( FALSE, m_hWnd, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 				//	Jan. 31, 2000 genta
 				//	この時点ではWindowsの終了が確定していないので常駐解除すべきではない．
 				//	DestroyWindow( hwnd );
@@ -1189,7 +1189,7 @@ LRESULT CEditApp::DispatchEvent(
 			}
 		case WM_CLOSE:
 			/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-			if( CloseAllEditor( FALSE, m_hWnd, TRUE ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
+			if( CloseAllEditor( FALSE, m_hWnd, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 				DestroyWindow( hwnd );
 			}
 			return 0L;
@@ -1298,6 +1298,7 @@ void CEditApp::OnNewEditor(void)
 	@date 2000.10.24 genta WinExec -> CreateProcess．同期機能を付加
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2003.05.30 genta 外部プロセス起動時のカレントディレクトリ指定を可能に．
+	@date 2007.06.26 ryoji 新規編集ウィンドウは hWndParent と同じグループを指定して起動する
 */
 bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* pszPath, int nCharCode, BOOL bReadOnly, bool sync, const char* szCurDir )
 {
@@ -1333,6 +1334,14 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 	if( bReadOnly ){
 		nPos += wsprintf( szCmdLineBuf + nPos, " -R" );
 	}		//To Here Feb. 26, 2001
+
+	// 親ウィンドウからグループIDを取得する
+	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER );
+	int nGroup = CShareData::getInstance()->GetGroupId( hwndAncestor );
+	if( nGroup > 0 ){
+		nPos += wsprintf( szCmdLineBuf + nPos, " -GROUP=%d", nGroup );
+	}
+
 //: do error check nPos
 
 	//	DEBUG
@@ -1484,7 +1493,7 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 
 	/* 現在の編集ウィンドウの数を調べる */
 	if( pShareData->m_Common.m_bExitConfirm ){	//終了時の確認
-		if( 0 < CShareData::getInstance()->GetEditorWindowsNum() ){
+		if( 0 < CShareData::getInstance()->GetEditorWindowsNum( 0 ) ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
@@ -1497,7 +1506,7 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 	}
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	BOOL bCheckConfirm = (pShareData->m_Common.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
-	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
+	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 		::PostMessage( pShareData->m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
@@ -1511,20 +1520,22 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 	@param bCheckConfirm [in] [すべて閉じる]確認オプションに従って問い合わせをするかどうか
 	@param hWndFrom [in] 呼び出し元のウィンドウハンドル
 	@param bExit [in] TRUE: 編集の全終了 / FALSE: すべて閉じる
+	@param nGroup [in] グループID
 
 	@date Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2006.12.25 ryoji 複数の編集ウィンドウを閉じるときの確認（引数追加）
 	@date 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
+	@date 2007.06.20 ryoji nGroup引数を追加
 */
-BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit )
+BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup )
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();	/* 共有データ構造体のアドレスを返す */
 
 	/* 現在の編集ウィンドウの数を調べる */
 	if( bCheckConfirm && pShareData->m_Common.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
 		int nCount = CShareData::getInstance()->IsEditWnd( hWndFrom )? 1: 0;	// 呼び出し元が編集ウィンドウなら編集ウィンドウが複数の場合に確認する
-		if( nCount < CShareData::getInstance()->GetEditorWindowsNum() ){
+		if( nCount < CShareData::getInstance()->GetEditorWindowsNum( nGroup ) ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
@@ -1537,7 +1548,7 @@ BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit )
 	}
 
 	/* 全編集ウィンドウへ終了要求を出す */
-	if( !CShareData::getInstance()->RequestCloseAllEditor( bExit ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
+	if( !CShareData::getInstance()->RequestCloseAllEditor( bExit, nGroup ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 		return FALSE;
 	}else{
 		return TRUE;

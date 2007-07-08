@@ -191,16 +191,19 @@ CEditWnd::~CEditWnd()
 
 	@param hInstance [in] Instance Handle
 	@param hwndParent [in] 親ウィンドウのハンドル
+	@param nGroup [in] グループID
 	@param pszPath [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
 	@param nCharCode [in] 漢字コード
 	@param bReadOnly [in] 読みとり専用で開くかどうか
 	@param nDocumentType [in] 文書タイプ．-1のとき強制指定無し．
 	
 	@date 2002.03.07 genta nDocumentType追加
+	@date 2007.06.26 ryoji nGroup追加
 */
 HWND CEditWnd::Create(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
+	int			nGroup,
 	const char*	pszPath,
 	int			nCharCode,
 	BOOL		bReadOnly,
@@ -213,6 +216,9 @@ HWND CEditWnd::Create(
 	//	small icon指定のため RegisterClassExに変更
 	WNDCLASSEX	wc;
 	HWND		hWnd;
+	HWND		hwndTop;
+	WINDOWPLACEMENT	wpTop;
+	EditNode*	pEditNode;
 	ATOM		atom;
 	BOOL		bOpened;
 	char szMsg[512];
@@ -294,21 +300,34 @@ HWND CEditWnd::Create(
 
 	//From Here @@@ 2003.05.31 MIK
 	//タブウインドウの場合は現状値を指定
-	if( m_pShareData->m_Common.m_bDispTabWnd 
-	 && m_pShareData->m_TabWndWndpl.length
-	 && m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
-		//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
-		// FIXME: 非プライマリモニタまたはタスクバーを動かした後だとずれる
-		RECT	rcArea;
-		::SystemParametersInfo( SPI_GETWORKAREA, NULL, &rcArea, 0 );
-		nWinCX = m_pShareData->m_TabWndWndpl.rcNormalPosition.right
-			   - m_pShareData->m_TabWndWndpl.rcNormalPosition.left;
-		nWinCY = m_pShareData->m_TabWndWndpl.rcNormalPosition.bottom
-			   - m_pShareData->m_TabWndWndpl.rcNormalPosition.top;
-		nWinOX = m_pShareData->m_TabWndWndpl.rcNormalPosition.left + rcArea.left;
-		nWinOY = m_pShareData->m_TabWndWndpl.rcNormalPosition.top  + rcArea.top;
+		if( nGroup < 0 )	// 不正なグループID
+			nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
+		pEditNode = CShareData::getInstance()->GetEditNodeAt( nGroup, 0 );	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
+		hwndTop = pEditNode? pEditNode->m_hWnd: NULL;
 
+		if( hwndTop )
+		{
+			//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
+			// 2007.06.20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
+			RECT rcWork;
+			RECT rcMon;
+			GetMonitorWorkRect( hwndTop, &rcWork, &rcMon );
+
+			wpTop.length = sizeof(WINDOWPLACEMENT);
+			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
+				nWinCX = wpTop.rcNormalPosition.right - wpTop.rcNormalPosition.left;
+				nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
+				nWinOX = wpTop.rcNormalPosition.left + (rcWork.left - rcMon.left);
+				nWinOY = wpTop.rcNormalPosition.top + (rcWork.top - rcMon.top);
+				if( wpTop.showCmd == SW_SHOWMINIMIZED )
+					wpTop.showCmd = pEditNode->m_showCmdRestore;
+			}
+			else{
+				hwndTop = NULL;
+			}
+		}
 	}
 	//To Here @@@ 2003.05.31 MIK
 
@@ -422,25 +441,16 @@ HWND CEditWnd::Create(
 	}
 
 	//From Here @@@ 2003.06.13 MIK
-	if( m_pShareData->m_Common.m_bDispTabWnd 
-	 && m_pShareData->m_TabWndWndpl.length
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin
+		&& hwndTop )
 	{
 		// 現在の先頭ウィンドウから WS_EX_TOPMOST 状態を引き継ぐ	// 2007.05.18 ryoji
-		HWND hwnd;
-		int i;
-		for( i = 0; i < m_pShareData->m_nEditArrNum; i++ ){
-			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
-			if( hwnd != m_hWnd && CShareData::getInstance()->IsEditWnd( hwnd ) ){
-				DWORD dwExStyle = (DWORD)::GetWindowLongPtr( hwnd, GWL_EXSTYLE );
-				::SetWindowPos( m_hWnd, (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
-				break;
-			}
-		}
+		DWORD dwExStyle = (DWORD)::GetWindowLongPtr( hwndTop, GWL_EXSTYLE );
+		::SetWindowPos( m_hWnd, (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
-		if( m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED )
+		if( wpTop.showCmd == SW_SHOWMAXIMIZED )
 		{
 			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
 		}
@@ -479,20 +489,15 @@ HWND CEditWnd::Create(
 
 		m_bIsActiveApp = ( ::GetActiveWindow() == m_hWnd );	// 2007.03.08 ryoji
 
-		// 表示直後の位置記憶	// 2007.04.08 ryoji
-		// Note. WM_SETFOCUS では CShareData::AddEditWndList() を呼ばないようにしたので
-		//       ::ShowWindow() 時の WM_SIZE では位置記憶されていない
-		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-		::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
-
 		/* 編集ウィンドウリストへの登録 */
-		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd ) ){
+		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
 			wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 			::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
 			::DestroyWindow( m_hWnd );
 			m_hWnd = hWnd = NULL;
 			return hWnd;
 		}
+		CShareData::getInstance()->SetTraceOutSource( m_hWnd );	// TraceOut()起動元ウィンドウの設定	// 2006.06.26 ryoji
 
 		//	Aug. 29, 2003 wmlhq
 		m_nTimerCount = 0;
@@ -1280,21 +1285,10 @@ LRESULT CEditWnd::DispatchEvent(
 
 	//From here 2003.05.31 MIK
 	case WM_MOVE:
-		{
-			EditNode* p = NULL;
-			CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
-			if( NULL != p && p[ 0 ].m_hWnd == m_hWnd ){	// 一番手前のウィンドウ	// 2006.12.19 ryoji
-				m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-				::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
-			}
-			if( p ) delete []p;
-		}
-
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowPos ){
-			if( SW_MAXIMIZE != m_pShareData->m_TabWndWndpl.showCmd &&
-			    SW_SHOWMINIMIZED != m_pShareData->m_TabWndWndpl.showCmd ){
+			if( !::IsZoomed( m_hWnd ) && !::IsIconic( m_hWnd ) ){
 				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
 				RECT rcWork;
 				::GetWindowRect( hwnd, &rcWork);
@@ -1305,23 +1299,6 @@ LRESULT CEditWnd::DispatchEvent(
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	//To here 2003.05.31 MIK
-/*
-	//From here 2003.06.25 MIK
-	case WM_SYSCOMMAND:
-		switch( wParam )
-		{
-		case SC_CLOSE:
-		//case SC_MOVE:
-		//case SC_SIZE:
-		//case SC_MINIMIZE:
-		//case SC_MAXIMIZE:
-			m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-			::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
-			break;
-		}
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
-	//To here 2003.06.25 MIK
-*/
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 		//	Feb. 11, 2007 genta 動作を選べるように(MDI風と従来動作)
@@ -1574,10 +1551,13 @@ LRESULT CEditWnd::DispatchEvent(
 					!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
 					m_pShareData->m_Common.m_bTab_RetainEmptyWin
 					){
-					if( 1 == CShareData::getInstance()->GetEditorWindowsNum() ){
-						CShareData::getInstance()->DeleteEditWndList( m_hWnd );	// 新規エディタのタブには自分を表示させない
+					// 自グループ内の残ウィンドウ数を調べる	// 2007.06.20 ryoji
+					int nGroup = CShareData::getInstance()->GetGroupId( m_hWnd );
+					if( 1 == CShareData::getInstance()->GetEditorWindowsNum( nGroup ) ){
+						EditNode* pEditNode = CShareData::getInstance()->GetEditNode( m_hWnd );
+						if( pEditNode )
+							pEditNode->m_bClosing = TRUE;	// 自分はタブ表示してもらわなくていい
 						CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, TRUE );
-						WindowTopMost( ( (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2 );	// 新規エディタに WS_EX_TOPMOST 状態を引き継ぐ	// 2007.05.18 ryoji
 					}
 				}
 			}
@@ -1631,28 +1611,42 @@ LRESULT CEditWnd::DispatchEvent(
 		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 		EndLayoutBars();
 
-		if( m_hWnd != (HWND)lParam )
+		if( m_pShareData->m_Common.m_bDispTabWnd )
 		{
-			if( m_pShareData->m_Common.m_bDispTabWnd
-				&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+			// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある
+			m_cTabWnd.Refresh( FALSE );
+		}
+		if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+		{
+			if( CShareData::getInstance()->IsTopEditWnd( m_hWnd ) )
 			{
-				::ShowWindow(m_hWnd, SW_HIDE);
+				if( !::IsWindowVisible( m_hWnd ) )
+				{
+					// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+					::SetWindowPos( m_hWnd, NULL,0,0,0,0,
+									SWP_SHOWWINDOW | SWP_NOACTIVATE
+									| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
+
+					// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
+					WindowTopMost( ((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
+				}
 			}
 			else
+			{
+				if( ::IsWindowVisible( m_hWnd ) )
+				{
+					::ShowWindow( m_hWnd, SW_HIDE );
+				}
+			}
+		}
+		else
+		{
+			if( !::IsWindowVisible( m_hWnd ) )
 			{
 				// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
 				::SetWindowPos( m_hWnd, NULL,0,0,0,0,
 								SWP_SHOWWINDOW | SWP_NOACTIVATE
 								| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
-			}
-		}
-		else
-		{
-			if( m_pShareData->m_Common.m_bDispTabWnd
-				&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
-			{
-				// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
-				WindowTopMost( ((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
 			}
 		}
 
@@ -1873,7 +1867,13 @@ int	CEditWnd::OnClose( void )
 	if( !nRet ) return nRet;
 
 	// 2005.09.01 ryoji タブまとめ表示の場合は次のウィンドウを前面に（終了時のウィンドウちらつきを抑制）
-	int i;
+
+	// 2007.07.07 ryoji
+	// Note. タブまとめでない場合にも以下の処理を通しているのは、以前、タブまとめ設定を同期していなかったときの名残です。
+	//       （タブまとめ解除しても非表示のままになっているウィンドウを表示に戻す必要があった）
+	//       同期にしている現在では、同期に不具合があって非表示になっている場合でも表示に戻す、という保険的な意味しかありません。
+
+	int i, j;
 	EditNode*	p = NULL;
 	int nCount = CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
 	if( nCount > 1 )
@@ -1883,26 +1883,42 @@ int	CEditWnd::OnClose( void )
 			if( p[ i ].m_hWnd == m_hWnd )
 				break;
 		}
-
-		i = ( i >= nCount )? 0: i + 1;
-
-		HWND hwnd = p[ i ].m_hWnd;
+		if( i < nCount )
 		{
-			// 2006.01.28 ryoji
-			// タブまとめ表示でこの画面が非表示から表示に変わってすぐ閉じる場合(タブの中クリック時等)、
-			// 以前のウィンドウが消えるよりも先に一気にここまで処理が進んでしまうと
-			// あとで画面がちらつくので、以前のウィンドウが消えるのをちょっとだけ待つ
-			if( m_pShareData->m_Common.m_bDispTabWnd
-				&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+			for( j = i + 1; j < nCount; j++ )
 			{
-				int iWait = 0;
-				while( ::IsWindowVisible( hwnd ) && iWait++ < 20 )
-					::Sleep(1);
+				if( p[ j ].m_nGroup == p[ i ].m_nGroup )
+					break;
 			}
-		}
-		if( !::IsWindowVisible( hwnd ) )
-		{
-			ActivateFrameWindow( hwnd );
+			if( j >= nCount )
+			{
+				for( j = 0; j < i; j++ )
+				{
+					if( p[ j ].m_nGroup == p[ i ].m_nGroup )
+						break;
+				}
+			}
+			if( j != i )
+			{
+				HWND hwnd = p[ j ].m_hWnd;
+				{
+					// 2006.01.28 ryoji
+					// タブまとめ表示でこの画面が非表示から表示に変わってすぐ閉じる場合(タブの中クリック時等)、
+					// 以前のウィンドウが消えるよりも先に一気にここまで処理が進んでしまうと
+					// あとで画面がちらつくので、以前のウィンドウが消えるのをちょっとだけ待つ
+					if( m_pShareData->m_Common.m_bDispTabWnd
+						&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+					{
+						int iWait = 0;
+						while( ::IsWindowVisible( hwnd ) && iWait++ < 20 )
+							::Sleep(1);
+					}
+				}
+				if( !::IsWindowVisible( hwnd ) )
+				{
+					ActivateFrameWindow( hwnd );
+				}
+			}
 		}
 	}
 	if( p ) delete []p;
@@ -2170,6 +2186,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE, "グループを閉じる(&G)" );	// グループを閉じる	// 2007.06.20 ryoji
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, "編集の全終了(&Q)" );	//Feb/ 19, 2001 JEPRO 追加	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 			//	Jun. 9, 2001 genta ソフトウェア名改称
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL			, "サクラエディタの全終了(&X)" );	//Sept. 11, 2000 jepro キャプションを「アプリケーション終了」から変更	//Dec. 26, 2000 JEPRO F_に変更
@@ -2683,11 +2700,35 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINLIST			, "ウィンドウ一覧(&W)..." );		// 2006.03.23 fon
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW		, "ひとつにまとめて表示(&B)" );		//2004.07.14 Kazika 新規追加	// 2007.02.13 ryoji 「結合して表示」→「ひとつにまとめて表示」
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, "上下に並べて表示(&H)" );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, "左右に並べて表示(&T)" );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOPMOST			, "常に手前に表示" ); //2004.09.21 Moca
+			if( (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST ){
+				pszLabel = "常に手前を解除(&F)";
+			}else{
+				pszLabel = "常に手前に表示(&F)";
+			}
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOPMOST, pszLabel ); //2004.09.21 Moca	// 2007.06.20 ryoji アクセスキー追加
+
+			hMenuPopUp = ::CreatePopupMenu();	// 2007.06.20 ryoji
+			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+				pszLabel = "グループ化を解除(&B)";
+			}else{
+				pszLabel = "グループ化(&B)";
+			}
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW, pszLabel );		//2004.07.14 Kazika 新規追加	// 2007.02.13 ryoji 「結合して表示」→「ひとつにまとめて表示」	// 2007.06.20 ryoji 「グループ化」
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE		, "グループを閉じる(&G)" );	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_NEXTGROUP		, "次のグループ(&N)" );			// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_PREVGROUP		, "前のグループ(&P)" );			// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_MOVERIGHT	, "タブを右に移動(&R)" );		// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_MOVELEFT	, "タブを左に移動(&L)" );		// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_SEPARATE	, "新規グループ(&E)" );			// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_JOINTNEXT	, "次のグループに移動(&X)" );	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_JOINTPREV	, "前のグループに移動(&V)" );	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "タブの操作(&B)" );		// 2007.06.20 ryoji
+
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_V		, "縦方向に最大化(&X)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_H		, "横方向に最大化(&Y)" );	//2001.02.10 by MIK
@@ -3412,8 +3453,18 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		return TRUE;
 		//End 2004.07.15 Kazika
 	case F_BIND_WINDOW:	//2004.07.14 Kazika 新規追加
+	case F_TAB_MOVERIGHT:	// 2007.06.20 ryoji 追加
+	case F_TAB_MOVELEFT:	// 2007.06.20 ryoji 追加
 		//非タブモード時はウィンドウを結合して表示できない
 		return (pShareData->m_Common.m_bDispTabWnd);
+	case F_GROUPCLOSE:		// 2007.06.20 ryoji 追加
+	case F_NEXTGROUP:		// 2007.06.20 ryoji 追加
+	case F_PREVGROUP:		// 2007.06.20 ryoji 追加
+		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin );
+	case F_TAB_SEPARATE:	// 2007.06.20 ryoji 追加
+	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji 追加
+	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
+		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin && !::IsZoomed( pcEditDoc->m_hwndParent ) );
 	}
 	return TRUE;
 }
@@ -3587,43 +3638,33 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	cy = HIWORD( lParam );
 
 	/* ウィンドウサイズ継承 */
-	if( wParam != SIZE_MINIMIZED &&						/* 最小化は継承しない */
+	if( wParam != SIZE_MINIMIZED ){						/* 最小化は継承しない */
 		//	2004.05.13 Moca m_nSaveWindowSizeの解釈追加のため
-		WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowSize		/* ウィンドウサイズ継承をするか */
-	){
-		if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
-			if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ){
-				m_pShareData->m_Common.m_nWinSizeType = wParam;
-			}
-		}else{
-			::GetWindowRect( m_hWnd, &rcWin );
-			/* ウィンドウサイズに関するデータが変更されたか */
-			if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ||
-				m_pShareData->m_Common.m_nWinSizeCX != rcWin.right - rcWin.left ||
-				m_pShareData->m_Common.m_nWinSizeCY != rcWin.bottom - rcWin.top
-			){
-				m_pShareData->m_Common.m_nWinSizeType = wParam;
-				m_pShareData->m_Common.m_nWinSizeCX = rcWin.right - rcWin.left;
-				m_pShareData->m_Common.m_nWinSizeCY = rcWin.bottom - rcWin.top;
+		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
+			if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
+				if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ){
+					m_pShareData->m_Common.m_nWinSizeType = wParam;
+				}
+			}else{
+				::GetWindowRect( m_hWnd, &rcWin );
+				/* ウィンドウサイズに関するデータが変更されたか */
+				if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ||
+					m_pShareData->m_Common.m_nWinSizeCX != rcWin.right - rcWin.left ||
+					m_pShareData->m_Common.m_nWinSizeCY != rcWin.bottom - rcWin.top
+				){
+					m_pShareData->m_Common.m_nWinSizeType = wParam;
+					m_pShareData->m_Common.m_nWinSizeCX = rcWin.right - rcWin.left;
+					m_pShareData->m_Common.m_nWinSizeCY = rcWin.bottom - rcWin.top;
+				}
 			}
 		}
-	}
 
-	//From Here 2003.05.31 MIK
-	//ウインドウ情報を最新に更新する。
-	//if( 0 == m_pShareData->m_TabWndWndpl.length )
-	//{
-	{
-		EditNode* p = NULL;
-		CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
-		if( NULL != p && p[ 0 ].m_hWnd == m_hWnd ){	// 一番手前のウィンドウ	// 2006.12.19 ryoji
-			m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-			::GetWindowPlacement( m_hWnd, &(m_pShareData->m_TabWndWndpl) );
+		// 元に戻すときのサイズ種別を記憶	// 2007.06.20 ryoji
+		EditNode *p = CShareData::getInstance()->GetEditNode( m_hWnd );
+		if( p != NULL ){
+			p->m_showCmdRestore = ::IsZoomed( p->m_hWnd )? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
 		}
-		if( p ) delete []p;
 	}
-	//}
-	//To Here 2003.05.31 MIK
 
 	m_nWinSizeType = wParam;	/* サイズ変更のタイプ */
 	nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
@@ -3999,23 +4040,57 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 				if(  nRowNum > 0 )
 				{
 					// 自分のウィンドウを調べる
-					int i;
-					int j = 0;
+					int i, j;
+					int nGroup = 0;
 					for( i = 0; i < nRowNum; ++i )
 					{
 						if( m_hWnd == pEditNodeArr[i].m_hWnd )
 						{
-							j = i;
+							nGroup = pEditNodeArr[i].m_nGroup;
 							break;
 						}
 					}
-					if( nDelta < 0 )
-						j = ( j == nRowNum - 1 )? 0: j + 1;	// 次のウィンドウ
-					else
-						j = ( j == 0 )? nRowNum - 1: j - 1;	// 前のウィンドウ
+					if( i < nRowNum )
+					{
+						if( nDelta < 0 )
+						{
+							// 次のウィンドウ
+							for( j = i + 1; j < nRowNum; ++j )
+							{
+								if( nGroup == pEditNodeArr[j].m_nGroup )
+									break;
+							}
+							if( j >= nRowNum )
+							{
+								for( j = 0; j < i; ++j )
+								{
+									if( nGroup == pEditNodeArr[j].m_nGroup )
+										break;
+								}
+							}
+						}
+						else
+						{
+							// 前のウィンドウ
+							for( j = i - 1; j >= 0; --j )
+							{
+								if( nGroup == pEditNodeArr[j].m_nGroup )
+									break;
+							}
+							if( j < 0 )
+							{
+								for( j = nRowNum - 1; j > i; --j )
+								{
+									if( nGroup == pEditNodeArr[j].m_nGroup )
+										break;
+								}
+							}
+						}
 
-					/* 次の（or 前の）ウィンドウをアクティブにする */
-					ActivateFrameWindow( pEditNodeArr[j].m_hWnd );
+						/* 次の（or 前の）ウィンドウをアクティブにする */
+						if( i != j )
+							ActivateFrameWindow( pEditNodeArr[j].m_hWnd );
+					}
 
 					delete []pEditNodeArr;
 				}
@@ -4535,7 +4610,8 @@ void CEditWnd::ChangeFileNameNotify( const char *pszTabCaption, const char *pszF
 	cRecentEditNode.Terminate();
 
 	//ファイル名変更通知をブロードキャストする。
-	CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_FILE, (LPARAM)m_hWnd, m_hWnd );
+	int nGroup = CShareData::getInstance()->GetGroupId( m_hWnd );
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_FILE, (LPARAM)m_hWnd, m_hWnd, nGroup );
 
 	return;
 }
@@ -4637,6 +4713,8 @@ void CEditWnd::WindowTopMost( int top )
 		for( i = 0, hwndInsertAfter = m_hWnd; i < m_pShareData->m_nEditArrNum; i++ ){
 			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
 			if( hwnd != m_hWnd && CShareData::getInstance()->IsEditWnd( hwnd ) ){
+				if( !CShareData::getInstance()->IsSameGroup( m_hWnd, hwnd ) )
+					continue;
 				::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 				hwndInsertAfter = hwnd;
 			}

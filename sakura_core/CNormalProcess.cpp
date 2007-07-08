@@ -11,6 +11,7 @@
 	Copyright (C) 2002, YAZAKI, Moca, genta
 	Copyright (C) 2003, genta, Moca, MIK
 	Copyright (C) 2004, Moca, naoh
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -41,6 +42,7 @@
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2004.05.13 Moca CEditWnd::Create()に失敗した場合にfalseを返すように．
+	@date 2007.06.26 ryoji グループIDを指定して編集ウィンドウを作成する
 */
 bool CNormalProcess::Initialize()
 {
@@ -64,6 +66,7 @@ bool CNormalProcess::Initialize()
 	bool			bDebugMode;
 	bool			bGrepMode;
 	bool			bGrepDlg;
+	int				nGroup;	// 2007.06.26 ryoji
 	GrepInfo		gi;
 	FileInfo		fi;
 	
@@ -114,9 +117,10 @@ bool CNormalProcess::Initialize()
 	bDebugMode = CCommandLine::Instance()->IsDebugMode();
 	bGrepMode = CCommandLine::Instance()->IsGrepMode();
 	bGrepDlg = CCommandLine::Instance()->IsGrepDlg();
+	nGroup = CCommandLine::Instance()->GetGroupId();	// 2007.06.26 ryoji
 	
 	if( bDebugMode ){
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
 
 //	#ifdef _DEBUG/////////////////////////////////////////////
 		/* デバッグモニタモードに設定 */
@@ -126,7 +130,7 @@ bool CNormalProcess::Initialize()
 //	#endif////////////////////////////////////////////////////
 	}else
 	if( bGrepMode ){
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, NULL, 0, FALSE );
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 		if( NULL == hWnd ){
 			goto end_of_func;
@@ -195,7 +199,7 @@ bool CNormalProcess::Initialize()
 		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
 		if( 0 < strlen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, 
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
 							fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 							fi.m_szDocType[0] == '\0' ? -1 :
 								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
@@ -262,7 +266,7 @@ bool CNormalProcess::Initialize()
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
 		}else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray,
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
 										NULL, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 										fi.m_szDocType[0] == '\0' ? -1 :
 										m_cShareData.GetDocumentTypeExt( fi.m_szDocType )

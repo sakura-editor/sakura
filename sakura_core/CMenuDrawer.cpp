@@ -459,11 +459,11 @@ CMenuDrawer::CMenuDrawer()
 /* 311 */		F_DISABLE/*F_CUSTMENU_22*/	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー22	//アイコン未作
 /* 312 */		F_DISABLE/*F_CUSTMENU_23*/	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー23	//アイコン未作
 /* 313 */		F_CUSTMENU_24				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー24	//アイコン未作
-/* 314 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 315 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 316 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 317 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 318 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 314 */		F_TAB_MOVERIGHT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブを右に移動	// 2007.06.20 ryoji
+/* 315 */		F_TAB_MOVELEFT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブを左に移動	// 2007.06.20 ryoji
+/* 316 */		F_TAB_SEPARATE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規グループ	// 2007.06.20 ryoji
+/* 317 */		F_TAB_JOINTNEXT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のグループに移動	// 2007.06.20 ryoji
+/* 318 */		F_TAB_JOINTPREV				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のグループに移動	// 2007.06.20 ryoji
 /* 319 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 320 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
@@ -487,9 +487,9 @@ CMenuDrawer::CMenuDrawer()
 /* 337 */		F_TOPMOST		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//常に手前に表示 2004.09.21 Moca
 /* 338 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 339 */		F_WINLIST		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ウィンドウ一覧ポップアップ表示	// 2006.03.23 fon
-/* 340 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 341 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 342 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 340 */		F_GROUPCLOSE	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//グループを閉じる	// 2007.06.20 ryoji
+/* 341 */		F_NEXTGROUP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のグループ	// 2007.06.20 ryoji
+/* 342 */		F_PREVGROUP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のグループ	// 2007.06.20 ryoji
 
 /* 支援(11段目残りの10個: 343-352) */
 /* 343 */		F_HOKAN			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//入力補完

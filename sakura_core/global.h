@@ -130,6 +130,7 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP_DEBUG")
 	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized_DEBUG")
 	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit_DEBUG")
+	#define	GSTR_MUTEX_SAKURA_EDITARR _T("MutexSakuraEditorEditArr_DEBUG")
 	#endif
 #else
 	#ifndef	GSTR_SYNCOBJ_SAKURA
@@ -138,6 +139,7 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP")
 	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized")
 	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit")
+	#define	GSTR_MUTEX_SAKURA_EDITARR _T("MutexSakuraEditorEditArr")
 	#endif
 #endif
 

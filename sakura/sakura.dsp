@@ -916,6 +916,10 @@ SOURCE=..\sakura_core\CMRUFolder.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CMutex.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CNormalProcess.h
 # End Source File
 # Begin Source File
@@ -1113,6 +1117,22 @@ SOURCE=..\resource\cursor_move.cur
 # Begin Source File
 
 SOURCE=..\resource\cursor_rvarrow.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_tab_join.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_tab_left.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_tab_right.cur
+# End Source File
+# Begin Source File
+
+SOURCE=..\resource\cursor_tab_separate.cur
 # End Source File
 # Begin Source File
 

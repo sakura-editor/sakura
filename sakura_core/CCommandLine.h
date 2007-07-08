@@ -10,6 +10,7 @@
 	Copyright (C) 2002, aroka CEditAppÇÊÇËï™ó£
 	Copyright (C) 2002, genta
 	Copyright (C) 2005, D.S.Koba
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -64,6 +65,7 @@ public:
 	bool IsReadOnly() const {return m_bReadOnly;};
 	bool GetFileInfo(FileInfo& fi) const {fi = m_fi;return true;};
 	bool GetGrepInfo(GrepInfo& gi) const {gi = m_gi;return true;};
+	int GetGroupId() const {return m_nGroup;};	// 2007.06.26 ryoji
 
 // member valiables
 private:
@@ -76,6 +78,7 @@ private:
 	FileInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
 	bool		m_bReadOnly;		//! [out] TRUE: Read Only
+	int			m_nGroup;			//! ÉOÉãÅ[ÉvID	// 2007.06.26 ryoji
 };
 
 ///////////////////////////////////////////////////////////////////////

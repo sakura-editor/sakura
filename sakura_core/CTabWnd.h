@@ -43,7 +43,7 @@ class CTabWnd;
 #include <string>
 #include <map>
 
-//! ファンクションキーウィンドウ
+//! タブバーウィンドウ
 class SAKURA_CORE_API CTabWnd : public CWnd
 {
 public:
@@ -59,9 +59,17 @@ public:
 	HWND Open( HINSTANCE, HWND );		/*!< ウィンドウ オープン */
 	void Close( void );					/*!< ウィンドウ クローズ */
 	void TabWindowNotify( WPARAM wParam, LPARAM lParam );
+	void Refresh( BOOL bEnsureVisible = TRUE, BOOL bRebuild = FALSE );			// 2006.02.06 ryoji 引数削除
+	void NextGroup( void );			/* 次のグループ */			// 2007.06.20 ryoji
+	void PrevGroup( void );			/* 前のグループ */			// 2007.06.20 ryoji
+	void MoveRight( void );			/* タブを右に移動 */		// 2007.06.20 ryoji
+	void MoveLeft( void );			/* タブを左に移動 */		// 2007.06.20 ryoji
+	void Separate( void );			/* 新規グループ */			// 2007.06.20 ryoji
+	void JoinNext( void );			/* 次のグループに移動 */	// 2007.06.20 ryoji
+	void JoinPrev( void );			/* 前のグループに移動 */	// 2007.06.20 ryoji
 
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
+	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE, BOOL bOtherGroup = TRUE );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
 
 	/*
 	|| メンバ変数
@@ -85,13 +93,14 @@ protected:
 	|| 実装ヘルパ系
 	*/
 	int FindTabIndexByHWND( HWND hWnd );
-	void Refresh( void );	// 2006.02.06 ryoji 引数削除
 	void AdjustWindowPlacement( void );							/*!< 編集ウィンドウの位置合わせ */	// 2007.04.03 ryoji
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
 	void HideOtherWindows( HWND hwndExclude );					/*!< 他の編集ウィンドウを隠す */	// 2007.05.17 ryoji
-	int GetFirstOpenedWindow( void );
 	void ForceActiveWindow( HWND hwnd );
 	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
+	HWND GetNextGroupWnd( void );	/* 次のグループの先頭ウィンドウを探す */	// 2007.06.20 ryoji
+	HWND GetPrevGroupWnd( void );	/* 前のグループの先頭ウィンドウを探す */	// 2007.06.20 ryoji
+	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR pszName, int nLen );	/* タブ名取得処理 */	// 2007.06.28 ryoji 新規作成
 
 	/* 仮想関数 */
 	virtual void AfterCreateWindow( void ){}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
@@ -125,6 +134,7 @@ protected:
 
 	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; }	/*!< ドラッグ状態解除処理 */
 	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< タブ順序変更処理 */
+	BOOL SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop );	/*!< タブ分離処理 */	// 2007.06.20 ryoji
 	LRESULT ExecTabCommand( int nId, POINTS pts );	/*!< タブ部 コマンド実行処理 */
 	void LayoutTab( void );							/*!< タブのレイアウト調整処理 */
 
@@ -132,6 +142,7 @@ protected:
 
 	DragState m_eDragState;		 //!< ドラッグ状態
 	int	m_nSrcTab;				 //!< 移動元タブ
+	POINT m_ptSrcCursor;		 //!< ドラッグ開始カーソル位置
 
 	// 2006.01.28 ryoji タブへのアイコン表示を可能に
 	HIMAGELIST (WINAPI *m_RealImageList_Duplicate)(HIMAGELIST himl);

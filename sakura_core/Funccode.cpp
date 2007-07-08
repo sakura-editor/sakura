@@ -410,11 +410,19 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_NEXTWINDOW		,	//次のウィンドウ
 	F_PREVWINDOW		,	//前のウィンドウ
  	F_WINLIST			,	//開いているウィンドウ一覧ポップアップ表示	// 2006.03.23 fon
-	F_BIND_WINDOW		,	//結合して表示	// 2006.04.22 ryoji
 	F_CASCADE			,	//重ねて表示
 	F_TILE_V			,	//上下に並べて表示
 	F_TILE_H			,	//左右に並べて表示
 	F_TOPMOST			,	//常に手前に表示
+	F_BIND_WINDOW		,	//結合して表示	// 2006.04.22 ryoji
+	F_GROUPCLOSE		,	//グループを閉じる	// 2007.06.20 ryoji
+	F_NEXTGROUP			,	//次のグループ	// 2007.06.20 ryoji
+	F_PREVGROUP			,	//前のグループ	// 2007.06.20 ryoji
+	F_TAB_MOVERIGHT		,	//タブを右に移動	// 2007.06.20 ryoji
+	F_TAB_MOVELEFT		,	//タブを左に移動	// 2007.06.20 ryoji
+	F_TAB_SEPARATE		,	//新規グループ	// 2007.06.20 ryoji
+	F_TAB_JOINTNEXT		,	//次のグループに移動	// 2007.06.20 ryoji
+	F_TAB_JOINTPREV		,	//前のグループに移動	// 2007.06.20 ryoji
 	F_MAXIMIZE_V		,	//縦方向に最大化
 	F_MAXIMIZE_H		,	//横方向に最大化 //2001.02.10 by MIK
 	F_MINIMIZE_ALL		,	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一

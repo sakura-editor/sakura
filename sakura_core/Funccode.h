@@ -388,6 +388,14 @@
 #define F_MAXIMIZE_H		31352	//横方向に最大化	//2001.02.10 by MIK
 #define F_REDRAW			31360	//再描画
 #define F_WIN_OUTPUT		31370	//アウトプットウィンドウ表示
+#define F_GROUPCLOSE		31380	/* グループを閉じる */	// 2007.06.20 ryoji
+#define F_NEXTGROUP			31381	/* 次のグループ */	// 2007.06.20 ryoji
+#define F_PREVGROUP			31382	/* 前のグループ */	// 2007.06.20 ryoji
+#define F_TAB_MOVERIGHT		31383	/* タブを右に移動 */	// 2007.06.20 ryoji
+#define F_TAB_MOVELEFT		31384	/* タブを左に移動 */	// 2007.06.20 ryoji
+#define F_TAB_SEPARATE		31385	/* 新規グループ */	// 2007.06.20 ryoji
+#define F_TAB_JOINTNEXT		31386	/* 次のグループに移動 */	// 2007.06.20 ryoji
+#define F_TAB_JOINTPREV		31387	/* 前のグループに移動 */	// 2007.06.20 ryoji
 
 
 /* 支援 */

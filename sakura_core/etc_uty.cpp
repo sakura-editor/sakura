@@ -2252,6 +2252,14 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_MINIMIZE_ALL:	return HLP000096;	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	case F_REDRAW:			return HLP000187;	//再描画
 	case F_WIN_OUTPUT:		return HLP000188;	//アウトプットウィンドウ表示
+	case F_GROUPCLOSE:		return HLP000320;	//グループを閉じる	// 2007.06.20 ryoji
+	case F_NEXTGROUP:		return HLP000321;	//次のグループ	// 2007.06.20 ryoji
+	case F_PREVGROUP:		return HLP000322;	//前のグループ	// 2007.06.20 ryoji
+	case F_TAB_MOVERIGHT:	return HLP000323;	//タブを右に移動	// 2007.06.20 ryoji
+	case F_TAB_MOVELEFT:	return HLP000324;	//タブを左に移動	// 2007.06.20 ryoji
+	case F_TAB_SEPARATE:	return HLP000325;	//新規グループ	// 2007.06.20 ryoji
+	case F_TAB_JOINTNEXT:	return HLP000326;	//次のグループに移動	// 2007.06.20 ryoji
+	case F_TAB_JOINTPREV:	return HLP000327;	//前のグループに移動	// 2007.06.20 ryoji
 
 
 	/* 支援 */
@@ -2872,6 +2880,47 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NUL
 	return ( mi.dwFlags == MONITORINFOF_PRIMARY ) ? true : false;
 }
 //	To Here 2006.04.21 ryoji MutiMonitor
+
+
+/**	指定したウィンドウの祖先のハンドルを取得する
+
+	GetAncestor() APIがWin95で使えないのでそのかわり
+
+	@author ryoji
+	@date 2007.07.01 ryoji 新規
+*/
+HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
+{
+	HWND hwndAncestor;
+	HWND hwndDesktop = ::GetDesktopWindow();
+
+	if( hWnd == hwndDesktop )
+		return NULL;
+
+	switch( gaFlags )
+	{
+	case GA_PARENT:	// 親ウィンドウを返す（オーナーは返さない）
+		hwndAncestor = ( (DWORD)::GetWindowLongPtr( hWnd, GWL_STYLE ) & WS_CHILD )? ::GetParent( hWnd ): hwndDesktop;
+		break;
+
+	case GA_ROOT:	// 親子関係を遡って直近上位のトップレベルウィンドウを返す
+		hwndAncestor = hWnd;
+		while( (DWORD)::GetWindowLongPtr( hwndAncestor, GWL_STYLE ) & WS_CHILD )
+			hwndAncestor = ::GetParent( hwndAncestor );
+		break;
+
+	case GA_ROOTOWNER:	// 親子関係と所有関係を遡って所有されていないトップレベルウィンドウを返す
+		HWND hwndWk;
+		hwndWk = hWnd;
+		do{
+			hwndAncestor = hwndWk;
+			hwndWk = ::GetParent( hwndWk );
+		}while( hwndWk != NULL );
+		break;
+	}
+
+	return hwndAncestor;
+}
 
 // novice 2004/10/10 マウスサイドボタン対応
 /*!

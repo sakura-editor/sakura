@@ -622,6 +622,14 @@ BOOL CEditView::HandleCommand(
 	case F_TRACEOUT:		Command_TRACEOUT((const char*)lparam1, (int)lparam2);break;		//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
 	case F_TOPMOST:			Command_WINTOPMOST( lparam1 );break;	//常に手前に表示 Moca
 	case F_WINLIST:			Command_WINLIST( nCommandFrom );break;		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
+	case F_GROUPCLOSE:		Command_GROUPCLOSE();break;		/* グループを閉じる */		// 2007.06.20 ryoji 追加
+	case F_NEXTGROUP:		Command_NEXTGROUP();break;		/* 次のグループ */			// 2007.06.20 ryoji 追加
+	case F_PREVGROUP:		Command_PREVGROUP();break;		/* 前のグループ */			// 2007.06.20 ryoji 追加
+	case F_TAB_MOVERIGHT:	Command_TAB_MOVERIGHT();break;	/* タブを右に移動 */		// 2007.06.20 ryoji 追加
+	case F_TAB_MOVELEFT:	Command_TAB_MOVELEFT();break;	/* タブを左に移動 */		// 2007.06.20 ryoji 追加
+	case F_TAB_SEPARATE:	Command_TAB_SEPARATE();break;	/* 新規グループ */			// 2007.06.20 ryoji 追加
+	case F_TAB_JOINTNEXT:	Command_TAB_JOINTNEXT();break;	/* 次のグループに移動 */	// 2007.06.20 ryoji 追加
+	case F_TAB_JOINTPREV:	Command_TAB_JOINTPREV();break;	/* 前のグループに移動 */	// 2007.06.20 ryoji 追加
 
 	/* 支援 */
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完
@@ -6208,7 +6216,7 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 
 		bSuccess = CEditApp::OpenNewEditor2(
 			m_hInstance,
-			m_pShareData->m_hwndTray,
+			m_hWnd,
 			&inf,
 			FALSE,	/* 読み取り専用か */
 			true	//	同期モードで開く
@@ -6701,7 +6709,7 @@ open_c:;
 		/* 文字コードはこのファイルに合わせる */
 		CEditApp::OpenNewEditor(
 			m_hInstance,
-			m_pShareData->m_hwndTray,
+			m_hWnd,
 			szPath2,
 			m_pcEditDoc->m_nCharCode,
 			FALSE,	/* 読み取り専用か */
@@ -6768,6 +6776,7 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 	[共通設定]->[ウィンドウ]->[タブ表示 まとめない]の切り替えと同じです。
 	@author Kazika
 	@date 2004.07.14 Kazika 新規作成
+	@date 2007.06.20 ryoji m_pShareData->m_TabWndWndplの廃止，グループIDリセット
 */
 void CEditView::Command_BIND_WINDOW( void )
 {
@@ -6776,10 +6785,6 @@ void CEditView::Command_BIND_WINDOW( void )
 	{
 		//タブウィンドウの設定を変更
 		m_pShareData->m_Common.m_bDispTabWndMultiWin = !m_pShareData->m_Common.m_bDispTabWndMultiWin;
-
-		// 2006.02.07 ryoji ウインドウ情報を更新する
-		m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-		::GetWindowPlacement( m_pcEditDoc->m_pcEditWnd->m_hWnd, &(m_pShareData->m_TabWndWndpl) );
 
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 		if( !m_pShareData->m_Common.m_bDispTabWndMultiWin )
@@ -6791,6 +6796,7 @@ void CEditView::Command_BIND_WINDOW( void )
 
 		//Start 2004.08.27 Kazika 変更
 		//タブウィンドウの設定を変更をブロードキャストする
+		CShareData::getInstance()->ResetGroupId();
 		CShareData::getInstance()->PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((m_pShareData->m_Common.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
@@ -6809,24 +6815,15 @@ void CEditView::Command_BIND_WINDOW( void )
 	@date 2004.03.19 crayonzen カレントウィンドウを最後に配置．
 		ウィンドウが多い場合に2周目以降は右にずらして配置．
 	@date 2004.03.20 genta Z-Orderの上から順に並べていくように．(SetWindowPosを利用)
+	@date 2007.06.20 ryoji タブモードは解除せずグループ単位で並べる
 */
 void CEditView::Command_CASCADE( void )
 {
 	int i;
 
-	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	//Start 2004.07.15 Kazika タブウィンドウ時はタブモードを解除して実行
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
-	{
-		//タブウィンドウをまとめない設定に変更
-		m_pShareData->m_Common.m_bDispTabWndMultiWin = TRUE;
-	}
-	//End 2004.07.15 Kazika
-
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		struct WNDARR {
@@ -6846,8 +6843,9 @@ void CEditView::Command_CASCADE( void )
 
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
-				if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) )	// 2006.02.06 ryoji 可視化だけしておく
-					::ShowWindow( pEditNodeArr[i].m_hWnd, SW_SHOWNA );
+				continue;
+			}
+			if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) ){	//	不可視ウィンドウは無視。
 				continue;
 			}
 			//	Mar. 20, 2004 genta
@@ -6964,19 +6962,9 @@ void CEditView::Command_TILE_H( void )
 {
 	int i;
 
-	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	//Start 2004.07.15 Kazika タブウィンドウ時はタブモードを解除して実行
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
-	{
-		//タブウィンドウをまとめない設定に変更
-		m_pShareData->m_Common.m_bDispTabWndMultiWin = TRUE;
-	}
-	//End 2004.07.15 Kazika
-
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -6987,8 +6975,9 @@ void CEditView::Command_TILE_H( void )
 		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
-				if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) )	// 2006.02.06 ryoji 可視化だけしておく
-					::ShowWindow( pEditNodeArr[i].m_hWnd, SW_SHOWNA );
+				continue;
+			}
+			if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) ){	//	不可視ウィンドウは無視。
 				continue;
 			}
 			//	From Here Jul. 28, 2002 genta
@@ -7029,19 +7018,9 @@ void CEditView::Command_TILE_V( void )
 {
 	int i;
 
-	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	//Start 2004.07.15 Kazika タブウィンドウ時はタブモードを解除して実行
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )// return;
-	{
-		//タブウィンドウをまとめない設定に変更
-		m_pShareData->m_Common.m_bDispTabWndMultiWin = TRUE;
-	}
-	//End 2004.07.15 Kazika
-
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/ );
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -7052,8 +7031,9 @@ void CEditView::Command_TILE_V( void )
 		::GetMonitorWorkRect( m_hWnd, &rcDesktop );
 		for( i = 0; i < nRowNum; ++i ){
 			if( ::IsIconic( pEditNodeArr[i].m_hWnd ) ){	//	最小化しているウィンドウは無視。
-				if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) )	// 2006.02.06 ryoji 可視化だけしておく
-					::ShowWindow( pEditNodeArr[i].m_hWnd, SW_SHOWNA );
+				continue;
+			}
+			if( !::IsWindowVisible( pEditNodeArr[i].m_hWnd ) ){	//	不可視ウィンドウは無視。
 				continue;
 			}
 			//	From Here Jul. 28, 2002 genta
@@ -7153,18 +7133,8 @@ void CEditView::Command_MINIMIZE_ALL( void )
 	for( i = 0; i < j; ++i ){
 		if( CShareData::IsEditWnd( phWndArr[i] ) )
 		{
-			if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-			 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )	//@@@ 2003.06.13 MIK
-			{
-				if( ::IsWindowVisible( phWndArr[i] ) )
-					::ShowWindow( phWndArr[i], SW_MINIMIZE );
-				else
-					::ShowWindow( phWndArr[i], SW_HIDE );
-			}
-			else
-			{
+			if( ::IsWindowVisible( phWndArr[i] ) )
 				::ShowWindow( phWndArr[i], SW_MINIMIZE );
-			}
 		}
 	}
 	delete [] phWndArr;
@@ -8360,7 +8330,7 @@ void CEditView::Command_PROPERTY_FILE( void )
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
 void CEditView::Command_EXITALLEDITORS( void )
 {
-	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE );
+	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, 0 );
 	return;
 }
 
@@ -8374,10 +8344,21 @@ void CEditView::Command_EXITALL( void )
 
 
 
+/* グループを閉じる */	// 2007.06.20 ryoji 追加
+void CEditView::Command_GROUPCLOSE( void )
+{
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+		int nGroup = CShareData::getInstance()->GetGroupId( ::GetParent(m_hwndParent) );
+		CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, nGroup );
+	}
+	return;
+}
+
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 void CEditView::Command_FILECLOSEALL( void )
 {
-	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), FALSE );	// 2006.12.25, 2007.02.13 ryoji 引数追加
+	int nGroup = CShareData::getInstance()->GetGroupId( ::GetParent(m_hwndParent) );
+	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	return;
 }
 
@@ -8398,7 +8379,7 @@ void CEditView::Command_WIN_OUTPUT( void )
 	if( NULL == m_pShareData->m_hwndDebug
 		|| !CShareData::IsEditWnd( m_pShareData->m_hwndDebug )
 	){
-		CEditApp::OpenNewEditor( NULL, NULL, "-DEBUGMODE", CODE_SJIS, FALSE, true );
+		CEditApp::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, FALSE, true );
 #if 0
 		//	Jun. 25, 2001 genta OpenNewEditorのsync機能を利用するように変更
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
@@ -8783,6 +8764,7 @@ void CEditView::Command_SHOWFUNCKEY( void )
 	@author MIK
 	@date 2003.06.10 新規作成
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutTabBar(), CEditWnd::EndLayoutBars() で行うように変更
+	@date 2007.06.20 ryoji グループIDリセット
  */
 void CEditView::Command_SHOWTAB( void )
 {
@@ -8800,15 +8782,8 @@ void CEditView::Command_SHOWTAB( void )
 		);
 	}
 
-// pCEditWnd->EndLayoutBars()の中でWM_SIZEが送られるのでウインドウ情報更新の処理はここでは不要
-	//if( m_pShareData->m_Common.m_bDispTabWnd )
-	//{
-	//	// ウインドウ情報を更新する
-	//	m_pShareData->m_TabWndWndpl.length = sizeof( m_pShareData->m_TabWndWndpl );
-	//	::GetWindowPlacement( m_pcEditDoc->m_pcEditWnd->m_hWnd, &(m_pShareData->m_TabWndWndpl) );
-	//}
-
 	//全ウインドウに変更を通知する。
+	CShareData::getInstance()->ResetGroupId();
 	CShareData::getInstance()->PostMessageToAllEditors( MYWM_BAR_CHANGE_NOTIFY, (WPARAM)MYBCN_TAB, (LPARAM)pCEditWnd->m_hWnd, pCEditWnd->m_hWnd );
 }
 //@@@ To Here 2003.06.10 MIK
@@ -9507,5 +9482,67 @@ void CEditView::Command_JUMPHIST_NEXT( void )
 }
 //	To HERE Sep. 8, 2000 genta
 
+/* 次のグループ */			// 2007.06.20 ryoji
+void CEditView::Command_NEXTGROUP( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->NextGroup();
+}
+
+/* 前のグループ */			// 2007.06.20 ryoji
+void CEditView::Command_PREVGROUP( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->PrevGroup();
+}
+
+/* タブを右に移動 */		// 2007.06.20 ryoji
+void CEditView::Command_TAB_MOVERIGHT( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->MoveRight();
+}
+
+/* タブを左に移動 */		// 2007.06.20 ryoji
+void CEditView::Command_TAB_MOVELEFT( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->MoveLeft();
+}
+
+/* 新規グループ */			// 2007.06.20 ryoji
+void CEditView::Command_TAB_SEPARATE( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->Separate();
+}
+
+/* 次のグループに移動 */	// 2007.06.20 ryoji
+void CEditView::Command_TAB_JOINTNEXT( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->JoinNext();
+}
+
+/* 前のグループに移動 */	// 2007.06.20 ryoji
+void CEditView::Command_TAB_JOINTPREV( void )
+{
+	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	if( pcTabWnd->m_hWnd == NULL )
+		return;
+	pcTabWnd->JoinPrev();
+}
 
 /*[EOF]*/
