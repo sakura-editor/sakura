@@ -157,6 +157,7 @@ BOOL CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 		m_nStartIdx[i] = m_nStartIdx[i + 1];	//	2004.07.29 Moca 可変長記憶
 		m_IsSorted[i] = m_IsSorted[i+1];	//MIK 2000.12.01 binary search
 	}
+	m_nStartIdx[m_nKeyWordSetNum - 1] = m_nStartIdx[m_nKeyWordSetNum];	// 2007.07.14 ryoji これが無いと末尾＝最終セットの先頭になってしまう
 	m_nKeyWordSetNum--;
 	if( m_nKeyWordSetNum <= m_nCurrentKeyWordSetIdx ){
 		m_nCurrentKeyWordSetIdx = m_nKeyWordSetNum - 1;
