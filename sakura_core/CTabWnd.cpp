@@ -980,12 +980,16 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if( ::PtInRect( &rcBtn, pt ) )
 			{
 				int nId;
-				if( m_pShareData->m_Common.m_bDispTabWnd &&
-					!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
-					!m_pShareData->m_Common.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加
-					)
+				if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 				{
-					nId = F_WINCLOSE;	// 閉じる（タイトルバーの閉じるボタンは編集の全終了）
+					if( !m_pShareData->m_Common.m_bTab_CloseOneWin )
+					{
+						nId = F_WINCLOSE;	// 閉じる（タイトルバーの閉じるボタンは編集の全終了）
+					}
+					else
+					{
+						nId = F_GROUPCLOSE;	// グループを閉じる
+					}
 				}
 				else
 				{
@@ -1187,12 +1191,17 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		if( m_bCloseBtnHilighted )	// ボタンに入ってきた?
 		{
 			pszTip = m_szTextTip1;
-			if( m_pShareData->m_Common.m_bDispTabWnd &&
-				!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
-				!m_pShareData->m_Common.m_bTab_CloseOneWin
-				)
+			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 			{
-				_tcscpy( m_szTextTip1, _T("タブを閉じる") );
+				if( !m_pShareData->m_Common.m_bTab_CloseOneWin )
+				{
+					_tcscpy( m_szTextTip1, _T("タブを閉じる") );
+				}
+				else
+				{
+					::LoadString( m_hInstance, F_GROUPCLOSE, m_szTextTip1, sizeof(m_szTextTip1)/sizeof(TCHAR) );
+					m_szTextTip1[sizeof(m_szTextTip1)/sizeof(TCHAR) - 1] = _T('\0');
+				}
 			}
 			else
 			{
