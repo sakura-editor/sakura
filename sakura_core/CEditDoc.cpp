@@ -3217,15 +3217,22 @@ int CEditDoc::GetActivePane( void )
 
 
 
-/* 非アクティブなペインをRedrawする */
+/** 非アクティブなペインをRedrawする
+
+	スクロールバーの状態更新はパラメータでフラグ制御 or 別関数にしたほうがいい？
+	@date 2007.07.22 ryoji スクロールバーの状態更新を追加
+*/
 void CEditDoc::RedrawInactivePane(void)
 {
 	if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+		m_cEditViewArr[m_nActivePaneIndex^1].AdjustScrollBars();
 		m_cEditViewArr[m_nActivePaneIndex^1].Redraw();
 	}
 	if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+		m_cEditViewArr[m_nActivePaneIndex^2].AdjustScrollBars();
 		m_cEditViewArr[m_nActivePaneIndex^2].Redraw();
 		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			m_cEditViewArr[(m_nActivePaneIndex^1)^2].AdjustScrollBars();
 			m_cEditViewArr[(m_nActivePaneIndex^1)^2].Redraw();
 		}
 	}

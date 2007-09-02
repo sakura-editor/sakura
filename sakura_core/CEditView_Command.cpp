@@ -2745,7 +2745,7 @@ void CEditView::Command_PASTEBOX( void )
 	const char *lptstr = cmemClip.GetPtr( &nstrlen );
 
 	Command_PASTEBOX(lptstr, nstrlen);
-
+	AdjustScrollBars(); // 2007.07.22 ryoji
 	Redraw();			// 2002.01.25 hor
 	return;
 }
@@ -7781,6 +7781,7 @@ void CEditView::Command_REPLACE_ALL()
 			{
 				Command_PASTEBOX(szREPLACEKEY, nREPLACEKEY);
 				// 再描画を行わないとどんな結果が起きているのか分からずみっともないので・・・。
+				AdjustScrollBars(); // 2007.07.22 ryoji
 				Redraw();
 			}
 		}

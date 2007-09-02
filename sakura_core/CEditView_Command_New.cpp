@@ -806,6 +806,7 @@ void CEditView::Command_UNDO( void )
 			}
 		}
 		m_bDrawSWITCH = TRUE;	//	hor
+		AdjustScrollBars(); // 2007.07.22 ryoji
 
 		/* Undo後の変更フラグ */
 		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
@@ -890,6 +891,7 @@ void CEditView::Command_REDO( void )
 
 	/* 現在のRedo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = m_pcEditDoc->m_cOpeBuf.DoRedo( &bIsModified ) ) ){
+		m_bDrawSWITCH = FALSE;	// 2007.07.22 ryoji
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		for( i = 0; i < nOpeBlkNum; ++i ){
 			pcOpe = pcOpeBlk->GetOpe( i );
@@ -997,6 +999,9 @@ void CEditView::Command_REDO( void )
 				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE );
 			}
 		}
+		m_bDrawSWITCH = TRUE; // 2007.07.22 ryoji
+		AdjustScrollBars(); // 2007.07.22 ryoji
+
 		/* Redo後の変更フラグ */
 		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
