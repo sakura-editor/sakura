@@ -3311,15 +3311,12 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 								break;
 						}
 					}
-					if( i != j )
-					{
-						/* 次のウィンドウをアクティブにする */
-						hwndWork = pEditNodeArr[j].m_hWnd;
-						/* アクティブにする */
-						ActivateFrameWindow( hwndWork );
-						/* 最後のペインをアクティブにする */
-						::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
-					}
+					/* 前のウィンドウをアクティブにする */
+					hwndWork = pEditNodeArr[j].m_hWnd;
+					/* アクティブにする */
+					ActivateFrameWindow( hwndWork );
+					/* 最後のペインをアクティブにする */
+					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
 				}
 				delete [] pEditNodeArr;
 			}
@@ -3359,15 +3356,12 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 								break;
 						}
 					}
-					if( i != j )
-					{
-						/* 次のウィンドウをアクティブにする */
-						hwndWork = pEditNodeArr[j].m_hWnd;
-						/* アクティブにする */
-						ActivateFrameWindow( hwndWork );
-						/* 最初のペインをアクティブにする */
-						::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
-					}
+					/* 次のウィンドウをアクティブにする */
+					hwndWork = pEditNodeArr[j].m_hWnd;
+					/* アクティブにする */
+					ActivateFrameWindow( hwndWork );
+					/* 最初のペインをアクティブにする */
+					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
 				}
 				delete [] pEditNodeArr;
 			}
