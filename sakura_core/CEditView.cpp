@@ -14,7 +14,7 @@
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, じゅうじ
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -2765,26 +2765,59 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 
 	m_nViewLeftCol -= nScrollColNum;
 
+	//	From Here 2007.07.28 じゅうじ : 表示行数が3行以下の場合の動作改善
 	/* 垂直スクロール量（行数）の算出 */
-	if( nWk_CaretPosY < m_nViewTopLine + ( nCaretMarginY ) ){
-		if( nWk_CaretPosY < ( nCaretMarginY ) ){
+										// 画面が３行以下
+	if( m_nViewRowNum <= 3 ){
+							// 移動先は、画面のスクロールラインより上か？（up キー）
+		if( nWk_CaretPosY - m_nViewTopLine < nCaretMarginY ){
+			if( nWk_CaretPosY < nCaretMarginY ){	//１行目に移動
+				nScrollRowNum = m_nViewTopLine;
+			}else
+			if( m_nViewRowNum <= 1 ){	// 画面が１行
+				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY;
+			}else
+#if !(0)	// COMMENTにすると、上下の空きを死守しない為、縦移動はgoodだが、横移動の場合上下にぶれる
+			if( m_nViewRowNum <= 2 ){	// 画面が２行
+				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY;
+			}else
+#endif
+			{						// 画面が３行
+				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY + 1;
+			}
+		}else
+							// 移動先は、画面の最大行数－２より下か？（down キー）
+		if( nWk_CaretPosY - m_nViewTopLine >= (m_nViewRowNum - nCaretMarginY - 2) ){
+			int ii = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+			if( ii - nWk_CaretPosY < nCaretMarginY + 1 &&
+				ii - m_nViewTopLine < m_nViewRowNum ) {
+			} else
+			if( m_nViewRowNum <= 2 ){	// 画面が２行、１行
+				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY;
+			}else{						// 画面が３行
+				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY + 1;
+			}
+		}
+	}else							// 移動先は、画面のスクロールラインより上か？（up キー）
+	if( nWk_CaretPosY - m_nViewTopLine < nCaretMarginY ){
+		if( nWk_CaretPosY < nCaretMarginY ){	//１行目に移動
 			nScrollRowNum = m_nViewTopLine;
 		}else{
-			nScrollRowNum = m_nViewTopLine + ( nCaretMarginY ) - nWk_CaretPosY;
+			nScrollRowNum = -(nWk_CaretPosY - m_nViewTopLine) + nCaretMarginY;
 		}
-	}else
-	if( nWk_CaretPosY >= m_nViewTopLine + m_nViewRowNum - ( nCaretMarginY + 2 ) ){
-		if( nWk_CaretPosY > m_pcEditDoc->m_cLayoutMgr.GetLineCount() - ( nCaretMarginY + 2 ) ){
-			if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() + 2 > m_nViewRowNum ){
-				nScrollRowNum = m_nViewTopLine - ( m_pcEditDoc->m_cLayoutMgr.GetLineCount() + 2 - m_nViewRowNum );
-			}else{
-				nScrollRowNum = 0;
-			}
-		}else{
+	} else
+							// 移動先は、画面の最大行数－２より下か？（down キー）
+	if( nWk_CaretPosY - m_nViewTopLine >= m_nViewRowNum - nCaretMarginY - 2 ){
+		int ii = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+		if( ii - nWk_CaretPosY < nCaretMarginY + 1 &&
+			ii - m_nViewTopLine < m_nViewRowNum ) {
+		} else
+		{
 			nScrollRowNum =
-				m_nViewTopLine + m_nViewRowNum - ( nCaretMarginY ) - ( nWk_CaretPosY + 2 );
+				-(nWk_CaretPosY - m_nViewTopLine) + (m_nViewRowNum - nCaretMarginY - 2);
 		}
 	}
+	//	To Here 2007.07.28 じゅうじ
 	if( bScroll ){
 		/* スクロール */
 		if( abs( nScrollColNum ) >= m_nViewColNum ||
