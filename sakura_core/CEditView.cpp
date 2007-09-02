@@ -4591,6 +4591,14 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		::SendMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
 	}
 
+	/*	2007.07.09 maru 機能コードの判定を追加
+		ダブルクリックからのドラッグでは単語単位の範囲選択(エディタの一般的動作)になるが
+		この動作は、ダブルクリック＝単語選択を前提としたもの。
+		キー割り当ての変更により、ダブルクリック≠単語選択のときには m_bBeginWordSelect = TRUE
+		にすると、処理の内容によっては表示がおかしくなるので、ここで抜けるようにする。
+	*/
+	if(F_SELECTWORD != nFuncID) return;
+
 	/* ドラッグ選択開始 */
 	m_nMouseRollPosXOld = xPos;			/* マウス範囲選択前回位置(X座標) */
 	m_nMouseRollPosYOld = yPos;			/* マウス範囲選択前回位置(Y座標) */
