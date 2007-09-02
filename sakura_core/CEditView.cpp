@@ -8442,6 +8442,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				cmemClip.SetDataSz( "" );
 				/* 貼り付け（クリップボードから貼り付け）*/
 				Command_PASTEBOX( cmemBuf.GetPtr(), cmemBuf.GetLength() );
+				AdjustScrollBars(); // 2007.07.22 ryoji
 				Redraw();
 			}
 			if( bMove ){
@@ -8469,6 +8470,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 					/* 操作の追加 */
 					m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+					m_pcEditDoc->RedrawInactivePane();	// 他のペインの表示	// 2007.07.22 ryoji
 				}else{
 					delete m_pcOpeBlk;
 				}
