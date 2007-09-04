@@ -102,6 +102,9 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 //		return CDialog::DoModeless( hInstance, hwndParent, IDD_GREP, NULL );
 //	}
 
+//	2007.02.09 bosagami
+LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam);
+WNDPROC g_pOnFolderProc;
 
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -135,14 +138,57 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		int idx = ::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET ), CB_ADDSTRING,   0, (LPARAM)gm_pszCodeComboNameArr[i] );
 		::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET ), CB_SETITEMDATA, idx, gm_nCodeComboValueArr[i] );
 	}
+	//	2007.02.09 bosagami
+	HWND hFolder = ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER );
+	DragAcceptFiles(hFolder, true);
+	g_pOnFolderProc = (WNDPROC)GetWindowLong(hFolder, GWL_WNDPROC);
+	SetWindowLong(hFolder, GWL_WNDPROC, (DWORD)OnFolderProc);
+
 
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
+/*! @brief フォルダ指定EditBoxのコールバック関数
 
+	@date 2007.02.09 bosagami 新規作成
+	@date 2007.09.02 genta ディレクトリチェックを強化
+*/
+LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+{
+	if(msg == WM_DROPFILES) 
+	do {
+		//	From Here 2007.09.02 genta 
+		char sPath[MAX_PATH + 1];
+		char szWork[MAX_PATH + 1];
+		if( DragQueryFile((HDROP)wparam, 0, NULL, 0 ) > sizeof(sPath) - 1 ){
+			// skip if the length of the path exceeds buffer capacity
+			break;
+		}
+		DragQueryFile((HDROP)wparam, 0, sPath, sizeof(sPath) - 1);
 
+		/* ショートカット(.lnk)の解決 */
+		//	ショートカットの先は別のディレクトリかもしれないので
+		//	ファイル名を切り捨てる前に変換する
+		if( TRUE == ResolveShortcutLink( NULL, sPath, szWork ) ){
+			strcpy( sPath, szWork );
+		}
+		
+		//	ファイルがドロップされた場合はフォルダを切り出す
+		//	フォルダの場合は最後が失われるのでsplitしてはいけない．
+		if( IsFileExists( sPath, true )){	//	第2引数がtrueだとディレクトリは対象外
+			SplitPath_FolderAndFile( sPath, szWork, NULL );
+			strcpy( sPath, szWork );
+		}
+		/* ロングファイル名を取得する */
+		if( TRUE == ::GetLongFileName( sPath, szWork ) ){
+			strcpy( sPath, szWork );
+		}
+		SetWindowText(hwnd, szWork);
+	} while(0);
+	return  CallWindowProc((WNDPROC)g_pOnFolderProc,hwnd,msg,wparam,lparam);
+}
 
 BOOL CDlgGrep::OnBnClicked( int wID )
 {
