@@ -12,6 +12,7 @@
 	Copyright (C) 2003, MIK, ryoji, Ç©ÇÎÇ∆
 	Copyright (C) 2004, genta, Moca, MIK
 	Copyright (C) 2005, genta, Moca, MIK, D.S.Koba
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1625,7 +1626,7 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 //			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
 //		}
 		break;
-	case EOL_LF:	//	ç∂å¸Ç´ñÓàÛ
+	case EOL_CR:	//	ç∂å¸Ç´ñÓàÛ	// 2007.08.17 ryoji EOL_LF -> EOL_CR
 		sx = nPosX;
 		sy = nPosY + ( nHeight / 2 );
 		::MoveToEx( hdc, sx + nWidth, sy, NULL );	//	âEÇ÷
@@ -1657,7 +1658,7 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 //			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
 //		}
 		break;
-	case EOL_CR:	//	â∫å¸Ç´ñÓàÛ
+	case EOL_LF:	//	â∫å¸Ç´ñÓàÛ	// 2007.08.17 ryoji EOL_CR -> EOL_LF
 		sx = nPosX + ( nWidth / 2 );
 		sy = nPosY + ( nHeight * 3 / 4 );
 		::MoveToEx( hdc, sx, nPosY + nHeight / 4 + 1, NULL );	//	è„Ç÷
