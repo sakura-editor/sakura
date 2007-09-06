@@ -9,6 +9,7 @@
 	Copyright (C) 2000, jepro
 	Copyright (C) 2001, GAE, jepro
 	Copyright (C) 2003, Moca, genta, wmlhq
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -76,15 +77,9 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	do {
 		//	From Here 2001.7.1 GAE
 		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
-		char	szPath[_MAX_PATH], szExeDrive[_MAX_DRIVE], szExeDir[_MAX_DIR];
-
-		// sakura.exe のパスを取得
-		::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
-
-		// (sakuraディレクトリ) my_icons.bmp の文字列を作成
-		_splitpath( szPath, szExeDrive, szExeDir, NULL, NULL );
-		//	@@TEST@@
-		wsprintf( szPath, "%s%s" FN_TOOL_BMP, szExeDrive, szExeDir );	//Jul.04, 2001 JEPRO toolbar.bmp→my_icons.bmp に名前変更
+		// 2007.05.19 ryoji 設定ファイル優先に変更
+		TCHAR szPath[_MAX_PATH];
+		GetInidirOrExedir( szPath, FN_TOOL_BMP );
 		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 

@@ -35,6 +35,7 @@ CCommandLine* CCommandLine::_instance = NULL;
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002
 #define CMDLINEOPT_NOWIN		1003
+#define CMDLINEOPT_WRITEQUIT	1004
 #define CMDLINEOPT_GREPMODE		1100
 #define CMDLINEOPT_GREPDLG		1101
 #define CMDLINEOPT_DEBUGMODE	1999
@@ -87,6 +88,7 @@ int CCommandLine::CheckCommandLine(
 	static const _CmdLineOpt _COptWoA[] = {
 		{"R", 1,			CMDLINEOPT_R},
 		{"NOWIN", 5,		CMDLINEOPT_NOWIN},
+		{"WQ", 2,			CMDLINEOPT_WRITEQUIT},	// 2007.05.19 ryoji sakuext用に追加
 		{"GREPMODE", 8,		CMDLINEOPT_GREPMODE},
 		{"GREPDLG", 7,		CMDLINEOPT_GREPDLG},
 		{"DEBUGMODE", 9,	CMDLINEOPT_DEBUGMODE},
@@ -316,6 +318,10 @@ void CCommandLine::ParseCommandLine( void )
 			case CMDLINEOPT_NOWIN:	//	NOWIN
 				m_bNoWindow = true;
 				break;
+			case CMDLINEOPT_WRITEQUIT:	//	WRITEQUIT	// 2007.05.19 ryoji sakuext用に追加
+				m_bWriteQuit = true;
+				m_bNoWindow = true;	// 2007.09.05 ryoji -WQを指定されたら-NOWINも指定されたとして扱う
+				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
 				break;
@@ -415,6 +421,7 @@ CCommandLine::CCommandLine(LPSTR cmd) :
 	m_bGrepDlg				= false;
 	m_bDebugMode			= false;
 	m_bNoWindow				= false;
+	m_bWriteQuit			= false;
 	m_gi.bGrepSubFolder		= false;
 	m_gi.bGrepNoIgnoreCase	= false;
 	m_gi.bGrepRegularExp	= false;

@@ -492,7 +492,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	psh.ppsp = (LPCPROPSHEETPAGE)psp;
 	psh.pfnCallback = NULL;
 
-	nRet = ::PropertySheet( &psh );
+	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 	if( -1 == nRet ){
 		char*	pszMsgBuf;
 		::FormatMessage(

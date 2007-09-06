@@ -11,6 +11,7 @@
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2005, genta, Moca
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -515,22 +516,30 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
+	char			szInitDir[_MAX_PATH + 1];
 	FILE*			pFile;
 	char			szLine[1024];
 	int				i;
 	bool			bAddError = false;
 
+	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
 	strcpy( szPath, "" );
+	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
 		"*.kwd",
-		szPath
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return;
 	}
+	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+
 	pFile = fopen( szPath, "r" );
 	if( NULL == pFile ){
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -579,23 +588,31 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //	);
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
+	char			szInitDir[_MAX_PATH + 1];
 	FILE*			pFile;
 //	char			szLine[1024];
 	int				i;
 	int				nKeyWordNum;
 
+	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
 	strcpy( szPath, "" );
+	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
 		"*.kwd",
-		szPath
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;
 	}
 //	MYTRACE( "%s\n", szPath );
+	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+
 	pFile = fopen( szPath, "w" );
 	if( NULL == pFile ){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,

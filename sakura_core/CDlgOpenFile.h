@@ -104,7 +104,7 @@ protected:
 
 	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
 	static COsVersionInfo m_cOsVer;
-	BOOL IsOfnV5( void ) { return ( m_cOsVer.GetVersion() && (m_cOsVer.IsWin2000orLater() || m_cOsVer.IsWinMe()) ); }
+	BOOL IsOfnV5( void ) { return ( m_cOsVer.GetVersion() && (m_cOsVer.IsWin2000_or_later() || m_cOsVer.IsWinMe()) ); }
 	void InitOfn( OPENFILENAMEZ& );
 
 	// 2005.11.02 ryoji 初期レイアウト設定処理

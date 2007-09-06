@@ -2406,7 +2406,8 @@ int CEditDoc::ReadRuleFile( const char* pszFilename, oneRule* pcOneRule, int nMa
 {
 	long	i;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
-	FILE*	pFile = fopen_absexe( pszFilename, "r" );
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	FILE*	pFile = _tfopen_absini( pszFilename, "r" );
 	if( NULL == pFile ){
 		return 0;
 	}
@@ -4043,6 +4044,7 @@ void CEditDoc::SetImeMode( int mode )
 	@li V  エディタのバージョン文字列
 	@li h  Grep検索キーの先頭32byte
 	@li S  サクラエディタのフルパス
+	@li I  iniファイルのフルパス
 	@li M  現在実行しているマクロファイルパス
 
 	@date 2003.04.03 genta strncpy_ex導入によるfor文の削減
@@ -4300,6 +4302,16 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				char	szPath[_MAX_PATH + 1];
 
 				::GetModuleFileName( ::GetModuleHandle( NULL ), szPath, sizeof(szPath) );
+				q = strncpy_ex( q, q_max - q, szPath, strlen(szPath) );
+				++p;
+			}
+			break;
+		case 'I':	//	May. 19, 2007 ryoji
+			//	iniファイルのフルパス
+			{
+				char	szPath[_MAX_PATH + 1];
+
+				CShareData::getInstance()->GetIniFileName( szPath );
 				q = strncpy_ex( q, q_max - q, szPath, strlen(szPath) );
 				++p;
 			}

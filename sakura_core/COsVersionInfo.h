@@ -12,6 +12,7 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -102,14 +103,13 @@ public:
 	}
 #endif
 
-	/*! Luna GUI‚ªŽg‚¦‚é‚©’²‚×‚é
+	/*! Windows XPˆÈã‚©’²‚×‚é
 
-		@retval TRUE Luna is available (Windows XP or later)
-		@retval FALSE Luna is not available 
+		@retval TRUE Windows XP or later
 
 		@date 2003.09.06 genta
 	*/
-	BOOL IsLuna(){
+	BOOL IsWinXP_or_later(){
 		return ( m_cOsVersionInfo.dwMajorVersion >= 6 ||	// 2006.06.17 ryoji Ver 6.0, 7.0,...‚àŠÜ‚ß‚é
 			(m_cOsVersionInfo.dwMajorVersion >= 5 && m_cOsVersionInfo.dwMinorVersion >= 1) );
 	}
@@ -120,7 +120,7 @@ public:
 
 		@date 2005.10.26 ryoji
 	*/
-	BOOL IsWin2000orLater(){
+	BOOL IsWin2000_or_later(){
 		return ( IsWin32NT() && (5 <= m_cOsVersionInfo.dwMajorVersion) );
 	}
 
@@ -134,9 +134,21 @@ public:
 		return ( IsWin32Windows() && (4 == m_cOsVersionInfo.dwMajorVersion) && ( 90 == m_cOsVersionInfo.dwMinorVersion ) );
 	}
 
+	/*! Windows VistaˆÈã‚©’²‚×‚é
+
+		@retval TRUE Windows Vista or later
+
+		@date 2007.05.19 ryoji
+	*/
+	BOOL IsWinVista_or_later(){
+		return ( 6 <= m_cOsVersionInfo.dwMajorVersion );
+	}
+
 protected:
 	BOOL m_bSuccess;
 	OSVERSIONINFO m_cOsVersionInfo;
 };
 
 #endif
+
+/*[EOF]*/

@@ -8,6 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka CProcessより分離, YAZAKI
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,6 +24,7 @@
 #include "CMemory.h"
 #include "etc_uty.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
+#include <io.h>
 #include <tchar.h>
 #include "CRunningTimer.h"
 
@@ -83,9 +85,16 @@ bool CControlProcess::Initialize()
 	}
 
 	/* 共有データのロード */
-	if( FALSE == m_cShareData.LoadShareData() ){
+	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
+	TCHAR szIniFile[_MAX_PATH];
+	m_cShareData.LoadShareData();
+	m_cShareData.GetIniFileName( szIniFile );	// 出力iniファイル名
+	if( _taccess( szIniFile, 0 ) == -1 || CCommandLine::Instance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
 		m_cShareData.SaveShareData();
+		if( CCommandLine::Instance()->IsWriteQuit() ){
+			return false;
+		}
 	}
 
 	MY_TRACETIME( cRunningTimer, "Before new CEditApp" );

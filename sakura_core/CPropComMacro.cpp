@@ -9,6 +9,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, genta, novice
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -458,10 +459,11 @@ void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( szDir ) ){
 		char folder[_MAX_PATH];
 		strcpy( folder, szDir );
-		GetExecutableDir( szDir, folder );
+		GetInidirOrExedir( szDir, folder );
 	}
 
 	if( SelectDir( hwndDlg, "Macroディレクトリの選択", szDir, szDir ) ){
@@ -509,10 +511,11 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_MACRODIR, path, _MAX_PATH );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( path ) ){
 		char folder[_MAX_PATH];
 		strcpy( folder, path );
-		GetExecutableDir( path, folder );
+		GetInidirOrExedir( path, folder );
 	}
 	strcat( path, "*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
@@ -592,3 +595,6 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, false );
 	}
 }
+
+
+/*[EOF]*/

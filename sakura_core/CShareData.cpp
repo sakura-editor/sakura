@@ -219,9 +219,15 @@ struct ARRHEAD {
 	Version 76:
 	タブのグループ化 2007.06.20 ryoji
 
+	Version 77:
+	iniフォルダ設定 2007.05.31 ryoji
+
+	Version 78:
+	エディタ－トレイ間でのUI特権分離確認のためのバージョン合わせ 2007.06.07 ryoji
+
 */
 
-const unsigned int uShareDataVersion = 76;
+const unsigned int uShareDataVersion = 78;
 
 /*
 ||	Singleton風
@@ -293,18 +299,6 @@ bool CShareData::Init( void )
 
 	int		i;
 	int		j;
-	char	szExeFolder[_MAX_PATH + 1];
-	char	szPath[_MAX_PATH + 1];
-
-	/* exeのあるフォルダ */
-	::GetModuleFileName(
-		::GetModuleHandle( NULL ),
-		szPath, sizeof( szPath )
-	);
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
-	strcat( szExeFolder, "\\" );
 
 	/* ファイルマッピングオブジェクト */
 	m_hFileMap = ::CreateFileMapping(
@@ -334,6 +328,13 @@ bool CShareData::Init( void )
 			0,
 			0
 		);
+
+		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
+		char	szIniFolder[_MAX_PATH];
+		m_pShareData->m_IniFolder.m_bInit = false;
+		GetInidir( szIniFolder );
+		AddLastChar( szIniFolder, _MAX_PATH, '\\' );
+
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 //		m_pShareData->m_CKeyMacroMgr.Clear();			/* キーワードマクロのバッファ */
 		strcpy(m_pShareData->m_szKeyMacroFileName, "");	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
@@ -385,8 +386,8 @@ bool CShareData::Init( void )
 			strcpy( m_pShareData->m_szGREPFOLDERArr[i], "" );
 			//m_pShareData->m_bGREPFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
-		strcpy( m_pShareData->m_szMACROFOLDER, szExeFolder );	/* マクロ用フォルダ */
-		strcpy( m_pShareData->m_szIMPORTFOLDER, szExeFolder );	/* 設定インポート用フォルダ */
+		strcpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
+		strcpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
 		for( i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
 			strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
@@ -404,7 +405,9 @@ bool CShareData::Init( void )
 		strcpy( m_pShareData->m_szTransformFileNameTo[4],   "共有デスクトップ\\" );
 		strcpy( m_pShareData->m_szTransformFileNameFrom[5], "%Common Documents%\\" );
 		strcpy( m_pShareData->m_szTransformFileNameTo[5], "共有ドキュメント\\" );
-		m_pShareData->m_nTransformFileNameArrNum = 6;
+		strcpy( m_pShareData->m_szTransformFileNameFrom[6], "%AppData%\\" );	// 2007.05.19 ryoji 追加
+		strcpy( m_pShareData->m_szTransformFileNameTo[6], "アプリデータ\\" );	// 2007.05.19 ryoji 追加
+		m_pShareData->m_nTransformFileNameArrNum = 7;
 		
 		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
 			必要になるまで遅らせるために、CPrintに、CShareDataを操作する権限を与える。
@@ -1803,33 +1806,28 @@ int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
 	}
 	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
-		int nFlen = strlen( m_pShareData->m_szMACROFOLDER );
 		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, sizeof(m_pShareData->m_szMACROFOLDER), '\\' );
-		int nAllLen = nLen + nFlen + ( 0 == nFolderSep ? 0 : 1 );
+		int nAllLen;
+		char *pszDir;
 
 		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
+		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
-			char szExeDir[_MAX_PATH];
-			int nExeLen;
-			GetExecutableDir( szExeDir, NULL );
-			nExeLen = strlen( szExeDir );
-			nAllLen += nExeLen + 1;
-			if( pszPath == NULL || nBufLen <= nAllLen ){
-				return -nAllLen;
-			}
-			strcpy( pszPath, szExeDir );
-			ptr = pszPath + nExeLen;
-			*ptr++ = '\\';
+			char szDir[_MAX_PATH + sizeof( m_pShareData->m_szMACROFOLDER )];
+			GetInidirOrExedir( szDir, m_pShareData->m_szMACROFOLDER );
+			pszDir = szDir;
 		}else{
-			ptr = pszPath;
+			pszDir = m_pShareData->m_szMACROFOLDER;
 		}
 
+		int nDirLen = strlen( pszDir );
+		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
 		if( pszPath == NULL || nBufLen <= nAllLen ){
 			return -nAllLen;
 		}
 
-		strcpy( ptr, m_pShareData->m_szMACROFOLDER );
-		ptr += nFlen;
+		strcpy( pszPath, pszDir );
+		ptr = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
 			*ptr++ = '\\';
 		}
@@ -2347,8 +2345,13 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 			// %SAKURA%
 			if( 0 == my_tcsnicmp( _T("SAKURA%"), ps, 7 ) ){
 				// exeのあるフォルダ
-				GetExecutableDir( szPath );
+				GetExedir( szPath );
 				nMetaLen = 6;
+			// %SAKURADATA%	// 2007.06.06 ryoji
+			}else if( 0 == my_tcsnicmp( _T("SAKURADATA%"), ps, 11 ) ){
+				// iniのあるフォルダ
+				GetInidir( szPath );
+				nMetaLen = 10;
 			// メタ文字列っぽい
 			}else if( NULL != (pStr = _tcschr( (LPTSTR)ps, '%' ) )){
 				nMetaLen = pStr - ps;

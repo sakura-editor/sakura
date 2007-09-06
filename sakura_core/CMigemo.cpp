@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2004, isearch
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -13,6 +14,7 @@
 
 
 #include "stdafx.h"
+#include <io.h>
 #include "CMigemo.h"
 #include "Csharedata.h"
 #include "etc_uty.h"
@@ -70,12 +72,12 @@ char* CMigemo::GetDllName(char *)
 	static char szDllName[_MAX_PATH];
 	szDll = CShareData::getInstance()->GetShareData()->m_Common.m_szMigemoDll;
 
-		
-	if(strlen(szDll)==0)
-		return "migemo.dll";
-	else{
+	if(strlen(szDll)==0){
+		GetInidir( szDllName, _T("migemo.dll") );
+		return ( _taccess( szDllName, 0 ) != -1 )? szDllName: _T("migemo.dll");
+	}else{
 		if(_IS_REL_PATH(szDll)){
-			GetExecutableDir(szDllName , szDll);
+			GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 			szDll = szDllName;
 		}
 		return szDll;
@@ -177,14 +179,14 @@ int CMigemo::migemo_load_all()
 		char *ppath;
 		
 		if (strlen(szDict) == 0){
-			GetExecutableDir(path,"dict");
+			GetInidirOrExedir(path,_T("dict"));	// 2007.05.20 ryoji 相対パスは設定ファイルからのパスを優先
 			
 			//::GetModuleFileName(NULL,path,MAX_PATH);
 			//::GetFullPathName(path,260,path2,&ppath);			
 			//strcpy(ppath, "dict\\");
 		}else{
 			if (_IS_REL_PATH(szDict)){
-				GetExecutableDir(path,szDict);
+				GetInidirOrExedir(path,szDict);	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			}else{
 				strcpy(path,szDict);
 			}
@@ -207,3 +209,6 @@ int CMigemo::migemo_load_all()
 CMigemo::~CMigemo()
 {
 }
+
+
+/*[EOF]*/

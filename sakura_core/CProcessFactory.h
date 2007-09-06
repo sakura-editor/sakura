@@ -41,6 +41,7 @@ private:
 	bool IsExistControlProcess();
 	bool StartControlProcess();
 	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
+	bool TestWriteQuit();	// 2007.09.04 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）
 };
 
 ///////////////////////////////////////////////////////////////////////

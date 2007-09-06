@@ -10,6 +10,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, genta
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -204,8 +205,9 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_szExtHelp ) ){
-						GetExecutableDir( szPath, m_Common.m_szExtHelp );
+						GetInidirOrExedir( szPath, m_Common.m_szExtHelp, TRUE );
 					}else{
 						strcpy( szPath, m_Common.m_szExtHelp );
 					}
@@ -227,8 +229,9 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_szExtHtmlHelp ) ){
-						GetExecutableDir( szPath, m_Common.m_szExtHtmlHelp );
+						GetInidirOrExedir( szPath, m_Common.m_szExtHtmlHelp, TRUE );
 					}else{
 						strcpy( szPath, m_Common.m_szExtHtmlHelp );
 					}
@@ -274,8 +277,9 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_szMigemoDll ) ){
-						GetExecutableDir( szPath, m_Common.m_szMigemoDll );
+						GetInidirOrExedir( szPath, m_Common.m_szMigemoDll, TRUE );
 					}else{
 						strcpy( szPath, m_Common.m_szMigemoDll );
 					}
@@ -294,17 +298,19 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 				return TRUE;
 			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */
 				{
-					char	szFolder[MAX_PATH];
+					char	szPath[MAX_PATH];
 					/* 検索フォルダ */
-					::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, szFolder, _MAX_PATH - 1 );
-					if( 0 == lstrlen( szFolder ) ){
-						::GetCurrentDirectory( sizeof( szFolder ), szFolder );
+					// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
+					if( _IS_REL_PATH( m_Common.m_szMigemoDict ) ){
+						GetInidirOrExedir( szPath, m_Common.m_szMigemoDict, TRUE );
+					}else{
+						strcpy( szPath, m_Common.m_szMigemoDict );
 					}
-					if( SelectDir( hwndDlg, "検索するフォルダを選んでください", szFolder, szFolder ) ){
-						strcpy( m_Common.m_szMigemoDict, szFolder );
+					if( SelectDir( hwndDlg, "検索するフォルダを選んでください", szPath, szPath ) ){
+						strcpy( m_Common.m_szMigemoDict, szPath );
 						::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_szMigemoDict );
 					}
-				}			
+				}
 				return TRUE;
 			}
 			break;	/* BN_CLICKED */

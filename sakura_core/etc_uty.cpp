@@ -294,33 +294,14 @@ TCHAR* my_strtok( TCHAR* pBuffer, int nLen, int* pnOffset, const TCHAR* pDelimit
  
     @date 2002/01/19 aroka ；nMaxLen 引数追加
 */
-char* GetHelpFilePath( char* pszHelpFile, unsigned int nMaxLen )
+LPTSTR GetHelpFilePath( LPTSTR pszHelpFile, unsigned int nMaxLen )
 {
 //	int		i;
-	unsigned long	lPathLen;
-	char	szHelpFile[_MAX_PATH + 1];
-//	int		nCharChars;
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-	/* ヘルプファイルのファイルパス */
-	lPathLen = ::GetModuleFileName(
-		::GetModuleHandle( NULL ),
-		szHelpFile, sizeof(szHelpFile)
-	);
-	if( lPathLen > nMaxLen ){
-		*pszHelpFile = '\0';
-		return pszHelpFile;
-	}
+	TCHAR	szHelpFile[_MAX_PATH];
 
-	_splitpath( szHelpFile, szDrive, szDir, NULL, NULL );
-	if( strlen(szDrive) + strlen(szDir) + strlen("sakura.chm") > nMaxLen ){
-		*pszHelpFile = '\0';
-		return pszHelpFile;
-	}
-	strcpy( szHelpFile, szDrive );
-	strcat( szHelpFile, szDir );
-	strcat( szHelpFile, "sakura.chm" );
-	strncpy( pszHelpFile, szHelpFile, nMaxLen );
+	/* ヘルプファイルのファイルパス */
+	GetExedir( szHelpFile, _T("sakura.chm") );
+	::lstrcpyn( pszHelpFile, szHelpFile, nMaxLen );
 	return pszHelpFile;
 }
 
@@ -2658,23 +2639,98 @@ bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, u
 	
 	@author genta
 	@date 2002.12.02 genta
+	@date 2007.05.20 ryoji 関数名変更（旧：GetExecutableDir）、汎用テキストマッピング化
 */
-void GetExecutableDir( char* pDir, const char* szFile )
+void GetExedir( LPTSTR pDir, LPCTSTR szFile )
 {
 	if( pDir == NULL )
 		return;
 	
-	char	szPath[_MAX_PATH];
+	TCHAR	szPath[_MAX_PATH];
 	// sakura.exe のパスを取得
 	::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}
 	else {
-		char	szDir[_MAX_PATH];
+		TCHAR	szDir[_MAX_PATH];
 		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		wsprintf( pDir, "%s\\%s", szDir, szFile );
+		_snprintf( pDir, _MAX_PATH, _T("%s\\%s"), szDir, szFile );
+		pDir[_MAX_PATH - 1] = _T('\0');
 	}
+}
+
+/*!
+	@brief INIファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
+	
+	@param pDir [out] INIファイルのあるディレクトリを返す場所．
+		予め_MAX_PATHのバッファを用意しておくこと．
+	@param szFile [in] ディレクトリ名に結合するファイル名．
+	
+	@author ryoji
+	@date 2007.05.19 新規作成（GetExedirベース）
+*/
+void GetInidir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/ )
+{
+	if( pDir == NULL )
+		return;
+	
+	TCHAR	szPath[_MAX_PATH];
+	// sakura.ini のパスを取得
+	CShareData::getInstance()->GetIniFileName( szPath );
+	if( szFile == NULL ){
+		SplitPath_FolderAndFile( szPath, pDir, NULL );
+	}
+	else {
+		TCHAR	szDir[_MAX_PATH];
+		SplitPath_FolderAndFile( szPath, szDir, NULL );
+		_snprintf( pDir, _MAX_PATH, _T("%s\\%s"), szDir, szFile );
+		pDir[_MAX_PATH - 1] = _T('\0');
+	}
+}
+
+
+/*!
+	@brief INIファイルまたはEXEファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す（INIを優先）．
+	
+	@param pDir [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
+		予め_MAX_PATHのバッファを用意しておくこと．
+	@param szFile [in] ディレクトリ名に結合するファイル名．
+	@param bRetExedirIfFileEmpty [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．
+	
+	@author ryoji
+	@date 2007.05.22 新規作成
+*/
+void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/, BOOL bRetExedirIfFileEmpty/*=FALSE*/ )
+{
+	TCHAR	szInidir[_MAX_PATH];
+	TCHAR	szExedir[_MAX_PATH];
+
+	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
+	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == _T('\0')) ){
+		GetExedir( szExedir, szFile );
+		::lstrcpy( pDir, szExedir );
+		return;
+	}
+
+	// INI基準のフルパスが実在すればそのパスを返す
+	GetInidir( szInidir, szFile );
+	if( _taccess(szInidir, 0) != -1 ){
+		::lstrcpy( pDir, szInidir );
+		return;
+	}
+
+	// EXE基準のフルパスが実在すればそのパスを返す
+	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
+		GetExedir( szExedir, szFile );
+		if( _taccess(szExedir, 0) != -1 ){
+			::lstrcpy( pDir, szExedir );
+			return;
+		}
+	}
+
+	// どちらにも実在しなければINI基準のフルパスを返す
+	::lstrcpy( pDir, szInidir );
 }
 
 
@@ -2692,6 +2748,7 @@ void GetExecutableDir( char* pDir, const char* szFile )
 	@return アイコンハンドル．失敗した場合はNULL．
 	
 	@date 2002.12.02 genta 新規作成
+	@data 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmall )
@@ -2699,18 +2756,18 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 	// サイズの設定
 	int size = ( bSmall ? 16 : 32 );
 
-	char szPath[_MAX_PATH];
-	
-	GetExecutableDir( szPath, szFile );
-	
+	TCHAR szPath[_MAX_PATH];
 	HICON hIcon;
+
 	// ファイルからの読み込みをまず試みる
+	GetInidirOrExedir( szPath, szFile );
+
 	hIcon = (HICON)::LoadImage( NULL, szPath, IMAGE_ICON, size, size,
 			LR_SHARED | LR_LOADFROMFILE );
 	if( hIcon != NULL ){
 		return hIcon;
 	}
-	
+
 	//	ファイルからの読み込みに失敗したらリソースから取得
 	hIcon = (HICON)::LoadImage( hInst, MAKEINTRESOURCE(nResource),
 		IMAGE_ICON, size, size, LR_SHARED );
@@ -2721,31 +2778,34 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 /*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
 	@author Moca
 	@date 2003.06.23
+	@date 2007.05.20 ryoji 関数名変更（旧：fopen_absexe）、汎用テキストマッピング化
 */
-FILE* fopen_absexe(const char* fname, const char* mode)
+FILE* _tfopen_absexe(LPCTSTR fname, LPCTSTR mode)
 {
 	if( _IS_REL_PATH( fname ) ){
-		char path[_MAX_PATH];
-		GetExecutableDir( path, fname );
-		return fopen( path, mode );
+		TCHAR path[_MAX_PATH];
+		GetExedir( path, fname );
+		return _tfopen( path, mode );
 	}
-	return fopen( fname, mode );
+	return _tfopen( fname, mode );
 	
 }
 
-/*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
-	@author Moca
-	@date 2003.06.23
+/*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
+	@author ryoji
+	@date 2007.05.19 新規作成（_tfopen_absexeベース）
 */
-HFILE _lopen_absexe(LPCSTR fname, int mode)
+FILE* _tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
-	// fnameが相対パス
 	if( _IS_REL_PATH( fname ) ){
-		char path[_MAX_PATH];
-		GetExecutableDir( path, fname );
-		return _lopen( path, mode );
+		TCHAR path[_MAX_PATH];
+		if( bOrExedir )
+			GetInidirOrExedir( path, fname );
+		else
+			GetInidir( path, fname );
+		return _tfopen( path, mode );
 	}
-	return _lopen( fname, mode );
+	return _tfopen( fname, mode );
 }
 
 
@@ -3174,5 +3234,182 @@ void MyInitCommonControls()
 		::InitCommonControls();
 	}
 }
+
+/*!	特殊フォルダのパスを取得する
+	SHGetSpecialFolderPath API（shell32.dll version 4.71以上が必要）と同等の処理をする
+
+	@author ryoji
+	@date 2007.05.19 新規
+*/
+BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
+{
+	BOOL bRet = FALSE;
+	HRESULT hres;
+	LPMALLOC pMalloc;
+	LPITEMIDLIST pidl;
+
+	hres = ::SHGetMalloc( &pMalloc );
+	if( FAILED( hres ) )
+		return FALSE;
+
+	hres = ::SHGetSpecialFolderLocation( NULL, nFolder, &pidl );
+	if( SUCCEEDED( hres ) ){
+		bRet = ::SHGetPathFromIDList( pidl, pszPath );
+		pMalloc->Free( (void*)pidl );
+	}
+
+	pMalloc->Release();
+
+	return bRet;
+}
+
+
+///////////////////////////////////////////////////////////////////////
+// From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
+
+static WNDPROC s_pOldPropSheetWndProc;	// プロパティシートの元のウィンドウプロシージャ
+
+/*!	独自拡張プロパティシートのウィンドウプロシージャ
+	@author ryoji
+	@date 2007.05.25 新規
+*/
+static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	switch( uMsg ){
+	case WM_SHOWWINDOW:
+		// 追加ボタンの位置を調整する
+		if( wParam ){
+			HWND hwndBtn;
+			RECT rcOk;
+			RECT rcTab;
+			POINT pt;
+
+			hwndBtn = ::GetDlgItem( hwnd, 0x02000 );
+			::GetWindowRect( ::GetDlgItem( hwnd, IDOK ), &rcOk );
+			::GetWindowRect( PropSheet_GetTabControl( hwnd ), &rcTab );
+			pt.x = rcTab.left;
+			pt.y = rcOk.top;
+			::ScreenToClient( hwnd, &pt );
+			::MoveWindow( hwndBtn, pt.x, pt.y, 140, rcOk.bottom - rcOk.top, FALSE );
+		}
+		break;
+
+	case WM_COMMAND:
+		// 追加ボタンが押された時はその処理を行う
+		if( HIWORD( wParam ) == BN_CLICKED && LOWORD( wParam ) == 0x02000 ){
+			HWND hwndBtn = ::GetDlgItem( hwnd, 0x2000 );
+			RECT rc;
+			POINT pt;
+
+			// メニューを表示する
+			::GetWindowRect( hwndBtn, &rc );
+			pt.x = rc.left;
+			pt.y = rc.bottom;
+			GetMonitorWorkRect( pt, &rc );	// モニタのワークエリア
+
+			HMENU hMenu = ::CreatePopupMenu();
+			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, _T("開く(&O)...") );
+			::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, _T("インポート／エクスポートの起点リセット(&R)") );
+
+			int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+										( pt.x > rc.left )? pt.x: rc.left,
+										( pt.y < rc.bottom )? pt.y: rc.bottom,
+										0, hwnd, NULL );
+			::DestroyMenu( hMenu );
+
+			// 選択されたメニューの処理
+			switch( nId ){
+			case 100:	// 設定フォルダを開く
+				TCHAR szPath[_MAX_PATH];
+				GetInidir( szPath );
+
+				// フォルダの ITEMIDLIST を取得して ShellExecuteEx() で開く
+				// Note. MSDN の ShellExecute() の解説にある方法でフォルダを開こうとした場合、
+				//       フォルダと同じ場所に <フォルダ名>.exe があるとうまく動かない。
+				//       verbが"open"やNULLではexeのほうが実行され"explore"では失敗する
+				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
+				LPSHELLFOLDER pDesktopFolder;
+				if( SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)) ){
+					LPMALLOC pMalloc;
+					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
+						LPITEMIDLIST pIDL;
+						LPWSTR pwszDisplayName;
+#ifdef _UNICODE
+						pwszDisplayName = szPath;
+#else
+						WCHAR wszPath[_MAX_PATH];
+						::MultiByteToWideChar( CP_ACP, 0, szPath, -1, wszPath, _MAX_PATH );
+						pwszDisplayName = wszPath;
+#endif
+						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pwszDisplayName, NULL, &pIDL, NULL)) ){
+							SHELLEXECUTEINFO si;
+							::ZeroMemory( &si, sizeof(SHELLEXECUTEINFO) );
+							si.cbSize = sizeof(SHELLEXECUTEINFO);
+							si.fMask = SEE_MASK_IDLIST;
+							si.lpVerb = _T("open");
+							si.lpIDList = pIDL;
+							si.nShow = SW_SHOWNORMAL;
+							::ShellExecuteEx( &si );	// フォルダを開く
+							pMalloc->Free( (void*)pIDL );
+						}
+						pMalloc->Release();
+					}
+					pDesktopFolder->Release();
+				}
+				break;
+			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
+				if( IDOK == MYMESSAGEBOX( hwnd, MB_OKCANCEL | MB_ICONINFORMATION, GSTR_APPNAME,
+						_T("各種設定のインポート／エクスポート用ファイル選択画面の\n初期表示フォルダを設定フォルダに戻します。") ) )
+				{
+					DLLSHAREDATA *pShareData = CShareData::getInstance()->GetShareData();
+					GetInidir( pShareData->m_szIMPORTFOLDER );
+				}
+				break;
+			}
+		}
+		break;
+
+	case WM_DESTROY:
+		::SetWindowLongPtr( hwnd, GWLP_WNDPROC, (LONG_PTR)s_pOldPropSheetWndProc );
+		break;
+	}
+
+	return ::CallWindowProc( (WNDPROC)s_pOldPropSheetWndProc, hwnd, uMsg, wParam, lParam );
+}
+
+/*!	独自拡張プロパティシートのコールバック関数
+	@author ryoji
+	@date 2007.05.25 新規
+*/
+static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
+{
+	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
+	if( uMsg == PSCB_INITIALIZED ){
+		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
+		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
+		HWND hwndBtn = ::CreateWindowEx( 0, _T("BUTTON"), _T("設定フォルダ(&/) >>"), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
+		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+	}
+	return 0;
+}
+
+
+/*!	独自拡張プロパティシート（共通設定／タイプ別設定画面用）
+	@author ryoji
+	@date 2007.05.25 新規
+*/
+int MyPropertySheet( LPPROPSHEETHEADER lppsph )
+{
+	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
+	if( CShareData::getInstance()->IsPrivateSettings() ){
+		lppsph->dwFlags |= PSH_USECALLBACK;
+		lppsph->pfnCallback = PropSheetProc;
+	}
+	return ::PropertySheet( lppsph );
+}
+
+// To Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
+///////////////////////////////////////////////////////////////////////
 
 /*[EOF]*/

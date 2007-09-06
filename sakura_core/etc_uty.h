@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, novice
 	Copyright (C) 2005, genta, aroka
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -71,7 +72,7 @@ SAKURA_CORE_API void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* ƒŠƒ
 SAKURA_CORE_API void SplitPath_FolderAndFile( const char*, char*, char* );	/* ƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğAƒtƒHƒ‹ƒ_‚Æƒtƒ@ƒCƒ‹–¼‚É•ªŠ„ */
 SAKURA_CORE_API BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */
 SAKURA_CORE_API BOOL GetLongFileName( const char*, char* );	/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */
-SAKURA_CORE_API char* GetHelpFilePath( char* , unsigned int nMaxLen = _MAX_PATH );	/* ƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚· */// 20020119 aroka
+SAKURA_CORE_API LPTSTR GetHelpFilePath( LPTSTR , unsigned int nMaxLen = _MAX_PATH );	/* ƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚· */// 20020119 aroka
 SAKURA_CORE_API BOOL CheckEXT( const char*, const char* );	/* Šg’£q‚ğ’²‚×‚é */
 SAKURA_CORE_API char* my_strtok( char*, int, int*, const char* );
 /* Shell InterfaceŒn(?) */
@@ -125,14 +126,16 @@ SAKURA_CORE_API const char* GetColorNameByIndex( int index );
 bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, unsigned BufferSize);
 
 //	Dec. 2, 2002 genta
-void GetExecutableDir( char* pDir, const char *szFile = NULL );
+void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
+void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
+void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmall = false);
 
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
-FILE *fopen_absexe(const char* fname, const char* mode); // 2003.06.23 Moca
-HFILE _lopen_absexe(LPCSTR fname, int mode); // 2003.06.23 Moca
+FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
+FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //	Apr. 30, 2003 genta
 //	ƒfƒBƒŒƒNƒgƒŠ‚Ì[‚³‚ğ’²‚×‚é
@@ -198,6 +201,8 @@ BOOL IsVisualStyle();						// ©•ª‚ªŒ»İƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹•\¦ó‘Ô‚©‚Ç‚¤‚©‚ğ¦‚·
 void PreventVisualStyle( HWND hWnd );		// w’èƒEƒBƒ“ƒhƒE‚ÅƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹‚ğg‚í‚È‚¢‚æ‚¤‚É‚·‚é	// 2006.06.23 ryoji
 void MyInitCommonControls();				// ƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹‚ğ‰Šú‰»‚·‚é							// 2006.06.21 ryoji
 
+BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath );	// “ÁêƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ğæ“¾‚·‚é	// 2007.05.19 ryoji
+int MyPropertySheet( LPPROPSHEETHEADER lppsph );	// “Æ©Šg’£ƒvƒƒpƒeƒBƒV[ƒg	// 2007.05.24 ryoji
 
 #endif /* _ETC_UTY_H_ */
 

@@ -12,6 +12,7 @@
 	Copyright (C) 2003, MIK, ryoji, genta
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, maru
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -153,19 +154,13 @@ void CEditView::ViewDiffInfo(
 	int		nFlgFile12 = 1;
 
 	/* exeのあるフォルダ */
-	char	szPath[_MAX_PATH + 1];
 	char	szExeFolder[_MAX_PATH + 1];
-	::GetModuleFileName(
-		::GetModuleHandle( NULL ),
-		szPath, sizeof( szPath )
-	);
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
+
+	GetExedir( cmdline, _T("diff.exe") );
+	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
 	//	From Here Dec. 28, 2002 MIK
 	//	diff.exeの存在チェック
-	wsprintf( cmdline, "%s\\%s", szExeFolder, "diff.exe" );
 	if( -1 == ::GetFileAttributes( cmdline ) )
 	{
 		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
@@ -770,3 +765,4 @@ BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 }
 
 
+/*[EOF]*/
