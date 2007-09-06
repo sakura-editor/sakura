@@ -2663,7 +2663,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL 
 			DisableSelectArea( TRUE );
 		}
 	}
-	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, TRUE );
+	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, TRUE, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( bSelect ){
 		/*	現在のカーソル位置によって選択範囲を変更．
@@ -3063,35 +3063,34 @@ void CEditView::SetIMECompFormFont( void )
 
 
 
-/* マウス等による座標指定によるカーソル移動
-|| 必要に応じて縦/横スクロールもする
-|| 垂直スクロールをした場合はその行数を返す(正／負)
+/** 行桁指定によるカーソル移動（座標調整付き）
+	@param nNewX[in/out] カーソルのレイアウト座標X
+	@param nNewY[in/out] カーソルのレイアウト座標Y
+	@param bScroll[in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
+	@param nCaretMarginRate[in] 縦スクロール開始位置を決める値
+	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
+
+	@note マウス等による移動で不適切な位置に行かないよう座標調整してカーソル移動する
+
+	@date 2007.08.23 ryoji 関数化（MoveCursorToPoint()から処理を抜き出し）
 */
-int CEditView::MoveCursorToPoint( int xPos, int yPos )
+int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCaretMarginRate )
 {
 	const char*		pLine;
 	int				nLineLen;
-	int				nNewX;
-	int				nNewY;
-	int				nScrollRowNum = 0;
 	const CLayout*	pcLayout;
-	nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+
 	if( 0 > nNewY ){
 		nNewY = 0;
 	}
 	/* カーソルがテキスト最下端行にあるか */
 	if( nNewY >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
 		// 2004.04.03 Moca EOFより後ろの座標調整は、MoveCursor内でやってもらうので、削除
-		nScrollRowNum = MoveCursor( nNewX, nNewY, TRUE, 1000 );
-		m_nCaretPosX_Prev = m_nCaretPosX;
 	}else
 	/* カーソルがテキスト最上端行にあるか */
 	if( nNewY < 0 ){
 		nNewX = 0;
 		nNewY = 0;
-		nScrollRowNum = MoveCursor( nNewX, nNewY, TRUE, 1000 );
-		m_nCaretPosX_Prev = m_nCaretPosX;
 	}else{
 		/* 移動先の行のデータを取得 */
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
@@ -3151,9 +3150,29 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 //				}
 			}
 		}
-		nScrollRowNum = MoveCursor( nPosX, nNewY, TRUE, 1000 );
-		m_nCaretPosX_Prev = m_nCaretPosX;
+		nNewX = nPosX;
 	}
+
+	return MoveCursor( nNewX, nNewY, bScroll, nCaretMarginRate );
+}
+
+
+
+/* マウス等による座標指定によるカーソル移動
+|| 必要に応じて縦/横スクロールもする
+|| 垂直スクロールをした場合はその行数を返す(正／負)
+*/
+int CEditView::MoveCursorToPoint( int xPos, int yPos )
+{
+	int				nScrollRowNum;
+	int				nNewX;
+	int				nNewY;
+
+	nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+
+	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, TRUE, 1000 );
+	m_nCaretPosX_Prev = m_nCaretPosX;
 	return nScrollRowNum;
 }
 //_CARETMARGINRATE_CARETMARGINRATE_CARETMARGINRATE

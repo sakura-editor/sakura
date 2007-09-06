@@ -244,7 +244,7 @@ bool CNormalProcess::Initialize()
 				{
 					// From Here Mar. 28, 2003 MIK
 					//改行の真ん中にカーソルが来ないように。
-					const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLineInfo( nPosY );
+					const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLineInfo( fi.m_nY );	// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
 					if( pTmpDocLine ){
 						if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
 					}
