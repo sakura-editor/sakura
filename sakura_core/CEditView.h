@@ -152,6 +152,7 @@ public:
 	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
 	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
 	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
+	int MoveCursorProperly( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動（座標調整付き） */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
 	void MoveCursorSelecting( int, int, BOOL, int = _CARETMARGINRATE );
 	BOOL GetAdjustCursorPos( int *, int *);	// 正しいカーソル位置を算出する

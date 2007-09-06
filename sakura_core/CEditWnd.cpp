@@ -30,6 +30,7 @@
 #include "CEditWnd.h"
 #include "sakura_rc.h"
 #include "CEditDoc.h"
+#include "CDocLine.h"
 #include "debug.h"
 #include "CDlgAbout.h"
 #include "mymessage.h"
@@ -1704,6 +1705,17 @@ LRESULT CEditWnd::DispatchEvent(
 				&nCaretPosX,
 				&nCaretPosY
 			);
+			// 改行の真ん中にカーソルが来ないように	// 2007.08.22 ryoji
+			// Note. もとが改行単位の桁位置なのでレイアウト折り返しの桁位置を超えることはない。
+			//       選択指定(bSelect==TRUE)の場合にはどうするのが妥当かよくわからないが、
+			//       2007.08.22現在ではアウトライン解析ダイアログから桁位置0で呼び出される
+			//       パターンしかないので実用上特に問題は無い。
+			if( !bSelect ){
+				const CDocLine *pTmpDocLine = m_cEditDoc.m_cDocLineMgr.GetLineInfo( ppoCaret->y );
+				if( pTmpDocLine ){
+					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) nCaretPosX--;
+				}
+			}
 			//	2006.07.09 genta 選択範囲を考慮して移動
 			//	MoveCursorの位置調整機能があるので，最終行以降への
 			//	移動指示の調整もMoveCursorにまかせる

@@ -47,6 +47,8 @@
 #include <assert.h> /// 2002/11/2 frozen
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 #include "my_sp.h" // 2005/11/22 aroka 追加
+#include "CLayout.h"	// 2007.08.22 ryoji 追加
+#include "CMemoryIterator.h"	// 2007.08.22 ryoji 追加
 
 
 #define IDT_ROLLMOUSE	1
@@ -732,7 +734,7 @@ BOOL CEditDoc::FileRead(
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = fi.m_nViewLeftCol; // 2001/10/20 novice
 			// From Here Mar. 28, 2003 MIK
 			// 改行の真ん中にカーソルが来ないように。
-			CDocLine *pTmpDocLine = m_cDocLineMgr.GetLineInfo( nCaretPosY );
+			const CDocLine *pTmpDocLine = m_cDocLineMgr.GetLineInfo( fi.m_nY );	// 2008.08.22 ryoji 改行単位の行番号を渡すように修正
 			if( pTmpDocLine ){
 				if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nCaretPosX--;
 			}
@@ -3928,8 +3930,12 @@ void CEditDoc::ReloadCurrentFile(
 
 	BOOL	bOpened;
 	char	szFilePath[MAX_PATH];
+	int		nViewTopLine;
+	int		nViewLeftCol;
 	int		nCaretPosX;
 	int		nCaretPosY;
+	nViewTopLine = m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine;	/* 表示域の一番上の行(0開始) */
+	nViewLeftCol = m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol;	/* 表示域の一番左の桁(0開始) */
 	nCaretPosX = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 	nCaretPosY = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY;
 
@@ -3956,7 +3962,14 @@ void CEditDoc::ReloadCurrentFile(
 		FALSE		/* 文字コード変更時の確認をするかどうか */
 	);
 
-	m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE );
+	// レイアウト行単位のカーソル位置復元
+	// ※ここではオプションのカーソル位置復元（＝改行単位）が指定されていない場合でも復元する
+	// 2007.08.23 ryoji 表示領域復元
+	if( nCaretPosY < m_cLayoutMgr.GetLineCount() ){
+		m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine = nViewTopLine;
+		m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = nViewLeftCol;
+	}
+	m_cEditViewArr[m_nActivePaneIndex].MoveCursorProperly( nCaretPosX, nCaretPosY, TRUE );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
 	m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 
 }
