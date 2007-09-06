@@ -59,6 +59,7 @@ private:
 // member accessor method
 public:
 	bool IsNoWindow() const {return m_bNoWindow;};
+	bool IsWriteQuit() const {return m_bWriteQuit;};	// 2007.05.19 ryoji sakuext用に追加
 	bool IsGrepMode() const {return m_bGrepMode;};
 	bool IsGrepDlg() const {return m_bGrepDlg;};
 	bool IsDebugMode() const {return m_bDebugMode;};
@@ -75,6 +76,7 @@ private:
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
 	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
+	bool		m_bWriteQuit;		//! [out] TRUE: 設定を保存して終了	// 2007.05.19 ryoji sakuext用に追加
 	FileInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
 	bool		m_bReadOnly;		//! [out] TRUE: Read Only

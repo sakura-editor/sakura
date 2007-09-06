@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2006, fon, ryoji
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -264,7 +265,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				}
 				/* 指定したパスに辞書があるかチェックする */
 				FILE* fp;
-				if( (fp=fopen_absexe(szPath,"r")) == NULL ){	// 2006.02.01 genta 本体からの相対パスを受け付ける
+				if( (fp=_tfopen_absini(szPath,"r")) == NULL ){	// 2006.02.01 genta 本体からの相対パスを受け付ける	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
 					return FALSE;
 				}
@@ -469,6 +470,14 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 			case IDC_BUTTON_KEYHELP_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
 				{	CDlgOpenFile	cDlgOpenFile;
 					/* ファイルオープンダイアログの初期化 */
+					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+					TCHAR szWk[_MAX_PATH];
+					::GetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, szWk, _MAX_PATH );
+					if( _IS_REL_PATH( szWk ) ){
+						GetInidirOrExedir( szPath, szWk );
+					}else{
+						::lstrcpy( szPath, szWk );
+					}
 					cDlgOpenFile.Create( m_hInstance, hwndDlg, "*.khp", szPath );
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, szPath );
@@ -746,7 +755,7 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 		}
 		//Path
 		FILE* fp2;
-		if( (fp2=fopen_absexe(p3,"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く
+		if( (fp2=_tfopen_absini(p3,"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
 			p2 = "【辞書ファイルが見つかりません】";
 			b_enable_flag = 0;

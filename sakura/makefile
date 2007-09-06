@@ -80,7 +80,7 @@ CC_EXEFILEOPT=/Fe
 
 #DEF=EXPORT_SAKURA_DLL
 
-LIBS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comctl32.lib Imm32.lib mpr.lib
+LIBS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comctl32.lib Imm32.lib mpr.lib imagehlp.lib
 
 OBJS =\
 	$(OBJDIR)\CAutoSave.obj \
@@ -306,5 +306,3 @@ clobber :
 #
 #.\aXX : 
 #	@echo "aaa"
-
-

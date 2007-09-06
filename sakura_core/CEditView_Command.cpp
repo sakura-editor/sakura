@@ -4913,8 +4913,9 @@ retry:;
 	GetCurrentTextForSearch( cmemCurText );
 	if( _IS_REL_PATH( helpfile ) ){
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		char path[_MAX_PATH];
-		GetExecutableDir( path, helpfile );
+		GetInidirOrExedir( path, helpfile );
 		::WinHelp( m_hwndParent, path, HELP_KEY, (ULONG_PTR)(char*)cmemCurText.GetPtr() );
 		return;
 	}
@@ -4980,8 +4981,9 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 //	if( m_pShareData->m_Common.m_bHtmlHelpIsSingle ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( filename ) ){
-			GetExecutableDir( m_pShareData->m_szWork, filename );
+			GetInidirOrExedir( m_pShareData->m_szWork, filename );
 		}else{
 			strcpy( m_pShareData->m_szWork, filename ); //	Jul. 5, 2002 genta
 		}
@@ -5001,9 +5003,10 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 		link.fIndexOnFail = TRUE;
 
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( filename ) ){
 			char path[_MAX_PATH];
-			GetExecutableDir( path, filename );
+			GetInidirOrExedir( path, filename );
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL/*m_pShareData->m_hwndTray*/,
@@ -6137,7 +6140,7 @@ next_line:
 	@date	2004.05.29 Moca 0以下が指定されたときは、善処する
 	@date	2007.02.17 genta 相対パスの基準ディレクトリ指示を追加
 */
-bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm, bool bClose, bool bRelFromExe )
+bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpToColm, bool bClose, bool bRelFromIni )
 {
 	HWND	hwndOwner;
 	POINT	poCaret;
@@ -6151,8 +6154,9 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
-	if( bRelFromExe && _IS_REL_PATH( pszFileName ) ){
-		GetExecutableDir( szJumpToFile, pszFileName );
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
+		GetInidirOrExedir( szJumpToFile, pszFileName );
 	}
 	else {
 		strcpy( szJumpToFile, pszFileName );
@@ -6306,18 +6310,12 @@ bool CEditView::Command_TagsMake( void )
 
 	char	cmdline[1024];
 	/* exeのあるフォルダ */
-	char	szPath[_MAX_PATH + 1];
 	char	szExeFolder[_MAX_PATH + 1];
-	::GetModuleFileName(
-		::GetModuleHandle( NULL ),
-		szPath, sizeof( szPath )
-	);
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, szExeFolder, NULL );
+
+	GetExedir( cmdline, CTAGS_COMMAND );
+	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
 	//ctags.exeの存在チェック
-	wsprintf( cmdline, "%s\\%s", szExeFolder, CTAGS_COMMAND );
 	if( -1 == ::GetFileAttributes( cmdline ) )
 	{
 		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
@@ -8934,8 +8932,9 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	char			szInitDir[_MAX_PATH + 1];
 	strcpy( szPath, "" );
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
-		GetExecutableDir( szInitDir, m_pShareData->m_szMACROFOLDER );
+		GetInidirOrExedir( szInitDir, m_pShareData->m_szMACROFOLDER );
 	}else{
 		strcpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
 	}
@@ -9028,8 +9027,9 @@ void CEditView::Command_LOADKEYMACRO( void )
 	strcpy( szPath, "" );
 	pszFolder = m_pShareData->m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( pszFolder ) ){
-		GetExecutableDir( szInitDir, pszFolder );
+		GetInidirOrExedir( szInitDir, pszFolder );
 	}else{
 		strcpy( szInitDir, pszFolder );	/* マクロ用フォルダ */
 	}

@@ -219,6 +219,7 @@ private:
 	void	ProcSearchBox( MSG* );	//検索(ボックス)
 	int		m_nCurrentFocus;
 	BOOL	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
+	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	
 	//	Jul. 21, 2003 genta ToolBarのOwner Draw
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );

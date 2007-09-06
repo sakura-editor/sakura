@@ -790,7 +790,7 @@ void ReplaceData_CEditView(
 	bool Command_TagJumpByTagsFile( void );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
 	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
 	//	Feb. 17, 2007 genta 相対パスの基準ディレクトリ指示を追加
-	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn, bool bClose = false, bool bRelFromExe = false );
+	bool TagJumpSub( const char *pszJumpToFile, int nLine, int nColumn, bool bClose = false, bool bRelFromIni = false );
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	bool Command_TagJumpByTagsFileKeyword( const char* keyword );	//	@@ 2005.03.31 MIK
 	void Command_COMPARE( void );						/* ファイル内容比較 */

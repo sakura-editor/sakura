@@ -24,6 +24,7 @@
 #include "CEditApp.h"
 #include "Debug.h"
 #include "etc_uty.h"
+#include <io.h>
 #include <tchar.h>
 #include "COsVersionInfo.h"
 #include "CRunningTimer.h"
@@ -63,6 +64,9 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
+		if( TestWriteQuit() ){	// 2007.09.04 ryoji「設定を保存して終了する」オプション処理（sakuext連携用）
+			return 0;
+		}
 		if( !IsExistControlProcess() ){
 			process = new CControlProcess( hInstance, lpCmdLine );
 		}
@@ -266,5 +270,33 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	return true;
 }
 
+/*!
+	@brief 「設定を保存して終了する」オプション処理（sakuext連携用）
+
+	@author ryoji
+	@date 2007.09.04
+*/
+bool CProcessFactory::TestWriteQuit()
+{
+	if( CCommandLine::Instance()->IsWriteQuit() ){
+		TCHAR szIniFileIn[_MAX_PATH];
+		TCHAR szIniFileOut[_MAX_PATH];
+		CShareData::GetIniFileNameDirect( szIniFileIn, szIniFileOut );
+		if( szIniFileIn[0] != _T('\0') ){	// マルチユーザ用設定か
+			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
+			if( _taccess( szIniFileIn, 0 ) == 0 ){
+				if( ::CopyFile( szIniFileIn, szIniFileOut, FALSE ) ){
+					return true;
+				}
+			}
+		}else{
+			// 既にEXE基準のiniファイルがあれば何もせず終了
+			if( _taccess( szIniFileOut, 0 ) == 0 ){
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 /*[EOF]*/

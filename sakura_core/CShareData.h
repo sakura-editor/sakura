@@ -597,6 +597,16 @@ struct Common {
 	BOOL				m_bNoFilterSaveFile;	// 新規以外から保存時は全ファイル表示
 }; /* Common */
 
+
+//! iniフォルダ設定	// 2007.05.31 ryoji
+struct IniFolder {
+	bool m_bInit;							// 初期化済フラグ
+	bool m_bReadPrivate;					// マルチユーザ用iniからの読み出しフラグ
+	bool m_bWritePrivate;					// マルチユーザ用iniへの書き込みフラグ
+	TCHAR m_szIniFile[_MAX_PATH];			// EXE基準のiniファイルパス
+	TCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
+};	/* iniフォルダ設定 */
+
 //! 共有データ領域
 struct DLLSHAREDATA {
 	//	Oct. 27, 2000 genta
@@ -668,6 +678,8 @@ struct DLLSHAREDATA {
 	int					m_nCmdArrNum;
 //	bool				m_bCmdArrFavorite[MAX_CMDARR];	//お気に入り	//@@@ 2003.04.08 MIK
 
+	/**** iniフォルダ設定 ****/
+	IniFolder			m_IniFolder;
 
 	/**** 共通設定 ****/
 	Common				m_Common;
@@ -796,6 +808,9 @@ public:
 	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut起動元ウィンドウの設定 */
 	BOOL LoadShareData( void );	/* 共有データのロード */
 	void SaveShareData( void );	/* 共有データの保存 */
+	static void GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
+	void GetIniFileName( LPTSTR pszIniFileName, BOOL bRead = FALSE );	/* iniファイル名の取得 */	// 2007.05.19 ryoji
+	BOOL IsPrivateSettings( void ){ return m_pShareData->m_IniFolder.m_bWritePrivate; }			/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
 	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
 	static void IO_ColorSet( CProfile* , const char* , ColorInfo* );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 

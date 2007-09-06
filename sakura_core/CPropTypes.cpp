@@ -12,6 +12,7 @@
 	Copyright (C) 2003, MIK, zenryaku, Moca, naoh, KEITA, genta
 	Copyright (C) 2005, MIK, genta, Moca, ryoji
 	Copyright (C) 2006, ryoji, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -710,7 +711,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 
 //	m_hbmpToolButtons = ::LoadBitmap( m_hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
 
-	nRet = ::PropertySheet( &psh );
+	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 	if( -1 == nRet ){
 		char*	pszMsgBuf;
 		::FormatMessage(
@@ -811,8 +812,9 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Types.m_szOutlineRuleFilename ) ){
-						GetExecutableDir( szPath, m_Types.m_szOutlineRuleFilename );
+						GetInidirOrExedir( szPath, m_Types.m_szOutlineRuleFilename );
 					}else{
 						strcpy( szPath, m_Types.m_szOutlineRuleFilename );
 					}
@@ -1407,8 +1409,9 @@ INT_PTR CPropTypes::DispatchEvent_p2(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Types.m_szHokanFile ) ){
-						GetExecutableDir( szPath, m_Types.m_szHokanFile );
+						GetInidirOrExedir( szPath, m_Types.m_szHokanFile );
 					}else{
 						strcpy( szPath, m_Types.m_szHokanFile );
 					}
@@ -1430,8 +1433,9 @@ INT_PTR CPropTypes::DispatchEvent_p2(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Types.m_szExtHelp ) ){
-						GetExecutableDir( szPath, m_Types.m_szExtHelp );
+						GetInidirOrExedir( szPath, m_Types.m_szExtHelp, TRUE );
 					}else{
 						strcpy( szPath, m_Types.m_szExtHelp );
 					}
@@ -1453,8 +1457,9 @@ INT_PTR CPropTypes::DispatchEvent_p2(
 					CDlgOpenFile	cDlgOpenFile;
 					char			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Types.m_szExtHtmlHelp ) ){
-						GetExecutableDir( szPath, m_Types.m_szExtHtmlHelp );
+						GetInidirOrExedir( szPath, m_Types.m_szExtHtmlHelp, TRUE );
 					}else{
 						strcpy( szPath, m_Types.m_szExtHtmlHelp );
 					}

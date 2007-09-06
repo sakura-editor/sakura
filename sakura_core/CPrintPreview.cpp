@@ -330,7 +330,7 @@ LRESULT CPrintPreview::OnSize( WPARAM wParam, LPARAM lParam )
 	// Win9xでは 巨大なBMPは作成できないことと
 	// StretchBltでSTRETCH_HALFTONEが未サポートであるので Win2K 以上のみで有効にする。
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hwndPrintPreviewBar, IDC_CHECK_ANTIALIAS ) &&
-			osVer.IsWin2000orLater() ){
+			osVer.IsWin2000_or_later() ){
 		m_nbmpCompatScale = COMPAT_BMP_SCALE;
 	}else{
 		// Win9x: BASE = SCALE で 1:1
@@ -1681,7 +1681,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 		//::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		{
 			COsVersionInfo cOsVer;
-			if( cOsVer.IsWin2000orLater() ){
+			if( cOsVer.IsWin2000_or_later() ){
 				::EnableWindow( ::GetDlgItem(hwndDlg, IDC_CHECK_ANTIALIAS), TRUE );
 			}
 		}
@@ -1761,3 +1761,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	}
 	return FALSE;
 }
+
+
+/*[EOF]*/

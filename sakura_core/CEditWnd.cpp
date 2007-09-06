@@ -490,6 +490,20 @@ HWND CEditWnd::Create(
 
 		m_bIsActiveApp = ( ::GetActiveWindow() == m_hWnd );	// 2007.03.08 ryoji
 
+		/* エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） */	// 2007.06.07 ryoji
+		if( COsVersionInfo().IsWinVista_or_later() ){
+			m_bUIPI = FALSE;
+			::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
+			if( !m_bUIPI ){	// 返事が返らない
+				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+					_T("エディタ間の対話に失敗しました。\n権限レベルの異なるエディタが既に起動している可能性があります。")
+				);
+				::DestroyWindow( m_hWnd );
+				m_hWnd = hWnd = NULL;
+				return hWnd;
+			}
+		}
+
 		/* 編集ウィンドウリストへの登録 */
 		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
 			wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
@@ -1540,6 +1554,11 @@ LRESULT CEditWnd::DispatchEvent(
 				EndLayoutBars();
 			}
 		}
+		return 0L;
+
+	case MYWM_UIPI_CHECK:
+		/* エディタ－トレイ間でのUI特権分離の確認メッセージ */	// 2007.06.07 ryoji
+		m_bUIPI = TRUE;	// トレイからの返事を受け取った
 		return 0L;
 
 	case MYWM_CLOSE:
@@ -4535,7 +4554,7 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
 	//	Sep. 6, 2003 genta Windows XP(Luna)の場合にはCOLOR_MENUBARを使わなくてはならない
 	COLORREF bkColor =
-		::GetSysColor( COsVersionInfo().IsLuna() ? COLOR_MENUBAR : COLOR_MENU );
+		::GetSysColor( COsVersionInfo().IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
 	::SetBkColor( hdc, bkColor );
 	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
 	::SelectObject( hdc, hFontOld );

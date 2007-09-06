@@ -9,6 +9,7 @@
 	Copyright (C) 2002, aroka, Moca
 	Copyright (C) 2003, Moca
 	Copyright (C) 2006, fon
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -74,7 +75,8 @@ BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey
 		return FALSE;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
-	pFile = fopen_absexe( pszKeyWordHelpFile, "r" );
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	pFile = _tfopen_absini( pszKeyWordHelpFile, "r" );
 	if( NULL == pFile ){
 		return FALSE;
 	}
@@ -146,7 +148,8 @@ int CDicMgr::HokanSearch(
 		return 0;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
-	pFile = fopen_absexe( pszKeyWordFile, "r" );
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	pFile = _tfopen_absini( pszKeyWordFile, "r" );
 	if( NULL == pFile ){
 		return 0;
 	}

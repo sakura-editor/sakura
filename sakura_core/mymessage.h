@@ -10,6 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka
 	Copyright (C) 2003, MIK
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -100,6 +101,9 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 
 /*! バーの表示・非表示変更メッセージ */
 #define	MYWM_BAR_CHANGE_NOTIFY	(WM_APP+214)	//@@@ 2003.06.10 MIK
+
+/*! エディタ－トレイ間でのUI特権分離の確認メッセージ */
+#define	MYWM_UIPI_CHECK	(WM_APP+215)	//@@@ 2007.06.07 ryoji
 
 
 /* 再変換対応 */ // 20020331 aroka

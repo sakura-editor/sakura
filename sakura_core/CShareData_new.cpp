@@ -21,6 +21,7 @@
 */
 
 #include "stdafx.h"
+#include <imagehlp.h>
 #include <stdio.h>
 #include <io.h>
 #include "CShareData.h"
@@ -30,6 +31,8 @@
 #include "CRunningTimer.h"
 #include "CProfile.h"
 #include "etc_uty.h"
+#include "COsVersionInfo.h"
+#include "CCommandLine.h"
 
 #define STR_COLORDATA_HEAD3		" テキストエディタ色設定 Ver3"	//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 
@@ -49,6 +52,113 @@ CShareData::CShareData()
 // レジストリは使わない。
 // 未使用の２関数を削除 2002/2/3 aroka
 
+
+/**
+	構成設定ファイルからiniファイル名を取得する
+
+	sakura.exe.iniからsakura.iniの格納フォルダを取得し、フルパス名を返す
+
+	@param[out] pszPrivateIniFile マルチユーザ用のiniファイルパス
+	@param[out] pszIniFile EXE基準のiniファイルパス
+
+	@author ryoji
+	@date 2007.09.04 ryoji 新規作成
+*/
+void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile )
+{
+	TCHAR szPath[_MAX_PATH];
+	TCHAR szDrive[_MAX_DRIVE];
+	TCHAR szDir[_MAX_DIR];
+	TCHAR szFname[_MAX_FNAME];
+	TCHAR szExt[_MAX_EXT];
+
+	::GetModuleFileName(
+		::GetModuleHandle( NULL ),
+		szPath, sizeof(szPath)
+	);
+	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
+	_snprintf( pszIniFile, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".ini") );
+	pszIniFile[_MAX_PATH - 1] = _T('\0');
+
+	// マルチユーザ用のiniファイルパス
+	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
+	//		に従ってマルチユーザ用のiniファイルパスを決める
+	pszPrivateIniFile[0] = _T('\0');
+	if( COsVersionInfo().IsWin2000_or_later() ){
+		_snprintf( szPath, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".exe.ini") );
+		szPath[_MAX_PATH - 1] = _T('\0');
+		int nEnable = ::GetPrivateProfileInt(_T("Settings"), _T("MultiUser"), 0, szPath );
+		if( nEnable ){
+			int nFolder = ::GetPrivateProfileInt(_T("Settings"), _T("UserRootFolder"), 0, szPath );
+			switch( nFolder ){
+			case 1:
+				nFolder = CSIDL_PROFILE;			// ユーザのルートフォルダ
+				break;
+			case 2:
+				nFolder = CSIDL_PERSONAL;			// ユーザのドキュメントフォルダ
+				break;
+			case 3:
+				nFolder = CSIDL_DESKTOPDIRECTORY;	// ユーザのデスクトップフォルダ
+				break;
+			default:
+				nFolder = CSIDL_APPDATA;			// ユーザのアプリケーションデータフォルダ
+				break;
+			}
+			::GetPrivateProfileString(_T("Settings"), _T("UserSubFolder"), _T("sakura"), szDir, _MAX_DIR, szPath );
+			if( szDir[0] == _T('\0') )
+				::lstrcpy( szDir, _T("sakura") );
+			if( GetSpecialFolderPath( nFolder, szPath ) ){
+				_snprintf( pszPrivateIniFile, _MAX_PATH - 1, _T("%s\\%s\\%s%s"), szPath, szDir, szFname, _T(".ini") );
+				pszPrivateIniFile[_MAX_PATH - 1] = _T('\0');
+			}
+		}
+	}
+	return;
+}
+
+/**
+	iniファイル名の取得
+
+	共有データからsakura.iniの格納フォルダを取得し、フルパス名を返す
+	（共有データ未設定のときは共有データ設定を行う）
+
+	@param[out] pszIniFileName iniファイル名（フルパス）
+	@param[in] bRead true: 読み込み / false: 書き込み
+
+	@author ryoji
+	@date 2007.05.19 ryoji 新規作成
+*/
+void CShareData::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
+{
+	if( !m_pShareData->m_IniFolder.m_bInit ){
+		m_pShareData->m_IniFolder.m_bInit = true;			// 初期化済フラグ
+		m_pShareData->m_IniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
+		m_pShareData->m_IniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
+
+		GetIniFileNameDirect( m_pShareData->m_IniFolder.m_szPrivateIniFile, m_pShareData->m_IniFolder.m_szIniFile );
+		if( m_pShareData->m_IniFolder.m_szPrivateIniFile[0] != _T('\0') ){
+			m_pShareData->m_IniFolder.m_bReadPrivate = true;
+			m_pShareData->m_IniFolder.m_bWritePrivate = true;
+			if( CCommandLine::Instance()->IsNoWindow() && CCommandLine::Instance()->IsWriteQuit() )
+				m_pShareData->m_IniFolder.m_bWritePrivate = false;
+
+			// マルチユーザ用のiniフォルダを作成しておく
+			if( m_pShareData->m_IniFolder.m_bWritePrivate ){
+				TCHAR szPath[_MAX_PATH];
+				TCHAR szDrive[_MAX_DRIVE];
+				TCHAR szDir[_MAX_DIR];
+				_tsplitpath( m_pShareData->m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
+				_snprintf( szPath, _MAX_PATH - 1, _T("%s\\%s"), szDrive, szDir );
+				szPath[_MAX_PATH - 1] = _T('\0');
+				::MakeSureDirectoryPathExists( szPath );
+			}
+		}
+	}
+
+	bool bPrivate = bRead? m_pShareData->m_IniFolder.m_bReadPrivate: m_pShareData->m_IniFolder.m_bWritePrivate;
+	::lstrcpy( pszIniFileName, bPrivate? m_pShareData->m_IniFolder.m_szPrivateIniFile: m_pShareData->m_IniFolder.m_szIniFile );
+}
+
 /*!
 	共有データの読み込み/保存 2
 
@@ -63,11 +173,6 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 
 	char		szIniFileName[_MAX_PATH + 1];
 	CProfile	cProfile;
-	char		szPath[_MAX_PATH + 1];
-	char		szDrive[_MAX_DRIVE];
-	char		szDir[_MAX_DIR];
-	char		szFname[_MAX_FNAME];
-	char		szExt[_MAX_EXT];
 
 	// Feb. 12, 2006 D.S.Koba
 	if( bRead ){
@@ -76,14 +181,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
-	/* exeのあるフォルダ */
-	::GetModuleFileName(
-		::GetModuleHandle( NULL ),
-		szPath, sizeof(szPath)
-	);
-	_splitpath( szPath, szDrive, szDir, szFname, szExt );
-	_makepath( szIniFileName, szDrive, szDir, szFname, "ini" );
-
+	GetIniFileName( szIniFileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
 //	MYTRACE( "Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
