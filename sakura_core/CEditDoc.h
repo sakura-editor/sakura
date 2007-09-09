@@ -264,6 +264,7 @@ public:
 	void			MakeTopicList_asm( CFuncInfoArr* );		/* アセンブラ アウトライン解析 */
 	void			MakeFuncList_Perl( CFuncInfoArr* );		/* Perl関数リスト作成 */	//	Sep. 8, 2000 genta
 	void			MakeFuncList_VisualBasic( CFuncInfoArr* );/* Visual Basic関数リスト作成 */ //June 23, 2001 N.Nakatani
+	void			MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr ); /* Python アウトライン解析*/ // 2007.02.08 genta
 	void			MakeTopicList_wztxt(CFuncInfoArr*);		/* 階層付きテキスト アウトライン解析 */ // 2003.05.20 zenryaku
 	void			MakeTopicList_html(CFuncInfoArr*);		/* HTML アウトライン解析 */ // 2003.05.20 zenryaku
 	void			MakeTopicList_tex(CFuncInfoArr*);		/* TeX アウトライン解析 */ // 2003.07.20 naoh

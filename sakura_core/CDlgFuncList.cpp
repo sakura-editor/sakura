@@ -241,6 +241,12 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 		SetTreeJava( m_hWnd, TRUE );
 		::SetWindowText( m_hWnd, "Java メソッドツリー" );
 	}else
+	//	2007.02.08 genta Python追加
+	if( OUTLINE_PYTHON == m_nListType ){ /* Python メソッドツリー */
+		m_nViewType = 1;
+		SetTree( true );
+		::SetWindowText( m_hWnd, "Python メソッドツリー" );
+	}else
 	if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
@@ -1228,10 +1234,14 @@ void CDlgFuncList::GetTreeTextNext(
 
 /*! 汎用ツリーコントロールの初期化：CFuncInfo::m_nDepthを利用して親子を設定
 
+	@param[in] tagjump タグジャンプ形式で出力する
+
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.10 Moca 階層の制限をなくした
+	@date 2007.02.25 genta クリップボード出力をタブジャンプ可能な書式に変更
+	@date 2007.03.04 genta タブジャンプ可能な書式に変更するかどうかのフラグを追加
 */
-void CDlgFuncList::SetTree()
+void CDlgFuncList::SetTree(bool tagjump)
 {
 	HTREEITEM hItemSelected = NULL;
 	HWND hwndTree = ::GetDlgItem( m_hWnd, IDC_TREE1 );
@@ -1291,12 +1301,37 @@ void CDlgFuncList::SetTree()
 		/* クリップボードコピー用テキストを作成する */
 		//	2003.06.22 Moca dummy要素はツリーに入れるがTAGJUMPには加えない
 		if( pcFuncInfo->IsAddClipText() ){
-			int j;
-			for( j = 0; j < nStackPointer; ++j ){
-				m_cmemClipText.AppendSz( "  " );
+			CMemory text;
+
+			if( tagjump ){
+
+				text.AllocBuffer( pcFuncInfo->m_cmemFuncName.GetLength() 
+					+ nStackPointer * 2 + 1
+					+ strlen( m_pcFuncInfoArr->m_szFilePath )
+					+ 20 );
+				
+				//	2007.03.04 genta タグジャンプできる形式で書き込む
+				text.AppendSz( m_pcFuncInfoArr->m_szFilePath );
+				
+				char linenum[32];
+				int len = wsprintf( linenum, "(%d): ",
+					pcFuncInfo->m_nFuncLineCRLF					/* 検出行番号 */
+				);
+				text.AppendSz( linenum );
 			}
-			m_cmemClipText.AppendSz( (const char *)pcFuncInfo->m_cmemFuncName.GetPtr() );
-			m_cmemClipText.AppendSz( (const char *)"\r\n" );
+			else {
+				//	先に十分なサイズの領域を取っておく
+				text.AllocBuffer( pcFuncInfo->m_cmemFuncName.GetLength() + nStackPointer * 2 + 1 + 5 );
+			}
+
+			for( int cnt = 0; cnt < nStackPointer; cnt++ ){
+				text.AppendSz( "  " );
+			}
+			text.Append( " ", 1 );
+			
+			text.Append( &pcFuncInfo->m_cmemFuncName );
+			text.Append( "\r\n", 2 );
+			m_cmemClipText.Append( &text );	/* クリップボードコピー用テキスト */
 		}
 	}
 

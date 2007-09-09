@@ -68,7 +68,7 @@ protected:
 	BOOL OnJump( bool bCheckAutoClose = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
 	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
-	void SetTree();					/* ツリーコントロールの初期化：汎用品 */
+	void SetTree(bool tagjump = false);		/* ツリーコントロールの初期化：汎用品 */
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 
 	// 2002/11/1 frozen 
