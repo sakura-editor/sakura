@@ -4654,8 +4654,11 @@ BOOL CEditView::Command_FUNCLIST( int nAction/*nReLoad,bCheckOnly*/, int nOutlin
 	case OUTLINE_TEX:		m_pcEditDoc->MakeTopicList_tex(&cFuncInfoArr);break;		// 2003.07.20 naoh TeX アウトライン解析
 	case OUTLINE_BOOKMARK:	m_pcEditDoc->MakeFuncList_BookMark( &cFuncInfoArr );break;	//	2001.12.03 hor
 	case OUTLINE_FILE:		m_pcEditDoc->MakeFuncList_RuleFile( &cFuncInfoArr );break;	//	2002.04.01 YAZAKI アウトライン解析にルールファイルを導入
-	case OUTLINE_TEXT:
 //	case OUTLINE_UNKNOWN:	//Jul. 08, 2001 JEPRO 使わないように変更
+	case OUTLINE_PYTHON:	m_pcEditDoc->MakeFuncList_python(&cFuncInfoArr);break;		// 2007.02.08 genta
+	case OUTLINE_TEXT:
+		//	fall though
+		//	ここには何も入れてはいけない 2007.02.28 genta 注意書き
 	default:
 		m_pcEditDoc->MakeTopicList_txt( &cFuncInfoArr );
 		break;

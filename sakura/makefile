@@ -122,6 +122,7 @@ OBJS =\
 	$(OBJDIR)\CEditApp.obj \
 	$(OBJDIR)\CEditDoc.obj \
 	$(OBJDIR)\CEditDoc_FuncList1.obj \
+	$(OBJDIR)\CEditDoc_FuncList2.obj \
 	$(OBJDIR)\CEditDoc_new.obj \
 	$(OBJDIR)\CEditView.obj \
 	$(OBJDIR)\CEditView_Cmdgrep.obj \
