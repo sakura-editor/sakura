@@ -27,6 +27,7 @@
 #endif
 #endif
 
+#include "global.h"
 #include <windows.h>
 #include <commdlg.h> // PRINTDLG, 
 #include <comutil.h> // VT_BSTR,..
