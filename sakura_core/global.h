@@ -48,8 +48,12 @@
 #define _stricmp stricmp
 #define _memicmp memicmp
 #ifndef __max
-#define __max(a,b)	((a)>=(b)?(a):(b))
+#define __max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
+#ifndef __min
+#define __min(a,b)  (((a) < (b)) ? (a) : (b))
+#endif
+#define __access access
 #ifndef STRICT
 #define STRICT
 #endif

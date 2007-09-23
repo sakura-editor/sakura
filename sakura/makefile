@@ -25,13 +25,15 @@ TOOLDIR=..\btool
 #------------------------------------------
 # BCC: Flag for bcc
 BCC=1
+RC=brcc32.exe
+LINK=ilink32.exe
 
 # compatibility option
 CC_OBJFILEOPT=-o
 CC_EXEFILEOPT=-e
 
 ## (BCC) CPP Options
-CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -M -D_MBCS -tW
+CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -DNOMINMAX -tW
 RFLAGS=-dDS_SETFOREGROUND=0x200L -i$(SRCDIR)
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 
@@ -49,6 +51,11 @@ OPTFLAGS=$(OPTFLAGS) -DNDEBUG -w-8004  -w-8057
 !endif
 !endif
 
+## (BCC) LINK Options
+LFLAGS=-aa -V4.0 -c -Gn -m -s
+STDOBJS=c0w32.obj
+STDLIBS=import32.lib cw32.lib
+
 !elseif "$(CC)"=="cl"
 #------------------------------------------
 # Micrsoft Optimizing Compiler
@@ -64,7 +71,7 @@ OPTLIBS=libc.lib libcp.lib
 !endif
 
 RC=rc.exe
-CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
+CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "NOMINMAX" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
 RFLAGS=/l 0x411 /d "NDEBUG" /I "$(SRCDIR)"
 LFLAGS=/subsystem:windows /machine:x86 /map
 
@@ -227,7 +234,7 @@ all : tool tall
 tool : "$(OBJDIR)" $(OBJDIR)\mrc2brc.exe
 
 $(OBJDIR)\mrc2brc.exe : $(OBJDIR)\mrc2brc.obj $(OBJDIR)\RcCvt.obj
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) -WC -e$@ $**
+	$(CC) $(CPPFLAGS) -M $(OPTFLAGS) -WC -e$@ $**
 
 $(OBJDIR)\sakurabc.rc : $(SRCDIR)\sakura_rc.rc
 	$(OBJDIR)\mrc2brc	$** $@ > $(OBJDIR)\mrc2brc.log
@@ -250,15 +257,16 @@ TEMPRC=$(SRCDIR)\sakura_rc.rc
 tall : "$(OBJDIR)" $(OBJDIR)\sakura.exe
 
 !ifdef BCC
-$(OBJDIR)\sakura_norc.exe : $(OBJS)
-	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_EXEFILEOPT)$@ @&&%
-$**
-%
+$(OBJDIR)\sakurabc.res : $(TEMPRC)
+	$(RC) $(RFLAGS) $** $@
 
-$(OBJDIR)\sakura.exe : $(TEMPRC) $(OBJDIR)\sakura_norc.exe
-	brc32 $(RFLAGS) $**
-	move /y $(OBJDIR)\sakura_norc.exe $@
-	move /y $(OBJDIR)\sakura_norc.map $(@:exe=map)
+$(OBJDIR)\sakura.exe : $(OBJDIR)\sakurabc.res $(OBJS)
+	$(CC) $(CPPFLAGS) -c $(OPTFLAGS) @&&%
+$(OBJS)
+%
+	$(LINK) @&&%
+$(LFLAGS) $(STDOBJS) $(OBJS),$@,$(@:exe=map),$(STDLIBS),,$(OBJDIR)\sakurabc.res
+%
 
 !else
 $(OBJDIR)\sakura_rc.res : $(TEMPRC)
@@ -283,13 +291,13 @@ $(CPPFLAGS) $(OPTFLAGS) $(CC_EXEFILEOPT)$@ $** /link $(LFLAGS) $(LIBS) $(OPTLIBS
 	$(CC) $(CPPFLAGS) $(OPTFLAGS) $(CC_OBJFILEOPT)$(OBJDIR)\$(@F) -c $<
 
 cleanall : clean
-	erase $(OBJDIR)\mrc2brc.exe
-	erase $(OBJDIR)\mrc2brc.map
-	erase $(OBJDIR)\mrc2brc.tds
-	erase $(OBJDIR)\mrc2brc.log
+	-erase $(OBJDIR)\mrc2brc.exe
+	-erase $(OBJDIR)\mrc2brc.map
+	-erase $(OBJDIR)\mrc2brc.tds
+	-erase $(OBJDIR)\mrc2brc.log
 
 clean : clobber
-	erase $(OBJDIR)\*.exe
+	-erase $(OBJDIR)\*.exe
 
 clobber :
 	-erase $(OBJDIR)\*.res

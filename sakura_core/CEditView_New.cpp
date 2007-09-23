@@ -1858,15 +1858,15 @@ void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol,
 	if( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp == FALSE ){
 		return;
 	}
-	nLeftCol = max( m_nViewLeftCol, nLeftCol );
+	nLeftCol = __max( m_nViewLeftCol, nLeftCol );
 	const int nWrapWidth  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 	const int nCharWidth  = m_nCharWidth + typeData.m_nColmSpace;
 	if( nRightCol < 0 ){
 		nRightCol = nWrapWidth;
 	}
 	const int nPosXOffset = m_pShareData->m_Common.m_nVertLineOffset + m_nViewAlignLeft;
-	const int nPosXLeft   = max( m_nViewAlignLeft + (nLeftCol  - m_nViewLeftCol) * nCharWidth, m_nViewAlignLeft );
-	const int nPosXRight  = min( m_nViewAlignLeft + (nRightCol - m_nViewLeftCol) * nCharWidth, m_nViewCx + m_nViewAlignLeft );
+	const int nPosXLeft   = __max( m_nViewAlignLeft + (nLeftCol  - m_nViewLeftCol) * nCharWidth, m_nViewAlignLeft );
+	const int nPosXRight  = __min( m_nViewAlignLeft + (nRightCol - m_nViewLeftCol) * nCharWidth, m_nViewCx + m_nViewAlignLeft );
 	const int nLineHeight = m_nCharHeight + typeData.m_nLineSpace;
 	bool bOddLine = ((((nLineHeight % 2) ? m_nViewTopLine : 0) + m_nViewAlignTop + nTop) % 2 == 1);
 
