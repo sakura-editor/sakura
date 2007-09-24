@@ -14,7 +14,7 @@
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
-	Copyright (C) 2007, ryoji, じゅうじ
+	Copyright (C) 2007, ryoji, じゅうじ, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -8772,44 +8772,53 @@ CEOL CEditView::GetCurrentInsertEOL( void )
 }
 #endif
 
-//	From Here Jun. 30, 2001 GAE
-//////////////////////////////////////////////////////////////////////
-/*! 子プロセスの標準出力をリダイレクトする
-	作業ファイルを作成
-	作業ファイルのハンドルを標準出力先に設定した状態で、子プロセスを起動する
-	子プロセスが終了またはユーザーにより中断されるまでループ
-	作業ファイルを読み込む
-	終了処理  (後始末)
-	作業ファイルを削除
+/*!	@brief	外部コマンドの実行
+
+	@param[in] pszCmd コマンドライン
+	@param[in] nFlgOpt オプション
+		@li	0x01	標準出力を得る
+		@li	0x02	標準出力のりダイレクト先（無効=アウトプットウィンドウ / 有効=編集中のウィンドウ）
+		@li	0x04	編集中ファイルを標準入力へ
+
+	@note	子プロセスの標準出力取得はパイプを使用する
+	@note	子プロセスの標準入力への送信は一時ファイルを使用
+
+	@author	N.Nakatani
+	@date	2001/06/23
+	@date	2001/06/30	GAE
+	@date	2002/01/24	YAZAKI	1バイト取りこぼす可能性があった
+	@date	2003/06/04	genta
+	@date	2004/09/20	naoh	多少は見やすく・・・
+	@date	2004/01/23	genta
+	@date	2004/01/28	Moca	改行コードが分割されるのを防ぐ
+	@date	2007/03/18	maru	オプションの拡張
 */
-/*
-ファイルを介してリダイレクトする
-	【問題点】
-	子プロセス実行中にリアルタイムに出力を取り出したいが
-	子プロセスとの読み書きの同期がうまく取れないと結果が正しく読めない・・・
-	子プロセスが終了するまで待ってから、結果を読み出すと正しい結果を取り出せる。
-
-	【原因】
-	親子で同じファイルハンドルを使っているからファイルポインタ位置が
-	滅茶苦茶になるのかもしれないけど詳細は不明
-
-	【解決】
-	一つのファイルに対するハンドルを二つ持つ。
-	子に渡すハンドルと、親が読むハンドルを別々にする事で、出力結果の内容の問題は解決した。
-
-	2001/06/23 N.Nakatani すこし修正  でもまだちゃんと動かない
-
-*/
-//////////////////////////////////////////////////////////////////////
-void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
+void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 {
-	#define	IsKanji1(x) ((unsigned char)((x^0x20)-0xA1)<=0x3B)
 	char				cmdline[1024];
-	HANDLE				hStdOutWrite, hStdOutRead;
+	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
 	PROCESS_INFORMATION	pi;
 	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
 	CDlgCancel				cDlgCancel;
 
+	//	From Here 2006.12.03 maru 引数を拡張のため
+	BOOL	bGetStdout;			//	子プロセスの標準出力を得る
+	BOOL	bToEditWindow;		//	TRUE=編集中のウィンドウ / FALSAE=アウトプットウィンドウ
+	BOOL	bSendStdin;			//	編集中ファイルを子プロセスSTDINに渡す
+	
+	bGetStdout = nFlgOpt & 0x01 ? TRUE : FALSE;
+	bToEditWindow = nFlgOpt & 0x02 ? TRUE : FALSE;
+	bSendStdin = nFlgOpt & 0x04 ? TRUE : FALSE;
+	//	To Here 2006.12.03 maru 引数を拡張のため
+
+	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
+	int	nLineFrom, nColmFrom;
+	BOOL	bBeforeTextSelected = IsTextSelected();
+	if (bBeforeTextSelected){
+		nLineFrom = m_nSelectLineFrom;
+		nColmFrom = m_nSelectColmFrom;
+	}
+	
 	//子プロセスの標準出力と接続するパイプを作成
 	SECURITY_ATTRIBUTES	sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -8825,17 +8834,51 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 				0, FALSE,
 				DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS );	// 元の継承可能ハンドルは DUPLICATE_CLOSE_SOURCE で閉じる	// 2007.01.31 ryoji
 
+	// From Here 2007.03.18 maru 子プロセスの標準入力ハンドル
+	// CDocLineMgr::WriteFileなど既存のファイル出力系の関数のなかには
+	// ファイルハンドルを返すタイプのものがないので、一旦書き出してから
+	// 一時ファイル属性でオープンすることに。
+	hStdIn = NULL;
+	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
+		TCHAR		szPathName[MAX_PATH];
+		TCHAR		szTempFileName[MAX_PATH];
+		int			nFlgOpt;
+
+		GetTempPath( MAX_PATH, szPathName );
+		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
+#ifdef _DEBUG
+		MYTRACE( "CEditView::ExecCmd() TempFilename=[%s]\n", szTempFileName );
+#endif
+		
+		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
+		
+		if( FALSE == Command_PUTFILE( szTempFileName, CODE_SJIS, nFlgOpt) ){	// 一時ファイル出力
+			hStdIn = NULL;
+		} else {
+			hStdIn = CreateFile( szTempFileName, GENERIC_READ,		// 子プロセスへの継承用にファイルを開く
+					0, &sa, OPEN_EXISTING,
+					FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+					NULL );
+			if(hStdIn == INVALID_HANDLE_VALUE) hStdIn = NULL;
+		}
+	}
+	
+	if (hStdIn == NULL) {	/* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
+		bSendStdin = FALSE;
+		hStdIn = GetStdHandle( STD_INPUT_HANDLE );
+	}
+	// To Here 2007.03.18 maru 子プロセスの標準入力ハンドル
+	
 	//CreateProcessに渡すSTARTUPINFOを作成
 	STARTUPINFO	sui;
 	ZeroMemory( &sui, sizeof(STARTUPINFO) );
 	sui.cb = sizeof(STARTUPINFO);
-	if( bGetStdout ) {
-		sui.dwFlags = STARTF_USESHOWWINDOW;
-		sui.wShowWindow = SW_HIDE;
-		sui.dwFlags |=  STARTF_USESTDHANDLES;
-		sui.hStdInput = GetStdHandle( STD_INPUT_HANDLE );
-		sui.hStdOutput = hStdOutWrite;
-		sui.hStdError = hStdOutWrite;
+	if( bGetStdout || bSendStdin ) {
+		sui.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+		sui.wShowWindow = bGetStdout ? SW_HIDE : SW_SHOW;
+		sui.hStdInput = hStdIn;
+		sui.hStdOutput = bGetStdout ? hStdOutWrite : GetStdHandle( STD_OUTPUT_HANDLE );
+		sui.hStdError = bGetStdout ? hStdOutWrite : GetStdHandle( STD_ERROR_HANDLE );
 	}
 
 	//コマンドライン実行
@@ -8858,11 +8901,27 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		}
 	}
 
+	// ファイル全体に対するフィルタ動作
+	//	現在編集中のファイルからのデータ書きだしおよびデータ取り込みが
+	//	指定されていて，かつ範囲選択が行われていない場合は
+	//	「すべて選択」されているものとして，編集データ全体を
+	//	コマンドの出力結果と置き換える．
+	//	2007.05.20 maru
+	if((FALSE == bBeforeTextSelected) && bSendStdin && bGetStdout && bToEditWindow){
+		SetSelectArea( 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 );
+		DeleteData( TRUE );
+	}
+
+	// hStdOutWrite は CreateProcess() で継承したので親プロセスでは用済み
+	// hStdInも親プロセスでは使用しないが、Win9x系では子プロセスが終了してから
+	// クローズするようにしないと一時ファイルが自動削除されない
+	CloseHandle(hStdOutWrite);
+	hStdOutWrite = NULL;	// 2007.09.08 genta 二重closeを防ぐ
+
 	if( bGetStdout ) {
 		DWORD	read_cnt;
 		DWORD	new_cnt;
 		char	work[1024];
-		char	tmp;
 		int		bufidx = 0;
 		int		j;
 		BOOL	bLoopFlag = TRUE;
@@ -8871,7 +8930,7 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・
-		{
+		if (FALSE==bToEditWindow) {	//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			char szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime( &systime );
@@ -8912,9 +8971,11 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 			if( cDlgCancel.IsCanceled() ){
 				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
 				::TerminateProcess( pi.hProcess, 0 );
-				//最後にテキストを追加
-				const char* pszText = "\r\n中断しました。\r\n";
-				CShareData::getInstance()->TraceOut( "%s", pszText );
+				if (FALSE==bToEditWindow) {	//	2006.12.03 maru アウトプットウィンドウにのみ出力
+					//最後にテキストを追加
+					const char* pszText = "\r\n中断しました。\r\n";
+					CShareData::getInstance()->TraceOut( "%s", pszText );
+				}
 				break;
 			}
 			new_cnt = 0;
@@ -8925,6 +8986,7 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					}
 					ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
+					
 					if( read_cnt == 0 ) {
 						// Jan. 23, 2004 genta while追加のため制御を変更
 						break;
@@ -8934,7 +8996,8 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
 					//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
 					for( j=0; j<(int)read_cnt - 1; j++ ) {
-						if( IsKanji1(work[j]) ) {
+						//	2007.09.10 ryoji
+						if( CMemory::GetSizeOfChar(work, read_cnt, j) == 2 ) {
 							j++;
 						} else {
 							if( work[j] == '\r' && work[j+1] == '\n' ) {
@@ -8947,7 +9010,7 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					//	From Here Jan. 28, 2004 Moca
 					//	改行コードが分割されるのを防ぐ
 					if( j == read_cnt - 1 ){
-						if( IsKanji1(work[j]) ) {
+						if( _IS_SJIS_1(work[j]) ) {
 							j = read_cnt + 1; // ぴったり出力できないことを主張
 						}else if( work[j] == '\r' || work[j] == '\n' ) {
 							// CRLF,LFCRの一部ではない改行が末尾にある
@@ -8959,15 +9022,31 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 					}
 					//	To Here Jan. 28, 2004 Moca
 					if( j == (int)read_cnt ) {	//ぴったり出力できる場合
-						work[read_cnt] = 0;
-						CShareData::getInstance()->TraceOut( "%s", work );
+						//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
+						if (FALSE==bToEditWindow) {
+							work[read_cnt] = '\0';
+							CShareData::getInstance()->TraceOut( "%s", work );
+						} else {
+							Command_INSTEXT(FALSE, work, read_cnt, TRUE);
+						}
 						bufidx = 0;
+#ifdef _DEBUG
+	//MYTRACE( "ExecCmd: No leap character\n");
+#endif
 					} else {
-						tmp = work[read_cnt-1];
-						work[read_cnt-1] = 0;
-						CShareData::getInstance()->TraceOut( "%s", work );
+						char tmp = work[read_cnt-1];
+						//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
+						if (FALSE==bToEditWindow) {
+							work[read_cnt-1] = '\0';
+							CShareData::getInstance()->TraceOut( "%s", work );
+						} else {
+							Command_INSTEXT(FALSE, work, read_cnt-1, TRUE);
+						}
 						work[0] = tmp;
 						bufidx = 1;
+#ifdef _DEBUG
+	MYTRACE( "ExecCmd: Carry last character [%d]\n", tmp );
+#endif
 					}
 					// Jan. 23, 2004 genta
 					// 子プロセスの出力をどんどん受け取らないと子プロセスが
@@ -8981,25 +9060,36 @@ void CEditView::ExecCmd( const char* pszCmd, BOOL bGetStdout )
 			}
 		} while( bLoopFlag || new_cnt > 0 );
 		
-		//	Jun. 04, 2003 genta	終了コードの取得と出力
-		DWORD result;
-		::GetExitCodeProcess( pi.hProcess, &result );
-		CShareData::getInstance()->TraceOut( "\r\n終了コード: %d\r\n", result );
+		if (FALSE==bToEditWindow) {	//	2006.12.03 maru アウトプットウィンドウにのみ出力
+			work[bufidx] = '\0';
+			CShareData::getInstance()->TraceOut( "%s", work );	/* 最後の文字の処理 */
+			//	Jun. 04, 2003 genta	終了コードの取得と出力
+			DWORD result;
+			::GetExitCodeProcess( pi.hProcess, &result );
+			CShareData::getInstance()->TraceOut( "\r\n終了コード: %d\r\n", result );
 
-		// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-		if(result > 0) ActivateFrameWindow( m_pShareData->m_hwndDebug );
+			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
+			if(result > 0) ActivateFrameWindow( m_pShareData->m_hwndDebug );
+		}
+		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
+			Command_INSTEXT(FALSE, work, bufidx, TRUE);	/* 最後の文字の処理 */
+			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
+				SetSelectArea( nLineFrom, nColmFrom, m_nCaretPosY, m_nCaretPosX );
+				DrawSelectArea();
+			}
+			RedrawAll();
+		}
 	}
 
 
 finish:
 	//終了処理
-	CloseHandle( hStdOutWrite );
+	if(bSendStdin) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
+	if(hStdOutWrite) CloseHandle( hStdOutWrite );
 	CloseHandle( hStdOutRead );
 	if( pi.hProcess ) CloseHandle( pi.hProcess );
 	if( pi.hThread ) CloseHandle( pi.hThread );
-	#undef IsKanji1
 }
-//	To Here Jun. 30, 2001 GAE
 
 /*!
 	検索／置換／ブックマーク検索時の状態をステータスバーに表示する

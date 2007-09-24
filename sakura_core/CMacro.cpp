@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, zenryaku, FILE
 	Copyright (C) 2006, かろと
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -66,7 +66,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 		{
 			AddParam( (const char *)lParam );	//	lParamを追加。
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_bGetStdout ? 0x01 : 0x00;
+			lFlag = pcEditView->m_pShareData->m_nExecFlgOpt;
 			AddParam( lFlag );
 		}
 		break;
@@ -452,30 +452,15 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x0010 -t expand-tabs         TAB-SPACE変換
 		//		0x0020    (編集中のファイルが旧ファイル)
 		//		0x0040    (DIFF差分がないときにメッセージ表示)
-		if( Argument[0] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T(	"比較相手ファイルが指定されていません．" ));
-			break;
-		}
-		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
-		break;
+		/* NO BREAK */
 	case F_EXECCOMMAND:
 		//	Argument[0]を実行。オプションはArgument[1]に。
 		//	Argument[1]:
 		//		次の数値の和。
 		//		0x01	標準出力を得る
-		if( Argument[0] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T(	"外部コマンドが指定されていません．" ));
-			break;
-		}
-		{
-			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 0;
-			pcEditView->m_pShareData->m_bGetStdout = lFlag & 0x01 ? 1 : 0;
-		//	pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)atoi(Argument[1]), 0, 0);
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
-		}
-		break;
+		//		0x02	標準出力をキャレット位置に	//	2007.01.02 maru 引数の拡張
+		//		0x04	編集中ファイルを標準入力へ	//	2007.01.02 maru 引数の拡張
+		/* NO BREAK */
 	case F_TRACEOUT:		// 2006.05.01 マクロ用アウトプットウインドウに出力
 		//	Argument[0]を出力。オプションはArgument[1]に。
 		//	Argument[1]:
@@ -484,13 +469,36 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x02	テキスト末尾に改行コードを付加しない
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T(	"出力テキストが指定されていません．" ));
+				_T(	"引数(文字列)が指定されていません．" ));
 			break;
 		}
 		{
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)(Argument[1] != NULL ? atoi(Argument[1]) : 0 ), 0, 0);
 		}
 		break;
+	/* はじめの引数は文字列。２つ目と３つ目は数値 */
+	case F_PUTFILE:		// 2006.12.10 作業中ファイルの一時出力
+		//	Argument[0]に出力。Argument[1]に文字コード。オプションはArgument[2]に。
+		//	Argument[2]:
+		//		次の値の和
+		//		0x01	選択範囲を出力（非選択状態なら空ファイルを生成）
+		// no break
+	case F_INSFILE:		// 2006.12.10 キャレット位置にファイル挿入
+		//	Argument[0]に出力。Argument[1]に文字コード。オプションはArgument[2]に。
+		//	Argument[2]:
+		//		現在は特になし
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T(	"ファイル名が指定されていません．" ));
+			break;
+		}
+		{
+			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 
+						(LPARAM)(Argument[1] != NULL ? atoi(Argument[1]) : 0 ),
+						(LPARAM)(Argument[2] != NULL ? atoi(Argument[2]) : 0 ), 0);
+		}
+		break;
+
 	/* はじめの2つの引数は文字列。3つ目は数値 */
 	case F_REPLACE:
 	case F_REPLACE_ALL:

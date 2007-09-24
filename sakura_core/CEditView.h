@@ -13,7 +13,7 @@
 	Copyright (C) 2004, genta, Moca, novice, Kazika, isearch
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
 	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -508,7 +508,7 @@ protected:
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
 	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
-	void ExecCmd(const char*, BOOL ) ;							// 子プロセスの標準出力をリダイレクトする
+	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張
 	void AddToCmdArr( const char* );
 	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
@@ -571,6 +571,8 @@ protected:
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
 	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
+	BOOL Command_PUTFILE( const char*, int, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
+	BOOL Command_INSFILE( const char*, int, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
 
 	/* 編集系 */
 	void Command_CHAR( char );				/* 文字入力 */
@@ -835,12 +837,17 @@ void ReplaceData_CEditView(
 	void Command_SAVEKEYMACRO( void );	/* キーマクロの保存 */
 	void Command_LOADKEYMACRO( void );	/* キーマクロの読み込み */
 	void Command_EXECKEYMACRO( void );	/* キーマクロの実行 */
+//	From Here 2006.12.03 maru 引数の拡張．
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	void Command_EXECCMMAND( void );	/* 外部コマンド実行 */
 	//	Oct. 9, 2001 genta マクロ対応のため機能拡張
-	void Command_EXECCOMMAND_DIALOG( const char* cmd );	/* 外部コマンド実行ダイアログ表示 */
-	void Command_EXECCOMMAND( const char* cmd );	/* 外部コマンド実行 */
+//	void Command_EXECCOMMAND_DIALOG( const char* cmd );	/* 外部コマンド実行ダイアログ表示 */
+//	void Command_EXECCOMMAND( const char* cmd );	/* 外部コマンド実行 */
+	void Command_EXECCOMMAND_DIALOG( void );	/* 外部コマンド実行ダイアログ表示 */	//	引数使ってないみたいなので
+	//	マクロからの呼び出しではオプションを保存させないため、Command_EXECCOMMAND_DIALOG内で処理しておく．
+	void Command_EXECCOMMAND( const char* cmd, const int nFlgOpt );	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
+//	To Here 2006.12.03 maru 引数の拡張
 
 	/* カスタムメニュー */
 	void Command_MENU_RBUTTON( void );	/* 右クリックメニュー */

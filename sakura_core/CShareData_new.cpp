@@ -14,7 +14,7 @@
 	Copyright (C) 2004, MIK, Moca, D.S.Koba, genta
 	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
-	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2007, ryoji, genta, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1492,7 +1492,10 @@ void CShareData::ShareData_IO_Other( CProfile& cProfile )
 
 	/* **** その他のダイアログ **** */
 	/* 外部コマンド実行の「標準出力を得る」 */
-	cProfile.IOProfileData( pszSecName, "bGetStdout"		, m_pShareData->m_bGetStdout );
+	if(true != cProfile.IOProfileData( pszSecName, "nExecFlgOpt"	, m_pShareData->m_nExecFlgOpt ) ){ //	2006.12.03 maru オプション拡張
+		cProfile.IOProfileData( pszSecName, "bGetStdout"		, m_pShareData->m_nExecFlgOpt );
+	}
+
 	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 	cProfile.IOProfileData( pszSecName, "bLineNumIsCRLF"	, m_pShareData->m_bLineNumIsCRLF );
 	
