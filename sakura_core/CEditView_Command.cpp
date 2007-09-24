@@ -7427,6 +7427,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理など見直し
 	@date 2006.03.31 かろと 行置換機能追加
 	@date 2007.01.16 ryoji 行置換機能を全置換のオプションに変更
+	@date 2009.09.20 genta 左下～右上で矩形選択された領域の置換が行われない
 */
 void CEditView::Command_REPLACE_ALL()
 {
@@ -7519,10 +7520,22 @@ void CEditView::Command_REPLACE_ALL()
 	if (bSelectedArea){
 		/* 選択範囲置換 */
 		/* 選択範囲開始位置の取得 */
-		colFrom = m_nSelectColmFrom;
 		linFrom = m_nSelectLineFrom;
-		colTo   = m_nSelectColmTo;
 		linTo   = m_nSelectLineTo;
+		//	From Here 2007.09.20 genta 矩形範囲の選択置換ができない
+		//	左下～右上と選択した場合，m_nSelectColmTo < m_nSelectColmFrom となるが，
+		//	範囲チェックで colFrom < colTo を仮定しているので，
+		//	矩形選択の場合は左上～右下指定になるよう桁を入れ換える．
+		if( bBeginBoxSelect && m_nSelectColmTo < m_nSelectColmFrom ){
+			colFrom = m_nSelectColmTo;
+			colTo   = m_nSelectColmFrom;
+		}
+		else {
+			colFrom = m_nSelectColmFrom;
+			colTo   = m_nSelectColmTo;
+		}
+		//	To Here 2007.09.20 genta 矩形範囲の選択置換ができない
+		
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 			colTo,
 			linTo,
