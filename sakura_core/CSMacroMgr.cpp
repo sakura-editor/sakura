@@ -15,7 +15,7 @@
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, FILE
 	Copyright (C) 2006, かろと, fon
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -92,6 +92,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_PROPERTY_FILE,				"PropertyFile",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルのプロパティ
 	{F_EXITALLEDITORS,				"ExitAllEditors",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //編集の全終了	// 2007.02.13 ryoji 追加
 	{F_EXITALL,						"ExitAll",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+	{F_PUTFILE,						"PutFile",				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // 作業中ファイルの一時出力 2006.12.10 maru
+	{F_INSFILE,						"InsFile",				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // キャレット位置にファイル挿入 2006.12.10 maru
 
 	/* 編集系 */
 	{F_CHAR,				"Char",					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字入力
@@ -728,6 +730,9 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_PROPERTY_FILE			://ファイルのプロパティ
 //	case F_EXITALLEDITORS			://編集の全終了	// 2007.02.13 ryoji 追加
 //	case F_EXITALL					://サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+//	case F_PUTFILE					://作業中ファイルの一時出力	2006.12.10 maru
+//	case F_INSFILE					://キャレット位置にファイル挿入	2006.12.10 maru
+
 
 	/* 編集系 */
 	case F_CHAR						://文字入力

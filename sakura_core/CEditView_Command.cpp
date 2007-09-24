@@ -275,6 +275,8 @@ BOOL CEditView::HandleCommand(
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
 	case F_EXITALLEDITORS:		Command_EXITALLEDITORS();break;		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
+	case F_PUTFILE:				Command_PUTFILE((const char*)lparam1, (int)lparam2, (int)lparam3);break;	/* 作業中ファイルの一時出力 */ //maru 2006.12.10
+	case F_INSFILE:				Command_INSFILE((const char*)lparam1, (int)lparam2, (int)lparam3);break;	/* キャレット位置にファイル挿入 */ //maru 2006.12.10
 
 	/* 編集系 */
 	case F_UNDO:				Command_UNDO();break;				/* 元に戻す(Undo) */
@@ -548,11 +550,13 @@ BOOL CEditView::HandleCommand(
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
 		}
-		Command_EXECCOMMAND_DIALOG((const char*)lparam1);	/* 外部コマンド実行 */
+		//Command_EXECCOMMAND_DIALOG((const char*)lparam1);	/* 外部コマンド実行 */
+		Command_EXECCOMMAND_DIALOG();	/* 外部コマンド実行 */	//	引数つかってないみたいなので
 		break;
 	//	To Here Sept. 20, 2000
 	case F_EXECCOMMAND:
-		Command_EXECCOMMAND((const char*)lparam1);
+		//Command_EXECCOMMAND((const char*)lparam1);
+		Command_EXECCOMMAND((const char*)lparam1, (int)lparam2);	//	2006.12.03 maru 引数の拡張のため
 		break;
 
 	/* カスタムメニュー */
@@ -9314,26 +9318,25 @@ void CEditView::Command_INS_TIME( void )
 
 /*! 外部コマンド実行ダイアログ表示
 	@date 2002.02.02 YAZAKI.
+	@date 2007.01.02 maru	引数は使っていないようなのでvoidに変更．
+							HandleCommand(F_EXECCOMMAND,,,,,)実行の引数変更
 */
-void CEditView::Command_EXECCOMMAND_DIALOG( const char *cmd )
+void CEditView::Command_EXECCOMMAND_DIALOG( void )
 {
 	const char *cmd_string;	//	Oct. 9, 2001 genta
 	CDlgExec cDlgExec;
 
-	if( cmd == NULL ){
-		/* モードレスダイアログの表示 */
-		if( FALSE == cDlgExec.DoModal( m_hInstance, m_hWnd, 0 ) ){
-			return;
-		}
+	/* モードレスダイアログの表示 */
+	if( FALSE == cDlgExec.DoModal( m_hInstance, m_hWnd, 0 ) ){
+		return;
+	}
 	//	MYTRACE( "cDlgExec.m_szCommand=[%s]\n", cDlgExec.m_szCommand );
 
-		AddToCmdArr( cDlgExec.m_szCommand );
-		cmd_string = cDlgExec.m_szCommand;
-	}
-	else {
-		cmd_string = cmd;
-	}
-	HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+	AddToCmdArr( cDlgExec.m_szCommand );
+	cmd_string = cDlgExec.m_szCommand;
+
+	//HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+	HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, (LPARAM)(m_pShareData->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
 }
 
 //外部コマンド実行
@@ -9341,7 +9344,8 @@ void CEditView::Command_EXECCOMMAND_DIALOG( const char *cmd )
 //	void CEditView::Command_EXECCMMAND( void )
 //	Oct. 9, 2001 genta マクロ対応のため引数追加
 //@@@ 2002.2.2 YAZAKI ダイアログ呼び出し部とコマンド実行部を分離
-void CEditView::Command_EXECCOMMAND( const char *cmd_string )
+//void CEditView::Command_EXECCOMMAND( const char *cmd_string )
+void CEditView::Command_EXECCOMMAND( const char *cmd_string, const int nFlgOpt)	//	2006.12.03 maru 引数の拡張
 //	To Here Sept. 20, 2000
 {
 #if 0
@@ -9369,7 +9373,8 @@ void CEditView::Command_EXECCOMMAND( const char *cmd_string )
 	m_pcEditDoc->ExpandParameter(cmd_string, buf, bufmax);
 	
 	// 子プロセスの標準出力をリダイレクトする
-	ExecCmd( buf, m_pShareData->m_bGetStdout );
+	//ExecCmd( buf, m_pShareData->m_bGetStdout );	//	2006.12.03 maru マクロからの呼び出しではオプションを保存させないため
+	ExecCmd( buf, nFlgOpt );
 	//	To Here Aug. 21, 2001 genta
 	return;
 }

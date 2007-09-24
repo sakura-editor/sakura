@@ -421,6 +421,8 @@
 #define F_CHGMOD_EOL          32800		// 入力改行コード指定 2003.06.23 Moca
 #define F_SET_QUOTESTRING     32801		// 共通設定: 引用符の設定	2005.01.29 genta
 #define F_TRACEOUT            32802		// マクロ用アウトプットウインドウに出力	2006.04.26 maru
+#define F_PUTFILE             32803 	// 作業中ファイルの一時出力 2006.12.10 maru
+#define F_INSFILE             32804 	// キャレット位置にファイル挿入 2006.12.10 maru
 
 #define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 

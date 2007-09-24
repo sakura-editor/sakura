@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, ryoji, genta, D.S.Koba
 	Copyright (C) 2006, genta, Moca, fon
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -37,6 +37,9 @@
 #include "CEditWnd.h"
 #include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
+#include "CFileLoad.h"	// 2006.12.09 maru
+#include "CDlgCancel.h"	// 2006.12.09 maru
+#include "CFileWrite.h"	// 2006.12.09 maru
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -2863,6 +2866,236 @@ void CEditView::Command_TRACEOUT( const char* outputstr, int nFlgOpt )
 	// 0x02 改行コードの有無
 	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOut( "\r\n" );
 
+}
+
+/*!	@brief 編集中の内容を別名保存
+
+	主に編集中の一時ファイル出力などの目的に使用する．
+	現在開いているファイル(m_szFilePath)には影響しない．
+
+	@param[in] filename 出力ファイル名
+	@param[in] nCharCode 文字コード指定
+		@li	CODE_xxxxxxxxxx:各種文字コード
+		@li	CODE_AUTODETECT:現在の文字コードを維持
+	@param[in] nFlgOpt 動作オプション
+		@li	0x01:選択範囲を出力 (非選択状態でも空ファイルを出力する)
+
+	@retval	TRUE 正常終了
+	@retval	FALSE ファイル作成に失敗
+
+	@author	maru
+	@date	2006.12.10 maru 新規作成
+*/
+BOOL CEditView::Command_PUTFILE( const char* filename, const int nCharCode, int nFlgOpt )
+{
+	BOOL	bResult = TRUE;
+	int		nSaveCharCode;
+	nSaveCharCode = nCharCode;
+	if(filename[0] == '\0') {
+		return FALSE;
+	}
+	
+	if(nSaveCharCode == CODE_AUTODETECT) nSaveCharCode = m_pcEditDoc->m_nCharCode;
+	
+	//	2007.09.08 genta CEditDoc::FileWrite()にならって砂時計カーソル
+	CWaitCursor cWaitCursor( m_hWnd );
+	
+	if(nFlgOpt & 0x01)
+	{	/* 選択範囲を出力 */
+		try
+		{
+			CFileWrite cfw(filename);
+			if ( m_pcEditDoc->m_bBomExist) {
+				switch( nSaveCharCode ){
+				case CODE_UNICODE:
+					cfw.Write("\xff\xfe",sizeof(char)*2);
+					break;
+				case CODE_UNICODEBE:
+					cfw.Write( "\xfe\xff", sizeof(char) * 2 );
+					break;
+				case CODE_UTF8: // 2003.05.04 Moca BOMの間違いを訂正
+					cfw.Write( "\xef\xbb\xbf", sizeof(char) * 3 );
+					break;
+				default:
+					//	genta ここに来るのはバグだ
+					//	2007.09.08 genta 追加
+					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("作者に教えて欲しいエラー"),
+					_T("CEditView::Command_PUTFILE/BOM Error\nSaveCharCode=%d"), nSaveCharCode );
+					;
+				}
+			}
+
+			/* 選択範囲の取得 */
+			CMemory cMem;
+			GetSelectedData(cMem, FALSE, NULL, FALSE, FALSE);
+
+			/* 書き込み時のコード変換 */
+			switch( nSaveCharCode ){
+				case CODE_UNICODE:	cMem.SJISToUnicode();break;	/* SJIS→Unicodeコード変換 */
+				case CODE_UTF8:		cMem.SJISToUTF8();break;	/* SJIS→UTF-8コード変換 */
+				case CODE_UTF7:		cMem.SJISToUTF7();break;	/* SJIS→UTF-7コード変換 */
+				case CODE_EUC:		cMem.SJISToEUC();break;		/* SJIS→EUCコード変換 */
+				case CODE_JIS:		cMem.SJIStoJIS();break;		/* SJIS→JISコード変換 */
+				case CODE_UNICODEBE:	cMem.SJISToUnicodeBE();break;	/* SJIS→UnicodeBEコード変換 */
+				case CODE_SJIS:		/* NO BREAK */
+				default:			break;
+			}
+			if( 0 < cMem.GetLength() ) cfw.Write(cMem.GetPtr(),sizeof(char)*cMem.GetLength());
+		}
+		catch(CError_FileOpen)
+		{
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+				"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
+				filename);
+			bResult = FALSE;
+		}
+		catch(CError_FileWrite)
+		{
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, "ファイルの書き込み中にエラーが発生しました。" );
+			bResult = FALSE;
+		}
+	}
+	else {	/* ファイル全体を出力 */
+		FILETIME	filetime;
+		HWND		hwndProgress;
+		CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
+		
+		if( NULL != pCEditWnd ){
+			hwndProgress = pCEditWnd->m_hwndProgressBar;
+		}else{
+			hwndProgress = NULL;
+		}
+		if( NULL != hwndProgress ){
+			::ShowWindow( hwndProgress, SW_SHOW );
+		}
+
+		bResult = (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile(	// 一時ファイル出力
+					filename, m_pcEditDoc->m_hWnd, hwndProgress, nSaveCharCode,
+					&filetime, EOL_NONE , m_pcEditDoc->m_bBomExist );
+
+		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
+	}
+	return bResult;
+}
+
+/*!	@brief カーソル位置にファイルを挿入
+
+	現在のカーソル位置に指定のファイルを読み込む．
+
+	@param[in] filename 入力ファイル名
+	@param[in] nCharCode 文字コード指定
+		@li	CODE_xxxxxxxxxx:各種文字コード
+		@li	CODE_AUTODETECT:前回文字コードもしくは自動判別の結果による
+	@param[in] nFlgOpt 動作オプション（現在は未定義．0を指定のこと）
+
+	@retval	TRUE 正常終了
+	@retval	FALSE ファイルオープンに失敗
+
+	@author	maru
+	@date	2006.12.10 maru 新規作成
+*/
+BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOpt )
+{
+	CFileLoad	cfl;
+	const char*	pLine;
+	CEOL cEol;
+	int			nLineLen;
+	int			nLineNum = 0;
+	int			nSaveCharCode;
+
+	CDlgCancel*	pcDlgCancel = NULL;
+	HWND		hwndCancel = NULL;
+	HWND		hwndProgress = NULL;
+	BOOL		bResult = TRUE;
+
+	if(filename[0] == '\0') {
+		return FALSE;
+	}
+
+	//	2007.09.08 genta CEditDoc::FileRead()にならって砂時計カーソル
+	CWaitCursor cWaitCursor( m_hWnd );
+
+	// 範囲選択中なら挿入後も選択状態にするため	/* 2007.04.29 maru */
+	int	nLineFrom, nColmFrom;
+	BOOL	bBeforeTextSelected = IsTextSelected();
+	if (bBeforeTextSelected){
+		nLineFrom = m_nSelectLineFrom;
+		nColmFrom = m_nSelectColmFrom;
+	}
+
+
+	nSaveCharCode = nCharCode;
+	if(nSaveCharCode == CODE_AUTODETECT) {
+		FileInfo		fi;
+		CMRU			cMRU;
+		if ( cMRU.GetFileInfo( filename, &fi ) ){
+				nSaveCharCode = fi.m_nCharCode;
+		} else {
+			nSaveCharCode = m_pcEditDoc->m_nCharCode;
+		}
+	}
+	
+	/* ここまできて文字コードが決定しないならどこかおかしい */
+	if( 0 > nSaveCharCode || nSaveCharCode > CODE_CODEMAX ) nSaveCharCode = CODE_SJIS;
+	
+	try{
+		// ファイルを開く
+		cfl.FileOpen( filename, nSaveCharCode, NULL );
+
+		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
+		if ( 0x10000 < cfl.GetFileSize() ) {
+			pcDlgCancel = new CDlgCancel;
+			if( NULL != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
+				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
+				::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM(0, 100) );
+				::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+			}
+		}
+
+		// ReadLineはファイルから 文字コード変換された1行を読み出します
+		// エラー時はthrow CError_FileRead を投げます
+		while( NULL != ( pLine = cfl.ReadLine( &nLineLen, &cEol ) ) ){
+			++nLineNum;
+			Command_INSTEXT(FALSE, pLine, nLineLen, TRUE);
+
+			/* 進捗ダイアログ有無 */
+			if( NULL == pcDlgCancel ){
+				continue;
+			}
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
+				break;
+			}
+			/* 中断ボタン押下チェック */
+			if( pcDlgCancel->IsCanceled() ){
+				break;
+			}
+			if( 0 == ( nLineNum & 0xFF ) ){
+				::PostMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
+				Redraw();
+			}
+		}
+		// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
+		cfl.FileClose();
+	} // try
+	catch( CError_FileOpen ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, "file open error [%s]", filename );
+		bResult = FALSE;
+	}
+	catch( CError_FileRead ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, "ファイルの読み込み中にエラーが発生しました。" );
+		bResult = FALSE;
+	} // 例外処理終わり
+
+	if( NULL != pcDlgCancel ){
+		delete pcDlgCancel;
+	}
+	if (bBeforeTextSelected){	// 挿入された部分を選択状態に
+		SetSelectArea( nLineFrom, nColmFrom, m_nCaretPosY, m_nCaretPosX );
+		DrawSelectArea();
+	}
+	Redraw();
+	return bResult;
 }
 
 /*[EOF]*/

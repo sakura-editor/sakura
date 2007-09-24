@@ -588,6 +588,9 @@
 #define IDC_CHECK_CloseOneWin           1519
 #define IDC_CHECK_bCaretTextForSearch   1520
 #define IDC_CHECK_ChgWndByWheel         1521
+#define IDC_RADIO_OUTPUT                1536
+#define IDC_RADIO_EDITWINDOW            1537
+#define IDC_CHECK_SENDSTDIN             1538
 #define IDD_PROP_TOOLBAR                1539
 #define IDC_CHECK_SortTabList           1540
 #define IDM_POPLAST                     4047

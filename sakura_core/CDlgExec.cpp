@@ -9,6 +9,7 @@
 	Copyright (C) 2001, jepro, Stonee
 	Copyright (C) 2002, aroka, YAZAKI, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, maru
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -34,6 +35,9 @@ const DWORD p_helpids[] = {	//12100
 	IDC_BUTTON_HELP,				HIDC_EXEC_BUTTON_HELP,			//ヘルプ
 	IDC_CHECK_GETSTDOUT,			HIDC_EXEC_CHECK_GETSTDOUT,		//標準出力を得る
 	IDC_COMBO_m_szCommand,			HIDC_EXEC_COMBO_m_szCommand,	//コマンド
+	IDC_RADIO_OUTPUT,				HIDC_RADIO_OUTPUT,				//標準出力リダイレクト先：アウトプットウィンドウ
+	IDC_RADIO_EDITWINDOW,			HIDC_RADIO_EDITWINDOW,			//標準出力リダイレクト先：編集中のウィンドウ
+	IDC_CHECK_SENDSTDIN,			HIDC_CHECK_SENDSTDIN,			//標準入力に送る
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -78,10 +82,23 @@ void CDlgExec::SetData( void )
 	// 標準出力を得る
 //	From Here Sept. 12, 2000 jeprotest
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, m_pShareData->m_bGetStdout/*m_bGetStdout*/ ? BST_CHECKED : BST_UNCHECKED );
+//	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, m_pShareData->m_bGetStdout/*m_bGetStdout*/ ? BST_CHECKED : BST_UNCHECKED );
 //	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, TRUE );
 //	To Here Sept. 12, 2000 	うまくいかないので元に戻してある
 
+	{	//	From Here 2007.01.02 maru 引数を拡張のため
+		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
+		int nExecFlgOpt;
+		nExecFlgOpt = m_pShareData->m_nExecFlgOpt;
+		
+		::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, nExecFlgOpt & 0x01 ? BST_CHECKED : BST_UNCHECKED );
+		::CheckDlgButton( m_hWnd, IDC_RADIO_OUTPUT, nExecFlgOpt & 0x02 ? BST_UNCHECKED : BST_CHECKED );
+		::CheckDlgButton( m_hWnd, IDC_RADIO_EDITWINDOW, nExecFlgOpt & 0x02 ? BST_CHECKED : BST_UNCHECKED );
+		::CheckDlgButton( m_hWnd, IDC_CHECK_SENDSTDIN, nExecFlgOpt & 0x04 ? BST_CHECKED : BST_UNCHECKED );
+
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
+	}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 	/*****************************
 	*         データ設定         *
@@ -105,17 +122,14 @@ void CDlgExec::SetData( void )
 int CDlgExec::GetData( void )
 {
 	::GetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand, sizeof( m_szCommand ));
-
-	// 標準出力を得る
-//	From Here Sept. 12, 2000 jeprotest
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
-//	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
-//	To Here Sept. 12, 2000 うまくいかないので元に戻してある
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-		 m_pShareData->m_bGetStdout = TRUE;
-	}else{
-		 m_pShareData->m_bGetStdout = FALSE;
-	}
+	{	//	From Here 2007.01.02 maru 引数を拡張のため
+		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
+		int nFlgOpt = 0;
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ) ? 0x01 : 0;	// 標準出力を得る
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_EDITWINDOW ) ) ? 0x02 : 0;	// 標準出力を編集中のウインドウへ
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SENDSTDIN ) ) ? 0x04 : 0;	// 編集中ファイルを標準入力へ
+		m_pShareData->m_nExecFlgOpt = nFlgOpt;
+	}	//	To Here 2007.01.02 maru 引数を拡張のため
 	return 1;
 }
 
@@ -137,6 +151,12 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			 m_pShareData->m_bGetStdout = FALSE;
 		}
 #endif
+		{	//	From Here 2007.01.02 maru 引数を拡張のため
+			BOOL bEnabled;
+			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_OUTPUT ), bEnabled );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), bEnabled );
+		}	//	To Here 2007.01.02 maru 引数を拡張のため
 		break;
 	//	To Here Sept. 12, 2000 うまくいかないので元に戻してある
 	case IDC_BUTTON_HELP:

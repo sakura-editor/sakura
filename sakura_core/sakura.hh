@@ -665,6 +665,9 @@
 #define HIDC_EXEC_BUTTON_HELP		12103	//ヘルプ
 #define HIDC_EXEC_CHECK_GETSTDOUT	12104	//標準出力を得る
 #define HIDC_EXEC_COMBO_m_szCommand	12105	//コマンド
+#define HIDC_RADIO_OUTPUT			12106	//標準出力リダイレクト先：アウトプットウィンドウ
+#define HIDC_RADIO_EDITWINDOW		12107	//標準出力リダイレクト先：編集中のウィンドウ
+#define HIDC_CHECK_SENDSTDIN		12108	//標準入力に送る
 
 //アウトライン解析
 #define HIDC_FL_BUTTON_COPY		12200	//コピー
