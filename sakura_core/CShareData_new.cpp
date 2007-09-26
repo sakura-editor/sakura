@@ -505,6 +505,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bGrepRealTime"			, common.m_bGrepRealTimeView ); // 2003.06.16 Moca
 	cProfile.IOProfileData( pszSecName, "bCaretTextForSearch"	, common.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
 	
+	/* 正規表現DLL 2007.08.12 genta */
+	cProfile.IOProfileData( pszSecName, "szRegexpLib"			, common.m_szRegexpLib, sizeof( common.m_szRegexpLib ) );
+	
 	cProfile.IOProfileData( pszSecName, "bGTJW_RETURN"			, common.m_bGTJW_RETURN );
 	cProfile.IOProfileData( pszSecName, "bGTJW_LDBLCLK"			, common.m_bGTJW_LDBLCLK );
 	cProfile.IOProfileData( pszSecName, "bBackUp"				, common.m_bBackUp );

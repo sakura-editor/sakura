@@ -65,9 +65,9 @@ bool CUxTheme::Init( char* str )
 /*!
 	UxTheme ‚Ìƒtƒ@ƒCƒ‹–¼‚ð“n‚·
 */
-char *CUxTheme::GetDllName( char* )
+LPCTSTR CUxTheme::GetDllName( LPCTSTR )
 {
-	return "UxTheme.dll";
+	return _T("UxTheme.dll");
 }
 
 int CUxTheme::InitDll(void)

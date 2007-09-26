@@ -59,9 +59,10 @@ public:
 		@retval 0 正常終了。DLLがロードされた。
 		@retval other 異常終了。DLLはロードされなかった。
 
-		@date Jul. 5, 2001 genta 引数追加。パスの指定などに使える
+		@date 2001.07.05 genta 引数追加。パスの指定などに使える
+		@date 2007.06.25 genta GetDllNameInOrderを使うように実装を変更．
 	*/
-	int LoadLibrary(char* str = NULL);
+	int LoadLibrary(const char* str = NULL);
 	//! DLLのアンロード
 	/*!
 		@param force [in] 終了処理に失敗してもDLLを解放するかどうか
@@ -75,7 +76,7 @@ public:
 	/*!
 		詳細な戻り値を返さないこと以外はLoadLibrary()と同じ
 	*/
-	bool Init(char* str = NULL){ return LoadLibrary(str) == 0; }
+	bool Init(const char* str = NULL){ return LoadLibrary(str) == 0; }
 
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
@@ -129,9 +130,31 @@ protected:
 	virtual int DeinitDll(void);
 	//! DLLファイル名の取得
 	/*!
-		@date Jul. 5, 2001 genta 引数追加。パスの指定などに使える
+		@date 2001.07.05 genta 引数追加。パスの指定などに使える
+		@date 2007.06.25 genta GetDllNameInOrderを使用する場合は必須ではないので，
+			純粋仮想関数はやめてプレースホルダーを用意する．
 	*/
-	virtual char* GetDllName(char*) = 0;
+	virtual LPCTSTR GetDllName(LPCTSTR);
+
+	//! DLLファイル名の取得(複数を順次)
+	/*!
+		DLLファイル名として複数の可能性があり，そのうちの一つでも
+		見つかったものを使用する場合に対応する．
+		
+		番号に応じてそれぞれ異なるファイル名を返すことができる．
+		LoadLibrary()からはcounterを0から1ずつ増加させて順に呼びだされる．
+		それはDLLのロードに成功する(成功)か，戻り値としてNULLを返す(失敗)
+		まで続けられる．
+
+		デフォルトの実装はcounterが0の場合だけGetDllName()を呼びだし，
+		それ以外ではNULLを返す．
+		
+		@param[in] str LoadLibrary()に渡された文字列がそのまま渡される
+		@param[in] index インデックス．(0～)
+		
+		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
+	*/
+	virtual LPCTSTR GetDllNameInOrder(LPCTSTR str, int index);
 	
 	bool RegisterEntries(const ImportTable table[]);
 

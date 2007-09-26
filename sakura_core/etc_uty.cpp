@@ -2323,16 +2323,29 @@ SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int lengt
 
 	@retval true 初期化成功
 	@retval false 初期化に失敗
+
+	@date 2007.08.12 genta 共通設定からDLL名を取得する
 */
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
 {
-	if( !rRegexp.Init() ){
+	//	From Here 2007.08.12 genta
+	CShareData* pInstance = NULL;
+	DLLSHAREDATA* pShareData = NULL;
+	
+	LPCTSTR RegexpDll = _T("");
+	
+	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
+		RegexpDll = pShareData->m_Common.m_szRegexpLib;
+	}
+	//	To Here 2007.08.12 genta
+
+	if( !rRegexp.Init( RegexpDll ) ){
 		if( bShowMessage ){
 			::MessageBeep( MB_ICONEXCLAMATION );
-			::MessageBox( hWnd, "BREGEXP.DLLが見つかりません。\r\n"
-				"正規表現を利用するにはBREGEXP.DLLが必要です。\r\n"
-				"入手方法はヘルプを参照してください。",
-				"情報", MB_OK | MB_ICONEXCLAMATION );
+			::MessageBox( hWnd, _T("正規表現ライブラリが見つかりません。\r\n"
+				"正規表現を利用するにはBREGEXP.DLL互換のライブラリが必要です。\r\n"
+				"入手方法はヘルプを参照してください。"),
+				GSTR_APPNAME, MB_OK | MB_ICONEXCLAMATION );
 		}
 		return false;
 	}

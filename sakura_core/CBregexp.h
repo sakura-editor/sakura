@@ -195,7 +195,7 @@ public:
 
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
-	virtual char* GetDllName(char*);
+	virtual LPCTSTR GetDllNameInOrder(LPCTSTR, int);
 	virtual int InitDll(void);
 	virtual int DeinitDll(void);
 

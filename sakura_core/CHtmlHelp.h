@@ -51,7 +51,7 @@ public:
 
 protected:
 	virtual int InitDll(void);
-	virtual char* GetDllName(char *);
+	virtual const char* GetDllName(const char *);
 
 };
 

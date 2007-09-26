@@ -45,18 +45,28 @@ CDllHandler::~CDllHandler()
 	}
 }
 
-int CDllHandler::LoadLibrary(char* str)
+int CDllHandler::LoadLibrary(const char* str)
 {
 	if( IsAvailable() ){
 		//	既に利用可能で有れば何もしない．
 		return 0;
 	}
 
-	char *name = GetDllName(str);
-	if( name == NULL )	return -1;
+	for( int i = 0; m_hInstance == NULL ; i++ ){
+		LPCTSTR name = GetDllNameInOrder(str, i);
+		if( name == NULL ){
+			if( i == 0 ){
+				//	1周目ならファイル名異常
+				return -1;
+			}
+			else {
+				//	2周目以降ならロード失敗
+				return -2;
+			}
+		}
 
-	m_hInstance = ::LoadLibrary( name );
-	if( m_hInstance == NULL )	return -2;
+		m_hInstance = ::LoadLibrary( name );
+	}
 
 	int ret = InitDll();
 	if( ret != 0 ){
@@ -111,4 +121,16 @@ bool CDllHandler::RegisterEntries(const ImportTable table[])
 	return true;
 }
 
+LPCTSTR CDllHandler::GetDllName(LPCTSTR)
+{
+	return NULL;
+}
+
+LPCTSTR CDllHandler::GetDllNameInOrder(LPCTSTR str, int index)
+{
+	if( index == 0 ){
+		return GetDllName(str);
+	}
+	return NULL;
+}
 /*[EOF]*/

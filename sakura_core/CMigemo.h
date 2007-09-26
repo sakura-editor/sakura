@@ -83,7 +83,7 @@ protected:
 
 	migemo* m_migemo;
 	
-	char* GetDllName(char *);
+	const char* GetDllName(const char *);
 	int InitDll(void);
 	int DeInitDll(void);
 	

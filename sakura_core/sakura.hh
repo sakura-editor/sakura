@@ -397,6 +397,8 @@
 #define HIDC_CHECK_GTJW_RETURN					10511 //タグジャンプ（エンターキー）
 #define HIDC_CHECK_GTJW_LDBLCLK					10512 //タグジャンプ（ダブルクリック）
 #define HIDC_CHECK_GREPREALTIME					10513 //リアルタイムで表示する	// 2006.08.08 ryoji
+#define HIDC_EDIT_REGEXPLIB						10514 //正規表現ライブラリ選択	// 2007.09.02 genta
+#define HIDC_LABEL_REGEXPVER					10515 //正規表現ライブラリ選択	// 2007.09.02 genta
 //#define HIDC_BUTTON_HOKANFILE_REF				10600 //入力補完 単語ファイル参照			//Jul. 05, 2001 JEPRO タイプ別に移動
 //#define HIDC_BUTTON_KEYWORDHELPFILE_REF			10601 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_BUTTON_OPENHELP1					10602 //外部ヘルプファイル参照
