@@ -66,7 +66,7 @@ int CMigemo::DeInitDll(void)
 	return 0;
 }
 
-char* CMigemo::GetDllName(char *)
+const char* CMigemo::GetDllName(const char *)
 {
 	char* szDll;
 	static char szDllName[_MAX_PATH];

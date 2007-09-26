@@ -16,11 +16,15 @@
 
 #include "stdafx.h"
 #include "CPropCommon.h"
+#include "CBregexp.h"	// 2007.08/12 genta バージョン取得
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #if 1	//@@@ 2002.01.03 add MIK
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	//10500
+	IDC_EDIT_REGEXPLIB,				HIDC_EDIT_REGEXPLIB,	//正規表現ライブラリ選択	// 2007.09.02 genta
+	IDC_LABEL_REGEXP,				HIDC_EDIT_REGEXPLIB,
+	IDC_LABEL_REGEXP_VER,			HIDC_LABEL_REGEXPVER,	//正規表現ライブラリバージョン	// 2007.09.02 genta
 	IDC_CHECK_bCaretTextForSearch,	HIDC_CHECK_bCaretTextForSearch,	//カーソル位置の文字列をデフォルトの検索文字列にする	// 2006.08.23 ryoji
 	IDC_CHECK_bGrepExitConfirm,		HIDC_CHECK_bGrepExitConfirm,	//GREPの保存確認
 	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//タグジャンプ（エンターキー）
@@ -99,6 +103,12 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 //			break;	/* default */
 //		}
 		break;	/* WM_NOTIFY */
+	case WM_COMMAND:
+		//	2007.08.12 genta 正規表現DLLの変更に応じてVersionを再取得する
+		if( wParam == MAKEWPARAM( IDC_EDIT_REGEXPLIB, EN_KILLFOCUS )){
+			SetRegexpVersion( hwndDlg );
+		}
+		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 	case WM_HELP:
@@ -130,7 +140,6 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 
 //	BOOL	m_bGrepExitConfirm;	/* Grepモードで保存確認するか */
 
-
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_bCaretTextForSearch );
 
@@ -146,6 +155,11 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 
 	/* Grepモード: ダブルクリックでタグジャンプ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_bGTJW_LDBLCLK );
+
+	//	2007.08.12 genta 正規表現DLL
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( sizeof(m_Common.m_szRegexpLib ) - 1 ), 0 );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_szRegexpLib);
+	SetRegexpVersion( hwndDlg );
 
 	return;
 }
@@ -174,7 +188,23 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 	/* Grepモード: ダブルクリックでタグジャンプ */
 	m_Common.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
+	//	2007.08.12 genta 正規表現DLL
+	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_szRegexpLib, sizeof( m_Common.m_szRegexpLib ));
+
 	return TRUE;
+}
+
+void CPropCommon::SetRegexpVersion( HWND hwndDlg )
+{
+	TCHAR regexp_dll[_MAX_PATH];
+	
+	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, sizeof( regexp_dll ));
+	CBregexp breg;
+	if( ! breg.Init( regexp_dll ) ){
+		::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, _T("正規表現は使用できません") );
+		return;
+	}
+	::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersion() );
 }
 
 

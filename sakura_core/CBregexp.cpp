@@ -45,6 +45,10 @@
 #include "CBregexp.h"
 #include "etc_uty.h"
 
+//	2007.07.22 genta : DLL判別用
+const static TCHAR P_BREG[] = _T("BREGEXP.DLL");
+const static TCHAR P_ONIG[] = _T("bregonig.dll");
+
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const char CBregexp::m_tmpBuf[2] = "\0";
 
@@ -61,11 +65,25 @@ CBregexp::~CBregexp()
 	//>> 2002/03/27 Azumaiya
 }
 
-//	Jul. 5, 2001 genta 引数追加。ただし、ここでは使わない。
-char *
-CBregexp::GetDllName( char* str )
+/*!
+	@date 2001.07.05 genta 引数追加。ただし、ここでは使わない。
+	@date 2007.06.25 genta 複数のDLL名に対応
+	@date 2007.09.13 genta サーチルールを変更
+		@li 指定有りの場合はそれのみを返す
+		@li 指定無し(NULLまたは空文字列)の場合はBREGONIG, BREGEXPの順で試みる
+*/
+LPCTSTR CBregexp::GetDllNameInOrder( LPCTSTR str, int index )
 {
-	return "BREGEXP.DLL";
+
+	switch( index ){
+	case 0:
+		//	NULLはリストの終わりを意味するので，
+		//	str == NULLの場合にそのまま返してはいけない．
+		return str == NULL || str[0] == _T('\0') ? P_ONIG : str ;
+	case 1:
+		return str == NULL || str[0] == _T('\0') ? P_BREG : NULL;
+	}
+	return NULL;
 }
 /*!
 	DLLの初期化

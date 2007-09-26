@@ -82,10 +82,9 @@ void CPPA::Execute(CEditView* pcEditView )
 	m_fnExecute();
 }
 
-char *
-CPPA::GetDllName( char* str )
+LPCTSTR CPPA::GetDllName( LPCTSTR str )
 {
-	return "PPA.DLL";
+	return _T("PPA.DLL");
 }
 
 /*!

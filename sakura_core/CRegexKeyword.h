@@ -87,7 +87,7 @@ typedef struct RegexInfo_t {
 */
 class SAKURA_CORE_API CRegexKeyword : public CBregexp {
 public:
-	CRegexKeyword();
+	CRegexKeyword(LPCTSTR);
 	~CRegexKeyword();
 
 	//! çsåüçıäJén

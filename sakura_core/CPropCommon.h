@@ -268,6 +268,7 @@ protected:
 	INT_PTR DispatchEvent_PROP_GREP( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_GREP( HWND );
 	int GetData_PROP_GREP( HWND );
+	void SetRegexpVersion( HWND ); // 2007.08.12 genta バージョン表示
 
 	//	From Here Jun. 2, 2001 genta
 	//==============================================================

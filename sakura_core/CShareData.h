@@ -450,6 +450,7 @@ struct Common {
 	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
 	int					m_bGrepRealTimeView;			/* 2003.06.16 Moca Grep結果のリアルタイム表示 */
 	BOOL				m_bCaretTextForSearch;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+	char				m_szRegexpLib[_MAX_PATH];		/* 使用する正規表現DLL */ // 2007.08.22 genta
 
 	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
 	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */

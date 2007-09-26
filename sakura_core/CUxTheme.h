@@ -54,7 +54,7 @@ protected:
 
 	bool Init( char* str = NULL );
 	virtual int InitDll( void );
-	virtual char* GetDllName( char* );
+	virtual LPCTSTR GetDllName( LPCTSTR );
 
 protected:
 	// UxTheme API Entry Points

@@ -583,11 +583,14 @@
 #define IDC_CHECK_NoFilterSaveFile      1516
 #define IDC_CHECK_CLOSEALLCONFIRM       1517
 #define IDC_CHECK_ANTIALIAS             1518
-#define IDC_BUTTON_DIRECTPAGE           1519
 #define IDC_CHECK_RetainEmptyWindow     1518
+#define IDC_BUTTON_DIRECTPAGE           1519
 #define IDC_CHECK_CloseOneWin           1519
 #define IDC_CHECK_bCaretTextForSearch   1520
 #define IDC_CHECK_ChgWndByWheel         1521
+#define IDC_LABEL_REGEXP                1522
+#define IDC_EDIT_REGEXPLIB              1524
+#define IDC_LABEL_REGEXP_VER            1525
 #define IDC_RADIO_OUTPUT                1536
 #define IDC_RADIO_EDITWINDOW            1537
 #define IDC_CHECK_SENDSTDIN             1538
@@ -649,7 +652,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1522
+#define _APS_NEXT_CONTROL_VALUE         1526
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

@@ -220,9 +220,6 @@ CEditView::CEditView() :
 {
 	LOGFONT		lf;
 
-	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	m_CurRegexp.Init();
-
 	m_bDrawSWITCH = TRUE;
 	m_pcDropTarget = new CDropTarget( this );
 	m_bDragSource = FALSE;
@@ -346,6 +343,10 @@ CEditView::CEditView() :
 	}
 	m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
 
+	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+	//	2007.08.12 genta 初期化にShareDataの値が必要になった
+	m_CurRegexp.Init(m_pShareData->m_Common.m_szRegexpLib );
+
 	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 	m_bInMenuLoop = FALSE;				/* メニュー モーダル ループに入っています */
@@ -452,7 +453,8 @@ BOOL CEditView::Create(
 	m_pcEditDoc = pcEditDoc;
 	m_nMyIndex = nMyIndex;
 
-	m_cRegexKeyword = new CRegexKeyword;	//@@@ 2001.11.17 add MIK
+	//	2007.08.18 genta 初期化にShareDataの値が必要になった
+	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
 
 	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
@@ -6578,6 +6580,9 @@ DWORD CEditView::DoGrep(
 	/*
 		Grepを行うに当たって検索・画面色分け用正規表現バッファも
 		初期化する．これはGrep検索結果の色分けを行うため．
+
+		Note: ここで強調するのは最後の検索文字列であって
+		Grep対象パターンではないことに注意
 	*/
 	if( m_bCurSrchRegularExp ){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
@@ -6607,6 +6612,27 @@ DWORD CEditView::DoGrep(
 
 	strcpy( m_pcEditDoc->m_szGrepKey, szKey );
 	m_pcEditDoc->m_bGrepMode = TRUE;
+
+	//	2007.07.22 genta
+	//	バージョン番号取得のため，処理を前の方へ移動した
+	if( bGrepRegularExp ){
+		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
+			return 0;
+		}
+		/* 検索パターンのコンパイル */
+		int nFlag = 0x00;
+		nFlag |= bGrepLoHiCase ? 0x01 : 0x00;
+		if( !cRegexp.Compile( szKey, nFlag ) ){
+			return 0;
+		}
+	}else{
+		/* 検索条件の情報 */
+		CDocLineMgr::CreateCharCharsArr(
+			(const unsigned char *)szKey,
+			lstrlen( szKey ),
+			&pnKey_CharCharsArr
+		);
+	}
 
 //	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -6697,7 +6723,10 @@ DWORD CEditView::DoGrep(
 		cmemMessage.AppendSz( pszWork );
 
 		if( bGrepRegularExp ){
-			cmemMessage.AppendSz( "    (正規表現)\r\n" );
+			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
+			cmemMessage.AppendSz( "    (正規表現:" );
+			cmemMessage.AppendSz( cRegexp.GetVersion() );
+			cmemMessage.AppendSz( ")\r\n" );
 		}
 	}
 
@@ -6727,32 +6756,8 @@ DWORD CEditView::DoGrep(
 	if( 0 < nWork ){
 		Command_ADDTAIL( pszWork, nWork );
 	}
-	if( bGrepRegularExp ){
-		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
-			return 0;
-		}
-		/* 検索パターンのコンパイル */
-		int nFlag = 0x00;
-		nFlag |= bGrepLoHiCase ? 0x01 : 0x00;
-		if( !cRegexp.Compile( szKey, nFlag ) ){
-			return 0;
-		}
-	}else{
-		/* 検索条件の情報 */
-		CDocLineMgr::CreateCharCharsArr(
-			(const unsigned char *)szKey,
-			lstrlen( szKey ),
-			&pnKey_CharCharsArr
-		);
-//		/* 検索条件の情報(キー文字列の使用文字表)作成 */
-//		CDocLineMgr::CreateCharUsedArr(
-//			(const unsigned char *)szKey,
-//			lstrlen( szKey ),
-//			pnKey_CharCharsArr,
-//			&pnKey_CharUsedArr
-//		);
-
-	}
+	//	2007.07.22 genta バージョンを取得するために，
+	//	正規表現の初期化を上へ移動
 
 	/* 表示処理ON/OFF */
 	// 2003.06.23 Moca 共通設定で変更できるように

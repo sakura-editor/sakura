@@ -219,6 +219,7 @@ struct ARRHEAD {
 	Version 76:
 	タブのグループ化 2007.06.20 ryoji
 
+
 	Version 77:
 	iniフォルダ設定 2007.05.31 ryoji
 
@@ -227,9 +228,12 @@ struct ARRHEAD {
 
 	Version 79:
 	外部コマンド実行のオプション拡張 2007.04.29 maru
+
+	Version 80:
+	正規表現ライブラリの切り替え 2007.07.22 genta
 */
 
-const unsigned int uShareDataVersion = 79;
+const unsigned int uShareDataVersion = 80;
 
 /*
 ||	Singleton風
@@ -525,6 +529,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
 		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;				/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
 		m_pShareData->m_Common.m_bCaretTextForSearch = TRUE;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+		m_pShareData->m_Common.m_szRegexpLib[0] = '\0';	/* 2007.08.12 genta 正規表現DLL */
 		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 

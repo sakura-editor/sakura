@@ -39,9 +39,9 @@ CHtmlHelp::~CHtmlHelp(void)
 /*!
 	HTML Help ‚Ìƒtƒ@ƒCƒ‹–¼‚ð“n‚·
 */
-char *CHtmlHelp::GetDllName(char *)
+LPCTSTR CHtmlHelp::GetDllName(LPCTSTR)
 {
-	return "HHCTRL.OCX";
+	return _T("HHCTRL.OCX");
 }
 
 int CHtmlHelp::InitDll(void)
