@@ -2566,8 +2566,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,5,17,0
- PRODUCTVERSION 1,5,17,0
+ FILEVERSION 1,6,0,0
+ PRODUCTVERSION 1,6,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2585,13 +2585,13 @@ BEGIN
             VALUE "Comments", "このソフトはフリーソフトです。\0"
             VALUE "CompanyName", "Project: Sakura-Editor\0"
             VALUE "FileDescription", "サクラエディタ\0"
-            VALUE "FileVersion", "1.5\0"
+            VALUE "FileVersion", "1.6\0"
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", "Copyright (C) Norio Nakatani & Collaborators\0"
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.5.17.0\0"
+            VALUE "ProductVersion", "1.6.0.0\0"
         END
     END
     BLOCK "VarFileInfo"
