@@ -24,70 +24,67 @@ aaHHCtlCloseWin.Click(); }
 </script>
 <h2>コマンドラインオプション</h2>
 ここに挙げたコマンドラインオプションは、サクラエディタが内部的に使用するものです。<br>
-<div class=li200>
-・<font color="red">誤った指定をした場合等の動作は全く保証しません</font>。<br>
-・<font color="red">オプションは英大文字小文字を区別しません</font>。<br>
-・<font color="blue">オプションで使う'='(イコール)の代わりに':'(コロン)を使うこともできます。</font><br>
-Windows95/98でオプションを環境変数に設定する場合は'='が使えないので':'を使って下さい。<br>
-</div><br>
-------------------------------<br>
-■ファイルオープンに関するオプション<br>
-------------------------------<br>
-<div class=li200>
-[ファイル名]	編集するファイルを指定。一つだけ指定可能。""で囲ったほうがいいです。<br>
--X=	ファイルを開いたときのカーソルの桁位置を指定<br>
--Y=	ファイルを開いたときのカーソルの行位置を指定<br>
--VX=	スクロール：ウィンドウ左端の桁位置<br>
--VY=	スクロール：ウィンドウ上端の行位置<br>
--CODE=	文字コード種別 (0=SJIS, 1=JIS, 2=EUC, 3=Unicode, 4=UTF-8, 5=UTF-7, 6=UnicodeBE, 99=自動判別)<br>
--TYPE=	タイプ別設定の強制指定。拡張子で指定します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(例) -TYPE=txt&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定をテキストで開く<br>
--R	読み取り専用で開く<br>
--SX=	ウィンドウの幅を指定します。<br>
--SY=	ウィンドウの高さを指定します。<br>
--WX=	ウィンドウ位置のX座標(1開始)。<br>
--WY=	ウィンドウ位置のY座標(1開始)。<br>
-</div><br>
-------------------------------<br>
-■単独で使用するオプション<br>
-------------------------------<br>
-<div class=li200>
--NOWIN		タスクトレイのみ起動。既にサクラエディタが起動している場合は無効<br>
--DEBUGMODE	アウトプット用のウィンドウとして起動<br>
-</div><br>
+<ul>
+<li><font color="red">誤った指定をした場合等の動作は全く保証しません</font>。</li>
+<li><font color="red">オプションは英大文字小文字を区別しません</font>。</li>
+<li><font color="blue">オプションで使う'='(イコール)の代わりに':'(コロン)を使うこともできます。</font><br>
+	Windows95/98でオプションを環境変数に設定する場合は'='が使えないので':'を使って下さい。</li>
+</ul>
+<br>
+<h3>ファイルオープンに関するオプション</h3>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><nobr><i>ファイル名</i></nobr></td><td>編集するファイルを指定。一つだけ指定可能。<br>""で囲ったほうがいいです。</td></tr>
+<tr><td>-X=</td>     <td>ファイルを開いたときのカーソルの桁位置を指定</td></tr>
+<tr><td>-Y=</td>     <td>ファイルを開いたときのカーソルの行位置を指定</td></tr>
+<tr><td>-VX=</td>    <td>スクロール：ウィンドウ左端の桁位置</td></tr>
+<tr><td>-VY=</td>    <td>スクロール：ウィンドウ上端の行位置</td></tr>
+<tr><td>-CODE=</td>  <td>文字コード種別<br> (0=SJIS, 1=JIS, 2=EUC, 3=Unicode, 4=UTF-8, 5=UTF-7, 6=UnicodeBE, 99=自動判別)</td></tr>
+<tr><td>-TYPE=</td>  <td>タイプ別設定の強制指定。拡張子で指定します。<br>(例) -TYPE=txt&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定をテキストで開く</td></tr>
+<tr><td>-R</td>      <td>読み取り専用で開く</td></tr>
+<tr><td>-SX=</td>    <td>ウィンドウの幅を指定します。</td></tr>
+<tr><td>-SY=</td>    <td>ウィンドウの高さを指定します。</td></tr>
+<tr><td>-WX=</td>    <td>ウィンドウ位置のX座標(1開始)。</td></tr>
+<tr><td>-WY=</td>    <td>ウィンドウ位置のY座標(1開始)。</td></tr>
+<tr><td><nobr>-GROUP=</nobr></td> <td>タブモードのグループを指定して開く(1開始)。<br>・0を指定するとアクティブのグループ<br>・未使用のグループ番号を指定すると新規グループ<br>ファイル名指定なしのときも使えます。</td></tr>
+</table>
+<br>
+
+<h3>単独で使用するオプション</h3>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>-NOWIN</td>     <td>タスクトレイのみ起動。既にサクラエディタが起動している場合は無効</td></tr>
+<tr><td>-DEBUGMODE</td> <td>アウトプット用のウィンドウとして起動</td></tr>
+<tr><td>-WQ</td>        <td>通常は使用しません(SakuExtとの連動専用)</td></tr>
+</table>
+
+<br>
 Windowsの起動と同時にサクラエディタを常駐したい場合、ショートカットのプロパティでリンク先のexeに -NOWIN を指定してスタートアップフォルダに入れておくといいでしょう。<br>
 <br>
-------------------------------<br>
-■Grepに関するオプション<br>
-------------------------------<br>
-<div class=li200>
--GREPMODE	Grep実行モードで起動<br>
-&nbsp;&nbsp;&nbsp;&nbsp;以下のオプションは -GREPMODE と同時に指定します<br>
--GKEY=	Grepの検索条件<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"'で囲む。条件中の'"'は二つの連続した'"'にする<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(例) -GKEY="printf("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;「printf(」を検索<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(例) -GKEY="printf( ""%s"&nbsp;&nbsp;&nbsp;&nbsp;「printf( "%s」を検索<br>
--GFILE=	Grepの検索対象のファイル<br>
-&nbsp;&nbsp;&nbsp;&nbsp;'"'で囲む。条件中の'"'は二つの連続した'"'にする<br>
--GFOLDER=	Grepの検索対象のフォルダ<br>
-&nbsp;&nbsp;&nbsp;&nbsp;'"'で囲む。条件中の'"'は二つの連続した'"'にする<br>
--GREPDLG	サクラエディタが起動すると同時にGrepダイアログを表示します。<br>
--GCODE=	Grepでの文字コードを指定します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-CODEと同じように数字で指定します。<br>
--GOPT=	[S][L][R][P][W][1|2][K]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Grepのオプション<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[S] サブフォルダからも検索<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[L] 大文字と小文字を区別<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[R] 正規表現<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[P] 該当行を出力／該当部分だけ出力<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[W] 単語単位で探す<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[1|2] 結果出力形式。1か2のどちらかを指定します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(1=ノーマル、2=ファイル毎)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[K] -GCODE=99と同じ意味です。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;互換性のためだけに残されています。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(例) -GOPT=SRK<br>
-</div><br>
--------------------------------------------------------------<br>
+
+<h3>Grepに関するオプション</h3>
+-GREPMODE と同時に指定します
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>-GREPMODE</td><td>Grep実行モードで起動</td></tr>
+<tr><td>-GKEY=</td><td>Grepの検索条件<br>"'で囲む。条件中の'"'は二つの連続した'"'にする<br>(例) -GKEY="printf("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;「printf(」を検索<br>(例) -GKEY="printf( ""%s"&nbsp;&nbsp;&nbsp;&nbsp;「printf( "%s」を検索</td></tr>
+<tr><td>-GFILE=</td><td>Grepの検索対象のファイル<br>'"'で囲む。条件中の'"'は二つの連続した'"'にする</td></tr>
+<tr><td>-GFOLDER=</td><td>Grepの検索対象のフォルダ<br>'"'で囲む。条件中の'"'は二つの連続した'"'にする</td></tr>
+<tr><td>-GREPDLG</td><td>サクラエディタが起動すると同時にGrepダイアログを表示します。<br></td></tr>
+<tr><td>-GCODE=</td><td>Grepでの文字コードを指定します。<br>-CODEと同じように数字で指定します。</td></tr>
+<tr><td>-GOPT=</td><td>[S][L][R][P][W][1|2][K]</td></tr>
+</table>
+<br>
+-GOPTのオプション<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>S</td><td>サブフォルダからも検索</td></tr>
+<tr><td>L</td><td>大文字と小文字を区別</td></tr>
+<tr><td>R</td><td>正規表現</td></tr>
+<tr><td>P</td><td>該当行を出力／該当部分だけ出力</td></tr>
+<tr><td>W</td><td>単語単位で探す</td></tr>
+<tr><td>1|2</td><td>結果出力形式。1か2のどちらかを指定します。<br>(1=ノーマル、2=ファイル毎)</td></tr>
+<tr><td>K</td><td>-GCODE=99と同じ意味です。<br>互換性のためだけに残されています。</td></tr>
+</table>
+(例) -GOPT=SRK<br>
+<br>
+<hr>
 <img src="images/hint.png">ヒント<br>
 エクスプローラ(フォルダウィンドウ)の送るメニューや、IEのソースの表示ではコマンドラインオプションを設定しても、無視されてしまいます。これを回避するにはヘルパーアプリケーションが必要です。<br>
 <br>

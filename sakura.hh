@@ -187,6 +187,9 @@
 #define HLP000197	197 //タイプ別設定 『支援』プロパティ
 #define HLP000203	203 //タイプ別設定 『正規表現キーワード』プロパティ	//@@@ 2001.11.17 add MIK
 #define HLP000315	315 //タイプ別設定 『キーワードヘルプ』プロパティ	// 2006.10.06 ryoji
+#define HLP000077	77 //設定フォルダ（iniフォルダ）	// 2007.09.09 maru
+#define HLP000078	78 //マルチユーザー化				// 2007.09.23 maru
+#define HLP000078	79 //Visual Style化／UAC対応化		// 2007.09.23 maru
 #define HLP000076	76 //共通設定
 #define HLP000081	81 //共通設定 『全般』プロパティ
 #define HLP000146	146 //共通設定 『ウィンドウ』プロパティ
@@ -397,6 +400,8 @@
 #define HIDC_CHECK_GTJW_RETURN					10511 //タグジャンプ（エンターキー）
 #define HIDC_CHECK_GTJW_LDBLCLK					10512 //タグジャンプ（ダブルクリック）
 #define HIDC_CHECK_GREPREALTIME					10513 //リアルタイムで表示する	// 2006.08.08 ryoji
+#define HIDC_EDIT_REGEXPLIB						10514 //正規表現ライブラリ選択	// 2007.09.02 genta
+#define HIDC_LABEL_REGEXPVER					10515 //正規表現ライブラリ選択	// 2007.09.02 genta
 //#define HIDC_BUTTON_HOKANFILE_REF				10600 //入力補完 単語ファイル参照			//Jul. 05, 2001 JEPRO タイプ別に移動
 //#define HIDC_BUTTON_KEYWORDHELPFILE_REF			10601 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_BUTTON_OPENHELP1					10602 //外部ヘルプファイル参照
@@ -665,6 +670,9 @@
 #define HIDC_EXEC_BUTTON_HELP		12103	//ヘルプ
 #define HIDC_EXEC_CHECK_GETSTDOUT	12104	//標準出力を得る
 #define HIDC_EXEC_COMBO_m_szCommand	12105	//コマンド
+#define HIDC_RADIO_OUTPUT			12106	//標準出力リダイレクト先：アウトプットウィンドウ
+#define HIDC_RADIO_EDITWINDOW		12107	//標準出力リダイレクト先：編集中のウィンドウ
+#define HIDC_CHECK_SENDSTDIN		12108	//標準入力に送る
 
 //アウトライン解析
 #define HIDC_FL_BUTTON_COPY		12200	//コピー

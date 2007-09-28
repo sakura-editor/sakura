@@ -24,108 +24,158 @@ aaHHCtlCloseWin.Click(); }
 </script>
 <h2>インストール／アンインストール手順</h2>
 <h3>インストール</h3>
-<b>■単体配布版インストール</b><br>
+<h4>単体配布版インストール</h4>
 配布ファイルは zip形式にて圧縮されています。<br>
 解凍方法についてはここでは説明しません。<br>
 <ol>
-<li>以前のバージョンのサクラエディタがインストールされている場合、実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
+<li>以前のバージョンのサクラエディタがインストールされている場合、実行中のサクラエディタを(常駐も含めて)すべて終了させます。</li>
 <li>任意のフォルダを作成し、そのフォルダに配布ファイル<em>sakura_xxxx-xx-xx.zip</em>を解凍します。更新の場合は通常、上書きで構いません。</li>
-<li>エディタの本体である <em>sakura.exe</em> を実行すれば使えます。</li>
+<li>2000以降の場合は、必要に応じて<a href="HLP000078.html">マルチユーザー化</a>のための設定ファイル<em>sakura.exe.ini</em><small>(sakura.iniではありません)</small>を設置します。<small>*Vista以降で<a href="HLP000079.html">UAC対応化</a>を行う場合はマルチユーザー化が必須です。</small></li>
+<li>XP以降で<a href="HLP000079.html">VisualStyle化</a>する場合は<em>sakura.exe.manifest</em>を設置します。また、Vista以降で<a href="HLP000079.html">UAC対応化</a>する場合にも<em>sakura.exe.manifest</em>が必要になります。</li>
 <li>ショートカット作成などは手作業で行って下さい。</li>
 </ol><br>
 
-<b>■パッケージ版インストール</b><br>
+<img src="images/note.png"><b>注意</b><div class=li200>
+VistaのUACに対応していないバージョン(1.5.17.0以前)からバージョンアップする場合は、manifestを置くことでVirtualStoreが無効化されるため、これまで使っていた設定が引き継がれません。
+必要に応じて<em>sakura.ini</em>を適切な位置へ移動するなどの対応をお願いします。
+詳しくは<a href="HLP000079.html">UAC対応化</a>および<a href="HLP000078.html">マルチユーザー化</a>の頁参照<br>
+</div>
+<br>
+
+<h4>パッケージ版インストール</h4>
 <font color="blue">パッケージ版（インストーラ）を利用した場合には、アンインストール情報などをレジストリに書き込みします。</font><br>
 <br>
 <ol>
-<li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
+<li>実行中のサクラエディタを(常駐も含めて)すべて終了させます。</li>
 <li>ダウンロードした<em>sinstx-x-xx-x.exe</em>を実行し、ウィザードに従ってください。</li>
+<li>2000以降のOSでは<b>新規インストール時のみ</b>、<a href="HLP000078.html">マルチユーザー化</a>の設定を行うかどうかの選択画面がでます。</li>
 </ol><br>
 
-<img src="images/note.png"><b>注意</b><br>
+<img src="images/note.png"><b>注意</b><div class=li200>
 新バージョンに更新したことによってそれまで使えていた機能が動作しなくなる場合があります。<br>
 旧バージョンの実行ファイル<em>sakura.exe</em>と設定ファイル<em>sakura.ini</em>をバックアップしておくことをお勧めします。<br>
 この場合<em>sakura.exe</em>を単に別フォルダに移動しただけでは、ショートカットがリンク先を自動変更して旧バージョンを起動してしまうことがあるのでファイル名を変更したほうがいいでしょう。<br>
+</div>
+<br>
+<img src="images/note.png"><b>注意</b><div class=li200>
+古いバージョンのパッケージ版では、最後の画面で「今すぐサクラエディタを起動」のチェックボックスがありますが、Vista以降のOSのときはOFFにしてください。ONのまま続行すると、BackSpaceが効かないなどの障害が発生します。その場合は常駐も含めてサクラエディタを一旦すべて終了させてください。
+</div>
 <br>
 
 <h3>アンインストール</h3>
-<b>■単体配布版アンインストール</b><br>
+<h4>単体配布版アンインストール</h4>
 <ol>
 <li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
 <li><em>sakura.exe</em>のフォルダを丸ごと削除します。</li>
+<li>2000以降で<a href="HLP000078.html">マルチユーザー化</a>を行っていた場合は、<a href="HLP000077.html">設定フォルダ</a>も削除します。<br>
+Vista以降にてVirtualStoreが適用されている場合は、<em>"%LOCALAPPDATA%\VirtualStore"</em> 以下にある<em>sakura.ini</em>などのファイルも削除します。</li>
 <li>自分で作成したショートカットなども削除してください。</li>
 </ol>
-<div class=li200>
+<img src="images/hint.png">ヒント<div class=li200>
 サクラエディタはレジストリへの書き込みは一切致しませんので、アンインストールにあたりレジストリを操作する必要はありません。<br>
 </div>
 <br>
-<b>■パッケージ版アンインストール</b><br>
+<h4>パッケージ版アンインストール</h4>
 <ol>
 <li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
 <li>プログラムの追加と削除(アプリケーションの追加と削除)からアンインストールしてください。</li>
 </ol>
 <br>
 
-<img src="images/hint.png">ヒント<br>
-<em>sakura.ini</em> というファイルはサクラエディタの設定ファイルです。<br>
-設定を残したい場合は、<em>sakura.ini</em> のバックアップを取っておくと役に立つことがあるかもしれません。
-
+<img src="images/hint.png">ヒント<div class=li200>
+<em>sakura.ini</em> というファイルはサクラエディタの設定ファイルです。パッケージ版のアンインストールでは、<em>sakura.ini</em> は削除しないようになっています。<br>
+</div>
+<br>
+<img src="images/note.png"><b>注意</b><div class=li200>
+通常<em>sakura.ini</em>は<em>sakura.exe</em>と同じ場所にありますが、マルチユーザー化を行っている場合やVirtualStoreが適用されている場合など<em>sakura.ini</em>の保存場所が異なる場合があります。<br>
+<br>
+sakura.iniの保存先
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>XP以前の標準</td><td>sakura.exeと同じ場所</td></tr>
+<tr><td>マルチユーザー化有効時</td><td><a href="HLP000078.html">マルチユーザー化</a>および<a href="HLP000077.html">設定フォルダ</a>参照</td></tr>
+<tr><td>VirtualStore適用時</td><td><em>"%LOCALAPPDATA%\VirtualStore\Program Files\sakura"</em><br><small>*パッケージ版のデフォルト値でインストールした場合</small></td></tr>
+</table>
+</div>
 
 <h3>パッケージ版ファイル一式</h3>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>sakura.exe</td><td>サクラエディタ  本体</td></tr>
-<tr><td>bregexp.dll</td><td>正規表現ライブラリ</td></tr>
+<tr><td>bregonig.dll</td><td>正規表現ライブラリ<br>(1.5.17.0以前ではbregexp.dll)</td></tr>
 <tr><td>sakura.chm</td><td>サクラエディタ  オンラインヘルプ<br>(1.5.12.0以前ではsakura.hlpとsakura.cnt)</td></tr>
 <tr><td>sakuext.exe</td><td>サクラエディタ用関連づけ設定ツール (すい氏 ご提供)</td></tr>
 <tr><td>sakuext.txt</td><td>sakuext.exeの使用説明</td></tr>
 <tr><td>uninstall.exe</td><td>アンインストーラ</td></tr>
-<tr><td>sakura.exe.manifest</td><td>XP用manifestファイル</td></tr>
+<tr><td>sakura.exe.manifest</td><td>XP/Vista用manifestファイル</td></tr>
+<tr><td>sakura.exe.ini</td><td>マルチユーザー化設定ファイル</td></tr>
 </table>
 
 &lt;keyword&gt;フォルダ
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>ABAP4.kwd</td><td>ABAP4用強調キーワード</td></tr>
-<tr><td>COBOL.kwd</td><td>COBOL用強調キーワード</td></tr>
-<tr><td>HSP.KWD</td><td>HSP用強調キーワード</td></tr>
-<tr><td>JavaScript.kwd</td><td>JavaScript用強調キーワード</td></tr>
-<tr><td>PHP.KWD</td><td>PHP用強調キーワード</td></tr>
-<tr><td>PPA.KWD</td><td>PPA用強調キーワード</td></tr>
-<tr><td>Perl.kwd</td><td>Perl 一般的な予約語と関数　(ふゆ^2氏 ご提供)</td></tr>
-<tr><td>Perlvar.kwd</td><td>Perl '$' が頭につく予約変数　(ふゆ^2氏 ご提供)</td></tr>
-<tr><td>S_MAC.KWD</td><td>サクラエディタマクロ用強調キーワード</td></tr>
-<tr><td>TTL.KWD</td><td>Tera Term Pro 2.3 MACRO用強調キーワード</td></tr>
-<tr><td>TeX.kwd</td><td>TeX キーワード　(tatei氏 ご提供)</td></tr>
-<tr><td>VBScript.kwd</td><td>VBScript用強調キーワード</td></tr>
 <tr><td>awk.kwd</td><td>AWK キーワード　(すい氏 ご提供)</td></tr>
+<tr><td>bat.khp</td><td>MS-DOSバッチ用キーワードヘルプ</td></tr>
+<tr><td>bat.rl</td><td>バッチ用アウトラインルール</td></tr>
 <tr><td>batch.kwd</td><td>MS-DOSバッチ用キーワード　(すい氏 ご提供)</td></tr>
+<tr><td>bat_win2k.khp</td><td>NT系バッチ用キーワード</td></tr>
+<tr><td>COBOL.kwd</td><td>COBOL用強調キーワード</td></tr>
 <tr><td>corba.kwd</td><td>CORBA IDL用キーワード　(げんた氏 ご提供)</td></tr>
 <tr><td>cpp.kwd</td><td>C/C++用強調キーワード</td></tr>
 <tr><td>csharp.kwd</td><td>C#用強調キーワード</td></tr>
+<tr><td>ecmascript.kwd</td><td>JavaScript用強調キーワード</td></tr>
+<tr><td>HSP.KHP</td><td>HSP用キーワードヘルプ</td></tr>
+<tr><td>HSP.KWD</td><td>HSP用強調キーワード</td></tr>
+<tr><td>HSP.RL</td><td>HSP用アウトラインルール</td></tr>
+<tr><td>PERL.COL</td><td>PERL用カラー定義</td></tr>
 <tr><td>html.kwd</td><td>HTML用強調キーワード</td></tr>
 <tr><td>java.kwd</td><td>Java用強調キーワード</td></tr>
+<tr><td>JavaScript.kwd</td><td>JavaScript用強調キーワード</td></tr>
 <tr><td>pascal.kwd</td><td>Pascal用強調キーワード　(n-tack氏 ご提供)</td></tr>
+<tr><td>Perl.kwd</td><td>Perl 一般的な予約語と関数　(ふゆ^2氏 ご提供)</td></tr>
+<tr><td>Perl.rkw</td><td>Perl用正規表現キーワード定義</td></tr>
+<tr><td>Perlvar.kwd</td><td>Perl '$' が頭につく予約変数　(ふゆ^2氏 ご提供)</td></tr>
+<tr><td>php.khp</td><td>PHP用キーワードヘルプ</td></tr>
+<tr><td>PHP.KWD</td><td>PHP用強調キーワード</td></tr>
 <tr><td>pli.kwd</td><td>PL/I用キーワード</td></tr>
 <tr><td>plsql.kwd</td><td>PL/SQL用強調キーワード</td></tr>
+<tr><td>PPA.KWD</td><td>PPA用強調キーワード</td></tr>
 <tr><td>python.kwd</td><td>Python用強調キーワード</td></tr>
 <tr><td>rtf.kwd</td><td>RTF用強調キーワード</td></tr>
 <tr><td>ruby.kwd</td><td>Ruby用強調キーワード</td></tr>
+<tr><td>SHELL.kwd</td><td>シェルスクリプト用強調キーワード</td></tr>
+<tr><td>S_MAC.KWD</td><td>サクラエディタマクロ用強調キーワード</td></tr>
+<tr><td>S_MACPPA.DIC</td><td>サクラエディタマクロ用入力補完辞書</td></tr>
+<tr><td>S_MACPPA.KHP</td><td>サクラエディタマクロ用キーワードヘルプ</td></tr>
+<tr><td>TeX.kwd</td><td>TeX キーワード　(tatei氏 ご提供)</td></tr>
 <tr><td>tsql.kwd</td><td>Transact-SQL用強調キーワード</td></tr>
 <tr><td>tsql2.kwd</td><td>Transact-SQL用強調キーワード　(第二キーワード)</td></tr>
+<tr><td>TTL.KHP</td><td>Tera Term Pro MACRO用キーワードヘルプ</td></tr>
+<tr><td>TTL.KWD</td><td>Tera Term Pro 2.3 MACRO用強調キーワード</td></tr>
+<tr><td>TTL.RL</td><td>Tera Term Pro MACRO用キーワードヘルプ</td></tr>
+<tr><td>uwsc.dic</td><td>UWSC用入力補完辞書</td></tr>
 <tr><td>uwsc.kwd</td><td>UWSC用強調キーワード</td></tr>
+<tr><td>uwsc.rl</td><td>UWSC用アウトラインルール</td></tr>
+<tr><td>uwsc2.kwd</td><td>UWSC用強調キーワード</td></tr>
+<tr><td>VB.KWD</td><td>VisualBasic用強調キーワード</td></tr>
+<tr><td>vb2.kwd</td><td>VisualBasic用強調キーワード</td></tr>
+<tr><td>VBScript.kwd</td><td>VBScript用強調キーワード</td></tr>
+<tr><td>vb_asp.kwd</td><td>ASP用強調キーワード</td></tr>
 <tr><td>verilog.kwd</td><td>Verilog用強調キーワード</td></tr>
 </table>
 <br>
 
-<b>■サクラエディタが作成する作業ファイルについて</b><br>
+<h4>サクラエディタが作成する作業ファイルについて</h4>
 サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダに以下のファイルが作成されます。<br>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>sakura.ini </td><td>サクラエディタ用の設定ファイルです。</td></tr>
 </table>
 <br>
-キーマクロの記録を使うと、共通設定のマクロ一覧のフォルダに「RecKey.mac」というファイルが作成されます。<br>
+キーマクロの記録を使うと、共通設定のマクロ一覧のフォルダに以下のファイルが作成されます。<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>RecKey.mac</td><td>キーマクロの記録ファイルです。</td></tr>
+</table>
 <br>
 
-■ソースと共に配布されているドキュメント<br>
+<h4>ソースと共に配布されているドキュメント</h4>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>BugsInfo.txt</td><td>バグ／フィックス情報　 (開発メモ その１)</td></tr>
 <tr><td>request.txt</td><td>要望 　(開発メモ その２)</td></tr>

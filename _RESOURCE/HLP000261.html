@@ -34,40 +34,43 @@ t …テキストファイルで、ユーザが簡単に作成可能なファイルです。<br>
 b …バイナリファイル<br>
 i …INI形式(に見える)ファイル<br>
 </div><br>
-■利用時に参照するファイル<br>
-<div class=li200>
-b*  ヘルプファイル(sakura.chm)<br>
-b   DIFF差分表示(diff.exe)<br>
-b*  正規表現ライブラリ(bregxp.dll)<br>
-b   Migemoライブラリ(migemo.dll)<br>
-b   pascalマクロライブラリ(ppa.dll)<br>
-t*  Windows XP用manifestファイル(sakura.exe.manifest)<br>
-t   辞書ファイル(*.txt / *.dic / *.*)<br>
-t   <a href="HLP000105.html">キーワードヘルプファイル</a>(*.khp / *.*)<br>
-t   <a href="HLP000104.html">入力補完ファイル</a>(*.*)<br>
-t   <a href="HLP000075.html">ルールファイル</a>(*.rule / *.*)<br>
-t   <a href="HLP000204.html">各種マクロファイル</a>(*.mac/ *.ppa / その他指定された拡張子)<br>
-b   <a href="HLP000190.html">外部ヘルプファイル</a>(*.hlp)<br>
-b   <a href="HLP000191.html">外部HTMLヘルプファイル</a>(*.chm / *.col / *.*)<br>
-b   <a href="HLP000010.html">カスタムメニューアイコンファイル</a>(my_icons.bmp)<br>
-b   <a href="HLP000260.html">カスタムアイコンファイル</a>(my_appicon.ico, my_grepicon.ico)<br>
-</div><br>
-■インポート・エクスポートするもの<br>
+<h4>利用時に参照するファイル</h4>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>b*</td><td>ヘルプファイル(sakura.chm)</td></tr>
+<tr><td>b </td><td>DIFF差分表示(diff.exe)</td></tr>
+<tr><td>b*</td><td>正規表現ライブラリ(bregonig.dll or bregxp.dll)</td></tr>
+<tr><td>b </td><td>Migemoライブラリ(migemo.dll)</td></tr>
+<tr><td>b </td><td>pascalマクロライブラリ(ppa.dll)</td></tr>
+<tr><td>t*</td><td>Windows XP/Vista用manifestファイル(sakura.exe.manifest)</td></tr>
+<tr><td>t*</td><td>マルチユーザー構成設定ファイル(sakura.exe.ini)</td></tr>
+<tr><td>t </td><td>辞書ファイル(*.txt / *.dic / *.*)</td></tr>
+<tr><td>t </td><td><a href="HLP000105.html">キーワードヘルプファイル</a>(*.khp / *.*)</td></tr>
+<tr><td>t </td><td><a href="HLP000104.html">入力補完ファイル</a>(*.*)</td></tr>
+<tr><td>t </td><td><a href="HLP000075.html">ルールファイル</a>(*.rule / *.*)</td></tr>
+<tr><td>t </td><td><a href="HLP000204.html">各種マクロファイル</a>(*.mac/ *.ppa / その他指定された拡張子)</td></tr>
+<tr><td>b </td><td><a href="HLP000190.html">外部ヘルプファイル</a>(*.hlp)</td></tr>
+<tr><td>b </td><td><a href="HLP000191.html">外部HTMLヘルプファイル</a>(*.chm / *.col / *.*)</td></tr>
+<tr><td>b </td><td><a href="HLP000010.html">ツールバーアイコンファイル</a>(my_icons.bmp)</td></tr>
+<tr><td>b </td><td><a href="HLP000260.html">アプリアイコンファイル</a>(my_appicon.ico, my_grepicon.ico)</td></tr>
+</table>
+
+<h4>インポート・エクスポートするもの</h4>
 一度インポートすれば、設定ファイルに書きこまれます。<br>
-<div class=li200>
-t* <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\n共通設定『強調キーワード』プロパティでインポート、エクスポート可能。\n拡張子は*.kwdです。','ＭＳゴシック,11',9,9,-1,-1)">強調キーワードファイル</a>(*.kwd / *.*)<br>
-i  <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\nタイプ別設定『正規表現キーワード』プロパティでインポート、エクスポート可能。\n拡張子は*.rkwです。','ＭＳゴシック,11',9,9,-1,-1)">正規表現キーワード</a>(*.rkw / *.*)<br>
-i  <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\nタイプ別設定『カラー』プロパティでインポート、エクスポートできます。\n拡張子は*.colです。','ＭＳゴシック,11',9,9,-1,-1)">色設定ファイル</a>(*.col / *.*)<br>
-i  <a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\n共通設定『キー割り当て』プロパティでインポート、エクスポート可能。\n拡張子は*.keyです。','ＭＳゴシック,11',9,9,-1,-1)">キー割り当てファイル</a>(*.key / *.*)<br>
-b  <a href="javascript:id=hhctrl.TextPopup('右クリックメニュー、カスタムメニューの設定を記録するファイル。\nバイナリファイルなのでエディタで編集・閲覧不可。\n共通設定『カスタムメニュー』プロパティでインポート、エクスポート可能。\n拡張子は*.mnuです。','ＭＳゴシック,11',9,9,-1,-1)">カスタムメニュー設定ファイル</a>(*.mnu / *.*)<br>
-</div><br>
-■拡張ツール<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>t*</td><td><a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\n共通設定『強調キーワード』プロパティでインポート、エクスポート可能。\n拡張子は*.kwdです。','ＭＳゴシック,11',9,9,-1,-1)">強調キーワードファイル</a>(*.kwd / *.*)</td></tr>
+<tr><td>i </td><td><a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\nタイプ別設定『正規表現キーワード』プロパティでインポート、エクスポート可能。\n拡張子は*.rkwです。','ＭＳゴシック,11',9,9,-1,-1)">正規表現キーワード</a>(*.rkw / *.*)</td></tr>
+<tr><td>i </td><td><a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\nタイプ別設定『カラー』プロパティでインポート、エクスポートできます。\n拡張子は*.colです。','ＭＳゴシック,11',9,9,-1,-1)">色設定ファイル</a>(*.col / *.*)</td></tr>
+<tr><td>i </td><td><a href="javascript:id=hhctrl.TextPopup('テキストファイルなのでエディタで編集・閲覧可能。\n共通設定『キー割り当て』プロパティでインポート、エクスポート可能。\n拡張子は*.keyです。','ＭＳゴシック,11',9,9,-1,-1)">キー割り当てファイル</a>(*.key / *.*)</td></tr>
+<tr><td>b </td><td><a href="javascript:id=hhctrl.TextPopup('右クリックメニュー、カスタムメニューの設定を記録するファイル。\nバイナリファイルなのでエディタで編集・閲覧不可。\n共通設定『カスタムメニュー』プロパティでインポート、エクスポート可能。\n拡張子は*.mnuです。','ＭＳゴシック,11',9,9,-1,-1)">カスタムメニュー設定ファイル</a>(*.mnu / *.*)</td></tr>
+</table>
+
+<h4>拡張ツール</h4>
 エディタの機能のうちのいくつかは外部ツールを必要とします。バイナリとは別に以下のツールも併せてダウンロードしてください。<br>
 <dl>
 	<dt>SakuEXT.exe</dt>
 	<dd>Sakura.Editor 専用の拡張子連動設定ソフトです。(インストーラパッケージには含まれています)</dd>
 
-	<dt><a href="HLP000006.html">BREGEXP.DLL</a></dt>
+	<dt><a href="HLP000006.html">BREGEXP互換ライブラリ</a></dt>
 	<dd>正規表現検索・置換および正規表現キーワード強調表示に必要です。(インストーラパッケージには含まれています)</dd>
 
 	<dt><a href="HLP000251.html">GNU diff</a> 中のdiff.exe</dt>
