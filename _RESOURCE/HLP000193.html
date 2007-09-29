@@ -54,8 +54,8 @@ aaHHCtlCloseWin.Click(); }
 <tr><td><a href="HLP000192.html">同名のC/C++ヘッダ(ソース)を開く</a></td><td>Shift+Ctrl+C, Shift+Ctrl+H</td></tr>
 <tr><td><a href="HLP000024.html">同名のC/C++ヘッダファイルを開く</a></td><td> </td></tr>
 <tr><td><a href="HLP000026.html">同名のC/C++ソースファイルを開く</a></td><td> </td></tr>
-<tr><td><a href="HLP000132.html">Oracle SQL*Plusをアクティブ表示</a></td><td>Shift+F11</td></tr>
-<tr><td><a href="HLP000027.html">Oracle SQL*Plusで実行</a></td><td>F10</td></tr>
+<tr><td><a href="HLP000132.html">SQL*Plusをアクティブ表示</a></td><td>Shift+F11</td></tr>
+<tr><td><a href="HLP000027.html">SQL*Plusで実行</a></td><td>F10</td></tr>
 <tr><td><a href="HLP000121.html">ブラウズ</a></td><td>Ctrl+B</td></tr>
 <tr><td><a href="HLP000249.html">読み取り専用</a></td><td> </td></tr>
 <tr><td><a href="HLP000022.html">ファイルのプロパティ</a></td><td>Alt+Enter</td></tr>
@@ -88,7 +88,7 @@ aaHHCtlCloseWin.Click(); }
 <tr><td><a href="HLP000211.html">右(末尾)の空白を削除</a></td><td>Alt+R</td></tr>
 <tr><td><a href="HLP000212.html">選択行の昇順ソート</a></td><td>Alt+A</td></tr>
 <tr><td><a href="HLP000213.html">選択行の降順ソート</a></td><td>Alt+D</td></tr>
-<tr><td><a href="HLP000214.html">連続した重複行の削除(uniq)</a></td><td>Alt+M</td></tr>
+<tr><td><a href="HLP000214.html">選択行のマージ</a></td><td>Alt+M</td></tr>
 <tr><td><a href="HLP000218.html">再変換</a></td><td> </td></tr>
 </table>
 
@@ -172,7 +172,7 @@ aaHHCtlCloseWin.Click(); }
 <tr><td><a href="HLP000038.html">選択範囲内全行行番号付きコピー</a></td><td>Ctrl+:</td></tr>
 <tr><td><a href="HLP000303.html">このファイル名をコピー</a></td><td>Ctrl+-</td></tr>
 <tr><td><a href="HLP000056.html">このファイルのパス名をコピー</a></td><td>Ctrl+\</td></tr>
-<tr><td><a href="HLP000175.html">このファイルのパス名とカーソル位置をコピー</a></td><td>Ctrl+^(英語')</td></tr>
+<tr><td><a href="HLP000175.html">このファイルのパス名とカーソル位置をコピー</a></td><td>Ctrl+^(英語')</td></tr><!--'-->
 <tr><td><a href="HLP000057.html">キー割り当て一覧をコピー</a></td><td>Ctrl+Q</td></tr>
 </table>
 
@@ -224,6 +224,7 @@ aaHHCtlCloseWin.Click(); }
 <tr><td><a href="HLP000067.html">Grep</a></td><td>Ctrl+G</td></tr>
 <tr><td><a href="HLP000063.html">指定行へジャンプ</a>※</td><td>Ctrl+J</td></tr>
 <tr><td><a href="HLP000064.html">アウトライン解析</a></td><td>F11</td></tr>
+<tr><td><a href="HLP000064.html">アウトライン解析（トグル）</a></td><td></td></tr>
 <tr><td><a href="HLP000065.html">タグジャンプ</a></td><td>F12, Ctrl+T</td></tr>
 <tr><td><a href="HLP000291.html">閉じてタグジャンプ</a></td><td> </td></tr>
 <tr><td><a href="HLP000066.html">タグジャンプバック</a></td><td>Shift+F12, Shift+Ctrl+T</td></tr>
@@ -271,7 +272,6 @@ aaHHCtlCloseWin.Click(); }
 <tr><td><a href="HLP000184.html">現在のウィンドウ幅で折り返し／折り返さない</a></td><td>Ctrl+Alt+U</td></tr>
 <tr><td><a href="HLP000122.html">印刷ページ設定</a>※</td><td>Ctrl+Alt+P</td></tr>
 <tr><td><a href="HLP000279.html">履歴の管理</a></td><td>
-<tr><td><a href="HLP000318.html">キーワードヘルプ自動表示する</a></td><td> </td></tr>
 </table>
 
 [マクロ系]
@@ -297,16 +297,26 @@ aaHHCtlCloseWin.Click(); }
 <tr><td><a href="HLP000140.html">上下に並べて表示</a></td><td>Ctrl+Alt+H</td></tr>
 <tr><td><a href="HLP000139.html">左右に並べて表示</a></td><td>Ctrl+Alt+T</td></tr>
 <tr><td><a href="HLP000312.html">常に手前に表示</a></td><td> </td></tr>
+<tr><td><a href="HLP000311.html">グループ化</a></td><td> </td></tr>
+<tr><td><a href="HLP000320.html">グループを閉じる</a></td><td> </td></tr>
+<tr><td><a href="HLP000321.html">次のグループ</a></td><td> </td></tr>
+<tr><td><a href="HLP000322.html">前のグループ</a></td><td> </td></tr>
+<tr><td><a href="HLP000323.html">タブを右に移動</a></td><td> </td></tr>
+<tr><td><a href="HLP000324.html">タブを左に移動</a></td><td> </td></tr>
+<tr><td><a href="HLP000325.html">新規グループ</a></td><td> </td></tr>
+<tr><td><a href="HLP000326.html">次のグループに移動</a></td><td> </td></tr>
+<tr><td><a href="HLP000327.html">前のグループに移動</a></td><td> </td></tr>
 <tr><td><a href="HLP000141.html">縦方向に最大化</a></td><td>Shift+Ctrl+Alt+↑</td></tr>
 <tr><td><a href="HLP000098.html">横方向に最大化</a></td><td>Shift+Ctrl+Alt+→</td></tr>
 <tr><td><a href="HLP000096.html">すべて最小化</a></td><td>Shift+Ctrl+Alt+↓</td></tr>
 <tr><td><a href="HLP000187.html">再描画</a></td><td>F5</td></tr>
-<tr><td><a href="HLP000188.html">アウトプット</a></td><td> </td></tr>
+<tr><td><a href="HLP000188.html">アウトプットウィンドウ表示</a></td><td> </td></tr>
 </table>
 
 [支援]
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td><a href="HLP000111.html">入力補完</a></td><td>Ctrl+Space, Ctrl+/</td></tr>
+<tr><td><a href="HLP000318.html">キーワードヘルプ自動表示</a></td><td> </td></tr>
 <tr><td><a href="HLP000100.html">ヘルプ目次</a></td><td>Alt+F1</td></tr>
 <tr><td><a href="HLP000101.html">ヘルプキーワード検索</a></td><td>Shift+Alt+F1</td></tr>
 <tr><td><a href="HLP000189.html">コマンド一覧</a></td><td>Shift+F1</td></tr>
