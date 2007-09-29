@@ -423,6 +423,10 @@
 				<LI><OBJECT type="text/sitemap"><param name="Name" value="すべて置換(実行)"><param name="Local" value="_RESOURCE\HLP000293.html"><param name="ImageNumber" value="9"></OBJECT></li>
 				<LI><OBJECT type="text/sitemap"><param name="Name" value="指定パターンに一致する行をマーク"><param name="Local" value="_RESOURCE\HLP000294.html"><param name="ImageNumber" value="9"></OBJECT></li>
 				<LI><OBJECT type="text/sitemap"><param name="Name" value="最後にテキストを追加"><param name="Local" value="_RESOURCE\HLP000295.html"><param name="ImageNumber" value="9"></OBJECT></li>
+				<LI><OBJECT type="text/sitemap"><param name="Name" value="引用符の変更"><param name="Local" value="_RESOURCE\HLP000330.html"><param name="ImageNumber" value="9"></OBJECT></li>
+				<LI><OBJECT type="text/sitemap"><param name="Name" value="トレース出力"><param name="Local" value="_RESOURCE\HLP000331.html"><param name="ImageNumber" value="9"></OBJECT></li>
+				<LI><OBJECT type="text/sitemap"><param name="Name" value="編集文書の一時出力"><param name="Local" value="_RESOURCE\HLP000328.html"><param name="ImageNumber" value="9"></OBJECT></li>
+				<LI><OBJECT type="text/sitemap"><param name="Name" value="編集文書にファイル挿入"><param name="Local" value="_RESOURCE\HLP000329.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			</UL>
 		</UL>
 
