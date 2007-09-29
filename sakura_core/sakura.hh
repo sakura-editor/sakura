@@ -189,7 +189,7 @@
 #define HLP000315	315 //タイプ別設定 『キーワードヘルプ』プロパティ	// 2006.10.06 ryoji
 #define HLP000077	77 //設定フォルダ（iniフォルダ）	// 2007.09.09 maru
 #define HLP000078	78 //マルチユーザー化				// 2007.09.23 maru
-#define HLP000078	79 //Visual Style化／UAC対応化		// 2007.09.23 maru
+#define HLP000079	79 //Visual Style化／UAC対応化		// 2007.09.23 maru
 #define HLP000076	76 //共通設定
 #define HLP000081	81 //共通設定 『全般』プロパティ
 #define HLP000146	146 //共通設定 『ウィンドウ』プロパティ
