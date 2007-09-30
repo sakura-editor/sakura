@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>変更履歴(2007/09/27～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+
+<h2>変更履歴(2007/09/27～)</h2>
+<h3>Sep. 27, 2007 (1.6.0.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>Grep 画面へのドラッグ＆ドロップ (svn:1117 patches:1786543 bosagami, げんた)</li>
+	<li>Vista UACとマルチユーザへの対応 (svn:1120 patches:1721425 dev:4809 ryoji)</li>
+	<ul>
+		<li>sakura.ini等の設定ファイルを個人のプロファイルディレクトリに置ける</li>
+		<li>管理者権限とユーザ権限のプロセス混在を防止</li>
+		<li>sakuextとの連携</li>
+	</ul>
+	<li>Pythonアウトライン解析 (svn:1121 patches:1668208 げんた)</li>
+	<li>外部コマンドへの編集文書の書き出しおよび出力の取り込み (svn:1124 patches:1553455 dev:4572 maru (げんた，ryoji))</li>
+	<li>bregonig.dllを正規表現DLLとして認識する (svn:1125 patches:1742481 dev:4877 げんた)</li>
+	<li>正規表現DLLを指定可能に (svn:1125 patches:1742481 dev:4910 dev:4937 data:6232 げんた)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>改行コード表示のLFとCRの図形を入れ換えて↓＝LF, ←＝CRとした (svn:1119 patches:1775980 data:6220 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>強調キーワードセットの削除後，セットを追加して編集すると最終セットが破壊される (svn:1111 patches:1753916 dev:4926 ryoji)</li>
+	<li>グループ化時の[XX]ボタンが「編集の全終了」になっている (svn:1112 patches:1759555 dev:4941 ryoji)</li>
+	<li>画面の高さが３ライン以下のときカーソルが上のルーラーに重なる(svn:1113 patches:1758102  dev:4936 dev:3432 じゅうじ)</li>
+	<li>ポップアップウインドウなど出すマクロをダブルクリックに割り付けると，その後選択開始状態のままになる (svn:1114 patches:1750637 macro:380 dev:4917 maru)</li>
+	<li>次の／前のウィンドウが分割画面内で巡回動作しない (svn:1115 patches:1784912 dev:4975 ryoji)</li>
+	<li>Undoでスクロールバーが更新されない．カーソル行アンダーラインの残骸が出る．(svn:1116 patches:1757559 dev:4934 ryoji)</li>
+	<li>コマンドラインの行・桁指定(-Y=num)で開いたとき改行の後ろにカーソルが移動することがある (svn:1118 patches:1776384 data:6223 ryoji)</li>
+	<li>履歴（カーソル位置の復元）で開いたときにカーソル位置が左にずれることがある (svn:1118 patches:1776384 ryoji)</li>
+	<li>外部で変更されたファイルを開き直したり、別の文字コードを指定して開き直すとカーソルが不適切な位置になることがある (svn:1118 patches:1776384 ryoji)</li>
+	<li>左下－右上の矩形選択領域に対する置換が実行されない (svn:1123 patches:1798850 dev:5046 げんた)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>Turbo C++ Explorer Edition対応 (svn:1122 patches:1558771 dev:4583 ryoji)</li>
+</ul>
+
+<br>
+</BODY></HTML>

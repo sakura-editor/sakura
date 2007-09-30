@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>利用可能な正規表現</TITLE>
+<META NAME="MS-HKWD" CONTENT="正規表現">
+<META NAME="MS-HKWD" CONTENT="パターン">
+<META NAME="MS-HKWD" CONTENT="エスケープシーケンス">
+<META NAME="MS-HKWD" CONTENT="メタキャラクタ">
+<META NAME="MS-HKWD" CONTENT="量指定子">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>利用可能な正規表現</h2>
+使える(かも知れない)正規表現についての解説です。すべての動作を確認することは難しく、またライブラリの更新により動作が変更になることもあります。最終的にはご自分でご確認ください。<br>
+<br>
+<div class=li200>関連：<a href = "HLP000006.html">正規表現ライブラリ</a></div>
+<h4>メタキャラクタ</h4>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>\</td><td>次のメタ文字・数量子を普通の文字として扱います。</td></tr>
+<tr><td>^</td><td>行頭 ※サクラエディタでは、制限があります。</td></tr>
+<tr><td>.</td><td>\nを除く任意の1文字 <b>[^\n]</b>と同じ</td></tr>
+<tr><td>$</td><td>行末</td></tr>
+<tr><td>|</td><td>パターンの論理和</td></tr>
+<tr><td>( )</td><td>パターンをグループ化</td></tr>
+<tr><td>[ ]</td><td>キャラクタクラス<br><b>[A-Z]</b>は、「A」から「Z」までの文字のどれか1つとマッチします。<br><b>[ABC]</b>は、AかBかCのどれかにマッチします。<b>A|B|C</b>とほぼ同じです。<br></td></tr>
+<tr><td>[^ ]</td><td>指定された範囲以外の1文字にマッチします。</td></tr>
+</table>
+
+<h4>量指定子</h4>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><small>最小一致<br>(無欲)</small></td><td><small>最大一致<br>(欲張り)</small></td><td><small>[鬼] 強欲</small></td><td>-</td></tr>
+<tr><td>*?</td>     <td>*</td>      <td>*+</td>     <td>直前のパターンの0回以上の繰り返し</td></tr>
+<tr><td>+?</td>     <td>+</td>      <td>++</td>     <td>直前のパターンの1回以上の繰り返し</td></tr>
+<tr><td>??</td>     <td>?</td>      <td>?+</td>     <td>直前のパターンが0回または1回現われる</td></tr>
+<tr><td>{n}?</td>   <td>{n}</td>    <td>{n}+</td>   <td>直前のパターンの n 回の繰り返し</td></tr>
+<tr><td>{n,}?</td>  <td>{n,}</td>   <td>{n,}+</td>  <td>直前のパターンの n 回以上の繰り返し</td></tr>
+<tr><td>{n,m}?</td> <td>{n,m}</td>  <td>{n,m}+</td> <td>直前のパターンが n 回以上、 m 回以下</td></tr>
+</table>
+<br>
+正規表現Aを<b>[A-Z_]*PROC </b>、正規表現Bを<b>[A-Z_]*?PROC </b>とします。<br>
+&nbsp;&nbsp;&nbsp;&nbsp; SAKURA_COLLBACKPROC_BREXP_PROC<br>
+という文字列中で、最初にマッチするのは以下のようになります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Aの場合: SAKURA_COLLBACKPROC_BREXP_PROC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Bの場合: SAKURA_COLLBACKPROC<br>
+
+<h4>エスケープシーケンス</h4>
+[鬼] マークはbregonig.dllのみ
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>\w</td><td>英単語の構成文字 <b>[0-9A-Za-z_]</b>と同じ</td></tr>
+<tr><td>\W</td><td>単語の構成文字以外</td></tr>
+<tr><td>\s</td><td>空白文字にマッチ</td></tr>
+<tr><td>\S</td><td>空白文字以外</td></tr>
+<tr><td>\d</td><td>数字</td></tr>
+<tr><td>\D</td><td>数字以外</td></tr>
+<tr><td>\b</td><td>英単語の境界<br><small>[ ]の中ではバックスペースの意味になります</small></td></tr>
+<tr><td>\B</td><td>英単語の境界以外</td></tr>
+<tr><td>\A</td><td>文字列の最初</td></tr>
+<tr><td>\Z</td><td>文字列の最後(改行の直前)</td></tr>
+<tr><td>\t</td><td>水平タブコード</td></tr>
+<tr><td>\n</td><td>ラインフィード(LF)</td></tr>
+<tr><td>\r</td><td>キャリッジリターン(CR)</td></tr>
+<tr><td>\f</td><td>フォームフィード</td></tr>
+<tr><td>\e</td><td>エスケープコード</td></tr>
+<tr><td>\a</td><td>ベル</td></tr>
+<tr><td>\G</td><td>前回のマッチ終端</td></tr>
+<tr><td>\<font color="blue">ooo</font></td>	<td>oに8進数で文字コードを指定する (<font color="blue">o</font>は1～3桁)</td></tr>
+<tr><td>\x<font color="blue">hh</font></td>	<td>hに16進数で文字コードを指定する (<font color="blue">h</font>は1～2桁)</td></tr>
+<tr><td>\c<font color="blue">[</font></td>	<td>コントロール文字(<font color="blue">[</font>はコントロール文字)</td></tr>
+<tr><td>\x{HHHH}</td><td>[鬼] 拡張十六進数表現</td></tr>
+<tr><td>\z</td><td>[鬼] 文字列末尾</td></tr>
+<tr><td>\p{property-name}</td><td>[鬼] キャラクタプロパティ</td></tr>
+<tr><td>\p{^property-name}</td><td>[鬼] キャラクタプロパティ（否定）</td></tr>
+<tr><td>\P{property-name}</td><td>[鬼] キャラクタプロパティ（否定）</td></tr>
+<tr><td>\k&lt;name&gt;<br>\k'name'</td><td>[鬼] 名前指定後方参照</td></tr>
+<tr><td>\k&lt;name+n&gt;<br>\k&lt;name-n&gt;</td><td>[鬼] ネストレベル付き後方参照</td></tr>
+<tr><td>\k'name+n'<br>\k'name-n'</td><td>[鬼] ネストレベル付き後方参照</td></tr>
+<tr><td>\g&lt;name&gt;<br>\g'name'</td><td>[鬼] 名前指定部分式呼出し</td></tr>
+<tr><td>\g&lt;n&gt;<br>\g'n'</td><td>[鬼] 番号指定部分式呼出し</td></tr>
+</table>
+
+<h4>置換表現および参照</h4>
+[鬼] マークはbregonig.dllのみ
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>$n</td><td>( )でグループ化した文字列を、<b>$n</b>(nは1以上の整数)で参照します。<br>サクラエディタでは<b>$n</b>の代わりに<b>\n</b>も使用できます。</td></tr>
+<tr><td>\x{HHHH}</td><td>[鬼] 拡張十六進数表現</td></tr>
+<tr><td>${n}</td><td>[鬼] （安全な）番号指定参照</td></tr>
+<tr><td>$+</td><td>[鬼] 最後にマッチした部分文字列</td></tr>
+<tr><td>$+{name}<br>$-{name}[n]</td><td>[鬼] 名前指定参照（Perl 5.10 互換、推奨）</td></tr>
+<tr><td>\k&lt;name&gt;<br>\k'name'</td><td>[鬼] 名前指定参照（鬼車準拠）</td></tr>
+<tr><td>${name}</td><td>[鬼] 名前指定参照（独自拡張、暫定仕様のため非推奨）</td></tr>
+</table>
+
+<h4>文字集合</h4>
+[鬼] マークはbregonig.dllのみ
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>[...]</td><td>[鬼] 文字集合内文字集合</td></tr>
+<tr><td>..&&..</td><td>[鬼] 積演算</td></tr>
+<tr><td>POSIXブラケット</td><td>[鬼] ([:xxxxx:], 否定 [:^xxxxx:])</td></tr>
+</table>
+
+<h4>拡張式集合</h4>
+[鬼] マークはbregonig.dllのみ
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>(?#...)</td><td>注釈</td></tr>
+<tr><td>(?imsx)</td><td>孤立オプション<br>i: 大文字小文字照合<br>s: 単一行  （. が \n にもマッチ）<br>x: 拡張形式（空白を無視、# 以降を無視）</td></tr>
+<tr><td>(式)</td><td>捕獲式集合</td></tr>
+<tr><td>(?:式)</td><td>非捕獲式集合 （グループ化のみ）</td></tr>
+<tr><td>(?=式)</td><td>先読み</td></tr>
+<tr><td>(?!式)</td><td>否定先読み</td></tr>
+<tr><td>(?imsx-imsx)</td><td>[鬼] 孤立オプション（オプションの否定が可能になった。）</td></tr>
+<tr><td>(imsx-imsx:式)</td><td>[鬼] 式オプション</td></tr>
+<tr><td>(?&lt;=式)</td><td>[鬼] 戻り読み</td></tr>
+<tr><td>(?&lt;!式)</td><td>[鬼] 否定戻り読み</td></tr>
+<tr><td>(?&gt;式)</td><td>[鬼] 原子的式集合</td></tr>
+<tr><td>(?&lt;name&gt;式)<br>(?'name'式)</td><td>[鬼] 名前付き捕獲式集合</td></tr>
+</table>
+
+<h4>bregonig.dllへの変更による違い</h4>
+<ul>
+	<li><b>\w は2バイト文字も含む。</b><br>
+	  何度も書いていますが、\w は [A-Za-z0-9_] に加え、2バイト文字も含みます。これに応じて、\W, \b, \B の動作も変更になります。<br>
+	</li>
+	<li><b>[ ] の中に [ を書くときは必ずエスケープが必要。</b><br>
+	  文字集合の中で文字集合や積演算が使えるようになる代わりに、[ そのものを書くときは必ず \[ と書かなければならなくなりました。
+	</li>
+	<li><b>\c\ の動作が異なる。</b><br>
+	  Bregexp.dll では、\c\ は Ctrl+\ を意味していますが、bregonig.dll では、\c の次の \ はエスケープとして解釈されます。Ctrl+\ を指定するには \c\\とする必要があります。（Perl の仕様と異なるため、変更の可能性があります。）
+	</li>
+	<li><b>置換で \nnn の動作が少し異なる。</b><br>
+	  Perl の動作に近づけてあります。
+	</li>
+</ul>
+
+<h4>正規表現の制限</h4>
+<b>^■</b>(行頭の■を検索)や、<b>(^■)|(^○)</b>は正しく動きます。<br>
+<b>(^■)|(【.*?】)</b>の、後ろ半分の<b>(【.*?】) </b>は、正しく動きません。<br>
+<br>
+
+<h4>改行の検索</h4>
+サクラエディタで改行(CRLF)を検索する場合は、<br>
+<b>\r\n </b>  で検索して下さい。<br>
+改行(CR,LF,CRLFのすべて)を検索する場合は、<br>
+<b>[\r\n]+ </b> のように指定してください。<br>
+改行(CR,LF,CRLF,LFCR)と、最終行の行末を検索する場合は、<br>
+<b>$ </b> と指定してください。<br>
+
+<hr>
+
+<img src="images/hint.png">ヒント<br>
+正規表現を検索、置換、Grepで利用する場合、「/」をエスケープしたり、「/」で囲ったりする必要はありません。<br>
+<br>
+<img src="images/hint.png">追加情報<br>
+検索、置換、Grepでは、Bregxpに渡す文字列を以下のようにしています。[0xFF]は、\xffとします。<br>
+検索時のオプションは「m[0xFF]Pattern[0xFF]km」です。<br>
+置換時のオプションは「s[0xFF]PatternBefore[0xFF]PatternAfter[0xFF]km」です。<br>
+また大文字小文字を区別する場合は最後に「i」が付加されます。<br>
+(mオプションが付いていますが、改行をまたいだ検索はできません。)<br>
+</BODY></HTML>

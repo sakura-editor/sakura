@@ -29,15 +29,19 @@
 <param name="Local" value="_RESOURCE\HLP000005.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="マルチユーザー化">
+<param name="Name" value="ユーザー別設定">
 <param name="Local" value="_RESOURCE\HLP000078.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="VisualStyle化／UAC対応化">
+<param name="Name" value="Visual Style">
 <param name="Local" value="_RESOURCE\HLP000079.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="正規表現ライブラリについて">
+<param name="Name" value="Virtual Store">
+<param name="Local" value="_RESOURCE\HLP000080.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="正規表現ライブラリ">
 <param name="Local" value="_RESOURCE\HLP000006.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
@@ -91,6 +95,10 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="入力補完機能">
 <param name="Local" value="_RESOURCE\HLP000104.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="利用可能な正規表現">
+<param name="Local" value="_RESOURCE\HLP000089.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="キーワードヘルプ">
@@ -1355,6 +1363,10 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="プロジェクト連絡先">
 <param name="Local" value="_RESOURCE\HLP_UR000.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2007/09/27～)">
+<param name="Local" value="_RESOURCE\HLP_UR014.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="変更履歴(2006/11/04～)">

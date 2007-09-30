@@ -3,8 +3,8 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>正規表現ライブラリについて</TITLE>
-<META NAME="MS-HKWD" CONTENT="正規表現ライブラリについて">
+<TITLE>正規表現ライブラリ</TITLE>
+<META NAME="MS-HKWD" CONTENT="正規表現ライブラリ">
 </HEAD>
 <BODY>
 <script type="text/javascript">
@@ -21,11 +21,12 @@ if (window.event.keyCode == 27)
 aaHHCtlCloseWin.Click(); }
 // -->
 </script>
-<h2>正規表現ライブラリについて</h2>
+<h2>正規表現ライブラリ</h2>
 検索条件などに正規表現を利用するには、正規表現機能を提供するライブラリをインストールする必要があります。<br>
 現在利用可能と思われる正規表現ライブラリは以下の通りです。お持ちでない方は別途入手してご利用下さい。<br>
 <br>
 <h3>Perl5互換の正規表現</h3>
+<a href = "HLP000089.html">利用可能な正規表現</a>について
 <dl>
 	<dt>BREGEXP.DLL</dt>
 	<dd>馬場氏(ハンドル名 babaq)作成のPerl5互換の正規表現ライブラリです。<br>
@@ -52,98 +53,4 @@ aaHHCtlCloseWin.Click(); }
 JRE32.DLLをご利用になる場合は、JRE32.DLL対応の最終版であるver. UR1.2.34.3をご利用下さい。
 </div>
 
-<h3>パターンについて</h3>
-<h4>使える（かもしれない）メタキャラクタ</h4>
-<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>\</td><td>次のメタ文字・数量子を普通の文字として扱います。</td></tr>
-<tr><td>^</td><td>行頭 ※サクラエディタでは、制限があります。</td></tr>
-<tr><td>.</td><td>\nを除く任意の1文字 <b>[.\n]</b>と同じ</td></tr>
-<tr><td>$</td><td>行末</td></tr>
-<tr><td>|</td><td>パターンの論理和</td></tr>
-<tr><td>( )</td><td>パターンをグループ化</td></tr>
-<tr><td>[ ]</td><td>キャラクタクラス<br><b>[A-Z]</b>は、「A」から「Z」までの文字のどれか1つとマッチします。<br><b>[ABC]</b>は、AかBかCのどれかにマッチします。<b>A|B|C</b>とほぼ同じです。<br></td></tr>
-<tr><td>[^ ]</td><td>指定された範囲以外の1文字にマッチします。</td></tr>
-</table>
-
-<br>
-
-<h4>使える（かもしれない）直前のパターンの数量子</h4>
-<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>*</td>      <td>直前のパターンの0回以上の繰り返し(最大一致)</td></tr>
-<tr><td>+</td>      <td>直前のパターンの1回以上の繰り返し(最大一致)</td></tr>
-<tr><td>*?</td>     <td>直前のパターンの0回以上の繰り返し(最小一致)</td></tr>
-<tr><td>+?</td>     <td>直前のパターンの1回以上の繰り返し(最小一致)</td></tr>
-<tr><td>?</td>      <td>直前のパターンが0回または1回現われる</td></tr>
-<tr><td>{n}</td>    <td>直前のパターンの n 回の繰り返し</td></tr>
-<tr><td>{n,m}</td>  <td>直前のパターンが n 回以上、 m 回以下の繰り返し(最大一致)</td></tr>
-<tr><td>{n,m}?</td> <td>直前のパターンが n 回以上、 m 回以下の繰り返し(最小一致)</td></tr>
-</table>
-
-
-<h4>使える（かもしれない）エスケープシーケンス</h4>
-<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>\w</td><td>英単語の構成文字 <b>[0-9A-Za-z_]</b>と同じ</td></tr>
-<tr><td>\W</td><td>単語の構成文字以外</td></tr>
-<tr><td>\s</td><td>空白文字にマッチ</td></tr>
-<tr><td>\S</td><td>空白文字以外</td></tr>
-<tr><td>\d</td><td>数字</td></tr>
-<tr><td>\D</td><td>数字以外</td></tr>
-<tr><td>\b</td><td>単語の境界(SJIS未対応)</td></tr>
-<tr><td>\B</td><td>単語の境界以外</td></tr>
-<tr><td>\A</td><td>文字列の最初</td></tr>
-<tr><td>\Z</td><td>文字列の最後</td></tr>
-<tr><td>\t</td><td>水平タブコード</td></tr>
-<tr><td>\n</td><td>ラインフィード(LF)</td></tr>
-<tr><td>\r</td><td>キャリッジリターン(CR)</td></tr>
-<tr><td>\f</td><td>フォームフィード</td></tr>
-<tr><td>\e</td><td>エスケープコード</td></tr>
-<tr><td>\a</td><td>ベル</td></tr>
-<tr><td>\<font color="blue">ooo</font></td>	<td>oに8進数で文字コードを指定する (<font color="blue">o</font>は1～3桁)</td></tr>
-<tr><td>\x<font color="blue">hh</font></td>	<td>hに16進数で文字コードを指定する (<font color="blue">h</font>は1～2桁)</td></tr>
-<tr><td>\c<font color="blue">[</font></td>	<td>コントロール文字(<font color="blue">[</font>はコントロール文字)</td></tr>
-<tr><td>\<font color="blue">n</font></td>	<td>( )でグループ化した文字列を指定する(<font color="blue">n</font>は1)<br>置換文字列などに使用できます</td></tr>
-</table>
-
-
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
-
-
-
-<h4>最大一致、最小一致</h4>
-正規表現Aを<b>[A-Z_]*PROC </b>、正規表現Bを<b>[A-Z_]*?PROC </b>とします。<br>
-&nbsp;&nbsp;&nbsp;&nbsp; SAKURA_COLLBACKPROC_BREXP_PROC<br>
-という文字列中で、最初にマッチするのは以下のようになります。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Aの場合: SAKURA_COLLBACKPROC_BREXP_PROC<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Bの場合: SAKURA_COLLBACKPROC<br>
-すなわち、最大一致では、指定された文字列でもっとも長くパターンにマッチしたものを選びます。<br>
-最小一致では、もっとも短いマッチした文字列(0を含む)を選びます。<br>
-<br>
-
-<h4>正規表現の制限</h4>
-<b>^■</b>(行頭の■を検索)や、<b>(^■)|(^○)</b>は正しく動きます。<br>
-<b>(^■)|(【.*?】)</b>の、後ろ半分の<b>(【.*?】) </b>は、正しく動きません。<br>
-<br>
-
-<h4>改行の検索</h4>
-サクラエディタで改行(CRLF)を検索する場合は、<br>
-<b>\r\n </b>  で検索して下さい。<br>
-改行(CR,LF,CRLFのすべて)を検索する場合は、<br>
-<b>[\r\n]+ </b> のように指定してください。<br>
-改行(CR,LF,CRLF,LFCR)と、最終行の行末を検索する場合は、<br>
-<b>$ </b> と指定してください。<br>
-<hr>
-
-<img src="images/hint.png">ヒント<br>
-正規表現を検索、置換、Grepで利用する場合、「/」をエスケープしたり、「/」で囲ったりする必要はありません。<br>
-<br>
-<img src="images/hint.png">追加情報<br>
-検索、置換、Grepでは、Bregxpに渡す文字列を以下のようにしています。[0xFF]は、\xffとします。<br>
-検索時のオプションは「m[0xFF]Pattern[0xFF]km」です。<br>
-置換時のオプションは「s[0xFF]PatternBefore[0xFF]PatternAfter[0xFF]km」です。<br>
-また大文字小文字を区別する場合は最後に「i」が付加されます。<br>
-(mオプションが付いていますが、改行をまたいだ検索はできません。)<br>
 </BODY></HTML>

@@ -30,15 +30,16 @@ aaHHCtlCloseWin.Click(); }
 <ol>
 <li>以前のバージョンのサクラエディタがインストールされている場合、実行中のサクラエディタを(常駐も含めて)すべて終了させます。</li>
 <li>任意のフォルダを作成し、そのフォルダに配布ファイル<em>sakura_xxxx-xx-xx.zip</em>を解凍します。更新の場合は通常、上書きで構いません。</li>
-<li>2000以降の場合は、必要に応じて<a href="HLP000078.html">マルチユーザー化</a>のための設定ファイル<em>sakura.exe.ini</em><small>(sakura.iniではありません)</small>を設置します。<small>*Vista以降で<a href="HLP000079.html">UAC対応化</a>を行う場合はマルチユーザー化が必須です。</small></li>
-<li>XP以降で<a href="HLP000079.html">VisualStyle化</a>する場合は<em>sakura.exe.manifest</em>を設置します。また、Vista以降で<a href="HLP000079.html">UAC対応化</a>する場合にも<em>sakura.exe.manifest</em>が必要になります。</li>
+<li>2000以降で、<a href="HLP000078.html">ユーザー別設定</a>にしたい場合は、<em>sakura.exe.ini</em><small>(sakura.iniとは別のファイル)</small>を設置します。<br>
+	　<small>*Vista以降で<a href="HLP000080.html">Virtual Store</a>を無効にする場合は<a href="HLP000078.html">ユーザー別設定</a>が必須です。</small></li>
+<li>XP以降で<a href="HLP000079.html">VisualStyle</a>を有効にする場合は<em>sakura.exe.manifest</em>を設置します。また、Vista以降で<a href="HLP000080.html">Virtual Store</a>を無効にする場合にも<em>sakura.exe.manifest</em>が必要になります。</li>
 <li>ショートカット作成などは手作業で行って下さい。</li>
 </ol><br>
 
 <img src="images/note.png"><b>注意</b><div class=li200>
-VistaのUACに対応していないバージョン(1.5.17.0以前)からバージョンアップする場合は、manifestを置くことでVirtualStoreが無効化されるため、これまで使っていた設定が引き継がれません。
+VistaのUACに対応していないバージョン(1.5.17.0以前)からバージョンアップする場合は、manifestを置くことで<a href="HLP000080.html">Virtual Store</a>が無効化されるため、これまで使っていた設定が引き継がれません。
 必要に応じて<em>sakura.ini</em>を適切な位置へ移動するなどの対応をお願いします。
-詳しくは<a href="HLP000079.html">UAC対応化</a>および<a href="HLP000078.html">マルチユーザー化</a>の頁参照<br>
+詳しくは<a href="HLP000080.html">Virtual Store</a>、<a href="HLP000078.html">ユーザー別設定</a>および<a href = "HLP000077.html">設定フォルダ</a>を参照。<br>
 </div>
 <br>
 
@@ -48,7 +49,7 @@ VistaのUACに対応していないバージョン(1.5.17.0以前)からバージョンアップする場合は
 <ol>
 <li>実行中のサクラエディタを(常駐も含めて)すべて終了させます。</li>
 <li>ダウンロードした<em>sinstx-x-xx-x.exe</em>を実行し、ウィザードに従ってください。</li>
-<li>2000以降のOSでは<b>新規インストール時のみ</b>、<a href="HLP000078.html">マルチユーザー化</a>の設定を行うかどうかの選択画面がでます。</li>
+<li>2000以降のOSでは<b>新規インストール時のみ</b>、<a href="HLP000078.html">ユーザー別設定</a>を行うかどうかの選択画面がでます。</li>
 </ol><br>
 
 <img src="images/note.png"><b>注意</b><div class=li200>
@@ -67,8 +68,8 @@ VistaのUACに対応していないバージョン(1.5.17.0以前)からバージョンアップする場合は
 <ol>
 <li>実行中のサクラエディタを常駐も含めてすべて終了させます。</li>
 <li><em>sakura.exe</em>のフォルダを丸ごと削除します。</li>
-<li>2000以降で<a href="HLP000078.html">マルチユーザー化</a>を行っていた場合は、<a href="HLP000077.html">設定フォルダ</a>も削除します。<br>
-Vista以降にてVirtualStoreが適用されている場合は、<em>"%LOCALAPPDATA%\VirtualStore"</em> 以下にある<em>sakura.ini</em>などのファイルも削除します。</li>
+<li>2000以降で<a href="HLP000078.html">ユーザー別設定</a>を行っていた場合は、<a href="HLP000077.html">設定フォルダ</a>も削除します。</li>
+<li>Vista以降にて<a href="HLP000080.html">Virtual Store</a>が有効になっている場合は、<em>"%LOCALAPPDATA%\VirtualStore"</em> 以下にある<em>sakura.ini</em>などのファイルも削除します。</li>
 <li>自分で作成したショートカットなども削除してください。</li>
 </ol>
 <img src="images/hint.png">ヒント<div class=li200>
@@ -83,30 +84,30 @@ Vista以降にてVirtualStoreが適用されている場合は、<em>"%LOCALAPPDATA%\VirtualStor
 <br>
 
 <img src="images/hint.png">ヒント<div class=li200>
-<em>sakura.ini</em> というファイルはサクラエディタの設定ファイルです。パッケージ版のアンインストールでは、<em>sakura.ini</em> は削除しないようになっています。<br>
+<em>sakura.ini</em> というファイルはサクラエディタの設定ファイルです。パッケージ版のアンインストールでは、<em>sakura.ini</em> は削除されません。<br>
 </div>
 <br>
 <img src="images/note.png"><b>注意</b><div class=li200>
-通常<em>sakura.ini</em>は<em>sakura.exe</em>と同じ場所にありますが、マルチユーザー化を行っている場合やVirtualStoreが適用されている場合など<em>sakura.ini</em>の保存場所が異なる場合があります。<br>
+通常<em>sakura.ini</em>は<em>sakura.exe</em>と同じ場所にありますが、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合や<a href="HLP000080.html">Virtual Store</a>が有効になっているなどの理由で、<em>sakura.ini</em>の保存場所が異なる場合があります。<br>
 <br>
 sakura.iniの保存先
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>XP以前の標準</td><td>sakura.exeと同じ場所</td></tr>
-<tr><td>マルチユーザー化有効時</td><td><a href="HLP000078.html">マルチユーザー化</a>および<a href="HLP000077.html">設定フォルダ</a>参照</td></tr>
-<tr><td>VirtualStore適用時</td><td><em>"%LOCALAPPDATA%\VirtualStore\Program Files\sakura"</em><br><small>*パッケージ版のデフォルト値でインストールした場合</small></td></tr>
+<tr><td>XP以前で標準インストールの場合</td><td>sakura.exeと同じ場所</td></tr>
+<tr><td>2000以降で<a href="HLP000078.html">ユーザー別設定</a>の場合</td><td><a href="HLP000078.html">ユーザー別設定</a>および<a href="HLP000077.html">設定フォルダ</a>参照</td></tr>
+<tr><td>Vista以降で<a href="HLP000080.html">Virtual Store</a>有効の場合</td><td><em>"%LOCALAPPDATA%\VirtualStore\Program Files\sakura"</em><br><small>*パッケージ版でデフォルトのインストール先を指定した場合</small></td></tr>
 </table>
 </div>
 
 <h3>パッケージ版ファイル一式</h3>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>sakura.exe</td><td>サクラエディタ  本体</td></tr>
-<tr><td>bregonig.dll</td><td>正規表現ライブラリ<br>(1.5.17.0以前ではbregexp.dll)</td></tr>
+<tr><td>bregonig.dll</td><td>正規表現ライブラリ<br>(1.5.17.x以前ではbregexp.dll)</td></tr>
 <tr><td>sakura.chm</td><td>サクラエディタ  オンラインヘルプ<br>(1.5.12.0以前ではsakura.hlpとsakura.cnt)</td></tr>
 <tr><td>sakuext.exe</td><td>サクラエディタ用関連づけ設定ツール (すい氏 ご提供)</td></tr>
 <tr><td>sakuext.txt</td><td>sakuext.exeの使用説明</td></tr>
 <tr><td>uninstall.exe</td><td>アンインストーラ</td></tr>
 <tr><td>sakura.exe.manifest</td><td>XP/Vista用manifestファイル</td></tr>
-<tr><td>sakura.exe.ini</td><td>マルチユーザー化設定ファイル</td></tr>
+<tr><td>sakura.exe.ini</td><td>ユーザー別設定構成ファイル</td></tr>
 </table>
 
 &lt;keyword&gt;フォルダ
@@ -164,7 +165,7 @@ sakura.iniの保存先
 <br>
 
 <h4>サクラエディタが作成する作業ファイルについて</h4>
-サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダに以下のファイルが作成されます。<br>
+サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダ（または<a href = "HLP000077.html">設定フォルダ</a>）に以下のファイルが作成されます。<br>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td>sakura.ini </td><td>サクラエディタ用の設定ファイルです。</td></tr>
 </table>

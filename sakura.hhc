@@ -18,9 +18,10 @@
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="動作環境"><param name="Local" value="_RESOURCE\HLP000003.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="使用条件等"><param name="Local" value="_RESOURCE\HLP000004.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="インストール／アンインストール手順"><param name="Local" value="_RESOURCE\HLP000005.html"><param name="ImageNumber" value="9"></OBJECT></li>
-			<LI><OBJECT type="text/sitemap"><param name="Name" value="マルチユーザー化"><param name="Local" value="_RESOURCE\HLP000078.html"><param name="ImageNumber" value="9"></OBJECT></li>
-			<LI><OBJECT type="text/sitemap"><param name="Name" value="VisualStyle化／UAC対応化"><param name="Local" value="_RESOURCE\HLP000079.html"><param name="ImageNumber" value="9"></OBJECT></li>
-			<LI><OBJECT type="text/sitemap"><param name="Name" value="正規表現ライブラリについて"><param name="Local" value="_RESOURCE\HLP000006.html"><param name="ImageNumber" value="9"></OBJECT></li>
+			<LI><OBJECT type="text/sitemap"><param name="Name" value="ユーザー別設定"><param name="Local" value="_RESOURCE\HLP000078.html"><param name="ImageNumber" value="9"></OBJECT></li>
+			<LI><OBJECT type="text/sitemap"><param name="Name" value="Visual Style"><param name="Local" value="_RESOURCE\HLP000079.html"><param name="ImageNumber" value="9"></OBJECT></li>
+			<LI><OBJECT type="text/sitemap"><param name="Name" value="Virtual Store"><param name="Local" value="_RESOURCE\HLP000080.html"><param name="ImageNumber" value="9"></OBJECT></li>
+			<LI><OBJECT type="text/sitemap"><param name="Name" value="正規表現ライブラリ"><param name="Local" value="_RESOURCE\HLP000006.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="最新バージョンのダウンロード"><param name="Local" value="_RESOURCE\HLP000112.html"><param name="ImageNumber" value="9"></OBJECT></li>
 		</UL>
 
@@ -37,6 +38,7 @@
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="TABインデント、逆TABインデント"><param name="Local" value="_RESOURCE\HLP000113.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="SPACEインデント、逆SPACEインデント"><param name="Local" value="_RESOURCE\HLP000114.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="矩形編集"><param name="Local" value="_RESOURCE\HLP000115.html"><param name="ImageNumber" value="9"></OBJECT></li>
+			<LI><OBJECT type="text/sitemap"><param name="Name" value="利用可能な正規表現"><param name="Local" value="_RESOURCE\HLP000089.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="入力補完機能"><param name="Local" value="_RESOURCE\HLP000104.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="キーワードヘルプ"><param name="Local" value="_RESOURCE\HLP000105.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="クリッカブルURL"><param name="Local" value="_RESOURCE\HLP000129.html"><param name="ImageNumber" value="9"></OBJECT></li>
@@ -466,6 +468,7 @@
 
 		<UL>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="サクラエディタについて"><param name="Local" value="_RESOURCE\HLP_UR000.html"><param name="ImageNumber" value="9"></OBJECT></li>
+			<LI><OBJECT type="text/sitemap"><param name="Name" value="変更履歴(2007/09/27～)"><param name="Local" value="_RESOURCE\HLP_UR014.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="変更履歴(2006/11/04～)"><param name="Local" value="_RESOURCE\HLP_UR013.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="変更履歴(2004/10/02～)"><param name="Local" value="_RESOURCE\HLP_UR012.html"><param name="ImageNumber" value="9"></OBJECT></li>
 			<LI><OBJECT type="text/sitemap"><param name="Name" value="変更履歴(2003/06/26～)"><param name="Local" value="_RESOURCE\HLP_UR011.html"><param name="ImageNumber" value="9"></OBJECT></li>
