@@ -40,6 +40,7 @@ private:
 	static int CheckCommandLine(
 
 		LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
+		int quotelen, //!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
 		char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
 	);
 	
