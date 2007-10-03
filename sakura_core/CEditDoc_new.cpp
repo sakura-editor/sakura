@@ -1276,7 +1276,15 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 		}
 	}
 	else {
-		strncpy( pszPath, filename, _MAX_PATH - 1 );
+		//	2007.10.01 genta 相対パスを絶対パスに変換
+		//	変換しないとIsPathOpenedで正しい結果が得られず，
+		//	同一ファイルを複数開くことがある．
+		if( ! GetLongFileName( filename, pszPath )){
+			//	ファイル名の変換に失敗
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
+				"ファイル名の変換に失敗しました [%s]", filename );
+			return;
+		}
 	}
 	/* 指定ファイルが開かれているか調べる */
 	if( CShareData::getInstance()->IsPathOpened(pszPath, &hWndOwner, nCharCode) ){		// 開いていればアクティブにする
