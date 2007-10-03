@@ -29,6 +29,7 @@
 // 関数をマクロ再定義するので my_icmp.h は最後に置く	// 2006.10.25 ryoji
 #include "my_icmp.h"
 #include "charcode.h"  // 2006.06.28 rastiv
+#include "debug.h"
 
 CCommandLine* CCommandLine::_instance = NULL;
 
@@ -39,6 +40,7 @@ CCommandLine* CCommandLine::_instance = NULL;
 #define CMDLINEOPT_GREPMODE		1100
 #define CMDLINEOPT_GREPDLG		1101
 #define CMDLINEOPT_DEBUGMODE	1999
+#define CMDLINEOPT_NOMOREOPT	1998
 #define CMDLINEOPT_X			1
 #define CMDLINEOPT_Y			2
 #define CMDLINEOPT_VX			3
@@ -69,6 +71,7 @@ CCommandLine* CCommandLine::_instance = NULL;
 */
 int CCommandLine::CheckCommandLine(
 	LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
+	int quotelen, //!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
 	char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
 )
 {
@@ -87,6 +90,7 @@ int CCommandLine::CheckCommandLine(
 	*/
 	static const _CmdLineOpt _COptWoA[] = {
 		{"R", 1,			CMDLINEOPT_R},
+		{"-", 1,			CMDLINEOPT_NOMOREOPT},
 		{"NOWIN", 5,		CMDLINEOPT_NOWIN},
 		{"WQ", 2,			CMDLINEOPT_WRITEQUIT},	// 2007.05.19 ryoji sakuext用に追加
 		{"GREPMODE", 8,		CMDLINEOPT_GREPMODE},
@@ -120,7 +124,7 @@ int CCommandLine::CheckCommandLine(
 	};
 
 	const _CmdLineOpt *ptr;
-	int len = lstrlen( str );
+	int len = lstrlen( str ) - quotelen;
 
 	//	引数がある場合を先に確認
 	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ ){
@@ -150,6 +154,10 @@ int CCommandLine::CheckCommandLine(
 	WinMain()から呼び出される。
 	
 	@date 2005-08-24 D.S.Koba 関数のstaticをやめ，メンバ変数を引数で渡すのをやめる
+	@date 2007.09.09 genta Visual Studioが各々の引数をお節介にも""で囲む問題に対応．
+		オプションが""で囲まれた場合に対応する．
+		そうすると-で始まるファイル名を指定できなくなるので，
+		それ以降オプション解析をしないという "--" オプションを新設する．
 	
 	@note
 	これが呼び出された時点では共有メモリの初期化が完了していないため，
@@ -179,6 +187,7 @@ void CCommandLine::ParseCommandLine( void )
 
 	TCHAR	szPath[_MAX_PATH + 1];
 	bool	bFind = false;
+	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
 	int		i, j;
 //	WIN32_FIND_DATA	w32fd;
@@ -220,7 +229,12 @@ void CCommandLine::ParseCommandLine( void )
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
 	LPSTR pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, " " );
 	while( pszToken != NULL ){
-		if( !bFind && pszToken[0] != '-' ){
+#ifdef _DEBUG
+	MYTRACE( "OPT=[%s]\n", pszToken );
+#endif
+		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
+		if( !bFind && ( bParseOptDisabled ||
+			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
 			if( pszToken[0] == '\"' ){
 				CMemory cmWork;
 				//	Nov. 3, 2005 genta
@@ -273,9 +287,14 @@ void CCommandLine::ParseCommandLine( void )
 			}
 
 		}else{
+			int qlen = 0;
+			if( *pszToken == '"' ){
+				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
+				qlen = 1;
+			}
 			++pszToken;	//	先頭の'-'はskip
 			char *arg;
-			switch( CheckCommandLine( pszToken, &arg ) ){
+			switch( CheckCommandLine( pszToken, qlen, &arg ) ){
 			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
 				m_fi.m_nX = AtoiOptionInt( arg ) - 1;
@@ -373,6 +392,9 @@ void CCommandLine::ParseCommandLine( void )
 				break;
 			case CMDLINEOPT_DEBUGMODE:
 				m_bDebugMode = true;
+				break;
+			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効
+				bParseOptDisabled = true;
 				break;
 			}
 		}
