@@ -9,6 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka, YAZAKI
 	Copyright (C) 2003, MIK
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -431,11 +432,24 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 			}
 		}
 		if( m_nActivePane == 0 || m_nActivePane == 1 ){
-			if ( pcViewArr[2]->m_nViewTopLine < pcViewArr[2]->m_nCaretPosY ){
-				nActivePane = 2;
-			}
-			else {
-				nActivePane = 0;
+			// 2007.10.01 ryoji
+			// 分割無しからの切替時のみ従来コードを実行してアクティブペインを決める。
+			// それ以外の場合はペイン0をアクティブにする。
+			// 従来は、上下に分割しておいて、
+			// ・上下分割バーを動かす
+			// ・ステータスバーなど各種バーの表示／非表示を切り替える
+			// ・設定画面をOKで閉じる
+			// ・左右も分割して左右分割を解除する
+			// といった操作をするだけで下のペインがアクティブ化されることがあった。
+			// （シンプルに0固定にしてしまっても良い気はするけれど．．．）
+			nActivePane = 0;
+			if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
+				if ( pcViewArr[2]->m_nViewTopLine < pcViewArr[2]->m_nCaretPosY ){
+					nActivePane = 2;
+				}
+				else {
+					nActivePane = 0;
+				}
 			}
 		}else{
 			nActivePane = 2;
