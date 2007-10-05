@@ -3070,13 +3070,15 @@ void CEditView::SetIMECompFormFont( void )
 	@param nNewY[in/out] カーソルのレイアウト座標Y
 	@param bScroll[in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
 	@param nCaretMarginRate[in] 縦スクロール開始位置を決める値
+	@param dx[in] nNewXとマウスカーソル位置との誤差(カラム幅未満のドット数)
 	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
 
 	@note マウス等による移動で不適切な位置に行かないよう座標調整してカーソル移動する
 
 	@date 2007.08.23 ryoji 関数化（MoveCursorToPoint()から処理を抜き出し）
+	@date 2007.09.26 ryoji 半角文字でも中央で左右にカーソルを振り分ける
 */
-int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCaretMarginRate )
+int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCaretMarginRate, int dx )
 {
 	const char*		pLine;
 	int				nLineLen;
@@ -3097,6 +3099,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCare
 		/* 移動先の行のデータを取得 */
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
 
+		int nColWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
 		int nPosX = 0;
 		int i = 0;
 		CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
@@ -3107,7 +3110,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCare
 				break;
 			}
 			if( it.getColumn() + it.getColumnDelta() > nNewX ){
-				if (nNewX >= (pcLayout ? pcLayout->GetIndent() : 0) && (it.getColumnDelta() > 1) && ((it.getColumn() + it.getColumnDelta() - nNewX) <= it.getColumnDelta() / 2)){
+				if (nNewX >= (pcLayout ? pcLayout->GetIndent() : 0) && ((nNewX - it.getColumn()) * nColWidth + dx) * 2 >= it.getColumnDelta() * nColWidth){
 					nPosX += it.getColumnDelta();
 				}
 				i = it.getIndex();
@@ -3169,11 +3172,13 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 	int				nScrollRowNum;
 	int				nNewX;
 	int				nNewY;
+	int				dx;
 
 	nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+	dx = (xPos - m_nViewAlignLeft) % ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 
-	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, TRUE, 1000 );
+	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, TRUE, 1000, dx );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	return nScrollRowNum;
 }
