@@ -845,7 +845,10 @@ void CEditView::Command_UNDO( void )
 #endif
 
 	}
+
+	m_nCaretPosX_Prev = m_nCaretPosX;	// 2007.10.11 ryoji 追加
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+
 	return;
 }
 
@@ -1038,6 +1041,8 @@ void CEditView::Command_REDO( void )
 	//	2001/06/21 End
 #endif
 	}
+
+	m_nCaretPosX_Prev = m_nCaretPosX;	// 2007.10.11 ryoji 追加
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 
 	return;
