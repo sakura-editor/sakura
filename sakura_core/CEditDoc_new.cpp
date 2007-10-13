@@ -517,6 +517,8 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_SORT_ASC:	// 2001.12.11 hor
 	case F_SORT_DESC:	// 2001.12.11 hor
 	case F_MERGE:		// 2001.12.11 hor
+	case F_UNDO:		// 2007.10.12 genta
+	case F_REDO:		// 2007.10.12 genta
 //		::MessageBox( m_hWnd, "Operation is forbidden.", "DEBUG", MB_OK | MB_ICONEXCLAMATION );
 		return true;
 	}
