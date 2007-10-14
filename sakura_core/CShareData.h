@@ -556,6 +556,7 @@ struct Common {
 	BOOL				m_bAutoCloseDlgReplace;		/* 置換 ダイアログを自動的に閉じる */
 	BOOL				m_bSearchAll;				/* 先頭（末尾）から再検索 2002.01.26 hor */
 	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
+	BOOL				m_bNoCaretMoveByActivation;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
 	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN	補完決定キーが有効/無効 */
 	BOOL				m_bHokanKey_TAB;	/* VK_TAB		補完決定キーが有効/無効 */

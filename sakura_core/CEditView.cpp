@@ -212,6 +212,7 @@ VOID CALLBACK EditViewTimerProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditView::CEditView() :
 	m_cHistory( new CAutoMarkMgr ),
+	m_bActivateByMouse( FALSE ),	// 2007.10.02 nasukoji
 	m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 // 20020331 aroka 再変換対応 for 95/NT
 // 2002.04.09 コンストラクタのなかに移動しました。 minfu
@@ -864,7 +865,20 @@ LRESULT CEditView::DispatchEvent(
 //	case WM_MBUTTONDBLCLK:
 	case WM_LBUTTONDBLCLK:
 
+		// 2007.10.02 nasukoji	非アクティブウィンドウのダブルクリック時はここでカーソルを移動する
+		// 2007.10.12 genta フォーカス移動のため，OnLBUTTONDBLCLKより移動
+		if(m_bActivateByMouse){
+			::SetFocus( ::GetParent( m_hwndParent ) );
 
+			if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
+				/* アクティブなペインを設定 */
+				m_pcEditDoc->SetActivePane( m_nMyIndex );
+			}
+			// カーソルをクリック位置へ移動する
+			OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );	
+			// 2007.10.02 nasukoji
+			m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
+		}
 //		MYTRACE( " WM_LBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDBLCLK( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
@@ -883,6 +897,8 @@ LRESULT CEditView::DispatchEvent(
 			/* アクティブなペインを設定 */
 			m_pcEditDoc->SetActivePane( m_nMyIndex );
 		}
+		// 2007.10.02 nasukoji
+		m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
 //		MYTRACE( " WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
@@ -1067,6 +1083,19 @@ LRESULT CEditView::DispatchEvent(
 		}
 		
 		return 0L;
+
+	// 2007.10.02 nasukoji	マウスクリックにてアクティベートされた時はカーソル位置を移動しない
+	case WM_MOUSEACTIVATE:
+		// マウスクリックによりバックグラウンドウィンドウがアクティベートされた
+		//	2007.10.08 genta オプション追加
+		if( m_pShareData->m_Common.m_bNoCaretMoveByActivation &&
+		   (! m_pcEditDoc->m_pcEditWnd->IsActiveApp()))
+		{
+			m_bActivateByMouse = TRUE;		// マウスによるアクティベート
+			return MA_ACTIVATEANDEAT;		// アクティベート後イベントを破棄
+		}
+
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT

@@ -231,9 +231,12 @@ struct ARRHEAD {
 
 	Version 80:
 	正規表現ライブラリの切り替え 2007.07.22 genta
+
+	Version 81:
+	マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji
 */
 
-const unsigned int uShareDataVersion = 80;
+const unsigned int uShareDataVersion = 81;
 
 /*
 ||	Singleton風
@@ -621,6 +624,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
 		m_pShareData->m_Common.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
 		m_pShareData->m_Common.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
+		m_pShareData->m_Common.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
 		m_pShareData->m_Common.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
 		m_pShareData->m_Common.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */

@@ -172,6 +172,8 @@
                                         0x806b03f5    // IDD_PROP1P1
 #define HIDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD \
                                         0x806b03f4    // IDD_PROP1P1
+#define HIDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE \
+                                        0x806b03f7    // IDD_PROP1P1
 #define HIDC_CHECK_SameTabWidth         0x93f40578    // IDD_PROP_WIN
 #define HIDC_CHECK_SortTabList          0x93f40604    // IDD_PROP_WIN
 #define HIDC_CHECK_TAB_ARROW            0x93ed05b0    // IDD_PROPTYPESP1
