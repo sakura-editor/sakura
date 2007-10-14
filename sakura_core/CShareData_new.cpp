@@ -683,6 +683,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFuncList"		, common.m_bAutoCloseDlgFuncList );/* アウトライン ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgReplace"		, common.m_bAutoCloseDlgReplace );/* 置換 ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoColmnPaste"			, common.m_bAutoColmnPaste );/* 矩形コピーのテキストは常に矩形貼り付け */
+	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 	cProfile.IOProfileData( pszSecName, "bScrollBarHorz"				, common.m_bScrollBarHorz );/* 水平スクロールバーを使う */
 	
 	cProfile.IOProfileData( pszSecName, "bHokanKey_RETURN"			, common.m_bHokanKey_RETURN );/* VK_RETURN 補完決定キーが有効/無効 */

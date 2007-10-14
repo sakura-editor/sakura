@@ -965,6 +965,9 @@ private:
 	bool m_bISearchFlagHistory[256];
 	int m_nISearchHistoryCount;
 	bool m_bISearchFirst;
+
+	// 2007.10.02 nasukoji
+	bool	m_bActivateByMouse;		//!< マウスによるアクティベート
 };
 
 
