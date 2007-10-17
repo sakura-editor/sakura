@@ -182,10 +182,6 @@
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="開き直す">
-<param name="Local" value="_RESOURCE\CNT000905.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="開き直す">
 <param name="Local" value="_RESOURCE\HLP000283.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
@@ -309,10 +305,6 @@
 <param name="Local" value="_RESOURCE\HLP000042.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="挿入">
-<param name="Local" value="_RESOURCE\CNT000908.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
 <param name="Name" value="日付">
 <param name="Local" value="_RESOURCE\HLP000164.html">
 </OBJECT>
@@ -323,10 +315,6 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="コントロールコード">
 <param name="Local" value="_RESOURCE\HLP000255.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="高度な操作">
-<param name="Local" value="_RESOURCE\CNT000909.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="単語の左端まで削除">
@@ -417,10 +405,6 @@
 <param name="Local" value="_RESOURCE\HLP000175.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="移動">
-<param name="Local" value="_RESOURCE\CNT000910.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
 <param name="Name" value="カーソル上移動(２行ごと)">
 <param name="Local" value="_RESOURCE\HLP000220.html">
 </OBJECT>
@@ -493,10 +477,6 @@
 <param name="Local" value="_RESOURCE\HLP000265.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="選択">
-<param name="Local" value="_RESOURCE\CNT000911.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
 <param name="Name" value="現在位置の単語選択">
 <param name="Local" value="_RESOURCE\HLP000045.html">
 </OBJECT>
@@ -559,10 +539,6 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="矩形範囲選択開始">
 <param name="Local" value="_RESOURCE\HLP000244.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="整形">
-<param name="Local" value="_RESOURCE\CNT000912.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="左(先頭)の空白を削除">
@@ -635,10 +611,6 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="空白→TAB">
 <param name="Local" value="_RESOURCE\HLP000196.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="文字コード変換">
-<param name="Local" value="_RESOURCE\CNT000914.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="自動判別→SJISコード変換">
@@ -721,10 +693,6 @@
 <param name="Local" value="_RESOURCE\HLP000264.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="インクリメンタルサーチ">
-<param name="Local" value="_RESOURCE\CNT000931.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
 <param name="Name" value="前方インクリメンタルサーチ">
 <param name="Local" value="_RESOURCE\HLP000304.html">
 </OBJECT>
@@ -747,10 +715,6 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="MIGEMO後方インクリメンタルサーチ">
 <param name="Local" value="_RESOURCE\HLP000309.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="ブックマーク">
-<param name="Local" value="_RESOURCE\CNT000932.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="ブックマーク設定・解除">
@@ -871,10 +835,6 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="入力補完">
 <param name="Local" value="_RESOURCE\HLP000111.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="カスタムメニュー">
-<param name="Local" value="_RESOURCE\CNT000917.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="右クリックメニュー">
