@@ -4547,7 +4547,7 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	po.y = poFrame.y - rcFrame.top;
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
 	nStrLen = MAX_LEN;
-	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - 5;
+	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - ( ::GetSystemMetrics( SM_CXSIZEFRAME ) + 2 );
 	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
 	rc.bottom = rc.top + m_nCaretPosInfoCharHeight;

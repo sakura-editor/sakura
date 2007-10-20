@@ -834,6 +834,7 @@ void CEditView::Command_UNDO( void )
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
+		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
 		m_pcEditDoc->RedrawInactivePane();/* 他のペインの表示状態を更新 */
 #if 0
@@ -1024,6 +1025,7 @@ void CEditView::Command_REDO( void )
 //		OnKillFocus();
 		OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
 //		OnSetFocus();
+		DispRuler( hdc );	// 2007.10.19 ryoji
 		::ReleaseDC( m_hWnd, hdc );
 
 		/* 行番号表示に必要な幅を設定 */
@@ -1031,6 +1033,7 @@ void CEditView::Command_REDO( void )
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
+		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
 		m_pcEditDoc->RedrawInactivePane();/* 他のペインの表示状態を更新 */
 #if 0
