@@ -539,6 +539,22 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 	return FALSE;
 }
 
+/** マクロオブジェクトをすべて破棄する(キーボードマクロ以外)
+
+	マクロの登録を変更した場合に，変更前のマクロが
+	引き続き実行されてしまうのを防ぐ．
+
+	@date 2007.10.19 genta 新規作成
+*/
+void CSMacroMgr::UnloadAll(void)
+{
+	for ( int idx = 0; idx < MAX_CUSTMACRO; idx++ ){
+		delete m_cSavedKeyMacro[idx];
+		m_cSavedKeyMacro[idx] = NULL;
+	}
+	
+}
+
 /*! キーボードマクロの保存
 
 	@param idx [in] 読み込み先マクロバッファ番号

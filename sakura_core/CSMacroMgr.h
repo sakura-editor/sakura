@@ -121,7 +121,8 @@ public:
 	/*! キーボードマクロの読み込み */
 	BOOL Load( int idx, HINSTANCE hInstance, const char* pszPath );
 	BOOL Save( int idx, HINSTANCE hInstance, const char* pszPath );
-	
+	void UnloadAll(void);
+
 	/*! キーマクロのバッファにデータ追加 */
 	int Append( int idx, int nFuncID, LPARAM lParam1, CEditView* pcEditView );
 

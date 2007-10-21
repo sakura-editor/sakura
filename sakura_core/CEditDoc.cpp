@@ -1109,6 +1109,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
 		BOOL bGroup = (m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin);
 		m_cPropCommon.ApplyData();
+		m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
 		if( bGroup != (m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ) ){
 			CShareData::getInstance()->ResetGroupId();
 		}
