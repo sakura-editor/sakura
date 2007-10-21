@@ -4558,6 +4558,11 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 			){
 				/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
 				DisableSelectArea( TRUE );
+
+				// ‘ÎŠ‡ŒÊ‚Ì‹­’²•\¦	// 2007.10.18 ryoji
+				DrawBracketPair( false );
+				SetBracketPairPos( true );
+				DrawBracketPair( true );
 			}
 //		}
 		m_cUnderLine.UnLock();
