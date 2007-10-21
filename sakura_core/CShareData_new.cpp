@@ -673,6 +673,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "nLineNumberRightSpace"		, common.m_nLineNumRightSpace );/* 行番号の右側の隙間 */
 	cProfile.IOProfileData( pszSecName, "nVertLineOffset"			, common.m_nVertLineOffset ); // 2005.11.10 Moca
 	cProfile.IOProfileData( pszSecName, "bCopyAndDisablSelection"	, common.m_bCopyAndDisablSelection );/* コピーしたら選択解除 */
+	cProfile.IOProfileData( pszSecName, "bEnableLineModePaste"		, common.m_bEnableLineModePaste );/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"			, common.m_bHtmlHelpIsSingle );/* HtmlHelpビューアはひとつ */
 	cProfile.IOProfileData( pszSecName, "bCompareAndTileHorz"		, common.m_bCompareAndTileHorz );/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 	cProfile.IOProfileData( pszSecName, "bDropFileAndClose"			, common.m_bDropFileAndClose );/* ファイルをドロップしたときは閉じて開く */

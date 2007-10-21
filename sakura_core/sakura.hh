@@ -376,6 +376,7 @@
 #define HIDC_LIST_RES							10151 //メニュー一覧
 #define HIDC_CHECK_ADDCRLFWHENCOPY				10210 //折り返し行に改行を付けてコピー
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA		10211 //コピーしたら選択解除
+#define HIDC_CHECK_bEnableLineModePaste			10215 //ラインモード貼り付けを可能にする	// 2007.10.08 ryoji
 #define HIDC_CHECK_DRAGDROP						10212 //ドラッグ＆ドロップ編集する
 #define HIDC_CHECK_DROPSOURCE					10213 //ドロップ元にする
 #define HIDC_CHECK_bNotOverWriteCRLF			10214 //上書きモード

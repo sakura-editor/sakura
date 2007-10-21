@@ -414,8 +414,8 @@ public: /* テスト用にアクセス属性を変更 */
 protected:
 //	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
-	BOOL MyGetClipboardData( CMemory&, BOOL* );			/* クリップボードからデータを取得 */
-	BOOL MySetClipboardData( const char*, int, BOOL );	/* クリップボードにデータを設定 */
+	BOOL MyGetClipboardData( CMemory&, BOOL*, BOOL* = NULL );			/* クリップボードからデータを取得 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
+	BOOL MySetClipboardData( const char*, int, BOOL, BOOL = FALSE );	/* クリップボードにデータを設定 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
 	BOOL GetCurrentWord( CMemory* );					/* キャレット位置の単語を取得 */	// 2006.03.24 fon
 //	void PrintBitmap( HDC, int, int, const char* );		/* ビットマップファイル表示 */
@@ -688,6 +688,7 @@ protected:
 //	void Command_GOFILEEND( int );			/* ファイルの最後に移動 */
 
 	/* クリップボード系 */
+	void CopyCurLine( BOOL bAddCRLFWhenCopy, enumEOLType neweol, BOOL bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
 	void Command_COPY( int, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( void );						/* 貼り付け（クリップボードから貼り付け）*/
