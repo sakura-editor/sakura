@@ -27,6 +27,7 @@
 static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_ADDCRLFWHENCOPY,			HIDC_CHECK_ADDCRLFWHENCOPY,				//折り返し行に改行を付けてコピー
 	IDC_CHECK_COPYnDISABLESELECTEDAREA,	HIDC_CHECK_COPYnDISABLESELECTEDAREA,	//コピーしたら選択解除
+	IDC_CHECK_bEnableLineModePaste,		HIDC_CHECK_bEnableLineModePaste,		//ラインモード貼り付けを可能にする	// 2007.10.08 ryoji
 	IDC_CHECK_DRAGDROP,					HIDC_CHECK_DRAGDROP,					//Drag&Drop編集する
 	IDC_CHECK_DROPSOURCE,				HIDC_CHECK_DROPSOURCE,					//ドロップ元にする
 	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//上書きモード
@@ -197,6 +198,9 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 	/* コピーしたら選択解除 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA, m_Common.m_bCopyAndDisablSelection );
 
+	/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bEnableLineModePaste, m_Common.m_bEnableLineModePaste );
+
 	/* 改行は上書きしない */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bNotOverWriteCRLF, m_Common.m_bNotOverWriteCRLF );
 
@@ -225,6 +229,9 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 
 	/* コピーしたら選択解除 */
 	m_Common.m_bCopyAndDisablSelection = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA );
+
+	/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+	m_Common.m_bEnableLineModePaste = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bEnableLineModePaste );
 
 	/* 改行は上書きしない */
 	m_Common.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );

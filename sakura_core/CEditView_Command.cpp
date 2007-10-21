@@ -1533,6 +1533,54 @@ try_again:;
 
 
 
+/** カーソル行をクリップボードにコピーする
+	@param bAddCRLFWhenCopy [in] 折り返し位置に改行コードを挿入するか？
+	@param neweol [in] コピーするときのEOL。
+	@param bEnableLineModePaste [in] ラインモード貼り付けを可能にする
+
+	@date 2007.10.08 ryoji 新規（Command_COPY()から処理抜き出し）
+*/
+void CEditView::CopyCurLine(
+	BOOL bAddCRLFWhenCopy,
+	enumEOLType neweol,
+	BOOL bEnableLineModePaste
+)
+{
+	if( IsTextSelected() ){
+		return;
+	}
+
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	if( NULL == pcLayout ){
+		return;
+	}
+
+	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
+	CMemory cmemBuf;
+	cmemBuf.SetData( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
+	if( pcLayout->m_cEol.GetLen() != 0 ){
+		cmemBuf.AppendSz(
+			( neweol == EOL_UNKNOWN ) ?
+				pcLayout->m_cEol.GetValue() : CEOL(neweol).GetValue()
+		);
+	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
+		cmemBuf.AppendSz(
+			( neweol == EOL_UNKNOWN ) ?
+				CRLF : CEOL(neweol).GetValue()
+		);
+	}
+
+	/* クリップボードにデータcmemBufの内容を設定 */
+	if( FALSE == MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE, bEnableLineModePaste ) ){
+		::MessageBeep( MB_ICONHAND );
+		return;
+	}
+
+	return;
+}
+
+
+
 /*!	選択範囲をクリップボードにコピー
 	@param bIgnoreLockAndDisable [in] 選択範囲を解除するか？
 	@param bAddCRLFWhenCopy [in] 折り返し位置に改行コードを挿入するか？
@@ -1548,7 +1596,10 @@ void CEditView::Command_COPY(
 	BOOL			bBeginBoxSelect = FALSE;
 
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
-	if( IsTextSelected() ){
+	if( !IsTextSelected() ){
+		/* 非選択時は、カーソル行をコピーする */
+		CopyCurLine( bAddCRLFWhenCopy, neweol, m_pShareData->m_Common.m_bEnableLineModePaste );
+	}else{
 		/* テキストが選択されているときは、選択範囲のデータを取得 */
 
 		if( m_bBeginBoxSelect ){
@@ -1560,26 +1611,12 @@ void CEditView::Command_COPY(
 			::MessageBeep( MB_ICONHAND );
 			return;
 		}
-	}else{
-		/* 非選択時は、カーソル行をコピーする */
 
-		const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
-		if( NULL == pcLayout ){
+		/* クリップボードにデータcmemBufの内容を設定 */
+		if( FALSE == MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), bBeginBoxSelect, FALSE ) ){
+			::MessageBeep( MB_ICONHAND );
 			return;
 		}
-		cmemBuf.SetData( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
-		if( pcLayout->m_cEol.GetLen() != 0 ){
-			cmemBuf.AppendSz(
-				( neweol == EOL_UNKNOWN ) ?
-					pcLayout->m_cEol.GetValue() : CEOL(neweol).GetValue()
-			);
-		}
-	}
-
-	/* クリップボードにデータcmemBufの内容を設定 */
-	if( FALSE == MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), bBeginBoxSelect ) ){
-		::MessageBeep( MB_ICONHAND );
-		return;
 	}
 
 	/* 選択範囲の後片付け */
@@ -2035,57 +2072,20 @@ void CEditView::Command_CUT_LINE( void )
 		return;
 	}
 
-	int				nCaretPosX_OLD;
-	int				nCaretPosY_OLD;
-	const CLayout*	pcLayout;
-	COpe*			pcOpe = NULL;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+
+	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
-	m_nSelectLineFrom = m_nCaretPosY;		/* 範囲選択開始行 */
-	m_nSelectColmFrom = m_nCaretPosX; 		/* 範囲選択開始桁 */
-	m_nSelectLineTo = m_nCaretPosY;			/* 範囲選択終了行 */
-	m_nSelectColmTo = m_nCaretPosX + 1;		/* 範囲選択終了桁 */
-	nCaretPosX_OLD = m_nCaretPosX;
-	nCaretPosY_OLD = m_nCaretPosY;
-	/* 選択範囲内の全行をクリップボードにコピーする */
-	Command_COPYLINES();
-	Command_DELETE();
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
-	if( NULL != pcLayout ){
-		// 2003-04-30 かろと
-		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
-		// フリーカーソルモードでない場合は、カーソル位置を調整する
-		if( !m_pShareData->m_Common.m_bIsFreeCursorMode ) {
-			int nIndex;
-			nIndex = LineColmnToIndex2( pcLayout, nCaretPosX_OLD, nCaretPosX_OLD );
-			if (nCaretPosX_OLD > 0) {
-				nCaretPosX_OLD--;
-			} else {
-				nCaretPosX_OLD = LineIndexToColmn( pcLayout, nIndex );
-			}
-		}
-		/* 操作前の位置へカーソルを移動 */
-		MoveCursor( nCaretPosX_OLD, nCaretPosY_OLD, TRUE );
-		m_nCaretPosX_Prev = m_nCaretPosX;
-		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;					/* 操作種別 */
-			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;				/* 操作前のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;				/* 操作前のキャレット位置Ｙ */
 
-			pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
-			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe( pcOpe );
-		}
-	}
+	// 2007.10.04 ryoji 処理簡素化
+	CopyCurLine( m_pShareData->m_Common.m_bAddCRLFWhenCopy, EOL_UNKNOWN, m_pShareData->m_Common.m_bEnableLineModePaste );
+	Command_DELETE_LINE();
 	return;
 }
 
@@ -2237,7 +2237,9 @@ bool CEditView::Command_SELECTWORD( void )
 
 
 
-/* 貼り付け(クリップボードから貼り付け) */
+/** 貼り付け(クリップボードから貼り付け)
+	@date 2007.10.04 ryoji MSDEVLineSelect形式の行コピー対応処理を追加（VS2003/2005のエディタと類似の挙動に）
+*/
 void CEditView::Command_PASTE( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
@@ -2260,7 +2262,8 @@ void CEditView::Command_PASTE( void )
 	/* クリップボードからデータを取得 */
 	CMemory		cmemClip;
 	BOOL		bColmnSelect;
-	if( FALSE == MyGetClipboardData( cmemClip, &bColmnSelect ) ){
+	BOOL		bLineSelect = FALSE;
+	if( FALSE == MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
 		::MessageBeep( MB_ICONHAND );
 		return;
 	}
@@ -2274,6 +2277,17 @@ void CEditView::Command_PASTE( void )
 		}
 	}
 	pszText = cmemClip.GetPtr( &nTextLen );
+
+	// 2007.10.04 ryoji
+	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
+	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
+	if( bLineSelect ){
+		// ※CRやLFは2バイト文字の2バイト目として扱われることはないので末尾だけで判定（CMemory::GetSizeOfChar()参照）
+		if( pszText[nTextLen - 1] != CR && pszText[nTextLen - 1] != LF ){
+			cmemClip.AppendSz(m_pcEditDoc->GetNewLineCode().GetValue());
+			pszText = cmemClip.GetPtr( &nTextLen );
+		}
+	}
 
 	/* テキストが選択されているか */
 	bBox = FALSE;
@@ -2300,20 +2314,22 @@ void CEditView::Command_PASTE( void )
 			else{
 
 				/* データ置換 削除&挿入にも使える */
+				// 行コピーの貼り付けでは選択範囲は削除（後で行頭に貼り付ける）	// 2007.10.04 ryoji
 				ReplaceData_CEditView(
 					m_nSelectLineFrom,		/* 範囲選択開始行 */
 					m_nSelectColmFrom,		/* 範囲選択開始桁 */
 					m_nSelectLineTo,		/* 範囲選択終了行 */
 					m_nSelectColmTo,		/* 範囲選択終了桁 */
 					NULL,					/* 削除されたデータのコピー(NULL可能) */
-					pszText,				/* 挿入するデータ */
-					nTextLen,				/* 挿入するデータの長さ */
+					bLineSelect? "": pszText,	/* 挿入するデータ */
+					bLineSelect? 0: nTextLen,	/* 挿入するデータの長さ */
 					TRUE
 				);
 #ifdef _DEBUG
 					gm_ProfileOutput = FALSE;
 #endif
-				return;
+				if( !bLineSelect )	// 2007.10.04 ryoji
+					return;
 			}
 		}
 	}
@@ -2329,6 +2345,24 @@ void CEditView::Command_PASTE( void )
 		Command_INDENT( szPaste, i );
 	}else{
 		m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
+		int nPosX_PHY_Delta;
+		if( bLineSelect ){	// 2007.10.04 ryoji
+			/* 挿入ポイント（折り返し単位行頭）にカーソルを移動 */
+			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+				pcOpe = new COpe;
+				pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
+				pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
+				pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
+			}
+			Command_GOLINETOP( FALSE, 1 );	// 行頭に移動(折り返し単位)
+			nPosX_PHY_Delta = pcOpe->m_nCaretPosX_PHY_Before - m_nCaretPosX_PHY;	// 挿入ポイントと元の位置との差分桁数
+			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
+				pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
+				/* 操作の追加 */
+				m_pcOpeBlk->AppendOpe( pcOpe );
+			}
+		}
 		if( !m_bDoing_UndoRedo ){						/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 //			pcOpe->m_nCaretPosX_Before = m_nCaretPosX;	/* 操作前のキャレット位置Ｘ */
@@ -2361,6 +2395,31 @@ void CEditView::Command_PASTE( void )
 			pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
 			/* 操作の追加 */
 			m_pcOpeBlk->AppendOpe( pcOpe );
+		}
+		if( bLineSelect ){	// 2007.10.04 ryoji
+			/* 元の位置へカーソルを移動 */
+			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+				pcOpe = new COpe;
+				pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
+				pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
+				pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
+			}
+			int nPosX;
+			int nPosY;
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+				m_nCaretPosX_PHY + nPosX_PHY_Delta,
+				m_nCaretPosY_PHY,
+				&nPosX,
+				&nPosY
+			);
+			MoveCursor( nPosX, nPosY, TRUE );
+			m_nCaretPosX_Prev = m_nCaretPosX;
+			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
+				pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
+				/* 操作の追加 */
+				m_pcOpeBlk->AppendOpe( pcOpe );
+			}
 		}
 	}
 	return;

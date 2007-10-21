@@ -323,6 +323,7 @@
 #define IDC_CHECK_DROPSOURCE            1290
 #define IDC_CHECK_COPYnDISABLESELECTEDAREA 1291
 #define IDC_CHECK_HTMLHELPISSINGLE      1292
+#define IDC_CHECK_bEnableLineModePaste  1292
 #define IDC_CHECK_bSelectClickedURL     1293
 #define IDC_EDIT_nRulerHeight           1294
 #define IDC_CHECK_bGrepExitConfirm      1295

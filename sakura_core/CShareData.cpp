@@ -234,9 +234,12 @@ struct ARRHEAD {
 
 	Version 81:
 	マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji
+
+	Version 82:
+	ラインモード貼り付けを可能にする 2007.10.08 ryoji
 */
 
-const unsigned int uShareDataVersion = 81;
+const unsigned int uShareDataVersion = 82;
 
 /*
 ||	Singleton風
@@ -610,6 +613,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_nVertLineOffset = -1;				// 2005.11.10 Moca 指定桁縦線
 		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
+		m_pShareData->m_Common.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
 		/* 1999.11.15 */

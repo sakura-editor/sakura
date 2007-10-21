@@ -8048,14 +8048,18 @@ int CEditView::IsCurrentPositionSelectedTEST(
 
 /*! クリップボードからデータを取得
 	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
+	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 */
-BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
+BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL* pbLineSelect /*= NULL*/ )
 {
 	HGLOBAL		hglb;
 	char*		lptstr;
 
 	if( NULL != pbColmnSelect ){
 		*pbColmnSelect = FALSE;
+	}
+	if( NULL != pbLineSelect ){
+		*pbLineSelect = FALSE;
 	}
 
 
@@ -8073,15 +8077,20 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 
 	char	szFormatName[128];
 
-	if( NULL != pbColmnSelect ){
-		/* 矩形選択のテキストデータがクリップボードにあるか */
+	if( NULL != pbColmnSelect || NULL != pbColmnSelect ){
+		/* 矩形選択や行選択のテキストデータがクリップボードにあるか */
 		uFormat = 0;
 		while( 0 != ( uFormat = ::EnumClipboardFormats( uFormat ) ) ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
-			if( ::GetClipboardFormatName( uFormat, szFormatName, sizeof(szFormatName) - 1 ) &&
-				0 == lstrcmp( "MSDEVColumnSelect", szFormatName ) ){
-				*pbColmnSelect = TRUE;
-				break;
+			if( ::GetClipboardFormatName( uFormat, szFormatName, sizeof(szFormatName) - 1 ) ){
+				if( NULL != pbColmnSelect && 0 == lstrcmp( "MSDEVColumnSelect", szFormatName ) ){
+					*pbColmnSelect = TRUE;
+					break;
+				}
+				if( NULL != pbLineSelect && 0 == lstrcmp( "MSDEVLineSelect", szFormatName ) ){
+					*pbLineSelect = TRUE;
+					break;
+				}
 			}
 		}
 	}
@@ -8125,12 +8134,14 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect )
 
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
+	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
  */
-BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect )
+BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect, BOOL bLineSelect /*= FALSE*/ )
 {
 	HGLOBAL		hgClipText;
 	HGLOBAL		hgClipSakura;
 	HGLOBAL		hgClipMSDEVColm;
+	HGLOBAL		hgClipMSDEVLine;
 
 	char*		pszClip;
 	UINT		uFormat;
@@ -8192,9 +8203,29 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 			}
 		}
 	}
+
+	/* 行選択を示すダミーデータ */
+	if( bLineSelect ){
+		uFormat = ::RegisterClipboardFormat( _T("MSDEVLineSelect") );
+		if( 0 != uFormat ){
+			hgClipMSDEVLine = ::GlobalAlloc(
+				GMEM_MOVEABLE | GMEM_DDESHARE,
+				1
+			);
+			if( hgClipMSDEVLine ){
+				pszClip = (char*)::GlobalLock( hgClipMSDEVLine );
+				pszClip[0] = (char)0x01;
+				::GlobalUnlock( hgClipMSDEVLine );
+				::SetClipboardData( uFormat, hgClipMSDEVLine );
+			}
+		}
+	}
 	::CloseClipboard();
 
 	if( bColmnSelect && !hgClipMSDEVColm ){
+		return FALSE;
+	}
+	if( bLineSelect && !hgClipMSDEVLine ){
 		return FALSE;
 	}
 	
