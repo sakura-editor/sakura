@@ -105,6 +105,8 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 /*! エディタ－トレイ間でのUI特権分離の確認メッセージ */
 #define	MYWM_UIPI_CHECK	(WM_APP+215)	//@@@ 2007.06.07 ryoji
 
+/*! ポップアップウィンドウの表示切替指示 */
+#define MYWM_SHOWOWNEDPOPUPS (WM_APP+216)	//@@@ 2007.10.22 ryoji
 
 /* 再変換対応 */ // 20020331 aroka
 #ifndef WM_IME_REQUEST

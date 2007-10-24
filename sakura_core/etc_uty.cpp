@@ -2959,13 +2959,19 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NUL
 
 	GetAncestor() APIがWin95で使えないのでそのかわり
 
+	WS_POPUPスタイルを持たないウィンドウ（ex.CDlgFuncListダイアログ）だと、
+	GA_ROOTOWNERでは編集ウィンドウまで遡れないみたい。GetAncestor() APIでも同様。
+	本関数固有に用意したGA_ROOTOWNER2では遡ることができる。
+
 	@author ryoji
 	@date 2007.07.01 ryoji 新規
+	@date 2007.10.22 ryoji フラグ値としてGA_ROOTOWNER2（本関数固有）を追加
 */
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 {
 	HWND hwndAncestor;
 	HWND hwndDesktop = ::GetDesktopWindow();
+	HWND hwndWk;
 
 	if( hWnd == hwndDesktop )
 		return NULL;
@@ -2982,13 +2988,24 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 			hwndAncestor = ::GetParent( hwndAncestor );
 		break;
 
-	case GA_ROOTOWNER:	// 親子関係と所有関係を遡って所有されていないトップレベルウィンドウを返す
-		HWND hwndWk;
+	case GA_ROOTOWNER:	// 親子関係と所有関係をGetParent()で遡って所有されていないトップレベルウィンドウを返す
 		hwndWk = hWnd;
 		do{
 			hwndAncestor = hwndWk;
 			hwndWk = ::GetParent( hwndWk );
 		}while( hwndWk != NULL );
+		break;
+
+	case GA_ROOTOWNER2:	// 所有関係をGetWindow()で遡って所有されていないトップレベルウィンドウを返す
+		hwndWk = hWnd;
+		do{
+			hwndAncestor = hwndWk;
+			hwndWk = ::GetWindow( hwndWk, GW_OWNER );
+		}while( hwndWk != NULL );
+		break;
+
+	default:
+		hwndAncestor = NULL;
 		break;
 	}
 
