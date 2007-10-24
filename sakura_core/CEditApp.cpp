@@ -1341,7 +1341,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 	}		//To Here Feb. 26, 2001
 
 	// 親ウィンドウからグループIDを取得する
-	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER );
+	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 	int nGroup = CShareData::getInstance()->GetGroupId( hwndAncestor );
 	if( nGroup > 0 ){
 		nPos += wsprintf( szCmdLineBuf + nPos, " -GROUP=%d", nGroup );

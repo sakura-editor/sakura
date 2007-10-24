@@ -1275,6 +1275,7 @@ LRESULT CEditWnd::DispatchEvent(
 			// アクティブ化が編集ウィンドウでない場合（ダイアログ等の場合）は一旦編集ウィンドウをアクティブ化して戻す
 			// ・CDlgFuncListダイアログを閉じたときに以前のアクティブウィンドウではなく編集ウィンドウがアクティブになるように
 			// ・タブまとめ表示の場合はこれで編集ウィンドウが非表示→表示に切替わるのでリスト移動処理で画面が一時的に消えることもなくなる
+			//   （まとめ時は非アクティブタブのポップアップを非表示にしたのでそこからアクティブ化されることは無くなった）	// 2007.10.22 ryoji
 			HWND hwndActive = ::GetActiveWindow();
 			if( hwndActive != m_hWnd ){
 				ActivateFrameWindow( m_hWnd );		// 編集ウィンドウをアクティブ化
@@ -1288,6 +1289,24 @@ LRESULT CEditWnd::DispatchEvent(
 		m_CFuncKeyWnd.Timer_ONOFF( m_bIsActiveApp ); // 20060126 aroka
 		this->Timer_ONOFF( m_bIsActiveApp ); // 20060128 aroka
 
+		return 0L;
+
+	case WM_WINDOWPOSCHANGED:
+		// ポップアップウィンドウの表示切替指示をポストする	// 2007.10.22 ryoji
+		// ・WM_SHOWWINDOWはすべての表示切替で呼ばれるわけではないのでWM_WINDOWPOSCHANGEDで処理
+		//   （タブグループ解除などの設定変更時はWM_SHOWWINDOWは呼ばれない）
+		// ・即時切替だとタブ切替に干渉して元のタブに戻ってしまうことがあるので後で切り替える
+		WINDOWPOS* pwp;
+		pwp = (WINDOWPOS*)lParam;
+		if( pwp->flags & SWP_SHOWWINDOW )
+			::PostMessage( hwnd, MYWM_SHOWOWNEDPOPUPS, TRUE, 0 );
+		else if( pwp->flags & SWP_HIDEWINDOW )
+			::PostMessage( hwnd, MYWM_SHOWOWNEDPOPUPS, FALSE, 0 );
+
+		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+
+	case MYWM_SHOWOWNEDPOPUPS:
+		::ShowOwnedPopups( m_hWnd, (BOOL)wParam );	// 2007.10.22 ryoji
 		return 0L;
 
 	case WM_SIZE:

@@ -36,6 +36,7 @@
 #define GA_ROOT			2
 #define GA_ROOTOWNER	3
 #endif
+#define GA_ROOTOWNER2	100
 
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
 class CMemory;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
