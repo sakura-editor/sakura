@@ -78,10 +78,10 @@ int COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 	if( 0 == m_nCOpeBlkArrNum ){
 		m_ppCOpeBlkArr = (COpeBlk**)malloc( sizeof( COpeBlk* ) );
 	}else{
-		m_ppCOpeBlkArr = (COpeBlk**)realloc( (void*)m_ppCOpeBlkArr,  sizeof( COpeBlk* ) * (m_nCOpeBlkArrNum + 1 ) );
+		m_ppCOpeBlkArr = (COpeBlk**)realloc( m_ppCOpeBlkArr,  sizeof( COpeBlk* ) * (m_nCOpeBlkArrNum + 1 ) );
 	}
 	if( NULL == m_ppCOpeBlkArr ){
-		::MessageBox( 0, "COpeBlk::AppendOpe() error", "メモリ確保に失敗しました。\n非常に危険な状態です。", MB_OK );
+		::MessageBoxA( 0, "COpeBlk::AppendOpe() error", "メモリ確保に失敗しました。\n非常に危険な状態です。", MB_OK );
 		return FALSE;
 	}
 	m_ppCOpeBlkArr[m_nCOpeBlkArrNum] = pcOpeBlk;
@@ -123,17 +123,17 @@ int	COpeBuf::IsEnableRedo( void )
 
 
 /* 現在のUndo対象の操作ブロックを返す */
-COpeBlk* COpeBuf::DoUndo( int* pbModified )
+COpeBlk* COpeBuf::DoUndo( bool* pbModified )
 {
 	/* Undo可能な状態か */
 	if( !IsEnableUndo() ){
-		return FALSE;
+		return NULL;
 	}
 	m_nCurrentPointer--;
 	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* 無変更な状態になった位置 */
-		*pbModified = FALSE;
+		*pbModified = false;
 	}else{
-		*pbModified = TRUE;
+		*pbModified = true;
 	}
 	return m_ppCOpeBlkArr[m_nCurrentPointer];
 }
@@ -143,19 +143,19 @@ COpeBlk* COpeBuf::DoUndo( int* pbModified )
 
 
 /* 現在のRedo対象の操作ブロックを返す */
-COpeBlk* COpeBuf::DoRedo( int* pbModified )
+COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 {
 	COpeBlk*	pcOpeBlk;
 	/* Redo可能な状態か */
 	if( !IsEnableRedo() ){
-		return FALSE;
+		return NULL;
 	}
 	pcOpeBlk = m_ppCOpeBlkArr[m_nCurrentPointer];
 	m_nCurrentPointer++;
 	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* 無変更な状態になった位置 */
-		*pbModified = FALSE;
+		*pbModified = false;
 	}else{
-		*pbModified = TRUE;
+		*pbModified = true;
 	}
 	return pcOpeBlk;
 }
@@ -175,12 +175,12 @@ void COpeBuf::DUMP( void )
 {
 #ifdef _DEBUG
 	int i;
-	MYTRACE( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
+	MYTRACE_A( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
 	for( i = 0; i < m_nCOpeBlkArrNum; ++i ){
-		MYTRACE( "COpeBuf.m_ppCOpeBlkArr[%d]----\n", i );
+		MYTRACE_A( "COpeBuf.m_ppCOpeBlkArr[%d]----\n", i );
 		m_ppCOpeBlkArr[i]->DUMP();
 	}
-	MYTRACE( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
+	MYTRACE_A( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
 #endif
 	return;
 }

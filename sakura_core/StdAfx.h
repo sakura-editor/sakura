@@ -27,15 +27,63 @@
 #endif
 #endif
 
-#include "global.h"
-#include <windows.h>
-#include <commdlg.h> // PRINTDLG, 
-#include <comutil.h> // VT_BSTR,..
-#include <objidl.h>  // LPDATAOBJECT
-#include <shellapi.h>// HDROP
-#include <stdlib.h>  // _MAX_PATH
+//ビルドオプション的なヘッダ
+#include "config/build_config.h"
 
-// TODO: プログラムで必要なヘッダー参照を追加してください。
+//グローバル
+#include "global.h"
+
+//高頻度API等
+#include <windows.h>
+#include <stdlib.h>  // _MAX_PATH
+#include <tchar.h>
+
+//シンプルでよく使うもの
+#include "basis/primitive.h"
+#include "util/std_macro.h"
+
+//sizeof
+#define sizeof_raw(V)  sizeof(V)
+#define sizeof_type(V) sizeof(V)
+
+//MFC互換
+#include "basis/CMyString.h"
+#include "basis/CMyRect.h"
+#include "basis/CMyPoint.h"
+#include "basis/CMySize.h"
+
+//サクラエディタ固有型
+#include "basis/SakuraBasis.h"
+
+//デバッグ
+#include "Debug2.h"
+#include "Debug3.h"
+
+//よく使うヘッダ
+#include "Debug.h"
+#include "CNativeW.h"
+#include "CNativeA.h"
+#include "CNativeT.h"
+#include <wchar.h>
+
+#include "util/string_ex.h"
+
+//その他
+#define malloc_char (char*)malloc
+#define GlobalLockChar  (char*)::GlobalLock
+#define GlobalLockUChar (unsigned char*)::GlobalLock
+#define GlobalLockWChar (wchar_t*)::GlobalLock
+#define GlobalLockBYTE  (BYTE*)::GlobalLock
+
+//APIラップ
+#include "apiwrap/StdControl.h"
+#include "apiwrap/CommonControl.h"
+#include "apiwrap/StdApi.h"
+
+//TCHARユーティリティ
+#include "util/tchar_convert.h"
+
+
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

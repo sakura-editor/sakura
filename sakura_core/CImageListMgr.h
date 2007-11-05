@@ -57,7 +57,7 @@ public:
 	CImageListMgr() : m_cx( 16 ), m_cy( 16 ), m_hIconBitmap( NULL ), m_cTrans( RGB( 0, 0, 0 )) {}
 	~CImageListMgr();
 
-	bool Create(HINSTANCE hInstance, HWND hWnd);	//	ê∂ê¨
+	bool Create(HINSTANCE hInstance);	//	ê∂ê¨
 	
 	/*! @brief ÉAÉCÉRÉìÇÃï`âÊ
 	

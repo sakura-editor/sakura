@@ -16,19 +16,16 @@
 
 /*! CFuncInfoクラス構築 */
 CFuncInfo::CFuncInfo(
-	int		nFuncLineCRLF,	/*!< 関数のある行(CRLF単位) */
-	int		nFuncLineLAYOUT,/*!< 関数のある行(折り返し単位) */
-//	int		nFuncLine,		/*!< 関数のある行 */
-	const char*	pszFuncName,	/*!< 関数名 */
-	int		nInfo			/*!< 付加情報 */
-) : m_nDepth(0)				/*!< 深さ */
+	CLogicInt		nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
+	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
+	const TCHAR*	pszFuncName,		//!< 関数名
+	int				nInfo				//!< 付加情報
+)
+: m_nDepth(0) // 深さ
 {
 	m_nFuncLineCRLF = nFuncLineCRLF;		/* 関数のある行(CRLF単位) */
 	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* 関数のある行(折り返し単位) */
-//	m_nFuncLine = nFuncLine;;
-//	m_cmemFuncName = pszFuncName;
-//	m_cmemFuncName.SetData( pszFuncName, lstrlen( pszFuncName ) );
-	m_cmemFuncName.SetDataSz( pszFuncName );
+	m_cmemFuncName.SetString( pszFuncName );
 
 	m_nInfo = nInfo;
 	return;

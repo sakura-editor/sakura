@@ -22,8 +22,8 @@
 #include <stdio.h>
 #include "CMRU.h"
 #include "CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
-#include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
+#include "util/string_ex2.h"
 
 /*!	コンストラクタ
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -32,15 +32,12 @@ CMRU::CMRU()
 {
 	//	初期化。
 	m_pShareData = CShareData::getInstance()->GetShareData();
-
-	//履歴の管理	//@@@ 2003.04.08 MIK
-	(void)m_cRecent.EasyCreate( RECENT_FOR_FILE );
 }
 
 /*	デストラクタ	*/
 CMRU::~CMRU()
 {
-	m_cRecent.Terminate();
+	m_cRecentFile.Terminate();
 }
 
 /*!
@@ -54,8 +51,8 @@ CMRU::~CMRU()
 HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 {
 	HMENU	hMenuPopUp;
-	char	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
-	char	szMemu[300];			//	メニューキャプション
+	TCHAR	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
+	TCHAR	szMemu[300];			//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 	FileInfo	*p;
@@ -64,32 +61,34 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 
 	//	空メニューを作る
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
+	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecent.GetViewCount() ) break;
+		if ( i >= m_cRecentFile.GetViewCount() ) break;
 		
 		/* MRUリストの中にある開かれていないファイル */
 
-		p = (FileInfo*)m_cRecent.GetItem( i );
+		p = m_cRecentFile.GetItem( i );
 		
 		CShareData::getInstance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
 		dupamp( szMemu, szFile2 );
 		
-		bFavorite = m_cRecent.IsFavorite( i );
+		bFavorite = m_cRecentFile.IsFavorite( i );
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
-		wsprintf( szMemu, "&%c %s%s", 
-			(i < 10) ? ('0' + i) : ('A' + i - 10), 
-			(FALSE == m_pShareData->m_Common.m_bMenuIcon && bFavorite) ? "★ " : "",
-			szFile2 );
+		auto_sprintf(
+			szMemu,
+			_T("&%tc %ts%ts"),
+			(i < 10) ? (_T('0') + i) : (_T('A') + i - 10), 
+			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
+			szFile2
+		);
 
 		//	ファイル名のみ必要。
 		//	文字コード表記
-		if( 0 <  p->m_nCharCode  &&
-				 p->m_nCharCode  < CODE_CODEMAX ){
-			strcat( szMemu, gm_pszCodeNameArr_3[ p->m_nCharCode ] );
+		if(IsValidCodeTypeExceptSJIS(p->m_nCharCode)){
+			_tcscat( szMemu, gm_pszCodeNameArr_Bracket[ p->m_nCharCode ] );
 		}
 
 		//	メニューに追加。
@@ -111,15 +110,15 @@ BOOL CMRU::DestroyMenu( HMENU hMenuPopUp )
 	最後の要素の次にはNULLが入る．
 	予め呼び出す側で最大値+1の領域を確保しておくこと．
 */
-void CMRU::GetPathList( char** ppszMRU )
+void CMRU::GetPathList( TCHAR** ppszMRU )
 {
 	int i;
 
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
+	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecent.GetViewCount() ) break;
-		ppszMRU[i] = (char*)m_cRecent.GetDataOfItem( i );
+		if ( i >= m_cRecentFile.GetViewCount() ) break;
+		ppszMRU[i] = const_cast<TCHAR*>(m_cRecentFile.GetItemText( i ));
 	}
 	ppszMRU[i] = NULL;
 }
@@ -127,7 +126,7 @@ void CMRU::GetPathList( char** ppszMRU )
 /*! アイテム数を返す */
 int CMRU::Length(void)
 {
-	return m_cRecent.GetItemCount();
+	return m_cRecentFile.GetItemCount();
 }
 
 /*!
@@ -135,7 +134,7 @@ int CMRU::Length(void)
 */
 void CMRU::ClearAll(void)
 {
-	m_cRecent.DeleteAllItem();
+	m_cRecentFile.DeleteAllItem();
 }
 
 /*!
@@ -149,9 +148,7 @@ void CMRU::ClearAll(void)
 */
 BOOL CMRU::GetFileInfo( int num, FileInfo* pfi )
 {
-	FileInfo	*p;
-
-	p = (FileInfo*)m_cRecent.GetItem( num );
+	FileInfo*	p = m_cRecentFile.GetItem( num );
 	if( NULL == p ) return FALSE;
 
 	*pfi = *p;
@@ -170,11 +167,9 @@ BOOL CMRU::GetFileInfo( int num, FileInfo* pfi )
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-BOOL CMRU::GetFileInfo( const char* pszPath, FileInfo* pfi )
+BOOL CMRU::GetFileInfo( const TCHAR* pszPath, FileInfo* pfi )
 {
-	FileInfo	*p;
-
-	p = (FileInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
+	FileInfo*	p = m_cRecentFile.GetItem( m_cRecentFile.FindItemByPath( pszPath ) );
 	if( NULL == p ) return FALSE;
 
 	*pfi = *p;
@@ -195,16 +190,16 @@ void CMRU::Add( FileInfo* pFileInfo )
 {
 	//	ファイル名が無ければ無視
 	if( NULL == pFileInfo
-	 || 0 == strlen( pFileInfo->m_szPath ) )
+	 || 0 == _tcslen( pFileInfo->m_szPath ) )
 	{
 		return;
 	}
 
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-	char	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
+	TCHAR	szDrive[_MAX_DRIVE];
+	TCHAR	szDir[_MAX_DIR];
+	TCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
 
-	_splitpath( pFileInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
+	_tsplitpath( pFileInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
 
 	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
 	//	一応無効化する．
@@ -214,50 +209,13 @@ void CMRU::Add( FileInfo* pFileInfo )
 	//}
 
 	//	szFolder作成
-	strcpy( szFolder, szDrive );
-	strcat( szFolder, szDir );
+	_tcscpy( szFolder, szDrive );
+	_tcscat( szFolder, szDir );
 	//	Folderを、CMRUFolderに登録
 	CMRUFolder cMRUFolder;
 	cMRUFolder.Add(szFolder);
 
-	m_cRecent.AppendItem( (char*)pFileInfo );
+	m_cRecentFile.AppendItem( pFileInfo );
 }
 
-#if 0
-// etc_uty.cppのIsLocalDrive()へ統合
-
-/*!
-	リムーバブルドライブの判定
-
-	@param pszDrive [in] ドライブ名を含むパス名
-	
-	@retval true リムーバブルドライブ
-	@retval false 固定ドライブ．ネットワークドライブ．
-	
-	@author MIK
-	@date 2001.03.29 新規作成
-	@date 2001.12.23 YAZAKI MRUの別クラス化に伴う関数化
-	@date 2002.01.28 genta 戻り値の型をBOOLからboolに変更．
-*/
-bool CMRU::IsRemovableDrive( const char* pszDrive )
-{
-	char	szDriveType[_MAX_DRIVE+1];	// "A:\"登録用
-	long	lngRet;
-	char	c;
-
-	c = pszDrive[0];
-	if( c >= 'a' && c <= 'z' ){
-		c = c - ('a' - 'A');
-	}
-	if( c >= 'A' && c <= 'Z' ){
-		sprintf( szDriveType, "%c:\\", c );
-		lngRet = GetDriveType( szDriveType );
-		if( DRIVE_REMOVABLE	== lngRet
-		 || DRIVE_CDROM		== lngRet){
-			return true;
-		}
-	}
-	return false;
-}
-#endif
 /*EOF*/

@@ -41,10 +41,10 @@ public:
 	~CDocLine();
 
 
-	CDocLine*	m_pPrev;	/*!< 一つ前の要素 */
-	CDocLine*	m_pNext;	/*!< 一つ後の要素 */
-	CMemory*	m_pLine;	/*!< データ */
-	CEOL		m_cEol;		/*!< 行末コード */
+	CDocLine*	m_pPrev;	//!< 一つ前の要素
+	CDocLine*	m_pNext;	//!< 一つ後の要素
+	CNativeW2	m_cLine;	//!< データ  2007.10.11 kobake ポインタではなく、実体を持つように変更
+	CEOL		m_cEol;		//!< 行末コード
 
 	bool		IsModifyed  ( void ) const { return m_bMark.m_bMarkArray.m_bModify ? true : false; }	// 変更フラグの状態を取得する	//@@@ 2002.05.25 MIK
 	void		SetModifyFlg( bool bFlg )  { m_bMark.m_bMarkArray.m_bModify = bFlg ? 1 : 0; }	// 変更フラグの状態を指定する	//@@@ 2002.05.25 MIK
@@ -55,11 +55,13 @@ public:
 	int			IsDiffMarked( void ) const { return (int)m_bMark.m_bMarkArray.m_bDiffMark; }	//差分状態を取得する	//@@@ 2002.05.25 MIK
 	void		SetDiffMark( int type )    { m_bMark.m_bMarkArray.m_bDiffMark = type; }		//差分状態を設定する	//@@@ 2002.05.25 MIK
 
-	bool		IsEmptyLine( void );	//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
-	int			GetLengthWithoutEOL( void ) const { return m_pLine->GetLength() - m_cEol.GetLen(); }
-	char*		GetPtr( void ) const              { return m_pLine->GetPtr(); }
-	int			GetLength( void ) const			  { return m_pLine->GetLength(); }	//	CMemoryIterator用
-	int			GetIndent( void ) const			  { return 0; }						//	CMemoryIterator用
+	bool		IsEmptyLine( void ) const;	//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
+	CLogicInt	GetLengthWithoutEOL( void ) const	{ return m_cLine.GetStringLength() - m_cEol.GetLen(); } //!< 戻り値は文字単位。
+	const wchar_t*	GetPtr( void ) const			{ return m_cLine.GetStringPtr(); }
+	CLogicInt	GetLength() const					{ return m_cLine.GetStringLength(); }	//	CMemoryIterator用
+
+	//! 文字列参照を取得
+	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLength()); }
 protected:
 	//マーク情報
 	union {

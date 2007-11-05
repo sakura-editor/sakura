@@ -23,13 +23,16 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
-#include "etc_uty.h"
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"
 #include "funccode.h"	//Stonee, 2001/05/18
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
+#include "io/CTextStream.h"
+#include "util/shell.h"
+#include "util/file.h"
+using namespace std;
 
 
 #include "sakura.hh"
@@ -88,76 +91,76 @@ INT_PTR CALLBACK CPropTypes::PropTypesRegex(
 
 BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 {
-	CDlgOpenFile	cDlgOpenFile;
-	char		szPath[_MAX_PATH + 1];
-	int		i, j, k;
-	char		szInitDir[_MAX_PATH + 1];
-//	CProfile	cProfile;
-	FILE		*fp;
-	struct RegexKeywordInfo	pRegexKey[MAX_REGEX_KEYWORD];
-	char	buff[1024];
-	HWND	hwndWork;
-	LV_ITEM	lvi;
-	char	*p;
-
-	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
+	CDlgOpenFile	cDlgOpenFile;
+	TCHAR			szPath[_MAX_PATH + 1]=_T("");
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.rkw",	/* [R]egex [K]ey[W]ord */
-		szInitDir
+		_T("*.rkw"),					// [R]egex [K]ey[W]ord
+		m_pShareData->m_szIMPORTFOLDER	// インポート用フォルダ
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return FALSE;
 	}
+
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	_tcscat( m_pShareData->m_szIMPORTFOLDER, _T("\\") );
 
-	if( (fp = fopen(szPath, "r")) == NULL )
+
+	CTextInputStream in(szPath);
+	if(!in){
+	/*
+	FILE		*fp;
+	if( (fp = _tfopen(szPath, _T("r"))) == NULL )
 	{
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
+	*/
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 		return FALSE;
 	}
 
+	RegexKeywordInfo	pRegexKey[MAX_REGEX_KEYWORD];
+	TCHAR				buff[1024];
+	int					i, j, k;
 	j = 0;
-	while(fgets(buff, sizeof(buff), fp))
+	while(in)
 	{
+		//1行読み込み
+		wstring line=in.ReadLineW();
+		_wcstotcs(buff,line.c_str(),_countof(buff));
+
 		if(j >= MAX_REGEX_KEYWORD) break;
-		for(i = strlen(buff) - 1; i >= 0; i--){
-			if( buff[i] == '\r' || buff[i] == '\n' ) buff[i] = '\0';
-		}
+
 		//RxKey[999]=ColorName,RegexKeyword
-		if( strlen(buff) < 12 ) continue;
-		if( memcmp(buff, "RxKey[", 6) != 0 ) continue;
-		if( memcmp(&buff[9], "]=", 2) != 0 ) continue;
-		p = strstr(&buff[11], ",");
+		if( auto_strlen(buff) < 12 ) continue;
+		if( auto_memcmp(buff, _T("RxKey["), 6) != 0 ) continue;
+		if( auto_memcmp(&buff[9], _T("]="), 2) != 0 ) continue;
+		TCHAR	*p;
+		p = auto_strstr(&buff[11], _T(","));
 		if( p )
 		{
-			*p = '\0';
+			*p = _T('\0');
 			p++;
-			if( p[0]	//キーワードがある
-			 && RegexKakomiCheck(p) == TRUE )	//囲みがある
+			if( p[0] && RegexKakomiCheck(to_wchar(p)) )	//囲みがある
 			{
 				//色指定名に対応する番号を探す
 				k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
 				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
 				{
 					pRegexKey[j].m_nColorIndex = k;
-					strcpy(pRegexKey[j].m_szKeyword, p);
+					_tcstowcs(pRegexKey[j].m_szKeyword, p, _countof(pRegexKey[j].m_szKeyword));
 					j++;
 				}
 				else
 				{	/* 日本語名からインデックス番号に変換する */
 					for(k = 0; k < COLORIDX_LAST; k++)
 					{
-						if( strcmp(m_Types.m_ColorInfoArr[k].m_szName, &buff[11]) == 0 )
+						if( auto_strcmp(m_Types.m_ColorInfoArr[k].m_szName, &buff[11]) == 0 )
 						{
 							pRegexKey[j].m_nColorIndex = k;
-							strcpy(pRegexKey[j].m_szKeyword, p);
+							_tcstowcs(pRegexKey[j].m_szKeyword, p, _countof(pRegexKey[j].m_szKeyword));
 							j++;
 							break;
 						}
@@ -167,18 +170,21 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 		}
 	}
 
-	fclose(fp);
+	in.Close();
 
+	HWND	hwndWork;
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 	for(i = 0; i < j; i++)
 	{
+		LV_ITEM	lvi;
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText  = pRegexKey[i].m_szKeyword;
+		lvi.pszText  = const_cast<TCHAR*>(to_tchar(pRegexKey[i].m_szKeyword));
 		lvi.iItem    = i;
 		lvi.iSubItem = 0;
 		lvi.lParam   = 0;
 		ListView_InsertItem( hwndWork, &lvi );
+
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
 		lvi.iSubItem = 1;
@@ -192,23 +198,16 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 
 BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 {
-	CDlgOpenFile	cDlgOpenFile;
-	char		szPath[_MAX_PATH + 1];
-	int		i, j, k;
-	char		szInitDir[_MAX_PATH + 1];
-//	CProfile	cProfile;
-	FILE		*fp;
-	char	szKeyWord[256], szColorIndex[256];
-	HWND	hwndList;
 
-	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	
 	/* ファイルオープンダイアログの初期化 */
+	CDlgOpenFile	cDlgOpenFile;
+	TCHAR			szPath[_MAX_PATH + 1]=_T("");
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.rkw",	/* [R]egex [K]ey[W]ord */
-		szInitDir
+		_T("*.rkw"),					// [R]egex [K]ey[W]ord
+		m_pShareData->m_szIMPORTFOLDER	// インポート用フォルダ
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return FALSE;
@@ -216,42 +215,45 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	_tcscat( m_pShareData->m_szIMPORTFOLDER, _T("\\") );
 
-	if( (fp = fopen(szPath, "w")) == NULL )
-	{
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
+	CTextOutputStream out(szPath);
+	if(!out){
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 		return FALSE;
 	}
 
-	fprintf(fp, "// 正規表現キーワード Ver1\n");
+	out.WriteF(L"// 正規表現キーワード Ver1\n");
 
+	HWND	hwndList;
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
-	j = ListView_GetItemCount(hwndList);
-	for(i = 0; i < j; i++)
+	int j = ListView_GetItemCount(hwndList);
+	for(int i = 0; i < j; i++)
 	{
-		memset(szKeyWord, 0, sizeof(szKeyWord));
-		ListView_GetItemText(hwndList, i, 0, szKeyWord, sizeof(szKeyWord));
-		memset(szColorIndex, 0, sizeof(szColorIndex));
-		ListView_GetItemText(hwndList, i, 1, szColorIndex, sizeof(szColorIndex));
+		TCHAR	szKeyWord[256];
+		auto_memset(szKeyWord, 0, _countof(szKeyWord));
+		ListView_GetItemText(hwndList, i, 0, szKeyWord, _countof(szKeyWord));
 
-		const char* p = szColorIndex;
-		for(k = 0; k < COLORIDX_LAST; k++)
+		TCHAR	szColorIndex[256];
+		auto_memset(szColorIndex, 0, _countof(szColorIndex));
+		ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
+
+		const TCHAR* p = szColorIndex;
+		for(int k = 0; k < COLORIDX_LAST; k++)
 		{
-			if( strcmp( m_Types.m_ColorInfoArr[k].m_szName, szColorIndex ) == 0 )
+			if( _tcscmp( m_Types.m_ColorInfoArr[k].m_szName, szColorIndex ) == 0 )
 			{
 				p = GetColorNameByIndex(k);
 				break;
 			}
 		}
-		//fprintf(fp, "RxKey[%03d]=%s,%s\n", i, szColorIndex, szKeyWord);
-		fprintf(fp, "RxKey[%03d]=%s,%s\n", i, p, szKeyWord);
+		out.WriteF( L"RxKey[%03d]=%ts,%ts\n", i, p, szKeyWord);
 	}
 
-	fclose(fp);
+	out.Close();
 
 	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-		"ファイルへエクスポートしました。\n\n%s", szPath
+		_T("ファイルへエクスポートしました。\n\n%ls"), szPath
 	);
 
 	return TRUE;
@@ -274,10 +276,13 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 	LV_ITEM	lvi;
 	LV_COLUMN	col;
 	RECT		rc;
-	char	szKeyWord[256], szColorIndex[256];
 	static int nPrevIndex = -1;	//更新時におかしくなるバグ修正 @@@ 2003.03.26 MIK
 
+
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
+
+	TCHAR	szKeyWord[256];
+	TCHAR	szColorIndex[256];
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -291,13 +296,13 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 54 / 100;
-		col.pszText  = "キーワード";
+		col.pszText  = _T("キーワード");
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 38 / 100;
-		col.pszText  = "色指定";
+		col.pszText  = _T("色指定");
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 
@@ -305,7 +310,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 		SetData_Regex( hwndDlg );	/* ダイアログデータの設定 正規表現キーワード */
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
-			::SetDlgItemText( hwndDlg, IDC_LABEL_REGEX_VERSION, "正規表現キーワードは使えません。" );
+			::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, _T("正規表現キーワードは使えません。") );
 			//ライブラリがなくて、使用しないになっている場合は、無効にする。
 			if( ! IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
 			{
@@ -337,8 +342,8 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 								hwndDlg,
 								MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 								GSTR_APPNAME,
-								"正規表現ライブラリが見つかりません。\n\n正規表現キーワードは機能しませんが、それでも有効にしますか？",
-								"正規表現キーワードを使用する" );
+								_T("正規表現ライブラリが見つかりません。\n\n正規表現キーワードは機能しませんが、それでも有効にしますか？"),
+								_T("正規表現キーワードを使用する") );
 						if( nRet != IDYES )
 						{
 							CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
@@ -361,23 +366,23 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 
 			case IDC_BUTTON_REGEX_INS:	/* 挿入 */
 				//挿入するキー情報を取得する。
-				memset(szKeyWord, 0, sizeof(szKeyWord));
-				::GetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, sizeof(szKeyWord) );
-				if( szKeyWord[0] == '\0' ) return FALSE;
+				auto_memset(szKeyWord, 0, _countof(szKeyWord));
+				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, _countof(szKeyWord) );
+				if( szKeyWord[0] == L'\0' ) return FALSE;
 				//同じキーがないか調べる。
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "これ以上登録できません。");
+					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
 					return FALSE;
 				}
 				for(i = 0; i < nIndex2; i++)
 				{
-					memset(szColorIndex, 0, sizeof(szColorIndex));
-					ListView_GetItemText(hwndList, i, 0, szColorIndex, sizeof(szColorIndex));
-					if( strcmp(szKeyWord, szColorIndex) == 0 ) 
+					auto_memset(szColorIndex, 0, _countof(szColorIndex));
+					ListView_GetItemText(hwndList, i, 0, szColorIndex, _countof(szColorIndex));
+					if( _tcscmp(szKeyWord, szColorIndex) == 0 ) 
 					{
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "同じキーワードで登録済みです。");
+						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("同じキーワードで登録済みです。"));
 						return FALSE;
 					}
 				}
@@ -389,29 +394,29 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 					nIndex = nIndex2;
 				}
 				//書式をチェックする。
-				if( RegexKakomiCheck(szKeyWord) == FALSE )	//囲みをチェックする。
+				if( !RegexKakomiCheck(to_wchar(szKeyWord)) )	//囲みをチェックする。
 				{
 					nRet = ::MYMESSAGEBOX(
 							hwndDlg,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							GSTR_APPNAME,
-							"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。",
-							"正規表現キーワード" );
+							_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
+							_T("正規表現キーワード") );
 					return FALSE;
 				}
-				if( CheckRegexpSyntax( szKeyWord, hwndDlg, false ) == false )
+				if( !CheckRegexpSyntax( to_wchar(szKeyWord), hwndDlg, false ) )
 				{
 					nRet = ::MYMESSAGEBOX(
 							hwndDlg,
 							MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 							GSTR_APPNAME,
-							"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？",
-							"正規表現キーワード" );
+							_T("書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"),
+							_T("正規表現キーワード") );
 					if( nRet != IDYES ) return FALSE;
 				}
 				//挿入するキー情報を取得する。
-				memset(szColorIndex, 0, sizeof(szColorIndex));
-				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
+				auto_memset(szColorIndex, 0, _countof(szColorIndex));
+				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -433,49 +438,49 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				//最後のキー番号を取得する。
 				nIndex = ListView_GetItemCount( hwndList );
 				//追加するキー情報を取得する。
-				memset(szKeyWord, 0, sizeof(szKeyWord));
-				::GetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, sizeof(szKeyWord) );
-				if( szKeyWord[0] == '\0' ) return FALSE;
+				auto_memset(szKeyWord, 0, _countof(szKeyWord));
+				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, _countof(szKeyWord) );
+				if( szKeyWord[0] == L'\0' ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "これ以上登録できません。");
+					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
 					return FALSE;
 				}
 				for(i = 0; i < nIndex2; i++)
 				{
-					memset(szColorIndex, 0, sizeof(szColorIndex));
-					ListView_GetItemText(hwndList, i, 0, szColorIndex, sizeof(szColorIndex));
-					if( strcmp(szKeyWord, szColorIndex) == 0 ) 
+					auto_memset(szColorIndex, 0, _countof(szColorIndex));
+					ListView_GetItemText(hwndList, i, 0, szColorIndex, _countof(szColorIndex));
+					if( _tcscmp(szKeyWord, szColorIndex) == 0 ) 
 					{
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "同じキーワードで登録済みです。");
+						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("同じキーワードで登録済みです。"));
 						return FALSE;
 					}
 				}
 				//書式をチェックする。
-				if( RegexKakomiCheck(szKeyWord) == FALSE )	//囲みをチェックする。
+				if( !RegexKakomiCheck(to_wchar(szKeyWord)) )	//囲みをチェックする。
 				{
 					nRet = ::MYMESSAGEBOX(
 							hwndDlg,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							GSTR_APPNAME,
-							"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。",
-							"正規表現キーワード" );
+							_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
+							_T("正規表現キーワード") );
 					return FALSE;
 				}
-				if( CheckRegexpSyntax( szKeyWord, hwndDlg, false ) == false )
+				if( !CheckRegexpSyntax( to_wchar(szKeyWord), hwndDlg, false ) )
 				{
 					nRet = ::MYMESSAGEBOX(
 							hwndDlg,
 							MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 							GSTR_APPNAME,
-							"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？",
-							"正規表現キーワード" );
+							_T("書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"),
+							_T("正規表現キーワード") );
 					if( nRet != IDYES ) return FALSE;
 				}
 				//追加するキー情報を取得する。
-				memset(szColorIndex, 0, sizeof(szColorIndex));
-				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
+				auto_memset(szColorIndex, 0, _countof(szColorIndex));
+				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -498,51 +503,51 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
 				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "キーワードが選択されていません。");
+					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("キーワードが選択されていません。"));
 					return FALSE;
 				}
 				//更新するキー情報を取得する。
-				memset(szKeyWord, 0, sizeof(szKeyWord));
-				::GetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, sizeof(szKeyWord) );
-				if( szKeyWord[0] == '\0' ) return FALSE;
+				auto_memset(szKeyWord, 0, _countof(szKeyWord));
+				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, _countof(szKeyWord) );
+				if( szKeyWord[0] == L'\0' ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
 				for(i = 0; i < nIndex2; i++)
 				{
 					if( i != nIndex )
 					{
-						memset(szColorIndex, 0, sizeof(szColorIndex));
-						ListView_GetItemText(hwndList, i, 0, szColorIndex, sizeof(szColorIndex));
-						if( strcmp(szKeyWord, szColorIndex) == 0 ) 
+						auto_memset(szColorIndex, 0, _countof(szColorIndex));
+						ListView_GetItemText(hwndList, i, 0, szColorIndex, _countof(szColorIndex));
+						if( _tcscmp(szKeyWord, szColorIndex) == 0 ) 
 						{
-							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "同じキーワードで登録済みです。");
+							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("同じキーワードで登録済みです。"));
 							return FALSE;
 						}
 					}
 				}
 				//書式をチェックする。
-				if( RegexKakomiCheck(szKeyWord) == FALSE )	//囲みをチェックする。
+				if( !RegexKakomiCheck(to_wchar(szKeyWord)) )	//囲みをチェックする。
 				{
 					nRet = ::MYMESSAGEBOX(
 							hwndDlg,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST | MB_DEFBUTTON2,
 							GSTR_APPNAME,
-							"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。",
-							"正規表現キーワード" );
+							_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
+							_T("正規表現キーワード") );
 					return FALSE;
 				}
-				if( CheckRegexpSyntax( szKeyWord, hwndDlg, false ) == false )
+				if( !CheckRegexpSyntax( to_wchar(szKeyWord), hwndDlg, false ) )
 				{
 					nRet = ::MYMESSAGEBOX(
 							hwndDlg,
 							MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 							GSTR_APPNAME,
-							"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？",
-							"正規表現キーワード" );
+							_T("書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"),
+							_T("正規表現キーワード") );
 					if( nRet != IDYES ) return FALSE;
 				}
 				//追加するキー情報を取得する。
-				memset(szColorIndex, 0, sizeof(szColorIndex));
-				::GetDlgItemText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, sizeof(szColorIndex) );
+				auto_memset(szColorIndex, 0, _countof(szColorIndex));
+				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -550,11 +555,13 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
 				ListView_SetItem( hwndList, &lvi );
+
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
+
 				//更新したキーを選択する。
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData_Regex( hwndDlg );
@@ -577,8 +584,8 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				if( -1 == nIndex ) return FALSE;
 				if( 0 == nIndex ) return TRUE;	//すでに先頭にある。
 				nIndex2 = 0;
-				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -602,8 +609,8 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 - 1 == nIndex ) return TRUE;	//すでに最終にある。
-				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -629,8 +636,8 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
-				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -656,8 +663,8 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				if( nIndex2 - 1 == nIndex ) return TRUE;	//すでに最終にある。
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
-				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = szKeyWord;
@@ -716,7 +723,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				if( -1 == nIndex )
 				{
 					/* 初期値を設定する */
-					::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, "//k" );	/* 正規表現 */
+					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, _T("//k") );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for( i = 0, j = 0; i < COLORIDX_LAST; i++ )
 					{
@@ -724,7 +731,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 						{
 							if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
 							{
-								::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
+								::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
 								break;
 							}
 							j++;
@@ -734,17 +741,17 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				}
 				if( nPrevIndex != nIndex )	//@@@ 2003.03.26 MIK
 				{	//更新時にListViewのSubItemを正しく取得できないので、その対策
-					ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, sizeof(szKeyWord));
-					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, sizeof(szColorIndex));
-					::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
+					ListView_GetItemText(hwndList, nIndex, 0, szKeyWord, _countof(szKeyWord));
+					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
+					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, szKeyWord );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
 						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 						{
-							if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
+							if(_tcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
-								::SendMessage(hwndCombo, CB_SETCURSEL, j, 0);
+								::SendMessageAny(hwndCombo, CB_SETCURSEL, j, 0);
 								break;
 							}
 							j++;
@@ -784,19 +791,19 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	DWORD		dwStyle;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_RegexKeywordArr[0].m_szKeyword ) - 1 ), (LPARAM)0 );
-	::SetDlgItemText( hwndDlg, IDC_EDIT_REGEX, "//k" );	/* 正規表現 */
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), EM_LIMITTEXT, _countof( m_Types.m_RegexKeywordArr[0].m_szKeyword ) - 1, (LPARAM)0 );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, _T("//k") );	/* 正規表現 */
 
 	/* 色種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
-	::SendMessage( hwndWork, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );  /* コンボボックスを空にする */
+	::SendMessageAny( hwndWork, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );  /* コンボボックスを空にする */
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
 		if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 		{
-			j = ::SendMessage( hwndWork, CB_ADDSTRING, (WPARAM)0, (LPARAM)(char*)m_Types.m_ColorInfoArr[i].m_szName );
+			j = ::SendMessage( hwndWork, CB_ADDSTRING, (WPARAM)0, (LPARAM)m_Types.m_ColorInfoArr[i].m_szName );
 			if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
-				::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
+				::SendMessageAny( hwndWork, CB_SETCURSEL, (WPARAM)j, (LPARAM)0 );	/* コンボボックスのデフォルト選択 */
 		}
 	}
 
@@ -810,17 +817,17 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 
 	/* 行選択 */
-	dwStyle = (DWORD)::SendMessage( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	dwStyle = (DWORD)::SendMessageAny( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
 	dwStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dwStyle );
+	::SendMessageAny( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dwStyle );
 
 	/* データ表示 */
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( m_Types.m_RegexKeywordArr[i].m_szKeyword[0] == '\0' ) break;
+		if( m_Types.m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' ) break;
 		
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText  = m_Types.m_RegexKeywordArr[i].m_szKeyword;
+		lvi.pszText  = const_cast<TCHAR*>(to_tchar(m_Types.m_RegexKeywordArr[i].m_szKeyword));
 		lvi.iItem    = i;
 		lvi.iSubItem = 0;
 		lvi.lParam   = 0; //m_Types.m_RegexKeywordArr[i].m_nColorIndex;
@@ -841,7 +848,7 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
-	char	szKeyWord[256], szColorIndex[256];
+	TCHAR	szKeyWord[256], szColorIndex[256];
 
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	//自分のページ番号
@@ -860,16 +867,16 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 	{
 		if( i < nIndex )
 		{
-			szKeyWord[0]    = '\0';
-			szColorIndex[0] = '\0';
-			ListView_GetItemText(hwndList, i, 0, szKeyWord,    sizeof(szKeyWord)   );
-			ListView_GetItemText(hwndList, i, 1, szColorIndex, sizeof(szColorIndex));
-			strcpy(m_Types.m_RegexKeywordArr[i].m_szKeyword, szKeyWord);
+			szKeyWord[0]    = _T('\0');
+			szColorIndex[0] = _T('\0');
+			ListView_GetItemText(hwndList, i, 0, szKeyWord,    _countof(szKeyWord)   );
+			ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
+			_tcstowcs(m_Types.m_RegexKeywordArr[i].m_szKeyword, szKeyWord, _countof(m_Types.m_RegexKeywordArr[i].m_szKeyword));
 			//色指定文字列を番号に変換する
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 			for(j = 0; j < COLORIDX_LAST; j++)
 			{
-				if(strcmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
+				if(_tcscmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
 				{
 					m_Types.m_RegexKeywordArr[i].m_nColorIndex = j;
 					break;
@@ -878,7 +885,7 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 		}
 		else	//未登録部分はクリアする
 		{
-			m_Types.m_RegexKeywordArr[i].m_szKeyword[0] = '\0';
+			m_Types.m_RegexKeywordArr[i].m_szKeyword[0] = L'\0';
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 		}
 	}
@@ -890,33 +897,33 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 	return TRUE;
 }
 
-BOOL CPropTypes::RegexKakomiCheck(const char *s)
+BOOL CPropTypes::RegexKakomiCheck(const wchar_t *s)
 {
-	const char	*p;
+	const wchar_t	*p;
 	int	length, i;
-	static const char *kakomi[7 * 2] = {
-		"/",  "/k",
-		"m/", "/k",
-		"m#", "#k",
-		"/",  "/ki",
-		"m/", "/ki",
-		"m#", "#ki",
+	static const wchar_t *kakomi[7 * 2] = {
+		L"/",  L"/k",
+		L"m/", L"/k",
+		L"m#", L"#k",
+		L"/",  L"/ki",
+		L"m/", L"/ki",
+		L"m#", L"#ki",
 		NULL, NULL,
 	};
 
-	length = strlen(s);
+	length = wcslen(s);
 
 	for(i = 0; kakomi[i] != NULL; i += 2)
 	{
 		//文字長を確かめる
-		if( length > (int)strlen(kakomi[i]) + (int)strlen(kakomi[i+1]) )
+		if( length > (int)wcslen(kakomi[i]) + (int)wcslen(kakomi[i+1]) )
 		{
 			//始まりを確かめる
-			if( strncmp(kakomi[i], s, strlen(kakomi[i])) == 0 )
+			if( wcsncmp(kakomi[i], s, wcslen(kakomi[i])) == 0 )
 			{
 				//終わりを確かめる
-				p = &s[length - strlen(kakomi[i+1])];
-				if( strcmp(p, kakomi[i+1]) == 0 )
+				p = &s[length - wcslen(kakomi[i+1])];
+				if( wcscmp(p, kakomi[i+1]) == 0 )
 				{
 					//正常
 					return TRUE;

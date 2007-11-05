@@ -22,11 +22,10 @@
 #include <stdio.h>
 #include <windows.h>
 #include <winuser.h>
-#include <io.h>
 #include <mbctype.h>
 #include <mbstring.h>
 
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CEditWnd.h"
 #include "sakura_rc.h"
 #include "CEditDoc.h"
@@ -36,7 +35,6 @@
 #include "mymessage.h"
 #include "CShareData.h"
 #include "CPrint.h"
-#include "etc_uty.h"
 #include "charcode.h"
 #include "global.h"
 #include "CDlgPrintSetting.h"
@@ -49,13 +47,16 @@
 #include "COsVersioninfo.h"	// Sep. 6, 2003 genta
 #include "CRunningTimer.h"
 #include "KeyCode.h"
+#include "CharPointer.h"
+#include "CEditApp.h"
+#include "util/module.h"
+#include "util/os.h"
+#include "util/window.h"
+#include "util/shell.h"
+#include "util/file.h"
+#include "util/string_ex2.h"
+#include <shlobj.h>
 
-
-#define IDT_EDIT		455  // 20060128 aroka
-#define IDT_TOOLBAR		456
-#define IDT_CAPTION		457
-#define IDT_SYSMENU		1357
-#define ID_TOOLBAR		100
 
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
@@ -86,29 +87,7 @@
 //	定義を削除
 
 
-/*! サブクラス化したツールバーのウィンドウプロシージャ
-	@author ryoji
-	@date 2006.09.06 ryoji
-*/
-static WNDPROC g_pOldToolBarWndProc;	// ツールバーの本来のウィンドウプロシージャ
 
-static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch( msg )
-	{
-	// WinXP Visual Style のときにツールバー上でのマウス左右ボタン同時押しで無応答になる
-	//（マウスをキャプチャーしたまま放さない） 問題を回避するために右ボタンを無視する
-	case WM_RBUTTONDOWN:
-	case WM_RBUTTONUP:
-		return 0L;				// 右ボタンの UP/DOWN は本来のウィンドウプロシージャに渡さない
-
-	case WM_DESTROY:
-		// サブクラス化解除
-		::SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)g_pOldToolBarWndProc );
-		break;
-	}
-	return ::CallWindowProc( g_pOldToolBarWndProc, hWnd, msg, wParam, lParam );
-}
 
 
 //	/* メッセージループ */
@@ -121,148 +100,70 @@ LRESULT CALLBACK CEditWndProc(
 	LPARAM	lParam 	// second message parameter
 )
 {
-	CEditWnd* pSEWnd;
-	// Modified by KEITA for WIN64 2003.9.6
-	pSEWnd = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	if( NULL != pSEWnd ){
-		return pSEWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
+	CEditWnd* pcWnd = ( CEditWnd* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
+	if( pcWnd ){
+		return pcWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	}
 	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
 
+#pragma warning(disable:4355) //「thisポインタが初期化リストで使用されました」の警告を無効化
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditWnd::CEditWnd() :
-	m_hWnd( NULL ),
-	m_bDragMode( FALSE ),
-	m_hwndParent( NULL ),
-	m_hwndReBar( NULL ),	// 2006.06.17 ryoji
-	m_hwndToolBar( NULL ),
-	m_hwndStatusBar( NULL ),
-	m_hwndProgressBar( NULL ),
-// 20020331 aroka 再変換対応 for 95/NT
-	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
-	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ),
-
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	m_pPrintPreview( NULL ),
-	m_pszAppName( GSTR_EDITWINDOWNAME ),
-	m_pszLastCaption( NULL ),
-	m_hwndSearchBox( NULL ),
-	m_fontSearchBox( NULL ),
-	m_nCurrentFocus( 0 ),
-	m_bIsActiveApp( FALSE ),
-	m_IconClicked(icNone) //by 鬼(2)
+CEditWnd::CEditWnd()
+: m_hWnd( NULL )
+, m_bDragMode( FALSE )
+, m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
+, m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
+, m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+, m_pszWndClass( GSTR_EDITWINDOWNAME )
+, m_pszLastCaption( NULL )
+, m_nCurrentFocus( 0 )
+, m_bIsActiveApp( FALSE )
+, m_IconClicked(icNone) //by 鬼(2)
+, m_cToolbar(this)
+, m_cStatusBar(this)
+, m_nActivePaneIndex( 0 )
 {
+	g_pcEditWnd=this;
+	for(int i=0;i<4;i++)
+		m_pcEditViewArr[i]=new CEditView(this);
+
 	//	Dec. 4, 2002 genta
 	InitMenubarMessageFont();
 
-	// Sep. 10, 2002 genta
-	m_cEditDoc.m_pcEditWnd = this;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-
-//	MYTRACE( "CEditWnd::CEditWnd()おわり\n" );
-	return;
 }
-
-
-
 
 CEditWnd::~CEditWnd()
 {
-	delete []m_pszLastCaption;
+	g_pcEditWnd=NULL;
+
+	delete[] m_pszLastCaption;
+
+	for(int i=0;i<4;i++)
+		delete m_pcEditViewArr[i];
 
 	//	Dec. 4, 2002 genta
 	/* キャレットの行桁位置表示用フォント */
 	::DeleteObject( m_hFontCaretPosInfo );
 
-
-	if( NULL != m_hWnd ){
-		m_hWnd = NULL;
-	}
-	return;
+	m_hWnd = NULL;
 }
 
 
 
 
-
-/*!	作成
-
-	@param hInstance [in] Instance Handle
-	@param hwndParent [in] 親ウィンドウのハンドル
-	@param nGroup [in] グループID
-	@param pszPath [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
-	@param nCharCode [in] 漢字コード
-	@param bReadOnly [in] 読みとり専用で開くかどうか
-	@param nDocumentType [in] 文書タイプ．-1のとき強制指定無し．
-	
-	@date 2002.03.07 genta nDocumentType追加
-	@date 2007.06.26 ryoji nGroup追加
-*/
-HWND CEditWnd::Create(
-	HINSTANCE	hInstance,
-	HWND		hwndParent,
-	int			nGroup,
-	const char*	pszPath,
-	int			nCharCode,
-	BOOL		bReadOnly,
-	int			nDocumentType
-)
+//!< ウィンドウ生成用の矩形を取得
+void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
-
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	WNDCLASSEX	wc;
-	HWND		hWnd;
-	HWND		hwndTop;
-	WINDOWPLACEMENT	wpTop;
-	EditNode*	pEditNode;
-	ATOM		atom;
-	BOOL		bOpened;
-	char szMsg[512];
-
-	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
-		return NULL;
-	}
-
-
-	m_hInstance = hInstance;
-	m_hwndParent = hwndParent;
-	//	Apr. 27, 2000 genta
-	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
-	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
-	wc.lpfnWndProc		= CEditWndProc;
-	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= 32;
-	wc.hInstance		= m_hInstance;
-	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
-
-	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
-	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
-	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
-	wc.lpszClassName	= m_pszAppName;
-
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
-	if( 0 == ( atom = RegisterClassEx( &wc ) ) ){
-		//	2004.05.13 Moca return NULLを有効にした
-		return NULL;
-	}
-
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
 	//	2004.05.13 Moca m_Common.m_nSaveWindowSizeをBOOLからenumに変えたため
-	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowSize ){
-		nWinCX = m_pShareData->m_Common.m_nWinSizeCX;
-		nWinCY = m_pShareData->m_Common.m_nWinSizeCY;
+	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_nSaveWindowSize ){
+		nWinCX = m_pShareData->m_Common.m_sWindow.m_nWinSizeCX;
+		nWinCY = m_pShareData->m_Common.m_sWindow.m_nWinSizeCY;
 	}else{
 		nWinCX = CW_USEDEFAULT;
 		nWinCY = 0;
@@ -279,15 +180,14 @@ HWND CEditWnd::Create(
 	}
 
 	/* ウィンドウ位置指定 */
-
 	int nWinOX, nWinOY;
 	nWinOX = CW_USEDEFAULT;
 	nWinOY = 0;
 	// ウィンドウ位置固定
 	//	2004.05.13 Moca 保存したウィンドウ位置を使う場合は共有メモリからセット
-	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowPos ){
-		nWinOX =  m_pShareData->m_Common.m_nWinPosX;
-		nWinOY =  m_pShareData->m_Common.m_nWinPosY;
+	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_nSaveWindowPos ){
+		nWinOX =  m_pShareData->m_Common.m_sWindow.m_nWinPosX;
+		nWinOY =  m_pShareData->m_Common.m_sWindow.m_nWinPosY;
 	}
 
 	//	2004.05.13 Moca マルチディスプレイでは負の値も有効なので，
@@ -299,29 +199,94 @@ HWND CEditWnd::Create(
 		nWinOY = fi.m_nWindowOriginY;
 	}
 
+	// 必要なら、タブグループにフィットするよう、変更
+	if(sTabGroupInfo.IsValid()){
+		RECT rcWork, rcMon;
+		GetMonitorWorkRect( sTabGroupInfo.hwndTop, &rcWork, &rcMon );
+
+		const WINDOWPLACEMENT& wpTop = sTabGroupInfo.wpTop;
+		nWinCX = wpTop.rcNormalPosition.right  - wpTop.rcNormalPosition.left;
+		nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
+		nWinOX = wpTop.rcNormalPosition.left   + (rcWork.left - rcMon.left);
+		nWinOY = wpTop.rcNormalPosition.top    + (rcWork.top - rcMon.top);
+	}
+
+	//結果
+	rcResult->SetXYWH(nWinOX,nWinOY,nWinCX,nWinCY);
+}
+
+HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
+{
+	// -- -- -- -- ウィンドウクラス登録 -- -- -- -- //
+	WNDCLASSEX	wc;
+	//	Apr. 27, 2000 genta
+	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
+	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
+	wc.lpfnWndProc		= CEditWndProc;
+	wc.cbClsExtra		= 0;
+	wc.cbWndExtra		= 32;
+	wc.hInstance		= m_hInstance;
+	//	Dec, 2, 2002 genta アイコン読み込み方法変更
+	wc.hIcon			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
+
+	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
+	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
+	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
+	wc.lpszClassName	= m_pszWndClass;
+
+	//	Dec. 6, 2002 genta
+	//	small icon指定のため RegisterClassExに変更
+	wc.cbSize			= sizeof( wc );
+	wc.hIconSm			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
+	ATOM	atom = RegisterClassEx( &wc );
+	if( 0 == atom ){
+		//	2004.05.13 Moca return NULLを有効にした
+		return NULL;
+	}
+
+	//矩形取得
+	CMyRect rc;
+	_GetWindowRectForInit(&rc, nGroup, sTabGroupInfo);
+
+	//作成
+	HWND hwndResult = ::CreateWindowEx(
+		0,				 	// extended window style
+		m_pszWndClass,		// pointer to registered class name
+		m_pszWndClass,		// pointer to window name
+		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,	// window style
+		rc.left,			// horizontal position of window
+		rc.top,				// vertical position of window
+		rc.Width(),			// window width
+		rc.Height(),		// window height
+		NULL,				// handle to parent or owner window
+		NULL,				// handle to menu or child-window identifier
+		m_hInstance,		// handle to application instance
+		NULL				// pointer to window-creation data
+	);
+	return hwndResult;
+}
+
+void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
+{
+	HWND hwndTop = NULL;
+	WINDOWPLACEMENT	wpTop = {0};
+
 	//From Here @@@ 2003.05.31 MIK
 	//タブウインドウの場合は現状値を指定
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		if( nGroup < 0 )	// 不正なグループID
 			nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
-		pEditNode = CShareData::getInstance()->GetEditNodeAt( nGroup, 0 );	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
-		hwndTop = pEditNode? pEditNode->m_hWnd: NULL;
+		EditNode*	pEditNode = CShareData::getInstance()->GetEditNodeAt( nGroup, 0 );	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
+		hwndTop = pEditNode? pEditNode->GetHwnd(): NULL;
 
 		if( hwndTop )
 		{
 			//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
 			// 2007.06.20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
-			RECT rcWork;
-			RECT rcMon;
-			GetMonitorWorkRect( hwndTop, &rcWork, &rcMon );
 
-			wpTop.length = sizeof(WINDOWPLACEMENT);
+			wpTop.length = sizeof(wpTop);
 			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
-				nWinCX = wpTop.rcNormalPosition.right - wpTop.rcNormalPosition.left;
-				nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
-				nWinOX = wpTop.rcNormalPosition.left + (rcWork.left - rcMon.left);
-				nWinOY = wpTop.rcNormalPosition.top + (rcWork.top - rcMon.top);
 				if( wpTop.showCmd == SW_SHOWMINIMIZED )
 					wpTop.showCmd = pEditNode->m_showCmdRestore;
 			}
@@ -332,84 +297,20 @@ HWND CEditWnd::Create(
 	}
 	//To Here @@@ 2003.05.31 MIK
 
-	hWnd = ::CreateWindowEx(
-		0 	// extended window style
-//		| WS_EX_CLIENTEDGE
-		,
-		m_pszAppName,		// pointer to registered class name
-		m_pszAppName,		// pointer to window name
-//		WS_VISIBLE |
-		WS_OVERLAPPEDWINDOW |
-		WS_CLIPCHILDREN	|
-//		WS_HSCROLL | WS_VSCROLL	|
-		0,	// window style
+	//結果
+	pTabGroupInfo->hwndTop = hwndTop;
+	pTabGroupInfo->wpTop = wpTop;
+}
 
-		nWinOX,				// horizontal position of window
-		nWinOY,				// vertical position of window
-		nWinCX,				// window width
-		nWinCY,				// window height
-		NULL,				// handle to parent or owner window
-		NULL,				// handle to menu or child-window identifier
-		m_hInstance,		// handle to application instance
-		NULL				// pointer to window-creation data
-	);
-	m_hWnd = hWnd;
-
-	// 2004.05.13 Moca ウィンドウ作成失敗。終了
-	if( NULL == hWnd ){
-		return NULL;
-	}
-
-	MyInitCommonControls();	// 2006.06.19 ryoji コモンコントロールの初期化を CreateToolBar() から移動
-
-
-	m_cIcons.Create( m_hInstance, m_hWnd );	//	CreateImage List
-
-	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
-
-	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
-	// （m_cEditDoc メンバーの初期化を優先）
-	if( FALSE == m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons/*, 1, 1, 0, 0*/ ) ){
-		::MessageBox(
-			m_hWnd,
-			"クライアントウィンドウの作成に失敗しました", GSTR_APPNAME,
-			MB_OK
-		);
-	}
-
-	// 2007.03.08 ryoji 各種バーの作成を Layoutxxx(), EndLayoutBars() で簡素化
-
-// 次のSetWindowLongPtr以降だとデバッグ中に落ちることがあったので順番を入れ替えた。 // 2005/8/9 aroka
-	/* ツールバー */
-	LayoutToolBar();
-
-//	if( NULL != m_hWnd ){
-		// Modified by KEITA for WIN64 2003.9.6
-		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
-
-
-//	}
-
-	/* ステータスバー */
-	LayoutStatusBar();
-
-	/* ファンクションキー バー */
-	LayoutFuncKey();
-
-	/* タブウインドウ */
-	LayoutTabBar();
-
-	/* バーの配置終了 */
-	EndLayoutBars( FALSE );
-
-	/* デスクトップからはみ出さないようにする */
+void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
+{
 	RECT	rcOrg;
 	RECT	rcDesktop;
 //	int		nWork;
 
 	//	May 01, 2004 genta マルチモニタ対応
-	::GetMonitorWorkRect( m_hWnd, &rcDesktop );
-	::GetWindowRect( m_hWnd, &rcOrg );
+	::GetMonitorWorkRect( GetHwnd(), &rcDesktop );
+	::GetWindowRect( GetHwnd(), &rcOrg );
 
 	// 2005.11.23 Moca マルチモニタ等で問題があったため計算方法変更
 	/* ウィンドウ位置調整 */
@@ -442,519 +343,260 @@ HWND CEditWnd::Create(
 	}
 
 	//From Here @@@ 2003.06.13 MIK
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin
-		&& hwndTop )
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+		&& !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin
+		&& sTabGroupInfo.hwndTop )
 	{
 		// 現在の先頭ウィンドウから WS_EX_TOPMOST 状態を引き継ぐ	// 2007.05.18 ryoji
-		DWORD dwExStyle = (DWORD)::GetWindowLongPtr( hwndTop, GWL_EXSTYLE );
-		::SetWindowPos( m_hWnd, (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+		DWORD dwExStyle = (DWORD)::GetWindowLongPtr( sTabGroupInfo.hwndTop, GWL_EXSTYLE );
+		::SetWindowPos( GetHwnd(), (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
-		if( wpTop.showCmd == SW_SHOWMAXIMIZED )
+		if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
 		{
-			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+			::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
 		}
 		else
 		{
-			::ShowWindow( m_hWnd, SW_SHOW );
+			::ShowWindow( GetHwnd(), SW_SHOW );
 		}
 	}
 	else
 	{
 		::SetWindowPos(
-			m_hWnd, 0,
+			GetHwnd(), 0,
 			rcOrg.left, rcOrg.top,
 			rcOrg.right - rcOrg.left, rcOrg.bottom - rcOrg.top,
 			SWP_NOOWNERZORDER | SWP_NOZORDER
 		);
 
 		/* ウィンドウサイズ継承 */
-		if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowSize &&
-			m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED ){
-			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+		if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_nSaveWindowSize &&
+			m_pShareData->m_Common.m_sWindow.m_nWinSizeType == SIZE_MAXIMIZED ){
+			::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
 		}else
 		// 2004.05.14 Moca ウィンドウサイズを直接指定する場合は、最小化表示を受け入れる
-		if( WINSIZEMODE_SET == m_pShareData->m_Common.m_nSaveWindowSize &&
-			m_pShareData->m_Common.m_nWinSizeType == SIZE_MINIMIZED ){
-			::ShowWindow( m_hWnd, SW_SHOWMINIMIZED );
-		}else{
-			::ShowWindow( m_hWnd, SW_SHOW );
+		if( WINSIZEMODE_SET == m_pShareData->m_Common.m_sWindow.m_nSaveWindowSize &&
+			m_pShareData->m_Common.m_sWindow.m_nWinSizeType == SIZE_MINIMIZED ){
+			::ShowWindow( GetHwnd(), SW_SHOWMINIMIZED );
+		}
+		else{
+			::ShowWindow( GetHwnd(), SW_SHOW );
 		}
 	}
 	//To Here @@@ 2003.06.13 MIK
+}
 
-//	if( NULL != m_hWnd ){
-		/* ドロップされたファイルを受け入れる */
-		::DragAcceptFiles( m_hWnd, TRUE );
+/*!
+	作成
 
-		m_bIsActiveApp = ( ::GetActiveWindow() == m_hWnd );	// 2007.03.08 ryoji
+	@date 2002.03.07 genta nDocumentType追加
+	@date 2007.06.26 ryoji nGroup追加
+*/
+HWND CEditWnd::Create(
+	HINSTANCE		hInstance,		//!< [in] Instance Handle
+	int				nGroup			//!< [in] グループID
+)
+{
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
-		/* エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） */	// 2007.06.07 ryoji
-		if( COsVersionInfo().IsWinVista_or_later() ){
-			m_bUIPI = FALSE;
-			::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
-			if( !m_bUIPI ){	// 返事が返らない
-				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-					_T("エディタ間の対話に失敗しました。\n権限レベルの異なるエディタが既に起動している可能性があります。")
-				);
-				::DestroyWindow( m_hWnd );
-				m_hWnd = hWnd = NULL;
-				return hWnd;
-			}
-		}
+	//メンバ変数の初期化
+	m_hInstance = hInstance;
 
-		/* 編集ウィンドウリストへの登録 */
-		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
-			wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-			::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
-			::DestroyWindow( m_hWnd );
+	//ウィンドウ数制限
+	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		return NULL;
+	}
+
+	//タブグループ情報取得
+	STabGroupInfo sTabGroupInfo;
+	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
+
+
+	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
+	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
+	if(!hWnd)return NULL;
+	m_hWnd = hWnd;
+	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
+
+	//コモンコントロール初期化
+	MyInitCommonControls();
+
+	//イメージ、ヘルパなどの作成
+	m_CMenuDrawer.Create( m_hInstance, GetHwnd(), &CEditApp::Instance()->GetIcons() );
+
+
+	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
+
+	/* 分割フレーム作成 */
+	m_cSplitterWnd.Create( m_hInstance, GetHwnd(), this );
+
+	/* ビュー */
+	m_pcEditViewArr[0]->Create( m_hInstance, m_cSplitterWnd.GetHwnd(), &GetDocument(), 0, TRUE  );
+	m_pcEditViewArr[1]->Create( m_hInstance, m_cSplitterWnd.GetHwnd(), &GetDocument(), 1, FALSE );
+	m_pcEditViewArr[2]->Create( m_hInstance, m_cSplitterWnd.GetHwnd(), &GetDocument(), 2, FALSE );
+	m_pcEditViewArr[3]->Create( m_hInstance, m_cSplitterWnd.GetHwnd(), &GetDocument(), 3, FALSE );
+
+	m_pcEditViewArr[0]->OnSetFocus();
+
+	/* 子ウィンドウの設定 */
+	HWND		hWndArr[4];
+	hWndArr[0] = m_pcEditViewArr[0]->GetHwnd();
+	hWndArr[1] = m_pcEditViewArr[1]->GetHwnd();
+	hWndArr[2] = m_pcEditViewArr[2]->GetHwnd();
+	hWndArr[3] = m_pcEditViewArr[3]->GetHwnd();
+	m_cSplitterWnd.SetChildWndArr( hWndArr );
+
+	MY_TRACETIME( cRunningTimer, L"View created" );
+
+	// -- -- -- -- ダイアログ作成 -- -- -- -- //
+
+	/* 入力補完ウィンドウ作成 */
+	m_cHokanMgr.DoModeless(
+		m_hInstance,
+		m_pcEditViewArr[0]->GetHwnd(),
+		(LPARAM)m_pcEditViewArr[0]
+	);
+
+	/* 設定プロパティシートの初期化１ */
+	m_cPropCommon.Create( m_hInstance, GetHwnd(), &CEditApp::Instance()->GetIcons(), GetDocument().m_pcSMacroMgr, &GetMenuDrawer() );
+	m_cPropTypes.Create( m_hInstance, GetHwnd() );
+
+	// -- -- -- -- 各種バー作成 -- -- -- -- //
+
+	/* ツールバー */
+	LayoutToolBar();
+
+	/* ステータスバー */
+	LayoutStatusBar();
+
+	/* ファンクションキー バー */
+	LayoutFuncKey();
+
+	/* タブウインドウ */
+	LayoutTabBar();
+
+	/* バーの配置終了 */
+	EndLayoutBars( FALSE );
+
+
+	// -- -- -- -- その他調整など -- -- -- -- //
+	// デスクトップからはみ出さないようにする
+	_AdjustInMonitor(sTabGroupInfo);
+
+	// ドロップされたファイルを受け入れる
+	::DragAcceptFiles( GetHwnd(), TRUE );
+
+	//アクティブ情報
+	m_bIsActiveApp = ( ::GetActiveWindow() == GetHwnd() );	// 2007.03.08 ryoji
+
+	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
+	if( COsVersionInfo().IsWinVista_or_later() ){
+		m_bUIPI = FALSE;
+		::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)GetHwnd() );
+		if( !m_bUIPI ){	// 返事が返らない
+			::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_ICONSTOP | MB_TOPMOST,
+				GSTR_APPNAME_A,
+				"エディタ間の対話に失敗しました。\n"
+				"権限レベルの異なるエディタが既に起動している可能性があります。"
+			);
+			::DestroyWindow( GetHwnd() );
 			m_hWnd = hWnd = NULL;
 			return hWnd;
 		}
-		CShareData::getInstance()->SetTraceOutSource( m_hWnd );	// TraceOut()起動元ウィンドウの設定	// 2006.06.26 ryoji
+	}
 
-		//	Aug. 29, 2003 wmlhq
-		m_nTimerCount = 0;
-		/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
-		if( 0 == ::SetTimer( m_hWnd, IDT_EDIT, 500, NULL ) ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
-			);
-		}
-		// ツールバーのタイマーを分離した 20060128 aroka
-		Timer_ONOFF( TRUE );
-//	}
-	::InvalidateRect( m_hWnd, NULL, TRUE );
-	if( NULL != pszPath ){
-		char*	pszPathNew = new char[_MAX_PATH];
-		strcpy( pszPathNew, pszPath );
-		::ShowWindow( m_hWnd, SW_SHOW );
+	/* 編集ウィンドウリストへの登録 */
+	if( FALSE == CShareData::getInstance()->AddEditWndList( GetHwnd(), nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
+		OkMessage( GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		::DestroyWindow( GetHwnd() );
+		m_hWnd = hWnd = NULL;
+		return hWnd;
+	}
+	CShareData::getInstance()->SetTraceOutSource( GetHwnd() );	// TraceOut()起動元ウィンドウの設定	// 2006.06.26 ryoji
+
+	//	Aug. 29, 2003 wmlhq
+	m_nTimerCount = 0;
+	/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
+	if( 0 == ::SetTimer( GetHwnd(), IDT_EDIT, 500, NULL ) ){
+		::MYMESSAGEBOX( GetHwnd(), MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			_T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。")
+		);
+	}
+	// ツールバーのタイマーを分離した 20060128 aroka
+	Timer_ONOFF( TRUE );
+
+	//デフォルトのIMEモード設定
+	GetDocument().SetImeMode( m_pShareData->m_Types[0].m_nImeState );
+
+	return GetHwnd();
+}
+
+
+
+//! 起動時のファイルオープン処理
+void CEditWnd::OpenDocumentWhenCreate(
+	const TCHAR*	pszPath,		//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
+	ECodeType		nCharCode,		//!< [in] 漢字コード
+	bool			bReadOnly		//!< [in] 読みとり専用で開くかどうか
+)
+{
+	if( pszPath ){
+		TCHAR	szPathNew[_MAX_PATH];
+		_tcscpy( szPathNew, pszPath );
+		::ShowWindow( GetHwnd(), SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
-		if( !m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly,
-			m_pShareData->m_Common.m_bQueryIfCodeChange ) ){
+		bool	bOpened;
+		bool	bReadResult = GetDocument().FileRead(
+			szPathNew,
+			&bOpened,
+			nCharCode,
+			bReadOnly,
+			m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange!=0
+		);
+		if( !bReadResult ){
 			/* ファイルが既に開かれている */
 			if( bOpened ){
-				::PostMessage( m_hWnd, WM_CLOSE, 0, 0 );
-				delete [] pszPathNew;
+				::PostMessageAny( GetHwnd(), WM_CLOSE, 0, 0 );
 				// 2004.07.12 Moca return NULLだと、メッセージループを通らずにそのまま破棄されてしまい、タブの終了処理が抜ける
 				//	この後は正常ルートでメッセージループに入った後WM_CLOSEを受信して直ちにCLOSE & DESTROYとなる．
 				//	その中で編集ウィンドウの削除が行われる．
-				return m_hWnd;
-			}
-			else {
-				//	Nov. 20, 2000 genta
-				m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 			}
 		}
-		delete [] pszPathNew;
 	}
-	else {
-		//	Nov. 20, 2000 genta
-		m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
-	}
+}
+
+void CEditWnd::SetDocumentTypeWhenCreate(
+	ECodeType		nCharCode,		//!< [in] 漢字コード
+	bool			bReadOnly,		//!< [in] 読みとり専用で開くかどうか
+	int				nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
+)
+{
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
 	if( nDocumentType >= 0 ){
-		m_cEditDoc.SetDocumentType( nDocumentType, true );
+		GetDocument().SetDocumentType( nDocumentType, true );
 		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
-		m_cEditDoc.LockDocumentType();
+		GetDocument().LockDocumentType();
 		/* 設定変更を反映させる */
-		m_cEditDoc.OnChangeSetting();
+		GetDocument().OnChangeSetting();
 	}
 	//	Jun. 4 ,2004 genta ファイル名指定が無くても読みとり専用強制指定を有効にする
-	m_cEditDoc.m_bReadOnly = bReadOnly;
-	m_cEditDoc.SetParentCaption();
-	
-	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
-	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
-	return m_hWnd;
+	GetDocument().m_bReadOnly = bReadOnly;
 }
 
-
-//	キーワード：ステータスバー順序
-/* ステータスバー作成 */
-void CEditWnd::CreateStatusBar( void )
-{
-//	int		nStArr[] = { 300, 400, 500. -1 };
-//	int		nStArrNum = sizeof( nStArr ) / sizeof( nStArr[0] );
-
-	/* ステータスバー */
-	m_hwndStatusBar = ::CreateStatusWindow(
-		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
-		"",
-		m_hWnd,
-		IDW_STATUSBAR
-	);
-
-	/* プログレスバー */
-	m_hwndProgressBar = ::CreateWindowEx(
-		WS_EX_TOOLWINDOW,
-		PROGRESS_CLASS,
-		(LPSTR) NULL,
-		WS_CHILD /*|  WS_VISIBLE*/,
-		3,
-		5,
-		150,
-		13,
-		m_hwndStatusBar,
-		NULL,
-		m_hInstance,
-		0
-	);
-//	::ShowWindow( m_hwndProgressBar, SW_SHOW );
-
-	if( NULL != m_CFuncKeyWnd.m_hWnd ){
-		m_CFuncKeyWnd.SizeBox_ONOFF( FALSE );
-	}
-	//スプリッターの、サイズボックスの位置を変更
-	m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1);
-	return;
-}
-
-
-/* ステータスバー破棄 */
-void CEditWnd::DestroyStatusBar( void )
-{
-	if( NULL != m_hwndProgressBar ){
-		::DestroyWindow( m_hwndProgressBar );
-		m_hwndProgressBar = NULL;
-	}
-	::DestroyWindow( m_hwndStatusBar );
-	m_hwndStatusBar = NULL;
-
-	if( NULL != m_CFuncKeyWnd.m_hWnd ){
-		BOOL bSizeBox;
-		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-			/* サイズボックスの表示／非表示切り替え */
-			bSizeBox = FALSE;
-		}else{
-			bSizeBox = TRUE;
-			/* ステータスパーを表示している場合はサイズボックスを表示しない */
-			if( NULL != m_hwndStatusBar ){
-				bSizeBox = FALSE;
-			}
-		}
-		m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
-	}
-	//スプリッターの、サイズボックスの位置を変更
-	m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
-
-	return;
-}
-
-/* ツールバー作成
-	@date @@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	@date 2005.08.29 aroka ツールバーの折り返し
-	@date 2006.06.17 ryoji ビジュアルスタイルが有効の場合はツールバーを Rebar に入れてサイズ変更時のちらつきを無くす
-*/
-void CEditWnd::CreateToolBar( void )
-{
-	REBARINFO		rbi;
-	REBARBANDINFO	rbBand;
-	int				nFlag;
-	TBBUTTON		tbb;
-	int				i;
-	int				nIdx;
-	UINT			uToolType;
-	nFlag = 0;
-
-	// 2006.06.17 ryoji
-	// Rebar ウィンドウの作成
-	if( IsVisualStyle() ){	// ビジュアルスタイル有効
-		m_hwndReBar = ::CreateWindowEx(
-			WS_EX_TOOLWINDOW,
-			REBARCLASSNAME,
-			NULL,
-			WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |	// 2007.03.08 ryoji WS_VISIBLE 除去
-			RBS_BANDBORDERS | CCS_NODIVIDER,
-			0, 0, 0, 0,
-			m_hWnd,
-			NULL,
-			m_hInstance,
-			NULL);
-
-		if( NULL == m_hwndReBar ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-				"Rebar の作成に失敗しました。"
-			);
-			return;
-		}
-
-		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
-			PreventVisualStyle( m_hwndReBar );	// ビジュアルスタイル非適用のフラットな Rebar にする
-		}
-
-		::ZeroMemory(&rbi, sizeof(REBARINFO));
-		rbi.cbSize = sizeof(REBARINFO);
-		::SendMessage(m_hwndReBar, RB_SETBARINFO, 0, (LPARAM)&rbi);
-
-		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ツールバーへの追加スタイル
-	}
-
-	/* ツールバーウィンドウの作成 */
-	m_hwndToolBar = ::CreateWindowEx(
-		0,
-		TOOLBARCLASSNAME,
-		NULL,
-		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加	// 2007.03.08 ryoji WS_VISIBLE 除去
-/*		WS_EX_WINDOWEDGE| */
-		TBSTYLE_TOOLTIPS |
-//		TBSTYLE_WRAPABLE |
-//		TBSTYLE_ALTDRAG |
-//		CCS_ADJUSTABLE |
-		nFlag,
-		0, 0,
-		0, 0,
-		m_hWnd,
-		(HMENU)ID_TOOLBAR,
-		m_hInstance,
-		NULL
-	);
-	if( NULL == m_hwndToolBar ){
-		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
-			m_pShareData->m_Common.m_bToolBarIsFlat = FALSE;
-		}
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-			"ツールバーの作成に失敗しました。"
-		);
-		DestroyToolBar();	// 2006.06.17 ryoji
-	}else{
-		// 2006.09.06 ryoji ツールバーをサブクラス化する
-		g_pOldToolBarWndProc = (WNDPROC)::SetWindowLongPtr( m_hwndToolBar, GWLP_WNDPROC, (LONG_PTR)ToolBarWndProc );
-
-		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0 );
-		//	Oct. 12, 2000 genta
-		//	既に用意されているImage Listをアイコンとして登録
-		m_cIcons.SetToolBarImages( m_hwndToolBar );
-		/* ツールバーにボタンを追加 */
-		int count = 0;	//@@@ 2002.06.15 MIK
-		int nToolBarButtonNum = 0;// 2005/8/29 aroka
-		//	From Here 2005.08.29 aroka
-		// はじめにツールバー構造体の配列を作っておく
-		TBBUTTON *pTbbArr = new TBBUTTON[m_pShareData->m_Common.m_nToolBarButtonNum];
-		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-			nIdx = m_pShareData->m_Common.m_nToolBarButtonIdxArr[i];
-			pTbbArr[nToolBarButtonNum] = m_CMenuDrawer.getButton(nIdx);
-			// セパレータが続くときはひとつにまとめる
-			// 折り返しボタンもTBSTYLE_SEP属性を持っているので
-			// 折り返しの前のセパレータは全て削除される．
-			if( (pTbbArr[nToolBarButtonNum].fsStyle & TBSTYLE_SEP) && (nToolBarButtonNum!=0)){
-				if( (pTbbArr[nToolBarButtonNum-1].fsStyle & TBSTYLE_SEP) ){
-					pTbbArr[nToolBarButtonNum-1] = pTbbArr[nToolBarButtonNum];
-					nToolBarButtonNum--;
-				}
-			}
-			// 仮想折返しボタンがきたら直前のボタンに折返し属性を付ける
-			if( pTbbArr[nToolBarButtonNum].fsState & TBSTATE_WRAP ){
-				if( nToolBarButtonNum!=0 ){
-					pTbbArr[nToolBarButtonNum-1].fsState |= TBSTATE_WRAP;
-				}
-				continue;
-			}
-			nToolBarButtonNum++;
-		}
-		//	To Here 2005.08.29 aroka
-
-		for( i = 0; i < nToolBarButtonNum; ++i ){
-			tbb = pTbbArr[i];
-			//::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
-
-			//@@@ 2002.06.15 MIK start
-			switch( tbb.fsStyle )
-			{
-			case TBSTYLE_DROPDOWN:	//ドロップダウン
-				//拡張スタイルに設定
-				::SendMessage( m_hwndToolBar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS );
-				::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
-				count++;
-				break;
-
-			case TBSTYLE_COMBOBOX:	//コンボボックス
-				{
-					RECT			rc;
-					TBBUTTONINFO	tbi;
-					//HWND			my_hwnd;
-					TBBUTTON		my_tbb;
-					//int			width;
-					LOGFONT			lf;
-					//HFONT			my_font;
-					int				my_i;
-
-					switch( tbb.idCommand )
-					{
-					case F_SEARCH_BOX:
-						if( m_hwndSearchBox )
-						{
-							break;
-						}
-						
-						//セパレータ作る
-						memset( &my_tbb, 0, sizeof(my_tbb) );
-						my_tbb.fsStyle   = TBSTYLE_BUTTON;  //ボタンにしないと描画が乱れる 2005/8/29 aroka
-						my_tbb.idCommand = tbb.idCommand;	//同じIDにしておく
-						if( tbb.fsState & TBSTATE_WRAP ){   //折り返し 2005/8/29 aroka
-							my_tbb.fsState |=  TBSTATE_WRAP;
-						}
-						::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&my_tbb );
-						count++;
-
-						//サイズを設定する
-						tbi.cbSize = sizeof(tbi);
-						tbi.dwMask = TBIF_SIZE;
-						tbi.cx     = 160;	//ボックスの幅
-						::SendMessage( m_hwndToolBar, TB_SETBUTTONINFO, (WPARAM)(tbb.idCommand), (LPARAM)&tbi );
-
-						//サイズを取得する
-						rc.right = rc.left = rc.top = rc.bottom = 0;
-						::SendMessage( m_hwndToolBar, TB_GETITEMRECT, (WPARAM)(count-1), (LPARAM)&rc );
-
-						//コンボボックスを作る
-						//	Mar. 8, 2003 genta 検索ボックスを1ドット下にずらした
-						m_hwndSearchBox = CreateWindow( "COMBOBOX", "Combo",
-								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
-								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
-								rc.left, rc.top + 1, rc.right - rc.left, (rc.bottom - rc.top) * 10,
-								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, m_hInstance, NULL );
-						if( m_hwndSearchBox )
-						{
-							m_nCurrentFocus = 0;
-
-							memset( &lf, 0, sizeof(LOGFONT) );
-							lf.lfHeight			= 12; // Jan. 14, 2003 genta ダイアログにあわせてちょっと小さく
-							lf.lfWidth			= 0;
-							lf.lfEscapement		= 0;
-							lf.lfOrientation	= 0;
-							lf.lfWeight			= FW_NORMAL;
-							lf.lfItalic			= FALSE;
-							lf.lfUnderline		= FALSE;
-							lf.lfStrikeOut		= FALSE;
-							lf.lfCharSet		= SHIFTJIS_CHARSET;
-							lf.lfOutPrecision	= OUT_DEFAULT_PRECIS;
-							lf.lfClipPrecision	= CLIP_DEFAULT_PRECIS;
-							lf.lfQuality		= DEFAULT_QUALITY;
-							lf.lfPitchAndFamily	= FF_MODERN | DEFAULT_PITCH;
-							//strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
-							strcpy( lf.lfFaceName, "ＭＳ Ｐゴシック" );
-							m_fontSearchBox = ::CreateFontIndirect( &lf );
-							if( m_fontSearchBox )
-							{
-								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_fontSearchBox, MAKELONG (TRUE, 0) );
-							}
-
-							//入力長制限
-							::SendMessage( m_hwndSearchBox, CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
-
-							//拡張インタフェース
-							//::SendMessage( m_hwndSearchBox, CB_SETEXTENDEDUI, (WPARAM)(BOOL)TRUE, 0 );
-
-							//検索ボックスを更新
-							::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-							for( my_i = 0; my_i < m_pShareData->m_nSEARCHKEYArrNum; my_i++ )
-							{
-								::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[my_i] );
-							}
-							::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
-						}
-						break;
-
-					default:
-						//width = 0;
-						//my_hwnd = NULL;
-						//my_font = NULL;
-						break;
-					}
-				}
-				break;
-
-			case TBSTYLE_BUTTON:	//ボタン
-			case TBSTYLE_SEP:		//セパレータ
-			default:
-				::SendMessage( m_hwndToolBar, TB_ADDBUTTONS, (WPARAM)1, (LPARAM)&tbb );
-				count++;
-				break;
-			}
-			//@@@ 2002.06.15 MIK end
-		}
-		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
-			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
-			uToolType |= (TBSTYLE_FLAT);
-			::SetWindowLong(m_hwndToolBar, GWL_STYLE, uToolType);
-			::InvalidateRect(m_hwndToolBar, NULL, TRUE);
-		}
-		delete []pTbbArr;// 2005/8/29 aroka
-	}
-
-	// 2006.06.17 ryoji
-	// ツールバーを Rebar に入れる
-	if( m_hwndReBar && m_hwndToolBar ){
-		// ツールバーの高さを取得する
-		DWORD dwBtnSize = ::SendMessage( m_hwndToolBar, TB_GETBUTTONSIZE, 0, 0 );
-		DWORD dwRows = ::SendMessage( m_hwndToolBar, TB_GETROWS, 0, 0 );
-
-		// バンド情報を設定する
-		rbBand.cbSize = sizeof(REBARBANDINFO);
-		rbBand.fMask  = RBBIM_STYLE | RBBIM_CHILD | RBBIM_CHILDSIZE | RBBIM_SIZE;
-		rbBand.fStyle = RBBS_CHILDEDGE;
-		rbBand.hwndChild  = m_hwndToolBar;	// ツールバー
-		rbBand.cxMinChild = 0;
-		rbBand.cyMinChild = HIWORD(dwBtnSize) * dwRows;
-		rbBand.cx         = 250;
-
-		// バンドを追加する
-		::SendMessage( m_hwndReBar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rbBand );
-		::ShowWindow( m_hwndToolBar, SW_SHOW );
-	}
-
-	return;
-}
-
-void CEditWnd::DestroyToolBar( void )
-{
-	if( m_hwndToolBar )
-	{
-		if( m_hwndSearchBox )
-		{
-			if( m_fontSearchBox )
-			{
-				::DeleteObject( m_fontSearchBox );
-				m_fontSearchBox = NULL;
-			}
-
-			::DestroyWindow( m_hwndSearchBox );
-			m_hwndSearchBox = NULL;
-
-			m_nCurrentFocus = 0;
-		}
-
-		::DestroyWindow( m_hwndToolBar );
-		m_hwndToolBar = NULL;
-
-		//if( m_cTabWnd.m_hWnd ) ::UpdateWindow( m_cTabWnd.m_hWnd );
-		//if( m_CFuncKeyWnd.m_hWnd ) ::UpdateWindow( m_CFuncKeyWnd.m_hWnd );
-	}
-
-	// 2006.06.17 ryoji Rebar を破棄する
-	if( m_hwndReBar )
-	{
-		::DestroyWindow( m_hwndReBar );
-		m_hwndReBar = NULL;
-	}
-
-	return;
-}
 
 /*! ツールバーの配置処理
 	@date 2006.12.19 ryoji 新規作成
 */
 void CEditWnd::LayoutToolBar( void )
 {
-	if( m_pShareData->m_Common.m_bDispTOOLBAR ){	/* ツールバーを表示する */
-		if( NULL == m_hwndToolBar ){
-			CreateToolBar();
-		}
+	if( m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR ){	/* ツールバーを表示する */
+		m_cToolbar.CreateToolBar();
 	}else{
-		DestroyToolBar();
+		m_cToolbar.DestroyToolBar();
 	}
 }
 
@@ -963,14 +605,13 @@ void CEditWnd::LayoutToolBar( void )
 */
 void CEditWnd::LayoutStatusBar( void )
 {
-	if( m_pShareData->m_Common.m_bDispSTATUSBAR ){	/* ステータスバーを表示する */
-		if( NULL == m_hwndStatusBar ){
-			/* ステータスバー作成 */
-			CreateStatusBar();
-		}
-	}else{
+	if( m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR ){	/* ステータスバーを表示する */
+		/* ステータスバー作成 */
+		m_cStatusBar.CreateStatusBar();
+	}
+	else{
 		/* ステータスバー破棄 */
-		DestroyStatusBar();
+		m_cStatusBar.DestroyStatusBar();
 	}
 }
 
@@ -981,18 +622,18 @@ void CEditWnd::LayoutFuncKey( void )
 {
 	BOOL		bSizeBox;
 
-	if( m_pShareData->m_Common.m_bDispFUNCKEYWND ){	/* ファンクションキーを表示する */
-		if( NULL == m_CFuncKeyWnd.m_hWnd ){
-			if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
+	if( m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND ){	/* ファンクションキーを表示する */
+		if( NULL == m_CFuncKeyWnd.GetHwnd() ){
+			if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 				bSizeBox = FALSE;
 			}else{
 				bSizeBox = TRUE;
 				/* ステータスバーがあるときはサイズボックスを表示しない */
-				if( NULL != m_hwndStatusBar ){
+				if( m_cStatusBar.GetStatusHwnd() ){
 					bSizeBox = FALSE;
 				}
 			}
-			m_CFuncKeyWnd.Open( m_hInstance, m_hWnd, &m_cEditDoc, bSizeBox );
+			m_CFuncKeyWnd.Open( m_hInstance, GetHwnd(), &GetDocument(), bSizeBox );
 		}
 	}else{
 		m_CFuncKeyWnd.Close();
@@ -1004,9 +645,9 @@ void CEditWnd::LayoutFuncKey( void )
 */
 void CEditWnd::LayoutTabBar( void )
 {
-	if( m_pShareData->m_Common.m_bDispTabWnd ){	/* タブバーを表示する */
-		if( NULL == m_cTabWnd.m_hWnd ){
-			m_cTabWnd.Open( m_hInstance, m_hWnd );
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
+		if( NULL == m_cTabWnd.GetHwnd() ){
+			m_cTabWnd.Open( m_hInstance, GetHwnd() );
 		}
 	}else{
 		m_cTabWnd.Close();
@@ -1020,72 +661,66 @@ void CEditWnd::LayoutTabBar( void )
 void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 {
 	int nCmdShow = m_pPrintPreview? SW_HIDE: SW_SHOW;
-	HWND hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
+	HWND hwndToolBar = (NULL != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
 	if( NULL != hwndToolBar )
 		::ShowWindow( hwndToolBar, nCmdShow );
-	if( NULL != m_hwndStatusBar )
-		::ShowWindow( m_hwndStatusBar, nCmdShow );
-	if( NULL != m_CFuncKeyWnd.m_hWnd )
-		::ShowWindow( m_CFuncKeyWnd.m_hWnd, nCmdShow );
-	if( NULL != m_cTabWnd.m_hWnd )
-		::ShowWindow( m_cTabWnd.m_hWnd, nCmdShow );
+	if( m_cStatusBar.GetStatusHwnd() )
+		::ShowWindow( m_cStatusBar.GetStatusHwnd(), nCmdShow );
+	if( NULL != m_CFuncKeyWnd.GetHwnd() )
+		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), nCmdShow );
+	if( NULL != m_cTabWnd.GetHwnd() )
+		::ShowWindow( m_cTabWnd.GetHwnd(), nCmdShow );
 
 	if( bAdjust )
 	{
 		RECT		rc;
-		m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
-		::GetClientRect( m_hWnd, &rc );
-		::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
-		::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
+		m_cSplitterWnd.DoSplit( -1, -1 );
+		::GetClientRect( GetHwnd(), &rc );
+		::SendMessageAny( GetHwnd(), WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+		::RedrawWindow( GetHwnd(), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
 
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+		GetActiveView().SetIMECompFormPos();
 	}
 }
 
+static BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
+{
+	if(hwnd==NULL)return FALSE;
+	return ::IsDialogMessage(hwnd, msg);
+}
 
 //複数プロセス版
 /* メッセージループ */
+//2004.02.17 Moca GetMessageのエラーチェック
 void CEditWnd::MessageLoop( void )
 {
 	MSG	msg;
 	int ret;
-	
-	//2004.02.17 Moca GetMessageのエラーチェック
-	while ( NULL != m_hWnd && ( ret = GetMessage( &msg, NULL, 0, 0 ) ) ){
-		if( ret == -1 ){
-			break;
-		}
 
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-		if( m_pPrintPreview && NULL != m_pPrintPreview->GetPrintPreviewBarHANDLE() && ::IsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE(), &msg ) ){	/* 印刷プレビュー 操作バー */
-		}else
-		if( NULL != m_cEditDoc.m_cDlgFind.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgFind.m_hWnd, &msg ) ){	/* 「検索」ダイアログ */
-		}else
-		if( NULL != m_cEditDoc.m_cDlgFuncList.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgFuncList.m_hWnd, &msg ) ){	/* 「アウトライン」ダイアログ */
-		}else
-		if( NULL != m_cEditDoc.m_cDlgReplace.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgReplace.m_hWnd, &msg ) ){	/* 「置換」ダイアログ */
-		}else
-		if( NULL != m_cEditDoc.m_cDlgGrep.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgGrep.m_hWnd, &msg ) ){	/* 「Grep」ダイアログ */
-		}else
-		if( NULL != m_cEditDoc.m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cHokanMgr.m_hWnd, &msg ) ){	/* 「入力補完」 */
-		}else
-		if( NULL != m_hwndSearchBox && ::IsDialogMessage( m_hwndSearchBox, &msg ) ){	/* 「検索ボックス」 */
-			ProcSearchBox( &msg );
-		}else
-		{
-			if( NULL != m_pShareData->m_hAccel ){
-				if( TranslateAccelerator( msg.hwnd, m_pShareData->m_hAccel, &msg ) ){
-				}else{
-					TranslateMessage( &msg );
-					DispatchMessage( &msg );
-				}
-			}else{
-				TranslateMessage( &msg );
-				DispatchMessage( &msg );
-			}
+	while(GetHwnd())
+	{
+		//メッセージ取得
+		ret = GetMessage(&msg,NULL,0,0);
+		if(ret== 0)break; //WM_QUIT
+		if(ret==-1)break; //GetMessage失敗
+
+		if(0){}
+		//ダイアログメッセージ
+		else if( MyIsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE_Safe(),	&msg ) ){}	//!< 印刷プレビュー 操作バー
+		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
+		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
+		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
+		else if( MyIsDialogMessage( m_cDlgGrep.GetHwnd(),								&msg ) ){}	//!<「Grep」ダイアログ
+		else if( MyIsDialogMessage( m_cHokanMgr.GetHwnd(),								&msg ) ){}	//!<「入力補完」
+		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
+		//アクセラレータ
+		else if( m_pShareData->m_hAccel && TranslateAccelerator( msg.hwnd, m_pShareData->m_hAccel, &msg ) ){}
+		//通常メッセージ
+		else{
+			TranslateMessage( &msg );
+			DispatchMessage( &msg );
 		}
 	}
-	return;
 }
 
 
@@ -1099,15 +734,11 @@ LRESULT CEditWnd::DispatchEvent(
 	int					nRet;
 	int					idCtrl;
 	LPNMHDR				pnmh;
-	LPTOOLTIPTEXT		lptip;
 	int					nPane;
 	FileInfo*			pfi;
-	int					nCaretPosX;
-	int					nCaretPosY;
-	POINT*				ppoCaret;
 	LPHELPINFO			lphi;
-	const char*			pLine;
-	int					nLineLen;
+	const wchar_t*		pLine;
+	CLogicInt			nLineLen;
 
 	UINT				idCtl;	/* コントロールのID */
 	MEASUREITEMSTRUCT*	lpmis;
@@ -1117,15 +748,14 @@ LRESULT CEditWnd::DispatchEvent(
 	UINT				uItem;
 	UINT				fuFlags;
 	HMENU				hmenu;
-	const char*			pszItemStr;
 	LRESULT				lRes;
 
 	switch( uMsg ){
 	case WM_PAINTICON:
-//		MYTRACE( "WM_PAINTICON\n" );
+//		MYTRACE_A( "WM_PAINTICON\n" );
 		return 0;
 	case WM_ICONERASEBKGND:
-//		MYTRACE( "WM_ICONERASEBKGND\n" );
+//		MYTRACE_A( "WM_ICONERASEBKGND\n" );
 		return 0;
 	case WM_LBUTTONDOWN:
 		return OnLButtonDown( wParam, lParam );
@@ -1151,7 +781,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case WM_MENUSELECT:
-		if( NULL == m_hwndStatusBar ){
+		if( NULL == m_cStatusBar.GetStatusHwnd() ){
 			return 1;
 		}
 		uItem = (UINT) LOWORD(wParam);		// menu item or submenu index
@@ -1159,31 +789,33 @@ LRESULT CEditWnd::DispatchEvent(
 		hmenu = (HMENU) lParam;				// handle to menu clicked
 		{
 			/* メニュー機能のテキストをセット */
-			CMemory		cmemWork;
-			pszItemStr = "";
+			CNativeT	cmemWork;
 
 			/* 機能に対応するキー名の取得(複数) */
-			CMemory**	ppcAssignedKeyList;
+			CNativeT**	ppcAssignedKeyList;
 			int			nAssignedKeyNum;
 			int			j;
 			nAssignedKeyNum = CKeyBind::GetKeyStrList(
-				m_hInstance, m_pShareData->m_nKeyNameArrNum,
-				(KEYDATA*)m_pShareData->m_pKeyNameArr, &ppcAssignedKeyList, uItem
+				m_hInstance,
+				m_pShareData->m_nKeyNameArrNum,
+				(KEYDATA*)m_pShareData->m_pKeyNameArr,
+				&ppcAssignedKeyList,
+				uItem
 			);
 			if( 0 < nAssignedKeyNum ){
 				for( j = 0; j < nAssignedKeyNum; ++j ){
 					if( j > 0 ){
-						cmemWork.AppendSz( " , " );
+						cmemWork.AppendString(_T(" , L"));
 					}
-					cmemWork.Append( ppcAssignedKeyList[j] );
+					cmemWork.AppendNativeData( *ppcAssignedKeyList[j] );
 					delete ppcAssignedKeyList[j];
 				}
 				delete [] ppcAssignedKeyList;
 			}
-			pszItemStr = cmemWork.GetPtr();
 
+			const TCHAR* pszItemStr = cmemWork.GetStringPtr();
 
-			::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)pszItemStr );
+			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, pszItemStr);
 
 
 		}
@@ -1197,7 +829,7 @@ LRESULT CEditWnd::DispatchEvent(
 			if( 5 == lpdis->itemID ){ // 2003.08.26 Moca idがずれて作画されなかった
 				int	nColor;
 				if( m_pShareData->m_bRecordingKeyMacro	/* キーボードマクロの記録中 */
-				 && m_pShareData->m_hwndRecordingKeyMacro == m_hWnd	/* キーボードマクロを記録中のウィンドウ */
+				 && m_pShareData->m_hwndRecordingKeyMacro == GetHwnd()	/* キーボードマクロを記録中のウィンドウ */
 				){
 					nColor = COLOR_BTNTEXT;
 				}else{
@@ -1210,9 +842,9 @@ LRESULT CEditWnd::DispatchEvent(
 				TEXTMETRIC tm;
 				::GetTextMetrics( lpdis->hDC, &tm );
 				int y = ( lpdis->rcItem.bottom - lpdis->rcItem.top - tm.tmHeight + 1 ) / 2 + lpdis->rcItem.top;
-				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, "REC", lstrlen( "REC" ) );
+				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, _T("REC"), _tcslen( _T("REC") ) );
 				if( COLOR_BTNTEXT == nColor ){
-					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, "REC", lstrlen( "REC" ) );
+					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, _T("REC"), _tcslen( _T("REC") ) );
 				}
 			}
 			return 0;
@@ -1234,7 +866,7 @@ LRESULT CEditWnd::DispatchEvent(
 //			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
 
 
-//			MYTRACE( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
+//			MYTRACE_A( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
 			if( -1 == nItemWidth ){
@@ -1253,16 +885,16 @@ LRESULT CEditWnd::DispatchEvent(
 		return OnPaint( hwnd, uMsg, wParam, lParam );
 
 	case WM_PASTE:
-		return m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
+		return GetActiveView().GetCommander().HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
 
 	case WM_COPY:
-		return m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
+		return GetActiveView().GetCommander().HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
 
 	case WM_HELP:
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			OnHelp_MenuItem( hwnd, lphi->iCtrlId );
+			CEditApp::Instance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
 			break;
 		}
 		return TRUE;
@@ -1277,15 +909,15 @@ LRESULT CEditWnd::DispatchEvent(
 			// ・タブまとめ表示の場合はこれで編集ウィンドウが非表示→表示に切替わるのでリスト移動処理で画面が一時的に消えることもなくなる
 			//   （まとめ時は非アクティブタブのポップアップを非表示にしたのでそこからアクティブ化されることは無くなった）	// 2007.10.22 ryoji
 			HWND hwndActive = ::GetActiveWindow();
-			if( hwndActive != m_hWnd ){
-				ActivateFrameWindow( m_hWnd );		// 編集ウィンドウをアクティブ化
+			if( hwndActive != GetHwnd() ){
+				ActivateFrameWindow( GetHwnd() );		// 編集ウィンドウをアクティブ化
 				::SetActiveWindow( hwndActive );	// アクティブウィンドウを元に戻す
 			}
-			CShareData::getInstance()->AddEditWndList( m_hWnd );	// リスト移動処理
+			CShareData::getInstance()->AddEditWndList( GetHwnd() );	// リスト移動処理
 		}
 
 		// キャプション設定、タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
-		m_cEditDoc.SetParentCaption();
+		GetDocument().SetParentCaption();
 		m_CFuncKeyWnd.Timer_ONOFF( m_bIsActiveApp ); // 20060126 aroka
 		this->Timer_ONOFF( m_bIsActiveApp ); // 20060128 aroka
 
@@ -1310,10 +942,10 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_SIZE:
-//		MYTRACE( "WM_SIZE\n" );
+//		MYTRACE_A( "WM_SIZE\n" );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
-			m_cEditDoc.SetParentCaption();
+			GetDocument().SetParentCaption();
 		}
 		return OnSize( wParam, lParam );
 
@@ -1321,13 +953,13 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_MOVE:
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowPos ){
-			if( !::IsZoomed( m_hWnd ) && !::IsIconic( m_hWnd ) ){
+		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_nSaveWindowPos ){
+			if( !::IsZoomed( GetHwnd() ) && !::IsIconic( GetHwnd() ) ){
 				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
 				RECT rcWork;
 				::GetWindowRect( hwnd, &rcWork);
-				m_pShareData->m_Common.m_nWinPosX = rcWork.left;
-				m_pShareData->m_Common.m_nWinPosY = rcWork.top;
+				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWork.left;
+				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWork.top;
 			}
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
@@ -1350,7 +982,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_IME_COMPOSITION:
 		if ( lParam & GCS_RESULTSTR ) {
 			/* メッセージの配送 */
-			return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+			return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 		}else{
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
@@ -1362,24 +994,24 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_ENTERMENULOOP:
 	case MYWM_IME_REQUEST:   /*  再変換対応 by minfu 2002.03.27  */ // 20020331 aroka
 		/* メッセージの配送 */
-		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_EXITMENULOOP:
-//		MYTRACE( "WM_EXITMENULOOP\n" );
-		if( NULL != m_hwndStatusBar ){
-			::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
+//		MYTRACE_A( "WM_EXITMENULOOP\n" );
+		if( NULL != m_cStatusBar.GetStatusHwnd() ){
+			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
 		}
 
 		/* メッセージの配送 */
-		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 	case WM_SETFOCUS:
-//		MYTRACE( "WM_SETFOCUS\n" );
+//		MYTRACE_A( "WM_SETFOCUS\n" );
 
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
 
 		/* メッセージの配送 */
-		lRes = m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+		lRes = Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		/* 印刷プレビューモードのときは、キー操作は全部PrintPreviewBarへ転送 */
@@ -1388,36 +1020,26 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 
 		//検索ボックスを更新
-		if( m_hwndSearchBox )
-		{
-			int	i;
-			::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-			for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; i++ )
-			{
-				::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
-			}
-			::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
-		}
+		m_cToolbar.AcceptSharedSearchKey();
 		
 		return lRes;
-
 
 	case WM_NOTIFY:
 		idCtrl = (int) wParam;
 		pnmh = (LPNMHDR) lParam;
 		//	From Here Feb. 15, 2004 genta 
 		//	ステータスバーのダブルクリックでモード切替ができるようにする
-		if( m_hwndStatusBar && pnmh->hwndFrom == m_hwndStatusBar ){
+		if( m_cStatusBar.GetStatusHwnd() && pnmh->hwndFrom == m_cStatusBar.GetStatusHwnd() ){
 			if( pnmh->code == NM_DBLCLK ){
 				LPNMMOUSE mp = (LPNMMOUSE) lParam;
 				if( mp->dwItemSpec == 6 ){	//	上書き/挿入
-					m_cEditDoc.HandleCommand( F_CHGMOD_INS );
+					GetDocument().HandleCommand( F_CHGMOD_INS );
 				}
 				else if( mp->dwItemSpec == 5 ){	//	マクロの記録開始・終了
-					m_cEditDoc.HandleCommand( F_RECKEYMACRO );
+					GetDocument().HandleCommand( F_RECKEYMACRO );
 				}
 				else if( mp->dwItemSpec == 1 ){	//	桁位置→行番号ジャンプ
-					m_cEditDoc.HandleCommand( F_JUMP_DIALOG );
+					GetDocument().HandleCommand( F_JUMP_DIALOG );
 				}
 			}
 			else if( pnmh->code == NM_RCLICK ){
@@ -1426,16 +1048,16 @@ LRESULT CEditWnd::DispatchEvent(
 					m_CMenuDrawer.ResetContents();
 					HMENU hMenuPopUp = ::CreatePopupMenu();
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, 
-						"入力改行コード指定(&CRLF)" ); // 入力改行コード指定(CRLF)
+						_T("入力改行コード指定(&CRLF)") ); // 入力改行コード指定(CRLF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF,
-						"入力改行コード指定(&LF)" ); // 入力改行コード指定(LF)
+						_T("入力改行コード指定(&LF)") ); // 入力改行コード指定(LF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR,
-						"入力改行コード指定(C&R)" ); // 入力改行コード指定(CR)
+						_T("入力改行コード指定(C&R)") ); // 入力改行コード指定(CR)
 						
 					//	mp->ptはステータスバー内部の座標なので，スクリーン座標への変換が必要
 					POINT	po = mp->pt;
-					::ClientToScreen( m_hwndStatusBar, &po );
-					int nId = ::TrackPopupMenu(
+					::ClientToScreen( m_cStatusBar.GetStatusHwnd(), &po );
+					EFunctionCode nId = (EFunctionCode)::TrackPopupMenu(
 						hMenuPopUp,
 						TPM_CENTERALIGN
 						| TPM_BOTTOMALIGN
@@ -1445,11 +1067,11 @@ LRESULT CEditWnd::DispatchEvent(
 						po.x,
 						po.y,
 						0,
-						m_hWnd,
+						GetHwnd(),
 						NULL
 					);
 					::DestroyMenu( hMenuPopUp );
-					m_cEditDoc.HandleCommand( nId );
+					GetDocument().HandleCommand( nId );
 				}
 			}
 			return 0L;
@@ -1457,39 +1079,13 @@ LRESULT CEditWnd::DispatchEvent(
 		//	To Here Feb. 15, 2004 genta 
 
 		switch( pnmh->code ){
+		// 2007.09.08 kobake TTN_NEEDTEXTの処理をA版とW版に分けて明示的に処理するようにしました。
+		//                   ※テキストが80文字を超えそうならTOOLTIPTEXT::lpszTextを利用してください。
 		case TTN_NEEDTEXT:
-			lptip = (LPTOOLTIPTEXT)pnmh;
 			{
-				/* ツールバーのツールチップのテキストをセット */
-				CMemory**	ppcAssignedKeyList;
-				int			nAssignedKeyNum;
-				int			j;
-				char*		pszKey;
-				char		szLabel[1024];
-
-
-				// From Here Oct. 15, 2001 genta
-				// 機能文字列の取得にLookupを使うように変更
-				if( !m_cEditDoc.m_cFuncLookup.Funccode2Name( lptip->hdr.idFrom, szLabel, 1024 )){
-					szLabel[0] = '\0';
-				}
-				// To Here Oct. 15, 2001 genta
-				/* 機能に対応するキー名の取得(複数) */
-				nAssignedKeyNum = CKeyBind::GetKeyStrList(
-					m_hInstance, m_pShareData->m_nKeyNameArrNum,
-					(KEYDATA*)m_pShareData->m_pKeyNameArr, &ppcAssignedKeyList, lptip->hdr.idFrom
-				);
-				if( 0 < nAssignedKeyNum ){
-					for( j = 0; j < nAssignedKeyNum; ++j ){
-						strcat( szLabel, "\n        " );
-						pszKey = ppcAssignedKeyList[j]->GetPtr();
-						strcat( szLabel, pszKey );
-						delete ppcAssignedKeyList[j];
-					}
-					delete [] ppcAssignedKeyList;
-				}
-				lptip->hinst = NULL;
-				lptip->lpszText	= szLabel;
+				//ツールチップテキスト取得、設定
+				LPTOOLTIPTEXT lptip = (LPTOOLTIPTEXT)pnmh;
+				GetTooltipText(lptip->szText, _countof(lptip->szText), lptip->hdr.idFrom);
 			}
 			break;
 
@@ -1502,9 +1098,9 @@ LRESULT CEditWnd::DispatchEvent(
 			return FALSE;
 		//	From Here Jul. 21, 2003 genta
 		case NM_CUSTOMDRAW:
-			if( pnmh->hwndFrom == m_hwndToolBar ){
+			if( pnmh->hwndFrom == m_cToolbar.GetToolbarHwnd() ){
 				//	ツールバーのOwner Draw
-				return ToolBarOwnerDraw( (LPNMCUSTOMDRAW)pnmh );
+				return m_cToolbar.ToolBarOwnerDraw( (LPNMCUSTOMDRAW)pnmh );
 			}
 			break;
 		//	To Here Jul. 21, 2003 genta
@@ -1533,29 +1129,33 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return 0L;
 	case WM_DESTROY:
+		RELPRINT_A("CEditWnd WM_DESTROY");
+		
 		if( m_pShareData->m_bRecordingKeyMacro ){					/* キーボードマクロの記録中 */
-			if( m_pShareData->m_hwndRecordingKeyMacro == m_hWnd ){	/* キーボードマクロを記録中のウィンドウ */
+			if( m_pShareData->m_hwndRecordingKeyMacro == GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				m_pShareData->m_bRecordingKeyMacro = FALSE;			/* キーボードマクロの記録中 */
 				m_pShareData->m_hwndRecordingKeyMacro = NULL;		/* キーボードマクロを記録中のウィンドウ */
 			}
 		}
 
 		/* タイマーを削除 */
-		::KillTimer( m_hWnd, IDT_TOOLBAR );
+		::KillTimer( GetHwnd(), IDT_TOOLBAR );
 
 		/* ドロップされたファイルを受け入れるのを解除 */
 		::DragAcceptFiles( hwnd, FALSE );
-		/* 編集ウィンドウリストからの削除 */
-		CShareData::getInstance()->DeleteEditWndList( m_hWnd );
 
-		if( m_pShareData->m_hwndDebug == m_hWnd ){
+		/* 編集ウィンドウリストからの削除 */
+		CShareData::getInstance()->DeleteEditWndList( GetHwnd() );
+
+		if( m_pShareData->m_hwndDebug == GetHwnd() ){
 			m_pShareData->m_hwndDebug = NULL;
 		}
 		m_hWnd = NULL;
 
 
 		/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
-		::PostMessage( m_pShareData->m_hwndTray, MYWM_DELETE_ME, 0, 0 );
+		RELPRINT_A("post MYWM_DELETE_ME to 0x%08X", m_pShareData->m_hwndTray);
+		::PostMessageAny( m_pShareData->m_hwndTray, MYWM_DELETE_ME, 0, 0 );
 
 		/* Windows にスレッドの終了を要求します */
 		::PostQuitMessage( 0 );
@@ -1566,9 +1166,9 @@ LRESULT CEditWnd::DispatchEvent(
 		// 2006.06.17 ryoji
 		// ビジュアルスタイル／クラシックスタイルが切り替わったらツールバーを再作成する
 		// （ビジュアルスタイル: Rebar 有り、クラシックスタイル: Rebar 無し）
-		if( NULL != m_hwndToolBar ){
-			if( IsVisualStyle() == (NULL == m_hwndReBar) ){
-				DestroyToolBar();
+		if( m_cToolbar.GetToolbarHwnd() ){
+			if( IsVisualStyle() == (NULL == m_cToolbar.GetRebarHwnd()) ){
+				m_cToolbar.DestroyToolBar();
 				LayoutToolBar();
 				EndLayoutBars();
 			}
@@ -1586,17 +1186,17 @@ LRESULT CEditWnd::DispatchEvent(
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 			if( !(BOOL)wParam ){	// 全終了要求でない場合
 				// タブまとめ表示で(無題)を残す指定の場合、残ウィンドウが１個なら新規エディタを起動して終了する
-				if( m_pShareData->m_Common.m_bDispTabWnd &&
-					!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
-					m_pShareData->m_Common.m_bTab_RetainEmptyWin
+				if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
+					!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
+					m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin
 					){
 					// 自グループ内の残ウィンドウ数を調べる	// 2007.06.20 ryoji
-					int nGroup = CShareData::getInstance()->GetGroupId( m_hWnd );
+					int nGroup = CShareData::getInstance()->GetGroupId( GetHwnd() );
 					if( 1 == CShareData::getInstance()->GetEditorWindowsNum( nGroup ) ){
-						EditNode* pEditNode = CShareData::getInstance()->GetEditNode( m_hWnd );
+						EditNode* pEditNode = CShareData::getInstance()->GetEditNode( GetHwnd() );
 						if( pEditNode )
 							pEditNode->m_bClosing = TRUE;	// 自分はタブ表示してもらわなくていい
-						CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, TRUE );
+						CControlTray::OpenNewEditor( m_hInstance, GetHwnd(), NULL, CODE_DEFAULT, FALSE, TRUE );
 					}
 				}
 			}
@@ -1610,13 +1210,13 @@ LRESULT CEditWnd::DispatchEvent(
 		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 		/* 編集ファイル情報を格納 */
-		m_cEditDoc.SetFileInfo( pfi );
+		GetDocument().GetFileInfo( pfi );
 		return 0L;
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
 // Oct 10, 2000 ao
 /* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
-		DestroyToolBar();
+		m_cToolbar.DestroyToolBar();
 		LayoutToolBar();
 // Oct 10, 2000 ao ここまで
 
@@ -1635,14 +1235,14 @@ LRESULT CEditWnd::DispatchEvent(
 			int i;
 			bool b1;
 			bool b2;
-			b1 = (m_pShareData->m_Common.m_bScrollBarHorz == FALSE);
+			b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
 			for( i = 0; i < 4; i++ )
 			{
-				b2 = (m_cEditDoc.m_cEditViewArr[i].m_hwndHScrollBar == NULL);
+				b2 = (m_pcEditViewArr[i]->m_hwndHScrollBar == NULL);
 				if( b1 != b2 )		/* 水平スクロールバーを使う */
 				{
-					m_cEditDoc.m_cEditViewArr[i].DestroyScrollBar();
-					m_cEditDoc.m_cEditViewArr[i].CreateScrollBar();
+					m_pcEditViewArr[i]->DestroyScrollBar();
+					m_pcEditViewArr[i]->CreateScrollBar();
 				}
 			}
 		}
@@ -1650,69 +1250,60 @@ LRESULT CEditWnd::DispatchEvent(
 		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 		EndLayoutBars();
 
-		if( m_pShareData->m_Common.m_bDispTabWnd )
+		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
 		{
 			// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある
 			m_cTabWnd.Refresh( FALSE );
 		}
-		if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			if( CShareData::getInstance()->IsTopEditWnd( m_hWnd ) )
+			if( CShareData::getInstance()->IsTopEditWnd( GetHwnd() ) )
 			{
-				if( !::IsWindowVisible( m_hWnd ) )
+				if( !::IsWindowVisible( GetHwnd() ) )
 				{
-					// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
-					::SetWindowPos( m_hWnd, NULL,0,0,0,0,
+					// ::ShowWindow( GetHwnd(), SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+					::SetWindowPos( GetHwnd(), NULL,0,0,0,0,
 									SWP_SHOWWINDOW | SWP_NOACTIVATE
 									| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
 
 					// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
-					WindowTopMost( ((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
+					WindowTopMost( ((DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
 				}
 			}
 			else
 			{
-				if( ::IsWindowVisible( m_hWnd ) )
+				if( ::IsWindowVisible( GetHwnd() ) )
 				{
-					::ShowWindow( m_hWnd, SW_HIDE );
+					::ShowWindow( GetHwnd(), SW_HIDE );
 				}
 			}
 		}
 		else
 		{
-			if( !::IsWindowVisible( m_hWnd ) )
+			if( !::IsWindowVisible( GetHwnd() ) )
 			{
-				// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
-				::SetWindowPos( m_hWnd, NULL,0,0,0,0,
+				// ::ShowWindow( GetHwnd(), SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+				::SetWindowPos( GetHwnd(), NULL,0,0,0,0,
 								SWP_SHOWWINDOW | SWP_NOACTIVATE
 								| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
 			}
 		}
 
 		//	Aug, 21, 2000 genta
-		m_cEditDoc.ReloadAutoSaveParam();
+		GetDocument().ReloadAutoSaveParam();
 
-//1999.09.03 なーんかうまく動かんので、やめた。運用でカバーしてほしい。
-//
-//ファンクションキー窓位置変更したとき、サイズボックスの位置を変更
-//		m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1);
-//ファンクションキー窓位置変更したとき、ファンクションキー窓位置変更
-//		::GetWindowRect( hwnd, &rc );
-//		::SetWindowPos( hwnd, 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top + 1, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-//		::SetWindowPos( hwnd, 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-
-		m_cEditDoc.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
-		m_cEditDoc.OnChangeSetting();	/* ビューに設定変更を反映させる */
+		GetDocument().SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
+		GetDocument().OnChangeSetting();	/* ビューに設定変更を反映させる */
 		return 0L;
 	case MYWM_SETACTIVEPANE:
 		if( -1 == (int)wParam ){
 			if( 0 == lParam ){
-				nPane = m_cEditDoc.m_cSplitterWnd.GetFirstPane();
+				nPane = m_cSplitterWnd.GetFirstPane();
 			}else{
-				nPane = m_cEditDoc.m_cSplitterWnd.GetLastPane();
+				nPane = m_cSplitterWnd.GetLastPane();
 			}
 		}
-		m_cEditDoc.SetActivePane( nPane );
+		this->SetActivePane( nPane );
 		return 0L;
 
 
@@ -1723,13 +1314,12 @@ LRESULT CEditWnd::DispatchEvent(
 			//	bit 1 (MASK 2): 0: bit 0の設定に従う．1:現在の選択ロックs状態を継続
 			//	既存の実装では どちらも0なので強制解除と解釈される．
 			//	呼び出し時はe_PM_SETCARETPOS_SELECTSTATEの値を使うこと．
-			int bSelect = lParam & 1;
+			bool bSelect = (0!= (lParam & 1));
 			if( lParam & 2 ){
 				// 現在の状態をKEEP
-				bSelect = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSelectingLock;
+				bSelect = GetActiveView().GetSelectionInfo().m_bSelectingLock;
 			}
 			
-			ppoCaret = (POINT*)m_pShareData->m_szWork;
 			//	2006.07.09 genta 強制解除しない
 			/*
 			カーソル位置変換
@@ -1737,11 +1327,11 @@ LRESULT CEditWnd::DispatchEvent(
 			→
 			 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
-			m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
-				ppoCaret->x,
-				ppoCaret->y,
-				&nCaretPosX,
-				&nCaretPosY
+			CLogicPoint* ppoCaret = m_pShareData->GetWorkBuffer<CLogicPoint>();
+			CLayoutPoint ptCaretPos;
+			GetDocument().m_cLayoutMgr.LogicToLayout(
+				*ppoCaret,
+				&ptCaretPos
 			);
 			// 改行の真ん中にカーソルが来ないように	// 2007.08.22 ryoji
 			// Note. もとが改行単位の桁位置なのでレイアウト折り返しの桁位置を超えることはない。
@@ -1749,61 +1339,70 @@ LRESULT CEditWnd::DispatchEvent(
 			//       2007.08.22現在ではアウトライン解析ダイアログから桁位置0で呼び出される
 			//       パターンしかないので実用上特に問題は無い。
 			if( !bSelect ){
-				const CDocLine *pTmpDocLine = m_cEditDoc.m_cDocLineMgr.GetLineInfo( ppoCaret->y );
+				const CDocLine *pTmpDocLine = GetDocument().m_cDocLineMgr.GetLineInfo( ppoCaret->GetY2() );
 				if( pTmpDocLine ){
-					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) nCaretPosX--;
+					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) ptCaretPos.x--;
 				}
 			}
 			//	2006.07.09 genta 選択範囲を考慮して移動
 			//	MoveCursorの位置調整機能があるので，最終行以降への
 			//	移動指示の調整もMoveCursorにまかせる
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
+			GetActiveView().MoveCursorSelecting( ptCaretPos, bSelect, _CARETMARGINRATE / 3 );
 		}
 		return 0L;
 
 
 	case MYWM_GETCARETPOS:	/* カーソル位置取得要求 */
-		ppoCaret = (POINT*)m_pShareData->m_szWork;
 		/*
 		カーソル位置変換
 		 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 		→
 		物理位置(行頭からのバイト数、折り返し無し行位置)
 		*/
-		m_cEditDoc.m_cLayoutMgr.CaretPos_Log2Phys(
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX,
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY,
-			(int*)&ppoCaret->x,
-			(int*)&ppoCaret->y
-		);
+		{
+			CLogicPoint* ppoCaret = m_pShareData->GetWorkBuffer<CLogicPoint>();
+			GetDocument().m_cLayoutMgr.LayoutToLogic(
+				GetActiveView().GetCaret().GetCaretLayoutPos(),
+				ppoCaret
+			);
+		}
 		return 0L;
 
 	case MYWM_GETLINEDATA:	/* 行(改行単位)データの要求 */
-		pLine = m_cEditDoc.m_cDocLineMgr.GetLineStr( (int)wParam, &nLineLen );
+		pLine = GetDocument().m_cDocLineMgr.GetLineStr( CLogicInt(wParam), &nLineLen );
 		if( NULL == pLine ){
 			return 0;
 		}
-		if( nLineLen > sizeof( m_pShareData->m_szWork ) ){
-			memcpy( m_pShareData->m_szWork, pLine, sizeof( m_pShareData->m_szWork ) );
+		if( nLineLen > (int)m_pShareData->GetWorkBufferCount<EDIT_CHAR>() ){
+			auto_memcpy( m_pShareData->GetWorkBuffer<EDIT_CHAR>(), pLine, m_pShareData->GetWorkBufferCount<EDIT_CHAR>() );
 		}else{
-			memcpy( m_pShareData->m_szWork, pLine, nLineLen );
+			auto_memcpy( m_pShareData->GetWorkBuffer<EDIT_CHAR>(), pLine, nLineLen );
 		}
 		return nLineLen;
 
 
 	case MYWM_ADDSTRING:
-//		MYTRACE( "MYWM_ADDSTRING[%s]\n", m_pShareData->m_szWork );
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, TRUE, (LPARAM)m_pShareData->m_szWork, (LPARAM)lstrlen( m_pShareData->m_szWork ), 0, 0 );
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
-		return 0L;
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-	case MYWM_SETREFERER:
-		ppoCaret = (POINT*)m_pShareData->m_szWork;
+		{
+			EDIT_CHAR* pWork = m_pShareData->GetWorkBuffer<EDIT_CHAR>();
 
-		m_cEditDoc.SetReferer( (HWND)wParam, ppoCaret->x, ppoCaret->y );
+			GetActiveView().GetCommander().HandleCommand(
+				F_ADDTAIL_W,
+				TRUE,
+				(LPARAM)pWork,
+				(LPARAM)wcslen( pWork ),
+				0,
+				0
+			);
+			GetActiveView().GetCommander().HandleCommand(
+				F_GOFILEEND,
+				TRUE,
+				0,
+				0,
+				0,
+				0
+			);
+		}
 		return 0L;
-#endif
 
 	//タブウインドウ	//@@@ 2003.05.31 MIK
 	case MYWM_TAB_WINDOW_NOTIFY:
@@ -1812,7 +1411,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	//バーの表示・非表示	//@@@ 2003.06.10 MIK
 	case MYWM_BAR_CHANGE_NOTIFY:
-		if( m_hWnd != (HWND)lParam )
+		if( GetHwnd() != (HWND)lParam )
 		{
 			switch( wParam )
 			{
@@ -1824,10 +1423,10 @@ LRESULT CEditWnd::DispatchEvent(
 				break;
 			case MYBCN_TAB:
 				LayoutTabBar();		// 2006.12.19 ryoji
-				if( m_pShareData->m_Common.m_bDispTabWnd
-					&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+				if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+					&& !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 				{
-					::ShowWindow(m_hWnd, SW_HIDE);
+					::ShowWindow(GetHwnd(), SW_HIDE);
 				}
 				else
 				{
@@ -1857,7 +1456,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
 		if( wParam == IMN_SETCONVERSIONMODE || wParam == IMN_SETOPENSTATUS){
-			m_cEditDoc.ActiveView().ShowEditCaret();
+			this->GetActiveView().GetCaret().ShowEditCaret();
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
@@ -1873,10 +1472,10 @@ LRESULT CEditWnd::DispatchEvent(
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
 		// タイマーを使用してタイトルの変更を遅延する
 		if( m_pShareData->m_bEditWndChanging ){
-			delete []m_pszLastCaption;
-			m_pszLastCaption = new TCHAR[ ::lstrlen((LPCTSTR)lParam) + 1 ];
-			::lstrcpy( m_pszLastCaption, (LPCTSTR)lParam );	// 変更後のタイトルを記憶しておく
-			::SetTimer( m_hWnd, IDT_CAPTION, 50, NULL );
+			delete[] m_pszLastCaption;
+			m_pszLastCaption = new TCHAR[ ::_tcslen((LPCTSTR)lParam) + 1 ];
+			::_tcscpy( m_pszLastCaption, (LPCTSTR)lParam );	// 変更後のタイトルを記憶しておく
+			::SetTimer( GetHwnd(), IDT_CAPTION, 50, NULL );
 			return 0L;
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -1889,7 +1488,7 @@ LRESULT CEditWnd::DispatchEvent(
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
 		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
-			return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+			return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 		}
 // >> by aroka
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -1904,16 +1503,16 @@ int	CEditWnd::OnClose( void )
 {
 	/* ウィンドウをアクティブにする */
 	/* アクティブにする */
-//	ActivateFrameWindow( m_hWnd );	//削除(必要ならOnFileClose内で)	@@@ 2003.06.25 MIK
-//	if( ::IsIconic( m_hWnd ) ){
-//		::ShowWindow( m_hWnd, SW_RESTORE );
+//	ActivateFrameWindow( GetHwnd() );	//削除(必要ならOnFileClose内で)	@@@ 2003.06.25 MIK
+//	if( ::IsIconic( GetHwnd() ) ){
+//		::ShowWindow( GetHwnd(), SW_RESTORE );
 //	}else{
-//		::ShowWindow( m_hWnd, SW_SHOW );
+//		::ShowWindow( GetHwnd(), SW_SHOW );
 //	}
-//	::SetForegroundWindow( m_hWnd );
-//	::SetActiveWindow( m_hWnd );
+//	::SetForegroundWindow( GetHwnd() );
+//	::SetActiveWindow( GetHwnd() );
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	int nRet = m_cEditDoc.OnFileClose();
+	int nRet = GetDocument().OnFileClose();
 	if( !nRet ) return nRet;
 
 	// 2005.09.01 ryoji タブまとめ表示の場合は次のウィンドウを前面に（終了時のウィンドウちらつきを抑制）
@@ -1930,7 +1529,7 @@ int	CEditWnd::OnClose( void )
 	{
 		for( i = 0; i < nCount; i++ )
 		{
-			if( p[ i ].m_hWnd == m_hWnd )
+			if( p[ i ].GetHwnd() == GetHwnd() )
 				break;
 		}
 		if( i < nCount )
@@ -1950,14 +1549,14 @@ int	CEditWnd::OnClose( void )
 			}
 			if( j != i )
 			{
-				HWND hwnd = p[ j ].m_hWnd;
+				HWND hwnd = p[ j ].GetHwnd();
 				{
 					// 2006.01.28 ryoji
 					// タブまとめ表示でこの画面が非表示から表示に変わってすぐ閉じる場合(タブの中クリック時等)、
 					// 以前のウィンドウが消えるよりも先に一気にここまで処理が進んでしまうと
 					// あとで画面がちらつくので、以前のウィンドウが消えるのをちょっとだけ待つ
-					if( m_pShareData->m_Common.m_bDispTabWnd
-						&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+					if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+						&& !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 					{
 						int iWait = 0;
 						while( ::IsWindowVisible( hwnd ) && iWait++ < 20 )
@@ -1983,7 +1582,7 @@ int	CEditWnd::OnClose( void )
 
 void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
-//	MYTRACE( "CEditWnd::OnCommand()\n" );
+//	MYTRACE_A( "CEditWnd::OnCommand()\n" );
 
 	int				nFuncCode;
 	HWND			hwndWork;
@@ -1995,38 +1594,32 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		switch( wID ){
 		case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
 			/* サクラエディタの全終了 */
-			CEditApp::TerminateApplication( m_hWnd );	// 2006.12.25 ryoji 引数追加
+			CControlTray::TerminateApplication( GetHwnd() );	// 2006.12.25 ryoji 引数追加
 			break;
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 		case F_HELP_CONTENTS:
 			/* ヘルプ目次 */
 			{
-				char	szHelp[_MAX_PATH + 1];
-				/* ヘルプファイルのフルパスを返す */
-				::GetHelpFilePath( szHelp );
-				ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
+				ShowWinHelpContents( GetHwnd(), CEditApp::Instance()->GetHelpFilePath() );	//	目次を表示する
 			}
 			break;
 		case F_HELP_SEARCH:
 			/* ヘルプキーワード検索 */
 			{
-				char	szHelp[_MAX_PATH + 1];
-				/* ヘルプファイルのフルパスを返す */
-				::GetHelpFilePath( szHelp );
-				MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+				MyWinHelp( GetHwnd(), CEditApp::Instance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 			}
 			break;
 		case F_ABOUT:	//Dec. 25, 2000 JEPRO F_に変更
 			/* バージョン情報 */
 			{
 				CDlgAbout cDlgAbout;
-				cDlgAbout.DoModal( m_hInstance, m_hWnd );
+				cDlgAbout.DoModal( m_hInstance, GetHwnd() );
 			}
 			break;
 		default:
 			if( wID - IDM_SELWINDOW >= 0 &&
 				wID - IDM_SELWINDOW < m_pShareData->m_nEditArrNum ){
-				hwndWork = m_pShareData->m_pEditArr[wID - IDM_SELWINDOW].m_hWnd;
+				hwndWork = m_pShareData->m_pEditArr[wID - IDM_SELWINDOW].GetHwnd();
 				
 				/* アクティブにする */
 				ActivateFrameWindow( hwndWork );
@@ -2040,7 +1633,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				FileInfo checkFileInfo;
 				cMRU.GetFileInfo(wID - IDM_SELMRU, &checkFileInfo);
 				//	Oct.  9, 2004 genta 共通関数化
-				m_cEditDoc.OpenFile( checkFileInfo.m_szPath, checkFileInfo.m_nCharCode);
+				GetDocument().OpenFile( checkFileInfo.m_szPath, checkFileInfo.m_nCharCode);
 
 			}else
 			if( wID - IDM_SELOPENFOLDER >= 0 &&
@@ -2053,24 +1646,24 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					NetConnect( cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER ) );
 
 					/* 「ファイルを開く」ダイアログ */
-					int nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-					BOOL bReadOnly = FALSE;
-					char		szPath[_MAX_PATH + 3];
-					szPath[0] = '\0';
-					if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
+					ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
+					bool bReadOnly = false;
+					TCHAR		szPath[_MAX_PATH + 3];
+					szPath[0] = _T('\0');
+					if( !GetDocument().OpenFileDialog( GetHwnd(), cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
 						return;
 					}
 					//	Oct.  9, 2004 genta 共通関数化
-					m_cEditDoc.OpenFile( szPath, nCharCode, bReadOnly );
+					GetDocument().OpenFile( szPath, nCharCode, bReadOnly );
 				}
 			}else{
 				//ビューにフォーカスを移動しておく
 				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
-					::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+					::SetFocus( GetActiveView().GetHwnd() );
 
 				/* コマンドコードによる処理振り分け */
 				//	May 19, 2006 genta 上位ビットを渡す
-				m_cEditDoc.HandleCommand( MAKELONG( wID, wNotifyCode ));
+				GetDocument().HandleCommand( (EFunctionCode)MAKELONG( wID, wNotifyCode ));
 			}
 			break;
 		}
@@ -2079,38 +1672,37 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	case 1:
 		//ビューにフォーカスを移動しておく
 		if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
-			::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+			::SetFocus( GetActiveView().GetHwnd() );
 
 		nFuncCode = CKeyBind::GetFuncCode(
 			wID,
 			m_pShareData->m_nKeyNameArrNum,
 			m_pShareData->m_pKeyNameArr
 		);
-//		MYTRACE( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
-		m_cEditDoc.HandleCommand( MAKELONG( nFuncCode, wNotifyCode ) );
+//		MYTRACE_A( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
+		GetDocument().HandleCommand( (EFunctionCode)MAKELONG( nFuncCode, wNotifyCode ) );
 		break;
 
 	case CBN_SETFOCUS:
-		if( NULL != m_hwndSearchBox && hwndCtl == m_hwndSearchBox )
+		if( NULL != m_cToolbar.GetSearchHwnd() && hwndCtl == m_cToolbar.GetSearchHwnd() )
 		{
 			m_nCurrentFocus = F_SEARCH_BOX;
 		}
 		break;
 
 	case CBN_KILLFOCUS:
-		if( NULL != m_hwndSearchBox && hwndCtl == m_hwndSearchBox )
+		if( NULL != m_cToolbar.GetSearchHwnd() && hwndCtl == m_cToolbar.GetSearchHwnd() )
 		{
 			m_nCurrentFocus = 0;
 
 			//フォーカスがはずれたときに検索キーにしてしまう。
+
 			//検索キーワードを取得
-			char	szText[_MAX_PATH];
-			memset( szText, 0, sizeof(szText) );
-			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
-			if( szText[0] )	//キー文字列がある
+			wchar_t	szText[_MAX_PATH];
+			if( m_cToolbar.GetSearchKey(szText,_countof(szText)) )	//キー文字列がある
 			{
 				//検索キーを登録
-				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
+				CShareData::getInstance()->AddToSearchKeyArr( szText );
 			}
 
 		}
@@ -2140,17 +1732,17 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 	HMENU		hMenuPopUp;
 	HMENU		hMenuPopUp_2;
-	const char*	pszLabel;
+	const TCHAR*	pszLabel;
 
 
-	if( hMenu != ::GetSubMenu( ::GetMenu( m_hWnd ), uPos ) ){
+	if( hMenu != ::GetSubMenu( ::GetMenu( GetHwnd() ), uPos ) ){
 		goto end_of_func_IsEnable;
 	}
 
 
 	if( fSystemMenu ){
 	}else{
-//		MYTRACE( "hMenu=%08xh uPos=%d, fSystemMenu=%s\n", hMenu, uPos, fSystemMenu ? "TRUE":"FALSE" );
+//		MYTRACE_A( "hMenu=%08xh uPos=%d, fSystemMenu=%ls\n", hMenu, uPos, fSystemMenu ? "TRUE":"FALSE" );
 		switch( uPos ){
 		case 0:
 			/* 「ファイル」メニュー */
@@ -2159,51 +1751,51 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			for( i = cMenuItems - 1; i >= 0; i-- ){
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW			, "新規作成(&N)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN		, "開く(&O)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVE		, "上書き保存(&S)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEAS_DIALOG	, "名前を付けて保存(&A)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL		, "すべて上書き保存(&Z)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW			, _T("新規作成(&N)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN		, _T("開く(&O)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVE		, _T("上書き保存(&S)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEAS_DIALOG	, _T("名前を付けて保存(&A)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL		, _T("すべて上書き保存(&Z)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//	Feb. 28, 2003 genta 保存して閉じるを追加．閉じるメニューを近くに移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVECLOSE	, "保存して閉じる(&E)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, "閉じる(&C)" );	//Feb. 18, 2001	JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE		, "閉じて(無題) (&R)" );	//Oct. 17, 2000 jepro キャプションを「閉じる」から変更	//Feb. 18, 2001 JEPRO アクセスキー変更(C→B; Blankの意味)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE_OPEN	, "閉じて開く(&L)..." );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVECLOSE	, _T("保存して閉じる(&E)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, _T("閉じる(&C)") );	//Feb. 18, 2001	JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE		, _T("閉じて(無題) (&R)") );	//Oct. 17, 2000 jepro キャプションを「閉じる」から変更	//Feb. 18, 2001 JEPRO アクセスキー変更(C→B; Blankの意味)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILECLOSE_OPEN	, _T("閉じて開く(&L)...") );
 
 			// 「文字コードセット」ポップアップメニュー
 			//	Aug. 19. 2003 genta アクセスキー表記を統一
 			hMenuPopUp_2 = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			//	Dec. 4, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN	, "開き直す(&W)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_SJIS, "SJISで開き直す(&S)" );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_JIS, "JISで開き直す(&J)" );			//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_EUC, "EUCで開き直す(&E)" );			//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UNICODE, "Unicodeで開き直す(&U)" );	//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UNICODEBE, "UnicodeBEで開き直す(&N)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UTF8, "UTF-8で開き直す(&8)" );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UTF7, "UTF-7で開き直す(&7)" );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp_2 , "開き直す(&W)" );//Oct. 11, 2000 JEPRO アクセスキー変更(M→H)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN	, _T("開き直す(&W)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp_2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_SJIS, _T("SJISで開き直す(&S)") );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_JIS, _T("JISで開き直す(&J)") );			//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_EUC, _T("EUCで開き直す(&E)") );			//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UNICODE, _T("Unicodeで開き直す(&U)") );	//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UNICODEBE, _T("UnicodeBEで開き直す(&N)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UTF8, _T("UTF-8で開き直す(&8)") );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp_2, MF_BYPOSITION | MF_STRING, F_FILE_REOPEN_UTF7, _T("UTF-7で開き直す(&7)") );		//Nov. 7, 2000 jepro キャプションに'で開き直す'を追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp_2 , _T("開き直す(&W)") );//Oct. 11, 2000 JEPRO アクセスキー変更(M→H)
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PRINT				, "印刷(&P)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PRINT_PREVIEW		, "印刷プレビュー(&V)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PRINT_PAGESETUP		, "ページ設定(&U)..." );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PRINT				, _T("印刷(&P)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PRINT_PREVIEW		, _T("印刷プレビュー(&V)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PRINT_PAGESETUP		, _T("ページ設定(&U)...") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			// 「ファイル操作」ポップアップメニュー
 			//hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			//m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PROPERTY_FILE				, "ファイルのプロパティ(&T)" );		//Nov. 7, 2000 jepro キャプションに'ファイルの'を追加
-			//m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "ファイル操作(&R)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BROWSE						, "ブラウズ(&B)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PROPERTY_FILE				, _T("ファイルのプロパティ(&T)") );		//Nov. 7, 2000 jepro キャプションに'ファイルの'を追加
+			//m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("ファイル操作(&R)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BROWSE						, _T("ブラウズ(&B)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			/* MRUリストのファイルのリストをメニューにする */
 			{
@@ -2212,11 +1804,11 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 				if ( cMRU.Length() > 0 ){
 					//	アクティブ
-					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "最近使ったファイル(&F)" );
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("最近使ったファイル(&F)") );
 				}
 				else {
 					//	非アクティブ
-					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , "最近使ったファイル(&F)" );
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , _T("最近使ったファイル(&F)") );
 				}
 			}
 
@@ -2227,19 +1819,19 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
 				if (cMRUFolder.Length() > 0){
 					//	アクティブ
-					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "最近使ったフォルダ(&D)" );
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("最近使ったフォルダ(&D)") );
 				}
 				else {
 					//	非アクティブ
-					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , "最近使ったフォルダ(&D)" );
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , _T("最近使ったフォルダ(&D)") );
 				}
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE, "グループを閉じる(&G)" );	// グループを閉じる	// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, "編集の全終了(&Q)" );	//Feb/ 19, 2001 JEPRO 追加	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE, _T("グループを閉じる(&G)") );	// グループを閉じる	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T("編集の全終了(&Q)") );	//Feb/ 19, 2001 JEPRO 追加	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 			//	Jun. 9, 2001 genta ソフトウェア名改称
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL			, "サクラエディタの全終了(&X)" );	//Sept. 11, 2000 jepro キャプションを「アプリケーション終了」から変更	//Dec. 26, 2000 JEPRO F_に変更
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL			, _T("サクラエディタの全終了(&X)") );	//Sept. 11, 2000 jepro キャプションを「アプリケーション終了」から変更	//Dec. 26, 2000 JEPRO F_に変更
 			break;
 
 		case 1:
@@ -2250,162 +1842,162 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 			//	Aug. 19. 2003 genta アクセスキー表記を統一
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UNDO		, "元に戻す(&U)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REDO		, "やり直し(&R)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UNDO		, _T("元に戻す(&U)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REDO		, _T("やり直し(&R)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CUT			, "切り取り(&T)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY		, "コピー(&C)" );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CUT			, _T("切り取り(&T)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY		, _T("コピー(&C)") );
 			//	Jul, 3, 2000 genta
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPYLINESASPASSAGE, "全行引用コピー(&N)" );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPYLINESASPASSAGE, _T("全行引用コピー(&N)") );
 			//	Sept. 14, 2000 JEPRO	キャプションに「記号付き」を追加、アクセスキー変更(N→.)
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPYLINESASPASSAGE, "選択範囲内全行引用符付きコピー(&.)" );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPYLINESASPASSAGE, _T("選択範囲内全行引用符付きコピー(&.)") );
 //			Sept. 30, 2000 JEPRO	引用符付きコピーのアイコンを作成したので上記メニューは重複を避けて「高度な操作」内におくだけにする
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PASTE		, "貼り付け(&P)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DELETE		, "削除(&D)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SELECTALL	, "すべて選択(&A)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );							/* メニューからの再変換対応 minfu 2002.04.09 */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECONVERT	, "再変換(&R)" );		/* メニューからの再変換対応 minfu 2002.04.09 */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PASTE		, _T("貼り付け(&P)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DELETE		, _T("削除(&D)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SELECTALL	, _T("すべて選択(&A)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );							/* メニューからの再変換対応 minfu 2002.04.09 */
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECONVERT	, _T("再変換(&R)") );		/* メニューからの再変換対応 minfu 2002.04.09 */
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			//	Aug. 19. 2003 genta アクセスキー表記を統一
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY_CRLF	, "CRLF改行でコピー(&L)" );				//Nov. 9, 2000 JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY_ADDCRLF	, "折り返し位置に改行をつけてコピー(&H)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PASTEBOX	, "矩形貼り付け(&X)" );					//Sept. 13, 2000 JEPRO 移動に伴いアクセスキー付与	//Oct. 22, 2000 JEPRO アクセスキー変更(P→X)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DELETE_BACK	, "カーソル前を削除(&B)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY_CRLF	, _T("CRLF改行でコピー(&L)") );				//Nov. 9, 2000 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COPY_ADDCRLF	, _T("折り返し位置に改行をつけてコピー(&H)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PASTEBOX	, _T("矩形貼り付け(&X)") );					//Sept. 13, 2000 JEPRO 移動に伴いアクセスキー付与	//Oct. 22, 2000 JEPRO アクセスキー変更(P→X)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DELETE_BACK	, _T("カーソル前を削除(&B)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			// 「挿入」ポップアップメニュー
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INS_DATE, "日付(&D)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INS_TIME, "時刻(&T)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CTRL_CODE_DIALOG, "コントロールコード(&C)..." );	// 2004.05.06 MIK ...追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INS_DATE, _T("日付(&D)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INS_TIME, _T("時刻(&T)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CTRL_CODE_DIALOG, _T("コントロールコード(&C)...") );	// 2004.05.06 MIK ...追加
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "挿入(&I)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("挿入(&I)") );
 
 			// 「高度な操作」ポップアップメニュー
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordDeleteToStart	,	"単語の左端まで削除(&L)" );			//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordDeleteToEnd	,	"単語の右端まで削除(&R)" );			//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SELECTWORD			,	"現在位置の単語選択(&W)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordCut			,	"単語切り取り(&T)" );				//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordDelete			,	"単語削除(&D)" );					//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineCutToStart		,	"行頭まで切り取り(改行単位) (&U)" );//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineCutToEnd		,	"行末まで切り取り(改行単位) (&K)" );//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineDeleteToStart	,	"行頭まで削除(改行単位) (&H)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineDeleteToEnd	,	"行末まで削除(改行単位) (&E)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUT_LINE			,	"行切り取り(折り返し単位) (&X)" );	//Jan. 16, 2001 JEPRO 行(頭・末)関係の順序を入れ替えた
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DELETE_LINE		,	"行削除(折り返し単位) (&Y)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DUPLICATELINE		,	"行の二重化(折り返し単位) (&2)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INDENT_TAB			,	"TABインデント(&A)" );				//Oct. 22, 2000 JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UNINDENT_TAB		,	"逆TABインデント(&B)" );			//Oct. 22, 2000 JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INDENT_SPACE		,	"SPACEインデント(&S)" );			//Oct. 22, 2000 JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UNINDENT_SPACE		,	"逆SPACEインデント(&P)" );			//Oct. 22, 2000 JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYLINES				, "選択範囲内全行コピー(&@)" );		//Sept. 14, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYLINESASPASSAGE		, "選択範囲内全行引用符付きコピー(&.)" );//Sept. 13, 2000 JEPRO キャプションから「記号付き」を追加、アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYLINESWITHLINENUMBER, "選択範囲内全行行番号付きコピー(&:)" );//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYFNAME			,	"このファイル名をコピー(&-)" );	// 2002/2/3 aroka
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYPATH			,	"このファイルのパス名をコピー(&\\)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYTAG			,	"このファイルのパス名とカーソル位置をコピー(&^)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_TEST_CREATEKEYBINDLIST	, "キー割り当て一覧をコピー(&Q)" );	//Sept. 15, 2000 JEPRO キャプションの「...リスト」、アクセスキー変更(K→Q)
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WORDSREFERENCE, "単語リファレンス(&W)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordDeleteToStart	,	_T("単語の左端まで削除(&L)") );			//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordDeleteToEnd	,	_T("単語の右端まで削除(&R)") );			//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SELECTWORD			,	_T("現在位置の単語選択(&W)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordCut			,	_T("単語切り取り(&T)") );				//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WordDelete			,	_T("単語削除(&D)") );					//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineCutToStart		,	_T("行頭まで切り取り(改行単位) (&U)") );//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineCutToEnd		,	_T("行末まで切り取り(改行単位) (&K)") );//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineDeleteToStart	,	_T("行頭まで削除(改行単位) (&H)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LineDeleteToEnd	,	_T("行末まで削除(改行単位) (&E)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CUT_LINE			,	_T("行切り取り(折り返し単位) (&X)") );	//Jan. 16, 2001 JEPRO 行(頭・末)関係の順序を入れ替えた
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DELETE_LINE		,	_T("行削除(折り返し単位) (&Y)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DUPLICATELINE		,	_T("行の二重化(折り返し単位) (&2)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INDENT_TAB			,	_T("TABインデント(&A)") );				//Oct. 22, 2000 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UNINDENT_TAB		,	_T("逆TABインデント(&B)") );			//Oct. 22, 2000 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_INDENT_SPACE		,	_T("SPACEインデント(&S)") );			//Oct. 22, 2000 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UNINDENT_SPACE		,	_T("逆SPACEインデント(&P)") );			//Oct. 22, 2000 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYLINES				, _T("選択範囲内全行コピー(&@)") );		//Sept. 14, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYLINESASPASSAGE		, _T("選択範囲内全行引用符付きコピー(&.)") );//Sept. 13, 2000 JEPRO キャプションから「記号付き」を追加、アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYLINESWITHLINENUMBER, _T("選択範囲内全行行番号付きコピー(&:)") );//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYFNAME			,	_T("このファイル名をコピー(&-)") );	// 2002/2/3 aroka
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYPATH			,	_T("このファイルのパス名をコピー(&\\)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_COPYTAG			,	_T("このファイルのパス名とカーソル位置をコピー(&^)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_TEST_CREATEKEYBINDLIST	, _T("キー割り当て一覧をコピー(&Q)") );	//Sept. 15, 2000 JEPRO キャプションの「...リスト」、アクセスキー変更(K→Q)
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WORDSREFERENCE, _T("単語リファレンス(&W)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "高度な操作(&V)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("高度な操作(&V)") );
 
 		//From Here Feb. 19, 2001 JEPRO [移動(M)], [選択(R)]メニューを[編集]のサブメニューとして移動
 			// 「移動」ポップアップメニュー
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UP2		, "カーソル上移動(２行ごと) (&Q)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DOWN2		, "カーソル下移動(２行ごと) (&K)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDLEFT	, "単語の左端に移動(&L)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDRIGHT	, "単語の右端に移動(&R)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOPREVPARAGRAPH	, "前の段落に移動(&A)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GONEXTPARAGRAPH	, "次の段落に移動(&Z)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINETOP	, "行頭に移動(折り返し単位) (&H)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINEEND	, "行末に移動(折り返し単位) (&E)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageUp	, "１ページアップ(&U)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageDown	, "１ページダウン(&D)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILETOP	, "ファイルの先頭に移動(&T)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILEEND	, "ファイルの最後に移動(&B)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CURLINECENTER, "カーソル行をウィンドウ中央へ(&C)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG, "指定行へジャンプ(&J)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, "検索開始位置へ戻る(&I)" );	// 検索開始位置へ戻る 02/06/26 ai
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_PREV	, "移動履歴: 前へ(&P)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_NEXT	, "移動履歴: 次へ(&N)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_SET	, "現在位置を移動履歴に登録(&S)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UP2		, _T("カーソル上移動(２行ごと) (&Q)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DOWN2		, _T("カーソル下移動(２行ごと) (&K)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDLEFT	, _T("単語の左端に移動(&L)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDRIGHT	, _T("単語の右端に移動(&R)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOPREVPARAGRAPH	, _T("前の段落に移動(&A)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GONEXTPARAGRAPH	, _T("次の段落に移動(&Z)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINETOP	, _T("行頭に移動(折り返し単位) (&H)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINEEND	, _T("行末に移動(折り返し単位) (&E)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageUp	, _T("１ページアップ(&U)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageDown	, _T("１ページダウン(&D)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILETOP	, _T("ファイルの先頭に移動(&T)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILEEND	, _T("ファイルの最後に移動(&B)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CURLINECENTER, _T("カーソル行をウィンドウ中央へ(&C)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG, _T("指定行へジャンプ(&J)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, _T("検索開始位置へ戻る(&I)") );	// 検索開始位置へ戻る 02/06/26 ai
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_PREV	, _T("移動履歴: 前へ(&P)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_NEXT	, _T("移動履歴: 次へ(&N)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_JUMPHIST_SET	, _T("現在位置を移動履歴に登録(&S)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "移動(&O)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("移動(&O)") );
 
 			// 「選択」ポップアップメニュー
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SELECTWORD		, "現在位置の単語選択(&W)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SELECTALL		, "すべて選択(&A)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BEGIN_SEL		, "範囲選択開始(&S)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UP2_SEL		, "(選択)カーソル上移動(２行ごと) (&Q)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DOWN2_SEL		, "(選択)カーソル下移動(２行ごと) (&K)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDLEFT_SEL	, "(選択)単語の左端に移動(&L)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDRIGHT_SEL	, "(選択)単語の右端に移動(&R)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOPREVPARAGRAPH_SEL	, "(選択)前の段落に移動(&2)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GONEXTPARAGRAPH_SEL	, "(選択)次の段落に移動(&8)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINETOP_SEL	, "(選択)行頭に移動(折り返し単位) (&H)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINEEND_SEL	, "(選択)行末に移動(折り返し単位) (&T)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageUp_Sel	, "(選択)１ページアップ(&U)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageDown_Sel	, "(選択)１ページダウン(&D)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILETOP_SEL	, "(選択)ファイルの先頭に移動(&1)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILEEND_SEL	, "(選択)ファイルの最後に移動(&9)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SELECTWORD		, _T("現在位置の単語選択(&W)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SELECTALL		, _T("すべて選択(&A)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BEGIN_SEL		, _T("範囲選択開始(&S)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UP2_SEL		, _T("(選択)カーソル上移動(２行ごと) (&Q)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_DOWN2_SEL		, _T("(選択)カーソル下移動(２行ごと) (&K)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDLEFT_SEL	, _T("(選択)単語の左端に移動(&L)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_WORDRIGHT_SEL	, _T("(選択)単語の右端に移動(&R)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOPREVPARAGRAPH_SEL	, _T("(選択)前の段落に移動(&2)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GONEXTPARAGRAPH_SEL	, _T("(選択)次の段落に移動(&8)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINETOP_SEL	, _T("(選択)行頭に移動(折り返し単位) (&H)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOLINEEND_SEL	, _T("(選択)行末に移動(折り返し単位) (&T)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageUp_Sel	, _T("(選択)１ページアップ(&U)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_1PageDown_Sel	, _T("(選択)１ページダウン(&D)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILETOP_SEL	, _T("(選択)ファイルの先頭に移動(&1)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GOFILEEND_SEL	, _T("(選択)ファイルの最後に移動(&9)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			//	Mar. 11, 2004 genta 矩形選択メニューを選択メニューに統合
 			//	今のところは1つしかないので
 			// 「矩形選択」ポップアップメニュー
 			// hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BEGIN_BOX	, "矩形範囲選択開始(&B)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BEGIN_BOX	, _T("矩形範囲選択開始(&B)") );
 ////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UP_BOX			, "(矩選)カーソル上移動(&)" );
-////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DOWN_BOX		, "(矩選)カーソル下移動(&)" );
-////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LEFT_BOX		, "(矩選)カーソル左移動(&)" );
-////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RIGHT_BOX		, "(矩選)カーソル右移動(&)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UP2_BOX			, "(矩選)カーソル上移動(２行ごと) (&Q)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DOWN2_BOX		, "(矩選)カーソル下移動(２行ごと) (&K)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WORDLEFT_BOX	, "(矩選)単語の左端に移動(&L)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WORDRIGHT_BOX	, "(矩選)単語の右端に移動(&R)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOLINETOP_BOX	, "(矩選)行頭に移動(折り返し単位) (&H)" x);
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOLINEEND_BOX	, "(矩選)行末に移動(折り返し単位) (&E)" );
+////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UP_BOX			, _T("(矩選)カーソル上移動(&)") );
+////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DOWN_BOX		, _T("(矩選)カーソル下移動(&)") );
+////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LEFT_BOX		, _T("(矩選)カーソル左移動(&)") );
+////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RIGHT_BOX		, _T("(矩選)カーソル右移動(&)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UP2_BOX			, _T("(矩選)カーソル上移動(２行ごと) (&Q)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DOWN2_BOX		, _T("(矩選)カーソル下移動(２行ごと) (&K)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WORDLEFT_BOX	, _T("(矩選)単語の左端に移動(&L)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WORDRIGHT_BOX	, _T("(矩選)単語の右端に移動(&R)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOLINETOP_BOX	, _T("(矩選)行頭に移動(折り返し単位) (&H)") x);
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOLINEEND_BOX	, _T("(矩選)行末に移動(折り返し単位) (&E)") );
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HalfPageUp_Box	, "(選択)半ページアップ(&)" );
-////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HalfPageDown_Box, "(選択)半ページダウン(&)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_1PageUp_Box		, "(矩選)１ページアップ(&U)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_1PageDown_Box	, "(矩選)１ページダウン(&D)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOFILETOP_BOX	, "(矩選)ファイルの先頭に移動(&T)" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOFILEEND_BOX	, "(矩選)ファイルの最後に移動(&B)" );
+////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HalfPageUp_Box	, _T("(選択)半ページアップ(&)") );
+////			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HalfPageDown_Box, _T("(選択)半ページダウン(&)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_1PageUp_Box		, _T("(矩選)１ページアップ(&U)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_1PageDown_Box	, _T("(矩選)１ページダウン(&D)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOFILETOP_BOX	, _T("(矩選)ファイルの先頭に移動(&T)") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GOFILEEND_BOX	, _T("(矩選)ファイルの最後に移動(&B)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "選択(&S)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("選択(&S)") );
 
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "矩形選択(&E)" );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("矩形選択(&E)") );
 
 			// 「整形」ポップアップメニュー
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LTRIM, "左(先頭)の空白を削除(&L)" );	// 2001.12.06 hor
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_RTRIM, "右(末尾)の空白を削除(&R)" );	// 2001.12.06 hor
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SORT_ASC, "選択行の昇順ソート(&A)" );	// 2001.12.06 hor
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SORT_DESC, "選択行の降順ソート(&D)" );	// 2001.12.06 hor
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_MERGE, "連続した重複行の削除(uniq)(&U)" );			// 2001.12.06 hor
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "整形(&K)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_LTRIM, _T("左(先頭)の空白を削除(&L)") );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_RTRIM, _T("右(末尾)の空白を削除(&R)") );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SORT_ASC, _T("選択行の昇順ソート(&A)") );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_SORT_DESC, _T("選択行の降順ソート(&D)") );	// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_MERGE, _T("連続した重複行の削除(uniq)(&U)") );			// 2001.12.06 hor
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("整形(&K)") );
 
 			break;
 		//Feb. 19, 2001 JEPRO [移動][移動], [選択]を[編集]配下に移したので削除
@@ -2418,49 +2010,49 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			for( i = cMenuItems - 1; i >= 0; i-- ){
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOLOWER				, "小文字(&L)" );			//Sept. 10, 2000 jepro キャプションを英語から変更
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOUPPER				, "大文字(&U)" );			//Sept. 10, 2000 jepro キャプションを英語から変更
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOLOWER				, _T("小文字(&L)") );			//Sept. 10, 2000 jepro キャプションを英語から変更
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOUPPER				, _T("大文字(&U)") );			//Sept. 10, 2000 jepro キャプションを英語から変更
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 //	From Here Sept. 18, 2000 JEPRO
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKAKU			, "全角→半角" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUKATA		, "半角→全角カタカナ" );
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUHIRA		, "半角→全角ひらがな" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKAKU			, "全角→半角(&F)" );					//Sept. 13, 2000 JEPRO アクセスキー付与
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKAKU			, _T("全角→半角") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUKATA		, _T("半角→全角カタカナ") );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUHIRA		, _T("半角→全角ひらがな") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKAKU			, _T("全角→半角(&F)") );					//Sept. 13, 2000 JEPRO アクセスキー付与
 	// From Here 2007.01.24 maru メニューの並び変更とアクセスキー追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUKATA		, "半角＋全ひら→全角・カタカナ(&Z)" );	//Sept. 13, 2000 JEPRO キャプション変更 & アクセスキー付与 //Oct. 11, 2000 JEPRO キャプション変更
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUHIRA		, "半角＋全カタ→全角・ひらがな(&N)" );	//Sept. 13, 2000 JEPRO キャプション変更 & アクセスキー付与 //Oct. 11, 2000 JEPRO キャプション変更
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANEI				, "全角英数→半角英数(&A)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENEI				, "半角英数→全角英数(&M)" );				//July. 29, 2001 Misaka アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKATA			, "全角カタカナ→半角カタカナ(&J)" );		//Aug. 29, 2002 ai
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUKATA		, _T("半角＋全ひら→全角・カタカナ(&Z)") );	//Sept. 13, 2000 JEPRO キャプション変更 & アクセスキー付与 //Oct. 11, 2000 JEPRO キャプション変更
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENKAKUHIRA		, _T("半角＋全カタ→全角・ひらがな(&N)") );	//Sept. 13, 2000 JEPRO キャプション変更 & アクセスキー付与 //Oct. 11, 2000 JEPRO キャプション変更
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANEI				, _T("全角英数→半角英数(&A)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOZENEI				, _T("半角英数→全角英数(&M)") );				//July. 29, 2001 Misaka アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKATA			, _T("全角カタカナ→半角カタカナ(&J)") );		//Aug. 29, 2002 ai
 	// To Here 2007.01.24 maru メニューの並び変更とアクセスキー追加
 //	To Here Sept. 18, 2000
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUKATA, "半角カタカナ→全角カタカナ(&K)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUHIRA, "半角カタカナ→全角ひらがな(&H)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TABTOSPACE			, "TAB→空白(&S)" );	//Feb. 19, 2001 JEPRO 下から移動した
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, "空白→TAB(&T)" );	//#### Stonee, 2001/05/27
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUKATA, _T("半角カタカナ→全角カタカナ(&K)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUHIRA, _T("半角カタカナ→全角ひらがな(&H)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TABTOSPACE			, _T("TAB→空白(&S)") );	//Feb. 19, 2001 JEPRO 下から移動した
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, _T("空白→TAB(&T)") );	//---- Stonee, 2001/05/27
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//「文字コード変換」ポップアップ
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_AUTO2SJIS		, "自動判別→SJISコード変換(&A)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_EMAIL			, "E-Mail(JIS→SJIS)コード変換(&M)" );//Sept. 11, 2000 JEPRO キャプションに「E-Mail」を追加しアクセスキー変更(V→M:Mail)
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_EUC2SJIS		, "EUC→SJISコード変換(&W)" );		//Sept. 11, 2000 JEPRO アクセスキー変更(E→W:Work Station)
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UNICODE2SJIS	, "Unicode→SJISコード変換(&U)" );	//Sept. 11, 2000 JEPRO アクセスキー変更候補はI:shIft
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UNICODEBE2SJIS	, "UnicodeBE→SJISコード変換(&N)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UTF82SJIS		, "UTF-8→SJISコード変換(&T)" );	//Sept. 11, 2000 JEPRO アクセスキー付与(T:uTF/shifT)	//Oct. 6, 2000 簡潔表示にした
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UTF72SJIS		, "UTF-7→SJISコード変換(&F)" );	//Sept. 11, 2000 JEPRO アクセスキー付与(F:utF/shiFt)	//Oct. 6, 2000 簡潔表示にした
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2JIS		, "SJIS→JISコード変換(&J)" );		//Sept. 11, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2EUC		, "SJIS→EUCコード変換(&E)" );		//Sept. 11, 2000 JEPRO アクセスキー付与
-//			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2UNICODE	, "SJIS→&Unicodeコード変換" );		//Sept. 11, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2UTF8		, "SJIS→UTF-8コード変換(&8)" );	//Sept. 11, 2000 JEPRO アクセスキー付与 //Oct. 6, 2000 簡潔表示にした
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2UTF7		, "SJIS→UTF-7コード変換(&7)" );	//Sept. 11, 2000 JEPRO アクセスキー付与 //Oct. 6, 2000 簡潔表示にした
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BASE64DECODE			, "Base64デコードして保存(&B)" );	//Oct. 6, 2000 JEPRO アクセスキー変更(6→B)
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UUDECODE				, "uudecodeして保存(&D)" );			//Sept. 11, 2000 JEPRO アクセスキー変更(U→D)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_AUTO2SJIS		, _T("自動判別→SJISコード変換(&A)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_EMAIL			, _T("E-Mail(JIS→SJIS)コード変換(&M)") );//Sept. 11, 2000 JEPRO キャプションに「E-Mail」を追加しアクセスキー変更(V→M:Mail)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_EUC2SJIS		, _T("EUC→SJISコード変換(&W)") );		//Sept. 11, 2000 JEPRO アクセスキー変更(E→W:Work Station)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UNICODE2SJIS	, _T("Unicode→SJISコード変換(&U)") );	//Sept. 11, 2000 JEPRO アクセスキー変更候補はI:shIft
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UNICODEBE2SJIS	, _T("UnicodeBE→SJISコード変換(&N)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UTF82SJIS		, _T("UTF-8→SJISコード変換(&T)") );	//Sept. 11, 2000 JEPRO アクセスキー付与(T:uTF/shifT)	//Oct. 6, 2000 簡潔表示にした
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_UTF72SJIS		, _T("UTF-7→SJISコード変換(&F)") );	//Sept. 11, 2000 JEPRO アクセスキー付与(F:utF/shiFt)	//Oct. 6, 2000 簡潔表示にした
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2JIS		, _T("SJIS→JISコード変換(&J)") );		//Sept. 11, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2EUC		, _T("SJIS→EUCコード変換(&E)") );		//Sept. 11, 2000 JEPRO アクセスキー付与
+//			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2UNICODE	, _T("SJIS→&Unicodeコード変換") );		//Sept. 11, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2UTF8		, _T("SJIS→UTF-8コード変換(&8)") );	//Sept. 11, 2000 JEPRO アクセスキー付与 //Oct. 6, 2000 簡潔表示にした
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CODECNV_SJIS2UTF7		, _T("SJIS→UTF-7コード変換(&7)") );	//Sept. 11, 2000 JEPRO アクセスキー付与 //Oct. 6, 2000 簡潔表示にした
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BASE64DECODE			, _T("Base64デコードして保存(&B)") );	//Oct. 6, 2000 JEPRO アクセスキー変更(6→B)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_UUDECODE				, _T("uudecodeして保存(&D)") );			//Sept. 11, 2000 JEPRO アクセスキー変更(U→D)
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "文字コード変換(&C)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("文字コード変換(&C)") );
 
 			break;
 
@@ -2472,53 +2064,53 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			for( i = cMenuItems - 1; i >= 0; i-- ){
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_DIALOG	, "検索(&F)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_NEXT		, "次を検索(&N)" );				//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_PREV		, "前を検索(&P)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REPLACE_DIALOG	, "置換(&R)..." );				//Oct. 7, 2000 JEPRO 下のセクションからここに移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_CLEARMARK, "検索マークの切替え(&C)" );	// "検索マークのクリア(&C)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, "検索開始位置へ戻る(&I)" );	// 検索開始位置へ戻る 02/06/26 ai
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_DIALOG	, _T("検索(&F)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_NEXT		, _T("次を検索(&N)") );				//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_PREV		, _T("前を検索(&P)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REPLACE_DIALOG	, _T("置換(&R)...") );				//Oct. 7, 2000 JEPRO 下のセクションからここに移動
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_CLEARMARK, _T("検索マークの切替え(&C)") );	// "検索マークのクリア(&C)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP_SRCHSTARTPOS, _T("検索開始位置へ戻る(&I)") );	// 検索開始位置へ戻る 02/06/26 ai
 		
 			// Jan. 10, 2005 genta インクリメンタルサーチ
 			hMenuPopUp = ::CreatePopupMenu();
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_NEXT, "前方インクリメンタルサーチ(&F)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_PREV, "後方インクリメンタルサーチ(&B)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_REGEXP_NEXT, "正規表現前方インクリメンタルサーチ(&R)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_REGEXP_PREV, "正規表現後方インクリメンタルサーチ(&X)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_MIGEMO_NEXT, "MIGEMO前方インクリメンタルサーチ(&M)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_MIGEMO_PREV, "MIGEMO後方インクリメンタルサーチ(&N)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "インクリメンタルサーチ(&S)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_NEXT, _T("前方インクリメンタルサーチ(&F)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_PREV, _T("後方インクリメンタルサーチ(&B)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_REGEXP_NEXT, _T("正規表現前方インクリメンタルサーチ(&R)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_REGEXP_PREV, _T("正規表現後方インクリメンタルサーチ(&X)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_MIGEMO_NEXT, _T("MIGEMO前方インクリメンタルサーチ(&M)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_ISEARCH_MIGEMO_PREV, _T("MIGEMO後方インクリメンタルサーチ(&N)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("インクリメンタルサーチ(&S)") );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 // From Here 2001.12.03 hor
 			// Jan. 10, 2005 genta 長すぎるのでブックマークをサブメニューに
 			hMenuPopUp = ::CreatePopupMenu();
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_SET	, "ブックマーク設定・解除(&S)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_NEXT	, "次のブックマークへ(&A)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_PREV	, "前のブックマークへ(&Z)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_RESET	, "ブックマークの全解除(&X)" );
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_VIEW	, "ブックマークの一覧(&V)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "ブックマーク(&M)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_SET	, _T("ブックマーク設定・解除(&S)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_NEXT	, _T("次のブックマークへ(&A)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_PREV	, _T("前のブックマークへ(&Z)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_RESET	, _T("ブックマークの全解除(&X)") );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BOOKMARK_VIEW	, _T("ブックマークの一覧(&V)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("ブックマーク(&M)") );
 // To Here 2001.12.03 hor
 			//	Aug. 19. 2003 genta アクセスキー表記を統一
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG		, "Grep(&G)..." );					//Oct. 7, 2000 JEPRO 下からここに移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG		, "指定行へジャンプ(&J)..." );	//Sept. 11, 2000 jepro キャプションに「 ジャンプ」を追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OUTLINE			, "アウトライン解析(&L)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMP			, "タグジャンプ(&T)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMPBACK		, "タグジャンプバック(&B)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGS_MAKE		, "タグファイルの作成..." );	//@@@ 2003.04.13 MIK // 2004.05.06 MIK ...追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIRECT_TAGJUMP	, "ダイレクトタグジャンプ" );	//@@@ 2003.04.13 MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMP_KEYWORD	, "キーワードを指定してタグジャンプ" ); //@@ 2005.03.31 MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPEN_HfromtoC				, "同名のC/C++ヘッダ(ソース)を開く(&C)" );	//Feb. 7, 2001 JEPRO 追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COMPARE			, "ファイル内容比較(&@)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_DIALOG		, "DIFF差分表示(&D)..." );	//@@@ 2002.05.25 MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_NEXT		, "次の差分へ" );		//@@@ 2002.05.25 MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_PREV		, "前の差分へ" );		//@@@ 2002.05.25 MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_RESET		, "差分表示の全解除" );		//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG		, _T("Grep(&G)...") );					//Oct. 7, 2000 JEPRO 下からここに移動
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_JUMP_DIALOG		, _T("指定行へジャンプ(&J)...") );	//Sept. 11, 2000 jepro キャプションに「 ジャンプ」を追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OUTLINE			, _T("アウトライン解析(&L)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMP			, _T("タグジャンプ(&T)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMPBACK		, _T("タグジャンプバック(&B)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGS_MAKE		, _T("タグファイルの作成...") );	//@@@ 2003.04.13 MIK // 2004.05.06 MIK ...追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIRECT_TAGJUMP	, _T("ダイレクトタグジャンプ") );	//@@@ 2003.04.13 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAGJUMP_KEYWORD	, _T("キーワードを指定してタグジャンプ") ); //@@ 2005.03.31 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPEN_HfromtoC				, _T("同名のC/C++ヘッダ(ソース)を開く(&C)") );	//Feb. 7, 2001 JEPRO 追加
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_COMPARE			, _T("ファイル内容比較(&@)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_DIALOG		, _T("DIFF差分表示(&D)...") );	//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_NEXT		, _T("次の差分へ") );		//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_PREV		, _T("前の差分へ") );		//@@@ 2002.05.25 MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_DIFF_RESET		, _T("差分表示の全解除") );		//@@@ 2002.05.25 MIK
 //	From Here Sept. 1, 2000 JEPRO	対括弧の検索をメニューに追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BRACKETPAIR		, "対括弧の検索(&[)" );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_BRACKETPAIR		, _T("対括弧の検索(&[)") );
 //	To Here Sept. 1, 2000
 
 			break;
@@ -2533,16 +2125,16 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			}
 
 			if( !m_pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, "キーマクロの記録開始(&R)" );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, "キーマクロの保存(&M)" );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, "キーマクロの読み込み(&A)" );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, "キーマクロの実行(&D)" );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, _T("キーマクロの記録開始(&R)") );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, _T("キーマクロの保存(&M)") );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, _T("キーマクロの読み込み(&A)") );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, _T("キーマクロの実行(&D)") );
 			}else{
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, "キーマクロの記録終了(&R)" );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, _T("キーマクロの記録終了(&R)") );
 				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, "キーマクロの記録終了&&保存(&M)" );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, "キーマクロの記録終了&&読み込み(&A)" );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, "キーマクロの記録終了&&実行(&D)" );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, _T("キーマクロの記録終了&&保存(&M)") );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, _T("キーマクロの記録終了&&読み込み(&A)") );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, _T("キーマクロの記録終了&&実行(&D)") );
 			}
 			
 			//	From Here Sep. 14, 2001 genta
@@ -2560,42 +2152,42 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					}
 				}
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "登録済みマクロ(&B)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("登録済みマクロ(&B)") );
 			//	To Here Sep. 14, 2001 genta
 
 			if( m_pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );
 			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECCMMAND, "外部コマンド実行(&X)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECCOMMAND_DIALOG, "外部コマンド実行(&X)..." );	//Mar. 10, 2001 JEPRO 機能しないのでメニューから隠した	//Mar.21, 2001 JEPRO 標準出力しないで復活 // 2004.05.06 MIK ...追加
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECCMMAND, _T("外部コマンド実行(&X)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECCOMMAND_DIALOG, _T("外部コマンド実行(&X)...") );	//Mar. 10, 2001 JEPRO 機能しないのでメニューから隠した	//Mar.21, 2001 JEPRO 標準出力しないで復活 // 2004.05.06 MIK ...追加
 			//To Here Sept. 20, 2000
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ACTIVATE_SQLPLUS			, "SQL*Plusをアクティブ表示(&P)" );	//Sept. 11, 2000 JEPRO アクセスキー付与	説明の「アクティブ化」を「アクティブ表示」に統一
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PLSQL_COMPILE_ON_SQLPLUS	, "SQL*Plusで実行(&S)" );			//Sept. 11, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ACTIVATE_SQLPLUS			, _T("SQL*Plusをアクティブ表示(&P)") );	//Sept. 11, 2000 JEPRO アクセスキー付与	説明の「アクティブ化」を「アクティブ表示」に統一
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PLSQL_COMPILE_ON_SQLPLUS	, _T("SQL*Plusで実行(&S)") );			//Sept. 11, 2000 JEPRO アクセスキー付与
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HOKAN			, "入力補完(&/)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HOKAN			, _T("入力補完(&/)") );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//「カスタムメニュー」ポップアップ
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			//	右クリックメニュー
-			if( m_pShareData->m_Common.m_nCustMenuItemNumArr[0] > 0 ){
+			if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
 				 m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING,
-				 	F_MENU_RBUTTON, m_pShareData->m_Common.m_szCustMenuNameArr[0] );
+				 	F_MENU_RBUTTON, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0] );
 			}
 			//	カスタムメニュー
 			for( i = 1; i < MAX_CUSTOM_MENU; ++i ){
-				if( m_pShareData->m_Common.m_nCustMenuItemNumArr[i] > 0 ){
+				if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[i] > 0 ){
 					 m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING,
-					 	F_CUSTMENU_BASE + i, m_pShareData->m_Common.m_szCustMenuNameArr[i] );
+					 	F_CUSTMENU_BASE + i, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i] );
 				}
 			}
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "カスタムメニュー(&U)" );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("カスタムメニュー(&U)") );
 
 //		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
@@ -2612,101 +2204,102 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 //	From Here Sept. 17, 2000 JEPRO
 //	やはりWin標準に合わせてチェックマークだけで表示／非表示を判断するようにした方がいいので変更
-			if ( FALSE == m_pShareData->m_Common.m_bMenuIcon ){
-				pszLabel = "ツールバーを表示(&T)";				//これのみ表示
+			if ( FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+				pszLabel = _T("ツールバーを表示(&T)");				//これのみ表示
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel );	//これのみ
-				pszLabel = "ファンクションキーを表示(&K)";		//これのみ表示
+				pszLabel = _T("ファンクションキーを表示(&K)");		//これのみ表示
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel );	//これのみ
-				pszLabel = "タブバーを表示";		//これのみ表示	//@@@ 2003.06.10 MIK	// 2007.02.13 ryoji 「タブ」→「タブバー」
+				pszLabel = _T("タブバーを表示");		//これのみ表示	//@@@ 2003.06.10 MIK	// 2007.02.13 ryoji 「タブ」→「タブバー」
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel );	//これのみ	//@@@ 2003.06.10 MIK
-				pszLabel = "ステータスバーを表示(&S)";			//これのみ表示
+				pszLabel = _T("ステータスバーを表示(&S)");			//これのみ表示
 //	To Here Sept.17, 2000 JEPRO
 //	From Here Oct. 28, 2000 JEPRO
 //	3つボタンのアイコンができたことに伴い表示／非表示のメッセージを変えるように再び変更
-			}else{
-				if( m_hwndToolBar == NULL ){
-					pszLabel = "ツールバーを表示(&T)";			//これのみ表示
+			}
+			else{
+				if( m_cToolbar.GetToolbarHwnd() == NULL ){
+					pszLabel = _T("ツールバーを表示(&T)");			//これのみ表示
 				}else{
-					pszLabel = "表示中のツールバーを隠す(&T)";			//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
+					pszLabel = _T("表示中のツールバーを隠す(&T)");			//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
 				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel );	//これのみ
-				if( NULL == m_CFuncKeyWnd.m_hWnd ){
-					pszLabel = "ファンクションキーを表示(&K)";	//これのみ表示
+				if( NULL == m_CFuncKeyWnd.GetHwnd() ){
+					pszLabel = _T("ファンクションキーを表示(&K)");	//これのみ表示
 				}else{
-					pszLabel = "表示中のファンクションキーを隠す(&K)";	//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
+					pszLabel = _T("表示中のファンクションキーを隠す(&K)");	//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
 				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel );	//これのみ
 				//@@@ 2003.06.10 MIK
-				if( NULL == m_cTabWnd.m_hWnd ){
-					pszLabel = "タブバーを表示(&M)";	//これのみ表示	// 2007.02.13 ryoji 「タブ」→「タブバー」
+				if( NULL == m_cTabWnd.GetHwnd() ){
+					pszLabel = _T("タブバーを表示(&M)");	//これのみ表示	// 2007.02.13 ryoji 「タブ」→「タブバー」
 				}else{
-					pszLabel = "表示中のタブバーを隠す(&M)";	// 2007.02.13 ryoji 「タブ」→「タブバー」
+					pszLabel = _T("表示中のタブバーを隠す(&M)");	// 2007.02.13 ryoji 「タブ」→「タブバー」
 				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel );	//これのみ
-				if( m_hwndStatusBar == NULL ){
-					pszLabel = "ステータスバーを表示(&S)";		//これのみ表示
+				if( m_cStatusBar.GetStatusHwnd() == NULL ){
+					pszLabel = _T("ステータスバーを表示(&S)");		//これのみ表示
 				}else{
-					pszLabel = "表示中のステータスバーを隠す(&S)";		//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
+					pszLabel = _T("表示中のステータスバーを隠す(&S)");		//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
 				}
 			}
 //	To Here Oct. 28, 2000
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWSTATUSBAR, pszLabel );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST		, "タイプ別設定一覧(&L)..." );	//Sept. 13, 2000 JEPRO 設定より上に移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION_TYPE		, "タイプ別設定(&Y)..." );		//Sept. 13, 2000 JEPRO アクセスキー変更(S→Y)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION			, "共通設定(&C)..." );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FONT			, "フォント設定(&F)..." );		//Sept. 17, 2000 jepro キャプションに「設定」を追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, "履歴の管理(&O)..." );	//履歴の管理	//@@@ 2003.04.08 MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST		, _T("タイプ別設定一覧(&L)...") );	//Sept. 13, 2000 JEPRO 設定より上に移動
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION_TYPE		, _T("タイプ別設定(&Y)...") );		//Sept. 13, 2000 JEPRO アクセスキー変更(S→Y)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION			, _T("共通設定(&C)...") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FONT			, _T("フォント設定(&F)...") );		//Sept. 17, 2000 jepro キャプションに「設定」を追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, _T("履歴の管理(&O)...") );	//履歴の管理	//@@@ 2003.04.08 MIK
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
 // 20051022 aroka タイプ別設定値に戻すコマンド追加
 			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 			//	Jan.  8, 2006 genta 共通関数化
 			{
-				int width;
-				CEditView::TOGGLE_WRAP_ACTION mode = m_cEditDoc.ActiveView().GetWrapMode( width );
+				CLayoutInt ketas;
+				CEditView::TOGGLE_WRAP_ACTION mode = this->GetActiveView().GetWrapMode( &ketas );
 				if( mode == CEditView::TGWRAP_NONE ){
-					pszLabel = "幅の変更は出来ません(&W)";
+					pszLabel = _T("幅の変更は出来ません(&W)");
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , pszLabel );
 				}
 				else {
 					if( mode == CEditView::TGWRAP_FULL ){
-						pszLabel = "折り返さない(&W)";
+						pszLabel = _T("折り返さない(&W)");
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
-						pszLabel = "現在のウィンドウ幅で折り返し(&W)";
+						pszLabel = _T("現在のウィンドウ幅で折り返し(&W)");
 					}
 					else {	// TGWRAP_PROP
-						pszLabel = "タイプ別設定の幅で折り返し(&W)";
+						pszLabel = _T("タイプ別設定の幅で折り返し(&W)");
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );
 				}
 			}
 			//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , "現在のウィンドウ幅で折り返し(&W)" );	//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+//			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , _T("現在のウィンドウ幅で折り返し(&W)") );	//Sept. 13, 2000 JEPRO アクセスキー付与	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			// 2003.06.08 Moca 追加
 			// 「モード変更」ポップアップメニュー
 			// Feb. 28, 2004 genta 編集メニューから移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CHGMOD_INS	, "挿入／上書きモード(&I)" );	//Nov. 9, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_READONLY					, "読み取り専用(&R)" );
-			if ( FALSE == m_pShareData->m_Common.m_bMenuIcon ){
-				pszLabel = "キーワードヘルプ自動表示(&H)";
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CHGMOD_INS	, _T("挿入／上書きモード(&I)") );	//Nov. 9, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_READONLY					, _T("読み取り専用(&R)") );
+			if ( FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+				pszLabel = _T("キーワードヘルプ自動表示(&H)");
 			}
-			else if( IsFuncChecked( &m_cEditDoc, m_pShareData, F_TOGGLE_KEY_SEARCH ) ){
-				pszLabel = "キーワードヘルプ自動表示しない(&H)";
+			else if( IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) ){
+				pszLabel = _T("キーワードヘルプ自動表示しない(&H)");
 			}
 			else {
-				pszLabel = "キーワードヘルプ自動表示する(&H)";
+				pszLabel = _T("キーワードヘルプ自動表示する(&H)");
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOGGLE_KEY_SEARCH, pszLabel );
 			hMenuPopUp = ::CreatePopupMenu();
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, "入力改行コード指定(&CRLF)" ); // 入力改行コード指定(CRLF)
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF, "入力改行コード指定(&LF)" ); // 入力改行コード指定(LF)
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR, "入力改行コード指定(C&R)" ); // 入力改行コード指定(CR)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "入力改行コード指定(&E)" );
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, _T("入力改行コード指定(&CRLF)") ); // 入力改行コード指定(CRLF)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF, _T("入力改行コード指定(&LF)") ); // 入力改行コード指定(LF)
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR, _T("入力改行コード指定(C&R)") ); // 入力改行コード指定(CR)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("入力改行コード指定(&E)") );
 
 
 			break;
@@ -2721,74 +2314,74 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
-			if( 1 == m_cEditDoc.m_cSplitterWnd.GetAllSplitRows() ){ // 2002/2/8 aroka メソッドを通じてアクセス
-				pszLabel = "上下に分割(&-)";	//Oct. 7, 2000 JEPRO アクセスキーを変更(T→-)
+			if( 1 == m_cSplitterWnd.GetAllSplitRows() ){ // 2002/2/8 aroka メソッドを通じてアクセス
+				pszLabel = _T("上下に分割(&-)");	//Oct. 7, 2000 JEPRO アクセスキーを変更(T→-)
 			}else{
-				pszLabel = "上下分割の解除(&-)";
+				pszLabel = _T("上下分割の解除(&-)");
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_V , pszLabel );
 
-			if( 1 == m_cEditDoc.m_cSplitterWnd.GetAllSplitCols() ){ // 2002/2/8 aroka メソッドを通じてアクセス
-				pszLabel = "左右に分割(&I)";	//Oct. 7, 2000 JEPRO アクセスキーを変更(Y→I)
+			if( 1 == m_cSplitterWnd.GetAllSplitCols() ){ // 2002/2/8 aroka メソッドを通じてアクセス
+				pszLabel = _T("左右に分割(&I)");	//Oct. 7, 2000 JEPRO アクセスキーを変更(Y→I)
 			}else{
-				pszLabel = "左右分割の解除(&I)";
+				pszLabel = _T("左右分割の解除(&I)");
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_H , pszLabel );
 //	From Here Sept. 17, 2000 JEPRO	縦横分割の場合も状態によってメニューメッセージが変わるように変更
-			if( (1 < m_cEditDoc.m_cSplitterWnd.GetAllSplitRows()) && (1 < m_cEditDoc.m_cSplitterWnd.GetAllSplitCols()) ){ // 2002/2/8 aroka メソッドを通じてアクセス
-				pszLabel = "縦横分割の解除(&S)";	//Feb. 18, 2001 JEPRO アクセスキー変更(Q→S)
+			if( (1 < m_cSplitterWnd.GetAllSplitRows()) && (1 < m_cSplitterWnd.GetAllSplitCols()) ){ // 2002/2/8 aroka メソッドを通じてアクセス
+				pszLabel = _T("縦横分割の解除(&S)");	//Feb. 18, 2001 JEPRO アクセスキー変更(Q→S)
 			}else{
-				pszLabel = "縦横に分割(&S)";	//Sept. 17, 2000 jepro 説明に「に」を追加	//Oct. 7, 2000 JEPRO アクセスキーを変更(S→Q)	//Feb. 18, 2001 JEPRO アクセスキーを元に戻した(Q→S)
+				pszLabel = _T("縦横に分割(&S)");	//Sept. 17, 2000 jepro 説明に「に」を追加	//Oct. 7, 2000 JEPRO アクセスキーを変更(S→Q)	//Feb. 18, 2001 JEPRO アクセスキーを元に戻した(Q→S)
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_VH , pszLabel );
 //	To Here Sept. 17, 2000
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, "閉じる(&C)" );			//Feb. 18, 2001 JEPRO アクセスキー変更(O→C)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, "すべて閉じる(&Q)" );		//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, "次のウィンドウ(&N)" );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINLIST			, "ウィンドウ一覧(&W)..." );		// 2006.03.23 fon
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, "重ねて表示(&E)" );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, "上下に並べて表示(&H)" );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, "左右に並べて表示(&T)" );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)
-			if( (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST ){
-				pszLabel = "常に手前を解除(&F)";
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, _T("閉じる(&C)") );			//Feb. 18, 2001 JEPRO アクセスキー変更(O→C)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, _T("すべて閉じる(&Q)") );		//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, _T("次のウィンドウ(&N)") );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, _T("前のウィンドウ(&P)") );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINLIST			, _T("ウィンドウ一覧(&W)...") );		// 2006.03.23 fon
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, _T("重ねて表示(&E)") );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, _T("上下に並べて表示(&H)") );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, _T("左右に並べて表示(&T)") );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)
+			if( (DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST ){
+				pszLabel = _T("常に手前を解除(&F)");
 			}else{
-				pszLabel = "常に手前に表示(&F)";
+				pszLabel = _T("常に手前に表示(&F)");
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOPMOST, pszLabel ); //2004.09.21 Moca	// 2007.06.20 ryoji アクセスキー追加
 
 			hMenuPopUp = ::CreatePopupMenu();	// 2007.06.20 ryoji
-			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
-				pszLabel = "グループ化を解除(&B)";
+			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
+				pszLabel = _T("グループ化を解除(&B)");
 			}else{
-				pszLabel = "グループ化(&B)";
+				pszLabel = _T("グループ化(&B)");
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW, pszLabel );		//2004.07.14 Kazika 新規追加	// 2007.02.13 ryoji 「結合して表示」→「ひとつにまとめて表示」	// 2007.06.20 ryoji 「グループ化」
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE		, "グループを閉じる(&G)" );	// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_NEXTGROUP		, "次のグループ(&N)" );			// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_PREVGROUP		, "前のグループ(&P)" );			// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_MOVERIGHT	, "タブを右に移動(&R)" );		// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_MOVELEFT	, "タブを左に移動(&L)" );		// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_SEPARATE	, "新規グループ(&E)" );			// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_JOINTNEXT	, "次のグループに移動(&X)" );	// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_JOINTPREV	, "前のグループに移動(&V)" );	// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "タブの操作(&B)" );		// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE		, _T("グループを閉じる(&G)") );	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenuSep( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_NEXTGROUP		, _T("次のグループ(&N)") );			// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_PREVGROUP		, _T("前のグループ(&P)") );			// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_MOVERIGHT	, _T("タブを右に移動(&R)") );		// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_MOVELEFT	, _T("タブを左に移動(&L)") );		// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_SEPARATE	, _T("新規グループ(&E)") );			// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_JOINTNEXT	, _T("次のグループに移動(&X)") );	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_JOINTPREV	, _T("前のグループに移動(&V)") );	// 2007.06.20 ryoji
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("タブの操作(&B)") );		// 2007.06.20 ryoji
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_V		, "縦方向に最大化(&X)" );	//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_H		, "横方向に最大化(&Y)" );	//2001.02.10 by MIK
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MINIMIZE_ALL	, "すべて最小化(&M)" );		//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */				//Oct. 22, 2000 JEPRO 下の「再描画」復活に伴いセパレータを追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REDRAW			, "再描画(&R)" );			//Oct. 22, 2000 JEPRO コメントアウトされていたのを復活させた
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_OUTPUT		, "アウトプット(&U)" );		//Sept. 13, 2000 JEPRO アクセスキー変更(O→U)
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_V		, _T("縦方向に最大化(&X)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MAXIMIZE_H		, _T("横方向に最大化(&Y)") );	//2001.02.10 by MIK
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MINIMIZE_ALL	, _T("すべて最小化(&M)") );		//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */				//Oct. 22, 2000 JEPRO 下の「再描画」復活に伴いセパレータを追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_REDRAW			, _T("再描画(&R)") );			//Oct. 22, 2000 JEPRO コメントアウトされていたのを復活させた
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_OUTPUT		, _T("アウトプット(&U)") );		//Sept. 13, 2000 JEPRO アクセスキー変更(O→U)
 // 2006.03.23 fon CHG-start>>
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );		/* セパレータ */
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );		/* セパレータ */
 			EditNode*	pEditNodeArr;
 			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			WinListMenu(hMenu, pEditNodeArr, nRowNum, false);
@@ -2806,16 +2399,16 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , "目次(&O)" );				//Sept. 7, 2000 jepro キャプションを「ヘルプ目次」から変更	Oct. 13, 2000 JEPRO アクセスキーを「トレイ右ボタン」のために変更(C→O)
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH	,	 "キーワード検索(&S)..." );	//Sept. 7, 2000 jepro キャプションを「ヘルプトピックの検索」から変更 //Nov. 25, 2000 jepro「トピックの」→「キーワード」に変更 // 2004.05.06 MIK ...追加
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MENU_ALLFUNC	, "コマンド一覧(&M)" );		//Oct. 13, 2000 JEPRO アクセスキーを「トレイ右ボタン」のために変更(L→M)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T("目次(&O)") );				//Sept. 7, 2000 jepro キャプションを「ヘルプ目次」から変更	Oct. 13, 2000 JEPRO アクセスキーを「トレイ右ボタン」のために変更(C→O)
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH	,	 _T("キーワード検索(&S)...") );	//Sept. 7, 2000 jepro キャプションを「ヘルプトピックの検索」から変更 //Nov. 25, 2000 jepro「トピックの」→「キーワード」に変更 // 2004.05.06 MIK ...追加
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MENU_ALLFUNC	, _T("コマンド一覧(&M)") );		//Oct. 13, 2000 JEPRO アクセスキーを「トレイ右ボタン」のために変更(L→M)
 //Sept. 16, 2000 JEPRO ショートカットキーがうまく働かないので次行は殺して元に戻してある		//Dec. 25, 2000 復活
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CREATEKEYBINDLIST	, "キー割り当て一覧をコピー(&Q)" );			//Sept. 15, 2000 JEPRO キャプションの「...リスト」、アクセスキー変更(K→Q) IDM_TEST→Fに変更			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXTHELP1		, "外部ヘルプ１(&E)" );		//Sept. 7, 2000 JEPRO このメニューの順番をトップから下に移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXTHTMLHELP		, "外部HTMLヘルプ(&H)" );	//Sept. 7, 2000 JEPRO このメニューの順番を２番目から下に移動
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT			, "バージョン情報(&A)" );	//Dec. 25, 2000 JEPRO F_に変更
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CREATEKEYBINDLIST	, _T("キー割り当て一覧をコピー(&Q)") );			//Sept. 15, 2000 JEPRO キャプションの「...リスト」、アクセスキー変更(K→Q) IDM_TEST→Fに変更			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXTHELP1		, _T("外部ヘルプ１(&E)") );		//Sept. 7, 2000 JEPRO このメニューの順番をトップから下に移動
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXTHTMLHELP		, _T("外部HTMLヘルプ(&H)") );	//Sept. 7, 2000 JEPRO このメニューの順番を２番目から下に移動
+			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT			, _T("バージョン情報(&A)") );	//Dec. 25, 2000 JEPRO F_に変更
 			break;
 		}
 	}
@@ -2830,13 +2423,13 @@ end_of_func_IsEnable:;
 		id = ::GetMenuItemID(hMenu, nPos);
 		/* 機能が利用可能か調べる */
 		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
-		if( ! IsFuncEnable( &m_cEditDoc, m_pShareData, id ) ){
+		if( ! IsFuncEnable( &GetDocument(), m_pShareData, id ) ){
 			fuFlags = MF_BYCOMMAND | MF_GRAYED;
 			::EnableMenuItem(hMenu, id, fuFlags);
 		}
 
 		/* 機能がチェック状態か調べる */
-		if( IsFuncChecked( &m_cEditDoc, m_pShareData, id ) ){
+		if( IsFuncChecked( &GetDocument(), m_pShareData, id ) ){
 			fuFlags = MF_BYCOMMAND | MF_CHECKED;
 			::CheckMenuItem(hMenu, id, fuFlags);
 		}
@@ -2854,120 +2447,130 @@ end_of_func_IsEnable:;
 /* ファイルがドロップされた */
 void CEditWnd::OnDropFiles( HDROP hDrop )
 {
-		POINT		pt;
-		WORD		cFiles, i;
-		char		szFile[_MAX_PATH + 1];
-		char		szWork[_MAX_PATH + 1];
-		BOOL		bOpened;
-		FileInfo*	pfi;
-		HWND		hWndOwner;
+	POINT		pt;
+	WORD		cFiles, i;
+	TCHAR		szFile[_MAX_PATH + 1];
+	TCHAR		szWork[_MAX_PATH + 1];
+	FileInfo*	pfi;
+	HWND		hWndOwner;
 
-		::DragQueryPoint( hDrop, &pt );
-		cFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, (LPSTR) NULL, 0);
-		/* ファイルをドロップしたときは閉じて開く */
-		if( m_pShareData->m_Common.m_bDropFileAndClose ){
-			cFiles = 1;
+	::DragQueryPoint( hDrop, &pt );
+	cFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0);
+	/* ファイルをドロップしたときは閉じて開く */
+	if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
+		cFiles = 1;
+	}
+	/* 一度にドロップ可能なファイル数 */
+	if( cFiles > m_pShareData->m_Common.m_sFile.m_nDropFileNumMax ){
+		cFiles = m_pShareData->m_Common.m_sFile.m_nDropFileNumMax;
+	}
+
+	for( i = 0; i < cFiles; i++ ) {
+		::DragQueryFile( hDrop, i, szFile, _countof(szFile) );
+		/* ショートカット(.lnk)の解決 */
+		if( TRUE == ResolveShortcutLink( NULL, szFile, szWork ) ){
+			_tcscpy( szFile, szWork );
 		}
-		/* 一度にドロップ可能なファイル数 */
-		if( cFiles > m_pShareData->m_Common.m_nDropFileNumMax ){
-				cFiles = m_pShareData->m_Common.m_nDropFileNumMax;
+		/* ロングファイル名を取得する */
+		if( TRUE == ::GetLongFileName( szFile, szWork ) ){
+			_tcscpy( szFile, szWork );
 		}
-		for( i = 0; i < cFiles; i++ ) {
-				::DragQueryFile( hDrop, i, szFile, sizeof(szFile) );
-				/* ショートカット(.lnk)の解決 */
-				if( TRUE == ResolveShortcutLink( NULL, szFile, szWork ) ){
-					strcpy( szFile, szWork );
-				}
-				/* ロングファイル名を取得する */
-				if( TRUE == ::GetLongFileName( szFile, szWork ) ){
-						strcpy( szFile, szWork );
-				}
 
-				/* 指定ファイルが開かれているか調べる */
-				if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
-					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-					/* アクティブにする */
-					ActivateFrameWindow( hWndOwner );
-					/* MRUリストへの登録 */
-					CMRU cMRU;
-					cMRU.Add( pfi );
-				}else{
-						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
-						//	2005.06.24 Moca
-						if( m_cEditDoc.IsFileOpenInThisWindow() ){
-								/* ファイル読み込み */
-								m_cEditDoc.FileRead(
-										szFile,
-										&bOpened,
-										CODE_AUTODETECT,	/* 文字コード自動判別 */
-										FALSE,				/* 読み取り専用か */
-										//	Oct. 03, 2004 genta コード確認は設定に依存
-										m_pShareData->m_Common.m_bQueryIfCodeChange
-								);
-								hWndOwner = m_hWnd;
-								/* アクティブにする */
-								// 2007.06.17 maru すでに開いているかチェック済みだが
-								// ドロップされたのはフォルダかもしれないので再チェック
-								if(FALSE==bOpened) ActivateFrameWindow( hWndOwner );
-						}else{
-								/* ファイルをドロップしたときは閉じて開く */
-								if( m_pShareData->m_Common.m_bDropFileAndClose ){
-										/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-										if( m_cEditDoc.OnFileClose() ){
-												/* 既存データのクリア */
-												m_cEditDoc.Init();
-
-												/* 全ビューの初期化 */
-												m_cEditDoc.InitAllView();
-
-												/* 親ウィンドウのタイトルを更新 */
-												m_cEditDoc.SetParentCaption();
-
-												/* ファイル読み込み */
-														m_cEditDoc.FileRead(
-														szFile,
-														&bOpened,
-														CODE_AUTODETECT,	/* 文字コード自動判別 */
-														FALSE,				/* 読み取り専用か */
-														//	Oct. 03, 2004 genta コード確認は設定に依存
-														m_pShareData->m_Common.m_bQueryIfCodeChange
-														//TRUE
-												);
-												hWndOwner = m_hWnd;
-												/* アクティブにする */
-												ActivateFrameWindow( hWndOwner );
-										}
-										goto end_of_drop_query;
-								}else{
-										/* 編集ウィンドウの上限チェック */
-										if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-												char szMsg[512];
-												wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-												::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
-												::DragFinish( hDrop );
-												return;
-										}
-										char	szFile2[_MAX_PATH + 3];
-										if( strchr( szFile, ' ' ) ){
-												wsprintf( szFile2, "\"%s\"", szFile );
-												strcpy( szFile, szFile2 );
-										}
-										/* 新たな編集ウィンドウを起動 */
-										CEditApp::OpenNewEditor(
-												m_hInstance,
-												m_hWnd,
-												szFile,
-												CODE_AUTODETECT,	/* 文字コード自動判別 */
-												FALSE				/* 読み取り専用か */
-										);
-								}
-						}
-				}
+		/* 指定ファイルが開かれているか調べる */
+		if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
+			::SendMessageAny( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
+			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			/* アクティブにする */
+			ActivateFrameWindow( hWndOwner );
+			/* MRUリストへの登録 */
+			CMRU cMRU;
+			cMRU.Add( pfi );
 		}
+		else{
+			/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
+			//	2005.06.24 Moca
+			if( GetDocument().IsFileOpenInThisWindow() ){
+				/* ファイル読み込み */
+				bool		bOpened;
+				GetDocument().FileRead(
+						szFile,
+						&bOpened,
+						CODE_AUTODETECT,	/* 文字コード自動判別 */
+						false,				/* 読み取り専用か */
+						//	Oct. 03, 2004 genta コード確認は設定に依存
+						m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange!=0
+				);
+				hWndOwner = GetHwnd();
+				/* アクティブにする */
+				// 2007.06.17 maru すでに開いているかチェック済みだが
+				// ドロップされたのはフォルダかもしれないので再チェック
+				if(!bOpened) ActivateFrameWindow( hWndOwner );
+			}
+			else{
+				/* ファイルをドロップしたときは閉じて開く */
+				if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
+					/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
+					if( GetDocument().OnFileClose() ){
+						/* 既存データのクリア */
+						GetDocument().Init();
+
+						/* 全ビューの初期化 */
+						GetDocument().InitAllView();
+
+						/* 親ウィンドウのタイトルを更新 */
+						GetDocument().SetParentCaption();
+
+						/* ファイル読み込み */
+						bool		bOpened;
+						GetDocument().FileRead(
+							szFile,
+							&bOpened,
+							CODE_AUTODETECT,	/* 文字コード自動判別 */
+							false,				/* 読み取り専用か */
+							//	Oct. 03, 2004 genta コード確認は設定に依存
+							m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange!=0
+							//TRUE
+						);
+						hWndOwner = GetHwnd();
+						/* アクティブにする */
+						ActivateFrameWindow( hWndOwner );
+					}
+					goto end_of_drop_query;
+				}
+				else{
+					/* 編集ウィンドウの上限チェック */
+					if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+						TCHAR szMsg[512];
+						auto_sprintf(
+							szMsg,
+							_T("編集ウィンドウ数の上限は%dです。\n")
+							_T("これ以上は同時に開けません。"),
+							MAX_EDITWINDOWS
+						);
+						::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+						::DragFinish( hDrop );
+						return;
+					}
+					TCHAR	szFile2[_MAX_PATH + 3];
+					if( _tcschr( szFile, _T(' ') ) ){
+						auto_sprintf( szFile2, _T("\"%ts\""), szFile );
+						_tcscpy( szFile, szFile2 );
+					}
+					/* 新たな編集ウィンドウを起動 */
+					CControlTray::OpenNewEditor(
+						m_hInstance,
+						GetHwnd(),
+						szFile,
+						CODE_AUTODETECT,	/* 文字コード自動判別 */
+						FALSE				/* 読み取り専用か */
+					);
+				}
+			}
+		}
+	}
 end_of_drop_query:;
-		::DragFinish( hDrop );
-		return;
+	::DragFinish( hDrop );
+	return;
 }
 
 /*! WM_TIMER 処理 
@@ -2982,7 +2585,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 		OnEditTimer();
 		break;
 	case IDT_TOOLBAR:
-		OnToolbarTimer();
+		m_cToolbar.OnToolbarTimer();
 		break;
 	case IDT_CAPTION:
 		OnCaptionTimer();
@@ -2997,68 +2600,6 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
-/*! タイマーの処理
-	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
-	@date 2006.01.28 aroka ツールバー更新を OnToolbarTimerに移動した
-	@date 2007.04.03 ryoji パラメータ無しにした
-*/
-void CEditWnd::OnEditTimer( void )
-{
-	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
-	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
-	m_nTimerCount++;
-	if( 6 < m_nTimerCount ){
-		m_nTimerCount = 0;
-	}
-
-	// 2006.01.28 aroka ツールバー更新関連は OnToolbarTimerに移動した。
-	
-	//	Aug. 29, 2003 wmlhq, ryoji
-	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
-		/* ファイルのタイムスタンプのチェック処理 */
-		m_cEditDoc.CheckFileTimeStamp() ;
-	}
-
-	m_cEditDoc.CheckAutoSave();
-	return;
-}
-
-/*! ツールバー更新用タイマーの処理
-	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
-	@date 2006.01.28 aroka OnTimerから分離
-	@date 2007.04.03 ryoji パラメータ無しにした
-*/
-void CEditWnd::OnToolbarTimer( void )
-{
-	int			i;
-	TBBUTTON	tbb;
-	m_nTimerCount++;
-	if( 10 < m_nTimerCount ){
-		m_nTimerCount = 0;
-	}
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
-	if( !m_pPrintPreview && NULL != m_hwndToolBar ){
-		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-			tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]);
-
-			/* 機能が利用可能か調べる */
-			::PostMessage(
-				m_hwndToolBar, TB_ENABLEBUTTON, tbb.idCommand,
-				(LPARAM) MAKELONG( (IsFuncEnable( &m_cEditDoc, m_pShareData, tbb.idCommand ) ) , 0 )
-			);
-			/* 機能がチェック状態か調べる */
-			::PostMessage(
-				m_hwndToolBar, TB_CHECKBUTTON, tbb.idCommand,
-				(LPARAM) MAKELONG( IsFuncChecked( &m_cEditDoc, m_pShareData, tbb.idCommand ), 0 )
-			);
-		}
-	}
-
-	return;
-}
 
 /*! キャプション更新用タイマーの処理
 	@date 2007.04.03 ryoji 新規
@@ -3068,8 +2609,8 @@ void CEditWnd::OnCaptionTimer( void )
 	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
 	// まだ切替中ならタイマー継続
 	if( !m_pShareData->m_bEditWndChanging ){
-		::KillTimer( m_hWnd, IDT_CAPTION );
-		::SetWindowText( m_hWnd, m_pszLastCaption );
+		::KillTimer( GetHwnd(), IDT_CAPTION );
+		::SetWindowText( GetHwnd(), m_pszLastCaption );
 	}
 }
 
@@ -3079,7 +2620,7 @@ void CEditWnd::OnCaptionTimer( void )
 */
 void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 {
-	::KillTimer( m_hWnd, IDT_SYSMENU );	// 2007.04.03 ryoji
+	::KillTimer( GetHwnd(), IDT_SYSMENU );	// 2007.04.03 ryoji
 
 	if(m_IconClicked == icClicked)
 	{
@@ -3089,435 +2630,23 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 		// 2006.04.21 ryoji マルチモニタ対応の修正
 		// 2007.05.13 ryoji 0x0313メッセージをポストする方式に変更（TrackPopupMenuだとメニュー項目の有効／無効状態が不正になる問題対策）
 		RECT R;
-		GetWindowRect(m_hWnd, &R);
+		GetWindowRect(GetHwnd(), &R);
 		POINT pt;
 		pt.x = R.left + GetSystemMetrics(SM_CXFRAME);
 		pt.y = R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME);
 		GetMonitorWorkRect( pt, &R );
-		::PostMessage( m_hWnd, 0x0313, 0, MAKELPARAM( (pt.x > R.left)? pt.x: R.left, (pt.y < R.bottom)? pt.y: R.bottom ));
+		::PostMessageAny(
+			GetHwnd(),
+			0x0313, //右クリックでシステムメニューを表示する際に送信するモノらしい
+			0,
+			MAKELPARAM( (pt.x > R.left)? pt.x: R.left, (pt.y < R.bottom)? pt.y: R.bottom )
+		);
 	}
 	m_IconClicked = icNone;
 }
 
-/* 機能がチェック状態か調べる */
-int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
-{
-	CEditWnd* pCEditWnd;
-	// Modified by KEITA for WIN64 2003.9.6
-	pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( pcEditDoc->m_hwndParent, GWLP_USERDATA );
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
-	switch( nId ){
-	case F_FILE_REOPEN_SJIS:
-		if( CODE_SJIS == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_FILE_REOPEN_JIS:
-		if( CODE_JIS == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_FILE_REOPEN_EUC:
-		if( CODE_EUC == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_FILE_REOPEN_UNICODE:
-		if( CODE_UNICODE == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_FILE_REOPEN_UNICODEBE:
-		if( CODE_UNICODEBE == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_FILE_REOPEN_UTF8:
-		if( CODE_UTF8 == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_FILE_REOPEN_UTF7:
-		if( CODE_UTF7 == pcEditDoc->m_nCharCode ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}else{
-			return FALSE;
-		}
-	case F_SHOWTOOLBAR:
-		if( pCEditWnd->m_hwndToolBar != NULL ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_SHOWFUNCKEY:
-		if( pCEditWnd->m_CFuncKeyWnd.m_hWnd != NULL ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_SHOWTAB:	//@@@ 2003.06.10 MIK
-		if( pCEditWnd->m_cTabWnd.m_hWnd != NULL ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_SHOWSTATUSBAR:
-		if( pCEditWnd->m_hwndStatusBar != NULL ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	// Mar. 6, 2002 genta
-	case F_READONLY://読み取り専用
-		if( pcEditDoc->m_bReadOnly ){ /* 変更フラグ */
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	//	From Here 2003.06.23 Moca
-	case F_CHGMOD_EOL_CRLF:
-		if( EOL_CRLF == pcEditDoc->GetNewLineCode() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_CHGMOD_EOL_LF:
-		if( EOL_LF == pcEditDoc->GetNewLineCode() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_CHGMOD_EOL_CR:
-		if( EOL_CR == pcEditDoc->GetNewLineCode() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	//	To Here 2003.06.23 Moca
-	//	2003.07.21 genta
-	case F_CHGMOD_INS:
-		//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
-		if( pcEditDoc->IsInsMode() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_TOGGLE_KEY_SEARCH:
-		//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
-		if( pShareData->m_Common.m_bUseCaretKeyWord ){
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
-	//Start 2004.07.14 Kazika 追加
-	case F_BIND_WINDOW:	//
-		return ((pShareData->m_Common.m_bDispTabWnd) && !(pShareData->m_Common.m_bDispTabWndMultiWin));
-
-	// 2004.09.21 Moca
-	case F_TOPMOST:
-		if( (DWORD)::GetWindowLongPtr( pCEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-		break;
-	// Jan. 10, 2004 genta インクリメンタルサーチ
-	case F_ISEARCH_NEXT:
-	case F_ISEARCH_PREV:
-	case F_ISEARCH_REGEXP_NEXT:
-	case F_ISEARCH_REGEXP_PREV:
-	case F_ISEARCH_MIGEMO_NEXT:
-	case F_ISEARCH_MIGEMO_PREV:
-		return pcEditDoc->ActiveView().IsISearchEnabled( nId );
-	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
-		// ToDo:ブックマークリストが出ているときもへこんでしまう。
-		return (pcEditDoc->m_cDlgFuncList.m_hWnd != NULL);
-	}
-	//End 2004.07.14 Kazika
-
-	return FALSE;
-}
 
 
-
-
-/* 機能が利用可能か調べる */
-int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
-{
-	/* 書き換え禁止のときを一括チェック */
-	if( pcEditDoc->IsModificationForbidden( nId ) )
-		return FALSE;
-
-	switch( nId ){
-	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}else{
-			return TRUE;
-		}
-	case F_SAVEKEYMACRO:	/* キーマクロの保存 */
-		//	Jun. 16, 2002 genta
-		//	キーマクロエンジン以外のマクロを読み込んでいるときは
-		//	実行はできるが保存はできない．
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}else{
-			return pcEditDoc->m_pcSMacroMgr->IsSaveOk();
-		}
-	case F_EXECKEYMACRO:	/* キーマクロの実行 */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}else{
-			//@@@ 2002.1.24 YAZAKI m_szKeyMacroFileNameにファイル名がコピーされているかどうか。
-			if (pShareData->m_szKeyMacroFileName[0] ) {
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}
-	case F_LOADKEYMACRO:	/* キーマクロの読み込み */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}else{
-			return TRUE;
-		}
-
-	case F_SEARCH_CLEARMARK:	//検索マークのクリア
-		return TRUE;
-
-	// 02/06/26 ai Start
-	case F_JUMP_SRCHSTARTPOS:	// 検索開始位置へ戻る
-		if( 0 <= pcEditDoc->m_cEditViewArr[pcEditDoc->m_nActivePaneIndex].m_nSrchStartPosX_PHY &&
-			0 <= pcEditDoc->m_cEditViewArr[pcEditDoc->m_nActivePaneIndex].m_nSrchStartPosY_PHY) {
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	// 02/06/26 ai End
-
-	case F_COMPARE:	/* ファイル内容比較 */
-		if( 2 <= pShareData->m_nEditArrNum ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-
-	case F_DIFF_NEXT:	/* 次の差分へ */	//@@@ 2002.05.25 MIK
-	case F_DIFF_PREV:	/* 前の差分へ */	//@@@ 2002.05.25 MIK
-	case F_DIFF_RESET:	/* 差分の全解除 */	//@@@ 2002.05.25 MIK
-		if( ! pcEditDoc->m_cDocLineMgr.IsDiffUse() ) return FALSE;
-		return TRUE;
-	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
-		//if( pcEditDoc->IsModified() ) return FALSE;
-		//if( ! pcEditDoc->IsFilePathAvailable() ) return FALSE;
-		return TRUE;
-
-	case F_BEGIN_BOX:	//矩形範囲選択開始
-		if( TRUE == pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_PASTEBOX:
-		/* クリップボードから貼り付け可能か？ */
-		if( pcEditDoc->IsEnablePaste() &&
-			TRUE == pShareData->m_Common.m_bFontIs_FIXED_PITCH
-		){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_PASTE:
-		/* クリップボードから貼り付け可能か？ */
-		if( pcEditDoc->IsEnablePaste() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-
-	case F_FILENEW:	/* 新規作成 */
-	case F_GREP_DIALOG:	/* Grep */
-		/* 編集ウィンドウの上限チェック */
-		if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-			return FALSE;
-		}else{
-			return TRUE;
-		}
-
-	case F_FILESAVE:	/* 上書き保存 */
-		if( !pcEditDoc->m_bReadOnly ){	/* 読み取り専用モード */
-			if( pcEditDoc->IsModified() ){	/* 変更フラグ */
-				return TRUE;
-			}else{
-				/* 無変更でも上書きするか */
-				if( FALSE == pShareData->m_Common.m_bEnableUnmodifiedOverwrite ){
-					return FALSE;
-				}else{
-					return TRUE;
-				}
-			}
-		}else{
-			return FALSE;
-		}
-	case F_COPYLINES:				//選択範囲内全行コピー
-	case F_COPYLINESASPASSAGE:		//選択範囲内全行引用符付きコピー
-	case F_COPYLINESWITHLINENUMBER:	//選択範囲内全行行番号付きコピー
-		if( pcEditDoc->IsTextSelected( ) ){/* テキストが選択されているか */
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-
-	case F_TOLOWER:					/* 小文字 */
-	case F_TOUPPER:					/* 大文字 */
-	case F_TOHANKAKU:				/* 全角→半角 */
-	case F_TOHANKATA:				/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
-	case F_TOZENEI:					/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
-	case F_TOHANEI:					/* 全角英数→半角英数 */
-	case F_TOZENKAKUKATA:			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
-	case F_TOZENKAKUHIRA:			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA:	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA:	/* 半角カタカナ→全角ひらがな */
-	case F_TABTOSPACE:				/* TAB→空白 */
-	case F_SPACETOTAB:				/* 空白→TAB */  //#### Stonee, 2001/05/27
-	case F_CODECNV_AUTO2SJIS:		/* 自動判別→SJISコード変換 */
-	case F_CODECNV_EMAIL:			/* E-Mail(JIS→SJIS)コード変換 */
-	case F_CODECNV_EUC2SJIS:		/* EUC→SJISコード変換 */
-	case F_CODECNV_UNICODE2SJIS:	/* Unicode→SJISコード変換 */
-	case F_CODECNV_UNICODEBE2SJIS:	/* UnicodeBE→SJISコード変換 */
-	case F_CODECNV_UTF82SJIS:		/* UTF-8→SJISコード変換 */
-	case F_CODECNV_UTF72SJIS:		/* UTF-7→SJISコード変換 */
-	case F_CODECNV_SJIS2JIS:		/* SJIS→JISコード変換 */
-	case F_CODECNV_SJIS2EUC:		/* SJIS→EUCコード変換 */
-	case F_CODECNV_SJIS2UTF8:		/* SJIS→UTF-8コード変換 */
-	case F_CODECNV_SJIS2UTF7:		/* SJIS→UTF-7コード変換 */
-	case F_BASE64DECODE:			/* Base64デコードして保存 */
-	case F_UUDECODE:				//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
-
-		/* テキストが選択されているか */
-		if( pcEditDoc->IsTextSelected( ) ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_SELECTWORD:	/* 現在位置の単語選択 */
-	case F_CUT_LINE:	//行切り取り(折り返し単位)
-	case F_DELETE_LINE:	//行削除(折り返し単位)
-		/* テキストが選択されているか */
-		if( pcEditDoc->IsTextSelected( ) ){
-			return FALSE;
-		}else{
-			return TRUE;
-		}
-	case F_UNDO:
-		/* Undo(元に戻す)可能な状態か？ */
-		if( pcEditDoc->IsEnableUndo() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_REDO:
-		/* Redo(やり直し)可能な状態か？ */
-		if( pcEditDoc->IsEnableRedo() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-
-	case F_COPYPATH:
-	case F_COPYTAG:
-	case F_COPYFNAME:					// 2002/2/3 aroka
-	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-	case F_OPEN_HHPP:					//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
-	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
-	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
-	case F_BROWSE:						//ブラウズ
-	//case F_READONLY:					//読み取り専用	//	Sep. 10, 2002 genta 常に使えるように
-	case F_PROPERTY_FILE:
-		/* 現在編集中のファイルのパス名をクリップボードにコピーできるか */
-		if( pcEditDoc->IsFilePathAvailable() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
-		if( pcEditDoc->ActiveView().m_cHistory->CheckPrev() )
-			return TRUE;
-		else
-			return FALSE;
-	case F_JUMPHIST_NEXT:	//	移動履歴: 次へ
-		if( pcEditDoc->ActiveView().m_cHistory->CheckNext() )
-			return TRUE;
-		else
-			return FALSE;
-	case F_JUMPHIST_SET:	//	現在位置を移動履歴に登録
-		return TRUE;
-	case F_DIRECT_TAGJUMP:	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
-	case F_TAGJUMP_KEYWORD:	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
-	//	2003.05.12 MIK タグファイル作成先を選べるようにしたので、常に作成可能とする
-//	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
-		if( pcEditDoc->IsFilePathAvailable() ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	
-	//タブモード時はウインドウ並べ替え禁止です。	@@@ 2003.06.12 MIK
-	case F_TILE_H:
-	case F_TILE_V:
-	case F_CASCADE:
-		//Start 2004.07.15 Kazika タブウィンド時も実行可能
-		return TRUE;
-		//End 2004.07.15 Kazika
-	case F_BIND_WINDOW:	//2004.07.14 Kazika 新規追加
-	case F_TAB_MOVERIGHT:	// 2007.06.20 ryoji 追加
-	case F_TAB_MOVELEFT:	// 2007.06.20 ryoji 追加
-		//非タブモード時はウィンドウを結合して表示できない
-		return (pShareData->m_Common.m_bDispTabWnd);
-	case F_GROUPCLOSE:		// 2007.06.20 ryoji 追加
-	case F_NEXTGROUP:		// 2007.06.20 ryoji 追加
-	case F_PREVGROUP:		// 2007.06.20 ryoji 追加
-		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin );
-	case F_TAB_SEPARATE:	// 2007.06.20 ryoji 追加
-	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji 追加
-	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
-		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin && !::IsZoomed( pcEditDoc->m_hwndParent ) );
-	}
-	return TRUE;
-}
 
 //#ifdef _DEBUG
 	/* デバッグモニタモードに設定 */
@@ -3528,13 +2657,13 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 				return;
 			}
 		}
-		m_pShareData->m_hwndDebug = m_hWnd;
-		m_cEditDoc.m_bDebugMode = TRUE;
+		m_pShareData->m_hwndDebug = GetHwnd();
+		GetDocument().m_bDebugMode = TRUE;
 
-// 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
-		m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */
+// 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAIL_Wが抑止されるのでとりあえず読み取り専用モードは辞めました
+		GetDocument().m_bReadOnly = FALSE;		/* 読み取り専用モード */
 		/* 親ウィンドウのタイトルを更新 */
-		m_cEditDoc.SetParentCaption();
+		GetDocument().SetParentCaption();
 		return;
 	}
 	
@@ -3542,41 +2671,15 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	//! デバックモニタモードの解除
 	void CEditWnd::SetDebugModeOFF( void )
 	{
-		if( m_pShareData->m_hwndDebug == m_hWnd ){
+		if( m_pShareData->m_hwndDebug == GetHwnd() ){
 			m_pShareData->m_hwndDebug = NULL;
-			m_cEditDoc.m_bDebugMode = FALSE;
-			m_cEditDoc.SetParentCaption();
+			GetDocument().m_bDebugMode = FALSE;
+			GetDocument().SetParentCaption();
 		}
 	}
 //#endif
 
 
-/* 機能IDに対応するヘルプコンテキスト番号を返す */
-// Modified by Stonee, 2001/02/23
-// etc_uty.cpp内に中身を移動
-/*	2002/04/17 YAZAKI コメントアウト
-int CEditWnd::FuncID_To_HelpContextID( int nFuncID )
-{
-	return ::FuncID_To_HelpContextID(nFuncID);
-}
-*/
-
-/* メニューアイテムに対応するヘルプを表示 */
-void CEditWnd::OnHelp_MenuItem( HWND hwndParent, int nFuncID )
-{
-	char	szHelpFile[_MAX_PATH + 1];
-	int		nHelpContextID;
-
-	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( szHelpFile );
-
-	/* 機能IDに対応するヘルプコンテキスト番号を返す */
-	nHelpContextID = FuncID_To_HelpContextID( nFuncID );
-	if( 0 != nHelpContextID ){
-		MyWinHelp( hwndParent, szHelpFile, HELP_CONTEXT, nHelpContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-	}
-	return;
-}
 
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -3588,7 +2691,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 	HWND	hwndToolBar;
 
 	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
-	hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
+	hwndToolBar = (NULL != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
 
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -3599,41 +2702,41 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		m_pPrintPreview = NULL;	//	NULLか否かで、プリントプレビューモードか判断するため。
 
 		/*	通常モードに戻す	*/
-		::ShowWindow( m_cEditDoc.m_hWnd, SW_SHOW );
+		::ShowWindow( GetDocument().GetSplitterHwnd(), SW_SHOW );
 		::ShowWindow( hwndToolBar, SW_SHOW );	// 2006.06.17 ryoji
-		::ShowWindow( m_hwndStatusBar, SW_SHOW );
-		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_SHOW );
-		::ShowWindow( m_cTabWnd.m_hWnd, SW_SHOW );	//@@@ 2003.06.25 MIK
+		::ShowWindow( m_cStatusBar.GetStatusHwnd(), SW_SHOW );
+		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), SW_SHOW );
+		::ShowWindow( m_cTabWnd.GetHwnd(), SW_SHOW );	//@@@ 2003.06.25 MIK
 
-		::SetFocus( m_hWnd );
+		::SetFocus( GetHwnd() );
 
 		hMenu = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_MENU1 ) );
-		::SetMenu( m_hWnd, hMenu );
-		::DrawMenuBar( m_hWnd );
+		::SetMenu( GetHwnd(), hMenu );
+		::DrawMenuBar( GetHwnd() );
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-		::InvalidateRect( m_hWnd, NULL, TRUE );
+		::InvalidateRect( GetHwnd(), NULL, TRUE );
 	}else{
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		/*	通常モードを隠す	*/
-		hMenu = ::GetMenu( m_hWnd );
+		hMenu = ::GetMenu( GetHwnd() );
 		//	Jun. 18, 2001 genta Print Previewではメニューを削除
-		::SetMenu( m_hWnd, NULL );
+		::SetMenu( GetHwnd(), NULL );
 		::DestroyMenu( hMenu );
-		::DrawMenuBar( m_hWnd );
+		::DrawMenuBar( GetHwnd() );
 
-		::ShowWindow( m_cEditDoc.m_hWnd, SW_HIDE );
+		::ShowWindow( GetDocument().GetSplitterHwnd(), SW_HIDE );
 		::ShowWindow( hwndToolBar, SW_HIDE );	// 2006.06.17 ryoji
-		::ShowWindow( m_hwndStatusBar, SW_HIDE );
-		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_HIDE );
-		::ShowWindow( m_cTabWnd.m_hWnd, SW_HIDE );	//@@@ 2003.06.25 MIK
+		::ShowWindow( m_cStatusBar.GetStatusHwnd(), SW_HIDE );
+		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), SW_HIDE );
+		::ShowWindow( m_cTabWnd.GetHwnd(), SW_HIDE );	//@@@ 2003.06.25 MIK
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		m_pPrintPreview = new CPrintPreview( this );
 		/* 現在の印刷設定 */
 		m_pPrintPreview->SetPrintSetting(
 			&m_pShareData->m_PrintSettingArr[
-				m_cEditDoc.GetDocumentAttribute().m_nCurrentPrintSetting]
+				GetDocument().GetDocumentAttribute().m_nCurrentPrintSetting]
 		);
 
 		//	プリンタの情報を取得。
@@ -3642,8 +2745,8 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		BOOL bRes;
 		bRes = m_pPrintPreview->GetDefaultPrinterInfo();
 		if( FALSE == bRes ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
-				"印刷プレビューを実行する前に、プリンタをインストールしてください。\n"
+			::MYMESSAGEBOX( GetHwnd(), MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
+				_T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n")
 			);
 			return;
 		}
@@ -3651,8 +2754,8 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		/* 印刷設定の反映 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		m_pPrintPreview->OnChangePrintSetting();
-		::InvalidateRect( m_hWnd, NULL, TRUE );
-		::UpdateWindow( m_hWnd /* m_pPrintPreview->GetPrintPreviewBarHANDLE() */);
+		::InvalidateRect( GetHwnd(), NULL, TRUE );
+		::UpdateWindow( GetHwnd() /* m_pPrintPreview->GetPrintPreviewBarHANDLE() */);
 
 	}
 	return;
@@ -3690,29 +2793,29 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	/* ウィンドウサイズ継承 */
 	if( wParam != SIZE_MINIMIZED ){						/* 最小化は継承しない */
 		//	2004.05.13 Moca m_nSaveWindowSizeの解釈追加のため
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
+		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_nSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
 			if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
-				if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ){
-					m_pShareData->m_Common.m_nWinSizeType = wParam;
+				if( m_pShareData->m_Common.m_sWindow.m_nWinSizeType != (int)wParam ){
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
 				}
 			}else{
-				::GetWindowRect( m_hWnd, &rcWin );
+				::GetWindowRect( GetHwnd(), &rcWin );
 				/* ウィンドウサイズに関するデータが変更されたか */
-				if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ||
-					m_pShareData->m_Common.m_nWinSizeCX != rcWin.right - rcWin.left ||
-					m_pShareData->m_Common.m_nWinSizeCY != rcWin.bottom - rcWin.top
+				if( m_pShareData->m_Common.m_sWindow.m_nWinSizeType != (int)wParam ||
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX != rcWin.right - rcWin.left ||
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeCY != rcWin.bottom - rcWin.top
 				){
-					m_pShareData->m_Common.m_nWinSizeType = wParam;
-					m_pShareData->m_Common.m_nWinSizeCX = rcWin.right - rcWin.left;
-					m_pShareData->m_Common.m_nWinSizeCY = rcWin.bottom - rcWin.top;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX = rcWin.right - rcWin.left;
+					m_pShareData->m_Common.m_sWindow.m_nWinSizeCY = rcWin.bottom - rcWin.top;
 				}
 			}
 		}
 
 		// 元に戻すときのサイズ種別を記憶	// 2007.06.20 ryoji
-		EditNode *p = CShareData::getInstance()->GetEditNode( m_hWnd );
+		EditNode *p = CShareData::getInstance()->GetEditNode( GetHwnd() );
 		if( p != NULL ){
-			p->m_showCmdRestore = ::IsZoomed( p->m_hWnd )? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
+			p->m_showCmdRestore = ::IsZoomed( p->GetHwnd() )? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
 		}
 	}
 
@@ -3723,33 +2826,33 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
 
 	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
-	hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
+	hwndToolBar = (NULL != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
 	nToolBarHeight = 0;
 	if( NULL != hwndToolBar ){
-		::SendMessage( hwndToolBar, WM_SIZE, wParam, lParam );
+		::SendMessageAny( hwndToolBar, WM_SIZE, wParam, lParam );
 		::GetWindowRect( hwndToolBar, &rc );
 		nToolBarHeight = rc.bottom - rc.top;
 	}
 	nFuncKeyWndHeight = 0;
-	if( NULL != m_CFuncKeyWnd.m_hWnd ){
-		::SendMessage( m_CFuncKeyWnd.m_hWnd, WM_SIZE, wParam, lParam );
-		::GetWindowRect( m_CFuncKeyWnd.m_hWnd, &rc );
+	if( NULL != m_CFuncKeyWnd.GetHwnd() ){
+		::SendMessageAny( m_CFuncKeyWnd.GetHwnd(), WM_SIZE, wParam, lParam );
+		::GetWindowRect( m_CFuncKeyWnd.GetHwnd(), &rc );
 		nFuncKeyWndHeight = rc.bottom - rc.top;
 	}
 	//@@@ From Here 2003.05.31 MIK
 	//タブウインドウ
 	nTabWndHeight = 0;
-	if( NULL != m_cTabWnd.m_hWnd )
+	if( NULL != m_cTabWnd.GetHwnd() )
 	{
-		::SendMessage( m_cTabWnd.m_hWnd, WM_SIZE, wParam, lParam );
-		::GetWindowRect( m_cTabWnd.m_hWnd, &rc );
+		::SendMessageAny( m_cTabWnd.GetHwnd(), WM_SIZE, wParam, lParam );
+		::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
 		nTabWndHeight = rc.bottom - rc.top;
 	}
 	//@@@ To Here 2003.05.31 MIK
 	nStatusBarHeight = 0;
-	if( NULL != m_hwndStatusBar ){
-		::SendMessage( m_hwndStatusBar, WM_SIZE, wParam, lParam );
-		::GetClientRect( m_hwndStatusBar, &rc );
+	if( NULL != m_cStatusBar.GetStatusHwnd() ){
+		::SendMessageAny( m_cStatusBar.GetStatusHwnd(), WM_SIZE, wParam, lParam );
+		::GetClientRect( m_cStatusBar.GetStatusHwnd(), &rc );
 		//	May 12, 2000 genta
 		//	2カラム目に改行コードの表示を挿入
 		//	From Here
@@ -3757,7 +2860,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		// 2003.08.26 Moca CR0LF0廃止に従い、適当に調整
 		// 2004-02-28 yasu 文字列を出力時の書式に合わせる
 		// 幅を変えた場合にはCEditView::DrawCaretPosInfo()での表示方法を見直す必要あり．
-		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
+		const TCHAR*	pszLabel[7] = { _T(""), _T("99999 行 9999 列"), _T("CRLF"), _T("0000"), _T("Unicode"), _T("REC"), _T("上書") };	//Oct. 30, 2000 JEPRO 千万行も要らん
 		int			nStArrNum = 7;
 		//	To Here
 		int			nAllWidth = rc.right - rc.left;
@@ -3768,8 +2871,8 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		int			i;
 		// 2004-02-28 yasu
 		// 正確な幅を計算するために、表示フォントを取得してhdcに選択させる。
-		hdc = ::GetDC( m_hwndStatusBar );
-		HFONT hFont = (HFONT)::SendMessage(m_hwndStatusBar, WM_GETFONT, 0, 0);
+		hdc = ::GetDC( m_cStatusBar.GetStatusHwnd() );
+		HFONT hFont = (HFONT)::SendMessageAny(m_cStatusBar.GetStatusHwnd(), WM_GETFONT, 0, 0);
 		if (hFont != NULL)
 		{
 			hFont = (HFONT)::SelectObject(hdc, hFont);
@@ -3779,7 +2882,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 			nStArr[nStArrNum - 1] -= nSbxWidth;
 		}
 		for( i = nStArrNum - 1; i > 0; i-- ){
-			::GetTextExtentPoint32( hdc, pszLabel[i], lstrlen( pszLabel[i] ), &sz );
+			::GetTextExtentPoint32( hdc, pszLabel[i], _tcslen( pszLabel[i] ), &sz );
 			nStArr[i - 1] = nStArr[i] - ( sz.cx + nBdrWidth );
 		}
 
@@ -3787,52 +2890,52 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	初期状態ではすべての部分が「枠あり」だが，メッセージエリアは枠を描画しないようにしている
 		//	ため，初期化時の枠が変な風に残ってしまう．初期状態で枠を描画させなくするため，
 		//	最初に「枠無し」状態を設定した後でバーの分割を行う．
-		::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
+		m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
 
-		::SendMessage( m_hwndStatusBar, SB_SETPARTS, nStArrNum, (LPARAM) (LPINT)nStArr );
+		::SendMessageAny( m_cStatusBar.GetStatusHwnd(), SB_SETPARTS, nStArrNum, (LPARAM)nStArr );
 		if (hFont != NULL)
 		{
 			::SelectObject(hdc, hFont);
 		}
-		::ReleaseDC( m_hwndStatusBar, hdc );
+		::ReleaseDC( m_cStatusBar.GetStatusHwnd(), hdc );
 
-		::UpdateWindow( m_hwndStatusBar );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
-		::GetWindowRect( m_hwndStatusBar, &rc );
+		::UpdateWindow( m_cStatusBar.GetStatusHwnd() );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
+		::GetWindowRect( m_cStatusBar.GetStatusHwnd(), &rc );
 		nStatusBarHeight = rc.bottom - rc.top;
 	}
-	::GetClientRect( m_hWnd, &rcClient );
+	::GetClientRect( GetHwnd(), &rcClient );
 
 	//@@@ From 2003.05.31 MIK
 	//タブウインドウ追加に伴い，ファンクションキー表示位置も調整
 
 	//タブウインドウ
-	if( m_cTabWnd.m_hWnd )
+	if( m_cTabWnd.GetHwnd() )
 	{
-		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+		if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 )
 		{
-			::MoveWindow( m_cTabWnd.m_hWnd, 0, nToolBarHeight + nFuncKeyWndHeight, cx, nTabWndHeight, TRUE );
+			::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight + nFuncKeyWndHeight, cx, nTabWndHeight, TRUE );
 		}
 		else
 		{
-			::MoveWindow( m_cTabWnd.m_hWnd, 0, nToolBarHeight, cx, nTabWndHeight, TRUE );
+			::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight, cx, nTabWndHeight, TRUE );
 		}
 	}
 
 	//	2005.04.23 genta ファンクションキー非表示の時は移動しない
-	if( m_CFuncKeyWnd.m_hWnd != NULL ){
-		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+	if( m_CFuncKeyWnd.GetHwnd() != NULL ){
+		if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 )
 		{	/* ファンクションキー表示位置／0:上 1:下 */
 			::MoveWindow(
-				m_CFuncKeyWnd.m_hWnd,
+				m_CFuncKeyWnd.GetHwnd(),
 				0,
 				nToolBarHeight,
 				cx,
 				nFuncKeyWndHeight, TRUE );
 		}
-		else if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 1 )
+		else if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 1 )
 		{	/* ファンクションキー表示位置／0:上 1:下 */
 			::MoveWindow(
-				m_CFuncKeyWnd.m_hWnd,
+				m_CFuncKeyWnd.GetHwnd(),
 				0,
 				cy - nFuncKeyWndHeight - nStatusBarHeight,
 				cx,
@@ -3840,7 +2943,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 			);
 
 			BOOL	bSizeBox = TRUE;
-			if( NULL != m_hwndStatusBar ){
+			if( NULL != m_cStatusBar.GetStatusHwnd() ){
 				bSizeBox = FALSE;
 			}
 			if( wParam == SIZE_MAXIMIZED ){
@@ -3848,25 +2951,29 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 			}
 			m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 		}
-		::UpdateWindow( m_CFuncKeyWnd.m_hWnd );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
+		::UpdateWindow( m_CFuncKeyWnd.GetHwnd() );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
 	}
 
-	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 )
+	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 )
 	{
-		m_cEditDoc.OnMove(
+		::MoveWindow(
+			m_cSplitterWnd.GetHwnd(),
 			0,
 			nToolBarHeight + nFuncKeyWndHeight + nTabWndHeight,	//@@@ 2003.05.31 MIK
 			cx,
-			cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight	//@@@ 2003.05.31 MIK
+			cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight,	//@@@ 2003.05.31 MIK
+			TRUE
 		);
 	}
 	else
 	{
-		m_cEditDoc.OnMove(
+		::MoveWindow(
+			m_cSplitterWnd.GetHwnd(),
 			0,
 			nToolBarHeight + nTabWndHeight,
 			cx,
-			cy - nToolBarHeight - nTabWndHeight - nFuncKeyWndHeight - nStatusBarHeight	//@@@ 2003.05.31 MIK
+			cy - nToolBarHeight - nTabWndHeight - nFuncKeyWndHeight - nStatusBarHeight,	//@@@ 2003.05.31 MIK
+			TRUE
 		);
 	}
 	//@@@ To 2003.05.31 MIK
@@ -3934,16 +3041,10 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 	if(m_IconClicked != icNone)
 		return 0;
 
-	WPARAM		fwKeys;
-	int			xPos;
-	int			yPos;
-	fwKeys = wParam;		// key flags
-	xPos = LOWORD(lParam);	// horizontal position of cursor
-	yPos = HIWORD(lParam);	// vertical position of cursor
-	m_nDragPosOrgX = xPos;
-	m_nDragPosOrgY = yPos;
-	SetCapture( m_hWnd );
-	m_bDragMode = TRUE;
+	m_ptDragPosOrg.x = LOWORD(lParam);	// horizontal position of cursor
+	m_ptDragPosOrg.y = HIWORD(lParam);	// vertical position of cursor
+	m_bDragMode      = true;
+	SetCapture( GetHwnd() );
 
 	return 0;
 }
@@ -3957,14 +3058,15 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 		{
 			m_IconClicked = icClicked;
 			//by 鬼(2) タイマー(IDは適当です)
-			SetTimer(m_hWnd, IDT_SYSMENU, GetDoubleClickTime(), NULL);
+			SetTimer(GetHwnd(), IDT_SYSMENU, GetDoubleClickTime(), NULL);
 		}
 		return 0;
 	}
 
 	m_bDragMode = FALSE;
+//	MYTRACE_A("m_bDragMode = FALSE (OnLButtonUp)\n");
 	ReleaseCapture();
-	::InvalidateRect( m_hWnd, NULL, TRUE );
+	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return 0;
 }
 
@@ -3979,28 +3081,35 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 		{
 			POINT P;
 			GetCursorPos(&P); //スクリーン座標
-			if(SendMessage(m_hWnd, WM_NCHITTEST, 0, P.x | (P.y << 16)) != HTSYSMENU)
+			if(SendMessageAny(GetHwnd(), WM_NCHITTEST, 0, P.x | (P.y << 16)) != HTSYSMENU)
 			{
 				ReleaseCapture();
 				m_IconClicked = icNone;
 
-				if(m_cEditDoc.IsFilePathAvailable())
+				if(GetDocument().IsFilePathAvailable())
 				{
-					const char *PathEnd = m_cEditDoc.GetFilePath();
-					for(const char* I = m_cEditDoc.GetFilePath(); *I != 0; ++I)
+					const TCHAR *PathEnd = GetDocument().GetFilePath();
+					for(CharPointerT I = GetDocument().GetFilePath(); *I != 0; ++I)
 					{
-						//by 鬼(2): DBCS処理
-						if(IsDBCSLeadByte(*I))
-							++I;
-						else if(*I == '\\')
-							PathEnd = I;
+						if(*I == _T('\\'))
+							PathEnd = I.GetPointer();
 					}
 
+					//CMyString WPath(GetDocument().GetFilePath(), PathEnd-GetDocument().GetFilePath()); //wchar_tへの変換用
 					wchar_t WPath[MAX_PATH];
-					int c = MultiByteToWideChar(CP_ACP, 0, m_cEditDoc.GetFilePath(), PathEnd - m_cEditDoc.GetFilePath(), WPath, MAX_PATH);
-					WPath[c] = 0;
+					{
+						//文字列抜き出し
+						const TCHAR* p=GetDocument().GetFilePath();
+						int n = PathEnd - p;
+						CMyString tmp(p,n);
+
+						//wchar_tに変換
+						wcscpy(WPath,tmp);
+					}
+
+					//CMyString WFile(PathEnd+1); //wchar_tへの変換用
 					wchar_t WFile[MAX_PATH];
-					MultiByteToWideChar(CP_ACP, 0, PathEnd + 1, -1, WFile, MAX_PATH);
+					_tcstowcs(WFile,PathEnd+1,_countof(WFile));
 
 					IDataObject *DataObject;
 					IMalloc *Malloc;
@@ -4022,25 +3131,26 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 #define DDASTEXT
 #ifdef  DDASTEXT
 							//テキストでも持たせる…便利
-							int Len = lstrlen(m_cEditDoc.GetFilePath());
-							FORMATETC F;
-							STGMEDIUM M;
+							{
+								FORMATETC F;
+								F.cfFormat = CF_UNICODETEXT;
+								F.ptd      = NULL;
+								F.dwAspect = DVASPECT_CONTENT;
+								F.lindex   = -1;
+								F.tymed    = TYMED_HGLOBAL;
 
-							F.cfFormat = CF_TEXT;
-							F.ptd      = NULL;
-							F.dwAspect = DVASPECT_CONTENT;
-							F.lindex   = -1;
-							F.tymed    = TYMED_HGLOBAL;
+								STGMEDIUM M;
+								const wchar_t* pFilePath = to_wchar(GetDocument().GetFilePath());
+								int Len = wcslen(pFilePath);
+								M.tymed          = TYMED_HGLOBAL;
+								M.pUnkForRelease = NULL;
+								M.hGlobal        = GlobalAlloc(GMEM_MOVEABLE, (Len+1)*sizeof(wchar_t));
+								void* p = GlobalLock(M.hGlobal);
+								CopyMemory(p, pFilePath, (Len+1)*sizeof(wchar_t));
+								GlobalUnlock(M.hGlobal);
 
-							M.tymed = TYMED_HGLOBAL;
-							M.pUnkForRelease = NULL;
-							M.hGlobal = GlobalAlloc(GMEM_MOVEABLE, Len+1);
-
-							void* P = GlobalLock(M.hGlobal);
-							CopyMemory(P, m_cEditDoc.GetFilePath(), Len+1);
-							GlobalUnlock(M.hGlobal);
-
-							DataObject->SetData(&F, &M, TRUE);
+								DataObject->SetData(&F, &M, TRUE);
+							}
 #endif
 							//移動は禁止
 							DWORD R;
@@ -4075,14 +3185,14 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 	/* 印刷プレビューモードか */
 	if( !m_pPrintPreview ){
 		// 2006.03.26 ryoji by assitance with John タブ上ならウィンドウ切り替え
-		if( m_pShareData->m_Common.m_bChgWndByWheel && NULL != m_cTabWnd.m_hwndTab )
+		if( m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel && NULL != m_cTabWnd.m_hwndTab )
 		{
 			POINT pt;
 			pt.x = (short)LOWORD( lParam );
 			pt.y = (short)HIWORD( lParam );
 			int nDelta = (short)HIWORD( wParam );
 			HWND hwnd = ::WindowFromPoint( pt );
-			if( (hwnd == m_cTabWnd.m_hwndTab || hwnd == m_cTabWnd.m_hWnd) )
+			if( (hwnd == m_cTabWnd.m_hwndTab || hwnd == m_cTabWnd.GetHwnd()) )
 			{
 				// 現在開いている編集窓のリストを得る
 				EditNode* pEditNodeArr;
@@ -4094,7 +3204,7 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 					int nGroup = 0;
 					for( i = 0; i < nRowNum; ++i )
 					{
-						if( m_hWnd == pEditNodeArr[i].m_hWnd )
+						if( GetHwnd() == pEditNodeArr[i].GetHwnd() )
 						{
 							nGroup = pEditNodeArr[i].m_nGroup;
 							break;
@@ -4139,7 +3249,7 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 
 						/* 次の（or 前の）ウィンドウをアクティブにする */
 						if( i != j )
-							ActivateFrameWindow( pEditNodeArr[j].m_hWnd );
+							ActivateFrameWindow( pEditNodeArr[j].GetHwnd() );
 					}
 
 					delete []pEditNodeArr;
@@ -4149,7 +3259,7 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 		}
 
 		/* メッセージの配送 */
-		return m_cEditDoc.DispatchEvent( m_hWnd, WM_MOUSEWHEEL, wParam, lParam );
+		return Views_DispatchEvent( GetHwnd(), WM_MOUSEWHEEL, wParam, lParam );
 	}
 	return m_pPrintPreview->OnMouseWheel( wParam, lParam );
 }
@@ -4169,12 +3279,12 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[i];
 	}
 
-//	cDlgPrintSetting.Create( m_hInstance, m_hWnd );
-	nCurrentPrintSetting = m_cEditDoc.GetDocumentAttribute().m_nCurrentPrintSetting;
+//	cDlgPrintSetting.Create( m_hInstance, GetHwnd() );
+	nCurrentPrintSetting = GetDocument().GetDocumentAttribute().m_nCurrentPrintSetting;
 	bRes = cDlgPrintSetting.DoModal(
 		m_hInstance,
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-		m_hWnd,
+		GetHwnd(),
 		&nCurrentPrintSetting, /* 現在選択している印刷設定 */
 		PrintSettingArr
 	);
@@ -4182,37 +3292,21 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	if( TRUE == bRes ){
 		/* 現在選択されているページ設定の番号が変更されたか */
 		if( nCurrentPrintSetting !=
-			m_pShareData->m_Types[m_cEditDoc.GetDocumentType()].m_nCurrentPrintSetting
+			m_pShareData->m_Types[GetDocument().GetDocumentType()].m_nCurrentPrintSetting
 		){
 //			/* 変更フラグ(タイプ別設定) */
-			m_cEditDoc.GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;
+			GetDocument().GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;
 		}
 
-//		/* それぞれのページ設定の内容が変更されたか */
-//		if( 0 != memcmp(
-//			&m_pShareData->m_PrintSettingArr,
-//			&PrintSettingArr,
-//			sizeof( m_pShareData->m_PrintSettingArr ) )
-//		){
-//			m_pShareData->m_bPrintSettingModify = TRUE;	/* 変更フラグ(印刷の全体) */
-			for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
-//				if( 0 != memcmp(
-//					&m_pShareData->m_PrintSettingArr[i],
-//					&PrintSettingArr[i],
-//					sizeof( m_pShareData->m_PrintSettingArr[i] ) )
-//				){
-//					/* 変更フラグ(印刷設定ごと) */
-//					m_pShareData->m_bPrintSettingModifyArr[i] = TRUE;
-					m_pShareData->m_PrintSettingArr[i] = PrintSettingArr[i];
-//				}
-			}
-//		}
+		for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
+			m_pShareData->m_PrintSettingArr[i] = PrintSettingArr[i];
+		}
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		//	印刷プレビュー時のみ。
 		if ( m_pPrintPreview ){
 			/* 現在の印刷設定 */
-			m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[m_cEditDoc.GetDocumentAttribute().m_nCurrentPrintSetting] );
+			m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument().GetDocumentAttribute().m_nCurrentPrintSetting] );
 
 			/* 印刷プレビュー スクロールバー初期化 */
 			m_pPrintPreview->InitPreviewScrollBar();
@@ -4220,11 +3314,11 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 			/* 印刷設定の反映 */
 			m_pPrintPreview->OnChangePrintSetting( );
 
-			::InvalidateRect( m_hWnd, NULL, TRUE );
+			::InvalidateRect( GetHwnd(), NULL, TRUE );
 		}
 	}
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	::UpdateWindow( m_hWnd /* m_pPrintPreview->GetPrintPreviewBarHANDLE() */);
+	::UpdateWindow( GetHwnd() /* m_pPrintPreview->GetPrintPreviewBarHANDLE() */);
 	return bRes;
 }
 
@@ -4235,12 +3329,12 @@ LRESULT CEditWnd::OnNcLButtonDown(WPARAM wp, LPARAM lp)
 	LRESULT Result;
 	if(wp == HTSYSMENU)
 	{
-		SetCapture(m_hWnd);
+		SetCapture(GetHwnd());
 		m_IconClicked = icDown;
 		Result = 0;
 	}
 	else
-		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONDOWN, wp, lp);
+		Result = DefWindowProc(GetHwnd(), WM_NCLBUTTONDOWN, wp, lp);
 
 	return Result;
 }
@@ -4261,7 +3355,7 @@ LRESULT CEditWnd::OnNcLButtonUp(WPARAM wp, LPARAM lp)
 		//	2004.05.23 Moca メッセージミス修正
 		//	フレームのダブルクリック時後にウィンドウサイズ
 		//	変更モードなっていた
-		Result = DefWindowProc(m_hWnd, WM_NCLBUTTONUP, wp, lp);
+		Result = DefWindowProc(GetHwnd(), WM_NCLBUTTONUP, wp, lp);
 	}
 
 	return Result;
@@ -4275,13 +3369,13 @@ LRESULT CEditWnd::OnLButtonDblClk(WPARAM wp, LPARAM lp) //by 鬼(2)
 		ReleaseCapture();
 		m_IconClicked = icDoubleClicked;
 
-		SendMessage(m_hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+		SendMessageCmd(GetHwnd(), WM_SYSCOMMAND, SC_CLOSE, 0);
 
 		Result = 0;
 	}
 	else {
 		//	2004.05.23 Moca メッセージミス修正
-		Result = DefWindowProc(m_hWnd, WM_LBUTTONDBLCLK, wp, lp);
+		Result = DefWindowProc(GetHwnd(), WM_LBUTTONDBLCLK, wp, lp);
 	}
 
 	return Result;
@@ -4302,11 +3396,11 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	//    複数あるときはどれを押した時も１個目のボタン情報が入るようなのでマウス位置からボタン位置を求める
 	::GetCursorPos( &po );
 	::ScreenToClient( hwnd, &po );
-	nIndex = ::SendMessage( hwnd, TB_HITTEST, (WPARAM)0, (LPARAM)&po );
+	nIndex = ::SendMessageAny( hwnd, TB_HITTEST, (WPARAM)0, (LPARAM)&po );
 	if( nIndex < 0 ){
 		return 0;
 	}
-	::SendMessage( hwnd, TB_GETITEMRECT, (WPARAM)nIndex, (LPARAM)&rc );
+	::SendMessageAny( hwnd, TB_GETITEMRECT, (WPARAM)nIndex, (LPARAM)&rc );
 	po.x = rc.left;
 	po.y = rc.bottom;
 	::ClientToScreen( hwnd, &po );
@@ -4324,7 +3418,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	hMenu = cMRU.CreateMenu( &m_CMenuDrawer );
 	if( cMRU.Length() > 0 )
 	{
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+		m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	}
 
 	/* 最近使ったフォルダのメニューを作成 */
@@ -4333,18 +3427,18 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	if ( cMRUFolder.Length() > 0 )
 	{
 		//	アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, "最近使ったフォルダ(&D)" );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("最近使ったフォルダ(&D)") );
 	}
 	else 
 	{
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, "最近使ったフォルダ(&D)" );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, _T("最近使ったフォルダ(&D)") );
 	}
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, "新規作成(&N)", FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, "開く(&O)...", FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T("新規作成(&N)"), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T("開く(&O)..."), FALSE );
 
 	nId = ::TrackPopupMenu(
 		hMenu,
@@ -4365,44 +3459,6 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	return nId;
 }
 
-/*! 検索ボックスでの処理 */
-void CEditWnd::ProcSearchBox( MSG *msg )
-{
-	if( msg->message == WM_KEYDOWN /* && ::GetParent( msg->hwnd ) == m_hwndSearchBox */ )
-	{
-		if( (TCHAR)msg->wParam == VK_RETURN )  //リターンキー
-		{
-			//検索キーワードを取得
-			char	szText[_MAX_PATH];
-			memset( szText, 0, sizeof(szText) );
-			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
-			if( szText[0] )	//キー文字列がある
-			{
-				//検索キーを登録
-				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
-
-				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
-				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
-
-				// 検索開始時のカーソル位置登録条件を変更 02/07/28 ai start
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosX_PHY = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX_PHY;
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosY_PHY = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY_PHY;
-				// 02/07/28 ai end
-
-				//次を検索
-				OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
-			}
-		}
-		else if( (TCHAR)msg->wParam == VK_TAB )	//タブキー
-		{
-			//フォーカスを移動
-			//	2004.10.27 MIK IME表示位置のずれ修正
-			::SetFocus( m_hWnd  );
-		}
-	}
-
-	return;
-}
 
 /*!
 	@brief ウィンドウのアイコン設定
@@ -4417,7 +3473,7 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 */
 void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
 {
-	HICON hOld = (HICON)::SendMessage( m_hWnd, WM_SETICON, flag, (LPARAM)hIcon );
+	HICON hOld = (HICON)::SendMessageAny( GetHwnd(), WM_SETICON, flag, (LPARAM)hIcon );
 	if( hOld != NULL ){
 		::DestroyIcon( hOld );
 	}
@@ -4435,7 +3491,7 @@ void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
 */
 void CEditWnd::GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const
 {
-	hIconBig = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
+	hIconBig   = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
 	hIconSmall = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 }
 
@@ -4454,23 +3510,23 @@ void CEditWnd::GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const
 	@author genta
 	@date 2002.09.10
 */
-bool CEditWnd::GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconSmall) const
+bool CEditWnd::GetRelatedIcon(const TCHAR* szFile, HICON& hIconBig, HICON& hIconSmall) const
 {
-	if( NULL != szFile && szFile[0] != '\0' ){
-		char szExt[_MAX_EXT];
-		char FileType[1024];
+	if( NULL != szFile && szFile[0] != _T('\0') ){
+		TCHAR szExt[_MAX_EXT];
+		TCHAR FileType[1024];
 
 		// (.で始まる)拡張子の取得
-		_splitpath( szFile, NULL, NULL, NULL, szExt );
+		_tsplitpath( szFile, NULL, NULL, NULL, szExt );
 		
-		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, sizeof(FileType) - 13)){
-			lstrcat( FileType, "\\DefaultIcon" );
+		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, _countof(FileType) - 13)){
+			_tcscat( FileType, _T("\\DefaultIcon") );
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, NULL, 0)){
 				// 関連づけられたアイコンを取得する
 				SHFILEINFO shfi;
-				SHGetFileInfo( szFile, 0, &shfi, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_LARGEICON );
+				SHGetFileInfo( szFile, 0, &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_LARGEICON );
 				hIconBig = shfi.hIcon;
-				SHGetFileInfo( szFile, 0, &shfi, sizeof(SHFILEINFO), SHGFI_ICON | SHGFI_SMALLICON );
+				SHGetFileInfo( szFile, 0, &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_SMALLICON );
 				hIconSmall = shfi.hIcon;
 				return true;
 			}
@@ -4492,13 +3548,12 @@ bool CEditWnd::GetRelatedIcon(const char* szFile, HICON& hIconBig, HICON& hIconS
 void CEditWnd::InitMenubarMessageFont(void)
 {
 	TEXTMETRIC	tm;
-	LOGFONT		lf;
+	LOGFONT	lf;
 	HDC			hdc;
 	HFONT		hFontOld;
-	int			i;
 
 	/* LOGFONTの初期化 */
-	memset( &lf, 0, sizeof( LOGFONT ) );
+	memset_raw( &lf, 0, sizeof( lf ) );
 	lf.lfHeight			= -12;
 	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
@@ -4512,7 +3567,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	strcpy( lf.lfFaceName, "ＭＳ ゴシック" );
+	_tcscpy( lf.lfFaceName, _T("ＭＳ ゴシック") );
 	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
 
 	hdc = ::GetDC( ::GetDesktopWindow() );
@@ -4520,9 +3575,6 @@ void CEditWnd::InitMenubarMessageFont(void)
 	::GetTextMetrics( hdc, &tm );
 	m_nCaretPosInfoCharWidth = tm.tmAveCharWidth;
 	m_nCaretPosInfoCharHeight = tm.tmHeight;
-	for( i = 0; i < ( sizeof( m_pnCaretPosInfoDx ) / sizeof( m_pnCaretPosInfoDx[0] ) ); ++i ){
-		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
-	}
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( ::GetDesktopWindow(), hdc );
 }
@@ -4536,32 +3588,32 @@ void CEditWnd::InitMenubarMessageFont(void)
 	@author genta
 	@date 2002.12.04
 */
-void CEditWnd::PrintMenubarMessage( const char* msg )
+void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
 {
-	if( NULL == ::GetMenu( m_hWnd ) )	// 2007.03.08 ryoji 追加
+	if( NULL == ::GetMenu( GetHwnd() ) )	// 2007.03.08 ryoji 追加
 		return;
 
-	HDC		hdc;
 	POINT	po,poFrame;
 	RECT	rc,rcFrame;
 	HFONT	hFontOld;
 	int		nStrLen;
 	const int MAX_LEN = 30;
-	char	szText[MAX_LEN + 1];
+	TCHAR	szText[MAX_LEN + 1];
 	
-	int len = strlen( msg );
-	strncpy( szText, msg, MAX_LEN );
+	int len = _tcslen( msg );
+	_tcsncpy( szText, msg, MAX_LEN );
 	
 	if( len < MAX_LEN ){
-		memset( szText + len, ' ', MAX_LEN - len );
+		auto_memset( szText + len, _T(' '), MAX_LEN - len );
 	}
-	szText[MAX_LEN] = '\0';
+	szText[MAX_LEN] = _T('\0');
 	
-	hdc = ::GetWindowDC( m_hWnd );
+	HDC		hdc;
+	hdc = ::GetWindowDC( GetHwnd() );
 	poFrame.x = 0;
 	poFrame.y = 0;
-	::ClientToScreen( m_hWnd, &poFrame );
-	::GetWindowRect( m_hWnd, &rcFrame );
+	::ClientToScreen( GetHwnd(), &poFrame );
+	::GetWindowRect( GetHwnd(), &rcFrame );
 	po.x = rcFrame.right - rcFrame.left;
 	po.y = poFrame.y - rcFrame.top;
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
@@ -4575,9 +3627,15 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	COLORREF bkColor =
 		::GetSysColor( COsVersionInfo().IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
 	::SetBkColor( hdc, bkColor );
-	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
+	/*
+	int			m_pnCaretPosInfoDx[64];	// 文字列描画用文字幅配列
+	for( i = 0; i < _countof( m_pnCaretPosInfoDx ); ++i ){
+		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
+	}
+	*/
+	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,NULL/*m_pnCaretPosInfoDx*/); //2007.10.17 kobake めんどいので今のところは文字間隔配列を使わない。
 	::SelectObject( hdc, hFontOld );
-	::ReleaseDC( m_hWnd, hdc );
+	::ReleaseDC( GetHwnd(), hdc );
 }
 
 /*!
@@ -4590,36 +3648,15 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	@date 2002.01.26 hor 新規作成
 	@date 2002.12.04 genta CEditViewより移動
 */
-void CEditWnd::SendStatusMessage( const char* msg )
+void CEditWnd::SendStatusMessage( const TCHAR* msg )
 {
-	if( NULL == m_hwndStatusBar ){
+	if( NULL == m_cStatusBar.GetStatusHwnd() ){
 		// メニューバーへ
 		PrintMenubarMessage( msg );
-	}else{
-		// ステータスバーへ
-		::SendMessage( m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
 	}
-}
-
-/*!
-	@brief メッセージの表示
-	
-	指定されたメッセージをステータスバーに表示する．
-	メニューバー右端に入らないものや，桁位置表示を隠したくないものに使う
-	
-	呼び出し前にSendStatusMessage2IsEffective()で処理の有無を
-	確認することで無駄な処理を省くことが出来る．
-
-	@param msg [in] 表示するメッセージ
-	@date 2005.07.09 genta 新規作成
-	
-	@sa SendStatusMessage2IsEffective
-*/
-void CEditWnd::SendStatusMessage2( const char* msg )
-{
-	if( NULL != m_hwndStatusBar ){
+	else{
 		// ステータスバーへ
-		::SendMessage( m_hwndStatusBar,SB_SETTEXT,0 | SBT_NOBORDERS,(LPARAM) (LPINT)msg );
+		m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, msg);
 	}
 }
 
@@ -4629,30 +3666,31 @@ void CEditWnd::SendStatusMessage2( const char* msg )
 	@date 2003.05.31 新規作成
 	@date 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 */
-void CEditWnd::ChangeFileNameNotify( const char *pszTabCaption, const char *pszFilePath, BOOL bIsGrep )
+void CEditWnd::ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* _pszFilePath, BOOL bIsGrep )
 {
-	CRecent	cRecentEditNode;
+	const TCHAR* pszFilePath = _pszFilePath;
+
 	EditNode	*p;
 	int		nIndex;
 
-	if( NULL == pszTabCaption ) pszTabCaption = "";	//ガード
-	if( NULL == pszFilePath ) pszFilePath = "";		//ガード 2006.01.28 ryoji
+	if( NULL == pszTabCaption ) pszTabCaption = _T("");	//ガード
+	if( NULL == pszFilePath )pszFilePath = _FT("");		//ガード 2006.01.28 ryoji
 
-	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
-	nIndex = cRecentEditNode.FindItem( (const char*)&m_hWnd );
+	CRecentEditNode	cRecentEditNode;
+	nIndex = cRecentEditNode.FindItemByHwnd( GetHwnd() );
 	if( -1 != nIndex )
 	{
-		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
+		p = cRecentEditNode.GetItem( nIndex );
 		if( p )
 		{
-			int	size = sizeof( p->m_szTabCaption ) - 1;
-			strncpy( p->m_szTabCaption, pszTabCaption, size );
-			p->m_szTabCaption[ size ] = '\0';
+			int	size = _countof( p->m_szTabCaption ) - 1;
+			_tcsncpy( p->m_szTabCaption, pszTabCaption, size );
+			p->m_szTabCaption[ size ] = _T('\0');
 
 			// 2006.01.28 ryoji ファイル名、Grepモード追加
-			size = sizeof( p->m_szFilePath ) - 1;
-			strncpy( p->m_szFilePath, pszFilePath, size );
-			p->m_szFilePath[ size ] = '\0';
+			size = _countof2( p->m_szFilePath ) - 1;
+			_tcsncpy( p->m_szFilePath, pszFilePath, size );
+			p->m_szFilePath[ size ] = _T('\0');
 
 			p->m_bIsGrep = bIsGrep;
 		}
@@ -4660,71 +3698,16 @@ void CEditWnd::ChangeFileNameNotify( const char *pszTabCaption, const char *pszF
 	cRecentEditNode.Terminate();
 
 	//ファイル名変更通知をブロードキャストする。
-	int nGroup = CShareData::getInstance()->GetGroupId( m_hWnd );
-	CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_FILE, (LPARAM)m_hWnd, m_hWnd, nGroup );
+	int nGroup = CShareData::getInstance()->GetGroupId( GetHwnd() );
+	CShareData::getInstance()->PostMessageToAllEditors(
+		MYWM_TAB_WINDOW_NOTIFY,
+		(WPARAM)TWNT_FILE,
+		(LPARAM)GetHwnd(),
+		GetHwnd(),
+		nGroup
+	);
 
 	return;
-}
-/*!	@brief ToolBarのOwnerDraw
-
-	@param pnmh [in] Owner Draw情報
-
-	@note Common Control V4.71以降はNMTBCUSTOMDRAWを送ってくるが，
-	Common Control V4.70はLPNMCUSTOMDRAWしか送ってこないので
-	安全のため小さい方に合わせて処理を行う．
-	
-	@author genta
-	@date 2003.07.21 作成
-
-*/
-LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
-{
-	switch( pnmh->dwDrawStage ){
-	case CDDS_PREPAINT:
-		//	描画開始前
-		//	アイテムを自前で描画する旨を通知する
-		return CDRF_NOTIFYITEMDRAW;
-	
-	case CDDS_ITEMPREPAINT:
-		//	面倒くさいので，枠はToolbarに描いてもらう
-		//	アイコンが登録されていないので中身は何も描かれない
-		return CDRF_NOTIFYPOSTPAINT;
-	
-	case CDDS_ITEMPOSTPAINT:
-		{
-			//	描画
-			//	pnmh->dwItemSpec はコマンド番号なので，アイコン番号に変更する必要がある]
-// CMenuDrawerのメンバ変数をカプセル化 2005/8/9 aroka
-//			int nIconId = -1;
-//			for( int i = 1; i < m_CMenuDrawer.m_nMyButtonNum; i++ ){
-//				if( m_CMenuDrawer.m_tbMyButton[i].idCommand == pnmh->dwItemSpec ){
-//					nIconId = m_CMenuDrawer.m_tbMyButton[i].iBitmap;
-//					break;
-//				}
-//			}
-			int nIndex = m_CMenuDrawer.FindIndexFromCommandId( pnmh->dwItemSpec );
-			int nIconId = m_CMenuDrawer.GetIconId( nIndex );
-
-			//	もしもアイコンがなかったら
-			if( nIconId < 0 ){
-				nIconId = 348; // なんとなく(i)アイコン
-			}
-
-			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_cIcons.cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
-			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
-			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
-			
-
-			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
-			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
-				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
-			);
-		}
-		break;
-	default:
-		break;
-	}
-	return CDRF_DODEFAULT;
 }
 
 /*! 常に手前に表示
@@ -4734,7 +3717,7 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 void CEditWnd::WindowTopMost( int top )
 {
 	if( 0 == top ){
-		DWORD dwExstyle = (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE );
+		DWORD dwExstyle = (DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE );
 		if( dwExstyle & WS_EX_TOPMOST ){
 			top = 2; // 最前面である -> 解除
 		}else{
@@ -4754,32 +3737,21 @@ void CEditWnd::WindowTopMost( int top )
 		return;
 	}
 
-	::SetWindowPos( m_hWnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+	::SetWindowPos( GetHwnd(), hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
 	// タブまとめ時は WS_EX_TOPMOST 状態を全ウィンドウで同期する	// 2007.05.18 ryoji
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 		HWND hwnd;
 		int i;
-		for( i = 0, hwndInsertAfter = m_hWnd; i < m_pShareData->m_nEditArrNum; i++ ){
-			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
-			if( hwnd != m_hWnd && CShareData::getInstance()->IsEditWnd( hwnd ) ){
-				if( !CShareData::getInstance()->IsSameGroup( m_hWnd, hwnd ) )
+		for( i = 0, hwndInsertAfter = GetHwnd(); i < m_pShareData->m_nEditArrNum; i++ ){
+			hwnd = m_pShareData->m_pEditArr[i].GetHwnd();
+			if( hwnd != GetHwnd() && CShareData::getInstance()->IsEditWnd( hwnd ) ){
+				if( !CShareData::getInstance()->IsSameGroup( GetHwnd(), hwnd ) )
 					continue;
 				::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 				hwndInsertAfter = hwnd;
 			}
 		}
-	}
-}
-
-/*!
-ツールバーの検索ボックスにフォーカスを移動する.
-	@date 2006.06.04 yukihane 新規作成
-*/
-void CEditWnd::SetFocusSearchBox( void ) const
-{
-	if( m_hwndSearchBox ){
-		::SetFocus(m_hwndSearchBox);
 	}
 }
 
@@ -4790,17 +3762,17 @@ void CEditWnd::SetFocusSearchBox( void ) const
 //	呼び出してもらうことにより、余計な負荷を停止したい。
 void CEditWnd::Timer_ONOFF( BOOL bStart )
 {
-	if( NULL != m_hWnd ){
+	if( NULL != GetHwnd() ){
 		if( bStart ){
 			/* タイマーを起動 */
-			if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, NULL ) ){
-				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-					"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+			if( 0 == ::SetTimer( GetHwnd(), IDT_TOOLBAR, 300, NULL ) ){
+				::MYMESSAGEBOX( GetHwnd(), MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+					_T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。")
 				);
 			}
 		} else {
 			/* タCマーを削除 */
-			::KillTimer( m_hWnd, IDT_TOOLBAR );
+			::KillTimer( GetHwnd(), IDT_TOOLBAR );
 		}
 	}
 	return;
@@ -4825,7 +3797,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 		::GetCursorPos( &pt );	// マウスカーソル位置に変更
 	}
 	else {
-		::GetWindowRect( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd, &rc );
+		::GetWindowRect( GetActiveView().GetHwnd(), &rc );
 		pt.x = rc.right - 150;
 		if( pt.x < rc.left )
 			pt.x = rc.left;
@@ -4833,7 +3805,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 	}
 
 	// ウィンドウ一覧メニューをポップアップ表示する
-	if( NULL != m_cTabWnd.m_hWnd ){
+	if( NULL != m_cTabWnd.GetHwnd() ){
 		m_cTabWnd.TabListMenu( pt );
 	}
 	else{
@@ -4847,10 +3819,10 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 									( pt.x > rcWork.left )? pt.x: rcWork.left,
 									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-									0, m_hWnd, NULL);
+									0, GetHwnd(), NULL);
 		delete [] pEditNodeArr;
 		::DestroyMenu( hMenu );
-		::SendMessage( m_hWnd, WM_COMMAND, (WPARAM)nId, (LPARAM)NULL );
+		::SendMessageCmd( GetHwnd(), WM_COMMAND, (WPARAM)nId, (LPARAM)NULL );
 	}
 
 	return 0L;
@@ -4862,7 +3834,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
 {
 	int			i;
-	char		szMemu[280];
+	TCHAR		szMemu[280];
 //>	EditNode*	pEditNodeArr;
 	FileInfo*	pfi;
 
@@ -4873,54 +3845,61 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 		CShareData::getInstance()->TransformFileName_MakeCache();
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
-			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
+			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 			if( pfi->m_bIsGrep ){
 				/* データを指定バイト数以内に切り詰める */
-				CMemory		cmemDes;
+				CNativeW2	cmemDes;
 				int			nDesLen;
-				const char*	pszDes;
-				LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
-				pszDes = cmemDes.GetPtr();
-				nDesLen = lstrlen( pszDes );
+				const wchar_t*	pszDes;
+				LimitStringLengthW2( pfi->m_szGrepKey, wcslen( pfi->m_szGrepKey ), 64, cmemDes );
+				pszDes = cmemDes.GetStringPtr();
+				nDesLen = wcslen( pszDes );
 ////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
 ////		i >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
-				wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
-					pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "・・・":""
+				auto_sprintf( szMemu, _T("&%tc 【Grep】\"%ls%ts\""),
+					((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
+					pszDes,
+					( (int)wcslen( pfi->m_szGrepKey ) > nDesLen ) ? _T("・・・"):_T("")
 				);
-			}else
-			if( pEditNodeArr[i].m_hWnd == m_pShareData->m_hwndDebug ){
+			}
+			else if( pEditNodeArr[i].GetHwnd() == m_pShareData->m_hwndDebug ){
 ////		i >= 10 + 26 の時の考慮を省いた(に近い)が出力ファイル数が36個を越えることはまずないので事実上OKでしょう
-				wsprintf( szMemu, "&%c アウトプット", ((1 + i) <= 9)?('1' + i):('A' + i - 9) );
+				auto_sprintf( szMemu, _T("&%tc アウトプット"), ((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9) );
 
-			}else{
+			}
+			else{
 ////		From Here Jan. 23, 2001 JEPRO
 ////		ファイル名やパス名に'&'が使われているときに履歴等でキチンと表示されない問題を修正(&を&&に置換するだけ)
 ////<----- From Here Added
-				char	szFile2[_MAX_PATH * 2];
-				if( '\0' == pfi->m_szPath[0] ){
-					strcpy( szFile2, "(無題)" );
+				TCHAR	szFile2[_MAX_PATH * 2];
+				if( _T('\0') == pfi->m_szPath[0] ){
+					_tcscpy( szFile2, _T("(無題)") );
 				}else{
-					char buf[_MAX_PATH];
+					TCHAR buf[_MAX_PATH];
 					CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
+					
 					dupamp( buf, szFile2 );
 				}
-				wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
+				auto_sprintf(
+					szMemu,
+					_T("&%tc %ts %ts"),
+					((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
 					szFile2,
-					pfi->m_bIsModified ? "*":" "
+					pfi->m_bIsModified ? _T("*"):_T(" ")
 				);
 ////-----> To Here Added
 ////		To Here Jan. 23, 2001
 
 ////	To Here Oct. 4, 2000
 				// SJIS以外の文字コードの種別を表示する
-				// gm_pszCodeNameArr_3 からコピーするように変更
-				if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-					strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+				// gm_pszCodeNameArr_Bracket からコピーするように変更
+				if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
+					_tcscat( szMemu, gm_pszCodeNameArr_Bracket[pfi->m_nCharCode] );
 				}
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu );
-			if( m_hWnd == pEditNodeArr[i].m_hWnd ){
+			if( GetHwnd() == pEditNodeArr[i].GetHwnd() ){
 				::CheckMenuItem( hMenu, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, MF_BYCOMMAND | MF_CHECKED );
 			}
 		}
@@ -4929,5 +3908,355 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 	return 0L;
 }
 
+//2007.09.08 kobake 追加
+//!ツールチップのテキストを取得
+void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
+{
+	// 機能文字列の取得 -> tmp -> wszBuf
+	WCHAR tmp[256];
+	if( !GetDocument().m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) )){
+		tmp[0] = LTEXT('\0');
+	}
+	_wcstotcs(wszBuf, tmp, nBufCount);
 
-/*[EOF]*/
+	// 機能に対応するキー名の取得(複数)
+	CNativeT**	ppcAssignedKeyList;
+	int nAssignedKeyNum = CKeyBind::GetKeyStrList(
+		m_hInstance,
+		m_pShareData->m_nKeyNameArrNum,
+		m_pShareData->m_pKeyNameArr,
+		&ppcAssignedKeyList,
+		nID
+	);
+
+	// wszBufへ結合
+	if( 0 < nAssignedKeyNum ){
+		for( int j = 0; j < nAssignedKeyNum; ++j ){
+			_tcscat_s( wszBuf, nBufCount, _T("\n        ") );
+			const TCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
+			_tcscat_s( wszBuf, nBufCount, pszKey );
+			delete ppcAssignedKeyList[j];
+		}
+		delete [] ppcAssignedKeyList;
+	}
+}
+
+
+
+/*! タイマーの処理
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
+	@date 2006.01.28 aroka ツールバー更新を OnToolbarTimerに移動した
+	@date 2007.04.03 ryoji パラメータ無しにした
+*/
+void CEditWnd::OnEditTimer( void )
+{
+	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
+	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
+	IncrementTimerCount(6);
+
+	// 2006.01.28 aroka ツールバー更新関連は OnToolbarTimerに移動した。
+	
+	//	Aug. 29, 2003 wmlhq, ryoji
+	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
+		/* ファイルのタイムスタンプのチェック処理 */
+		GetDocument().CheckFileTimeStamp() ;
+	}
+
+	GetDocument().CheckAutoSave();
+	return;
+}
+
+LRESULT CEditWnd::Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch( msg ){
+	case WM_ENTERMENULOOP:
+	case WM_EXITMENULOOP:
+		m_pcEditViewArr[0]->DispatchEvent( hwnd, msg, wParam, lParam );
+		m_pcEditViewArr[1]->DispatchEvent( hwnd, msg, wParam, lParam );
+		m_pcEditViewArr[2]->DispatchEvent( hwnd, msg, wParam, lParam );
+		m_pcEditViewArr[3]->DispatchEvent( hwnd, msg, wParam, lParam );
+		return 0L;
+	default:
+		return this->GetActiveView().DispatchEvent( hwnd, msg, wParam, lParam );
+	}
+}
+
+void CEditWnd::Views_RedrawAll()
+{
+	//アクティブ以外を再描画してから…
+	for( int v = 0; v < 4; ++v ){
+		if( m_nActivePaneIndex != v ){
+			this->m_pcEditViewArr[v]->RedrawAll();
+		}
+	}
+	//アクティブを再描画
+	this->GetActiveView().RedrawAll();
+}
+
+void CEditWnd::Views_Redraw()
+{
+	//アクティブ以外を再描画してから…
+	for( int v = 0; v < 4; ++v ){
+		if( m_nActivePaneIndex != v )
+			m_pcEditViewArr[v]->Redraw();
+	}
+	//アクティブを再描画
+	GetActiveView().Redraw();
+}
+
+
+/* アクティブなペインを設定 */
+void  CEditWnd::SetActivePane( int nIndex )
+{
+	this->GetActiveView().OnKillFocus();
+	this->GetActiveView().GetCaret().m_cUnderLine.CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
+
+	/* アクティブなビューを切り替える */
+	m_nActivePaneIndex = nIndex;
+
+	this->GetActiveView().OnSetFocus();
+
+	this->GetActiveView().RedrawAll();	/* フォーカス移動時の再描画 */
+
+	m_cSplitterWnd.SetActivePane( nIndex );
+
+	if( NULL != m_cDlgFind.GetHwnd() ){		/* 「検索」ダイアログ */
+		/* モードレス時：検索対象となるビューの変更 */
+		m_cDlgFind.ChangeView( (LPARAM)&this->GetActiveView() );
+	}
+	if( NULL != m_cDlgReplace.GetHwnd() ){	/* 「置換」ダイアログ */
+		/* モードレス時：検索対象となるビューの変更 */
+		m_cDlgReplace.ChangeView( (LPARAM)&this->GetActiveView() );
+	}
+	if( NULL != m_cHokanMgr.GetHwnd() ){	/* 「入力補完」ダイアログ */
+		m_cHokanMgr.Hide();
+		/* モードレス時：検索対象となるビューの変更 */
+		m_cHokanMgr.ChangeView( (LPARAM)&this->GetActiveView() );
+	}
+	if( NULL != m_cDlgFuncList.GetHwnd() ){	/* 「アウトライン」ダイアログ */ // 20060201 aroka
+		/* モードレス時：現在位置表示の対象となるビューの変更 */
+		m_cDlgFuncList.ChangeView( (LPARAM)&this->GetActiveView() );
+	}
+
+	return;
+}
+
+
+/* アクティブなペインを取得 */
+int CEditWnd::GetActivePane( void ) const
+{
+	return m_nActivePaneIndex;
+}
+
+
+
+/** 非アクティブなペインをRedrawする
+
+	スクロールバーの状態更新はパラメータでフラグ制御 or 別関数にしたほうがいい？
+	@date 2007.07.22 ryoji スクロールバーの状態更新を追加
+*/
+void CEditWnd::RedrawInactivePane(void)
+{
+	if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+		this->m_pcEditViewArr[m_nActivePaneIndex^1]->AdjustScrollBars();
+		this->m_pcEditViewArr[m_nActivePaneIndex^1]->Redraw();
+	}
+	if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+		this->m_pcEditViewArr[m_nActivePaneIndex^2]->AdjustScrollBars();
+		this->m_pcEditViewArr[m_nActivePaneIndex^2]->Redraw();
+		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			this->m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->AdjustScrollBars();
+			this->m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->Redraw();
+		}
+	}
+}
+
+void CEditWnd::Views_DisableSelectArea(bool bRedraw)
+{
+	for( int i = 0; i < 4; ++i ){
+		if( m_pcEditViewArr[i]->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+			/* 現在の選択範囲を非選択状態に戻す */
+			m_pcEditViewArr[i]->GetSelectionInfo().DisableSelectArea( true );
+		}
+	}
+}
+
+
+/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
+BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
+{
+	if ( this->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea( bRedraw ) ){
+		/* ActivePaneで計算したら、再設定・再描画が必要と判明した */
+		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			this->m_pcEditViewArr[m_nActivePaneIndex^1]->GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+		}
+		else {
+			//	表示されていないので再描画しない
+			this->m_pcEditViewArr[m_nActivePaneIndex^1]->GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+		}
+		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+			this->m_pcEditViewArr[m_nActivePaneIndex^2]->GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+			if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+				this->m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+			}
+		}
+		else {
+			this->m_pcEditViewArr[m_nActivePaneIndex^2]->GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+			this->m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+/*!	レイアウトパラメータの変更
+
+	具体的にはタブ幅と折り返し位置を変更する．
+	現在のドキュメントのレイアウトのみを変更し，共通設定は変更しない．
+
+	@date 2005.08.14 genta 新規作成
+*/
+void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas )
+{
+	HWND		hwndProgress = NULL;
+	if( bShowProgress && NULL != this ){
+		hwndProgress = this->m_cStatusBar.GetProgressHwnd();
+		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_SHOW );
+	}
+
+	//	座標の保存
+	CLogicPoint* posSave = SavePhysPosOfAllView();
+
+	//	レイアウトの更新
+	GetDocument().m_cLayoutMgr.ChangeLayoutParam( NULL, nTabSize, nMaxLineKetas );
+
+	//	座標の復元
+	RestorePhysPosOfAllView( posSave );
+
+	for( int i = 0; i < 4; i++ ){
+		if( m_pcEditViewArr[i]->GetHwnd() ){
+			InvalidateRect( m_pcEditViewArr[i]->GetHwnd(), NULL, TRUE );
+		}
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_HIDE );
+	}
+}
+
+
+/*!
+	レイアウトの変更に先立って，全てのViewの座標を物理座標に変換して保存する．
+
+	@return データを保存した配列へのポインタ
+
+	@note 取得した値はレイアウト変更後にCEditDoc::RestorePhysPosOfAllViewへ渡す．
+	渡し忘れるとメモリリークとなる．
+
+	@date 2005.08.11 genta  新規作成
+	@date 2007.09.06 kobake 戻り値をCLogicPoint*に変更
+*/
+CLogicPoint* CEditWnd::SavePhysPosOfAllView(void)
+{
+	const int NUM_OF_VIEW = 4;
+	const int NUM_OF_POS = 5;
+	
+	CLogicPoint* pptPosArray = new CLogicPoint[NUM_OF_VIEW * NUM_OF_POS];
+	
+	for( int i = 0; i < NUM_OF_VIEW; ++i ){
+		GetDocument().m_cLayoutMgr.LayoutToLogic(
+			this->m_pcEditViewArr[i]->GetCaret().GetCaretLayoutPos(),
+			&pptPosArray[i * NUM_OF_POS + 0]
+		);
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LayoutToLogic(
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetFrom(),
+				&pptPosArray[i * NUM_OF_POS + 1]
+			);
+		}
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LayoutToLogic(
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetTo(),
+				&pptPosArray[i * NUM_OF_POS + 2]
+			);
+		}
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LayoutToLogic(
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetFrom(),
+				&pptPosArray[i * NUM_OF_POS + 3]
+			);
+		}
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LayoutToLogic(
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetTo(),
+				&pptPosArray[i * NUM_OF_POS + 4]
+			);
+		}
+	}
+	return pptPosArray;
+}
+
+
+/*!	座標の復元
+
+	CEditDoc::SavePhysPosOfAllViewで保存したデータを元に座標値を再計算する．
+
+	@date 2005.08.11 genta  新規作成
+	@date 2007.09.06 kobake 引数をCLogicPoint*に変更
+*/
+void CEditWnd::RestorePhysPosOfAllView( CLogicPoint* pptPosArray/*int* posary*/ )
+{
+	const int NUM_OF_VIEW = 4;
+	const int NUM_OF_POS = 5;
+
+	for( int i = 0; i < NUM_OF_VIEW; ++i ){
+		CLayoutPoint ptPosXY;
+		GetDocument().m_cLayoutMgr.LogicToLayout(
+			pptPosArray[i * NUM_OF_POS + 0],
+			&ptPosXY
+		);
+		this->m_pcEditViewArr[i]->GetCaret().MoveCursor( ptPosXY, TRUE );
+		this->m_pcEditViewArr[i]->GetCaret().m_nCaretPosX_Prev = this->m_pcEditViewArr[i]->GetCaret().GetCaretLayoutPos().GetX2();
+
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LogicToLayout(
+				pptPosArray[i * NUM_OF_POS + 1],
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetFromPointer()
+			);
+		}
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LogicToLayout(
+				pptPosArray[i * NUM_OF_POS + 2],
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelectBgn.GetToPointer()
+			);
+		}
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LogicToLayout(
+				pptPosArray[i * NUM_OF_POS + 3],
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetFromPointer()
+			);
+		}
+		if( this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
+			GetDocument().m_cLayoutMgr.LogicToLayout(
+				pptPosArray[i * NUM_OF_POS + 4],
+				this->m_pcEditViewArr[i]->GetSelectionInfo().m_sSelect.GetToPointer()
+			);
+		}
+	}
+	delete[] pptPosArray;
+}
+
+CEditDoc& CEditWnd::GetDocument()
+{
+	return CEditApp::Instance()->GetDocument();
+}
+const CEditDoc& CEditWnd::GetDocument() const
+{
+	return CEditApp::Instance()->GetDocument();
+}

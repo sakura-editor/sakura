@@ -34,15 +34,9 @@
 #define _CHARCODE_H_
 
 
-typedef unsigned char	uchar_t;		//  unsigned char の別名．
-typedef unsigned short	uchar16_t;		//  UTF-16 用．
-typedef unsigned long	uchar32_t;		//  UTF-32 用．
-typedef long wchar32_t;
-
-
-
 
 enum enumCodeType;
+typedef enumCodeType ECodeType;
 #if 0
 /*! 文字コードセット種別 */
 enum enumCodeType {
@@ -115,7 +109,7 @@ enum enumJisESCSeqType {
 	文字コード判定情報 構造体群
 */
 typedef struct EncodingInfo_t {
-	enumCodeType eCodeID;	// 文字コード識別番号
+	ECodeType eCodeID;		// 文字コード識別番号
 	int nSpecBytes;			// 特有バイト数
 	int nDiff;				// ポイント数 := 特有バイト数 － 不正バイト数
 } MBCODE_INFO;
@@ -130,21 +124,9 @@ typedef struct UnicodeInfo_t {
 	int nCRorLF_ascii;		// マルチバイト文字の改行の個数
 } UNICODE_INFO;
 
-
-#define TAB 				(char)'\t'
-#define SPACE				(char)' '
-#define CRLF				"\015\012"
-#define LFCR				"\012\015"
-#define CR					(char)'\015'
-#define LF					(char)'\012'
-#define ESC					(char)'\x1b'
-
 /*
 	関数のエミュレーション
 */
-#define _IS_SJIS_1		Charcode::IsSJisKan1
-#define _IS_SJIS_2		Charcode::IsSJisKan2
-#define UUDECODE_CHAR	Charcode::Uu_CharToVal
 
 
 
@@ -170,7 +152,6 @@ namespace Charcode
 	
 	uchar_t __fastcall Base64_CharToVal( const uchar_t );
 	uchar_t __fastcall Base64_ValToChar( const uchar_t );
-	uchar_t __fastcall Uu_CharToVal( const uchar_t );
 	int __fastcall GetJisESCSeqLen( const enumJisESCSeqType );
 	const char* __fastcall GetJisESCSeqData( const enumJisESCSeqType );
 
@@ -226,7 +207,7 @@ namespace Charcode
 	// --- JIS エスケープシーケンス検出
 	int DetectJisESCSeq( const uchar_t* pS, const int nLen, int* pnEscType );
 	// --- ユニコード BOM 検出器
-	int DetectUnicodeBom( const char*, const int );
+	ECodeType DetectUnicodeBom( const char*, int );
 	
 	/*
 	|| 文字列の文字コード情報を得る．
@@ -240,6 +221,9 @@ namespace Charcode
 	void GetEncdInf_Utf7( const char*, const int, MBCODE_INFO* );
 	void GetEncdInf_Uni( const char*, const int, UNICODE_INFO* );
 } // ends namespace Charcode.
+
+#include "charcode2.h"
+
 
 #endif /* _CHARCODE_H_ */
 
