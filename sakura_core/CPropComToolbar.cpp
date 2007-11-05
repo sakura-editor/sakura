@@ -20,7 +20,6 @@
 #include "CMenuDrawer.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2005/8/9 aroka
 #include "debug.h" // 2002/2/10 aroka
-#include "util/shell.h"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -106,7 +105,7 @@ int Listbox_INSERTDATA(
 			_T("Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"), index, nIndex1 );
 		return nIndex1;
 	}
-	else if( ::SendMessageAny( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
+	else if( ::SendMessage( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			_T("Toolbar Dialog: INS: 値の設定に失敗しました。:%d"), nIndex1 );
 		return LB_ERR;
@@ -131,16 +130,17 @@ int Listbox_INSERTDATA(
 */
 int Listbox_ADDDATA(
 	HWND hWnd,              //!< handle to destination window 
+	int index,          //!< item index
 	int value
 )
 {
-	int nIndex1 = ::SendMessage( hWnd, LB_ADDSTRING, 0, 1 );
+	int nIndex1 = ::SendMessage( hWnd, LB_ADDSTRING, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: 要素の追加に失敗しました。(%d)"), nIndex1 );
+			_T("Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"), index, nIndex1 );
 		return nIndex1;
 	}
-	else if( ::SendMessageAny( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
+	else if( ::SendMessage( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			_T("Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"), nIndex1 );
 		return LB_ERR;
@@ -201,7 +201,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 
 //	From Here Oct.14, 2000 JEPRO added	(Ref. CPropComCustmenu.cpp 内のWM_INITDIALOGを参考にした)
 		/* キー選択時の処理 */
-		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
+		::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 //	To Here Oct. 14, 2000
 
 		::SetTimer( hwndDlg, 1, 300, NULL );
@@ -228,7 +228,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
+//			MYTRACE( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 PROP_TOOLBAR */
 			GetData_PROP_TOOLBAR( hwndDlg );
 			return TRUE;
@@ -253,26 +253,55 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 		if( hwndCombo == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIndex2 = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+//				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
+				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 
-				::SendMessageAny( hwndFuncList, LB_RESETCONTENT, 0, 0 );
-
+				::SendMessage( hwndFuncList, LB_RESETCONTENT, 0, 0 );
+//				nNum = ::SendMessage( hwndFuncList, LB_GETCOUNT, 0, 0 );
+//				for( i = 0; i < nNum; ++i ){
+//					::SendMessage( hwndFuncList, LB_DELETESTRING, 0, 0 );
+//				}
 				/* 機能一覧に文字列をセット (リストボックス) */
 				//	From Here Oct. 15, 2001 genta Lookupを使うように変更
 				nNum = m_cLookup.GetItemCount( nIndex2 );
 				for( i = 0; i < nNum; ++i ){
 					nIndex1 = m_cLookup.Pos2FuncCode( nIndex2, i );
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
+//						if( m_cShareData.m_tbMyButton[j].idCommand == nIndex1 ){
+// 2005/8/9 aroka CMenuDrawerのメンバ変数をカプセル化
+//					for( j = 0; j < m_pcMenuDrawer->m_nMyButtonNum; ++j ){
+//						if( m_pcMenuDrawer->m_tbMyButton[j].idCommand == nIndex1 ){	//	jは、nIndex1で指定された機能コードを持つ
+//				//	To Here Oct. 15, 2001 genta Lookupを使うように変更
+//							break;
+//						}
+//					}
 					int nIndex = m_pcMenuDrawer->FindIndexFromCommandId( nIndex1 );
-
+//jepro note: 次行不要???
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+//					if( j < m_cShareData.m_nMyButtonNum ){
+// 2005/8/9 aroka CMenuDrawerのメンバ変数をカプセル化
+//					if( j < m_pcMenuDrawer->m_nMyButtonNum ){
 					if( nIndex >= 0 ){
-						/* ツールバーボタンの情報をセット (リストボックス) */
-						lResult = ::Listbox_ADDDATA( hwndFuncList, (LPARAM)nIndex );
-						if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
-							break;
-						}
-						lResult = ::SendMessageAny( hwndFuncList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
+
+//						/* ツールバーボタンの情報をセット (リストボックス) */
+//						for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
+							//	From Here Apr. 13, 2002 genta
+							lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)nIndex );
+							if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
+								break;
+							}
+							//	To Here Apr. 13, 2002 genta
+							lResult = ::SendMessage( hwndFuncList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
+//						}
 					}
 
+//jeprotest コメントアウトされていた以下の５行のコメントアウトを解除するとエラーが出る
+//					if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[nIndex2])[i], pszLabel, sizeof(pszLabel) ) ){
+//						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
+//					}else{
+//						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
+//					}
 				}
 				return TRUE;
 			}
@@ -282,7 +311,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 			case BN_CLICKED:
 				switch( wID ){
 				case IDC_BUTTON_INSERTSEPARATOR:
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 ){
 //						break;
 						nIndex1 = 0;
@@ -293,12 +322,12 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
 // 2005/8/9 aroka 折返ボタンが押されたら、右のリストに「ツールバー折返」を追加する。
 				case IDC_BUTTON_INSERTWRAP:
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 ){
 //						break;
 						nIndex1 = 0;
@@ -309,57 +338,57 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
 				case IDC_BUTTON_DELETE:
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 ){
 						break;
 					}
-					i = ::SendMessageAny( hwndResList, LB_DELETESTRING, nIndex1, 0 );
+					i = ::SendMessage( hwndResList, LB_DELETESTRING, nIndex1, 0 );
 					if( i == LB_ERR ){
 						break;
 					}
 					if( nIndex1 >= i ){
 						if( i == 0 ){
-							i = ::SendMessageAny( hwndResList, LB_SETCURSEL, 0, 0 );
+							i = ::SendMessage( hwndResList, LB_SETCURSEL, 0, 0 );
 						}else{
-							i = ::SendMessageAny( hwndResList, LB_SETCURSEL, i - 1, 0 );
+							i = ::SendMessage( hwndResList, LB_SETCURSEL, i - 1, 0 );
 						}
 					}else{
-						i = ::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+						i = ::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					}
 					break;
 
 				case IDC_BUTTON_INSERT:
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 ){
 //						break;
 						nIndex1 = 0;
 					}
-					nIndex2 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
+					nIndex2 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex2 ){
 						break;
 					}
-					i = ::SendMessageAny( hwndFuncList, LB_GETITEMDATA, nIndex2, 0 );
+					i = ::SendMessage( hwndFuncList, LB_GETITEMDATA, nIndex2, 0 );
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1 + 1, 0 );
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1 + 1, 0 );
 					break;
 
 
 				case IDC_BUTTON_ADD:
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCOUNT, 0, 0 );
-					nIndex2 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
+					nIndex2 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex2 ){
 						break;
 					}
-					i = ::SendMessageAny( hwndFuncList, LB_GETITEMDATA, nIndex2, 0 );
+					i = ::SendMessage( hwndFuncList, LB_GETITEMDATA, nIndex2, 0 );
 					//	From Here Apr. 13, 2002 genta
 					//	ここでは i != 0 だとは思うけど、一応保険です。
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
@@ -369,17 +398,17 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
 				case IDC_BUTTON_UP:
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 || 0 >= nIndex1 ){
 						break;
 					}
-					i = ::SendMessageAny( hwndResList, LB_GETITEMDATA, nIndex1, 0 );
+					i = ::SendMessage( hwndResList, LB_GETITEMDATA, nIndex1, 0 );
 
-					j = ::SendMessageAny( hwndResList, LB_DELETESTRING, nIndex1, 0 );
+					j = ::SendMessage( hwndResList, LB_DELETESTRING, nIndex1, 0 );
 					if( j == LB_ERR ){
 						break;
 					}
@@ -391,18 +420,18 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
-					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					break;
 
 				case IDC_BUTTON_DOWN:
-					i = ::SendMessageAny( hwndResList, LB_GETCOUNT, 0, 0 );
-					nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
+					i = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
+					nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
 					if( LB_ERR == nIndex1 || nIndex1 + 1 >= i ){
 						break;
 					}
-					i = ::SendMessageAny( hwndResList, LB_GETITEMDATA, nIndex1, 0 );
+					i = ::SendMessage( hwndResList, LB_GETITEMDATA, nIndex1, 0 );
 
-					j = ::SendMessageAny( hwndResList, LB_DELETESTRING, nIndex1, 0 );
+					j = ::SendMessage( hwndResList, LB_DELETESTRING, nIndex1, 0 );
 					if( j == LB_ERR ){
 						break;
 					}
@@ -413,7 +442,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
 						break;
 					}
-					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );
+					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
 					//	To Here Apr. 13, 2002 genta
 					break;
 				}
@@ -424,9 +453,9 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 		break;
 
 	case WM_TIMER:
-		nIndex1 = ::SendMessageAny( hwndResList, LB_GETCURSEL, 0, 0 );
-		nIndex2 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
-		i = ::SendMessageAny( hwndResList, LB_GETCOUNT, 0, 0 );
+		nIndex1 = ::SendMessage( hwndResList, LB_GETCURSEL, 0, 0 );
+		nIndex2 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
+		i = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
 		if( LB_ERR == nIndex1 ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
@@ -499,10 +528,13 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 	/* 機能種別一覧に文字列をセット(コンボボックス) */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 15, 2001 genta
+//	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
+//		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
+//	}
 	
 	/* 種別の先頭の項目を選択(コンボボックス) */
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
-	::PostMessageCmd( hwndCombo, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
+	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
+	::PostMessage( hwndCombo, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 
 	/* コントロールのハンドルを取得 */
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
@@ -518,20 +550,20 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 //	nListItemHeight+=2;
 
 	/* ツールバーボタンの情報をセット(リストボックス)*/
-	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
+	for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
 		//	From Here Apr. 13, 2002 genta
-		lResult = ::Listbox_ADDDATA( hwndResList, (LPARAM)m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i] );
+		lResult = ::Listbox_ADDDATA( hwndResList, 0, (LPARAM)m_Common.m_nToolBarButtonIdxArr[i] );
 		if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
 			break;
 		}
 		//	To Here Apr. 13, 2002 genta
-		lResult = ::SendMessageAny( hwndResList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
+		lResult = ::SendMessage( hwndResList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 	}
 //	/* ツールバーの先頭の項目を選択(リストボックス)*/
-	::SendMessageAny( hwndResList, LB_SETCURSEL, 0, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
+	::SendMessage( hwndResList, LB_SETCURSEL, 0, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 
 	/* フラットツールバーにする／しない  */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_TOOLBARISFLAT, m_Common.m_sToolBar.m_bToolBarIsFlat );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_TOOLBARISFLAT, m_Common.m_bToolBarIsFlat );
 	return;
 }
 
@@ -552,21 +584,21 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
 	/* ツールバーボタンの数 */
-	m_Common.m_sToolBar.m_nToolBarButtonNum = ::SendMessageAny( hwndResList, LB_GETCOUNT, 0, 0 );
+	m_Common.m_nToolBarButtonNum = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
 
 	/* ツールバーボタンの情報を取得 */
 	k = 0;
-	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
-		j = ::SendMessageAny( hwndResList, LB_GETITEMDATA, i, 0 );
+	for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
+		j = ::SendMessage( hwndResList, LB_GETITEMDATA, i, 0 );
 		if( LB_ERR != j ){
-			m_Common.m_sToolBar.m_nToolBarButtonIdxArr[k] = j;
+			m_Common.m_nToolBarButtonIdxArr[k] = j;
 			k++;
 		}
 	}
-	m_Common.m_sToolBar.m_nToolBarButtonNum = k;
+	m_Common.m_nToolBarButtonNum = k;
 
 	/* フラットツールバーにする／しない  */
-	m_Common.m_sToolBar.m_bToolBarIsFlat = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TOOLBARISFLAT );
+	m_Common.m_bToolBarIsFlat = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TOOLBARISFLAT );
 
 	return TRUE;
 }
@@ -577,6 +609,7 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 */
 void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
+	char		szLabel[256];
 	TBBUTTON	tbb;
 	HBRUSH		hBrush;
 	RECT		rc;
@@ -609,12 +642,11 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
 		}
 
-		WCHAR	szLabel[256];
 		if( 0 == tbb.idCommand ){
-			auto_strcpy( szLabel, LTEXT("───────────") );	// nLength 未使用 2003/01/09 Moca
+			strcpy( szLabel, "───────────" );	// nLength 未使用 2003/01/09 Moca
 		//	From Here Oct. 15, 2001 genta
-		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) )){
-			auto_sprintf( szLabel, LTEXT("%ls"), LTEXT("-- UNKNOWN --") );
+		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, sizeof( szLabel ) )){
+			wsprintf( szLabel, "%s", "-- UNKNOWN --" );
 		}
 		//	To Here Oct. 15, 2001 genta
 
@@ -636,7 +668,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 //		::DeleteObject( hBrush );
 
 		::SetBkMode( pDis->hDC, TRANSPARENT );
-		TextOutW2( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, wcslen( szLabel ) );
+		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, strlen( szLabel ) );
 
 	}
 

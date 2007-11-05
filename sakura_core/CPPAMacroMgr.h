@@ -37,16 +37,16 @@ public:
 	||	PPA.DLLに委譲する部分
 	*/
 	virtual void ExecKeyMacro( class CEditView* pcEditView ) const;				/* キーボードマクロの実行 */
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);	/* キーボードマクロを読み込み、CMacroの列に変換 */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);	/* キーボードマクロを読み込み、CMacroの列に変換 */
 
 	static class CPPA m_cPPA;
 
 	// Apr. 29, 2002 genta
-	static CMacroManagerBase* Creator(const TCHAR* ext);
+	static CMacroManagerBase* Creator(const char*);
 	static void declare(void);
 
 protected:
-	CNativeW2 m_cBuffer;
+	CMemory m_cBuffer;
 };
 
 

@@ -30,30 +30,30 @@ CLineComment::CLineComment()
 	@param buffer [in]      コメント文字列
 	@param nCommentPos [in] コメント位置．-1のときは指定無し．
 */
-void CLineComment::CopyTo( const int n, const wchar_t* buffer, int nCommentPos )
+void CLineComment::CopyTo( const int n, const char* buffer, int nCommentPos )
 {
-	int nStrLen = wcslen( buffer );
+	int nStrLen = lstrlen( buffer );
 	if( 0 < nStrLen && nStrLen < COMMENT_DELIMITER_BUFFERSIZE ){
-		wcscpy( m_pszLineComment[n], buffer );
+		strcpy( m_pszLineComment[n], buffer );
 		m_nLineCommentPos[n] = nCommentPos;
 		m_nLineCommentLen[n] = nStrLen;
 	}
 	else {
-		m_pszLineComment[n][0] = L'\0';
+		m_pszLineComment[n][0] = '\0';
 		m_nLineCommentPos[n] = -1;
 		m_nLineCommentLen[n] = 0;
 	}
 }
 
-bool CLineComment::Match( int nPos, int nLineLen, const wchar_t* pLine ) const
+bool CLineComment::Match( int nPos, int nLineLen, const char* pLine ) const
 {
 	int i;
 	for ( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
 		if (
-		  L'\0' != m_pszLineComment[i][0] &&	/* 行コメントデリミタ */
+		  '\0' != m_pszLineComment[i][0] &&	/* 行コメントデリミタ */
 		  ( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	位置指定ON.
 		  nPos <= nLineLen - m_nLineCommentLen[i] &&	/* 行コメントデリミタ */
-		  0 == auto_memicmp( &pLine[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )
+		  0 == memicmp( &pLine[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )
 		){
 			return true;
 		}

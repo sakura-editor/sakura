@@ -16,6 +16,13 @@ class COpeBuf;
 #ifndef _COPEBUF_H_
 #define _COPEBUF_H_
 
+/* アンドゥバッファ用 操作コード */
+enum enumOPECODE {
+	OPE_INSERT		= 1,
+	OPE_DELETE		= 2,
+	OPE_MOVECARET	= 3,
+};
+
 
 #include "global.h"
 class COpeBlk;/// 2002/2/10 aroka
@@ -37,8 +44,8 @@ class SAKURA_CORE_API COpeBuf {
 		int AppendOpeBlk( COpeBlk* );	/* 操作ブロックの追加 */
 		int	IsEnableUndo( void );	/* Undo可能な状態か */
 		int	IsEnableRedo( void );	/* Redo可能な状態か */
-		COpeBlk* DoUndo( bool* );	/* 現在のUndo対象の操作ブロックを返す */
-		COpeBlk* DoRedo( bool* );	/* 現在のRedo対象の操作ブロックを返す */
+		COpeBlk* DoUndo( int* );	/* 現在のUndo対象の操作ブロックを返す */
+		COpeBlk* DoRedo( int* );	/* 現在のRedo対象の操作ブロックを返す */
 		void SetNoModified( void );	/* 現在位置で無変更な状態になったことを通知 */
 
 		void DUMP( void );	/* 編集操作要素ブロックのダンプ */

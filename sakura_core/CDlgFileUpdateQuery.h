@@ -37,19 +37,15 @@
 #include "CDialog.h"
 
 class SAKURA_CORE_API CDlgFileUpdateQuery : public CDialog {
+private:
+	const char* m_pFilename;
+	bool m_bModified;
+
 public:
-	CDlgFileUpdateQuery(const TCHAR* filename, bool IsModified)
-	: m_pFilename( filename )
-	, m_bModified( IsModified )
-	{
-	}
+	CDlgFileUpdateQuery(const char* filename, bool IsModified)
+		: m_pFilename( filename ), m_bModified( IsModified ) {}
 	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnBnClicked( int );
-
-private:
-	const TCHAR* m_pFilename;
-	bool m_bModified;
 };
-
 #endif
 /*[EOF]*/

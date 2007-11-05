@@ -17,10 +17,9 @@
 #include "sakura_rc.h"
 #include "CDlgInput1.h"
 #include "debug.h"
-#include "CEditApp.h"
-#include "util/shell.h"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
+#include "etc_uty.h"
 #include "sakura.hh"
 static const DWORD p_helpids[] = {	//13000
 	IDOK,					HIDOK_DLG1,
@@ -65,7 +64,7 @@ INT_PTR CALLBACK CDlgInput1Proc(
 CDlgInput1::CDlgInput1()
 {
 	/* ヘルプファイルのフルパスを返す */
-	m_szHelpFile = CEditApp::Instance()->GetHelpFilePath();	//@@@ 2002.01.07 add
+	::GetHelpFilePath( m_szHelpFile );	//@@@ 2002.01.07 add
 
 	return;
 }
@@ -80,14 +79,7 @@ CDlgInput1::~CDlgInput1()
 
 
 /* モードレスダイアログの表示 */
-BOOL CDlgInput1::DoModal(
-	HINSTANCE		hInstApp,
-	HWND			hwndParent,
-	const TCHAR*	pszTitle,
-	const TCHAR*	pszMessage,
-	int				nMaxTextLen,
-	TCHAR*			pszText
-)
+BOOL CDlgInput1::DoModal( HINSTANCE hInstApp, HWND hwndParent, const char* pszTitle, const char* pszMessage, int nMaxTextLen, char* pszText )
 {
 	BOOL bRet;
 	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
@@ -96,7 +88,7 @@ BOOL CDlgInput1::DoModal(
 	m_pszMessage = pszMessage;		/* メッセージ */
 	m_nMaxTextLen = nMaxTextLen;	/* 入力サイズ上限 */
 //	m_pszText = pszText;			/* テキスト */
-	m_cmemText.SetString( pszText );
+	m_cmemText.SetDataSz( pszText );
 	bRet = (BOOL)::DialogBoxParam(
 		m_hInstance,
 		MAKEINTRESOURCE( IDD_INPUT1 ),
@@ -104,25 +96,8 @@ BOOL CDlgInput1::DoModal(
 		CDlgInput1Proc,
 		(LPARAM)this
 	);
-	_tcscpy( pszText, m_cmemText.GetStringPtr() );
+	strcpy( pszText, m_cmemText.GetPtr() );
 	return bRet;
-}
-
-BOOL CDlgInput1::DoModal(
-	HINSTANCE		hInstApp,
-	HWND			hwndParent,
-	const TCHAR*	pszTitle,
-	const TCHAR*	pszMessage,
-	int				nMaxTextLen,
-	NOT_TCHAR*		pszText
-)
-{
-	TCHAR buf[1024];
-	BOOL ret=DoModal(hInstApp, hwndParent, pszTitle, pszMessage, nMaxTextLen, buf);
-	if(ret){
-		auto_strcpy(pszText,to_not_tchar(buf));
-	}
-	return ret;
 }
 
 
@@ -147,7 +122,7 @@ INT_PTR CDlgInput1::DispatchEvent(
 
 		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), EM_LIMITTEXT, m_nMaxTextLen, 0 );	/* 入力サイズ上限 */
-		DlgItem_SetText( hwndDlg, IDC_EDIT1, m_cmemText.GetStringPtr() );	/* テキスト */
+		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetPtr() );	/* テキスト */
 		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_MSG ), m_pszMessage );	/* メッセージ */
 
 		return TRUE;
@@ -160,8 +135,8 @@ INT_PTR CDlgInput1::DispatchEvent(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDOK:
-				m_cmemText.AllocStringBuffer( ::GetWindowTextLength( ::GetDlgItem( hwndDlg, IDC_EDIT1 ) ) );
-				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetStringPtr(), m_nMaxTextLen + 1 );	/* テキスト */
+				m_cmemText.AllocBuffer( ::GetWindowTextLength( ::GetDlgItem( hwndDlg, IDC_EDIT1 ) ) );
+				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetPtr(), m_nMaxTextLen + 1 );	/* テキスト */
 				::EndDialog( hwndDlg, TRUE );
 				return TRUE;
 			case IDCANCEL:

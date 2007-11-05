@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
-#include "util/shell.h"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -118,7 +117,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 //				OnHelp( hwndDlg, IDD_PROP_FILE );
 //				return TRUE;
 //			case PSN_KILLACTIVE:
-////				MYTRACE_A( "p2 PSN_KILLACTIVE\n" );
+////				MYTRACE( "p2 PSN_KILLACTIVE\n" );
 //				/* ダイアログデータの取得 p2 */
 //				GetData_p2( hwndDlg );
 //				return TRUE;
@@ -137,7 +136,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 				OnHelp( hwndDlg, IDD_PROP_FILE );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "p2 PSN_KILLACTIVE\n" );
+//				MYTRACE( "p2 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p2 */
 				GetData_p2( hwndDlg );
 				return TRUE;
@@ -249,58 +248,58 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 {
 	/*--- p2 ---*/
 	/* ファイルの排他制御モード */
-	switch( m_Common.m_sFile.m_nFileShareMode ){
-	case SHAREMODE_DENY_WRITE:	/* 書き込み禁止 */
+	switch( m_Common.m_nFileShareMode ){
+	case OF_SHARE_DENY_WRITE:	/* 書き込み禁止 */
 		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE, BST_CHECKED );
 		break;
-	case SHAREMODE_DENY_READWRITE:	/* 読み書き禁止 */
+	case OF_SHARE_EXCLUSIVE:	/* 読み書き禁止 */
 		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE, BST_CHECKED );
 		break;
-	case SHAREMODE_NOT_EXCLUSIVE:	/* 排他なし */
+	case 0:	/* 排他なし */
 	default:	/* 排他なし */
 		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO, BST_CHECKED );
 		break;
 	}
 	/* 更新の監視 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_bCheckFileTimeStamp );
 
 	/* 無変更でも上書きするか */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_bEnableUnmodifiedOverwrite );
 
 	/* ファイルをドロップしたときは閉じて開く */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_sFile.m_bDropFileAndClose );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_bDropFileAndClose );
 	/* 一度にドロップ可能なファイル数 */
-	::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, m_Common.m_sFile.m_nDropFileNumMax, FALSE );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, m_Common.m_nDropFileNumMax, FALSE );
 
 	//	From Here Aug. 21, 2000 genta
 	//	自動保存の有効・無効
-	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.m_sBackup.IsAutoBackupEnabled() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.IsAutoBackupEnabled() );
 
-	TCHAR buf[6];
+	char buf[6];
 	int nN;
 
-	nN = m_Common.m_sBackup.GetAutoBackupInterval();
+	nN = m_Common.GetAutoBackupInterval();
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
 
-	auto_sprintf( buf, _T("%d"), nN);
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
+	wsprintf( buf, "%d", nN);
+	::SetDlgItemText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
 	//	To Here Aug. 21, 2000 genta
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.m_sFile.GetRestoreCurPosition() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.GetRestoreCurPosition() );
 	// 2002.01.16 hor ブックマーク復元フラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.m_sFile.GetRestoreBookmarks() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.GetRestoreBookmarks() );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.m_sFile.GetAutoMIMEdecode() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.GetAutoMIMEdecode() );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_QueryIfCodeChange, m_Common.m_sFile.GetQueryIfCodeChange() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_QueryIfCodeChange, m_Common.GetQueryIfCodeChange() );
 	//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告するかどうかのフラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_AlertIfFileNotExist, m_Common.m_sFile.GetAlertIfFileNotExist() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AlertIfFileNotExist, m_Common.GetAlertIfFileNotExist() );
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_sFile.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
-	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_sFile.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	EnableFilePropInput(hwndDlg);
 	return;
@@ -322,72 +321,72 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 
 	/* ファイルの排他制御モード */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){	/* 排他なし */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_NOT_EXCLUSIVE;
+		m_Common.m_nFileShareMode = 0;
 	}else
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE ) ){	/* 書き込み禁止 */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE	;
+		m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE	;
 	}else
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE ) ){	/* 読み書き禁止 */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_READWRITE;
+		m_Common.m_nFileShareMode = OF_SHARE_EXCLUSIVE;
 	}else{
 		/* 排他なし */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_NOT_EXCLUSIVE;
+		m_Common.m_nFileShareMode = 0;
 	}
 	/* 更新の監視 */
-	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
+	m_Common.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
 
 	/* 無変更でも上書きするか */
-	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
+	m_Common.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
 
 	/* ファイルをドロップしたときは閉じて開く */
-	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose );
+	m_Common.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose );
 	/* 一度にドロップ可能なファイル数 */
-	m_Common.m_sFile.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
-	if( 1 > m_Common.m_sFile.m_nDropFileNumMax ){
-		m_Common.m_sFile.m_nDropFileNumMax = 1;
+	m_Common.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
+	if( 1 > m_Common.m_nDropFileNumMax ){
+		m_Common.m_nDropFileNumMax = 1;
 	}
-	if( 99 < m_Common.m_sFile.m_nDropFileNumMax ){	//Sept. 21, 2000, JEPRO 16より大きいときに99と制限されていたのを修正(16→99と変更)
-		m_Common.m_sFile.m_nDropFileNumMax = 99;
+	if( 99 < m_Common.m_nDropFileNumMax ){	//Sept. 21, 2000, JEPRO 16より大きいときに99と制限されていたのを修正(16→99と変更)
+		m_Common.m_nDropFileNumMax = 99;
 	}
 
 	//	From Here Aug. 16, 2000 genta
 	//	自動保存を行うかどうか
-	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
+	m_Common.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
 
 	//	自動保存間隔の取得
-	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
+	char szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
 	int	 nN;
-	TCHAR *pDigit;
+	char *pDigit;
 
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
+	::GetDlgItemText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
 
-	for( nN = 0, pDigit = szNumBuf; *pDigit != _T('\0'); pDigit++ ){
-		if( _T('0') <= *pDigit && *pDigit <= _T('9') ){
-			nN = nN * 10 + *pDigit - _T('0');
+	for( nN = 0, pDigit = szNumBuf; *pDigit != '\0'; pDigit++ ){
+		if( '0' <= *pDigit && *pDigit <= '9' ){
+			nN = nN * 10 + *pDigit - '0';
 		}
 		else
 			break;
 	}
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
-	m_Common.m_sBackup.SetAutoBackupInterval( nN );
+	m_Common.SetAutoBackupInterval( nN );
 
 	//	To Here Aug. 16, 2000 genta
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
-	m_Common.m_sFile.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
+	m_Common.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
 	// 2002.01.16 hor ブックマーク復元フラグ
-	m_Common.m_sFile.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
+	m_Common.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
-	m_Common.m_sFile.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
+	m_Common.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	m_Common.m_sFile.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
+	m_Common.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	m_Common.m_sFile.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) == TRUE );
+	m_Common.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) == TRUE );
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
-	m_Common.m_sFile.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+	m_Common.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	m_Common.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	return TRUE;
 }

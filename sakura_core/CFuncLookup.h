@@ -38,7 +38,7 @@
 #include "global.h"
 #include "Funccode.h"
 class CSMacroMgr;// 2002/2/10 aroka
-struct CommonSetting;// 2002/2/10 aroka
+struct Common;// 2002/2/10 aroka
 
 /*!
 	@brief 表示用文字列等の取得
@@ -49,20 +49,20 @@ class SAKURA_CORE_API CFuncLookup {
 
 public:
 	//	Oct. 15, 2001 genta 引数追加
-	CFuncLookup( HINSTANCE hInst, CSMacroMgr* SMacroMgr, CommonSetting* pCom )
+	CFuncLookup( HINSTANCE hInst, CSMacroMgr* SMacroMgr, Common* pCom )
 		: m_pcSMacroMgr( SMacroMgr ), m_hInstance( hInst ), m_pCommon( pCom ) {}
 	CFuncLookup() : m_pcSMacroMgr( NULL ), m_hInstance( NULL ) {}
 
-	void Init( HINSTANCE hInst, CSMacroMgr* SMacroMgr, CommonSetting* pCom ){
+	void Init( HINSTANCE hInst, CSMacroMgr* SMacroMgr, Common* pCom ){
 		m_pcSMacroMgr = SMacroMgr;
 		m_hInstance = hInst;
 		m_pCommon = pCom;
 	}
 
-	EFunctionCode Pos2FuncCode( int category, int position ) const;
-	bool Pos2FuncName( int category, int position, WCHAR* ptr, int bufsize ) const;
-	bool Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const ;
-	const TCHAR* Category2Name( int category ) const;
+	int Pos2FuncCode( int category, int position ) const;
+	bool Pos2FuncName( int category, int position, char *ptr, int bufsize ) const;
+	bool Funccode2Name( int funccode, char *ptr, int bufsize ) const ;
+	const char* Category2Name( int category ) const;
 
 	void SetCategory2Combo( HWND hComboBox ) const ;
 	void SetListItem( HWND hListBox, int category ) const;
@@ -78,7 +78,7 @@ private:
 	HINSTANCE m_hInstance;	//!< 文字列リソースを持つインスタンス
 	CSMacroMgr* m_pcSMacroMgr;	//!< マクロ管理クラス
 	
-	CommonSetting* m_pCommon;	//! 共通設定データ領域へのポインタ
+	Common* m_pCommon;	//! 共通設定データ領域へのポインタ
 
 };
 

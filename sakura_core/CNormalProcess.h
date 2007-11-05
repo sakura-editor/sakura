@@ -17,8 +17,6 @@
 #include "global.h"
 #include "CProcess.h"
 #include "CMigemo.h"
-#include "CEditApp.h"
-#include "util/design_template.h"
 class CEditWnd;
 
 /*-----------------------------------------------------------------------
@@ -29,12 +27,15 @@ class CEditWnd;
 	
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
 */
-class SAKURA_CORE_API CNormalProcess : public CProcess, public TSingleInstance<CNormalProcess> {
+class SAKURA_CORE_API CNormalProcess : public CProcess {
 public:
-	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine ) : 
-		m_pcEditApp( NULL ),
+	CNormalProcess( HINSTANCE hInstance, LPSTR lpCmdLine ) : 
+		m_pcEditWnd( 0 ),
 		CProcess( hInstance, lpCmdLine ){}
 	virtual ~CNormalProcess(); // 2002/2/3 aroka
+
+	//migemo
+	CMigemo m_cMigemo;
 
 protected:
 	CNormalProcess();
@@ -43,12 +44,8 @@ protected:
 	virtual void Terminate();
 
 	HANDLE GetInitializeMutex() const; // 2002/2/8 aroka
-
 private:
-	CEditApp*	m_pcEditApp; //2007.10.23 kobake
-//	CEditWnd*	m_pcEditWnd;
-	
-	CMigemo		m_cMigemo;	//migemo
+	CEditWnd*	m_pcEditWnd;
 };
 
 

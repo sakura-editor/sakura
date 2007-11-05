@@ -40,7 +40,8 @@
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 #include "CShareData.h"
-#include "CControlTray.h"
+#include "etc_uty.h"
+#include "CEditApp.h"
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "OleTypes.h"
 
@@ -51,8 +52,8 @@
 #define omGet (0)
 #define omSet (1)
 
-CNativeA		CPPA::m_cMemRet;
-CNativeA		CPPA::m_cMemDebug;
+CMemory			CPPA::m_cMemRet;
+CMemory			CPPA::m_cMemDebug;
 CEditView*		CPPA::m_pcEditView = NULL;
 DLLSHAREDATA*	CPPA::m_pShareData = NULL;
 bool			CPPA::m_bError = false;
@@ -77,7 +78,7 @@ void CPPA::Execute(CEditView* pcEditView )
 	m_pcEditView = pcEditView;
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_bError = false;			//	2003.06.01 Moca
-	m_cMemDebug.SetString("");	//	2003.06.01 Moca
+	m_cMemDebug.SetDataSz("");	//	2003.06.01 Moca
 	m_fnExecute();
 }
 
@@ -153,15 +154,15 @@ int CPPA::InitDll()
 	if( ! RegisterEntries(table) )
 		return 1;
 
-	SetIntFunc(CPPA::stdIntFunc);	// 2003.02.24 Moca
-	SetStrFunc(CPPA::stdStrFunc);
-	SetProc(CPPA::stdProc);
+	SetIntFunc((void*)CPPA::stdIntFunc);	// 2003.02.24 Moca
+	SetStrFunc((void*)CPPA::stdStrFunc);
+	SetProc((void*)CPPA::stdProc);
 
 	// 2003.06.01 Moca エラーメッセージを追加
-	SetErrProc(CPPA::stdError);
-	SetStrObj(CPPA::stdStrObj);	// UserErrorMes用
+	SetErrProc((void*)CPPA::stdError);
+	SetStrObj((void*)CPPA::stdStrObj);	// UserErrorMes用
 #if PPADLL_VER >= 123
-	SetFinishProc(CPPA::stdFinishProc);
+	SetFinishProc((void*)CPPA::stdFinishProc);
 #endif
 
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
@@ -252,7 +253,7 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 			strcat( szArgument, "; " );
 			strcat( szArgument, szArguments[j] );
 		}
-		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",
+		sprintf( szBuffer, "%s S_%s(%s)%s; index %d;",
 			szType,
 			cMacroFuncInfo.m_pszFuncName,
 			szArgument,
@@ -261,7 +262,7 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		);
 	}
 	else {
-		auto_sprintf( szBuffer, "%hs S_%ts%hs; index %d;",
+		sprintf( szBuffer, "%s S_%s%s; index %d;",
 			szType,
 			cMacroFuncInfo.m_pszFuncName,
 			szReturn,
@@ -294,12 +295,12 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	case 2:
 		switch(GS_Mode){
 		case omGet:
-//			::MessageBoxA( m_pcEditView->m_hWnd, m_cMemDebug.GetPtr(), "GetStrObj", MB_OK );
-			*Value = m_cMemDebug.GetStringPtr();
+//			::MessageBox( m_pcEditView->m_hWnd, m_cMemDebug.GetPtr(), "GetStrObj", MB_OK );
+			*Value = m_cMemDebug.GetPtr();
 			break;
 		case omSet:
-//			::MessageBoxA( m_pcEditView->m_hWnd, *Value, "SetStrObj", MB_OK );
-			m_cMemDebug.SetString(*Value);
+//			::MessageBox( m_pcEditView->m_hWnd, *Value, "SetStrObj", MB_OK );
+			m_cMemDebug.SetDataSz(*Value);
 			break;
 		}
 		break;
@@ -343,31 +344,31 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		if( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID != -1 ){
 			char szFuncDec[1024];
 			GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i], szFuncDec );
-			auto_sprintf( szMes, "関数の実行エラー\n%hs", szFuncDec );
+			wsprintf( szMes, "関数の実行エラー\n%s", szFuncDec );
 		}else{
-			auto_sprintf( szMes, "不明な関数の実行エラー(バグです)\nFunc_ID=%d", FuncID );
+			wsprintf( szMes, "不明な関数の実行エラー(バグです)\nFunc_ID=%d", FuncID );
 		}
 	}else{
 		switch( Err_CD ){
 		case 0:
-			if( 0 == lstrlenA( Err_Mes ) ){
+			if( 0 == lstrlen( Err_Mes ) ){
 				pszErr = "詳細不明のエラー";
 			}else{
 				pszErr = Err_Mes;
 			}
 			break;
 		default:
-			auto_sprintf( szMes, "未定義のエラー\nError_CD=%d\n%hs", Err_CD, Err_Mes );
+			wsprintf( szMes, "未定義のエラー\nError_CD=%d\n%s", Err_CD, Err_Mes );
 		}
 	}
-	if( 0 == m_cMemDebug.GetStringLength() ){
-		::MessageBoxA( m_pcEditView->m_hWnd, pszErr, "PPA実行エラー", MB_OK );
+	if( 0 == m_cMemDebug.GetLength() ){
+		::MessageBox( m_pcEditView->m_hWnd, pszErr, "PPA実行エラー", MB_OK );
 	}else{
-		char* p = new char [ lstrlenA(pszErr) + m_cMemDebug.GetStringLength() + 2 ];
+		char* p = new char [ lstrlen(pszErr) + m_cMemDebug.GetLength() + 2 ];
 		strcpy( p, pszErr );
 		strcat( p, "\n" );
-		strcat( p, m_cMemDebug.GetStringPtr() );
-		::MessageBoxA( m_pcEditView->m_hWnd, p, "PPA実行エラー", MB_OK );
+		strcat( p, m_cMemDebug.GetPtr() );
+		::MessageBox( m_pcEditView->m_hWnd, p, "PPA実行エラー", MB_OK );
 		delete [] p;
 	}
 }
@@ -376,41 +377,13 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 
 //----------------------------------------------------------------------
 void __stdcall CPPA::stdProc(
-	const char*		FuncName,
-	const int		_Index,
-	const char*		Argument[],
-	const int		ArgSize,
-	int*			Err_CD
-)
+	const char* FuncName, const int Index,
+	const char* Argument[], const int ArgSize, int* Err_CD)
 {
 	NEVER_USED_PARAM(FuncName);
-	EFunctionCode Index=(EFunctionCode)_Index;
 
 	*Err_CD = 0;
-
-	//Argumentをwchar_t[]に変換 -> tmpArguments
-	WCHAR** tmpArguments2=new WCHAR*[ArgSize];
-	for(int i=0;i<ArgSize;i++){
-		if(Argument[i]){
-			tmpArguments2[i]=mbstowcs_new(Argument[i]);
-		}
-		else{
-			tmpArguments2[i]=NULL;
-		}
-	}
-	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
-
-	//処理
-	CMacro::HandleCommand( m_pcEditView, Index, tmpArguments, ArgSize );
-
-	//tmpArgumentsを解放
-	for(int i=0;i<ArgSize;i++){
-		if(tmpArguments2[i]){
-			WCHAR* p=const_cast<WCHAR*>(tmpArguments2[i]);
-			delete[] p;
-		}
-	}
-	delete[] tmpArguments2;
+	CMacro::HandleCommand( m_pcEditView, Index, Argument, ArgSize );
 }
 
 //----------------------------------------------------------------------
@@ -467,7 +440,9 @@ void __stdcall CPPA::stdStrFunc(
 	char** ResultValue)
 {
 	NEVER_USED_PARAM(FuncName);
-
+//	2003.06.01 Moca スタティックメンバに変更
+//	static CMemory cMem; // ANSI文字列でなければならない
+//						// これの管理するポインタをPPAに渡すのでstaticである必要がある。
 	VARIANT Ret;
 	::VariantInit(&Ret);
 	*Err_CD = 0;
@@ -476,9 +451,9 @@ void __stdcall CPPA::stdStrFunc(
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
-			m_cMemRet.SetString(buf,len); // Mar. 9, 2003 genta
+			m_cMemRet.SetData(buf,len); // Mar. 9, 2003 genta
 			delete[] buf;
-			*ResultValue = m_cMemRet.GetStringPtr();
+			*ResultValue = m_cMemRet.GetPtr();
 			::VariantClear(&Ret);
 			return;
 		}
@@ -522,7 +497,7 @@ bool CPPA::CallHandleFunction(
 		}
 		case VT_BSTR:
 		{
-			SysString S(Arg[i],lstrlenA(Arg[i]));
+			SysString S(Arg[i],lstrlen(Arg[i]));
 			Wrap(&vtArg[i])->Receive(S);
 			break;
 		}
@@ -560,8 +535,8 @@ bool CPPA::CallHandleFunction(
 */
 void __stdcall CPPA::stdFinishProc()
 {
-	m_cMemRet.SetString("");
-	m_cMemDebug.SetString("");
+	m_cMemRet.SetDataSz("");
+	m_cMemDebug.SetDataSz("");
 	m_pShareData = NULL;
 	m_pcEditView = NULL;
 	m_bError = false;

@@ -41,14 +41,16 @@ public:
 	void Hide( void );
 	/* 初期化 */
 	int Search(
-		POINT*			ppoWin,
-		int				nWinHeight,
-		int				nColmWidth,
-		const wchar_t*	pszCurWord,
-		const TCHAR*	pszHokanFile,
-		BOOL			bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
-		BOOL			bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
-		CNativeW2*		pcmemHokanWord = NULL	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
+	//	HFONT		hFont,
+		POINT*		ppoWin,
+		int			nWinHeight,
+		int			nColmWidth,
+		const char*	pszCurWord,
+	//	void*		pcEditView,
+		const char* pszHokanFile,
+		BOOL		bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+		BOOL		bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
+		CMemory*	pcmemHokanWord = NULL	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	);
 //	void SetCurKouhoStr( void );
 	BOOL DoHokan( int );
@@ -75,8 +77,8 @@ public:
 
 //	HFONT			m_hFont;
 //	HFONT			m_hFontOld;
-	CNativeW2		m_cmemCurWord;
-	CNativeW2*		m_pcmemKouho;
+	CMemory			m_cmemCurWord;
+	CMemory*		m_pcmemKouho;
 	int				m_nKouhoNum;
 
 	int				m_nCurKouhoIdx;

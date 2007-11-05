@@ -29,7 +29,7 @@
 */
 class SAKURA_CORE_API CLineComment
 {
-	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	/* 行コメントデリミタ */
+	char	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	/* 行コメントデリミタ */
 	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
 	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
 
@@ -39,10 +39,10 @@ public:
 	*/
 	CLineComment();
 
-	void CopyTo( const int n, const wchar_t* buffer, int nCommentPos );	//	行コメントデリミタをコピーする
-	bool Match( int nPos, int nLineLen, const wchar_t* pLine ) const;	//	行コメントに値するか確認する
+	void CopyTo( const int n, const char* buffer, int nCommentPos );	//	行コメントデリミタをコピーする
+	bool Match( int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する
 
-	const wchar_t* getLineComment( const int n ){
+	const char* getLineComment( const int n ){
 		return m_pszLineComment[n];
 	};
 	int getLineCommentPos( const int n ) const {
