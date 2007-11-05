@@ -43,11 +43,11 @@ public:
 	*/
 private:
 	// 20060126 aroka すべてPrivateにして、初期化順序に合わせて並べ替え
-	const TCHAR*	m_pszClassName;	/*!< クラス名 */
+	const char*		m_pszClassName;	/*!< クラス名 */
 	CEditDoc*		m_pCEditDoc;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nCurrentKeyState;
-	WCHAR			m_szFuncNameArr[12][256];
+	char			m_szFuncNameArr[12][256];
 	HWND			m_hwndButtonArr[12];
 	HFONT			m_hFont;	/*!< 表示用フォント */
 	BOOL			m_bSizeBox;

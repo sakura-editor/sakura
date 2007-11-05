@@ -34,8 +34,7 @@ public:
 	*/
 	CDlgInput1();
 	~CDlgInput1();
-	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , TCHAR*  );	/* モードレスダイアログの表示 */
-	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , NOT_TCHAR*  );	/* モードレスダイアログの表示 */
+	BOOL DoModal( HINSTANCE , HWND , const char* , const char* , int , char*  );	/* モードレスダイアログの表示 */
 	/*
 	||  Attributes & Operations
 	*/
@@ -45,12 +44,12 @@ public:
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND		m_hWnd;			/* このダイアログのハンドル */
 
-	const TCHAR*	m_pszTitle;		/* ダイアログタイトル */
-	const TCHAR*	m_pszMessage;	/* メッセージ */
+	const char*	m_pszTitle;		/* ダイアログタイトル */
+	const char*	m_pszMessage;	/* メッセージ */
 	int			m_nMaxTextLen;	/* 入力サイズ上限 */
 //	char*		m_pszText;		/* テキスト */
-	CNativeT	m_cmemText;		/* テキスト */
-	SFilePath	m_szHelpFile;	//@@@ 2002.01.07 add
+	CMemory		m_cmemText;		/* テキスト */
+	char			m_szHelpFile[_MAX_PATH + 1];	//@@@ 2002.01.07 add
 protected:
 	/*
 	||  実装ヘルパ関数

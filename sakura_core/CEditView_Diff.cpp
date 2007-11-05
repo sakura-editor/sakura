@@ -21,7 +21,9 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <io.h>
 #include "sakura_rc.h"
+#include "etc_uty.h"
 #include "global.h"
 #include "CDlgDiff.h"
 #include "CEditDoc.h"
@@ -32,11 +34,87 @@
 #include "COsVersionInfo.h"
 #include "mymessage.h"
 #include "debug.h"
-#include "util/module.h"
-#include "util/file.h"
-#include "CEditWnd.h"
 
-#define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")
+#define	SAKURA_DIFF_TEMP_PREFIX	"sakura_diff_"
+
+/*!	差分表示
+	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
+	@author	maru
+	@date	2005/10/28 これまでのCommand_DiffはViewDiffInfoに名称変更
+*/
+void CEditView::Command_Diff( const char *szTmpFile2, int nFlgOpt )
+{
+	bool	bTmpFile1 = false;
+	char	szTmpFile1[_MAX_PATH * 2];
+
+	if( -1 == ::GetFileAttributes( szTmpFile2 ) )
+	{
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+			_T( "差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。" ) );
+		return;
+	}
+
+	//自ファイル
+	if (m_pcEditDoc->IsModified() == FALSE ) strcpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
+	else return;
+
+	//差分表示
+	ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt);
+
+	//一時ファイルを削除する
+	if( bTmpFile1 ) unlink( szTmpFile1 );
+
+	return;
+
+}
+
+/*!	差分表示
+	@note	HandleCommandからの呼び出し対応(ダイアログあり版)
+	@author	MIK
+	@date	2002/05/25
+	@date	2002/11/09 編集中ファイルを許可
+	@date	2005/10/29 maru 一時ファイル作成処理をMakeDiffTmpFileへ移動
+*/
+void CEditView::Command_Diff_Dialog( void )
+{
+	CDlgDiff	cDlgDiff;
+	bool	bTmpFile1 = false, bTmpFile2 = false;
+	char	szTmpFile1[_MAX_PATH * 2];
+	char	szTmpFile2[_MAX_PATH * 2];
+
+	//DIFF差分表示ダイアログを表示する
+	if( FALSE == cDlgDiff.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc,
+		m_pcEditDoc->GetFilePath(),
+		m_pcEditDoc->IsModified() ) )
+	{
+		return;
+	}
+	
+	//自ファイル
+	if (m_pcEditDoc->IsModified() == FALSE ) strcpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
+	else return;
+		
+	//相手ファイル
+	if (cDlgDiff.m_bIsModifiedDst == FALSE ) strcpy( szTmpFile2, cDlgDiff.m_szFile2);
+	else if (MakeDiffTmpFile ( szTmpFile2, cDlgDiff.m_hWnd_Dst )) bTmpFile2 = true;
+	else 
+	{
+		if( bTmpFile1 ) unlink( szTmpFile1 );
+		return;
+	}
+	
+	//差分表示
+	ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt);
+	
+	
+	//一時ファイルを削除する
+	if( bTmpFile1 ) unlink( szTmpFile1 );
+	if( bTmpFile2 ) unlink( szTmpFile2 );
+
+	return;
+}
 
 /*!	差分表示
 	@param	pszFile1	[in]	自ファイル名
@@ -53,12 +131,12 @@
 	@author	MIK
 	@date	2002/05/25
 	@date	2005/10/28	旧Command_Diffから関数名の変更。
-						GetCommander().Command_Diff_Dialogだけでなく新Command_Diff
+						Command_Diff_Dialogだけでなく新Command_Diff
 						からも呼ばれる関数。maru
 */
 void CEditView::ViewDiffInfo( 
-	const TCHAR* pszFile1,
-	const TCHAR* pszFile2,
+	const char	*pszFile1,
+	const char	*pszFile2,
 	int			nFlgOpt )
 /*
 	bool	bFlgCase,		//大文字小文字同一視
@@ -69,14 +147,14 @@ void CEditView::ViewDiffInfo(
 	bool	bFlgFile12,		//編集中のファイルが旧ファイル
 */
 {
-	TCHAR	cmdline[1024];
+	char	cmdline[1024];
 	HANDLE	hStdOutWrite, hStdOutRead;
 //	CDlgCancel	cDlgCancel;
 	CWaitCursor	cWaitCursor( m_hWnd );
 	int		nFlgFile12 = 1;
 
 	/* exeのあるフォルダ */
-	TCHAR	szExeFolder[_MAX_PATH + 1];
+	char	szExeFolder[_MAX_PATH + 1];
 
 	GetExedir( cmdline, _T("diff.exe") );
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
@@ -92,16 +170,16 @@ void CEditView::ViewDiffInfo(
 
 	//今あるDIFF差分を消去する。
 	if( m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
-		GetCommander().Command_Diff_Reset();
+		Command_Diff_Reset();
 		//m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
 	PROCESS_INFORMATION	pi;
-	ZeroMemory( &pi, sizeof(pi) );
+	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
 
 	//子プロセスの標準出力と接続するパイプを作成
 	SECURITY_ATTRIBUTES	sa;
-	ZeroMemory( &sa, sizeof(sa) );
-	sa.nLength              = sizeof(sa);
+	ZeroMemory( &sa, sizeof(SECURITY_ATTRIBUTES) );
+	sa.nLength              = sizeof(SECURITY_ATTRIBUTES);
 	sa.bInheritHandle       = TRUE;
 	sa.lpSecurityDescriptor = NULL;
 	hStdOutRead = hStdOutWrite = 0;
@@ -118,8 +196,8 @@ void CEditView::ViewDiffInfo(
 
 	//CreateProcessに渡すSTARTUPINFOを作成
 	STARTUPINFO	sui;
-	ZeroMemory( &sui, sizeof(sui) );
-	sui.cb          = sizeof(sui);
+	ZeroMemory( &sui, sizeof(STARTUPINFO) );
+	sui.cb          = sizeof(STARTUPINFO);
 	sui.dwFlags     = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
 	sui.wShowWindow = SW_HIDE;
 	sui.hStdInput   = GetStdHandle( STD_INPUT_HANDLE );
@@ -127,14 +205,14 @@ void CEditView::ViewDiffInfo(
 	sui.hStdError   = hStdOutWrite;
 
 	//オプションを作成する
-	TCHAR	szOption[16];	// "-cwbBt"
-	_tcscpy( szOption, _T("-") );
-	if( nFlgOpt & 0x0001 ) _tcscat( szOption, _T("i") );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) _tcscat( szOption, _T("w") );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) _tcscat( szOption, _T("b") );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) _tcscat( szOption, _T("B") );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) _tcscat( szOption, _T("t") );	//-t expand-tabs         TAB-SPACE変換
-	if( _tcscmp( szOption, _T("-") ) == 0 ) _tcscpy( szOption, _T("") );	//オプションなし
+	char	szOption[16];	// "-cwbBt"
+	strcpy( szOption, "-" );
+	if( nFlgOpt & 0x0001 ) strcat( szOption, "i" );	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) strcat( szOption, "w" );	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) strcat( szOption, "b" );	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) strcat( szOption, "B" );	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) strcat( szOption, "t" );	//-t expand-tabs         TAB-SPACE変換
+	if( strcmp( szOption, "-" ) == 0 ) strcpy( szOption, "" );	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
@@ -145,26 +223,22 @@ void CEditView::ViewDiffInfo(
 		COsVersionInfo cOsVer;
 		//コマンドライン文字列作成(MAX:1024)
 		if (cOsVer.IsWin32NT()){
-			auto_sprintf(
-				cmdline,
-				_T("cmd.exe /C \"\"%ts\\%ls\" %ls \"%ts\" \"%ts\"\""),
-				szExeFolder,	//sakura.exeパス
-				_T("diff.exe"),		//diff.exe
-				szOption,		//diffオプション
-				( nFlgFile12 ? pszFile2 : pszFile1 ),
-				( nFlgFile12 ? pszFile1 : pszFile2 )
-			);
+			wsprintf( cmdline, "cmd.exe /C \"\"%s\\%s\" %s \"%s\" \"%s\"\"",
+					szExeFolder,	//sakura.exeパス
+					"diff.exe",		//diff.exe
+					szOption,		//diffオプション
+					( nFlgFile12 ? pszFile2 : pszFile1 ),
+					( nFlgFile12 ? pszFile1 : pszFile2 )
+				);
 		}
 		else{
-			auto_sprintf(
-				cmdline,
-				_T("command.com /C \"%ls\\%ls\" %ls \"%ts\" \"%ts\""),
-				szExeFolder,	//sakura.exeパス
-				_T("diff.exe"),		//diff.exe
-				szOption,		//diffオプション
-				( nFlgFile12 ? pszFile2 : pszFile1 ),
-				( nFlgFile12 ? pszFile1 : pszFile2 )
-			);
+			wsprintf( cmdline, "command.com /C \"%s\\%s\" %s \"%s\" \"%s\"",
+					szExeFolder,	//sakura.exeパス
+					"diff.exe",		//diff.exe
+					szOption,		//diffオプション
+					( nFlgFile12 ? pszFile2 : pszFile1 ),
+					( nFlgFile12 ? pszFile1 : pszFile2 )
+				);
 		}
 	}
 
@@ -172,8 +246,8 @@ void CEditView::ViewDiffInfo(
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
 	{
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-				"差分コマンド実行は失敗しました。\n\n%ls", cmdline );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
+				"差分コマンド実行は失敗しました。\n\n%s", cmdline );
 		goto finish;
 	}
 
@@ -227,9 +301,9 @@ void CEditView::ViewDiffInfo(
 			{
 				while( new_cnt > 0 )												//待機中のものがある
 				{
-					if( new_cnt >= _countof(work) - 2 )							//パイプから読み出す量を調整
+					if( new_cnt >= sizeof(work) - 2 )							//パイプから読み出す量を調整
 					{
-						new_cnt = _countof(work) - 2;
+						new_cnt = sizeof(work) - 2;
 					}
 					ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					if( read_cnt == 0 )
@@ -245,7 +319,7 @@ void CEditView::ViewDiffInfo(
 						bFirst = false;
 						if( strncmp( work, "Binary files ", strlen( "Binary files " ) ) == 0 )
 						{
-							::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
+							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 								"DIFF差分を行おうとしたファイルはバイナリファイルです。" );
 							goto finish;
 						}
@@ -330,7 +404,8 @@ void CEditView::ViewDiffInfo(
 	{
 		if( false == m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
 		{
-			InfoMessage( m_hWnd, _T("DIFF差分は見つかりませんでした。") );
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"DIFF差分は見つかりませんでした。" );
 		}
 	}
 
@@ -344,8 +419,8 @@ finish:
 
 	//分割したビューも更新
 	for( int v = 0; v < 4; ++v )
-		if( m_pcEditWnd->m_nActivePaneIndex != v )
-			m_pcEditWnd->m_pcEditViewArr[v]->Redraw();
+		if( m_pcEditDoc->m_nActivePaneIndex != v )
+			m_pcEditDoc->m_cEditViewArr[v].Redraw();
 	Redraw();
 
 	return;
@@ -444,17 +519,151 @@ void CEditView::AnalyzeDiffInfo(
 	//抽出したDIFF情報から行番号に差分マークを付ける
 	if( 0 == nFlgFile12 )	//編集中ファイルは旧ファイル
 	{
-		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s1    ), CLogicInt(e1    ) );
-		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
-		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
+		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, s1    , e1     );
+		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, s1 - 1, e1 - 1 );
+		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, s1 - 1, e1 - 1 );
 	}
 	else	//編集中ファイルは新ファイル
 	{
-		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
-		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
-		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s2    ), CLogicInt(e2    ) );
+		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, s2 - 1, e2 - 1 );
+		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, s2 - 1, e2 - 1 );
+		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, s2    , e2     );
 	}
 
+	return;
+}
+
+/*!	次の差分を探し，見つかったら移動する
+*/
+void CEditView::Command_Diff_Next( void )
+{
+	int			nX = 0;
+	int			nY;
+	int			nYOld;
+	BOOL		bFound = FALSE;
+	BOOL		bRedo = TRUE;
+
+	nY = m_nCaretPosY_PHY;
+	nYOld = nY;
+
+re_do:;	
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, 1 /* 後方検索 */, &nY ) )
+	{
+		bFound = TRUE;
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
+		if( m_bSelectingLock )
+		{
+			if( !IsTextSelected() ) BeginSelectArea();
+		}
+		else
+		{
+			if( IsTextSelected() ) DisableSelectArea( TRUE );
+		}
+		MoveCursor( nX, nY, TRUE );
+		if( m_bSelectingLock )
+		{
+			ChangeSelectAreaByCurrentCursor( nX, nY );
+		}
+	}
+
+	if( m_pShareData->m_Common.m_bSearchAll )
+	{
+		if( !bFound		// 見つからなかった
+		 && bRedo )		// 最初の検索
+		{
+			nY = 0 - 1;	/* 1個手前を指定 */
+			bRedo = FALSE;
+			goto re_do;		// 先頭から再検索
+		}
+	}
+	if( bFound )
+	{
+		if( nYOld >= nY ) SendStatusMessage( "▼先頭から再検索しました" );
+	}
+	else
+	{
+		SendStatusMessage( "▽見つかりませんでした" );
+		if( m_pShareData->m_Common.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"後方(↓) に差分が見つかりません。" );
+	}
+
+	return;
+}
+
+
+
+/*!	前の差分を探し，見つかったら移動する
+*/
+void CEditView::Command_Diff_Prev( void )
+{
+	int			nX = 0;
+	int			nY;
+	int			nYOld;
+	BOOL		bFound = FALSE;
+	BOOL		bRedo = TRUE;
+
+	nY = m_nCaretPosY_PHY;
+	nYOld = nY;
+
+re_do:;
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, 0 /* 前方検索 */, &nY ) )
+	{
+		bFound = TRUE;
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
+		if( m_bSelectingLock )
+		{
+			if( !IsTextSelected() ) BeginSelectArea();
+		}
+		else
+		{
+			if( IsTextSelected() ) DisableSelectArea( TRUE );
+		}
+		MoveCursor( nX, nY, TRUE );
+		if( m_bSelectingLock )
+		{
+			ChangeSelectAreaByCurrentCursor( nX, nY );
+		}
+	}
+
+	if( m_pShareData->m_Common.m_bSearchAll )
+	{
+		if( !bFound	// 見つからなかった
+		 && bRedo )	// 最初の検索
+		{
+			nY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	/* 1個手前を指定 */
+			bRedo = FALSE;
+			goto re_do;	// 末尾から再検索
+		}
+	}
+	if( bFound )
+	{
+		if( nYOld <= nY ) SendStatusMessage( "▲末尾から再検索しました" );
+	}
+	else
+	{
+		SendStatusMessage( "△見つかりませんでした" );
+		if( m_pShareData->m_Common.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+				"前方(↑) に差分が見つかりません。" );
+	}
+
+	return;
+}
+
+/*!	差分表示の全解除
+	@author	MIK
+	@date	2002/05/26
+*/
+void CEditView::Command_Diff_Reset( void )
+{
+	m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
+
+	//分割したビューも更新
+	for( int v = 0; v < 4; ++v )
+		if( m_pcEditDoc->m_nActivePaneIndex != v )
+			m_pcEditDoc->m_cEditViewArr[v].Redraw();
+	Redraw();
 	return;
 }
 
@@ -464,22 +673,24 @@ void CEditView::AnalyzeDiffInfo(
 	@date	2005/10/29	引数変更const char* → char*
 						一時ファイル名の取得処理もここでおこなう。maru
 */
-BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
+BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 {
-	const wchar_t*	pLineData;
-	CLogicInt		nLineLen;
-	CLogicInt		y;
+	const char*	pLineData;
+	int		nLineLen;
+	int		y;
 	FILE	*fp;
 
-	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	char	*pszTmpName;
+	
+	pszTmpName = _tempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName )
 	{
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 			"差分コマンド実行は失敗しました。" );
 		return FALSE;
 	}
 
-	_tcscpy( filename, pszTmpName );
+	strcpy( filename, pszTmpName );
 	free( pszTmpName );
 
 	//自分か？
@@ -487,32 +698,31 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	{
 		CEOL	cEol( m_pcEditDoc->m_cSaveLineCode );
 		FILETIME	filetime;
-		return RESULT_FAILURE != m_pcEditDoc->m_cDocLineMgr.WriteFile( 
+		return (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile( 
 			filename, 
-			m_pcEditDoc->GetSplitterHwnd(), 
+			m_pcEditDoc->m_hWnd, 
 			NULL,
 			m_pcEditDoc->m_nCharCode,
 			&filetime,
 			cEol,
-			m_pcEditDoc->m_bBomExist	//	Jul. 26, 2003 ryoji BOM
-		);
+			m_pcEditDoc->m_bBomExist);	//	Jul. 26, 2003 ryoji BOM
 	}
 
-	fp = _tfopen( filename, _T("wb") );
+	fp = fopen( filename, "wb" );
 	if( NULL == fp )
 	{
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 			"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
 		return FALSE;
 	}
 
-	y = CLogicInt(0);
+	y = 0;
 
 	// 行(改行単位)データの要求
 	if( hWnd )
 	{
-		pLineData = m_pShareData->GetWorkBuffer<EDIT_CHAR>();
-		nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
+		pLineData = m_pShareData->m_szWork;
+		nLineLen = ::SendMessage( hWnd, MYWM_GETLINEDATA, y, 0 );
 	}
 	else
 	{
@@ -523,29 +733,29 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	{
 		if( 0 == nLineLen || NULL == pLineData ) break;
 
-		if( hWnd && nLineLen > (int)m_pShareData->GetWorkBufferCount<EDIT_CHAR>() )
+		if( hWnd && nLineLen > sizeof( m_pShareData->m_szWork ) )
 		{
 			// 一時バッファを超えている
 			fclose( fp );
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 				"差分コマンド実行は失敗しました。\n\n行が長すぎます。" );
-			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			unlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 			return FALSE;
 		}
 
 		if( 1 != fwrite( pLineData, nLineLen, 1, fp ) )
 		{
 			fclose( fp );
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 				"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
-			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			unlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 			return FALSE;
 		}
 
 		y++;
 
 		// 行(改行単位)データの要求 
-		if( hWnd ) nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
+		if( hWnd ) nLineLen = ::SendMessage( hWnd, MYWM_GETLINEDATA, y, 0 );
 		else       pLineData = m_pcEditDoc->m_cDocLineMgr.GetLineStr( y, &nLineLen );
 	}
 

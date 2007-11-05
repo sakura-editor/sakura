@@ -72,17 +72,15 @@ const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 };
 
 /* 行終端子の表示名の配列 */
-const TCHAR* CEOL::gm_pszEolNameArr[EOL_TYPE_NUM] = {
+const char* CEOL::gm_pszEolNameArr[EOL_TYPE_NUM] = {
 	//	May 12, 2000 genta
 	//	文字幅の都合上“無”を漢字に
-	_T("改行無"),
-	_T("CRLF"),
-	_T("LFCR"),
-	_T("LF"),
-	_T("CR")
+	"改行無",
+	"CRLF",
+	"LFCR",
+	"LF",
+	"CR"
 };
-
-
 //-----------------------------------------------
 //	実装部
 //-----------------------------------------------
@@ -116,20 +114,7 @@ enumEOLType CEOL::GetEOLType( const char* pszData, int nDataLen )
 	/* 改行コードの長さを調べる */
 	for( i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == auto_memcmp( pszData, gm_pszEolDataArr[i], gm_pnEolLenArr[i] )
-		){
-			return gm_pnEolTypeArr[i];
-		}
-	}
-	return EOL_NONE;
-}
-enumEOLType CEOL::GetEOLType( const wchar_t* pszData, int nDataLen )
-{
-	int	i;
-	/* 改行コードの長さを調べる */
-	for( i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == wmemcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] )
+		 && 0 == memcmp( pszData, gm_pszEolDataArr[i], gm_pnEolLenArr[i] )
 		){
 			return gm_pnEolTypeArr[i];
 		}
@@ -149,7 +134,7 @@ enumEOLType CEOL::GetEOLTypeUni( const wchar_t* pszData, int nDataLen )
 	/* 改行コードの長さを調べる */
 	for( i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == auto_memcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] )
+		 && 0 == memcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) )
 		){
 			return gm_pnEolTypeArr[i];
 		}
@@ -169,7 +154,7 @@ enumEOLType CEOL::GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 	/* 改行コードの長さを調べる */
 	for( i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == auto_memcmp( pszData, gm_pszEolUnicodeBEDataArr[i], gm_pnEolLenArr[i] )
+		 && 0 == memcmp( pszData, gm_pszEolUnicodeBEDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) )
 		){
 			return gm_pnEolTypeArr[i];
 		}

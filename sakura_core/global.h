@@ -59,80 +59,119 @@
 #endif
 #endif
 
+//	Sep. 22, 2003 MIK
+//	古いSDK対策．新しいSDKでは不要
+#ifndef _WIN64
+#ifndef DWORD_PTR
+#define DWORD_PTR DWORD
+#endif
+#ifndef ULONG_PTR
+#define ULONG_PTR ULONG
+#endif
+#ifndef LONG_PTR
+#define LONG_PTR LONG
+#endif
+#ifndef UINT_PTR
+#define UINT_PTR UINT
+#endif
+#ifndef INT_PTR
+#define INT_PTR INT
+#endif
+#ifndef SetWindowLongPtr
+#define SetWindowLongPtr SetWindowLong
+#endif
+#ifndef GetWindowLongPtr
+#define GetWindowLongPtr GetWindowLong
+#endif
+#ifndef DWLP_USER
+#define DWLP_USER DWL_USER
+#endif
+#ifndef GWLP_WNDPROC
+#define GWLP_WNDPROC GWL_WNDPROC
+#endif
+#ifndef GWLP_USERDATA
+#define GWLP_USERDATA GWL_USERDATA
+#endif
+#ifndef GWLP_HINSTANCE
+#define GWLP_HINSTANCE GWL_HINSTANCE
+#endif
+#endif  //_WIN64
 
-/*
-SAKURA_CORE_API extern const TCHAR* GSTR_APPNAME;
-SAKURA_CORE_API extern const CHAR*  GSTR_APPNAME_A;
-*/
-// アプリ名。2007.09.21 kobake 整理
-#ifdef _UNICODE
-	#define _APP_NAME_(TYPE) TYPE("sakuraW2")
+#ifndef COLOR_MENUHILIGHT
+#define COLOR_MENUHILIGHT 29
+#endif
+#ifndef COLOR_MENUBAR
+#define COLOR_MENUBAR 30
+#endif
+
+
+//Oct. 31, 2000 JEPRO TeX Keyword のために'\'を追加	//Nov. 9, 2000 JEPRO HSP Keyword のために'@'を追加
+//#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
+//#define IS_KEYWORD_CHAR(c) ((c) == '#'/*35*/ || (c) == '$'/*36*/ || (c) == '@'/*64*/ || (c) == '\\'/*92*/ || __iscsym( (c) ))
+SAKURA_CORE_API	extern const unsigned char gm_keyword_char[256];	//@@@ 2002.04.27
+#define IS_KEYWORD_CHAR(c)	((int)(gm_keyword_char[(unsigned char)((c) & 0xff)]))	//@@@ 2002.04.27 ロケールに依存しない
+
+
+SAKURA_CORE_API extern const char* GSTR_APPNAME;
+
+
+#ifdef _DEBUG
+	#ifndef	GSTR_EDITWINDOWNAME
+	#define	GSTR_EDITWINDOWNAME "TextEditorWindow_DEBUG"
+	#endif
 #else
-	#define _APP_NAME_(TYPE) TYPE("sakuraA")
+	#ifndef	GSTR_EDITWINDOWNAME
+	#define	GSTR_EDITWINDOWNAME "TextEditorWindow"
+	#endif
+#endif
+
+//20020108 aroka コントロールプロセスと起動処理のためにミューテックス名を追加
+// 2006.04.10 ryoji コントロールプロセス初期化完了を示すイベントフラグ名を追加
+#ifdef _DEBUG
+	#ifndef	GSTR_SYNCOBJ_SAKURA
+	#define	GSTR_SYNCOBJ_SAKURA
+	#define	GSTR_MUTEX_SAKURA "MutexSakuraEditor_DEBUG"
+	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP_DEBUG")
+	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized_DEBUG")
+	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit_DEBUG")
+	#define	GSTR_MUTEX_SAKURA_EDITARR _T("MutexSakuraEditorEditArr_DEBUG")
+	#endif
+#else
+	#ifndef	GSTR_SYNCOBJ_SAKURA
+	#define	GSTR_SYNCOBJ_SAKURA
+	#define	GSTR_MUTEX_SAKURA "MutexSakuraEditor"
+	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP")
+	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized")
+	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit")
+	#define	GSTR_MUTEX_SAKURA_EDITARR _T("MutexSakuraEditorEditArr")
+	#endif
 #endif
 
 #ifdef _DEBUG
-	#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版 ") TYPE(__DATE__) TYPE(")")
+	#ifndef	GSTR_CEDITAPP
+#define	GSTR_CEDITAPP "CEditApp_DEBUG"
+	#endif
 #else
-	#define _APP_NAME_2_(TYPE) TYPE("(") TYPE(__DATE__) TYPE(")")
+	#ifndef	GSTR_CEDITAPP
+	#define	GSTR_CEDITAPP "CEditApp"
+	#endif
 #endif
 
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) //例:UNICODEデバッグ→_T("sakuraW2(デバッグ版)")
-
-#define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
-#define GSTR_APPNAME_A  (_GSTR_APPNAME_(ATEXT))
-#define GSTR_APPNAME_W  (_GSTR_APPNAME_(LTEXT))
-
-
-
-
-
-//2007.09.20 kobake デバッグ判別、定数サフィックス
 #ifdef _DEBUG
-	#define _DEBUG_SUFFIX_ "_DEBUG"
+	#ifndef	GSTR_CSHAREDATA
+	#define	GSTR_CSHAREDATA "CShareData_DEBUG"
+	#endif
 #else
-	#define _DEBUG_SUFFIX_ ""
+	#ifndef	GSTR_CSHAREDATA
+	#define	GSTR_CSHAREDATA "CShareData"
+	#endif
 #endif
-
-//2007.09.20 kobake ビルドコード判別、定数サフィックス
-#ifdef _UNICODE
-	#define _CODE_SUFFIX_ "W"
-#else
-	#define _CODE_SUFFIX_ "A"
-#endif
-
-
-//2007.09.05 ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_EDITWINDOWNAME (_T("TextEditorWindow") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
-//2006.04.10 ryoji  コントロールプロセス初期化完了を示すイベントフラグ名を追加
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_MUTEX_SAKURA					(_T("MutexSakuraEditor")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_INIT				(_T("MutexSakuraEditorInit")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_CEDITAPP	(_T("CControlTray") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_CSHAREDATA	(_T("CShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
 
 //	Dec. 2, 2002 genta
 //	固定ファイル名
-#define FN_APP_ICON  _T("my_appicon.ico")
-#define FN_GREP_ICON _T("my_grepicon.ico")
-#define FN_TOOL_BMP  _T("my_icons.bmp")
+#define FN_APP_ICON "my_appicon.ico"
+#define FN_GREP_ICON "my_grepicon.ico"
+#define FN_TOOL_BMP "my_icons.bmp"
 
 //	標準アプリケーションアイコンリソース名
 #ifdef _DEBUG
@@ -143,6 +182,9 @@ SAKURA_CORE_API extern const CHAR*  GSTR_APPNAME_A;
 	#define ICON_DEFAULT_GREP IDI_ICON_GREP
 #endif
 
+//#ifndef	GSTR_REG_ROOTPATH
+//#define	GSTR_REG_ROOTPATH "Software\\BugSoft\\sakura"
+//#endif
 
 
 /* ウィンドウのID */
@@ -164,45 +206,19 @@ SAKURA_CORE_API enum enumCodeType {
 	CODE_UTF7,				/* UTF-7 */
 	CODE_UNICODEBE,			/* Unicode BigEndian */
 	CODE_CODEMAX,
-	CODE_AUTODETECT	= 99,			/* 文字コード自動判別 */
-	CODE_ERROR      = -1,			/* エラー */                 //2007.08.14 kobake 追加
-	CODE_NONE       = -1,			/* 未検出 */
-	CODE_DEFAULT    = CODE_SJIS,	/* デフォルトの文字コード */ //2007.08.14 kobake 追加
+	CODE_AUTODETECT	= 99	/* 文字コード自動判別 */
 };
-typedef enumCodeType ECodeType;
 
-//2007.08.14 kobake 追加
-//!有効な文字コードセットならtrue
-inline bool IsValidCodeType(int code)
-{
-	return code>=0 && code<CODE_CODEMAX;
-}
-
-//2007.08.14 kobake 追加
-//!有効な文字コードセットならtrue。ただし、SJISは除く(意図は不明)
-inline bool IsValidCodeTypeExceptSJIS(int code)
-{
-	return IsValidCodeType(code) && code!=CODE_SJIS;
-}
-
-//2007.08.14 kobake 追加
-//!ECodeType型で表せる値ならtrue
-inline bool IsInECodeType(int code)
-{
-	return (code>=0 && code<CODE_CODEMAX) || code==CODE_ERROR || code==CODE_AUTODETECT;
-}
-
-
-SAKURA_CORE_API extern const TCHAR* gm_pszCodeNameArr_Normal[];
-SAKURA_CORE_API extern const TCHAR* gm_pszCodeNameArr_Short[];
-SAKURA_CORE_API extern const TCHAR* gm_pszCodeNameArr_Bracket[];
+SAKURA_CORE_API extern const char* gm_pszCodeNameArr_1[];
+SAKURA_CORE_API extern const char* gm_pszCodeNameArr_2[];
+SAKURA_CORE_API extern const char* gm_pszCodeNameArr_3[];
 
 /* コンボボックス用 自動判別を含む配列 */
-SAKURA_CORE_API extern const ECodeType gm_nCodeComboValueArr[];
-SAKURA_CORE_API extern const TCHAR* const gm_pszCodeComboNameArr[];
+SAKURA_CORE_API extern const int gm_nCodeComboValueArr[];
+SAKURA_CORE_API extern const char* const gm_pszCodeComboNameArr[];
 SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
 
-//const char* GetCodeTypeName( ECodeType nCodeTYpe )
+//const char* GetCodeTypeName( enumCodeType nCodeTYpe )
 //{
 //	const char* pszCodeTypeNameArr[] = {
 //		"SJIS",
@@ -240,13 +256,13 @@ SAKURA_CORE_API enum enumOutlineType {
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
 SAKURA_CORE_API enum enumEOLType {
-	EOL_NONE,			//!< 
-	EOL_CRLF,			//!< 0d0a
-	EOL_LFCR,			//!< 0a0d
-	EOL_LF,				//!< 0a
-	EOL_CR,				//!< 0d
-	EOL_CODEMAX,		//
-	EOL_UNKNOWN = -1	//
+	EOL_NONE,
+	EOL_CRLF,
+	EOL_LFCR,
+	EOL_LF,
+	EOL_CR,
+	EOL_CODEMAX,
+	EOL_UNKNOWN = -1
 };
 
 /* 行終端子のデータ長 */
@@ -358,21 +374,12 @@ SAKURA_CORE_API enum enumColorIndexType {
 
 	//カラー表示制御用
 	COLORIDX_BLOCK1		= 47,	/* ブロックコメント1(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 35→36 */
-	COLORIDX_BLOCK2		= 48,	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
+	COLORIDX_BLOCK2		= 48	/* ブロックコメント2(文字色と背景色は行コメントと同じ) */	/* 02/10/16 ai Mod 36→37 */
 
-	// -- -- 別名 -- -- //
-	COLORIDX_DEFAULT	= COLORIDX_TEXT,
-
-	// -- -- 1000-1099 : カラー表示制御用(正規表現キーワード) -- -- //
+	//1000-1099 : カラー表示制御用(正規表現キーワード)
 };
 //	To Here Sept. 18, 2000
-typedef enumColorIndexType EColorIndexType;
 
-//正規表現キーワードのEColorIndexType値を作る関数
-inline EColorIndexType MakeColorIndexType_RegularExpression(int nRegExpIndex)
-{
-	return (EColorIndexType)(1000 + nRegExpIndex);
-}
 
 
 //@@@ From Here 2003.05.31 MIK
@@ -414,8 +421,8 @@ SAKURA_CORE_API	enum enumBarChangeNotifyType {
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
 typedef struct ColorAttributeData_t{
-	TCHAR*			szName;
-	unsigned int	fAttribute;
+	char* szName;
+	unsigned int fAttribute;
 } ColorAttributeData;
 
 SAKURA_CORE_API extern const ColorAttributeData g_ColorAttributeArr[];
@@ -449,71 +456,10 @@ const int COLUMNSPACE_MAX = 64;
 #endif
 
 //	Aug. 14, 2005 genta 定数定義追加
-// 2007.09.07 kobake 定数名変更: MAXLINESIZE→MAXLINEKETAS
-// 2007.09.07 kobake 定数名変更: MINLINESIZE→MINLINEKETAS
-const int MAXLINEKETAS		= 10240;	//!< 1行の桁数の最大値
-const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
+const int MAXLINESIZE	= 10240;	//!<	1行の桁数の最大値
+const int MINLINESIZE	= 10;		//!<	1行の桁数の最小値
 
-const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読み込むときのバッファサイズ
-
-
-//2007.09.06 kobake 追加
-//!検索方向
-enum ESearchDirection{
-	SEARCH_BACKWARD = 0, //前方検索 (前を検索)
-	SEARCH_FORWARD  = 1, //後方検索 (次を検索) (普通)
-};
-
-//2007.09.06 kobake 追加
-struct SSearchOption{
-//	ESearchDirection	eDirection;
-//	bool	bPrevOrNext;	//!< false==前方検索 true==後方検索
-	bool	bRegularExp;	//!< true==正規表現
-	bool	bLoHiCase;		//!< true==英大文字小文字の区別
-	bool	bWordOnly;		//!< true==単語のみ検索
-
-	SSearchOption() : bRegularExp(false), bLoHiCase(false), bWordOnly(false) { }
-	SSearchOption(
-		bool _bRegularExp,
-		bool _bLoHiCase,
-		bool _bWordOnly
-	)
-	: bRegularExp(_bRegularExp)
-	, bLoHiCase(_bLoHiCase)
-	, bWordOnly(_bWordOnly)
-	{
-	}
-	void Reset()
-	{
-		bRegularExp = false;
-		bLoHiCase   = false;
-		bWordOnly   = false;
-	}
-
-	//演算子
-	bool operator == (const SSearchOption& rhs) const
-	{
-		//とりあえずmemcmpでいいや
-		return memcmp(this,&rhs,sizeof(*this))==0;
-	}
-	bool operator != (const SSearchOption& rhs) const
-	{
-		return !operator==(rhs);
-	}
-
-};
-
-
-
-//2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
-class CEditWnd;
-extern CEditWnd* g_pcEditWnd;
-
-
-/* カラー名＜＞インデックス番号の変換 */	//@@@ 2002.04.30
-SAKURA_CORE_API int GetColorIndexByName( const TCHAR *name );
-SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index );
-
+const int LINEREADBUFSIZE	= 10240;	//!<	ファイルから1行分データを読み込むときのバッファサイズ
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */

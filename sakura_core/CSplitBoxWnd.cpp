@@ -18,8 +18,8 @@
 #include "mymessage.h"// 2002/2/3 aroka
 
 CSplitBoxWnd::CSplitBoxWnd()
-: CWnd(_T("::CSplitBoxWnd"))
 {
+	strcat( m_szClassInheritances, "::CSplitBoxWnd" );
 	m_pszClassName = NULL;
 	m_bVertical = TRUE;	/* 垂直分割ボックスか */
 	return;
@@ -39,19 +39,22 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	RECT		rc;
 	HCURSOR		hCursor;
 
+	/* 初期化 */
+	m_hInstance = hInstance;
+	m_hwndParent = hwndParent;
+
 	/* ウィンドウクラス作成 */
 	if( bVertical ){
-		m_pszClassName = _T("VSplitBoxWnd");
+		m_pszClassName = "VSplitBoxWnd";
 		hCursor = ::LoadCursor( NULL, IDC_SIZENS );
-	}
-	else{
-		m_pszClassName = _T("HSplitBoxWnd");
+	}else{
+		m_pszClassName = "HSplitBoxWnd";
 		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
 	}
 	RegisterWC(
-		hInstance,
-		NULL,	// Handle to the class icon.
-		NULL,	// Handle to a small icon
+		/* WNDCLASS用 */
+		NULL,// Handle to the class icon.
+		NULL,	//Handle to a small icon
 		hCursor,// Handle to the class cursor.
 		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
 		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
@@ -64,13 +67,11 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* 垂直スクロールバーの幅 */
 
 	/* 親ウィンドウのクライアント領域のサイズを取得 */
-	::GetClientRect( GetParentHwnd(), &rc );
+	::GetClientRect( m_hwndParent, &rc );
 
 	/* 基底クラスメンバ呼び出し */
 	return CWnd::Create(
-		/* 初期化 */
-		hInstance,
-		hwndParent,
+		/* CreateWindowEx()用 */
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
@@ -116,7 +117,7 @@ void CSplitBoxWnd::FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORRE
 	RECT	rc;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rc, x, y, x + cx, y + cy );
-	::ExtTextOutW2( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
 	return;
 }
 
@@ -180,14 +181,14 @@ LRESULT CSplitBoxWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	if( m_bVertical ){
 		m_nDragPosY = 1;
 
-		hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
+		hdc = ::GetDC( ::GetParent( m_hwndParent ) );
 		::SetBkColor( hdc, RGB(0, 0, 0) );
 		hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 
 		::SetROP2( hdc, R2_XORPEN );
 		::SetBkMode( hdc, TRANSPARENT );
-		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
+		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;
 
@@ -199,18 +200,18 @@ LRESULT CSplitBoxWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		::SelectObject( hdc, hBrushOld );
 		::DeleteObject( hBrush );
-		::ReleaseDC( ::GetParent( GetParentHwnd() ), hdc );
+		::ReleaseDC( ::GetParent( m_hwndParent ), hdc );
 	}else{
 		m_nDragPosX = 1;
 
-		hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
+		hdc = ::GetDC( ::GetParent( m_hwndParent ) );
 		::SetBkColor( hdc, RGB(0, 0, 0) );
 		hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 
 		::SetROP2( hdc, R2_XORPEN );
 		::SetBkMode( hdc, TRANSPARENT );
-		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
+		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 
 		rc2.left = m_nDragPosX;
 		rc2.top = 0;
@@ -220,7 +221,7 @@ LRESULT CSplitBoxWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		::SelectObject( hdc, hBrushOld );
 		::DeleteObject( hBrush );
-		::ReleaseDC( ::GetParent( GetParentHwnd() ), hdc );
+		::ReleaseDC( ::GetParent( m_hwndParent ), hdc );
 
 	}
 	return 0L;
@@ -246,7 +247,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		return 0L;
 	}
 	if( m_bVertical ){
-		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
+		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;
 
@@ -254,26 +255,26 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		po_top.x = 0;
 		po_top.y = 0;
-		::ClientToScreen( ::GetParent( GetParentHwnd() ), &po_top );
+		::ClientToScreen( ::GetParent( m_hwndParent ), &po_top );
 		if( po.y < po_top.y ){
 			po.y = po_top.y;
 		}
 
 		po_top.x = 0;
 		po_top.y = rc.bottom;
-		::ClientToScreen( ::GetParent( GetParentHwnd() ), &po_top );
+		::ClientToScreen( ::GetParent( m_hwndParent ), &po_top );
 		if( po.y > po_top.y - 6 ){
 			po.y = po_top.y - 6;
 		}
 
-		::ScreenToClient( ::GetParent( GetParentHwnd() ), &po );
+		::ScreenToClient( ::GetParent( m_hwndParent ), &po );
 		xPos = po.x;
 		yPos = po.y;
 
 		if( yPos != m_nDragPosY ){
-//			MYTRACE_A( "xPos=%d yPos=%d\n", xPos, yPos );
+//			MYTRACE( "xPos=%d yPos=%d\n", xPos, yPos );
 
-			hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
+			hdc = ::GetDC( ::GetParent( m_hwndParent ) );
 			::SetBkColor( hdc, RGB(0, 0, 0) );
 			hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 			hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -296,11 +297,11 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 			::SelectObject( hdc, hBrushOld );
 			::DeleteObject( hBrush );
-			::ReleaseDC( ::GetParent( GetParentHwnd() ), hdc );
+			::ReleaseDC( ::GetParent( m_hwndParent ), hdc );
 
 		}
 	}else{
-		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
+		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* 垂直スクロールバーの幅 */
 		rc.right -= nCxVScroll;
 
@@ -308,26 +309,26 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		po_top.x = 0;
 		po_top.y = 0;
-		::ClientToScreen( ::GetParent( GetParentHwnd() ), &po_top );
+		::ClientToScreen( ::GetParent( m_hwndParent ), &po_top );
 		if( po.x < po_top.x ){
 			po.x = po_top.x;
 		}
 
 		po_top.x = rc.right;
 		po_top.y = 0;
-		::ClientToScreen( ::GetParent( GetParentHwnd() ), &po_top );
+		::ClientToScreen( ::GetParent( m_hwndParent ), &po_top );
 		if( po.x > po_top.x - 6 ){
 			po.x = po_top.x - 6;
 		}
 
-		::ScreenToClient( ::GetParent( GetParentHwnd() ), &po );
+		::ScreenToClient( ::GetParent( m_hwndParent ), &po );
 		xPos = po.x;
 		yPos = po.y;
 
 		if( xPos != m_nDragPosX ){
-//			MYTRACE_A( "xPos=%d yPos=%d\n", xPos, yPos );
+//			MYTRACE( "xPos=%d yPos=%d\n", xPos, yPos );
 
-			hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
+			hdc = ::GetDC( ::GetParent( m_hwndParent ) );
 			::SetBkColor( hdc, RGB(0, 0, 0) );
 			hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 			hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -351,7 +352,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 			::SelectObject( hdc, hBrushOld );
 			::DeleteObject( hBrush );
-			::ReleaseDC( ::GetParent( GetParentHwnd() ), hdc );
+			::ReleaseDC( ::GetParent( m_hwndParent ), hdc );
 		}
 	}
 	return 0L;
@@ -374,11 +375,11 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		return 0L;
 	}
 	if( m_bVertical ){
-		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
+		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;
 
-		hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
+		hdc = ::GetDC( ::GetParent( m_hwndParent ) );
 		::SetBkColor( hdc, RGB(0, 0, 0) );
 		hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -393,17 +394,17 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		::SelectObject( hdc, hBrushOld );
 		::DeleteObject( hBrush );
-		::ReleaseDC( ::GetParent( GetParentHwnd() ), hdc );
+		::ReleaseDC( ::GetParent( m_hwndParent ), hdc );
 
 		/* 親ウィンドウに、メッセージをポストする */
-		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)0, (LPARAM)m_nDragPosY );
+		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)0, (LPARAM)m_nDragPosY );
 
 	}else{
-		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
+		::GetClientRect( ::GetParent( m_hwndParent ), &rc );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* 垂直スクロールバーの幅 */
 		rc.right -= nCxVScroll;
 
-		hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
+		hdc = ::GetDC( ::GetParent( m_hwndParent ) );
 		::SetBkColor( hdc, RGB(0, 0, 0) );
 		hBrush = ::CreateSolidBrush( RGB(255,255,255) );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -419,10 +420,10 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		::SelectObject( hdc, hBrushOld );
 		::DeleteObject( hBrush );
-		::ReleaseDC( GetParentHwnd(), hdc );
+		::ReleaseDC( m_hwndParent, hdc );
 
 		/* 親ウィンドウに、メッセージをポストする */
-		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)m_nDragPosX, (LPARAM)0 );
+		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)m_nDragPosX, (LPARAM)0 );
 	}
 	::ReleaseCapture();
 	return 0L;
@@ -437,20 +438,19 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	RECT		rc;
 	int			nCyHScroll;
 	if( m_bVertical ){
-		::GetClientRect( GetParentHwnd(), &rc );
+		::GetClientRect( m_hwndParent, &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;
 
 		/* 親ウィンドウに、メッセージをポストする */
-		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)0, (LPARAM)(rc.bottom / 2) );
-	}
-	else{
-		::GetClientRect( GetParentHwnd(), &rc );
+		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)0, (LPARAM)(rc.bottom / 2) );
+	}else{
+		::GetClientRect( m_hwndParent, &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;
 
 		/* 親ウィンドウに、メッセージをポストする */
-		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)(rc.right / 2), (LPARAM)0 );
+		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)(rc.right / 2), (LPARAM)0 );
 	}
 	return 0L;
 }

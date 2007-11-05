@@ -29,6 +29,7 @@
 		   distribution.
 */
 #include <windows.h>
+#include "etc_uty.h"
 #include "CMemory.h"
 
 #ifndef _CFILELOAD_H_
@@ -68,19 +69,15 @@ public:
 	~CFileLoad( void );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	ECodeType FileOpen( LPCTSTR, ECodeType, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
+	enumCodeType FileOpen( LPCTSTR, int, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
-	//! 1行データをロードする 順アクセス用
-	const wchar_t* ReadLine(
-		CNativeW2*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
-		int*		pnLineLen,		//!< [out] 改行コード長を含む一行のデータ長。文字単位。
-		CEOL*		pcEol			//!< [i/o]
-	);
+	const char* ReadLine( int*, CEOL* );	// 1行データをロードする 順アクセス用
+//	const wcha_t* ReadLineW( int*, CEOL* );	// 1行データをロードする 順アクセス用(Unicode版)
 
 //	未実装関数郡
 //	cosnt char* ReadAtLine( int, int*, CEOL* ); // 指定行目をロードする
-//	cosnt wchar_t* ReadAtLineW2( int, int*, CEOL* ); // 指定行目をロードする(Unicode版)
+//	cosnt wchar_t* ReadAtLineW( int, int*, CEOL* ); // 指定行目をロードする(Unicode版)
 //	bool ReadIgnoreLine( void ); // 1行読み飛ばす
 
 
@@ -116,10 +113,15 @@ protected:
 	// GetLextLine の 文字コード考慮版
 	const char* GetNextLineCharCode( const char*, int, int*, int*, CEOL*, int* );
 
+	/* 実装ヘルパー関数 */
+	static const wchar_t* GetNextLineW(  const wchar_t*, int, int*, int*, CEOL* ); // GetNextLineのwchar_t版
+	static const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEOL* ); // GetNextLineのwchar_t版(ビックエンディアン用)
+
 	int Read( void*, size_t ); // inline
 	DWORD FilePointer( DWORD, DWORD ); // inline
 
 	/* メンバオブジェクト */
+	CMemory	m_cmemLine;		// 行データバッファ
 
 //	LPTSTR	m_pszFileName;	// ファイル名
 	HANDLE	m_hFile;		// ファイルハンドル
@@ -127,7 +129,7 @@ protected:
 	int		m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
 	int		m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
-	ECodeType	m_CharCode;		// 文字コード
+	int		m_CharCode;		// 文字コード
 	BOOL	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca

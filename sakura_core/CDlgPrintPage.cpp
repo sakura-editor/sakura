@@ -49,38 +49,38 @@ int CDlgPrintPage::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam 
 /* ダイアログデータの設定 */
 void CDlgPrintPage::SetData( void )
 {
-	TCHAR szText[100];
+	char szText[100];
 //	From Here Sept. 12, 2000 JEPRO スタイルを少し変更(指定を選んだ時だけ印刷範囲を入力できるようにした)
 //	一度設定したページ設定値を保存できるようにしたいがまだできてない
-//	::CheckDlgButton( GetHwnd(), IDC_RADIO_ALL, m_bAllPage?BST_CHECKED:BST_UNCHECKED );
-//	auto_sprintf( szText, "%d ～ %d 頁", m_nPageMin, m_nPageMax );
-//	::DlgItem_SetText( GetHwnd(), IDC_STATIC_ALL, szText );
+//	::CheckDlgButton( m_hWnd, IDC_RADIO_ALL, m_bAllPage?BST_CHECKED:BST_UNCHECKED );
+//	wsprintf( szText, "%d ～ %d 頁", m_nPageMin, m_nPageMax );
+//	::SetDlgItemText( m_hWnd, IDC_STATIC_ALL, szText );
 //
-//	::SetDlgItemInt( GetHwnd(), IDC_EDIT_FROM, m_nPageFrom, FALSE );
-//	::SetDlgItemInt( GetHwnd(), IDC_EDIT_TO, m_nPageTo, FALSE );
+//	::SetDlgItemInt( m_hWnd, IDC_EDIT_FROM, m_nPageFrom, FALSE );
+//	::SetDlgItemInt( m_hWnd, IDC_EDIT_TO, m_nPageTo, FALSE );
 //
 	if( TRUE == m_bAllPage ){
-		::CheckDlgButton( GetHwnd(), IDC_RADIO_ALL, BST_CHECKED );
+		::CheckDlgButton( m_hWnd, IDC_RADIO_ALL, BST_CHECKED );
 	}else{
-		::CheckDlgButton( GetHwnd(), IDC_RADIO_FROMTO, BST_CHECKED );
+		::CheckDlgButton( m_hWnd, IDC_RADIO_FROMTO, BST_CHECKED );
 	}
-	auto_sprintf( szText, _T("%d ～ %d ページ"), m_nPageMin, m_nPageMax );
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_ALL, szText );
+	wsprintf( szText, "%d ～ %d ページ", m_nPageMin, m_nPageMax );
+	::SetDlgItemText( m_hWnd, IDC_STATIC_ALL, szText );
 
-	::SetDlgItemInt( GetHwnd(), IDC_EDIT_FROM, m_nPageFrom, FALSE );
-	::SetDlgItemInt( GetHwnd(), IDC_EDIT_TO, m_nPageTo, FALSE );
+	::SetDlgItemInt( m_hWnd, IDC_EDIT_FROM, m_nPageFrom, FALSE );
+	::SetDlgItemInt( m_hWnd, IDC_EDIT_TO, m_nPageTo, FALSE );
 
 	//	印刷範囲を指定するかどうか
 	if( FALSE == m_bAllPage ){
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_FROM ), TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_FROM ), TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_TO ), TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_TO ), TRUE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_FROM ), TRUE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_FROM ), TRUE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_TO ), TRUE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_TO ), TRUE );
 	}else{
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_FROM ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_FROM ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_TO ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_TO ), FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_FROM ), FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_FROM ), FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_TO ), FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_TO ), FALSE );
 	}
 //	To Here Sept. 12, 2000
 
@@ -93,13 +93,13 @@ void CDlgPrintPage::SetData( void )
 /* ダイアログデータの取得 */
 int CDlgPrintPage::GetData( void )
 {
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_ALL ) ){
+	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_ALL ) ){
 		m_bAllPage = TRUE;
 	}else{
 		m_bAllPage = FALSE;
 	}
-	m_nPageFrom = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FROM, NULL, FALSE );
-	m_nPageTo	= ::GetDlgItemInt( GetHwnd(), IDC_EDIT_TO  , NULL, FALSE );
+	m_nPageFrom = ::GetDlgItemInt( m_hWnd, IDC_EDIT_FROM, NULL, FALSE );
+	m_nPageTo	= ::GetDlgItemInt( m_hWnd, IDC_EDIT_TO  , NULL, FALSE );
 	/* 頁範囲チェック */
 	if( FALSE == m_bAllPage ){
 		if( m_nPageMin <= m_nPageFrom && m_nPageFrom <= m_nPageMax &&
@@ -107,7 +107,7 @@ int CDlgPrintPage::GetData( void )
 			m_nPageFrom <= m_nPageTo
 		){
 		}else{
-			::MYMESSAGEBOX_A(	GetHwnd(), MB_OK | MB_ICONSTOP | MB_TOPMOST, "入力エラー", "ページ範囲指定が正しくありません。" );
+			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, "入力エラー", "ページ範囲指定が正しくありません。" );
 			return FALSE;
 		}
 	}
@@ -125,16 +125,16 @@ BOOL CDlgPrintPage::OnBnClicked( int wID )
 	case IDC_RADIO_ALL:
 	case IDC_RADIO_FROMTO:
 	//	印刷範囲を指定するかどうか
-		if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_FROMTO ) ){
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_FROM ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_FROM ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_TO ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_TO ), TRUE );
+		if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_FROMTO ) ){
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_FROM ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_FROM ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_TO ), TRUE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_TO ), TRUE );
 		}else{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_FROM ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_FROM ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_TO ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_TO ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_FROM ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_FROM ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_LABEL_TO ), FALSE );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_TO ), FALSE );
 		}
 		return TRUE;
 //	To Here Sept. 12, 2000

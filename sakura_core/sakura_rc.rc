@@ -15,7 +15,7 @@
 #define APSTUDIO_HIDDEN_SYMBOLS
 #include "windows.h"
 #undef APSTUDIO_HIDDEN_SYMBOLS
-#include "funccode_define.h"
+#include "funccode.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -1769,7 +1769,7 @@ BEGIN
                     14,WS_GROUP,0,HIDC_BUTTON_REGEX_IMPORT
     PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_REGEX_EXPORT,212,193,53,
                     14,0,0,HIDC_BUTTON_REGEX_EXPORT
-    RTEXT           "BREGONIG.DLL Version",IDC_LABEL_REGEX_VERSION,118,16,148,
+    RTEXT           "BREGEXP.DLL Version",IDC_LABEL_REGEX_VERSION,118,16,148,
                     10,NOT WS_GROUP,WS_EX_TRANSPARENT,
                     HIDC_LABEL_REGEX_VERSION
     CONTROL         "正規表現キーワードを使用する(&R)",IDC_CHECK_REGEX,
@@ -2717,7 +2717,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_EXITALLEDITORS        "編集の全終了"
     F_EXITALL               "サクラエディタの全終了"
-    F_WCHAR                 "文字入力"
+    F_CHAR                  "文字入力"
     F_IME_CHAR              "全角文字入力"
 END
 
@@ -2736,7 +2736,7 @@ BEGIN
     F_COPY_CRLF             "CRLF改行でコピー"
     F_PASTE                 "貼り付け"
     F_PASTEBOX              "矩形貼り付け"
-    F_INSTEXT_W               "テキストを貼り付け"
+    F_INSTEXT               "テキストを貼り付け"
 END
 
 STRINGTABLE DISCARDABLE 

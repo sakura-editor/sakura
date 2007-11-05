@@ -24,8 +24,12 @@
 #include "debug.h"
 #include "CSplitBoxWnd.h"
 #include "CEditWnd.h"
-#include "CImageListMgr.h"
+#include "etc_uty.h"
 
+//	Jan. 29, 2002 genta
+//	Win95/NTが納得するsizeof( MENUITEMINFO )
+//	これ以外の値を与えると古いOSでちゃんと動いてくれない．
+const int SIZEOF_MENUITEMINFO = 44;
 
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
@@ -35,7 +39,7 @@ void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	RECT rect;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rect, x, y, x + cx, y + cy );
-	::ExtTextOutW2( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
+	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 
 
@@ -293,8 +297,8 @@ CMenuDrawer::CMenuDrawer()
 /* 163 */		F_COPY_CRLF						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//CRLF改行でコピー
 /* 164 */		F_PASTE							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//貼り付け(クリップボードから貼り付け)
 /* 165 */		F_PASTEBOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//矩形貼り付け(クリップボードから貼り付け)
-/* 166 */		F_DISABLE/*F_INSTEXT_W*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//テキストを貼り付け	(未公開コマンド？未完成？)
-/* 167 */		F_DISABLE/*F_ADDTAIL_W*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//最後にテキストを追加	(未公開コマンド？未完成？)
+/* 166 */		F_DISABLE/*F_INSTEXT*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//テキストを貼り付け	(未公開コマンド？未完成？)
+/* 167 */		F_DISABLE/*F_ADDTAIL*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//最後にテキストを追加	(未公開コマンド？未完成？)
 /* 168 */		F_COPYLINES						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内全行コピー	//Sept. 30, 2000 JEPRO 追加
 /* 169 */		F_COPYLINESASPASSAGE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内全行引用符付きコピー	//Sept. 30, 2000 JEPRO 追加
 /* 170 */		F_COPYLINESWITHLINENUMBER		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内全行行番号付きコピー	//Sept. 30, 2000 JEPRO 追加
@@ -535,7 +539,7 @@ CMenuDrawer::CMenuDrawer()
 /* 384 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 
 };
-	int tbd_num = _countof( tbd );
+	int tbd_num = sizeof( tbd ) / sizeof( tbd[0] );
 	BYTE	style;	//@@@ 2002.06.15 MIK
 	
 	for( int i = 0; i < tbd_num; i++ ){
@@ -609,14 +613,14 @@ void CMenuDrawer::ResetContents( void )
 	int		i;
 	LOGFONT	lf;
 	for( i = 0; i < m_nMenuItemNum; ++i ){
-		m_cmemMenuItemStrArr[i].SetString(_T(""));
+		m_cmemMenuItemStrArr[i].SetData( "", 0 );
 		m_nMenuItemFuncArr[i] = 0;
 	}
 	m_nMenuItemNum = 0;
 
 	NONCLIENTMETRICS	ncm;
-	ncm.cbSize = sizeof( ncm );
-	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(ncm), (PVOID)&ncm, 0 );
+	ncm.cbSize = sizeof( NONCLIENTMETRICS );
+	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), (PVOID)&ncm, 0 );
 
 	m_nMenuHeight = ncm.iMenuHeight;
 	if( 21 > m_nMenuHeight ){
@@ -650,7 +654,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 
 
 	*pnItemHeight = m_nMenuHeight;
-	const TCHAR* pszLabel;
+	const char* pszLabel;
 	RECT rc;
 	HDC hdc;
 	HFONT hFontOld;
@@ -660,7 +664,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	}
 	hdc = ::GetDC( m_hWndOwner );
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
-	::DrawText( hdc, pszLabel, _tcslen( pszLabel ), &rc, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_CALCRECT );
+	::DrawText( hdc, pszLabel, strlen( pszLabel ), &rc, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_CALCRECT );
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWndOwner, hdc );
 
@@ -676,25 +680,19 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 }
 
 /* メニュー項目を追加 */
-void CMenuDrawer::MyAppendMenu(
-	HMENU			hMenu,
-	int				nFlag,
-	int				nFuncId,
-	const TCHAR*	pszLabel,
-	BOOL			bAddKeyStr,
-	int				nForceIconId	//お気に入り	//@@@ 2003.04.08 MIK
-)
+//void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char* pszLabel, BOOL bAddKeyStr )
+void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char* pszLabel, BOOL bAddKeyStr, int nForceIconId )	//お気に入り	//@@@ 2003.04.08 MIK
 {
-	TCHAR		szLabel[256];
+	char		szLabel[256];
 	int			nFlagAdd = 0;
 	int			i;
 
 	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//お気に入り	//@@@ 2003.04.08 MIK
 
-	szLabel[0] = _T('\0');
+	szLabel[0] = '\0';
 	if( NULL != pszLabel ){
-		_tcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
-		szLabel[ _countof( szLabel ) - 1 ] = _T('\0');
+		strncpy( szLabel, pszLabel, sizeof( szLabel ) / sizeof( szLabel[0] ) - 1 );
+		szLabel[ sizeof( szLabel ) / sizeof( szLabel[0] ) - 1 ] = '\0';
 	}
 	if( nFuncId != 0 ){
 		/* メニューラベルの作成 */
@@ -710,22 +708,18 @@ void CMenuDrawer::MyAppendMenu(
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 
 		if( m_nMenuItemNum + 1 > MAX_MENUITEMS ){
-			::MYMESSAGEBOX_A(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-				"CMenuDrawer::MyAppendMenu()エラー\n"
-				"\n"
-				"CMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n ",
-				MAX_MENUITEMS
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+				"CMenuDrawer::MyAppendMenu()エラー\n\nCMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n ", MAX_MENUITEMS
 			);
-		}
-		else{
+		}else{
 
 			m_nMenuItemBitmapIdxArr[m_nMenuItemNum] = -1;
 			m_nMenuItemFuncArr[m_nMenuItemNum] = nFuncId;
-			m_cmemMenuItemStrArr[m_nMenuItemNum].SetString( szLabel, _tcslen( szLabel ) );
+			m_cmemMenuItemStrArr[m_nMenuItemNum].SetData( szLabel, strlen( szLabel ) );
 //#ifdef _DEBUG
 			/* メニュー項目をオーナー描画にする */
 			/* メニューにアイコンを表示する */
-			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+			if( m_pShareData->m_Common.m_bMenuIcon ){
 				nFlagAdd = MF_OWNERDRAW;
 			}
 //#endif
@@ -751,10 +745,14 @@ void CMenuDrawer::MyAppendMenu(
 	}
 
 	MENUITEMINFO mii;
-	memset_raw( &mii, 0, sizeof( mii ) );
+	memset( &mii, 0, sizeof( MENUITEMINFO ) );
 	//	Aug. 31, 2001 genta
-	mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
-
+#ifdef _WIN64
+	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
+#else
+	//mii.cbSize = sizeof( MENUITEMINFO ); // 本当はこちらの書き方が正しいが，
+	mii.cbSize = SIZEOF_MENUITEMINFO; // サイズが大きいとWin95で動かないので，Win95が納得する値を決め打ち
+#endif
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = 0;
 	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW;
@@ -794,7 +792,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	int			j;
 	int			nItemIndex;
 	HDC			hdc;
+	const char*	pszItemStr;
 	int			nItemStrLen;
+//	TEXTMETRIC	tm;
+//	SIZE		sz;
 	HFONT		hFontOld;
 	int			nIndentLeft;
 	int			nIndentRight;
@@ -820,21 +821,24 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 */
 //@@@ 2002.01.03 YAZAKI 極力メンバ関数を使用するように。
 	nItemIndex = Find( (int)lpdis->itemID );
-	const TCHAR*	pszItemStr;
-	pszItemStr = m_cmemMenuItemStrArr[nItemIndex].GetStringPtr( &nItemStrLen );
+	pszItemStr = m_cmemMenuItemStrArr[nItemIndex].GetPtr( &nItemStrLen );
 
+//	hdc = ::GetDC( m_hWndOwner );
 	hdc = lpdis->hDC;
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
 
 
 	/* アイテム矩形塗りつぶし */
+//	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_MENU ) );
 	hBrush = ::GetSysColorBrush( COLOR_MENU );
 	::FillRect( hdc, &lpdis->rcItem, hBrush );
+//	::DeleteObject( hBrush );
 
 
 	/* アイテムが選択されている */
 	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
+//		hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT/*COLOR_3DHIGHLIGHT*/ ) );
 		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 		rc1 = lpdis->rcItem;
 		if( -1 != m_nMenuItemBitmapIdxArr[nItemIndex] || lpdis->itemState & ODS_CHECKED ){
@@ -842,6 +846,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
+//		::DeleteObject( hBrush );
 
 		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
@@ -859,21 +864,23 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}
 
 #ifdef _DEBUG
-	TCHAR	szText[1024];
+	char	szText[1024];
 	MENUITEMINFO mii;
 	// メニュー項目に関する情報を取得します。
-	memset_raw( &mii, 0, sizeof( mii ) );
-
-	mii.cbSize = SIZEOF_MENUITEMINFO; // Win95対策済みのsizeof(MENUITEMINFO)値
-
+	memset( &mii, 0, sizeof( MENUITEMINFO ) );
+#ifdef _WIN64
+	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
+#else
+	mii.cbSize = SIZEOF_MENUITEMINFO; // Jan. 29, 2002 genta
+#endif
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = MFT_STRING;
-	_tcscpy( szText, _T("--unknown--") );
-	mii.dwTypeData = szText;
-	mii.cch = _countof( szText ) - 1;
-	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, &mii )
+	strcpy( szText, "--unknown--" );
+	mii.dwTypeData = (LPTSTR)szText;
+	mii.cch = sizeof( szText ) - 1;
+	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, (MENUITEMINFO*)&mii )
 	 && NULL == mii.hSubMenu
-	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
+	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
 		//@@@ 2001.12.21 YAZAKI
 		if( lpdis->itemState & ODS_SELECTED ){
@@ -892,7 +899,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 
 	/* TAB文字の前と後ろに分割してテキストを描画する */
 	for( j = 0; j < nItemStrLen; ++j ){
-		if( pszItemStr[j] == _T('\t') ){
+		if( pszItemStr[j] == '\t' ){
 			break;
 		}
 	}
@@ -905,51 +912,31 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				rcText.top++;
 				rcText.right++;
 				rcText.bottom++;
-				::DrawText(
-					hdc,
-					&pszItemStr[j + 1],
-					_tcslen( &pszItemStr[j + 1] ),
-					&rcText,
-					DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
-				);
+				::DrawText( hdc, &pszItemStr[j + 1], strlen( &pszItemStr[j + 1] ), &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT );
 				rcText.left--;
 				rcText.top--;
 				rcText.right--;
 				rcText.bottom--;
 				::SetTextColor( hdc, colOld );
 		}
-		::DrawText(
-			hdc,
-			&pszItemStr[j + 1],
-			_tcslen( &pszItemStr[j + 1] ),
-			&rcText,
-			DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
-		);
+		::DrawText( hdc, &pszItemStr[j + 1], strlen( &pszItemStr[j + 1] ), &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT );
 	}
 	/* TAB文字の前側のテキストを描画する */
 	/* アイテムが使用不可 */
 	if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
 		COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
-
-		rcText.left++;
-		rcText.top++;
-		rcText.right++;
-		rcText.bottom++;
-		::DrawText( hdc, pszItemStr, j, &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
-
-		rcText.left--;
-		rcText.top--;
-		rcText.right--;
-		rcText.bottom--;
-		::SetTextColor( hdc, colOld );
+			rcText.left++;
+			rcText.top++;
+			rcText.right++;
+			rcText.bottom++;
+			::DrawText( hdc, pszItemStr, j, &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
+			rcText.left--;
+			rcText.top--;
+			rcText.right--;
+			rcText.bottom--;
+			::SetTextColor( hdc, colOld );
 	}
-	::DrawText(
-		hdc,
-		pszItemStr,
-		j,
-		&rcText,
-		DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT
-	);
+	::DrawText( hdc, pszItemStr, j, &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
 	::SelectObject( hdc, hFontOld  );
 	::SetBkMode( hdc, nBkModeOld );
 
@@ -1055,6 +1042,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 	}
 
+	//	::ReleaseDC( m_hWndOwner, hdc );
 	return;
 }
 
@@ -1092,28 +1080,28 @@ int CMenuDrawer::Find( int nFuncID )
 }
 
 
-const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
+const char* CMenuDrawer::GetLabel( int nFuncID )
 {
 	int i;
 	if( -1 == ( i = Find( nFuncID ) ) ){
 		return NULL;
 	}
-	return m_cmemMenuItemStrArr[i].GetStringPtr();
+	return m_cmemMenuItemStrArr[i].GetPtr();
 }
 
-TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
+char CMenuDrawer::GetAccelCharFromLabel( const char* pszLabel )
 {
 	int i;
-	for( i = 0; i + 1 < (int)_tcslen( pszLabel ); ++i ){
-		if( _T('&') == pszLabel[i] ){
-			if( _T('&') == pszLabel[i + 1]  ){
+	for( i = 0; i + 1 < (int)strlen( pszLabel ); ++i ){
+		if( '&' == pszLabel[i] ){
+			if( '&' == pszLabel[i + 1]  ){
 				i++;
 			}else{
-				return _totupper( pszLabel[i + 1] );
+				return toupper( pszLabel[i + 1] );
 			}
 		}
 	}
-	return _T('\0');
+	return (char)0;
 }
 
 
@@ -1126,18 +1114,20 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	TCHAR				chUser;
 	UINT				fuFlag;
 	HMENU				hmenu;
+//	HMENU				hMenu;
+	MENUITEMINFO		mii;
 	int i;
 	chUser = (TCHAR) LOWORD(wParam);	// character code
 	fuFlag = (UINT) HIWORD(wParam);		// menu flag
 	hmenu = (HMENU) lParam;				// handle to menu
-//	MYTRACE_A( "::GetMenuItemCount( %xh )==%d\n", hmenu, ::GetMenuItemCount( hmenu ) );
+//	MYTRACE( "::GetMenuItemCount( %xh )==%d\n", hmenu, ::GetMenuItemCount( hmenu ) );
 
 	//	Oct. 27, 2000 genta
 	if( 0 <= chUser && chUser < ' '){
 		chUser += '@';
 	}
 	else {
-		chUser = _totupper( chUser );
+		chUser = toupper( chUser );
 	}
 
 	struct WorkData{
@@ -1151,22 +1141,24 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	nAccelNum = 0;
 	nAccelSel = 99999;
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
-		TCHAR	szText[1024];
+		char	szText[1024];
 		// メニュー項目に関する情報を取得します。
-		MENUITEMINFO		mii;
-		memset_raw( &mii, 0, sizeof( mii ) );
-
-		mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
-
+		memset( &mii, 0, sizeof( MENUITEMINFO ) );
+#ifdef _WIN64
+	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
+#else
+		// Jan. 29, 2002 gentaWinNT4でアクセラレータが効かないのが直るはず
+		mii.cbSize = SIZEOF_MENUITEMINFO;
+#endif
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
-		_tcscpy( szText, _T("--unknown--") );
-		mii.dwTypeData = szText;
-		mii.cch = _countof( szText ) - 1;
-		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, &mii ) ){
+		strcpy( szText, "--unknown--" );
+		mii.dwTypeData = (LPTSTR)szText;
+		mii.cch = sizeof( szText ) - 1;
+		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, (MENUITEMINFO*)&mii ) ){
 			continue;
 		}
-		const TCHAR* pszLabel;
+		const char* pszLabel;
 		if( NULL == ( pszLabel = GetLabel( mii.wID ) ) ){
 			continue;
 		}
@@ -1179,19 +1171,19 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			nAccelNum++;
 		}
 	}
-//	MYTRACE_A( "%d\n", (int)mapAccel.size() );
+//	MYTRACE( "%d\n", (int)mapAccel.size() );
 	if( 0 == nAccelNum ){
 		return  MAKELONG( 0, MNC_IGNORE );
 	}
 	if( 1 == nAccelNum ){
 		return  MAKELONG( vecAccel[0].idx, MNC_EXECUTE );
 	}
-//	MYTRACE_A( "nAccelSel=%d nAccelNum=%d\n", nAccelSel, nAccelNum );
+//	MYTRACE( "nAccelSel=%d nAccelNum=%d\n", nAccelSel, nAccelNum );
 	if( nAccelSel + 1 >= nAccelNum ){
-//		MYTRACE_A( "vecAccel[0].idx=%d\n", vecAccel[0].idx );
+//		MYTRACE( "vecAccel[0].idx=%d\n", vecAccel[0].idx );
 		return  MAKELONG( vecAccel[0].idx, MNC_SELECT );
 	}else{
-//		MYTRACE_A( "vecAccel[nAccelSel + 1].idx=%d\n", vecAccel[nAccelSel + 1].idx );
+//		MYTRACE( "vecAccel[nAccelSel + 1].idx=%d\n", vecAccel[nAccelSel + 1].idx );
 		return  MAKELONG( vecAccel[nAccelSel + 1].idx, MNC_SELECT );
 	}
 }
