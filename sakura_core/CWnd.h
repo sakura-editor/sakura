@@ -20,7 +20,6 @@ class CWnd;
 
 #include <windows.h>
 #include "global.h"
-extern CWnd* gm_pCWnd;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -38,23 +37,44 @@ extern CWnd* gm_pCWnd;
 */
 class SAKURA_CORE_API CWnd
 {
+protected:
+	friend LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 public:
 	/* Constructors */
-	CWnd();
+	CWnd(const TCHAR* pszInheritanceAppend = _T(""));
 	virtual ~CWnd();
 	/*
 	||  Attributes & Operations
 	*/
-protected: // 2002/2/10 aroka アクセス権変更
-	char		m_szClassInheritances[1024];
-	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
-public:
-	HWND		m_hWnd;			/* このダイアログのハンドル */
 
 	void Init( HINSTANCE, HWND );/* 初期化 */
-	ATOM RegisterWC( HICON, HICON, HCURSOR, HBRUSH, LPCTSTR, LPCTSTR );/* ウィンドウクラス作成 */
-	HWND Create( DWORD, LPCTSTR, LPCTSTR, DWORD, int,  int, int, int, HMENU );/* 作成 */
+	
+	// ウィンドウクラス登録
+	ATOM RegisterWC(
+		HINSTANCE	hInstance,
+		HICON		hIcon,			// Handle to the class icon.
+		HICON		hIconSm,		// Handle to a small icon
+		HCURSOR		hCursor,		// Handle to the class cursor.
+		HBRUSH		hbrBackground,	// Handle to the class background brush.
+		LPCTSTR		lpszMenuName,	// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+		LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
+	);
+
+	//ウィンドウ作成
+	HWND Create(
+		HINSTANCE	hInstance,
+		HWND		hwndParent,
+		DWORD		dwExStyle,		// extended window style
+		LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
+		LPCTSTR		lpWindowName,	// pointer to window name
+		DWORD		dwStyle,		// window style
+		int			x,				// horizontal position of window
+		int			y,				// vertical position of window
+		int			nWidth,			// window width
+		int			nHeight,		// window height
+		HMENU		hMenu			// handle to menu, or child-window identifier
+	);
+
 	virtual LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );/* メッセージ配送 */
 protected:
 	/* 仮想関数 */
@@ -129,6 +149,29 @@ protected:
 	/* デフォルトメッセージ処理 */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
 
+public:
+	//インターフェース
+	HWND GetHwnd() const{ return m_hWnd; }
+	HWND GetParentHwnd() const{ return m_hwndParent; }
+	HINSTANCE GetAppInstance() const{ return m_hInstance; }
+
+	//特殊インターフェース (使用は好ましくない)
+	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
+
+	//ウィンドウ標準操作
+	void DestroyWindow()
+	{
+		if(m_hWnd){
+			::DestroyWindow( m_hWnd );
+			m_hWnd = NULL;
+		}
+	}
+
+private: // 2002/2/10 aroka アクセス権変更
+	TCHAR		m_szClassInheritances[1024];
+	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
+	HWND		m_hwndParent;	// オーナーウィンドウのハンドル
+	HWND		m_hWnd;			// このダイアログのハンドル
 };
 
 ///////////////////////////////////////////////////////////////////////

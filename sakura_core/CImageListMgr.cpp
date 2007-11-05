@@ -18,7 +18,7 @@
 #include "CImageListMgr.h"
 #include "sakura_rc.h"
 #include "CRunningTimer.h"
-#include "etc_uty.h"
+#include "util/module.h"
 
 //	Jul. 21, 2003 genta 他でも使うので関数の外に出した
 //	Oct. 21, 2000 JEPRO 設定
@@ -37,7 +37,7 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	RECT rect;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rect, x, y, x + cx, y + cy );
-	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
+	::ExtTextOutW2( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 
 //	Destructor
@@ -56,11 +56,10 @@ CImageListMgr::~CImageListMgr()
 	描画用に保持する．
 	
 	@param hInstance [in] bitmapリソースを持つインスタンス
-	@param hWnd [in] 未使用
 	
 	@date 2003.07.21 genta ImageListの構築は行わない．代わりにbitmapをそのまま保持する．
 */
-bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
+bool CImageListMgr::Create(HINSTANCE hInstance)
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CImageListMgr::Create" );
 	if( m_hIconBitmap != NULL ){	//	既に構築済みなら無視する
@@ -156,6 +155,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	}
 
 	return nRetPos == 0;
+
 }
 
 

@@ -26,6 +26,16 @@ class CPropTypes;
 #include "CShareData.h"
 
 /*-----------------------------------------------------------------------
+定数
+-----------------------------------------------------------------------*/
+//#define STR_COLORDATA_HEAD2	" テキストエディタ色設定 Ver2"
+//#define STR_COLORDATA_HEAD21	" テキストエディタ色設定 Ver2.1"	//Nov. 2, 2000 JEPRO 変更 [注]. 0.3.9.0:ur3β10以降、設定項目の番号を入れ替えたため
+#define STR_COLORDATA_HEAD3	" テキストエディタ色設定 Ver3"		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
+//#define STR_COLORDATA_HEAD4		" テキストエディタ色設定 Ver4"		//2007.10.02 kobake UNICODE化に際してカラーファイル仕様も変更
+#define STR_COLORDATA_SECTION	"SakuraColor"
+
+
+/*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
 /*!
@@ -64,8 +74,8 @@ private:
 	/*
 	|| ダイアログデータ
 	*/
-	char			m_szHelpFile[_MAX_PATH + 1];
-	int				m_nMaxLineSize_org;					/* 折り返し文字数 */
+	SFilePath		m_szHelpFile;
+	CLayoutInt		m_nMaxLineKetas_org;					/* 折り返し桁数 */
 	Types			m_Types;
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;	// Mar. 31, 2003 genta メモリ削減のためポインタに
 	int				m_nCurrentColorType;		/* 現在選択されている色タイプ */
@@ -105,7 +115,7 @@ protected:
 	BOOL Import_Regex( HWND );	//@@@ 2001.11.17 add MIK
 	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
 	static INT_PTR CALLBACK PropTypesRegex( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );	//@@@ 2001.11.17 add MIK
-	BOOL RegexKakomiCheck(const char *s);	//@@@ 2001.11.17 add MIK
+	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
 
 	void RearrangeKeywordSet( HWND );	// Jan. 23, 2005 genta キーワードセット再配置
 

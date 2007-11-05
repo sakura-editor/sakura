@@ -53,7 +53,7 @@ CUxTheme::~CUxTheme()
 	@author ryoji
 	@date 2007.04.01 ryoji êVãK
 */
-bool CUxTheme::Init( char* str )
+bool CUxTheme::Init( TCHAR* str )
 {
 	if( m_bInitialized )
 		return IsAvailable();

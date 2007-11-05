@@ -36,13 +36,14 @@ public:
 	||  Attributes & Operations
 	*/
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
-	int DoModal( HINSTANCE, HWND, CMemory& );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, const CNativeA& );	/* モーダルダイアログの表示 */
 
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND		m_hWnd;		/* このダイアログのハンドル */
 
-	CMemory		m_cmemDebugInfo;
+private:
+	CNativeA		m_cmemDebugInfo;
 
 
 protected:

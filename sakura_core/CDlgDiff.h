@@ -49,10 +49,10 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const char*, BOOL );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, BOOL );	/* モーダルダイアログの表示 */
 
-	char	m_szFile1[_MAX_PATH];	/* 自ファイル */
-	char	m_szFile2[_MAX_PATH];	/* 相手ファイル */
+	SFilePath	m_szFile1;	/* 自ファイル */
+	SFilePath	m_szFile2;	/* 相手ファイル */
 	BOOL	m_bIsModified;			/* 自ファイル更新中 */
 	BOOL	m_bIsModifiedDst;		/* 相手ファイル更新中 */
 	int		m_nDiffFlgOpt;			/* DIFFオプション */

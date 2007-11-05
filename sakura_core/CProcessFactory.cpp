@@ -21,13 +21,14 @@
 #include "CControlProcess.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "Debug.h"
-#include "etc_uty.h"
+
 #include <io.h>
 #include <tchar.h>
 #include "COsVersionInfo.h"
 #include "CRunningTimer.h"
+#include "util/os.h"
 
 class CProcess;
 
@@ -45,7 +46,7 @@ class CProcess;
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
 */
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
+CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPTSTR lpCmdLine )
 {
 	CCommandLine::Instance(lpCmdLine);
 	
@@ -70,7 +71,8 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPSTR lpCmdLine )
 		if( !IsExistControlProcess() ){
 			process = new CControlProcess( hInstance, lpCmdLine );
 		}
-	}else{
+	}
+	else{
 		if( !IsExistControlProcess() ){
 			StartControlProcess();
 		}
@@ -97,13 +99,13 @@ bool CProcessFactory::IsValidVersion()
 	COsVersionInfo	cOsVer;
 	if( cOsVer.GetVersion() ){
 		if( !cOsVer.OsIsEnableVersion() ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
 				"このアプリケーションを実行するには、\nWindows95以上 または WindowsNT4.0以上のOSが必要です。\nアプリケーションを終了します。"
 			);
 			return false;
 		}
 	}else{
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
 			"OSのバージョンが取得できません。\nアプリケーションを終了します。"
 		);
 		return false;
@@ -155,7 +157,7 @@ bool CProcessFactory::IsExistControlProcess()
 	@brief コントロールプロセスを起動する
 	
 	自分自身に -NOWIN オプションを付けて起動する．
-	共有メモリをチェックしてはいけないので，残念ながらCEditApp::OpenNewEditorは使えない．
+	共有メモリをチェックしてはいけないので，残念ながらCControlTray::OpenNewEditorは使えない．
 	
 	@author genta
 	@date Aug. 28, 2001
@@ -168,12 +170,11 @@ bool CProcessFactory::StartControlProcess()
 	PROCESS_INFORMATION p;
 	STARTUPINFO s;
 
-	s.cb = sizeof( s );
-	s.lpReserved = NULL;
-	s.lpDesktop = NULL;
-	s.lpTitle = NULL;
-
-	s.dwFlags = STARTF_USESHOWWINDOW;
+	s.cb          = sizeof( s );
+	s.lpReserved  = NULL;
+	s.lpDesktop   = NULL;
+	s.lpTitle     = _T("sakura control process"); //2007.09.21 kobake デバッグしやすいように、名前を付ける
+	s.dwFlags     = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
 	s.cbReserved2 = 0;
 	s.lpReserved2 = NULL;
@@ -182,26 +183,42 @@ bool CProcessFactory::StartControlProcess()
 	TCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 	TCHAR szDir[MAX_PATH + 1];	//	ディレクトリパス名
 
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, sizeof( szEXE ));
-	::wsprintf( szCmdLineBuf, _T("%s -NOWIN"), szEXE );
-	::GetSystemDirectory( szDir, sizeof( szDir ));
+	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, _countof( szEXE ));
+	::auto_sprintf( szCmdLineBuf, _T("%ts -NOWIN"), szEXE );
+	::GetSystemDirectory( szDir, _countof( szDir ));
 
-	if( 0 == ::CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,
-		CREATE_DEFAULT_ERROR_MODE, NULL, szDir, &s, &p ) ){
+	//常駐プロセス起動
+	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
+#ifdef _DEBUG
+//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
+#endif
+	BOOL bCreateResult = ::CreateProcess(
+		szEXE,				// 実行可能モジュールの名前
+		szCmdLineBuf,		// コマンドラインの文字列
+		NULL,				// セキュリティ記述子
+		NULL,				// セキュリティ記述子
+		FALSE,				// ハンドルの継承オプション
+		dwCreationFlag,		// 作成のフラグ
+		NULL,				// 新しい環境ブロック
+		szDir,				// カレントディレクトリの名前
+		&s,					// スタートアップ情報
+		&p					// プロセス情報
+	);
+	if( !bCreateResult ){
 		//	失敗
-		LPVOID pMsg;
+		TCHAR* pMsg;
 		::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
 						FORMAT_MESSAGE_IGNORE_INSERTS |
 						FORMAT_MESSAGE_FROM_SYSTEM,
 						NULL,
 						::GetLastError(),
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-						(LPTSTR) &pMsg,
+						(LPTSTR)&pMsg,
 						0,
 						NULL
 		);
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			_T("\'%s\'\nプロセスの起動に失敗しました。\n%s"), szEXE, (LPTSTR)pMsg );
+			_T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, pMsg );
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
 		return false;
 	}
@@ -211,10 +228,11 @@ bool CProcessFactory::StartControlProcess()
 	// Note: この待ちにより、ここで起動したコントロールプロセスが競争に生き残れなかった場合でも、
 	// 唯一生き残ったコントロールプロセスが多重起動防止用ミューテックスを作成しているはず。
 	//
-	int nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
+	int nResult;
+	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
 	if( 0 != nResult ){
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			_T("\'%s\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
+			_T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
 		::CloseHandle( p.hThread );
 		::CloseHandle( p.hProcess );
 		return false;
@@ -259,7 +277,8 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 		//
 		return true;
 	}
-	DWORD dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
+	DWORD dwRet;
+	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
 	if( WAIT_TIMEOUT == dwRet ){	// コントロールプロセスの初期化が終了しない
 		::CloseHandle( hEvent );
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,

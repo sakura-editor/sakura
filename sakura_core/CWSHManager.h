@@ -29,7 +29,7 @@
 class CEditView;
 class CInterfaceObject;
 
-typedef void (*EngineCallback)(char *Ext, char *EngineName);
+typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
 
 class CWSHMacroManager: public CMacroManagerBase
 {
@@ -38,9 +38,9 @@ public:
 	virtual ~CWSHMacroManager();
 
 	virtual void ExecKeyMacro(CEditView *EditView) const;
-	virtual BOOL LoadKeyMacro(HINSTANCE Instance, char const* Path);
+	virtual BOOL LoadKeyMacro(HINSTANCE Instance, const TCHAR* Path);
 
-	static CMacroManagerBase* Creator(char const *FileExt);
+	static CMacroManagerBase* Creator(const TCHAR* FileExt);
 	static void declare();
 	static void EnumEngines(EngineCallback Proc); //スクリプトエンジン列挙
 protected:

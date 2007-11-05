@@ -102,13 +102,13 @@ namespace Charcode
 		true, true, true, bNA,  bNA,  bNA,  bNA,  bNA,  //78-7f:x, y, z
 	};
 
-	const char JISESCDATA_ASCII[]				= "\x1b""(B";
-	const char JISESCDATA_JISX0201Latin[]		= "\x1b""(J";
-	const char JISESCDATA_JISX0201Latin_OLD[]	= "\x1b""(H";
-	const char JISESCDATA_JISX0201Katakana[]	= "\x1b""(I";
-	const char JISESCDATA_JISX0208_1978[]		= "\x1b""$@";
-	const char JISESCDATA_JISX0208_1983[]		= "\x1b""$B";
-	const char JISESCDATA_JISX0208_1990[]		= "\x1b""&@""\x1b""$B";
+	const char JISESCDATA_ASCII[]				= "\x1b" "(B";
+	const char JISESCDATA_JISX0201Latin[]		= "\x1b" "(J";
+	const char JISESCDATA_JISX0201Latin_OLD[]	= "\x1b" "(H";
+	const char JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";
+	const char JISESCDATA_JISX0208_1978[]		= "\x1b" "$@";
+	const char JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";
+	const char JISESCDATA_JISX0208_1990[]		= "\x1b" "&@""\x1b""$B";
 
 	/* ここまで */////////////////////////////////////////////////////////////////////////////
 
@@ -190,9 +190,6 @@ namespace Charcode
 	}
 	uchar_t __fastcall Base64_ValToChar( const uchar_t v ){
 		return BASE64CHAR[v];
-	}
-	uchar_t __fastcall Uu_CharToVal( const uchar_t c ){
-		return static_cast<uchar_t>((c - 0x20) & 0x3f);
 	}
 	int __fastcall GetJisESCSeqLen( const enumJisESCSeqType eEscType ){
 		return TABLE_JISESCLEN[(int)eEscType];
@@ -1075,7 +1072,7 @@ namespace Charcode
 		nEscType = JISESC_UNKNOWN;
 		expected_esc_len = 0;
 		
-		if( *pS == ESC ){
+		if( *pS == ACODE::ESC ){
 			expected_esc_len++;
 			p = const_cast<uchar_t *>(pS)+1;
 			if( p+2 <= end_ptr ){
@@ -1177,19 +1174,21 @@ namespace Charcode
 	
 	
 	/*!
+		2007.08.14 kobake 戻り値をECodeTypeに変更
+
 		文字列の先頭にUnicode系BOMが付いているか？
 		
-		@retval	0	なし,未検出
-		@retval	3	(CODE_UNICODE)	Unicode
-		@retval	4	(CODE_UTF8)		UTF-8
-		@retval	6	(CODE_UNICODEBE) UnicodeBE
+		@retval	CODE_NONE		なし,未検出
+		@retval	CODE_UNICODE	Unicode
+		@retval	CODE_UTF8		UTF-8
+		@retval	CODE_UNICODEBE	UnicodeBE
 	*/
-	int DetectUnicodeBom( const char* pS, int nLen )
+	ECodeType DetectUnicodeBom( const char* pS, int nLen )
 	{
 		const uchar_t* pBuf = reinterpret_cast<const uchar_t *>(pS);
 
 		if( NULL == pS ){
-			return 0;
+			return CODE_NONE;
 		}
 		if( 2 <= nLen ){
 			if( pBuf[0] == 0xff && pBuf[1] == 0xfe ){
@@ -1204,9 +1203,162 @@ namespace Charcode
 				}
 			}
 		}
-		return 0;
+		return CODE_NONE;
 	}
+
+
+
+
+
+
 
 } // ends namespace Charcode.
 
-/*[EOF]*/
+
+
+namespace WCODE
+{
+	//2007.08.30 kobake 追加
+	bool isHankaku(wchar_t wc)
+	{
+		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
+
+		//参考：http://www.swanq.co.jp/blog/archives/000783.html
+		if(
+			   wc<=0x007E //ACODEとか
+			|| wc==0x00A5 //バックスラッシュ
+			|| wc==0x203E //にょろ
+			|| (wc>=0xFF61 && wc<=0xFF9f)
+		)return true;
+
+		//0x7F ～ 0xA0 も半角とみなす
+		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF を見て、なんとなく
+		if(wc>=0x007F && wc<=0x00A0)return true;
+
+		//$$ 仮。もう動的に計算しちゃえ。(初回のみ)
+		bool CalcHankakuByFont(wchar_t);
+		return CalcHankakuByFont(wc);
+
+
+		return false;
+	}
+
+	//!制御文字であるかどうか
+	bool isControlCode(wchar_t wc)
+	{
+		//改行は制御文字とみなさない
+		if(isLineDelimiter(wc))return false;
+
+		//タブは制御文字とみなさない
+		if(wc==TAB)return false;
+
+		return iswcntrl(wc)!=0;
+	}
+
+}
+
+
+
+/*!
+	UNICODE文字情報のキャッシュクラス。
+	1文字当たり2ビットで、値を保存しておく。
+	00:未初期化
+	01:半角
+	10:全角
+	11:-
+*/
+class LocalCache{
+public:
+	LocalCache()
+	{
+		memset(cache,0,sizeof(cache));
+		test=0x12345678;
+	}
+	void SetCache(wchar_t c, bool cache_value)
+	{
+		int v=cache_value?0x1:0x2;
+		cache[c/4] &= ~( 0x3<< ((c%4)*2) ); //該当箇所クリア
+		cache[c/4] |=  ( v  << ((c%4)*2) ); //該当箇所セット
+	}
+	bool GetCache(wchar_t c) const
+	{
+		return _GetRaw(c)==0x1?true:false;
+	}
+	bool ExistCache(wchar_t c) const
+	{
+		assert(test==0x12345678);
+		return _GetRaw(c)!=0x0;
+	}
+protected:
+	int _GetRaw(wchar_t c) const
+	{
+		return (cache[c/4]>>((c%4)*2))&0x3;
+	}
+private:
+	BYTE cache[0x10000/4]; //16KB
+	int test; //cache溢れ検出
+};
+
+//文字幅の動的計算。半角ならtrue。
+bool CalcHankakuByFont(wchar_t c)
+{
+	// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
+	static LocalCache cache; //$$ これはShare領域に入れておいたほうが、もっと良い
+	if(cache.ExistCache(c))return cache.GetCache(c);
+
+	// -- -- 作業用HDC -- -- //
+	HDC hdc=GetDC(NULL);
+	HFONT hFont = CreateFontW(
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		DEFAULT_CHARSET,
+		OUT_CHARACTER_PRECIS,
+		CLIP_CHARACTER_PRECIS,
+		DEFAULT_QUALITY,
+		FIXED_PITCH,
+		L"ＭＳ ゴシック"
+	);
+	HFONT hfntOld = (HFONT)SelectObject(hdc,hFont);
+
+	// -- -- 半角基準 -- -- //
+	SIZE han_size;
+	GetTextExtentPoint32W2(hdc,L"x",1,&han_size);
+
+	// -- -- 周辺256文字を一気に判定 -- -- //
+	int begin=c/256*256;
+	int end=begin+256;
+	for(int i=begin;i<end;i++){
+		// -- -- 相対比較 -- -- //
+		SIZE size={han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
+		wchar_t tmp = (wchar_t)i;
+		GetTextExtentPoint32W2(hdc,&tmp,1,&size);
+		int char_width;
+		if(size.cx>han_size.cx){
+			char_width=2;
+		}
+		else{
+			char_width=1;
+		}
+
+		// -- -- キャッシュ更新 -- -- //
+		cache.SetCache(i,char_width==1);
+	}
+
+	// -- -- 後始末 -- -- //
+	SelectObject(hdc,hfntOld);
+	ReleaseDC(NULL,hdc);
+
+	return cache.GetCache(c);
+}
+
+
+
+
+
+
