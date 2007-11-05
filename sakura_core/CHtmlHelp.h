@@ -35,6 +35,7 @@
 
 #include "CDllHandler.h"
 
+
 /*!
 	@brief HtmpHelpìÆìIÉçÅ[Éh
 
@@ -51,8 +52,7 @@ public:
 
 protected:
 	virtual int InitDll(void);
-	virtual const char* GetDllName(const char *);
-
+	virtual LPCTSTR GetDllName(LPCTSTR);
 };
 
 #endif

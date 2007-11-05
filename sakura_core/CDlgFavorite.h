@@ -37,6 +37,8 @@ class CDlgFavorite;
 
 #include "CDialog.h"
 
+//!「履歴の管理」ダイアログ
+//アクセス方法：[設定] - [履歴の管理]
 class SAKURA_CORE_API CDlgFavorite : public CDialog
 {
 public:
@@ -70,27 +72,27 @@ protected:
 	//void	ChangeSlider( int nIndex );
 
 private:
-	CRecent	m_cRecentFile;
-	CRecent	m_cRecentFolder;
-	CRecent	m_cRecentSearch;
-	CRecent	m_cRecentReplace;
-	CRecent	m_cRecentGrepFile;
-	CRecent	m_cRecentGrepFolder;
-	CRecent	m_cRecentCmd;
+	CRecentFile		m_cRecentFile;
+	CRecentFolder	m_cRecentFolder;
+	CRecentSearch	m_cRecentSearch;
+	CRecentReplace	m_cRecentReplace;
+	CRecentFile		m_cRecentGrepFile;
+	CRecentFolder	m_cRecentGrepFolder;
+	CRecentCmd		m_cRecentCmd;
 
 	typedef struct FavoriteInfoTag {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
-		char*		m_pszCaption;		//キャプション
+		TCHAR*		m_pszCaption;		//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
 		int			m_nViewCount;		//カレントの表示数
 	} FavoriteInfoTag;
 
-	FavoriteInfoTag	p_favorite_info[8];
+	FavoriteInfoTag	m_aFavoriteInfo[8];
 
 	int		m_nCurrentTab;
-	char	m_szMsg[1024];
+	TCHAR	m_szMsg[1024];
 
 };
 

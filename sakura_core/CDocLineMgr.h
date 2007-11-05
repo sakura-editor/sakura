@@ -28,24 +28,23 @@ class CDocLineMgr;
 class CDocLine; // 2002/2/10 aroka
 class CMemory; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka
+#include "basis/SakuraBasis.h"
+#include "charset/CCodeBase.h"
 
 struct DocLineReplaceArg {
-	int			nDelLineFrom;		/* 削除範囲行  From 改行単位の行番号 0開始) */
-	int			nDelPosFrom;		/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
-	int			nDelLineTo;			/* 削除範囲行  To   改行単位の行番号 0開始) */
-	int			nDelPosTo;			/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
-	CMemory*	pcmemDeleted;		/* 削除されたデータを保存 */
-	int			nDeletedLineNum;	/* 削除した行の総数 */
-	const char*	pInsData;			/* 挿入するデータ */
-	int			nInsDataLen;		/* 挿入するデータの長さ */
-	int			nInsLineNum;		/* 挿入によって増えた行の数 */
-	int			nNewLine;			/* 挿入された部分の次の位置の行 */
-	int			nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
+	CLogicRange		sDelRange;			//!< 削除範囲。ロジック単位。
+	CNativeW2*		pcmemDeleted;		//!< 削除されたデータを保存 */
+	CLogicInt		nDeletedLineNum;	//!< 削除した行の総数
+	const wchar_t*	pInsData;			//!< 挿入するデータ
+	int				nInsDataLen;		//!< 挿入するデータの長さ
+	CLogicInt		nInsLineNum;		//!< 挿入によって増えた行の数
+	CLogicPoint		ptNewPos;			//!< 挿入された部分の次の位置
 };
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+//2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
 class SAKURA_CORE_API CDocLineMgr
 {
 public:
@@ -58,56 +57,44 @@ public:
 	/*
 	||  参照系
 	*/
-	char* GetAllData( int* );	/* 全行データを返す */
-	int GetLineCount( void ) { return m_nLines; }	/* 全行数を返す */
-	const char* GetLineStr( int , int* );
-	const char* GetLineStrWithoutEOL( int , int* ); // 2003.06.22 Moca
-	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
-	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
+	wchar_t* GetAllData( int* );	/* 全行データを返す */
+	CLogicInt GetLineCount( void ) { return m_nLines; }	/* 全行数を返す */
+	const wchar_t* GetLineStr( CLogicInt , CLogicInt* );
+	const wchar_t* GetLineStrWithoutEOL( CLogicInt , int* ); // 2003.06.22 Moca
+	const wchar_t* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
+	const wchar_t* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
 
-	int WhereCurrentWord( int , int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
-	// 2001/06/23 N.Nakatani WhereCurrentWord_2()追加 staticメンバ
-	static int WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+	bool WhereCurrentWord( CLogicInt , CLogicInt , CLogicInt* , CLogicInt*, CNativeW2*, CNativeW2* );	/* 現在位置の単語の範囲を調べる */
 
-	static int WhatKindOfChar( const char*, int, int );	/* 現在位置の文字の種類を調べる */
-	int PrevOrNextWord( int , int , int* , BOOL bLEFT, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
-	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
-	static int SearchNextWordPosition(
-		const char* pLine,
-		int			nLineLen,
-		int			nIdx,		//	桁数
-		int*		pnColmNew,	//	見つかった位置
-		BOOL		bStopsBothEnds	//	単語の両端で止まる
-	);
+	bool PrevOrNextWord( CLogicInt , CLogicInt , CLogicInt* , BOOL bLEFT, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CBregexp* ); /* 単語検索 */
+	int SearchWord( CLogicPoint ptSerachBegin, const wchar_t* , ESearchDirection eDirection, const SSearchOption& sSearchOption , CLogicRange* pMatchRange, CBregexp* ); /* 単語検索 */
 //	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int*, int ); /* 文字列検索 */
-	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int ); /* 文字列検索 */
-	static void CreateCharCharsArr( const unsigned char*, int, int** );	/* 検索条件の情報 */
+	static const wchar_t* SearchString( const wchar_t*, int, int , const wchar_t* , int, int*, bool ); /* 文字列検索 */
+	static void CreateCharCharsArr( const wchar_t*, int, int** );	/* 検索条件の情報 */
 //	static void CreateCharUsedArr( const unsigned char*, int, const int*, int** ); /* 検索条件の情報(キー文字列の使用文字表)作成 */
 
 
 
 	void DUMP( void );
-//	void ResetAllModifyFlag( BOOL );	/* 行変更状態をすべてリセット */
 	void ResetAllModifyFlag( void );	/* 行変更状態をすべてリセット */
 
 
 // From Here 2001.12.03 hor
 	void ResetAllBookMark( void );			/* ブックマークの全解除 */
-	int SearchBookMark( int , int , int* ); /* ブックマーク検索 */
+	int SearchBookMark( CLogicInt nLineNum, ESearchDirection , CLogicInt* pnLineNum ); /* ブックマーク検索 */
 // To Here 2001.12.03 hor
 
 	//@@@ 2002.05.25 MIK
 	void ResetAllDiffMark( void );			/* 差分表示の全解除 */
-	int SearchDiffMark( int , int , int* ); /* 差分検索 */
-	void SetDiffMarkRange( int nMode, int nStartLine, int nEndLine );	/* 差分範囲の登録 */
+	int SearchDiffMark( CLogicInt , ESearchDirection , CLogicInt* ); /* 差分検索 */
+	void SetDiffMarkRange( int nMode, CLogicInt nStartLine, CLogicInt nEndLine );	/* 差分範囲の登録 */
 	bool IsDiffUse( void ) const { return m_bIsDiffUse; }	/* DIFF使用中 */
 
 // From Here 2002.01.16 hor
-	void MarkSearchWord( const char* , int , int , int , CBregexp* ); /* 検索条件に該当する行にブックマークをセットする */
-	void SetBookMarks( char* ); /* 物理行番号のリストからまとめて行マーク */
-	char* GetBookMarks( void ); /* 行マークされてる物理行番号のリストを作る */
+	void MarkSearchWord( const wchar_t* , const SSearchOption& , CBregexp* ); /* 検索条件に該当する行にブックマークをセットする */
+	void SetBookMarks( wchar_t* ); /* 物理行番号のリストからまとめて行マーク */
+	wchar_t* GetBookMarks( void ); /* 行マークされてる物理行番号のリストを作る */
 // To Here 2001.01.16 hor
 
 	/*
@@ -115,93 +102,71 @@ public:
 	*/
 	void Init();
 	void Empty();
-//	void InsertLineStr( int );	/* 指定行の前に追加する */
 
-#if 0
-	void AddLineStrSz( const char* );	/* 末尾に行を追加 Ver0 */
-	void AddLineStr( const char*, int );	/* 末尾に行を追加 Ver1 */
-	void AddLineStr( CMemory& );	/* 末尾に行を追加 Ver2 */
-#endif
 	//	May 15, 2000 genta
-	void AddLineStrX( const char*, int, CEOL );	/* 末尾に行を追加 Ver1.5 */
+	void AddLineStrX( const wchar_t*, int, CEOL );	/* 末尾に行を追加 Ver1.5 */
 
 	void DeleteData_CDocLineMgr(
-		int			nLine,
-		int			nDelPos,
-		int			nDelLen,
-		int*		pnModLineOldFrom,	/* 影響のあった変更前の行(from) */
-		int*		pnModLineOldTo,		/* 影響のあった変更前の行(to) */
-		int*		pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
-		int*		pnDelLineOldNum,	/* 削除された行数 */
-		CMemory&	cmemDeleted			/* 削除されたデータ */
+		CLogicInt	nLine,
+		CLogicInt	nDelPos,
+		CLogicInt	nDelLen,
+		CLogicInt*	pnModLineOldFrom,	/* 影響のあった変更前の行(from) */
+		CLogicInt*	pnModLineOldTo,		/* 影響のあった変更前の行(to) */
+		CLogicInt*	pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
+		CLogicInt*	pnDelLineOldNum,	/* 削除された行数 */
+		CNativeW2*	cmemDeleted			/* 削除されたデータ */
 	);
 
 	/* 指定範囲のデータを置換(削除 & データを挿入)
 	  Fromを含む位置からToの直前を含むデータを削除する
 	  Fromの位置へテキストを挿入する
 	*/
-	void CDocLineMgr::ReplaceData(
-		DocLineReplaceArg*
-#if 0
-		int			nDelLineFrom,		/* 削除範囲行  From 改行単位の行番号 0開始) */
-		int			nDelPosFrom,		/* 削除範囲位置From 改行単位の行頭からのバイト位置 0開始) */
-		int			nDelLineTo,			/* 削除範囲行  To   改行単位の行番号 0開始) */
-		int			nDelPosTo,			/* 削除範囲位置To   改行単位の行頭からのバイト位置 0開始) */
-		CMemory*	pcmemDeleted,		/* 削除されたデータを保存 */
-		int*		pnDeletedLineNum,	/* 削除した行の総数 */
-		const char*	pInsData,			/* 挿入するデータ */
-		int			nInsDataLen,		/* 挿入するデータの長さ */
-		int*		pnInsLineNum,		/* 挿入によって増えた行の数 */
-		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
-		int*		pnNewPos			/* 挿入された部分の次の位置のデータ位置 */
-#endif
-	);
+	void CDocLineMgr::ReplaceData( DocLineReplaceArg* );
 	void DeleteNode( CDocLine* );/* 行オブジェクトの削除、リスト変更、行数-- */
 	void InsertNode( CDocLine*, CDocLine* );	/* 行オブジェクトの挿入、リスト変更、行数++ */
 
 	/* データの挿入 */
 	void InsertData_CDocLineMgr(
-		int			nLine,
-		int			nInsPos,
-		const char*	pInsData,
-		int			nInsDataLen,
-		int*		pnInsLineNum,	/* 挿入によって増えた行の数 */
-		int*		pnNewLine,		/* 挿入された部分の次の位置の行 */
-		int*		pnNewPos		/* 挿入された部分の次の位置のデータ位置 */
+		CLogicInt		nLine,
+		CLogicInt		nInsPos,
+		const wchar_t*	pInsData,
+		CLogicInt		nInsDataLen,
+		CLogicInt*		pnInsLineNum,	// 挿入によって増えた行の数
+		CLogicPoint*	pptNewPos		// 挿入された部分の次の位置
 	);
 
 	//	Nov. 12, 2000 genta 引数追加
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
+	int ReadFile( const TCHAR* pszPath, HWND, HWND, ECodeType, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
+
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEOL, BOOL bBomExist = FALSE );
-	CDocLine* GetLineInfo( int );
+	EConvertResult WriteFile( const TCHAR*, HWND, HWND, ECodeType, FILETIME*, CEOL, BOOL bBomExist = FALSE );
+
+	CDocLine* GetLineInfo( CLogicInt nLine );
 	// 2002/2/10 aroka メンバを private にしてアクセサ追加
 	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }
 	CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }
 
-private:
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         実装補助                            //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+protected:
+	// -- -- チェーン関数 -- -- // 2007.10.11 kobake 作成
+	void _PushBottom(CDocLine* pDocLineNew);             //!< 最下部に挿入
+	void _Insert(CDocLine* pDocLineNew, CDocLine* pPos); //!< pPosの直前に挿入
 
-	/*
-	|| メンバ変数
-	*/
-	CDocLine*	m_pDocLineTop;
-	CDocLine*	m_pDocLineBot;
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                        メンバ変数                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+private:
+	CDocLine*	m_pDocLineTop; //最初の行
+	CDocLine*	m_pDocLineBot; //最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
 	CDocLine*	m_pDocLineCurrent;	/* 順アクセス時の現在位置 */
-	int			m_nLines;		/* 全行数 */
-	int			m_nPrevReferLine;
+	CLogicInt	m_nLines;		/* 全行数 */
+	CLogicInt	m_nPrevReferLine;
 	CDocLine*	m_pCodePrevRefer;
 	bool		m_bIsDiffUse;	/* DIFF差分表示実施中 */	//@@@ 2002.05.25 MIK
-protected:
-
-	/*
-	|| 実装ヘルパ系
-	*/
-protected:
-
-
-
 };
 
 

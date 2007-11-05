@@ -147,6 +147,11 @@ CommandLine に文字列として D:\Test.ext が与えられた場合、
 　　　　ext   = ""
 )=========================================================================== */
 
+static int isAZ(wchar_t wc)
+{
+	return (wc>=L'A' && wc<=L'Z') || (wc>=L'a' && wc<=L'z');
+}
+
 /* ↓ Shift_JIS の漢字の1バイト目の判定 */
 #define	_IS_SJIS_1(ch)	( ( ( ch >=0x081 )&&( ch <=0x09F ) ) || ( ( ch >=0x0E0 )&&( ch <=0x0FC ) ) )
 
@@ -164,7 +169,14 @@ char	*sjis_strrchr2( unsigned char *pt , const unsigned char ch1 , const unsigne
 	}
 	return	pf;
 }
-
+wchar_t* wcsrchr2( wchar_t *pt , wchar_t ch1 , wchar_t ch2 ){
+	wchar_t	*pf = NULL;
+	while( *pt != L'\0' ){	/* 文字列の終端まで調べる。 */
+		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = 検索文字の位置 */
+		if( *pt != '\0' )		pt++;	/* 次の文字へ */
+	}
+	return	pf;
+}
 /* 文字列 pi 中の先頭にある有効なパス名（実在するファイル・ディレクトリ名）部分
 　 のみを po に書き出す。po は char po[_MAX_PATH]; 確保しておく事。 */
 #ifdef	LSI_C	/* LSI-C の場合。 */
@@ -176,7 +188,8 @@ void far	int_nop(){	_asm_void_( "IRET\n" );	}
 #define		GetExistPath_IV_Drive		1	/* ドライブが無効 */
 #define		GetExistPath_AV_Drive		2	/* ドライブが有効 */
 
-void	GetExistPath( char *po , const char *pi ) {
+void	GetExistPath( char *po , const char *pi )
+{
 	char	*pw,*ps;
 	int		cnt;
 	char	drv[4] = "_:\\";
@@ -216,7 +229,6 @@ void	GetExistPath( char *po , const char *pi ) {
 		)
 	){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
 		drv[0] = *po;
-/*		printf("chk>{%s}\n",drv);	/* for DEBUG */
 		if( access(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
 		else						dl = GetExistPath_IV_Drive;		/* 無効 */
 	}
@@ -242,7 +254,6 @@ void	GetExistPath( char *po , const char *pi ) {
 	}
 
 	for(;;){
-/*		printf("chk>{%s}\n",po);		/* for DEBUG */
 		if( access(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
 		/* ↓文字列最後尾の \ または ' ' を探し出し、そこを文字列終端にする。*/
 
@@ -263,7 +274,6 @@ void	GetExistPath( char *po , const char *pi ) {
 		/* ↓ルートディレクトリを引っかけるための処理 */
 		if( ( *pw == '\\' )&&( *(pw-1) == ':' ) ){	/* C:\ とかの \ っぽい */
 			* (pw+1) = '\0';		/* \ の後ろの位置を文字列の終端にする。 */
-/*			printf("chk>{%s}\n",po);		/* for DEBUG */
 			if( access(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
 		}
 		*pw = '\0';		/* \ か ' ' の位置を文字列の終端にする。 */
@@ -274,10 +284,86 @@ void	GetExistPath( char *po , const char *pi ) {
 	return;
 }
 
+void GetExistPathW2( wchar_t *po , const wchar_t *pi )
+{
+	wchar_t	*pw,*ps;
+	int		cnt;
+	wchar_t	drv[4] = L"_:\\";
+	int		dl;		/* ドライブの状態 */
+
+	/* pi の内容を
+	/ ・ " を削除しつつ
+	/ ・ / を \ に変換しつつ(Win32API では / も \ と同等に扱われるから)
+	/ ・最大 ( _MAX_PATH-1 ) 文字まで
+	/ po にコピーする。 */
+	for( pw=po,cnt=0 ; ( *pi != L'\0' ) && ( cnt < _MAX_PATH-1 ) ; pi++ ){
+		/* /," 共に Shift_JIS の漢字コード中には含まれないので Shift_JIS 判定は不要。 */
+		if( *pi == L'\"' )	continue;		/*  " なら何もしない。次の文字へ */
+		if( *pi == L'/' )	*pw++ = L'\\';	/*  / なら \ に変換してコピー    */
+		else				*pw++ = *pi;	/* その他の文字はそのままコピー  */
+		cnt++;	/* コピーした文字数 ++ */
+	}
+	*pw = L'\0';		/* 文字列終端 */
+
+	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
+	if( *(po+1)==L':' && isAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
+		drv[0] = *po;
+		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
+		else						dl = GetExistPath_IV_Drive;		/* 無効 */
+	}
+
+	if( dl == GetExistPath_IV_Drive ){	/* ドライブ自体が無効 */
+		/* フロッピーディスク中のファイルが指定されていて、
+		　 そのドライブにフロッピーディスクが入っていない、とか */
+		*po = L'\0';	/* 返値文字列 = "";(空文字列) */
+		return;		/* これ以上何もしない */
+	}
+
+	/* ps = 検索開始位置 */
+	ps = po;	/* ↓文字列の先頭が \\ なら、\ 検索処理の対象から外す */
+	if( ( *po == L'\\' )&&( *(po+1) == L'\\' ) )	ps +=2;
+
+	if( *ps == L'\0' ){	/* 検索対象が空文字列なら */
+		*po = L'\0';		/* 返値文字列 = "";(空文字列) */
+		return;			/*これ以上何もしない */
+	}
+
+	for(;;){
+		if( _waccess(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
+		/* ↓文字列最後尾の \ または ' ' を探し出し、そこを文字列終端にする。*/
+
+		pw = wcsrchr2(ps,'\\',' ');	/* 最末尾の \ か ' ' を探す。 */
+		if ( pw == NULL ){	/* 文字列中に '\\' も ' ' も無かった */
+			/* 例えば "C:testdir" という文字列が来た時に、"C:testdir" が実在
+			　 しなくとも C:ドライブが有効なら "C:" という文字列だけでも返し
+			　 たい。以下↓は、そのための処理。 */
+			if( dl == GetExistPath_AV_Drive ){
+				/* 先頭に有効なドライブのドライブレターがある。 */
+				*(po+2) = L'\0';		/* ドライブレター部の文字列のみ返す */
+			}
+			else{	/* 有効なパス部分が全く見つからなかった */
+				*po = L'\0';	/* 返値文字列 = "";(空文字列) */
+			}
+			break;		/* ループを抜ける */
+		}
+		/* ↓ルートディレクトリを引っかけるための処理 */
+		if( ( *pw == L'\\' )&&( *(pw-1) == L':' ) ){	/* C:\ とかの \ っぽい */
+			* (pw+1) = L'\0';		/* \ の後ろの位置を文字列の終端にする。 */
+			if( _waccess(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
+		}
+		*pw = L'\0';		/* \ か ' ' の位置を文字列の終端にする。 */
+		/* ↓末尾がスペースなら、スペースを全て削除する */
+		while( ( pw != ps ) && ( *(pw-1) == L' ' ) )	* --pw = L'\0';
+	}
+
+	return;
+}
+
 /* 与えられたコマンドライン文字列の先頭部分から実在するファイル・ディレクトリ
 　 のパス文字列を抽出し、そのパスを分解して drv dir fnm ext に書き込む。
 　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
-void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext ){
+void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext )
+{
 	char	ppp[_MAX_PATH];		/* パス格納（作業用） */
 	unsigned char	*pd;
 	unsigned char	*pf;
@@ -315,11 +401,9 @@ void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext 
 			_dos_getfileattr(ppp,&attr);
 			a_dir = ( attr & _A_SUBDIR ) ? 1 : 0;
 		#else
-			attr =  GetFileAttributes(ppp);
+			attr =  GetFileAttributesA(ppp);
 			a_dir = ( attr & FILE_ATTRIBUTE_DIRECTORY ) ?  1 : 0;
 		#endif
-/*		if( a_dir )	printf("find>{%s} <DIR>\n",ppp);		/* for DEBUG */
-/*		else		printf("find>{%s} <FILE>\n",ppp);		/* for DEBUG */
 		if( ! a_dir ){	/* 見つけた物がファイルだった場合。 */
 			pf = sjis_strrchr2(ppp,'\\','\\');	/* 最末尾の \ を探す。 */
 			if(pf != NULL)	pf++;		/* 見つかった→  pf=\の次の文字の位置*/
@@ -352,7 +436,6 @@ void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext 
 			if( ( ch != '\\' ) && ( strlen(ppp) < _MAX_PATH -1 ) ){
 				*pf++ = '\\';	*pf = '\0';
 			}
-/*			printf("%d:{%s}\n",strlen(ppp),ppp);	/* for DEBUG */
 
 			/* ディレクトリ名を返値として書き込む。 */
 			strncpy(dir,pd,_MAX_DIR -1);
@@ -366,5 +449,93 @@ void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext 
 	}
 	return;
 }
+
+
+#ifdef _UNICODE
+/* 与えられたコマンドライン文字列の先頭部分から実在するファイル・ディレクトリ
+　 のパス文字列を抽出し、そのパスを分解して drv dir fnm ext に書き込む。
+　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
+void my_splitpath_w (
+	const wchar_t *comln,
+	wchar_t *drv,
+	wchar_t *dir,
+	wchar_t *fnm,
+	wchar_t *ext
+)
+{
+	wchar_t	ppp[_MAX_PATH];		/* パス格納（作業用） */
+	wchar_t	*pd;
+	wchar_t	*pf;
+	wchar_t	*pe;
+	wchar_t	ch;
+	DWORD	attr;
+	int		a_dir;
+
+	if( drv != NULL )	*drv = L'\0';
+	if( dir != NULL )	*dir = L'\0';
+	if( fnm != NULL )	*fnm = L'\0';
+	if( ext != NULL )	*ext = L'\0';
+	if( *comln == L'\0' )	return;
+
+	/* コマンドライン先頭部分の実在するパス名を ppp に書き出す。 */
+	GetExistPathW2( ppp , comln );
+
+	if( *ppp != L'\0' ) {	/* ファイル・ディレクトリが存在する場合 */
+		/* 先頭文字がドライブレターかどうか判定し、
+		　 pd = ディレクトリ名の先頭位置に設定する。 */
+		pd = ppp;
+		if(*(pd+1)==L':' && isAZ(*pd)){	/* 先頭にドライブレターがある。 */
+			pd += 2;	/* pd = ドライブレター部の後ろ         */
+		}				/*      ( = ディレクトリ名の先頭位置 ) */
+		/* ここまでで、pd = ディレクトリ名の先頭位置 */
+
+		attr =  GetFileAttributesW(ppp);
+		a_dir = ( attr & FILE_ATTRIBUTE_DIRECTORY ) ?  1 : 0;
+
+		if( ! a_dir ){	/* 見つけた物がファイルだった場合。 */
+			pf = wcsrchr(ppp,L'\\');	/* 最末尾の \ を探す。 */
+			if(pf != NULL)	pf++;		/* 見つかった→  pf=\の次の文字の位置*/
+			else			pf = pd;	/* 見つからない→pf=パス名の先頭位置 */
+			/* ここまでで pf = ファイル名の先頭位置 */
+			pe = wcsrchr(pf,L'.');		/* 最末尾の '.' を探す。 */
+			if( pe != NULL ){					/* 見つかった(pe = L'.'の位置)*/
+				if( ext != NULL ){	/* 拡張子を返値として書き込む。 */
+					wcsncpy(ext,pe,_MAX_EXT-1);
+					ext[_MAX_EXT -1] = L'\0';
+				}
+				*pe = L'\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
+			}
+			if( fnm != NULL ){	/* ファイル名を返値として書き込む。 */
+				wcsncpy(fnm,pf,_MAX_FNAME-1);
+				fnm[_MAX_FNAME -1] = L'\0';
+			}
+			*pf = L'\0';	/* ファイル名の先頭位置を文字列終端にする。 */
+		}
+		/* ここまでで文字列 ppp はドライブレター＋ディレクトリ名のみになっている */
+		if( dir != NULL ){
+			/* ディレクトリ名の最後の文字が \ ではない場合、\ にする。 */
+
+			/* ↓最後の文字を ch に得る。(ディレクトリ文字列が空の場合 ch=L'\\' となる) */
+			for( ch = L'\\' , pf = pd ; *pf != L'\0' ; pf++ ){
+				ch = *pf;
+			}
+			/* 文字列が空でなく、かつ、最後の文字が \ でなかったならば \ を追加。 */
+			if( ( ch != L'\\' ) && ( wcslen(ppp) < _MAX_PATH -1 ) ){
+				*pf++ = L'\\';	*pf = L'\0';
+			}
+
+			/* ディレクトリ名を返値として書き込む。 */
+			wcsncpy(dir,pd,_MAX_DIR -1);
+			dir[_MAX_DIR -1] = L'\0';
+		}
+		*pd = L'\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
+		if( drv != NULL ){	/* ドライブレターを返値として書き込む。 */
+			wcsncpy(drv,ppp,_MAX_DRIVE -1);
+			drv[_MAX_DRIVE -1] = L'\0';
+		}
+	}
+	return;
+}
+#endif
 
 /* file end */

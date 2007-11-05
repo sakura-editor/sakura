@@ -31,26 +31,29 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, const char* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, const TCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
 
 	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
-	int			m_bLoHiCase;	/*!< 英大文字と小文字を区別する */
-	int			m_bRegularExp;	/*!< 正規表現 */
+
+	SSearchOption	m_sSearchOption;	//!< 検索オプション
+	/*
+	int			m_bRegularExp;	//!< 正規表現
+	int			m_bLoHiCase;	//!< 英大文字と小文字を区別する
+	BOOL		m_bWordOnly;	//!< 単語単位で検索
+	*/
+
 	BOOL		m_bGrepOutputLine;	/*!< 行を出力するか該当部分だけ出力するか */
 
-	//2001/06/23 N.Nakatani add
-	BOOL		m_bWordOnly;	/*!< 単語単位で検索 */
-	// 2002/09/22 Moca Add
-	int			m_nGrepCharSet;		/*!< 文字コードセット */
+	ECodeType	m_nGrepCharSet;		/*!< 文字コードセット */
 
-	int			m_nGrepOutputStyle;				/*!< Grep: 出力形式 */
-	char		m_szText[_MAX_PATH + 1];	/*!< 検索文字列 */
-	char		m_szFile[_MAX_PATH + 1];	/*!< 検索ファイル */
-	char		m_szFolder[_MAX_PATH + 1];	/*!< 検索フォルダ */
-	char		m_szCurrentFilePath[_MAX_PATH + 1];
+	int			m_nGrepOutputStyle;			/*!< Grep: 出力形式 */
+	EDIT_CHAR	m_szText[_MAX_PATH + 1];	/*!< 検索文字列 */
+	SFilePath	m_szFile;					/*!< 検索ファイル */
+	SFilePath	m_szFolder;					/*!< 検索フォルダ */
+	SFilePath	m_szCurrentFilePath;
 protected:
 	/*
 	||  実装ヘルパ関数

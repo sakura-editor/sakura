@@ -46,10 +46,10 @@ class CDlgTagJumpList;
 //キーワードを入力して該当する情報を表示するまでの時間(ミリ秒)
 #define TAGJUMP_TIMER_DELAY 700
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
-#define TAG_FILENAME        "tags"
+#define TAG_FILENAME        L"tags"
 //タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
 //	@@ 2005.04.03 MIK キーワードに空白が含まれる場合の考慮
-#define TAG_FORMAT          "%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%s\t%s"
+#define TAG_FORMAT       _T("%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%ls\t%ls")
 
 /*!	@brief ダイレクトタグジャンプ候補一覧ダイアログ
 
@@ -71,10 +71,10 @@ public:
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
 	//	@@ 2005.03.31 MIK 階層パラメータを追加
-	bool AddParam( char *s0, char *s1, int n2, char *s3, char *s4, int depth );	//登録
-	bool GetSelectedParam( char *s0, char *s1, int *n2, char *s3, char *s4, int *depth );	//取得
-	void SetFileName( const char *pszFileName );
-	void SetKeyword( const char *pszKeyword );	//	@@ 2005.03.31 MIK
+	bool AddParam( TCHAR *s0, TCHAR *s1, int n2, TCHAR *s3, TCHAR *s4, int depth );	//登録
+	bool GetSelectedParam( TCHAR *s0, TCHAR *s1, int *n2, TCHAR *s3, TCHAR *s4, int *depth );	//取得
+	void SetFileName( const TCHAR *pszFileName );
+	void SetKeyword( const wchar_t *pszKeyword );	//	@@ 2005.03.31 MIK
 
 protected:
 	/*
@@ -96,12 +96,12 @@ protected:
 	int		GetData( void );	/* ダイアログデータの取得 */
 	void	UpdateData( void );	//	@@ 2005.03.31 MIK
 
-	char	*GetNameByType( const char type, const char *name );	//タイプを名前に変換する。
+	TCHAR	*GetNameByType( const TCHAR type, const TCHAR *name );	//タイプを名前に変換する。
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
-	const char *GetFileName( void );
-	const char *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : ""; }
-	void find_key( const char* keyword );
+	const TCHAR *GetFileName( void );
+	const TCHAR *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : _T(""); }
+	void find_key( const wchar_t* keyword );
 	void Empty( void );
 
 
@@ -109,8 +109,8 @@ protected:
 private:
 
 	int		m_nIndex;		//!< 選択された要素番号
-	char	*m_pszFileName;	//!< 編集中のファイル名
-	char	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
+	TCHAR	*m_pszFileName;	//!< 編集中のファイル名
+	wchar_t	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
 	int		m_nLoop;		//!< さかのぼれる階層数
 	CSortedTagJumpList	m_cList;	//!< タグジャンプ情報
 	UINT	m_nTimerId;		//!< タイマ番号

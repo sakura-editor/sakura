@@ -34,6 +34,7 @@
 #define _CSMACROMGR_H_
 
 #include <windows.h>
+#include <wtypes.h> //VARTYPE
 
 #include "CKeyMacroMgr.h"
 #include "CShareData.h"
@@ -49,13 +50,11 @@ const int INVALID_MACRO_IDX	= -2;	//!< 無効なマクロのインデックス番号 @date Sep.
 
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	int  	m_nFuncID;
-	char *	m_pszFuncName;
-//		char *	m_pszFuncParam;
-	VARTYPE	m_varArguments[4]; //引数の型の配列
-//		int		m_ArgumentCount; //引数の数
-	VARTYPE	m_varResult; //戻り値の型 VT_EMPTYならprocedureということで
-	char *	m_pszData;
+	EFunctionCode	m_nFuncID;
+	const WCHAR*	m_pszFuncName;
+	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
+	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
+	wchar_t*		m_pszData;
 };
 
 /*-----------------------------------------------------------------------
@@ -95,16 +94,18 @@ public:
 	}
 	
 	//!	表示する名前の取得
-	const char* GetTitle(int idx) const {
+	const TCHAR* GetTitle(int idx) const
+	{
 		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
-			( m_pShareData->m_MacroTable[idx].m_szName[0] == '\0' ?
+			( m_pShareData->m_MacroTable[idx].m_szName[0] == _T('\0') ?
 				m_pShareData->m_MacroTable[idx].m_szFile : 
 				m_pShareData->m_MacroTable[idx].m_szName)
 			: NULL;
 	}
 	
 	//!	表示名の取得
-	const char* GetName(int idx) const {
+	const TCHAR* GetName(int idx) const
+	{
 		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].m_szName : NULL;
 	}
@@ -113,24 +114,25 @@ public:
 	
 		@param idx [in] マクロ番号
 	*/
-	const char* GetFile(int idx) const {
+	const TCHAR* GetFile(int idx) const
+	{
 		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].m_szFile : NULL;
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const char* pszPath );
-	BOOL Save( int idx, HINSTANCE hInstance, const char* pszPath );
+	BOOL Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath );
+	BOOL Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath );
 	void UnloadAll(void);
 
 	/*! キーマクロのバッファにデータ追加 */
-	int Append( int idx, int nFuncID, LPARAM lParam1, CEditView* pcEditView );
+	int Append( int idx, EFunctionCode nFuncID, LPARAM lParam1, CEditView* pcEditView );
 
 	/*
 	||  Attributes & Operations
 	*/
-	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* 機能ID→関数名，機能名日本語 */
-	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
+	static WCHAR* GetFuncInfoByID( HINSTANCE , int , WCHAR* , WCHAR* );	/* 機能ID→関数名，機能名日本語 */
+	static EFunctionCode GetFuncInfoByName( HINSTANCE , const WCHAR* , WCHAR* );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
 	
 	//	Jun. 16, 2002 genta

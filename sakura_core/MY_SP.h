@@ -32,8 +32,18 @@ extern "C" {
 #endif
 
 void my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext );
+void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
+void my_splitpath_t ( const TCHAR *comln , TCHAR *drv,TCHAR *dir,TCHAR *fnm,TCHAR *ext );
+
 char	*sjis_strrchr2( unsigned char *pt , const unsigned char ch1 , const unsigned char ch2 );
 
 #ifdef __cplusplus
 }
+#endif
+
+
+#ifdef _UNICODE
+#define my_splitpath_t my_splitpath_w
+#else
+#define my_splitpath_t my_splitpath
 #endif
