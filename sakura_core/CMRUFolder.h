@@ -54,13 +54,13 @@ public:
 	BOOL DestroyMenu( HMENU hMenu );
 	
 	//	フォルダ名の一覧を教えて
-	void GetPathList( char** ppszMRU );	//	ppszMRUにはフォルダ名をコピーしません。変更しないでね☆
+	void GetPathList( TCHAR** ppszMRU );	//	ppszMRUにはフォルダ名をコピーしません。変更しないでね☆
 
 	//	アクセス関数
 	int Length();	//	アイテムの数。
 	void ClearAll();					//	アイテムを削除～。
-	void Add( const char* pszFolder );	//	pszFolderを追加する。
-	const char* GetPath(int num);
+	void Add( const TCHAR* pszFolder );	//	pszFolderを追加する。
+	const TCHAR* GetPath(int num);
 
 protected:
 
@@ -68,7 +68,7 @@ protected:
 	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
 
 private:
-	CRecent	m_cRecent;	//履歴	//@@@ 2003.04.08 MIK
+	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
 };
 
 #endif

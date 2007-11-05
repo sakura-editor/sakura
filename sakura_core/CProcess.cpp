@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "CProcess.h"
 #include "debug.h"
-#include "etc_uty.h"
 
 /*!
 	@brief プロセス基底クラス
@@ -27,11 +26,11 @@
 */
 CProcess::CProcess(
 	HINSTANCE	hInstance,		//!< handle to process instance
-	LPSTR		lpCmdLine		//!< pointer to command line
-) :
-	m_hInstance( hInstance ),
-	m_CommandLine( lpCmdLine ),
-	m_hWnd( 0 )
+	LPTSTR		lpCmdLine		//!< pointer to command line
+)
+: m_hInstance( hInstance )
+, m_CommandLine( lpCmdLine )
+, m_hWnd( 0 )
 {
 }
 
@@ -49,7 +48,6 @@ bool CProcess::Initialize()
 			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
 		return false;
 	}
-	m_pShareData = m_cShareData.GetShareData();
 
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
@@ -66,7 +64,8 @@ bool CProcess::Initialize()
 */
 bool CProcess::Run(void)
 {
-	if( true == Initialize() ){
+	if( Initialize() )
+	{
 		MainLoop() ;
 		Terminate();
 		return true;

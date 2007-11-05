@@ -31,15 +31,23 @@ class CError_FileWrite
 };
 
 //! ファイル書き込みクラス（Cのライブラリ関数を使用して実装）
+// 2007.08.23 kobake デストラクタと同じ処理をClose関数からも呼べるようにしました。Close後のWriteは禁止です。
 class CFileWrite
 {
 public:
 	CFileWrite(const TCHAR* pszPath);
 	~CFileWrite();
+	void Close();
 	inline void Write(const void* buffer,size_t size)
 	{
+		assert(m_hFile);
 		if(::fwrite(buffer,1,size,m_hFile)!=size)
 			throw CError_FileWrite();
+	}
+	//※終端'\0'は出力しない
+	inline void WriteSz(const char* szData)
+	{
+		Write(szData,strlen(szData));
 	}
 private:
 	FILE* m_hFile;

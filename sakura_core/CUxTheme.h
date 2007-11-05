@@ -52,7 +52,7 @@ public:
 protected:
 	bool m_bInitialized;
 
-	bool Init( char* str = NULL );
+	bool Init( TCHAR* str = NULL );
 	virtual int InitDll( void );
 	virtual LPCTSTR GetDllName( LPCTSTR );
 

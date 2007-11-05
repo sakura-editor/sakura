@@ -18,44 +18,45 @@ class COpe;
 
 class CMemory;// 2002/2/10 aroka
 
+
+// アンドゥバッファ用 操作コード
+enum EOpeCode {
+	OPE_UNKNOWN		= 0,
+	OPE_INSERT		= 1,
+	OPE_DELETE		= 2,
+	OPE_MOVECARET	= 3,
+};
+
+
 /*!
-	@brief 編集操作要素
+	編集操作要素
 	
 	Undoのためにに操作手順を記録するために用いる。
 	1オブジェクトが１つの操作を表す。
 */
+//2007.10.17 kobake 解放漏れを防ぐため、データをポインタではなくインスタンス実体で持つように変更
 class COpe {
-	public:
-		COpe();		/* COpeクラス構築 */
-		~COpe();	/* COpeクラス消滅 */
+public:
+	COpe(EOpeCode eCode = OPE_UNKNOWN);		/* COpeクラス構築 */
+	~COpe();	/* COpeクラス消滅 */
 
-		void DUMP( void );	/* 編集操作要素のダンプ */
+	void DUMP( void );	/* 編集操作要素のダンプ */
 
-		int		m_nOpe;			/* 操作種別 */
+	EOpeCode	GetCode() const{ return m_nOpe; }
 
-//- 1999.12.22 メモリ食う
-//-		int		m_nCaretPosX_Before;	/* 操作前のキャレット位置Ｘ */
-//-		int		m_nCaretPosY_Before;	/* 操作前のキャレット位置Ｙ */
-//-		int		m_nCaretPosX_To;		/* 操作前のキャレット位置Ｘ To */
-//-		int		m_nCaretPosY_To;		/* 操作前のキャレット位置Ｙ To */
-//-		int		m_nCaretPosX_After; 	/* 操作後のキャレット位置Ｘ */
-//-		int		m_nCaretPosY_After; 	/* 操作後のキャレット位置Ｙ */
+private:
+	EOpeCode	m_nOpe;						//!< 操作種別
 
-		int		m_nCaretPosX_PHY_Before;	/* カーソル位置 改行単位行先頭からのバイト数（０開始） */
-		int		m_nCaretPosY_PHY_Before;	/* カーソル位置 改行単位行の行番号（０開始） */
-		int		m_nCaretPosX_PHY_To;		/* 操作前のキャレット位置Ｘ To 改行単位行先頭からのバイト数（０開始）*/
-		int		m_nCaretPosY_PHY_To;		/* 操作前のキャレット位置Ｙ To 改行単位行の行番号（０開始）*/
-		int		m_nCaretPosX_PHY_After;		/* カーソル位置 改行単位行先頭からのバイト数（０開始） */
-		int		m_nCaretPosY_PHY_After;		/* カーソル位置 改行単位行の行番号（０開始） */
+public:
+	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< キャレット位置。文字単位。
+	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。
+	CLogicPoint	m_ptCaretPos_PHY_After;		//!< キャレット位置。文字単位。
 
-
-		int		m_nDataLen;					/* 操作に関連するデータのサイズ */
-		CMemory*	m_pcmemData;			/* 操作に関連するデータ */
-
-	public:
-	private:
+	CLogicInt	m_nDataLen;					//!< 操作に関連するデータのサイズ
+	CNativeW2	m_pcmemData;				//!< 操作に関連するデータ
 };
 
+typedef COpe* PCOpe;
 
 
 ///////////////////////////////////////////////////////////////////////

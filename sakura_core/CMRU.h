@@ -37,13 +37,8 @@ class CMRU;
 #define _CMRU_H_
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
-#include "CRecent.h"
+#include "CRecentFile.h"
 struct FileInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
-
-/*	MRUリストに関係するmaxdata	*/
-enum MRU_maxdata{
-	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
-};
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRU{
@@ -57,13 +52,13 @@ public:
 	BOOL DestroyMenu( HMENU hMenu );
 	
 	//	ファイル名の一覧を教えて
-	void GetPathList( char** ppszMRU );	//	ppszMRUにはファイル名をコピーしません。変更しないでね☆
+	void GetPathList( TCHAR** ppszMRU );	//	ppszMRUにはファイル名をコピーしません。変更しないでね☆
 
 	//	アクセス関数
 	int Length(void);	//	アイテムの数。
 	void ClearAll(void);//	アイテムを削除～。
 	BOOL GetFileInfo( int num, FileInfo* pfi );				//	番号で指定したFileInfo（情報をまるごと）
-	BOOL GetFileInfo( const char* pszPath, FileInfo* pfi );	//	ファイル名で指定したFileInfo（情報をまるごと）
+	BOOL GetFileInfo( const TCHAR* pszPath, FileInfo* pfi );	//	ファイル名で指定したFileInfo（情報をまるごと）
 	void Add( FileInfo* pFileInfo );		//	*pFileInfoを追加する。
 
 protected:
@@ -72,7 +67,7 @@ protected:
 	bool IsRemovableDrive( const char* pszDrive );
 
 private:
-	CRecent	m_cRecent;	//履歴	//@@@ 2003.04.08 MIK
+	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 
 };
 #endif

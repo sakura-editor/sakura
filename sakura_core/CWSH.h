@@ -55,8 +55,8 @@ public:
 };
 
 //WSHˆê”Ê
-
-typedef HRESULT (*CInterfaceObjectMethod)(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
+enum EFunctionCode;
+typedef HRESULT (*CInterfaceObjectMethod)(EFunctionCode ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 
 class CWSHClient;
@@ -69,11 +69,11 @@ private:
 public:
 	struct CMethodInfo
 	{
-		FUNCDESC Desc;
-		wchar_t Name[64];
-		CInterfaceObjectMethod Method;
-		ELEMDESC Arguments[8];
-		int ID;
+		FUNCDESC				Desc;
+		wchar_t					Name[64];
+		CInterfaceObjectMethod	Method;
+		ELEMDESC				Arguments[8];
+		EFunctionCode			ID;
 	};
 	typedef std::vector<CMethodInfo> CMethodInfoList;
 	CMethodInfoList m_Methods;
@@ -81,7 +81,7 @@ public:
 	
 	CInterfaceObject(CWSHClient *AOwner);
 	~CInterfaceObject();
-	void AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, int ArgumentCount, VARTYPE ResultType, 
+	void AddMethod(wchar_t *Name, EFunctionCode ID, VARTYPE *ArgumentTypes, int ArgumentCount, VARTYPE ResultType, 
 					CInterfaceObjectMethod Method);
 	void ReserveMethods(int Count)
 	{

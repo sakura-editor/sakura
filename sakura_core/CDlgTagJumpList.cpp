@@ -44,10 +44,11 @@
 #include "CSortedTagJumpList.h"
 //#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "CRecent.h"
-#include "etc_uty.h"
 #include "debug.h"
 #include "my_icmp.h"
 #include "charcode.h"  // 2006.06.28 rastiv
+#include "util/shell.h"
+#include "util/file.h"
 
 #include "sakura.hh"
 const DWORD p_helpids[] = {
@@ -63,36 +64,36 @@ const DWORD p_helpids[] = {
 /*
 	ctags.exe が出力する、拡張子と対応する種類
 */
-static const char *p_extentions[] = {
-	/*asm*/			"asm,s",								"d=define,l=label,m=macro,t=type",
-	/*asp*/			"asp,asa",								"f=function,s=sub",
-	/*awk*/			"awk,gawk,mawk",						"f=function",
-	/*beta*/		"bet",									"f=fragment,p=pattern,s=slot,v=virtual",
-	/*c*/			"c,h",									"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*c++*/			"c++,cc,cp,cpp,cxx,h++,hh,hp,hpp,hxx",	"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*java*/		"java",									"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*vera*/		"vr,vri,vrh",							"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*cobol*/		"cbl,cob",								"d=data,f=file,g=group,p=paragraph,P=program,s=section",
-	/*eiffel*/		"e",									"c=class,f=feature,l=local",
-	/*fortran*/		"f,for,ftn,f77,f90,f95",				"b=block data,c=common,e=entry,f=function,i=interface,k=component,l=label,L=local,m=module,n=namelist,p=program,s=subroutine,t=type,v=variable",
-	/*lisp*/		"cl,clisp,el,l,lisp,lsp,ml",			"f=function",
-	/*lua*/			"lua",									"f=function",
-	/*makefile*/	"mak",									"m=macro",
-	/*pascal*/		"p,pas",								"f=function,p=procedure",
-	/*perl*/		"pl,pm,perl",							"s=subroutine,p=package",
-	/*php*/			"php,php3,phtml",						"c=class,f=function",
-	/*python*/		"py,python",							"c=class,f=function,m=member",
-	/*rexx*/		"cmd,rexx,rx",							"s=subroutine",
-	/*ruby*/		"rb",									"c=class,f=method,F=singleton method,m=mixin",
-	/*scheme*/		"sch,scheme,scm,sm",					"f=function,s=set",
-	/*sh*/			"sh,bsh,bash,ksh,zsh",					"f=function",
-	/*slang*/		"sl",									"f=function,n=namespace",
-	/*sql*/			"sql",									"c=cursor,d=prototype,f=function,F=field,l=local,P=package,p=procedure,r=record,s=subtype,t=table,T=trigger,v=variable",
-	/*tcl*/			"tcl,tk,wish,itcl",						"p=procedure,c=class,f=method",
-	/*verilog*/		"v",									"f=function,m=module,P=parameter,p=port,r=reg,t=task,v=variable,w=wire",
-	/*vim*/			"vim",									"f=function,v=variable",
-	/*yacc*/		"y",									"l=label",
-//	/*vb*/			"bas,cls,ctl,dob,dsr,frm,pag",			"a=attribute,c=class,f=function,l=label,s=procedure,v=variable",
+static const TCHAR *p_extentions[] = {
+	/*asm*/			_T("asm,s"),								_T("d=define,l=label,m=macro,t=type"),
+	/*asp*/			_T("asp,asa"),								_T("f=function,s=sub"),
+	/*awk*/			_T("awk,gawk,mawk"),						_T("f=function"),
+	/*beta*/		_T("bet"),									_T("f=fragment,p=pattern,s=slot,v=virtual"),
+	/*c*/			_T("c,h"),									_T("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*c++*/			_T("c++,cc,cp,cpp,cxx,h++,hh,hp,hpp,hxx"),	_T("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*java*/		_T("java"),								_T("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*vera*/		_T("vr,vri,vrh"),							_T("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*cobol*/		_T("cbl,cob"),								_T("d=data,f=file,g=group,p=paragraph,P=program,s=section"),
+	/*eiffel*/		_T("e"),									_T("c=class,f=feature,l=local"),
+	/*fortran*/		_T("f,for,ftn,f77,f90,f95"),				_T("b=block data,c=common,e=entry,f=function,i=interface,k=component,l=label,L=local,m=module,n=namelist,p=program,s=subroutine,t=type,v=variable"),
+	/*lisp*/		_T("cl,clisp,el,l,lisp,lsp,ml"),			_T("f=function"),
+	/*lua*/			_T("lua"),									_T("f=function"),
+	/*makefile*/	_T("mak"),									_T("m=macro"),
+	/*pascal*/		_T("p,pas"),								_T("f=function,p=procedure"),
+	/*perl*/		_T("pl,pm,perl"),							_T("s=subroutine,p=package"),
+	/*php*/			_T("php,php3,phtml"),						_T("c=class,f=function"),
+	/*python*/		_T("py,python"),							_T("c=class,f=function,m=member"),
+	/*rexx*/		_T("cmd,rexx,rx"),							_T("s=subroutine"),
+	/*ruby*/		_T("rb"),									_T("c=class,f=method,F=singleton method,m=mixin"),
+	/*scheme*/		_T("sch,scheme,scm,sm"),					_T("f=function,s=set"),
+	/*sh*/			_T("sh,bsh,bash,ksh,zsh"),					_T("f=function"),
+	/*slang*/		_T("sl"),									_T("f=function,n=namespace"),
+	/*sql*/			_T("sql"),									_T("c=cursor,d=prototype,f=function,F=field,l=local,P=package,p=procedure,r=record,s=subtype,t=table,T=trigger,v=variable"),
+	/*tcl*/			_T("tcl,tk,wish,itcl"),					_T("p=procedure,c=class,f=method"),
+	/*verilog*/		_T("v"),									_T("f=function,m=module,P=parameter,p=port,r=reg,t=task,v=variable,w=wire"),
+	/*vim*/			_T("vim"),									_T("f=function,v=variable"),
+	/*yacc*/		_T("y"),									_T("l=label"),
+//	/*vb*/			_T("bas,cls,ctl,dob,dsr,frm,pag"),			_T("a=attribute,c=class,f=function,l=label,s=procedure,v=variable"),
 					NULL,									NULL
 };
 
@@ -132,7 +133,7 @@ CDlgTagJumpList::~CDlgTagJumpList()
 void CDlgTagJumpList::StopTimer( void )
 {
 	if( m_nTimerId != 0 ){
-		::KillTimer( m_hWnd, m_nTimerId );
+		::KillTimer( GetHwnd(), m_nTimerId );
 		m_nTimerId = 0;
 	}
 }
@@ -149,7 +150,7 @@ void CDlgTagJumpList::StopTimer( void )
 void CDlgTagJumpList::StartTimer( void )
 {
 	StopTimer();
-	m_nTimerId = ::SetTimer( m_hWnd, 12345, TAGJUMP_TIMER_DELAY, NULL );
+	m_nTimerId = ::SetTimer( GetHwnd(), 12345, TAGJUMP_TIMER_DELAY, NULL );
 }
 
 /*!
@@ -187,25 +188,24 @@ void CDlgTagJumpList::SetData( void )
 	if( 0 != m_lParam )
 	{
 		HWND hwndKey;
-		hwndKey = ::GetDlgItem( m_hWnd, IDC_KEYWORD );
+		hwndKey = ::GetDlgItem( GetHwnd(), IDC_KEYWORD );
 
 		m_bTagJumpICase = m_pShareData->m_bTagJumpICase;
-		::CheckDlgButton( m_hWnd, IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
 		m_bTagJumpAnyWhere = m_pShareData->m_bTagJumpAnyWhere;
-		::CheckDlgButton( m_hWnd, IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
 		::SendMessage( hwndKey, CB_LIMITTEXT, (WPARAM)_MAX_PATH-1, 0 );
-		CRecent cRecent;
-		cRecent.EasyCreate( RECENT_FOR_TAGJUMP_KEYWORD );
-		for( int i = 0; i < cRecent.GetItemCount(); i++ ){
-			::SendMessage( hwndKey, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)cRecent.GetItem(i) );
+		CRecentTagjumpKeyword cRecentTagJump;
+		for( int i = 0; i < cRecentTagJump.GetItemCount(); i++ ){
+			Combo_AddString( hwndKey, cRecentTagJump.GetItemText(i) );
 		}
 		if( m_pszKeyword != NULL ){
-			::SetDlgItemText( m_hWnd, IDC_KEYWORD, m_pszKeyword );
+			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
-		else if( cRecent.GetItemCount() > 0 ){
-			::SendMessage( hwndKey, CB_SETCURSEL, 0, 0 );
+		else if( cRecentTagJump.GetItemCount() > 0 ){
+			::SendMessageAny( hwndKey, CB_SETCURSEL, 0, 0 );
 		}
-		cRecent.Terminate();
+		cRecentTagJump.Terminate();
 		StartTimer();
 	}
 	//	To Here 2005.04.03 MIK 設定値の読み込み
@@ -222,16 +222,15 @@ void CDlgTagJumpList::UpdateData( void )
 {
 	HWND	hwndList;
 	LV_ITEM	lvi;
-	char	tmp[32];
 	int		nIndex;
-	char	*p;
 	int		count;
 
-	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST_TAGJUMP );
+	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
 	ListView_DeleteAllItems( hwndList );
 
 	count = m_cList.GetCount();
 
+	TCHAR	tmp[32];
 	for( nIndex = 0; nIndex < count; nIndex++ )
 	{
 		CSortedTagJumpList::TagJumpInfo* item;
@@ -244,12 +243,13 @@ void CDlgTagJumpList::UpdateData( void )
 		lvi.pszText  = item->keyword;
 		ListView_InsertItem( hwndList, &lvi );
 
-		wsprintf( tmp, "%d", item->depth );
+		auto_sprintf( tmp, _T("%d"), item->depth );
 		ListView_SetItemText( hwndList, nIndex, 1, tmp );
 
-		wsprintf( tmp, "%d", item->no );
+		auto_sprintf( tmp, _T("%d"), item->no );
 		ListView_SetItemText( hwndList, nIndex, 2, tmp );
 
+		TCHAR	*p;
 		p = GetNameByType( item->type, item->filename );
 		ListView_SetItemText( hwndList, nIndex, 3, p );
 		free( p );
@@ -267,13 +267,13 @@ void CDlgTagJumpList::UpdateData( void )
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = nIndex;
 		lvi.iSubItem = 0;
-		lvi.pszText  = "(通知)";
+		lvi.pszText  = _T("(通知)");
 		ListView_InsertItem( hwndList, &lvi );
-		ListView_SetItemText( hwndList, nIndex, 1, "" );
-		ListView_SetItemText( hwndList, nIndex, 2, "" );
-		ListView_SetItemText( hwndList, nIndex, 3, "" );
-		ListView_SetItemText( hwndList, nIndex, 4, "(これ以降は切り捨てました)" );
-		ListView_SetItemText( hwndList, nIndex, 5, "" );
+		ListView_SetItemText( hwndList, nIndex, 1, _T("") );
+		ListView_SetItemText( hwndList, nIndex, 2, _T("") );
+		ListView_SetItemText( hwndList, nIndex, 3, _T("") );
+		ListView_SetItemText( hwndList, nIndex, 4, _T("(これ以降は切り捨てました)") );
+		ListView_SetItemText( hwndList, nIndex, 5, _T("") );
 	}
 
 	m_nIndex = SearchBestTag();
@@ -296,7 +296,7 @@ int CDlgTagJumpList::GetData( void )
 {
 	HWND	hwndList;
 
-	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST_TAGJUMP );
+	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
 	m_nIndex = ListView_GetNextItem( hwndList, -1, LVIS_SELECTED );
 	if( m_nIndex == -1 || m_nIndex >= m_cList.GetCapacity() ) return FALSE;
 
@@ -306,14 +306,13 @@ int CDlgTagJumpList::GetData( void )
 		m_pShareData->m_bTagJumpICase = m_bTagJumpICase;
 		m_pShareData->m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
 
-		char	tmp[MAX_TAG_STRING_LENGTH];
-		strcpy( tmp, "" );
-		::GetDlgItemText( m_hWnd, IDC_KEYWORD, tmp, sizeof( tmp ) / sizeof( char ) );
+		wchar_t	tmp[MAX_TAG_STRING_LENGTH];
+		wcscpy( tmp, L"" );
+		::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, _countof( tmp ) );
 		SetKeyword( tmp );
 
 		//設定を保存
-		CRecent cRecentTagJumpKeyword;
-		cRecentTagJumpKeyword.EasyCreate( RECENT_FOR_TAGJUMP_KEYWORD );
+		CRecentTagjumpKeyword cRecentTagJumpKeyword;
 		cRecentTagJumpKeyword.AppendItem( m_pszKeyword );
 		cRecentTagJumpKeyword.Terminate();
 	}
@@ -334,7 +333,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	long		lngStyle;
 	BOOL		bRet;
 
-	m_hWnd = hwndDlg;
+	_SetHwnd( hwndDlg );
 
 	//リストビューの表示位置を取得する。
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_TAGJUMP );
@@ -345,71 +344,71 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 19 / 100;
-	col.pszText  = "キーワード";
+	col.pszText  = _T("キーワード");
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_CENTER;
 	col.cx       = (rc.right - rc.left) * 6 / 100;
-	col.pszText  = "階層";
+	col.pszText  = _T("階層");
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_RIGHT;
 	col.cx       = (rc.right - rc.left) * 8 / 100;
-	col.pszText  = "行番号";
+	col.pszText  = _T("行番号");
 	col.iSubItem = 2;
 	ListView_InsertColumn( hwndList, 2, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 9 / 100;
-	col.pszText  = "種類";
+	col.pszText  = _T("種類");
 	col.iSubItem = 3;
 	ListView_InsertColumn( hwndList, 3, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 35 / 100;
-	col.pszText  = "ファイル名";
+	col.pszText  = _T("ファイル名");
 	col.iSubItem = 4;
 	ListView_InsertColumn( hwndList, 4, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 20 / 100;
-	col.pszText  = "備考";
+	col.pszText  = _T("備考");
 	col.iSubItem = 5;
 	ListView_InsertColumn( hwndList, 5, &col );
 
 	/* 行選択 */
-	lngStyle = ::SendMessage( hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	lngStyle = ::SendMessageAny( hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
 	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	::SendMessageAny( hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
 
 	HWND hwndKey;
-	hwndKey = ::GetDlgItem( m_hWnd, IDC_KEYWORD );
+	hwndKey = ::GetDlgItem( GetHwnd(), IDC_KEYWORD );
 	if( m_lParam == 0 ){
 		//標準
-		::ShowWindow( ::GetDlgItem( m_hWnd, IDC_STATIC_KEYWORD ), FALSE );
+		::ShowWindow( ::GetDlgItem( GetHwnd(), IDC_STATIC_KEYWORD ), FALSE );
 		::ShowWindow( hwndKey, FALSE );
-		::ShowWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_ICASE ), FALSE );
-		::ShowWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_ANYWHERE ), FALSE );
+		::ShowWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_ICASE ), FALSE );
+		::ShowWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_ANYWHERE ), FALSE );
 		bRet = TRUE;
 	}else{
 		//キーワード指定
-		::ShowWindow( ::GetDlgItem( m_hWnd, IDC_STATIC_KEYWORD ), TRUE );
+		::ShowWindow( ::GetDlgItem( GetHwnd(), IDC_STATIC_KEYWORD ), TRUE );
 		::ShowWindow( hwndKey, TRUE );
-		::ShowWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_ICASE ), TRUE );
-		::ShowWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_ANYWHERE ), TRUE );
+		::ShowWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_ICASE ), TRUE );
+		::ShowWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_ANYWHERE ), TRUE );
 		::SetFocus( hwndKey );
 		bRet = FALSE;	//for set focus
 	}
 
 	/* 基底クラスメンバ */
-	CDialog::OnInitDialog( m_hWnd, wParam, lParam );
+	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 	
 	return bRet;
 }
@@ -420,29 +419,29 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
-		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_TAGJUMP_LIST ) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( GetHwnd(), m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_TAGJUMP_LIST ) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 
 	case IDOK:			/* 左右に表示 */
 		StopTimer();
 		/* ダイアログデータの取得 */
-		::EndDialog( m_hWnd, (BOOL)GetData() );
+		::EndDialog( GetHwnd(), (BOOL)GetData() );
 		return TRUE;
 
 	case IDCANCEL:
 		StopTimer();
-		::EndDialog( m_hWnd, FALSE );
+		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
 
 	// From Here 2005.04.03 MIK 検索条件設定
 	case IDC_CHECK_ICASE:
 		StartTimer();
-		m_bTagJumpICase = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_ICASE ) == BST_CHECKED ? TRUE : FALSE;
+		m_bTagJumpICase = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_ICASE ) == BST_CHECKED ? TRUE : FALSE;
 		return TRUE;
 
 	case IDC_CHECK_ANYWHERE:
 		StartTimer();
-		m_bTagJumpAnyWhere = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_ANYWHERE ) == BST_CHECKED ? TRUE : FALSE;
+		m_bTagJumpAnyWhere = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_ANYWHERE ) == BST_CHECKED ? TRUE : FALSE;
 		return TRUE;
 	// To Here 2005.04.03 MIK 検索条件設定
 	}
@@ -458,7 +457,7 @@ BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 
 	pNMHDR = (NMHDR*)lParam;
 
-	hwndList = GetDlgItem( m_hWnd, IDC_LIST_TAGJUMP );
+	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
 
 	//	候補一覧リストボックス
 	if( hwndList == pNMHDR->hwndFrom )
@@ -470,7 +469,7 @@ BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 			if( m_nIndex == -1 || m_nIndex >= m_cList.GetCount() ) return TRUE;
 
 			StopTimer();
-			::EndDialog( m_hWnd, GetData() );
+			::EndDialog( GetHwnd(), GetData() );
 			return TRUE;
 
 		}
@@ -489,9 +488,9 @@ BOOL CDlgTagJumpList::OnTimer( WPARAM wParam )
 {
 	StopTimer();
 
-	char	szKey[ MAX_TAG_STRING_LENGTH ];
-	strcpy( szKey, "" );
-	::GetDlgItemText( m_hWnd, IDC_KEYWORD, szKey, sizeof( szKey ) );
+	wchar_t	szKey[ MAX_TAG_STRING_LENGTH ];
+	wcscpy( szKey, L"" );
+	::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, _countof( szKey ) );
 	find_key( szKey );
 	UpdateData();
 
@@ -534,7 +533,7 @@ LPVOID CDlgTagJumpList::GetHelpIdTable( void )
 	return (LPVOID)p_helpids;
 }
 
-bool CDlgTagJumpList::AddParam( char *s0, char *s1, int n2, char *s3, char *s4, int depth )
+bool CDlgTagJumpList::AddParam( TCHAR *s0, TCHAR *s1, int n2, TCHAR *s3, TCHAR *s4, int depth )
 {
 	if( -1 == m_nIndex ) m_nIndex = 0;	//規定値
 
@@ -543,7 +542,7 @@ bool CDlgTagJumpList::AddParam( char *s0, char *s1, int n2, char *s3, char *s4, 
 	return true;
 }
 
-bool CDlgTagJumpList::GetSelectedParam( char *s0, char *s1, int *n2, char *s3, char *s4, int *depth )
+bool CDlgTagJumpList::GetSelectedParam( TCHAR *s0, TCHAR *s1, int *n2, TCHAR *s3, TCHAR *s4, int *depth )
 {
 	if( -1 == m_nIndex || m_nIndex >= m_cList.GetCount() ) return false;
 
@@ -552,58 +551,58 @@ bool CDlgTagJumpList::GetSelectedParam( char *s0, char *s1, int *n2, char *s3, c
 	return true;
 }
 
-char *CDlgTagJumpList::GetNameByType( const char type, const char *name )
+TCHAR *CDlgTagJumpList::GetNameByType( const TCHAR type, const TCHAR *name )
 {
-	const char	*p;
-	char	*token;
+	const TCHAR	*p;
+	TCHAR	*token;
 	int		i;
 	//	2005.03.31 MIK
-	char	tmp[MAX_TAG_STRING_LENGTH];
+	TCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
-	p = strrchr( name, '.' );
-	if( ! p ) p = ".c";	//見つからないときは ".c" と想定する。
+	p = _tcsrchr( name, _T('.') );
+	if( ! p ) p = _T(".c");	//見つからないときは ".c" と想定する。
 	p++;
 
 	for( i = 0; p_extentions[i]; i += 2 )
 	{
-		strcpy( tmp, p_extentions[i] );
-		token = strtok( tmp, "," );
+		_tcscpy( tmp, p_extentions[i] );
+		token = _tcstok( tmp, _T(",") );
 		while( token )
 		{
-			if( stricmp( p, token ) == 0 )
+			if( _tcsicmp( p, token ) == 0 )
 			{
-				strcpy( tmp, p_extentions[i+1] );
-				token = strtok( tmp, "," );
+				_tcscpy( tmp, p_extentions[i+1] );
+				token = _tcstok( tmp, _T(",") );
 				while( token )
 				{
 					if( token[0] == type )
 					{
-						return strdup( &token[2] );
+						return _tcsdup( &token[2] );
 					}
 
-					token = strtok( NULL, "," );
+					token = _tcstok( NULL, _T(",") );
 				}
 
-				return strdup( "" );
+				return _tcsdup( _T("") );
 			}
 
-			token = strtok( NULL, "," );
+			token = _tcstok( NULL, _T(",") );
 		}
 	}
 
-	return strdup( "" );
+	return _tcsdup( _T("") );
 }
 
 /*!
 	与えられたファイル名と，そこに含まれるディレクトリの深さを設定する．
 */
-void CDlgTagJumpList::SetFileName( const char *pszFileName )
+void CDlgTagJumpList::SetFileName( const TCHAR *pszFileName )
 {
 	if( NULL == pszFileName ) return;
 
 	if( m_pszFileName ) free( m_pszFileName );
 
-	m_pszFileName = strdup( pszFileName );
+	m_pszFileName = _tcsdup( pszFileName );
 
 	m_nLoop = CalcDirectoryDepth( m_pszFileName );
 	if( m_nLoop <  0 ) m_nLoop =  0;
@@ -616,13 +615,13 @@ void CDlgTagJumpList::SetFileName( const char *pszFileName )
 	検索キーワードの設定
 
 */
-void CDlgTagJumpList::SetKeyword( const char *pszKeyword )
+void CDlgTagJumpList::SetKeyword( const wchar_t *pszKeyword )
 {
 	if( NULL == pszKeyword ) return;
 
 	if( m_pszKeyword ) free( m_pszKeyword );
 
-	m_pszKeyword = strdup( pszKeyword );
+	m_pszKeyword = wcsdup( pszKeyword );
 
 	return;
 }
@@ -639,17 +638,17 @@ int CDlgTagJumpList::SearchBestTag( void )
 	if( m_cList.GetCount() <= 0 ) return -1;	//選べません。
 	if( NULL == m_pszFileName ) return 0;
 
-	char	szFileSrc[1024];
-	char	szFileDst[1024];
-	char	szExtSrc[1024];
-	char	szExtDst[1024];
+	TCHAR	szFileSrc[1024];
+	TCHAR	szFileDst[1024];
+	TCHAR	szExtSrc[1024];
+	TCHAR	szExtDst[1024];
 	int		nMatch = -1;
 	int		i;
 	int		count;
 
-	strcpy( szFileSrc, "" );
-	strcpy( szExtSrc,  "" );
-	_splitpath( m_pszFileName, NULL, NULL, szFileSrc, szExtSrc );
+	_tcscpy( szFileSrc, _T("") );
+	_tcscpy( szExtSrc,  _T("") );
+	_tsplitpath( m_pszFileName, NULL, NULL, szFileSrc, szExtSrc );
 
 	count = m_cList.GetCount();
 
@@ -658,13 +657,13 @@ int CDlgTagJumpList::SearchBestTag( void )
 		CSortedTagJumpList::TagJumpInfo* item;
 		item = m_cList.GetPtr( i );
 
-		strcpy( szFileDst, "" );
-		strcpy( szExtDst,  "" );
-		_splitpath( item->filename, NULL, NULL, szFileDst, szExtDst );
+		_tcscpy( szFileDst, _T("") );
+		_tcscpy( szExtDst,  _T("") );
+		_tsplitpath( item->filename, NULL, NULL, szFileDst, szExtDst );
 		
-		if( stricmp( szFileSrc, szFileDst ) == 0 )
+		if( _tcsicmp( szFileSrc, szFileDst ) == 0 )
 		{
-			if( stricmp( szExtSrc, szExtDst ) == 0 ) return i;
+			if( _tcsicmp( szExtSrc, szExtDst ) == 0 ) return i;
 			if( nMatch == -1 ) nMatch = i;
 		}
 	}
@@ -680,14 +679,16 @@ int CDlgTagJumpList::SearchBestTag( void )
 
 	@date 2007.03.13 genta バッファオーバーラン暫定対処でバッファサイズ変更
 */
-void CDlgTagJumpList::find_key( const char* keyword )
+void CDlgTagJumpList::find_key( const wchar_t* _keyword )
 {
-	char	szCurrentPath[1024];	//カレントフォルダ
-	char	szTagFile[1024];		//タグファイル
-	char	szLineData[1024];		//行バッファ
-	char	s[5][1024];
+	const TCHAR* keyword = to_tchar(_keyword);
+
+	TCHAR	szCurrentPath[1024];	//カレントフォルダ
+	TCHAR	szTagFile[1024];		//タグファイル
+	TCHAR	szLineData[1024];		//行バッファ
+	TCHAR	s[5][1024];
 	int		n2;
-	int	length = strlen( keyword );
+	int	length = _tcslen( keyword );
 	int	nMatch;
 	int	i;
 	FILE*	fp;
@@ -698,27 +699,28 @@ void CDlgTagJumpList::find_key( const char* keyword )
 
 	if( length == 0 ) return;
 
-	strcpy( szCurrentPath, GetFilePath() );
-	szCurrentPath[ strlen( szCurrentPath ) - strlen( GetFileName() ) ] = '\0';
+	_tcscpy( szCurrentPath, GetFilePath() );
+	szCurrentPath[ _tcslen( szCurrentPath ) - _tcslen( GetFileName() ) ] = _T('\0');
 
 	for( i = 0; i <= m_nLoop; i++ )
 	{
 		//タグファイル名を作成する。
-		wsprintf( szTagFile, "%s%s", szCurrentPath, TAG_FILENAME );
+		auto_sprintf( szTagFile, _T("%ls%ls"), szCurrentPath, TAG_FILENAME );
 
 		//タグファイルを開く。
-		fp = fopen( szTagFile, "r" );
+		fp = _tfopen( szTagFile, _T("r") );
 		if( fp )
 		{
 			nMatch = 0;
-			while( fgets( szLineData, sizeof( szLineData ), fp ) )
+			while( _fgetts( szLineData, _countof( szLineData ), fp ) )
 			{
-				if( szLineData[0] <= '!' ) goto next_line;	//コメントならスキップ
+				if( szLineData[0] <= L'!' ) goto next_line;	//コメントならスキップ
 				//chop( szLineData );
 
-				s[0][0] = s[1][0] = s[2][0] = s[3][0] = s[4][0] = '\0';
+				s[0][0] = s[1][0] = s[2][0] = s[3][0] = s[4][0] = _T('\0');
 				n2 = 0;
-				nRet = sscanf( szLineData, 
+				nRet = _stscanf(
+					szLineData, 
 					TAG_FORMAT,	//tagsフォーマット
 					s[0], s[1], &n2, s[3], s[4]
 					);
@@ -727,21 +729,22 @@ void CDlgTagJumpList::find_key( const char* keyword )
 
 				if( m_bTagJumpAnyWhere ){
 					if( m_bTagJumpICase )
-						cmp = strstri( s[0], keyword ) != NULL ? 0 : -1;
+						cmp = _tcsistr_j( s[0], keyword ) != NULL ? 0 : -1;
 					else
-						cmp = strstr( s[0], keyword ) != NULL ? 0 : -1;
+						cmp = _tcsstr( s[0], keyword ) != NULL ? 0 : -1;
 				}else{
 					if( m_bTagJumpICase )
-						cmp = strnicmp( s[0], keyword, length );
+						cmp = _tcsnicmp( s[0], keyword, length );
 					else
-						cmp = strncmp( s[0], keyword, length );
+						cmp = _tcsncmp( s[0], keyword, length );
 				}
 
 				if( 0 == cmp )
 				{
 					m_cList.AddParam( s[0], s[1], n2, s[3][0], s[4], i );
 					nMatch++;
-				}else if( 0 < cmp ){
+				}
+				else if( 0 < cmp ){
 					//	tagsはソートされているので，先頭からのcase sensitiveな
 					//	比較結果によって検索の時は処理の打ち切りが可能
 					//	2005.04.05 MIK バグ修正
@@ -757,28 +760,16 @@ next_line:
 
 		}
 		
-		strcat( szCurrentPath, "..\\" );
+		_tcscat( szCurrentPath, _T("..\\") );
 	}
 }
 
 /*!
 	パスからファイル名部分のみを取り出す．(2バイト対応)
 */
-const char * CDlgTagJumpList::GetFileName( void )
+const TCHAR* CDlgTagJumpList::GetFileName( void )
 {
-	const char *p, *pszName;
-	pszName = p = GetFilePath();
-	while( *p != '\0'  ){
-		if( _IS_SJIS_1( (unsigned char)*p ) && _IS_SJIS_2( (unsigned char)p[1] ) ){
-			p+=2;
-		}else if( *p == '\\' ){
-			pszName = p + 1;
-			p++;
-		}else{
-			p++;
-		}
-	}
-	return pszName;
+	return GetFileTitlePointer(GetFilePath());
 }
 
 /*[EOF]*/
