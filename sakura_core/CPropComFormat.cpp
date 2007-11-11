@@ -17,8 +17,8 @@
 
 #include "stdafx.h"
 #include "CPropCommon.h"
-#include "etc_uty.h"
 #include "debug.h" // 2002/2/10 aroka
+#include "util/shell.h"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -106,11 +106,11 @@ void CPropCommon::ChangeDateExample( HWND hwndDlg )
 	GetData_p9( hwndDlg );
 
 	/* 日付をフォーマット */
-	char szText[1024];
+	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
-	::SetDlgItemText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
+	CShareData::getInstance()->MyGetDateFormat( systime, szText, _countof( szText ) - 1, m_Common.m_sFormat.m_nDateFormatType, m_Common.m_sFormat.m_szDateFormat );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
 	return;
 }
 void CPropCommon::ChangeTimeExample( HWND hwndDlg )
@@ -119,11 +119,11 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 	GetData_p9( hwndDlg );
 
 	/* 時刻をフォーマット */
-	char szText[1024];
+	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
-	::SetDlgItemText( hwndDlg, IDC_EDIT_TFORM_EX, szText );
+	CShareData::getInstance()->MyGetTimeFormat( systime, szText, _countof( szText ) - 1, m_Common.m_sFormat.m_nTimeFormatType, m_Common.m_sFormat.m_szTimeFormat );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_TFORM_EX, szText );
 	return;
 }
 
@@ -154,25 +154,17 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 		ChangeDateExample( hwndDlg );
 		ChangeTimeExample( hwndDlg );
 
-
-		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-//		/* 外部ヘルプ１ */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHELP1 ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-//		/* 外部HTMLヘルプ */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHTMLHELP ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-
-
 		/* 見出し記号 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szMidashiKigou) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szMidashiKigou) - 1 ), 0 );
 
 		/* 引用符 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szInyouKigou) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szInyouKigou) - 1 ), 0 );
 
 		/* 日付書式 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szDateFormat) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szDateFormat) - 1 ), 0 );
 
 		/* 時刻書式 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szTimeFormat) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szTimeFormat) - 1 ), 0 );
 
 
 
@@ -218,52 +210,6 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 
 
-
-//			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
-//				{
-//					CDlgOpenFile	cDlgOpenFile;
-//					char*			pszMRU = NULL;;
-//					char*			pszOPENFOLDER = NULL;;
-//					char			szPath[_MAX_PATH + 1];
-//					strcpy( szPath, m_Common.m_szExtHelp1 );
-//					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create(
-//						m_hInstance,
-//						hwndDlg,
-//						"*.hlp",
-//						m_Common.m_szExtHelp1,
-//						(const char **)&pszMRU,
-//						(const char **)&pszOPENFOLDER
-//					);
-//					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//						strcpy( m_Common.m_szExtHelp1, szPath );
-//						::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1 );
-//					}
-//				}
-//				return TRUE;
-//			case IDC_BUTTON_OPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
-//				{
-//					CDlgOpenFile	cDlgOpenFile;
-//					char*			pszMRU = NULL;;
-//					char*			pszOPENFOLDER = NULL;;
-//					char			szPath[_MAX_PATH + 1];
-//					strcpy( szPath, m_Common.m_szExtHtmlHelp );
-//					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create(
-//						m_hInstance,
-//						hwndDlg,
-//						"*.chm;*.col",
-//						m_Common.m_szExtHtmlHelp,
-//						(const char **)&pszMRU,
-//						(const char **)&pszOPENFOLDER
-//					);
-//					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//						strcpy( m_Common.m_szExtHtmlHelp, szPath );
-//						::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp );
-//					}
-//				}
-//				return TRUE;
-//
 			}
 			break;	/* BN_CLICKED */
 		}
@@ -281,7 +227,7 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 				OnHelp( hwndDlg, IDD_PROP_FORMAT );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p9 PSN_KILLACTIVE\n" );
+//				MYTRACE_A( "p9 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p9 */
 				GetData_p9( hwndDlg );
 				return TRUE;
@@ -293,11 +239,11 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 //			break;	/* default */
 //		}
 
-//		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
-//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code );
-//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos );
-//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
+//		MYTRACE_A( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
+//		MYTRACE_A( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
+//		MYTRACE_A( "pNMHDR->code    =%xh\n", pNMHDR->code );
+//		MYTRACE_A( "pMNUD->iPos    =%d\n", pMNUD->iPos );
+//		MYTRACE_A( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -331,35 +277,29 @@ void CPropCommon::SetData_p9( HWND hwndDlg )
 {
 
 	/* 見出し記号 */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_szMidashiKigou );
-
-//	/* 外部ヘルプ１ */
-//	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1 );
-//
-//	/* 外部HTMLヘルプ */
-//	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_sFormat.m_szMidashiKigou );
 
 	/* 引用符 */
-	::SetDlgItemText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_szInyouKigou );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou );
 
 
 	//日付書式のタイプ
-	if( 0 == m_Common.m_nDateFormatType ){
+	if( 0 == m_Common.m_sFormat.m_nDateFormatType ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_DFORM_0, BST_CHECKED );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_RADIO_DFORM_1, BST_CHECKED );
 	}
 	//日付書式
-	::SetDlgItemText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_szDateFormat );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_sFormat.m_szDateFormat );
 
 	//時刻書式のタイプ
-	if( 0 == m_Common.m_nTimeFormatType ){
+	if( 0 == m_Common.m_sFormat.m_nTimeFormatType ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_TFORM_0, BST_CHECKED );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_RADIO_TFORM_1, BST_CHECKED );
 	}
 	//時刻書式
-	::SetDlgItemText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_szTimeFormat );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_sFormat.m_szTimeFormat );
 
 	//	From Here Sept. 10, 2000 JEPRO
 	//	日付/時刻書式 0=標準 1=カスタム
@@ -380,36 +320,36 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_FORMAT;
 
 	/* 見出し記号 */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_szMidashiKigou, sizeof(m_Common.m_szMidashiKigou) );
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_sFormat.m_szMidashiKigou, _countof(m_Common.m_sFormat.m_szMidashiKigou) );
 
 //	/* 外部ヘルプ１ */
-//	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1, MAX_PATH - 1 );
+//	::DlgItem_GetText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sFormat.m_szExtHelp1, MAX_PATH - 1 );
 //
 //	/* 外部HTMLヘルプ */
-//	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp, MAX_PATH - 1 );
+//	::DlgItem_GetText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_sFormat.m_szExtHtmlHelp, MAX_PATH - 1 );
 
 	/* 引用符 */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_szInyouKigou, sizeof(m_Common.m_szInyouKigou) );
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou, _countof(m_Common.m_sFormat.m_szInyouKigou) );
 
 
 	//日付書式のタイプ
 	if( BST_CHECKED == ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_DFORM_0 ) ){
-		m_Common.m_nDateFormatType = 0;
+		m_Common.m_sFormat.m_nDateFormatType = 0;
 	}else{
-		m_Common.m_nDateFormatType = 1;
+		m_Common.m_sFormat.m_nDateFormatType = 1;
 	}
 	//日付書式
-	::GetDlgItemText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_szDateFormat, sizeof( m_Common.m_szDateFormat ));
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_sFormat.m_szDateFormat, _countof( m_Common.m_sFormat.m_szDateFormat ));
 
 	//時刻書式のタイプ
 	if( BST_CHECKED == ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_TFORM_0 ) ){
-		m_Common.m_nTimeFormatType = 0;
+		m_Common.m_sFormat.m_nTimeFormatType = 0;
 	}else{
-		m_Common.m_nTimeFormatType = 1;
+		m_Common.m_sFormat.m_nTimeFormatType = 1;
 	}
 
 	//時刻書式
-	::GetDlgItemText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_szTimeFormat, sizeof( m_Common.m_szTimeFormat ));
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_sFormat.m_szTimeFormat, _countof( m_Common.m_sFormat.m_szTimeFormat ));
 
 
 

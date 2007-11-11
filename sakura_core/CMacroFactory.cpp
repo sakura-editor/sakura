@@ -34,7 +34,7 @@
 #include "ctype.h"
 #include "debug.h"
 
-static const char NULSTR[] = "";
+static const TCHAR NULSTR[] = _T("");
 
 CMacroFactory::CMacroFactory()
 {}
@@ -48,51 +48,17 @@ CMacroFactory::CMacroFactory()
 	@li NULLは""にする。
 	@li アルファベットは小文字に統一
 */
-std::string CMacroFactory::Ext2Key(const char *ext)
+std::tstring CMacroFactory::Ext2Key(const TCHAR *ext)
 {
 	if( ext == NULL ){
 		ext = NULSTR;
 	}
 	
-	std::string key = ext;
-	std::transform( key.begin(), key.end(), key.begin(), (int (*)(int))tolower);
+	std::tstring key = ext;
+	std::transform( key.begin(), key.end(), key.begin(), _totlower);
 
 	return key;
 }
-
-#if 0
-// Jan. 31, 2004 genta
-// バイナリサイズ削減のため拡張子保持用mapを削除
-
-/*!
-	対応拡張子の登録
-	
-	拡張子と対応するCreatorを登録する．
-	
-	@param ext [in] 関連づける拡張子
-	@param f [in] 登録するFactory関数
-	
-	@sa CMacroFactory::RegisterCreator
-	
-	@date 2002.08.25 genta 名前変更
-*/
-bool CMacroFactory::RegisterExt( const char* ext, Creator f )
-{
-	if( f == NULL ){
-		return false;
-	}
-
-	std::string key = Ext2Key( ext );
-	
-#ifdef _DEBUG
-	MYTRACE( "CMacroFactory::RegisterExt(%s)\n", key.c_str() );
-#endif
-
-	//	上書きチェックは行わない
-	m_mMacroExts[ key ] = f;
-	return true;
-}
-#endif
 
 /*!
 	Creatorの登録
@@ -123,26 +89,6 @@ bool CMacroFactory::RegisterCreator( Creator f )
 */
 bool CMacroFactory::Unregister( Creator f )
 {
-#if 0
-	// Jan. 31, 2004 genta
-	// バイナリサイズ削減のため拡張子保持用mapを削除
-	//	拡張子リストからの削除
-	MacroTypeRep::iterator ext_it = m_mMacroExts.begin();
-	while( ext_it != m_mMacroExts.end() ){
-		if( ext_it->second == f ){
-			MacroTypeRep::iterator tmp_it;
-
-			//	いきなり削除するとiteratorが無効になるので，
-			//	iteratorを1つ進めてから現在位置を削除する．
-			tmp_it = ext_it++;
-			m_mMacroExts.erase( tmp_it );
-		}
-		else {
-			++ ext_it;
-		}
-	}
-#endif
-
 	//	Creator Listからの削除
 	MacroEngineRep::iterator c_it = m_mMacroCreators.begin();
 	while( c_it != m_mMacroCreators.end() ){
@@ -173,40 +119,16 @@ bool CMacroFactory::Unregister( Creator f )
 	@pararm ext [in] 拡張子
 	@return Macroオブジェクト。適切なものが見つからなければNULL。
 */
-CMacroManagerBase* CMacroFactory::Create(const char* ext)
+CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 {
-	std::string key = Ext2Key( ext );
+	std::tstring key = Ext2Key( ext );
 
-#if 0
-	// Jan. 31, 2004 genta
-	// バイナリサイズ削減のため拡張子保持用mapを削除
-	MacroTypeRep::iterator ext_it = m_mMacroExts.find( key );
-	if( ext_it != m_mMacroExts.end()){
-		CMacroManagerBase* pobj = (*ext_it->second)(key.c_str());
-		if( pobj != NULL ){
-#ifdef _DEBUG
-			MYTRACE( "CMacroFactory::Create/ Found in map (%s)\n", key.c_str() );
-#endif
-			return pobj;
-		}
-		
-		//	NULLが返された場合
-	}
-#endif
 	//	Creatorを順に試す
 	for( MacroEngineRep::iterator c_it = m_mMacroCreators.begin();
 		c_it != m_mMacroCreators.end(); ++ c_it ){
 		CMacroManagerBase* pobj = (*c_it)(key.c_str());
 		if( pobj != NULL ){
-#ifdef _DEBUG
-			MYTRACE( "CMacroFactory::Create/ Answered for (%s)\n", key.c_str() );
-#endif
-			//	対応表に登録する
-#if 0
-			// Jan. 31, 2004 genta
-			// バイナリサイズ削減のため拡張子保持用mapを削除
-			m_mMacroExts[ key ] = *c_it;
-#endif
+			DBPRINT_A( "CMacroFactory::Create/ Answered for (%ls)\n", key.c_str() );
 			return pobj;
 		}
 	}

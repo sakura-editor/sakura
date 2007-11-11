@@ -23,7 +23,6 @@ class CDialog;
 #include <dbt.h>
 #include "CShareData.h"
 #include "global.h"
-#include "etc_uty.h"
 
 
 /*-----------------------------------------------------------------------
@@ -84,11 +83,17 @@ public:
 
 //	virtual BOOL OnLbnSelChange( HWND, int );
 
+public:
+	HWND GetHwnd() const{ return m_hWnd; }
+	//特殊インターフェース (使用は好ましくない)
+	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
-
+public:
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+private:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
+public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
 	BOOL			m_bModal;		/* モーダル ダイアログか */
@@ -98,7 +103,7 @@ public:
 	int				m_xPos;
 	int				m_yPos;
 //	void*			m_pcEditView;
-	char			m_szHelpFile[_MAX_PATH + 1];
+	SFilePath		m_szHelpFile;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 

@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
+#include "util/shell.h"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -101,17 +102,10 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 			switch( wID ){
 			case IDC_CHECK_DRAGDROP:	/* タスクトレイを使う */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//					::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, TRUE );	/* DropSource */
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
-//	To Here Sept. 9, 2000
-				}else{
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//					::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, FALSE );	/* DropSource */
+				}
+				else{
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
-//	To Here Sept. 9, 2000
 				}
 				return TRUE;
 			}
@@ -123,26 +117,21 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 		pMNUD  = (NM_UPDOWN*)lParam;
-//		switch( idCtrl ){
-//		default:
-			switch( pNMHDR->code ){
-			case PSN_HELP:
-				OnHelp( hwndDlg, IDD_PROP_EDIT );
-				return TRUE;
-			case PSN_KILLACTIVE:
-#ifdef _DEBUG
-				MYTRACE( "p1 PSN_KILLACTIVE\n" );
-#endif
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_EDIT( hwndDlg );
-				return TRUE;
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_EDIT;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
-				return TRUE;
-			}
-//			break;	/* default */
-//		}
+		switch( pNMHDR->code ){
+		case PSN_HELP:
+			OnHelp( hwndDlg, IDD_PROP_EDIT );
+			return TRUE;
+		case PSN_KILLACTIVE:
+			DBPRINT_A( "p1 PSN_KILLACTIVE\n" );
+
+			/* ダイアログデータの取得 p1 */
+			GetData_PROP_EDIT( hwndDlg );
+			return TRUE;
+
+		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			m_nPageNum = ID_PAGENUM_EDIT;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+			return TRUE;
+		}
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -171,41 +160,32 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 /* ダイアログデータの設定 */
 void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 {
-//	BOOL	bRet;
-
 	/* ドラッグ & ドロップ編集 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_bUseOLE_DragDrop );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_sEdit.m_bUseOLE_DragDrop );
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, TRUE );	/* DropSource */
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
-//	To Here Sept. 9, 2000
-	}else{
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, FALSE );	/* DropSource */
+	}
+	else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
-//	To Here Sept. 9, 2000
 	}
 
 	/* DropSource */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, m_Common.m_bUseOLE_DropSource );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, m_Common.m_sEdit.m_bUseOLE_DropSource );
 
 	/* 折り返し行に改行を付けてコピー */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY, m_Common.m_bAddCRLFWhenCopy );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY, m_Common.m_sEdit.m_bAddCRLFWhenCopy );
 
 	/* コピーしたら選択解除 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA, m_Common.m_bCopyAndDisablSelection );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA, m_Common.m_sEdit.m_bCopyAndDisablSelection );
 
 	/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bEnableLineModePaste, m_Common.m_bEnableLineModePaste );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bEnableLineModePaste, m_Common.m_sEdit.m_bEnableLineModePaste );
 
 	/* 改行は上書きしない */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bNotOverWriteCRLF, m_Common.m_bNotOverWriteCRLF );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bNotOverWriteCRLF, m_Common.m_sEdit.m_bNotOverWriteCRLF );
 
 	//	URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_bSelectClickedURL );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_sEdit.m_bSelectClickedURL );
 	return;
 }
 
@@ -220,24 +200,24 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_EDIT;
 
 	/* ドラッグ & ドロップ編集 */
-	m_Common.m_bUseOLE_DragDrop = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP );
+	m_Common.m_sEdit.m_bUseOLE_DragDrop = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP );
 	/* DropSource */
-	m_Common.m_bUseOLE_DropSource = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DROPSOURCE );
+	m_Common.m_sEdit.m_bUseOLE_DropSource = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DROPSOURCE );
 
 	/* 折り返し行に改行を付けてコピー */
-	m_Common.m_bAddCRLFWhenCopy = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY );
+	m_Common.m_sEdit.m_bAddCRLFWhenCopy = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY ));
 
 	/* コピーしたら選択解除 */
-	m_Common.m_bCopyAndDisablSelection = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA );
+	m_Common.m_sEdit.m_bCopyAndDisablSelection = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA );
 
 	/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
-	m_Common.m_bEnableLineModePaste = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bEnableLineModePaste );
+	m_Common.m_sEdit.m_bEnableLineModePaste = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bEnableLineModePaste ));
 
 	/* 改行は上書きしない */
-	m_Common.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );
+	m_Common.m_sEdit.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );
 
 	/* URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
-	m_Common.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
+	m_Common.m_sEdit.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
 	return TRUE;
 }
 

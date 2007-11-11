@@ -52,8 +52,21 @@ CFileWrite::~CFileWrite()
 //	ここで::fflushを呼び出してはいけません。
 //  詳細：http://www.microsoft.com/japan/support/faq/KBArticles2.asp?URL=/japan/support/kb/articles/jp288/7/94.asp
 
-	::fclose(m_hFile);
-	if(m_ChangeAttribute)
-		::SetFileAttributes(m_pszPath,m_dwFileAttribute);
-	::free(m_pszPath);
+	if(m_hFile){
+		Close();
+	}
+}
+
+void CFileWrite::Close()
+{
+	if(m_hFile){
+		::fclose(m_hFile);
+		if(m_ChangeAttribute)
+			::SetFileAttributes(m_pszPath,m_dwFileAttribute);
+		::free(m_pszPath);
+	}
+	else{
+		//2度目のClose禁止
+		assert(0);
+	}
 }

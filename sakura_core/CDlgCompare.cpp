@@ -18,12 +18,12 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "CDlgCompare.h"
-#include "etc_uty.h"
 #include "debug.h"
 #include "CEditDoc.h"
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "mymessage.h"
+#include "util/shell.h"
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -43,7 +43,6 @@ const DWORD p_helpids[] = {	//12300
 CDlgCompare::CDlgCompare()
 {
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
-//	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 	return;
 }
 
@@ -53,9 +52,9 @@ int CDlgCompare::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
 	LPARAM		lParam,
-	const char*	pszPath,
+	const TCHAR*	pszPath,
 	BOOL		bIsModified,
-	char*		pszComparePath,
+	TCHAR*	pszComparePath,
 	HWND*		phwndCompareWnd
 )
 {
@@ -63,17 +62,16 @@ int CDlgCompare::DoModal(
 	m_bIsModified = bIsModified;
 	m_pszComparePath = pszComparePath;
 	m_phwndCompareWnd = phwndCompareWnd;
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );
+	return CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );
 }
 
 BOOL CDlgCompare::OnBnClicked( int wID )
 {
-//	CEditView*	pcEditView = (CEditView*)m_lParam;	//	Oct. 10, 2000 JEPRO added	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は必要？
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「内容比較」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( GetHwnd(), m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //	From Here Oct. 10, 2000 JEPRO added  Ref. code はCDlgFind.cpp の OnBnClicked
 //	チェックボックスをボタン化してCDlgCompare.cppに直接書き込んでみたが失敗
@@ -102,10 +100,10 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 //	To Here Oct. 10, 2000
 	case IDOK:			/* 左右に表示 */
 		/* ダイアログデータの取得 */
-		::EndDialog( m_hWnd, GetData() );
+		::EndDialog( GetHwnd(), GetData() );
 		return TRUE;
 	case IDCANCEL:
-		::EndDialog( m_hWnd, FALSE );
+		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
 	}
 	/* 基底クラスメンバ */
@@ -122,10 +120,10 @@ void CDlgCompare::SetData( void )
 	EditNode*		pEditNodeArr;
 	FileInfo*		pfi;
 	int				i;
-	char			szMenu[512];
+	TCHAR			szMenu[512];
 	int				nItem;
 
-	hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_FILES );
+	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
 
 //	2002/2/10 aroka ファイル名で比較しないため不用 (2001.12.26 YAZAKIさん)
 //	//	Oct. 15, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
@@ -136,68 +134,48 @@ void CDlgCompare::SetData( void )
 	if( nRowNum > 0 ){
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
-			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
+			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 //			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
-			if (pEditNodeArr[i].m_hWnd == pCEditDoc->m_hwndParent){
+			if (pEditNodeArr[i].GetHwnd() == pCEditDoc->GetOwnerHwnd()){
 				continue;
 			}
-			wsprintf( szMenu, "%s %s",
-				(0 < lstrlen(pfi->m_szPath))?pfi->m_szPath:"(無題)",
-				pfi->m_bIsModified ? "*":" "
+			auto_sprintf(
+				szMenu,
+				_T("%ls %ls"),
+				(0 < _tcslen(pfi->m_szPath))?pfi->m_szPath:_T("(無題)"),
+				pfi->m_bIsModified ? _T("*"):_T(" ")
 			);
-			// gm_pszCodeNameArr_3 からコピーするように変更
-			if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-				strcat( szMenu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+			// gm_pszCodeNameArr_Bracket からコピーするように変更
+			if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
+				_tcscat( szMenu, gm_pszCodeNameArr_Bracket[pfi->m_nCharCode] );
 			}
-#if 0
-			if( 0 != pfi->m_nCharCode ){		/* 文字コード種別 */
-				switch( pfi->m_nCharCode ){
-				case CODE_JIS:	/* JIS */
-					strcat( szMenu, "  [JIS]" );
-					break;
-				case CODE_EUC:	/* EUC */
-					strcat( szMenu, "  [EUC]" );
-					break;
-				case CODE_UNICODE:	/* Unicode */
-					strcat( szMenu, "  [Unicode]" );
-					break;
-				case CODE_UTF8:	/* UTF-8 */
-					strcat( szMenu, "  [UTF-8]" );
-					break;
-				case CODE_UTF7:	/* UTF-7 */
-					strcat( szMenu, "  [UTF-7]" );
-					break;
-				}
-			}
-#endif
-			nItem = ::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)(char*)szMenu );
-			::SendMessage( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].m_hWnd );
+			nItem = ::List_AddString( hwndList, szMenu );
+			::SendMessageAny( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].GetHwnd() );
 		}
 		delete [] pEditNodeArr;
 		// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
-		::SendMessage( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)1000, 0 );
+		::SendMessageAny( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)1000, 0 );
 	}
-	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
-	char	szWork[512];
-	wsprintf( szWork, "%s %s",
-		(0 < lstrlen( m_pszPath )?m_pszPath:"(無題)" ),
-		m_bIsModified?"*":""
+	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
+	TCHAR	szWork[512];
+	auto_sprintf( szWork, _T("%ls %ls"),
+		(0 < _tcslen( m_pszPath )?m_pszPath:_T("(無題)") ),
+		m_bIsModified?_T("*"):_T("")
 	);
-	::SetDlgItemText( m_hWnd, IDC_STATIC_COMPARESRC, szWork );
+	::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szWork );
 	/* 左右に並べて表示 */
 	//@@@ 2003.06.12 MIK
 	// TAB 1ウィンドウ表示のときは並べて比較できなくする
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( TRUE  == m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+	 && FALSE == m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		m_bCompareAndTileHorz = FALSE;
-		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_TILE_H ), FALSE );
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_TILE_H ), FALSE );
 	}
-	::CheckDlgButton( m_hWnd, IDC_CHECK_TILE_H, m_bCompareAndTileHorz );
-//	::CheckDlgButton( m_hWnd, IDC_CHECK_TILE_H, m_bCompareAndTileHorz );	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_TILE_H, m_bCompareAndTileHorz );
 	return;
 }
 
@@ -210,21 +188,18 @@ int CDlgCompare::GetData( void )
 {
 	HWND			hwndList;
 	int				nItem;
-//	HWND			hwndCompareFile;
 	FileInfo*		pfi;
-	hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_FILES );
-	nItem = ::SendMessage( hwndList, LB_GETCURSEL, 0, 0 );
-	*m_phwndCompareWnd = (HWND)::SendMessage( hwndList, LB_GETITEMDATA, nItem, 0 );
+	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
+	nItem = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	*m_phwndCompareWnd = (HWND)::SendMessageAny( hwndList, LB_GETITEMDATA, nItem, 0 );
 	/* トレイからエディタへの編集ファイル名要求通知 */
-	::SendMessage( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
-//	pfi = (FileInfo*)m_pShareData->m_szWork;
+	::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
 	pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
-	strcpy( m_pszComparePath, pfi->m_szPath );
+	_tcscpy( m_pszComparePath, pfi->m_szPath );
 
 	/* 左右に並べて表示 */
-	m_bCompareAndTileHorz = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_TILE_H );
-//	m_bCompareAndTileHorz = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_TILE_H );	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
+	m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );
 
 	return TRUE;
 }

@@ -17,6 +17,8 @@
 #include "CMemory.h"
 #include "CMacroFactory.h"
 #include <string.h>
+#include "io/CTextStream.h"
+using namespace std;
 
 CPPA CPPAMacroMgr::m_cPPA;
 
@@ -33,32 +35,32 @@ CPPAMacroMgr::~CPPAMacroMgr()
 */
 void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
 {
-	m_cPPA.SetSource( m_cBuffer.GetPtr() );
+	m_cPPA.SetSource( to_achar(m_cBuffer.GetStringPtr()) );
 	m_cPPA.Execute(pcEditView);
 }
 
 /*! キーボードマクロの読み込み
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
+BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 {
-	FILE* hFile = fopen( pszPath, "r" );
-	if( NULL == hFile ){
+	CTextInputStream in( pszPath );
+	if(!in){
 		m_nReady = false;
 		return FALSE;
 	}
 
-	CMemory cmemWork;
+	CNativeW cmemWork;
 
 	// バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
-	char	szLine[LINEREADBUFSIZE];	//	1行がLINEREADBUFSIZE以上だったら無条件にアウト
-	while( NULL != fgets( szLine, sizeof(szLine), hFile ) ){
-		int nLineLen = strlen( szLine );
-		cmemWork.Append(szLine, nLineLen);
+	while( in ){
+		wstring szLine = in.ReadLineW();
+		szLine += L"\n";
+		cmemWork.AppendString(szLine.c_str());
 	}
-	fclose( hFile );
+	in.Close();
 
-	m_cBuffer.SetData( &cmemWork );	//	m_cBufferにコピー
+	m_cBuffer.SetNativeData( cmemWork );	//	m_cBufferにコピー
 
 	m_nReady = true;
 	return TRUE;
@@ -74,9 +76,9 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		そのため，過ったオブジェクト生成を行わないために拡張子チェックは必須．
 
 */
-CMacroManagerBase* CPPAMacroMgr::Creator(const char* ext)
+CMacroManagerBase* CPPAMacroMgr::Creator(const TCHAR* ext)
 {
-	if( strcmp( ext, "ppa" ) == 0 ){
+	if( _tcscmp( ext, _T("ppa") ) == 0 ){
 		return new CPPAMacroMgr;
 	}
 	return NULL;

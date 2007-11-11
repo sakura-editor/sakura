@@ -43,11 +43,12 @@
 /*!
 	スペースの判定
 */
-inline bool C_IsSpace( char c ){
-	return ('\t' == c ||
-			 ' ' == c ||
-			  CR == c ||
-			  LF == c
+inline bool C_IsSpace( wchar_t c ){
+	return (
+		L'\t' == c ||
+		L' ' == c ||
+		WCODE::CR == c ||
+		WCODE::LF == c
 	);
 }
 
@@ -60,11 +61,11 @@ inline bool C_IsSpace( char c ){
 		それは実行してみれば明らかにわかることなので
 		そこまで厳密にチェックしない
 */
-inline bool Python_IsWordChar( char c ){
-	return ( '_' == c ||
-			('a' <= c && c <= 'z' )||
-			('A' <= c && c <= 'Z' )||
-			('0' <= c && c <= '9' )
+inline bool Python_IsWordChar( wchar_t c ){
+	return ( L'_' == c ||
+			(L'a' <= c && c <= L'z' )||
+			(L'A' <= c && c <= L'Z' )||
+			(L'0' <= c && c <= L'9' )
 		);
 }
 
@@ -112,10 +113,10 @@ struct COutlinePython {
 		ある状態から別の状態に移るところまでを扱う．
 		別の状態に移る判定がややこしいばあいは，Enter*として関数にする．
 	*/	
-	int ScanNormal( const char* data, int linelen, int start_offset );
-	int ScanString( const char* data, int linelen, int start_offset );
-	int EnterString( const char* data, int linelen, int start_offset );
-	void DoScanLine( const char* data, int linelen, int start_offset );
+	int ScanNormal( const wchar_t* data, int linelen, int start_offset );
+	int ScanString( const wchar_t* data, int linelen, int start_offset );
+	int EnterString( const wchar_t* data, int linelen, int start_offset );
+	void DoScanLine( const wchar_t* data, int linelen, int start_offset );
 	
 	bool IsLogicalLineTop(void) const { return STATE_NORMAL == m_state; }
 };
@@ -152,7 +153,7 @@ COutlinePython::COutlinePython()
 	@note 引用符の位置で呼びだせば，抜けた後は必ずSTATE_STRINGになっているはず．
 		引用符以外の位置で呼びだした場合は何もしないで抜ける．
 */
-int COutlinePython::EnterString( const char* data, int linelen, int start_offset )
+int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_offset )
 {
 	assert( m_state != STATE_STRING );
 
@@ -206,12 +207,12 @@ int COutlinePython::EnterString( const char* data, int linelen, int start_offset
 	
 	@return 調査後の位置
 */
-int COutlinePython::ScanNormal( const char* data, int linelen, int start_offset )
+int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offset )
 {
 	assert( m_state == STATE_NORMAL || m_state == STATE_CONTINUE );
 
 	for( int col = start_offset; col < linelen; ++col ){
-		int nCharChars = CMemory::GetSizeOfChar( data, linelen, col );
+		int nCharChars = CNativeW::GetSizeOfChar( data, linelen, col );
 		if( 1 < nCharChars ){
 			col += (nCharChars - 1);
 			continue;
@@ -233,9 +234,9 @@ int COutlinePython::ScanNormal( const char* data, int linelen, int start_offset 
 			//	最終行には改行コードがないことがあるが，それ以降には何もないので影響しない
 			if(
 				( linelen - 2 == col && 
-				( data[ col + 1 ] == CR && data[ col + 2 ] == LF )) ||
+				( data[ col + 1 ] == WCODE::CR && data[ col + 2 ] == WCODE::LF )) ||
 				( linelen - 1 == col && 
-				( data[ col + 1 ] == CR || data[ col + 1 ] == LF ))
+				( data[ col + 1 ] == WCODE::CR || data[ col + 1 ] == WCODE::LF ))
 			){
 				m_state = STATE_CONTINUE;
 				break;
@@ -271,13 +272,13 @@ int COutlinePython::ScanNormal( const char* data, int linelen, int start_offset 
 	@date 2007.03.23 genta 文字列の継続行の処理を追加
 
 */
-int COutlinePython::ScanString( const char* data, int linelen, int start_offset )
+int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offset )
 {
 	assert( m_state == STATE_STRING );
 
 	int quote_char = m_quote_char;
 	for( int col = start_offset; col < linelen; ++col ){
-		int nCharChars = CMemory::GetSizeOfChar( data, linelen, col );
+		int nCharChars = CNativeW::GetSizeOfChar( data, linelen, col );
 		if( 1 < nCharChars ){
 			col += (nCharChars - 1);
 			continue;
@@ -285,17 +286,17 @@ int COutlinePython::ScanString( const char* data, int linelen, int start_offset 
 		//	rawモード以外ではエスケープをチェック
 		//	rawモードでも継続行はチェック
 		if( data[ col ] == '\\' && col + 1 < linelen ){
-			int key = data[ col + 1 ];
+			wchar_t key = data[ col + 1 ];
 			if( ! m_raw_string ){
-				if( key == '\\' ||
-					key == '\"' ||
-					key == '\'' ){
+				if( key == L'\\' ||
+					key == L'\"' ||
+					key == L'\'' ){
 					++col;
 					//	ignore
 					continue;
 				}
 			}
-			if( key == CR || key == LF ){
+			if( key == WCODE::CR || key == WCODE::LF ){
 				// \r\nをまとめて\nとして扱う必要がある
 				if( col + 1 >= linelen ||
 					data[ col + 2 ] == key ){
@@ -303,13 +304,13 @@ int COutlinePython::ScanString( const char* data, int linelen, int start_offset 
 					++col;
 					continue;
 				}
-				else if( data[ col + 2 ] == CR || data[ col + 2 ] == LF ){
+				else if( data[ col + 2 ] == WCODE::CR || data[ col + 2 ] == WCODE::LF ){
 					col += 2;	//	 CRLF or LFCR
 				}
 			}
 		}
 		//	short string + 改行の場合はエラーから強制復帰
-		else if( data[ col ] == CR || data[ col ] == LF ){
+		else if( data[ col ] == WCODE::CR || data[ col ] == WCODE::LF ){
 			//あとで
 			if( ! m_long_string ){
 				//	文字列の末尾を発見した
@@ -352,7 +353,7 @@ int COutlinePython::ScanString( const char* data, int linelen, int start_offset 
 	@param[in] start_offset 調査開始位置
 
 */
-void COutlinePython::DoScanLine( const char* data, int linelen, int start_offset )
+void COutlinePython::DoScanLine( const wchar_t* data, int linelen, int start_offset )
 {
 	int col = start_offset;
 	while( col < linelen ){
@@ -399,8 +400,8 @@ void COutlinePython::DoScanLine( const char* data, int linelen, int start_offset
 */
 void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 {
-	int			nLineLen;
-	int			nLineCount;
+	CLogicInt	nLineLen;
+	CLogicInt	nLineCount;
 
 	COutlinePython python_analyze_state;
 
@@ -410,10 +411,10 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 	indent_level[0] = 0;	// do as python does.
 	int depth_index = 0;
 
-	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-		const char*	pLine;
+	for( nLineCount = CLogicInt(0); nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
+		const wchar_t*	pLine;
 		int depth;	//	indent depth
-		int col = 0;	//	current working column position
+		CLogicInt col = CLogicInt(0);	//	current working column position
 
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		
@@ -421,36 +422,36 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			//	indent check
 			//	May 15, 2007 genta 桁位置colはデータオフセットdと独立にしないと
 			//	文字列比較がおかしくなる
-			for( depth = 0, col = 0; col < nLineLen; ++col ){
+			for( depth = 0, col = CLogicInt(0); col < nLineLen; ++col ){
 				//	calculate indent level
-				if( pLine[col] == ' ' ){
+				if( pLine[col] == L' ' ){
 					++depth;
 				}
-				else if( pLine[col] == '\t' ){
+				else if( pLine[col] == L'\t' ){
 					depth = ( depth + 8 ) & ~7;
 				}
 				else {
 					break;
 				}
 			}
-			if( pLine[col] == '\r' ||
-				pLine[col] == '\n' ||
-				pLine[col] == '\0' ||
-				pLine[col] == '#' ){
+			if( pLine[col] == L'\r' ||
+				pLine[col] == L'\n' ||
+				pLine[col] == L'\0' ||
+				pLine[col] == L'#' ){
 				//	blank line or comment line are ignored
 				continue;
 			}
 			
 			int nItemFuncId = 0;	// topic type
-			if( nLineLen - col > 3 + 1 && strncmp( pLine + col, "def", 3 ) == 0 ){
+			if( nLineLen - col > CLogicInt(3 + 1) && wcsncmp_literal( pLine + col, L"def" ) == 0 ){
 				//	"def"
 				nItemFuncId = 1;
-				col += 3; // strlen( def )
+				col += CLogicInt(3); // strlen( def )
 			}
-			else if( nLineLen - col > 5 + 1 && strncmp( pLine + col, "class", 5 ) == 0 ){
+			else if( nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal( pLine + col, L"class" ) == 0 ){
 				// class
 				nItemFuncId = 4;
-				col += 5; // strlen( class )
+				col += CLogicInt(5); // strlen( class )
 			}
 			else {
 				python_analyze_state.DoScanLine( pLine, nLineLen, col );
@@ -463,7 +464,7 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			//	本当は継続行として次の行に関数名を書くことも文法上は可能だが
 			//	複雑になるので対応しない．
 			int c = pLine[col];
-			if(  c != ' ' && c != '\t' ){
+			if(  c != L' ' && c != L'\t' ){
 				python_analyze_state.DoScanLine( pLine, nLineLen, col );
 				continue;
 			}
@@ -507,27 +508,27 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			
 			//	このあたりは暫定
 
-			char szWord[512];	// 適当に大きな数(pythonでは名前の長さの上限があるのか？)
+			wchar_t szWord[512];	// 適当に大きな数(pythonでは名前の長さの上限があるのか？)
 			int len = w_end - col;
 			
 			if( len > 0 ){
-				if( len > sizeof( szWord ) - 1){
-					len = sizeof( szWord ) - 1;
+				if( len > _countof( szWord ) - 1){
+					len = _countof( szWord ) - 1;
 				}
-				strncpy( szWord, pLine + col, len );
-				szWord[ len ] = '\0';
+				wcsncpy( szWord, pLine + col, len );
+				szWord[ len ] = L'\0';
 			}
 			else {
-				strcpy( szWord, "名称未定" );
+				wcscpy( szWord, L"名称未定" );
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
-				if( sizeof( szWord ) - 8  < len ){
+				if( _countof( szWord ) - 8  < len ){
 					//	後ろを削って入れる
-					len = sizeof( szWord ) - 8;
+					len = _countof( szWord ) - 8;
 				}
 				// class
-				strcpy( szWord + len, " クラス" );
+				wcscpy( szWord + len, L" クラス" );
 			}
 			
 			/*
@@ -536,16 +537,19 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			  →
 			  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
-			int		nPosX;
-			int		nPosY;
-			m_cLayoutMgr.CaretPos_Phys2Log(
-				0,
-				nLineCount/*nFuncLine - 1*/,
-				&nPosX,
-				&nPosY
+			CLayoutPoint ptPosXY;
+			m_cLayoutMgr.LogicToLayout(
+				CLogicPoint(CLogicInt(0), nLineCount),
+				&ptPosXY
 			);
-			pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1, szWord, nItemFuncId, depth_index );
-			col = w_end; // クラス・関数定義の続きはここから
+			pcFuncInfoArr->AppendData(
+				nLineCount + CLogicInt(1),
+				ptPosXY.GetY2() + CLayoutInt(1),
+				szWord,
+				nItemFuncId,
+				depth_index
+			);
+			col = CLogicInt(w_end); // クラス・関数定義の続きはここから
 		}
 		python_analyze_state.DoScanLine( pLine, nLineLen, col );
 	}

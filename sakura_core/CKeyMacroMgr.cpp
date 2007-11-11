@@ -18,19 +18,15 @@
 
 #include "stdafx.h"
 #include <stdio.h>
-//	#include <stdlib.h>
-//	#include <malloc.h>
 #include <string.h>
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 #include "debug.h"
 #include "charcode.h"
-#include "etc_uty.h" // Oct. 5, 2002 genta
-//	#include "global.h"
-//	#include "CEditView.h"
 #include "CMemory.h"
 #include "CMacroFactory.h"
+#include "io/CTextStream.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
@@ -71,7 +67,11 @@ void CKeyMacroMgr::ClearAll( void )
 	機能番号と、引数ひとつを追加版。
 	@date 2002.2.2 YAZAKI pcEditViewも渡すようにした。
 */
-void CKeyMacroMgr::Append( int nFuncID, LPARAM lParam1, CEditView* pcEditView )
+void CKeyMacroMgr::Append(
+	EFunctionCode	nFuncID,
+	LPARAM			lParam1,
+	CEditView*		pcEditView
+)
 {
 	CMacro* macro = new CMacro( nFuncID );
 	macro->AddLParam( lParam1, pcEditView );
@@ -100,24 +100,24 @@ void CKeyMacroMgr::Append( CMacro* macro )
 /*! キーボードマクロの保存
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const char* pszPath ) const
+BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) const
 {
-	HFILE		hFile;
-	char		szLine[1024];
-	CMemory		cmemWork;
-	hFile = _lcreat( pszPath, 0 );
-	if( HFILE_ERROR == hFile ){
+	CTextOutputStream out(pszPath);
+	if(!out){
 		return FALSE;
 	}
-	strcpy( szLine, "//キーボードマクロのファイル\r\n" );
-	_lwrite( hFile, szLine, strlen( szLine ) );
-	CMacro* p = m_pTop;
 
+	//最初のコメント
+	out.WriteF(L"//キーボードマクロのファイル\n");
+
+	//マクロ内容
+	CMacro* p = m_pTop;
 	while (p){
-		p->Save( hInstance, hFile );
+		p->Save( hInstance, out );
 		p = p->GetNext();
 	}
-	_lclose( hFile );
+
+	out.Close();
 	return TRUE;
 }
 
@@ -138,50 +138,48 @@ void CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
 /*! キーボードマクロの読み込み
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
+BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 {
 	/* キーマクロのバッファをクリアする */
 	ClearAll();
 
-	FILE* hFile = fopen( pszPath, "r" );
-	if( NULL == hFile ){
+	CTextInputStream in( pszPath );
+	if(!in){
 		m_nReady = false;
 		return FALSE;
 	}
 
-	char	szFuncName[100];
-	char	szFuncNameJapanese[256];
-	int		nFuncID;
+	WCHAR	szFuncName[100];
+	WCHAR	szFuncNameJapanese[256];
+	EFunctionCode	nFuncID;
 	int		i;
 	int		nBgn, nEnd;
-	CMemory cmemWork;
 	CMacro* macro = NULL;
 
 	//	Jun. 16, 2002 genta
 	m_nReady = true;	//	エラーがあればfalseになる
-	static const char MACRO_ERROR_TITLE[] = "Macro読み込みエラー";
+	static const TCHAR MACRO_ERROR_TITLE[] = _T("Macro読み込みエラー");
 
-	// 一行ずつ読みこみ、コメント行を排除した上で、macroコマンドを作成する。
-	char	szLine[LINEREADBUFSIZE];
-	
 	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
-	for( ; NULL != fgets( szLine, sizeof(szLine), hFile ) ; ++line ){
-		int nLineLen = strlen( szLine );
+	for( ; in.Good() ; ++line ){
+		std::wstring szLine = in.ReadLineW();
+		using namespace WCODE;
+
+		int nLineLen = auto_strlen( szLine.c_str() );
 		// 先行する空白をスキップ
 		for( i = 0; i < nLineLen; ++i ){
-			//	Jun. 16, 2002 genta '\r' 追加
-			if( szLine[i] != SPACE && szLine[i] != TAB && szLine[i] != '\r' ){
+			if( szLine[i] != SPACE && szLine[i] != TAB ){
 				break;
 			}
 		}
 		nBgn = i;
 		// コメント行の検出
 		//# パフォーマンス：'/'のときだけ２文字目をテスト
-		if( szLine[nBgn] == '/' && nBgn + 1 < nLineLen && szLine[nBgn + 1] == '/' ){
+		if( szLine[nBgn] == LTEXT('/') && nBgn + 1 < nLineLen && szLine[nBgn + 1] == LTEXT('/') ){
 			continue;
 		}
 		//	Jun. 16, 2002 genta 空行を無視する
-		if( szLine[nBgn] == '\n' || szLine[nBgn] == '\0' ){
+		if( szLine[nBgn] == LTEXT('\0') ){
 			continue;
 		}
 
@@ -189,9 +187,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
 			//# バッファオーバーランチェック
-			if( szLine[i] == '(' && (i - nBgn)< sizeof(szFuncName) ){
-				memcpy( szFuncName, &szLine[nBgn], i - nBgn );
-				szFuncName[i - nBgn] = '\0';
+			if( szLine[i] == LTEXT('(') && (i - nBgn)< _countof(szFuncName) ){
+				auto_memcpy( szFuncName, &szLine[nBgn], i - nBgn );
+				szFuncName[i - nBgn] = L'\0';
 				++i;
 				nBgn = i;
 				break;
@@ -201,7 +199,6 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 
 		/* 関数名→機能ID，機能名日本語 */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//		nFuncID = CMacro::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
 		nFuncID = CSMacroMgr::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
 		if( -1 != nFuncID ){
 			macro = new CMacro( nFuncID );
@@ -211,39 +208,49 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 			//	Skip Space
 			for(nArgs = 0; szLine[i] ; ++nArgs ) {
 				// Jun. 16, 2002 genta プロトタイプチェック
-				if( nArgs >= sizeof( mInfo->m_varArguments ) / sizeof( mInfo->m_varArguments[0] )){
-					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-						_T("Line %d: Column %d: 引数が多すぎます\n" ), line, i + 1 );
+				if( nArgs >= _countof( mInfo->m_varArguments ) ){
+					::MYMESSAGEBOX(
+						NULL,
+						MB_OK | MB_ICONSTOP | MB_TOPMOST,
+						MACRO_ERROR_TITLE,
+						_T("Line %d: Column %d: 引数が多すぎます\n"),
+						line,
+						i + 1
+					);
 					m_nReady = false;
 				}
 
-				while( szLine[i] == ' ' || szLine[i] == '\t' )
+				while( szLine[i] == LTEXT(' ') || szLine[i] == LTEXT('\t') )
 					i++;
 
 				//@@@ 2002.2.2 YAZAKI PPA.DLLマクロにあわせて仕様変更。文字列は''で囲む。
 				//	Jun. 16, 2002 genta double quotationも許容する
-				if( '\'' == szLine[i] || '\"' == szLine[i]  ){	//	'で始まったら文字列だよきっと。
+				if( LTEXT('\'') == szLine[i] || LTEXT('\"') == szLine[i]  ){	//	'で始まったら文字列だよきっと。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( mInfo->m_varArguments[nArgs] != VT_BSTR && 
 						mInfo->m_varArguments[nArgs] != VT_EMPTY ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-							_T("Line %d: Column %d\r\n"
-							"関数%sの%d番目の引数に文字列は置けません．" ), line, i + 1, szFuncName, nArgs + 1 );
+						::MYMESSAGEBOX(
+							NULL,
+							MB_OK | MB_ICONSTOP | MB_TOPMOST,
+							MACRO_ERROR_TITLE,
+							_T("Line %d: Column %d\r\n")
+							_T("関数%lsの%d番目の引数に文字列は置けません．"),
+							line,
+							i + 1,
+							szFuncName,
+							nArgs + 1
+						);
 						m_nReady = false;
 						break;
 					}
-					int cQuote = szLine[i];
+					WCHAR cQuote = szLine[i];
 					++i;
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					//	Jun. 16, 2002 genta
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
-						if( _IS_SJIS_1( (unsigned char)szLine[i] ) ){
-							++i;
-							continue;
-						}
-						if( szLine[i] == '\\' ){	// エスケープのスキップ
+						if( szLine[i] == LTEXT('\\') ){	// エスケープのスキップ
 							++i;
 							continue;
 						}
@@ -251,10 +258,17 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 							nEnd = i;	//	nEndは終わりの次の文字（'）
 							break;
 						}
-						if( szLine[i] == '\0' ){	//	行末に来てしまった
-							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-								_T("Line %d:\r\n関数%sの%d番目の引数の終わりに%cがありません．" ),
-								line, szFuncName, nArgs + 1, cQuote);
+						if( szLine[i] == LTEXT('\0') ){	//	行末に来てしまった
+							::MYMESSAGEBOX(
+								NULL,
+								MB_OK | MB_ICONSTOP | MB_TOPMOST,
+								MACRO_ERROR_TITLE,
+								_T("Line %d:\r\n関数%lsの%d番目の引数の終わりに%mcがありません．"),
+								line,
+								szFuncName,
+								nArgs + 1,
+								cQuote
+							);
 							m_nReady = false;
 							nEnd = i - 1;	//	nEndは終わりの次の文字（'）
 							break;
@@ -264,28 +278,38 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					if( !m_nReady ){
 						break;
 					}
-					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
-					cmemWork.Replace( "\\\'", "\'" );
+
+					CNativeW cmemWork;
+					cmemWork.SetString( szLine.c_str() + nBgn, nEnd - nBgn );
+					cmemWork.Replace( LTEXT("\\\'"), LTEXT("\'") );
 
 					//	Jun. 16, 2002 genta double quotationもエスケープ解除
-					cmemWork.Replace( "\\\"", "\"" );
-					cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
+					cmemWork.Replace( LTEXT("\\\""), LTEXT("\"") );
+					cmemWork.Replace( LTEXT("\\\\"), LTEXT("\\") );
+					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
-				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
+				else if ( is09(szLine[i]) ){	//	数字で始まったら数字列だ。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( mInfo->m_varArguments[nArgs] != VT_I4 && 
 						mInfo->m_varArguments[nArgs] != VT_EMPTY){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-							_T("Line %d: Column %d\r\n"
-							"関数%sの%d番目の引数に数値は置けません．" ), line, i + 1, szFuncName, nArgs + 1);
+						::MYMESSAGEBOX(
+							NULL,
+							MB_OK | MB_ICONSTOP | MB_TOPMOST,
+							MACRO_ERROR_TITLE,
+							_T("Line %d: Column %d\r\n")
+							_T("関数%lsの%d番目の引数に数値は置けません．"),
+							line,
+							i + 1,
+							szFuncName,
+							nArgs + 1
+						);
 						m_nReady = false;
 						break;
 					}
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
-						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// まだ数値
+						if( is09(szLine[i]) ){	// まだ数値
 //							++i;
 							continue;
 						}
@@ -295,15 +319,17 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 							break;
 						}
 					}
-					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
+
+					CNativeW cmemWork;
+					cmemWork.SetString( szLine.c_str() + nBgn, nEnd - nBgn );
 					// Jun. 16, 2002 genta
 					//	数字の中にquotationは入っていないよ
-					//cmemWork.Replace( "\\\'", "\'" );
-					//cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
+					//cmemWork.Replace( L"\\\'", L"\'" );
+					//cmemWork.Replace( L"\\\\", L"\\" );
+					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
 				//	Jun. 16, 2002 genta
-				else if( szLine[i] == ')' ){
+				else if( szLine[i] == LTEXT(')') ){
 					//	引数無し
 					break;
 				}
@@ -312,18 +338,18 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
 					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-						_T("Line %d: Column %d: Syntax Error\n" ), line, i );
+						_T("Line %d: Column %d: Syntax Error\n"), line, i );
 					m_nReady = false;
 					break;
 				}
 
 				for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
-					if( szLine[i] == ')' || szLine[i] == ',' ){	//	,もしくは)を読み飛ばす
+					if( szLine[i] == LTEXT(')') || szLine[i] == LTEXT(',') ){	//	,もしくは)を読み飛ばす
 						i++;
 						break;
 					}
 				}
-				if (szLine[i-1] == ')'){
+				if (szLine[i-1] == LTEXT(')')){
 					break;
 				}
 			}
@@ -338,13 +364,13 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 		}
 		else {
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-				_T("Line %d: %sは存在しない関数です．\n" ), line, szFuncName );
+				_T("Line %d: %lsは存在しない関数です．\n"), line, szFuncName );
 			//	Jun. 16, 2002 genta
 			m_nReady = false;
 			break;
 		}
 	}
-	fclose( hFile );
+	in.Close();
 
 	//	Jun. 16, 2002 genta
 	//	マクロ中にエラーがあったら異常終了できるようにする．
@@ -360,9 +386,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	@date 2004-01-31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
 		そのため，過ったオブジェクト生成を行わないために拡張子チェックは必須．
 */
-CMacroManagerBase* CKeyMacroMgr::Creator(const char* ext)
+CMacroManagerBase* CKeyMacroMgr::Creator(const TCHAR* ext)
 {
-	if( strcmp( ext, "mac" ) == 0 ){
+	if( _tcscmp( ext, _T("mac") ) == 0 ){
 		return new CKeyMacroMgr;
 	}
 	return NULL;

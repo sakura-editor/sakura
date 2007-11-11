@@ -20,11 +20,11 @@
 #include "stdafx.h"
 #include "CDlgAbout.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
-
 #include "CBREGEXP.h"
 #include "CPPA.h"
-//	Dec. 2, 2002 genta
-#include "etc_uty.h"
+#include "util/file.h"
+#include "util/module.h"
+#include <shellapi.h>
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -87,16 +87,15 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
-	m_hWnd = hwndDlg;
+	_SetHwnd( hwndDlg );
 
-	char			szMsg[2048];
-	char			szFile[_MAX_PATH];
-	//WIN32_FIND_DATA	wfd;
+	TCHAR			szMsg[2048];
+	TCHAR			szFile[_MAX_PATH];
 	FILETIME		lastTime;
 	SYSTEMTIME		systimeL;
 
 	/* この実行ファイルの情報 */
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
+	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, _countof( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
 	//	2003.10.04 Moca ハンドルのクローズ忘れ
@@ -121,17 +120,17 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		&dwVersionMS, &dwVersionLS );
 
 	int ComPiler_ver = COMPILER_VER;
-	wsprintf( szMsg, "Ver. %d.%d.%d.%d (" COMPILER_TYPE " %d)",
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (") _T(COMPILER_TYPE) _T(" %d)"),
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
 		LOWORD( dwVersionLS ),
 		ComPiler_ver
 	);
-	::SetDlgItemText( m_hWnd, IDC_STATIC_VER, szMsg );
+	::DlgItem_SetText( GetHwnd(), IDC_STATIC_VER, szMsg );
 
 	/* 更新日情報 */
-	wsprintf( szMsg, "Last Modified: %d/%d/%d %02d:%02d:%02d",
+	auto_sprintf( szMsg, _T("Last Modified: %d/%d/%d %02d:%02d:%02d"),
 		systimeL.wYear,
 		systimeL.wMonth,
 		systimeL.wDay,
@@ -139,34 +138,34 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		systimeL.wMinute,
 		systimeL.wSecond
 	);
-	::SetDlgItemText( m_hWnd, IDC_STATIC_UPDATE, szMsg );
+	::DlgItem_SetText( GetHwnd(), IDC_STATIC_UPDATE, szMsg );
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
-	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, sizeof( szMsg ) );
+	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, _countof( szMsg ) );
 	if( desclen > 0 ){
-		::SetDlgItemText( m_hWnd, IDC_EDIT_ABOUT, szMsg );
+		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta
 
 	//	From Here Dec. 2, 2002 genta
 	//	アイコンをカスタマイズアイコンに合わせる
 	HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
-	HWND hIconWnd = GetDlgItem( m_hWnd, IDC_STATIC_MYICON );
+	HWND hIconWnd = GetDlgItem( GetHwnd(), IDC_STATIC_MYICON );
 	
 	if( hIconWnd != NULL && hIcon != NULL ){
-		::SendMessage( hIconWnd, STM_SETICON, (WPARAM)hIcon, 0 );
+		::SendMessageAny( hIconWnd, STM_SETICON, (WPARAM)hIcon, 0 );
 	}
 	//	To Here Dec. 2, 2002 genta
 
 	// URLウィンドウをサブクラス化する
-	m_UrlUrWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_UR ) );
+	m_UrlUrWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
-	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_ORG ) );
+	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_ORG ) );
 
 	/* 基底クラスメンバ */
-	return CDialog::OnInitDialog( m_hWnd, wParam, lParam );
+	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
 
@@ -178,16 +177,11 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	case IDC_STATIC_URL_ORG:
 		//	Web Browserの起動
 		{
-			char buf[512];
-			::GetWindowText( ::GetDlgItem( m_hWnd, wID ), buf, 512 );
-			ShellExecute( m_hWnd, NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			TCHAR buf[512];
+			::GetWindowText( ::GetDlgItem( GetHwnd(), wID ), buf, _countof(buf) );
+			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
-//Jan. 12, 2001 JEPRO UR1.2.20.2 (Nov. 7, 2000) から以下のボタンは削除されているのでコメントアウトした
-//	case IDC_BUTTON_DOWNLOAD:
-//		/* 「最新バージョンのダウンロード」のヘルプ  */
-//		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 112 );
-//		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -203,7 +197,7 @@ BOOL CUrlWnd::SubclassWindow( HWND hWnd )
 {
 	// STATICウィンドウをサブクラス化する
 	// 元のSTATICは WS_TABSTOP, SS_NOTIFY スタイルのものを使用すること
-	if( m_hWnd != NULL )
+	if( GetHwnd() != NULL )
 		return FALSE;
 	if( !IsWindow( hWnd ) )
 		return FALSE;
@@ -222,12 +216,12 @@ BOOL CUrlWnd::SubclassWindow( HWND hWnd )
 	// 下線付きフォントに変更する
 	HFONT hFont;
 	LOGFONT lf;
-	hFont = (HFONT)SendMessage( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
+	hFont = (HFONT)SendMessageAny( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
 	GetObject( hFont, sizeof(lf), &lf );
 	lf.lfUnderline = TRUE;
 	m_hFont = CreateFontIndirect( &lf );
 	if(m_hFont != NULL)
-		SendMessage( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
+		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
 	return TRUE;
 }
@@ -249,7 +243,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		return (LRESULT)0;
 	case WM_LBUTTONDOWN:
 		// キーボードフォーカスを自分に当てる
-		SendMessage( GetParent(hWnd), WM_NEXTDLGCTL, (WPARAM)hWnd, (LPARAM)1 );
+		SendMessageAny( GetParent(hWnd), WM_NEXTDLGCTL, (WPARAM)hWnd, (LPARAM)1 );
 		break;
 	case WM_SETFOCUS:
 	case WM_KILLFOCUS:
@@ -285,7 +279,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		ScreenToClient( hWnd, &pt );
 		GetClientRect( hWnd, &rc );
 		if( !PtInRect( &rc, pt ) )
-			SendMessage( hWnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
+			SendMessageAny( hWnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
 		break;
 	case WM_PAINT:
 		// ウィンドウの描画
@@ -298,14 +292,14 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 		// 現在のクライアント矩形、テキスト、フォントを取得する
 		GetClientRect( hWnd, &rc );
-		GetWindowText( hWnd, szText, 512 );
-		hFont = (HFONT)SendMessage( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
+		GetWindowText( hWnd, szText, _countof(szText) );
+		hFont = (HFONT)SendMessageAny( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
 
 		// テキスト描画
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hOldFont = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, 2, 0, szText, lstrlen( szText ) );
+		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
 		SelectObject( hdc, (HGDIOBJ)hOldFont );
 
 		// フォーカス枠描画
@@ -322,12 +316,12 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		if( pUrlWnd->m_bHilighted ){
 			// ハイライト時背景描画
 			SetBkColor( hdc, RGB( 0xff, 0xff, 0 ) );
-			ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+			ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
 		}else{
 			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 			HBRUSH hbr;
 			HBRUSH hbrOld;
-			hbr = (HBRUSH)SendMessage( GetParent( hWnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd );
+			hbr = (HBRUSH)SendMessageAny( GetParent( hWnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd );
 			hbrOld = (HBRUSH)SelectObject( hdc, hbr );
 			FillRect( hdc, &rc, hbr );
 			SelectObject( hdc, hbrOld );

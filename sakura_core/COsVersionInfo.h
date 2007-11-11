@@ -41,7 +41,7 @@
 class COsVersionInfo {
 public:
 	COsVersionInfo(){
-		memset( (void *)&m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
+		memset_raw( &m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
 		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
 		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
 	};

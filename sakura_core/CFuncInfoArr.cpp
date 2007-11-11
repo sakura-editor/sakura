@@ -85,11 +85,11 @@ void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 	@date 2002.04.01 YAZAKI 深さ導入
 */
 void CFuncInfoArr::AppendData(
-	int		nFuncLineCRLF,	/* 関数のある行(CRLF単位) */
-	int		nFuncLineLAYOUT,/* 関数のある行(折り返し単位) */
-	const char*	pszFuncName,	/* 関数名 */
-	int		nInfo,			/* 付加情報 */
-	int		nDepth			/* 深さ */
+	CLogicInt		nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
+	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
+	const TCHAR*	pszFuncName,		//!< 関数名
+	int				nInfo,				//!< 付加情報
+	int				nDepth				//!< 深さ
 )
 {
 	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncLineLAYOUT, pszFuncName, nInfo );
@@ -98,20 +98,31 @@ void CFuncInfoArr::AppendData(
 	return;
 }
 
+void CFuncInfoArr::AppendData(
+	CLogicInt			nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
+	CLayoutInt			nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
+	const NOT_TCHAR*	pszFuncName,		//!< 関数名
+	int					nInfo,				//!< 付加情報
+	int					nDepth				//!< 深さ
+)
+{
+	AppendData(nFuncLineCRLF,nFuncLineLAYOUT,to_tchar(pszFuncName),nInfo,nDepth);
+}
+
 
 void CFuncInfoArr::DUMP( void )
 {
 #ifdef _DEBUG
 	int i;
-	MYTRACE( "=============================\n" );
+	MYTRACE_A( "=============================\n" );
 	for( i = 0; i < m_nFuncInfoArrNum; i++ ){
-		MYTRACE( "[%d]------------------\n", i );
-		MYTRACE( "m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
-		MYTRACE( "m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
-		MYTRACE( "m_cmemFuncName	=[%s]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetPtr() );
-		MYTRACE( "m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
+		MYTRACE_A( "[%d]------------------\n", i );
+		MYTRACE_A( "m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
+		MYTRACE_A( "m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
+		MYTRACE_A( "m_cmemFuncName	=[%ls]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
+		MYTRACE_A( "m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
 	}
-	MYTRACE( "=============================\n" );
+	MYTRACE_A( "=============================\n" );
 #endif
 }
 
