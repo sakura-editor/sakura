@@ -19,7 +19,6 @@
 //#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <io.h>
 #include "CEditView.h"
 #include "debug.h"
 #include "keycode.h"
@@ -32,14 +31,13 @@
 #include "CShareData.h"
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
-#include "etc_uty.h"
 
 #ifdef _DEBUG
 //★★★テスト用非公開機能★★★
 /* ルーラー描画 */
 void CEditView::DispRulerEx( HDC hdc )
 {
-	if( !m_bDrawSWITCH ){
+	if( !GetDrawSwitch() ){
 		return;
 	}
 	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
@@ -55,7 +53,7 @@ void CEditView::DispRulerEx( HDC hdc )
 	int			i;
 	int			nX;
 	int			nY;
-	LOGFONT		lf;
+	LOGFONT	lf;
 	HFONT		hFont;
 	HFONT		hFontOld;
 	char		szColm[32];
@@ -68,7 +66,7 @@ void CEditView::DispRulerEx( HDC hdc )
 	SIZE		sizFont;
 
 	/* LOGFONTの初期化 */
-	memset( &lf, 0, sizeof(LOGFONT) );
+	memset_raw( &lf, 0, sizeof(lf) );
 	lf.lfHeight			= -11;
 	lf.lfWidth			= 5;
 	lf.lfEscapement		= 0;
@@ -85,14 +83,14 @@ void CEditView::DispRulerEx( HDC hdc )
 	strcpy( lf.lfFaceName, "Arial" );
 	hFont = ::CreateFontIndirect( &lf );
 	hFontOld = (HFONT)::SelectObject( hdc, hFont );
-	::GetTextExtentPoint32( hdc, "X", 1, &sizFont );
+	::GetTextExtentPoint32W( hdc, "X", 1, &sizFont );
 	::SetBkMode( hdc, TRANSPARENT );
 
 	/* 背景 */
 	hPen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_3DHILIGHT ) );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
 	::MoveToEx( hdc, 0, 0, NULL );
-	::LineTo( hdc, m_nViewAlignLeft + m_nViewCx, 0 );
+	::LineTo( hdc, GetAreaRight(), 0 );
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
 
@@ -100,31 +98,31 @@ void CEditView::DispRulerEx( HDC hdc )
 	hPen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_3DFACE ) );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
 	::MoveToEx( hdc, 0, 1, NULL );
-	::LineTo( hdc, m_nViewAlignLeft + m_nViewCx, 1 );
-	::MoveToEx( hdc, 0, m_nViewAlignTop - m_nTopYohaku - 2, NULL );
-	::LineTo( hdc, m_nViewAlignLeft + m_nViewCx, m_nViewAlignTop - m_nTopYohaku - 2 );
-	::MoveToEx( hdc, 0, m_nViewAlignTop - m_nTopYohaku - 3, NULL );
-	::LineTo( hdc, m_nViewAlignLeft + m_nViewCx, m_nViewAlignTop - m_nTopYohaku - 3 );
+	::LineTo( hdc, GetAreaRight(), 1 );
+	::MoveToEx( hdc, 0, GetRulerHeight() - 2, NULL );
+	::LineTo( hdc, GetAreaRight(), GetRulerHeight() - 2 );
+	::MoveToEx( hdc, 0, GetRulerHeight() - 3, NULL );
+	::LineTo( hdc, GetAreaRight(), GetRulerHeight() - 3 );
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
 
 
 	hPen = ::CreatePen( PS_SOLID, 0, /*RGB( 255, 0, 0 )*/::GetSysColor( COLOR_3DSHADOW ) );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
-	::MoveToEx( hdc, 0, m_nViewAlignTop - m_nTopYohaku - 1, NULL );
-	::LineTo( hdc, m_nViewAlignLeft + m_nViewCx, m_nViewAlignTop - m_nTopYohaku - 1 );
+	::MoveToEx( hdc, 0, GetRulerHeight() - 1, NULL );
+	::LineTo( hdc, GetAreaRight(), GetRulerHeight() - 1 );
 	::SelectObject( hdc, hPenOld );
 	::DeleteObject( hPen );
 
 
 
-	rc.left = m_nViewAlignLeft - 2;
+	rc.left = GetAreaLeft() - 2;
 	rc.top = 2;
-	rc.right = m_nViewAlignLeft + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 2;
-	if( rc.right > m_nViewAlignLeft + m_nViewCx + 2 ){
-		rc.right = m_nViewAlignLeft + m_nViewCx + 2;
+	rc.right = GetAreaLeft() + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - GetViewLeftCol()) * GetHankakuDx() + 2;
+	if( rc.right > GetAreaRight() + 2 ){
+		rc.right = GetAreaRight() + 2;
 	}
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku - 3;
+	rc.bottom = GetRulerHeight() - 3;
 	CSplitBoxWnd::Draw3dRect( hdc,
 		rc.left,
 		rc.top,
@@ -139,15 +137,15 @@ void CEditView::DispRulerEx( HDC hdc )
 	rc2.left = 0;
 	rc2.top = 1;
 	rc2.right = rc.left;
-	rc2.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
+	rc2.bottom = GetRulerHeight() - 1;
 	::FillRect( hdc, &rc2, hBrush );
 	::DeleteObject( hBrush );
 
 	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_3DFACE ) );
 	rc2.left = rc.right;
 	rc2.top = 1;
-	rc2.right = m_nViewAlignLeft + m_nViewCx + 2;
-	rc2.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
+	rc2.right = GetAreaRight() + 2;
+	rc2.bottom = GetRulerHeight() - 1;
 	::FillRect( hdc, &rc2, hBrush );
 	::DeleteObject( hBrush );
 
@@ -178,8 +176,8 @@ void CEditView::DispRulerEx( HDC hdc )
 
 
 
-	nX = m_nViewAlignLeft;
-//	nY = m_nViewAlignTop - m_nTopYohaku - 2;
+	nX = GetAreaLeft();
+//	nY = GetRulerHeight() - 2;
 	nY = (rc.top + rc.bottom) / 2;
 
 //	hPen = ::CreatePen( PS_SOLID, 0, RGB( 0, 0, 0 ) );
@@ -188,19 +186,19 @@ void CEditView::DispRulerEx( HDC hdc )
 //	colTextOld = ::SetTextColor( hdc, RGB( 0, 0, 0 ) );
 	colTextOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
 
-	nToX = m_nViewAlignLeft + m_nViewCx;
+	nToX = GetAreaRight();
 
-	nToX = m_nViewAlignLeft + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewLeftCol) * ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	if( nToX > m_nViewAlignLeft + m_nViewCx ){
-		nToX = m_nViewAlignLeft + m_nViewCx;
+	nToX = GetAreaLeft() + (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - GetViewLeftCol()) * GetHankakuDx();
+	if( nToX > GetAreaRight() ){
+		nToX = GetAreaRight();
 	}
 
-//	::MoveToEx( hdc, m_nViewAlignLeft, nY + 1, NULL );
-//	::LineTo( hdc, nToX/*m_nViewAlignLeft + m_nViewCx*/, nY + 1 );
+//	::MoveToEx( hdc, GetAreaLeft(), nY + 1, NULL );
+//	::LineTo( hdc, nToX/*GetAreaRight()*/, nY + 1 );
 
 
-	for( i = m_nViewLeftCol;
-		i <= m_nViewLeftCol + m_nViewColNum + 1
+	for( i = GetViewLeftCol();
+		i <= GetRightCol() + 1
 //	 && i <= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 	 && i < m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 		i++
@@ -211,21 +209,21 @@ void CEditView::DispRulerEx( HDC hdc )
 //			::MoveToEx( hdc, nX, nY - 6, NULL );
 //			::LineTo( hdc, nX, nY + 7 );
 
-			::MoveToEx( hdc, nX, m_nViewAlignTop - m_nTopYohaku - 3, NULL );
-			::LineTo( hdc, nX, m_nViewAlignTop - m_nTopYohaku - 5 );
+			::MoveToEx( hdc, nX, GetRulerHeight() - 3, NULL );
+			::LineTo( hdc, nX, GetRulerHeight() - 5 );
 
 //			::MoveToEx( hdc, nX, 0, NULL );
 //			::LineTo( hdc, nX, 2 );
 
 
-			itoa( (i) / 10, szColm, 10 );
+			_itow( (i) / 10, szColm, 10 );
 
 			SIZE sz;
 			int nColmLen = lstrlen( szColm );
 			// 文字列の幅と高さを計算します。
-			::GetTextExtentPoint32( hdc, szColm, nColmLen, &sz );
-//			::TextOut( hdc, nX + 2 + 0, nY - (sizFont.cy / 2), szColm, nColmLen );
-			::TextOut( hdc, nX - ( sz.cx / 2 ) + 1, nY - (sizFont.cy / 2), szColm, nColmLen );
+			::GetTextExtentPoint32W( hdc, szColm, nColmLen, &sz );
+//			::TextOutW_AnyBuild( hdc, nX + 2 + 0, nY - (sizFont.cy / 2), szColm, nColmLen );
+			::TextOutW_AnyBuild( hdc, nX - ( sz.cx / 2 ) + 1, nY - (sizFont.cy / 2), szColm, nColmLen );
 		}else
 		if( 0 < i && 0 == ( (i) % 5 ) ){
 			::MoveToEx( hdc, nX, nY - 1, NULL );
@@ -234,7 +232,7 @@ void CEditView::DispRulerEx( HDC hdc )
 //			::MoveToEx( hdc, nX, nY , NULL );
 //			::LineTo( hdc, nX, nY + 1 );
 		}
-		nX += ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		nX += GetHankakuDx();
 	}
 	::SetTextColor( hdc, colTextOld );
 	::SelectObject( hdc, hPenOld );
@@ -242,18 +240,18 @@ void CEditView::DispRulerEx( HDC hdc )
 
 //	return;
 
-	if( m_nViewLeftCol <= m_nCaretPosX
-	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
+	if( GetViewLeftCol() <= GetCaret().GetCaretLayoutPos().GetX()
+	 && GetRightCol() + 2 >= GetCaret().GetCaretLayoutPos().GetX()
 	){
-		if( 0 == m_nCaretWidth ){
+		if( 0 == GetCaret().GetCaretSize().cx ){
 			hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
 		}else{
 			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
 		}
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		rc.left = GetAreaLeft() + ( GetCaret().GetCaretLayoutPos().GetX() - GetViewLeftCol() ) * GetHankakuDx() + 1;
 //		rc.top = 0;
-		rc.right = rc.left + m_nCharWidth;
-//		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
+		rc.right = rc.left + GetHankakuWidth();
+//		rc.bottom = GetRulerHeight() - 1;
 		nROP_Old = ::SetROP2( hdc, R2_NOTXORPEN );
 		hRgn = ::CreateRectRgnIndirect( &rc );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -267,8 +265,8 @@ void CEditView::DispRulerEx( HDC hdc )
 /***
 	rc.left = 0;
 	rc.top = 0;
-	rc.right = m_nViewAlignLeft + m_nViewCx;
-	rc.bottom = m_nViewAlignTop - m_nTopYohaku;
+	rc.right = GetAreaRight();
+	rc.bottom = GetRulerHeight();
 	CSplitBoxWnd::Draw3dRect(
 		hdc,
 		rc.left, rc.top, rc.right, rc.bottom,

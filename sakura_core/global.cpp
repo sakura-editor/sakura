@@ -17,45 +17,43 @@
 #include "stdafx.h"
 #include "global.h"
 
+//2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
+CEditWnd* g_pcEditWnd = NULL;
 
-#ifdef _DEBUG
-	const char* GSTR_APPNAME = "sakura(デバッグ版)";
-#else
-	const char* GSTR_APPNAME = "sakura";
-#endif
-
-
-const char* gm_pszCodeNameArr_1[] = {
-	"SJIS",				/* SJIS */
-	"JIS",				/* JIS */
-	"EUC",				/* EUC */
-	"Unicode",			/* Unicode */
-	"UTF-8",			/* UTF-8 */
-	"UTF-7",			/* UTF-7 */
-	"UniBE"				/* Unicode BigEndian */
+//2007.10.17 kobake 変数名変更: gm_pszCodeNameArr_1→gm_pszCodeNameArr_Normal
+const TCHAR* gm_pszCodeNameArr_Normal[] = {
+	_T("SJIS"),			/* SJIS */
+	_T("JIS"),			/* JIS */
+	_T("EUC"),			/* EUC */
+	_T("Unicode"),		/* Unicode */
+	_T("UTF-8"),		/* UTF-8 */
+	_T("UTF-7"),		/* UTF-7 */
+	_T("UniBE")			/* Unicode BigEndian */
 };
 
-const char* gm_pszCodeNameArr_2[] = {
-	"SJIS",				/* SJIS */
-	"JIS",				/* JIS */
-	"EUC",				/* EUC */
-	"Uni",				/* Unicode */
-	"UTF-8",			/* UTF-8 */
-	"UTF-7",			/* UTF-7 */
-	"UniBE"				/* Unicode BigEndian */
+//2007.10.17 kobake 変数名変更: gm_pszCodeNameArr_2→gm_pszCodeNameArr_Short
+const TCHAR* gm_pszCodeNameArr_Short[] = {
+	_T("SJIS"),			/* SJIS */
+	_T("JIS"),			/* JIS */
+	_T("EUC"),			/* EUC */
+	_T("Uni"),			/* Unicode */
+	_T("UTF-8"),		/* UTF-8 */
+	_T("UTF-7"),		/* UTF-7 */
+	_T("UniBE")			/* Unicode BigEndian */
 };
 
-const char* gm_pszCodeNameArr_3[] = {
-	"  [SJIS]",			/* SJIS */
-	"  [JIS]",			/* JIS */
-	"  [EUC]",			/* EUC */
-	"  [Unicode]",		/* Unicode */
-	"  [UTF-8]",		/* UTF-8 */
-	"  [UTF-7]",		/* UTF-7 */
-	"  [UniBE]"			/* Unicode BigEndian */
+//2007.10.17 kobake 変数名変更: gm_pszCodeNameArr_3→gm_pszCodeNameArr_Bracket
+const TCHAR* gm_pszCodeNameArr_Bracket[] = {
+	_T("  [SJIS]"),		/* SJIS */
+	_T("  [JIS]"),		/* JIS */
+	_T("  [EUC]"),		/* EUC */
+	_T("  [Unicode]"),	/* Unicode */
+	_T("  [UTF-8]"),	/* UTF-8 */
+	_T("  [UTF-7]"),	/* UTF-7 */
+	_T("  [UniBE]")		/* Unicode BigEndian */
 };
 
-const int gm_nCodeComboValueArr[] = {
+const ECodeType gm_nCodeComboValueArr[] = {
 	CODE_AUTODETECT,	/* 文字コード自動判別 */
 	CODE_SJIS,
 	CODE_JIS,
@@ -65,18 +63,18 @@ const int gm_nCodeComboValueArr[] = {
 	CODE_UTF8,
 	CODE_UTF7
 };
-const char* const	gm_pszCodeComboNameArr[] = {
-	"自動選択",
-	"SJIS",
-	"JIS",
-	"EUC",
-	"Unicode",
-	"UnicodeBE",
-	"UTF-8",
-	"UTF-7"
+const TCHAR* const	gm_pszCodeComboNameArr[] = {
+	_T("自動選択"),
+	_T("SJIS"),
+	_T("JIS"),
+	_T("EUC"),
+	_T("Unicode"),
+	_T("UnicodeBE"),
+	_T("UTF-8"),
+	_T("UTF-7")
 };
 
-const int gm_nCodeComboNameArrNum = sizeof( gm_nCodeComboValueArr ) / sizeof( gm_nCodeComboValueArr[0] );
+const int gm_nCodeComboNameArrNum = _countof( gm_nCodeComboValueArr );
 
 
 /*! 選択領域描画用パラメータ */
@@ -92,32 +90,6 @@ const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_CR					// == 1
 };
 
-/*! キーワードキャラクタ */
-const unsigned char gm_keyword_char[256] = {
- /* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F      : 0123456789ABCDEF */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0: ................ */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 1: ................ */
-	0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 2:  !"#$%&'()*+,-./ */
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,	/* 3: 0123456789:;<=>? */
-	2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 4: @ABCDEFGHIJKLMNO */
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 0, 0, 1,	/* 5: PQRSTUVWXYZ[\]^_ */
-	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 6: `abcdefghijklmno */
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,	/* 7: pqrstuvwxyz{|}~. */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 8: ................ */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 9: ................ */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* A: .｡｢｣､･ｦｧｨｩｪｫｬｭｮｯ */	//setlocal( LC_ALL, "C" )
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* B: ｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ */	//setlocal( LC_ALL, "C" )
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* C: ﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏ */	//setlocal( LC_ALL, "C" )
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* D: ﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ */	//setlocal( LC_ALL, "C" )
-//	0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* A: .｡｢｣､･ｦｧｨｩｪｫｬｭｮｯ */	//setlocal( LC_ALL, "Japanese" )
-//	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* B: ｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ */	//setlocal( LC_ALL, "Japanese" )
-//	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* C: ﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏ */	//setlocal( LC_ALL, "Japanese" )
-//	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* D: ﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ */	//setlocal( LC_ALL, "Japanese" )
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* E: ................ */
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* F: ................ */
-	/* 0: not-keyword, 1:__iscsym(), 2:user-define */
-};
-
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
   配列の順番は共有メモリ中のデータの順番と一致している。
@@ -127,54 +99,77 @@ const unsigned char gm_keyword_char[256] = {
 */
 const ColorAttributeData g_ColorAttributeArr[] =
 {
-	{"TXT", COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_EFFECTS},
-	{"RUL", COLOR_ATTRIB_NO_EFFECTS},
-	{"CAR", COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
-	{"IME", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
-	{"UND", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
-	{"LNO", 0},
-	{"MOD", 0},
-	{"TAB", 0},
-	{"SPC", 0},	//2002.04.28 Add By KK
-	{"ZEN", 0},
-	{"CTL", 0},
-	{"EOL", 0},
-	{"RAP", 0},
-	{"VER", 0},  // 2005.11.08 Moca 指定桁縦線
-	{"EOF", 0},
-	{"NUM", 0},	//@@@ 2001.02.17 by MIK 半角数値の強調
-	{"FND", 0},
-	{"KW1", 0},
-	{"KW2", 0},
-	{"KW3", 0},	//@@@ 2003.01.13 by MIK 強調キーワード3-10
-	{"KW4", 0},
-	{"KW5", 0},
-	{"KW6", 0},
-	{"KW7", 0},
-	{"KW8", 0},
-	{"KW9", 0},
-	{"KWA", 0},
-	{"CMT", 0},
-	{"SQT", 0},
-	{"WQT", 0},
-	{"URL", 0},
-	{"RK1", 0},	//@@@ 2001.11.17 add MIK
-	{"RK2", 0},	//@@@ 2001.11.17 add MIK
-	{"RK3", 0},	//@@@ 2001.11.17 add MIK
-	{"RK4", 0},	//@@@ 2001.11.17 add MIK
-	{"RK5", 0},	//@@@ 2001.11.17 add MIK
-	{"RK6", 0},	//@@@ 2001.11.17 add MIK
-	{"RK7", 0},	//@@@ 2001.11.17 add MIK
-	{"RK8", 0},	//@@@ 2001.11.17 add MIK
-	{"RK9", 0},	//@@@ 2001.11.17 add MIK
-	{"RKA", 0},	//@@@ 2001.11.17 add MIK
-	{"DFA", 0},	//DIFF追加	//@@@ 2002.06.01 MIK
-	{"DFC", 0},	//DIFF変更	//@@@ 2002.06.01 MIK
-	{"DFD", 0},	//DIFF削除	//@@@ 2002.06.01 MIK
-	{"BRC", 0},	//対括弧	// 02/09/18 ai Add
-	{"MRK", 0},	//ブックマーク	// 02/10/16 ai Add
-	{"LAST", 0}	// Not Used
+	{_T("TXT"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_EFFECTS},
+	{_T("RUL"), COLOR_ATTRIB_NO_EFFECTS},
+	{_T("CAR"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
+	{_T("IME"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
+	{_T("UND"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
+	{_T("LNO"), 0},
+	{_T("MOD"), 0},
+	{_T("TAB"), 0},
+	{_T("SPC"), 0},	//2002.04.28 Add By KK
+	{_T("ZEN"), 0},
+	{_T("CTL"), 0},
+	{_T("EOL"), 0},
+	{_T("RAP"), 0},
+	{_T("VER"), 0},  // 2005.11.08 Moca 指定桁縦線
+	{_T("EOF"), 0},
+	{_T("NUM"), 0},	//@@@ 2001.02.17 by MIK 半角数値の強調
+	{_T("FND"), 0},
+	{_T("KW1"), 0},
+	{_T("KW"), 0},
+	{_T("KW3"), 0},	//@@@ 2003.01.13 by MIK 強調キーワード3-10
+	{_T("KW4"), 0},
+	{_T("KW5"), 0},
+	{_T("KW6"), 0},
+	{_T("KW7"), 0},
+	{_T("KW8"), 0},
+	{_T("KW9"), 0},
+	{_T("KWA"), 0},
+	{_T("CMT"), 0},
+	{_T("SQT"), 0},
+	{_T("WQT"), 0},
+	{_T("URL"), 0},
+	{_T("RK1"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK2"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK3"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK4"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK5"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK6"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK7"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK8"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RK9"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("RKA"), 0},	//@@@ 2001.11.17 add MIK
+	{_T("DFA"), 0},	//DIFF追加	//@@@ 2002.06.01 MIK
+	{_T("DFC"), 0},	//DIFF変更	//@@@ 2002.06.01 MIK
+	{_T("DFD"), 0},	//DIFF削除	//@@@ 2002.06.01 MIK
+	{_T("BRC"), 0},	//対括弧	// 02/09/18 ai Add
+	{_T("MRK"), 0},	//ブックマーク	// 02/10/16 ai Add
+	{_T("LAST"), 0}	// Not Used
 };
+
+
+
+/*
+ * カラー名からインデックス番号に変換する
+ */
+SAKURA_CORE_API int GetColorIndexByName( const TCHAR *name )
+{
+	int	i;
+	for( i = 0; i < COLORIDX_LAST; i++ )
+	{
+		if( _tcscmp( name, g_ColorAttributeArr[i].szName ) == 0 ) return i;
+	}
+	return -1;
+}
+
+/*
+ * インデックス番号からカラー名に変換する
+ */
+SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index )
+{
+	return g_ColorAttributeArr[index].szName;
+}
 
 
 /*[EOF]*/

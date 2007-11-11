@@ -23,8 +23,9 @@
 #include "CSMacroMgr.h"
 #include "CEditView.h"
 #include "CEditDoc.h"
-#include "etc_uty.h"
 #include "OleTypes.h"
+#include "io/CTextStream.h"
+#include "util/os.h"
 
 //スクリプトに渡されるオブジェクトの情報
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
@@ -305,8 +306,9 @@ public:
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
 			{
 				wchar_t *Message = new wchar_t[SysStringLen(Info.bstrDescription) + 128];
-				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[swprintf]に修正
-				swprintf(Message, L"[Line %d] %ls", Line + 1, Info.bstrDescription);
+				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[auto_sprintf]に修正
+				const wchar_t* szDesc=Info.bstrDescription;
+				auto_sprintf(Message, L"[Line %d] %ls", Line + 1, szDesc);
 				SysReAllocString(&Info.bstrDescription, Message);
 				delete[] Message;
 			}
@@ -336,7 +338,7 @@ public:
 	virtual HRESULT __stdcall GetWindow(
 	    /* [out] */ HWND *phwnd)
 	{
-		*phwnd = reinterpret_cast<CEditView*>(m_Client->m_Data)->m_pcEditDoc->m_hWnd;
+		*phwnd = reinterpret_cast<CEditView*>(m_Client->m_Data)->m_pcEditDoc->GetSplitterHwnd();
 		return S_OK;
 	}
 
@@ -353,7 +355,7 @@ public:
 CInterfaceObjectTypeInfo::CInterfaceObjectTypeInfo(CInterfaceObject *AObject)
 				: ImplementsIUnknown<ITypeInfo>(), m_Object(AObject)
 { 
-	ZeroMemory(&m_TypeAttr, sizeof(TYPEATTR));
+	ZeroMemory(&m_TypeAttr, sizeof(m_TypeAttr));
 	m_TypeAttr.cImplTypes = 0; //親クラスのITypeInfoの数
 	m_TypeAttr.cFuncs = m_Object->m_Methods.size();
 }
@@ -481,8 +483,14 @@ HRESULT STDMETHODCALLTYPE CInterfaceObject::GetIDsOfNames(
 	return S_OK;		
 }
 
-void CInterfaceObject::AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, int ArgumentCount, VARTYPE ResultType, 
-					CInterfaceObjectMethod Method)
+void CInterfaceObject::AddMethod(
+	wchar_t*				Name,
+	EFunctionCode			ID,
+	VARTYPE*				ArgumentTypes,
+	int						ArgumentCount,
+	VARTYPE					ResultType,
+	CInterfaceObjectMethod	Method
+)
 {
 	m_Methods.push_back(CMethodInfo());
 	CMethodInfo *Info = &m_Methods[m_Methods.size() - 1];
@@ -591,7 +599,7 @@ void CWSHClient::Error(wchar_t* Description)
 
 	@date 2005.06.27 zenryaku 戻り値の受け取りが無くてもエラーにせずに関数を実行する
 */
-static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
+static HRESULT MacroCommand(EFunctionCode ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
 {
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
 
@@ -611,24 +619,25 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 		if(ArgCount > 4) ArgCount = 4;
 
 		//	Nov. 29, 2005 FILE 引数を文字列で取得する
-		char *StrArgs[4] = {NULL, NULL, NULL, NULL}, *S = NULL;	// 初期化必須
-		Variant varCopy;										// VT_BYREFだと困るのでコピー用
+		WCHAR *StrArgs[4] = {NULL, NULL, NULL, NULL};	// 初期化必須
+		WCHAR *S = NULL;								// 初期化必須
+		Variant varCopy;							// VT_BYREFだと困るのでコピー用
 		int Len;
 		for(int I = 0; I < ArgCount; ++I)
 		{
 			if(VariantChangeType(&varCopy.Data, &(Arguments->rgvarg[I]), 0, VT_BSTR) == S_OK)
 			{
-				Wrap(&varCopy.Data.bstrVal)->Get(&S, &Len);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&S, &Len);
 			}
 			else
 			{
-				S = new char[1];
+				S = new WCHAR[1];
 				S[0] = 0;
 			}
 			StrArgs[ArgCount - I - 1] = S;
 		}
 
-		CMacro::HandleCommand(View, ID, const_cast<char const **>(StrArgs), ArgCount);
+		CMacro::HandleCommand(View, ID, const_cast<WCHAR const **>(StrArgs), ArgCount);
 
 		//	Nov. 29, 2005 FILE 配列の破棄なので、[括弧]を追加
 		for(int J = 0; J < ArgCount; ++J)
@@ -647,11 +656,9 @@ static void MacroError(BSTR Description, BSTR Source, void *Data)
 	MessageA[WideCharToMultiByte(CP_ACP, 0, Description, SysStringLen(Description), MessageA, 1023, NULL, NULL)] = 0;
 	SourceA[WideCharToMultiByte(CP_ACP, 0, Source, SysStringLen(Source), SourceA, 1023, NULL, NULL)] = 0;
 	
-	MessageBox(View->m_hWnd, MessageA, SourceA, MB_ICONERROR);
+	MessageBoxA(View->m_hWnd, MessageA, SourceA, MB_ICONERROR);
 }
 
-// ReadRegistryはetc_uty.cppに移動しました．
-//
 
 CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName) : m_EngineName(AEngineName)
 {
@@ -666,14 +673,21 @@ void CWSHMacroManager::ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *In
 	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
 		wchar_t FuncName[256];
-		MultiByteToWideChar(CP_ACP, 0, Info->m_pszFuncName, -1, FuncName, 255);
+		wcscpy(FuncName, Info->m_pszFuncName);
 
 		int ArgCount = 0;
 		for(int I = 0; I < 4; ++I)
 			if(Info->m_varArguments[I] != VT_EMPTY) 
 				++ArgCount;
 		
-		Object->AddMethod(FuncName, Info->m_nFuncID, Info->m_varArguments, ArgCount, Info->m_varResult, MacroCommand);
+		Object->AddMethod(
+			FuncName,
+			Info->m_nFuncID,
+			Info->m_varArguments,
+			ArgCount,
+			Info->m_varResult,
+			MacroCommand
+		);
 		
 		++Info;
 	}
@@ -690,18 +704,13 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
 	Engine = new CWSHClient(m_EngineName.c_str(), MacroError, EditView);
 	if(Engine->m_Valid)
 	{
-/* // CSMacroMgr.hで配列のサイズが明確に宣言されて無いのでsizeofが使えない
-		Engine->m_InterfaceObject->ReserveMethods(
-						sizeof (CSMacroMgr::m_MacroFuncInfoArr) / sizeof (CSMacroMgr::m_MacroFuncInfoArr[0]) +
-						sizeof (CSMacroMgr::m_MacroFuncInfoNotCommandArr) / sizeof (CSMacroMgr::m_MacroFuncInfoNotCommandArr[0]));
-*/
 		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoArr);
 		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoNotCommandArr);
 		
 		Engine->Execute(m_Source.c_str());
 		
 		//EditView->Redraw();
-		EditView->ShowEditCaret();
+		EditView->GetCaret().ShowEditCaret();
 	}
 	delete Engine;
 }
@@ -712,45 +721,35 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
 	@param Instance [in] インスタンスハンドル(未使用)
 	@param Path		[in] ファイルのパス
 */
-BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, char const* Path)
+BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* szPath)
 {
-	BOOL Result = FALSE;
+	//ソース読み込み -> m_Source
+	m_Source=L"";
 	
-	HANDLE File = CreateFile(Path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if(File != INVALID_HANDLE_VALUE)
-	{
-		unsigned long Size = GetFileSize(File, NULL); //ギガ単位のマクロはさすがに無いでしょう…
-		char *Buffer = new char[Size];
-		wchar_t *WideBuffer = new wchar_t[Size + 1]; //Unicode化して長くはならない
+	CTextInputStream in(szPath);
+	if(!in)
+		return FALSE;
 
-		if(ReadFile(File, Buffer, Size, &Size, NULL) != 0)
-		{
-			WideBuffer[MultiByteToWideChar(CP_ACP, 0, Buffer, Size, WideBuffer, Size)] = 0;
-			m_Source = WideBuffer;
-			Result = TRUE;
-		}
-		//	Nov. 10, 2003 FILE 配列の破棄なので、[括弧]を追加
-		delete [] Buffer;
-		delete [] WideBuffer;
-		CloseHandle(File);
+	while(in){
+		m_Source+=in.ReadLineW()+L"\r\n";
 	}
-	return Result;
+	return TRUE;
 }
 
-CMacroManagerBase* CWSHMacroManager::Creator(char const *FileExt)
+CMacroManagerBase* CWSHMacroManager::Creator(const TCHAR* FileExt)
 {
-	char FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
-	wchar_t EngineNameW[1024];
+	TCHAR FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
 	
-	strcpy( FileExtWithDot, "." );
-	strcat( FileExtWithDot, FileExt );
+	_tcscpy( FileExtWithDot, _T(".") );
+	_tcscat( FileExtWithDot, FileExt );
 
 	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, NULL, FileType, 1024))
 	{
-		lstrcat(FileType, "\\ScriptEngine");
+		lstrcat(FileType, _T("\\ScriptEngine"));
 		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, EngineName, 1024))
 		{
-			MultiByteToWideChar(CP_ACP, 0, EngineName, -1, EngineNameW, sizeof(EngineNameW) / sizeof(wchar_t));
+			wchar_t EngineNameW[1024];
+			_tcstowcs(EngineNameW, EngineName, _countof(EngineNameW));
 			return new CWSHMacroManager(EngineNameW);
 		}
 	}
@@ -763,37 +762,3 @@ void CWSHMacroManager::declare()
 	CMacroFactory::Instance()->RegisterCreator(Creator);
 }
 
-#if 0
-Feb. 08, 2003 使ってないのでとりあえずコメントアウト
-void CWSHMacroManager::EnumEngines(EngineCallback Proc)
-{
-	char FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
-	LONG	lret;
-	DWORD	index;
-	DWORD	dwSize;
-	FILETIME	szFileTime;
-
-	for( index = 0; ; index++ )
-	{
-		/* 列挙する */
-		dwSize = sizeof( FileExtWithDot );
-		memset( FileExtWithDot, 0, sizeof( FileExtWithDot ) );
-		lret = RegEnumKeyEx( HKEY_CLASSES_ROOT, index, FileExtWithDot, &dwSize, NULL, NULL, NULL, &szFileTime );
-		//if( lret == ERROR_NO_MORE_ITEMS ) break;	/* 列挙終了 */
-		if( lret != ERROR_SUCCESS ) break;	/* 列挙終了 */
-
-		if( FileExtWithDot[0] == '.' )	/* 拡張子か？ */
-		{
-			/* スクリプトエンジンか確認する */
-			if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, NULL, FileType, 1024))
-			{
-				lstrcat(FileType, "\\ScriptEngine");
-				if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, EngineName, 1024))
-				{
-					Proc(FileExtWithDot + 1, EngineName);
-				}
-			}
-		}
-	}
-}
-#endif

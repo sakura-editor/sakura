@@ -62,6 +62,7 @@ public:
 
 	void SetFocusToPrintPreviewBar( void );
 	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar;	}
+	HWND GetPrintPreviewBarHANDLE_Safe() const{ if(!this)return NULL; else return m_hwndPrintPreviewBar; } //!< thisがNULLでも実行できる版。2007.10.29 kobake
 	
 	//	PrintPreviewバーのメッセージ処理。
 	//	まずPrintPreviewBar_DlgProcにメッセージが届き、DispatchEvent_PPBに転送する仕組み
@@ -85,19 +86,18 @@ protected:
 	||	また、DrawXXXXX()から抜けてきたときは、半角フォントに設定されていることを期待してよい。
 	||	フォントは、半角フォントと全角フォントしかないことも期待してよい。
 	*/
-	void DrawHeader( HDC hdc, RECT& rect, HFONT hFontZen );
+	void DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen );
 	void DrawPageText( HDC, int, int, int, HFONT hFontZen, class CDlgCancel* );
-	void DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen );
+	void DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen );
 
 	/* 印刷／プレビュー 行描画 */
 	void Print_DrawLine(
-		HDC			hdc,
-		int			x,
-		int			y,
-		const char*	pLine,
-		int			nLineLen,
-		int			nIndent, // 折り返しインデント桁数 // 2006.08.14 Moca
-		HFONT		hFontZen
+		HDC				hdc,
+		POINT			ptDraw,		//!< 描画座標。HDC内部単位。
+		const wchar_t*	pLine,
+		int				nLineLen,
+		CLayoutInt		nIndent,	//!< 折り返しインデント桁数 // 2006.08.14 Moca
+		HFONT			hFontZen
 	);
 
 
@@ -126,8 +126,8 @@ public:
 	void SetFooter(char* pszWork[]);	//	&p/&Pなどを登録
 
 protected:
-	void SetPreviewFontHan( LOGFONT* lf );
-	void SetPreviewFontZen( LOGFONT* lf );
+	void SetPreviewFontHan( const LOGFONT* lf );
+	void SetPreviewFontZen( const LOGFONT* lf );
 
 /* メンバ変数宣言 */
 public:
@@ -172,19 +172,18 @@ protected:
 	int				m_nPreview_PaperOffsetTop;	/* 用紙余白上端(1/10mm単位) */
 //	int				m_nPreview_PaperOffsetRight;	/* 用紙余白右端(1/10mm単位) */
 //	int				m_nPreview_PaperOffsetBottom;	/* 用紙余白下端(1/10mm単位) */
-	int				m_bPreview_EnableColms;	/* 印字可能桁数/ページ */
+	CLayoutInt		m_bPreview_EnableColms;	/* 印字可能桁数/ページ */
 	int				m_bPreview_EnableLines;	/* 印字可能行数/ページ */
 	int				m_nPreview_LineNumberColmns;	/* 行番号エリアの幅（文字数） */
 	int				m_nAllPageNum;	/* 全ページ数 */
 	int				m_nCurPageNum;	/* 現在のページ */
 
 	PRINTSETTING*	m_pPrintSetting;	/* 現在の印刷設定 */
-	LOGFONT			m_lfPreviewHan;	/* プレビュー用フォント */
-	LOGFONT			m_lfPreviewZen;	/* プレビュー用フォント */
+	LOGFONT		m_lfPreviewHan;	/* プレビュー用フォント */
+	LOGFONT		m_lfPreviewZen;	/* プレビュー用フォント */
 
 	class CLayoutMgr*	m_pLayoutMgr_Print;	/* 印刷用のレイアウト管理情報 */
 
-	int				m_pnDx[MAXLINESIZE + 10];	/* 文字列描画用文字幅配列 */
 	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
 	static CPrint	m_cPrint;		//!< 現在のプリンタ情報
 };

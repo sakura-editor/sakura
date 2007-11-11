@@ -23,6 +23,7 @@
 struct SysString
 {
 	BSTR Data;
+
 	SysString()                         { Data = NULL; }
 	SysString(SysString &Source)        { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
 	SysString(BSTR &Source)             { Data = ::SysAllocStringLen(Source, SysStringLen(Source)); }
@@ -44,6 +45,14 @@ struct SysString
 		*L = ::WideCharToMultiByte(CP_ACP, 0, Data, Len, *S, Len * 2, NULL, NULL);
 		(*S)[*L] = 0;
 	}
+	void GetW(wchar_t **S, int *L)
+	{
+		int Len = ::SysStringLen(Data);
+		*S = new wchar_t[Len + 1];
+		*L = Len;
+		wcscpy(*S, Data);
+	}
+	void GetT(TCHAR **S, int *L);
 };
 
 /*! VARIANT‚ÌWrapper class

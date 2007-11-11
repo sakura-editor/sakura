@@ -13,6 +13,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+/*
+Migemo はローマ字のまま日本語をインクリメンタル検索するためのツールです。
+*/
 
 #ifndef _SAKURA_MIGEMO_H_
 #define _SAKURA_MIGEMO_H_
@@ -59,16 +62,16 @@ public:
 protected:
 	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
 	//	影響を受けないようにする．
-	typedef migemo* (__cdecl *Proc_migemo_open)(char* dict);
-	typedef void (__cdecl *Proc_migemo_close)(migemo* object);
-	typedef unsigned char* (__cdecl *Proc_migemo_query)(migemo* object, unsigned char* query);
-	typedef void (__cdecl *Proc_migemo_release)(migemo* object, unsigned char* string);
-	typedef int (__cdecl *Proc_migemo_set_operator)(migemo* object, int index, unsigned char* op);
-	typedef const unsigned char* (__cdecl *Proc_migemo_get_operator)(migemo* object, int index);
-	typedef void (__cdecl *Proc_migemo_setproc_char2int)(migemo* object, MIGEMO_PROC_CHAR2INT proc);
-	typedef void (__cdecl *Proc_migemo_setproc_int2char)(migemo* object, MIGEMO_PROC_INT2CHAR proc);
-	typedef int (__cdecl *Proc_migemo_load)(migemo* obj, int dict_id, char* dict_file);
-	typedef int (__cdecl *Proc_migemo_is_enable)(migemo* obj);
+	typedef migemo*        (__cdecl *Proc_migemo_open)            (char* dict);
+	typedef void           (__cdecl *Proc_migemo_close)           (migemo* object);
+	typedef unsigned char* (__cdecl *Proc_migemo_query)           (migemo* object, unsigned char* query);
+	typedef void           (__cdecl *Proc_migemo_release)         (migemo* object, unsigned char* string);
+	typedef int            (__cdecl *Proc_migemo_set_operator)    (migemo* object, int index, unsigned char* op);
+	typedef const uchar_t* (__cdecl *Proc_migemo_get_operator)    (migemo* object, int index);
+	typedef void           (__cdecl *Proc_migemo_setproc_char2int)(migemo* object, MIGEMO_PROC_CHAR2INT proc);
+	typedef void           (__cdecl *Proc_migemo_setproc_int2char)(migemo* object, MIGEMO_PROC_INT2CHAR proc);
+	typedef int            (__cdecl *Proc_migemo_load)            (migemo* obj, int dict_id, const char* dict_file);
+	typedef int            (__cdecl *Proc_migemo_is_enable)       (migemo* obj);
 	
 	Proc_migemo_open                  m_migemo_open                ;
 	Proc_migemo_close                 m_migemo_close               ;
@@ -83,7 +86,7 @@ protected:
 
 	migemo* m_migemo;
 	
-	const char* GetDllName(const char *);
+	LPCTSTR GetDllName(LPCTSTR);
 	int InitDll(void);
 	int DeInitDll(void);
 	
@@ -96,7 +99,13 @@ public:
 	const unsigned char* migemo_get_operator(int index);
 	void migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc);
 	void migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc);
-	int migemo_load(int dict_id, char* dict_file);
+	int migemo_load_a(int dict_id, const char* dict_file);
+	int migemo_load_w(int dict_id, const wchar_t* dict_file);
+#ifdef _UNICODE
+	#define migemo_load_t migemo_load_w
+#else
+	#define migemo_load_t migemo_load_a
+#endif
 	int migemo_is_enable();
 	int migemo_load_all();
 

@@ -20,9 +20,8 @@
 #include "CCommandLine.h"
 #include "CShareData.h"
 #include "Debug.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CMemory.h"
-#include "etc_uty.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
 #include <io.h>
 #include <tchar.h>
@@ -37,7 +36,7 @@
 	@brief コントロールプロセスを初期化する
 	
 	MutexCPを作成・ロックする。
-	CEditAppを作成する。
+	CControlTrayを作成する。
 	
 	@author aroka
 	@date 2002/01/07
@@ -53,7 +52,8 @@ bool CControlProcess::Initialize()
 	if( NULL == m_hMutex ){
 		::MessageBeep( MB_ICONSTOP );
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateMutex()失敗。\n終了します。") );
+			_T("CreateMutex()失敗。\n終了します。")
+		);
 		return false;
 	}
 
@@ -62,8 +62,8 @@ bool CControlProcess::Initialize()
 	if( NULL == m_hEventCPInitialized )
 	{
 		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateEvent()失敗。\n終了します。") );
+		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
+			"CreateEvent()失敗。\n終了します。" );
 		return false;
 	}
 
@@ -71,8 +71,8 @@ bool CControlProcess::Initialize()
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_CP );
 	if( NULL == m_hMutexCP ){
 		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateMutex()失敗。\n終了します。") );
+		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
+			"CreateMutex()失敗。\n終了します。" );
 		return false;
 	}
 	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
@@ -87,36 +87,38 @@ bool CControlProcess::Initialize()
 	/* 共有データのロード */
 	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
 	TCHAR szIniFile[_MAX_PATH];
-	m_cShareData.LoadShareData();
-	m_cShareData.GetIniFileName( szIniFile );	// 出力iniファイル名
+	GetShareData().LoadShareData();
+	GetShareData().GetIniFileName( szIniFile );	// 出力iniファイル名
 	if( _taccess( szIniFile, 0 ) == -1 || CCommandLine::Instance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
-		m_cShareData.SaveShareData();
+		GetShareData().SaveShareData();
 		if( CCommandLine::Instance()->IsWriteQuit() ){
 			return false;
 		}
 	}
 
-	MY_TRACETIME( cRunningTimer, "Before new CEditApp" );
+	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
-	m_pcEditApp = new CEditApp;
+	m_pcTray = new CControlTray;
 
-	MY_TRACETIME( cRunningTimer, "After new CEditApp" );
+	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
 
-	if( NULL == ( m_hWnd = m_pcEditApp->Create( m_hInstance ) ) ){
+	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
+	if( !hwnd ){
 		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
-			GSTR_APPNAME, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
+		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
+			GSTR_APPNAME_A, "ウィンドウの作成に失敗しました。\n起動できません。" );
 		return false;
 	}
-	m_pShareData->m_hwndTray = m_hWnd;
+	SetMainWindow(hwnd);
+	GetDllShareData().m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
 		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("SetEvent()失敗。\n終了します。") );
+		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
+			"SetEvent()失敗。\n終了します。" );
 		return false;
 	}
 
@@ -131,10 +133,13 @@ bool CControlProcess::Initialize()
 */
 bool CControlProcess::MainLoop()
 {
-	if( NULL != m_pcEditApp && NULL != m_hWnd ){
-		m_pcEditApp->MessageLoop();	/* メッセージループ */
+	RELPRINT_A("CControlProcess begin");
+	if( m_pcTray && GetMainWindow() ){
+		m_pcTray->MessageLoop();	/* メッセージループ */
+		RELPRINT_A("CControlProcess done.");
 		return true;
 	}
+	RELPRINT_A("CControlProcess done failed.");
 	return false;
 }
 
@@ -143,17 +148,17 @@ bool CControlProcess::MainLoop()
 	
 	@author aroka
 	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CEditApp へ移動
+	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
 */
 void CControlProcess::Terminate()
 {
-	m_pShareData->m_hwndTray = NULL;
+	GetDllShareData().m_hwndTray = NULL;
 }
 
 CControlProcess::~CControlProcess()
 {
-	if( m_pcEditApp ){
-		delete m_pcEditApp;
+	if( m_pcTray ){
+		delete m_pcTray;
 	}
 	if( m_hEventCPInitialized ){
 		::ResetEvent( m_hEventCPInitialized );

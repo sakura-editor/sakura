@@ -24,9 +24,9 @@
 #ifdef _UNICODE
 
  /* my_icmp */
-#define  my_tmemicmp my_wmemicmp
-#define  my_tcsicmp  my_wcsicmp
-#define  my_tcsnicmp my_wcsnicmp
+#define  my_tmemicmp wmemicmp
+#define  my_tcsicmp  wcsicmp
+#define  my_tcsnicmp wcsnicmp
 
  /* CRT */
 #ifndef _tmemcpy
@@ -38,7 +38,7 @@
 #else
 
  /*  my_icmp */
-#define  my_tmemicmp my_memicmp
+#define  my_tmemicmp auto_memicmp
 #define  my_tcsicmp  my_stricmp
 #define  my_tcsnicmp my_strnicmp
 

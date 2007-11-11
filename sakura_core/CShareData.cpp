@@ -20,17 +20,21 @@
 */
 
 #include "stdafx.h"
-#include <io.h>
 #include "CShareData.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "mymessage.h"
 #include "debug.h"
 #include "global.h"
-#include "etc_uty.h"
 #include "CRunningTimer.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 #include "my_tchar.h" // 2003/01/06 Moca
 #include "charcode.h"  // 2006/06/28 rastiv
+#include <tchar.h>
+#include "util/module.h"
+#include "util/string_ex2.h"
+#include "util/window.h"
+#include "util/file.h"
+#include "util/os.h"
 
 struct ARRHEAD {
 	int		nLength;
@@ -304,13 +308,12 @@ bool CShareData::Init( void )
 {
 	MY_RUNNINGTIMER(cRunningTimer,"CShareData::Init" );
 
+//	MessageBoxA(NULL,"share","init",MB_OK);
+
 	if (CShareData::_instance == NULL)	//	Singleton風
 		CShareData::_instance = this;
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
-
-	int		i;
-	int		j;
 
 	/* ファイルマッピングオブジェクト */
 	m_hFileMap = ::CreateFileMapping(
@@ -322,7 +325,7 @@ bool CShareData::Init( void )
 		GSTR_CSHAREDATA
 	);
 	if( NULL == m_hFileMap ){
-		::MessageBox(
+		::MessageBoxA(
 			NULL,
 			"CreateFileMapping()に失敗しました",
 			"予期せぬエラー",
@@ -342,14 +345,13 @@ bool CShareData::Init( void )
 		);
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
-		char	szIniFolder[_MAX_PATH];
+		TCHAR	szIniFolder[_MAX_PATH];
 		m_pShareData->m_IniFolder.m_bInit = false;
 		GetInidir( szIniFolder );
-		AddLastChar( szIniFolder, _MAX_PATH, '\\' );
+		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
-//		m_pShareData->m_CKeyMacroMgr.Clear();			/* キーワードマクロのバッファ */
-		strcpy(m_pShareData->m_szKeyMacroFileName, "");	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
+		_tcscpy(m_pShareData->m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
@@ -365,60 +367,42 @@ bool CShareData::Init( void )
 
 		m_pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
-		m_pShareData->m_Common.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
+		m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 		CMRU cMRU;
 		cMRU.ClearAll();
-		m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX = 15;	/* フォルダの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
+		m_pShareData->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = 15;	/* フォルダの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 		CMRUFolder cMRUFolder;
 		cMRUFolder.ClearAll();
 
-		m_pShareData->m_nSEARCHKEYArrNum = 0;
-		for( i = 0; i < MAX_SEARCHKEY; ++i ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[i], "" );
-			//m_pShareData->m_bSEARCHKEYArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
-		}
-		m_pShareData->m_nREPLACEKEYArrNum = 0;
-		for( i = 0; i < MAX_REPLACEKEY; ++i ){
-			strcpy( m_pShareData->m_szREPLACEKEYArr[i], "" );
-			//m_pShareData->m_bREPLACEKEYArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
-		}
-		m_pShareData->m_nGREPFILEArrNum = 0;
-		for( i = 0; i < MAX_GREPFILE; ++i ){
-			strcpy( m_pShareData->m_szGREPFILEArr[i], "" );
-			//m_pShareData->m_bGREPFILEArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
-		}
-		m_pShareData->m_nGREPFILEArrNum = 1;
-		strcpy( m_pShareData->m_szGREPFILEArr[0], "*.*" );
-		//m_pShareData->m_bSEARCHKEYArrFavorite[0] = true;	//お気に入り	//@@@ 2003.04.08 MIK
+		m_pShareData->m_aSearchKeys.clear();
+		m_pShareData->m_aReplaceKeys.clear();
+		m_pShareData->m_aGrepFiles.clear();
+		m_pShareData->m_aGrepFiles.push_back(_T("*.*"));
+		m_pShareData->m_aGrepFolders.clear();
 
-		m_pShareData->m_nGREPFOLDERArrNum = 0;
-		for( i = 0; i < MAX_GREPFOLDER; ++i ){
-			strcpy( m_pShareData->m_szGREPFOLDERArr[i], "" );
-			//m_pShareData->m_bGREPFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
-		}
-		strcpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
-		strcpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
+		_tcscpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
+		_tcscpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
-		for( i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
-			strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
-			strcpy( m_pShareData->m_szTransformFileNameTo[i], "" );
+		for( int i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
+			_tcscpy( m_pShareData->m_szTransformFileNameFrom[i], _T("") );
+			_tcscpy( m_pShareData->m_szTransformFileNameTo[i], _T("") );
 		}
-		strcpy( m_pShareData->m_szTransformFileNameFrom[0], "%DeskTop%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[0], "デスクトップ\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[1], "%Personal%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[1], "マイドキュメント\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[2], "%Cache%\\Content.IE5\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[2], "IEキャッシュ\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[3], "%TEMP%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[3],   "TEMP\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[4], "%Common DeskTop%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[4],   "共有デスクトップ\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[5], "%Common Documents%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[5], "共有ドキュメント\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[6], "%AppData%\\" );	// 2007.05.19 ryoji 追加
-		strcpy( m_pShareData->m_szTransformFileNameTo[6], "アプリデータ\\" );	// 2007.05.19 ryoji 追加
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[0],   _T("デスクトップ\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[1], _T("%Personal%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[1],   _T("マイドキュメント\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[2], _T("%Cache%\\Content.IE5\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[2],   _T("IEキャッシュ\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[3], _T("%TEMP%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[3],   _T("TEMP\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[4], _T("%Common DeskTop%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[4],   _T("共有デスクトップ\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[5], _T("%Common Documents%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[5],   _T("共有ドキュメント\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[6], _T("%AppData%\\") );	// 2007.05.19 ryoji 追加
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[6],   _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
 		m_pShareData->m_nTransformFileNameArrNum = 7;
 		
 		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
@@ -429,14 +413,14 @@ bool CShareData::Init( void )
 			/*
 				2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
 			*/
-			char szSettingName[64];
-			i = 0;
-			wsprintf( szSettingName, "印刷設定 %d", i + 1 );
+			TCHAR szSettingName[64];
+			int i = 0;
+			auto_sprintf( szSettingName, _T("印刷設定 %d"), i + 1 );
 			CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 		}
-		for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
+		for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 			m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-			wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+			auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _T("印刷設定 %d"), i + 1 );	/* 印刷設定の名前 */
 		}
 
 		//	Jan. 30, 2005 genta 関数として独立
@@ -445,228 +429,223 @@ bool CShareData::Init( void )
 //	From Here Sept. 19, 2000 JEPRO コメントアウトになっていた初めのブロックを復活しその下をコメントアウト
 //	MS ゴシック標準スタイル10ptに設定
 //		/* LOGFONTの初期化 */
-		memset( &m_pShareData->m_Common.m_lf, 0, sizeof( LOGFONT ) );
-		m_pShareData->m_Common.m_lf.lfHeight			= -13;
-		m_pShareData->m_Common.m_lf.lfWidth				= 0;
-		m_pShareData->m_Common.m_lf.lfEscapement		= 0;
-		m_pShareData->m_Common.m_lf.lfOrientation		= 0;
-		m_pShareData->m_Common.m_lf.lfWeight			= 400;
-		m_pShareData->m_Common.m_lf.lfItalic			= 0x0;
-		m_pShareData->m_Common.m_lf.lfUnderline			= 0x0;
-		m_pShareData->m_Common.m_lf.lfStrikeOut			= 0x0;
-		m_pShareData->m_Common.m_lf.lfCharSet			= 0x80;
-		m_pShareData->m_Common.m_lf.lfOutPrecision		= 0x3;
-		m_pShareData->m_Common.m_lf.lfClipPrecision		= 0x2;
-		m_pShareData->m_Common.m_lf.lfQuality			= 0x1;
-		m_pShareData->m_Common.m_lf.lfPitchAndFamily	= 0x31;
-		strcpy( m_pShareData->m_Common.m_lf.lfFaceName, "ＭＳ ゴシック" );
+		memset_raw( &m_pShareData->m_Common.m_sView.m_lf, 0, sizeof( m_pShareData->m_Common.m_sView.m_lf ) );
+		m_pShareData->m_Common.m_sView.m_lf.lfHeight			= -13;
+		m_pShareData->m_Common.m_sView.m_lf.lfWidth				= 0;
+		m_pShareData->m_Common.m_sView.m_lf.lfEscapement		= 0;
+		m_pShareData->m_Common.m_sView.m_lf.lfOrientation		= 0;
+		m_pShareData->m_Common.m_sView.m_lf.lfWeight			= 400;
+		m_pShareData->m_Common.m_sView.m_lf.lfItalic			= 0x0;
+		m_pShareData->m_Common.m_sView.m_lf.lfUnderline			= 0x0;
+		m_pShareData->m_Common.m_sView.m_lf.lfStrikeOut			= 0x0;
+		m_pShareData->m_Common.m_sView.m_lf.lfCharSet			= 0x80;
+		m_pShareData->m_Common.m_sView.m_lf.lfOutPrecision		= 0x3;
+		m_pShareData->m_Common.m_sView.m_lf.lfClipPrecision		= 0x2;
+		m_pShareData->m_Common.m_sView.m_lf.lfQuality			= 0x1;
+		m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily	= 0x31;
+		_tcscpy( m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
 		::SystemParametersInfo(
 			SPI_GETICONTITLELOGFONT,				// system parameter to query or set
 			sizeof(LOGFONT),						// depends on action to be taken
-			(PVOID)&m_pShareData->m_Common.m_lf_kh,	// depends on action to be taken
+			(PVOID)&m_pShareData->m_Common.m_sHelper.m_lf_kh,	// depends on action to be taken
 			NULL									// user profile update flag
 		);
 		// ai 02/05/21 Add E
 
 //	To Here Sept. 19,2000
 
-		m_pShareData->m_Common.m_bFontIs_FIXED_PITCH = TRUE;				/* 現在のフォントは固定幅フォントである */
+		m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE;				/* 現在のフォントは固定幅フォントである */
 
 //		m_pShareData->m_Common.m_bUseCaretKeyWord = FALSE;		/* キャレット位置の単語を辞書検索-機能OFF */	// 2006.03.24 fon sakura起動ごとFALSEとし、初期化しない
 
 
 		/* バックアップ */
-		m_pShareData->m_Common.m_bBackUp = FALSE;				/* バックアップの作成 */
-		m_pShareData->m_Common.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
-		m_pShareData->m_Common.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
-		m_pShareData->m_Common.m_szBackUpFolder[0] = '\0';		/* バックアップを作成するフォルダ */
-		m_pShareData->m_Common.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-		m_pShareData->m_Common.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;
+		m_pShareData->m_Common.m_sBackup.m_bBackUp = FALSE;				/* バックアップの作成 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
+		m_pShareData->m_Common.m_sBackup.m_szBackUpFolder[0] = L'\0';		/* バックアップを作成するフォルダ */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;
 																/* バックアップファイル名：日付 */
-		m_pShareData->m_Common.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
 																/* バックアップファイル名：連番の数と先頭文字 */
-		m_pShareData->m_Common.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
-		m_pShareData->m_Common.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
-		m_pShareData->m_Common.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
-		m_pShareData->m_Common.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
-		m_pShareData->m_Common.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-		m_pShareData->m_Common.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-		m_pShareData->m_Common.m_szBackUpPathAdvanced[0] = '\0';	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		m_pShareData->m_Common.m_sBackup.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+		m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
-		m_pShareData->m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
+		m_pShareData->m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE;/* ファイルの排他制御モード */
 
-		m_pShareData->m_Common.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
-		m_pShareData->m_Common.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
-		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
+		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
+		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
 
-		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
-		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
+		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
+		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
 		//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
+		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
 
-		m_pShareData->m_Common.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
+		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
 
-		m_pShareData->m_Common.m_bRegularExp = 0;				/* 1==正規表現 */
-		m_pShareData->m_Common.m_bLoHiCase = 0;					/* 1==英大文字小文字の区別 */
-		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
-		m_pShareData->m_Common.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
-		m_pShareData->m_Common.m_szExtHelp[0] = '\0';			/* 外部ヘルプ１ */
-		m_pShareData->m_Common.m_szExtHtmlHelp[0] = '\0';		/* 外部HTMLヘルプ */
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption.Reset();			// 検索オプション
+		m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = 0;			// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+		m_pShareData->m_Common.m_sSearch.m_bSelectedArea = FALSE;			// 選択範囲内置換
+		m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] = L'\0';			// 外部ヘルプ１
+		m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] = L'\0';		// 外部HTMLヘルプ
 		
-		m_pShareData->m_Common.m_szMigemoDll[0] = '\0';			/* migemo dll */
-		m_pShareData->m_Common.m_szMigemoDict[0] = '\0';		/* migemo dict */
+		m_pShareData->m_Common.m_sHelper.m_szMigemoDll[0] = L'\0';			/* migemo dll */
+		m_pShareData->m_Common.m_sHelper.m_szMigemoDict[0] = L'\0';		/* migemo dict */
 
-		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
+		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
 
-		m_pShareData->m_Common.m_bCloseAllConfirm = FALSE;		/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
-		m_pShareData->m_Common.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
-		m_pShareData->m_Common.m_nRepeatedScrollLineNum = 3;	/* キーリピート時のスクロール行数 */
-		m_pShareData->m_Common.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
+		m_pShareData->m_Common.m_sGeneral.m_bCloseAllConfirm = FALSE;		/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
+		m_pShareData->m_Common.m_sGeneral.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
+		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(3);	/* キーリピート時のスクロール行数 */
+		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
 
-		m_pShareData->m_Common.m_bAddCRLFWhenCopy = FALSE;		/* 折り返し行に改行を付けてコピー */
-		m_pShareData->m_Common.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
-		m_pShareData->m_Common.m_bGrepOutputLine = TRUE;		/* Grep: 行を出力するか該当部分だけ出力するか */
-		m_pShareData->m_Common.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
-		m_pShareData->m_Common.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
-		m_pShareData->m_Common.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
-		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;				/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
-		m_pShareData->m_Common.m_bCaretTextForSearch = TRUE;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-		m_pShareData->m_Common.m_szRegexpLib[0] = '\0';	/* 2007.08.12 genta 正規表現DLL */
-		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
-		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
+		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy = FALSE;			/* 折り返し行に改行を付けてコピー */
+		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
+		m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = TRUE;			/* Grep: 行を出力するか該当部分だけ出力するか */
+		m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
+		m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
+		m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = CODE_AUTODETECT;	/* Grep: 文字コードセット */
+		m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView = FALSE;		/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
+		m_pShareData->m_Common.m_sSearch.m_bCaretTextForSearch = TRUE;		/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+		m_pShareData->m_Common.m_sSearch.m_szRegexpLib[0] =_T('\0');		/* 2007.08.12 genta 正規表現DLL */
+		m_pShareData->m_Common.m_sSearch.m_bGTJW_RETURN = TRUE;				/* エンターキーでタグジャンプ */
+		m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
 //キーワード：ツールバー順序
 		//	Jan. 30, 2005 genta 関数として独立
 		InitToolButtons( m_pShareData );
 
-		m_pShareData->m_Common.m_bDispTOOLBAR = TRUE;			/* 次回ウィンドウを開いたときツールバーを表示する */
-		m_pShareData->m_Common.m_bDispSTATUSBAR = TRUE;			/* 次回ウィンドウを開いたときステータスバーを表示する */
-		m_pShareData->m_Common.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
-		m_pShareData->m_Common.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
-		m_pShareData->m_Common.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
+		m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = TRUE;			/* 次回ウィンドウを開いたときツールバーを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR = TRUE;			/* 次回ウィンドウを開いたときステータスバーを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
+		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
+		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
 
-		m_pShareData->m_Common.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
-		m_pShareData->m_Common.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-		strcpy( m_pShareData->m_Common.m_szTabWndCaption,
-			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
-		m_pShareData->m_Common.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
-		m_pShareData->m_Common.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
-		m_pShareData->m_Common.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
-		m_pShareData->m_Common.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
-		m_pShareData->m_Common.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
-		m_pShareData->m_Common.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
-		m_pShareData->m_Common.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
+		wcscpy( m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption,
+	L"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
+		m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
+		m_pShareData->m_Common.m_sTabBar.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
 
-		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
-		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
+		m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
+		m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
 		/* カスタムメニュー情報 */
-		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[0], "右クリックメニュー", i );
-		for( i = 1; i < MAX_CUSTOM_MENU; ++i ){
-			wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[i], "メニュー%d", i );
-			m_pShareData->m_Common.m_nCustMenuItemNumArr[i] = 0;
-			for( j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){
-				m_pShareData->m_Common.m_nCustMenuItemFuncArr[i][j] = 0;
-				m_pShareData->m_Common.m_nCustMenuItemKeyArr [i][j] = '\0';
+		auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0], LTEXT("右クリックメニュー") );
+		for( int i = 1; i < MAX_CUSTOM_MENU; ++i ){
+			auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i], LTEXT("メニュー%d"), i );
+			m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[i] = 0;
+			for( int j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){
+				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] = 0;
+				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr [i][j] = '\0';
 			}
 		}
-		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[CUSTMENU_INDEX_FOR_TABWND], "タブメニュー" );	//@@@ 2003.06.13 MIK
+		auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[CUSTMENU_INDEX_FOR_TABWND], LTEXT("タブメニュー") );	//@@@ 2003.06.13 MIK
 
 
 		/* 見出し記号 */
-		strcpy( m_pShareData->m_Common.m_szMidashiKigou, "１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
+		wcscpy( m_pShareData->m_Common.m_sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
 		/* 引用符 */
-		strcpy( m_pShareData->m_Common.m_szInyouKigou, "> " );		/* 引用符 */
-		m_pShareData->m_Common.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
+		wcscpy( m_pShareData->m_Common.m_sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
+		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
 		//	2004.05.13 Moca ウィンドウサイズ固定指定追加に伴う指定方法変更
-		m_pShareData->m_Common.m_nSaveWindowSize = WINSIZEMODE_SAVE;	// ウィンドウサイズ継承
-		m_pShareData->m_Common.m_nWinSizeType = SIZE_RESTORED;
-		m_pShareData->m_Common.m_nWinSizeCX = CW_USEDEFAULT;
-		m_pShareData->m_Common.m_nWinSizeCY = 0;
+		m_pShareData->m_Common.m_sWindow.m_nSaveWindowSize = WINSIZEMODE_SAVE;	// ウィンドウサイズ継承
+		m_pShareData->m_Common.m_sWindow.m_nWinSizeType = SIZE_RESTORED;
+		m_pShareData->m_Common.m_sWindow.m_nWinSizeCX = CW_USEDEFAULT;
+		m_pShareData->m_Common.m_sWindow.m_nWinSizeCY = 0;
 		
 		//	2004.05.13 Moca ウィンドウ位置
-		m_pShareData->m_Common.m_nSaveWindowPos = WINSIZEMODE_DEF;		// ウィンドウ位置固定・継承
-		m_pShareData->m_Common.m_nWinPosX = CW_USEDEFAULT;
-		m_pShareData->m_Common.m_nWinPosY = 0;
+		m_pShareData->m_Common.m_sWindow.m_nSaveWindowPos = WINSIZEMODE_DEF;		// ウィンドウ位置固定・継承
+		m_pShareData->m_Common.m_sWindow.m_nWinPosX = CW_USEDEFAULT;
+		m_pShareData->m_Common.m_sWindow.m_nWinPosY = 0;
 
-		m_pShareData->m_Common.m_bUseTaskTray = TRUE;				/* タスクトレイのアイコンを使う */
-		m_pShareData->m_Common.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
-		m_pShareData->m_Common.m_wTrayMenuHotKeyCode = 'Z';			/* タスクトレイ左クリックメニュー キー */
-		m_pShareData->m_Common.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
-		m_pShareData->m_Common.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
-		m_pShareData->m_Common.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
-		m_pShareData->m_Common.m_bDispExitingDialog = FALSE;		/* 終了ダイアログを表示する */
-		m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
-		m_pShareData->m_Common.m_bSelectClickedURL = TRUE;			/* URLがクリックされたら選択するか */
-		m_pShareData->m_Common.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
+		m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray = TRUE;				/* タスクトレイのアイコンを使う */
+		m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
+		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = L'Z';		/* タスクトレイ左クリックメニュー キー */
+		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
+		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
+		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
+		m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog = FALSE;		/* 終了ダイアログを表示する */
+		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
+		m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL = TRUE;			/* URLがクリックされたら選択するか */
+		m_pShareData->m_Common.m_sSearch.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
 //		m_pShareData->m_Common.m_bRulerDisp = TRUE;					/* ルーラー表示 */
-		m_pShareData->m_Common.m_nRulerHeight = 13;					/* ルーラーの高さ */
-		m_pShareData->m_Common.m_nRulerBottomSpace = 0;				/* ルーラーとテキストの隙間 */
-		m_pShareData->m_Common.m_nRulerType = 0;					/* ルーラーのタイプ */
+		m_pShareData->m_Common.m_sWindow.m_nRulerHeight = 13;					/* ルーラーの高さ */
+		m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace = 0;				/* ルーラーとテキストの隙間 */
+		m_pShareData->m_Common.m_sWindow.m_nRulerType = 0;					/* ルーラーのタイプ */
 		//	Sep. 18, 2002 genta
-		m_pShareData->m_Common.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
-		m_pShareData->m_Common.m_nVertLineOffset = -1;				// 2005.11.10 Moca 指定桁縦線
-		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
-		m_pShareData->m_Common.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
-		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
-		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
+		m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
+		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
+		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
+		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;		/* HtmlHelpビューアはひとつ */
+		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
+
 		/* 1999.11.15 */
-		m_pShareData->m_Common.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
-		m_pShareData->m_Common.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
-		m_pShareData->m_Common.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
-		m_pShareData->m_Common.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
-		::SetRect( &m_pShareData->m_Common.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
-		m_pShareData->m_Common.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
-		m_pShareData->m_Common.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
-		m_pShareData->m_Common.m_bScrollBarHorz = TRUE;				/* 水平スクロールバーを使う */
-		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
-		m_pShareData->m_Common.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
-		m_pShareData->m_Common.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
-		m_pShareData->m_Common.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
+		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
+		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
+		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
+		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
+		::SetRect( &m_pShareData->m_Common.m_sOthers.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
+		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
+		m_pShareData->m_Common.m_sSearch.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
+		m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz = TRUE;				/* 水平スクロールバーを使う */
+		m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
+		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
+		m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
+		m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
-		m_pShareData->m_Common.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_sHelper.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 
-		m_pShareData->m_Common.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
-		m_pShareData->m_Common.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
+		m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
+		m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
 
 		/*
 			書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
 		*/
 
-		m_pShareData->m_Common.m_nDateFormatType = 0;	//日付書式のタイプ
-		strcpy( m_pShareData->m_Common.m_szDateFormat, "yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
-		m_pShareData->m_Common.m_nTimeFormatType = 0;	//時刻書式のタイプ
-		strcpy( m_pShareData->m_Common.m_szTimeFormat, "tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
+		m_pShareData->m_Common.m_sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
+		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szDateFormat, _T("yyyy\'年\'M\'月\'d\'日(\'dddd\')\'") );	//日付書式
+		m_pShareData->m_Common.m_sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
+		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
-		m_pShareData->m_Common.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
 		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
-		m_pShareData->m_Common.m_bQueryIfCodeChange = TRUE;
+		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = TRUE;
+
 		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-		m_pShareData->m_Common.m_bAlertIfFileNotExist = FALSE;
+		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;
 
 		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-		m_pShareData->m_Common.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
-		m_pShareData->m_Common.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
+		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
+		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
 
-		for( i = 0; i < MAX_CMDARR; i++ ){
-			/* 初期化 */
-			m_pShareData->m_szCmdArr[i][0] = '\0';
-			//m_pShareData->m_bCmdArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
-		}
-		m_pShareData->m_nCmdArrNum = 0;
+		m_pShareData->m_aCommands.clear();
 
 		InitKeyword( m_pShareData );
 		InitTypeConfig( m_pShareData );
@@ -674,19 +653,19 @@ bool CShareData::Init( void )
 
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-		strcpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
-			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -"
-			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
-		strcpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
-			"${w?$h$:アウトプット$:$f$}${U?(更新)$} -"
-			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
+		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive, 
+			_T("${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -")
+			_T(" $A $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
+		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive, 
+			_T("${w?$h$:アウトプット$:$f$}${U?(更新)$} -")
+			_T(" $A $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化
 		MacroRec *mptr = m_pShareData->m_MacroTable;
-		for( i = 0; i < MAX_CUSTMACRO; ++i, ++mptr ){
-			mptr->m_szName[0] = '\0';
-			mptr->m_szFile[0] = '\0';
+		for( int i = 0; i < MAX_CUSTMACRO; ++i, ++mptr ){
+			mptr->m_szName[0] = L'\0';
+			mptr->m_szFile[0] = L'\0';
 			mptr->m_bReloadWhenExecute = FALSE;
 		}
 		//	To Here Sep. 14, 2001 genta
@@ -703,13 +682,16 @@ bool CShareData::Init( void )
 		m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 
 		m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
-		strcpy( m_pShareData->m_szTagsCmdLine, "" );	/* CTAGS */	//@@@ 2003.05.12 MIK
+		_tcscpy( m_pShareData->m_szTagsCmdLine, _T("") );	/* CTAGS */	//@@@ 2003.05.12 MIK
 		//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
-		m_pShareData->m_nTagJumpKeywordArrNum = 0;
-		for( i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
-			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], "" );
+		m_pShareData->m_aTagJumpKeywords.clear();
+		/*
+		m_pShareData->m_aTagJumpKeywords.size() = 0;
+		for( int i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
+			wcscpy( m_pShareData->m_aTagJumpKeywords[i], L"" );
 			//m_pShareData->m_bTagJumpKeywordArrFavorite[i] = false;	//お気に入り
 		}
+		*/
 		m_pShareData->m_bTagJumpICase = FALSE;
 		m_pShareData->m_bTagJumpAnyWhere = FALSE;
 		//To Here 2005.04.03 MIK 
@@ -745,19 +727,19 @@ void CShareData::SetKeyNameArrVal(
 	DLLSHAREDATA*	pShareData,
 	int				nIdx,
 	short			nKeyCode,
-	char*			pszKeyName,
-	short			nFuncCode_0,
-	short			nFuncCode_1,
-	short			nFuncCode_2,
-	short			nFuncCode_3,
-	short			nFuncCode_4,
-	short			nFuncCode_5,
-	short			nFuncCode_6,
-	short			nFuncCode_7
- )
- {
+	TCHAR*			pszKeyName,
+	EFunctionCode	nFuncCode_0,
+	EFunctionCode	nFuncCode_1,
+	EFunctionCode	nFuncCode_2,
+	EFunctionCode	nFuncCode_3,
+	EFunctionCode	nFuncCode_4,
+	EFunctionCode	nFuncCode_5,
+	EFunctionCode	nFuncCode_6,
+	EFunctionCode	nFuncCode_7
+)
+{
 	pShareData->m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
-	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
+	_tcscpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[0] = nFuncCode_0;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[1] = nFuncCode_1;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[2] = nFuncCode_2;
@@ -766,23 +748,8 @@ void CShareData::SetKeyNameArrVal(
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[5] = nFuncCode_5;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[6] = nFuncCode_6;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[7] = nFuncCode_7;
- 	return;
- }
-
-
-/* KEYDATA配列にデータをセット */
-/*void CShareData::SetKeyNameArrVal(  // 20050818 aroka 未使用なので削除
-	DLLSHAREDATA*	pShareData,
-	int				nIdx,
-	short			nKeyCode,
-	char*			pszKeyName
- )
-{
-	pShareData->m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
-	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
 	return;
- }
-*/
+}
 
 
 
@@ -793,19 +760,20 @@ void CShareData::SetKeyNameArrVal(
 	
 	拡張子を切り出して GetDocumentTypeExt に渡すだけ．
 */
-int CShareData::GetDocumentType( const char* pszFilePath )
+int CShareData::GetDocumentType( const TCHAR* pszFilePath )
 {
-	char	szExt[_MAX_EXT];
+	TCHAR	szExt[_MAX_EXT];
 
-	if( NULL != pszFilePath && 0 < (int)strlen( pszFilePath ) ){
-		_splitpath( pszFilePath, NULL, NULL, NULL, szExt );
-		if( szExt[0] == '.' )
+	if( NULL != pszFilePath && 0 < (int)_tcslen( pszFilePath ) ){
+		_tsplitpath( pszFilePath, NULL, NULL, NULL, szExt );
+		if( szExt[0] == _T('.') )
 			return GetDocumentTypeExt( szExt + 1 );
 		else
 			return GetDocumentTypeExt( szExt );
 	}
 	return 0;
 }
+
 
 /*!
 	拡張子から、ドキュメントタイプ（数値）を取得する
@@ -816,22 +784,22 @@ int CShareData::GetDocumentType( const char* pszFilePath )
 	とりあえず今のところはタイプは拡張子のみに依存すると仮定している．
 	ファイル全体の形式に対応させるときは，また考え直す．
 */
-int CShareData::GetDocumentTypeExt( const char* pszExt )
+int CShareData::GetDocumentTypeExt( const TCHAR* pszExt )
 {
-	const char	pszSeps[] = " ;,";	// separator
+	const TCHAR	pszSeps[] = _T(" ;,");	// separator
 
 	int		i;
-	char*	pszToken;
-	char	szText[256];
+	TCHAR*	pszToken;
+	TCHAR	szText[256];
 
 	for( i = 0; i < MAX_TYPES; ++i ){
-		strcpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
-		pszToken = strtok( szText, pszSeps );
+		_tcscpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
+		pszToken = _tcstok( szText, pszSeps );
 		while( NULL != pszToken ){
-			if( 0 == _stricmp( pszExt, pszToken ) ){
+			if( 0 == _tcsicmp( pszExt, pszToken ) ){
 				return i;	//	番号
 			}
-			pszToken = strtok( NULL, pszSeps );
+			pszToken = _tcstok( NULL, pszSeps );
 		}
 	}
 	return 0;	//	ハズレ
@@ -843,7 +811,7 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 
 /** 編集ウィンドウリストへの登録
 
-	@param hWnd [in] 登録する編集ウィンドウのハンドル
+	@param hWnd   [in] 登録する編集ウィンドウのハンドル
 	@param nGroup [in] 新規登録の場合のグループID
 
 	@date 2003.06.28 MIK CRecent利用で書き換え
@@ -851,55 +819,24 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 */
 BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 {
-//	int		i;
-//	int		j;
-//	/* 同じウィンドウハンドルがある場合は先頭に持ってくる */
-//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-//		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
-//			break;
-//		}
-//	}
-//	if( i < m_pShareData->m_nEditArrNum ){
-//		for( j = i; j > 0; j-- ){
-//			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
-//		}
-//	}else{
-//		if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-//			/* これ以上登録できない */
-//			return FALSE;
-//		}
-//
-//		for( j = MAX_EDITWINDOWS - 1; j > 0; j-- ){
-//			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
-//		}
-//		m_pShareData->m_nEditArrNum++;
-//		if( m_pShareData->m_nEditArrNum > MAX_EDITWINDOWS ){
-//			m_pShareData->m_nEditArrNum = MAX_EDITWINDOWS;
-////#ifdef _DEBUG
-////			/* デバッグモニタに出力 */
-////			TraceOut( "%s(%d): m_nEditArrNum=%d\n", __FILE__, __LINE__, hWnd, m_pShareData->m_nEditArrNum );
-////#endif
-//			/* これ以上登録できない */
-//			return FALSE;
-//		}
-//	}
-//	m_pShareData->m_pEditArr[0].m_hWnd = hWnd;
+	DBPRINT_A("AddEditWndList %08X",hWnd);
 
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
-	CRecent	cRecentEditNode;
-	EditNode	MyEditNode;
+	EditNode	sMyEditNode;
 	EditNode	*p;
 
-	memset( &MyEditNode, 0, sizeof( MyEditNode ) );
-	MyEditNode.m_hWnd = hWnd;
+	memset_raw( &sMyEditNode, 0, sizeof( sMyEditNode ) );
+	sMyEditNode.m_hWnd = hWnd;
 
 	{	// 2007.07.07 genta Lock領域
 	LockGuard<CMutex> guard( g_cEditArrMutex );
-	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+
+	CRecentEditNode	cRecentEditNode;
 
 	//登録済みか？
-	if( -1 != (nIndex = cRecentEditNode.FindItem( (const char*)&hWnd ) ) )
+	nIndex = cRecentEditNode.FindItemByHwnd( hWnd );
+	if( -1 != nIndex )
 	{
 		//もうこれ以上登録できないか？
 		if( cRecentEditNode.GetItemCount() >= cRecentEditNode.GetArrayCount() )
@@ -910,10 +847,10 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 		nSubCommand = TWNT_ORDER;
 
 		//以前の情報をコピーする。
-		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
+		p = cRecentEditNode.GetItem( nIndex );
 		if( p )
 		{
-			memcpy( &MyEditNode, p, sizeof( MyEditNode ) );
+			memcpy_raw( &sMyEditNode, p, sizeof( sMyEditNode ) );
 		}
 	}
 
@@ -925,28 +862,28 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 		::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_nSequences );
 
 		//連番を更新する。
-		MyEditNode.m_nIndex = m_pShareData->m_nSequences;
+		sMyEditNode.m_nIndex = m_pShareData->m_nSequences;
 
 		/* タブグループ連番 */
 		if( nGroup > 0 )
 		{
-			MyEditNode.m_nGroup = nGroup;	// 指定のグループ
+			sMyEditNode.m_nGroup = nGroup;	// 指定のグループ
 		}
 		else
 		{
-			p = (EditNode*)cRecentEditNode.GetItem( 0 );
+			p = cRecentEditNode.GetItem( 0 );
 			if( NULL == p )
-				MyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+				sMyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
 			else
-				MyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
+				sMyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
 		}
 
-		MyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
-		MyEditNode.m_bClosing = FALSE;
+		sMyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
+		sMyEditNode.m_bClosing = FALSE;
 	}
 
 	//追加または先頭に移動する。
-	cRecentEditNode.AppendItem( (const char*)&MyEditNode );
+	cRecentEditNode.AppendItem( &sMyEditNode );
 	cRecentEditNode.Terminate();
 	}	// 2007.07.07 genta Lock領域終わり
 
@@ -967,31 +904,17 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 */
 void CShareData::DeleteEditWndList( HWND hWnd )
 {
-//	int		i;
-//	int		j;
-//
-//	/* ウィンドウハンドルの検索 */
-//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-//		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
-//			break;
-//		}
-//	}
-//	if( i >= m_pShareData->m_nEditArrNum ){
-//		return;
-//	}
-//	for( j = i; j < m_pShareData->m_nEditArrNum - 1; ++j ){
-//		m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j + 1];
-//	}
-//	m_pShareData->m_nEditArrNum--;
-
 	int nGroup = GetGroupId( hWnd );
 
 	//ウインドウをリストから削除する。
 	{	// 2007.07.07 genta Lock領域
 		LockGuard<CMutex> guard( g_cEditArrMutex );
-		CRecent	cRecentEditNode;
-		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
-		cRecentEditNode.DeleteItem( (const char*)&hWnd );
+
+		CRecentEditNode	cRecentEditNode;
+DBPRINT_A("cnt %d",cRecentEditNode.GetItemCount());
+DBPRINT_A("DeleteItemByHwnd %08X",hWnd);
+		cRecentEditNode.DeleteItemByHwnd( hWnd );
+DBPRINT_A("/cnt %d",cRecentEditNode.GetItemCount());
 		cRecentEditNode.Terminate();
 	}
 
@@ -1178,7 +1101,7 @@ BOOL CShareData::RequestCloseAllEditor( BOOL bExit, int nGroup )
 				/* アクティブにする */
 				ActivateFrameWindow( pWndArr[i].m_hWnd );
 				/* トレイからエディタへの終了要求 */
-				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
+				if( !::SendMessageAny( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 					delete []pWndArr;
 					return FALSE;
 				}
@@ -1200,7 +1123,7 @@ BOOL CShareData::RequestCloseAllEditor( BOOL bExit, int nGroup )
 	@retval	TRUE すでに開いていた
 	@retval	FALSE 開いていなかった
 */
-BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
+BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 {
 	int			i;
 	FileInfo*	pfi;
@@ -1214,10 +1137,10 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
-			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
+			::SendMessageAny( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 			/* 同一パスのファイルが既に開かれているか */
-			if( 0 == _stricmp( pfi->m_szPath, pszPath ) ){
+			if( 0 == _tcsicmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
 				return TRUE;
 			}
@@ -1244,38 +1167,48 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 
 	@date 2007.03.12 maru 新規作成
 */
-BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharCode ){
+BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode ){
 
 	if( IsPathOpened( pszPath, phwndOwner ) ){
 		FileInfo*		pfi;
 		CMRU			cMRU;
-		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
+		::SendMessageAny( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
 		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 		if(nCharCode != CODE_AUTODETECT){
-			char*	pszCodeNameCur = NULL;
-			char*	pszCodeNameNew = NULL;
-			if(-1 < nCharCode && nCharCode < CODE_CODEMAX){
-				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+			const TCHAR*	pszCodeNameCur = NULL;
+			const TCHAR*	pszCodeNameNew = NULL;
+			if(IsValidCodeType(nCharCode)){
+				pszCodeNameNew = gm_pszCodeNameArr_Normal[nCharCode];
 			}
-			if(-1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
-				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+			if(IsValidCodeType(pfi->m_nCharCode)){
+				pszCodeNameCur = gm_pszCodeNameArr_Normal[pfi->m_nCharCode];
 			}
 
 			if(NULL != pszCodeNameCur && NULL != pszCodeNameNew){
 				if(nCharCode != pfi->m_nCharCode){
-					::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-						"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\nファイルメニューから「開き直す」を使用してください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
-						pszPath, pszCodeNameCur, pszCodeNameNew
+					::MYMESSAGEBOX_A( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME_A,
+						"%ts\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n"
+						"ファイルメニューから「開き直す」を使用してください。\n"
+						"\n"
+						"現在の文字コードセット=[%ts]\n"
+						"新しい文字コードセット=[%ts]",
+						pszPath,
+						pszCodeNameCur,
+						pszCodeNameNew
 					);
 				}
 			}
 			else{
-				::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-					"%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]",
+				::MYMESSAGEBOX_A( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME_A,
+					"%ts\n\n多重オープンの確認で不明な文字コードが指定されました。\n"
+					"\n"
+					"現在の文字コードセット=%d [%ts]\n新しい文字コードセット=%d [%ts]",
 					pszPath,
-					pfi->m_nCharCode, NULL==pszCodeNameCur?"不明":pszCodeNameCur,
-					nCharCode,        NULL==pszCodeNameNew?"不明":pszCodeNameNew
+					pfi->m_nCharCode,
+					NULL==pszCodeNameCur?_T("不明"):pszCodeNameCur,
+					nCharCode,
+					NULL==pszCodeNameNew?_T("不明"):pszCodeNameNew
 				);
 			}
 		}
@@ -1433,17 +1366,17 @@ BOOL CShareData::SendMessageToAllEditors(
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL CShareData::IsEditWnd( HWND hWnd )
 {
-	char	szClassName[64];
+	TCHAR	szClassName[64];
 	if( hWnd == NULL ){	// 2007.06.20 ryoji 条件追加
 		return FALSE;
 	}
 	if( !::IsWindow( hWnd ) ){
 		return FALSE;
 	}
-	if( 0 == ::GetClassName( hWnd, szClassName, sizeof(szClassName) - 1 ) ){
+	if( 0 == ::GetClassName( hWnd, szClassName, _countof(szClassName) - 1 ) ){
 		return FALSE;
 	}
-	if(0 == strcmp( GSTR_EDITWINDOWNAME, szClassName ) ){
+	if(0 == _tcscmp( GSTR_EDITWINDOWNAME, szClassName ) ){
 		return TRUE;
 	}else{
 		return FALSE;
@@ -1746,7 +1679,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
 		// （m_hwndTraceOutSource は CEditWnd::Create() で予め設定）
 		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
-		CEditApp::OpenNewEditor( NULL, m_hwndTraceOutSource, "-DEBUGMODE", CODE_SJIS, FALSE, true );
+		CControlTray::OpenNewEditor( NULL, m_hwndTraceOutSource, _T("-DEBUGMODE"), CODE_SJIS, FALSE, true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
@@ -1757,11 +1690,12 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	}
 	va_list argList;
 	va_start( argList, lpFmt );
-	wvsprintf( m_pShareData->m_szWork, lpFmt, argList );
+	auto_vsprintf( m_pShareData->GetWorkBuffer<EDIT_CHAR>(), to_wchar(lpFmt), argList );
 	va_end( argList );
 	::SendMessage( m_pShareData->m_hwndDebug, MYWM_ADDSTRING, 0, 0 );
 	return;
 }
+
 
 /*
 	CShareData::CheckMRUandOPENFOLDERList
@@ -1790,64 +1724,63 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	
 	@note idxは正確なものでなければならない。(内部で正当性チェックを行っていない)
 */
-int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
+int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 {
 	if( -1 != idx && !m_pShareData->m_MacroTable[idx].IsEnabled() )
 		return 0;
-//	char fbuf[_MAX_PATH * 2];
-	char *ptr;
-	char *pszFile;
+	TCHAR *ptr;
+	TCHAR *pszFile;
 
 	if( -1 == idx ){
-		pszFile = "RecKey.mac";
+		pszFile = _T("RecKey.mac");
 	}else{
 		pszFile = m_pShareData->m_MacroTable[idx].m_szFile;
 	}
-	if( pszFile[0] == '\0' ){	//	ファイル名が無い
+	if( pszFile[0] == _T('\0') ){	//	ファイル名が無い
 		if( pszPath != NULL ){
-			pszPath[0] = '\0';
+			pszPath[0] = _T('\0');
 		}
 		return 0;
 	}
 	ptr = pszFile;
-	int nLen = strlen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
+	int nLen = _tcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
-		|| m_pShareData->m_szMACROFOLDER[0] == '\0' ){	//	フォルダ指定なし
+		|| m_pShareData->m_szMACROFOLDER[0] == _T('\0') ){	//	フォルダ指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
-		strcpy( pszPath, pszFile );
+		_tcscpy( pszPath, pszFile );
 		return nLen;
 	}
 	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
-		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, sizeof(m_pShareData->m_szMACROFOLDER), '\\' );
+		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, _countof2(m_pShareData->m_szMACROFOLDER), _T('\\') );
 		int nAllLen;
-		char *pszDir;
+		TCHAR *pszDir;
 
 		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
-			char szDir[_MAX_PATH + sizeof( m_pShareData->m_szMACROFOLDER )];
+			TCHAR szDir[_MAX_PATH + _countof2( m_pShareData->m_szMACROFOLDER )];
 			GetInidirOrExedir( szDir, m_pShareData->m_szMACROFOLDER );
 			pszDir = szDir;
 		}else{
 			pszDir = m_pShareData->m_szMACROFOLDER;
 		}
 
-		int nDirLen = strlen( pszDir );
+		int nDirLen = _tcslen( pszDir );
 		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
 		if( pszPath == NULL || nBufLen <= nAllLen ){
 			return -nAllLen;
 		}
 
-		strcpy( pszPath, pszDir );
+		_tcscpy( pszPath, pszDir );
 		ptr = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
-			*ptr++ = '\\';
+			*ptr++ = _T('\\');
 		}
-		strcpy( ptr, pszFile );
+		_tcscpy( ptr, pszFile );
 		return nAllLen;
 	}
 
@@ -1865,169 +1798,59 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 	return ( m_pShareData->m_MacroTable[idx].m_bReloadWhenExecute == TRUE );
 }
 
-/*!	m_szSEARCHKEYArrにpszSearchKeyを追加する。
+/*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI
 */
-void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
+void CShareData::AddToSearchKeyArr( const wchar_t* pszSearchKey )
 {
-/*
-	CMemory	pcmWork( pszSearchKey, lstrlen( pszSearchKey ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-		if( 0 == strcmp( pszSearchKey, m_pShareData->m_szSEARCHKEYArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nSEARCHKEYArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-		}
-		++m_pShareData->m_nSEARCHKEYArrNum;
-		if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
-			m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
-		}
-	}
-	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork.GetPtr() );
-*/
-	CRecent	cRecentSearchKey;
-
-	cRecentSearchKey.EasyCreate( RECENT_FOR_SEARCH );
+	CRecentSearch	cRecentSearchKey;
 	cRecentSearchKey.AppendItem( pszSearchKey );
 	cRecentSearchKey.Terminate();
-
-	return;
 }
 
-/*!	m_szREPLACEKEYArrにpszReplaceKeyを追加する
+/*!	m_aReplaceKeysにpszReplaceKeyを追加する
 	YAZAKI
 */
-void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
+void CShareData::AddToReplaceKeyArr( const wchar_t* pszReplaceKey )
 {
-/*
-	CMemory pcmWork( pszReplaceKey, lstrlen( pszReplaceKey ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i ){
-		if( 0 == strcmp( pszReplaceKey, m_pShareData->m_szREPLACEKEYArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nREPLACEKEYArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_REPLACEKEY - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
-		}
-		++m_pShareData->m_nREPLACEKEYArrNum;
-		if( m_pShareData->m_nREPLACEKEYArrNum > MAX_REPLACEKEY ){
-			m_pShareData->m_nREPLACEKEYArrNum = MAX_REPLACEKEY;
-		}
-	}
-	strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork.GetPtr() );
-*/
-	CRecent	cRecentReplaceKey;
-
-	cRecentReplaceKey.EasyCreate( RECENT_FOR_REPLACE );
+	CRecentReplace	cRecentReplaceKey;
 	cRecentReplaceKey.AppendItem( pszReplaceKey );
 	cRecentReplaceKey.Terminate();
 
 	return;
 }
 
-/*!	m_szGREPFILEArrにpszGrepFileを追加する
+/*!	m_aGrepFilesにpszGrepFileを追加する
 	YAZAKI
 */
-void CShareData::AddToGrepFileArr( const char* pszGrepFile )
+void CShareData::AddToGrepFileArr( const TCHAR* pszGrepFile )
 {
-/*
-	CMemory pcmWork( pszGrepFile, lstrlen( pszGrepFile ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nGREPFILEArrNum; ++i ){
-		if( 0 == strcmp( pszGrepFile, m_pShareData->m_szGREPFILEArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nGREPFILEArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_GREPFILE - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
-		}
-		++m_pShareData->m_nGREPFILEArrNum;
-		if( m_pShareData->m_nGREPFILEArrNum > MAX_GREPFILE ){
-			m_pShareData->m_nGREPFILEArrNum = MAX_GREPFILE;
-		}
-	}
-	strcpy( m_pShareData->m_szGREPFILEArr[0], pcmWork.GetPtr() );
-*/
-	CRecent	cRecentGrepFile;
-
-	cRecentGrepFile.EasyCreate( RECENT_FOR_GREP_FILE );
+	CRecentGrepFile	cRecentGrepFile;
 	cRecentGrepFile.AppendItem( pszGrepFile );
 	cRecentGrepFile.Terminate();
-
-	return;
 }
 
-/*!	m_nGREPFOLDERArrNumにpszGrepFolderを追加する
+/*!	m_aGrepFolders.size()にpszGrepFolderを追加する
 	YAZAKI
 */
-void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
+void CShareData::AddToGrepFolderArr( const TCHAR* pszGrepFolder )
 {
-/*
-	CMemory pcmWork( pszGrepFolder, lstrlen( pszGrepFolder ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nGREPFOLDERArrNum; ++i ){
-		if( 0 == strcmp( pszGrepFolder, m_pShareData->m_szGREPFOLDERArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nGREPFOLDERArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_GREPFOLDER - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
-		}
-		++m_pShareData->m_nGREPFOLDERArrNum;
-		if( m_pShareData->m_nGREPFOLDERArrNum > MAX_GREPFOLDER ){
-			m_pShareData->m_nGREPFOLDERArrNum = MAX_GREPFOLDER;
-		}
-	}
-	strcpy( m_pShareData->m_szGREPFOLDERArr[0], pcmWork.GetPtr() );
-*/
-	CRecent	cRecentGrepFolder;
-
-	cRecentGrepFolder.EasyCreate( RECENT_FOR_GREP_FOLDER );
+	CRecentGrepFolder	cRecentGrepFolder;
 	cRecentGrepFolder.AppendItem( pszGrepFolder );
 	cRecentGrepFolder.Terminate();
-
-	return;
 }
 
 /*!	外部Winヘルプが設定されているか確認。
 */
 bool CShareData::ExtWinHelpIsSet( int nTypeNo )
 {
-	if (m_pShareData->m_Common.m_szExtHelp[0] != '\0'){
+	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != L'\0'){
 		return true;	//	共通設定に設定されている
 	}
 	if (nTypeNo < 0 || MAX_TYPES <= nTypeNo ){
 		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
 	}
-	if (m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != '\0'){
+	if (m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != L'\0'){
 		return true;	//	タイプ別設定に設定されている。
 	}
 	return false;
@@ -2037,25 +1860,26 @@ bool CShareData::ExtWinHelpIsSet( int nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-char* CShareData::GetExtWinHelp( int nTypeNo )
+const TCHAR* CShareData::GetExtWinHelp( int nTypeNo )
 {
-	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != '\0'){
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != _T('\0')){
 		return m_pShareData->m_Types[nTypeNo].m_szExtHelp;
 	}
 	
-	return m_pShareData->m_Common.m_szExtHelp;
+	return m_pShareData->m_Common.m_sHelper.m_szExtHelp;
 }
+
 /*!	外部HTMLヘルプが設定されているか確認。
 */
 bool CShareData::ExtHTMLHelpIsSet( int nTypeNo )
 {
-	if (m_pShareData->m_Common.m_szExtHtmlHelp[0] != '\0'){
+	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != L'\0'){
 		return true;	//	共通設定に設定されている
 	}
 	if (nTypeNo < 0 || MAX_TYPES <= nTypeNo ){
 		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
 	}
-	if (m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+	if (m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != L'\0'){
 		return true;	//	タイプ別設定に設定されている。
 	}
 	return false;
@@ -2065,23 +1889,24 @@ bool CShareData::ExtHTMLHelpIsSet( int nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-char* CShareData::GetExtHTMLHelp( int nTypeNo )
+const TCHAR* CShareData::GetExtHTMLHelp( int nTypeNo )
 {
-	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != _T('\0')){
 		return m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp;
 	}
 	
-	return m_pShareData->m_Common.m_szExtHtmlHelp;
+	return m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp;
 }
+
 /*!	ビューアを複数起動しないがONかを返す。
 */
 bool CShareData::HTMLHelpIsSingle( int nTypeNo )
 {
-	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != L'\0'){
 		return (m_pShareData->m_Types[nTypeNo].m_bHtmlHelpIsSingle != FALSE);
 	}
 	
-	return (m_pShareData->m_Common.m_bHtmlHelpIsSingle != FALSE);
+	return (m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle != FALSE);
 }
 
 /*! 日付をフォーマット
@@ -2093,14 +1918,26 @@ bool CShareData::HTMLHelpIsSingle( int nTypeNo )
 	pszDateFormat：
 		カスタムのときのフォーマット
 */
-const char* CShareData::MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen )
+const TCHAR* CShareData::MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen )
 {
-	return MyGetDateFormat( systime, pszDest, nDestLen, m_pShareData->m_Common.m_nDateFormatType, m_pShareData->m_Common.m_szDateFormat );
+	return MyGetDateFormat(
+		systime,
+		pszDest,
+		nDestLen,
+		m_pShareData->m_Common.m_sFormat.m_nDateFormatType,
+		m_pShareData->m_Common.m_sFormat.m_szDateFormat
+	);
 }
 
-const char* CShareData::MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat )
+const TCHAR* CShareData::MyGetDateFormat(
+	const SYSTEMTIME&		systime,
+	TCHAR*		pszDest,
+	int				nDestLen,
+	int				nDateFormatType,
+	const TCHAR*	szDateFormat
+)
 {
-	const char* pszForm;
+	const TCHAR* pszForm;
 	DWORD dwFlags;
 	if( 0 == nDateFormatType ){
 		dwFlags = DATE_LONGDATE;
@@ -2116,15 +1953,27 @@ const char* CShareData::MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int
 
 
 /* 時刻をフォーマット */
-const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen )
+const TCHAR* CShareData::MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen )
 {
-	return MyGetTimeFormat( systime, pszDest, nDestLen, m_pShareData->m_Common.m_nTimeFormatType, m_pShareData->m_Common.m_szTimeFormat );
+	return MyGetTimeFormat(
+		systime,
+		pszDest,
+		nDestLen,
+		m_pShareData->m_Common.m_sFormat.m_nTimeFormatType,
+		m_pShareData->m_Common.m_sFormat.m_szTimeFormat
+	);
 }
 
 /* 時刻をフォーマット */
-const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat )
+const TCHAR* CShareData::MyGetTimeFormat(
+	const SYSTEMTIME&	systime,
+	TCHAR*			pszDest,
+	int					nDestLen,
+	int					nTimeFormatType,
+	const TCHAR*		szTimeFormat
+)
 {
-	const char* pszForm;
+	const TCHAR* pszForm;
 	DWORD dwFlags;
 	if( 0 == nTimeFormatType ){
 		dwFlags = 0;
@@ -2138,44 +1987,6 @@ const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int
 }
 
 
-
-/*!	共有データの設定に従ってパスを縮小表記に変換する
-	@param pszSrc   [in]  ファイル名
-	@param pszDest  [out] 変換後のファイル名の格納先
-	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
-	@date 2002.11.27 Moca 新規作成
-*/
-/**************** 未使用
-LPTSTR CShareData::GetTransformFileName( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen )
-{
-	int i;
-	TCHAR pszBuf[ _MAX_PATH + 8 ];
-	TCHAR szFrom[ _MAX_PATH ];
-	bool  bTransform = false;
-
-#ifdef _DEBUG
-	if( _MAX_PATH + 8 < nDestLen ){
-		nDestLen = _MAX_PATH + 8;
-	}
-#endif
-	_tcsncpy( pszBuf, pszSrc, _MAX_PATH + 7 );
-	pszBuf[_MAX_PATH + 7] = '\0';
-	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
-		if( '\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
-			if( ExpandMetaToFolder( m_pShareData->m_szTransformFileNameFrom[i], szFrom, _MAX_PATH ) ){
-				GetFilePathFormat( pszBuf, pszDest, nDestLen, szFrom, m_pShareData->m_szTransformFileNameTo[i] );
-				_tcscpy( pszBuf, pszDest );
-				bTransform = true;
-			}
-		}
-	}
-	if( !bTransform ){
-		_tcsncpy( pszDest, pszBuf, nDestLen - 1 ); // 1回も変換しないときのために
-		pszDest[nDestLen - 1] = '\0';
-	}
-	return pszDest;
-}
-****************/
 
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
@@ -2196,7 +2007,8 @@ LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int
 	if( 0 < m_nTransformFileNameCount ){
 		GetFilePathFormat( pszSrc, pszDest, nDestLen,
 			m_szTransformFileNameFromExp[0],
-			m_pShareData->m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]] );
+			m_pShareData->m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]]
+		);
 		for( i = 1; i < m_nTransformFileNameCount; i++ ){
 			_tcscpy( szBuf, pszDest );
 			GetFilePathFormat( szBuf, pszDest, nDestLen,
@@ -2211,7 +2023,6 @@ LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int
 	return pszDest;
 }
 
-
 /*!	展開済みメタ文字列のキャッシュを作成・更新する
 	@retval 有効な展開済み置換前文字列の数
 	@date 2003.01.27 Moca 新規作成
@@ -2221,7 +2032,7 @@ int CShareData::TransformFileName_MakeCache( void ){
 	int i;
 	int nCount = 0;
 	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
-		if( '\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
+		if( L'\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
 			if( ExpandMetaToFolder( m_pShareData->m_szTransformFileNameFrom[i],
 			 m_szTransformFileNameFromExp[nCount], _MAX_PATH ) ){
 				// m_szTransformFileNameToとm_szTransformFileNameFromExpの番号がずれることがあるので記録しておく
@@ -2236,11 +2047,6 @@ int CShareData::TransformFileName_MakeCache( void ){
 
 
 /*!	ファイル・フォルダ名を置換して、簡易表示名を取得する
-	@param pszSrc   [in]  ファイル名
-	@param pszDest  [out] 変換後のファイル名の格納先
-	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ
-	@param pszFrom  [in]  置換前文字列
-	@param pszTo    [in]  置換後文字列
 	@date 2002.11.27 Moca 新規作成
 	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
 */
@@ -2305,7 +2111,6 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 {
 	LPCTSTR ps;
 	LPTSTR  pd, pd_end;
-	LPTSTR  pStr;
 
 #define _USE_META_ALIAS
 #ifdef _USE_META_ALIAS
@@ -2329,53 +2134,57 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 #endif
 
 	pd_end = pszDes + ( nDesLen - 1 );
-	for( ps = pszSrc, pd = pszDes; '\0' != *ps; ps++ ){
+	for( ps = pszSrc, pd = pszDes; _T('\0') != *ps; ps++ ){
 		if( pd_end <= pd ){
 			if( pd_end == pd ){
-				*pd = '\0';
+				*pd = _T('\0');
 			}
 			return false;
 		}
 
-		if( '%' != *ps ){
+		if( _T('%') != *ps ){
 			*pd = *ps;
 			pd++;
 			continue;
 		}
 
 		// %% は %
-		if( '%' == ps[1] ){
-			*pd = '%';
+		if( _T('%') == ps[1] ){
+			*pd = _T('%');
 			pd++;
 			ps++;
 			continue;
 		}
 
-		if( '\0' != ps[1] ){
+		if( _T('\0') != ps[1] ){
 			TCHAR szMeta[_MAX_PATH];
 			TCHAR szPath[_MAX_PATH + 1];
 			int   nMetaLen;
 			int   nPathLen;
 			bool  bFolderPath;
+			LPCTSTR  pStr;
 			ps++;
 			// %SAKURA%
 			if( 0 == my_tcsnicmp( _T("SAKURA%"), ps, 7 ) ){
 				// exeのあるフォルダ
 				GetExedir( szPath );
 				nMetaLen = 6;
+			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
-			}else if( 0 == my_tcsnicmp( _T("SAKURADATA%"), ps, 11 ) ){
+			else if( 0 == my_tcsnicmp( _T("SAKURADATA%"), ps, 11 ) ){
 				// iniのあるフォルダ
 				GetInidir( szPath );
 				nMetaLen = 10;
+			}
 			// メタ文字列っぽい
-			}else if( NULL != (pStr = _tcschr( (LPTSTR)ps, '%' ) )){
+			else if( NULL != (pStr = _tcschr( ps, _T('%') ) )){
 				nMetaLen = pStr - ps;
 				if( nMetaLen < _MAX_PATH ){
 					_tmemcpy( szMeta, ps, nMetaLen );
-					szMeta[nMetaLen] = '\0';
-				}else{
-					*pd = '\0';
+					szMeta[nMetaLen] = _T('\0');
+				}
+				else{
+					*pd = _T('\0');
 					return false;
 				}
 #ifdef _USE_META_ALIAS
@@ -2391,16 +2200,16 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 				}
 #endif
 				// 直接レジストリで調べる
-				szPath[0] = '\0';
+				szPath[0] = _T('\0');
 				bFolderPath = ReadRegistry( HKEY_CURRENT_USER,
 					_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
-					szMeta, szPath, sizeof( szPath ) );
-				if( false == bFolderPath || '\0' == szPath[0] ){
+					szMeta, szPath, _countof( szPath ) );
+				if( false == bFolderPath || _T('\0') == szPath[0] ){
 					bFolderPath = ReadRegistry( HKEY_LOCAL_MACHINE,
 						_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
-						szMeta, szPath, sizeof( szPath ) );
+						szMeta, szPath, _countof( szPath ) );
 				}
-				if( false == bFolderPath || '\0' == szPath[0] ){
+				if( false == bFolderPath || _T('\0') == szPath[0] ){
 					pStr = _tgetenv( szMeta );
 					// 環境変数
 					if( NULL != pStr ){
@@ -2408,26 +2217,26 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 						if( nPathLen < _MAX_PATH ){
 							_tcscpy( szPath, pStr );
 						}else{
-							*pd = '\0';
+							*pd = _T('\0');
 							return false;
 						}
 					}
 					// 未定義のメタ文字列は 入力された%...%を，そのまま文字として処理する
 					else if(  pd + ( nMetaLen + 2 ) < pd_end ){
-						*pd = '%';
+						*pd = _T('%');
 						_tmemcpy( &pd[1], ps, nMetaLen );
-						pd[nMetaLen + 1] = '%';
+						pd[nMetaLen + 1] = _T('%');
 						pd += nMetaLen + 2;
 						ps += nMetaLen;
 						continue;
 					}else{
-						*pd = '\0';
+						*pd = _T('\0');
 						return false;
 					}
 				}
 			}else{
 				// %...%の終わりの%がない とりあえず，%をコピー
-				*pd = '%';
+				*pd = _T('%');
 				pd++;
 				ps--; // 先にps++してしまったので戻す
 				continue;
@@ -2435,34 +2244,34 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 
 			// ロングファイル名にする
 			nPathLen = _tcslen( szPath );
-			pStr = szPath;
+			LPTSTR pStr2 = szPath;
 			if( nPathLen < _MAX_PATH && 0 != nPathLen ){
 				if( FALSE != GetLongFileName( szPath, szMeta ) ){
-					pStr = szMeta;
+					pStr2 = szMeta;
 				}
 			}
 
 			// 最後のフォルダ区切り記号を削除する
 			// [A:\]などのルートであっても削除
-			for(nPathLen = 0; pStr[nPathLen] != '\0'; nPathLen++ ){
+			for(nPathLen = 0; pStr2[nPathLen] != _T('\0'); nPathLen++ ){
 #ifdef _MBCS
-				if( _IS_SJIS_1( (unsigned char)pStr[nPathLen] ) && _IS_SJIS_2( (unsigned char)pStr[nPathLen + 1] ) ){
+				if( _IS_SJIS_1( (unsigned char)pStr2[nPathLen] ) && _IS_SJIS_2( (unsigned char)pStr2[nPathLen + 1] ) ){
 					// SJIS読み飛ばし
 					nPathLen++; // 2003/01/17 sui
 				}else
 #endif
-				if( '\\' == pStr[nPathLen] && '\0' == pStr[nPathLen + 1] ){
-					pStr[nPathLen] = '\0';
+				if( _T('\\') == pStr2[nPathLen] && _T('\0') == pStr2[nPathLen + 1] ){
+					pStr2[nPathLen] = _T('\0');
 					break;
 				}
 			}
 
 			if( pd + nPathLen < pd_end && 0 != nPathLen ){
-				_tmemcpy( pd, pStr, nPathLen );
+				_tmemcpy( pd, pStr2, nPathLen );
 				pd += nPathLen;
 				ps += nMetaLen;
 			}else{
-				*pd = '\0';
+				*pd = _T('\0');
 				return false;
 			}
 		}else{
@@ -2471,878 +2280,878 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 			pd++;
 		}
 	}
-	*pd = '\0';
+	*pd = _T('\0');
 	return true;
 }
 
-static const char* const	ppszKeyWordsCPP[] = {
-	"#define",
-	"#elif",
-	"#else",
-	"#endif",
-	"#error",
-	"#if",
-	"#ifdef",
-	"#ifndef",
-	"#include",
-	"#line",
-	"#pragma",
-	"#undef",
-	"__FILE__",
-	"__declspec",
-	"asm",
-	"auto",
-	"bool",
-	"break",
-	"case",
-	"catch",
-	"char",
-	"class",
-	"const",
-	"const_cast",
-	"continue",
-	"default",
-	"define",
-	"defined",
-	"delete",
-	"do",
-	"double",
-	"dynamic_cast",
-	"elif",
-	"else",
-	"endif",
-	"enum",
-	"error",
-	"explicit",
-	"export",
-	"extern",
-	"false",
-	"float",
-	"for",
-	"friend",
-	"goto",
-	"if",
-	"ifdef",
-	"ifndef",
-	"include",
-	"inline",
-	"int",
-	"line",
-	"long",
-	"mutable",
-	"namespace",
-	"new",
-	"operator",
-	"pragma",
-	"private",
-	"protected",
-	"public",
-	"register",
-	"reinterpret_cast",
-	"return",
-	"short",
-	"signed",
-	"sizeof",
-	"static",
-	"static_cast",
-	"struct",
-	"switch",
-	"template",
-	"this",
-	"throw",
-	"true",
-	"try",
-	"typedef",
-	"typeid",
-	"typename",
-	"undef",
-	"union",
-	"unsigned",
-	"using",
-	"virtual",
-	"void",
-	"volatile",
-	"wchar_t",
-	"while"
+static const wchar_t* const	ppszKeyWordsCPP[] = {
+	L"#define",
+	L"#elif",
+	L"#else",
+	L"#endif",
+	L"#error",
+	L"#if",
+	L"#ifdef",
+	L"#ifndef",
+	L"#include",
+	L"#line",
+	L"#pragma",
+	L"#undef",
+	L"__FILE__",
+	L"__declspec",
+	L"asm",
+	L"auto",
+	L"bool",
+	L"break",
+	L"case",
+	L"catch",
+	L"char",
+	L"class",
+	L"const",
+	L"const_cast",
+	L"continue",
+	L"default",
+	L"define",
+	L"defined",
+	L"delete",
+	L"do",
+	L"double",
+	L"dynamic_cast",
+	L"elif",
+	L"else",
+	L"endif",
+	L"enum",
+	L"error",
+	L"explicit",
+	L"export",
+	L"extern",
+	L"false",
+	L"float",
+	L"for",
+	L"friend",
+	L"goto",
+	L"if",
+	L"ifdef",
+	L"ifndef",
+	L"include",
+	L"inline",
+	L"int",
+	L"line",
+	L"long",
+	L"mutable",
+	L"namespace",
+	L"new",
+	L"operator",
+	L"pragma",
+	L"private",
+	L"protected",
+	L"public",
+	L"register",
+	L"reinterpret_cast",
+	L"return",
+	L"short",
+	L"signed",
+	L"sizeof",
+	L"static",
+	L"static_cast",
+	L"struct",
+	L"switch",
+	L"template",
+	L"this",
+	L"throw",
+	L"true",
+	L"try",
+	L"typedef",
+	L"typeid",
+	L"typename",
+	L"undef",
+	L"union",
+	L"unsigned",
+	L"using",
+	L"virtual",
+	L"void",
+	L"volatile",
+	L"wchar_t",
+	L"while"
 };
 
-static const char* const	ppszKeyWordsHTML[] = {
-	"_blank",
-	"_parent",
-	"_self",
-	"_top",
-	"A",
-	"ABBR",
-	"ABOVE",
-	"absbottom",
-	"absmiddle",
-	"ACCESSKEY",
-	"ACRONYM",
-	"ACTION",
-	"ADDRESS",
-	"ALIGN",
-	"all",
-	"APPLET",
-	"AREA",
-	"AUTOPLAY",
-	"AUTOSTART",
-	"B",
-	"BACKGROUND",
-	"BASE",
-	"BASEFONT",
-	"baseline",
-	"BEHAVIOR",
-	"BELOW",
-	"BGCOLOR",
-	"BGSOUND",
-	"BIG",
-	"BLINK",
-	"BLOCKQUOTE",
-	"BODY",
-	"BORDER",
-	"BORDERCOLOR",
-	"BORDERCOLORDARK",
-	"BORDERCOLORLIGHT",
-	"BOTTOM",
-	"box",
-	"BR",
-	"BUTTON",
-	"CAPTION",
-	"CELLPADDING",
-	"CELLSPACING",
-	"CENTER",
-	"CHALLENGE",
-	"char",
-	"checkbox",
-	"CHECKED",
-	"CITE",
-	"CLEAR",
-	"CLIP",
-	"CODE",
-	"CODEBASE",
-	"CODETYPE",
-	"COL",
-	"COLGROUP",
-	"COLOR",
-	"COLS",
-	"COLSPAN",
-	"COMMENT",
-	"CONTROLS",
-	"DATA",
-	"DD",
-	"DECLARE",
-	"DEFER",
-	"DEL",
-	"DELAY",
-	"DFN",
-	"DIR",
-	"DIRECTION",
-	"DISABLED",
-	"DIV",
-	"DL",
-	"DOCTYPE",
-	"DT",
-	"EM",
-	"EMBED",
-	"ENCTYPE",
-	"FACE",
-	"FIELDSET",
-	"file",
-	"FONT",
-	"FOR",
-	"FORM",
-	"FRAME",
-	"FRAMEBORDER",
-	"FRAMESET",
-	"GET",
-	"groups",
-	"GROUPS",
-	"GUTTER",
-	"H1",
-	"H2",
-	"H3",
-	"H4",
-	"H5",
-	"H6",
-	"H7",
-	"HEAD",
-	"HEIGHT",
-	"HIDDEN",
-	"Hn",
-	"HR",
-	"HREF",
-	"hsides",
-	"HSPACE",
-	"HTML",
-	"I",
-	"ID",
-	"IFRAME",
-	"ILAYER",
-	"image",
-	"IMG",
-	"INDEX",
-	"inherit",
-	"INPUT",
-	"INS",
-	"ISINDEX",
-	"JavaScript",
-	"justify",
-	"KBD",
-	"KEYGEN",
-	"LABEL",
-	"LANGUAGE",
-	"LAYER",
-	"LEFT",
-	"LEGEND",
-	"lhs",
-	"LI",
-	"LINK",
-	"LISTING",
-	"LOOP",
-	"MAP",
-	"MARQUEE",
-	"MAXLENGTH",
-	"MENU",
-	"META",
-	"METHOD",
-	"METHODS",
-	"MIDDLE",
-	"MULTICOL",
-	"MULTIPLE",
-	"NAME",
-	"NEXT",
-	"NEXTID",
-	"NOBR",
-	"NOEMBED",
-	"NOFRAMES",
-	"NOLAYER",
-	"none",
-	"NOSAVE",
-	"NOSCRIPT",
-	"NOTAB",
-	"NOWRAP",
-	"OBJECT",
-	"OL",
-	"onBlur",
-	"onChange",
-	"onClick",
-	"onFocus",
-	"onLoad",
-	"onMouseOut",
-	"onMouseOver",
-	"onReset",
-	"onSelect",
-	"onSubmit",
-	"OPTION",
-	"P",
-	"PAGEX",
-	"PAGEY",
-	"PALETTE",
-	"PANEL",
-	"PARAM",
-	"PARENT",
-	"password",
-	"PLAINTEXT",
-	"PLUGINSPAGE",
-	"POST",
-	"PRE",
-	"PREVIOUS",
-	"Q",
-	"radio",
-	"REL",
-	"REPEAT",
-	"reset",
-	"REV",
-	"rhs",
-	"RIGHT",
-	"rows",
-	"ROWSPAN",
-	"RULES",
-	"S",
-	"SAMP",
-	"SAVE",
-	"SCRIPT",
-	"SCROLLAMOUNT",
-	"SCROLLDELAY",
-	"SELECT",
-	"SELECTED",
-	"SERVER",
-	"SHAPES",
-	"show",
-	"SIZE",
-	"SMALL",
-	"SONG",
-	"SPACER",
-	"SPAN",
-	"SRC",
-	"STANDBY",
-	"STRIKE",
-	"STRONG",
-	"STYLE",
-	"SUB",
-	"submit",
-	"SUMMARY",
-	"SUP",
-	"TABINDEX",
-	"TABLE",
-	"TARGET",
-	"TBODY",
-	"TD",
-	"TEXT",
-	"TEXTAREA",
-	"textbottom",
-	"TEXTFOCUS",
-	"textmiddle",
-	"texttop",
-	"TFOOT",
-	"TH",
-	"THEAD",
-	"TITLE",
-	"TOP",
-	"TR",
-	"TT",
-	"TXTCOLOR",
-	"TYPE",
-	"U",
-	"UL",
-	"URN",
-	"USEMAP",
-	"VALIGN",
-	"VALUE",
-	"VALUETYPE",
-	"VAR",
-	"VISIBILITY",
-	"void",
-	"vsides",
-	"VSPACE",
-	"WBR",
-	"WIDTH",
-	"WRAP",
-	"XMP"
+static const wchar_t* const	ppszKeyWordsHTML[] = {
+	L"_blank",
+	L"_parent",
+	L"_self",
+	L"_top",
+	L"A",
+	L"ABBR",
+	L"ABOVE",
+	L"absbottom",
+	L"absmiddle",
+	L"ACCESSKEY",
+	L"ACRONYM",
+	L"ACTION",
+	L"ADDRESS",
+	L"ALIGN",
+	L"all",
+	L"APPLET",
+	L"AREA",
+	L"AUTOPLAY",
+	L"AUTOSTART",
+	L"B",
+	L"BACKGROUND",
+	L"BASE",
+	L"BASEFONT",
+	L"baseline",
+	L"BEHAVIOR",
+	L"BELOW",
+	L"BGCOLOR",
+	L"BGSOUND",
+	L"BIG",
+	L"BLINK",
+	L"BLOCKQUOTE",
+	L"BODY",
+	L"BORDER",
+	L"BORDERCOLOR",
+	L"BORDERCOLORDARK",
+	L"BORDERCOLORLIGHT",
+	L"BOTTOM",
+	L"box",
+	L"BR",
+	L"BUTTON",
+	L"CAPTION",
+	L"CELLPADDING",
+	L"CELLSPACING",
+	L"CENTER",
+	L"CHALLENGE",
+	L"char",
+	L"checkbox",
+	L"CHECKED",
+	L"CITE",
+	L"CLEAR",
+	L"CLIP",
+	L"CODE",
+	L"CODEBASE",
+	L"CODETYPE",
+	L"COL",
+	L"COLGROUP",
+	L"COLOR",
+	L"COLS",
+	L"COLSPAN",
+	L"COMMENT",
+	L"CONTROLS",
+	L"DATA",
+	L"DD",
+	L"DECLARE",
+	L"DEFER",
+	L"DEL",
+	L"DELAY",
+	L"DFN",
+	L"DIR",
+	L"DIRECTION",
+	L"DISABLED",
+	L"DIV",
+	L"DL",
+	L"DOCTYPE",
+	L"DT",
+	L"EM",
+	L"EMBED",
+	L"ENCTYPE",
+	L"FACE",
+	L"FIELDSET",
+	L"file",
+	L"FONT",
+	L"FOR",
+	L"FORM",
+	L"FRAME",
+	L"FRAMEBORDER",
+	L"FRAMESET",
+	L"GET",
+	L"groups",
+	L"GROUPS",
+	L"GUTTER",
+	L"H1",
+	L"H2",
+	L"H3",
+	L"H4",
+	L"H5",
+	L"H6",
+	L"H7",
+	L"HEAD",
+	L"HEIGHT",
+	L"HIDDEN",
+	L"Hn",
+	L"HR",
+	L"HREF",
+	L"hsides",
+	L"HSPACE",
+	L"HTML",
+	L"I",
+	L"ID",
+	L"IFRAME",
+	L"ILAYER",
+	L"image",
+	L"IMG",
+	L"INDEX",
+	L"inherit",
+	L"INPUT",
+	L"INS",
+	L"ISINDEX",
+	L"JavaScript",
+	L"justify",
+	L"KBD",
+	L"KEYGEN",
+	L"LABEL",
+	L"LANGUAGE",
+	L"LAYER",
+	L"LEFT",
+	L"LEGEND",
+	L"lhs",
+	L"LI",
+	L"LINK",
+	L"LISTING",
+	L"LOOP",
+	L"MAP",
+	L"MARQUEE",
+	L"MAXLENGTH",
+	L"MENU",
+	L"META",
+	L"METHOD",
+	L"METHODS",
+	L"MIDDLE",
+	L"MULTICOL",
+	L"MULTIPLE",
+	L"NAME",
+	L"NEXT",
+	L"NEXTID",
+	L"NOBR",
+	L"NOEMBED",
+	L"NOFRAMES",
+	L"NOLAYER",
+	L"none",
+	L"NOSAVE",
+	L"NOSCRIPT",
+	L"NOTAB",
+	L"NOWRAP",
+	L"OBJECT",
+	L"OL",
+	L"onBlur",
+	L"onChange",
+	L"onClick",
+	L"onFocus",
+	L"onLoad",
+	L"onMouseOut",
+	L"onMouseOver",
+	L"onReset",
+	L"onSelect",
+	L"onSubmit",
+	L"OPTION",
+	L"P",
+	L"PAGEX",
+	L"PAGEY",
+	L"PALETTE",
+	L"PANEL",
+	L"PARAM",
+	L"PARENT",
+	L"password",
+	L"PLAINTEXT",
+	L"PLUGINSPAGE",
+	L"POST",
+	L"PRE",
+	L"PREVIOUS",
+	L"Q",
+	L"radio",
+	L"REL",
+	L"REPEAT",
+	L"reset",
+	L"REV",
+	L"rhs",
+	L"RIGHT",
+	L"rows",
+	L"ROWSPAN",
+	L"RULES",
+	L"S",
+	L"SAMP",
+	L"SAVE",
+	L"SCRIPT",
+	L"SCROLLAMOUNT",
+	L"SCROLLDELAY",
+	L"SELECT",
+	L"SELECTED",
+	L"SERVER",
+	L"SHAPES",
+	L"show",
+	L"SIZE",
+	L"SMALL",
+	L"SONG",
+	L"SPACER",
+	L"SPAN",
+	L"SRC",
+	L"STANDBY",
+	L"STRIKE",
+	L"STRONG",
+	L"STYLE",
+	L"SUB",
+	L"submit",
+	L"SUMMARY",
+	L"SUP",
+	L"TABINDEX",
+	L"TABLE",
+	L"TARGET",
+	L"TBODY",
+	L"TD",
+	L"TEXT",
+	L"TEXTAREA",
+	L"textbottom",
+	L"TEXTFOCUS",
+	L"textmiddle",
+	L"texttop",
+	L"TFOOT",
+	L"TH",
+	L"THEAD",
+	L"TITLE",
+	L"TOP",
+	L"TR",
+	L"TT",
+	L"TXTCOLOR",
+	L"TYPE",
+	L"U",
+	L"UL",
+	L"URN",
+	L"USEMAP",
+	L"VALIGN",
+	L"VALUE",
+	L"VALUETYPE",
+	L"VAR",
+	L"VISIBILITY",
+	L"void",
+	L"vsides",
+	L"VSPACE",
+	L"WBR",
+	L"WIDTH",
+	L"WRAP",
+	L"XMP"
 };
 
-static const char* const	ppszKeyWordsPLSQL[] = {
-	"AND",
-	"AS",
-	"BEGIN",
-	"BINARY_INTEGER",
-	"BODY",
-	"BOOLEAN",
-	"BY",
-	"CHAR",
-	"CHR",
-	"COMMIT",
-	"COUNT",
-	"CREATE",
-	"CURSOR",
-	"DATE",
-	"DECLARE",
-	"DEFAULT",
-	"DELETE",
-	"ELSE",
-	"ELSIF",
-	"END",
-	"ERRORS",
-	"EXCEPTION",
-	"FALSE",
-	"FOR",
-	"FROM",
-	"FUNCTION",
-	"GOTO",
-	"HTP",
-	"IDENT_ARR",
-	"IF",
-	"IN",
-	"INDEX",
-	"INTEGER",
-	"IS",
-	"LOOP",
-	"NOT",
-	"NO_DATA_FOUND",
-	"NULL",
-	"NUMBER",
-	"OF",
-	"OR",
-	"ORDER",
-	"OUT",
-	"OWA_UTIL",
-	"PACKAGE",
-	"PRAGMA",
-	"PRN",
-	"PROCEDURE",
-	"REPLACE",
-	"RESTRICT_REFERENCES",
-	"RETURN",
-	"ROWTYPE",
-	"SELECT",
-	"SHOW",
-	"SUBSTR",
-	"TABLE",
-	"THEN",
-	"TRUE",
-	"TYPE",
-	"UPDATE",
-	"VARCHAR",
-	"VARCHAR2",
-	"WHEN",
-	"WHERE",
-	"WHILE",
-	"WNDS",
-	"WNPS",
-	"RAISE",
-	"INSERT",
-	"INTO",
-	"VALUES",
-	"SET",
-	"SYSDATE",
-	"RTRIM",
-	"LTRIM",
-	"TO_CHAR",
-	"DUP_VAL_ON_INDEX",
-	"ROLLBACK",
-	"OTHERS",
-	"SQLCODE"
+static const wchar_t* const	ppszKeyWordsPLSQL[] = {
+	L"AND",
+	L"AS",
+	L"BEGIN",
+	L"BINARY_INTEGER",
+	L"BODY",
+	L"BOOLEAN",
+	L"BY",
+	L"CHAR",
+	L"CHR",
+	L"COMMIT",
+	L"COUNT",
+	L"CREATE",
+	L"CURSOR",
+	L"DATE",
+	L"DECLARE",
+	L"DEFAULT",
+	L"DELETE",
+	L"ELSE",
+	L"ELSIF",
+	L"END",
+	L"ERRORS",
+	L"EXCEPTION",
+	L"FALSE",
+	L"FOR",
+	L"FROM",
+	L"FUNCTION",
+	L"GOTO",
+	L"HTP",
+	L"IDENT_ARR",
+	L"IF",
+	L"IN",
+	L"INDEX",
+	L"INTEGER",
+	L"IS",
+	L"LOOP",
+	L"NOT",
+	L"NO_DATA_FOUND",
+	L"NULL",
+	L"NUMBER",
+	L"OF",
+	L"OR",
+	L"ORDER",
+	L"OUT",
+	L"OWA_UTIL",
+	L"PACKAGE",
+	L"PRAGMA",
+	L"PRN",
+	L"PROCEDURE",
+	L"REPLACE",
+	L"RESTRICT_REFERENCES",
+	L"RETURN",
+	L"ROWTYPE",
+	L"SELECT",
+	L"SHOW",
+	L"SUBSTR",
+	L"TABLE",
+	L"THEN",
+	L"TRUE",
+	L"TYPE",
+	L"UPDATE",
+	L"VARCHAR",
+	L"VARCHAR2",
+	L"WHEN",
+	L"WHERE",
+	L"WHILE",
+	L"WNDS",
+	L"WNPS",
+	L"RAISE",
+	L"INSERT",
+	L"INTO",
+	L"VALUES",
+	L"SET",
+	L"SYSDATE",
+	L"RTRIM",
+	L"LTRIM",
+	L"TO_CHAR",
+	L"DUP_VAL_ON_INDEX",
+	L"ROLLBACK",
+	L"OTHERS",
+	L"SQLCODE"
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char* const	ppszKeyWordsCOBOL[] = {
-	"ACCEPT",
-	"ADD",
-	"ADVANCING",
-	"AFTER",
-	"ALL",
-	"AND",
-	"ARGUMENT",
-	"ASSIGN",
-	"AUTHOR",
-	"BEFORE",
-	"BLOCK",
-	"BY",
-	"CALL",
-	"CHARACTERS",
-	"CLOSE",
-	"COMP",
-	"COMPILED",
-	"COMPUTE",
-	"COMPUTER",
-	"CONFIGURATION",
-	"CONSOLE",
-	"CONTAINS",
-	"CONTINUE",
-	"CONTROL",
-	"COPY",
-	"DATA",
-	"DELETE",
-	"DISPLAY",
-	"DIVIDE",
-	"DIVISION",
-	"ELSE",
-	"END",
-	"ENVIRONMENT",
-	"EVALUATE",
-	"EXAMINE",
-	"EXIT",
-	"EXTERNAL",
-	"FD",
-	"FILE",
-	"FILLER",
-	"FROM",
-	"GIVING",
-	"GO",
-	"GOBACK",
-	"HIGH-VALUE",
-	"IDENTIFICATION"
-	"IF",
-	"INITIALIZE",
-	"INPUT",
-	"INTO",
-	"IS",
-	"LABEL",
-	"LINKAGE",
-	"LOW-VALUE",
-	"MODE",
-	"MOVE",
-	"NOT",
-	"OBJECT",
-	"OCCURS",
-	"OF",
-	"ON",
-	"OPEN",
-	"OR",
-	"OTHER",
-	"OUTPUT",
-	"PERFORM",
-	"PIC",
-	"PROCEDURE",
-	"PROGRAM",
-	"READ",
-	"RECORD",
-	"RECORDING",
-	"REDEFINES",
-	"REMAINDER",
-	"REMARKS",
-	"REPLACING",
-	"REWRITE",
-	"ROLLBACK",
-	"SECTION",
-	"SELECT",
-	"SOURCE",
-	"SPACE",
-	"STANDARD",
-	"STOP",
-	"STORAGE",
-	"SYSOUT",
-	"TEST",
-	"THEN",
-	"TO",
-	"TODAY",
-	"TRANSFORM",
-	"UNTIL",
-	"UPON",
-	"USING",
-	"VALUE",
-	"VARYING",
-	"WHEN",
-	"WITH",
-	"WORKING",
-	"WRITE",
-	"WRITTEN",
-	"ZERO"
+static const wchar_t* const	ppszKeyWordsCOBOL[] = {
+	L"ACCEPT",
+	L"ADD",
+	L"ADVANCING",
+	L"AFTER",
+	L"ALL",
+	L"AND",
+	L"ARGUMENT",
+	L"ASSIGN",
+	L"AUTHOR",
+	L"BEFORE",
+	L"BLOCK",
+	L"BY",
+	L"CALL",
+	L"CHARACTERS",
+	L"CLOSE",
+	L"COMP",
+	L"COMPILED",
+	L"COMPUTE",
+	L"COMPUTER",
+	L"CONFIGURATION",
+	L"CONSOLE",
+	L"CONTAINS",
+	L"CONTINUE",
+	L"CONTROL",
+	L"COPY",
+	L"DATA",
+	L"DELETE",
+	L"DISPLAY",
+	L"DIVIDE",
+	L"DIVISION",
+	L"ELSE",
+	L"END",
+	L"ENVIRONMENT",
+	L"EVALUATE",
+	L"EXAMINE",
+	L"EXIT",
+	L"EXTERNAL",
+	L"FD",
+	L"FILE",
+	L"FILLER",
+	L"FROM",
+	L"GIVING",
+	L"GO",
+	L"GOBACK",
+	L"HIGH-VALUE",
+	L"IDENTIFICATION"
+	L"IF",
+	L"INITIALIZE",
+	L"INPUT",
+	L"INTO",
+	L"IS",
+	L"LABEL",
+	L"LINKAGE",
+	L"LOW-VALUE",
+	L"MODE",
+	L"MOVE",
+	L"NOT",
+	L"OBJECT",
+	L"OCCURS",
+	L"OF",
+	L"ON",
+	L"OPEN",
+	L"OR",
+	L"OTHER",
+	L"OUTPUT",
+	L"PERFORM",
+	L"PIC",
+	L"PROCEDURE",
+	L"PROGRAM",
+	L"READ",
+	L"RECORD",
+	L"RECORDING",
+	L"REDEFINES",
+	L"REMAINDER",
+	L"REMARKS",
+	L"REPLACING",
+	L"REWRITE",
+	L"ROLLBACK",
+	L"SECTION",
+	L"SELECT",
+	L"SOURCE",
+	L"SPACE",
+	L"STANDARD",
+	L"STOP",
+	L"STORAGE",
+	L"SYSOUT",
+	L"TEST",
+	L"THEN",
+	L"TO",
+	L"TODAY",
+	L"TRANSFORM",
+	L"UNTIL",
+	L"UPON",
+	L"USING",
+	L"VALUE",
+	L"VARYING",
+	L"WHEN",
+	L"WITH",
+	L"WORKING",
+	L"WRITE",
+	L"WRITTEN",
+	L"ZERO"
 };
 
-static const char*	ppszKeyWordsJAVA[] = {
-	"abstract",
-	"assert",	// Mar. 8, 2003 genta
-	"boolean",
-	"break",
-	"byte",
-	"case",
-	"catch",
-	"char",
-	"class",
-	"const",
-	"continue",
-	"default",
-	"do",
-	"double",
-	"else",
-	"extends",
-	"final",
-	"finally",
-	"float",
-	"for",
-	"goto",
-	"if",
-	"implements",
-	"import",
-	"instanceof",
-	"int",
-	"interface",
-	"long",
-	"native",
-	"new",
-	"package",
-	"private",
-	"protected",
-	"public",
-	"return",
-	"short",
-	"static",
-	"strictfp",	// Mar. 8, 2003 genta
-	"super",
-	"switch",
-	"synchronized",
-	"this",
-	"throw",
-	"throws",
-	"transient",
-	"try",
-	"void",
-	"volatile",
-	"while"
+static const wchar_t*	ppszKeyWordsJAVA[] = {
+	L"abstract",
+	L"assert",	// Mar. 8, 2003 genta
+	L"boolean",
+	L"break",
+	L"byte",
+	L"case",
+	L"catch",
+	L"char",
+	L"class",
+	L"const",
+	L"continue",
+	L"default",
+	L"do",
+	L"double",
+	L"else",
+	L"extends",
+	L"final",
+	L"finally",
+	L"float",
+	L"for",
+	L"goto",
+	L"if",
+	L"implements",
+	L"import",
+	L"instanceof",
+	L"int",
+	L"interface",
+	L"long",
+	L"native",
+	L"new",
+	L"package",
+	L"private",
+	L"protected",
+	L"public",
+	L"return",
+	L"short",
+	L"static",
+	L"strictfp",	// Mar. 8, 2003 genta
+	L"super",
+	L"switch",
+	L"synchronized",
+	L"this",
+	L"throw",
+	L"throws",
+	L"transient",
+	L"try",
+	L"void",
+	L"volatile",
+	L"while"
 };
 
-static const char* const	ppszKeyWordsCORBA_IDL[] = {
-	"any",
-	"attribute",
-	"boolean",
-	"case",
-	"char",
-	"const",
-	"context",
-	"default",
-	"double",
-	"enum",
-	"exception",
-	"FALSE",
-	"fixed",
-	"float",
-	"in",
-	"inout",
-	"interface",
-	"long",
-	"module",
-	"Object",
-	"octet",
-	"oneway",
-	"out",
-	"raises",
-	"readonly",
-	"sequence",
-	"short",
-	"string",
-	"struct",
-	"switch",
-	"TRUE",
-	"typedef",
-	"unsigned",
-	"union",
-	"void",
-	"wchar",
-	"wstring"
+static const wchar_t* const	ppszKeyWordsCORBA_IDL[] = {
+	L"any",
+	L"attribute",
+	L"boolean",
+	L"case",
+	L"char",
+	L"const",
+	L"context",
+	L"default",
+	L"double",
+	L"enum",
+	L"exception",
+	L"FALSE",
+	L"fixed",
+	L"float",
+	L"in",
+	L"inout",
+	L"interface",
+	L"long",
+	L"module",
+	L"Object",
+	L"octet",
+	L"oneway",
+	L"out",
+	L"raises",
+	L"readonly",
+	L"sequence",
+	L"short",
+	L"string",
+	L"struct",
+	L"switch",
+	L"TRUE",
+	L"typedef",
+	L"unsigned",
+	L"union",
+	L"void",
+	L"wchar_t",
+	L"wstring"
 };
 
-static const char* const	ppszKeyWordsAWK[] = {
-	"BEGIN",
-	"END",
-	"next",
-	"exit",
-	"func",
-	"function",
-	"return",
-	"if",
-	"else",
-	"for",
-	"in",
-	"do",
-	"while",
-	"break",
-	"continue",
-	"$0",
-	"$1",
-	"$2",
-	"$3",
-	"$4",
-	"$5",
-	"$6",
-	"$7",
-	"$8",
-	"$9",
-	"$10",
-	"$11",
-	"$12",
-	"$13",
-	"$14",
-	"$15",
-	"$16",
-	"$17",
-	"$18",
-	"$19",
-	"$20",
-	"FS",
-	"OFS",
-	"NF",
-	"RS",
-	"ORS",
-	"NR",
-	"FNR",
-	"ARGV",
-	"ARGC",
-	"ARGIND",
-	"FILENAME",
-	"ENVIRON",
-	"ERRNO",
-	"OFMT",
-	"CONVFMT",
-	"FIELDWIDTHS",
-	"IGNORECASE",
-	"RLENGTH",
-	"RSTART",
-	"SUBSEP",
-	"delete",
-	"index",
-	"jindex",
-	"length",
-	"jlength",
-	"substr",
-	"jsubstr",
-	"match",
-	"split",
-	"sub",
-	"gsub",
-	"sprintf",
-	"tolower",
-	"toupper",
-	"print",
-	"printf",
-	"getline",
-	"system",
-	"close",
-	"sin",
-	"cos",
-	"atan2",
-	"exp",
-	"log",
-	"int",
-	"sqrt",
-	"srand",
-	"rand",
-	"strftime",
-	"systime"
+static const wchar_t* const	ppszKeyWordsAWK[] = {
+	L"BEGIN",
+	L"END",
+	L"next",
+	L"exit",
+	L"func",
+	L"function",
+	L"return",
+	L"if",
+	L"else",
+	L"for",
+	L"in",
+	L"do",
+	L"while",
+	L"break",
+	L"continue",
+	L"$0",
+	L"$1",
+	L"$2",
+	L"$3",
+	L"$4",
+	L"$5",
+	L"$6",
+	L"$7",
+	L"$8",
+	L"$9",
+	L"$10",
+	L"$11",
+	L"$12",
+	L"$13",
+	L"$14",
+	L"$15",
+	L"$16",
+	L"$17",
+	L"$18",
+	L"$19",
+	L"$20",
+	L"FS",
+	L"OFS",
+	L"NF",
+	L"RS",
+	L"ORS",
+	L"NR",
+	L"FNR",
+	L"ARGV",
+	L"ARGC",
+	L"ARGIND",
+	L"FILENAME",
+	L"ENVIRON",
+	L"ERRNO",
+	L"OFMT",
+	L"CONVFMT",
+	L"FIELDWIDTHS",
+	L"IGNORECASE",
+	L"RLENGTH",
+	L"RSTART",
+	L"SUBSEP",
+	L"delete",
+	L"index",
+	L"jindex",
+	L"length",
+	L"jlength",
+	L"substr",
+	L"jsubstr",
+	L"match",
+	L"split",
+	L"sub",
+	L"gsub",
+	L"sprintf",
+	L"tolower",
+	L"toupper",
+	L"print",
+	L"printf",
+	L"getline",
+	L"system",
+	L"close",
+	L"sin",
+	L"cos",
+	L"atan2",
+	L"exp",
+	L"log",
+	L"int",
+	L"sqrt",
+	L"srand",
+	L"rand",
+	L"strftime",
+	L"systime"
 };
 
-static const char*	ppszKeyWordsBAT[] = {
-	"PATH",
-	"PROMPT",
-	"TEMP",
-	"TMP",
-	"TZ",
-	"CONFIG",
-	"COMSPEC",
-	"DIRCMD",
-	"COPYCMD",
-	"winbootdir",
-	"windir",
-	"DIR",
-	"CALL",
-	"CHCP",
-	"RENAME",
-	"REN",
-	"ERASE",
-	"DEL",
-	"TYPE",
-	"REM",
-	"COPY",
-	"PAUSE",
-	"DATE",
-	"TIME",
-	"VER",
-	"VOL",
-	"CD",
-	"CHDIR",
-	"MD",
-	"MKDIR",
-	"RD",
-	"RMDIR",
-	"BREAK",
-	"VERIFY",
-	"SET",
-	"EXIT",
-	"CTTY",
-	"ECHO",
-	"@ECHO",	//Oct. 31, 2000 JEPRO '@' を強調可能にしたので追加
-	"LOCK",
-	"UNLOCK",
-	"GOTO",
-	"SHIFT",
-	"IF",
-	"FOR",
-	"DO",	//Nov. 2, 2000 JEPRO 追加
-	"IN",	//Nov. 2, 2000 JEPRO 追加
-	"ELSE",	//Nov. 2, 2000 JEPRO 追加 Win2000で使える
-	"CLS",
-	"TRUENAME",
-	"LOADHIGH",
-	"LH",
-	"LFNFOR",
-	"ON",
-	"OFF",
-	"NOT",
-	"ERRORLEVEL",
-	"EXIST",
-	"NUL",
-	"CON",
-	"AUX",
-	"COM1",
-	"COM2",
-	"COM3",
-	"COM4",
-	"PRN",
-	"LPT1",
-	"LPT2",
-	"LPT3",
-	"CLOCK",
-	"CLOCK$",
-	"CONFIG$"
+static const wchar_t*	ppszKeyWordsBAT[] = {
+	L"PATH",
+	L"PROMPT",
+	L"TEMP",
+	L"TMP",
+	L"TZ",
+	L"CONFIG",
+	L"COMSPEC",
+	L"DIRCMD",
+	L"COPYCMD",
+	L"winbootdir",
+	L"windir",
+	L"DIR",
+	L"CALL",
+	L"CHCP",
+	L"RENAME",
+	L"REN",
+	L"ERASE",
+	L"DEL",
+	L"TYPE",
+	L"REM",
+	L"COPY",
+	L"PAUSE",
+	L"DATE",
+	L"TIME",
+	L"VER",
+	L"VOL",
+	L"CD",
+	L"CHDIR",
+	L"MD",
+	L"MKDIR",
+	L"RD",
+	L"RMDIR",
+	L"BREAK",
+	L"VERIFY",
+	L"SET",
+	L"EXIT",
+	L"CTTY",
+	L"ECHO",
+	L"@ECHO",	//Oct. 31, 2000 JEPRO '@' を強調可能にしたので追加
+	L"LOCK",
+	L"UNLOCK",
+	L"GOTO",
+	L"SHIFT",
+	L"IF",
+	L"FOR",
+	L"DO",	//Nov. 2, 2000 JEPRO 追加
+	L"IN",	//Nov. 2, 2000 JEPRO 追加
+	L"ELSE",	//Nov. 2, 2000 JEPRO 追加 Win2000で使える
+	L"CLS",
+	L"TRUENAME",
+	L"LOADHIGH",
+	L"LH",
+	L"LFNFOR",
+	L"ON",
+	L"OFF",
+	L"NOT",
+	L"ERRORLEVEL",
+	L"EXIST",
+	L"NUL",
+	L"CON",
+	L"AUX",
+	L"COM1",
+	L"COM2",
+	L"COM3",
+	L"COM4",
+	L"PRN",
+	L"LPT1",
+	L"LPT2",
+	L"LPT3",
+	L"CLOCK",
+	L"CLOCK$",
+	L"CONFIG$"
 };
 
-static const char*	ppszKeyWordsPASCAL[] = {
-	"and",
-	"exports",
-	"mod",
-	"shr",
-	"array",
-	"file",
-	"nil",
-	"string",
-	"as",
-	"finalization",
-	"not",
-	"stringresource",
-	"asm",
-	"finally",
-	"object",
-	"then",
-	"begin",
-	"for",
-	"of",
-	"case",
-	"function",
-	"or",
-	"to",
-	"class",
-	"goto",
-	"out",
-	"try",
-	"const",
-	"if",
-	"packed",
-	"type",
-	"constructor",
-	"implementation",
-	"procedure",
-	"unit",
-	"destructor",
-	"in",
-	"program",
-	"until",
-	"dispinterface",
-	"inherited",
-	"property",
-	"uses",
-	"div",
-	"initialization",
-	"raise",
-	"var",
-	"do",
-	"inline",
-	"record",
-	"while",
-	"downto",
-	"interface",
-	"repeat",
-	"with",
-	"else",
-	"is",
-	"resourcestring",
-	"xor",
-	"end",
-	"label",
-	"set",
-	"except",
-	"library",
-	"shl",
-	"private",
-	"public",
-	"published",
-	"protected",
-	"override"
+static const wchar_t*	ppszKeyWordsPASCAL[] = {
+	L"and",
+	L"exports",
+	L"mod",
+	L"shr",
+	L"array",
+	L"file",
+	L"nil",
+	L"string",
+	L"as",
+	L"finalization",
+	L"not",
+	L"stringresource",
+	L"asm",
+	L"finally",
+	L"object",
+	L"then",
+	L"begin",
+	L"for",
+	L"of",
+	L"case",
+	L"function",
+	L"or",
+	L"to",
+	L"class",
+	L"goto",
+	L"out",
+	L"try",
+	L"const",
+	L"if",
+	L"packed",
+	L"type",
+	L"constructor",
+	L"implementation",
+	L"procedure",
+	L"unit",
+	L"destructor",
+	L"in",
+	L"program",
+	L"until",
+	L"dispinterface",
+	L"inherited",
+	L"property",
+	L"uses",
+	L"div",
+	L"initialization",
+	L"raise",
+	L"var",
+	L"do",
+	L"inline",
+	L"record",
+	L"while",
+	L"downto",
+	L"interface",
+	L"repeat",
+	L"with",
+	L"else",
+	L"is",
+	L"resourcestring",
+	L"xor",
+	L"end",
+	L"label",
+	L"set",
+	L"except",
+	L"library",
+	L"shl",
+	L"private",
+	L"public",
+	L"published",
+	L"protected",
+	L"override"
 };
 
-static const char*	ppszKeyWordsTEX[] = {
+static const wchar_t*	ppszKeyWordsTEX[] = {
 //Nov. 20, 2000 JEPRO	大幅追加 & 若干修正・削除 --ほとんどコマンドのみ
-	"error",
-	"Warning",
+	L"error",
+	L"Warning",
 //			"center",
 //			"document",
 //			"enumerate",
@@ -3367,497 +3176,497 @@ static const char*	ppszKeyWordsTEX[] = {
 //			"\\<",
 //			"\\=",
 //			"\\>",
-	"\\aa",
-	"\\AA",
-	"\\acute",
-	"\\addcontentsline",
-	"\\addtocounter",
-	"\\addtolength",
-	"\\ae",
-	"\\AE",
-	"\\aleph",
-	"\\alpha",
-	"\\alph",
-	"\\Alph",
-	"\\and",
-	"\\angle",
-	"\\appendix",
-	"\\approx",
-	"\\arabic",
-	"\\arccos",
-	"\\arctan",
-	"\\arg",
-	"\\arrayrulewidth",
-	"\\arraystretch",
-	"\\ast",
-	"\\atop",
-	"\\author",
-	"\\b",
-	"\\backslash",
-	"\\bar",
-	"\\baselineskip",
-	"\\baselinestretch",
-	"\\begin",
-	"\\beta",
-	"\\bf",
-	"\\bibitem",
-	"\\bibliography",
-	"\\bibliographystyle",
-	"\\big",
-	"\\Big",
-	"\\bigcap",
-	"\\bigcirc",
-	"\\bigcup",
-	"\\bigg",
-	"\\Bigg",
-	"\\Biggl",
-	"\\Biggm",
-	"\\biggl",
-	"\\biggm",
-	"\\biggr",
-	"\\Biggr",
-	"\\bigl",
-	"\\bigm",
-	"\\Bigm",
-	"\\Bigl",
-	"\\bigodot",
-	"\\bigoplus",
-	"\\bigotimes",
-	"\\bigr",
-	"\\Bigr",
-	"\\bigskip",
-	"\\bigtriangledown",
-	"\\bigtriangleup",
-	"\\boldmath",
-	"\\bot",
-	"\\Box",
-	"\\brace",
-	"\\breve",
-	"\\bullet",
-	"\\bye",
-	"\\c",
-	"\\cal",
-	"\\cap",
-	"\\caption",
-	"\\cc",
-	"\\cdot",
-	"\\cdots",
-	"\\centering",
-	"\\chapter",
-	"\\check",
-	"\\chi",
-	"\\choose",
-	"\\circ",
-	"\\circle",
-	"\\cite",
-	"\\clearpage",
-	"\\cline",
-	"\\closing",
-	"\\clubsuit",
-	"\\colon",
-	"\\columnsep",
-	"\\columnseprule",
-	"\\cong",
-	"\\cot",
-	"\\coth",
-	"\\cr",
-	"\\cup",
-	"\\d",
-	"\\dag",
-	"\\dagger",
-	"\\date",
-	"\\dashbox",
-	"\\ddag",
-	"\\ddot",
-	"\\ddots",
-	"\\def",
-	"\\deg",
-	"\\delta",
-	"\\Delta",
-	"\\det",
-	"\\diamond",
-	"\\diamondsuit",
-	"\\dim",
-	"\\displaystyle",
-	"\\documentclass",
-	"\\documentstyle",
-	"\\dot",
-	"\\doteq",
-	"\\dotfill",
-	"\\Downarrow",
-	"\\downarrow",
-	"\\ell",
-	"\\em",
-	"\\emptyset",
-	"\\encl",
-	"\\end",
-	"\\enspace",
-	"\\enskip",
-	"\\epsilon",
-	"\\eqno",
-	"\\equiv",
-	"\\evensidemargin",
-	"\\eta",
-	"\\exists",
-	"\\exp",
-	"\\fbox",
-	"\\fboxrule",
-	"\\flat",
-	"\\footnote",
-	"\\footnotesize",
-	"\\forall",
-	"\\frac",
-	"\\frame",
-	"\\framebox",
-	"\\gamma",
-	"\\Gamma",
-	"\\gcd",
-	"\\ge",
-	"\\geq",
-	"\\gets",
-	"\\gg",
-	"\\grave",
-	"\\gt",
-	"\\H",
-	"\\hat",
-	"\\hbar",
-	"\\hbox",
-	"\\headsep",
-	"\\heartsuit",
-	"\\hfil",
-	"\\hfill",
-	"\\hline",
-	"\\hom",
-	"\\hrulefill",
-	"\\hskip",
-	"\\hspace",
-	"\\hspace*",
-	"\\huge",
-	"\\Huge",
-	"\\i",
-	"\\Im",
-	"\\imath",
-	"\\in",
-	"\\include",
-	"\\includegraphics",
-	"\\includeonly",
-	"\\indent",
-	"\\index",
-	"\\inf",
-	"\\infty",
-	"\\input",
-	"\\int",
-	"\\iota",
-	"\\it",
-	"\\item",
-	"\\itemsep",
-	"\\j",
-	"\\jmath",
-	"\\kappa",
-	"\\ker",
-	"\\kern",
-	"\\kill",
-	"\\l",
-	"\\L",
-	"\\label",
-	"\\lambda",
-	"\\Lambda",
-	"\\land",
-	"\\langle",
-	"\\large",
-	"\\Large",
-	"\\LARGE",
-	"\\LaTeX",
-	"\\LaTeXe",
-	"\\lceil",
-	"\\ldots",
-	"\\le",
-	"\\leftarrow",
-	"\\Leftarrow",
-	"\\lefteqn",
-	"\\leftharpoondown",
-	"\\leftharpoonup",
-	"\\leftmargin",
-	"\\leftrightarrow",
-	"\\Leftrightarrow",
-	"\\leq",
-	"\\leqno",
-	"\\lfloor",
-	"\\lg",
-	"\\lim",
-	"\\liminf",
-	"\\limsup",
-	"\\line",
-	"\\linebreak",
-	"\\linewidth",
-	"\\listoffigures",
-	"\\listoftables",
-	"\\ll",
-	"\\llap",
-	"\\ln",
-	"\\lnot",
-	"\\log",
-	"\\longleftarrow",
-	"\\Longleftarrow",
-	"\\longleftrightarrow",
-	"\\Longleftrightarrow",
-	"\\longrightarrow",
-	"\\Longrightarrow",
-	"\\lor",
-	"\\lower",
-	"\\magstep",
-	"\\makeatletter",
-	"\\makeatother",
-	"\\makebox",
-	"\\makeindex",
-	"\\maketitle",
-	"\\makelabels",
-	"\\mathop",
-	"\\mapsto",
-	"\\markboth",
-	"\\markright",
-	"\\mathstrut",
-	"\\max",
-	"\\mbox",
-	"\\mc",
-	"\\medskip",
-	"\\mid",
-	"\\min",
-	"\\mit",
-	"\\mp",
-	"\\mu",
-	"\\multicolumn",
-	"\\multispan",
-	"\\multiput",
-	"\\nabla",
-	"\\natural",
-	"\\ne",
-	"\\neg",
-	"\\nearrow",
-	"\\nwarrow",
-	"\\neq",
-	"\\newblock",
-	"\\newcommand",
-	"\\newenvironment",
-	"\\newfont",
-	"\\newlength",
-	"\\newline",
-	"\\newpage",
-	"\\newtheorem",
-	"\\ni",
-	"\\noalign",
-	"\\noindent",
-	"\\nolimits",
-	"\\nolinebreak",
-	"\\nonumber",
-	"\\nopagebreak",
-	"\\normalsize",
-	"\\not",
-	"\\notice",
-	"\\notin",
-	"\\nu",
-	"\\o",
-	"\\O",
-	"\\oddsidemargin",
-	"\\odot",
-	"\\oe",
-	"\\OE",
-	"\\oint",
-	"\\Omega",
-	"\\omega",
-	"\\ominus",
-	"\\oplus",
-	"\\opening",
-	"\\otimes",
-	"\\owns",
-	"\\overleftarrow",
-	"\\overline",
-	"\\overrightarrow",
-	"\\overvrace",
-	"\\oval",
-	"\\P",
-	"\\pagebreak",
-	"\\pagenumbering",
-	"\\pageref",
-	"\\pagestyle",
-	"\\par",
-	"\\parallel",
-	"\\paragraph",
-	"\\parbox",
-	"\\parindent",
-	"\\parskip",
-	"\\partial",
-	"\\perp",
-	"\\phi",
-	"\\Phi",
-	"\\pi",
-	"\\Pi",
-	"\\pm",
-	"\\Pr",
-	"\\prime",
-	"\\printindex",
-	"\\prod",
-	"\\propto",
-	"\\ps",
-	"\\psi",
-	"\\Psi",
-	"\\put",
-	"\\qquad",
-	"\\quad",
-	"\\raisebox",
-	"\\rangle",
-	"\\rceil",
-	"\\Re",
-	"\\ref",
-	"\\renewcommand",
-	"\\renewenvironment",
-	"\\rfloor",
-	"\\rho",
-	"\\right",
-	"\\rightarrow",
-	"\\Rightarrow",
-	"\\rightharpoondown",
-	"\\rightharpoonup",
-	"\\rightleftharpoonup",
-	"\\rightmargin",
-	"\\rm",
-	"\\rule",
-	"\\roman",
-	"\\Roman",
-	"\\S",
-	"\\samepage",
-	"\\sb",
-	"\\sc",
-	"\\scriptsize",
-	"\\scriptscriptstyle",
-	"\\scriptstyle",
-	"\\searrow",
-	"\\sec",
-	"\\section",
-	"\\setcounter",
-	"\\setlength",
-	"\\settowidth",
-	"\\setminus",
-	"\\sf",
-	"\\sharp",
-	"\\sigma",
-	"\\Sigma",
-	"\\signature",
-	"\\sim",
-	"\\simeq",
-	"\\sin",
-	"\\sinh",
-	"\\sl",
-	"\\sloppy",
-	"\\small",
-	"\\smash",
-	"\\smallskip",
-	"\\sp",
-	"\\spadesuit",
-	"\\special",
-	"\\sqrt",
-	"\\ss",
-	"\\star",
-	"\\stackrel",
-	"\\strut",
-	"\\subparagraph",
-	"\\subsection",
-	"\\subset",
-	"\\subseteq",
-	"\\subsubsection",
-	"\\sum",
-	"\\sup",
-	"\\supset",
-	"\\supseteq",
-	"\\swarrow",
-	"\\t",
-	"\\tableofcontents",
-	"\\tan",
-	"\\tanh",
-	"\\tau",
-	"\\TeX",
-	"\\textbf",
-	"\\textgreater",
-	"\\textgt",
-	"\\textheight",
-	"\\textit",
-	"\\textless",
-	"\\textmc",
-	"\\textrm",
-	"\\textsc",
-	"\\textsf",
-	"\\textsl",
-	"\\textstyle",
-	"\\texttt",
-	"\\textwidth",
-	"\\thanks",
-	"\\thebibliography",
-	"\\theequation",
-	"\\thepage",
-	"\\thesection",
-	"\\theta",
-	"\\Theta",
-	"\\thicklines",
-	"\\thinlines",
-	"\\thinspace",
-	"\\thisepage",
-	"\\thisepagestyle",
-	"\\tie",
-	"\\tilde",
-	"\\times",
-	"\\tiny",
-	"\\title",
-	"\\titlepage",
-	"\\to",
-	"\\toaddress",
-	"\\topmargin",
-	"\\triangle",
-	"\\tt",
-	"\\twocolumn",
-	"\\u",
-	"\\underline",
-	"\\undervrace",
-	"\\unitlength",
-	"\\Uparrow",
-	"\\uparrow",
-	"\\updownarrow",
-	"\\Updownarrow",
-	"\\uplus",
-	"\\upsilon",
-	"\\Upsilon",
-	"\\usepackage",
-	"\\v",
-	"\\varepsilon",
-	"\\varphi",
-	"\\varpi",
-	"\\varrho",
-	"\\varsigma",
-	"\\vartheta",
-	"\\vbox",
-	"\\vcenter",
-	"\\vec",
-	"\\vector",
-	"\\vee",
-	"\\verb",
-	"\\verb*",
-	"\\verbatim",
-	"\\vert",
-	"\\Vert",
-	"\\vfil",
-	"\\vfill",
-	"\\vrule",
-	"\\vskip",
-	"\\vspace",
-	"\\vspace*",
-	"\\wedge",
-	"\\widehat",
-	"\\widetilde",
-	"\\wp",
-	"\\wr",
-	"\\wrapfigure",
-	"\\xi",
-	"\\Xi",
-	"\\zeta"//,
+	L"\\aa",
+	L"\\AA",
+	L"\\acute",
+	L"\\addcontentsline",
+	L"\\addtocounter",
+	L"\\addtolength",
+	L"\\ae",
+	L"\\AE",
+	L"\\aleph",
+	L"\\alpha",
+	L"\\alph",
+	L"\\Alph",
+	L"\\and",
+	L"\\angle",
+	L"\\appendix",
+	L"\\approx",
+	L"\\arabic",
+	L"\\arccos",
+	L"\\arctan",
+	L"\\arg",
+	L"\\arrayrulewidth",
+	L"\\arraystretch",
+	L"\\ast",
+	L"\\atop",
+	L"\\author",
+	L"\\b",
+	L"\\backslash",
+	L"\\bar",
+	L"\\baselineskip",
+	L"\\baselinestretch",
+	L"\\begin",
+	L"\\beta",
+	L"\\bf",
+	L"\\bibitem",
+	L"\\bibliography",
+	L"\\bibliographystyle",
+	L"\\big",
+	L"\\Big",
+	L"\\bigcap",
+	L"\\bigcirc",
+	L"\\bigcup",
+	L"\\bigg",
+	L"\\Bigg",
+	L"\\Biggl",
+	L"\\Biggm",
+	L"\\biggl",
+	L"\\biggm",
+	L"\\biggr",
+	L"\\Biggr",
+	L"\\bigl",
+	L"\\bigm",
+	L"\\Bigm",
+	L"\\Bigl",
+	L"\\bigodot",
+	L"\\bigoplus",
+	L"\\bigotimes",
+	L"\\bigr",
+	L"\\Bigr",
+	L"\\bigskip",
+	L"\\bigtriangledown",
+	L"\\bigtriangleup",
+	L"\\boldmath",
+	L"\\bot",
+	L"\\Box",
+	L"\\brace",
+	L"\\breve",
+	L"\\bullet",
+	L"\\bye",
+	L"\\c",
+	L"\\cal",
+	L"\\cap",
+	L"\\caption",
+	L"\\cc",
+	L"\\cdot",
+	L"\\cdots",
+	L"\\centering",
+	L"\\chapter",
+	L"\\check",
+	L"\\chi",
+	L"\\choose",
+	L"\\circ",
+	L"\\circle",
+	L"\\cite",
+	L"\\clearpage",
+	L"\\cline",
+	L"\\closing",
+	L"\\clubsuit",
+	L"\\colon",
+	L"\\columnsep",
+	L"\\columnseprule",
+	L"\\cong",
+	L"\\cot",
+	L"\\coth",
+	L"\\cr",
+	L"\\cup",
+	L"\\d",
+	L"\\dag",
+	L"\\dagger",
+	L"\\date",
+	L"\\dashbox",
+	L"\\ddag",
+	L"\\ddot",
+	L"\\ddots",
+	L"\\def",
+	L"\\deg",
+	L"\\delta",
+	L"\\Delta",
+	L"\\det",
+	L"\\diamond",
+	L"\\diamondsuit",
+	L"\\dim",
+	L"\\displaystyle",
+	L"\\documentclass",
+	L"\\documentstyle",
+	L"\\dot",
+	L"\\doteq",
+	L"\\dotfill",
+	L"\\Downarrow",
+	L"\\downarrow",
+	L"\\ell",
+	L"\\em",
+	L"\\emptyset",
+	L"\\encl",
+	L"\\end",
+	L"\\enspace",
+	L"\\enskip",
+	L"\\epsilon",
+	L"\\eqno",
+	L"\\equiv",
+	L"\\evensidemargin",
+	L"\\eta",
+	L"\\exists",
+	L"\\exp",
+	L"\\fbox",
+	L"\\fboxrule",
+	L"\\flat",
+	L"\\footnote",
+	L"\\footnotesize",
+	L"\\forall",
+	L"\\frac",
+	L"\\frame",
+	L"\\framebox",
+	L"\\gamma",
+	L"\\Gamma",
+	L"\\gcd",
+	L"\\ge",
+	L"\\geq",
+	L"\\gets",
+	L"\\gg",
+	L"\\grave",
+	L"\\gt",
+	L"\\H",
+	L"\\hat",
+	L"\\hbar",
+	L"\\hbox",
+	L"\\headsep",
+	L"\\heartsuit",
+	L"\\hfil",
+	L"\\hfill",
+	L"\\hline",
+	L"\\hom",
+	L"\\hrulefill",
+	L"\\hskip",
+	L"\\hspace",
+	L"\\hspace*",
+	L"\\huge",
+	L"\\Huge",
+	L"\\i",
+	L"\\Im",
+	L"\\imath",
+	L"\\in",
+	L"\\include",
+	L"\\includegraphics",
+	L"\\includeonly",
+	L"\\indent",
+	L"\\index",
+	L"\\inf",
+	L"\\infty",
+	L"\\input",
+	L"\\int",
+	L"\\iota",
+	L"\\it",
+	L"\\item",
+	L"\\itemsep",
+	L"\\j",
+	L"\\jmath",
+	L"\\kappa",
+	L"\\ker",
+	L"\\kern",
+	L"\\kill",
+	L"\\l",
+	L"\\L",
+	L"\\label",
+	L"\\lambda",
+	L"\\Lambda",
+	L"\\land",
+	L"\\langle",
+	L"\\large",
+	L"\\Large",
+	L"\\LARGE",
+	L"\\LaTeX",
+	L"\\LaTeXe",
+	L"\\lceil",
+	L"\\ldots",
+	L"\\le",
+	L"\\leftarrow",
+	L"\\Leftarrow",
+	L"\\lefteqn",
+	L"\\leftharpoondown",
+	L"\\leftharpoonup",
+	L"\\leftmargin",
+	L"\\leftrightarrow",
+	L"\\Leftrightarrow",
+	L"\\leq",
+	L"\\leqno",
+	L"\\lfloor",
+	L"\\lg",
+	L"\\lim",
+	L"\\liminf",
+	L"\\limsup",
+	L"\\line",
+	L"\\linebreak",
+	L"\\linewidth",
+	L"\\listoffigures",
+	L"\\listoftables",
+	L"\\ll",
+	L"\\llap",
+	L"\\ln",
+	L"\\lnot",
+	L"\\log",
+	L"\\longleftarrow",
+	L"\\Longleftarrow",
+	L"\\longleftrightarrow",
+	L"\\Longleftrightarrow",
+	L"\\longrightarrow",
+	L"\\Longrightarrow",
+	L"\\lor",
+	L"\\lower",
+	L"\\magstep",
+	L"\\makeatletter",
+	L"\\makeatother",
+	L"\\makebox",
+	L"\\makeindex",
+	L"\\maketitle",
+	L"\\makelabels",
+	L"\\mathop",
+	L"\\mapsto",
+	L"\\markboth",
+	L"\\markright",
+	L"\\mathstrut",
+	L"\\max",
+	L"\\mbox",
+	L"\\mc",
+	L"\\medskip",
+	L"\\mid",
+	L"\\min",
+	L"\\mit",
+	L"\\mp",
+	L"\\mu",
+	L"\\multicolumn",
+	L"\\multispan",
+	L"\\multiput",
+	L"\\nabla",
+	L"\\natural",
+	L"\\ne",
+	L"\\neg",
+	L"\\nearrow",
+	L"\\nwarrow",
+	L"\\neq",
+	L"\\newblock",
+	L"\\newcommand",
+	L"\\newenvironment",
+	L"\\newfont",
+	L"\\newlength",
+	L"\\newline",
+	L"\\newpage",
+	L"\\newtheorem",
+	L"\\ni",
+	L"\\noalign",
+	L"\\noindent",
+	L"\\nolimits",
+	L"\\nolinebreak",
+	L"\\nonumber",
+	L"\\nopagebreak",
+	L"\\normalsize",
+	L"\\not",
+	L"\\notice",
+	L"\\notin",
+	L"\\nu",
+	L"\\o",
+	L"\\O",
+	L"\\oddsidemargin",
+	L"\\odot",
+	L"\\oe",
+	L"\\OE",
+	L"\\oint",
+	L"\\Omega",
+	L"\\omega",
+	L"\\ominus",
+	L"\\oplus",
+	L"\\opening",
+	L"\\otimes",
+	L"\\owns",
+	L"\\overleftarrow",
+	L"\\overline",
+	L"\\overrightarrow",
+	L"\\overvrace",
+	L"\\oval",
+	L"\\P",
+	L"\\pagebreak",
+	L"\\pagenumbering",
+	L"\\pageref",
+	L"\\pagestyle",
+	L"\\par",
+	L"\\parallel",
+	L"\\paragraph",
+	L"\\parbox",
+	L"\\parindent",
+	L"\\parskip",
+	L"\\partial",
+	L"\\perp",
+	L"\\phi",
+	L"\\Phi",
+	L"\\pi",
+	L"\\Pi",
+	L"\\pm",
+	L"\\Pr",
+	L"\\prime",
+	L"\\printindex",
+	L"\\prod",
+	L"\\propto",
+	L"\\ps",
+	L"\\psi",
+	L"\\Psi",
+	L"\\put",
+	L"\\qquad",
+	L"\\quad",
+	L"\\raisebox",
+	L"\\rangle",
+	L"\\rceil",
+	L"\\Re",
+	L"\\ref",
+	L"\\renewcommand",
+	L"\\renewenvironment",
+	L"\\rfloor",
+	L"\\rho",
+	L"\\right",
+	L"\\rightarrow",
+	L"\\Rightarrow",
+	L"\\rightharpoondown",
+	L"\\rightharpoonup",
+	L"\\rightleftharpoonup",
+	L"\\rightmargin",
+	L"\\rm",
+	L"\\rule",
+	L"\\roman",
+	L"\\Roman",
+	L"\\S",
+	L"\\samepage",
+	L"\\sb",
+	L"\\sc",
+	L"\\scriptsize",
+	L"\\scriptscriptstyle",
+	L"\\scriptstyle",
+	L"\\searrow",
+	L"\\sec",
+	L"\\section",
+	L"\\setcounter",
+	L"\\setlength",
+	L"\\settowidth",
+	L"\\setminus",
+	L"\\sf",
+	L"\\sharp",
+	L"\\sigma",
+	L"\\Sigma",
+	L"\\signature",
+	L"\\sim",
+	L"\\simeq",
+	L"\\sin",
+	L"\\sinh",
+	L"\\sl",
+	L"\\sloppy",
+	L"\\small",
+	L"\\smash",
+	L"\\smallskip",
+	L"\\sp",
+	L"\\spadesuit",
+	L"\\special",
+	L"\\sqrt",
+	L"\\ss",
+	L"\\star",
+	L"\\stackrel",
+	L"\\strut",
+	L"\\subparagraph",
+	L"\\subsection",
+	L"\\subset",
+	L"\\subseteq",
+	L"\\subsubsection",
+	L"\\sum",
+	L"\\sup",
+	L"\\supset",
+	L"\\supseteq",
+	L"\\swarrow",
+	L"\\t",
+	L"\\tableofcontents",
+	L"\\tan",
+	L"\\tanh",
+	L"\\tau",
+	L"\\TeX",
+	L"\\textbf",
+	L"\\textgreater",
+	L"\\textgt",
+	L"\\textheight",
+	L"\\textit",
+	L"\\textless",
+	L"\\textmc",
+	L"\\textrm",
+	L"\\textsc",
+	L"\\textsf",
+	L"\\textsl",
+	L"\\textstyle",
+	L"\\texttt",
+	L"\\textwidth",
+	L"\\thanks",
+	L"\\thebibliography",
+	L"\\theequation",
+	L"\\thepage",
+	L"\\thesection",
+	L"\\theta",
+	L"\\Theta",
+	L"\\thicklines",
+	L"\\thinlines",
+	L"\\thinspace",
+	L"\\thisepage",
+	L"\\thisepagestyle",
+	L"\\tie",
+	L"\\tilde",
+	L"\\times",
+	L"\\tiny",
+	L"\\title",
+	L"\\titlepage",
+	L"\\to",
+	L"\\toaddress",
+	L"\\topmargin",
+	L"\\triangle",
+	L"\\tt",
+	L"\\twocolumn",
+	L"\\u",
+	L"\\underline",
+	L"\\undervrace",
+	L"\\unitlength",
+	L"\\Uparrow",
+	L"\\uparrow",
+	L"\\updownarrow",
+	L"\\Updownarrow",
+	L"\\uplus",
+	L"\\upsilon",
+	L"\\Upsilon",
+	L"\\usepackage",
+	L"\\v",
+	L"\\varepsilon",
+	L"\\varphi",
+	L"\\varpi",
+	L"\\varrho",
+	L"\\varsigma",
+	L"\\vartheta",
+	L"\\vbox",
+	L"\\vcenter",
+	L"\\vec",
+	L"\\vector",
+	L"\\vee",
+	L"\\verb",
+	L"\\verb*",
+	L"\\verbatim",
+	L"\\vert",
+	L"\\Vert",
+	L"\\vfil",
+	L"\\vfill",
+	L"\\vrule",
+	L"\\vskip",
+	L"\\vspace",
+	L"\\vspace*",
+	L"\\wedge",
+	L"\\widehat",
+	L"\\widetilde",
+	L"\\wp",
+	L"\\wr",
+	L"\\wrapfigure",
+	L"\\xi",
+	L"\\Xi",
+	L"\\zeta"//,
 //			"\\[",
 //			"\\\"",
 //			"\\\'",
@@ -3873,579 +3682,579 @@ static const char*	ppszKeyWordsTEX[] = {
 };
 
 //Jan. 19, 2001 JEPRO	TeX のキーワード2として新規追加 & 一部復活 --環境コマンドとオプション名が中心
-static const char*	ppszKeyWordsTEX2[] = {
+static const wchar_t*	ppszKeyWordsTEX2[] = {
 	//	環境コマンド
 	//Jan. 19, 2001 JEPRO 本当は{}付きでキーワードにしたかったが単語として認識してくれないので止めた
-	"abstract",
-	"array"
-	"center",
-	"description",
-	"document",
-	"displaymath",
-	"em",
-	"enumerate",
-	"eqnarray",
-	"eqnarray*",
-	"equation",
-	"figure",
-	"figure*",
-	"floatingfigure",
-	"flushleft",
-	"flushright",
-	"itemize",
-	"letter",
-	"list",
-	"math",
-	"minipage",
-	"multicols",
-	"namelist",
-	"picture",
-	"quotation",
-	"quote",
-	"sloppypar",
-	"subeqnarray",
-	"subeqnarray*",
-	"subequations",
-	"subfigure",
-	"tabbing",
-	"table",
-	"table*",
-	"tabular",
-	"tabular*",
-	"tatepage",
-	"thebibliography",
-	"theindex",
-	"titlepage",
-	"trivlist",
-	"verbatim",
-	"verbatim*",
-	"verse",
-	"wrapfigure",
+	L"abstract",
+	L"array"
+	L"center",
+	L"description",
+	L"document",
+	L"displaymath",
+	L"em",
+	L"enumerate",
+	L"eqnarray",
+	L"eqnarray*",
+	L"equation",
+	L"figure",
+	L"figure*",
+	L"floatingfigure",
+	L"flushleft",
+	L"flushright",
+	L"itemize",
+	L"letter",
+	L"list",
+	L"math",
+	L"minipage",
+	L"multicols",
+	L"namelist",
+	L"picture",
+	L"quotation",
+	L"quote",
+	L"sloppypar",
+	L"subeqnarray",
+	L"subeqnarray*",
+	L"subequations",
+	L"subfigure",
+	L"tabbing",
+	L"table",
+	L"table*",
+	L"tabular",
+	L"tabular*",
+	L"tatepage",
+	L"thebibliography",
+	L"theindex",
+	L"titlepage",
+	L"trivlist",
+	L"verbatim",
+	L"verbatim*",
+	L"verse",
+	L"wrapfigure",
 	//	スタイルオプション
-	"a4",
-	"a4j",
-	"a5",
-	"a5j",
-	"Alph",
-	"alph",
-	"annote",
-	"arabic",
-	"b4",
-	"b4j",
-	"b5",
-	"b5j",
-	"bezier",
-	"booktitle",
-	"boxedminipage",
-	"boxit",
+	L"a4",
+	L"a4j",
+	L"a5",
+	L"a5j",
+	L"Alph",
+	L"alph",
+	L"annote",
+	L"arabic",
+	L"b4",
+	L"b4j",
+	L"b5",
+	L"b5j",
+	L"bezier",
+	L"booktitle",
+	L"boxedminipage",
+	L"boxit",
 //		"bp",
 //		"cm",
-	"dbltopnumber",
+	L"dbltopnumber",
 //		"dd",
-	"eclepsf",
-	"eepic",
-	"enumi",
-	"enumii",
-	"enumiii",
-	"enumiv",
-	"epic",
-	"epsbox",
-	"epsf",
-	"fancybox",
-	"fancyheadings",
-	"fleqn",
-	"footnote",
-	"howpublished",
-	"jabbrv",
-	"jalpha",
+	L"eclepsf",
+	L"eepic",
+	L"enumi",
+	L"enumii",
+	L"enumiii",
+	L"enumiv",
+	L"epic",
+	L"epsbox",
+	L"epsf",
+	L"fancybox",
+	L"fancyheadings",
+	L"fleqn",
+	L"footnote",
+	L"howpublished",
+	L"jabbrv",
+	L"jalpha",
 //		"article",
-	"jarticle",
-	"jsarticle",
+	L"jarticle",
+	L"jsarticle",
 //		"book",
-	"jbook",
-	"jsbook",
+	L"jbook",
+	L"jsbook",
 //		"letter",
-	"jletter",
+	L"jletter",
 //		"plain",
-	"jplain",
+	L"jplain",
 //		"report",
-	"jreport",
-	"jtwocolumn",
-	"junsrt",
-	"leqno",
-	"makeidx",
-	"markboth",
-	"markright",
+	L"jreport",
+	L"jtwocolumn",
+	L"junsrt",
+	L"leqno",
+	L"makeidx",
+	L"markboth",
+	L"markright",
 //		"mm",
-	"multicol",
-	"myheadings",
-	"openbib",
+	L"multicol",
+	L"myheadings",
+	L"openbib",
 //		"pc",
 //		"pt",
-	"secnumdepth",
+	L"secnumdepth",
 //		"sp",
-	"titlepage",
-	"tjarticle",
-	"topnumber",
-	"totalnumber",
-	"twocolumn",
-	"twoside",
-	"yomi"//,
+	L"titlepage",
+	L"tjarticle",
+	L"topnumber",
+	L"totalnumber",
+	L"twocolumn",
+	L"twoside",
+	L"yomi"//,
 //		"zh",
 //		"zw"
 };
 
-static const char*	ppszKeyWordsPERL[] = {
+static const wchar_t*	ppszKeyWordsPERL[] = {
 	//Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
-	"break",
-	"continue",
-	"do",
-	"elsif",
-	"else",
-	"for",
-	"foreach",
-	"goto",
-	"if",
-	"last",
-	"next",
-	"return",
-	"sub",
-	"undef",
-	"unless",
-	"until",
-	"while",
-	"abs",
-	"accept",
-	"alarm",
-	"atan2",
-	"bind",
-	"binmode",
-	"bless",
-	"caller",
-	"chdir",
-	"chmod",
-	"chomp",
-	"chop",
-	"chown",
-	"chr",
-	"chroot",
-	"close",
-	"closedir",
-	"connect",
-	"continue",
-	"cos",
-	"crypt",
-	"dbmclose",
-	"dbmopen",
-	"defined",
-	"delete",
-	"die",
-	"do",
-	"dump",
-	"each",
-	"eof",
-	"eval",
-	"exec",
-	"exists",
-	"exit",
-	"exp",
-	"fcntl",
-	"fileno",
-	"flock",
-	"fork",
-	"format",
-	"formline",
-	"getc",
-	"getlogin",
-	"getpeername",
-	"getpgrp",
-	"getppid",
-	"getpriority",
-	"getpwnam",
-	"getgrnam",
-	"gethostbyname",
-	"getnetbyname",
-	"getprotobyname",
-	"getpwuid",
-	"getgrgid",
-	"getservbyname",
-	"gethostbyaddr",
-	"getnetbyaddr",
-	"getprotobynumber",
-	"getservbyport",
-	"getpwent",
-	"getgrent",
-	"gethostent",
-	"getnetent",
-	"getprotoent",
-	"getservent",
-	"setpwent",
-	"setgrent",
-	"sethostent",
-	"setnetent",
-	"setprotoent",
-	"setservent",
-	"endpwent",
-	"endgrent",
-	"endhostent",
-	"endnetent",
-	"endprotoent",
-	"endservent",
-	"getsockname",
-	"getsockopt",
-	"glob",
-	"gmtime",
-	"goto",
-	"grep",
-	"hex",
-	"import",
-	"index",
-	"int",
-	"ioctl",
-	"join",
-	"keys",
-	"kill",
-	"last",
-	"lc",
-	"lcfirst",
-	"length",
-	"link",
-	"listen",
-	"local",
-	"localtime",
-	"log",
-	"lstat",
+	L"break",
+	L"continue",
+	L"do",
+	L"elsif",
+	L"else",
+	L"for",
+	L"foreach",
+	L"goto",
+	L"if",
+	L"last",
+	L"next",
+	L"return",
+	L"sub",
+	L"undef",
+	L"unless",
+	L"until",
+	L"while",
+	L"abs",
+	L"accept",
+	L"alarm",
+	L"atan2",
+	L"bind",
+	L"binmode",
+	L"bless",
+	L"caller",
+	L"chdir",
+	L"chmod",
+	L"chomp",
+	L"chop",
+	L"chown",
+	L"chr",
+	L"chroot",
+	L"close",
+	L"closedir",
+	L"connect",
+	L"continue",
+	L"cos",
+	L"crypt",
+	L"dbmclose",
+	L"dbmopen",
+	L"defined",
+	L"delete",
+	L"die",
+	L"do",
+	L"dump",
+	L"each",
+	L"eof",
+	L"eval",
+	L"exec",
+	L"exists",
+	L"exit",
+	L"exp",
+	L"fcntl",
+	L"fileno",
+	L"flock",
+	L"fork",
+	L"format",
+	L"formline",
+	L"getc",
+	L"getlogin",
+	L"getpeername",
+	L"getpgrp",
+	L"getppid",
+	L"getpriority",
+	L"getpwnam",
+	L"getgrnam",
+	L"gethostbyname",
+	L"getnetbyname",
+	L"getprotobyname",
+	L"getpwuid",
+	L"getgrgid",
+	L"getservbyname",
+	L"gethostbyaddr",
+	L"getnetbyaddr",
+	L"getprotobynumber",
+	L"getservbyport",
+	L"getpwent",
+	L"getgrent",
+	L"gethostent",
+	L"getnetent",
+	L"getprotoent",
+	L"getservent",
+	L"setpwent",
+	L"setgrent",
+	L"sethostent",
+	L"setnetent",
+	L"setprotoent",
+	L"setservent",
+	L"endpwent",
+	L"endgrent",
+	L"endhostent",
+	L"endnetent",
+	L"endprotoent",
+	L"endservent",
+	L"getsockname",
+	L"getsockopt",
+	L"glob",
+	L"gmtime",
+	L"goto",
+	L"grep",
+	L"hex",
+	L"import",
+	L"index",
+	L"int",
+	L"ioctl",
+	L"join",
+	L"keys",
+	L"kill",
+	L"last",
+	L"lc",
+	L"lcfirst",
+	L"length",
+	L"link",
+	L"listen",
+	L"local",
+	L"localtime",
+	L"log",
+	L"lstat",
 //			"//m",
-	"map",
-	"mkdir",
-	"msgctl",
-	"msgget",
-	"msgsnd",
-	"msgrcv",
-	"my",
-	"next",
-	"no",
-	"oct",
-	"open",
-	"opendir",
-	"ord",
-	"our",	// 2006.04.20 genta
-	"pack",
-	"package",
-	"pipe",
-	"pop",
-	"pos",
-	"print",
-	"printf",
-	"prototype",
-	"push",
+	L"map",
+	L"mkdir",
+	L"msgctl",
+	L"msgget",
+	L"msgsnd",
+	L"msgrcv",
+	L"my",
+	L"next",
+	L"no",
+	L"oct",
+	L"open",
+	L"opendir",
+	L"ord",
+	L"our",	// 2006.04.20 genta
+	L"pack",
+	L"package",
+	L"pipe",
+	L"pop",
+	L"pos",
+	L"print",
+	L"printf",
+	L"prototype",
+	L"push",
 //			"//q",
-	"qq",
-	"qr",
-	"qx",
-	"qw",
-	"quotemeta",
-	"rand",
-	"read",
-	"readdir",
-	"readline",
-	"readlink",
-	"readpipe",
-	"recv",
-	"redo",
-	"ref",
-	"rename",
-	"require",
-	"reset",
-	"return",
-	"reverse",
-	"rewinddir",
-	"rindex",
-	"rmdir",
+	L"qq",
+	L"qr",
+	L"qx",
+	L"qw",
+	L"quotemeta",
+	L"rand",
+	L"read",
+	L"readdir",
+	L"readline",
+	L"readlink",
+	L"readpipe",
+	L"recv",
+	L"redo",
+	L"ref",
+	L"rename",
+	L"require",
+	L"reset",
+	L"return",
+	L"reverse",
+	L"rewinddir",
+	L"rindex",
+	L"rmdir",
 //			"//s",
-	"scalar",
-	"seek",
-	"seekdir",
-	"select",
-	"semctl",
-	"semget",
-	"semop",
-	"send",
-	"setpgrp",
-	"setpriority",
-	"setsockopt",
-	"shift",
-	"shmctl",
-	"shmget",
-	"shmread",
-	"shmwrite",
-	"shutdown",
-	"sin",
-	"sleep",
-	"socket",
-	"socketpair",
-	"sort",
-	"splice",
-	"split",
-	"sprintf",
-	"sqrt",
-	"srand",
-	"stat",
-	"study",
-	"sub",
-	"substr",
-	"symlink",
-	"syscall",
-	"sysopen",
-	"sysread",
-	"sysseek",
-	"system",
-	"syswrite",
-	"tell",
-	"telldir",
-	"tie",
-	"tied",
-	"time",
-	"times",
-	"tr",
-	"truncate",
-	"uc",
-	"ucfirst",
-	"umask",
-	"undef",
-	"unlink",
-	"unpack",
-	"untie",
-	"unshift",
-	"use",
-	"utime",
-	"values",
-	"vec",
-	"wait",
-	"waitpid",
-	"wantarray",
-	"warn",
-	"write"
+	L"scalar",
+	L"seek",
+	L"seekdir",
+	L"select",
+	L"semctl",
+	L"semget",
+	L"semop",
+	L"send",
+	L"setpgrp",
+	L"setpriority",
+	L"setsockopt",
+	L"shift",
+	L"shmctl",
+	L"shmget",
+	L"shmread",
+	L"shmwrite",
+	L"shutdown",
+	L"sin",
+	L"sleep",
+	L"socket",
+	L"socketpair",
+	L"sort",
+	L"splice",
+	L"split",
+	L"sprintf",
+	L"sqrt",
+	L"srand",
+	L"stat",
+	L"study",
+	L"sub",
+	L"substr",
+	L"symlink",
+	L"syscall",
+	L"sysopen",
+	L"sysread",
+	L"sysseek",
+	L"system",
+	L"syswrite",
+	L"tell",
+	L"telldir",
+	L"tie",
+	L"tied",
+	L"time",
+	L"times",
+	L"tr",
+	L"truncate",
+	L"uc",
+	L"ucfirst",
+	L"umask",
+	L"undef",
+	L"unlink",
+	L"unpack",
+	L"untie",
+	L"unshift",
+	L"use",
+	L"utime",
+	L"values",
+	L"vec",
+	L"wait",
+	L"waitpid",
+	L"wantarray",
+	L"warn",
+	L"write"
 };
 
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
-static const char*	ppszKeyWordsPERL2[] = {
-	"$ARGV",
-	"$_",
-	"$1",
-	"$2",
-	"$3",
-	"$4",
-	"$5",
-	"$6",
-	"$7",
-	"$8",
-	"$9",
-	"$0",
-	"$MATCH",
-	"$&",
-	"$PREMATCH",
-	"$`",
-	"$POSTMATCH",
-	"$'",
-	"$LAST_PAREN_MATCH",
-	"$+",
-	"$MULTILINE_MATCHING",
-	"$*",
-	"$INPUT_LINE_NUMBER",
-	"$NR",
-	"$.",
-	"$INPUT_RECORD_SEPARATOR",
-	"$RS",
-	"$/",
-	"$OUTPUT_AUTOFLUSH",
-	"$|",
-	"$OUTPUT_FIELD_SEPARATOR",
-	"$OFS",
-	"$,",
-	"$OUTPUT_RECORD_SEPARATOR",
-	"$ORS",
-	"$\\",
-	"$LIST_SEPARATOR",
-	"$\"",
-	"$SUBSCRIPT_SEPARATOR",
-	"$SUBSEP",
-	"$;",
-	"$OFMT",
-	"$#",
-	"$FORMAT_PAGE_NUMBER",
-	"$%",
-	"$FORMAT_LINES_PER_PAGE",
-	"$=",
-	"$FORMAT_LINES_LEFT",
-	"$-",
-	"$FORMAT_NAME",
-	"$~",
-	"$FORMAT_TOP_NAME",
-	"$^",
-	"$FORMAT_LINE_BREAK_CHARACTERS",
-	"$:",
-	"$FORMAT_FORMFEED",
-	"$^L",
-	"$ACCUMULATOR",
-	"$^A",
-	"$CHILD_ERROR",
-	"$?",
-	"$OS_ERROR",
-	"$ERRNO",
-	"$!",
-	"$EVAL_ERROR",
-	"$@",
-	"$PROCESS_ID",
-	"$PID",
-	"$$",
-	"$REAL_USER_ID",
-	"$UID",
-	"$<",
-	"$EFFECTIVE_USER_ID",
-	"$EUID",
-	"$>",
-	"$REAL_GROUP_ID",
-	"$GID",
-	"$(",
-	"$EFFECTIVE_GROUP_ID",
-	"$EGID",
-	"$)",
-	"$PROGRAM_NAME",
-	"$0",
-	"$[",
-	"$PERL_VERSION",
-	"$]",
-	"$DEBUGGING",
-	"$^D",
-	"$SYSTEM_FD_MAX",
-	"$^F",
-	"$INPLACE_EDIT",
-	"$^I",
-	"$PERLDB",
-	"$^P",
-	"$BASETIME",
-	"$^T",
-	"$WARNING",
-	"$^W",
-	"$EXECUTABLE_NAME",
-	"$^X",
-	"$ARGV",
-	"$ENV",
-	"$SIG"
+static const wchar_t*	ppszKeyWordsPERL2[] = {
+	L"$ARGV",
+	L"$_",
+	L"$1",
+	L"$2",
+	L"$3",
+	L"$4",
+	L"$5",
+	L"$6",
+	L"$7",
+	L"$8",
+	L"$9",
+	L"$0",
+	L"$MATCH",
+	L"$&",
+	L"$PREMATCH",
+	L"$`",
+	L"$POSTMATCH",
+	L"$'",
+	L"$LAST_PAREN_MATCH",
+	L"$+",
+	L"$MULTILINE_MATCHING",
+	L"$*",
+	L"$INPUT_LINE_NUMBER",
+	L"$NR",
+	L"$.",
+	L"$INPUT_RECORD_SEPARATOR",
+	L"$RS",
+	L"$/",
+	L"$OUTPUT_AUTOFLUSH",
+	L"$|",
+	L"$OUTPUT_FIELD_SEPARATOR",
+	L"$OFS",
+	L"$,",
+	L"$OUTPUT_RECORD_SEPARATOR",
+	L"$ORS",
+	L"$\\",
+	L"$LIST_SEPARATOR",
+	L"$\"",
+	L"$SUBSCRIPT_SEPARATOR",
+	L"$SUBSEP",
+	L"$;",
+	L"$OFMT",
+	L"$#",
+	L"$FORMAT_PAGE_NUMBER",
+	L"$%",
+	L"$FORMAT_LINES_PER_PAGE",
+	L"$=",
+	L"$FORMAT_LINES_LEFT",
+	L"$-",
+	L"$FORMAT_NAME",
+	L"$~",
+	L"$FORMAT_TOP_NAME",
+	L"$^",
+	L"$FORMAT_LINE_BREAK_CHARACTERS",
+	L"$:",
+	L"$FORMAT_FORMFEED",
+	L"$^L",
+	L"$ACCUMULATOR",
+	L"$^A",
+	L"$CHILD_ERROR",
+	L"$?",
+	L"$OS_ERROR",
+	L"$ERRNO",
+	L"$!",
+	L"$EVAL_ERROR",
+	L"$@",
+	L"$PROCESS_ID",
+	L"$PID",
+	L"$$",
+	L"$REAL_USER_ID",
+	L"$UID",
+	L"$<",
+	L"$EFFECTIVE_USER_ID",
+	L"$EUID",
+	L"$>",
+	L"$REAL_GROUP_ID",
+	L"$GID",
+	L"$(",
+	L"$EFFECTIVE_GROUP_ID",
+	L"$EGID",
+	L"$)",
+	L"$PROGRAM_NAME",
+	L"$0",
+	L"$[",
+	L"$PERL_VERSION",
+	L"$]",
+	L"$DEBUGGING",
+	L"$^D",
+	L"$SYSTEM_FD_MAX",
+	L"$^F",
+	L"$INPLACE_EDIT",
+	L"$^I",
+	L"$PERLDB",
+	L"$^P",
+	L"$BASETIME",
+	L"$^T",
+	L"$WARNING",
+	L"$^W",
+	L"$EXECUTABLE_NAME",
+	L"$^X",
+	L"$ARGV",
+	L"$ENV",
+	L"$SIG"
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char*	ppszKeyWordsVB[] = {
-	"And",
-	"As",
-	"Attribute",
-	"Begin",
-	"BeginProperty",
-	"Boolean",
-	"ByVal",
-	"Byte",
-	"Call",
-	"Case",
-	"Const",
-	"Currency",
-	"Date",
-	"Declare",
-	"Dim",
-	"Do",
-	"Double",
-	"Each",
-	"Else",
-	"ElseIf",
-	"Empty",
-	"End",
-	"EndProperty",
-	"Error",
-	"Eqv",
-	"Exit",
-	"False",
-	"For",
-	"Friend",
-	"Function",
-	"Get",
-	"GoTo",
-	"If",
-	"Imp",
-	"Integer",
-	"Is",
-	"Let",
-	"Like",
-	"Long",
-	"Loop",
-	"Me",
-	"Mod",
-	"New",
-	"Next",
-	"Not",
-	"Null",
-	"Object",
-	"On",
-	"Option",
-	"Or",
-	"Private",
-	"Property",
-	"Public",
-	"RSet",
-	"ReDim",
-	"Rem",
-	"Resume",
-	"Select",
-	"Set",
-	"Single",
-	"Static",
-	"Step",
-	"Stop",
-	"String",
-	"Sub",
-	"Then",
-	"To",
-	"True",
-	"Type",
-	"Wend",
-	"While",
-	"With",
-	"Xor",
-	"#If",
-	"#Else",
-	"#End",
-	"#Const",
-	"AddressOf",
-	"Alias",
-	"Append",
-	"Array",
-	"ByRef",
-	"Explicit",
-	"Global",
-	"In",
-	"Lib",
-	"Nothing",
-	"Optional",
-	"Output",
-	"Terminate",
-	"Until",
+static const wchar_t*	ppszKeyWordsVB[] = {
+	L"And",
+	L"As",
+	L"Attribute",
+	L"Begin",
+	L"BeginProperty",
+	L"Boolean",
+	L"ByVal",
+	L"Byte",
+	L"Call",
+	L"Case",
+	L"Const",
+	L"Currency",
+	L"Date",
+	L"Declare",
+	L"Dim",
+	L"Do",
+	L"Double",
+	L"Each",
+	L"Else",
+	L"ElseIf",
+	L"Empty",
+	L"End",
+	L"EndProperty",
+	L"Error",
+	L"Eqv",
+	L"Exit",
+	L"False",
+	L"For",
+	L"Friend",
+	L"Function",
+	L"Get",
+	L"GoTo",
+	L"If",
+	L"Imp",
+	L"Integer",
+	L"Is",
+	L"Let",
+	L"Like",
+	L"Long",
+	L"Loop",
+	L"Me",
+	L"Mod",
+	L"New",
+	L"Next",
+	L"Not",
+	L"Null",
+	L"Object",
+	L"On",
+	L"Option",
+	L"Or",
+	L"Private",
+	L"Property",
+	L"Public",
+	L"RSet",
+	L"ReDim",
+	L"Rem",
+	L"Resume",
+	L"Select",
+	L"Set",
+	L"Single",
+	L"Static",
+	L"Step",
+	L"Stop",
+	L"String",
+	L"Sub",
+	L"Then",
+	L"To",
+	L"True",
+	L"Type",
+	L"Wend",
+	L"While",
+	L"With",
+	L"Xor",
+	L"#If",
+	L"#Else",
+	L"#End",
+	L"#Const",
+	L"AddressOf",
+	L"Alias",
+	L"Append",
+	L"Array",
+	L"ByRef",
+	L"Explicit",
+	L"Global",
+	L"In",
+	L"Lib",
+	L"Nothing",
+	L"Optional",
+	L"Output",
+	L"Terminate",
+	L"Until",
 	//=========================================================
 	// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
 	//=========================================================
-	"DefBool",
-	"DefByte",
-	"DefCur",
-	"DefDate",
-	"DefDbl",
-	"DefInt",
-	"DefLng",
-	"DefObj",
-	"DefSng",
-	"DefStr",
-	"DefVar",
-	"LSet",
-	"GoSub",
-	"Return",
-	"Variant",
+	L"DefBool",
+	L"DefByte",
+	L"DefCur",
+	L"DefDate",
+	L"DefDbl",
+	L"DefInt",
+	L"DefLng",
+	L"DefObj",
+	L"DefSng",
+	L"DefStr",
+	L"DefVar",
+	L"LSet",
+	L"GoSub",
+	L"Return",
+	L"Variant",
 	//			"Option Base
 	//			"As Any
 	//=========================================================
@@ -4461,289 +4270,289 @@ static const char*	ppszKeyWordsVB[] = {
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char*	ppszKeyWordsVB2[] = {
-	"AppActivate",
-	"Beep",
-	"BeginTrans",
-	"ChDir",
-	"ChDrive",
-	"Close",
-	"CommitTrans",
-	"CompactDatabase",
-	"Date",
-	"DeleteSetting",
-	"Erase",
-	"FileCopy",
-	"FreeLocks",
-	"Input",
-	"Kill",
-	"Load",
-	"Lock",
-	"Mid",
-	"MidB",
-	"MkDir",
-	"Name",
-	"Open",
-	"Print",
-	"Put",
-	"Randomize",
-	"RegisterDatabase",
-	"RepairDatabase",
-	"Reset",
-	"RmDir",
-	"Rollback",
-	"SavePicture",
-	"SaveSetting",
-	"Seek",
-	"SendKeys",
-	"SetAttr",
-	"SetDataAccessOption",
-	"SetDefaultWorkspace",
-	"Time",
-	"Unload",
-	"Unlock",
-	"Width",
-	"Write",
-	"Array",
-	"Asc",
-	"AscB",
-	"Atn",
-	"CBool",
-	"CByte",
-	"CCur",
-	"CDate",
-	"CDbl",
-	"CInt",
-	"CLng",
-	"CSng",
-	"CStr",
-	"CVErr",
-	"CVar",
-	"Choose",
-	"Chr",
-	"ChrB",
-	"Command",
-	"Cos",
-	"CreateDatabase",
-	"CreateObject",
-	"CurDir",
-	"DDB",
-	"Date",
-	"DateAdd",
-	"DateDiff",
-	"DatePart",
-	"DateSerial",
-	"DateValue",
-	"Day",
-	"Dir",
-	"DoEvents",
-	"EOF",
-	"Environ",
-	"Error",
-	"Exp",
-	"FV",
-	"FileAttr",
-	"FileDateTime",
-	"FileLen",
-	"Fix",
-	"Format",
-	"FreeFile",
-	"GetAllSettings",
-	"GetAttr",
-	"GetObject",
-	"GetSetting",
-	"Hex",
-	"Hour",
-	"IIf",
-	"IMEStatus",
-	"IPmt",
-	"IRR",
-	"InStr",
-	"Input",
-	"Int",
-	"IsArray",
-	"IsDate",
-	"IsEmpty",
-	"IsError",
-	"IsMissing",
-	"IsNull",
-	"IsNumeric",
-	"IsObject",
-	"LBound",
-	"LCase",
-	"LOF",
-	"LTrim",
-	"Left",
-	"LeftB",
-	"Len",
-	"LoadPicture",
-	"Loc",
-	"Log",
-	"MIRR",
-	"Mid",
-	"MidB",
-	"Minute",
-	"Month",
-	"MsgBox",
-	"NPV",
-	"NPer",
-	"Now",
-	"Oct",
-	"OpenDatabase",
-	"PPmt",
-	"PV",
-	"Partition",
-	"Pmt",
-	"QBColor",
-	"RGB",
-	"RTrim",
-	"Rate",
-	"ReadProperty",
-	"Right",
-	"RightB",
-	"Rnd",
-	"SLN",
-	"SYD",
-	"Second",
-	"Seek",
-	"Sgn",
-	"Shell",
-	"Sin",
-	"Space",
-	"Spc",
-	"Sqr",
-	"Str",
-	"StrComp",
-	"StrConv",
-	"Switch",
-	"Tab",
-	"Tan",
-	"Time",
-	"TimeSerial",
-	"TimeValue",
-	"Timer",
-	"Trim",
-	"TypeName",
-	"UBound",
-	"UCase",
-	"Val",
-	"VarType",
-	"Weekday",
-	"Year",
-	"Hide",
-	"Line",
-	"Refresh",
-	"Show",
+static const wchar_t*	ppszKeyWordsVB2[] = {
+	L"AppActivate",
+	L"Beep",
+	L"BeginTrans",
+	L"ChDir",
+	L"ChDrive",
+	L"Close",
+	L"CommitTrans",
+	L"CompactDatabase",
+	L"Date",
+	L"DeleteSetting",
+	L"Erase",
+	L"FileCopy",
+	L"FreeLocks",
+	L"Input",
+	L"Kill",
+	L"Load",
+	L"Lock",
+	L"Mid",
+	L"MidB",
+	L"MkDir",
+	L"Name",
+	L"Open",
+	L"Print",
+	L"Put",
+	L"Randomize",
+	L"RegisterDatabase",
+	L"RepairDatabase",
+	L"Reset",
+	L"RmDir",
+	L"Rollback",
+	L"SavePicture",
+	L"SaveSetting",
+	L"Seek",
+	L"SendKeys",
+	L"SetAttr",
+	L"SetDataAccessOption",
+	L"SetDefaultWorkspace",
+	L"Time",
+	L"Unload",
+	L"Unlock",
+	L"Width",
+	L"Write",
+	L"Array",
+	L"Asc",
+	L"AscB",
+	L"Atn",
+	L"CBool",
+	L"CByte",
+	L"CCur",
+	L"CDate",
+	L"CDbl",
+	L"CInt",
+	L"CLng",
+	L"CSng",
+	L"CStr",
+	L"CVErr",
+	L"CVar",
+	L"Choose",
+	L"Chr",
+	L"ChrB",
+	L"Command",
+	L"Cos",
+	L"CreateDatabase",
+	L"CreateObject",
+	L"CurDir",
+	L"DDB",
+	L"Date",
+	L"DateAdd",
+	L"DateDiff",
+	L"DatePart",
+	L"DateSerial",
+	L"DateValue",
+	L"Day",
+	L"Dir",
+	L"DoEvents",
+	L"EOF",
+	L"Environ",
+	L"Error",
+	L"Exp",
+	L"FV",
+	L"FileAttr",
+	L"FileDateTime",
+	L"FileLen",
+	L"Fix",
+	L"Format",
+	L"FreeFile",
+	L"GetAllSettings",
+	L"GetAttr",
+	L"GetObject",
+	L"GetSetting",
+	L"Hex",
+	L"Hour",
+	L"IIf",
+	L"IMEStatus",
+	L"IPmt",
+	L"IRR",
+	L"InStr",
+	L"Input",
+	L"Int",
+	L"IsArray",
+	L"IsDate",
+	L"IsEmpty",
+	L"IsError",
+	L"IsMissing",
+	L"IsNull",
+	L"IsNumeric",
+	L"IsObject",
+	L"LBound",
+	L"LCase",
+	L"LOF",
+	L"LTrim",
+	L"Left",
+	L"LeftB",
+	L"Len",
+	L"LoadPicture",
+	L"Loc",
+	L"Log",
+	L"MIRR",
+	L"Mid",
+	L"MidB",
+	L"Minute",
+	L"Month",
+	L"MsgBox",
+	L"NPV",
+	L"NPer",
+	L"Now",
+	L"Oct",
+	L"OpenDatabase",
+	L"PPmt",
+	L"PV",
+	L"Partition",
+	L"Pmt",
+	L"QBColor",
+	L"RGB",
+	L"RTrim",
+	L"Rate",
+	L"ReadProperty",
+	L"Right",
+	L"RightB",
+	L"Rnd",
+	L"SLN",
+	L"SYD",
+	L"Second",
+	L"Seek",
+	L"Sgn",
+	L"Shell",
+	L"Sin",
+	L"Space",
+	L"Spc",
+	L"Sqr",
+	L"Str",
+	L"StrComp",
+	L"StrConv",
+	L"Switch",
+	L"Tab",
+	L"Tan",
+	L"Time",
+	L"TimeSerial",
+	L"TimeValue",
+	L"Timer",
+	L"Trim",
+	L"TypeName",
+	L"UBound",
+	L"UCase",
+	L"Val",
+	L"VarType",
+	L"Weekday",
+	L"Year",
+	L"Hide",
+	L"Line",
+	L"Refresh",
+	L"Show",
 	//=========================================================
 	// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
 	//=========================================================
 	//$付き関数各種
-	"Dir$",
-	"LCase$",
-	"Left$",
-	"LeftB$",
-	"Mid$",
-	"MidB$",
-	"RightB$",
-	"Right$",
-	"Space$",
-	"Str$",
-	"String$",
-	"Trim$",
-	"UCase$",
+	L"Dir$",
+	L"LCase$",
+	L"Left$",
+	L"LeftB$",
+	L"Mid$",
+	L"MidB$",
+	L"RightB$",
+	L"Right$",
+	L"Space$",
+	L"Str$",
+	L"String$",
+	L"Trim$",
+	L"UCase$",
 	//VB5,6の隠し関数
-	"VarPtr",
-	"StrPtr",
-	"ObjPtr",
-	"VarPrtArray",
-	"VarPtrStringArray"
+	L"VarPtr",
+	L"StrPtr",
+	L"ObjPtr",
+	L"VarPrtArray",
+	L"VarPtrStringArray"
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char*	ppszKeyWordsRTF[] = {
-	"\\ansi",
-	"\\b",
-	"\\bin",
-	"\\box",
-	"\\brdrb",
-	"\\brdrbar",
-	"\\brdrdb",
-	"\\brdrdot",
-	"\\brdrl",
-	"\\brdrr",
-	"\\brdrs",
-	"\\brdrsh",
-	"\\brdrt",
-	"\\brdrth",
-	"\\cell",
-	"\\cellx",
-	"\\cf",
-	"\\chftn",
-	"\\clmgf",
-	"\\clmrg",
-	"\\colortbl",
-	"\\deff",
-	"\\f",
-	"\\fi",
-	"\\field",
-	"\\fldrslt",
-	"\\fonttbl",
-	"\\footnote",
-	"\\fs",
-	"\\i"
-	"\\intbl",
-	"\\keep",
-	"\\keepn",
-	"\\li",
-	"\\line",
-	"\\mac",
-	"\\page",
-	"\\par",
-	"\\pard",
-	"\\pc",
-	"\\pich",
-	"\\pichgoal",
-	"\\picscalex",
-	"\\picscaley",
-	"\\pict",
-	"\\picw",
-	"\\picwgoal",
-	"\\plain",
-	"\\qc",
-	"\\ql",
-	"\\qr",
-	"\\ri",
-	"\\row",
-	"\\rtf",
-	"\\sa",
-	"\\sb",
-	"\\scaps",
-	"\\sect",
-	"\\sl",
-	"\\strike",
-	"\\tab",
-	"\\tqc",
-	"\\tqr",
-	"\\trgaph",
-	"\\trleft",
-	"\\trowd",
-	"\\trqc",
-	"\\trql",
-	"\\tx",
-	"\\ul",
-	"\\uldb",
-	"\\v",
-	"\\wbitmap",
-	"\\wbmbitspixel",
-	"\\wbmplanes",
-	"\\wbmwidthbytes",
-	"\\wmetafile",
-	"bmc",
-	"bml",
-	"bmr",
-	"emc",
-	"eml",
-	"emr"
+static const wchar_t*	ppszKeyWordsRTF[] = {
+	L"\\ansi",
+	L"\\b",
+	L"\\bin",
+	L"\\box",
+	L"\\brdrb",
+	L"\\brdrbar",
+	L"\\brdrdb",
+	L"\\brdrdot",
+	L"\\brdrl",
+	L"\\brdrr",
+	L"\\brdrs",
+	L"\\brdrsh",
+	L"\\brdrt",
+	L"\\brdrth",
+	L"\\cell",
+	L"\\cellx",
+	L"\\cf",
+	L"\\chftn",
+	L"\\clmgf",
+	L"\\clmrg",
+	L"\\colortbl",
+	L"\\deff",
+	L"\\f",
+	L"\\fi",
+	L"\\field",
+	L"\\fldrslt",
+	L"\\fonttbl",
+	L"\\footnote",
+	L"\\fs",
+	L"\\i"
+	L"\\intbl",
+	L"\\keep",
+	L"\\keepn",
+	L"\\li",
+	L"\\line",
+	L"\\mac",
+	L"\\page",
+	L"\\par",
+	L"\\pard",
+	L"\\pc",
+	L"\\pich",
+	L"\\pichgoal",
+	L"\\picscalex",
+	L"\\picscaley",
+	L"\\pict",
+	L"\\picw",
+	L"\\picwgoal",
+	L"\\plain",
+	L"\\qc",
+	L"\\ql",
+	L"\\qr",
+	L"\\ri",
+	L"\\row",
+	L"\\rtf",
+	L"\\sa",
+	L"\\sb",
+	L"\\scaps",
+	L"\\sect",
+	L"\\sl",
+	L"\\strike",
+	L"\\tab",
+	L"\\tqc",
+	L"\\tqr",
+	L"\\trgaph",
+	L"\\trleft",
+	L"\\trowd",
+	L"\\trqc",
+	L"\\trql",
+	L"\\tx",
+	L"\\ul",
+	L"\\uldb",
+	L"\\v",
+	L"\\wbitmap",
+	L"\\wbmbitspixel",
+	L"\\wbmplanes",
+	L"\\wbmwidthbytes",
+	L"\\wmetafile",
+	L"bmc",
+	L"bml",
+	L"bmr",
+	L"emc",
+	L"eml",
+	L"emr"
 };
 
 /*!	@brief 共有メモリ初期化/強調キーワード
@@ -4762,24 +4571,24 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 
 #define PopulateKeyword(name,case_sensitive,ary) \
 	pShareData->m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
-	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, sizeof(ary)/sizeof(ary[0]), (ary) );
+	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, _countof(ary), (ary) );
 	
-	PopulateKeyword( "C/C++", TRUE, ppszKeyWordsCPP );			/* セット 0の追加 */
-	PopulateKeyword( "HTML", FALSE, ppszKeyWordsHTML );			/* セット 1の追加 */
-	PopulateKeyword( "PL/SQL", FALSE, ppszKeyWordsPLSQL );		/* セット 2の追加 */
-	PopulateKeyword( "COBOL", TRUE ,ppszKeyWordsCOBOL );		/* セット 3の追加 */
-	PopulateKeyword( "Java", TRUE, ppszKeyWordsJAVA );			/* セット 4の追加 */
-	PopulateKeyword( "CORBA IDL", TRUE, ppszKeyWordsCORBA_IDL );/* セット 5の追加 */
-	PopulateKeyword( "AWK", TRUE, ppszKeyWordsAWK );			/* セット 6の追加 */
-	PopulateKeyword( "MS-DOS batch", FALSE, ppszKeyWordsBAT );	/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
-	PopulateKeyword( "Pascal", FALSE, ppszKeyWordsPASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
-	PopulateKeyword( "TeX", TRUE, ppszKeyWordsTEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
-	PopulateKeyword( "TeX2", TRUE, ppszKeyWordsTEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
-	PopulateKeyword( "Perl", TRUE, ppszKeyWordsPERL );			/* セット11の追加 */
-	PopulateKeyword( "Perl2", TRUE, ppszKeyWordsPERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
-	PopulateKeyword( "Visual Basic", FALSE, ppszKeyWordsVB );	/* セット13の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( "Visual Basic2", FALSE, ppszKeyWordsVB2 );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( "リッチテキスト", TRUE, ppszKeyWordsRTF );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"C/C++", TRUE, ppszKeyWordsCPP );			/* セット 0の追加 */
+	PopulateKeyword( L"HTML", FALSE, ppszKeyWordsHTML );			/* セット 1の追加 */
+	PopulateKeyword( L"PL/SQL", FALSE, ppszKeyWordsPLSQL );		/* セット 2の追加 */
+	PopulateKeyword( L"COBOL", TRUE ,ppszKeyWordsCOBOL );		/* セット 3の追加 */
+	PopulateKeyword( L"Java", TRUE, ppszKeyWordsJAVA );			/* セット 4の追加 */
+	PopulateKeyword( L"CORBA IDL", TRUE, ppszKeyWordsCORBA_IDL );/* セット 5の追加 */
+	PopulateKeyword( L"AWK", TRUE, ppszKeyWordsAWK );			/* セット 6の追加 */
+	PopulateKeyword( L"MS-DOS batch", FALSE, ppszKeyWordsBAT );	/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
+	PopulateKeyword( L"Pascal", FALSE, ppszKeyWordsPASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
+	PopulateKeyword( L"TeX", TRUE, ppszKeyWordsTEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
+	PopulateKeyword( L"TeX2", TRUE, ppszKeyWordsTEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
+	PopulateKeyword( L"Perl", TRUE, ppszKeyWordsPERL );			/* セット11の追加 */
+	PopulateKeyword( L"Perl2", TRUE, ppszKeyWordsPERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
+	PopulateKeyword( L"Visual Basic", FALSE, ppszKeyWordsVB );	/* セット13の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"Visual Basic2", FALSE, ppszKeyWordsVB2 );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"リッチテキスト", TRUE, ppszKeyWordsRTF );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
 #undef PopulateKeyword
 }
@@ -4796,16 +4605,16 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/* 共通設定の規定値 */
 	/********************/
 	struct KEYDATAINIT {
-		short			nKeyCode;		/*!< Key Code (0 for non-keybord button) */
-		char*			pszKeyName;		/*!< Key Name (for display) */
-		short			nFuncCode_0;	/*!<                      Key */
-		short			nFuncCode_1;	/*!< Shift +              Key */
-		short			nFuncCode_2;	/*!<         Ctrl +       Key */
-		short			nFuncCode_3;	/*!< Shift + Ctrl +       Key */
-		short			nFuncCode_4;	/*!<                Alt + Key */
-		short			nFuncCode_5;	/*!< Shift +        Alt + Key */
-		short			nFuncCode_6;	/*!<         Ctrl + Alt + Key */
-		short			nFuncCode_7;	/*!< Shift + Ctrl + Alt + Key */
+		short			nKeyCode;		//!< Key Code (0 for non-keybord button)
+		TCHAR*			pszKeyName;		//!< Key Name (for display)
+		EFunctionCode	nFuncCode_0;	//!<                      Key
+		EFunctionCode	nFuncCode_1;	//!< Shift +              Key
+		EFunctionCode	nFuncCode_2;	//!<         Ctrl +       Key
+		EFunctionCode	nFuncCode_3;	//!< Shift + Ctrl +       Key
+		EFunctionCode	nFuncCode_4;	//!<                Alt + Key
+		EFunctionCode	nFuncCode_5;	//!< Shift +        Alt + Key
+		EFunctionCode	nFuncCode_6;	//!<         Ctrl + Alt + Key
+		EFunctionCode	nFuncCode_7;	//!< Shift + Ctrl + Alt + Key
 	};
 	static KEYDATAINIT	KeyDataInit[] = {
 	//Sept. 1, 2000 Jepro note: key binding
@@ -4814,29 +4623,27 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	//		keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
 	//
 		/* マウスボタン */
-		{ 0, "ダブルクリック",F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD },
-	//Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
-		{ 0, "右クリック",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, 0, 0, 0, 0 },
-	// novice 2004/10/11 マウス中ボタン対応
-		{ 0, "中クリック", 0, 0, 0, 0, 0, 0, 0, 0 },
-	// novice 2004/10/10 マウスサイドボタン対応
-		{ 0, "左サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, "右サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, _T("ダブルクリック"),		F_SELECTWORD,	F_SELECTWORD,	F_SELECTWORD,	F_SELECTWORD,	F_SELECTWORD,	F_SELECTWORD,	F_SELECTWORD,	F_SELECTWORD }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
+		{ 0, _T("右クリック"),			F_MENU_RBUTTON,	F_MENU_RBUTTON,	F_MENU_RBUTTON,	F_MENU_RBUTTON,	F_0,			F_0,			F_0,			F_0 },
+		{ 0, _T("中クリック"),			F_0,			F_0,			F_0,			F_0,			F_0,			F_0,			F_0,			F_0 }, // novice 2004/10/11 マウス中ボタン対応
+		{ 0, _T("左サイドクリック"),	F_0,			F_0,			F_0,			F_0,			F_0,			F_0,			F_0,			F_0 }, // novice 2004/10/10 マウスサイドボタン対応
+		{ 0, _T("右サイドクリック"),	F_0,			F_0,			F_0,			F_0,			F_0,			F_0,			F_0,			F_0 },
+
 		/* ファンクションキー */
 	//	From Here Sept. 14, 2000 JEPRO
-	//	VK_F1,"F1", F_EXTHTMLHELP, 0, F_EXTHELP1, 0, 0, 0, 0, 0,
+	//	VK_F1,_T("F1"), F_EXTHTMLHELP, F_0, F_EXTHELP1, 0, 0, 0, 0, 0,
 	//	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000 JEPRO 殺していたのを修正・復活
 	//Dec. 25, 2000 JEPRO Shift+Ctrl+F1 に「バージョン情報」を追加
-	//	{ VK_F1,"F1", F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, 0, 0, 0, 0, 0 },
-		{ VK_F1,"F1", F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, F_ABOUT, F_HELP_CONTENTS, F_HELP_SEARCH, 0, 0 },
+	//	{ VK_F1,_T("F1"), F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F1,_T("F1"), F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, F_ABOUT, F_HELP_CONTENTS, F_HELP_SEARCH, F_0, F_0 },
 	//	To Here Sept. 14, 2000
 	// From Here 2001.12.03 hor F2にブックマーク関連を割当
-	//	{ VK_F2,"F2", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F2,"F2", F_BOOKMARK_NEXT, F_BOOKMARK_PREV, F_BOOKMARK_SET, F_BOOKMARK_RESET, F_BOOKMARK_VIEW, 0, 0, 0 },
+	//	{ VK_F2,_T("F2"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F2,_T("F2"), F_BOOKMARK_NEXT, F_BOOKMARK_PREV, F_BOOKMARK_SET, F_BOOKMARK_RESET, F_BOOKMARK_VIEW, F_0, F_0, F_0 },
 	// To Here 2001.12.03 hor
 		//Sept. 21, 2000 JEPRO	Ctrl+F3 に「検索マークのクリア」を追加
 		//Aug. 12, 2002 ai	Ctrl+Shift+F3 に「検索開始位置へ戻る」を追加
-		{ VK_F3,"F3", F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, F_JUMP_SRCHSTARTPOS, 0, 0, 0, 0 },
+		{ VK_F3,_T("F3"), F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, F_JUMP_SRCHSTARTPOS, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Alt+F4 に「ウィンドウを閉じる」, Shift+Alt+F4 に「すべてのウィンドウを閉じる」を追加
 		//	Ctrl+F4に割り当てられていた「縦横に分割」を「閉じて(無題)」に変更し Shift+Ctrl+F4 に「閉じて開く」を追加
 		//Jan. 14, 2001 Ctrl+Alt+F4 に「テキストエディタの全終了」を追加
@@ -4844,207 +4651,209 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//2006.10.21 ryoji Alt+F4 には何も割り当てない（デフォルトのシステムコマンド「閉じる」が実行されるように）
 		//2007.02.13 ryoji Shift+Ctrl+F4をF_WIN_CLOSEALLからF_EXITALLEDITORSに変更
 		//2007.02.22 ryoji Ctrl+F4 への割り当てを削除（デフォルトのコマンドを実行）
-		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, 0, F_FILECLOSE_OPEN, 0, F_EXITALLEDITORS, F_EXITALL, 0 },
+		{ VK_F4,_T("F4"), F_SPLIT_V, F_SPLIT_H, F_0, F_FILECLOSE_OPEN, F_0, F_EXITALLEDITORS, F_EXITALL, F_0 },
 	//	From Here Sept. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
-	//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECCOMMAND_DIALOG, 0, 0, 0, 0, 0 },
+	//	{ VK_F5,_T("F5"), F_PLSQL_COMPILE_ON_SQLPLUS, F_0, F_EXECCOMMAND_DIALOG, F_0, F_0, F_0, F_0, F_0 },
 	//	To Here Sept. 20, 2000
 		//Oct. 28, 2000 F5 は「再描画」に変更	//Jan. 14, 2001 Alt+F5 に「uudecodeして保存」, Ctrl+ Alt+F5 に「TAB→空白」を追加
 		//	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
-		{ VK_F5,"F5", F_REDRAW, 0, F_EXECCOMMAND_DIALOG, 0, F_UUDECODE, 0, F_TABTOSPACE, F_SPACETOTAB },
+		{ VK_F5,_T("F5"), F_REDRAW, F_0, F_EXECCOMMAND_DIALOG, F_0, F_UUDECODE, F_0, F_TABTOSPACE, F_SPACETOTAB },
 		//Jan. 14, 2001 JEPRO	Ctrl+F6 に「小文字」, Alt+F6 に「Base64デコードして保存」を追加
-		{ VK_F6,"F6", F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, 0, F_BASE64DECODE, 0, 0, 0 },
+		{ VK_F6,_T("F6"), F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, F_0, F_BASE64DECODE, F_0, F_0, F_0 },
 		//Jan. 14, 2001 JEPRO	Ctrl+F7 に「大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加
-		{ VK_F7,"F7", F_CUT, 0, F_TOUPPER, 0, F_CODECNV_UTF72SJIS, F_CODECNV_SJIS2UTF7, F_FILE_REOPEN_UTF7, 0 },
+		{ VK_F7,_T("F7"), F_CUT, F_0, F_TOUPPER, F_0, F_CODECNV_UTF72SJIS, F_CODECNV_SJIS2UTF7, F_FILE_REOPEN_UTF7, F_0 },
 		//Nov. 9, 2000 JEPRO	Shift+F8 に「CRLF改行でコピー」を追加
 		//Jan. 14, 2001 JEPRO	Ctrl+F8 に「全角→半角」, Alt+F8 に「UTF-8→SJISコード変換」, Shift+Alt+F8 に「SJIS→UTF-8コード変換」, Ctrl+Alt+F8 に「UTF-8で開き直す」を追加
-		{ VK_F8,"F8", F_COPY, F_COPY_CRLF, F_TOHANKAKU, 0, F_CODECNV_UTF82SJIS, F_CODECNV_SJIS2UTF8, F_FILE_REOPEN_UTF8, 0 },
+		{ VK_F8,_T("F8"), F_COPY, F_COPY_CRLF, F_TOHANKAKU, F_0, F_CODECNV_UTF82SJIS, F_CODECNV_SJIS2UTF8, F_FILE_REOPEN_UTF8, F_0 },
 		//Jan. 14, 2001 JEPRO	Ctrl+F9 に「半角＋全ひら→全角・カタカナ」, Alt+F9 に「Unicode→SJISコード変換」, Ctrl+Alt+F9 に「Unicodeで開き直す」を追加
-		{ VK_F9,"F9", F_PASTE, F_PASTEBOX, F_TOZENKAKUKATA, 0, F_CODECNV_UNICODE2SJIS, 0, F_FILE_REOPEN_UNICODE, 0 },
+		{ VK_F9,_T("F9"), F_PASTE, F_PASTEBOX, F_TOZENKAKUKATA, F_0, F_CODECNV_UNICODE2SJIS, F_0, F_FILE_REOPEN_UNICODE, F_0 },
 		//Oct. 28, 2000 JEPRO F10 に「SQL*Plusで実行」を追加(F5からの移動)
 		//Jan. 14, 2001 JEPRO	Ctrl+F10 に「半角＋全カタ→全角・ひらがな」, Alt+F10 に「EUC→SJISコード変換」, Shift+Alt+F10 に「SJIS→EUCコード変換」, Ctrl+Alt+F10 に「EUCで開き直す」を追加
-		{ VK_F10,"F10", F_PLSQL_COMPILE_ON_SQLPLUS, F_DUPLICATELINE, F_TOZENKAKUHIRA, 0, F_CODECNV_EUC2SJIS, F_CODECNV_SJIS2EUC, F_FILE_REOPEN_EUC, 0 },
+		{ VK_F10,_T("F10"), F_PLSQL_COMPILE_ON_SQLPLUS, F_DUPLICATELINE, F_TOZENKAKUHIRA, F_0, F_CODECNV_EUC2SJIS, F_CODECNV_SJIS2EUC, F_FILE_REOPEN_EUC, F_0 },
 		//Jan. 14, 2001 JEPRO	Shift+F11 に「SQL*Plusをアクティブ表示」, Ctrl+F11 に「半角カタカナ→全角カタカナ」, Alt+F11 に「E-Mail(JIS→SJIS)コード変換」, Shift+Alt+F11 に「SJIS→JISコード変換」, Ctrl+Alt+F11 に「JISで開き直す」を追加
-		{ VK_F11,"F11", F_OUTLINE, F_ACTIVATE_SQLPLUS, F_HANKATATOZENKAKUKATA, 0, F_CODECNV_EMAIL, F_CODECNV_SJIS2JIS, F_FILE_REOPEN_JIS, 0 },
+		{ VK_F11,_T("F11"), F_OUTLINE, F_ACTIVATE_SQLPLUS, F_HANKATATOZENKAKUKATA, F_0, F_CODECNV_EMAIL, F_CODECNV_SJIS2JIS, F_FILE_REOPEN_JIS, F_0 },
 		//Jan. 14, 2001 JEPRO	Ctrl+F12 に「半角カタカナ→全角ひらがな」, Alt+F12 に「自動判別→SJISコード変換」, Ctrl+Alt+F11 に「SJISで開き直す」を追加
-		{ VK_F12,"F12", F_TAGJUMP, F_TAGJUMPBACK, F_HANKATATOZENKAKUHIRA, 0, F_CODECNV_AUTO2SJIS, 0, F_FILE_REOPEN_SJIS, 0 },
-		{ VK_F13,"F13", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F14,"F14", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F15,"F15", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F16,"F16", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F17,"F17", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F18,"F18", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F19,"F19", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F20,"F20", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F21,"F21", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F22,"F22", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F23,"F23", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F24,"F24", 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ VK_F12,_T("F12"), F_TAGJUMP, F_TAGJUMPBACK, F_HANKATATOZENKAKUHIRA, F_0, F_CODECNV_AUTO2SJIS, F_0, F_FILE_REOPEN_SJIS, F_0 },
+		{ VK_F13,_T("F13"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F14,_T("F14"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F15,_T("F15"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F16,_T("F16"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F17,_T("F17"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F18,_T("F18"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F19,_T("F19"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F20,_T("F20"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F21,_T("F21"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F22,_T("F22"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F23,_T("F23"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F24,_T("F24"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
 		/* 特殊キー */
-		{ VK_TAB,"Tab",F_INDENT_TAB, F_UNINDENT_TAB, F_NEXTWINDOW, F_PREVWINDOW, 0, 0, 0, 0 },
+		{ VK_TAB,_T("Tab"),F_INDENT_TAB, F_UNINDENT_TAB, F_NEXTWINDOW, F_PREVWINDOW, F_0, F_0, F_0, F_0 },
 		//Sept. 1, 2000 JEPRO	Alt+Enter に「ファイルのプロパティ」を追加	//Oct. 15, 2000 JEPRO Ctrl+Enter に「ファイル内容比較」を追加
-			{ VK_RETURN,"Enter",0, 0, F_COMPARE, 0, F_PROPERTY_FILE, 0, 0, 0 },
-		{ VK_ESCAPE,"Esc",F_CANCEL_MODE, 0, 0, 0, 0, 0, 0, 0 },
-//			{ VK_BACK,"BackSpace",F_DELETE_BACK, 0, F_WordDeleteToStart, 0, 0, 0, 0, 0 },
+			{ VK_RETURN,_T("Enter"),F_0, F_0, F_COMPARE, F_0, F_PROPERTY_FILE, F_0, F_0, F_0 },
+		{ VK_ESCAPE,_T("Esc"),F_CANCEL_MODE, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+//			{ VK_BACK,_T("BackSpace"),F_DELETE_BACK, F_0, F_WordDeleteToStart, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO 長いので名称を簡略形に変更(BackSpace→BkSp)
-		{ VK_BACK,"BkSp",F_DELETE_BACK, 0, F_WordDeleteToStart, 0, 0, 0, 0, 0 },
-//			{ VK_INSERT,"Insert",F_CHGMOD_INS, F_PASTE, F_COPY, 0, 0, 0, 0, 0 },
+		{ VK_BACK,_T("BkSp"),F_DELETE_BACK, F_0, F_WordDeleteToStart, F_0, F_0, F_0, F_0, F_0 },
+//			{ VK_INSERT,_T("Insert"),F_CHGMOD_INS, F_PASTE, F_COPY, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Insert→Ins)
-		{ VK_INSERT,"Ins",F_CHGMOD_INS, F_PASTE, F_COPY, 0, 0, 0, 0, 0 },
-//			{ VK_DELETE,"Delete",F_DELETE, 0, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
+		{ VK_INSERT,_T("Ins"),F_CHGMOD_INS, F_PASTE, F_COPY, F_0, F_0, F_0, F_0, F_0 },
+//			{ VK_DELETE,_T("Delete"),F_DELETE, F_0, F_WordDeleteToEnd, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Delete→Del)
 		//Jun. 26, 2001 JEPRO	Shift+Del に「切り取り」を追加
-		{ VK_DELETE,"Del",F_DELETE, F_CUT, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
-		{ VK_HOME,"Home",F_GOLINETOP, F_GOLINETOP_SEL, F_GOFILETOP, F_GOFILETOP_SEL, 0, 0, 0, 0 },
-		{ VK_END,"End(Help)",F_GOLINEEND, F_GOLINEEND_SEL, F_GOFILEEND, F_GOFILEEND_SEL, 0, 0, 0, 0 },
-		{ VK_LEFT,"←",F_LEFT, F_LEFT_SEL/*F_GOLINETOP*/, F_WORDLEFT, F_WORDLEFT_SEL, F_BEGIN_BOX, 0, 0, 0 },
+		{ VK_DELETE,_T("Del"),F_DELETE, F_CUT, F_WordDeleteToEnd, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_HOME,_T("Home"),F_GOLINETOP, F_GOLINETOP_SEL, F_GOFILETOP, F_GOFILETOP_SEL, F_0, F_0, F_0, F_0 },
+		{ VK_END,_T("End(Help)"),F_GOLINEEND, F_GOLINEEND_SEL, F_GOFILEEND, F_GOFILEEND_SEL, F_0, F_0, F_0, F_0 },
+		{ VK_LEFT,_T("←"),F_LEFT, F_LEFT_SEL/*F_GOLINETOP*/, F_WORDLEFT, F_WORDLEFT_SEL, F_BEGIN_BOX, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+↑に「縦方向に最大化」を追加
-//			{ VK_UP,"↑",F_UP, F_UP_SEL, F_UP2, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
+//			{ VK_UP,_T("↑"),F_UP, F_UP_SEL, F_UP2, F_UP2_SEL, F_BEGIN_BOX, F_0, F_0, F_MAXIMIZE_V },
 		//Jun. 27, 2001 JEPRO
 		//	Ctrl+↑に割り当てられていた「カーソル上移動(２行ごと)」を「テキストを１行下へスクロール」に変更
-		{ VK_UP,"↑",F_UP, F_UP_SEL, F_WndScrollDown, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
+		{ VK_UP,_T("↑"),F_UP, F_UP_SEL, F_WndScrollDown, F_UP2_SEL, F_BEGIN_BOX, F_0, F_0, F_MAXIMIZE_V },
 		//2001.02.10 by MIK Shift+Ctrl+Alt+→に「横方向に最大化」を追加
-		{ VK_RIGHT,"→",F_RIGHT, F_RIGHT_SEL/*F_GOLINEEND*/, F_WORDRIGHT, F_WORDRIGHT_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_H },
+		{ VK_RIGHT,_T("→"),F_RIGHT, F_RIGHT_SEL/*F_GOLINEEND*/, F_WORDRIGHT, F_WORDRIGHT_SEL, F_BEGIN_BOX, F_0, F_0, F_MAXIMIZE_H },
 		//Sept. 14, 2000 JEPRO
 		//	Ctrl+↓に割り当てられていた「右クリックメニュー」を「カーソル下移動(２行ごと)」に変更
 		//	それに付随してさらに「右クリックメニュー」をCtrl＋Alt＋↓に変更
-//			{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_DOWN2, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
+//			{ VK_DOWN,_T("↓"),F_DOWN, F_DOWN_SEL, F_DOWN2, F_DOWN2_SEL, F_BEGIN_BOX, F_0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
 		//Jun. 27, 2001 JEPRO
 		//	Ctrl+↓に割り当てられていた「カーソル下移動(２行ごと)」を「テキストを１行上へスクロール」に変更
-		{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_WndScrollUp, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
-//			{ VK_PRIOR,"RollDown(PageUp)",F_ROLLDOWN, F_ROLLDOWN_SEL, 0, 0, 0, 0, 0, 0 },
-//			{ VK_NEXT,"RollUp(PageDown)",F_ROLLUP, F_ROLLUP_SEL, 0, 0, 0, 0, 0, 0 },
+		{ VK_DOWN,_T("↓"),F_DOWN, F_DOWN_SEL, F_WndScrollUp, F_DOWN2_SEL, F_BEGIN_BOX, F_0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
+//			{ VK_PRIOR,_T("RollDown(PageUp)"),F_ROLLDOWN, F_ROLLDOWN_SEL, F_0, F_0, F_0, F_0, F_0, F_0 },
+//			{ VK_NEXT,_T("RollUp(PageDown)"),F_ROLLUP, F_ROLLUP_SEL, F_0, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページダウン」, 「(選択)１ページダウン」を追加
 		//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollUp→PgDn) //Oct. 10, 2000 JEPRO 名称変更
 		//2001.12.03 hor 1Page/HalfPage 入替え
-		{ VK_NEXT,"PgDn(RollUp)", F_1PageDown, F_1PageDown_Sel,F_HalfPageDown, F_HalfPageDown_Sel, 0, 0, 0, 0 },
+		{ VK_NEXT,_T("PgDn(RollUp)"), F_1PageDown, F_1PageDown_Sel,F_HalfPageDown, F_HalfPageDown_Sel, F_0, F_0, F_0, F_0 },
 		//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページアップ」, 「(選択)１ページアップ」を追加
 		//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollDown→PgUp) //Oct. 10, 2000 JEPRO 名称変更
 		//2001.12.03 hor 1Page/HalfPage 入替え
-		{ VK_PRIOR,"PgUp(RollDn)", F_1PageUp, F_1PageUp_Sel,F_HalfPageUp, F_HalfPageUp_Sel, 0, 0, 0, 0 },
-//			{ VK_SPACE,"SpaceBar",F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, 0, 0, 0, 0, 0 },
+		{ VK_PRIOR,_T("PgUp(RollDn)"), F_1PageUp, F_1PageUp_Sel,F_HalfPageUp, F_HalfPageUp_Sel, F_0, F_0, F_0, F_0 },
+//			{ VK_SPACE,_T("SpaceBar"),F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(SpaceBar→Space)
-		{ VK_SPACE,"Space",F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, 0, 0, 0, 0, 0 },
+		{ VK_SPACE,_T("Space"),F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, F_0, F_0, F_0, F_0, F_0 },
 		/* 数字 */
 		//Oct. 7, 2000 JEPRO	Ctrl+0 を「タイプ別設定一覧」→「未定義」に変更
 		//Jan. 13, 2001 JEPRO	Alt+0 に「カスタムメニュー10」, Shift+Alt+0 に「カスタムメニュー20」を追加
-		{ '0', "0",0, 0, 0, 0, F_CUSTMENU_10, F_CUSTMENU_20, 0, 0 },
+		{ '0', _T("0"),F_0, F_0, F_0, F_0, F_CUSTMENU_10, F_CUSTMENU_20, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+1 を「タイプ別設定」→「ツールバーの表示」に変更
 		//Jan. 13, 2001 JEPRO	Alt+1 に「カスタムメニュー1」, Shift+Alt+1 に「カスタムメニュー11」を追加
 		//Jan. 19, 2001 JEPRO	Shift+Ctrl+1 に「カスタムメニュー21」を追加
-		{ '1', "1",0, 0, F_SHOWTOOLBAR, F_CUSTMENU_21, F_CUSTMENU_1, F_CUSTMENU_11, 0, 0 },
+		{ '1', _T("1"),F_0, F_0, F_SHOWTOOLBAR, F_CUSTMENU_21, F_CUSTMENU_1, F_CUSTMENU_11, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+2 を「共通設定」→「ファンクションキーの表示」に変更
 		//Jan. 13, 2001 JEPRO	Alt+2 を「アウトプット」→「カスタムメニュー2」に変更し「アウトプット」は Alt+O に移動, Shift+Alt+2 に「カスタムメニュー12」を追加
 		//Jan. 19, 2001 JEPRO	Shift+Ctrl+2 に「カスタムメニュー22」を追加
-		{ '2', "2",0, 0, F_SHOWFUNCKEY, F_CUSTMENU_22, F_CUSTMENU_2/*F_WIN_OUTPUT*/, F_CUSTMENU_12, 0, 0 },
+		{ '2', _T("2"),F_0, F_0, F_SHOWFUNCKEY, F_CUSTMENU_22, F_CUSTMENU_2/*F_WIN_OUTPUT*/, F_CUSTMENU_12, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+3 を「フォント設定」→「ステータスバーの表示」に変更
 		//Jan. 13, 2001 JEPRO	Alt+3 に「カスタムメニュー3」, Shift+Alt+3 に「カスタムメニュー13」を追加
 		//Jan. 19, 2001 JEPRO	Shift+Ctrl+3 に「カスタムメニュー23」を追加
-		{ '3', "3",0, 0, F_SHOWSTATUSBAR, F_CUSTMENU_23, F_CUSTMENU_3, F_CUSTMENU_13, 0, 0 },
+		{ '3', _T("3"),F_0, F_0, F_SHOWSTATUSBAR, F_CUSTMENU_23, F_CUSTMENU_3, F_CUSTMENU_13, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+4 を「ツールバーの表示」→「タイプ別設定一覧」に変更
 		//Jan. 13, 2001 JEPRO	Alt+4 に「カスタムメニュー4」, Shift+Alt+4 に「カスタムメニュー14」を追加
 		//Jan. 19, 2001 JEPRO	Shift+Ctrl+4 に「カスタムメニュー24」を追加
-		{ '4', "4",0, 0, F_TYPE_LIST, F_CUSTMENU_24, F_CUSTMENU_4, F_CUSTMENU_14, 0, 0 },
+		{ '4', _T("4"),F_0, F_0, F_TYPE_LIST, F_CUSTMENU_24, F_CUSTMENU_4, F_CUSTMENU_14, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+5 を「ファンクションキーの表示」→「タイプ別設定」に変更
 		//Jan. 13, 2001 JEPRO	Alt+5 に「カスタムメニュー5」, Shift+Alt+5 に「カスタムメニュー15」を追加
-		{ '5', "5",0, 0, F_OPTION_TYPE, 0, F_CUSTMENU_5, F_CUSTMENU_15, 0, 0 },
+		{ '5', _T("5"),F_0, F_0, F_OPTION_TYPE, F_0, F_CUSTMENU_5, F_CUSTMENU_15, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+6 を「ステータスバーの表示」→「共通設定」に変更
 		//Jan. 13, 2001 JEPRO	Alt+6 に「カスタムメニュー6」, Shift+Alt+6 に「カスタムメニュー16」を追加
-		{ '6', "6",0, 0, F_OPTION, 0, F_CUSTMENU_6, F_CUSTMENU_16, 0, 0 },
+		{ '6', _T("6"),F_0, F_0, F_OPTION, F_0, F_CUSTMENU_6, F_CUSTMENU_16, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+7 に「フォント設定」を追加
 		//Jan. 13, 2001 JEPRO	Alt+7 に「カスタムメニュー7」, Shift+Alt+7 に「カスタムメニュー17」を追加
-		{ '7', "7",0, 0, F_FONT, 0, F_CUSTMENU_7, F_CUSTMENU_17, 0, 0 },
+		{ '7', _T("7"),F_0, F_0, F_FONT, F_0, F_CUSTMENU_7, F_CUSTMENU_17, F_0, F_0 },
 		//Jan. 13, 2001 JEPRO	Alt+8 に「カスタムメニュー8」, Shift+Alt+8 に「カスタムメニュー18」を追加
-		{ '8', "8",0, 0, 0, 0, F_CUSTMENU_8, F_CUSTMENU_18, 0, 0 },
+		{ '8', _T("8"),F_0, F_0, F_0, F_0, F_CUSTMENU_8, F_CUSTMENU_18, F_0, F_0 },
 		//Jan. 13, 2001 JEPRO	Alt+9 に「カスタムメニュー9」, Shift+Alt+9 に「カスタムメニュー19」を追加
-		{ '9', "9",0, 0, 0, 0, F_CUSTMENU_9, F_CUSTMENU_19, 0, 0 },
+		{ '9', _T("9"),F_0, F_0, F_0, F_0, F_CUSTMENU_9, F_CUSTMENU_19, F_0, F_0 },
 		/* アルファベット */
 		//2001.12.06 hor Alt+A を「SORT_ASC」に割当
-		{ 'A', "A",0, 0, F_SELECTALL, 0, F_SORT_ASC, 0, 0, 0 },
+		{ 'A', _T("A"),F_0, F_0, F_SELECTALL, F_0, F_SORT_ASC, F_0, F_0, F_0 },
 		//Jan. 13, 2001 JEPRO	Ctrl+B に「ブラウズ」を追加
-		{ 'B', "B",0, 0, F_BROWSE, 0, 0, 0, 0, 0 },
+		{ 'B', _T("B"),F_0, F_0, F_BROWSE, F_0, F_0, F_0, F_0, F_0 },
 		//Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加
 		//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
-		{ 'C', "C",0, 0, F_COPY, F_OPEN_HfromtoC, 0, 0, 0, 0 },
+		{ 'C', _T("C"),F_0, F_0, F_COPY, F_OPEN_HfromtoC, F_0, F_0, F_0, F_0 },
 		//Jan. 16, 2001 JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加
 		//2001.12.06 hor Alt+D を「SORT_DESC」に割当
-		{ 'D', "D",0, 0, F_WordCut, F_WordDelete, F_SORT_DESC, 0, 0, 0 },
+		{ 'D', _T("D"),F_0, F_0, F_WordCut, F_WordDelete, F_SORT_DESC, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加
 		//Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
-		{ 'E', "E",0, 0, F_CUT_LINE, F_DELETE_LINE, 0, 0, F_CASCADE, 0 },
-		{ 'F', "F",0, 0, F_SEARCH_DIALOG, 0, 0, 0, 0, 0 },
-		{ 'G', "G",0, 0, F_GREP_DIALOG, 0, 0, 0, 0, 0 },
+		{ 'E', _T("E"),F_0, F_0, F_CUT_LINE, F_DELETE_LINE, F_0, F_0, F_CASCADE, F_0 },
+		{ 'F', _T("F"),F_0, F_0, F_SEARCH_DIALOG, F_0, F_0, F_0, F_0, F_0 },
+		{ 'G', _T("G"),F_0, F_0, F_GREP_DIALOG, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加
 		//Jan. 16, 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H に「.cまたは.cppと同名の.hを開く」を追加
 		//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
-		{ 'H', "H",0, 0, F_CURLINECENTER, F_OPEN_HfromtoC, 0, 0, F_TILE_V, 0 },
+		{ 'H', _T("H"),F_0, F_0, F_CURLINECENTER, F_OPEN_HfromtoC, F_0, F_0, F_TILE_V, F_0 },
 		//Jan. 21, 2001	JEPRO	Ctrl+I に「行の二重化」を追加
-		{ 'I', "I",0, 0, F_DUPLICATELINE, 0, 0, 0, 0, 0 },
-		{ 'J', "J",0, 0, F_JUMP_DIALOG, 0, 0, 0, 0, 0 },
+		{ 'I', _T("I"),F_0, F_0, F_DUPLICATELINE, F_0, F_0, F_0, F_0, F_0 },
+		{ 'J', _T("J"),F_0, F_0, F_JUMP_DIALOG, F_0, F_0, F_0, F_0, F_0 },
 		//Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
-		{ 'K', "K",0, 0, F_LineCutToEnd, F_LineDeleteToEnd, 0, 0, 0, 0 },
+		{ 'K', _T("K"),F_0, F_0, F_LineCutToEnd, F_LineDeleteToEnd, F_0, F_0, F_0, F_0 },
 		//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「小文字」, Shift+Ctrl+Alt+L に「大文字」を追加
 		//Jan. 16, 2001 Ctrl+L を「カーソル行をウィンドウ中央へ」→「キーマクロの読み込み」に変更し「カーソル行をウィンドウ中央へ」は Ctrl+H に移動
 		//2001.12.03 hor Alt+L を「LTRIM」に割当
-		{ 'L', "L",0, 0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, 0, F_TOLOWER, F_TOUPPER },
+		{ 'L', _T("L"),F_0, F_0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, F_0, F_TOLOWER, F_TOUPPER },
 		//Jan. 16, 2001 JEPRO	Ctrl+M に「キーマクロの保存」を追加
 		//2001.12.06 hor Alt+M を「MERGE」に割当
-		{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MERGE, 0, 0, 0 },
+		{ 'M', _T("M"),F_0, F_0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MERGE, F_0, F_0, F_0 },
 		//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
-		{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPHIST_NEXT, 0, 0, 0 },
+		{ 'N', _T("N"),F_0, F_0, F_FILENEW, F_0, F_JUMPHIST_NEXT, F_0, F_0, F_0 },
 		//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
-		{ 'O', "O",0, 0, F_FILEOPEN, 0, 0, 0, 0, 0 },
+		{ 'O', _T("O"),F_0, F_0, F_FILEOPEN, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+P に「印刷」, Shift+Ctrl+P に「印刷プレビュー」, Ctrl+Alt+P に「ページ設定」を追加
 		//Oct. 20, 2000 JEPRO	Alt+P に「移動履歴: 前へ」を追加
-		{ 'P', "P",0, 0, F_PRINT, F_PRINT_PREVIEW, F_JUMPHIST_PREV, 0, F_PRINT_PAGESETUP, 0 },
+		{ 'P', _T("P"),F_0, F_0, F_PRINT, F_PRINT_PREVIEW, F_JUMPHIST_PREV, F_0, F_PRINT_PAGESETUP, F_0 },
 		//Jan. 24, 2001	JEPRO	Ctrl+Q に「キー割り当て一覧をコピー」を追加
-		{ 'Q', "Q",0, 0, F_CREATEKEYBINDLIST, 0, 0, 0, 0, 0 },
+		{ 'Q', _T("Q"),F_0, F_0, F_CREATEKEYBINDLIST, F_0, F_0, F_0, F_0, F_0 },
 		//2001.12.03 hor Alt+R を「RTRIM」に割当
-		{ 'R', "R",0, 0, F_REPLACE_DIALOG, 0, F_RTRIM, 0, 0, 0 },
+		{ 'R', _T("R"),F_0, F_0, F_REPLACE_DIALOG, F_0, F_RTRIM, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
-		{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS_DIALOG, 0, 0, 0, 0 },
+		{ 'S', _T("S"),F_0, F_0, F_FILESAVE, F_FILESAVEAS_DIALOG, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
 		//Jan. 21, 2001	JEPRO	Ctrl+T に「タグジャンプ」, Shift+Ctrl+T に「タグジャンプバック」を追加
-		{ 'T', "T",0, 0, F_TAGJUMP, F_TAGJUMPBACK, 0, 0, F_TILE_H, 0 },
+		{ 'T', _T("T"),F_0, F_0, F_TAGJUMP, F_TAGJUMPBACK, F_0, F_0, F_TILE_H, F_0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+Alt+U に「現在のウィンドウ幅で折り返し」を追加
 		//Jan. 16, 2001	JEPRO	Ctrl+U に「行頭まで切り取り(改行単位)」, Shift+Ctrl+U に「行頭まで削除(改行単位)」を追加
-		{ 'U', "U",0, 0, F_LineCutToStart, F_LineDeleteToStart, 0, 0, F_WRAPWINDOWWIDTH, 0 },
-		{ 'V', "V",0, 0, F_PASTE, 0, 0, 0, 0, 0 },
-		{ 'W', "W",0, 0, F_SELECTWORD, 0, 0, 0, 0, 0 },
+		{ 'U', _T("U"),F_0, F_0, F_LineCutToStart, F_LineDeleteToStart, F_0, F_0, F_WRAPWINDOWWIDTH, F_0 },
+		{ 'V', _T("V"),F_0, F_0, F_PASTE, F_0, F_0, F_0, F_0, F_0 },
+		{ 'W', _T("W"),F_0, F_0, F_SELECTWORD, F_0, F_0, F_0, F_0, F_0 },
 		//Jan. 13, 2001 JEPRO	Alt+X を「カスタムメニュー1」→「未定義」に変更し「カスタムメニュー1」は Alt+1 に移動
-		{ 'X', "X",0, 0, F_CUT, 0, 0, 0, 0, 0 },
-		{ 'Y', "Y",0, 0, F_REDO, 0, 0, 0, 0, 0 },
-		{ 'Z', "Z",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
+		{ 'X', _T("X"),F_0, F_0, F_CUT, F_0, F_0, F_0, F_0, F_0 },
+		{ 'Y', _T("Y"),F_0, F_0, F_REDO, F_0, F_0, F_0, F_0, F_0 },
+		{ 'Z', _T("Z"),F_0, F_0, F_UNDO, F_0, F_0, F_0, F_0, F_0 },
 		/* 記号 */
 		//Oct. 7, 2000 JEPRO	Shift+Ctrl+- に「上下に分割」を追加
 		// 2002.02.08 hor Ctrl+-にファイル名をコピーを追加
-		{ 0x00bd, "-",0, 0, F_COPYFNAME, F_SPLIT_V, 0, 0, 0, 0 },
-		{ 0x00de, "^(英語')",0, 0, F_COPYTAG, 0, 0, 0, 0, 0 },
+		{ 0x00bd, _T("-"),F_0, F_0, F_COPYFNAME, F_SPLIT_V, F_0, F_0, F_0, F_0 },
+		{ 0x00de, _T("^(英語')"),F_0, F_0, F_COPYTAG, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ に「左右に分割」を追加
-		{ 0x00dc, "\\",0, 0, F_COPYPATH, F_SPLIT_H, 0, 0, 0, 0 },
+		{ 0x00dc, _T("\\"),F_0, F_0, F_COPYPATH, F_SPLIT_H, F_0, F_0, F_0, F_0 },
 		//Sept. 20, 2000 JEPRO	Ctrl+@ に「ファイル内容比較」を追加  //Oct. 15, 2000 JEPRO「選択範囲内全行コピー」に変更
-		{ 0x00c0, "@(英語`)",0, 0, F_COPYLINES, 0, 0, 0, 0, 0 },
+		{ 0x00c0, _T("@(英語`)"),F_0, F_0, F_COPYLINES, F_0, F_0, F_0, F_0, F_0 },
 		//	Aug. 16, 2000 genta
 		//	反対向きの括弧にも括弧検索を追加
-		{ 0x00db, "[",0, 0, F_BRACKETPAIR, 0, 0, 0, 0, 0 },
+		{ 0x00db, _T("["),F_0, F_0, F_BRACKETPAIR, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	Shift+Ctrl+; に「縦横に分割」を追加	//Jan. 16, 2001	Alt+; に「日付挿入」を追加
-		{ 0x00bb, ";",0, 0, 0, F_SPLIT_VH, F_INS_DATE, 0, 0, 0 },
+		{ 0x00bb, _T(";"),F_0, F_0, F_0, F_SPLIT_VH, F_INS_DATE, F_0, F_0, F_0 },
 		//Sept. 14, 2000 JEPRO	Ctrl+: に「選択範囲内全行行番号付きコピー」を追加	//Jan. 16, 2001	Alt+: に「時刻挿入」を追加
-		{ 0x00ba, ":",0, 0, F_COPYLINESWITHLINENUMBER, 0, F_INS_TIME, 0, 0, 0 },
-		{ 0x00dd, "]",0, 0, F_BRACKETPAIR, 0, 0, 0, 0, 0 },
-		{ 0x00bc, ",",0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0x00ba, _T(":"),F_0, F_0, F_COPYLINESWITHLINENUMBER, F_0, F_INS_TIME, F_0, F_0, F_0 },
+		{ 0x00dd, _T("]"),F_0, F_0, F_BRACKETPAIR, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00bc, _T(","),F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
 		//Sept. 14, 2000 JEPRO	Ctrl+. に「選択範囲内全行引用符付きコピー」を追加
-		{ 0x00be, ".",0, 0, F_COPYLINESASPASSAGE, 0, 0, 0, 0, 0 },
-		{ 0x00bf, "/",0, 0, F_HOKAN, 0, 0, 0, 0, 0 },
+		{ 0x00be, _T("."),F_0, F_0, F_COPYLINESASPASSAGE, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00bf, _T("/"),F_0, F_0, F_HOKAN, F_0, F_0, F_0, F_0, F_0 },
 		//	Nov. 15, 2000 genta PC/ATキーボードに合わせてキーコードを変更
 		//	PC98救済のため，従来のキーコードに対応する項目を追加．
-		{ 0x00e2, "_",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
-		{ 0x00df, "_(PC-98)",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
+		{ 0x00e2, _T("_"),F_0, F_0, F_UNDO, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00df, _T("_(PC-98)"),F_0, F_0, F_UNDO, F_0, F_0, F_0, F_0, F_0 },
 		//Oct. 7, 2000 JEPRO	長くて表示しきれない所がでてきてしまうのでアプリケーションキー→アプリキーに短縮
-		{ VK_APPS, "アプリキー",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
+		{ VK_APPS, _T("アプリキー"),F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
 	};
-	int	nKeyDataInitNum = sizeof( KeyDataInit ) / sizeof( KeyDataInit[0] );
+	int	nKeyDataInitNum = _countof( KeyDataInit );
 	for( int i = 0; i < nKeyDataInitNum; ++i ){
-		SetKeyNameArrVal( pShareData, i,
+		SetKeyNameArrVal(
+			pShareData,
+			i,
 			KeyDataInit[i].nKeyCode,
 			KeyDataInit[i].pszKeyName,
 			KeyDataInit[i].nFuncCode_0,
@@ -5106,14 +4915,18 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	//	ツールバーアイコン数の最大値を超えないためのおまじない
 	//	最大値を超えて定義しようとするとここでコンパイルエラーになります．
-	char dummy[ sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]) < MAX_TOOLBARBUTTONS ? 1:0 ];
+	char dummy[ _countof(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBARBUTTONS ? 1:0 ];
 	dummy[0]=0;
 
-	memcpy( (void*)pShareData->m_Common.m_nToolBarButtonIdxArr, DEFAULT_TOOL_BUTTONS, sizeof(DEFAULT_TOOL_BUTTONS) );
+	memcpy_raw(
+		pShareData->m_Common.m_sToolBar.m_nToolBarButtonIdxArr,
+		DEFAULT_TOOL_BUTTONS,
+		sizeof(DEFAULT_TOOL_BUTTONS)
+	);
 
 	/* ツールバーボタンの数 */
-	pShareData->m_Common.m_nToolBarButtonNum = sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]);
-	pShareData->m_Common.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
+	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = _countof(DEFAULT_TOOL_BUTTONS);
+	pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 	
 }
 
@@ -5132,33 +4945,33 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 /************************/
 	int nIdx = 0;
 	int i;
-	pShareData->m_Types[nIdx].m_nMaxLineSize = MAXLINESIZE;				/* 折り返し文字数 */
+	pShareData->m_Types[nIdx].m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);	/* 折り返し桁数 */
 	pShareData->m_Types[nIdx].m_nColmSpace = 0;					/* 文字と文字の隙間 */
 	pShareData->m_Types[nIdx].m_nLineSpace = 1;					/* 行間のすきま */
-	pShareData->m_Types[nIdx].m_nTabSpace = 4;					/* TABの文字数 */
+	pShareData->m_Types[nIdx].m_nTabSpace = CLayoutInt(4);					/* TABの文字数 */
 	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
 		pShareData->m_Types[nIdx].m_nKeyWordSetIdx[i] = -1;
 	}
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	strcpy( pShareData->m_Types[nIdx].m_szTabViewString, "^       " );	/* TAB表示文字列 */
+	wcscpy( pShareData->m_Types[nIdx].m_szTabViewString, _EDITL("^       ") );	/* TAB表示文字列 */
 //#endif
 	pShareData->m_Types[nIdx].m_bTabArrow = FALSE;				/* タブ矢印表示 */	// 2001.12.03 hor
 	pShareData->m_Types[nIdx].m_bInsSpace = FALSE;				/* スペースの挿入 */	// 2001.12.03 hor
 	
 	//@@@ 2002.09.22 YAZAKI 以下、m_cLineCommentとm_cBlockCommentを使うように修正
-	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(0, "", -1);	/* 行コメントデリミタ */
-	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(1, "", -1);	/* 行コメントデリミタ2 */
-	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(2, "", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(0, "", "");	/* ブロックコメントデリミタ */
-	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(1, "", "");	/* ブロックコメントデリミタ2 */
+	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
+	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(1, L"", -1);	/* 行コメントデリミタ2 */
+	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(2, L"", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(0, L"", L"");	/* ブロックコメントデリミタ */
+	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(1, L"", L"");	/* ブロックコメントデリミタ2 */
 
 	pShareData->m_Types[nIdx].m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	strcpy( pShareData->m_Types[nIdx].m_szIndentChars, "" );		/* その他のインデント対象文字 */
+	wcscpy( pShareData->m_Types[nIdx].m_szIndentChars, L"" );		/* その他のインデント対象文字 */
 
 	pShareData->m_Types[nIdx].m_nColorInfoArrNum = COLORIDX_LAST;
 
 	// 2001/06/14 Start by asa-o
-	strcpy( pShareData->m_Types[nIdx].m_szHokanFile, "" );		/* 入力補完 単語ファイル */
+	_tcscpy( pShareData->m_Types[nIdx].m_szHokanFile, _T("") );		/* 入力補完 単語ファイル */
 	// 2001/06/14 End
 
 	// 2001/06/19 asa-o
@@ -5168,8 +4981,8 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	//@@@2002.2.4 YAZAKI
-	pShareData->m_Types[nIdx].m_szExtHelp[0] = '\0';
-	pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = '\0';
+	pShareData->m_Types[nIdx].m_szExtHelp[0] = L'\0';
+	pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = L'\0';
 	pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = TRUE;
 
 	pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
@@ -5184,57 +4997,57 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	//	szName(項目名),				色分け／表示, 太字,		下線,		文字色,		背景色,
 	//
 	//Oct. 8, 2000 JEPRO 背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
-		"テキスト",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),
-		"ルーラー",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 ),
-		"カーソル",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
-		"カーソル(IME ON)",					TRUE , FALSE, FALSE, RGB( 255, 0, 0 )		, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
-		"カーソル行アンダーライン",			TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
-		"行番号",							TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
-		"行番号(変更行)",					TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
-		"TAB記号",							TRUE , FALSE, FALSE, RGB( 128, 128, 128 )	, RGB( 255, 251, 240 ),	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更
-		"半角空白"		,					FALSE , FALSE, FALSE , RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2002.04.28 Add by KK
-		"日本語空白",						TRUE , FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ),
-		"コントロールコード",				TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 251, 240 ),
-		"改行記号",							TRUE , FALSE, FALSE, RGB( 0, 128, 255 )		, RGB( 255, 251, 240 ),
-		"折り返し記号",						TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 251, 240 ),
-		"指定桁縦線",						FALSE, FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2005.11.08 Moca
-		"EOF記号",							TRUE , FALSE, FALSE, RGB( 0, 255, 255 )		, RGB( 0, 0, 0 ),
+		_T("テキスト"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),
+		_T("ルーラー"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 ),
+		_T("カーソル"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
+		_T("カーソル(IME ON)"),				TRUE , FALSE, FALSE, RGB( 255, 0, 0 )		, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
+		_T("カーソル行アンダーライン"),		TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
+		_T("行番号"),							TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
+		_T("行番号(変更行)"),					TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
+		_T("TAB記号"),							TRUE , FALSE, FALSE, RGB( 128, 128, 128 )	, RGB( 255, 251, 240 ),	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更
+		_T("半角空白")		,					FALSE , FALSE, FALSE , RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2002.04.28 Add by KK
+		_T("日本語空白"),						TRUE , FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ),
+		_T("コントロールコード"),				TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 251, 240 ),
+		_T("改行記号"),						TRUE , FALSE, FALSE, RGB( 0, 128, 255 )		, RGB( 255, 251, 240 ),
+		_T("折り返し記号"),					TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 251, 240 ),
+		_T("指定桁縦線"),						FALSE, FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2005.11.08 Moca
+		_T("EOF記号"),							TRUE , FALSE, FALSE, RGB( 0, 255, 255 )		, RGB( 0, 0, 0 ),
 //#ifdef COMPILE_COLOR_DIGIT
-		"半角数値",							FALSE, FALSE, FALSE, RGB( 235, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
+		_T("半角数値"),						FALSE, FALSE, FALSE, RGB( 235, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
 //#endif
-		"検索文字列",						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
-		"強調キーワード1",					TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
-		"強調キーワード2",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
-		"強調キーワード3",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
-		"強調キーワード4",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"強調キーワード5",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"強調キーワード6",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"強調キーワード7",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"強調キーワード8",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"強調キーワード9",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"強調キーワード10",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		"コメント",							TRUE , FALSE, FALSE, RGB( 0, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("検索文字列"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
+		_T("強調キーワード1"),					TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード2"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
+		_T("強調キーワード3"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
+		_T("強調キーワード4"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード5"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード6"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード7"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード8"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード9"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("強調キーワード10"),				TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
+		_T("コメント"),						TRUE , FALSE, FALSE, RGB( 0, 128, 0 )		, RGB( 255, 251, 240 ),
 	//Sept. 4, 2000 JEPRO シングルクォーテーション文字列に色を割り当てるが色分け表示はしない
 	//Oct. 17, 2000 JEPRO 色分け表示するように変更(最初のFALSE→TRUE)
 	//"シングルクォーテーション文字列", FALSE, FALSE, FALSE, RGB( 0, 0, 0 ), RGB( 255, 255, 255 ),
-		"シングルクォーテーション文字列",	TRUE , FALSE, FALSE, RGB( 64, 128, 128 )	, RGB( 255, 251, 240 ),
-		"ダブルクォーテーション文字列",		TRUE , FALSE, FALSE, RGB( 128, 0, 64 )		, RGB( 255, 251, 240 ),
-		"URL",								TRUE , FALSE, TRUE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
-		"正規表現キーワード1",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード2",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード3",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード4",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード5",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード6",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード7",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード8",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード9",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"正規表現キーワード10",		FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		"DIFF差分表示(追加)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-		"DIFF差分表示(変更)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-		"DIFF差分表示(削除)",		FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-		"対括弧の強調表示",			FALSE , TRUE,  FALSE, RGB( 128, 0, 0 )		, RGB( 255, 251, 240 ),	// 02/09/18 ai
-		"ブックマーク",				TRUE  , FALSE, FALSE, RGB( 255, 251, 240 )	, RGB( 0, 128, 192 ),	// 02/10/16 ai
+		_T("シングルクォーテーション文字列"),	TRUE , FALSE, FALSE, RGB( 64, 128, 128 )	, RGB( 255, 251, 240 ),
+		_T("ダブルクォーテーション文字列"),	TRUE , FALSE, FALSE, RGB( 128, 0, 64 )		, RGB( 255, 251, 240 ),
+		_T("URL"),								TRUE , FALSE, TRUE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
+		_T("正規表現キーワード1"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード2"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード3"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード4"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード5"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード6"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード7"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード8"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード9"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("正規表現キーワード10"),			FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
+		_T("DIFF差分表示(追加)"),				FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
+		_T("DIFF差分表示(変更)"),				FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
+		_T("DIFF差分表示(削除)"),				FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
+		_T("対括弧の強調表示"),				FALSE , TRUE,  FALSE, RGB( 128, 0, 0 )		, RGB( 255, 251, 240 ),	// 02/09/18 ai
+		_T("ブックマーク"),					TRUE  , FALSE, FALSE, RGB( 255, 251, 240 )	, RGB( 0, 128, 192 ),	// 02/10/16 ai
 	};
 //	To Here Sept. 18, 2000
 
@@ -5246,31 +5059,31 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bUnderLine		= ColorInfo_DEFAULT[i].m_bUnderLine;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colTEXT			= ColorInfo_DEFAULT[i].m_colTEXT;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colBACK			= ColorInfo_DEFAULT[i].m_colBACK;
-		strcpy( pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
+		_tcscpy( pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
 	}
 	pShareData->m_Types[nIdx].m_bLineNumIsCRLF = TRUE;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	pShareData->m_Types[nIdx].m_nLineTermType = 1;					/* 行番号区切り 0=なし 1=縦線 2=任意 */
-	pShareData->m_Types[nIdx].m_cLineTermChar = ':';					/* 行番号区切り文字 */
+	pShareData->m_Types[nIdx].m_cLineTermChar = L':';					/* 行番号区切り文字 */
 	pShareData->m_Types[nIdx].m_bWordWrap = FALSE;					/* 英文ワードラップをする */
 	pShareData->m_Types[nIdx].m_nCurrentPrintSetting = 0;				/* 現在選択している印刷設定 */
 	pShareData->m_Types[nIdx].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	pShareData->m_Types[nIdx].m_nSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
 	pShareData->m_Types[nIdx].m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
-	pShareData->m_Types[nIdx].m_szOutlineRuleFilename[0] = '\0';	//Dec. 4, 2000 MIK
+	pShareData->m_Types[nIdx].m_szOutlineRuleFilename[0] = L'\0';	//Dec. 4, 2000 MIK
 	pShareData->m_Types[nIdx].m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	pShareData->m_Types[nIdx].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	pShareData->m_Types[nIdx].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	pShareData->m_Types[nIdx].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	strcpy( pShareData->m_Types[nIdx].m_szKinsokuHead, "" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	strcpy( pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	wcscpy( pShareData->m_Types[nIdx].m_szKinsokuHead, L"" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	wcscpy( pShareData->m_Types[nIdx].m_szKinsokuTail, L"" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 
 	pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 
 //@@@ 2001.11.17 add start MIK
 	for(i = 0; i < 100; i++)
 	{
-		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = '\0';
+		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = L'\0';
 		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}
 	pShareData->m_Types[nIdx].m_bUseRegexKeyword = FALSE;
@@ -5280,8 +5093,8 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 //@@@ 2006.04.10 fon ADD-start
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_nUse = 0;
-		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = '\0';
-		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = '\0';
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}
 	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;	/* 辞書選択機能の使用可否 */
 	pShareData->m_Types[nIdx].m_nKeyHelpNum = 0;			/* 登録辞書数 */
@@ -5292,87 +5105,87 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	// 2005.11.08 Moca 指定位置縦線の設定
 	for( i = 0; i < MAX_VERTLINES; i++ ){
-		pShareData->m_Types[nIdx].m_nVertLineIdx[i] = 0;
+		pShareData->m_Types[nIdx].m_nVertLineIdx[i] = CLayoutInt(0);
 	}
 
-	static char* pszTypeNameArr[] = {
-		"基本",
-		"テキスト",
-		"C/C++",
-		"HTML",
-		"PL/SQL",
-		"COBOL",
-		"Java",
-		"アセンブラ",
-		"AWK",
-		"MS-DOSバッチファイル",
-		"Pascal",
-		"TeX",				//Oct. 31, 2000 JEPRO TeX  ユーザに贈る
-		"Perl",				//Jul. 08, 2001 JEPRO Perl ユーザに贈る
-		"Visual Basic",		//JUl. 10, 2001 JEPRO VB   ユーザに贈る
-		"リッチテキスト",	//JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね
-		"設定ファイル",		//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
-		"設定17",			//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
-		"設定18",
-		"設定19",
-		"設定20"			//To Here Jul. 12, 2001
+	static TCHAR* pszTypeNameArr[] = {
+		_T("基本"),
+		_T("テキスト"),
+		_T("C/C++"),
+		_T("HTML"),
+		_T("PL/SQL"),
+		_T("COBOL"),
+		_T("Java"),
+		_T("アセンブラ"),
+		_T("AWK"),
+		_T("MS-DOSバッチファイル"),
+		_T("Pascal"),
+		_T("TeX"),				//Oct. 31, 2000 JEPRO TeX  ユーザに贈る
+		_T("Perl"),				//Jul. 08, 2001 JEPRO Perl ユーザに贈る
+		_T("Visual Basic"),		//JUl. 10, 2001 JEPRO VB   ユーザに贈る
+		_T("リッチテキスト"),	//JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね
+		_T("設定ファイル"),		//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
+		_T("設定17"),			//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
+		_T("設定18"),
+		_T("設定19"),
+		_T("設定20")			//To Here Jul. 12, 2001
 	};
-	static char* pszTypeExts[] = {
-		"",
+	static TCHAR* pszTypeExts[] = {
+		_T(""),
 		//Nov. 15, 2000 JEPRO PostScriptファイルも読めるようにする
 		//Jan. 12, 2001 JEPRO readme.1st も読めるようにする
 		//Feb. 12, 2001 JEPRO .err エラーメッセージ
 		//Nov.  6, 2002 genta docはMS Wordに譲ってここからは外す（関連づけ防止のため）
 		//Nov.  6, 2002 genta log を追加
-		"txt,log,1st,err,ps",
+		_T("txt,log,1st,err,ps"),
 		//	Jan. 24, 2004 genta 関連づけ上好ましくないのでdsw,dsp,dep,makははずす
-		"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
+		_T("c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm"),	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
 			//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
-		"html,htm,shtml,plg",	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
-		"sql,plsql",
-		"cbl,cpy,pco,cob",	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
-		"java,jav",
-		"asm",
-		"awk",
-		"bat",
-		"dpr,pas",
-		"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo",		//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
-		"cgi,pl,pm",			//Jul. 08, 2001 JEPRO 追加
-		"bas,frm,cls,ctl,pag,dob,dsr,vb",	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加 // Feb. 19, 2006 genta .vb追加
-		"rtf",					//Jul. 10, 2001 JEPRO 追加
-		"ini,inf,cnf,kwd,col",	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
-		"",						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
-		"",
-		"",
-		""						//To Here Jul. 12, 2001
+		_T("html,htm,shtml,plg"),	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
+		_T("sql,plsql"),
+		_T("cbl,cpy,pco,cob"),	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
+		_T("java,jav"),
+		_T("asm"),
+		_T("awk"),
+		_T("bat"),
+		_T("dpr,pas"),
+		_T("tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo"),		//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
+		_T("cgi,pl,pm"),			//Jul. 08, 2001 JEPRO 追加
+		_T("bas,frm,cls,ctl,pag,dob,dsr,vb"),	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加 // Feb. 19, 2006 genta .vb追加
+		_T("rtf"),					//Jul. 10, 2001 JEPRO 追加
+		_T("ini,inf,cnf,kwd,col"),	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
+		_T(""),						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
+		_T(""),
+		_T(""),
+		_T("")						//To Here Jul. 12, 2001
 	};
 
 	pShareData->m_Types[0].m_nIdx = 0;
-	strcpy( pShareData->m_Types[0].m_szTypeName, pszTypeNameArr[0] );				/* タイプ属性：名称 */
-	strcpy( pShareData->m_Types[0].m_szTypeExts, pszTypeExts[0] );				/* タイプ属性：拡張子リスト */
+	_tcscpy( pShareData->m_Types[0].m_szTypeName, pszTypeNameArr[0] );				/* タイプ属性：名称 */
+	_tcscpy( pShareData->m_Types[0].m_szTypeExts, pszTypeExts[0] );				/* タイプ属性：拡張子リスト */
 	for( nIdx = 1; nIdx < MAX_TYPES; ++nIdx ){
 		pShareData->m_Types[nIdx] = pShareData->m_Types[0];
 		pShareData->m_Types[nIdx].m_nIdx = nIdx;
 
 		//	From Here 2005.02.20 りんご 配列数が設定数より小さいケースの考慮
-		const char* pszTypeName;
-		const char* pszTypeExt;
-		if(nIdx < (sizeof(pszTypeNameArr)/sizeof(char*)))
+		const TCHAR* pszTypeName;
+		const TCHAR* pszTypeExt;
+		if(nIdx < _countof(pszTypeNameArr))
 			pszTypeName = pszTypeNameArr[nIdx];
 		else
-			pszTypeName = "未定義";
-		if(nIdx < (sizeof(pszTypeExts)/sizeof(char*)))
+			pszTypeName = _T("未定義");
+		if(nIdx < _countof(pszTypeExts))
 			pszTypeExt = pszTypeExts[nIdx];
 		else
-			pszTypeExt = "";
-		strcpy( m_pShareData->m_Types[nIdx].m_szTypeName, pszTypeName );
-		strcpy( m_pShareData->m_Types[nIdx].m_szTypeExts, pszTypeExt );
+			pszTypeExt = _T("");
+		_tcscpy( m_pShareData->m_Types[nIdx].m_szTypeName, pszTypeName );
+		_tcscpy( m_pShareData->m_Types[nIdx].m_szTypeExts, pszTypeExt );
 		//	To Here 2005.02.20 りんご
 	}
 
 
 	/* 基本 */
-	pShareData->m_Types[0].m_nMaxLineSize = MAXLINESIZE;				/* 折り返し文字数 */
+	pShareData->m_Types[0].m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);			/* 折り返し桁数 */
 //		pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_UNKNOWN;	/* アウトライン解析方法 */	//Jul. 08, 2001 JEPRO 使わないように変更
 	pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
@@ -5384,7 +5197,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 //		nIdx = 0;
 	/* テキスト */
 	//From Here Sept. 20, 2000 JEPRO テキストの規定値を80→120に変更(不具合一覧.txtがある程度読みやすい桁数)
-	pShareData->m_Types[1].m_nMaxLineSize = 120;					/* 折り返し文字数 */
+	pShareData->m_Types[1].m_nMaxLineKetas = CLayoutInt(120);					/* 折り返し桁数 */
 	//To Here Sept. 20, 2000
 	pShareData->m_Types[1].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
@@ -5395,16 +5208,15 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[1].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	pShareData->m_Types[1].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	pShareData->m_Types[1].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-//		strcpy( pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕ぁぃぅぇぉっゃゅょゎ゛゜ゝゞァィゥェォッャュョヮヵヶ・ーヽヾ！％），．：；？］｝｡｣､･ｧｨｩｪｫｬｭｮｯｰﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	strcpy( pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK
-	strcpy( pShareData->m_Types[1].m_szKinsokuTail, "$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	wcscpy( pShareData->m_Types[1].m_szKinsokuHead, L"!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
+	wcscpy( pShareData->m_Types[1].m_szKinsokuTail, L"$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
 
 
 	// nIdx = 1;
 	/* C/C++ */
-	pShareData->m_Types[2].m_cLineComment.CopyTo( 0, "//", -1 );			/* 行コメントデリミタ */
-	pShareData->m_Types[2].m_cBlockComment.CopyTo( 0, "/*", "*/" );		/* ブロックコメントデリミタ */
-	pShareData->m_Types[2].m_cBlockComment.CopyTo( 1, "#if 0", "#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
+	pShareData->m_Types[2].m_cLineComment.CopyTo( 0, L"//", -1 );			/* 行コメントデリミタ */
+	pShareData->m_Types[2].m_cBlockComment.CopyTo( 0, L"/*", L"*/" );		/* ブロックコメントデリミタ */
+	pShareData->m_Types[2].m_cBlockComment.CopyTo( 1, L"#if 0", L"#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
 	pShareData->m_Types[2].m_nKeyWordSetIdx[0] = 0;						/* キーワードセット */
 	pShareData->m_Types[2].m_nDefaultOutline = OUTLINE_CPP;			/* アウトライン解析方法 */
 	pShareData->m_Types[2].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
@@ -5416,7 +5228,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[2].m_bUseHokanByFile = TRUE;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	/* HTML */
-	pShareData->m_Types[3].m_cBlockComment.CopyTo( 0, "<!--", "-->" );	/* ブロックコメントデリミタ */
+	pShareData->m_Types[3].m_cBlockComment.CopyTo( 0, L"<!--", L"-->" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[3].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	pShareData->m_Types[3].m_nKeyWordSetIdx[0] = 1;						/* キーワードセット */
 	// Feb. 2, 2005 genta 苦情が多いのでシングルクォートの色分けはHTMLでは行わない
@@ -5424,32 +5236,32 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	// nIdx = 3;
 	/* PL/SQL */
-	pShareData->m_Types[4].m_cLineComment.CopyTo( 0, "--", -1 );		/* 行コメントデリミタ */
-	pShareData->m_Types[4].m_cBlockComment.CopyTo( 0, "/*", "*/" );	/* ブロックコメントデリミタ */
+	pShareData->m_Types[4].m_cLineComment.CopyTo( 0, L"--", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[4].m_cBlockComment.CopyTo( 0, L"/*", L"*/" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[4].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	strcpy( pShareData->m_Types[4].m_szIndentChars, "|★" );			/* その他のインデント対象文字 */
+	wcscpy( pShareData->m_Types[4].m_szIndentChars, L"|★" );			/* その他のインデント対象文字 */
 	pShareData->m_Types[4].m_nKeyWordSetIdx[0] = 2;						/* キーワードセット */
 	pShareData->m_Types[4].m_nDefaultOutline = OUTLINE_PLSQL;			/* アウトライン解析方法 */
 
 	/* COBOL */
-	pShareData->m_Types[5].m_cLineComment.CopyTo( 0, "*", 6 );	//Jun. 02, 2001 JEPRO 修正
-	pShareData->m_Types[5].m_cLineComment.CopyTo( 1, "D", 6 );	//Jun. 04, 2001 JEPRO 追加
+	pShareData->m_Types[5].m_cLineComment.CopyTo( 0, L"*", 6 );	//Jun. 02, 2001 JEPRO 修正
+	pShareData->m_Types[5].m_cLineComment.CopyTo( 1, L"D", 6 );	//Jun. 04, 2001 JEPRO 追加
 	pShareData->m_Types[5].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	strcpy( pShareData->m_Types[5].m_szIndentChars, "*" );			/* その他のインデント対象文字 */
+	wcscpy( pShareData->m_Types[5].m_szIndentChars, L"*" );			/* その他のインデント対象文字 */
 	pShareData->m_Types[5].m_nKeyWordSetIdx[0] = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
 	pShareData->m_Types[5].m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 
 	// 2005.11.08 Moca 指定桁縦線
 	pShareData->m_Types[5].m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = TRUE;
-	pShareData->m_Types[5].m_nVertLineIdx[0] = 7;
-	pShareData->m_Types[5].m_nVertLineIdx[1] = 8;
-	pShareData->m_Types[5].m_nVertLineIdx[2] = 12;
-	pShareData->m_Types[5].m_nVertLineIdx[3] = 73;
+	pShareData->m_Types[5].m_nVertLineIdx[0] = CLayoutInt(7);
+	pShareData->m_Types[5].m_nVertLineIdx[1] = CLayoutInt(8);
+	pShareData->m_Types[5].m_nVertLineIdx[2] = CLayoutInt(12);
+	pShareData->m_Types[5].m_nVertLineIdx[3] = CLayoutInt(73);
 
 
 	/* Java */
-	pShareData->m_Types[6].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */
-	pShareData->m_Types[6].m_cBlockComment.CopyTo( 0, "/*", "*/" );	/* ブロックコメントデリミタ */
+	pShareData->m_Types[6].m_cLineComment.CopyTo( 0, L"//", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[6].m_cBlockComment.CopyTo( 0, L"/*", L"*/" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[6].m_nKeyWordSetIdx[0] = 4;						/* キーワードセット */
 	pShareData->m_Types[6].m_nDefaultOutline = OUTLINE_JAVA;			/* アウトライン解析方法 */
 	pShareData->m_Types[6].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
@@ -5460,25 +5272,25 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	/* アセンブラ */
 	//	2004.05.01 MIK/genta
-	pShareData->m_Types[7].m_cLineComment.CopyTo( 0, ";", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[7].m_cLineComment.CopyTo( 0, L";", -1 );		/* 行コメントデリミタ */
 	pShareData->m_Types[7].m_nDefaultOutline = OUTLINE_ASM;			/* アウトライン解析方法 */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
 	pShareData->m_Types[7].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
 
 	/* awk */
-	pShareData->m_Types[8].m_cLineComment.CopyTo( 0, "#", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[8].m_cLineComment.CopyTo( 0, L"#", -1 );		/* 行コメントデリミタ */
 	pShareData->m_Types[8].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
 	pShareData->m_Types[8].m_nKeyWordSetIdx[0] = 6;						/* キーワードセット */
 
 	/* MS-DOSバッチファイル */
-	pShareData->m_Types[9].m_cLineComment.CopyTo( 0, "REM ", -1 );	/* 行コメントデリミタ */
+	pShareData->m_Types[9].m_cLineComment.CopyTo( 0, L"REM ", -1 );	/* 行コメントデリミタ */
 	pShareData->m_Types[9].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
 	pShareData->m_Types[9].m_nKeyWordSetIdx[0] = 7;						/* キーワードセット */
 
 	/* Pascal */
-	pShareData->m_Types[10].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */		//Nov. 5, 2000 JEPRO 追加
-	pShareData->m_Types[10].m_cBlockComment.CopyTo( 0, "{", "}" );	/* ブロックコメントデリミタ */	//Nov. 5, 2000 JEPRO 追加
-	pShareData->m_Types[10].m_cBlockComment.CopyTo( 1, "(*", "*)" );	/* ブロックコメントデリミタ2 */	//@@@ 2001.03.10 by MIK
+	pShareData->m_Types[10].m_cLineComment.CopyTo( 0, L"//", -1 );		/* 行コメントデリミタ */		//Nov. 5, 2000 JEPRO 追加
+	pShareData->m_Types[10].m_cBlockComment.CopyTo( 0, L"{", L"}" );	/* ブロックコメントデリミタ */	//Nov. 5, 2000 JEPRO 追加
+	pShareData->m_Types[10].m_cBlockComment.CopyTo( 1, L"(*", L"*)" );	/* ブロックコメントデリミタ2 */	//@@@ 2001.03.10 by MIK
 	pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
 	pShareData->m_Types[10].m_nKeyWordSetIdx[0] = 8;						/* キーワードセット */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
@@ -5486,7 +5298,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	//From Here Oct. 31, 2000 JEPRO
 	/* TeX */
-	pShareData->m_Types[11].m_cLineComment.CopyTo( 0, "%", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[11].m_cLineComment.CopyTo( 0, L"%", -1 );		/* 行コメントデリミタ */
 	pShareData->m_Types[11].m_nDefaultOutline = OUTLINE_TEX;			/* アウトライン解析方法 */
 	pShareData->m_Types[11].m_nKeyWordSetIdx[0]  = 9;					/* キーワードセット */
 	pShareData->m_Types[11].m_nKeyWordSetIdx[1] = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
@@ -5500,7 +5312,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	//From Here Jul. 08, 2001 JEPRO
 	/* Perl */
-	pShareData->m_Types[12].m_cLineComment.CopyTo( 0, "#", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[12].m_cLineComment.CopyTo( 0, L"#", -1 );		/* 行コメントデリミタ */
 	pShareData->m_Types[12].m_nDefaultOutline = OUTLINE_PERL;			/* アウトライン解析方法 */
 	pShareData->m_Types[12].m_nKeyWordSetIdx[0]  = 11;					/* キーワードセット */
 	pShareData->m_Types[12].m_nKeyWordSetIdx[1] = 12;					/* キーワードセット2 */
@@ -5511,7 +5323,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	//From Here Jul. 10, 2001 JEPRO
 	/* Visual Basic */
-	pShareData->m_Types[13].m_cLineComment.CopyTo( 0, "'", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[13].m_cLineComment.CopyTo( 0, L"'", -1 );		/* 行コメントデリミタ */
 	pShareData->m_Types[13].m_nDefaultOutline = OUTLINE_VB;			/* アウトライン解析方法 */
 	pShareData->m_Types[13].m_nKeyWordSetIdx[0]  = 13;					/* キーワードセット */
 	pShareData->m_Types[13].m_nKeyWordSetIdx[1] = 14;					/* キーワードセット2 */
@@ -5535,8 +5347,8 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	//From Here Nov. 9, 2000 JEPRO
 	/* 設定ファイル */
-	pShareData->m_Types[15].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */
-	pShareData->m_Types[15].m_cLineComment.CopyTo( 1, ";", -1 );		/* 行コメントデリミタ2 */
+	pShareData->m_Types[15].m_cLineComment.CopyTo( 0, L"//", -1 );		/* 行コメントデリミタ */
+	pShareData->m_Types[15].m_cLineComment.CopyTo( 1, L";", -1 );		/* 行コメントデリミタ2 */
 	pShareData->m_Types[15].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
 	//シングルクォーテーション文字列を色分け表示しない
 	pShareData->m_Types[15].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
@@ -5555,134 +5367,140 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 {
 	/* カスタムメニュー 規定値 */
 	
-	Common& rCommon = m_pShareData->m_Common;
+	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;
 
 	/* 右クリックメニュー */
 	int n = 0;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_UNDO;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'U';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_UNDO;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'U';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_REDO;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'R';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_REDO;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'R';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_CUT;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'T';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUT;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'T';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPY;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'C';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'C';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_PASTE;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'P';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'P';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_DELETE;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'D';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_DELETE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'D';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'L';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'L';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPY_ADDCRLF;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'H';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_ADDCRLF;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'H';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'X';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'X';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'A';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'A';
 	n++;
 
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMP;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'G';		//Nov. 9, 2000 JEPRO 「コピー」とバッティングしていたアクセスキーを変更(T→G)
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMP;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'G';		//Nov. 9, 2000 JEPRO 「コピー」とバッティングしていたアクセスキーを変更(T→G)
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMPBACK;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'B';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMPBACK;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'B';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPYLINES;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '@';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINES;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '@';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPYLINESASPASSAGE;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '.';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINESASPASSAGE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '.';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = '\\';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = F_PROPERTY_FILE;
-	rCommon.m_nCustMenuItemKeyArr [0][n] = 'F';		//Nov. 9, 2000 JEPRO 「やり直し」とバッティングしていたアクセスキーを変更(R→F)
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PROPERTY_FILE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'F';		//Nov. 9, 2000 JEPRO 「やり直し」とバッティングしていたアクセスキーを変更(R→F)
 	n++;
-	rCommon.m_nCustMenuItemNumArr[0] = n;
+	rMenu.m_nCustMenuItemNumArr[0] = n;
 
 	/* カスタムメニュー１ */
-	rCommon.m_nCustMenuItemNumArr[1] = 7;
-	rCommon.m_nCustMenuItemFuncArr[1][0] = F_FILEOPEN;
-	rCommon.m_nCustMenuItemKeyArr [1][0] = 'O';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (F→O)
-	rCommon.m_nCustMenuItemFuncArr[1][1] = F_FILESAVE;
-	rCommon.m_nCustMenuItemKeyArr [1][1] = 'S';
-	rCommon.m_nCustMenuItemFuncArr[1][2] = F_NEXTWINDOW;
-	rCommon.m_nCustMenuItemKeyArr [1][2] = 'N';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (O→N)
-	rCommon.m_nCustMenuItemFuncArr[1][3] = F_TOLOWER;
-	rCommon.m_nCustMenuItemKeyArr [1][3] = 'L';
-	rCommon.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
-	rCommon.m_nCustMenuItemKeyArr [1][4] = 'U';
-	rCommon.m_nCustMenuItemFuncArr[1][5] = 0;
-	rCommon.m_nCustMenuItemKeyArr [1][5] = '\0';
-	rCommon.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
-	rCommon.m_nCustMenuItemKeyArr [1][6] = 'C';
+	rMenu.m_nCustMenuItemNumArr[1] = 7;
+	rMenu.m_nCustMenuItemFuncArr[1][0] = F_FILEOPEN;
+	rMenu.m_nCustMenuItemKeyArr [1][0] = 'O';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (F→O)
+	rMenu.m_nCustMenuItemFuncArr[1][1] = F_FILESAVE;
+	rMenu.m_nCustMenuItemKeyArr [1][1] = 'S';
+	rMenu.m_nCustMenuItemFuncArr[1][2] = F_NEXTWINDOW;
+	rMenu.m_nCustMenuItemKeyArr [1][2] = 'N';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (O→N)
+	rMenu.m_nCustMenuItemFuncArr[1][3] = F_TOLOWER;
+	rMenu.m_nCustMenuItemKeyArr [1][3] = 'L';
+	rMenu.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
+	rMenu.m_nCustMenuItemKeyArr [1][4] = 'U';
+	rMenu.m_nCustMenuItemFuncArr[1][5] = 0;
+	rMenu.m_nCustMenuItemKeyArr [1][5] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
+	rMenu.m_nCustMenuItemKeyArr [1][6] = 'C';
 
 	/* タブメニュー */	//@@@ 2003.06.14 MIK
 	n = 0;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVE;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'S';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'S';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVEAS_DIALOG;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'A';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVEAS_DIALOG;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'A';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'R';	// 2007.06.26 ryoji B -> R
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'R';	// 2007.06.26 ryoji B -> R
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE_OPEN;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'L';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE_OPEN;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'L';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_WINCLOSE;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'C';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_WINCLOSE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'C';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '0';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '0';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVELEFT;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '1';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVELEFT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '1';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_SEPARATE;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'E';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_SEPARATE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'E';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTNEXT;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'X';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTNEXT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'X';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTPREV;
-	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'V';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTPREV;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'V';
 	n++;
-	rCommon.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
+	rMenu.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
 }
-/*[EOF]*/
+
+
+#include "CNormalProcess.h"
+DLLSHAREDATA& GetDllShareData()
+{
+	return CNormalProcess::Instance()->GetDllShareData();
+}

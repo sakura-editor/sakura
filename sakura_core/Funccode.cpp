@@ -26,42 +26,42 @@
 
 #include "stdafx.h"
 #include "funccode.h"
+#include "sakura.hh"
+#include "CMRU.h" //MAX_MRU
+#include "CShareData.h"
+#include "CEditDoc.h"
+#include "CSMacroMgr.h"
+#include "CMarkMgr.h"
+#include "CEditWnd.h"
 
 //using namespace nsFuncCode;
 
-const char* nsFuncCode::ppszFuncKind[] = {
+const TCHAR* nsFuncCode::ppszFuncKind[] = {
 //	"--未定義--",	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更
 //	Oct. 16, 2000 JEPRO 表示の順番をメニューバーのそれに合わせるように少し入れ替えた(下の個別のものも全部)
-	"ファイル操作系",
-	"編集系",
-	"カーソル移動系",
-	"選択系",		//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
-	"矩形選択系",	//Oct. 17, 2000 JEPRO 「選択系」に一緒にすると多くなりすぎるので「矩形選択系」も独立させた
-	"クリップボード系",
-	"挿入系",
-	"変換系",
-	"検索系",
-	"モード切り替え系",
-	"設定系",
-	"マクロ系",
+	_T("ファイル操作系"),
+	_T("編集系"),
+	_T("カーソル移動系"),
+	_T("選択系"),		//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
+	_T("矩形選択系"),	//Oct. 17, 2000 JEPRO 「選択系」に一緒にすると多くなりすぎるので「矩形選択系」も独立させた
+	_T("クリップボード系"),
+	_T("挿入系"),
+	_T("変換系"),
+	_T("検索系"),
+	_T("モード切り替え系"),
+	_T("設定系"),
+	_T("マクロ系"),
 	//	Oct. 15, 2001 genta カスタムメニューの文字列をは動的に変更可能にするためここからは外す．
-//	"カスタムメニュー",	//Oct. 21, 2000 JEPRO 「その他」から独立分離化
-	"ウィンドウ系",
-	"支援",
-	"その他"
+//	_T("カスタムメニュー"),	//Oct. 21, 2000 JEPRO 「その他」から独立分離化
+	_T("ウィンドウ系"),
+	_T("支援"),
+	_T("その他")
 };
-const int nsFuncCode::nFuncKindNum = sizeof(nsFuncCode::ppszFuncKind) / sizeof(nsFuncCode::ppszFuncKind[0]);
-
-//	From Here Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように以下の4行をコメントアウトに変更
-//const int pnFuncList_Undef[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
-//	0
-//};
-//int	nFincList_Undef_Num = sizeof( pnFuncList_Undef ) / sizeof( pnFuncList_Undef[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
-//	To Here Oct. 14, 2000
+const int nsFuncCode::nFuncKindNum = _countof(nsFuncCode::ppszFuncKind);
 
 
 /* ファイル操作系 */
-const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
+const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	F_FILENEW			,	//新規作成
 	F_FILEOPEN			,	//開く
 	F_FILEOPEN_DROPDOWN	,	//開く(ドロップダウン)
@@ -94,11 +94,11 @@ const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_Fil
 	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 };
-const int nFincList_File_Num = sizeof( pnFuncList_File ) / sizeof( pnFuncList_File[0] );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
+const int nFincList_File_Num = _countof( pnFuncList_File );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
 
 
 /* 編集系 */
-const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
+const EFunctionCode pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 	F_UNDO				,	//元に戻す(Undo)
 	F_REDO				,	//やり直し(Redo)
 	F_DELETE			,	//削除
@@ -126,11 +126,11 @@ const int pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edi
 	F_RECONVERT				//再変換 				2002.04.09 minfu
 //		F_WORDSREFERENCE		//単語リファレンス
 };
-const int nFincList_Edit_Num = sizeof( pnFuncList_Edit ) / sizeof( pnFuncList_Edit[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
+const int nFincList_Edit_Num = _countof( pnFuncList_Edit );	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 
 
 /* カーソル移動系 */
-const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
+const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 	F_UP				,	//カーソル上移動
 	F_DOWN				,	//カーソル下移動
 	F_LEFT				,	//カーソル左移動
@@ -160,11 +160,11 @@ const int pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Mov
 	F_GONEXTPARAGRAPH	,	//次の段落へ
 	F_GOPREVPARAGRAPH		//前の段落へ
 };
-const int nFincList_Move_Num = sizeof( pnFuncList_Move ) / sizeof( pnFuncList_Move[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
+const int nFincList_Move_Num = _countof( pnFuncList_Move );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
 
 /* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
-const int pnFuncList_Select[] = {
+const EFunctionCode pnFuncList_Select[] = {
 	F_SELECTWORD			,	//現在位置の単語選択
 	F_SELECTALL				,	//すべて選択
 	F_BEGIN_SEL				,	//範囲選択開始
@@ -189,11 +189,11 @@ const int pnFuncList_Select[] = {
 	F_GONEXTPARAGRAPH_SEL	,	//(範囲選択)次の段落へ
 	F_GOPREVPARAGRAPH_SEL		//(範囲選択)前の段落へ
 };
-const int nFincList_Select_Num = sizeof( pnFuncList_Select ) / sizeof( pnFuncList_Select[0] );
+const int nFincList_Select_Num = _countof( pnFuncList_Select );
 
 
 /* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
-const int pnFuncList_Box[] = {
+const EFunctionCode pnFuncList_Box[] = {
 //	F_BOXSELALL			,	//矩形ですべて選択
 	F_BEGIN_BOX			,	//矩形範囲選択開始
 /*
@@ -215,19 +215,19 @@ const int pnFuncList_Box[] = {
 	F_GOFILEEND_BOX			//(矩形選択)ファイルの最後に移動
 */
 };
-const int nFincList_Box_Num = sizeof( pnFuncList_Box ) / sizeof( pnFuncList_Box[0] );
+const int nFincList_Box_Num = _countof( pnFuncList_Box );
 
 
 /* クリップボード系 */
-const int pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
+const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
 	F_CUT						,	//切り取り(選択範囲をクリップボードにコピーして削除)
 	F_COPY						,	//コピー(選択範囲をクリップボードにコピー)
 	F_COPY_ADDCRLF				,	//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	F_COPY_CRLF					,	//CRLF改行でコピー
 	F_PASTE						,	//貼り付け(クリップボードから貼り付け)
 	F_PASTEBOX					,	//矩形貼り付け(クリップボードから矩形貼り付け)
-//	F_INSTEXT					,	//テキストを貼り付け		//Oct. 22, 2000 JEPRO ここに追加したが非公式機能なのか不明なのでコメントアウトにしておく
-//	F_ADDTAIL					,	//最後にテキストを追加		//Oct. 22, 2000 JEPRO ここに追加したが非公式機能なのか不明なのでコメントアウトにしておく
+//	F_INSTEXT_W					,	//テキストを貼り付け		//Oct. 22, 2000 JEPRO ここに追加したが非公式機能なのか不明なのでコメントアウトにしておく
+//	F_ADDTAIL_W					,	//最後にテキストを追加		//Oct. 22, 2000 JEPRO ここに追加したが非公式機能なのか不明なのでコメントアウトにしておく
 	F_COPYLINES					,	//選択範囲内全行コピー
 	F_COPYLINESASPASSAGE		,	//選択範囲内全行引用符付きコピー
 	F_COPYLINESWITHLINENUMBER	,	//選択範囲内全行行番号付きコピー
@@ -236,20 +236,20 @@ const int pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Cli
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
-const int nFincList_Clip_Num = sizeof( pnFuncList_Clip ) / sizeof( pnFuncList_Clip[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
+const int nFincList_Clip_Num = _countof( pnFuncList_Clip );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
 
 /* 挿入系 */
-const int pnFuncList_Insert[] = {
+const EFunctionCode pnFuncList_Insert[] = {
 	F_INS_DATE				,	// 日付挿入
 	F_INS_TIME				,	// 時刻挿入
 	F_CTRL_CODE_DIALOG			//コントロールコードの入力
 };
-const int nFincList_Insert_Num = sizeof( pnFuncList_Insert ) / sizeof( pnFuncList_Insert[0] );
+const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
 
 
 /* 変換系 */
-const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
+const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
 	F_TOLOWER				,	//小文字
 	F_TOUPPER				,	//大文字
 	F_TOHANKAKU				,	/* 全角→半角 */
@@ -263,7 +263,7 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_HANKATATOZENKAKUKATA	,	/* 半角カタカナ→全角カタカナ */
 	F_HANKATATOZENKAKUHIRA	,	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE			,	/* TAB→空白 */
-	F_SPACETOTAB			,	/* 空白→TAB */  //#### Stonee, 2001/05/27
+	F_SPACETOTAB			,	/* 空白→TAB */  //---- Stonee, 2001/05/27
 	F_CODECNV_AUTO2SJIS		,	/* 自動判別→SJISコード変換 */
 	F_CODECNV_EMAIL			,	//E-Mail(JIS→SJIS)コード変換
 	F_CODECNV_EUC2SJIS		,	//EUC→SJISコード変換
@@ -280,11 +280,11 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	//Sept. 30, 2000JEPRO コメントアウトされてあったのを復活させた(動作しないのかも？)
 	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 };
-const int nFincList_Convert_Num = sizeof( pnFuncList_Convert ) / sizeof( pnFuncList_Convert[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
+const int nFincList_Convert_Num = _countof( pnFuncList_Convert );	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
 
 
 /* 検索系 */
-const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
+const EFunctionCode pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 	F_SEARCH_DIALOG		,	//検索(単語検索ダイアログ)
 	F_SEARCH_BOX		,	//検索(ボックス)
 	F_SEARCH_NEXT		,	//次を検索	//Sept. 16, 2000 JEPRO "次"を"前"の前に移動
@@ -320,22 +320,22 @@ const int pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_S
 	F_ISEARCH_MIGEMO_NEXT,	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 	F_ISEARCH_MIGEMO_PREV	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 };
-const int nFincList_Search_Num = sizeof( pnFuncList_Search ) / sizeof( pnFuncList_Search[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
+const int nFincList_Search_Num = _countof( pnFuncList_Search );	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 
 
 /* モード切り替え系 */	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
-const int pnFuncList_Mode[] = {
+const EFunctionCode pnFuncList_Mode[] = {
 	F_CHGMOD_INS		,	//挿入／上書きモード切り替え
 	F_CHGMOD_EOL_CRLF	,	//入力改行コード指定(CRLF)	2003.06.23 Moca
 	F_CHGMOD_EOL_LF		,	//入力改行コード指定(LF)	2003.06.23 Moca
 	F_CHGMOD_EOL_CR		,	//入力改行コード指定(CR)	2003.06.23 Moca
 	F_CANCEL_MODE			//各種モードの取り消し
 };
-const int nFincList_Mode_Num = sizeof( pnFuncList_Mode ) / sizeof( pnFuncList_Mode[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
+const int nFincList_Mode_Num = _countof( pnFuncList_Mode );	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
 
 
 /* 設定系 */
-const int pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
+const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 	F_SHOWTOOLBAR		,	/* ツールバーの表示 */
 	F_SHOWFUNCKEY		,	/* ファンクションキーの表示 */	//Sept. 14, 2000 JEPRO ファンクションキーとステータスバーを入れ替え
 	F_SHOWTAB			,	/* タブの表示 */	//@@@ 2003.06.10 MIK
@@ -348,11 +348,11 @@ const int pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 	F_PRINT_PAGESETUP	,	//印刷ページ設定				//Sept. 14, 2000 JEPRO 「印刷のページレイアウトの設定」を「印刷ページ設定」に変更	//Oct. 17, 2000 コマンド本家は「ファイル操作系」
 	F_FAVORITE				//履歴の管理	//@@@ 2003.04.08 MIK
 };
-int		nFincList_Set_Num = sizeof( pnFuncList_Set ) / sizeof( pnFuncList_Set[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
+int		nFincList_Set_Num = _countof( pnFuncList_Set );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 
 
 /* マクロ系 */
-const int pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
+const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
 	F_RECKEYMACRO	,	/* キーマクロの記録開始／終了 */
 	F_SAVEKEYMACRO	,	/* キーマクロの保存 */
 	F_LOADKEYMACRO	,	/* キーマクロの読み込み */
@@ -363,14 +363,14 @@ const int pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_M
 //	To Here Sept. 20, 2000
 
 };
-const int nFincList_Macro_Num = sizeof( pnFuncList_Macro) / sizeof( pnFuncList_Macro[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
+const int nFincList_Macro_Num = _countof( pnFuncList_Macro);	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
 
 
 /* カスタムメニュー */	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
 #if 0
 //	From Here Oct. 15, 2001 genta
 //	カスタムメニューの文字列を動的に変更可能にするためこれは削除．
-const int pnFuncList_Menu[] = {
+const EFunctionCode pnFuncList_Menu[] = {
 	F_MENU_RBUTTON				,	/* 右クリックメニュー */
 	F_CUSTMENU_1				,	/* カスタムメニュー1 */
 	F_CUSTMENU_2				,	/* カスタムメニュー2 */
@@ -397,11 +397,11 @@ const int pnFuncList_Menu[] = {
 	F_CUSTMENU_23				,	/* カスタムメニュー23 */
 	F_CUSTMENU_24				 	/* カスタムメニュー24 */
 };
-const int nFincList_Menu_Num = sizeof( pnFuncList_Menu ) / sizeof( pnFuncList_Menu[0] );	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
+const int nFincList_Menu_Num = _countof( pnFuncList_Menu );	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
 #endif
 
 /* ウィンドウ系 */
-const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
+const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_SPLIT_V			,	//上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 	F_SPLIT_H			,	//左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 	F_SPLIT_VH			,	//縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
@@ -429,11 +429,11 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_REDRAW			,	//再描画
 	F_WIN_OUTPUT		,	//アウトプットウィンドウ表示
 };
-const int nFincList_Win_Num = sizeof( pnFuncList_Win ) / sizeof( pnFuncList_Win[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
+const int nFincList_Win_Num = _countof( pnFuncList_Win );	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 
 
 /* 支援 */
-const int pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
+const EFunctionCode pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 	F_HOKAN						,	/* 入力補完 */
 	F_TOGGLE_KEY_SEARCH			,	/* キャレット位置の単語を辞書検索する機能ON/OFF */	// 2006.03.24 fon
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
@@ -444,15 +444,15 @@ const int pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List
 	F_EXTHTMLHELP				,	/* 外部HTMLヘルプ */
 	F_ABOUT							/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 };
-const int nFincList_Support_Num = sizeof( pnFuncList_Support ) / sizeof( pnFuncList_Support[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
+const int nFincList_Support_Num = _countof( pnFuncList_Support );	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 
 
 /* その他 */	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
-const int pnFuncList_Others[] = {
+const EFunctionCode pnFuncList_Others[] = {
 //	F_SENDMAIL					,	/* メール送信 */
 	F_DISABLE				//Oct. 21, 2000 JEPRO 何もないとエラーになってしまうのでダミーで[未定義]を入れておく
 };
-const int nFincList_Others_Num = sizeof( pnFuncList_Others ) / sizeof( pnFuncList_Others[0] );	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
+const int nFincList_Others_Num = _countof( pnFuncList_Others );	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 
 
 
@@ -478,27 +478,838 @@ const int nsFuncCode::pnFuncListNumArr[] = {
 	nFincList_Support_Num,	/* 支援 */				//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 	nFincList_Others_Num	/* その他 */			//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 };
-const int *	nsFuncCode::ppnFuncListArr[] = {
-//	(int*)pnFuncList_Undef,	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
-	(int*)pnFuncList_File,	/* ファイル操作系 */	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
-	(int*)pnFuncList_Edit,	/* 編集系 */			//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
-	(int*)pnFuncList_Move,	/* カーソル移動系 */	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
-	(int*)pnFuncList_Select,/* 選択系 */			//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動  (矩形選択)は新設され次第ここにおく
-	(int*)pnFuncList_Box,	/* 矩形選択系 */		//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
-	(int*)pnFuncList_Clip,	/* クリップボード系 */	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
-	(int*)pnFuncList_Insert,/* 挿入系 */
-	(int*)pnFuncList_Convert,/* 変換系 */			//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
-	(int*)pnFuncList_Search,/* 検索系 */			//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
-	(int*)pnFuncList_Mode,	/* モード切り替え系 */	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
-	(int*)pnFuncList_Set,	/* 設定系 */			//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
-	(int*)pnFuncList_Macro,	/* マクロ系 */			//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
+const EFunctionCode* nsFuncCode::ppnFuncListArr[] = {
+//	pnFuncList_Undef,	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
+	pnFuncList_File,	/* ファイル操作系 */	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
+	pnFuncList_Edit,	/* 編集系 */			//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
+	pnFuncList_Move,	/* カーソル移動系 */	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
+	pnFuncList_Select,/* 選択系 */			//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動  (矩形選択)は新設され次第ここにおく
+	pnFuncList_Box,	/* 矩形選択系 */		//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
+	pnFuncList_Clip,	/* クリップボード系 */	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
+	pnFuncList_Insert,/* 挿入系 */
+	pnFuncList_Convert,/* 変換系 */			//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
+	pnFuncList_Search,/* 検索系 */			//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
+	pnFuncList_Mode,	/* モード切り替え系 */	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
+	pnFuncList_Set,	/* 設定系 */			//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
+	pnFuncList_Macro,	/* マクロ系 */			//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
 //	カスタムメニューの文字列を動的に変更可能にするためこれは削除
-//	(int*)pnFuncList_Menu,	/* カスタムメニュー */	//Oct. 21, 2000 JEPRO「その他」から分離独立化
-	(int*)pnFuncList_Win,	/* ウィンドウ系 */		//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
-	(int*)pnFuncList_Support,/* 支援 */				//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
-	(int*)pnFuncList_Others	/* その他 */			//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
+//	pnFuncList_Menu,	/* カスタムメニュー */	//Oct. 21, 2000 JEPRO「その他」から分離独立化
+	pnFuncList_Win,	/* ウィンドウ系 */		//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
+	pnFuncList_Support,/* 支援 */				//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
+	pnFuncList_Others	/* その他 */			//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 };
-const int nsFuncCode::nFincListNumArrNum = sizeof( nsFuncCode::pnFuncListNumArr ) / sizeof( nsFuncCode::pnFuncListNumArr[0] );
+const int nsFuncCode::nFincListNumArrNum = _countof( nsFuncCode::pnFuncListNumArr );
 
 
-/*[EOF]*/
+
+
+//! 機能番号に応じてヘルプトピック番号を返す
+/*!
+	@author Stonee
+	@date	2001/02/23
+	@param nFuncID 機能番号
+	@return ヘルプトピック番号。該当IDが無い場合には0を返す。
+
+	内容はcase文の羅列。
+
+	@par history
+	2001.12.22 YAZAKI sakura.hhを参照するように変更
+*/
+int FuncID_To_HelpContextID( EFunctionCode nFuncID )
+{
+	switch( nFuncID ){
+
+	/* ファイル操作系 */
+	case F_FILENEW:				return HLP000025;			//新規作成
+	case F_FILEOPEN:			return HLP000015;			//開く
+	case F_FILEOPEN_DROPDOWN:	return HLP000015;			//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
+	case F_FILESAVE:			return HLP000020;			//上書き保存
+	case F_FILESAVEAS_DIALOG:	return HLP000021;			//名前を付けて保存
+	case F_FILESAVEALL:			return HLP000313;			//すべて上書き保存	// 2006.10.05 ryoji
+	case F_FILESAVECLOSE:		return HLP000287;			//保存して閉じる	// 2006.10.05 ryoji
+	case F_FILECLOSE:			return HLP000017;			//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+	case F_FILECLOSE_OPEN:		return HLP000119;			//閉じて開く
+	case F_FILE_REOPEN:			return HLP000283;			//開き直す	//@@@ 2003.06.15 MIK
+	case F_FILE_REOPEN_SJIS:	return HLP000156;			//SJISで開き直す
+	case F_FILE_REOPEN_JIS:		return HLP000157;			//JISで開き直す
+	case F_FILE_REOPEN_EUC:		return HLP000158;			//EUCで開き直す
+	case F_FILE_REOPEN_UNICODE:	return HLP000159;			//Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE:	return HLP000256;		//UnicodeBEで開き直す
+	case F_FILE_REOPEN_UTF8:	return HLP000160;			//UTF-8で開き直す
+	case F_FILE_REOPEN_UTF7:	return HLP000161;			//UTF-7で開き直す
+	case F_PRINT:				return HLP000162;			//印刷				//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	case F_PRINT_PREVIEW:		return HLP000120;			//印刷プレビュー
+	case F_PRINT_PAGESETUP:		return HLP000122;			//印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	case F_OPEN_HfromtoC:		return HLP000192;			//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+	case F_OPEN_HHPP:			return HLP000024;			//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	case F_OPEN_CCPP:			return HLP000026;			//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	case F_ACTIVATE_SQLPLUS:	return HLP000132;			/* Oracle SQL*Plusをアクティブ表示 */
+	case F_PLSQL_COMPILE_ON_SQLPLUS:	return HLP000027;	/* Oracle SQL*Plusで実行 */
+	case F_BROWSE:				return HLP000121;			//ブラウズ
+	case F_READONLY:			return HLP000249;			//読み取り専用
+	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
+
+	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
+	case F_EXITALL:			return HLP000028;				//サクラエディタの全終了	//Dec. 26, 2000 JEPRO F_に変更
+
+
+	/* 編集系 */
+	case F_UNDO:						return HLP000032;	//元に戻す(Undo)
+	case F_REDO:						return HLP000033;	//やり直し(Redo)
+	case F_DELETE:						return HLP000041;	//削除
+	case F_DELETE_BACK:					return HLP000042;	//カーソル前を削除
+	case F_WordDeleteToStart:			return HLP000166;	//単語の左端まで削除
+	case F_WordDeleteToEnd:				return HLP000167;	//単語の右端まで削除
+	case F_WordCut:						return HLP000169;	//単語切り取り
+	case F_WordDelete:					return HLP000168;	//単語削除
+	case F_LineCutToStart:				return HLP000172;	//行頭まで切り取り(改行単位)
+	case F_LineCutToEnd:				return HLP000173;	//行末まで切り取り(改行単位)
+	case F_LineDeleteToStart:			return HLP000170;	//行頭まで削除(改行単位)
+	case F_LineDeleteToEnd:				return HLP000171;	//行末まで削除(改行単位)
+	case F_CUT_LINE:					return HLP000174;	//行切り取り(折り返し単位)
+	case F_DELETE_LINE:					return HLP000137;	//行削除(折り返し単位)
+	case F_DUPLICATELINE:				return HLP000043;	//行の二重化(折り返し単位)
+	case F_INDENT_TAB:					return HLP000113;	//TABインデント
+	case F_UNINDENT_TAB:				return HLP000113;	//逆TABインデント
+	case F_INDENT_SPACE:				return HLP000114;	//SPACEインデント
+	case F_UNINDENT_SPACE:				return HLP000114;	//逆SPACEインデント
+	case F_RECONVERT:					return HLP000218;	//再変換
+//	case ORDSREFERENCE:					return ;	//単語リファレンス
+
+
+	/* カーソル移動系 */
+	case F_UP:				return HLP000289;	//カーソル上移動	// 2006.10.11 ryoji
+	case F_DOWN:			return HLP000289;	//カーソル下移動	// 2006.10.11 ryoji
+	case F_LEFT:			return HLP000289;	//カーソル左移動	// 2006.10.11 ryoji
+	case F_RIGHT:			return HLP000289;	//カーソル右移動	// 2006.10.11 ryoji
+	case F_UP2:				return HLP000220;	//カーソル上移動(２行ごと)
+	case F_DOWN2:			return HLP000221;	//カーソル下移動(２行ごと)
+	case F_WORDLEFT:		return HLP000222;	//単語の左端に移動
+	case F_WORDRIGHT:		return HLP000223;	//単語の右端に移動
+	case F_GOLINETOP:		return HLP000224;	//行頭に移動(折り返し単位)
+	case F_GOLINEEND:		return HLP000225;	//行末に移動(折り返し単位)
+//	case F_ROLLDOWN:		return ;	//スクロールダウン
+//	case F_ROLLUP:			return ;	//スクロールアップ
+	case F_HalfPageUp:		return HLP000245;	//半ページアップ	//Oct. 17, 2000 JEPRO 以下「１ページダウン」まで追加
+	case F_HalfPageDown:	return HLP000246;	//半ページダウン
+	case F_1PageUp:			return HLP000226;	//１ページアップ
+	case F_1PageDown:		return HLP000227;	//１ページダウン
+	case F_GOFILETOP:		return HLP000228;	//ファイルの先頭に移動
+	case F_GOFILEEND:		return HLP000229;	//ファイルの最後に移動
+	case F_CURLINECENTER:	return HLP000230;	//カーソル行をウィンドウ中央へ
+	case F_JUMP_SRCHSTARTPOS:	return HLP000264; //検索開始位置へ戻る
+	case F_JUMPHIST_PREV:		return HLP000231;	//移動履歴: 前へ	//Oct. 17, 2000 JEPRO 以下「移動履歴:次へ」まで追加
+	case F_JUMPHIST_NEXT:		return HLP000232;	//移動履歴: 次へ
+	case F_JUMPHIST_SET:	return HLP000265;	//現在位置を移動履歴に登録
+	case F_WndScrollDown:	return HLP000198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
+	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
+	case F_GONEXTPARAGRAPH:	return HLP000262;	//前の段落に移動
+	case F_GOPREVPARAGRAPH:	return HLP000263;	//前の段落に移動
+
+	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
+	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
+	case F_SELECTALL:		return HLP000044;	//すべて選択
+	case F_BEGIN_SEL:		return HLP000233;	//範囲選択開始
+	case F_UP_SEL:			return HLP000290;	//(範囲選択)カーソル上移動	// 2006.10.11 ryoji
+	case F_DOWN_SEL:		return HLP000290;	//(範囲選択)カーソル下移動	// 2006.10.11 ryoji
+	case F_LEFT_SEL:		return HLP000290;	//(範囲選択)カーソル左移動	// 2006.10.11 ryoji
+	case F_RIGHT_SEL:		return HLP000290;	//(範囲選択)カーソル右移動	// 2006.10.11 ryoji
+	case F_UP2_SEL:			return HLP000234;	//(範囲選択)カーソル上移動(２行ごと)
+	case F_DOWN2_SEL:		return HLP000235;	//(範囲選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_SEL:	return HLP000236;	//(範囲選択)単語の左端に移動
+	case F_WORDRIGHT_SEL:	return HLP000237;	//(範囲選択)単語の右端に移動
+	case F_GONEXTPARAGRAPH_SEL:	return HLP000273;	//(範囲選択)前の段落に移動	//@@@ 2003.06.15 MIK
+	case F_GOPREVPARAGRAPH_SEL:	return HLP000274;	//(範囲選択)前の段落に移動	//@@@ 2003.06.15 MIK
+	case F_GOLINETOP_SEL:	return HLP000238;	//(範囲選択)行頭に移動(折り返し単位)
+	case F_GOLINEEND_SEL:	return HLP000239;	//(範囲選択)行末に移動(折り返し単位)
+//	case F_ROLLDOWN_SEL:	return ;	//(範囲選択)スクロールダウン
+//	case F_ROLLUP_SEL:		return ;	//(範囲選択)スクロールアップ
+	case F_HalfPageUp_Sel:	return HLP000247;	//(範囲選択)半ページアップ		//Oct. 17, 2000 JEPRO 以下「１ページダウン」まで追加
+	case F_HalfPageDown_Sel:return HLP000248;	//(範囲選択)半ページダウン
+	case F_1PageUp_Sel:		return HLP000240;	//(範囲選択)１ページアップ
+	case F_1PageDown_Sel:	return HLP000241;	//(範囲選択)１ページダウン
+	case F_GOFILETOP_SEL:	return HLP000242;	//(範囲選択)ファイルの先頭に移動
+	case F_GOFILEEND_SEL:	return HLP000243;	//(範囲選択)ファイルの最後に移動
+//	case F_GONEXTPARAGRAPH_SEL:	return HLP000262;	//(範囲選択)次の段落へ
+//	case F_GOPREVPARAGRAPH_SEL:	return HLP000263;	//(範囲選択)前の段落へ
+
+
+	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
+//	case F_BOXSELALL:		return ;	//矩形ですべて選択
+	case F_BEGIN_BOX:		return HLP000244;	//矩形範囲選択開始
+/*
+	case F_UP_BOX:			return ;	//(矩形選択)カーソル上移動	//Oct. 17, 2000 JEPRO 以下「ファイルの最後に移動」まで追加
+	case F_DOWN_BOX:		return ;	//(矩形選択)カーソル下移動
+	case F_LEFT_BOX:		return ;	/(矩形選択)カーソル左移動
+	case F_RIGHT_BOX:		return ;	//(矩形選択)カーソル右移動
+	case F_UP2_BOX:			return ;	//(矩形選択)カーソル上移動(２行ごと)
+	case F_DOWN2_BOX:		return ;	//(矩形選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_BOX:	return ;	//(矩形選択)単語の左端に移動
+	case F_WORDRIGHT_BOX:	return ;	//(矩形選択)単語の右端に移動
+	case F_GOLINETOP_BOX:	return ;	//(矩形選択)行頭に移動(折り返し単位)
+	case F_GOLINEEND_BOX:	return ;	//(矩形選択)行末に移動(折り返し単位)
+	case F_HalfPageUp_Box:	return ;	//(矩形選択)半ページアップ
+	case F_HalfPageDown_Box:return ;	//(矩形選択)半ページダウン
+	case F_1PageUp_Box:		return ;	//(矩形選択)１ページアップ
+	case F_1PageDown_Box:	return ;	//(矩形選択)１ページダウン
+	case F_GOFILETOP_BOX:	return ;	//(矩形選択)ファイルの先頭に移動
+	case F_GOFILEEND_BOX:	return ;	//(矩形選択)ファイルの最後に移動
+*/
+	/* 整形系 2002/04/17 YAZAKI */
+	case F_LTRIM:		return HLP000210;	//左(先頭)の空白を削除
+	case F_RTRIM:		return HLP000211;	//右(末尾)の空白を削除
+	case F_SORT_ASC:	return HLP000212;	//選択行の昇順ソート
+	case F_SORT_DESC:	return HLP000213;	//選択行の降順ソート
+	case F_MERGE:		return HLP000214;	//選択行のマージ
+
+	/* クリップボード系 */
+	case F_CUT:				return HLP000034;			//切り取り(選択範囲をクリップボードにコピーして削除)
+	case F_COPY:			return HLP000035;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF:	return HLP000219;			//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_CRLF:		return HLP000163;			//CRLF改行でコピー(選択範囲をクリップボードにコピー)	//Feb. 23, 2001 JEPRO 抜けていたので追加
+	case F_PASTE:			return HLP000039;			//貼り付け(クリップボードから貼り付け)
+	case F_PASTEBOX:		return HLP000040;			//矩形貼り付け(クリップボードから矩形貼り付け)
+//	case F_INSTEXT_W:			return ;			// テキストを貼り付け
+	case F_COPYLINES:				return HLP000036;	//選択範囲内全行コピー
+	case F_COPYLINESASPASSAGE:		return HLP000037;	//選択範囲内全行引用符付きコピー
+	case F_COPYLINESWITHLINENUMBER:	return HLP000038;	//選択範囲内全行行番号付きコピー
+	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
+	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
+	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
+//	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
+	case F_CREATEKEYBINDLIST:		return HLP000057;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 JEPRO 「リスト」を「一覧」に変更、IDM＿TESTをFに変更したがうまくいかないので殺してある	//Dec. 25, 2000 復活
+
+
+	/* 挿入系 */
+	case F_INS_DATE:				return HLP000164;	// 日付挿入
+	case F_INS_TIME:				return HLP000165;	// 時刻挿入
+	case F_CTRL_CODE_DIALOG:		return HLP000255;	/* コントロールコード入力 */
+
+
+	/* 変換系 */
+	case F_TOLOWER:					return HLP000047;	//小文字
+	case F_TOUPPER:					return HLP000048;	//大文字
+	case F_TOHANKAKU:				return HLP000049;	/* 全角→半角 */
+	case F_TOHANKATA:				return HLP000258;	//全角カタカナ→半角カタカナ
+	case F_TOZENKAKUKATA:			return HLP000050;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
+	case F_TOZENKAKUHIRA:			return HLP000051;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+	case F_HANKATATOZENKAKUKATA:	return HLP000123;	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENKAKUHIRA:	return HLP000124;	/* 半角カタカナ→全角ひらがな */
+	case F_TOZENEI:					return HLP000200;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka //Stonee, 2001/09/26 番号修正
+	case F_TOHANEI:					return HLP000215;	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
+	case F_TABTOSPACE:				return HLP000182;	/* TAB→空白 */
+	case F_SPACETOTAB:				return HLP000196;	/* 空白→TAB */	//---- Stonee, 2001/05/27	//Jul. 03, 2001 JEPRO 番号修正
+	case F_CODECNV_AUTO2SJIS:		return HLP000178;	/* 自動判別→SJISコード変換 */
+	case F_CODECNV_EMAIL:			return HLP000052;	//E-Mail(JIS→SJIS)コード変換
+	case F_CODECNV_EUC2SJIS:		return HLP000053;	//EUC→SJISコード変換
+	case F_CODECNV_UNICODE2SJIS:	return HLP000179;	//Unicode→SJISコード変換
+	case F_CODECNV_UNICODEBE2SJIS:	return HLP000257;	//UnicodeBE→SJISコード変換
+	case F_CODECNV_UTF82SJIS:		return HLP000142;	/* UTF-8→SJISコード変換 */
+	case F_CODECNV_UTF72SJIS:		return HLP000143; /* UTF-7→SJISコード変換 */
+	case F_CODECNV_SJIS2JIS:		return HLP000117;	/* SJIS→JISコード変換 */
+	case F_CODECNV_SJIS2EUC:		return HLP000118;	/* SJIS→EUCコード変換 */
+	case F_CODECNV_SJIS2UTF8:		return HLP000180;	/* SJIS→UTF-8コード変換 */
+	case F_CODECNV_SJIS2UTF7:		return HLP000181;	/* SJIS→UTF-7コード変換 */
+	case F_BASE64DECODE:			return HLP000054;	//Base64デコードして保存
+	case F_UUDECODE:				return HLP000055;	//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+
+
+	/* 検索系 */
+	case F_SEARCH_DIALOG:		return HLP000059;	//検索(単語検索ダイアログ)
+	case F_SEARCH_BOX:			return HLP000059;	//検索(ボックス) Jan. 13, 2003 MIK
+	case F_SEARCH_NEXT:			return HLP000061;	//次を検索
+	case F_SEARCH_PREV:			return HLP000060;	//前を検索
+	case F_REPLACE_DIALOG:		return HLP000062;	//置換(置換ダイアログ)
+	case F_SEARCH_CLEARMARK:	return HLP000136;	//検索マークのクリア
+	case F_GREP_DIALOG:			return HLP000067;	//Grep
+	case F_JUMP_DIALOG:			return HLP000063;	//指定行へジャンプ
+	case F_OUTLINE:				return HLP000064;	//アウトライン解析
+	case F_OUTLINE_TOGGLE:		return HLP000317;	//アウトライン解析(トグル)	// 2006.10.11 ryoji
+	case F_TAGJUMP:				return HLP000065;	//タグジャンプ機能
+	case F_TAGJUMPBACK:			return HLP000066;	//タグジャンプバック機能
+	case F_TAGS_MAKE:			return HLP000280;	//タグファイルの作成	//@@@ 2003.04.13 MIK
+	case F_TAGJUMP_LIST:		return HLP000281;	//タグジャンプ一覧	//@@@ 2003.04.17 MIK
+	case F_DIRECT_TAGJUMP:		return HLP000281;	//ダイレクトタグジャンプ	//@@@ 2003.04.17 MIK
+	case F_TAGJUMP_CLOSE:		return HLP000291;	//閉じてタグジャンプ(元ウィンドウClose)	// 2006.10.11 ryoji
+	case F_TAGJUMP_KEYWORD:		return HLP000310;	//キーワードを指定してタグジャンプ	// 2006.10.05 ryoji
+	case F_COMPARE:				return HLP000116;	//ファイル内容比較
+	case F_DIFF_DIALOG:			return HLP000251;	//DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+//	case F_DIFF:				return HLP000251;	//DIFF差分表示	//@@@ 2002.05.25 MIK
+	case F_DIFF_NEXT:			return HLP000252;	//次の差分へ	//@@@ 2002.05.25 MIK
+	case F_DIFF_PREV:			return HLP000253;	//前の差分へ	//@@@ 2002.05.25 MIK
+	case F_DIFF_RESET:			return HLP000254;	//差分の全解除	//@@@ 2002.05.25 MIK
+	case F_BRACKETPAIR:			return HLP000183;	//対括弧の検索	//Oct. 17, 2000 JEPRO 追加
+	case F_BOOKMARK_SET:		return HLP000205;	//ブックマーク設定・解除
+	case F_BOOKMARK_NEXT:		return HLP000206;	//次のブックマークへ
+	case F_BOOKMARK_PREV:		return HLP000207;	//前のブックマークへ
+	case F_BOOKMARK_RESET:		return HLP000208;	//ブックマークの全解除
+	case F_BOOKMARK_VIEW:		return HLP000209;	//ブックマークの一覧
+	case F_ISEARCH_NEXT:		return HLP000304;	//前方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_PREV:		return HLP000305;	//後方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_REGEXP_NEXT:	return HLP000306;	//正規表現前方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_REGEXP_PREV:	return HLP000307;	//正規表現後方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_MIGEMO_NEXT:	return HLP000308;	//MIGEMO前方インクリメンタルサーチ	// 2006.10.05 ryoji
+	case F_ISEARCH_MIGEMO_PREV:	return HLP000309;	//MIGEMO後方インクリメンタルサーチ	// 2006.10.05 ryoji
+
+	/* モード切り替え系 */
+	case F_CHGMOD_INS:		return HLP000046;	//挿入／上書きモード切り替え
+	case F_CHGMOD_EOL_CRLF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
+	case F_CHGMOD_EOL_CR:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
+	case F_CHGMOD_EOL_LF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
+	case F_CANCEL_MODE:		return HLP000194;	//各種モードの取り消し
+
+
+	/* 設定系 */
+	case F_SHOWTOOLBAR:		return HLP000069;	/* ツールバーの表示 */
+	case F_SHOWFUNCKEY:		return HLP000070;	/* ファンクションキーの表示 */
+	case F_SHOWTAB:			return HLP000282;	/* タブの表示 */	//@@@ 2003.06.10 MIK
+	case F_SHOWSTATUSBAR:	return HLP000134;	/* ステータスバーの表示 */
+	case F_TYPE_LIST:		return HLP000072;	/* タイプ別設定一覧 */
+	case F_OPTION_TYPE:		return HLP000073;	/* タイプ別設定 */
+	case F_OPTION:			return HLP000076;	/* 共通設定 */
+//From here 設定ダイアログ用のhelpトピックIDを追加  Stonee, 2001/05/18
+	case F_TYPE_SCREEN:		return HLP000074;	/* タイプ別設定『スクリーン』 */
+	case F_TYPE_COLOR:		return HLP000075;	/* タイプ別設定『カラー』 */
+	case F_TYPE_HELPER:		return HLP000197;	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
+	case F_TYPE_REGEX_KEYWORD:	return HLP000203;	/* タイプ別設定『正規表現キーワード』 */	//@@@ 2001.11.17 add MIK
+	case F_TYPE_KEYHELP:	return HLP000315;	/* タイプ別設定『キーワードヘルプ』 */	// 2006.10.06 ryoji 追加
+	case F_OPTION_GENERAL:	return HLP000081;	/* 共通設定『全般』 */
+	case F_OPTION_WINDOW:	return HLP000146;	/* 共通設定『ウィンドウ』 */
+	case F_OPTION_TAB:		return HLP000150;	/* 共通設定『タブバー』 */	// 2007.02.13 ryoji 追加
+	case F_OPTION_EDIT:		return HLP000144;	/* 共通設定『編集』 */
+	case F_OPTION_FILE:		return HLP000083;	/* 共通設定『ファイル』 */
+	case F_OPTION_BACKUP:	return HLP000145;	/* 共通設定『バックアップ』 */
+	case F_OPTION_FORMAT:	return HLP000082;	/* 共通設定『書式』 */
+//	case F_OPTION_URL:		return HLP000147;	/* 共通設定『クリッカブルURL』 */
+	case F_OPTION_GREP:		return HLP000148;	/* 共通設定『Grep』 */
+	case F_OPTION_KEYBIND:	return HLP000084;	/* 共通設定『キー割り当て』 */
+	case F_OPTION_CUSTMENU:	return HLP000087;	/* 共通設定『カスタムメニュー』 */
+	case F_OPTION_TOOLBAR:	return HLP000085;	/* 共通設定『ツールバー』 */
+	case F_OPTION_KEYWORD:	return HLP000086;	/* 共通設定『強調キーワード』 */
+	case F_OPTION_HELPER:	return HLP000088;	/* 共通設定『支援』 */
+//To here  Stonee, 2001/05/18
+	case F_OPTION_MACRO:	return HLP000201;	/* 共通設定『マクロ』 */	//@@@ 2002.01.02
+	case F_OPTION_FNAME:	return HLP000277;	/* 共通設定 『全般』プロパティ */	// 2002.12.09 Moca Add	//重複回避
+	case F_FONT:			return HLP000071;	/* フォント設定 */
+	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正
+	case F_FAVORITE:		return HLP000279;	/* 履歴の管理 */	//@@@ 2003.04.08 MIK
+
+	/* マクロ */
+	case F_RECKEYMACRO:		return HLP000125;	/* キーマクロ記録開始／終了 */
+	case F_SAVEKEYMACRO:	return HLP000127;	/* キーマクロ保存 */
+	case F_LOADKEYMACRO:	return HLP000128;	/* キーマクロ読み込み */
+	case F_EXECKEYMACRO:	return HLP000126;	/* キーマクロ実行 */
+//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
+//	case F_EXECCMMAND:		return 103; /* 外部コマンド実行 */
+	case F_EXECCOMMAND_DIALOG:	return HLP000103; /* 外部コマンド実行 */
+//	To Here Sept. 20, 2000
+
+
+	/* カスタムメニュー */
+	case F_MENU_RBUTTON:	return HLP000195;	/* 右クリックメニュー */
+	case F_CUSTMENU_1:	return HLP000186;	/* カスタムメニュー1 */
+	case F_CUSTMENU_2:	return HLP000186;	/* カスタムメニュー2 */
+	case F_CUSTMENU_3:	return HLP000186;	/* カスタムメニュー3 */
+	case F_CUSTMENU_4:	return HLP000186;	/* カスタムメニュー4 */
+	case F_CUSTMENU_5:	return HLP000186;	/* カスタムメニュー5 */
+	case F_CUSTMENU_6:	return HLP000186;	/* カスタムメニュー6 */
+	case F_CUSTMENU_7:	return HLP000186;	/* カスタムメニュー7 */
+	case F_CUSTMENU_8:	return HLP000186;	/* カスタムメニュー8 */
+	case F_CUSTMENU_9:	return HLP000186;	/* カスタムメニュー9 */
+	case F_CUSTMENU_10:	return HLP000186;	/* カスタムメニュー10 */
+	case F_CUSTMENU_11:	return HLP000186;	/* カスタムメニュー11 */
+	case F_CUSTMENU_12:	return HLP000186;	/* カスタムメニュー12 */
+	case F_CUSTMENU_13:	return HLP000186;	/* カスタムメニュー13 */
+	case F_CUSTMENU_14:	return HLP000186;	/* カスタムメニュー14 */
+	case F_CUSTMENU_15:	return HLP000186;	/* カスタムメニュー15 */
+	case F_CUSTMENU_16:	return HLP000186;	/* カスタムメニュー16 */
+	case F_CUSTMENU_17:	return HLP000186;	/* カスタムメニュー17 */
+	case F_CUSTMENU_18:	return HLP000186;	/* カスタムメニュー18 */
+	case F_CUSTMENU_19:	return HLP000186;	/* カスタムメニュー19 */
+	case F_CUSTMENU_20:	return HLP000186;	/* カスタムメニュー20 */
+	case F_CUSTMENU_21:	return HLP000186;	/* カスタムメニュー21 */
+	case F_CUSTMENU_22:	return HLP000186;	/* カスタムメニュー22 */
+	case F_CUSTMENU_23:	return HLP000186;	/* カスタムメニュー23 */
+	case F_CUSTMENU_24:	return HLP000186;	/* カスタムメニュー24 */
+
+
+	/* ウィンドウ系 */
+	case F_SPLIT_V:			return HLP000093;	//上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
+	case F_SPLIT_H:			return HLP000094;	//左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
+	case F_SPLIT_VH:		return HLP000095;	//縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+	case F_WINCLOSE:		return HLP000018;	//ウィンドウを閉じる
+	case F_WIN_CLOSEALL:	return HLP000019;	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+	case F_NEXTWINDOW:		return HLP000092;	//次のウィンドウ
+	case F_PREVWINDOW:		return HLP000091;	//前のウィンドウ
+	case F_WINLIST:			return HLP000314;	//ウィンドウ一覧	// 2006.10.05 ryoji
+	case F_BIND_WINDOW:		return HLP000311;	//結合して表示	// 2006.10.05 ryoji
+	case F_CASCADE:			return HLP000138;	//重ねて表示
+	case F_TILE_V:			return HLP000140;	//上下に並べて表示
+	case F_TILE_H:			return HLP000139;	//左右に並べて表示
+	case F_TOPMOST:			return HLP000312;	//常に手前に表示	// 2006.10.05 ryoji
+	case F_MAXIMIZE_V:		return HLP000141;	//縦方向に最大化
+	case F_MAXIMIZE_H:		return HLP000098;	//横方向に最大化	//2001.02.10 by MIK
+	case F_MINIMIZE_ALL:	return HLP000096;	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+	case F_REDRAW:			return HLP000187;	//再描画
+	case F_WIN_OUTPUT:		return HLP000188;	//アウトプットウィンドウ表示
+	case F_GROUPCLOSE:		return HLP000320;	//グループを閉じる	// 2007.06.20 ryoji
+	case F_NEXTGROUP:		return HLP000321;	//次のグループ	// 2007.06.20 ryoji
+	case F_PREVGROUP:		return HLP000322;	//前のグループ	// 2007.06.20 ryoji
+	case F_TAB_MOVERIGHT:	return HLP000323;	//タブを右に移動	// 2007.06.20 ryoji
+	case F_TAB_MOVELEFT:	return HLP000324;	//タブを左に移動	// 2007.06.20 ryoji
+	case F_TAB_SEPARATE:	return HLP000325;	//新規グループ	// 2007.06.20 ryoji
+	case F_TAB_JOINTNEXT:	return HLP000326;	//次のグループに移動	// 2007.06.20 ryoji
+	case F_TAB_JOINTPREV:	return HLP000327;	//前のグループに移動	// 2007.06.20 ryoji
+
+
+	/* 支援 */
+	case F_HOKAN:			return HLP000111;	/* 入力補完機能 */
+	case F_TOGGLE_KEY_SEARCH:	return HLP000318;	//キャレット位置辞書検索機能ON/OFF	// 2006.10.11 ryoji
+//Sept. 15, 2000→Nov. 25, 2000 JEPRO	//ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
+	case F_HELP_CONTENTS:	return HLP000100;	//ヘルプ目次			//Nov. 25, 2000 JEPRO
+	case F_HELP_SEARCH:		return HLP000101;	//ヘルプキーワード検索	//Nov. 25, 2000 JEPRO「トピックの」→「キーワード」に変更
+	case F_MENU_ALLFUNC:	return HLP000189;	/* コマンド一覧 */
+	case F_EXTHELP1:		return HLP000190;	/* 外部ヘルプ１ */
+	case F_EXTHTMLHELP:		return HLP000191;	/* 外部HTMLヘルプ */
+	case F_ABOUT:			return HLP000102;	//バージョン情報	//Dec. 24, 2000 JEPRO F_に変更
+
+
+	/* その他 */
+//	case F_SENDMAIL:		return ;	/* メール送信 */
+
+	default:
+		// From Here 2003.09.23 Moca
+		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
+			return HLP000029;	//最近使ったファイル
+		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
+			return HLP000023;	//最近使ったフォルダ
+		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
+			return HLP000097;	//ウィンドウリスト
+		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){
+			return HLP000202;	//登録済みマクロ	// 2006.10.08 ryoji
+		}
+		// To Here 2003.09.23 Moca
+		return 0;
+	}
+}
+
+
+
+
+
+/* 機能が利用可能か調べる */
+int IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
+{
+	/* 書き換え禁止のときを一括チェック */
+	if( pcEditDoc->IsModificationForbidden( nId ) )
+		return FALSE;
+
+	switch( nId ){
+	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
+		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}else{
+			return TRUE;
+		}
+	case F_SAVEKEYMACRO:	/* キーマクロの保存 */
+		//	Jun. 16, 2002 genta
+		//	キーマクロエンジン以外のマクロを読み込んでいるときは
+		//	実行はできるが保存はできない．
+		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}else{
+			return pcEditDoc->m_pcSMacroMgr->IsSaveOk();
+		}
+	case F_EXECKEYMACRO:	/* キーマクロの実行 */
+		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}else{
+			//@@@ 2002.1.24 YAZAKI m_szKeyMacroFileNameにファイル名がコピーされているかどうか。
+			if (pShareData->m_szKeyMacroFileName[0] ) {
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}
+	case F_LOADKEYMACRO:	/* キーマクロの読み込み */
+		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}else{
+			return TRUE;
+		}
+
+	case F_SEARCH_CLEARMARK:	//検索マークのクリア
+		return TRUE;
+
+	// 02/06/26 ai Start
+	case F_JUMP_SRCHSTARTPOS:	// 検索開始位置へ戻る
+		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_ptSrchStartPos_PHY.BothNatural() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	// 02/06/26 ai End
+
+	case F_COMPARE:	/* ファイル内容比較 */
+		if( 2 <= pShareData->m_nEditArrNum ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+
+	case F_DIFF_NEXT:	/* 次の差分へ */	//@@@ 2002.05.25 MIK
+	case F_DIFF_PREV:	/* 前の差分へ */	//@@@ 2002.05.25 MIK
+	case F_DIFF_RESET:	/* 差分の全解除 */	//@@@ 2002.05.25 MIK
+		if( ! pcEditDoc->m_cDocLineMgr.IsDiffUse() ) return FALSE;
+		return TRUE;
+	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
+		//if( pcEditDoc->IsModified() ) return FALSE;
+		//if( ! pcEditDoc->IsFilePathAvailable() ) return FALSE;
+		return TRUE;
+
+	case F_BEGIN_BOX:	//矩形範囲選択開始
+		if( pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_PASTEBOX:
+		/* クリップボードから貼り付け可能か？ */
+		if( pcEditDoc->IsEnablePaste() && pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_PASTE:
+		/* クリップボードから貼り付け可能か？ */
+		if( pcEditDoc->IsEnablePaste() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+
+	case F_FILENEW:	/* 新規作成 */
+	case F_GREP_DIALOG:	/* Grep */
+		/* 編集ウィンドウの上限チェック */
+		if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+			return FALSE;
+		}else{
+			return TRUE;
+		}
+
+	case F_FILESAVE:	/* 上書き保存 */
+		if( !pcEditDoc->m_bReadOnly ){	/* 読み取り専用モード */
+			if( pcEditDoc->IsModified() ){	/* 変更フラグ */
+				return TRUE;
+			}else{
+				/* 無変更でも上書きするか */
+				if( FALSE == pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
+					return FALSE;
+				}else{
+					return TRUE;
+				}
+			}
+		}else{
+			return FALSE;
+		}
+	case F_COPYLINES:				//選択範囲内全行コピー
+	case F_COPYLINESASPASSAGE:		//選択範囲内全行引用符付きコピー
+	case F_COPYLINESWITHLINENUMBER:	//選択範囲内全行行番号付きコピー
+		if( pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected( ) ){/* テキストが選択されているか */
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+
+	case F_TOLOWER:					/* 小文字 */
+	case F_TOUPPER:					/* 大文字 */
+	case F_TOHANKAKU:				/* 全角→半角 */
+	case F_TOHANKATA:				/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
+	case F_TOZENEI:					/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	case F_TOHANEI:					/* 全角英数→半角英数 */
+	case F_TOZENKAKUKATA:			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
+	case F_TOZENKAKUHIRA:			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+	case F_HANKATATOZENKAKUKATA:	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENKAKUHIRA:	/* 半角カタカナ→全角ひらがな */
+	case F_TABTOSPACE:				/* TAB→空白 */
+	case F_SPACETOTAB:				/* 空白→TAB */  //---- Stonee, 2001/05/27
+	case F_CODECNV_AUTO2SJIS:		/* 自動判別→SJISコード変換 */
+	case F_CODECNV_EMAIL:			/* E-Mail(JIS→SJIS)コード変換 */
+	case F_CODECNV_EUC2SJIS:		/* EUC→SJISコード変換 */
+	case F_CODECNV_UNICODE2SJIS:	/* Unicode→SJISコード変換 */
+	case F_CODECNV_UNICODEBE2SJIS:	/* UnicodeBE→SJISコード変換 */
+	case F_CODECNV_UTF82SJIS:		/* UTF-8→SJISコード変換 */
+	case F_CODECNV_UTF72SJIS:		/* UTF-7→SJISコード変換 */
+	case F_CODECNV_SJIS2JIS:		/* SJIS→JISコード変換 */
+	case F_CODECNV_SJIS2EUC:		/* SJIS→EUCコード変換 */
+	case F_CODECNV_SJIS2UTF8:		/* SJIS→UTF-8コード変換 */
+	case F_CODECNV_SJIS2UTF7:		/* SJIS→UTF-7コード変換 */
+	case F_BASE64DECODE:			/* Base64デコードして保存 */
+	case F_UUDECODE:				//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+
+		/* テキストが選択されているか */
+		if( pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected( ) ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_SELECTWORD:	/* 現在位置の単語選択 */
+	case F_CUT_LINE:	//行切り取り(折り返し単位)
+	case F_DELETE_LINE:	//行削除(折り返し単位)
+		/* テキストが選択されているか */
+		if( pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected( ) ){
+			return FALSE;
+		}else{
+			return TRUE;
+		}
+	case F_UNDO:
+		/* Undo(元に戻す)可能な状態か？ */
+		if( pcEditDoc->IsEnableUndo() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_REDO:
+		/* Redo(やり直し)可能な状態か？ */
+		if( pcEditDoc->IsEnableRedo() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+
+	case F_COPYPATH:
+	case F_COPYTAG:
+	case F_COPYFNAME:					// 2002/2/3 aroka
+	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+	case F_OPEN_HHPP:					//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
+	case F_BROWSE:						//ブラウズ
+	//case F_READONLY:					//読み取り専用	//	Sep. 10, 2002 genta 常に使えるように
+	case F_PROPERTY_FILE:
+		/* 現在編集中のファイルのパス名をクリップボードにコピーできるか */
+		if( pcEditDoc->IsFilePathAvailable() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
+		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )
+			return TRUE;
+		else
+			return FALSE;
+	case F_JUMPHIST_NEXT:	//	移動履歴: 次へ
+		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckNext() )
+			return TRUE;
+		else
+			return FALSE;
+	case F_JUMPHIST_SET:	//	現在位置を移動履歴に登録
+		return TRUE;
+	case F_DIRECT_TAGJUMP:	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
+	case F_TAGJUMP_KEYWORD:	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
+	//	2003.05.12 MIK タグファイル作成先を選べるようにしたので、常に作成可能とする
+//	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
+		if( pcEditDoc->IsFilePathAvailable() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	
+	//タブモード時はウインドウ並べ替え禁止です。	@@@ 2003.06.12 MIK
+	case F_TILE_H:
+	case F_TILE_V:
+	case F_CASCADE:
+		//Start 2004.07.15 Kazika タブウィンド時も実行可能
+		return TRUE;
+		//End 2004.07.15 Kazika
+	case F_BIND_WINDOW:	//2004.07.14 Kazika 新規追加
+	case F_TAB_MOVERIGHT:	// 2007.06.20 ryoji 追加
+	case F_TAB_MOVELEFT:	// 2007.06.20 ryoji 追加
+		//非タブモード時はウィンドウを結合して表示できない
+		return (pShareData->m_Common.m_sTabBar.m_bDispTabWnd);
+	case F_GROUPCLOSE:		// 2007.06.20 ryoji 追加
+	case F_NEXTGROUP:		// 2007.06.20 ryoji 追加
+	case F_PREVGROUP:		// 2007.06.20 ryoji 追加
+		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin );
+	case F_TAB_SEPARATE:	// 2007.06.20 ryoji 追加
+	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji 追加
+	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
+		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin && !::IsZoomed( pcEditDoc->GetOwnerHwnd() ) );
+	}
+	return TRUE;
+}
+
+
+
+/* 機能がチェック状態か調べる */
+int IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
+{
+	CEditWnd* pCEditWnd;
+	// Modified by KEITA for WIN64 2003.9.6
+	pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( pcEditDoc->GetOwnerHwnd(), GWLP_USERDATA );
+//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
+	switch( nId ){
+	case F_FILE_REOPEN_SJIS:
+		if( CODE_SJIS == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_FILE_REOPEN_JIS:
+		if( CODE_JIS == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_FILE_REOPEN_EUC:
+		if( CODE_EUC == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_FILE_REOPEN_UNICODE:
+		if( CODE_UNICODE == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_FILE_REOPEN_UNICODEBE:
+		if( CODE_UNICODEBE == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_FILE_REOPEN_UTF8:
+		if( CODE_UTF8 == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_FILE_REOPEN_UTF7:
+		if( CODE_UTF7 == pcEditDoc->m_nCharCode ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
+		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}else{
+			return FALSE;
+		}
+	case F_SHOWTOOLBAR:
+		if( pCEditWnd->m_cToolbar.GetToolbarHwnd() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_SHOWFUNCKEY:
+		if( pCEditWnd->m_CFuncKeyWnd.GetHwnd() != NULL ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_SHOWTAB:	//@@@ 2003.06.10 MIK
+		if( pCEditWnd->m_cTabWnd.GetHwnd() != NULL ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_SHOWSTATUSBAR:
+		if( pCEditWnd->m_cStatusBar.GetStatusHwnd() != NULL ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	// Mar. 6, 2002 genta
+	case F_READONLY://読み取り専用
+		if( pcEditDoc->m_bReadOnly ){ /* 変更フラグ */
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	//	From Here 2003.06.23 Moca
+	case F_CHGMOD_EOL_CRLF:
+		if( EOL_CRLF == pcEditDoc->GetNewLineCode() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_CHGMOD_EOL_LF:
+		if( EOL_LF == pcEditDoc->GetNewLineCode() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_CHGMOD_EOL_CR:
+		if( EOL_CR == pcEditDoc->GetNewLineCode() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	//	To Here 2003.06.23 Moca
+	//	2003.07.21 genta
+	case F_CHGMOD_INS:
+		//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
+		if( pcEditDoc->IsInsMode() ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_TOGGLE_KEY_SEARCH:
+		//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
+		if( pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord ){
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	//Start 2004.07.14 Kazika 追加
+	case F_BIND_WINDOW:	//
+		return ((pShareData->m_Common.m_sTabBar.m_bDispTabWnd) && !(pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin));
+
+	// 2004.09.21 Moca
+	case F_TOPMOST:
+		if( (DWORD)::GetWindowLongPtr( pCEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+		break;
+	// Jan. 10, 2004 genta インクリメンタルサーチ
+	case F_ISEARCH_NEXT:
+	case F_ISEARCH_PREV:
+	case F_ISEARCH_REGEXP_NEXT:
+	case F_ISEARCH_REGEXP_PREV:
+	case F_ISEARCH_MIGEMO_NEXT:
+	case F_ISEARCH_MIGEMO_PREV:
+		return pcEditDoc->m_pcEditWnd->GetActiveView().IsISearchEnabled( nId );
+	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
+		// ToDo:ブックマークリストが出ているときもへこんでしまう。
+		return (pcEditDoc->m_pcEditWnd->m_cDlgFuncList.GetHwnd() != NULL);
+	}
+	//End 2004.07.14 Kazika
+
+	return FALSE;
+}
+

@@ -7,6 +7,7 @@
 	@author Norio Nakatani
 	@date 1998/05/13 新規作成
 	@date 2001/06/03 N.Nakatani grep単語単位で検索を実装するときのためにコマンドラインオプションの処理追加
+	@date 2007/10/23 kobake     クラス名、ファイル名変更: CControlTray→CControlTray
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -21,7 +22,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CEditApp;
+class CControlTray;
 
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
@@ -43,14 +44,14 @@ class CEditApp;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CEditApp
+class SAKURA_CORE_API CControlTray
 {
 public:
 	/*
 	||  Constructors
 	*/
-	CEditApp();
-	~CEditApp();
+	CControlTray();
+	~CControlTray();
 
 	/*
 	|| メンバ関数
@@ -63,43 +64,21 @@ public:
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
 
-	static bool OpenNewEditor( HINSTANCE, HWND, const char*, int, BOOL, bool sync = false, const char* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
+	static bool OpenNewEditor( HINSTANCE, HWND, const TCHAR*, ECodeType, BOOL, bool sync = false, const TCHAR* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
 	static bool OpenNewEditor2( HINSTANCE, HWND , const FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
 
 	static BOOL CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	static void TerminateApplication( HWND hWndFrom );	/* サクラエディタの全終了 */	// 2006.12.25 ryoji 引数追加
 
-	/*
-	|| メンバ変数
-	*/
-
-private:
-	CMenuDrawer		m_CMenuDrawer;
-	bool			m_bUseTrayMenu;	//トレイメニュー表示中
-	HINSTANCE		m_hInstance;
-	HWND			m_hWnd;
-	char*			m_pszAppName;
-	BOOL			m_bCreatedTrayIcon;	/*!< トレイにアイコンを作った */
-
-	DLLSHAREDATA*	m_pShareData;
-	CDlgGrep		m_cDlgGrep; // Jul. 2, 2001 genta
-
-	CImageListMgr	m_hIcons;
-
-	void	DoGrep();	//Stonee, 2001/03/21
-#if 0
-	//	Apr. 6, 2001 genta コマンドラインオプションの解析
-	static int CheckCommandLine( char *str, char** arg );
-#endif
-	//	Apr. 24, 2001 genta
-	/*!	RegisterMessageで得られるMessage IDの保管場所 */
-	UINT	m_uCreateTaskBarMsg;
+public:
+	HWND GetTrayHwnd() const{ return m_hWnd; }
 
 	/*
 	|| 実装ヘルパ系
 	*/
 protected:
-	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const char* );	/*!< タスクトレイのアイコンに関する処理 */
+	void	DoGrep();	//Stonee, 2001/03/21
+	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const TCHAR* );	/*!< タスクトレイのアイコンに関する処理 */
 	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
 	void OnNewEditor( void ); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
@@ -109,6 +88,25 @@ protected:
 		WPARAM	wParam,		// first message parameter
 		LPARAM	lParam		// second message parameter
 	);
+
+
+	/*
+	|| メンバ変数
+	*/
+private:
+	CMenuDrawer		m_CMenuDrawer;
+	bool			m_bUseTrayMenu;			//トレイメニュー表示中
+	HINSTANCE		m_hInstance;
+	HWND			m_hWnd;
+	TCHAR*			m_pszAppName;
+	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
+
+	DLLSHAREDATA*	m_pShareData;
+	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
+
+	CImageListMgr	m_hIcons;
+
+	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 };
 
 

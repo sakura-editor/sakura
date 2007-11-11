@@ -39,29 +39,29 @@ public:
 	CFileExt();
 	~CFileExt();
 
-	bool AppendExt( const char *pszName, const char *pszExt );
-	bool AppendExtRaw( const char *pszName, const char *pszExt );
-	const char *GetName( int nIndex );
-	const char *GetExt( int nIndex );
+	bool AppendExt( const TCHAR *pszName, const TCHAR *pszExt );
+	bool AppendExtRaw( const TCHAR *pszName, const TCHAR *pszExt );
+	const TCHAR *GetName( int nIndex );
+	const TCHAR *GetExt( int nIndex );
 
 	//ダイアログに渡す拡張子フィルタを取得する。(lpstrFilterに直接指定可能)
-	const char *GetExtFilter( void );
+	const TCHAR *GetExtFilter( void );
 
 	int GetCount( void ) { return m_nCount; }
 
 protected:
-	bool ConvertTypesExtToDlgExt( const char *pszSrcExt, char *pszDstExt );
+	bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt );
 
 private:
 
 	typedef struct {
-		char	m_szName[64];		//名前(64文字以下のはず→m_szTypeName)
-		char	m_szExt[64*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
+		TCHAR	m_szName[64];		//名前(64文字以下のはず→m_szTypeName)
+		TCHAR	m_szExt[64*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
 	} FileExtInfoTag;
 
 	int				m_nCount;
 	FileExtInfoTag	*m_puFileExtInfo;
-	char			m_szFilter[4096];
+	TCHAR			m_szFilter[4096];
 };
 
 #endif	//_CFILEEXT_H_
