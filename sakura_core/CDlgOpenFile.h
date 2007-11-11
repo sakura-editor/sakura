@@ -59,34 +59,16 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void Create( HINSTANCE, HWND, const TCHAR*, const TCHAR*, const TCHAR** = NULL,const TCHAR** = NULL);
-	void Create2(
-		HINSTANCE hInstance,
-		HWND hwndParent,
-		const TCHAR* pszUserWildCard,
-		const TCHAR* pszDefaultPath,
-		TCHAR** ppszMRU,
-		TCHAR** ppszOPENFOLDER
-	)
-	{
-		Create(
-			hInstance,
-			hwndParent,
-			pszUserWildCard,
-			pszDefaultPath,
-			(const TCHAR**)ppszMRU,
-			(const TCHAR**)ppszOPENFOLDER
-		);
-	}
+	void Create( HINSTANCE, HWND, const char*, const char*, const char** = NULL,const char** = NULL);
 	//void Create( HINSTANCE, HWND, const char*, const char* );
 	//	2002/08/21 moca	引数追加
-	BOOL DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
+	BOOL DoModal_GetOpenFileName( char*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
 	//	2002/08/21 30,2002 moca	引数追加
-	BOOL DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
-	BOOL DoModalOpenDlg( TCHAR* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
+	BOOL DoModal_GetSaveFileName( char*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( TCHAR* , ECodeType*, CEOL*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalSaveDlg( char* , int*, CEOL*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
 //	INT_PTR DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
@@ -97,10 +79,10 @@ public:
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
+	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
-	ECodeType		m_nCharCode;					/* 文字コード */
+	int				m_nCharCode;					/* 文字コード */
 //	char			m_szHelpFile[_MAX_PATH + 1];
 //	int				m_nHelpTopicID;
 	CEOL			m_cEol;	//	Feb. 9, 2001 genta
@@ -110,7 +92,7 @@ public:
 	BOOL			m_bBom;	//!< BOMを付けるかどうか
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 
-	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
+	TCHAR			m_szPath[_MAX_PATH];	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
 
 protected:
 	/*

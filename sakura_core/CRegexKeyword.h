@@ -44,11 +44,11 @@
 #define RK_SIZE           100    //最大登録可能数
 
 //#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
-#define RK_HEAD_STR1      L"/^"   //BREGEXP
+#define RK_HEAD_STR1      "/^"   //BREGEXP
 #define RK_HEAD_STR1_LEN  2
-#define RK_HEAD_STR2      L"m#^"  //BREGEXP
+#define RK_HEAD_STR2      "m#^"  //BREGEXP
 #define RK_HEAD_STR2_LEN  3
-#define RK_HEAD_STR3      L"m/^"  //BREGEXP
+#define RK_HEAD_STR3      "m/^"  //BREGEXP
 #define RK_HEAD_STR3_LEN  3
 //#define RK_HEAD_STR4      "#^"   //BREGEXP
 //#define RK_HEAD_STR4_LEN  2
@@ -66,7 +66,7 @@
 
 //!	正規表現キーワード検索情報構造体
 typedef struct RegexInfo_t {
-	BREGEXP_W	*pBregexp;	//BREGEXP_W構造体
+	BREGEXP	*pBregexp;	//BREGEXP構造体
 #ifdef USE_PARENT
 #else
 	struct RegexKeywordInfo	sRegexKey;	//コンパイルパターンを保持
@@ -93,11 +93,11 @@ public:
 	//! 行検索開始
 	BOOL RegexKeyLineStart( void );
 	//! 行検索
-	BOOL RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor );
+	BOOL RegexIsKeyword( const char *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor );
 	//! タイプ設定
 	BOOL RegexKeySetTypes( Types *pTypesPtr );
 	//! 書式(囲み)チェック
-	BOOL RegexKeyCheckSyntax( const wchar_t *s );
+	BOOL RegexKeyCheckSyntax( const char *s );
 
 	int		m_nTypeIndex;		//現在のタイプ設定番号
 	BOOL		m_bUseRegexKeyword;	//正規表現キーワードを使用する・しない
@@ -115,7 +115,7 @@ private:
 	int		m_nCompiledMagicNumber;	//コンパイル済みか？
 	int		m_nRegexKeyCount;	//現在のキーワード数
 	REGEX_INFO	m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)
-	wchar_t		m_szMsg[256];		//!< BREGEXP_Wからのメッセージを保持する
+	char		m_szMsg[256];		//!< BREGEXPからのメッセージを保持する
 };
 
 #endif	//_REGEX_KEYWORD_H_

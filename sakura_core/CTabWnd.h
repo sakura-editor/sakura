@@ -71,6 +71,23 @@ public:
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE, BOOL bOtherGroup = TRUE );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
 
+	/*
+	|| メンバ変数
+	*/
+	LPCTSTR			m_pszClassName;	/*!< クラス名 */
+	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
+	HFONT			m_hFont;		/*!< 表示用フォント */
+	HWND			m_hwndTab;		/*!< タブコントロール */
+	HWND			m_hwndToolTip;	/*!< ツールチップ */
+	TCHAR			m_szTextTip1[1024];
+#ifdef UNICODE
+	//※現在扱っている文字コードとは逆の文字コードを指定する。
+	char			m_szTextTip2[1024];	//!< SJIS文字列でのツールチップ
+#else
+	//※現在扱っている文字コードとは逆の文字コードを指定する。
+	wchar_t			m_szTextTip2[1024];	//!< UNICODE文字列でのツールチップ
+#endif	//UNICODE
+
 protected:
 	/*
 	|| 実装ヘルパ系
@@ -115,13 +132,25 @@ protected:
 	LRESULT OnTabMButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_MBUTTONUP 処理 */
 	LRESULT OnTabNotify( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_NOTIFY 処理 */
 
-	//実装補助インターフェース
 	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; }	/*!< ドラッグ状態解除処理 */
 	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< タブ順序変更処理 */
 	BOOL SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop );	/*!< タブ分離処理 */	// 2007.06.20 ryoji
 	LRESULT ExecTabCommand( int nId, POINTS pts );	/*!< タブ部 コマンド実行処理 */
 	void LayoutTab( void );							/*!< タブのレイアウト調整処理 */
 
+	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
+
+	DragState m_eDragState;		 //!< ドラッグ状態
+	int	m_nSrcTab;				 //!< 移動元タブ
+	POINT m_ptSrcCursor;		 //!< ドラッグ開始カーソル位置
+
+	// 2006.01.28 ryoji タブへのアイコン表示を可能に
+	HIMAGELIST (WINAPI *m_RealImageList_Duplicate)(HIMAGELIST himl);
+	HIMAGELIST m_hIml;								/*!< イメージリスト */
+	HICON m_hIconApp;								/*!< アプリケーションアイコン */
+	HICON m_hIconGrep;								/*!< Grepアイコン */
+	int m_iIconApp;									/*!< アプリケーションアイコンのインデックス */
+	int m_iIconGrep;								/*!< Grepアイコンのインデックス */
 	HIMAGELIST InitImageList( void );				/*!< イメージリストの初期化処理 */
 	int GetImageIndex( EditNode* pNode );			/*!< イメージリストのインデックス取得処理 */
 	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< イメージリストの複製処理 */
@@ -132,52 +161,20 @@ protected:
 	void DrawCloseBtn( HDC hdc, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
 	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
-
+	BOOL m_bVisualStyle;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
+	BOOL m_bHovering;
+	BOOL m_bListBtnHilighted;
+	BOOL m_bCloseBtnHilighted;		//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
+	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
+	CaptureSrc m_eCaptureSrc;		 //!< キャプチャー元
 	HFONT CreateMenuFont( void )
 	{
 		// メニュー用フォント作成
 		NONCLIENTMETRICS	ncm;
-		ncm.cbSize = sizeof( ncm );
-		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(ncm), (PVOID)&ncm, 0 );
+		ncm.cbSize = sizeof( NONCLIENTMETRICS );
+		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), (PVOID)&ncm, 0 );
 		return ::CreateFontIndirect( &ncm.lfMenuFont );
 	}
-
-protected:
-	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
-	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
-
-	typedef HIMAGELIST (WINAPI *FN_ImageList_Duplicate)(HIMAGELIST himl);
-
-	/*
-	|| メンバ変数
-	*/
-public:
-	LPCTSTR			m_pszClassName;	/*!< クラス名 */
-	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
-	HFONT			m_hFont;		/*!< 表示用フォント */
-	HWND			m_hwndTab;		/*!< タブコントロール */
-	HWND			m_hwndToolTip;	/*!< ツールチップ */
-	TCHAR			m_szTextTip1[1024];
-
-private:
-	DragState	m_eDragState;			//!< ドラッグ状態
-	int			m_nSrcTab;				//!< 移動元タブ
-	POINT		m_ptSrcCursor;			//!< ドラッグ開始カーソル位置
-
-	// 2006.01.28 ryoji タブへのアイコン表示を可能に
-	FN_ImageList_Duplicate	m_RealImageList_Duplicate;
-
-	HIMAGELIST	m_hIml;					//!< イメージリスト
-	HICON		m_hIconApp;				//!< アプリケーションアイコン
-	HICON		m_hIconGrep;			//!< Grepアイコン
-	int			m_iIconApp;				//!< アプリケーションアイコンのインデックス
-	int			m_iIconGrep;			//!< Grepアイコンのインデックス
-
-	BOOL		m_bVisualStyle;			//!< ビジュアルスタイルかどうか	// 2007.04.01 ryoji
-	BOOL		m_bHovering;
-	BOOL		m_bListBtnHilighted;
-	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
-	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
 };
 
 #endif /* _CTABWND_H_ */

@@ -36,9 +36,9 @@
 
 BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam )
 {
-	::DlgItem_SetText( hWnd, IDC_UPDATEDFILENAME, m_pFilename );
-	::DlgItem_SetText( hWnd, IDC_QUERYRELOADMSG, m_bModified ?
-		L"再ロードを行うと変更が失われますがよろしいですか?":L"再ロードしますか?" );
+	::SetDlgItemText( hWnd, IDC_UPDATEDFILENAME, m_pFilename );
+	::SetDlgItemText( hWnd, IDC_QUERYRELOADMSG, m_bModified ?
+		"再ロードを行うと変更が失われますがよろしいですか?":"再ロードしますか?" );
 
 	return CDialog::OnInitDialog( hWnd, wParam, lParam );
 }

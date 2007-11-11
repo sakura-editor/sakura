@@ -100,7 +100,7 @@ int CDlgKeywordSelect::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSet
 */
 BOOL CDlgKeywordSelect::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
-	_SetHwnd( hwndDlg );
+	m_hWnd = hwndDlg;
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
@@ -128,30 +128,30 @@ void CDlgKeywordSelect::SetData( void )
 
 	for( index = 0; index < KEYWORD_SELECT_NUM; index++ )
 	{
-		hwndCombo = ::GetDlgItem( GetHwnd(), keyword_select_target_combo[ index ] );
+		hwndCombo = ::GetDlgItem( m_hWnd, keyword_select_target_combo[ index ] );
 
 		/* コンボボックスを空にする */
-		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
 		
 		/* 一行目は空白 */
-		Combo_AddString( hwndCombo, L" " );
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)_T(" ") );
 
 		if( m_pCKeyWordSetMgr->m_nKeyWordSetNum > 0 )
 		{
 			for( i = 0; i < m_pCKeyWordSetMgr->m_nKeyWordSetNum; i++ )
 			{
-				Combo_AddString( hwndCombo, m_pCKeyWordSetMgr->GetTypeName( i ) );
+				::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_pCKeyWordSetMgr->GetTypeName( i ) );
 			}
 
 			if( -1 == m_nSet[ index ] )
 			{
 				/* セット名コンボボックスのデフォルト選択 */
-				::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)0, 0 );
+				::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, 0 );
 			}
 			else
 			{
 				/* セット名コンボボックスのデフォルト選択 */
-				::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)(m_nSet[ index ] + 1), 0 );
+				::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)(m_nSet[ index ] + 1), 0 );
 			}
 		}
 	}
@@ -168,9 +168,9 @@ int CDlgKeywordSelect::GetData( void )
 
 	for( index = 0; index < KEYWORD_SELECT_NUM; index++ )
 	{
-		hwndCombo = ::GetDlgItem( GetHwnd(), keyword_select_target_combo[ index ] );
+		hwndCombo = ::GetDlgItem( m_hWnd, keyword_select_target_combo[ index ] );
 
-		n = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		n = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 		if( CB_ERR == n || 0 == n )
 		{
 			m_nSet[ index ] = -1;

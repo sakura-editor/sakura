@@ -30,31 +30,25 @@
 /*!
 	スペースの判定
 */
-bool C_IsSpace( char c );
-inline bool C_IsSpace( wchar_t c )
-{
-	return (
-		L'\t' == c ||
-		L' ' == c ||
-		WCODE::CR == c ||
-		WCODE::LF == c
+inline bool C_IsSpace( char c ){
+	return ('\t' == c ||
+			 ' ' == c ||
+			  CR == c ||
+			  LF == c
 	);
 }
 
 /*!
 	関数に用いることができる文字かどうかの判定
 */
-bool C_IsWordChar( char c );
-inline bool C_IsWordChar( wchar_t c )
-{
-	return (
-		L'_' == c ||
-		L':' == c ||
-		L'~' == c ||
-		(L'a' <= c && c <= L'z' )||
-		(L'A' <= c && c <= L'Z' )||
-		(L'0' <= c && c <= L'9' )
-	);
+inline bool C_IsWordChar( char c ){
+	return ( '_' == c ||
+			 ':' == c ||
+			 '~' == c ||
+			('a' <= c && c <= 'z' )||
+			('A' <= c && c <= 'Z' )||
+			('0' <= c && c <= '9' )
+		);
 }
 //	To Here
 
@@ -71,12 +65,12 @@ inline bool C_IsWordChar( wchar_t c )
 	@param nLen 文字列の長さ。
 	本質的には不要であるが、高速化のために既にある値を利用する。
 */
-static bool C_IsOperator( wchar_t* szStr, int nLen	)
+static bool C_IsOperator( char* szStr, int nLen	)
 {
-	if( nLen >= 8 && szStr[ nLen - 1 ] == L'r' ){
+	if( nLen >= 8 && szStr[ nLen - 1 ] == 'r' ){
 		if( nLen > 8 ?
-				wcscmp( szStr + nLen - 9, L":operator" ) == 0 :	// メンバー関数による定義
-				wcscmp( szStr, L"operator" ) == 0	// friend関数による定義
+				strcmp( szStr + nLen - 9, ":operator" ) == 0 :	// メンバー関数による定義
+				strcmp( szStr, "operator" ) == 0	// friend関数による定義
 		 ){
 		 	return true;
 		}
@@ -90,29 +84,27 @@ static bool C_IsOperator( wchar_t* szStr, int nLen	)
 
 	@date 2005.12.06 じゅうじ 最後の1文字しか見ないと2バイトコードの後半がバックスラッシュの場合に誤認する
 */
-static bool C_IsLineEsc(const char *s, int len);
-static bool C_IsLineEsc(const wchar_t *s, int len)
+static bool C_IsLineEsc(const char *s, int len)
 {
-	if ( len > 0 && s[len-1] == L'\n' ) len--;
-	if ( len > 0 && s[len-1] == L'\r' ) len--;
-	if ( len > 0 && s[len-1] == L'\n' ) len--;
+	if ( len > 0 && s[len-1] == '\n' ) len--;
+	if ( len > 0 && s[len-1] == '\r' ) len--;
+	if ( len > 0 && s[len-1] == '\n' ) len--;
 
-	if ( len > 0 && s[len-1] == L'\\' ) {
+	if ( len > 0 && s[len-1] == '\\' ) {
 		if ( len == 1 ) {
 			return(true);
 		} else if ( len == 2 ) {
-			if ( CNativeW2::GetSizeOfChar( s, 2 , 0 ) == 1 )
+			if ( CMemory::GetSizeOfChar( s, 2 , 0 ) == 1 )
 				return(true);
-		} else { //残り３バイト以上
-			if ( CNativeW2::GetSizeOfChar( s, len , len-2 ) == 1 )
+		} else {				/* 残り３バイト以上	*/
+			if ( CMemory::GetSizeOfChar( s, len , len-2 ) == 1 )
 				return(true);
-			if ( CNativeW2::GetSizeOfChar( s, len , len-3 ) == 2 )
+			if ( CMemory::GetSizeOfChar( s, len , len-3 ) == 2 )
 				return(true);
 		}
 	}
 	return(false);
 }
-
 
 /*!
 	Cプリプロセッサの #if/ifdef/ifndef - #else - #endif状態管理クラス
@@ -126,7 +118,7 @@ public:
 		m_stackptr( 0 ), m_bitpattern( 1 ), m_enablebuf( 0 ), m_maxnestlevel( 32 ), m_ismultiline( false )
 	{}
 
-	CLogicInt ScanLine(const wchar_t*, CLogicInt);
+	int ScanLine(const char*, int);
 
 private:
 	bool m_ismultiline; //!< 複数行のディレクティブ
@@ -169,29 +161,27 @@ private:
 	@date 2004.08.13 zenryaku 複数行のディレクティブに対応
 
 */
-CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
+int CCppPreprocessMng::ScanLine( const char* str, int length )
 {
-	int length=_length;
-
-	const wchar_t* lastptr = str + length;	//	処理文字列末尾
-	const wchar_t* p;	//	処理中の位置
+	const char* lastptr = str + length;	//	処理文字列末尾
+	const char* p;	//	処理中の位置
 
 	//	skip whitespace
 	for( p = str; C_IsSpace( *p ) && p < lastptr ; ++p )
 		;
 	if( lastptr <= p )
-		return CLogicInt(length);	//	空行のため処理不要
+		return length;	//	空行のため処理不要
 
 	if(m_ismultiline){ // 複数行のディレクティブは無視
 		m_ismultiline = C_IsLineEsc(str, length); // 行末が \ で終わっていないか
-		return CLogicInt(length);
+		return length;
 	}
 
-	if( *p != L'#' ){	//	プリプロセッサ以外の処理はメイン部に任せる
+	if( *p != '#' ){	//	プリプロセッサ以外の処理はメイン部に任せる
 		if( m_enablebuf ){
-			return CLogicInt(length);	//	1ビットでも1となっていたら無視
+			return length;	//	1ビットでも1となっていたら無視
 		}
-		return CLogicInt(p - str);
+		return p - str;
 	}
 
 	++p; // #をスキップ
@@ -201,7 +191,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		;
 
 	//	ここからPreprocessor directive解析
-	if( p + 2 + 2 < lastptr && wcsncmp_literal( p, L"if" ) == 0 ){
+	if( p + 2 + 2 < lastptr && strncmp( p, "if", 2 ) == 0 ){	//	sizeof( "if" ) == 2
 		// if
 		p += 2;
 		
@@ -215,7 +205,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			//	skip whitespace
 			for( ; C_IsSpace( *p ) && p < lastptr ; ++p )
 				;
-			if( *p == L'0' ){
+			if( *p == '0' ){
 				enable = 1;
 			}
 			else {
@@ -223,8 +213,8 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			}
 		}
 		else if(
-			( p + 3 < lastptr && wcsncmp_literal( p, L"def" ) == 0 ) ||
-			( p + 4 < lastptr && wcsncmp_literal( p, L"ndef" ) == 0 )){
+			( p + 3 < lastptr && strncmp( p, "def", 3 ) == 0 ) ||
+			( p + 4 < lastptr && strncmp( p, "ndef", 4 ) == 0 )){
 			enable = 2;
 		}
 		
@@ -237,12 +227,12 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			}
 		}
 	}
-	else if( p + 4 < lastptr && wcsncmp_literal( p, L"else" ) == 0 ){
+	else if( p + 4 < lastptr && strncmp( p, "else", 4 ) == 0 ){	//	sizeof( "else" ) == 4
 		if( m_stackptr < m_maxnestlevel ){
 			m_enablebuf ^= m_bitpattern;
 		}
 	}
-	else if( p + 5 < lastptr && wcsncmp_literal( p, L"endif" ) == 0 ){
+	else if( p + 5 < lastptr && strncmp( p, "endif", 5 ) == 0 ){	//	sizeof( "endif" ) == 5
 		if( m_stackptr > 0 ){
 			--m_stackptr;
 			m_enablebuf &= ~m_bitpattern;
@@ -253,7 +243,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		m_ismultiline = C_IsLineEsc(str, length); // 行末が \ で終わっていないか
 	}
 
-	return CLogicInt(length);	//	基本的にプリプロセッサ指令は無視
+	return length;	//	基本的にプリプロセッサ指令は無視
 }
 
 /*!
@@ -286,9 +276,10 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 */
 void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberFunc )
 {
-	const wchar_t*	pLine;
-	CLogicInt	nLineLen;
-	CLogicInt	i;
+	const char*	pLine;
+	int			nLineLen;
+	int			nLineCount;
+	int			i;
 
 	// 2002/10/27 frozen　ここから
 	// nNestLevelを nNestLevel_global を nNestLevel_func に分割した。
@@ -300,8 +291,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 	// 2002/10/27 frozen　ここまで
 
 	int			nCharChars;			//	多バイト文字を読み飛ばすためのもの
-	wchar_t		szWordPrev[256];	//	1つ前のword
-	wchar_t		szWord[256];		//	現在解読中のwordを入れるところ
+	char		szWordPrev[256];	//	1つ前のword
+	char		szWord[256];		//	現在解読中のwordを入れるところ
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 100;	//	許容されるwordの最大長さ
 	int			nMode;				//	現在のstate
@@ -334,13 +325,14 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 		M2_KR_FUNC			= 0x16,	//!< K&Rスタイルの関数定義を調査する。
 		M2_AFTER_ITEM		= 0x10,
 	} nMode2 = M2_NORMAL;
+//	char		szFuncName[256];	//	関数名
 
 	const int	nNamespaceNestMax	= 32;			//!< ネスト可能なネームスペース、クラス等の最大数
 	int			nNamespaceLen[nNamespaceNestMax+1];	//!< ネームスペース全体の長さ
 	const int	nNamespaceLenMax 	= 512;			//!< 最大のネームスペース全体の長さ
-	wchar_t		szNamespace[nNamespaceLenMax];		//!< 現在のネームスペース(終端が\0になっているとは限らないので注意)
+	char		szNamespace[nNamespaceLenMax];		//!< 現在のネームスペース(終端が\0になっているとは限らないので注意)
 	const int 	nItemNameLenMax	 	= 256;
-	wchar_t		szItemName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
+	char		szItemName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
 	// 例えば下のコードの←の部分での
 	// szNamespaceは"Namespace\ClassName\"
 	// nMamespaceLenは{10,20}
@@ -351,20 +343,31 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 	//　←
 	//　}}
 
-	CLogicInt	nItemLine;			//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
+	int			nItemLine;			//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
 	int			nItemFuncId;
 
-	szWordPrev[0] = L'\0';
-	szWord[nWordIdx] = L'\0';
-	szNamespace[0] = L'\0';	// 2002/10/27 frozen
+//	int			nFuncLine;
+//	int			nFuncId;
+	
+//	int			nFuncNum;			// 使っていないようなので削除
+	// 2002/10/27 frozen　ここまで
+
+	//	Mar. 4, 2001 genta
+//	bool		bCppInitSkip;		//	C++のメンバー変数、親クラスの初期化子をSKIP // 2002/10/27 frozen nMode2の機能で代用
+	szWordPrev[0] = '\0';
+	szWord[nWordIdx] = '\0';
+	szNamespace[0] = '\0';	// 2002/10/27 frozen
 	nNamespaceLen[0] = 0;	// 2002/10/27 frozen
 	nMode = 0;
 	
 	//	Aug. 10, 2004 genta プリプロセス処理クラス
 	CCppPreprocessMng cCppPMng;
 	
-	CLogicInt		nLineCount;
-	for( nLineCount = CLogicInt(0); nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
+//	FuncNum = 0;
+//	bCppInitSkip = false;
+//	for( nLineCount = 0; nLineCount <  m_cLayoutMgr.GetLineCount(); ++nLineCount ){
+	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
+//		pLine = m_cLayoutMgr.GetLineStr( nLineCount, &nLineLen );
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 
 		//	From Here Aug. 10, 2004 genta
@@ -374,7 +377,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 			i = cCppPMng.ScanLine( pLine, nLineLen );
 		}
 		else {
-			i = CLogicInt(0);
+			i = 0;
 		}
 		//	C/C++としての処理が不要なケースでは i == nLineLenとなっているので
 		//	以下の解析処理はSKIPされる．
@@ -383,9 +386,9 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 		for( ; i < nLineLen; ++i ){
 			/* 1バイト文字だけを処理する */
 			// 2005-09-02 D.S.Koba GetSizeOfChar
-			nCharChars = CNativeW2::GetSizeOfChar( pLine, nLineLen, i );
+			nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 			if( 1 < nCharChars ){
-				i += CLogicInt(nCharChars - 1);
+				i += (nCharChars - 1);
 				continue;
 			}
 /* del start 2005/12/6 じゅうじ	*/
@@ -402,64 +405,64 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					continue;
 				}else{
 				}
-			}
+			}else
 			/* ラインコメント読み込み中 */
 			// 2003/06/24 zenryaku
-			else if( 10 == nMode)
+			if( 10 == nMode)
 			{
 				if(!C_IsLineEsc(pLine, nLineLen)){
 					nMode = 0;
 				}
 				i = nLineLen;
 				continue;
-			}
-			/* add start 2005/12/6 じゅうじ	*/
+			}else
+/* add start 2005/12/6 じゅうじ	*/
 			/* エスケープシーケンスは常に取り除く */
-			else if( '\\' == pLine[i] ){
+			if( '\\' == pLine[i] ){
 				++i;
-			}
+			}else
 			/* シングルクォーテーション文字列読み込み中 */
-			else if( 20 == nMode ){
+			if( 20 == nMode ){
 				if( '\'' == pLine[i] ){
 					nMode = 0;
 					continue;
 				}else{
 				}
-			}
+			}else
 			/* ダブルクォーテーション文字列読み込み中 */
-			else if( 21 == nMode ){
+			if( 21 == nMode ){
 				if( '"' == pLine[i] ){
 					nMode = 0;
 					continue;
 				}else{
 				}
-			}
-			/* add end 2005/12/6 じゅうじ	*/
+			}else
+/* add end 2005/12/6 じゅうじ	*/
 			/* 単語読み込み中 */
-			else if( 1 == nMode ){
+			if( 1 == nMode ){
 				if( C_IsWordChar( pLine[i] ) ){
 					++nWordIdx;
 					if( nWordIdx >= nMaxWordLeng ){
 						nMode = 999;
 						continue;
 					}else{
-						if( pLine[i] == L':')
+						if( pLine[i] == ':')
 						{
 							if(nMode2 == M2_NAMESPACE_SAVE)
 							{
 								if(szWord[0]!='\0')
-									wcscpy( szItemName, szWord );
+									strcpy( szItemName, szWord );
 								nMode2 = M2_NAMESPACE_END;
 							}
 							else if( nMode2 == M2_TEMPLATE_SAVE)
 							{
-								wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
-								szItemName[ nItemNameLenMax - 1 ] = L'\0';
+								strncat( szItemName, szWord, nItemNameLenMax - strlen(szItemName) );
+								szItemName[ nItemNameLenMax - 1 ] = '\0';
 								nMode2 = M2_NAMESPACE_END;
 							}
 						}
 						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = '\0';
 					}
 				}else{
 					//	From Here Mar. 31, 2001 genta
@@ -493,20 +496,20 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 							oplen = 1;
 							if( i + 1 < nLineLen ){
 								if( pLine[ i + 1 ] == pLine[ i ] ||
-									pLine[ i + 1 ] == L'=' )
+									pLine[ i + 1 ] == '=' )
 									oplen = 2;
 							}
 							break;
 						case '-':
 							oplen = 1;
 							if( i + 1 < nLineLen ){
-								if( pLine[ i + 1 ] == L'-' ||
-									pLine[ i + 1 ] == L'=' )
+								if( pLine[ i + 1 ] == '-' ||
+									pLine[ i + 1 ] == '=' )
 									oplen = 2;
-								else if( pLine[ i + 1 ] == L'>' ){
+								else if( pLine[ i + 1 ] == '>' ){
 									oplen = 2;
 									if( i + 2 < nLineLen ){
-										if( pLine[ i + 2 ] == L'*' )
+										if( pLine[ i + 2 ] == '*' )
 											oplen = 3;
 									}
 								}
@@ -520,7 +523,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						case '=':
 							oplen = 1;
 							if( i + 1 < nLineLen ){
-								if( pLine[ i + 1 ] == L'=' )
+								if( pLine[ i + 1 ] == '=' )
 									oplen = 2;
 							}
 							break;
@@ -531,11 +534,11 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 								if( pLine[ i + 1 ] == pLine[ i ] ){
 									oplen = 2;
 									if( i + 2 < nLineLen ){
-										if( pLine[ i + 2 ] == L'=' )
+										if( pLine[ i + 2 ] == '=' )
 											oplen = 3;
 									}
 								}
-								else if( pLine[ i + 1 ] == L'=' )
+								else if( pLine[ i + 1 ] == '=' )
 									oplen = 2;
 							}
 							break;
@@ -560,7 +563,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 							++nWordIdx;
 							szWord[nWordIdx] = pLine[i];
 						}
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = '\0';
 							// 記号列の処理を行う前は記号列のiは記号列の先頭を指していた。
 							// この時点でiは記号列の1つ後を指している
 
@@ -574,30 +577,30 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					}
 					// 2002/10/27 frozen　ここから
 					if( nMode2 == M2_NAMESPACE_SAVE )
-						wcscpy( szItemName, szWord );
+						strcpy( szItemName, szWord );
 					else if( nMode2 == M2_TEMPLATE_SAVE)
 					{
-						wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
-						szItemName[ nItemNameLenMax - 1 ] = L'\0';
+						strncat( szItemName, szWord, nItemNameLenMax - strlen(szItemName) );
+						szItemName[ nItemNameLenMax - 1 ] = '\0';
 					}
 					else if( nNestLevel_func == 0 && nMode2 == M2_NORMAL )
 					{
 						nItemFuncId = 0;
-						if( wcscmp(szWord,L"class")==0 )
+						if( strcmp(szWord,"class")==0 )
 							nItemFuncId = 3;
-						if( wcscmp(szWord,L"struct")==0 )
+						if( strcmp(szWord,"struct")==0 )
 							nItemFuncId = 4;
-						else if( wcscmp(szWord,L"namespace")==0 )
+						else if( strcmp(szWord,"namespace")==0 )
 							nItemFuncId = 7;
-						else if( wcscmp(szWord,L"enum")==0 )
+						else if( strcmp(szWord,"enum")==0 )
 							nItemFuncId = 5;
-						else if( wcscmp(szWord,L"union")==0 )
+						else if( strcmp(szWord,"union")==0 )
 							nItemFuncId = 6;
 						if( nItemFuncId != 0 )
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
-							nItemLine = nLineCount + CLogicInt(1);
-							wcscpy(szItemName,L"無名");
+							nItemLine = nLineCount + 1;
+							strcpy(szItemName,"無名");
 						}
 					}
 					else if( nMode2 == M2_FUNC_NAME_END )
@@ -608,10 +611,10 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 
 					//	To Here Mar. 31, 2001 genta
 					// 2004/03/12 zenryaku キーワードに _ と PARAMS を使わせない (GNUのコードが見にくくなるから)
-					if( !( wcscmp(L"PARAMS",szWord) == 0 || wcscmp(L"_",szWord) == 0 ) )
-						wcscpy( szWordPrev, szWord );
+					if( !( strcmp("PARAMS",szWord) == 0 || strcmp("_",szWord) == 0 ) )
+						strcpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = '\0';
 					nMode = 0;
 					i--;
 					continue;
@@ -630,9 +633,9 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					 '"' == pLine[i] ||
 					 '/' == pLine[i]
 				){
-					wcscpy( szWordPrev, szWord );
+					strcpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = '\0';
 					nMode = 0;
 					i--;
 					continue;
@@ -643,7 +646,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						continue;
 					}else{
 						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = '\0';
 					}
 				}
 			}else
@@ -689,13 +692,13 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
 							nNestLevel_global < nNamespaceNestMax &&
-							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + 10 + 1) < nNamespaceLenMax)
+							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = strlen(szItemName)) + 10 + 1) < nNamespaceLenMax)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
 					// +10は追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
 					// +1は終端NUL文字
 					{
-						wcscpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
+						strcpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
 						//	関数の後ろにconst, throw または初期化子があると
 						//	M2_KR_FUNCに遷移して，';'が見つからないとその状態のまま
@@ -707,11 +710,11 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
 							if( nItemFuncId == 7)
-								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]],L"::定義位置");
+								strcpy(&szNamespace[nNamespaceLen[nNestLevel_global]],"::定義位置");
 							else
 							{
-								szNamespace[nNamespaceLen[nNestLevel_global]] = L'\0';
-								szNamespace[nNamespaceLen[nNestLevel_global]+1] = L':';
+								szNamespace[nNamespaceLen[nNestLevel_global]] = '\0';
+								szNamespace[nNamespaceLen[nNestLevel_global]+1] = ':';
 								if(bVisibleMemberFunc == false && nNestPoint_class == 0)
 									nNestPoint_class = nNestLevel_global;
 							}
@@ -722,16 +725,19 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						  →
 						  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 						*/
-						CLayoutPoint ptPosXY;
-						m_cLayoutMgr.LogicToLayout(
-							CLogicPoint(0, nItemLine - 1),
-							&ptPosXY
+						int		nPosX;
+						int		nPosY;
+						m_cLayoutMgr.CaretPos_Phys2Log(
+							0,
+							nItemLine - 1,
+							&nPosX,
+							&nPosY
 						);
-						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1) , szNamespace, nItemFuncId);
+						pcFuncInfoArr->AppendData( nItemLine, nPosY + 1 , szNamespace, nItemFuncId);
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
 						if( nMode2 != M2_FUNC_NAME_END && nMode2 != M2_KR_FUNC )
 						{
-							szNamespace[nNamespaceLen[nNestLevel_global]] = L':';
+							szNamespace[nNamespaceLen[nNestLevel_global]] = ':';
 							nNamespaceLen[nNestLevel_global] += 2;
 						}
 					}
@@ -777,18 +783,18 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 				if( '(' == pLine[i] ){
 					//  2002/10/27 frozen ここから
 //					if( nNestLevel == 0 && !bCppInitSkip ){
-//						wcscpy( szFuncName, szWordPrev );
+//						strcpy( szFuncName, szWordPrev );
 //						nFuncLine = nLineCount + 1;
 //						nNestLevel2 = 1;
 //					}
 //					nMode = 0;
 					if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 == M2_NAMESPACE_END) )
 					{
-						if( wcscmp(szWordPrev, L"__declspec") == 0 ) {continue;}
+						if( strcmp(szWordPrev, "__declspec") == 0 ) {continue;}
 						if(nNestLevel_fparam==0)
 						{
-							wcscpy( szItemName, szWordPrev);
-							nItemLine = nLineCount + CLogicInt(1);
+							strcpy( szItemName, szWordPrev);
+							nItemLine = nLineCount + 1;
 						}
 						++ nNestLevel_fparam;
 					}
@@ -823,12 +829,36 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 				}else
 				if( ';' == pLine[i] ){
 					//  2002/10/27 frozen ここから
+//					if( 2 == nNestLevel2 ){
+//						//	閉じ括弧')'の後の';' すなわち関数宣言
+//						if( 0 != strcmp( "sizeof", szFuncName ) ){
+//							nFuncId = 1;
+//							++nFuncNum;
+//							/*
+//							  カーソル位置変換
+//							  物理位置(行頭からのバイト数、折り返し無し行位置)
+//							  →
+//							  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+//							*/
+//							int		nPosX;
+//							int		nPosY;
+//							m_cLayoutMgr.CaretPos_Phys2Log(
+//								0,
+//								nFuncLine - 1,
+//								&nPosX,
+//								&nPosY
+//							);
+//							pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1, szFuncName, nFuncId);
+////						pcFuncInfoArr->AppendData( nFuncLine, szFuncName, nFuncId );
+//						}
+//					}
+//					nNestLevel2 = 0;
 					if( nMode2 == M2_KR_FUNC )
 					{
 						//	Jan. 30, 2005 genta 関数後の const, throwの後ろの
 						//	';'はK&R形式宣言の終わりでなく関数宣言の終わり
-						if( wcscmp( szWordPrev, L"const" ) == 0 ||
-							wcscmp( szWordPrev, L"throw" ) == 0 ){
+						if( strcmp( szWordPrev, "const" ) == 0 ||
+							strcmp( szWordPrev, "throw" ) == 0 ){
 								nMode2 = M2_FUNC_NAME_END;
 								//	すぐ下のif文に引っかかりますように
 						}
@@ -840,12 +870,12 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					} //	Jan. 30, 2005 genta K&R処理に引き続いて宣言処理も行う．
 					if( nMode2 == M2_FUNC_NAME_END &&
 						nNestLevel_global < nNamespaceNestMax &&
-						(nNamespaceLen[nNestLevel_global] + wcslen(szItemName)) < nNamespaceLenMax &&
+						(nNamespaceLen[nNestLevel_global] + strlen(szItemName)) < nNamespaceLenMax &&
 						nNestPoint_class == 0)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
 					{
-						wcscpy( &szNamespace[nNamespaceLen[ nNestLevel_global]] , szItemName);
+						strcpy( &szNamespace[nNamespaceLen[ nNestLevel_global]] , szItemName);
 
 						nItemFuncId = 1;
 						/*
@@ -854,12 +884,15 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						  →
 						  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 						*/
-						CLayoutPoint ptPosXY;
-						m_cLayoutMgr.LogicToLayout(
-							CLogicPoint(0, nItemLine - 1),
-							&ptPosXY
+						int		nPosX;
+						int		nPosY;
+						m_cLayoutMgr.CaretPos_Phys2Log(
+							0,
+							nItemLine - 1,
+							&nPosX,
+							&nPosY
 						);
-						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1), szNamespace, nItemFuncId);
+						pcFuncInfoArr->AppendData( nItemLine, nPosY + 1, szNamespace, nItemFuncId);
 					}
 					nMode2 = M2_NORMAL;
 					//  2002/10/27 frozen ここまで
@@ -867,59 +900,88 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					continue;
 				}else if( nNestLevel_fparam == 0 ){
 					if( C_IsWordChar( pLine[i] ) ){
+						//  2002/10/27 frozen ここから削除
+//						if( 2 == nNestLevel2 ){
+//							//	閉じ括弧が無いけどとりあえず登録しちゃう
+//							if( 0 != strcmp( "sizeof", szFuncName ) ){
+//								nFuncId = 2;
+//								++nFuncNum;
+//								/*
+//								  カーソル位置変換
+//								  物理位置(行頭からのバイト数、折り返し無し行位置)
+//								  →
+//								  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+//								*/
+//								int		nPosX;
+//								int		nPosY;
+//								m_cLayoutMgr.CaretPos_Phys2Log(
+//									0,
+//									nFuncLine - 1,
+//									&nPosX,
+//									&nPosY
+//								);
+//								pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1 , szFuncName, nFuncId );
+//							}
+//							nNestLevel2 = 0;
+//							//	Mar 4, 2001 genta	初期化子だったときはそれ以降の登録を制限する
+//							if( pLine[i] == ':' )
+//								bCppInitSkip = true;
+//						}
+						//  2002/10/27 frozen ここまで削除
+
 						//	//	Mar. 15, 2000 genta
 						//	From Here
 						//	直前のwordの最後が::か，あるいは直後のwordの先頭が::なら
 						//	クラス限定子と考えて両者を接続する．
 
 						{
-							int pos = wcslen( szWordPrev ) - 2;
+							int pos = strlen( szWordPrev ) - 2;
 							if( //	前の文字列の末尾チェック
-								( pos > 0 &&	szWordPrev[pos] == L':' &&
-								szWordPrev[pos + 1] == L':' ) ||
+								( pos > 0 &&	szWordPrev[pos] == ':' &&
+								szWordPrev[pos + 1] == ':' ) ||
 								//	次の文字列の先頭チェック
-								( i < nLineLen - 1 && pLine[i] == L':' &&
-									pLine[i+1] == L':' )
+								( i < nLineLen - 1 && pLine[i] == ':' &&
+									pLine[i+1] == ':' )
 							){
 								//	前の文字列に続ける
-								wcscpy( szWord, szWordPrev );
-								nWordIdx = wcslen( szWord );
+								strcpy( szWord, szWordPrev );
+								nWordIdx = strlen( szWord );
 							}
 							//	From Here Apr. 1, 2001 genta
 							//	operator new/delete 演算子の対応
 							else if( C_IsOperator( szWordPrev, pos + 2 ) ){
 								//	スペースを入れて、前の文字列に続ける
-								szWordPrev[pos + 2] = L' ';
-								szWordPrev[pos + 3] = L'\0';
-								wcscpy( szWord, szWordPrev );
-								nWordIdx = wcslen( szWord );
+								szWordPrev[pos + 2] = ' ';
+								szWordPrev[pos + 3] = '\0';
+								strcpy( szWord, szWordPrev );
+								nWordIdx = strlen( szWord );
 							}
 							//	To Here Apr. 1, 2001 genta
 							else{
 								nWordIdx = 0;
 							}
 						}
-						//	wcscpy( szWordPrev, szWord );	不要？
+						//	strcpy( szWordPrev, szWord );	不要？
 						//	To Here
 						
-						if( pLine[i] == L':')
+						if( pLine[i] == ':')
 						{
 							if(nMode2 == M2_NAMESPACE_SAVE)
 							{
 								if(szWord[0]!='\0')
-									wcscpy( szItemName, szWord );
+									strcpy( szItemName, szWord );
 								nMode2 = M2_NAMESPACE_END;
 							}
 							else if( nMode2 == M2_TEMPLATE_SAVE)
 							{
-								wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
-								szItemName[ nItemNameLenMax - 1 ] = L'\0';
+								strncat( szItemName, szWord, nItemNameLenMax - strlen(szItemName) );
+								szItemName[ nItemNameLenMax - 1 ] = '\0';
 								nMode2 = M2_NAMESPACE_END;
 							}
 						}
 
 						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = '\0';
 						//	//	Mar. 15, 2000 genta
 						//	From Here
 						//	長さチェックは必須
@@ -936,20 +998,20 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						//	operatorの判定は前にクラス名が付いている可能性があるので
 						//	専用の判定関数を使うべし．
 						//	operatorで無ければ=は代入なのでここは宣言文ではない．
-						if( pLine[i] == L'=' && nNestLevel_func == 0 && nNestLevel_fparam==0
-							&& nMode2 == M2_NORMAL && ! C_IsOperator(szWordPrev,wcslen(szWordPrev)) ){
+						if( pLine[i] == '=' && nNestLevel_func == 0 && nNestLevel_fparam==0
+							&& nMode2 == M2_NORMAL && ! C_IsOperator(szWordPrev,strlen(szWordPrev)) ){
 							nMode2 = M2_AFTER_EQUAL;
 						}
-						wcscpy( szWordPrev, szWord );
+						strcpy( szWordPrev, szWord );
 						nWordIdx = 0;
 						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = '\0';
 						nMode = 2;
 
 						// 2002/10/27 frozen ここから
 						if( nMode2 == M2_NAMESPACE_SAVE )
 						{
-							if( pLine[i] == L'>' || pLine[i] == L',' || pLine[i] == L'=')
+							if( pLine[i] == '>' || pLine[i] == ',' || pLine[i] == '=')
 								// '<' の前に '>' , ',' , '=' があったので、おそらく
 								// 前にあった"class"はテンプレートパラメータの型を表していたと考えられる。
 								// よって、クラス名の調査は終了。
@@ -957,17 +1019,17 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 								// ',' はテンプレートパラメータの区切り
 								// '=' はデフォルトテンプレートパラメータの指定
 								nMode2 = M2_NORMAL; 
-							else if( pLine[i] == L'<' )
+							else if( pLine[i] == '<' )
 								nMode2 = M2_TEMPLATE_SAVE;
 						}
 
 						if( nMode2 == M2_TEMPLATE_SAVE)
 						{
-							int nItemNameLen = wcslen(szItemName);
+							int nItemNameLen = strlen(szItemName);
 							if(nItemNameLen + 1 < nItemNameLenMax )
 							{
 								szItemName[nItemNameLen] = pLine[i];
-								szItemName[nItemNameLen + 1 ] = L'\0';
+								szItemName[nItemNameLen + 1 ] = '\0';
 							}
 						}
 						// 2002/10/27 frozen ここまで

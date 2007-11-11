@@ -21,16 +21,16 @@
 #include "stdafx.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
-#include "CControlTray.h"
+#include "CEditApp.h"
 #include "CShareData.h"
 #include "Debug.h"
+#include "etc_uty.h"
 #include "CEditWnd.h" // 2002/2/3 aroka
 #include "mymessage.h" // 2002/2/3 aroka
 #include "CDocLine.h" // 2003/03/28 MIK
 #include <tchar.h>
 #include "CRunningTimer.h"
-#include "util/window.h"
-#include "util/file.h"
+
 
 /*!
 	@brief エディタプロセスを初期化する
@@ -48,8 +48,11 @@ bool CNormalProcess::Initialize()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
 
+	HANDLE			hMutex;
+	HWND			hWnd;
+
 	/* プロセス初期化の目印 */
-	HANDLE	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
+	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
 	if( NULL == hMutex ){
 		return false;
 	}
@@ -63,13 +66,14 @@ bool CNormalProcess::Initialize()
 	bool			bDebugMode;
 	bool			bGrepMode;
 	bool			bGrepDlg;
+	int				nGroup;	// 2007.06.26 ryoji
 	GrepInfo		gi;
 	FileInfo		fi;
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
 	CCommandLine::Instance()->GetFileInfo(fi); // 2002/2/8 aroka ここに移動
-	if( 0 < _tcslen( fi.m_szPath ) ){
+	if( 0 < strlen( fi.m_szPath ) ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileReadで
 		//	行われるのでここでは必要なし．
@@ -77,20 +81,20 @@ bool CNormalProcess::Initialize()
 		HWND hwndOwner;
 		/* 指定ファイルが開かれているか調べる */
 		// 2007.03.13 maru 文字コードが異なるときはワーニングを出すように
-		if( FALSE != GetShareData().IsPathOpened( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
+		if( FALSE != m_cShareData.IsPathOpened( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
-			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
-				CLogicPoint& pt = *CProcess::GetDllShareData().GetWorkBuffer<CLogicPoint>();
-				if( fi.m_ptCursor.x < 0 ){
+			if( fi.m_nY >= 0 ){	//	行の指定があるか
+				POINT& pt = *(POINT*)CProcess::m_pShareData->m_szWork;
+				if( fi.m_nX < 0 ){
 					//	桁の指定が無い場合
-					::SendMessageAny( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
+					::SendMessage( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
 				}
 				else {
-					pt.x = fi.m_ptCursor.x;
+					pt.x = fi.m_nX;
 				}
-				pt.y = fi.m_ptCursor.y;
-				::SendMessageAny( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
+				pt.y = fi.m_nY;
+				::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 			}
 			//	To Here Oct. 19, 2001 genta
 			/* アクティブにする */
@@ -103,102 +107,105 @@ bool CNormalProcess::Initialize()
 		}
 	}
 
-
-	// エディタアプリケーションを作成。2007.10.23 kobake
-	m_pcEditApp = new CEditApp(GetProcessInstance());
-	CEditWnd* pEditWnd = m_pcEditApp->GetWindow();
+	MY_TRACETIME( cRunningTimer, "CheckFile" );
+//複数プロセス版
+	/* エディタウィンドウオブジェクトを作成 */
+	m_pcEditWnd = new CEditWnd;
+	MY_TRACETIME( cRunningTimer, "CEditWnd Created" );
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::Instance()->IsDebugMode();
-	bGrepMode  = CCommandLine::Instance()->IsGrepMode();
-	bGrepDlg   = CCommandLine::Instance()->IsGrepDlg();
-
-	MY_TRACETIME( cRunningTimer, "CheckFile" );
+	bGrepMode = CCommandLine::Instance()->IsGrepMode();
+	bGrepDlg = CCommandLine::Instance()->IsGrepDlg();
+	nGroup = CCommandLine::Instance()->GetGroupId();	// 2007.06.26 ryoji
+	
 	if( bDebugMode ){
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
+
+//	#ifdef _DEBUG/////////////////////////////////////////////
 		/* デバッグモニタモードに設定 */
-		pEditWnd->SetDebugModeON();
+		m_pcEditWnd->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
-		pEditWnd->GetDocument().SetDocumentType( GetShareData().GetDocumentTypeExt(_T("output")), true );
-	}
-	else if( bGrepMode ){
+		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeExt("output"), true );
+//	#endif////////////////////////////////////////////////////
+	}else
+	if( bGrepMode ){
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
-		if( NULL == pEditWnd->GetHwnd() ){
+		if( NULL == hWnd ){
 			goto end_of_func;
 		}
 		/* GREP */
 		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
-		if( !bGrepDlg ){
+		if( false == bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
 			/* ロングファイル名を取得する */
-			if( ::GetLongFileName( gi.cmGrepFolder.GetStringPtr(), szWork ) ){
-				gi.cmGrepFolder.SetString( szWork, _tcslen( szWork ) );
+			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr(), szWork ) ){
+				gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
 			}
 			// 2003.06.23 Moca GREP実行前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
+			m_hWnd = hWnd;
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			pEditWnd->m_pcEditViewArr[0]->DoGrep(
+			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
 				gi.bGrepSubFolder,
-				gi.sGrepSearchOption,
+				gi.bGrepNoIgnoreCase,
+				gi.bGrepRegularExp,
 				gi.nGrepCharSet,	//	2002/09/21 Moca
 				gi.bGrepOutputLine,
+				gi.bGrepWordOnly,	//	Jun. 26, 2001 genta
 				gi.nGrepOutputStyle
 			);
 			return true; // 2003.06.23 Moca
-		}
-		else{
+		}else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
-			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
-			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
-			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
-			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder = gi.bGrepSubFolder;
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption = gi.sGrepSearchOption;
-			GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet = gi.nGrepCharSet;
-			GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine = gi.bGrepOutputLine;
-			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
+			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetPtr() );
+			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetPtr() );
+			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetPtr() );
+			m_pShareData->m_Common.m_bGrepSubFolder = gi.bGrepSubFolder;
+			m_pShareData->m_Common.m_bLoHiCase = gi.bGrepNoIgnoreCase;
+			m_pShareData->m_Common.m_bRegularExp = gi.bGrepRegularExp;
+			m_pShareData->m_Common.m_nGrepCharSet = gi.nGrepCharSet;
+			m_pShareData->m_Common.m_bGrepOutputLine = gi.bGrepOutputLine;
+			m_pShareData->m_Common.m_bWordOnly = gi.bGrepWordOnly;
+			m_pShareData->m_Common.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
+			m_hWnd = hWnd;
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			wcscpy( pEditWnd->m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
-			_tcscpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );	/* 検索ファイル */
-			_tcscpy( pEditWnd->m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetPtr() );		/* 検索文字列 */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetPtr() );		/* 検索ファイル */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetPtr() );	/* 検索フォルダ */
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
+			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
 			if( FALSE != nRet ){
-				pEditWnd->m_pcEditViewArr[0]->GetCommander().HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
 			}
 			return true; // 2003.06.23 Moca
 		}
-	}
-	else{
+	}else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
-		if( 0 < _tcslen( fi.m_szPath ) ){
+		if( 0 < strlen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
-			pEditWnd->OpenDocumentWhenCreate(
-				fi.m_szPath,
-				fi.m_nCharCode,
-				bReadOnly/* 読み取り専用か */
-			);
-			pEditWnd->SetDocumentTypeWhenCreate(
-				fi.m_nCharCode,
-				bReadOnly/* 読み取り専用か */,
-				fi.m_szDocType[0] == '\0' ? -1 : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
-			);
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
+							fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+							fi.m_szDocType[0] == '\0' ? -1 :
+								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
+				 );
 			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
-			if( NULL == pEditWnd->GetHwnd() ){
+			if( NULL == hWnd ){
 				goto end_of_func;
 			}
 			//	Nov. 6, 2000 genta
@@ -207,85 +214,72 @@ bool CNormalProcess::Initialize()
 			//	Oct. 19, 2001 genta
 			//	未設定＝-1になるようにしたので，安全のため両者が指定されたときだけ
 			//	移動するようにする． || → &&
-			if( ( CLayoutInt(0) <= fi.m_nViewTopLine && CLayoutInt(0) <= fi.m_nViewLeftCol )
-				&& fi.m_nViewTopLine < pEditWnd->GetDocument().m_cLayoutMgr.GetLineCount() ){
-				pEditWnd->m_pcEditViewArr[0]->GetTextArea().SetViewTopLine( fi.m_nViewTopLine );
-				pEditWnd->m_pcEditViewArr[0]->GetTextArea().SetViewLeftCol( fi.m_nViewLeftCol );
+			if( ( 0 <= fi.m_nViewTopLine && 0 <= fi.m_nViewLeftCol )
+				&& fi.m_nViewTopLine < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewTopLine = fi.m_nViewTopLine;
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewLeftCol = fi.m_nViewLeftCol;
 			}
 
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
 			//	Oct. 19, 2001 genta
 			//	0も位置としては有効な値なので判定に含めなくてはならない
-			if( 0 <= fi.m_ptCursor.x || 0 <= fi.m_ptCursor.y ){
+			if( 0 <= fi.m_nX || 0 <= fi.m_nY ){
 				/*
 				  カーソル位置変換
 				  物理位置(行頭からのバイト数、折り返し無し行位置)
 				  →
 				  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 				*/
-				CLayoutPoint ptPos;
-				pEditWnd->GetDocument().m_cLayoutMgr.LogicToLayout(
-					fi.m_ptCursor,
-					&ptPos
+				int		nPosX;
+				int		nPosY;
+				m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
+					fi.m_nX,
+					fi.m_nY,
+					&nPosX,
+					&nPosY
 				);
-
-				// From Here Mar. 28, 2003 MIK
-				// 改行の真ん中にカーソルが来ないように。
-				// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
-				const CDocLine *pTmpDocLine = pEditWnd->GetDocument().m_cDocLineMgr.GetLineInfo( fi.m_ptCursor.GetY2() );
-				if( pTmpDocLine ){
-					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_ptCursor.x ) ptPos.x--;
+				// 2004.04.03 Moca EOFだけの行で終わっていると、EOFの一つ上の行に移動してしまうバグ修正
+				// MoveCursorが補正するのである程度行わなくて良くなった
+//				if( nPosY < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() )
+				{
+					// From Here Mar. 28, 2003 MIK
+					//改行の真ん中にカーソルが来ないように。
+					const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLineInfo( fi.m_nY );	// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
+					if( pTmpDocLine ){
+						if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
+					}
+					// To Here Mar. 28, 2003 MIK
+					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
+					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
+						m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
+				// 2004.04.03 Moca 削除
+				// }else{
+				// 	int		i;
+				// 	i = m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() - 1;
+				// 	if( i < 0 ){
+				// 		i = 0;
+				// 	}
+				// 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( 0, i, TRUE );
+				// 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
 				}
-				// To Here Mar. 28, 2003 MIK
-
-				pEditWnd->m_pcEditViewArr[0]->GetCaret().MoveCursor( ptPos, TRUE );
-				pEditWnd->m_pcEditViewArr[0]->GetCaret().m_nCaretPosX_Prev =
-					pEditWnd->m_pcEditViewArr[0]->GetCaret().GetCaretLayoutPos().GetX2();
 			}
-			pEditWnd->m_pcEditViewArr[0]->RedrawAll();
-		}
-		else{
+			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
+		}else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
-			pEditWnd->SetDocumentTypeWhenCreate(
-				fi.m_nCharCode,
-				bReadOnly/* 読み取り専用か */,
-				fi.m_szDocType[0] == '\0' ? -1 : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
-			);
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
+										NULL, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+										fi.m_szDocType[0] == '\0' ? -1 :
+										m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
+									);
 		}
 	}
+	MY_TRACETIME( cRunningTimer, "EditDoc->Create() End" );
 
 end_of_func:
-	SetMainWindow( pEditWnd->GetHwnd() );
-
-	//ウィンドウキャプション更新
-	pEditWnd->GetDocument().SetParentCaption();
-
-	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
-	pEditWnd->GetActiveView().SetIMECompFormPos();
-
-	//WM_SIZEをポスト
-	{
-		RECT rc;
-		GetClientRect( pEditWnd->GetHwnd(), &rc);
-		::PostMessageAny(
-			pEditWnd->GetHwnd(),
-			WM_SIZE,
-			SIZE_RESTORED,
-			MAKELPARAM(
-				rc.right -rc.left,
-				rc.bottom-rc.top
-			)
-		);
-	}
-
-	//再描画
-	::InvalidateRect( pEditWnd->GetHwnd(), NULL, TRUE );
-
+	m_hWnd = hWnd;
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
-
-
-	return pEditWnd->GetHwnd() ? true : false;
+	return hWnd ? true : false;
 }
 
 /*!
@@ -296,8 +290,8 @@ end_of_func:
 */
 bool CNormalProcess::MainLoop()
 {
-	if( GetMainWindow() ){
-		m_pcEditApp->GetWindow()->MessageLoop();	/* メッセージループ */
+	if( NULL != m_pcEditWnd && NULL != m_hWnd ){
+		m_pcEditWnd->MessageLoop();	/* メッセージループ */
 		return true;
 	}
 	return false;
@@ -323,6 +317,9 @@ void CNormalProcess::Terminate()
 */
 CNormalProcess::~CNormalProcess()
 {
+	if( m_pcEditWnd ){
+		delete m_pcEditWnd;
+	}
 };
 
 

@@ -46,12 +46,11 @@
 */
 class SAKURA_CORE_API CEOL
 {
-	static const char*		gm_pszEolDataArr			[EOL_TYPE_NUM];
-	static const wchar_t*	gm_pszEolUnicodeDataArr		[EOL_TYPE_NUM];
-	static const wchar_t*	gm_pszEolUnicodeBEDataArr	[EOL_TYPE_NUM];
-	static const int		gm_pnEolLenArr				[EOL_TYPE_NUM];
-	static const TCHAR*		gm_pszEolNameArr			[EOL_TYPE_NUM];
-	static const wchar_t*	gm_aEolInfoStrings			[EOL_TYPE_NUM];
+	static const char* gm_pszEolDataArr[EOL_TYPE_NUM];
+	static const wchar_t* gm_pszEolUnicodeDataArr[EOL_TYPE_NUM];
+	static const wchar_t* gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM];
+	static const int gm_pnEolLenArr[EOL_TYPE_NUM];
+	static const char* gm_pszEolNameArr[EOL_TYPE_NUM];
 public:
 
 	//	設定関数
@@ -61,22 +60,24 @@ public:
 	}
 
 	static enumEOLType GetEOLType( const char* pszData, int nDataLen );
-	static enumEOLType GetEOLType( const wchar_t* pszData, int nDataLen );
 	static enumEOLType GetEOLTypeUni( const wchar_t* pszData, int nDataLen );
 	static enumEOLType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen );
 	bool SetType( enumEOLType t);	//	Typeの設定
-	void GetTypeFromString( const wchar_t* pszData, int nDataLen )
-		{	SetType( GetEOLType( pszData, nDataLen ) ); }
 	void GetTypeFromString( const char* pszData, int nDataLen )
 		{	SetType( GetEOLType( pszData, nDataLen ) ); }
 
 	//	読み出し関数
-	enumEOLType		GetType()			const{ return m_enumEOLType; }								//!< 現在のTypeを取得
-	CLogicInt		GetLen()			const{ return CLogicInt(gm_pnEolLenArr[ m_enumEOLType ]); }	//!< 現在のEOL長を取得。文字単位。
-	const TCHAR*	GetName()			const{ return gm_pszEolNameArr[ m_enumEOLType ]; }			//!< 現在のEOLの名称取得
-	const char*		GetValue()			const{ return gm_pszEolDataArr[ m_enumEOLType ]; }			//!< 現在のEOL文字列先頭へのポインタを取得
-	const wchar_t*	GetUnicodeValue()	const{ return gm_pszEolUnicodeDataArr[m_enumEOLType]; }		//!< Unicode版GetValue	2002/5/9 Frozen
-	const wchar_t*	GetUnicodeBEValue()	const{ return gm_pszEolUnicodeBEDataArr[m_enumEOLType]; }	//!< UnicodeBE版のGetValue 2002.05.30 Moca
+	enumEOLType GetType(void) const { return m_enumEOLType; }	//!<	現在のTypeを取得
+	int GetLen(void) const
+		{ return gm_pnEolLenArr[ m_enumEOLType ]; }	//!<	現在のEOL長を取得
+	const char* GetName(void) const
+		{ return gm_pszEolNameArr[ m_enumEOLType ]; }	//!<	現在のEOLの名称取得
+	const char* GetValue(void) const
+		{ return gm_pszEolDataArr[ m_enumEOLType ]; }	//!<	現在のEOL文字列先頭へのポインタを取得
+	const char* GetUnicodeValue() const
+		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeDataArr[m_enumEOLType]);}	//!<	Unicode版GetValue	2002/5/9 Frozen
+	const char* GetUnicodeBEValue(void) const
+		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeBEDataArr[m_enumEOLType]); }	//!<	UnicodeBE版のGetValue 2002.05.30 Moca
 
 	//	利便性向上のためのOverload
 	bool operator==( enumEOLType t ) const { return GetType() == t; }

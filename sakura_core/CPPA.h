@@ -31,26 +31,16 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-/*
-PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリタコンポーネントです。
-*/
 
 #ifndef _DLL_CPPA_H_
 #define _DLL_CPPA_H_
 
-#include <objidl.h>  // VARIANT等
 #include "CSMacroMgr.h"
 #include "CDllHandler.h"
 #include "stdio.h"
 
 #define PPADLL_VER 123
 
-
-/*
-PPA(Poor-Pascal for Application)はDelphi/C++Builder用の
-Pascalインタプリタコンポーネントです。
-アプリケーションにマクロ機能を搭載する事を目的に作成されています。
-*/
 
 /*!
 	@brief PPA.DLL をサポートするクラス
@@ -66,7 +56,7 @@ public:
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得。m_szMsgを壊す
 		if ( IsAvailable() ){
-			auto_sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
+			sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
 			return m_szMsg;
 		}
 		return "";
@@ -89,47 +79,47 @@ protected:
 private:
 	//	DLL Interfaceの受け皿
 	typedef void (WINAPI *PPA_Execute)();
-	typedef void (WINAPI *PPA_SetSource) (const char* ss);
-	typedef void (WINAPI *PPA_SetDeclare)(const char* ss);
-	typedef void (WINAPI *PPA_SetDefProc)(const char* ss);
-	typedef void (WINAPI *PPA_SetDefine) (const char* ss);
-	typedef void (WINAPI *PPA_AddIntVar) (const char*, int, int);
-	typedef void (WINAPI *PPA_AddStrVar) (const char*, const char*, int);
-	typedef void (WINAPI *PPA_SetIntFunc)(void* p);
-	typedef void (WINAPI *PPA_SetStrFunc)(void* p);
-	typedef void (WINAPI *PPA_SetProc)   (void* p);
-	typedef void (WINAPI *PPA_SetErrProc)(void* p);
-	typedef void (WINAPI *PPA_Abort)     ();
+	typedef void (WINAPI *PPA_SetSource)(const char*);
+	typedef void (WINAPI *PPA_SetDeclare)(const char*);
+	typedef void (WINAPI *PPA_SetDefProc)(const char*);
+	typedef void (WINAPI *PPA_SetDefine)(const char*);
+	typedef void (WINAPI *PPA_AddIntVar)(const char*, int, int);
+	typedef void (WINAPI *PPA_AddStrVar)(const char*, const char*, int);
+	typedef void (WINAPI *PPA_SetIntFunc)(void*);
+	typedef void (WINAPI *PPA_SetStrFunc)(void*);
+	typedef void (WINAPI *PPA_SetProc)(void*);
+	typedef void (WINAPI *PPA_SetErrProc)(void*);
+	typedef void (WINAPI *PPA_Abort)();
 	typedef int  (WINAPI *PPA_GetVersion)();
-	typedef void (WINAPI *PPA_DeleteVar) (const char*);
-	typedef int  (WINAPI *PPA_GetArgInt) (int);
-	typedef char*(WINAPI *PPA_GetArgStr) (int);
+	typedef void (WINAPI *PPA_DeleteVar)(const char*);
+	typedef int  (WINAPI *PPA_GetArgInt)(int);
+	typedef char*(WINAPI *PPA_GetArgStr)(int);
 	typedef char*(WINAPI *PPA_GetArgBStr)(int);
-	typedef void (WINAPI *PPA_SetStrObj) (void* proc);
-	typedef void (WINAPI *PPA_SetIntObj) (void* proc);
-	typedef void (WINAPI *PPA_AddIntObj) (const char*, int, BOOL, int);
-	typedef void (WINAPI *PPA_AddStrObj) (const char*, const char*, BOOL, int);
-	typedef int  (WINAPI *PPA_GetIntVar) (const char* ss);
-	typedef char*(WINAPI *PPA_GetStrVar) (const char* ss);
-	typedef char*(WINAPI *PPA_GetBStrVar)(const char* ss);
-	typedef BOOL (WINAPI *PPA_SetIntVar) (const char*, int);
-	typedef BOOL (WINAPI *PPA_SetStrVar) (const char*, const char*);
+	typedef void (WINAPI *PPA_SetStrObj)(void*);
+	typedef void (WINAPI *PPA_SetIntObj)(void*);
+	typedef void (WINAPI *PPA_AddIntObj)(const char*, int, BOOL, int);
+	typedef void (WINAPI *PPA_AddStrObj)(const char*, const char*, BOOL, int);
+	typedef int  (WINAPI *PPA_GetIntVar)(const char*);
+	typedef char*(WINAPI *PPA_GetStrVar)(const char*);
+	typedef char*(WINAPI *PPA_GetBStrVar)(const char*);
+	typedef BOOL (WINAPI *PPA_SetIntVar)(const char*, int);
+	typedef BOOL (WINAPI *PPA_SetStrVar)(const char*, const char*);
 
 	// 以下は PPA.DLL Version 1.20 で追加された関数 --
 	#if PPADLL_VER >= 120
 	typedef void   (WINAPI *PPA_AddRealVar)(const char*, double, BOOL);
-	typedef void   (WINAPI *PPA_SetRealObj)(void* p);
+	typedef void   (WINAPI *PPA_SetRealObj)(void*);
 	typedef void   (WINAPI *PPA_AddRealObj)(const char*, double, BOOL, LONG);
 	typedef double (WINAPI *PPA_GetRealVar)(const char*);
 	typedef BOOL   (WINAPI *PPA_SetRealVar)(const char*, double);
-	typedef void   (WINAPI *PPA_SetRealFunc)(void* p);
+	typedef void   (WINAPI *PPA_SetRealFunc)(void*);
 	typedef DWORD  (WINAPI *PPA_GetArgReal)(int);
 	#endif // PPADLL_VER >= 120
 
 	// 以下は PPA.DLL Version 1.23 で追加された関数 --
 	#if PPADLL_VER >= 123
 	typedef BYTE (WINAPI *PPA_IsRunning)();
-	typedef void (WINAPI *PPA_SetFinishProc)(void* p);	//	2003.06.01 Moca
+	typedef void (WINAPI *PPA_SetFinishProc)(void*);	//	2003.06.01 Moca
 	#endif // PPADLL_VER >= 123
 
 	PPA_Execute    m_fnExecute;
@@ -268,11 +258,11 @@ private:
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
-	static CNativeA			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
+	static CMemory			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
 	static CEditView*		m_pcEditView;	//	2003.06.01 Moca
 	static DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
 	static bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-	static CNativeA			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+	static CMemory			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
 
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];

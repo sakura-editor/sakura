@@ -56,7 +56,7 @@ class CMacroManagerBase;
 */
 class CMacroFactory {
 public:
-	typedef CMacroManagerBase* (*Creator)(const TCHAR*);
+	typedef CMacroManagerBase* (*Creator)(const char*);
 
 	bool RegisterCreator( Creator );
 	// Jan. 31, 2004 genta
@@ -64,13 +64,13 @@ public:
 	//bool RegisterExt( const char*, Creator );
 	bool Unregister( Creator );
 
-	CMacroManagerBase* Create(const TCHAR* ext);
+	CMacroManagerBase* Create(const char*);
 	
 	static CMacroFactory* Instance();
 
 private:
 	CMacroFactory();
-	std::tstring Ext2Key(const TCHAR *ext);
+	std::string Ext2Key(const char *ext);
 
 	// Jan. 31, 2004 genta
 	// バイナリサイズ削減のため拡張子保持用mapを削除

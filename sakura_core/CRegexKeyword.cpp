@@ -28,7 +28,7 @@
 {\
 	FILE	*fp;\
 	fp = fopen("debug.log", "a");\
-	fprintf(fp, "%08x: %ls  BMatch(%d)=%d, Use=%d, Idx=%d\n", &m_pTypes, s, &BMatch, BMatch, m_bUseRegexKeyword, m_nTypeIndex);\
+	fprintf(fp, "%08x: %s  BMatch(%d)=%d, Use=%d, Idx=%d\n", &m_pTypes, s, &BMatch, BMatch, m_bUseRegexKeyword, m_nTypeIndex);\
 	fclose(fp);\
 }
 #else
@@ -171,7 +171,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 {
 	int	i;
 	int	matched;
-	static const wchar_t dummy[2] = L"\0";
+	static const char dummy[2] = "\0";
 	struct RegexKeywordInfo	*rp;
 
 	MYDBGMSG("RegexKeyCompile")
@@ -224,9 +224,10 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 			if( m_szMsg[0] == '\0' )	//エラーがないかチェックする
 			{
 				//先頭以外は検索しなくてよい
-				if( wcsncmp( RK_HEAD_STR1, rp->m_szKeyword, RK_HEAD_STR1_LEN ) == 0
-				 || wcsncmp( RK_HEAD_STR2, rp->m_szKeyword, RK_HEAD_STR2_LEN ) == 0
-				 || wcsncmp( RK_HEAD_STR3, rp->m_szKeyword, RK_HEAD_STR3_LEN ) == 0
+				if( strncmp( RK_HEAD_STR1, rp->m_szKeyword, RK_HEAD_STR1_LEN ) == 0
+				 || strncmp( RK_HEAD_STR2, rp->m_szKeyword, RK_HEAD_STR2_LEN ) == 0
+				 || strncmp( RK_HEAD_STR3, rp->m_szKeyword, RK_HEAD_STR3_LEN ) == 0
+				/* || strncmp( RK_HEAD_STR4, rp->m_szKeyword, RK_HEAD_STR4_LEN ) == 0 */
 				)
 				{
 					m_sInfo[i].nHead = 1;
@@ -338,7 +339,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 
 	@note RegexKeyLineStart関数によって初期化されていること。
 */
-BOOL CRegexKeyword::RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor )
+BOOL CRegexKeyword::RegexIsKeyword( const char *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor )
 {
 	int	i, matched;
 
@@ -419,33 +420,33 @@ BOOL CRegexKeyword::RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen
 	return FALSE;
 }
 
-BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
+BOOL CRegexKeyword::RegexKeyCheckSyntax(const char *s)
 {
-	const wchar_t	*p;
+	const char	*p;
 	int	length, i;
-	static const wchar_t *kakomi[7 * 2] = {
-		L"/",  L"/k",
-		L"m/", L"/k",
-		L"m#", L"#k",
-		L"/",  L"/ki",
-		L"m/", L"/ki",
-		L"m#", L"#ki",
+	static const char *kakomi[7 * 2] = {
+		"/",  "/k",
+		"m/", "/k",
+		"m#", "#k",
+		"/",  "/ki",
+		"m/", "/ki",
+		"m#", "#ki",
 		NULL, NULL,
 	};
 
-	length = wcslen(s);
+	length = strlen(s);
 
 	for(i = 0; kakomi[i] != NULL; i += 2)
 	{
 		//文字長を確かめる
-		if( length > (int)wcslen(kakomi[i]) + (int)wcslen(kakomi[i+1]) )
+		if( length > (int)strlen(kakomi[i]) + (int)strlen(kakomi[i+1]) )
 		{
 			//始まりを確かめる
-			if( wcsncmp(kakomi[i], s, wcslen(kakomi[i])) == 0 )
+			if( strncmp(kakomi[i], s, strlen(kakomi[i])) == 0 )
 			{
 				//終わりを確かめる
-				p = &s[length - wcslen(kakomi[i+1])];
-				if( wcscmp(p, kakomi[i+1]) == 0 )
+				p = &s[length - strlen(kakomi[i+1])];
+				if( strcmp(p, kakomi[i+1]) == 0 )
 				{
 					//正常
 					return TRUE;

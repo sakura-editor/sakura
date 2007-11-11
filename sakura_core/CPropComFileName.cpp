@@ -36,7 +36,6 @@
 #include "CPropCommon.h"
 #include "CShareData.h"
 #include "sakura.hh"
-#include "util/shell.h"
 
 
 static const DWORD p_helpids[] = {	//13400
@@ -122,15 +121,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 					nIndex = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					// 未選択
 					if( -1 == nIndex ){
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, _T("") );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, _T("") );
-					}
-					else if( nIndex != m_nLastPos_FILENAME ){
+						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, _T("") );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO, _T("") );
+					}else if( nIndex != m_nLastPos_FILENAME ){
 						GetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo );
-					}
-					else{
+						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO, szTo );
+					}else{
 						// nIndex == m_nLastPos_FILENAMEのとき
 						// リスト→エディットボックスにデータをコピーすると[更新]がうまくうまく動作しない
 					}
@@ -177,8 +174,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 						// 選択中でなければ最後に追加
 						nIndex = nCount;
 					}
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
+					::GetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					::GetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 
 					if( -1 != SetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo, true ) ){
 						return TRUE;
@@ -187,8 +184,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 				case IDC_BUTTON_FNAME_ADD:	// 追加
 					nCount = ListView_GetItemCount( hListView );
 
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
+					::GetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					::GetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 					
 					if( -1 != SetListViewItem_FILENAME( hListView, nCount, szFrom, szTo, true ) ){
 						return TRUE;
@@ -197,8 +194,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 
 				case IDC_BUTTON_FNAME_UPD:	// 更新
 					if( -1 != nIndex ){
-						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
+						::GetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+						::GetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 						if( -1 != SetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo, false ) ){
 							return TRUE;
 						}
@@ -278,8 +275,15 @@ void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
 {
 	int nIndex;
 	int i;
-	LVITEM lvItem;
+	LVITEM Item;
 
+	// ファイル名を簡易表示する
+//	if( FALSE != m_bUseTransformFileName ){
+//		CheckDlgButton( hwndDlg, IDC_CHECK_FNAME, BST_CHECKED );
+//	}else{
+//		CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
+//	}
+//	EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_FNAME ), FALSE );
 
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
@@ -289,19 +293,19 @@ void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
 	for( i = 0, nIndex = 0; i < m_nTransformFileNameArrNum; i++ ){
 		if( '\0' == m_szTransformFileNameFrom[i][0] ) continue;
 
-		::ZeroMemory( &lvItem, sizeof_raw( lvItem ));
-		lvItem.mask     = LVIF_TEXT;
-		lvItem.iItem    = nIndex;
-		lvItem.iSubItem = 0;
-		lvItem.pszText  = m_szTransformFileNameFrom[i];
-		ListView_InsertItem( hListView, &lvItem );
+		::ZeroMemory( &Item, sizeof( Item ));
+		Item.mask     = LVIF_TEXT;
+		Item.iItem    = nIndex;
+		Item.iSubItem = 0;
+		Item.pszText  = m_szTransformFileNameFrom[i];
+		ListView_InsertItem( hListView, &Item );
 
-		::ZeroMemory( &lvItem, sizeof_raw( lvItem ));
-		lvItem.mask     = LVIF_TEXT;
-		lvItem.iItem    = nIndex;
-		lvItem.iSubItem = 1;
-		lvItem.pszText  = m_szTransformFileNameTo[i];
-		ListView_SetItem( hListView, &lvItem );
+		::ZeroMemory( &Item, sizeof( Item ));
+		Item.mask     = LVIF_TEXT;
+		Item.iItem    = nIndex;
+		Item.iSubItem = 1;
+		Item.pszText  = m_szTransformFileNameTo[i];
+		ListView_SetItem( hListView, &Item );
 
 		nIndex++;
 	}
@@ -347,15 +351,15 @@ int CPropCommon::GetData_PROP_FILENAME( HWND hwndDlg )
 			ListView_GetItemText( hListView, nIndex, 0, m_szTransformFileNameFrom[nCount], _MAX_PATH );
 
 			// 置換前文字列がNULLだったら捨てる
-			if( L'\0' == m_szTransformFileNameFrom[nCount][0] ){
-				m_szTransformFileNameTo[nIndex][0] = L'\0';
+			if( '\0' == m_szTransformFileNameFrom[nCount][0] ){
+				m_szTransformFileNameTo[nIndex][0] = '\0';
 			}else{
 				ListView_GetItemText( hListView, nIndex, 1, m_szTransformFileNameTo[nCount], _MAX_PATH );
 				nCount++;
 			}
 		}else{
-			m_szTransformFileNameFrom[nIndex][0] = L'\0';
-			m_szTransformFileNameTo[nIndex][0] = L'\0';
+			m_szTransformFileNameFrom[nIndex][0] = '\0';
+			m_szTransformFileNameTo[nIndex][0] = '\0';
 		}
 	}
 
@@ -368,7 +372,7 @@ int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR sz
 	LV_ITEM	Item;
 	int nCount;
 
-	if( _T('\0') == szFrom[0] || -1 == nIndex ) return -1;
+	if( '\0' == szFrom[0] || -1 == nIndex ) return -1;
 
 	nCount = ListView_GetItemCount( hListView );
 
@@ -378,7 +382,7 @@ int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR sz
 		return -1;
 	}
 
-	::ZeroMemory( &Item, sizeof_raw( Item ));
+	::ZeroMemory( &Item, sizeof( Item ));
 	Item.mask     = LVIF_TEXT;
 	Item.iItem    = nIndex;
 	Item.iSubItem = 0;
@@ -389,7 +393,7 @@ int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR sz
 		ListView_SetItem( hListView, &Item );
 	}
 
-	::ZeroMemory( &Item, sizeof_raw( Item ));
+	::ZeroMemory( &Item, sizeof( Item ));
 	Item.mask     = LVIF_TEXT;
 	Item.iItem    = nIndex;
 	Item.iSubItem = 1;

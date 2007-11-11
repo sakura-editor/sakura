@@ -40,9 +40,9 @@ const int LUOFFSET_MACRO = 0;
 const int LUOFFSET_CUSTMENU = 1;
 
 //! 動的に内容が変わる分類の名前
-const TCHAR *DynCategory[] = {
-	_T("外部マクロ"),
-	_T("カスタムメニュー")
+const char *DynCategory[] = {
+	"外部マクロ",
+	"カスタムメニュー"
 };
 
 /*!	@brief 分類中の位置に対応する機能番号を返す．
@@ -50,7 +50,7 @@ const TCHAR *DynCategory[] = {
 	@param category [in] 分類番号 (0-)
 	@param position [in] 分類中のindex (0-)
 */
-EFunctionCode CFuncLookup::Pos2FuncCode( int category, int position ) const
+int CFuncLookup::Pos2FuncCode( int category, int position ) const
 {
 	if( category < nsFuncCode::nFuncKindNum ){
 		return nsFuncCode::ppnFuncListArr[category][position];
@@ -58,49 +58,49 @@ EFunctionCode CFuncLookup::Pos2FuncCode( int category, int position ) const
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO){
 		//	キー割り当てマクロ
 		if( m_pcSMacroMgr->IsEnabled(position))
-			return (EFunctionCode)(F_USERMACRO_0 + position);
+			return F_USERMACRO_0 + position;
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU){
 		//	キー割り当てマクロ
 		if( position == 0 )
 			return F_MENU_RBUTTON;
 		else if( 1 <= position && position <= MAX_CUSTOM_MENU - 1 )
-			return (EFunctionCode)(F_CUSTMENU_BASE + position);
+			return F_CUSTMENU_BASE + position;
 	}
-	return F_DEFAULT;
+	return 0;
 }
 
 /*!	@brief 分類中の位置に対応する機能名称を返す．
 
-	@retval true  名称の設定に成功
+	@param category [in] 分類番号 (0-)
+	@param position [in] 分類中のindex (0-)
+	@param ptr [out] 文字列を格納するバッファの先頭
+	@param bufsize [in] 文字列を格納するバッファのサイズ
+
+	@retval true 名称の設定に成功
 	@retval false 失敗。文字列は格納されていない
 */
-bool CFuncLookup::Pos2FuncName(
-	int		category,	//!< [in]  分類番号 (0-)
-	int		position,	//!< [in]  分類中のindex (0-)
-	WCHAR*	ptr,		//!< [out] 文字列を格納するバッファの先頭
-	int		bufsize		//!< [in]  文字列を格納するバッファのサイズ
-) const
+bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsize ) const
 {
 	int func;
 	if( category < nsFuncCode::nFuncKindNum ){
 		func = nsFuncCode::ppnFuncListArr[category][position];
-		return ( ::LoadStringW2( m_hInstance, func, ptr, bufsize ) > 0 );
+		return ( ::LoadString( m_hInstance, func, ptr, bufsize ) > 0 );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO){
 		//	キー割り当てマクロ
-		const TCHAR *p = m_pcSMacroMgr->GetTitle( position );
+		const char *p = m_pcSMacroMgr->GetTitle( position );
 		if( p == NULL )
 			return false;
-		_tcstowcs( ptr, p, bufsize - 1 );
-		ptr[ bufsize - 1 ] = LTEXT('\0');
+		strncpy( ptr, p, bufsize - 1 );
+		ptr[ bufsize - 1 ] = '\0';
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU){
 		//	キー割り当てマクロ
 		if( 0 <= position && position < MAX_CUSTOM_MENU )
 		{
-			wcsncpy( ptr, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[position], bufsize );
-			ptr[bufsize-1] = LTEXT('\0');
+			strncpy( ptr, m_pCommon->m_szCustMenuNameArr[position], bufsize );
+			ptr[bufsize-1] = '\0';
 		}
 		else
 			return false;
@@ -117,31 +117,31 @@ bool CFuncLookup::Pos2FuncName(
 	@retval true 名称の設定に成功
 	@retval false 失敗。文字列は格納されていない
 */
-bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
+bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 {
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
 		if( !m_pcSMacroMgr->IsEnabled( position )){
-			*ptr = LTEXT('\0');
+			*ptr = '\0';
 			return false;
 		}
 
-		const WCHAR *p = to_wchar(m_pcSMacroMgr->GetTitle( position ));
+		const char *p = m_pcSMacroMgr->GetTitle( position );
 		if( p == NULL )
 			return false;
-		wcsncpy( ptr, p, bufsize - 1 );
-		ptr[ bufsize - 1 ] = LTEXT('\0');
+		strncpy( ptr, p, bufsize - 1 );
+		ptr[ bufsize - 1 ] = '\0';
 	}
 	else if( funccode == F_MENU_RBUTTON ){
-		wcsncpy( ptr, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[0], bufsize );
-		ptr[bufsize-1] = LTEXT('\0');
+		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[0], bufsize );
+		ptr[bufsize-1] = '\0';
 	}
 	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTMACRO ){
-		wcsncpy( ptr, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
-		ptr[bufsize-1] = LTEXT('\0');
+		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
+		ptr[bufsize-1] = '\0';
 	}
 	else {
-		return ( ::LoadStringW2( m_hInstance, funccode, ptr, bufsize ) > 0 );
+		return ( ::LoadString( m_hInstance, funccode, ptr, bufsize ) > 0 );
 	}
 	return true;
 }
@@ -152,7 +152,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 	
 	@return NULL 分類名称．取得に失敗したらNULL．
 */
-const TCHAR* CFuncLookup::Category2Name( int category ) const
+const char* CFuncLookup::Category2Name( int category ) const
 {
 	if( category < nsFuncCode::nFuncKindNum ){
 		return nsFuncCode::ppszFuncKind[category];
@@ -175,17 +175,17 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 	int i;
 
 	//	リストを初期化する
-	::SendMessageAny( hComboBox, CB_RESETCONTENT, 0, (LPARAM)0 );
+	::SendMessage( hComboBox, CB_RESETCONTENT, 0, (LPARAM)0 );
 
 	//	固定機能リスト
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-		Combo_AddString( hComboBox, nsFuncCode::ppszFuncKind[i] );
+		::SendMessage( hComboBox, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
 	}
 
 	//	ユーザマクロ
-	Combo_AddString( hComboBox, DynCategory[0] );
+	::SendMessage( hComboBox, CB_ADDSTRING, 0, (LPARAM)DynCategory[0] );
 	//	カスタムメニュー
-	Combo_AddString( hComboBox, DynCategory[1] );
+	::SendMessage( hComboBox, CB_ADDSTRING, 0, (LPARAM)DynCategory[1] );
 }
 
 /*!	@brief 指定された分類に属する機能リストをListBoxに登録する．
@@ -195,18 +195,18 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 */
 void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 {
+	char pszLabel[256];
 	int i;
 
 	//	リストを初期化する
-	::SendMessageAny( hListBox, LB_RESETCONTENT , 0, (LPARAM)0 );
+	::SendMessage( hListBox, LB_RESETCONTENT , 0, (LPARAM)0 );
 
 	if( category < nsFuncCode::nFuncKindNum ){
-		TCHAR pszLabel[256];
 		for( i = 0; i < nsFuncCode::pnFuncListNumArr[category]; ++i ){
 			if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[category])[i], pszLabel, 255 ) ){
-				::List_AddString( hListBox, pszLabel );
+				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)pszLabel );
 			}else{
-				::List_AddString( hListBox, _WINT("--未定義--") );
+				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
 			}
 		}
 	}
@@ -214,16 +214,16 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 		//	マクロ
 		for( i = 0; i < MAX_CUSTMACRO ; ++i ){
 			if( m_pcSMacroMgr->IsEnabled(i)){
-				::List_AddString( hListBox, m_pcSMacroMgr->GetTitle(i));
+				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)m_pcSMacroMgr->GetTitle(i));
 			}
 			else {
-				::List_AddString( hListBox, _WINT("unavailable") );
+				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)"unavailable" );
 			}
 		}
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU ){
 		for( i = 0; i < MAX_CUSTOM_MENU ; ++i ){
-			::List_AddString( hListBox, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[i] );
+			::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)m_pCommon->m_szCustMenuNameArr[i] );
 		}
 	}
 }

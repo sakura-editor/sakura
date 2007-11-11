@@ -34,14 +34,14 @@ HWND CDlgCancel::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTempl
 
 BOOL CDlgCancel::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
-	_SetHwnd( hwndDlg );
+	m_hWnd = hwndDlg;
 	HICON	hIcon;
 	hIcon = ::LoadIcon( NULL, IDI_ASTERISK );
 //	hIcon = ::LoadIcon( m_hInstance, MAKEINTRESOURCE( IDI_ICON_GREP ) );
-	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)NULL );
-	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
-	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)NULL );
-	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)hIcon );
+	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)NULL );
+	::SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
+	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)NULL );
+	::SendMessage( m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
 
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */

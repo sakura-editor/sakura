@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
-	Copyright (C) 2002, aroka CControlTrayより分離
+	Copyright (C) 2002, aroka CEditAppより分離
 	Copyright (C) 2002, genta
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2007, ryoji
@@ -31,29 +31,30 @@ class CMemory;
 */
 class SAKURA_CORE_API CCommandLine {
 public:
-	static CCommandLine* Instance(LPTSTR cmd=NULL);
+	static CCommandLine* Instance(LPSTR cmd=NULL);
 
 private:
 	// 2005-08-24 D.S.Koba 引数削除
 	void ParseCommandLine( void );
 	
 	static int CheckCommandLine(
-		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
-		int		quotelen,	//!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
-		TCHAR**	arg			//!< [out] 引数がある場合はその先頭へのポインタ
+
+		LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
+		int quotelen, //!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
+		char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
 	);
 	
 	// 外から作らせない。
 	CCommandLine();
-	CCommandLine(LPTSTR cmd);
+	CCommandLine(LPSTR cmd);
 
 	/*!
 		引用符で囲まれている数値を認識するようにする
 		@date 2002.12.05 genta
 	*/
-	static int AtoiOptionInt(const TCHAR* arg){
-		return ( arg[0] == _T('"') || arg[0] == _T('\'') ) ?
-			_ttoi( arg + 1 ) : _ttoi( arg );
+	static int AtoiOptionInt(const char* arg){
+		return ( arg[0] == '"' || arg[0] == '\'' ) ?
+			atoi( arg + 1 ) : atoi( arg );
 	}
 
 // member accessor method
@@ -71,7 +72,7 @@ public:
 // member valiables
 private:
 	static CCommandLine* _instance;
-	LPCTSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
+	LPCSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
