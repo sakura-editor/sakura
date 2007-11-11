@@ -19,7 +19,7 @@
 #include "CShareData.h"
 #include "CProcess.h"
 
-class CControlTray;
+class CEditApp;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -27,15 +27,15 @@ class CControlTray;
 /*!
 	@brief コントロールプロセスクラス
 	
-	コントロールプロセスはCControlTrayクラスのインスタンスを作る。
+	コントロールプロセスはCEditAppクラスのインスタンスを作る。
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CControlProcess : public CProcess {
 public:
-	CControlProcess( HINSTANCE hInstance, LPTSTR lpCmdLine ) : 
+	CControlProcess( HINSTANCE hInstance, LPSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),
-		m_pcTray( 0 ),
+		m_pcEditApp( 0 ),
 		// 2006.04.10 ryoji 同期オブジェクトのハンドルを初期化
 		m_hMutex( NULL ),
 		m_hMutexCP( NULL ),
@@ -53,7 +53,7 @@ private:
 	HANDLE			m_hMutex;
 	HANDLE			m_hMutexCP;
 	HANDLE			m_hEventCPInitialized;	// コントロールプロセス初期化完了イベント 2006.04.10 ryoji
-	CControlTray*		m_pcTray;
+	CEditApp*		m_pcEditApp;
 };
 
 

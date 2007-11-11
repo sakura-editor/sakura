@@ -40,12 +40,9 @@
 #include "CEditWnd.h"
 #include "global.h"
 #include "mymessage.h"
+#include "etc_uty.h"
 #include "charcode.h"
 #include "my_tchar.h"	//Unicode対応 Moca
-#include "util/os.h"
-#include "util/window.h"
-#include "util/module.h"
-#include "util/string_ex2.h"
 
 //#if(WINVER >= 0x0500)
 #ifndef	SPI_GETFOREGROUNDLOCKTIMEOUT
@@ -75,10 +72,10 @@ static const RECT rcBtnBase = { 0, 0, 16, 16 };
 
 // 2006.02.01 ryoji タブ一覧メニュー用データ
 typedef struct {
-	HWND	hwnd;
-	int		iItem;
-	int		iImage;
-	TCHAR	szText[_MAX_PATH];
+	HWND hwnd;
+	int iItem;
+	int iImage;
+	TCHAR szText[_MAX_PATH];
 } TABMENU_DATA;
 
 /*!	タブ一覧メニュー用データの qsort() コールバック処理
@@ -88,7 +85,7 @@ static int compTABMENU_DATA( const void *arg1, const void *arg2 )
 {
 	int ret;
 
-	ret = ::_tcscmp( ((TABMENU_DATA*)arg1)->szText, ((TABMENU_DATA*)arg2)->szText );
+	ret = ::lstrcmp( ((TABMENU_DATA*)arg1)->szText, ((TABMENU_DATA*)arg2)->szText );
 	if( 0 == ret )
 		ret = ((TABMENU_DATA*)arg1)->iItem - ((TABMENU_DATA*)arg2)->iItem;
 	return ret;
@@ -152,7 +149,7 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		return OnTabNotify( wParam, lParam );
 
 	case WM_HSCROLL:
-		::InvalidateRect( GetHwnd(), NULL, TRUE );	// アクティブタブの位置が変わるのでトップバンドを更新する	// 2006.03.27 ryoji
+		::InvalidateRect( m_hWnd, NULL, TRUE );	// アクティブタブの位置が変わるのでトップバンドを更新する	// 2006.03.27 ryoji
 		break;
 
 	case WM_THEMECHANGED:
@@ -194,7 +191,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 	hitinfo.pt.x = LOWORD( (DWORD)lParam );
 	hitinfo.pt.y = HIWORD( (DWORD)lParam );
 	int nDstTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
-	int nSelfTab = FindTabIndexByHWND( GetParentHwnd() );
+	int nSelfTab = FindTabIndexByHWND( m_hwndParent );
 
 	switch( m_eDragState )
 	{
@@ -204,7 +201,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 			//指定のウインドウをアクティブに
 			TCITEM	tcitem;
 			tcitem.mask   = TCIF_PARAM;
-			tcitem.lParam = 0;
+			tcitem.lParam = (LPARAM)0;
 			TabCtrl_GetItem( m_hwndTab, nDstTab, &tcitem );
 
 			ShowHideWindow( (HWND)tcitem.lParam, TRUE );
@@ -220,20 +217,20 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		else
 		{
 			// タブの分離処理
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-				if( !::IsZoomed( GetParentHwnd() ) )
+			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+				if( !::IsZoomed( m_hwndParent ) )
 				{
 					HWND hwndAncestor;
 					POINT ptCursor;
 
 					::GetCursorPos( &ptCursor );
 					hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
-					if( hwndAncestor != GetParentHwnd() )	// 自画面の外でドロップ
+					if( hwndAncestor != m_hwndParent )	// 自画面の外でドロップ
 					{
 						// タブ移動
 						TCITEM	tcitem;
 						tcitem.mask   = TCIF_PARAM;
-						tcitem.lParam = 0;
+						tcitem.lParam = (LPARAM)0;
 						TabCtrl_GetItem( m_hwndTab, m_nSrcTab, &tcitem );
 						HWND hwndSrc = (HWND)tcitem.lParam;
 						HWND hwndDst = CShareData::getInstance()->IsEditWnd( hwndAncestor )? hwndAncestor: NULL;
@@ -285,16 +282,16 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		}
 		else
 		{
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 			{
-				if( !::IsZoomed( GetParentHwnd() ) )
+				if( !::IsZoomed( m_hwndParent ) )
 				{
 					HWND hwndAncestor;
 					POINT ptCursor;
 
 					::GetCursorPos( &ptCursor );
 					hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
-					if( hwndAncestor != GetParentHwnd() )	// 自画面の外にカーソルがある
+					if( hwndAncestor != m_hwndParent )	// 自画面の外にカーソルがある
 					{
 						if( CShareData::getInstance()->IsEditWnd( hwndAncestor ) )
 							lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_JOIN);	// 結合カーソル
@@ -363,30 +360,56 @@ LRESULT CTabWnd::OnTabMButtonUp( WPARAM wParam, LPARAM lParam )
 	@date 2005.09.01 ryoji 関数化
 	@date 2006.10.31 ryoji ツールチップのフルパス名を簡易表示する
 */
-
 LRESULT CTabWnd::OnTabNotify( WPARAM wParam, LPARAM lParam )
 {
-	NMTTDISPINFO* lpnmtdi;
-	lpnmtdi = (NMTTDISPINFO*)lParam;
+	LPNMTTDISPINFO	lpnmtdi;
+	lpnmtdi = (LPNMTTDISPINFO)lParam;
 	if( lpnmtdi->hdr.hwndFrom == m_hwndToolTip )
 	{
 		switch( lpnmtdi->hdr.code )
 		{
 		//case TTN_NEEDTEXT:
-		case TTN_GETDISPINFO:
+		case TTN_GETDISPINFOW:
+		case TTN_GETDISPINFOA:
 			{
 				TCITEM	tcitem;
 
 				tcitem.mask   = TCIF_PARAM;
 				tcitem.lParam = (LPARAM)NULL;
-
 				if( TabCtrl_GetItem( m_hwndTab, lpnmtdi->hdr.idFrom, &tcitem ) )
 				{
 					EditNode* pEditNode;
 					pEditNode = CShareData::getInstance()->GetEditNode( (HWND)tcitem.lParam );
+					GetTabName( pEditNode, TRUE, FALSE, m_szTextTip1, sizeof(m_szTextTip1)/sizeof(TCHAR) );
 
-					GetTabName( pEditNode, TRUE, FALSE, lpnmtdi->szText, _countof(lpnmtdi->szText) );
-					lpnmtdi->hinst=NULL;
+					if( TTN_GETDISPINFOW == lpnmtdi->hdr.code )
+					{
+#ifdef UNICODE
+						lpnmtdi->lpszText = m_szTextTip1;
+						lpnmtdi->hinst    = NULL;
+#else
+						//UNICODEの文字列が欲しい。
+						int	Size = _tcslen( m_szTextTip1 );
+						m_szTextTip2[ MultiByteToWideChar( CP_ACP, 0, m_szTextTip1, Size, m_szTextTip2, Size ) ] = 0;
+						LPNMTTDISPINFOW	lpnmtdiw = (LPNMTTDISPINFOW)lParam;
+						lpnmtdiw->lpszText = m_szTextTip2;
+						lpnmtdiw->hinst    = NULL;
+#endif	//UNICODE
+					}
+					else
+					{
+#ifdef UNICODE
+						//SJISの文字列が欲しい。
+						int	Size = _tcslen( m_szTextTip1 );
+						m_szTextTip2[ WideCharToMultiByte( CP_ACP, 0, m_szTextTip1, Size, m_szTextTip2, Size, 0, 0 ) ] = 0;
+						LPNMTTDISPINFOA	lpnmtdia = (LPNMTTDISPINFOA)lParam;
+						lpnmtdia->lpszText = m_szTextTip2;
+						lpnmtdia->hinst    = NULL;
+#else
+						lpnmtdi->lpszText = m_szTextTip1;
+						lpnmtdi->hinst    = NULL;
+#endif	//UNICODE
+					}
 
 					return 0L;
 				}
@@ -417,12 +440,12 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 
 	// 移動元タブ、移動先タブのウィンドウを取得する
 	tcitem.mask   = TCIF_PARAM;
-	tcitem.lParam = 0;
+	tcitem.lParam = (LPARAM)0;
 	TabCtrl_GetItem( m_hwndTab, nSrcTab, &tcitem );
 	hwndSrc = (HWND)tcitem.lParam;
 
 	tcitem.mask   = TCIF_PARAM;
-	tcitem.lParam = 0;
+	tcitem.lParam = (LPARAM)0;
 	TabCtrl_GetItem( m_hwndTab, nDstTab, &tcitem );
 	hwndDst = (HWND)tcitem.lParam;
 
@@ -432,14 +455,8 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 	}
 
 	// 再表示メッセージをブロードキャストする。
-	int nGroup = CShareData::getInstance()->GetGroupId( GetParentHwnd() );
-	CShareData::getInstance()->PostMessageToAllEditors(
-		MYWM_TAB_WINDOW_NOTIFY,
-		(WPARAM)TWNT_REFRESH,
-		(LPARAM)FALSE,
-		GetParentHwnd(),
-		nGroup
-	);
+	int nGroup = CShareData::getInstance()->GetGroupId( m_hwndParent );
+	CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_REFRESH, (LPARAM)FALSE, m_hwndParent, nGroup );
 
 	return TRUE;
 }
@@ -450,7 +467,7 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 */
 BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop )
 {
-	HWND hWnd = GetParentHwnd();
+	HWND hWnd = m_hwndParent;
 	if( hWnd != ::GetForegroundWindow() )
 		return FALSE;
 	// 最大化時は切り離さない（最大化時の処理コードも残してあるが動作不安定のため、無理しないでおく）
@@ -479,7 +496,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 		EditNode* pNextEditNode = CShareData::getInstance()->GetEditNodeAt( pSrcEditNode->m_nGroup, 1 );
 		if( pNextEditNode != NULL )
 		{
-			DWORD_PTR dwResult;
+			DWORD dwResult;
 			::SendMessageTimeout( pNextEditNode->m_hWnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
 									SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
 		}
@@ -496,7 +513,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 	WINDOWPLACEMENT wp;
 	RECT rcDstWork;
 	GetMonitorWorkRect( ptDrop, &rcDstWork );
-	wp.length = sizeof(wp);
+	wp.length = sizeof(WINDOWPLACEMENT);
 	if( hwndDst == NULL )
 	{	// 新規グループのウィンドウ処理
 		// ウィンドウを移動先に表示する
@@ -583,14 +600,9 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 
 	// 再表示メッセージをブロードキャストする。
 	//	2007.07.07 genta 2回ループに
-	for( int group = 0; group < _countof( notifygroups ); group++ ){
-		CShareData::getInstance()->PostMessageToAllEditors(
-			MYWM_TAB_WINDOW_NOTIFY,
-			(WPARAM)TWNT_REFRESH,
-			(LPARAM)bSrcIsTop,
-			NULL,
-			notifygroups[group]
-		);
+	for( int group = 0; group < sizeof( notifygroups )/sizeof( notifygroups[0] ); group++ ){
+		CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY,
+			(WPARAM)TWNT_REFRESH, (LPARAM)bSrcIsTop, NULL, notifygroups[group] );
 	}
 
 	return TRUE;
@@ -612,7 +624,7 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 	// 対象ウィンドウを取得する
 	TCITEM	tcitem;
 	tcitem.mask   = TCIF_PARAM;
-	tcitem.lParam = 0;
+	tcitem.lParam = (LPARAM)0;
 	if( !TabCtrl_GetItem( m_hwndTab, nTab, &tcitem ) )
 		return 1L;
 	HWND hWnd = (HWND)tcitem.lParam;
@@ -621,25 +633,28 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 	ShowHideWindow( hWnd, TRUE );
 
 	// コマンドを対象ウインドウに送る。
-	::PostMessageCmd( hWnd, WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
+	::PostMessage( hWnd, WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
 
 	return 0L;
 }
 
 
 CTabWnd::CTabWnd()
-: CWnd(_T("::CTabWnd"))
-, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
-, m_eDragState( DRAG_NONE )
-, m_bHovering( FALSE )	//	2006.02.01 ryoji
-, m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
-, m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
-, m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
+  : m_bVisualStyle( FALSE ),		// 2007.04.01 ryoji
+    m_eDragState( DRAG_NONE ),
+    m_bHovering( FALSE ),	//	2006.02.01 ryoji
+    m_bListBtnHilighted( FALSE ),	//	2006.02.01 ryoji
+    m_bCloseBtnHilighted( FALSE ),	//	2006.10.21 ryoji
+    m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
 {
+	strcat( m_szClassInheritances, _T("::CTabWnd") );
+
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
+	m_hInstance  = NULL;
+	m_hwndParent = NULL;
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
@@ -663,6 +678,8 @@ CTabWnd::~CTabWnd()
 HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* 初期化 */
+	m_hInstance  = hInstance;
+	m_hwndParent = hwndParent;
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
@@ -676,7 +693,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
-		hInstance,
+		/* WNDCLASS用 */
 		NULL,								// Handle to the class icon.
 		NULL,								//Handle to a small icon
 		::LoadCursor( NULL, IDC_ARROW ),	// Handle to the class cursor.
@@ -689,8 +706,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 	/* 基底クラスメンバ呼び出し */
 	CWnd::Create(
-		hInstance,
-		hwndParent,
+		/* CreateWindowEx()用 */
 		0,									// extended window style
 		m_pszClassName,						// Pointer to a null-terminated string or is an atom.
 		m_pszClassName,						// pointer to window name
@@ -715,9 +731,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		TAB_MARGIN_TOP,
 		0,
 		TAB_WINDOW_HEIGHT,
-		GetHwnd(),
+		m_hWnd,
 		(HMENU)NULL,
-		GetAppInstance(),
+		m_hInstance,
 		(LPVOID)NULL
 		);
 	if( m_hwndTab )
@@ -740,7 +756,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
 		LOGFONT	lf;
-		::ZeroMemory( &lf, sizeof(lf) );
+		::ZeroMemory( &lf, sizeof(LOGFONT) );
 		lf.lfHeight			= -12;
 		lf.lfWidth			= 0;
 		lf.lfEscapement		= 0;
@@ -758,7 +774,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		m_hFont = ::CreateFontIndirect( &lf );
 		
 		/* フォント変更 */
-		::SendMessageAny( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
+		::SendMessage( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 
 		//ツールチップを作成する。
 		//	2005.08.11 ryoji 「重ねて表示」のZ-orderがおかしくなるのでTOPMOST指定を解除
@@ -771,9 +787,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
-			GetHwnd(), //m_hwndTab,
+			m_hWnd, //m_hwndTab,
 			NULL,
-			GetAppInstance(),
+			m_hInstance,
 			NULL
 			);
 
@@ -782,17 +798,17 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 		// タブバーにツールチップを追加する
 		TOOLINFO	ti;
-		ti.cbSize      = sizeof( ti );
+		ti.cbSize      = sizeof( TOOLINFO );
 		ti.uFlags      = TTF_SUBCLASS | TTF_IDISHWND;	// TTF_IDISHWND: uId は HWND で rect は無視（HWND 全体）
-		ti.hwnd        = GetHwnd();
-		ti.hinst       = GetAppInstance();
-		ti.uId         = (UINT)GetHwnd();
+		ti.hwnd        = m_hWnd;
+		ti.hinst       = m_hInstance;
+		ti.uId         = (UINT)m_hWnd;
 		ti.lpszText    = NULL;
 		ti.rect.left   = 0;
 		ti.rect.top    = 0;
 		ti.rect.right  = 0;
 		ti.rect.bottom = 0;
-		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)&ti );
+		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&ti );
 
 		// タブバー内のタブコントロールにツールチップを追加する
 		TabCtrl_SetToolTips( m_hwndTab, m_hwndToolTip );
@@ -800,16 +816,18 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		// 2006.02.22 ryoji イメージリストを初期化する
 		InitImageList();
 
+		//TabCtrl_DeleteAllItems( m_hwndTab );
+		//::ShowWindow( m_hwndTab, SW_HIDE );
 		Refresh();	// タブ非表示から表示に切り替わったときに各ウィンドウの情報をタブ登録する必要がある
 	}
 
-	return GetHwnd();
+	return m_hWnd;
 }
 
 /* ウィンドウ クローズ */
 void CTabWnd::Close( void )
 {
-	if( GetHwnd() )
+	if( m_hWnd )
 	{
 		if( gm_pOldWndProc )
 		{
@@ -827,7 +845,8 @@ void CTabWnd::Close( void )
 			m_hwndToolTip = NULL;
 		}
 
-		this->DestroyWindow();
+		::DestroyWindow( m_hWnd );
+		m_hWnd = NULL;
 	}
 }
 
@@ -836,15 +855,15 @@ LRESULT CTabWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	RECT	rcParent;
 
-	if( NULL == GetHwnd() || NULL == m_hwndTab ) return 0L;
+	if( NULL == m_hWnd || NULL == m_hwndTab ) return 0L;
 
-	::GetWindowRect( GetHwnd(), &rcParent );
+	::GetWindowRect( m_hWnd, &rcParent );
 
 	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcParent.right - rcParent.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), TAB_WINDOW_HEIGHT, TRUE );	// 2005.01.30 ryoji
 
 	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
 
-	::InvalidateRect( GetHwnd(), NULL, FALSE );	//	2006.02.01 ryoji
+	::InvalidateRect( m_hWnd, NULL, FALSE );	//	2006.02.01 ryoji
 
 	return 0L;
 }
@@ -875,7 +894,7 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	::KillTimer( hwnd, 1 );	//	2006.02.01 ryoji
 
-	_SetHwnd(NULL);
+	m_hWnd = NULL;
 
 	return 0L;
 }
@@ -886,7 +905,7 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 LRESULT CTabWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	// 新規作成コマンドを実行する
-	::SendMessageCmd( GetParentHwnd(), WM_COMMAND, MAKEWPARAM( F_FILENEW, 0 ), (LPARAM)NULL );
+	::SendMessage( m_hwndParent, WM_COMMAND, MAKEWPARAM( F_FILENEW, 0 ), (LPARAM)NULL );
 	return 0L;
 }
 
@@ -914,7 +933,7 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 	pt.x = LOWORD(lParam);
 	pt.y = HIWORD(lParam);
-	::GetClientRect( GetHwnd(), &rc );
+	::GetClientRect( m_hWnd, &rc );
 
 	// タブ一覧ボタン上ならタブ一覧メニュー（タブ名）を表示する
 	GetListBtnRect( &rc, &rcBtn );
@@ -922,7 +941,7 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	{
 		pt.x = rcBtn.left;
 		pt.y = rcBtn.bottom;
-		::ClientToScreen( GetHwnd(), &pt );
+		::ClientToScreen( m_hWnd, &pt );
 		TabListMenu( pt, FALSE, FALSE, FALSE );	// タブ一覧メニュー（タブ名）
 	}
 	else
@@ -932,7 +951,7 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		if( ::PtInRect( &rcBtn, pt ) )
 		{
 			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャー元は閉じるボタン
-			::SetCapture( GetHwnd() );
+			::SetCapture( m_hWnd );
 		}
 	}
 
@@ -950,9 +969,9 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	pt.x = LOWORD(lParam);
 	pt.y = HIWORD(lParam);
-	::GetClientRect( GetHwnd(), &rc );
+	::GetClientRect( m_hWnd, &rc );
 
-	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャーしている?
+	if( ::GetCapture() == m_hWnd )	// 自ウィンドウがマウスキャプチャーしている?
 	{
 		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャー元は閉じるボタン?
 		{
@@ -961,9 +980,9 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if( ::PtInRect( &rcBtn, pt ) )
 			{
 				int nId;
-				if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+				if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 				{
-					if( !m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin )
+					if( !m_pShareData->m_Common.m_bTab_CloseOneWin )
 					{
 						nId = F_WINCLOSE;	// 閉じる（タイトルバーの閉じるボタンは編集の全終了）
 					}
@@ -976,7 +995,7 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				{
 					nId = F_EXITALLEDITORS;	// 編集の全終了（タイトルバーの閉じるボタンは１個だけ閉じる）
 				}
-				::PostMessageAny( GetParentHwnd(), WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
+				::PostMessage( m_hwndParent, WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
 			}
 		}
 
@@ -1000,7 +1019,7 @@ LRESULT CTabWnd::OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 	pt.x = LOWORD(lParam);
 	pt.y = HIWORD(lParam);
-	::GetClientRect( GetHwnd(), &rc );
+	::GetClientRect( m_hWnd, &rc );
 
 	// タブ一覧ボタン上ならタブ一覧メニュー（フルパス）を表示する	// 2006.11.30 ryoji
 	GetListBtnRect( &rc, &rcBtn );
@@ -1008,7 +1027,7 @@ LRESULT CTabWnd::OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	{
 		pt.x = rcBtn.left;
 		pt.y = rcBtn.bottom;
-		::ClientToScreen( GetHwnd(), &pt );
+		::ClientToScreen( m_hWnd, &pt );
 		TabListMenu( pt, FALSE, TRUE, FALSE );	// タブ一覧メニュー（フルパス）
 	}
 
@@ -1030,7 +1049,7 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
 		SIZE size;
 
-		::GetTextExtentPoint32( hdc, pData->szText, ::_tcslen(pData->szText), &size );
+		::GetTextExtentPoint32( hdc, pData->szText, ::lstrlen(pData->szText), &size );
 
 		lpmis->itemHeight = ::GetSystemMetrics( SM_CYMENU );
 		lpmis->itemWidth = size.cx + CX_SMICON + 8;
@@ -1172,22 +1191,22 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		if( m_bCloseBtnHilighted )	// ボタンに入ってきた?
 		{
 			pszTip = m_szTextTip1;
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 			{
-				if( !m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin )
+				if( !m_pShareData->m_Common.m_bTab_CloseOneWin )
 				{
 					_tcscpy( m_szTextTip1, _T("タブを閉じる") );
 				}
 				else
 				{
-					::LoadString( GetAppInstance(), F_GROUPCLOSE, m_szTextTip1, _countof(m_szTextTip1) );
-					m_szTextTip1[_countof(m_szTextTip1) - 1] = _T('\0');
+					::LoadString( m_hInstance, F_GROUPCLOSE, m_szTextTip1, sizeof(m_szTextTip1)/sizeof(TCHAR) );
+					m_szTextTip1[sizeof(m_szTextTip1)/sizeof(TCHAR) - 1] = _T('\0');
 				}
 			}
 			else
 			{
-				::LoadString( GetAppInstance(), F_EXITALLEDITORS, m_szTextTip1, _countof(m_szTextTip1) );
-				m_szTextTip1[_countof(m_szTextTip1) - 1] = _T('\0');
+				::LoadString( m_hInstance, F_EXITALLEDITORS, m_szTextTip1, sizeof(m_szTextTip1)/sizeof(TCHAR) );
+				m_szTextTip1[sizeof(m_szTextTip1)/sizeof(TCHAR) - 1] = _T('\0');
 			}
 		}
 	}
@@ -1197,10 +1216,10 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	{
 		TOOLINFO ti;
 		::ZeroMemory( &ti, sizeof(ti) );
-		ti.cbSize       = sizeof(ti);
-		ti.hwnd         = GetHwnd();
-		ti.hinst        = GetAppInstance();
-		ti.uId          = (UINT)GetHwnd();
+		ti.cbSize       = sizeof( TOOLINFO );
+		ti.hwnd         = m_hWnd;
+		ti.hinst        = m_hInstance;
+		ti.uId          = (UINT)m_hWnd;
 		ti.lpszText     = pszTip;
 		::SendMessage( m_hwndToolTip, TTM_UPDATETIPTEXT, (WPARAM)0, (LPARAM)&ti );
 	}
@@ -1223,7 +1242,7 @@ LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		::ScreenToClient( hwnd, &pt );
 		::GetClientRect( hwnd, &rc );
 		if( !::PtInRect( &rc, pt ) )
-			::SendMessageAny( hwnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
+			::SendMessage( hwnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
 	}
 
 	return 0L;
@@ -1269,7 +1288,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 			pt.x = rcCurSel.left;
 			pt.y = 0;
 			::ClientToScreen( m_hwndTab, &pt );
-			::ScreenToClient( GetHwnd(), &pt );
+			::ScreenToClient( m_hWnd, &pt );
 			rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left) - 1;
 			rcCurSel.left = pt.x + 1;
 			rcCurSel.top = rc.top + TAB_MARGIN_TOP - 2;
@@ -1287,7 +1306,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 				::GetWindowRect( hwndUpDown, &rcUpDown );
 				ptREnd.x = rcUpDown.left;
 				ptREnd.y = 0;
-				::ScreenToClient( GetHwnd(), &ptREnd );
+				::ScreenToClient( m_hWnd, &ptREnd );
 				if( rcCurSel.right > ptREnd.x )
 					rcCurSel.right = ptREnd.x;	// 右端限界値
 			}
@@ -1361,12 +1380,12 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			nIndex = nCount;
 		}
 
-		if( CShareData::getInstance()->IsTopEditWnd( GetParentHwnd() ) )
+		if( CShareData::getInstance()->IsTopEditWnd( m_hwndParent ) )
 		{
 			//自分ならアクティブに
-			if( !::IsWindowVisible( GetParentHwnd() ) )
+			if( !::IsWindowVisible( m_hwndParent ) )
 			{
-				ShowHideWindow( GetParentHwnd(), TRUE );
+				ShowHideWindow( m_hwndParent, TRUE );
 				//ここに来たということはすでにアクティブ
 				//コマンド実行時のアウトプットで問題があるのでアクティブにする
 			}
@@ -1374,7 +1393,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			TabCtrl_SetCurSel( m_hwndTab, nIndex );
 
 			// 自分以外を隠す
-			HideOtherWindows( GetParentHwnd() );
+			HideOtherWindows( m_hwndParent );
 		}
 		break;
 
@@ -1382,12 +1401,12 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		nIndex = FindTabIndexByHWND( (HWND)lParam );
 		if( -1 != nIndex )
 		{
-			if( CShareData::getInstance()->IsTopEditWnd( GetParentHwnd() ) )
+			if( CShareData::getInstance()->IsTopEditWnd( m_hwndParent ) )
 			{
-				if( !::IsWindowVisible( GetParentHwnd() ) )
+				if( !::IsWindowVisible( m_hwndParent ) )
 				{
-					ShowHideWindow( GetParentHwnd(), TRUE );
-					ForceActiveWindow( GetParentHwnd() );
+					ShowHideWindow( m_hwndParent, TRUE );
+					ForceActiveWindow( m_hwndParent );
 				}
 			}
 			TabCtrl_DeleteItem( m_hwndTab, nIndex );
@@ -1397,10 +1416,10 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
 			if( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 			{
-				nScrollPos = LOWORD( ::SendMessageAny( hwndUpDown, UDM_GETPOS, (WPARAM)0, (LPARAM)0 ) );
+				nScrollPos = LOWORD( ::SendMessage( hwndUpDown, UDM_GETPOS, (WPARAM)0, (LPARAM)0 ) );
 
 				// 現在位置 nScrollPos と画面表示とを一致させる
-				::SendMessageAny( m_hwndTab, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, LOWORD( nScrollPos ) ), (LPARAM)NULL );	// 設定位置にタブをスクロール
+				::SendMessage( m_hwndTab, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, LOWORD( nScrollPos ) ), (LPARAM)NULL );	// 設定位置にタブをスクロール
 			}
 		}
 		break;
@@ -1409,12 +1428,12 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		nIndex = FindTabIndexByHWND( (HWND)lParam );
 		if( -1 != nIndex )
 		{
-			if( CShareData::getInstance()->IsTopEditWnd( GetParentHwnd() ) )
+			if( CShareData::getInstance()->IsTopEditWnd( m_hwndParent ) )
 			{
 				//自分ならアクティブに
-				if( !::IsWindowVisible( GetParentHwnd() ) )
+				if( !::IsWindowVisible( m_hwndParent ) )
 				{
-					ShowHideWindow( GetParentHwnd(), TRUE );
+					ShowHideWindow( m_hwndParent, TRUE );
 				}
 				//ここに来たということはすでにアクティブ
 
@@ -1427,13 +1446,13 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 				// 自分以外を隠す
 				// （連続切替時に TWNT_ORDER が大量発生・交錯して？画面がすべて消えてしまったりするのを防ぐ）
-				HideOtherWindows( GetParentHwnd() );
+				HideOtherWindows( m_hwndParent );
 			}
 		}
 		else
 		{
 			//指定のウインドウがないので再表示
-			if( !CShareData::getInstance()->IsSameGroup( GetParentHwnd(), (HWND)lParam ) )
+			if( !CShareData::getInstance()->IsSameGroup( m_hwndParent, (HWND)lParam ) )
 				Refresh();
 		}
 		break;
@@ -1443,16 +1462,16 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( -1 != nIndex )
 		{
 			TCITEM	tcitem;
-			CRecentEditNode	cRecentEditNode;
+			CRecent	cRecentEditNode;
 			TCHAR	szName[1024];
 			//	Jun. 19, 2004 genta
 			EditNode	*p;
 			p = CShareData::getInstance()->GetEditNode( (HWND)lParam );
-			GetTabName( p, FALSE, TRUE, szName, _countof(szName) );
+			GetTabName( p, FALSE, TRUE, szName, sizeof(szName)/sizeof(TCHAR) );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName;
-			tcitem.lParam  = lParam;
+			tcitem.lParam  = (LPARAM)lParam;
 
 			// 2006.01.28 ryoji タブのアイコンイメージを変更する
 			tcitem.mask |= TCIF_IMAGE;
@@ -1463,7 +1482,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		else
 		{
 			//指定のウインドウがないので再表示
-			if( !CShareData::getInstance()->IsSameGroup( GetParentHwnd(), (HWND)lParam ) )
+			if( !CShareData::getInstance()->IsSameGroup( m_hwndParent, (HWND)lParam ) )
 				Refresh();
 		}
 		break;
@@ -1476,15 +1495,15 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 	//タブモード有効になった場合、まとめられる側のウィンドウは隠れる
 	case TWNT_MODE_ENABLE:
 		Refresh();
-		if( CShareData::getInstance()->IsTopEditWnd( GetParentHwnd() ) )
+		if( CShareData::getInstance()->IsTopEditWnd( m_hwndParent ) )
 		{
-			if( !::IsWindowVisible( GetParentHwnd() ) )
+			if( !::IsWindowVisible( m_hwndParent ) )
 			{
 				//表示状態とする(フォアグラウンドにはしない)
-				TabWnd_ActivateFrameWindow( GetParentHwnd(), false );
+				TabWnd_ActivateFrameWindow( m_hwndParent, false );
 			}
 			// 自分以外を隠す
-			HideOtherWindows( GetParentHwnd() );
+			HideOtherWindows( m_hwndParent );
 		}
 		break;
 	//End 2004.07.14 Kazika
@@ -1493,10 +1512,10 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 	//タブモード無効になった場合、隠れていたウィンドウは表示状態となる
 	case TWNT_MODE_DISABLE:
 		Refresh();
-		if( !::IsWindowVisible( GetParentHwnd() ) )
+		if( !::IsWindowVisible( m_hwndParent ) )
 		{
 			//表示状態とする(フォアグラウンドにはしない)
-			TabWnd_ActivateFrameWindow( GetParentHwnd(), false );
+			TabWnd_ActivateFrameWindow( m_hwndParent, false );
 		}
 		break;
 	//End 2004.08.27 Kazika
@@ -1524,7 +1543,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 
 	//更新
 	::InvalidateRect( m_hwndTab, NULL, TRUE );
-	::InvalidateRect( GetHwnd(), NULL, TRUE );		// 2006.10.21 ryoji タブ内ボタン再描画のために追加
+	::InvalidateRect( m_hWnd, NULL, TRUE );		// 2006.10.21 ryoji タブ内ボタン再描画のために追加
 
 	return;
 }
@@ -1560,6 +1579,7 @@ int CTabWnd::FindTabIndexByHWND( HWND hWnd )
 void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/ )
 {
 	TCITEM		tcitem;
+	TCHAR		szName[2048];
 	EditNode	*pEditNode;
 	int			nCount;
 	int			nGroup;
@@ -1578,7 +1598,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 	// 自ウィンドウのグループ番号を調べる
 	for( i = 0; i < nCount; i++ )
 	{
-		if( pEditNode[i].m_hWnd == GetParentHwnd() ){
+		if( pEditNode[i].m_hWnd == m_hwndParent ){
 			nGroup = pEditNode[i].m_nGroup;
 			break;
 		}
@@ -1591,7 +1611,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 	}
 	else
 	{
-		::SendMessageAny( m_hwndTab, WM_SETREDRAW, (WPARAM)FALSE, (LPARAM)0 );	// 2005.09.01 ryoji 再描画禁止
+		::SendMessage( m_hwndTab, WM_SETREDRAW, (WPARAM)FALSE, (LPARAM)0 );	// 2005.09.01 ryoji 再描画禁止
 
 		if( bRebuild )
 			TabCtrl_DeleteAllItems( m_hwndTab );	// 作成しなおす
@@ -1603,18 +1623,17 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 				continue;
 			if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 				continue;
-			if( pEditNode[i].m_hWnd == GetParentHwnd() )
+			if( pEditNode[i].m_hWnd == m_hwndParent )
 				nSel = j;	// 選択状態にするタブ位置
 			j++;
 		}
 		nTab = j;	// 作成するタブ数
 
 		// タブが無ければ１つ作成して選択状態にする（自ウィンドウのタブ用）
-		TCHAR		szName[2048];
 		_tcscpy( szName, _T("") );
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 		tcitem.pszText = szName;
-		tcitem.lParam  = (LPARAM)GetParentHwnd();
+		tcitem.lParam  = (LPARAM)m_hwndParent;
 		if( TabCtrl_GetItemCount( m_hwndTab ) == 0 )
 		{
 			TabCtrl_InsertItem( m_hwndTab, 0, &tcitem );
@@ -1656,7 +1675,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 			if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 				continue;
 
-			GetTabName( &pEditNode[i], FALSE, TRUE, szName, _countof(szName) );
+			GetTabName( &pEditNode[i], FALSE, TRUE, szName, sizeof(szName)/sizeof(TCHAR) );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName;
@@ -1670,7 +1689,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 			j++;
 		}
 
-		::SendMessageAny( m_hwndTab, WM_SETREDRAW, (WPARAM)TRUE, (LPARAM)0 );	// 2005.09.01 ryoji 再描画許可
+		::SendMessage( m_hwndTab, WM_SETREDRAW, (WPARAM)TRUE, (LPARAM)0 );	// 2005.09.01 ryoji 再描画許可
 
 		// 選択タブを可視位置にする
 		if( bEnsureVisible )
@@ -1678,8 +1697,8 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 			// TabCtrl_SetCurSel() を使うと等幅タブのときに選択タブが左端のほうに寄ってしまう
 //			TabCtrl_SetCurSel( m_hwndTab, 0 );
 //			TabCtrl_SetCurSel( m_hwndTab, nSel );
-			::PostMessageAny( m_hwndTab, TCM_SETCURSEL, 0, 0 );
-			::PostMessageAny( m_hwndTab, TCM_SETCURSEL, nSel, 0 );
+			::PostMessage( m_hwndTab, TCM_SETCURSEL, 0, 0 );
+			::PostMessage( m_hwndTab, TCM_SETCURSEL, nSel, 0 );
 		}
 	}
 
@@ -1697,9 +1716,9 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 void CTabWnd::AdjustWindowPlacement( void )
 {
 	// タブまとめ表示の場合は編集ウィンドウの表示位置を復元する
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
-		HWND hwnd = GetParentHwnd();	// 自身の編集ウィンドウ
+		HWND hwnd = m_hwndParent;	// 自身の編集ウィンドウ
 		WINDOWPLACEMENT wp;
 		if( !::IsWindowVisible( hwnd ) )	// 可視化するときだけ引き継ぐ
 		{
@@ -1720,7 +1739,7 @@ void CTabWnd::AdjustWindowPlacement( void )
 				return;
 			}
 			HWND hwndInsertAfter = pEditNode->m_hWnd;
-			wp.length = sizeof( wp );
+			wp.length = sizeof( WINDOWPLACEMENT );
 			::GetWindowPlacement( hwndInsertAfter, &wp );
 			if( wp.showCmd == SW_SHOWMINIMIZED )
 				wp.showCmd = pEditNode->m_showCmdRestore;
@@ -1729,7 +1748,7 @@ void CTabWnd::AdjustWindowPlacement( void )
 			if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
 			{
 				WINDOWPLACEMENT wpCur;
-				wpCur.length = sizeof( wpCur );
+				wpCur.length = sizeof( WINDOWPLACEMENT );
 				::GetWindowPlacement( hwnd, &wpCur );
 				if( !::EqualRect( &wp.rcNormalPosition, &wpCur.rcNormalPosition ) )
 				{
@@ -1760,14 +1779,14 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 
 	if( bDisp )
 	{
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+		if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 		{
 			if( m_pShareData->m_bEditWndChanging )
 				return;	// 切替の最中(busy)は要求を無視する
 			m_pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
 			// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
-			DWORD_PTR dwResult;
+			DWORD dwResult;
 			::SendMessageTimeout( hwnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
 				SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
 		}
@@ -1778,7 +1797,7 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 	}
 	else
 	{
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+		if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 		{
 			::ShowWindow( hwnd, SW_HIDE );
 		}
@@ -1796,7 +1815,7 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 */
 void CTabWnd::HideOtherWindows( HWND hwndExclude )
 {
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
 		HWND hwnd;
 		int	i;
@@ -1896,12 +1915,12 @@ void CTabWnd::LayoutTab( void )
 {
 	// アイコンの表示を切り替える
 	HIMAGELIST hImg = TabCtrl_GetImageList( m_hwndTab );
-	if( NULL == hImg && m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
+	if( NULL == hImg && m_pShareData->m_Common.m_bDispTabIcon )
 	{
 		if( NULL != InitImageList() )
 			Refresh( TRUE, TRUE );
 	}
-	else if( NULL != hImg && !m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
+	else if( NULL != hImg && !m_pShareData->m_Common.m_bDispTabIcon )
 	{
 		InitImageList();
 	}
@@ -1909,19 +1928,19 @@ void CTabWnd::LayoutTab( void )
 	// タブのアイテム幅の等幅を切り替える
 	UINT lStyle;
 	lStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
-	if( (lStyle & TCS_FIXEDWIDTH) && !m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth )
+	if( (lStyle & TCS_FIXEDWIDTH) && !m_pShareData->m_Common.m_bSameTabWidth )
 	{
 		lStyle &= ~(TCS_FIXEDWIDTH | TCS_FORCELABELLEFT);
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
 		return;
 	}
-	else if( !(lStyle & TCS_FIXEDWIDTH) && m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth )
+	else if( !(lStyle & TCS_FIXEDWIDTH) && m_pShareData->m_Common.m_bSameTabWidth )
 	{
 		lStyle |= TCS_FIXEDWIDTH | TCS_FORCELABELLEFT;
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
 	}
 
-	if( !m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth )
+	if( !m_pShareData->m_Common.m_bSameTabWidth )
 		return;	// アイテム幅の調整は不要
 
 	// タブのアイテム幅を調整する
@@ -1952,31 +1971,19 @@ HIMAGELIST CTabWnd::InitImageList( void )
 	HIMAGELIST hImlNew;
 
 	hImlNew = NULL;
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
+	if( m_pShareData->m_Common.m_bDispTabIcon )
 	{
 		// システムイメージリストを取得する
 		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
 		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
 		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
 
-		hImlSys = (HIMAGELIST)::SHGetFileInfo(
-			_T(".0"),
-			FILE_ATTRIBUTE_DIRECTORY,
-			&sfi,
-			sizeof(sfi),
-			SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES
-		);
+		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".0"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
 		if( NULL == hImlSys )
 			goto l_end;
 		m_iIconApp = sfi.iIcon;
 
-		hImlSys = (HIMAGELIST)::SHGetFileInfo(
-			_T(".1"),
-			FILE_ATTRIBUTE_DIRECTORY,
-			&sfi,
-			sizeof(sfi),
-			SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_OPENICON
-		);
+		hImlSys = (HIMAGELIST)::SHGetFileInfo( _T(".1"), FILE_ATTRIBUTE_DIRECTORY, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_OPENICON );
 		if( NULL == hImlSys )
 			goto l_end;
 		m_iIconGrep = sfi.iIcon;
@@ -1989,9 +1996,9 @@ HIMAGELIST CTabWnd::InitImageList( void )
 
 		// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
 		// （利用しないアイコンと差し替える）
-		m_hIconApp = GetAppIcon( GetAppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
+		m_hIconApp = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 		ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
-		m_hIconGrep = GetAppIcon( GetAppInstance(), ICON_DEFAULT_GREP, FN_GREP_ICON, true );
+		m_hIconGrep = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
 		ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
 	}
 
@@ -2028,7 +2035,7 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 			_tsplitpath( pNode->m_szFilePath, NULL, NULL, NULL, szExt );
 
 			// 拡張子に関連付けられたアイコンイメージのインデックスを取得する
-			hImlSys = (HIMAGELIST)::SHGetFileInfo( szExt, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
+			hImlSys = (HIMAGELIST)::SHGetFileInfo( szExt, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES );
 			if( NULL == hImlSys )
 				return -1;
 			if( ImageList_GetImageCount( m_hIml ) > sfi.iIcon )
@@ -2046,7 +2053,7 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 			ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
 
 			// タブにアイコンイメージを設定する
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
+			if( m_pShareData->m_Common.m_bDispTabIcon )
 				TabCtrl_SetImageList( m_hwndTab, hImlNew );
 
 			// 新しいイメージリストを記憶する
@@ -2148,12 +2155,12 @@ void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
 	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
 	hpenOld = (HPEN)::SelectObject( hdc, hpen );
 	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
-	for( i = 0; i < _countof(ptBase); i++ )
+	for( i = 0; i < sizeof(ptBase)/sizeof(ptBase[0]); i++ )
 	{
 		pt[i].x = ptBase[i].x + rcBtn.left;
 		pt[i].y = ptBase[i].y + rcBtn.top;
 	}
-	::Polygon( hdc, pt, _countof(pt) );
+	::Polygon( hdc, pt, sizeof(pt)/sizeof(pt[0]) );
 	::SelectObject( hdc, hpenOld );
 	::SelectObject( hdc, hbrOld );
 	::DeleteObject( hpen );
@@ -2210,13 +2217,13 @@ void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
 	hpenOld = (HPEN)::SelectObject( hdc, hpen );
 	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
-		!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
-		!m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加（ウィンドウの閉じるボタンは全部閉じる）
+	if( m_pShareData->m_Common.m_bDispTabWnd &&
+		!m_pShareData->m_Common.m_bDispTabWndMultiWin &&
+		!m_pShareData->m_Common.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加（ウィンドウの閉じるボタンは全部閉じる）
 		)
 	{
 		// [x]を描画（直線6本）
-		for( i = 0; i < _countof(ptBase1); i++ )
+		for( i = 0; i < sizeof(ptBase1)/sizeof(ptBase1[0]); i++ )
 		{
 			pt[0].x = ptBase1[i][0].x + rcBtn.left;
 			pt[0].y = ptBase1[i][0].y + rcBtn.top;
@@ -2229,7 +2236,7 @@ void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 	else
 	{
 		 // [xx]を描画（矩形10個）
-		for( i = 0; i < _countof(ptBase2); i++ )
+		for( i = 0; i < sizeof(ptBase2)/sizeof(ptBase2[0]); i++ )
 		{
 			pt[0].x = ptBase2[i][0].x + rcBtn.left;
 			pt[0].y = ptBase2[i][0].y + rcBtn.top;
@@ -2314,7 +2321,6 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR 
 }
 
 
-
 /**	タブ一覧表示処理
 
 	@param pt [in] 表示位置
@@ -2333,7 +2339,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 	bool bRepeat;
 
 	if( bSel )
-		bFull = m_pShareData->m_Common.m_sTabBar.m_bTab_ListFull;
+		bFull = m_pShareData->m_Common.m_bTab_ListFull;
 
 	do
 	{
@@ -2354,7 +2360,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		// 自ウィンドウのグループ番号を調べる
 		for( i = 0; i < nCount; i++ )
 		{
-			if( pEditNode[i].m_hWnd == GetParentHwnd() )
+			if( pEditNode[i].m_hWnd == m_hwndParent )
 			{
 				nGroup = pEditNode[i].m_nGroup;
 				break;
@@ -2371,14 +2377,14 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 					continue;
 				if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 					continue;
-				GetTabName( &pEditNode[i], bFull, TRUE, pData[nSelfTab].szText, _countof(pData[0].szText) );
+				GetTabName( &pEditNode[i], bFull, TRUE, pData[nSelfTab].szText, sizeof(pData[0].szText) );
 				pData[nSelfTab].hwnd = pEditNode[i].m_hWnd;
 				pData[nSelfTab].iItem = i;
 				pData[nSelfTab].iImage = GetImageIndex( &pEditNode[i] );
 				nSelfTab++;
 			}
 			// 表示文字でソートする
-			if( nSelfTab > 0 && m_pShareData->m_Common.m_sTabBar.m_bSortTabList )	// 2006.03.23 fon 変更
+			if( nSelfTab > 0 && m_pShareData->m_Common.m_bSortTabList )	// 2006.03.23 fon 変更
 				qsort( pData, nSelfTab, sizeof(pData[0]), compTABMENU_DATA );
 		}
 
@@ -2390,14 +2396,14 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 				continue;
 			if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 				continue;
-			GetTabName( &pEditNode[i], bFull, TRUE, pData[nTab].szText, _countof(pData[0].szText) );
+			GetTabName( &pEditNode[i], bFull, TRUE, pData[nTab].szText, sizeof(pData[0].szText) );
 			pData[nTab].hwnd = pEditNode[i].m_hWnd;
 			pData[nTab].iItem = i;
 			pData[nTab].iImage = GetImageIndex( &pEditNode[i] );
 			nTab++;
 		}
 		// 表示文字でソートする
-		if( nTab > nSelfTab && m_pShareData->m_Common.m_sTabBar.m_bSortTabList )
+		if( nTab > nSelfTab && m_pShareData->m_Common.m_bSortTabList )
 			qsort( pData + nSelfTab, nTab - nSelfTab, sizeof(pData[0]), compTABMENU_DATA );
 
 		delete []pEditNode;
@@ -2410,7 +2416,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		for( i = 0; i < nSelfTab; i++ )
 		{
 			::InsertMenu( hMenu, i, uFlags, IDM_SELWINDOW + i, m_hIml? (LPCTSTR)&pData[i]: pData[i].szText );
-			if( pData[i].hwnd == GetParentHwnd() )
+			if( pData[i].hwnd == m_hwndParent )
 				iMenuSel = i;
 		}
 
@@ -2451,7 +2457,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 									( pt.x > rcWork.left )? pt.x: rcWork.left,
 									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-									0, GetHwnd(), NULL);
+									0, m_hWnd, NULL);
 		::DestroyMenu( hMenu );
 
 		// メニュー選択されたタブのウインドウをアクティブにする
@@ -2476,7 +2482,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 	} while( bRepeat );
 
 	if( bSel )
-		m_pShareData->m_Common.m_sTabBar.m_bTab_ListFull = bFull;
+		m_pShareData->m_Common.m_bTab_ListFull = bFull;
 
 	return 0L;
 }
@@ -2489,7 +2495,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 {
 	HWND hwndRet = NULL;
 
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
 		EditNode* pWndArr;
 		int i;
@@ -2501,7 +2507,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 			return NULL;
 		for( i = 0; i < n; i++ )
 		{
-			if( pWndArr[i].m_hWnd == GetParentHwnd() )
+			if( pWndArr[i].m_hWnd == m_hwndParent )
 				break;
 		}
 		if( i < n )
@@ -2538,7 +2544,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 HWND CTabWnd::GetPrevGroupWnd( void )
 {
 	HWND hwndRet = NULL;
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
 		EditNode* pWndArr;
 		int i;
@@ -2550,7 +2556,7 @@ HWND CTabWnd::GetPrevGroupWnd( void )
 			return NULL;
 		for( i = 0; i < n; i++ )
 		{
-			if( pWndArr[i].m_hWnd == GetParentHwnd() )
+			if( pWndArr[i].m_hWnd == m_hwndParent )
 				break;
 		}
 		if( i < n )
@@ -2610,9 +2616,9 @@ void CTabWnd::PrevGroup( void )
 */
 void CTabWnd::MoveRight( void )
 {
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
+	if( m_pShareData->m_Common.m_bDispTabWnd )
 	{
-		int nIndex = FindTabIndexByHWND( GetParentHwnd() );
+		int nIndex = FindTabIndexByHWND( m_hwndParent );
 		if( -1 != nIndex )
 		{
 			int nCount = TabCtrl_GetItemCount( m_hwndTab );
@@ -2629,9 +2635,9 @@ void CTabWnd::MoveRight( void )
 */
 void CTabWnd::MoveLeft( void )
 {
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
+	if( m_pShareData->m_Common.m_bDispTabWnd )
 	{
-		int nIndex = FindTabIndexByHWND( GetParentHwnd() );
+		int nIndex = FindTabIndexByHWND( m_hwndParent );
 		if( -1 != nIndex )
 		{
 			if( 0 < nIndex )
@@ -2647,7 +2653,7 @@ void CTabWnd::MoveLeft( void )
 */
 void CTabWnd::Separate( void )
 {
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
 		RECT rc;
 		POINT ptSrc;
@@ -2655,7 +2661,7 @@ void CTabWnd::Separate( void )
 		RECT rcWork;
 		int cy;
 
-		::GetWindowRect( GetParentHwnd(), &rc );
+		::GetWindowRect( m_hwndParent, &rc );
 		ptSrc.x = rc.left;
 		ptSrc.y = rc.top;
 		cy = ::GetSystemMetrics( SM_CYCAPTION );
@@ -2663,7 +2669,7 @@ void CTabWnd::Separate( void )
 		rc.right += cy;
 		rc.top += cy;
 		rc.bottom += cy;
-		GetMonitorWorkRect( GetParentHwnd(), &rcWork );
+		GetMonitorWorkRect( m_hwndParent, &rcWork );
 		if( rc.bottom > rcWork.bottom ){
 			rc.top -= (rc.bottom - rcWork.bottom);
 			rc.bottom = rcWork.bottom;
@@ -2683,7 +2689,7 @@ void CTabWnd::Separate( void )
 		ptDst.x = rc.left;
 		ptDst.y = rc.top;
 
-		SeparateGroup( GetParentHwnd(), NULL, ptSrc, ptDst );
+		SeparateGroup( m_hwndParent, NULL, ptSrc, ptDst );
 	}
 }
 
@@ -2698,7 +2704,7 @@ void CTabWnd::JoinNext( void )
 		POINT ptSrc;
 		POINT ptDst;
 		ptSrc.x = ptSrc.y = ptDst.x = ptDst.y = 0;
-		SeparateGroup( GetParentHwnd(), hWnd, ptSrc, ptDst );
+		SeparateGroup( m_hwndParent, hWnd, ptSrc, ptDst );
 	}
 }
 
@@ -2713,7 +2719,7 @@ void CTabWnd::JoinPrev( void )
 		POINT ptSrc;
 		POINT ptDst;
 		ptSrc.x = ptSrc.y = ptDst.x = ptDst.y = 0;
-		SeparateGroup( GetParentHwnd(), hWnd, ptSrc, ptDst );
+		SeparateGroup( m_hwndParent, hWnd, ptSrc, ptDst );
 	}
 }
 

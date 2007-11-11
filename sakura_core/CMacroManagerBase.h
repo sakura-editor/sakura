@@ -51,7 +51,7 @@ public:
 		@param hInstance [in]
 		@param pszPath [in] ファイル名
 	*/
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath) = 0;
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath) = 0;
 
 	//static CMacroManagerBase* Creator( const char* str );
 	//純粋仮想クラスは実体化できないのでFactoryは不要。

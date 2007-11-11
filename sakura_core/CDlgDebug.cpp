@@ -69,7 +69,7 @@ CDlgDebug::~CDlgDebug()
 
 
 /* モーダルダイアログの表示 */
-int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, const CNativeA& cmemDebugInfo )
+int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, CMemory& cmemDebugInfo )
 {
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
@@ -105,7 +105,7 @@ INT_PTR CDlgDebug::DispatchEvent(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		::SetDlgItemTextA( hwndDlg, IDC_EDIT_DEBUG, m_cmemDebugInfo.GetStringPtr() );
+		::SetDlgItemText( hwndDlg, IDC_EDIT_DEBUG, m_cmemDebugInfo.GetPtr() );
 
 		return TRUE;
 	case WM_COMMAND:

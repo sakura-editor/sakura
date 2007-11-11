@@ -32,15 +32,14 @@
 	コントロールプロセスはCControlProcessクラスのインスタンスを作り、
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
-int WINAPI _tWinMain(
+int WINAPI WinMain(
 	HINSTANCE	hInstance,		//!< handle to current instance
 	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPTSTR		lpCmdLine,		//!< pointer to command line
+	LPSTR		lpCmdLine,		//!< pointer to command line
 	int			nCmdShow		//!< show state of window
 )
 {
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
-	setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
 
 	CProcessFactory aFactory;
 	CProcess *process = 0;

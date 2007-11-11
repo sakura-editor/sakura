@@ -20,9 +20,9 @@
 #include "CDicMgr.h"
 #include "CMemory.h" // 2002/2/10 aroka ヘッダ整理
 #include "CRunningTimer.h"
+#include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
-#include "io/CTextStream.h"
-using namespace std;
+
 
 CDicMgr::CDicMgr()
 {
@@ -43,79 +43,78 @@ CDicMgr::~CDicMgr()
 /*!
 	キーワードの検索
 	最初に見つかったキーワードの意味を返す
+	
+	@param[in] pszKey 検索キーワード
+	@param[in] nCmpLen 検索キーワードの長さ
+	@param[out] ppcmemKey 見つかったキーワード．呼び出し元の責任で解放する．
+	@param[out] ppcmemMean 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
+	@param[in] pszKeyWordHelpFile キーワードヘルプファイルのパス名
+	@param[out] pLine 見つかったキーワードのキーワードヘルプファイル内での行番号
 
 	@date 2006.04.10 fon 検索ヒット行を返す引数pLineを追加
 */
-BOOL CDicMgr::Search(
-	const wchar_t*		pszKey,				//!< 検索キーワード
-	const int			nCmpLen,			//!< 検索キーワードの長さ
-	CNativeW2**			ppcmemKey,			//!< 見つかったキーワード．呼び出し元の責任で解放する．
-	CNativeW2**			ppcmemMean,			//!< 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
-	const TCHAR*		pszKeyWordHelpFile,	//!< キーワードヘルプファイルのパス名
-	int*				pLine				//!< 見つかったキーワードのキーワードヘルプファイル内での行番号
-)
+BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey, CMemory** ppcmemMean, const char* pszKeyWordHelpFile, int *pLine )
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( "CDicMgr::Search" );
+	CRunningTimer cRunningTimer( (const char*)"CDicMgr::Search" );
 #endif
+//	char	szDir[_MAX_PATH];
+//	long	lPathLen;
 	long	i;
-	wchar_t*	pszDelimit = L" /// ";
-	wchar_t*	pszWork;
+	FILE*	pFile;
+	char	szLine[LINEREADBUFSIZE];
+	char*	pszDelimit = " /// ";
+	char*	pszWork;
 	int		nRes;
-	wchar_t*	pszToken;
-	wchar_t*	pszKeySeps = L",\0";
+	char*	pszToken;
+	char*	pszKeySeps = ",\0";
 
 
 	/* 辞書ファイル */
-	if( 0 >= _tcslen( pszKeyWordHelpFile ) ){
+	if( 0 >= lstrlen( pszKeyWordHelpFile ) ){
 		return FALSE;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	CTextInputStream_AbsIni in(pszKeyWordHelpFile);
-	if(!in){
+	pFile = _tfopen_absini( pszKeyWordHelpFile, "r" );
+	if( NULL == pFile ){
 		return FALSE;
 	}
-
-	wchar_t	szLine[LINEREADBUFSIZE];
-	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
-		//1行読み込み
-		{
-			wstring tmp = in.ReadLineW(); //NULL != fgetws( szLine, _countof(szLine), pFile );
-			wcscpy_s(szLine,_countof(szLine),tmp.c_str());
-		}
-
-		pszWork = wcsstr( szLine, pszDelimit );
-		if( NULL != pszWork && szLine[0] != L';' ){
-			*pszWork = L'\0';
-			pszWork += wcslen( pszDelimit );
+	for(int line=1 ;NULL != fgets( szLine, sizeof(szLine), pFile ); line++ ){	// 2006.04.10 fon
+		pszWork = strstr( szLine, pszDelimit );
+		if( NULL != pszWork && szLine[0] != ';' ){
+			*pszWork = '\0';
+			pszWork += lstrlen( pszDelimit );
 
 			/* 最初のトークンを取得します。 */
-			pszToken = wcstok( szLine, pszKeySeps );
+			pszToken = strtok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
-				nRes = _wcsnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
+				nRes = _strnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
-					for( i = 0; i < (int)wcslen(pszWork); ++i ){
-						if( pszWork[i] == L'\r' ||
-							pszWork[i] == L'\n' ){
-							pszWork[i] = L'\0';
+					for( i = 0; i < (int)lstrlen(pszWork); ++i ){
+						if( pszWork[i] == '\r' ||
+							pszWork[i] == '\n' ){
+							pszWork[i] = '\0';
 							break;
 						}
 					}
 					//キーワードのセット
-					*ppcmemKey = new CNativeW2;	// 2006.04.10 fon
-					(*ppcmemKey)->SetString( pszToken );
+					*ppcmemKey = new CMemory;	// 2006.04.10 fon
+					(*ppcmemKey)->SetDataSz( pszToken );
 					//意味のセット
-					*ppcmemMean = new CNativeW2;
-					(*ppcmemMean)->SetString( pszWork );
+					*ppcmemMean = new CMemory;
+//					(*ppcmemMean)->SetData( pszWork, lstrlen(pszWork) );
+					(*ppcmemMean)->SetDataSz( pszWork );
 
+					fclose( pFile );
 					*pLine = line;	// 2006.04.10 fon
 					return TRUE;
 				}
-				pszToken = wcstok( NULL, pszKeySeps );
+				pszToken = strtok( NULL, pszKeySeps );
 			}
 		}
 	}
+	fclose( pFile );
 	return FALSE;
 }
 
@@ -126,64 +125,65 @@ BOOL CDicMgr::Search(
 /*
 ||  入力補完キーワードの検索
 ||
-||  ・見つかった候補をすべて返す(改行で区切って返す) -> ppcmemKouho
+||  ・見つかった候補をすべて返す(改行で区切って返す)
 ||  ・指定された候補の最大数を超えると処理を中断する
 ||  ・見つかった数を返す
 ||
 */
 int CDicMgr::HokanSearch(
-	const wchar_t*	pszKey,
-	BOOL			bHokanLoHiCase,	//!< 英大文字小文字を同一視する
-	CNativeW2**		ppcmemKouho,	//!< [out] 候補リスト。改行(\n)区切り。
-	int				nMaxKouho,		//!< Max候補数(0==無制限)
-	const TCHAR*	pszKeyWordFile
+			const char* pszKey,
+			BOOL		bHokanLoHiCase,	/*英大文字小文字を同一視する*/
+			CMemory**	ppcmemKouho,
+			int			nMaxKouho,	//Max候補数(0==無制限)
+			const char* pszKeyWordFile
 )
 {
+	FILE*	pFile;
+	char	szLine[1024];
 	int		nKeyLen;
 	int		nKouhoNum;
 	int		nRet;
 	*ppcmemKouho = NULL;
-	if( 0 >= _tcslen( pszKeyWordFile ) ){
+	if( 0 >= lstrlen( pszKeyWordFile ) ){
 		return 0;
 	}
-
-	CTextInputStream_AbsIni in(pszKeyWordFile);
-	if(!in){
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	pFile = _tfopen_absini( pszKeyWordFile, "r" );
+	if( NULL == pFile ){
 		return 0;
 	}
 	nKouhoNum = 0;
-	nKeyLen = wcslen( pszKey );
-	wstring szLine;
-	while( in ){
-		szLine = in.ReadLineW(); // NULL != fgetws( szLine, _countof(szLine), pFile ) ){
-		if( nKeyLen > (int)szLine.length() ){
+	nKeyLen = lstrlen( pszKey );
+	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
+		if( nKeyLen > (int)lstrlen( szLine ) ){
 			continue;
 		}
-
-		//コメント無視
-		if( szLine[0] == L';' )continue;
-
-		//空行無視
-		if( szLine[0] == L'\0' )continue;
-
+		if( szLine[0] == ';' ){
+			continue;
+		}
+		if( szLine[nKeyLen] == '\r' || szLine[nKeyLen] == '\n' ){
+			continue;
+		}
 		if( bHokanLoHiCase ){	/* 英大文字小文字を同一視する */
-			nRet = auto_memicmp( pszKey, szLine.c_str(), nKeyLen );
+			nRet = memicmp( pszKey, szLine, nKeyLen );
 		}else{
-			nRet = auto_memcmp( pszKey, szLine.c_str(), nKeyLen );
+			nRet = memcmp( pszKey, szLine, nKeyLen );
 		}
 		if( 0 == nRet ){
 			if( NULL == *ppcmemKouho ){
-				*ppcmemKouho = new CNativeW2;
+				*ppcmemKouho = new CMemory;
+				(*ppcmemKouho)->SetDataSz( szLine );
+			}else{
+				(*ppcmemKouho)->AppendSz( szLine );
 			}
-			(*ppcmemKouho)->AppendString( szLine.c_str() );
-			(*ppcmemKouho)->AppendString( L"\n" );
 			++nKouhoNum;
 			if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
 				break;
 			}
 		}
 	}
-	in.Close();
+	fclose( pFile );
 	return nKouhoNum;
 }
 

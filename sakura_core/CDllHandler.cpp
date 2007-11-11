@@ -45,7 +45,7 @@ CDllHandler::~CDllHandler()
 	}
 }
 
-int CDllHandler::LoadLibrary(LPCTSTR str)
+int CDllHandler::LoadLibrary(const char* str)
 {
 	if( IsAvailable() ){
 		//	既に利用可能で有れば何もしない．
@@ -133,3 +133,4 @@ LPCTSTR CDllHandler::GetDllNameInOrder(LPCTSTR str, int index)
 	}
 	return NULL;
 }
+/*[EOF]*/

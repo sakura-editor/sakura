@@ -66,15 +66,7 @@ public:
 	*/
 	void ResetContents( void );
 	//void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE );	/* メニュー項目を追加 */
-	void MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const TCHAR*     pszLabel, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK
-	void MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const NOT_TCHAR* pszLabel, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 )
-	{
-		MyAppendMenu(hMenu,nFlag,nFuncId,to_tchar(pszLabel),bAddKeyStr,nForceIconId);
-	}
-	void MyAppendMenuSep( HMENU hMenu, int nFlag, int nFuncId, const TCHAR* pszLabel, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 )
-	{
-		MyAppendMenu(hMenu,nFlag,nFuncId,pszLabel,bAddKeyStr,nForceIconId);
-	}
+	void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE, int = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK
 	int MeasureItem( int, int* );	/* メニューアイテムの描画サイズを計算 */
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
@@ -84,11 +76,15 @@ public:
 	TBBUTTON getButton( int index ) const{ return m_tbMyButton[index]; } // 20050809 aroka
 private:
 	int Find( int nFuncID );
-	const TCHAR* GetLabel( int nFuncID );
-	TCHAR GetAccelCharFromLabel( const TCHAR* pszLabel );
+	const char* GetLabel( int nFuncID );
+	char GetAccelCharFromLabel( const char* pszLabel );
+//@@@ 2002.01.03 YAZAKI 不使用のため
+//	static void MyBitBlt( HDC drawdc, int nXDest, int nYDest, int nWidth,
+//							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF, COLORREF);
+//	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
+//						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
 
 
-private:
 	DLLSHAREDATA*	m_pShareData;
 
 	HINSTANCE		m_hInstance;
@@ -101,10 +97,13 @@ private:
 
 	int				m_nMenuItemBitmapIdxArr[MAX_MENUITEMS];
 	int				m_nMenuItemFuncArr[MAX_MENUITEMS];
-	CNativeT		m_cmemMenuItemStrArr[MAX_MENUITEMS];
+	CMemory			m_cmemMenuItemStrArr[MAX_MENUITEMS];
 	int				m_nMenuHeight;
 	HFONT			m_hFontMenu;
 	HFONT			m_hFontMenuUndelLine;
+//@@@ 2002.01.03 YAZAKI 不使用のため
+//	int				m_nMaxTab;
+//	int				m_nMaxTabLen;
 
 	//	Oct. 16, 2000 genta
 	CImageListMgr	*m_pcIcons;	//	Image List

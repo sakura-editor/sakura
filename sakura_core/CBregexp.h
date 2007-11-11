@@ -42,7 +42,24 @@
 #ifndef _DLL_BREGEXP_H_
 #define _DLL_BREGEXP_H_
 
-#include "CBregexpDll2.h"
+#include "CDllHandler.h"
+
+/*!
+	BREGEXP 正規表現のコンパイル結果を保持する構造体
+*/
+typedef struct bregexp {
+	const char *outp;	//!< BSubst 置換データの先頭ポインタ
+	const char *outendp;	//!< BSubst 置換データの最終ポインタ+1
+	int  splitctr;	//!< BSplit 配列数
+	const char **splitp;	//!< BSplit データポインタ
+	int	rsv1;		//!< リザーブ 自由に使用可能
+	char *parap;		//!< パターンデータポインタ
+	char *paraendp;		//!< パターンデータポインタ+1
+	char *transtblp;	//!< BTrans 変換テーブルポインタ
+	char **startp;		//!< マッチしたデータの先頭ポインタ
+	char **endp;		//!< マッチしたデータの最終ポインタ+1
+	int nparens;		//!< パターンの中の() の数。 $1,$2, を調べるときに使用
+} BREGEXP;
 
 /*!
 	@brief Perl互換正規表現 BREGEXP.DLL をサポートするクラス
@@ -62,7 +79,7 @@
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class SAKURA_CORE_API CBregexp : public CBregexpDll2{
+class SAKURA_CORE_API CBregexp : public CDllHandler {
 public:
 	CBregexp();
 	virtual ~CBregexp();
@@ -83,8 +100,9 @@ public:
 		PAT_LOOKAHEAD = 16		//!< 先読み"(?[=]"
 	};
 
-	//! DLLのバージョン情報を取得
-	const TCHAR* GetVersionT(){ return IsAvailable() ? to_tchar(BRegexpVersion()) : _T(""); }
+	const char* GetVersion(){		//!< DLLのバージョン情報を取得
+		return IsAvailable() ? BRegexpVersion() : "";
+	}
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
@@ -92,12 +110,12 @@ public:
 	// 2002.01.26 hor    置換後文字列を別引数に
 	// 2002.02.01 hor    大文字小文字を無視するオプション追加
 	//>> 2002/03/27 Azumaiya 正規表現置換にコンパイル関数を使う形式を追加
-	bool Compile(const wchar_t *szPattern, int nOption = 0) {
+	bool Compile(const char *szPattern, int nOption = 0) {
 		return Compile(szPattern, NULL, nOption);
 	}
-	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0);	//!< Replace用
-	bool Match(const wchar_t *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
-	int Replace(const wchar_t *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
+	bool Compile(const char *szPattern0, const char *szPattern1, int nOption = 0);	//!< Replace用
+	bool Match(const char *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
+	int Replace(const char *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
 
 	//-----------------------------------------
 	// 2005.03.19 かろと クラス内部を隠蔽
@@ -108,31 +126,28 @@ public:
 	    検索に一致した文字列の先頭位置を返す(文字列先頭なら0)
 		@retval 検索に一致した文字列の先頭位置
 	*/
-	CLogicInt GetIndex(void)
-	{
-		return CLogicInt(m_pRegExp->startp[0] - m_szTarget);
+	int GetIndex(void) {
+		return m_pRegExp->startp[0] - m_szTarget;
 	}
 	/*!
 	    検索に一致した文字列の次の位置を返す
 		@retval 検索に一致した文字列の次の位置
 	*/
-	CLogicInt GetLastIndex(void)
-	{
-		return CLogicInt(m_pRegExp->endp[0] - m_szTarget);
+	int GetLastIndex(void) {
+		return m_pRegExp->endp[0] - m_szTarget;
 	}
 	/*!
 		検索に一致した文字列の長さを返す
 		@retval 検索に一致した文字列の長さ
 	*/
-	CLogicInt GetMatchLen(void)
-	{
-		return CLogicInt(m_pRegExp->endp[0] - m_pRegExp->startp[0]);
+	int GetMatchLen(void) {
+		return m_pRegExp->endp[0] - m_pRegExp->startp[0];
 	}
 	/*!
 		置換された文字列の長さを返す
 		@retval 置換された文字列の長さ
 	*/
-	CLogicInt GetStringLen(void) {
+	int GetStringLen(void) {
 		// 置換後文字列が０幅なら outp、outendpもNULLになる
 		// NULLポインタの引き算は問題なく０になる。
 		// outendpは '\0'なので、文字列長は +1不要
@@ -140,19 +155,17 @@ public:
 		// Jun. 03, 2005 Karoto
 		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
 		//	outpのNULLチェックが必要
-
 		if (m_pRegExp->outp == NULL) {
-			return CLogicInt(0);
+			return 0;
 		} else {
-			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
+			return m_pRegExp->outendp - m_pRegExp->outp;
 		}
 	}
 	/*!
 		置換された文字列を返す
 		@retval 置換された文字列へのポインタ
 	*/
-	const wchar_t *GetString(void)
-	{
+	const char *GetString(void) {
 		return m_pRegExp->outp;
 	}
 	/*! @} */
@@ -161,8 +174,7 @@ public:
 	/*! BREGEXPメッセージを取得する
 		@retval メッセージへのポインタ
 	*/
-	const TCHAR* GetLastMessage() const;// { return m_szMsg; }
-
+	const char* GetLastMessage(void) const { return m_szMsg; }
 	/*!	先読みパターンが存在するかを返す
 		この関数は、コンパイル後であることが前提なので、コンパイル前はfalse
 		@retval true 先読みがある
@@ -176,13 +188,38 @@ public:
 		@retval true 先読みがある
 		@retval false 先読みがない
 	*/
-	bool IsLookAhead(const wchar_t *pattern) {
+	bool IsLookAhead(const char *pattern) {
 		CheckPattern(pattern);
 		return IsLookAhead();
 	}
 
 protected:
+	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
+	virtual LPCTSTR GetDllNameInOrder(LPCTSTR, int);
+	virtual int InitDll(void);
+	virtual int DeinitDll(void);
 
+	//	DLL Interfaceの受け皿
+	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
+	//	影響を受けないようにする．
+	typedef int (__cdecl *BREGEXP_BMatch)(const char*,const char *,const char *,BREGEXP **,char *);
+	typedef int (__cdecl *BREGEXP_BSubst)(const char*,const char *,const char *,BREGEXP **,char *);
+	typedef int (__cdecl *BREGEXP_BTrans)(const char*,char *,char *,BREGEXP **,char *);
+	typedef int (__cdecl *BREGEXP_BSplit)(const char*,char *,char *,int,BREGEXP **,char *);
+	typedef void (__cdecl *BREGEXP_BRegfree)(BREGEXP*);
+	typedef const char* (__cdecl *BREGEXP_BRegexpVersion)(void);
+	// 2005.03.19 かろと 前方一致用新インターフェース
+	typedef int (*BREGEXP_BMatchEx)(const char*,const char*, const char *,const char *,BREGEXP **,char *);
+	typedef int (*BREGEXP_BSubstEx)(const char*,const char*, const char *,const char *,BREGEXP **,char *);
+
+	BREGEXP_BMatch BMatch;
+	BREGEXP_BSubst BSubst;
+	BREGEXP_BTrans BTrans;
+	BREGEXP_BSplit BSplit;
+	BREGEXP_BRegfree BRegfree;
+	BREGEXP_BRegexpVersion BRegexpVersion;
+	BREGEXP_BMatchEx BMatchEx;
+	BREGEXP_BSubstEx BSubstEx;
 
 	//!	コンパイルバッファを解放する
 	/*!
@@ -201,29 +238,124 @@ private:
 	//	内部関数
 
 	//! 検索パターン作成
-	int CheckPattern( const wchar_t* szPattern );
-	wchar_t* MakePatternSub( const wchar_t* szPattern, const wchar_t* szPattern2, const wchar_t* szAdd2, int nOption );
-	wchar_t* MakePattern( const wchar_t* szPattern, const wchar_t* szPattern2, int nOption );
-
+	int CheckPattern( const char *szPattern );
+	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int nOption );
+	char* MakePattern( const char* szPattern, const char* szPattern2, int nOption );
 	//	メンバ変数
-	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
+	BREGEXP*			m_pRegExp;			//!< コンパイル構造体
 	int					m_ePatType;			//!< 検索文字列パターン種別
-	const wchar_t*		m_szTarget;			//!< 対象文字列へのポインタ
-	wchar_t				m_szMsg[80];		//!< BREGEXP_Wからのメッセージを保持する
-
+	const char			*m_szTarget;		//!< 対象文字列へのポインタ
+	char				m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
 	// 静的メンバ変数
-	static const wchar_t	m_tmpBuf[2];	//!< ダミー文字列
+	static const char	m_tmpBuf[2];		//!< ダミー文字列
 };
 
+//	以下は関数ポインタに読み込まれる関数の解説
+/*!	@fn int CBregexp::BMatch(char* str,char *target,char *targetendp, BREGEXP **rxp,char *msg)
 
-//	Jun. 26, 2001 genta
-//!	正規表現ライブラリのバージョン取得
-SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
-SAKURA_CORE_API bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
-SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
+	m/pattern/option 形式のPerl互換パターンマッチングを行う。
 
+	@param str [in] 検索するパターン
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	target <= p < targetendp の範囲が検索対象になる。
+*/
+/*!	@fn int CBregexp::BMatchEx(char* str,char *targetbeg, char *target,char *targetendp, BREGEXP **rxp,char *msg)
+
+	m/pattern/option 形式のPerl互換パターンマッチングを行う。
+
+	@param str [in] 検索するパターン(コンパイル済みならNULL)
+	@param targetbeg [in] 検索対象文字列(行頭から)
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	target <= p < targetendp の範囲が検索対象になる。
+*/
+
+/*!	@fn int CBregexp::BSubst(char* str,char *target,char *targetendp, BREGEXP **rxp,char *msg);
+
+	s/pattern/replace/option 形式のPerl互換文字列置換を行う
+
+	@param str [in] 検索・置換パターン
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	@return 置換した文字列の数
+	
+	rxp->outpからrxp->outendpに置換後の文字列が格納される。
+
+*/
+/*!	@fn int CBregexp::BSubstEx(char* str,char *targetbeg char *target, ,char *targetendp, BREGEXP **rxp,char *msg);
+
+	s/pattern/replace/option 形式のPerl互換文字列置換を行う
+
+	@param str [in] 検索・置換パターン（コンパイル済みならNULL)
+	@param target [in] 検索対象文字列（行頭から）
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	@return 置換した文字列の数
+	
+	rxp->outpからrxp->outendpに置換後の文字列が格納される。
+
+*/
+
+/*!	@fn	int CBregexp::BTrans(char* str,char *target,char *targetendp, BREGEXP **rxp,char *msg)
+
+	tr/pattern/replace/option 形式のPerl互換文字置換を行う
+
+	@param str [in] 検索・置換パターン
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+
+	@return 変換した文字数
+
+	rxp->outpからrxp->outendpに変換後の文字列が格納される。
+
+*/
+
+/*!	@fn int CBregexp::BSplit(char* str,char *target,char *targetendp, int limit,BREGEXP **rxp,char *msg)
+
+	split( /patttern/, string ) 相当の文字列分割を行う
+
+	@param str [in] 検索パターン
+	@param target [in] 検索対象領域先頭
+	@param targetendp [in] 検索対象領域末尾
+	@param rxp [out] BREGEXP構造体。結果はここから取得する。
+	@param msg [out] エラーメッセージ
+	@param limit [in] 最大分割数。これを越えた分については分割は行われずに最終要素に入る。
+
+	@return 分割数
+
+*/
+
+/*!	@fn void CBregexp::BRegfree(BREGEXP* rx)
+
+	検索関数によって渡されたBREGEXP構造体の解放
+
+	@param rx [in] 解放する構造体
+*/
+
+
+/*!	@fn const char* CBregexp::BRegexpVersion(void)
+
+	BREGEXP.DLLのバージョン番号を返す。
+	@return バージョン文字列へのポインタ。
+
+	@par Sample
+	Version: Bregexp.dll V1.1 Build 22 Apr 29 2000 21:13:19
+*/
 
 #endif
 /*[EOF]*/
-
-

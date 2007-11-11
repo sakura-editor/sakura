@@ -30,7 +30,7 @@ public:
 	*/
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
-	TCHAR	m_szCommand[1024 + 1];	/* コマンドライン */
+	char	m_szCommand[1024 + 1];	/* コマンドライン */
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 //	BOOL	m_bGetStdout;	// 標準出力を得る
 

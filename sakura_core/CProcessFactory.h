@@ -33,7 +33,7 @@ class CProcess;
 */
 class SAKURA_CORE_API CProcessFactory {
 public:
-	CProcess* Create( HINSTANCE hInstance, LPTSTR lpCmdLine );
+	CProcess* Create( HINSTANCE hInstance, LPSTR lpCmdLine );
 protected:
 private:
 	bool IsValidVersion();

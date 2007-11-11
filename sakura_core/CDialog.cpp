@@ -17,10 +17,8 @@
 */
 #include "stdafx.h"
 #include "CDialog.h"
+#include "etc_uty.h"
 #include "debug.h"/// 2002/2/10 aroka ヘッダ整理
-#include "CEditApp.h"
-#include "util/os.h"
-#include "util/shell.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(
@@ -57,7 +55,7 @@ INT_PTR CALLBACK MyDialogProc(
 */
 CDialog::CDialog()
 {
-//	MYTRACE_A( "CDialog::CDialog()\n" );
+//	MYTRACE( "CDialog::CDialog()\n" );
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
@@ -73,14 +71,14 @@ CDialog::CDialog()
 	m_nHeight = -1;
 
 	/* ヘルプファイルのフルパスを返す */
-	m_szHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	::GetHelpFilePath( m_szHelpFile );
 
 	return;
 
 }
 CDialog::~CDialog()
 {
-//	MYTRACE_A( "CDialog::~CDialog()\n" );
+//	MYTRACE( "CDialog::~CDialog()\n" );
 	CloseDialog( 0 );
 	return;
 }
@@ -159,7 +157,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( -1 != m_xPos && -1 != m_yPos ){
 		::SetWindowPos( m_hWnd, NULL, m_xPos, m_yPos, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 #ifdef _DEBUG
-		MYTRACE_A( "CDialog::OnInitDialog() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
+		MYTRACE( "CDialog::OnInitDialog() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 #endif
 	}
 	if( -1 != m_nWidth && -1 != m_nHeight ){
@@ -211,7 +209,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_nHeight = rc.bottom - rc.top;
 
 		WINDOWPLACEMENT cWindowPlacement;
-		cWindowPlacement.length = sizeof( cWindowPlacement );
+		cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
 		cWindowPlacement.showCmd = m_nShowCmd;	//	最大化・最小化
 		cWindowPlacement.rcNormalPosition.left = m_xPos;
 		cWindowPlacement.rcNormalPosition.top = m_yPos;
@@ -227,7 +225,7 @@ BOOL CDialog::OnDestroy( void )
 {
 	/* ウィンドウ位置・サイズを記憶 */
 	WINDOWPLACEMENT cWindowPlacement;
-	cWindowPlacement.length = sizeof( cWindowPlacement );
+	cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
 	if (::GetWindowPlacement( m_hWnd, &cWindowPlacement )){
 		m_nShowCmd = cWindowPlacement.showCmd;	//	最大化・最小化
 		m_xPos = cWindowPlacement.rcNormalPosition.left;
@@ -321,7 +319,7 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 	m_nWidth = rc.right - rc.left;
 	m_nHeight = rc.bottom - rc.top;
 #ifdef _DEBUG
-		MYTRACE_A( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
+		MYTRACE( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 #endif
 	return TRUE;
 
@@ -334,8 +332,8 @@ void CDialog::CreateSizeBox( void )
 	/* サイズボックス */
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT,								/* no extended styles */
-		_T("SCROLLBAR"),										/* scroll bar control class */
-		NULL,												/* text for window title bar */
+		"SCROLLBAR",										/* scroll bar control class */
+		(LPSTR) NULL,										/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 		0,													/* horizontal position */
 		0,													/* vertical position */
@@ -359,7 +357,7 @@ void CDialog::CreateSizeBox( void )
 INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 //#ifdef _DEBUG
-//	MYTRACE_A( "CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
+//	MYTRACE( "CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
 //#endif
 	switch( uMsg ){
 	case WM_INITDIALOG:	return OnInitDialog( hwndDlg, wParam, lParam );
@@ -379,6 +377,7 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
 	case WM_VKEYTOITEM:	return OnVKeyToItem( wParam, lParam );
 	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
+//	case WM_NEXTDLGCTL:	return OnNextDlgCtl( wParam, lParam );
 	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
 	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
 	}

@@ -39,15 +39,12 @@ public:
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* モーダルダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
 
-	SSearchOption	m_sSearchOption;	// 検索オプション
-	/*
-	int				m_bLoHiCase;	// 英大文字と英小文字を区別する
-	int				m_bWordOnly;	// 一致する単語のみ検索する
-	int				m_bRegularExp;	// 正規表現
-	*/
+	int				m_bLoHiCase;	/* 英大文字と英小文字を区別する */
+	int				m_bWordOnly;	/* 一致する単語のみ検索する */
 	int				m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	wchar_t			m_szText[_MAX_PATH + 1];	/* 検索文字列 */
-	wchar_t			m_szText2[_MAX_PATH + 1];	/* 置換後文字列 */
+	int				m_bRegularExp;	/* 正規表現 */
+	char			m_szText[_MAX_PATH + 1];	/* 検索文字列 */
+	char			m_szText2[_MAX_PATH + 1];	/* 置換後文字列 */
 	BOOL			m_bSelectedArea;	/* 選択範囲内置換 */
 	int				m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
 	int				m_nSettingType;
@@ -56,8 +53,8 @@ public:
 	int				m_nPaste;			/* 貼り付け？ */	// 2001.12.03 hor
 	int				m_nReplaceCnt;		//すべて置換の実行結果		// 2002.02.08 hor
 	bool			m_bCanceled;		//すべて置換で中断したか	// 2002.02.08 hor
-
-	CLogicPoint		m_ptEscCaretPos_PHY;	// 検索/置換開始時のカーソル位置退避エリア
+	int				m_nEscCaretPosX_PHY;	/* 検索/置換開始時のカーソル位置退避エリア 02/07/28 ai */
+	int				m_nEscCaretPosY_PHY;	/* 検索/置換開始時のカーソル位置退避エリア 02/07/28 ai */
 
 protected:
 	/*
