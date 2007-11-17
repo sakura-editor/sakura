@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, zenryaku, ぜっと, D.S.Koba
 	Copyright (C) 2006, genta, aroka, ryoji, Moca
 	Copyright (C) 2006, genta, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -112,6 +113,36 @@ CDlgFuncList::CDlgFuncList()
 	return;
 }
 
+
+/*!
+	標準以外のメッセージを捕捉する
+
+	@date 2007.11.07 ryoji 新規
+*/
+INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	switch( wMsg ){
+	case WM_ACTIVATEAPP:
+		// 自分が最初にアクティブ化された場合は一旦編集ウィンドウをアクティブ化して戻す
+		//
+		// Note. このダイアログは他とは異なるウィンドウスタイルのため閉じたときの挙動が異なる．
+		// 他はスレッド内最近アクティブなウィンドウがアクティブになるが，このダイアログでは
+		// セッション内全体での最近アクティブウィンドウがアクティブになってしまう．
+		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
+		if( (BOOL)wParam ){
+			CEditView* pcEditView = (CEditView*)m_lParam;
+			CEditWnd* pcEditWnd = pcEditView->m_pcEditDoc->m_pcEditWnd;
+			if( ::GetActiveWindow() == m_hWnd ){
+				::SetActiveWindow( pcEditWnd->m_hWnd );
+				BlockingHook( NULL );	// キュー内に溜まっているメッセージを処理
+				::SetActiveWindow( m_hWnd );
+				return 0L;
+			}
+		}
+		break;
+	}
+	return CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+}
 
 
 //	/* モーダルダイアログの表示 */

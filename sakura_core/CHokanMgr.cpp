@@ -10,6 +10,7 @@
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2004, genta, Moca, novice
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -65,9 +66,6 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		/* 補完実行キーなら補完する */
 		if( -1 != pCHokanMgr->KeyProc( wParam, lParam ) ){
 			/* キーストロークを親に転送 */
-			::EnableWindow( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ), TRUE );
-//			::ShowWindow( pCDialog->m_hWnd, SW_HIDE );
-//			::SetFocus( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ) );
 			return ::PostMessage( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ), uMsg, wParam, lParam );
 		}
 		break;
@@ -139,14 +137,12 @@ void CHokanMgr::ChangeView( LPARAM pcEditView )
 void CHokanMgr::Hide( void )
 {
 	CEditView* pcEditView;
-	::EnableWindow( ::GetParent( ::GetParent( m_hwndParent ) ), TRUE );
-//	::DestroyWindow( hwnd );
+
 	::ShowWindow( m_hWnd, SW_HIDE );
 	m_nCurKouhoIdx = -1;
 	/* 入力フォーカスを受け取ったときの処理 */
 	pcEditView = (CEditView*)m_lParam;
 	pcEditView->OnSetFocus();
-//	m_nCurKouhoIdx = -1;
 	return;
 
 }
