@@ -65,6 +65,7 @@ public:
 //	BOOL DispatchEvent_PPB( HWND, UINT, WPARAM, LPARAM );	/* 印刷プレビュー 操作バー ダイアログのメッセージ処理 */
 
 	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
+	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// マウスホイール処理	// 2007.10.16 ryoji
 
 	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* 描画処理 */
 	LRESULT OnSize( WPARAM, LPARAM );	/* WM_SIZE 処理 */

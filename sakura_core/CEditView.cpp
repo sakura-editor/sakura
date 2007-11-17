@@ -725,6 +725,9 @@ LRESULT CEditView::DispatchEvent(
 //-		MYTRACE( "CEditView WM_DESTROYCLIPBOARD\n" );
 //-		return 0;
 	case WM_MOUSEWHEEL:
+		if( m_pcEditDoc->m_pcEditWnd->DoMouseWheel( wParam, lParam ) ){
+			return 0L;
+		}
 		return OnMOUSEWHEEL( wParam, lParam );
 
 
@@ -766,6 +769,12 @@ LRESULT CEditView::DispatchEvent(
 //		MYTRACE( "WM_CHAR\n" );
 		HandleCommand( F_CHAR, TRUE, wParam, 0, 0, 0 );
 		return 0L;
+
+	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
+		if( wParam == IMN_SETCONVERSIONMODE || wParam == IMN_SETOPENSTATUS){
+			ShowEditCaret();
+		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_IME_COMPOSITION:
 		if( IsInsMode() /* Oct. 2, 2005 genta */
@@ -868,12 +877,8 @@ LRESULT CEditView::DispatchEvent(
 		// 2007.10.02 nasukoji	非アクティブウィンドウのダブルクリック時はここでカーソルを移動する
 		// 2007.10.12 genta フォーカス移動のため，OnLBUTTONDBLCLKより移動
 		if(m_bActivateByMouse){
-			::SetFocus( ::GetParent( m_hwndParent ) );
-
-			if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
-				/* アクティブなペインを設定 */
-				m_pcEditDoc->SetActivePane( m_nMyIndex );
-			}
+			/* アクティブなペインを設定 */
+			m_pcEditDoc->SetActivePane( m_nMyIndex );
 			// カーソルをクリック位置へ移動する
 			OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );	
 			// 2007.10.02 nasukoji
@@ -890,13 +895,6 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_LBUTTONDOWN:
-//	case WM_RBUTTONDOWN:
-		::SetFocus( ::GetParent( m_hwndParent ) );
-
-		if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
-			/* アクティブなペインを設定 */
-			m_pcEditDoc->SetActivePane( m_nMyIndex );
-		}
 		// 2007.10.02 nasukoji
 		m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
 //		MYTRACE( " WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
@@ -913,7 +911,6 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_RBUTTONDBLCLK:
-		::SetFocus( ::GetParent( m_hwndParent ) );
 //		MYTRACE( " WM_RBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		return 0L;
 //	case WM_RBUTTONDOWN:
@@ -943,8 +940,6 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_VSCROLL:
-		::SetFocus( ::GetParent( m_hwndParent ) );
-
 //		MYTRACE( "	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
@@ -956,15 +951,10 @@ LRESULT CEditView::DispatchEvent(
 				SyncScrollV( Scroll );
 			}
 		}
-		if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
-			/* アクティブなペインを設定 */
-			m_pcEditDoc->SetActivePane( m_nMyIndex );
-		}
 
 		return 0L;
 
 	case WM_HSCROLL:
-		::SetFocus( ::GetParent( m_hwndParent ) );
 //		MYTRACE( "	WM_HSCROLL nPos=%d\n", GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
@@ -975,11 +965,6 @@ LRESULT CEditView::DispatchEvent(
 			if(( ::GetKeyState( VK_SHIFT ) & 0x8000 ) == 0 ){
 				SyncScrollH( Scroll );
 			}
-		}
-
-		if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
-			/* アクティブなペインを設定 */
-			m_pcEditDoc->SetActivePane( m_nMyIndex );
 		}
 
 		return 0L;
@@ -1086,6 +1071,12 @@ LRESULT CEditView::DispatchEvent(
 
 	// 2007.10.02 nasukoji	マウスクリックにてアクティベートされた時はカーソル位置を移動しない
 	case WM_MOUSEACTIVATE:
+		LRESULT nRes;
+		nRes = ::DefWindowProc( hwnd, uMsg, wParam, lParam );	// 親に先に処理させる
+		if( nRes == MA_NOACTIVATE || nRes == MA_NOACTIVATEANDEAT ){
+			return nRes;
+		}
+
 		// マウスクリックによりバックグラウンドウィンドウがアクティベートされた
 		//	2007.10.08 genta オプション追加
 		if( m_pShareData->m_Common.m_bNoCaretMoveByActivation &&
@@ -1095,7 +1086,10 @@ LRESULT CEditView::DispatchEvent(
 			return MA_ACTIVATEANDEAT;		// アクティベート後イベントを破棄
 		}
 
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		/* アクティブなペインを設定 */
+		m_pcEditDoc->SetActivePane( m_nMyIndex );
+
+		return nRes;
 	
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
@@ -3041,8 +3035,6 @@ void CEditView::SetIMECompFormPos( void )
 	// composition window position.
 	//
 	//
-	RECT			rc;
-	POINT			po;
 	COMPOSITIONFORM	CompForm;
 	HIMC			hIMC = ::ImmGetContext( m_hWnd );
 	POINT			point;
@@ -3051,15 +3043,8 @@ void CEditView::SetIMECompFormPos( void )
 
 	::GetCaretPos( &point );
 	CompForm.dwStyle = CFS_POINT;
-	CompForm.ptCurrentPos.x = (long) point.x + 1;
-	CompForm.ptCurrentPos.y = (long) point.y + 1 + m_nCaretHeight - m_nCharHeight;
-
-	::GetWindowRect( m_hWnd, &rc );
-	po.x = 0;
-	po.y = 0;
-	::ClientToScreen( hwndFrame, &po );
-	CompForm.ptCurrentPos.x += ( rc.left - po.x );
-	CompForm.ptCurrentPos.y += ( rc.top  - po.y );
+	CompForm.ptCurrentPos.x = (long) point.x;
+	CompForm.ptCurrentPos.y = (long) point.y + m_nCaretHeight - m_nCharHeight;
 
 	if ( hIMC ){
 		::ImmSetCompositionWindow( hIMC, &CompForm );

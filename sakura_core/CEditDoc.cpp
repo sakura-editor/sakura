@@ -3170,13 +3170,23 @@ void CEditDoc::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 /* アクティブなペインを設定 */
 void  CEditDoc::SetActivePane( int nIndex )
 {
-	m_cEditViewArr[m_nActivePaneIndex].OnKillFocus();
-	m_cEditViewArr[m_nActivePaneIndex].m_cUnderLine.CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
-
 	/* アクティブなビューを切り替える */
+	int nOldIndex = m_nActivePaneIndex;
 	m_nActivePaneIndex = nIndex;
 
-	m_cEditViewArr[m_nActivePaneIndex].OnSetFocus();
+	// フォーカスを移動する	// 2007.10.16 ryoji
+	m_cEditViewArr[nOldIndex].m_cUnderLine.CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
+	if( ::GetActiveWindow() == m_pcEditWnd->m_hWnd
+		&& ::GetFocus() != m_cEditViewArr[m_nActivePaneIndex].m_hWnd )
+	{
+		// ::SetFocus()でフォーカスを切り替える
+		::SetFocus( m_cEditViewArr[m_nActivePaneIndex].m_hWnd );
+	}else{
+		// アクティブでないときに::SetFocus()するとアクティブになってしまう
+		// （不可視なら可視になる）ので内部的に切り替えるだけにする
+		m_cEditViewArr[nOldIndex].OnKillFocus();
+		m_cEditViewArr[m_nActivePaneIndex].OnSetFocus();
+	}
 
 	m_cEditViewArr[m_nActivePaneIndex].RedrawAll();	/* フォーカス移動時の再描画 */
 

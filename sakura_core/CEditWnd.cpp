@@ -1345,7 +1345,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}else{
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
-	case WM_KILLFOCUS:
+	//case WM_KILLFOCUS:
 	case WM_CHAR:
 	case WM_IME_CHAR:
 	case WM_KEYUP:
@@ -1369,8 +1369,9 @@ LRESULT CEditWnd::DispatchEvent(
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
 
-		/* メッセージの配送 */
-		lRes = m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
+		// ビューにフォーカスを移動する	// 2007.10.16 ryoji
+		::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+		lRes = 0;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		/* 印刷プレビューモードのときは、キー操作は全部PrintPreviewBarへ転送 */
@@ -4062,6 +4063,18 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 {
+	if( m_pPrintPreview ){
+		return m_pPrintPreview->OnMouseWheel( wParam, lParam );
+	}
+	return m_cEditDoc.DispatchEvent( m_hWnd, WM_MOUSEWHEEL, wParam, lParam );
+}
+
+/** マウスホイール処理
+
+	@date 2007.10.16 ryoji OnMouseWheel()から処理抜き出し
+*/
+BOOL CEditWnd::DoMouseWheel( WPARAM wParam, LPARAM lParam )
+{
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューモードか */
 	if( !m_pPrintPreview ){
@@ -4135,14 +4148,12 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 
 					delete []pEditNodeArr;
 				}
-				return 0;
+				return TRUE;	// 処理した
 			}
 		}
-
-		/* メッセージの配送 */
-		return m_cEditDoc.DispatchEvent( m_hWnd, WM_MOUSEWHEEL, wParam, lParam );
+		return FALSE;	// 処理しなかった
 	}
-	return m_pPrintPreview->OnMouseWheel( wParam, lParam );
+	return FALSE;	// 処理しなかった
 }
 
 /* 印刷ページ設定
