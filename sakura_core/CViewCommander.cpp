@@ -7916,7 +7916,7 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 			for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
 				wcscpy( GetShareData()->m_aSearchKeys[j], GetShareData()->m_aSearchKeys[j - 1] );
 			}
-			GetShareData()->m_aSearchKeys.resize( min(MAX_SEARCHKEY, GetShareData()->m_aSearchKeys.size()+1) );
+			GetShareData()->m_aSearchKeys.resize( t_min<int>(MAX_SEARCHKEY, GetShareData()->m_aSearchKeys.size()+1) );
 		}
 		wcscpy( GetShareData()->m_aSearchKeys[0], cmemCurText.GetStringPtr() );
 
