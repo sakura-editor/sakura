@@ -26,7 +26,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -82,6 +82,7 @@
 				OutputFile="$(OutDir)/sakuraW_Ansi.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
 				SubSystem="2"
 				TargetMachine="1"
@@ -126,7 +127,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -182,6 +183,7 @@
 				OutputFile="$(OutDir)/sakuraW_Ansi.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
 				SubSystem="2"
@@ -227,7 +229,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -283,6 +285,7 @@
 				OutputFile="$(OutDir)/sakuraW.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
 				SubSystem="2"
@@ -328,7 +331,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -384,6 +387,7 @@
 				OutputFile="$(OutDir)/sakuraW.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
 				SubSystem="2"
 				TargetMachine="1"
@@ -434,6 +438,42 @@
 			<File
 				RelativePath="..\sakura_core\Funccode_x.hsrc"
 				>
+				<FileConfiguration
+					Name="Release_Ansi|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+						Outputs="..\sakura_core\Funccode_define.h"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Ansi|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+						Outputs="..\sakura_core\Funccode_define.h"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Unicode|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+						Outputs="..\sakura_core\Funccode_define.h"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Unicode|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+						Outputs="..\sakura_core\Funccode_define.h"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\sakura_core\sakura.hh"
