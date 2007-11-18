@@ -184,11 +184,11 @@ void CViewSelect::DrawSelectArea() const
 			m_sSelectOld.GetFrom(),	// 範囲選択開始
 			m_sSelectOld.GetTo()	// 範囲選択終了
 		);
-		rcOld.left   = max(rcOld.left  , pView->GetTextArea().GetViewLeftCol()  );
-		rcOld.right  = max(rcOld.right , pView->GetTextArea().GetViewLeftCol()  );
-		rcOld.right  = min(rcOld.right , pView->GetTextArea().GetRightCol() + 1 );
-		rcOld.top    = max(rcOld.top   , pView->GetTextArea().GetViewTopLine()  );
-		rcOld.bottom = min(rcOld.bottom, pView->GetTextArea().GetBottomLine()   );
+		rcOld.left   = t_max(rcOld.left  , pView->GetTextArea().GetViewLeftCol()  );
+		rcOld.right  = t_max(rcOld.right , pView->GetTextArea().GetViewLeftCol()  );
+		rcOld.right  = t_min(rcOld.right , pView->GetTextArea().GetRightCol() + 1 );
+		rcOld.top    = t_max(rcOld.top   , pView->GetTextArea().GetViewTopLine()  );
+		rcOld.bottom = t_min(rcOld.bottom, pView->GetTextArea().GetBottomLine()   );
 
 		RECT rcOld2;
 		rcOld2.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)rcOld.left  * nCharWidth;
@@ -204,11 +204,11 @@ void CViewSelect::DrawSelectArea() const
 			m_sSelect.GetFrom(),	// 範囲選択開始
 			m_sSelect.GetTo()		// 範囲選択終了
 		);
-		rcNew.left   = max(rcNew.left  , pView->GetTextArea().GetViewLeftCol() );
-		rcNew.right  = max(rcNew.right , pView->GetTextArea().GetViewLeftCol() );
-		rcNew.right  = min(rcNew.right , pView->GetTextArea().GetRightCol() + 1);
-		rcNew.top    = max(rcNew.top   , pView->GetTextArea().GetViewTopLine() );
-		rcNew.bottom = min(rcNew.bottom, pView->GetTextArea().GetBottomLine()  );
+		rcNew.left   = t_max(rcNew.left  , pView->GetTextArea().GetViewLeftCol() );
+		rcNew.right  = t_max(rcNew.right , pView->GetTextArea().GetViewLeftCol() );
+		rcNew.right  = t_min(rcNew.right , pView->GetTextArea().GetRightCol() + 1);
+		rcNew.top    = t_max(rcNew.top   , pView->GetTextArea().GetViewTopLine() );
+		rcNew.bottom = t_min(rcNew.bottom, pView->GetTextArea().GetBottomLine()  );
 
 		RECT rcNew2;
 		rcNew2.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)rcNew.left  * nCharWidth;
