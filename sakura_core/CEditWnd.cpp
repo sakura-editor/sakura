@@ -419,7 +419,6 @@ HWND CEditWnd::Create(
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return NULL;
 	m_hWnd = hWnd;
-	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
 
 	//コモンコントロール初期化
 	MyInitCommonControls();
@@ -483,6 +482,10 @@ HWND CEditWnd::Create(
 
 
 	// -- -- -- -- その他調整など -- -- -- -- //
+
+	// 画面表示直前にDispatchEventを有効化する
+	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
+
 	// デスクトップからはみ出さないようにする
 	_AdjustInMonitor(sTabGroupInfo);
 
