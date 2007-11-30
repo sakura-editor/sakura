@@ -1848,6 +1848,8 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	@date 2004.08.27 Kazika 引数bForeground追加。bForegroundがfalseの場合はウィンドウをフォアグラウンドにしない。
 	@date 2005.11.05 ryoji Grepダイアログがフォーカスを失わないようにするため，
 		対象ウィンドウのプロセスが既にフォアグラウンドなら何もしないようにする．
+	@date 2007.11.07 ryoji 対象がdisableのときは最近のポップアップをフォアグラウンド化する．
+		（モーダルダイアログやメッセージボックスを表示しているようなとき）
 */
 void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 {
@@ -1861,10 +1863,13 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 			return;
 		}
 
+		// 対象がdisableのときは最近のポップアップをフォアグラウンド化する
+		HWND hwndActivate;
+		hwndActivate = ::IsWindowEnabled( hwnd )? hwnd: ::GetLastActivePopup( hwnd );
+
 		if( ::IsIconic( hwnd ) )
 		{
 			::ShowWindow( hwnd, SW_RESTORE );	// Nov. 7. 2003 MIK アイコン時は元のサイズに戻す
-			return;
 		}
 		else if( ::IsZoomed( hwnd ) )
 		{
@@ -1875,8 +1880,8 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 			::ShowWindow( hwnd, SW_SHOW );
 		}
 
-		::SetForegroundWindow( hwnd );
-		::BringWindowToTop( hwnd );
+		::SetForegroundWindow( hwndActivate );
+		::BringWindowToTop( hwndActivate );
 	}
 	else
 	{
