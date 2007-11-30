@@ -980,7 +980,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}else{
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
-	case WM_KILLFOCUS:
+	//case WM_KILLFOCUS:
 	case WM_CHAR:
 	case WM_IME_CHAR:
 	case WM_KEYUP:
@@ -1004,8 +1004,9 @@ LRESULT CEditWnd::DispatchEvent(
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
 
-		/* メッセージの配送 */
-		lRes = Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
+		// ビューにフォーカスを移動する	// 2007.10.16 ryoji
+		::SetFocus( this->GetActiveView().GetHwnd() );
+		lRes = 0;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		/* 印刷プレビューモードのときは、キー操作は全部PrintPreviewBarへ転送 */
@@ -3175,6 +3176,18 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 {
+	if( m_pPrintPreview ){
+		return m_pPrintPreview->OnMouseWheel( wParam, lParam );
+	}
+	return Views_DispatchEvent( GetHwnd(), WM_MOUSEWHEEL, wParam, lParam );
+}
+
+/** マウスホイール処理
+
+	@date 2007.10.16 ryoji OnMouseWheel()から処理抜き出し
+*/
+BOOL CEditWnd::DoMouseWheel( WPARAM wParam, LPARAM lParam )
+{
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューモードか */
 	if( !m_pPrintPreview ){
@@ -3248,14 +3261,12 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 
 					delete []pEditNodeArr;
 				}
-				return 0;
+				return TRUE;	// 処理した
 			}
 		}
-
-		/* メッセージの配送 */
-		return Views_DispatchEvent( GetHwnd(), WM_MOUSEWHEEL, wParam, lParam );
+		return FALSE;	// 処理しなかった
 	}
-	return m_pPrintPreview->OnMouseWheel( wParam, lParam );
+	return FALSE;	// 処理しなかった
 }
 
 /* 印刷ページ設定
@@ -4003,13 +4014,23 @@ void CEditWnd::Views_Redraw()
 /* アクティブなペインを設定 */
 void  CEditWnd::SetActivePane( int nIndex )
 {
-	this->GetActiveView().OnKillFocus();
-	this->GetActiveView().GetCaret().m_cUnderLine.CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
-
 	/* アクティブなビューを切り替える */
+	int nOldIndex = m_nActivePaneIndex;
 	m_nActivePaneIndex = nIndex;
 
-	this->GetActiveView().OnSetFocus();
+	// フォーカスを移動する	// 2007.10.16 ryoji
+	m_pcEditViewArr[nOldIndex]->CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
+	if( ::GetActiveWindow() == GetHwnd()
+		&& ::GetFocus() != m_pcEditViewArr[m_nActivePaneIndex]->GetHwnd() )
+	{
+		// ::SetFocus()でフォーカスを切り替える
+		::SetFocus( m_pcEditViewArr[m_nActivePaneIndex]->GetHwnd() );
+	}else{
+		// アクティブでないときに::SetFocus()するとアクティブになってしまう
+		// （不可視なら可視になる）ので内部的に切り替えるだけにする
+		m_pcEditViewArr[nOldIndex]->OnKillFocus();
+		m_pcEditViewArr[m_nActivePaneIndex]->OnSetFocus();
+	}
 
 	this->GetActiveView().RedrawAll();	/* フォーカス移動時の再描画 */
 

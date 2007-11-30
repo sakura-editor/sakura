@@ -120,6 +120,7 @@ public:
 	LRESULT OnLButtonDown( WPARAM, LPARAM );
 	LRESULT OnMouseMove( WPARAM, LPARAM );
 	LRESULT OnMouseWheel( WPARAM, LPARAM );
+	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// マウスホイール処理	// 2007.10.16 ryoji
 	LRESULT OnHScroll( WPARAM, LPARAM );
 	LRESULT OnVScroll( WPARAM, LPARAM );
 	int	OnClose( void );	/* 終了時の処理 */
