@@ -549,7 +549,9 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
 	if( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation == DMORIENT_PORTRAIT ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_PORTRAIT, BST_CHECKED );
+		::CheckDlgButton( GetHwnd(), IDC_RADIO_LANDSCAPE, BST_UNCHECKED );
 	}else{
+		::CheckDlgButton( GetHwnd(), IDC_RADIO_PORTRAIT, BST_UNCHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_LANDSCAPE, BST_CHECKED );
 	}
 
