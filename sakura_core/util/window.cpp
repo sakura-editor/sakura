@@ -89,7 +89,10 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 
 
 
-/* アクティブにする */
+/** フレームウィンドウをアクティブにする
+	@date 2007.11.07 ryoji 対象がdisableのときは最近のポップアップをフォアグラウンド化する．
+		（モーダルダイアログやメッセージボックスを表示しているようなとき）
+*/
 void ActivateFrameWindow( HWND hwnd )
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
@@ -117,6 +120,9 @@ void ActivateFrameWindow( HWND hwnd )
 		}
 	}
 
+	// 対象がdisableのときは最近のポップアップをフォアグラウンド化する
+	HWND hwndActivate;
+	hwndActivate = ::IsWindowEnabled( hwnd )? hwnd: ::GetLastActivePopup( hwnd );
 	if( ::IsIconic( hwnd ) ){
 		::ShowWindow( hwnd, SW_RESTORE );
 	}
@@ -126,8 +132,8 @@ void ActivateFrameWindow( HWND hwnd )
 	else {
 		::ShowWindow( hwnd, SW_SHOW );
 	}
-	::SetForegroundWindow( hwnd );
-	::BringWindowToTop( hwnd );
+	::SetForegroundWindow( hwndActivate );
+	::BringWindowToTop( hwndActivate );
 
 	if( pShareData )
 		pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji

@@ -907,15 +907,6 @@ LRESULT CEditWnd::DispatchEvent(
 
 		// アクティブ化なら編集ウィンドウリストの先頭に移動する		// 2007.04.08 ryoji WM_SETFOCUS から移動
 		if( m_bIsActiveApp ){
-			// アクティブ化が編集ウィンドウでない場合（ダイアログ等の場合）は一旦編集ウィンドウをアクティブ化して戻す
-			// ・CDlgFuncListダイアログを閉じたときに以前のアクティブウィンドウではなく編集ウィンドウがアクティブになるように
-			// ・タブまとめ表示の場合はこれで編集ウィンドウが非表示→表示に切替わるのでリスト移動処理で画面が一時的に消えることもなくなる
-			//   （まとめ時は非アクティブタブのポップアップを非表示にしたのでそこからアクティブ化されることは無くなった）	// 2007.10.22 ryoji
-			HWND hwndActive = ::GetActiveWindow();
-			if( hwndActive != GetHwnd() ){
-				ActivateFrameWindow( GetHwnd() );		// 編集ウィンドウをアクティブ化
-				::SetActiveWindow( hwndActive );	// アクティブウィンドウを元に戻す
-			}
 			CShareData::getInstance()->AddEditWndList( GetHwnd() );	// リスト移動処理
 		}
 
