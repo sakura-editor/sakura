@@ -504,6 +504,7 @@ public:
 	void DrawCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
 protected:
 	BOOL IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
+	BOOL CheckTripleClick( int, int);							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
 	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
@@ -665,6 +666,7 @@ protected:
 	/* 選択系 */
 	bool Command_SELECTWORD( void );		/* 現在位置の単語選択 */
 	void Command_SELECTALL( void );			/* すべて選択 */
+	void Command_SELECTLINE( int lparam );	/* 1行選択 */	// 2007.10.13 nasukoji
 	void Command_BEGIN_SELECT( void );		/* 範囲選択開始 */
 
 	/* 矩形選択系 */
@@ -969,6 +971,9 @@ private:
 
 	// 2007.10.02 nasukoji
 	bool	m_bActivateByMouse;		//!< マウスによるアクティベート
+
+	// 2007.10.02 nasukoji
+	DWORD	m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻
 };
 
 

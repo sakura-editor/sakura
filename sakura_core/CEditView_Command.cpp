@@ -362,6 +362,7 @@ BOOL CEditView::HandleCommand(
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
 	case F_SELECTALL:		Command_SELECTALL();break;						//すべて選択
+	case F_SELECTLINE:		Command_SELECTLINE( lparam1 );break;			//1行選択	// 2007.10.13 nasukoji
 	case F_BEGIN_SEL:		Command_BEGIN_SELECT();break;					/* 範囲選択開始 */
 	case F_UP_SEL:			Command_UP( TRUE, bRepeat, lparam1 ); break;	//(範囲選択)カーソル上移動
 	case F_DOWN_SEL:		Command_DOWN( TRUE, bRepeat ); break;			//(範囲選択)カーソル下移動
@@ -2181,6 +2182,55 @@ void CEditView::Command_SELECTALL( void )
 
 	/* 選択領域描画 */
 	DrawSelectArea();
+	return;
+}
+
+/*!	1行選択
+	@brief カーソル位置を1行選択する
+	@param lparam [in] マクロから使用する拡張フラグ（拡張用に予約）
+	
+	@date 2007.10.06 nasukoji	新規作成
+	@date 2007.10.11 nasukoji	1行選択を改行単位で行うように変更
+	@date 2007.10.13 nasukoji	引数を追加
+	@date 2007.11.05 nasukoji	EOFのみの行を選択した時、アンダーラインが表示されなくなる不具合を修正
+								選択後選択行の行頭へ戻すように変更
+*/
+void CEditView::Command_SELECTLINE( int lparam )
+{
+	// 改行単位で1行選択する
+	Command_GOLINETOP( FALSE, 0x9 );	// 物理行頭に移動
+
+	m_bBeginLineSelect = TRUE;		// 行単位選択中
+
+	int nCaretPosX;
+	int nCaretPosY;
+
+	// 最下行（物理行）でない
+	if( m_nCaretPosY_PHY < m_pcEditDoc->m_cDocLineMgr.GetLineCount() ){
+		// 1行先の物理行からレイアウト行を求める
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			0, m_nCaretPosY_PHY + 1, &nCaretPosX, &nCaretPosY
+		);
+
+		// カーソルを次の物理行頭へ移動する
+		MoveCursorSelecting( nCaretPosX, nCaretPosY, TRUE );
+	}else{
+		// カーソルを最下行（レイアウト行）へ移動する
+		MoveCursorSelecting( 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), TRUE );
+		Command_GOLINEEND( TRUE, FALSE );	// 行末に移動
+		
+		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
+		if(( ! IsTextSelected() )&&( m_nCaretPosY_PHY >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() )){
+			DisableSelectArea( TRUE );		// 現在の選択範囲を非選択状態に戻す
+		}
+	}
+
+	if( m_bBeginLineSelect ){
+		// クリック行より上へ選択移動した時にクリック行が非選択となってしまうことへの対処
+		m_nSelectLineBgnTo = m_nSelectLineTo = m_nCaretPosY;	// 範囲選択開始行(原点)
+		m_nSelectColmBgnTo = m_nSelectColmTo = m_nCaretPosX;	// 範囲選択開始桁(原点)
+	}
+
 	return;
 }
 

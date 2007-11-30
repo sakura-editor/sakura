@@ -393,6 +393,9 @@ CEditView::CEditView() :
 	//m_pcmigemo->Init();
 	m_pcmigemo = NULL;
 
+	// 2007.10.02 nasukoji
+	m_dwTripleClickCheck = 0;		// トリプルクリックチェック用時刻初期化
+
 	return;
 }
 
@@ -3225,6 +3228,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	int			nColmTo;
 	int			nIdx;
 	int			nWork;
+	BOOL		tripleClickMode = FALSE;	// 2007.10.02 nasukoji	トリプルクリックであることを示す
+	int			nFuncID = 0;				// 2007.11.30 nasukoji	マウス左クリックに対応する機能コード
 
 	if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() == 0 ){
 		return;
@@ -3243,12 +3248,27 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		m_dwTipTimer = ::GetTickCount();		/* 辞書Tip起動タイマー */
 	}
 
+	// 2007.11.30 nasukoji	トリプルクリックをチェック
+	tripleClickMode = CheckTripleClick(xPos, yPos);
+
+	if(tripleClickMode){
+		// マウス左トリプルクリックに対応する機能コードはm_Common.m_pKeyNameArr[5]に入っている
+		nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
+		if( 0 == nFuncID ){
+			tripleClickMode = 0;	// 割り当て機能無しの時はトリプルクリック OFF
+		}
+	}else{
+		m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
+	}
+
 	/* 現在のマウスカーソル位置→レイアウト位置 */
 	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 //	MYTRACE( "OnLBUTTONDOWN() nNewX=%d nNewY=%d\n", nNewX, nNewY );
 
-	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+	// OLEによるドラッグ & ドロップを使う
+	// 2007.11.30 nasukoji	トリプルクリック時はドラッグを開始しない
+	if( !tripleClickMode && TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){
 		if( m_pShareData->m_Common.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
 			/* 行選択エリアをドラッグした */
 			if( xPos < m_nViewAlignLeft - ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
@@ -3293,8 +3313,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 normal_action:;
 
-	/* ALTキーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
+	// ALTキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
+	if(( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) )&&( ! tripleClickMode)){
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			DisableSelectArea( TRUE );
@@ -3364,6 +3384,33 @@ normal_action:;
 		HideCaret_( m_hWnd ); // 2002/07/22 novice
 
 
+		if(tripleClickMode){		// 2007.10.10 nasukoji	トリプルクリックを処理する
+			// 1行選択でない場合は選択文字列を解除
+			// 2007.11.05 nasukoji	トリプルクリックが1行選択でなくてもクアドラプルクリックを有効とする
+			if(F_SELECTLINE != nFuncID){
+				OnLBUTTONUP( fwKeys, xPos, yPos );	// ここで左ボタンアップしたことにする
+
+				if( IsTextSelected() )		// テキストが選択されているか
+					DisableSelectArea( TRUE );		// 現在の選択範囲を非選択状態に戻す
+			}
+
+			// 2007.10.10 nasukoji	単語の途中で折り返されていると下の行が選択されてしまうことへの対処
+			MoveCursorToPoint( xPos, yPos );	// カーソル移動
+
+			// コマンドコードによる処理振り分け
+			// マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
+			::SendMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ), (LPARAM)NULL );
+
+			// 1行選択でない場合はここで抜ける（他の選択コマンドの時問題となるかも）
+			if(F_SELECTLINE != nFuncID)
+				return;
+
+			// 2007.10.13 nasukoji	選択するものが無い（[EOF]のみの行）時は通常クリックと同じ処理
+			if(( ! IsTextSelected() )&&( m_nCaretPosY_PHY >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() )){
+				BeginSelectArea();				// 現在のカーソル位置から選択を開始する
+				m_bBeginLineSelect = FALSE;		// 行単位選択中 OFF
+			}
+		}else
 		/* 選択開始処理 */
 		/* SHIFTキーが押されていたか */
 		if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
@@ -3428,8 +3475,8 @@ normal_action:;
 		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
 
 
-		/* CTRLキーが押されていたか */
-		if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
+		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
+		if(( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) )&&( ! tripleClickMode)){
 			m_bBeginWordSelect = TRUE;		/* 単語単位選択中 */
 			if( !IsTextSelected() ){
 				/* 現在位置の単語選択 */
@@ -3694,6 +3741,60 @@ BOOL CEditView::IsCurrentPositionURL(
 }
 
 
+/*!	トリプルクリックのチェック
+	@brief トリプルクリックを判定する
+	
+	2回目のクリックから3回目のクリックまでの時間がダブルクリック時間以内で、
+	かつその時のクリック位置のずれがシステムメトリック（X:SM_CXDOUBLECLK,
+	Y:SM_CYDOUBLECLK）の値（ピクセル）以下の時トリプルクリックとする。
+	
+	@param[in] xPos		マウスクリックX座標
+	@param[in] yPos		マウスクリックY座標
+	@return		トリプルクリックの時はTRUEを返す
+	トリプルクリックでない時はFALSEを返す
+
+	@note	m_dwTripleClickCheckが0でない時にチェックモードと判定するが、PCを
+			連続稼動している場合49.7日毎にカウンタが0になる為、わずかな可能性
+			であるがトリプルクリックが判定できない時がある。
+	
+	@date 2007.10.02 nasukoji	新規作成
+	@date 2007.10.11 nasukoji	改行文字より左側でないとトリプルクリックが認識されない不具合を修正
+	@date 2007.10.13 nasukoji	行番号表示エリアのトリプルクリックは通常クリックとして扱う
+*/
+BOOL CEditView::CheckTripleClick( int xPos, int yPos )
+{
+
+	// トリプルクリックチェック有効でない（時刻がセットされていない）
+	if(! m_dwTripleClickCheck)
+		return FALSE;
+
+	BOOL result = FALSE;
+
+	// 前回クリックとのクリック位置のずれを算出
+	int dxpos = m_nMouseRollPosXOld - xPos;
+	int dypos = m_nMouseRollPosYOld - yPos;
+
+	if(dxpos < 0)
+		dxpos = -dxpos;		// 絶対値化
+
+	if(dypos < 0)
+		dypos = -dypos;		// 絶対値化
+
+	// 行番号表示エリアでない、かつクリックプレスからダブルクリック時間以内、
+	// かつダブルクリックの許容ずれピクセル以下のずれの時トリプルクリックとする
+	//	2007.10.12 genta/dskoba システムのダブルクリック速度，ずれ許容量を取得
+	if( (xPos >= m_nViewAlignLeft)&&
+		(::GetTickCount() - m_dwTripleClickCheck <= GetDoubleClickTime() )&&
+		(dxpos <= GetSystemMetrics(SM_CXDOUBLECLK) ) &&
+		(dypos <= GetSystemMetrics(SM_CYDOUBLECLK)))
+	{
+		result = TRUE;
+	}else{
+		m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
+	}
+	
+	return result;
+}
 
 
 /* マウス右ボタン押下 */
@@ -3729,7 +3830,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[1].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -3757,8 +3858,8 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[2].m_nFuncCodeArr[nIdx];
+	/* マウス中ボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
+	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -3785,7 +3886,7 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[3].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -3813,7 +3914,7 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス右サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[4].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4176,8 +4277,53 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		m_nMouseRollPosYOld = yPos;	/* マウス範囲選択前回位置(Y座標) */
 	}else{
 		/* 座標指定によるカーソル移動 */
-		if( xPos < m_nViewAlignLeft && m_bBeginLineSelect ){
-			nScrollRowNum = MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) , yPos + ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ) );
+		if(( xPos < m_nViewAlignLeft || m_dwTripleClickCheck )&& m_bBeginLineSelect ){		// 2007.10.02 nasukoji	行単位選択中
+			// 2007.10.13 nasukoji	上方向の行選択時もマウスカーソルの位置の行が選択されるようにする
+			int nNewY = yPos;
+			int nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;		// 1行の高さ
+
+			// 選択開始行以下へのドラッグ時は1行下にカーソルを移動する
+			if( m_nViewTopLine + (yPos - m_nViewAlignTop) / nLineHeight >= m_nSelectLineBgnTo )
+				nNewY += nLineHeight;
+
+			// カーソルを移動
+			nScrollRowNum = MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) , nNewY );
+
+			// 2007.10.13 nasukoji	2.5クリックによる行単位のドラッグ
+			if( m_dwTripleClickCheck ){
+				int nSelectStartLine = m_nSelectLineBgnTo;
+
+				// 選択開始行以上にドラッグした
+				if( m_nCaretPosY <= nSelectStartLine ){
+					Command_GOLINETOP( TRUE, 0x09 );	// 改行単位の行頭へ移動
+				}else{
+					int nCaretPosX;
+					int nCaretPosY;
+
+					int nCaretPrevPosX_PHY;
+					int nCaretPrevPosY_PHY = m_nCaretPosY_PHY;
+
+					// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
+					// 選択開始行にカーソルがある時はチェック不要
+					if(m_nCaretPosY > nSelectStartLine){
+						// 1行前の物理行を取得する
+						m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+							0, m_nCaretPosY - 1, &nCaretPrevPosX_PHY, &nCaretPrevPosY_PHY
+						);
+					}
+
+					// 前の行と同じ物理行
+					if( nCaretPrevPosY_PHY == m_nCaretPosY_PHY ){
+						// 1行先の物理行からレイアウト行を求める
+						m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+							0, m_nCaretPosY_PHY + 1, &nCaretPosX, &nCaretPosY
+						);
+
+						// カーソルを次の物理行頭へ移動する
+						nScrollRowNum = MoveCursor( nCaretPosX, nCaretPosY, TRUE );
+					}
+				}
+			}
 		}else{
 			nScrollRowNum = MoveCursorToPoint( xPos , yPos );
 		}
@@ -4572,69 +4718,104 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	char*		pszURL;
 	const char*	pszMailTo = "mailto:";
 
-	/* カーソル位置にURLが有る場合のその範囲を調べる */
-	//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
-		IsCurrentPositionURL(
-		m_nCaretPosX,	// カーソル位置X
-		m_nCaretPosY,	// カーソル位置Y
-		&nUrlLine,		// URLの行(改行単位)
-		&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-		&nUrlLen,		// URLの長さ(バイト数)
-		&pszURL			// URL受け取り先
-	) ){
-		char*		pszWork = NULL;
-		char*		pszOPEN;
+	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
+	if(! m_dwTripleClickCheck){
+		/* カーソル位置にURLが有る場合のその範囲を調べる */
+		//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
+		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+			IsCurrentPositionURL(
+			m_nCaretPosX,	// カーソル位置X
+			m_nCaretPosY,	// カーソル位置Y
+			&nUrlLine,		// URLの行(改行単位)
+			&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
+			&nUrlLen,		// URLの長さ(バイト数)
+			&pszURL			// URL受け取り先
+		) ){
+			char*		pszWork = NULL;
+			char*		pszOPEN;
 
-		/* URLを開く */
-	 	/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
-		if( TRUE == IsMailAddress( pszURL, lstrlen( pszURL ), NULL ) ){
-			pszWork = new char[ lstrlen( pszURL ) + lstrlen( pszMailTo ) + 1];
-			strcpy( pszWork, pszMailTo );
-			strcat( pszWork, pszURL );
-			pszOPEN = pszWork;
-		}else{
-			if( _tcsnicmp( pszURL, _T("ttp://"), 6 ) == 0 ){	//抑止URL
-				pszWork = new TCHAR[ _tcslen( pszURL ) + 1 + 1 ];
-				_tcscpy( pszWork, _T("h") );
-				_tcscat( pszWork, pszURL );
-				pszOPEN = pszWork;
-			}else if( _tcsnicmp( pszURL, _T("tp://"), 5 ) == 0 ){	//抑止URL
-				pszWork = new TCHAR[ _tcslen( pszURL ) + 2 + 1 ];
-				_tcscpy( pszWork, _T("ht") );
-				_tcscat( pszWork, pszURL );
+			/* URLを開く */
+			/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
+			if( TRUE == IsMailAddress( pszURL, lstrlen( pszURL ), NULL ) ){
+				pszWork = new char[ lstrlen( pszURL ) + lstrlen( pszMailTo ) + 1];
+				strcpy( pszWork, pszMailTo );
+				strcat( pszWork, pszURL );
 				pszOPEN = pszWork;
 			}else{
-				pszOPEN = pszURL;
+				if( _tcsnicmp( pszURL, _T("ttp://"), 6 ) == 0 ){	//抑止URL
+					pszWork = new TCHAR[ _tcslen( pszURL ) + 1 + 1 ];
+					_tcscpy( pszWork, _T("h") );
+					_tcscat( pszWork, pszURL );
+					pszOPEN = pszWork;
+				}else if( _tcsnicmp( pszURL, _T("tp://"), 5 ) == 0 ){	//抑止URL
+					pszWork = new TCHAR[ _tcslen( pszURL ) + 2 + 1 ];
+					_tcscpy( pszWork, _T("ht") );
+					_tcscat( pszWork, pszURL );
+					pszOPEN = pszWork;
+				}else{
+					pszOPEN = pszURL;
+				}
 			}
+			::ShellExecute( NULL, "open", pszOPEN, NULL, NULL, SW_SHOW );
+			delete [] pszURL;
+			if( NULL != pszWork ){
+				delete [] pszWork;
+			}
+			return;
 		}
-		::ShellExecute( NULL, "open", pszOPEN, NULL, NULL, SW_SHOW );
-		delete [] pszURL;
-		if( NULL != pszWork ){
-			delete [] pszWork;
-		}
-		return;
-	}
 
-	/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
-	//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
-	if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_bGTJW_LDBLCLK ){
-		/* タグジャンプ機能 */
-		Command_TAGJUMP();
-		return;
+		/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
+		//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
+		if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_bGTJW_LDBLCLK ){
+			/* タグジャンプ機能 */
+			Command_TAGJUMP();
+			return;
+		}
 	}
 
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[0]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[0].m_nFuncCodeArr[nIdx];
+	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[?]に入っている 2007.10.06 nasukoji */
+	nFuncID = m_pShareData->m_pKeyNameArr[
+		m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK
+		].m_nFuncCodeArr[nIdx];
+	if(m_dwTripleClickCheck){
+		// 非選択状態にした後左クリックしたことにする
+		// すべて選択の場合は、3.5クリック時の選択状態保持とドラッグ開始時の
+		// 範囲変更のため。
+		// クアドラプルクリック機能が割り当てられていない場合は、ダブルクリック
+		// として処理するため。
+		if( IsTextSelected() )		// テキストが選択されているか
+			DisableSelectArea( TRUE );		// 現在の選択範囲を非選択状態に戻す
+
+		if(! nFuncID){
+			m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
+			nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
+			OnLBUTTONDOWN( fwKeys, xPos , yPos );	// カーソルをクリック位置へ移動する
+		}
+	}
+
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 //		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
 		::SendMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
 	}
+
+	// 2007.10.06 nasukoji	クアドラプルクリック時もここで抜ける
+	if(m_dwTripleClickCheck){
+		m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF（次回は通常クリック）
+		return;
+	}
+
+	// 2007.11.06 nasukoji	ダブルクリックが単語選択でなくてもトリプルクリックを有効とする
+	// 2007.10.02 nasukoji	トリプルクリックチェック用に時刻を取得
+	m_dwTripleClickCheck = ::GetTickCount();
+
+	// ダブルクリック位置として記憶
+	m_nMouseRollPosXOld = xPos;			/* マウス範囲選択前回位置(X座標) */
+	m_nMouseRollPosYOld = yPos;			/* マウス範囲選択前回位置(Y座標) */
 
 	/*	2007.07.09 maru 機能コードの判定を追加
 		ダブルクリックからのドラッグでは単語単位の範囲選択(エディタの一般的動作)になるが
@@ -4644,9 +4825,6 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	*/
 	if(F_SELECTWORD != nFuncID) return;
 
-	/* ドラッグ選択開始 */
-	m_nMouseRollPosXOld = xPos;			/* マウス範囲選択前回位置(X座標) */
-	m_nMouseRollPosYOld = yPos;			/* マウス範囲選択前回位置(Y座標) */
 	/* 範囲選択開始 & マウスキャプチャー */
 	m_bBeginSelect = TRUE;				/* 範囲選択中 */
 	m_bBeginBoxSelect = FALSE;			/* 矩形範囲選択中でない */
@@ -4659,6 +4837,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 			m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
 		}
 	}
+
 	::SetCapture( m_hWnd );
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 	if( IsTextSelected() ){

@@ -85,6 +85,9 @@ protected:
 	/*
 	||  À‘•ƒwƒ‹ƒpŠÖ”
 	*/
+
+	static bool GetKeyStrSub(int& nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA* pKeyNameArr,
+			int nShiftState, CMemory& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };
 
 

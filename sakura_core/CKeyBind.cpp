@@ -252,10 +252,64 @@ int CKeyBind::CreateKeyBindList(
 	return nValidKeys;
 }
 
+/** 機能に対応するキー名のサーチ(補助関数)
+
+	与えられたシフト状態に対して，指定された範囲のキーエリアから
+	当該機能に対応するキーがあるかを調べ，見つかったら
+	対応するキー文字列をセットする．
+	
+	関数から出るときには検索開始位置(nKeyNameArrBegin)に
+	次に処理するindexを設定する．
+
+	@param[in,out] nKeyNameArrBegin 調査開始INDEX (終了時には次回の開始INDEXに書き換えられる)
+	@param[in] nKeyNameArrBegin 調査終了INDEX + 1
+	@param[in] pKeyNameArr キー配列
+	@param[in] nShiftState シフト状態
+	@param[out] cMemList キー文字列設定先
+	@param[in]	nFuncId 検索対象機能ID
+	@param[in]	bGetDefFuncCode 標準機能を取得するかどうか
+*/
+bool CKeyBind::GetKeyStrSub(
+		int&		nKeyNameArrBegin,
+		int			nKeyNameArrEnd,
+		KEYDATA*	pKeyNameArr,
+		int			nShiftState,
+		CMemory&	cMemList,
+		int			nFuncId,
+		BOOL		bGetDefFuncCode /* = TRUE */
+)
+{
+	const char pszSHIFT[] = "Shift+";
+	const char pszCTRL[] = "Ctrl+";
+	const char pszALT[] = "Alt+";
+
+	int i;
+	for( i = nKeyNameArrBegin; i < nKeyNameArrEnd; ++i ){
+		if( nFuncId == GetFuncCodeAt( pKeyNameArr[i], nShiftState, bGetDefFuncCode ) ){
+			if( nShiftState & _SHIFT ){
+				cMemList.AppendSz( pszSHIFT );
+			}
+			if( nShiftState & _CTRL ){
+				cMemList.AppendSz( pszCTRL );
+			}
+			if( nShiftState & _ALT ){
+				cMemList.AppendSz( pszALT );
+			}
+			cMemList.AppendSz( pKeyNameArr[i].m_szKeyName );
+			nKeyNameArrBegin = i + 1;
+			return true;
+		}
+	}
+	nKeyNameArrBegin = i;
+	return false;
+}
 
 
-/*! 機能に対応するキー名の取得
+/** 機能に対応するキー名の取得
+
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
+	@date 2007.11.04 genta マウスクリックよりキー割り当ての優先度を上げる
+	@date 2007.11.04 genta 共通機能のサブルーチン化
 */
 int CKeyBind::GetKeyStr(
 		HINSTANCE	hInstance,
@@ -271,25 +325,21 @@ int CKeyBind::GetKeyStr(
 	char*	pszSHIFT = "Shift+";
 	char*	pszCTRL = "Ctrl+";
 	char*	pszALT = "Alt+";
-//	cMemList.SetData( "", strlen( "" ) );
 	cMemList.SetDataSz( "" );
+
+	//	先にキー部分を調査する
 	for( j = 0; j < 8; ++j ){
-		for( i = 0; i < nKeyNameArrNum; ++i ){
-			if( nFuncId == GetFuncCodeAt( pKeyNameArr[i], j, bGetDefFuncCode ) ){
-				if( j & _SHIFT ){
-//					cMemList.Append( pszSHIFT, strlen( pszSHIFT ) );
-					cMemList.AppendSz( pszSHIFT );
-				}
-				if( j & _CTRL ){
-//					cMemList.Append( pszCTRL, strlen( pszCTRL ) );
-					cMemList.AppendSz( pszCTRL );
-				}
-				if( j & _ALT ){
-//					cMemList.Append( pszALT, strlen( pszALT ) );
-					cMemList.AppendSz( pszALT );
-				}
-//				cMemList.Append( pKeyNameArr[i].m_szKeyName, strlen( pKeyNameArr[i].m_szKeyName ) );
-				cMemList.AppendSz( pKeyNameArr[i].m_szKeyName );
+		for( i = MOUSEFUNCTION_KEYBEGIN; i < nKeyNameArrNum; /* 1を加えてはいけない */ ){
+			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j, cMemList, nFuncId, bGetDefFuncCode )){
+				return 1;
+			}
+		}
+	}
+
+	//	後にマウス部分を調査する
+	for( j = 0; j < 8; ++j ){
+		for( i = 0; i < MOUSEFUNCTION_KEYBEGIN; /* 1を加えてはいけない */ ){
+			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j, cMemList, nFuncId, bGetDefFuncCode )){
 				return 1;
 			}
 		}
@@ -298,8 +348,10 @@ int CKeyBind::GetKeyStr(
 }
 
 
-/*! 機能に対応するキー名の取得(複数)
+/** 機能に対応するキー名の取得(複数)
+
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
+	@date 2007.11.04 genta 共通機能のサブルーチン化
 */
 int CKeyBind::GetKeyStrList(
 		HINSTANCE	hInstance,
@@ -340,22 +392,10 @@ int CKeyBind::GetKeyStrList(
 
 	nAssignedKeysNum = 0;
 	for( j = 0; j < 8; ++j ){
-		for( i = 0; i < nKeyNameArrNum; ++i ){
-			if( nFuncId == GetFuncCodeAt( pKeyNameArr[i], j, bGetDefFuncCode ) ){
-				if( j & _SHIFT ){
-//					(*pppcMemList)[nAssignedKeysNum]->Append( pszSHIFT, strlen( pszSHIFT ) );
-					(*pppcMemList)[nAssignedKeysNum]->AppendSz( pszSHIFT );
-				}
-				if( j & _CTRL ){
-//					(*pppcMemList)[nAssignedKeysNum]->Append( pszCTRL, strlen( pszCTRL ) );
-					(*pppcMemList)[nAssignedKeysNum]->AppendSz( pszCTRL );
-				}
-				if( j & _ALT ){
-//					(*pppcMemList)[nAssignedKeysNum]->Append( pszALT, strlen( pszALT ) );
-					(*pppcMemList)[nAssignedKeysNum]->AppendSz( pszALT );
-				}
-//				(*pppcMemList)[nAssignedKeysNum]->Append( pKeyNameArr[i].m_szKeyName, strlen( pKeyNameArr[i].m_szKeyName ) );
-				(*pppcMemList)[nAssignedKeysNum]->AppendSz( pKeyNameArr[i].m_szKeyName );
+		for( i = 0; i < nKeyNameArrNum; /* 1を加えてはいけない */ ){
+			//	2007.11.04 genta 共通機能のサブルーチン化
+			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j,
+					*((*pppcMemList)[nAssignedKeysNum]), nFuncId, bGetDefFuncCode )){
 				nAssignedKeysNum++;
 			}
 		}

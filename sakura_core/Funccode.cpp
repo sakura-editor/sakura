@@ -167,6 +167,7 @@ const int nFincList_Move_Num = sizeof( pnFuncList_Move ) / sizeof( pnFuncList_Mo
 const int pnFuncList_Select[] = {
 	F_SELECTWORD			,	//現在位置の単語選択
 	F_SELECTALL				,	//すべて選択
+	F_SELECTLINE			,	//1行選択	// 2007.10.06 nasukoji
 	F_BEGIN_SEL				,	//範囲選択開始
 	F_UP_SEL				,	//(範囲選択)カーソル上移動
 	F_DOWN_SEL				,	//(範囲選択)カーソル下移動

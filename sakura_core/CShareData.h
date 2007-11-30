@@ -876,7 +876,7 @@ protected:
 
 	//	Jan. 30, 2005 genta ‰Šú‰»ŠÖ”‚Ì•ªŠ„
 	void InitKeyword(DLLSHAREDATA*);
-	void InitKeyAssign(DLLSHAREDATA*);
+	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta ‹N“®’†~‚Ì‚½‚ß’l‚ğ•Ô‚·
 	void InitToolButtons(DLLSHAREDATA*);
 	void InitTypeConfig(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);

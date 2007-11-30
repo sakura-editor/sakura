@@ -130,6 +130,7 @@
 /* 選択系 */
 #define F_SELECTWORD		30400	//現在位置の単語選択
 #define F_SELECTALL			30401	//すべて選択
+#define F_SELECTLINE		30403	//1行選択	// 2007.10.06 nasukoji
 #define F_BEGIN_SEL			30410	//範囲選択開始
 #define F_UP_SEL			30411	//(範囲選択)カーソル上移動
 #define F_DOWN_SEL			30412	//(範囲選択)カーソル下移動

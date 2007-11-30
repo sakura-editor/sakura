@@ -440,7 +440,10 @@ bool CShareData::Init( void )
 		}
 
 		//	Jan. 30, 2005 genta 関数として独立
-		InitKeyAssign( m_pShareData );
+		//	2007.11.04 genta 戻り値チェック．falseなら起動中断．
+		if( ! InitKeyAssign( m_pShareData )){
+			return false;
+		}
 
 //	From Here Sept. 19, 2000 JEPRO コメントアウトになっていた初めのブロックを復活しその下をコメントアウト
 //	MS ゴシック標準スタイル10ptに設定
@@ -4789,8 +4792,9 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 	デフォルトキー割り当て関連の初期化処理
 
 	@date 2005.01.30 genta CShareData::Init()から分離
+	@date 2007.11.04 genta キー設定数がDLLSHAREの領域を超えたら起動できないように
 */
-void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
+bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 {
 	/********************/
 	/* 共通設定の規定値 */
@@ -4822,6 +4826,9 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	// novice 2004/10/10 マウスサイドボタン対応
 		{ 0, "左サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, "右サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
+	// 2007.10.05 nasukoji	トリプルクリック・クアドラプルクリック対応
+		{ 0, "トリプルクリック", F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE },
+		{ 0, "クアドラプルクリック", F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL },
 		/* ファンクションキー */
 	//	From Here Sept. 14, 2000 JEPRO
 	//	VK_F1,"F1", F_EXTHTMLHELP, 0, F_EXTHELP1, 0, 0, 0, 0, 0,
@@ -5042,7 +5049,14 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//Oct. 7, 2000 JEPRO	長くて表示しきれない所がでてきてしまうのでアプリケーションキー→アプリキーに短縮
 		{ VK_APPS, "アプリキー",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
 	};
-	int	nKeyDataInitNum = sizeof( KeyDataInit ) / sizeof( KeyDataInit[0] );
+	const int	nKeyDataInitNum = sizeof( KeyDataInit ) / sizeof( KeyDataInit[0] );
+	//	From Here 2007.11.04 genta バッファオーバーラン防止
+	if( nKeyDataInitNum > sizeof( pShareData->m_pKeyNameArr ) / sizeof( pShareData->m_pKeyNameArr[0])) {
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, _T("作者に教えて欲しいエラー"),
+			_T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
+		return false;
+	}
+	//	To Here 2007.11.04 genta バッファオーバーラン防止
 	for( int i = 0; i < nKeyDataInitNum; ++i ){
 		SetKeyNameArrVal( pShareData, i,
 			KeyDataInit[i].nKeyCode,
@@ -5058,6 +5072,7 @@ void CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		 );
 	}
 	pShareData->m_nKeyNameArrNum = nKeyDataInitNum;
+	return true;
 }
 
 /*!	@brief 共有メモリ初期化/ツールバー
