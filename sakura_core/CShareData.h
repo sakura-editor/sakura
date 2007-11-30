@@ -543,6 +543,7 @@ struct Common {
 	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
 
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
+	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	BOOL				m_bEnableLineModePaste;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
 	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */

@@ -1582,10 +1582,12 @@ void CEditView::CopyCurLine(
 
 
 
-/*!	選択範囲をクリップボードにコピー
+/**	選択範囲をクリップボードにコピー
 	@param bIgnoreLockAndDisable [in] 選択範囲を解除するか？
 	@param bAddCRLFWhenCopy [in] 折り返し位置に改行コードを挿入するか？
 	@param neweol [in] コピーするときのEOL。
+	
+	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
 void CEditView::Command_COPY(
 	int bIgnoreLockAndDisable,
@@ -1599,6 +1601,9 @@ void CEditView::Command_COPY(
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	if( !IsTextSelected() ){
 		/* 非選択時は、カーソル行をコピーする */
+		if( !m_pShareData->m_Common.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
+			return;	// 何もしない（音も鳴らさない）
+		}
 		CopyCurLine( bAddCRLFWhenCopy, neweol, m_pShareData->m_Common.m_bEnableLineModePaste );
 	}else{
 		/* テキストが選択されているときは、選択範囲のデータを取得 */
@@ -1640,7 +1645,10 @@ void CEditView::Command_COPY(
 
 
 
-/* 切り取り(選択範囲をクリップボードにコピーして削除) */
+/** 切り取り(選択範囲をクリップボードにコピーして削除)
+
+	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
+*/
 void CEditView::Command_CUT( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
@@ -1653,6 +1661,9 @@ void CEditView::Command_CUT( void )
 	/* 範囲選択がされていない */
 	if( !IsTextSelected() ){
 		/* 非選択時は、カーソル行を切り取り */
+		if( !m_pShareData->m_Common.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
+			return;	// 何もしない（音も鳴らさない）
+		}
 		//行切り取り(折り返し単位)
 		Command_CUT_LINE();
 		return;
