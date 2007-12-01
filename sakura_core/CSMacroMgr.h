@@ -8,6 +8,7 @@
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, YAZAKI, genta
 	Copyright (C) 2005, FILE
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -97,10 +98,7 @@ public:
 	//!	•\Ž¦‚·‚é–¼‘O‚ÌŽæ“¾
 	const char* GetTitle(int idx) const {
 		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
-			( m_pShareData->m_MacroTable[idx].m_szName[0] == '\0' ?
-				m_pShareData->m_MacroTable[idx].m_szFile : 
-				m_pShareData->m_MacroTable[idx].m_szName)
-			: NULL;
+		m_pShareData->m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
 	}
 	
 	//!	•\Ž¦–¼‚ÌŽæ“¾

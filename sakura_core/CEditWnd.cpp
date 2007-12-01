@@ -1465,9 +1465,8 @@ LRESULT CEditWnd::DispatchEvent(
 
 				// From Here Oct. 15, 2001 genta
 				// 機能文字列の取得にLookupを使うように変更
-				if( !m_cEditDoc.m_cFuncLookup.Funccode2Name( lptip->hdr.idFrom, szLabel, 1024 )){
-					szLabel[0] = '\0';
-				}
+				m_cEditDoc.m_cFuncLookup.Funccode2Name( lptip->hdr.idFrom, szLabel, 1024 );
+
 				// To Here Oct. 15, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(
@@ -4697,27 +4696,12 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	case CDDS_ITEMPOSTPAINT:
 		{
 			//	描画
-			//	pnmh->dwItemSpec はコマンド番号なので，アイコン番号に変更する必要がある]
-// CMenuDrawerのメンバ変数をカプセル化 2005/8/9 aroka
-//			int nIconId = -1;
-//			for( int i = 1; i < m_CMenuDrawer.m_nMyButtonNum; i++ ){
-//				if( m_CMenuDrawer.m_tbMyButton[i].idCommand == pnmh->dwItemSpec ){
-//					nIconId = m_CMenuDrawer.m_tbMyButton[i].iBitmap;
-//					break;
-//				}
-//			}
-			int nIndex = m_CMenuDrawer.FindIndexFromCommandId( pnmh->dwItemSpec );
-			int nIconId = m_CMenuDrawer.GetIconId( nIndex );
-
-			//	もしもアイコンがなかったら
-			if( nIconId < 0 ){
-				nIconId = 348; // なんとなく(i)アイコン
-			}
+			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
+			int nIconId = ::SendMessage( pnmh->hdr.hwndFrom, TB_GETBITMAP, (WPARAM)pnmh->dwItemSpec, 0 );
 
 			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_cIcons.cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
 			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
-			
 
 			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
 			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,

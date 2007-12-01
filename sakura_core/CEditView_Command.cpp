@@ -4966,7 +4966,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 		hMenuPopUp = ::CreatePopupMenu();
 		for( j = 0; j < FuncLookup.GetItemCount(i); j++ ){
 			//	Oct. 3, 2001 genta
-			int code = FuncLookup.Pos2FuncCode( i, j );
+			int code = FuncLookup.Pos2FuncCode( i, j, false );	// 2007.11.02 ryoji –¢“o˜^ƒ}ƒNƒ”ñ•\Ž¦‚ð–¾Ž¦Žw’è
 			if( code != 0 ){
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
 				//::LoadString( m_hInstance, nsFuncCode::ppnFuncListArr[i][j], szLabel, 256 );

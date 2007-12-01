@@ -2660,7 +2660,7 @@ IDC_CURSOR_TAB_JOIN     CURSOR  DISCARDABLE     "../resource/cursor_tab_join.cur
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_DISABLE               "–¢’è‹`"
+    F_DISABLE               "-- •s–¾ --"
 END
 
 STRINGTABLE DISCARDABLE 

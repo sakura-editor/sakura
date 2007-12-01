@@ -66,7 +66,7 @@ CMenuDrawer::CMenuDrawer()
 		int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 	} TBBUTTON;
 	*/
-	SetTBBUTTONVal( &m_tbMyButton[0], 0, 0, 0, TBSTYLE_SEP, 0, 0 );		//セパレータ
+	SetTBBUTTONVal( &m_tbMyButton[0], -1, 0, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 #if 0
 	2002/04/26 無用な汎用性は排除。
 	struct TBUTTONDATA {
@@ -536,6 +536,7 @@ CMenuDrawer::CMenuDrawer()
 /* 381 */		F_DISABLE 			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 382 */		F_DISABLE 			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 383 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+//	2007.10.17 genta 384は折り返しマークとして使用しているのでアイコンとしては使用できない
 /* 384 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 
 };
@@ -561,7 +562,7 @@ CMenuDrawer::CMenuDrawer()
 		//	m_tbMyButton[0]にはセパレータが入っているため。
 		SetTBBUTTONVal(
 			&m_tbMyButton[i+1],
-			i,
+			(tbd[i] == F_DISABLE)? -1: i,	// 2007.11.02 ryoji アイコンの未定義化(-1)
 			tbd[i],				//	tbd[i].idCommand,
 			TBSTATE_ENABLED,	//	tbd[i].fsState,
 			style /*TBSTYLE_BUTTON*/,		//	tbd[i].fsStyle,
@@ -571,9 +572,12 @@ CMenuDrawer::CMenuDrawer()
 	}
 
 	// ツールバー改行用の仮想ボタン（実際は表示されない） // 20050809 aroka
+	//	2007.10.12 genta 折り返しボタンが最後のデータと重なっているが，
+	//	インデックスを変更するとsakura.iniが引き継げなくなるので
+	//	重複を承知でそのままにする
 	SetTBBUTTONVal(
 		&m_tbMyButton[tbd_num],
-		0,
+		-1,						// 2007.11.02 ryoji アイコンの未定義化(-1)
 		F_MENU_NOT_USED_FIRST,			//	tbd[i].idCommand,
 		TBSTATE_ENABLED|TBSTATE_WRAP,	//	tbd[i].fsState,
 		TBSTYLE_SEP,			//	tbd[i].fsStyle,
@@ -1047,14 +1051,27 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 }
 
 
-/* ツールバーボタンリストのアイテム描画
-	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
+/** コマンドコードからツールバーボタン情報のINDEXを得る
+
+	@param idCommand [in] コマンドコード
+	@param bOnlyFunc [in] 有効な機能の範囲で検索する
+
 	@retval みつからなければ-1を返す。
-*/
-int CMenuDrawer::FindIndexFromCommandId( int idCommand )
+
+	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
+	@date 2005.11.02 ryoji bOnlyFuncパラメータを追加
+ */
+int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc )
 {
+	if( bOnlyFunc ){
+		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
+		if ( !( F_MENU_FIRST <= idCommand && idCommand < F_MENU_NOT_USED_FIRST ) ){
+			return -1;
+		}
+	}
+
 	int nIndex = -1;
-	for( int i = 1; i < m_nMyButtonNum; i++ ){
+	for( int i = 0; i < m_nMyButtonNum; i++ ){
 		if( m_tbMyButton[i].idCommand == idCommand ){
 			nIndex = i;
 			break;
@@ -1062,6 +1079,25 @@ int CMenuDrawer::FindIndexFromCommandId( int idCommand )
 	}
 
 	return nIndex;
+}
+
+/** インデックスからボタン情報を得る
+
+	@param index [in] ボタン情報のインデックス
+	@retval ボタン情報
+
+	@date 2007.11.02 ryoji 範囲外の場合は未定義のボタン情報を返すように
+ */
+TBBUTTON CMenuDrawer::getButton( int index ) const
+{
+	if( 0 <= index && index < m_nMyButtonNum )
+		return m_tbMyButton[index];
+
+	// 範囲外なら未定義のボタン情報を作成して返す
+	// （sakura.iniに範囲外インデックスが指定があった場合など、堅牢性のため）
+	TBBUTTON tbb;
+	SetTBBUTTONVal( &tbb, -1, F_DISABLE, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
+	return tbb;
 }
 
 int CMenuDrawer::Find( int nFuncID )
@@ -1201,7 +1237,7 @@ void CMenuDrawer::SetTBBUTTONVal(
 	BYTE		fsStyle,
 	DWORD_PTR	dwData,
 	INT_PTR		iString
-)
+) const
 {
 	/*
 typedef struct _TBBUTTON {

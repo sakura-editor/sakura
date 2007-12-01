@@ -9,6 +9,7 @@
 */
 /*
 	Copyright (C) 2001, genta
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,6 +35,7 @@
 #include "stdafx.h"
 #include "CFuncLookup.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
+#include <stdio.h>
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;
@@ -49,25 +51,37 @@ const char *DynCategory[] = {
 
 	@param category [in] 分類番号 (0-)
 	@param position [in] 分類中のindex (0-)
+	@param bGetUnavailable [in] 未登録マクロでも機能番号を返す
+
+	@retval 機能番号
+
+	@date 2007.11.02 ryoji bGetUnavailableパラメータ追加
 */
-int CFuncLookup::Pos2FuncCode( int category, int position ) const
+int CFuncLookup::Pos2FuncCode( int category, int position, bool bGetUnavailable ) const
 {
+	if( category < 0 || position < 0 )
+		return F_DISABLE;
+
 	if( category < nsFuncCode::nFuncKindNum ){
-		return nsFuncCode::ppnFuncListArr[category][position];
+		if( position < nsFuncCode::pnFuncListNumArr[category] )
+			return nsFuncCode::ppnFuncListArr[category][position];
 	}
-	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO){
+	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO ){
 		//	キー割り当てマクロ
-		if( m_pcSMacroMgr->IsEnabled(position))
-			return F_USERMACRO_0 + position;
+		if( position < MAX_CUSTMACRO ){
+			if( bGetUnavailable || m_pMacroRec[position].IsEnabled() )
+				return F_USERMACRO_0 + position;
+		}
 	}
-	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU){
+	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU ){
 		//	キー割り当てマクロ
 		if( position == 0 )
 			return F_MENU_RBUTTON;
-		else if( 1 <= position && position <= MAX_CUSTOM_MENU - 1 )
+		else if( position < MAX_CUSTOM_MENU )
 			return F_CUSTMENU_BASE + position;
 	}
-	return 0;
+
+	return F_DISABLE;	// F_DISABLE == 0
 }
 
 /*!	@brief 分類中の位置に対応する機能名称を返す．
@@ -77,35 +91,15 @@ int CFuncLookup::Pos2FuncCode( int category, int position ) const
 	@param ptr [out] 文字列を格納するバッファの先頭
 	@param bufsize [in] 文字列を格納するバッファのサイズ
 
-	@retval true 名称の設定に成功
-	@retval false 失敗。文字列は格納されていない
+	@retval true 指定された機能番号は定義されている
+	@retval false 指定された機能番号は未定義
+
+	@date 2007.11.02 ryoji 処理を簡素化
 */
 bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsize ) const
 {
-	int func;
-	if( category < nsFuncCode::nFuncKindNum ){
-		func = nsFuncCode::ppnFuncListArr[category][position];
-		return ( ::LoadString( m_hInstance, func, ptr, bufsize ) > 0 );
-	}
-	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO){
-		//	キー割り当てマクロ
-		const char *p = m_pcSMacroMgr->GetTitle( position );
-		if( p == NULL )
-			return false;
-		strncpy( ptr, p, bufsize - 1 );
-		ptr[ bufsize - 1 ] = '\0';
-	}
-	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU){
-		//	キー割り当てマクロ
-		if( 0 <= position && position < MAX_CUSTOM_MENU )
-		{
-			strncpy( ptr, m_pCommon->m_szCustMenuNameArr[position], bufsize );
-			ptr[bufsize-1] = '\0';
-		}
-		else
-			return false;
-	}
-	return true;
+	int funccode = Pos2FuncCode( category, position );
+	return Funccode2Name( funccode, ptr, bufsize );
 }
 
 /*!	@brief 機能番号に対応する機能名称を返す．
@@ -114,36 +108,47 @@ bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsi
 	@param ptr [out] 文字列を格納するバッファの先頭
 	@param bufsize [in] 文字列を格納するバッファのサイズ
 	
-	@retval true 名称の設定に成功
-	@retval false 失敗。文字列は格納されていない
+	@retval true 指定された機能番号は定義されている
+	@retval false 指定された機能番号は未定義
+
+	@date 2007.11.02 ryoji 未登録マクロも文字列を格納．戻り値の意味を変更（文字列は必ず格納）．
 */
 bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 {
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
-		if( !m_pcSMacroMgr->IsEnabled( position )){
-			*ptr = '\0';
-			return false;
+		if( m_pMacroRec[position].IsEnabled() ){
+			const char *p = m_pMacroRec[position].GetTitle();
+			strncpy( ptr, p, bufsize - 1 );
+			ptr[ bufsize - 1 ] = '\0';
+		}else{
+			_snprintf( ptr, bufsize, "マクロ %d (未登録)", position );
+			ptr[ bufsize - 1 ] = '\0';
 		}
-
-		const char *p = m_pcSMacroMgr->GetTitle( position );
-		if( p == NULL )
-			return false;
-		strncpy( ptr, p, bufsize - 1 );
-		ptr[ bufsize - 1 ] = '\0';
+		return true;
 	}
 	else if( funccode == F_MENU_RBUTTON ){
 		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[0], bufsize );
 		ptr[bufsize-1] = '\0';
+		return true;
 	}
 	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTMACRO ){
 		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
 		ptr[bufsize-1] = '\0';
+		return true;
 	}
-	else {
-		return ( ::LoadString( m_hInstance, funccode, ptr, bufsize ) > 0 );
+	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
+		if( ::LoadString( m_hInstance, funccode, ptr, bufsize ) > 0 ){
+			return true;	// 定義されたコマンド
+		}
 	}
-	return true;
+
+	// 未定義コマンド
+	if( ::LoadString( m_hInstance, F_DISABLE, ptr, bufsize ) > 0 ){
+		return false;
+	}
+	ptr[0] = '\0';
+	return false;
 }
 
 /*!	@brief 機能分類番号に対応する機能名称を返す．
@@ -154,6 +159,9 @@ bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 */
 const char* CFuncLookup::Category2Name( int category ) const
 {
+	if( category < 0 )
+		return NULL;
+
 	if( category < nsFuncCode::nFuncKindNum ){
 		return nsFuncCode::ppszFuncKind[category];
 	}
@@ -192,39 +200,24 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 	
 	@param hListBox [in(out)] 値を設定するリストボックス
 	@param category [in] 機能分類番号
+
+	@date 2007.11.02 ryoji 未定義コマンドは除外．処理も簡素化．
 */
 void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 {
 	char pszLabel[256];
+	int n;
 	int i;
 
 	//	リストを初期化する
 	::SendMessage( hListBox, LB_RESETCONTENT , 0, (LPARAM)0 );
 
-	if( category < nsFuncCode::nFuncKindNum ){
-		for( i = 0; i < nsFuncCode::pnFuncListNumArr[category]; ++i ){
-			if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[category])[i], pszLabel, 255 ) ){
-				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)pszLabel );
-			}else{
-				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
-			}
-		}
-	}
-	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO ){
-		//	マクロ
-		for( i = 0; i < MAX_CUSTMACRO ; ++i ){
-			if( m_pcSMacroMgr->IsEnabled(i)){
-				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)m_pcSMacroMgr->GetTitle(i));
-			}
-			else {
-				::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)"unavailable" );
-			}
-		}
-	}
-	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU ){
-		for( i = 0; i < MAX_CUSTOM_MENU ; ++i ){
-			::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)m_pCommon->m_szCustMenuNameArr[i] );
-		}
+	n = GetItemCount( category );
+	for( i = 0; i < n; i++ ){
+		if( Pos2FuncCode( category, i ) == F_DISABLE )
+			continue;
+		Pos2FuncName( category, i, pszLabel, sizeof(pszLabel) );
+		::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)pszLabel );
 	}
 }
 
@@ -235,6 +228,9 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 */
 int CFuncLookup::GetItemCount(int category) const
 {
+	if( category < 0 )
+		return 0;
+
 	if( category < nsFuncCode::nFuncKindNum ){
 		return nsFuncCode::pnFuncListNumArr[category];
 	}
@@ -248,3 +244,6 @@ int CFuncLookup::GetItemCount(int category) const
 	}
 	return 0;
 }
+
+
+/*[EOF]*/

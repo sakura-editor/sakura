@@ -319,6 +319,7 @@ struct MacroRec {
 	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 	
 	bool IsEnabled() const { return m_szFile[0] != '\0'; }
+	const char* GetTitle() const { return m_szName[0] == '\0' ? m_szFile: m_szName; }	// 2007.11.02 ryoji 追加
 };
 //	To Here Sep. 14, 2001 genta
 

@@ -9,6 +9,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -188,6 +189,24 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PAGENUM_CUSTMENU;
+
+			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
+			nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+			nIdx2 = ::SendMessage( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+			nIdx3 = ::SendMessage( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
+			nIdx4 = ::SendMessage( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
+			if( nIdx1 != CB_ERR ){
+				::SendMessage( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_MENU );
+				if( nIdx2 != LB_ERR ){
+					::SendMessage( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+				}
+			}
+			if( nIdx3 != CB_ERR ){
+				::SendMessage( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_FUNCKIND );
+				if( nIdx4 != LB_ERR ){
+					::SendMessage( hwndLIST_FUNC, LB_SETCURSEL, nIdx4, 0 );
+				}
+			}
 			return TRUE;
 		}
 		break;
@@ -354,45 +373,13 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 		if( hwndCOMBO_FUNCKIND == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIdx1 = ::SendMessage( hwndCOMBO_MENU, LB_GETCURSEL, 0, 0 );
-				nIdx2 = ::SendMessage( hwndLIST_RES, CB_GETCURSEL, 0, 0 );
 				nIdx3 = ::SendMessage( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
-				nIdx4 = ::SendMessage( hwndLIST_FUNC, CB_GETCURSEL, 0, 0 );
-
 
 				/* 機能一覧に文字列をセット（リストボックス）*/
 //	Oct. 14, 2000 jepro note: ここのforブロックで実際にリストを書いているようである
 				// Oct. 3, 2001 genta
 				// 専用ルーチンに置き換え
 				m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
-#if 0
-				::SendMessage( hwndLIST_FUNC, LB_RESETCONTENT, 0, 0 );
-				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIdx3]; ++i ){
-					if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[nIdx3])[i], szLabel, 255 ) ){
-						::SendMessage( hwndLIST_FUNC, LB_ADDSTRING, 0, (LPARAM)szLabel );
-					}else{
-						::SendMessage( hwndLIST_FUNC, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
-					}
-				}
-#endif
-				i = 0;
-//				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
-//					i |= _SHIFT;
-//				}
-//				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
-//					i |= _CTRL;
-//				}
-//				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
-//					i |= _ALT;
-//				}
-//				nFuncCode = m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
-//				for( i = 0; i < nFincListNumArrNum; ++i ){
-//					if( -1 != ( nIndex3 = SearchIntArr( nFuncCode, (int*)(nsFuncCode::ppnFuncListArr[i]), nsFuncCode::pnFuncListNumArr[i] ) ) ){
-//						if( nIndex2 == i ){
-//							::SendMessage( hwndFuncList, LB_SETCURSEL, (WPARAM)nIndex3, (LPARAM)0 );
-//						}
-//					}
-//				}
 				return TRUE;
 			}
 		}else{

@@ -9,6 +9,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, aroka, genta
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -70,10 +71,11 @@ public:
 	int MeasureItem( int, int* );	/* メニューアイテムの描画サイズを計算 */
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	int FindIndexFromCommandId( int idCommand ); /* ツールバーIndexの取得 */// 20050809 aroka
-	int GetIconId( int nIndex ){ return m_tbMyButton[nIndex].iBitmap; }
+	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ); /* ツールバーIndexの取得 */// 20050809 aroka
+	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
 
-	TBBUTTON getButton( int index ) const{ return m_tbMyButton[index]; } // 20050809 aroka
+	TBBUTTON getButton( int index ) const; // 20050809 aroka
+
 private:
 	int Find( int nFuncID );
 	const char* GetLabel( int nFuncID );
@@ -115,7 +117,7 @@ protected:
 	int GetData( void );	/* ダイアログデータの取得 */
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD_PTR, INT_PTR );	/* TBBUTTON構造体にデータをセット */
+	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD_PTR, INT_PTR ) const;	/* TBBUTTON構造体にデータをセット */
 };
 
 

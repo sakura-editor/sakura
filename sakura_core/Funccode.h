@@ -25,6 +25,8 @@
 #define F_DISABLE		0	//未使用
 #define F_SEPARATOR		1	//セパレータ
 
+#define F_MENU_FIRST 30000
+
 /* ファイル操作系 */
 #define F_FILENEW					30101	//新規作成
 #define F_FILEOPEN					30102	//開く

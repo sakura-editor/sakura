@@ -209,7 +209,7 @@ BOOL CEditDoc::Create(
 	MY_TRACETIME( cRunningTimer, "View created" );
 
 	//	Oct. 2, 2001 genta
-	m_cFuncLookup.Init( m_hInstance, m_pcSMacroMgr, &m_pShareData->m_Common );
+	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_MacroTable, &m_pShareData->m_Common );
 
 	/* 設定プロパティシートの初期化１ */
 	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr, &(pCEditWnd->m_CMenuDrawer) );
