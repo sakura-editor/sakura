@@ -316,6 +316,10 @@ CEditView::CEditView() :
 	m_hdcCompatDC = NULL;		/* 再描画用コンパチブルＤＣ */
 	m_hbmpCompatBMP = NULL;		/* 再描画用メモリＢＭＰ */
 	m_hbmpCompatBMPOld = NULL;	/* 再描画用メモリＢＭＰ(OLD) */
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	m_nCompatBMPWidth = -1;
+	m_nCompatBMPHeight = -1;
+	// To Here 2007.09.09 Moca
 	m_nCharWidth = 10;			/* 半角文字の幅 */
 	m_nCharHeight = 18;			/* 文字の高さ */
 
@@ -415,16 +419,10 @@ CEditView::~CEditView()
 		DestroyWindow( m_hWnd );
 	}
 
-	/* 再描画用メモリＢＭＰ */
-	if( m_hbmpCompatBMP != NULL ){
-		/* 再描画用メモリＢＭＰ(OLD) */
-		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
-		::DeleteObject( m_hbmpCompatBMP );
-	}
 	/* 再描画用コンパチブルＤＣ */
-	if( m_hdcCompatDC != NULL ){
-		::DeleteDC( m_hdcCompatDC );
-	}
+	//	2007.09.30 genta 関数化
+	//	m_hbmpCompatBMPもここで削除される．
+	UseCompatibleDC(FALSE);
 
 	delete m_pcDropTarget;
 	m_pcDropTarget = NULL;
@@ -451,7 +449,6 @@ BOOL CEditView::Create(
 )
 {
 	WNDCLASS	wc;
-	HDC			hdc;
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
@@ -529,9 +526,9 @@ BOOL CEditView::Create(
 	m_cTipWnd.Create( m_hInstance, m_hWnd/*m_pShareData->m_hwndTray*/ );
 
 	/* 再描画用コンパチブルＤＣ */
-	hdc = ::GetDC( m_hWnd );
-	m_hdcCompatDC = ::CreateCompatibleDC( hdc );
-	::ReleaseDC( m_hWnd, hdc );
+	// 2007.09.09 Moca 互換BMPによる画面バッファ
+	// 2007.09.30 genta 関数化
+	UseCompatibleDC( m_pShareData->m_Common.m_bUseCompotibleBMP );
 
 	/* 垂直分割ボックス */
 	m_pcsbwVSplitBox = new CSplitBoxWnd;
@@ -573,6 +570,43 @@ BOOL CEditView::Create(
 	return TRUE;
 }
 
+/** 画面キャッシュ用CompatibleDCを用意する
+
+	@param[in] TRUE: 画面キャッシュON
+
+	@date 2007.09.30 genta 関数化
+*/
+void CEditView::UseCompatibleDC(BOOL fCache)
+{
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( fCache ){
+		if( m_hdcCompatDC == NULL ){
+			HDC			hdc;
+			hdc = ::GetDC( m_hWnd );
+			m_hdcCompatDC = ::CreateCompatibleDC( hdc );
+			::ReleaseDC( m_hWnd, hdc );
+#ifdef _DEBUG
+			MYTRACE("CEditView::UseCompatibleDC: Created\n", fCache);
+#endif
+		}
+		else {
+#ifdef _DEBUG
+			MYTRACE("CEditView::UseCompatibleDC: Reused\n", fCache);
+#endif
+		}
+	}
+	else {
+		//	CompatibleBitmapが残っているかもしれないので最初に削除
+		DeleteCompatibleBitmap();
+		if( m_hdcCompatDC != NULL ){
+			::DeleteDC( m_hdcCompatDC );
+#ifdef _DEBUG
+			MYTRACE("CEditView::UseCompatibleDC: Deleted.\n");
+#endif
+			m_hdcCompatDC = NULL;
+		}
+	}
+}
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -745,6 +779,15 @@ LRESULT CEditView::DispatchEvent(
 //		::SetTimer( hwnd, IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc );
 
 		return 0L;
+
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	case WM_SHOWWINDOW:
+		// ウィンドウ非表示の再に互換BMPを廃棄してメモリーを節約する
+		if( hwnd == m_hWnd && (BOOL)wParam == FALSE ){
+			DeleteCompatibleBitmap();
+		}
+		return 0L;
+	// To Here 2007.09.09 Moca
 
 	case WM_SIZE:
 //		MYTRACE( "	WM_SIZE\n" );
@@ -1135,10 +1178,12 @@ void CEditView::OnMove( int x, int y, int nWidth, int nHeight )
 /* ウィンドウサイズの変更処理 */
 void CEditView::OnSize( int cx, int cy )
 {
-	if( NULL == m_hWnd ){
-		return;
-	}
-	if( cx == 0 && cy == 0 ){
+	if( NULL == m_hWnd 
+		|| ( cx == 0 && cy == 0 ) ){
+		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+		// ウィンドウ無効時にも互換BMPを破棄する
+		DeleteCompatibleBitmap();
+		// To Here 2007.09.09 Moca
 		return;
 	}
 
@@ -1153,14 +1198,12 @@ void CEditView::OnSize( int cx, int cy )
 	nVSplitHeight = 0;	/* 垂直分割ボックスの高さ */
 	nHSplitWidth = 0;	/* 水平分割ボックスの幅 */
 
-	HDC	hdc;
 	nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
 	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 	nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
 
 
-	hdc = ::GetDC( m_hWnd );
 
 	/* 垂直分割ボックス */
 	if( NULL != m_pcsbwVSplitBox ){
@@ -1201,19 +1244,106 @@ void CEditView::OnSize( int cx, int cy )
 	AdjustScrollBars();
 
 	/* 再描画用メモリＢＭＰ */
-	if( m_hbmpCompatBMP != NULL ){
-		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );	/* 再描画用メモリＢＭＰ(OLD) */
-		::DeleteObject( m_hbmpCompatBMP );
-	}
-	m_hbmpCompatBMP = ::CreateCompatibleBitmap( hdc, cx, cy );
-	m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( m_hdcCompatDC, m_hbmpCompatBMP );
-	::ReleaseDC( m_hWnd, hdc );
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( m_hdcCompatDC != NULL ){
+		CreateOrUpdateCompatibleBitmap( cx, cy );
+ 	}
+	// To Here 2007.09.09 Moca
 
 	/* 親ウィンドウのタイトルを更新 */
 	SetParentCaption();	//	[Q] genta 本当に必要？
 
 	return;
 }
+
+/*!
+	画面の互換ビットマップを作成または更新する。
+		必要の無いときは何もしない。
+	
+	@param cx ウィンドウの高さ
+	@param cy ウィンドウの幅
+	@return true: ビットマップを利用可能 / false: ビットマップの作成・更新に失敗
+
+	@date 2007.09.09 Moca CEditView::OnSizeから分離。
+		単純に生成するだけだったものを、仕様変更に従い内容コピーを追加。
+		サイズが同じときは何もしないように変更
+
+	@par 互換BMPにはキャレット・カーソル位置横縦線・対括弧以外の情報を全て書き込む。
+		選択範囲変更時の反転処理は、画面と互換BMPの両方を別々に変更する。
+		カーソル位置横縦線変更時には、互換BMPから画面に元の情報を復帰させている。
+
+*/
+bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
+{
+	if( NULL == m_hdcCompatDC ){
+		return false;
+	}
+	// サイズを64の倍数で整列
+	int nBmpWidthNew  = ((cx + 63) & (0x7fffffff - 63));
+	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
+	if( nBmpWidthNew != m_nCompatBMPWidth || nBmpHeightNew != m_nCompatBMPHeight ){
+#ifdef _DEBUG
+	MYTRACE( "CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n", cx, cy );
+#endif
+		HDC	hdc = ::GetDC( m_hWnd );
+		HBITMAP hBitmapNew = NULL;
+		if( m_hbmpCompatBMP ){
+			// BMPの更新
+			HDC hdcTemp = ::CreateCompatibleDC( hdc );
+			hBitmapNew = ::CreateCompatibleBitmap( hdc, nBmpWidthNew, nBmpHeightNew );
+			if( hBitmapNew ){
+				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
+				// 前の画面内容をコピーする
+				::BitBlt( hdcTemp, 0, 0,
+					__min( nBmpWidthNew,m_nCompatBMPWidth ),
+					__min( nBmpHeightNew, m_nCompatBMPHeight ),
+					m_hdcCompatDC, 0, 0, SRCCOPY );
+				::SelectObject( hdcTemp, hBitmapOld );
+				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
+				::DeleteObject( m_hbmpCompatBMP );
+			}
+			::DeleteDC( hdcTemp );
+		}else{
+			// BMPの新規作成
+			hBitmapNew = ::CreateCompatibleBitmap( hdc, nBmpWidthNew, nBmpHeightNew );
+		}
+		if( hBitmapNew ){
+			m_hbmpCompatBMP = hBitmapNew;
+			m_nCompatBMPWidth = nBmpWidthNew;
+			m_nCompatBMPHeight = nBmpHeightNew;
+			m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( m_hdcCompatDC, m_hbmpCompatBMP );
+		}else{
+			// 互換BMPの作成に失敗
+			// 今後も失敗を繰り返す可能性が高いので
+			// m_hdcCompatDCをNULLにすることで画面バッファ機能をこのウィンドウのみ無効にする。
+			//	2007.09.29 genta 関数化．既存のBMPも解放
+			UseCompatibleDC(FALSE);
+		}
+		::ReleaseDC( m_hWnd, hdc );
+	}
+	return NULL != m_hbmpCompatBMP;
+}
+
+
+/*!
+	互換メモリBMPを削除
+
+	@note 分割ビューが非表示になった場合と
+		親ウィンドウが非表示・最小化された場合に削除される。
+	@date 2007.09.09 Moca 新規作成 
+*/
+void CEditView::DeleteCompatibleBitmap()
+{
+	if( m_hbmpCompatBMP ){
+		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
+		::DeleteObject( m_hbmpCompatBMP );
+		m_hbmpCompatBMP = NULL;
+		m_hbmpCompatBMPOld = NULL;
+		m_nCompatBMPWidth = -1;
+		m_nCompatBMPHeight = -1;
+	}
+}
+
 
 
 /*!	IME ONか
@@ -2063,6 +2193,8 @@ void CEditView::TraceRgn( HRGN hrgn )
 /*! 選択領域の描画
 
 	@date 2006.10.01 Moca 重複コード削除．矩形作画改善．
+	@date 2007.09.09 Moca 互換BMPによる画面バッファ
+		画面バッファが有効時、画面と互換BMPの両方の反転処理を行う。
 */
 void CEditView::DrawSelectArea( void )
 {
@@ -2083,6 +2215,14 @@ void CEditView::DrawSelectArea( void )
 	HBRUSH      hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
 	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	HBRUSH		hBrushCompatOld;
+	int			nROPCompatOld;
+	if( m_hbmpCompatBMP ){
+		hBrushCompatOld = (HBRUSH)::SelectObject( m_hdcCompatDC, hBrush );
+		nROPCompatOld = ::SetROP2( m_hdcCompatDC, SELECTEDAREA_ROP2 );
+	}
+	// To Here 2007.09.09 Moca
 
 //	MYTRACE( "DrawSelectArea()  m_bBeginBoxSelect=%s\n", m_bBeginBoxSelect?"TRUE":"FALSE" );
 	if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
@@ -2196,6 +2336,11 @@ void CEditView::DrawSelectArea( void )
 					::DeleteObject( hrgnEOFNew );
 				}
 				::PaintRgn( hdc, hrgnDraw );
+				// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+				if( m_hbmpCompatBMP ){
+					::PaintRgn( m_hdcCompatDC, hrgnDraw );
+				}
+				// To Here 2007.09.09 Moca
 			}
 		}
 
@@ -2280,6 +2425,13 @@ void CEditView::DrawSelectArea( void )
 			}
 		}
 	}
+	
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( m_hbmpCompatBMP ){
+		::SetROP2( m_hdcCompatDC, nROPCompatOld );
+		::SelectObject( m_hdcCompatDC, hBrushCompatOld );
+	}
+	// To Here 2007.09.09 Moca
 	// 2006.10.01 Moca 重複コード統合
 	::SetROP2( hdc, nROP_Old );
 	::SelectObject( hdc, hBrushOld );
@@ -2333,12 +2485,6 @@ void CEditView::DrawSelectAreaLine(
 			}
 			// 2006.03.28 Moca 画面外まで求めたら打ち切る
 			if( it.getColumn() > m_nViewLeftCol + m_nViewColNum ){
-#ifdef _DEBUG
-				TCHAR szHoge[1024];
-				wsprintf( szHoge, "break %d > %d  len=%d\n", it.getColumn(),
-					m_nViewLeftCol + m_nViewColNum, pcLayout->GetLengthWithoutEOL() );
-				::OutputDebugString( szHoge );
-#endif
 				break;
 			}
 			it.addDelta();
@@ -2386,6 +2532,11 @@ void CEditView::DrawSelectAreaLine(
 		if( nSelectFrom <= m_nViewLeftCol + m_nViewColNum && m_nViewLeftCol < nSelectTo ){
 			HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
 			::PaintRgn( hdc, hrgnDraw );
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			if( m_hbmpCompatBMP ){
+				::PaintRgn( m_hdcCompatDC, hrgnDraw );
+			}
+			// To Here 2007.09.09 Moca
 			::DeleteObject( hrgnDraw );
 		}
 	}
@@ -2569,7 +2720,9 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //			OnKillFocus();
 			m_cUnderLine.Lock();
-			OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			OnPaint( hdc, &ps, FALSE );
+			// To Here 2007.09.09 Moca
 			m_cUnderLine.UnLock();
 //			OnSetFocus();
 //			DispRuler( hdc );
@@ -2905,7 +3058,27 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 					&rcScrol,	/* スクロール長方形の構造体のアドレス */
 					NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
 				);
-
+				// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+				if( m_hbmpCompatBMP ){
+					// 互換BMPもスクロール処理のためにBitBltで移動させる
+					::BitBlt(
+						m_hdcCompatDC,
+						rcScrol.left + nScrollColNum * ( m_nCharWidth +  m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
+						rcScrol.top  + nScrollRowNum * ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace ),
+						rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
+						m_hdcCompatDC, rcScrol.left, rcScrol.top, SRCCOPY
+					);
+				}
+				// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
+				if( nScrollColNum != 0 && m_nOldCursorLineX == m_nViewAlignLeft - 1 ){
+					RECT rcClip3;
+					rcClip3.left = m_nOldCursorLineX;
+					rcClip3.right = m_nOldCursorLineX + 1;
+					rcClip3.top  = m_nViewAlignTop;
+					rcClip3.bottom = m_nViewCy + m_nViewAlignTop;
+					::InvalidateRect( m_hWnd, &rcClip3, TRUE );
+				}
+				// To Here 2007.09.09 Moca
 				if( nScrollRowNum != 0 ){
 					::InvalidateRect( m_hWnd, &rcClip, TRUE );
 					if( nScrollColNum != 0 ){
@@ -5069,6 +5242,17 @@ int CEditView::ScrollAtV( int nPos )
 				&rcScrol,	/* スクロール長方形の構造体のアドレス */
 				NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
 			);
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			// 互換BMPのスクロール
+			if( m_hbmpCompatBMP ){
+				::BitBlt(
+					m_hdcCompatDC, rcScrol.left,
+					rcScrol.top + nScrollRowNum * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ),
+					rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
+					m_hdcCompatDC, rcScrol.left, rcScrol.top, SRCCOPY
+				);
+			}
+			// To Here 2007.09.09 Moca
 			::InvalidateRect( m_hWnd, &rcClip, TRUE );
 			::UpdateWindow( m_hWnd );
 		}
@@ -5153,6 +5337,25 @@ int CEditView::ScrollAtH( int nPos )
 				&rcScrol,	/* スクロール長方形の構造体のアドレス */
 				NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
 			);
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			// 互換BMPのスクロール
+			if( m_hbmpCompatBMP ){
+				::BitBlt(
+					m_hdcCompatDC, rcScrol.left + nScrollColNum * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ),
+						rcScrol.top, rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
+					m_hdcCompatDC, rcScrol.left, rcScrol.top , SRCCOPY
+				);
+			}
+			// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
+			if( m_nOldCursorLineX == m_nViewAlignLeft - 1 ){
+				RECT rcClip3;
+				rcClip3.left = m_nOldCursorLineX;
+				rcClip3.right = m_nOldCursorLineX + 1;
+				rcClip3.top  = m_nViewAlignTop;
+				rcClip3.bottom = m_nViewCy + m_nViewAlignTop;
+				::InvalidateRect( m_hWnd, &rcClip3, TRUE );
+			}
+			// To Here 2007.09.09 Moca
 			::InvalidateRect( m_hWnd, &rcClip2, TRUE );
 			::UpdateWindow( m_hWnd );
 		}
@@ -5545,9 +5748,9 @@ void CEditView::CopySelectedAllLines(
 	ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 	ps.rcPaint.top = m_nViewAlignTop;
 	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-//	OnKillFocus();
-	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
-//	OnSetFocus();
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	OnPaint( hdc, &ps, FALSE );
+	// To Here 2007.09.09 Moca
 	::ReleaseDC( m_hWnd, hdc );
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
@@ -5853,7 +6056,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	ps.rcPaint.top		= m_nViewAlignTop;
 	ps.rcPaint.bottom	= m_nViewAlignTop + m_nViewCy;
 	OnKillFocus();
-	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+	OnPaint( hdc, &ps, FALSE );
 	OnSetFocus();
 	::ReleaseDC( m_hWnd, hdc );
 #endif ///////////////////////////////
@@ -6475,6 +6678,9 @@ void CEditView::OnChangeSetting( void )
 
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
+	
+	//	2007.09.30 genta 画面キャッシュ用CompatibleDCを用意する
+	UseCompatibleDC( m_pShareData->m_Common.m_bUseCompotibleBMP );
 
 	/* ウィンドウサイズの変更処理 */
 	::GetClientRect( m_hWnd, &rc );
@@ -6504,7 +6710,7 @@ void CEditView::RedrawAll( void )
 
 	::GetClientRect( m_hWnd, &ps.rcPaint );
 
-	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
+	OnPaint( hdc, &ps, FALSE );
 //	OnSetFocus();
 	::ReleaseDC( m_hWnd, hdc );
 
@@ -6536,7 +6742,7 @@ void CEditView::Redraw( void )
 
 	::GetClientRect( m_hWnd, &ps.rcPaint );
 
-	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
+	OnPaint( hdc, &ps, FALSE );
 
 	::ReleaseDC( m_hWnd, hdc );
 
@@ -8882,20 +9088,70 @@ void CCaretUnderLine::CaretUnderLineOFF( BOOL bDraw )
 }
 
 
-/* カーソル行アンダーラインのON */
+/*! カーソル行アンダーラインのON
+	@date 2007.09.09 Moca カーソル位置縦線処理追加
+*/
 void CEditView::CaretUnderLineON( BOOL bDraw )
 {
-	if( FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+
+	BOOL bUnderLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
+	BOOL bCursorVLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
+	if( FALSE == bUnderLine && FALSE == bCursorVLine ){
 		return;
 	}
 
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
-	m_nOldUnderLineY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight;
-	if( -1 == m_nOldUnderLineY ){
-		m_nOldUnderLineY = -2;
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( bCursorVLine ){
+		// カーソル位置縦線。-1してキャレットの左に来るように。
+		m_nOldCursorLineX = m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol)
+			* (m_pcEditDoc->GetDocumentAttribute().m_nColmSpace + m_nCharWidth ) - 1;
+		if( -1 == m_nOldCursorLineX ){
+			m_nOldCursorLineX = -2;
+		}
+	}else{
+		m_nOldCursorLineX = -1;
 	}
+
+	if( bDraw
+	 && m_bDrawSWITCH
+	 && m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace < m_nOldCursorLineX
+	 && m_nOldCursorLineX <= m_nViewAlignLeft + m_nViewCx
+	 && m_bDoing_UndoRedo == FALSE
+	){
+		// カーソル位置縦線の描画
+		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
+		HDC		hdc;
+		HPEN	hPen, hPenOld;
+		int     nROP_Old = 0;
+		hdc = ::GetDC( m_hWnd );
+		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
+		hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, m_nOldCursorLineX, m_nViewAlignTop, NULL );
+		::LineTo(   hdc, m_nOldCursorLineX, m_nViewCy + m_nViewAlignTop );
+		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
+		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
+			m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
+			::MoveToEx( hdc, m_nOldCursorLineX - 1, m_nViewAlignTop, NULL );
+			::LineTo(   hdc, m_nOldCursorLineX - 1, m_nViewCy + m_nViewAlignTop );
+		}
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+		::ReleaseDC( m_hWnd, hdc );
+		hdc= NULL;
+	}
+	if( bUnderLine ){
+		m_nOldUnderLineY = m_nViewAlignTop + (m_nCaretPosY - m_nViewTopLine)
+			 * (m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight) + m_nCharHeight;
+		if( -1 == m_nOldUnderLineY ){
+			m_nOldUnderLineY = -2;
+		}
+	}else{
+		m_nOldUnderLineY = -1;
+	}
+	// To Here 2007.09.09 Moca
 
 	if( bDraw
 	 && m_bDrawSWITCH
@@ -8930,10 +9186,13 @@ void CEditView::CaretUnderLineON( BOOL bDraw )
 
 
 
-/* カーソル行アンダーラインのOFF */
+/*! カーソル行アンダーラインのOFF
+	@date 2007.09.09 Moca カーソル位置縦線処理追加
+*/
 void CEditView::CaretUnderLineOFF( BOOL bDraw )
 {
-	if( FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
+			FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp ){
 		return;
 	}
 
@@ -8955,7 +9214,7 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 			ps.rcPaint.left = m_nViewAlignLeft;
 			ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 			ps.rcPaint.top = m_nOldUnderLineY;
-			ps.rcPaint.bottom = m_nOldUnderLineY;
+			ps.rcPaint.bottom = m_nOldUnderLineY + 1; // 2007.09.09 Moca +1 するように
 			HDC hdc = ::GetDC( m_hWnd );
 			m_cUnderLine.Lock();
 			//	不本意ながら選択情報をバックアップ。
@@ -8967,7 +9226,8 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 			m_nSelectLineTo = -1;
 			m_nSelectColmFrom = -1;
 			m_nSelectColmTo = -1;
-			OnPaint( hdc, &ps, FALSE );
+			// 可能なら互換BMPからコピーして再作画
+			OnPaint( hdc, &ps, TRUE );
 			//	選択情報を復元
 			m_nSelectLineFrom = nSelectLineFrom;
 			m_nSelectLineTo = nSelectLineTo;
@@ -8999,6 +9259,48 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 		}
 		m_nOldUnderLineY = -1;
 	}
+	
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	// カーソル位置縦線
+	if( -1 != m_nOldCursorLineX ){
+		if( bDraw
+		 && m_bDrawSWITCH
+		 && m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace < m_nOldCursorLineX
+		 && m_nOldCursorLineX <= m_nViewAlignLeft + m_nViewCx
+		 && m_bDoing_UndoRedo == FALSE
+		){
+			PAINTSTRUCT ps;
+			ps.rcPaint.left = m_nOldCursorLineX;
+			ps.rcPaint.right = m_nOldCursorLineX + 1;
+			ps.rcPaint.top = m_nViewAlignTop;
+			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
+			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont ){
+				ps.rcPaint.left += -1;
+			}
+			HDC hdc = ::GetDC( m_hWnd );
+			m_cUnderLine.Lock();
+			//	不本意ながら選択情報をバックアップ。
+			int nSelectLineFrom = m_nSelectLineFrom;
+			int nSelectLineTo = m_nSelectLineTo;
+			int nSelectColmFrom = m_nSelectColmFrom;
+			int nSelectColmTo = m_nSelectColmTo;
+			m_nSelectLineFrom = -1;
+			m_nSelectLineTo = -1;
+			m_nSelectColmFrom = -1;
+			m_nSelectColmTo = -1;
+			// 可能なら互換BMPからコピーして再作画
+			OnPaint( hdc, &ps, TRUE );
+			//	選択情報を復元
+			m_nSelectLineFrom = nSelectLineFrom;
+			m_nSelectLineTo = nSelectLineTo;
+			m_nSelectColmFrom = nSelectColmFrom;
+			m_nSelectColmTo = nSelectColmTo;
+			m_cUnderLine.UnLock();
+			ReleaseDC( m_hWnd, hdc );
+		}
+		m_nOldCursorLineX = -1;
+	};
+	// To Here 2007.09.09 Moca
 	return;
 }
 

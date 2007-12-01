@@ -240,9 +240,12 @@ struct ARRHEAD {
 
 	Version 83:
 	選択なしでコピーを可能にする 2007.11.18 ryoji
+
+	Version 84:
+	画面キャッシュを使う 2007.09.09 Moca
 */
 
-const unsigned int uShareDataVersion = 83;
+const unsigned int uShareDataVersion = 84;
 
 /*
 ||	Singleton風
@@ -618,6 +621,7 @@ bool CShareData::Init( void )
 		//	Sep. 18, 2002 genta
 		m_pShareData->m_Common.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_nVertLineOffset = -1;				// 2005.11.10 Moca 指定桁縦線
+		m_pShareData->m_Common.m_bUseCompotibleBMP = FALSE;			// 2007.09.09 Moca 画面キャッシュを使う
 		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
@@ -5208,6 +5212,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		"カーソル",							TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
 		"カーソル(IME ON)",					TRUE , FALSE, FALSE, RGB( 255, 0, 0 )		, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
 		"カーソル行アンダーライン",			TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
+ 		"カーソル位置縦線",					FALSE, FALSE, FALSE, RGB( 128, 128, 255 )	, RGB( 255, 251, 240 ),// 2007.09.09 Moca
 		"行番号",							TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
 		"行番号(変更行)",					TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
 		"TAB記号",							TRUE , FALSE, FALSE, RGB( 128, 128, 128 )	, RGB( 255, 251, 240 ),	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更

@@ -239,6 +239,12 @@ public:
 	};
 	TOGGLE_WRAP_ACTION GetWrapMode( int& );
 
+	// 2006.05.14 Moca 互換BMPによる画面バッファ
+	bool CreateOrUpdateCompatibleBitmap( int, int );	/*!< メモリBMPを作成または更新 */
+	void DeleteCompatibleBitmap();			/*!< メモリBMPを削除 */
+	//	2007.09.30 genta CompatibleDC操作関数
+	void UseCompatibleDC(BOOL fCache);
+
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
 	BOOL			m_bDrawSWITCH;
@@ -323,6 +329,11 @@ public: /* テスト用にアクセス属性を変更 */
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	int				m_nCompatBMPWidth;  /* 再作画用メモリＢＭＰの幅 */
+	int				m_nCompatBMPHeight; /* 再作画用メモリＢＭＰの高さ */
+	// To Here 2007.09.09 Moca
+
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
 	static int		m_pnDx[MAXLINESIZE + 10];	/* 文字列描画用文字幅配列 */
 	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
@@ -344,7 +355,8 @@ public: /* テスト用にアクセス属性を変更 */
 	COLORREF	m_crBack;			/* テキストの背景色 */			// 2006.12.07 ryoji
 	HBITMAP	m_hbmpCaret;			/* キャレットのビットマップ */	// 2006.11.28 ryoji
 	CCaretUnderLine m_cUnderLine;	/* アンダーライン */
-	int		m_nOldUnderLineY;
+	int		m_nOldUnderLineY;	// 前回作画したカーソルアンダーラインの位置 0未満=非表示
+	int		m_nOldCursorLineX;	/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
 
 	int		m_nOldCaretPosX;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
 	int		m_nOldCaretWidth;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK

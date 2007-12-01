@@ -613,6 +613,7 @@
 #define HIDC_MACROLIST				11741	//マクロリスト
 #define HIDC_MACRODIR				11750	//マクロ一覧
 #define HIDC_CHECK_RELOADWHENEXECUTE	11751	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
+#define HIDC_CHECK_MEMDC			11752	//画面キャッシュを使う
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

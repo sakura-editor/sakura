@@ -1534,4 +1534,18 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 	return FALSE;
 }
 
+
+/*!
+	CEditViewの画面バッファを削除
+	@date 2007.09.09 Moca 新規作成
+*/
+void CEditDoc::DeleteCompatibleBitmap()
+{
+	// CEditView群へ転送する
+	for( int i = 0; i < 4; i++ ){
+		if( m_cEditViewArr[i].m_hWnd ){
+			m_cEditViewArr[i].DeleteCompatibleBitmap();
+		}
+	}
+}
 /*[EOF]*/

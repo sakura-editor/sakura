@@ -1145,10 +1145,13 @@ LRESULT CEditWnd::DispatchEvent(
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 		return m_CMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
 
-
-
-
-
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	case WM_SHOWWINDOW:
+	if( FALSE == (BOOL)wParam ){
+		m_cEditDoc.DeleteCompatibleBitmap();
+	}
+	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+	// To Here 2007.09.09 Moca
 
 	case WM_MENUSELECT:
 		if( NULL == m_hwndStatusBar ){
@@ -1692,7 +1695,6 @@ LRESULT CEditWnd::DispatchEvent(
 //		::GetWindowRect( hwnd, &rc );
 //		::SetWindowPos( hwnd, 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top + 1, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 //		::SetWindowPos( hwnd, 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-
 		m_cEditDoc.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
 		m_cEditDoc.OnChangeSetting();	/* ビューに設定変更を反映させる */
 		return 0L;

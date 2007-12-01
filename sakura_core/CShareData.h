@@ -541,6 +541,8 @@ struct Common {
 	int					m_nRulerType;				/* ルーラーのタイプ */
 	int					m_nLineNumRightSpace;		// 行番号の右のスペース Sep. 18, 2002 genta
 	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
+	BOOL				m_bUseCompotibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
+
 
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
 	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji

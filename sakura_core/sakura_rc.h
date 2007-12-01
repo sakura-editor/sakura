@@ -578,6 +578,7 @@
 #define IDC_RADIO_BACKUP_DATETYPE1A     1507
 #define IDC_RADIO_BACKUP_DATETYPE2A     1508
 #define IDC_LABEL_BACKUP_HELP2          1509
+#define IDC_CHECK_MEMDC                 1510
 #define IDC_STATIC_COLOR                1510
 #define IDC_BUTTON_SELALL               1511
 #define IDC_BUTTON_SELNOTING            1512

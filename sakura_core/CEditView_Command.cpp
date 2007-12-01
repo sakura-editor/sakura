@@ -1389,7 +1389,7 @@ void CEditView::Command_GOFILEEND( int bSelect )
 //	ps.rcPaint.top = m_nViewAlignTop;
 //	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //	OnKillFocus();
-//	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+//	OnPaint( hdc, &ps, FALSE );
 //	OnSetFocus();
 //	::ReleaseDC( m_hWnd, hdc );
 //	return;
@@ -4261,7 +4261,6 @@ void CEditView::Command_OPTION( void )
 {
 	/* 設定プロパティシート テスト用 */
 	m_pcEditDoc->OpenPropertySheet( -1/*, -1*/ );
-
 	return;
 }
 
@@ -5841,7 +5840,7 @@ void CEditView::Command_UNINDENT( char cChar )
 //	ps.rcPaint.top = m_nViewAlignTop;
 //	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //	OnKillFocus();
-//	OnPaint( hdc, &ps, TRUE );	/* メモリＤＣを使用してちらつきのない再描画 */
+//	OnPaint( hdc, &ps, FALSE );
 //	OnSetFocus();
 //	::ReleaseDC( m_hWnd, hdc );
 	Redraw();	// 2002.01.25 hor

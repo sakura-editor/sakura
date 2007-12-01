@@ -215,6 +215,10 @@ public:
 	bool IsInsMode() const { return m_bInsMode; }
 	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
+	// 2007.09.09 Moca 互換BMPによる画面バッファ 
+	void DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
+
+
 protected:
 	int				m_nSettingType;
 	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態

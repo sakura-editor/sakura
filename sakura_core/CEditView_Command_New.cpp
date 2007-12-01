@@ -242,7 +242,7 @@ void CEditView::InsertData_CEditView(
 			}
 			hdc = ::GetDC( m_hWnd );
 //			OnKillFocus();
-			OnPaint( hdc, &ps, TRUE );	/* ƒƒ‚ƒŠ‚c‚b‚ğg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+			OnPaint( hdc, &ps, FALSE );
 //			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
 		}
@@ -522,7 +522,7 @@ void CEditView::DeleteData(
 				ps.rcPaint.top = m_nViewAlignTop;
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //				OnKillFocus();
-				OnPaint( hdc, &ps, TRUE );	/* ƒƒ‚ƒŠ‚c‚b‚ğg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+				OnPaint( hdc, &ps, FALSE );
 //				OnSetFocus();
 				::ReleaseDC( m_hWnd, hdc );
 			}
@@ -825,7 +825,7 @@ void CEditView::Command_UNDO( void )
 		ps.rcPaint.top = m_nViewAlignTop;
 		ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //		OnKillFocus();
-		OnPaint( hdc, &ps, TRUE );	/* ƒƒ‚ƒŠ‚c‚b‚ğg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+		OnPaint( hdc, &ps, FALSE );
 //		OnSetFocus();
 		DispRuler( hdc );
 		::ReleaseDC( m_hWnd, hdc );
@@ -1023,7 +1023,7 @@ void CEditView::Command_REDO( void )
 		ps.rcPaint.top = m_nViewAlignTop;
 		ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 //		OnKillFocus();
-		OnPaint( hdc, &ps, TRUE );	/* ƒƒ‚ƒŠ‚c‚b‚ğg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+		OnPaint( hdc, &ps, FALSE );
 //		OnSetFocus();
 		DispRuler( hdc );	// 2007.10.19 ryoji
 		::ReleaseDC( m_hWnd, hdc );
@@ -1312,7 +1312,7 @@ void CEditView::ReplaceData_CEditView(
 
 			}
 //			OnKillFocus();
-			OnPaint( hdc, &ps, TRUE );	/* ƒƒ‚ƒŠ‚c‚b‚ğg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+			OnPaint( hdc, &ps, FALSE );
 //			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
 		}

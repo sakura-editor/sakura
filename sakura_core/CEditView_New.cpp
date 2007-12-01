@@ -60,8 +60,14 @@ HFONT CEditView::ChooseFontHandle( BOOL bFat, BOOL bUnderLine )
 }
 
 
-/* 通常の描画処理 new */
-void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
+/*! 通常の描画処理 new 
+	@param pPs  pPs.rcPaint は正しい必要がある
+	@param bDrawFromComptibleBmp  TRUE 画面バッファからhdcに作画する(コピーするだけ)。
+			TRUEの場合、pPs.rcPaint領域外は作画されないが、FALSEの場合は作画される事がある。
+			互換DC/BMPが無い場合は、普通の作画処理をする。
+	@date 2007.09.09 Moca 元々無効化されていた第三パラメータのbUseMemoryDCをbDrawFromComptibleBmpに変更。
+*/
+void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::OnPaint" );
 
@@ -75,6 +81,48 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	if( !m_bDrawSWITCH ){
 		return;
 	}
+
+	//@@@
+#ifdef _DEBUG
+	::MYTRACE( "OnPaint(%d,%d)-(%d,%d) : %d\n",
+		pPs->rcPaint.left,
+		pPs->rcPaint.top,
+		pPs->rcPaint.right,
+		pPs->rcPaint.bottom,
+		bDrawFromComptibleBmp
+		);
+#endif
+	
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	// 互換BMPからの転送のみによる作画
+	if( bDrawFromComptibleBmp
+		&& m_hdcCompatDC && m_hbmpCompatBMP ){
+		::BitBlt(
+			hdc,
+			pPs->rcPaint.left,
+			pPs->rcPaint.top,
+			pPs->rcPaint.right - pPs->rcPaint.left,
+			pPs->rcPaint.bottom - pPs->rcPaint.top,
+			m_hdcCompatDC,
+			pPs->rcPaint.left,
+			pPs->rcPaint.top,
+			SRCCOPY
+		);
+		if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
+			/* アクティブペインは、アンダーライン描画 */
+			m_cUnderLine.CaretUnderLineON( TRUE );
+		}
+		return;
+	}
+	if( m_hdcCompatDC && NULL == m_hbmpCompatBMP
+		 || (pPs->rcPaint.right - pPs->rcPaint.left) < m_nCompatBMPWidth
+		 || (pPs->rcPaint.bottom - pPs->rcPaint.top) < m_nCompatBMPHeight ){
+		RECT rect;
+		::GetWindowRect( m_hWnd, &rect );
+		CreateOrUpdateCompatibleBitmap( rect.right - rect.left, rect.bottom - rect.top );
+	}
+	// To Here 2007.09.09 Moca
+
 	/* キャレットを隠す */
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 
@@ -118,7 +166,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 //	DrawCaretPosInfo();
 
 	/* メモリＤＣを利用した再描画の場合は描画先のＤＣを切り替える */
-	bUseMemoryDC = FALSE;
+	// 2007.09.09 Moca bUseMemoryDCを有効化。
+	// bUseMemoryDC = FALSE;
+	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
 	if( bUseMemoryDC ){
 		hdcOld = hdc;
 		hdc = m_hdcCompatDC;
@@ -291,11 +341,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		DispRuler( hdc );
 	}
 
-	if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
-		/* アクティブペインは、アンダーライン描画 */
-		m_cUnderLine.CaretUnderLineON( TRUE );
-	}
-
 	/* メモリＤＣを利用した再描画の場合はメモリＤＣに描画した内容を画面へコピーする */
 	if( bUseMemoryDC ){
 		::BitBlt(
@@ -310,6 +355,14 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 			SRCCOPY
 		);
 	}
+
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
+	if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
+		/* アクティブペインは、アンダーライン描画 */
+		m_cUnderLine.CaretUnderLineON( TRUE );
+	}
+	// To Here 2007.09.09 Moca
 
 	/* 03/02/18 対括弧の強調表示(描画) ai */
 	DrawBracketPair( true );
