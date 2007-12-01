@@ -302,8 +302,11 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 	enum MODE2
 	{
 		M2_NORMAL			= 0x00,	//!< 通常
+		M2_ATTRIBUTE		= 0x02,	//!< C++/CLI attribute : 2007.05.26 genta
+
 		M2_NAMESPACE_SAVE	= 0x11,	//!< ネームスペース名調査中
-			// 「通常」状態で単語 "class" "struct" "union" "enum" "namespace"を読み込むと、この状態になり、';' '{' ',' '>' '='を読み込むと「通常」になる。
+			// 「通常」状態で単語 "class" "struct" "union" "enum" "namespace", "__interface" を読み込むと、この状態になり、';' '{' ',' '>' '='を読み込むと「通常」になる。
+			//	2007.05.26 genta キーワードに__interface追加
 			//
 			// ':' を読み込むと「ネームスペース名調査完了」へ移行すると同時に
 			// szWordをszTokenNameに保存し、あとで ':' 又は '{' の直前の単語が調べられるようにしている。
@@ -596,6 +599,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 							nItemFuncId = 5;
 						else if( strcmp(szWord,"union")==0 )
 							nItemFuncId = 6;
+						else if( strcmp(szWord,"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
+							nItemFuncId = 8;
 						if( nItemFuncId != 0 )
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
@@ -788,7 +793,10 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 //						nNestLevel2 = 1;
 //					}
 //					nMode = 0;
-					if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 == M2_NAMESPACE_END) )
+					//	2007.05.26 genta C++/CLI nMode2 == M2_NAMESPACE_ENDの場合を対象外に
+					//	NAMESPACE_END(class クラス名 :の後ろ)においては()を関数とみなさない．
+					//	TEMPLATE<sizeof(int)> のようなケースでsizeofを関数と誤認する．
+					if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE ) )
 					{
 						if( strcmp(szWordPrev, "__declspec") == 0 ) {continue;}
 						if(nNestLevel_fparam==0)
@@ -818,7 +826,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					if( nNestLevel_fparam > 0)
 					{
 						--nNestLevel_fparam;
-						if( nNestLevel_fparam == 0)
+						//	2007.05.26 genta C++/CLI Attribute内部ではnMode2の変更は行わない
+						if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE )
 						{
 							nMode2 = M2_FUNC_NAME_END;
 							nItemFuncId = 2;
@@ -827,6 +836,22 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					//  2002/10/27 frozen ここまで
 					continue;
 				}else
+				// From Here 2007.05.26 genta C++/CLI Attributeの取り扱い
+				if( '[' == pLine[i] ){
+					if( nNestLevel_func == 0 && nNestLevel_fparam == 0 && nMode2 == M2_NORMAL ) {
+						nMode2 = M2_ATTRIBUTE;
+						continue;
+					}
+				} else
+				if( ']' == pLine[i] ){
+					//	Attribute内部でも[]を配列として使うかもしれないので，
+					//	括弧のレベルは元に戻っている必要有り
+					if( nNestLevel_fparam == 0 && nMode2 == M2_ATTRIBUTE ) {
+						nMode2 = M2_NORMAL;
+						continue;
+					}
+				} else
+				// To Here 2007.05.26 genta C++/CLI Attributeの取り扱い
 				if( ';' == pLine[i] ){
 					//  2002/10/27 frozen ここから
 //					if( 2 == nNestLevel2 ){
@@ -898,7 +923,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					//  2002/10/27 frozen ここまで
 					nMode = 0;
 					continue;
-				}else if( nNestLevel_fparam == 0 ){
+				}else if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE ){
+					// 2007.05.26 genta C++/CLI Attribute内部では関数名処理は一切行わない
 					if( C_IsWordChar( pLine[i] ) ){
 						//  2002/10/27 frozen ここから削除
 //						if( 2 == nNestLevel2 ){

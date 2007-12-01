@@ -939,7 +939,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			//	Global空間の場合 (C++のみ)
 
 			// 2002/10/27 frozen ここから
-			if( 3 <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= 7 )
+			// 2007.05.26 genta "__interface" をクラスに類する扱いにする
+			if( 3 <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= 8 )
 				htiClass = TVI_ROOT;
 			else
 			{
@@ -960,7 +961,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				htiClass = htiGlobal;
 			}
 		}
-		pFuncName = new char[ strlen(pWork) + 1 + 7 ];	// +6 は追加する文字列の最大長
+		pFuncName = new char[ strlen(pWork) + 1 + 18 ];	// +16 は追加する文字列の最大長
 		strcpy( pFuncName, pWork );
 
 		// 2002/10/27 frozen 追加文字列の種類を増やした
@@ -972,6 +973,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		case 5: strcat( pFuncName, " 列挙体" );break;
 		case 6: strcat( pFuncName, " 共用体" );break;
 //		case 7: strcat( pFuncName, " 名前空間" );break;
+		
+		case 8: strcat( pFuncName, " インターフェース" );break; // 2007.05.26 genta : "__interface"
 		};
 //		}
 		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
