@@ -317,6 +317,7 @@
 // note: 303 は 「このファイル名をコピー」が使用
 //#define HLP000304	304 //メタ文字列の仕様 HLP000272
 #define HLP000089	89 //利用可能な正規表現	// 2007.09.30
+#define HLP000108	108 //1行選択	// 2007.12.01
 
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
@@ -376,6 +377,8 @@
 #define HIDC_LIST_RES							10151 //メニュー一覧
 #define HIDC_CHECK_ADDCRLFWHENCOPY				10210 //折り返し行に改行を付けてコピー
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA		10211 //コピーしたら選択解除
+#define HIDC_CHECK_bEnableNoSelectCopy			10216 //選択なしでコピーを可能にする	// 2007.11.18 ryoji
+#define HIDC_CHECK_bEnableLineModePaste			10215 //ラインモード貼り付けを可能にする	// 2007.10.08 ryoji
 #define HIDC_CHECK_DRAGDROP						10212 //ドラッグ＆ドロップ編集する
 #define HIDC_CHECK_DROPSOURCE					10213 //ドロップ元にする
 #define HIDC_CHECK_bNotOverWriteCRLF			10214 //上書きモード
@@ -470,6 +473,7 @@
 #define HIDC_CHECK_STOPS_WORD					10917 //単語単位で移動するときに単語の両端に止まる
 #define HIDC_CHECK_STOPS_PARAGRAPH				10918 //段落単位で移動するときに段落の両端に止まる
 #define HIDC_CHECK_CLOSEALLCONFIRM				10919 //[すべて閉じる]で他に編集用のウィンドウがあれば確認する	// 2006.12.25 ryoji
+#define HIDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE		10920 //マウスクリックでアクティブになったときはカーソルをクリック位置に移動しない 2007.10.08 genta
 #define HIDC_HOTKEY_TRAYMENU					10940 //左クリックメニューのショートカットキー
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM			10941 //スクロール行数
 #define HIDC_EDIT_MAX_MRU_FILE					10942 //ファイル履歴の最大数

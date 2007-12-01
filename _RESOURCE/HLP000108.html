@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<TITLE>1行選択</TITLE>
+<META NAME="MS-HKWD" CONTENT="1行選択">
+<META NAME="MS-HKWD" CONTENT="SelectLine">
+</HEAD>
+<BODY>
+<script type="text/javascript">
+<!--
+document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
+document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
+document.writeln(' <PARAM name="Command" value="Close"> ');
+document.writeln('</OBJECT> ');
+
+document.onkeypress=CheckClose;
+
+function CheckClose() {
+if (window.event.keyCode == 27)
+aaHHCtlCloseWin.Click(); }
+// -->
+</script>
+<h2>1行選択</h2>
+カーソル位置の行全体(改行単位)を選択された状態にします。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: SelectLine( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1    予約（現在は未使用。0を指定のこと。）<br>
+・記録:	○<br>
+</BODY></HTML>
