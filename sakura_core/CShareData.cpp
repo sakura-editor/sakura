@@ -243,9 +243,12 @@ struct ARRHEAD {
 
 	Version 84:
 	画面キャッシュを使う 2007.09.09 Moca
+
+	Version 85:
+	キーワードセット最大値増加 2007.12.01 genta
 */
 
-const unsigned int uShareDataVersion = 84;
+const unsigned int uShareDataVersion = 85;
 
 /*
 ||	Singleton風
