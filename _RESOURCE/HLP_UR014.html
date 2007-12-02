@@ -25,6 +25,38 @@ aaHHCtlCloseWin.Click(); }
 <h2>変更履歴(2007/09/27～)</h2>
 <!--<h3>xxx. xx, 2007 (1.x.x.x)</h3>-->
 
+<h3>Dec. 2, 2007 (1.6.2.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>VS2003/2005エディタ互換の行コピー&行貼り付け (svn:1159 patches:1807523 dev:5083 ryoji)</li>
+	<li>トリプルクリック，クラドラプルクリック対応 devwiki:TripleClick (svn:1191 patches:1810231 dev:5080 なすこじ)</li>
+	<li>「選択なしでコピーを可能にする」オプション (svn:1192 patches:1833906 data:6472 ryoji)</li>
+	<li>カーソル位置の縦線 (svn:1197 patches:1791110 もか)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>キーワードセット最大数を25から100に拡張 (svn:1200 patches:1842455 Request/226 data:6495 dev:5210 げんた)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>Undo/Redoでステータスバーやルーラーの行桁位置表示が更新されない (svn:1156 patches:1816675 ryoji)</li>
+	<li>マクロ登録を変更しても変更前のマクロが実行される (svn:1157 patches:1816633 data:6373 げんた)</li>
+	<li>最小化の操作でタブが切り替わる (svn:1160 patches:1818501 dev:5137 FC9#616 ryoji)</li>
+	<li>印刷設定ダイアログで印刷設定を切り替えると「用紙の向き」のラジオボタンが縦・横両方ともオンになる (svn:1177 patches:1829778 dev:5177 ryoji)</li>
+	<li>ツールバーアイコン登録で「その他」カテゴリの水平線を選択すると未定義アイコンが挿入される (svn:1198 patches:1812307 data:6362 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>マウスリリース時の対括弧強調表示 (svn:1158 patches:1815933 ryoji)</li>
+	<li>アウトライン解析とバージョン情報ダイアログからアイコンを除去 (svn:1163 patches:1820655 dev:5139 げんた，ryoji)</li>
+	<li>IME Watcher対応 (svn:1179 patches:1827485 data:6367 dev:5129 ryoji)</li>
+	<li>C++アウトライン解析のAttribute(C++/CLI)対応 (svn:1196 patches:1733921 dev:4837 げんた)</li>
+	<li>外部マクロのツールバーへの登録処理見直し．マクロ定義の有無と登録を切り離した． (svn:1198 patches:1812307 ryoji)</li>
+</ul>
+
 <h3>Oct. 17, 2007 (1.6.1.0)</h3>
 [機能追加]<br />
 <ul>
