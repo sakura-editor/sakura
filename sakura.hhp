@@ -14,7 +14,7 @@ Language=0x411 日本語
 Title=サクラエディタ ヘルプ
 
 [WINDOWS]
-XHP="サクラエディタ ヘルプ","sakura.hhc","sakura.hhk","_RESOURCE\HLP000001.html","_RESOURCE\HLP000001.html",,,,,0x61720,200,0x10204e,[200,200,800,600],0x0,0x0,,,,,0
+XHP="サクラエディタ ヘルプ","sakura.hhc","sakura.hhk","_RESOURCE\HLP000001.html","_RESOURCE\HLP000001.html",,,,,0x61720,200,0x10204e,[50,50,850,550],0x0,0x0,,,,,0
 $global_Web="Remote URL",,,,,,,,,,,0x383c,[125,144,721,602],,,,,,,0
 
 
