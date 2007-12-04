@@ -71,22 +71,10 @@ public:
 	void SetColorTypePrev(EColorIndexType n){ m_nTypePrev=n; }
 
 	//!レイアウト幅を計算。インデントも改行も含まない。2007.10.11 kobake
-	CLayoutInt CalcLayoutWidth() const
-	{
-		//ソース
-		const wchar_t* pText    = m_pCDocLine->GetPtr();
-		CLogicInt      nTextLen = m_pCDocLine->GetLengthWithoutEOL();
-
-		//計算
-		CLayoutInt nWidth = CLayoutInt(0);
-		for(CLogicInt i=m_ptLogicPos.GetX2();i<m_ptLogicPos.GetX2()+m_nLength;i++){
-			nWidth += CNativeW::GetKetaOfChar(pText,nTextLen,i);
-		}
-		return nWidth;
-	}
+	CLayoutInt CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const;
 
 	//! オフセット値をレイアウト単位に変換して取得。2007.10.17 kobake
-	CLayoutInt CalcLayoutOffset(const CLayoutMgr& pLayoutMgr) const;
+	CLayoutInt CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const;
 
 	//! 文字列参照を取得
 	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLength()); }

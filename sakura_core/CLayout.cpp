@@ -37,8 +37,30 @@ void CLayout::DUMP( void )
 	return;
 }
 
+//!レイアウト幅を計算。インデントも改行も含まない。
+//2007.10.11 kobake 作成
+//2007.11.29 kobake タブ幅が計算されていなかったのを修正
+CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
+{
+	//ソース
+	const wchar_t* pText    = m_pCDocLine->GetPtr();
+	CLogicInt      nTextLen = m_pCDocLine->GetLengthWithoutEOL();
+
+	//計算
+	CLayoutInt nWidth = CLayoutInt(0);
+	for(CLogicInt i=m_ptLogicPos.GetX2();i<m_ptLogicPos.GetX2()+m_nLength;i++){
+		if(pText[i]==WCODE::TAB){
+			nWidth += cLayoutMgr.GetActualTabSpace(nWidth);
+		}
+		else{
+			nWidth += CNativeW::GetKetaOfChar(pText,nTextLen,i);
+		}
+	}
+	return nWidth;
+}
+
 //! オフセット値をレイアウト単位に変換して取得。2007.10.17 kobake
-CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& pLayoutMgr) const
+CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const
 {
 	CLayoutInt nRet(0);
 	if(this->GetLogicOffset()){
@@ -46,7 +68,7 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& pLayoutMgr) const
 		int nLineLen = this->m_pCDocLine->GetLength();
 		for(int i=0;i<GetLogicOffset();i++){
 			if(pLine[i]==WCODE::TAB){
-				nRet+=pLayoutMgr.GetActualTabSpace(nRet);
+				nRet+=cLayoutMgr.GetActualTabSpace(nRet);
 			}
 			else{
 				nRet+=CNativeW::GetKetaOfChar(pLine,nLineLen,i);
@@ -55,5 +77,6 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& pLayoutMgr) const
 	}
 	return nRet;
 }
+
 
 /*[EOF]*/
