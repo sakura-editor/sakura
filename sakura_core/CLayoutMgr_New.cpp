@@ -858,7 +858,7 @@ bool CLayoutMgr::IsKinsokuHead( const wchar_t *pLine, CLogicInt length )
 {
 	if(length==1 && m_pszKinsokuHead_1.size()){
 		wchar_t wc=pLine[0];
-		return wcschr(&m_pszKinsokuHead_1[0],wc)!=NULL;
+		return m_pszKinsokuHead_1.exist(wc);
 	}
 	else{
 		return false;
@@ -877,7 +877,7 @@ bool CLayoutMgr::IsKinsokuTail( const wchar_t *pLine, CLogicInt length )
 {
 	if(length==1 && m_pszKinsokuTail_1.size()){
 		wchar_t wc=pLine[0];
-		return wcschr(&m_pszKinsokuTail_1[0],wc)!=NULL;
+		return m_pszKinsokuTail_1.exist(wc);
 	}
 	else{
 		return false;
@@ -920,7 +920,7 @@ bool CLayoutMgr::IsKinsokuKuto( const wchar_t *pLine, CLogicInt length )
 {
 	if(length==1 && m_pszKinsokuKuto_1.size()){
 		wchar_t wc=pLine[0];
-		return wcschr(&m_pszKinsokuKuto_1[0],wc)!=NULL;
+		return m_pszKinsokuKuto_1.exist(wc);
 	}
 	else{
 		return false;

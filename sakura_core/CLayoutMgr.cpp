@@ -135,17 +135,13 @@ void CLayoutMgr::SetLayoutInfo(
 			if(IsKutoTen(*p)) //句読点は別管理
 			{
 				// 2004.11.12 Moca 重複していたら登録しない
-				if(!_ExistKinsokuKuto(*p)){
-					m_pszKinsokuKuto_1.push_back(*p);
-				}
+				m_pszKinsokuKuto_1.push_back_unique(*p);
 			}
 			else
 			{
-				m_pszKinsokuHead_1.push_back(*p);
+				m_pszKinsokuHead_1.push_back_unique(*p);
 			}
 		}
-		m_pszKinsokuHead_1.push_back(0); //終端 \0
-		m_pszKinsokuKuto_1.push_back(0); //終端 \0
 
 		//行末禁則文字の1,2バイト文字を分けて管理する。
 		m_bKinsokuTail = refType.m_bKinsokuTail;
@@ -155,10 +151,9 @@ void CLayoutMgr::SetLayoutInfo(
 		{
 			for( const wchar_t* p = refType.m_szKinsokuTail; *p; p++ )
 			{
-				m_pszKinsokuTail_1.push_back(*p);
+				m_pszKinsokuTail_1.push_back_unique(*p);
 			}
 		}
-		m_pszKinsokuTail_1.push_back(0); //終端 \0
 
 		m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 

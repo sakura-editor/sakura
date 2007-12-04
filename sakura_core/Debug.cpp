@@ -27,6 +27,12 @@
 struct TestArrayA{ char    a[100]; };
 struct TestArrayW{ wchar_t a[100]; };
 struct TestArrayI{ int     a[100]; };
+void Test()
+{
+	TestArrayA a; a.a[0]=0;
+	TestArrayW w; w.a[0]=0;
+	TestArrayI i; i.a[0]=0;
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
