@@ -236,6 +236,7 @@ SAKURA_CORE_API enum enumOutlineType {
 	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
 	OUTLINE_UNKNOWN	= 99
 };
+typedef enumOutlineType EOutlineType; //2007.11.29 kobake
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
@@ -298,6 +299,7 @@ SAKURA_CORE_API enum enumSmartIndentType {
 	SMARTINDENT_NONE,
 	SMARTINDENT_CPP
 };
+typedef enumSmartIndentType ESmartIndentType; //2007.11.29 kobake
 
 
 

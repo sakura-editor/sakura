@@ -7140,6 +7140,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\util\other_util.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\util\other_util.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\util\shell.cpp"
 					>
 				</File>

@@ -39,12 +39,14 @@
 #include "util/module.h"
 using namespace std;
 
+//2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
+template <class TYPE>
 struct TYPE_NAME {
-	int		nMethod;
-	wchar_t*	pszName;
+	TYPE			nMethod;
+	wchar_t*		pszName;
 };
 
-TYPE_NAME OlmArr[] = {
+TYPE_NAME<EOutlineType> OlmArr[] = {
 //	{ OUTLINE_C,		L"C" },
 	{ OUTLINE_CPP,		L"C/C++" },
 	{ OUTLINE_PLSQL,	L"PL/SQL" },
@@ -61,13 +63,13 @@ TYPE_NAME OlmArr[] = {
 };
 
 
-TYPE_NAME SmartIndentArr[] = {
+TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	L"なし" },
 	{ SMARTINDENT_CPP,	L"C/C++" }
 };
 
 //	Nov. 20, 2000 genta
-TYPE_NAME ImeStateArr[] = {
+TYPE_NAME<int> ImeStateArr[] = {
 	{ 0, L"標準設定" },
 	{ 1, L"全角" },
 	{ 2, L"全角ひらがな" },
@@ -75,7 +77,7 @@ TYPE_NAME ImeStateArr[] = {
 	{ 4, L"無変換" }
 };
 
-TYPE_NAME ImeSwitchArr[] = {
+TYPE_NAME<int> ImeSwitchArr[] = {
 	{ 0, L"そのまま" },
 	{ 1, L"常にON" },
 	{ 2, L"常にOFF" },
@@ -86,7 +88,7 @@ TYPE_NAME ImeSwitchArr[] = {
 	@sa CLayoutMgr::SetLayoutInfo()
 	@date Oct. 1, 2002 genta 
 */
-TYPE_NAME IndentTypeArr[] = {
+TYPE_NAME<int> IndentTypeArr[] = {
 	{ 0, L"なし" },
 	{ 1, L"tx2x" },
 	{ 2, L"論理行先頭" },

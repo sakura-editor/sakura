@@ -107,6 +107,10 @@ namespace WCODE
 	{
 		return (wc>=L'0' && wc<=L'9');
 	}
+	inline bool IsInRange(wchar_t c, wchar_t front, wchar_t back)
+	{
+		return c>=front && c<=back;
+	}
 
 	//!”¼Šp•¶Žš(c’·’·•ûŒ`)‚©‚Ç‚¤‚©”»’è
 	bool isHankaku(wchar_t wc);
@@ -285,6 +289,7 @@ namespace TCODE
 		using namespace ACODE;
 	#endif
 }
+
 
 
 
