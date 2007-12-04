@@ -7092,6 +7092,10 @@
 				Name="util"
 				>
 				<File
+					RelativePath="..\sakura_core\util\container.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\util\design_template.h"
 					>
 				</File>

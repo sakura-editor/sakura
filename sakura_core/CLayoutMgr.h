@@ -28,6 +28,7 @@ class CLayoutMgr;
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "basis/SakuraBasis.h"
 #include <vector>
+#include "util/container.h"
 
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
@@ -217,8 +218,8 @@ public:
 	void Empty();
 
 private:
-	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.size() && wcschr(&m_pszKinsokuKuto_1[0],wc)!=NULL; }
-	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.size() && wcschr(&m_pszKinsokuHead_1[0],wc)!=NULL; }
+	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
+	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.exist(wc); }
 	bool IsKinsokuHead( const wchar_t *pLine, CLogicInt length );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 	bool IsKinsokuTail( const wchar_t *pLine, CLogicInt length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 	bool IsKutoTen( wchar_t wc );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
@@ -277,9 +278,9 @@ protected:
 	BOOL					m_bKinsokuTail;				// 行末禁則をする	//@@@ 2002.04.08 MIK
 	BOOL					m_bKinsokuRet;				// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 	BOOL					m_bKinsokuKuto;				// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	std::vector<wchar_t>	m_pszKinsokuHead_1;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
-	std::vector<wchar_t>	m_pszKinsokuTail_1;			// 行末禁則文字	//@@@ 2002.04.08 MIK
-	std::vector<wchar_t>	m_pszKinsokuKuto_1;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
+	vector_ex<wchar_t>		m_pszKinsokuHead_1;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<wchar_t>		m_pszKinsokuTail_1;			// 行末禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
 	CLayoutInt				m_nTabSpace;				// TAB文字スペース
 	BOOL					m_bDispComment;				// コメントの色分け		// 2005.11.21 Moca
 	BOOL					m_bDispSString;				// シングルクォーテーションの色分け		// 2005.11.21 Moca
