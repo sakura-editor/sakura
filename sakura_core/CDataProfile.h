@@ -82,6 +82,16 @@ protected:
 	{
 		*profile = _work_itow(value);
 	}
+
+	//intéÆì¸èoóÕé¿ëïÉ}ÉNÉç
+	#define AS_INT(TYPE) \
+		void profile_to_value(const wstring& profile, TYPE* value){ *value = (TYPE)_wtoi(profile.c_str()); } \
+		void value_to_profile(const TYPE& value, wstring* profile){ *profile = _work_itow(value);    }
+
+	//intéÆ
+	AS_INT(EOutlineType)
+	AS_INT(WORD)
+
 #ifdef USE_STRICT_INT
 	//CLayoutInt
 	void profile_to_value(const wstring& profile, CLayoutInt* value){ *value = (CLayoutInt)_wtoi(profile.c_str()); }
@@ -90,15 +100,6 @@ protected:
 	void profile_to_value(const wstring& profile, CLogicInt* value){ *value = (CLogicInt)_wtoi(profile.c_str()); }
 	void value_to_profile(const CLogicInt& value, wstring* profile){ *profile = _work_itow((Int)value);    }
 #endif
-	//WORD
-	void profile_to_value(const wstring& profile, WORD* value)
-	{
-		*value = _wtoi(profile.c_str());
-	}
-	void value_to_profile(const WORD& value, wstring* profile)
-	{
-		*profile = _work_itow(value);
-	}
 	//ACHAR
 	void profile_to_value(const wstring& profile, ACHAR* value)
 	{

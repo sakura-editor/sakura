@@ -4120,9 +4120,11 @@ void CViewCommander::Command_CODECNV_AUTO2SJIS( void )
 // トグル用のフラグに変更 20060201 aroka
 BOOL CViewCommander::Command_FUNCLIST(
 	int nAction,
-	int nOutlineType
+	int _nOutlineType
 )
 {
+	EOutlineType nOutlineType = (EOutlineType)_nOutlineType; //2007.11.29 kobake
+
 //	if( bCheckOnly ){
 //		return TRUE;
 //	}
@@ -8456,4 +8458,5 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	m_pCommanderView->Redraw();
 	return bResult;
 }
+
 

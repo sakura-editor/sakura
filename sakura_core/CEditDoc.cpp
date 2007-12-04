@@ -57,6 +57,7 @@
 #include "util/format.h"
 #include "util/module.h"
 #include "CEditApp.h"
+#include "util/other_util.h"
 
 #define IDT_ROLLMOUSE	1
 
@@ -2044,24 +2045,18 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 /*!	テキスト・トピックリスト作成
 	
 	@date 2002.04.01 YAZAKI CDlgFuncList::SetText()を使用するように改訂。
-	@date 2002.11.03 Moca 階層が最大値を超えるとバッファオーバーランするのを修正
-		最大値以上は追加せずに無視する
+	@date 2002.11.03 Moca	階層が最大値を超えるとバッファオーバーランするのを修正
+							最大値以上は追加せずに無視する
+	@date 2007.8頃   kobake 機械的にUNICODE化
+	@date 2007.11.29 kobake UNICODE対応できてなかったので修正
 */
 void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 {
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	int				i;
-	int				j;
-	int				nCharChars;
-	int				nCharChars2;
-	const wchar_t*	pszStarts;
-	int				nStartsLen;
-	wchar_t*		pszText;
+	using namespace WCODE;
 
-
-	pszStarts = m_pShareData->m_Common.m_sFormat.m_szMidashiKigou; 	/* 見出し記号 */
-	nStartsLen = wcslen( pszStarts );
+	//見出し記号
+	const wchar_t*	pszStarts = m_pShareData->m_Common.m_sFormat.m_szMidashiKigou;
+	int				nStartsLen = wcslen( pszStarts );
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
@@ -2071,11 +2066,15 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	wchar_t pszStack[nMaxStack][32];
 	wchar_t szTitle[32];			//	一時領域
 	CLogicInt				nLineCount;
-	for( nLineCount = CLogicInt(0); nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
-		if( NULL == pLine ){
-			break;
-		}
+	for( nLineCount = CLogicInt(0); nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount )
+	{
+		//行取得
+		CLogicInt		nLineLen;
+		const wchar_t*	pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
+		if( NULL == pLine )break;
+
+		//行頭の空白飛ばし
+		int i;
 		for( i = 0; i < nLineLen; ++i ){
 			if( WCODE::isBlank(pLine[i]) ){
 				continue;
@@ -2085,79 +2084,40 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		if( i >= nLineLen ){
 			continue;
 		}
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-		for( j = 0; j < nStartsLen; j+=nCharChars2 ){
-			// 2005-09-02 D.S.Koba GetSizeOfChar
-			nCharChars2 = CNativeW::GetSizeOfChar( pszStarts, nStartsLen, j );
-			if( nCharChars == nCharChars2 ){
-				if( 0 == auto_memcmp( &pLine[i], &pszStarts[j], nCharChars ) ){
-					wcsncpy( szTitle, &pszStarts[j], nCharChars);	//	szTitleに保持。
-					szTitle[nCharChars] = L'\0';
-					break;
-				}
-			}
+
+		//先頭文字が見出し記号のいずれかであれば、次へ進む
+		if(NULL==wcschr(pszStarts,pLine[0]))continue;
+
+		//見出し種類の判別 -> szTitle
+		if( pLine[i] == L'(' ){
+			if(0){}
+			else if ( IsInRange(pLine[i + 1], L'0', L'9') ) wcscpy( szTitle, L"(0)" ); //数字
+			else if ( IsInRange(pLine[i + 1], L'A', L'Z') ) wcscpy( szTitle, L"(A)" ); //英大文字
+			else if ( IsInRange(pLine[i + 1], L'a', L'z') ) wcscpy( szTitle, L"(a)" ); //英小文字
+			else continue; //※「(」の次が英数字で無い場合、見出しとみなさない
 		}
-		if( j >= nStartsLen ){
-			continue;
+		else if( IsInRange(pLine[i], L'０', L'９') ) wcscpy( szTitle, L"０" ); // 全角数字
+		else if( IsInRange(pLine[i], L'①', L'⑳') ) wcscpy( szTitle, L"①" ); // ①～⑳
+		else if( IsInRange(pLine[i], L'Ⅰ', L'Ⅹ') ) wcscpy( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ
+		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) wcscpy( szTitle, L"一" ); //漢数字
+		else{
+			szTitle[0]=pLine[i];
+			szTitle[1]=L'\0';
 		}
-		/* 見出し文字に(が含まれていることが前提になっている! */
-		if( nCharChars == 1 && pLine[i] == L'(' ){
-			if( pLine[i + 1] >= L'0' && pLine[i + 1] <= L'9' )  {
-				wcscpy( szTitle, L"(0)" );
-			}
-			else if ( pLine[i + 1] >= L'A' && pLine[i + 1] <= L'Z' ) {
-				wcscpy( szTitle, L"(A)" );
-			}
-			else if ( pLine[i + 1] >= L'a' && pLine[i + 1] <= L'z' ) {
-				wcscpy( szTitle, L"(a)" );
-			}
-			else {
-				continue;
-			}
-		}else
-		if( 2 == nCharChars ){
-			// 2003.06.28 Moca 1桁目から始まっていないと同一レベルと認識されずに
-			//	どんどん子ノードになってしまうのを，字下げによらず同一レベルと認識されるように
-			/* 全角数字 */
-			if( pLine[i] == 0x82 && ( pLine[i + 1] >= 0x4f && pLine[i + 1] <= 0x58 ) ) {
-				wcscpy( szTitle, L"０" );
-			}
-			/* ①～⑳ */
-			else if( pLine[i] == 0x87 && ( pLine[i + 1] >= 0x40 && pLine[i + 1] <= 0x53 ) ){
-				wcscpy( szTitle, L"①" );
-			}
-			/* Ⅰ～Ⅹ */
-			else if( pLine[i] == 0x87 && ( pLine[i + 1] >= 0x54 && pLine[i + 1] <= 0x5d ) ){
-				wcscpy( szTitle, L"Ⅰ" );
-			}
-			// 2003.06.28 Moca 漢数字も同一階層に
-			//	漢数字が異なる＝番号が異なると異なる見出し記号と認識されていたのを
-			//	皆同じ階層と識別されるように
-			else{
-				wchar_t szCheck[3];
-				szCheck[0] = pLine[i];
-				szCheck[1] = pLine[i + 1];
-				szCheck[2] = L'\0';
-				/* 一～十 */
-				if( NULL != wcsstr( L"〇一二三四五六七八九十百零壱弐参伍", szCheck ) ){
-					wcscpy( szTitle, L"一" );
-				}
-			}
-		}
+
 		/*	「見出し記号」に含まれる文字で始まるか、
 			(0、(1、...(9、(A、(B、...(Z、(a、(b、...(z
 			で始まる行は、アウトライン結果に表示する。
 		*/
-		pszText = new wchar_t[nLineLen + 1];
+
+		//行文字列から改行を取り除く pLine -> pszText
+		wchar_t*	pszText = new wchar_t[nLineLen + 1];
 		wmemcpy( pszText, &pLine[i], nLineLen );
 		pszText[nLineLen] = L'\0';
 		for( i = 0; i < (int)wcslen(pszText); ++i ){
-			if( pszText[i] == WCODE::CR ||
-				pszText[i] == WCODE::LF ){
-				pszText[i] = L'\0';
-			}
+			if( pszText[i] == CR || pszText[i] == LF )pszText[i] = L'\0';
 		}
+
 		/*
 		  カーソル位置変換
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -2169,10 +2129,10 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			CLogicPoint(0, nLineCount),
 			&ptPos
 		);
+
 		/* nDepthを計算 */
 		int k;
-		BOOL bAppend;
-		bAppend = TRUE;
+		bool bAppend = true;
 		for ( k = 0; k < nDepth; k++ ){
 			int nResult = wcscmp( pszStack[k], szTitle );
 			if ( nResult == 0 ){
@@ -2188,13 +2148,14 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			//	いままでに同じ見出しが存在しなかった。
 			//	ので、pszStackにコピーしてAppendData.
 			wcscpy(pszStack[nDepth], szTitle);
-		}else{
+		}
+		else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーラン
 			// nDepth = nMaxStack;
-			bAppend = FALSE;
+			bAppend = false;
 		}
 		
-		if( FALSE != bAppend ){
+		if( bAppend ){
 			pcFuncInfoArr->AppendData( nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1) , pszText, 0, nDepth );
 			nDepth++;
 		}
@@ -2208,8 +2169,9 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 /*! ルールファイルの1行を管理する構造体
 
 	@date 2002.04.01 YAZAKI
+	@date 2007.11.29 kobake 名前変更: oneRule→SOneRule
 */
-struct oneRule {
+struct SOneRule {
 	wchar_t szMatch[256];
 	int		nLength;
 	wchar_t szGroupName[256];
@@ -2220,7 +2182,7 @@ struct oneRule {
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.03 Moca 引数nMaxCountを追加。バッファ長チェックをするように変更
 */
-int CEditDoc::ReadRuleFile( const TCHAR* pszFilename, oneRule* pcOneRule, int nMaxCount )
+int CEditDoc::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount )
 {
 	long	i;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
@@ -2271,18 +2233,15 @@ int CEditDoc::ReadRuleFile( const TCHAR* pszFilename, oneRule* pcOneRule, int nM
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.03 Moca ネストの深さが最大値を超えるとバッファオーバーランするのを修正
 		最大値以上は追加せずに無視する
+	@date 2007.11.29 kobake SOneRule test[1024] でスタックが溢れていたのを修正
 */
 void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 {
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	int				i;
-	int				j;
 	wchar_t*		pszText;
 
 	/* ルールファイルの内容をバッファに読み込む */
-	oneRule test[1024];	//	1024個許可。
-	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test, 1024 );
+	auto_array_ptr<SOneRule> test = new SOneRule[1024];	// 1024個許可。 2007.11.29 kobake スタック使いすぎなので、ヒープに確保するように修正。
+	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test.get(), 1024 );
 	if ( nCount < 1 ){
 		return;
 	}
@@ -2290,23 +2249,23 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
 		（256文字まで同じだったら同じものとして扱います）
 	*/
-	const int nMaxStack = 32;	//	ネストの最深
-	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	wchar_t pszStack[nMaxStack][256];
-	wchar_t szTitle[256];			//	一時領域
-	CLogicInt		nLineCount;
-	for( nLineCount = CLogicInt(0); nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
+	const int	nMaxStack = 32;	//	ネストの最深
+	int			nDepth = 0;				//	いまのアイテムの深さを表す数値。
+	wchar_t		pszStack[nMaxStack][256];
+	wchar_t		szTitle[256];			//	一時領域
+	for( CLogicInt nLineCount = CLogicInt(0); nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount )
+	{
+		//行取得
+		CLogicInt		nLineLen;
+		const wchar_t*	pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		if( NULL == pLine ){
 			break;
 		}
+
+		//行頭の空白飛ばし
+		int		i;
 		for( i = 0; i < nLineLen; ++i ){
-			if( pLine[i] == ' ' ||
-				pLine[i] == '\t'){
-				continue;
-			}else
-			if( i + 1 < nLineLen && pLine[i] == 0x81 && pLine[i + 1] == 0x40 ){
-				++i;
+			if( pLine[i] == L' ' || pLine[i] == L'\t' || pLine[i] == L'　'){
 				continue;
 			}
 			break;
@@ -2314,6 +2273,9 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		if( i >= nLineLen ){
 			continue;
 		}
+
+		//先頭文字が見出し記号のいずれかであれば、次へ進む
+		int		j;
 		for( j = 0; j < nCount; j++ ){
 			if ( 0 == wcsncmp( &pLine[i], test[j].szMatch, test[j].nLength ) ){
 				wcscpy( szTitle, test[j].szGroupName );
@@ -2323,19 +2285,22 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		if( j >= nCount ){
 			continue;
 		}
+
 		/*	ルールにマッチした行は、アウトライン結果に表示する。
 		*/
+
+		//行文字列から改行を取り除く pLine -> pszText
 		pszText = new wchar_t[nLineLen + 1];
 		wmemcpy( pszText, &pLine[i], nLineLen );
 		pszText[nLineLen] = L'\0';
 		int nTextLen = wcslen( pszText );
 		for( i = 0; i < nTextLen; ++i ){
-			if( pszText[i] == WCODE::CR ||
-				pszText[i] == WCODE::LF ){
+			if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
 				pszText[i] = L'\0';
 				break;
 			}
 		}
+
 		/*
 		  カーソル位置変換
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -2347,6 +2312,7 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 			CLogicPoint(0, nLineCount),
 			&ptPos
 		);
+
 		/* nDepthを計算 */
 		int k;
 		BOOL bAppend;

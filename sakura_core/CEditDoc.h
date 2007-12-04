@@ -39,7 +39,7 @@ class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
 struct FileInfo; // 20050705 aroka
 class CFuncInfoArr;
-struct oneRule; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
+struct SOneRule; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 class CEditApp;
 
 typedef CEditWnd* P_CEditWnd;
@@ -215,7 +215,7 @@ public:
 	void			MakeTopicList_html(CFuncInfoArr*);		/* HTML アウトライン解析 */ // 2003.05.20 zenryaku
 	void			MakeTopicList_tex(CFuncInfoArr*);		/* TeX アウトライン解析 */ // 2003.07.20 naoh
 	void			MakeFuncList_RuleFile( CFuncInfoArr* );	/* ルールファイルを使ってリスト作成 2002.04.01 YAZAKI */
-	int				ReadRuleFile( const TCHAR* pszFilename, oneRule* pcOneRule, int nMaxCount );	/* ルールファイル読込 2002.04.01 YAZAKI */
+	int				ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount );	/* ルールファイル読込 2002.04.01 YAZAKI */
 
 // From Here 2001.12.03 hor
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */

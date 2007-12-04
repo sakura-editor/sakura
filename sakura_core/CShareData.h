@@ -194,7 +194,7 @@ struct Types {
 
 	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 
-	int					m_nDefaultOutline;				/*!< アウトライン解析方法 */
+	EOutlineType		m_nDefaultOutline;				/*!< アウトライン解析方法 */
 	SFilePath			m_szOutlineRuleFilename;		/*!< アウトライン解析ルールファイル */
 
 	int					m_nSmartIndent;					/*!< スマートインデント種別 */
