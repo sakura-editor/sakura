@@ -416,19 +416,12 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	case CDDS_ITEMPOSTPAINT:
 		{
 			//	描画
-			//	pnmh->dwItemSpec はコマンド番号なので，アイコン番号に変更する必要がある]
-			int nIndex = m_pOwner->GetMenuDrawer().FindIndexFromCommandId( pnmh->dwItemSpec );
-			int nIconId = m_pOwner->GetMenuDrawer().GetIconId( nIndex );
-
-			//	もしもアイコンがなかったら
-			if( nIconId < 0 ){
-				nIconId = 348; // なんとなく(i)アイコン
-			}
+			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
+			int nIconId = ::SendMessage( pnmh->hdr.hwndFrom, TB_GETBITMAP, (WPARAM)pnmh->dwItemSpec, 0 );
 
 			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - CEditApp::Instance()->GetIcons().cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
 			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
-			
 
 			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
 			CEditApp::Instance()->GetIcons().Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,

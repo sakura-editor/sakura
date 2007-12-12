@@ -175,7 +175,7 @@ BOOL CEditDoc::Create(
 
 
 	//	Oct. 2, 2001 genta
-	m_cFuncLookup.Init( m_hInstance, m_pcSMacroMgr, &m_pShareData->m_Common );
+	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_MacroTable, &m_pShareData->m_Common );
 
 
 	MY_TRACETIME( cRunningTimer, L"End: PropSheet" );

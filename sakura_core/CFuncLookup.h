@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, aroka
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -37,7 +38,7 @@
 #include <windows.h>
 #include "global.h"
 #include "Funccode.h"
-class CSMacroMgr;// 2002/2/10 aroka
+struct MacroRec;// 2007.11.02 ryoji
 struct CommonSetting;// 2002/2/10 aroka
 
 /*!
@@ -49,17 +50,18 @@ class SAKURA_CORE_API CFuncLookup {
 
 public:
 	//	Oct. 15, 2001 genta 引数追加
-	CFuncLookup( HINSTANCE hInst, CSMacroMgr* SMacroMgr, CommonSetting* pCom )
-		: m_pcSMacroMgr( SMacroMgr ), m_hInstance( hInst ), m_pCommon( pCom ) {}
-	CFuncLookup() : m_pcSMacroMgr( NULL ), m_hInstance( NULL ) {}
+	// 2007.11.02 ryoji 引数変更（CSMacroMgr->MacroRec）
+	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
+		: m_pMacroRec( pMacroRec ), m_hInstance( hInst ), m_pCommon( pCom ) {}
+	CFuncLookup() : m_pMacroRec( NULL ), m_hInstance( NULL ) {}
 
-	void Init( HINSTANCE hInst, CSMacroMgr* SMacroMgr, CommonSetting* pCom ){
-		m_pcSMacroMgr = SMacroMgr;
+	void Init( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom ){
+		m_pMacroRec = pMacroRec;
 		m_hInstance = hInst;
 		m_pCommon = pCom;
 	}
 
-	EFunctionCode Pos2FuncCode( int category, int position ) const;
+	EFunctionCode Pos2FuncCode( int category, int position, bool bGetUnavailable = true ) const;	// 2007.10.31 ryoji bGetUnavailableパラメータ追加
 	bool Pos2FuncName( int category, int position, WCHAR* ptr, int bufsize ) const;
 	bool Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const ;
 	const TCHAR* Category2Name( int category ) const;
@@ -76,7 +78,7 @@ public:
 
 private:
 	HINSTANCE m_hInstance;	//!< 文字列リソースを持つインスタンス
-	CSMacroMgr* m_pcSMacroMgr;	//!< マクロ管理クラス
+	MacroRec* m_pMacroRec;	//!< マクロ情報	// 2007.11.02 ryoji メンバ変更（CSMacroMgr->MacroRec）
 	
 	CommonSetting* m_pCommon;	//! 共通設定データ領域へのポインタ
 

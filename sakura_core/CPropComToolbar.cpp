@@ -10,6 +10,7 @@
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2005, aroka
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -574,6 +575,7 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 /* ツールバーボタンリストのアイテム描画
 	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
 	@date 2005.08.09 aroka CPropCommon.cpp から移動
+	@date 2007.11.02 ryoji ボタンとセパレータとで処理を分ける
 */
 void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
@@ -604,17 +606,24 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 //		tbb = m_pcMenuDrawer->m_tbMyButton[pDis->itemData];
 		tbb = m_pcMenuDrawer->getButton(pDis->itemData);
 
-		if( (0 != tbb.idCommand) && (F_MENU_NOT_USED_FIRST > tbb.idCommand) ){
-			/* ビットマップの表示 灰色を透明描画 */
-			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
-		}
-
+		// ボタンとセパレータとで処理を分ける	2007.11.02 ryoji
 		WCHAR	szLabel[256];
-		if( 0 == tbb.idCommand ){
-			auto_strcpy( szLabel, LTEXT("───────────") );	// nLength 未使用 2003/01/09 Moca
+		if( tbb.fsStyle & TBSTYLE_SEP ){
+			// テキストだけ表示する
+			if( tbb.idCommand == F_DISABLE ){
+				auto_strcpy( szLabel, LTEXT("───────────") );	// nLength 未使用 2003/01/09 Moca
+			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
+				if( ::LoadStringW_AnyBuild( m_hInstance, tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
+					auto_strcpy( szLabel, LTEXT("――ツールバー折返――") );
+				}
+			}else{
+				auto_strcpy( szLabel, LTEXT("────不　明────") );
+			}
 		//	From Here Oct. 15, 2001 genta
-		}else if( !m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) )){
-			auto_sprintf( szLabel, LTEXT("%ls"), LTEXT("-- UNKNOWN --") );
+		}else{
+			// アイコンとテキストを表示する
+			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
+			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
 		}
 		//	To Here Oct. 15, 2001 genta
 

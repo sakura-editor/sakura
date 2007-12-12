@@ -9,6 +9,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -160,6 +161,24 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PAGENUM_CUSTMENU;
+
+			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
+			nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+			nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+			nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
+			nIdx4 = ::SendMessageAny( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
+			if( nIdx1 != CB_ERR ){
+				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_MENU );
+				if( nIdx2 != LB_ERR ){
+					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+				}
+			}
+			if( nIdx3 != CB_ERR ){
+				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_FUNCKIND );
+				if( nIdx4 != LB_ERR ){
+					::SendMessageAny( hwndLIST_FUNC, LB_SETCURSEL, nIdx4, 0 );
+				}
+			}
 			return TRUE;
 		}
 		break;
@@ -312,19 +331,13 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 		else if( hwndCOMBO_FUNCKIND == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, LB_GETCURSEL, 0, 0 );
-				nIdx2 = ::SendMessageAny( hwndLIST_RES, CB_GETCURSEL, 0, 0 );
 				nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
-				nIdx4 = ::SendMessageAny( hwndLIST_FUNC, CB_GETCURSEL, 0, 0 );
-
 
 				/* 機能一覧に文字列をセット（リストボックス）*/
 //	Oct. 14, 2000 jepro note: ここのforブロックで実際にリストを書いているようである
 				// Oct. 3, 2001 genta
 				// 専用ルーチンに置き換え
 				m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
-				i = 0;
-
 				return TRUE;
 			}
 		}else{
