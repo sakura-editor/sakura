@@ -3919,9 +3919,7 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 {
 	// 機能文字列の取得 -> tmp -> wszBuf
 	WCHAR tmp[256];
-	if( !GetDocument().m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) )){
-		tmp[0] = LTEXT('\0');
-	}
+	GetDocument().m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) );
 	_wcstotcs(wszBuf, tmp, nBufCount);
 
 	// 機能に対応するキー名の取得(複数)

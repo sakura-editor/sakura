@@ -323,12 +323,15 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	@date 2003.07.21 genta 独自描画ルーチンを使う
 	@date 2003.08.30 genta 背景色を指定する引数を追加
 	@date 2003.09.06 genta Mocaさんの背景色透過処理に伴い，背景色引数削除
+	@date 2007.11.02 ryoji アイコン番号が負の場合は描画しない
 */
 bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 {
 	if( m_hIconBitmap == NULL )
 		return false;
-	
+	if( index < 0 )
+		return false;
+
 	if( fstyle == ILD_MASK ){
 		DitherBlt2( dc, x, y, cx(), cy(), m_hIconBitmap,
 		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());

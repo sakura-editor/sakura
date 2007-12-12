@@ -181,6 +181,8 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 //	To Here Oct. 14, 2000
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 
+		::SetTimer( hwndDlg, 1, 300, NULL );	// 2007.11.02 ryoji
+
 		return TRUE;
 
 	case WM_NOTIFY:
@@ -200,6 +202,20 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PAGENUM_KEYBOARD;
+
+			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
+			nIndex = ::SendMessageAny( hwndKeyList, LB_GETCURSEL, 0, 0 );
+			nIndex2 = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+			nIndex3 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
+			if( nIndex != LB_ERR ){
+				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+			}
+			if( nIndex2 != CB_ERR ){
+				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
+				if( nIndex3 != LB_ERR ){
+					::SendMessageAny( hwndFuncList, LB_SETCURSEL, nIndex3, 0 );
+				}
+			}
 			return TRUE;
 		}
 		break;
@@ -225,6 +241,9 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				nIndex = ::SendMessageAny( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
 				nIndex3 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
+				if( nIndex == LB_ERR || nIndex2 == CB_ERR || nIndex3 == LB_ERR ){
+					return TRUE;
+				}
 				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
@@ -242,8 +261,9 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				return TRUE;
 			case IDC_BUTTON_RELEASE:	/* 解除 */
 				nIndex = ::SendMessageAny( hwndKeyList, LB_GETCURSEL, 0, 0 );
-				nIndex2 = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-				nIndex3 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
+				if( nIndex == LB_ERR ){
+					return TRUE;
+				}
 				nFuncCode = F_DEFAULT;
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
@@ -289,12 +309,13 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				}
 				nFuncCode = m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
 				// Oct. 2, 2001 genta
-				if( m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 )){
-//				if( 0 < ::LoadString( m_hInstance, nFuncCode, pszLabel, 255 )  ){	//}
-					Wnd_SetText( hwndEDIT_KEYSFUNC, pszLabel );
+				// 2007.11.02 ryoji F_DISABLEなら未割付
+				if( nFuncCode == F_DISABLE ){
+					auto_strcpy( pszLabel, LTEXT("未割付") );
 				}else{
-					Wnd_SetText( hwndEDIT_KEYSFUNC, _T("--不明--") );
+					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
 				}
+				Wnd_SetText( hwndEDIT_KEYSFUNC, pszLabel );
 				return TRUE;
 			}
 		}else
@@ -392,6 +413,19 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 //@@@ 2001.11.08 add end MIK
 
 		}
+		break;
+
+	case WM_TIMER:
+		// ボタンの有効／無効を切り替える	// 2007.11.02 ryoji
+		nIndex = ::SendMessageAny( hwndKeyList, LB_GETCURSEL, 0, 0 );
+		nIndex2 = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		nIndex3 = ::SendMessageAny( hwndFuncList, LB_GETCURSEL, 0, 0 );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ASSIGN ), !( LB_ERR == nIndex || nIndex2 == CB_ERR || nIndex3 == LB_ERR ) );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RELEASE ), !( LB_ERR == nIndex ) );
+		break;
+
+	case WM_DESTROY:
+		::KillTimer( hwndDlg, 1 );	// 2007.11.02 ryoji
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

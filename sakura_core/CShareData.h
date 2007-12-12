@@ -244,7 +244,8 @@ struct MacroRec {
 	TCHAR	m_szFile[_MAX_PATH+1];	//<! ファイル名(ディレクトリを含まない)
 	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 	
-	bool IsEnabled() const { return m_szFile[0] != '\0'; }
+	bool IsEnabled() const { return m_szFile[0] != _T('\0'); }
+	const TCHAR* GetTitle() const { return m_szName[0] == _T('\0') ? m_szFile: m_szName; }	// 2007.11.02 ryoji 追加
 };
 //	To Here Sep. 14, 2001 genta
 

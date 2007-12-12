@@ -9,6 +9,7 @@ enum EFunctionCode{
 	F_0 = 0,
 	F_DISABLE = 0,
 	F_SEPARATOR = 1,
+	F_MENU_FIRST = 30000,
 	F_FILENEW = 30101,
 	F_FILEOPEN = 30102,
 	F_FILESAVE = 30103,

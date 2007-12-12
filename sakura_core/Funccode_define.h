@@ -8,6 +8,7 @@
 #define F_0 0
 #define F_DISABLE 0
 #define F_SEPARATOR 1
+#define F_MENU_FIRST 30000
 #define F_FILENEW 30101
 #define F_FILEOPEN 30102
 #define F_FILESAVE 30103

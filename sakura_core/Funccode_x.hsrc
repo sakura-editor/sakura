@@ -11,6 +11,8 @@ F_0				= 0,
 F_DISABLE		= 0,	//未使用
 F_SEPARATOR		= 1,	//セパレータ
 
+F_MENU_FIRST				= 30000
+
 // ファイル操作系
 //											[意味]								[引数]
 F_FILENEW					= 30101,	//新規作成							なし
