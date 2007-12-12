@@ -216,7 +216,7 @@ CControlTray::~CControlTray()
 /* 作成 */
 HWND CControlTray::Create( HINSTANCE hInstance )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CControlTray::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, "CControlTray::Create" );
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;

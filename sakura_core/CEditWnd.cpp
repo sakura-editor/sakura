@@ -399,7 +399,7 @@ HWND CEditWnd::Create(
 	int				nGroup			//!< [in] グループID
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
 
 	//メンバ変数の初期化
 	m_hInstance = hInstance;
@@ -448,7 +448,7 @@ HWND CEditWnd::Create(
 	hWndArr[3] = m_pcEditViewArr[3]->GetHwnd();
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 
-	MY_TRACETIME( cRunningTimer, L"View created" );
+	MY_TRACETIME( cRunningTimer, "View created" );
 
 	// -- -- -- -- ダイアログ作成 -- -- -- -- //
 

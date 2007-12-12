@@ -90,7 +90,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_bInsMode( true )	// Oct. 2, 2005 genta
 , m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
+	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
 //	m_pcDlgTest = new CDlgTest;
 
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
@@ -169,7 +169,7 @@ BOOL CEditDoc::Create(
 	CImageListMgr* pcIcons
  )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
 
 	m_hInstance = hInstance;
 
@@ -178,7 +178,7 @@ BOOL CEditDoc::Create(
 	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_MacroTable, &m_pShareData->m_Common );
 
 
-	MY_TRACETIME( cRunningTimer, L"End: PropSheet" );
+	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 
 	return TRUE;
 }
