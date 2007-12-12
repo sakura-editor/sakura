@@ -1367,36 +1367,39 @@ BEGIN
     GROUPBOX        "タイトルバー",IDC_STATIC,3,157,264,47
 END
 
-IDD_PROP_EDIT DIALOGEX 0, 0, 271, 180
+IDD_PROP_EDIT DIALOGEX 0, 0, 271, 211
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "折り返し行に改行を付けてコピー(&C)",
                     IDC_CHECK_ADDCRLFWHENCOPY,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,18,124,
-                    10,0,HIDC_CHECK_ADDCRLFWHENCOPY
+                    WS_GROUP | WS_TABSTOP,8,18,124,10,0,
+                    HIDC_CHECK_ADDCRLFWHENCOPY
     CONTROL         "コピーしたら選択解除(&R)",
                     IDC_CHECK_COPYnDISABLESELECTEDAREA,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,33,88,10,0,
                     HIDC_CHECK_COPYnDISABLESELECTEDAREA
+    CONTROL         "選択なしでコピーを可能にする(&E)",
+                    IDC_CHECK_bEnableNoSelectCopy,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,48,126,10
     CONTROL         "ラインモード貼り付けを可能にする(&L)",
                     IDC_CHECK_bEnableLineModePaste,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,48,126,10
-    GROUPBOX        "コピー",IDC_STATIC,3,3,134,64,WS_GROUP
+                    WS_TABSTOP,8,63,126,10
+    GROUPBOX        "コピー",IDC_STATIC,3,3,134,78,WS_GROUP
     CONTROL         "ドラッグ && ドロップ編集する(&D)",IDC_CHECK_DRAGDROP,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,87,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,102,
                     107,10,0,HIDC_CHECK_DRAGDROP
     CONTROL         "ドロップ元にする(&S)",IDC_CHECK_DROPSOURCE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,102,72,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,117,72,10,0,
                     HIDC_CHECK_DROPSOURCE
-    GROUPBOX        "ドラッグ && ドロップ",IDC_STATIC,3,72,134,50,WS_GROUP
+    GROUPBOX        "ドラッグ && ドロップ",IDC_STATIC,3,87,134,50,WS_GROUP
     CONTROL         "改行コードは上書きしない(&N)",
                     IDC_CHECK_bNotOverWriteCRLF,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,142,104,10,0,
+                    WS_GROUP | WS_TABSTOP,8,157,104,10,0,
                     HIDC_CHECK_bNotOverWriteCRLF
-    GROUPBOX        "上書きモード",IDC_STATIC,3,127,134,35,WS_GROUP
+    GROUPBOX        "上書きモード",IDC_STATIC,3,142,134,35,WS_GROUP
     CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,147,18,91,10,0,
                     HIDC_CHECK_bSelectClickedURL
@@ -2369,7 +2372,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 264
         TOPMARGIN, 7
-        BOTTOMMARGIN, 173
+        BOTTOMMARGIN, 204
     END
 
     IDD_PROP_TAB, DIALOG

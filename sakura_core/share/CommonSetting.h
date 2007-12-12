@@ -110,6 +110,7 @@ struct CommonSetting_Edit
 {
 	//コピー
 	bool	m_bAddCRLFWhenCopy;			// 折り返し行に改行を付けてコピー
+	BOOL	m_bEnableNoSelectCopy;		// 選択なしでコピーを可能にする 2007.11.18 ryoji
 	BOOL	m_bCopyAndDisablSelection;	// コピーしたら選択解除
 	bool	m_bEnableLineModePaste;		// ラインモード貼り付けを可能にする  2007.10.08 ryoji
 

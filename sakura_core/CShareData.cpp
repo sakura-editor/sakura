@@ -241,9 +241,12 @@ struct ARRHEAD {
 
 	Version 82:
 	ラインモード貼り付けを可能にする 2007.10.08 ryoji
+
+	Version 83:
+	選択なしでコピーを可能にする 2007.11.18 ryoji
 */
 
-const unsigned int uShareDataVersion = 82;
+const unsigned int uShareDataVersion = 83;
 
 /*
 ||	Singleton風
@@ -595,6 +598,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
 		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
+		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;		/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
