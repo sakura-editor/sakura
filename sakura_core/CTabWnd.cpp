@@ -496,7 +496,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 		EditNode* pNextEditNode = CShareData::getInstance()->GetEditNodeAt( pSrcEditNode->m_nGroup, 1 );
 		if( pNextEditNode != NULL )
 		{
-			DWORD dwResult;
+			DWORD_PTR dwResult;
 			::SendMessageTimeout( pNextEditNode->m_hWnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
 									SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
 		}
@@ -1786,7 +1786,7 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 			m_pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
 			// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
-			DWORD dwResult;
+			DWORD_PTR dwResult;
 			::SendMessageTimeout( hwnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
 				SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
 		}

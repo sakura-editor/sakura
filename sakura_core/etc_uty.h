@@ -27,9 +27,24 @@
 #include "global.h"
 #include <shlobj.h>
 
+// 2007.12.21 ryoji
+// Windows SDK for Vista 以降には NewApis.h は含まれないので使用をあきらめる
+// multimon.h もいずれは削除されてしまうかもしれないので使用しない
+// Win95/NT4.0には存在しない API を使うようになるのでこれら古い OS への対応は不可です
+//
+// Note.
+// 新しい Windows SDK を使用する場合、NewApis.h, multimon.h を除外するので
+// WINVER に 0x0400 のような古い OS 対応の値を指定するとコンパイルエラーになります
+// 明示指定がない場合のデフォルトは 0x0600 以上なので特に指定する必要はありません
+// ちなみに通常の Windows.h 利用では昔から次のようにちょっと変なところがあります
+// ・GetLongPathName() API は Win95(0x0400) 非対応なのに 0x0400 にしてもエラーになりません
+// ・マルチモニタ関連 API は Win98(0x0410) 対応なのに 0x0500 以上にしないとエラーになります
+
+#ifndef _INC_SDKDDKVER	// 新しい Windows SDK では windows.h が sdkddkver.h を include する
 #define WANT_GETLONGPATHNAME_WRAPPER
 #include <NewApis.h>
 #include <multimon.h>
+#endif
 
 #ifndef GA_PARENT
 #define GA_PARENT		1
@@ -43,7 +58,7 @@ class CMemory;// 2002/2/3 aroka ヘッダ軽量化
 class CEOL;// 2002/2/3 aroka ヘッダ軽量化
 class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 
-BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
+BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 //@@@ 2002.2.9 YAZAKI CShareDataに移動
 //SAKURA_CORE_API const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat );/* 日付をフォーマット */

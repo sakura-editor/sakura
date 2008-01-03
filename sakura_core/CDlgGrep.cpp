@@ -141,8 +141,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2007.02.09 bosagami
 	HWND hFolder = ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER );
 	DragAcceptFiles(hFolder, true);
-	g_pOnFolderProc = (WNDPROC)GetWindowLong(hFolder, GWL_WNDPROC);
-	SetWindowLong(hFolder, GWL_WNDPROC, (DWORD)OnFolderProc);
+	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
+	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
 
 
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */

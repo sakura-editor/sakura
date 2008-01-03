@@ -461,7 +461,7 @@ UINT_PTR CALLBACK OFNHookProc(
 					::lstrcpyn(szText, pcDlgOpenFile->m_szPath, _MAX_PATH);
 					::lstrcat(szText, _T(" は既に存在します。\r\n上書きしますか？"));
 					if( IDYES != ::MessageBox( hwndOpenDlg, szText, _T("名前を付けて保存"), MB_YESNO | MB_ICONEXCLAMATION) ){
-						::SetWindowLong( hdlg, DWL_MSGRESULT, TRUE );
+						::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
 						return TRUE;
 					}
 				}

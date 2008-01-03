@@ -893,7 +893,8 @@ void CEditWnd::CreateToolBar( void )
 		DWORD dwRows = ::SendMessage( m_hwndToolBar, TB_GETROWS, 0, 0 );
 
 		// バンド情報を設定する
-		rbBand.cbSize = sizeof(REBARBANDINFO);
+		// 以前のプラットフォームに _WIN32_WINNT >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21 ryoji
+		rbBand.cbSize = CCSIZEOF_STRUCT( REBARBANDINFO, wID );
 		rbBand.fMask  = RBBIM_STYLE | RBBIM_CHILD | RBBIM_CHILDSIZE | RBBIM_SIZE;
 		rbBand.fStyle = RBBS_CHILDEDGE;
 		rbBand.hwndChild  = m_hwndToolBar;	// ツールバー
