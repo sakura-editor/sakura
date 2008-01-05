@@ -137,8 +137,9 @@ protected:
 	{
 		// メニュー用フォント作成
 		NONCLIENTMETRICS	ncm;
-		ncm.cbSize = sizeof( ncm );
-		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof(ncm), (PVOID)&ncm, 0 );
+		// 以前のプラットフォームに WINVER >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21 ryoji
+		ncm.cbSize = CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont );
+		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, ncm.cbSize, (PVOID)&ncm, 0 );
 		return ::CreateFontIndirect( &ncm.lfMenuFont );
 	}
 
