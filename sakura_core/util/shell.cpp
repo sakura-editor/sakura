@@ -8,8 +8,7 @@
 #include "COsVersionInfo.h"
 #include "CShareData.h"
 #include "CHtmlHelp.h"
-#define WANT_GETLONGPATHNAME_WRAPPER
-#include <NewApis.h>
+#include <Shlobj.h>
 #include <shellapi.h>
 
 int CALLBACK MYBrowseCallbackProc(

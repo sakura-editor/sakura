@@ -126,7 +126,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HWND hFolder = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
 	DragAcceptFiles(hFolder, true);
 	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
-	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (DWORD)OnFolderProc);
+	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
 
 
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */
