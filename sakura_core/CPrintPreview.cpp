@@ -1422,7 +1422,9 @@ void CPrintPreview::InitPreviewScrollBar( void )
 /*! 印刷／プレビュー 行描画
 	@param[in] nIndent 行頭折り返しインデント桁数
 
-	@date 2006.08.14 Moca 折り返しインデントが印刷時に反映されるように
+	@date 2006.08.14 Moca   折り返しインデントが印刷時に反映されるように
+	@date 2007.08    kobake 機械的にUNICODE化
+	@date 2007.12.12 kobake 全角フォントが反映されていない問題を修正
 */
 void CPrintPreview::Print_DrawLine(
 	HDC				hdc,
@@ -1464,21 +1466,39 @@ void CPrintPreview::Print_DrawLine(
 		nDx
 	);
 
+	//タブ幅取得
 	CLayoutInt nTabSpace = m_pParentWnd->GetDocument().m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
 
 	int nBgnLogic = 0;		// TABを展開する前のバイト数で、pLineの何バイト目まで描画したか？
 	int iLogic;				// pLineの何文字目をスキャン？
 	CLayoutInt nLayoutX = nIndent;	// TABを展開した後のバイト数で、テキストの何バイト目まで描画したか？
 
-	for( iLogic = 0; iLogic < nLineLen; ++iLogic ){
-		// タブ文字が出現する毎に描画
-		if( WCODE::TAB == pLine[iLogic] ){
+	//文字種判定フラグ
+	int nKind     = 0; //0:半角 1:全角 2:タブ
+	int nKindLast = 2; //直前のnKind状態
+
+	for( iLogic = 0; iLogic < nLineLen; ++iLogic, nKindLast = nKind ){
+		//文字の種類
+		if(pLine[iLogic]==WCODE::TAB){
+			nKind = 2;
+		}
+		else if(WCODE::isHankaku(pLine[iLogic])){
+			nKind = 0;
+		}
+		else{
+			nKind = 1;
+		}
+
+		// タブ文字出現 or 文字種の境界
+		if( nKind == 2 || (nKindLast!=2 && nKind!=nKindLast)){
+			//iLogicの直前までを描画
 			if( 0 < iLogic - nBgnLogic ){
 				// タブ文字の前までを描画。
+				::SelectObject(hdc,nKindLast==0?hFontHan:hFontZen);
 				::ExtTextOutW_AnyBuild(
 					hdc,
 					ptDraw.x + (Int)nLayoutX * nDx,
-					ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ),
+					ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKindLast==0?nAscentHan:nAscentZen) ),
 					0,
 					NULL,
 					&pLine[nBgnLogic],
@@ -1486,27 +1506,32 @@ void CPrintPreview::Print_DrawLine(
 					&pDxArray[nBgnLogic]
 				);
 
-				// 描画したテキスト分の桁数を埋める。
+				//桁進め
 				for(int i=nBgnLogic;i<iLogic;i++){
 					nLayoutX += CLayoutInt(pDxArray[i]/nDx);
 				}
-				//nLayoutX += ( iLogic - nBgnLogic );
+
+				//ロジック進め
+				nBgnLogic = iLogic;
 			}
 
-			// タブ分の桁数を埋める。
-			nLayoutX += ( nTabSpace - nLayoutX % nTabSpace );
-
-			//文字位置進める
-			nBgnLogic = iLogic + 1;	//	スキャン中の次のバイト
+			//タブ進め
+			if(pLine[iLogic]==WCODE::TAB){
+				//桁進め
+				nLayoutX += ( nTabSpace - nLayoutX % nTabSpace );
+				//ロジック進め
+				nBgnLogic = iLogic + 1;
+			}
 		}
 	}
 	
+	//残りを描画
 	if( 0 < iLogic - nBgnLogic ){
-		/* 1バイト文字描画。フォントは標準で1バイト文字用。	*/
+		::SelectObject(hdc,nKindLast==0?hFontHan:hFontZen);
 		::ExtTextOutW_AnyBuild(
 			hdc,
 			ptDraw.x + (Int)nLayoutX * nDx,
-			ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ),
+			ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKindLast==0?nAscentHan:nAscentZen) ),
 			0,
 			NULL,
 			&pLine[nBgnLogic],
@@ -1514,7 +1539,9 @@ void CPrintPreview::Print_DrawLine(
 			&pDxArray[nBgnLogic]
 		);
 	}
-	return;
+
+	//フォントを元 (半角) に戻す
+	::SelectObject( hdc, hFontHan );
 }
 
 /*	印刷プレビューフォント（半角）を設定する
