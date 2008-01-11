@@ -1,7 +1,20 @@
 #pragma once
 
 #include "CDllHandler.h"
-#include "bregexp.h"
+
+typedef struct bregexp {
+	const WCHAR *outp;		/* result string start ptr  */
+	const WCHAR *outendp;	/* result string end ptr    */
+	const int   splitctr;	/* split result counter     */
+	const WCHAR **splitp;	/* split result pointer ptr     */
+	int rsv1;					/* reserved for external use    */
+	WCHAR *parap;				/* parameter start ptr ie. "s/xxxxx/yy/gi"  */
+	WCHAR *paraendp;			/* parameter end ptr     */
+	WCHAR *transtblp;			/* translate table ptr   */
+	WCHAR **startp;				/* match string start ptr   */
+	WCHAR **endp;				/* match string end ptr     */
+	int nparens;				/* number of parentheses */
+} BREGEXP_W;
 
 //!BREGONIG.DLL‚ğƒ‰ƒbƒv‚µ‚½‚à‚ÌB
 //2007.09.13 kobake ì¬

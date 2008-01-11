@@ -963,9 +963,9 @@ void CShareData::ShareData_IO_Print( CDataProfile& cProfile )
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
-			_tcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
-			_tcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
-			_tcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
+			auto_strcpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
+			auto_strcpy( printsetting.m_szFooterForm[0], _EDITL("") );
+			auto_strcpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
 		
 		//Л╓Се	//@@@ 2002.04.09 MIK

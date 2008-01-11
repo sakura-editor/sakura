@@ -29,7 +29,7 @@
 */
 
 #include "stdafx.h"
-#include "CESI.h"
+#include "charset/CESI.h"
 #include "charcode.h"
 
 /*!

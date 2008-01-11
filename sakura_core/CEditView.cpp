@@ -39,7 +39,7 @@
 #include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
 #include "CMarkMgr.h"///
 #include "COsVersionInfo.h"
-#include "CFileLoad.h" // 2002/08/30 Moca
+#include "io/CFileLoad.h" // 2002/08/30 Moca
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "CClipboard.h"
 #include "CTypeSupport.h"
@@ -3441,7 +3441,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* ƒL[ */
 			if( L'\0' == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
-				_tcscpy( szLabel2, szLabel );
+				auto_strcpy( szLabel2, szLabel );
 			}else{
 				auto_sprintf( szLabel2, LTEXT("%ls (&%lc)"),
 					szLabel,

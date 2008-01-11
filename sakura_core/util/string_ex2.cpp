@@ -3,32 +3,6 @@
 #include "charcode.h"
 #include "CEOL.h"
 
-/*! 文字数制限機能付きstrncpy
-
-	コピー先のバッファサイズから溢れないようにstrncpyする。
-	バッファが不足する場合には2バイト文字の切断もあり得る。
-	末尾の\0は付与されないが、コピーはコピー先バッファサイズ-1までにしておく。
-
-	@param dst [in] コピー先領域へのポインタ
-	@param dst_count [in] コピー先領域のサイズ
-	@param src [in] コピー元
-	@param src_count [in] コピーする文字列の末尾
-
-	@retval 実際にコピーされたコピー先領域の1つ後を指すポインタ
-
-	@author genta
-	@date 2003.04.03 genta
-*/
-char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
-{
-	if( src_count >= dst_count ){
-		src_count = dst_count - 1;
-	}
-	auto_memcpy( dst, src, src_count );
-	return dst + src_count;
-}
-
-
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count)
 {
 	if( src_count >= dst_count ){

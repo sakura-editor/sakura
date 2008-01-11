@@ -32,7 +32,6 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
-#include "my_icmp.h"	//@@@ 2002.01.13 add
 #include "Clayout.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
 #include "CTypeSupport.h"

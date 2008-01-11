@@ -37,7 +37,6 @@
 #include "CKeyWordSetMgr.h"
 #include <stdlib.h>
 #include <malloc.h>
-#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 #include "charcode.h"
 
 //! 1ブロック当たりのキーワード数

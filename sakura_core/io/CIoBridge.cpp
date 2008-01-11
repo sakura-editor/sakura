@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CIoBridge.h"
+#include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 
@@ -34,4 +34,5 @@ EConvertResult CIoBridge::ImplToFile(
 	//Œ‹‰Ê
 	return ret;
 }
+
 

@@ -660,62 +660,10 @@
 		<Filter
 			Name="C Source Files"
 			>
-			<File
-				RelativePath="..\sakura_core\MY_SP.C"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\MY_SP.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Cpp Source Files"
 			>
-			<File
-				RelativePath="..\sakura_core\bregexp.h"
-				>
-			</File>
 			<File
 				RelativePath="..\sakura_core\CAutoSave.cpp"
 				>
@@ -3089,50 +3037,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CESI.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CESI.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CFileExt.cpp"
 				>
 				<FileConfiguration
@@ -3174,102 +3078,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CFileExt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFileLoad.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFileLoad.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFilePath.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFilePath.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFileWrite.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFileWrite.h"
 				>
 			</File>
 			<File
@@ -3630,14 +3438,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CImageListMgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CIoBridge.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CIoBridge.h"
 				>
 			</File>
 			<File
@@ -6649,54 +6449,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\my_icmp.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\my_icmp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\my_tchar.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\mymessage.h"
 				>
 			</File>
@@ -6706,10 +6458,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\sakura_rc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\StaticType.h"
 				>
 			</File>
 			<File
@@ -6797,6 +6545,14 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\charset\CCodeMediator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CESI.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CESI.h"
 					>
 				</File>
 				<File
@@ -7028,6 +6784,30 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\io\CFileLoad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CFileLoad.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CFileWrite.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CFileWrite.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CIoBridge.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CIoBridge.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\io\CStream.cpp"
 					>
 				</File>
@@ -7153,6 +6933,10 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\util\shell.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\util\StaticType.h"
 					>
 				</File>
 				<File

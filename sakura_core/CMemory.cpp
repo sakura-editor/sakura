@@ -43,7 +43,6 @@
 #include "CMemory.h"
 #include "CEol.h"// 2002/2/3 aroka
 #include "charcode.h"
-#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 #include <vector>
 #include "charset/CShiftJis.h"
 #include <mbstring.h>

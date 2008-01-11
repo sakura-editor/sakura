@@ -13,7 +13,6 @@
 */
 #include "stdafx.h"
 #include "CLineComment.h"
-#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 
 CLineComment::CLineComment()
 {

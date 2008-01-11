@@ -33,7 +33,6 @@
 #include "Clayout.h" /// 2002/2/3 aroka
 #include "CDocLine.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka
-#include "my_icmp.h"	//@@@ 2002.01.13 add
 #include "CTextMetrics.h"
 #include "CTypeSupport.h"
 #include "parse/CWordParse.h"

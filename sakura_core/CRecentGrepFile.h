@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "StaticType.h"
+#include "util/StaticType.h"
 
 typedef StaticString<TCHAR, _MAX_PATH> CGrepFileString;
 

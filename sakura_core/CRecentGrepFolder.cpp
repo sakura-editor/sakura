@@ -3,7 +3,6 @@
 #include "CShareData.h"
 #include "CRecentGrepFolder.h"
 #include <string.h>
-#include "my_icmp.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

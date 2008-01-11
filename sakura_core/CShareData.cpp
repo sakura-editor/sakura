@@ -26,9 +26,7 @@
 #include "debug.h"
 #include "global.h"
 #include "CRunningTimer.h"
-#include "my_icmp.h" // 2002/11/30 Moca 追加
-#include "my_tchar.h" // 2003/01/06 Moca
-#include "charcode.h"  // 2006/06/28 rastiv
+#include "charcode.h"
 #include <tchar.h>
 #include "util/module.h"
 #include "util/string_ex2.h"
@@ -2169,13 +2167,13 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 			LPCTSTR  pStr;
 			ps++;
 			// %SAKURA%
-			if( 0 == my_tcsnicmp( _T("SAKURA%"), ps, 7 ) ){
+			if( 0 == auto_strnicmp( _T("SAKURA%"), ps, 7 ) ){
 				// exeのあるフォルダ
 				GetExedir( szPath );
 				nMetaLen = 6;
 			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
-			else if( 0 == my_tcsnicmp( _T("SAKURADATA%"), ps, 11 ) ){
+			else if( 0 == auto_strnicmp( _T("SAKURADATA%"), ps, 11 ) ){
 				// iniのあるフォルダ
 				GetInidir( szPath );
 				nMetaLen = 10;
@@ -2184,7 +2182,7 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 			else if( NULL != (pStr = _tcschr( ps, _T('%') ) )){
 				nMetaLen = pStr - ps;
 				if( nMetaLen < _MAX_PATH ){
-					_tmemcpy( szMeta, ps, nMetaLen );
+					auto_memcpy( szMeta, ps, nMetaLen );
 					szMeta[nMetaLen] = _T('\0');
 				}
 				else{
@@ -2197,7 +2195,7 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 				for( pAlias = &AliasList[0]; nMetaLen < pAlias->nLenth; pAlias++ )
 					; // 読み飛ばす
 				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
-					if( 0 == my_tcsicmp( pAlias->szAlias, szMeta ) ){
+					if( 0 == auto_stricmp( pAlias->szAlias, szMeta ) ){
 						_tcscpy( szMeta, pAlias->szOrig );
 						break;
 					}
@@ -2228,7 +2226,7 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 					// 未定義のメタ文字列は 入力された%...%を，そのまま文字として処理する
 					else if(  pd + ( nMetaLen + 2 ) < pd_end ){
 						*pd = _T('%');
-						_tmemcpy( &pd[1], ps, nMetaLen );
+						auto_memcpy( &pd[1], ps, nMetaLen );
 						pd[nMetaLen + 1] = _T('%');
 						pd += nMetaLen + 2;
 						ps += nMetaLen;
@@ -2271,7 +2269,7 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 			}
 
 			if( pd + nPathLen < pd_end && 0 != nPathLen ){
-				_tmemcpy( pd, pStr2, nPathLen );
+				auto_memcpy( pd, pStr2, nPathLen );
 				pd += nPathLen;
 				ps += nMetaLen;
 			}else{

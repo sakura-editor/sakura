@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StaticType.h"
+#include "util/StaticType.h"
 #include "CProfile.h"
 
 //文字列バッファの型

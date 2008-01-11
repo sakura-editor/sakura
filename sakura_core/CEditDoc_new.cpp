@@ -25,7 +25,6 @@
 #include "CDocLine.h"// 2002/2/10 aroka
 #include "CEditWnd.h"
 #include "Debug.h"
-#include "my_icmp.h" // Nov. 29, 2002 genta/moca
 #include "mymessage.h"	//	Oct. 9, 2004 genta
 #include "CControlTray.h"	//	Oct. 9, 2004 genta
 #include "util/file.h"

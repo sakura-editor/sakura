@@ -45,8 +45,7 @@
 //#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "CRecent.h"
 #include "debug.h"
-#include "my_icmp.h"
-#include "charcode.h"  // 2006.06.28 rastiv
+#include "charcode.h"
 #include "util/shell.h"
 #include "util/file.h"
 

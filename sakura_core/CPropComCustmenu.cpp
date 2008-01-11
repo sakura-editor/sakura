@@ -236,7 +236,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
 						/* ÉLÅ[ */
 						if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] ){
-							_tcscpy( szLabel2, szLabel );
+							auto_strcpy( szLabel2, szLabel );
 						}else{
 							auto_sprintf( szLabel2, LTEXT("%ls(%hc)"), szLabel, m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] );
 						}

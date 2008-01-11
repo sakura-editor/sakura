@@ -15,7 +15,6 @@
 #include "stdafx.h"
 #include "CBlockComment.h"
 #include "CMemory.h"
-#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 
 CBlockComment::CBlockComment()
 {
