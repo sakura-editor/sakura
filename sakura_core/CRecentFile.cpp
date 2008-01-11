@@ -3,7 +3,6 @@
 #include "CShareData.h"
 #include "CRecentFile.h"
 #include <string.h>
-#include "my_icmp.h"
 
 
 /*

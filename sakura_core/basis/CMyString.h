@@ -46,9 +46,6 @@ private:
 	mutable char* m_str_cache; //c_str用キャッシュ。m_wstrが変更(set)されたらこれを解放し、NULLにしておくのがルール。
 };
 
-#include "CFilePath.h"
-
-
 //std::string の TCHAR 対応用マクロ定義
 #ifdef _UNICODE
 #define tstring wstring
@@ -56,3 +53,15 @@ private:
 #define tstring string
 #endif
 #define astring string
+
+
+
+// ファイルパス用文字列 2008.01.11 rastiv  CFilePath.h から移動。
+//#include "CFilePath.h"
+
+//共通マクロ
+#define _FT _T
+#include "util/StaticType.h"
+//共通型
+typedef StaticString<TCHAR,_MAX_PATH> SFilePath;
+

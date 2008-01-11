@@ -40,7 +40,6 @@
 #include "CDialog.h"
 #include "CDlgFavorite.h"
 #include "debug.h"
-#include "my_icmp.h"
 #include "util/shell.h"
 
 #include "sakura.hh"

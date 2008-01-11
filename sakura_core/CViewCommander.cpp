@@ -61,7 +61,6 @@
 #include "CDlgTagJumpList.h"
 #include "CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "COsVersionInfo.h"
-#include "my_icmp.h"
 #include "convert/CConvert_Base64Decode.h"
 #include "convert/CConvert_UuDecode.h"
 #include "io/CBinaryStream.h"
@@ -74,9 +73,9 @@
 #include "util/os.h"
 #include "CEditView.h"
 #include "CEditWnd.h"
-#include "CFileWrite.h"
+#include "io/CFileWrite.h"
 #include "charset/CCodeFactory.h"
-#include "CFileLoad.h"
+#include "io/CFileLoad.h"
 
 //ŠO•”ˆË‘¶
 CEditDoc* CViewCommander::GetDocument()
@@ -7218,7 +7217,7 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 			FuncLookup.Funccode2Name( GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* ƒL[ */
 			if( L'\0' == GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
-				_tcscpy( szLabel2, szLabel );
+				auto_strcpy( szLabel2, szLabel );
 			}else{
 				auto_sprintf( szLabel2, LTEXT("%ls (&%lc)"),
 					szLabel,

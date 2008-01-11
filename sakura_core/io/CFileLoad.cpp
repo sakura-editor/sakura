@@ -38,12 +38,12 @@
 #include "global.h"
 #include "CMemory.h"
 #include "CEOL.h"
-#include "CFileLoad.h"
+#include "io/CFileLoad.h"
 #include "charcode.h"
 #ifdef _DEBUG
 #include "Debug.h"
 #endif
-#include "CIoBridge.h"
+#include "io/CIoBridge.h"
 #include "charset/CCodeMediator.h"
 #include "util/string_ex2.h"
 

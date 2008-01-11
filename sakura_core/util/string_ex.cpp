@@ -34,34 +34,8 @@ SAKURA_CORE_API int my_tolower( int c )
 }
 
 
-/*!	日本語１バイト目か調べる。
-	@param c [in] 検査する文字コード
-
-	@retval 1	漢字１バイト目である
-	@retval 0	漢字１バイト目ではない
-*/
-SAKURA_CORE_API int my_iskanji1( int c )
-{
-	if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ) return 1;
-	return 0;
-}
-
-
-/*!	日本語２バイト目か調べる。
-	@param c [in] 検査する文字コード
-
-	@retval 1	漢字２バイト目である
-	@retval 0	漢字２バイト目ではない
-*/
-SAKURA_CORE_API int my_iskanji2( int c )
-{
-	if( (c >= 0x40 && c <= 0x7e) || (c >= 0x80 && c <= 0xfc) ) return 1;
-	return 0;
-}
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         独自実装                            //
+//                       拡張・独自実装                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!	大文字小文字を同一視する文字列比較をする。
@@ -89,9 +63,6 @@ SAKURA_CORE_API int __cdecl my_strnicmp( const char *s1, const char *s2, size_t 
 	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           拡張                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 {
@@ -101,6 +72,32 @@ LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 	lpString1[len2]=L'\0';
 	return lpString1;
 }
+
+/*! 文字数制限機能付きstrncpy
+
+	コピー先のバッファサイズから溢れないようにstrncpyする。
+	バッファが不足する場合には2バイト文字の切断もあり得る。
+	末尾の\0は付与されないが、コピーはコピー先バッファサイズ-1までにしておく。
+
+	@param dst [in] コピー先領域へのポインタ
+	@param dst_count [in] コピー先領域のサイズ
+	@param src [in] コピー元
+	@param src_count [in] コピーする文字列の末尾
+
+	@retval 実際にコピーされたコピー先領域の1つ後を指すポインタ
+
+	@author genta
+	@date 2003.04.03 genta
+*/
+char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
+{
+	if( src_count >= dst_count ){
+		src_count = dst_count - 1;
+	}
+	auto_memcpy( dst, src, src_count );
+	return dst + src_count;
+}
+
 
 const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
 {
@@ -126,43 +123,6 @@ const char* stristr(const char* s1, const char* s2)
 	}
 	return NULL;
 }
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           互換                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-#if _MSC_VER<1400 //VS2005より前なら
-error_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
-{
-	if(!szDst)return EINVAL;
-	if(!szSrc)return EINVAL;
-
-	size_t nDstLen=wcslen(szDst);
-	if(nDstLen>=nDstCount)return EINVAL;
-
-	size_t nSrcCount=wcslen(szSrc)+1;
-	wchar_t* p=&szDst[nDstLen];           //追加場所
-	int nRestCount = nDstCount-(p-szDst); //szDstに追加できる要素数
-
-	//はみ出さない
-	if((int)nSrcCount<=nRestCount){
-		wmemmove(p,szSrc,nSrcCount);
-	}
-	//はみ出す
-	else{
-		return ERANGE;
-		//wmemmove(p,szSrc,nRestCount-1); p[nRestCount-1]=L'\0';
-	}
-
-	return 0;
-}
-	
-#endif
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        日本語対応                           //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
 	@date 2005.04.07 MIK    新規作成
@@ -232,9 +192,39 @@ const char* stristr_j( const char* s1, const char* s2 )
 }
 
 
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          文字列                             //
+//                           互換                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+#if _MSC_VER<1400 //VS2005より前なら
+error_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
+{
+	if(!szDst)return EINVAL;
+	if(!szSrc)return EINVAL;
+
+	size_t nDstLen=wcslen(szDst);
+	if(nDstLen>=nDstCount)return EINVAL;
+
+	size_t nSrcCount=wcslen(szSrc)+1;
+	wchar_t* p=&szDst[nDstLen];           //追加場所
+	int nRestCount = nDstCount-(p-szDst); //szDstに追加できる要素数
+
+	//はみ出さない
+	if((int)nSrcCount<=nRestCount){
+		wmemmove(p,szSrc,nSrcCount);
+	}
+	//はみ出す
+	else{
+		return ERANGE;
+		//wmemmove(p,szSrc,nRestCount-1); p[nRestCount-1]=L'\0';
+	}
+
+	return 0;
+}
+	
+#endif
+
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -493,7 +483,10 @@ int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 	return 0;
 }
 
-
+int wmemicmp(const WCHAR* p1,const WCHAR* p2)
+{
+	return wmemicmp(p1,p2,wcslen(p2));
+}
 
 
 

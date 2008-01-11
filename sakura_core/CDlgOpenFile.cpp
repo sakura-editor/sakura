@@ -23,9 +23,7 @@
 #include "sakura_rc.h"
 #include "global.h"
 #include "funccode.h"	//Stonee, 2001/05/18
-#include "MY_SP.h"	// Jun. 23, 2002 genta
 #include "CFileExt.h"
-#include "my_icmp.h"
 #include <dlgs.h>    // stc3,...
 #include <cderr.h>   // FNERR...,CDERR...
 #include "CEditApp.h"

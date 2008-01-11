@@ -22,6 +22,14 @@ inline bool _IS_SJIS_2(char c)
 {
 	return Charcode::IsSJisKan2((unsigned char)c);
 }
+inline int my_iskanji1( int c )
+{
+	return Charcode::IsSJisKan1((unsigned char)c);
+}
+inline int my_iskanji2( int c )
+{
+	return Charcode::IsSJisKan2((unsigned char)c);
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           ’è”                              //
@@ -239,6 +247,11 @@ namespace WCODE
 //ANSI”»’èŠÖ”ŒQ
 namespace ACODE
 {
+	inline bool isAZ(char c)
+	{
+		return (c>='A' && c<='Z') || (c>='a' && c<='z');
+	}
+
 	//!§Œä•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
 	inline bool isControlCode(char c)
 	{

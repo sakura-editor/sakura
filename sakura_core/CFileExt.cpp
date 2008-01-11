@@ -32,7 +32,6 @@
 #include <string.h>
 #include <malloc.h>
 #include "CFileExt.h"
-#include "my_icmp.h"
 
 CFileExt::CFileExt()
 {

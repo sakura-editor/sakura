@@ -19,7 +19,6 @@
 #include "CMenuDrawer.h"	//	これでいいのか？
 #include "CMRUFolder.h"
 #include "CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
-#include "my_icmp.h" // 2002/11/30 Moca 追加
 #include "util/string_ex2.h"
 
 /*!	コンストラクタ

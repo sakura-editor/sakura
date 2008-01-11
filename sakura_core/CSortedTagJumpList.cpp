@@ -30,7 +30,6 @@
 
 #include "stdafx.h"
 #include "CSortedTagJumpList.h"
-#include "my_icmp.h"
 
 /*!
 	@date 2005.04.23 genta ŠÇ—”‚ÌÅ‘å’l‚ğw’è‚·‚éˆø”’Ç‰Á

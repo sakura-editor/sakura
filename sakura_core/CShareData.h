@@ -289,7 +289,7 @@ struct IniFolder {
 };	/* iniフォルダ設定 */
 
 
-#include "StaticType.h"
+#include "util/StaticType.h"
 
 //! 共有データ領域
 //2007.09.23 kobake m_nSEARCHKEYArrNum,      m_szSEARCHKEYArr      を m_aSearchKeys      にまとめました

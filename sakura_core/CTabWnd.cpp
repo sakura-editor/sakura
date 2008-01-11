@@ -41,7 +41,6 @@
 #include "global.h"
 #include "mymessage.h"
 #include "charcode.h"
-#include "my_tchar.h"	//Unicode‘Î‰ž Moca
 #include "util/os.h"
 #include "util/window.h"
 #include "util/module.h"

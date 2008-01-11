@@ -20,7 +20,6 @@
 #include "CDicMgr.h"
 #include "CMemory.h" // 2002/2/10 aroka ƒwƒbƒ_®—
 #include "CRunningTimer.h"
-#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 #include "io/CTextStream.h"
 using namespace std;
 

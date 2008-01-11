@@ -48,10 +48,9 @@
 #include "CDocLine.h"// 2002/2/10 aroka ヘッダ整理
 #include "CMemory.h"// 2002/2/10 aroka
 
-#include "CFileWrite.h" //2002/05/22 Frozen
-#include "CFileLoad.h" // 2002/08/30 Moca
-#include "my_icmp.h" // Nov. 29, 2002 genta/moca
-#include "CIoBridge.h"
+#include "io/CFileWrite.h" //2002/05/22 Frozen
+#include "io/CFileLoad.h" // 2002/08/30 Moca
+#include "io/CIoBridge.h"
 #include "basis/SakuraBasis.h"
 #include "parse/CWordParse.h"
 #include "util/window.h"
@@ -1222,7 +1221,7 @@ int CDocLineMgr::SearchWord(
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 							const wchar_t* pData = pDocLine->m_cLine.GetStringPtr();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
-							if( (!sSearchOption.bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+							if( (!sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 								(sSearchOption.bLoHiCase && 0 ==	 auto_memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 							){
 								pMatchRange->SetFromY(nLinePos);	// マッチ行
@@ -1261,7 +1260,7 @@ int CDocLineMgr::SearchWord(
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 						const wchar_t* pData = pDocLine->m_cLine.GetStringPtr();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
-						if( (!sSearchOption.bLoHiCase && 0 ==  _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+						if( (!sSearchOption.bLoHiCase && 0 ==  auto_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 							(sSearchOption.bLoHiCase && 0 == auto_memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 						){
 							pMatchRange->SetFromY(nLinePos);	// マッチ行

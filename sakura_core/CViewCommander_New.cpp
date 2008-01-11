@@ -19,9 +19,9 @@
 #include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "CEditWnd.h"
-#include "CFileLoad.h"	// 2006.12.09 maru
+#include "io/CFileLoad.h"	// 2006.12.09 maru
 #include "CDlgCancel.h"	// 2006.12.09 maru
-#include "CFileWrite.h"	// 2006.12.09 maru
+#include "io/CFileWrite.h"	// 2006.12.09 maru
 
 using namespace std; // 2002/2/3 aroka to here
 

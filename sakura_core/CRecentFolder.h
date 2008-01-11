@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "StaticType.h"
+#include "util/StaticType.h"
 
 //StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_GREPFOLDER, const TCHAR*>
 

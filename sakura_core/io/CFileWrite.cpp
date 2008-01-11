@@ -15,7 +15,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
-#include "CFileWrite.h"
+#include "io/CFileWrite.h"
 
 CFileWrite::CFileWrite(const TCHAR* pszPath)
 {
