@@ -419,7 +419,7 @@ void CEditView::CopyCurLine(
 	if( pcLayout->m_cEol.GetLen() != 0 ){
 		cmemBuf.AppendString(
 			( neweol == EOL_UNKNOWN ) ?
-				pcLayout->m_cEol.GetUnicodeBEValue() : CEOL(neweol).GetUnicodeValue()
+				pcLayout->m_cEol.GetUnicodeValue() : CEOL(neweol).GetUnicodeValue()
 		);
 	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy‘Î‰ˆ—’Ç‰Á
 		cmemBuf.AppendString(
