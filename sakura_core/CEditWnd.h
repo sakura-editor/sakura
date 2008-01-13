@@ -102,9 +102,9 @@ public:
 	);
 
 	void SetDocumentTypeWhenCreate(
-		ECodeType		nCharCode,			//!< [in] 漢字コード
-		bool			bReadOnly,			//!< [in] 読みとり専用で開くかどうか
-		int				nDocumentType = -1	//!< [in] 文書タイプ．-1のとき強制指定無し．
+		ECodeType		nCharCode,							//!< [in] 漢字コード
+		bool			bReadOnly,							//!< [in] 読みとり専用で開くかどうか
+		CDocumentType	nDocumentType = CDocumentType(-1)	//!< [in] 文書タイプ．-1のとき強制指定無し．
 	);
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //

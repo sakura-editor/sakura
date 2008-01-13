@@ -594,10 +594,10 @@ void CCaret::DrawCaretPosInfo()
 	// -- -- -- -- •¶ŽšƒR[ƒhî•ñ -> pszCodeName -- -- -- -- //
 	const TCHAR* pszCodeName;
 	if(!hwndStatusBar){
-		pszCodeName = gm_pszCodeNameArr_Short[m_pEditDoc->m_nCharCode];
+		pszCodeName = gm_pszCodeNameArr_Short[m_pEditDoc->GetDocumentEncoding()];
 	}
 	else{
-		pszCodeName = gm_pszCodeNameArr_Normal[m_pEditDoc->m_nCharCode];
+		pszCodeName = gm_pszCodeNameArr_Normal[m_pEditDoc->GetDocumentEncoding()];
 	}
 
 

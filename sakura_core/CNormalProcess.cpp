@@ -195,7 +195,7 @@ bool CNormalProcess::Initialize()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bReadOnly/* ì«Ç›éÊÇËêÍópÇ© */,
-				fi.m_szDocType[0] == '\0' ? -1 : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
+				fi.m_szDocType[0] == '\0' ? CDocumentType(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
 			);
 			// 2004.05.13 Moca CEditWnd::Create()Ç…é∏îsÇµÇΩèÍçáÇÃçló∂Çí«â¡
 			if( NULL == pEditWnd->GetHwnd() ){
@@ -249,7 +249,7 @@ bool CNormalProcess::Initialize()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bReadOnly/* ì«Ç›éÊÇËêÍópÇ© */,
-				fi.m_szDocType[0] == '\0' ? -1 : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
+				fi.m_szDocType[0] == '\0' ? CDocumentType(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
 			);
 		}
 	}

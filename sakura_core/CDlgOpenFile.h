@@ -86,7 +86,7 @@ public:
 	BOOL DoModalOpenDlg( TCHAR* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( TCHAR* , ECodeType*, CEOL*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalSaveDlg( TCHAR* , ECodeType*, CEOL*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
 //	INT_PTR DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
@@ -107,7 +107,7 @@ public:
 	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
 	//	Jul. 26, 2003 ryoji BOM
-	BOOL			m_bBom;	//!< BOMを付けるかどうか
+	bool			m_bBom;	//!< BOMを付けるかどうか
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji

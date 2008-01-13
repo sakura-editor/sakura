@@ -280,7 +280,7 @@ bool CEditDoc::FileRead(
 	BOOL			bIsExistInMRU;
 	int				nRet;
 	BOOL			bFileIsExist;
-	int				doctype;
+	CDocumentType	doctype;
 
 	*pbOpened = FALSE;	// 2004.06.18 Moca 初期化ミス
 	m_bReadOnly = bReadOnly;	/* 読み取り専用モード */
@@ -873,7 +873,7 @@ BOOL CEditDoc::OpenFileDialog(
 	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
 	@date 2006.11.10 ryoji	ユーザー指定の拡張子を状況依存で変化させる
 */
-BOOL CEditDoc::SaveFileDialog( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* pcEol, BOOL* pbBomExist )
+BOOL CEditDoc::SaveFileDialog( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* pcEol, bool* pbBomExist )
 {
 	TCHAR**	ppszMRU;		//	最近のファイル
 	TCHAR**	ppszOPENFOLDER;	//	最近のフォルダ
@@ -990,16 +990,17 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 
 /*! タイプ別設定 プロパティシート */
-BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
+BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, CDocumentType nSettingType )
 {
-	m_pcEditWnd->m_cPropTypes.SetTypeData( m_pShareData->m_Types[nSettingType] );
+	Types& types = m_pShareData->GetTypeSetting(nSettingType);
+	m_pcEditWnd->m_cPropTypes.SetTypeData( types );
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
 	//m_cPropTypes.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
 
 	/* プロパティシートの作成 */
 	if( m_pcEditWnd->m_cPropTypes.DoPropertySheet( nPageNum ) ){
 		/* 変更された設定値のコピー */
-		m_pcEditWnd->m_cPropTypes.GetTypeData( m_pShareData->m_Types[nSettingType] );
+		m_pcEditWnd->m_cPropTypes.GetTypeData( types );
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessageAny( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
@@ -1022,7 +1023,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 
 
 /* Undo(元に戻す)可能な状態か？ */
-BOOL CEditDoc::IsEnableUndo( void )
+bool CEditDoc::IsEnableUndo( void )
 {
 	return m_cOpeBuf.IsEnableUndo();
 }
@@ -1030,7 +1031,7 @@ BOOL CEditDoc::IsEnableUndo( void )
 
 
 /*! Redo(やり直し)可能な状態か？ */
-BOOL CEditDoc::IsEnableRedo( void )
+bool CEditDoc::IsEnableRedo( void )
 {
 	return m_cOpeBuf.IsEnableRedo();
 }
@@ -1039,9 +1040,9 @@ BOOL CEditDoc::IsEnableRedo( void )
 
 
 /*! クリップボードから貼り付け可能か？ */
-BOOL CEditDoc::IsEnablePaste( void )
+bool CEditDoc::IsEnablePaste( void )
 {
-	return CClipboard::HasValidData()?TRUE:FALSE;
+	return CClipboard::HasValidData();
 }
 
 
@@ -3108,7 +3109,7 @@ void CEditDoc::OnChangeSetting( void )
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	CShareData::getInstance()->TransformFileName_MakeCache();
-	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	CDocumentType doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, false );
 
 	CLogicPoint* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
@@ -3169,19 +3170,6 @@ void CEditDoc::GetFileInfo( FileInfo* pfi ) const
 	return;
 
 }
-
-
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-/* タグジャンプ元など参照元の情報を保持する */
-void CEditDoc::SetReferer( HWND hwndReferer, int nRefererX, int nRefererLine )
-{
-	m_hwndReferer	= hwndReferer;	/* 参照元ウィンドウ */
-	m_nRefererX		= nRefererX;	/* 参照元  行頭からのバイト位置桁 */
-	m_nRefererLine	= nRefererLine;	/* 参照元行  折り返し無しの物理行位置 */
-	return;
-}
-#endif
 
 
 
@@ -3327,7 +3315,7 @@ void CEditDoc::Init( void )
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	CDocumentType doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, true );
 
 	/* レイアウト管理情報の初期化 */
@@ -4065,4 +4053,19 @@ HWND CEditDoc::GetSplitterHwnd() const
 HWND CEditDoc::GetOwnerHwnd() const
 {
 	return m_pcEditWnd->GetHwnd();
+}
+
+
+//! ドキュメントの文字コードを取得
+ECodeType CEditDoc::GetDocumentEncoding() const
+{
+	return m_nCharCode;
+}
+
+//! ドキュメントの文字コードを設定
+void CEditDoc::SetDocumentEncoding(ECodeType eCharCode)
+{
+	if(!IsValidCodeType(eCharCode))return; //無効な範囲を受け付けない
+
+	m_nCharCode = eCharCode;
 }

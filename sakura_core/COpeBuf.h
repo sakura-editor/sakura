@@ -30,23 +30,29 @@ class COpeBlk;/// 2002/2/10 aroka
 	@brief アンドゥ・リドゥバッファ
 */
 class SAKURA_CORE_API COpeBuf {
-	public:
-		COpeBuf();	/* COpeBufクラス構築 */
-		~COpeBuf();	/* COpeBufクラス消滅 */
-		void ClearAll( void );	/* 全要素のクリア */
-		int AppendOpeBlk( COpeBlk* );	/* 操作ブロックの追加 */
-		int	IsEnableUndo( void );	/* Undo可能な状態か */
-		int	IsEnableRedo( void );	/* Redo可能な状態か */
-		COpeBlk* DoUndo( bool* );	/* 現在のUndo対象の操作ブロックを返す */
-		COpeBlk* DoRedo( bool* );	/* 現在のRedo対象の操作ブロックを返す */
-		void SetNoModified( void );	/* 現在位置で無変更な状態になったことを通知 */
+public:
+	COpeBuf();	//!< COpeBufクラス構築
+	~COpeBuf();	//!< COpeBufクラス消滅
 
-		void DUMP( void );	/* 編集操作要素ブロックのダンプ */
-	private:
-		int			 m_nCOpeBlkArrNum;	/* 操作ブロックの数 */
-		COpeBlk**	m_ppCOpeBlkArr;	/* 操作ブロックの配列 */
-		int			m_nCurrentPointer;	/* 現在位置 */
-		int			m_nNoModifiedIndex;	/* 無変更な状態になった位置 */
+	//状態
+	bool IsEnableUndo( void );		//!< Undo可能な状態か
+	bool IsEnableRedo( void );		//!< Redo可能な状態か
+
+	//操作
+	void ClearAll( void );			//!< 全要素のクリア
+	int AppendOpeBlk( COpeBlk* );	//!< 操作ブロックの追加
+	COpeBlk* DoUndo( bool* );		//!< 現在のUndo対象の操作ブロックを返す
+	COpeBlk* DoRedo( bool* );		//!< 現在のRedo対象の操作ブロックを返す
+	void SetNoModified( void );		//!< 現在位置で無変更な状態になったことを通知
+
+	//デバッグ
+	void DUMP( void );				//!< 編集操作要素ブロックのダンプ
+
+private:
+	int			m_nCOpeBlkArrNum;	//!< 操作ブロックの数
+	COpeBlk**	m_ppCOpeBlkArr;		//!< 操作ブロックの配列
+	int			m_nCurrentPointer;	//!< 現在位置
+	int			m_nNoModifiedIndex;	//!< 無変更な状態になった位置
 };
 
 

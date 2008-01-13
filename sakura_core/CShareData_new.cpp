@@ -992,7 +992,7 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 
 	for( i = 0; i < MAX_TYPES; ++i ){
 		// 2005.04.07 D.S.Koba
-		Types& types = m_pShareData->m_Types[i];
+		Types& types = m_pShareData->GetTypeSetting(CDocumentType(i));
 		auto_sprintf( szKey, LTEXT("Types(%d)"), i );
 		pszSecName = szKey;
 		static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK

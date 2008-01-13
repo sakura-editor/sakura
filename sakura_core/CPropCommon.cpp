@@ -542,7 +542,7 @@ void CPropCommon::InitData( void )
 	//2002/04/25 YAZAKI Types全体を保持する必要はない。
 	for( i = 0; i < MAX_TYPES; ++i ){
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-			m_Types_nKeyWordSetIdx[i][j] = m_pShareData->m_Types[i].m_nKeyWordSetIdx[j];
+			m_Types_nKeyWordSetIdx[i][j] = CDocumentType(i)->m_nKeyWordSetIdx[j];
 		}
 	}
 	/* マクロ関係
@@ -591,7 +591,7 @@ void CPropCommon::ApplyData( void )
 		//2002/04/25 YAZAKI Types全体を保持する必要はない。
 		/* 変更された設定値のコピー */
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-			m_pShareData->m_Types[i].m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
+			CDocumentType(i)->m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
 		}
 	}
 

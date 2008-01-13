@@ -90,7 +90,7 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendString( _T("\r\n") );
 
 	cmemProp.AppendString( _T("文字コード  ") );
-	cmemProp.AppendString( gm_pszCodeNameArr_Normal[pCEditDoc->m_nCharCode] );
+	cmemProp.AppendString( gm_pszCodeNameArr_Normal[pCEditDoc->GetDocumentEncoding()] );
 	cmemProp.AppendString( _T("\r\n") );
 
 	auto_sprintf( szWork, _T("行数  %d行\r\n"), pCEditDoc->m_cDocLineMgr.GetLineCount() );
@@ -99,7 +99,7 @@ void CDlgProperty::SetData( void )
 	auto_sprintf( szWork, _T("レイアウト行数  %d行\r\n"), pCEditDoc->m_cLayoutMgr.GetLineCount() );
 	cmemProp.AppendString( szWork );
 
-	if( pCEditDoc->m_bReadOnly ){
+	if( pCEditDoc->IsReadOnly() ){
 		cmemProp.AppendString( _T("上書き禁止モードで開いています。\r\n") );
 	}
 	if( pCEditDoc->IsModified() ){

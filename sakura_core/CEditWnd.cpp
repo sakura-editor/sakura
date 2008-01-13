@@ -532,7 +532,7 @@ HWND CEditWnd::Create(
 	Timer_ONOFF( TRUE );
 
 	//デフォルトのIMEモード設定
-	GetDocument().SetImeMode( m_pShareData->m_Types[0].m_nImeState );
+	GetDocument().SetImeMode( m_pShareData->GetTypeSetting(CDocumentType(0)).m_nImeState );
 
 	return GetHwnd();
 }
@@ -574,20 +574,21 @@ void CEditWnd::OpenDocumentWhenCreate(
 void CEditWnd::SetDocumentTypeWhenCreate(
 	ECodeType		nCharCode,		//!< [in] 漢字コード
 	bool			bReadOnly,		//!< [in] 読みとり専用で開くかどうか
-	int				nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
+	CDocumentType	nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
 )
 {
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
-	if( nDocumentType >= 0 ){
+	if( nDocumentType.IsValid() ){
 		GetDocument().SetDocumentType( nDocumentType, true );
 		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
 		GetDocument().LockDocumentType();
 		/* 設定変更を反映させる */
 		GetDocument().OnChangeSetting();
 	}
+
 	//	Jun. 4 ,2004 genta ファイル名指定が無くても読みとり専用強制指定を有効にする
-	GetDocument().m_bReadOnly = bReadOnly;
+	GetDocument().SetReadOnly(bReadOnly);
 }
 
 
@@ -2656,7 +2657,7 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 		GetDocument().m_bDebugMode = TRUE;
 
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAIL_Wが抑止されるのでとりあえず読み取り専用モードは辞めました
-		GetDocument().m_bReadOnly = FALSE;		/* 読み取り専用モード */
+		GetDocument().SetReadOnly(false);	/* 読み取り専用モード */
 		/* 親ウィンドウのタイトルを更新 */
 		GetDocument().SetParentCaption();
 		return;
@@ -3297,7 +3298,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	if( TRUE == bRes ){
 		/* 現在選択されているページ設定の番号が変更されたか */
 		if( nCurrentPrintSetting !=
-			m_pShareData->m_Types[GetDocument().GetDocumentType()].m_nCurrentPrintSetting
+			GetDocument().GetDocumentType()->m_nCurrentPrintSetting
 		){
 //			/* 変更フラグ(タイプ別設定) */
 			GetDocument().GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;

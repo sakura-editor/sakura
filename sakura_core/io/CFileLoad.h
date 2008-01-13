@@ -68,7 +68,7 @@ public:
 	~CFileLoad( void );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	ECodeType FileOpen( LPCTSTR, ECodeType, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
+	ECodeType FileOpen( LPCTSTR, ECodeType, int, bool* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用

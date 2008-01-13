@@ -95,13 +95,9 @@ int COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 
 
 /* Undo‰Â”\‚Èó‘Ô‚© */
-int COpeBuf::IsEnableUndo( void )
+bool COpeBuf::IsEnableUndo( void )
 {
-	if( 0 < m_nCOpeBlkArrNum && 0 < m_nCurrentPointer ){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
+	return 0 < m_nCOpeBlkArrNum && 0 < m_nCurrentPointer;
 }
 
 
@@ -109,13 +105,9 @@ int COpeBuf::IsEnableUndo( void )
 
 
 /* Redo‰Â”\‚Èó‘Ô‚© */
-int	COpeBuf::IsEnableRedo( void )
+bool COpeBuf::IsEnableRedo( void )
 {
-	if( 0 < m_nCOpeBlkArrNum && m_nCurrentPointer < m_nCOpeBlkArrNum ){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
+	return 0 < m_nCOpeBlkArrNum && m_nCurrentPointer < m_nCOpeBlkArrNum;
 }
 
 

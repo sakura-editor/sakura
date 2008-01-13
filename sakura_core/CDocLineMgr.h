@@ -137,11 +137,11 @@ public:
 
 	//	Nov. 12, 2000 genta 引数追加
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int ReadFile( const TCHAR* pszPath, HWND, HWND, ECodeType, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
+	int ReadFile( const TCHAR* pszPath, HWND, HWND, ECodeType, FILETIME*, int extraflag, bool* pbBomExist = NULL );
 
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	EConvertResult WriteFile( const TCHAR*, HWND, HWND, ECodeType, FILETIME*, CEOL, BOOL bBomExist = FALSE );
+	EConvertResult WriteFile( const TCHAR*, HWND, HWND, ECodeType, FILETIME*, CEOL, bool bBomExist = false );
 
 	CDocLine* GetLineInfo( CLogicInt nLine );
 	// 2002/2/10 aroka メンバを private にしてアクセサ追加
