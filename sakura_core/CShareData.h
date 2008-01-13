@@ -33,6 +33,9 @@ class CShareData;
 #include "basis/SakuraBasis.h"
 #include "config/maxdata.h"
 
+//! どこからでもアクセスできる、共有データアクセサ。2007.10.30 kobake
+struct DLLSHAREDATA;
+DLLSHAREDATA& GetDllShareData();
 
 struct EditNode {
 	int				m_nIndex;
@@ -291,6 +294,36 @@ struct IniFolder {
 
 #include "util/StaticType.h"
 
+#include "basis/CStrictInteger.h"
+
+//!ドキュメント種類。共有データ内 Types へのアクセサも兼ねる。
+//2007.12.13 kobake 作成
+class CDocumentType{
+public:
+	CDocumentType()
+	{
+#ifdef _DEBUG
+		//元がintだったので、未初期化で使うと問題が発生するように、あえて、変な値を入れておく。
+		m_nType = 1234;
+#else
+		//リリース時は、未初期化でも問題が起こりにくいように、ゼロクリアしておく
+		m_nType = 0;
+#endif
+	}
+	explicit CDocumentType(int n)
+	{
+		m_nType = n;
+	}
+	bool IsValid() const{ return m_nType>=0 && m_nType<MAX_TYPES; }
+	int GetIndex() const{ /*assert(IsValid());*/ return m_nType; }
+
+	//共有データへの簡易アクセサ
+	Types* operator->();
+private:
+	int m_nType;
+};
+
+
 //! 共有データ領域
 //2007.09.23 kobake m_nSEARCHKEYArrNum,      m_szSEARCHKEYArr      を m_aSearchKeys      にまとめました
 //2007.09.23 kobake m_nREPLACEKEYArrNum,     m_szREPLACEKEYArr     を m_aReplaceKeys     にまとめました
@@ -298,7 +331,11 @@ struct IniFolder {
 //2007.09.23 kobake m_nGREPFOLDERArrNum,     m_szGREPFOLDERArr     を m_aGrepFolders     にまとめました
 //2007.09.23 kobake m_szCmdArr,              m_nCmdArrNum          を m_aCommands        にまとめました
 //2007.09.23 kobake m_nTagJumpKeywordArrNum, m_szTagJumpKeywordArr を m_aTagJumpKeywords にまとめました
-struct DLLSHAREDATA {
+//2007.12.13 kobake DLLSHAREDATAへの簡易アクセサを用意
+
+struct DLLSHAREDATA{
+	void OnInit();
+
 	//	Oct. 27, 2000 genta
 	//!	データ構造 Version
 	/*	データ構造の異なるバージョンの同時起動を防ぐため
@@ -317,6 +354,13 @@ public:
 
 	template <class T>
 	size_t GetWorkBufferCount(){ return sizeof(m_pWork)/sizeof(T); }
+
+	Types& GetTypeSetting(CDocumentType cDocumentType)
+	{
+		int n = cDocumentType.GetIndex();
+		assert(n>=0 && n<_countof(m_Types));
+		return m_Types[n];
+	}
 
 public:
 	FileInfo			m_FileInfo_MYWM_GETFILEINFO;
@@ -387,9 +431,11 @@ public:
 	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
 	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
 
+private:
 	/* **** タイプ別設定 **** */
 	Types				m_Types[MAX_TYPES];
 
+public:
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
 		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
@@ -457,8 +503,8 @@ public:
 	*/
 	bool Init(void);	/* CShareDataクラスの初期化処理 */
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
-	int GetDocumentType( const TCHAR* pszFilePath );			/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
-	int GetDocumentTypeExt( const TCHAR* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
+	CDocumentType GetDocumentType( const TCHAR* pszFilePath );			/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
+	CDocumentType GetDocumentTypeExt( const TCHAR* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	
 	BOOL AddEditWndList( HWND, int nGroup = 0 );				/* 編集ウィンドウの登録 */	// 2007.06.26 ryoji nGroup引数追加
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
@@ -521,11 +567,11 @@ public:
 	void		AddToGrepFolderArr( const TCHAR* pszGrepFolder );	//	m_aGrepFolders.size()にpszGrepFolderを追加する
 
 	//@@@ 2002.2.3 YAZAKI
-	bool		ExtWinHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
-	const TCHAR*	GetExtWinHelp( int nType = -1 );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
-	bool		ExtHTMLHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
-	const TCHAR*	GetExtHTMLHelp( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
-	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
+	bool		ExtWinHelpIsSet( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
+	const TCHAR*	GetExtWinHelp( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
+	bool		ExtHTMLHelpIsSet( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
+	const TCHAR*	GetExtHTMLHelp( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
+	bool		HTMLHelpIsSingle( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 	
 	//@@@ 2002.2.9 YAZAKI
 	const TCHAR* MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen );
@@ -595,8 +641,6 @@ protected:
 
 
 
-//! どこからでもアクセスできる、共有データアクセサ。2007.10.30 kobake
-DLLSHAREDATA& GetDllShareData();
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSHAREDATA_H_ */

@@ -224,7 +224,7 @@ open_c:;
 			m_hInstance,
 			m_hWnd,
 			szPath2,
-			GetDocument()->m_nCharCode,
+			GetDocument()->GetDocumentEncoding(),
 			FALSE,	/* “Ç‚İæ‚èê—p‚© */
 			true
 		);

@@ -297,6 +297,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					static TCHAR		pszLabel[1024];
 					_tcscpy( pszLabel, _T("") );
 					for( i = 0; i < MAX_TYPES; ++i ){
+						CDocumentType type(i);
 						// 2002/04/25 YAZAKI Types全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
 						if( nIndex1 == m_Types_nKeyWordSetIdx[i][0]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][1]
@@ -309,9 +310,9 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][8]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][9] ){
 							_tcscat( pszLabel, _T("・") );
-							_tcscat( pszLabel, m_pShareData->m_Types[i].m_szTypeName );
+							_tcscat( pszLabel, type->m_szTypeName );
 							_tcscat( pszLabel, _T("（") );
-							_tcscat( pszLabel, m_pShareData->m_Types[i].m_szTypeExts );
+							_tcscat( pszLabel, type->m_szTypeExts );
 							_tcscat( pszLabel, _T("）") );
 							_tcscat( pszLabel, _T("\n") );
 						}

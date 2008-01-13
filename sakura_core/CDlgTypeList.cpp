@@ -22,6 +22,9 @@
 #include "funccode.h"	//Stonee, 2001/03/12
 #include "util/shell.h"
 
+//内部使用定数
+static const int PROP_TEMPCHANGE_FLAG = 0x10000;
+
 // タイプ別設定一覧 CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
 const DWORD p_helpids[] = {	//12700
@@ -35,15 +38,18 @@ const DWORD p_helpids[] = {	//12700
 };	//@@@ 2002.01.07 add end MIK
 
 /* モーダルダイアログの表示 */
-int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingType )
+int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResult )
 {
 	int	nRet;
-	m_nSettingType = *pnSettingType;
+	m_nSettingType = psResult->cDocumentType;
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
 	if( -1 == nRet ){
 		return FALSE;
-	}else{
-		*pnSettingType = nRet;
+	}
+	else{
+		//結果
+		psResult->cDocumentType = CDocumentType(nRet & ~PROP_TEMPCHANGE_FLAG);
+		psResult->bTempChange   = ((nRet & PROP_TEMPCHANGE_FLAG) != 0);
 		return TRUE;
 	}
 	return nRet;
@@ -55,8 +61,16 @@ BOOL CDlgTypeList::OnLbnDblclk( int wID )
 	case IDC_LIST_TYPES:
 		//	Nov. 29, 2000	genta
 		//	動作変更: 指定タイプの設定ダイアログ→一時的に別の設定を適用
-		::EndDialog( GetHwnd(), ::SendMessageAny( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
-			| PROP_TEMPCHANGE_FLAG );
+		::EndDialog(
+			GetHwnd(),
+			::SendMessageAny(
+				GetDlgItem( GetHwnd(), IDC_LIST_TYPES ),
+				LB_GETCURSEL,
+				0,
+				0
+			)
+			| PROP_TEMPCHANGE_FLAG
+		);
 		return TRUE;
 	}
 	return FALSE;
@@ -73,8 +87,16 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	//	Nov. 29, 2000	From Here	genta
 	//	適用する型の一時的変更
 	case IDC_BUTTON_TEMPCHANGE:
-		::EndDialog( GetHwnd(), ::SendMessageAny( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
-			| PROP_TEMPCHANGE_FLAG );
+		::EndDialog(
+			GetHwnd(),
+			::SendMessageAny(
+				GetDlgItem( GetHwnd(), IDC_LIST_TYPES ),
+				LB_GETCURSEL,
+				0,
+				0
+			)
+			| PROP_TEMPCHANGE_FLAG
+		);
 		return TRUE;
 	//	Nov. 29, 2000	To Here
 	case IDOK:
@@ -98,19 +120,20 @@ void CDlgTypeList::SetData( void )
 	TCHAR	szText[130];
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
-		if( 0 < _tcslen( m_pShareData->m_Types[nIdx].m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
+		Types& types = m_pShareData->GetTypeSetting(CDocumentType(nIdx));
+		if( 0 < _tcslen( types.m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
-				m_pShareData->m_Types[nIdx].m_szTypeName,	/* タイプ属性：名称 */
-				m_pShareData->m_Types[nIdx].m_szTypeExts	/* タイプ属性：拡張子リスト */
+				types.m_szTypeName,	/* タイプ属性：名称 */
+				types.m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
 			auto_sprintf( szText, _T("%ts"),
-				m_pShareData->m_Types[nIdx].m_szTypeName	/* タイプ属性：拡称 */
+				types.m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
 		::List_AddString( hwndList, szText );
 	}
-	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)m_nSettingType, (LPARAM)0 );
+	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)m_nSettingType.GetIndex(), (LPARAM)0 );
 	return;
 }
 

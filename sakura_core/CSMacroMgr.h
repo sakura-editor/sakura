@@ -136,7 +136,7 @@ public:
 	//	Jun. 16, 2002 genta
 	static const MacroFuncInfo* GetFuncInfoByID( int );
 	
-	BOOL IsSaveOk(void);
+	bool IsSaveOk(void);
 
 	//	Sep. 15, 2005 FILE	実行中マクロのインデックス番号操作 (INVALID_MACRO_IDX:無効)
 	int GetCurrentIdx( void ) const {

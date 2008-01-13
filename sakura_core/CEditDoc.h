@@ -44,8 +44,14 @@ class CEditApp;
 
 typedef CEditWnd* P_CEditWnd;
 
-//! 文書関連情報の管理
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+/*!
+	文書関連情報の管理
+
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2007.12.13 kobake GetDocumentEncoding作成
+	@date 2007.12.13 kobake SetDocumentEncoding作成
+	@date 2007.12.13 kobake IsReadOnly作成
+*/
 class SAKURA_CORE_API CEditDoc
 {
 public:
@@ -65,17 +71,50 @@ public:
 	/*
 	|| 状態
 	*/
-	BOOL IsEnableUndo( void );		/* Undo(元に戻す)可能な状態か？ */
-	BOOL IsEnableRedo( void );		/* Redo(やり直し)可能な状態か？ */
-	BOOL IsEnablePaste( void );		/* クリップボードから貼り付け可能か？ */
+	bool IsEnableUndo( void );				/* Undo(元に戻す)可能な状態か？ */
+	bool IsEnableRedo( void );				/* Redo(やり直し)可能な状態か？ */
+	bool IsEnablePaste( void );				/* クリップボードから貼り付け可能か？ */
 	void GetFileInfo( FileInfo* ) const;	/* 編集ファイル情報を格納 */ //2007.10.24 kobake 関数名変更: SetFileInfo→GetFileInfo
+
+	/*
+	|| 属性
+	*/
+	ECodeType	GetDocumentEncoding() const;				//!< ドキュメントの文字コードを取得
+	void		SetDocumentEncoding(ECodeType eCharCode);	//!< ドキュメントの文字コードを設定
+	bool		IsReadOnly() const			{ return m_bReadOnly; }			//!< 読み取り専用属性を取得
+	void		SetReadOnly(bool bReadOnly)	{ m_bReadOnly = bReadOnly; }	//!< 読み取り専用属性を設定
+	bool		IsBomExist() const			{ return m_bBomExist; }			//!< 保存時にBOMを付加するかどうかを取得
+	void		SetBomMode(bool bBomExist)	{ m_bBomExist = bBomExist; }	//!< 保存時にBOMを付加するかどうかを設定
+
+	//	Nov. 23, 2000 From Here	genta
+	//	文書種別情報の設定，取得Interface
+	void SetDocumentType(CDocumentType type, bool force)	//	文書種別の設定
+	{
+		if( (!m_nSettingTypeLocked) || force ){
+			m_nSettingType = type;
+			UnlockDocumentType();
+			m_pShareData->GetTypeSetting(m_nSettingType).m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
+			SetDocumentIcon();	// Sep. 11, 2002 genta
+		}
+	}
+	CDocumentType GetDocumentType(void) const	//!<	文書種別の読み出し
+	{
+		return m_nSettingType;
+	}
+	Types& GetDocumentAttribute(void) const	//!<	設定された文書情報への参照を返す
+	{
+		return m_pShareData->GetTypeSetting(m_nSettingType);
+	}
+	//	Nov. 23, 2000 To Here
 
 	/* いろいろ */
 	BOOL OnFileClose( void );	/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 	BOOL HandleCommand( EFunctionCode );
 	BOOL SelectFont( LOGFONT* );
 
-	/* ファイルを開く */
+	/*
+	|| ファイルオペレーション
+	*/
 	bool FileRead(
 		TCHAR*		pszPath,			//!< [in/out]
 		bool*		pbOpened,			//!< [out] すでに開かれていたか
@@ -83,9 +122,7 @@ public:
 		bool		bReadOnly,			/*!< [in] 読み取り専用か */
 		bool		bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
 	);
-
-	//	Feb. 9, 2001 genta 引数追加
-	BOOL FileWrite( const TCHAR*, enumEOLType cEolType );
+	BOOL FileWrite( const TCHAR*, enumEOLType cEolType );	//	Feb. 9, 2001 genta 引数追加
 	bool SaveFile( const TCHAR* path );	//	ファイルの保存（に伴ういろいろ）
 	void OpenFile( const TCHAR* filename = NULL, ECodeType nCharCode = CODE_AUTODETECT,
 		bool bReadOnly = FALSE );	//	Oct. 9, 2004 genta CEditViewより移動
@@ -95,19 +132,26 @@ public:
 	BOOL FileSaveAs_Dialog( void );				/* 名前を付けて保存ダイアログ */	// 2006.12.30 ryoji
 	BOOL FileSaveAs( const TCHAR* filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
 
+
+	/*
+	|| 編集
+	*/
+	//	Nov. 20, 2000 genta
+	void SetImeMode(int mode);	//	IME状態の設定
+
+	/*
+	|| その他
+	*/
 	int MakeBackUp( const TCHAR* target_file );	/* バックアップの作成 */
 	void SetParentCaption( void );	/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
-	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
+	BOOL OpenPropertySheetTypes( int, CDocumentType );	/* タイプ別設定 */
 
 	BOOL OpenFileDialog( HWND, const TCHAR*, TCHAR*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-	void SetReferer( HWND , int, int );	/* タグジャンプ元など参照元の情報を保持する */
-#endif
+
 	//	Jul. 26, 2003 ryoji BOMオプション追加
-	BOOL SaveFileDialog( TCHAR*, ECodeType*, CEOL* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
+	BOOL SaveFileDialog( TCHAR*, ECodeType*, CEOL* pcEol = NULL, bool* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
 	void ReloadCurrentFile( ECodeType, bool );/* 同一ファイルの再オープン */
@@ -120,12 +164,8 @@ public:
 	bool IsModificationForbidden( int nCommand );
 
 	//	Aug. 21, 2000 genta
-	CPassiveTimer	m_cAutoSave;	//!<	自動保存管理
 	void	CheckAutoSave(void);
 	void	ReloadAutoSaveParam(void);	//	設定をSharedAreaから読み出す
-
-	//	Nov. 20, 2000 genta
-	void SetImeMode(int mode);	//	IME状態の設定
 
 	//	Sep. 9, 2002 genta
 	const TCHAR* GetFilePath(void) const { return m_szFilePath; }
@@ -140,32 +180,7 @@ public:
 	void UnlockDocumentType(void){ m_nSettingTypeLocked = false; }
 	bool GetDocumentLockState(void){ return m_nSettingTypeLocked; }
 	//	Nov. 29, 2000 To Here
-	//	Nov. 23, 2000 From Here	genta
-	//	文書種別情報の設定，取得Interface
-	void SetDocumentType(int type, bool force)	//	文書種別の設定
-	{
-		if( (!m_nSettingTypeLocked) || force ){
-			m_nSettingType = type;
-			UnlockDocumentType();
-			m_pShareData->m_Types[m_nSettingType].m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
-			SetDocumentIcon();	// Sep. 11, 2002 genta
-		}
-	}
-	int GetDocumentType(void) const	//!<	文書種別の読み出し
-	{
-		return m_nSettingType;
-	}
-	Types& GetDocumentAttribute(void) const	//!<	設定された文書情報への参照を返す
-	{
-		return m_pShareData->m_Types[m_nSettingType];
-	}
-	//	Nov. 23, 2000 To Here
 
-	//	May 18, 2001 genta
-	//! ReadOnly状態の読み出し
-	BOOL IsReadOnly( void ){ return m_bReadOnly; }
-	//! ReadOnly状態の設定
-	void SetReadOnly( bool flag){ m_bReadOnly = flag; }
 	
 	//	Jan. 22, 2002 genta Modified Flagの設定
 	void SetModified( bool flag, bool redraw);
@@ -241,28 +256,39 @@ public:
 	//                       メンバ変数群                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
+	//参照
 	P_CEditWnd&		m_pcEditWnd;	//	Sep. 10, 2002
 
+	//データ構造
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
+
+	//ヘルパ
+	CPassiveTimer	m_cAutoSave;	//!<	自動保存管理
+
+	//ファイル
+private:
+	SFilePath		m_szFilePath;	//!< 現在編集中のファイルのパス
+	FILETIME		m_FileTime;		//!< ファイルの最終更新日付
+	ECodeType		m_nCharCode;	//!< 文字コード種別
+	bool			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
 
 private:
 //	HWND			m_hwndParent;		/* 親ウィンドウ（CEditWndが管理）ハンドル */
 
 protected:
-	int				m_nSettingType;
+	CDocumentType	m_nSettingType;
 	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態
 	bool			m_bIsModified;
 
 private:
-	SFilePath		m_szFilePath;	/* 現在編集中のファイルのパス */
 
 public: /* テスト用にアクセス属性を変更 */
 	BOOL			m_bGrepRunning;				/* Grep処理中 */
 	int				m_nCommandExecNum;			/* コマンド実行回数 */
-	FILETIME		m_FileTime;					/* ファイルの最終更新日付 */
-	ECodeType		m_nCharCode;				/* 文字コード種別 */
-	BOOL			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
+
+public:
+	//編集
 	bool			m_bInsMode;		//!< 挿入・上書きモード Oct. 2, 2005 genta
 
 	//	May 15, 2000 genta
@@ -272,7 +298,9 @@ protected:
 public:
 	CEOL			m_cSaveLineCode;			//	保存時の改行コード種別（EOL_NONE:変換なし）
 
+private:
 	bool			m_bReadOnly;				/* 読み取り専用モード */
+public:
 	BOOL			m_bDebugMode;				/* デバッグモニタモード */
 	BOOL			m_bGrepMode;				/* Grepモードか */
 	wchar_t			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
@@ -283,7 +311,7 @@ public:
 	HINSTANCE		m_hInstance;		/* インスタンスハンドル */
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
-	EShareMode	m_nFileShareModeOld;	/* ファイルの排他制御モード */
+	EShareMode		m_nFileShareModeOld;	/* ファイルの排他制御モード */
 	HANDLE			m_hLockedFile;			/* ロックしているファイルのハンドル */
 	CSMacroMgr*		m_pcSMacroMgr;	//!< マクロ
 	CFuncLookup		m_cFuncLookup;	//!< 機能名，機能番号などのresolve

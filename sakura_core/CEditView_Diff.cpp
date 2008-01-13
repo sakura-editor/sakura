@@ -491,10 +491,10 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 			filename, 
 			m_pcEditDoc->GetSplitterHwnd(), 
 			NULL,
-			m_pcEditDoc->m_nCharCode,
+			m_pcEditDoc->GetDocumentEncoding(),
 			&filetime,
 			cEol,
-			m_pcEditDoc->m_bBomExist	//	Jul. 26, 2003 ryoji BOM
+			m_pcEditDoc->IsBomExist()	//	Jul. 26, 2003 ryoji BOM
 		);
 	}
 

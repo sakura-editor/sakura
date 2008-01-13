@@ -99,7 +99,7 @@ CFileLoad::~CFileLoad( void )
 	@date 2003.06.08 Moca CODE_AUTODETECTを指定できるように変更
 	@date 2003.07.26 ryoji BOM引数追加
 */
-ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag, BOOL* pbBomExist )
+ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag, bool* pbBomExist )
 {
 	HANDLE	hFile;
 	DWORD	FileSize;
@@ -161,7 +161,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		m_bBomExist = TRUE;
 		if( pbBomExist != NULL ){
-			*pbBomExist = TRUE;
+			*pbBomExist = true;
 		}
 		switch( nBomCode ){
 			case CODE_UNICODE:
@@ -177,7 +177,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}else{
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		if( pbBomExist != NULL ){
-			*pbBomExist = FALSE;
+			*pbBomExist = false;
 		}
 	}
 	
@@ -207,49 +207,6 @@ void CFileLoad::FileClose( void )
 	m_eMode			= FLMODE_CLOSE;
 	m_nLineIndex	= -1;
 }
-
-/*!
-	ファイルの先頭にポインタを移動する
-	BOMはここで読み飛ばす
-	
-	@date 2003.06.13 Moca 使わないのでコメントアウト
-*/
-/*
-void CFileLoad::SeekBegin( void )
-{
-	DWORD	ReadSize = 0;
-	char	Buf[4];
-	FilePointer( 0, FILE_BEGIN );
-	m_nFileDataLen = m_nFileSize;
-	switch( m_CharCode ){
-	case CODE_UNICODE:
-	case CODE_UNICODEBE:
-		ReadSize = Read( &Buf, 2 );
-		m_nFileDataLen -= 2;
-		break;
-	case CODE_UTF8:
-		ReadSize = Read( &Buf, 3 );
-		m_nFileDataLen -= 3;
-		break;
-//	case CODE_SJIS:
-//	case CODE_EUC:
-//	case CODE_JIS:
-//	case CODE_UTF7:
-//	default:
-//		break;
-	}
-	// もしBOMが付いていなかったらポインタを元に戻す
-	m_bBomExist = FALSE;
-	if( ReadSize != 0 ){
-		if( m_CharCode == CMemory::IsUnicodeBom( (const unsigned char*)Buf, ReadSize ) ){
-			m_bBomExist = TRUE;
-		}else{
-			m_nFileDataLen = m_nFileSize;
-			FilePointer( 0, FILE_BEGIN );
-		}
-	}
-}
-*/
 
 /*!
 	次の論理行を文字コード変換してロードする

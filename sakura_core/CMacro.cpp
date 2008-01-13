@@ -768,18 +768,17 @@ void CMacro::HandleCommand(
 			}
 			// 文字コードセット
 			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
-			if(	IsValidCodeType(nCharCode) &&
-				nCharCode != pcEditView->m_pcEditDoc->m_nCharCode ){
-				pcEditView->m_pcEditDoc->m_nCharCode = nCharCode;
+			if(	IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding() ){
+				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode);
 				//	From Here Jul. 26, 2003 ryoji BOM状態を初期化
-				switch( pcEditView->m_pcEditDoc->m_nCharCode ){
+				switch( pcEditView->m_pcEditDoc->GetDocumentEncoding() ){
 				case CODE_UNICODE:
 				case CODE_UNICODEBE:
-					pcEditView->m_pcEditDoc->m_bBomExist = TRUE;
+					pcEditView->m_pcEditDoc->SetBomMode(true);
 					break;
 				case CODE_UTF8:
 				default:
-					pcEditView->m_pcEditDoc->m_bBomExist = FALSE;
+					pcEditView->m_pcEditDoc->SetBomMode(false);
 					break;
 				}
 				//	To Here Jul. 26, 2003 ryoji BOM状態を初期化
@@ -1014,7 +1013,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	case F_GETCHARCODE:
 		//	2005.07.31 maru マクロ追加
 		{
-			Wrap( &Result )->Receive(View->m_pcEditDoc->m_nCharCode);
+			Wrap( &Result )->Receive(View->m_pcEditDoc->GetDocumentEncoding());
 		}
 		return true;
 	case F_GETLINECODE:

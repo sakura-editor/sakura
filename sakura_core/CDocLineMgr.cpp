@@ -326,7 +326,7 @@ int CDocLineMgr::ReadFile(
 	ECodeType			nCharCode,		//!<
 	FILETIME*			pFileTime,		//!<
 	int					nFlags,			//!< [in] bit 0: MIME Encode‚³‚ê‚½ƒwƒbƒ_‚ðdecode‚·‚é‚©‚Ç‚¤‚©
-	BOOL*				pbBomExist		//!<
+	bool*				pbBomExist		//!<
 )
 {
 #ifdef _DEBUG
@@ -457,7 +457,7 @@ EConvertResult CDocLineMgr::WriteFile(
 	ECodeType		nCharCode,
 	FILETIME*		pFileTime,
 	CEOL			cEol,
-	BOOL			bBomExist
+	bool			bBomExist
 )
 {
 	int				nLineNumber;
@@ -1737,4 +1737,6 @@ void CDocLineMgr::_Insert(CDocLine* pDocLineNew, CDocLine* pPos)
 
 	++m_nLines;
 }
+
+
 

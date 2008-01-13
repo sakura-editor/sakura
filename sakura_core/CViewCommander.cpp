@@ -268,7 +268,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_FILECLOSE_OPEN:	/* 閉じて開く */
 		Command_FILECLOSE_OPEN();
 		break;
-	case F_FILE_REOPEN:				Command_FILE_REOPEN( GetDocument()->m_nCharCode, lparam1!=0 );break;//	Dec. 4, 2002 genta
+	case F_FILE_REOPEN:				Command_FILE_REOPEN( GetDocument()->GetDocumentEncoding(), lparam1!=0 );break;//	Dec. 4, 2002 genta
 	case F_FILE_REOPEN_SJIS:		Command_FILE_REOPEN( CODE_SJIS, lparam1!=0 );break;		//SJISで開き直す
 	case F_FILE_REOPEN_JIS:			Command_FILE_REOPEN( CODE_JIS, lparam1!=0 );break;		//JISで開き直す
 	case F_FILE_REOPEN_EUC:			Command_FILE_REOPEN( CODE_EUC, lparam1!=0 );break;		//EUCで開き直す
@@ -3763,22 +3763,20 @@ void CViewCommander::Command_OPTION_TYPE( void )
 /* タイプ別設定一覧 */
 void CViewCommander::Command_TYPE_LIST( void )
 {
-	CDlgTypeList	cDlgTypeList;
-	int				nSettingType;
-//	cDlgTypeList.Create( GetInstance(), GetHwnd() );
-	nSettingType = GetDocument()->GetDocumentType();
-	if( cDlgTypeList.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), &nSettingType ) ){
+	CDlgTypeList			cDlgTypeList;
+	CDlgTypeList::SResult	sResult;
+	if( cDlgTypeList.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), &sResult ) ){
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
-		if( nSettingType & PROP_TEMPCHANGE_FLAG ){
-			GetDocument()->SetDocumentType( nSettingType & ~PROP_TEMPCHANGE_FLAG, true );
+		if( sResult.bTempChange ){
+			GetDocument()->SetDocumentType( sResult.cDocumentType, true );
 			GetDocument()->LockDocumentType();
 			/* 設定変更を反映させる */
 			GetDocument()->OnChangeSetting();
 		}
 		else{
 			/* タイプ別設定 */
-			GetDocument()->OpenPropertySheetTypes( -1, nSettingType );
+			GetDocument()->OpenPropertySheetTypes( -1, sResult.cDocumentType );
 		}
 	}
 	return;
@@ -4592,7 +4590,7 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 		if(GetDocument()->GetDocumentAttribute().m_bUseKeyWordHelp){		/* キーワード辞書セレクトを使用する */	// 2006.04.10 fon
 			//	Feb. 17, 2007 genta 相対パスを実行ファイル基準で開くように
 			m_pCommanderView->TagJumpSub(
-				GetShareData()->m_Types[GetDocument()->GetDocumentType()].m_KeyHelpArr[m_pCommanderView->m_cTipWnd.m_nSearchDict].m_szPath,
+				GetDocument()->GetDocumentType()->m_KeyHelpArr[m_pCommanderView->m_cTipWnd.m_nSearchDict].m_szPath,
 				CMyPoint(1, m_pCommanderView->m_cTipWnd.m_nSearchLine),
 				0,
 				true
@@ -7078,9 +7076,10 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 /* 読み取り専用 */
 void CViewCommander::Command_READONLY( void )
 {
-	GetDocument()->m_bReadOnly ^= 1;
+	//読み取り専用属性を反転
+	GetDocument()->SetReadOnly(!GetDocument()->IsReadOnly());
 
-	/* 親ウィンドウのタイトルを更新 */
+	// 親ウィンドウのタイトルを更新
 	GetDocument()->SetParentCaption();
 }
 
@@ -7977,7 +7976,7 @@ void CViewCommander::Command_FILE_REOPEN(
 	/* 同一ファイルの再オープン */
 	 GetDocument()->ReloadCurrentFile(
 		nCharCode,					/* 文字コード種別 */
-		GetDocument()->m_bReadOnly	/* 読み取り専用モード */
+		GetDocument()->IsReadOnly()	/* 読み取り専用モード */
 	);
 	/* キャレットの行桁位置を表示する */
 	GetCaret().DrawCaretPosInfo();
@@ -8232,7 +8231,7 @@ BOOL CViewCommander::Command_PUTFILE( LPCWSTR filename, ECodeType nCharCode, int
 		return FALSE;
 	}
 	
-	if(nSaveCharCode == CODE_AUTODETECT) nSaveCharCode = GetDocument()->m_nCharCode;
+	if(nSaveCharCode == CODE_AUTODETECT) nSaveCharCode = GetDocument()->GetDocumentEncoding();
 	
 	//	2007.09.08 genta CEditDoc::FileWrite()にならって砂時計カーソル
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
@@ -8242,7 +8241,7 @@ BOOL CViewCommander::Command_PUTFILE( LPCWSTR filename, ECodeType nCharCode, int
 		try
 		{
 			CFileWrite cfw(to_tchar(filename));
-			if ( GetDocument()->m_bBomExist) {
+			if ( GetDocument()->IsBomExist() ) {
 				switch( nSaveCharCode ){
 				case CODE_UNICODE:
 					cfw.Write("\xff\xfe",sizeof(char)*2);
@@ -8327,7 +8326,7 @@ BOOL CViewCommander::Command_PUTFILE( LPCWSTR filename, ECodeType nCharCode, int
 			nSaveCharCode,
 			&filetime,
 			EOL_NONE,
-			GetDocument()->m_bBomExist
+			GetDocument()->IsBomExist()
 		);
 		bResult = (eRet != RESULT_FAILURE);
 
@@ -8393,7 +8392,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		if ( cMRU.GetFileInfo( to_tchar(filename), &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;
 		} else {
-			nSaveCharCode = GetDocument()->m_nCharCode;
+			nSaveCharCode = GetDocument()->GetDocumentEncoding();
 		}
 	}
 	
@@ -8472,5 +8471,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	m_pCommanderView->Redraw();
 	return bResult;
 }
+
+
 
 

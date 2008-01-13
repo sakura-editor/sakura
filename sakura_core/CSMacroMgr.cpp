@@ -1044,8 +1044,8 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 	@retval TRUE •Û‘¶‰Â”\
 	@retval FALSE •Û‘¶•s‰Â
 */
-BOOL CSMacroMgr::IsSaveOk(void)
+bool CSMacroMgr::IsSaveOk(void)
 {
-	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? FALSE : TRUE;
+	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? false : true;
 }
 /*[EOF]*/

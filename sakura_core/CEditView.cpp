@@ -2183,7 +2183,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	int			nLine; // 2006.04.10 fon
 
 
-	int nTypeNo = m_pcEditDoc->GetDocumentType();
+	CDocumentType nTypeNo = m_pcEditDoc->GetDocumentType();
 	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
 	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
@@ -2195,8 +2195,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix)
 		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
-	for(int i=0;i<m_pShareData->m_Types[nTypeNo].m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
-		if( 1 == m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_nUse ){
+	for(int i=0;i<m_pShareData->GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
+		if( 1 == m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_nUse ){
 			// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
 			CNativeW*	pcmemRefText;
 			int nSearchResult=m_cDicMgr.CDicMgr::Search(
@@ -2204,7 +2204,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				nCmpLen,
 				&pcmemRefKey,
 				&pcmemRefText,
-				m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath,
+				m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath,
 				&nLine
 			);
 			if(nSearchResult){
@@ -2219,7 +2219,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					else
 						m_cTipWnd.m_cInfo.AppendString( _T("■") );	/* 先頭の場合 */
 					/* 辞書のパス挿入 */
-					m_cTipWnd.m_cInfo.AppendString( m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath );
+					m_cTipWnd.m_cInfo.AppendString( m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath );
 					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
@@ -6980,6 +6980,8 @@ void CEditView::SetInsMode(bool mode)
 {
 	m_pcEditDoc->SetInsMode( mode );
 }
+
+
 
 
 

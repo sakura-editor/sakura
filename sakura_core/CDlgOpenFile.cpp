@@ -797,7 +797,8 @@ BOOL CDlgOpenFile::DoModalOpenDlg( TCHAR* pszPath, ECodeType* pnCharCode, bool* 
 	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
 	for( i = 0; i < MAX_TYPES; i++ )
 	{
-		cFileExt.AppendExt( m_pShareData->m_Types[i].m_szTypeName, m_pShareData->m_Types[i].m_szTypeExts );
+		Types& types = m_pShareData->GetTypeSetting(CDocumentType(i));
+		cFileExt.AppendExt( types.m_szTypeName, types.m_szTypeExts );
 	}
 
 	/* 構造体の初期化 */
@@ -875,7 +876,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( TCHAR* pszPath, ECodeType* pnCharCode, bool* 
 			例）hoge.abc -> hoge.abc.txt
 		自前で補完することでこれを回避する。（実際の処理はフックプロシージャの中）
 */
-BOOL CDlgOpenFile::DoModalSaveDlg( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* pcEol, BOOL* pbBom )
+BOOL CDlgOpenFile::DoModalSaveDlg( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* pcEol, bool* pbBom )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
