@@ -2746,6 +2746,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_SELECTWORD            "現在位置の単語選択"
     F_SELECTALL             "すべて選択"
+    F_SELECTLINE            "1行選択"
     F_BEGIN_SEL             "範囲選択開始"
     F_UP_SEL                "(選択)カーソル上移動"
     F_DOWN_SEL              "(選択)カーソル下移動"

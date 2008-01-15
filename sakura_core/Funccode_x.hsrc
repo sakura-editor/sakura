@@ -118,6 +118,7 @@ F_GOPREVPARAGRAPH	= 30383,	//前の段落へ								なし
 // 選択系
 F_SELECTWORD		= 30400,	//現在位置の単語選択						なし
 F_SELECTALL			= 30401,	//すべて選択								なし
+F_SELECTLINE		= 30403,	//1行選択									int param	// 2007.10.06 nasukoji
 F_BEGIN_SEL			= 30410,	//範囲選択開始								なし
 F_UP_SEL			= 30411,	//(範囲選択)カーソル上移動					int lines
 F_DOWN_SEL			= 30412,	//(範囲選択)カーソル下移動					なし
