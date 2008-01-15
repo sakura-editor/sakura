@@ -361,6 +361,7 @@ public:
 	//                         各種判定                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	bool IsCurrentPositionURL( const CLayoutPoint& ptCaretPos, CLogicRange* pUrlRange, wchar_t** );/* カーソル位置にURLが有る場合のその範囲を調べる */
+	BOOL CheckTripleClick( CMyPoint ptMouse );							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	bool IsSearchString( const wchar_t*, CLogicInt, CLogicInt, CLogicInt*, CLogicInt* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
@@ -622,6 +623,9 @@ private:
 
 	// 2007.10.02 nasukoji
 	bool	m_bActivateByMouse;		//!< マウスによるアクティベート
+
+	// 2007.10.02 nasukoji
+	DWORD	m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻
 };
 
 

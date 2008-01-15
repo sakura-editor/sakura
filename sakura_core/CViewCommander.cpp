@@ -364,6 +364,7 @@ BOOL CViewCommander::HandleCommand(
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
 	case F_SELECTALL:		Command_SELECTALL();break;						//すべて選択
+	case F_SELECTLINE:		Command_SELECTLINE( lparam1 );break;			//1行選択	// 2007.10.13 nasukoji
 	case F_BEGIN_SEL:		Command_BEGIN_SELECT();break;					/* 範囲選択開始 */
 	case F_UP_SEL:			Command_UP( TRUE, bRepeat, lparam1 ); break;	//(範囲選択)カーソル上移動
 	case F_DOWN_SEL:		Command_DOWN( TRUE, bRepeat ); break;			//(範囲選択)カーソル下移動
@@ -2090,6 +2091,59 @@ void CViewCommander::Command_SELECTALL( void )
 
 	/* 選択領域描画 */
 	m_pCommanderView->GetSelectionInfo().DrawSelectArea();
+}
+
+
+
+
+/*!	1行選択
+	@brief カーソル位置を1行選択する
+	@param lparam [in] マクロから使用する拡張フラグ（拡張用に予約）
+
+	note 改行単位で選択を行う。
+
+	@date 2007.11.15 nasukoji	新規作成
+*/
+void CViewCommander::Command_SELECTLINE( int lparam )
+{
+	// 改行単位で1行選択する
+	Command_GOLINETOP( FALSE, 0x9 );	// 物理行頭に移動
+
+	m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect = TRUE;		// 行単位選択中
+
+	CLayoutPoint ptCaret;
+
+	// 最下行（物理行）でない
+	if(GetCaret().GetCaretLogicPos().y < GetDocument()->m_cDocLineMgr.GetLineCount() ){
+		// 1行先の物理行からレイアウト行を求める
+		GetDocument()->m_cLayoutMgr.LogicToLayout( CLogicPoint(0, GetCaret().GetCaretLogicPos().y + 1), &ptCaret );
+
+		// カーソルを次の物理行頭へ移動する
+		m_pCommanderView->MoveCursorSelecting( ptCaret, TRUE );
+		
+		// 移動後のカーソル位置を取得する
+		ptCaret = GetCaret().GetCaretLayoutPos().Get();
+	}else{
+		// カーソルを最下行（レイアウト行）へ移動する
+		m_pCommanderView->MoveCursorSelecting( CLayoutPoint(CLayoutInt(0), GetDocument()->m_cLayoutMgr.GetLineCount()), TRUE );
+		Command_GOLINEEND( TRUE, FALSE );	// 行末に移動
+
+		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
+		if(( ! m_pCommanderView->GetSelectionInfo().IsTextSelected() )&&
+		   ( GetCaret().GetCaretLogicPos().y >= GetDocument()->m_cDocLineMgr.GetLineCount() ))
+		{
+			// 現在の選択範囲を非選択状態に戻す
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		}
+	}
+
+	if( m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect ){
+		// 範囲選択開始行・カラムを記憶
+		m_pCommanderView->GetSelectionInfo().m_sSelect.SetTo( ptCaret );
+		m_pCommanderView->GetSelectionInfo().m_sSelectBgn.SetTo( ptCaret );
+	}
+
+	return;
 }
 
 
@@ -8471,7 +8525,3 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	m_pCommanderView->Redraw();
 	return bResult;
 }
-
-
-
-

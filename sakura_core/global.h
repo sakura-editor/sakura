@@ -458,6 +458,20 @@ const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
 
 const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読み込むときのバッファサイズ
 
+/**	マウスクリックとキー定義の対応
+
+	@date 2007.11.04 genta 新規作成．即値回避と範囲サイズ定義のため
+*/
+enum MOUSEFUNCTION_ASSIGN {
+	MOUSEFUNCTION_DOUBLECLICK	= 0,	//!< ダブルクリック
+	MOUSEFUNCTION_RIGHT			= 1,	//!< 右クリック
+	MOUSEFUNCTION_CENTER		= 2,	//!< 中クリック
+	MOUSEFUNCTION_LEFTSIDE		= 3,	//!< 左サイドクリック
+	MOUSEFUNCTION_RIGHTSIDE		= 4,	//!< 右サイドクリック
+	MOUSEFUNCTION_TRIPLECLICK	= 5,	//!< トリプルクリック
+	MOUSEFUNCTION_QUADCLICK		= 6,	//!< クアドラプルクリック
+	MOUSEFUNCTION_KEYBEGIN		= 7,	//!< マウスへの割り当て個数＝本当のキー割り当て先頭INDEX
+};
 
 //2007.09.06 kobake 追加
 //!検索方向

@@ -153,6 +153,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
 	{F_SELECTWORD,			LTEXT("SelectWord"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置の単語選択
 	{F_SELECTALL,			LTEXT("SelectAll"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて選択
+	{F_SELECTLINE,			LTEXT("SelectLine"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //1行選択	// 2007.10.13 nasukoji
 	{F_BEGIN_SEL,			LTEXT("BeginSelect"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //範囲選択開始 Mar. 5, 2001 genta 名称修正
 	{F_UP_SEL,				LTEXT("Up_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル上移動
 	{F_DOWN_SEL,			LTEXT("Down_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル下移動
@@ -803,6 +804,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので独立化して(選択)を移動(サブメニュー化は構造上できないので)
 	case F_SELECTWORD				://現在位置の単語選択
 	case F_SELECTALL				://すべて選択
+	case F_SELECTLINE				://1行選択	// 2007.10.06 nasukoji
 	case F_BEGIN_SEL				://範囲選択開始
 	case F_UP_SEL					://(範囲選択)カーソル上移動
 	case F_DOWN_SEL					://(範囲選択)カーソル下移動
