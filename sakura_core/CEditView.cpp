@@ -1864,23 +1864,15 @@ normal_action:;
 		else{
 			/* URLがクリックされたら選択するか */
 			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLは普通の文字として扱う
-			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+			if( CTypeSupport(this,COLORIDX_URL).IsDisp() &&
 				TRUE == m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL ){
 
-				//int			nUrlLine;	// URLの行(折り返し単位)
-				//int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
-				//int			nUrlLen;	// URLの長さ(バイト数)
-				CLogicRange cUrlRange;
+				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
 				bool bIsUrl = IsCurrentPositionURL(
 					GetCaret().GetCaretLayoutPos(),	// カーソル位置
-					/*
-					&nUrlLine,				// URLの行(改行単位)
-					&nUrlIdxBgn,			// URLの位置(行頭からのバイト位置)
-					&nUrlLen,				// URLの長さ(バイト数)
-					*/
-					&cUrlRange,
-					NULL					// URL受け取り先
+					&cUrlRange,						// URL範囲
+					NULL							// URL受け取り先
 				);
 				if( bIsUrl ){
 					/* 現在の選択範囲を非選択状態に戻す */
@@ -1910,17 +1902,15 @@ normal_action:;
 	}
 }
 
-/* 指定カーソル位置にURLが有る場合のその範囲を調べる */
-/* 戻り値がTRUEの場合、*ppszURLは呼び出し側でdeleteすること */
+/*!
+	指定カーソル位置にURLが有る場合のその範囲を調べる
+
+	2007.01.18 kobake URL文字列の受け取りをwstringで行うように変更
+*/
 bool CEditView::IsCurrentPositionURL(
 	const CLayoutPoint&	ptCaretPos,		//!< [in]  カーソル位置
 	CLogicRange*		pUrlRange,		//!< [out] URL範囲。ロジック単位。
-	/*
-	CLogicInt*			pnUrlLine,		// URLの行。ロジック単位。
-	int*				pnUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-	int*				pnUrlLen,		// URLの長さ(バイト数)
-	*/
-	wchar_t**			ppszURL			//!< URL受け取り先(関数内でnewする)
+	std::wstring*		pwstrURL		//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::IsCurrentPositionURL" );
@@ -1956,19 +1946,11 @@ bool CEditView::IsCurrentPositionURL(
 		else{
 			if( i <= ptXY.GetX2() && ptXY.GetX2() < i + CLogicInt(nUrlLen) ){
 				/* URLを返す場合 */
-				if( NULL != ppszURL ){
-					*ppszURL = new wchar_t[nUrlLen + 1];
-					wmemcpy( *ppszURL, &pLine[i], nUrlLen );
-					(*ppszURL)[nUrlLen] = L'\0';
-					/* *ppszURLは呼び出し側でdeleteすること */
+				if( pwstrURL ){
+					pwstrURL->assign(&pLine[i],nUrlLen);
 				}
 				pUrlRange->SetLine(ptXY.GetY2());
 				pUrlRange->SetXs(i, i+CLogicInt(nUrlLen));
-				/*
-				*pnUrlLen = nUrlLen;
-				*pnUrlLine = ptXY.GetY2();
-				*pnUrlIdxBgn = i;
-				*/
 				return true;
 			}else{
 				i += CLogicInt(nUrlLen);
@@ -2440,15 +2422,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 			}
 			/* カーソル位置にURLが有る場合 */
 			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-			else if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+			else if( CTypeSupport(this,COLORIDX_URL).IsDisp() &&
 				IsCurrentPositionURL(
 					ptNew,			// カーソル位置
 					&cUrlRange,		// URL範囲
-					/*
-					&nUrlLine,		// URLの行(改行単位)
-					&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-					&nUrlLen,		// URLの長さ(バイト数)
-					*/
 					NULL			// URL受け取り先
 				)
 			){
@@ -2706,70 +2683,46 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 
 // マウス左ボタンダブルクリック
+// 2007.01.18 kobake IsCurrentPositionURL仕様変更に伴い、処理の書き換え
 void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 {
 	CMyPoint ptMouse(_xPos,_yPos);
 
-	int			nIdx;
-	CLogicRange	cUrlRange;
-	/*
-	int			nUrlLine;	// URLの行(折り返し単位)
-	int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
-	int			nUrlLen;	// URLの長さ(バイト数)
-	*/
-	wchar_t*	pszURL;
+	CLogicRange		cUrlRange;	// URL範囲
+	std::wstring	wstrURL;
 	const wchar_t*	pszMailTo = L"mailto:";
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
 	if(! m_dwTripleClickCheck){
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
 		//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp
+		if( CTypeSupport(this,COLORIDX_URL).IsDisp()
 			&&
 			IsCurrentPositionURL(
 				GetCaret().GetCaretLayoutPos(),	// カーソル位置
-				&cUrlRange,
-				/*
-				&nUrlLine,				// URLの行(改行単位)
-				&nUrlIdxBgn,			// URLの位置(行頭からのバイト位置)
-				&nUrlLen,				// URLの長さ(バイト数)
-				*/
-				&pszURL					// URL受け取り先
+				&cUrlRange,				// URL範囲
+				&wstrURL				// URL受け取り先
 			)
 		){
-			wchar_t* pszOPEN;
-			wchar_t* pszWork;
+			std::wstring wstrOPEN;
 
 			// URLを開く
 		 	// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
-			if( IsMailAddress( pszURL, wcslen( pszURL ), NULL ) ){
-				pszWork = new wchar_t[ wcslen( pszURL ) + wcslen( pszMailTo ) + 1];
-				wcscpy( pszWork, pszMailTo );
-				wcscat( pszWork, pszURL );
-				pszOPEN = pszWork;
+			if( IsMailAddress( wstrURL.c_str(), wstrURL.length(), NULL ) ){
+				wstrOPEN = pszMailTo + wstrURL;
 			}
 			else{
-				if( wcsnicmp( pszURL, L"ttp://", 6 ) == 0 ){	//抑止URL
-					pszWork = new wchar_t[ wcslen( pszURL ) + 1 + 1 ];
-					wcscpy( pszWork, L"h" );
-					wcscat( pszWork, pszURL );
-					pszOPEN = pszWork;
+				if( wcsnicmp( wstrURL.c_str(), L"ttp://", 6 ) == 0 ){	//抑止URL
+					wstrOPEN = L"h" + wstrURL;
 				}
-				else if( wcsnicmp( pszURL, L"tp://", 5 ) == 0 ){	//抑止URL
-					pszWork = new wchar_t[ wcslen( pszURL ) + 2 + 1 ];
-					wcscpy( pszWork, L"ht" );
-					wcscat( pszWork, pszURL );
-					pszOPEN = pszWork;
+				else if( wcsnicmp( wstrURL.c_str(), L"tp://", 5 ) == 0 ){	//抑止URL
+					wstrOPEN = L"ht" + wstrURL;
 				}
 				else{
-					pszOPEN = pszURL;
+					wstrOPEN = wstrURL;
 				}
 			}
-			::ShellExecute( NULL, _T("open"), to_tchar(pszOPEN), NULL, NULL, SW_SHOW );
-			delete [] pszURL;
-			if(pszWork){
-				delete pszWork;
-			}
+			::ShellExecute( NULL, _T("open"), to_tchar(wstrOPEN.c_str()), NULL, NULL, SW_SHOW );
 			return;
 		}
 
@@ -2784,7 +2737,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
-	nIdx = getCtrlKeyState();
+	int	nIdx = getCtrlKeyState();
 
 	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[?]に入っている 2007.11.15 nasukoji */
 	EFunctionCode	nFuncID = m_pShareData->m_pKeyNameArr[
