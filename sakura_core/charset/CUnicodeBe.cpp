@@ -1,3 +1,5 @@
+//	‚±‚Ìs‚Í•¶š‰»‚¯‘Îô—p‚Å‚·DÁ‚³‚È‚¢‚Å‚­‚¾‚³‚¢
+
 #include "stdafx.h"
 #include "CUnicodeBe.h"
 
