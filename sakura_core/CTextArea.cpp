@@ -262,7 +262,7 @@ void CTextArea::GenerateLeftRect  (RECT* rc, CLayoutInt nColCount ) const
 
 void CTextArea::GenerateRightRect (RECT* rc, CLayoutInt nColCount ) const
 {
-	rc->left   = m_nViewAlignLeft + m_nViewCx + (Int)nColCount * m_pEditView->GetTextMetrics().GetHankakuDx();
+	rc->left   = m_nViewAlignLeft + m_nViewCx - (Int)nColCount * m_pEditView->GetTextMetrics().GetHankakuDx(); //2008.01.26 kobake •„†‚ª‹t‚É‚È‚Á‚Ä‚½‚Ì‚ðC³
 	rc->right  = m_nViewAlignLeft + m_nViewCx;
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop  + m_nViewCy;
@@ -283,4 +283,5 @@ void CTextArea::GenerateTextAreaRect(RECT* rc) const
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop + m_nViewCy;
 }
+
 
