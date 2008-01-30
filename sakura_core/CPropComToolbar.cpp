@@ -103,13 +103,11 @@ int Listbox_INSERTDATA(
 {
 	int nIndex1 = ::SendMessage( hWnd, LB_INSERTSTRING, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: óvëfÇÃë}ì¸Ç…é∏îsÇµÇ‹ÇµÇΩÅB(%d:%d)"), index, nIndex1 );
+		TopErrorMessage( NULL, _T("Toolbar Dialog: óvëfÇÃë}ì¸Ç…é∏îsÇµÇ‹ÇµÇΩÅB(%d:%d)"), index, nIndex1 );
 		return nIndex1;
 	}
 	else if( ::SendMessageAny( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: INS: ílÇÃê›íËÇ…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
+		TopErrorMessage( NULL, _T("Toolbar Dialog: INS: ílÇÃê›íËÇ…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -137,13 +135,11 @@ int Listbox_ADDDATA(
 {
 	int nIndex1 = ::SendMessage( hWnd, LB_ADDSTRING, 0, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB(%d)"), nIndex1 );
+		TopErrorMessage( NULL, _T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB(%d)"), nIndex1 );
 		return nIndex1;
 	}
 	else if( ::SendMessageAny( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: ADD: ílÇÃê›íËÇ…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
+		TopErrorMessage( NULL, _T("Toolbar Dialog: ADD: ílÇÃê›íËÇ…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -365,8 +361,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 					//	Ç±Ç±Ç≈ÇÕ i != 0 ÇæÇ∆ÇÕévÇ§ÇØÇ«ÅAàÍâûï€åØÇ≈Ç∑ÅB
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-							_T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
+						TopErrorMessage( NULL, _T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -387,8 +382,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 - 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-							_T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
+						TopErrorMessage( NULL, _T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -410,8 +404,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 + 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-							_T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
+						TopErrorMessage( NULL, _T("Toolbar Dialog: óvëfÇÃí«â¡Ç…é∏îsÇµÇ‹ÇµÇΩÅB:%d"), nIndex1 );
 						break;
 					}
 					::SendMessageAny( hwndResList, LB_SETCURSEL, nIndex1, 0 );

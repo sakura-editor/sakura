@@ -469,7 +469,7 @@ bool InitRegexp(
 {
 	if( !rRegexp.Init() ){
 		if( bShowMessage ){
-			::MessageBeep( MB_ICONEXCLAMATION );
+			WarningBeep();
 			::MessageBox( hWnd,
 				_T("BREGONIG.DLLが見つかりません。\r\n")
 				_T("正規表現を利用するにはBREGONIG.DLLが必要です。\r\n")

@@ -26,7 +26,7 @@ retry:;
 	if( GetDocument()->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
 		0 == _tcslen( GetDocument()->GetDocumentAttribute().m_szHokanFile 
 	) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		if( IDYES == ::MYMESSAGEBOX_A( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME_A,
 			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
 		) ){
@@ -43,7 +43,7 @@ retry:;
 	if( 0 < m_pCommanderView->GetParser().GetLeftWord( &cmemData, 100 ) ){
 		m_pCommanderView->ShowHokanMgr( cmemData, TRUE );
 	}else{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		GetShareData()->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;

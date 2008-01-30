@@ -1196,12 +1196,12 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, ECodeType
 
 			if(NULL != pszCodeNameCur && NULL != pszCodeNameNew){
 				if(nCharCode != pfi->m_nCharCode){
-					::MYMESSAGEBOX_A( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME_A,
-						"%ts\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n"
-						"ファイルメニューから「開き直す」を使用してください。\n"
-						"\n"
-						"現在の文字コードセット=[%ts]\n"
-						"新しい文字コードセット=[%ts]",
+					TopWarningMessage( *phwndOwner,
+						_T("%ts\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
+						_T("ファイルメニューから「開き直す」を使用してください。\n")
+						_T("\n")
+						_T("現在の文字コードセット=[%ts]\n")
+						_T("新しい文字コードセット=[%ts]"),
 						pszPath,
 						pszCodeNameCur,
 						pszCodeNameNew
@@ -1209,10 +1209,10 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, ECodeType
 				}
 			}
 			else{
-				::MYMESSAGEBOX_A( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME_A,
-					"%ts\n\n多重オープンの確認で不明な文字コードが指定されました。\n"
-					"\n"
-					"現在の文字コードセット=%d [%ts]\n新しい文字コードセット=%d [%ts]",
+				TopWarningMessage( *phwndOwner,
+					_T("%ts\n\n多重オープンの確認で不明な文字コードが指定されました。\n")
+					_T("\n")
+					_T("現在の文字コードセット=%d [%ts]\n新しい文字コードセット=%d [%ts]"),
 					pszPath,
 					pfi->m_nCharCode,
 					NULL==pszCodeNameCur?_T("不明"):pszCodeNameCur,

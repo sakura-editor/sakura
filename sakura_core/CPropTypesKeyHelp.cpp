@@ -238,7 +238,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 				if(wID == IDC_BUTTON_KEYHELP_INS){	/* 挿入 */
 					if( nIndex2 >= MAX_KEYHELP_FILE ){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
+						ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
 						return FALSE;
 					}if( -1 == nIndex ){
 						/* 選択中でなければ最後にする。 */
@@ -248,7 +248,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 					}
 				}else{								/* 更新 */
 					if( -1 == nIndex ){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("更新する辞書をリストから選択してください。"));
+						ErrorMessage( hwndDlg, _T("更新する辞書をリストから選択してください。"));
 						return FALSE;
 					}
 				}
@@ -266,7 +266,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 					if( _tcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
-							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("既に登録済みの辞書です。"));
+							ErrorMessage( hwndDlg, _T("既に登録済みの辞書です。"));
 							return FALSE;
 						}
 					}
@@ -276,7 +276,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				{
 					CTextInputStream_AbsIni in(szPath);
 					if(!in){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+						ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 						return FALSE;
 					}
 					// 開けたなら1行目を取得してから閉じる -> szAbout
@@ -784,11 +784,7 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 
 		//About
 		if(wcslen(p2)>DICT_ABOUT_LEN){
-			::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP,
-				GSTR_APPNAME,
-				_T("辞書の説明は%d文字以内にしてください。\n"),
-				DICT_ABOUT_LEN
-			);
+			ErrorMessage( hwndDlg, _T("辞書の説明は%d文字以内にしてください。\n"), DICT_ABOUT_LEN );
 			++invalid_record;
 			continue;
 		}
@@ -859,10 +855,7 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 	}
 	out.Close();
 
-	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION,
-		GSTR_APPNAME,
-		_T("ファイルへエクスポートしました。\n\n%ts"), szXPath
-	);
+	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szXPath );
 	return TRUE;
 }
 

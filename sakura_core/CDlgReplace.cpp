@@ -305,7 +305,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		/* テキストの貼り付け */
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE ) &&
 			!pcEditView->m_pcEditDoc->IsEnablePaste() ){
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK , GSTR_APPNAME_A,"クリップボードに有効なデータがありません！");
+			OkMessage( GetHwnd(), _T("クリップボードに有効なデータがありません！") );
 			::CheckDlgButton( GetHwnd(), IDC_CHK_PASTE, FALSE );
 		}
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE)) );
@@ -415,9 +415,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画 */
 			pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK , GSTR_APPNAME_A,
-				"文字列を指定してください。"
-			);
+			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:	/* 下検索 */
@@ -446,9 +444,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			// To Here 2001.12.03 hor
                
 		}else{
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK , GSTR_APPNAME_A,
-				"文字列を指定してください。"
-			);
+			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}
 		return TRUE;
 
@@ -479,9 +475,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画 */
 			pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK , GSTR_APPNAME_A,
-				"文字列を指定してください。"
-			);
+			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
@@ -489,10 +483,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			// 置換開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-				/*
-				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
-				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
-				*/
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 
@@ -503,8 +493,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* アクティブにする */
 			ActivateFrameWindow( GetHwnd() );
 
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_TOPMOST, GSTR_APPNAME_A,
-				"%d箇所を置換しました。", m_nReplaceCnt);
+			TopOkMessage( GetHwnd(), _T("%d箇所を置換しました。"), m_nReplaceCnt);
 
 			if( !m_bCanceled ){
 				if( m_bModal ){		/* モーダルダイアログか */
@@ -519,9 +508,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			}
 			return TRUE;
 		}else{
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK , GSTR_APPNAME_A,
-				"置換条件を指定してください。"
-			);
+			OkMessage( GetHwnd(), _T("置換条件を指定してください。") );
 		}
 		return TRUE;
 //	case IDCANCEL:

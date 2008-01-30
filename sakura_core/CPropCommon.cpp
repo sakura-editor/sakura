@@ -680,9 +680,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					CMRU cMRU;
 					cMRU.ClearAll();
 				}
-				::MYMESSAGEBOX_A( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
-					"最近使ったファイルの履歴を削除しました。\n"
-				);
+				InfoMessage( hwndDlg, _T("最近使ったファイルの履歴を削除しました。\n") );
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
 				/* フォルダの履歴をクリア */
@@ -696,9 +694,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					CMRUFolder cMRUFolder;	//	MRUリストの初期化。ラベル内だと問題あり？
 					cMRUFolder.ClearAll();
 				}
-				::MYMESSAGEBOX_A( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
-					"最近使ったフォルダの履歴を削除しました。\n"
-				);
+				InfoMessage( hwndDlg, _T("最近使ったフォルダの履歴を削除しました。\n") );
 				return TRUE;
 
 			}

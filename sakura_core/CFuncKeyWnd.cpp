@@ -515,9 +515,7 @@ void CFuncKeyWnd::Timer_ONOFF( BOOL bStart )
 		if( bStart ){
 			/* タイマーを起動 */
 			if( 0 == ::SetTimer( GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
-				::MYMESSAGEBOX_A(	GetHwnd(),	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-					"CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
-				);
+				WarningMessage(	GetHwnd(), _T("CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 			}
 		} else {
 			/* タイマーを削除 */

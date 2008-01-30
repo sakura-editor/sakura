@@ -99,15 +99,15 @@ bool CProcessFactory::IsValidVersion()
 	COsVersionInfo	cOsVer;
 	if( cOsVer.GetVersion() ){
 		if( !cOsVer.OsIsEnableVersion() ){
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
-				"このアプリケーションを実行するには、\nWindows95以上 または WindowsNT4.0以上のOSが必要です。\nアプリケーションを終了します。"
+			InfoMessage( NULL,
+				_T("このアプリケーションを実行するには、\n")
+				_T("Windows95以上 または WindowsNT4.0以上のOSが必要です。\n")
+				_T("アプリケーションを終了します。")
 			);
 			return false;
 		}
 	}else{
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
-			"OSのバージョンが取得できません。\nアプリケーションを終了します。"
-		);
+		InfoMessage( NULL, _T("OSのバージョンが取得できません。\nアプリケーションを終了します。") );
 		return false;
 	}
 
@@ -217,8 +217,7 @@ bool CProcessFactory::StartControlProcess()
 						0,
 						NULL
 		);
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			_T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, pMsg );
+		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, pMsg );
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
 		return false;
 	}
@@ -231,8 +230,7 @@ bool CProcessFactory::StartControlProcess()
 	int nResult;
 	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
 	if( 0 != nResult ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			_T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
+		ErrorMessage( NULL, _T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
 		::CloseHandle( p.hThread );
 		::CloseHandle( p.hProcess );
 		return false;
@@ -281,8 +279,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
 	if( WAIT_TIMEOUT == dwRet ){	// コントロールプロセスの初期化が終了しない
 		::CloseHandle( hEvent );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
+		TopErrorMessage( NULL, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
 		return false;
 	}
 	::CloseHandle( hEvent );

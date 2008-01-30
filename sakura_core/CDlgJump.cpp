@@ -179,9 +179,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 		if( 0 < GetData() ){
 			CloseDialog( 1 );
 		}else{
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK , GSTR_APPNAME_A,
-				"正しく行番号を入力してください。"
-			);
+			OkMessage( GetHwnd(), _T("正しく行番号を入力してください。") );
 		}
 //To Here Feb. 20, 2001
 		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。

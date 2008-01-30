@@ -1245,8 +1245,7 @@ void CEditDoc::OpenFile( const TCHAR* filename, ECodeType nCharCode, bool bReadO
 		//	同一ファイルを複数開くことがある．
 		if( ! GetLongFileName( filename, pszPath )){
 			//	ファイル名の変換に失敗
-			::MYMESSAGEBOX( GetSplitterHwnd(), MB_OK , GSTR_APPNAME,
-				_T("ファイル名の変換に失敗しました [%ts]"), filename );
+			OkMessage( GetSplitterHwnd(), _T("ファイル名の変換に失敗しました [%ts]"), filename );
 			return;
 		}
 	}
@@ -1357,7 +1356,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 	 	//	Feb. 28, 2004 genta
 	 	//	保存不要でも警告音を出して欲しくない場合がある
 	 	if( warnbeep ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 		}
 		return TRUE;
 	}
@@ -1376,12 +1375,10 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			if( warnbeep ){
-				::MessageBeep( MB_ICONHAND );
-				MYMESSAGEBOX(
+				ErrorBeep();
+				TopErrorMessage(
 					GetSplitterHwnd(),
-					MB_OK | MB_ICONSTOP | MB_TOPMOST,
-					GSTR_APPNAME,
-					_T("%ls\n")
+					_T("%ts\n")
 					_T("\n")
 					_T("は読み取り専用モードで開いています。 上書き保存はできません。\n")
 					_T("\n")
@@ -1425,13 +1422,8 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
 		//	同名で上書きされるのを防ぐ
 		if( m_bReadOnly && _tcscmp( szPath, GetFilePath()) == 0 ){
-			::MessageBeep( MB_ICONHAND );
-			MYMESSAGEBOX_A(
-				GetSplitterHwnd(),
-				MB_OK | MB_ICONSTOP | MB_TOPMOST,
-				GSTR_APPNAME_A,
-				"読み取り専用モードでは同一ファイルへの上書き保存はできません。"
-			);
+			ErrorBeep();
+			TopErrorMessage( GetSplitterHwnd(), _T("読み取り専用モードでは同一ファイルへの上書き保存はできません。") );
 		}
 		else {
 			FileSaveAs( szPath );

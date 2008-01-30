@@ -184,13 +184,11 @@ CControlTray::CControlTray()
 			m_pShareData->m_pKeyNameArr
 		);
 	if( NULL == m_pShareData->m_hAccel ){
-		::MessageBox(
+		ErrorMessage(
 			NULL,
 			_T("CControlTray::CControlTray()\n")
 			_T("アクセラレータ テーブルが作成できません。\n")
 			_T("システムリソースが不足しています。"),
-			GSTR_APPNAME,
-			MB_OK | MB_ICONSTOP
 		);
 	}
 
@@ -244,12 +242,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		wc.lpszClassName	= m_pszAppName;
 		ATOM	atom = RegisterClass( &wc );
 		if( 0 == atom ){
-			::MessageBox(
-				NULL,
-				_T("CControlTray::Create()\nウィンドウクラスを登録できませんでした。"),
-				GSTR_APPNAME,
-				MB_OK | MB_ICONSTOP
-			);
+			ErrorMessage( NULL, _T("CControlTray::Create()\nウィンドウクラスを登録できませんでした。") );
 		}
 	}
 	g_m_pCEditApp = this;
@@ -608,13 +601,11 @@ LRESULT CControlTray::DispatchEvent(
 					m_pShareData->m_pKeyNameArr
 				);
 			if( NULL == m_pShareData->m_hAccel ){
-				::MessageBox(
+				ErrorMessage(
 					NULL,
 					_T("CControlTray::DispatchEvent()\n")
 					_T("アクセラレータ テーブルが作成できません。\n")
 					_T("システムリソースが不足しています。"),
-					GSTR_APPNAME,
-					MB_OK | MB_ICONSTOP
 				);
 			}
 
@@ -650,7 +641,7 @@ LRESULT CControlTray::DispatchEvent(
 							break;
 						}
 						else{
-							::MessageBeep( MB_ICONHAND );
+							ErrorBeep();
 						}
 					}while(IDYES == ::MYMESSAGEBOX( 
 							NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST,
@@ -1121,10 +1112,8 @@ bool CControlTray::OpenNewEditor(
 						0,
 						NULL
 		);
-		::MYMESSAGEBOX(
+		ErrorMessage(
 			hWndParent,
-			MB_OK | MB_ICONSTOP,
-			GSTR_APPNAME,
 			_T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"),
 			szEXE,
 			pMsg
@@ -1137,10 +1126,8 @@ bool CControlTray::OpenNewEditor(
 		//	起動したプロセスが完全に立ち上がるまでちょっと待つ．
 		int nResult = WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
 		if( nResult != 0 ){
-			::MYMESSAGEBOX(
+			ErrorMessage(
 				hWndParent,
-				MB_OK | MB_ICONSTOP,
-				GSTR_APPNAME,
 				_T("\'%ls\'\nプロセスの起動に失敗しました。"),
 				szEXE
 			);

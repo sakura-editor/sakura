@@ -1010,11 +1010,11 @@ void CDlgOpenFile::DlgOpenFail(void)
 	default: pszError = _T("UNKNOWN_ERRORCODE"); break;
 	}
 
-	::MessageBeep( MB_ICONSTOP );
-	::MYMESSAGEBOX_A( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-		"ダイアログが開けません。\n"
-		"\n"
-		"エラー:%ls",
+	ErrorBeep();
+	TopErrorMessage( m_hwndParent,
+		_T("ダイアログが開けません。\n")
+		_T("\n")
+		_T("エラー:%ls"),
 		pszError
 	);
 }

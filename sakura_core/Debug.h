@@ -104,26 +104,41 @@ void DBMSG_IMP(const ACHAR* msg); //!< ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ð•\Ž¦BƒLƒƒƒvƒVƒ‡ƒ“‚É‚
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                ƒ†[ƒU—pƒƒbƒZ[ƒWƒ{ƒbƒNƒX                   //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//$$ƒƒ‚FDebug.hˆÈŠO‚Ì’u‚«êŠ‚ðl‚¦‚é
 
 //ƒfƒoƒbƒO—pƒƒbƒZ[ƒWƒ{ƒbƒNƒX
 #define MYMESSAGEBOX MessageBoxF
 #define MYMESSAGEBOX_A MessageBoxF_A
 
 //ƒGƒ‰[FÔŠÛ‚Éu~v
-#define ErrorMessage(hwnd, format, ...)   MessageBoxF    (hwnd, MB_OK | MB_ICONSTOP       , GSTR_APPNAME,   format, __VA_ARGS__)
-#define ErrorMessage_A(hwnd, format, ...) MessageBoxF_A  (hwnd, MB_OK | MB_ICONSTOP       , GSTR_APPNAME_A, format, __VA_ARGS__)
+#define ErrorMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK | MB_ICONSTOP						, GSTR_APPNAME,   format, __VA_ARGS__)
+#define ErrorMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_ICONSTOP						, GSTR_APPNAME_A, format, __VA_ARGS__)
+//(TOPMOST)
+#define TopErrorMessage(hwnd, format, ...)		MessageBoxF		(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST			, GSTR_APPNAME,   format, __VA_ARGS__)
+#define TopErrorMessage_A(hwnd, format, ...)	MessageBoxF_A	(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST			, GSTR_APPNAME_A, format, __VA_ARGS__)
+#define ErrorBeep()								MessageBeep(MB_ICONSTOP)
 
 //ŒxFŽOŠp‚ÉuIv
-#define WarningMessage(hwnd, format, ...)   MessageBoxF  (hwnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,   format, __VA_ARGS__)
-#define WarningMessage_A(hwnd, format, ...) MessageBoxF_A(hwnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A, format, __VA_ARGS__)
+#define WarningMessage(hwnd, format, ...)		MessageBoxF		(hwnd, MB_OK | MB_ICONEXCLAMATION				, GSTR_APPNAME,   format, __VA_ARGS__)
+#define WarningMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_ICONEXCLAMATION				, GSTR_APPNAME_A, format, __VA_ARGS__)
+#define TopWarningMessage(hwnd, format, ...)	MessageBoxF		(hwnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST	, GSTR_APPNAME,   format, __VA_ARGS__)
+#define WarningBeep()							MessageBeep(MB_ICONEXCLAMATION)
 
 //î•ñFÂŠÛ‚Éuiv
-#define InfoMessage(hwnd, format, ...)      MessageBoxF  (hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,   format, __VA_ARGS__)
-#define InfoMessage_A(hwnd, format, ...)    MessageBoxF_A(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A, format, __VA_ARGS__)
+#define InfoMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK | MB_ICONINFORMATION				, GSTR_APPNAME,   format, __VA_ARGS__)
+#define InfoMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_ICONINFORMATION				, GSTR_APPNAME_A, format, __VA_ARGS__)
+#define TopInfoMessage(hwnd, format, ...)		MessageBoxF		(hwnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST	, GSTR_APPNAME,   format, __VA_ARGS__)
+#define InfoBeep()								MessageBeep(MB_ICONINFORMATION)
 
 //‚»‚Ì‘¼ƒƒbƒZ[ƒW•\Ž¦—pƒ{ƒbƒNƒX
-#define OkMessage(hwnd, format, ...)      MessageBoxF    (hwnd, MB_OK                     , GSTR_APPNAME,   format, __VA_ARGS__)
-#define OkMessage_A(hwnd, format, ...)    MessageBoxF_A  (hwnd, MB_OK                     , GSTR_APPNAME_A, format, __VA_ARGS__)
+#define OkMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK									, GSTR_APPNAME,   format, __VA_ARGS__)
+#define OkMessage_A(hwnd, format, ...)			MessageBoxF_A	(hwnd, MB_OK									, GSTR_APPNAME_A, format, __VA_ARGS__)
+//(TOPMOST)
+#define TopOkMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK | MB_TOPMOST						, GSTR_APPNAME,   format, __VA_ARGS__)
+#define TopOkMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_TOPMOST						, GSTR_APPNAME_A, format, __VA_ARGS__)
+
+//ìŽÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰[
+#define PleaseReportToAuthor(hwnd, format, ...)	MessageBoxF		(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST	, _T("ìŽÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰["), format, __VA_ARGS__)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

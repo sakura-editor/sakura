@@ -506,9 +506,7 @@ int CDlgGrep::GetData( void )
 
 //やめました
 //	if( 0 == wcslen( m_szText ) ){
-//		::MYMESSAGEBOX_A(	GetHwnd(),	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-//			"検索のキーワードを指定してください。"
-//		);
+//		WarningMessage(	GetHwnd(), _T("検索のキーワードを指定してください。") );
 //		return FALSE;
 //	}
 	/* この編集中のテキストから検索する */
@@ -519,9 +517,7 @@ int CDlgGrep::GetData( void )
 		_tcscpy( m_szFile, _T("*.*") );
 	}
 	if( 0 == _tcslen( m_szFolder ) ){
-		::MYMESSAGEBOX_A(	GetHwnd(),	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-			"検索対象フォルダを指定してください。"
-		);
+		WarningMessage(	GetHwnd(), _T("検索対象フォルダを指定してください。") );
 		return FALSE;
 	}
 
@@ -529,9 +525,7 @@ int CDlgGrep::GetData( void )
 	::GetCurrentDirectory( MAX_PATH, szCurDirOld );
 	/* 相対パス→絶対パス */
 	if( 0 == ::SetCurrentDirectory( m_szFolder ) ){
-		::MYMESSAGEBOX_A(	GetHwnd(),	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-			"検索対象フォルダが正しくありません。"
-		);
+		WarningMessage(	GetHwnd(), _T("検索対象フォルダが正しくありません。") );
 		::SetCurrentDirectory( szCurDirOld );
 		return FALSE;
 	}

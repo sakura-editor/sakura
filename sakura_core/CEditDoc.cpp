@@ -337,8 +337,8 @@ bool CEditDoc::FileRead(
 			NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
 		if( hTest == INVALID_HANDLE_VALUE ){
 			// 読み込みアクセス権がない
-			::MYMESSAGEBOX(
-				GetSplitterHwnd(), MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			ErrorMessage(
+				GetSplitterHwnd(),
 				_T("\'%ls\'\n")
 				_T("というファイルを開けません。\n")
 				_T("読み込みアクセス権がありません。"),
@@ -421,8 +421,8 @@ bool CEditDoc::FileRead(
 		} else {
 			m_nCharCode = CCodeMediator::CheckKanjiCodeOfFile( pszPath );
 			if( CODE_ERROR == m_nCharCode ){
-				::MYMESSAGEBOX( GetSplitterHwnd(), MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-					_T("%ls\n")
+				TopWarningMessage( GetSplitterHwnd(),
+					_T("%ts\n")
 					_T("文字コードの判別処理でエラーが発生しました。"),
 					pszPath
 				);
@@ -523,14 +523,12 @@ bool CEditDoc::FileRead(
 
 		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように
 		if( m_pShareData->m_Common.m_sFile.GetAlertIfFileNotExist() ){
-			::MessageBeep( MB_ICONINFORMATION );
+			InfoBeep();
 
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
-			::MYMESSAGEBOX(
+			TopInfoMessage(
 				GetOwnerHwnd(),
-				MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-				GSTR_APPNAME,
 				_T("%ls\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
@@ -1640,11 +1638,9 @@ void CEditDoc::DoFileLock( void )
 
 	//書き込めるか検査
 	if( !IsFileWritable(GetFilePath()) ){
-		::MessageBeep( MB_ICONEXCLAMATION );
-		MYMESSAGEBOX(
+		WarningBeep();
+		TopWarningMessage(
 			GetSplitterHwnd(),
-			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
-			GSTR_APPNAME,
 			_T("%ts\nは現在他のプロセスによって書込みが禁止されています。"),
 			IsFilePathAvailable() ? GetFilePath() : _T("（無題）")
 		);
@@ -1671,11 +1667,9 @@ void CEditDoc::DoFileLock( void )
 			pszMode = _T("未定義のモード（問題があります）");
 			break;
 		}
-		::MessageBeep( MB_ICONEXCLAMATION );
-		MYMESSAGEBOX(
+		WarningBeep();
+		TopWarningMessage(
 			GetSplitterHwnd(),
-			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
-			GSTR_APPNAME,
 			_T("%ls\nを%lsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
 			IsFilePathAvailable() ? GetFilePath() : _T("（無題）"),
 			pszMode
@@ -3190,10 +3184,8 @@ BOOL CEditDoc::OnFileClose( void )
 	if( m_bGrepRunning ){		/* Grep処理中 */
 		/* アクティブにする */
 		ActivateFrameWindow( hwndMainFrame );	//@@@ 2003.06.25 MIK
-		::MYMESSAGEBOX(
+		TopInfoMessage(
 			hwndMainFrame,
-			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-			GSTR_APPNAME,
 			_T("Grepの処理中です。\n")
 		);
 		return FALSE;

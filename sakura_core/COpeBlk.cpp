@@ -67,11 +67,11 @@ COpeBlk::~COpeBlk()
 int COpeBlk::AppendOpe( COpe* pcOpe )
 {
 	if(pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()){
-		MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-			"COpeBlk::AppendOpe() error.\n"
-			"バグ\n"
-			"pcOpe->m_nCaretPos_PHY_Before = %d,%d\n"
-			"pcOpe->m_nCaretPos_PHY_After = %d,%d\n",
+		TopErrorMessage( NULL,
+			_T("COpeBlk::AppendOpe() error.\n")
+			_T("バグ\n")
+			_T("pcOpe->m_nCaretPos_PHY_Before = %d,%d\n")
+			_T("pcOpe->m_nCaretPos_PHY_After = %d,%d\n"),
 			pcOpe->m_ptCaretPos_PHY_Before.x,
 			pcOpe->m_ptCaretPos_PHY_Before.y,
 			pcOpe->m_ptCaretPos_PHY_After.x,

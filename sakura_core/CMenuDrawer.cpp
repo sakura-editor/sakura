@@ -715,10 +715,10 @@ void CMenuDrawer::MyAppendMenu(
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 
 		if( m_nMenuItemNum + 1 > MAX_MENUITEMS ){
-			::MYMESSAGEBOX_A(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-				"CMenuDrawer::MyAppendMenu()エラー\n"
-				"\n"
-				"CMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n ",
+			TopErrorMessage(	NULL,
+				_T("CMenuDrawer::MyAppendMenu()エラー\n")
+				_T("\n")
+				_T("CMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n "),
 				MAX_MENUITEMS
 			);
 		}
