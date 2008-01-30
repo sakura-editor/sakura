@@ -1557,9 +1557,7 @@ void CPropTypes::p3_Import_Colors( HWND hwndDlg )
 	nColorInfoArrNum = COLORIDX_LAST;
 	if( !cProfile.ReadProfile( szPath ) ){
 		/* 設定ファイルが存在しない */
-		::MYMESSAGEBOX_A( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME_A,
-			"ファイルを開けませんでした。\n\n%ls", szPath
-		);
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 		return;
 	}
 	/* 色設定 I/O */

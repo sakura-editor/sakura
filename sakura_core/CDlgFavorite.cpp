@@ -402,9 +402,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 				case IDYES:
 				case IDOK:
 					if( pRecent ) pRecent->DeleteAllItem();
-					::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
-						"最近使った%tsの履歴を削除しました。",
-						m_aFavoriteInfo[nIndex].m_pszCaption );
+					InfoMessage( GetHwnd(), _T("最近使った%tsの履歴を削除しました。"), m_aFavoriteInfo[nIndex].m_pszCaption );
 					break;
 					
 				case IDNO:
@@ -421,9 +419,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 							}
 						}
 					}
-					::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_ICONINFORMATION, GSTR_APPNAME_A,
-						"最近使った%tsの履歴(お気に入り以外)を削除しました。",
-						m_aFavoriteInfo[nIndex].m_pszCaption );
+					InfoMessage( GetHwnd(), _T("最近使った%tsの履歴(お気に入り以外)を削除しました。"), m_aFavoriteInfo[nIndex].m_pszCaption );
 					break;
 					
 				case IDCANCEL:

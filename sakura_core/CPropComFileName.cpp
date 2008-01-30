@@ -374,7 +374,7 @@ int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR sz
 
 	// Ç±ÇÍà»è„í«â¡Ç≈Ç´Ç»Ç¢
 	if( bInsMode && MAX_TRANSFORM_FILENAME <= nCount ){
-		::MessageBox( GetParent( hListView ), _T("Ç±ÇÍà»è„ìoò^Ç≈Ç´Ç‹ÇπÇÒÅB"), GSTR_APPNAME, MB_OK | MB_ICONSTOP );
+		ErrorMessage( GetParent( hListView ), _T("Ç±ÇÍà»è„ìoò^Ç≈Ç´Ç‹ÇπÇÒÅB") );
 		return -1;
 	}
 

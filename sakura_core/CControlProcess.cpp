@@ -50,10 +50,8 @@ bool CControlProcess::Initialize()
 	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
 	if( NULL == m_hMutex ){
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateMutex()失敗。\n終了します。")
-		);
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
 		return false;
 	}
 
@@ -61,18 +59,16 @@ bool CControlProcess::Initialize()
 	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, GSTR_EVENT_SAKURA_CP_INITIALIZED );
 	if( NULL == m_hEventCPInitialized )
 	{
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-			"CreateEvent()失敗。\n終了します。" );
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("CreateEvent()失敗。\n終了します。") );
 		return false;
 	}
 
 	/* コントロールプロセスの目印 */
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_CP );
 	if( NULL == m_hMutexCP ){
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-			"CreateMutex()失敗。\n終了します。" );
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
 		return false;
 	}
 	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
@@ -106,9 +102,8 @@ bool CControlProcess::Initialize()
 
 	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
 	if( !hwnd ){
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
-			GSTR_APPNAME_A, "ウィンドウの作成に失敗しました。\n起動できません。" );
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
 		return false;
 	}
 	SetMainWindow(hwnd);
@@ -116,9 +111,8 @@ bool CControlProcess::Initialize()
 
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
-		::MessageBeep( MB_ICONSTOP );
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME_A,
-			"SetEvent()失敗。\n終了します。" );
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("SetEvent()失敗。\n終了します。") );
 		return false;
 	}
 

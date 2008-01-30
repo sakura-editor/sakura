@@ -301,9 +301,8 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 			pszResourceName = _T("GDI ");
 		}
 		if( NULL != pszResourceName ){
-			::MessageBeep( MB_ICONHAND );
-			::MessageBeep( MB_ICONHAND );
-//			if( IDYES == ::MYMESSAGEBOX_A( NULL, MB_YESNO | MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
+			ErrorBeep();
+			ErrorBeep();
 			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
 				_T("%tsリソースが極端に不足しています。\n")
 				_T("このまま%tsを起動すると、正常に動作しない可能性があります。\n")
@@ -326,4 +325,5 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 	}
 	return TRUE;
 }
+
 

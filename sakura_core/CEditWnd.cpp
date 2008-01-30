@@ -500,10 +500,9 @@ HWND CEditWnd::Create(
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)GetHwnd() );
 		if( !m_bUIPI ){	// 返事が返らない
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_ICONSTOP | MB_TOPMOST,
-				GSTR_APPNAME_A,
-				"エディタ間の対話に失敗しました。\n"
-				"権限レベルの異なるエディタが既に起動している可能性があります。"
+			TopErrorMessage( GetHwnd(), 
+				_T("エディタ間の対話に失敗しました。\n")
+				_T("権限レベルの異なるエディタが既に起動している可能性があります。")
 			);
 			::DestroyWindow( GetHwnd() );
 			m_hWnd = hWnd = NULL;
@@ -524,9 +523,7 @@ HWND CEditWnd::Create(
 	m_nTimerCount = 0;
 	/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
 	if( 0 == ::SetTimer( GetHwnd(), IDT_EDIT, 500, NULL ) ){
-		::MYMESSAGEBOX( GetHwnd(), MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			_T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。")
-		);
+		WarningMessage( GetHwnd(), _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 	// ツールバーのタイマーを分離した 20060128 aroka
 	Timer_ONOFF( TRUE );
@@ -2741,9 +2738,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		BOOL bRes;
 		bRes = m_pPrintPreview->GetDefaultPrinterInfo();
 		if( FALSE == bRes ){
-			::MYMESSAGEBOX( GetHwnd(), MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME,
-				_T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n")
-			);
+			TopInfoMessage( GetHwnd(), _T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n") );
 			return;
 		}
 
@@ -3772,9 +3767,7 @@ void CEditWnd::Timer_ONOFF( BOOL bStart )
 		if( bStart ){
 			/* タイマーを起動 */
 			if( 0 == ::SetTimer( GetHwnd(), IDT_TOOLBAR, 300, NULL ) ){
-				::MYMESSAGEBOX( GetHwnd(), MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-					_T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。")
-				);
+				WarningMessage( GetHwnd(), _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 			}
 		} else {
 			/* タCマーを削除 */

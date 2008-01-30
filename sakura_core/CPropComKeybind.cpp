@@ -644,9 +644,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	return;
 
 err:
-	::MYMESSAGEBOX_A(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME_A,
-		"キー設定ファイルの形式が違います。\n\n%ls", szPath
-	);
+	ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
 }
 
 
@@ -681,9 +679,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		
 		CTextOutputStream out(szPath);
 		if(!out){
-			::MYMESSAGEBOX_A(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME_A,
-				"ファイルを開けませんでした。\n\n%ts", szPath
-			);
+			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 			return;
 		}
 		
