@@ -71,7 +71,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 				i = j = 0;
 				while( i < nLineLen ){
 					nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-					if( 1 == nCharChars && WCODE::isBlank(pLine[i]) ){
+					if( !WCODE::isBlank(pLine[i]) ){
 						j = i + nCharChars;
 					}
 					i += nCharChars;
@@ -92,4 +92,5 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	pDes = NULL;
 	return true;
 }
+
 

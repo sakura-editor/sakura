@@ -18,7 +18,7 @@
 #include "CConvert_Trim.h"
 
 /* 機能種別によるバッファの変換 */
-void CConvertMediator::ConvMemory( CNativeW* pCMemory, int nFuncCode, int nTabWidth )
+void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, int nTabWidth )
 {
 	switch( nFuncCode ){
 	//文字種変換、整形
@@ -40,4 +40,5 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, int nFuncCode, int nTabWi
 	}
 	return;
 }
+
 
