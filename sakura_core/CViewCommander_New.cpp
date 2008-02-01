@@ -716,24 +716,25 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 
 
 /*! TRIM Step1
-
 	非選択時はカレント行を選択して m_pCommanderView->ConvSelectedArea → ConvMemory へ
-	
-	@param bLeft [in] FALSE: 右TRIM / それ以外: 左TRIM
 	@author hor
 	@date 2001.12.03 hor 新規作成
 */
-void CViewCommander::Command_TRIM( BOOL bLeft )
+void CViewCommander::Command_TRIM(
+	BOOL bLeft	//!<  [in] FALSE: 右TRIM / それ以外: 左TRIM
+)
 {
 	bool bBeDisableSelectArea = false;
-	if(!m_pCommanderView->GetSelectionInfo().IsTextSelected()){	//	非選択時は行選択に変更
-		m_pCommanderView->GetSelectionInfo().m_sSelect.SetFrom(
+	CViewSelect& cViewSelect = m_pCommanderView->GetSelectionInfo();
+
+	if(!cViewSelect.IsTextSelected()){	//	非選択時は行選択に変更
+		cViewSelect.m_sSelect.SetFrom(
 			CLayoutPoint(
 				CLayoutInt(0),
 				GetCaret().GetCaretLayoutPos().GetY()
 			)
 		);
-		m_pCommanderView->GetSelectionInfo().m_sSelect.SetTo  (
+		cViewSelect.m_sSelect.SetTo  (
 			CLayoutPoint(
 				GetDocument()->m_cLayoutMgr.GetMaxLineKetas(),
 				GetCaret().GetCaretLayoutPos().GetY()
@@ -750,7 +751,7 @@ void CViewCommander::Command_TRIM( BOOL bLeft )
 	}
 
 	if(bBeDisableSelectArea)
-		m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		cViewSelect.DisableSelectArea( TRUE );
 }
 
 /*!	物理行のソートに使う構造体*/

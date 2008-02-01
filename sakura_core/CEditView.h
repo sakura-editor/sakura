@@ -322,7 +322,7 @@ protected:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	void CopySelectedAllLines( const wchar_t*, BOOL );			/* 選択範囲内の全行をクリップボードにコピーする */
-	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
+	void ConvSelectedArea( EFunctionCode );								/* 選択エリアのテキストを指定方法で変換 */
 
 public:
 	

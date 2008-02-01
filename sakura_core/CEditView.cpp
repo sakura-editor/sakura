@@ -3364,7 +3364,7 @@ void CEditView::CopySelectedAllLines(
 }
 
 /* 選択エリアのテキストを指定方法で変換 */
-void CEditView::ConvSelectedArea( int nFuncCode )
+void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 {
 	CNativeW	cmemBuf;
 
