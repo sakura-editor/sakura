@@ -10,6 +10,7 @@
 	Copyright (C) 2003, genta, かろと, おきた, KEITA
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2006, ryoji, Moca
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -787,12 +788,12 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 	}
 	m_nCurPageNum = nPage;
 
-	if( 0 == m_nCurPageNum ){
-		//	最初のページのときは、前のページボタンをオフ。
-		//	Jul. 18, 2001 genta FocusのあるWindowをDisableにすると操作できなくなるのを回避
-		::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ));
-		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
-	}else{
+	//	2008.01.29 nasukoji	印刷枚数が2枚の時操作できなくなることへの対処（SetFocusを移動）
+	//	2008.02.01 genta : ボタンのフォーカスが元の動作になるようにするため，
+	//		前ボタンのDisableを後ろへ移動した．
+	//		操作できない現象は「次へ」がDisableにも関わらずフォーカスを与えていたため．
+	//		次・前どちらも，ボタン有効化→フォーカス移動→ボタン無効化の順にした
+	if( 0 < m_nCurPageNum ){
 		//	前のページボタンをオン
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), TRUE );
 	}
@@ -809,6 +810,12 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ), TRUE );
 	}
 
+	if( 0 == m_nCurPageNum ){
+		//	最初のページのときは、前のページボタンをオフ。
+		//	Jul. 18, 2001 genta FocusのあるWindowをDisableにすると操作できなくなるのを回避
+		::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ));
+		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
+	}
 	char	szEdit[1024];
 	wsprintf( szEdit, "%d/%d頁", m_nCurPageNum + 1, m_nAllPageNum );
 	::SetDlgItemText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
