@@ -1273,6 +1273,37 @@ public:
 	{
 		memset(cache,0,sizeof(cache));
 		test=0x12345678;
+
+		HDC hdc=GetDC(NULL);
+		m_hdc = CreateCompatibleDC(hdc);
+		ReleaseDC(NULL, hdc);
+		m_hFont = CreateFontW(
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			DEFAULT_CHARSET,
+			OUT_CHARACTER_PRECIS,
+			CLIP_CHARACTER_PRECIS,
+			DEFAULT_QUALITY,
+			FIXED_PITCH,
+			L"ＭＳ ゴシック"
+		);
+		m_hfntOld = (HFONT)SelectObject(m_hdc,m_hFont);
+
+		// -- -- 半角基準 -- -- //
+		GetTextExtentPoint32W_AnyBuild(m_hdc,L"x",1,&m_han_size);
+	}
+	~LocalCache()
+	{
+		// -- -- 後始末 -- -- //
+		SelectObject(m_hdc,m_hfntOld);
+		DeleteObject(m_hFont);
+		DeleteDC(m_hdc);
 	}
 	void SetCache(wchar_t c, bool cache_value)
 	{
@@ -1289,6 +1320,12 @@ public:
 		assert(test==0x12345678);
 		return _GetRaw(c)!=0x0;
 	}
+	bool CalcHankakuByFont(wchar_t c)
+	{
+		SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
+		GetTextExtentPoint32W_AnyBuild(m_hdc,&c,1,&size);
+		return (size.cx<=m_han_size.cx);
+	}
 protected:
 	int _GetRaw(wchar_t c) const
 	{
@@ -1297,6 +1334,11 @@ protected:
 private:
 	BYTE cache[0x10000/4]; //16KB
 	int test; //cache溢れ検出
+
+	HDC m_hdc;
+	HFONT m_hfntOld;
+	HFONT m_hFont;
+	SIZE m_han_size;
 };
 
 //文字幅の動的計算。半角ならtrue。
@@ -1306,53 +1348,12 @@ bool CalcHankakuByFont(wchar_t c)
 	static LocalCache cache; //$$ これはShare領域に入れておいたほうが、もっと良い
 	if(cache.ExistCache(c))return cache.GetCache(c);
 
-	// -- -- 作業用HDC -- -- //
-	HDC hdc=GetDC(NULL);
-	HFONT hFont = CreateFontW(
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		DEFAULT_CHARSET,
-		OUT_CHARACTER_PRECIS,
-		CLIP_CHARACTER_PRECIS,
-		DEFAULT_QUALITY,
-		FIXED_PITCH,
-		L"ＭＳ ゴシック"
-	);
-	HFONT hfntOld = (HFONT)SelectObject(hdc,hFont);
+	// -- -- 相対比較 -- -- //
+	bool value;;
+	value = cache.CalcHankakuByFont(c);
 
-	// -- -- 半角基準 -- -- //
-	SIZE han_size;
-	GetTextExtentPoint32W_AnyBuild(hdc,L"x",1,&han_size);
-
-	// -- -- 周辺256文字を一気に判定 -- -- //
-	int begin=c/256*256;
-	int end=begin+256;
-	for(int i=begin;i<end;i++){
-		// -- -- 相対比較 -- -- //
-		SIZE size={han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
-		wchar_t tmp = (wchar_t)i;
-		GetTextExtentPoint32W_AnyBuild(hdc,&tmp,1,&size);
-		int char_width;
-		if(size.cx>han_size.cx){
-			char_width=2;
-		}
-		else{
-			char_width=1;
-		}
-
-		// -- -- キャッシュ更新 -- -- //
-		cache.SetCache(i,char_width==1);
-	}
-
-	// -- -- 後始末 -- -- //
-	SelectObject(hdc,hfntOld);
-	ReleaseDC(NULL,hdc);
+	// -- -- キャッシュ更新 -- -- //
+	cache.SetCache(c,value);
 
 	return cache.GetCache(c);
 }
