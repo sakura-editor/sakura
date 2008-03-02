@@ -5832,7 +5832,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 		GetSelectionInfo().SetSelectArea(
 			CLayoutRange(
 				CLayoutPoint(CLayoutInt(0), CLayoutInt(0)),
-				CLayoutPoint(m_pcEditDoc->m_cLayoutMgr.GetLineCount(), CLayoutInt(0) )
+				CLayoutPoint(CLayoutInt(0), m_pcEditDoc->m_cLayoutMgr.GetLineCount())
 			)
 		);
 		DeleteData( TRUE );
@@ -6002,7 +6002,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			if (bBeforeTextSelected){	// ‘}“ü‚³‚ê‚½•”•ª‚ğ‘I‘ğó‘Ô‚É
 				GetSelectionInfo().SetSelectArea(
 					CLayoutRange(
-						CLayoutPoint(nLineFrom, nColmFrom),
+						CLayoutPoint(nColmFrom, nLineFrom),
 						GetCaret().GetCaretLayoutPos()// CLayoutPoint(m_nCaretPosY, m_nCaretPosX )
 					)
 				);
