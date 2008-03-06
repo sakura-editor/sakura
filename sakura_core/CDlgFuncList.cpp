@@ -385,16 +385,16 @@ void CDlgFuncList::SetData()
 			/* クリップボードにコピーするテキストを編集 */
 			if(_tcslen(item.pszText)){
 				// 検出結果の種類(関数,,,)があるとき
-				auto_sprintf( szText, _T("%ls(%d): %ls(%ls)\r\n"),
-					(LPCWSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
+				auto_sprintf( szText, _T("%ts(%d): %ts(%ts)\r\n"),
+					(LPCTSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 					pcFuncInfo->m_cmemFuncName.GetStringPtr(),	/* 検出結果 */
 					item.pszText								/* 検出結果の種類 */
 				);
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
-				auto_sprintf( szText, _T("%ls(%d): %ls\r\n"),
-					(LPCWSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
+				auto_sprintf( szText, _T("%ts(%d): %ts\r\n"),
+					(LPCTSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 					pcFuncInfo->m_cmemFuncName.GetStringPtr()	/* 検出結果 */
 				);
@@ -751,8 +751,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 
 		/* クリップボードにコピーするテキストを編集 */
 		WCHAR szText[2048];
-		auto_sprintf( szText, L"%ls(%d): %ls %ls\r\n",
-			(LPCWSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
+		auto_sprintf( szText, L"%ts(%d): %ts %ls\r\n",
+			(LPCTSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
 			pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 			pcFuncInfo->m_cmemFuncName.GetStringPtr(), 	/* 検出結果 */
 			( 1 == pcFuncInfo->m_nInfo ? L"(宣言)" : L"" ) 	//	Jan. 04, 2001 genta C++で使用
@@ -958,16 +958,16 @@ void CDlgFuncList::SetListVB (void)
 		if(_tcslen(item.pszText)){
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
-			auto_sprintf( szText, _T("%ls(%d): %ls(%ls)\r\n"),
-				(LPCWSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
+			auto_sprintf( szText, _T("%ts(%d): %ts(%ts)\r\n"),
+				(LPCTSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 				pcFuncInfo->m_cmemFuncName.GetStringPtr(),	/* 検出結果 */
 				item.pszText								/* 検出結果の種類 */
 			);
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
-			auto_sprintf( szText, _T("%ls(%d): %ls\r\n"),
-				(LPCWSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
+			auto_sprintf( szText, _T("%ts(%d): %ts\r\n"),
+				(LPCTSTR)m_pcFuncInfoArr->m_szFilePath,		/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 				pcFuncInfo->m_cmemFuncName.GetStringPtr()	/* 検出結果 */
 			);
