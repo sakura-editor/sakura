@@ -169,17 +169,28 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 void CDataObject::SetText( LPCWSTR lpszText )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( m_data != NULL ){
-		delete[] m_data;
-		m_data = NULL;
-		m_size = 0;
-		m_cfFormat = 0;
+	if( m_pData != NULL )
+	{
+		int i;
+		for( i = 0; i < m_nFormat; i++ )
+			delete [](m_pData[i].data);
+		delete []m_pData;
+		m_pData = NULL;
+		m_nFormat = 0;
 	}
 	if( lpszText != NULL ){
-		m_size = ( wcslen(lpszText) + 1) * sizeof( wchar_t );
-		m_data = new BYTE[m_size];
-		memcpy_raw( m_data, lpszText, m_size) ;
-		m_cfFormat = CF_UNICODETEXT;
+		m_nFormat = 2;
+		m_pData = new DATA[m_nFormat];
+
+		m_pData[0].cfFormat = CF_UNICODETEXT;
+		m_pData[0].size = ( wcslen(lpszText) + 1) * sizeof( wchar_t );
+		m_pData[0].data = new BYTE[m_pData[0].size];
+		memcpy_raw( m_pData[0].data, lpszText, m_pData[0].size );
+
+		m_pData[1].cfFormat = CF_TEXT;
+		m_pData[1].size = ::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), NULL, 0, NULL, NULL );
+		m_pData[1].data = new BYTE[m_pData[1].size];
+		::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[1].data, m_pData[1].size, NULL, NULL );
 	}
 }
 
@@ -197,7 +208,7 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( lpfe == NULL || lpsm == NULL )
 		return E_INVALIDARG;
-	if( m_data == NULL )
+	if( m_pData == NULL )
 		return OLE_E_NOTRUNNING;
 	if( lpfe->lindex != -1 )
 		return DV_E_LINDEX;
@@ -205,17 +216,22 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 		return DV_E_TYMED;
 	if( lpfe->dwAspect != DVASPECT_CONTENT )
 		return DV_E_DVASPECT;
-	if( lpfe->cfFormat != m_cfFormat )
-		return DV_E_FORMATETC;
-	if( lpfe->cfFormat != m_cfFormat
-		|| !(lpfe->tymed & TYMED_HGLOBAL)
+	if( !(lpfe->tymed & TYMED_HGLOBAL)
 		|| lpfe->lindex != -1
 		|| lpfe->dwAspect != DVASPECT_CONTENT )
 		return DV_E_FORMATETC;
 
+	int i;
+	for( i = 0; i < m_nFormat; i++ ){
+		if( lpfe->cfFormat == m_pData[i].cfFormat )
+			break;
+	}
+	if( i == m_nFormat )
+		return DV_E_FORMATETC;
+
 	lpsm->tymed = TYMED_HGLOBAL;
-	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, m_size );
-	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_data, m_size );
+	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, m_pData[i].size );
+	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
 	lpsm->pUnkForRelease = NULL;
 
@@ -227,7 +243,7 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( lpfe == NULL || lpsm == NULL || lpsm->hGlobal == NULL )
 		return E_INVALIDARG;
-	if( m_data == NULL )
+	if( m_pData == NULL )
 		return OLE_E_NOTRUNNING;
 
 	if( lpfe->lindex != -1 )
@@ -235,14 +251,20 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	if( lpfe->tymed != TYMED_HGLOBAL
 		|| lpsm->tymed != TYMED_HGLOBAL )
 		return DV_E_TYMED;
-	if( m_size > ::GlobalSize( lpsm->hGlobal ) )
-		return STG_E_MEDIUMFULL;
 	if( lpfe->dwAspect != DVASPECT_CONTENT )
 		return DV_E_DVASPECT;
-	if( lpfe->cfFormat != m_cfFormat )
-		return DV_E_FORMATETC;
 
-	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_data, m_size );
+	int i;
+	for( i = 0; i < m_nFormat; i++ ){
+		if( lpfe->cfFormat == m_pData[i].cfFormat )
+			break;
+	}
+	if( i == m_nFormat )
+		return DV_E_FORMATETC;
+	if( m_pData[i].size > ::GlobalSize( lpsm->hGlobal ) )
+		return STG_E_MEDIUMFULL;
+
+	memcpy_raw( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
 
 	return S_OK;
@@ -253,14 +275,21 @@ STDMETHODIMP CDataObject::QueryGetData( LPFORMATETC lpfe )
 	if( lpfe == NULL )
 		return E_INVALIDARG;
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( m_data == NULL )
+	if( m_pData == NULL )
 		return OLE_E_NOTRUNNING;
 
-	if( lpfe->cfFormat != m_cfFormat
-		|| lpfe->ptd != NULL
+	if( lpfe->ptd != NULL
 		|| lpfe->dwAspect != DVASPECT_CONTENT
 		|| lpfe->lindex != -1
 		|| !(lpfe->tymed & TYMED_HGLOBAL) )
+		return DATA_E_FORMATETC;
+
+	int i;
+	for( i = 0; i < m_nFormat; i++ ){
+		if( lpfe->cfFormat == m_pData[i].cfFormat )
+			break;
+	}
+	if( i == m_nFormat )
 		return DATA_E_FORMATETC;
 	return S_OK;
 }

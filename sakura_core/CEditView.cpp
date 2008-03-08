@@ -5225,7 +5225,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
 
-	if( IsDataAvailable( pDataObject, CF_UNICODETEXT) ){
+	if( IsDataAvailable( pDataObject, CF_UNICODETEXT) || IsDataAvailable( pDataObject, CF_TEXT) ){
 		/* 自分をアクティブペインにする */
 		m_pcEditDoc->m_pcEditWnd->SetActivePane( m_nMyIndex );
 
@@ -5336,10 +5336,15 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	*pdwEffect = DROPEFFECT_NONE;
 
-	if( IsDataAvailable(pDataObject, CF_UNICODETEXT) ){
-		HGLOBAL		hData = GetGlobalData(pDataObject, CF_UNICODETEXT);
+	CLIPFORMAT cf = 0;
+	if( IsDataAvailable(pDataObject, CF_UNICODETEXT) )
+		cf = CF_UNICODETEXT;
+	else if( IsDataAvailable( pDataObject, CF_TEXT) )
+		cf = CF_TEXT;
+	if( cf == CF_UNICODETEXT || cf == CF_TEXT ){
+		HGLOBAL		hData = GetGlobalData(pDataObject, cf);
 #ifdef _DEBUG
-		MYTRACE_A( "%xh == GetGlobalData(pDataObject, CF_UNICODETEXT)\n", hData );
+		MYTRACE_A( "%xh == GetGlobalData(pDataObject, %d)\n", hData, cf );
 #endif
 		if (hData == NULL){
 			m_pcDropTarget->m_pDataObject = NULL;
@@ -5349,7 +5354,11 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		}
 
 		DWORD	nSize = 0;
-		LPCWSTR lpszSource = (LPCWSTR) ::GlobalLock(hData);
+		LPVOID lpszSource = ::GlobalLock(hData);
+		if( cf == CF_UNICODETEXT )
+			cmemBuf.SetString( (LPWSTR)lpszSource );
+		else
+			cmemBuf.SetStringOld( (LPSTR)lpszSource );
 
 		/* 移動かコピーか */
 		if( GetKeyState_Control() || !m_bDragSource){
@@ -5367,9 +5376,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				m_pcOpeBlk = new COpeBlk;
 			}
 			bBoxSelected = GetSelectionInfo().IsBoxSelecting();
-
-			/* 選択範囲のデータを取得 */
-			cmemBuf.SetString( lpszSource );
 
 			/* 移動の場合、位置関係を算出 */
 			if( bMove ){
@@ -5469,7 +5475,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				m_pcOpeBlk = NULL;
 			}
 		}else{
-			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)lpszSource, TRUE, 0, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
 		}
 		::GlobalUnlock(hData);
 		// 2004.07.12 fotomo/もか メモリーリークの修正
