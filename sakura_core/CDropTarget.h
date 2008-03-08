@@ -110,16 +110,20 @@ public:
 
 class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
-	CLIPFORMAT m_cfFormat;
-	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	LPBYTE			m_data;	//データ
-	unsigned int	m_size;	//データサイズ。バイト単位。
+	typedef struct {
+		CLIPFORMAT cfFormat;
+		//Feb. 26, 2001, fixed by yebisuya sugoroku
+		LPBYTE			data;	//データ
+		unsigned int	size;	//データサイズ。バイト単位。
+	} DATA, *PDATA;
+
+	int m_nFormat;
+	PDATA m_pData;
 
 public:
-	CDataObject (LPCWSTR lpszText )
-	: m_cfFormat( 0 )
-	, m_data( NULL )
-	, m_size( 0 )	//Feb. 26, 2001, fixed by yebisuya sugoroku
+	CDataObject (LPCWSTR lpszText ):
+		m_nFormat(0),
+		m_pData(NULL)
 	{
 		SetText( lpszText );
 	}
