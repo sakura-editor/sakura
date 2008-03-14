@@ -44,6 +44,7 @@
 #include <string.h>
 #include "CBregexp.h"
 #include "charcode.h"
+#include "CShareData.h"
 
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
@@ -460,6 +461,8 @@ const TCHAR* CBregexp::GetLastMessage() const
 
 	@retval true 初期化成功
 	@retval false 初期化に失敗
+
+	@date 2007.08.12 genta 共通設定からDLL名を取得する
 */
 bool InitRegexp(
 	HWND		hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
@@ -467,7 +470,18 @@ bool InitRegexp(
 	bool		bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
 )
 {
-	if( !rRegexp.Init() ){
+	//	From Here 2007.08.12 genta
+	CShareData* pInstance = NULL;
+	DLLSHAREDATA* pShareData = NULL;
+	
+	LPCTSTR RegexpDll = _T("");
+	
+	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
+		RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
+	}
+	//	To Here 2007.08.12 genta
+
+	if( !rRegexp.Init(RegexpDll) ){
 		if( bShowMessage ){
 			WarningBeep();
 			::MessageBox( hWnd,

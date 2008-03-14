@@ -224,8 +224,6 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , AT_ImmSetReconvertString(NULL)
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 {
-	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	m_CurRegexp.Init();
 }
 
 
@@ -245,9 +243,6 @@ BOOL CEditView::Create(
 
 	m_cHistory = new CAutoMarkMgr;
 	m_cRegexKeyword = NULL;				// 2007.04.08 ryoji
-
-	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	m_CurRegexp.Init();
 
 	SetDrawSwitch(true);
 	m_pcDropTarget = new CDropTarget( this );
