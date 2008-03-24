@@ -880,6 +880,14 @@ LRESULT CEditView::DispatchEvent(
 		}
 		return 0L;
 
+	// From Here 2008.03.24 Moca ATOK等の要求にこたえる
+	case WM_PASTE:
+		return HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
+
+	case WM_COPY:
+		return HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
+	// To Here 2008.03.24 Moca
+
 //		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 //			return 1L;
 //		}
