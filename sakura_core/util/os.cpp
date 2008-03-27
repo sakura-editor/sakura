@@ -327,3 +327,24 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 }
 
 
+
+//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
+
+CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
+{
+	int n = ::GetCurrentDirectory(_countof(m_szCurDir),m_szCurDir);
+	if(n>0 && n<_countof(m_szCurDir)){
+		//ok
+	}
+	else{
+		//ng
+		m_szCurDir[0] = _T('\0');
+	}
+}
+
+CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
+{
+	if(m_szCurDir[0]){
+		::SetCurrentDirectory(m_szCurDir);
+	}
+}

@@ -2,6 +2,10 @@
 
 #pragma once
 
+
+#define SAFE_DELETE(p) do{ if(p){ delete p; p=0; } }while(0)
+
+
 /*
 	2007.10.18 kobake
 	テンプレート式 min とか max とか。

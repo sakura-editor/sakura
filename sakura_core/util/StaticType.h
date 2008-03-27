@@ -59,13 +59,19 @@ public:
 	//データアクセス
 	CHAR_TYPE*       GetBufferPointer()      { return m_szData; }
 	const CHAR_TYPE* GetBufferPointer() const{ return m_szData; }
+	const CHAR_TYPE* c_str()            const{ return m_szData; } //std::string風
 
 	//簡易データアクセス
 	operator       CHAR_TYPE*()      { return m_szData; }
 	operator const CHAR_TYPE*() const{ return m_szData; }
+	CHAR_TYPE At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	Me& operator = (const CHAR_TYPE* dst){ auto_strcpy_s(m_szData,_countof(m_szData),dst); return *this; }
+	void Assign(const CHAR_TYPE* src){ auto_strcpy_s(m_szData,_countof(m_szData),src); }
+	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
+
+	//各種メソッド
+	int Length() const{ return auto_strlen(m_szData); }
 
 private:
 	CHAR_TYPE m_szData[N_BUFFER_COUNT];

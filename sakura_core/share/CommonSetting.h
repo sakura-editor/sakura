@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "CFile.h" //EShareMode
+
 // Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
 static const int MAX_CAPTION_CONF_LEN = 256;
 
@@ -15,8 +17,7 @@ static const int MAX_CUSTOM_MENU_ITEMS		=  48;
 static const int MAX_TOOLBARBUTTONS			= 384;	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)
 
 
-//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
-//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
+// 旧版と違い、bool型使えるようにしてあります by kobake
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           全般                              //
@@ -32,8 +33,8 @@ struct CommonSetting_General
 
 	//カーソル
 	int		m_nCaretType;							// カーソルのタイプ 0=win 1=dos 
-	int		m_bIsINSMode;							// 挿入／上書きモード
-	int		m_bIsFreeCursorMode;					// フリーカーソルモードか
+	bool	m_bIsINSMode;							// 挿入／上書きモード
+	bool	m_bIsFreeCursorMode;					// フリーカーソルモードか
 	BOOL	m_bStopsBothEndsWhenSearchWord;			// 単語単位で移動するときに、単語の両端で止まるか
 	BOOL	m_bStopsBothEndsWhenSearchParagraph;	// 段落単位で移動するときに、段落の両端で止まるか
 	BOOL	m_bNoCaretMoveByActivation;				// マウスクリックにてアクティベートされた時はカーソル位置を移動しない  2007.10.02 nasukoji (add by genta)
@@ -133,12 +134,6 @@ struct CommonSetting_Edit
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         ファイル                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//!ファイルの排他制御モード  2007.10.11 kobake 作成
-enum EShareMode{
-	SHAREMODE_NOT_EXCLUSIVE,	//!< 排他制御しない
-	SHAREMODE_DENY_WRITE,		//!< 他プロセスからの上書きを禁止
-	SHAREMODE_DENY_READWRITE,	//!< 他プロセスからの読み書きを禁止
-};
 
 struct CommonSetting_File
 {
@@ -156,7 +151,7 @@ public:
 	void	SetAutoMIMEdecode(bool i)			{ m_bAutoMIMEdecode = i; }
 
 	// 前回と文字コードが異なるときに問い合わせを行う  Oct. 03, 2004 genta
-	bool	GetQueryIfCodeChange(void) const	{ return m_bQueryIfCodeChange != 0; }
+	bool	GetQueryIfCodeChange(void) const	{ return m_bQueryIfCodeChange; }
 	void	SetQueryIfCodeChange(bool i)		{ m_bQueryIfCodeChange = i; }
 	
 	// 開こうとしたファイルが存在しないとき警告する  Oct. 09, 2004 genta
@@ -166,7 +161,7 @@ public:
 public:
 	//ファイルの排他制御モード
 	EShareMode		m_nFileShareMode;
-	BOOL				m_bCheckFileTimeStamp;			// 更新の監視
+	BOOL			m_bCheckFileTimeStamp;	// 更新の監視
 
 	//ファイルの保存
 	BOOL	m_bEnableUnmodifiedOverwrite;	// 無変更でも上書きするか
@@ -182,7 +177,7 @@ public:
 	BOOL	m_bRestoreCurPosition;			// ファイルを開いたときカーソル位置を復元するか
 	BOOL	m_bRestoreBookmarks;			// ブックマークを復元するかどうか 2002.01.16 hor
 	BOOL	m_bAutoMIMEdecode;				// ファイル読み込み時にMIMEのdecodeを行うか
-	BOOL	m_bQueryIfCodeChange;			// 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta
+	bool	m_bQueryIfCodeChange;			// 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta
 	BOOL	m_bAlertIfFileNotExist;			// 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
 };
 

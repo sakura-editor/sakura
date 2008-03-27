@@ -7,6 +7,11 @@
 #include <string.h>
 #include "charcode.h"
 
+bool fexist(LPCTSTR pszPath)
+{
+	return _taccess(pszPath,0)!=-1;
+}
+
 /**	ファイル名の切り出し
 
 	指定文字列からファイル名と認識される文字列を取り出し、
@@ -533,7 +538,7 @@ void GetInidirOrExedir(
 
 	// INI基準のフルパスが実在すればそのパスを返す
 	GetInidir( szInidir, szFile );
-	if( _taccess(szInidir, 0) != -1 ){
+	if( fexist(szInidir) ){
 		::lstrcpy( pDir, szInidir );
 		return;
 	}
@@ -541,7 +546,7 @@ void GetInidirOrExedir(
 	// EXE基準のフルパスが実在すればそのパスを返す
 	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
 		GetExedir( szExedir, szFile );
-		if( _taccess(szExedir, 0) != -1 ){
+		if( fexist(szExedir) ){
 			::lstrcpy( pDir, szExedir );
 			return;
 		}
@@ -575,9 +580,8 @@ bool IsFileExists(const TCHAR* path, bool bFileOnly)
 	HANDLE hFind = ::FindFirstFile( path, &fd );
 	if( hFind != INVALID_HANDLE_VALUE ){
 		::FindClose( hFind );
-		if( bFileOnly == false ||
-			( fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == 0 )
-			return true;
+		if( bFileOnly && (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )return false;
+		return true;
 	}
 	return false;
 }
@@ -586,8 +590,6 @@ bool IsFileExists(const TCHAR* path, bool bFileOnly)
 
 /*!	ファイルの更新日時を取得
 
-	@param[in] filename ファイルのパス
-	@param[out] ftime 更新日時を返す場所
 	@return true: 成功, false: FindFirstFile失敗
 
 	@author genta by assitance with ryoji
@@ -598,20 +600,26 @@ bool IsFileExists(const TCHAR* path, bool bFileOnly)
 	FindFirstFileを使うことでファイルのロック状態に影響されずにタイムスタンプを
 	取得できる．(ryoji)
 */
-bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime )
+bool GetLastWriteTimestamp(
+	const TCHAR*	pszFileName,	//[in]  ファイルのパス
+	CFileTime*		pcFileTime		//[out] 更新日時を返す場所
+)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA ffd;
 
-	hFindFile = ::FindFirstFile( filename, &ffd );
+	hFindFile = ::FindFirstFile( pszFileName, &ffd );
 	if( INVALID_HANDLE_VALUE != hFindFile )
 	{
 		::FindClose( hFindFile );
-		ftime = ffd.ftLastWriteTime;
+		pcFileTime->SetFILETIME(ffd.ftLastWriteTime);
 		return true;
 	}
-	//	ファイルが見つからなかった
-	return false;
+	else{
+		//	ファイルが見つからなかった
+		pcFileTime->ClearFILETIME();
+		return false;
+	}
 }
 
 

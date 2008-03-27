@@ -1,6 +1,6 @@
 #pragma once
 
-class CEOL;
+class CEol;
 
 // Aug. 16, 2007 kobake
 wchar_t *wcsncpy_ex(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
@@ -15,14 +15,12 @@ wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src);
 #endif
 
 SAKURA_CORE_API int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
-SAKURA_CORE_API int LimitStringLengthB( const char*, int, int, CMemory& );/* データを指定バイト数以内に切り詰める */
 SAKURA_CORE_API int LimitStringLengthA( const ACHAR*, int, int, CNativeA& );/* データを指定「文字数」以内に切り詰める */
 SAKURA_CORE_API int LimitStringLengthW( const WCHAR*, int, int, CNativeW& );/* データを指定「文字数」以内に切り詰める */
 SAKURA_CORE_API int LimitStringLengthT( const TCHAR*, int, int, CNativeT& );/* データを指定「文字数」以内に切り詰める */
 SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* 指定長以下のテキストに切り分ける */
-SAKURA_CORE_API const char*    GetNextLine  ( const char*   , int, int*, int*, CEOL* ); /* CR0LF0,CRLF,LFCR,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
-SAKURA_CORE_API const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEOL* ); // GetNextLineのwchar_t版
-SAKURA_CORE_API const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEOL* ); // GetNextLineのwchar_t版(ビックエンディアン用)
+SAKURA_CORE_API const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
+SAKURA_CORE_API const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版
 SAKURA_CORE_API void GetLineColm( const wchar_t*, int*, int* );
 SAKURA_CORE_API int IsNumber( const wchar_t*, int, int );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
 
