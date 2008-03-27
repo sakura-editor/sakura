@@ -215,7 +215,6 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 	static const wchar_t* szCRLF = CRLF;		//!< 復帰・改行
 	static const wchar_t szCR[] = {CR,0};				//!< 復帰
 	static const wchar_t szLF[] = {LF,0};				//!< 改行
-	static const wchar_t* szLFCR = LFCR;			//!< 改行・復帰
 	static const wchar_t BOT_SUBST[] = L"s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< 行末パターンの置換用パターン
 	int nLen;									//!< szPatternの長さ
 	BREGEXP_W*	sReg = NULL;					//!< コンパイル構造体
@@ -237,20 +236,16 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 				if( sReg->startp[0] == &szCRLF[1] && sReg->endp[0] == &szCRLF[1] ) {
 					if( BMatch( NULL, szCR, szCR+wcslen(szCR), &sReg, szMsg ) > 0 && sReg->startp[0] == &szCR[1] && sReg->endp[0] == &szCR[1] ) {
 						if( BMatch( NULL, szLF, szLF+wcslen(szLF), &sReg, szMsg ) > 0 && sReg->startp[0] == &szLF[0] && sReg->endp[0] == &szLF[0] ) {
-							if( BMatch( NULL, szLFCR, szLFCR+wcslen(szLFCR), &sReg, szMsg ) > 0 && sReg->startp[0] == &szLFCR[0] && sReg->endp[0] == &szLFCR[0] ) {
-								// 検索文字列は 行末($)のみだった
-								bJustDollar = true;
-							}
+							// 検索文字列は 行末($)のみだった
+							bJustDollar = true;
 						}
 					}
 				}
 			} else {
 				if( BMatch( NULL, szCR, szCR+wcslen(szCR), &sReg, szMsg ) <= 0 ) {
 					if( BMatch( NULL, szLF, szLF+wcslen(szLF), &sReg, szMsg ) <= 0 ) {
-						if( BMatch( NULL, szLFCR, szLFCR+wcslen(szLFCR), &sReg, szMsg ) <= 0 ) {
-							// 検索文字列は、文字＋行末($)だった
-							bJustDollar = true;
-						}
+						// 検索文字列は、文字＋行末($)だった
+						bJustDollar = true;
 					}
 				}
 			}
