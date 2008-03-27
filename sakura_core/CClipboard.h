@@ -10,8 +10,8 @@ public:
 	//インターフェース
 	void Empty(); //!< クリップボードを空にする
 	void Close(); //!< クリップボードを閉じる
-	bool SetText(const wchar_t* str,bool bColmnSelect, bool bLineSelect);   //!< テキストを設定する
-	bool GetText(CNativeW* cmemBuf, BOOL* pbColmnSelect, BOOL* pbLineSelect); //!< テキストを取得する
+	bool SetText(const wchar_t* pData, int nDataLen, bool bColmnSelect, bool bLineSelect);   //!< テキストを設定する
+	bool GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSelect); //!< テキストを取得する
 
 	//演算子
 	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue
