@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CConvert_SpaceToTab.h"
 #include "charcode.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "util/string_ex2.h"
 
 //! 空白→TAB変換。単独のスペースは変換しない
@@ -16,7 +16,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 	int			i;
 	int			nPosDes;
 	int			nPosX;
-	CEOL		cEol;
+	CEol		cEol;
 
 	BOOL		bSpace = FALSE;	//スペースの処理中かどうか
 	int		j;
@@ -107,7 +107,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 		}
 
 		/* 行末の処理 */
-		auto_memcpy( &pDes[nPosDes], cEol.GetUnicodeValue(), cEol.GetLen() );
+		auto_memcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 		nPosDes += cEol.GetLen();
 	}
 	pDes[nPosDes] = L'\0';
