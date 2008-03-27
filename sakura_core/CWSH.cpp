@@ -650,13 +650,7 @@ static HRESULT MacroCommand(EFunctionCode ID, DISPPARAMS *Arguments, VARIANT* Re
 static void MacroError(BSTR Description, BSTR Source, void *Data)
 {
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
-
-	char MessageA[1024], SourceA[1024];
-	
-	MessageA[WideCharToMultiByte(CP_ACP, 0, Description, SysStringLen(Description), MessageA, 1023, NULL, NULL)] = 0;
-	SourceA[WideCharToMultiByte(CP_ACP, 0, Source, SysStringLen(Source), SourceA, 1023, NULL, NULL)] = 0;
-	
-	MessageBoxA(View->m_hWnd, MessageA, SourceA, MB_ICONERROR);
+	MessageBox(View->GetHwnd(), to_tchar(Description), to_tchar(Source), MB_ICONERROR);
 }
 
 

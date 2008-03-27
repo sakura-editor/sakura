@@ -2712,7 +2712,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_BROWSE                "ブラウズ"
-    F_READONLY              "読み取り専用"
+    F_VIEWMODE              "ビューモード"
     F_PROPERTY_FILE         "ファイルのプロパティ"
 END
 
