@@ -40,20 +40,9 @@
 #endif // INVALID_SET_FILE_POINTER
 
 
-// ファイルのオープンに失敗したときに送出する例外
-#ifndef DEF_CERROR_FILEOPEN
+#include "CStream.h" //CError_FileOpen
 
-#define DEF_CERROR_FILEOPEN
-class CError_FileOpen
-{
-};
 
-#endif // DEF_CERROR_FILEOPEN
-
-//! ファイルの読み込みに失敗したときに放出する例外
-class CError_FileRead
-{
-};
 
 /*!
 	文字コードを変換してデータを行単位で取得するためのクラス
@@ -75,16 +64,13 @@ public:
 	const wchar_t* ReadLine(
 		CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
 		int*		pnLineLen,		//!< [out] 改行コード長を含む一行のデータ長。文字単位。
-		CEOL*		pcEol			//!< [i/o]
+		CEol*		pcEol			//!< [i/o]
 	);
 
 //	未実装関数郡
-//	cosnt char* ReadAtLine( int, int*, CEOL* ); // 指定行目をロードする
-//	cosnt wchar_t* ReadAtLineW( int, int*, CEOL* ); // 指定行目をロードする(Unicode版)
+//	cosnt char* ReadAtLine( int, int*, CEol* ); // 指定行目をロードする
+//	cosnt wchar_t* ReadAtLineW( int, int*, CEol* ); // 指定行目をロードする(Unicode版)
 //	bool ReadIgnoreLine( void ); // 1行読み飛ばす
-
-
-//	void SetReadBufAlloc( int );	// バッファサイズの変更
 
 	//! ファイルの日時を取得する
 	BOOL GetFileTime( FILETIME*, FILETIME*, FILETIME* ); // inline
@@ -114,7 +100,7 @@ protected:
 	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode( const char*, int, int*, int*, CEOL*, int* );
+	const char* GetNextLineCharCode( const char*, int, int*, int*, CEol*, int* );
 
 	int Read( void*, size_t ); // inline
 	DWORD FilePointer( DWORD, DWORD ); // inline
@@ -160,7 +146,7 @@ inline BOOL CFileLoad::GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess
 inline int CFileLoad::Read( void* pBuf, size_t nSize )
 {
 	DWORD ReadSize;
-	if( FALSE == ::ReadFile( m_hFile, pBuf, nSize, &ReadSize, NULL ) )
+	if( !::ReadFile( m_hFile, pBuf, nSize, &ReadSize, NULL ) )
 		throw CError_FileRead();
 	return (int)ReadSize;
 }
