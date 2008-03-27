@@ -53,7 +53,7 @@ private:
 	HANDLE			m_hMutex;
 	HANDLE			m_hMutexCP;
 	HANDLE			m_hEventCPInitialized;	// コントロールプロセス初期化完了イベント 2006.04.10 ryoji
-	CControlTray*		m_pcTray;
+	CControlTray*	m_pcTray;
 };
 
 
