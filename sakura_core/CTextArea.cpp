@@ -51,10 +51,10 @@ void CTextArea::UpdateAreaMetrics(HDC hdc)
 	m_nViewRowNum = CLayoutInt(m_nViewCy / pView->GetTextMetrics().GetHankakuDy());		// 表示域の行数
 
 	// 文字間隔
-	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace );
 
 	// 行間隔
-	pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+	pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace );
 }
 
 
@@ -125,7 +125,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 	int				nViewAlignLeftNew;
 
-	if( pView->m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){
+	if( pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){
 		/* 行番号表示に必要な桁数を計算 */
 		int i = DetectWidthOfLineNumberArea_calculate();
 		nViewAlignLeftNew = pView->GetTextMetrics().GetHankakuDx() * (i + 1);	/* 表示域の左端座標 */
@@ -141,7 +141,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 	if( nViewAlignLeftNew != GetAreaLeft() ){
 		CMyRect			rc;
 		SetAreaLeft(nViewAlignLeftNew);
-		::GetClientRect( pView->m_hWnd, &rc );
+		pView->GetClientRect( &rc );
 		int nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL ); // 垂直スクロールバーの横幅
 		m_nViewCx = rc.Width() - nCxVScroll - GetAreaLeft(); // 表示域の幅
 
@@ -181,7 +181,7 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate() const
 	int nAllLines; //$$ 単位混在
 
 	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	if( pView->m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
+	if( pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}
 	else{

@@ -4,7 +4,7 @@
 class CTextMetrics;
 class CTextArea;
 class CViewFont;
-class CEOL;
+class CEol;
 class CEditView;
 class CLayout;
 #include "DispPos.h"
@@ -40,9 +40,9 @@ public:
 	//画面描画補助関数
 	//@@@ 2001.12.21 YAZAKI 改行記号の書きかたが変だったので修正
 	void _DrawEOL(HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
-		CEOL cEol, bool bBold, COLORREF pColor ) const;
+		CEol cEol, bool bBold, COLORREF pColor ) const;
 	//2007.08.30 kobake 追加
-	void DispEOL(HDC hdc, DispPos* pDispPos, CEOL cEol, bool bSearchStringMode) const;
+	void DispEOL(HDC hdc, DispPos* pDispPos, CEol cEol, bool bSearchStringMode) const;
 
 	// -- -- タブ描画 -- -- //
 	//2007.08.28 kobake 追加

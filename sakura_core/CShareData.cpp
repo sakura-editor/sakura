@@ -58,7 +58,7 @@ struct ARRHEAD {
 	
 	Version 26:
 	MacroRecに、m_bReloadWhenExecuteを追加 2002/03/11 YAZAKI
-	FileInfoに、m_szDocType追加 Mar. 7, 2002 genta
+	EditInfoに、m_szDocType追加 Mar. 7, 2002 genta
 	
 	Version 27:
 	Typesに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
@@ -221,7 +221,6 @@ struct ARRHEAD {
 	Version 76:
 	タブのグループ化 2007.06.20 ryoji
 
-
 	Version 77:
 	iniフォルダ設定 2007.05.31 ryoji
 
@@ -242,9 +241,12 @@ struct ARRHEAD {
 
 	Version 83:
 	選択なしでコピーを可能にする 2007.11.18 ryoji
+
+	Version 1000:
+	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 83;
+const unsigned int uShareDataVersion = 1000;
 
 /*
 ||	Singleton風
@@ -467,28 +469,27 @@ bool CShareData::Init( void )
 
 
 		/* バックアップ */
-		m_pShareData->m_Common.m_sBackup.m_bBackUp = FALSE;				/* バックアップの作成 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
-		m_pShareData->m_Common.m_sBackup.m_szBackUpFolder[0] = L'\0';		/* バックアップを作成するフォルダ */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;
-																/* バックアップファイル名：日付 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
-																/* バックアップファイル名：連番の数と先頭文字 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-		m_pShareData->m_Common.m_sBackup.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-		m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+		CommonSetting_Backup& sBackup = m_pShareData->m_Common.m_sBackup;
+		sBackup.m_bBackUp = FALSE;										/* バックアップの作成 */
+		sBackup.m_bBackUpDialog = TRUE;									/* バックアップの作成前に確認 */
+		sBackup.m_bBackUpFolder = FALSE;								/* 指定フォルダにバックアップを作成する */
+		sBackup.m_szBackUpFolder[0] = L'\0';							/* バックアップを作成するフォルダ */
+		sBackup.m_nBackUpType = 2;										/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+		sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
+		sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;					/* バックアップファイル名：連番の数と先頭文字 */
+		sBackup.m_nBackUpType_Opt3 = 5;									/* バックアップファイル名：Option3 */
+		sBackup.m_nBackUpType_Opt4 = 0;									/* バックアップファイル名：Option4 */
+		sBackup.m_nBackUpType_Opt5 = 0;									/* バックアップファイル名：Option5 */
+		sBackup.m_nBackUpType_Opt6 = 0;									/* バックアップファイル名：Option6 */
+		sBackup.m_bBackUpDustBox = FALSE;								/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		sBackup.m_bBackUpPathAdvanced = FALSE;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+		sBackup.m_szBackUpPathAdvanced[0] = _T('\0');					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
 		m_pShareData->m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE;/* ファイルの排他制御モード */
 
-		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
-		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
-		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
+		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;					/* カーソルのタイプ 0=win 1=dos */
+		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = true;				/* 挿入／上書きモード */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
 
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
@@ -539,7 +540,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		wcscpy( m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption,
-	L"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+	L"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
 		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
@@ -642,7 +643,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
-		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = TRUE;
+		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;
 
 		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;
@@ -661,10 +662,10 @@ bool CShareData::Init( void )
 		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive, 
 			_T("${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -")
-			_T(" $A $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
+			_T(" $A $V ${R?(ビューモード)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive, 
 			_T("${w?$h$:アウトプット$:$f$}${U?(更新)$} -")
-			_T(" $A $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
+			_T(" $A $V ${R?(ビューモード)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化
@@ -1134,21 +1135,29 @@ BOOL CShareData::RequestCloseAllEditor( BOOL bExit, int nGroup )
 */
 BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 {
-	int			i;
-	FileInfo*	pfi;
+	EditInfo*	pfi;
 	*phwndOwner = NULL;
 
-	/* 現在の編集ウィンドウの数を調べる */
+	//	2007.10.01 genta 相対パスを絶対パスに変換
+	//	変換しないとIsPathOpenedで正しい結果が得られず，
+	//	同一ファイルを複数開くことがある．
+	TCHAR	szBuf[_MAX_PATH];
+	if( GetLongFileName( pszPath, szBuf )){
+		pszPath = szBuf;
+	}
+
+	// 現在の編集ウィンドウの数を調べる
 	if( 0 ==  GetEditorWindowsNum( 0 ) ){
 		return FALSE;
 	}
 	
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
+	for( int i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-			/* トレイからエディタへの編集ファイル名要求通知 */
+			// トレイからエディタへの編集ファイル名要求通知
 			::SendMessageAny( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
-			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-			/* 同一パスのファイルが既に開かれているか */
+			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+
+			// 同一パスのファイルが既に開かれているか
 			if( 0 == _tcsicmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
 				return TRUE;
@@ -1167,34 +1176,28 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 
 	@retval	開かれている場合は開いているウィンドウのハンドル
 
-	@note	CEditDoc::FileReadに先立って実行されることもあるが、
-			CEditDoc::FileReadからも実行される必要があることに注意。
-			(フォルダ指定の場合やCEditDoc::FileReadが直接実行される場合もあるため)
+	@note	CEditDoc::FileLoadに先立って実行されることもあるが、
+			CEditDoc::FileLoadからも実行される必要があることに注意。
+			(フォルダ指定の場合やCEditDoc::FileLoadが直接実行される場合もあるため)
 
 	@retval	TRUE すでに開いていた
 	@retval	FALSE 開いていなかった
 
 	@date 2007.03.12 maru 新規作成
 */
-BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode ){
-
+BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode )
+{
 	if( IsPathOpened( pszPath, phwndOwner ) ){
-		FileInfo*		pfi;
-		CMRU			cMRU;
+		
+		//文字コードの一致確認
+		EditInfo*		pfi;
 		::SendMessageAny( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
-		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
-
+		pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 		if(nCharCode != CODE_AUTODETECT){
-			const TCHAR*	pszCodeNameCur = NULL;
-			const TCHAR*	pszCodeNameNew = NULL;
-			if(IsValidCodeType(nCharCode)){
-				pszCodeNameNew = gm_pszCodeNameArr_Normal[nCharCode];
-			}
-			if(IsValidCodeType(pfi->m_nCharCode)){
-				pszCodeNameCur = gm_pszCodeNameArr_Normal[pfi->m_nCharCode];
-			}
+			LPCTSTR pszCodeNameNew = CCodeTypeName(nCharCode).Normal();
+			LPCTSTR pszCodeNameCur = CCodeTypeName(pfi->m_nCharCode).Normal();
 
-			if(NULL != pszCodeNameCur && NULL != pszCodeNameNew){
+			if(pszCodeNameCur && pszCodeNameNew){
 				if(nCharCode != pfi->m_nCharCode){
 					TopWarningMessage( *phwndOwner,
 						_T("%ts\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
@@ -1221,13 +1224,12 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, ECodeType
 				);
 			}
 		}
-		
-		/* 開いているウィンドウをアクティブにする */
-		/* アクティブにする */
+
+		// 開いているウィンドウをアクティブにする
 		ActivateFrameWindow( *phwndOwner );
 
-		/* MRUリストへの登録 */
-		cMRU.Add( pfi );
+		// MRUリストへの登録
+		CMRU().Add( pfi );
 		return TRUE;
 	}
 	else {
@@ -1688,7 +1690,11 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
 		// （m_hwndTraceOutSource は CEditWnd::Create() で予め設定）
 		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
-		CControlTray::OpenNewEditor( NULL, m_hwndTraceOutSource, _T("-DEBUGMODE"), CODE_SJIS, FALSE, true );
+		SLoadInfo sLoadInfo;
+		sLoadInfo.cFilePath = _T("");
+		sLoadInfo.eCharCode = CODE_SJIS;
+		sLoadInfo.bViewMode = false;
+		CControlTray::OpenNewEditor( NULL, m_hwndTraceOutSource, sLoadInfo, _T("-DEBUGMODE"), true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
@@ -5012,68 +5018,10 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 
 	CDocumentType(nIdx)->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
-	static ColorInfoIni ColorInfo_DEFAULT[] = {
-	//	Nov. 9, 2000 Jepro note: color setting (詳細は CshareData.h を参照のこと)
-	//	0,							1(Disp),	 2(FatFont),3(UnderLIne) , 4(colTEXT),	5(colBACK),
-	//	szName(項目名),				色分け／表示, 太字,		下線,		文字色,		背景色,
-	//
-	//Oct. 8, 2000 JEPRO 背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
-		_T("テキスト"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),
-		_T("ルーラー"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 239, 239, 239 ),
-		_T("カーソル"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
-		_T("カーソル(IME ON)"),				TRUE , FALSE, FALSE, RGB( 255, 0, 0 )		, RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
-		_T("カーソル行アンダーライン"),		TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
-		_T("行番号"),							TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
-		_T("行番号(変更行)"),					TRUE , TRUE , FALSE, RGB( 0, 0, 255 )		, RGB( 239, 239, 239 ),
-		_T("TAB記号"),							TRUE , FALSE, FALSE, RGB( 128, 128, 128 )	, RGB( 255, 251, 240 ),	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更
-		_T("半角空白")		,					FALSE , FALSE, FALSE , RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2002.04.28 Add by KK
-		_T("日本語空白"),						TRUE , FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ),
-		_T("コントロールコード"),				TRUE , FALSE, FALSE, RGB( 255, 255, 0 )		, RGB( 255, 251, 240 ),
-		_T("改行記号"),						TRUE , FALSE, FALSE, RGB( 0, 128, 255 )		, RGB( 255, 251, 240 ),
-		_T("折り返し記号"),					TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 251, 240 ),
-		_T("指定桁縦線"),						FALSE, FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2005.11.08 Moca
-		_T("EOF記号"),							TRUE , FALSE, FALSE, RGB( 0, 255, 255 )		, RGB( 0, 0, 0 ),
-//#ifdef COMPILE_COLOR_DIGIT
-		_T("半角数値"),						FALSE, FALSE, FALSE, RGB( 235, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
-//#endif
-		_T("検索文字列"),						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
-		_T("強調キーワード1"),					TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード2"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
-		_T("強調キーワード3"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
-		_T("強調キーワード4"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード5"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード6"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード7"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード8"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード9"),					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("強調キーワード10"),				TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),
-		_T("コメント"),						TRUE , FALSE, FALSE, RGB( 0, 128, 0 )		, RGB( 255, 251, 240 ),
-	//Sept. 4, 2000 JEPRO シングルクォーテーション文字列に色を割り当てるが色分け表示はしない
-	//Oct. 17, 2000 JEPRO 色分け表示するように変更(最初のFALSE→TRUE)
-	//"シングルクォーテーション文字列", FALSE, FALSE, FALSE, RGB( 0, 0, 0 ), RGB( 255, 255, 255 ),
-		_T("シングルクォーテーション文字列"),	TRUE , FALSE, FALSE, RGB( 64, 128, 128 )	, RGB( 255, 251, 240 ),
-		_T("ダブルクォーテーション文字列"),	TRUE , FALSE, FALSE, RGB( 128, 0, 64 )		, RGB( 255, 251, 240 ),
-		_T("URL"),								TRUE , FALSE, TRUE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
-		_T("正規表現キーワード1"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード2"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード3"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード4"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード5"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード6"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード7"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード8"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード9"),				FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("正規表現キーワード10"),			FALSE , FALSE, FALSE , RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
-		_T("DIFF差分表示(追加)"),				FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-		_T("DIFF差分表示(変更)"),				FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-		_T("DIFF差分表示(削除)"),				FALSE , FALSE, FALSE, RGB( 0, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-		_T("対括弧の強調表示"),				FALSE , TRUE,  FALSE, RGB( 128, 0, 0 )		, RGB( 255, 251, 240 ),	// 02/09/18 ai
-		_T("ブックマーク"),					TRUE  , FALSE, FALSE, RGB( 255, 251, 240 )	, RGB( 0, 128, 192 ),	// 02/10/16 ai
-	};
-//	To Here Sept. 18, 2000
-
 
 	for( i = 0; i < COLORIDX_LAST; ++i ){
+		GetDefaultColorInfo(&CDocumentType(nIdx)->m_ColorInfoArr[i],i);
+		/*
 		CDocumentType(nIdx)->m_ColorInfoArr[i].m_nColorIdx		= i;
 		CDocumentType(nIdx)->m_ColorInfoArr[i].m_bDisp			= ColorInfo_DEFAULT[i].m_bDisp;
 		CDocumentType(nIdx)->m_ColorInfoArr[i].m_bFatFont		= ColorInfo_DEFAULT[i].m_bFatFont;
@@ -5081,6 +5029,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		CDocumentType(nIdx)->m_ColorInfoArr[i].m_colTEXT			= ColorInfo_DEFAULT[i].m_colTEXT;
 		CDocumentType(nIdx)->m_ColorInfoArr[i].m_colBACK			= ColorInfo_DEFAULT[i].m_colBACK;
 		_tcscpy( CDocumentType(nIdx)->m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
+		*/
 	}
 	CDocumentType(nIdx)->m_bLineNumIsCRLF = TRUE;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	CDocumentType(nIdx)->m_nLineTermType = 1;					/* 行番号区切り 0=なし 1=縦線 2=任意 */
