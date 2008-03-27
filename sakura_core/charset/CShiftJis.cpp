@@ -2,6 +2,22 @@
 #include "CShiftJis.h"
 #include "charcode.h"
 
+void CShiftJis::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
+{
+	static const struct{
+		const char* szData;
+		int nLen;
+	}
+	aEolTable[EOL_TYPE_NUM] = {
+		"",			0,	// EOL_NONE
+		"\x0d\x0a",	2,	// EOL_CRLF
+		"\x0a",		1,	// EOL_LF
+		"\x0d",		1,	// EOL_CR
+	};
+	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+}
+
+
 //! 指定した位置の文字が何バイト文字かを返す
 /*!
 	@param[in] pData 位置を求めたい文字列の先頭

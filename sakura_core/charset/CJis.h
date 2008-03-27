@@ -1,14 +1,16 @@
 #pragma once
 
 #include "CCodeBase.h"
+#include "CShiftJis.h"
 
 class CJis : public CCodeBase{
 public:
 	CJis(bool base64decode = true) : m_base64decode(base64decode) { }
 public:
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory* pSrc, CNativeW* pDst){ *pDst->_GetMemory()=*pSrc; return JISToUnicode(pDst->_GetMemory()); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW* pSrc, CMemory* pDst){ *pDst=*pSrc->_GetMemory(); return UnicodeToJIS(pDst); }	//!< UNICODE    → 特定コード 変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ *pDst->_GetMemory()=cSrc; return JISToUnicode(pDst->_GetMemory()); }	//!< 特定コード → UNICODE    変換
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ *pDst=*cSrc._GetMemory(); return UnicodeToJIS(pDst); }	//!< UNICODE    → 特定コード 変換
+	void GetEol(CMemory* pcmemEol, EEolType eEolType){ CShiftJis::S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得
 
 public:
 	//実装

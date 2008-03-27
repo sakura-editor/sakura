@@ -1,13 +1,20 @@
 #include "stdafx.h"
 #include "CUtf8.h"
 
+//! BOMデータ取得
+void CUtf8::GetBom(CMemory* pcmemBom)
+{
+	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
+	pcmemBom->SetRawData(UTF8_BOM, sizeof(UTF8_BOM));
+}
+
 //! UTF-8→Unicodeコード変換
 // 2007.08.13 kobake 作成
-EConvertResult CUtf8::UTF8ToUnicode( const CMemory* pSrcMem, CNativeW* pDstMem )
+EConvertResult CUtf8::UTF8ToUnicode( const CMemory& cSrcMem, CNativeW* pDstMem )
 {
 	//データ取得
 	int nSrcLen;
-	const char* pData = (char*)pSrcMem->GetRawPtr(&nSrcLen);
+	const char* pData = (char*)cSrcMem.GetRawPtr(&nSrcLen);
 
 	//必要なバッファサイズを調べる
 	size_t nDstLen=MultiByteToWideChar(
@@ -43,11 +50,11 @@ EConvertResult CUtf8::UTF8ToUnicode( const CMemory* pSrcMem, CNativeW* pDstMem )
 
 
 //! コード変換 Unicode→UTF-8
-EConvertResult CUtf8::UnicodeToUTF8( const CNativeW* pSrcMem, CMemory* pDstMem )
+EConvertResult CUtf8::UnicodeToUTF8( const CNativeW& cSrcMem, CMemory* pDstMem )
 {
 	//データ取得
 	int nSrcLen;
-	const wchar_t* pSrc = pSrcMem->GetStringPtr(&nSrcLen);
+	const wchar_t* pSrc = cSrcMem.GetStringPtr(&nSrcLen);
 
 	//必要なバッファサイズを調べる
 	size_t nDstLen=WideCharToMultiByte(
