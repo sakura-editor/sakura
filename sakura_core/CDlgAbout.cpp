@@ -91,8 +91,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	TCHAR			szMsg[2048];
 	TCHAR			szFile[_MAX_PATH];
-	FILETIME		lastTime;
-	SYSTEMTIME		systimeL;
 
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, _countof( szFile ) );
@@ -104,12 +102,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//if( hFind != INVALID_HANDLE_VALUE ){
 	//	FindClose( hFind );
 	//}
-	if( !GetLastWriteTimestamp( szFile, lastTime )){
-		lastTime.dwLowDateTime = lastTime.dwHighDateTime = 0;
-	}
 
-	::FileTimeToLocalFileTime( &lastTime, &lastTime );
-	::FileTimeToSystemTime( &lastTime, &systimeL );
+
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
@@ -130,13 +124,15 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_VER, szMsg );
 
 	/* 更新日情報 */
+	CFileTime cFileTime;
+	GetLastWriteTimestamp( szFile, &cFileTime );
 	auto_sprintf( szMsg, _T("Last Modified: %d/%d/%d %02d:%02d:%02d"),
-		systimeL.wYear,
-		systimeL.wMonth,
-		systimeL.wDay,
-		systimeL.wHour,
-		systimeL.wMinute,
-		systimeL.wSecond
+		cFileTime->wYear,
+		cFileTime->wMonth,
+		cFileTime->wDay,
+		cFileTime->wHour,
+		cFileTime->wMinute,
+		cFileTime->wSecond
 	);
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_UPDATE, szMsg );
 
