@@ -146,7 +146,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
-						m_hInstance,
+						CNormalProcess::Instance()->GetProcessInstance(),
 						hwndDlg,
 						_T("*.hlp"),
 						szPath
@@ -170,7 +170,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
-						m_hInstance,
+						CNormalProcess::Instance()->GetProcessInstance(),
 						hwndDlg,
 						_T("*.chm;*.col"),
 						szPath
@@ -218,7 +218,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					}
 					/* ファイルオープンダイアログの初期化 */
 					cDlgOpenFile.Create(
-						m_hInstance,
+						CNormalProcess::Instance()->GetProcessInstance(),
 						hwndDlg,
 						_T("*.dll"),
 						szPath

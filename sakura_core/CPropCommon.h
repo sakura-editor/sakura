@@ -66,7 +66,7 @@ public:
 	~CPropCommon();
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	void Create( HINSTANCE, HWND, CImageListMgr*, CSMacroMgr* , CMenuDrawer* );	/* 初期化 */
+	void Create( HWND, CImageListMgr*, CSMacroMgr* , CMenuDrawer* );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations
@@ -80,7 +80,6 @@ public:
 	//	Jun. 2, 2001 genta
 	//	ここにあったEvent Handlerはprotectedエリアに移動した．
 
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hwndThis;		/* このダイアログのハンドル */
 	int				m_nPageNum;

@@ -264,7 +264,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					wcscpy( szKeyWord, L"" );
 					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
 					if( FALSE == cDlgInput1.DoModal(
-						m_hInstance,
+						CNormalProcess::Instance()->GetProcessInstance(),
 						hwndDlg,
 						_T("キーワードのセット追加"),
 						_T("セット名を入力してください。"),
@@ -342,7 +342,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					wcscpy( szKeyWord, m_CKeyWordSetMgr.GetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
 					{
 						BOOL bDlgInputResult = cDlgInput1.DoModal(
-							m_hInstance,
+							CNormalProcess::Instance()->GetProcessInstance(),
 							hwndDlg,
 							_T("セットの名称変更"),
 							_T("セット名を入力してください。"),
@@ -372,7 +372,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					/* モードレスダイアログの表示 */
 					wcscpy( szKeyWord, L"" );
-					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+					if( FALSE == cDlgInput1.DoModal( CNormalProcess::Instance()->GetProcessInstance(), hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( 0 < wcslen( szKeyWord ) ){
@@ -468,7 +468,7 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	wcscpy( szKeyWord, m_CKeyWordSetMgr.GetKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
-	if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+	if( FALSE == cDlgInput1.DoModal( CNormalProcess::Instance()->GetProcessInstance(), hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
 	if( 0 < wcslen( szKeyWord ) ){
@@ -532,7 +532,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		m_hInstance,
+		CNormalProcess::Instance()->GetProcessInstance(),
 		hwndDlg,
 		_T("*.kwd"),
 		szInitDir
@@ -591,7 +591,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		m_hInstance,
+		CNormalProcess::Instance()->GetProcessInstance(),
 		hwndDlg,
 		_T("*.kwd"),
 		szInitDir

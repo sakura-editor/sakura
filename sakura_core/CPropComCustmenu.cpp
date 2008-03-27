@@ -271,7 +271,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 				auto_sprintf( szKey, _T("%hc"), m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
-						m_hInstance,
+						CNormalProcess::Instance()->GetProcessInstance(),
 						hwndDlg,
 						_T("メニューアイテムのアクセスキー設定"),
 						_T("キーを入力してください。"),
@@ -284,7 +284,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 				}
 				//	Oct. 3, 2001 genta
 				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
-				//::LoadString( m_hInstance, m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+				//::LoadString( CNormalProcess::Instance()->GetProcessInstance(), m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 
 				{
 					KEYCODE keycode[3]={0}; _tctomb(szKey, keycode);
@@ -675,7 +675,7 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 		}else{
 			//	Oct. 3, 2001 genta
 			m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
-			//::LoadString( m_hInstance, m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			//::LoadString( CNormalProcess::Instance()->GetProcessInstance(), m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
 		}
 		/* キー */
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
@@ -719,7 +719,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1] = _T("");
 	cDlgOpenFile.Create(
-		m_hInstance,
+		CNormalProcess::Instance()->GetProcessInstance(),
 		hwndDlg,
 		_T("*.mnu"),
 		m_pShareData->m_szIMPORTFOLDER // インポート用フォルダ
@@ -782,7 +782,7 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1] = _T("");
 	cDlgOpenFile.Create(
-		m_hInstance,
+		CNormalProcess::Instance()->GetProcessInstance(),
 		hwndDlg,
 		_T("*.mnu"),
 		m_pShareData->m_szIMPORTFOLDER // インポート用フォルダ

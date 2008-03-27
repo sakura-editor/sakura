@@ -300,14 +300,14 @@ bool CProcessFactory::TestWriteQuit()
 		CShareData::GetIniFileNameDirect( szIniFileIn, szIniFileOut );
 		if( szIniFileIn[0] != _T('\0') ){	// マルチユーザ用設定か
 			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
-			if( _taccess( szIniFileIn, 0 ) == 0 ){
+			if( fexist(szIniFileIn) ){
 				if( ::CopyFile( szIniFileIn, szIniFileOut, FALSE ) ){
 					return true;
 				}
 			}
 		}else{
 			// 既にEXE基準のiniファイルがあれば何もせず終了
-			if( _taccess( szIniFileOut, 0 ) == 0 ){
+			if( fexist(szIniFileOut) ){
 				return true;
 			}
 		}
