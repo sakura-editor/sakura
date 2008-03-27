@@ -31,7 +31,7 @@
 #include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
 #include "CTextArea.h"
@@ -44,6 +44,8 @@
 #include "CViewSelect.h"
 #include "basis/SakuraBasis.h"
 #include "CEditView_Paint.h"
+#include "mfclike/CMyWnd.h"
+#include "CDocListener.h"
 
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
 class CMemory;///
@@ -103,6 +105,8 @@ class CEditView;
 class SAKURA_CORE_API CEditView
 : public CViewCalc //$$ これが親クラスである必要は無いが、このクラスのメソッド呼び出しが多いので、暫定的に親クラスとする。
 , public CEditView_Paint
+, public CMyWnd
+, public CDocListenerEx
 {
 public:
 	const CEditDoc* GetDocument() const
@@ -113,10 +117,6 @@ public:
 	{
 		return m_pcEditDoc;
 	}
-	HWND GetHwnd() const
-	{
-		return m_hWnd;
-	}
 public:
 	//! 背景にビットマップを使用するかどうか(事実上は常にFALSE。TRUEの場合背景作画しない)
 	bool IsBkBitmap() const{ return false; }
@@ -126,7 +126,6 @@ public:
 	{
 		return m_bDrawSWITCH;
 	}
-public:
 	void SetDrawSwitch(bool b)
 	{
 		m_bDrawSWITCH = b;
@@ -146,9 +145,18 @@ public:
 	CEditView(CEditWnd* pcEditWnd);
 	~CEditView();
 	/* 初期化系メンバ関数 */
-	BOOL Create( HINSTANCE, HWND, CEditDoc*, int,/* BOOL,*/ BOOL );
+	BOOL Create(
+		HINSTANCE	hInstance,	//!< アプリケーションのインスタンスハンドル
+		HWND		hwndParent,	//!< 親
+		CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
+		int			nMyIndex,	//!< ビューのインデックス
+		BOOL		bShow		//!< 作成時に表示するかどうか
+	);
 	BOOL CreateScrollBar( void );		/* スクロールバー作成 */	// 2006.12.19 ryoji
 	void DestroyScrollBar( void );		/* スクロールバー破棄 */	// 2006.12.19 ryoji
+
+	//リスン
+	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 
 	//	Oct. 2, 2005 genta 挿入モードの設定・取得
 	bool IsInsMode() const;
@@ -173,33 +181,7 @@ public:
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 
-	DWORD DoGrep( const CNativeW*, const CNativeT*, const CNativeT*, BOOL, const SSearchOption&, ECodeType, BOOL, int );	/* Grep実行 */
-	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int DoGrepTree( CDlgCancel*, HWND, const wchar_t*, int*, const TCHAR*, const TCHAR*, BOOL, const SSearchOption&, ECodeType, BOOL, int, CBregexp*, int, int* );
-	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	//	Mar. 28, 2004 genta 不要な引数を削除
-	int DoGrepFile( CDlgCancel*, HWND, const wchar_t*, int*, const TCHAR*, const SSearchOption&, ECodeType, BOOL, int, CBregexp*, int*, const TCHAR*, CNativeW& );
-	/* Grep結果をpszWorkに格納 */
-	void SetGrepResult(
-		/* データ格納先 */
-		wchar_t*	pWork,
-		int*		pnWorkLen,
-		/* マッチしたファイルの情報 */
-		const TCHAR*		pszFullPath,	//	フルパス
-		const TCHAR*		pszCodeName,	//	文字コード情報"[SJIS]"とか
-		/* マッチした行の情報 */
-		int			nLine,			//	マッチした行番号
-		int			nColm,			//	マッチした桁番号
-		const wchar_t*	pCompareData,	//	行の文字列
-		int			nLineLen,		//	行の文字列の長さ
-		int			nEolCodeLen,	//	EOLの長さ
-		/* マッチした文字列の情報 */
-		const wchar_t*	pMatchData,		//	マッチした文字列
-		int			nMatchLen,		//	マッチした文字列の長さ
-		/* オプション */
-		BOOL		bGrepOutputLine,
-		int			nGrepOutputStyle
-	);
+
 	
 	//	Jun. 16, 2000 genta
 	bool  SearchBracket( const CLayoutPoint& ptPos, CLayoutPoint* pptLayoutNew, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
@@ -218,7 +200,7 @@ public:
 	bool  ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 
 // 2002/01/19 novice public属性に変更
-	BOOL GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	//	Aug. 25, 2002 genta protected->publicに移動
 	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
 	int HokanSearchByFile( const wchar_t*, BOOL, CNativeW**, int, int ); // 2003.06.25 Moca
@@ -256,18 +238,18 @@ public:
 	void GetCurrentTextForSearch( CNativeW& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	void GetCurrentTextForSearchDlg( CNativeW& );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
 public:
-//	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
+//	CEol GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      クリップボード                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//取得
-	BOOL MyGetClipboardData( CNativeW&, BOOL*, BOOL* = NULL );			/* クリップボードからデータを取得 */
+	bool MyGetClipboardData( CNativeW&, bool*, bool* = NULL );			/* クリップボードからデータを取得 */
 
 	//設定
-	BOOL MySetClipboardData( const ACHAR*, int, bool bColmnSelect, bool = FALSE );	/* クリップボードにデータを設定 */
-	BOOL MySetClipboardData( const WCHAR*, int, bool bColmnSelect, bool = FALSE );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const ACHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const WCHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
 
 	void CopyCurLine( bool bAddCRLFWhenCopy, enumEOLType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 
@@ -354,7 +336,6 @@ public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
 public:
 	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
-	void SetParentCaption( void );								/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
 public:
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -413,8 +394,22 @@ public:
 		CNativeW*		pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
 		const wchar_t*	pInsData,			// 挿入するデータ
 		CLogicInt		nInsDataLen,		// 挿入するデータの長さ
-		bool			bRedraw
+		bool			bRedraw,
+		COpeBlk*		pcOpeBlk
 	);
+	void ReplaceData_CEditView2(
+		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
+		CNativeW*			pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
+		const wchar_t*		pInsData,			// 挿入するデータ
+		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
+		bool				bRedraw,
+		COpeBlk*			pcOpeBlk
+	)
+	{
+		CLayoutRange sDelRangeLayout;
+		this->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(sDelRange,&sDelRangeLayout);
+		ReplaceData_CEditView(sDelRangeLayout,pcmemCopyOfDeleted,pInsData,nInsDataLen,bRedraw,pcOpeBlk);
+	}
 
 	//	Jan. 10, 2005 genta HandleCommandからgrep関連処理を分離
 	void TranslateCommand_grep( EFunctionCode&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
@@ -514,10 +509,22 @@ public:
 	CViewFont*		m_pcFontset;
 
 	//主要ヘルパ
-	CViewParser	m_cParser;
+	CViewParser		m_cParser;
 	CTextDrawer		m_cTextDrawer;
 	CViewCommander	m_cCommander;
 
+private:
+//	HWND			m_hWnd;				/* 編集ウィンドウハンドル */
+public:
+	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
+
+	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
+	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
+
+	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
+	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
+	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
+	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
@@ -537,12 +544,10 @@ public:
 	SSearchOption m_sCurSearchOption;	// 検索／置換  オプション
 
 	bool	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
-	HWND	m_hWnd;				/* 編集ウィンドウハンドル */
 
 	CLogicPoint	m_ptSrchStartPos_PHY;	// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 
 	BOOL		m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
-//	CLogicInt	m_nCharSize;			/* 対括弧の文字サイズ */	// 02/09/18 ai 
 	
 	CLogicPoint	m_ptBracketCaretPos_PHY;// 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	CLogicPoint	m_ptBracketPairPos_PHY;	// 対括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
@@ -550,19 +555,14 @@ public:
 
 	TCHAR*			m_pszAppName;	/* Mutex作成用・ウィンドウクラス名 */
 	HINSTANCE		m_hInstance;	/* インスタンスハンドル */
-	HWND			m_hwndParent;	/* 親ウィンドウハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 //	int				m_nSettingType;
 
 	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
-	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
-	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
-	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
-	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
-	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
-	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
-	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
+	bool			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
+
+
 
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */

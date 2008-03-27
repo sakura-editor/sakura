@@ -82,8 +82,8 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 		if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 )
 		{
 			nColorIdx = nCOMMENTMODE - 1000;	//下駄を履かせているのをはずす
-			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
-			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
+			colText = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
+			colBack = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
 			::SetTextColor( hdc, colText );
 			::SetBkColor( hdc, colBack );
 			if( NULL != m_hFontOld ){
@@ -92,8 +92,8 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
 				GetFontset().ChooseFontHandle(
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
+					m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
+					m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
 				)
 			);
 			return;
@@ -108,9 +108,9 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 
 
 	if( -1 != nColorIdx ){
-		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bDisp ){
-			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
-			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
+		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bDisp ){
+			colText = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
+			colBack = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
 			::SetTextColor( hdc, colText );
 			::SetBkColor( hdc, colBack );
 			if( NULL != m_hFontOld ){
@@ -119,8 +119,8 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
 				GetFontset().ChooseFontHandle(
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
+					m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
+					m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
 				)
 			);
 		}
@@ -406,7 +406,7 @@ bool CEditView::SearchBracket(
 	//int PosX, PosY;	//	物理位置
 
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptLayout, &ptPos );
-	const wchar_t *cline = m_pcEditDoc->m_cDocLineMgr.GetLineStr( ptPos.GetY2(), &len );
+	const wchar_t *cline = m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2())->GetDocLineStrWithEOL(&len);
 
 	//	Jun. 19, 2000 genta
 	if( cline == NULL )	//	最後の行に本文がない場合
@@ -445,7 +445,6 @@ bool CEditView::SearchBracket(
 
 	const wchar_t *bPos = CNativeW::GetCharPrev( cline, ptPos.x, cline + ptPos.x );
 	int nCharSize = cline + ptPos.x - bPos;
-//	m_nCharSize = nCharSize;	// 02/10/01 対括弧の文字サイズ設定 ai
 	// 括弧処理 2007.10.16 kobake
 	if(nCharSize==1){
 		const KAKKO_T* p;
@@ -508,8 +507,8 @@ bool CEditView::SearchBracketForward(
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, &ptColLine );	// 02/09/19 ai
 	nSearchNum = ( GetTextArea().GetBottomLine() ) - ptColLine.y;					// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( ptPos.GetY2() );
-	cline = ci->m_cLine.GetStringPtr( &len );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
+	cline = ci->GetDocLineStrWithEOL( &len );
 	lineend = cline + len;
 	cPos = cline + ptPos.x;
 
@@ -549,11 +548,11 @@ bool CEditView::SearchBracketForward(
 
 		//	次の行へ
 		ptPos.y++;
-		ci = ci->m_pNext;	//	次のアイテム
+		ci = ci->GetNextLine();	//	次のアイテム
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_cLine.GetStringPtr( &len );
+		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline;
 		lineend = cline + len;
 	}while( cline != NULL );
@@ -604,8 +603,8 @@ bool CEditView::SearchBracketBackward(
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, &ptColLine );	// 02/09/19 ai
 	nSearchNum = ptColLine.y - GetTextArea().GetViewTopLine();										// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( ptPos.GetY2() );
-	cline = ci->m_cLine.GetStringPtr( &len );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
+	cline = ci->GetDocLineStrWithEOL( &len );
 	lineend = cline + len;
 	cPos = cline + ptPos.x;
 
@@ -645,11 +644,11 @@ bool CEditView::SearchBracketBackward(
 
 		//	次の行へ
 		ptPos.y--;
-		ci = ci->m_pPrev;	//	次のアイテム
+		ci = ci->GetPrevLine();	//	次のアイテム
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_cLine.GetStringPtr( &len );
+		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline + len;
 	}while( cline != NULL );
 
@@ -700,8 +699,8 @@ bool CEditView::SearchBracketForward2(
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, &ptColLine );	// 02/09/19 ai
 	nSearchNum = ( GetTextArea().GetBottomLine() ) - ptColLine.y;					// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( ptPos.GetY2() );
-	cline = ci->m_cLine.GetStringPtr( &len );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
+	cline = ci->GetDocLineStrWithEOL( &len );
 	lineend = cline + len;
 	cPos = cline + ptPos.x;
 
@@ -739,11 +738,11 @@ bool CEditView::SearchBracketForward2(
 
 		//	次の行へ
 		ptPos.y++;
-		ci = ci->m_pNext;	//	次のアイテム
+		ci = ci->GetNextLine();	//	次のアイテム
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_cLine.GetStringPtr( &len );
+		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline;
 		lineend = cline + len;
 	}while( cline != NULL );
@@ -796,8 +795,8 @@ bool CEditView::SearchBracketBackward2(
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, &ptColLine );	// 02/09/19 ai
 	nSearchNum = ptColLine.y - GetTextArea().GetViewTopLine();										// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( ptPos.GetY2() );
-	cline = ci->m_cLine.GetStringPtr( &len );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
+	cline = ci->GetDocLineStrWithEOL( &len );
 	lineend = cline + len;
 	cPos = cline + ptPos.x;
 
@@ -835,11 +834,11 @@ bool CEditView::SearchBracketBackward2(
 
 		//	次の行へ
 		ptPos.y--;
-		ci = ci->m_pPrev;	//	次のアイテム
+		ci = ci->GetPrevLine();	//	次のアイテム
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_cLine.GetStringPtr( &len );
+		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline + len;
 	}while( cline != NULL );
 
@@ -903,7 +902,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 	RECT		rcTipWin,
 				rcDesktop;
 
-	if( m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
 		if( m_bInMenuLoop == FALSE	&&	/* メニュー モーダル ループに入っていない */
 			0 != m_dwTipTimer			/* 辞書Tipを表示していない */
 		){
@@ -972,7 +971,7 @@ int CEditView::DispCtrlCode( HDC hdc, int x, int y, const unsigned char* pData, 
 	x1 = GetTextMetrics().GetHankakuWidth() / 3;
 	y1 = GetTextMetrics().GetHankakuHeight() / 5;
 
-	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_colTEXT );
+	hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CTRLCODE].m_colTEXT );
 	hPenOld = (HPEN)::SelectObject( hdc, hPen );
 
 	for( i = 0; i < nLength; i++, pData++ )

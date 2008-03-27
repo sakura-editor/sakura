@@ -18,53 +18,29 @@
 #include "debug.h"
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//               コンストラクタ・デストラクタ                  //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* COpeBlkクラス構築 */
 COpeBlk::COpeBlk()
 {
-	Init();
-	return;
 }
 
-void COpeBlk::Init( void )
-{
-	m_nCOpeArrNum = 0;	/* 操作の数 */
-	m_ppCOpeArr = NULL;	/* 操作の配列 */
-}
-
-void COpeBlk::Empty( void )
-{
-	int		i;
-	/* 操作の配列を削除する */
-	if( 0 < m_nCOpeArrNum && NULL != m_ppCOpeArr ){
-		for( i = 0; i < m_nCOpeArrNum; ++i ){
-			if( NULL != m_ppCOpeArr[i] ){
-				delete m_ppCOpeArr[i];
-				m_ppCOpeArr[i] = NULL;
-			}
-		}
-		free( m_ppCOpeArr );
-		m_ppCOpeArr = NULL;
-		m_nCOpeArrNum = 0;
-	}
-	return;
-}
-
-
-
-/* COpeBlkクラス消滅 */
 COpeBlk::~COpeBlk()
 {
-	Empty();
-
+	/* 操作の配列を削除する */
+	for( int i = 0; i < (int)m_ppCOpeArr.size(); ++i ){
+		SAFE_DELETE(m_ppCOpeArr[i]);
+	}
+	m_ppCOpeArr.clear();
 }
 
-
-
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     インターフェース                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 操作の追加 */
-int COpeBlk::AppendOpe( COpe* pcOpe )
+bool COpeBlk::AppendOpe( COpe* pcOpe )
 {
 	if(pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()){
 		TopErrorMessage( NULL,
@@ -80,45 +56,34 @@ int COpeBlk::AppendOpe( COpe* pcOpe )
 	}
 
 	/* 配列のメモリサイズを調整 */
-	if( 0 == m_nCOpeArrNum ){
-		m_ppCOpeArr = (COpe**)malloc( sizeof( COpe* ) );
-	}else{
-		m_ppCOpeArr = (COpe**)realloc( m_ppCOpeArr,  sizeof( COpe* ) * (m_nCOpeArrNum + 1 ) );
-	}
-	if( NULL == m_ppCOpeArr ){
-		MessageBoxA( 0, "COpeBlk::AppendOpe() error", "メモリ確保に失敗しました。\n非常に危険な状態です。", MB_OK );
-		return FALSE;
-	}
-	m_ppCOpeArr[m_nCOpeArrNum] = pcOpe;
-	m_nCOpeArrNum++;
-	return TRUE;
+	m_ppCOpeArr.push_back(pcOpe);
+	return true;
 }
-
-
-
 
 
 /* 操作を返す */
 COpe* COpeBlk::GetOpe( int nIndex )
 {
-	if( m_nCOpeArrNum <= nIndex ){
+	if( GetNum() <= nIndex ){
 		return NULL;
 	}
 	return m_ppCOpeArr[nIndex];
 }
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         デバッグ                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 編集操作要素ブロックのダンプ */
 void COpeBlk::DUMP( void )
 {
 #ifdef _DEBUG
 	int i;
-	for( i = 0; i < m_nCOpeArrNum; ++i ){
+	for( i = 0; i < GetNum(); ++i ){
 		MYTRACE_A( "\tCOpeBlk.m_ppCOpeArr[%d]----\n", i );
 		m_ppCOpeArr[i]->DUMP();
 	}
 #endif
-	return;
 }
 
 

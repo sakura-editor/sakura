@@ -95,7 +95,7 @@ bool CEditView::TagJumpSub(
 	else
 	{
 		/* 新しく開く */
-		FileInfo	inf;
+		EditInfo	inf;
 		bool		bSuccess;
 
 		_tcscpy( inf.m_szPath, szJumpToFile );
@@ -110,9 +110,9 @@ bool CEditView::TagJumpSub(
 
 		bSuccess = CControlTray::OpenNewEditor2(
 			m_hInstance,
-			m_hWnd,
+			this->GetHwnd(),
 			&inf,
-			FALSE,	/* 読み取り専用か */
+			FALSE,	/* ビューモードか */
 			true	//	同期モードで開く
 		);
 
@@ -168,13 +168,13 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 
 	/* 編集中ファイルの拡張子を調べる */
 	for( i = 0; i < open_extno; i++ ){
-		if( CheckEXT( GetDocument()->GetFilePath(), open_ext[i] ) ){
+		if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), open_ext[i] ) ){
 			bwantopen_c = TRUE;
 			goto open_c;
 		}
 	}
 	if( bBeepWhenMiss ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 	}
 	return FALSE;
 
@@ -188,15 +188,15 @@ open_c:;
 	TCHAR	szExt[_MAX_EXT];
 	HWND	hwndOwner;
 
-	_tsplitpath( GetDocument()->GetFilePath(), szDrive, szDir, szFname, szExt );
+	_tsplitpath( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
 
 	for( i = 0; i < file_extno; i++ ){
 		_tmakepath( szPath, szDrive, szDir, szFname, file_ext[i] );
-		if( -1 == _taccess( szPath, 0 ) ){
+		if( !fexist(szPath) ){
 			if( i < file_extno - 1 )
 				continue;
 			if( bBeepWhenMiss ){
-				::MessageBeep( MB_ICONHAND );
+				ErrorBeep();
 			}
 			return FALSE;
 		}
@@ -212,28 +212,22 @@ open_c:;
 	/* ファイルを開いているか */
 	if( CShareData::getInstance()->IsPathOpened( szPath, &hwndOwner ) ){
 	}else{
-		/* 新しく開く */
-		TCHAR	szPath2[_MAX_PATH + 3];
-		if( _tcschr( szPath, _T(' ') ) ){
-			auto_sprintf( szPath2, _T("\"%ts\""), szPath );
-		}else{
-			_tcscpy( szPath2, szPath );
-		}
 		/* 文字コードはこのファイルに合わせる */
+		SLoadInfo sLoadInfo;
+		sLoadInfo.cFilePath = szPath;
+		sLoadInfo.eCharCode = GetDocument()->GetDocumentEncoding();
+		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor(
 			m_hInstance,
-			m_hWnd,
-			szPath2,
-			GetDocument()->GetDocumentEncoding(),
-			FALSE,	/* 読み取り専用か */
+			this->GetHwnd(),
+			sLoadInfo,
+			NULL,
 			true
 		);
 		/* ファイルを開いているか */
 		if( CShareData::getInstance()->IsPathOpened( szPath, &hwndOwner ) ){
 		}else{
-			::MYMESSAGEBOX_A( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME_A,
-				"%ls\n\n%ls\n\n", errmes, szPath
-			);
+			ErrorMessage( this->GetHwnd(), _T("%ts\n\n%ts\n\n"), errmes, szPath );
 			return FALSE;
 		}
 	}
@@ -317,20 +311,20 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CLayoutInt* _newKetas )
 			newKetas = CLayoutInt(MAXLINEKETAS);
 			return TGWRAP_FULL;
 		}
-		else if( GetDocument()->GetDocumentAttribute().m_nMaxLineKetas == MAXLINEKETAS ){ // 5)
+		else if( GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas == MAXLINEKETAS ){ // 5)
 			// 6)
 			return TGWRAP_NONE;
 		}
 		else { // 7)
-			newKetas = CLayoutInt(GetDocument()->GetDocumentAttribute().m_nMaxLineKetas);
+			newKetas = CLayoutInt(GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas);
 			return TGWRAP_PROP;
 		}
 	}
 	else { // 8)
 		if( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == MAXLINEKETAS && // 9)
-			GetDocument()->GetDocumentAttribute().m_nMaxLineKetas != MAXLINEKETAS ){
+			GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas != MAXLINEKETAS ){
 			// a)
-			newKetas = CLayoutInt(GetDocument()->GetDocumentAttribute().m_nMaxLineKetas);
+			newKetas = CLayoutInt(GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas);
 			return TGWRAP_PROP;
 			
 		}
@@ -373,7 +367,7 @@ BOOL CEditView::ChangeCurRegexp(void)
 	 && bChangeState
 	){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
 			return FALSE;
 		}
 		int nFlag = 0x00;
@@ -416,15 +410,15 @@ void CEditView::CopyCurLine(
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	CNativeW cmemBuf;
 	cmemBuf.SetString( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
-	if( pcLayout->m_cEol.GetLen() != 0 ){
+	if( pcLayout->GetLayoutEol().GetLen() != 0 ){
 		cmemBuf.AppendString(
 			( neweol == EOL_UNKNOWN ) ?
-				pcLayout->m_cEol.GetUnicodeValue() : CEOL(neweol).GetUnicodeValue()
+				pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2()
 		);
 	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
 		cmemBuf.AppendString(
 			( neweol == EOL_UNKNOWN ) ?
-				WCODE::CRLF : CEOL(neweol).GetUnicodeValue()
+				WCODE::CRLF : CEol(neweol).GetValue2()
 		);
 	}
 
@@ -436,9 +430,6 @@ void CEditView::CopyCurLine(
 		bEnableLineModePaste
 	);
 	if( !bSetResult ){
-		::MessageBeep( MB_ICONHAND );
-		return;
+		ErrorBeep();
 	}
-
-	return;
 }

@@ -229,11 +229,11 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
 BOOL CEditView::Create(
-	HINSTANCE	hInstance,
-	HWND		hwndParent,
-	CEditDoc*	pcEditDoc,
-	int			nMyIndex,
-	BOOL		bShow
+	HINSTANCE	hInstance,	//!< アプリケーションのインスタンスハンドル
+	HWND		hwndParent,	//!< 親
+	CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
+	int			nMyIndex,	//!< ビューのインデックス
+	BOOL		bShow		//!< 作成時に表示するかどうか
 )
 {
 	m_pcTextArea = new CTextArea(this);
@@ -269,7 +269,6 @@ BOOL CEditView::Create(
 	m_pcsbwHSplitBox = NULL;	/* 水平分割ボックス */
 	m_pszAppName = _T("EditorClient");
 	m_hInstance = NULL;
-	m_hWnd = NULL;
 	m_hwndVScrollBar = NULL;
 	m_nVScrollRate = 1;			/* 垂直スクロールバーの縮尺 */
 	m_hwndHScrollBar = NULL;
@@ -355,12 +354,12 @@ BOOL CEditView::Create(
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
 	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
-	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
+	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->m_cDocType.GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
 
 	GetTextArea().SetTopYohaku( m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );								/* 表示域の上端座標 */
 	/* ルーラー表示 */
-	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
+	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + m_pShareData->m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 
@@ -383,23 +382,25 @@ BOOL CEditView::Create(
 
 	/* エディタウィンドウの作成 */
 	g_m_pcEditView = this;
-	m_hWnd = ::CreateWindowEx(
-		WS_EX_STATICEDGE,		// extended window style
-		m_pszAppName,			// pointer to registered class name
-		m_pszAppName,			// pointer to window name
-		0						// window style
-		| WS_VISIBLE
-		| WS_CHILD
-		| WS_CLIPCHILDREN
-		,
-		CW_USEDEFAULT,			// horizontal position of window
-		0,						// vertical position of window
-		CW_USEDEFAULT,			// window width
-		0,						// window height
-		hwndParent,				// handle to parent or owner window
-		NULL,					// handle to menu or child-window identifier
-		m_hInstance,			// handle to application instance
-		(LPVOID)this			// pointer to window-creation data
+	SetHwnd(
+		::CreateWindowEx(
+			WS_EX_STATICEDGE,		// extended window style
+			m_pszAppName,			// pointer to registered class name
+			m_pszAppName,			// pointer to window name
+			0						// window style
+			| WS_VISIBLE
+			| WS_CHILD
+			| WS_CLIPCHILDREN
+			,
+			CW_USEDEFAULT,			// horizontal position of window
+			0,						// vertical position of window
+			CW_USEDEFAULT,			// window width
+			0,						// window height
+			hwndParent,				// handle to parent or owner window
+			NULL,					// handle to menu or child-window identifier
+			m_hInstance,			// handle to application instance
+			(LPVOID)this			// pointer to window-creation data
+		)
 	);
 	if( NULL == GetHwnd() ){
 		return FALSE;
@@ -432,7 +433,7 @@ BOOL CEditView::Create(
 	}
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	/* キーボードの現在のリピート間隔を取得 */
 	int nKeyBoardSpeed;
@@ -440,9 +441,7 @@ BOOL CEditView::Create(
 
 	/* タイマー起動 */
 	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc ) ){
-		::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-			"CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
-		);
+		WarningMessage( GetHwnd(), _T("CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 
 	return TRUE;
@@ -657,7 +656,7 @@ LRESULT CEditView::DispatchEvent(
 		OnSetFocus();
 
 		/* 親ウィンドウのタイトルを更新 */
-		SetParentCaption();
+		m_pcEditWnd->UpdateCaption();
 
 		return 0L;
 	case WM_KILLFOCUS:
@@ -908,7 +907,7 @@ LRESULT CEditView::DispatchEvent(
 		}
 
 
-		m_hWnd = NULL;
+		SetHwnd(NULL);
 		return 0L;
 
 	case MYWM_DOSPLIT:
@@ -1056,7 +1055,7 @@ void CEditView::OnSize( int cx, int cy )
 	::ReleaseDC( GetHwnd(), hdc );
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();	//	[Q] genta 本当に必要？
+	m_pcEditWnd->UpdateCaption(); // [Q] genta 本当に必要？
 
 	return;
 }
@@ -1383,22 +1382,12 @@ void CEditView::AdjustScrollBars( void )
 	カーソル移動後は上下移動でもカラム位置を保つよう，
 	GetCaret().m_nCaretPosX_Prevの更新も併せて行う．
 
-	@param nWk_CaretPosX	[in] 移動先桁位置(0～)
-	@param nWk_CaretPosY	[in] 移動先行位置(0～)
-	@param bSelect			[in] TRUE: 選択する/ FALSE: 選択解除
-	@param nCaretMarginRate	[in] 縦スクロール開始位置を決める値
-
-
 	@date 2006.07.09 genta 新規作成
 */
 void CEditView::MoveCursorSelecting(
-	CLayoutPoint ptWk_CaretPos,
-	/*
-	int nWk_CaretPosX,
-	int nWk_CaretPosY,
-	*/
-	bool bSelect,
-	int nCaretMarginRate
+	CLayoutPoint	ptWk_CaretPos,		//!< [in] 移動先レイアウト位置
+	bool			bSelect,			//!< true: 選択する  false: 選択解除
+	int				nCaretMarginRate	//!< 縦スクロール開始位置を決める値
 )
 {
 	if( bSelect ){
@@ -1731,9 +1720,7 @@ normal_action:;
 
 		/******* この時点で必ず true == GetSelectionInfo().IsTextSelected() の状態になる ****:*/
 		if( !GetSelectionInfo().IsTextSelected() ){
-			::MYMESSAGEBOX_A( GetHwnd(), MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-				"バグってる"
-			);
+			WarningMessage( GetHwnd(), _T("バグってる") );
 			return;
 		}
 
@@ -1925,7 +1912,7 @@ bool CEditView::IsCurrentPositionURL(
 	pUrlRange->SetLine(ptXY.GetY2());
 //	*pnUrlLine = ptXY.GetY2();
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( ptXY.GetY2(), &nLineLen ); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
+	const wchar_t*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
 
 	int			nUrlLen;
 	CLogicInt	i = ptXY.GetX2() - CLogicInt(200);
@@ -2183,7 +2170,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 	int			i;
 
 	/* キーワードヘルプを使用するか？ */
-	if( !m_pcEditDoc->GetDocumentAttribute().m_bUseKeyWordHelp )	/* キーワードヘルプ機能を使用する */	// 2006.04.10 fon
+	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyWordHelp )	/* キーワードヘルプ機能を使用する */	// 2006.04.10 fon
 		goto end_of_search;
 	/* フォーカスがあるか？ */
 	if( !GetCaret().ExistCaretFocus() ) 
@@ -2262,16 +2249,16 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	int			nLine; // 2006.04.10 fon
 
 
-	CDocumentType nTypeNo = m_pcEditDoc->GetDocumentType();
+	CDocumentType nTypeNo = m_pcEditDoc->m_cDocType.GetDocumentType();
 	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
-	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
+	if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
 		m_cTipWnd.m_cInfo.AppendString( _T("[ ") );
 		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringT() );
 		m_cTipWnd.m_cInfo.AppendString( _T(" ]") );
 	}
 	/* 途中まで一致を使う場合 */
-	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix)
+	if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix)
 		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i=0;i<m_pShareData->GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
@@ -2291,7 +2278,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				LPWSTR		pszWork;
 				pszWork = pcmemRefText->GetStringPtr();
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
-				if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
+				if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */
 					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
 						m_cTipWnd.m_cInfo.AppendString( _T("\n--------------------\n■") );
@@ -2301,7 +2288,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					m_cTipWnd.m_cInfo.AppendString( m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath );
 					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
 					/* 前方一致でヒットした単語を挿入 */
-					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+					if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringT() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}/* 調査した「意味」を挿入 */
@@ -2321,7 +2308,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 						m_cTipWnd.m_cInfo.AppendString( _T("\n--------------------\n") );
 					
 					/* 前方一致でヒットした単語を挿入 */
-					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+					if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringT() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}
@@ -2456,14 +2443,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 			CMyPoint nNewPos(0, ptMouse.y);
 
 			// 1行の高さ
-			int nLineHeight = GetTextMetrics().GetHankakuHeight() + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
+			int nLineHeight = GetTextMetrics().GetHankakuHeight() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace;
 
 			// 選択開始行以下へのドラッグ時は1行下にカーソルを移動する
 			if( GetTextArea().GetViewTopLine() + (ptMouse.y - GetTextArea().GetAreaTop()) / nLineHeight >= GetSelectionInfo().m_sSelectBgn.GetTo().y)
 				nNewPos.y += nLineHeight;
 
 			// カーソルを移動
-			nNewPos.x = GetTextArea().GetAreaLeft() - Int(GetTextArea().GetViewLeftCol()) * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+			nNewPos.x = GetTextArea().GetAreaLeft() - Int(GetTextArea().GetViewLeftCol()) * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace );
 			nScrollRowNum = GetCaret().MoveCursorToClientPoint( nNewPos );
 
 			// 2.5クリックによる行単位のドラッグ
@@ -2723,7 +2710,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 		/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
 		//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
-		if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK ){
+		if( (CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode || CAppMode::Instance()->IsDebugMode()) && m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK ){
 			/* タグジャンプ機能 */
 			GetCommander().Command_TAGJUMP();
 			return;
@@ -3043,7 +3030,7 @@ void CEditView::SyncScrollH( CLayoutInt col )
 
 /* 選択範囲のデータを取得 */
 /* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-BOOL CEditView::GetSelectedData(
+bool CEditView::GetSelectedData(
 	CNativeW*		cmemBuf,
 	BOOL			bLineOnly,
 	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
@@ -3062,12 +3049,12 @@ BOOL CEditView::GetSelectedData(
 	wchar_t*		pszLineNum;
 	wchar_t*		pszSpaces = L"                    ";
 	const CLayout*	pcLayout;
-	CEOL			appendEol( neweol );
+	CEol			appendEol( neweol );
 	bool			addnl = false;
 
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
-		return FALSE;
+		return false;
 	}
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		/* 行番号表示に必要な桁数を計算 */
@@ -3098,10 +3085,10 @@ BOOL CEditView::GetSelectedData(
 
 		// 実際の文字量。
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
-		for(; i != CLayoutInt(0) && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext)
+		for(; i != CLayoutInt(0) && pcLayout != NULL; i--, pcLayout = pcLayout->GetNextLayout())
 		{
-			pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->GetLogicOffset();
-			nLineLen = CLogicInt(pcLayout->GetLength());
+			pLine = pcLayout->GetPtr() + pcLayout->GetLogicOffset();
+			nLineLen = CLogicInt(pcLayout->GetLengthWithEOL());
 			if( NULL != pLine )
 			{
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -3193,9 +3180,9 @@ BOOL CEditView::GetSelectedData(
 		nBufSize *= (Int)i;
 
 		// 実際の各行の長さ。
-		for (; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext )
+		for (; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->GetNextLayout() )
 		{
-			nBufSize += pcLayout->GetLength() + appendEol.GetLen();
+			nBufSize += pcLayout->GetLengthWithEOL() + appendEol.GetLen();
 			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
 				break;
 			}
@@ -3228,18 +3215,16 @@ BOOL CEditView::GetSelectedData(
 			}
 
 			if( NULL != pszQuote && 0 < wcslen( pszQuote ) ){	/* 先頭に付ける引用符 */
-//				cmemBuf.Append( pszQuote, lstrlen( pszQuote ) );
 				cmemBuf->AppendString( pszQuote );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
 				auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
 				cmemBuf->AppendString( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
-//				cmemBuf.Append( pszLineNum, lstrlen( pszLineNum ) );
 				cmemBuf->AppendString( pszLineNum );
 			}
 
 
-			if( EOL_NONE != pcLayout->m_cEol ){
+			if( EOL_NONE != pcLayout->GetLayoutEol() ){
 //			if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
 //				cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 //				cmemBuf.AppendSz( CRLF );
@@ -3248,8 +3233,8 @@ BOOL CEditView::GetSelectedData(
 					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta
 					cmemBuf->AppendString( ( neweol == EOL_UNKNOWN ) ?
-						(pcLayout->m_cEol).GetUnicodeValue() :	//	コード保存
-						appendEol.GetUnicodeValue() );			//	新規改行コード
+						(pcLayout->GetLayoutEol()).GetValue2() :	//	コード保存
+						appendEol.GetValue2() );			//	新規改行コード
 				}
 				else {
 					cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
@@ -3265,7 +3250,7 @@ BOOL CEditView::GetSelectedData(
 						//	Jul. 25, 2000 genta
 						cmemBuf->AppendString(( neweol == EOL_UNKNOWN ) ?
 							WCODE::CRLF :						//	コード保存
-							appendEol.GetUnicodeValue() );		//	新規改行コード
+							appendEol.GetValue2() );		//	新規改行コード
 					}
 				}
 			}
@@ -3277,7 +3262,7 @@ BOOL CEditView::GetSelectedData(
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		delete [] pszLineNum;
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -3348,11 +3333,11 @@ void CEditView::CopySelectedAllLines(
 		bWithLineNumber, /* 行番号を付与する */
 		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
 	) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* クリップボードにデータを設定 */
-	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
+	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), false );
 
 
 	return;
@@ -3466,13 +3451,13 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			COpe* pcOpe = new COpe(OPE_MOVECARET);
-
-			pcOpe->m_ptCaretPos_PHY_Before = GetCaret().GetCaretLogicPos();				// 操作前のキャレット位置
-			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	// 操作後のキャレット位置
-
 			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe( pcOpe );
+			m_pcOpeBlk->AppendOpe(
+				new CMoveCaretOpe(
+					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				)
+			);
 		}
 	}
 	else{
@@ -3494,7 +3479,8 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.GetStringPtr(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
 			cmemBuf.GetStringLength(),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
-			false
+			false,
+			m_bDoing_UndoRedo?NULL:m_pcOpeBlk
 		);
 
 		// From Here 2001.12.03 hor
@@ -3508,13 +3494,13 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		}
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			COpe*	pcOpe = new COpe(OPE_MOVECARET);
-
-			pcOpe->m_ptCaretPos_PHY_Before = GetCaret().GetCaretLogicPos();			// 操作前のキャレット位置
-			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	// 操作後のキャレット位置
-
 			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe( pcOpe );
+			m_pcOpeBlk->AppendOpe(
+				new CMoveCaretOpe(
+					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				)
+			);
 		}
 		RedrawAll();
 		// To Here 2001.12.03 hor
@@ -3627,16 +3613,6 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 
 
-/*! 親ウィンドウのタイトルを更新
-
-	@date 2007.03.08 ryoji bKillFocusパラメータを除去
-*/
-void CEditView::SetParentCaption( void )
-{
-	m_pcEditDoc->SetParentCaption();
-	return;
-}
-
 
 
 /* 設定変更を反映させる */
@@ -3648,7 +3624,7 @@ void CEditView::OnChangeSetting( void )
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );									/* 表示域の上端座標 */
 
 	/* ルーラー表示 */
-	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
+	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + m_pShareData->m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 
@@ -3694,10 +3670,10 @@ void CEditView::RedrawAll( void )
 	GetCaret().ShowEditCaret();
 
 	// キャレットの行桁位置を表示する
-	GetCaret().DrawCaretPosInfo();
+	GetCaret().ShowCaretPosInfo();
 
 	// 親ウィンドウのタイトルを更新
-	SetParentCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	//	Jul. 9, 2005 genta	選択範囲の情報をステータスバーへ表示
 	GetSelectionInfo().PrintSelectionInfoMsg();
@@ -3834,1216 +3810,6 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 
 
 
-/* Grep実行 */
-DWORD CEditView::DoGrep(
-	const CNativeW*			pcmGrepKey,
-	const CNativeT*			pcmGrepFile,
-	const CNativeT*			pcmGrepFolder,
-	BOOL					bGrepSubFolder,
-	const SSearchOption&	sSearchOption,
-	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-	BOOL					bGrepOutputLine,
-	int						nGrepOutputStyle
-)
-{
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( "CEditView::DoGrep" );
-#endif
-
-	m_pcEditDoc->m_bGrepRunning = TRUE;
-
-
-	int			nDummy;
-	int			nHitCount = 0;
-	wchar_t		szKey[_MAX_PATH];
-	TCHAR		szFile[_MAX_PATH];
-	CDlgCancel	cDlgCancel;
-	HWND		hwndCancel;
-	HWND		hwndMainFrame;
-	int			nCharChars;
-	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	CBregexp	cRegexp;
-	CNativeW	cmemMessage;
-	int			nWork;
-	int*		pnKey_CharCharsArr;
-	pnKey_CharCharsArr = NULL;
-
-	/*
-	|| バッファサイズの調整
-	*/
-	cmemMessage.AllocStringBuffer( 4000 );
-
-	m_bDoing_UndoRedo		= TRUE;
-
-
-	/* アンドゥバッファの処理 */
-	if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
-//@@@2002.2.2 YAZAKI NULLじゃないと進まないので、とりあえずコメント。＆NULLのときは、new COpeBlkする。
-//		while( NULL != m_pcOpeBlk ){}
-//		delete m_pcOpeBlk;
-//		m_pcOpeBlk = NULL;
-	}
-	else {
-		m_pcOpeBlk = new COpeBlk;
-	}
-
-	m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
-	wcscpy( m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
-	m_sCurSearchOption.bRegularExp = sSearchOption.bRegularExp;		/* 検索／置換  1==正規表現 */
-	m_sCurSearchOption.bLoHiCase   = sSearchOption.bLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
-	/* 正規表現 */
-
-	//	From Here Jun. 27 genta
-	/*
-		Grepを行うに当たって検索・画面色分け用正規表現バッファも
-		初期化する．これはGrep検索結果の色分けを行うため．
-
-		Note: ここで強調するのは最後の検索文字列であって
-		Grep対象パターンではないことに注意
-	*/
-	if( m_sCurSearchOption.bRegularExp ){
-		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( GetHwnd(), m_CurRegexp, true ) ){
-			return 0;
-		}
-
-		/* 検索パターンのコンパイル */
-		int nFlag = 0x00;
-		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
-		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
-	}
-	//	To Here Jun. 27 genta
-
-//まだ m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
-
-//	cDlgCancel.Create( m_hInstance, m_hwndParent );
-//	hwndCancel = cDlgCancel.Open( MAKEINTRESOURCE(IDD_GREPRUNNING) );
-	hwndCancel = cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_GREPRUNNING );
-
-	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
-	::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, _T(" ") );	// 2002/09/09 Moca add
-	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );	// 2003.06.23 Moca
-
-	wcscpy( szKey, pcmGrepKey->GetStringPtr() );
-
-	wcscpy( m_pcEditDoc->m_szGrepKey, szKey );
-	m_pcEditDoc->m_bGrepMode = TRUE;
-
-	//	2007.07.22 genta
-	//	バージョン番号取得のため，処理を前の方へ移動した
-	if( sSearchOption.bRegularExp ){
-		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
-			return 0;
-		}
-		/* 検索パターンのコンパイル */
-		int nFlag = 0x00;
-		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( !cRegexp.Compile( szKey, nFlag ) ){
-			return 0;
-		}
-	}else{
-		/* 検索条件の情報 */
-		CDocLineMgr::CreateCharCharsArr(
-			szKey,
-			wcslen( szKey ),
-			&pnKey_CharCharsArr
-		);
-	}
-
-//2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
-	HICON	hIconBig, hIconSmall;
-	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	hIconBig   = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, false );
-	hIconSmall = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
-
-	//	Sep. 10, 2002 genta
-	//	CEditWndに新設した関数を使うように
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
-	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
-
-	TCHAR szPath[_MAX_PATH];
-	_tcscpy( szPath, pcmGrepFolder->GetStringPtr() );
-	nDummy = _tcslen( szPath );
-
-	/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
-	nCharChars = &szPath[nDummy] - CNativeT::GetCharPrev( szPath, nDummy, &szPath[nDummy] );
-	if( 1 == nCharChars && szPath[nDummy - 1] == _T('\\') ){
-	}else{
-		_tcscat( szPath, _T("\\") );
-	}
-	_tcscpy( szFile, pcmGrepFile->GetStringPtr() );
-
-	nWork = wcslen( szKey ); // 2003.06.10 Moca あらかじめ長さを計算しておく
-
-	/* 最後にテキストを追加 */
-	CNativeW	cmemWork;
-	cmemMessage.AppendString( L"\r\n□検索条件  " );
-	if( 0 < nWork ){
-		CNativeW cmemWork2;
-		cmemWork2.SetString( szKey );
-		if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-			cmemWork2.Replace( L"\\", L"\\\\" );
-			cmemWork2.Replace( L"\'", L"\\\'" );
-			cmemWork2.Replace( L"\"", L"\\\"" );
-		}else{
-			cmemWork2.Replace( L"\'", L"\'\'" );
-			cmemWork2.Replace( L"\"", L"\"\"" );
-		}
-		cmemWork.AppendString( L"\"" );
-		cmemWork.AppendNativeData( cmemWork2 );
-		cmemWork.AppendString( L"\"\r\n" );
-	}else{
-		cmemWork.AppendString( L"「ファイル検索」\r\n" );
-	}
-	cmemMessage += cmemWork;
-
-
-
-	cmemMessage.AppendString( L"検索対象   " );
-	cmemWork.SetStringT( szFile );
-	if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemMessage += cmemWork;
-
-
-
-
-	cmemMessage.AppendString( L"\r\n" );
-	cmemMessage.AppendString( L"フォルダ   " );
-	cmemWork.SetStringT( szPath );
-	if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemMessage += cmemWork;
-	cmemMessage.AppendString( L"\r\n" );
-
-	const wchar_t*	pszWork;
-	if( bGrepSubFolder ){
-		pszWork = L"    (サブフォルダも検索)\r\n";
-	}else{
-		pszWork = L"    (サブフォルダを検索しない)\r\n";
-	}
-	cmemMessage.AppendString( pszWork );
-
-	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
-		if( sSearchOption.bWordOnly ){
-		/* 単語単位で探す */
-			cmemMessage.AppendString( L"    (単語単位で探す)\r\n" );
-		}
-
-		if( sSearchOption.bLoHiCase ){
-			pszWork = L"    (英大文字小文字を区別する)\r\n";
-		}else{
-			pszWork = L"    (英大文字小文字を区別しない)\r\n";
-		}
-		cmemMessage.AppendString( pszWork );
-
-		if( sSearchOption.bRegularExp ){
-			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
-			cmemMessage.AppendString( L"    (正規表現:" );
-			cmemMessage.AppendStringT( cRegexp.GetVersionT() );
-			cmemMessage.AppendString( L")\r\n" );
-		}
-	}
-
-	if( CODE_AUTODETECT == nGrepCharSet ){
-		cmemMessage.AppendString( L"    (文字コードセットの自動判別)\r\n" );
-	}else if(IsValidCodeType(nGrepCharSet)){
-		cmemMessage.AppendString( L"    (文字コードセット：" );
-		cmemMessage.AppendStringT( gm_pszCodeNameArr_Normal[nGrepCharSet] );
-		cmemMessage.AppendString( L")\r\n" );
-	}
-
-	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
-		if( bGrepOutputLine ){
-		/* 該当行 */
-			pszWork = L"    (一致した行を出力)\r\n";
-		}else{
-			pszWork = L"    (一致した箇所のみ出力)\r\n";
-		}
-		cmemMessage.AppendString( pszWork );
-	}
-
-
-	cmemMessage.AppendString( L"\r\n\r\n" );
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-//@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
-	CLayoutInt tmp_PosY_Layout = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	if( 0 < nWork ){
-		GetCommander().Command_ADDTAIL( pszWork, nWork );
-	}
-	//	2007.07.22 genta バージョンを取得するために，
-	//	正規表現の初期化を上へ移動
-
-
-	/* 表示処理ON/OFF */
-	// 2003.06.23 Moca 共通設定で変更できるように
-//	SetDrawSwitch(false);
-	SetDrawSwitch(0 != m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView);
-
-
-	int nGrepTreeResult = DoGrepTree(
-		&cDlgCancel,
-		hwndCancel,
-		szKey,
-		pnKey_CharCharsArr,
-		szFile,
-		szPath,
-		bGrepSubFolder,
-		sSearchOption,
-		nGrepCharSet,
-		bGrepOutputLine,
-		nGrepOutputStyle,
-		&cRegexp,
-		0,
-		&nHitCount
-	);
-	if( -1 == nGrepTreeResult ){
-		const wchar_t* p = L"中断しました。\r\n";
-		GetCommander().Command_ADDTAIL( p, wcslen( p ) );
-	}
-	auto_sprintf( szPath, _T("%d 個が検索されました。\r\n"), nHitCount );
-	GetCommander().Command_ADDTAIL( to_wchar(szPath), -1 );
-//	GetCommander().Command_GOFILEEND( FALSE );
-#ifdef _DEBUG
-	auto_sprintf( szPath, _T("処理時間: %dミリ秒\r\n"), cRunningTimer.Read() );
-	GetCommander().Command_ADDTAIL( to_wchar(szPath), -1 );
-#endif
-
-	GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), tmp_PosY_Layout), TRUE );	//	カーソルをGrep直前の位置に戻す。
-
-	cDlgCancel.CloseDialog( 0 );
-
-	/* アクティブにする */
-	hwndMainFrame = ::GetParent( m_hwndParent );
-	/* アクティブにする */
-	ActivateFrameWindow( hwndMainFrame );
-
-
-	/* アンドゥバッファの処理 */
-	if( NULL != m_pcOpeBlk ){
-		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-		}else{
-			delete m_pcOpeBlk;
-		}
-		m_pcOpeBlk = NULL;
-	}
-
-	//	Apr. 13, 2001 genta
-	//	Grep実行後はファイルを変更無しの状態にする．
-	m_pcEditDoc->SetModified(false,false);
-
-	m_pcEditDoc->m_bGrepRunning = FALSE;
-	m_bDoing_UndoRedo = FALSE;
-
-	if( NULL != pnKey_CharCharsArr ){
-		delete [] pnKey_CharCharsArr;
-		pnKey_CharCharsArr = NULL;
-	}
-//	if( NULL != pnKey_CharUsedArr ){
-//		delete [] pnKey_CharUsedArr;
-//		pnKey_CharUsedArr = NULL;
-//	}
-
-	/* 表示処理ON/OFF */
-	SetDrawSwitch(true);
-
-	/* フォーカス移動時の再描画 */
-	RedrawAll();
-
-	return nHitCount;
-}
-
-/*
- * SORTED_LIST_BSEARCH
- *   リストの探索にbsearchを使います。
- *   指定しない場合は、線形探索になります。
- * SORTED_LIST
- *   リストをqsortします。
- *
- * メモ：
- *   線形探索でもqsortを使い、文字列比較の大小関係が逆転したところで探索を
- *   打ち切れば少しは速いかもしれません。
- */
-//#define SORTED_LIST
-//#define SORTED_LIST_BSEARCH
-
-#ifdef SORTED_LIST_BSEARCH
-#define SORTED_LIST
-#endif
-
-#ifdef SORTED_LIST
-typedef int (* COMP)(const void *, const void *);
-
-/*!
-	qsort用比較関数
-	引数a,bは文字列へのポインタのポインタであることに注意。
-	
-	@param a [in] 比較文字列へのポインタのポインタ(list)
-	@param b [in] 比較文字列へのポインタのポインタ(list)
-	@return 比較結果
-*/
-int grep_compare_pp(const void* a, const void* b)
-{
-	return _tcscmp( *((const TCHAR**)a), *((const TCHAR**)b) );
-}
-
-/*!
-	bsearch用比較関数
-	引数bは文字列へのポインタのポインタであることに注意。
-	
-	@param a [in] 比較文字列へのポインタ(key)
-	@param b [in] 比較文字列へのポインタのポインタ(list)
-	@return 比較結果
-*/
-int grep_compare_sp(const void* a, const void* b)
-{
-	return _tcscmp( (const TCHAR*)a, *((const TCHAR**)b) );
-}
-#endif
-
-/*! @brief Grep実行
-
-	@date 2001.06.27 genta	正規表現ライブラリの差し替え
-	@date 2003.06.23 Moca   サブフォルダ→ファイルだったのをファイル→サブフォルダの順に変更
-	@date 2003.06.23 Moca   ファイル名から""を取り除くように
-	@date 2003.03.27 みく   除外ファイル指定の導入と重複検索防止の追加．
-		大部分が変更されたため，個別の変更点記入は無し．
-*/
-int CEditView::DoGrepTree(
-	CDlgCancel*			pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
-	HWND				hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
-	const wchar_t*		pszKey,				//!< [in] 検索パターン
-	int*				pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
-	const TCHAR*		pszFile,			//!< [in] 検索対象ファイルパターン(!で除外指定)
-	const TCHAR*		pszPath,			//!< [in] 検索対象パス
-	BOOL				bGrepSubFolder,		//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
-	const SSearchOption& sSearchOption,		//!< [in] 検索オプション
-	ECodeType			nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
-	BOOL				bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-	int					nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
-	CBregexp*			pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	int					nNest,				//!< [in] ネストレベル
-	int*				pnHitCount			//!< [i/o] ヒット数の合計
-)
-{
-	::DlgItem_SetText( hwndCancel, IDC_STATIC_CURPATH, pszPath );
-
-	const TCHAR EXCEPT_CHAR = _T('!');	//除外識別子
-	const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
-	const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
-
-	int		nWildCardLen;
-	int		nPos;
-	BOOL	result;
-	int		i;
-	WIN32_FIND_DATA w32fd;
-	CNativeW		cmemMessage;
-	int				nHitCountOld;
-	const wchar_t*	pszWork;
-	int				nWork = 0;
-	nHitCountOld = -100;
-
-	//解放の対象
-	HANDLE handle      = INVALID_HANDLE_VALUE;
-
-
-	/*
-	 * リストの初期化(文字列へのポインタをリスト管理する)
-	 */
-	int checked_list_size = 256;	//確保済みサイズ
-	int checked_list_count = 0;	//登録個数
-	TCHAR** checked_list = (TCHAR**)malloc( sizeof( TCHAR* ) * checked_list_size );
-	if( ! checked_list ) return FALSE;	//メモリ確保失敗
-
-
-	/*
-	 * 除外ファイルを登録する。
-	 */
-	nPos = 0;
-	TCHAR* pWildCard = _tcsdup( pszFile );	//ワイルドカードリスト作業用
-	if( ! pWildCard ) goto error_return;	//メモリ確保失敗
-	nWildCardLen = _tcslen( pWildCard );
-	TCHAR*	token;
-	while( NULL != (token = my_strtok<TCHAR>( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) )	//トークン毎に繰り返す。
-	{
-		//除外ファイル指定でないか？
-		if( EXCEPT_CHAR != token[0] ) continue;
-
-		//ダブルコーテーションを除き、絶対パス名を作成する。
-		TCHAR* p;
-		TCHAR* q;
-		p = q = ++token;
-		while( *p )
-		{
-			if( *p != _T('"') ) *q++ = *p;
-			p++;
-		}
-		*q = _T('\0');
-		TCHAR* currentPath = NULL;	//現在探索中のパス
-		currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-		if( ! currentPath ) goto error_return;	//メモリ確保失敗
-		_tcscpy( currentPath, pszPath );
-		_tcscat( currentPath, token );
-
-		//ファイルの羅列を開始する。
-		handle = FindFirstFile( currentPath, &w32fd );
-		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
-		while( result )
-		{
-			if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )	//フォルダでない場合
-			{
-				//チェック済みリストに登録する。
-				if( checked_list_count >= checked_list_size )
-				{
-					checked_list_size += 256;
-					TCHAR** p = (TCHAR**)realloc( checked_list, sizeof( TCHAR* ) * checked_list_size );
-					if( ! p ) goto error_return;	//メモリ確保失敗
-					checked_list = p;
-				}
-				checked_list[ checked_list_count ] = _tcsdup( w32fd.cFileName );
-				checked_list_count++;
-			}
-
-			//次のファイルを羅列する。
-			result = FindNextFile( handle, &w32fd );
-		}
-		//ハンドルを閉じる。
-		if( INVALID_HANDLE_VALUE != handle )
-		{
-			FindClose( handle );
-			handle = INVALID_HANDLE_VALUE;
-		}
-		delete [] currentPath;
-		currentPath = NULL;
-	}
-	free( pWildCard );
-	pWildCard = NULL;
-
-
-	/*
-	 * カレントフォルダのファイルを探索する。
-	 */
-	nPos = 0;
-	pWildCard = _tcsdup( pszFile );
-	if( ! pWildCard ) goto error_return;	//メモリ確保失敗
-	nWildCardLen = _tcslen( pWildCard );
-	while( NULL != (token = my_strtok<TCHAR>( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) )	//トークン毎に繰り返す。
-	{
-		//除外ファイル指定か？
-		if( EXCEPT_CHAR == token[0] ) continue;
-
-		//ダブルコーテーションを除き、絶対パス名を作成する。
-		TCHAR* p;
-		TCHAR* q;
-		p = q = token;
-		while( *p )
-		{
-			if( *p != _T('"') ) *q++ = *p;
-			p++;
-		}
-		*q = _T('\0');
-		TCHAR* currentPath = NULL;	//現在探索中のパス
-		currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-		if( ! currentPath ) goto error_return;
-		_tcscpy( currentPath, pszPath );
-		_tcscat( currentPath, token );
-
-		//ファイルの羅列を開始する。
-#ifdef SORTED_LIST
-		//ソート
-		qsort( checked_list, checked_list_count, sizeof( WCHAR* ), (COMP)grep_compare_pp_w );
-#endif
-		int current_checked_list_count = checked_list_count;	//前回までのリストの数
-		handle = FindFirstFile( currentPath, &w32fd );
-		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
-		while( result )
-		{
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-				goto cancel_return;
-			}
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				goto cancel_return;
-			}
-
-			/* 表示設定をチェック */
-			SetDrawSwitch(0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ));
-
-			if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )	//フォルダでない場合
-			{
-				/*
-				 * リストにあるか調べる。
-				 * 今回探索中のファイル同士が重複することはないので、
-				 * 前回までのリスト(current_checked_list_count)から検索すればよい。
-				 */
-#ifdef SORTED_LIST_BSEARCH
-				if( ! bsearch( w32fd.cFileName, checked_list, current_checked_list_count, sizeof( WCHAR* ), (COMP)grep_compare_sp ) )
-#else
-				bool found = false;
-				TCHAR** ptr = checked_list;
-				for( i = 0; i < current_checked_list_count; i++, ptr++ )
-				{
-#ifdef SORTED_LIST
-					int n = wcscmp( *ptr, w32fd.cFileName );
-					if( 0 == n )
-					{
-						found = true; 
-						break;
-					}
-					else if( n > 0 )	//探索打ち切り
-					{
-						break;
-					}
-#else
-					if( 0 == _tcscmp( *ptr, w32fd.cFileName ) )
-					{
-						found = true; 
-						break;
-					}
-#endif
-				}
-				if( ! found )
-#endif
-				{
-					//チェック済みリストに登録する。
-					if( checked_list_count >= checked_list_size )
-					{
-						checked_list_size += 256;
-						TCHAR** p = (TCHAR**)realloc( checked_list, sizeof( TCHAR* ) * checked_list_size );
-						if( ! p ) goto error_return;	//メモリ確保失敗
-						checked_list = p;
-					}
-					checked_list[ checked_list_count ] = _tcsdup( w32fd.cFileName );
-					checked_list_count++;
-
-
-					//GREP実行！
-					::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, w32fd.cFileName );
-
-					TCHAR* currentFile = new TCHAR[ _tcslen( pszPath ) + _tcslen( w32fd.cFileName ) + 1 ];
-					if( ! currentFile ) goto error_return;	//メモリ確保失敗
-					_tcscpy( currentFile, pszPath );
-					_tcscat( currentFile, w32fd.cFileName );
-					/* ファイル内の検索 */
-					int nRet = DoGrepFile(
-						pcDlgCancel,
-						hwndCancel,
-						pszKey,
-						pnKey_CharCharsArr,
-						w32fd.cFileName,
-						sSearchOption,
-						nGrepCharSet,
-						bGrepOutputLine,
-						nGrepOutputStyle,
-						pRegexp,
-						pnHitCount,
-						currentFile,
-						cmemMessage
-					);
-					delete currentFile;
-					currentFile = NULL;
-
-					// 2003.06.23 Moca リアルタイム表示のときは早めに表示
-					if( GetDrawSwitch() ){
-						if( LTEXT('\0') != pszKey[0] ){
-							// データ検索のときファイルの合計が最大10MBを超えたら表示
-							nWork += ( w32fd.nFileSizeLow + 1023 ) / 1024;
-						}
-						if( *pnHitCount - nHitCountOld && 
-							( *pnHitCount < 20 || 10000 < nWork ) ){
-							nHitCountOld = -100; // 即表示
-						}
-					}
-					if( *pnHitCount - nHitCountOld  >= 10 ){
-						/* 結果出力 */
-						pszWork = cmemMessage.GetStringPtr( &nWork );
-						if( 0 < nWork ){
-							GetCommander().Command_ADDTAIL( pszWork, nWork );
-							GetCommander().Command_GOFILEEND( FALSE );
-							/* 結果格納エリアをクリア */
-							cmemMessage.SetString( L"" );
-							nWork = 0;
-						}
-						nHitCountOld = *pnHitCount;
-					}
-					if( -1 == nRet ){
-						goto cancel_return;
-					}
-				}
-			}
-
-			//次のファイルを羅列する。
-			result = FindNextFile( handle, &w32fd );
-		}
-		//ハンドルを閉じる。
-		if( INVALID_HANDLE_VALUE != handle )
-		{
-			FindClose( handle );
-			handle = INVALID_HANDLE_VALUE;
-		}
-		delete [] currentPath;
-		currentPath = NULL;
-	}
-	free( pWildCard );
-	pWildCard = NULL;
-
-	for( i = 0; i < checked_list_count; i++ )
-	{
-		free( checked_list[ i ] );
-	}
-	free( checked_list );
-	checked_list = NULL;
-	checked_list_count = 0;
-	checked_list_size = 0;
-
-
-	/*
-	 * サブフォルダを検索する。
-	 */
-	if( bGrepSubFolder ){
-		TCHAR* subPath     = NULL;
-		subPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( WILDCARD_ANY ) + 1 ];
-		if( ! subPath ) goto error_return;	//メモリ確保失敗
-		_tcscpy( subPath, pszPath );
-		_tcscat( subPath, WILDCARD_ANY );
-		handle = FindFirstFile( subPath, &w32fd );
-		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
-		while( result )
-		{
-			//サブフォルダの探索を再帰呼び出し。
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-				goto cancel_return;
-			}
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				goto cancel_return;
-			}
-			/* 表示設定をチェック */
-			SetDrawSwitch(0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ));
-
-			if( (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)	//フォルダの場合
-			 && 0 != _tcscmp( w32fd.cFileName, _T("."))
-			 && 0 != _tcscmp( w32fd.cFileName, _T("..")) )
-			{
-				//フォルダ名を作成する。
-				TCHAR* currentPath = NULL;	//現在探索中のパス
-				currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( w32fd.cFileName ) + 2 ];
-				if( ! currentPath ) goto error_return;	//メモリ確保失敗
-				_tcscpy( currentPath, pszPath );
-				_tcscat( currentPath, w32fd.cFileName );
-				_tcscat( currentPath, _T("\\") );
-
-				int nGrepTreeResult = DoGrepTree(
-					pcDlgCancel,
-					hwndCancel,
-					pszKey,
-					pnKey_CharCharsArr,
-					pszFile,
-					currentPath,
-					bGrepSubFolder,
-					sSearchOption,
-					nGrepCharSet,
-					bGrepOutputLine,
-					nGrepOutputStyle,
-					pRegexp,
-					nNest + 1,
-					pnHitCount
-				);
-				if( -1 == nGrepTreeResult ){
-					goto cancel_return;
-				}
-				::DlgItem_SetText( hwndCancel, IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダから戻ってきたら...
-
-				delete [] currentPath;
-				currentPath = NULL;
-			}
-
-			//次のファイルを羅列する。
-			result = FindNextFile( handle, &w32fd );
-		}
-		//ハンドルを閉じる。
-		if( INVALID_HANDLE_VALUE != handle )
-		{
-			FindClose( handle );
-			handle = INVALID_HANDLE_VALUE;
-		}
-		delete [] subPath;
-		subPath = NULL;
-	}
-
-	::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, LTEXT(" ") );	// 2002/09/09 Moca add
-	/* 結果出力 */
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-	if( 0 < nWork ){
-		GetCommander().Command_ADDTAIL( pszWork, nWork );
-		GetCommander().Command_GOFILEEND( FALSE );
-		/* 結果格納エリアをクリア */
-		cmemMessage.SetString( LTEXT("") );
-	}
-
-	return 0;
-
-
-cancel_return:;
-error_return:;
-	/*
-	 * エラー時はすべての確保済みリソースを解放する。
-	 */
-	if( INVALID_HANDLE_VALUE != handle ) FindClose( handle );
-
-	if( pWildCard ) free( pWildCard );
-//	if( currentPath ) delete [] currentPath;
-//	if( subPath ) delete [] subPath;
-
-	if( checked_list )
-	{
-		for( i = 0; i < checked_list_count; i++ )
-		{
-			free( checked_list[ i ] );
-		}
-		free( checked_list );
-	}
-
-	/* 結果出力 */
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-	if( 0 < nWork )
-	{
-		GetCommander().Command_ADDTAIL( pszWork, nWork );
-		GetCommander().Command_GOFILEEND( FALSE );
-		/* 結果格納エリアをクリア */
-		cmemMessage.SetString( LTEXT("") );
-	}
-
-	return -1;
-}
-
-
-
-
-/*!	@brief Grep結果を構築する
-
-	@param pWork [out] Grep出力文字列．充分なメモリ領域を予め確保しておくこと．
-		最長で 本文2000 byte＋ファイル名 _MAX_PATH byte＋行・桁位置表示の長さが必要．
-		ファイル単位出力の場合は本文2500 byte + _MAX_PATH + 行・桁位置表示の長さが必要．
-		
-
-	pWorkは充分なメモリ領域を持っているコト
-	@date 2002/08/29 Moca バイナリーデータに対応 pnWorkLen 追加
-*/
-void CEditView::SetGrepResult(
-	/* データ格納先 */
-	wchar_t*	pWork,
-	int*		pnWorkLen,			/*!< [out] Grep出力文字列の長さ */
-	/* マッチしたファイルの情報 */
-	const TCHAR*		pszFullPath,	/*!< [in] フルパス */
-	const TCHAR*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
-	/* マッチした行の情報 */
-	int			nLine,				/*!< [in] マッチした行番号(1～) */
-	int			nColm,				/*!< [in] マッチした桁番号(1～) */
-	const wchar_t*	pCompareData,	/*!< [in] 行の文字列 */
-	int			nLineLen,			/*!< [in] 行の文字列の長さ */
-	int			nEolCodeLen,		/*!< [in] EOLの長さ */
-	/* マッチした文字列の情報 */
-	const wchar_t*	pMatchData,		/*!< [in] マッチした文字列 */
-	int			nMatchLen,			/*!< [in] マッチした文字列の長さ */
-	/* オプション */
-	BOOL		bGrepOutputLine,	/*!< [in] 0: 該当部分のみ, !0: 該当行 */
-	int			nGrepOutputStyle	/*!< [in] 1: Normal, 2: WZ風(ファイル単位) */
-)
-{
-
-	int nWorkLen = 0;
-	const wchar_t * pDispData;
-	int k;
-	bool bEOL = true;
-	int nMaxOutStr;
-
-	/* ノーマル */
-	if( 1 == nGrepOutputStyle ){
-		nWorkLen = ::auto_sprintf( pWork, L"%ls(%d,%d)%ls: ", pszFullPath, nLine, nColm, pszCodeName );
-		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
-	}
-	/* WZ風 */
-	else if( 2 == nGrepOutputStyle ){
-		nWorkLen = ::auto_sprintf( pWork, L"・(%6d,%-5d): ", nLine, nColm );
-		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
-	}
-
-	/* 該当行 */
-	if( bGrepOutputLine ){
-		pDispData = pCompareData;
-		k = nLineLen - nEolCodeLen;
-		if( nMaxOutStr < k ){
-			k = nMaxOutStr; // 2003.06.10 Moca 最大長変更
-		}
-	}
-	/* 該当部分 */
-	else{
-		pDispData = pMatchData;
-		k = nMatchLen;
-		if( nMaxOutStr < k ){
-			k = nMaxOutStr; // 2003.06.10 Moca 最大長変更
-		}
-		// 該当部分に改行を含む場合はその改行コードをそのまま利用する(次の行に空行を作らない)
-		// 2003.06.10 Moca k==0のときにバッファアンダーランしないように
-		if( 0 < k && (pMatchData[ k - 1 ] == L'\r' || pMatchData[ k - 1 ] == L'\n') ){
-			bEOL = false;
-		}
-	}
-
-	auto_memcpy( &pWork[nWorkLen], pDispData, k );
-	nWorkLen += k;
-	if( bEOL ){
-		auto_memcpy( &pWork[nWorkLen], L"\r\n", 2 );
-		nWorkLen = nWorkLen + 2;
-	}
-	*pnWorkLen = nWorkLen;
-}
-
-/*!
-	Grep実行 (CFileLoadを使ったテスト版)
-
-	@param pcDlgCancel		[in] Cancelダイアログへのポインタ
-	@param hwndCancel		[in] Cancelダイアログのウィンドウハンドル
-	@param pszKey			[in] 検索パターン
-	@param pnKey_CharCharsArr	[in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
-	@param pszFile			[in] 処理対象ファイル名(表示用)
-	@param bGrepLoHiCase	[in] TRUE: 大文字小文字の区別あり / FALSE: 無し
-	@param bGrepRegularExp	[in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
-	@param nGrepCharSet		[in] 文字コードセット (0:自動認識)～
-	@param bGrepOutputLine	[in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-	@param bWordOnly		[in] TRUE: 単語単位で一致を判断 / FALSE: 部分にも一致する
-	@param nGrepOutputStyle	[in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
-	@param pRegexp			[in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	@param pnHitCount		[i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
-	@param pszFullPath		[in] 処理対象ファイルパス
-
-	@retval -1 GREPのキャンセル
-	@retval それ以外 ヒット数(ファイル検索時はファイル数)
-
-	@date 2002/08/30 Moca CFileLoadを使ったテスト版
-	@date 2004/03/28 genta 不要な引数nNest, bGrepSubFolder, pszPathを削除
-*/
-int CEditView::DoGrepFile(
-	CDlgCancel*				pcDlgCancel,
-	HWND					hwndCancel,
-	const wchar_t*			pszKey,
-	int*					pnKey_CharCharsArr,
-	const TCHAR*			pszFile,
-	const SSearchOption&	sSearchOption,
-	ECodeType				nGrepCharSet,
-	BOOL					bGrepOutputLine,
-	int						nGrepOutputStyle,
-	CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	int*					pnHitCount,
-	const TCHAR*			pszFullPath,
-	CNativeW&				cmemMessage
-)
-{
-	int		nHitCount;
-//	char	szLine[16000];
-	wchar_t	szWork[3000]; // ここは SetGrepResult() が返す文字列を格納できるサイズが必要
-	wchar_t	szWork0[_MAX_PATH + 100];
-	int		nLine;
-	int		nWorkLen;
-	const wchar_t*	pszRes; // 2002/08/29 const付加
-	ECodeType	nCharCode;
-	const wchar_t*	pCompareData; // 2002/08/29 const付加
-	int		nColm;
-	BOOL	bOutFileName;
-	bOutFileName = FALSE;
-	CEOL	cEol;
-	int		nEolCodeLen;
-	CFileLoad	cfl;
-	int		nOldPercent = 0;
-
-	int	nKeyKen = wcslen( pszKey );
-
-	//	ここでは正規表現コンパイルデータの初期化は不要
-
-	const TCHAR*	pszCodeName; // 2002/08/29 const付加
-	pszCodeName = _T("");
-	nHitCount = 0;
-	nLine = 0;
-
-	/* 検索条件が長さゼロの場合はファイル名だけ返す */
-	// 2002/08/29 行ループの前からここに移動
-	if( 0 == nKeyKen ){
-		if( CODE_AUTODETECT == nGrepCharSet ){
-			// 2003.06.10 Moca コード判別処理をここに移動．
-			// 判別エラーでもファイル数にカウントするため
-			// ファイルの日本語コードセット判別
-			nCharCode = CCodeMediator::CheckKanjiCodeOfFile( pszFullPath );
-			if( -1 == nCharCode ){
-				pszCodeName = _T("  [(DetectError)]");
-			}else{
-				pszCodeName = gm_pszCodeNameArr_Bracket[nCharCode];
-			}
-		}
-		if( 1 == nGrepOutputStyle ){
-		/* ノーマル */
-			auto_sprintf( szWork0, L"%ts%ts\r\n", pszFullPath, pszCodeName );
-		}else{
-		/* WZ風 */
-			auto_sprintf( szWork0, L"■\"%ts\"%ts\r\n", pszFullPath, pszCodeName );
-		}
-		cmemMessage.AppendString( szWork0 );
-		++(*pnHitCount);
-		::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-		return 1;
-	}
-
-
-	try{
-	// ファイルを開く
-	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
-	// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
-	nCharCode = cfl.FileOpen( pszFullPath, nGrepCharSet, 0 );
-	if( CODE_AUTODETECT == nGrepCharSet ){
-		pszCodeName = gm_pszCodeNameArr_Bracket[nCharCode];
-	}
-	auto_sprintf( szWork0, L"■\"%ts\"%ts\r\n", pszFullPath, pszCodeName );
-//	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-		return -1;
-	}
-	/* 中断ボタン押下チェック */
-	if( pcDlgCancel->IsCanceled() ){
-		return -1;
-	}
-
-	/* 検索条件が長さゼロの場合はファイル名だけ返す */
-	// 2002/08/29 ファイルオープンの手前へ移動
-
-	// 注意 : cfl.ReadLine が throw する可能性がある
-	CNativeW cUnicodeBuffer;
-	int		nLineLen;
-	const wchar_t*	pLine;
-	while( NULL != ( pLine = cfl.ReadLine( &cUnicodeBuffer, &nLineLen, &cEol ) ) ){
-		nEolCodeLen = cEol.GetLen();
-		++nLine;
-		pCompareData = pLine;
-
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-			return -1;
-		}
-		if( 0 == nLine % 64 ){
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				return -1;
-			}
-			//	2003.06.23 Moca 表示設定をチェック
-			SetDrawSwitch(0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ));
-			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
-			if( 5000000 < cfl.GetFileSize() ){
-				int nPercent = cfl.GetPercent();
-				if( 5 <= nPercent - nOldPercent ){
-					nOldPercent = nPercent;
-					::auto_sprintf( szWork, L"%ls (%3d%%)", pszFile, nPercent );
-					::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, szWork );
-				}
-			}
-		}
-
-		/* 正規表現検索 */
-		if( sSearchOption.bRegularExp ){
-			int nColmPrev = 0;
-
-			//	Jun. 21, 2003 genta ループ条件見直し
-			//	マッチ箇所を1行から複数検出するケースを標準に，
-			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-			while( pRegexp->Match( pCompareData, nLineLen, 0 ) ){
-
-					//	パターン発見
-					nColm = pRegexp->GetIndex() + 1;
-					int matchlen = pRegexp->GetMatchLen();
-
-					/* Grep結果を、szWorkに格納する */
-					SetGrepResult(
-						szWork,
-						&nWorkLen,
-						pszFullPath,
-						pszCodeName,
-						nLine,
-						nColm + nColmPrev,
-						pCompareData,
-						nLineLen,
-						nEolCodeLen,
-						pCompareData + nColm - 1,
-						matchlen,
-						bGrepOutputLine,
-						nGrepOutputStyle
-					);
-					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						if( !bOutFileName ){
-							cmemMessage.AppendString( szWork0 );
-							bOutFileName = TRUE;
-						}
-					}
-					cmemMessage.AppendString( szWork, nWorkLen );
-					++nHitCount;
-					++(*pnHitCount);
-					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-					}
-					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-					if ( bGrepOutputLine ) {
-						break;
-					}
-					//	探し始める位置を補正
-					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColm + matchlen;
-					if( matchlen != 0 ){
-						nPosDiff--;
-					}
-					pCompareData += nPosDiff;
-					nLineLen -= nPosDiff;
-					nColmPrev += nPosDiff;
-			}
-		}
-		/* 単語のみ検索 */
-		else if( sSearchOption.bWordOnly ){
-			/*
-				2002/02/23 Norio Nakatani
-				単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
-				英単語やC/C++識別子などの検索条件ならヒットします。
-
-				2002/03/06 YAZAKI
-				Grepにも試験導入。
-				WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
-			*/
-			CLogicInt nNextWordFrom = CLogicInt(0);
-			CLogicInt nNextWordFrom2;
-			CLogicInt nNextWordTo2;
-			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( CWordParse::WhereCurrentWord_2( pCompareData, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-				if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
-					// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
-					/* 1==大文字小文字の区別 */
-					if( (!sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
-						(sSearchOption.bLoHiCase && 0 ==	 auto_memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
-					){
-						/* Grep結果を、szWorkに格納する */
-						SetGrepResult(
-							szWork, &nWorkLen,
-							pszFullPath, pszCodeName,
-							//	Jun. 25, 2002 genta
-							//	桁位置は1始まりなので1を足す必要がある
-							nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
-							&(pCompareData[nNextWordFrom2]), nKeyKen,
-							bGrepOutputLine, nGrepOutputStyle
-						);
-						if( 2 == nGrepOutputStyle ){
-						/* WZ風 */
-							if( !bOutFileName ){
-								cmemMessage.AppendString( szWork0 );
-								bOutFileName = TRUE;
-							}
-						}
-
-						cmemMessage.AppendString( szWork, nWorkLen );
-						++nHitCount;
-						++(*pnHitCount);
-						//	May 22, 2000 genta
-						// if( 0 == ( (*pnHitCount) % 16 ) ){
-							::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-						// }
-					}
-				}
-				/* 現在位置の左右の単語の先頭位置を調べる */
-				if( !CWordParse::SearchNextWordPosition( pCompareData, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom, FALSE ) ){
-					break;	//	次の単語が無い。
-				}
-			}
-		}
-		else {
-			/* 文字列検索 */
-			int nColmPrev = 0;
-			//	Jun. 21, 2003 genta ループ条件見直し
-			//	マッチ箇所を1行から複数検出するケースを標準に，
-			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-			while( NULL != ( pszRes = CDocLineMgr::SearchString(
-					pCompareData, nLineLen,
-					0,
-					pszKey, nKeyKen,
-					pnKey_CharCharsArr,
-					sSearchOption.bLoHiCase
-				) ) ){
-					nColm = pszRes - pCompareData + 1;
-
-					/* Grep結果を、szWorkに格納する */
-					SetGrepResult(
-						szWork, &nWorkLen,
-						pszFullPath, pszCodeName,
-						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
-						pszRes, nKeyKen,
-						bGrepOutputLine, nGrepOutputStyle
-					);
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						if( !bOutFileName ){
-							cmemMessage.AppendString( szWork0 );
-							bOutFileName = TRUE;
-						}
-					}
-
-					cmemMessage.AppendString( szWork, nWorkLen );
-					++nHitCount;
-					++(*pnHitCount);
-					//	May 22, 2000 genta
-					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-					}
-					
-					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-					if ( bGrepOutputLine ) {
-						break;
-					}
-					//	探し始める位置を補正
-					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColm += nKeyKen - 1;
-					pCompareData += nPosDiff;
-					nLineLen -= nPosDiff;
-					nColmPrev += nPosDiff;
-			}
-		}
-	}
-
-	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
-	cfl.FileClose();
-	} // try
-	catch( CError_FileOpen ){
-		auto_sprintf( szWork, L"file open error [%ts]\r\n", pszFullPath );
-		GetCommander().Command_ADDTAIL( szWork, wcslen( szWork ) );
-		return 0;
-	}
-	catch( CError_FileRead ){
-		auto_sprintf( szWork, L"CEditView::DoGrepFile() ファイルの読み込み中にエラーが発生しました。\r\n");
-		GetCommander().Command_ADDTAIL( szWork, wcslen( szWork ) );
-	} // 例外処理終わり
-
-	return nHitCount;
-}
-
-
 /* 指定カーソル位置が選択エリア内にあるか
 	【戻り値】
 	-1	選択エリアより前方 or 無選択
@@ -5162,20 +3928,20 @@ int CEditView::IsCurrentPositionSelectedTEST(
 	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 */
-BOOL CEditView::MyGetClipboardData( CNativeW& cmemBuf, BOOL* pbColmnSelect, BOOL* pbLineSelect /*= NULL*/ )
+bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool* pbLineSelect /*= NULL*/ )
 {
 	if(pbColmnSelect)
-		*pbColmnSelect = FALSE;
+		*pbColmnSelect = false;
 
 	if(pbLineSelect)
-		*pbLineSelect = FALSE;
+		*pbLineSelect = false;
 
 	if(!CClipboard::HasValidData())
-		return FALSE;
+		return false;
 	
 	CClipboard cClipboard(GetHwnd());
 	if(!cClipboard)
-		return FALSE;
+		return false;
 
 	return cClipboard.GetText(&cmemBuf,pbColmnSelect,pbLineSelect);
 }
@@ -5183,22 +3949,22 @@ BOOL CEditView::MyGetClipboardData( CNativeW& cmemBuf, BOOL* pbColmnSelect, BOOL
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
  */
-BOOL CEditView::MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= FALSE*/ )
+bool CEditView::MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= false*/ )
 {
 	//WCHARに変換
 	vector<wchar_t> buf;
 	mbstowcs_vector(pszText,nTextLen,&buf);
 	return MySetClipboardData(&buf[0],buf.size()-1,bColmnSelect,bLineSelect);
 }
-BOOL CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= FALSE*/ )
+bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= false*/ )
 {
 	/* Windowsクリップボードにコピー */
 	CClipboard cClipboard(GetHwnd());
 	if(!cClipboard){
-		return FALSE;
+		return false;
 	}
 	cClipboard.Empty();
-	return cClipboard.SetText(pszText,bColmnSelect,bLineSelect)?TRUE:FALSE;
+	return cClipboard.SetText(pszText,nTextLen,bColmnSelect,bLineSelect);
 }
 
 
@@ -5208,14 +3974,15 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 #ifdef _DEBUG
 	MYTRACE_A( "CEditView::DragEnter()\n" );
 #endif
+	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
+	if(!m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
-	if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
-		//	Oct. 22, 2005 genta 上書き禁止(ファイルがロックされている)場合も不可
-		 && !( SHAREMODE_NOT_EXCLUSIVE != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL )
-		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読みとり専用のファイルにはドロップさせない
-	}else{
-		return E_UNEXPECTED;	//	Moca E_INVALIDARGから変更
-	}
+	//ビューモードの場合はドロップを受け付けない
+	if(CAppMode::Instance()->IsViewMode())return E_UNEXPECTED;
+
+	//上書き禁止の場合はドロップを受け付けない
+	if(!m_pcEditDoc->m_cDocLocker.IsDocWritable())return E_UNEXPECTED;
+
 
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
@@ -5237,6 +4004,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 		}else{
 			*pdwEffect = DROPEFFECT_MOVE;
 		}
+
 		// アクティブにする
 		::SetFocus( GetHwnd() );
 	}
@@ -5462,7 +4230,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			if( NULL != m_pcOpeBlk ){
 				if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 					/* 操作の追加 */
-					m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+					m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
 					m_pcEditDoc->m_pcEditWnd->RedrawInactivePane();	// 他のペインの表示	// 2007.07.22 ryoji
 				}else{
 					delete m_pcOpeBlk;
@@ -5593,7 +4361,7 @@ void CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText )
 /* カーソル行アンダーラインのON */
 void CEditView::CaretUnderLineON( bool bDraw )
 {
-	if( FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
 		return;
 	}
 
@@ -5615,7 +4383,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		HDC		hdc;
 		HPEN	hPen, hPenOld;
 		hdc = ::GetDC( GetHwnd() );
-		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx(
 			hdc,
@@ -5641,7 +4409,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 /* カーソル行アンダーラインのOFF */
 void CEditView::CaretUnderLineOFF( bool bDraw )
 {
-	if( FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
 		return;
 	}
 
@@ -5666,9 +4434,9 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			GetSelectionInfo().m_sSelect.Clear(-1);
 
 			// 描画
-			HDC hdc = ::GetDC( GetHwnd() );
+			HDC hdc = this->GetDC();
 			OnPaint( hdc, &ps, FALSE );
-			ReleaseDC( GetHwnd(), hdc );
+			this->ReleaseDC( hdc );
 
 			//	選択情報を復元
 			GetSelectionInfo().m_sSelect = sSelectBackup;
@@ -5682,9 +4450,9 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 
 #if 0
 /* 現在、Enterなどで挿入する改行コードの種類を取得 */
-CEOL CEditView::GetCurrentInsertEOL( void )
+CEol CEditView::GetCurrentInsertEOL( void )
 {
-	return m_pcEditDoc->GetNewLineCode();
+	return m_pcEditDoc->m_cDocEditor.GetNewLineCode();
 }
 #endif
 
@@ -5915,7 +4683,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 					if( new_cnt >= _countof(work)-2 ) {							//パイプから読み出す量を調整
 						new_cnt = _countof(work)-2;
 					}
-					ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					::ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
 
 					if( read_cnt == 0 ) {
@@ -5944,8 +4712,8 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						if( _IS_SJIS_1(work[j]) ) {
 							j = read_cnt + 1; // ぴったり出力できないことを主張
 						}else if( work[j] == _T2(PIPE_CHAR,'\r') || work[j] == _T2(PIPE_CHAR,'\n') ) {
-							// CRLF,LFCRの一部ではない改行が末尾にある
-							// 次の読み込みで、CRLF,LFCRの一部になる可能性がある
+							// CRLFの一部ではない改行が末尾にある
+							// 次の読み込みで、CRLFの一部になる可能性がある
 							j = read_cnt + 1;
 						}else{
 							j = read_cnt;
@@ -6065,8 +4833,8 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		//選択範囲が複数行の時は
 		if (ptSelectTo.y != ptSelect.y){
 			//行末までに制限
-			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(ptSelect.GetY2());
-			ptSelectTo.x = pDocLine->m_cLine.GetStringLength();
+			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptSelect.GetY2());
+			ptSelectTo.x = pDocLine->GetLengthWithEOL();
 		}
 	}else{
 		//テキストが選択されていないとき
@@ -6076,15 +4844,15 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 	nSelectedLen = ptSelectTo.x - ptSelect.x;
 
 	//ドキュメント行取得 -> pcCurDocLine
-	CDocLine* pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(ptSelect.GetY2());
+	CDocLine* pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptSelect.GetY2());
 	if (NULL == pcCurDocLine )
 		return 0;
 
 	//テキスト取得 -> pLine, nLineLen
-	int nLineLen = pcCurDocLine->m_cLine.GetStringLength() - pcCurDocLine->m_cEol.GetLen() ; //改行コードをのぞいた長さ
+	int nLineLen = pcCurDocLine->GetLengthWithEOL() - pcCurDocLine->GetEol().GetLen() ; //改行コードをのぞいた長さ
 	if ( 0 == nLineLen )
 		return 0;
-	const wchar_t* pLine = pcCurDocLine->m_cLine.GetStringPtr();
+	const wchar_t* pLine = pcCurDocLine->GetPtr();
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -6286,7 +5054,7 @@ void CEditView::SetBracketPairPos( bool flag )
 		return;
 	}
 
-	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
+	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
 		return;
 	}
 
@@ -6346,7 +5114,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 		return;
 	}
 
-	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
+	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp ){
 		return;
 	}
 
@@ -6369,7 +5137,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 	HDC			hdc;
 	hdc = ::GetDC( GetHwnd() );
-	Types *TypeDataPtr = &( m_pcEditDoc->GetDocumentAttribute() );
+	Types *TypeDataPtr = &( m_pcEditDoc->m_cDocType.GetDocumentAttribute() );
 
 	for( int i = 0; i < 2; i++ )
 	{
@@ -6494,7 +5262,7 @@ int CEditView::GetColorIndex(
 )
 {
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	Types	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 
 	const wchar_t*			pLine;	//@@@ 2002.09.22 YAZAKI
 	CLogicInt				nLineLen;
@@ -6526,14 +5294,14 @@ int CEditView::GetColorIndex(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength()/* - pcLayout->GetLogicOffset()*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
-		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr()/* + pcLayout->GetLogicOffset()*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		nLineLen = pcLayout->GetDocLineRef()->GetLengthWithEOL()/* - pcLayout->GetLogicOffset()*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pLine = pcLayout->GetPtr()/* + pcLayout->GetLogicOffset()*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		const CLayout* pcLayoutLineFirst = pcLayout;
 		// 論理行の最初のレイアウト情報を取得する
 		while( 0 != pcLayoutLineFirst->GetLogicOffset() ){
-			pcLayoutLineFirst = pcLayoutLineFirst->m_pPrev;
+			pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
 		}
 		nCOMMENTMODE = pcLayoutLineFirst->GetColorTypePrev();
 		nCOMMENTEND = 0;
@@ -6600,7 +5368,7 @@ searchnext:;
 					}
 				}
 
-				if( nPos >= nLineLen - pcLayout2->m_cEol.GetLen() ){
+				if( nPos >= nLineLen - pcLayout2->GetLayoutEol().GetLen() ){
 					goto end_of_line;
 				}
 				SEARCH_START:;
@@ -7100,10 +5868,32 @@ end_of_line:;
 */
 bool CEditView::IsInsMode(void) const
 {
-	return m_pcEditDoc->IsInsMode();
+	return m_pcEditDoc->m_cDocEditor.IsInsMode();
 }
 
 void CEditView::SetInsMode(bool mode)
 {
-	m_pcEditDoc->SetInsMode( mode );
+	m_pcEditDoc->m_cDocEditor.SetInsMode( mode );
+}
+
+
+void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
+{
+	CEditDoc* pcDoc = GetListeningDoc();
+
+	// -- -- ※ InitAllViewでやってたこと -- -- //
+	pcDoc->m_nCommandExecNum=0;
+
+	m_cHistory->Flush();
+
+	/* 現在の選択範囲を非選択状態に戻す */
+	GetSelectionInfo().DisableSelectArea( FALSE );
+
+	OnChangeSetting();
+	GetCaret().MoveCursor( CLayoutPoint(0, 0), TRUE );
+	GetCaret().m_nCaretPosX_Prev = CLayoutInt(0);
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+	//	2004.05.13 Moca 改行コードの設定内からここに移動
+	m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();
 }
