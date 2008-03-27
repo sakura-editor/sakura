@@ -9,3 +9,13 @@
 
 
 
+//########
+HWND G_GetProgressBar()
+{
+	if(CEditWnd::Instance()){
+		return CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
+	}
+	else{
+		return NULL;
+	}
+}

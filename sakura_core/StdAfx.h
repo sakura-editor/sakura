@@ -26,6 +26,7 @@
 #endif
 #endif
 
+
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"
 
@@ -83,6 +84,20 @@
 #include "util/tchar_convert.h"
 
 
+//###########超仮
+#include "CNormalProcess.h"
+#include "CEditWnd.h"
+#include "CEditApp.h"
+#include "CModifyManager.h"
+#include "CDiffManager.h"
+#include "CBookmarkManager.h"
+#include "CReadManager.h"
+#include "CWriteManager.h"
+#include "CSearchAgent.h"
+#include "CDocReader.h"
+#include "CAppMode.h"
+HWND G_GetProgressBar();
+#pragma warning( disable : 4355 ) //warning C4355: 'this' : ベース メンバ初期化リストで使用されました。
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
