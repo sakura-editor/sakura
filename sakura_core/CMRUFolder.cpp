@@ -71,17 +71,15 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	return hMenuPopUp;
 }
 
-void CMRUFolder::GetPathList( TCHAR** ppszOPENFOLDER )
+std::vector<LPCTSTR> CMRUFolder::GetPathList() const
 {
-	int	i;
-
-	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
-	{
+	std::vector<LPCTSTR> ret;
+	for( int i = 0; i < m_cRecentFolder.GetItemCount(); ++i ){
 		//	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
-		ppszOPENFOLDER[i] = const_cast<TCHAR*>(m_cRecentFolder.GetItemText( i ));
+		ret.push_back(m_cRecentFolder.GetItemText(i));
 	}
-	ppszOPENFOLDER[i] = NULL;
+	return ret;
 }
 
 int CMRUFolder::Length()

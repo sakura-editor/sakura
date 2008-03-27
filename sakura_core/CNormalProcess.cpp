@@ -54,30 +54,30 @@ bool CNormalProcess::Initialize()
 		return false;
 	}
 
-	if ( CProcess::Initialize() == false ){
+	if ( !CProcess::Initialize() ){
 		return false;
 	}
 
 	/* コマンドラインオプション */
-	bool			bReadOnly;
+	bool			bViewMode;
 	bool			bDebugMode;
 	bool			bGrepMode;
 	bool			bGrepDlg;
 	GrepInfo		gi;
-	FileInfo		fi;
+	EditInfo		fi;
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
-	CCommandLine::Instance()->GetFileInfo(fi); // 2002/2/8 aroka ここに移動
+	CCommandLine::Instance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
 	if( 0 < _tcslen( fi.m_szPath ) ){
 		//	Oct. 27, 2000 genta
-		//	MRUからカーソル位置を復元する操作はCEditDoc::FileReadで
+		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
 		//	行われるのでここでは必要なし．
 
 		HWND hwndOwner;
 		/* 指定ファイルが開かれているか調べる */
 		// 2007.03.13 maru 文字コードが異なるときはワーニングを出すように
-		if( FALSE != GetShareData().IsPathOpened( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
+		if( GetShareData().ActiveAlreadyOpenedWindow( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
@@ -98,8 +98,6 @@ bool CNormalProcess::Initialize()
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			return false;
-		}else{
-
 		}
 	}
 
@@ -116,9 +114,9 @@ bool CNormalProcess::Initialize()
 	MY_TRACETIME( cRunningTimer, "CheckFile" );
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
-		pEditWnd->SetDebugModeON();
+		CAppMode::Instance()->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
-		pEditWnd->GetDocument().SetDocumentType( GetShareData().GetDocumentTypeExt(_T("output")), true );
+		pEditWnd->GetDocument().m_cDocType.SetDocumentType( GetShareData().GetDocumentTypeExt(_T("output")), true );
 	}
 	else if( bGrepMode ){
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
@@ -126,7 +124,7 @@ bool CNormalProcess::Initialize()
 			goto end_of_func;
 		}
 		/* GREP */
-		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
+		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
 			/* ロングファイル名を取得する */
@@ -138,7 +136,8 @@ bool CNormalProcess::Initialize()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			pEditWnd->m_pcEditViewArr[0]->DoGrep(
+			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
+				pEditWnd->m_pcEditViewArr[0],
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
@@ -184,17 +183,19 @@ bool CNormalProcess::Initialize()
 	else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
-		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
+		bViewMode = CCommandLine::Instance()->IsViewMode(); // 2002/2/8 aroka ここに移動
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
-			pEditWnd->OpenDocumentWhenCreate(
-				fi.m_szPath,
-				fi.m_nCharCode,
-				bReadOnly/* 読み取り専用か */
+			pEditWnd->OpenDocumentWhenStart(
+				SLoadInfo(
+					fi.m_szPath,
+					fi.m_nCharCode,
+					bViewMode
+				)
 			);
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
-				bReadOnly/* 読み取り専用か */,
+				bViewMode, // ビューモードか
 				fi.m_szDocType[0] == '\0' ? CDocumentType(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
 			);
 			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
@@ -232,7 +233,7 @@ bool CNormalProcess::Initialize()
 				// From Here Mar. 28, 2003 MIK
 				// 改行の真ん中にカーソルが来ないように。
 				// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
-				const CDocLine *pTmpDocLine = pEditWnd->GetDocument().m_cDocLineMgr.GetLineInfo( fi.m_ptCursor.GetY2() );
+				const CDocLine *pTmpDocLine = pEditWnd->GetDocument().m_cDocLineMgr.GetLine( fi.m_ptCursor.GetY2() );
 				if( pTmpDocLine ){
 					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_ptCursor.x ) ptPos.x--;
 				}
@@ -248,7 +249,7 @@ bool CNormalProcess::Initialize()
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
-				bReadOnly/* 読み取り専用か */,
+				bViewMode,	// ビューモードか
 				fi.m_szDocType[0] == '\0' ? CDocumentType(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
 			);
 		}
@@ -258,7 +259,7 @@ end_of_func:
 	SetMainWindow( pEditWnd->GetHwnd() );
 
 	//ウィンドウキャプション更新
-	pEditWnd->GetDocument().SetParentCaption();
+	pEditWnd->UpdateCaption();
 
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	pEditWnd->GetActiveView().SetIMECompFormPos();

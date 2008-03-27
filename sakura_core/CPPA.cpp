@@ -361,13 +361,13 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		}
 	}
 	if( 0 == m_cMemDebug.GetStringLength() ){
-		::MessageBoxA( m_pcEditView->m_hWnd, pszErr, "PPA実行エラー", MB_OK );
+		::MessageBoxA( m_pcEditView->GetHwnd(), pszErr, "PPA実行エラー", MB_OK );
 	}else{
 		char* p = new char [ lstrlenA(pszErr) + m_cMemDebug.GetStringLength() + 2 ];
 		strcpy( p, pszErr );
 		strcat( p, "\n" );
 		strcat( p, m_cMemDebug.GetStringPtr() );
-		::MessageBoxA( m_pcEditView->m_hWnd, p, "PPA実行エラー", MB_OK );
+		::MessageBoxA( m_pcEditView->GetHwnd(), p, "PPA実行エラー", MB_OK );
 		delete [] p;
 	}
 }

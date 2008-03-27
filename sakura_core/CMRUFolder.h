@@ -54,7 +54,7 @@ public:
 	BOOL DestroyMenu( HMENU hMenu );
 	
 	//	フォルダ名の一覧を教えて
-	void GetPathList( TCHAR** ppszMRU );	//	ppszMRUにはフォルダ名をコピーしません。変更しないでね☆
+	std::vector<LPCTSTR> GetPathList() const;
 
 	//	アクセス関数
 	int Length();	//	アイテムの数。

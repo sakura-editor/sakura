@@ -271,8 +271,8 @@ private:
 	static CNativeA			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
 	static CEditView*		m_pcEditView;	//	2003.06.01 Moca
 	static DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-	static bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-	static CNativeA			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+	static bool				m_bError;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
+	static CNativeA			m_cMemDebug;	//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
 
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];
