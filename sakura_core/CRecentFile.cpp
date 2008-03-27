@@ -35,12 +35,12 @@ CRecentFile::CRecentFile()
 
 
 
-int CRecentFile::CompareItem( const FileInfo* p1, const FileInfo* p2 ) const
+int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 {
 	return _tcsicmp(p1->m_szPath, p2->m_szPath);
 }
 
-void CRecentFile::CopyItem( FileInfo* dst, const FileInfo* src ) const
+void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
 {
 	memcpy_raw(dst,src,sizeof(*dst));
 }
