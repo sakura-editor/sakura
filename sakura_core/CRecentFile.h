@@ -1,17 +1,17 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "FileInfo.h" //FileInfo
+#include "EditInfo.h" //EditInfo
 
-//! FileInfoの履歴を管理 (RECENT_FOR_FILE)
-class CRecentFile : public CRecentImp<FileInfo>{
+//! EditInfoの履歴を管理 (RECENT_FOR_FILE)
+class CRecentFile : public CRecentImp<EditInfo>{
 public:
 	//生成
 	CRecentFile();
 
 	//オーバーライド
-	int				CompareItem( const FileInfo* p1, const FileInfo* p2 ) const;
-	void			CopyItem( FileInfo* dst, const FileInfo* src ) const;
+	int				CompareItem( const EditInfo* p1, const EditInfo* p2 ) const;
+	void			CopyItem( EditInfo* dst, const EditInfo* src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;
 
 	//固有インターフェース

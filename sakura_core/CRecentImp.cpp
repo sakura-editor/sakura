@@ -474,7 +474,7 @@ bool CRecentImp<T, S>::UpdateView()
 #include "CRecent.h"
 template class CRecentImp<CCmdString, LPCTSTR>;
 template class CRecentImp<EditNode>;
-template class CRecentImp<FileInfo>;
+template class CRecentImp<EditInfo>;
 template class CRecentImp<CPathString, LPCTSTR>;
 template class CRecentImp<CGrepFileString, LPCTSTR>;
 template class CRecentImp<CGrepFolderString, LPCTSTR>;
