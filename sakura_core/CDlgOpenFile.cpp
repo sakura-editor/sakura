@@ -29,6 +29,7 @@
 #include "CEditApp.h"
 #include "util/shell.h"
 #include "util/file.h"
+#include "util/os.h"
 
 // オープンファイル CDlgOpenFile.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -51,11 +52,11 @@ static const DWORD p_helpids[] = {	//13100
 
 WNDPROC			m_wpOpenDialogProc;
 
-const TCHAR**	m_ppszMRU;
-const TCHAR**	m_ppszOPENFOLDER;
+std::vector<LPCTSTR>	m_vMRU;
+std::vector<LPCTSTR>	m_vOPENFOLDER;
 SFilePath		m_szHelpFile;
 int				m_nHelpTopicID;
-bool			m_bReadOnly;		/* 読み取り専用か */
+bool			m_bViewMode;		/* ビューモードか */
 BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 
 COsVersionInfo CDlgOpenFile::m_cOsVer;	// 2005.11.02 ryoji
@@ -102,7 +103,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				MyWinHelp( hwnd, m_szHelpFile, HELP_CONTEXT, m_nHelpTopicID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case chx1:	// The read-only check box
-				m_bReadOnly = ( 0 != ::IsDlgButtonChecked( hwnd , chx1 ) );
+				m_bViewMode = ( 0 != ::IsDlgButtonChecked( hwnd , chx1 ) );
 				break;
 			}
 			break;
@@ -294,32 +295,30 @@ UINT_PTR CALLBACK OFNHookProc(
 		}else{
 			i = 0;
 		}
-		for( /*i = 0*/; i < gm_nCodeComboNameArrNum; ++i ){
-			nIdx = Combo_AddString( hwndComboCODES, gm_pszCodeComboNameArr[i] );
-			::SendMessageAny( hwndComboCODES, CB_SETITEMDATA, nIdx, gm_nCodeComboValueArr[i] );
-			if( gm_nCodeComboValueArr[i] == pcDlgOpenFile->m_nCharCode ){
+		CCodeTypesForCombobox cCodeTypes;
+		for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
+			nIdx = Combo_AddString( hwndComboCODES, cCodeTypes.GetName(i) );
+			::SendMessageAny( hwndComboCODES, CB_SETITEMDATA, nIdx, cCodeTypes.GetCode(i) );
+			if( cCodeTypes.GetCode(i) == pcDlgOpenFile->m_nCharCode ){
 				nIdxSel = nIdx;
 			}
 		}
 		::SendMessageAny( hwndComboCODES, CB_SETCURSEL, (WPARAM)nIdxSel, 0 );
 
 
-		/* 読み取り専用の初期値セット */
-		::CheckDlgButton( hwndOpenDlg, chx1, m_bReadOnly );
+		/* ビューモードの初期値セット */
+		::CheckDlgButton( hwndOpenDlg, chx1, m_bViewMode );
 
 		/* 最近開いたファイル コンボボックス初期値設定 */
-		//	2003.06.22 Moca m_ppszMRU がNULLの場合を考慮する
-		if( NULL != m_ppszMRU ){
-			for( i = 0; m_ppszMRU[i] != NULL; ++i ){
-				Combo_AddString( hwndComboMRU, m_ppszMRU[i] );
-			}
+		//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
+		for( i = 0; i < (int)m_vMRU.size(); i++ ){
+			Combo_AddString( hwndComboMRU, m_vMRU[i] );
 		}
+
 		/* 最近開いたフォルダ コンボボックス初期値設定 */
-		//	2003.06.22 Moca m_ppszOPENFOLDER がNULLの場合を考慮する
-		if( NULL != m_ppszOPENFOLDER ){
-			for( i = 0; m_ppszOPENFOLDER[i] != NULL; ++i ){
-				Combo_AddString( hwndComboOPENFOLDER, m_ppszOPENFOLDER[i] );
-			}
+		//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
+		for( i = 0; i < (int)m_vOPENFOLDER.size(); i++ ){
+			Combo_AddString( hwndComboOPENFOLDER, m_vOPENFOLDER[i] );
 		}
 
 		break;
@@ -549,10 +548,9 @@ CDlgOpenFile::CDlgOpenFile()
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* OPENFILENAMEの初期化 */
-	InitOfn( m_ofn );		// 2005.10.29 ryoji
+	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.nFilterIndex = 1;	//Jul. 09, 2001 JEPRO		/* 「開く」での最初のワイルドカード */
 
-//	::GetCurrentDirectory( _MAX_PATH, m_szInitialDir );	/* 「開く」での初期ディレクトリ */
 	TCHAR	szFile[_MAX_PATH + 1];
 	TCHAR	szDrive[_MAX_DRIVE];
 	TCHAR	szDir[_MAX_DIR];
@@ -612,12 +610,12 @@ void CDlgOpenFile::Create(
 
 /* 初期化 */
 void CDlgOpenFile::Create(
-	HINSTANCE			hInstance,
-	HWND				hwndParent,
-	const TCHAR*		pszUserWildCard,
-	const TCHAR*		pszDefaultPath,
-	const TCHAR**		ppszMRU,
-	const TCHAR**		ppszOPENFOLDER
+	HINSTANCE					hInstance,
+	HWND						hwndParent,
+	const TCHAR*				pszUserWildCard,
+	const TCHAR*				pszDefaultPath,
+	const std::vector<LPCTSTR>& vMRU,
+	const std::vector<LPCTSTR>& vOPENFOLDER
 )
 {
 	m_hInstance = hInstance;
@@ -636,8 +634,8 @@ void CDlgOpenFile::Create(
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, NULL, NULL );
 		auto_sprintf( m_szInitialDir, _T("%ts%ts"), szDrive, szDir );
 	}
-	m_ppszMRU = ppszMRU;
-	m_ppszOPENFOLDER = ppszOPENFOLDER;
+	m_vMRU = vMRU;
+	m_vOPENFOLDER = vOPENFOLDER;
 	return;
 }
 
@@ -653,17 +651,10 @@ void CDlgOpenFile::Create(
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
-BOOL CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
+bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 {
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	if( false == bSetCurDir ){
-		int nRetVal;
-		nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-		if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-			bGetCurDirSuc = true;
-		}
-	}
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
@@ -672,7 +663,7 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 
 	/* 構造体の初期化 */
-	InitOfn( m_ofn );		// 2005.10.29 ryoji
+	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
@@ -700,25 +691,15 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 	// To Here Jun. 23, 2002 genta
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-//	m_ofn.Flags =
-//		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
-//		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
-	m_ofn.Flags =
-		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
-		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
-		;
-// 2005/02/20 novice 拡張子を省略したら補完する
-	m_ofn.lpstrDefExt = _T("");
-	if( GetOpenFileNameRecover( m_ofn ) ){
-		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
-		}
-		return TRUE;
-	}else{
+	m_ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	m_ofn.lpstrDefExt = _T(""); // 2005/02/20 novice 拡張子を省略したら補完する
+	if( _GetOpenFileNameRecover( &m_ofn ) ){
+		return true;
+	}
+	else{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
-		return FALSE;
+		return false;
 	}
 }
 
@@ -731,17 +712,10 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
-BOOL CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
+bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 {
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	if( false == bSetCurDir ){
-		int nRetVal;
-		nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-		if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-			bGetCurDirSuc = true;
-		}
-	}
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
@@ -750,29 +724,23 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 
 	/* 構造体の初期化 */
-	InitOfn( m_ofn );		// 2005.10.29 ryoji
+	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-// 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	m_ofn.lpstrFile = pszPath;
+	m_ofn.lpstrFile = pszPath; // 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-	m_ofn.Flags =
-		OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT
-		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/;
-// 2005/02/20 novice 拡張子を省略したら補完する
-	m_ofn.lpstrDefExt = _T("");
-	if( GetSaveFileNameRecover( m_ofn ) ){
-		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
-		}
-		return TRUE;
-	}else{
+	m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+
+	m_ofn.lpstrDefExt = _T("");	// 2005/02/20 novice 拡張子を省略したら補完する
+	if( GetSaveFileNameRecover( &m_ofn ) ){
+		return true;
+	}
+	else{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
-		return FALSE;
+		return false;
 	}
 }
 
@@ -785,87 +753,60 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
-BOOL CDlgOpenFile::DoModalOpenDlg( TCHAR* pszPath, ECodeType* pnCharCode, bool* pbReadOnly )
+bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo )
 {
 	m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
-	int		i;
-
-	//	2003.05.12 MIK
+	// ファイルの種類	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
-	for( i = 0; i < MAX_TYPES; i++ )
-	{
-		Types& types = m_pShareData->GetTypeSetting(CDocumentType(i));
+	for( int i = 0; i < MAX_TYPES; i++ ){
+		const Types& types = m_pShareData->GetTypeSetting(CDocumentType(i));
 		cFileExt.AppendExt( types.m_szTypeName, types.m_szTypeExts );
 	}
 
-	/* 構造体の初期化 */
-	InitOfn( m_ofn );		// 2005.10.29 ryoji
+	//メンバの初期化
+	m_bViewMode = pLoadInfo->bViewMode;
+	m_nCharCode = pLoadInfo->eCharCode;	/* 文字コード自動判別 */
+	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILEOPEN);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
+	m_bUseEol = false;	//	Feb. 9, 2001 genta
+	m_bUseBom = false;	//	Jul. 26, 2003 ryoji
+
+	//ファイルパス受け取りバッファ
+	TCHAR szPathBuf[_MAX_PATH] = _T("");
+
+	//OPENFILENAME構造体の初期化
+	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-// 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	m_ofn.lpstrFile = pszPath;
-	m_ofn.nMaxFile = _MAX_PATH;
+	m_ofn.lpstrFile = szPathBuf;	// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	m_ofn.nMaxFile = _countof(szPathBuf);
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-	m_ofn.Flags =
-		OFN_EXPLORER | OFN_CREATEPROMPT | OFN_FILEMUSTEXIST  /*| OFN_HIDEREADONLY*/
-		 | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK /*| OFN_READONLY*/ | OFN_SHOWHELP | OFN_ENABLESIZING /*| OFN_ALLOWMULTISELECT*/
-		;
-	if( NULL != pbReadOnly ){
-		m_bReadOnly = *pbReadOnly;
-		if( TRUE == *pbReadOnly ){
-			m_ofn.Flags |= OFN_READONLY;
-		}
+	m_ofn.Flags = OFN_EXPLORER | OFN_CREATEPROMPT | OFN_FILEMUSTEXIST | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_SHOWHELP | OFN_ENABLESIZING;
+	if( m_bViewMode )m_ofn.Flags |= OFN_READONLY;
+	m_ofn.lpstrDefExt = _T("");	// 2005/02/20 novice 拡張子を省略したら補完する
+
+	//カレントディレクトリを保存。関数を抜けるときに自動でカレントディレクトリは復元されます。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
+
+	//ダイアログ表示
+	bool bDlgResult = _GetOpenFileNameRecover( &m_ofn );
+	if( bDlgResult ){
+		pLoadInfo->cFilePath = m_ofn.lpstrFile;
+		pLoadInfo->eCharCode = m_nCharCode;
+		pLoadInfo->bViewMode = m_bViewMode;
 	}
-// 2005/02/20 novice 拡張子を省略したら補完する
-	m_ofn.lpstrDefExt = _T("");
-
-	m_nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
-	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILEOPEN);
-	m_bUseEol = false;	//	Feb. 9, 2001 genta
-	m_bUseBom = false;	//	Jul. 26, 2003 ryoji
-	// 2002/08/22 カレントディレクトリを保存
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	int nRetVal;
-	nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-	if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-		bGetCurDirSuc = true;
-	}
-
-
-	if( GetOpenFileNameRecover( m_ofn ) ){
-
-//		MYTRACE_A( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */
-
-		if( NULL != pnCharCode ){
-			*pnCharCode = m_nCharCode;
-		}
-		if( NULL != pbReadOnly ){
-			*pbReadOnly = m_bReadOnly;
-		}
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
-		}
-		return TRUE;
-	}else{
-		//	May 29, 2004 genta 関数にまとめた
+	else{
 		DlgOpenFail();
-		return FALSE;
 	}
+	return bDlgResult;
 }
 
 /*! 保存ダイアログ モーダルダイアログの表示
 
-	@param pszPath [out]	取得したパス名
-	@param pnCharCode [out]	文字コード
-	@param pcEol [out]		改行コード
-	@param pbBom [out]		BOM
-
+	@date 2001.02.09 genta	引数追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2003.07.26 ryoji BOMパラメータ追加
@@ -876,7 +817,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( TCHAR* pszPath, ECodeType* pnCharCode, bool* 
 			例）hoge.abc -> hoge.abc.txt
 		自前で補完することでこれを回避する。（実際の処理はフックプロシージャの中）
 */
-BOOL CDlgOpenFile::DoModalSaveDlg( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* pcEol, bool* pbBom )
+bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
@@ -887,25 +828,19 @@ BOOL CDlgOpenFile::DoModalSaveDlg( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* 
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 
 	// ファイル名の初期設定	// 2006.11.10 ryoji
-	if( pszPath[0] == _T('\0') )
-		lstrcpyn(pszPath, _T("無題"), _MAX_PATH);
+	if( pSaveInfo->cFilePath[0] == _T('\0') )
+		lstrcpyn(pSaveInfo->cFilePath, _T("無題"), _MAX_PATH);
 
-	/* 構造体の初期化 */
-	InitOfn( m_ofn );		// 2005.10.29 ryoji
+	//OPENFILENAME構造体の初期化
+	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-// 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	m_ofn.lpstrFile = pszPath;
+	m_ofn.lpstrFile = pSaveInfo->cFilePath;	// 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	m_ofn.nMaxFile = _MAX_PATH;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
-//	m_ofn.Flags =
-//		/*OFN_CREATEPROMPT |*/ OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
-//		/* | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK */
-	m_ofn.Flags =
-		OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT
-		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/ | OFN_SHOWHELP | OFN_ENABLESIZING;
-	if( NULL != pnCharCode || NULL != pcEol ){
+	m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_ENABLESIZING;
+	if( !bSimpleMode ){
 		m_ofn.Flags = m_ofn.Flags | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK;
 		m_ofn.Flags &= ~OFN_OVERWRITEPROMPT;	// 2006.11.10 ryoji 上書き確認もフックの中で自前で処理する
 	}
@@ -915,30 +850,24 @@ BOOL CDlgOpenFile::DoModalSaveDlg( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* 
 //	m_ofn.lpstrDefExt = _T("");
 	m_ofn.lpstrDefExt = (m_ofn.Flags & OFN_ENABLEHOOK)? NULL: _T("");	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
 
-	// 2002/08/22 カレントディレクトリを保存
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	int nRetVal;
-	nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-	if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-		bGetCurDirSuc = true;
-	}
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
 
-	if( NULL != pnCharCode ){
-		m_nCharCode = *pnCharCode;
-	}
+	m_nCharCode = pSaveInfo->eCharCode;
+
 	//	From Here Feb. 9, 2001 genta
-	if( NULL != pcEol ){
+	if(!bSimpleMode){
 		m_cEol = EOL_NONE;	//	初期値は「改行コードを保存」に固定
 		m_bUseEol = true;
 	}
 	else{
 		m_bUseEol = false;
 	}
+
 	//	To Here Feb. 9, 2001 genta
 	//	Jul. 26, 2003 ryoji BOM設定
-	if( NULL != pbBom ){
-		m_bBom = *pbBom;
+	if(!bSimpleMode){
+		m_bBom = pSaveInfo->bBomExist;
 		m_bUseBom = true;
 	}
 	else{
@@ -946,31 +875,27 @@ BOOL CDlgOpenFile::DoModalSaveDlg( TCHAR* pszPath, ECodeType* pnCharCode, CEOL* 
 	}
 
 	m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS_DIALOG);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
-	if( GetSaveFileNameRecover( m_ofn ) ){
+	if( GetSaveFileNameRecover( &m_ofn ) ){
+		pSaveInfo->cFilePath = m_ofn.lpstrFile;
 		if( m_ofn.Flags & OFN_ENABLEHOOK )
-			lstrcpyn(pszPath, m_szPath, _MAX_PATH);	// 自前で拡張子の補完を行ったときのファイルパス	// 2006.11.10 ryoji
+			lstrcpyn(pSaveInfo->cFilePath, m_szPath, _MAX_PATH);	// 自前で拡張子の補完を行ったときのファイルパス	// 2006.11.10 ryoji
 
-//		MYTRACE_A( "m_nCharCode = %d\n", m_nCharCode );	/* 文字コード */
+		pSaveInfo->eCharCode = m_nCharCode;
 
-		if( NULL != pnCharCode ){
-			*pnCharCode = m_nCharCode;
-		}
 		//	Feb. 9, 2001 genta
 		if( m_bUseEol ){
-			*pcEol = m_cEol;
+			pSaveInfo->cEol = m_cEol;
 		}
 		//	Jul. 26, 2003 ryoji BOM設定
 		if( m_bUseBom ){
-			*pbBom = m_bBom;
+			pSaveInfo->bBomExist = m_bBom;
 		}
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
-		}
-		return TRUE;
-	}else{
+		return true;
+	}
+	else{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
-		return FALSE;
+		return false;
 	}
 }
 
@@ -1026,14 +951,14 @@ void CDlgOpenFile::DlgOpenFail(void)
 	@author ryoji
 	@date 2005.10.29
 */
-void CDlgOpenFile::InitOfn( OPENFILENAMEZ& ofn )
+void CDlgOpenFile::InitOfn( OPENFILENAMEZ* ofn )
 {
-	memset_raw(&ofn, 0, sizeof(m_ofn));
+	memset_raw(ofn, 0, sizeof(m_ofn));
 
-	ofn.lStructSize = IsOfnV5()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
-	ofn.lCustData = (LPARAM)this;
-	ofn.lpfnHook = OFNHookProc;
-	ofn.lpTemplateName = _T("IDD_FILEOPEN");
+	ofn->lStructSize = IsOfnV5()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
+	ofn->lCustData = (LPARAM)this;
+	ofn->lpfnHook = OFNHookProc;
+	ofn->lpTemplateName = _T("IDD_FILEOPEN");
 }
 
 /*! 初期レイアウト設定処理
@@ -1160,36 +1085,34 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 	@author Moca
 	@date 2006.09.03 新規作成
 */
-BOOL CDlgOpenFile::GetOpenFileNameRecover( OPENFILENAMEZ& ofn )
+bool CDlgOpenFile::_GetOpenFileNameRecover( OPENFILENAMEZ* ofn )
 {
-	BOOL ret;
-	ret = ::GetOpenFileName( &ofn );
-	if( FALSE == ret  ){
+	BOOL bRet = ::GetOpenFileName( ofn );
+	if( !bRet  ){
 		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
-			_tcscpy( ofn.lpstrFile, _T("") );
-			ofn.lpstrInitialDir = _T("");
-			ret = ::GetOpenFileName( &ofn );
+			_tcscpy( ofn->lpstrFile, _T("") );
+			ofn->lpstrInitialDir = _T("");
+			bRet = ::GetOpenFileName( ofn );
 		}
 	}
-	return ret;
+	return bRet!=FALSE;
 }
 
 /*! リトライ機能付き GetSaveFileName
 	@author Moca
 	@date 2006.09.03 新規作成
 */
-BOOL CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ& ofn )
+bool CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ* ofn )
 {
-	BOOL ret;
-	ret = ::GetSaveFileName( &ofn );
-	if( FALSE == ret  ){
+	BOOL bRet = ::GetSaveFileName( ofn );
+	if( !bRet  ){
 		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
-			_tcscpy( ofn.lpstrFile, _T("") );
-			ofn.lpstrInitialDir = _T("");
-			ret = ::GetSaveFileName( &ofn );
+			_tcscpy( ofn->lpstrFile, _T("") );
+			ofn->lpstrInitialDir = _T("");
+			bRet = ::GetSaveFileName( ofn );
 		}
 	}
-	return ret;
+	return bRet!=FALSE;
 }
 
 /*[EOF]*/
