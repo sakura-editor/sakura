@@ -4,32 +4,58 @@
 #include "CEditWnd.h"
 #include "util/shell.h"
 #include "CCommandLine.h"
+#include "CPropertyManager.h"
+#include "CMruListener.h"
 
 #pragma warning(disable:4355) //「thisポインタが初期化リストで使用されました」の警告を無効化
 
 CEditApp::CEditApp(HINSTANCE hInst)
 : m_hInst(hInst)
-, m_cEditDoc(this)
 {
 	//ヘルパ作成
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
 	//ドキュメントの作成
-	if( !m_cEditDoc.Create( m_hInst, &m_cIcons ) ){
+	m_pcEditDoc = new CEditDoc(this);
+	if( !m_pcEditDoc->Create( &m_cIcons ) ){
 		ErrorMessage( NULL, _T("ドキュメントの作成に失敗しました") );
 	}
+
+	//IO管理
+	m_pcLoadAgent = new CLoadAgent();
+	m_pcSaveAgent = new CSaveAgent();
+	m_pcVisualProgress = new CVisualProgress();
+
+	//GREPモード管理
+	m_pcGrepAgent = new CGrepAgent();
 
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
 	m_pcEditWnd->Create(
-		hInst,
 		CCommandLine::Instance()->GetGroupId()
 	);
+
+	//MRU管理
+	m_pcMruListener = new CMruListener();
+
+	//マクロ
+	m_pcSMacroMgr = new CSMacroMgr();
+
+	//プロパティ管理
+	m_pcPropertyManager = new CPropertyManager();
 }
 
 CEditApp::~CEditApp()
 {
+	delete m_pcSMacroMgr;
+	delete m_pcPropertyManager;
+	delete m_pcMruListener;
 	delete m_pcEditWnd;
+	delete m_pcGrepAgent;
+	delete m_pcVisualProgress;
+	delete m_pcSaveAgent;
+	delete m_pcLoadAgent;
+	delete m_pcEditDoc;
 }
 
 
