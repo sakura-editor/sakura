@@ -25,10 +25,11 @@ public:
 	void AppendNativeData( const CNativeW& );                  //!< バッファの最後にデータを追加する
 
 	//演算子
-	const CNativeW& operator+=( wchar_t wch )        { AppendString(&wch,1);   return *this; }
-	const CNativeW& operator=( wchar_t wch )         { SetString(&wch,1);      return *this; }
-	const CNativeW& operator+=( const CNativeW& rhs ){ AppendNativeData(rhs); return *this; }
-	const CNativeW& operator=(const CNativeW& rhs)   { SetNativeData(rhs);    return *this; }
+	const CNativeW& operator+=(wchar_t wch)				{ AppendString(&wch,1);   return *this; }
+	const CNativeW& operator=(wchar_t wch)				{ SetString(&wch,1);      return *this; }
+	const CNativeW& operator+=(const CNativeW& rhs)		{ AppendNativeData(rhs); return *this; }
+	const CNativeW& operator=(const CNativeW& rhs)		{ SetNativeData(rhs);    return *this; }
+	CNativeW operator+(const CNativeW& rhs) const		{ CNativeW tmp=*this; return tmp+=rhs; }
 
 
 	//ネイティブ取得インターフェース
@@ -61,6 +62,15 @@ public:
 	void _SetStringLength(int nLength)
 	{
 		_GetMemory()->_SetRawLength(nLength*sizeof(wchar_t));
+	}
+	//末尾を1文字削る
+	void Chop()
+	{
+		int n = GetStringLength();
+		n-=1;
+		if(n>=0){
+			_SetStringLength(n);
+		}
 	}
 
 

@@ -43,17 +43,17 @@ class CMemory;
 //! メモリバッファクラス
 class SAKURA_CORE_API CMemory
 {
+	//コンストラクタ・デストラクタ
 public:
-	/*
-	||  Constructors
-	*/
 	CMemory();
-	CMemory( const void* pData, int nDataLenBytes );
-	~CMemory();
+	CMemory(const CMemory& rhs);
+	CMemory(const void* pData, int nDataLenBytes);
+	virtual ~CMemory();
+protected:
+	void _init_members();
 
-	/*
-	|| 生
-	*/
+	//インターフェース
+public:
 	void AllocBuffer( int );                               //!< バッファサイズの調整。必要に応じて拡大する。
 	void SetRawData( const void* pData, int nDataLen );    //!< バッファの内容を置き換える
 	void SetRawData( const CMemory& );                     //!< バッファの内容を置き換える
@@ -68,19 +68,13 @@ public:
 	__forceinline void* GetRawPtr(){ return m_pData; }             //!< データへのポインタを返す
 	int GetRawLength() const { return m_nDataLen; }                //!<データ長を返す。バイト単位。
 
-	/*
-	|| 演算子
-	*/
+	// 演算子
 	const CMemory& operator=( const CMemory& );
 
-	/*
-	|| 比較
-	*/
+	// 比較
 	static int IsEqual( CMemory&, CMemory& );	/* 等しい内容か */
 
-	/*
-	|| 変換関数
-	*/
+	// 変換関数
 	void SwapHLByte();			// Byteを交換する
 
 
@@ -106,9 +100,6 @@ private: // 2002/2/10 aroka アクセス権変更
 	int		m_nDataBufSize; //バッファサイズ。バイト単位。
 	char*	m_pData;        //バッファ
 	int		m_nDataLen;     //データサイズ(m_nDataBufSize以内)。バイト単位。
-
-
-
 };
 
 

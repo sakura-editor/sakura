@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CNativeW.h"
 #include "charcode.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include <mbstring.h>
 #include "charset/CShiftJis.h"
 
@@ -11,6 +11,12 @@
 CNativeW::CNativeW()
 : m_pDebugData((PWCHAR&)_DebugGetPointerRef())
 {
+}
+
+CNativeW::CNativeW(const CNativeW& rhs)
+: m_pDebugData((PWCHAR&)_DebugGetPointerRef())
+{
+	SetNativeData(rhs);
 }
 
 //! nDataLenÇÕï∂éöíPà ÅB

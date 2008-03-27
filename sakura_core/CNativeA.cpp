@@ -2,7 +2,7 @@
 #include "CNativeA.h"
 #include "charset/CShiftJis.h"
 #include <mbstring.h>
-#include "CEOL.h"
+#include "CEol.h"
 #include "charcode.h"
 #include <string>
 #include "util/string_ex2.h"
@@ -433,7 +433,7 @@ void CNativeA::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 //	BOOL		bEOL;
 	int			nPosX;
 	int			nWork;
-	CEOL		cEol;
+	CEol		cEol;
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
@@ -476,8 +476,9 @@ void CNativeA::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 				}
 			}
 		}
-		auto_memcpy( &pDes[nPosDes], cEol.GetValue(), cEol.GetLen() );
-		nPosDes += cEol.GetLen();
+		CMemory cEolMem; CShiftJis::S_GetEol(&cEolMem,cEol.GetType());
+		auto_memcpy( &pDes[nPosDes], (const char*)cEolMem.GetRawPtr(), cEolMem.GetRawLength() );
+		nPosDes += cEolMem.GetRawLength();
 	}
 	pDes[nPosDes] = '\0';
 
@@ -507,7 +508,7 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 	int			i;
 	int			nPosDes;
 	int			nPosX;
-	CEOL		cEol;
+	CEol		cEol;
 
 	BOOL		bSpace = FALSE;	//スペースの処理中かどうか
 	int		j;
@@ -598,8 +599,9 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 		}
 
 		/* 行末の処理 */
-		memcpy( &pDes[nPosDes], cEol.GetValue(), cEol.GetLen() );
-		nPosDes += cEol.GetLen();
+		CMemory cEolMem; CShiftJis::S_GetEol(&cEolMem,cEol.GetType());
+		auto_memcpy( &pDes[nPosDes], (const char*)cEolMem.GetRawPtr(), cEolMem.GetRawLength() );
+		nPosDes += cEolMem.GetRawLength();
 	}
 	pDes[nPosDes] = '\0';
 

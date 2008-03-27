@@ -76,7 +76,7 @@ LPCTSTR CMigemo::GetDllName(LPCTSTR)
 
 	if(_tcslen(szDll)==0){
 		GetInidir( szDllName, _T("migemo.dll") );
-		return ( _taccess( szDllName, 0 ) != -1 )? szDllName: _T("migemo.dll");
+		return fexist(szDllName) ? szDllName : _T("migemo.dll");
 	}else{
 		if(_IS_REL_PATH(szDll)){
 			GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先

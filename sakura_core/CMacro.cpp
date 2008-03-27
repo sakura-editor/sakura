@@ -29,6 +29,7 @@
 #include "OleTypes.h" //2003-02-21 鬼
 #include "io/CTextStream.h"
 #include "CEditWnd.h"
+#include "CSakuraEnvironment.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {
@@ -665,11 +666,6 @@ void CMacro::HandleCommand(
 			//	常に外部ウィンドウに。
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
-			TCHAR	pCmdLine[1024];
-			TCHAR	pOpt[64];
-//			int		nDataLen;
-			ECodeType	nCharSet;
-
 			CNativeT cmWork1;	cmWork1.SetStringW( Argument[0] );	cmWork1.Replace( _T("\""), _T("\"\"") );	//	検索文字列
 			CNativeT cmWork2;	cmWork2.SetStringW( Argument[1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ファイル名
 			CNativeT cmWork3;	cmWork3.SetStringW( Argument[2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	フォルダ名
@@ -677,6 +673,7 @@ void CMacro::HandleCommand(
 			LPARAM lFlag = Argument[3] != NULL ? _wtoi(Argument[3]) : 5;
 
 			// 2002/09/21 Moca 文字コードセット
+			ECodeType	nCharSet;
 			{
 				nCharSet = CODE_SJIS;
 				if( lFlag & 0x10 ){	// 文字コード自動判別(下位互換用)
@@ -687,11 +684,11 @@ void CMacro::HandleCommand(
 					nCharSet = (ECodeType)nCode;
 				}
 			}
-			/*
-			|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-			*/
-			auto_sprintf(
-				pCmdLine,
+
+			// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
+			CCommandLineString cCmdLine;
+			TCHAR	pOpt[64];
+			cCmdLine.AppendF(
 				_T("-GREPMODE -GKEY=\"%ls\" -GFILE=\"%ls\" -GFOLDER=\"%ls\" -GCODE=%d"),
 				cmWork1.GetStringPtr(),
 				cmWork2.GetStringPtr(),
@@ -699,38 +696,29 @@ void CMacro::HandleCommand(
 				nCharSet
 			);
 
+			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 ){	/* サブフォルダからも検索する */
-				_tcscat( pOpt, _T("S") );
-			}
-		//	if( lFlag & 0x02 ){	/* この編集中のテキストから検索する */
-		//
-		//	}
-			if( lFlag & 0x04 ){	/* 英大文字と英小文字を区別する */
-				_tcscat( pOpt, _T("L") );
-			}
-			if( lFlag & 0x08 ){	/* 正規表現 */
-				_tcscat( pOpt, _T("R") );
-			}
-//			2002/09/21 Moca -GCODE に統合
-//			if( lFlag & 0x10 ){	/* 文字コード自動判別 */
-//				_tcscat( pOpt, _T("K") );
-//			}
-			if( lFlag & 0x20 ){	/* 行を出力するか該当部分だけ出力するか */
-				_tcscat( pOpt, _T("P") );
-			}
-			if( lFlag & 0x40 ){	/* Grep: 出力形式 */
-				_tcscat( pOpt, _T("2") );
-			}
-			else {
-				_tcscat( pOpt, _T("1") );
-			}
+			if( lFlag & 0x01 )_tcscat( pOpt, _T("S") );	/* サブフォルダからも検索する */
+			if( lFlag & 0x04 )_tcscat( pOpt, _T("L") );	/* 英大文字と英小文字を区別する */
+			if( lFlag & 0x08 )_tcscat( pOpt, _T("R") );	/* 正規表現 */
+			if( lFlag & 0x20 )_tcscat( pOpt, _T("P") );	/* 行を出力するか該当部分だけ出力するか */
+			if( lFlag & 0x40 )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
+			else _tcscat( pOpt, _T("1") );
 			if( 0 < _tcslen( pOpt ) ){
-				_tcscat( pCmdLine, _T(" -GOPT=") );
-				_tcscat( pCmdLine, pOpt );
+				cCmdLine.AppendF( _T(" -GOPT="), pOpt );
 			}
+
 			/* 新規編集ウィンドウの追加 ver 0 */
-			CControlTray::OpenNewEditor( pcEditView->m_hInstance, pcEditView->m_hWnd, pCmdLine, CODE_DEFAULT, FALSE );
+			SLoadInfo sLoadInfo;
+			sLoadInfo.cFilePath = _T("");
+			sLoadInfo.eCharCode = CODE_DEFAULT;
+			sLoadInfo.bViewMode = false;
+			CControlTray::OpenNewEditor(
+				pcEditView->m_hInstance,
+				pcEditView->GetHwnd(),
+				sLoadInfo,
+				cCmdLine.c_str()
+			);
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
 		}
@@ -754,55 +742,43 @@ void CMacro::HandleCommand(
 			break;
 		}
 		{
-			/* デフォルト値 */
-			//	Sep. 11, 2004 genta 初期値を「変更しない」に
-			//	0だとSJIS指定となってしまうため
-			ECodeType nCharCode = CODE_AUTODETECT;
-			int nSaveLineCode = 0;
-			
+			// 文字コードセット
+			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
+			ECodeType nCharCode = CODE_AUTODETECT;	//デフォルト値
 			if (Argument[1] != NULL){
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
-			if (Argument[2] != NULL){
-				nSaveLineCode = _wtoi( Argument[2] );
-			}
-			// 文字コードセット
-			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
 			if(	IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding() ){
 				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode);
 				//	From Here Jul. 26, 2003 ryoji BOM状態を初期化
 				switch( pcEditView->m_pcEditDoc->GetDocumentEncoding() ){
 				case CODE_UNICODE:
 				case CODE_UNICODEBE:
-					pcEditView->m_pcEditDoc->SetBomMode(true);
+					pcEditView->m_pcEditDoc->m_cDocFile.SetBomMode(true);
 					break;
 				case CODE_UTF8:
 				default:
-					pcEditView->m_pcEditDoc->SetBomMode(false);
+					pcEditView->m_pcEditDoc->m_cDocFile.SetBomMode(false);
 					break;
 				}
 				//	To Here Jul. 26, 2003 ryoji BOM状態を初期化
 			}
+
 			// 改行コード
+			int nSaveLineCode = 0;	//デフォルト値	//Sep. 11, 2004 genta 初期値を「変更しない」に
+			if (Argument[2] != NULL){
+				nSaveLineCode = _wtoi( Argument[2] );
+			}
+			EEolType eEol;
 			switch (nSaveLineCode){
-			case 0:
-				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;
-				break;
-			case 1:
-				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_CRLF;
-				break;
-			case 2:
-				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_LF;
-				break;
-			case 3:
-				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_CR;
-				break;
-			default:
-				pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;
-				break;
+			case 0:		eEol = EOL_NONE;	break;
+			case 1:		eEol = EOL_CRLF;	break;
+			case 2:		eEol = EOL_LF;		break;
+			case 3:		eEol = EOL_CR;		break;
+			default:	eEol = EOL_NONE;	break;
 			}
 			
-			pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, (LPARAM)eEol, 0);
 		}
 		break;
 	// Jul. 5, 2002 genta
@@ -874,7 +850,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	{
 	case F_GETFILENAME:
 		{
-			const TCHAR* FileName = View->m_pcEditDoc->GetFilePath();
+			const TCHAR* FileName = View->m_pcEditDoc->m_cDocFile.GetFilePath();
 			SysString S(FileName, _tcslen(FileName));
 			Wrap(&Result)->Receive(S);
 		}
@@ -906,7 +882,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			int SourceLength;
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			wchar_t Buffer[2048];
-			View->m_pcEditDoc->ExpandParameter(Source, Buffer, 2047);
+			CSakuraEnvironment::ExpandParameter(Source, Buffer, 2047);
 			delete[] Source;
 			SysString S(Buffer, wcslen(Buffer));
 			Wrap(&Result)->Receive(S);
@@ -926,7 +902,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 				}else{
 					nLine = CLogicInt(varCopy.Data.lVal - 1);
 				}
-				Buffer = View->m_pcEditDoc->m_cDocLineMgr.GetLineStr( nLine, &nLength );
+				Buffer = View->m_pcEditDoc->m_cDocLineMgr.GetLine(nLine)->GetDocLineStrWithEOL(&nLength);
 				if( Buffer != NULL ){
 					SysString S( Buffer, nLength );
 					Wrap( &Result )->Receive( S );
@@ -1019,7 +995,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	case F_GETLINECODE:
 		//	2005.08.04 maru マクロ追加
 		{
-			switch( View->m_pcEditDoc->GetNewLineCode() ){
+			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode() ){
 			case EOL_CRLF:
 				Wrap( &Result )->Receive( 0 );
 				break;
@@ -1035,13 +1011,13 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	case F_ISPOSSIBLEUNDO:
 		//	2005.08.04 maru マクロ追加
 		{
-			Wrap( &Result )->Receive( View->m_pcEditDoc->IsEnableUndo() );
+			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cDocEditor.IsEnableUndo() );
 		}
 		return true;
 	case F_ISPOSSIBLEREDO:
 		//	2005.08.04 maru マクロ追加
 		{
-			Wrap( &Result )->Receive( View->m_pcEditDoc->IsEnableRedo() );
+			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cDocEditor.IsEnableRedo() );
 		}
 		return true;
 	default:
