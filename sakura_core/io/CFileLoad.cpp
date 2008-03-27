@@ -37,7 +37,7 @@
 #include <Windows.h>
 #include "global.h"
 #include "CMemory.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "io/CFileLoad.h"
 #include "charcode.h"
 #ifdef _DEBUG
@@ -218,7 +218,7 @@ void CFileLoad::FileClose( void )
 const wchar_t* CFileLoad::ReadLine(
 	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
 	int*		pnLineLen,		//!< [out] 改行コード長を含む一行のデータ長。文字単位。
-	CEOL*		pcEol			//!< [i/o]
+	CEol*		pcEol			//!< [i/o]
 )
 {
 	const char	*pLine;
@@ -263,14 +263,14 @@ const wchar_t* CFileLoad::ReadLine(
 	m_nReadLength += ( nBufLineLen = cLineBuffer.GetRawLength() );
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	CIoBridge::FileToImpl(&cLineBuffer,pUnicodeBuffer,m_CharCode,m_nFlag);
+	CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_CharCode,m_nFlag);
 	cLineBuffer.SetRawData("",0);
 
 	m_nLineIndex++;
 	// データあり
 	if( 0 != nBufLineLen + nEolLen ){
 		// 改行コードを追加
-		pUnicodeBuffer->AppendString( pcEol->GetUnicodeValue(), pcEol->GetLen() );
+		pUnicodeBuffer->AppendString( pcEol->GetValue2(), pcEol->GetLen() );
 
 		// ポインタと文字列長を得る
 		int nDataLen;
@@ -344,45 +344,6 @@ void CFileLoad::ReadBufEmpty( void )
 	m_nReadBufOffSet  = 0;
 }
 
-/*!
-	バッファサイズの変更
-	@note ファイルサイズを考慮しない
-		FileOpenより先に呼ぶと確実にバッファサイズを小さくできる
-*/
-/*
-void CFileLoad::SetReadBufAlloc( int nNewSize ){
-	char * pBuf;
-
-	// データが残っている場合は移動させる
-	if( m_nReadBufOffSet + 1 <= m_nReadDataLen ){
-		m_nReadDataLen -= m_nReadBufOffSet;
-		memmove( m_pReadBuf, &m_pReadBuf[m_nReadBufOffSet], m_nReadDataLen );
-		m_nReadBufOffSet = 0;
-	}
-
-	// 現在ロードしてるデータを失わないように
-	if( m_nReadDataLen > nNewSize ){
-		nNewSize = m_nReadDataLen;
-	}
-	// wchar_t の大きさで整頓
-	if( 0 != nNewSize % sizeof(wchar_t) ){
-		nNewSize += sizeof(wchar_t) - ( nNewSize % sizeof(wchar_t) );
-	}
-	if( gm_nBufSizeMin > nNewSize ){
-		nNewSize = gm_nBufSizeMin;
-	}
-
-	// バッファサイズを変更
-	if( m_nReadBufSize != nNewSize ){
-		if( NULL != ( pBuf = (char *)realloc( m_pReadBuf, nNewSize ) ) ){
-			m_pReadBuf = pBuf;
-			m_nReadBufSize = nNewSize;
-		}
-		// メモリー確保に失敗したときは変更はなかったことにする
-	}
-}
-*/
-
 
 /*!
 	 現在の進行率を取得する
@@ -408,7 +369,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	int			nDataLen,	//!< [in]	検索文字列のバイト数
 	int*		pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
 	int*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
-	CEOL*		pcEol,		//!< [i/o]	EOL
+	CEol*		pcEol,		//!< [i/o]	EOL
 	int*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 ){
 	const char *pRetStr;

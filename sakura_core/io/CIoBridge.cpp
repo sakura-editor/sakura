@@ -5,7 +5,7 @@
 
 //! 内部実装のエンコードへ変換
 EConvertResult CIoBridge::FileToImpl(
-	const CMemory*	pSrc,			//!< [in]  変換元メモリ
+	const CMemory&	cSrc,			//!< [in]  変換元メモリ
 	CNativeW*		pDst,			//!< [out] 変換先メモリ(UNICODE)
 	ECodeType		eCharcodeFrom,	//!< [in]  変換元メモリの文字コード
 	int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダをdecodeするかどうか
@@ -13,7 +13,7 @@ EConvertResult CIoBridge::FileToImpl(
 {
 	//任意の文字コードからUnicodeへ変換する
 	CCodeBase* pCode=CCodeFactory::CreateCodeBase(eCharcodeFrom,nFlag);
-	EConvertResult ret = pCode->CodeToUnicode(pSrc,pDst);
+	EConvertResult ret = pCode->CodeToUnicode(cSrc,pDst);
 	delete pCode;
 
 	//結果
@@ -21,14 +21,14 @@ EConvertResult CIoBridge::FileToImpl(
 }
 
 EConvertResult CIoBridge::ImplToFile(
-	const CNativeW*	pSrc,		//!< [in]  変換元メモリ(UNICODE)
+	const CNativeW&		cSrc,		//!< [in]  変換元メモリ(UNICODE)
 	CMemory*			pDst,		//!< [out] 変換先メモリ
 	ECodeType			eCharcodeTo	//!< [in]  変換先メモリの文字コード
 )
 {
 	// Unicodeから任意の文字コードへ変換する
 	CCodeBase* pCode=CCodeFactory::CreateCodeBase(eCharcodeTo,0);
-	EConvertResult ret = pCode->UnicodeToCode(pSrc,pDst);
+	EConvertResult ret = pCode->UnicodeToCode(cSrc,pDst);
 	delete pCode;
 
 	//結果

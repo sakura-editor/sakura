@@ -14,12 +14,8 @@ public:
 	int Read(void* pBuffer, int nSizeInBytes);
 };
 
-class CBinaryOutputStream : public CStream{
+class CBinaryOutputStream : public COutputStream{
 public:
-	CBinaryOutputStream(LPCTSTR tszFilePath);
-
-public:
-	//! データを無変換で書き込む。戻り値は書き込んだバイト数。
-	int Write(const void* pBuffer, int nSizeInBytes);
+	CBinaryOutputStream(LPCTSTR tszFilePath, bool bExceptionMode = false);
 };
 
