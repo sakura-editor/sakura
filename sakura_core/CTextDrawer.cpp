@@ -214,7 +214,7 @@ void CTextDrawer::_DrawEOL(
 	int      nPosY,   //!< 描画座標Y
 	int      nWidth,  //!< 描画エリアのサイズX
 	int      nHeight, //!< 描画エリアのサイズY
-	CEOL     cEol,    //!< 行末コード種別
+	CEol     cEol,    //!< 行末コード種別
 	bool     bBold,   //!< TRUE: 太字
 	COLORREF pColor   //!< 色
 ) const
@@ -244,21 +244,6 @@ void CTextDrawer::_DrawEOL(
 			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
 		}
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
-//		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
-//		if( bBold ){
-//			++sx;
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
-//			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
-//		}
 		break;
 	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
 		sx = nPosX;
@@ -276,21 +261,6 @@ void CTextDrawer::_DrawEOL(
 			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
 		}
-//		::MoveToEx( hdc, nPosX, sy, NULL );
-//		::LineTo(   hdc, nPosX + nWidth, sy );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
-//		if( bBold ){
-//			++sy;
-//			::MoveToEx( hdc, nPosX, sy, NULL );
-//			::LineTo(   hdc, nPosX + nWidth, sy );
-//			::MoveToEx( hdc, sx, sy, NULL );
-//			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
-//		}
 		break;
 	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
 		sx = nPosX + ( nWidth / 2 );
@@ -308,74 +278,6 @@ void CTextDrawer::_DrawEOL(
 			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		}
-//#if 1
-//		sx = nPosX + nWidth;
-//		sy = nPosY + ( nHeight / 2 );
-//		::MoveToEx( hdc, nPosX, sy, NULL );
-//		::LineTo(   hdc, nPosX + nWidth, sy );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//		::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
-//		if( bBold ){
-//			++sy;
-//			::MoveToEx( hdc, nPosX, sy, NULL );
-//			::LineTo(   hdc, nPosX + nWidth, sy );
-//			::MoveToEx( hdc, sx, sy, NULL );
-//			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//			::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
-//		}
-//#else
-//		sx = nPosX;
-//		::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
-//		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
-//		::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
-//		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
-//		if( bBold ){
-//			++sx;
-//			::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
-//			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
-//			::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
-//			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
-//		}
-//#endif
-		break;
-	case EOL_LFCR:
-		sx = nPosX + ( nWidth / 2 );
-		sy = nPosY + ( nHeight * 3 / 4 );
-		::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 1, NULL );	//	右上へ
-		::LineTo(   hdc, sx, nPosY + nHeight / 4 + 1 );			//	右から左へ
-		::LineTo(   hdc, sx, sy );								//	上から下へ
-		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
-		::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
-		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
-		if( bBold ){
-			::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 2, NULL );	//	右上へ
-			++sx;
-			::LineTo(   hdc, sx, nPosY + nHeight / 4 + 2 );			//	右から左へ
-			::LineTo(   hdc, sx, sy );								//	上から下へ
-			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
-			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
-			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
-		}
-//		sx = nPosX + ( nWidth / 2 );
-//		sy = nPosY + ( nHeight * 1 / 4 );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, sy, NULL);
-//		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//		if( bBold ){
-//			++sx;
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, sy, NULL );
-//			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, sy, NULL);
-//			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//		}
 		break;
 	}
 	::SelectObject( hdc, hPenOld );
@@ -384,7 +286,7 @@ void CTextDrawer::_DrawEOL(
 
 
 //2007.08.30 kobake 追加
-void CTextDrawer::DispEOL(HDC hdc, DispPos* pDispPos, CEOL cEol, bool bSearchStringMode) const
+void CTextDrawer::DispEOL(HDC hdc, DispPos* pDispPos, CEol cEol, bool bSearchStringMode) const
 {
 	const CEditView* pView=m_pEditView;
 
@@ -459,7 +361,7 @@ void CTextDrawer::DispTab( HDC hdc, DispPos* pDispPos, int nColorIdx ) const
 	//必要なインターフェース
 	const CTextMetrics* pMetrics=&m_pEditView->GetTextMetrics();
 	const CTextArea* pArea=GetTextArea();
-	Types* TypeDataPtr = &pView->m_pcEditDoc->GetDocumentAttribute();
+	Types* TypeDataPtr = &pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int nLineHeight = pMetrics->GetHankakuDy();
 	int nCharWidth = pMetrics->GetHankakuDx();
@@ -795,7 +697,7 @@ void CTextDrawer::DispVerticalLines(
 {
 	const CEditView* pView=m_pEditView;
 
-	const Types&	typeData = pView->m_pcEditDoc->GetDocumentAttribute();
+	const Types&	typeData = pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	CTypeSupport cVertType(pView,COLORIDX_VERTLINE);
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
@@ -920,11 +822,10 @@ void CTextDrawer::DispLineNumber(
 ) const
 {
 	const CEditView* pView=m_pEditView;
-	const Types* pTypes=&pView->m_pcEditDoc->GetDocumentAttribute();
+	const Types* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int				nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();
-	const CDocLine*	pCDocLine;
 	//	Sep. 23, 2002 genta 共通式のくくりだし
 	int				nLineNumAreaWidth = pView->GetTextArea().m_nViewAlignLeftCols * nCharWidth;
 
@@ -935,17 +836,17 @@ void CTextDrawer::DispLineNumber(
 	//                     nColorIndexを決定                       //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	int nColorIndex = COLORIDX_GYOU;	/* 行番号 */
-	if( NULL != pcLayout ){
-		pCDocLine = pcLayout->m_pCDocLine;
+	const CDocLine*	pCDocLine;
+	if( pcLayout ){
+		pCDocLine = pcLayout->GetDocLineRef();
 
-		if( pView->m_pcEditDoc->IsModified()	/* ドキュメントが無変更の状態か */
-		 && pCDocLine->IsModifyed() ){		/* 変更フラグ */
+		if( pView->m_pcEditDoc->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine) ){		/* 変更フラグ */
 			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() )	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 		}
 	}
 
-	int type = pCDocLine->IsDiffMarked();
+	EDiffMark type = CDiffLineGetter(pCDocLine).GetLineDiffMark();
 	{
 		//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
 		if( type )
@@ -971,7 +872,7 @@ void CTextDrawer::DispLineNumber(
 
 	// 02/10/16 ai
 	// ブックマークの表示
-	if(pCDocLine->IsBookMarked()){
+	if(CBookmarkGetter(pCDocLine).IsBookmarked()){
 		if( CTypeSupport(pView,COLORIDX_MARK).IsDisp() ) {
 			nColorIndex = COLORIDX_MARK;
 		}
@@ -1082,7 +983,7 @@ void CTextDrawer::DispLineNumber(
 
 	// 2001.12.03 hor
 	/* とりあえずブックマークに縦線 */
-	if(pCDocLine->IsBookMarked() && !cMarkType.IsDisp() )
+	if(CBookmarkGetter(pCDocLine).IsBookmarked() && !cMarkType.IsDisp() )
 	{
 		cColorType.SetSolidPen(hdc,2);
 		::MoveToEx( hdc, 1, y, NULL );

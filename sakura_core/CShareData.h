@@ -42,7 +42,7 @@ struct EditNode {
 	int				m_nGroup;					/*!< グループID */							//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
 	WIN_CHAR		m_szTabCaption[_MAX_PATH];	/*!< タブウインドウ用：キャプション名 */	//@@@ 2003.05.31 MIK
-	SFilePath		m_szFilePath;	/*!< タブウインドウ用：ファイル名 */		//@@@ 2006.01.28 ryoji
+	SFilePath		m_szFilePath;				/*!< タブウインドウ用：ファイル名 */		//@@@ 2006.01.28 ryoji
 	BOOL			m_bIsGrep;					/*!< Grepのウィンドウか */					//@@@ 2006.01.28 ryoji
 	UINT			m_showCmdRestore;			/*!< 元のサイズに戻すときのサイズ種別 */	//@@@ 2007.06.20 ryoji
 	BOOL			m_bClosing;					/*!< 終了中か（「最後のファイルを閉じても(無題)を残す」用） */	//@@@ 2007.06.20 ryoji
@@ -64,7 +64,8 @@ struct EditNode {
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 
-#include "FileInfo.h"
+#include "EditInfo.h"
+#include "CDocTypeSetting.h"
 
 
 /*!	検索オプション
@@ -119,132 +120,11 @@ struct PRINTSETTING {
 };
 
 
-//! 色設定
-struct ColorInfo {
-	int			m_nColorIdx;
-	BOOL		m_bDisp;			/* 色分け/表示 をする */
-	BOOL		m_bFatFont;			/* 太字か */
-	BOOL		m_bUnderLine;		/* アンダーラインか */
-	COLORREF	m_colTEXT;			/* 前景色(文字色) */
-	COLORREF	m_colBACK;			/* 背景色 */
-	TCHAR		m_szName[32];		/* 名前 */
-	wchar_t		m_cReserved[60];
-};
-
-//! 色設定(保存用)
-struct ColorInfoIni {
-	const TCHAR*	m_pszName;			/* 色名 */
-	BOOL		m_bDisp;			/* 色分け/表示 をする */
-	BOOL		m_bFatFont;			/* 太字か */
-	BOOL		m_bUnderLine;		/* アンダーラインか */
-	COLORREF	m_colTEXT;			/* 前景色(文字色) */
-	COLORREF	m_colBACK;			/* 背景色 */
-};
-
-//@@@ 2001.11.17 add start MIK
-struct RegexKeywordInfo {
-	wchar_t	m_szKeyword[100];	//正規表現キーワード
-	int	m_nColorIndex;		//色指定番号
-};
-//@@@ 2001.11.17 add end MIK
-
-//@@@ 2006.04.10 fon ADD-start
-const int DICT_ABOUT_LEN = 50; /*!< 辞書の説明の最大長 -1 */
-struct KeyHelpInfo {
-	int			m_nUse;						/*!< 辞書を 使用する/しない */
-	TCHAR		m_szAbout[DICT_ABOUT_LEN];	/*!< 辞書の説明(辞書ファイルの1行目から生成) */
-	SFilePath	m_szPath;					/*!< ファイルパス */
-};
-//@@@ 2006.04.10 fon ADD-end
-
-//! タイプ別設定
-struct Types {
-	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
-	int					m_nIdx;
-	TCHAR				m_szTypeName[64];				/*!< タイプ属性：名称 */
-	TCHAR				m_szTypeExts[64];				/*!< タイプ属性：拡張子リスト */
-	CLayoutInt			m_nMaxLineKetas;				/*!< 折り返し桁数 */
-	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
-	int					m_nLineSpace;					/*!< 行間のすきま */
-	CLayoutInt			m_nTabSpace;					/*!< TABの文字数 */
-	int					m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
-	EDIT_CHAR			m_szTabViewString[17];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張
-	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
-	// 2005.01.13 MIK 配列化
-	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	/*!< キーワードセット */
-
-	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
-	CBlockComment		m_cBlockComment;				/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-
-	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	wchar_t				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
-
-	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
-	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
-
-	int					m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
-	wchar_t				m_cLineTermChar;				/*!< 行番号区切り文字 */
-	CLayoutInt			m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
-
-	BOOL				m_bWordWrap;					/*!< 英文ワードラップをする */
-	BOOL				m_bKinsokuHead;					/*!< 行頭禁則をする */	//@@@ 2002.04.08 MIK
-	BOOL				m_bKinsokuTail;					/*!< 行末禁則をする */	//@@@ 2002.04.08 MIK
-	BOOL				m_bKinsokuRet;					/*!< 改行文字のぶら下げ */	//@@@ 2002.04.13 MIK
-	BOOL				m_bKinsokuKuto;					/*!< 句読点のぶらさげ */	//@@@ 2002.04.17 MIK
-	wchar_t				m_szKinsokuHead[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-	wchar_t				m_szKinsokuTail[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-
-	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
-
-	EOutlineType		m_nDefaultOutline;				/*!< アウトライン解析方法 */
-	SFilePath			m_szOutlineRuleFilename;		/*!< アウトライン解析ルールファイル */
-
-	int					m_nSmartIndent;					/*!< スマートインデント種別 */
-	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
-
-	//	2001/06/14 asa-o 補完のタイプ別設定
-	SFilePath			m_szHokanFile;					/*!< 入力補完 単語ファイル */
-	//	2003.06.23 Moca ファイル内からの入力補完機能
-	int					m_bUseHokanByFile;				/*!< 入力補完 開いているファイル内から候補を探す */
-	//	2001/06/19 asa-o
-	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
-
-	SFilePath			m_szExtHelp;					/* 外部ヘルプ１ */
-	SFilePath			m_szExtHtmlHelp;				/* 外部HTMLヘルプ */
-	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
-	
-	
-//@@@ 2001.11.17 add start MIK
-	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
-	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
-	struct RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
-//@@@ 2001.11.17 add end MIK
-
-//@@@ 2006.04.10 fon ADD-start
-	BOOL				m_bUseKeyWordHelp;			/* キーワード辞書セレクト機能を使うか */
-	int					m_nKeyHelpNum;					/* キーワード辞書の冊数 */
-	struct	KeyHelpInfo	m_KeyHelpArr[MAX_KEYHELP_FILE];	/* キーワード辞書ファイル */
-	BOOL				m_bUseKeyHelpAllSearch;			/* ヒットした次の辞書も検索(&A) */
-	BOOL				m_bUseKeyHelpKeyDisp;			/* 1行目にキーワードも表示する(&W) */
-	BOOL				m_bUseKeyHelpPrefix;			/* 選択範囲で前方一致検索(&P) */
-//@@@ 2006.04.10 fon ADD-end
-
-	//	2002/04/30 YAZAKI Commonから移動。
-	BOOL				m_bAutoIndent;					/* オートインデント */
-	BOOL				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
-	BOOL				m_bRTrimPrevLine;				/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
-	
-	//	Sep. 10, 2002 genta
-	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
-
-}; /* Types */
 
 //! マクロ情報
 struct MacroRec {
-	TCHAR	m_szName[MACRONAME_MAX];	//<! 表示名
-	TCHAR	m_szFile[_MAX_PATH+1];	//<! ファイル名(ディレクトリを含まない)
+	TCHAR	m_szName[MACRONAME_MAX];	//!< 表示名
+	TCHAR	m_szFile[_MAX_PATH+1];	//!< ファイル名(ディレクトリを含まない)
 	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 	
 	bool IsEnabled() const { return m_szFile[0] != _T('\0'); }
@@ -255,8 +135,8 @@ struct MacroRec {
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {
-	HWND		hwndReferer;				//<! 参照元ウィンドウ
-	CLogicPoint	point;						//<! ライン, カラム
+	HWND		hwndReferer;				//!< 参照元ウィンドウ
+	CLogicPoint	point;						//!< ライン, カラム
 };
 
 //	Aug. 15, 2000 genta
@@ -296,32 +176,6 @@ struct IniFolder {
 
 #include "basis/CStrictInteger.h"
 
-//!ドキュメント種類。共有データ内 Types へのアクセサも兼ねる。
-//2007.12.13 kobake 作成
-class CDocumentType{
-public:
-	CDocumentType()
-	{
-#ifdef _DEBUG
-		//元がintだったので、未初期化で使うと問題が発生するように、あえて、変な値を入れておく。
-		m_nType = 1234;
-#else
-		//リリース時は、未初期化でも問題が起こりにくいように、ゼロクリアしておく
-		m_nType = 0;
-#endif
-	}
-	explicit CDocumentType(int n)
-	{
-		m_nType = n;
-	}
-	bool IsValid() const{ return m_nType>=0 && m_nType<MAX_TYPES; }
-	int GetIndex() const{ /*assert(IsValid());*/ return m_nType; }
-
-	//共有データへの簡易アクセサ
-	Types* operator->();
-private:
-	int m_nType;
-};
 
 
 //! 共有データ領域
@@ -363,7 +217,7 @@ public:
 	}
 
 public:
-	FileInfo			m_FileInfo_MYWM_GETFILEINFO;
+	EditInfo			m_EditInfo_MYWM_GETFILEINFO;
 
 	DWORD				m_dwProductVersionMS;
 	DWORD				m_dwProductVersionLS;
@@ -383,7 +237,7 @@ public:
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;
-	FileInfo			m_fiMRUArr[MAX_MRU];
+	EditInfo			m_fiMRUArr[MAX_MRU];
 	bool				m_bMRUArrFavorite[MAX_MRU];	//お気に入り	//@@@ 2003.04.08 MIK
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUFolderを経由してください。
@@ -521,8 +375,11 @@ public:
 	bool IsTopEditWnd( HWND hWnd ){ return (GetTopEditWnd( hWnd ) == hWnd); }	/* 先頭の編集ウィンドウかどうかを調べる */
 
 	BOOL RequestCloseAllEditor( BOOL bExit, int nGroup );		/* 全編集ウィンドウへ終了要求を出す */	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加	// 2007.06.20 ryoji nGroup引数追加
+	
+	//MRU系
 	BOOL IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner ); /* 指定ファイルが開かれているか調べる */
-	BOOL IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode );/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
+	BOOL ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode );/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
+
 	int GetEditorWindowsNum( int nGroup );						/* 現在の編集ウィンドウの数を調べる */	// 2007.06.20 ryoji nGroup引数追加
 	BOOL PostMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージをポストする */	// 2007.06.20 ryoji nGroup引数追加
 	BOOL SendMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージを送るする */	// 2007.06.20 ryoji nGroup引数追加
