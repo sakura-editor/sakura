@@ -156,7 +156,7 @@ void CViewSelect::DrawSelectArea() const
 	m_bDrawSelectArea = true;
 
 	// 2006.10.01 Moca 重複コード統合
-	HDC         hdc = ::GetDC( pView->m_hWnd );
+	HDC         hdc = pView->GetDC();
 	HBRUSH      hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
 	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
@@ -322,7 +322,7 @@ void CViewSelect::DrawSelectArea() const
 	::SetROP2( hdc, nROP_Old );
 	::SelectObject( hdc, hBrushOld );
 	::DeleteObject( hBrush );
-	::ReleaseDC( pView->m_hWnd, hdc );
+	pView->ReleaseDC( hdc );
 	//	Jul. 9, 2005 genta 選択領域の情報を表示
 	PrintSelectionInfoMsg();
 }
@@ -484,7 +484,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 			else {	//	2行以上選択されている場合
 				select_sum =
 					pcLayout->GetLengthWithoutEOL()
-					+ pcLayout->m_cEol.GetLen()
+					+ pcLayout->GetLayoutEol().GetLen()
 					- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
 
 				//	GetSelectedDataと似ているが，先頭行と最終行は排除している
@@ -497,7 +497,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
 					if( NULL == pLine )
 						break;
-					select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen();
+					select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
 				}
 
 				//	最終行の処理

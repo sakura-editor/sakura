@@ -15,7 +15,7 @@ public:
 	: m_pFontset(&pEditView->GetFontset())
 	, m_nColorIdx(nColorIdx)
 	{
-		m_pTypes = &pEditView->m_pcEditDoc->GetDocumentAttribute();
+		m_pTypes = &pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 		m_hdc=NULL;
 		m_hfntOld=NULL;

@@ -74,7 +74,7 @@ CLogicInt CViewCalc::LineColmnToIndex2( const CLayout* pcLayout, CLayoutInt nCol
 		it.addDelta();
 	}
 	i2 += it.getIndex();
-	if( i2 >= pcLayout->GetLength() ){
+	if( i2 >= pcLayout->GetLengthWithEOL() ){
 		nPosX2 += it.getColumn();
 		*pnLineAllColLen = nPosX2;
 	}

@@ -19,13 +19,12 @@ void CViewCommander::Command_Diff( const WCHAR* _szTmpFile2, int nFlgOpt )
 
 	if( -1 == ::GetFileAttributes( szTmpFile2 ) )
 	{
-		::MYMESSAGEBOX( m_pCommanderView->m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			_T("差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。") );
+		WarningMessage( m_pCommanderView->GetHwnd(), _T("差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。") );
 		return;
 	}
 
 	//自ファイル
-	if (!GetDocument()->IsModified()) _tcscpy( szTmpFile1, GetDocument()->GetFilePath());
+	if (!GetDocument()->m_cDocEditor.IsModified()) _tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath());
 	else if (m_pCommanderView->MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
 	else return;
 
@@ -50,23 +49,27 @@ void CViewCommander::Command_Diff_Dialog( void )
 {
 	CDlgDiff	cDlgDiff;
 	bool	bTmpFile1 = false, bTmpFile2 = false;
-	TCHAR	szTmpFile1[_MAX_PATH * 2];
-	TCHAR	szTmpFile2[_MAX_PATH * 2];
 
 	//DIFF差分表示ダイアログを表示する
-	if( FALSE == cDlgDiff.DoModal( GetInstance(), m_pCommanderView->m_hWnd, (LPARAM)GetDocument(),
-		GetDocument()->GetFilePath(),
-		GetDocument()->IsModified() ) )
-	{
+	int nDiffDlgResult = cDlgDiff.DoModal(
+		GetInstance(),
+		m_pCommanderView->GetHwnd(),
+		(LPARAM)GetDocument(),
+		GetDocument()->m_cDocFile.GetFilePath(),
+		GetDocument()->m_cDocEditor.IsModified()
+	);
+	if( !nDiffDlgResult ){
 		return;
 	}
 	
 	//自ファイル
-	if (!GetDocument()->IsModified()) _tcscpy( szTmpFile1, GetDocument()->GetFilePath());
+	TCHAR	szTmpFile1[_MAX_PATH * 2];
+	if (!GetDocument()->m_cDocEditor.IsModified()) _tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath());
 	else if (m_pCommanderView->MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
 	else return;
 		
 	//相手ファイル
+	TCHAR	szTmpFile2[_MAX_PATH * 2];
 	if (!cDlgDiff.m_bIsModifiedDst ) _tcscpy( szTmpFile2, cDlgDiff.m_szFile2);
 	else if (m_pCommanderView->MakeDiffTmpFile ( szTmpFile2, cDlgDiff.m_hWnd_Dst )) bTmpFile2 = true;
 	else 
@@ -99,7 +102,7 @@ void CViewCommander::Command_Diff_Next( void )
 	CLogicInt tmp_y;
 
 re_do:;	
-	if( GetDocument()->m_cDocLineMgr.SearchDiffMark( ptXY.GetY2(), SEARCH_FORWARD, &tmp_y ) ){
+	if( CDiffLineMgr(&GetDocument()->m_cDocLineMgr).SearchDiffMark( ptXY.GetY2(), SEARCH_FORWARD, &tmp_y ) ){
 		ptXY.y = tmp_y;
 		bFound = TRUE;
 		CLayoutPoint ptXY_Layout;
@@ -133,7 +136,7 @@ re_do:;
 	else{
 		m_pCommanderView->SendStatusMessage( _T("▽見つかりませんでした") );
 		if( GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			InfoMessage( m_pCommanderView->m_hWnd, _T("後方(↓) に差分が見つかりません。") );
+			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↓) に差分が見つかりません。") );
 	}
 
 	return;
@@ -153,7 +156,7 @@ void CViewCommander::Command_Diff_Prev( void )
 	CLogicInt tmp_y;
 
 re_do:;
-	if( GetDocument()->m_cDocLineMgr.SearchDiffMark( ptXY.GetY2(), SEARCH_BACKWARD, &tmp_y) ){
+	if( CDiffLineMgr(&GetDocument()->m_cDocLineMgr).SearchDiffMark( ptXY.GetY2(), SEARCH_BACKWARD, &tmp_y) ){
 		ptXY.y = tmp_y;
 		bFound = TRUE;
 		CLayoutPoint ptXY_Layout;
@@ -186,7 +189,7 @@ re_do:;
 	else{
 		m_pCommanderView->SendStatusMessage( _T("△見つかりませんでした") );
 		if( GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			InfoMessage( m_pCommanderView->m_hWnd, _T("前方(↑) に差分が見つかりません。") );
+			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↑) に差分が見つかりません。") );
 	}
 
 	return;
@@ -198,7 +201,7 @@ re_do:;
 */
 void CViewCommander::Command_Diff_Reset( void )
 {
-	GetDocument()->m_cDocLineMgr.ResetAllDiffMark();
+	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 
 	//分割したビューも更新
 	for( int v = 0; v < 4; ++v )

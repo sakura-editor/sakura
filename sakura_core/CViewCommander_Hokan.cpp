@@ -23,15 +23,15 @@ void CViewCommander::Command_HOKAN( void )
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
-	if( GetDocument()->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
-		0 == _tcslen( GetDocument()->GetDocumentAttribute().m_szHokanFile 
+	if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
+		0 == _tcslen( GetDocument()->m_cDocType.GetDocumentAttribute().m_szHokanFile 
 	) ){
 		ErrorBeep();
 		if( IDYES == ::MYMESSAGEBOX_A( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME_A,
 			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
 		) ){
 			/* タイプ別設定 プロパティシート */
-			if( !GetDocument()->OpenPropertySheetTypes( 2, GetDocument()->GetDocumentType() ) ){
+			if( !CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheetTypes( 2, GetDocument()->m_cDocType.GetDocumentType() ) ){
 				return;
 			}
 			goto retry;

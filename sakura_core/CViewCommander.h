@@ -7,6 +7,7 @@ struct DLLSHAREDATA;
 class COpeBlk;
 class CCaret;
 class CEditWnd;
+#include "CEol.h"
 
 class CViewCommander{
 public:
@@ -53,19 +54,22 @@ public:
 	/* ファイルを開く */
 	// Oct. 2, 2001 genta マクロ用に機能拡張
 	// Mar. 30, 2003 genta 引数追加
-	void Command_FILEOPEN( const WCHAR *filename = NULL,
-		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+	void Command_FILEOPEN(
+		const WCHAR*	filename		= NULL,
+		ECodeType		nCharCode		= CODE_AUTODETECT,
+		bool			bViewMode	= false
+	);
 	
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
-	BOOL Command_FILESAVE( bool warnbeep = true, bool askname = true );	
-	BOOL Command_FILESAVEAS_DIALOG();			/* 名前を付けて保存 */
-	BOOL Command_FILESAVEAS( const WCHAR* filename );			/* 名前を付けて保存 */
-	BOOL Command_FILESAVEALL( void );	/* 全て上書き保存 */ // Jan. 23, 2005 genta
-	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+	bool Command_FILESAVE( bool warnbeep = true, bool askname = true );	
+	bool Command_FILESAVEAS_DIALOG();									/* 名前を付けて保存 */
+	BOOL Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType);	/* 名前を付けて保存 */
+	BOOL Command_FILESAVEALL( void );					/* 全て上書き保存 */ // Jan. 23, 2005 genta
+	void Command_FILECLOSE( void );						/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	/* 閉じて開く*/
 	// Mar. 30, 2003 genta 引数追加
 	void Command_FILECLOSE_OPEN( LPCWSTR filename = NULL,
-		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+		ECodeType nCharCode = CODE_AUTODETECT, bool bViewMode = false );
 	
 	void Command_FILE_REOPEN( ECodeType nCharCode, bool bNoConfirm );		/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 
@@ -78,7 +82,7 @@ public:
 	void Command_ACTIVATE_SQLPLUS( void );		/* Oracle SQL*Plusをアクティブ表示 */
 	void Command_PLSQL_COMPILE_ON_SQLPLUS( void );/* Oracle SQL*Plusで実行 */
 	void Command_BROWSE( void );				/* ブラウズ */
-	void Command_READONLY( void );				/* 読み取り専用 */
+	void Command_VIEWMODE( void );				/* ビューモード */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
 	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
