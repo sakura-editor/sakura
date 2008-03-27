@@ -20,7 +20,7 @@
 #define _CCOMMANDLINE_H_
 
 #include "global.h"
-#include "CShareData.h"	// FileInfo, GrepInfo
+#include "CShareData.h"	// EditInfo, GrepInfo
 class CMemory;
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -63,9 +63,9 @@ public:
 	bool IsGrepMode() const {return m_bGrepMode;};
 	bool IsGrepDlg() const {return m_bGrepDlg;};
 	bool IsDebugMode() const {return m_bDebugMode;};
-	bool IsReadOnly() const {return m_bReadOnly;};
-	bool GetFileInfo(FileInfo& fi) const {fi = m_fi;return true;};
-	bool GetGrepInfo(GrepInfo& gi) const {gi = m_gi;return true;};
+	bool IsViewMode() const {return m_bViewMode;};
+	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
+	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
 	int GetGroupId() const {return m_nGroup;};	// 2007.06.26 ryoji
 
 // member valiables
@@ -77,9 +77,9 @@ private:
 	bool		m_bDebugMode;		
 	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
 	bool		m_bWriteQuit;		//! [out] TRUE: 設定を保存して終了	// 2007.05.19 ryoji sakuext用に追加
-	FileInfo	m_fi;				//!
+	EditInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
-	bool		m_bReadOnly;		//! [out] TRUE: Read Only
+	bool		m_bViewMode;	//! [out] TRUE: Read Only
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
 };
 

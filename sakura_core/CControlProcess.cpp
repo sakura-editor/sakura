@@ -85,7 +85,7 @@ bool CControlProcess::Initialize()
 	TCHAR szIniFile[_MAX_PATH];
 	GetShareData().LoadShareData();
 	GetShareData().GetIniFileName( szIniFile );	// 出力iniファイル名
-	if( _taccess( szIniFile, 0 ) == -1 || CCommandLine::Instance()->IsWriteQuit() ){
+	if( !fexist(szIniFile) || CCommandLine::Instance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
 		GetShareData().SaveShareData();
 		if( CCommandLine::Instance()->IsWriteQuit() ){

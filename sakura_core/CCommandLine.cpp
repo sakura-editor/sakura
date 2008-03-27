@@ -30,6 +30,7 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "debug.h"
+#include "CSakuraEnvironment.h"
 
 CCommandLine* CCommandLine::_instance = NULL;
 
@@ -202,7 +203,7 @@ void CCommandLine::ParseCommandLine( void )
 				continue;
 			}
 			/* ファイルの存在と、ファイルかどうかをチェック */
-			if( -1 != _taccess( szPath, 0 ) ){
+			if( fexist(szPath) ){
 				bFind = true;
 				break;
 			}
@@ -216,6 +217,7 @@ void CCommandLine::ParseCommandLine( void )
 	}else{
 		nPos = 0;
 	}
+
 	LPTSTR pszCmdLineWork = new TCHAR[lstrlen( m_pszCmdLineSrc ) + 1];
 	_tcscpy( pszCmdLineWork, m_pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
@@ -324,7 +326,7 @@ void CCommandLine::ParseCommandLine( void )
 				m_fi.m_nCharCode = (ECodeType)AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_R:	//	R
-				m_bReadOnly = true;
+				m_bViewMode = true;
 				break;
 			case CMDLINEOPT_NOWIN:	//	NOWIN
 				m_bNoWindow = true;
@@ -404,17 +406,8 @@ void CCommandLine::ParseCommandLine( void )
 
 	/* ファイル名 */
 	if( _T('\0') != m_fi.m_szPath[0] ){
-		/* ショートカット(.lnk)の解決 */
-		if( ResolveShortcutLink( NULL, m_fi.m_szPath, szPath ) ){
-			_tcscpy( m_fi.m_szPath, szPath );
-		}
-		/* ロングファイル名を取得する */
-		if( ::GetLongFileName( m_fi.m_szPath, szPath ) ){
-			_tcscpy( m_fi.m_szPath, szPath );
-		}
-
-		/* MRUから情報取得 */
-
+		//ファイルパスの解決
+		CSakuraEnvironment::ResolvePath(m_fi.m_szPath);
 	}
 
 	return;
@@ -454,7 +447,7 @@ CCommandLine::CCommandLine(LPTSTR cmd)
 	m_gi.nGrepCharSet		= CODE_SJIS;
 	m_gi.bGrepOutputLine	= false;
 	m_gi.nGrepOutputStyle	= 1;
-	m_bReadOnly				= false;
+	m_bViewMode			= false;
 	m_nGroup				= 0;		// 2007.06.26 ryoji
 	
 	ParseCommandLine();
