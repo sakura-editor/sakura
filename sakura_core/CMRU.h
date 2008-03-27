@@ -37,8 +37,10 @@ class CMRU;
 #define _CMRU_H_
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include <vector>
 #include "CRecentFile.h"
-struct FileInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
+struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
+class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRU{
@@ -48,18 +50,18 @@ public:
 	~CMRU();
 
 	//	メニューを取得する
-	HMENU CreateMenu( class CMenuDrawer* pCMenuDrawer );	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer );	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
 	BOOL DestroyMenu( HMENU hMenu );
 	
 	//	ファイル名の一覧を教えて
-	void GetPathList( TCHAR** ppszMRU );	//	ppszMRUにはファイル名をコピーしません。変更しないでね☆
+	std::vector<LPCTSTR> GetPathList() const;
 
 	//	アクセス関数
 	int Length(void);	//	アイテムの数。
 	void ClearAll(void);//	アイテムを削除～。
-	BOOL GetFileInfo( int num, FileInfo* pfi );				//	番号で指定したFileInfo（情報をまるごと）
-	BOOL GetFileInfo( const TCHAR* pszPath, FileInfo* pfi );	//	ファイル名で指定したFileInfo（情報をまるごと）
-	void Add( FileInfo* pFileInfo );		//	*pFileInfoを追加する。
+	bool GetEditInfo( int num, EditInfo* pfi );				//	番号で指定したEditInfo（情報をまるごと）
+	bool GetEditInfo( const TCHAR* pszPath, EditInfo* pfi );	//	ファイル名で指定したEditInfo（情報をまるごと）
+	void Add( EditInfo* pEditInfo );		//	*pFileInfoを追加する。
 
 protected:
 	//	共有メモリアクセス用。
