@@ -31,7 +31,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, BOOL, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, bool, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
 
 	const TCHAR*		m_pszPath;
 	BOOL			m_bIsModified;

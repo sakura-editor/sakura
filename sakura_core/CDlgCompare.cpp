@@ -49,13 +49,13 @@ CDlgCompare::CDlgCompare()
 
 /* モーダルダイアログの表示 */
 int CDlgCompare::DoModal(
-	HINSTANCE	hInstance,
-	HWND		hwndParent,
-	LPARAM		lParam,
+	HINSTANCE		hInstance,
+	HWND			hwndParent,
+	LPARAM			lParam,
 	const TCHAR*	pszPath,
-	BOOL		bIsModified,
-	TCHAR*	pszComparePath,
-	HWND*		phwndCompareWnd
+	bool			bIsModified,
+	TCHAR*			pszComparePath,
+	HWND*			phwndCompareWnd
 )
 {
 	m_pszPath = pszPath;
@@ -118,7 +118,7 @@ void CDlgCompare::SetData( void )
 	HWND			hwndList;
 	int				nRowNum;
 	EditNode*		pEditNodeArr;
-	FileInfo*		pfi;
+	EditInfo*		pfi;
 	int				i;
 	TCHAR			szMenu[512];
 	int				nItem;
@@ -135,7 +135,7 @@ void CDlgCompare::SetData( void )
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
-			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 //			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
@@ -150,7 +150,7 @@ void CDlgCompare::SetData( void )
 			);
 			// gm_pszCodeNameArr_Bracket からコピーするように変更
 			if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
-				_tcscat( szMenu, gm_pszCodeNameArr_Bracket[pfi->m_nCharCode] );
+				_tcscat( szMenu, CCodeTypeName(pfi->m_nCharCode).Bracket() );
 			}
 			nItem = ::List_AddString( hwndList, szMenu );
 			::SendMessageAny( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].GetHwnd() );
@@ -188,13 +188,13 @@ int CDlgCompare::GetData( void )
 {
 	HWND			hwndList;
 	int				nItem;
-	FileInfo*		pfi;
+	EditInfo*		pfi;
 	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
 	nItem = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
 	*m_phwndCompareWnd = (HWND)::SendMessageAny( hwndList, LB_GETITEMDATA, nItem, 0 );
 	/* トレイからエディタへの編集ファイル名要求通知 */
 	::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
-	pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+	pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 	_tcscpy( m_pszComparePath, pfi->m_szPath );
 
