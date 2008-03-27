@@ -60,7 +60,7 @@ struct LayoutReplaceArg {
 	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
 */
 //2007.10.15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
-class SAKURA_CORE_API CLayoutMgr
+class SAKURA_CORE_API CLayoutMgr : public CProgressSubject
 {
 private:
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );
@@ -104,7 +104,7 @@ public:
 	CLayoutInt GetMaxLineKetas(void) const { return m_nMaxLineKetas; }
 
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	bool ChangeLayoutParam( HWND hwndProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
+	bool ChangeLayoutParam( CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
 
 	// Jul. 29, 2006 genta
 	void GetEndLayoutPos(CLayoutPoint* ptLayoutEnd);
@@ -161,7 +161,10 @@ public:
 		@date 2002.04.13 MIK 禁則,改行文字をぶら下げる,句読点ぶらさげを追加
 		@date 2002/04/27 YAZAKI Typesを渡すように変更。
 	*/
-	void SetLayoutInfo( int, HWND, Types& refType );
+	void SetLayoutInfo(
+		bool			bDoRayout,
+		const Types&	refType
+	);
 	
 	/* 行内文字削除 */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
@@ -206,7 +209,7 @@ protected:
 	|| 更新系
 	*/
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	void DoLayout( HWND );	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
+	void _DoLayout();	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	CLayoutInt DoLayout_Range( CLayout* , CLogicInt, CLogicPoint, EColorIndexType, CLayoutInt* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLayout* DeleteLayoutAsLogical( CLayout*, CLayoutInt, CLogicInt , CLogicInt, CLogicPoint, CLayoutInt* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
@@ -258,7 +261,7 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	CDocLineMgr*	m_pcDocLineMgr;	/* 行バッファ管理マネージャ */
+	CDocLineMgr*			m_pcDocLineMgr;	/* 行バッファ管理マネージャ */
 
 protected:
 	// 2002.10.07 YAZAKI add m_nLineTypeBot
@@ -293,7 +296,7 @@ protected:
 	mutable CLayoutInt		m_nPrevReferLine;
 	mutable CLayout*		m_pLayoutPrevRefer;
 	
-	// 2006.10.01 Moca EOFカーソル位置を記憶する(DoLayout/DoLayout_Rangeで無効にする)
+	// 2006.10.01 Moca EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)
 	CLayoutInt				m_nEOFLine; //!< EOF行数
 	CLayoutInt				m_nEOFColumn; //!< EOF幅位置
 

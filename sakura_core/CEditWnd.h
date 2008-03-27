@@ -42,8 +42,8 @@ class CEditWnd;
 #include "CDlgFuncList.h"
 #include "CDlgOpenFile.h"
 #include "CHokanMgr.h"
-#include "CPropCommon.h"
-#include "CPropTypes.h"
+#include "util/design_template.h"
+#include "CDocListener.h"
 
 //by 鬼
 #include"CDropTarget.h"
@@ -72,6 +72,8 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class SAKURA_CORE_API CEditWnd
+: public TSingleInstance<CEditWnd> //###
+, public CDocListenerEx
 {
 public:
 	/*
@@ -87,7 +89,6 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
-		HINSTANCE		hInstance,			//!< [in] Instance Handle
 		int				nGroup				//!< [in] グループID
 	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
@@ -95,20 +96,23 @@ public:
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
-	void OpenDocumentWhenCreate(
-		const TCHAR*	pszPath,		//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
-		ECodeType		nCharCode,		//!< [in] 漢字コード
-		bool			bReadOnly		//!< [in] 読みとり専用で開くかどうか
+	void OpenDocumentWhenStart(
+		const SLoadInfo& sLoadInfo		//!< [in]
 	);
 
 	void SetDocumentTypeWhenCreate(
 		ECodeType		nCharCode,							//!< [in] 漢字コード
-		bool			bReadOnly,							//!< [in] 読みとり専用で開くかどうか
+		bool			bViewMode,							//!< [in] ビューモードで開くかどうか
 		CDocumentType	nDocumentType = CDocumentType(-1)	//!< [in] 文書タイプ．-1のとき強制指定無し．
 	);
+	void UpdateCaption();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//ドキュメントイベント
+	void OnAfterSave(const SSaveInfo& sSaveInfo);
+
+
 	//管理
 	void MessageLoop( void );								/* メッセージループ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
@@ -141,7 +145,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//ファイル名変更通知
-	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, BOOL m_bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -170,8 +174,8 @@ public:
 	
 	//アイコン
 	void SetWindowIcon( HICON, int);	//	Sep. 10, 2002 genta
-	void GetDefaultIcon( HICON& hIconBig, HICON& hIconSmall ) const;	//	Sep. 10, 2002 genta
-	bool GetRelatedIcon(const TCHAR* szFile, HICON& hIconBig, HICON& hIconSmall) const;	//	Sep. 10, 2002 genta
+	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
+	bool GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -219,16 +223,11 @@ public:
 	CLogicPoint* SavePhysPosOfAllView(void);
 	void RestorePhysPosOfAllView( CLogicPoint* pptPosArray );
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         デバッグ                            //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void SetDebugModeON( void );	/* デバッグモニタモードに設定 */
-	void SetDebugModeOFF( void );	// 2005.06.24 Moca
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HWND			GetHwnd()		const	{ return m_hWnd;        }
+	HWND			GetHwnd()		const	{ return this?m_hWnd:NULL; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_CMenuDrawer; }
 	CEditDoc&		GetDocument();
 	const CEditDoc&	GetDocument() const;
@@ -281,9 +280,6 @@ public:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	//モジュール情報
-	HINSTANCE		m_hInstance;
-
 	//自ウィンドウ
 	HWND			m_hWnd;
 
@@ -310,8 +306,6 @@ public:
 	CDlgFuncList	m_cDlgFuncList;		// アウトライン解析結果ダイアログ
 	CDlgOpenFile	m_cDlgOpenFile;		// ファイルオープンダイアログ
 	CHokanMgr		m_cHokanMgr;		// 入力補完
-	CPropCommon		m_cPropCommon;
-	CPropTypes		m_cPropTypes;
 
 private:
 	//共有データ
@@ -326,7 +320,7 @@ private:
 
 	//状態
 	const TCHAR*	m_pszWndClass;		//!< ウィンドウクラス名
-	BOOL			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
+	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPTSTR			m_pszLastCaption;
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
 	int				m_nCurrentFocus;	//!< 現在のフォーカス情報

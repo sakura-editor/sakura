@@ -34,9 +34,23 @@
 
 #include "global.h"
 
-/*-----------------------------------------------------------------------
-クラスの宣言
------------------------------------------------------------------------*/
+// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
+/* 行終端子の種類 */
+SAKURA_CORE_API enum enumEOLType {
+	EOL_NONE,			//!< 
+	EOL_CRLF,			//!< 0d0a
+	EOL_LF,				//!< 0a
+	EOL_CR,				//!< 0d
+	EOL_CODEMAX,		//
+	EOL_UNKNOWN = -1	//
+};
+typedef enumEOLType EEolType;
+
+#define EOL_TYPE_NUM	5
+
+/* 行終端子の配列 */
+SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
+
 /*!
 	@brief 行末の改行コードを管理
 
@@ -44,59 +58,44 @@
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class SAKURA_CORE_API CEOL
-{
-	static const char*		gm_pszEolDataArr			[EOL_TYPE_NUM];
-	static const wchar_t*	gm_pszEolUnicodeDataArr		[EOL_TYPE_NUM];
-	static const wchar_t*	gm_pszEolUnicodeBEDataArr	[EOL_TYPE_NUM];
-	static const int		gm_pnEolLenArr				[EOL_TYPE_NUM];
-	static const TCHAR*		gm_pszEolNameArr			[EOL_TYPE_NUM];
-	static const wchar_t*	gm_aEolInfoStrings			[EOL_TYPE_NUM];
+class SAKURA_CORE_API CEol{
 public:
+	//コンストラクタ・デストラクタ
+	CEol(){ m_eEolType = EOL_NONE;; }
+	CEol( EEolType t ){ SetType(t); }
 
-	//	設定関数
-	void Init(void){
-		m_enumEOLType = EOL_NONE;
-	//	m_nEOLLen = 2; /* = CR+LF */
+	//比較
+	bool operator==( EEolType t ) const { return GetType() == t; }
+	bool operator!=( EEolType t ) const { return GetType() != t; }
+
+	//代入
+	const CEol& operator=( const CEol& t ){ m_eEolType = t.m_eEolType; return *this; }
+
+	//型変換
+	operator EEolType() const { return GetType(); }
+
+	//設定
+	bool SetType( EEolType t);	//	Typeの設定
+	void SetTypeByString( const wchar_t* pszData, int nDataLen );
+	void SetTypeByString( const char* pszData, int nDataLen );
+
+	//取得
+	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得
+	CLogicInt		GetLen()	const;	//!< 現在のEOL長を取得。文字単位。
+	const TCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
+	const wchar_t*	GetValue2()	const;	//!< 現在のEOL文字列先頭へのポインタを取得
+	//#####
+
+	bool IsValid() const
+	{
+		return m_eEolType>=EOL_CRLF && m_eEolType<EOL_CODEMAX;
 	}
 
-	static enumEOLType GetEOLType( const char* pszData, int nDataLen );
-	static enumEOLType GetEOLType( const wchar_t* pszData, int nDataLen );
-	static enumEOLType GetEOLTypeUni( const wchar_t* pszData, int nDataLen );
-	static enumEOLType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen );
-	bool SetType( enumEOLType t);	//	Typeの設定
-	void GetTypeFromString( const wchar_t* pszData, int nDataLen )
-		{	SetType( GetEOLType( pszData, nDataLen ) ); }
-	void GetTypeFromString( const char* pszData, int nDataLen )
-		{	SetType( GetEOLType( pszData, nDataLen ) ); }
-
-	//	読み出し関数
-	enumEOLType		GetType()			const{ return m_enumEOLType; }								//!< 現在のTypeを取得
-	CLogicInt		GetLen()			const{ return CLogicInt(gm_pnEolLenArr[ m_enumEOLType ]); }	//!< 現在のEOL長を取得。文字単位。
-	const TCHAR*	GetName()			const{ return gm_pszEolNameArr[ m_enumEOLType ]; }			//!< 現在のEOLの名称取得
-	const char*		GetValue()			const{ return gm_pszEolDataArr[ m_enumEOLType ]; }			//!< 現在のEOL文字列先頭へのポインタを取得
-	const wchar_t*	GetUnicodeValue()	const{ return gm_pszEolUnicodeDataArr[m_enumEOLType]; }		//!< Unicode版GetValue	2002/5/9 Frozen
-	const wchar_t*	GetUnicodeBEValue()	const{ return gm_pszEolUnicodeBEDataArr[m_enumEOLType]; }	//!< UnicodeBE版のGetValue 2002.05.30 Moca
-
-	//	利便性向上のためのOverload
-	bool operator==( enumEOLType t ) const { return GetType() == t; }
-	bool operator!=( enumEOLType t ) const { return GetType() != t; }
-	const CEOL& operator=( const CEOL& t )
-		{ m_enumEOLType = t.m_enumEOLType; return *this; }
-	operator enumEOLType(void) const { return GetType(); }
-
-	//	constructor
-	CEOL(){ Init(); }
-	CEOL( enumEOLType t ){ SetType(t); }
 
 private:
-	enumEOLType		m_enumEOLType;	//!< 改行コードの種類
-	//int			m_nEOLLen;		/* 改行コードの長さ */
+	EEolType	m_eEolType;	//!< 改行コードの種類
 };
 
-//	利便性向上のためのOverload
-// inline bool operator==(m_enumEOLType t, const CEOL& c ){ return c == t; }
-// inline bool operator!=(m_enumEOLType t, const CEOL& c ){ return c != t; }
 
 #endif
 

@@ -46,11 +46,9 @@
 		nPosXがインデントを含む幅を保持するように変更．nMaxLineKetasは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
 */
-void CLayoutMgr::DoLayout(
-		HWND	hwndProgress
-)
+void CLayoutMgr::_DoLayout()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::DoLayout" );
+	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::_DoLayout" );
 
 	CLogicInt	nLineNum;
 	CDocLine*	pCDocLine;
@@ -71,13 +69,11 @@ void CLayoutMgr::DoLayout(
 	nCOMMENTMODE = COLORIDX_TEXT;
 	nCOMMENTMODE_Prev = COLORIDX_TEXT;
 
-	if( NULL != hwndProgress ){
-		::PostMessageAny( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
-		::PostMessageAny( hwndProgress, PBM_SETPOS, 0, 0 );
+	
+	if( GetListenerCount() != 0 ){
+		NotifyProgress(0);
 		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( NULL ) ){
-			return;
-		}
+		if( !::BlockingHook( NULL ) )return;
 	}
 
 	Empty();
@@ -105,7 +101,7 @@ void CLayoutMgr::DoLayout(
 
 	while( NULL != pCDocLine ){
 		CLogicInt		nLineLen;
-		const wchar_t*	pLine = pCDocLine->m_cLine.GetStringPtr( &nLineLen );
+		const wchar_t*	pLine = pCDocLine->GetDocLineStrWithEOL( &nLineLen );
 		nPosX = CLayoutInt(0);
 
 		CLogicInt	nBgn = CLogicInt(0);
@@ -116,7 +112,7 @@ void CLayoutMgr::DoLayout(
 
 		int			nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 
-		int	nEol = pCDocLine->m_cEol.GetLen();
+		int	nEol = pCDocLine->GetEol().GetLen();
 		int nEol_1 = nEol - 1;
 		if( 0 >	nEol_1 ){
 			nEol_1 = 0;
@@ -372,15 +368,13 @@ void CLayoutMgr::DoLayout(
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 		}
 		nLineNum++;
-		if( NULL != hwndProgress && 0 < nAllLineNum && 0 == ( nLineNum % 1024 ) ){
-			::PostMessageAny( hwndProgress, PBM_SETPOS, nLineNum * 100 / nAllLineNum , 0 );
+		if( GetListenerCount()!=0 && 0 < nAllLineNum && 0 == ( nLineNum % 1024 ) ){
+			NotifyProgress(nLineNum * 100 / nAllLineNum);
 			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( NULL ) ){
-				return;
-			}
+			if( !::BlockingHook( NULL ) )return;
 		}
 //		pLine = m_pcDocLineMgr->GetNextLinrStr( &nLineLen );
-		pCDocLine = pCDocLine->m_pNext;;
+		pCDocLine = pCDocLine->GetNextLine();;
 // 2002/03/13 novice
 		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
 			nCOMMENTMODE_Prev = COLORIDX_TEXT;
@@ -391,14 +385,11 @@ void CLayoutMgr::DoLayout(
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
 
-	if( NULL != hwndProgress ){
-		::PostMessageAny( hwndProgress, PBM_SETPOS, 0, 0 );
+	if( GetListenerCount()!=0 ){
+		NotifyProgress(0);
 		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( NULL ) ){
-			return;
-		}
+		if( !::BlockingHook( NULL ) )return;
 	}
-	return;
 }
 
 
@@ -414,7 +405,7 @@ void CLayoutMgr::DoLayout(
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
 
 	@note 2004.04.03 Moca
-		DoLayoutとは違ってレイアウト情報がリスト中間に挿入されるため，
+		_DoLayoutとは違ってレイアウト情報がリスト中間に挿入されるため，
 		挿入後にm_nLineTypeBotへコメントモードを指定してはならない
 		代わりに最終行のコメントモードを終了間際に確認している．
 */
@@ -444,7 +435,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	EColorIndexType		nCOMMENTMODE = nCurrentLineType;
 	EColorIndexType		nCOMMENTMODE_Prev = nCOMMENTMODE;
 
-	CDocLine*	pCDocLine = m_pcDocLineMgr->GetLineInfo( nCurLine );
+	CDocLine*	pCDocLine = m_pcDocLineMgr->GetLine( nCurLine );
 
 	int			nCOMMENTEND = 0;
 	CLayoutInt	nModifyLayoutLinesNew = CLayoutInt(0);
@@ -456,7 +447,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 
 	while( NULL != pCDocLine ){
 		CLogicInt		nLineLen;
-		const wchar_t*	pLine = pCDocLine->m_cLine.GetStringPtr( &nLineLen );
+		const wchar_t*	pLine = pCDocLine->GetDocLineStrWithEOL( &nLineLen );
 		CLayoutInt		nPosX = CLayoutInt(0); //表示上のX位置
 
 		// メモリ上の位置(offset)
@@ -468,7 +459,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 
 		int			nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 
-		int	nEol = pCDocLine->m_cEol.GetLen();
+		int	nEol = pCDocLine->GetEol().GetLen();
 		int nEol_1 = nEol - 1;
 		if( 0 >	nEol_1 ){
 			nEol_1 = 0;
@@ -503,7 +494,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 						{
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
-								pLayout = pLayout->m_pNext;
+								pLayout = pLayout->GetNextLayout();
 								pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
@@ -571,7 +562,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 						{
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
-								pLayout = pLayout->m_pNext;
+								pLayout = pLayout->GetNextLayout();
 								pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
@@ -637,7 +628,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
 						//@@@ 2002.09.23 YAZAKI 最適化
 						if( bNeedChangeCOMMENTMODE ){
-							pLayout = pLayout->m_pNext;
+							pLayout = pLayout->GetNextLayout();
 							pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
@@ -679,7 +670,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
 						//@@@ 2002.09.23 YAZAKI 最適化
 						if( bNeedChangeCOMMENTMODE ){
-							pLayout = pLayout->m_pNext;
+							pLayout = pLayout->GetNextLayout();
 							pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
@@ -714,7 +705,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				if( nPosX + nCharKetas > nMaxLineKetas ){
 					//@@@ 2002.09.23 YAZAKI 最適化
 					if( bNeedChangeCOMMENTMODE ){
-						pLayout = pLayout->m_pNext;
+						pLayout = pLayout->GetNextLayout();
 						pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 						(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 					}
@@ -754,7 +745,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 						{	//@@@ 2002.04.14 MIK
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
-								pLayout = pLayout->m_pNext;
+								pLayout = pLayout->GetNextLayout();
 								pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
@@ -788,7 +779,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 			}
 			//@@@ 2002.09.23 YAZAKI 最適化
 			if( bNeedChangeCOMMENTMODE ){
-				pLayout = pLayout->m_pNext;
+				pLayout = pLayout->GetNextLayout();
 				pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
 				(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 			}
@@ -820,7 +811,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				break;	//	while( NULL != pCDocLine ) 終了
 			}
 		}
-		pCDocLine = pCDocLine->m_pNext;
+		pCDocLine = pCDocLine->GetNextLine();
 // 2002/03/13 novice
 		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
 			nCOMMENTMODE_Prev = COLORIDX_TEXT;
@@ -932,7 +923,7 @@ bool CLayoutMgr::IsKinsokuKuto( const wchar_t *pLine, CLogicInt length )
 	@param[in] nCharChars 現在位置の文字サイズ
 	@param[in] nCharChars2 現在位置の次の文字サイズ
 
-	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離
+	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
 */
 bool CLayoutMgr::IsKinsokuPosHead(
 	CLayoutInt nRest,
@@ -978,7 +969,7 @@ bool CLayoutMgr::IsKinsokuPosHead(
 	@param[in] nCharChars 現在位置の文字サイズ
 	@param[in] nCharChars2 現在位置の次の文字サイズ
 
-	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離
+	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
 */
 bool CLayoutMgr::IsKinsokuPosTail(
 	CLayoutInt nRest,
@@ -1210,8 +1201,8 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	CMemoryIterator it( pLayoutPrev, m_nTabSpace );
 
 	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
-	bool bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
-	const wchar_t* szSpecialIndentChar = m_pcEditDoc->GetDocumentAttribute().m_szIndentChars;
+	bool bZenSpace = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
+	const wchar_t* szSpecialIndentChar = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && WCODE::isIndentChar(it.getCurrentChar(),bZenSpace) )

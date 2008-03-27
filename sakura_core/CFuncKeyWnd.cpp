@@ -89,7 +89,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
 	m_hFont = ::CreateFontIndirect( &lf );
 
-	m_bSizeBox = FALSE;
+	m_bSizeBox = false;
 	m_hwndSizeBox = NULL;
 	m_nTimerCount = 0;
 
@@ -110,7 +110,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 
 
 /* ウィンドウ オープン */
-HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, BOOL bSizeBox )
+HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
 	m_pCEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
@@ -468,7 +468,7 @@ void CFuncKeyWnd::CreateButtons( void )
 
 
 /*! サイズボックスの表示／非表示切り替え */
-void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
+void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 {
 
 	RECT		rc;
@@ -479,7 +479,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 	if( m_bSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
-		m_bSizeBox = FALSE;
+		m_bSizeBox = false;
 		OnSize( NULL, 0, 0, 0 );
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
@@ -497,7 +497,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 			(LPVOID) NULL			/* pointer not needed				*/
 		);
 		::ShowWindow( m_hwndSizeBox, SW_SHOW );
-		m_bSizeBox = TRUE;
+		m_bSizeBox = true;
 		OnSize( NULL, 0, 0, 0 );
 	}
 	return;
@@ -509,7 +509,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 // ファンクションキー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときに親ウィンドウからON/OFFを
 //	呼び出してもらうことにより、余計な負荷を停止したい。
-void CFuncKeyWnd::Timer_ONOFF( BOOL bStart )
+void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 {
 	if( NULL != GetHwnd() ){
 		if( bStart ){

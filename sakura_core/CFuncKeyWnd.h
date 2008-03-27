@@ -34,10 +34,10 @@ public:
 	/*
 	|| メンバ関数
 	*/
-	HWND Open( HINSTANCE, HWND, CEditDoc*, BOOL );	/* ウィンドウ オープン */
+	HWND Open( HINSTANCE, HWND, CEditDoc*, bool );	/* ウィンドウ オープン */
 	void Close( void );	/* ウィンドウ クローズ */
-	void SizeBox_ONOFF( BOOL );	/* サイズボックスの表示／非表示切り替え */
-	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060126 aroka */
+	void SizeBox_ONOFF( bool );	/* サイズボックスの表示／非表示切り替え */
+	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060126 aroka */
 	/*
 	|| メンバ変数
 	*/
@@ -50,7 +50,7 @@ private:
 	WCHAR			m_szFuncNameArr[12][256];
 	HWND			m_hwndButtonArr[12];
 	HFONT			m_hFont;	/*!< 表示用フォント */
-	BOOL			m_bSizeBox;
+	bool			m_bSizeBox;
 	HWND			m_hwndSizeBox;
 	int				m_nTimerCount;
 	int				m_nButtonGroupNum; // Openで初期化

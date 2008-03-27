@@ -42,7 +42,6 @@ inline int my_iskanji2( int c )
 #define LF_					'\012'
 #define ESC_				'\x1b'
 #define CRLF_				"\015\012"
-#define LFCR_				"\012\015"
 
 //ANSI定数
 namespace ACODE{
@@ -55,7 +54,6 @@ namespace ACODE{
 
 	//文字列
 	static const char CRLF[] = CRLF_;
-	static const char LFCR[] = LFCR_;
 
 	//特殊 (BREGEXP)
 	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFF;
@@ -72,7 +70,6 @@ namespace WCODE{
 
 	//文字列
 	static const wchar_t CRLF[] = LTEXT(CRLF_);
-	static const wchar_t LFCR[] = LTEXT(LFCR_);
 
 	//特殊 (BREGEXP)
 	//$$ UNICODE版の仮デリミタ。bregonigの仕様がよくわかんないので、とりあえずこんな値にしてます。
