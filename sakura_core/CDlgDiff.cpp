@@ -63,8 +63,8 @@ CDlgDiff::CDlgDiff()
 	m_szFile2[0] = 0;
 	//m_nDiffFlgFile12 = 1;
 	m_nDiffFlgOpt    = 0;
-	m_bIsModified    = FALSE;
-	m_bIsModifiedDst = FALSE;
+	m_bIsModified    = false;
+	m_bIsModifiedDst = false;
 	m_hWnd_Dst       = NULL;
 	return;
 }
@@ -75,7 +75,7 @@ int CDlgDiff::DoModal(
 	HWND				hwndParent,
 	LPARAM				lParam,
 	const TCHAR*		pszPath,		//自ファイル
-	BOOL				bIsModified		//自ファイル編集中？
+	bool				bIsModified		//自ファイル編集中？
 )
 {
 	_tcscpy(m_szFile1, pszPath);
@@ -213,7 +213,7 @@ void CDlgDiff::SetData( void )
 		HWND		hwndList;
 		int			nRowNum;
 		EditNode	*pEditNode;
-		FileInfo	*pFileInfo;
+		EditInfo	*pFileInfo;
 		int			i;
 		int			nItem;
 		WIN_CHAR	szName[_MAX_PATH];
@@ -231,7 +231,7 @@ void CDlgDiff::SetData( void )
 			{
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessageAny( pEditNode[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
-				pFileInfo = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+				pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
 				if ( pEditNode[i].GetHwnd() == pCEditDoc->GetOwnerHwnd() )
@@ -249,7 +249,7 @@ void CDlgDiff::SetData( void )
 
 				// gm_pszCodeNameArr_Bracket からコピーするように変更
 				if(IsValidCodeTypeExceptSJIS(pFileInfo->m_nCharCode)){
-					_tcscat( szName, gm_pszCodeNameArr_Bracket[pFileInfo->m_nCharCode] );
+					_tcscat( szName, CCodeTypeName(pFileInfo->m_nCharCode).Bracket() );
 				}
 
 				/* リストに登録する */
@@ -319,7 +319,7 @@ int CDlgDiff::GetData( void )
 	//相手ファイル名
 	_tcscpy( m_szFile2, _T("") );
 	m_hWnd_Dst = NULL;
-	m_bIsModifiedDst = FALSE;
+	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
 		::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, _countof2(m_szFile2) );
@@ -332,7 +332,7 @@ int CDlgDiff::GetData( void )
 	{
 		HWND		hwndList;
 		int			nItem;
-		FileInfo	*pFileInfo;
+		EditInfo	*pFileInfo;
 
 		/* リストから相手のウインドウハンドルを取得 */
 		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
@@ -343,7 +343,7 @@ int CDlgDiff::GetData( void )
 
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
-			pFileInfo = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 			_tcscpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;

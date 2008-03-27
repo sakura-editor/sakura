@@ -38,6 +38,7 @@ class CDlgDiff;
 /*!
 	@brief DIFF差分表示ダイアログボックス
 */
+//	Feb. 28, 2004 genta 最後に選択されていた番号を保存する
 class CDlgDiff : public CDialog
 {
 public:
@@ -49,15 +50,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, BOOL );	/* モーダルダイアログの表示 */
-
-	SFilePath	m_szFile1;	/* 自ファイル */
-	SFilePath	m_szFile2;	/* 相手ファイル */
-	BOOL	m_bIsModified;			/* 自ファイル更新中 */
-	BOOL	m_bIsModifiedDst;		/* 相手ファイル更新中 */
-	int		m_nDiffFlgOpt;			/* DIFFオプション */
-	//int		m_nDiffFlgFile12;		/* 新旧ファイル */
-	HWND	m_hWnd_Dst;				/* 相手ウインドウハンドル */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, bool );	/* モーダルダイアログの表示 */
 
 protected:
 	/*
@@ -72,8 +65,16 @@ protected:
 	int		GetData( void );	/* ダイアログデータの取得 */
 
 private:
-	//	Feb. 28, 2004 genta 最後に選択されていた番号を保存する
-	int m_nIndexSave;
+	int			m_nIndexSave;		// 最後に選択されていた番号
+
+public:
+	SFilePath	m_szFile1;			// 自ファイル
+	SFilePath	m_szFile2;			// 相手ファイル
+	bool		m_bIsModified;		// 自ファイル更新中
+	bool		m_bIsModifiedDst;	// 相手ファイル更新中
+	int			m_nDiffFlgOpt;		// DIFFオプション
+	HWND		m_hWnd_Dst;			// 相手ウインドウハンドル
+
 };
 
 

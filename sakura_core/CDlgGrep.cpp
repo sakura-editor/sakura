@@ -16,18 +16,17 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <shellapi.h>
-
-
 #include "sakura_rc.h"
 #include "CDlgGrep.h"
 #include "debug.h"
-
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"
 #include "util/file.h"
 #include "util/shell.h"
 #include "CBregexp.h"
+#include "util/os.h"
+#include "CSakuraEnvironment.h"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -118,9 +117,10 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// 2002/09/22 Moca Add
 	int i;
 	/* 文字コードセット選択コンボボックス初期化 */
-	for( i = 0; i < gm_nCodeComboNameArrNum; ++i ){
-		int idx = ::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), CB_ADDSTRING,   0, (LPARAM)gm_pszCodeComboNameArr[i] );
-		::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), CB_SETITEMDATA, idx, gm_nCodeComboValueArr[i] );
+	CCodeTypesForCombobox cCodeTypes;
+	for( i = 0; i < cCodeTypes.GetCount(); ++i ){
+		int idx = ::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), CB_ADDSTRING,   0, (LPARAM)cCodeTypes.GetName(i) );
+		::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), CB_SETITEMDATA, idx, cCodeTypes.GetCode(i) );
 	}
 	//	2007.02.09 bosagami
 	HWND hFolder = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
@@ -151,27 +151,21 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		}
 		DragQueryFile((HDROP)wparam, 0, sPath, _countof2(sPath) - 1);
 
-		/* ショートカット(.lnk)の解決 */
-		//	ショートカットの先は別のディレクトリかもしれないので
-		//	ファイル名を切り捨てる前に変換する
-		SFilePath szWork;
-		if( ResolveShortcutLink( NULL, sPath, szWork ) ){
-			_tcscpy(sPath, szWork);
-		}
+		//ファイルパスの解決
+		CSakuraEnvironment::ResolvePath(sPath);
 		
 		//	ファイルがドロップされた場合はフォルダを切り出す
 		//	フォルダの場合は最後が失われるのでsplitしてはいけない．
 		if( IsFileExists( sPath, true )){	//	第2引数がtrueだとディレクトリは対象外
+			SFilePath szWork;
 			SplitPath_FolderAndFile( sPath, szWork, NULL );
 			_tcscpy( sPath, szWork );
 		}
 
-		/* ロングファイル名を取得する */
-		if( ::GetLongFileName( sPath, szWork ) ){
-			_tcscpy( sPath, szWork );
-		}
-		SetWindowText(hwnd, szWork);
-	} while(0);
+		SetWindowText(hwnd, sPath);
+	}
+	while(0);
+
 	return  CallWindowProc((WNDPROC)g_pOnFolderProc,hwnd,msg,wparam,lparam);
 }
 
@@ -380,7 +374,8 @@ void CDlgGrep::SetData( void )
 		ECodeType nCharSet;
 		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
 		nCurIdx = ::SendMessageAny( hWndCombo , CB_GETCURSEL, 0, 0 );
-		for( nIdx = 0; nIdx < gm_nCodeComboNameArrNum; nIdx++ ){
+		CCodeTypesForCombobox cCodeTypes;
+		for( nIdx = 0; nIdx < cCodeTypes.GetCount(); nIdx++ ){
 			nCharSet = (ECodeType)::SendMessageAny( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
 			if( nCharSet == m_nGrepCharSet ){
 				nCurIdx = nIdx;
@@ -521,16 +516,17 @@ int CDlgGrep::GetData( void )
 		return FALSE;
 	}
 
-	TCHAR szCurDirOld[MAX_PATH];
-	::GetCurrentDirectory( MAX_PATH, szCurDirOld );
-	/* 相対パス→絶対パス */
-	if( 0 == ::SetCurrentDirectory( m_szFolder ) ){
-		WarningMessage(	GetHwnd(), _T("検索対象フォルダが正しくありません。") );
-		::SetCurrentDirectory( szCurDirOld );
-		return FALSE;
+	{
+		//カレントディレクトリを保存。このブロックから抜けるときに自動でカレントディレクトリは復元される。
+		CCurrentDirectoryBackupPoint cCurDirBackup;
+		
+		// 相対パス→絶対パス
+		if( !::SetCurrentDirectory( m_szFolder ) ){
+			WarningMessage(	GetHwnd(), _T("検索対象フォルダが正しくありません。") );
+			return FALSE;
+		}
+		::GetCurrentDirectory( MAX_PATH, m_szFolder );
 	}
-	::GetCurrentDirectory( MAX_PATH, m_szFolder );
-	::SetCurrentDirectory( szCurDirOld );
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
 	/* 検索文字列 */
