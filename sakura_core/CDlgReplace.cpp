@@ -304,7 +304,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_CHK_PASTE:
 		/* テキストの貼り付け */
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE ) &&
-			!pcEditView->m_pcEditDoc->IsEnablePaste() ){
+			!pcEditView->m_pcEditDoc->m_cDocEditor.IsEnablePaste() ){
 			OkMessage( GetHwnd(), _T("クリップボードに有効なデータがありません！") );
 			::CheckDlgButton( GetHwnd(), IDC_CHK_PASTE, FALSE );
 		}

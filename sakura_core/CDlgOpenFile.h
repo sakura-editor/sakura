@@ -51,63 +51,40 @@ struct OPENFILENAMEZ : public OPENFILENAME {
 class SAKURA_CORE_API CDlgOpenFile
 {
 public:
-	/*
-	||  Constructors
-	*/
+	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
 	~CDlgOpenFile();
-	/*
-	||  Attributes & Operations
-	*/
-	void Create( HINSTANCE, HWND, const TCHAR*, const TCHAR*, const TCHAR** = NULL,const TCHAR** = NULL);
-	void Create2(
-		HINSTANCE hInstance,
-		HWND hwndParent,
-		const TCHAR* pszUserWildCard,
-		const TCHAR* pszDefaultPath,
-		TCHAR** ppszMRU,
-		TCHAR** ppszOPENFOLDER
-	)
-	{
-		Create(
-			hInstance,
-			hwndParent,
-			pszUserWildCard,
-			pszDefaultPath,
-			(const TCHAR**)ppszMRU,
-			(const TCHAR**)ppszOPENFOLDER
-		);
-	}
-	//void Create( HINSTANCE, HWND, const char*, const char* );
-	//	2002/08/21 moca	引数追加
-	BOOL DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
-	//	2002/08/21 30,2002 moca	引数追加
-	BOOL DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
-	BOOL DoModalOpenDlg( TCHAR* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
-	//	Feb. 9, 2001 genta	引数追加
-	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( TCHAR* , ECodeType*, CEOL*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	void Create(
+		HINSTANCE					hInstance,
+		HWND						hwndParent,
+		const TCHAR*				pszUserWildCard,
+		const TCHAR*				pszDefaultPath,
+		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
+		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
+	);
 
-//	INT_PTR DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	//操作
+	bool DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */	//2002/08/21 moca	引数追加
+	bool DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */	//2002/08/21 30,2002 moca	引数追加
+	bool DoModalOpenDlg( SLoadInfo* pLoadInfo );	/* 開くダイアグ モーダルダイアログの表示 */
+	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode );	/* 保存ダイアログ モーダルダイアログの表示 */
 
+public:
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hWnd;			/* このダイアログのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
-//	int				m_nSettingType;
 
 	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
 	ECodeType		m_nCharCode;					/* 文字コード */
-//	char			m_szHelpFile[_MAX_PATH + 1];
-//	int				m_nHelpTopicID;
-	CEOL			m_cEol;	//	Feb. 9, 2001 genta
-	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
-	//	Jul. 26, 2003 ryoji BOM
-	bool			m_bBom;	//!< BOMを付けるかどうか
+	CEol			m_cEol;		//	Feb. 9, 2001 genta
+	bool			m_bUseEol;	//	Feb. 9, 2001 genta
+	
+	bool			m_bBom;		//!< BOMを付けるかどうか	//	Jul. 26, 2003 ryoji BOM
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
@@ -123,7 +100,7 @@ protected:
 	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
 	static COsVersionInfo m_cOsVer;
 	BOOL IsOfnV5( void ) { return ( m_cOsVer.GetVersion() && (m_cOsVer.IsWin2000_or_later() || m_cOsVer.IsWinMe()) ); }
-	void InitOfn( OPENFILENAMEZ& );
+	void InitOfn( OPENFILENAMEZ* );
 
 	// 2005.11.02 ryoji 初期レイアウト設定処理
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
@@ -133,9 +110,9 @@ protected:
 
 	// 2006.09.03 Moca ファイルダイアログのエラー回避
 	//! リトライ機能付き GetOpenFileName
-	BOOL GetOpenFileNameRecover( OPENFILENAMEZ& ofn );
+	bool _GetOpenFileNameRecover( OPENFILENAMEZ* ofn );
 	//! リトライ機能付き GetOpenFileName
-	BOOL GetSaveFileNameRecover( OPENFILENAMEZ& ofn );
+	bool GetSaveFileNameRecover( OPENFILENAMEZ* ofn );
 
 	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 };
