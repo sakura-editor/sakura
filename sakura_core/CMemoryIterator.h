@@ -34,7 +34,7 @@ public:
 	//CDocLine用コンストラクタ
 	CMemoryIterator( const CDocLine* pcT, CLayoutInt nTabSpace )
 	: m_pLine( pcT ? pcT->GetPtr() : NULL )
-	, m_nLineLen( pcT ? pcT->GetLength() : 0 )
+	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
 	, m_nTabSpace( nTabSpace )
 	, m_nIndent( CLayoutInt(0) )
 	{
@@ -44,7 +44,7 @@ public:
 	//CLayout用コンストラクタ
 	CMemoryIterator( const CLayout* pcT, CLayoutInt nTabSpace )
 	: m_pLine( pcT ? pcT->GetPtr() : NULL )
-	, m_nLineLen( pcT ? pcT->GetLength() : 0 )
+	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
 	, m_nTabSpace( nTabSpace )
 	, m_nIndent( pcT ? pcT->GetIndent() : CLayoutInt(0) )
 	{

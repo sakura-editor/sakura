@@ -1,13 +1,15 @@
 #pragma once
 
+#include "CDocListener.h"
+
 class CEditWnd;
 
-class CMainStatusBar{
+class CMainStatusBar : public CDocListenerEx{
 public:
+	//作成・破棄
 	CMainStatusBar(CEditWnd* pOwner);
-
-	void CreateStatusBar( void );		// ステータスバー作成
-	void DestroyStatusBar( void );		/* ステータスバー破棄 */
+	void CreateStatusBar();		// ステータスバー作成
+	void DestroyStatusBar();		/* ステータスバー破棄 */
 	void SendStatusMessage2( const TCHAR* msg );	//	Jul. 9, 2005 genta メニューバー右端には出したくない長めのメッセージを出す
 	/*!	SendStatusMessage2()が効き目があるかを予めチェック
 		@date 2005.07.09 genta
@@ -16,7 +18,8 @@ public:
 		
 		@sa SendStatusMessage2
 	*/
-	bool SendStatusMessage2IsEffective(void) const {
+	bool SendStatusMessage2IsEffective() const
+	{
 		return NULL != m_hwndStatusBar;
 	}
 
@@ -26,7 +29,6 @@ public:
 
 	//設定
 	void SetStatusText(int nIndex, int nOption, const TCHAR* pszText);
-
 private:
 	CEditWnd*	m_pOwner;
 	HWND		m_hwndStatusBar;

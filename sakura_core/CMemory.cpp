@@ -50,88 +50,57 @@
 #include "debug.h"
 #include "CRunningTimer.h"
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//               コンストラクタ・デストラクタ                  //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
-
-
-
-/*///////////////////////////////////////////////////////////////////////////
-//
-//	CMemory::CMemory
-//	CMemory()
-//
-//	説明
-//		CMemoryクラス コンストラクタ
-//
-///////////////////////////////////////////////////////////////////////////*/
-CMemory::CMemory()
+void CMemory::_init_members()
 {
 	m_nDataBufSize = 0;
 	m_pData = NULL;
 	m_nDataLen = 0;
-	return;
 }
 
-
-
-/*///////////////////////////////////////////////////////////////////////////
-//
-//	CMemory::CMemory
-//	CMemory( const char* pData, int nDataLen )
-//
-//	引数
-//	  pData		格納データアドレス
-//	  nDataLen	格納データの有効長
-//
-//	説明
-//		CMemoryクラス  コンストラクタ
-//
-//
-//	戻値
-//		なし
-//
-//	備考
-//		格納データにはNULLを含むことができる
-//
-///////////////////////////////////////////////////////////////////////////*/
-CMemory::CMemory( const void* pData, int nDataLenBytes )
+CMemory::CMemory()
 {
-	m_nDataBufSize = 0;
-	m_pData = NULL;
-	m_nDataLen = 0;
+	_init_members();
+}
+
+/*
+	@note 格納データにはNULLを含むことができる
+*/
+CMemory::CMemory(
+	const void*	pData,			//!< 格納データアドレス
+	int			nDataLenBytes	//!< 格納データの有効長
+)
+{
+	_init_members();
 	SetRawData( pData, nDataLenBytes );
-	return;
+}
+
+CMemory::CMemory(const CMemory& rhs)
+{
+	_init_members();
+	SetRawData(rhs);
 }
 
 
 CMemory::~CMemory()
 {
 	_Empty();
-	return;
 }
 
 
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          演算子                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//const CMemory& CMemory::operator = ( const char* pszStr )
-//{
-//	SetData( pszStr, strlen( pszStr ) );
-//	return *this;
-//}
-
-/******
-const CMemory& CMemory::operator=( const char* pData, int nDataLen )
+const CMemory& CMemory::operator = ( const CMemory& rhs )
 {
-	SetData( pData, nDataLen );
-	return *this;
-}
-*******/
-
-const CMemory& CMemory::operator = ( const CMemory& cMemory )
-{
-	if( this != &cMemory ){
-		SetRawData( cMemory );
+	if( this != &rhs ){
+		SetRawData( rhs );
 	}
 	return *this;
 }
@@ -139,6 +108,9 @@ const CMemory& CMemory::operator = ( const CMemory& cMemory )
 
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         実装補助                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 
@@ -325,6 +297,7 @@ void CMemory::SetRawData( const CMemory& pcmemData )
 /* バッファの最後にデータを追加する（publicメンバ）*/
 void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
 {
+	if(nDataLenBytes<=0)return;
 	AllocBuffer( m_nDataLen + nDataLenBytes );
 	_AddData( pData, nDataLenBytes );
 }
@@ -368,6 +341,7 @@ void CMemory::_SetRawLength(int nLength)
 {
 	assert(m_nDataLen <= m_nDataBufSize-2);
 	m_nDataLen = nLength;
+	assert(m_nDataLen <= m_nDataBufSize-2);
 	m_pData[m_nDataLen  ]=0;
 	m_pData[m_nDataLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
 }

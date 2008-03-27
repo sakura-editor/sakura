@@ -50,8 +50,8 @@ public:
 	CMacro( EFunctionCode nFuncID );	//	ã@î\IDÇéwíËÇµÇƒèâä˙âª
 	~CMacro();
 
-	void SetNext(CMacro* pNext){ m_pNext = pNext; };
-	CMacro* GetNext(){ return m_pNext;};
+	void SetNext(CMacro* pNext){ m_pNext = pNext; }
+	CMacro* GetNext(){ return m_pNext; }
 	void Exec( CEditView* pcEditView ) const; //2007.09.30 kobake constí«â¡
 	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake constí«â¡
 	

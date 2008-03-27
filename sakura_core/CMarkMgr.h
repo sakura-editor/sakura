@@ -65,7 +65,7 @@ public:
 		//	constructor
 		CMark( const CLogicPoint& pt ) : m_ptLogic(pt) { }
 
-		int GetLine(void) const { return m_ptLogic.y; }
+		int GetLineNo(void) const { return m_ptLogic.y; }
 		int GetPos(void) const { return m_ptLogic.x; }
 		void SetPosition(const CLogicPoint& pt) { m_ptLogic=pt; }
 

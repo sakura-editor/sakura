@@ -31,7 +31,7 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 				CShareData::getInstance()->AddToSearchKeyArr( szText );
 
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
-				::SetFocus( m_pOwner->GetActiveView().m_hWnd );
+				m_pOwner->GetActiveView().SetFocus();
 
 				// 検索開始時のカーソル位置登録条件を変更 02/07/28 ai start
 				m_pOwner->GetActiveView().m_ptSrchStartPos_PHY = m_pOwner->GetActiveView().GetCaret().GetCaretLogicPos();
@@ -110,9 +110,7 @@ void CMainToolBar::CreateToolBar( void )
 		);
 
 		if( NULL == m_hwndReBar ){
-			::MYMESSAGEBOX( m_pOwner->GetHwnd(), MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-				_T("Rebar の作成に失敗しました。")
-			);
+			TopWarningMessage( m_pOwner->GetHwnd(), _T("Rebar の作成に失敗しました。") );
 			return;
 		}
 
@@ -150,9 +148,7 @@ void CMainToolBar::CreateToolBar( void )
 		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat = FALSE;
 		}
-		::MYMESSAGEBOX( m_pOwner->GetHwnd(), MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-			_T("ツールバーの作成に失敗しました。")
-		);
+		TopWarningMessage( m_pOwner->GetHwnd(), _T("ツールバーの作成に失敗しました。") );
 		DestroyToolBar();	// 2006.06.17 ryoji
 	}
 	else{

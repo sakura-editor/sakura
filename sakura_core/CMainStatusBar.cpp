@@ -13,7 +13,7 @@ CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 
 //	キーワード：ステータスバー順序
 /* ステータスバー作成 */
-void CMainStatusBar::CreateStatusBar( void )
+void CMainStatusBar::CreateStatusBar()
 {
 	if( m_hwndStatusBar )return;
 
@@ -51,7 +51,7 @@ void CMainStatusBar::CreateStatusBar( void )
 
 
 /* ステータスバー破棄 */
-void CMainStatusBar::DestroyStatusBar( void )
+void CMainStatusBar::DestroyStatusBar()
 {
 	if( NULL != m_hwndProgressBar ){
 		::DestroyWindow( m_hwndProgressBar );
@@ -61,24 +61,22 @@ void CMainStatusBar::DestroyStatusBar( void )
 	m_hwndStatusBar = NULL;
 
 	if( NULL != m_pOwner->m_CFuncKeyWnd.GetHwnd() ){
-		BOOL bSizeBox;
+		bool bSizeBox;
 		if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 			/* サイズボックスの表示／非表示切り替え */
-			bSizeBox = FALSE;
+			bSizeBox = false;
 		}
 		else{
-			bSizeBox = TRUE;
+			bSizeBox = true;
 			/* ステータスパーを表示している場合はサイズボックスを表示しない */
 			if( NULL != m_hwndStatusBar ){
-				bSizeBox = FALSE;
+				bSizeBox = false;
 			}
 		}
 		m_pOwner->m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 	}
 	//スプリッターの、サイズボックスの位置を変更
 	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1 );
-
-	return;
 }
 
 
@@ -109,3 +107,5 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 {
 	StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText );
 }
+
+
