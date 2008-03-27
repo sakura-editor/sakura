@@ -64,8 +64,24 @@ public:
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
 
-	static bool OpenNewEditor( HINSTANCE, HWND, const TCHAR*, ECodeType, BOOL, bool sync = false, const TCHAR* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
-	static bool OpenNewEditor2( HINSTANCE, HWND , const FileInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
+	//ウィンドウ管理
+	static bool OpenNewEditor(							//!< 新規編集ウィンドウの追加 ver 0
+		HINSTANCE			hInstance,					//!< [in] インスタンスID (実は未使用)
+		HWND				hWndParent,					//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
+		const SLoadInfo&	sLoadInfo,					//!< [in]
+		const TCHAR*		szCmdLineOption	= NULL,		//!< [in] 追加のコマンドラインオプション
+		bool				sync			= false,	//!< [in] trueなら新規エディタの起動まで待機する
+		const TCHAR*		szCurDir		= NULL		//!< [in] 新規エディタのカレントディレクトリ
+	);
+	static bool OpenNewEditor2(						//!< 新規編集ウィンドウの追加 ver 1
+		HINSTANCE		hInstance,
+		HWND			hWndParent,
+		const EditInfo*	pfi,
+		bool			bViewMode,
+		bool			sync		= false
+	);
+	static void ActiveNextWindow();
+	static void ActivePrevWindow();
 
 	static BOOL CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	static void TerminateApplication( HWND hWndFrom );	/* サクラエディタの全終了 */	// 2006.12.25 ryoji 引数追加
@@ -80,7 +96,7 @@ protected:
 	void	DoGrep();	//Stonee, 2001/03/21
 	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const TCHAR* );	/*!< タスクトレイのアイコンに関する処理 */
 	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
-	void OnNewEditor( void ); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
+	void OnNewEditor(); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
 	static INT_PTR CALLBACK ExitingDlgProc(	/*!< 終了ダイアログ用プロシージャ */	// 2006.07.02 ryoji CControlProcess から移動
 		HWND	hwndDlg,	// handle to dialog box
