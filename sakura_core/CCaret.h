@@ -91,9 +91,9 @@ public:
 	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos );		//!< マウス等による座標指定によるカーソル移動
 	CLayoutInt Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect );	//!< カーソル上下移動処理
 	CLayoutInt MoveCursor(												//!< 行桁指定によるカーソル移動
-		CLayoutPoint	ptWk_CaretPos,
-		bool			bScroll,
-		int				nCaretMarginRate = _CARETMARGINRATE
+		CLayoutPoint	ptWk_CaretPos,									//!< [in] 移動先レイアウト位置
+		bool			bScroll,										//!< [in] true: 画面位置調整有り  false: 画面位置調整無し
+		int				nCaretMarginRate	= _CARETMARGINRATE			//!< [in] 縦スクロール開始位置を決める値
 	);
 	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 
@@ -121,7 +121,7 @@ public:
 
 	//描画？
 	void ShowEditCaret();    //!< キャレットの表示・更新
-	void DrawCaretPosInfo(); //!< キャレットの行桁位置を表示する
+	void ShowCaretPosInfo(); //!< キャレットの行桁位置を表示する
 
 	//API呼び出し
 	void ShowCaret_( HWND hwnd );
