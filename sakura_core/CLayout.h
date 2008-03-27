@@ -29,6 +29,8 @@ class CLayoutMgr;
 -----------------------------------------------------------------------*/
 class CLayout
 {
+protected:
+	friend class CLayoutMgr; //####仮
 public:
 	/*
 	||  Constructors
@@ -54,10 +56,10 @@ public:
 	void DUMP( void );
 	
 	// m_ptLogicPos.xで補正したあとの文字列を得る
-	const wchar_t* GetPtr() const   { return m_pCDocLine->m_cLine.GetStringPtr() + m_ptLogicPos.x; };
+	const wchar_t* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; };
 	int GetLengthWithEOL() const    { return m_nLength;	};	//	ただしEOLは常に1文字とカウント？？
 	int GetLengthWithoutEOL() const { return m_nLength - (m_cEol.GetLen() ? 1 : 0);	};
-	CLogicInt GetLength() const {	return m_nLength;	};	//	CMemoryIterator用（EOL含む）
+	//CLogicInt GetLength() const {	return m_nLength;	};	//	CMemoryIterator用（EOL含む）
 	CLayoutInt GetIndent() const {	return m_nIndent;	};	//!< このレイアウト行のインデントサイズを取得。単位は半角文字。	CMemoryIterator用
 
 	//取得インターフェース
@@ -77,20 +79,33 @@ public:
 	CLayoutInt CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const;
 
 	//! 文字列参照を取得
-	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLength()); }
-public:
-	CLayout*		m_pPrev;
-	CLayout*		m_pNext;
-	const CDocLine*	m_pCDocLine;
+	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLengthWithEOL()); }
+
+	//チェーン属性
+	CLayout* GetPrevLayout() const{ return m_pPrev; }
+	CLayout* GetNextLayout() const{ return m_pNext; }
+	void _SetPrevLayout(CLayout* pcLayout){ m_pPrev = pcLayout; }
+	void _SetNextLayout(CLayout* pcLayout){ m_pNext = pcLayout; }
+
+	//実データ参照
+	const CDocLine* GetDocLineRef() const{ return m_pCDocLine; }
+
+	//その他属性参照
+	const CEol& GetLayoutEol() const{ return m_cEol; }
 
 private:
+	CLayout*			m_pPrev;
+	CLayout*			m_pNext;
+
+	//データ参照範囲
+	const CDocLine*		m_pCDocLine;		//!< 実データへの参照
 	CLogicPoint			m_ptLogicPos;		//!< 対応するロジック参照位置
 	CLogicInt			m_nLength;			//!< このレイアウト行の長さ。文字単位。
+	
+	//その他属性
 	EColorIndexType		m_nTypePrev;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
 	CLayoutInt			m_nIndent;			//!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
-
-public:
-	CEOL			m_cEol;
+	CEol				m_cEol;
 };
 
 

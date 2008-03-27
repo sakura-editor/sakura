@@ -36,7 +36,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	CLayout*		pLayoutWork = pLayout;
 	if( pLayoutWork ){
 		while( 0 != pLayoutWork->GetLogicOffset() ){
-			pLayoutWork = pLayoutWork->m_pPrev;
+			pLayoutWork = pLayoutWork->GetPrevLayout();
 			nLineWork--;
 		}
 		nCurrentLineType = pLayoutWork->GetColorTypePrev();
@@ -63,7 +63,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	DLRArg.pcmemDeleted = pArg->pcmemDeleted;	// 削除されたデータを保存
 	DLRArg.pInsData = pArg->pInsData;			// 挿入するデータ
 	DLRArg.nInsDataLen = pArg->nInsDataLen;		// 挿入するデータの長さ
-	m_pcDocLineMgr->ReplaceData(
+	CSearchAgent(m_pcDocLineMgr).ReplaceData(
 		&DLRArg
 	);
 
@@ -111,7 +111,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		}
 	}
 	else{
-		if( NULL == pLayoutPrev->m_pNext ){
+		if( NULL == pLayoutPrev->GetNextLayout() ){
 			nRowNum =
 				m_pcDocLineMgr->GetLineCount() -
 				pLayoutPrev->GetLogicLineNo() - CLogicInt(1);

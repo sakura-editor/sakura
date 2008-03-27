@@ -51,13 +51,12 @@ class SAKURA_CORE_API CFuncLookup {
 public:
 	//	Oct. 15, 2001 genta 引数追加
 	// 2007.11.02 ryoji 引数変更（CSMacroMgr->MacroRec）
-	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
-		: m_pMacroRec( pMacroRec ), m_hInstance( hInst ), m_pCommon( pCom ) {}
-	CFuncLookup() : m_pMacroRec( NULL ), m_hInstance( NULL ) {}
+//	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
+//		: m_pMacroRec( pMacroRec ), m_pCommon( pCom ) {}
+	CFuncLookup() : m_pMacroRec( NULL ){}
 
-	void Init( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom ){
+	void Init( MacroRec* pMacroRec, CommonSetting* pCom ){
 		m_pMacroRec = pMacroRec;
-		m_hInstance = hInst;
 		m_pCommon = pCom;
 	}
 
@@ -77,7 +76,6 @@ public:
 
 
 private:
-	HINSTANCE m_hInstance;	//!< 文字列リソースを持つインスタンス
 	MacroRec* m_pMacroRec;	//!< マクロ情報	// 2007.11.02 ryoji メンバ変更（CSMacroMgr->MacroRec）
 	
 	CommonSetting* m_pCommon;	//! 共通設定データ領域へのポインタ

@@ -36,6 +36,7 @@
 #include "CFuncLookup.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 #include <stdio.h>
+#include "CNormalProcess.h"
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;
@@ -137,13 +138,13 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		return true;
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
-		if( ::LoadStringW_AnyBuild( m_hInstance, funccode, ptr, bufsize ) > 0 ){
+		if( ::LoadStringW_AnyBuild( CNormalProcess::Instance()->GetProcessInstance(), funccode, ptr, bufsize ) > 0 ){
 			return true;	// 定義されたコマンド
 		}
 	}
 
 	// 未定義コマンド
-	if( ::LoadStringW_AnyBuild( m_hInstance, F_DISABLE, ptr, bufsize ) > 0 ){
+	if( ::LoadStringW_AnyBuild( CNormalProcess::Instance()->GetProcessInstance(), F_DISABLE, ptr, bufsize ) > 0 ){
 		return false;
 	}
 	ptr[0] = LTEXT('\0');
