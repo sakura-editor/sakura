@@ -7,6 +7,8 @@ enum EConvertResult{
 	RESULT_FAILURE,  //!< 何らかの原因により失敗した。
 };
 
+#include "CEol.h"
+
 /*!
 	文字コード基底クラス。
 	
@@ -17,7 +19,13 @@ class CCodeBase{
 public:
 	virtual ~CCodeBase(){}
 //	virtual bool IsCode(const CMemory* pMem){return false;}  //!< 特定コードであればtrue
-	virtual EConvertResult CodeToUnicode(const CMemory* pSrc, CNativeW* pDst)=0; //!< 特定コード → UNICODE    変換
-	virtual EConvertResult UnicodeToCode(const CNativeW* pSrc, CMemory* pDst)=0; //!< UNICODE    → 特定コード 変換
+
+	//文字コード変換
+	virtual EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst)=0;	//!< 特定コード → UNICODE    変換
+	virtual EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst)=0;	//!< UNICODE    → 特定コード 変換
+
+	//ファイル形式
+	virtual void GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMデータ取得
+	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType)=0;					//!< 改行データ取得
 };
 
