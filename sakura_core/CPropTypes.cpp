@@ -1486,16 +1486,14 @@ int CPropTypes::GetData_p2( HWND hwndDlg )
 void CPropTypes::p3_Import_Colors( HWND hwndDlg )
 {
 	/* ファイルオープンダイアログの初期化 */
-	TCHAR*			pszMRU        = NULL;
-	TCHAR*			pszOPENFOLDER = NULL;
 	CDlgOpenFile	cDlgOpenFile;
-	cDlgOpenFile.Create2(
+	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
 		_T("*.col"),
 		m_pShareData->m_szIMPORTFOLDER, // インポート用フォルダ
-		&pszMRU,
-		&pszOPENFOLDER
+		std::vector<LPCTSTR>(),
+		std::vector<LPCTSTR>()
 	);
 	TCHAR	szPath[_MAX_PATH + 1] = _T("");
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -1586,16 +1584,14 @@ void CPropTypes::p3_Export_Colors( HWND hwndDlg )
 {
 	/* ファイルオープンダイアログの初期化 */
 	CDlgOpenFile	cDlgOpenFile;
-	TCHAR*			pszMRU                = NULL;
-	TCHAR*			pszOPENFOLDER         = NULL;
 	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-	cDlgOpenFile.Create2(
+	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
 		_T("*.col"),
 		m_pShareData->m_szIMPORTFOLDER, // インポート用フォルダ
-		&pszMRU,
-		&pszOPENFOLDER
+		std::vector<LPCTSTR>(),
+		std::vector<LPCTSTR>()
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;

@@ -329,7 +329,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				/* 機能に対応するキー名の取得(複数) */
 				CNativeT**	ppcAssignedKeyList;
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
-					m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr,
+					CNormalProcess::Instance()->GetProcessInstance(), m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr,
 					&ppcAssignedKeyList, nFuncCode,
 					FALSE	// 2007.02.22 ryoji デフォルト機能は取得しない
 				);	
@@ -537,7 +537,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		m_hInstance,
+		CNormalProcess::Instance()->GetProcessInstance(),
 		hwndDlg,
 		_T("*.key"),
 		szInitDir
@@ -610,7 +610,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 			//機能名を数値に置き換える。(数値の機能名もあるかも)
 			//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 			WCHAR	szFuncNameJapanese[256];
-			EFunctionCode n = CSMacroMgr::GetFuncInfoByName(m_hInstance, p, szFuncNameJapanese);
+			EFunctionCode n = CSMacroMgr::GetFuncInfoByName(CNormalProcess::Instance()->GetProcessInstance(), p, szFuncNameJapanese);
 			if( n == F_INVALID )
 			{
 				if( WCODE::is09(*p) )
@@ -659,7 +659,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		m_hInstance,
+		CNormalProcess::Instance()->GetProcessInstance(),
 		hwndDlg,
 		_T("*.key"),
 		szInitDir
@@ -696,7 +696,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 				WCHAR szFuncName[256];
 				WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-					m_hInstance,
+					CNormalProcess::Instance()->GetProcessInstance(),
 					m_pKeyNameArr[i].m_nFuncCodeArr[j],
 					szFuncName,
 					szFuncNameJapanese

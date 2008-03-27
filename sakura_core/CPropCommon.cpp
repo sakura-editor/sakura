@@ -32,6 +32,7 @@
 #include "funccode.h"	//Stonee, 2001/05/18
 #include "CEditApp.h"
 #include "util/shell.h"
+#include "CNormalProcess.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #if 1	//@@@ 2002.01.03 add MIK
@@ -166,7 +167,6 @@ CPropCommon::CPropCommon()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = 0;
@@ -191,9 +191,8 @@ CPropCommon::~CPropCommon()
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pMacro, CMenuDrawer* pMenuDrawer )
+void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pMacro, CMenuDrawer* pMenuDrawer )
 {
-	m_hInstance = hInstApp;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pcIcons = cIcons;
 	m_pcSMacro = pMacro;
@@ -201,7 +200,7 @@ void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cI
 	// 2007.11.02 ryoji マクロ設定を変更したあと、画面を閉じないでカスタムメニュー、ツールバー、
 	//                  キー割り当ての画面に切り替えた時に各画面でマクロ設定の変更が反映されるよう、
 	//                  m_MacroTable（ローカルメンバ）でm_cLookupを初期化する
-	m_cLookup.Init( m_hInstance, m_MacroTable, &m_Common );	//	機能名・番号resolveクラス．
+	m_cLookup.Init( m_MacroTable, &m_Common );	//	機能名・番号resolveクラス．
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	m_pcMenuDrawer = pMenuDrawer;
@@ -445,7 +444,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			memset_raw( p, 0, sizeof_raw( *p ) );
 			p->dwSize      = sizeof_raw( *p );
 			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance   = m_hInstance;
+			p->hInstance   = CNormalProcess::Instance()->GetProcessInstance();
 			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
 			p->pszIcon     = NULL;
 			p->pfnDlgProc  = (DLGPROC)(ComPropSheetInfoList[i].DProc);
@@ -467,7 +466,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE;
 	psh.hwndParent = m_hwndParent;
-	psh.hInstance  = m_hInstance;
+	psh.hInstance  = CNormalProcess::Instance()->GetProcessInstance();
 	psh.pszIcon    = NULL;
 	psh.pszCaption = _T("共通設定");
 	psh.nPages     = nIdx;
@@ -827,7 +826,7 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 
 
 	/* フリーカーソルモード */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_sGeneral.m_bIsFreeCursorMode );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_sGeneral.m_bIsFreeCursorMode ? 1 : 0 );
 
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord );
@@ -891,7 +890,7 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	}
 
 	/* フリーカーソルモード */
-	m_Common.m_sGeneral.m_bIsFreeCursorMode = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FREECARET );
+	m_Common.m_sGeneral.m_bIsFreeCursorMode = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FREECARET ) != 0;
 
 	/* 単語単位で移動するときに、単語の両端で止まるか */
 	m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD );

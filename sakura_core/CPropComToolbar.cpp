@@ -606,7 +606,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 			if( tbb.idCommand == F_DISABLE ){
 				auto_strcpy( szLabel, LTEXT("───────────") );	// nLength 未使用 2003/01/09 Moca
 			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
-				if( ::LoadStringW_AnyBuild( m_hInstance, tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
+				if( ::LoadStringW_AnyBuild( CNormalProcess::Instance()->GetProcessInstance(), tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
 					auto_strcpy( szLabel, LTEXT("――ツールバー折返――") );
 				}
 			}else{

@@ -78,7 +78,7 @@ public:
 
 protected:
 	void ReadOneline( const wstring& line );
-	bool WriteFile( const tstring& strFilename, const std::vector< wstring >& vecLine);
+	bool _WriteFile( const tstring& strFilename, const std::vector< wstring >& vecLine);
 
 
 	bool GetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, wstring& strEntryValue);

@@ -169,7 +169,7 @@ bool CProfile::WriteProfile(
 		vecLine.push_back( LTEXT("") );
 	}
 
-	return WriteFile( m_strProfileName, vecLine );
+	return _WriteFile( m_strProfileName, vecLine );
 }
 
 /*! ファイルへ書き込む
@@ -180,7 +180,7 @@ bool CProfile::WriteProfile(
 	@date 2004-01-28 D.S.Koba WriteProfile()から分離
 	@date 2004-01-29 genta stream使用をやめてCライブラリ使用に．
 */
-bool CProfile::WriteFile(
+bool CProfile::_WriteFile(
 	const tstring&			strFilename,	//!< [in]  ファイル名
 	const vector<wstring>&	vecLine			//!< [out] 文字列格納先
 )

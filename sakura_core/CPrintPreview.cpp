@@ -29,6 +29,7 @@
 #include "CEditApp.h"
 #include "util/window.h"
 #include "util/shell.h"
+#include "CSakuraEnvironment.h"
 using namespace std;
 
 #define MIN_PREVIEW_ZOOM 10
@@ -754,8 +755,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pLayoutMgr_Print->Create( &m_pParentWnd->GetDocument(), &m_pParentWnd->GetDocument().m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
-//	Types& ref = m_pParentWnd->GetDocument().GetDocumentAttribute();
-	Types ref = m_pParentWnd->GetDocument().GetDocumentAttribute();
+//	Types& ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
+	Types ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColms;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
@@ -778,7 +779,6 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_bKinsokuKuto = m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	m_pLayoutMgr_Print->SetLayoutInfo(
 		TRUE,	
-		NULL,	
 		ref
 	);
 	m_nAllPageNum = (Int)m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu );		/* 全ページ数 */
@@ -960,12 +960,12 @@ void CPrintPreview::OnPrint( void )
 	}
 
 	/* プリンタに渡すジョブ名を生成 */
-	if( ! m_pParentWnd->GetDocument().IsFilePathAvailable() ){	/* 現在編集中のファイルのパス */
+	if( ! m_pParentWnd->GetDocument().m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
 		_tcscpy( szJobName, _T("無題") );
 	}else{
 		TCHAR	szFileName[_MAX_FNAME];
 		TCHAR	szExt[_MAX_EXT];
-		_tsplitpath( m_pParentWnd->GetDocument().GetFilePath(), NULL, NULL, szFileName, szExt );
+		_tsplitpath( m_pParentWnd->GetDocument().m_cDocFile.GetFilePath(), NULL, NULL, szFileName, szExt );
 		auto_sprintf( szJobName, _T("%ts%ts"), szFileName, szExt );
 	}
 
@@ -1113,7 +1113,7 @@ void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 	int nDx = m_pPrintSetting->m_nPrintFontWidth;
 
 	// 左寄せ
-	m_pParentWnd->GetDocument().ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
+	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
 	Print_DrawLine(
 		hdc,
 		rect.UpperLeft(),
@@ -1124,7 +1124,7 @@ void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 	);
 
 	// 中央寄せ
-	m_pParentWnd->GetDocument().ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
+	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
 	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, wcslen(szHeaderWork), nDx); //テキスト幅
 	Print_DrawLine(
 		hdc,
@@ -1139,7 +1139,7 @@ void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 	);
 	
 	// 右寄せ
-	m_pParentWnd->GetDocument().ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
+	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
 	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, wcslen(szHeaderWork), nDx); //テキスト幅
 	Print_DrawLine(
 		hdc,
@@ -1171,7 +1171,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 	int nY = rect.bottom + m_pPrintSetting->m_nPrintFontHeight;
 
 	// 左寄せ
-	m_pParentWnd->GetDocument().ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
+	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
 	Print_DrawLine(
 		hdc,
 		CMyPoint(
@@ -1185,7 +1185,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 	);
 
 	// 中央寄せ
-	m_pParentWnd->GetDocument().ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
+	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
 	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, wcslen(szFooterWork), nDx); //テキスト幅
 	Print_DrawLine(
 		hdc,
@@ -1200,7 +1200,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 	);
 	
 	// 右寄せ
-	m_pParentWnd->GetDocument().ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
+	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
 	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, wcslen(szFooterWork), nDx); //テキスト幅
 	Print_DrawLine(
 		hdc,
@@ -1271,7 +1271,7 @@ void CPrintPreview::DrawPageText(
 			if( m_pPrintSetting->m_bPrintLineNumber ){
 				wchar_t		szLineNum[64];	//	行番号を入れる。
 				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-				if( m_pParentWnd->GetDocument().GetDocumentAttribute().m_bLineNumIsCRLF ){
+				if( m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){
 						wcscpy( szLineNum, L" " );
@@ -1285,9 +1285,9 @@ void CPrintPreview::DrawPageText(
 				}
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
-				if( 2 == m_pParentWnd->GetDocument().GetDocumentAttribute().m_nLineTermType ){
+				if( 2 == m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_nLineTermType ){
 					wchar_t szLineTerm[2];
-					auto_sprintf( szLineTerm, L"%lc", m_pParentWnd->GetDocument().GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
+					auto_sprintf( szLineTerm, L"%lc", m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
 					wcscat( szLineNum, szLineTerm );
 				}
 				else{
@@ -1334,7 +1334,7 @@ void CPrintPreview::DrawPageText(
 
 		// 2006.08.14 Moca 行番号が縦線の場合は1度に引く
 		if( m_pPrintSetting->m_bPrintLineNumber &&
-				1 == m_pParentWnd->GetDocument().GetDocumentAttribute().m_nLineTermType ){
+				1 == m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_nLineTermType ){
 			// 縦線は本文と行番号の隙間1桁の中心に作画する(画面作画では、右詰め)
 			::MoveToEx( hdc,
 				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
