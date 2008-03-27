@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CConvert.h"
 #include "Funccode.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "charcode.h"
 #include "CConvert_ToLower.h"
 #include "CConvert_ToUpper.h"

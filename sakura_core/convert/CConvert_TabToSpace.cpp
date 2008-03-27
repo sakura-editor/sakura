@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CConvert_TabToSpace.h"
 #include "charcode.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "util/string_ex2.h"
 
 //! TAB→空白
@@ -17,7 +17,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 	int			nPosDes;
 	int			nPosX;
 	int			nWork;
-	CEOL		cEol;
+	CEol		cEol;
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
@@ -60,7 +60,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 				}
 			}
 		}
-		auto_memcpy( &pDes[nPosDes], cEol.GetUnicodeValue(), cEol.GetLen() );
+		auto_memcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 		nPosDes += cEol.GetLen();
 	}
 	pDes[nPosDes] = L'\0';

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CConvert_Trim.h"
 #include "convert_util.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "charcode.h"
 #include "util/string_ex2.h"
 
@@ -25,7 +25,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	int			nBgn;
 	int			i,j;
 	int			nPosDes;
-	CEOL		cEol;
+	CEol		cEol;
 	int			nCharChars;
 
 	nBgn = 0;
@@ -59,7 +59,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 					nPosDes+=nLineLen-i;
 				}
 			}
-			wmemcpy( &pDes[nPosDes], cEol.GetUnicodeValue(), cEol.GetLen() );
+			wmemcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 			nPosDes += cEol.GetLen();
 		}
 	}
@@ -81,7 +81,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 					nPosDes+=j;
 				}
 			}
-			wmemcpy( &pDes[nPosDes], cEol.GetUnicodeValue(), cEol.GetLen() );
+			wmemcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 			nPosDes += cEol.GetLen();
 		}
 	}
