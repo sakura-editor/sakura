@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "string_ex2.h"
 #include "charcode.h"
-#include "CEOL.h"
+#include "CEol.h"
 
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count)
 {
@@ -102,13 +102,13 @@ int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c ){
 
 
 
-/* CR0LF0,CRLF,LFCR,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
+/* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
 const char* GetNextLine(
 	const char*		pData,
 	int				nDataLen,
 	int*			pnLineLen,
 	int*			pnBgn,
-	CEOL*			pcEol
+	CEol*			pcEol
 )
 {
 	int		i;
@@ -124,7 +124,7 @@ const char* GetNextLine(
 		/* 改行コードがあった */
 		if( pData[i] == '\n' || pData[i] == '\r' ){
 			/* 行終端子の種類を調べる */
-			pcEol->GetTypeFromString( &pData[i], nDataLen - i );
+			pcEol->SetTypeByString( &pData[i], nDataLen - i );
 			break;
 		}
 	}
@@ -139,11 +139,11 @@ const char* GetNextLine(
 	static メンバ関数
 */
 const wchar_t* GetNextLineW(
-	const wchar_t*	pData,	//!< [in]	検索文字列
-	int			nDataLen,	//!< [in]	検索文字列の文字数
-	int*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
-	int*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
-	CEOL*		pcEol		//!< [i/o]	EOL
+	const wchar_t*	pData,		//!< [in]	検索文字列
+	int				nDataLen,	//!< [in]	検索文字列の文字数
+	int*			pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
+	int*			pnBgn,		//!< [i/o]	検索文字列のオフセット位置
+	CEol*			pcEol		//!< [out]	EOL
 )
 {
 	int		i;
@@ -156,9 +156,9 @@ const wchar_t* GetNextLineW(
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
 		// 改行コードがあった
-		if( pData[i] == (wchar_t)0x000a || pData[i] == (wchar_t)0x000d ){
+		if( pData[i] == L'\n' || pData[i] == L'\r' ){
 			// 行終端子の種類を調べる
-			pcEol->SetType( CEOL::GetEOLTypeUni( &pData[i], nDataLen - i ) );
+			pcEol->SetTypeByString(&pData[i], nDataLen - i);
 			break;
 		}
 	}
@@ -166,41 +166,6 @@ const wchar_t* GetNextLineW(
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }
-
-/*!
-	GetNextLineのwchar_t版(ビックエンディアン用)
-	GetNextLineより作成
-	static メンバ関数
-*/
-const wchar_t* GetNextLineWB(
-	const wchar_t*	pData,	//!< [in]	検索文字列
-	int			nDataLen,	//!< [in]	検索文字列の文字数
-	int*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
-	int*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
-	CEOL*		pcEol		//!< [i/o]	EOL
-)
-{
-	int		i;
-	int		nBgn;
-	nBgn = *pnBgn;
-
-	pcEol->SetType( EOL_NONE );
-	if( *pnBgn >= nDataLen ){
-		return NULL;
-	}
-	for( i = *pnBgn; i < nDataLen; ++i ){
-		// 改行コードがあった
-		if( pData[i] == (wchar_t)0x0a00 || pData[i] == (wchar_t)0x0d00 ){
-			// 行終端子の種類を調べる
-			pcEol->SetType( CEOL::GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
-			break;
-		}
-	}
-	*pnBgn = i + pcEol->GetLen();
-	*pnLineLen = i - nBgn;
-	return &pData[nBgn];
-}
-
 
 
 
@@ -242,28 +207,6 @@ const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimi
 
 
 
-/* データを指定バイト数以内に切り詰める */
-int LimitStringLengthB( const char* pszData, int nDataLength, int nLimitLengthB, CMemory& cmemDes )
-{
-	int	i;
-	int	nCharChars;
-	int	nDesLen;
-	nDesLen = 0;
-	for( i = 0; i < nDataLength; ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeA::GetSizeOfChar( pszData, nDataLength, i );
-		if( 0 == nCharChars ){
-			nCharChars = 1;
-		}
-		if( nDesLen + nCharChars > nLimitLengthB ){
-			break;
-		}
-		nDesLen += nCharChars;
-		i += nCharChars;
-	}
-	cmemDes.SetRawData( pszData, nDesLen );
-	return nDesLen;
-}
 
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
 SAKURA_CORE_API int LimitStringLengthW(
