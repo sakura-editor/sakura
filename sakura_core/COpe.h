@@ -38,7 +38,7 @@ enum EOpeCode {
 class COpe {
 public:
 	COpe(EOpeCode eCode = OPE_UNKNOWN);		/* COpeクラス構築 */
-	~COpe();	/* COpeクラス消滅 */
+	virtual ~COpe();	/* COpeクラス消滅 */
 
 	void DUMP( void );	/* 編集操作要素のダンプ */
 
@@ -48,15 +48,50 @@ private:
 	EOpeCode	m_nOpe;						//!< 操作種別
 
 public:
-	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< キャレット位置。文字単位。
-	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。
-	CLogicPoint	m_ptCaretPos_PHY_After;		//!< キャレット位置。文字単位。
-
-	CLogicInt	m_nDataLen;					//!< 操作に関連するデータのサイズ
-	CNativeW	m_pcmemData;				//!< 操作に関連するデータ
+	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< キャレット位置。文字単位。			[共通]
+	CLogicPoint	m_ptCaretPos_PHY_After;		//!< キャレット位置。文字単位。			[共通]
 };
 
-typedef COpe* PCOpe;
+//!削除
+class CDeleteOpe : public COpe{
+public:
+	CDeleteOpe() : COpe(OPE_DELETE)
+	{
+		m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));
+		m_nDataLen = CLogicInt(0);
+	}
+public:
+	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
+	CLogicInt	m_nDataLen;					//!< 操作に関連するデータのサイズ		[DELETE]
+	CNativeW	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+};
+
+//!挿入
+class CInsertOpe : public COpe{
+public:
+	CInsertOpe() : COpe(OPE_INSERT) { }
+public:
+	CNativeW	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+};
+
+//!キャレット移動
+class CMoveCaretOpe : public COpe{
+public:
+	CMoveCaretOpe() : COpe(OPE_MOVECARET) { }
+	CMoveCaretOpe(const CLogicPoint& ptBefore, const CLogicPoint& ptAfter)
+	: COpe(OPE_MOVECARET)
+	{
+		m_ptCaretPos_PHY_Before = ptBefore;
+		m_ptCaretPos_PHY_After = ptAfter;
+	}
+};
+
+
+
+
+
+
+
 
 
 ///////////////////////////////////////////////////////////////////////

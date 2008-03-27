@@ -22,12 +22,9 @@ COpe::COpe(EOpeCode eCode)
 {
 	m_nOpe = eCode;					// 操作種別
 
-	m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));			//操作前のキャレット位置
 	m_ptCaretPos_PHY_Before.Set(CLogicInt(-1),CLogicInt(-1));	//カーソル位置
 	m_ptCaretPos_PHY_After.Set(CLogicInt(-1),CLogicInt(-1));	//カーソル位置
 
-	m_nDataLen = CLogicInt(0);	// 操作に関連するデータのサイズ
-	return;
 }
 
 
@@ -45,8 +42,8 @@ void COpe::DUMP( void )
 	MYTRACE_A( "\t\tm_nOpe                  = [%d]\n", m_nOpe               );
 	MYTRACE_A( "\t\tm_ptCaretPos_PHY_Before = [%d,%d]\n", m_ptCaretPos_PHY_Before.x, m_ptCaretPos_PHY_Before.y   );
 	MYTRACE_A( "\t\tm_ptCaretPos_PHY_After  = [%d,%d]\n", m_ptCaretPos_PHY_After.x, m_ptCaretPos_PHY_After.y   );
-	MYTRACE_A( "\t\tm_nDataLen              = [%d]\n",  m_nDataLen           );
-	MYTRACE_A( "\t\tm_pcmemData             = [%ls]\n", m_pcmemData.GetStringPtr() );
+//	MYTRACE_A( "\t\tm_nDataLen              = [%d]\n",  m_nDataLen           );
+//	MYTRACE_A( "\t\tm_pcmemData             = [%ls]\n", m_pcmemData.GetStringPtr() );
 #endif
 	return;
 }

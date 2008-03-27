@@ -172,7 +172,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				break;
 			case 2: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage(_T("BREGREP.DLLが使用できません。"));
 					return;
 				}
@@ -182,7 +182,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				break;
 			case 3: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage(_T("BREGREP.DLLが使用できません。"));
 					return;
 				}
@@ -190,7 +190,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				//	Jan. 10, 2005 genta 設定変更で使えるようになっている
 				//	可能性があるので，使用可能でなければ一応初期化を試みる
 				if ( ! m_pcmigemo->IsAvailable() && ! m_pcmigemo->Init() ){
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage(_T("MIGEMO.DLLが使用できません。"));
 					return;
 				}
@@ -200,7 +200,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 					m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp = true;
 					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
 				}else{
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage(_T("MIGEMOは使用できません。 "));
 					return;
 				}
@@ -359,8 +359,8 @@ void CEditView::ISearchExec(bool bNext)
 			CLogicInt nLineP;
 			int nIdxP;
 			nLineP =  m_pcEditDoc->m_cDocLineMgr.GetLineCount() - CLogicInt(1);
-			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( nLineP );
-			nIdxP = pDocLine->GetLength() -1;
+			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( nLineP );
+			nIdxP = pDocLine->GetLengthWithEOL() -1;
 			CLayoutPoint ptTmp;
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(CLogicPoint(nIdxP,nLineP),&ptTmp);
 			nIdx1=ptTmp.GetX2();
@@ -471,7 +471,7 @@ void CEditView::ISearchBack(void) {
 				m_bCurSrchKeyMark = false;
 
 		}else{
-			MessageBeep(MB_ICONEXCLAMATION);
+			WarningBeep();
 		}
 	}
 	m_nISearchHistoryCount --;
@@ -506,7 +506,7 @@ void CEditView::ISearchWordMake(void)
 	case 1: // 通常インクリメンタルサーチ
 		break;
 	case 2: // 正規表現インクリメンタルサーチ
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
 			return ;
 		}
 		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
@@ -514,7 +514,7 @@ void CEditView::ISearchWordMake(void)
 		m_CurRegexp.Compile(m_szCurSrchKey , nFlag );
 		break;
 	case 3: // MIGEMOインクリメンタルサーチ
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
 			return ;
 		}
 		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;

@@ -33,7 +33,7 @@ void CEditView::TranslateCommand_grep(
 	LPARAM&			lparam4
 )
 {
-	if( ! m_pcEditDoc->m_bGrepMode )
+	if( ! CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode )
 		return;
 
 	if( nCommand == F_WCHAR ){

@@ -88,7 +88,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	poWin.y = GetTextArea().GetAreaTop()
 			 + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
 			  * GetTextMetrics().GetHankakuDy();
-	::ClientToScreen( m_hWnd, &poWin );
+	this->ClientToScreen( &poWin );
 	poWin.x -= (
 		cmemData.GetStringLength()
 		 * GetTextMetrics().GetHankakuDx()
@@ -110,9 +110,9 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		GetTextMetrics().GetHankakuHeight(),
 		GetTextMetrics().GetHankakuDx(),
 		cmemData.GetStringPtr(),
-		m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
-		m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
-		m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
+		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_szHokanFile,
+		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bHokanLoHiCase,
+		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
 		pcmemHokanWord
 	);
 	/* 補完候補の数によって動作を変える */
@@ -121,7 +121,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 			// 2003.06.25 Moca 失敗してたら、ビープ音を出して補完終了。
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 		}
 	}
 	else if( bAutoDecided && nKouhoNum == 1){ //	候補1つのみ→確定。
@@ -176,7 +176,7 @@ int CEditView::HokanSearchByFile(
 	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //物理カーソル位置
 	
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
-		pszLine = m_pcEditDoc->m_cDocLineMgr.GetLineStrWithoutEOL( i, &nLineLen );
+		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
 		for( j = 0; j < nLineLen; j++ ){
 			//
 			if( !IS_KEYWORD_CHAR( pszLine[j] ) )continue;

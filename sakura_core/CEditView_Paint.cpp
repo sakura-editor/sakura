@@ -34,9 +34,9 @@ void CEditView_Paint::Call_OnPaint(
 	//•`‰æ
 	PAINTSTRUCT	ps;
 	ps.rcPaint = rc;
-	HDC hdc = ::GetDC( pView->m_hWnd );
+	HDC hdc = pView->GetDC();
 	pView->OnPaint( hdc, &ps, bUseMemoryDC );
-	::ReleaseDC( pView->m_hWnd, hdc );
+	pView->ReleaseDC( hdc );
 }
 
 

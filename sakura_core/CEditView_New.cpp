@@ -49,10 +49,10 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	if( !GetDrawSwitch() )return;
 
 	// キャレットを隠す
-	GetCaret().HideCaret_( m_hWnd ); // 2002/07/22 novice
+	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
 
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	Types	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
@@ -281,7 +281,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	DrawBracketPair( true );
 
 	/* キャレットを現在位置に表示します */
-	GetCaret().ShowCaret_( m_hWnd ); // 2002/07/22 novice
+	GetCaret().ShowCaret_( this->GetHwnd() ); // 2002/07/22 novice
 	return;
 }
 
@@ -353,7 +353,7 @@ bool CEditView::DispLineNew(
 	bool	bKeyWordTop = true;	//	Keyword Top
 
 	//サイズ
-	Types* TypeDataPtr = &m_pcEditDoc->GetDocumentAttribute();
+	Types* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
 	int nCharDx  = GetTextMetrics().GetHankakuDx();  //半角
 
@@ -370,8 +370,8 @@ bool CEditView::DispLineNew(
 	const CLayout*	pcLayout2; //ワーク用CLayoutポインタ
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength() - pcLayout->GetLogicOffset();
-		pLine    = pcLayout->m_pCDocLine->m_cLine.GetStringPtr()    + pcLayout->GetLogicOffset();
+		nLineLen = pcLayout->GetDocLineRef()->GetLengthWithEOL() - pcLayout->GetLogicOffset();
+		pLine    = pcLayout->GetDocLineRef()->GetPtr() + pcLayout->GetLogicOffset();
 
 		// タイプ
 		// 0=通常
@@ -473,7 +473,7 @@ bool CEditView::DispLineNew(
 			//                 通常文字列以外描画ループ                    //
 			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 			//行終端または折り返しに達するまでループ
-			while( GetNPos() - nLineBgn < pcLayout2->GetLength() ){
+			while( GetNPos() - nLineBgn < pcLayout2->GetLengthWithEOL() ){
 				/* 検索文字列の色分け */
 				/* 検索文字列のマーク */
 				if( m_bCurSrchKeyMark && cSearchType.IsDisp() ){
@@ -513,7 +513,7 @@ searchnext:;
 
 				}
 
-				if( GetNPos() >= nLineLen - pcLayout2->m_cEol.GetLen() ){
+				if( GetNPos() >= nLineLen - pcLayout2->GetLayoutEol().GetLen() ){
 					if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
 						/* テキスト表示 */
 						GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
@@ -526,7 +526,7 @@ searchnext:;
 						}
 
 						// 改行記号の表示
-						GetTextDrawer().DispEOL(hdc,pDispPos,pcLayout2->m_cEol,bSearchStringMode);
+						GetTextDrawer().DispEOL(hdc,pDispPos,pcLayout2->GetLayoutEol(),bSearchStringMode);
 
 						// 2006.04.29 Moca 選択処理のため縦線処理を追加
 						GetTextDrawer().DispVerticalLines( hdc, pDispPos->GetDrawPos().y, pDispPos->GetDrawPos().y + nLineHeight, CLayoutInt(0), CLayoutInt(-1) );

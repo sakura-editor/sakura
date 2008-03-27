@@ -18,6 +18,7 @@ class COpeBuf;
 
 
 #include "global.h"
+#include <vector>
 class COpeBlk;/// 2002/2/10 aroka
 
 
@@ -31,28 +32,30 @@ class COpeBlk;/// 2002/2/10 aroka
 */
 class SAKURA_CORE_API COpeBuf {
 public:
-	COpeBuf();	//!< COpeBufクラス構築
-	~COpeBuf();	//!< COpeBufクラス消滅
+	//コンストラクタ・デストラクタ
+	COpeBuf();
+	~COpeBuf();
 
 	//状態
-	bool IsEnableUndo( void );		//!< Undo可能な状態か
-	bool IsEnableRedo( void );		//!< Redo可能な状態か
+	bool IsEnableUndo();						//!< Undo可能な状態か
+	bool IsEnableRedo();						//!< Redo可能な状態か
 
 	//操作
-	void ClearAll( void );			//!< 全要素のクリア
-	int AppendOpeBlk( COpeBlk* );	//!< 操作ブロックの追加
-	COpeBlk* DoUndo( bool* );		//!< 現在のUndo対象の操作ブロックを返す
-	COpeBlk* DoRedo( bool* );		//!< 現在のRedo対象の操作ブロックを返す
-	void SetNoModified( void );		//!< 現在位置で無変更な状態になったことを通知
+	void ClearAll();							//!< 全要素のクリア
+	bool AppendOpeBlk( COpeBlk* pcOpeBlk );		//!< 操作ブロックの追加
+	void SetNoModified();						//!< 現在位置で無変更な状態になったことを通知
+
+	//使用
+	COpeBlk* DoUndo( bool* pbModified );		//!< 現在のUndo対象の操作ブロックを返す
+	COpeBlk* DoRedo( bool* pbModified );		//!< 現在のRedo対象の操作ブロックを返す
 
 	//デバッグ
-	void DUMP( void );				//!< 編集操作要素ブロックのダンプ
+	void DUMP();								//!< 編集操作要素ブロックのダンプ
 
 private:
-	int			m_nCOpeBlkArrNum;	//!< 操作ブロックの数
-	COpeBlk**	m_ppCOpeBlkArr;		//!< 操作ブロックの配列
-	int			m_nCurrentPointer;	//!< 現在位置
-	int			m_nNoModifiedIndex;	//!< 無変更な状態になった位置
+	std::vector<COpeBlk*>	m_vCOpeBlkArr;		//!< 操作ブロックの配列
+	int						m_nCurrentPointer;	//!< 現在位置
+	int						m_nNoModifiedIndex;	//!< 無変更な状態になった位置
 };
 
 

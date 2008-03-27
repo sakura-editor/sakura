@@ -12,7 +12,8 @@
 	Copyright (C) 2003, MIK, ryoji, genta
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, maru
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, kobake
+	Copyright (C) 2008, kobake
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -35,6 +36,7 @@
 #include "util/module.h"
 #include "util/file.h"
 #include "CEditWnd.h"
+#include "io/CTextStream.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")
 
@@ -57,9 +59,10 @@
 						からも呼ばれる関数。maru
 */
 void CEditView::ViewDiffInfo( 
-	const TCHAR* pszFile1,
-	const TCHAR* pszFile2,
-	int			nFlgOpt )
+	const TCHAR*	pszFile1,
+	const TCHAR*	pszFile2,
+	int				nFlgOpt
+)
 /*
 	bool	bFlgCase,		//大文字小文字同一視
 	bool	bFlgBlank,		//空白無視
@@ -69,15 +72,15 @@ void CEditView::ViewDiffInfo(
 	bool	bFlgFile12,		//編集中のファイルが旧ファイル
 */
 {
-	TCHAR	cmdline[1024];
 	HANDLE	hStdOutWrite, hStdOutRead;
-//	CDlgCancel	cDlgCancel;
-	CWaitCursor	cWaitCursor( m_hWnd );
+
+	CWaitCursor	cWaitCursor( this->GetHwnd() );
 	int		nFlgFile12 = 1;
 
 	/* exeのあるフォルダ */
 	TCHAR	szExeFolder[_MAX_PATH + 1];
 
+	TCHAR	cmdline[1024];
 	GetExedir( cmdline, _T("diff.exe") );
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
@@ -85,13 +88,12 @@ void CEditView::ViewDiffInfo(
 	//	diff.exeの存在チェック
 	if( -1 == ::GetFileAttributes( cmdline ) )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			_T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
+		WarningMessage( GetHwnd(), _T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
 		return;
 	}
 
 	//今あるDIFF差分を消去する。
-	if( m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
+	if( CDiffManager::Instance()->IsDiffUse() )
 		GetCommander().Command_Diff_Reset();
 		//m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
@@ -172,8 +174,7 @@ void CEditView::ViewDiffInfo(
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
 	{
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-				"差分コマンド実行は失敗しました。\n\n%ls", cmdline );
+			WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n%ls"), cmdline );
 		goto finish;
 	}
 
@@ -231,7 +232,7 @@ void CEditView::ViewDiffInfo(
 					{
 						new_cnt = _countof(work) - 2;
 					}
-					ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					if( read_cnt == 0 )
 					{
 						// Jan. 23, 2004 genta while追加のため制御を変更
@@ -245,8 +246,7 @@ void CEditView::ViewDiffInfo(
 						bFirst = false;
 						if( strncmp( work, "Binary files ", strlen( "Binary files " ) ) == 0 )
 						{
-							::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-								"DIFF差分を行おうとしたファイルはバイナリファイルです。" );
+							WarningMessage( NULL, _T("DIFF差分を行おうとしたファイルはバイナリファイルです。") );
 							goto finish;
 						}
 					}
@@ -328,9 +328,9 @@ void CEditView::ViewDiffInfo(
 	//DIFF差分が見つからなかったときにメッセージ表示
 	if( nFlgOpt & 0x0040 )
 	{
-		if( false == m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
+		if( !CDiffManager::Instance()->IsDiffUse() )
 		{
-			InfoMessage( m_hWnd, _T("DIFF差分は見つかりませんでした。") );
+			InfoMessage( this->GetHwnd(), _T("DIFF差分は見つかりませんでした。") );
 		}
 	}
 
@@ -360,8 +360,9 @@ finish:
 	@date	2002/05/25
 */
 void CEditView::AnalyzeDiffInfo( 
-	const char	*pszDiffInfo,
-	int		nFlgFile12 )
+	const char*	pszDiffInfo,
+	int			nFlgFile12
+)
 {
 	/*
 	 * 99a99		旧ファイル99行の次行に新ファイル99行が追加された。
@@ -444,15 +445,15 @@ void CEditView::AnalyzeDiffInfo(
 	//抽出したDIFF情報から行番号に差分マークを付ける
 	if( 0 == nFlgFile12 )	//編集中ファイルは旧ファイル
 	{
-		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s1    ), CLogicInt(e1    ) );
-		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
-		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
+		if     ( mode == 'a' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s1    ), CLogicInt(e1    ) );
+		else if( mode == 'c' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
+		else if( mode == 'd' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
 	}
 	else	//編集中ファイルは新ファイル
 	{
-		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
-		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
-		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s2    ), CLogicInt(e2    ) );
+		if     ( mode == 'a' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
+		else if( mode == 'c' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
+		else if( mode == 'd' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s2    ), CLogicInt(e2    ) );
 	}
 
 	return;
@@ -463,19 +464,15 @@ void CEditView::AnalyzeDiffInfo(
 	@date	2002/05/26
 	@date	2005/10/29	引数変更const char* → char*
 						一時ファイル名の取得処理もここでおこなう。maru
+	@date	2007/08/??	kobake 機械的にUNICODE化
+	@date	2008/01/26	kobake 出力形式修正
 */
 BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 {
-	const wchar_t*	pLineData;
-	CLogicInt		nLineLen;
-	CLogicInt		y;
-	FILE	*fp;
-
+	//一時
 	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
-	if( NULL == pszTmpName )
-	{
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-			"差分コマンド実行は失敗しました。" );
+	if( NULL == pszTmpName ){
+		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。") );
 		return FALSE;
 	}
 
@@ -485,71 +482,61 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	//自分か？
 	if( NULL == hWnd )
 	{
-		CEOL	cEol( m_pcEditDoc->m_cSaveLineCode );
-		FILETIME	filetime;
-		return RESULT_FAILURE != m_pcEditDoc->m_cDocLineMgr.WriteFile( 
-			filename, 
-			m_pcEditDoc->GetSplitterHwnd(), 
-			NULL,
-			m_pcEditDoc->GetDocumentEncoding(),
-			&filetime,
-			cEol,
-			m_pcEditDoc->IsBomExist()	//	Jul. 26, 2003 ryoji BOM
+		EConvertResult eWriteResult = CWriteManager().WriteFile_From_CDocLineMgr(
+			m_pcEditDoc->m_cDocLineMgr,
+			SSaveInfo(
+				filename,
+				m_pcEditDoc->GetDocumentEncoding(),
+				EOL_NONE,
+				m_pcEditDoc->m_cDocFile.IsBomExist()
+			)
 		);
+		return RESULT_FAILURE != eWriteResult;
 	}
 
-	fp = _tfopen( filename, _T("wb") );
-	if( NULL == fp )
-	{
-		::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-			"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
+	CTextOutputStream out(filename, CODE_SJIS);
+	if(!out){
+		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
 		return FALSE;
 	}
 
-	y = CLogicInt(0);
+	CLogicInt y = CLogicInt(0);
 
-	// 行(改行単位)データの要求
-	if( hWnd )
-	{
-		pLineData = m_pShareData->GetWorkBuffer<EDIT_CHAR>();
-		nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
-	}
-	else
-	{
-		pLineData = m_pcEditDoc->m_cDocLineMgr.GetLineStr( y, &nLineLen );
-	}
+	while(1){
+		// 行(改行単位)データの要求 
+		const wchar_t*	pLineData;
+		CLogicInt		nLineLen;
+		if( hWnd ){
+			pLineData = m_pShareData->GetWorkBuffer<EDIT_CHAR>();
+			nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
 
-	while( 1 )
-	{
-		if( 0 == nLineLen || NULL == pLineData ) break;
-
-		if( hWnd && nLineLen > (int)m_pShareData->GetWorkBufferCount<EDIT_CHAR>() )
-		{
-			// 一時バッファを超えている
-			fclose( fp );
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-				"差分コマンド実行は失敗しました。\n\n行が長すぎます。" );
-			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-			return FALSE;
+			// 一時バッファを超える場合はエラー終了
+			if( nLineLen > (int)m_pShareData->GetWorkBufferCount<EDIT_CHAR>() ){
+				out.Close();
+				_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+				WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n行が長すぎます。") );
+				return FALSE;
+			}
+		}
+		else{
+			pLineData = m_pcEditDoc->m_cDocLineMgr.GetLine(y)->GetDocLineStrWithEOL(&nLineLen);
 		}
 
-		if( 1 != fwrite( pLineData, nLineLen, 1, fp ) )
-		{
-			fclose( fp );
-			::MYMESSAGEBOX_A( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME_A,
-				"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
-			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-			return FALSE;
+		if( 0 == nLineLen || NULL == pLineData ) break;
+
+		try{
+			out.WriteString(pLineData,nLineLen);
+		}
+		catch(...){
+			out.Close();
+			_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
 		}
 
 		y++;
-
-		// 行(改行単位)データの要求 
-		if( hWnd ) nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
-		else       pLineData = m_pcEditDoc->m_cDocLineMgr.GetLineStr( y, &nLineLen );
 	}
 
-	fclose( fp );
+	//fclose( fp );
 
 	return TRUE;
 }
