@@ -19,10 +19,6 @@
 CDocLine::CDocLine()
 : m_pPrev( NULL ), m_pNext( NULL )
 {
-//	m_bMark.m_bAllMark  = 0;
-	m_bMark.m_bMarkArray.m_bModify   = 1;	//true
-	m_bMark.m_bMarkArray.m_bBookMark = 0;	//false
-	m_bMark.m_bMarkArray.m_bDiffMark = 0;
 }
 
 CDocLine::~CDocLine()
@@ -35,7 +31,7 @@ CDocLine::~CDocLine()
 
 	2002/04/26 YAZAKI
 */
-bool CDocLine::IsEmptyLine( void ) const
+bool CDocLine::IsEmptyLine() const
 {
 	const wchar_t* pLine = GetPtr();
 	int nLineLen = GetLengthWithoutEOL();
@@ -48,4 +44,36 @@ bool CDocLine::IsEmptyLine( void ) const
 	return true;	//	すべてスペースかタブだけだったらtrue。
 }
 
-/*[EOF]*/
+
+void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
+{
+	m_cLine.SetString(pData, nLength);
+
+	//改行コード設定
+	const wchar_t* p = &pData[nLength] - 1;
+	while(p>=pData && WCODE::isLineDelimiter(*p))p--;
+	p++;
+	if(p>=pData){
+		m_cEol.SetTypeByString(p, &pData[nLength]-p);
+	}
+	else{
+		m_cEol = EOL_NONE;
+	}
+}
+
+void CDocLine::SetDocLineString(const CNativeW& cData)
+{
+	SetDocLineString(cData.GetStringPtr(), cData.GetStringLength());
+}
+
+void CDocLine::SetEol(const CEol& cEol, COpeBlk* pcOpeBlk)
+{
+	//改行コードを削除
+	for(int i=0;i<(Int)m_cEol.GetLen();i++){
+		m_cLine.Chop();
+	}
+
+	//改行コードを挿入
+	m_cEol = cEol;
+	m_cLine += cEol.GetValue2();
+}
