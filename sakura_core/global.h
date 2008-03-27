@@ -153,67 +153,7 @@ SAKURA_CORE_API extern const CHAR*  GSTR_APPNAME_A;
 #define IDM_SELMRU			11000
 #define IDM_SELOPENFOLDER	12000
 
-
-/* 文字コードセット種別 */
-SAKURA_CORE_API enum enumCodeType {
-	CODE_SJIS,				/* SJIS */
-	CODE_JIS,				/* JIS */
-	CODE_EUC,				/* EUC */
-	CODE_UNICODE,			/* Unicode */
-	CODE_UTF8,				/* UTF-8 */
-	CODE_UTF7,				/* UTF-7 */
-	CODE_UNICODEBE,			/* Unicode BigEndian */
-	CODE_CODEMAX,
-	CODE_AUTODETECT	= 99,			/* 文字コード自動判別 */
-	CODE_ERROR      = -1,			/* エラー */                 //2007.08.14 kobake 追加
-	CODE_NONE       = -1,			/* 未検出 */
-	CODE_DEFAULT    = CODE_SJIS,	/* デフォルトの文字コード */ //2007.08.14 kobake 追加
-};
-typedef enumCodeType ECodeType;
-
-//2007.08.14 kobake 追加
-//!有効な文字コードセットならtrue
-inline bool IsValidCodeType(int code)
-{
-	return code>=0 && code<CODE_CODEMAX;
-}
-
-//2007.08.14 kobake 追加
-//!有効な文字コードセットならtrue。ただし、SJISは除く(意図は不明)
-inline bool IsValidCodeTypeExceptSJIS(int code)
-{
-	return IsValidCodeType(code) && code!=CODE_SJIS;
-}
-
-//2007.08.14 kobake 追加
-//!ECodeType型で表せる値ならtrue
-inline bool IsInECodeType(int code)
-{
-	return (code>=0 && code<CODE_CODEMAX) || code==CODE_ERROR || code==CODE_AUTODETECT;
-}
-
-
-SAKURA_CORE_API extern const TCHAR* gm_pszCodeNameArr_Normal[];
-SAKURA_CORE_API extern const TCHAR* gm_pszCodeNameArr_Short[];
-SAKURA_CORE_API extern const TCHAR* gm_pszCodeNameArr_Bracket[];
-
-/* コンボボックス用 自動判別を含む配列 */
-SAKURA_CORE_API extern const ECodeType gm_nCodeComboValueArr[];
-SAKURA_CORE_API extern const TCHAR* const gm_pszCodeComboNameArr[];
-SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
-
-//const char* GetCodeTypeName( ECodeType nCodeTYpe )
-//{
-//	const char* pszCodeTypeNameArr[] = {
-//		"SJIS",
-//		"JIS",
-//		"EUC",
-//		"Unicode",
-//		"UTF-8",
-//		"UTF-7"
-//	};
-//	return pszCodeTypeNameArr[nCodeTYpe];
-//}
+#include "charset/charset.h"
 
 /* アウトライン解析の種類 */
 SAKURA_CORE_API enum enumOutlineType {
@@ -238,28 +178,6 @@ SAKURA_CORE_API enum enumOutlineType {
 };
 typedef enumOutlineType EOutlineType; //2007.11.29 kobake
 
-// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
-/* 行終端子の種類 */
-SAKURA_CORE_API enum enumEOLType {
-	EOL_NONE,			//!< 
-	EOL_CRLF,			//!< 0d0a
-	EOL_LFCR,			//!< 0a0d
-	EOL_LF,				//!< 0a
-	EOL_CR,				//!< 0d
-	EOL_CODEMAX,		//
-	EOL_UNKNOWN = -1	//
-};
-
-/* 行終端子のデータ長 */
-SAKURA_CORE_API enum enumEOLLen {
-	LEN_EOL_NONE			= 0,
-	LEN_EOL_CRLF			= 2,
-	LEN_EOL_LFCR			= 2,
-	LEN_EOL_LF				= 1,
-	LEN_EOL_CR				= 1
-//	LEN_EOL_UNKNOWN		0
-};
-
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
 SAKURA_CORE_API enum enumShowDlg {
 	SHOW_NORMAL			= 0,
@@ -267,27 +185,6 @@ SAKURA_CORE_API enum enumShowDlg {
 	SHOW_TOGGLE			= 2,
 };
 
-
-#define EOL_TYPE_NUM	5
-
-/* 行終端子の配列 */
-SAKURA_CORE_API extern const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM];
-
-//	May 15, 2000 genta
-//	CEOLへ移動
-//	From Here
-/* 行終端子のデータの配列 */
-// SAKURA_CORE_API extern const char* gm_pszEolDataArr[EOL_TYPE_NUM];
-
-/* 行終端子のデータ長の配列 */
-// SAKURA_CORE_API extern const int gm_pnEolLenArr[EOL_TYPE_NUM];
-
-/* 行終端子の表示名の配列 */
-// SAKURA_CORE_API extern const char* gm_pszEolNameArr[EOL_TYPE_NUM];
-
-/* 行終端子の種類を調べる */
-// SAKURA_CORE_API enumEOLType GetEOLType( const char*, int );
-//	To Here
 
 /* 選択領域描画用パラメータ */
 SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;

@@ -20,75 +20,10 @@
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
 CEditWnd* g_pcEditWnd = NULL;
 
-//2007.10.17 kobake 変数名変更: gm_pszCodeNameArr_1→gm_pszCodeNameArr_Normal
-const TCHAR* gm_pszCodeNameArr_Normal[] = {
-	_T("SJIS"),			/* SJIS */
-	_T("JIS"),			/* JIS */
-	_T("EUC"),			/* EUC */
-	_T("Unicode"),		/* Unicode */
-	_T("UTF-8"),		/* UTF-8 */
-	_T("UTF-7"),		/* UTF-7 */
-	_T("UniBE")			/* Unicode BigEndian */
-};
-
-//2007.10.17 kobake 変数名変更: gm_pszCodeNameArr_2→gm_pszCodeNameArr_Short
-const TCHAR* gm_pszCodeNameArr_Short[] = {
-	_T("SJIS"),			/* SJIS */
-	_T("JIS"),			/* JIS */
-	_T("EUC"),			/* EUC */
-	_T("Uni"),			/* Unicode */
-	_T("UTF-8"),		/* UTF-8 */
-	_T("UTF-7"),		/* UTF-7 */
-	_T("UniBE")			/* Unicode BigEndian */
-};
-
-//2007.10.17 kobake 変数名変更: gm_pszCodeNameArr_3→gm_pszCodeNameArr_Bracket
-const TCHAR* gm_pszCodeNameArr_Bracket[] = {
-	_T("  [SJIS]"),		/* SJIS */
-	_T("  [JIS]"),		/* JIS */
-	_T("  [EUC]"),		/* EUC */
-	_T("  [Unicode]"),	/* Unicode */
-	_T("  [UTF-8]"),	/* UTF-8 */
-	_T("  [UTF-7]"),	/* UTF-7 */
-	_T("  [UniBE]")		/* Unicode BigEndian */
-};
-
-const ECodeType gm_nCodeComboValueArr[] = {
-	CODE_AUTODETECT,	/* 文字コード自動判別 */
-	CODE_SJIS,
-	CODE_JIS,
-	CODE_EUC,
-	CODE_UNICODE,
-	CODE_UNICODEBE,
-	CODE_UTF8,
-	CODE_UTF7
-};
-const TCHAR* const	gm_pszCodeComboNameArr[] = {
-	_T("自動選択"),
-	_T("SJIS"),
-	_T("JIS"),
-	_T("EUC"),
-	_T("Unicode"),
-	_T("UnicodeBE"),
-	_T("UTF-8"),
-	_T("UTF-7")
-};
-
-const int gm_nCodeComboNameArrNum = _countof( gm_nCodeComboValueArr );
-
 
 /*! 選択領域描画用パラメータ */
 const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
-
-/*! 行終端子の配列 */
-const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
-	EOL_NONE			,	// == 0
-	EOL_CRLF			,	// == 2
-	EOL_LFCR			,	// == 2
-	EOL_LF				,	// == 1
-	EOL_CR					// == 1
-};
 
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)

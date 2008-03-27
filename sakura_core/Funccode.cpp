@@ -89,7 +89,7 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5
 	F_ACTIVATE_SQLPLUS			,	/* Oracle SQL*Plusをアクティブ表示 */	//Sept. 20, 2000 「コンパイル」JEPRO アクティブ表示を上に移動した
 	F_PLSQL_COMPILE_ON_SQLPLUS	,	/* Oracle SQL*Plusで実行 */	//Sept. 20, 2000 jepro 説明の「コンパイル」を「実行」に統一
 	F_BROWSE			,	//ブラウズ
-	F_READONLY			,	//読み取り専用
+	F_VIEWMODE			,	//ビューモード
 	F_PROPERTY_FILE		,	/* ファイルのプロパティ */
 	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
@@ -547,7 +547,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_ACTIVATE_SQLPLUS:	return HLP000132;			/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	return HLP000027;	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:				return HLP000121;			//ブラウズ
-	case F_READONLY:			return HLP000249;			//読み取り専用
+	case F_VIEWMODE:			return HLP000249;			//ビューモード
 	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
 
 	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
@@ -928,7 +928,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 				return FALSE;
 			}
 		}else{
-			return pcEditDoc->m_pcSMacroMgr->IsSaveOk();
+			return CEditApp::Instance()->m_pcSMacroMgr->IsSaveOk();
 		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
@@ -978,11 +978,11 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_DIFF_NEXT:	/* 次の差分へ */	//@@@ 2002.05.25 MIK
 	case F_DIFF_PREV:	/* 前の差分へ */	//@@@ 2002.05.25 MIK
 	case F_DIFF_RESET:	/* 差分の全解除 */	//@@@ 2002.05.25 MIK
-		if( ! pcEditDoc->m_cDocLineMgr.IsDiffUse() ) return FALSE;
+		if( !CDiffManager::Instance()->IsDiffUse() ) return FALSE;
 		return TRUE;
 	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
 		//if( pcEditDoc->IsModified() ) return FALSE;
-		//if( ! pcEditDoc->IsFilePathAvailable() ) return FALSE;
+		//if( ! pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() ) return FALSE;
 		return TRUE;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
@@ -993,14 +993,14 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		}
 	case F_PASTEBOX:
 		/* クリップボードから貼り付け可能か？ */
-		if( pcEditDoc->IsEnablePaste() && pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
+		if( pcEditDoc->m_cDocEditor.IsEnablePaste() && pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
 			return TRUE;
 		}else{
 			return FALSE;
 		}
 	case F_PASTE:
 		/* クリップボードから貼り付け可能か？ */
-		if( pcEditDoc->IsEnablePaste() ){
+		if( pcEditDoc->m_cDocEditor.IsEnablePaste() ){
 			return TRUE;
 		}else{
 			return FALSE;
@@ -1016,8 +1016,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		}
 
 	case F_FILESAVE:	/* 上書き保存 */
-		if( !pcEditDoc->IsReadOnly() ){	/* 読み取り専用モード */
-			if( pcEditDoc->IsModified() ){	/* 変更フラグ */
+		if( !CAppMode::Instance()->IsViewMode() ){	/* ビューモード */
+			if( pcEditDoc->m_cDocEditor.IsModified() ){	/* 変更フラグ */
 				return TRUE;
 			}else{
 				/* 無変更でも上書きするか */
@@ -1070,8 +1070,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		// テキストが選択されていなければtrue
 		return !pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected();
 
-	case F_UNDO:		return pcEditDoc->IsEnableUndo();	/* Undo(元に戻す)可能な状態か？ */
-	case F_REDO:		return pcEditDoc->IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
+	case F_UNDO:		return pcEditDoc->m_cDocEditor.IsEnableUndo();	/* Undo(元に戻す)可能な状態か？ */
+	case F_REDO:		return pcEditDoc->m_cDocEditor.IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
 
 	case F_COPYPATH:
 	case F_COPYTAG:
@@ -1081,9 +1081,9 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:						//ブラウズ
-	//case F_READONLY:					//読み取り専用	//	Sep. 10, 2002 genta 常に使えるように
+	//case F_VIEWMODE:					//ビューモード	//	Sep. 10, 2002 genta 常に使えるように
 	case F_PROPERTY_FILE:
-		return pcEditDoc->IsFilePathAvailable();	// 現在編集中のファイルのパス名をクリップボードにコピーできるか
+		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath();	// 現在編集中のファイルのパス名をクリップボードにコピーできるか
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )
@@ -1101,7 +1101,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_TAGJUMP_KEYWORD:	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
 	//	2003.05.12 MIK タグファイル作成先を選べるようにしたので、常に作成可能とする
 //	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
-		if( pcEditDoc->IsFilePathAvailable() ){
+		if( pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 			return TRUE;
 		}else{
 			return FALSE;
@@ -1164,14 +1164,14 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 	case F_SHOWTAB:				return pCEditWnd->m_cTabWnd.GetHwnd() != NULL;	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:		return pCEditWnd->m_cStatusBar.GetStatusHwnd() != NULL;
 	// Mar. 6, 2002 genta
-	case F_READONLY:			return pcEditDoc->IsReadOnly(); //読み取り専用
+	case F_VIEWMODE:			return CAppMode::Instance()->IsViewMode(); //ビューモード
 	//	From Here 2003.06.23 Moca
-	case F_CHGMOD_EOL_CRLF:		return EOL_CRLF == pcEditDoc->GetNewLineCode();
-	case F_CHGMOD_EOL_LF:		return EOL_LF == pcEditDoc->GetNewLineCode();
-	case F_CHGMOD_EOL_CR:		return EOL_CR == pcEditDoc->GetNewLineCode();
+	case F_CHGMOD_EOL_CRLF:		return EOL_CRLF == pcEditDoc->m_cDocEditor.GetNewLineCode();
+	case F_CHGMOD_EOL_LF:		return EOL_LF == pcEditDoc->m_cDocEditor.GetNewLineCode();
+	case F_CHGMOD_EOL_CR:		return EOL_CR == pcEditDoc->m_cDocEditor.GetNewLineCode();
 	//	To Here 2003.06.23 Moca
 	//	2003.07.21 genta
-	case F_CHGMOD_INS:			return pcEditDoc->IsInsMode();	//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
+	case F_CHGMOD_INS:			return pcEditDoc->m_cDocEditor.IsInsMode();	//	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
 	case F_TOGGLE_KEY_SEARCH:	return pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord != FALSE;	//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
 	case F_BIND_WINDOW:			return ((pShareData->m_Common.m_sTabBar.m_bDispTabWnd) && !(pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin));	//2004.07.14 Kazika 追加
 	case F_TOPMOST:				return ((DWORD)::GetWindowLongPtr( pCEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) != 0;	// 2004.09.21 Moca
