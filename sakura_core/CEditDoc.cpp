@@ -45,7 +45,6 @@
 #include "CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "charset/CCodeMediator.h"
-#include "io/io_util.h"
 #include "util/file.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
@@ -55,7 +54,6 @@
 #include "util/other_util.h"
 #include "CSakuraEnvironment.h"
 #include "CNormalProcess.h"
-#include "CProgressBar.h"
 #include "CControlTray.h"
 
 #define IDT_ROLLMOUSE	1

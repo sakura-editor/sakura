@@ -57,7 +57,6 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include <list>
-#include "CProgressBar.h"
 #include "charset/CCodeMediator.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

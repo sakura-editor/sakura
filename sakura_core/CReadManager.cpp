@@ -3,7 +3,6 @@
 #include "charset/CCodeMediator.h"
 #include "util/window.h"
 #include "io/CFileLoad.h"
-#include "CProgressBar.h"
 #include <io.h>
 
 /*!
