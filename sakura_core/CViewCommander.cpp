@@ -73,7 +73,6 @@
 #include "util/os.h"
 #include "CEditView.h"
 #include "CEditWnd.h"
-#include "io/CFileWrite.h"
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"
 #include "CSakuraEnvironment.h"

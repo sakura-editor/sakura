@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CVisualProgress.h"
 #include "CWaitCursor.h"
-#include "CProgressBar.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

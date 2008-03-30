@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "CWriteManager.h"
-#include "CProgressBar.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include <list>
 #include "io/CIoBridge.h"
-#include "io/CFileWrite.h"
 #include "io/CBinaryStream.h"
 #include "util/window.h"
 

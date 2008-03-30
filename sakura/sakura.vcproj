@@ -665,47 +665,35 @@
 			Name="Cpp Source Files"
 			>
 			<File
-				RelativePath="..\sakura_core\CAutoSave.cpp"
+				RelativePath="..\sakura_core\CAppMode.cpp"
 				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CAutoSave.h"
+				RelativePath="..\sakura_core\CAppMode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CAutoReloadAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CAutoReloadAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CAutoSaveAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CAutoSaveAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CBackupAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CBackupAgent.h"
 				>
 			</File>
 			<File
@@ -750,6 +738,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CBlockComment.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CBookmarkManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CBookmarkManager.h"
 				>
 			</File>
 			<File
@@ -818,6 +814,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CClipboard.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CCodeChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CCodeChecker.h"
 				>
 			</File>
 			<File
@@ -1010,6 +1014,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CDicMgr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDiffManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDiffManager.h"
 				>
 			</File>
 			<File
@@ -2157,6 +2169,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CDocEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocEditor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocFile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocFileOperation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocFileOperation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CDocLine.cpp"
 				>
 				<FileConfiguration
@@ -2245,44 +2281,60 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CDocLineMgr_New.cpp"
+				RelativePath="..\sakura_core\CDocListener.cpp"
 				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocListener.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocLocker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocLocker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocOutline.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocOutline.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocTypeSetting.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocTypeSetting.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocVisitor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CDocVisitor.h"
+				>
 			</File>
 			<File
 				RelativePath="..\sakura_core\CDropTarget.cpp"
@@ -2415,126 +2467,6 @@
 			<File
 				RelativePath="..\sakura_core\CEditDoc.h"
 				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CEditDoc_FuncList1.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CEditDoc_FuncList2.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CEditDoc_new.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\sakura_core\CEditView.cpp"
@@ -2901,46 +2833,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CEditView_New3.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CEditView_Paint.cpp"
 				>
 			</File>
@@ -3034,6 +2926,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CEol.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CFile.h"
 				>
 			</File>
 			<File
@@ -3254,6 +3154,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CFuncLookup.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepAgent.h"
 				>
 			</File>
 			<File
@@ -3785,6 +3693,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CLoadAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CLoadAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CMacro.cpp"
 				>
 				<FileConfiguration
@@ -4113,6 +4029,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CModifyManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CModifyManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CMRU.cpp"
 				>
 				<FileConfiguration
@@ -4198,6 +4122,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CMRUFolder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CMruListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CMruListener.h"
 				>
 			</File>
 			<File
@@ -5325,6 +5257,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CPropertyManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CPropertyManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CPropTypes.cpp"
 				>
 				<FileConfiguration
@@ -5447,6 +5387,22 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CReadHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CReadHelper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CReadManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CReadManager.h"
+				>
 			</File>
 			<File
 				RelativePath="..\sakura_core\CRecent.cpp"
@@ -5669,6 +5625,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CSakuraEnvironment.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSakuraEnvironment.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSaveAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSaveAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSearchAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSearchAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CShareData.cpp"
 				>
 				<FileConfiguration
@@ -5838,6 +5818,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CSortedTagJumpList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSoundSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSoundSet.h"
 				>
 			</File>
 			<File
@@ -6041,6 +6029,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CTypeDoc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CTypeDoc.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CTypeSupport.cpp"
 				>
 			</File>
@@ -6149,6 +6145,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CVisualProgress.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CVisualProgress.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CWaitCursor.cpp"
 				>
 				<FileConfiguration
@@ -6234,6 +6238,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CWnd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CWriteManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CWriteManager.h"
 				>
 			</File>
 			<File
@@ -6350,6 +6362,10 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\DispPos.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\EditInfo.h"
 				>
 			</File>
 			<File
@@ -6528,6 +6544,10 @@
 				Name="charset"
 				>
 				<File
+					RelativePath="..\sakura_core\charset\CCodeBase.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\charset\CCodeBase.h"
 					>
 				</File>
@@ -6561,6 +6581,14 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\charset\CEuc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\charset.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\charset.h"
 					>
 				</File>
 				<File
@@ -6792,14 +6820,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\io\CFileWrite.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\io\CFileWrite.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\io\CIoBridge.cpp"
 					>
 				</File>
@@ -6821,14 +6841,6 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\io\CTextStream.h"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\io\io_util.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\io\io_util.h"
 					>
 				</File>
 			</Filter>
@@ -6925,6 +6937,18 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\util\other_util.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\util\ReadMe_util.txt"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\util\relation_tool.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\util\relation_tool.h"
 					>
 				</File>
 				<File
