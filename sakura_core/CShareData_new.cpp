@@ -31,7 +31,7 @@
 #include "CDataProfile.h"
 #include "COsVersionInfo.h"
 #include "CCommandLine.h"
-#include "CPropTypes.h" //STR_COLORDATA_HEAD3
+#include "types/CPropTypes.h" //STR_COLORDATA_HEAD3
 #include "util/shell.h"
 #include <shlobj.h>
 
