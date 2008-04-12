@@ -5817,14 +5817,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CTypeDoc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CTypeDoc.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CTypeSupport.cpp"
 				>
 			</File>

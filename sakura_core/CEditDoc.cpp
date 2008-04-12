@@ -245,7 +245,6 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 /*! ビューに設定変更を反映させる
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
-
 */
 void CEditDoc::OnChangeSetting( void )
 {
@@ -273,6 +272,8 @@ void CEditDoc::OnChangeSetting( void )
 
 	/* 共有データ構造体のアドレスを返す */
 	CShareData::getInstance()->TransformFileName_MakeCache();
+
+	// 文書種別
 	CDocumentType doctype = CShareData::getInstance()->GetDocumentType( m_cDocFile.GetFilePath() );
 	m_cDocType.SetDocumentType( doctype, false );
 

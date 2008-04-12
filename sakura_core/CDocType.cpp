@@ -3,7 +3,7 @@
 
 void CDocType::SetDocumentType(CDocumentType type, bool force)	//	•¶‘í•Ê‚Ìİ’è
 {
-	if( (!m_nSettingTypeLocked) || force ){
+	if( !m_nSettingTypeLocked || force ){
 		m_nSettingType = type;
 		UnlockDocumentType();
 		GetDllShareData().GetTypeSetting(m_nSettingType).m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK

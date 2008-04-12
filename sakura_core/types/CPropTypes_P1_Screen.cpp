@@ -8,6 +8,7 @@
 #include "sakura.hh"
 #include "util/module.h"
 #include "util/shell.h"
+#include <windowsx.h> //Edit_LimitText
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
@@ -105,7 +106,6 @@ TYPE_NAME<int> IndentTypeArr[] = {
 
 
 
-
 /* p1 メッセージ処理 */
 INT_PTR CPropTypes::DispatchEvent_Screen(
 	HWND		hwndDlg,	// handle to dialog box
@@ -130,19 +130,16 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), EM_LIMITTEXT, (WPARAM)( _countof( m_Types.m_szTypeName ) - 1 ), 0 );
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), EM_LIMITTEXT, (WPARAM)( _countof( m_Types.m_szTypeExts ) - 1 ), 0 );
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INDENTCHARS ), EM_LIMITTEXT, (WPARAM)( _countof( m_Types.m_szIndentChars ) - 1 ), 0 );
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), EM_LIMITTEXT, (WPARAM)( _countof( m_Types.m_szTabViewString ) - 1 ), 0 );
-//#endif
-		//	Oct. 5, 2002 genta 画面上でも入力制限
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ),  EM_LIMITTEXT, (WPARAM)( _countof2( m_Types.m_szOutlineRuleFilename ) - 1 ), 0 );
+		// エディットコントロールの入力文字数制限
+		Edit_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME        ), _countof( m_Types.m_szTypeName      ) - 1 );
+		Edit_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS        ), _countof( m_Types.m_szTypeExts      ) - 1 );
+		Edit_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_INDENTCHARS     ), _countof( m_Types.m_szIndentChars   ) - 1 );
+		Edit_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING   ), _countof( m_Types.m_szTabViewString ) - 1 );
+		Edit_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), _countof2( m_Types.m_szOutlineRuleFilename ) - 1 );	//	Oct. 5, 2002 genta 画面上でも入力制限
 
 		if( 0 == m_Types.m_nIdx ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );	//設定の名前
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), FALSE );	//ファイル拡張子
 		}
 
 		return TRUE;
@@ -363,171 +360,149 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 /* ダイアログデータの設定 p1 */
 void CPropTypes::SetData_p1( HWND hwndDlg )
 {
-	BOOL	bRet;
-	static	int	nTabArr[] = { 2, 3, 4, 6, 8 };
-	static	int	nTabArrNum = _countof( nTabArr );
-	int			i;
-
-	/* タイプ属性：名称 */
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );
-
-	/* タイプ属性：拡張子リスト */
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );
-
-	/* 折り返し文字数 */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, (Int)m_Types.m_nMaxLineKetas, FALSE );
-
-	/* 文字の隙間 */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColmSpace, FALSE );
-
-	/* 行の隙間 */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, FALSE );
-
-	/* TAB幅 */
-	//	Sep. 22, 2002 genta
-	::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, (Int)m_Types.m_nTabSpace, FALSE );
-
-	/* TAB表示文字列 */
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );
-
-	//タブ矢印表示	//@@@ 2003.03.26 MIK
-	::CheckDlgButton( hwndDlg, IDC_CHECK_TAB_ARROW, m_Types.m_bTabArrow );
-	// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
-	if( m_Types.m_bTabArrow ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), FALSE );
-	}
-	else {
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), TRUE );
-	}
-// From Here 2001.12.03 hor
-	/* スペースの挿入 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );
-// To Here 2001.12.03 hor
-
-	/* その他のインデント対象文字 */
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars );
-
-
-	/* アウトライン解析方法
-	
-		2002.04.01 YAZAKI ルールファイル関連追加
-	*/
 	HWND	hwndCombo;
 	int		nSelPos;
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	nSelPos = 0;
-	for( i = 0; i < _countof( OlmArr ); ++i ){
-		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
-		if( OlmArr[i].nMethod == m_Types.m_nDefaultOutline ){	/* アウトライン解析方法 */
-			nSelPos = i;
-		}
+
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );	//設定の名前
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );	//ファイル拡張子
+
+	//レイアウト
+	{
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, (Int)m_Types.m_nMaxLineKetas, FALSE );	// 折り返し文字数
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColmSpace, FALSE );			// 文字の間隔
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, FALSE );			// 行の間隔
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, (Int)m_Types.m_nTabSpace, FALSE );			// TAB幅	//	Sep. 22, 2002 genta
+		::DlgItem_SetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );		// TAB表示(8文字)
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), !m_Types.m_bTabArrow );	// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
+		::CheckDlgButton( hwndDlg, IDC_CHECK_TAB_ARROW, m_Types.m_bTabArrow );					// 矢印表示 [チェックボックス]	//@@@ 2003.03.26 MIK
+		::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );					// SPACEの挿入 [チェックボックス]	// From Here 2001.12.03 hor
 	}
 
-	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
-	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
+	//インデント
+	{
+		/* 自動インデント */
+		::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Types.m_bAutoIndent );
 
-	if( m_Types.m_nDefaultOutline == OUTLINE_FILE ){
-		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, TRUE );
+		/* 日本語空白もインデント */
+		::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
 
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
+		/* スマートインデント種別 */
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		nSelPos = 0;
+		for( int i = 0; i < _countof( SmartIndentArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SmartIndentArr[i].pszName );
+			if( SmartIndentArr[i].nMethod == m_Types.m_nSmartIndent ){	/* スマートインデント種別 */
+				nSelPos = i;
+			}
+		}
+		::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 
-	}else{
-		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
+		// その他のインデント対象文字
+		::DlgItem_SetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars );
 
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
+		//折り返し行インデント	//	Oct. 1, 2002 genta コンボボックスに変更
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		nSelPos = 0;
+		for( int i = 0; i < _countof( IndentTypeArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)IndentTypeArr[i].pszName );
+			if( IndentTypeArr[i].nMethod == m_Types.m_nIndentLayout ){	/* 折り返しインデント種別 */
+				nSelPos = i;
+			}
+		}
+		::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 
+		// 改行時に末尾の空白を削除	//2005.10.11 ryoji
+		::CheckDlgButton( hwndDlg, IDC_CHECK_RTRIM_PREVLINE, m_Types.m_bRTrimPrevLine );
+	}
+
+	//起動時のIME(日本語入力変換)	//Nov. 20, 2000 genta
+	{
+		int ime;
+		// ON/OFF状態
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		ime = m_Types.m_nImeState & 3;
+		nSelPos = 0;
+		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeSwitchArr[i].pszName );
+			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
+				nSelPos = i;
+			}
+		}
+		::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
+		// 入力モード
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		ime = m_Types.m_nImeState >> 2;
+		nSelPos = 0;
+		for( int i = 0; i < _countof( ImeStateArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeStateArr[i].pszName );
+			if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
+				nSelPos = i;
+			}
+		}
 		::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 	}
 
-	/* インデント */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Types.m_bAutoIndent );
+	//アウトライン解析方法
+	//2002.04.01 YAZAKI ルールファイル関連追加
+	{
+		//標準ルール
+		if( m_Types.m_nDefaultOutline == OUTLINE_FILE ){
+			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, FALSE );
+			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, TRUE );
 
-	/* 日本語空白もインデント */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
-
-	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_RTRIM_PREVLINE, m_Types.m_bRTrimPrevLine );
-
-	/* スマートインデント種別 */
-//	HWND	hwndCombo;
-//	int		nSelPos;
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	nSelPos = 0;
-	for( i = 0; i < _countof( SmartIndentArr ); ++i ){
-		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SmartIndentArr[i].pszName );
-		if( SmartIndentArr[i].nMethod == m_Types.m_nSmartIndent ){	/* スマートインデント種別 */
-			nSelPos = i;
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
 		}
-	}
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+		else{
+			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
+			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
 
-	/* 折り返しは2行目以降を字下げ表示 */
-	//	Oct. 1, 2002 genta コンボボックスに変更
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	nSelPos = 0;
-	for( i = 0; i < _countof( IndentTypeArr ); ++i ){
-		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)IndentTypeArr[i].pszName );
-		if( IndentTypeArr[i].nMethod == m_Types.m_nIndentLayout ){	/* 折り返しインデント種別 */
-			nSelPos = i;
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), TRUE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
+
+			::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 		}
-	}
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
-
-	//	From Here Nov. 20, 2000 genta
-	//	IME入力モード
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	int ime = m_Types.m_nImeState >> 2;
-	nSelPos = 0;
-	for( i = 0; i < _countof( ImeStateArr ); ++i ){
-		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeStateArr[i].pszName );
-		if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
-			nSelPos = i;
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		nSelPos = 0;
+		for( int i = 0; i < _countof( OlmArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
+			if( OlmArr[i].nMethod == m_Types.m_nDefaultOutline ){	/* アウトライン解析方法 */
+				nSelPos = i;
+			}
 		}
+
+		//ルールファイル	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
+		::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
 	}
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
-	//	IME ON/OFF制御
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	ime = m_Types.m_nImeState & 3;
-	nSelPos = 0;
-	for( i = 0; i < _countof( ImeSwitchArr ); ++i ){
-		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeSwitchArr[i].pszName );
-		if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
-			nSelPos = i;
-		}
+
+	//その他
+	{
+		/* 英文ワードラップをする */
+		::CheckDlgButton( hwndDlg, IDC_CHECK_WORDWRAP, m_Types.m_bWordWrap );
+		
+		/* 禁則処理 */
+		{	//@@@ 2002.04.08 MIK start
+			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUHEAD, m_Types.m_bKinsokuHead ? TRUE : FALSE );
+			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUTAIL, m_Types.m_bKinsokuTail ? TRUE : FALSE );
+			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKURET,  m_Types.m_bKinsokuRet  ? TRUE : FALSE );	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUKUTO, m_Types.m_bKinsokuKuto ? TRUE : FALSE );	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+			::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), EM_LIMITTEXT, _countof(m_Types.m_szKinsokuHead) - 1, 0 );
+			::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), EM_LIMITTEXT, _countof(m_Types.m_szKinsokuTail) - 1, 0 );
+			::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead );
+			::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail );
+		}	//@@@ 2002.04.08 MIK end
+		
+		// 文書アイコンを使う	//Sep. 10, 2002 genta
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon  ? TRUE : FALSE );
 	}
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
-	//	To Here Nov. 20, 2000 genta
-
-	/* 英文ワードラップをする */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_WORDWRAP, m_Types.m_bWordWrap );
-
-	/* 禁則処理 */
-	{	//@@@ 2002.04.08 MIK start
-		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUHEAD, m_Types.m_bKinsokuHead ? TRUE : FALSE );
-		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUTAIL, m_Types.m_bKinsokuTail ? TRUE : FALSE );
-		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKURET,  m_Types.m_bKinsokuRet  ? TRUE : FALSE );	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-		::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUKUTO, m_Types.m_bKinsokuKuto ? TRUE : FALSE );	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), EM_LIMITTEXT, _countof(m_Types.m_szKinsokuHead) - 1, 0 );
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), EM_LIMITTEXT, _countof(m_Types.m_szKinsokuTail) - 1, 0 );
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead );
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail );
-	}	//@@@ 2002.04.08 MIK end
-	
-	//	Sep. 10, 2002 genta
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon  ? TRUE : FALSE );
-
-	return;
 }
 
 
@@ -535,146 +510,141 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 /* ダイアログデータの取得 p1 */
 int CPropTypes::GetData_p1( HWND hwndDlg )
 {
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	int  i;
-//#endif
-
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 0;
-	/* タイプ属性：名称 */
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, _countof( m_Types.m_szTypeName ) );
-	/* タイプ属性：拡張子リスト */
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, _countof( m_Types.m_szTypeExts ) );
-
-
-	/* 折り返し桁数 */
-	m_Types.m_nMaxLineKetas = CLayoutInt(::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE ));
-	if( m_Types.m_nMaxLineKetas < CLayoutInt(MINLINEKETAS) ){
-		m_Types.m_nMaxLineKetas = CLayoutInt(MINLINEKETAS);
-	}
-	if( m_Types.m_nMaxLineKetas > CLayoutInt(MAXLINEKETAS) ){
-		m_Types.m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);
-	}
-
-	/* 文字の隙間 */
-	m_Types.m_nColmSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
-	if( m_Types.m_nColmSpace < 0 ){
-		m_Types.m_nColmSpace = 0;
-	}
-	if( m_Types.m_nColmSpace > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
-		m_Types.m_nColmSpace = COLUMNSPACE_MAX;
-	}
-
-	/* 行の隙間 */
-	m_Types.m_nLineSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
-//	From Here Oct. 8, 2000 JEPRO 行間も最小0まで設定できるように変更(昔に戻っただけ?)
-//	if( m_Types.m_nLineSpace < 1 ){
-//		m_Types.m_nLineSpace = 1;
-//	}
-	if( m_Types.m_nLineSpace < 0 ){
-		m_Types.m_nLineSpace = 0;
-	}
-//	To Here  Oct. 8, 2000
-	if( m_Types.m_nLineSpace > LINESPACE_MAX ){	// Feb. 18, 2003 genta 最大値の定数化
-		m_Types.m_nLineSpace = LINESPACE_MAX;
-	}
-
-	/* その他のインデント対象文字 */
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) - 1 );
-
-	/* TAB幅 */
-	m_Types.m_nTabSpace = CLayoutInt(::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE ));
-	if( m_Types.m_nTabSpace < CLayoutInt(1) ){
-		m_Types.m_nTabSpace = CLayoutInt(1);
-	}
-	if( m_Types.m_nTabSpace > CLayoutInt(64) ){
-		m_Types.m_nTabSpace = CLayoutInt(64);
-	}
-
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	/* TAB表示文字列 */
-	WIN_CHAR szTab[8+1+1]; /* +1. happy */
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, _countof( szTab ) - 1 );
-	wcscpy( m_Types.m_szTabViewString, L"^       " );
-	for( i = 0; i < 8; i++ ){
-		if( !TCODE::isTabAvailableCode(szTab[i]) )break;
-		m_Types.m_szTabViewString[i] = szTab[i];
-	}
-//#endif
-
-	//タブ矢印表示	//@@@ 2003.03.26 MIK
-	m_Types.m_bTabArrow = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW );
-// 2001.12.03 hor
-	/* スペースの挿入 */
-	m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );
-// From Here 2001.12.03 hor
-
-	/* アウトライン解析方法
-	
-		2002.04.01 YAZAKI ルールファイル関連追加
-	*/
 	HWND	hwndCombo;
 	int		nSelPos;
-	
-	// 2003.06.23 Moca ルールを使っていなくてもファイル名を保持
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, _countof2( m_Types.m_szOutlineRuleFilename ));
 
-	if ( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
-		m_Types.m_nDefaultOutline = OUTLINE_FILE;
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, _countof( m_Types.m_szTypeName ) );	// 設定の名前
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, _countof( m_Types.m_szTypeExts ) );	// ファイル拡張子
+
+	//レイアウト
+	{
+		/* 折り返し桁数 */
+		m_Types.m_nMaxLineKetas = CLayoutInt(::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE ));
+		if( m_Types.m_nMaxLineKetas < CLayoutInt(MINLINEKETAS) ){
+			m_Types.m_nMaxLineKetas = CLayoutInt(MINLINEKETAS);
+		}
+		if( m_Types.m_nMaxLineKetas > CLayoutInt(MAXLINEKETAS) ){
+			m_Types.m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);
+		}
+
+		/* 文字の間隔 */
+		m_Types.m_nColmSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
+		if( m_Types.m_nColmSpace < 0 ){
+			m_Types.m_nColmSpace = 0;
+		}
+		if( m_Types.m_nColmSpace > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta 最大値の定数化
+			m_Types.m_nColmSpace = COLUMNSPACE_MAX;
+		}
+
+		/* 行の間隔 */
+		m_Types.m_nLineSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
+		if( m_Types.m_nLineSpace < 0 ){
+			m_Types.m_nLineSpace = 0;
+		}
+		if( m_Types.m_nLineSpace > LINESPACE_MAX ){	// Feb. 18, 2003 genta 最大値の定数化
+			m_Types.m_nLineSpace = LINESPACE_MAX;
+		}
+
+		/* TAB幅 */
+		m_Types.m_nTabSpace = CLayoutInt(::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE ));
+		if( m_Types.m_nTabSpace < CLayoutInt(1) ){
+			m_Types.m_nTabSpace = CLayoutInt(1);
+		}
+		if( m_Types.m_nTabSpace > CLayoutInt(64) ){
+			m_Types.m_nTabSpace = CLayoutInt(64);
+		}
+
+		/* TAB表示文字列 */
+		WIN_CHAR szTab[8+1+1]; /* +1. happy */
+		::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, _countof( szTab ) - 1 );
+		wcscpy( m_Types.m_szTabViewString, L"^       " );
+		for( int i = 0; i < 8; i++ ){
+			if( !TCODE::isTabAvailableCode(szTab[i]) )break;
+			m_Types.m_szTabViewString[i] = szTab[i];
+		}
+
+		// タブ矢印表示	//@@@ 2003.03.26 MIK
+		m_Types.m_bTabArrow = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW ));
+
+		// SPACEの挿入
+		m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );
 	}
-	else {
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
+
+	//インデント
+	{
+		/* 自動インデント */
+		m_Types.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
+
+		/* 日本語空白もインデント */
+		m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+
+		/* スマートインデント種別 */
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-		m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+		m_Types.m_nSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+
+		/* その他のインデント対象文字 */
+		::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) - 1 );
+
+		// 折り返し行インデント	//	Oct. 1, 2002 genta コンボボックスに変更
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
+		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_nIndentLayout = IndentTypeArr[nSelPos].nMethod;	/* 折り返し部インデント種別 */
+
+		// 改行時に末尾の空白を削除	//2005.10.11 ryoji
+		m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE );
 	}
 
-	/* インデント */
-	m_Types.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
+	//起動時のIME(日本語入力変換)	Nov. 20, 2000 genta
+	{
+		//ON/OFF状態
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
 
-	/* 日本語空白もインデント */
-	m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+		//入力モード
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
+		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IME入力モード
+	}
 
-	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE );
+	//アウトライン解析方法
+	//2002.04.01 YAZAKI ルールファイル関連追加
+	{
+		//標準ルール
+		if ( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
+			m_Types.m_nDefaultOutline = OUTLINE_FILE;
+		}
+		else {
+			hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
+			nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+			m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+		}
 
-	/* スマートインデント種別 */
-//	HWND	hwndCombo;
-//	int		nSelPos;
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
-	nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-	m_Types.m_nSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持
+		::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, _countof2( m_Types.m_szOutlineRuleFilename ));
+	}
 
-	/* 折り返しは2行目以降を字下げ表示 */
-	//	Oct. 1, 2002 genta コンボボックスに変更
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
-	nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-	m_Types.m_nIndentLayout = IndentTypeArr[nSelPos].nMethod;	/* 折り返し部インデント種別 */
+	//その他
+	{
+		/* 英文ワードラップをする */
+		m_Types.m_bWordWrap = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WORDWRAP );
 
-	//	From Here Nov. 20, 2000 genta	IME状態
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
-	nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-	m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IME入力モード
+		/* 禁則処理 */
+		{	//@@@ 2002.04.08 MIK start
+			m_Types.m_bKinsokuHead = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ? TRUE : FALSE;
+			m_Types.m_bKinsokuTail = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ? TRUE : FALSE;
+			m_Types.m_bKinsokuRet  = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKURET  ) ? TRUE : FALSE;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+			m_Types.m_bKinsokuKuto = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUKUTO ) ? TRUE : FALSE;	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, _countof( m_Types.m_szKinsokuHead ) );
+			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, _countof( m_Types.m_szKinsokuTail ) );
+		}	//@@@ 2002.04.08 MIK end
 
-	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
-	nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-	m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
-	//	To Here Nov. 20, 2000 genta
-
-	/* 英文ワードラップをする */
-	m_Types.m_bWordWrap = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WORDWRAP );
-
-	/* 禁則処理 */
-	{	//@@@ 2002.04.08 MIK start
-		m_Types.m_bKinsokuHead = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ? TRUE : FALSE;
-		m_Types.m_bKinsokuTail = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ? TRUE : FALSE;
-		m_Types.m_bKinsokuRet  = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKURET  ) ? TRUE : FALSE;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-		m_Types.m_bKinsokuKuto = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUKUTO ) ? TRUE : FALSE;	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, _countof( m_Types.m_szKinsokuHead ) );
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, _countof( m_Types.m_szKinsokuTail ) );
-	}	//@@@ 2002.04.08 MIK end
-
-	//	Sep. 10, 2002 genta
-	m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DOCICON ) ? TRUE : FALSE;
+		// 文書アイコンを使う	//Sep. 10, 2002 genta
+		m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DOCICON ) ? TRUE : FALSE;
+	}
 
 	return TRUE;
 }

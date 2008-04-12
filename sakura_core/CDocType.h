@@ -1,36 +1,39 @@
+/*
+	ドキュメント種別の管理
+
+	2008.01～03 kobake 作成
+*/
 #pragma once
+
 
 class CDocType{
 public:
+	//生成と破棄
 	CDocType(CEditDoc* pcDoc)
 	: m_pcDocRef(pcDoc)
 	, m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
 	, m_nSettingType( 0 )	// Sep. 11, 2002 genta
 	{
 	}
-
-	//	2002.10.13 Moca
-	void SetDocumentIcon();	// Sep. 10, 2002 genta
-
-	//	Nov. 29, 2000 From Here	genta
-	//	設定の一時変更時に拡張子による強制的な設定変更を無効にする
-	void LockDocumentType(void){ m_nSettingTypeLocked = true; }
-	void UnlockDocumentType(void){ m_nSettingTypeLocked = false; }
-	bool GetDocumentLockState(void){ return m_nSettingTypeLocked; }
-	//	Nov. 29, 2000 To Here
-
-	//	Nov. 23, 2000 From Here	genta
-	//	文書種別情報の設定，取得Interface
-	void SetDocumentType(CDocumentType type, bool force);	//	文書種別の設定
-	CDocumentType GetDocumentType(void) const	//!<	文書種別の読み出し
+	
+	//ロック機能	//	Nov. 29, 2000 genta 設定の一時変更時に拡張子による強制的な設定変更を無効にする
+	void LockDocumentType(){ m_nSettingTypeLocked = true; }
+	void UnlockDocumentType(){ m_nSettingTypeLocked = false; }
+	bool GetDocumentLockState(){ return m_nSettingTypeLocked; }
+	
+	// 文書種別の設定と取得		// Nov. 23, 2000 genta
+	void SetDocumentType(CDocumentType type, bool force);	//!< 文書種別の設定
+	CDocumentType GetDocumentType() const					//!< 文書種別の取得
 	{
 		return m_nSettingType;
 	}
-	Types& GetDocumentAttribute(void) const	//!<	設定された文書情報への参照を返す
+	Types& GetDocumentAttribute() const						//!< 文書種別の詳細情報
 	{
 		return GetDllShareData().GetTypeSetting(m_nSettingType);
 	}
-	//	Nov. 23, 2000 To Here
+
+	// 拡張機能
+	void SetDocumentIcon();	//アイコンの設定	//Sep. 10, 2002 genta
 
 private:
 	CEditDoc*		m_pcDocRef;
