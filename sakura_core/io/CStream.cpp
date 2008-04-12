@@ -15,11 +15,18 @@
 
 class CFileAttribute{
 public:
-	CFileAttribute(const TCHAR* tszPath) : m_strPath(tszPath) { }
+	CFileAttribute(const TCHAR* tszPath)
+	: m_strPath(tszPath)
+	, m_bAttributeChanged(false)
+	, m_dwAttribute(0)
+	{
+	}
 
 	//! w’è‘®«‚ğæ‚èœ‚­
 	void PopAttribute(DWORD dwPopAttribute)
 	{
+		if(m_bAttributeChanged)return; //Šù‚Éæ‚èœ‚«Ï‚İ
+
 		m_dwAttribute = ::GetFileAttributes(m_strPath.c_str());
 		if( m_dwAttribute != (DWORD)-1 ){
 			if(m_dwAttribute & dwPopAttribute){
