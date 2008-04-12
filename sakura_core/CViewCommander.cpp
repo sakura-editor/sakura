@@ -3803,8 +3803,6 @@ void CViewCommander::Command_OPTION( void )
 {
 	/* 設定プロパティシート テスト用 */
 	CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheet( -1/*, -1*/ );
-
-	return;
 }
 
 
@@ -3814,8 +3812,6 @@ void CViewCommander::Command_OPTION( void )
 void CViewCommander::Command_OPTION_TYPE( void )
 {
 	CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
-
-	return;
 }
 
 

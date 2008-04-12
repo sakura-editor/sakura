@@ -105,6 +105,9 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 		if(pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODE || pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODEBE)pcDoc->m_cDocFile.m_sFileInfo.bBomExist = true;
 	}
 
+	// •¶‘Ží•Ê
+	CDocumentType	doctype = CShareData::getInstance()->GetDocumentType( pcDoc->m_cDocFile.GetFilePath() );
+	pcDoc->m_cDocType.SetDocumentType( doctype, true );
 
 	//Ä•`‰æ $$•s‘«
 	CEditWnd::Instance()->GetActiveView().SetDrawSwitch(true);

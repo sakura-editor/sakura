@@ -4982,7 +4982,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	wcscpy( CDocumentType(nIdx)->m_szTabViewString, _EDITL("^       ") );	/* TAB表示文字列 */
 //#endif
-	CDocumentType(nIdx)->m_bTabArrow = FALSE;				/* タブ矢印表示 */	// 2001.12.03 hor
+	CDocumentType(nIdx)->m_bTabArrow = false;				/* タブ矢印表示 */	// 2001.12.03 hor
 	CDocumentType(nIdx)->m_bInsSpace = FALSE;				/* スペースの挿入 */	// 2001.12.03 hor
 	
 	//@@@ 2002.09.22 YAZAKI 以下、m_cLineCommentとm_cBlockCommentを使うように修正

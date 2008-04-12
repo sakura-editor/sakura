@@ -386,7 +386,7 @@ void CTextDrawer::DispTab( HDC hdc, DispPos* pDispPos, int nColorIdx ) const
 		rcClip2.top = sPos.GetDrawPos().y;
 		rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 		// TABを表示するか？
-		if( cTabType.IsDisp() && 0 == TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
+		if( cTabType.IsDisp() && !TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
 
 			// サポートクラス
 			CTypeSupport cSupport(pView,nColorIdx);
@@ -424,7 +424,7 @@ void CTextDrawer::DispTab( HDC hdc, DispPos* pDispPos, int nColorIdx ) const
 			
 			//タブ矢印表示	//@@@ 2003.03.26 MIK
 			if( cTabType.IsDisp()
-			 && 0 != TypeDataPtr->m_bTabArrow
+			 && TypeDataPtr->m_bTabArrow
 			 && rcClip2.left <= sPos.GetDrawPos().x ) // Apr. 1, 2003 MIK 行番号と重なる
 			{
 				_DrawTabArrow(
