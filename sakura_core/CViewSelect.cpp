@@ -521,12 +521,12 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		}
 
 #ifdef _DEBUG
-		auto_sprintf( msg, _T("%d bytes (%d lines) selected. [%d:%d]-[%d:%d]"),
+		auto_sprintf( msg, _T("%d chars (%d lines) selected. [%d:%d]-[%d:%d]"),
 			select_sum, select_line,
 			m_sSelect.GetFrom().x, m_sSelect.GetFrom().y,
 			m_sSelect.GetTo().x, m_sSelect.GetTo().y );
 #else
-		auto_sprintf( msg, _T("%d bytes (%d lines) selected."), select_sum, select_line );
+		auto_sprintf( msg, _T("%d chars (%d lines) selected."), select_sum, select_line );
 #endif
 	}
 	pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
