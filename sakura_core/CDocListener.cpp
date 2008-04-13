@@ -2,6 +2,11 @@
 #include "CDocListener.h"
 #include <map>
 
+bool SSaveInfo::IsSamePath(LPCTSTR pszPath) const
+{
+	return _tcsicmp(this->cFilePath,pszPath)==0;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       CDocSubject                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
