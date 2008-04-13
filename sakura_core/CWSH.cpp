@@ -21,7 +21,7 @@
 #include "CMacroFactory.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "OleTypes.h"
 #include "io/CTextStream.h"

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CViewSelect.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "CMemoryIterator.h"
 #include "CLayout.h"
@@ -110,7 +110,8 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 			pSelect->SetFrom(m_sSelectBgn.GetFrom());
 			pSelect->SetTo(ptCaretPos);
 		}
-	}else{
+	}
+	else{
 		// 常時選択範囲の範囲内
 		// キャレット位置が m_sSelectBgn の from以上で、toより小さい場合
 		if( PointCompare(ptCaretPos,m_sSelectBgn.GetFrom()) >= 0 && PointCompare(ptCaretPos,m_sSelectBgn.GetTo()) < 0 ){
@@ -127,7 +128,8 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 			// 常時選択範囲の前方向
 			pSelect->SetFrom(ptCaretPos);
 			pSelect->SetTo(m_sSelectBgn.GetTo());
-		}else{
+		}
+		else{
 			// 常時選択範囲の後ろ方向
 			pSelect->SetFrom(m_sSelectBgn.GetFrom());
 			pSelect->SetTo(ptCaretPos);

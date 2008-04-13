@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CViewCommander.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CWaitCursor.h"
 #include "charcode.h"
 #include "CRunningTimer.h"

@@ -13,7 +13,7 @@
 */
 #include "stdafx.h"
 #include "sakura_rc.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "CDocLine.h"
 #include "CMigemo.h"

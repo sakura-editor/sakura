@@ -18,7 +18,7 @@
 #include "sakura_rc.h"
 #include "CDlgReplace.h"
 #include "debug.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "CLayout.h"/// 2002/2/3 aroka

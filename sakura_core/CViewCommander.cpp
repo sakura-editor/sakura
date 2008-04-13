@@ -27,7 +27,7 @@
 #include <io.h>
 #include <mbstring.h>
 #include "sakura_rc.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "debug.h"
 #include "funccode.h"
 #include "CRunningTimer.h"
@@ -71,7 +71,7 @@
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/os.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditWnd.h"
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"

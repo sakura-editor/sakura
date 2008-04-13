@@ -28,7 +28,7 @@
 #include "CDlgFuncList.h"
 #include "debug.h"
 #include "global.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "funccode.h"		//Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "mymessage.h"// 2002/2/3 aroka

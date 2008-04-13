@@ -33,7 +33,7 @@ class CEditWnd;
 #include "CMenuDrawer.h"
 #include "CMainToolBar.h"
 #include "CMainStatusBar.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CSplitterWnd.h"
 #include "CDlgFind.h"
 #include "CDlgReplace.h"

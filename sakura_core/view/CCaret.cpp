@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CCaret.h"
 #include "CTextArea.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "CTextMetrics.h"
 #include "CMemoryIterator.h"

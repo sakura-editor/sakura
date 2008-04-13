@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "util/file.h"
 #include "util/module.h"

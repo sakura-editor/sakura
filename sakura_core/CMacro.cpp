@@ -22,7 +22,7 @@
 #include "funccode.h"
 #include "CMacro.h"
 #include "CControlTray.h"
-#include "CEditView.h" //2002/2/10 aroka
+#include "view/CEditView.h" //2002/2/10 aroka
 #include "CSMacroMgr.h" //2002/2/10 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ÉwÉbÉ_êÆóù
 #include "debug.h"

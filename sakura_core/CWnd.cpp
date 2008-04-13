@@ -15,11 +15,9 @@
 */
 #include "stdafx.h"
 #include "CWnd.h"
+#include "util/os.h" //WM_MOUSEWHEEL
 
 
-#ifndef	WM_MOUSEWHEEL
-	#define WM_MOUSEWHEEL	0x020A
-#endif
 
 
 /* CWndウィンドウメッセージのコールバック関数 */

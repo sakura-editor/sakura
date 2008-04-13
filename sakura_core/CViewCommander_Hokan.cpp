@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CViewCommander.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 
 /*!	“ü—Í•âŠ®
