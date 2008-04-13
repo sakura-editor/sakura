@@ -208,12 +208,12 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			TCHAR	szWorkFile[MAX_PATH];
 			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
 			::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, szWorkFolder );
-		}else{
+		}
+		else{
 			/* 現在のプロセスのカレントディレクトリを取得します */
 			TCHAR	szWorkFolder[MAX_PATH];
 			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
 			::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, szWorkFolder );
-//			::MessageBeep( MB_ICONEXCLAMATION );
 		}
 		return TRUE;
 

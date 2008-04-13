@@ -23,10 +23,13 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//オプション：無変更でも上書きするか
 	if( !GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
-		// 無変更の場合は警告音を出し、終了
-		if(!pcDoc->m_cDocEditor.IsModified() && pSaveInfo->cEol==EOL_NONE){ //※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
-			CEditApp::Instance()->m_cSoundSet.NeedlessToSaveBeep();
-			return CALLBACK_INTERRUPT;
+		// 上書きの場合
+		if(pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath())){
+			// 無変更の場合は警告音を出し、終了
+			if(!pcDoc->m_cDocEditor.IsModified() && pSaveInfo->cEol==EOL_NONE){ //※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
+				CEditApp::Instance()->m_cSoundSet.NeedlessToSaveBeep();
+				return CALLBACK_INTERRUPT;
+			}
 		}
 	}
 
