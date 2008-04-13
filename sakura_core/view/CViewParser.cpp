@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CViewParser.h"
 #include "CLayout.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "charcode.h"
 

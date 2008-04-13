@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CViewCalc.h"
 #include "CMemoryIterator.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "CLayout.h"
 

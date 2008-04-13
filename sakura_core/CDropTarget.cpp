@@ -12,7 +12,7 @@
 */
 
 #include "stdafx.h"
-#include "CEditView.h"// 2002/2/3 aroka
+#include "view/CEditView.h"// 2002/2/3 aroka
 #include "CDropTarget.h"
 #include "global.h"
 #include "debug.h"// 2002/2/3 aroka

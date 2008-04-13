@@ -171,6 +171,9 @@ bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer
 }
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      クリップボード                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //SetClipboardTextA,SetClipboardTextT 実装用テンプレート
 //2007.08.14 kobake UNICODE用に改造
@@ -231,9 +234,65 @@ SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLen
 	return SetClipboardTextImp<WCHAR>(hwnd,pszText,nLength);
 }
 
+/*
+	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
+	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
+*/
+BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+{
+	FORMATETC	fe;
+
+	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
+	//  tymed = TYMED_HGLOBALを指定すれば問題ない
+	fe.cfFormat = cfFormat;
+	fe.ptd = NULL;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	fe.tymed = TYMED_HGLOBAL;
+	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
+	return S_OK == pDataObject->QueryGetData( &fe );
+}
+
+HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+{
+	FORMATETC fe;
+	fe.cfFormat = cfFormat;
+	fe.ptd = NULL;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
+	fe.tymed = TYMED_HGLOBAL;
+
+	HGLOBAL hDest = NULL;
+	STGMEDIUM stgMedium;
+	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
+	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
+		if( stgMedium.pUnkForRelease == NULL ){
+			if( stgMedium.tymed == TYMED_HGLOBAL )
+				hDest = stgMedium.hGlobal;
+		}else{
+			if( stgMedium.tymed == TYMED_HGLOBAL ){
+				DWORD nSize = ::GlobalSize( stgMedium.hGlobal );
+				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
+				if( hDest != NULL ){
+					// copy the bits
+					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
+					LPVOID lpDest = ::GlobalLock( hDest );
+					memcpy_raw( lpDest, lpSource, nSize );
+					::GlobalUnlock( hDest );
+					::GlobalUnlock( stgMedium.hGlobal );
+				}
+			}
+			::ReleaseStgMedium( &stgMedium );
+		}
+	}
+	return hDest;
+}
 
 
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       システム資源                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* システムリソースを調べる
 	Win16 の時は、GetFreeSystemResources という関数がありました。しかし、Win32 ではありません。
@@ -274,8 +333,6 @@ BOOL GetSystemResources(
 		return FALSE;
 	}
 }
-
-
 
 
 /* システムリソースのチェック */
@@ -327,6 +384,9 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 }
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        便利クラス                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
 
@@ -348,3 +408,6 @@ CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
 		::SetCurrentDirectory(m_szCurDir);
 	}
 }
+
+
+

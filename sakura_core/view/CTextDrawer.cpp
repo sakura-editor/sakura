@@ -5,7 +5,7 @@
 #include "CTextArea.h"
 #include "CViewFont.h"
 #include "CEol.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "CTypeSupport.h"
 #include "charcode.h"

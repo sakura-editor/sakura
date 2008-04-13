@@ -21,7 +21,7 @@
 #include "CKeyBind.h"
 #include "Keycode.h"
 #include "CDicMgr.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "mymessage.h"
 #include "sakura_rc.h"
 #include "util/input.h"

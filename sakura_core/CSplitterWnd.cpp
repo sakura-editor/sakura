@@ -20,7 +20,7 @@
 #include "debug.h"
 #include "mymessage.h"
 #include "CEditWnd.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include <tchar.h>
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。

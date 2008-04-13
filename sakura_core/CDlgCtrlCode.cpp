@@ -37,7 +37,7 @@
 #include "mymessage.h"
 #include "CDialog.h"
 #include "CDlgCtrlCode.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "debug.h"
 #include "util/shell.h"
 

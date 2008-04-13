@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CRuler.h"
 #include "CTextArea.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CEditDoc.h"
 #include "CTypeSupport.h"
 

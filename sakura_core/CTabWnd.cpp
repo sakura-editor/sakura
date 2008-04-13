@@ -41,7 +41,7 @@
 #include "global.h"
 #include "mymessage.h"
 #include "charcode.h"
-#include "util/os.h"
+#include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
@@ -54,11 +54,6 @@
 #define SPI_SETFOREGROUNDLOCKTIMEOUT        0x2001
 #endif
 //#endif
-
-// 2007.04.01 ryoji WM_THEMECHANGED
-#ifndef	WM_THEMECHANGED
-#define WM_THEMECHANGED		0x031A
-#endif
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 #define TAB_WINDOW_HEIGHT	24

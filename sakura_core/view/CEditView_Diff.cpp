@@ -26,7 +26,7 @@
 #include "global.h"
 #include "CDlgDiff.h"
 #include "CEditDoc.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CDocLine.h"
 #include "CDocLineMgr.h"
 #include "CWaitCursor.h"

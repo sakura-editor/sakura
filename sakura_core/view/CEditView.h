@@ -174,11 +174,11 @@ public:
 	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
 	void MoveCursorSelecting( CLayoutPoint ptWk_CaretPos, bool bSelect, int = _CARETMARGINRATE );
-	void OnChangeSetting( void );								/* 設定変更を反映させる */
+	void OnChangeSetting();										/* 設定変更を反映させる */
 	void SetFont( void );										/* フォントの変更 */
-	void RedrawAll( void );										/* フォーカス移動時の再描画 */
-	void Redraw( void );										// 2001/06/21 asa-o 再描画
-	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
+	void RedrawAll();											/* フォーカス移動時の再描画 */
+	void Redraw();										// 2001/06/21 asa-o 再描画
+	void CopyViewStatus( CEditView* ) const;					/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 
 
@@ -237,13 +237,11 @@ public:
 	*/
 	void GetCurrentTextForSearch( CNativeW& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	void GetCurrentTextForSearchDlg( CNativeW& );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
-public:
-//	CEol GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      クリップボード                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
+public:
 	//取得
 	bool MyGetClipboardData( CNativeW&, bool*, bool* = NULL );			/* クリップボードからデータを取得 */
 
@@ -251,7 +249,9 @@ public:
 	bool MySetClipboardData( const ACHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
 	bool MySetClipboardData( const WCHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
 
+	//利用
 	void CopyCurLine( bool bAddCRLFWhenCopy, enumEOLType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
+	void CopySelectedAllLines( const wchar_t*, BOOL );			/* 選択範囲内の全行をクリップボードにコピーする */
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -303,7 +303,6 @@ protected:
 	//                           計算                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	void CopySelectedAllLines( const wchar_t*, BOOL );			/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( EFunctionCode );								/* 選択エリアのテキストを指定方法で変換 */
 
 public:
@@ -356,6 +355,9 @@ public:
 	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode);	/* 再変換用構造体を設定する 2002.04.09 minfu */
 	LRESULT SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           D&D                               //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public: /* テスト用にアクセス属性を変更 */
 	/* IDropTarget実装 */
 	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );

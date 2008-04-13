@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "CShareData.h"
 #include "CEditDoc.h"
 

@@ -34,7 +34,7 @@
 
 #include "stdafx.h"
 #include "CPPA.h"
-#include "CEditView.h"
+#include "view/CEditView.h"
 #include "Funccode.h"
 #include "debug.h"
 #include "CMacro.h"

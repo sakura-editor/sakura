@@ -57,6 +57,7 @@
 #include "util/string_ex2.h"
 #include <shlobj.h>
 #include "CSakuraEnvironment.h"
+#include "util/os.h" //WM_MOUSEWHEEL,WM_THEMECHANGED
 
 
 
@@ -73,14 +74,7 @@
 	#define TBSTYLE_LIST	0x1000
 #endif
 
-#ifndef	WM_MOUSEWHEEL
-	#define WM_MOUSEWHEEL	0x020A
-#endif
 
-// 2006.06.17 ryoji WM_THEMECHANGED
-#ifndef	WM_THEMECHANGED
-#define WM_THEMECHANGED		0x031A
-#endif
 
 #define		YOHAKU_X		4		/* ウィンドウ内の枠と紙の隙間最小値 */
 #define		YOHAKU_Y		4		/* ウィンドウ内の枠と紙の隙間最小値 */
