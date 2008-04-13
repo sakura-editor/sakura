@@ -34,7 +34,7 @@
 #include "sakura_rc.h"
 #include "CDlgTagsMake.h"
 #include "debug.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "global.h"
 #include "funccode.h"
 #include "mymessage.h"

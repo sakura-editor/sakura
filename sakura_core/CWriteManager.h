@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 
 class CWriteManager : public CProgressSubject{
 public:

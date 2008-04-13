@@ -2,7 +2,7 @@
 #include "CRuler.h"
 #include "CTextArea.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CTypeSupport.h"
 
 CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)

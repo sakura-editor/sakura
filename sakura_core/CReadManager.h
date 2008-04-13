@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 class CDocLineMgr;
 
 class CReadManager : public CProgressSubject{

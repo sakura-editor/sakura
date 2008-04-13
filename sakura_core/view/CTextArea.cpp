@@ -3,7 +3,7 @@
 #include "CShareData.h"
 #include "CViewFont.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 
 CTextArea::CTextArea(CEditView* pEditView)
 : m_pEditView(pEditView)

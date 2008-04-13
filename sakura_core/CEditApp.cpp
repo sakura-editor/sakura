@@ -5,7 +5,7 @@
 #include "util/shell.h"
 #include "CCommandLine.h"
 #include "CPropertyManager.h"
-#include "CMruListener.h"
+#include "recent/CMruListener.h"
 
 #pragma warning(disable:4355) //「thisポインタが初期化リストで使用されました」の警告を無効化
 

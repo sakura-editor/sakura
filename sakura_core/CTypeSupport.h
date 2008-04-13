@@ -2,7 +2,7 @@
 
 #include "view/CEditView.h"
 #include "CShareData.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 
 //2007.08.28 kobake 追加
 //!タイプサポートクラス

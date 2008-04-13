@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "CViewSelect.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CMemoryIterator.h"
-#include "CLayout.h"
+#include "doc/CLayout.h"
 #include "CEditWnd.h"
 
 CViewSelect::CViewSelect(CEditView* pcEditView)

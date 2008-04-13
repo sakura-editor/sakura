@@ -52,8 +52,8 @@ struct EditNode {
 
 
 //@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
-#include "CMRU.h"
-#include "CMRUFolder.h"
+#include "recent/CMRU.h"
+#include "recent/CMRUFolder.h"
 
 //20020129 aroka
 #include "funccode.h"
@@ -61,11 +61,11 @@ struct EditNode {
 
 #include "CMutex.h"	// 2007.07.07 genta
 
-#include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
-#include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
+#include "doc/CLineComment.h"	//@@@ 2002.09.22 YAZAKI
+#include "doc/CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 
 #include "EditInfo.h"
-#include "CDocTypeSetting.h"
+#include "doc/CDocTypeSetting.h"
 
 
 /*!	åüçıÉIÉvÉVÉáÉì

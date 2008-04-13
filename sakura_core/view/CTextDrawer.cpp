@@ -6,10 +6,10 @@
 #include "CViewFont.h"
 #include "CEol.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CTypeSupport.h"
 #include "charcode.h"
-#include "CLayout.h"
+#include "doc/CLayout.h"
 
 const CTextArea* CTextDrawer::GetTextArea() const
 {

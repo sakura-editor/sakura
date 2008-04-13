@@ -22,7 +22,7 @@
 #include "CDlgOpenFile.h"
 #include "CDlgDiff.h"
 #include "debug.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "global.h"
 #include "funccode.h"
 #include "mymessage.h"

@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CControlTray.h"
 #include "charcode.h"
 

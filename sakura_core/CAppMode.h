@@ -1,7 +1,7 @@
 #pragma once
 
 #include "util/design_template.h"
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 
 class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###‰¼
 public:

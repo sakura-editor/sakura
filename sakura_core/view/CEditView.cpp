@@ -31,7 +31,7 @@
 #include "CWaitCursor.h"
 #include "CEditWnd.h"
 #include "CDlgCancel.h"
-#include "CLayout.h"/// 2002/2/3 aroka
+#include "doc/CLayout.h"/// 2002/2/3 aroka
 #include "COpe.h"///
 #include "COpeBlk.h"///
 #include "CDropTarget.h"///

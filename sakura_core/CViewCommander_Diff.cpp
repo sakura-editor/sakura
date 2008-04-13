@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CViewCommander.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CDlgDiff.h"
 #include "CEditWnd.h"
 

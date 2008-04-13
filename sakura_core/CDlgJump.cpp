@@ -19,7 +19,7 @@
 #include "sakura_rc.h"
 #include "CDlgJump.h"
 #include "debug.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/10 aroka ƒwƒbƒ_®—
 #include "util/shell.h"

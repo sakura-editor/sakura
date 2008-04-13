@@ -17,7 +17,7 @@
 
 #include "stdafx.h"
 #include "CPrintPreview.h"
-#include "CLayout.h"
+#include "doc/CLayout.h"
 #include "CEditWnd.h"
 #include "charcode.h"
 #include "CDlgPrintPage.h"

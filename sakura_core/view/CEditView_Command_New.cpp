@@ -25,14 +25,14 @@
 #include <algorithm>		// 2001.12.11 hor    for VC++
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
-#include "CLayout.h"///
-#include "CDocLine.h"///
+#include "doc/CLayout.h"///
+#include "doc/CDocLine.h"///
 #include "mymessage.h"///
 #include "debug.h"///
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
-#include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "CEditWnd.h"
 #include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK

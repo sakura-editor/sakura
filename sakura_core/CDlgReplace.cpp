@@ -21,8 +21,8 @@
 #include "view/CEditView.h"
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
-#include "CLayout.h"/// 2002/2/3 aroka
-#include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CLayout.h"/// 2002/2/3 aroka
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "util/shell.h"
 #include "util/window.h"
 
