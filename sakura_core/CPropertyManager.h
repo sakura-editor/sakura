@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CPropCommon.h"
+#include "prop/CPropCommon.h"
 #include "types/CPropTypes.h"
 
 class CPropertyManager{

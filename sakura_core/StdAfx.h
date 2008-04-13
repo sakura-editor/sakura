@@ -94,7 +94,7 @@
 #include "CReadManager.h"
 #include "CWriteManager.h"
 #include "CSearchAgent.h"
-#include "CDocReader.h"
+#include "doc/CDocReader.h"
 #include "CAppMode.h"
 HWND G_GetProgressBar();
 #pragma warning( disable : 4355 ) //warning C4355: 'this' : ベース メンバ初期化リストで使用されました。

@@ -31,7 +31,7 @@
 #define __CAUTOSAVE_H_
 #include <windows.h>
 #include "global.h"
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 
 //! •ª¨ƒ~ƒŠ•b‚É•ÏŠ·‚·‚é‚½‚ß‚ÌŒW”
 const int MSec2Min = 1000 * 60;

@@ -26,7 +26,7 @@
 #include "Debug.h"
 #include "CEditWnd.h" // 2002/2/3 aroka
 #include "mymessage.h" // 2002/2/3 aroka
-#include "CDocLine.h" // 2003/03/28 MIK
+#include "doc/CDocLine.h" // 2003/03/28 MIK
 #include <tchar.h>
 #include "CRunningTimer.h"
 #include "util/window.h"

@@ -14,8 +14,8 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
-#include "CDocLine.h"
+#include "doc/CEditDoc.h"
+#include "doc/CDocLine.h"
 #include "CMigemo.h"
 
 /*!

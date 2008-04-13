@@ -36,7 +36,7 @@
 #include "CWaitCursor.h"
 #include "CSplitterWnd.h"
 //@@@ 2002.2.2 YAZAKI É}ÉNÉçÇÕCSMacroMgrÇ…ìùàÍ
-#include "CSMacroMgr.h"
+#include "macro/CSMacroMgr.h"
 #include "CDlgTypeList.h"
 #include "CDlgProperty.h"
 #include "CDlgCompare.h"
@@ -47,12 +47,12 @@
 #include "CDlgAbout.h"	//Dec. 24, 2000 JEPRO í«â¡
 #include "COpe.h"/// 2002/2/3 aroka í«â¡ from here
 #include "COpeBlk.h"///
-#include "CLayout.h"///
+#include "doc/CLayout.h"///
 #include "CEditWnd.h"///
 #include "CFuncInfoArr.h"///
 #include "CMarkMgr.h"///
-#include "CDocLine.h"///
-#include "CSMacroMgr.h"///
+#include "doc/CDocLine.h"///
+#include "macro/CSMacroMgr.h"///
 #include "mymessage.h"/// 2002/2/3 aroka í«â¡ to here
 #include "CDlgCancel.h"// 2002/2/8 hor
 #include "CPrintPreview.h"

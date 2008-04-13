@@ -45,7 +45,7 @@
 #include "basis/SakuraBasis.h"
 #include "CEditView_Paint.h"
 #include "mfclike/CMyWnd.h"
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 
 class CDropTarget; /// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 class CMemory;///

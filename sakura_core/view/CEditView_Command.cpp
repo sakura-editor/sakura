@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "view/CEditView.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "mymessage.h"
 #include "util/window.h"
 #include "CControlTray.h"
 #include <io.h>
-#include "CLayout.h"
+#include "doc/CLayout.h"
 #include "charcode.h"
 
 /*

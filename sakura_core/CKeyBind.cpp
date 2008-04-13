@@ -18,7 +18,7 @@
 #include "stdafx.h"
 #include "CKeyBind.h"
 #include "debug.h"
-#include "CSMacroMgr.h"// 2002/2/10 aroka
+#include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "CFuncLookup.h"
 #include "KeyCode.h"// 2002/2/10 aroka
 #include "CMemory.h"// 2002/2/10 aroka

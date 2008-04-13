@@ -27,10 +27,10 @@
 #include "stdafx.h"
 #include "funccode.h"
 #include "sakura.hh"
-#include "CMRU.h" //MAX_MRU
+#include "recent/CMRU.h" //MAX_MRU
 #include "CShareData.h"
-#include "CEditDoc.h"
-#include "CSMacroMgr.h"
+#include "doc/CEditDoc.h"
+#include "macro/CSMacroMgr.h"
 #include "CMarkMgr.h"
 #include "CEditWnd.h"
 

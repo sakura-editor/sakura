@@ -7,10 +7,10 @@ class CEditWnd;
 class CPropertyManager;
 class CMruListener;
 enum EFunctionCode;
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CImageListMgr.h"
 #include "CPropertyManager.h"
-#include "CSMacroMgr.h"
+#include "macro/CSMacroMgr.h"
 #include "CGrepAgent.h"
 #include "CSoundSet.h"
 #include "CSaveAgent.h"

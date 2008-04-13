@@ -28,8 +28,8 @@
 #include "CControlTray.h"
 #include "CEditWnd.h"
 #include "sakura_rc.h"
-#include "CEditDoc.h"
-#include "CDocLine.h"
+#include "doc/CEditDoc.h"
+#include "doc/CDocLine.h"
 #include "debug.h"
 #include "CDlgAbout.h"
 #include "mymessage.h"
@@ -43,7 +43,7 @@
 #include "CPrintPreview.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "CCommandLine.h" /// 2003/1/26 aroka
-#include "CSMacroMgr.h" // Jun. 16, 2002 genta
+#include "macro/CSMacroMgr.h" // Jun. 16, 2002 genta
 #include "COsVersioninfo.h"	// Sep. 6, 2003 genta
 #include "CRunningTimer.h"
 #include "KeyCode.h"

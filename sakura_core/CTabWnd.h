@@ -38,7 +38,7 @@ class CTabWnd;
 #define _CTABWND_H_
 
 #include "CWnd.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CShareData.h"
 #include <string>
 #include <map>

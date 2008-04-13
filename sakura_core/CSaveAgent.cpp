@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CSaveAgent.h"
-#include "CDocVisitor.h"
+#include "doc/CDocVisitor.h"
 #include "CWaitCursor.h"
 
 CSaveAgent::CSaveAgent()

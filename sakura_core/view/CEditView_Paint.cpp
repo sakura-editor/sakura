@@ -3,7 +3,7 @@
 #include "view/CEditView.h"
 #include <vector>
 #include "CTypeSupport.h"
-#include "CLayout.h"
+#include "doc/CLayout.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
 

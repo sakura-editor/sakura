@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 
 // ファイルが更新された場合に再読込を行うかどうかのフラグ
 enum WatchUpdate {

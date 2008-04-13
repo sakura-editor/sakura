@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "CSakuraEnvironment.h"
 #include "util/string_ex2.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CEditWnd.h"
 #include "CPrintPreview.h"
 #include "util/module.h" //GetAppVersionInfo
-#include "CSMacroMgr.h"
+#include "macro/CSMacroMgr.h"
 #include "util/shell.h"
 
 CEditWnd* CSakuraEnvironment::GetMainWindow()

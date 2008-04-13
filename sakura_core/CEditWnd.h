@@ -26,7 +26,7 @@
 class CEditWnd;
 
 #include <shellapi.h>// HDROP
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "CShareData.h"
 #include "CFuncKeyWnd.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
@@ -43,7 +43,7 @@ class CEditWnd;
 #include "CDlgOpenFile.h"
 #include "CHokanMgr.h"
 #include "util/design_template.h"
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 
 //by ‹S
 #include"CDropTarget.h"

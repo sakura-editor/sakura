@@ -24,8 +24,8 @@
 -----------------------------------------------------------------------*/
 // 2007.10.23 kobake テンプレートである必要も無いので、非テンプレートに変更。
 
-#include "CLayout.h"
-#include "CDocLine.h"
+#include "doc/CLayout.h"
+#include "doc/CDocLine.h"
 
 //! ブロックコメントデリミタを管理する
 class SAKURA_CORE_API CMemoryIterator

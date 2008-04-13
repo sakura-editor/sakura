@@ -21,7 +21,7 @@
 #include "CDlgAbout.h"
 #include "sakura_rc.h" // 2002/2/10 aroka •œ‹A
 #include "CBREGEXP.h"
-#include "CPPA.h"
+#include "macro/CPPA.h"
 #include "util/file.h"
 #include "util/module.h"
 #include <shellapi.h>

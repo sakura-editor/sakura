@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CDocListener.h"
+#include "doc/CDocListener.h"
 class CWaitCursor;
 
 class CVisualProgress : public CDocListenerEx, public CProgressListener{

@@ -19,7 +19,7 @@
 #include "sakura_rc.h"
 #include "CDlgCompare.h"
 #include "debug.h"
-#include "CEditDoc.h"
+#include "doc/CEditDoc.h"
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "mymessage.h"

@@ -33,7 +33,7 @@
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "mymessage.h"// 2002/2/3 aroka
 #include "Keycode.h"// 2002/2/10 aroka ヘッダ整理
-#include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "CEditWnd.h"	//	2006/2/11 aroka 追加
 #include "util/shell.h"
 #include "util/os.h"
