@@ -246,7 +246,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1000;
+const unsigned int uShareDataVersion = 1001;
 
 /*
 ||	Singleton風
@@ -470,9 +470,9 @@ bool CShareData::Init( void )
 
 		/* バックアップ */
 		CommonSetting_Backup& sBackup = m_pShareData->m_Common.m_sBackup;
-		sBackup.m_bBackUp = FALSE;										/* バックアップの作成 */
-		sBackup.m_bBackUpDialog = TRUE;									/* バックアップの作成前に確認 */
-		sBackup.m_bBackUpFolder = FALSE;								/* 指定フォルダにバックアップを作成する */
+		sBackup.m_bBackUp = false;										/* バックアップの作成 */
+		sBackup.m_bBackUpDialog = true;									/* バックアップの作成前に確認 */
+		sBackup.m_bBackUpFolder = false;								/* 指定フォルダにバックアップを作成する */
 		sBackup.m_szBackUpFolder[0] = L'\0';							/* バックアップを作成するフォルダ */
 		sBackup.m_nBackUpType = 2;										/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
@@ -481,8 +481,8 @@ bool CShareData::Init( void )
 		sBackup.m_nBackUpType_Opt4 = 0;									/* バックアップファイル名：Option4 */
 		sBackup.m_nBackUpType_Opt5 = 0;									/* バックアップファイル名：Option5 */
 		sBackup.m_nBackUpType_Opt6 = 0;									/* バックアップファイル名：Option6 */
-		sBackup.m_bBackUpDustBox = FALSE;								/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-		sBackup.m_bBackUpPathAdvanced = FALSE;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+		sBackup.m_bBackUpDustBox = false;								/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		sBackup.m_bBackUpPathAdvanced = false;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
 		sBackup.m_szBackUpPathAdvanced[0] = _T('\0');					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
 		m_pShareData->m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE;/* ファイルの排他制御モード */

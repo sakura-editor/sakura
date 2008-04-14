@@ -61,6 +61,7 @@ VOID_NOTIFY2(AfterLoad,const SLoadInfo&)
 VOID_NOTIFY2(FinalLoad,ELoadResult)
 
 DEF_NOTIFY2(CheckSave,SSaveInfo*)
+DEF_NOTIFY2(PreBeforeSave,SSaveInfo*)
 VOID_NOTIFY2(BeforeSave,const SSaveInfo&)
 VOID_NOTIFY2(Save,const SSaveInfo&)
 VOID_NOTIFY2(Saving,int)

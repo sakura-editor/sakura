@@ -18,3 +18,14 @@ SAKURA_CORE_API BOOL BlockingHook( HWND hwndDlgCancel );
 
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
+
+
+//チェックボックス
+inline void CheckDlgButtonBool(HWND hDlg, int nIDButton, bool bCheck)
+{
+	CheckDlgButton(hDlg,nIDButton,bCheck?BST_CHECKED:BST_UNCHECKED);
+}
+inline bool IsDlgButtonCheckedBool(HWND hDlg, int nIDButton)
+{
+	return (IsDlgButtonChecked(hDlg,nIDButton) & BST_CHECKED) != 0;
+}

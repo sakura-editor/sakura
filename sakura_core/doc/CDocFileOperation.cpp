@@ -235,6 +235,9 @@ bool CDocFileOperation::DoSaveFlow(const SSaveInfo& _sSaveInfo)
 		//セーブ前チェック
 		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyCheckSave(&sSaveInfo))throw CFlowInterruption();
 
+		//セーブ前おまけ処理
+		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyPreBeforeSave(&sSaveInfo))throw CFlowInterruption();
+
 		//セーブ処理
 		m_pcDocRef->NotifyBeforeSave(sSaveInfo);	//前処理
 		m_pcDocRef->NotifySave(sSaveInfo);			//本処理

@@ -216,9 +216,9 @@ public:
 	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
 
 public:
-	BOOL		m_bBackUp;					// バックアップの作成
-	BOOL		m_bBackUpDialog;			// バックアップの作成前に確認
-	BOOL		m_bBackUpFolder;			// 指定フォルダにバックアップを作成する
+	bool		m_bBackUp;					// 保存時にバックアップを作成する
+	bool		m_bBackUpDialog;			// バックアップの作成前に確認
+	bool		m_bBackUpFolder;			// 指定フォルダにバックアップを作成する
 	SFilePath	m_szBackUpFolder;			// バックアップを作成するフォルダ
 	int 		m_nBackUpType;				// バックアップファイル名のタイプ 1=(.bak) 2=*_日付.*
 	int 		m_nBackUpType_Opt1;			// バックアップファイル名：オプション1
@@ -227,8 +227,8 @@ public:
 	int 		m_nBackUpType_Opt4;			// バックアップファイル名：オプション4
 	int 		m_nBackUpType_Opt5;			// バックアップファイル名：オプション5
 	int 		m_nBackUpType_Opt6;			// バックアップファイル名：オプション6
-	BOOL		m_bBackUpDustBox;			// バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
-	BOOL		m_bBackUpPathAdvanced;		// バックアップ先フォルダを詳細設定する 20051107 aroka
+	bool		m_bBackUpDustBox;			// バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
+	bool		m_bBackUpPathAdvanced;		// バックアップ先フォルダを詳細設定する 20051107 aroka
 	SFilePath	m_szBackUpPathAdvanced;		// バックアップを作成するフォルダの詳細設定 20051107 aroka
 };
 

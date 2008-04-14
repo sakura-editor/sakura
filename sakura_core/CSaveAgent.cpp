@@ -15,7 +15,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	//	Jun.  5, 2004 genta
 	//	ビューモードのチェックをCEditDocから上書き保存処理に移動
 	//	同名で上書きされるのを防ぐ
-	if( CAppMode::Instance()->IsViewMode() && _tcscmp( pSaveInfo->cFilePath, pcDoc->m_cDocFile.GetFilePath()) == 0 ){
+	if( CAppMode::Instance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		ErrorBeep();
 		TopErrorMessage( CEditWnd::Instance()->GetHwnd(), _T("ビューモードでは同一ファイルへの上書き保存はできません。") );
 		return CALLBACK_INTERRUPT;

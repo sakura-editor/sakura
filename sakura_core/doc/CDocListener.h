@@ -97,6 +97,7 @@ public:
 
 	//セーブ前後
 	ECallbackResult NotifyCheckSave	(SSaveInfo* pSaveInfo);
+	ECallbackResult NotifyPreBeforeSave(SSaveInfo* pSaveInfo);
 	void NotifyBeforeSave			(const SSaveInfo& sSaveInfo);
 	void NotifySave					(const SSaveInfo& sSaveInfo);
 	void NotifySaving				(int nPer);
@@ -127,6 +128,7 @@ public:
 
 	//セーブ前後
 	virtual ECallbackResult OnCheckSave	(SSaveInfo* pSaveInfo)		{ return CALLBACK_CONTINUE; }	//!< 本当にセーブを行うかの判定を行う
+	virtual ECallbackResult OnPreBeforeSave	(SSaveInfo* pSaveInfo)	{ return CALLBACK_CONTINUE; }	//!< セーブ事前おまけ処理 ($$ 仮)
 	virtual void			OnBeforeSave(const SSaveInfo& sSaveInfo){ return ; }	//!< セーブ事前処理
 	virtual void			OnSave		(const SSaveInfo& sSaveInfo){ return ; }	//!< セーブ処理
 	virtual void			OnSaving	(int nPer)					{ return ; }	//!< セーブ処理の経過情報を受信
