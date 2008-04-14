@@ -34,7 +34,7 @@
 #include "sakura_rc.h"
 #include "types/CPropTypes.h"
 #include "debug.h"
-#include "CDlgOpenFile.h"
+#include "dlg/CDlgOpenFile.h"
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
 #include "charcode.h"
 #include "sakura.hh"

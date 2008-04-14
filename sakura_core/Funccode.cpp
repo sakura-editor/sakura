@@ -32,7 +32,7 @@
 #include "doc/CEditDoc.h"
 #include "macro/CSMacroMgr.h"
 #include "CMarkMgr.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 
 //using namespace nsFuncCode;
 

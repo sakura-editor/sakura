@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CEditView.h"
-#include "CDlgCancel.h"
+#include "dlg/CDlgCancel.h"
 #include "util/window.h"
 #include "util/tchar_template.h"
 

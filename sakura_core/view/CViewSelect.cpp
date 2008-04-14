@@ -4,7 +4,7 @@
 #include "doc/CEditDoc.h"
 #include "CMemoryIterator.h"
 #include "doc/CLayout.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
 : m_pcEditView(pcEditView)

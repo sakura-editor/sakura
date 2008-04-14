@@ -21,7 +21,7 @@
 #include "prop/CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
 #include "global.h"
-#include "CDlgWinSize.h"	//	2004.05.13 Moca
+#include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

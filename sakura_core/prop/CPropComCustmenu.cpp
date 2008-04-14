@@ -17,8 +17,8 @@
 
 #include "stdafx.h"
 #include "prop/CPropCommon.h"
-#include "CDlgInput1.h"
-#include "CDlgOpenFile.h"
+#include "dlg/CDlgInput1.h"
+#include "dlg/CDlgOpenFile.h"
 #include "debug.h" // 2002/2/10 aroka
 #include "io/CTextStream.h"
 #include "util/shell.h"

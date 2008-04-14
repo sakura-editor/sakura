@@ -29,11 +29,11 @@
 #include <windows.h>
 #include "debug.h"
 #include "CControlTray.h"
-#include "CEditWnd.h"		//Nov. 21, 2000 JEPROtest
-#include "CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
+#include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
+#include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
 #include "sakura_rc.h"
 #include "mymessage.h"
-#include "CDlgOpenFile.h"
+#include "dlg/CDlgOpenFile.h"
 #include "global.h"
 #include "CRunningTimer.h"
 #include <htmlhelp.h>

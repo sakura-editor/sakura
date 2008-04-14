@@ -31,7 +31,7 @@
 #ifndef SC_CDLGSAMECOLOR_H__
 #define SC_CDLGSAMECOLOR_H__
 
-#include "CDialog.h"
+#include "dlg/CDialog.h"
 #include "CShareData.h"
 
 /*!	@brief 文字色／背景色統一ダイアログ

@@ -31,7 +31,7 @@
 #ifndef SC_CDLGKEYWORDSELECT_H__
 #define SC_CDLGKEYWORDSELECT_H__
 
-#include "CDialog.h"
+#include "dlg/CDialog.h"
 
 /*
 	強調キーワード選択可能数

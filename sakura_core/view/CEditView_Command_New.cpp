@@ -33,9 +33,9 @@
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
-#include "CEditWnd.h"
-#include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
-#include "CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
+#include "window/CEditWnd.h"
+#include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
+#include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 
 using namespace std; // 2002/2/3 aroka to here
 

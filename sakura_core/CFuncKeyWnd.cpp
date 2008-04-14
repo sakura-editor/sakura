@@ -18,7 +18,7 @@
 #include "stdafx.h"
 #include "CFuncKeyWnd.h"
 #include "debug.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "global.h"
 #include "KeyCode.h"// 2002/2/10 aroka
 #include "util/input.h"

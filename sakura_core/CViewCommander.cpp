@@ -34,32 +34,32 @@
 #include "charcode.h"
 #include "CControlTray.h"
 #include "CWaitCursor.h"
-#include "CSplitterWnd.h"
+#include "window/CSplitterWnd.h"
 //@@@ 2002.2.2 YAZAKI É}ÉNÉçÇÕCSMacroMgrÇ…ìùàÍ
 #include "macro/CSMacroMgr.h"
-#include "CDlgTypeList.h"
-#include "CDlgProperty.h"
-#include "CDlgCompare.h"
+#include "dlg/CDlgTypeList.h"
+#include "dlg/CDlgProperty.h"
+#include "dlg/CDlgCompare.h"
 #include "global.h"
 #include <htmlhelp.h>
 #include "CRunningtimer.h"
-#include "CDlgExec.h"
-#include "CDlgAbout.h"	//Dec. 24, 2000 JEPRO í«â¡
+#include "dlg/CDlgExec.h"
+#include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO í«â¡
 #include "COpe.h"/// 2002/2/3 aroka í«â¡ from here
 #include "COpeBlk.h"///
 #include "doc/CLayout.h"///
-#include "CEditWnd.h"///
+#include "window/CEditWnd.h"///
 #include "CFuncInfoArr.h"///
 #include "CMarkMgr.h"///
 #include "doc/CDocLine.h"///
 #include "macro/CSMacroMgr.h"///
 #include "mymessage.h"/// 2002/2/3 aroka í«â¡ to here
-#include "CDlgCancel.h"// 2002/2/8 hor
+#include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "CPrintPreview.h"
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
-#include "CDlgCancel.h"
-#include "CDlgTagJumpList.h"
-#include "CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
+#include "dlg/CDlgCancel.h"
+#include "dlg/CDlgTagJumpList.h"
+#include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "COsVersionInfo.h"
 #include "convert/CConvert_Base64Decode.h"
 #include "convert/CConvert_UuDecode.h"
@@ -72,7 +72,7 @@
 #include "util/string_ex2.h"
 #include "util/os.h"
 #include "view/CEditView.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"
 #include "CSakuraEnvironment.h"

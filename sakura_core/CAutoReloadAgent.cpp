@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "CAutoReloadAgent.h"
 #include "doc/CEditDoc.h"
-#include "CEditWnd.h"
-#include "CDlgFileUpdateQuery.h"
+#include "window/CEditWnd.h"
+#include "dlg/CDlgFileUpdateQuery.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -2,7 +2,7 @@
 #include "CSakuraEnvironment.h"
 #include "util/string_ex2.h"
 #include "doc/CEditDoc.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "CPrintPreview.h"
 #include "util/module.h" //GetAppVersionInfo
 #include "macro/CSMacroMgr.h"

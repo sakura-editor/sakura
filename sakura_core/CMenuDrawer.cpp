@@ -22,8 +22,8 @@
 #include "sakura_rc.h"
 #include "global.h"
 #include "debug.h"
-#include "CSplitBoxWnd.h"
-#include "CEditWnd.h"
+#include "window/CSplitBoxWnd.h"
+#include "window/CEditWnd.h"
 #include "CImageListMgr.h"
 
 

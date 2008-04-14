@@ -29,13 +29,13 @@
 #include "charcode.h"
 #include "mymessage.h"
 #include "CWaitCursor.h"
-#include "CEditWnd.h"
-#include "CDlgCancel.h"
+#include "window/CEditWnd.h"
+#include "dlg/CDlgCancel.h"
 #include "doc/CLayout.h"/// 2002/2/3 aroka
 #include "COpe.h"///
 #include "COpeBlk.h"///
 #include "CDropTarget.h"///
-#include "CSplitBoxWnd.h"///
+#include "window/CSplitBoxWnd.h"///
 #include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
 #include "CMarkMgr.h"///
 #include "COsVersionInfo.h"

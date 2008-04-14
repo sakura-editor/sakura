@@ -7,7 +7,7 @@
 #include "CMemoryIterator.h"
 #include "doc/CLayout.h"
 #include "charcode.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include <vector>
 using namespace std;
 

@@ -22,7 +22,7 @@
 #include "debug.h"
 #include <windows.h>
 #include <commctrl.h>
-#include "CDlgOpenFile.h"
+#include "dlg/CDlgOpenFile.h"
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"
