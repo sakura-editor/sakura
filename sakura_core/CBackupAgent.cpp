@@ -6,14 +6,18 @@
 #include "util/format.h" //GetDateTimeFormat
 #include <io.h>
 
-ECallbackResult CBackupAgent::OnCheckSave(SSaveInfo* pSaveInfo)
+ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 {
-	if( GetDllShareData().m_Common.m_sBackup.m_bBackUp ){	/* バックアップの作成 */
-		CEditDoc* pcDoc = GetListeningDoc();
+	CEditDoc* pcDoc = GetListeningDoc();
 
+	//新しくファイルを作る場合は何もしない
+	if(!fexist(pSaveInfo->cFilePath))return CALLBACK_CONTINUE;
+
+	//共通設定：保存時にバックアップを作成する
+	if( GetDllShareData().m_Common.m_sBackup.m_bBackUp ){
 		//	Jun.  5, 2004 genta ファイル名を与えるように．戻り値に応じた処理を追加．
 		// ファイル保存前にバックアップ処理
-		int nBackupResult = MakeBackUp( pcDoc->m_cDocFile.GetFilePath() );
+		int nBackupResult = MakeBackUp( pSaveInfo->cFilePath );
 		switch( nBackupResult ){
 		case 2:	//	中断指示
 			return CALLBACK_INTERRUPT;
@@ -101,27 +105,24 @@ int CBackupAgent::MakeBackUp(
 
 	if( bup_setting.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
 		::MessageBeep( MB_ICONQUESTION );
-//From Here Feb. 27, 2001 JEPROtest キャンセルもできるようにし、メッセージを追加した
-//		if( IDYES != MYMESSAGEBOX(
-//			CEditWnd::Instance()->GetHwnd(),
-//			MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-//			"バックアップ作成の確認",
-//			"変更される前に、バックアップファイルを作成します。\nよろしいですか？\n\n%ls\n    ↓\n%ls\n\n",
-//			GetFilePathClass().IsValidPath() ? GetFilePath() : "（無題）",
-//			szPath
-//		) ){
-//			return FALSE;
-//		}
-		if( bup_setting.m_bBackUpDustBox && dustflag == false ){	//@@@ 2001.12.11 add start MIK	//2002.03.23
+		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX_A(
 				CEditWnd::Instance()->GetHwnd(),
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 				"バックアップ作成の確認",
-				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%ls\n    ↓\n%ls\n\n作成したバックアップファイルをごみ箱に放り込みます。\n",
+				"変更される前に、バックアップファイルを作成します。\n"
+				"よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n"
+				"\n"
+				"%ls\n"
+				"    ↓\n"
+				"%ls\n"
+				"\n"
+				"作成したバックアップファイルをごみ箱に放り込みます。\n",
 				target_file,
 				szPath
 			);
-		}else{	//@@@ 2001.12.11 add end MIK
+		}
+		else{	//@@@ 2001.12.11 add end MIK
 			nRet = ::MYMESSAGEBOX_A(
 				CEditWnd::Instance()->GetHwnd(),
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
@@ -133,8 +134,6 @@ int CBackupAgent::MakeBackUp(
 				"    ↓\n"
 				"%ls\n"
 				"\n",
-				//GetFilePathClass().IsValidPath() ? GetFilePath() : "（無題）",
-				//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
 				target_file,
 				szPath
 			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
@@ -250,7 +249,7 @@ int CBackupAgent::MakeBackUp(
 	if( ::CopyFile( target_file, szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
-		if( bup_setting.m_bBackUpDustBox && dustflag == false ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
+		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			TCHAR	szDustPath[_MAX_PATH+1];
 			_tcscpy(szDustPath, szPath);
 			szDustPath[_tcslen(szDustPath) + 1] = _T('\0');

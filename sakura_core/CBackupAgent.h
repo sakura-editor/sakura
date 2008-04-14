@@ -4,7 +4,7 @@
 
 class CBackupAgent : public CDocListenerEx{
 public:
-	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo);
+	ECallbackResult OnPreBeforeSave(SSaveInfo* pSaveInfo);
 
 protected:
 	int MakeBackUp( const TCHAR* target_file );								//!< バックアップの作成
