@@ -5,7 +5,7 @@
 #include "doc/CEditDoc.h"
 #include "CControlTray.h"
 #include "charcode.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 
 /*! GREPダイアログの表示
 

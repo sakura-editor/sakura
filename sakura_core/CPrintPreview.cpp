@@ -18,11 +18,11 @@
 #include "stdafx.h"
 #include "CPrintPreview.h"
 #include "doc/CLayout.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "charcode.h"
-#include "CDlgPrintPage.h"
-#include "CDlgCancel.h"/// 2002/2/3 aroka from here
-#include "CDlgInput1.h" /// 2007.02.11 Moca
+#include "dlg/CDlgPrintPage.h"
+#include "dlg/CDlgCancel.h"/// 2002/2/3 aroka from here
+#include "dlg/CDlgInput1.h" /// 2007.02.11 Moca
 #include "Debug.h"///
 #include <stdio.h>/// 2002/2/3 aroka to here
 #include <vector>

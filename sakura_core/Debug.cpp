@@ -95,7 +95,7 @@ void DebugOutA( LPCSTR lpFmt, ...)
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 #include "global.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 HWND GetMessageBoxOwner(HWND hwndOwner)
 {
 	if(hwndOwner==NULL && g_pcEditWnd){

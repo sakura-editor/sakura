@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CEditApp.h"
 #include "util/module.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "util/shell.h"
 #include "CCommandLine.h"
 #include "CPropertyManager.h"

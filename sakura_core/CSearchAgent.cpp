@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CSearchAgent.h"
 #include "parse/CWordParse.h"
-#include "CDlgCancel.h"
+#include "dlg/CDlgCancel.h"
 
 /*!
 	•¶š—ñŒŸõ

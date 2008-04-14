@@ -86,7 +86,7 @@
 
 //###########’´‰¼
 #include "CNormalProcess.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "CModifyManager.h"
 #include "CDiffManager.h"

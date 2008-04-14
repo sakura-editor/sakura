@@ -24,8 +24,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <commctrl.h>
-#include "CDlgOpenFile.h"
-#include "CDlgInput1.h"
+#include "dlg/CDlgOpenFile.h"
+#include "dlg/CDlgInput1.h"
 #include "global.h"
 #include "io/CTextStream.h"
 #include "util/shell.h"

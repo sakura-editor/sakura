@@ -2,7 +2,7 @@
 #include "CGrepAgent.h"
 #include "util/window.h"
 #include "CRunningTimer.h"
-#include "CDlgCancel.h"
+#include "dlg/CDlgCancel.h"
 #include "COpeBlk.h"
 #include "util/module.h"
 #include "io/CFileLoad.h"

@@ -23,11 +23,11 @@
 #include "debug.h"
 #include <windows.h>
 #include <commctrl.h>
-#include "CDlgOpenFile.h"
+#include "dlg/CDlgOpenFile.h"
 #include "global.h"
-#include "CDlgInput1.h"
-#include "CDlgDebug.h"
-#include "CSplitBoxWnd.h"
+#include "dlg/CDlgInput1.h"
+#include "dlg/CDlgDebug.h"
+#include "window/CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
 #include "funccode.h"	//Stonee, 2001/05/18
 #include "CEditApp.h"

@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "sakura_rc.h"
 #include "global.h"
-#include "CDlgDiff.h"
+#include "dlg/CDlgDiff.h"
 #include "doc/CEditDoc.h"
 #include "view/CEditView.h"
 #include "doc/CDocLine.h"
@@ -35,7 +35,7 @@
 #include "debug.h"
 #include "util/module.h"
 #include "util/file.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "io/CTextStream.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")

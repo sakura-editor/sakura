@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "prop/CPropCommon.h"
-#include "CDlgOpenFile.h"
+#include "dlg/CDlgOpenFile.h"
 #include "macro/CSMacroMgr.h" // 2002/2/10 aroka
 #include "KeyCode.h"	/// 2002/2/3 aroka from here
 #include "debug.h" ///

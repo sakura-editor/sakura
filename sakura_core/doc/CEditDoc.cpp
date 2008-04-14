@@ -32,14 +32,14 @@
 #include "charcode.h"
 #include <DLGS.H>
 #include "CShareData.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "sakura_rc.h"
 #include "global.h"
 #include "CFuncInfoArr.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h"///
 #include "doc/CDocLine.h" /// 2002/2/3 aroka
 #include "CPrintPreview.h"
-#include "CDlgFileUpdateQuery.h"
+#include "dlg/CDlgFileUpdateQuery.h"
 #include <assert.h> /// 2002/11/2 frozen
 #include "CClipboard.h"
 #include "doc/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á

@@ -2,8 +2,8 @@
 #include "CViewCommander.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "CDlgDiff.h"
-#include "CEditWnd.h"
+#include "dlg/CDlgDiff.h"
+#include "window/CEditWnd.h"
 
 /*!	差分表示
 	@note	HandleCommandからの呼び出し対応(ダイアログなし版)

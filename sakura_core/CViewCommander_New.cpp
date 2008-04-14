@@ -15,12 +15,12 @@
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
-#include "CEditWnd.h"
-#include "CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
-#include "CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
+#include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
+#include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
+#include "window/CEditWnd.h"
 #include "io/CFileLoad.h"	// 2006.12.09 maru
-#include "CDlgCancel.h"	// 2006.12.09 maru
+#include "dlg/CDlgCancel.h"	// 2006.12.09 maru
 #include "CSakuraEnvironment.h"
 
 using namespace std; // 2002/2/3 aroka to here

@@ -28,7 +28,7 @@
 #include "debug.h"
 #include "OleTypes.h" //2003-02-21 ‹S
 #include "io/CTextStream.h"
-#include "CEditWnd.h"
+#include "window/CEditWnd.h"
 #include "CSakuraEnvironment.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
