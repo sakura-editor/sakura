@@ -7,7 +7,7 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
 , m_bInsMode( true )	// Oct. 2, 2005 genta
 , m_cNewLineCode( EOL_CRLF )		//	New Line Type
-, m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
+, m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 	//	Oct. 2, 2005 genta 挿入モード
 	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
@@ -24,10 +24,10 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 */
 void CDocEditor::SetModified( bool flag, bool redraw)
 {
-	if( m_bIsModified == flag )	//	変更がなければ何もしない
+	if( m_bIsDocModified == flag )	//	変更がなければ何もしない
 		return;
 
-	m_bIsModified = flag;
+	m_bIsDocModified = flag;
 	if( redraw )
 		m_pcDocRef->m_pcEditWnd->UpdateCaption();
 }

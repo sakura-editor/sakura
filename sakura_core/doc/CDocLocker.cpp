@@ -63,10 +63,13 @@ void CDocLocker::OnBeforeSave(const SSaveInfo& sSaveInfo)
 void CDocLocker::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
+
+	// 書き込めるか検査
+	m_bIsDocWritable = true;
+
+	// ファイルの排他ロック
 	if( pcDoc->m_cDocFileOperation._ToDoLock() ){
-		// ファイルの排他ロック
 		pcDoc->m_cDocFile.DoFileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode);
 	}
 }
-
 
