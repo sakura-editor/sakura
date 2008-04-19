@@ -244,10 +244,6 @@ uchar_t wc_to_c(wchar_t wc)
 /*!
 	文字列がURLかどうかを検査する。
 	
-	@param pszLine [in] 文字列
-	@param nLineLen [in] 文字列の長さ
-	@param pnMatchLen [out] URLの長さ
-	
 	@retval TRUE URLである
 	@retval FALSE URLでない
 	
@@ -258,7 +254,11 @@ uchar_t wc_to_c(wchar_t wc)
 
 	2007.10.23 kobake UNICODE対応。//$ wchar_t専用のテーブル(または判定ルーチン)を用意したほうが効率は上がるはずです。
 */
-BOOL IsURL( const wchar_t *pszLine, int nLineLen, int *pnMatchLen )
+BOOL IsURL(
+	const wchar_t*	pszLine,	//!< [in]  文字列
+	int				nLineLen,	//!< [in]  文字列の長さ
+	int*			pnMatchLen	//!< [out] URLの長さ
+)
 {
 	struct _url_table_t {
 		wchar_t	name[12];

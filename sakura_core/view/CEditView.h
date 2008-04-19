@@ -85,6 +85,7 @@ typedef struct tagRECONVERTSTRING {
 const int CMD_FROM_MOUSE = 2;
 
 class CEditView;
+struct SDrawStrategyInfo;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -285,19 +286,19 @@ public:
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 protected:
-	// 行のテキスト／選択状態の描画
-	//	int DispLine( HDC, int, int, int, const unsigned char*, int, BOOL );
-	//2007.08.25 kobake 戻り値をintからboolに変更
-	bool DispLineNew(
+	//! ロジック行を1行描画
+	bool DrawLogicLine(
 		HDC				hdc,			//!< [in]     作画対象
-		const CLayout*	pcLayout,		//!< [in]     表示を開始するレイアウト
 		DispPos*		pDispPos,		//!< [in/out] 描画する箇所、描画元ソース
-		CLayoutInt		nLineTo,		//!< [in]     作画終了するレイアウト行番号
-		bool			bSelected		//!< [in]     選択中か
+		CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 	);
 
+	//! レイアウト行を1行描画
+	bool DrawLayoutLine(SDrawStrategyInfo* pInfo);
+
+public:
 	void DispTextSelected( HDC hdc, CLayoutInt nLineNum, const CMyPoint& ptXY, CLayoutInt nX_Layout );	/* テキスト反転 */
-//	int	DispCtrlCode( HDC, int, int, const unsigned char*, int );	/* コントロールコード表示 */
+protected:
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           計算                              //
