@@ -79,7 +79,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		//ファイルクローズ
 		out.Close();
 	}
-	catch(CError_FileOpen){
+	catch(CError_FileOpen){ //########### 現時点では、この例外が発生した場合は正常に動作できない
 		ErrorMessage(
 			CEditWnd::Instance()->GetHwnd(),
 			_T("\'%ts\'\n")

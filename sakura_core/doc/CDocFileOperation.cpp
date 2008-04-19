@@ -14,7 +14,10 @@ bool CDocFileOperation::_ToDoLock() const
 
 	// ビューモード
 	if( CAppMode::Instance()->IsViewMode() )return false;
-	
+
+	// 排他設定
+	if( GetDllShareData().m_Common.m_sFile.m_nFileShareMode == SHAREMODE_NOT_EXCLUSIVE )return false;
+
 	return true;
 }
 

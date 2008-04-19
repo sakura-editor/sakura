@@ -443,7 +443,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
 
 	switch( *pCond ){
-	case L'R': // ビューモードおよび読み取り専用属性
+	case L'R': // $R ビューモードおよび読み取り専用属性
 		if( CAppMode::Instance()->IsViewMode() ){
 			return 0; // ビューモード
 		}
@@ -453,7 +453,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 		else{
 			return 2; // 上記以外
 		}
-	case L'w': // Grepモード/Output Mode
+	case L'w': // $w Grepモード/Output Mode
 		if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ){
 			return 0;
 		}else if( CAppMode::Instance()->IsDebugMode() ){
@@ -461,20 +461,20 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 		}else {
 			return 2;
 		}
-	case L'M': // キーボードマクロの記録中
+	case L'M': // $M キーボードマクロの記録中
 		if( GetDllShareData().m_bRecordingKeyMacro && GetDllShareData().m_hwndRecordingKeyMacro==pcDoc->GetOwnerHwnd() ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
 		}
-	case L'U': // 更新
+	case L'U': // $U 更新
 		if( pcDoc->m_cDocEditor.IsModified()){
 			return 0;
 		}
 		else {
 			return 1;
 		}
-	case L'I': // アイコン化されているか
+	case L'I': // $I アイコン化されているか
 		if( ::IsIconic( pcDoc->GetOwnerHwnd() )){
 			return 0;
 		} else {

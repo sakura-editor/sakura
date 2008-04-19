@@ -2,6 +2,7 @@
 #include "CSaveAgent.h"
 #include "doc/CDocVisitor.h"
 #include "CWaitCursor.h"
+#include "io/CBinaryStream.h"
 
 CSaveAgent::CSaveAgent()
 {
@@ -33,6 +34,34 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		}
 	}
 
+	// 書込可能チェック ######### スマートじゃない。ホントは書き込み時エラーチェック検出機構を用意したい
+	if(!pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) || !pcDoc->m_cDocFileOperation._ToDoLock()){ //名前を付けて保存 or ロックしてない
+		CFile cFile;
+		cFile.SetFilePath(pSaveInfo->cFilePath);
+		try{
+			if(fexist(pSaveInfo->cFilePath)){
+				if(!cFile.IsFileWritable()){
+					throw CError_FileOpen();
+				}
+			}
+			else{
+				CBinaryOutputStream out(pSaveInfo->cFilePath);
+				out.Close();
+				::DeleteFile(pSaveInfo->cFilePath);
+			}
+		}
+		catch(CError_FileOpen){
+			ErrorMessage(
+				CEditWnd::Instance()->GetHwnd(),
+				_T("\'%ts\'\n")
+				_T("ファイルを保存できません。\n")
+				_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
+				pSaveInfo->cFilePath.c_str()
+			);
+			return CALLBACK_INTERRUPT;
+		}
+	}
+
 	return CALLBACK_CONTINUE;
 }
 
@@ -57,11 +86,6 @@ void CSaveAgent::OnSave(const SSaveInfo& sSaveInfo)
 		pcDoc->m_cDocLineMgr,
 		sSaveInfo
 	);
-}
-
-void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
-{
-	CEditDoc* pcDoc = GetListeningDoc();
 
 	//セーブ情報の確定
 	pcDoc->SetFilePathAndIcon( sSaveInfo.cFilePath );
@@ -70,6 +94,11 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	if(sSaveInfo.cEol.IsValid()){
 		pcDoc->m_cDocEditor.SetNewLineCode(sSaveInfo.cEol);
 	}
+}
+
+void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
+{
+	CEditDoc* pcDoc = GetListeningDoc();
 
 	/* 更新後のファイル時刻の取得
 	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新

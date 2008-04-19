@@ -8303,7 +8303,8 @@ BOOL CViewCommander::Command_PUTFILE(
 		{
 			WarningMessage(
 				NULL,
-				_T("\'%ls\'\nファイルを保存できません。\n")
+				_T("\'%ls\'\n")
+				_T("ファイルを保存できません。\n")
 				_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
 				filename
 			);

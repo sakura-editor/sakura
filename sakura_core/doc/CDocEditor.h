@@ -26,7 +26,7 @@ public:
 	//	Jan. 22, 2002 genta Modified Flagの設定
 	void SetModified( bool flag, bool redraw);
 	//! ファイルが修正中かどうか
-	bool IsModified() const { return m_bIsModified; }
+	bool IsModified() const { return m_bIsDocModified; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           設定                              //
@@ -51,7 +51,7 @@ public:
 	CEol 			m_cNewLineCode;				//!< Enter押下時に挿入する改行コード種別
 	COpeBuf			m_cOpeBuf;					//!< アンドゥバッファ
 	bool			m_bInsMode;					//!< 挿入・上書きモード Oct. 2, 2005 genta
-	bool			m_bIsModified;
+	bool			m_bIsDocModified;
 };
 
 class CDocLineMgr;
