@@ -6,6 +6,12 @@
 #include "doc/CLayout.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
+#include "CDrawStrategy.h"
+#include "CDraw_Comment.h"
+#include "CDraw_Quote.h"
+#include "CDraw_RegexKeyword.h"
+#include "CDraw_Space.h"
+#include "CDraw_Found.h"
 
 /*
 	PAINT_LINENUMBER = (1<<0), //!< 行番号
@@ -842,7 +848,7 @@ bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*! 指定位置のColorIndexの取得
-	CEditView::DispLineNewを元にしたためCEditView::DispLineNewに
+	CEditView::DrawLogicLineを元にしたためCEditView::DrawLogicLineに
 	修正があった場合は、ここも修正が必要。
 
 	@par nCOMMENTMODE
@@ -864,9 +870,9 @@ bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
  	1000～COLORIDX_LASTまでは正規表現で使用する。
 */
 int CEditView::GetColorIndex(
-		HDC						hdc,
-		const CLayout*			pcLayout,
-		int						nCol
+	HDC						hdc,
+	const CLayout*			pcLayout,
+	int						nCol
 )
 {
 	//	May 9, 2000 genta
@@ -1132,7 +1138,7 @@ searchnext:;
 						}
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
-					 && ( TRUE == IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+					 && ( IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 					){
 						nBgn = nPos;
 						nCOMMENTMODE = COLORIDX_URL;	/* URLモード */ // 2002/03/13 novice
@@ -1477,10 +1483,7 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 	int				nColorIdx;
 	COLORREF		colText;
 	COLORREF		colBack;
-//	if( NULL != m_hFontOld ){
-//		::SelectObject( hdc, m_hFontOld );
-//		m_hFontOld = NULL;
-//	}
+
 	nColorIdx = -1;
 	switch( nCOMMENTMODE ){
 // 2002/03/13 novice
@@ -1584,7 +1587,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	RECT			rc;
 	int				nLineHeight = GetTextMetrics().GetHankakuDy();
 	int				nCharDx = GetTextMetrics().GetHankakuDx();
-	const CLayout*	pcLayout;
 
 	//サポート
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
@@ -1642,12 +1644,11 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 
 	int nTop = pPs->rcPaint.top;
-	BOOL bEOF = FALSE;
 
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//           描画開始行 -> nLayoutLine             //
+	//           描画開始レイアウト絶対行 -> nLayoutLine             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	CLayoutInt nLayoutLine;
 	if( 0 > nTop - GetTextArea().GetAreaTop() ){
@@ -1658,7 +1659,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 	int nMaxRollBackLineNum = 260 / (Int)nWrapKeta + 1;
 	int nRollBackLineNum = 0;
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
 	while( nRollBackLineNum < nMaxRollBackLineNum ){
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
 		if( NULL == pcLayout ){
@@ -1673,9 +1674,10 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//          描画終了行 -> nLogicLineTo            //
+	//          描画終了レイアウト絶対行 -> nLayoutLineTo            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	CLayoutInt nLogicLineTo = GetTextArea().GetViewTopLine() + CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() ) / nLineHeight );
+	CLayoutInt nLayoutLineTo = GetTextArea().GetViewTopLine()
+		+ CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() ) / nLineHeight );
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1694,31 +1696,23 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//必要な行を描画する
-	bool bSelected = GetSelectionInfo().IsTextSelected();
-	while(sPos.GetLayoutLineRef() <= nLogicLineTo)
+	while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 	{
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( sPos.GetLayoutLineRef() );
-	
+		//描画X位置リセット
 		sPos.ResetDrawCol();
 
-		bool bDispResult = DispLineNew(
+		//1行描画
+		bool bDispResult = DrawLogicLine(
 			hdc,
-			pcLayout,
 			&sPos,
-			nLogicLineTo,
-			bSelected
+			nLayoutLineTo
 		);
 
 		if(bDispResult){
 			pPs->rcPaint.bottom += nLineHeight;	// EOF再描画対応
-			bEOF = TRUE;
 			break;
 		}
 
-		if( NULL == pcLayout ){
-			bEOF = TRUE;
-			break;
-		}
 	}
 	if( NULL != m_hFontOld ){
 		::SelectObject( hdc, m_hFontOld );
@@ -1843,101 +1837,84 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 //@@@ 2007.08.31 kobake 引数 bDispBkBitmap を削除
 /*!
 	行のテキスト／選択状態の描画
-	1回で1論理行分を作画する。
+	1回で1ロジック行分を作画する。
 
 	@return EOFを作画したらtrue
 */
-bool CEditView::DispLineNew(
-	HDC				hdc,			//!< [in]     作画対象
-	const CLayout*	pcLayout,		//!< [in]     表示を開始するレイアウト
-	DispPos*		pDispPos,		//!< [in/out] 描画する箇所、描画元ソース
-	CLayoutInt		nLineTo,		//!< [in]     作画終了するレイアウト行番号
-	bool			bSelected		//!< [in]     選択中か
+bool CEditView::DrawLogicLine(
+	HDC				_hdc,			//!< [in]     作画対象
+	DispPos*		_pDispPos,		//!< [in/out] 描画する箇所、描画元ソース
+	CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 )
 {
-//	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DispLineNew" );
+//	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
+	SDrawStrategyInfo sInfo;
+	SDrawStrategyInfo* pInfo = &sInfo;
+	pInfo->hdc = _hdc;
+	pInfo->pDispPos = _pDispPos;
+	pInfo->pcView = this;
+
+	// 表示を開始するレイアウト
+	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pInfo->pDispPos->GetLayoutLineRef() );
+//	if( !pcLayout ){
+//		return true;
+//	}
+
 
 	//DispPosを保存しておく
-	DispPos sDispPosBegin = *pDispPos;
+	pInfo->sDispPosBegin = *pInfo->pDispPos;
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 
-	int		nCharChars_2;
-	EColorIndexType		nCOMMENTMODE;
-	EColorIndexType		nCOMMENTMODE_OLD;
-	int		nCOMMENTEND;
-	int		nCOMMENTEND_OLD;
-
-	bool	bEOF = false;
-	int		i, j;
-	int		nIdx;
-	int		nUrlLen;
-	int		nColorIdx;
-	bool	bKeyWordTop = true;	//	Keyword Top
 
 	//サイズ
 	Types* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
 	int nCharDx  = GetTextMetrics().GetHankakuDx();  //半角
 
-	bool bSearchStringMode = false; //検索ヒットフラグ？これで色分けを判定する
-	BOOL bSearchFlg        = TRUE;  //？ 2002.02.08 hor
-	CLogicInt  nSearchStart      = CLogicInt(-1);    //？ 2002.02.08 hor
-	CLogicInt  nSearchEnd        = CLogicInt(-1);    //？ 2002.02.08 hor
+	pInfo->bSearchStringMode = false; //☆開始 //検索ヒットフラグ？これで色分けを判定する
+	pInfo->bSearchFlg        = true;  //☆開始 //？ 2002.02.08 hor
+	pInfo->nSearchStart      = CLogicInt(-1); //☆開始   //？ 2002.02.08 hor
+	pInfo->nSearchEnd        = CLogicInt(-1); //☆開始   //？ 2002.02.08 hor
+
+	//処理する文字位置
+	pInfo->nPos = CLogicInt(0); //☆開始
+	#define SetNPos(N) pInfo->nPos=(N)
+	#define GetNPos() (pInfo->nPos+CLogicInt(0))
+
+	//通常テキスト開始位置 (ほぼ固定)
+	pInfo->nBgn = 0; //☆開始
+	#define SetNBgn(N) pInfo->nBgn=(N)
+	#define GetNBgn() (pInfo->nBgn+0)
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//          論理行データの取得 -> pLine, pLineLen              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	const CLayout*	pcLayout2; //ワーク用CLayoutポインタ
-	if( NULL != pcLayout ){
+	if( pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->GetDocLineRef()->GetLengthWithEOL() - pcLayout->GetLogicOffset();
-		pLine    = pcLayout->GetDocLineRef()->GetPtr() + pcLayout->GetLogicOffset();
-
-		// タイプ
-		// 0=通常
-		// 1=行コメント
-		// 2=ブロックコメント
-		// 3=シングルクォーテーション文字列
-		// 4=ダブルクォーテーション文字列
-		nCOMMENTMODE = pcLayout->GetColorTypePrev();
-		nCOMMENTEND = 0;
-		pcLayout2 = pcLayout;
+		pInfo->nLineLen = pcLayout->GetDocLineRef()->GetLengthWithEOL() - pcLayout->GetLogicOffset();
+		pInfo->pLine    = pcLayout->GetDocLineRef()->GetPtr() + pcLayout->GetLogicOffset();
 	}
 	else{
-		pLine = NULL;
-		nLineLen = CLogicInt(0);
-		nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-		nCOMMENTEND = 0;
-
-		pcLayout2 = NULL;
+		pInfo->pLine = NULL;
+		pInfo->nLineLen = CLogicInt(0);
 	}
 
-	/* 現在の色を指定 */
-	SetCurrentColor( hdc, nCOMMENTMODE );
-
-	int nLineBgn   = 0; //？
-//	int nX         = 0; //テキストX位置
-	CLogicInt nCharChars = CLogicInt(0); //処理した文字数
-
-	//処理する文字位置
-	CLogicInt nPos = CLogicInt(0);
-	#define SetNPos(N) nPos=(N)
-	#define GetNPos() (nPos+CLogicInt(0))
-
-	//通常テキスト開始位置 (ほぼ固定)
-	int nBgn = 0;
-	#define SetNBgn(N) nBgn=(N)
-	#define GetNBgn() (nBgn+0)
+	// 前行の最終設定色
+	pInfo->ChangeColor(pcLayout?pcLayout->GetColorTypePrev():COLORIDX_TEXT);
+	pInfo->nCOMMENTEND = 0; //☆開始
 
 	//サポート
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
 	CTypeSupport cSearchType(this,COLORIDX_SEARCH);
 
-	if( NULL != pLine ){
+	//状態変数
+	bool bEOF = false;
+	pInfo->bKeyWordTop = true;	//☆開始	//	Keyword Top
+	pInfo->nCharChars = CLogicInt(0); //☆開始	//処理した文字数
+
+	if( pInfo->pLine ){
 
 		//@@@ 2001.11.17 add start MIK
 		if( TypeDataPtr->m_bUseRegexKeyword )
@@ -1946,804 +1923,279 @@ bool CEditView::DispLineNew(
 		}
 		//@@@ 2001.11.17 add end MIK
 
-		pDispPos->ForwardDrawLine(-1);
-		pDispPos->ForwardLayoutLineRef(-1);
+		pInfo->pDispPos->ForwardDrawLine(-1);
+		pInfo->pDispPos->ForwardLayoutLineRef(-1);
 
-		while( GetNPos() < nLineLen ){
-			pDispPos->ForwardDrawLine(1);
-			pDispPos->ForwardLayoutLineRef(1);
-			if( GetTextArea().GetBottomLine() < pDispPos->GetLayoutLineRef() ){
-				pDispPos->SetLayoutLineRef(nLineTo + CLayoutInt(1));
+		while( GetNPos() < pInfo->nLineLen ){
+			pInfo->pDispPos->ForwardDrawLine(1);
+			pInfo->pDispPos->ForwardLayoutLineRef(1);
+			if( GetTextArea().GetBottomLine() < pInfo->pDispPos->GetLayoutLineRef() ){
+				pInfo->pDispPos->SetLayoutLineRef(nLineTo + CLayoutInt(1));
 				goto end_of_func;
 			}
-			if( nLineTo < pDispPos->GetLayoutLineRef() ){
+			if( nLineTo < pInfo->pDispPos->GetLayoutLineRef() ){
 				goto end_of_func;
 			}
 
-			pcLayout2 = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pDispPos->GetLayoutLineRef() );
-
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			//                        行番号描画                           //
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-				// 行番号表示
-				GetTextDrawer().DispLineNumber( hdc, pcLayout2, (Int)pDispPos->GetLayoutLineRef(), pDispPos->GetDrawPos().y );
-			}
-
-
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			//                       本文描画開始                          //
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			SetNBgn(GetNPos());
-			nLineBgn = GetNBgn();
-			pDispPos->ResetDrawCol();
-
-
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			//                 行頭(インデント)背景描画                    //
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			if(pcLayout2 && pcLayout2->GetIndent()!=0)
-			{
-				RECT rcClip;
-				if(GetTextArea().GenerateClipRect(&rcClip,*pDispPos,(Int)pcLayout2->GetIndent())){
-					cTextType.FillBack(hdc,rcClip);
-				}
-				//描画位置進める
-				pDispPos->ForwardDrawCol((Int)pcLayout2->GetIndent());
-			}
-
-
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			//                 通常文字列以外描画ループ                    //
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			//行終端または折り返しに達するまでループ
-			while( GetNPos() - nLineBgn < pcLayout2->GetLengthWithEOL() ){
-				/* 検索文字列の色分け */
-				/* 検索文字列のマーク */
-				if( m_bCurSrchKeyMark && cSearchType.IsDisp() ){
-searchnext:;
-					// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-					//        検索ヒットフラグ設定 -> bSearchStringMode            //
-					// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-					// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
-					if(!bSearchStringMode && (!m_sCurSearchOption.bRegularExp || (bSearchFlg && nSearchStart < GetNPos()))){
-						bSearchFlg=IsSearchString( pLine, nLineLen, GetNPos(), &nSearchStart, &nSearchEnd );
-					}
-					if( !bSearchStringMode && bSearchFlg && nSearchStart==GetNPos()){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						bSearchStringMode = true;
-
-						// 現在の色を指定
-						SetCurrentColor( hdc, COLORIDX_SEARCH ); // 2002/03/13 novice
-					}
-					else if( bSearchStringMode && nSearchEnd <= GetNPos() ){ //+ == では行頭文字の場合、nSearchEndも０であるために文字色の解除ができないバグを修正 2003.05.03 かろと
-						// 検索した文字列の終わりまできたら、文字色を標準に戻す処理
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							// テキスト表示
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						/* 現在の色を指定 */
-						SetCurrentColor( hdc, nCOMMENTMODE );
-						bSearchStringMode = false;
-						goto searchnext;
-					}
-
-
-				}
-
-				if( GetNPos() >= nLineLen - pcLayout2->GetLayoutEol().GetLen() ){
-					if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-						/* テキスト表示 */
-						GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						SetNBgn(GetNPos() + 1);
-
-						// 行末背景描画
-						RECT rcClip;
-						if(GetTextArea().GenerateClipRectRight(&rcClip,*pDispPos)){
-							cTextType.FillBack(hdc,rcClip);
-						}
-
-						// 改行記号の表示
-						GetTextDrawer().DispEOL(hdc,pDispPos,pcLayout2->GetLayoutEol(),bSearchStringMode);
-
-						// 2006.04.29 Moca 選択処理のため縦線処理を追加
-						GetTextDrawer().DispVerticalLines( hdc, pDispPos->GetDrawPos().y, pDispPos->GetDrawPos().y + nLineHeight, CLayoutInt(0), CLayoutInt(-1) );
-						if( bSelected ){
-							/* テキスト反転 */
-							DispTextSelected(
-								hdc,
-								pDispPos->GetLayoutLineRef(),
-								CMyPoint(sDispPosBegin.GetDrawPos().x, pDispPos->GetDrawPos().y),
-								pDispPos->GetDrawCol()
-							);
-						}
-					}
-
-					goto end_of_line;
-				}
-SEARCH_START:;
-				int		nMatchLen;
-				int		nMatchColor;
-				switch( nCOMMENTMODE ){
-				case COLORIDX_TEXT: // 2002/03/13 novice
-//@@@ 2001.11.17 add start MIK
-					//正規表現キーワード
-					if( TypeDataPtr->m_bUseRegexKeyword
-					 && m_cRegexKeyword->RegexIsKeyword( pLine, GetNPos(), nLineLen, &nMatchLen, &nMatchColor )
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() )
-						{
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						/* 現在の色を指定 */
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = MakeColorIndexType_RegularExpression(nMatchColor);	/* 色指定 */	//@@@ 2002.01.04 upd
-						nCOMMENTEND = GetNPos() + nMatchLen;  /* キーワード文字列の終端をセットする */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );	//@@@ 2002.01.04
-						}
-					}
-//@@@ 2001.11.17 add end MIK
-					//	Mar. 15, 2000 genta
-					else if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cLineComment.Match( GetNPos(), nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-
-						nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
-
-						/* コメントを表示する */
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-					}
-					//	Mar. 15, 2000 genta
-					else if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 0, GetNPos(), nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
-
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, GetNPos() + (int)wcslen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(0) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-
-					}
-					else if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 1, GetNPos(), nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
-
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, GetNPos() + (int)wcslen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(1) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-					}
-					else if( pLine[GetNPos()] == L'\'' &&
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp  /* シングルクォーテーション文字列を表示する */
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
-
-//						if( TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp ){	/* シングルクォーテーション文字列を表示する */
-							/* 現在の色を指定 */
-							if( !bSearchStringMode ){
-								SetCurrentColor( hdc, nCOMMENTMODE );
-							}
-//						}
-						/* シングルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = GetNPos() + 1; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'\'' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}
-					else if( pLine[GetNPos()] == L'"' &&
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						/* ダブルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = GetNPos() + 1; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'"' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}
-					else if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
-					 && IsURL( &pLine[GetNPos()], nLineLen - GetNPos(), &nUrlLen )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_URL;	/* URLモード */ // 2002/03/13 novice
-						nCOMMENTEND = GetNPos() + nUrlLen;
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-//@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
-//#ifdef COMPILE_COLOR_DIGIT
-					}
-					else if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
-						&& (i = IsNumber( pLine, GetNPos(), nLineLen )) > 0 )		/* 半角数字を表示する */
-					{
-						/* キーワード文字列の終端をセットする */
-						i = GetNPos() + i;
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() )
-						{
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						/* 現在の色を指定 */
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_DIGIT;	/* 半角数値である */ // 2002/03/13 novice
-						nCOMMENTEND = i;
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-//#endif
-//@@@ 2001.02.17 End by MIK: 半角数値を強調表示
-					}
-					else if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx[0] != -1 && /* キーワードセット */
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
-						IS_KEYWORD_CHAR( pLine[GetNPos()] )
-					){
-						//	Mar 4, 2001 genta comment out
-						//	bKeyWordTop = false;
-						/* キーワード文字列の終端を探す */
-						for( i = GetNPos() + 1; i <= nLineLen - 1; ++i ){
-							if( IS_KEYWORD_CHAR( pLine[i] ) ){
-							}else{
-								break;
-							}
-						}
-						/* キーワードが登録単語ならば、色を変える */
-						j = i - GetNPos();
-						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
-							TypeDataPtr->m_nKeyWordSetIdx[0],
-							&pLine[GetNPos()],
-							j
-						);
-						if( nIdx != -1 ){
-							if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-								/* テキスト表示 */
-								GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-							}
-
-							/* 現在の色を指定 */
-							SetNBgn(GetNPos());
-							nCOMMENTMODE = COLORIDX_KEYWORD1;	/* 強調キーワード1 */ // 2002/03/13 novice
-							nCOMMENTEND = i;
-							if( !bSearchStringMode ){
-								SetCurrentColor( hdc, nCOMMENTMODE );
-							}
-						}else{		//MIK START ADD 2000.12.01 second keyword & binary search
-							// 2005.01.13 MIK 強調キーワード数追加に伴う配列化
-							for( int my_i = 1; my_i < 10; my_i++ )
-							{
-								if(TypeDataPtr->m_nKeyWordSetIdx[ my_i ] != -1 && /* キーワードセット */							//MIK 2000.12.01 second keyword
-									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
-								{																							//MIK
-									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
-										TypeDataPtr->m_nKeyWordSetIdx[ my_i ] ,													//MIK
-										&pLine[GetNPos()],																		//MIK
-										j																					//MIK
-									);																						//MIK
-									if( nIdx != -1 ){																		//MIK
-										if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){										//MIK
-											/* テキスト表示 */																//MIK
-											GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );	//MIK
-										}																					//MIK
-										/* 現在の色を指定 */																//MIK
-										SetNBgn(GetNPos());																		//MIK
-										nCOMMENTMODE = (EColorIndexType)(COLORIDX_KEYWORD1 + my_i);	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
-										nCOMMENTEND = i;																	//MIK
-										if( !bSearchStringMode ){															//MIK
-											SetCurrentColor( hdc, nCOMMENTMODE );											//MIK
-										}																					//MIK
-										break;
-									}																						//MIK
-								}																							//MIK
-								else
-								{
-									if(TypeDataPtr->m_nKeyWordSetIdx[my_i] == -1 )
-										break;
-								}
-							}
-						}			//MIK END
-					}
-					//	From Here Mar. 4, 2001 genta
-					if( IS_KEYWORD_CHAR( pLine[GetNPos()] ))	bKeyWordTop = false;
-					else								bKeyWordTop = true;
-					//	To Here
-					break;
-// 2002/03/13 novice
-				case COLORIDX_URL:		/* URLモードである */
-				case COLORIDX_KEYWORD1:	/* 強調キーワード1 */
-				case COLORIDX_DIGIT:	/* 半角数値である */  //@@@ 2001.02.17 by MIK
-				case COLORIDX_KEYWORD2:	/* 強調キーワード2 */	//MIK
-				case COLORIDX_KEYWORD3:	// 2005.01.13 MIK 強調キーワード3-10
-				case COLORIDX_KEYWORD4:
-				case COLORIDX_KEYWORD5:
-				case COLORIDX_KEYWORD6:
-				case COLORIDX_KEYWORD7:
-				case COLORIDX_KEYWORD8:
-				case COLORIDX_KEYWORD9:
-				case COLORIDX_KEYWORD10:
-				//case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04 del
-					if( GetNPos() == nCOMMENTEND ){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						goto SEARCH_START;
-					}
-					break;
-				case COLORIDX_CTRLCODE:	/* コントロールコード */ // 2002/03/13 novice
-					if( GetNPos() == nCOMMENTEND ){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = nCOMMENTMODE_OLD;
-						nCOMMENTEND = nCOMMENTEND_OLD;
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						goto SEARCH_START;
-					}
-					break;
-
-				case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
-					break;
-				case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, GetNPos(), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-					}else
-					if( GetNPos() == nCOMMENTEND ){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						goto SEARCH_START;
-					}
-					break;
-//#ifdef	COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-				case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, GetNPos(), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-					}else
-					if( GetNPos() == nCOMMENTEND ){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						goto SEARCH_START;
-					}
-					break;
-//#endif
-				case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* シングルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = GetNPos()/* + 1*/; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'\'' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}else
-					if( GetNPos() == nCOMMENTEND ){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						goto SEARCH_START;
-					}
-					break;
-				case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* ダブルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = GetNPos()/* + 1*/; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'"' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}else
-					if( GetNPos() == nCOMMENTEND ){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							SetCurrentColor( hdc, nCOMMENTMODE );
-						}
-						goto SEARCH_START;
-					}
-					break;
-				default:	//@@@ 2002.01.04 add start
-					if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
-						if( GetNPos() == nCOMMENTEND ){
-							if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-								/* テキスト表示 */
-								GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-							}
-							SetNBgn(GetNPos());
-							nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-							/* 現在の色を指定 */
-							if( !bSearchStringMode ){
-								SetCurrentColor( hdc, nCOMMENTMODE );
-							}
-							goto SEARCH_START;
-						}
-					}
-					break;	//@@@ 2002.01.04 add end
-				}
-
-				//タブ
-				if( pLine[GetNPos()] == WCODE::TAB ){
-					if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-						// テキスト表示
-						GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-
-						// 色決定
-						if( bSearchStringMode ){
-							nColorIdx = COLORIDX_SEARCH;
-						}else{
-							nColorIdx = COLORIDX_TAB;
-						}
-
-						// タブ表示
-						GetTextDrawer().DispTab( hdc, pDispPos, nColorIdx );
-					}
-					SetNBgn(GetNPos() + 1);
-					nCharChars = CLogicInt(1);
-				}
-				//全角スペース
-				else if( WCODE::isZenkakuSpace(pLine[GetNPos()]) && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )
-				{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
-					if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-						// 全角スペース以前のテキストを表示
-						GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-
-						// 全角空白を表示する
-						GetTextDrawer().DispZenkakuSpace(hdc,pDispPos,bSearchStringMode);
-					}
-					//文字進める
-					SetNBgn(GetNPos() + 1);
-					nCharChars = CLogicInt(1);
-				}
-				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
-				else if (pLine[GetNPos()] == ' ' && TypeDataPtr->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp 
-					 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )
-				{
-					GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-					if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-						GetTextDrawer().DispHankakuSpace(hdc,pDispPos,bSearchStringMode);
-					}
-					SetNBgn(GetNPos() + 1);
-					nCharChars = CLogicInt(1);
-				}
-				else{
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, GetNPos() );
-					if( 0 == nCharChars ){
-						nCharChars = CLogicInt(1);
-					}
-					if( !bSearchStringMode
-					 && 1 == nCharChars
-					 && COLORIDX_CTRLCODE != nCOMMENTMODE // 2002/03/13 novice
-					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
-					 &&	WCODE::isControlCode(pLine[GetNPos()])
-					){
-						if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-							/* テキスト表示 */
-							GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-						}
-						SetNBgn(GetNPos());
-						nCOMMENTMODE_OLD = nCOMMENTMODE;
-						nCOMMENTEND_OLD = nCOMMENTEND;
-						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
-						/* コントロールコード列の終端を探す */
-						for( i = GetNPos() + 1; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = 1;
-							}
-							if( nCharChars_2 != 1 ){
-								break;
-							}
-							if(!WCODE::isControlCode(pLine[i])){
-								break;
-							}
-						}
-						nCOMMENTEND = i;
-						/* 現在の色を指定 */
-						SetCurrentColor( hdc, nCOMMENTMODE );
-					}
-				}
-				SetNPos( GetNPos() + nCharChars );
-			}
-			//end of while( GetNPos() - nLineBgn < pcLayout2->GetLength() )
-
-
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			//                         本文描画                            //
-			// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-			if( GetNPos() >= nLineLen ){
-				break;
-			}
-			if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-				/* テキスト表示 */
-				GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
-				SetNBgn(GetNPos());
-
-				/* 行末背景描画 */
-				RECT rcClip;
-				if(GetTextArea().GenerateClipRectRight(&rcClip,*pDispPos)){
-					cTextType.FillBack(hdc,rcClip);
-				}
-
-				/* 折り返し記号を表示する */
-				GetTextDrawer().DispWrap(hdc,pDispPos);
-
-				// 2006.04.29 Moca 選択処理のため縦線処理を追加
-				GetTextDrawer().DispVerticalLines( hdc, pDispPos->GetDrawPos().y, pDispPos->GetDrawPos().y + nLineHeight,  CLayoutInt(0), CLayoutInt(-1) );
-				if( bSelected ){
-					/* テキスト反転 */
-					DispTextSelected(
-						hdc,
-						pDispPos->GetLayoutLineRef(),
-						CMyPoint(sDispPosBegin.GetDrawPos().x, pDispPos->GetDrawPos().y),
-						pDispPos->GetDrawCol()
-					);
-				}
-			}
+			//レイアウト行を1行描画
+			bool bDrawLayoutLine = DrawLayoutLine(pInfo);
+			if(bDrawLayoutLine)goto end_of_line;
 		}
 		// end of while( GetNPos() < nLineLen )
 
-		if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
+		if( pInfo->pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
 
 			/* テキスト表示 */
-			GetTextDrawer().DispText( hdc, pDispPos, &pLine[GetNBgn()], GetNPos() - GetNBgn() );
+			GetTextDrawer().DispText(
+				pInfo->hdc, pInfo->pDispPos, &pInfo->pLine[GetNBgn()], GetNPos() - GetNBgn() );
 
 			/* EOF記号の表示 */
-			if( pDispPos->GetLayoutLineRef() + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount()
-				&& pDispPos->GetDrawCol() < nWrapKeta )
+			if( pInfo->pDispPos->GetLayoutLineRef() + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount()
+				&& pInfo->pDispPos->GetDrawCol() < nWrapKeta )
 			{
 				if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
 					//	May 29, 2004 genta (advised by MIK) 共通関数化
-					GetTextDrawer().DispEOF(hdc,pDispPos);
+					GetTextDrawer().DispEOF(pInfo->hdc,pInfo->pDispPos);
 				}
 				bEOF = true;
 			}
 
-			if( IsBkBitmap() ){
-			}else{
+			if( !IsBkBitmap() ){
 				// 行末背景描画
 				RECT rcClip;
-				if(GetTextArea().GenerateClipRectRight(&rcClip,*pDispPos)){
-					cTextType.FillBack(hdc,rcClip);
+				if(GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos)){
+					cTextType.FillBack(pInfo->hdc,rcClip);
 				}
 			}
 
 			// 2006.04.29 Moca 選択処理のため縦線処理を追加
-			GetTextDrawer().DispVerticalLines( hdc, pDispPos->GetDrawPos().y, pDispPos->GetDrawPos().y + nLineHeight,  CLayoutInt(0), CLayoutInt(-1) );
+			GetTextDrawer().DispVerticalLines(
+				pInfo->hdc,
+				pInfo->pDispPos->GetDrawPos().y,
+				pInfo->pDispPos->GetDrawPos().y + nLineHeight,
+				CLayoutInt(0),
+				CLayoutInt(-1)
+			);
 
-			if( bSelected ){
+			if( GetSelectionInfo().IsTextSelected() ){
 				/* テキスト反転 */
 				DispTextSelected(
-					hdc,
-					pDispPos->GetLayoutLineRef(),
-					CMyPoint(sDispPosBegin.GetDrawPos().x, pDispPos->GetDrawPos().y),
-					pDispPos->GetDrawCol()
+					pInfo->hdc,
+					pInfo->pDispPos->GetLayoutLineRef(),
+					CMyPoint(pInfo->sDispPosBegin.GetDrawPos().x, pInfo->pDispPos->GetDrawPos().y),
+					pInfo->pDispPos->GetDrawCol()
 				);
 			}
 
 		}
 end_of_line:;
-		pDispPos->ForwardLayoutLineRef(1);
-		pDispPos->ForwardDrawLine(1);
+		pInfo->pDispPos->ForwardLayoutLineRef(1);
+		pInfo->pDispPos->ForwardDrawLine(1);
 	}
 	// NULL == pLineの場合
 	else{
-		if( pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
-			if(GetTextDrawer().DispEmptyLine(hdc,pDispPos)){
+		if( pInfo->pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
+			if(GetTextDrawer().DispEmptyLine(pInfo->hdc,pInfo->pDispPos)){
 				bEOF=true;
 			}
 		}
+		return true;
 	}
 
 end_of_func:;
-//	2002/05/08 YAZAKI アンダーラインの再描画は不要でした
-//	MYTRACE_A( "m_nOldUnderLineY=%d\n", m_nOldUnderLineY );
-//	if( -1 != m_nOldUnderLineY ){
-//		/* カーソル行アンダーラインのON */
-//		CaretUnderLineON( TRUE );
-//	}
 
 
 	return bEOF;
 }
+
+/*!
+	レイアウト行を1行描画
+*/
+bool CEditView::DrawLayoutLine(SDrawStrategyInfo* pInfo)
+{
+	CTypeSupport cTextType(this,COLORIDX_TEXT);
+	CTypeSupport cSearchType(this,COLORIDX_SEARCH);
+
+	// コンフィグ
+	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
+	Types* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+
+	const CLayout*	pcLayout2; //ワーク用CLayoutポインタ
+	pcLayout2 = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pInfo->pDispPos->GetLayoutLineRef() );
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                        行番号描画                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	if( pInfo->pDispPos->GetDrawPos().y >= GetTextArea().GetAreaTop() ){
+		// 行番号表示
+		pInfo->pcView->GetTextDrawer().DispLineNumber(
+			pInfo->hdc,
+			pcLayout2,
+			(Int)pInfo->pDispPos->GetLayoutLineRef(),
+			pInfo->pDispPos->GetDrawPos().y
+		);
+	}
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                       本文描画開始                          //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	pInfo->nBgn = pInfo->nPos;
+	int nLineBgn = pInfo->nBgn;
+	pInfo->pDispPos->ResetDrawCol();
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                 行頭(インデント)背景描画                    //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	if(pcLayout2 && pcLayout2->GetIndent()!=0)
+	{
+		RECT rcClip;
+		if(GetTextArea().GenerateClipRect(&rcClip,*pInfo->pDispPos,(Int)pcLayout2->GetIndent())){
+			cTextType.FillBack(pInfo->hdc,rcClip);
+		}
+		//描画位置進める
+		pInfo->pDispPos->ForwardDrawCol((Int)pcLayout2->GetIndent());
+	}
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                 通常文字列以外描画ループ                    //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//行終端または折り返しに達するまでループ
+	while( pInfo->nPos - nLineBgn < pcLayout2->GetLengthWithEOL() ){
+		// マッチ文字列
+		CDraw_Found().EnterColor(pInfo);
+
+		//行末
+		if(CDraw_LineEnd().EnterColor(pInfo)){
+			return true;
+		}
+
+SEARCH_START:;
+		switch( pInfo->nCOMMENTMODE ){
+		case COLORIDX_TEXT:
+			//色の開始判定
+			if( CDraw_RegexKeyword().EnterColor(pInfo) ){ }		// 正規表現キーワード
+			else if( CDraw_LineComment().EnterColor(pInfo) ){ }	// 行コメント
+			else if( CDraw_BlockComment().EnterColor(pInfo) ){ }	// ブロックコメント
+			else if( CDraw_SingleQuote().EnterColor(pInfo) ){ }		// シングルクォーテーション文字列
+			else if( CDraw_DoubleQuote().EnterColor(pInfo) ){ }		// ダブルクォーテーション文字列
+			else if( CDraw_URL().EnterColor(pInfo) ){ }			// URL
+			else if( CDraw_Numeric().EnterColor(pInfo) ){ }		// 半角数字
+			else if( CDraw_KeywordSet().EnterColor(pInfo) ){ }		// キーワードセット
+			
+			//単語判定
+			if( IS_KEYWORD_CHAR( pInfo->pLine[pInfo->nPos] ))	pInfo->bKeyWordTop = false;
+			else												pInfo->bKeyWordTop = true;
+
+			break;
+
+		//色の終了判定
+		case COLORIDX_URL:		// URL
+		case COLORIDX_DIGIT:	// 半角数値
+		case COLORIDX_KEYWORD1:	// 強調キーワード1-10
+		case COLORIDX_KEYWORD2:
+		case COLORIDX_KEYWORD3:
+		case COLORIDX_KEYWORD4:
+		case COLORIDX_KEYWORD5:
+		case COLORIDX_KEYWORD6:
+		case COLORIDX_KEYWORD7:
+		case COLORIDX_KEYWORD8:
+		case COLORIDX_KEYWORD9:
+		case COLORIDX_KEYWORD10:
+			if( CDraw_ColorEnd().EnterColor(pInfo) ){
+				goto SEARCH_START;
+			}
+			break;
+		case COLORIDX_CTRLCODE:	/* コントロールコード */ // 2002/03/13 novice
+			if( CDraw_CtrlColorEnd().EnterColor(pInfo) ){
+				goto SEARCH_START;
+			}
+			break;
+
+		case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
+			break;
+		case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
+			if( CDraw_BlockCommentEnd().EnterColor(pInfo) ){
+				goto SEARCH_START;
+			}
+			break;
+		case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
+			if( CDraw_BlockCommentEnd2().EnterColor(pInfo) ){
+				goto SEARCH_START;
+			}
+			break;
+		case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
+			if( CDraw_SingleQuoteEnd().EnterColor(pInfo) ){
+				goto SEARCH_START;
+			}
+			break;
+		case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
+			if( CDraw_DoubleQuoteEnd().EnterColor(pInfo) ){
+				goto SEARCH_START;
+			}
+			break;
+		default:	//@@@ 2002.01.04 add start
+			if( pInfo->nCOMMENTMODE >= 1000 && pInfo->nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
+				if( CDraw_RegexKeywordEnd().EnterColor(pInfo) ){
+					goto SEARCH_START;
+				}
+			}
+			break;	//@@@ 2002.01.04 add end
+		}
+
+		//タブ
+		if( CDraw_Tab().EnterColor(pInfo) ){ }
+		//全角スペース
+		else if( CDraw_ZenSpace().EnterColor(pInfo) ){ }
+		//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
+		else if( CDraw_HanSpace().EnterColor(pInfo) ){ }
+		//コントロールコード 2008.04.20 kobake
+		else if( CDraw_CtrlCode().EnterColor(pInfo) ){ }
+		//その他
+		else{
+			pInfo->nCharChars = CLogicInt(1);
+		}
+		pInfo->nPos += pInfo->nCharChars;
+	}
+	//end of while( pInfo->nPos - nLineBgn < pcLayout2->GetLength() )
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         本文描画                            //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	if( pInfo->nPos >= pInfo->nLineLen ){
+		return false; //これで良い
+	}
+	if( pInfo->DrawToHere() ){
+		/* 行末背景描画 */
+		RECT rcClip;
+		if(pInfo->pcView->GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos)){
+			cTextType.FillBack(pInfo->hdc,rcClip);
+		}
+
+		/* 折り返し記号を表示する */
+		pInfo->pcView->GetTextDrawer().DispWrap(pInfo->hdc,pInfo->pDispPos);
+
+		// 2006.04.29 Moca 選択処理のため縦線処理を追加
+		pInfo->pcView->GetTextDrawer().DispVerticalLines( pInfo->hdc, pInfo->pDispPos->GetDrawPos().y, pInfo->pDispPos->GetDrawPos().y + nLineHeight,  CLayoutInt(0), CLayoutInt(-1) );
+		if( GetSelectionInfo().IsTextSelected() ){
+			/* テキスト反転 */
+			DispTextSelected(
+				pInfo->hdc,
+				pInfo->pDispPos->GetLayoutLineRef(),
+				CMyPoint(pInfo->sDispPosBegin.GetDrawPos().x, pInfo->pDispPos->GetDrawPos().y),
+				pInfo->pDispPos->GetDrawCol()
+			);
+		}
+	}
+	return false;
+}
+
+
+
+
 
 
 
@@ -2757,7 +2209,7 @@ end_of_func:;
 	@param nX       
 
 	@note
-	CCEditView::DispLineNew() での作画(WM_PAINT)時に、1レイアウト行をまとめて反転処理するための関数。
+	CCEditView::DrawLogicLine() での作画(WM_PAINT)時に、1レイアウト行をまとめて反転処理するための関数。
 	範囲選択の随時更新は、CEditView::DrawSelectArea() が選択・反転解除を行う。
 	
 */

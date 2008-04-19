@@ -45,10 +45,12 @@ public:
 	bool Match_CommentFrom( int n, int nPos, int nLineLen, const wchar_t* pLine ) const;	//	行コメントに値するか確認する	
 	int Match_CommentTo( int n, int nPos, int nLineLen, const wchar_t* pLine ) const;	//	行コメントに値するか確認する
 
-	const wchar_t* getBlockCommentFrom( const int n ){
+	const wchar_t* getBlockCommentFrom( const int n ) const
+	{
 		return m_szBlockCommentFrom[n];
 	};
-	const wchar_t* getBlockCommentTo( const int n ){
+	const wchar_t* getBlockCommentTo( const int n ) const
+	{
 		return m_szBlockCommentTo[n];
 	};
 	//	2005.11.10 Moca アクセス関数追加
