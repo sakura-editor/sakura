@@ -311,4 +311,4 @@ protected:
 #endif /* _CLAYOUTMGR_H_ */
 
 
-/*[EOF]*/
+

@@ -578,4 +578,4 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 }
 
 
-/*[EOF]*/
+

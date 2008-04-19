@@ -103,4 +103,4 @@ public:
 #endif /* _CDOCLINE_H_ */
 
 
-/*[EOF]*/
+

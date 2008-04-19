@@ -130,4 +130,4 @@ private:
 #endif /* _CBLOCKCOMMENT_H_ */
 
 
-/*[EOF]*/
+

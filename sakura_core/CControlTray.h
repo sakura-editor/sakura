@@ -130,4 +130,4 @@ private:
 #endif /* _CEDITAPP_H_ */
 
 
-/*[EOF]*/
+

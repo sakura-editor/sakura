@@ -145,4 +145,4 @@ protected:
 #endif /* _CPROPTYPES_H_ */
 
 
-/*[EOF]*/
+

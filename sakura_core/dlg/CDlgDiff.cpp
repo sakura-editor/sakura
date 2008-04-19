@@ -422,4 +422,4 @@ LPVOID CDlgDiff::GetHelpIdTable( void )
 	return (LPVOID)p_helpids;
 }
 
-/*[EOF]*/
+

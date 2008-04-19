@@ -65,4 +65,4 @@ protected:
 #endif /* _CDLGFIND_H_ */
 
 
-/*[EOF]*/
+

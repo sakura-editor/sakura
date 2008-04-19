@@ -64,4 +64,4 @@ void CRunningTimer::WriteTrace(const char* msg) const
 }
 #endif
 
-/*[EOF]*/
+

@@ -73,4 +73,4 @@ protected:
 #endif /* _CDLGGREP_H_ */
 
 
-/*[EOF]*/
+

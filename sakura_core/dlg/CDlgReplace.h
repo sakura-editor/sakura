@@ -77,4 +77,4 @@ protected:
 #endif /* _CDLGREPLACE_H_ */
 
 
-/*[EOF]*/
+

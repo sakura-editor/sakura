@@ -542,4 +542,4 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 }
 
 
-/*[EOF]*/
+

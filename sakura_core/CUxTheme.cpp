@@ -101,4 +101,4 @@ HRESULT CUxTheme::SetWindowTheme( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszS
 	return m_pfnSetWindowTheme( hwnd, pszSubAppName, pszSubIdList );
 }
 
-/*[EOF]*/
+

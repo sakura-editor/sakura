@@ -48,4 +48,4 @@ private:
 #endif /* _CFUNCINFOARR_H_ */
 
 
-/*[EOF]*/
+

@@ -158,4 +158,4 @@ void DBMSG_IMP(const ACHAR* msg); //!< ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ð•\Ž¦BƒLƒƒƒvƒVƒ‡ƒ“‚É‚
 #endif /* _DEBUG_H_ */
 
 
-/*[EOF]*/
+

@@ -64,4 +64,4 @@ protected:
 #endif /* _CDLGPRINTSETTING_H_ */
 
 
-/*[EOF]*/
+

@@ -1606,4 +1606,4 @@ INT_PTR CALLBACK CControlTray::ExitingDlgProc(
 	}
 	return FALSE;
 }
-/*[EOF]*/
+

@@ -189,4 +189,4 @@ INT_PTR CDlgInput1::DispatchEvent(
 }
 
 
-/*[EOF]*/
+

@@ -77,4 +77,4 @@ protected:
 #endif /* _CFUNCKEYWND_H_ */
 
 
-/*[EOF]*/
+

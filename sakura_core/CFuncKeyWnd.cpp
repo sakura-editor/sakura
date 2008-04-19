@@ -527,4 +527,4 @@ void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 }
 
 
-/*[EOF]*/
+

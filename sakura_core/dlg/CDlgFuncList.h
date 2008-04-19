@@ -116,4 +116,4 @@ private:
 #endif /* _CDLGFUNCLIST_H_ */
 
 
-/*[EOF]*/
+

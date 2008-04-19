@@ -452,4 +452,4 @@ void CPropCommon::EnableWinPropInput( HWND hwndDlg )
 //	To Here Sept. 9, 2000
 
 
-/*[EOF]*/
+

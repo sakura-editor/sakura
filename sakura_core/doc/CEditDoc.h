@@ -163,4 +163,4 @@ public:
 #endif /* _CEDITDOC_H_ */
 
 
-/*[EOF]*/
+

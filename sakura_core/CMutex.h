@@ -106,4 +106,4 @@ public:
 };
 
 #endif /* _CMUTEX_H_ */
-/*[EOF]*/
+

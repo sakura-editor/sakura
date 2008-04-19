@@ -107,4 +107,4 @@ SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index )
 }
 
 
-/*[EOF]*/
+

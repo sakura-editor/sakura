@@ -55,5 +55,5 @@ protected:
 #endif /* _CPPAMACROMGR_H_ */
 
 
-/*[EOF]*/
+
 	

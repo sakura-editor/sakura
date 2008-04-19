@@ -351,4 +351,4 @@ int CImageListMgr::Count() const
 {
 	return MAX_X * MAX_Y;
 }
-/*[EOF]*/
+

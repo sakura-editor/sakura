@@ -65,4 +65,4 @@ protected:
 #endif /* _CSPLITBOXWND_H_ */
 
 
-/*[EOF]*/
+

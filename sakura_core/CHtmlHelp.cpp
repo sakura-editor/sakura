@@ -59,4 +59,4 @@ int CHtmlHelp::InitDll(void)
 }
 
 
-/*[EOF]*/
+

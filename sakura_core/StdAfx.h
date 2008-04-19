@@ -105,4 +105,4 @@ HWND G_GetProgressBar();
 #endif // !defined(AFX_STDAFX_H__11490042_E569_11D3_BCE2_444553540001__INCLUDED_)
 
 
-/*[EOF]*/
+

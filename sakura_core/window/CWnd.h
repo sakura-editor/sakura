@@ -178,4 +178,4 @@ private: // 2002/2/10 aroka アクセス権変更
 #endif /* _CWND_H_ */
 
 
-/*[EOF]*/
+

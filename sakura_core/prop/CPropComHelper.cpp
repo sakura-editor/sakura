@@ -355,4 +355,4 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 }
 
 
-/*[EOF]*/
+

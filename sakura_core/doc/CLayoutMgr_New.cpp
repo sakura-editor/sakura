@@ -1234,4 +1234,4 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	return nIpos;	//	ƒCƒ“ƒfƒ“ƒg
 }
 
-/*[EOF]*/
+

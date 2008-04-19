@@ -315,4 +315,4 @@ bool CProcessFactory::TestWriteQuit()
 	return false;
 }
 
-/*[EOF]*/
+

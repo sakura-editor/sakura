@@ -1268,4 +1268,4 @@ typedef struct _TBBUTTON {
 	return;
 }
 
-/*[EOF]*/
+

@@ -146,4 +146,4 @@ private:
 #endif /* _CPRINT_H_ */
 
 
-/*[EOF]*/
+

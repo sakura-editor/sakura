@@ -67,4 +67,4 @@ protected:
 #endif /* _CKEYMACROMGR_H_ */
 
 
-/*[EOF]*/
+

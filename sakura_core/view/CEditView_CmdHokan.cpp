@@ -276,4 +276,4 @@ int CEditView::HokanSearchByFile(
 	}
 	return nKouhoNum;
 }
-/*[EOF]*/
+

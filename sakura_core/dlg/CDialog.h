@@ -120,4 +120,4 @@ protected:
 #endif /* _CDIALOG_H_ */
 
 
-/*[EOF]*/
+

@@ -146,4 +146,4 @@ public:
 #endif /* _CEDITDROPTARGET_H_ */
 
 
-/*[EOF]*/
+

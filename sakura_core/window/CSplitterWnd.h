@@ -99,4 +99,4 @@ protected:
 #endif /* _CSPLITTERWND_H_ */
 
 
-/*[EOF]*/
+

@@ -796,4 +796,4 @@ void CPropCommon::DispKeywordCount( HWND hwndDlg )
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
 }
 
-/*[EOF]*/
+

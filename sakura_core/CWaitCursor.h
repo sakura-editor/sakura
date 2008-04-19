@@ -47,4 +47,4 @@ private: // 2002/2/10 aroka
 #endif /* _CWAITCURSOR_H_ */
 
 
-/*[EOF]*/
+

@@ -55,4 +55,4 @@ public:
 #endif /* _CLINECOMMENT_H_ */
 
 
-/*[EOF]*/
+

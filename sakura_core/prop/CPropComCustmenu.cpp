@@ -836,4 +836,4 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 }
 
 
-/*[EOF]*/
+

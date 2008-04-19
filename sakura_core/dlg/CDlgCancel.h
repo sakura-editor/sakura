@@ -63,4 +63,4 @@ protected:
 #endif /* _CDLGCANCEL_H_ */
 
 
-/*[EOF]*/
+

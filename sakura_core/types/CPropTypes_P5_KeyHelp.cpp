@@ -872,4 +872,4 @@ static TCHAR* GetFileName(const TCHAR* fullpath)
 	return const_cast<TCHAR*>(pszName);
 }
 
-/*[EOF]*/
+

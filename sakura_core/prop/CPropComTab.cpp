@@ -199,4 +199,4 @@ void CPropCommon::EnableTabPropInput(HWND hwndDlg)
 		}
 	}
 }
-/*[EOF]*/
+

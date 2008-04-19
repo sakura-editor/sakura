@@ -163,4 +163,4 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 
 #endif /* _CFILELOAD_H_ */
 
-/*[EOF]*/
+
