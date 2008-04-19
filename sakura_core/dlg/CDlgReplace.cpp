@@ -527,4 +527,4 @@ LPVOID CDlgReplace::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
-/*[EOF]*/
+

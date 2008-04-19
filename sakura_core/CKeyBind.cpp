@@ -491,4 +491,4 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 };
 
 
-/*[EOF]*/
+

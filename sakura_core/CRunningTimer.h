@@ -92,4 +92,4 @@ protected:
 #endif /* _CRUNNINGTIMER_H_ */
 
 
-/*[EOF]*/
+

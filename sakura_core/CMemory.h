@@ -121,4 +121,4 @@ __forceinline void* CMemory::GetRawPtr(int* pnLength) //!< ƒf[ƒ^‚Ö‚Ìƒ|ƒCƒ“ƒ^‚Æ’
 #endif /* _CMEMORY_H_ */
 
 
-/*[EOF]*/
+

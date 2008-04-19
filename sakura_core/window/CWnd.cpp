@@ -300,4 +300,4 @@ LRESULT CWnd::CallDefWndProc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 }
 
 
-/*[EOF]*/
+

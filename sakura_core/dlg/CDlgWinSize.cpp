@@ -246,4 +246,4 @@ LPVOID CDlgWinSize::GetHelpIdTable( void )
 	return (LPVOID)p_helpids;
 }
 
-/*[EOF]*/
+

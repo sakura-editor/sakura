@@ -59,4 +59,4 @@ private:
 #endif /* _CDLGABOUT_H_ */
 
 
-/*[EOF]*/
+

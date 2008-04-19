@@ -227,4 +227,4 @@ namespace Charcode
 
 #endif /* _CHARCODE_H_ */
 
-/*[EOF]*/
+

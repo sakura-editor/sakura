@@ -505,4 +505,4 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 	return ::CallWindowProc( (WNDPROC)pCDlgSameColor->m_wpColorListProc, hwnd, uMsg, wParam, lParam );
 }
 
-/*[EOF]*/
+

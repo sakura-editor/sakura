@@ -101,4 +101,4 @@ public:
 #endif /* _CDOCLINEMGR_H_ */
 
 
-/*[EOF]*/
+

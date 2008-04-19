@@ -452,4 +452,4 @@ CCommandLine::CCommandLine(LPTSTR cmd)
 	
 	ParseCommandLine();
 }
-/*[EOF]*/
+

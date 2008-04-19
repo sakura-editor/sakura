@@ -302,4 +302,4 @@ void CProfile::DUMP( void )
 	return;
 }
 
-/*[EOF]*/
+

@@ -79,4 +79,4 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const
 }
 
 
-/*[EOF]*/
+

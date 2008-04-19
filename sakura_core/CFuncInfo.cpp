@@ -41,4 +41,4 @@ CFuncInfo::~CFuncInfo()
 }
 
 
-/*[EOF]*/
+

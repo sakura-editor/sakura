@@ -357,4 +357,4 @@ HANDLE CNormalProcess::GetInitializeMutex() const
 	return hMutex;
 }
 
-/*[EOF]*/
+

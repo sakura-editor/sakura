@@ -615,4 +615,4 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 	wcscpy( pPrintSetting.m_szFooterForm[2], L"" );
 }
 
-/*[EOF]*/
+

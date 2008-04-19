@@ -224,6 +224,6 @@ SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage
 
 
 #endif
-/*[EOF]*/
+
 
 

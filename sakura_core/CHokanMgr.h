@@ -102,4 +102,4 @@ protected:
 #endif /* _CHOKANMGR_H_ */
 
 
-/*[EOF]*/
+

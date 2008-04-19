@@ -97,4 +97,4 @@ protected:
 #endif /* _CKEYBIND_H_ */
 
 
-/*[EOF]*/
+

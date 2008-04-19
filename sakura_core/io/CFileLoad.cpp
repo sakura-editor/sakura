@@ -409,4 +409,4 @@ const char* CFileLoad::GetNextLineCharCode(
 }
 
 
-/*[EOF]*/
+

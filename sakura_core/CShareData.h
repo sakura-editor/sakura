@@ -503,4 +503,4 @@ protected:
 #endif /* _CSHAREDATA_H_ */
 
 
-/*[EOF]*/
+

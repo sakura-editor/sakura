@@ -1025,4 +1025,4 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	}
 }
 
-/*[EOF]*/
+

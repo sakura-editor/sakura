@@ -432,4 +432,4 @@ SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index );
 #endif /* _GLOBAL_H_ */
 
 
-/*[EOF]*/
+

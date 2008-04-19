@@ -134,4 +134,4 @@ void CEol::SetTypeByString( const char* pszData, int nDataLen )
 }
 
 
-/*[EOF]*/
+

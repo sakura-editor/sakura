@@ -52,4 +52,4 @@ class CFuncInfo {
 #endif /* _CFUNCINFO_H_ */
 
 
-/*[EOF]*/
+

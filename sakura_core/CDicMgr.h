@@ -54,4 +54,4 @@ protected:
 #endif /* _CDICMGR_H_ */
 
 
-/*[EOF]*/
+

@@ -112,4 +112,4 @@ int CBlockComment::Match_CommentTo( int n, int nPos, int nLineLen, const wchar_t
 	}
 	return nLineLen;
 }
-/*[EOF]*/
+

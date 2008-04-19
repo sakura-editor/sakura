@@ -456,4 +456,4 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 }
 
 
-/*[EOF]*/
+

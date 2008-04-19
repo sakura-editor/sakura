@@ -98,4 +98,4 @@ public:
 #endif /* _COPE_H_ */
 
 
-/*[EOF]*/
+

@@ -55,4 +55,4 @@ private:
 #endif /* _CDLGTYPELIST_H_ */
 
 
-/*[EOF]*/
+

@@ -346,4 +346,4 @@ private:
 #endif /* _CEDITWND_H_ */
 
 
-/*[EOF]*/
+

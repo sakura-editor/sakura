@@ -58,4 +58,4 @@ private:
 #endif /* _COPEBLK_H_ */
 
 
-/*[EOF]*/
+

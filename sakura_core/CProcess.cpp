@@ -72,4 +72,4 @@ bool CProcess::Run(void)
 	}
 	return false;
 }
-/*[EOF]*/
+

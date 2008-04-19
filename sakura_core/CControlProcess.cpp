@@ -169,4 +169,4 @@ CControlProcess::~CControlProcess()
 	::CloseHandle( m_hMutex );
 };
 
-/*[EOF]*/
+

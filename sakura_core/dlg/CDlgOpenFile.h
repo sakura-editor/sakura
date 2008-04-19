@@ -123,4 +123,4 @@ protected:
 #endif /* _CDLGOPENFILE_H_ */
 
 
-/*[EOF]*/
+

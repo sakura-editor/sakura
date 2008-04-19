@@ -771,4 +771,4 @@ const TCHAR* CDlgTagJumpList::GetFileName( void )
 	return GetFileTitlePointer(GetFilePath());
 }
 
-/*[EOF]*/
+

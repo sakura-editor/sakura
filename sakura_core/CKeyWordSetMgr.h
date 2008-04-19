@@ -163,4 +163,4 @@ protected:
 #endif /* _CKEYWORDSETMGR_H_ */
 
 
-/*[EOF]*/
+

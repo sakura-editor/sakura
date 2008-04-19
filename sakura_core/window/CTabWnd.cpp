@@ -2716,4 +2716,4 @@ void CTabWnd::JoinPrev( void )
 	}
 }
 
-/*[EOF]*/
+

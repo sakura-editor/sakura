@@ -810,4 +810,4 @@ LPVOID CDlgPrintSetting::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
-/*[EOF]*/
+

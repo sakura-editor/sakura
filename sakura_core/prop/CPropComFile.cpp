@@ -437,4 +437,4 @@ void CPropCommon::EnableFilePropInput(HWND hwndDlg)
 //	To Here Aug. 21, 2000 genta
 
 
-/*[EOF]*/
+

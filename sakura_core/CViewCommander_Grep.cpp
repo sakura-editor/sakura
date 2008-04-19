@@ -118,4 +118,4 @@ void CViewCommander::Command_GREP( void )
 	}
 	return;
 }
-/*[EOF]*/
+

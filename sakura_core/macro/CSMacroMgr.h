@@ -166,4 +166,4 @@ public:
 #endif /* _CSMacroMGR_H_ */
 
 
-/*[EOF]*/
+

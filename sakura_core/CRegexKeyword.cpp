@@ -459,4 +459,4 @@ BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
 
 //@@@ 2001.11.17 add end MIK
 
-/*[EOF]*/
+

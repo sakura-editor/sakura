@@ -636,4 +636,4 @@ private:
 #endif /* _CEDITVIEW_H_ */
 
 
-/*[EOF]*/
+

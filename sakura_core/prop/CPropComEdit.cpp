@@ -229,4 +229,4 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 }
 
 
-/*[EOF]*/
+

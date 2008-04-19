@@ -340,4 +340,4 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 }
 //@@@ 2002.01.18 add end
 
-/*[EOF]*/
+

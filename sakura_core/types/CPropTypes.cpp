@@ -275,4 +275,4 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 }
 
 
-/*[EOF]*/
+

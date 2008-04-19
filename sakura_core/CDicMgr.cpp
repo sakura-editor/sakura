@@ -187,4 +187,4 @@ int CDicMgr::HokanSearch(
 }
 
 
-/*[EOF]*/
+

@@ -87,4 +87,4 @@ private:
 #endif /* _CCOMMANDLINE_H_ */
 
 
-/*[EOF]*/
+

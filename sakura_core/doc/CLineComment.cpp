@@ -59,4 +59,4 @@ bool CLineComment::Match( int nPos, int nLineLen, const wchar_t* pLine ) const
 	}
 	return false;
 }
-/*[EOF]*/
+

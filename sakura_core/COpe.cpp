@@ -49,4 +49,4 @@ void COpe::DUMP( void )
 }
 
 
-/*[EOF]*/
+

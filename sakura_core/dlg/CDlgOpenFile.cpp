@@ -1115,4 +1115,4 @@ bool CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ* ofn )
 	return bRet!=FALSE;
 }
 
-/*[EOF]*/
+

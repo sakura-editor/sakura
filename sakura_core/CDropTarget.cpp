@@ -325,4 +325,4 @@ STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 }
 
 
-/*[EOF]*/
+

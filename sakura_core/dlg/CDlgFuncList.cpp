@@ -1682,4 +1682,4 @@ void CDlgFuncList::Redraw( int nOutLineType, CFuncInfoArr* pcFuncInfoArr, CLayou
 	SetData();
 }
 
-/*[EOF]*/
+

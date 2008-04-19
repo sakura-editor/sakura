@@ -58,4 +58,4 @@ protected:
 #endif /* _CDLGJUMP_H_ */
 
 
-/*[EOF]*/
+

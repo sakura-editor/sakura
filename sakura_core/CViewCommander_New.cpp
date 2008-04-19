@@ -1257,4 +1257,4 @@ void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nFlgOpt )
 
 }
 
-/*[EOF]*/
+

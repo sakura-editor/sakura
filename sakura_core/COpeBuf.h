@@ -64,4 +64,4 @@ private:
 #endif /* _COPEBUF_H_ */
 
 
-/*[EOF]*/
+

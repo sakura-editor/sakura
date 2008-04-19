@@ -81,4 +81,4 @@ protected:
 #endif /* _CTIPWND_H_ */
 
 
-/*[EOF]*/
+

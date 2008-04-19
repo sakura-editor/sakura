@@ -664,4 +664,4 @@ void CPropCommon::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設
 	}
 	return;
 }
-/*[EOF]*/
+

@@ -65,4 +65,4 @@ public:
 #endif /* _CBLOCKCOMMENT_H_ */
 
 
-/*[EOF]*/
+

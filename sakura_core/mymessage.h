@@ -96,4 +96,4 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 #define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
 #define RWM_RECONVERT TEXT("MSIMEReconvert")
 
-/*[EOF]*/
+

@@ -57,4 +57,4 @@ int WINAPI _tWinMain(
 	return 0;
 }
 
-/*[EOF]*/
+
