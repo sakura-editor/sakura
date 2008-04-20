@@ -95,9 +95,6 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 CEditDoc::~CEditDoc()
 {
-	if( GetSplitterHwnd() ){
-		DestroyWindow( GetSplitterHwnd() );
-	}
 }
 
 
