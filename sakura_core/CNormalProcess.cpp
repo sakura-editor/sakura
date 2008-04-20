@@ -32,6 +32,25 @@
 #include "util/window.h"
 #include "util/file.h"
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//               コンストラクタ・デストラクタ                  //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine )
+: m_pcEditApp( NULL )
+, CProcess( hInstance, lpCmdLine )
+{
+}
+
+CNormalProcess::~CNormalProcess()
+{
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     プロセスハンドラ                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 /*!
 	@brief エディタプロセスを初期化する
 	
@@ -44,17 +63,17 @@
 	@date 2004.05.13 Moca CEditWnd::Create()に失敗した場合にfalseを返すように．
 	@date 2007.06.26 ryoji グループIDを指定して編集ウィンドウを作成する
 */
-bool CNormalProcess::Initialize()
+bool CNormalProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
 
 	/* プロセス初期化の目印 */
-	HANDLE	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
+	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
 	if( NULL == hMutex ){
 		return false;
 	}
 
-	if ( !CProcess::Initialize() ){
+	if ( !CProcess::InitializeProcess() ){
 		return false;
 	}
 
@@ -311,34 +330,29 @@ bool CNormalProcess::MainLoop()
 	@date 2002/01/07
 	こいつはなにもしない。後始末はdtorで。
 */
-void CNormalProcess::Terminate()
+void CNormalProcess::OnExitProcess()
 {
+	SAFE_DELETE(m_pcEditApp);
 }
 
 
 
-/*!
-	デストラクタ
-	
-	@date 2002/2/3 aroka ヘッダから移動
-*/
-CNormalProcess::~CNormalProcess()
-{
-};
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         実装補助                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
 	@brief Mutex(プロセス初期化の目印)を取得する
 
 	多数同時に起動するとウィンドウが表に出てこないことがある。
 	
-	@date 2002/2/8 aroka Initializeから移動
+	@date 2002/2/8 aroka InitializeProcessから移動
 	@retval Mutex のハンドルを返す
 	@retval 失敗した時はリリースしてから NULL を返す
 */
-HANDLE CNormalProcess::GetInitializeMutex() const
+HANDLE CNormalProcess::_GetInitializeMutex() const
 {
-	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::GetInitializeMutex" );
+	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::_GetInitializeMutex" );
 	HANDLE hMutex;
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
 	if( NULL == hMutex ){

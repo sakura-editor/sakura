@@ -31,24 +31,23 @@ class CEditWnd;
 */
 class SAKURA_CORE_API CNormalProcess : public CProcess, public TSingleInstance<CNormalProcess> {
 public:
-	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine ) : 
-		m_pcEditApp( NULL ),
-		CProcess( hInstance, lpCmdLine ){}
-	virtual ~CNormalProcess(); // 2002/2/3 aroka
+	//コンストラクタ・デストラクタ
+	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
+	virtual ~CNormalProcess();
 
 protected:
-	CNormalProcess();
-	virtual bool Initialize();
+	//プロセスハンドラ
+	virtual bool InitializeProcess();
 	virtual bool MainLoop();
-	virtual void Terminate();
+	virtual void OnExitProcess();
 
-	HANDLE GetInitializeMutex() const; // 2002/2/8 aroka
+protected:
+	//実装補助
+	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
 
 private:
-	CEditApp*	m_pcEditApp; //2007.10.23 kobake
-//	CEditWnd*	m_pcEditWnd;
-	
-	CMigemo		m_cMigemo;	//migemo
+	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
+	CMigemo		m_cMigemo;		//migemo
 };
 
 

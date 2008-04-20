@@ -195,22 +195,6 @@ void CEditView::ViewDiffInfo(
 
 		//実行結果の取り込み
 		do {
-			//処理中のユーザー操作を可能にする
-//			if( !::BlockingHook( cDlgCancel.m_hWnd ) )
-//			{
-//				bDiffInfo = false;
-//				break;
-//			}
-
-			//中断ボタン押下チェック
-//			if( cDlgCancel.IsCanceled() )
-//			{
-				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
-//				::TerminateProcess( pi.hProcess, 0 );
-//				bDiffInfo = false;
-//				break;
-//			}
-
 			//プロセスが終了していないか確認
 			// Jul. 04, 2003 genta CPUを100%使い果たすのを防ぐため 200msec休む
 			// Jan. 23, 2004 genta

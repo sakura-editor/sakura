@@ -30,9 +30,9 @@ public:
 	virtual ~CProcess(){};
 protected:
 	CProcess();
-	virtual bool Initialize();
+	virtual bool InitializeProcess();
 	virtual bool MainLoop() = 0;
-	virtual void Terminate() = 0;
+	virtual void OnExitProcess() = 0;
 
 protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }

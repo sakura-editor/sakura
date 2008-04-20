@@ -53,8 +53,7 @@ CListener::CListener()
 
 CListener::~CListener()
 {
-	m_pcSubjectRef->_RemoveListener(this);
-	m_pcSubjectRef = NULL;
+	Listen(NULL);
 }
 
 CSubject* CListener::Listen(CSubject* pcSubject)
