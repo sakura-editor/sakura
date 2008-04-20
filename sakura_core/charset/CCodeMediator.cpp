@@ -48,7 +48,7 @@ ECodeType CCodeMediator::CheckKanjiCodeOfFile( const TCHAR* pszFile )
 	in.Close();
 
 	// 日本語コードセット判別
-	ECodeType nCodeType = Charcode::DetectUnicodeBom( reinterpret_cast<const char*>(pBuf), nBufLen );
+	ECodeType nCodeType = CESI::DetectUnicodeBom( reinterpret_cast<const char*>(pBuf), nBufLen );
 	if( nCodeType == CODE_NONE ){
 		// Unicode BOM は検出されませんでした．
 		nCodeType = CheckKanjiCode( reinterpret_cast<const uchar_t*>(pBuf), nBufLen );

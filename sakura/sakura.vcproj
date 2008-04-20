@@ -1385,10 +1385,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\charcode2.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CharPointer.h"
 				>
 			</File>
@@ -2895,6 +2891,14 @@
 			<Filter
 				Name="charset"
 				>
+				<File
+					RelativePath="..\sakura_core\charset\CBase64.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CBase64.h"
+					>
+				</File>
 				<File
 					RelativePath="..\sakura_core\charset\CCodeBase.cpp"
 					>

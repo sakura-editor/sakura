@@ -20,6 +20,44 @@
 #define CHAR_NULL		3	/* なにもない */
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       各種判定定数                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+const char CJis::JISESCDATA_ASCII[]				= "\x1b" "(B";
+const char CJis::JISESCDATA_JISX0201Latin[]		= "\x1b" "(J";
+const char CJis::JISESCDATA_JISX0201Latin_OLD[]	= "\x1b" "(H";
+const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";
+const char CJis::JISESCDATA_JISX0208_1978[]		= "\x1b" "$@";
+const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";
+const char CJis::JISESCDATA_JISX0208_1990[]		= "\x1b" "&@""\x1b""$B";
+
+// 順序は enumJISEscSeqType に依存 (charcode.h にて定義されている)
+const int CJis::TABLE_JISESCLEN[] = {
+	0,		// JISESC_UNKNOWN
+	3,		// JISESC_ASCII
+	3,		// JISESC_JISX0201Latin
+	3,		// JISESC_JISX0201Latin_OLD
+	3,		// JISESC_JISX0201Katakana
+	3,		// JISESC_JISX0208_1978
+	3,		// JISESC_JISX0208_1983
+	6,		// JISESC_JISX0208_1990
+};
+const char* CJis::TABLE_JISESCDATA[] = {
+	NULL,
+	JISESCDATA_ASCII,
+	JISESCDATA_JISX0201Latin,
+	JISESCDATA_JISX0201Latin_OLD,
+	JISESCDATA_JISX0201Katakana,
+	JISESCDATA_JISX0208_1978,
+	JISESCDATA_JISX0208_1983,
+	JISESCDATA_JISX0208_1990,
+};
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     インターフェース                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 /* E-Mail(JIS→Unicode)コード変換 */
 //2007.08.13 kobake 追加
 EConvertResult CJis::JISToUnicode(CMemory* pMem, bool base64decode)

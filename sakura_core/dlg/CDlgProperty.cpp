@@ -23,6 +23,7 @@
 #include "charcode.h"	// rastiv, 2006/06/28
 #include "io/CBinaryStream.h"
 #include "util/shell.h"
+#include "charset/CESI.h"
 
 // プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -70,8 +71,6 @@ void CDlgProperty::SetData( void )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
 	CNativeT		cmemProp;
-//	char*			pWork;
-//	char			szWork[100];
 	TCHAR			szWork[500];
 
 	HANDLE			nFind;
@@ -213,9 +212,6 @@ void CDlgProperty::SetData( void )
 
 
 #ifdef _DEBUG/////////////////////////////////////////////////////
-	MBCODE_INFO		mbci_tmp;
-	UNICODE_INFO	uci_tmp;
-	
 	HGLOBAL					hgData;
 	char*					pBuf;
 	int						nBufLen;
@@ -238,58 +234,8 @@ void CDlgProperty::SetData( void )
 	in.Read( pBuf, nBufLen );
 	in.Close();
 
-// From Here  2006.12.17  rastiv
-	/*
-	||ファイルの日本語コードセット判別: Unicodeか？
-	*/
-	/*
-	||ファイルの日本語コードセット判別: UnicodeBEか？
-	*/
-	Charcode::GetEncdInf_Uni( pBuf, nBufLen, &uci_tmp );
-	auto_sprintf( szWork, _T("Unicodeコード調査：改行バイト数=%d  BE改行バイト数=%d ASCII改行バイト数=%d\r\n")
-		, uci_tmp.Uni.nCRorLF, uci_tmp.UniBe.nCRorLF, uci_tmp.nCRorLF_ascii );
-	cmemProp.AppendString( szWork );
-	
-	/*
-	||ファイルの日本語コードセット判別: EUCか？
-	*/
-	Charcode::GetEncdInf_EucJp( pBuf, nBufLen, &mbci_tmp );
-	auto_sprintf( szWork, _T("EUCJPコード検査：特有バイト数=%d  ポイント数=%d\r\n")
-		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
-	cmemProp.AppendString( szWork );
-	
-	/*
-	||ファイルの日本語コードセット判別: SJISか？
-	*/
-	Charcode::GetEncdInf_SJis( pBuf, nBufLen, &mbci_tmp );
-	auto_sprintf( szWork, _T("SJISコード検査：特有バイト数=%d  ポイント数=%d\r\n")
-		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
-	cmemProp.AppendString( szWork );
-	
-	/*
-	||ファイルの日本語コードセット判別: JISか？
-	*/
-	Charcode::GetEncdInf_Jis( pBuf, nBufLen, &mbci_tmp );
-	auto_sprintf( szWork, _T("JISコード検査：特有バイト数=%d  ポイント数=%d\r\n")
-		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
-	cmemProp.AppendString( szWork );
-
-	/*
-	||ファイルの日本語コードセット判別: UTF-8Sか？
-	*/
-	Charcode::GetEncdInf_Utf8( pBuf, nBufLen, &mbci_tmp );
-	auto_sprintf( szWork, _T("UTF-8コード検査：特有バイト数=%d  ポイント数=%d\r\n")
-		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
-	cmemProp.AppendString( szWork );
-
-	/*
-	||ファイルの日本語コードセット判別: UTF-7Sか？
-	*/
-	Charcode::GetEncdInf_Utf7( pBuf, nBufLen, &mbci_tmp );
-	auto_sprintf( szWork, _T("UTF-7コード検査：特有バイト数=%d  ポイント数=%d\r\n")
-		, mbci_tmp.nSpecBytes, mbci_tmp.nDiff );
-	cmemProp.AppendString( szWork );
-// To Here rastiv 2006.12.17
+	//CESIのデバッグ情報
+	cmemProp.AppendNativeData(CESI::GetDebugInfo(pBuf,nBufLen));
 
 	if( NULL != hgData ){
 		::GlobalUnlock( hgData );

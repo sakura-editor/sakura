@@ -67,7 +67,7 @@ void CEuc::EUCToSJIS( CMemory* pMem )
 			nPtr += 2;
 		}
 		/* EUC漢字コードか? */
-		else if( nPtr < nBufLen - 1 && Charcode::IsEucKan1(pBuf[nPtr]) && Charcode::IsEucKan2(pBuf[nPtr + 1L]) ){
+		else if( nPtr < nBufLen - 1 && CEuc::IsEucKan1(pBuf[nPtr]) && CEuc::IsEucKan2(pBuf[nPtr + 1L]) ){
 			/* 通常のJISコードに変換 */
 			char jis[2];
 			jis[0] = pBuf[nPtr	  ] & 0x7f;

@@ -8,6 +8,9 @@ enum EConvertResult{
 };
 
 #include "CEol.h"
+#include "CNativeW.h"
+class CMemory;
+class CNativeW;
 
 /*!
 	文字コード基底クラス。
@@ -25,7 +28,7 @@ public:
 	virtual EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst)=0;	//!< UNICODE    → 特定コード 変換
 
 	//ファイル形式
-	virtual void GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMデータ取得
+	virtual void GetBom(CMemory* pcmemBom);											//!< BOMデータ取得
 	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType)=0;					//!< 改行データ取得
 };
 

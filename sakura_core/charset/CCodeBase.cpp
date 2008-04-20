@@ -1,9 +1,4 @@
 #include "stdafx.h"
 #include "CCodeBase.h"
 
-/*
-//! 改行データ取得
-void CCodeBase::GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-}
-*/
+void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMデータ取得

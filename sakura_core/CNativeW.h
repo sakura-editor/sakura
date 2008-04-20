@@ -2,6 +2,7 @@
 
 #include "CNative.h"
 #include "CNativeT.h"
+#include "SakuraBasis.h"
 
 class CNativeW : public CNative{
 public:
