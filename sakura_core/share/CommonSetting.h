@@ -161,7 +161,7 @@ public:
 public:
 	//ファイルの排他制御モード
 	EShareMode		m_nFileShareMode;
-	BOOL			m_bCheckFileTimeStamp;	// 更新の監視
+	bool			m_bCheckFileTimeStamp;	// 更新の監視
 
 	//ファイルの保存
 	BOOL	m_bEnableUnmodifiedOverwrite;	// 無変更でも上書きするか
