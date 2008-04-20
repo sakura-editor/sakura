@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CConvert_Base64Decode.h"
 #include "charcode.h"
+#include "charset/CBase64.h"
 
 #if 1 //$$$•Û—¯
 
@@ -12,7 +13,7 @@ int IsBASE64Char( wchar_t cData )
 
 	int nret = -1;
 	if( n==1 && (unsigned char)buf[0] < 0x80 ){
-		nret = Charcode::BASE64VAL[cData];
+		nret = CBase64::BASE64VAL[cData];
 		if( nret == 0xff ){
 			nret = -1;
 		}
@@ -23,7 +24,7 @@ int IsBASE64Char( char cData )
 {
 	int nret = -1;
 	if( (unsigned char)cData < 0x80 ){
-		nret = Charcode::BASE64VAL[cData];
+		nret = CBase64::BASE64VAL[cData];
 		if( nret == 0xff ){
 			nret = -1;
 		}

@@ -13,11 +13,17 @@ CNativeA::CNativeA(const char* szData)
 	SetString(szData);
 }
 
-
 CNativeA::CNativeA()
 : CNative()
 {
 }
+
+CNativeA::CNativeA(const CNativeA& rhs)
+: CNative()
+{
+	SetString(rhs.GetStringPtr(),rhs.GetStringLength());
+}
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ設定インターフェース                 //

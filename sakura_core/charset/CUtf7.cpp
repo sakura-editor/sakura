@@ -2,6 +2,31 @@
 #include "CUtf7.h"
 #include "charcode.h"
 
+
+/*!
+	UTF-7 セットD の文字たち
+*/
+const bool    bNA  = false;
+const bool CUtf7::UTF7SetD[] = {
+	bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  //00-07:
+	bNA,  true, true, bNA,  bNA,  true, bNA,  bNA,  //08-0f:TAB, LF, CR
+	bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  //10-17:
+	bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  //18-1f:
+	true, bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  true, //20-27:SP, `'`
+	true, true, bNA,  bNA,  true, true, true, true, //28-2f:(, ), `,`, -, ., /
+	true, true, true, true, true, true, true, true, //30-37:0 - 7
+	true, true, true, bNA,  bNA,  bNA,  bNA,  true, //38-3f:8, 9, :, ?
+	bNA,  true, true, true, true, true, true, true, //40-47:A - G
+	true, true, true, true, true, true, true, true, //48-4f:H - O
+	true, true, true, true, true, true, true, true, //50-57:P - W
+	true, true, true, bNA,  bNA,  bNA,  bNA,  bNA,  //58-5f:X, Y, Z
+	bNA,  true, true, true, true, true, true, true, //60-67:a - g
+	true, true, true, true, true, true, true, true, //68-6f:h - o
+	true, true, true, true, true, true, true, true, //70-77:p - w
+	true, true, true, bNA,  bNA,  bNA,  bNA,  bNA,  //78-7f:x, y, z
+};
+
+
 //! UTF-7→Unicodeコード変換
 // 2007.08.13 kobake 作成
 EConvertResult CUtf7::UTF7ToUnicode( CMemory* pMem )
@@ -259,7 +284,7 @@ int CUtf7::IsUTF7Direct( wchar_t wc )
 {
 	int nret = 0;
 	if( (wc & 0xff00) == 0 ){
-		nret = Charcode::IsUtf7SetDChar( (unsigned char)wc );
+		nret = CUtf7::IsUtf7SetDChar( (unsigned char)wc );
 	}
 	return nret;
 }

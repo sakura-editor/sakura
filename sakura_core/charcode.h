@@ -1,230 +1,309 @@
-/*!	@file
-	@brief 文字コード認識ライブラリ
+//2007.09.13 kobake 作成
 
-	@author Sakura-Editor collaborators
-	@date 1998/03/06 新規作成 by 原作者 Norio Nakatani (C) 1998-2001
-	@date 2006/03/06 名称・ライセンス改訂 [文字コード定数の定義] → [文字コード認識ライブラリ]
-*/
-/*
-	Copyright (C) 2006, D. S. Koba, rastiv
+#pragma once
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such, 
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
-*/
-
-
-#ifndef _CHARCODE_H_
-#define _CHARCODE_H_
-
-
-
-enum enumCodeType;
-typedef enumCodeType ECodeType;
-#if 0
-/*! 文字コードセット種別 */
-enum enumCodeType {
-	CODE_SJIS,				// MS-CP932(Windows-31J), シフトJIS(Shift_JIS)
-	CODE_JIS,				// MS-CP5022x(ISO-2022-JP-MS)
-	CODE_EUC,				// MS-CP51932, eucJP-ms(eucJP-open)
-	CODE_UNICODE,			// UTF-16 LittleEndian(UCS-2)
-	CODE_UTF8,				// UTF-8(UCS-2)
-	CODE_UTF7,				// UTF-7(UCS-2)
-	CODE_UNICODEBE,			// UTF-16 BigEndian(UCS-2)
-	// ...
-	CODE_CODEMAX,
-	CODE_AUTODETECT	= 99	/* 文字コード自動判別 */
-	
-	/*
-		- MS-CP50220 
-			Unicode から cp50220 への変換時に、
-			JIS X 0201 片仮名は JIS X 0208 の片仮名に置換される
-		- MS-CP50221
-			Unicode から cp50221 への変換時に、
-			JIS X 0201 片仮名は、G0 集合への指示のエスケープシーケンス ESC ( I を用いてエンコードされる
-		- MS-CP50222
-			Unicode から cp50222 への変換時に、
-			JIS X 0201 片仮名は、SO/SI を用いてエンコードされる
-		
-		参考
-		http://legacy-encoding.sourceforge.jp/wiki/
-	*/
-};
-#endif
-
-/*! JIS コードのエスケープシーケンスたち */
-/*
-	符号化文字集合       16進表現            文字列表現[*1]
-	------------------------------------------------------------
-	JIS C 6226-1978      1b 24 40            ESC $ @
-	JIS X 0208-1983      1b 24 42            ESC $ B
-	JIS X 0208-1990      1b 26 40 1b 24 42   ESC & @ ESC $ B
-	JIS X 0212-1990      1b 24 28 44         ESC $ ( D
-	JIS X 0213:2000 1面  1b 24 28 4f         ESC $ ( O
-	JIS X 0213:2004 1面  1b 24 28 51         ESC $ ( Q
-	JIS X 0213:2000 2面  1b 24 28 50         ESC $ ( P
-	JIS X 0201 ラテン    1b 28 4a            ESC ( J
-	JIS X 0201 ラテン    1b 28 48            ESC ( H         (歴史的[*2])
-	JIS X 0201 片仮名    1b 28 49            ESC ( I
-	ISO/IEC 646 IRV      1b 28 42            ESC ( B
-	
-	
-	  [*1] 各バイトを便宜的にISO/IEC 646 IRVの文字で表したもの。
-	       ただしESCはバイト値1bを表す。
-	
-	  [*2] JIS X 0201の指示としては使用すべきでないが、古いデータでは
-	       使われている可能性がある。
-	
-	出展：http://www.asahi-net.or.jp/~wq6k-yn/code/
-	参考：http://homepage2.nifty.com/zaco/code/
-*/
-enum enumJisESCSeqType {
-	JISESC_UNKNOWN,
-	JISESC_ASCII,
-	JISESC_JISX0201Latin,
-	JISESC_JISX0201Latin_OLD,
-	JISESC_JISX0201Katakana,
-	JISESC_JISX0208_1978,
-	JISESC_JISX0208_1983,
-	JISESC_JISX0208_1990,
-};
-
-/*
-	文字コード判定情報 構造体群
-*/
-typedef struct EncodingInfo_t {
-	ECodeType eCodeID;		// 文字コード識別番号
-	int nSpecBytes;			// 特有バイト数
-	int nDiff;				// ポイント数 := 特有バイト数 － 不正バイト数
-} MBCODE_INFO;
-typedef struct WC_EncodingInfo_t {
-	enumCodeType eCodeID;	// 文字コード識別番号
-	int nCRorLF;			// ワイド文字の改行の個数
-	int nLostBytes;			// 不正バイト数
-} WCCODE_INFO;
-typedef struct UnicodeInfo_t {
-	WCCODE_INFO Uni;		// 文字コード判定情報 for UNICODE
-	WCCODE_INFO UniBe;		// 文字コード判定情報 for UNICODE BE
-	int nCRorLF_ascii;		// マルチバイト文字の改行の個数
-} UNICODE_INFO;
-
-/*
-	関数のエミュレーション
-*/
-
-
-
-
-namespace Charcode
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         判定関数                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+#include "charset/CShiftJis.h"
+inline bool _IS_SJIS_1(unsigned char c)
 {
-	// BASE64エンコード後に使用する文字
-	extern const uchar_t BASE64CHAR[];
-	// BASE64デコードする際に使うバイナリ値
-	extern const uchar_t BASE64VAL[];
-	// UTF7SetD を処理する際に使うブール値
-	extern const bool UTF7SetD[];
-	// JIS コードのエスケープシーケンス文字列データ
-	extern const char JISESCDATA_ASCII[];
-	extern const char JISESCDATA_JISX0201Latin[];
-	extern const char JISESCDATA_JISX0201Latin_OLD[];
-	extern const char JISESCDATA_JISX0201Katakana[];
-	extern const char JISESCDATA_JISX0208_1978[];
-	extern const char JISESCDATA_JISX0208_1983[];
-	extern const char JISESCDATA_JISX0208_1990[];
-	extern const int TABLE_JISESCLEN[];
-	extern const char* TABLE_JISESCDATA[];
-	
-	uchar_t __fastcall Base64_CharToVal( const uchar_t );
-	uchar_t __fastcall Base64_ValToChar( const uchar_t );
-	int __fastcall GetJisESCSeqLen( const enumJisESCSeqType );
-	const char* __fastcall GetJisESCSeqData( const enumJisESCSeqType );
+	return CShiftJis::IsSJisKan1(c);
+}
+inline bool _IS_SJIS_2(unsigned char c)
+{
+	return CShiftJis::IsSJisKan2(c);
+}
+inline bool _IS_SJIS_1(char c)
+{
+	return CShiftJis::IsSJisKan1((unsigned char)c);
+}
+inline bool _IS_SJIS_2(char c)
+{
+	return CShiftJis::IsSJisKan2((unsigned char)c);
+}
+inline int my_iskanji1( int c )
+{
+	return CShiftJis::IsSJisKan1((unsigned char)c);
+}
+inline int my_iskanji2( int c )
+{
+	return CShiftJis::IsSJisKan2((unsigned char)c);
+}
 
-	/*
-	|| 共有実装ヘルパ関数
-	*/
-	
-	// --- 文字コード判別支援
-	bool __fastcall IsSJisKan1( const uchar_t );  // SJIS 文字長2 の場合の 0バイト目チェック
-	bool __fastcall IsSJisKan2( const uchar_t );  // SJIS 文字長2 の場合の 1バイト目チェック
-	bool __fastcall IsSJisKan( const uchar_t* ); // IsSJisKan1 + IsSJisKan2
-	bool __fastcall IsSJisHanKata( const uchar_t );  // SJIS 半角カタカナ判別
-	bool __fastcall IsEucKan1( const uchar_t );  // EUCJP 文字長2 の場合の 0バイト目チェック
-	bool __fastcall IsEucKan2( const uchar_t );  // EUCJP 文字長2 の場合の 1バイト目チェック
-	bool __fastcall IsEucKan( const uchar_t* );  // IsEucKan1  + IsEucKan2
-	bool __fastcall IsEucHanKata2( const uchar_t );  // EUCJP 半角カタカナ 2バイト目判別  add by genta
-	bool __fastcall IsUtf16SurrogHi( const uchar16_t );  // UTF16 文字長4 の場合の 0-1バイト目チェック
-	bool __fastcall IsUtf16SurrogLow( const uchar16_t ); // UTF16 文字長4 の場合の 2-3バイト目チェック
-#if 0
-	bool __fastcall IsUtf16Surrogates( const uchar16_t* ); // UTF16 のサロゲートペア判別
-	bool __fastcall IsUtf16SurrogHiOrLow( const uchar16_t );  // UTF16 のサロゲート片判別
-#endif
-	bool __fastcall IsBase64Char( const uchar_t );  // UTF-7 で使われる Modified BASE64 を判別
-	bool __fastcall IsUtf7SetDChar( const uchar_t ); // UTF-7 Set D の文字を判別
-	// --- 文字長予測．
-	int GuessCharLen_utf8( const uchar_t*, const int nStrLen = 4 );
-	int GuessCharLen_sjis( const uchar_t*, const int nStrLen = 2 );
-	int GuessCharLen_eucjp( const uchar_t*, const int nStrLen = 3 );
-#if 0
-	int GuessCharLenAsUtf16_imp( const uchar_t*, const int, bool bBigEndian );
-	int GuessCharLenAsUtf16( const uchar_t*, const int nStrLen = 4 );
-	int GuessCharLenAsUtf16Be( const uchar_t*, const int nStrLen = 4 );
-#endif
-	// --- 一文字チェック
-	int CheckSJisChar( const uchar_t*, const int );
-	int CheckSJisCharR( const uchar_t*, const int );  // CheckCharLenAsSJis の逆方向モード
-	int CheckEucJpChar( const uchar_t*, const int );
-	int CheckUtf8Char( const uchar_t*, const int );
-	int imp_CheckUtf16Char( const uchar_t*, const int, bool );
-	int CheckUtf16Char( const uchar_t*, const int );
-	int CheckUtf16BeChar( const uchar_t*, const int );
-#if 0
-	int CheckJisChar_JISX0208( const uchar_t*, const int );
-#endif
-	// --- 文字長チェック
-	int GetCharLen_sjis( const uchar_t*, const int );
-	int GetCharLenR_sjis( const uchar_t*, const int );  // GetCharLenAsSJis の逆方向モード
-	int GetCharLen_eucjp( const uchar_t*, const int );
-	int GetCharLen_utf8( const uchar_t*, const int );
-	// --- UTF-7 正当性チェック
-	int CheckUtf7SetDPart( const uchar_t*, const int, uchar_t*& ref_pNextC );
-	int CheckUtf7SetBPart( const uchar_t*, const int, uchar_t*& ref_pNextC );
-	// --- JIS エスケープシーケンス検出
-	int DetectJisESCSeq( const uchar_t* pS, const int nLen, int* pnEscType );
-	// --- ユニコード BOM 検出器
-	ECodeType DetectUnicodeBom( const char*, int );
-	
-	/*
-	|| 文字列の文字コード情報を得る．
-	*/
-	
-	// --- 文字列チェック
-	void GetEncdInf_SJis( const char*, const int, MBCODE_INFO* );
-	void GetEncdInf_Jis( const char*, const int, MBCODE_INFO* );
-	void GetEncdInf_EucJp( const char*, const int, MBCODE_INFO* );
-	void GetEncdInf_Utf8( const char*, const int, MBCODE_INFO* );
-	void GetEncdInf_Utf7( const char*, const int, MBCODE_INFO* );
-	void GetEncdInf_Uni( const char*, const int, UNICODE_INFO* );
-} // ends namespace Charcode.
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           定数                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#include "charcode2.h"
+//定数の素 (直接使用は控えてください)
+#define TAB_ 				'\t'
+#define SPACE_				' '
+#define CR_					'\015'
+#define LF_					'\012'
+#define ESC_				'\x1b'
+#define CRLF_				"\015\012"
+
+//ANSI定数
+namespace ACODE{
+	//文字
+	static const char TAB   = TAB_;
+	static const char SPACE = SPACE_;
+	static const char CR	= CR_;
+	static const char LF	= LF_;
+	static const char ESC	= ESC_;
+
+	//文字列
+	static const char CRLF[] = CRLF_;
+
+	//特殊 (BREGEXP)
+	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFF;
+}
+
+//UNICODE定数
+namespace WCODE{
+	//文字
+	static const wchar_t TAB   = LCHAR(TAB_);
+	static const wchar_t SPACE = LCHAR(SPACE_);
+	static const wchar_t CR    = LCHAR(CR_);
+	static const wchar_t LF    = LCHAR(LF_);
+	static const wchar_t ESC   = LCHAR(ESC_);
+
+	//文字列
+	static const wchar_t CRLF[] = LTEXT(CRLF_);
+
+	//特殊 (BREGEXP)
+	//$$ UNICODE版の仮デリミタ。bregonigの仕様がよくわかんないので、とりあえずこんな値にしてます。
+	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFFFF;
+}
 
 
-#endif /* _CHARCODE_H_ */
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         判定関数                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+
+
+
+//Oct. 31, 2000 JEPRO  TeX Keyword のために'\'を追加
+//Nov.  9, 2000 JEPRO  HSP Keyword のために'@'を追加
+//Oct. 18, 2007 kobake UNICODE用に書き直し
+inline bool IS_KEYWORD_CHAR(wchar_t wc)
+{
+	if(wc==L'#')return true;				//user-define
+	if(wc==L'$')return true;				//user-define
+	if(wc>=L'0' && wc<=L'9')return true;	//iscsym
+	if(wc==L'@')return true;				//user-define
+	if(wc>=L'A' && wc<=L'Z')return true;	//iscsym
+	if(wc>=L'a' && wc<=L'z')return true;	//iscsym
+	if(wc==L'_')return true;				//iscsym
+	if(wc==L'\\')return true;				//user-define
+	return false;
+}
+
+
+//UNICODE判定関数群
+namespace WCODE
+{
+	inline bool isAZ(wchar_t wc)
+	{
+		return (wc>=L'A' && wc<=L'Z') || (wc>=L'a' && wc<=L'z');
+	}
+	inline bool is09(wchar_t wc)
+	{
+		return (wc>=L'0' && wc<=L'9');
+	}
+	inline bool IsInRange(wchar_t c, wchar_t front, wchar_t back)
+	{
+		return c>=front && c<=back;
+	}
+
+	//!半角文字(縦長長方形)かどうか判定
+	bool isHankaku(wchar_t wc);
+
+	//!全角文字(正方形)かどうか判定
+	inline bool isZenkaku(wchar_t wc)
+	{
+		return !isHankaku(wc);
+	}
+
+	//!全角スペースかどうか判定
+	inline bool isZenkakuSpace(wchar_t wc)
+	{
+		return wc == 0x3000; //L'　'
+	}
+
+	//!制御文字であるかどうか
+	bool isControlCode(wchar_t wc);
+
+	//!改行文字であるかどうか
+	inline bool isLineDelimiter(wchar_t wc)
+	{
+		return wc==CR || wc==LF;
+	}
+
+	//!単語の区切り文字であるかどうか
+	inline bool isWordDelimiter(wchar_t wc)
+	{
+		return wc==SPACE || wc==TAB || isZenkakuSpace(wc);
+	}
+
+	//!インデント構成要素であるかどうか。bAcceptZenSpace: 全角スペースを含めるかどうか
+	inline bool isIndentChar(wchar_t wc,bool bAcceptZenSpace)
+	{
+		if(wc==TAB || wc==SPACE)return true;
+		if(bAcceptZenSpace && isZenkakuSpace(wc))return true;
+		return false;
+	}
+
+	//!空白かどうか
+	inline bool isBlank(wchar_t wc)
+	{
+		return wc==TAB || wc==SPACE || isZenkakuSpace(wc);
+	}
+
+	//!CPPキーワードで始まっていれば true
+	inline bool isHeadCppKeyword(const wchar_t* pData)
+	{
+		#define HEAD_EQ(DATA,LITERAL) (wcsncmp(DATA,LITERAL,_countof(LITERAL)-1)==0)
+		if( HEAD_EQ(pData, L"case"      ) )return true;
+		if( HEAD_EQ(pData, L"default:"  ) )return true;
+		if( HEAD_EQ(pData, L"public:"   ) )return true;
+		if( HEAD_EQ(pData, L"private:"  ) )return true;
+		if( HEAD_EQ(pData, L"protected:") )return true;
+		return false;
+	}
+
+	//!ファイル名に使える文字であるかどうか
+	inline bool isValidFilenameChar(const wchar_t* pData, size_t nIndex)
+	{
+		static const wchar_t* table = L"<>?\"|*";
+
+		wchar_t wc = pData[nIndex];
+		if(wcschr(table,wc)!=NULL)return false; //table内の文字が含まれていたら、ダメ。
+		else return true;
+	}
+
+	//!タブ表示に使える文字かどうか
+	inline bool isTabAvailableCode(wchar_t wc)
+	{
+		//$$要検証
+		if(wc==L'\0')return false;
+		if(wc==L'\r')return false;
+		if(wc==L'\n')return false;
+		if(wc==L'\t')return false;
+		return true;
+	}
+
+	//! 半角カナかどうか
+	inline bool isHankakuKatakana(wchar_t c)
+	{
+		//参考: http://ash.jp/code/unitbl1.htm
+		return c>=0xFF61 && c<=0xFF9F;
+	}
+
+	//! 全角記号かどうか
+	inline bool isZenkakuKigou(wchar_t c)
+	{
+		//$ 他にも全角記号はあると思うけど、とりあえずANSI版時代の判定を踏襲。パフォーマンス悪し。
+		static const wchar_t* table=L"　、。，．・：；？！゛゜´｀¨＾￣＿ヽヾゝゞ〃仝々〆〇ー―‐／＼～∥｜…‥‘’“”（）〔〕［］｛｝〈〉《》「」『』【】＋－±×÷＝≠＜＞≦≧∞∴♂♀°′″℃￥＄￠￡％＃＆＊＠§☆★○●◎◇◆□■△▲▽▼※〒→←↑↓〓∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬Å‰♯♭♪†‡¶◯";
+		return wcschr(table,c)!=NULL;
+	}
+
+	//! ひらがなかどうか
+	inline bool isHiragana(wchar_t c)
+	{
+		return c>=0x3041 && c<=0x3093;
+	}
+
+	//! カタカナかどうか
+	inline bool isZenkakuKatakana(wchar_t c)
+	{
+		return c>=0x30A1 && c<=0x30F6;
+	}
+
+	//! ギリシャ文字かどうか
+	inline bool isGreek(wchar_t c)
+	{
+		return c>=0x0391 && c<=0x03C9;
+	}
+
+	//! キリル文字かどうか
+	inline bool isCyrillic(wchar_t c)
+	{
+		return c>=0x0410 && c<=0x044F;
+	}
+
+	//! BOX DRAWING 文字 かどうか
+	inline bool isBoxDrawing(wchar_t c)
+	{
+		return c>=0x2500 && c<=0x257F;
+	}
+}
+
+
+//ANSI判定関数群
+namespace ACODE
+{
+	inline bool isAZ(char c)
+	{
+		return (c>='A' && c<='Z') || (c>='a' && c<='z');
+	}
+
+	//!制御文字であるかどうか
+	inline bool isControlCode(char c)
+	{
+		unsigned char n=(unsigned char)c;
+		if(c==TAB)return false;
+		if(c==CR )return false;
+		if(c==LF )return false;
+		if(n<=0x1F)return true;
+		if(n>=0x7F && n<=0xA0)return true;
+		if(n>=0xE0)return true;
+		return false;
+	}
+
+	//!タブ表示に使える文字かどうか
+	inline bool isTabAvailableCode(char c)
+	{
+		if(c=='\0')return false;
+		if(c<=0x1f)return false;
+		if(c>=0x7f)return false;
+		return true;
+	}
+
+	//!ファイル名に使える文字であるかどうか
+	inline bool isValidFilenameChar(const char* pData, size_t nIndex)
+	{
+		static const TCHAR* table = _T("<>?\"|*");
+		char c = pData[nIndex];
+
+		//table内の文字が含まれていて
+		if(_tcschr(table,c)!=NULL){
+			//それが1バイト文字だったら
+			if( nIndex==0 || (nIndex>0 && !_IS_SJIS_1(pData[nIndex-1])) ){
+				//使っちゃいけない文字！
+				return false;
+			}
+		}
+
+		return true;
+	}
+}
+
+//TCHAR判定関数群
+namespace TCODE
+{
+	#ifdef _UNICODE
+		using namespace WCODE;
+	#else
+		using namespace ACODE;
+	#endif
+}
+
+
+
+
+
+
 
 

@@ -46,6 +46,7 @@
 #include "io/CIoBridge.h"
 #include "charset/CCodeMediator.h"
 #include "util/string_ex2.h"
+#include "charset/CESI.h"
 
 /*
 	@note Win32APIで実装
@@ -155,7 +156,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 
 	// From Here Jun. 08, 2003 Moca BOMの除去
 //-	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
-	nBomCode = Charcode::DetectUnicodeBom( (const char *)m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
+	nBomCode = CESI::DetectUnicodeBom( (const char *)m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
 	m_nFileDataLen = m_nFileSize;
 	if( nBomCode != 0 && nBomCode == m_CharCode ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
@@ -184,7 +185,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	// To Here Jun. 13, 2003 Moca BOMの除去
 	m_eMode = FLMODE_REDY;
 //	m_cmemLine.AllocBuffer( 256 );
-	return (enumCodeType)m_CharCode;
+	return m_CharCode;
 }
 
 /*!

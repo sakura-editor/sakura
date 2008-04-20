@@ -65,6 +65,7 @@ typedef CRangeBase<CLayoutPoint>				CLayoutRange;
 typedef CStrictRect<CLayoutInt, CLayoutPoint>	CLayoutRect;
 
 //‚ä‚é‚¢’PˆÊ
+#include "CMyPoint.h"
 typedef CRangeBase<CMyPoint>     SelectionRange;
 
 

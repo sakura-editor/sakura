@@ -51,6 +51,8 @@ typedef enumEOLType EEolType;
 /* 行終端子の配列 */
 SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
+#include "SakuraBasis.h"
+
 /*!
 	@brief 行末の改行コードを管理
 
