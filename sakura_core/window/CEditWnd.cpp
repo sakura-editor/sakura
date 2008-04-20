@@ -3897,11 +3897,10 @@ void CEditWnd::OnEditTimer( void )
 	//	Aug. 29, 2003 wmlhq, ryoji
 	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
 		/* ファイルのタイムスタンプのチェック処理 */
-		GetDocument().m_cAutoReloadAgent.CheckFileTimeStamp() ;
+		GetDocument().m_cAutoReloadAgent.CheckFileTimeStamp();
 	}
 
 	GetDocument().m_cAutoSaveAgent.CheckAutoSave();
-	return;
 }
 
 LRESULT CEditWnd::Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

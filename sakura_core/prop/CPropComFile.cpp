@@ -18,6 +18,7 @@
 #include "prop/CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
+#include "util/window.h"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -262,7 +263,7 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 		break;
 	}
 	/* 更新の監視 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
+	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
 
 	/* 無変更でも上書きするか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite );
@@ -323,18 +324,19 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	/* ファイルの排他制御モード */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){	/* 排他なし */
 		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_NOT_EXCLUSIVE;
-	}else
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE ) ){	/* 書き込み禁止 */
+	}
+	else if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE ) ){	/* 書き込み禁止 */
 		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE	;
-	}else
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE ) ){	/* 読み書き禁止 */
+	}
+	else if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE ) ){	/* 読み書き禁止 */
 		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_READWRITE;
-	}else{
+	}
+	else{
 		/* 排他なし */
 		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_NOT_EXCLUSIVE;
 	}
 	/* 更新の監視 */
-	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
+	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
 
 	/* 無変更でも上書きするか */
 	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );

@@ -7,6 +7,9 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
+	// リロード要求の場合は、継続。
+	if(pLoadInfo->bRequestReload)goto next;
+
 	// 他のウィンドウで既に開かれている場合は、それをアクティブにする
 	HWND	hWndOwner;
 	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(pLoadInfo->cFilePath, &hWndOwner, pLoadInfo->eCharCode) ){
@@ -24,6 +27,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 		return CALLBACK_INTERRUPT;
 	}
 
+next:
 	// オプション：開こうとしたファイルが存在しないとき警告する
 	if( GetDllShareData().m_Common.m_sFile.GetAlertIfFileNotExist() ){
 		if(!fexist(pLoadInfo->cFilePath)){

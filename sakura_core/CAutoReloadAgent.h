@@ -24,7 +24,7 @@ public:
 public://#####仮
 	bool _ToDoChecking() const;
 	bool _IsFileUpdatedByOther(FILETIME* pNewFileTime) const;
-	void CheckFileTimeStamp();	/* ファイルのタイムスタンプのチェック処理 */
+	void CheckFileTimeStamp();	// ファイルのタイムスタンプのチェック処理
 
 public:
 	WatchUpdate		m_eWatchUpdate;	//!< 更新監視方法

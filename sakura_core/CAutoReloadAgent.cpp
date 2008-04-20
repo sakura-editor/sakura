@@ -109,7 +109,12 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			PauseWatching(); // çXêVäƒéãÇÃó}êß
 
 			CDlgFileUpdateQuery dlg( pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified() );
-			int result = dlg.DoModal( CNormalProcess::Instance()->GetProcessInstance(), CEditWnd::Instance()->GetHwnd(), IDD_FILEUPDATEQUERY, 0 );
+			int result = dlg.DoModal(
+				CNormalProcess::Instance()->GetProcessInstance(),
+				CEditWnd::Instance()->GetHwnd(),
+				IDD_FILEUPDATEQUERY,
+				0
+			);
 
 			switch( result ){
 			case 1:	// çƒì«çû

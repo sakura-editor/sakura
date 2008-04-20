@@ -97,8 +97,6 @@ void CDocFileOperation::ReloadCurrentFile(
 	ECodeType	nCharCode		//!< [in] 文字コード種別
 )
 {
-	bool bViewMode = CAppMode::Instance()->IsViewMode();	// ビューモード
-
 	if( !fexist(m_pcDocRef->m_cDocFile.GetFilePath()) ){
 		/* ファイルが存在しない */
 		//	Jul. 26, 2003 ryoji BOMを標準設定に
@@ -129,7 +127,8 @@ void CDocFileOperation::ReloadCurrentFile(
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath=m_pcDocRef->m_cDocFile.GetFilePath();
 	sLoadInfo.eCharCode=nCharCode;
-	sLoadInfo.bViewMode=bViewMode;
+	sLoadInfo.bViewMode=CAppMode::Instance()->IsViewMode();
+	sLoadInfo.bRequestReload=true;
 	this->DoLoadFlow(&sLoadInfo);
 
 	//文字コード確認フラグ復元

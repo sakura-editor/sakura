@@ -246,7 +246,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1001;
+const unsigned int uShareDataVersion = 1002;
 
 /*
 ||	Singleton風
@@ -485,19 +485,12 @@ bool CShareData::Init( void )
 		sBackup.m_bBackUpPathAdvanced = false;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
 		sBackup.m_szBackUpPathAdvanced[0] = _T('\0');					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
-		m_pShareData->m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE;/* ファイルの排他制御モード */
-
 		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;					/* カーソルのタイプ 0=win 1=dos */
 		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = true;				/* 挿入／上書きモード */
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
 
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
-
-		//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
-
-		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
 
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption.Reset();			// 検索オプション
 		m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = 0;			// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
@@ -590,7 +583,6 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
 		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
 		m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog = FALSE;		/* 終了ダイアログを表示する */
-		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
 		m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL = TRUE;			/* URLがクリックされたら選択するか */
 		m_pShareData->m_Common.m_sSearch.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
 //		m_pShareData->m_Common.m_bRulerDisp = TRUE;					/* ルーラー表示 */
@@ -606,10 +598,29 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;		/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
 
-		/* 1999.11.15 */
-		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
-		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
-		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
+		//[ファイル]タブ
+		{
+			//ファイルの排他制御
+			m_pShareData->m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE;	// ファイルの排他制御モード
+			m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;			// 更新の監視
+
+			//ファイルの保存
+			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;	// 無変更でも上書きするか
+
+			// 「名前を付けて保存」でファイルの種類が[ユーザ指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = TRUE;		// 新規から保存時は全ファイル表示
+			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = TRUE;		// 新規以外から保存時は全ファイル表示
+
+			//ファイルオープン
+			m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;		// ファイルをドロップしたときは閉じて開く
+			m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;			// 一度にドロップ可能なファイル数
+			m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;	// カーソル位置復元	//	Oct. 27, 2000 genta
+			m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;		// ブックマーク復元	//2002.01.16 hor
+			m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;		// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+			m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;		// 前回と異なる文字コードの時に問い合わせを行うか	Oct. 03, 2004 genta
+			m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;	// 開こうとしたファイルが存在しないとき警告する	Oct. 09, 2004 genta
+		}
+
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
 		::SetRect( &m_pShareData->m_Common.m_sOthers.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
 		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
@@ -639,18 +650,6 @@ bool CShareData::Init( void )
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
-		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
-
-		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
-		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;
-
-		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;
-
-		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
-		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
 
 		m_pShareData->m_aCommands.clear();
 
@@ -692,13 +691,6 @@ bool CShareData::Init( void )
 		_tcscpy( m_pShareData->m_szTagsCmdLine, _T("") );	/* CTAGS */	//@@@ 2003.05.12 MIK
 		//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
 		m_pShareData->m_aTagJumpKeywords.clear();
-		/*
-		m_pShareData->m_aTagJumpKeywords.size() = 0;
-		for( int i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
-			wcscpy( m_pShareData->m_aTagJumpKeywords[i], L"" );
-			//m_pShareData->m_bTagJumpKeywordArrFavorite[i] = false;	//お気に入り
-		}
-		*/
 		m_pShareData->m_bTagJumpICase = FALSE;
 		m_pShareData->m_bTagJumpAnyWhere = FALSE;
 		//To Here 2005.04.03 MIK 

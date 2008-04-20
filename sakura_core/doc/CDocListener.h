@@ -39,13 +39,28 @@ enum ECallbackResult{
 //###
 struct SLoadInfo
 {
-	SLoadInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), bViewMode(false), bOpened(false) { }
-	SLoadInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, bool _bReadOnly) : cFilePath(_cFilePath), eCharCode(_eCodeType), bViewMode(_bReadOnly), bOpened(false) { }
+	SLoadInfo()
+	: cFilePath(_T(""))
+	, eCharCode(CODE_AUTODETECT)
+	, bViewMode(false)
+	, bRequestReload(false)
+	, bOpened(false)
+	{
+	}
+	SLoadInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, bool _bReadOnly)
+	: cFilePath(_cFilePath)
+	, eCharCode(_eCodeType)
+	, bViewMode(_bReadOnly)
+	, bRequestReload(false)
+	, bOpened(false)
+	{
+	}
 
 	//入力
 	CFilePath	cFilePath;
 	ECodeType	eCharCode;
 	bool		bViewMode;
+	bool		bRequestReload;	//リロード要求
 
 	//出力
 	bool		bOpened;
