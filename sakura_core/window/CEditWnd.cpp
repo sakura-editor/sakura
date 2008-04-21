@@ -3900,10 +3900,12 @@ void CEditWnd::OnEditTimer( void )
 		GetDocument().m_cAutoReloadAgent.CheckFileTimeStamp();
 
 		// ファイル書込可能のチェック処理
-		bool bOld = GetDocument().m_cDocLocker.IsDocWritable();
-		GetDocument().m_cDocLocker.CheckWritable(false);
-		if(bOld != GetDocument().m_cDocLocker.IsDocWritable()){
-			this->UpdateCaption();
+		if(GetDocument().m_cAutoReloadAgent._ToDoChecking()){
+			bool bOld = GetDocument().m_cDocLocker.IsDocWritable();
+			GetDocument().m_cDocLocker.CheckWritable(false);
+			if(bOld != GetDocument().m_cDocLocker.IsDocWritable()){
+				this->UpdateCaption();
+			}
 		}
 	}
 
