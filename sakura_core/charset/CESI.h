@@ -57,11 +57,12 @@ struct UNICODE_INFO{
 
 
 /*
+	Encoding and Scan and Information class.
+
 	使用方法
-	
-	CESI( const char*, const int ) でオブジェクトを作成するか，
-	ScanEncoding() を使ってデータを取得してから，
-	Detect 系関数を使う.
+		CESI( const char*, const int ) でオブジェクトを作成するか，
+		ScanEncoding() を使ってデータを取得してから，
+		Detect 系関数を使う.
 */
 class CESI
 {
