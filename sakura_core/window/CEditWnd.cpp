@@ -3896,8 +3896,15 @@ void CEditWnd::OnEditTimer( void )
 	
 	//	Aug. 29, 2003 wmlhq, ryoji
 	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
-		/* ファイルのタイムスタンプのチェック処理 */
+		// ファイルのタイムスタンプのチェック処理
 		GetDocument().m_cAutoReloadAgent.CheckFileTimeStamp();
+
+		// ファイル書込可能のチェック処理
+		bool bOld = GetDocument().m_cDocLocker.IsDocWritable();
+		GetDocument().m_cDocLocker.CheckWritable(false);
+		if(bOld != GetDocument().m_cDocLocker.IsDocWritable()){
+			this->UpdateCaption();
+		}
 	}
 
 	GetDocument().m_cAutoSaveAgent.CheckAutoSave();

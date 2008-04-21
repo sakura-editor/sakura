@@ -13,7 +13,12 @@ public:
 	void OnBeforeSave(const SSaveInfo& sSaveInfo);
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
+	//状態
 	bool IsDocWritable() const{ return m_bIsDocWritable; }
+
+	//チェック
+	void CheckWritable(bool bMsg);
+
 private:
 	bool m_bIsDocWritable;
 };
