@@ -34,6 +34,7 @@
 #include "types/CPropTypes.h" //STR_COLORDATA_HEAD3
 #include "util/shell.h"
 #include <shlobj.h>
+#include "util/string_ex2.h"
 
 
 //	CShareData_new2.cppと統合
@@ -544,6 +545,7 @@ void CShareData::ShareData_IO_Common( CDataProfile& cProfile )
 		TCHAR		szKeyData[1024];
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, LTEXT("khlf"), MakeStringBufferT(szKeyData) ) ){
+				//##########################危険
 				_stscanf( szKeyData, pszForm,
 					&common.m_sHelper.m_lf_kh.lfHeight,
 					&common.m_sHelper.m_lf_kh.lfWidth,
@@ -680,15 +682,17 @@ void CShareData::ShareData_IO_Common( CDataProfile& cProfile )
 	WCHAR		szKeyData[1024];
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData)) ){
-			swscanf( szKeyData, pszForm,
-				&common.m_sOthers.m_rcOpenDialog.left,
-				&common.m_sOthers.m_rcOpenDialog.top,
-				&common.m_sOthers.m_rcOpenDialog.right,
-				&common.m_sOthers.m_rcOpenDialog.bottom
-			);
+			int buf[4];
+			scan_ints( szKeyData, pszForm, buf );
+			common.m_sOthers.m_rcOpenDialog.left	= buf[0];
+			common.m_sOthers.m_rcOpenDialog.top		= buf[1];
+			common.m_sOthers.m_rcOpenDialog.right	= buf[2];
+			common.m_sOthers.m_rcOpenDialog.bottom	= buf[3];
 		}
 	}else{
-		auto_sprintf( szKeyData, pszForm,
+		auto_sprintf(
+			szKeyData,
+			pszForm,
 			common.m_sOthers.m_rcOpenDialog.left,
 			common.m_sOthers.m_rcOpenDialog.top,
 			common.m_sOthers.m_rcOpenDialog.right,
@@ -787,21 +791,21 @@ void CShareData::ShareData_IO_Font( CDataProfile& cProfile )
 	CommonSetting_View& view = m_pShareData->m_Common.m_sView;
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, LTEXT("lf"), MakeStringBufferW(szKeyData) ) ){
-			swscanf( szKeyData, pszForm,
-				&view.m_lf.lfHeight,
-				&view.m_lf.lfWidth,
-				&view.m_lf.lfEscapement,
-				&view.m_lf.lfOrientation,
-				&view.m_lf.lfWeight,
-				&view.m_lf.lfItalic,
-				&view.m_lf.lfUnderline,
-				&view.m_lf.lfStrikeOut,
-				&view.m_lf.lfCharSet,
-				&view.m_lf.lfOutPrecision,
-				&view.m_lf.lfClipPrecision,
-				&view.m_lf.lfQuality,
-				&view.m_lf.lfPitchAndFamily
-			);
+			int buf[13];
+			scan_ints( szKeyData, pszForm, buf );
+			view.m_lf.lfHeight			= buf[ 0];
+			view.m_lf.lfWidth			= buf[ 1];
+			view.m_lf.lfEscapement		= buf[ 2];
+			view.m_lf.lfOrientation		= buf[ 3];
+			view.m_lf.lfWeight			= buf[ 4];
+			view.m_lf.lfItalic			= buf[ 5];
+			view.m_lf.lfUnderline		= buf[ 6];
+			view.m_lf.lfStrikeOut		= buf[ 7];
+			view.m_lf.lfCharSet			= buf[ 8];
+			view.m_lf.lfOutPrecision	= buf[ 9];
+			view.m_lf.lfClipPrecision	= buf[10];
+			view.m_lf.lfQuality			= buf[11];
+			view.m_lf.lfPitchAndFamily	= buf[12];
 		}
 	}else{
 		auto_sprintf( szKeyData, pszForm,
@@ -847,16 +851,16 @@ void CShareData::ShareData_IO_KeyBind( CDataProfile& cProfile )
 		
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
-				swscanf( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"),
-					&keydata.m_nFuncCodeArr[0],
-					&keydata.m_nFuncCodeArr[1],
-					&keydata.m_nFuncCodeArr[2],
-					&keydata.m_nFuncCodeArr[3],
-					&keydata.m_nFuncCodeArr[4],
-					&keydata.m_nFuncCodeArr[5],
-					&keydata.m_nFuncCodeArr[6],
-					&keydata.m_nFuncCodeArr[7]
-				 );
+				int buf[8];
+				scan_ints( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"), buf );
+				keydata.m_nFuncCodeArr[0]	= (EFunctionCode)buf[0];
+				keydata.m_nFuncCodeArr[1]	= (EFunctionCode)buf[1];
+				keydata.m_nFuncCodeArr[2]	= (EFunctionCode)buf[2];
+				keydata.m_nFuncCodeArr[3]	= (EFunctionCode)buf[3];
+				keydata.m_nFuncCodeArr[4]	= (EFunctionCode)buf[4];
+				keydata.m_nFuncCodeArr[5]	= (EFunctionCode)buf[5];
+				keydata.m_nFuncCodeArr[6]	= (EFunctionCode)buf[6];
+				keydata.m_nFuncCodeArr[7]	= (EFunctionCode)buf[7];
 			}
 		}else{
 			auto_sprintf( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"),
@@ -893,27 +897,27 @@ void CShareData::ShareData_IO_Print( CDataProfile& cProfile )
 		static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
-				swscanf( szKeyData, pszForm,
-					&printsetting.m_nPrintFontWidth		,
-					&printsetting.m_nPrintFontHeight		,
-					&printsetting.m_nPrintDansuu			,
-					&printsetting.m_nPrintDanSpace		,
-					&printsetting.m_nPrintLineSpacing		,
-					&printsetting.m_nPrintMarginTY		,
-					&printsetting.m_nPrintMarginBY		,
-					&printsetting.m_nPrintMarginLX		,
-					&printsetting.m_nPrintMarginRX		,
-					&printsetting.m_nPrintPaperOrientation,
-					&printsetting.m_nPrintPaperSize		,
-					&printsetting.m_bPrintWordWrap		,
-					&printsetting.m_bPrintLineNumber		,
-					&printsetting.m_bHeaderUse[0]			,
-					&printsetting.m_bHeaderUse[1]			,
-					&printsetting.m_bHeaderUse[2]			,
-					&printsetting.m_bFooterUse[0]			,
-					&printsetting.m_bFooterUse[1]			,
-					&printsetting.m_bFooterUse[2]
-				 );
+				int buf[19];
+				scan_ints( szKeyData, pszForm, buf );
+				printsetting.m_nPrintFontWidth			= buf[ 0];
+				printsetting.m_nPrintFontHeight			= buf[ 1];
+				printsetting.m_nPrintDansuu				= buf[ 2];
+				printsetting.m_nPrintDanSpace			= buf[ 3];
+				printsetting.m_nPrintLineSpacing		= buf[ 4];
+				printsetting.m_nPrintMarginTY			= buf[ 5];
+				printsetting.m_nPrintMarginBY			= buf[ 6];
+				printsetting.m_nPrintMarginLX			= buf[ 7];
+				printsetting.m_nPrintMarginRX			= buf[ 8];
+				printsetting.m_nPrintPaperOrientation	= buf[ 9];
+				printsetting.m_nPrintPaperSize			= buf[10];
+				printsetting.m_bPrintWordWrap			= buf[11];
+				printsetting.m_bPrintLineNumber			= buf[12];
+				printsetting.m_bHeaderUse[0]			= buf[13];
+				printsetting.m_bHeaderUse[1]			= buf[14];
+				printsetting.m_bHeaderUse[2]			= buf[15];
+				printsetting.m_bFooterUse[0]			= buf[16];
+				printsetting.m_bFooterUse[1]			= buf[17];
+				printsetting.m_bFooterUse[2]			= buf[18];
 			}
 		}else{
 			auto_sprintf( szKeyData, pszForm,
@@ -928,14 +932,14 @@ void CShareData::ShareData_IO_Print( CDataProfile& cProfile )
 				printsetting.m_nPrintMarginRX			,
 				printsetting.m_nPrintPaperOrientation	,
 				printsetting.m_nPrintPaperSize		,
-				printsetting.m_bPrintWordWrap			,
-				printsetting.m_bPrintLineNumber		,
-				printsetting.m_bHeaderUse[0]			,
-				printsetting.m_bHeaderUse[1]			,
-				printsetting.m_bHeaderUse[2]			,
-				printsetting.m_bFooterUse[0]			,
-				printsetting.m_bFooterUse[1]			,
-				printsetting.m_bFooterUse[2]
+				printsetting.m_bPrintWordWrap?1:0,
+				printsetting.m_bPrintLineNumber?1:0,
+				printsetting.m_bHeaderUse[0]?1:0,
+				printsetting.m_bHeaderUse[1]?1:0,
+				printsetting.m_bHeaderUse[2]?1:0,
+				printsetting.m_bFooterUse[0]?1:0,
+				printsetting.m_bFooterUse[1]?1:0,
+				printsetting.m_bFooterUse[2]?1:0
 			);
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 		}
@@ -993,42 +997,43 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 	for( i = 0; i < MAX_TYPES; ++i ){
 		// 2005.04.07 D.S.Koba
 		STypeConfig& types = m_pShareData->GetTypeSetting(CTypeConfig(i));
-		auto_sprintf( szKey, LTEXT("STypeConfig(%d)"), i );
+		auto_sprintf( szKey, LTEXT("Types(%d)"), i );
 		pszSecName = szKey;
 		static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
 		auto_strcpy( szKeyName, LTEXT("nInts") );
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
-				swscanf( szKeyData, pszForm,
-					&types.m_nIdx,
-					&types.m_nMaxLineKetas,
-					&types.m_nColmSpace,
-					&types.m_nTabSpace,
-					&types.m_nKeyWordSetIdx[0],
-					&types.m_nKeyWordSetIdx[1],	//MIK
-					&types.m_nStringType,
-					&types.m_bLineNumIsCRLF,
-					&types.m_nLineTermType,
-					&types.m_bWordWrap,
-					&types.m_nCurrentPrintSetting
-				 );
+				int buf[11];
+				scan_ints( szKeyData, pszForm, buf );
+				types.m_nIdx					= buf[ 0];
+				types.m_nMaxLineKetas			= buf[ 1];
+				types.m_nColmSpace				= buf[ 2];
+				types.m_nTabSpace				= buf[ 3];
+				types.m_nKeyWordSetIdx[0]		= buf[ 4];
+				types.m_nKeyWordSetIdx[1]		= buf[ 5];
+				types.m_nStringType				= buf[ 6];
+				types.m_bLineNumIsCRLF			= buf[ 7];
+				types.m_nLineTermType			= buf[ 8];
+				types.m_bWordWrap				= buf[ 9];
+				types.m_nCurrentPrintSetting	= buf[10];
 			}
 			// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
 			if( types.m_nMaxLineKetas < CLayoutInt(MINLINEKETAS) ){
 				types.m_nMaxLineKetas = CLayoutInt(MINLINEKETAS);
 			}
-		}else{
+		}
+		else{
 			auto_sprintf( szKeyData, pszForm,
 				types.m_nIdx,
 				types.m_nMaxLineKetas,
 				types.m_nColmSpace,
 				types.m_nTabSpace,
 				types.m_nKeyWordSetIdx[0],
-				types.m_nKeyWordSetIdx[1],	//MIK
+				types.m_nKeyWordSetIdx[1],
 				types.m_nStringType,
-				types.m_bLineNumIsCRLF,
+				types.m_bLineNumIsCRLF?1:0,
 				types.m_nLineTermType,
-				types.m_bWordWrap,
+				types.m_bWordWrap?1:0,
 				types.m_nCurrentPrintSetting
 			);
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
@@ -1468,14 +1473,15 @@ void CShareData::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, 
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 				pColorInfoArr[j].m_bUnderLine = false;
-				swscanf( szKeyData, pszForm,
-					&pColorInfoArr[j].m_bDisp,
-					&pColorInfoArr[j].m_bFatFont,
-					&pColorInfoArr[j].m_colTEXT,
-					&pColorInfoArr[j].m_colBACK,
-					&pColorInfoArr[j].m_bUnderLine
-				 );
-			}else{
+				int buf[5];
+				scan_ints( szKeyData, pszForm, buf);
+				pColorInfoArr[j].m_bDisp      = (buf[0]!=0);
+				pColorInfoArr[j].m_bFatFont   = (buf[1]!=0);
+				pColorInfoArr[j].m_colTEXT    = buf[2];
+				pColorInfoArr[j].m_colBACK    = buf[3];
+				pColorInfoArr[j].m_bUnderLine = (buf[4]!=0);
+			}
+			else{
 				// 2006.12.07 ryoji
 				// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
 				// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
@@ -1491,13 +1497,14 @@ void CShareData::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, 
 				pColorInfoArr[j].m_bFatFont = false;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
 				pColorInfoArr[j].m_bUnderLine = false;
-		}else{
+		}
+		else{
 			auto_sprintf( szKeyData, pszForm,
-				pColorInfoArr[j].m_bDisp,
-				pColorInfoArr[j].m_bFatFont,
+				pColorInfoArr[j].m_bDisp?1:0,
+				pColorInfoArr[j].m_bFatFont?1:0,
 				pColorInfoArr[j].m_colTEXT,
 				pColorInfoArr[j].m_colBACK,
-				pColorInfoArr[j].m_bUnderLine
+				pColorInfoArr[j].m_bUnderLine?1:0
 			);
 			pcProfile->IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 		}

@@ -28,6 +28,7 @@
 #include "charcode.h"
 #include "util/shell.h"
 #include "util/file.h"
+#include "util/string_ex2.h"
 using namespace std;
 
 const wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
@@ -593,7 +594,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 			wcsncpy(buf,p,q-p);
 			buf[q-p]=L'\0';
 			//buf -> 16進数変換 -> keycode
-			int n=swscanf(buf,L"%04x",&keycode);
+			int n=scan_ints(buf,L"%04x",&keycode);
 			if(n!=1)goto err;
 			//p進める
 			p=q+1;
