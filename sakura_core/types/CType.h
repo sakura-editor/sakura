@@ -169,3 +169,21 @@ GEN_CTYPE(CType_Other2)
 GEN_CTYPE(CType_Other3)
 GEN_CTYPE(CType_Other4)
 
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         実装補助                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+/*!
+	スペースの判定
+*/
+inline bool C_IsSpace( wchar_t c )
+{
+	return (
+		L'\t' == c ||
+		L' ' == c ||
+		WCODE::CR == c ||
+		WCODE::LF == c
+	);
+}
