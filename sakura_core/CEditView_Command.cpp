@@ -14,6 +14,7 @@
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -6739,6 +6740,7 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	@param errmes [in]			ファイルを開けなかった場合に表示するエラーメッセージ
 
 	@date 2003.06.28 Moca ヘッダ・ソースファイルオープン機能のコードを統合
+	@date 2008.04.09 ryoji 処理対象(file_ext)と開く対象(open_ext)の扱いが逆になっていたのを修正
 */
 BOOL CEditView::OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
 	const char* file_ext[], const char* open_ext[], int file_extno, int open_extno,
@@ -6760,8 +6762,8 @@ BOOL CEditView::OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
 //	}
 
 //From Here Feb. 7, 2001 JEPRO 追加
-	for( i = 0; i < open_extno; i++ ){
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), open_ext[i] ) ){
+	for( i = 0; i < file_extno; i++ ){
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), file_ext[i] ) ){
 			bwantopen_c = TRUE;
 			goto open_c;
 		}
@@ -6801,10 +6803,10 @@ open_c:;
 //	}
 
 //From Here Feb. 7, 2001 JEPRO 追加
-	for( i = 0; i < file_extno; i++ ){
-		_makepath( szPath, szDrive, szDir, szFname, file_ext[i] );
+	for( i = 0; i < open_extno; i++ ){
+		_makepath( szPath, szDrive, szDir, szFname, open_ext[i] );
 		if( -1 == _access( (const char *)szPath, 0 ) ){
-			if( i < file_extno - 1 )
+			if( i < open_extno - 1 )
 				continue;
 			if( bBeepWhenMiss ){
 				::MessageBeep( MB_ICONHAND );
