@@ -558,7 +558,7 @@ HWND CEditWnd::Create(
 	Timer_ONOFF( TRUE );
 
 	//デフォルトのIMEモード設定
-	GetDocument().m_cDocEditor.SetImeMode( m_pShareData->GetTypeSetting(CDocumentType(0)).m_nImeState );
+	GetDocument().m_cDocEditor.SetImeMode( m_pShareData->GetTypeSetting(CTypeConfig(0)).m_nImeState );
 
 	return GetHwnd();
 }
@@ -590,7 +590,7 @@ void CEditWnd::OpenDocumentWhenStart(
 void CEditWnd::SetDocumentTypeWhenCreate(
 	ECodeType		nCharCode,		//!< [in] 漢字コード
 	bool			bViewMode,		//!< [in] ビューモードで開くかどうか
-	CDocumentType	nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
+	CTypeConfig	nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
 )
 {
 	//	Mar. 7, 2002 genta 文書タイプの強制指定

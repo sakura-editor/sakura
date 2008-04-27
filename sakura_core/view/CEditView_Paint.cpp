@@ -2,7 +2,7 @@
 #include "CEditView_Paint.h"
 #include "view/CEditView.h"
 #include <vector>
-#include "CTypeSupport.h"
+#include "types/CTypeSupport.h"
 #include "doc/CLayout.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
@@ -198,7 +198,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 	HDC			hdc;
 	hdc = ::GetDC( GetHwnd() );
-	Types *TypeDataPtr = &( m_pcEditDoc->m_cDocType.GetDocumentAttribute() );
+	STypeConfig *TypeDataPtr = &( m_pcEditDoc->m_cDocType.GetDocumentAttribute() );
 
 	for( int i = 0; i < 2; i++ )
 	{
@@ -876,7 +876,7 @@ int CEditView::GetColorIndex(
 )
 {
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 
 	const wchar_t*			pLine;	//@@@ 2002.09.22 YAZAKI
 	CLogicInt				nLineLen;
@@ -1579,7 +1579,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
 
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
@@ -1869,7 +1869,7 @@ bool CEditView::DrawLogicLine(
 
 
 	//サイズ
-	Types* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
 	int nCharDx  = GetTextMetrics().GetHankakuDx();  //半角
 
@@ -2018,7 +2018,7 @@ bool CEditView::DrawLayoutLine(SDrawStrategyInfo* pInfo)
 
 	// コンフィグ
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
-	Types* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	const CLayout*	pcLayout2; //ワーク用CLayoutポインタ
 	pcLayout2 = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pInfo->pDispPos->GetLayoutLineRef() );

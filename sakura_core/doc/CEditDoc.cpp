@@ -82,7 +82,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
 
 	// レイアウト情報の変更
-	Types& ref = m_cDocType.GetDocumentAttribute();
+	STypeConfig& ref = m_cDocType.GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		ref
@@ -271,13 +271,13 @@ void CEditDoc::OnChangeSetting( void )
 	CShareData::getInstance()->TransformFileName_MakeCache();
 
 	// 文書種別
-	CDocumentType doctype = CShareData::getInstance()->GetDocumentType( m_cDocFile.GetFilePath() );
+	CTypeConfig doctype = CShareData::getInstance()->GetDocumentType( m_cDocFile.GetFilePath() );
 	m_cDocType.SetDocumentType( doctype, false );
 
 	CLogicPoint* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
-	const Types& ref = m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
 	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
 	m_cLayoutMgr.SetLayoutInfo(true,ref);
 	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
@@ -441,11 +441,11 @@ void CEditDoc::InitDoc()
 	m_cDocFile.m_sFileInfo.cFileTime.ClearFILETIME(); //######InitDoc確認後に確認
 
 	/* 共有データ構造体のアドレスを返す */
-	CDocumentType doctype = CShareData::getInstance()->GetDocumentType( m_cDocFile.GetFilePath() );
+	CTypeConfig doctype = CShareData::getInstance()->GetDocumentType( m_cDocFile.GetFilePath() );
 	m_cDocType.SetDocumentType( doctype, true );
 
 	/* レイアウト管理情報の初期化 */
-	Types& ref = m_cDocType.GetDocumentAttribute();
+	STypeConfig& ref = m_cDocType.GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		ref

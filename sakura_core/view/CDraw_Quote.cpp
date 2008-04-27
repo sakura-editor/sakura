@@ -11,7 +11,7 @@
 bool CDraw_SingleQuote::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if( pInfo->pLine[pInfo->nPos] == L'\'' &&
 		TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp  /* シングルクォーテーション文字列を表示する */
@@ -61,7 +61,7 @@ bool CDraw_SingleQuote::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_DoubleQuote::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if( pInfo->pLine[pInfo->nPos] == L'"' &&
 		TypeDataPtr->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
@@ -110,7 +110,7 @@ bool CDraw_DoubleQuote::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_SingleQuoteEnd::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if( 0 == pInfo->nCOMMENTEND ){
 		/* シングルクォーテーション文字列の終端があるか */
@@ -157,7 +157,7 @@ bool CDraw_SingleQuoteEnd::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_DoubleQuoteEnd::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if( 0 == pInfo->nCOMMENTEND ){
 		/* ダブルクォーテーション文字列の終端があるか */

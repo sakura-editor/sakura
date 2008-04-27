@@ -885,11 +885,11 @@ int CPropTypes::GetData_Color( HWND hwndDlg )
 
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, szFromBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(From) */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, szToBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(To) */
-	m_Types.m_cBlockComment.CopyTo( 0, szFromBuffer, szToBuffer );
+	m_Types.m_cBlockComment.SetBlockCommentRule( 0, szFromBuffer, szToBuffer );
 
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, szFromBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(From) */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, szToBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(To) */
-	m_Types.m_cBlockComment.CopyTo( 1, szFromBuffer, szToBuffer );
+	m_Types.m_cBlockComment.SetBlockCommentRule( 1, szFromBuffer, szToBuffer );
 
 	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_ESCAPETYPE_1 ) ){

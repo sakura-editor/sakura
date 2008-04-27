@@ -11,7 +11,7 @@
 bool CDraw_RegexKeyword::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	int		nMatchLen;
 	int		nMatchColor;
 
@@ -32,7 +32,7 @@ bool CDraw_RegexKeyword::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_RegexKeywordEnd::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	if( pInfo->nPos == pInfo->nCOMMENTEND ){
 		pInfo->DrawToHere();
 		pInfo->ChangeColor(COLORIDX_TEXT); // 2002/03/13 novice

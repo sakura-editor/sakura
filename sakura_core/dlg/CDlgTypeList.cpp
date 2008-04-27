@@ -48,7 +48,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 	}
 	else{
 		//結果
-		psResult->cDocumentType = CDocumentType(nRet & ~PROP_TEMPCHANGE_FLAG);
+		psResult->cDocumentType = CTypeConfig(nRet & ~PROP_TEMPCHANGE_FLAG);
 		psResult->bTempChange   = ((nRet & PROP_TEMPCHANGE_FLAG) != 0);
 		return TRUE;
 	}
@@ -120,7 +120,7 @@ void CDlgTypeList::SetData( void )
 	TCHAR	szText[130];
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
-		Types& types = m_pShareData->GetTypeSetting(CDocumentType(nIdx));
+		STypeConfig& types = m_pShareData->GetTypeSetting(CTypeConfig(nIdx));
 		if( 0 < _tcslen( types.m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
 				types.m_szTypeName,	/* タイプ属性：名称 */

@@ -26,7 +26,7 @@
 #include "global.h"
 #include "CBregexp.h"
 
-struct Types;
+struct STypeConfig;
 
 #define USE_PARENT	//親を使ってキーワード格納領域を削減する。
 
@@ -104,7 +104,7 @@ public:
 	//! 行検索
 	BOOL RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor );
 	//! タイプ設定
-	BOOL RegexKeySetTypes( Types *pTypesPtr );
+	BOOL RegexKeySetTypes( STypeConfig *pTypesPtr );
 	//! 書式(囲み)チェック
 	BOOL RegexKeyCheckSyntax( const wchar_t *s );
 
@@ -120,7 +120,7 @@ protected:
 
 
 private:
-	Types		*m_pTypes;		//タイプ設定へのポインタ(呼び出し側が持っているもの)
+	STypeConfig		*m_pTypes;		//タイプ設定へのポインタ(呼び出し側が持っているもの)
 	int		m_nCompiledMagicNumber;	//コンパイル済みか？
 	int		m_nRegexKeyCount;	//現在のキーワード数
 	REGEX_INFO	m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)

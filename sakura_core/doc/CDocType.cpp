@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CDocType.h"
 
-void CDocType::SetDocumentType(CDocumentType type, bool force)	//	•¶‘í•Ê‚Ìİ’è
+void CDocType::SetDocumentType(CTypeConfig type, bool force)	//	•¶‘í•Ê‚Ìİ’è
 {
 	if( !m_nSettingTypeLocked || force ){
 		m_nSettingType = type;

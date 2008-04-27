@@ -33,7 +33,7 @@ CBlockComment::CBlockComment()
 	@param pszFrom [in]   コメント開始文字列
 	@param pszTo [in]     コメント終了文字列
 */
-void CBlockComment::CopyTo( const int n, const wchar_t* pszFrom, const wchar_t* pszTo )
+void CBlockComment::SetBlockCommentRule( const int n, const wchar_t* pszFrom, const wchar_t* pszTo )
 {
 	int nStrLen = wcslen( pszFrom );
 	if( 0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE ){

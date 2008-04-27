@@ -762,7 +762,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo )
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
 	for( int i = 0; i < MAX_TYPES; i++ ){
-		const Types& types = m_pShareData->GetTypeSetting(CDocumentType(i));
+		const STypeConfig& types = m_pShareData->GetTypeSetting(CTypeConfig(i));
 		cFileExt.AppendExt( types.m_szTypeName, types.m_szTypeExts );
 	}
 

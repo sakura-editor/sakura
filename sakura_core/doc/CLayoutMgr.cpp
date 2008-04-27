@@ -30,52 +30,85 @@
 
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        生成と破棄                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*
-|| コンストラクタ
-*/
 CLayoutMgr::CLayoutMgr()
-: m_cLineComment(), m_cBlockComment(),
-	//	2004.04.03 Moca
-	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する
-	m_nMaxLineKetas( 10 ),
-	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
-	m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta
+: m_cLineComment()
+, m_cLayoutBlockComment()
+, m_nMaxLineKetas( 10 )	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する	//	2004.04.03 Moca
+, m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 {
 	m_pcDocLineMgr = NULL;
-	m_bWordWrap = TRUE;		/* 英文ワードラップをする */
-	m_nTabSpace = CLayoutInt(8);		/* TAB文字スペース */
-	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	m_bKinsokuHead = FALSE;		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_bKinsokuTail = FALSE;		/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_bKinsokuRet  = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	m_bKinsokuKuto = FALSE;		/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	m_pszKinsokuHead_1.clear();	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuTail_1.clear();	/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuKuto_1.clear();	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+	m_bWordWrap = TRUE;				/* 英文ワードラップをする */
+	m_nTabSpace = CLayoutInt(8);	/* TAB文字スペース */
+	m_nStringType = 0;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+	m_bKinsokuHead = FALSE;			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_bKinsokuTail = FALSE;			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_bKinsokuRet  = FALSE;			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	m_bKinsokuKuto = FALSE;			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+	m_pszKinsokuHead_1.clear();		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_1.clear();		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuKuto_1.clear();		/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+
 	// 2005.11.21 Moca 色分けフラグをメンバで持つ
 	m_bDispComment = FALSE; 
 	m_bDispSString = FALSE;
 	m_bDispWString = FALSE;
 
 	Init();
-	return;
 }
 
-
-/*
-|| デストラクタ
-*/
 CLayoutMgr::~CLayoutMgr()
 {
-	Empty();
+	_Empty();
 
 	m_pszKinsokuHead_1.clear();	/* 行頭禁則 */
 	m_pszKinsokuTail_1.clear();	/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1.clear();	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-
-	return;
 }
+
+
+/*
+||
+|| 行データ管理クラスのポインタを初期化します
+||
+*/
+void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
+{
+	Init();
+	//	Jun. 20, 2003 genta EditDocへのポインタ追加
+	m_pcEditDoc = pcEditDoc;
+	m_pcDocLineMgr = pcDocLineMgr;
+}
+
+void CLayoutMgr::Init()
+{
+	m_pLayoutTop = NULL;
+	m_pLayoutBot = NULL;
+	m_nPrevReferLine = CLayoutInt(0);
+	m_pLayoutPrevRefer = NULL;
+	m_nLines = CLayoutInt(0);			/* 全物理行数 */
+
+	// EOFレイアウト位置記憶	//2006.10.07 Moca
+	m_nEOFLine = CLayoutInt(-1);
+	m_nEOFColumn = CLayoutInt(-1);
+}
+
+
+
+void CLayoutMgr::_Empty()
+{
+	CLayout* pLayout = m_pLayoutTop;
+	while( pLayout ){
+		CLayout* pLayoutNext = pLayout->GetNextLayout();
+		delete pLayout;
+		pLayout = pLayoutNext;
+	}
+}
+
+
 
 
 /*
@@ -83,7 +116,7 @@ CLayoutMgr::~CLayoutMgr()
 */
 void CLayoutMgr::SetLayoutInfo(
 	bool			bDoRayout,
-	const Types&	refType
+	const STypeConfig&	refType
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
@@ -93,8 +126,8 @@ void CLayoutMgr::SetLayoutInfo(
 	m_nTabSpace		= refType.m_nTabSpace;
 	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
-	m_cLineComment = refType.m_cLineComment;	/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-	m_cBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	m_cLineComment = refType.m_cLineComment;			/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	m_cLayoutBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	// 2005.11.21 Moca 色分けフラグをメンバで持つ
 	m_bDispComment = refType.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp;
@@ -164,53 +197,6 @@ void CLayoutMgr::SetLayoutInfo(
 }
 
 
-/*
-||
-|| 行データ管理クラスのポインタを初期化します
-||
-*/
-void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
-{
-	Init();
-	//	Jun. 20, 2003 genta EditDocへのポインタ追加
-	m_pcEditDoc = pcEditDoc;
-	m_pcDocLineMgr = pcDocLineMgr;
-	return;
-}
-
-
-
-void CLayoutMgr::Init()
-{
-	m_pLayoutTop = NULL;
-	m_pLayoutBot = NULL;
-	m_nPrevReferLine = CLayoutInt(0);
-	m_pLayoutPrevRefer = NULL;
-//	m_pLayoutCurrent = NULL;
-	m_nLines = CLayoutInt(0);			/* 全物理行数 */
-//	m_pszLineComment = NULL;			/* 行コメントデリミタ */
-//	m_pszBlockCommentFrom = NULL;		/* ブロックコメントデリミタ(From) */
-//	m_pszBlockCommentTo = NULL;			/* ブロックコメントデリミタ(To) */
-	// 2006.10.07 Moca EOFレイアウト位置記憶
-	m_nEOFLine = CLayoutInt(-1);
-	m_nEOFColumn = CLayoutInt(-1);
-	return;
-}
-
-
-
-void CLayoutMgr::Empty()
-{
-	CLayout* pLayout;
-	CLayout* pLayoutNext;
-	pLayout = m_pLayoutTop;
-	while( NULL != pLayout ){
-		pLayoutNext = pLayout->GetNextLayout();
-		delete pLayout;
-		pLayout = pLayoutNext;
-	}
-	return;
-}
 
 
 /*!

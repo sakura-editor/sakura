@@ -293,8 +293,8 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					static TCHAR		pszLabel[1024];
 					_tcscpy( pszLabel, _T("") );
 					for( i = 0; i < MAX_TYPES; ++i ){
-						CDocumentType type(i);
-						// 2002/04/25 YAZAKI Types全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
+						CTypeConfig type(i);
+						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
 						if( nIndex1 == m_Types_nKeyWordSetIdx[i][0]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][1]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][2]
@@ -322,7 +322,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
 					for( i = 0; i < MAX_TYPES; ++i ){
-						// 2002/04/25 YAZAKI Types全体を保持する必要はない。
+						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 						for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 							if( nIndex1 == m_Types_nKeyWordSetIdx[i][j] ){
 								m_Types_nKeyWordSetIdx[i][j] = -1;

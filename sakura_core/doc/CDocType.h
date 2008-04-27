@@ -22,12 +22,12 @@ public:
 	bool GetDocumentLockState(){ return m_nSettingTypeLocked; }
 	
 	// •¶‘í•Ê‚Ìİ’è‚Ææ“¾		// Nov. 23, 2000 genta
-	void SetDocumentType(CDocumentType type, bool force);	//!< •¶‘í•Ê‚Ìİ’è
-	CDocumentType GetDocumentType() const					//!< •¶‘í•Ê‚Ìæ“¾
+	void SetDocumentType(CTypeConfig type, bool force);	//!< •¶‘í•Ê‚Ìİ’è
+	CTypeConfig GetDocumentType() const					//!< •¶‘í•Ê‚Ìæ“¾
 	{
 		return m_nSettingType;
 	}
-	Types& GetDocumentAttribute() const						//!< •¶‘í•Ê‚ÌÚ×î•ñ
+	STypeConfig& GetDocumentAttribute() const						//!< •¶‘í•Ê‚ÌÚ×î•ñ
 	{
 		return GetDllShareData().GetTypeSetting(m_nSettingType);
 	}
@@ -37,6 +37,6 @@ public:
 
 private:
 	CEditDoc*		m_pcDocRef;
-	CDocumentType	m_nSettingType;
+	CTypeConfig	m_nSettingType;
 	bool			m_nSettingTypeLocked;		//!< •¶‘í•Ê‚Ìˆêİ’èó‘Ô
 };

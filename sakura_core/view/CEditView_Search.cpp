@@ -97,7 +97,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	int			nLine; // 2006.04.10 fon
 
 
-	CDocumentType nTypeNo = m_pcEditDoc->m_cDocType.GetDocumentType();
+	CTypeConfig nTypeNo = m_pcEditDoc->m_cDocType.GetDocumentType();
 	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
 	if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon

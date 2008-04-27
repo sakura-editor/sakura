@@ -86,7 +86,7 @@ void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, pcDoc->m_cDocType.GetDocumentAttribute());
 	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
-	//パスを確定
+	// パスを確定
 	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
 }
 
@@ -110,7 +110,7 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	}
 
 	// 文書種別
-	CDocumentType	doctype = CShareData::getInstance()->GetDocumentType( pcDoc->m_cDocFile.GetFilePath() );
+	CTypeConfig	doctype = CShareData::getInstance()->GetDocumentType( pcDoc->m_cDocFile.GetFilePath() );
 	pcDoc->m_cDocType.SetDocumentType( doctype, true );
 
 	//再描画 $$不足
