@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, D.S.Koba, Moca, ryoji, aroka
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -2973,6 +2974,7 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NUL
 	@author ryoji
 	@date 2007.07.01 ryoji 新規
 	@date 2007.10.22 ryoji フラグ値としてGA_ROOTOWNER2（本関数固有）を追加
+	@date 2008.04.09 ryoji GA_ROOTOWNER2 は可能な限り祖先を遡るように動作修正
 */
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 {
@@ -2999,7 +3001,7 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 		hwndWk = hWnd;
 		do{
 			hwndAncestor = hwndWk;
-			hwndWk = ::GetParent( hwndWk );
+			hwndWk = ::GetParent( hwndAncestor );
 		}while( hwndWk != NULL );
 		break;
 
@@ -3007,7 +3009,9 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 		hwndWk = hWnd;
 		do{
 			hwndAncestor = hwndWk;
-			hwndWk = ::GetWindow( hwndWk, GW_OWNER );
+			hwndWk = ::GetParent( hwndAncestor );
+			if( hwndWk == NULL )
+				hwndWk = ::GetWindow( hwndAncestor, GW_OWNER );
 		}while( hwndWk != NULL );
 		break;
 
