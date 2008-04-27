@@ -246,7 +246,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1003;
+const unsigned int uShareDataVersion = 1004;
 
 /*
 ||	Singleton風
@@ -551,7 +551,7 @@ bool CShareData::Init( void )
 			auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i], LTEXT("メニュー%d"), i );
 			m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[i] = 0;
 			for( int j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){
-				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] = 0;
+				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] = F_0;
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr [i][j] = '\0';
 			}
 		}
@@ -4970,7 +4970,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_REDO;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'R';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUT;
@@ -4985,7 +4985,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_DELETE;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'D';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
@@ -4997,14 +4997,14 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'X';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'A';
 	n++;
 
-	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMP;
@@ -5013,7 +5013,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMPBACK;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'B';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINES;
@@ -5022,7 +5022,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINESASPASSAGE;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '.';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = 0;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
@@ -5045,7 +5045,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemKeyArr [1][3] = 'L';
 	rMenu.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
 	rMenu.m_nCustMenuItemKeyArr [1][4] = 'U';
-	rMenu.m_nCustMenuItemFuncArr[1][5] = 0;
+	rMenu.m_nCustMenuItemFuncArr[1][5] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [1][5] = '\0';
 	rMenu.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
 	rMenu.m_nCustMenuItemKeyArr [1][6] = 'C';
@@ -5070,7 +5070,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;

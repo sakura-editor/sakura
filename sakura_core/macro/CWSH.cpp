@@ -338,7 +338,7 @@ public:
 	virtual HRESULT __stdcall GetWindow(
 	    /* [out] */ HWND *phwnd)
 	{
-		*phwnd = reinterpret_cast<CEditView*>(m_Client->m_Data)->m_pcEditDoc->GetSplitterHwnd();
+		*phwnd = CEditWnd::Instance()->m_cSplitterWnd.GetHwnd();
 		return S_OK;
 	}
 

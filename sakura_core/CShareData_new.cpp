@@ -766,7 +766,7 @@ void CShareData::ShareData_IO_CustMenu( CDataProfile& cProfile )
 		int nSize = menu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
 			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
+			cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
 			auto_sprintf( szKeyName, LTEXT("nCMIK[%02d][%02d]"), i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemKeyArr[i][j] );
 		}
@@ -1467,7 +1467,7 @@ void CShareData::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, 
 		auto_sprintf( szKeyName, LTEXT("C[%ts]"), g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
-				pColorInfoArr[j].m_bUnderLine = FALSE;
+				pColorInfoArr[j].m_bUnderLine = false;
 				swscanf( szKeyData, pszForm,
 					&pColorInfoArr[j].m_bDisp,
 					&pColorInfoArr[j].m_bFatFont,
@@ -1486,11 +1486,11 @@ void CShareData::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, 
 			// ñµèÇê›íËÇ™Ç†ÇÍÇŒèCïúÇ∑ÇÈ
 			unsigned int fAttribute = g_ColorAttributeArr[j].fAttribute;
 			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
-				pColorInfoArr[j].m_bDisp = TRUE;
+				pColorInfoArr[j].m_bDisp = true;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_BOLD) )
-				pColorInfoArr[j].m_bFatFont = FALSE;
+				pColorInfoArr[j].m_bFatFont = false;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
-				pColorInfoArr[j].m_bUnderLine = FALSE;
+				pColorInfoArr[j].m_bUnderLine = false;
 		}else{
 			auto_sprintf( szKeyData, pszForm,
 				pColorInfoArr[j].m_bDisp,

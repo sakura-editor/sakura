@@ -18,7 +18,7 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nKeyWordSetIdx[0] = 0;											/* キーワードセット */
 	pType->m_nDefaultOutline = OUTLINE_CPP;									/* アウトライン解析方法 */
 	pType->m_nSmartIndent = SMARTINDENT_CPP;								/* スマートインデント種別 */
-	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;					//半角数値を色分け表示	//Mar. 10, 2001 JEPRO
-	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = TRUE;			//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;					//半角数値を色分け表示	//Mar. 10, 2001 JEPRO
+	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;			//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
 	pType->m_bUseHokanByFile = TRUE;										/*! 入力補完 開いているファイル内から候補を探す */
 }

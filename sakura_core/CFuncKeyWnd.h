@@ -54,7 +54,7 @@ private:
 	HWND			m_hwndSizeBox;
 	int				m_nTimerCount;
 	int				m_nButtonGroupNum; // Open‚Å‰Šú‰»
-	int				m_nFuncCodeArr[12]; // Open->CreateButtons‚Å‰Šú‰»
+	EFunctionCode	m_nFuncCodeArr[12]; // Open->CreateButtons‚Å‰Šú‰»
 protected:
 	/*
 	|| À‘•ƒwƒ‹ƒpŒn

@@ -80,7 +80,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 			szMemu,
 			_T("&%tc %ts%ts"),
 			(i < 10) ? (_T('0') + i) : (_T('A') + i - 10), 
-			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("Åö ") : _T(""),
+			(!m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("Åö ") : _T(""),
 			szFile2
 		);
 

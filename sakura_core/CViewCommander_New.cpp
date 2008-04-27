@@ -1176,7 +1176,7 @@ void CViewCommander::Command_Favorite( void )
 	CDlgFavorite	cDlgFavorite;
 
 	//ダイアログを表示する
-	if( FALSE == cDlgFavorite.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
+	if( !cDlgFavorite.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
 	{
 		return;
 	}

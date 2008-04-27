@@ -694,7 +694,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 
 	/* 印刷/プレビューに必要な情報を取得 */
 	TCHAR	szErrMsg[1024];
-	if( FALSE == m_cPrint.GetPrintMetrics(
+	if( !m_cPrint.GetPrintMetrics(
 		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
 		&m_nPreview_PaperAllWidth,		/* 用紙幅 */
 		&m_nPreview_PaperAllHeight,		/* 用紙高さ */
@@ -770,9 +770,9 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_cBlockComment.SetBlockCommentRule(1, L"", L"");	/* ブロックコメントデリミタ2 */
 
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = FALSE;
-	ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false;
+	ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
+	ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 	ref.m_bKinsokuHead = m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
 	ref.m_bKinsokuTail = m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
 	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
@@ -1005,7 +1005,7 @@ void CPrintPreview::OnPrint( void )
 	::EnableWindow( m_pParentWnd->GetHwnd(), FALSE );
 
 	/* 印刷 ジョブ開始 */
-	if( FALSE == m_cPrint.PrintOpen(
+	if( !m_cPrint.PrintOpen(
 		szJobName,
 		&m_pPrintSetting->m_mdmDevMode,	/* プリンタ設定 DEVMODE用*/
 		&hdc,

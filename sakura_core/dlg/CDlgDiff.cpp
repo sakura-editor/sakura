@@ -234,7 +234,7 @@ void CDlgDiff::SetData( void )
 				pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
-				if ( pEditNode[i].GetHwnd() == pCEditDoc->GetOwnerHwnd() )
+				if ( pEditNode[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() )
 				{
 					continue;
 				}

@@ -74,6 +74,7 @@ namespace WCODE{
 	//特殊 (BREGEXP)
 	//$$ UNICODE版の仮デリミタ。bregonigの仕様がよくわかんないので、とりあえずこんな値にしてます。
 	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFFFF;
+
 }
 
 
@@ -238,6 +239,9 @@ namespace WCODE
 	{
 		return c>=0x2500 && c<=0x257F;
 	}
+
+	//! 句読点か
+	bool IsKutoten( wchar_t wc );
 }
 
 

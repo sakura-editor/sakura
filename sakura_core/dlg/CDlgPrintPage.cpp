@@ -71,7 +71,7 @@ void CDlgPrintPage::SetData( void )
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_TO, m_nPageTo, FALSE );
 
 	//	印刷範囲を指定するかどうか
-	if( FALSE == m_bAllPage ){
+	if( !m_bAllPage ){
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_FROM ), TRUE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_FROM ), TRUE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_TO ), TRUE );
@@ -101,7 +101,7 @@ int CDlgPrintPage::GetData( void )
 	m_nPageFrom = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FROM, NULL, FALSE );
 	m_nPageTo	= ::GetDlgItemInt( GetHwnd(), IDC_EDIT_TO  , NULL, FALSE );
 	/* 頁範囲チェック */
-	if( FALSE == m_bAllPage ){
+	if( !m_bAllPage ){
 		if( m_nPageMin <= m_nPageFrom && m_nPageFrom <= m_nPageMax &&
 			m_nPageMin <= m_nPageTo   && m_nPageTo <= m_nPageMax &&
 			m_nPageFrom <= m_nPageTo

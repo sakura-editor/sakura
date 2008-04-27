@@ -35,27 +35,24 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CLayoutMgr::CLayoutMgr()
-: m_cLineComment()
-, m_cLayoutBlockComment()
-, m_nMaxLineKetas( 10 )	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する	//	2004.04.03 Moca
-, m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
+: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 {
 	m_pcDocLineMgr = NULL;
-	m_bWordWrap = TRUE;				/* 英文ワードラップをする */
-	m_nTabSpace = CLayoutInt(8);	/* TAB文字スペース */
-	m_nStringType = 0;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	m_bKinsokuHead = FALSE;			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_bKinsokuTail = FALSE;			/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_bKinsokuRet  = FALSE;			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	m_bKinsokuKuto = FALSE;			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	m_pszKinsokuHead_1.clear();		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuTail_1.clear();		/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuKuto_1.clear();		/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+	m_sTypeConfig.m_bWordWrap = TRUE;				/* 英文ワードラップをする */
+	m_sTypeConfig.m_nTabSpace = CLayoutInt(8);		/* TAB文字スペース */
+	m_sTypeConfig.m_nStringType = 0;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+	m_sTypeConfig.m_bKinsokuHead = FALSE;			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_sTypeConfig.m_bKinsokuTail = FALSE;			/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_sTypeConfig.m_bKinsokuRet  = FALSE;			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	m_sTypeConfig.m_bKinsokuKuto = FALSE;			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+	m_pszKinsokuHead_1.clear();						/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_1.clear();						/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuKuto_1.clear();						/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 
 	// 2005.11.21 Moca 色分けフラグをメンバで持つ
-	m_bDispComment = FALSE; 
-	m_bDispSString = FALSE;
-	m_bDispWString = FALSE;
+	m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false; 
+	m_sTypeConfig.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
+	m_sTypeConfig.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 
 	Init();
 }
@@ -115,25 +112,15 @@ void CLayoutMgr::_Empty()
 || レイアウト情報の変更
 */
 void CLayoutMgr::SetLayoutInfo(
-	bool			bDoRayout,
+	bool				bDoRayout,
 	const STypeConfig&	refType
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
 
-	m_nMaxLineKetas = refType.m_nMaxLineKetas;
-	m_bWordWrap		= refType.m_bWordWrap;		/* 英文ワードラップをする */
-	m_nTabSpace		= refType.m_nTabSpace;
-	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-
-	m_cLineComment = refType.m_cLineComment;			/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-	m_cLayoutBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-
-	// 2005.11.21 Moca 色分けフラグをメンバで持つ
-	m_bDispComment = refType.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp;
-	m_bDispSString = refType.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;
-	m_bDispWString = refType.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;
-
+	//タイプ別設定
+	m_sTypeConfig = refType;
+	
 	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
 	//	数が増えてきたらテーブルにすべき
 	switch ( refType.m_nIndentLayout ){	/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
@@ -148,49 +135,29 @@ void CLayoutMgr::SetLayoutInfo(
 		m_getIndentOffset = &CLayoutMgr::getIndentOffset_Normal;
 		break;
 	}
-	
-	{	//@@@ 2002.04.08 MIK start
 
-		//句読点のぶらさげ
-		m_bKinsokuKuto = refType.m_bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-		m_pszKinsokuKuto_1.clear();
-		//	Kuto_2="。、，．", Kuto_1="｡､,."
-		//データ部は行頭禁則処理で設定する。
-
-		//行頭禁則文字の1,2バイト文字を分けて管理する。
-		m_bKinsokuHead = refType.m_bKinsokuHead;
-		m_pszKinsokuHead_1.clear();
-
-		//refType.m_szKinsokuHead → m_pszKinsokuKuto_1, m_pszKinsokuHead_1
-		for( const wchar_t* p = refType.m_szKinsokuHead; *p; p++ )
-		{
-			if(IsKutoTen(*p)) //句読点は別管理
-			{
-				// 2004.11.12 Moca 重複していたら登録しない
-				m_pszKinsokuKuto_1.push_back_unique(*p);
-			}
-			else
-			{
-				m_pszKinsokuHead_1.push_back_unique(*p);
-			}
+	//行頭禁則文字、句読点のぶらさげ
+	//refType.m_szKinsokuHead → (句読点)   m_pszKinsokuKuto_1
+	//                        → (それ以外) m_pszKinsokuHead_1
+	m_pszKinsokuKuto_1.clear();
+	m_pszKinsokuHead_1.clear();
+	for( const wchar_t* p = refType.m_szKinsokuHead; *p; p++ ){
+		if(WCODE::IsKutoten(*p)){
+			m_pszKinsokuKuto_1.push_back_unique(*p);
 		}
-
-		//行末禁則文字の1,2バイト文字を分けて管理する。
-		m_bKinsokuTail = refType.m_bKinsokuTail;
-		m_pszKinsokuTail_1.clear();
-
-		//refType.m_szKinsokuTail → m_pszKinsokuTail_1
-		{
-			for( const wchar_t* p = refType.m_szKinsokuTail; *p; p++ )
-			{
-				m_pszKinsokuTail_1.push_back_unique(*p);
-			}
+		else{
+			m_pszKinsokuHead_1.push_back_unique(*p);
 		}
+	}
 
-		m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+	//行末禁則文字
+	//refType.m_szKinsokuTail → m_pszKinsokuTail_1
+	m_pszKinsokuTail_1.clear();
+	for( const wchar_t* p = refType.m_szKinsokuTail; *p; p++ ){
+		m_pszKinsokuTail_1.push_back_unique(*p);
+	}
 
-	}	//@@@ 2002.04.08 MIK end
-
+	//レイアウト
 	if( bDoRayout ){
 		_DoLayout();
 	}
@@ -933,8 +900,8 @@ bool CLayoutMgr::ChangeLayoutParam(
 	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
 	if( nMaxLineKetas < MINLINEKETAS || nMaxLineKetas > MAXLINEKETAS ){ return false; }
 
-	m_nTabSpace = nTabSize;
-	m_nMaxLineKetas = nMaxLineKetas;
+	m_sTypeConfig.m_nTabSpace = nTabSize;
+	m_sTypeConfig.m_nMaxLineKetas = nMaxLineKetas;
 
 	_DoLayout();
 
@@ -1336,7 +1303,7 @@ checkloop:;
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* テスト用にレイアウト情報をダンプ */
-void CLayoutMgr::DUMP( void )
+void CLayoutMgr::DUMP()
 {
 #ifdef _DEBUG
 	const wchar_t* pData;
@@ -1345,9 +1312,9 @@ void CLayoutMgr::DUMP( void )
 	MYTRACE_A( "m_nLines=%d\n", m_nLines );
 	MYTRACE_A( "m_pLayoutTop=%08lxh\n", m_pLayoutTop );
 	MYTRACE_A( "m_pLayoutBot=%08lxh\n", m_pLayoutBot );
-	MYTRACE_A( "m_nMaxLineKetas=%d\n", m_nMaxLineKetas );
+	MYTRACE_A( "m_nMaxLineKetas=%d\n", m_sTypeConfig.m_nMaxLineKetas );
 
-	MYTRACE_A( "m_nTabSpace=%d\n", m_nTabSpace );
+	MYTRACE_A( "m_nTabSpace=%d\n", m_sTypeConfig.m_nTabSpace );
 	CLayout* pLayout;
 	CLayout* pLayoutNext;
 	pLayout = m_pLayoutTop;

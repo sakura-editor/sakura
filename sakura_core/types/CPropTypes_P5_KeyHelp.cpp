@@ -156,7 +156,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 			switch( wID ){
 			case IDC_CHECK_KEYHELP:	/* キーワードヘルプ機能を使う */
-				if( FALSE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
+				if( !IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
 					//EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP ), FALSE );			//キーワードヘルプ機能を使う(&K)
 					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), FALSE );		  	//辞書ファイル一覧(&L)
 					EnableWindow( GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ), FALSE );         	//SysListView32

@@ -900,7 +900,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 
 
 /* 機能が利用可能か調べる */
-bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
+bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode nId )
 {
 	/* 書き換え禁止のときを一括チェック */
 	if( pcEditDoc->IsModificationForbidden( nId ) )
@@ -909,7 +909,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	switch( nId ){
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_hwndRecordingKeyMacro == CEditWnd::Instance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return TRUE;
 			}else{
 				return FALSE;
@@ -922,7 +922,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		//	キーマクロエンジン以外のマクロを読み込んでいるときは
 		//	実行はできるが保存はできない．
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_hwndRecordingKeyMacro == CEditWnd::Instance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return TRUE;
 			}else{
 				return FALSE;
@@ -932,7 +932,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_hwndRecordingKeyMacro == CEditWnd::Instance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return TRUE;
 			}else{
 				return FALSE;
@@ -947,7 +947,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		}
 	case F_LOADKEYMACRO:	/* キーマクロの読み込み */
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_hwndRecordingKeyMacro == CEditWnd::Instance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return TRUE;
 			}else{
 				return FALSE;
@@ -1021,7 +1021,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 				return TRUE;
 			}else{
 				/* 無変更でも上書きするか */
-				if( FALSE == pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
+				if( !pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
 					return FALSE;
 				}else{
 					return TRUE;
@@ -1126,7 +1126,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_TAB_SEPARATE:	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
-		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin && !::IsZoomed( pcEditDoc->GetOwnerHwnd() ) );
+		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin && !::IsZoomed( CEditWnd::Instance()->GetHwnd() ) );
 	}
 	return TRUE;
 }
@@ -1134,11 +1134,11 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 
 
 /* 機能がチェック状態か調べる */
-bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
+bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, EFunctionCode nId )
 {
 	CEditWnd* pCEditWnd;
 	// Modified by KEITA for WIN64 2003.9.6
-	pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( pcEditDoc->GetOwnerHwnd(), GWLP_USERDATA );
+	pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( CEditWnd::Instance()->GetHwnd(), GWLP_USERDATA );
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
 	ECodeType eDocCode = pcEditDoc->GetDocumentEncoding();
 	switch( nId ){
@@ -1151,7 +1151,7 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 	case F_FILE_REOPEN_UTF7:		return CODE_UTF7 == eDocCode;
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->GetOwnerHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
+			if( pShareData->m_hwndRecordingKeyMacro == CEditWnd::Instance()->GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				return TRUE;
 			}else{
 				return FALSE;

@@ -1,7 +1,15 @@
 #include "stdafx.h"
 #include "CDocType.h"
 
-void CDocType::SetDocumentType(CTypeConfig type, bool force)	//	文書種別の設定
+CDocType::CDocType(CEditDoc* pcDoc)
+: m_pcDocRef(pcDoc)
+, m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
+, m_nSettingType( 0 )			// Sep. 11, 2002 genta
+{
+}
+
+//	文書種別の設定
+void CDocType::SetDocumentType(CTypeConfig type, bool force)
 {
 	if( !m_nSettingTypeLocked || force ){
 		m_nSettingType = type;

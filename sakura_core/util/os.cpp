@@ -205,7 +205,7 @@ SAKURA_CORE_API bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLeng
 	auto_memcpy( pszClip, pszText, nLength );
 	pszClip[nLength] = 0;
 	::GlobalUnlock( hgClip );
-	if( FALSE == ::OpenClipboard( hwnd ) ){
+	if( !::OpenClipboard( hwnd ) ){
 		::GlobalFree( hgClip );
 		return false;
 	}

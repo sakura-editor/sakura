@@ -1298,7 +1298,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 					GetSelectionInfo().DisableSelectArea( TRUE );
 				}
 			}
-			if( FALSE == bBoxSelected ){	/* 矩形範囲選択中 */
+			if( !bBoxSelected ){	/* 矩形範囲選択中 */
 				//	2004,05.14 Moca 引数に文字列長を追加
 				GetCommander().Command_INSTEXT( TRUE, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
 			}else{

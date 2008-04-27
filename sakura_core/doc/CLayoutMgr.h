@@ -79,7 +79,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//! タブ幅の取得
-	CLayoutInt GetTabSpace() const { return m_nTabSpace; }
+	CLayoutInt GetTabSpace() const { return m_sTypeConfig.m_nTabSpace; }
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -100,11 +100,11 @@ public:
 		@param pos [in] 現在の位置
 		@return 次のTAB位置までの文字数．1～TAB幅
 	 */
-	CLayoutInt GetActualTabSpace(CLayoutInt pos) const { return m_nTabSpace - pos % m_nTabSpace; }
+	CLayoutInt GetActualTabSpace(CLayoutInt pos) const { return m_sTypeConfig.m_nTabSpace - pos % m_sTypeConfig.m_nTabSpace; }
 
 	//	Aug. 14, 2005 genta
 	// Sep. 07, 2007 kobake 関数名変更 GetMaxLineSize→GetMaxLineKetas
-	CLayoutInt GetMaxLineKetas(void) const { return m_nMaxLineKetas; }
+	CLayoutInt GetMaxLineKetas(void) const { return m_sTypeConfig.m_nMaxLineKetas; }
 
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	bool ChangeLayoutParam( CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
@@ -149,7 +149,7 @@ public:
 	//                         デバッグ                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	void DUMP( void );	/* テスト用にレイアウト情報をダンプ */
+	void DUMP();	/* テスト用にレイアウト情報をダンプ */
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -225,7 +225,6 @@ private:
 	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.exist(wc); }
 	bool IsKinsokuHead( const wchar_t *pLine, CLogicInt length );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
 	bool IsKinsokuTail( const wchar_t *pLine, CLogicInt length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKutoTen( wchar_t wc );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
 	bool IsKinsokuKuto( const wchar_t *pLine, CLogicInt length );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
 	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
 	/*! 句読点ぶら下げの処理位置か
@@ -272,42 +271,30 @@ protected:
 	// 2007.09.07 kobake 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	// 2007.10.08 kobake 変数名変更: getIndentOffset→m_getIndentOffset
 
+	//参照
+	CEditDoc*		m_pcEditDoc;
+
 	//実データ
 	CLayout*				m_pLayoutTop;
 	CLayout*				m_pLayoutBot;
 
-	//フラグ等
-	EColorIndexType			m_nLineTypeBot;				//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
-	CLayoutInt				m_nLines;					// 全レイアウト行数
-	CLayoutInt				m_nMaxLineKetas;			// 折り返し桁数
-	BOOL					m_bWordWrap;				// 英文ワードラップをする
-	BOOL					m_bKinsokuHead;				// 行頭禁則をする	//@@@ 2002.04.08 MIK
-	BOOL					m_bKinsokuTail;				// 行末禁則をする	//@@@ 2002.04.08 MIK
-	BOOL					m_bKinsokuRet;				// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
-	BOOL					m_bKinsokuKuto;				// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	//タイプ別設定
+	STypeConfig				m_sTypeConfig;
 	vector_ex<wchar_t>		m_pszKinsokuHead_1;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuTail_1;			// 行末禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
-	CLayoutInt				m_nTabSpace;				// TAB文字スペース
-	BOOL					m_bDispComment;				// コメントの色分け		// 2005.11.21 Moca
-	BOOL					m_bDispSString;				// シングルクォーテーションの色分け		// 2005.11.21 Moca
-	BOOL					m_bDispWString;				// ダブルクォーテーションの色分け		// 2005.11.21 Moca
-	CLineComment			m_cLineComment;				// 行コメントデリミタ		//@@@ 2002.09.22 YAZAKI
-	CBlockComment			m_cLayoutBlockComment;		// ブロックコメントデリミタ	//@@@ 2002.09.22 YAZAKI
-	int						m_nStringType;				// 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""]['']
 	CalcIndentProc			m_getIndentOffset;			//	Oct. 1, 2002 genta インデント幅計算関数を保持
+
+	//フラグ等
+	EColorIndexType			m_nLineTypeBot;				//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
+	CLayoutInt				m_nLines;					// 全レイアウト行数
 
 	mutable CLayoutInt		m_nPrevReferLine;
 	mutable CLayout*		m_pLayoutPrevRefer;
 	
-	// 2006.10.01 Moca EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)
+	// EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)	//2006.10.01 Moca
 	CLayoutInt				m_nEOFLine; //!< EOF行数
 	CLayoutInt				m_nEOFColumn; //!< EOF幅位置
-
-	//	Jul. 20, 2003 genta
-	//	タイプ別の設定を取得するためにCEditDocへの参照が必要
-	CEditDoc*		m_pcEditDoc;
-	
 };
 
 

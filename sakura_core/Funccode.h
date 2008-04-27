@@ -163,7 +163,7 @@ class CEditDoc;
 struct DLLSHAREDATA;
 
 //2007.10.30 kobake 機能チェックをCEditWndからここへ移動
-bool IsFuncEnable( CEditDoc*, DLLSHAREDATA*, int );	/* 機能が利用可能か調べる */
-bool IsFuncChecked( CEditDoc*, DLLSHAREDATA*, int );	/* 機能がチェック状態か調べる */
+bool IsFuncEnable( CEditDoc*, DLLSHAREDATA*, EFunctionCode );	/* 機能が利用可能か調べる */
+bool IsFuncChecked( CEditDoc*, DLLSHAREDATA*, EFunctionCode );	/* 機能がチェック状態か調べる */
 
 #endif // _FUNCCODE_H_

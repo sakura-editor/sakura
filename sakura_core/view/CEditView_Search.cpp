@@ -75,7 +75,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 	m_cTipWnd.m_cKey = cmemCurText;
 
 	/* 検索実行 */
-	if( FALSE == KeySearchCore(&m_cTipWnd.m_cKey) )
+	if( !KeySearchCore(&m_cTipWnd.m_cKey) )
 		goto end_of_search;
 	m_dwTipTimer = 0;		/* 辞書Tipを表示している */
 	m_poTipCurPos = *po;	/* 現在のマウスカーソル位置 */
@@ -144,7 +144,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
-					if(FALSE == m_cTipWnd.m_KeyWasHit){
+					if(!m_cTipWnd.m_KeyWasHit){
 						m_cTipWnd.m_nSearchDict=i;	/* 辞書を開くとき最初にヒットした辞書を開く */
 						m_cTipWnd.m_nSearchLine=nLine;
 						m_cTipWnd.m_KeyWasHit = TRUE;

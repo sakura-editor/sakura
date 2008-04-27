@@ -36,7 +36,7 @@ bool CEditView::TagJumpSub(
 	TagJump	tagJump;
 
 	// 参照元ウィンドウ保存
-	tagJump.hwndReferer = GetDocument()->GetOwnerHwnd();
+	tagJump.hwndReferer = CEditWnd::Instance()->GetHwnd();
 
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
@@ -122,7 +122,7 @@ bool CEditView::TagJumpSub(
 		//	Apr. 23, 2001 genta
 		//	hwndOwnerに値が入らなくなってしまったために
 		//	Tag Jump Backが動作しなくなっていたのを修正
-		if( FALSE == CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
+		if( !CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
 			return false;
 	}
 
@@ -248,7 +248,7 @@ open_c:;
 		GetCaret().GetCaretLayoutPos(),
 		&tagJump.point
 	);
-	tagJump.hwndReferer = GetDocument()->GetOwnerHwnd();
+	tagJump.hwndReferer = CEditWnd::Instance()->GetHwnd();
 	// タグジャンプ情報の保存
 	CShareData::getInstance()->PushTagJump(&tagJump);
 	return TRUE;

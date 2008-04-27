@@ -310,7 +310,6 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	int			nIdx;
 //	int			nFuncId;
 	int			i;
-	int			nFuncCode;
 
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
@@ -322,7 +321,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		/* ファンクションキーの機能名を取得 */
 		for( i = 0; i < _countof( m_szFuncNameArr ); ++i ){
 			// 2007.02.22 ryoji CKeyBind::GetFuncCode()を使う
-			nFuncCode = CKeyBind::GetFuncCode(
+			EFunctionCode	nFuncCode = CKeyBind::GetFuncCode(
 					(((VK_F1 + i) | ((WORD)((BYTE)(nIdx))) << 8)),
 					m_pShareData->m_nKeyNameArrNum,
 					m_pShareData->m_pKeyNameArr
@@ -438,7 +437,7 @@ void CFuncKeyWnd::CreateButtons( void )
 	nButtonHeight = nButtonHeight = rcParent.bottom - rcParent.top - 2;
 
 	for( i = 0; i < _countof(	m_nFuncCodeArr ); ++i ){
-		m_nFuncCodeArr[i] = 0;
+		m_nFuncCodeArr[i] = F_0;
 	}
 
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){

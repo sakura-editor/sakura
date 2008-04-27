@@ -460,7 +460,7 @@ void CMainToolBar::OnToolbarTimer( void )
 				m_hwndToolBar,
 				TB_ENABLEBUTTON,
 				tbb.idCommand,
-				MAKELONG( (IsFuncEnable( &m_pOwner->GetDocument(), &GetDllShareData(), tbb.idCommand ) ) , 0 )
+				MAKELONG( (IsFuncEnable( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) ) , 0 )
 			);
 
 			// 機能がチェック状態か調べる
@@ -468,7 +468,7 @@ void CMainToolBar::OnToolbarTimer( void )
 				m_hwndToolBar,
 				TB_CHECKBUTTON,
 				tbb.idCommand,
-				MAKELONG( IsFuncChecked( &m_pOwner->GetDocument(), &GetDllShareData(), tbb.idCommand ), 0 )
+				MAKELONG( IsFuncChecked( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ), 0 )
 			);
 		}
 	}

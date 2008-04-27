@@ -575,7 +575,7 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 		lvitem.iItem      = i;
 		lvitem.iSubItem   = 1;
 		bret = ListView_GetItem( hwndList, &lvitem );
-		if( FALSE == bret ) goto changed;	//エラーなので再構築
+		if( !bret ) goto changed;	//エラーなので再構築
 
 		//アイテム内容が変わったので再構築
 		if( i != pRecent->FindItemByText( szText ) ) goto changed;

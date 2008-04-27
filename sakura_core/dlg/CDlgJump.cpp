@@ -348,18 +348,18 @@ int CDlgJump::GetData( void )
 	/* PL/SQLソースの有効行か */
 	m_bPLSQL = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLSQL );
 	m_nPLSQL_E1 = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, &pTranslated, FALSE );
-	if( m_nPLSQL_E1 == 0 && FALSE == pTranslated ){
+	if( m_nPLSQL_E1 == 0 && !pTranslated ){
 		m_nPLSQL_E1 = 1;
 	}
 
 //	m_nPLSQL_E2 = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E2, &pTranslated, FALSE );
-//	if( m_nPLSQL_E2 == 0 && FALSE == pTranslated ){
+//	if( m_nPLSQL_E2 == 0 && !pTranslated ){
 //		m_nPLSQL_E2 = 1;
 //	}
 
 	/* 行番号 */
 	m_nLineNum = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, &pTranslated, FALSE );
-	if( m_nLineNum == 0 && FALSE == pTranslated ){
+	if( m_nLineNum == 0 && !pTranslated ){
 		return FALSE;
 	}
 	return TRUE;

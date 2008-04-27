@@ -13,5 +13,5 @@ void CType_Asm::InitTypeConfigImp(STypeConfig* pType)
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L";", -1 );			/* 行コメントデリミタ */
 	pType->m_nDefaultOutline = OUTLINE_ASM;					/* アウトライン解析方法 */
-	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;
 }

@@ -55,19 +55,19 @@ public:
 	//!•\Ž¦‚·‚é‚©‚Ç‚¤‚©
 	bool IsDisp() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bDisp!=FALSE;
+		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bDisp;
 	}
 
 	//!‘¾Žš‚©‚Ç‚¤‚©
 	bool IsFatFont() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bFatFont!=FALSE;
+		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bFatFont;
 	}
 
 	//!‰ºü‚ðŽ‚Â‚©‚Ç‚¤‚©
 	bool HasUnderLine() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bUnderLine!=FALSE;
+		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bUnderLine;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -121,7 +121,6 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 	int			nIdx4;
 	WCHAR		szLabel[300];
 	WCHAR		szLabel2[300];
-	int			nFunc;
 
 	CDlgInput1	cDlgInput1;
 
@@ -278,7 +277,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						1,
 						szKey
 					);
-					if( FALSE == bDlgInputResult ){
+					if( !bDlgInputResult ){
 						return TRUE;
 					}
 				}
@@ -370,7 +369,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i - 1];
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
-					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = 0;
+					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = F_0;
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
@@ -513,7 +512,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 
 					{
-						nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
+						EFunctionCode	nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
 						KEYCODE key = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1]  = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
@@ -545,7 +544,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 
 					{
-						nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
+						EFunctionCode	nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
 						KEYCODE key = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1]  = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
@@ -764,7 +763,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 		cProfile.IOProfileData(szSection,L"Name",MakeStringBufferW(menu->m_szCustMenuNameArr[i]));
 		cProfile.IOProfileData(szSection,L"ItemCount",menu->m_nCustMenuItemNumArr[i]);
 		for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
-			cProfile.IOProfileData(szSection,easy_format(L"FNC[%02d]",j),menu->m_nCustMenuItemFuncArr[i][j]);
+			cProfile.IOProfileData_WrapInt(szSection,easy_format(L"FNC[%02d]",j),menu->m_nCustMenuItemFuncArr[i][j]);
 			cProfile.IOProfileData(szSection,easy_format(L"KEY[%02d]",j),menu->m_nCustMenuItemKeyArr[i][j]);
 		}
 	}

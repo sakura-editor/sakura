@@ -1314,7 +1314,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 				);
 			}
 			/* 機能が利用可能か調べる */
-			if( TRUE == IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
+			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
 				uFlags = MF_STRING | MF_ENABLED;
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
@@ -1986,7 +1986,7 @@ bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bCo
 /* カーソル行アンダーラインのON */
 void CEditView::CaretUnderLineON( bool bDraw )
 {
-	if( FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
 		return;
 	}
 
@@ -2031,7 +2031,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 /* カーソル行アンダーラインのOFF */
 void CEditView::CaretUnderLineOFF( bool bDraw )
 {
-	if( FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
 		return;
 	}
 
@@ -2174,7 +2174,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 			}else{
 				m_cTipWnd.m_cKey = cmemCurText;
 				/* 検索実行 */
-				if(FALSE == KeySearchCore(&m_cTipWnd.m_cKey))	// 2006.04.10 fon
+				if(!KeySearchCore(&m_cTipWnd.m_cKey))	// 2006.04.10 fon
 					return FALSE;
 			}
 			m_dwTipTimer = 0;	/* 辞書Tipを表示している */
