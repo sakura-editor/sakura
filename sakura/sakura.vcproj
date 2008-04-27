@@ -3612,6 +3612,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\types\CType_Python.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\types\CType_Rich.cpp"
 					>
 				</File>
