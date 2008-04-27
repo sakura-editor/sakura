@@ -11,7 +11,7 @@
 bool CDraw_Tab::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	if( pInfo->pLine[pInfo->nPos] == WCODE::TAB ){
 		if( pInfo->DrawToHere() ){
 			// FŒˆ’è
@@ -36,7 +36,7 @@ bool CDraw_Tab::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_ZenSpace::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	if( WCODE::isZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )
 	{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
 		if( pInfo->DrawToHere() ){
@@ -55,7 +55,7 @@ bool CDraw_ZenSpace::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_HanSpace::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	if (pInfo->pLine[pInfo->nPos] == L' ' && TypeDataPtr->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp 
 		 && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )
 	{

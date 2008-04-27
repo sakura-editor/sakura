@@ -7,7 +7,7 @@
 #include "CEol.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "CTypeSupport.h"
+#include "types/CTypeSupport.h"
 #include "charcode.h"
 #include "doc/CLayout.h"
 
@@ -361,7 +361,7 @@ void CTextDrawer::DispTab( HDC hdc, DispPos* pDispPos, int nColorIdx ) const
 	//必要なインターフェース
 	const CTextMetrics* pMetrics=&m_pEditView->GetTextMetrics();
 	const CTextArea* pArea=GetTextArea();
-	Types* TypeDataPtr = &pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	STypeConfig* TypeDataPtr = &pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int nLineHeight = pMetrics->GetHankakuDy();
 	int nCharWidth = pMetrics->GetHankakuDx();
@@ -697,7 +697,7 @@ void CTextDrawer::DispVerticalLines(
 {
 	const CEditView* pView=m_pEditView;
 
-	const Types&	typeData = pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig&	typeData = pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	CTypeSupport cVertType(pView,COLORIDX_VERTLINE);
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
@@ -822,7 +822,7 @@ void CTextDrawer::DispLineNumber(
 ) const
 {
 	const CEditView* pView=m_pEditView;
-	const Types* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int				nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();

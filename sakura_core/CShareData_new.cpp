@@ -977,7 +977,7 @@ void CShareData::ShareData_IO_Print( CDataProfile& cProfile )
 }
 
 /*!
-	@brief 共有データのTypesセクションの入出力
+	@brief 共有データのSTypeConfigセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
@@ -992,8 +992,8 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 
 	for( i = 0; i < MAX_TYPES; ++i ){
 		// 2005.04.07 D.S.Koba
-		Types& types = m_pShareData->GetTypeSetting(CDocumentType(i));
-		auto_sprintf( szKey, LTEXT("Types(%d)"), i );
+		STypeConfig& types = m_pShareData->GetTypeSetting(CTypeConfig(i));
+		auto_sprintf( szKey, LTEXT("STypeConfig(%d)"), i );
 		pszSecName = szKey;
 		static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
 		auto_strcpy( szKeyName, LTEXT("nInts") );
@@ -1081,13 +1081,13 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 			buffer[0][0] = buffer[1][0] = L'\0';
 			bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom"), MakeStringBufferW(buffer[0]) );			
 			bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentTo"), MakeStringBufferW(buffer[1]) );
-			if( bRet1 && bRet2 ) types.m_cBlockComment.CopyTo( 0, buffer[0], buffer[1] );
+			if( bRet1 && bRet2 ) types.m_cBlockComment.SetBlockCommentRule( 0, buffer[0], buffer[1] );
 
 			//@@@ 2001.03.10 by MIK
 			buffer[0][0] = buffer[1][0] = L'\0';
 			bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom2"), MakeStringBufferW(buffer[0]) );
 			bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentTo2")	, MakeStringBufferW(buffer[1]) );
-			if( bRet1 && bRet2 ) types.m_cBlockComment.CopyTo( 1, buffer[0], buffer[1] );
+			if( bRet1 && bRet2 ) types.m_cBlockComment.SetBlockCommentRule( 1, buffer[0], buffer[1] );
 			
 			//	Line Comment
 			wchar_t lbuf[ COMMENT_DELIMITER_BUFFERSIZE ];

@@ -171,7 +171,7 @@ public:
 
 private:
 	const CViewFont* m_pFontset;
-	const Types*     m_pTypes;
+	const STypeConfig*     m_pTypes;
 	int              m_nColorIdx;
 
 	HDC       m_hdc;        //設定を変更したHDC
@@ -181,3 +181,6 @@ private:
 	COLORREF  m_clrOldBack; //SetBkColor  以前に設定されていた色
 	COLORREF  m_clrOldText; //SetTextColor以前に設定されていた色
 };
+
+
+

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CEditView.h"
 #include "util/input.h"
-#include "CTypeSupport.h"
+#include "types/CTypeSupport.h"
 #include "util/os.h"
 #include "parse/CWordParse.h"
 #include "COpeBlk.h"

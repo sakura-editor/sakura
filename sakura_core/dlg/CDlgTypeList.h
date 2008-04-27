@@ -30,7 +30,7 @@ class CDlgTypeList : public CDialog
 public:
 	// Œ^
 	struct SResult{
-		CDocumentType	cDocumentType;	//!< •¶‘Ží—Þ
+		CTypeConfig	cDocumentType;	//!< •¶‘Ží—Þ
 		bool			bTempChange;	//!< ‹ŒPROP_TEMPCHANGE_FLAG
 	};
 
@@ -46,7 +46,7 @@ protected:
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 private:
-	CDocumentType				m_nSettingType;
+	CTypeConfig				m_nSettingType;
 };
 
 

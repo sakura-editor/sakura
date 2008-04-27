@@ -755,8 +755,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pLayoutMgr_Print->Create( &m_pParentWnd->GetDocument(), &m_pParentWnd->GetDocument().m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
-//	Types& ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
-	Types ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
+//	STypeConfig& ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
+	STypeConfig ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColms;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
@@ -766,8 +766,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
 	ref.m_cLineComment.CopyTo(1, L"", -1);	/* 行コメントデリミタ2 */
 	ref.m_cLineComment.CopyTo(2, L"", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	ref.m_cBlockComment.CopyTo(0, L"", L"");	/* ブロックコメントデリミタ */
-	ref.m_cBlockComment.CopyTo(1, L"", L"");	/* ブロックコメントデリミタ2 */
+	ref.m_cBlockComment.SetBlockCommentRule(0, L"", L"");	/* ブロックコメントデリミタ */
+	ref.m_cBlockComment.SetBlockCommentRule(1, L"", L"");	/* ブロックコメントデリミタ2 */
 
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = FALSE;

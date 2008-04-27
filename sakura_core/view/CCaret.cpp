@@ -110,7 +110,7 @@ CLayoutInt CCaret::MoveCursor(
 {
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-	const Types* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 
 	// スクロール処理
 	CLayoutInt	nScrollRowNum = CLayoutInt(0);
@@ -413,7 +413,7 @@ void CCaret::ShowEditCaret()
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
 	CommonSetting* pCommon=&m_pEditView->m_pShareData->m_Common;
-	const Types* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 
 
 	using namespace WCODE;
@@ -570,7 +570,7 @@ void CCaret::ShowCaretPosInfo()
 {
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-	const Types* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 
 
 	if( !m_pEditView->GetDrawSwitch() ){
@@ -687,7 +687,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 {
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-//	const Types* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
+//	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 	CommonSetting* pCommon=&m_pEditView->m_pShareData->m_Common;
 
 

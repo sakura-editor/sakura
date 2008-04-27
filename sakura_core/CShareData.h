@@ -209,7 +209,7 @@ public:
 	template <class T>
 	size_t GetWorkBufferCount(){ return sizeof(m_pWork)/sizeof(T); }
 
-	Types& GetTypeSetting(CDocumentType cDocumentType)
+	STypeConfig& GetTypeSetting(CTypeConfig cDocumentType)
 	{
 		int n = cDocumentType.GetIndex();
 		assert(n>=0 && n<_countof(m_Types));
@@ -287,7 +287,7 @@ public:
 
 private:
 	/* **** タイプ別設定 **** */
-	Types				m_Types[MAX_TYPES];
+	STypeConfig				m_Types[MAX_TYPES];
 
 public:
 	/*	@@@ 2002.1.24 YAZAKI
@@ -357,8 +357,8 @@ public:
 	*/
 	bool Init(void);	/* CShareDataクラスの初期化処理 */
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
-	CDocumentType GetDocumentType( const TCHAR* pszFilePath );			/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
-	CDocumentType GetDocumentTypeExt( const TCHAR* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
+	CTypeConfig GetDocumentType( const TCHAR* pszFilePath );			/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
+	CTypeConfig GetDocumentTypeExt( const TCHAR* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	
 	BOOL AddEditWndList( HWND, int nGroup = 0 );				/* 編集ウィンドウの登録 */	// 2007.06.26 ryoji nGroup引数追加
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
@@ -424,11 +424,11 @@ public:
 	void		AddToGrepFolderArr( const TCHAR* pszGrepFolder );	//	m_aGrepFolders.size()にpszGrepFolderを追加する
 
 	//@@@ 2002.2.3 YAZAKI
-	bool		ExtWinHelpIsSet( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
-	const TCHAR*	GetExtWinHelp( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
-	bool		ExtHTMLHelpIsSet( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
-	const TCHAR*	GetExtHTMLHelp( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
-	bool		HTMLHelpIsSingle( CDocumentType nType = CDocumentType(-1) );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
+	bool		ExtWinHelpIsSet( CTypeConfig nType = CTypeConfig(-1) );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
+	const TCHAR*	GetExtWinHelp( CTypeConfig nType = CTypeConfig(-1) );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
+	bool		ExtHTMLHelpIsSet( CTypeConfig nType = CTypeConfig(-1) );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
+	const TCHAR*	GetExtHTMLHelp( CTypeConfig nType = CTypeConfig(-1) );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
+	bool		HTMLHelpIsSingle( CTypeConfig nType = CTypeConfig(-1) );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 	
 	//@@@ 2002.2.9 YAZAKI
 	const TCHAR* MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen );
@@ -472,7 +472,7 @@ protected:
 	void InitKeyword(DLLSHAREDATA*);
 	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta 起動中止のため値を返す
 	void InitToolButtons(DLLSHAREDATA*);
-	void InitTypeConfig(DLLSHAREDATA*);
+	void InitTypeConfigs(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);
 	
 	// Feb. 12, 2006 D.S.Koba

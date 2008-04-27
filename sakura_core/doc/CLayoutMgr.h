@@ -36,7 +36,7 @@ class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
-struct Types;// 2005.11.20 Moca
+struct STypeConfig;// 2005.11.20 Moca
 #include "basis/SakuraBasis.h"
 
 
@@ -66,12 +66,20 @@ private:
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );
 
 public:
-	/*
-	||  Constructors
-	*/
+	//生成と破棄
 	CLayoutMgr();
 	~CLayoutMgr();
 	void Create( CEditDoc*, CDocLineMgr* );
+	void Init();
+	void _Empty();
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                        コンフィグ                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//! タブ幅の取得
+	CLayoutInt GetTabSpace() const { return m_nTabSpace; }
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -87,11 +95,6 @@ public:
 	CLayout* SearchLineByLayoutY( CLayoutInt nLineLayout ){ return const_cast<CLayout*>(static_cast<const CLayoutMgr*>(this)->SearchLineByLayoutY(nLineLayout)); }
 	bool WhereCurrentWord( CLayoutInt , CLogicInt , CLayoutRange* pSelect, CNativeW*, CNativeW* );	/* 現在位置の単語の範囲を調べる */
 
-	//	Sep. 23, 2002 genta
-	/*! タブ幅の取得
-		@return タブ幅
-	 */
-	CLayoutInt GetTabSpace(void) const { return m_nTabSpace; }
 
 	/*! 次のTAB位置までの幅
 		@param pos [in] 現在の位置
@@ -159,11 +162,11 @@ public:
 	/* レイアウト情報の変更
 		@date Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
 		@date 2002.04.13 MIK 禁則,改行文字をぶら下げる,句読点ぶらさげを追加
-		@date 2002/04/27 YAZAKI Typesを渡すように変更。
+		@date 2002/04/27 YAZAKI STypeConfigを渡すように変更。
 	*/
 	void SetLayoutInfo(
 		bool			bDoRayout,
-		const Types&	refType
+		const STypeConfig&	refType
 	);
 	
 	/* 行内文字削除 */
@@ -216,9 +219,6 @@ protected:
 	void ShiftLogicalLineNum( CLayout* , CLogicInt );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
 
-public:
-	void Init();
-	void Empty();
 
 private:
 	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
@@ -238,15 +238,19 @@ private:
 	bool IsKinsokuPosHead(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行頭禁則の処理位置か
 	bool IsKinsokuPosTail(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行末禁則の処理位置か
 
-	//@@@ 2002.09.22 YAZAKI
-	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	bool CheckColorMODE( EColorIndexType& nCOMMENTMODE, int& nCOMMENTEND, int nPos, int nLineLen, const wchar_t* pLine );
 	int Match_Quote( wchar_t wcQuote, int nPos, int nLineLen, const wchar_t* pLine );
 
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_Tx2x( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_LeftSpace( CLayout* pLayoutPrev );
+
+	/*
+	|| 色分け
+	*/
+	//@@@ 2002.09.22 YAZAKI
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
+	bool _CheckColorMODE( EColorIndexType* nCOMMENTMODE, int* nCOMMENTEND, int nPos, int nLineLen, const wchar_t* pLine );
 
 protected:
 	/*
@@ -289,7 +293,7 @@ protected:
 	BOOL					m_bDispSString;				// シングルクォーテーションの色分け		// 2005.11.21 Moca
 	BOOL					m_bDispWString;				// ダブルクォーテーションの色分け		// 2005.11.21 Moca
 	CLineComment			m_cLineComment;				// 行コメントデリミタ		//@@@ 2002.09.22 YAZAKI
-	CBlockComment			m_cBlockComment;			// ブロックコメントデリミタ	//@@@ 2002.09.22 YAZAKI
+	CBlockComment			m_cLayoutBlockComment;		// ブロックコメントデリミタ	//@@@ 2002.09.22 YAZAKI
 	int						m_nStringType;				// 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""]['']
 	CalcIndentProc			m_getIndentOffset;			//	Oct. 1, 2002 genta インデント幅計算関数を保持
 

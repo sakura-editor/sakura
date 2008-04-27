@@ -215,7 +215,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bViewMode, // ビューモードか
-				fi.m_szDocType[0] == '\0' ? CDocumentType(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
+				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
 			);
 			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 			if( NULL == pEditWnd->GetHwnd() ){
@@ -269,7 +269,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bViewMode,	// ビューモードか
-				fi.m_szDocType[0] == '\0' ? CDocumentType(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
+				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
 			);
 		}
 	}

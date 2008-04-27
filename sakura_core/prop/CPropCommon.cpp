@@ -538,10 +538,10 @@ void CPropCommon::InitData( void )
 	}
 	m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
 
-	//2002/04/25 YAZAKI Types全体を保持する必要はない。
+	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	for( i = 0; i < MAX_TYPES; ++i ){
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-			m_Types_nKeyWordSetIdx[i][j] = CDocumentType(i)->m_nKeyWordSetIdx[j];
+			m_Types_nKeyWordSetIdx[i][j] = CTypeConfig(i)->m_nKeyWordSetIdx[j];
 		}
 	}
 	/* マクロ関係
@@ -587,10 +587,10 @@ void CPropCommon::ApplyData( void )
 	m_pShareData->m_Common = m_Common;
 
 	for( i = 0; i < MAX_TYPES; ++i ){
-		//2002/04/25 YAZAKI Types全体を保持する必要はない。
+		//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 		/* 変更された設定値のコピー */
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-			CDocumentType(i)->m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
+			CTypeConfig(i)->m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
 		}
 	}
 

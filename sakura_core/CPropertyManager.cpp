@@ -55,9 +55,9 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 
 
 /*! タイプ別設定 プロパティシート */
-BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CDocumentType nSettingType )
+BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType )
 {
-	Types& types = GetDllShareData().GetTypeSetting(nSettingType);
+	STypeConfig& types = GetDllShareData().GetTypeSetting(nSettingType);
 	m_cPropTypes.SetTypeData( types );
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
 	//m_cPropTypes.m_CKeyWordSetMgr = GetDllShareData().m_CKeyWordSetMgr;

@@ -3,7 +3,7 @@
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
 #include "doc/CLayout.h"
-#include "CTypeSupport.h"
+#include "types/CTypeSupport.h"
 
 #define SetNPos(N) pInfo->nPos=(N)
 #define GetNPos() (pInfo->nPos+CLogicInt(0))
@@ -16,7 +16,7 @@
 bool CDraw_URL::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	int	nUrlLen;
 	
 	if( pInfo->bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
@@ -34,7 +34,7 @@ bool CDraw_URL::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_Numeric::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	int	nnn;
 	
 	if( pInfo->bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
@@ -54,7 +54,7 @@ bool CDraw_Numeric::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_CtrlCode::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if(TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
 		&& COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
@@ -95,7 +95,7 @@ bool CDraw_CtrlColorEnd::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_KeywordSet::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	
 	if( pInfo->bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx[0] != -1 && /* キーワードセット */
 		TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice

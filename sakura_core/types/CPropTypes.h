@@ -52,8 +52,8 @@ public:
 	int DoPropertySheet( int );		//!< プロパティシートの作成
 
 	//インターフェース	
-	void SetTypeData( const Types& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
-	void GetTypeData( Types& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
+	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
+	void GetTypeData( STypeConfig& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
 
 protected:
 	//イベント
@@ -68,7 +68,7 @@ private:
 
 	//ダイアログデータ
 	int			m_nPageNum;
-	Types		m_Types;
+	STypeConfig		m_Types;
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

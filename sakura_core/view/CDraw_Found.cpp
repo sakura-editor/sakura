@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CDraw_Found.h"
-#include "CTypeSupport.h"
+#include "types/CTypeSupport.h"
 
 #define SetNPos(N) pInfo->nPos=(N)
 #define GetNPos() (pInfo->nPos+CLogicInt(0))
@@ -13,7 +13,7 @@
 bool CDraw_Found::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	CTypeSupport cSearchType(pInfo->pcView,COLORIDX_SEARCH);
 
 	if( pInfo->pcView->m_bCurSrchKeyMark && cSearchType.IsDisp() ){
@@ -67,7 +67,7 @@ top:
 bool CDraw_FoundEnd::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	return false;
 }

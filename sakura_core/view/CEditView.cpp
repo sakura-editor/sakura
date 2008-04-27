@@ -42,7 +42,7 @@
 #include "io/CFileLoad.h" // 2002/08/30 Moca
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "CClipboard.h"
-#include "CTypeSupport.h"
+#include "types/CTypeSupport.h"
 #include "parse/CWordParse.h"
 #include "convert/CConvert.h"
 #include "charset/CCodeMediator.h"

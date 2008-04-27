@@ -2509,14 +2509,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CTypeSupport.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CTypeSupport.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CUxTheme.cpp"
 				>
 				<FileConfiguration
@@ -3587,6 +3579,90 @@
 					RelativePath="..\sakura_core\types\CPropTypes_P5_KeyHelp.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Asm.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Awk.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Basis.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Cobol.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Cpp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Dos.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Html.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Ini.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Java.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Others.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Pascal.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Perl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Rich.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Sql.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Tex.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Text.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CType_Vb.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CTypeSupport.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\types\CTypeSupport.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="view"
@@ -4188,6 +4264,10 @@
 					</File>
 					<File
 						RelativePath="..\sakura_core\doc\CLayoutMgr.h"
+						>
+					</File>
+					<File
+						RelativePath="..\sakura_core\doc\CLayoutMgr_Color.cpp"
 						>
 					</File>
 					<File

@@ -12,7 +12,7 @@
 bool CDraw_LineComment::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	// 行コメント
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
@@ -31,7 +31,7 @@ bool CDraw_LineComment::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_BlockComment::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	// ブロックコメント
 	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
@@ -40,8 +40,13 @@ bool CDraw_BlockComment::EnterColor(SDrawStrategyInfo* pInfo)
 		pInfo->DrawToHere();
 		pInfo->ChangeColor(COLORIDX_BLOCK1);	/* ブロックコメント1である */ // 2002/03/13 novice
 
-		/* この物理行にブロックコメントの終端があるか */
-		pInfo->nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, pInfo->nPos + (int)wcslen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(0) ), pInfo->nLineLen, pInfo->pLine );	//@@@ 2002.09.22 YAZAKI
+		/* この物理行にブロックコメントの終端があるか */	//@@@ 2002.09.22 YAZAKI
+		pInfo->nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo(
+			0,
+			pInfo->nPos + (int)wcslen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(0) ),
+			pInfo->nLineLen,
+			pInfo->pLine
+		);
 
 		return true;
 	}
@@ -63,7 +68,7 @@ bool CDraw_BlockComment::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_BlockCommentEnd::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if( 0 == pInfo->nCOMMENTEND ){
 		/* この物理行にブロックコメントの終端があるか */
@@ -81,7 +86,7 @@ bool CDraw_BlockCommentEnd::EnterColor(SDrawStrategyInfo* pInfo)
 bool CDraw_BlockCommentEnd2::EnterColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const Types* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if( 0 == pInfo->nCOMMENTEND ){
 		/* この物理行にブロックコメントの終端があるか */

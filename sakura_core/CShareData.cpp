@@ -61,33 +61,33 @@ struct ARRHEAD {
 	EditInfoに、m_szDocType追加 Mar. 7, 2002 genta
 	
 	Version 27:
-	Typesに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
+	STypeConfigに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
 	
 	Version 28:
 	PRINTSETTINGに、m_bPrintKinsokuHead、m_bPrintKinsokuTailを追加 2002.04.09 MIK
-	Typesに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
+	STypeConfigに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
 
 	Version 29:
 	PRINTSETTINGに、m_bPrintKinsokuRetを追加 2002.04.13 MIK
-	Typesに、m_bKinsokuRetを追加 2002.04.13 MIK
+	STypeConfigに、m_bKinsokuRetを追加 2002.04.13 MIK
 
 	Version 30:
 	PRINTSETTINGに、m_bPrintKinsokuKutoを追加 2002.04.17 MIK
-	Typesに、m_bKinsokuKutoを追加 2002.04.17 MIK
+	STypeConfigに、m_bKinsokuKutoを追加 2002.04.17 MIK
 
 	Version 31:
 	Commonに、m_bStopsBothEndsWhenSearchParagraphを追加 2002/04/26 YAZAKI
 
 	Version 32:
-	CommonからTypesへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
+	CommonからSTypeConfigへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
 
 	Version 33:
 	Commonに、m_lf_khを追加 2002/05/21 ai
 	m_nDiffFlgOptを追加 2002.05.27 MIK
-	Types-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
+	STypeConfig-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
 
 	Version 34:
-	Typesにm_bUseDocumentIcon 追加． 2002.09.10 genta
+	STypeConfigにm_bUseDocumentIcon 追加． 2002.09.10 genta
 	
 	Version 35:
 	Commonにm_nLineNumRightSpace 追加．2002.09.18 genta
@@ -96,11 +96,11 @@ struct ARRHEAD {
 	Commonのm_bGrepKanjiCode_AutoDetectを削除、m_nGrepCharSetを追加 2002/09/21 Moca
 
 	Version 37:
-	TypesのLineComment関連をm_cLineCommentに変更．  @@@ 2002.09.23 YAZAKI
-	TypesのBlockComment関連をm_cBlockCommentに変更．@@@ 2002.09.23 YAZAKI
+	STypeConfigのLineComment関連をm_cLineCommentに変更．  @@@ 2002.09.23 YAZAKI
+	STypeConfigのBlockComment関連をm_cBlockCommentに変更．@@@ 2002.09.23 YAZAKI
 
 	Version 38:
-	Typesにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
+	STypeConfigにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
 	2002.10.01 genta m_nIndentLayoutに名前変更
 
 	Version 39:
@@ -110,11 +110,11 @@ struct ARRHEAD {
 	ファイル名簡易表記関連を追加． 2002/12/08～2003/01/15 Moca
 
 	Version 41:
-	Typesのm_szTabViewStringサイズ拡張
+	STypeConfigのm_szTabViewStringサイズ拡張
 	m_nWindowSizeX/Y m_nWindowOriginX/Y追加 2003.01.26 aroka
 
 	Version 42:
-	Typesに独自TABマークフラグ追加 2003.03.28 MIK
+	STypeConfigに独自TABマークフラグ追加 2003.03.28 MIK
 
 	Version 43:
 	最近使ったファイル・フォルダにお気に入りを追加 2003.04.08 MIK
@@ -129,7 +129,7 @@ struct ARRHEAD {
 	編集ウインドウ数修正、タブウインドウ用情報追加
 
 	Version 47:
-	ファイルからの補完をTypesに追加 2003.06.28 Moca
+	ファイルからの補完をSTypeConfigに追加 2003.06.28 Moca
 
 	Version 48:
 	Grepリアルタイム表示追加 2003.06.28 Moca
@@ -246,7 +246,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1002;
+const unsigned int uShareDataVersion = 1003;
 
 /*
 ||	Singleton風
@@ -654,7 +654,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_aCommands.clear();
 
 		InitKeyword( m_pShareData );
-		InitTypeConfig( m_pShareData );
+		InitTypeConfigs( m_pShareData );
 		InitPopupMenu( m_pShareData );
 
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
@@ -761,7 +761,7 @@ void CShareData::SetKeyNameArrVal(
 	
 	拡張子を切り出して GetDocumentTypeExt に渡すだけ．
 */
-CDocumentType CShareData::GetDocumentType( const TCHAR* pszFilePath )
+CTypeConfig CShareData::GetDocumentType( const TCHAR* pszFilePath )
 {
 	TCHAR	szExt[_MAX_EXT];
 
@@ -772,7 +772,7 @@ CDocumentType CShareData::GetDocumentType( const TCHAR* pszFilePath )
 		else
 			return GetDocumentTypeExt( szExt );
 	}
-	return CDocumentType(0);
+	return CTypeConfig(0);
 }
 
 
@@ -785,7 +785,7 @@ CDocumentType CShareData::GetDocumentType( const TCHAR* pszFilePath )
 	とりあえず今のところはタイプは拡張子のみに依存すると仮定している．
 	ファイル全体の形式に対応させるときは，また考え直す．
 */
-CDocumentType CShareData::GetDocumentTypeExt( const TCHAR* pszExt )
+CTypeConfig CShareData::GetDocumentTypeExt( const TCHAR* pszExt )
 {
 	const TCHAR	pszSeps[] = _T(" ;,");	// separator
 
@@ -794,17 +794,17 @@ CDocumentType CShareData::GetDocumentTypeExt( const TCHAR* pszExt )
 	TCHAR	szText[256];
 
 	for( i = 0; i < MAX_TYPES; ++i ){
-		CDocumentType nType(i);
+		CTypeConfig nType(i);
 		_tcscpy( szText, m_pShareData->GetTypeSetting(nType).m_szTypeExts );
 		pszToken = _tcstok( szText, pszSeps );
 		while( NULL != pszToken ){
 			if( 0 == _tcsicmp( pszExt, pszToken ) ){
-				return CDocumentType(i);	//	番号
+				return CTypeConfig(i);	//	番号
 			}
 			pszToken = _tcstok( NULL, pszSeps );
 		}
 	}
-	return CDocumentType(0);	//	ハズレ
+	return CTypeConfig(0);	//	ハズレ
 }
 
 
@@ -1849,7 +1849,7 @@ void CShareData::AddToGrepFolderArr( const TCHAR* pszGrepFolder )
 
 /*!	外部Winヘルプが設定されているか確認。
 */
-bool CShareData::ExtWinHelpIsSet( CDocumentType nTypeNo )
+bool CShareData::ExtWinHelpIsSet( CTypeConfig nTypeNo )
 {
 	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != L'\0'){
 		return true;	//	共通設定に設定されている
@@ -1867,7 +1867,7 @@ bool CShareData::ExtWinHelpIsSet( CDocumentType nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-const TCHAR* CShareData::GetExtWinHelp( CDocumentType nTypeNo )
+const TCHAR* CShareData::GetExtWinHelp( CTypeConfig nTypeNo )
 {
 	if (nTypeNo.IsValid() && m_pShareData->GetTypeSetting(nTypeNo).m_szExtHelp[0] != _T('\0')){
 		return m_pShareData->GetTypeSetting(nTypeNo).m_szExtHelp;
@@ -1878,7 +1878,7 @@ const TCHAR* CShareData::GetExtWinHelp( CDocumentType nTypeNo )
 
 /*!	外部HTMLヘルプが設定されているか確認。
 */
-bool CShareData::ExtHTMLHelpIsSet( CDocumentType nTypeNo )
+bool CShareData::ExtHTMLHelpIsSet( CTypeConfig nTypeNo )
 {
 	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != L'\0'){
 		return true;	//	共通設定に設定されている
@@ -1896,7 +1896,7 @@ bool CShareData::ExtHTMLHelpIsSet( CDocumentType nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-const TCHAR* CShareData::GetExtHTMLHelp( CDocumentType nTypeNo )
+const TCHAR* CShareData::GetExtHTMLHelp( CTypeConfig nTypeNo )
 {
 	if (nTypeNo.IsValid() && m_pShareData->GetTypeSetting(nTypeNo).m_szExtHtmlHelp[0] != _T('\0')){
 		return m_pShareData->GetTypeSetting(nTypeNo).m_szExtHtmlHelp;
@@ -1907,7 +1907,7 @@ const TCHAR* CShareData::GetExtHTMLHelp( CDocumentType nTypeNo )
 
 /*!	ビューアを複数起動しないがONかを返す。
 */
-bool CShareData::HTMLHelpIsSingle( CDocumentType nTypeNo )
+bool CShareData::HTMLHelpIsSingle( CTypeConfig nTypeNo )
 {
 	if (nTypeNo.IsValid() && m_pShareData->GetTypeSetting(nTypeNo).m_szExtHtmlHelp[0] != L'\0'){
 		return (m_pShareData->GetTypeSetting(nTypeNo).m_bHtmlHelpIsSingle != FALSE);
@@ -4949,375 +4949,6 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 	
 }
 
-/*!	@brief 共有メモリ初期化/タイプ別設定
-
-	タイプ別設定の初期化処理
-
-	@date 2005.01.30 genta CShareData::Init()から分離．
-*/
-void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
-{
-
-//キーワード：デフォルトカラー設定
-/************************/
-/* タイプ別設定の規定値 */
-/************************/
-	int nIdx = 0;
-	int i;
-	CDocumentType(nIdx)->m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);	/* 折り返し桁数 */
-	CDocumentType(nIdx)->m_nColmSpace = 0;					/* 文字と文字の隙間 */
-	CDocumentType(nIdx)->m_nLineSpace = 1;					/* 行間のすきま */
-	CDocumentType(nIdx)->m_nTabSpace = CLayoutInt(4);					/* TABの文字数 */
-	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
-		CDocumentType(nIdx)->m_nKeyWordSetIdx[i] = -1;
-	}
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	wcscpy( CDocumentType(nIdx)->m_szTabViewString, _EDITL("^       ") );	/* TAB表示文字列 */
-//#endif
-	CDocumentType(nIdx)->m_bTabArrow = false;				/* タブ矢印表示 */	// 2001.12.03 hor
-	CDocumentType(nIdx)->m_bInsSpace = FALSE;				/* スペースの挿入 */	// 2001.12.03 hor
-	
-	//@@@ 2002.09.22 YAZAKI 以下、m_cLineCommentとm_cBlockCommentを使うように修正
-	CDocumentType(nIdx)->m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
-	CDocumentType(nIdx)->m_cLineComment.CopyTo(1, L"", -1);	/* 行コメントデリミタ2 */
-	CDocumentType(nIdx)->m_cLineComment.CopyTo(2, L"", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	CDocumentType(nIdx)->m_cBlockComment.CopyTo(0, L"", L"");	/* ブロックコメントデリミタ */
-	CDocumentType(nIdx)->m_cBlockComment.CopyTo(1, L"", L"");	/* ブロックコメントデリミタ2 */
-
-	CDocumentType(nIdx)->m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	wcscpy( CDocumentType(nIdx)->m_szIndentChars, L"" );		/* その他のインデント対象文字 */
-
-	CDocumentType(nIdx)->m_nColorInfoArrNum = COLORIDX_LAST;
-
-	// 2001/06/14 Start by asa-o
-	_tcscpy( CDocumentType(nIdx)->m_szHokanFile, _T("") );		/* 入力補完 単語ファイル */
-	// 2001/06/14 End
-
-	// 2001/06/19 asa-o
-	CDocumentType(nIdx)->m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
-
-	//	2003.06.23 Moca ファイル内からの入力補完機能
-	CDocumentType(nIdx)->m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
-
-	//@@@2002.2.4 YAZAKI
-	CDocumentType(nIdx)->m_szExtHelp[0] = L'\0';
-	CDocumentType(nIdx)->m_szExtHtmlHelp[0] = L'\0';
-	CDocumentType(nIdx)->m_bHtmlHelpIsSingle = TRUE;
-
-	CDocumentType(nIdx)->m_bAutoIndent = TRUE;			/* オートインデント */
-	CDocumentType(nIdx)->m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
-	CDocumentType(nIdx)->m_bRTrimPrevLine = FALSE;			/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-
-	CDocumentType(nIdx)->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
-
-
-	for( i = 0; i < COLORIDX_LAST; ++i ){
-		GetDefaultColorInfo(&CDocumentType(nIdx)->m_ColorInfoArr[i],i);
-		/*
-		CDocumentType(nIdx)->m_ColorInfoArr[i].m_nColorIdx		= i;
-		CDocumentType(nIdx)->m_ColorInfoArr[i].m_bDisp			= ColorInfo_DEFAULT[i].m_bDisp;
-		CDocumentType(nIdx)->m_ColorInfoArr[i].m_bFatFont		= ColorInfo_DEFAULT[i].m_bFatFont;
-		CDocumentType(nIdx)->m_ColorInfoArr[i].m_bUnderLine		= ColorInfo_DEFAULT[i].m_bUnderLine;
-		CDocumentType(nIdx)->m_ColorInfoArr[i].m_colTEXT			= ColorInfo_DEFAULT[i].m_colTEXT;
-		CDocumentType(nIdx)->m_ColorInfoArr[i].m_colBACK			= ColorInfo_DEFAULT[i].m_colBACK;
-		_tcscpy( CDocumentType(nIdx)->m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
-		*/
-	}
-	CDocumentType(nIdx)->m_bLineNumIsCRLF = TRUE;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	CDocumentType(nIdx)->m_nLineTermType = 1;					/* 行番号区切り 0=なし 1=縦線 2=任意 */
-	CDocumentType(nIdx)->m_cLineTermChar = L':';					/* 行番号区切り文字 */
-	CDocumentType(nIdx)->m_bWordWrap = FALSE;					/* 英文ワードラップをする */
-	CDocumentType(nIdx)->m_nCurrentPrintSetting = 0;				/* 現在選択している印刷設定 */
-	CDocumentType(nIdx)->m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
-	CDocumentType(nIdx)->m_nSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
-	CDocumentType(nIdx)->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
-
-	CDocumentType(nIdx)->m_szOutlineRuleFilename[0] = L'\0';	//Dec. 4, 2000 MIK
-	CDocumentType(nIdx)->m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	CDocumentType(nIdx)->m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	CDocumentType(nIdx)->m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	CDocumentType(nIdx)->m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	wcscpy( CDocumentType(nIdx)->m_szKinsokuHead, L"" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	wcscpy( CDocumentType(nIdx)->m_szKinsokuTail, L"" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
-
-	CDocumentType(nIdx)->m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
-
-//@@@ 2001.11.17 add start MIK
-	for(i = 0; i < 100; i++)
-	{
-		CDocumentType(nIdx)->m_RegexKeywordArr[i].m_szKeyword[0] = L'\0';
-		CDocumentType(nIdx)->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
-	}
-	CDocumentType(nIdx)->m_bUseRegexKeyword = FALSE;
-//		CDocumentType(nIdx)->m_nRegexKeyMagicNumber = 1;
-//@@@ 2001.11.17 add end MIK
-
-//@@@ 2006.04.10 fon ADD-start
-	for(i = 0; i < MAX_KEYHELP_FILE; i++){
-		CDocumentType(nIdx)->m_KeyHelpArr[i].m_nUse = 0;
-		CDocumentType(nIdx)->m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
-		CDocumentType(nIdx)->m_KeyHelpArr[i].m_szPath[0] = _T('\0');
-	}
-	CDocumentType(nIdx)->m_bUseKeyWordHelp = FALSE;	/* 辞書選択機能の使用可否 */
-	CDocumentType(nIdx)->m_nKeyHelpNum = 0;			/* 登録辞書数 */
-	CDocumentType(nIdx)->m_bUseKeyHelpAllSearch = FALSE;	/* ヒットした次の辞書も検索(&A) */
-	CDocumentType(nIdx)->m_bUseKeyHelpKeyDisp = FALSE;		/* 1行目にキーワードも表示する(&W) */
-	CDocumentType(nIdx)->m_bUseKeyHelpPrefix = FALSE;		/* 選択範囲で前方一致検索(&P) */
-//@@@ 2006.04.10 fon ADD-end
-
-	// 2005.11.08 Moca 指定位置縦線の設定
-	for( i = 0; i < MAX_VERTLINES; i++ ){
-		CDocumentType(nIdx)->m_nVertLineIdx[i] = CLayoutInt(0);
-	}
-
-	static TCHAR* pszTypeNameArr[] = {
-		_T("基本"),
-		_T("テキスト"),
-		_T("C/C++"),
-		_T("HTML"),
-		_T("PL/SQL"),
-		_T("COBOL"),
-		_T("Java"),
-		_T("アセンブラ"),
-		_T("AWK"),
-		_T("MS-DOSバッチファイル"),
-		_T("Pascal"),
-		_T("TeX"),				//Oct. 31, 2000 JEPRO TeX  ユーザに贈る
-		_T("Perl"),				//Jul. 08, 2001 JEPRO Perl ユーザに贈る
-		_T("Visual Basic"),		//JUl. 10, 2001 JEPRO VB   ユーザに贈る
-		_T("リッチテキスト"),	//JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね
-		_T("設定ファイル"),		//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
-		_T("設定17"),			//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
-		_T("設定18"),
-		_T("設定19"),
-		_T("設定20")			//To Here Jul. 12, 2001
-	};
-	static TCHAR* pszTypeExts[] = {
-		_T(""),
-		//Nov. 15, 2000 JEPRO PostScriptファイルも読めるようにする
-		//Jan. 12, 2001 JEPRO readme.1st も読めるようにする
-		//Feb. 12, 2001 JEPRO .err エラーメッセージ
-		//Nov.  6, 2002 genta docはMS Wordに譲ってここからは外す（関連づけ防止のため）
-		//Nov.  6, 2002 genta log を追加
-		_T("txt,log,1st,err,ps"),
-		//	Jan. 24, 2004 genta 関連づけ上好ましくないのでdsw,dsp,dep,makははずす
-		_T("c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm"),	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
-			//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
-		_T("html,htm,shtml,plg"),	//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
-		_T("sql,plsql"),
-		_T("cbl,cpy,pco,cob"),	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
-		_T("java,jav"),
-		_T("asm"),
-		_T("awk"),
-		_T("bat"),
-		_T("dpr,pas"),
-		_T("tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo"),		//Oct. 31, 2000 JEPRO TeX ユーザに贈る	//Mar. 10, 2001 JEPRO 追加
-		_T("cgi,pl,pm"),			//Jul. 08, 2001 JEPRO 追加
-		_T("bas,frm,cls,ctl,pag,dob,dsr,vb"),	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加 // Feb. 19, 2006 genta .vb追加
-		_T("rtf"),					//Jul. 10, 2001 JEPRO 追加
-		_T("ini,inf,cnf,kwd,col"),	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
-		_T(""),						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
-		_T(""),
-		_T(""),
-		_T("")						//To Here Jul. 12, 2001
-	};
-
-	CDocumentType(0)->m_nIdx = 0;
-	_tcscpy( CDocumentType(0)->m_szTypeName, pszTypeNameArr[0] );				/* タイプ属性：名称 */
-	_tcscpy( CDocumentType(0)->m_szTypeExts, pszTypeExts[0] );				/* タイプ属性：拡張子リスト */
-	for( nIdx = 1; nIdx < MAX_TYPES; ++nIdx ){
-		pShareData->GetTypeSetting(CDocumentType(nIdx)) = pShareData->GetTypeSetting(CDocumentType(0));
-		CDocumentType(nIdx)->m_nIdx = nIdx;
-
-		//	From Here 2005.02.20 りんご 配列数が設定数より小さいケースの考慮
-		const TCHAR* pszTypeName;
-		const TCHAR* pszTypeExt;
-		if(nIdx < _countof(pszTypeNameArr))
-			pszTypeName = pszTypeNameArr[nIdx];
-		else
-			pszTypeName = _T("未定義");
-		if(nIdx < _countof(pszTypeExts))
-			pszTypeExt = pszTypeExts[nIdx];
-		else
-			pszTypeExt = _T("");
-		_tcscpy( CDocumentType(nIdx)->m_szTypeName, pszTypeName );
-		_tcscpy( CDocumentType(nIdx)->m_szTypeExts, pszTypeExt );
-		//	To Here 2005.02.20 りんご
-	}
-
-
-	/* 基本 */
-	CDocumentType(0)->m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);			/* 折り返し桁数 */
-//		CDocumentType(0)->m_nDefaultOutline = OUTLINE_UNKNOWN;	/* アウトライン解析方法 */	//Jul. 08, 2001 JEPRO 使わないように変更
-	CDocumentType(0)->m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
-	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
-	CDocumentType(0)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
-	CDocumentType(0)->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	
-
-//		nIdx = 0;
-	/* テキスト */
-	//From Here Sept. 20, 2000 JEPRO テキストの規定値を80→120に変更(不具合一覧.txtがある程度読みやすい桁数)
-	CDocumentType(1)->m_nMaxLineKetas = CLayoutInt(120);					/* 折り返し桁数 */
-	//To Here Sept. 20, 2000
-	CDocumentType(1)->m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
-	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
-	CDocumentType(1)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
-	CDocumentType(1)->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	CDocumentType(1)->m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	CDocumentType(1)->m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	CDocumentType(1)->m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	CDocumentType(1)->m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	wcscpy( CDocumentType(1)->m_szKinsokuHead, L"!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
-	wcscpy( CDocumentType(1)->m_szKinsokuTail, L"$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
-
-
-	// nIdx = 1;
-	/* C/C++ */
-	CDocumentType(2)->m_cLineComment.CopyTo( 0, L"//", -1 );			/* 行コメントデリミタ */
-	CDocumentType(2)->m_cBlockComment.CopyTo( 0, L"/*", L"*/" );		/* ブロックコメントデリミタ */
-	CDocumentType(2)->m_cBlockComment.CopyTo( 1, L"#if 0", L"#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
-	CDocumentType(2)->m_nKeyWordSetIdx[0] = 0;						/* キーワードセット */
-	CDocumentType(2)->m_nDefaultOutline = OUTLINE_CPP;			/* アウトライン解析方法 */
-	CDocumentType(2)->m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
-	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	CDocumentType(2)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
-	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
-	CDocumentType(2)->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
-	//	2003.06.23 Moca ファイル内からの入力補完機能
-	CDocumentType(2)->m_bUseHokanByFile = TRUE;			/*! 入力補完 開いているファイル内から候補を探す */
-
-	/* HTML */
-	CDocumentType(3)->m_cBlockComment.CopyTo( 0, L"<!--", L"-->" );	/* ブロックコメントデリミタ */
-	CDocumentType(3)->m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	CDocumentType(3)->m_nKeyWordSetIdx[0] = 1;						/* キーワードセット */
-	// Feb. 2, 2005 genta 苦情が多いのでシングルクォートの色分けはHTMLでは行わない
-	CDocumentType(3)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-
-	// nIdx = 3;
-	/* PL/SQL */
-	CDocumentType(4)->m_cLineComment.CopyTo( 0, L"--", -1 );		/* 行コメントデリミタ */
-	CDocumentType(4)->m_cBlockComment.CopyTo( 0, L"/*", L"*/" );	/* ブロックコメントデリミタ */
-	CDocumentType(4)->m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	wcscpy( CDocumentType(4)->m_szIndentChars, L"|★" );			/* その他のインデント対象文字 */
-	CDocumentType(4)->m_nKeyWordSetIdx[0] = 2;						/* キーワードセット */
-	CDocumentType(4)->m_nDefaultOutline = OUTLINE_PLSQL;			/* アウトライン解析方法 */
-
-	/* COBOL */
-	CDocumentType(5)->m_cLineComment.CopyTo( 0, L"*", 6 );	//Jun. 02, 2001 JEPRO 修正
-	CDocumentType(5)->m_cLineComment.CopyTo( 1, L"D", 6 );	//Jun. 04, 2001 JEPRO 追加
-	CDocumentType(5)->m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	wcscpy( CDocumentType(5)->m_szIndentChars, L"*" );			/* その他のインデント対象文字 */
-	CDocumentType(5)->m_nKeyWordSetIdx[0] = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
-	CDocumentType(5)->m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
-
-	// 2005.11.08 Moca 指定桁縦線
-	CDocumentType(5)->m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = TRUE;
-	CDocumentType(5)->m_nVertLineIdx[0] = CLayoutInt(7);
-	CDocumentType(5)->m_nVertLineIdx[1] = CLayoutInt(8);
-	CDocumentType(5)->m_nVertLineIdx[2] = CLayoutInt(12);
-	CDocumentType(5)->m_nVertLineIdx[3] = CLayoutInt(73);
-
-
-	/* Java */
-	CDocumentType(6)->m_cLineComment.CopyTo( 0, L"//", -1 );		/* 行コメントデリミタ */
-	CDocumentType(6)->m_cBlockComment.CopyTo( 0, L"/*", L"*/" );	/* ブロックコメントデリミタ */
-	CDocumentType(6)->m_nKeyWordSetIdx[0] = 4;						/* キーワードセット */
-	CDocumentType(6)->m_nDefaultOutline = OUTLINE_JAVA;			/* アウトライン解析方法 */
-	CDocumentType(6)->m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
-	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	CDocumentType(6)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
-	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
-	CDocumentType(6)->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
-
-	/* アセンブラ */
-	//	2004.05.01 MIK/genta
-	CDocumentType(7)->m_cLineComment.CopyTo( 0, L";", -1 );		/* 行コメントデリミタ */
-	CDocumentType(7)->m_nDefaultOutline = OUTLINE_ASM;			/* アウトライン解析方法 */
-	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	CDocumentType(7)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
-
-	/* awk */
-	CDocumentType(8)->m_cLineComment.CopyTo( 0, L"#", -1 );		/* 行コメントデリミタ */
-	CDocumentType(8)->m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-	CDocumentType(8)->m_nKeyWordSetIdx[0] = 6;						/* キーワードセット */
-
-	/* MS-DOSバッチファイル */
-	CDocumentType(9)->m_cLineComment.CopyTo( 0, L"REM ", -1 );	/* 行コメントデリミタ */
-	CDocumentType(9)->m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-	CDocumentType(9)->m_nKeyWordSetIdx[0] = 7;						/* キーワードセット */
-
-	/* Pascal */
-	CDocumentType(10)->m_cLineComment.CopyTo( 0, L"//", -1 );		/* 行コメントデリミタ */		//Nov. 5, 2000 JEPRO 追加
-	CDocumentType(10)->m_cBlockComment.CopyTo( 0, L"{", L"}" );	/* ブロックコメントデリミタ */	//Nov. 5, 2000 JEPRO 追加
-	CDocumentType(10)->m_cBlockComment.CopyTo( 1, L"(*", L"*)" );	/* ブロックコメントデリミタ2 */	//@@@ 2001.03.10 by MIK
-	CDocumentType(10)->m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
-	CDocumentType(10)->m_nKeyWordSetIdx[0] = 8;						/* キーワードセット */
-	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	CDocumentType(10)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	//@@@ 2001.11.11 upd MIK
-
-	//From Here Oct. 31, 2000 JEPRO
-	/* TeX */
-	CDocumentType(11)->m_cLineComment.CopyTo( 0, L"%", -1 );		/* 行コメントデリミタ */
-	CDocumentType(11)->m_nDefaultOutline = OUTLINE_TEX;			/* アウトライン解析方法 */
-	CDocumentType(11)->m_nKeyWordSetIdx[0]  = 9;					/* キーワードセット */
-	CDocumentType(11)->m_nKeyWordSetIdx[1] = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
-	//シングルクォーテーション文字列を色分け表示しない
-	CDocumentType(11)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	//ダブルクォーテーション文字列を色分け表示しない
-	CDocumentType(11)->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	//URLにアンダーラインを引かない(やっぱりやめた)
-//		CDocumentType(11)->m_ColorInfoArr[COLORIDX_URL].m_bDisp = FALSE;
-	//To Here Oct. 31, 2000
-
-	//From Here Jul. 08, 2001 JEPRO
-	/* Perl */
-	CDocumentType(12)->m_cLineComment.CopyTo( 0, L"#", -1 );		/* 行コメントデリミタ */
-	CDocumentType(12)->m_nDefaultOutline = OUTLINE_PERL;			/* アウトライン解析方法 */
-	CDocumentType(12)->m_nKeyWordSetIdx[0]  = 11;					/* キーワードセット */
-	CDocumentType(12)->m_nKeyWordSetIdx[1] = 12;					/* キーワードセット2 */
-	CDocumentType(12)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
-	//To Here Jul. 08, 2001
-	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
-	CDocumentType(12)->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
-
-	//From Here Jul. 10, 2001 JEPRO
-	/* Visual Basic */
-	CDocumentType(13)->m_cLineComment.CopyTo( 0, L"'", -1 );		/* 行コメントデリミタ */
-	CDocumentType(13)->m_nDefaultOutline = OUTLINE_VB;			/* アウトライン解析方法 */
-	CDocumentType(13)->m_nKeyWordSetIdx[0]  = 13;					/* キーワードセット */
-	CDocumentType(13)->m_nKeyWordSetIdx[1] = 14;					/* キーワードセット2 */
-	CDocumentType(13)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
-	CDocumentType(13)->m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	//シングルクォーテーション文字列を色分け表示しない
-	CDocumentType(13)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-
-	/* リッチテキスト */
-	CDocumentType(14)->m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-	CDocumentType(14)->m_nKeyWordSetIdx[0]  = 15;					/* キーワードセット */
-	CDocumentType(14)->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
-	CDocumentType(14)->m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	//シングルクォーテーション文字列を色分け表示しない
-	CDocumentType(14)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	//ダブルクォーテーション文字列を色分け表示しない
-	CDocumentType(14)->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	//URLにアンダーラインを引かない
-	CDocumentType(14)->m_ColorInfoArr[COLORIDX_URL].m_bDisp = FALSE;
-	//To Here Jul. 10, 2001
-
-	//From Here Nov. 9, 2000 JEPRO
-	/* 設定ファイル */
-	CDocumentType(15)->m_cLineComment.CopyTo( 0, L"//", -1 );		/* 行コメントデリミタ */
-	CDocumentType(15)->m_cLineComment.CopyTo( 1, L";", -1 );		/* 行コメントデリミタ2 */
-	CDocumentType(15)->m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
-	//シングルクォーテーション文字列を色分け表示しない
-	CDocumentType(15)->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	//ダブルクォーテーション文字列を色分け表示しない
-	CDocumentType(15)->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	//To Here Nov. 9, 2000
-}
 
 /*!	@brief 共有メモリ初期化/ポップアップメニュー
 
@@ -5477,10 +5108,4 @@ DLLSHAREDATA& GetDllShareData()
 void DLLSHAREDATA::OnInit()
 {
 	g_theDLLSHAREDATA = this;
-}
-
-
-Types* CDocumentType::operator->()
-{
-	return &GetDllShareData().GetTypeSetting(*this);
 }
