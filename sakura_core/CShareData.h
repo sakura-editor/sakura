@@ -51,7 +51,7 @@ enum maxdata{
 	MAX_REPLACEKEY				=  30,
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
-	MAX_TYPES					=  20,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした
+	MAX_TYPES					=  30,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした	// 2007.12.13 ryoji 20→30
 	MAX_TOOLBARBUTTONS			= 384,	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)
 	MAX_CUSTOM_MENU				=  25,
 	MAX_CUSTOM_MENU_NAME_LEN	=  32,

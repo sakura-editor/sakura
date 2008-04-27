@@ -247,9 +247,12 @@ struct ARRHEAD {
 
 	Version 85:
 	キーワードセット最大値増加 2007.12.01 genta
+
+	Version 86:
+	タイプ別設定最大値増加 2007.12.13 ryoji
 */
 
-const unsigned int uShareDataVersion = 85;
+const unsigned int uShareDataVersion = 86;
 
 /*
 ||	Singleton風
@@ -5343,10 +5346,6 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		"Visual Basic",		//JUl. 10, 2001 JEPRO VB   ユーザに贈る
 		"リッチテキスト",	//JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね
 		"設定ファイル",		//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
-		"設定17",			//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
-		"設定18",
-		"設定19",
-		"設定20"			//To Here Jul. 12, 2001
 	};
 	static char* pszTypeExts[] = {
 		"",
@@ -5372,10 +5371,6 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		"bas,frm,cls,ctl,pag,dob,dsr,vb",	//Jul. 09, 2001 JEPRO 追加 //Dec. 16, 2002 MIK追加 // Feb. 19, 2006 genta .vb追加
 		"rtf",					//Jul. 10, 2001 JEPRO 追加
 		"ini,inf,cnf,kwd,col",	//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
-		"",						//From Here Jul. 12, 2001 JEPRO タイプ別設定の設定数を16→20に増やした
-		"",
-		"",
-		""						//To Here Jul. 12, 2001
 	};
 
 	pShareData->m_Types[0].m_nIdx = 0;
@@ -5388,10 +5383,13 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 		//	From Here 2005.02.20 りんご 配列数が設定数より小さいケースの考慮
 		const char* pszTypeName;
 		const char* pszTypeExt;
+		char szTypeName[20];
 		if(nIdx < (sizeof(pszTypeNameArr)/sizeof(char*)))
 			pszTypeName = pszTypeNameArr[nIdx];
-		else
-			pszTypeName = "未定義";
+		else{
+			sprintf( szTypeName, "設定%d", nIdx + 1 );
+			pszTypeName = szTypeName;
+		}
 		if(nIdx < (sizeof(pszTypeExts)/sizeof(char*)))
 			pszTypeExt = pszTypeExts[nIdx];
 		else
