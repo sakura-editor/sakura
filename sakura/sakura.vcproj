@@ -3776,6 +3776,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\view\CEditView_Paint_Bracket.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\view\CEditView_Scroll.cpp"
 					>
 				</File>

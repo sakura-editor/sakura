@@ -37,3 +37,18 @@ SAKURA_CORE_API int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwit
 inline void dupamp(const TCHAR* org, TCHAR* out)
 {	cescape( org, out, _T('&'), _T('&') ); }
 
+
+/*
+	scanf的安全スキャン
+
+	使用例:
+		int a[3];
+		scan_ints("1,23,4,5", "%d,%d,%d", a);
+		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
+*/
+int scan_ints(
+	const wchar_t*	pszData,	//!< [in]  データ文字列
+	const wchar_t*	pszFormat,	//!< [in]  データフォーマット
+	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
+);
+
