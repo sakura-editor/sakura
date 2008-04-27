@@ -29,7 +29,7 @@ void CViewCommander::Command_GREP_DIALOG( void )
 	/* Grepダイアログの表示 */
 	int nRet = GetEditWindow()->m_cDlgGrep.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
 //	MYTRACE_A( "nRet=%d\n", nRet );
-	if( FALSE == nRet ){
+	if( !nRet ){
 		return;
 	}
 	HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);	//	GREPコマンドの発行

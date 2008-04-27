@@ -309,7 +309,7 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
 
 	/* ダイアログの位置の記憶 */
-	if( FALSE == m_bInited ){
+	if( !m_bInited ){
 		return TRUE;
 	}
 	RECT	rc;

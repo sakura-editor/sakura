@@ -214,7 +214,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 				_countof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1,
 				szWork
 			);
-			if( FALSE == bDlgInputResult ){
+			if( !bDlgInputResult ){
 				return TRUE;
 			}
 		}
@@ -774,7 +774,7 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	dmDummy.dmPaperSize = pPS->m_nPrintPaperSize;
 	dmDummy.dmOrientation = pPS->m_nPrintPaperOrientation;
 	/* —p†‚Ì•A‚‚³ */
-	if( FALSE == CPrint::GetPaperSize(
+	if( !CPrint::GetPaperSize(
 		&nPaperAllWidth,
 		&nPaperAllHeight,
 		&dmDummy

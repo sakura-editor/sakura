@@ -139,7 +139,7 @@ void CDlgCompare::SetData( void )
 
 //@@@ 2001.12.26 YAZAKI ƒtƒ@ƒCƒ‹–¼‚Å”äŠr‚·‚é‚Æ(–³‘è)‚¾‚Á‚½‚Æ‚«‚É–â‘è“¯Žm‚Ì”äŠr‚ª‚Å‚«‚È‚¢
 //			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
-			if (pEditNodeArr[i].GetHwnd() == pCEditDoc->GetOwnerHwnd()){
+			if (pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd()){
 				continue;
 			}
 			auto_sprintf(
@@ -170,7 +170,7 @@ void CDlgCompare::SetData( void )
 	//@@@ 2003.06.12 MIK
 	// TAB 1ƒEƒBƒ“ƒhƒE•\Ž¦‚Ì‚Æ‚«‚Í•À‚×‚Ä”äŠr‚Å‚«‚È‚­‚·‚é
 	if( TRUE  == m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
-	 && FALSE == m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		m_bCompareAndTileHorz = FALSE;
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_TILE_H ), FALSE );

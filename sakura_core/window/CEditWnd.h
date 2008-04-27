@@ -220,7 +220,7 @@ public:
 	//	Aug. 14, 2005 genta TABïùÇ∆ê‹ÇËï‘Çµà íuÇÃçXêV
 	void ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
 	//	Aug. 14, 2005 genta
-	CLogicPoint* SavePhysPosOfAllView(void);
+	CLogicPoint* SavePhysPosOfAllView();
 	void RestorePhysPosOfAllView( CLogicPoint* pptPosArray );
 
 

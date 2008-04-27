@@ -230,7 +230,7 @@ BOOL CPropCommon::SelectColor( HWND hwndParent, COLORREF* pColor )
 	cc.lCustData = NULL;
 	cc.lpfnHook = NULL;
 	cc.lpTemplateName = NULL;
-	if( FALSE == ::ChooseColor( &cc ) ){
+	if( !::ChooseColor( &cc ) ){
 		return FALSE;
 	}
 	*pColor = cc.rgbResult;

@@ -1578,12 +1578,12 @@ void CViewCommander::Command_CUT( void )
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( FALSE == m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
 	/* クリップボードにデータを設定 */
-	if( FALSE == m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect ) ){
+	if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect ) ){
 		ErrorBeep();
 		return;
 	}
@@ -2450,7 +2450,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		ErrorBeep();
 		return;
 	}
-	if( FALSE == GetShareData()->m_Common.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
+	if( !GetShareData()->m_Common.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
 	{
 		return;
 	}
@@ -3056,7 +3056,7 @@ end_of_func:;
 			m_pCommanderView->SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
-//	if( FALSE == bFound ){
+//	if( !bFound ){
 // To Here 2002.01.26 hor
 		ErrorBeep();
 		if( bReDraw	&&
@@ -3765,7 +3765,7 @@ void CViewCommander::Command_FONT( void )
 
 	/* フォント設定ダイアログ */
 	LOGFONT cLogfont = GetShareData()->m_Common.m_sView.m_lf;
-	if( GetDocument()->SelectFont( &cLogfont )  ){
+	if( MySelectFont( &cLogfont, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd() )  ){
 		GetShareData()->m_Common.m_sView.m_lf = cLogfont;
 
 //		/* 変更フラグ フォント */
@@ -5850,7 +5850,7 @@ void CViewCommander::Command_CASCADE( void )
 			}
 			//	Mar. 20, 2004 genta
 			//	現在のウィンドウを末尾に持っていくためここではスキップ
-			if( pEditNodeArr[i].GetHwnd() == GetDocument()->GetOwnerHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() ){
 				current_win_index = i;
 				continue;
 			}
@@ -5982,9 +5982,9 @@ void CViewCommander::Command_TILE_H( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == GetDocument()->GetOwnerHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = GetDocument()->GetOwnerHwnd();
+				phwndArr[0] = CEditWnd::Instance()->GetHwnd();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -6038,9 +6038,9 @@ void CViewCommander::Command_TILE_V( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == GetDocument()->GetOwnerHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = GetDocument()->GetOwnerHwnd();
+				phwndArr[0] = CEditWnd::Instance()->GetHwnd();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -7060,7 +7060,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
 				nBool = Command_FILESAVEAS_DIALOG();
 			}
-			if( FALSE == nBool ){
+			if( !nBool ){
 				return;
 			}
 			break;
@@ -7367,8 +7367,7 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 
 	// Windowsクリップボードにコピー
 	//2004.02.17 Moca 関数化
-	SetClipboardText( GetDocument()->GetSplitterHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
-	return;
+	SetClipboardText( CEditWnd::Instance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }
 
 /* ファイル内容比較 */
@@ -7396,7 +7395,7 @@ void CViewCommander::Command_COMPARE( void )
 		szPath,
 		&hwndCompareWnd
 	);
-	if( FALSE == bDlgCompareResult ){
+	if( !bDlgCompareResult ){
 		return;
 	}
 	/* 比較後、左右に並べて表示 */
@@ -7404,7 +7403,7 @@ void CViewCommander::Command_COMPARE( void )
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
 	if( TRUE  == GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd
-	 && FALSE == GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	 && !GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		hwndMsgBox = m_pCommanderView->GetHwnd();
 		GetShareData()->m_Common.m_sCompare.m_bCompareAndTileHorz = FALSE;
@@ -7512,7 +7511,7 @@ end_of_compare:;
 //To Here Oct. 10, 2000
 
 	//	2002/05/11 YAZAKI 親ウィンドウをうまく設定してみる。
-	if( FALSE == bDefferent ){
+	if( !bDefferent ){
 		TopInfoMessage( hwndMsgBox, _T("異なる箇所は見つかりませんでした。") );
 	}
 	else{
@@ -7743,7 +7742,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			GetInstance(),
 			GetShareData()->m_szKeyMacroFileName
 		);
-		if ( FALSE == nSaveResult ){
+		if ( !nSaveResult ){
 			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ls"), GetShareData()->m_szKeyMacroFileName );
 		}
 	}else{

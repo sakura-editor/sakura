@@ -15,6 +15,6 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nDefaultOutline = OUTLINE_TEX;						/* アウトライン解析方法 */
 	pType->m_nKeyWordSetIdx[0] = 9;								/* キーワードセット */
 	pType->m_nKeyWordSetIdx[1] = 10;							/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;	//シングルクォーテーション文字列を色分け表示しない
-	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;	//ダブルクォーテーション文字列を色分け表示しない
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//シングルクォーテーション文字列を色分け表示しない
+	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ダブルクォーテーション文字列を色分け表示しない
 }

@@ -66,61 +66,33 @@ class SAKURA_CORE_API CEditDoc
 , public TInstanceHolder<CEditDoc>
 {
 public:
-	/*
-	||  Constructors
-	*/
+	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp* pcApp);
 	~CEditDoc();
 
-	/*
-	||  初期化系メンバ関数
-	*/
+	//初期化
 	BOOL Create( CImageListMgr* );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
+	void Clear();
 
-	/*
-	|| 状態
-	*/
-	void GetEditInfo( EditInfo* ) const;	/* 編集ファイル情報を格納 */ //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
-	void GetSaveInfo(SSaveInfo* pSaveInfo) const;
-
-	/*
-	|| 属性
-	*/
-	ECodeType	GetDocumentEncoding() const;				//!< ドキュメントの文字コードを取得
-	void		SetDocumentEncoding(ECodeType eCharCode);	//!< ドキュメントの文字コードを設定
-
-	/* いろいろ */
-	BOOL OnFileClose();	/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
-	BOOL HandleCommand( EFunctionCode );
-	BOOL SelectFont( LOGFONT* );
-
-
-
-	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
-
-
-
-	//	Aug. 14, 2000 genta
-	bool IsModificationForbidden( int nCommand );
-
-	/*! @brief このウィンドウで新しいファイルを開けるか
-
-		新しいウィンドウを開かずに現在のウィンドウを再利用できるかどうかのテストを行う．
-		変更済み，ファイルを開いている，Grepウィンドウ，アウトプットウィンドウの場合には
-		再利用不可．
-
-		@author Moca
-		@date 2005.06.24 Moca
-	*/
-	bool IsAcceptLoad() const;
-
+	//設定
 	void SetFilePathAndIcon(const TCHAR* szFile);	// Sep. 9, 2002 genta
 
-public:
-	HWND GetSplitterHwnd() const;
-	HWND GetOwnerHwnd() const;
+	//属性
+	ECodeType	GetDocumentEncoding() const;				//!< ドキュメントの文字コードを取得
+	void		SetDocumentEncoding(ECodeType eCharCode);	//!< ドキュメントの文字コードを設定
+	bool IsModificationForbidden( EFunctionCode nCommand );	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
+	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
+
+	//状態
+	void GetEditInfo( EditInfo* ) const;	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
+	bool IsAcceptLoad() const;				//!< このウィンドウで(新しいウィンドウを開かずに)新しいファイルを開けるか
+
+	//イベント
+	BOOL HandleCommand( EFunctionCode );
+	void OnChangeSetting();		/* ビューに設定変更を反映させる */
+	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //

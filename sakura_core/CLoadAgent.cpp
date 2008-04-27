@@ -81,13 +81,16 @@ void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
 
+	// パスを確定
+	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
+
+	// 文書種別
+	pcDoc->m_cDocType.SetDocumentType( CShareData::getInstance()->GetDocumentType( sLoadInfo.cFilePath ), true );
+
 	/* レイアウト情報の変更 */
 	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
 	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, pcDoc->m_cDocType.GetDocumentAttribute());
 	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
-
-	// パスを確定
-	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
 }
 
 void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
@@ -108,10 +111,6 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 		pcDoc->m_cDocFile.m_sFileInfo.bBomExist = false;
 		if(pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODE || pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODEBE)pcDoc->m_cDocFile.m_sFileInfo.bBomExist = true;
 	}
-
-	// 文書種別
-	CTypeConfig	doctype = CShareData::getInstance()->GetDocumentType( pcDoc->m_cDocFile.GetFilePath() );
-	pcDoc->m_cDocType.SetDocumentType( doctype, true );
 
 	//再描画 $$不足
 	CEditWnd::Instance()->GetActiveView().SetDrawSwitch(true);

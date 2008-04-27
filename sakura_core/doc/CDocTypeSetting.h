@@ -8,9 +8,9 @@
 
 //! 色設定
 struct ColorInfoBase{
-	BOOL		m_bDisp;			//!< 表示
-	BOOL		m_bFatFont;			//!< 太字
-	BOOL		m_bUnderLine;		//!< 下線
+	bool		m_bDisp;			//!< 表示
+	bool		m_bFatFont;			//!< 太字
+	bool		m_bUnderLine;		//!< 下線
 	COLORREF	m_colTEXT;			//!< 文字色
 	COLORREF	m_colBACK;			//!< 背景色
 };

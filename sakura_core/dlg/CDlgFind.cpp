@@ -195,7 +195,7 @@ int CDlgFind::GetData( void )
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareDataに移動
 		CShareData::getInstance()->AddToSearchKeyArr( m_szText );
-		if( FALSE == m_bModal ){
+		if( !m_bModal ){
 			/* ダイアログデータの設定 */
 			SetData();
 		}

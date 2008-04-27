@@ -113,7 +113,7 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 
 	// デフォルトプリンタが選択されていなければ、選択する
 	if ( m_hDevMode == NULL ) {
-		if ( FALSE == GetDefaultPrinter( pMYDEVMODE ) ) {
+		if ( !GetDefaultPrinter( pMYDEVMODE ) ) {
 			return FALSE;
 		}
 	}
@@ -209,7 +209,7 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	memset_raw ( &pd, 0, sizeof(pd) );
 	pd.lStructSize	= sizeof(pd);
 	pd.Flags		= PD_RETURNDEFAULT;
-	if( FALSE == ::PrintDlg( &pd ) ){
+	if( !::PrintDlg( &pd ) ){
 		pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
 		return FALSE;
 	}
@@ -283,7 +283,7 @@ HDC CPrint::CreateDC(
 	//
 	// OpenPrinter()で、デバイス名でプリンタハンドルを取得
 	//
-	if( FALSE == ::OpenPrinter(
+	if( !::OpenPrinter(
 		pMYDEVMODE->m_szPrinterDeviceName,		/* プリンタデバイス名 */
 		&hPrinter,					/* プリンタハンドルのポインタ */
 		NULL
@@ -359,7 +359,7 @@ BOOL CPrint::GetPrintMetrics(
 	bRet = TRUE;
 
 	/* 現在の設定で、用紙の幅、高さを確定し、CreateDCに渡す */
-	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
+	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
 
@@ -373,7 +373,7 @@ BOOL CPrint::GetPrintMetrics(
 	}
 
 	/* CreateDC実行によって得られた実際のプリンタの用紙の幅、高さを取得 */
-	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
+	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
 

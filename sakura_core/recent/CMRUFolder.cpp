@@ -61,7 +61,7 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がフォルダの履歴MAXを36個にしてあるので事実上OKでしょう
 		auto_sprintf( szMemu, _T("&%tc %ts%ts"), 
 			(i < 10) ? (_T('0') + i) : (_T('A') + i - 10), 
-			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
+			(!m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
 			szFolder2 );
 
 		//	メニューに追加

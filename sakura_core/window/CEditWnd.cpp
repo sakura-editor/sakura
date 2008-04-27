@@ -164,7 +164,6 @@ void CEditWnd::OnAfterSave(const SSaveInfo& sSaveInfo)
 
 void CEditWnd::UpdateCaption()
 {
-//	if( !doc.GetSplitterHwnd() )return;
 	if( !GetActiveView().GetDrawSwitch() )return;
 
 	//キャプション文字列の生成 -> pszCap
@@ -540,7 +539,7 @@ HWND CEditWnd::Create(
 	}
 
 	/* 編集ウィンドウリストへの登録 */
-	if( FALSE == CShareData::getInstance()->AddEditWndList( GetHwnd(), nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
+	if( !CShareData::getInstance()->AddEditWndList( GetHwnd(), nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
 		OkMessage( GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::DestroyWindow( GetHwnd() );
 		m_hWnd = hWnd = NULL;
@@ -590,7 +589,7 @@ void CEditWnd::OpenDocumentWhenStart(
 void CEditWnd::SetDocumentTypeWhenCreate(
 	ECodeType		nCharCode,		//!< [in] 漢字コード
 	bool			bViewMode,		//!< [in] ビューモードで開くかどうか
-	CTypeConfig	nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
+	CTypeConfig		nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
 )
 {
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
@@ -1721,7 +1720,6 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 {
 	int			cMenuItems;
 	int			nPos;
-	UINT		id;
 	UINT		fuFlags;
 	int			i;
 	BOOL		bRet;
@@ -2201,7 +2199,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 //	From Here Sept. 17, 2000 JEPRO
 //	やはりWin標準に合わせてチェックマークだけで表示／非表示を判断するようにした方がいいので変更
-			if ( FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+			if ( !m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
 				pszLabel = _T("ツールバーを表示(&T)");				//これのみ表示
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel );	//これのみ
 				pszLabel = _T("ファンクションキーを表示(&K)");		//これのみ表示
@@ -2282,7 +2280,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			// Feb. 28, 2004 genta 編集メニューから移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CHGMOD_INS	, _T("挿入／上書きモード(&I)") );	//Nov. 9, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_VIEWMODE, _T("ビューモード(&R)") );
-			if ( FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
+			if ( !m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
 				pszLabel = _T("キーワードヘルプ自動表示(&H)");
 			}
 			else if( IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) ){
@@ -2417,7 +2415,7 @@ end_of_func_IsEnable:;
 	/* 機能が利用可能かどうか、チェック状態かどうかを一括チェック */
 	cMenuItems = ::GetMenuItemCount( hMenu );
 	for (nPos = 0; nPos < cMenuItems; nPos++) {
-		id = ::GetMenuItemID(hMenu, nPos);
+		EFunctionCode	id = (EFunctionCode)::GetMenuItemID(hMenu, nPos);
 		/* 機能が利用可能か調べる */
 		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
 		if( ! IsFuncEnable( &GetDocument(), m_pShareData, id ) ){
@@ -2635,7 +2633,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		m_pPrintPreview = NULL;	//	NULLか否かで、プリントプレビューモードか判断するため。
 
 		/*	通常モードに戻す	*/
-		::ShowWindow( GetDocument().GetSplitterHwnd(), SW_SHOW );
+		::ShowWindow( this->m_cSplitterWnd.GetHwnd(), SW_SHOW );
 		::ShowWindow( hwndToolBar, SW_SHOW );	// 2006.06.17 ryoji
 		::ShowWindow( m_cStatusBar.GetStatusHwnd(), SW_SHOW );
 		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), SW_SHOW );
@@ -2658,7 +2656,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::DestroyMenu( hMenu );
 		::DrawMenuBar( GetHwnd() );
 
-		::ShowWindow( GetDocument().GetSplitterHwnd(), SW_HIDE );
+		::ShowWindow( this->m_cSplitterWnd.GetHwnd(), SW_HIDE );
 		::ShowWindow( hwndToolBar, SW_HIDE );	// 2006.06.17 ryoji
 		::ShowWindow( m_cStatusBar.GetStatusHwnd(), SW_HIDE );
 		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), SW_HIDE );
@@ -2677,7 +2675,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		/* 現在のデフォルトプリンタの情報を取得 */
 		BOOL bRes;
 		bRes = m_pPrintPreview->GetDefaultPrinterInfo();
-		if( FALSE == bRes ){
+		if( !bRes ){
 			TopInfoMessage( GetHwnd(), _T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n") );
 			return;
 		}
@@ -4117,7 +4115,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 	@date 2005.08.11 genta  新規作成
 	@date 2007.09.06 kobake 戻り値をCLogicPoint*に変更
 */
-CLogicPoint* CEditWnd::SavePhysPosOfAllView(void)
+CLogicPoint* CEditWnd::SavePhysPosOfAllView()
 {
 	const int NUM_OF_VIEW = 4;
 	const int NUM_OF_POS = 5;

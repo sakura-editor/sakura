@@ -263,7 +263,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					/* モードレスダイアログの表示 */
 					wcscpy( szKeyWord, L"" );
 					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
-					if( FALSE == cDlgInput1.DoModal(
+					if( !cDlgInput1.DoModal(
 						CNormalProcess::Instance()->GetProcessInstance(),
 						hwndDlg,
 						_T("キーワードのセット追加"),
@@ -349,7 +349,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 							MAX_SETNAMELEN,
 							szKeyWord
 						);
-						if( FALSE == bDlgInputResult ){
+						if( !bDlgInputResult ){
 							return TRUE;
 						}
 					}
@@ -372,7 +372,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					/* モードレスダイアログの表示 */
 					wcscpy( szKeyWord, L"" );
-					if( FALSE == cDlgInput1.DoModal( CNormalProcess::Instance()->GetProcessInstance(), hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+					if( !cDlgInput1.DoModal( CNormalProcess::Instance()->GetProcessInstance(), hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( 0 < wcslen( szKeyWord ) ){
@@ -468,7 +468,7 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	wcscpy( szKeyWord, m_CKeyWordSetMgr.GetKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
-	if( FALSE == cDlgInput1.DoModal( CNormalProcess::Instance()->GetProcessInstance(), hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+	if( !cDlgInput1.DoModal( CNormalProcess::Instance()->GetProcessInstance(), hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
 	if( 0 < wcslen( szKeyWord ) ){

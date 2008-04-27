@@ -342,7 +342,7 @@ void CNativeA::ToZenkaku(
 			}
 			if( bHenkanOK ){
 				usSrc = pBuf[i];
-				if( FALSE == bHiragana &&
+				if( !bHiragana &&
 					pBuf[i]		== (unsigned char)'³' &&
 					pBuf[i + 1] == (unsigned char)'Þ' &&
 					bHiragana != 2

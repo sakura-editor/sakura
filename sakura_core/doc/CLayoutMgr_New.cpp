@@ -84,8 +84,8 @@ void CLayoutMgr::_DoLayout()
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
 	//	折り返し幅の最小値=10なのでこの値は問題ない
-	if( m_nTabSpace >= m_nMaxLineKetas ){
-		m_nTabSpace = CLayoutInt(4);
+	if( m_sTypeConfig.m_nTabSpace >= m_sTypeConfig.m_nMaxLineKetas ){
+		m_sTypeConfig.m_nTabSpace = CLayoutInt(4);
 	}
 
 	pCDocLine = m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
@@ -97,7 +97,7 @@ void CLayoutMgr::_DoLayout()
 		2004.03.28 Moca TAB計算を正しくするためにインデントを幅で調整することはしない
 		nMaxLineKetasは変更しないので，ここでm_nMaxLineKetasを設定する．
 	*/
-	nMaxLineKetas = m_nMaxLineKetas;
+	nMaxLineKetas = m_sTypeConfig.m_nMaxLineKetas;
 
 	while( NULL != pCDocLine ){
 		CLogicInt		nLineLen;
@@ -144,7 +144,7 @@ void CLayoutMgr::_DoLayout()
 				{
 					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && nPos == nWordBgn + nWordLen )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
 							AddLineBottom(
 								CreateLayout(
@@ -172,7 +172,7 @@ void CLayoutMgr::_DoLayout()
 			{
 			
 				/* ワードラップ処理 */
-				if( m_bWordWrap	/* 英文ワードラップをする */
+				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
 				 && nKinsokuType == KINSOKU_TYPE_NONE )
 				{
 					/* 英単語の先頭か */
@@ -230,7 +230,7 @@ void CLayoutMgr::_DoLayout()
 
 				//@@@ 2002.04.07 MIK start
 				/* 句読点のぶらさげ */
-				if( m_bKinsokuKuto && (nMaxLineKetas - nPosX < 2) && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				if( m_sTypeConfig.m_bKinsokuKuto && (nMaxLineKetas - nPosX < 2) && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					// 2007.09.07 kobake   レイアウトとロジックの区別
@@ -246,7 +246,7 @@ void CLayoutMgr::_DoLayout()
 				}
 
 				/* 行頭禁則 */
-				if( m_bKinsokuHead
+				if( m_sTypeConfig.m_bKinsokuHead
 				 && (nMaxLineKetas - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -276,7 +276,7 @@ void CLayoutMgr::_DoLayout()
 				}
 
 				/* 行末禁則 */
-				if( m_bKinsokuTail
+				if( m_sTypeConfig.m_bKinsokuTail
 				 && (nMaxLineKetas - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -341,7 +341,7 @@ void CLayoutMgr::_DoLayout()
 				if( nPosX + nCharKetas > nMaxLineKetas ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
 							AddLineBottom( CreateLayout(pCDocLine, CLogicPoint(nBgn, nLineNum), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
 							m_nLineTypeBot = nCOMMENTMODE;
@@ -420,7 +420,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	*pnExtInsLineNum = CLayoutInt(0);
 
 	bool		bNeedChangeCOMMENTMODE = false;	//@@@ 2002.09.23 YAZAKI bAddを名称変更
-	CLayoutInt	nMaxLineKetas= m_nMaxLineKetas;
+	CLayoutInt	nMaxLineKetas= m_sTypeConfig.m_nMaxLineKetas;
 	CLogicInt	nLineNumWork = CLogicInt(0);
 
 	CLayout*	pLayout = pLayoutPrev;
@@ -490,7 +490,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				{
 					if( nKinsokuType==KINSOKU_TYPE_KINSOKU_KUTO && nPos==nWordBgn+nWordLen )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
@@ -523,7 +523,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 			{
 			
 				/* ワードラップ処理 */
-				if( m_bWordWrap	/* 英文ワードラップをする */
+				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
 				 && nKinsokuType == KINSOKU_TYPE_NONE )
 				{
 					/* 英単語の先頭か */
@@ -587,7 +587,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 
 				//@@@ 2002.04.07 MIK start
 				/* 句読点のぶらさげ */
-				if( m_bKinsokuKuto
+				if( m_sTypeConfig.m_bKinsokuKuto
 				 && (nMaxLineKetas - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
@@ -606,7 +606,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				}
 
 				/* 行頭禁則 */
-				if( m_bKinsokuHead
+				if( m_sTypeConfig.m_bKinsokuHead
 				 && (nMaxLineKetas - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -650,7 +650,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				}
 
 				/* 行末禁則 */
-				if( m_bKinsokuTail
+				if( m_sTypeConfig.m_bKinsokuTail
 				 && (nMaxLineKetas - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -741,7 +741,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				if( nPosX + nCharKetas > nMaxLineKetas ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
@@ -875,29 +875,6 @@ bool CLayoutMgr::IsKinsokuTail( const wchar_t *pLine, CLogicInt length )
 	}
 }
 
-/*!
-	句読点か
-
-	@param[in] c1 調べる文字1バイト目
-	@param[in] c2 調べる文字2バイト目
-	@retval true 句読点である
-	@retval false 句読点でない
-*/
-
-bool CLayoutMgr::IsKutoTen( wchar_t wc )
-{
-	//句読点定義
-	static const wchar_t *KUTOTEN=
-		L"｡､,."
-		L"。、，．"
-	;
-
-	const wchar_t* p;
-	for(p=KUTOTEN;*p;p++){
-		if(*p==wc)return true;
-	}
-	return false;
-}
 
 /*!
 	禁則対象句読点に該当するかを調べる．
@@ -1015,15 +992,15 @@ int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, int nLineLen, const wcha
 		if( 0 == nCharChars ){
 			nCharChars = 1;
 		}
-		if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+		if(	m_sTypeConfig.m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 			if( 1 == nCharChars && pLine[i] == L'\\' ){
 				++i;
 			}else
 			if( 1 == nCharChars && pLine[i] == wcQuote ){
 				return i + 1;
 			}
-		}else
-		if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+		}
+		else if(	m_sTypeConfig.m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 			if( 1 == nCharChars && pLine[i] == wcQuote ){
 				if( i + 1 < nLineLen && pLine[i + 1] == wcQuote ){
 					++i;
@@ -1078,7 +1055,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 	if( pLayoutPrev->GetLogicOffset() > 0 )
 		return nIpos;
 	
-	CMemoryIterator it( pLayoutPrev, m_nTabSpace );
+	CMemoryIterator it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && it.getCurrentChar() == WCODE::TAB ){
@@ -1086,7 +1063,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	if ( m_nMaxLineKetas - nIpos < 6 ){
+	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < 6 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
@@ -1117,7 +1094,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		return nIpos;
 	
 	//	2002.10.07 YAZAKI インデントの計算
-	CMemoryIterator it( pLayoutPrev, m_nTabSpace );
+	CMemoryIterator it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
 
 	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
 	bool bZenSpace = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
@@ -1147,7 +1124,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	if ( m_nMaxLineKetas - nIpos < 6 ){
+	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < 6 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント

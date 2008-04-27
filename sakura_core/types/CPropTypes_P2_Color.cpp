@@ -243,10 +243,10 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )	// 2006.12.18 ryoji フラグ利用で簡素化
 		{
 			if( pColorInfo->m_bUnderLine ){	/* 下線で表示 */
-				pColorInfo->m_bUnderLine = FALSE;
+				pColorInfo->m_bUnderLine = false;
 				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, FALSE );
 			}else{
-				pColorInfo->m_bUnderLine = TRUE;
+				pColorInfo->m_bUnderLine = true;
 				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, TRUE );
 			}
 			::InvalidateRect( hwnd, &rcItem, TRUE );
@@ -262,10 +262,10 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
 		{
 			if( pColorInfo->m_bFatFont ){	/* 太字で表示 */
-				pColorInfo->m_bFatFont = FALSE;
+				pColorInfo->m_bFatFont = false;
 				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, FALSE );
 			}else{
-				pColorInfo->m_bFatFont = TRUE;
+				pColorInfo->m_bFatFont = true;
 				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, TRUE );
 			}
 			::InvalidateRect( hwnd, &rcItem, TRUE );
@@ -282,9 +282,9 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			)
 		{
 			if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
-				pColorInfo->m_bDisp = FALSE;
+				pColorInfo->m_bDisp = false;
 			}else{
-				pColorInfo->m_bDisp = TRUE;
+				pColorInfo->m_bDisp = true;
 			}
 			if( COLORIDX_GYOU == nIndex ){
 				pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
@@ -469,9 +469,9 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 				return TRUE;
 			case IDC_CHECK_DISP:	/* 色分け/表示 をする */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = TRUE;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = true;
 				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = FALSE;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = false;
 				}
 				/* 現在選択されている色タイプ */
 				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
@@ -479,18 +479,18 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 				return TRUE;
 			case IDC_CHECK_FAT:	/* 太字か */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FAT ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = TRUE;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = true;
 				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = FALSE;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = false;
 				}
 				/* 現在選択されている色タイプ */
 				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
 				return TRUE;
 			case IDC_CHECK_UNDERLINE:	/* 下線を表示 */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_UNDERLINE ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = TRUE;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = true;
 				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = FALSE;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = false;
 				}
 				/* 現在選択されている色タイプ */
 				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
@@ -1405,7 +1405,7 @@ BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustCol
 	cc.lCustData = NULL;
 	cc.lpfnHook = NULL;
 	cc.lpTemplateName = NULL;
-	if( FALSE == ::ChooseColor( &cc ) ){
+	if( !::ChooseColor( &cc ) ){
 		return FALSE;
 	}
 	*pColor = cc.rgbResult;
