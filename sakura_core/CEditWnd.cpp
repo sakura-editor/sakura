@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -54,6 +55,7 @@
 #define IDT_EDIT		455  // 20060128 aroka
 #define IDT_TOOLBAR		456
 #define IDT_CAPTION		457
+#define IDT_FIRST_IDLE	458
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
@@ -200,6 +202,7 @@ CEditWnd::~CEditWnd()
 	
 	@date 2002.03.07 genta nDocumentType追加
 	@date 2007.06.26 ryoji nGroup追加
+	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
 	HINSTANCE	hInstance,
@@ -359,6 +362,11 @@ HWND CEditWnd::Create(
 	if( NULL == hWnd ){
 		return NULL;
 	}
+
+	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
+	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
+	// ※起動元での起動先アイドリング検出については CEditApp::OpenNewEditor を参照
+	::SetTimer( m_hWnd, IDT_FIRST_IDLE, 0, NULL );
 
 	MyInitCommonControls();	// 2006.06.19 ryoji コモンコントロールの初期化を CreateToolBar() から移動
 
@@ -2966,6 +2974,7 @@ end_of_drop_query:;
 
 /*! WM_TIMER 処理 
 	@date 2007.04.03 ryoji 新規
+	@date 2008.04.19 ryoji IDT_FIRST_IDLE での MYWM_FIRST_IDLE ポスト処理を追加
 */
 LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 {
@@ -2983,6 +2992,10 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 		break;
 	case IDT_SYSMENU:
 		OnSysMenuTimer();
+		break;
+	case IDT_FIRST_IDLE:
+		CShareData::getInstance()->PostMessageToAllEditors( MYWM_FIRST_IDLE, ::GetCurrentProcessId(), 0, NULL );	// プロセスの初回アイドリング通知	// 2008.04.19 ryoji
+		::KillTimer( m_hWnd, wParam );
 		break;
 	default:
 		return 1L;

@@ -14,6 +14,7 @@
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1314,10 +1315,12 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharC
 /** 現在の編集ウィンドウの数を調べる
 
 	@param nGroup [in] グループ指定（0:全グループ）
+	@param bExcludeClosing [in] 終了中の編集ウィンドウはカウントしない
 
 	@date 2007.06.22 ryoji nGroup引数を追加
+	@date 2008.04.19 ryoji bExcludeClosing引数を追加
 */
-int CShareData::GetEditorWindowsNum( int nGroup )
+int CShareData::GetEditorWindowsNum( int nGroup, bool bExcludeClosing/* = true */ )
 {
 	int		i;
 	int		j;
@@ -1327,11 +1330,12 @@ int CShareData::GetEditorWindowsNum( int nGroup )
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			if( nGroup != 0 && nGroup != GetGroupId( m_pShareData->m_pEditArr[i].m_hWnd ) )
 				continue;
+			if( bExcludeClosing && m_pShareData->m_pEditArr[i].m_bClosing )
+				continue;
 			j++;
 		}
 	}
 	return j;
-
 }
 
 
