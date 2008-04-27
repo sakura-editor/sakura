@@ -54,6 +54,7 @@
 #include "CSakuraEnvironment.h"
 #include "CNormalProcess.h"
 #include "CControlTray.h"
+#include "docplus/CModifyManager.h"
 
 #define IDT_ROLLMOUSE	1
 
@@ -92,6 +93,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	//	自動保存の設定	//	Aug, 21, 2000 genta
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
+
+	//$$ CModifyManager インスタンスを生成
+	CModifyManager::Instance();
 }
 
 

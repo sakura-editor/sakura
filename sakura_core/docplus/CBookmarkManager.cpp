@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CBookmarkManager.h"
+#include "docplus/CBookmarkManager.h"
 #include "CSearchAgent.h"
 
 bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }

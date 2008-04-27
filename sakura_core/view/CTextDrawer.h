@@ -46,7 +46,7 @@ public:
 
 	// -- -- タブ描画 -- -- //
 	//2007.08.28 kobake 追加
-	void DispTab( HDC hdc, DispPos* pDispPos, int nColorIdx ) const;
+	void DispTab( HDC hdc, DispPos* pDispPos, EColorIndexType nColorIdx ) const;
 	//タブ矢印描画関数	//@@@ 2003.03.26 MIK
 	void _DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, int bBold, COLORREF pColor ) const;
 
@@ -69,7 +69,7 @@ public:
 
 protected:
 	// -- -- 実装補助 -- -- //
-	int _GetColorIdx(int nColorIdx,bool bSearchStringMode) const;
+	EColorIndexType _GetColorIdx(EColorIndexType nColorIdx,bool bSearchStringMode) const;
 
 
 private:

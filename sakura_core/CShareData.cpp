@@ -246,7 +246,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1004;
+const unsigned int uShareDataVersion = 1005;
 
 /*
 ||	Singleton風
@@ -821,8 +821,6 @@ CTypeConfig CShareData::GetDocumentTypeExt( const TCHAR* pszExt )
 */
 BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 {
-	DBPRINT_A("AddEditWndList %08X",hWnd);
-
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
 	EditNode	sMyEditNode;

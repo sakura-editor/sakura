@@ -697,14 +697,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CBookmarkManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CBookmarkManager.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CBregexp.cpp"
 				>
 				<FileConfiguration
@@ -918,14 +910,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CDicMgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CDiffManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CDiffManager.h"
 				>
 			</File>
 			<File
@@ -1794,14 +1778,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CMigemo.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CModifyManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CModifyManager.h"
 				>
 			</File>
 			<File
@@ -4781,6 +4757,34 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\window\CWnd.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="docplus"
+				>
+				<File
+					RelativePath="..\sakura_core\docplus\CBookmarkManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\docplus\CBookmarkManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\docplus\CDiffManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\docplus\CDiffManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\docplus\CModifyManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\docplus\CModifyManager.h"
 					>
 				</File>
 			</Filter>

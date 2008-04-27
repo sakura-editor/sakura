@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CModifyManager.h"
+#include "docplus/CModifyManager.h"
 
 
 void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
@@ -12,8 +12,14 @@ void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
 
 
 
-bool CModifyVisitor::IsLineModified(const CDocLine* pcDocLine) const{ return pcDocLine->m_sMark.m_cModified; }
-void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, bool bModified){ pcDocLine->m_sMark.m_cModified = bModified; }
+bool CModifyVisitor::IsLineModified(const CDocLine* pcDocLine) const
+{
+	return pcDocLine->m_sMark.m_cModified;
+}
+void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, bool bModified)
+{
+	pcDocLine->m_sMark.m_cModified = bModified;
+}
 
 /* 行変更状態をすべてリセット */
 /*
@@ -34,7 +40,7 @@ void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr)
 	CDocLine* pDocLine = pcDocLineMgr->GetDocLineTop();
 	while( pDocLine ){
 		CDocLine* pDocLineNext = pDocLine->GetNextLine();
-		pDocLine->m_sMark.m_cModified = false;
+		SetLineModified(pDocLine, false);
 		pDocLine = pDocLineNext;
 	}
 }

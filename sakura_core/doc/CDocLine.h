@@ -23,9 +23,9 @@ class CDocLine;
 #include "CEol.h"
 #include "CMemory.h"
 
-#include "CBookmarkManager.h"
-#include "CDiffManager.h"
-#include "CModifyManager.h"
+#include "docplus/CBookmarkManager.h"
+#include "docplus/CDiffManager.h"
+#include "docplus/CModifyManager.h"
 
 class COpeBlk;
 

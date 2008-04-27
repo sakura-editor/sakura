@@ -15,7 +15,7 @@ bool CDraw_Tab::EnterColor(SDrawStrategyInfo* pInfo)
 	if( pInfo->pLine[pInfo->nPos] == WCODE::TAB ){
 		if( pInfo->DrawToHere() ){
 			// FŒˆ’è
-			int	nColorIdx;
+			EColorIndexType	nColorIdx;
 			if( pInfo->bSearchStringMode ){
 				nColorIdx = COLORIDX_SEARCH;
 			}else{

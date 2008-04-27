@@ -41,7 +41,6 @@
 #include "dlg/CDlgPrintPage.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "CPrintPreview.h" /// 2002/2/3 aroka
-#include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "CCommandLine.h" /// 2003/1/26 aroka
 #include "macro/CSMacroMgr.h" // Jun. 16, 2002 genta
 #include "COsVersioninfo.h"	// Sep. 6, 2003 genta
