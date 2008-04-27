@@ -17,7 +17,11 @@ class CLineModified{
 public:
 	CLineModified() : m_bModified(true) { }
 	operator bool() const{ return m_bModified; }
-	CLineModified& operator = (bool b){ m_bModified = b; return *this; }
+	CLineModified& operator = (bool b)
+	{
+		m_bModified = b;
+		return *this;
+	}
 private:
 	bool m_bModified;
 };

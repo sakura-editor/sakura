@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CDiffManager.h"
+#include "docplus/CDiffManager.h"
 
 
 EDiffMark CDiffLineGetter::GetLineDiffMark() const{ return (EDiffMark)m_pcDocLine->m_sMark.m_cDiffmarked; }

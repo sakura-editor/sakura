@@ -204,7 +204,7 @@ typedef enumSmartIndentType ESmartIndentType; //2007.11.29 kobake
 // Stonee 注： 2000/01/12
 // ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
 //	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
-SAKURA_CORE_API enum enumColorIndexType {
+SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_TEXT		= 0,	/* テキスト */
 	COLORIDX_RULER		= 1,	/* ルーラー */
 	COLORIDX_CARET		= 2,	/* キャレット */	// 2006.12.07 ryoji
@@ -265,7 +265,6 @@ SAKURA_CORE_API enum enumColorIndexType {
 	// -- -- 1000-1099 : カラー表示制御用(正規表現キーワード) -- -- //
 };
 //	To Here Sept. 18, 2000
-typedef enumColorIndexType EColorIndexType;
 
 //正規表現キーワードのEColorIndexType値を作る関数
 inline EColorIndexType MakeColorIndexType_RegularExpression(int nRegExpIndex)

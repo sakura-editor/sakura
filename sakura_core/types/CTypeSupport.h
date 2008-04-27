@@ -11,7 +11,7 @@ private:
 	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //無効な色定数
 
 public:
-	CTypeSupport(const CEditView* pEditView,int nColorIdx)
+	CTypeSupport(const CEditView* pEditView,EColorIndexType nColorIdx)
 	: m_pFontset(&pEditView->GetFontset())
 	, m_nColorIdx(nColorIdx)
 	{
@@ -170,9 +170,9 @@ public:
 
 
 private:
-	const CViewFont* m_pFontset;
-	const STypeConfig*     m_pTypes;
-	int              m_nColorIdx;
+	const CViewFont*		m_pFontset;
+	const STypeConfig*		m_pTypes;
+	EColorIndexType			m_nColorIdx;
 
 	HDC       m_hdc;        //設定を変更したHDC
 	HFONT     m_hfntOld;    //SetFont     以前に選択されていたフォント

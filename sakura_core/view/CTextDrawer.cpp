@@ -18,11 +18,11 @@ const CTextArea* CTextDrawer::GetTextArea() const
 
 using namespace std;
 
-int CTextDrawer::_GetColorIdx(int nColorIdx,bool bSearchStringMode) const
+EColorIndexType CTextDrawer::_GetColorIdx(EColorIndexType nColorIdx,bool bSearchStringMode) const
 {
-	if(bSearchStringMode)return COLORIDX_SEARCH;                        //検索ヒット色
-	if(CTypeSupport(m_pEditView,nColorIdx).IsDisp())return nColorIdx; //特殊色
-	return 0;                                                           //通常色
+	if(bSearchStringMode)return COLORIDX_SEARCH;						//検索ヒット色
+	if(CTypeSupport(m_pEditView,nColorIdx).IsDisp())return nColorIdx;	//特殊色
+	return COLORIDX_TEXT;												//通常色
 }
 
 
@@ -43,10 +43,6 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 	const CTextMetrics* pMetrics=&m_pEditView->GetTextMetrics();
 	const CTextArea* pArea=GetTextArea();
 
-	//
-	int nDy = m_pEditView->GetTextMetrics().GetHankakuDy();
-	int nDx = m_pEditView->GetTextMetrics().GetHankakuDx();
-
 	//文字間隔配列を生成
 	vector<int> vDxArray;
 	const int* pDxArray=pMetrics->GenerateDxArray(&vDxArray,pData,nLength,this->m_pEditView->GetTextMetrics().GetHankakuDx());
@@ -59,10 +55,13 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 	rcClip.left   = x;
 	rcClip.right  = x + nTextWidth;
 	rcClip.top    = y;
-	rcClip.bottom = y + nDy;
+	rcClip.bottom = y + m_pEditView->GetTextMetrics().GetHankakuDy();
 	if( rcClip.left < pArea->GetAreaLeft() ){
 		rcClip.left = pArea->GetAreaLeft();
 	}
+
+	//文字間隔
+	int nDx = m_pEditView->GetTextMetrics().GetHankakuDx();
 
 	if( rcClip.left < rcClip.right
 	 && rcClip.left < pArea->GetAreaRight() && rcClip.right > pArea->GetAreaLeft()
@@ -350,7 +349,7 @@ void CTextDrawer::DispEOL(HDC hdc, DispPos* pDispPos, CEol cEol, bool bSearchStr
 //                         タブ描画                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CTextDrawer::DispTab( HDC hdc, DispPos* pDispPos, int nColorIdx ) const
+void CTextDrawer::DispTab( HDC hdc, DispPos* pDispPos, EColorIndexType nColorIdx ) const
 {
 	DispPos& sPos=*pDispPos;
 	const CEditView* pView=m_pEditView;
@@ -835,7 +834,7 @@ void CTextDrawer::DispLineNumber(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                     nColorIndexを決定                       //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	int nColorIndex = COLORIDX_GYOU;	/* 行番号 */
+	EColorIndexType nColorIndex = COLORIDX_GYOU;	/* 行番号 */
 	const CDocLine*	pCDocLine;
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
@@ -1034,7 +1033,5 @@ void CTextDrawer::DispLineNumber(
 
 		cColorType.RewindPen(hdc);
 	}
-	
-	return;
 }
 
