@@ -2,6 +2,10 @@
 #include "doc/CDocListener.h"
 #include <map>
 
+bool SLoadInfo::IsSamePath(LPCTSTR pszPath) const
+{
+	return _tcsicmp(this->cFilePath,pszPath)==0;
+}
 bool SSaveInfo::IsSamePath(LPCTSTR pszPath) const
 {
 	return _tcsicmp(this->cFilePath,pszPath)==0;

@@ -16,7 +16,7 @@
 
 #include "stdafx.h"
 #include "CProcess.h"
-#include "debug.h"
+#include "debug/Debug.h"
 
 /*!
 	@brief プロセス基底クラス

@@ -23,7 +23,7 @@
 #include "dlg/CDlgInput1.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "sakura_rc.h"	// 2002/2/10 aroka
-#include "debug.h"		// 2002/2/10 aroka
+#include "debug/Debug.h"		// 2002/2/10 aroka
 #include "util/shell.h"
 
 // ˆóüİ’è CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK

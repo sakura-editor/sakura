@@ -28,9 +28,9 @@
 #include <mbstring.h>
 #include "sakura_rc.h"
 #include "view/CEditView.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "funccode.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "charcode.h"
 #include "CControlTray.h"
 #include "CWaitCursor.h"
@@ -42,7 +42,7 @@
 #include "dlg/CDlgCompare.h"
 #include "global.h"
 #include <htmlhelp.h>
-#include "CRunningtimer.h"
+#include "debug/CRunningTimer.h"
 #include "dlg/CDlgExec.h"
 #include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO ’Ç‰Á
 #include "COpe.h"/// 2002/2/3 aroka ’Ç‰Á from here
@@ -56,7 +56,7 @@
 #include "mymessage.h"/// 2002/2/3 aroka ’Ç‰Á to here
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "CPrintPreview.h"
-#include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "dlg/CDlgCancel.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK

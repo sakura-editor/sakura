@@ -4,7 +4,7 @@
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "CTextMetrics.h"
-#include "CMemoryIterator.h"
+#include "mem/CMemoryIterator.h"
 #include "doc/CLayout.h"
 #include "charcode.h"
 #include "window/CEditWnd.h"

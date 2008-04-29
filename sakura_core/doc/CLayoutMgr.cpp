@@ -18,14 +18,14 @@
 #include "CShareData.h" // 2005.11.20 Moca
 
 #include "charcode.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include <commctrl.h>
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "doc/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CDocLine.h"/// 2002/2/10 aroka
 #include "doc/CDocLineMgr.h"/// 2002/2/10 aroka
-#include "CMemory.h"/// 2002/2/10 aroka
-#include "CMemoryIterator.h" // 2006.07.29 genta
+#include "mem/CMemory.h"/// 2002/2/10 aroka
+#include "mem/CMemoryIterator.h" // 2006.07.29 genta
 #include "basis/SakuraBasis.h"
 
 

@@ -43,16 +43,28 @@ next:
 	}
 
 	// 読み取り可能チェック
-	if(pcDoc->m_cDocFile.IsFileExist() && !pcDoc->m_cDocFile.IsFileReadable()){
-		ErrorMessage(
-			CEditWnd::Instance()->GetHwnd(),
-			_T("\'%ls\'\n")
-			_T("というファイルを開けません。\n")
-			_T("読み込みアクセス権がありません。"),
-			pLoadInfo->cFilePath.c_str()
-		);
-		return CALLBACK_INTERRUPT; //ファイルが存在しているのに読み取れない場合は中断
+	do{
+		CFile cFile(pLoadInfo->cFilePath.c_str());
+
+		//ファイルが存在しない場合はチェック省略
+		if(!cFile.IsFileExist())break;
+
+		//ロックしている場合はチェック省略
+		if(pLoadInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocFile.IsFileLocking())break;
+
+		//チェック
+		if(!cFile.IsFileReadable()){
+			ErrorMessage(
+				CEditWnd::Instance()->GetHwnd(),
+				_T("\'%ls\'\n")
+				_T("というファイルを開けません。\n")
+				_T("読み込みアクセス権がありません。"),
+				pLoadInfo->cFilePath.c_str()
+			);
+			return CALLBACK_INTERRUPT; //ファイルが存在しているのに読み取れない場合は中断
+		}
 	}
+	while(false);
 
 	return CALLBACK_CONTINUE;
 }

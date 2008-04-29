@@ -20,7 +20,7 @@
 #include <windows.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 
 /*!
 	Windows Entry point

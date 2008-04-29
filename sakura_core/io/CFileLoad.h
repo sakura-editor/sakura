@@ -29,7 +29,7 @@
 		   distribution.
 */
 #include <windows.h>
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 #ifndef _CFILELOAD_H_
 #define _CFILELOAD_H_

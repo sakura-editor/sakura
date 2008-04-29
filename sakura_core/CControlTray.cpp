@@ -27,7 +27,7 @@
 #define ID_HOTKEY_TRAYMENU	0x1234
 
 #include <windows.h>
-#include "debug.h"
+#include "debug/Debug.h"
 #include "CControlTray.h"
 #include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
@@ -35,7 +35,7 @@
 #include "mymessage.h"
 #include "dlg/CDlgOpenFile.h"
 #include "global.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include <htmlhelp.h>
 #include "CEditApp.h"
 #include "util/module.h"

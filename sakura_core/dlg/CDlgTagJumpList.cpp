@@ -44,7 +44,7 @@
 #include "CSortedTagJumpList.h"
 //#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "recent/CRecent.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "charcode.h"
 #include "util/shell.h"
 #include "util/file.h"

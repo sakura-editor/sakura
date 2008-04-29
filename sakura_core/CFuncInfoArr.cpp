@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "CFuncInfoArr.h"
-#include "debug.h"// 2002/2/10 aroka
+#include "debug/Debug.h"// 2002/2/10 aroka
 
 
 /* CFuncInfoArrÉNÉâÉXç\íz */

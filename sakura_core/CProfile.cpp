@@ -37,7 +37,7 @@
 #include <string.h>
 #include <algorithm>
 #include "CProfile.h"
-#include "Debug.h"
+#include "debug/Debug.h"
 #include "io/CTextStream.h"
 using namespace std;
 

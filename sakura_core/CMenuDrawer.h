@@ -22,7 +22,7 @@ class CMenuDrawer;
 
 #include <windows.h>
 #include "CShareData.h" // MAX_TOOLBARBUTTONS
-#include "CMemory.h"// 2002/2/10 aroka
+#include "mem/CMemory.h"// 2002/2/10 aroka
 class CImageListMgr;// 2002/2/10 aroka
 
 //#define MAX_MENUPOS	10

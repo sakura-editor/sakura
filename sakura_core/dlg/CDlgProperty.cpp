@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "dlg/CDlgProperty.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "global.h"		// Moca, 2002/05/26

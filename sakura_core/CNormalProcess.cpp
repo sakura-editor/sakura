@@ -23,12 +23,12 @@
 #include "CCommandLine.h"
 #include "CControlTray.h"
 #include "CShareData.h"
-#include "Debug.h"
+#include "debug/Debug.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
 #include "mymessage.h" // 2002/2/3 aroka
 #include "doc/CDocLine.h" // 2003/03/28 MIK
 #include <tchar.h>
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "util/window.h"
 #include "util/file.h"
 

@@ -32,7 +32,7 @@
 #include "stdafx.h"
 #include "charcode.h"
 #include "doc/CDocLineMgr.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "charcode.h"
 // Oct 6, 2000 ao
 #include <stdio.h>
@@ -41,12 +41,12 @@
 #include "CBregexp.h"
 #include <commctrl.h>
 #include "global.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 
 //	May 15, 2000 genta
 #include "CEol.h"
 #include "doc/CDocLine.h"// 2002/2/10 aroka ÉwÉbÉ_êÆóù
-#include "CMemory.h"// 2002/2/10 aroka
+#include "mem/CMemory.h"// 2002/2/10 aroka
 
 #include "io/CFileLoad.h" // 2002/08/30 Moca
 #include "io/CIoBridge.h"

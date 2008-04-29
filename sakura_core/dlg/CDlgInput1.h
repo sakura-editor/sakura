@@ -17,7 +17,7 @@ class CDlgInput1;
 #define _CDLGINPUT1_H_
 
 #include <windows.h>
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 
 /*-----------------------------------------------------------------------

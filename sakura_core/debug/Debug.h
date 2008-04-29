@@ -151,8 +151,8 @@ void DBMSG_IMP(const ACHAR* msg); //!< ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ð•\Ž¦BƒLƒƒƒvƒVƒ‡ƒ“‚É‚
 
 
 
-#include "Debug2.h"
-#include "Debug3.h"
+#include "debug/Debug2.h"
+#include "debug/Debug3.h"
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _DEBUG_H_ */

@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "window/CSplitterWnd.h"
 #include "window/CSplitBoxWnd.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "mymessage.h"
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"

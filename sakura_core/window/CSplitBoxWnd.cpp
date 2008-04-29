@@ -14,7 +14,7 @@
 */
 #include "stdafx.h"
 #include "window/CSplitBoxWnd.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "mymessage.h"// 2002/2/3 aroka
 
 CSplitBoxWnd::CSplitBoxWnd()

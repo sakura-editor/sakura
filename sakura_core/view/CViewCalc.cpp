@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CViewCalc.h"
-#include "CMemoryIterator.h"
+#include "mem/CMemoryIterator.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "doc/CLayout.h"

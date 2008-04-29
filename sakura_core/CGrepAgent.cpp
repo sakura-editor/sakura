@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CGrepAgent.h"
 #include "util/window.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "dlg/CDlgCancel.h"
 #include "COpeBlk.h"
 #include "util/module.h"

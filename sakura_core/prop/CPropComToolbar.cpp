@@ -20,7 +20,7 @@
 #include "prop/CPropCommon.h"
 #include "CMenuDrawer.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2005/8/9 aroka
-#include "debug.h" // 2002/2/10 aroka
+#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 
 

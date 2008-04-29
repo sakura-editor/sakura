@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Debug.h"
+#include "debug/Debug.h"
 
 //! ヒープを用いないvector
 //2007.09.23 kobake 作成。

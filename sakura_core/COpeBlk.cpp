@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "COpeBlk.h"
-#include "debug.h"
+#include "debug/Debug.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

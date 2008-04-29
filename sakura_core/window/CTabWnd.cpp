@@ -36,7 +36,7 @@
 #include "stdafx.h"
 #include <windows.h>
 #include "CTabWnd.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "window/CEditWnd.h"
 #include "global.h"
 #include "mymessage.h"

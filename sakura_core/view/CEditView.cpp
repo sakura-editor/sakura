@@ -24,8 +24,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include "view/CEditView.h"
-#include "debug.h"
-#include "CRunningTimer.h"
+#include "debug/Debug.h"
+#include "debug/CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
 #include "CWaitCursor.h"
@@ -40,7 +40,7 @@
 #include "CMarkMgr.h"///
 #include "COsVersionInfo.h"
 #include "io/CFileLoad.h" // 2002/08/30 Moca
-#include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "CClipboard.h"
 #include "types/CTypeSupport.h"
 #include "parse/CWordParse.h"

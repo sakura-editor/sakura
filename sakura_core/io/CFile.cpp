@@ -1,15 +1,18 @@
 #include "stdafx.h"
-#include "CFile.h"
+#include "io/CFile.h"
 #include <io.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CFile::CFile()
+CFile::CFile(LPCTSTR pszPath)
 : m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )
 , m_hLockedFile( INVALID_HANDLE_VALUE )
 {
+	if(pszPath){
+		SetFilePath(pszPath);
+	}
 }
 
 CFile::~CFile()

@@ -13,7 +13,7 @@ enum EShareMode{
 class CFile{
 public:
 	//コンストラクタ・デストラクタ
-	CFile();
+	CFile(LPCTSTR pszPath = NULL);
 	virtual ~CFile();
 	//パス
 	const CFilePath& GetFilePathClass() const { return m_szFilePath; }

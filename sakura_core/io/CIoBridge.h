@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CMemory.h"
+#include "mem/CMemory.h"
 #include "charset/CCodeBase.h"
 
 class CIoBridge{

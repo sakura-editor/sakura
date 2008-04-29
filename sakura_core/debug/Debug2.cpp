@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Debug2.h"
+#include "debug/Debug2.h"
 
 //2007.08.30 kobake ’Ç‰Á
 

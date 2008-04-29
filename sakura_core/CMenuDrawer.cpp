@@ -21,7 +21,7 @@
 #include "CMenuDrawer.h"
 #include "sakura_rc.h"
 #include "global.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "window/CSplitBoxWnd.h"
 #include "window/CEditWnd.h"
 #include "CImageListMgr.h"

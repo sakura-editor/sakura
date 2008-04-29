@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Debug3.h"
+#include "debug/Debug3.h"
 
 static HINSTANCE hDll=NULL;
 static void Load()

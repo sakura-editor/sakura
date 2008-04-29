@@ -19,7 +19,7 @@ class CHokanMgr;
 
 #include "dlg/CDialog.h"
 #include <windows.h>
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 class CEditView;
 

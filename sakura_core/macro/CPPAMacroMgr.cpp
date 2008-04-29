@@ -14,7 +14,7 @@
 #include "stdafx.h"
 #include "CPPAMacroMgr.h"
 #include "CPPA.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include <string.h>
 #include "io/CTextStream.h"

@@ -15,9 +15,9 @@
 */
 
 #include "stdafx.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "global.h"
-#include "debug.h"
+#include "debug/Debug.h"
 
 
 int CRunningTimer::m_nNestCount = 0;

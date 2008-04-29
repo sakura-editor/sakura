@@ -19,7 +19,7 @@
 #include "prop/CPropCommon.h"
 #include "dlg/CDlgInput1.h"
 #include "dlg/CDlgOpenFile.h"
-#include "debug.h" // 2002/2/10 aroka
+#include "debug/Debug.h" // 2002/2/10 aroka
 #include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/file.h"

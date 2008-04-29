@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "prop/CPropCommon.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include <windows.h>
 #include <stdio.h>
 #include <commctrl.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CFile.h"
+#include "io/CFile.h"
 #include "util/file.h"
 class CEditDoc;
 

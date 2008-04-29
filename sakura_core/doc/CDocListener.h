@@ -39,6 +39,15 @@ enum ECallbackResult{
 //###
 struct SLoadInfo
 {
+	//入力
+	CFilePath	cFilePath;
+	ECodeType	eCharCode;
+	bool		bViewMode;
+	bool		bRequestReload;	//リロード要求
+
+	//出力
+	bool		bOpened;
+
 	SLoadInfo()
 	: cFilePath(_T(""))
 	, eCharCode(CODE_AUTODETECT)
@@ -56,14 +65,8 @@ struct SLoadInfo
 	{
 	}
 
-	//入力
-	CFilePath	cFilePath;
-	ECodeType	eCharCode;
-	bool		bViewMode;
-	bool		bRequestReload;	//リロード要求
-
-	//出力
-	bool		bOpened;
+	//! ファイルパスの比較
+	bool IsSamePath(LPCTSTR pszPath) const;
 };
 
 struct SSaveInfo{

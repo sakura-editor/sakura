@@ -2,7 +2,7 @@
 #include "CViewSelect.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "CMemoryIterator.h"
+#include "mem/CMemoryIterator.h"
 #include "doc/CLayout.h"
 #include "window/CEditWnd.h"
 

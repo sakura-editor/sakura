@@ -57,7 +57,7 @@ struct EditNode {
 
 //20020129 aroka
 #include "funccode.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 #include "CMutex.h"	// 2007.07.07 genta
 

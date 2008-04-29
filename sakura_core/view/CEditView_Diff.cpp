@@ -32,7 +32,7 @@
 #include "CWaitCursor.h"
 #include "COsVersionInfo.h"
 #include "mymessage.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "util/module.h"
 #include "util/file.h"
 #include "window/CEditWnd.h"

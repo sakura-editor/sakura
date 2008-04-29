@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "types/CPropTypes.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include <windows.h>
 #include <commctrl.h>
 #include "dlg/CDlgOpenFile.h"
