@@ -2,6 +2,7 @@
 #include "CMruListener.h"
 #include "doc/CEditDoc.h"
 #include "util/file.h"
+#include "charset/CCodeMediator.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
@@ -21,85 +22,82 @@ void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
 ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
-	bool bConfirmCodeChange = GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange;
 
-	/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
-	CMRU		cMRU;
-	BOOL		bIsExistInMRU;
+	// 文字コード指定は明示的であるか
+	bool bSpecified = IsValidCodeType(pLoadInfo->eCharCode);
+
+	// 前回のコード -> ePrevCode
 	EditInfo	fi;
-	if ( cMRU.GetEditInfo( pLoadInfo->cFilePath, &fi ) ){
-		bIsExistInMRU = TRUE;
-
-		// 前回に指定された文字コード種別に変更する
-		if( CODE_NONE == pcDoc->m_cDocFile.m_sFileInfo.eCharCode ){
-			pcDoc->m_cDocFile.m_sFileInfo.eCharCode = fi.m_nCharCode;
-		}
-		
-		// 文字コード指定の再オープンなら前回を無視
-		if( !bConfirmCodeChange && CODE_AUTODETECT==pcDoc->m_cDocFile.m_sFileInfo.eCharCode ){
-			pcDoc->m_cDocFile.m_sFileInfo.eCharCode = fi.m_nCharCode;
-		}
-
-		// 存在しないファイルの文字コード指定なしなら前回を継承
-		if( !fexist(pLoadInfo->cFilePath) && CODE_AUTODETECT==pcDoc->m_cDocFile.m_sFileInfo.eCharCode ){
-			pcDoc->m_cDocFile.m_sFileInfo.eCharCode = fi.m_nCharCode;
-		}
-	}
-	else {
-		bIsExistInMRU = FALSE;
+	ECodeType ePrevCode = CODE_NONE;
+	if(CMRU().GetEditInfo( pLoadInfo->cFilePath, &fi )){
+		ePrevCode = fi.m_nCharCode;
 	}
 
-	/* 文字コードが異なるときに確認する */
-	if( bConfirmCodeChange && bIsExistInMRU ){
-		if (pcDoc->m_cDocFile.m_sFileInfo.eCharCode != fi.m_nCharCode ) {	// MRU の文字コードと判別が異なる
-			const TCHAR* pszCodeName = NULL;
-			const TCHAR* pszCodeNameNew = NULL;
+	// 指定のコード -> pLoadInfo->eCharCode
+	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
+		if( fexist(pLoadInfo->cFilePath) ){
+			pLoadInfo->eCharCode = CCodeMediator::CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
+		}
+		else{
+			pLoadInfo->eCharCode = ePrevCode;
+		}
+	}
+	else if( CODE_NONE == pLoadInfo->eCharCode ){
+		pLoadInfo->eCharCode = ePrevCode;
+	}
+	if(CODE_NONE==pLoadInfo->eCharCode)pLoadInfo->eCharCode = CODE_DEFAULT;	//無効値の回避
 
-			// gm_pszCodeNameArr_Normal を使うように変更 Moca. 2002/05/26
-			if(IsValidCodeType(fi.m_nCharCode)){
-				pszCodeName = CCodeTypeName(fi.m_nCharCode).Normal();
+	//食い違う場合
+	if(IsValidCodeType(ePrevCode) && pLoadInfo->eCharCode!=ePrevCode){
+		//オプション：前回と文字コードが異なるときに問い合わせを行う
+		if( GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange ){
+			const TCHAR* pszCodeNameOld = CCodeTypeName(ePrevCode).Normal();
+			const TCHAR* pszCodeNameNew = CCodeTypeName(pLoadInfo->eCharCode).Normal();
+			::MessageBeep( MB_ICONQUESTION );
+			int nRet = MYMESSAGEBOX(
+				CEditWnd::Instance()->GetHwnd(),
+				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+				_T("文字コード情報"),
+				_T("%ts\n")
+				_T("\n")
+				_T("このファイルを文字コード %ts で開こうとしていますが、前回は別の文字コード %ts で開かれています。\n")
+				_T("前回と同じ文字コードを使いますか？\n")
+				_T("\n")
+				_T("・[はい(Y)]  ＝%ts\n")
+				_T("・[いいえ(N)]＝%ts\n")
+				_T("・[キャンセル]＝開きません"),
+				pLoadInfo->cFilePath.c_str(),
+				pszCodeNameNew,
+				pszCodeNameOld,
+				pszCodeNameOld,
+				pszCodeNameNew
+			);
+			if( IDYES == nRet ){
+				// 前回の文字コードを採用する
+				pLoadInfo->eCharCode = ePrevCode;
 			}
-			if(IsValidCodeType(pcDoc->m_cDocFile.m_sFileInfo.eCharCode)){
-				pszCodeNameNew = CCodeTypeName(pcDoc->m_cDocFile.m_sFileInfo.eCharCode).Normal();
+			else if( IDNO == nRet ){
+				// 元々使おうとしていた文字コードを採用する
+				pLoadInfo->eCharCode = pLoadInfo->eCharCode;
 			}
-			if( pszCodeName != NULL ){
-				::MessageBeep( MB_ICONQUESTION );
-				int nRet = MYMESSAGEBOX(
-					CEditWnd::Instance()->GetHwnd(),
-					MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-					_T("文字コード情報"),
-					_T("%ts\n\nこのファイルは、前回は別の文字コード %ts で開かれています。\n")
-					_T("前回と同じ文字コードを使いますか？\n")
-					_T("\n")
-					_T("・[はい(Y)]  ＝%ts\n")
-					_T("・[いいえ(N)]＝%ts\n")
-					_T("・[キャンセル]＝開きません"),
-					pcDoc->m_cDocFile.GetFilePath(),
-					pszCodeName,
-					pszCodeName,
-					pszCodeNameNew
-				);
-				if( IDYES == nRet ){
-					/* 前回に指定された文字コード種別に変更する */
-					pcDoc->m_cDocFile.m_sFileInfo.eCharCode = fi.m_nCharCode;
-				}
-				else if( IDCANCEL == nRet ){
-					pcDoc->m_cDocFile.m_sFileInfo.eCharCode = CODE_DEFAULT;
-					//	Sep. 10, 2002 genta
-					pcDoc->SetFilePathAndIcon( _T("") );
-					return CALLBACK_INTERRUPT;
-				}
-			}else{
-				PleaseReportToAuthor(
-					CEditWnd::Instance()->GetHwnd(),
-					_T("バグじゃぁあああ！！！")
-				);
-				//	Sep. 10, 2002 genta
-				pcDoc->SetFilePathAndIcon( _T("") );
+			else if( IDCANCEL == nRet ){
 				return CALLBACK_INTERRUPT;
 			}
 		}
+		//食い違っても問い合わせを行わない場合
+		else{
+			//デフォルトの回答
+			//  自動判別の場合：前回の文字コードを採用
+			//  明示指定の場合：明示指定の文字コードを採用
+			if(!bSpecified){ //自動判別
+				pLoadInfo->eCharCode = ePrevCode;
+			}
+			else{ //明示指定
+				pLoadInfo->eCharCode = pLoadInfo->eCharCode;
+			}
+		}
 	}
+
 	return CALLBACK_CONTINUE;
 }
 
