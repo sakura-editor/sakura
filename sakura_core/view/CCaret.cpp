@@ -549,9 +549,6 @@ void CCaret::ShowEditCaret()
 	m_crCaret = crCaret;	//	2006.12.07 ryoji
 	m_pEditView->m_crBack = crBack;		//	2006.12.07 ryoji
 	m_pEditView->SetIMECompFormPos();
-
-
-	return;
 }
 
 
@@ -898,9 +895,12 @@ void CCaret::CopyCaretStatus(CCaret* pCaret) const
 
 POINT CCaret::CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const
 {
-	int nPosX = m_pEditView->GetTextArea().GetAreaLeft() + (Int)(ptCaretPos.x - m_pEditView->GetTextArea().GetViewLeftCol()) * GetHankakuDx();
-	int nPosY = m_pEditView->GetTextArea().GetAreaTop()  + (Int)(ptCaretPos.y - m_pEditView->GetTextArea().GetViewTopLine()) * m_pEditView->GetTextMetrics().GetHankakuDy()
-		+ m_pEditView->GetTextMetrics().GetHankakuDy() - GetCaretSize().cy; //‰ºŠñ‚¹
+	int nPosX = m_pEditView->GetTextArea().GetAreaLeft()
+		+ (Int)(ptCaretPos.x - m_pEditView->GetTextArea().GetViewLeftCol()) * GetHankakuDx();
+
+	int nPosY = m_pEditView->GetTextArea().GetAreaTop()
+		+ (Int)(ptCaretPos.y - m_pEditView->GetTextArea().GetViewTopLine()) * m_pEditView->GetTextMetrics().GetHankakuDy()
+		+ m_pEditView->GetTextMetrics().GetHankakuHeight() - GetCaretSize().cy; //‰ºŠñ‚¹
 
 	return CMyPoint(nPosX,nPosY);
 }
