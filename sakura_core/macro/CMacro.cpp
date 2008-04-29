@@ -705,7 +705,7 @@ void CMacro::HandleCommand(
 			if( lFlag & 0x40 )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
 			else _tcscat( pOpt, _T("1") );
 			if( 0 < _tcslen( pOpt ) ){
-				cCmdLine.AppendF( _T(" -GOPT="), pOpt );
+				cCmdLine.AppendF( _T(" -GOPT=%ts"), pOpt );
 			}
 
 			/* 新規編集ウィンドウの追加 ver 0 */
