@@ -133,38 +133,26 @@ int CEditView::GetColorIndex(
 	//	May 9, 2000 genta
 	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 
-	const wchar_t*			pLine;	//@@@ 2002.09.22 YAZAKI
-	CLogicInt				nLineLen;
 	int						nLineBgn;
-	int						nCOMMENTMODE;
-	int						nCOMMENTMODE_OLD;
-	int						nCOMMENTEND;
-	int						nCOMMENTEND_OLD;
 	const CLayout*			pcLayout2;
-	int						i, j;
-	int						nIdx;
-	int						nUrlLen;
-	BOOL					bSearchStringMode;
 	bool					bSearchFlg;			// 2002.02.08 hor
-	bool					bKeyWordTop = true;	//	Keyword Top
-	int						nColorIndex;
+	SColorInfo sInfo;
+	SColorInfo* pInfo = &sInfo;
+	sInfo.pcView = this;
+	sInfo.bKeyWordTop = true;	//	Keyword Top
 
-//@@@ 2001.11.17 add start MIK
-	int		nMatchLen;
-	int		nMatchColor;
-//@@@ 2001.11.17 add end MIK
 
-	bSearchStringMode = FALSE;
+	pInfo->bSearchStringMode = FALSE;
 	bSearchFlg	= true;	// 2002.02.08 hor
 
 	CLogicInt	nSearchStart = CLogicInt(-1);
 	CLogicInt	nSearchEnd   = CLogicInt(-1);
 
 	/* 論理行データの取得 */
-	if( NULL != pcLayout ){
+	if( pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->GetDocLineRef()->GetLengthWithEOL()/* - pcLayout->GetLogicOffset()*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
-		pLine = pcLayout->GetPtr()/* + pcLayout->GetLogicOffset()*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pInfo->nLineLen = pcLayout->GetDocLineRef()->GetLengthWithEOL()/* - pcLayout->GetLogicOffset()*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pInfo->pLine = pcLayout->GetPtr()/* + pcLayout->GetLogicOffset()*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		const CLayout* pcLayoutLineFirst = pcLayout;
@@ -172,32 +160,31 @@ int CEditView::GetColorIndex(
 		while( 0 != pcLayoutLineFirst->GetLogicOffset() ){
 			pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
 		}
-		nCOMMENTMODE = pcLayoutLineFirst->GetColorTypePrev();
-		nCOMMENTEND = 0;
+		pInfo->nCOMMENTMODE = pcLayoutLineFirst->GetColorTypePrev();
+		pInfo->nCOMMENTEND = 0;
 		pcLayout2 = pcLayout;
 
-	}else{
-		pLine = NULL;
-		nLineLen = CLogicInt(0);
-		nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-		nCOMMENTEND = 0;
+	}
+	else{
+		pInfo->pLine = NULL;
+		pInfo->nLineLen = CLogicInt(0);
+		pInfo->nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
+		pInfo->nCOMMENTEND = 0;
 		pcLayout2 = NULL;
 	}
 
 	/* 現在の色を指定 */
-	//@SetCurrentColor( hdc, nCOMMENTMODE );
-	nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
+	//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+	pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
 
-	int						nBgn;
-	CLogicInt				nPos;
-	nBgn = 0;
-	nPos = CLogicInt(0);
+	pInfo->nBgn = 0;
+	pInfo->nPos = CLogicInt(0);
 	nLineBgn = 0;
 
 	CLogicInt				nCharChars = CLogicInt(0);
-	CLogicInt				nCharChars_2;
+	CLogicInt				nCharChars_2; //##############################後で消す
 
-	if( NULL != pLine ){
+	if( NULL != pInfo->pLine ){
 
 		//@@@ 2001.11.17 add start MIK
 		if( TypeDataPtr->m_bUseRegexKeyword )
@@ -206,284 +193,56 @@ int CEditView::GetColorIndex(
 		}
 		//@@@ 2001.11.17 add end MIK
 
-		while( nPos <= nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
+		while( pInfo->nPos <= nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
 
-			nBgn = nPos;
-			nLineBgn = nBgn;
+			pInfo->nBgn = pInfo->nPos;
+			nLineBgn = pInfo->nBgn;
 
-			while( nPos - nLineBgn <= nCol ){	// 02/12/18 ai
+			while( pInfo->nPos - nLineBgn <= nCol ){	// 02/12/18 ai
 				/* 検索文字列の色分け */
 				if( m_bCurSrchKeyMark	/* 検索文字列のマーク */
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
 				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
-					if(!bSearchStringMode && (!m_sCurSearchOption.bRegularExp || (bSearchFlg && nSearchStart < nPos))){
-						bSearchFlg=IsSearchString( pLine, nLineLen, nPos, &nSearchStart, &nSearchEnd );
+					if(!pInfo->bSearchStringMode && (!m_sCurSearchOption.bRegularExp || (bSearchFlg && nSearchStart < pInfo->nPos))){
+						bSearchFlg=IsSearchString( pInfo->pLine, pInfo->nLineLen, pInfo->nPos, &nSearchStart, &nSearchEnd );
 					}
-					if( !bSearchStringMode && bSearchFlg && nSearchStart==nPos ){
-						nBgn = nPos;
-						bSearchStringMode = TRUE;
+					if( !pInfo->bSearchStringMode && bSearchFlg && nSearchStart==pInfo->nPos ){
+						pInfo->nBgn = pInfo->nPos;
+						pInfo->bSearchStringMode = TRUE;
 						/* 現在の色を指定 */
 						//@SetCurrentColor( hdc, COLORIDX_SEARCH ); // 2002/03/13 novice
-						nColorIndex = COLORIDX_SEARCH;	// 02/12/18 ai
+						pInfo->nColorIndex = COLORIDX_SEARCH;	// 02/12/18 ai
 					}
-					else if( bSearchStringMode && nSearchEnd == nPos ){
-						nBgn = nPos;
+					else if( pInfo->bSearchStringMode && nSearchEnd == pInfo->nPos ){
+						pInfo->nBgn = pInfo->nPos;
 						/* 現在の色を指定 */
-						//@SetCurrentColor( hdc, nCOMMENTMODE );
-						nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						bSearchStringMode = FALSE;
+						//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+						pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
+						pInfo->bSearchStringMode = FALSE;
 						goto searchnext;
 					}
 				}
 
-				if( nPos >= nLineLen - pcLayout2->GetLayoutEol().GetLen() ){
+				if( pInfo->nPos >= pInfo->nLineLen - pcLayout2->GetLayoutEol().GetLen() ){
 					goto end_of_line;
 				}
-				SEARCH_START:;
-				switch( nCOMMENTMODE ){
+SEARCH_START:;
+				switch( pInfo->nCOMMENTMODE ){
 				case COLORIDX_TEXT: // 2002/03/13 novice
-//@@@ 2001.11.17 add start MIK
-					//正規表現キーワード
-					if( TypeDataPtr->m_bUseRegexKeyword
-					 && m_cRegexKeyword->RegexIsKeyword( pLine, nPos, nLineLen, &nMatchLen, &nMatchColor )
-					 /*&& TypeDataPtr->m_ColorInfoArr[nMatchColor].m_bDisp*/ )
-					{
-						/* 現在の色を指定 */
-						nBgn = nPos;
-						nCOMMENTMODE = MakeColorIndexType_RegularExpression(nMatchColor);	/* 色指定 */	//@@@ 2002.01.04 upd
-						nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );	//@@@ 2002.01.04
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-					}
-					else
-//@@@ 2001.11.17 add end MIK
-					//	Mar. 15, 2000 genta
-					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cLineComment.Match( nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
-					){
-						nBgn = nPos;
+					if( CDraw_RegexKeyword().GetColorIndexImp(&sInfo) ) { }	//正規表現キーワード
+					else if( CDraw_LineComment().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_BlockComment().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_BlockComment2().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_SingleQuote().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_DoubleQuote().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_URL().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_Numeric().GetColorIndexImp(&sInfo) ) { }
+					else if( CDraw_KeywordSet().GetColorIndexImp(&sInfo) ) { }
 
-						nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
-
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-					}else
-					//	Mar. 15, 2000 genta
-					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
-					){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
-
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, nPos + (int)wcslen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(0) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-					}else
-					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 1, nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
-					){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, nPos + (int)wcslen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(1) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-//#endif
-					}else
-					if( pLine[nPos] == L'\'' &&
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp  /* シングルクォーテーション文字列を表示する */
-					){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
-
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-						/* シングルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = CLogicInt(1);
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'\'' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}else
-					if( pLine[nPos] == L'"' &&
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp	/* ダブルクォーテーション文字列を表示する */
-					){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-						/* ダブルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = CLogicInt(1);
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'"' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}else
-					if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
-					 && ( IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-					){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_URL;	/* URLモード */ // 2002/03/13 novice
-						nCOMMENTEND = nPos + nUrlLen;
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-//@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
-					}else if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
-						&& (i = IsNumber( pLine, nPos, nLineLen )) > 0 )		/* 半角数字を表示する */
-					{
-						/* キーワード文字列の終端をセットする */
-						i = nPos + i;
-						/* 現在の色を指定 */
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_DIGIT;	/* 半角数値である */ // 2002/03/13 novice
-						nCOMMENTEND = i;
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
-//@@@ 2001.02.17 End by MIK: 半角数値を強調表示
-					}else
-					if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx[0] != -1 && /* キーワードセット */
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
-						IS_KEYWORD_CHAR( pLine[nPos] )
-					){
-						//	Mar 4, 2001 genta comment out
-						/* キーワード文字列の終端を探す */
-						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							if( IS_KEYWORD_CHAR( pLine[i] ) ){
-							}else{
-								break;
-							}
-						}
-						/* キーワードが登録単語ならば、色を変える */
-						j = i - nPos;
-						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
-							TypeDataPtr->m_nKeyWordSetIdx[0],
-							&pLine[nPos],
-							j
-						);
-						if( nIdx != -1 ){
-							/* 現在の色を指定 */
-							nBgn = nPos;
-							nCOMMENTMODE = COLORIDX_KEYWORD1;	/* 強調キーワード1 */ // 2002/03/13 novice
-							nCOMMENTEND = i;
-							if( !bSearchStringMode ){
-								//@SetCurrentColor( hdc, nCOMMENTMODE );
-								nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-							}
-						}else{		//MIK START ADD 2000.12.01 second keyword & binary search
-							// 2005.01.13 MIK 強調キーワード数追加に伴う配列化
-							for( int my_i = 1; my_i < 10; my_i++ )
-							{
-								if(TypeDataPtr->m_nKeyWordSetIdx[my_i] != -1 && /* キーワードセット */							//MIK 2000.12.01 second keyword
-									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
-								{																							//MIK
-									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
-										TypeDataPtr->m_nKeyWordSetIdx[my_i] ,													//MIK
-										&pLine[nPos],																		//MIK
-										j																					//MIK
-									);																						//MIK
-									if( nIdx != -1 ){																		//MIK
-										/* 現在の色を指定 */																//MIK
-										nBgn = nPos;																		//MIK
-										nCOMMENTMODE = COLORIDX_KEYWORD1 + my_i;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
-										nCOMMENTEND = i;																	//MIK
-										if( !bSearchStringMode ){															//MIK
-											//@SetCurrentColor( hdc, nCOMMENTMODE );										//MIK
-											nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-										}																					//MIK
-										break;
-									}																						//MIK
-								}																							//MIK
-								else
-								{
-									if(TypeDataPtr->m_nKeyWordSetIdx[my_i] == -1 )
-										break;
-								}
-							}
-						}			//MIK END
-					}
 					//	From Here Mar. 4, 2001 genta
-					if( IS_KEYWORD_CHAR( pLine[nPos] ))	bKeyWordTop = false;
-					else								bKeyWordTop = true;
+					if( IS_KEYWORD_CHAR( pInfo->pLine[pInfo->nPos] ))	pInfo->bKeyWordTop = false;
+					else								pInfo->bKeyWordTop = true;
 					//	To Here
 					break;
 // 2002/03/13 novice
@@ -499,26 +258,26 @@ searchnext:;
 				case COLORIDX_KEYWORD8:
 				case COLORIDX_KEYWORD9:
 				case COLORIDX_KEYWORD10:
-					if( nPos == nCOMMENTEND ){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
+					if( pInfo->nPos == pInfo->nCOMMENTEND ){
+						pInfo->nBgn = pInfo->nPos;
+						pInfo->nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
+						if( !pInfo->bSearchStringMode ){
+							//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+							pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
 					}
 					break;
 				case COLORIDX_CTRLCODE:	/* コントロールコード */ // 2002/03/13 novice
-					if( nPos == nCOMMENTEND ){
-						nBgn = nPos;
-						nCOMMENTMODE = nCOMMENTMODE_OLD;
-						nCOMMENTEND = nCOMMENTEND_OLD;
+					if( pInfo->nPos == pInfo->nCOMMENTEND ){
+						pInfo->nBgn = pInfo->nPos;
+						pInfo->nCOMMENTMODE = pInfo->nCOMMENTMODE_OLD;
+						pInfo->nCOMMENTEND = pInfo->nCOMMENTEND_OLD;
 						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
+						if( !pInfo->bSearchStringMode ){
+							//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+							pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
 					}
@@ -527,198 +286,95 @@ searchnext:;
 				case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
 					break;
 				case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-					}else
-					if( nPos == nCOMMENTEND ){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
+					if( CDraw_BlockComment().GetColorIndexImpEnd(pInfo) ){
 						goto SEARCH_START;
 					}
 					break;
 				case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-					}else
-					if( nPos == nCOMMENTEND ){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
+					if( CDraw_BlockComment2().GetColorIndexImpEnd(pInfo) ){
 						goto SEARCH_START;
 					}
 					break;
 				case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* シングルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = CLogicInt(1);
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\'' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'\'' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}else
-					if( nPos == nCOMMENTEND ){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
+					if( CDraw_SingleQuote().GetColorIndexImpEnd(pInfo) ){
 						goto SEARCH_START;
 					}
 					break;
 				case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
-					if( 0 == nCOMMENTEND ){
-						/* ダブルクォーテーション文字列の終端があるか */
-						int i;
-						nCOMMENTEND = nLineLen;
-						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-							if( 0 == nCharChars_2 ){
-								nCharChars_2 = CLogicInt(1);
-							}
-							if( TypeDataPtr->m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'\\' ){
-									++i;
-								}else
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									nCOMMENTEND = i + 1;
-									break;
-								}
-							}else
-							if( TypeDataPtr->m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-								if( 1 == nCharChars_2 && pLine[i] == L'"' ){
-									if( i + 1 < nLineLen && pLine[i + 1] == L'"' ){
-										++i;
-									}else{
-										nCOMMENTEND = i + 1;
-										break;
-									}
-								}
-							}
-							if( 2 == nCharChars_2 ){
-								++i;
-							}
-						}
-					}else
-					if( nPos == nCOMMENTEND ){
-						nBgn = nPos;
-						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
-						/* 現在の色を指定 */
-						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
-							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
-						}
+					if( CDraw_DoubleQuote().GetColorIndexImpEnd(pInfo) ){
 						goto SEARCH_START;
 					}
 					break;
 				default:	//@@@ 2002.01.04 add start
-					if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
-						if( nPos == nCOMMENTEND ){
-							nBgn = nPos;
-							nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
+					if( pInfo->nCOMMENTMODE >= 1000 && pInfo->nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
+						if( pInfo->nPos == pInfo->nCOMMENTEND ){
+							pInfo->nBgn = pInfo->nPos;
+							pInfo->nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 							/* 現在の色を指定 */
-							if( !bSearchStringMode ){
-								//@SetCurrentColor( hdc, nCOMMENTMODE );
-								nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
+							if( !pInfo->bSearchStringMode ){
+								//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+								pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
 							}
 							goto SEARCH_START;
 						}
 					}
 					break;	//@@@ 2002.01.04 add end
 				}
-				if( pLine[nPos] == WCODE::TAB ){
-					nBgn = nPos + 1;
+				if( pInfo->pLine[pInfo->nPos] == WCODE::TAB ){
+					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
 				}
-				else if( WCODE::isZenkakuSpace(pLine[nPos]) && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
+				else if( WCODE::isZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
 				{
-					nBgn = nPos + 1;
+					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
 				}
 				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
-				else if (pLine[nPos] == L' ' && CTypeSupport(this,COLORIDX_SPACE).IsDisp() && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )
+				else if (pInfo->pLine[pInfo->nPos] == L' ' && CTypeSupport(this,COLORIDX_SPACE).IsDisp() && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )
 				{
-					nBgn = nPos + 1;
+					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
 				}
 				else{
 					// 2005-09-02 D.S.Koba GetSizeOfChar
-					nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
+					nCharChars = CNativeW::GetSizeOfChar( pInfo->pLine, pInfo->nLineLen, pInfo->nPos );
 					if( 0 == nCharChars ){
 						nCharChars = CLogicInt(1);
 					}
-					if( !bSearchStringMode
+					if( !pInfo->bSearchStringMode
 					 && 1 == nCharChars
-					 && COLORIDX_CTRLCODE != nCOMMENTMODE // 2002/03/13 novice
+					 && COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
 					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
-					 && WCODE::isControlCode(pLine[nPos])
+					 && WCODE::isControlCode(pInfo->pLine[pInfo->nPos])
 					){
-						nBgn = nPos;
-						nCOMMENTMODE_OLD = nCOMMENTMODE;
-						nCOMMENTEND_OLD = nCOMMENTEND;
-						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
+						pInfo->nBgn = pInfo->nPos;
+						pInfo->nCOMMENTMODE_OLD = pInfo->nCOMMENTMODE;
+						pInfo->nCOMMENTEND_OLD = pInfo->nCOMMENTEND;
+						pInfo->nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
 						/* コントロールコード列の終端を探す */
-						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
+						int i;
+						for( i = pInfo->nPos + 1; i <= pInfo->nLineLen - 1; ++i ){
 							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
+							nCharChars_2 = CNativeW::GetSizeOfChar( pInfo->pLine, pInfo->nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = CLogicInt(1);
 							}
 							if( nCharChars_2 != 1 ){
 								break;
 							}
-							if(!WCODE::isControlCode(pLine[i])){
+							if(!WCODE::isControlCode(pInfo->pLine[i])){
 								break;
 							}
 						}
-						nCOMMENTEND = i;
+						pInfo->nCOMMENTEND = i;
 						/* 現在の色を指定 */
-						//@SetCurrentColor( hdc, nCOMMENTMODE );
-						nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
+						//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+						pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
 					}
 				}
-				nPos+= nCharChars;
-			} //end of while( nPos - nLineBgn < pcLayout2->m_nLength ){
-			if( nPos > nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
+				pInfo->nPos+= nCharChars;
+			} //end of while( pInfo->nPos - nLineBgn < pcLayout2->m_nLength ){
+			if( pInfo->nPos > nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
 				break;
 			}
 		}
@@ -728,7 +384,7 @@ end_of_line:;
 	}
 
 //@end_of_func:;
-	return nColorIndex;
+	return pInfo->nColorIndex;
 }
 
 
@@ -1320,10 +976,10 @@ bool CEditView::DrawLayoutLine(SDrawStrategyInfo* pInfo)
 	//行終端または折り返しに達するまでループ
 	while( pInfo->nPos - nLineBgn < pcLayout2->GetLengthWithEOL() ){
 		// マッチ文字列
-		CDraw_Found().EnterColor(pInfo);
+		CDraw_Found().BeginColor(pInfo);
 
 		//行末
-		if(CDraw_LineEnd().EnterColor(pInfo)){
+		if(CDraw_Line().EndColor(pInfo)){
 			return true;
 		}
 
@@ -1331,14 +987,15 @@ SEARCH_START:;
 		switch( pInfo->nCOMMENTMODE ){
 		case COLORIDX_TEXT:
 			//色の開始判定
-			if( CDraw_RegexKeyword().EnterColor(pInfo) ){ }		// 正規表現キーワード
-			else if( CDraw_LineComment().EnterColor(pInfo) ){ }	// 行コメント
-			else if( CDraw_BlockComment().EnterColor(pInfo) ){ }	// ブロックコメント
-			else if( CDraw_SingleQuote().EnterColor(pInfo) ){ }		// シングルクォーテーション文字列
-			else if( CDraw_DoubleQuote().EnterColor(pInfo) ){ }		// ダブルクォーテーション文字列
-			else if( CDraw_URL().EnterColor(pInfo) ){ }			// URL
-			else if( CDraw_Numeric().EnterColor(pInfo) ){ }		// 半角数字
-			else if( CDraw_KeywordSet().EnterColor(pInfo) ){ }		// キーワードセット
+			if( CDraw_RegexKeyword().BeginColor(pInfo) ){ }			// 正規表現キーワード
+			else if( CDraw_LineComment().BeginColor(pInfo) ){ }		// 行コメント
+			else if( CDraw_BlockComment().BeginColor(pInfo) ){ }	// ブロックコメント
+			else if( CDraw_BlockComment2().BeginColor(pInfo) ){ }	// ブロックコメント2
+			else if( CDraw_SingleQuote().BeginColor(pInfo) ){ }		// シングルクォーテーション文字列
+			else if( CDraw_DoubleQuote().BeginColor(pInfo) ){ }		// ダブルクォーテーション文字列
+			else if( CDraw_URL().BeginColor(pInfo) ){ }				// URL
+			else if( CDraw_Numeric().BeginColor(pInfo) ){ }			// 半角数字
+			else if( CDraw_KeywordSet().BeginColor(pInfo) ){ }		// キーワードセット
 			
 			//単語判定
 			if( IS_KEYWORD_CHAR( pInfo->pLine[pInfo->nPos] ))	pInfo->bKeyWordTop = false;
@@ -1359,12 +1016,12 @@ SEARCH_START:;
 		case COLORIDX_KEYWORD8:
 		case COLORIDX_KEYWORD9:
 		case COLORIDX_KEYWORD10:
-			if( CDraw_ColorEnd().EnterColor(pInfo) ){
+			if( CDraw_ColorEnd().EndColor(pInfo) ){
 				goto SEARCH_START;
 			}
 			break;
 		case COLORIDX_CTRLCODE:	/* コントロールコード */ // 2002/03/13 novice
-			if( CDraw_CtrlColorEnd().EnterColor(pInfo) ){
+			if( CDraw_CtrlCode().EndColor(pInfo) ){
 				goto SEARCH_START;
 			}
 			break;
@@ -1372,28 +1029,28 @@ SEARCH_START:;
 		case COLORIDX_COMMENT:	/* 行コメントである */ // 2002/03/13 novice
 			break;
 		case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
-			if( CDraw_BlockCommentEnd().EnterColor(pInfo) ){
+			if( CDraw_BlockComment().EndColor(pInfo) ){
 				goto SEARCH_START;
 			}
 			break;
 		case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
-			if( CDraw_BlockCommentEnd2().EnterColor(pInfo) ){
+			if( CDraw_BlockComment2().EndColor(pInfo) ){
 				goto SEARCH_START;
 			}
 			break;
 		case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
-			if( CDraw_SingleQuoteEnd().EnterColor(pInfo) ){
+			if( CDraw_SingleQuote().EndColor(pInfo) ){
 				goto SEARCH_START;
 			}
 			break;
 		case COLORIDX_WSTRING:	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
-			if( CDraw_DoubleQuoteEnd().EnterColor(pInfo) ){
+			if( CDraw_DoubleQuote().EndColor(pInfo) ){
 				goto SEARCH_START;
 			}
 			break;
 		default:	//@@@ 2002.01.04 add start
 			if( pInfo->nCOMMENTMODE >= 1000 && pInfo->nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
-				if( CDraw_RegexKeywordEnd().EnterColor(pInfo) ){
+				if( CDraw_RegexKeyword().EndColor(pInfo) ){
 					goto SEARCH_START;
 				}
 			}
@@ -1401,13 +1058,13 @@ SEARCH_START:;
 		}
 
 		//タブ
-		if( CDraw_Tab().EnterColor(pInfo) ){ }
+		if( CDraw_Tab().BeginColor(pInfo) ){ }
 		//全角スペース
-		else if( CDraw_ZenSpace().EnterColor(pInfo) ){ }
+		else if( CDraw_ZenSpace().BeginColor(pInfo) ){ }
 		//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
-		else if( CDraw_HanSpace().EnterColor(pInfo) ){ }
+		else if( CDraw_HanSpace().BeginColor(pInfo) ){ }
 		//コントロールコード 2008.04.20 kobake
-		else if( CDraw_CtrlCode().EnterColor(pInfo) ){ }
+		else if( CDraw_CtrlCode().BeginColor(pInfo) ){ }
 		//その他
 		else{
 			pInfo->nCharChars = CLogicInt(1);

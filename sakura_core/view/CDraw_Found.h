@@ -4,11 +4,8 @@
 
 class CDraw_Found : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
 };
 
-class CDraw_FoundEnd : public CDrawStrategy{
-public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
-};
 

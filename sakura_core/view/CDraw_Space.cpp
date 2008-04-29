@@ -8,7 +8,7 @@
 #define GetNBgn() (pInfo->nBgn+0)
 
 
-bool CDraw_Tab::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_Tab::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
@@ -33,7 +33,7 @@ bool CDraw_Tab::EnterColor(SDrawStrategyInfo* pInfo)
 }
 
 
-bool CDraw_ZenSpace::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_ZenSpace::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
@@ -52,7 +52,7 @@ bool CDraw_ZenSpace::EnterColor(SDrawStrategyInfo* pInfo)
 }
 
 
-bool CDraw_HanSpace::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_HanSpace::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();

@@ -5,21 +5,17 @@
 
 class CDraw_SingleQuote : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
+	virtual bool GetColorIndexImp(SColorInfo* pInfo);
+	virtual bool GetColorIndexImpEnd(SColorInfo* pInfo);
 };
 
 class CDraw_DoubleQuote : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
-};
-
-class CDraw_SingleQuoteEnd : public CDrawStrategy{
-public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
-};
-
-class CDraw_DoubleQuoteEnd : public CDrawStrategy{
-public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
+	virtual bool GetColorIndexImp(SColorInfo* pInfo);
+	virtual bool GetColorIndexImpEnd(SColorInfo* pInfo);
 };
 
