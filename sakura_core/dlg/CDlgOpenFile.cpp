@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "dlg/CDlgOpenFile.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "sakura_rc.h"
 #include "global.h"
 #include "funccode.h"	//Stonee, 2001/05/18

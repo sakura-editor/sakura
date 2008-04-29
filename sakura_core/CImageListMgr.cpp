@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "CImageListMgr.h"
 #include "sakura_rc.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "util/module.h"
 
 //	Jul. 21, 2003 genta ‘¼‚Å‚àg‚¤‚Ì‚ÅŠÖ”‚ÌŠO‚Éo‚µ‚½

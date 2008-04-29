@@ -32,7 +32,7 @@
 #include "CMacroFactory.h"
 #include <algorithm>
 #include "ctype.h"
-#include "debug.h"
+#include "debug/Debug.h"
 
 static const TCHAR NULSTR[] = _T("");
 

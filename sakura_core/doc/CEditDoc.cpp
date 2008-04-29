@@ -25,9 +25,9 @@
 #include <string.h>	// Apr. 03, 2003 genta
 #include <io.h>
 #include "doc/CEditDoc.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "funccode.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "charcode.h"
 #include <DLGS.H>
 #include "CShareData.h"
@@ -42,7 +42,7 @@
 #include <assert.h> /// 2002/11/2 frozen
 #include "CClipboard.h"
 #include "doc/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
-#include "CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
+#include "mem/CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "charset/CCodeMediator.h"
 #include "util/file.h"
 #include "util/window.h"

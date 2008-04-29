@@ -18,7 +18,7 @@ class CFuncInfo;
 #ifndef _CFUNCINFO_H_
 #define _CFUNCINFO_H_
 
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 // CDlgFuncList::SetTree()—p m_Info
 //	2003.06.27 Moca

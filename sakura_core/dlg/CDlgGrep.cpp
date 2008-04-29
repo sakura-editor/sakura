@@ -18,7 +18,7 @@
 #include <shellapi.h>
 #include "sakura_rc.h"
 #include "dlg/CDlgGrep.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "global.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"

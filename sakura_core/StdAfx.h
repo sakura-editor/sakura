@@ -56,14 +56,14 @@
 #include "basis/SakuraBasis.h"
 
 //デバッグ
-#include "Debug2.h"
-#include "Debug3.h"
+#include "debug/Debug2.h"
+#include "debug/Debug3.h"
 
 //よく使うヘッダ
-#include "Debug.h"
-#include "CNativeW.h"
-#include "CNativeA.h"
-#include "CNativeT.h"
+#include "debug/Debug.h"
+#include "mem/CNativeW.h"
+#include "mem/CNativeA.h"
+#include "mem/CNativeT.h"
 #include <wchar.h>
 
 #include "util/string_ex.h"

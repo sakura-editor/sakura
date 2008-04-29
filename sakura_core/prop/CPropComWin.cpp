@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "prop/CPropCommon.h"
-#include "debug.h" // 2002/2/10 aroka
+#include "debug/Debug.h" // 2002/2/10 aroka
 #include "global.h"
 #include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"

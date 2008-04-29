@@ -37,7 +37,7 @@
 #include "CBackupAgent.h"
 #include "CAutoReloadAgent.h"
 #include "util/file.h" //CFileTime
-#include "CFile.h"
+#include "io/CFile.h"
 #include "CDocEditor.h"
 #include "CDocFile.h"
 #include "CDocFileOperation.h"

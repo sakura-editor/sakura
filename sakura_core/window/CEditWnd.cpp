@@ -30,7 +30,7 @@
 #include "sakura_rc.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocLine.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "dlg/CDlgAbout.h"
 #include "mymessage.h"
 #include "CShareData.h"
@@ -44,7 +44,7 @@
 #include "CCommandLine.h" /// 2003/1/26 aroka
 #include "macro/CSMacroMgr.h" // Jun. 16, 2002 genta
 #include "COsVersioninfo.h"	// Sep. 6, 2003 genta
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "KeyCode.h"
 #include "CharPointer.h"
 #include "CEditApp.h"

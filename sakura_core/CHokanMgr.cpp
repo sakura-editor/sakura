@@ -17,7 +17,7 @@
 */
 #include "stdafx.h"
 #include "CHokanMgr.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "CKeyBind.h"
 #include "Keycode.h"
 #include "CDicMgr.h"

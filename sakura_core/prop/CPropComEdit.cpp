@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "prop/CPropCommon.h"
-#include "debug.h" // 2002/2/10 aroka
+#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 
 

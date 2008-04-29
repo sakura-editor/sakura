@@ -8,7 +8,7 @@ enum EConvertResult{
 };
 
 #include "CEol.h"
-#include "CNativeW.h"
+#include "mem/CNativeW.h"
 class CMemory;
 class CNativeW;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 //¦CMemory‚ğprotectŒp³‚·‚é‚±‚Æ‚É‚æ‚èA‚ ‚Ü‚è©—R‚ÉCMemory‚ğg‚¦‚È‚¢‚æ‚¤‚É‚µ‚Ä‚¨‚­
 class CNative : protected CMemory{
@@ -14,6 +14,6 @@ public:
 	void Clear(); //!< ‹ó‚Á‚Û‚É‚·‚é
 };
 
-#include "CNativeA.h"
-#include "CNativeW.h"
+#include "mem/CNativeA.h"
+#include "mem/CNativeW.h"
 

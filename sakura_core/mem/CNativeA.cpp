@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CNativeA.h"
+#include "mem/CNativeA.h"
 #include "charset/CShiftJis.h"
 #include <mbstring.h>
 #include "CEol.h"

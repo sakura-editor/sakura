@@ -28,8 +28,8 @@
 #include "CMacroFactory.h"
 #include <stdio.h>
 #include <assert.h> // ŽŽŒ±—p
-#include "debug.h"
-#include "CRunningTimer.h"
+#include "debug/Debug.h"
+#include "debug/CRunningTimer.h"
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {

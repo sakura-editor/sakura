@@ -20,16 +20,16 @@
 
 #include "stdafx.h"
 #include "CCommandLine.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 #include <tchar.h>
 #include <io.h>
 #include <string.h>
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 // 関数をマクロ再定義するので my_icmp.h は最後に置く	// 2006.10.25 ryoji
 #include "charcode.h"  // 2006.06.28 rastiv
 #include "util/shell.h"
 #include "util/file.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "CSakuraEnvironment.h"
 
 CCommandLine* CCommandLine::_instance = NULL;

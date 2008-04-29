@@ -15,7 +15,7 @@
 */
 
 #include "stdafx.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include <tchar.h>
 #include "global.h"
 
@@ -38,7 +38,7 @@ void Test()
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#include "Debug3.h"
+#include "debug/Debug3.h"
 
 /*! @brief 書式付きデバッガ出力
 

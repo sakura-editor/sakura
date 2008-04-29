@@ -1089,14 +1089,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CFile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CFile.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CFileExt.cpp"
 				>
 				<FileConfiguration
@@ -1645,54 +1637,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CMemory.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CMemory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CMemoryIterator.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CMenuDrawer.cpp"
 				>
 				<FileConfiguration
@@ -1782,34 +1726,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CMutex.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNative.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNative.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNativeA.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNativeA.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNativeT.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNativeW.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CNativeW.h"
 				>
 			</File>
 			<File
@@ -2281,50 +2197,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CRunningTimer.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CRunningTimer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CSakuraEnvironment.cpp"
 				>
 			</File>
@@ -2610,74 +2482,6 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CWriteManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\Debug.cpp"
-				>
-				<FileConfiguration
-					Name="Release_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Ansi|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\sakura_core\Debug.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\Debug2.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\Debug2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\Debug3.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\Debug3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\DispPos.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\DispPos.h"
 				>
 			</File>
 			<File
@@ -3136,6 +2940,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\io\CFile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CFile.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\io\CFileLoad.cpp"
 					>
 				</File>
@@ -3171,6 +2983,46 @@
 			<Filter
 				Name="mem"
 				>
+				<File
+					RelativePath="..\sakura_core\mem\CMemory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CMemory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CMemoryIterator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNative.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNative.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNativeA.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNativeA.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNativeT.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNativeW.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mem\CNativeW.h"
+					>
+				</File>
 				<File
 					RelativePath="..\sakura_core\mem\CRecycledBuffer.cpp"
 					>
@@ -3865,6 +3717,14 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\view\CViewSelect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\view\DispPos.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\view\DispPos.h"
 					>
 				</File>
 			</Filter>
@@ -4789,6 +4649,42 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\docplus\CModifyManager.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="debug"
+				>
+				<File
+					RelativePath="..\sakura_core\debug\CRunningTimer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\CRunningTimer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\Debug.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\Debug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\Debug2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\Debug2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\Debug3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\debug\Debug3.h"
 					>
 				</File>
 			</Filter>

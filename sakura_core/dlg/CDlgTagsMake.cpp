@@ -33,7 +33,7 @@
 #include <string.h>
 #include "sakura_rc.h"
 #include "dlg/CDlgTagsMake.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "global.h"
 #include "funccode.h"

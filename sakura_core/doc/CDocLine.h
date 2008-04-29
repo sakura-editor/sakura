@@ -21,7 +21,7 @@ class CDocLine;
 #define _CDOCLINE_H_
 
 #include "CEol.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 #include "docplus/CBookmarkManager.h"
 #include "docplus/CDiffManager.h"

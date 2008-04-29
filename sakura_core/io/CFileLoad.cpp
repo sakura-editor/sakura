@@ -36,12 +36,12 @@
 #include <string.h>
 #include <Windows.h>
 #include "global.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 #include "CEol.h"
 #include "io/CFileLoad.h"
 #include "charcode.h"
 #ifdef _DEBUG
-#include "Debug.h"
+#include "debug/Debug.h"
 #endif
 #include "io/CIoBridge.h"
 #include "charset/CCodeMediator.h"

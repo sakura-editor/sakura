@@ -39,7 +39,7 @@
 #include "mymessage.h"
 #include "dlg/CDialog.h"
 #include "dlg/CDlgFavorite.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "util/shell.h"
 
 #include "sakura.hh"

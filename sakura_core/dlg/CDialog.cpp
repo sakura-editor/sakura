@@ -17,7 +17,7 @@
 */
 #include "stdafx.h"
 #include "dlg/CDialog.h"
-#include "debug.h"/// 2002/2/10 aroka ヘッダ整理
+#include "debug/Debug.h"/// 2002/2/10 aroka ヘッダ整理
 #include "CEditApp.h"
 #include "util/os.h"
 #include "util/shell.h"

@@ -26,7 +26,7 @@
 #include <commctrl.h>
 #include "sakura_rc.h"
 #include "dlg/CDlgFuncList.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "global.h"
 #include "view/CEditView.h"
 #include "funccode.h"		//Stonee, 2001/03/12

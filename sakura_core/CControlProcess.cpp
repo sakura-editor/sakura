@@ -19,13 +19,13 @@
 #include "CControlProcess.h"
 #include "CCommandLine.h"
 #include "CShareData.h"
-#include "Debug.h"
+#include "debug/Debug.h"
 #include "CControlTray.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ÉwÉbÉ_êÆóù
 #include <io.h>
 #include <tchar.h>
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 
 
 

@@ -18,7 +18,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "dlg/CDlgJump.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/10 aroka ƒwƒbƒ_®—

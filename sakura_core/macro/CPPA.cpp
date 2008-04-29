@@ -36,7 +36,7 @@
 #include "CPPA.h"
 #include "view/CEditView.h"
 #include "Funccode.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "CShareData.h"

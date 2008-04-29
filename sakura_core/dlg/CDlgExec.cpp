@@ -23,7 +23,7 @@
 #include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
 #include <commctrl.h>		//Mar. 28, 2001 JEPRO
 #include "dlg/CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
-#include "debug.h"// 2002/2/10 aroka ヘッダ整理
+#include "debug/Debug.h"// 2002/2/10 aroka ヘッダ整理
 #include "util/shell.h"
 
 //外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK

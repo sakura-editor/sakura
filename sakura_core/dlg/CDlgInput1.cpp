@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "dlg/CDlgInput1.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "CEditApp.h"
 #include "util/shell.h"
 

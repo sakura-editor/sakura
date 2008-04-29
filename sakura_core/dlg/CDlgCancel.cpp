@@ -11,7 +11,7 @@
 */
 #include "stdafx.h"
 #include "dlg/CDlgCancel.h"
-#include "debug.h"
+#include "debug/Debug.h"
 
 CDlgCancel::CDlgCancel()
 {

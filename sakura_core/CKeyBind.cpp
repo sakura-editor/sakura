@@ -17,11 +17,11 @@
 
 #include "stdafx.h"
 #include "CKeyBind.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "CFuncLookup.h"
 #include "KeyCode.h"// 2002/2/10 aroka
-#include "CMemory.h"// 2002/2/10 aroka
+#include "mem/CMemory.h"// 2002/2/10 aroka
 
 
 CKeyBind::CKeyBind()

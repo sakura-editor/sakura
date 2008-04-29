@@ -38,7 +38,7 @@
 #include "dlg/CDialog.h"
 #include "dlg/CDlgCtrlCode.h"
 #include "view/CEditView.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "util/shell.h"
 
 #include "sakura.hh"

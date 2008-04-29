@@ -13,8 +13,8 @@
 
 #include "stdafx.h"
 #include "COpe.h"
-#include "debug.h"
-#include "CMemory.h"// 2002/2/10 aroka
+#include "debug/Debug.h"
+#include "mem/CMemory.h"// 2002/2/10 aroka
 
 
 // COpeƒNƒ‰ƒX\’z

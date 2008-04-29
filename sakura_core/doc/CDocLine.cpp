@@ -14,7 +14,7 @@
 
 #include "stdafx.h"
 #include "doc/CDocLine.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 CDocLine::CDocLine()
 : m_pPrev( NULL ), m_pNext( NULL )

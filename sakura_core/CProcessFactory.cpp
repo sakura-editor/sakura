@@ -22,12 +22,12 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-#include "Debug.h"
+#include "debug/Debug.h"
 
 #include <io.h>
 #include <tchar.h>
 #include "COsVersionInfo.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "util/os.h"
 
 class CProcess;

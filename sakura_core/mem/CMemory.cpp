@@ -40,15 +40,15 @@
 #include <ctype.h>
 #include <locale.h>
 #include <limits.h>
-#include "CMemory.h"
+#include "mem/CMemory.h"
 #include "CEol.h"// 2002/2/3 aroka
 #include "charcode.h"
 #include <vector>
 #include "charset/CShiftJis.h"
 #include <mbstring.h>
 #include "global.h"
-#include "debug.h"
-#include "CRunningTimer.h"
+#include "debug/debug.h"
+#include "debug/CRunningTimer.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

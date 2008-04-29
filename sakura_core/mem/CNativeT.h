@@ -10,6 +10,6 @@ typedef CNativeA CNativeT;
 #endif
 
 
-#include "CNativeA.h"
-#include "CNativeW.h"
+#include "mem/CNativeA.h"
+#include "mem/CNativeW.h"
 

@@ -14,7 +14,7 @@
 */
 #include "stdafx.h"
 #include "CBlockComment.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 CBlockComment::CBlockComment()
 {

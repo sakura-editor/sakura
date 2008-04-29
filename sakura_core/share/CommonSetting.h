@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CFile.h" //EShareMode
+#include "io/CFile.h" //EShareMode
 
 // Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
 static const int MAX_CAPTION_CONF_LEN = 256;

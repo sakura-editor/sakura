@@ -21,7 +21,7 @@
 #include "dlg/CDlgOpenFile.h"
 #include "macro/CSMacroMgr.h" // 2002/2/10 aroka
 #include "KeyCode.h"	/// 2002/2/3 aroka from here
-#include "debug.h" ///
+#include "debug/Debug.h" ///
 #include <stdio.h>	/// 2002/2/3 aroka from here
 #include "io/CTextStream.h"
 #include "CDataProfile.h"

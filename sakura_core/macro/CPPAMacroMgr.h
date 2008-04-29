@@ -18,7 +18,7 @@
 
 #include <windows.h>
 #include "CKeyMacroMgr.h"
-#include "CMemory.h"
+#include "mem/CMemory.h"
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

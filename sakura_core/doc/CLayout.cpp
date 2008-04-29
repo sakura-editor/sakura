@@ -13,7 +13,7 @@
 */
 #include "stdafx.h"
 #include "doc/CLayout.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "charcode.h"
 #include "CLayoutMgr.h"
 

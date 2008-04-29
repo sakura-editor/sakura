@@ -21,14 +21,14 @@
 #include "view/CEditView.h"
 #include "CWaitCursor.h"
 #include "charcode.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include <algorithm>		// 2001.12.11 hor    for VC++
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
 #include "doc/CLayout.h"///
 #include "doc/CDocLine.h"///
 #include "mymessage.h"///
-#include "debug.h"///
+#include "debug/Debug.h"///
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 

@@ -25,9 +25,9 @@
 #include <stdio.h>
 #include "CShareData.h"
 #include "mymessage.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "global.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "CDataProfile.h"
 #include "COsVersionInfo.h"
 #include "CCommandLine.h"

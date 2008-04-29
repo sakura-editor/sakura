@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CDocEditor.h"
 #include "CClipboard.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)

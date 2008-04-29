@@ -14,7 +14,7 @@
 #include "stdafx.h"
 #include "dlg/CDlgPrintPage.h"
 #include "sakura_rc.h"
-#include "Debug.h"// 2002/2/10 aroka
+#include "debug/Debug.h"// 2002/2/10 aroka
 
 // ˆóü CDlgPrintPage.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

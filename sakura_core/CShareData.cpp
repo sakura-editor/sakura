@@ -23,9 +23,9 @@
 #include "CShareData.h"
 #include "CControlTray.h"
 #include "mymessage.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "global.h"
-#include "CRunningTimer.h"
+#include "debug/CRunningTimer.h"
 #include "charcode.h"
 #include <tchar.h>
 #include "util/module.h"

@@ -21,7 +21,7 @@
 #include "sakura_rc.h"
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgDiff.h"
-#include "debug.h"
+#include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "global.h"
 #include "funccode.h"
