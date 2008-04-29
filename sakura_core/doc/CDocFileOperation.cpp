@@ -186,6 +186,10 @@ bool CDocFileOperation::SaveFileDialog(
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			_tcscpy(szDefaultWildCard, _T("*.txt"));
+
+			//「新規から保存時は全ファイル表示」オプション
+			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
+				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
 		}
 		//ファイルパスが有る場合は *.(今の拡張子) とする
 		else{
@@ -193,11 +197,11 @@ bool CDocFileOperation::SaveFileDialog(
 			if(!*szExt)szExt = _T(".*");
 			_tcscpy(szDefaultWildCard, _T("*"));
 			_tcscat(szDefaultWildCard, szExt);
-		}
 
-		//「新規から保存時は全ファイル表示」オプション
-		if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-			_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+			//「新規以外から保存時は全ファイル表示」オプション
+			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
+				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+		}
 	}
 
 	// ダイアログを表示
