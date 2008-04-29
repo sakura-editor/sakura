@@ -103,7 +103,7 @@ void CViewCommander::Command_GREP( void )
 		if( 1 == GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
 		if( 2 == GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
 		if( 0 < _tcslen( pOpt ) ){
-			cCmdLine.AppendF( _T(" -GOPT="), pOpt );
+			cCmdLine.AppendF( _T(" -GOPT=%ts"), pOpt );
 		}
 
 //		MYTRACE_A( "pCmdLine=[%ls]\n", pCmdLine );
