@@ -19,11 +19,11 @@ public:
 	void SetHankakuDy(int nHankakuDy);         //!< 半角文字の行間隔を設定。単位はピクセル。
 
 	//取得
-	int GetHankakuWidth() const{ return m_nCharWidth; }   //!< 半角文字の横幅を取得。単位はピクセル。
-	int GetHankakuHeight() const{ return m_nCharHeight; } //!< 半角文字の縦幅を取得。単位はピクセル。
-	int GetHankakuDx() const{ return m_nDxBasis; }        //!< 半角文字の文字間隔を取得。単位はピクセル。
-	int GetZenkakuDx() const{ return m_nDxBasis*2; }      //!< 全角文字の文字間隔を取得。単位はピクセル。
-	int GetHankakuDy() const{ return m_nDyBasis; }
+	int GetHankakuWidth() const{ return m_nCharWidth; }		//!< 半角文字の横幅を取得。単位はピクセル。
+	int GetHankakuHeight() const{ return m_nCharHeight; }	//!< 半角文字の縦幅を取得。単位はピクセル。
+	int GetHankakuDx() const{ return m_nDxBasis; }			//!< 半角文字の文字間隔を取得。単位はピクセル。
+	int GetZenkakuDx() const{ return m_nDxBasis*2; }		//!< 全角文字の文字間隔を取得。単位はピクセル。
+	int GetHankakuDy() const{ return m_nDyBasis; }			//!< Y方向文字間隔。文字縦幅＋行間隔。単位はピクセル。
 
 	//文字間隔配列を取得
 	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。
