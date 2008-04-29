@@ -13,7 +13,12 @@
 
 
 
-bool CDraw_URL::EnterColor(SDrawStrategyInfo* pInfo)
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           URL                               //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CDraw_URL::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
@@ -30,8 +35,34 @@ bool CDraw_URL::EnterColor(SDrawStrategyInfo* pInfo)
 	return false;
 }
 
+bool CDraw_URL::GetColorIndexImp(SColorInfo* pInfo)
+{
+	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+	int		nUrlLen;
 
-bool CDraw_Numeric::EnterColor(SDrawStrategyInfo* pInfo)
+	if( pInfo->bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
+	 && ( IsURL( &pInfo->pLine[pInfo->nPos], pInfo->nLineLen - pInfo->nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+	){
+		pInfo->nBgn = pInfo->nPos;
+		pInfo->nCOMMENTMODE = COLORIDX_URL;	/* URLモード */ // 2002/03/13 novice
+		pInfo->nCOMMENTEND = pInfo->nPos + nUrlLen;
+		/* 現在の色を指定 */
+		if( !pInfo->bSearchStringMode ){
+			//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+			pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
+		}
+		return true;
+	}
+	return false;
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         半角数値                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CDraw_Numeric::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
@@ -51,48 +82,36 @@ bool CDraw_Numeric::EnterColor(SDrawStrategyInfo* pInfo)
 	return false;
 }
 
-bool CDraw_CtrlCode::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_Numeric::GetColorIndexImp(SColorInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
-	if(TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
-		&& COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
-		&&WCODE::isControlCode(pInfo->pLine[pInfo->nPos]))
+	//@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
+	int i;
+	if( pInfo->bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
+		&& (i = IsNumber( pInfo->pLine, pInfo->nPos, pInfo->nLineLen )) > 0 )		/* 半角数字を表示する */
 	{
-		pInfo->DrawToHere();
-
-		pInfo->nCOMMENTMODE_OLD = pInfo->nCOMMENTMODE;
-		pInfo->nCOMMENTEND_OLD = pInfo->nCOMMENTEND;
-
-		pInfo->ChangeColor(COLORIDX_CTRLCODE);
-		/* コントロールコード列の終端を探す */
-		int i;
-		for( i = pInfo->nPos + 1; i <= pInfo->nLineLen - 1; ++i ){
-			if(!WCODE::isControlCode(pInfo->pLine[i])){
-				break;
-			}
-		}
+		/* キーワード文字列の終端をセットする */
+		i = pInfo->nPos + i;
+		/* 現在の色を指定 */
+		pInfo->nBgn = pInfo->nPos;
+		pInfo->nCOMMENTMODE = COLORIDX_DIGIT;	/* 半角数値である */ // 2002/03/13 novice
 		pInfo->nCOMMENTEND = i;
-		pInfo->nCharChars = CLogicInt(1);
-		return true;
-	}
-
-	return false;
-}
-
-bool CDraw_CtrlColorEnd::EnterColor(SDrawStrategyInfo* pInfo)
-{
-	if( pInfo->nPos == pInfo->nCOMMENTEND ){
-		pInfo->DrawToHere();
-		pInfo->ChangeColor(pInfo->nCOMMENTMODE_OLD);
-		pInfo->nCOMMENTEND = pInfo->nCOMMENTEND_OLD;
+		if( !pInfo->bSearchStringMode ){
+			//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+			pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
+		}
 		return true;
 	}
 	return false;
 }
 
-bool CDraw_KeywordSet::EnterColor(SDrawStrategyInfo* pInfo)
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     キーワードセット                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CDraw_KeywordSet::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
@@ -159,9 +178,129 @@ bool CDraw_KeywordSet::EnterColor(SDrawStrategyInfo* pInfo)
 	return false;
 }
 
+bool CDraw_KeywordSet::GetColorIndexImp(SColorInfo* pInfo)
+{
+	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+
+	if( pInfo->bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx[0] != -1 && /* キーワードセット */
+		TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
+		IS_KEYWORD_CHAR( pInfo->pLine[pInfo->nPos] )
+	){
+		//	Mar 4, 2001 genta comment out
+		/* キーワード文字列の終端を探す */
+		int i;
+		for( i = pInfo->nPos + 1; i <= pInfo->nLineLen - 1; ++i ){
+			if( IS_KEYWORD_CHAR( pInfo->pLine[i] ) ){
+			}else{
+				break;
+			}
+		}
+		/* キーワードが登録単語ならば、色を変える */
+		int j = i - pInfo->nPos;
+		/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
+		int nIdx = GetDllShareData().m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
+			TypeDataPtr->m_nKeyWordSetIdx[0],
+			&pInfo->pLine[pInfo->nPos],
+			j
+		);
+		if( nIdx != -1 ){
+			/* 現在の色を指定 */
+			pInfo->nBgn = pInfo->nPos;
+			pInfo->nCOMMENTMODE = COLORIDX_KEYWORD1;	/* 強調キーワード1 */ // 2002/03/13 novice
+			pInfo->nCOMMENTEND = i;
+			if( !pInfo->bSearchStringMode ){
+				//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );
+				pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
+			}
+		}else{		//MIK START ADD 2000.12.01 second keyword & binary search
+			// 2005.01.13 MIK 強調キーワード数追加に伴う配列化
+			for( int my_i = 1; my_i < 10; my_i++ )
+			{
+				if(TypeDataPtr->m_nKeyWordSetIdx[my_i] != -1 && /* キーワードセット */							//MIK 2000.12.01 second keyword
+					TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
+				{																							//MIK
+					/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
+					nIdx = GetDllShareData().m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
+						TypeDataPtr->m_nKeyWordSetIdx[my_i] ,													//MIK
+						&pInfo->pLine[pInfo->nPos],																		//MIK
+						j																					//MIK
+					);																						//MIK
+					if( nIdx != -1 ){																		//MIK
+						/* 現在の色を指定 */																//MIK
+						pInfo->nBgn = pInfo->nPos;																		//MIK
+						pInfo->nCOMMENTMODE = COLORIDX_KEYWORD1 + my_i;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
+						pInfo->nCOMMENTEND = i;																	//MIK
+						if( !pInfo->bSearchStringMode ){															//MIK
+							//@SetCurrentColor( hdc, pInfo->nCOMMENTMODE );										//MIK
+							pInfo->nColorIndex = pInfo->nCOMMENTMODE;	// 02/12/18 ai
+						}																					//MIK
+						break;
+					}																						//MIK
+				}																							//MIK
+				else
+				{
+					if(TypeDataPtr->m_nKeyWordSetIdx[my_i] == -1 )
+						break;
+				}
+			}
+		}			//MIK END
+		return true;
+	}
+	return false;
+}
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        制御コード                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CDraw_CtrlCode::BeginColor(SDrawStrategyInfo* pInfo)
+{
+	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+
+	if(TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
+		&& COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
+		&&WCODE::isControlCode(pInfo->pLine[pInfo->nPos]))
+	{
+		pInfo->DrawToHere();
+
+		pInfo->nCOMMENTMODE_OLD = pInfo->nCOMMENTMODE;
+		pInfo->nCOMMENTEND_OLD = pInfo->nCOMMENTEND;
+
+		pInfo->ChangeColor(COLORIDX_CTRLCODE);
+		/* コントロールコード列の終端を探す */
+		int i;
+		for( i = pInfo->nPos + 1; i <= pInfo->nLineLen - 1; ++i ){
+			if(!WCODE::isControlCode(pInfo->pLine[i])){
+				break;
+			}
+		}
+		pInfo->nCOMMENTEND = i;
+		pInfo->nCharChars = CLogicInt(1);
+		return true;
+	}
+
+	return false;
+}
+
+bool CDraw_CtrlCode::EndColor(SDrawStrategyInfo* pInfo)
+{
+	if( pInfo->nPos == pInfo->nCOMMENTEND ){
+		pInfo->DrawToHere();
+		pInfo->ChangeColor(pInfo->nCOMMENTMODE_OLD);
+		pInfo->nCOMMENTEND = pInfo->nCOMMENTEND_OLD;
+		return true;
+	}
+	return false;
+}
 
 
-bool CDraw_ColorEnd::EnterColor(SDrawStrategyInfo* pInfo)
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           共通                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CDraw_ColorEnd::EndColor(SDrawStrategyInfo* pInfo)
 {
 	if( pInfo->nPos == pInfo->nCOMMENTEND ){
 		pInfo->DrawToHere();
@@ -175,7 +314,7 @@ bool CDraw_ColorEnd::EnterColor(SDrawStrategyInfo* pInfo)
 
 
 
-bool CDraw_LineEnd::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_Line::EndColor(SDrawStrategyInfo* pInfo)
 {
 	CTypeSupport cTextType(pInfo->pcView,COLORIDX_TEXT);
 	const CLayout*	pcLayout2; //ワーク用CLayoutポインタ

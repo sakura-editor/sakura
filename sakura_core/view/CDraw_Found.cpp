@@ -10,7 +10,7 @@
 
 
 
-bool CDraw_Found::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_Found::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
@@ -64,7 +64,7 @@ top:
 
 
 
-bool CDraw_FoundEnd::EnterColor(SDrawStrategyInfo* pInfo)
+bool CDraw_Found::EndColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();

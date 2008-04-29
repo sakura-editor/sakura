@@ -6,12 +6,7 @@
 
 class CDraw_RegexKeyword : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
+	virtual bool GetColorIndexImp(SColorInfo* pInfo);
 };
-
-
-class CDraw_RegexKeywordEnd : public CDrawStrategy{
-public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
-};
-

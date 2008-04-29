@@ -7,6 +7,21 @@
 struct DispPos;
 #include "DispPos.h"
 
+struct SColorInfo{
+	CEditView*				pcView;
+	const wchar_t*			pLine;
+	CLogicInt				nLineLen;
+	int						nBgn;
+	CLogicInt				nPos;
+	int						nCOMMENTMODE;
+	int						nCOMMENTMODE_OLD;
+	int						nCOMMENTEND;
+	int						nCOMMENTEND_OLD;
+	int						nColorIndex;
+	BOOL					bSearchStringMode;
+	bool					bKeyWordTop;
+};
+
 struct SDrawStrategyInfo{
 	SDrawStrategyInfo() : sDispPosBegin(0,0) {}
 
@@ -66,7 +81,7 @@ class CDrawStrategy{
 public:
 	virtual ~CDrawStrategy(){}
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo) = 0;
+//	virtual bool BeginColor(SDrawStrategyInfo* pInfo) = 0;
 };
 
 
@@ -78,38 +93,39 @@ public:
 
 class CDraw_URL : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool GetColorIndexImp(SColorInfo* pInfo);
 };
 
 class CDraw_Numeric : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
-};
-
-class CDraw_CtrlCode : public CDrawStrategy{
-public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool GetColorIndexImp(SColorInfo* pInfo);
 };
 
 class CDraw_KeywordSet : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool GetColorIndexImp(SColorInfo* pInfo);
 };
 
 
+class CDraw_CtrlCode : public CDrawStrategy{
+public:
+	virtual bool BeginColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
+};
+
+
+
+//共通
 
 class CDraw_ColorEnd : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
 };
 
-class CDraw_CtrlColorEnd : public CDrawStrategy{
+class CDraw_Line : public CDrawStrategy{
 public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
-};
-
-
-class CDraw_LineEnd : public CDrawStrategy{
-public:
-	virtual bool EnterColor(SDrawStrategyInfo* pInfo);
+	virtual bool EndColor(SDrawStrategyInfo* pInfo);
 };

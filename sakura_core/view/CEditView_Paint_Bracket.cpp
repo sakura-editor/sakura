@@ -138,7 +138,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 						// 03/10/24 ai Ü‚è•Ô‚µs‚ÌColorIndex‚ª³‚µ‚­æ“¾‚Å‚«‚È‚¢–â‘è‚É‘Î‰
 						if( i == 0 ){
 							nColorIndex = GetColorIndex( hdc, pcLayout, m_ptBracketCaretPos_PHY.x );
-						}else{
+						}
+						else{
 							nColorIndex = GetColorIndex( hdc, pcLayout, m_ptBracketPairPos_PHY.x );
 						}
 					}
