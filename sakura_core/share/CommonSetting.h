@@ -139,23 +139,23 @@ struct CommonSetting_File
 {
 public:
 	// カーソル位置を復元するかどうか  Oct. 27, 2000 genta
-	bool	GetRestoreCurPosition(void) const	{ return m_bRestoreCurPosition != 0; }
+	bool	GetRestoreCurPosition() const		{ return m_bRestoreCurPosition; }
 	void	SetRestoreCurPosition(bool i)		{ m_bRestoreCurPosition = i; }
 
 	// ブックマークを復元するかどうか  2002.01.16 hor
-	bool	GetRestoreBookmarks(void) const		{ return m_bRestoreBookmarks != 0; }
+	bool	GetRestoreBookmarks() const			{ return m_bRestoreBookmarks; }
 	void	SetRestoreBookmarks(bool i)			{ m_bRestoreBookmarks = i; }
 
 	// ファイル読み込み時にMIMEのdecodeを行うか  Nov. 12, 2000 genta
-	bool	GetAutoMIMEdecode(void) const		{ return m_bAutoMIMEdecode != 0; }
+	bool	GetAutoMIMEdecode() const			{ return m_bAutoMIMEdecode; }
 	void	SetAutoMIMEdecode(bool i)			{ m_bAutoMIMEdecode = i; }
 
 	// 前回と文字コードが異なるときに問い合わせを行う  Oct. 03, 2004 genta
-	bool	GetQueryIfCodeChange(void) const	{ return m_bQueryIfCodeChange; }
+	bool	GetQueryIfCodeChange() const		{ return m_bQueryIfCodeChange; }
 	void	SetQueryIfCodeChange(bool i)		{ m_bQueryIfCodeChange = i; }
 	
 	// 開こうとしたファイルが存在しないとき警告する  Oct. 09, 2004 genta
-	bool	GetAlertIfFileNotExist(void) const	{ return m_bAlertIfFileNotExist != 0; }
+	bool	GetAlertIfFileNotExist() const		{ return m_bAlertIfFileNotExist; }
 	void	SetAlertIfFileNotExist(bool i)		{ m_bAlertIfFileNotExist = i; }
 
 public:
@@ -164,21 +164,21 @@ public:
 	bool			m_bCheckFileTimeStamp;	// 更新の監視
 
 	//ファイルの保存
-	BOOL	m_bEnableUnmodifiedOverwrite;	// 無変更でも上書きするか
+	bool	m_bEnableUnmodifiedOverwrite;	// 無変更でも上書きするか
 
 	//「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示
 	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	BOOL	m_bNoFilterSaveNew;				// 新規から保存時は全ファイル表示
-	BOOL	m_bNoFilterSaveFile;			// 新規以外から保存時は全ファイル表示
+	bool	m_bNoFilterSaveNew;				// 新規から保存時は全ファイル表示
+	bool	m_bNoFilterSaveFile;			// 新規以外から保存時は全ファイル表示
 
 	//ファイルオープン
-	BOOL	m_bDropFileAndClose;			// ファイルをドロップしたときは閉じて開く
+	bool	m_bDropFileAndClose;			// ファイルをドロップしたときは閉じて開く
 	int		m_nDropFileNumMax;				// 一度にドロップ可能なファイル数
-	BOOL	m_bRestoreCurPosition;			// ファイルを開いたときカーソル位置を復元するか
-	BOOL	m_bRestoreBookmarks;			// ブックマークを復元するかどうか 2002.01.16 hor
-	BOOL	m_bAutoMIMEdecode;				// ファイル読み込み時にMIMEのdecodeを行うか
+	bool	m_bRestoreCurPosition;			// ファイルを開いたときカーソル位置を復元するか
+	bool	m_bRestoreBookmarks;			// ブックマークを復元するかどうか 2002.01.16 hor
+	bool	m_bAutoMIMEdecode;				// ファイル読み込み時にMIMEのdecodeを行うか
 	bool	m_bQueryIfCodeChange;			// 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta
-	BOOL	m_bAlertIfFileNotExist;			// 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
+	bool	m_bAlertIfFileNotExist;			// 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

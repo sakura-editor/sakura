@@ -246,7 +246,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1005;
+const unsigned int uShareDataVersion = 1007;
 
 /*
 ||	Singleton風
@@ -605,20 +605,20 @@ bool CShareData::Init( void )
 			m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;			// 更新の監視
 
 			//ファイルの保存
-			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;	// 無変更でも上書きするか
+			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = false;	// 無変更でも上書きするか
 
 			// 「名前を付けて保存」でファイルの種類が[ユーザ指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = TRUE;		// 新規から保存時は全ファイル表示
-			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = TRUE;		// 新規以外から保存時は全ファイル表示
+			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = true;		// 新規から保存時は全ファイル表示
+			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = true;		// 新規以外から保存時は全ファイル表示
 
 			//ファイルオープン
-			m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;		// ファイルをドロップしたときは閉じて開く
+			m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = false;		// ファイルをドロップしたときは閉じて開く
 			m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;			// 一度にドロップ可能なファイル数
-			m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;	// カーソル位置復元	//	Oct. 27, 2000 genta
-			m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;		// ブックマーク復元	//2002.01.16 hor
-			m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;		// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+			m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = true;	// カーソル位置復元	//	Oct. 27, 2000 genta
+			m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = true;		// ブックマーク復元	//2002.01.16 hor
+			m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = false;		// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 			m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;		// 前回と異なる文字コードの時に問い合わせを行うか	Oct. 03, 2004 genta
-			m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;	// 開こうとしたファイルが存在しないとき警告する	Oct. 09, 2004 genta
+			m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = false;	// 開こうとしたファイルが存在しないとき警告する	Oct. 09, 2004 genta
 		}
 
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
