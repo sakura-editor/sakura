@@ -360,9 +360,6 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 /* ダイアログデータの設定 p1 */
 void CPropTypes::SetData_p1( HWND hwndDlg )
 {
-	HWND	hwndCombo;
-	int		nSelPos;
-
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );	//設定の名前
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );	//ファイル拡張子
 
@@ -387,9 +384,9 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
 
 		/* スマートインデント種別 */
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-		nSelPos = 0;
+		int		nSelPos = 0;
 		for( int i = 0; i < _countof( SmartIndentArr ); ++i ){
 			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SmartIndentArr[i].pszName );
 			if( SmartIndentArr[i].nMethod == m_Types.m_nSmartIndent ){	/* スマートインデント種別 */
@@ -421,10 +418,10 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	{
 		int ime;
 		// ON/OFF状態
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
 		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
 		ime = m_Types.m_nImeState & 3;
-		nSelPos = 0;
+		int		nSelPos = 0;
 		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
 			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)ImeSwitchArr[i].pszName );
 			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
@@ -450,15 +447,19 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	//アウトライン解析方法
 	//2002.04.01 YAZAKI ルールファイル関連追加
 	{
-		//標準ルール
-		if( m_Types.m_nDefaultOutline == OUTLINE_FILE ){
-			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, FALSE );
-			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, TRUE );
-
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
+		//標準ルールのコンボボックス初期化
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		int		nSelPos = 0;
+		for( int i = 0; i < _countof( OlmArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
+			if( OlmArr[i].nMethod == m_Types.m_nDefaultOutline ){	/* アウトライン解析方法 */
+				nSelPos = i;
+			}
 		}
-		else{
+
+		//標準ルール
+		if( m_Types.m_nDefaultOutline != OUTLINE_FILE ){
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
 
@@ -468,14 +469,13 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 
 			::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 		}
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
-		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-		nSelPos = 0;
-		for( int i = 0; i < _countof( OlmArr ); ++i ){
-			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
-			if( OlmArr[i].nMethod == m_Types.m_nDefaultOutline ){	/* アウトライン解析方法 */
-				nSelPos = i;
-			}
+		//ルールファイル
+		else{
+			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, FALSE );
+			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, TRUE );
+
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
 		}
 
 		//ルールファイル	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
@@ -512,8 +512,6 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 0;
-	HWND	hwndCombo;
-	int		nSelPos;
 
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, _countof( m_Types.m_szTypeName ) );	// 設定の名前
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, _countof( m_Types.m_szTypeExts ) );	// ファイル拡張子
@@ -581,8 +579,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
 
 		/* スマートインデント種別 */
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
-		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
+		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
 		m_Types.m_nSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
 
 		/* その他のインデント対象文字 */
@@ -600,8 +598,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	//起動時のIME(日本語入力変換)	Nov. 20, 2000 genta
 	{
 		//ON/OFF状態
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
-		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
 		m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
 
 		//入力モード
@@ -614,13 +612,14 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	//2002.04.01 YAZAKI ルールファイル関連追加
 	{
 		//標準ルール
-		if ( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
-			m_Types.m_nDefaultOutline = OUTLINE_FILE;
-		}
-		else {
-			hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
-			nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		if ( !::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
+			HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
+			int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
 			m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+		}
+		//ルールファイル
+		else {
+			m_Types.m_nDefaultOutline = OUTLINE_FILE;
 		}
 
 		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持
