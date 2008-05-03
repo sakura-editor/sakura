@@ -2,7 +2,7 @@
 #include "CConvert_Trim.h"
 #include "convert_util.h"
 #include "CEol.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "util/string_ex2.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

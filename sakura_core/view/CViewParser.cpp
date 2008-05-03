@@ -3,7 +3,7 @@
 #include "doc/CLayout.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 /*
 	カーソル直前の単語を取得 単語の長さを返します

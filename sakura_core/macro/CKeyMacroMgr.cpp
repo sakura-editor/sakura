@@ -23,7 +23,7 @@
 #include "CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "debug/Debug.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include "io/CTextStream.h"

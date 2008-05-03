@@ -30,10 +30,10 @@
 
 
 #include "stdafx.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "doc/CDocLineMgr.h"
 #include "debug/Debug.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 // Oct 6, 2000 ao
 #include <stdio.h>
 #include <io.h>

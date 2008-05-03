@@ -18,7 +18,7 @@
 #include "stdafx.h"
 #include <mbstring.h>
 #include "CLayoutMgr.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "debug/Debug.h"
 #include <commctrl.h>
 #include "debug/CRunningTimer.h"
@@ -1097,7 +1097,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	CMemoryIterator it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
 
 	//	Jul. 20, 2003 genta Ž©“®ƒCƒ“ƒfƒ“ƒg‚É€‚¶‚½“®ì‚É‚·‚é
-	bool bZenSpace = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
+	bool bZenSpace = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
 	const wchar_t* szSpecialIndentChar = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();

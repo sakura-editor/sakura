@@ -35,7 +35,7 @@
 #include "mymessage.h"
 #include "CShareData.h"
 #include "CPrint.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "global.h"
 #include "dlg/CDlgPrintSetting.h"
 #include "dlg/CDlgPrintPage.h"
@@ -46,7 +46,7 @@
 #include "COsVersioninfo.h"	// Sep. 6, 2003 genta
 #include "debug/CRunningTimer.h"
 #include "KeyCode.h"
-#include "CharPointer.h"
+#include "charset/CharPointer.h"
 #include "CEditApp.h"
 #include "util/module.h"
 #include "util/os.h"
@@ -2020,8 +2020,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOHANKATA			, _T("全角カタカナ→半角カタカナ(&J)") );		//Aug. 29, 2002 ai
 	// To Here 2007.01.24 maru メニューの並び変更とアクセスキー追加
 //	To Here Sept. 18, 2000
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUKATA, _T("半角カタカナ→全角カタカナ(&K)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKAKUHIRA, _T("半角カタカナ→全角ひらがな(&H)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENKATA, _T("半角カタカナ→全角カタカナ(&K)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HANKATATOZENHIRA, _T("半角カタカナ→全角ひらがな(&H)") );	//Sept. 13, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TABTOSPACE			, _T("TAB→空白(&S)") );	//Feb. 19, 2001 JEPRO 下から移動した
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPACETOTAB			, _T("空白→TAB(&T)") );	//---- Stonee, 2001/05/27
@@ -2156,7 +2156,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 			//From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECCMMAND, _T("外部コマンド実行(&X)") );
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECCOMMAND_DIALOG, _T("外部コマンド実行(&X)...") );	//Mar. 10, 2001 JEPRO 機能しないのでメニューから隠した	//Mar.21, 2001 JEPRO 標準出力しないで復活 // 2004.05.06 MIK ...追加
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECMD_DIALOG, _T("外部コマンド実行(&X)...") );	//Mar. 10, 2001 JEPRO 機能しないのでメニューから隠した	//Mar.21, 2001 JEPRO 標準出力しないで復活 // 2004.05.06 MIK ...追加
 			//To Here Sept. 20, 2000
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ACTIVATE_SQLPLUS			, _T("SQL*Plusをアクティブ表示(&P)") );	//Sept. 11, 2000 JEPRO アクセスキー付与	説明の「アクティブ化」を「アクティブ表示」に統一

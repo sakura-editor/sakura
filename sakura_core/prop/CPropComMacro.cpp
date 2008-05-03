@@ -309,10 +309,10 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
 		if ( _tcscmp(buf, _T("on")) == 0){
-			m_MacroTable[index].m_bReloadWhenExecute = TRUE;
+			m_MacroTable[index].m_bReloadWhenExecute = true;
 		}
 		else {
-			m_MacroTable[index].m_bReloadWhenExecute = FALSE;
+			m_MacroTable[index].m_bReloadWhenExecute = false;
 		}
 	}
 

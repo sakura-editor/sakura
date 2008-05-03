@@ -70,23 +70,10 @@ public:
 	static int GetKeyStrList( HINSTANCE	hInstance, int nKeyNameArrNum,KEYDATA* pKeyNameArr, CNativeT*** pppcMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得(複数) */
 	static TCHAR* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, TCHAR* pszLabel, BOOL bKeyStr, BOOL bGetDefFuncCode = TRUE );	/* メニューラベルの作成 */
 
-	/*
-	||  更新系メンバ関数
-	*/
-
-
 protected:
-	/*
-	||  メンバ変数
-	*/
-//	HINSTANCE	m_hInstance;
-//	CKeyData*	m_pKeyNameArr;
-//	int			m_nKeyNameArrNum;
-
 	/*
 	||  実装ヘルパ関数
 	*/
-
 	static bool GetKeyStrSub(int& nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA* pKeyNameArr,
 			int nShiftState, CNativeT& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };

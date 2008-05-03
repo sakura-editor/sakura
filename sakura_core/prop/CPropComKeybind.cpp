@@ -25,7 +25,7 @@
 #include <stdio.h>	/// 2002/2/3 aroka from here
 #include "io/CTextStream.h"
 #include "CDataProfile.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/string_ex2.h"

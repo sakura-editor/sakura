@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CEuc.h"
 #include "CShiftJis.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include <mbstring.h>
 #include "codeutil.h"
 

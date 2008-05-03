@@ -45,7 +45,7 @@
 //#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "recent/CRecent.h"
 #include "debug/Debug.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "util/shell.h"
 #include "util/file.h"
 

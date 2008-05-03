@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "codeutil.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include <mbstring.h>
 
 /*!
@@ -31,21 +31,21 @@ unsigned short _mbcjmstojis_ex( unsigned char* pszSrc )
 			( ( *pszSrc == 0x0fc ) && ( *(pszSrc+1) <= 0x04b ) )
 		) {		/* fa40`fc4b ‚Ì•¶Žš‚Å‚ ‚éB */
 			/* •¶ŽšƒR[ƒh•ÏŠ·ˆ— */
-			if		  ( tmpw <= 0xfa49 ) {	tmpw -= 0x0b51;	}	/* fa40`fa49 ¨ eeef`eef8 (îï`îø) */
+			if		  ( tmpw <= 0xfa49 ) {	tmpw -= 0x0b51;	}	/* fa40`fa49 ¨ eeef`eef8 (ú@`úI) */
 			else	if( tmpw <= 0xfa53 ) {	tmpw -= 0x72f6;	}	/* fa4a`fa53 ¨ 8754`875d (‡T`‡]) */
-			else	if( tmpw <= 0xfa57 ) {	tmpw -= 0x0b5b;	}	/* fa54`fa57 ¨ eef9`eefc (Ê`îü) */
+			else	if( tmpw <= 0xfa57 ) {	tmpw -= 0x0b5b;	}	/* fa54`fa57 ¨ eef9`eefc (Ê`úW) */
 			else	if( tmpw == 0xfa58 ) {	tmpw  = 0x878a;	}	/* ‡Š */
 			else	if( tmpw == 0xfa59 ) {	tmpw  = 0x8782;	}	/* ‡‚ */
 			else	if( tmpw == 0xfa5a ) {	tmpw  = 0x8784;	}	/* ‡„ */
 			else	if( tmpw == 0xfa5b ) {	tmpw  = 0x879a;	}	/* æ */
-			else	if( tmpw <= 0xfa7e ) {	tmpw -= 0x0d1c;	}	/* fa5c`fa7e ¨ ed40`ed62 (í@`íb) */
-			else	if( tmpw <= 0xfa9b ) {	tmpw -= 0x0d1d;	}	/* fa80`fa9b ¨ ed63`ed7e (íc`í~) */
-			else	if( tmpw <= 0xfafc ) {	tmpw -= 0x0d1c;	}	/* fa9c`fafc ¨ ed80`ede0 (í€`íà) */
-			else	if( tmpw <= 0xfb5b ) {	tmpw -= 0x0d5f;	}	/* fb40`fb5b ¨ ede1`edfc (íá`íü) */
-			else	if( tmpw <= 0xfb7e ) {	tmpw -= 0x0d1c;	}	/* fb5c`fb7e ¨ ee40`ee62 (î@`îb) */
-			else	if( tmpw <= 0xfb9b ) {	tmpw -= 0x0d1d;	}	/* fb80`fb9b ¨ ee63`ee7e (îc`î~) */
-			else	if( tmpw <= 0xfbfc ) {	tmpw -= 0x0d1c;	}	/* fb9c`fbfc ¨ ee80`eee0 (î€`îà) */
-			else{							tmpw -= 0x0d5f;	}	/* fc40`fc4b ¨ eee1`eeec (îá`îì) */
+			else	if( tmpw <= 0xfa7e ) {	tmpw -= 0x0d1c;	}	/* fa5c`fa7e ¨ ed40`ed62 (ú\`ú~) */
+			else	if( tmpw <= 0xfa9b ) {	tmpw -= 0x0d1d;	}	/* fa80`fa9b ¨ ed63`ed7e (ú€`ú›) */
+			else	if( tmpw <= 0xfafc ) {	tmpw -= 0x0d1c;	}	/* fa9c`fafc ¨ ed80`ede0 (úœ`úü) */
+			else	if( tmpw <= 0xfb5b ) {	tmpw -= 0x0d5f;	}	/* fb40`fb5b ¨ ede1`edfc (û@`û[) */
+			else	if( tmpw <= 0xfb7e ) {	tmpw -= 0x0d1c;	}	/* fb5c`fb7e ¨ ee40`ee62 (û\`û~) */
+			else	if( tmpw <= 0xfb9b ) {	tmpw -= 0x0d1d;	}	/* fb80`fb9b ¨ ee63`ee7e (û€`û›) */
+			else	if( tmpw <= 0xfbfc ) {	tmpw -= 0x0d1c;	}	/* fb9c`fbfc ¨ ee80`eee0 (ûœ`ûü) */
+			else{							tmpw -= 0x0d5f;	}	/* fc40`fc4b ¨ eee1`eeec (ü@`üK) */
 		}
 		return (unsigned short) _mbcjmstojis( tmpw );
 	}

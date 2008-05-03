@@ -40,7 +40,7 @@
 #include "window/CEditWnd.h"
 #include "global.h"
 #include "mymessage.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"

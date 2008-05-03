@@ -43,7 +43,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "CBregexp.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "CShareData.h"
 
 

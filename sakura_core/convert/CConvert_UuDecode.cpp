@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CConvert_UuDecode.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 inline uchar_t UUDECODE_CHAR( wchar_t c )
 {

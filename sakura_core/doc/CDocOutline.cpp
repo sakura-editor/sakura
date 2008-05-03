@@ -25,7 +25,7 @@
 #include "doc/CEditDoc.h"
 #include "CFuncInfoArr.h"
 #include "doc/CDocLine.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "util/other_util.h"
 
 
@@ -38,7 +38,7 @@
 #include "doc/CEditDoc.h"
 #include "CFuncInfoArr.h"
 #include "doc/CDocLine.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 
 

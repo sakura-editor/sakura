@@ -261,8 +261,8 @@ const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(Li
 	F_TOHANEI				,	/* 全角英数→半角英数 */
 	F_TOHANKATA				,	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	// To Here 2007.01.24 maru 並び順変更
-	F_HANKATATOZENKAKUKATA	,	/* 半角カタカナ→全角カタカナ */
-	F_HANKATATOZENKAKUHIRA	,	/* 半角カタカナ→全角ひらがな */
+	F_HANKATATOZENKATA	,	/* 半角カタカナ→全角カタカナ */
+	F_HANKATATOZENHIRA	,	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE			,	/* TAB→空白 */
 	F_SPACETOTAB			,	/* 空白→TAB */  //---- Stonee, 2001/05/27
 	F_CODECNV_AUTO2SJIS		,	/* 自動判別→SJISコード変換 */
@@ -360,7 +360,7 @@ const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List
 	F_EXECKEYMACRO	,	/* キーマクロの実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
-	F_EXECCOMMAND_DIALOG	/* 外部コマンド実行 */
+	F_EXECMD_DIALOG	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 };
@@ -695,8 +695,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_TOHANKATA:				return HLP000258;	//全角カタカナ→半角カタカナ
 	case F_TOZENKAKUKATA:			return HLP000050;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			return HLP000051;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA:	return HLP000123;	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA:	return HLP000124;	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA:	return HLP000123;	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA:	return HLP000124;	/* 半角カタカナ→全角ひらがな */
 	case F_TOZENEI:					return HLP000200;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka //Stonee, 2001/09/26 番号修正
 	case F_TOHANEI:					return HLP000215;	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
 	case F_TABTOSPACE:				return HLP000182;	/* TAB→空白 */
@@ -803,7 +803,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_EXECKEYMACRO:	return HLP000126;	/* キーマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	case F_EXECCMMAND:		return 103; /* 外部コマンド実行 */
-	case F_EXECCOMMAND_DIALOG:	return HLP000103; /* 外部コマンド実行 */
+	case F_EXECMD_DIALOG:	return HLP000103; /* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 
@@ -1044,8 +1044,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 	case F_TOHANEI:					/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA:			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA:	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA:	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA:	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA:	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				/* TAB→空白 */
 	case F_SPACETOTAB:				/* 空白→TAB */  //---- Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		/* 自動判別→SJISコード変換 */

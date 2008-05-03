@@ -3,7 +3,7 @@
 #include "charset/CShiftJis.h"
 #include <mbstring.h>
 #include "CEol.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include <string>
 #include "util/string_ex2.h"
 

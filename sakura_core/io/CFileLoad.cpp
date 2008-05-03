@@ -39,7 +39,7 @@
 #include "mem/CMemory.h"
 #include "CEol.h"
 #include "io/CFileLoad.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #ifdef _DEBUG
 #include "debug/Debug.h"
 #endif

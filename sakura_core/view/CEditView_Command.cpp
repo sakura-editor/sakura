@@ -8,7 +8,7 @@
 #include "CControlTray.h"
 #include <io.h>
 #include "doc/CLayout.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。

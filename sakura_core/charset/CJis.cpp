@@ -3,7 +3,7 @@
 #include "CShiftJis.h"
 #include <mbstring.h>
 #include "convert/CConvert_Base64Decode.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "codeutil.h"
 
 #define ESC_JIS		"\x01b$B"

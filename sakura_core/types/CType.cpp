@@ -67,3 +67,45 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		SAFE_DELETE(table[i]);
 	}
 }
+
+
+/*!	@brief 共有メモリ初期化/強調キーワード
+
+	強調キーワード関連の初期化処理
+
+	@date 2005.01.30 genta CShareData::Init()から分離．
+		キーワード定義を関数の外に出し，登録をマクロ化して簡潔に．
+*/
+void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
+{
+	/* 強調キーワードのテストデータ */
+	pShareData->m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = 0;
+
+	int nSetCount = -1;
+
+#define PopulateKeyword(name,case_sensitive,aryname) \
+	extern const wchar_t* g_ppszKeywords##aryname[]; \
+	extern int g_nKeywords##aryname; \
+	pShareData->m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
+	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, g_nKeywords##aryname, g_ppszKeywords##aryname );
+	
+	PopulateKeyword( L"C/C++",			true,	CPP );			/* セット 0の追加 */
+	PopulateKeyword( L"HTML",			false,	HTML );			/* セット 1の追加 */
+	PopulateKeyword( L"PL/SQL",			false,	PLSQL );		/* セット 2の追加 */
+	PopulateKeyword( L"COBOL",			true,	COBOL );		/* セット 3の追加 */
+	PopulateKeyword( L"Java",			true,	JAVA );			/* セット 4の追加 */
+	PopulateKeyword( L"CORBA IDL",		true,	CORBA_IDL );	/* セット 5の追加 */
+	PopulateKeyword( L"AWK",			true,	AWK );			/* セット 6の追加 */
+	PopulateKeyword( L"MS-DOS batch",	false,	BAT );			/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
+	PopulateKeyword( L"Pascal",			false,	PASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
+	PopulateKeyword( L"TeX",			true,	TEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
+	PopulateKeyword( L"TeX2",			true,	TEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
+	PopulateKeyword( L"Perl",			true,	PERL );			/* セット11の追加 */
+	PopulateKeyword( L"Perl2",			true,	PERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
+	PopulateKeyword( L"Visual Basic",	false,	VB );			/* セット13の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"Visual Basic2",	false,	VB2 );			/* セット14の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"リッチテキスト",	true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
+
+#undef PopulateKeyword
+}
+

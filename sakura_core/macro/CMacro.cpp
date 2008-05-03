@@ -64,7 +64,7 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	/*	文字列パラメータを追加 */
 	case F_INSTEXT_W:
 	case F_FILEOPEN:
-	case F_EXECCOMMAND:
+	case F_EXECMD:
 		{
 			AddStringParam( (const wchar_t*)lParam );	//	lParamを追加。
 			LPARAM lFlag = 0x00;
@@ -275,7 +275,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				szFuncNameJapanese
 			);
 			break;
-		case F_EXECCOMMAND:
+		case F_EXECMD:
 			//	引数ひとつ分だけ保存
 			pText = m_pParamTop->m_pData;
 			nTextLen = wcslen(pText);
@@ -497,7 +497,7 @@ void CMacro::HandleCommand(
 		//		0x0040    (DIFF差分がないときにメッセージ表示)
 		/* NO BREAK */
 
-	case F_EXECCOMMAND:
+	case F_EXECMD:
 		//	Argument[0]を実行。オプションはArgument[1]に。
 		//	Argument[1]:
 		//		次の数値の和。

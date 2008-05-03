@@ -42,7 +42,7 @@
 #include <limits.h>
 #include "mem/CMemory.h"
 #include "CEol.h"// 2002/2/3 aroka
-#include "charcode.h"
+#include "charset/charcode.h"
 #include <vector>
 #include "charset/CShiftJis.h"
 #include <mbstring.h>

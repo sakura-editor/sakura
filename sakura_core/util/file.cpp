@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "file.h"
-#include "CharPointer.h"
+#include "charset/CharPointer.h"
 #include "util/module.h"
 #include "CShareData.h"
 #include <io.h>
 #include <string.h>
-#include "charcode.h"
+#include "charset/charcode.h"
 
 bool fexist(LPCTSTR pszPath)
 {

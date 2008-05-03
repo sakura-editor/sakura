@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CMyString.h"
-#include "charcode.h"
-#include "CharPointer.h"
+#include "charset/charcode.h"
+#include "charset/CharPointer.h"
 
 void CMyString::set(const char* szData)
 {

@@ -28,7 +28,7 @@
 #include "debug/Debug.h"
 #include "funccode.h"
 #include "debug/CRunningTimer.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include <DLGS.H>
 #include "CShareData.h"
 #include "window/CEditWnd.h"
@@ -366,8 +366,8 @@ bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand )
 	case F_TOHANEI:
 	case F_TOZENKAKUKATA:
 	case F_TOZENKAKUHIRA:
-	case F_HANKATATOZENKAKUKATA:
-	case F_HANKATATOZENKAKUHIRA:
+	case F_HANKATATOZENKATA:
+	case F_HANKATATOZENHIRA:
 	case F_TABTOSPACE:
 	case F_SPACETOTAB:  //---- Stonee, 2001/05/27
 	case F_HOKAN:
