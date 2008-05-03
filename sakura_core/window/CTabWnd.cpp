@@ -356,38 +356,12 @@ LRESULT CTabWnd::OnTabMButtonUp( WPARAM wParam, LPARAM lParam )
 
 	@date 2005.09.01 ryoji 関数化
 	@date 2006.10.31 ryoji ツールチップのフルパス名を簡易表示する
+	@date 2007.12.06 ryoji ツールチップ処理をOnNotify()に移動（タブをTCS_TOOLTIPSスタイル化）
 */
 
 LRESULT CTabWnd::OnTabNotify( WPARAM wParam, LPARAM lParam )
 {
-	NMTTDISPINFO* lpnmtdi;
-	lpnmtdi = (NMTTDISPINFO*)lParam;
-	if( lpnmtdi->hdr.hwndFrom == m_hwndToolTip )
-	{
-		switch( lpnmtdi->hdr.code )
-		{
-		//case TTN_NEEDTEXT:
-		case TTN_GETDISPINFO:
-			{
-				TCITEM	tcitem;
-
-				tcitem.mask   = TCIF_PARAM;
-				tcitem.lParam = (LPARAM)NULL;
-
-				if( TabCtrl_GetItem( m_hwndTab, lpnmtdi->hdr.idFrom, &tcitem ) )
-				{
-					EditNode* pEditNode;
-					pEditNode = CShareData::getInstance()->GetEditNode( (HWND)tcitem.lParam );
-
-					GetTabName( pEditNode, TRUE, FALSE, lpnmtdi->szText, _countof(lpnmtdi->szText) );
-					lpnmtdi->hinst=NULL;
-
-					return 0L;
-				}
-			}
-		}
-	}
-
+	// ツールチップ処理削除	// 2007.12.06 ryoji
 	return 1L;
 }
 
@@ -703,7 +677,8 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		WC_TABCONTROL,
 		_T(""),
 		//	2004.05.22 MIK 消えるTAB対策でWS_CLIPSIBLINGS追加
-		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
+		// 2007.12.06 ryoji TCS_TOOLTIPS追加（タブ用のツールチップはタブに作らせる）
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | TCS_TOOLTIPS,
 		// 2006.01.30 ryoji 初期配置見直し
 		TAB_MARGIN_LEFT,
 		TAB_MARGIN_TOP,
@@ -731,6 +706,13 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
 		TabCtrl_SetItemSize( m_hwndTab, MAX_TABITEM_WIDTH, TAB_ITEM_HEIGHT );	// 2006.01.28 ryoji
 
+		// タブのツールチップスタイルを変更する	// 2007.12.06 ryoji
+		HWND hwndToolTips;
+		hwndToolTips = TabCtrl_GetToolTips( m_hwndTab );
+		lngStyle = (UINT)::GetWindowLongPtr( hwndToolTips, GWL_STYLE );
+		lngStyle |= TTS_ALWAYSTIP;	// 従来通りTTS_ALWAYSTIPにしておく
+		::SetWindowLongPtr( hwndToolTips, GWL_STYLE, lngStyle );
+
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
 		LOGFONT	lf;
@@ -754,7 +736,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		/* フォント変更 */
 		::SendMessageAny( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 
-		//ツールチップを作成する。
+		//ツールチップを作成する。（タブではなく「閉じる」などのボタン用）
 		//	2005.08.11 ryoji 「重ねて表示」のZ-orderがおかしくなるのでTOPMOST指定を解除
 		m_hwndToolTip = ::CreateWindowEx(
 			0,
@@ -787,9 +769,6 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		ti.rect.right  = 0;
 		ti.rect.bottom = 0;
 		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)&ti );
-
-		// タブバー内のタブコントロールにツールチップを追加する
-		TabCtrl_SetToolTips( m_hwndTab, m_hwndToolTip );
 
 		// 2006.02.22 ryoji イメージリストを初期化する
 		InitImageList();
@@ -1137,6 +1116,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	// カーソルがボタン上を出入りするときに再描画
 	RECT rcBtn;
 	LPTSTR pszTip = (LPTSTR)-1L;
+	TCHAR szText[80];	// 2007.12.06 ryoji メンバ変数を使う必要は無いのでローカル変数にした
 
 	GetListBtnRect( &rc, &rcBtn );
 	bHovering = ::PtInRect( &rcBtn, pt );
@@ -1149,8 +1129,8 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		pszTip = NULL;	// ボタンの外に出るときは消す
 		if( m_bListBtnHilighted )	// ボタンに入ってきた?
 		{
-			pszTip = m_szTextTip1;
-			_tcscpy( m_szTextTip1, _T("左クリック: タブ名一覧\n右クリック: パス名一覧") );
+			pszTip = szText;
+			_tcscpy( szText, _T("左クリック: タブ名一覧\n右クリック: パス名一覧") );
 		}
 	}
 
@@ -1165,23 +1145,23 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		pszTip = NULL;	// ボタンの外に出るときは消す
 		if( m_bCloseBtnHilighted )	// ボタンに入ってきた?
 		{
-			pszTip = m_szTextTip1;
+			pszTip = szText;
 			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 			{
 				if( !m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin )
 				{
-					_tcscpy( m_szTextTip1, _T("タブを閉じる") );
+					_tcscpy( szText, _T("タブを閉じる") );
 				}
 				else
 				{
-					::LoadString( GetAppInstance(), F_GROUPCLOSE, m_szTextTip1, _countof(m_szTextTip1) );
-					m_szTextTip1[_countof(m_szTextTip1) - 1] = _T('\0');
+					::LoadString( GetAppInstance(), F_GROUPCLOSE, szText, _countof(szText) );
+					szText[_countof(szText) - 1] = _T('\0');
 				}
 			}
 			else
 			{
-				::LoadString( GetAppInstance(), F_EXITALLEDITORS, m_szTextTip1, _countof(m_szTextTip1) );
-				m_szTextTip1[_countof(m_szTextTip1) - 1] = _T('\0');
+				::LoadString( GetAppInstance(), F_EXITALLEDITORS, szText, _countof(szText) );
+				szText[_countof(szText) - 1] = _T('\0');
 			}
 		}
 	}
@@ -1303,10 +1283,33 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 /*! WM_NOTIFY処理
 
 	@date 2005.09.01 ryoji ウィンドウ切り替えは OnTabLButtonUp() に移動
+	@date 2007.12.06 ryoji タブのツールチップ処理をOnTabNotify()から移動（タブをTCS_TOOLTIPSスタイル化）
 */
 LRESULT CTabWnd::OnNotify( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	// 2005.09.01 ryoji ウィンドウ切り替えは OnTabLButtonUp() に移動
+	NMHDR* pnmh = (NMHDR*)lParam;
+	if( pnmh->hwndFrom == TabCtrl_GetToolTips( m_hwndTab ) )
+	{
+		switch( pnmh->code )
+		{
+		//case TTN_NEEDTEXT:
+		case TTN_GETDISPINFO:
+			// ツールチップ表示情報を設定する
+			TCITEM	tcitem;
+			tcitem.mask   = TCIF_PARAM;
+			tcitem.lParam = (LPARAM)NULL;
+			if( TabCtrl_GetItem( m_hwndTab, pnmh->idFrom, &tcitem ) )
+			{
+				EditNode* pEditNode;
+				pEditNode = CShareData::getInstance()->GetEditNode( (HWND)tcitem.lParam );
+				GetTabName( pEditNode, TRUE, FALSE, m_szTextTip, _countof(m_szTextTip) );
+				((NMTTDISPINFO*)pnmh)->lpszText = m_szTextTip;	// NMTTDISPINFO::szText[80]では短い
+				((NMTTDISPINFO*)pnmh)->hinst = NULL;
+			}
+			return 0L;
+		}
+	}
 	return 0L;
 }
 

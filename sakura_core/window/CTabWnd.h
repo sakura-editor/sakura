@@ -157,8 +157,8 @@ public:
 	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */
-	HWND			m_hwndToolTip;	/*!< ツールチップ */
-	TCHAR			m_szTextTip1[1024];
+	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
+	TCHAR			m_szTextTip[1024];	/*!< ツールチップのテキスト（タブ用） */
 
 private:
 	DragState	m_eDragState;			//!< ドラッグ状態
@@ -182,5 +182,6 @@ private:
 };
 
 #endif /* _CTABWND_H_ */
+
 
 
