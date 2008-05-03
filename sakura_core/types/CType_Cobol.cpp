@@ -16,7 +16,7 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	wcscpy( pType->m_szIndentChars, L"*" );				/* その他のインデント対象文字 */
 	pType->m_nKeyWordSetIdx[0] = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
-	pType->m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
+	pType->m_eDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 	// 指定桁縦線	//2005.11.08 Moca
 	pType->m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = true;
 	pType->m_nVertLineIdx[0] = CLayoutInt(7);

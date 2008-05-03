@@ -112,7 +112,6 @@ public:
 	//ドキュメントイベント
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-
 	//管理
 	void MessageLoop( void );								/* メッセージループ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
@@ -320,7 +319,6 @@ private:
 	UINT			m_uATOKReconvertMsg;
 
 	//状態
-	const TCHAR*	m_pszWndClass;		//!< ウィンドウクラス名
 	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPTSTR			m_pszLastCaption;
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq

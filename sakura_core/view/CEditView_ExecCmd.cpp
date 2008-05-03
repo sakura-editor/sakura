@@ -173,7 +173,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 		BOOL	bLoopFlag = TRUE;
 
 		//中断ダイアログ表示
-		cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_EXECRUNNING );
+		cDlgCancel.DoModeless( G_AppInstance(), m_hwndParent, IDD_EXECRUNNING );
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・
 		if (FALSE==bToEditWindow)	//	2006.12.03 maru アウトプットウィンドウにのみ出力
@@ -316,7 +316,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			CShareData::getInstance()->TraceOut( _T("\r\n終了コード: %d\r\n"), result );
 
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-			if(result > 0) ActivateFrameWindow( m_pShareData->m_hwndDebug );
+			if(result > 0) ActivateFrameWindow( GetDllShareData().m_hwndDebug );
 		}
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			GetCommander().Command_INSTEXT(FALSE, to_wchar(work,bufidx), CLogicInt(-1), TRUE);	/* 最後の文字の処理 */

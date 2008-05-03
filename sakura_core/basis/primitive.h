@@ -1,6 +1,29 @@
 #pragma once
 
 
+// -- -- -- -- 論理型 -- -- -- -- //
+
+// novice 2002/09/14
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef BOOL
+#define BOOL	int
+#endif
+
+
+// -- -- -- -- 定数 -- -- -- -- //
+
+#ifndef NULL
+#define NULL 0
+#endif
+
+
 // -- -- -- -- 文字 -- -- -- -- //
 
 //char,wchar_t の変わりに、別名の ACHAR,WCHAR を使うと、ソース整形がしやすいケースがある。

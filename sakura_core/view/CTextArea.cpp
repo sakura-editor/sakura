@@ -137,7 +137,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 	}
 
 	//	Sep 18, 2002 genta
-	nViewAlignLeftNew += pView->m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace;
+	nViewAlignLeftNew += GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace;
 	if( nViewAlignLeftNew != GetAreaLeft() ){
 		CMyRect			rc;
 		SetAreaLeft(nViewAlignLeftNew);

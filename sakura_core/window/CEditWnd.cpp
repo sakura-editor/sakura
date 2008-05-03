@@ -110,7 +110,6 @@ CEditWnd::CEditWnd()
 , m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
 , m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-, m_pszWndClass( GSTR_EDITWINDOWNAME )
 , m_pszLastCaption( NULL )
 , m_nCurrentFocus( 0 )
 , m_bIsActiveApp( false )
@@ -259,19 +258,19 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= 32;
-	wc.hInstance		= CNormalProcess::Instance()->GetProcessInstance();
+	wc.hInstance		= G_AppInstance();
 	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( CNormalProcess::Instance()->GetProcessInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
+	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
 
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
 	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
-	wc.lpszClassName	= m_pszWndClass;
+	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
 
 	//	Dec. 6, 2002 genta
 	//	small icon指定のため RegisterClassExに変更
 	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( CNormalProcess::Instance()->GetProcessInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
+	wc.hIconSm			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
 	ATOM	atom = RegisterClassEx( &wc );
 	if( 0 == atom ){
 		//	2004.05.13 Moca return NULLを有効にした
@@ -285,8 +284,8 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	//作成
 	HWND hwndResult = ::CreateWindowEx(
 		0,				 	// extended window style
-		m_pszWndClass,		// pointer to registered class name
-		m_pszWndClass,		// pointer to window name
+		GSTR_EDITWINDOWNAME,		// pointer to registered class name
+		GSTR_EDITWINDOWNAME,		// pointer to window name
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,	// window style
 		rc.left,			// horizontal position of window
 		rc.top,				// vertical position of window
@@ -294,7 +293,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 		rc.Height(),		// window height
 		NULL,				// handle to parent or owner window
 		NULL,				// handle to menu or child-window identifier
-		CNormalProcess::Instance()->GetProcessInstance(),		// handle to application instance
+		G_AppInstance(),		// handle to application instance
 		NULL				// pointer to window-creation data
 	);
 	return hwndResult;
@@ -454,19 +453,19 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_CMenuDrawer.Create( CNormalProcess::Instance()->GetProcessInstance(), GetHwnd(), &CEditApp::Instance()->GetIcons() );
+	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), &CEditApp::Instance()->GetIcons() );
 
 
 	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
 
 	/* 分割フレーム作成 */
-	m_cSplitterWnd.Create( CNormalProcess::Instance()->GetProcessInstance(), GetHwnd(), this );
+	m_cSplitterWnd.Create( G_AppInstance(), GetHwnd(), this );
 
 	/* ビュー */
-	m_pcEditViewArr[0]->Create( CNormalProcess::Instance()->GetProcessInstance(), m_cSplitterWnd.GetHwnd(), &GetDocument(), 0, TRUE  );
-	m_pcEditViewArr[1]->Create( CNormalProcess::Instance()->GetProcessInstance(), m_cSplitterWnd.GetHwnd(), &GetDocument(), 1, FALSE );
-	m_pcEditViewArr[2]->Create( CNormalProcess::Instance()->GetProcessInstance(), m_cSplitterWnd.GetHwnd(), &GetDocument(), 2, FALSE );
-	m_pcEditViewArr[3]->Create( CNormalProcess::Instance()->GetProcessInstance(), m_cSplitterWnd.GetHwnd(), &GetDocument(), 3, FALSE );
+	m_pcEditViewArr[0]->Create( m_cSplitterWnd.GetHwnd(), &GetDocument(), 0, TRUE  );
+	m_pcEditViewArr[1]->Create( m_cSplitterWnd.GetHwnd(), &GetDocument(), 1, FALSE );
+	m_pcEditViewArr[2]->Create( m_cSplitterWnd.GetHwnd(), &GetDocument(), 2, FALSE );
+	m_pcEditViewArr[3]->Create( m_cSplitterWnd.GetHwnd(), &GetDocument(), 3, FALSE );
 
 	m_pcEditViewArr[0]->OnSetFocus();
 
@@ -484,7 +483,7 @@ HWND CEditWnd::Create(
 
 	/* 入力補完ウィンドウ作成 */
 	m_cHokanMgr.DoModeless(
-		CNormalProcess::Instance()->GetProcessInstance(),
+		G_AppInstance(),
 		m_pcEditViewArr[0]->GetHwnd(),
 		(LPARAM)m_pcEditViewArr[0]
 	);
@@ -650,7 +649,7 @@ void CEditWnd::LayoutFuncKey( void )
 					bSizeBox = false;
 				}
 			}
-			m_CFuncKeyWnd.Open( CNormalProcess::Instance()->GetProcessInstance(), GetHwnd(), &GetDocument(), bSizeBox );
+			m_CFuncKeyWnd.Open( G_AppInstance(), GetHwnd(), &GetDocument(), bSizeBox );
 		}
 	}else{
 		m_CFuncKeyWnd.Close();
@@ -664,7 +663,7 @@ void CEditWnd::LayoutTabBar( void )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
 		if( NULL == m_cTabWnd.GetHwnd() ){
-			m_cTabWnd.Open( CNormalProcess::Instance()->GetProcessInstance(), GetHwnd() );
+			m_cTabWnd.Open( G_AppInstance(), GetHwnd() );
 		}
 	}else{
 		m_cTabWnd.Close();
@@ -769,10 +768,8 @@ LRESULT CEditWnd::DispatchEvent(
 
 	switch( uMsg ){
 	case WM_PAINTICON:
-//		MYTRACE_A( "WM_PAINTICON\n" );
 		return 0;
 	case WM_ICONERASEBKGND:
-//		MYTRACE_A( "WM_ICONERASEBKGND\n" );
 		return 0;
 	case WM_LBUTTONDOWN:
 		return OnLButtonDown( wParam, lParam );
@@ -815,7 +812,7 @@ LRESULT CEditWnd::DispatchEvent(
 			int			nAssignedKeyNum;
 			int			j;
 			nAssignedKeyNum = CKeyBind::GetKeyStrList(
-				CNormalProcess::Instance()->GetProcessInstance(),
+				G_AppInstance(),
 				m_pShareData->m_nKeyNameArrNum,
 				(KEYDATA*)m_pShareData->m_pKeyNameArr,
 				&ppcAssignedKeyList,
@@ -1213,7 +1210,7 @@ LRESULT CEditWnd::DispatchEvent(
 						sLoadInfo.eCharCode = CODE_DEFAULT;
 						sLoadInfo.bViewMode = false;
 						CControlTray::OpenNewEditor(
-							CNormalProcess::Instance()->GetProcessInstance(),
+							G_AppInstance(),
 							GetHwnd(),
 							sLoadInfo,
 							NULL,
@@ -1619,7 +1616,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			/* バージョン情報 */
 			{
 				CDlgAbout cDlgAbout;
-				cDlgAbout.DoModal( CNormalProcess::Instance()->GetProcessInstance(), GetHwnd() );
+				cDlgAbout.DoModal( G_AppInstance(), GetHwnd() );
 			}
 			break;
 		default:
@@ -2522,7 +2519,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					sLoadInfo.eCharCode = CODE_AUTODETECT;
 					sLoadInfo.bViewMode = false;
 					CControlTray::OpenNewEditor(
-						CNormalProcess::Instance()->GetProcessInstance(),
+						G_AppInstance(),
 						GetHwnd(),
 						sLoadInfo
 					);
@@ -2642,7 +2639,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 
 		::SetFocus( GetHwnd() );
 
-		hMenu = ::LoadMenu( CNormalProcess::Instance()->GetProcessInstance(), MAKEINTRESOURCE( IDR_MENU1 ) );
+		hMenu = ::LoadMenu( G_AppInstance(), MAKEINTRESOURCE( IDR_MENU1 ) );
 		::SetMenu( GetHwnd(), hMenu );
 		::DrawMenuBar( GetHwnd() );
 
@@ -3219,10 +3216,10 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[i];
 	}
 
-//	cDlgPrintSetting.Create( CNormalProcess::Instance()->GetProcessInstance(), GetHwnd() );
+//	cDlgPrintSetting.Create( G_AppInstance(), GetHwnd() );
 	nCurrentPrintSetting = GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting;
 	bRes = cDlgPrintSetting.DoModal(
-		CNormalProcess::Instance()->GetProcessInstance(),
+		G_AppInstance(),
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		GetHwnd(),
 		&nCurrentPrintSetting, /* 現在選択している印刷設定 */
@@ -3431,8 +3428,8 @@ void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
 */
 void CEditWnd::GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const
 {
-	*hIconBig   = GetAppIcon( CNormalProcess::Instance()->GetProcessInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
-	*hIconSmall = GetAppIcon( CNormalProcess::Instance()->GetProcessInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
+	*hIconBig   = GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
+	*hIconSmall = GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
 }
 
 /*!
@@ -3858,7 +3855,7 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 	// 機能に対応するキー名の取得(複数)
 	CNativeT**	ppcAssignedKeyList;
 	int nAssignedKeyNum = CKeyBind::GetKeyStrList(
-		CNormalProcess::Instance()->GetProcessInstance(),
+		G_AppInstance(),
 		m_pShareData->m_nKeyNameArrNum,
 		m_pShareData->m_pKeyNameArr,
 		&ppcAssignedKeyList,

@@ -19,3 +19,8 @@ HWND G_GetProgressBar()
 		return NULL;
 	}
 }
+
+HINSTANCE G_AppInstance()
+{
+	return CNormalProcess::Instance()->GetProcessInstance();
+}

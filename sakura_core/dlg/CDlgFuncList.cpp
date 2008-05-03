@@ -43,18 +43,18 @@
 //アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
 const DWORD p_helpids[] = {	//12200
-	IDC_BUTTON_COPY,				HIDC_FL_BUTTON_COPY,	//コピー
-	IDOK,							HIDOK_FL,				//ジャンプ
-	IDCANCEL,						HIDCANCEL_FL,			//キャンセル
-	IDC_BUTTON_HELP,				HIDC_FL_BUTTON_HELP,	//ヘルプ
+	IDC_BUTTON_COPY,					HIDC_FL_BUTTON_COPY,	//コピー
+	IDOK,								HIDOK_FL,				//ジャンプ
+	IDCANCEL,							HIDCANCEL_FL,			//キャンセル
+	IDC_BUTTON_HELP,					HIDC_FL_BUTTON_HELP,	//ヘルプ
 	IDC_CHECK_bAutoCloseDlgFuncList,	HIDC_FL_CHECK_bAutoCloseDlgFuncList,	//自動的に閉じる
-	IDC_LIST1,						HIDC_FL_LIST1,			//トピックリスト
-	IDC_TREE1,						HIDC_FL_TREE1,			//トピックツリー
+	IDC_LIST1,							HIDC_FL_LIST1,			//トピックリスト
+	IDC_TREE1,							HIDC_FL_TREE1,			//トピックツリー
 	IDC_CHECK_bFunclistSetFocusOnJump	,HIDC_FL_CHECK_bFunclistSetFocusOnJump,	//ジャンプでフォーカス移動する
 	IDC_CHECK_bMarkUpBlankLineEnable	,HIDC_FL_CHECK_bMarkUpBlankLineEnable,	//空行を無視する
-	IDC_COMBO_nSortType,			HIDC_COMBO_nSortType,	//順序
-	IDC_BUTTON_WINSIZE,				HIDC_FL_BUTTON_WINSIZE,	//ウィンドウ位置保存	// 2006.08.06 ryoji
-//	IDC_STATIC,						-1,
+	IDC_COMBO_nSortType,				HIDC_COMBO_nSortType,	//順序
+	IDC_BUTTON_WINSIZE,					HIDC_FL_BUTTON_WINSIZE,	//ウィンドウ位置保存	// 2006.08.06 ryoji
+//	IDC_STATIC,							-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
@@ -113,7 +113,6 @@ CDlgFuncList::CDlgFuncList()
 	m_bLineNumIsCRLF = FALSE;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
 	m_nSortType = 0;
-	return;
 }
 
 
@@ -202,84 +201,57 @@ void CDlgFuncList::SetData()
 	m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
 
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
-		//	May 18, 2001 genta
-		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
-		//	::DestroyWindow( hwndList );
-//		::ShowWindow( hwndList, SW_HIDE );
 		m_nViewType = 1;
-		/* ツリーコントロールの初期化：C++メソッドツリー */
-		//SetTreeCpp( GetHwnd() );
-		//	Jan. 04, 2002 genta Java Method Treeに統合
-
-		SetTreeJava( GetHwnd(), TRUE );
-
+		SetTreeJava( GetHwnd(), TRUE );	// Jan. 04, 2002 genta Java Method Treeに統合
 		::SetWindowTextA( GetHwnd(), "C++ メソッドツリー" );
-	}else
-	if( OUTLINE_FILE == m_nListType ){	//@@@ 2002.04.01 YAZAKI アウトライン解析にルールファイル導入
+	}
+	else if( OUTLINE_FILE == m_nListType ){	//@@@ 2002.04.01 YAZAKI アウトライン解析にルールファイル導入
 		m_nViewType = 1;
 		SetTree();
 		::SetWindowTextA( GetHwnd(), "ルールファイル" );
-	}else
-	if( OUTLINE_WZTXT == m_nListType ){ //@@@ 2003.05.20 zenryaku 階層付テキストアウトライン解析
+	}
+	else if( OUTLINE_WZTXT == m_nListType ){ //@@@ 2003.05.20 zenryaku 階層付テキストアウトライン解析
 		m_nViewType = 1;
 		SetTree();
-		//	2003.06.22 Moca 名前変更
-		::SetWindowTextA( GetHwnd(), "WZ階層付テキスト" );
-	}else
-	if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
+		::SetWindowTextA( GetHwnd(), "WZ階層付テキスト" ); //	2003.06.22 Moca 名前変更
+	}
+	else if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
 		m_nViewType = 1;
 		SetTree();
 		::SetWindowTextA( GetHwnd(), "HTML" );
-	}else
-	if( OUTLINE_TEX == m_nListType ){ //@@@ 2003.07.20 naoh TeXアウトライン解析
+	}
+	else if( OUTLINE_TEX == m_nListType ){ //@@@ 2003.07.20 naoh TeXアウトライン解析
 		m_nViewType = 1;
 		SetTree();
 		::SetWindowTextA( GetHwnd(), "TeX" );
-	}else
-	if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
-		//	May 18, 2001 genta
-		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
-		//::DestroyWindow( hwndList );
-//		::ShowWindow( hwndList, SW_HIDE );
+	}
+	else if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		m_nViewType = 1;
-		/* ツリーコントロールの初期化：テキストトピックツリー */
-//		SetTreeTxt();
 		SetTree();	//@@@ 2002.04.01 YAZAKI テキストトピックツリーも、汎用SetTreeを呼ぶように変更。
 		::SetWindowTextA( GetHwnd(), "テキスト トピックツリー" );
-	}else
-	if( OUTLINE_JAVA == m_nListType ){ /* Javaメソッドツリー */
-		//	May 18, 2001 genta
-		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
-		//	::DestroyWindow( hwndList );
-//		::ShowWindow( hwndList, SW_HIDE );
+	}
+	else if( OUTLINE_JAVA == m_nListType ){ /* Javaメソッドツリー */
 		m_nViewType = 1;
-		/* ツリーコントロールの初期化：Javaメソッドツリー */
 		SetTreeJava( GetHwnd(), TRUE );
 		::SetWindowTextA( GetHwnd(), "Java メソッドツリー" );
-	}else
+	}
 	//	2007.02.08 genta Python追加
-	if( OUTLINE_PYTHON == m_nListType ){ /* Python メソッドツリー */
+	else if( OUTLINE_PYTHON == m_nListType ){ /* Python メソッドツリー */
 		m_nViewType = 1;
 		SetTree( true );
 		::SetWindowTextA( GetHwnd(), "Python メソッドツリー" );
-	}else
-	if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
-		//	May 18, 2001 genta
-		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
-		//	::DestroyWindow( hwndList );
-//		::ShowWindow( hwndList, SW_HIDE );
+	}
+	else if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
 		m_nViewType = 1;
-		/* ツリーコントロールの初期化：COBOL アウトライン */
 		SetTreeJava( GetHwnd(), FALSE );
 		::SetWindowTextA( GetHwnd(), "COBOL アウトライン" );
-	}else
-	if( OUTLINE_VB == m_nListType ){	/* VisualBasic アウトライン */
-		// Jul 10, 2003  little YOSHI   処理が長くなったので独立
+	}
+	else if( OUTLINE_VB == m_nListType ){	/* VisualBasic アウトライン */
 		m_nViewType = 0;
-		/* リストビューコントロールの初期化：Visual Basic アウトライン */
 		SetListVB();
 		::SetWindowTextA( GetHwnd(), "Visual Basic アウトライン" );
-	}else{
+	}
+	else{
 		m_nViewType = 0;
 		switch( m_nListType ){
 		case OUTLINE_C:
@@ -484,8 +456,6 @@ void CDlgFuncList::SetData()
 		//ListView_SortItems( hwndList, _CompareFunc_, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
 		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダ書き換えのため)
 	}
-
-	return;
 }
 
 

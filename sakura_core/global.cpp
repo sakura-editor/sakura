@@ -32,7 +32,7 @@ const int		SELECTEDAREA_ROP2 = R2_XORPEN;
   @note 数値による内部的対応はglobal.hで行っているので参照のこと。(Mar. 7, 2001 jepro)
   CShareDataからglobalに移動
 */
-const ColorAttributeData g_ColorAttributeArr[] =
+const SColorAttributeData g_ColorAttributeArr[] =
 {
 	{_T("TXT"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("RUL"), COLOR_ATTRIB_NO_EFFECTS},

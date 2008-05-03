@@ -11,7 +11,7 @@ void CType_Rich::InitTypeConfigImp(STypeConfig* pType)
 	_tcscpy( pType->m_szTypeExts, _T("rtf") );
 
 	//設定
-	pType->m_nDefaultOutline = OUTLINE_TEXT;					/* アウトライン解析方法 */
+	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* アウトライン解析方法 */
 	pType->m_nKeyWordSetIdx[0]  = 15;							/* キーワードセット */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;		/* 半角数値を色分け表示 */
 	pType->m_nStringType = 0;									/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */

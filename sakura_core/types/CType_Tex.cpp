@@ -14,7 +14,7 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"%", -1 );				/* 行コメントデリミタ */
-	pType->m_nDefaultOutline = OUTLINE_TEX;						/* アウトライン解析方法 */
+	pType->m_eDefaultOutline = OUTLINE_TEX;						/* アウトライン解析方法 */
 	pType->m_nKeyWordSetIdx[0] = 9;								/* キーワードセット */
 	pType->m_nKeyWordSetIdx[1] = 10;							/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//シングルクォーテーション文字列を色分け表示しない

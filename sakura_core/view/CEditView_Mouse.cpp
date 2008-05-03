@@ -58,7 +58,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 
 	if(tripleClickMode){
 		// マウス左トリプルクリックに対応する機能コードはm_Common.m_pKeyNameArr[5]に入っている
-		nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
+		nFuncID = GetDllShareData().m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
 		if( 0 == nFuncID ){
 			tripleClickMode = 0;	// 割り当て機能無しの時はトリプルクリック OFF
 		}
@@ -72,8 +72,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.12.02 nasukoji	トリプルクリック時はドラッグを開始しない
-	if( !tripleClickMode && m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){
-		if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
+	if( !tripleClickMode && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){
+		if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
 			/* 行選択エリアをドラッグした */
 			if( ptMouse.x < GetTextArea().GetAreaLeft() - GetTextMetrics().GetHankakuDx() ){
 				goto normal_action;
@@ -81,7 +81,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 			/* 指定カーソル位置が選択エリア内にあるか */
 			if( 0 == IsCurrentPositionSelected(ptNew) ){
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
 					m_bDragSource = TRUE;
 					CDataObject data( cmemCurText.GetStringPtr() );
@@ -382,7 +382,7 @@ normal_action:;
 			/* URLがクリックされたら選択するか */
 			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLは普通の文字として扱う
 			if( CTypeSupport(this,COLORIDX_URL).IsDisp() &&
-				TRUE == m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL ){
+				TRUE == GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL ){
 
 				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
@@ -511,7 +511,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
+	nFuncID = GetDllShareData().m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -540,7 +540,7 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
+	nFuncID = GetDllShareData().m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -567,7 +567,7 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
+	nFuncID = GetDllShareData().m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -595,7 +595,7 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス右サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
+	nFuncID = GetDllShareData().m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -650,7 +650,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 
 		/* 選択テキストのドラッグ中か */
 		if( m_bDragMode ){
-			if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+			if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 				/* 座標指定によるカーソル移動 */
 				nScrollRowNum = GetCaret().MoveCursorToClientPoint( ptMouse );
 			}
@@ -660,12 +660,12 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 			if( ptMouse.x < GetTextArea().GetAreaLeft() || ptMouse.y < GetTextArea().GetAreaTop() ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
 				if( ptMouse.y >= GetTextArea().GetAreaTop() )
-					::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
+					::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
 				else
 					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}
-			else if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
-			 && m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
+			else if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+			 && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
 			 && 0 == IsCurrentPositionSelected(						/* 指定カーソル位置が選択エリア内にあるか */
 				ptNew	// カーソル位置
 				)
@@ -683,14 +683,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 				)
 			){
 				/* 手カーソル */
-				::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
+				::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
 			}else{
 				//migemo isearch 2004.10.22
 				if( m_nISearchMode > 0 ){
 					if (m_nISearchDirection == 1){
-						::SetCursor( ::LoadCursor( m_hInstance,MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 					}else{
-						::SetCursor( ::LoadCursor( m_hInstance,MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 					}
 				}else
 				/* アイビーム */
@@ -981,7 +981,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 		/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
 		//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
-		if( (CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode || CAppMode::Instance()->IsDebugMode()) && m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK ){
+		if( (CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode || CAppMode::Instance()->IsDebugMode()) && GetDllShareData().m_Common.m_sSearch.m_bGTJW_LDBLCLK ){
 			/* タグジャンプ機能 */
 			GetCommander().Command_TAGJUMP();
 			return;
@@ -993,7 +993,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	int	nIdx = getCtrlKeyState();
 
 	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[?]に入っている 2007.11.15 nasukoji */
-	EFunctionCode	nFuncID = m_pShareData->m_pKeyNameArr[
+	EFunctionCode	nFuncID = GetDllShareData().m_pKeyNameArr[
 		m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK
 		].m_nFuncCodeArr[nIdx];
 	if(m_dwTripleClickCheck){
@@ -1007,7 +1007,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 		if(! nFuncID){
 			m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
-			nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
+			nFuncID = GetDllShareData().m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
 			OnLBUTTONDOWN( fwKeys, ptMouse.x , ptMouse.y );	// カーソルをクリック位置へ移動する
 		}
 	}
@@ -1042,7 +1042,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	/* 範囲選択開始 & マウスキャプチャー */
 	GetSelectionInfo().SelectBeginWord();
 
-	if( m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
+	if( GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
 		if( GetKeyState_Alt() ){
 			GetSelectionInfo().SetBoxSelect(true);	/* 矩形範囲選択中 */
@@ -1075,7 +1075,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	MYTRACE_A( "CEditView::DragEnter()\n" );
 #endif
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
-	if(!m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
+	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
 	//ビューモードの場合はドロップを受け付けない
 	if(CAppMode::Instance()->IsViewMode())return E_UNEXPECTED;

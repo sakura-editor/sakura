@@ -114,9 +114,9 @@ DWORD CGrepAgent::DoGrep(
 
 //まだ m_bCurSrchWordOnly = GetDllShareData().m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
 
-//	cDlgCancel.Create( m_hInstance, m_hwndParent );
+//	cDlgCancel.Create( G_AppInstance(), m_hwndParent );
 //	hwndCancel = cDlgCancel.Open( MAKEINTRESOURCE(IDD_GREPRUNNING) );
-	hwndCancel = cDlgCancel.DoModeless( pcViewDst->m_hInstance, pcViewDst->m_hwndParent, IDD_GREPRUNNING );
+	hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING );
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
 	::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, _T(" ") );	// 2002/09/09 Moca add
@@ -151,8 +151,8 @@ DWORD CGrepAgent::DoGrep(
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
 	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	hIconBig   = GetAppIcon( pcViewDst->m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, false );
-	hIconSmall = GetAppIcon( pcViewDst->m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
+	hIconBig   = GetAppIcon( G_AppInstance(), ICON_DEFAULT_GREP, FN_GREP_ICON, false );
+	hIconSmall = GetAppIcon( G_AppInstance(), ICON_DEFAULT_GREP, FN_GREP_ICON, true );
 
 	//	Sep. 10, 2002 genta
 	//	CEditWndに新設した関数を使うように

@@ -52,7 +52,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 */
 void CEditView::PostprocessCommand_hokan(void)
 {
-	if( m_pShareData->m_Common.m_sHelper.m_bUseHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
+	if( GetDllShareData().m_Common.m_sHelper.m_bUseHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
 		CNativeW	cmemData;
 
 		/* カーソル直前の単語を取得 */
@@ -141,7 +141,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	
 	//	補完終了。
 	if ( !m_bHokan ){
-		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
+		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
 	}
 }
 

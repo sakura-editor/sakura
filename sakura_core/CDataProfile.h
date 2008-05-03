@@ -2,6 +2,7 @@
 
 #include "util/StaticType.h"
 #include "CProfile.h"
+#include "types/CType.h"
 
 //文字列バッファの型
 struct StringBufferW{

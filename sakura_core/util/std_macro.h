@@ -56,6 +56,9 @@ void t_swap(T& t1, T& t2)
 #define _countof(A) (sizeof(A)/sizeof(A[0]))
 #endif
 
+//sizeof
+#define sizeof_raw(V)  sizeof(V)
+#define sizeof_type(V) sizeof(V)
 
 
 /*
@@ -71,4 +74,5 @@ void t_swap(T& t1, T& t2)
 
 //ビルド種に関係なく、ANSI。
 #define ATEXT(A) A
+
 

@@ -20,9 +20,7 @@ public:
 	//ŠO•”ˆË‘¶
 	CEditDoc* GetDocument();
 	CEditWnd* GetEditWindow();
-	DLLSHAREDATA* GetShareData();
 	HWND GetMainWindow();
-	HINSTANCE GetInstance();
 	COpeBlk* GetOpeBlk();
 	void ClearOpeBlk();
 	void SetOpeBlk(COpeBlk* p);

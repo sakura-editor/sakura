@@ -52,7 +52,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 
 	//DIFF差分表示ダイアログを表示する
 	int nDiffDlgResult = cDlgDiff.DoModal(
-		GetInstance(),
+		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
@@ -121,7 +121,7 @@ re_do:;
 	}
 
 
-	if( GetShareData()->m_Common.m_sSearch.m_bSearchAll ){
+	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった。かつ、最初の検索
 		if( !bFound	&& bRedo ){
 			ptXY.y = 0 - 1;	// 1個手前を指定
@@ -135,7 +135,7 @@ re_do:;
 	}
 	else{
 		m_pCommanderView->SendStatusMessage( _T("▽見つかりませんでした") );
-		if( GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
+		if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
 			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↓) に差分が見つかりません。") );
 	}
 
@@ -174,7 +174,7 @@ re_do:;
 		}
 	}
 
-	if( GetShareData()->m_Common.m_sSearch.m_bSearchAll ){
+	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった、かつ、最初の検索
 		if( !bFound	&& bRedo ){
 			ptXY.y = (CLogicInt)(Int)GetDocument()->m_cLayoutMgr.GetLineCount();	// 1個手前を指定 //$$ 単位混在
@@ -188,7 +188,7 @@ re_do:;
 	}
 	else{
 		m_pCommanderView->SendStatusMessage( _T("△見つかりませんでした") );
-		if( GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
+		if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
 			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↑) に差分が見つかりません。") );
 	}
 

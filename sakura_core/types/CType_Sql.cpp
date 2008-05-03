@@ -16,7 +16,7 @@ void CType_Sql::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nStringType = 1;										/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	wcscpy( pType->m_szIndentChars, L"|★" );						/* その他のインデント対象文字 */
 	pType->m_nKeyWordSetIdx[0] = 2;									/* キーワードセット */
-	pType->m_nDefaultOutline = OUTLINE_PLSQL;						/* アウトライン解析方法 */
+	pType->m_eDefaultOutline = OUTLINE_PLSQL;						/* アウトライン解析方法 */
 }
 
 

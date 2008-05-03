@@ -68,7 +68,7 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 		{
 			AddStringParam( (const wchar_t*)lParam );	//	lParamを追加。
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_nExecFlgOpt;
+			lFlag |= GetDllShareData().m_nExecFlgOpt;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -77,7 +77,7 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 		{
 			AddIntParam( pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgJump.m_nLineNum );
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_bLineNumIsCRLF		? 0x01 : 0x00;
+			lFlag |= GetDllShareData().m_bLineNumIsCRLF		? 0x01 : 0x00;
 			lFlag |= pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
 			AddIntParam( lFlag );
 		}
@@ -87,53 +87,53 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		{
-			AddStringParam( pcEditView->m_pShareData->m_aSearchKeys[0] );	//	lParamを追加。
+			AddStringParam( GetDllShareData().m_aSearchKeys[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp	? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp	? 0x04 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
 			AddIntParam( lFlag );
 		}
 		break;
 	case F_REPLACE:
 	case F_REPLACE_ALL:
 		{
-			AddStringParam( pcEditView->m_pShareData->m_aSearchKeys[0] );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pShareData->m_aReplaceKeys[0] );	//	lParamを追加。
+			AddStringParam( GetDllShareData().m_aSearchKeys[0] );	//	lParamを追加。
+			AddStringParam( GetDllShareData().m_aReplaceKeys[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp	? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp	? 0x04 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
 			lFlag |= pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
 			lFlag |= pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll				? 0x0400: 0x00;	// 2007.01.16 ryoji
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll				? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddIntParam( lFlag );
 		}
 		break;
 	case F_GREP:
 		{
-			AddStringParam( pcEditView->m_pShareData->m_aSearchKeys[0] );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pShareData->m_aGrepFiles[0] );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pShareData->m_aGrepFolders[0] );	//	lParamを追加。
+			AddStringParam( GetDllShareData().m_aSearchKeys[0] );	//	lParamを追加。
+			AddStringParam( GetDllShareData().m_aGrepFiles[0] );	//	lParamを追加。
+			AddStringParam( GetDllShareData().m_aGrepFolders[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;
 			//			この編集中のテキストから検索する(0x02.未実装)
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase						? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp					? 0x08 : 0x00;
-			lFlag |= (pcEditView->m_pShareData->m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
-			lFlag |= (pcEditView->m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_nGrepCharSet << 8;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase						? 0x04 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp					? 0x08 : 0x00;
+			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
+			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet << 8;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -428,7 +428,7 @@ void CMacro::HandleCommand(
 		{
 			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 1; // デフォルト1
-			pcEditView->m_pShareData->m_bLineNumIsCRLF = lFlag & 0x01 ? 1 : 0;
+			GetDllShareData().m_bLineNumIsCRLF = lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->GetCommander().HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準
 		}
@@ -459,7 +459,7 @@ void CMacro::HandleCommand(
 		{
 			if( 0 < wcslen( Argument[0] ) ){
 				/* 正規表現 */
-				if( pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp
+				if( GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp
 					&& !CheckRegexpSyntax( Argument[0], NULL, true )
 				)
 				{
@@ -472,12 +472,12 @@ void CMacro::HandleCommand(
 			//	設定値バックアップ
 			//	マクロパラメータ→設定値変換
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly			= lFlag & 0x01 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase			= lFlag & 0x02 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly			= lFlag & 0x01 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase			= lFlag & 0x02 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
 			//	コマンド発行
 		//	pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
@@ -591,7 +591,7 @@ void CMacro::HandleCommand(
 		}
 		{
 			/* 正規表現 */
-			if( pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp
+			if( GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp
 				&& !CheckRegexpSyntax( Argument[0], NULL, true )
 			)
 			{
@@ -605,22 +605,22 @@ void CMacro::HandleCommand(
 			CShareData::getInstance()->AddToReplaceKeyArr( Argument[1] );
 
 			LPARAM lFlag = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly			= lFlag & 0x01 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase			= lFlag & 0x02 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly			= lFlag & 0x01 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase			= lFlag & 0x02 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
-//			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
+//			GetDllShareData().m_Common.m_sSearch.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
+			GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
 			if (Index == F_REPLACE) {
 				//	置換する時は選べない
-				pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea	= 0;
+				GetDllShareData().m_Common.m_sSearch.m_bSelectedArea	= 0;
 			}
 			else if (Index == F_REPLACE_ALL) {
 				//	全置換の時は選べる？
-				pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
+				GetDllShareData().m_Common.m_sSearch.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
 			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
 			//	コマンド発行
@@ -714,7 +714,7 @@ void CMacro::HandleCommand(
 			sLoadInfo.eCharCode = CODE_DEFAULT;
 			sLoadInfo.bViewMode = false;
 			CControlTray::OpenNewEditor(
-				pcEditView->m_hInstance,
+				G_AppInstance(),
 				pcEditView->GetHwnd(),
 				sLoadInfo,
 				cCmdLine.c_str()

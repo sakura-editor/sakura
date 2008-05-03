@@ -114,7 +114,6 @@ private:
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
-	TCHAR*			m_pszAppName;
 	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
 
 	DLLSHAREDATA*	m_pShareData;

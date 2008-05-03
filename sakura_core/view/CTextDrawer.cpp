@@ -710,7 +710,7 @@ void CTextDrawer::DispVerticalLines(
 	if( nRightCol < 0 ){
 		nRightCol = nWrapKetas;
 	}
-	const int nPosXOffset = pView->m_pShareData->m_Common.m_sWindow.m_nVertLineOffset + pView->GetTextArea().GetAreaLeft();
+	const int nPosXOffset = GetDllShareData().m_Common.m_sWindow.m_nVertLineOffset + pView->GetTextArea().GetAreaLeft();
 	const int nPosXLeft   = max( pView->GetTextArea().GetAreaLeft() + (Int)(nLeftCol  - pView->GetTextArea().GetViewLeftCol()) * nCharDx, pView->GetTextArea().GetAreaLeft() );
 	const int nPosXRight  = min( pView->GetTextArea().GetAreaLeft() + (Int)(nRightCol - pView->GetTextArea().GetViewLeftCol()) * nCharDx, pView->GetTextArea().GetAreaRight() );
 	const int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
@@ -966,7 +966,7 @@ void CTextDrawer::DispLineNumber(
 		RECT	rcClip;
 		// 行番号エリアの背景描画
 		rcClip.left   = 0;
-		rcClip.right  = pView->GetTextArea().GetAreaLeft() - pView->m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace; //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
+		rcClip.right  = pView->GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace; //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
 		rcClip.top    = y;
 		rcClip.bottom = y + nLineHeight;
 		cColorType.FillBack(hdc,rcClip);

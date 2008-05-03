@@ -470,7 +470,7 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 	}
 	else {
 		//	いま見ているところは空行の1行目
-		if ( GetShareData()->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
+		if ( GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
 		}
 		else {
 			/* 仕上げに、空行じゃないところまで進む */
@@ -542,7 +542,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 	*/
 	if ( nFirstLineIsEmptyLine == true ){
 		//	おしまい。
-		if ( GetShareData()->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
+		if ( GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
 			nCaretPointer++;	//	空行の最上行（段落の末端の次の行）で止まる。
 		}
 		else {
@@ -560,7 +560,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 	}
 	else {
 		//	いま見ているところは空行の1行目
-		if ( GetShareData()->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
+		if ( GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph ){	//	段落の両端で止まる
 			nCaretPointer++;
 		}
 		else {
@@ -646,7 +646,7 @@ re_do:;								// hor
 		m_pCommanderView->MoveCursorSelecting( ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
 	}
     // 2002.01.26 hor
-	if(GetShareData()->m_Common.m_sSearch.m_bSearchAll){
+	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&		// 見つからなかった
 			bRedo			// 最初の検索
 		){
@@ -659,7 +659,7 @@ re_do:;								// hor
 		if(nYOld >= ptXY.y)m_pCommanderView->SendStatusMessage(_T("▼先頭から再検索しました"));
 	}else{
 		m_pCommanderView->SendStatusMessage(_T("▽見つかりませんでした"));
-		if(GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
+		if(GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
 			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↓) にブックマークが見つかりません。"));
 	}
 	return;
@@ -689,7 +689,7 @@ re_do:;								// hor
 		m_pCommanderView->MoveCursorSelecting( ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
 	}
     // 2002.01.26 hor
-	if(GetShareData()->m_Common.m_sSearch.m_bSearchAll){
+	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
@@ -702,7 +702,7 @@ re_do:;								// hor
 		if(nYOld <= ptXY.y)m_pCommanderView->SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
-		if(GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
+		if(GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
 			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↑) にブックマークが見つかりません。") );
 	}
 	return;
@@ -726,8 +726,8 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 	//検索or置換ダイアログから呼び出された
 	if(!m_pCommanderView->ChangeCurRegexp())return;
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).MarkSearchWord(
-		GetShareData()->m_aSearchKeys[0],		// 検索条件
-		GetShareData()->m_Common.m_sSearch.m_sSearchOption,	// 検索条件
+		GetDllShareData().m_aSearchKeys[0],		// 検索条件
+		GetDllShareData().m_Common.m_sSearch.m_sSearchOption,	// 検索条件
 		&m_pCommanderView->m_CurRegexp							// 正規表現コンパイルデータ
 	);
 	// 2002.01.16 hor 分割したビューも更新
@@ -1068,7 +1068,7 @@ void CViewCommander::Command_Reconvert(void)
 		// ATOKが使えるかどうか
 		TCHAR sz[256];
 		ImmGetDescription(GetKeyboardLayout(0),sz,_countof(sz)); //説明の取得
-		if ( (_tcsncmp(sz,_T("ATOK"),4) == 0) && (NULL != m_pCommanderView->AT_ImmSetReconvertString) ){
+		if ( (_tcsncmp(sz,_T("ATOK"),4) == 0) && (NULL != m_pCommanderView->m_AT_ImmSetReconvertString) ){
 			bUseUnicodeATOK = true;
 		}else{
 			//対応IMEなし
@@ -1107,7 +1107,7 @@ void CViewCommander::Command_Reconvert(void)
 	
 	//変換範囲の調整
 	if(bUseUnicodeATOK){
-		(*m_pCommanderView->AT_ImmSetReconvertString)(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize);
+		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 	}
@@ -1117,7 +1117,7 @@ void CViewCommander::Command_Reconvert(void)
 	
 	//再変換実行
 	if(bUseUnicodeATOK){
-		(*m_pCommanderView->AT_ImmSetReconvertString)(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize);
+		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);
 	}
@@ -1136,7 +1136,7 @@ void CViewCommander::Command_CtrlCode_Dialog( void )
 	CDlgCtrlCode	cDlgCtrlCode;
 
 	//コントロールコード入力ダイアログを表示する
-	if( cDlgCtrlCode.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
+	if( cDlgCtrlCode.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
 	{
 		//コントロールコードを入力する
 		Command_WCHAR( cDlgCtrlCode.GetCharCode() );
@@ -1176,7 +1176,7 @@ void CViewCommander::Command_Favorite( void )
 	CDlgFavorite	cDlgFavorite;
 
 	//ダイアログを表示する
-	if( !cDlgFavorite.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
+	if( !cDlgFavorite.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
 	{
 		return;
 	}
@@ -1214,10 +1214,10 @@ void CViewCommander::Command_SET_QUOTESTRING( const wchar_t* quotestr )
 	if( quotestr == NULL )
 		return;
 
-	wcsncpy( GetShareData()->m_Common.m_sFormat.m_szInyouKigou, quotestr,
-		_countof( GetShareData()->m_Common.m_sFormat.m_szInyouKigou ));
+	wcsncpy( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, quotestr,
+		_countof( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ));
 	
-	GetShareData()->m_Common.m_sFormat.m_szInyouKigou[ _countof( GetShareData()->m_Common.m_sFormat.m_szInyouKigou ) - 1 ] = L'\0';
+	GetDllShareData().m_Common.m_sFormat.m_szInyouKigou[ _countof( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ) - 1 ] = L'\0';
 }
 
 /*!	@brief ウィンドウ一覧ポップアップ表示処理（ファイル名のみ）

@@ -1150,9 +1150,9 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, LTEXT("szIndentChars")		, MakeStringBufferW(types.m_szIndentChars) );
 		cProfile.IOProfileData( pszSecName, LTEXT("cLineTermChar")		, types.m_cLineTermChar );
 
-		cProfile.IOProfileData( pszSecName, LTEXT("nDefaultOutline")	, types.m_nDefaultOutline );/* アウトライン解析方法 */
+		cProfile.IOProfileData( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* アウトライン解析方法 */
 		cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
-		cProfile.IOProfileData( pszSecName, LTEXT("nSmartIndent")		, types.m_nSmartIndent );/* スマートインデント種別 */
+		cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* スマートインデント種別 */
 		//	Nov. 20, 2000 genta
 		cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
 

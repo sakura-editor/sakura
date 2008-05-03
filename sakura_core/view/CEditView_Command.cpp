@@ -86,7 +86,7 @@ bool CEditView::TagJumpSub(
 			}else{
 				poCaret.x = 0;
 			}
-			memcpy_raw( m_pShareData->GetWorkBuffer<void>(), &poCaret, sizeof(poCaret) );
+			memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poCaret, sizeof(poCaret) );
 			::SendMessageAny( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 		}
 		/* アクティブにする */
@@ -109,7 +109,7 @@ bool CEditView::TagJumpSub(
 		inf.m_nCharCode    = CODE_AUTODETECT;
 
 		bSuccess = CControlTray::OpenNewEditor2(
-			m_hInstance,
+			G_AppInstance(),
 			this->GetHwnd(),
 			&inf,
 			FALSE,	/* ビューモードか */
@@ -218,7 +218,7 @@ open_c:;
 		sLoadInfo.eCharCode = GetDocument()->GetDocumentEncoding();
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor(
-			m_hInstance,
+			G_AppInstance(),
 			this->GetHwnd(),
 			sLoadInfo,
 			NULL,
@@ -351,8 +351,8 @@ BOOL CEditView::ChangeCurRegexp(void)
 {
 	BOOL	bChangeState;
 	if( !m_bCurSrchKeyMark
-	 || 0 != wcscmp( m_szCurSrchKey, m_pShareData->m_aSearchKeys[0] )
-	 || m_sCurSearchOption != m_pShareData->m_Common.m_sSearch.m_sSearchOption
+	 || 0 != wcscmp( m_szCurSrchKey, GetDllShareData().m_aSearchKeys[0] )
+	 || m_sCurSearchOption != GetDllShareData().m_Common.m_sSearch.m_sSearchOption
 	){
 		bChangeState = TRUE;
 	}else{
@@ -360,8 +360,8 @@ BOOL CEditView::ChangeCurRegexp(void)
 	}
 
 	m_bCurSrchKeyMark = true;									// 検索文字列のマーク
-	wcscpy( m_szCurSrchKey, m_pShareData->m_aSearchKeys[0] );// 検索文字列
-	m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
+	wcscpy( m_szCurSrchKey, GetDllShareData().m_aSearchKeys[0] );// 検索文字列
+	m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
 	/* 正規表現 */
 	if( m_sCurSearchOption.bRegularExp
 	 && bChangeState
