@@ -236,17 +236,19 @@ void CTextArea::ClientToLayout(CMyPoint ptClient, CLayoutPoint* pptLayout) const
 }
 
 
+//! 行番号エリアも含む範囲
 void CTextArea::GenerateTopRect   (RECT* rc, CLayoutInt nLineCount) const
 {
-	rc->left   = m_nViewAlignLeft;
+	rc->left   = 0; //m_nViewAlignLeft;
 	rc->right  = m_nViewAlignLeft + m_nViewCx;
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop + (Int)nLineCount * m_pEditView->GetTextMetrics().GetHankakuDy();
 }
 
+//! 行番号エリアも含む範囲
 void CTextArea::GenerateBottomRect(RECT* rc, CLayoutInt nLineCount) const
 {
-	rc->left   = m_nViewAlignLeft;
+	rc->left   = 0; //m_nViewAlignLeft;
 	rc->right  = m_nViewAlignLeft + m_nViewCx;
 	rc->top    = m_nViewAlignTop  + m_nViewCy - (Int)nLineCount * m_pEditView->GetTextMetrics().GetHankakuDy();
 	rc->bottom = m_nViewAlignTop  + m_nViewCy;
