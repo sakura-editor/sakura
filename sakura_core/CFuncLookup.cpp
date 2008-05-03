@@ -138,13 +138,13 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		return true;
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
-		if( ::LoadStringW_AnyBuild( CNormalProcess::Instance()->GetProcessInstance(), funccode, ptr, bufsize ) > 0 ){
+		if( ::LoadStringW_AnyBuild( G_AppInstance(), funccode, ptr, bufsize ) > 0 ){
 			return true;	// 定義されたコマンド
 		}
 	}
 
 	// 未定義コマンド
-	if( ::LoadStringW_AnyBuild( CNormalProcess::Instance()->GetProcessInstance(), F_DISABLE, ptr, bufsize ) > 0 ){
+	if( ::LoadStringW_AnyBuild( G_AppInstance(), F_DISABLE, ptr, bufsize ) > 0 ){
 		return false;
 	}
 	ptr[0] = LTEXT('\0');

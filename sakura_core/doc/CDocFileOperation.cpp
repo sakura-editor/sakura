@@ -39,7 +39,7 @@ bool CDocFileOperation::OpenFileDialog(
 
 	// ファイルオープンダイアログを表示
 	m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.Create(
-		CNormalProcess::Instance()->GetProcessInstance(),
+		G_AppInstance(),
 		hwndParent,
 		_T("*.*"),
 		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダ
@@ -206,7 +206,7 @@ bool CDocFileOperation::SaveFileDialog(
 
 	// ダイアログを表示
 	m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.Create(
-		CNormalProcess::Instance()->GetProcessInstance(),
+		G_AppInstance(),
 		CEditWnd::Instance()->GetHwnd(),
 		szDefaultWildCard,
 		strDefFolder.c_str(),

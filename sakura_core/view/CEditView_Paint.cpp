@@ -588,7 +588,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	if( GetTextArea().GetTopYohaku() ){ 
 		rc.left   = 0;
 		rc.top    = GetTextArea().GetRulerHeight();
-		rc.right  = GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace; //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
+		rc.right  = GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace; //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
 		rc.bottom = GetTextArea().GetAreaTop();
 		HBRUSH hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK );
 		::FillRect( hdc, &rc, hBrush );

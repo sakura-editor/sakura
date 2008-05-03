@@ -167,7 +167,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		switch( mode ) {
 			case 1: // 通常インクリメンタルサーチ
 				m_sCurSearchOption.bRegularExp = FALSE;
-				m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp = false;
+				GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp = false;
 				//SendStatusMessage(_T("I-Search: "));
 				break;
 			case 2: // 正規表現インクリメンタルサーチ
@@ -177,7 +177,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 					return;
 				}
 				m_sCurSearchOption.bRegularExp = TRUE;
-				m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp = TRUE;
+				GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp = TRUE;
 				//SendStatusMessage(_T("[RegExp] I-Search: "));
 				break;
 			case 3: // MIGEMOインクリメンタルサーチ
@@ -197,7 +197,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				m_pcmigemo->migemo_load_all();
 				if (m_pcmigemo->migemo_is_enable()) {
 					m_sCurSearchOption.bRegularExp = TRUE;
-					m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp = true;
+					GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp = true;
 					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
 				}else{
 					WarningBeep();
@@ -232,9 +232,9 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 
 	//マウスカーソル変更
 	if (direction == 1){
-		::SetCursor( ::LoadCursor( m_hInstance,MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+		::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 	}else{
-		::SetCursor( ::LoadCursor( m_hInstance,MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+		::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 	}
 }
 

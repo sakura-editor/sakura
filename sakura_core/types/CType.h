@@ -1,10 +1,42 @@
 #pragma once
 
 #include "doc/CDocTypeSetting.h"
+#include "config/maxdata.h" //MAX_REGEX_KEYWORD
+#include "doc/CLineComment.h"
+#include "doc/CBlockComment.h"
+
+/* アウトライン解析の種類 */
+SAKURA_CORE_API enum EOutlineType{
+	OUTLINE_C,
+	OUTLINE_CPP,
+	OUTLINE_PLSQL,
+	OUTLINE_TEXT,
+	OUTLINE_JAVA,
+	OUTLINE_COBOL,
+	OUTLINE_ASM,
+	OUTLINE_PERL,		//	Sep. 8, 2000 genta
+	OUTLINE_VB,			//	June 23, 2001 N.Nakatani
+	OUTLINE_WZTXT,		// 2003.05.20 zenryaku 階層付テキストアウトライン解析
+	OUTLINE_HTML,		// 2003.05.20 zenryaku HTMLアウトライン解析
+	OUTLINE_TEX,		// 2003.07.20 naoh TeXアウトライン解析
+	OUTLINE_FILE,		//	2002.04.01 YAZAKI ルールファイル用
+	OUTLINE_PYTHON,		//	2007.02.08 genta Pythonアウトライン解析
+	OUTLINE_CODEMAX,
+	OUTLINE_BOOKMARK,	//	2001.12.03 hor
+	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
+	OUTLINE_UNKNOWN	= 99
+};
+
+/* スマートインデント種別 */
+SAKURA_CORE_API enum ESmartIndentType {
+	SMARTINDENT_NONE,
+	SMARTINDENT_CPP
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       タイプ別設定                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 //! タイプ別設定
 struct STypeConfig{
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
@@ -45,10 +77,10 @@ struct STypeConfig{
 
 	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 
-	EOutlineType		m_nDefaultOutline;				/*!< アウトライン解析方法 */
+	EOutlineType		m_eDefaultOutline;				/*!< アウトライン解析方法 */
 	SFilePath			m_szOutlineRuleFilename;		/*!< アウトライン解析ルールファイル */
 
-	int					m_nSmartIndent;					/*!< スマートインデント種別 */
+	ESmartIndentType	m_eSmartIndent;					/*!< スマートインデント種別 */
 	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
 
 	//	2001/06/14 asa-o 補完のタイプ別設定

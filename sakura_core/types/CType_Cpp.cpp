@@ -2,6 +2,7 @@
 #include "CType.h"
 #include "doc/CDocOutline.h"
 #include "CFuncInfoArr.h"
+#include "COpeBlk.h"
 
 /* C/C++ */
 // Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
@@ -18,8 +19,8 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_cBlockComment.SetBlockCommentRule( 0, L"/*", L"*/" );			/* ブロックコメントデリミタ */
 	pType->m_cBlockComment.SetBlockCommentRule( 1, L"#if 0", L"#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
 	pType->m_nKeyWordSetIdx[0] = 0;											/* キーワードセット */
-	pType->m_nDefaultOutline = OUTLINE_CPP;									/* アウトライン解析方法 */
-	pType->m_nSmartIndent = SMARTINDENT_CPP;								/* スマートインデント種別 */
+	pType->m_eDefaultOutline = OUTLINE_CPP;									/* アウトライン解析方法 */
+	pType->m_eSmartIndent = SMARTINDENT_CPP;								/* スマートインデント種別 */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;					//半角数値を色分け表示	//Mar. 10, 2001 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;			//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
 	pType->m_bUseHokanByFile = TRUE;										/*! 入力補完 開いているファイル内から候補を探す */
@@ -994,6 +995,317 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	}
 }
 
+
+
+/* C/C++スマートインデント処理 */
+void CEditView::SmartIndent_CPP( wchar_t wcChar )
+{
+	const wchar_t*	pLine;
+	CLogicInt		nLineLen;
+	int			k;
+	int			m;
+	const wchar_t*	pLine2;
+	CLogicInt	nLineLen2;
+	int			nLevel;
+	CLogicInt j;
+
+	/* 調整によって置換される箇所 */
+	CLogicRange sRangeA;
+	sRangeA.Clear(-1);
+
+	wchar_t*	pszData = NULL;
+	CLogicInt	nDataLen;
+
+	int			nWork;
+	CDocLine*	pCDocLine = NULL;
+	int	nCharChars;
+	int			nSrcLen;
+	wchar_t		pszSrc[1024];
+	BOOL		bChange;
+
+	int			nCaretPosX_PHY;
+
+	CLogicPoint ptCP;
+
+	if(wcChar==WCODE::CR || wcschr(L":{}()",wcChar)!=NULL){
+		//次へ進む
+	}else return;
+
+	switch( wcChar ){
+	case WCODE::CR:
+	case L':':
+	case L'}':
+	case L')':
+	case L'{':
+	case L'(':
+
+		nCaretPosX_PHY = GetCaret().GetCaretLogicPos().x;
+
+		pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2())->GetDocLineStrWithEOL(&nLineLen);
+		if( NULL == pLine ){
+			if( WCODE::CR != wcChar ){
+				return;
+			}
+			/* 調整によって置換される箇所 */
+			sRangeA.Set(CLogicPoint(0,GetCaret().GetCaretLogicPos().y));
+		}else{
+			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() );
+
+
+			//	nWorkに処理の基準桁位置を設定する
+			if( WCODE::CR != wcChar ){
+				nWork = nCaretPosX_PHY - 1;
+			}else{
+				/*
+				|| CRが入力された時、カーソル直後の識別子をインデントする。
+				|| カーソル直後の識別子が'}'や')'ならば
+				|| '}'や')'が入力された時と同じ処理をする
+				*/
+
+				int i;
+				for( i = nCaretPosX_PHY; i < nLineLen; i++ ){
+					if( WCODE::TAB != pLine[i] && WCODE::SPACE != pLine[i] ){
+						break;
+					}
+				}
+				if( i < nLineLen ){
+					// 2005-09-02 D.S.Koba GetSizeOfChar
+					nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
+					if( 1 == nCharChars && ( pLine[i] == L')' || pLine[i] == L'}' ) ){
+						wcChar = pLine[i];
+					}
+					nCaretPosX_PHY = i;
+					nWork = nCaretPosX_PHY;
+				}else{
+					nWork = nCaretPosX_PHY;
+				}
+			}
+			int i;
+			for( i = 0; i < nWork; i++ ){
+				if( WCODE::TAB != pLine[i] && WCODE::SPACE != pLine[i] ){
+					break;
+				}
+			}
+			if( i < nWork ){
+				if( ( L':' == wcChar && WCODE::isHeadCppKeyword(&pLine[i]) )
+					//	Sep. 18, 2002 かろと
+					|| ( L'{' == wcChar && L'#' != pLine[i] )
+					|| ( L'(' == wcChar && L'#' != pLine[i] )
+				){
+
+				}else{
+					return;
+				}
+			}else{
+				if( L':' == wcChar ){
+					return;
+				}
+			}
+			/* 調整によって置換される箇所 */
+			sRangeA.SetFrom(CLogicPoint(0, GetCaret().GetCaretLogicPos().GetY2()));
+			sRangeA.SetTo(CLogicPoint(i, GetCaret().GetCaretLogicPos().GetY2()));
+		}
+
+
+		/* 対応する括弧をさがす */
+		nLevel = 0;	/* {}の入れ子レベル */
+
+
+		nDataLen = CLogicInt(0);
+		for( j = GetCaret().GetCaretLogicPos().GetY2(); j >= CLogicInt(0); --j ){
+			pLine2 = m_pcEditDoc->m_cDocLineMgr.GetLine(j)->GetDocLineStrWithEOL(&nLineLen2);
+			if( j == GetCaret().GetCaretLogicPos().y ){
+				// 2005.10.11 ryoji EOF のみの行もスマートインデントの対象にする
+				if( NULL == pLine2 ){
+					if( GetCaret().GetCaretLogicPos().y == m_pcEditDoc->m_cDocLineMgr.GetLineCount() )
+						continue;	// EOF のみの行
+					break;
+				}
+				nCharChars = CLogicInt(&pLine2[nWork] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[nWork] ));
+				k = nWork - nCharChars;
+			}else{
+				if( NULL == pLine2 )
+					break;
+				nCharChars = CLogicInt(&pLine2[nLineLen2] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[nLineLen2] ));
+				k = nLineLen2 - nCharChars;
+			}
+
+			for( ; k >= 0; /*k--*/ ){
+				if( 1 == nCharChars && ( L'}' == pLine2[k] || L')' == pLine2[k] )
+				){
+					if( 0 < k && L'\'' == pLine2[k - 1]
+					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
+					){
+//						MYTRACE_A( "▼[%ls]\n", pLine2 );
+					}else{
+						//同じ行の場合
+						if( j == GetCaret().GetCaretLogicPos().y ){
+							if( L'{' == wcChar && L'}' == pLine2[k] ){
+								wcChar = L'}';
+								nLevel--;	/* {}の入れ子レベル */
+							}
+							if( L'(' == wcChar && L')' == pLine2[k] ){
+								wcChar = L')';
+								nLevel--;	/* {}の入れ子レベル */
+							}
+						}
+
+						nLevel++;	/* {}の入れ子レベル */
+					}
+				}
+				if( 1 == nCharChars && ( L'{' == pLine2[k] || L'(' == pLine2[k] )
+				){
+					if( 0 < k && L'\'' == pLine2[k - 1]
+					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
+					){
+//						MYTRACE_A( "▼[%ls]\n", pLine2 );
+					}else{
+						//同じ行の場合
+						if( j == GetCaret().GetCaretLogicPos().y ){
+							if( L'{' == wcChar && L'{' == pLine2[k] ){
+								return;
+							}
+							if( L'(' == wcChar && L'(' == pLine2[k] ){
+								return;
+							}
+						}
+						if( 0 == nLevel ){
+							break;
+						}else{
+							nLevel--;	/* {}の入れ子レベル */
+						}
+
+					}
+				}
+				nCharChars = CLogicInt(&pLine2[k] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[k] ));
+				if( 0 == nCharChars ){
+					nCharChars = CLogicInt(1);
+				}
+				k -= nCharChars;
+			}
+			if( k < 0 ){
+				/* この行にはない */
+				continue;
+			}
+
+			for( m = 0; m < nLineLen2; m++ ){
+				if( WCODE::TAB != pLine2[m] && WCODE::SPACE != pLine2[m] ){
+					break;
+				}
+			}
+
+
+			nDataLen = CLogicInt(m);
+			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(): 1;
+			pszData = new wchar_t[nDataLen + nCharChars + 1];
+			wmemcpy( pszData, pLine2, nDataLen );
+			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
+				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
+				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
+				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
+					int i;
+					i = m = 0;
+					while( i < nDataLen ){
+						nCharChars = CNativeW::GetSizeOfChar( pszData, nDataLen, i );
+						if( nCharChars == 1 && WCODE::TAB == pszData[i] )
+							m += (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace(CLayoutInt(m));
+						else
+							m += nCharChars;
+						i += nCharChars;
+					}
+					nCharChars = (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace(CLayoutInt(m));
+					for( int i = 0; i < nCharChars; i++ )
+						pszData[nDataLen + i] = WCODE::SPACE;
+					pszData[nDataLen + nCharChars] = L'\0';
+					nDataLen += CLogicInt(nCharChars);
+				}else{
+					pszData[nDataLen] = WCODE::TAB;
+					pszData[nDataLen + 1] = L'\0';
+					++nDataLen;
+				}
+			}else{
+				pszData[nDataLen] = L'\0';
+
+			}
+			break;
+		}
+		if( j < 0 ){
+			/* 対応する括弧が見つからなかった */
+			if( WCODE::CR == wcChar ){
+				return;
+			}else{
+				nDataLen = CLogicInt(0);
+				pszData = new wchar_t[nDataLen + 1];
+				pszData[nDataLen] = L'\0';
+			}
+		}
+
+		/* 調整後のカーソル位置を計算しておく */
+		ptCP.x = nCaretPosX_PHY - sRangeA.GetTo().x + nDataLen;
+		ptCP.y = GetCaret().GetCaretLogicPos().y;
+
+		nSrcLen = sRangeA.GetTo().x - sRangeA.GetFrom().x;
+		if( nSrcLen >= _countof( pszSrc ) - 1 ){
+			//	Sep. 18, 2002 genta メモリリーク対策
+			delete [] pszData;
+			return;
+		}
+		if( NULL == pLine ){
+			pszSrc[0] = L'\0';
+		}else{
+			wmemcpy( pszSrc, &pLine[sRangeA.GetFrom().x], nSrcLen );
+			pszSrc[nSrcLen] = L'\0';
+		}
+
+
+		/* 調整によって置換される箇所 */
+		CLayoutRange sRangeLayout;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( sRangeA, &sRangeLayout );
+
+		if( ( 0 == nDataLen && sRangeLayout.IsOne() )
+		 || ( nDataLen == nSrcLen && 0 == wmemcmp( pszSrc, pszData, nDataLen ) )
+		 ){
+			bChange = FALSE;
+		}else{
+			bChange = TRUE;
+
+			/* データ置換 削除&挿入にも使える */
+			ReplaceData_CEditView(
+				sRangeLayout,
+				NULL,		/* 削除されたデータのコピー(NULL可能) */
+				pszData,	/* 挿入するデータ */
+				nDataLen,	/* 挿入するデータの長さ */
+				true,
+				m_bDoing_UndoRedo?NULL:m_pcOpeBlk
+			);
+		}
+
+
+		/* カーソル位置調整 */
+		CLayoutPoint ptCP_Layout;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCP, &ptCP_Layout );
+
+		/* 選択エリアの先頭へカーソルを移動 */
+		GetCaret().MoveCursor( ptCP_Layout, TRUE );
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
+
+
+		if( bChange && !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+			/* 操作の追加 */
+			m_pcOpeBlk->AppendOpe(
+				new CMoveCaretOpe(
+					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				)
+			);
+		}
+		break;
+	}
+	if( NULL != pszData ){
+		delete [] pszData;
+		pszData = NULL;
+	}
+}
 
 
 

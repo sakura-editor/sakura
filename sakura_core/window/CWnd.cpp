@@ -237,37 +237,11 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	CALLH( WM_DRAWITEM			, OnDrawItem		);	// 2006.02.01 ryoji
 	CALLH( WM_CAPTURECHANGED	, OnCaptureChanged	);	// 2006.11.30 ryoji
 
-//	CALLH( WM_NCCREATE			, OnNcCreate		);
 	CALLH( WM_NCDESTROY			, OnNcDestroy		);
-//	CALLH( WM_NCCALCSIZE		, OnNcCalcSize		);
-//	CALLH( WM_NCHITTEST			, OnNcHitTest		);
-//	CALLH( WM_NCPAINT			, OnNcPaint			);
-//	CALLH( WM_NCACTIVATE		, OnNcActivate		);
-//	CALLH( WM_NCMOUSEMOVE		, OnNcMouseMove		);
-//	CALLH( WM_NCLBUTTONDOWN		, OnNcLButtonDown	);
-//	CALLH( WM_NCLBUTTONUP		, OnNcLButtonUp		);
-//	CALLH( WM_NCLBUTTONDBLCLK	, OnNcLButtonDblClk	);
-//	CALLH( WM_NCRBUTTONDOWN		, OnNcRButtonDown	);
-//	CALLH( WM_NCRBUTTONUP		, OnNcRButtonUp		);
-//	CALLH( WM_NCRBUTTONDBLCLK	, OnNcRButtonDblClk	);
-//	CALLH( WM_NCMBUTTONDOWN		, OnNcMButtonDown	);
-//	CALLH( WM_NCMBUTTONUP		, OnNcMButtonUp		);
-//	CALLH( WM_NCMBUTTONDBLCLK	, OnNcMButtonDblClk	);
-
 
 	/* MDI用 */
 	CALLH( WM_MDIACTIVATE		, OnMDIActivate		);
-//	CALLH( WM_MDICASCADE		, OnMDICascade		);
-//	CALLH( WM_MDICREATE			, OnMDICreate		);
-//	CALLH( WM_MDIDESTROY		, OnMDIDestroy		);
-//	CALLH( WM_MDIGETACTIVE		, OnMDIGetActive	);
-//	CALLH( WM_MDIICONARRANGE	, OnMDIIconArrange	);
-//	CALLH( WM_MDIMAXIMIZE		, OnMDIMaximize		);
-//	CALLH( WM_MDINEXT			, OnMDINext			);
-//	CALLH( WM_MDIREFRESHMENU	, OnMDIRefreshMenu	);
-//	CALLH( WM_MDIRESTORE		, OnMDIRestore		);
-//	CALLH( WM_MDISETMENU		, OnMDISetMenu		);
-//	CALLH( WM_MDITILE			, OnMDITile			);
+
 	default:
 		if( WM_APP <= msg && msg <= 0xBFFF ){
 			/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */

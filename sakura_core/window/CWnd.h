@@ -114,37 +114,8 @@ protected:
 	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
 	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
-//	virtual DECLH( OnNcCreate			);	// WM_NCCREATE
-//	virtual DECLH( OnNcCalcSize			);	// WM_NCCALCSIZE
-//	virtual DECLH( OnNcHitTest			);	// WM_NCHITTEST
-//	virtual DECLH( OnNcPaint			);	// WM_NCPAINT
-//	virtual DECLH( OnNcActivate			);	// WM_NCACTIVATE
-//	virtual DECLH( OnNcMouseMove		);	// WM_NCMOUSEMOVE
-//	virtual DECLH( OnNcLButtonDown		);	// WM_NCLBUTTONDOWN
-//	virtual DECLH( OnNcLButtonUp		);	// WM_NCLBUTTONUP
-//	virtual DECLH( OnNcLButtonDblClk	);	// WM_NCLBUTTONDBLCLK
-//	virtual DECLH( OnNcRButtonDown		);	// WM_NCRBUTTONDOWN
-//	virtual DECLH( OnNcRButtonUp		);	// WM_NCRBUTTONUP
-//	virtual DECLH( OnNcRButtonDblClk	);	// WM_NCRBUTTONDBLCLK
-//	virtual DECLH( OnNcMButtonDown		);	// WM_NCMBUTTONDOWN
-//	virtual DECLH( OnNcMButtonUp		);	// WM_NCMBUTTONUP
-//	virtual DECLH( OnNcMButtonDblClk	);	// WM_NCMBUTTONDBLCLK
-
-
 	/* MDI用 */
 	virtual DECLH( OnMDIActivate	);	// WM_MDIACTIVATE
-//	virtual DECLH( OnMDICascade		);	// WM_MDICASCADE
-//	virtual DECLH( OnMDICreate		);	// WM_MDICREATE
-//	virtual DECLH( OnMDIDestroy		);	// WM_MDIDESTROY
-//	virtual DECLH( OnMDIGetActive	);	// WM_MDIGETACTIVE
-//	virtual DECLH( OnMDIIconArrange	);	// WM_MDIICONARRANGE
-//	virtual DECLH( OnMDIMaximize	);	// WM_MDIMAXIMIZE
-//	virtual DECLH( OnMDINext		);	// WM_MDINEXT
-//	virtual DECLH( OnMDIRefreshMenu	);	// WM_MDIREFRESHMENU
-//	virtual DECLH( OnMDIRestore		);	// WM_MDIRESTORE
-//	virtual DECLH( OnMDISetMenu		);	// WM_MDISETMENU
-//	virtual DECLH( OnMDITile		);	// WM_MDITILE
-
 
 	/* デフォルトメッセージ処理 */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );

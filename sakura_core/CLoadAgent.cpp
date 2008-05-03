@@ -20,7 +20,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	// 現在のウィンドウに対してファイルを読み込めない場合は、新たなウィンドウを開き、そこにファイルを読み込ませる
 	if(!pcDoc->IsAcceptLoad()){
 		CControlTray::OpenNewEditor(
-			CNormalProcess::Instance()->GetProcessInstance(),
+			G_AppInstance(),
 			CEditWnd::Instance()->GetHwnd(),
 			*pLoadInfo
 		);

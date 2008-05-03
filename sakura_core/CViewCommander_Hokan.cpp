@@ -17,8 +17,8 @@
 */
 void CViewCommander::Command_HOKAN( void )
 {
-	if(!GetShareData()->m_Common.m_sHelper.m_bUseHokan){
-		GetShareData()->m_Common.m_sHelper.m_bUseHokan = TRUE;
+	if(!GetDllShareData().m_Common.m_sHelper.m_bUseHokan){
+		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = TRUE;
 	}
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
@@ -44,7 +44,7 @@ retry:;
 		m_pCommanderView->ShowHokanMgr( cmemData, TRUE );
 	}else{
 		ErrorBeep();
-		GetShareData()->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
+		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;
 }

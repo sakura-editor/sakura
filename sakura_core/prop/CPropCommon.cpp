@@ -445,7 +445,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			memset_raw( p, 0, sizeof_raw( *p ) );
 			p->dwSize      = sizeof_raw( *p );
 			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance   = CNormalProcess::Instance()->GetProcessInstance();
+			p->hInstance   = G_AppInstance();
 			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
 			p->pszIcon     = NULL;
 			p->pfnDlgProc  = (DLGPROC)(ComPropSheetInfoList[i].DProc);
@@ -467,7 +467,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE;
 	psh.hwndParent = m_hwndParent;
-	psh.hInstance  = CNormalProcess::Instance()->GetProcessInstance();
+	psh.hInstance  = G_AppInstance();
 	psh.pszIcon    = NULL;
 	psh.pszCaption = _T("共通設定");
 	psh.nPages     = nIdx;

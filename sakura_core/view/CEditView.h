@@ -123,14 +123,6 @@ public:
 	bool IsBkBitmap() const{ return false; }
 
 public:
-	bool GetDrawSwitch() const
-	{
-		return m_bDrawSWITCH;
-	}
-	void SetDrawSwitch(bool b)
-	{
-		m_bDrawSWITCH = b;
-	}
 	CEditView* GetEditView()
 	{
 		return this;
@@ -141,104 +133,21 @@ public:
 	}
 
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                        生成と破棄                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	/* Constructors */
 	CEditView(CEditWnd* pcEditWnd);
 	~CEditView();
 	/* 初期化系メンバ関数 */
 	BOOL Create(
-		HINSTANCE	hInstance,	//!< アプリケーションのインスタンスハンドル
 		HWND		hwndParent,	//!< 親
 		CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
 		int			nMyIndex,	//!< ビューのインデックス
 		BOOL		bShow		//!< 作成時に表示するかどうか
 	);
-	BOOL CreateScrollBar( void );		/* スクロールバー作成 */	// 2006.12.19 ryoji
-	void DestroyScrollBar( void );		/* スクロールバー破棄 */	// 2006.12.19 ryoji
-
-	//リスン
-	void OnAfterLoad(const SLoadInfo& sLoadInfo);
-
-	//	Oct. 2, 2005 genta 挿入モードの設定・取得
-	bool IsInsMode() const;
-	void SetInsMode(bool);
-
-	/* メッセージディスパッチャ */
-	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void OnMove( int, int, int, int );
-	void OnSetFocus( void );
-	void OnKillFocus( void );
-	void OnTimer( HWND, UINT, UINT, DWORD );
-	/* コマンド操作 */
-	void CaretUnderLineON( bool );								/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF( bool );								/* カーソル行アンダーラインのOFF */
-	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
-	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
-	void MoveCursorSelecting( CLayoutPoint ptWk_CaretPos, bool bSelect, int = _CARETMARGINRATE );
-	void OnChangeSetting();										/* 設定変更を反映させる */
-	void SetFont( void );										/* フォントの変更 */
-	void RedrawAll();											/* フォーカス移動時の再描画 */
-	void Redraw();										// 2001/06/21 asa-o 再描画
 	void CopyViewStatus( CEditView* ) const;					/* 自分の表示状態を他のビューにコピー */
-	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
-
-
-	
-	//	Jun. 16, 2000 genta
-	bool  SearchBracket( const CLayoutPoint& ptPos, CLayoutPoint* pptLayoutNew, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
-	bool  SearchBracketForward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-						const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
-	bool  SearchBracketBackward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-						const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
-//@@@ 2001.02.03 Start by MIK: 全角の対括弧
-	bool  SearchBracketForward2( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-								 const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
-	bool  SearchBracketBackward2( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-								  const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
-//@@@ 2001.02.03 End
-
-//	2001/06/18 asa-o
-	bool  ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
-
-// 2002/01/19 novice public属性に変更
-	bool GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
-	//	Aug. 25, 2002 genta protected->publicに移動
-	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
-	int HokanSearchByFile( const wchar_t*, BOOL, CNativeW**, int, int ); // 2003.06.25 Moca
-
-	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
-		@date 2006.04.10 fon 新規作成
-	*/
-	enum LID_SKH {
-		LID_SKH_ONTIMER		= 1,	/*!< CEditView::OnTimer */
-		LID_SKH_POPUPMENU_R = 2,	/*!< CEditView::CreatePopUpMenu_R */
-	};
-	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
-	BOOL KeySearchCore( const CNativeW* pcmemCurText );	// 2006.04.10 fon
-	
-	//	Jan. 10, 2005 インクリメンタルサーチ
-	bool IsISearchEnabled(int nCommand) const;
-
-	//	Jan.  8, 2006 genta 折り返しトグル動作判定
-	enum TOGGLE_WRAP_ACTION {
-		TGWRAP_NONE = 0,
-		TGWRAP_FULL,
-		TGWRAP_WINDOW,
-		TGWRAP_PROP,
-	};
-	TOGGLE_WRAP_ACTION GetWrapMode( CLayoutInt* newKetas );
-
-
-	void _SetDragMode(BOOL b)
-	{
-		m_bDragMode = b;
-	}
-public:
-	/*
-	||  実装ヘルパ関数
-	*/
-	void GetCurrentTextForSearch( CNativeW& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	void GetCurrentTextForSearchDlg( CNativeW& );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      クリップボード                         //
@@ -260,20 +169,31 @@ public:
 	//                         イベント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	//	void OnPaintOld( HDC, PAINTSTRUCT *, BOOL );	/* 通常の描画処理 */
+	//ドキュメントイベント
+	void OnAfterLoad(const SLoadInfo& sLoadInfo);
+	/* メッセージディスパッチャ */
+	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );
+	//
+	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
+	void OnTimer( HWND, UINT, UINT, DWORD );
+	//ウィンドウ
 	void OnSize( int, int );							/* ウィンドウサイズの変更処理 */
+	void OnMove( int, int, int, int );
+	//フォーカス
+	void OnSetFocus( void );
+	void OnKillFocus( void );
+	//スクロール
 	CLayoutInt  OnVScroll( int, int );							/* 垂直スクロールバーメッセージ処理 */
 	CLayoutInt  OnHScroll( int, int );							/* 水平スクロールバーメッセージ処理 */
+	//マウス
 	void OnLBUTTONDOWN( WPARAM, int, int );				/* マウス左ボタン押下 */
 	void OnMOUSEMOVE( WPARAM, int, int );				/* マウス移動のメッセージ処理 */
 	void OnLBUTTONUP( WPARAM, int, int );				/* マウス左ボタン開放のメッセージ処理 */
 	void OnLBUTTONDBLCLK( WPARAM, int , int );			/* マウス左ボタンダブルクリック */
 	void OnRBUTTONDOWN( WPARAM, int, int );				/* マウス右ボタン押下 */
 	void OnRBUTTONUP( WPARAM, int, int );				/* マウス右ボタン開放 */
-// novice 2004/10/11 マウス中ボタン対応
 	void OnMBUTTONDOWN( WPARAM, int, int );				/* マウス中ボタン押下 */
-// novice 2004/10/10 マウスサイドボタン対応
 	void OnXLBUTTONDOWN( WPARAM, int, int );			/* マウス左サイドボタン押下 */
 	void OnXRBUTTONDOWN( WPARAM, int, int );			/* マウス右サイドボタン押下 */
 	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				/* マウスホイールのメッセージ処理 */
@@ -307,15 +227,34 @@ public:
 
 public:
 	void DispTextSelected( HDC hdc, CLayoutInt nLineNum, const CMyPoint& ptXY, CLayoutInt nX_Layout );	/* テキスト反転 */
-protected:
+	void RedrawAll();											/* フォーカス移動時の再描画 */
+	void Redraw();										// 2001/06/21 asa-o 再描画
+	void CaretUnderLineON( bool );								/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF( bool );								/* カーソル行アンダーラインのOFF */
+	bool GetDrawSwitch() const
+	{
+		return m_bDrawSWITCH;
+	}
+	void SetDrawSwitch(bool b)
+	{
+		m_bDrawSWITCH = b;
+	}
+
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           計算                              //
+	//                        スクロール                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	void ConvSelectedArea( EFunctionCode );								/* 選択エリアのテキストを指定方法で変換 */
+	void AdjustScrollBars();								/* スクロールバーの状態を更新する */
+	BOOL CreateScrollBar();		/* スクロールバー作成 */	// 2006.12.19 ryoji
+	void DestroyScrollBar();	/* スクロールバー破棄 */	// 2006.12.19 ryoji
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           IME                               //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
+	//	Aug. 25, 2002 genta protected->publicに移動
+	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
 	
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -330,31 +269,38 @@ public:
 	void SyncScrollV( CLayoutInt );									/* 垂直同期スクロール */
 	void SyncScrollH( CLayoutInt );									/* 水平同期スクロール */
 
-	void DrawBracketPair( bool );								/* 対括弧の強調表示 02/09/18 ai */
 	void SetBracketPairPos( bool );								/* 対括弧の強調表示位置設定 03/02/18 ai */
 protected:
 	int GetColorIndex( HDC, const CLayout*, int );				/* 指定位置のColorIndexの取得 02/12/13 ai */
-	bool IsBracket( const wchar_t*, CLogicInt, CLogicInt );					/* 括弧判定 03/01/09 ai */
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        過去の遺産                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
-public:
 	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                       テキスト選択                          //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
+	// 2002/01/19 novice public属性に変更
+	bool GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
+	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
+	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
+	void MoveCursorSelecting( CLayoutPoint ptWk_CaretPos, bool bSelect, int = _CARETMARGINRATE );
+	void ConvSelectedArea( EFunctionCode );								/* 選択エリアのテキストを指定方法で変換 */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         各種判定                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
 	bool IsCurrentPositionURL( const CLayoutPoint& ptCaretPos, CLogicRange* pUrlRange, std::wstring* pwstrURL );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( CMyPoint ptMouse );							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
-	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
-	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
-	bool IsSearchString( const wchar_t*, CLogicInt, CLogicInt, CLogicInt*, CLogicInt* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
+
 
 
 	void ExecCmd(const TCHAR*, int ) ;							// 子プロセスの標準出力をリダイレクトする
@@ -375,18 +321,25 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 
+	void _SetDragMode(BOOL b)
+	{
+		m_bDragMode = b;
+	}
 
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           編集                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-
-
 	/* 指定位置の指定長データ削除 */
-	void CEditView::DeleteData2(
+	void DeleteData2(
 		const CLayoutPoint&	ptCaretPos,
 		CLogicInt			nDelLen,
 		CNativeW*			pcMem
 	);
 
-	void DeleteData( bool bRedraw );/* 現在位置のデータ削除 */
+	/* 現在位置のデータ削除 */
+	void DeleteData( bool bRedraw );
 
 	/* 現在位置にデータを挿入 */
 	void InsertData_CEditView(
@@ -396,9 +349,6 @@ public:
 		CLayoutPoint*	pptNewPos,	//挿入された部分の次の位置のデータ位置
 		bool			bRedraw
 	);
-	void SmartIndent_CPP( wchar_t );	/* C/C++スマートインデント処理 */
-	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
-
 
 	/* データ置換 削除&挿入にも使える */
 	void ReplaceData_CEditView(
@@ -422,46 +372,43 @@ public:
 		this->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(sDelRange,&sDelRangeLayout);
 		ReplaceData_CEditView(sDelRangeLayout,pcmemCopyOfDeleted,pInsData,nInsDataLen,bRedraw,pcOpeBlk);
 	}
+	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
+
+	//	Oct. 2, 2005 genta 挿入モードの設定・取得
+	bool IsInsMode() const;
+	void SetInsMode(bool);
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           検索                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//2004.10.13 インクリメンタルサーチ関係
+	void TranslateCommand_isearch( EFunctionCode&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
+	bool ProcessCommand_isearch( int, bool, LPARAM, LPARAM, LPARAM, LPARAM );
 
 	//	Jan. 10, 2005 genta HandleCommandからgrep関連処理を分離
 	void TranslateCommand_grep( EFunctionCode&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
 
+	//	Jan. 10, 2005 インクリメンタルサーチ
+	bool IsISearchEnabled(int nCommand) const;
 
-	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
-	//	Feb. 17, 2007 genta 相対パスの基準ディレクトリ指示を追加
-	bool TagJumpSub( const TCHAR* pszJumpToFile, CMyPoint ptJumpTo, bool bClose = false, bool bRelFromIni = false );
+	BOOL KeySearchCore( const CNativeW* pcmemCurText );	// 2006.04.10 fon
 
+	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
+		@date 2006.04.10 fon 新規作成
+	*/
+	enum LID_SKH {
+		LID_SKH_ONTIMER		= 1,	/*!< CEditView::OnTimer */
+		LID_SKH_POPUPMENU_R = 2,	/*!< CEditView::CreatePopUpMenu_R */
+	};
+	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
 
-//2004.10.13 インクリメンタルサーチ関係
-	void TranslateCommand_isearch( EFunctionCode&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
-	bool ProcessCommand_isearch( int, bool, LPARAM, LPARAM, LPARAM, LPARAM );
+	bool IsSearchString( const wchar_t*, CLogicInt, CLogicInt, CLogicInt*, CLogicInt* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 
-	int	CreatePopUpMenu_R( void );		/* ポップアップメニュー(右クリック) */
+	void GetCurrentTextForSearch( CNativeW& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+	void GetCurrentTextForSearchDlg( CNativeW& );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
 
-	/* 支援 */
-	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
-	void PreprocessCommand_hokan( int nCommand );
-	void PostprocessCommand_hokan(void);
-
-	void ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided );	//	補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
-
-
-	//	Aug. 31, 2000 genta
-	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
-
-	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile( TCHAR*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
-	void ViewDiffInfo( const TCHAR*, const TCHAR*, int );		/* DIFF差分表示 */		//2005.10.29 maru
-	
-	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const TCHAR* [], const TCHAR* [], int, int, const TCHAR* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
-
-
-public:
-	//ATOK専用再変換のAPI
-	HMODULE m_hAtokModule;
-	BOOL (WINAPI *AT_ImmSetReconvertString)( HIMC , int ,PRECONVERTSTRING , DWORD  );
 private:
-
 	/* インクリメンタルサーチ */ 
 	//2004.10.24 isearch migemo
 	void ISearchEnter( int mode, ESearchDirection direction);
@@ -473,8 +420,97 @@ private:
 	void ISearchWordMake(void);
 	void ISearchSetStatusMsg(CNativeT* msg) const;
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           括弧                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//	Jun. 16, 2000 genta
+	bool  SearchBracket( const CLayoutPoint& ptPos, CLayoutPoint* pptLayoutNew, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
+	bool  SearchBracketForward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
+						const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
+	bool  SearchBracketBackward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
+						const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
+//@@@ 2001.02.03 Start by MIK: 全角の対括弧
+	bool  SearchBracketForward2( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
+								 const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
+	bool  SearchBracketBackward2( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
+								  const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
+	void DrawBracketPair( bool );								/* 対括弧の強調表示 02/09/18 ai */
+	bool IsBracket( const wchar_t*, CLogicInt, CLogicInt );					/* 括弧判定 03/01/09 ai */
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           補完                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	/* 支援 */
+	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
+	void PreprocessCommand_hokan( int nCommand );
+	void PostprocessCommand_hokan(void);
+
+	// 補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
+	void ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided );
+
+	int HokanSearchByFile( const wchar_t*, BOOL, CNativeW**, int, int ); // 2003.06.25 Moca
 
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         ジャンプ                            //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
+	//	Feb. 17, 2007 genta 相対パスの基準ディレクトリ指示を追加
+	bool TagJumpSub( const TCHAR* pszJumpToFile, CMyPoint ptJumpTo, bool bClose = false, bool bRelFromIni = false );
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         メニュー                            //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+	int	CreatePopUpMenu_R( void );		/* ポップアップメニュー(右クリック) */
+
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           DIFF                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
+	BOOL MakeDiffTmpFile( TCHAR*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
+	void ViewDiffInfo( const TCHAR*, const TCHAR*, int );		/* DIFF差分表示 */		//2005.10.29 maru
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           履歴                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//	Aug. 31, 2000 genta
+	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                          その他                             //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const TCHAR* [], const TCHAR* [], int, int, const TCHAR* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
+	//	Jan.  8, 2006 genta 折り返しトグル動作判定
+	enum TOGGLE_WRAP_ACTION {
+		TGWRAP_NONE = 0,
+		TGWRAP_FULL,
+		TGWRAP_WINDOW,
+		TGWRAP_PROP,
+	};
+	TOGGLE_WRAP_ACTION GetWrapMode( CLayoutInt* newKetas );
+	void SmartIndent_CPP( wchar_t );	/* C/C++スマートインデント処理 */
+	/* コマンド操作 */
+	void SetFont( void );										/* フォントの変更 */
+	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
+
+//	2001/06/18 asa-o
+	bool  ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         アクセサ                            //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//主要構成部品アクセス
 	CTextArea& GetTextArea(){ assert(m_pcTextArea); return *m_pcTextArea; }
@@ -505,8 +541,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	CEditWnd*	m_pcEditWnd;	//!< ウィンドウ
-	CEditDoc*	m_pcEditDoc;	//!< ドキュメント
+	CEditWnd*		m_pcEditWnd;	//!< ウィンドウ
+	CEditDoc*		m_pcEditDoc;	//!< ドキュメント
 
 	//主要構成部品
 	CTextArea*		m_pcTextArea;
@@ -525,124 +561,102 @@ public:
 	CTextDrawer		m_cTextDrawer;
 	CViewCommander	m_cCommander;
 
-private:
-//	HWND			m_hWnd;				/* 編集ウィンドウハンドル */
 public:
+	//ウィンドウ
 	HWND			m_hwndParent;		/* 親ウィンドウハンドル */
-
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
-
 	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
 	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
 
-public: /* テスト用にアクセス属性を変更 */
-	CDropTarget*	m_pcDropTarget;
-private:
-	bool			m_bDrawSWITCH;
 public:
-	BOOL			m_bDragSource;	/* 選択テキストのドラッグ中か */
-	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
+	//描画
+	bool			m_bDrawSWITCH;
+	COLORREF		m_crBack;				/* テキストの背景色 */			// 2006.12.07 ryoji
+	int				m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
+	int				m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
+	HFONT			m_hFontOld;
+	bool			m_bUnderLineON;
 
-	/* 単語検索の状態 */
-
-	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	CBregexp	m_CurRegexp;			/*!< コンパイルデータ */
-	bool		m_bCurSrchKeyMark;			/* 検索文字列のマーク */
-	wchar_t		m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
-	
-	SSearchOption m_sCurSearchOption;	// 検索／置換  オプション
-
-	bool	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
-
-	CLogicPoint	m_ptSrchStartPos_PHY;	// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
-
-	BOOL		m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
-	
-	CLogicPoint	m_ptBracketCaretPos_PHY;// 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
-	CLogicPoint	m_ptBracketPairPos_PHY;	// 対括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
-	BOOL	m_bDrawBracketPairFlag;	/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
-
-	TCHAR*			m_pszAppName;	/* Mutex作成用・ウィンドウクラス名 */
-	HINSTANCE		m_hInstance;	/* インスタンスハンドル */
-
-	DLLSHAREDATA*	m_pShareData;
-//	int				m_nSettingType;
-
-	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
-	bool			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
-
-
-
+public:
+	//画面バッファ
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
-	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	int				m_nCompatBMPWidth;  /* 再作画用メモリＢＭＰの幅 */
-	int				m_nCompatBMPHeight; /* 再作画用メモリＢＭＰの高さ */
-	// To Here 2007.09.09 Moca
+	int				m_nCompatBMPWidth;  /* 再作画用メモリＢＭＰの幅 */	// 2007.09.09 Moca 互換BMPによる画面バッファ
+	int				m_nCompatBMPHeight; /* 再作画用メモリＢＭＰの高さ */	// 2007.09.09 Moca 互換BMPによる画面バッファ
 
 public:
-	HFONT			m_hFontOld;
+	//D&D
+	CDropTarget*	m_pcDropTarget;
+	BOOL			m_bDragSource;	/* 選択テキストのドラッグ中か */
+	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
+
+	//括弧
+	CLogicPoint		m_ptBracketCaretPos_PHY;	// 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
+	CLogicPoint		m_ptBracketPairPos_PHY;		// 対括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
+	BOOL			m_bDrawBracketPairFlag;		/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
+
+	//マウス
+	bool			m_bActivateByMouse;		//!< マウスによるアクティベート	//2007.10.02 nasukoji
+	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
+
+	//検索
+	CBregexp			m_CurRegexp;				/*!< コンパイルデータ */
+	bool				m_bCurSrchKeyMark;			/* 検索文字列のマーク */
+	wchar_t				m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
+	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
+	CLogicPoint			m_ptSrchStartPos_PHY;		// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
+	BOOL				m_bSearch;					/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
+	ESearchDirection	m_nISearchDirection;
+	int					m_nISearchMode;
+	bool				m_bISearchWrap;
+	bool				m_bISearchFlagHistory[256];
+	int					m_nISearchHistoryCount;
+	bool				m_bISearchFirst;
+	CLayoutRange		m_sISearchHistory[256];
+
+	//マクロ
+	bool			m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
 	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
 
-	/* 分割状態 */
-	int				m_nMyIndex;
+	// 入力補完
+	BOOL			m_bHokan;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
 
-	/* 入力状態 */
-	COLORREF	m_crBack;			/* テキストの背景色 */			// 2006.12.07 ryoji
-	int		m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
-	int		m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
+	//編集
+	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
+	bool			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 
+	// 辞書Tip関連
+	DWORD			m_dwTipTimer;			/* Tip起動タイマー */
+	CTipWnd			m_cTipWnd;				/* Tip表示ウィンドウ */
+	POINT			m_poTipCurPos;			/* Tip起動時のマウスカーソル位置 */
+	BOOL			m_bInMenuLoop;			/* メニュー モーダル ループに入っています */
+	CDicMgr			m_cDicMgr;				/* 辞書マネージャ */
 
-
-	/* 表示方法 */
-public:
-	/* 辞書Tip関連 */
-	DWORD	m_dwTipTimer;			/* Tip起動タイマー */
-	CTipWnd	m_cTipWnd;				/* Tip表示ウィンドウ */
-	POINT	m_poTipCurPos;			/* Tip起動時のマウスカーソル位置 */
-	BOOL	m_bInMenuLoop;			/* メニュー モーダル ループに入っています */
-	CDicMgr	m_cDicMgr;				/* 辞書マネージャ */
-
-	/* 入力補完 */
-	BOOL		m_bHokan;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
-
-	//	Aug. 31, 2000 genta
-	CAutoMarkMgr	*m_cHistory;	//	Jump履歴
-	CRegexKeyword	*m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
-
+	// IME
 private:
-	UINT	m_uMSIMEReconvertMsg;
-	UINT	m_uATOKReconvertMsg;
+	UINT			m_uMSIMEReconvertMsg;
+	UINT			m_uATOKReconvertMsg;
 public:
-	UINT	m_uWM_MSIME_RECONVERTREQUEST;
+	UINT			m_uWM_MSIME_RECONVERTREQUEST;
 private:
-	
-	int		m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
-	int		m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
+	int				m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
+	int				m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
 
-	bool	m_bUnderLineON;
+public:
+	//ATOK専用再変換のAPI
+	typedef BOOL (WINAPI *FP_ATOK_RECONV)( HIMC , int ,PRECONVERTSTRING , DWORD  );
+	HMODULE			m_hAtokModule;
+	FP_ATOK_RECONV	m_AT_ImmSetReconvertString;
 
-	CMigemo* m_pcmigemo;
-
-	ESearchDirection m_nISearchDirection;
-	int m_nISearchMode;
-	bool m_bISearchWrap;
-
-	CLayoutRange m_sISearchHistory[256];
-
-	bool m_bISearchFlagHistory[256];
-	int m_nISearchHistoryCount;
-	bool m_bISearchFirst;
-
-	// 2007.10.02 nasukoji
-	bool	m_bActivateByMouse;		//!< マウスによるアクティベート
-
-	// 2007.10.02 nasukoji
-	DWORD	m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻
+	// その他
+	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
+	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
+	int				m_nMyIndex;	/* 分割状態 */
+	CMigemo*		m_pcmigemo;
 };
 
 

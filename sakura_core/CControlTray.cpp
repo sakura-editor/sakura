@@ -171,8 +171,6 @@ CControlTray::CControlTray()
 		);
 	}
 
-	m_pszAppName = GSTR_CEDITAPP;
-
 	m_bUseTrayMenu = false;
 
 	return;
@@ -197,7 +195,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	HWND hwndWork = ::FindWindow( m_pszAppName, m_pszAppName );
+	HWND hwndWork = ::FindWindow( GSTR_CEDITAPP, GSTR_CEDITAPP );
 	if( NULL != hwndWork ){
 		return NULL;
 	}
@@ -218,7 +216,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		wc.hCursor			= LoadCursor( NULL, IDC_ARROW );
 		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
 		wc.lpszMenuName		= NULL;
-		wc.lpszClassName	= m_pszAppName;
+		wc.lpszClassName	= GSTR_CEDITAPP;
 		ATOM	atom = RegisterClass( &wc );
 		if( 0 == atom ){
 			ErrorMessage( NULL, _T("CControlTray::Create()\nウィンドウクラスを登録できませんでした。") );
@@ -228,8 +226,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	// ウィンドウ作成 (WM_CREATEで、GetHwnd() に HWND が格納される)
 	::CreateWindow(
-		m_pszAppName,						// pointer to registered class name
-		m_pszAppName,						// pointer to window name
+		GSTR_CEDITAPP,						// pointer to registered class name
+		GSTR_CEDITAPP,						// pointer to window name
 		WS_OVERLAPPEDWINDOW/*WS_VISIBLE *//*| WS_CHILD *//* | WS_CLIPCHILDREN*/	,	// window style
 		CW_USEDEFAULT,						// horizontal position of window
 		0,									// vertical position of window

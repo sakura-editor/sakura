@@ -47,7 +47,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		_T("CEditView::KeyWordHelpSearchDict\nnID=%d") );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		wchar_t* pszWork = cmemCurText.GetStringPtr();
 		int nWorkLength	= wcslen( pszWork );
 		for( i = 0; i < nWorkLength; ++i ){
@@ -62,11 +62,13 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		pszBuf[i] = L'\0';
 		cmemCurText.SetString( pszBuf, i );
 		delete [] pszBuf;
-	}/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
-	else if(m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord){
+	}
+	/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
+	else if(GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord){
 		if(!GetParser().GetCurrentWord(&cmemCurText))
 			goto end_of_search;
-	}else
+	}
+	else
 		goto end_of_search;
 
 	if( CNativeW::IsEqual( cmemCurText, m_cTipWnd.m_cKey ) &&	/* 既に検索済みか */
@@ -109,8 +111,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix)
 		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
-	for(int i=0;i<m_pShareData->GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
-		if( m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_bUse ){
+	for(int i=0;i<GetDllShareData().GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
+		if( GetDllShareData().GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_bUse ){
 			// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
 			CNativeW*	pcmemRefText;
 			int nSearchResult=m_cDicMgr.CDicMgr::Search(
@@ -118,7 +120,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				nCmpLen,
 				&pcmemRefKey,
 				&pcmemRefText,
-				m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath,
+				GetDllShareData().GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath,
 				&nLine
 			);
 			if(nSearchResult){
@@ -133,7 +135,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					else
 						m_cTipWnd.m_cInfo.AppendString( _T("■") );	/* 先頭の場合 */
 					/* 辞書のパス挿入 */
-					m_cTipWnd.m_cInfo.AppendString( m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath );
+					m_cTipWnd.m_cInfo.AppendString( GetDllShareData().GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath );
 					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
@@ -196,7 +198,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText )
 	szTopic[0] = L'\0';
 	if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 選択範囲のデータを取得 */
-		if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+		if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 			/* 検索文字列を現在位置の単語で初期化 */
 			wcsncpy( szTopic, cmemCurText.GetStringPtr(), _MAX_PATH - 1 );
 			szTopic[_MAX_PATH - 1] = L'\0';
@@ -222,7 +224,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText )
 				GetSelectionInfo().m_sSelect    = sRange;
 
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
 					wcsncpy( szTopic, cmemCurText.GetStringPtr(), MAX_PATH - 1 );
 					szTopic[MAX_PATH - 1] = L'\0';
@@ -255,11 +257,11 @@ void CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText )
 		GetCurrentTextForSearch( cmemCurText );
 	}
 	else{	// テキストが選択されていない
-		if( m_pShareData->m_Common.m_sSearch.m_bCaretTextForSearch ){
+		if( GetDllShareData().m_Common.m_sSearch.m_bCaretTextForSearch ){
 			GetCurrentTextForSearch( cmemCurText );	// カーソル位置単語を取得
 		}
 		else{
-			cmemCurText.SetString( m_pShareData->m_aSearchKeys[0] );	// 履歴からとってくる
+			cmemCurText.SetString( GetDllShareData().m_aSearchKeys[0] );	// 履歴からとってくる
 		}
 	}
 }
@@ -308,7 +310,7 @@ bool CEditView::IsSearchString(
 		nKeyLength = CLogicInt(wcslen( m_szCurSrchKey ));		/* 検索条件 */
 
 		// 2001/06/23 単語単位の検索のために追加
-		if( m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly ){	/* 検索／置換  1==単語のみ検索 */
+		if( GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly ){	/* 検索／置換  1==単語のみ検索 */
 			/* 現在位置の単語の範囲を調べる */
 			/* 現在位置の単語の範囲を調べる */
 			CLogicInt nIdxFrom, nIdxTo;

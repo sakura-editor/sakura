@@ -78,7 +78,7 @@ void CEditView::SetIMECompFormFont( void )
 	//
 	HIMC	hIMC = ::ImmGetContext( GetHwnd() );
 	if ( hIMC ){
-		::ImmSetCompositionFont( hIMC, &(m_pShareData->m_Common.m_sView.m_lf) );
+		::ImmSetCompositionFont( hIMC, &(GetDllShareData().m_Common.m_sView.m_lf) );
 	}
 	::ImmReleaseContext( GetHwnd() , hIMC );
 }

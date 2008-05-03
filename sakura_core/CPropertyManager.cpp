@@ -6,7 +6,7 @@ CPropertyManager::CPropertyManager()
 {
 	/* 設定プロパティシートの初期化１ */
 	m_cPropCommon.Create( CEditWnd::Instance()->GetHwnd(), &CEditApp::Instance()->GetIcons(), CEditApp::Instance()->m_pcSMacroMgr, &CEditWnd::Instance()->GetMenuDrawer() );
-	m_cPropTypes.Create( CNormalProcess::Instance()->GetProcessInstance(), CEditWnd::Instance()->GetHwnd() );
+	m_cPropTypes.Create( G_AppInstance(), CEditWnd::Instance()->GetHwnd() );
 }
 
 /*! 共通設定 プロパティシート */

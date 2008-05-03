@@ -60,89 +60,6 @@
 #endif
 
 
-/*
-SAKURA_CORE_API extern const TCHAR* GSTR_APPNAME;
-SAKURA_CORE_API extern const CHAR*  GSTR_APPNAME_A;
-*/
-// アプリ名。2007.09.21 kobake 整理
-#ifdef _UNICODE
-	#define _APP_NAME_(TYPE) TYPE("sakuraW2")
-#else
-	#define _APP_NAME_(TYPE) TYPE("sakuraA")
-#endif
-
-#ifdef _DEBUG
-	#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版 ") TYPE(__DATE__) TYPE(")")
-#else
-	#define _APP_NAME_2_(TYPE) TYPE("(") TYPE(__DATE__) TYPE(")")
-#endif
-
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) //例:UNICODEデバッグ→_T("sakuraW2(デバッグ版)")
-
-#define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
-#define GSTR_APPNAME_A  (_GSTR_APPNAME_(ATEXT))
-#define GSTR_APPNAME_W  (_GSTR_APPNAME_(LTEXT))
-
-
-
-
-
-//2007.09.20 kobake デバッグ判別、定数サフィックス
-#ifdef _DEBUG
-	#define _DEBUG_SUFFIX_ "_DEBUG"
-#else
-	#define _DEBUG_SUFFIX_ ""
-#endif
-
-//2007.09.20 kobake ビルドコード判別、定数サフィックス
-#ifdef _UNICODE
-	#define _CODE_SUFFIX_ "W"
-#else
-	#define _CODE_SUFFIX_ "A"
-#endif
-
-
-//2007.09.05 ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_EDITWINDOWNAME (_T("TextEditorWindow") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
-//2006.04.10 ryoji  コントロールプロセス初期化完了を示すイベントフラグ名を追加
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_MUTEX_SAKURA					(_T("MutexSakuraEditor")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_INIT				(_T("MutexSakuraEditorInit")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_CEDITAPP	(_T("CControlTray") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-#define	GSTR_CSHAREDATA	(_T("CShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-
-
-//	Dec. 2, 2002 genta
-//	固定ファイル名
-#define FN_APP_ICON  _T("my_appicon.ico")
-#define FN_GREP_ICON _T("my_grepicon.ico")
-#define FN_TOOL_BMP  _T("my_icons.bmp")
-
-//	標準アプリケーションアイコンリソース名
-#ifdef _DEBUG
-	#define ICON_DEFAULT_APP IDI_ICON_DEBUG
-	#define ICON_DEFAULT_GREP IDI_ICON_GREP
-#else
-	#define ICON_DEFAULT_APP IDI_ICON_STD
-	#define ICON_DEFAULT_GREP IDI_ICON_GREP
-#endif
-
 
 
 /* ウィンドウのID */
@@ -155,29 +72,6 @@ SAKURA_CORE_API extern const CHAR*  GSTR_APPNAME_A;
 
 #include "charset/charset.h"
 
-/* アウトライン解析の種類 */
-SAKURA_CORE_API enum enumOutlineType {
-	OUTLINE_C,
-	OUTLINE_CPP,
-	OUTLINE_PLSQL,
-	OUTLINE_TEXT,
-	OUTLINE_JAVA,
-	OUTLINE_COBOL,
-	OUTLINE_ASM,
-	OUTLINE_PERL,	//	Sep. 8, 2000 genta
-	OUTLINE_VB,	//	June 23, 2001 N.Nakatani
-	OUTLINE_WZTXT,		// 2003.05.20 zenryaku 階層付テキストアウトライン解析
-	OUTLINE_HTML,		// 2003.05.20 zenryaku HTMLアウトライン解析
-	OUTLINE_TEX,		// 2003.07.20 naoh TeXアウトライン解析
-	OUTLINE_FILE,		//	2002.04.01 YAZAKI ルールファイル用
-	OUTLINE_PYTHON,		//	2007.02.08 genta Pythonアウトライン解析
-	OUTLINE_CODEMAX,
-	OUTLINE_BOOKMARK,	//	2001.12.03 hor
-	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
-	OUTLINE_UNKNOWN	= 99
-};
-typedef enumOutlineType EOutlineType; //2007.11.29 kobake
-
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
 SAKURA_CORE_API enum enumShowDlg {
 	SHOW_NORMAL			= 0,
@@ -189,15 +83,6 @@ SAKURA_CORE_API enum enumShowDlg {
 /* 選択領域描画用パラメータ */
 SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;
 SAKURA_CORE_API extern const int		SELECTEDAREA_ROP2;
-
-
-/* スマートインデント種別 */
-SAKURA_CORE_API enum enumSmartIndentType {
-	SMARTINDENT_NONE,
-	SMARTINDENT_CPP
-};
-typedef enumSmartIndentType ESmartIndentType; //2007.11.29 kobake
-
 
 
 
@@ -279,7 +164,7 @@ inline EColorIndexType MakeColorIndexType_RegularExpression(int nRegExpIndex)
 
 //@@@ From Here 2003.05.31 MIK
 /*! タブウインドウ用メッセージサブコマンド */
-SAKURA_CORE_API enum enumTabWndNotifyType {
+SAKURA_CORE_API enum ETabWndNotifyType {
 	TWNT_REFRESH	= 0,		//再表示
 	TWNT_ADD		= 1,		//ウインドウ登録
 	TWNT_DEL		= 2,		//ウインドウ削除
@@ -291,7 +176,7 @@ SAKURA_CORE_API enum enumTabWndNotifyType {
 };
 
 /*! バーの表示・非表示 */
-SAKURA_CORE_API	enum enumBarChangeNotifyType {
+SAKURA_CORE_API	enum EBarChangeNotifyType {
 	MYBCN_TOOLBAR	= 0,		//ツールバー
 	MYBCN_FUNCKEY	= 1,		//ファンクションキー
 	MYBCN_TAB		= 2,		//タブ
@@ -315,48 +200,18 @@ SAKURA_CORE_API	enum enumBarChangeNotifyType {
 //#define COLOR_ATTRIB_NO_ITALIC		0x00000400	予約値
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
-typedef struct ColorAttributeData_t{
+struct SColorAttributeData{
 	TCHAR*			szName;
 	unsigned int	fAttribute;
-} ColorAttributeData;
+};
+SAKURA_CORE_API extern const SColorAttributeData g_ColorAttributeArr[];
 
-SAKURA_CORE_API extern const ColorAttributeData g_ColorAttributeArr[];
 //@@@ To Here 2006.12.18 ryoji
 
 /*!< 設定値の上限・下限 */
 //	ルーラの高さ
 const int IDC_SPIN_nRulerHeight_MIN = 2;
 const int IDC_SPIN_nRulerHeight_MAX = 32;
-
-// Feb. 18, 2003 genta 最大値の定数化と値変更
-const int LINESPACE_MAX = 128;
-const int COLUMNSPACE_MAX = 64;
-
-
-// novice 2002/09/14
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef NULL
-#define NULL 0
-#endif
-
-#ifndef BOOL
-#define BOOL	int
-#endif
-
-//	Aug. 14, 2005 genta 定数定義追加
-// 2007.09.07 kobake 定数名変更: MAXLINESIZE→MAXLINEKETAS
-// 2007.09.07 kobake 定数名変更: MINLINESIZE→MINLINEKETAS
-const int MAXLINEKETAS		= 10240;	//!< 1行の桁数の最大値
-const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
-
-const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読み込むときのバッファサイズ
 
 /**	マウスクリックとキー定義の対応
 
@@ -429,6 +284,7 @@ extern CEditWnd* g_pcEditWnd;
 /* カラー名＜＞インデックス番号の変換 */	//@@@ 2002.04.30
 SAKURA_CORE_API int GetColorIndexByName( const TCHAR *name );
 SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index );
+
 
 
 ///////////////////////////////////////////////////////////////////////

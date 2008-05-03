@@ -4,7 +4,7 @@
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
 */
-BOOL CEditView::CreateScrollBar( void )
+BOOL CEditView::CreateScrollBar()
 {
 	SCROLLINFO	si;
 
@@ -20,7 +20,7 @@ BOOL CEditView::CreateScrollBar( void )
 		CW_USEDEFAULT,						/* default height */
 		GetHwnd(),								/* handle of main window */
 		(HMENU) NULL,						/* no menu for a scroll bar */
-		m_hInstance,						/* instance owning this window */
+		G_AppInstance(),						/* instance owning this window */
 		(LPVOID) NULL						/* pointer not needed */
 	);
 	si.cbSize = sizeof( si );
@@ -35,7 +35,7 @@ BOOL CEditView::CreateScrollBar( void )
 
 	/* スクロールバーの作成 */
 	m_hwndHScrollBar = NULL;
-	if( m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
+	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
 			_T("SCROLLBAR"),						/* scroll bar control class */
@@ -47,7 +47,7 @@ BOOL CEditView::CreateScrollBar( void )
 			CW_USEDEFAULT,						/* default height */
 			GetHwnd(),								/* handle of main window */
 			(HMENU) NULL,						/* no menu for a scroll bar */
-			m_hInstance,						/* instance owning this window */
+			G_AppInstance(),						/* instance owning this window */
 			(LPVOID) NULL						/* pointer not needed */
 		);
 		si.cbSize = sizeof( si );
@@ -63,7 +63,7 @@ BOOL CEditView::CreateScrollBar( void )
 
 
 	/* サイズボックス */
-	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
+	if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 		m_hwndSizeBox = ::CreateWindowEx(
 			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
 			_T("SCROLLBAR"),						/* scroll bar control class */
@@ -75,7 +75,7 @@ BOOL CEditView::CreateScrollBar( void )
 			CW_USEDEFAULT,						/* default height */
 			GetHwnd(), 							/* handle of main window */
 			(HMENU) NULL,						/* no menu for a scroll bar */
-			m_hInstance,						/* instance owning this window */
+			G_AppInstance(),						/* instance owning this window */
 			(LPVOID) NULL						/* pointer not needed */
 		);
 	}else{
@@ -90,7 +90,7 @@ BOOL CEditView::CreateScrollBar( void )
 			CW_USEDEFAULT,						/* default height */
 			GetHwnd(), 							/* handle of main window */
 			(HMENU) NULL,						/* no menu for a scroll bar */
-			m_hInstance,						/* instance owning this window */
+			G_AppInstance(),						/* instance owning this window */
 			(LPVOID) NULL						/* pointer not needed */
 		);
 	}
@@ -102,7 +102,7 @@ BOOL CEditView::CreateScrollBar( void )
 /*! スクロールバー破棄
 	@date 2006.12.19 ryoji 新規作成
 */
-void CEditView::DestroyScrollBar( void )
+void CEditView::DestroyScrollBar()
 {
 	if( m_hwndVScrollBar )
 	{
@@ -141,13 +141,13 @@ CLayoutInt CEditView::OnVScroll( int nScrollCode, int nPos )
 //		for( i = 0; i < 4; ++i ){
 //			ScrollAtV( GetTextArea().GetViewTopLine() + 1 );
 //		}
-		nScrollVal = ScrollAtV( GetTextArea().GetViewTopLine() + m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum );
+		nScrollVal = ScrollAtV( GetTextArea().GetViewTopLine() + GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum );
 		break;
 	case SB_LINEUP:
 //		for( i = 0; i < 4; ++i ){
 //			ScrollAtV( GetTextArea().GetViewTopLine() - 1 );
 //		}
-		nScrollVal = ScrollAtV( GetTextArea().GetViewTopLine() - m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum );
+		nScrollVal = ScrollAtV( GetTextArea().GetViewTopLine() - GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum );
 		break;
 	case SB_PAGEDOWN:
 		nScrollVal = ScrollAtV( GetTextArea().GetBottomLine() );
@@ -220,7 +220,7 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 }
 
 /* スクロールバーの状態を更新する */
-void CEditView::AdjustScrollBars( void )
+void CEditView::AdjustScrollBars()
 {
 	if( !GetDrawSwitch() ){
 		return;
@@ -491,7 +491,7 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 */
 void CEditView::SyncScrollV( CLayoutInt line )
 {
-	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 )
+	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 )
 	{
 		CEditView*	pcEditView = m_pcEditDoc->m_pcEditWnd->m_pcEditViewArr[m_nMyIndex^0x01];
 #if 0
@@ -517,7 +517,7 @@ void CEditView::SyncScrollV( CLayoutInt line )
 */
 void CEditView::SyncScrollH( CLayoutInt col )
 {
-	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0 )
+	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0 )
 	{
 		CEditView*	pcEditView = m_pcEditDoc->m_pcEditWnd->m_pcEditViewArr[m_nMyIndex^0x02];
 		HDC			hdc = ::GetDC( pcEditView->GetHwnd() );

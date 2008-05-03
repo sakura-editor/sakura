@@ -30,6 +30,10 @@
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"
 
+//定数
+#include "config/system_constants.h"	//システム定数
+#include "config/app_constants.h"		//アプリケーション定数
+
 //グローバル
 #include "global.h"
 
@@ -41,10 +45,6 @@
 //シンプルでよく使うもの
 #include "basis/primitive.h"
 #include "util/std_macro.h"
-
-//sizeof
-#define sizeof_raw(V)  sizeof(V)
-#define sizeof_type(V) sizeof(V)
 
 //MFC互換
 #include "basis/CMyString.h"
@@ -97,6 +97,7 @@
 #include "doc/CDocReader.h"
 #include "CAppMode.h"
 HWND G_GetProgressBar();
+HINSTANCE G_AppInstance();
 #pragma warning( disable : 4355 ) //warning C4355: 'this' : ベース メンバ初期化リストで使用されました。
 
 //{{AFX_INSERT_LOCATION}}

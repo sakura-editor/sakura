@@ -434,7 +434,7 @@ void CCaret::ShowEditCaret()
 {
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-	CommonSetting* pCommon=&m_pEditView->m_pShareData->m_Common;
+	CommonSetting* pCommon=&GetDllShareData().m_Common;
 	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 
 
@@ -707,7 +707,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 	//必要なインターフェース
 	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
 //	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
-	CommonSetting* pCommon=&m_pEditView->m_pShareData->m_Common;
+	CommonSetting* pCommon=&GetDllShareData().m_Common;
 
 
 	const wchar_t*	pLine;
@@ -1000,7 +1000,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 				nPosX = m_pEditView->LineIndexToColmn( pcLayout, nLineLen );
 			}
 			/* フリーカーソルモードか */
-			else if( m_pEditView->m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode
+			else if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode
 			  || ( m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting() )	/* マウス範囲選択中 && 矩形範囲選択中 */
 			  || ( m_pEditView->m_bDragMode && m_pEditView->GetSelectionInfo().IsBoxSelecting() ) /* OLE DropTarget && 矩形範囲選択中 */
 			){

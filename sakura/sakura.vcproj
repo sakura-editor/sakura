@@ -1996,11 +1996,19 @@
 				Name="config"
 				>
 				<File
+					RelativePath="..\sakura_core\config\app_constants.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\config\build_config.h"
 					>
 				</File>
 				<File
 					RelativePath="..\sakura_core\config\maxdata.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\config\system_constants.h"
 					>
 				</File>
 			</Filter>

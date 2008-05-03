@@ -491,11 +491,11 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 		const wchar_t*	pLineData;
 		CLogicInt		nLineLen;
 		if( hWnd ){
-			pLineData = m_pShareData->GetWorkBuffer<EDIT_CHAR>();
+			pLineData = GetDllShareData().GetWorkBuffer<EDIT_CHAR>();
 			nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
 
 			// 一時バッファを超える場合はエラー終了
-			if( nLineLen > (int)m_pShareData->GetWorkBufferCount<EDIT_CHAR>() ){
+			if( nLineLen > (int)GetDllShareData().GetWorkBufferCount<EDIT_CHAR>() ){
 				out.Close();
 				_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 				WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n行が長すぎます。") );

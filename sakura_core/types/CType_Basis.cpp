@@ -61,8 +61,8 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_cLineTermChar = L':';					/* 行番号区切り文字 */
 	pType->m_bWordWrap = FALSE;					/* 英文ワードラップをする */
 	pType->m_nCurrentPrintSetting = 0;				/* 現在選択している印刷設定 */
-	pType->m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
-	pType->m_nSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
+	pType->m_eDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
+	pType->m_eSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
 	pType->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
 	pType->m_szOutlineRuleFilename[0] = L'\0';	//Dec. 4, 2000 MIK
@@ -115,7 +115,7 @@ void CType_Basis::InitTypeConfigImp(STypeConfig* pType)
 
 	//設定
 	pType->m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);			// 折り返し桁数
-	pType->m_nDefaultOutline = OUTLINE_TEXT;					// アウトライン解析方法
+	pType->m_eDefaultOutline = OUTLINE_TEXT;					// アウトライン解析方法
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	// シングルクォーテーション文字列を色分け表示しない	//Oct. 17, 2000 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	// ダブルクォーテーション文字列を色分け表示しない	//Sept. 4, 2000 JEPRO
 }

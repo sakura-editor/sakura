@@ -40,3 +40,7 @@ enum maxdata{
 	//	MRUリストに関係するmaxdata
 	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更。2007.10.23 kobake maxdataに移動。
 };
+
+
+
+

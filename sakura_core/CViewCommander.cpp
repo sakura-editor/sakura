@@ -86,17 +86,9 @@ CEditWnd* CViewCommander::GetEditWindow()
 {
 	return m_pCommanderView->m_pcEditWnd;
 }
-DLLSHAREDATA* CViewCommander::GetShareData()
-{
-	return m_pCommanderView->m_pShareData;
-}
 HWND CViewCommander::GetMainWindow()
 {
 	return ::GetParent( m_pCommanderView->m_hwndParent );
-}
-HINSTANCE CViewCommander::GetInstance()
-{
-	return m_pCommanderView->m_hInstance;
 }
 COpeBlk* CViewCommander::GetOpeBlk()
 {
@@ -172,8 +164,8 @@ BOOL CViewCommander::HandleCommand(
 		bRepeat = TRUE;
 	}
 	m_bPrevCommand = nCommand;
-	if( GetShareData()->m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
-		GetShareData()->m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
+	if( GetDllShareData().m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
+		GetDllShareData().m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
 	){
 		/* キーリピート状態をなくする */
 		bRepeat = FALSE;
@@ -195,7 +187,7 @@ BOOL CViewCommander::HandleCommand(
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		m_pCommanderView->m_bExecutingKeyMacro = true;
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !CEditApp::Instance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, GetInstance(), m_pCommanderView )){
+		if( !CEditApp::Instance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,
 				_T("マクロ %d (%ls) の実行に失敗しました。"),
@@ -406,9 +398,9 @@ BOOL CViewCommander::HandleCommand(
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
-	case F_COPY:					Command_COPY( false, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY:					Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
 	case F_COPY_ADDCRLF:			Command_COPY( false, true );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
-	case F_COPY_CRLF:				Command_COPY( false, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_CRLF:				Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE();break;					//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT_W:				Command_INSTEXT( bRedraw, (const wchar_t*)lparam1, CLogicInt(-1), lparam2!=0 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
@@ -686,12 +678,12 @@ int CViewCommander::Command_UP( bool bSelect, bool bRepeat, int lines )
 	int		nRepeat = 0;
 
 	/* キーリピート時のスクロールを滑らかにするか */
-	if( !GetShareData()->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth ){
+	if( !GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth ){
 		CLayoutInt i;
 		if( !bRepeat ){
 			i = CLayoutInt(-1);
 		}else{
-			i = -1 * GetShareData()->m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
+			i = -1 * GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
 		}
 		GetCaret().Cursor_UPDOWN( i, bSelect );
 		nRepeat = -1 * (Int)i;
@@ -699,7 +691,7 @@ int CViewCommander::Command_UP( bool bSelect, bool bRepeat, int lines )
 	else{
 		++nRepeat;
 		if( GetCaret().Cursor_UPDOWN( CLayoutInt(-1), bSelect )!=0 && bRepeat ){
-			for( int i = 0; i < GetShareData()->m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1; ++i ){		/* キーリピート時のスクロール行数 */
+			for( int i = 0; i < GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1; ++i ){		/* キーリピート時のスクロール行数 */
 				::UpdateWindow( m_pCommanderView->GetHwnd() );	//	YAZAKI
 				GetCaret().Cursor_UPDOWN( CLayoutInt(-1), bSelect );
 				++nRepeat;
@@ -718,19 +710,19 @@ int CViewCommander::Command_DOWN( bool bSelect, bool bRepeat )
 	int		nRepeat;
 	nRepeat = 0;
 	/* キーリピート時のスクロールを滑らかにするか */
-	if( !GetShareData()->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth ){
+	if( !GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth ){
 		CLayoutInt i;
 		if( !bRepeat ){
 			i = CLayoutInt(1);
 		}else{
-			i = GetShareData()->m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
+			i = GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
 		}
 		GetCaret().Cursor_UPDOWN( i, bSelect );
 		nRepeat = (Int)i;
 	}else{
 		++nRepeat;
 		if( GetCaret().Cursor_UPDOWN(CLayoutInt(1),bSelect)!=0 && bRepeat ){
-			for( int i = 0; i < GetShareData()->m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1; ++i ){	/* キーリピート時のスクロール行数 */
+			for( int i = 0; i < GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1; ++i ){	/* キーリピート時のスクロール行数 */
 				//	ここで再描画。
 				::UpdateWindow( m_pCommanderView->GetHwnd() );	//	YAZAKI
 				GetCaret().Cursor_UPDOWN( CLayoutInt(1), bSelect );
@@ -945,7 +937,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			if( nIndex >= pcLayout->GetLengthWithEOL() ){
 				/* フリーカーソルモードか */
 				if( (
-					GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode
+					GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode
 				 || m_pCommanderView->GetSelectionInfo().IsTextSelected() && m_pCommanderView->GetSelectionInfo().IsBoxSelecting()	/* 矩形範囲選択中 */
 					)
 				 &&
@@ -1335,11 +1327,11 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 	const CLayout* pcLayout;
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 	if( NULL == pcLayout ){
-		bool bIsFreeCursorModeOld = GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
+		bool bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
 		Command_LEFT( bSelect, false );
-		GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
+		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 		return;
 	}
 
@@ -1352,7 +1344,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 		GetCaret().GetCaretLayoutPos().GetY2(),
 		nIdx,
 		&ptLayoutNew,
-		GetShareData()->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
+		GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
 	);
 	if( nResult ){
 		/* 行が変わった */
@@ -1377,11 +1369,11 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
 	}else{
-		bool bIsFreeCursorModeOld = GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
+		bool bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
 		Command_LEFT( bSelect, false );
-		GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
+		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 	}
 	return;
 }
@@ -1428,7 +1420,7 @@ try_again:;
 		nCurLine,
 		nIdx,
 		&ptLayoutNew,
-		GetShareData()->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
+		GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
 	);
 	if( nResult ){
 		/* 行が変わった */
@@ -1452,11 +1444,11 @@ try_again:;
 		}
 	}
 	else{
-		bool	bIsFreeCursorModeOld = GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
+		bool	bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル右移動 */
 		Command_RIGHT( bSelect, false, false );
-		GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
+		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 		if( !bTryAgain ){
 			bTryAgain = true;
 			goto try_again;
@@ -1486,13 +1478,13 @@ void CViewCommander::Command_COPY(
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 非選択時は、カーソル行をコピーする */
-		if( !GetShareData()->m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
+		if( !GetDllShareData().m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
 			return;	// 何もしない（音も鳴らさない）
 		}
 		m_pCommanderView->CopyCurLine(
 			bAddCRLFWhenCopy,
 			neweol,
-			GetShareData()->m_Common.m_sEdit.m_bEnableLineModePaste
+			GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
 		);
 	}
 	else{
@@ -1522,7 +1514,7 @@ void CViewCommander::Command_COPY(
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = FALSE;
 		}
 	}
-	if( GetShareData()->m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
+	if( GetDllShareData().m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
 		/* テキストが選択されているか */
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -1551,7 +1543,7 @@ void CViewCommander::Command_CUT( void )
 	/* 範囲選択がされていない */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 非選択時は、カーソル行を切り取り */
-		if( !GetShareData()->m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
+		if( !GetDllShareData().m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
 			return;	// 何もしない（音も鳴らさない）
 		}
 		//行切り取り(折り返し単位)
@@ -1569,7 +1561,7 @@ void CViewCommander::Command_CUT( void )
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -1952,9 +1944,9 @@ void CViewCommander::Command_CUT_LINE( void )
 
 	// 2007.10.04 ryoji 処理簡素化
 	m_pCommanderView->CopyCurLine(
-		GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy,
+		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy,
 		EOL_UNKNOWN,
-		GetShareData()->m_Common.m_sEdit.m_bEnableLineModePaste
+		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
 	);
 	Command_DELETE_LINE();
 	return;
@@ -1992,7 +1984,7 @@ void CViewCommander::Command_DELETE_LINE( void )
 		// 2003-04-30 かろと
 		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
 		// フリーカーソルモードでない場合は、カーソル位置を調整する
-		if( !GetShareData()->m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
+		if( !GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
 			CLogicInt nIndex;
 
 			CLayoutInt tmp;
@@ -2173,13 +2165,13 @@ void CViewCommander::Command_PASTE( void )
 	CNativeW	cmemClip;
 	bool		bColmnSelect;
 	bool		bLineSelect = false;
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, GetShareData()->m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
+	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
 		ErrorBeep();
 		return;
 	}
 
 	// 矩形コピーのテキストは常に矩形貼り付け
-	if( GetShareData()->m_Common.m_sEdit.m_bAutoColmnPaste ){
+	if( GetDllShareData().m_Common.m_sEdit.m_bAutoColmnPaste ){
 		// 矩形コピーのデータなら矩形貼り付け
 		if( bColmnSelect ){
 			Command_PASTEBOX();
@@ -2441,7 +2433,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		ErrorBeep();
 		return;
 	}
-	if( !GetShareData()->m_Common.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
+	if( !GetDllShareData().m_Common.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
 	{
 		return;
 	}
@@ -2587,7 +2579,7 @@ void CViewCommander::Command_PASTEBOX( void )
 	}
 
 
-	if( !GetShareData()->m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
+	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
 	{
 		return;
 	}
@@ -2706,7 +2698,8 @@ end_of_for:;
 				}
 			}
 		}
-	}else{
+	}
+	else{
 		/* テキストが選択されているか */
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 			/* 矩形範囲選択中か */
@@ -2716,10 +2709,11 @@ end_of_for:;
 			}else{
 				m_pCommanderView->DeleteData( TRUE );
 			}
-		}else{
+		}
+		else{
 			if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */ ){
 				BOOL bDelete = TRUE;
-				if( GetShareData()->m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
+				if( GetDllShareData().m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
 					pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 					if( NULL != pcLayout ){
 						/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -2758,7 +2752,7 @@ end_of_for:;
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 	/* スマートインデント */
-	if( SMARTINDENT_CPP == GetDocument()->m_cDocType.GetDocumentAttribute().m_nSmartIndent ){	/* スマートインデント種別 */
+	if( SMARTINDENT_CPP == GetDocument()->m_cDocType.GetDocumentAttribute().m_eSmartIndent ){	/* スマートインデント種別 */
 		/* C/C++スマートインデント処理 */
 		m_pCommanderView->SmartIndent_CPP( wcChar );
 	}
@@ -2770,7 +2764,6 @@ end_of_for:;
 	}
 
 	m_pCommanderView->PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
-	return;
 }
 
 
@@ -2823,7 +2816,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 	else{
 		if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */ ){
 			BOOL bDelete = TRUE;
-			if( GetShareData()->m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
+			if( GetDllShareData().m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
 				const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 				if( NULL != pcLayout ){
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -2899,8 +2892,9 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 
 	/* 検索ダイアログの表示 */
 	if( NULL == GetEditWindow()->m_cDlgFind.GetHwnd() ){
-		GetEditWindow()->m_cDlgFind.DoModeless( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWindow()->GetActiveView() );
-	}else{
+		GetEditWindow()->m_cDlgFind.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWindow()->GetActiveView() );
+	}
+	else{
 		/* アクティブにする */
 		ActivateFrameWindow( GetEditWindow()->m_cDlgFind.GetHwnd() );
 		::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringT() );
@@ -2931,7 +2925,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 
 	//	bFlag1 = FALSE;
 	bSelecting = FALSE;
-	if( L'\0' == GetShareData()->m_aSearchKeys[0][0] ){
+	if( L'\0' == GetDllShareData().m_aSearchKeys[0][0] ){
 		goto end_of_func;
 	}
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -3032,7 +3026,7 @@ re_do:;							//	hor
 	}
 end_of_func:;
 // From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if(GetShareData()->m_Common.m_sSearch.m_bSearchAll){
+	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
@@ -3051,7 +3045,7 @@ end_of_func:;
 // To Here 2002.01.26 hor
 		ErrorBeep();
 		if( bReDraw	&&
-			GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
+			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
 		){
 			if( NULL == hwndParent ){
 				hwndParent = m_pCommanderView->GetHwnd();
@@ -3101,7 +3095,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 
 	bSelecting = FALSE;
 	//	2004.05.30 Moca bChangeCurRegexpに応じて対象文字列を変える
-	if( bChangeCurRegexp  && L'\0' == GetShareData()->m_aSearchKeys[0][0] 
+	if( bChangeCurRegexp  && L'\0' == GetDllShareData().m_aSearchKeys[0][0] 
 	 || !bChangeCurRegexp && L'\0' == m_pCommanderView->m_szCurSrchKey[0] ){
 		goto end_of_func;
 	}
@@ -3242,7 +3236,7 @@ re_do:;
 
 end_of_func:;
 // From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if(GetShareData()->m_Common.m_sSearch.m_bSearchAll){
+	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&		// 見つからなかった
 			bRedo	&&		// 最初の検索
 			m_pCommanderView->GetDrawSwitch()	// 全て置換の実行中じゃない
@@ -3266,7 +3260,7 @@ end_of_func:;
 
 		/* 検索／置換  見つからないときメッセージを表示 */
 		ErrorBeep();
-		if( bRedraw	&& GetShareData()->m_Common.m_sSearch.m_bNOTIFYNOTFOUND ){
+		if( bRedraw	&& GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND ){
 			if( NULL == hwndParent ){
 				hwndParent = m_pCommanderView->GetHwnd();
 			}
@@ -3325,7 +3319,7 @@ void CViewCommander::Command_BEGIN_SELECT( void )
 /* 矩形範囲選択開始 */
 void CViewCommander::Command_BEGIN_BOXSELECT( void )
 {
-	if( !GetShareData()->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
+	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		return;
 	}
 
@@ -3354,7 +3348,7 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
-	CControlTray::OpenNewEditor( GetInstance(), m_pCommanderView->GetHwnd(), sLoadInfo );
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo );
 	return;
 }
 
@@ -3544,7 +3538,7 @@ void CViewCommander::Command_COPYTAG( void )
 void CViewCommander::Command_JUMP_DIALOG( void )
 {
 	if( !GetEditWindow()->m_cDlgJump.DoModal(
-		GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
+		G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()
 	) ){
 		return;
 	}
@@ -3572,7 +3566,7 @@ void CViewCommander::Command_JUMP( void )
 
 	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if( GetShareData()->m_bLineNumIsCRLF ){
+		if( GetDllShareData().m_bLineNumIsCRLF ){
 			if( CLogicInt(0) >= nLineNum ){
 				nLineNum = CLogicInt(1);
 			}
@@ -3756,17 +3750,17 @@ void CViewCommander::Command_FONT( void )
 	hwndFrame = GetMainWindow();
 
 	/* フォント設定ダイアログ */
-	LOGFONT cLogfont = GetShareData()->m_Common.m_sView.m_lf;
+	LOGFONT cLogfont = GetDllShareData().m_Common.m_sView.m_lf;
 	if( MySelectFont( &cLogfont, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd() )  ){
-		GetShareData()->m_Common.m_sView.m_lf = cLogfont;
+		GetDllShareData().m_Common.m_sView.m_lf = cLogfont;
 
 //		/* 変更フラグ フォント */
-//		GetShareData()->m_bFontModify = TRUE;
+//		GetDllShareData().m_bFontModify = TRUE;
 
-		if( GetShareData()->m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
-			GetShareData()->m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE;	/* 現在のフォントは固定幅フォントである */
+		if( GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
+			GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE;	/* 現在のフォントは固定幅フォントである */
 		}else{
-			GetShareData()->m_Common.m_sView.m_bFontIs_FIXED_PITCH = FALSE;	/* 現在のフォントは固定幅フォントである */
+			GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH = FALSE;	/* 現在のフォントは固定幅フォントである */
 		}
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
@@ -3814,7 +3808,7 @@ void CViewCommander::Command_TYPE_LIST( void )
 {
 	CDlgTypeList			cDlgTypeList;
 	CDlgTypeList::SResult	sResult;
-	if( cDlgTypeList.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), &sResult ) ){
+	if( cDlgTypeList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), &sResult ) ){
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
 		if( sResult.bTempChange ){
@@ -4203,7 +4197,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
-		nOutlineType = GetDocument()->m_cDocType.GetDocumentAttribute().m_nDefaultOutline;
+		nOutlineType = GetDocument()->m_cDocType.GetDocumentAttribute().m_eDefaultOutline;
 	}
 
 	if( NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
@@ -4266,7 +4260,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	/* アウトライン ダイアログの表示 */
 	if( NULL == GetEditWindow()->m_cDlgFuncList.GetHwnd() ){
 		GetEditWindow()->m_cDlgFuncList.DoModeless(
-			GetInstance(),
+			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),
 			(LPARAM)m_pCommanderView,
 			&cFuncInfoArr,
@@ -4344,10 +4338,10 @@ void CViewCommander::Command_HELP_SEARCH( void )
 */
 void CViewCommander::Command_ToggleKeySearch( void )
 {	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
-	if( GetShareData()->m_Common.m_sSearch.m_bUseCaretKeyWord ){
-		GetShareData()->m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
+	if( GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord ){
+		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
 	}else{
-		GetShareData()->m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
 	}
 }
 
@@ -4433,7 +4427,7 @@ void CViewCommander::Command_EXTHELP1( void )
 {
 retry:;
 	if( CShareData::getInstance()->ExtWinHelpIsSet( GetDocument()->m_cDocType.GetDocumentType() ) == false){
-//	if( 0 == wcslen( GetShareData()->m_Common.m_szExtHelp1 ) ){
+//	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -4530,7 +4524,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		// タスクトレイのプロセスにHtmlHelpを起動させる
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		TCHAR* pWork=GetShareData()->GetWorkBuffer<TCHAR>();
+		TCHAR* pWork=GetDllShareData().GetWorkBuffer<TCHAR>();
 		if( _IS_REL_PATH( filename ) ){
 			GetInidirOrExedir( pWork, filename );
 		}else{
@@ -4539,7 +4533,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		nLen = _tcslen( pWork );
 		_tcscpy( &pWork[nLen + 1], cmemCurText.GetStringT() );
 		hwndHtmlHelp = (HWND)::SendMessageAny(
-			GetShareData()->m_hwndTray,
+			GetDllShareData().m_hwndTray,
 			MYWM_HTMLHELP,
 			(WPARAM)GetMainWindow(),
 			0
@@ -4564,7 +4558,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 			GetInidirOrExedir( path, filename );
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetShareData()->m_hwndTray*/,
+				NULL/*GetDllShareData().m_hwndTray*/,
 				path, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link
@@ -4572,7 +4566,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		}else{
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetShareData()->m_hwndTray*/,
+				NULL/*GetDllShareData().m_hwndTray*/,
 				filename, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link
@@ -4596,7 +4590,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 void CViewCommander::Command_ABOUT( void )
 {
 	CDlgAbout cDlgAbout;
-	cDlgAbout.DoModal( GetInstance(), m_pCommanderView->GetHwnd() );
+	cDlgAbout.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd() );
 	return;
 }
 //To Here Dec. 25, 2000
@@ -5256,7 +5250,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 	if( !CShareData::getInstance()->PopTagJump(&tagJump) || !CShareData::IsEditWnd(tagJump.hwndReferer) ){
 		m_pCommanderView->SendStatusMessage(_T("タグジャンプバックできません"));
 		// 2004.07.10 Moca m_TagJumpNumを0にしなくてもいいと思う
-		// GetShareData()->m_TagJumpNum = 0;
+		// GetDllShareData().m_TagJumpNum = 0;
 		return;
 	}
 
@@ -5264,7 +5258,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 	ActivateFrameWindow( tagJump.hwndReferer );
 
 	/* カーソルを移動させる */
-	memcpy_raw( GetShareData()->GetWorkBuffer<void>(), &(tagJump.point), sizeof( tagJump.point ) );
+	memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &(tagJump.point), sizeof( tagJump.point ) );
 	::SendMessageAny( tagJump.hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 
 	return;
@@ -5357,7 +5351,7 @@ next_line:
 				//複数あれば選択してもらう。
 				if( nMatch > 1 )
 				{
-					if( ! cDlgTagJumpList.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ) 
+					if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ) 
 					{
 						nMatch = 0;
 						return true;	//キャンセル
@@ -5450,7 +5444,7 @@ bool CViewCommander::Command_TagsMake( void )
 
 	//ダイアログを表示する
 	CDlgTagsMake	cDlgTagsMake;
-	if( !cDlgTagsMake.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
+	if( !cDlgTagsMake.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
 
 	TCHAR	cmdline[1024];
 	/* exeのあるフォルダ */
@@ -5554,7 +5548,7 @@ bool CViewCommander::Command_TagsMake( void )
 		//中断ダイアログ表示
 		HWND	hwndCancel;
 		HWND	hwndMsg;
-		hwndCancel = cDlgCancel.DoModeless( GetInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
+		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
 		hwndMsg = ::GetDlgItem( hwndCancel, IDC_STATIC_CMD );
 		::SendMessage( hwndMsg, WM_SETTEXT, 0, (LPARAM)L"タグファイルを作成中です。" );
 
@@ -5664,7 +5658,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 
 	szCurrentPath[ _tcslen( szCurrentPath ) - _tcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = _T('\0');
 
-	if( ! cDlgTagJumpList.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)1 ) ) 
+	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)1 ) ) 
 	{
 		return true;	//キャンセル
 	}
@@ -5768,18 +5762,18 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 	[共通設定]->[ウィンドウ]->[タブ表示 まとめない]の切り替えと同じです。
 	@author Kazika
 	@date 2004.07.14 Kazika 新規作成
-	@date 2007.06.20 ryoji GetShareData()->m_TabWndWndplの廃止，グループIDリセット
+	@date 2007.06.20 ryoji GetDllShareData().m_TabWndWndplの廃止，グループIDリセット
 */
 void CViewCommander::Command_BIND_WINDOW( void )
 {
 	//タブモードであるならば
-	if (GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd)
+	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd)
 	{
 		//タブウィンドウの設定を変更
-		GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin = !GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin;
+		GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin = !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin;
 
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
-		if( !GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+		if( !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
 			GetDocument()->m_pcEditWnd->WindowTopMost(
 				( (DWORD)::GetWindowLongPtr( GetDocument()->m_pcEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
@@ -5791,7 +5785,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		CShareData::getInstance()->ResetGroupId();
 		CShareData::getInstance()->PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
-			(WPARAM)((GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
+			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
 			(LPARAM)GetDocument()->m_pcEditWnd->GetHwnd(),	//CEditWndのウィンドウハンドル
 			m_pCommanderView->GetHwnd());									//自分自身
 		//End 2004.08.27 Kazika
@@ -6114,13 +6108,13 @@ void CViewCommander::Command_MINIMIZE_ALL( void )
 	HWND*	phWndArr;
 	int		i;
 	int		j;
-	j = GetShareData()->m_nEditArrNum;
+	j = GetDllShareData().m_nEditArrNum;
 	if( 0 == j ){
 		return;
 	}
 	phWndArr = new HWND[j];
 	for( i = 0; i < j; ++i ){
-		phWndArr[i] = GetShareData()->m_pEditArr[i].GetHwnd();
+		phWndArr[i] = GetDllShareData().m_pEditArr[i].GetHwnd();
 	}
 	for( i = 0; i < j; ++i ){
 		if( CShareData::IsEditWnd( phWndArr[i] ) )
@@ -6147,7 +6141,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 
 	/* 検索文字列を初期化 */
 	wcscpy( GetEditWindow()->m_cDlgReplace.m_szText, cmemCurText.GetStringPtr() );
-	wcsncpy( GetEditWindow()->m_cDlgReplace.m_szText2, GetShareData()->m_aReplaceKeys[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
+	wcsncpy( GetEditWindow()->m_cDlgReplace.m_szText2, GetDllShareData().m_aReplaceKeys[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
 	GetEditWindow()->m_cDlgReplace.m_szText2[MAX_PATH - 1] = L'\0';
 
 	if ( m_pCommanderView->GetSelectionInfo().IsTextSelected() && !GetSelect().IsLineOne() ) {
@@ -6163,7 +6157,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 	/* 置換ダイアログの表示 */
 	//	From Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	if( !::IsWindow( GetEditWindow()->m_cDlgReplace.GetHwnd() ) ){
-		GetEditWindow()->m_cDlgReplace.DoModeless( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, bSelected );
+		GetEditWindow()->m_cDlgReplace.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, bSelected );
 	}
 	else {
 		/* アクティブにする */
@@ -6187,8 +6181,8 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	//2002.02.10 hor
 	int nPaste			=	GetEditWindow()->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	=	GetEditWindow()->m_cDlgReplace.m_nReplaceTarget;
-	int	bRegularExp		=	GetShareData()->m_Common.m_sSearch.m_sSearchOption.bRegularExp;
-	int nFlag			=	GetShareData()->m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
+	int	bRegularExp		=	GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp;
+	int nFlag			=	GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !GetDocument()->m_cDocEditor.IsEnablePaste()){
@@ -6222,7 +6216,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
 
 	// 2004.06.01 Moca 検索中に、他のプロセスによってm_aReplaceKeysが書き換えられても大丈夫なように
-	const CNativeW	cMemRepKey( GetShareData()->m_aReplaceKeys[0] );
+	const CNativeW	cMemRepKey( GetDllShareData().m_aReplaceKeys[0] );
 
 	/* 次を検索 */
 	Command_SEARCH_NEXT( true, TRUE, hwndParent, 0 );
@@ -6281,7 +6275,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			} else {
 				cMemRepKey2 = cMemRepKey;
 			}
-			cRegexp.Compile( GetShareData()->m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
+			cRegexp.Compile( GetDllShareData().m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
 				// From Here Jun. 6, 2005 かろと
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
@@ -6314,7 +6308,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
-			//	HandleCommand( F_INSTEXT_W, FALSE, (LPARAM)GetShareData()->m_aReplaceKeys[0], FALSE, 0, 0 );
+			//	HandleCommand( F_INSTEXT_W, FALSE, (LPARAM)GetDllShareData().m_aReplaceKeys[0], FALSE, 0, 0 );
 			Command_INSTEXT( FALSE, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 
@@ -6350,9 +6344,9 @@ void CViewCommander::Command_REPLACE_ALL()
 	//2002.02.10 hor
 	int nPaste			= GetEditWindow()->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	= GetEditWindow()->m_cDlgReplace.m_nReplaceTarget;
-	int	bRegularExp		= GetShareData()->m_Common.m_sSearch.m_sSearchOption.bRegularExp;
-	int bSelectedArea	= GetShareData()->m_Common.m_sSearch.m_bSelectedArea;
-	int bConsecutiveAll	= GetShareData()->m_Common.m_sSearch.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+	int	bRegularExp		= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp;
+	int bSelectedArea	= GetDllShareData().m_Common.m_sSearch.m_bSelectedArea;
+	int bConsecutiveAll	= GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 
 	GetEditWindow()->m_cDlgReplace.m_bCanceled=false;
 	GetEditWindow()->m_cDlgReplace.m_nReplaceCnt=0;
@@ -6384,7 +6378,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* 進捗表示&中止ダイアログの作成 */
 	CDlgCancel	cDlgCancel;
-	HWND		hwndCancel = cDlgCancel.DoModeless( GetInstance(), m_pCommanderView->GetHwnd(), IDD_REPLACERUNNING );
+	HWND		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), IDD_REPLACERUNNING );
 	::EnableWindow( m_pCommanderView->GetHwnd(), FALSE );
 	::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), FALSE );
 	::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), FALSE );
@@ -6468,7 +6462,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		}
 
 		// 矩形貼り付けが許可されていて、クリップボードのデータが矩形選択のとき。
-		if ( GetShareData()->m_Common.m_sEdit.m_bAutoColmnPaste && bColmnSelect )
+		if ( GetDllShareData().m_Common.m_sEdit.m_bAutoColmnPaste && bColmnSelect )
 		{
 			// マウスによる範囲選択中
 			if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )
@@ -6478,7 +6472,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			}
 
 			// 現在のフォントは固定幅フォントである
-			if( !GetShareData()->m_Common.m_sView.m_bFontIs_FIXED_PITCH )
+			if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )
 			{
 				return;
 			}
@@ -6492,7 +6486,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	else
 	{
 		// 2004.05.14 Moca 全置換の途中で他のウィンドウで置換されるとまずいのでコピーする
-		cmemClip.SetString( GetShareData()->m_aReplaceKeys[0] );
+		cmemClip.SetString( GetDllShareData().m_aReplaceKeys[0] );
 	}
 
 	CLogicInt nREPLACEKEY;			// 置換後文字列の長さ。
@@ -6501,7 +6495,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	// 取得にステップがかかりそうな変数などを、一時変数化する。
 	// とはいえ、これらの操作をすることによって得をするクロック数は合わせても 1 ループで数十だと思います。
 	// 数百クロック毎ループのオーダーから考えてもそんなに得はしないように思いますけど・・・。
-	BOOL bAddCRLFWhenCopy = GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy;
+	BOOL bAddCRLFWhenCopy = GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy;
 	BOOL &bCANCEL = cDlgCancel.m_bCANCEL;
 	CDocLineMgr& rDocLineMgr = GetDocument()->m_cDocLineMgr;
 	CLayoutMgr& rLayoutMgr = GetDocument()->m_cLayoutMgr;
@@ -6533,9 +6527,9 @@ void CViewCommander::Command_REPLACE_ALL()
 			cMemRepKey2 = cMemRepKey;
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
-		int nFlag = (GetShareData()->m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
+		int nFlag = (GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
 		nFlag |= (bConsecutiveAll ? CBregexp::optNothing : CBregexp::optGlobal);	// 2007.01.16 ryoji
-		cRegexp.Compile(GetShareData()->m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
+		cRegexp.Compile(GetDllShareData().m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
 	}
 
 	//$$ 単位混在
@@ -6927,7 +6921,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	CNativeW	cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -6972,7 +6966,7 @@ void CViewCommander::Command_UUDECODE( void )
 	// 選択範囲のデータを取得 -> cmemBuf
 	// 正常時はTRUE,範囲未選択の場合はFALSEを返す
 	CNativeW	cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetShareData()->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -7151,8 +7145,8 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 
 
 	CDlgProperty	cDlgProperty;
-//	cDlgProperty.Create( GetInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
-	cDlgProperty.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
+//	cDlgProperty.Create( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
+	cDlgProperty.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
 	return;
 }
 
@@ -7179,7 +7173,7 @@ void CViewCommander::Command_EXITALL( void )
 /* グループを閉じる */	// 2007.06.20 ryoji 追加
 void CViewCommander::Command_GROUPCLOSE( void )
 {
-	if( GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd && !GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
+	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 		int nGroup = CShareData::getInstance()->GetGroupId( GetMainWindow() );
 		CControlTray::CloseAllEditor( TRUE, GetMainWindow(), TRUE, nGroup );
 	}
@@ -7208,7 +7202,7 @@ void CViewCommander::Command_WINCLOSE( void )
 //アウトプットウィンドウ表示
 void CViewCommander::Command_WIN_OUTPUT( void )
 {
-	if( NULL == GetShareData()->m_hwndDebug || !CShareData::IsEditWnd(GetShareData()->m_hwndDebug) ){
+	if( NULL == GetDllShareData().m_hwndDebug || !CShareData::IsEditWnd(GetDllShareData().m_hwndDebug) ){
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = _T("");
 		sLoadInfo.eCharCode = CODE_SJIS;
@@ -7217,7 +7211,7 @@ void CViewCommander::Command_WIN_OUTPUT( void )
 	}else{
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */
-		ActivateFrameWindow( GetShareData()->m_hwndDebug );
+		ActivateFrameWindow( GetDllShareData().m_hwndDebug );
 	}
 	return;
 }
@@ -7243,36 +7237,36 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 	if( nMenuIdx < 0 || MAX_CUSTOM_MENU <= nMenuIdx ){
 		return 0;
 	}
-	if( 0 == GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx] ){
+	if( 0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx] ){
 		return 0;
 	}
 	hMenu = ::CreatePopupMenu();
-	for( i = 0; i < GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( 0 == GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
+		if( 0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
 		}else{
 			//	Oct. 3, 2001 genta
 			WCHAR		szLabel[300];
 			WCHAR		szLabel2[300];
-			FuncLookup.Funccode2Name( GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			FuncLookup.Funccode2Name( GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* キー */
-			if( L'\0' == GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
+			if( L'\0' == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				auto_strcpy( szLabel2, szLabel );
 			}else{
 				auto_sprintf( szLabel2, LTEXT("%ls (&%lc)"),
 					szLabel,
-					GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
+					GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
 				);
 			}
 			/* 機能が利用可能か調べる */
-			if( IsFuncEnable( GetDocument(), GetShareData(), GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
+			if( IsFuncEnable( GetDocument(), &GetDllShareData(), GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
 				uFlags = MF_STRING | MF_ENABLED;
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
 			pCEditWnd->GetMenuDrawer().MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				GetShareData()->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
+				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
 		}
 	}
 	po.x = 0;
@@ -7319,7 +7313,7 @@ void CViewCommander::Command_COPYLINESASPASSAGE( void )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	m_pCommanderView->CopySelectedAllLines(
-		GetShareData()->m_Common.m_sFormat.m_szInyouKigou,	/* 引用符 */
+		GetDllShareData().m_Common.m_sFormat.m_szInyouKigou,	/* 引用符 */
 		FALSE 									/* 行番号を付与する */
 	);
 	return;
@@ -7349,9 +7343,9 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 	CNativeW		cMemKeyList;
 
 	CKeyBind::CreateKeyBindList(
-		GetInstance(),
-		GetShareData()->m_nKeyNameArrNum,
-		GetShareData()->m_pKeyNameArr,
+		G_AppInstance(),
+		GetDllShareData().m_nKeyNameArrNum,
+		GetDllShareData().m_pKeyNameArr,
 		cMemKeyList,
 		&GetDocument()->m_cFuncLookup,	//	Oct. 31, 2001 genta 追加
 		FALSE	// 2007.02.22 ryoji 追加
@@ -7377,9 +7371,9 @@ void CViewCommander::Command_COMPARE( void )
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
 	/* 比較後、左右に並べて表示 */
-	cDlgCompare.m_bCompareAndTileHorz = GetShareData()->m_Common.m_sCompare.m_bCompareAndTileHorz;
+	cDlgCompare.m_bCompareAndTileHorz = GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz;
 	BOOL bDlgCompareResult = cDlgCompare.DoModal(
-		GetInstance(),
+		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
@@ -7391,14 +7385,14 @@ void CViewCommander::Command_COMPARE( void )
 		return;
 	}
 	/* 比較後、左右に並べて表示 */
-	GetShareData()->m_Common.m_sCompare.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
+	GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	if( TRUE  == GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd
-	 && !GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( TRUE  == GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
+	 && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		hwndMsgBox = m_pCommanderView->GetHwnd();
-		GetShareData()->m_Common.m_sCompare.m_bCompareAndTileHorz = FALSE;
+		GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz = FALSE;
 	}
 	else
 	{
@@ -7421,7 +7415,7 @@ void CViewCommander::Command_COMPARE( void )
 	// カーソル位置取得 -> poDes
 	{
 		::SendMessageAny( hwndCompareWnd, MYWM_GETCARETPOS, 0, 0 );
-		CLogicPoint* ppoCaretDes = GetShareData()->GetWorkBuffer<CLogicPoint>();
+		CLogicPoint* ppoCaretDes = GetDllShareData().GetWorkBuffer<CLogicPoint>();
 		poDes.x = ppoCaretDes->x;
 		poDes.y = ppoCaretDes->y;
 	}
@@ -7429,7 +7423,7 @@ void CViewCommander::Command_COMPARE( void )
 	pLineSrc = GetDocument()->m_cDocLineMgr.GetLine(poSrc.GetY2())->GetDocLineStrWithEOL(&nLineLenSrc);
 	/* 行(改行単位)データの要求 */
 	nLineLenDes = ::SendMessageAny( hwndCompareWnd, MYWM_GETLINEDATA, poDes.y, 0 );
-	pLineDes = GetShareData()->GetWorkBuffer<EDIT_CHAR>();
+	pLineDes = GetDllShareData().GetWorkBuffer<EDIT_CHAR>();
 	while( 1 ){
 		if( pLineSrc == NULL &&	0 == nLineLenDes ){
 			bDefferent = FALSE;
@@ -7438,12 +7432,12 @@ void CViewCommander::Command_COMPARE( void )
 		if( pLineSrc == NULL || 0 == nLineLenDes ){
 			break;
 		}
-		if( nLineLenDes > (int)GetShareData()->GetWorkBufferCount<EDIT_CHAR>() ){
+		if( nLineLenDes > (int)GetDllShareData().GetWorkBufferCount<EDIT_CHAR>() ){
 			TopErrorMessage( m_pCommanderView->GetHwnd(),
 				_T("比較先のファイル\n%ls\n%dバイトを超える行があります。\n")
 				_T("比較できません。"),
 				szPath,
-				GetShareData()->GetWorkBufferCount<EDIT_CHAR>()
+				GetDllShareData().GetWorkBufferCount<EDIT_CHAR>()
 			);
 			return;
 		}
@@ -7472,7 +7466,7 @@ end_of_compare:;
 	/* 比較後、左右に並べて表示 */
 //From Here Oct. 10, 2000 JEPRO	チェックボックスをボタン化すれば以下の行(To Here まで)は不要のはずだが
 //	うまくいかなかったので元に戻してある…
-	if( GetShareData()->m_Common.m_sCompare.m_bCompareAndTileHorz ){
+	if( GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz ){
 		HWND* phwndArr = new HWND[2];
 		phwndArr[0] = GetMainWindow();
 		phwndArr[1] = hwndCompareWnd;
@@ -7511,11 +7505,11 @@ end_of_compare:;
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
-		memcpy_raw( GetShareData()->GetWorkBuffer<void>(), &poDes, sizeof( poDes ) );
+		memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poDes, sizeof( poDes ) );
 		::SendMessageAny( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
-		memcpy_raw( GetShareData()->GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
+		memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
 		::PostMessageAny( GetMainWindow(), MYWM_SETCARETPOS, 0, 0 );
 	}
 
@@ -7536,7 +7530,7 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 {
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	GetShareData()->m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
 	pCEditWnd->LayoutToolBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -7560,7 +7554,7 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 {
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	GetShareData()->m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
 	pCEditWnd->LayoutStatusBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -7584,7 +7578,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 {
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	GetShareData()->m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
 	pCEditWnd->EndLayoutBars();
 
@@ -7609,12 +7603,12 @@ void CViewCommander::Command_SHOWTAB( void )
 {
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
 	pCEditWnd->LayoutTabBar();
 	pCEditWnd->EndLayoutBars();
 
 	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
-	if( GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd && !GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		GetDocument()->m_pcEditWnd->WindowTopMost(
 			( (DWORD)::GetWindowLongPtr( GetDocument()->m_pcEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
@@ -7714,9 +7708,9 @@ void CViewCommander::Command_BROWSE( void )
 /* キーマクロの記録開始／終了 */
 void CViewCommander::Command_RECKEYMACRO( void )
 {
-	if( GetShareData()->m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
-		GetShareData()->m_bRecordingKeyMacro = FALSE;
-		GetShareData()->m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
+	if( GetDllShareData().m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
+		GetDllShareData().m_bRecordingKeyMacro = FALSE;
+		GetDllShareData().m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
 		TCHAR szInitDir[MAX_PATH];
 		int nRet;
@@ -7726,26 +7720,26 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"), nRet );
 			return;
 		}else{
-			_tcscpy( GetShareData()->m_szKeyMacroFileName, szInitDir );
+			_tcscpy( GetDllShareData().m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		int nSaveResult=CEditApp::Instance()->m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
-			GetInstance(),
-			GetShareData()->m_szKeyMacroFileName
+			G_AppInstance(),
+			GetDllShareData().m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
-			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ls"), GetShareData()->m_szKeyMacroFileName );
+			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ls"), GetDllShareData().m_szKeyMacroFileName );
 		}
 	}else{
-		GetShareData()->m_bRecordingKeyMacro = TRUE;
-		GetShareData()->m_hwndRecordingKeyMacro = GetMainWindow();;	/* キーボードマクロを記録中のウィンドウ */
+		GetDllShareData().m_bRecordingKeyMacro = TRUE;
+		GetDllShareData().m_hwndRecordingKeyMacro = GetMainWindow();;	/* キーボードマクロを記録中のウィンドウ */
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		CEditApp::Instance()->m_pcSMacroMgr->Clear(STAND_KEYMACRO);
 //		GetDocument()->m_CKeyMacroMgr.ClearAll();
-//		GetShareData()->m_CKeyMacroMgr.Clear();
+//		GetDllShareData().m_CKeyMacroMgr.Clear();
 	}
 	/* 親ウィンドウのタイトルを更新 */
 	this->GetEditWindow()->UpdateCaption();
@@ -7760,8 +7754,8 @@ void CViewCommander::Command_RECKEYMACRO( void )
 /* キーマクロの保存 */
 void CViewCommander::Command_SAVEKEYMACRO( void )
 {
-	GetShareData()->m_bRecordingKeyMacro = FALSE;
-	GetShareData()->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_bRecordingKeyMacro = FALSE;
+	GetDllShareData().m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
 	if( !CEditApp::Instance()->m_pcSMacroMgr->IsSaveOk() ){
@@ -7775,14 +7769,14 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	_tcscpy( szPath, _T("") );
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	if( _IS_REL_PATH( GetShareData()->m_szMACROFOLDER ) ){
-		GetInidirOrExedir( szInitDir, GetShareData()->m_szMACROFOLDER );
+	if( _IS_REL_PATH( GetDllShareData().m_szMACROFOLDER ) ){
+		GetInidirOrExedir( szInitDir, GetDllShareData().m_szMACROFOLDER );
 	}else{
-		_tcscpy( szInitDir, GetShareData()->m_szMACROFOLDER );	/* マクロ用フォルダ */
+		_tcscpy( szInitDir, GetDllShareData().m_szMACROFOLDER );	/* マクロ用フォルダ */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		GetInstance(),
+		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 		_T("*.mac"),
 		szInitDir
@@ -7792,13 +7786,13 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, GetShareData()->m_szMACROFOLDER, NULL );
-//	wcscat( GetShareData()->m_szMACROFOLDER, L"\\" );
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_szMACROFOLDER, NULL );
+//	wcscat( GetDllShareData().m_szMACROFOLDER, L"\\" );
 
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
-	if ( !CEditApp::Instance()->m_pcSMacroMgr->Save( STAND_KEYMACRO, GetInstance(), szPath ) ){
+	if ( !CEditApp::Instance()->m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ts"), szPath );
 	}
 	return;
@@ -7811,30 +7805,30 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 void CViewCommander::Command_EXECKEYMACRO( void )
 {
 	//@@@ 2002.1.24 YAZAKI 記録中は終了してから実行
-	if (GetShareData()->m_bRecordingKeyMacro){
+	if (GetDllShareData().m_bRecordingKeyMacro){
 		Command_RECKEYMACRO();
 	}
-	GetShareData()->m_bRecordingKeyMacro = FALSE;
-	GetShareData()->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_bRecordingKeyMacro = FALSE;
+	GetDllShareData().m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	/* キーボードマクロの実行中 */
 	m_pCommanderView->m_bExecutingKeyMacro = true;
 
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
-	if ( GetShareData()->m_szKeyMacroFileName[0] ){
+	if ( GetDllShareData().m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
-			GetInstance(),
-			GetShareData()->m_szKeyMacroFileName
+			G_AppInstance(),
+			GetDllShareData().m_szKeyMacroFileName
 		);
 		if ( !bLoadResult ){
-			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ls"), GetShareData()->m_szKeyMacroFileName );
+			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ls"), GetDllShareData().m_szKeyMacroFileName );
 		}
 		else {
-			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, GetInstance(), m_pCommanderView );
+			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView );
 		}
 	}
 
@@ -7855,15 +7849,15 @@ void CViewCommander::Command_EXECKEYMACRO( void )
  */
 void CViewCommander::Command_LOADKEYMACRO( void )
 {
-	GetShareData()->m_bRecordingKeyMacro = FALSE;
-	GetShareData()->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_bRecordingKeyMacro = FALSE;
+	GetDllShareData().m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1];
 	TCHAR			szInitDir[_MAX_PATH + 1];
 	const TCHAR*		pszFolder;
 	_tcscpy( szPath, _T("") );
-	pszFolder = GetShareData()->m_szMACROFOLDER;
+	pszFolder = GetDllShareData().m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( pszFolder ) ){
@@ -7873,7 +7867,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
-		GetInstance(),
+		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 // 2005/02/20 novice デフォルトの拡張子変更
 // 2005/07/13 novice 多様なマクロをサポートしているのでデフォルトは全て表示にする
@@ -7886,8 +7880,8 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
-	_tcscpy(GetShareData()->m_szKeyMacroFileName, szPath);
-//	GetShareData()->m_CKeyMacroMgr.LoadKeyMacro( GetInstance(), m_pCommanderView->GetHwnd(), szPath );
+	_tcscpy(GetDllShareData().m_szKeyMacroFileName, szPath);
+//	GetDllShareData().m_CKeyMacroMgr.LoadKeyMacro( G_AppInstance(), m_pCommanderView->GetHwnd(), szPath );
 	return;
 }
 
@@ -7943,27 +7937,27 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 		// 検索文字列設定
 		int i,j;
 		wcscpy( m_pCommanderView->m_szCurSrchKey, cmemCurText.GetStringPtr() );
-		for( i = 0; i < GetShareData()->m_aSearchKeys.size(); ++i ){
-			if( 0 == wcscmp( m_pCommanderView->m_szCurSrchKey, GetShareData()->m_aSearchKeys[i] ) ){
+		for( i = 0; i < GetDllShareData().m_aSearchKeys.size(); ++i ){
+			if( 0 == wcscmp( m_pCommanderView->m_szCurSrchKey, GetDllShareData().m_aSearchKeys[i] ) ){
 				break;
 			}
 		}
-		if( i < GetShareData()->m_aSearchKeys.size() ){
+		if( i < GetDllShareData().m_aSearchKeys.size() ){
 			for( j = i; j > 0; j-- ){
-				wcscpy( GetShareData()->m_aSearchKeys[j], GetShareData()->m_aSearchKeys[j - 1] );
+				wcscpy( GetDllShareData().m_aSearchKeys[j], GetDllShareData().m_aSearchKeys[j - 1] );
 			}
 		}
 		else{
 			for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-				wcscpy( GetShareData()->m_aSearchKeys[j], GetShareData()->m_aSearchKeys[j - 1] );
+				wcscpy( GetDllShareData().m_aSearchKeys[j], GetDllShareData().m_aSearchKeys[j - 1] );
 			}
-			GetShareData()->m_aSearchKeys.resize( t_min<int>(MAX_SEARCHKEY, GetShareData()->m_aSearchKeys.size()+1) );
+			GetDllShareData().m_aSearchKeys.resize( t_min<int>(MAX_SEARCHKEY, GetDllShareData().m_aSearchKeys.size()+1) );
 		}
-		wcscpy( GetShareData()->m_aSearchKeys[0], cmemCurText.GetStringPtr() );
+		wcscpy( GetDllShareData().m_aSearchKeys[0], cmemCurText.GetStringPtr() );
 
 		// 検索オプション設定
-		GetShareData()->m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない
-		GetShareData()->m_Common.m_sSearch.m_sSearchOption.bWordOnly=false;		//単語で検索しない
+		GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない
+		GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly=false;		//単語で検索しない
 		m_pCommanderView->ChangeCurRegexp(); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 
 		// 再描画
@@ -8050,7 +8044,7 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	CDlgExec cDlgExec;
 
 	/* モードレスダイアログの表示 */
-	if( !cDlgExec.DoModal( GetInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
+	if( !cDlgExec.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
 		return;
 	}
 
@@ -8058,7 +8052,7 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	const WCHAR* cmd_string = to_wchar(cDlgExec.m_szCommand);
 
 	//HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
-	HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, (LPARAM)(this->GetShareData()->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
+	HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, (LPARAM)(GetDllShareData().m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
 }
 
 //外部コマンド実行
@@ -8075,7 +8069,7 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt)
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 	
 	// 子プロセスの標準出力をリダイレクトする
-	//ExecCmd( buf, GetShareData()->m_bGetStdout );	//	2006.12.03 maru マクロからの呼び出しではオプションを保存させないため
+	//ExecCmd( buf, GetDllShareData().m_bGetStdout );	//	2006.12.03 maru マクロからの呼び出しではオプションを保存させないため
 	m_pCommanderView->ExecCmd( to_tchar(buf), nFlgOpt );
 	//	To Here Aug. 21, 2001 genta
 	return;

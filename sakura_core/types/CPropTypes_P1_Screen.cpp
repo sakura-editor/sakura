@@ -10,6 +10,7 @@
 #include "util/shell.h"
 #include <windowsx.h> //Edit_LimitText
 #include "util/window.h"
+#include "types/CType.h"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
@@ -390,7 +391,7 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		int		nSelPos = 0;
 		for( int i = 0; i < _countof( SmartIndentArr ); ++i ){
 			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SmartIndentArr[i].pszName );
-			if( SmartIndentArr[i].nMethod == m_Types.m_nSmartIndent ){	/* スマートインデント種別 */
+			if( SmartIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
 				nSelPos = i;
 			}
 		}
@@ -454,13 +455,13 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		int		nSelPos = 0;
 		for( int i = 0; i < _countof( OlmArr ); ++i ){
 			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
-			if( OlmArr[i].nMethod == m_Types.m_nDefaultOutline ){	/* アウトライン解析方法 */
+			if( OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
 				nSelPos = i;
 			}
 		}
 
 		//標準ルール
-		if( m_Types.m_nDefaultOutline != OUTLINE_FILE ){
+		if( m_Types.m_eDefaultOutline != OUTLINE_FILE ){
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
 
@@ -582,7 +583,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-		m_Types.m_nSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+		m_Types.m_eSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
 
 		/* その他のインデント対象文字 */
 		::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) - 1 );
@@ -616,11 +617,11 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		if ( !::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
 			HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 			int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-			m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+			m_Types.m_eDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
 		}
 		//ルールファイル
 		else {
-			m_Types.m_nDefaultOutline = OUTLINE_FILE;
+			m_Types.m_eDefaultOutline = OUTLINE_FILE;
 		}
 
 		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持

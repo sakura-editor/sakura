@@ -25,6 +25,7 @@
 #include "CShareData.h"
 #include "global.h"
 #include "CBregexp.h"
+#include "config/maxdata.h" //MAX_REGEX_KEYWORD
 
 struct STypeConfig;
 
@@ -121,10 +122,10 @@ protected:
 
 private:
 	STypeConfig		*m_pTypes;		//タイプ設定へのポインタ(呼び出し側が持っているもの)
-	int		m_nCompiledMagicNumber;	//コンパイル済みか？
-	int		m_nRegexKeyCount;	//現在のキーワード数
-	REGEX_INFO	m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)
-	wchar_t		m_szMsg[256];		//!< BREGEXP_Wからのメッセージを保持する
+	int				m_nCompiledMagicNumber;	//コンパイル済みか？
+	int				m_nRegexKeyCount;	//現在のキーワード数
+	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)
+	wchar_t			m_szMsg[256];		//!< BREGEXP_Wからのメッセージを保持する
 };
 
 #endif	//_REGEX_KEYWORD_H_

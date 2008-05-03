@@ -56,7 +56,6 @@
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
 
 
-
 CEditView*	g_m_pcEditView;
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
@@ -137,7 +136,7 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_cTextDrawer(this)
 , m_cCommander(this)
 , m_cViewSelect(this)
-, AT_ImmSetReconvertString(NULL)
+, m_AT_ImmSetReconvertString(NULL)
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 {
 }
@@ -145,7 +144,6 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
 BOOL CEditView::Create(
-	HINSTANCE	hInstance,	//!< アプリケーションのインスタンスハンドル
 	HWND		hwndParent,	//!< 親
 	CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
 	int			nMyIndex,	//!< ビューのインデックス
@@ -177,14 +175,11 @@ BOOL CEditView::Create(
 	//	メニューバーへのメッセージ表示機能はCEditWndへ移管
 
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_bCommandRunning = FALSE;	/* コマンドの実行中 */
 	m_pcOpeBlk = NULL;			/* 操作ブロック */
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 	m_pcsbwVSplitBox = NULL;	/* 垂直分割ボックス */
 	m_pcsbwHSplitBox = NULL;	/* 水平分割ボックス */
-	m_pszAppName = _T("EditorClient");
-	m_hInstance = NULL;
 	m_hwndVScrollBar = NULL;
 	m_nVScrollRate = 1;			/* 垂直スクロールバーの縮尺 */
 	m_hwndHScrollBar = NULL;
@@ -204,7 +199,7 @@ BOOL CEditView::Create(
 
 
 	/* ルーラー表示 */
-	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+m_pShareData->m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	GetRuler().SetRedrawFlag();	// ルーラー全体を描き直す時=true   2002.02.25 Add By KK
 	m_hdcCompatDC = NULL;		/* 再描画用コンパチブルＤＣ */
 	m_hbmpCompatBMP = NULL;		/* 再描画用メモリＢＭＰ */
@@ -216,7 +211,7 @@ BOOL CEditView::Create(
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
-	m_CurRegexp.Init(m_pShareData->m_Common.m_sSearch.m_szRegexpLib );
+	m_CurRegexp.Init(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );
 
 	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
@@ -239,9 +234,9 @@ BOOL CEditView::Create(
 		m_uWM_MSIME_RECONVERTREQUEST = ::RegisterWindowMessage(_T("MSIMEReconvertRequest"));
 		
 		m_hAtokModule = LoadLibrary(_T("ATOK10WC.DLL"));
-		AT_ImmSetReconvertString = NULL;
+		m_AT_ImmSetReconvertString = NULL;
 		if ( NULL != m_hAtokModule ) {
-			AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");
+			m_AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");
 		}
 	}
 	else{ 
@@ -267,20 +262,19 @@ BOOL CEditView::Create(
 
 	WNDCLASS	wc;
 //	HDC			hdc;	???
-	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
 	m_nMyIndex = nMyIndex;
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
-	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
+	m_cRegexKeyword = new CRegexKeyword( GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->m_cDocType.GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
 
-	GetTextArea().SetTopYohaku( m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
+	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );								/* 表示域の上端座標 */
 	/* ルーラー表示 */
 	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + m_pShareData->m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 
 
@@ -291,12 +285,12 @@ BOOL CEditView::Create(
 	wc.lpfnWndProc		= (WNDPROC)EditViewWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= sizeof( LONG_PTR );
-	wc.hInstance		= m_hInstance;
+	wc.hInstance		= G_AppInstance();
 	wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_IBEAM )*/;
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_WINDOW + 1)*/;
 	wc.lpszMenuName		= NULL;
-	wc.lpszClassName	= m_pszAppName;
+	wc.lpszClassName	= GSTR_VIEWNAME;
 	if( 0 == ::RegisterClass( &wc ) ){
 	}
 
@@ -305,8 +299,8 @@ BOOL CEditView::Create(
 	SetHwnd(
 		::CreateWindowEx(
 			WS_EX_STATICEDGE,		// extended window style
-			m_pszAppName,			// pointer to registered class name
-			m_pszAppName,			// pointer to window name
+			GSTR_VIEWNAME,			// pointer to registered class name
+			GSTR_VIEWNAME,			// pointer to window name
 			0						// window style
 			| WS_VISIBLE
 			| WS_CHILD
@@ -318,7 +312,7 @@ BOOL CEditView::Create(
 			0,						// window height
 			hwndParent,				// handle to parent or owner window
 			NULL,					// handle to menu or child-window identifier
-			m_hInstance,			// handle to application instance
+			G_AppInstance(),		// handle to application instance
 			(LPVOID)this			// pointer to window-creation data
 		)
 	);
@@ -329,19 +323,19 @@ BOOL CEditView::Create(
 	m_pcDropTarget->Register_DropTarget( GetHwnd() );
 
 	/* 辞書Tip表示ウィンドウ作成 */
-	m_cTipWnd.Create( m_hInstance, GetHwnd()/*m_pShareData->m_hwndTray*/ );
+	m_cTipWnd.Create( G_AppInstance(), GetHwnd()/*GetDllShareData().m_hwndTray*/ );
 
 	/* 再描画用コンパチブルＤＣ */
 	// 2007.09.09 Moca 互換BMPによる画面バッファ
 	// 2007.09.30 genta 関数化
-	UseCompatibleDC( m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP );
+	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompotibleBMP );
 
 	/* 垂直分割ボックス */
 	m_pcsbwVSplitBox = new CSplitBoxWnd;
-	m_pcsbwVSplitBox->Create( m_hInstance, GetHwnd(), TRUE );
+	m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
 	/* 水平分割ボックス */
 	m_pcsbwHSplitBox = new CSplitBoxWnd;
-	m_pcsbwHSplitBox->Create( m_hInstance, GetHwnd(), FALSE );
+	m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
 
 	/* スクロールバー作成 */
 	CreateScrollBar();		// 2006.12.19 ryoji
@@ -748,7 +742,7 @@ LRESULT CEditView::DispatchEvent(
 
 		// マウスクリックによりバックグラウンドウィンドウがアクティベートされた
 		//	2007.10.08 genta オプション追加
-		if( m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation &&
+		if( GetDllShareData().m_Common.m_sGeneral.m_bNoCaretMoveByActivation &&
 		   (! m_pcEditDoc->m_pcEditWnd->IsActiveApp()))
 		{
 			m_bActivateByMouse = TRUE;		// マウスによるアクティベート
@@ -1085,7 +1079,7 @@ VOID CEditView::OnTimer(
 	POINT		po;
 	RECT		rc;
 
-	if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+	if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 		if( m_bDragSource ){
 			return;
 		}
@@ -1096,7 +1090,8 @@ VOID CEditView::OnTimer(
 			/* 辞書Tipを表示 */
 			m_cTipWnd.Show( po.x, po.y + GetTextMetrics().GetHankakuHeight(), NULL );
 		}
-	}else{
+	}
+	else{
 		::GetCursorPos( &po );
 		::GetWindowRect(GetHwnd(), &rc );
 		if( !PtInRect( &rc, po ) ){
@@ -1229,7 +1224,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 	else{
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy );
+		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
 		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
@@ -1304,30 +1299,30 @@ int	CEditView::CreatePopUpMenu_R( void )
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
 
 	hMenu = ::CreatePopupMenu();
-	for( i = 0; i < m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( 0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
+		if( 0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
 		}else{
 			//	Oct. 3, 2001 genta
-			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			FuncLookup.Funccode2Name( GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* キー */
-			if( L'\0' == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
+			if( L'\0' == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				auto_strcpy( szLabel2, szLabel );
 			}else{
 				auto_sprintf( szLabel2, LTEXT("%ls (&%lc)"),
 					szLabel,
-					m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
+					GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
 				);
 			}
 			/* 機能が利用可能か調べる */
-			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
+			if( IsFuncEnable( m_pcEditDoc, &GetDllShareData(), GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
 				uFlags = MF_STRING | MF_ENABLED;
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
 			pCEditWnd->GetMenuDrawer().MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
+				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
 
 		}
 	}
@@ -1388,12 +1383,12 @@ void CEditView::OnChangeSetting()
 {
 	RECT		rc;
 
-	GetTextArea().SetTopYohaku( m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 		/* ルーラーとテキストの隙間 */
+	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 		/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );									/* 表示域の上端座標 */
 
 	/* ルーラー表示 */
 	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + m_pShareData->m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 
 	// フォント更新
@@ -1409,7 +1404,7 @@ void CEditView::OnChangeSetting()
 	AdjustScrollBars();
 
 	//	2007.09.30 genta 画面キャッシュ用CompatibleDCを用意する
-	UseCompatibleDC( m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP );
+	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompotibleBMP );
 
 	/* ウィンドウサイズの変更処理 */
 	::GetClientRect( GetHwnd(), &rc );
@@ -1456,7 +1451,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	if( bVert ){
 		if( m_pcsbwVSplitBox == NULL ){	/* 垂直分割ボックス */
 			m_pcsbwVSplitBox = new CSplitBoxWnd;
-			m_pcsbwVSplitBox->Create( m_hInstance, GetHwnd(), TRUE );
+			m_pcsbwVSplitBox->Create( G_AppInstance(), GetHwnd(), TRUE );
 		}
 	}
 	else{
@@ -1465,7 +1460,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	if( bHorz ){
 		if( m_pcsbwHSplitBox == NULL ){	/* 水平分割ボックス */
 			m_pcsbwHSplitBox = new CSplitBoxWnd;
-			m_pcsbwHSplitBox->Create( m_hInstance, GetHwnd(), FALSE );
+			m_pcsbwHSplitBox->Create( G_AppInstance(), GetHwnd(), FALSE );
 		}
 	}
 	else{
@@ -1488,7 +1483,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 			CW_USEDEFAULT,										/* default height */
 			GetHwnd(),												/* handle of main window */
 			(HMENU) NULL,										/* no menu for a scroll bar */
-			m_hInstance,										/* instance owning this window */
+			G_AppInstance(),										/* instance owning this window */
 			(LPVOID) NULL										/* pointer not needed */
 		);
 	}else{
@@ -1507,7 +1502,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 			CW_USEDEFAULT,											/* default height */
 			GetHwnd(),													/* handle of main window */
 			(HMENU) NULL,											/* no menu for a scroll bar */
-			m_hInstance,											/* instance owning this window */
+			G_AppInstance(),											/* instance owning this window */
 			(LPVOID) NULL											/* pointer not needed */
 		);
 	}
@@ -1933,7 +1928,7 @@ void CEditView::CopySelectedAllLines(
 		FALSE,
 		pszQuote, /* 引用符 */
 		bWithLineNumber, /* 行番号を付与する */
-		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
+		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
 	) ){
 		ErrorBeep();
 		return;
@@ -2020,7 +2015,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 
 	if( bDraw
 	 && m_bDrawSWITCH
-	 && GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
+	 && GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
 	 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
 	 && m_bDoing_UndoRedo == FALSE
 	){
@@ -2036,7 +2031,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		::LineTo(   hdc, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
 		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
 		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
-			GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
+			GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
 			::MoveToEx( hdc, m_nOldCursorLineX - 1, GetTextArea().GetAreaTop(), NULL );
 			::LineTo(   hdc, m_nOldCursorLineX - 1, GetTextArea().GetAreaBottom() );
 		}
@@ -2132,7 +2127,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 	if( -1 != m_nOldCursorLineX ){
 		if( bDraw
 		 && m_bDrawSWITCH
-		 && GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
+		 && GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
 		 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
 		 && m_bDoing_UndoRedo == FALSE
 		){
