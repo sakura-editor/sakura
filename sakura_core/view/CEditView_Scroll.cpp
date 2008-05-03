@@ -343,6 +343,16 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 				&rcScrol,	/* スクロール長方形の構造体のアドレス */
 				NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
 			);
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			// 互換BMPのスクロール
+			if( m_hbmpCompatBMP ){
+				::BitBlt(
+					m_hdcCompatDC, rcScrol.left,
+					rcScrol.top + (Int)nScrollRowNum * ( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace + GetTextMetrics().GetHankakuHeight() ),
+					rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
+					m_hdcCompatDC, rcScrol.left, rcScrol.top, SRCCOPY
+				);
+			}
 			::InvalidateRect( GetHwnd(), &rcClip, TRUE );
 			::UpdateWindow( GetHwnd() );
 		}
@@ -427,6 +437,24 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 				&rcScrol,	/* スクロール長方形の構造体のアドレス */
 				NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
 			);
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			// 互換BMPのスクロール
+			if( m_hbmpCompatBMP ){
+				::BitBlt(
+					m_hdcCompatDC, rcScrol.left + (Int)nScrollColNum * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace ),
+						rcScrol.top, rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
+					m_hdcCompatDC, rcScrol.left, rcScrol.top , SRCCOPY
+				);
+			}
+			// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
+			if( m_nOldCursorLineX == GetTextArea().GetAreaLeft() - 1 ){
+				RECT rcClip3;
+				rcClip3.left = m_nOldCursorLineX;
+				rcClip3.right = m_nOldCursorLineX + 1;
+				rcClip3.top  = GetTextArea().GetAreaTop();
+				rcClip3.bottom = GetTextArea().GetAreaBottom();
+				::InvalidateRect( GetHwnd(), &rcClip3, TRUE );
+			}
 			::InvalidateRect( GetHwnd(), &rcClip2, TRUE );
 			::UpdateWindow( GetHwnd() );
 		}

@@ -61,7 +61,7 @@ void CEditView::RedrawAll()
 	PAINTSTRUCT	ps;
 	HDC hdc = ::GetDC( GetHwnd() );
 	::GetClientRect( GetHwnd(), &ps.rcPaint );
-	OnPaint( hdc, &ps, FALSE );	// メモリＤＣを使用してちらつきのない再描画
+	OnPaint( hdc, &ps, FALSE );
 	::ReleaseDC( GetHwnd(), hdc );
 
 	// キャレットの表示
@@ -90,7 +90,7 @@ void CEditView::Redraw()
 
 	::GetClientRect( GetHwnd(), &ps.rcPaint );
 
-	OnPaint( hdc, &ps, FALSE );	/* メモリＤＣを使用してちらつきのない再描画 */
+	OnPaint( hdc, &ps, FALSE );
 
 	::ReleaseDC( GetHwnd(), hdc );
 }
@@ -476,8 +476,14 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 //                           描画                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// 通常の描画処理 new
-void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
+/*! 通常の描画処理 new 
+	@param pPs  pPs.rcPaint は正しい必要がある
+	@param bDrawFromComptibleBmp  TRUE 画面バッファからhdcに作画する(コピーするだけ)。
+			TRUEの場合、pPs.rcPaint領域外は作画されないが、FALSEの場合は作画される事がある。
+			互換DC/BMPが無い場合は、普通の作画処理をする。
+@date 2007.09.09 Moca 元々無効化されていた第三パラメータのbUseMemoryDCをbDrawFromComptibleBmpに変更。
+*/
+void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::OnPaint" );
 
@@ -485,6 +491,47 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 	if( NULL == hdc )return;
 
 	if( !GetDrawSwitch() )return;
+
+	//@@@
+#ifdef _DEBUG
+	::MYTRACE( _T("OnPaint(%d,%d)-(%d,%d) : %d\n"),
+		pPs->rcPaint.left,
+		pPs->rcPaint.top,
+		pPs->rcPaint.right,
+		pPs->rcPaint.bottom,
+		bDrawFromComptibleBmp
+		);
+#endif
+	
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	// 互換BMPからの転送のみによる作画
+	if( bDrawFromComptibleBmp
+		&& m_hdcCompatDC && m_hbmpCompatBMP ){
+		::BitBlt(
+			hdc,
+			pPs->rcPaint.left,
+			pPs->rcPaint.top,
+			pPs->rcPaint.right - pPs->rcPaint.left,
+			pPs->rcPaint.bottom - pPs->rcPaint.top,
+			m_hdcCompatDC,
+			pPs->rcPaint.left,
+			pPs->rcPaint.top,
+			SRCCOPY
+		);
+		if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
+			/* アクティブペインは、アンダーライン描画 */
+			GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+		}
+		return;
+	}
+	if( m_hdcCompatDC && NULL == m_hbmpCompatBMP
+		 || (pPs->rcPaint.right - pPs->rcPaint.left) < m_nCompatBMPWidth
+		 || (pPs->rcPaint.bottom - pPs->rcPaint.top) < m_nCompatBMPHeight ){
+		RECT rect;
+		::GetWindowRect( this->GetHwnd(), &rect );
+		CreateOrUpdateCompatibleBitmap( rect.right - rect.left, rect.bottom - rect.top );
+	}
+	// To Here 2007.09.09 Moca
 
 	// キャレットを隠す
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
@@ -513,7 +560,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 
 	// メモリＤＣを利用した再描画の場合は描画先のＤＣを切り替える
 	HDC hdcOld;
-	bUseMemoryDC = FALSE;
+	// 2007.09.09 Moca bUseMemoryDCを有効化。
+	// bUseMemoryDC = FALSE;
+	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
 	if( bUseMemoryDC ){
 		hdcOld = hdc;
 		hdc = m_hdcCompatDC;
@@ -682,12 +731,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 		GetRuler().DispRuler( hdc );
 	}
 
-	if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
-		/* アクティブペインは、アンダーライン描画 */
-		GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
-	}
-
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                     その他後始末など                        //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -705,6 +748,14 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bUseMemoryDC )
 			SRCCOPY
 		);
 	}
+
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
+	if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
+		/* アクティブペインは、アンダーライン描画 */
+		GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+	}
+	// To Here 2007.09.09 Moca
 
 	/* 03/02/18 対括弧の強調表示(描画) ai */
 	DrawBracketPair( true );
@@ -1234,4 +1285,137 @@ void CEditView::DispTextSelected(
 		}
 //	}
 	return;
+}
+
+
+
+
+
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       画面バッファ                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+
+/*!
+	画面の互換ビットマップを作成または更新する。
+		必要の無いときは何もしない。
+	
+	@param cx ウィンドウの高さ
+	@param cy ウィンドウの幅
+	@return true: ビットマップを利用可能 / false: ビットマップの作成・更新に失敗
+
+	@date 2007.09.09 Moca CEditView::OnSizeから分離。
+		単純に生成するだけだったものを、仕様変更に従い内容コピーを追加。
+		サイズが同じときは何もしないように変更
+
+	@par 互換BMPにはキャレット・カーソル位置横縦線・対括弧以外の情報を全て書き込む。
+		選択範囲変更時の反転処理は、画面と互換BMPの両方を別々に変更する。
+		カーソル位置横縦線変更時には、互換BMPから画面に元の情報を復帰させている。
+
+*/
+bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
+{
+	if( NULL == m_hdcCompatDC ){
+		return false;
+	}
+	// サイズを64の倍数で整列
+	int nBmpWidthNew  = ((cx + 63) & (0x7fffffff - 63));
+	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
+	if( nBmpWidthNew != m_nCompatBMPWidth || nBmpHeightNew != m_nCompatBMPHeight ){
+#ifdef _DEBUG
+	MYTRACE( _T("CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n"), cx, cy );
+#endif
+		HDC	hdc = ::GetDC( GetHwnd() );
+		HBITMAP hBitmapNew = NULL;
+		if( m_hbmpCompatBMP ){
+			// BMPの更新
+			HDC hdcTemp = ::CreateCompatibleDC( hdc );
+			hBitmapNew = ::CreateCompatibleBitmap( hdc, nBmpWidthNew, nBmpHeightNew );
+			if( hBitmapNew ){
+				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
+				// 前の画面内容をコピーする
+				::BitBlt( hdcTemp, 0, 0,
+					__min( nBmpWidthNew,m_nCompatBMPWidth ),
+					__min( nBmpHeightNew, m_nCompatBMPHeight ),
+					m_hdcCompatDC, 0, 0, SRCCOPY );
+				::SelectObject( hdcTemp, hBitmapOld );
+				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
+				::DeleteObject( m_hbmpCompatBMP );
+			}
+			::DeleteDC( hdcTemp );
+		}else{
+			// BMPの新規作成
+			hBitmapNew = ::CreateCompatibleBitmap( hdc, nBmpWidthNew, nBmpHeightNew );
+		}
+		if( hBitmapNew ){
+			m_hbmpCompatBMP = hBitmapNew;
+			m_nCompatBMPWidth = nBmpWidthNew;
+			m_nCompatBMPHeight = nBmpHeightNew;
+			m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( m_hdcCompatDC, m_hbmpCompatBMP );
+		}else{
+			// 互換BMPの作成に失敗
+			// 今後も失敗を繰り返す可能性が高いので
+			// m_hdcCompatDCをNULLにすることで画面バッファ機能をこのウィンドウのみ無効にする。
+			//	2007.09.29 genta 関数化．既存のBMPも解放
+			UseCompatibleDC(FALSE);
+		}
+		::ReleaseDC( GetHwnd(), hdc );
+	}
+	return NULL != m_hbmpCompatBMP;
+}
+
+
+/*!
+	互換メモリBMPを削除
+
+	@note 分割ビューが非表示になった場合と
+		親ウィンドウが非表示・最小化された場合に削除される。
+	@date 2007.09.09 Moca 新規作成 
+*/
+void CEditView::DeleteCompatibleBitmap()
+{
+	if( m_hbmpCompatBMP ){
+		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
+		::DeleteObject( m_hbmpCompatBMP );
+		m_hbmpCompatBMP = NULL;
+		m_hbmpCompatBMPOld = NULL;
+		m_nCompatBMPWidth = -1;
+		m_nCompatBMPHeight = -1;
+	}
+}
+
+
+
+/** 画面キャッシュ用CompatibleDCを用意する
+
+	@param[in] TRUE: 画面キャッシュON
+
+	@date 2007.09.30 genta 関数化
+*/
+void CEditView::UseCompatibleDC(BOOL fCache)
+{
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( fCache ){
+		if( m_hdcCompatDC == NULL ){
+			HDC			hdc;
+			hdc = ::GetDC( GetHwnd() );
+			m_hdcCompatDC = ::CreateCompatibleDC( hdc );
+			::ReleaseDC( GetHwnd(), hdc );
+			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Created\n"), fCache);
+		}
+		else {
+			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Reused\n"), fCache);
+		}
+	}
+	else {
+		//	CompatibleBitmapが残っているかもしれないので最初に削除
+		DeleteCompatibleBitmap();
+		if( m_hdcCompatDC != NULL ){
+			::DeleteDC( m_hdcCompatDC );
+			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Deleted.\n"));
+			m_hdcCompatDC = NULL;
+		}
+	}
 }

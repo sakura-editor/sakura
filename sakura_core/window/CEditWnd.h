@@ -222,6 +222,8 @@ public:
 	//	Aug. 14, 2005 genta
 	CLogicPoint* SavePhysPosOfAllView();
 	void RestorePhysPosOfAllView( CLogicPoint* pptPosArray );
+	// 互換BMPによる画面バッファ 2007.09.09 Moca
+	void Views_DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -274,7 +276,6 @@ public:
 	//フォーカス管理
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
@@ -344,6 +345,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITWND_H_ */
+
 
 
 

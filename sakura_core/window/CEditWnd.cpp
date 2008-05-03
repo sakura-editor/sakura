@@ -792,10 +792,12 @@ LRESULT CEditWnd::DispatchEvent(
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 		return m_CMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
 
-
-
-
-
+	// 2007.09.09 Moca 互換BMPによる画面バッファ
+	case WM_SHOWWINDOW:
+		if( !wParam ){
+			Views_DeleteCompatibleBitmap();
+		}
+		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_MENUSELECT:
 		if( NULL == m_cStatusBar.GetStatusHwnd() ){
@@ -3907,6 +3909,25 @@ void CEditWnd::OnEditTimer( void )
 	}
 
 	GetDocument().m_cAutoSaveAgent.CheckAutoSave();
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        ビュー管理                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+/*!
+	CEditViewの画面バッファを削除
+	@date 2007.09.09 Moca 新規作成
+*/
+void CEditWnd::Views_DeleteCompatibleBitmap()
+{
+	// CEditView群へ転送する
+	for( int i = 0; i < 4; i++ ){
+		if( m_pcEditViewArr[i]->GetHwnd() ){
+			m_pcEditViewArr[i]->DeleteCompatibleBitmap();
+		}
+	}
 }
 
 LRESULT CEditWnd::Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

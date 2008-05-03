@@ -142,6 +142,8 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 /*! 選択領域の描画
 
 	@date 2006.10.01 Moca 重複コード削除．矩形作画改善．
+	@date 2007.09.09 Moca 互換BMPによる画面バッファ
+		画面バッファが有効時、画面と互換BMPの両方の反転処理を行う。
 */
 void CViewSelect::DrawSelectArea() const
 {
@@ -162,6 +164,14 @@ void CViewSelect::DrawSelectArea() const
 	HBRUSH      hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
 	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	HBRUSH		hBrushCompatOld;
+	int			nROPCompatOld;
+	if( pView->m_hbmpCompatBMP ){
+		hBrushCompatOld = (HBRUSH)::SelectObject( pView->m_hdcCompatDC, hBrush );
+		nROPCompatOld = ::SetROP2( pView->m_hdcCompatDC, SELECTEDAREA_ROP2 );
+	}
+	// To Here 2007.09.09 Moca
 
 //	MYTRACE_A( "DrawSelectArea()  m_bBeginBoxSelect=%ls\n", m_bBeginBoxSelect?"TRUE":"FALSE" );
 	if( IsBoxSelecting() ){		// 矩形範囲選択中
@@ -253,6 +263,11 @@ void CViewSelect::DrawSelectArea() const
 					::DeleteObject( hrgnEOFNew );
 				}
 				::PaintRgn( hdc, hrgnDraw );
+				// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+				if( pView->m_hbmpCompatBMP ){
+					::PaintRgn( pView->m_hdcCompatDC, hrgnDraw );
+				}
+				// To Here 2007.09.09 Moca
 			}
 		}
 
@@ -320,6 +335,14 @@ void CViewSelect::DrawSelectArea() const
 			}
 		}
 	}
+
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( pView->m_hbmpCompatBMP ){
+		::SetROP2( pView->m_hdcCompatDC, nROPCompatOld );
+		::SelectObject( pView->m_hdcCompatDC, hBrushCompatOld );
+	}
+	// To Here 2007.09.09 Moca
+
 	// 2006.10.01 Moca 重複コード統合
 	::SetROP2( hdc, nROP_Old );
 	::SelectObject( hdc, hBrushOld );
@@ -414,6 +437,11 @@ void CViewSelect::DrawSelectAreaLine(
 		if( nSelectFrom <=pView->GetTextArea().GetRightCol() && pView->GetTextArea().GetViewLeftCol() < nSelectTo ){
 			HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
 			::PaintRgn( hdc, hrgnDraw );
+			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+			if( pView->m_hbmpCompatBMP ){
+				::PaintRgn( pView->m_hdcCompatDC, hrgnDraw );
+			}
+			// To Here 2007.09.09 Moca
 			::DeleteObject( hrgnDraw );
 		}
 	}

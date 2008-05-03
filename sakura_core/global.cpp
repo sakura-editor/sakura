@@ -39,6 +39,7 @@ const ColorAttributeData g_ColorAttributeArr[] =
 	{_T("CAR"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
 	{_T("IME"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
 	{_T("UND"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
+	{_T("CVL"), COLOR_ATTRIB_NO_BACK | ( COLOR_ATTRIB_NO_EFFECTS & ~COLOR_ATTRIB_NO_BOLD )}, // 2007.09.09 Moca カーソル位置縦線
 	{_T("LNO"), 0},
 	{_T("MOD"), 0},
 	{_T("TAB"), 0},
@@ -52,7 +53,7 @@ const ColorAttributeData g_ColorAttributeArr[] =
 	{_T("NUM"), 0},	//@@@ 2001.02.17 by MIK 半角数値の強調
 	{_T("FND"), 0},
 	{_T("KW1"), 0},
-	{_T("KW"), 0},
+	{_T("KW2"), 0},
 	{_T("KW3"), 0},	//@@@ 2003.01.13 by MIK 強調キーワード3-10
 	{_T("KW4"), 0},
 	{_T("KW5"), 0},
@@ -105,6 +106,7 @@ SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index )
 {
 	return g_ColorAttributeArr[index].szName;
 }
+
 
 
 

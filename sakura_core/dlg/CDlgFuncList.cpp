@@ -709,7 +709,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			//	Global空間の場合 (C++のみ)
 
 			// 2002/10/27 frozen ここから
-			if( 3 <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= 7 )
+			// 2007.05.26 genta "__interface" をクラスに類する扱いにする
+			if( 3 <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= 8 )
 				htiClass = TVI_ROOT;
 			else
 			{
@@ -731,7 +732,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			}
 		}
 		TCHAR*		pFuncName;
-		pFuncName = new TCHAR[ _tcslen(pWork) + 1 + 7 ];	// +6 は追加する文字列の最大長
+		pFuncName = new TCHAR[ _tcslen(pWork) + 32 ];	// ↓で追加する文字列が収まるだけ確保
 		_tcscpy( pFuncName, pWork );
 
 		// 2002/10/27 frozen 追加文字列の種類を増やした
@@ -743,6 +744,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		case 5: _tcscat( pFuncName, _T(" 列挙体") );break;
 		case 6: _tcscat( pFuncName, _T(" 共用体") );break;
 //		case 7: _tcscat( pFuncName, _T(" 名前空間") );break;
+		
+		case 8: _tcscat( pFuncName, _T(" インターフェース") );break; // 2007.05.26 genta : "__interface"
 		};
 //		}
 		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
@@ -1681,5 +1684,6 @@ void CDlgFuncList::Redraw( int nOutLineType, CFuncInfoArr* pcFuncInfoArr, CLayou
 	m_nCurLine = nCurLine;				/* 現在行 */
 	SetData();
 }
+
 
 

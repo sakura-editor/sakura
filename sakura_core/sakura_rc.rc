@@ -169,7 +169,7 @@ BEGIN
     CONTROL         "HotKey1",IDC_HOTKEY_TRAYMENU,"msctls_hotkey32",
                     WS_BORDER | WS_TABSTOP,8,167,95,12,0,
                     HIDC_HOTKEY_TRAYMENU
-    GROUPBOX        "スクロール",IDC_STATIC,150,3,117,65,WS_GROUP
+    GROUPBOX        "スクロール",IDC_STATIC,150,3,117,45,WS_GROUP
     LTEXT           "行数(&N)",IDC_STATIC,155,19,24,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_REPEATEDSCROLLLINENUM,180,17,40,12,
                     ES_AUTOHSCROLL | WS_GROUP,0,
@@ -180,6 +180,8 @@ BEGIN
     CONTROL         "少し滑らかにする(&S)",IDC_CHECK_REPEATEDSCROLLSMOOTH,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,33,75,10,0,
                     HIDC_CHECK_REPEATEDSCROLLSMOOTH
+    CONTROL         "画面キャッシュを使う(&G)",IDC_CHECK_MEMDC,"Button",
+                     BS_AUTOCHECKBOX | WS_TABSTOP,155,56,96,16
     GROUPBOX        "履歴",IDC_STATIC,150,72,117,82,WS_GROUP
     LTEXT           "ファイルの履歴&MAX",IDC_STATIC,155,87,59,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_MAX_MRU_FILE,160,98,28,12,ES_AUTOHSCROLL | 
@@ -333,12 +335,12 @@ FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&OK",IDOK,90,178,50,14,0,0,HIDOK
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
-    CONTROL         "サクラエディタ",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
-                    30,7,42,8
-    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,76,7,88,8,NOT WS_GROUP
+    CONTROL         "サクラエディタW",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
+                    30,7,50,8
+    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,84,7,88,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
-    LTEXT           "Copyright (C) 1998-2007  by Norio Nakatani && Collaborators",
+    LTEXT           "Copyright (C) 1998-2008  by Norio Nakatani && Collaborators",
                     IDC_STATIC,40,33,182,8,NOT WS_GROUP
     LTEXT           "原作者: たけ(竹パンダ) さん",IDC_STATIC,12,48,120,8,NOT 
                     WS_GROUP
@@ -2577,8 +2579,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,6,1,0
- PRODUCTVERSION 1,6,1,0
+ FILEVERSION 1,6,2,0
+ PRODUCTVERSION 1,6,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -2594,15 +2596,15 @@ BEGIN
         BLOCK "041104b0"
         BEGIN
             VALUE "Comments", "このソフトはフリーソフトです。\0"
-            VALUE "CompanyName", "Project: Sakura-Editor\0"
-            VALUE "FileDescription", "サクラエディタ\0"
+            VALUE "CompanyName", "Project: Sakura-Editor-W\0"
+            VALUE "FileDescription", "サクラエディタW\0"
             VALUE "FileVersion", "1.6\0"
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", "Copyright (C) Norio Nakatani & Collaborators\0"
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
-            VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.6.1.0\0"
+            VALUE "ProductName", "サクラエディタW\0"
+            VALUE "ProductVersion", "1.6.2.0w\0"
         END
     END
     BLOCK "VarFileInfo"

@@ -60,6 +60,7 @@ static const DWORD p_helpids[] = {	//10900
 	IDC_SPIN_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,
 	IDC_SPIN_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,
 	IDC_SPIN_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,
+	IDC_CHECK_MEMDC,				HIDC_CHECK_MEMDC,					//画面キャッシュを使う
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -849,6 +850,10 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* キーリピート時のスクロールを滑らかにするか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_sGeneral.m_nRepeatedScroll_Smooth );
 
+	// 2007.09.09 Moca 画面キャッシュ設定追加
+	// 画面キャッシュを使う
+	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_sWindow.m_bUseCompotibleBMP );
+
 	/* ファイルの履歴MAX */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_sGeneral.m_nMRUArrNum_MAX, FALSE );
 
@@ -917,6 +922,10 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 
 	/* キーリピート時のスクロールを滑らかにするか */
 	m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH );
+
+	// 2007.09.09 Moca 画面キャッシュ設定追加
+	// 画面キャッシュを使う
+	m_Common.m_sWindow.m_bUseCompotibleBMP = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MEMDC );
 
 	/* ファイルの履歴MAX */
 	m_Common.m_sGeneral.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
@@ -1039,6 +1048,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	}
 	return;
 }
+
 
 
 

@@ -209,6 +209,10 @@ BOOL CEditView::Create(
 	m_hdcCompatDC = NULL;		/* 再描画用コンパチブルＤＣ */
 	m_hbmpCompatBMP = NULL;		/* 再描画用メモリＢＭＰ */
 	m_hbmpCompatBMPOld = NULL;	/* 再描画用メモリＢＭＰ(OLD) */
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	m_nCompatBMPWidth = -1;
+	m_nCompatBMPHeight = -1;
+	// To Here 2007.09.09 Moca
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
@@ -262,7 +266,7 @@ BOOL CEditView::Create(
 	//↓今までCreateでやってたこと
 
 	WNDCLASS	wc;
-	HDC			hdc;
+//	HDC			hdc;	???
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
@@ -328,9 +332,9 @@ BOOL CEditView::Create(
 	m_cTipWnd.Create( m_hInstance, GetHwnd()/*m_pShareData->m_hwndTray*/ );
 
 	/* 再描画用コンパチブルＤＣ */
-	hdc = ::GetDC( GetHwnd() );
-	m_hdcCompatDC = ::CreateCompatibleDC( hdc );
-	::ReleaseDC( GetHwnd(), hdc );
+	// 2007.09.09 Moca 互換BMPによる画面バッファ
+	// 2007.09.30 genta 関数化
+	UseCompatibleDC( m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP );
 
 	/* 垂直分割ボックス */
 	m_pcsbwVSplitBox = new CSplitBoxWnd;
@@ -370,16 +374,10 @@ CEditView::~CEditView()
 		DestroyWindow( GetHwnd() );
 	}
 
-	/* 再描画用メモリＢＭＰ */
-	if( m_hbmpCompatBMP != NULL ){
-		/* 再描画用メモリＢＭＰ(OLD) */
-		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
-		::DeleteObject( m_hbmpCompatBMP );
-	}
 	/* 再描画用コンパチブルＤＣ */
-	if( m_hdcCompatDC != NULL ){
-		::DeleteDC( m_hdcCompatDC );
-	}
+	//	2007.09.30 genta 関数化
+	//	m_hbmpCompatBMPもここで削除される．
+	UseCompatibleDC(FALSE);
 
 	delete m_pcDropTarget;
 	m_pcDropTarget = NULL;
@@ -397,7 +395,6 @@ CEditView::~CEditView()
 	delete m_pcRuler;
 	delete m_pcFontset;
 }
-
 
 
 
@@ -443,6 +440,15 @@ LRESULT CEditView::DispatchEvent(
 		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );
 
 		return 0L;
+
+		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	case WM_SHOWWINDOW:
+		// ウィンドウ非表示の再に互換BMPを廃棄してメモリーを節約する
+		if( hwnd == GetHwnd() && (BOOL)wParam == FALSE ){
+			DeleteCompatibleBitmap();
+		}
+		return 0L;
+	// To Here 2007.09.09 Moca
 
 	case WM_SIZE:
 		OnSize( LOWORD( lParam ), HIWORD( lParam ) );
@@ -791,10 +797,12 @@ void CEditView::OnMove( int x, int y, int nWidth, int nHeight )
 /* ウィンドウサイズの変更処理 */
 void CEditView::OnSize( int cx, int cy )
 {
-	if( NULL == GetHwnd() ){
-		return;
-	}
-	if( cx == 0 && cy == 0 ){
+	if( NULL == GetHwnd() 
+		|| ( cx == 0 && cy == 0 ) ){
+		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+		// ウィンドウ無効時にも互換BMPを破棄する
+		DeleteCompatibleBitmap();
+		// To Here 2007.09.09 Moca
 		return;
 	}
 
@@ -842,20 +850,18 @@ void CEditView::OnSize( int cx, int cy )
 	AdjustScrollBars();
 
 	/* 再描画用メモリＢＭＰ */
-	if( m_hbmpCompatBMP != NULL ){
-		::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );	/* 再描画用メモリＢＭＰ(OLD) */
-		::DeleteObject( m_hbmpCompatBMP );
-	}
-	HDC	hdc = ::GetDC( GetHwnd() );
-	m_hbmpCompatBMP = ::CreateCompatibleBitmap( hdc, cx, cy );
-	m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( m_hdcCompatDC, m_hbmpCompatBMP );
-	::ReleaseDC( GetHwnd(), hdc );
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( m_hdcCompatDC != NULL ){
+		CreateOrUpdateCompatibleBitmap( cx, cy );
+ 	}
+	// To Here 2007.09.09 Moca
 
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcEditWnd->UpdateCaption(); // [Q] genta 本当に必要？
 
 	return;
 }
+
 
 
 /* 入力フォーカスを受け取ったときの処理 */
@@ -1402,6 +1408,9 @@ void CEditView::OnChangeSetting()
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
 
+	//	2007.09.30 genta 画面キャッシュ用CompatibleDCを用意する
+	UseCompatibleDC( m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP );
+
 	/* ウィンドウサイズの変更処理 */
 	::GetClientRect( GetHwnd(), &rc );
 	OnSize( rc.right, rc.bottom );
@@ -1913,7 +1922,9 @@ void CEditView::CopySelectedAllLines(
 	}
 	/* 再描画 */
 	//	::UpdateWindow();
-	Call_OnPaint(PAINT_LINENUMBER | PAINT_BODY, TRUE); // メモリＤＣを使用してちらつきのない再描画
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	Call_OnPaint(PAINT_LINENUMBER | PAINT_BODY, false);
+	// To Here 2007.09.09 Moca
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
@@ -1986,6 +1997,8 @@ bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bCo
 /* カーソル行アンダーラインのON */
 void CEditView::CaretUnderLineON( bool bDraw )
 {
+	BOOL bCursorVLine = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
+
 	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
 		return;
 	}
@@ -1993,10 +2006,55 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
-	m_nOldUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine()) * GetTextMetrics().GetHankakuDy() + GetTextMetrics().GetHankakuHeight();
-	if( -1 == m_nOldUnderLineY ){
-		m_nOldUnderLineY = -2;
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( bCursorVLine ){
+		// カーソル位置縦線。-1してキャレットの左に来るように。
+		m_nOldCursorLineX = GetTextArea().GetAreaLeft() + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
+			* (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
+		if( -1 == m_nOldCursorLineX ){
+			m_nOldCursorLineX = -2;
+		}
+	}else{
+		m_nOldCursorLineX = -1;
 	}
+
+	if( bDraw
+	 && m_bDrawSWITCH
+	 && GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
+	 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
+	 && m_bDoing_UndoRedo == FALSE
+	){
+		// カーソル位置縦線の描画
+		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
+		HDC		hdc;
+		HPEN	hPen, hPenOld;
+		int     nROP_Old = 0;
+		hdc = ::GetDC( GetHwnd() );
+		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
+		hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, m_nOldCursorLineX, GetTextArea().GetAreaTop(), NULL );
+		::LineTo(   hdc, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
+		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
+		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
+			GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
+			::MoveToEx( hdc, m_nOldCursorLineX - 1, GetTextArea().GetAreaTop(), NULL );
+			::LineTo(   hdc, m_nOldCursorLineX - 1, GetTextArea().GetAreaBottom() );
+		}
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+		::ReleaseDC( GetHwnd(), hdc );
+		hdc= NULL;
+	}
+	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+		m_nOldUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
+			 * (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace + GetTextMetrics().GetHankakuHeight()) + GetTextMetrics().GetHankakuHeight();
+		if( -1 == m_nOldUnderLineY ){
+			m_nOldUnderLineY = -2;
+		}
+	}else{
+		m_nOldUnderLineY = -1;
+	}
+	// To Here 2007.09.09 Moca
 
 	if( bDraw
 	 && GetDrawSwitch()
@@ -2031,7 +2089,8 @@ void CEditView::CaretUnderLineON( bool bDraw )
 /* カーソル行アンダーラインのOFF */
 void CEditView::CaretUnderLineOFF( bool bDraw )
 {
-	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
+			FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp ){
 		return;
 	}
 
@@ -2049,7 +2108,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			ps.rcPaint.left = GetTextArea().GetAreaLeft();
 			ps.rcPaint.right = GetTextArea().GetAreaRight();
 			ps.rcPaint.top = m_nOldUnderLineY;
-			ps.rcPaint.bottom = m_nOldUnderLineY;
+			ps.rcPaint.bottom = m_nOldUnderLineY + 1; // 2007.09.09 Moca +1 するように
 
 			//	不本意ながら選択情報をバックアップ。
 			CLayoutRange sSelectBackup = GetSelectionInfo().m_sSelect;
@@ -2057,7 +2116,8 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 
 			// 描画
 			HDC hdc = this->GetDC();
-			OnPaint( hdc, &ps, FALSE );
+			// 可能なら互換BMPからコピーして再作画
+			OnPaint( hdc, &ps, TRUE );
 			this->ReleaseDC( hdc );
 
 			//	選択情報を復元
@@ -2066,6 +2126,39 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 		}
 		m_nOldUnderLineY = -1;
 	}
+	
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	// カーソル位置縦線
+	if( -1 != m_nOldCursorLineX ){
+		if( bDraw
+		 && m_bDrawSWITCH
+		 && GetTextArea().GetAreaLeft() - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
+		 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
+		 && m_bDoing_UndoRedo == FALSE
+		){
+			PAINTSTRUCT ps;
+			ps.rcPaint.left = m_nOldCursorLineX;
+			ps.rcPaint.right = m_nOldCursorLineX + 1;
+			ps.rcPaint.top = GetTextArea().GetAreaTop();
+			ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
+			if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont ){
+				ps.rcPaint.left += -1;
+			}
+			HDC hdc = ::GetDC( GetHwnd() );
+			GetCaret().m_cUnderLine.Lock();
+			//	不本意ながら選択情報をバックアップ。
+			CLayoutRange sSelectBackup = this->GetSelectionInfo().m_sSelect;
+			this->GetSelectionInfo().m_sSelect.Clear(-1);
+			// 可能なら互換BMPからコピーして再作画
+			OnPaint( hdc, &ps, TRUE );
+			//	選択情報を復元
+			this->GetSelectionInfo().m_sSelect = sSelectBackup;
+			GetCaret().m_cUnderLine.UnLock();
+			ReleaseDC( hdc );
+		}
+		m_nOldCursorLineX = -1;
+	};
+	// To Here 2007.09.09 Moca
 }
 
 

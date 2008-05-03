@@ -236,7 +236,7 @@ void CEditView::InsertData_CEditView(
 				}
 			}
 			HDC hdc = this->GetDC();
-			OnPaint( hdc, &ps, TRUE );	// ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ
+			OnPaint( hdc, &ps, FALSE );
 			this->ReleaseDC( hdc );
 		}
 	}
@@ -441,7 +441,7 @@ void CEditView::DeleteData(
 				AdjustScrollBars();
 
 				/* Ä•`‰æ */
-				Call_OnPaint(PAINT_LINENUMBER | PAINT_BODY, TRUE); // ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ
+				Call_OnPaint(PAINT_LINENUMBER | PAINT_BODY, false);
 			}
 			/* ‘I‘ðƒGƒŠƒA‚Ìæ“ª‚ÖƒJ[ƒ\ƒ‹‚ðˆÚ“® */
 			this->UpdateWindow();
@@ -669,7 +669,7 @@ void CEditView::ReplaceData_CEditView(
 			/* Ä•`‰æƒqƒ“ƒg ƒŒƒCƒAƒEƒgs‚Ì‘Œ¸ */
 			//	Jan. 30, 2001 genta	“\‚è•t‚¯‚Ås”‚ªŒ¸‚éê‡‚Ìl—¶‚ª”²‚¯‚Ä‚¢‚½
 			if( 0 != LRArg.nAddLineNum ){
-				Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, true); // ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ
+				Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, false);
 			}
 			else{
 				PAINTSTRUCT ps;
@@ -696,7 +696,7 @@ void CEditView::ReplaceData_CEditView(
 				}
 
 				HDC hdc = this->GetDC();
-				OnPaint( hdc, &ps, TRUE );	/* ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+				OnPaint( hdc, &ps, FALSE );
 				this->ReleaseDC( hdc );
 			}
 		}
@@ -1114,6 +1114,7 @@ void CEditView::RTrimPrevLine( void )
 		}
 	}
 }
+
 
 
 
