@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "view/CEditView.h"
 #include "CWaitCursor.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
 #include <algorithm>		// 2001.12.11 hor    for VC++
 #include "COpe.h" ///	2002/2/3 aroka from here

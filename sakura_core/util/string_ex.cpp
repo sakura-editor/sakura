@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "string_ex.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 

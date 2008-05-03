@@ -77,19 +77,26 @@ public:
 	CKeyWordSetMgr();
 	~CKeyWordSetMgr();
 	
-	//@{
 	///	@name キーワードセット操作
-	BOOL AddKeyWordSet( const wchar_t*, BOOL, int nSize = -1 );	//!< セットの追加
+	bool AddKeyWordSet(							//!< セットの追加
+		const wchar_t*	pszSetName,				//!< [in] セット名
+		bool			bKEYWORDCASE,			//!< [in] 大文字小文字の区別．true:あり, false:無し
+		int				nSize			= -1	//!< [in] 最初に領域を確保するサイズ．
+	);
 	BOOL DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
 	const wchar_t* GetTypeName( int );	/* ｎ番目のセット名を返す */
 	const wchar_t* SetTypeName( int, const wchar_t* );	//!< ｎ番目のセット名を設定する // 2005.01.26 Moca
 	void SetKeyWordCase( int, int );				/* ｎ番目のセットの大文字小文字判断をセットする */	//MIK
-	int GetKeyWordCase( int );						/* ｎ番目のセットの大文字小文字判断を取得する */			//MIK
+	bool GetKeyWordCase( int );						/* ｎ番目のセットの大文字小文字判断を取得する */			//MIK
 	void SortKeyWord( int ); /* ｎ番目のセットのキーワードをソートする */  //MIK
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
 	int SetKeyWordArr( int, int, const wchar_t* );			//!< iniからキーワードを設定する
-	int SetKeyWordArr( int, int, const wchar_t* const* );	//!< キーワードの配列から設定する
+	int SetKeyWordArr(						//!< キーワードの配列から設定する
+		int				nIdx,				//!< [in] キーワードセット番号
+		int				nSize,				//!< [in] ppszKeyWordArrの要素数
+		const wchar_t*	ppszKeyWordArr[]	//!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
+	);
 	// To Here 2004.07.29 Moca
 	//@}
 
@@ -133,7 +140,7 @@ public:
 	int		m_nCurrentKeyWordSetIdx;
 	int		m_nKeyWordSetNum;	/*!< キーワードセット数 */
 	wchar_t	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];/*!< キーワードセット名 */
-	int		m_nKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
+	bool	m_bKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
 	int		m_nKeyWordNumArr[MAX_SETNUM];	/*!< キーワードセットに登録されているキーワード数 */
 private:
 	/*! キーワード格納領域 */

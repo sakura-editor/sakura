@@ -31,7 +31,7 @@
 #include "debug/Debug.h"
 #include "funccode.h"
 #include "debug/CRunningTimer.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "CControlTray.h"
 #include "CWaitCursor.h"
 #include "window/CSplitterWnd.h"
@@ -435,8 +435,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_TOHANEI:					Command_TOHANEI();break;				/* 半角→全角 */
 	case F_TOZENKAKUKATA:			Command_TOZENKAKUKATA();break;			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			Command_TOZENKAKUHIRA();break;			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA:	Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA:	Command_HANKATATOZENKAKUHIRA();break;	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA:	Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA:	Command_HANKATATOZENKAKUHIRA();break;	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				Command_TABTOSPACE();break;				/* TAB→空白 */
 	case F_SPACETOTAB:				Command_SPACETOTAB();break;				/* 空白→TAB */  //---- Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		Command_CODECNV_AUTO2SJIS();break;		/* 自動判別→SJISコード変換 */
@@ -541,7 +541,7 @@ BOOL CViewCommander::HandleCommand(
 		Command_EXECKEYMACRO();break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
-	case F_EXECCOMMAND_DIALOG:
+	case F_EXECMD_DIALOG:
 		/* 再帰処理対策 */// 2001/06/23 N.Nakatani
 		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
 			ClearOpeBlk();
@@ -550,7 +550,7 @@ BOOL CViewCommander::HandleCommand(
 		Command_EXECCOMMAND_DIALOG();	/* 外部コマンド実行 */	//	引数つかってないみたいなので
 		break;
 	//	To Here Sept. 20, 2000
-	case F_EXECCOMMAND:
+	case F_EXECMD:
 		//Command_EXECCOMMAND((const char*)lparam1);
 		Command_EXECCOMMAND((LPCWSTR)lparam1, (int)lparam2);	//	2006.12.03 maru 引数の拡張のため
 		break;
@@ -1168,26 +1168,23 @@ void CViewCommander::Command_GOLINETOP(
 {
 	using namespace WCODE;
 
-	bool			bLineTopOnly = false;
-	const CLayout*	pcLayout;
-
-	if( lparam & 1 ){
-		bLineTopOnly = true;
-	}
-	
+	// lparamの解釈
+	bool	bLineTopOnly = ((lparam & 1) != 0);
 	if( lparam & 4 ){
 		bSelect = true;
 	}
 
-	CLayoutPoint ptCaretPos;
 
+	CLayoutPoint ptCaretPos;
+	const CLayout*	pcLayout;
 	if ( lparam & 8 ){
 		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(0,GetCaret().GetCaretLogicPos().y),
 			&ptCaretPos
 		);
-	}else{
+	}
+	else{
 		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 		ptCaretPos.x = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
 		ptCaretPos.y = GetCaret().GetCaretLayoutPos().GetY2();
@@ -1197,21 +1194,16 @@ void CViewCommander::Command_GOLINETOP(
 		/* 改行単位指定で、先頭から空白が1折り返し行以上続いている場合は次の行データを取得 */
 		CLayoutInt nPosY_Layout;
 		CLogicInt  nPosX_Logic;
-		/*
-		CLayoutPoint ptPos;
-		*/
+
 		nPosY_Layout = ptCaretPos.y - 1;
-		const wchar_t*	pLine;
-		CLogicInt		nLineLen;
 		const CLayout*	pcLayout;
-		BOOL			bZenSpace;
+		bool			bZenSpace = GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
 		
-		bZenSpace = GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
-		
+		CLogicInt		nLineLen;
 		do {
 			++nPosY_Layout;
-			pLine = GetDocument()->m_cLayoutMgr.GetLineStr( nPosY_Layout, &nLineLen, &pcLayout );
-			if( NULL == pLine ){
+			const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( nPosY_Layout, &nLineLen, &pcLayout );
+			if( !pLine ){
 				return;
 			}
 			for( nPosX_Logic = 0; nPosX_Logic < nLineLen; ++nPosX_Logic ){
@@ -2692,7 +2684,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 							}
 						}
 
-						bool bZenSpace=GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE!=0;
+						bool bZenSpace=GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
 						if(nCharChars==1 && WCODE::isIndentChar(pLine[nPos],bZenSpace))
 						{
 							//下へ進む
@@ -4025,7 +4017,7 @@ void CViewCommander::Command_TOZENKAKUHIRA( void )
 void CViewCommander::Command_HANKATATOZENKAKUKATA( void )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
-	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENKAKUKATA );
+	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENKATA );
 	return;
 }
 
@@ -4036,7 +4028,7 @@ void CViewCommander::Command_HANKATATOZENKAKUKATA( void )
 void CViewCommander::Command_HANKATATOZENKAKUHIRA( void )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
-	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENKAKUHIRA );
+	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENHIRA );
 	return;
 }
 
@@ -4061,8 +4053,8 @@ void CViewCommander::Command_SPACETOTAB( void )
 
 
 
-//#define F_HANKATATOZENKAKUKATA	30557	/* 半角カタカナ→全角カタカナ */
-//#define F_HANKATATOZENKAKUHIRA	30558	/* 半角カタカナ→全角ひらがな */
+//#define F_HANKATATOZENKATA	30557	/* 半角カタカナ→全角カタカナ */
+//#define F_HANKATATOZENHIRA	30558	/* 半角カタカナ→全角ひらがな */
 
 
 
@@ -8065,8 +8057,8 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	m_pCommanderView->AddToCmdArr( cDlgExec.m_szCommand );
 	const WCHAR* cmd_string = to_wchar(cDlgExec.m_szCommand);
 
-	//HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
-	HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, (LPARAM)(this->GetShareData()->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
+	//HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+	HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, (LPARAM)(this->GetShareData()->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
 }
 
 //外部コマンド実行

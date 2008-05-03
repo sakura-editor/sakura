@@ -36,9 +36,9 @@
 #include "debug/Debug.h"
 #include "dlg/CDlgOpenFile.h"
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "sakura.hh"
-#include "CharPointer.h"
+#include "charset/CharPointer.h"
 #include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/file.h"

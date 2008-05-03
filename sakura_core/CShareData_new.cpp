@@ -45,7 +45,6 @@ CShareData::CShareData()
 	m_pShareData = NULL;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
 	m_nTransformFileNameCount = -1;
-	return;
 }
 
 // レジストリは使わない。
@@ -1323,15 +1322,18 @@ void CShareData::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			wchar_t *pszMem = new wchar_t[nMemLen];
 			pCKeyWordSetMgr->ResetAllKeyWordSet();
 			for( i = 0; i < nKeyWordSetNum; ++i ){
-				int nKEYWORDCASE = 0;
+				bool bKEYWORDCASE = false;
 				int nKeyWordNum = 0;
+				//値の取得
 				auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 				auto_sprintf( szKeyName, LTEXT("nCASE[%02d]"), i );
-				cProfile.IOProfileData( pszSecName, szKeyName, nKEYWORDCASE );
+				cProfile.IOProfileData( pszSecName, szKeyName, bKEYWORDCASE );
 				auto_sprintf( szKeyName, LTEXT("nKWN[%02d]"), i );
 				cProfile.IOProfileData( pszSecName, szKeyName, nKeyWordNum );
-				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, nKEYWORDCASE, nKeyWordNum );
+
+				//追加
+				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, bKEYWORDCASE, nKeyWordNum );
 				auto_sprintf( szKeyName, LTEXT("szKW[%02d]"), i );
 				if( cProfile.IOProfileData( pszSecName, szKeyName, StringBufferW(pszMem,nMemLen)) ){
 					pCKeyWordSetMgr->SetKeyWordArr( i, nKeyWordNum, pszMem );
@@ -1345,7 +1347,7 @@ void CShareData::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pCKeyWordSetMgr->m_szSetNameArr[i]) );
 			auto_sprintf( szKeyName, LTEXT("nCASE[%02d]"), i );
-			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKEYWORDCASEArr[i] );
+			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_bKEYWORDCASEArr[i] );
 			auto_sprintf( szKeyName, LTEXT("nKWN[%02d]"), i );
 			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKeyWordNumArr[i] );
 			

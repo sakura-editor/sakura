@@ -14,7 +14,7 @@
 #include "stdafx.h"
 #include "doc/CLayout.h"
 #include "debug/Debug.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "CLayoutMgr.h"
 
 

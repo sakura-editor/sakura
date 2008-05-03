@@ -36,3 +36,5 @@ void CType_Other4::InitTypeConfigImp(STypeConfig* pType)
 
 	//※設定はデフォルトのまま
 }
+
+

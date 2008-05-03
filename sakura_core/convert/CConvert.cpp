@@ -2,7 +2,7 @@
 #include "CConvert.h"
 #include "Funccode.h"
 #include "CEol.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "CConvert_ToLower.h"
 #include "CConvert_ToUpper.h"
 #include "CConvert_ToHankaku.h"
@@ -30,8 +30,8 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_TOHANEI:					CConvert_ZeneisuToHaneisu().CallConvert(pCMemory);	break;	// 全角英数→半角英数
 	case F_TOZENKAKUKATA:			CConvert_ToZenkana().CallConvert(pCMemory);			break;	// 半角＋全ひら→全角・カタカナ
 	case F_TOZENKAKUHIRA:			CConvert_ToZenhira().CallConvert(pCMemory);			break;	// 半角＋全カタ→全角・ひらがな
-	case F_HANKATATOZENKAKUKATA:	CConvert_HankanaToZenkana().CallConvert(pCMemory);	break;	// 半角カタカナ→全角カタカナ
-	case F_HANKATATOZENKAKUHIRA:	CConvert_HankanaToZenhira().CallConvert(pCMemory);	break;	// 半角カタカナ→全角ひらがな
+	case F_HANKATATOZENKATA:	CConvert_HankanaToZenkana().CallConvert(pCMemory);	break;	// 半角カタカナ→全角カタカナ
+	case F_HANKATATOZENHIRA:	CConvert_HankanaToZenhira().CallConvert(pCMemory);	break;	// 半角カタカナ→全角ひらがな
 	//文字種変換、整形
 	case F_TABTOSPACE:				CConvert_TabToSpace(nTabWidth).CallConvert(pCMemory);break;	// TAB→空白
 	case F_SPACETOTAB:				CConvert_SpaceToTab(nTabWidth).CallConvert(pCMemory);break;	// 空白→TAB

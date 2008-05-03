@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CUtf7.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 
 /*!

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CWordParse.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 
 //@@@ 2001.06.23 N.Nakatani

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CShiftJis.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 void CShiftJis::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 {

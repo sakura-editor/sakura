@@ -20,7 +20,7 @@
 #include "doc/CEditDoc.h"
 #include "funccode.h"		// Stonee, 2001/03/12
 #include "global.h"		// Moca, 2002/05/26
-#include "charcode.h"	// rastiv, 2006/06/28
+#include "charset/charcode.h"	// rastiv, 2006/06/28
 #include "io/CBinaryStream.h"
 #include "util/shell.h"
 #include "charset/CESI.h"

@@ -19,7 +19,7 @@
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "CControlTray.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 /*!
 	コマンドコードの変換(grep mode時)

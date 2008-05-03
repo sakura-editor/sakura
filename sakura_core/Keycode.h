@@ -22,14 +22,6 @@
 #define _CTRL	0x00000002
 #define _ALT	0x00000004
 
-/* キーコードの定義 */
-/* マウス操作 */
-// 2002/2/10 aroka 未使用
-//#define	KEY_LBUTTONCLK	 VK_LBUTTON
-//#define	KEY_LBUTTONDBLCLK 0x00000200
-//#define	KEY_RBUTTONCLK	 VK_RBUTTON
-//#define	KEY_RBUTTONDBLCLK 0x00000400
-
 
 
 ///////////////////////////////////////////////////////////////////////

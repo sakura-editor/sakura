@@ -30,7 +30,7 @@
 
 #include "stdafx.h"
 #include "charset/CESI.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "CShiftJis.h"
 #include "CEuc.h"
 #include "CUnicode.h"

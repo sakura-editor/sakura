@@ -9,6 +9,7 @@
 #include "util/module.h"
 #include "util/shell.h"
 #include <windowsx.h> //Edit_LimitText
+#include "util/window.h"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
@@ -378,10 +379,10 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	//インデント
 	{
 		/* 自動インデント */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT, m_Types.m_bAutoIndent );
+		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENT, m_Types.m_bAutoIndent );
 
 		/* 日本語空白もインデント */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
+		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENT_WSPACE, m_Types.m_bAutoIndent_ZENSPACE );
 
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
@@ -573,10 +574,10 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	//インデント
 	{
 		/* 自動インデント */
-		m_Types.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
+		m_Types.m_bAutoIndent = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENT );
 
 		/* 日本語空白もインデント */
-		m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+		m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENT_WSPACE );
 
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );

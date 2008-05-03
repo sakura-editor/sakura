@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "mem/CNativeW.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "CEol.h"
 #include <mbstring.h>
 #include "charset/CShiftJis.h"

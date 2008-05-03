@@ -17,7 +17,7 @@
 
 //	sakura
 #include "global.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

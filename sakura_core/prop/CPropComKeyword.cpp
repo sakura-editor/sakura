@@ -276,7 +276,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					if( 0 < wcslen( szKeyWord ) ){
 						/* セットの追加 */
-						m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, FALSE );
+						m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
 
 						m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = m_CKeyWordSetMgr.m_nKeyWordSetNum - 1;
 
@@ -361,7 +361,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					return TRUE;
 				case IDC_CHECK_KEYWORDCASE:	/* キーワードの英大文字小文字区別 */
-//					m_CKeyWordSetMgr.m_nKEYWORDCASEArr[ m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
+//					m_CKeyWordSetMgr.m_bKEYWORDCASEArr[ m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
 					m_CKeyWordSetMgr.SetKeyWordCase(m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE ));			//MIK 2000.12.01 case sense
 					return TRUE;
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
@@ -715,9 +715,6 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 	}
 
 	/* キーワードの英大文字小文字区別 */
-//	if( TRUE == m_CKeyWordSetMgr.m_ppcKeyWordSetArr[nIdx]->m_nKEYWORDCASE ){
-//	if( TRUE == m_CKeyWordSetMgr.m_cKeyWordSetArr[nIdx].m_nKEYWORDCASE ){
-//	if( TRUE == m_CKeyWordSetMgr.m_nKEYWORDCASEArr[nIdx] ){		//MIK 2000.12.01 case sense
 	if( TRUE == m_CKeyWordSetMgr.GetKeyWordCase(nIdx) ){		//MIK 2000.12.01 case sense
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, TRUE );
 	}else{

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "StdApi.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include <vector>
 using namespace std;
 

@@ -8,7 +8,7 @@
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "types/CTypeSupport.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "doc/CLayout.h"
 
 const CTextArea* CTextDrawer::GetTextArea() const

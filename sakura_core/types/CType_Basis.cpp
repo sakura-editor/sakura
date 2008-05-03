@@ -46,8 +46,8 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_szExtHtmlHelp[0] = L'\0';
 	pType->m_bHtmlHelpIsSingle = TRUE;
 
-	pType->m_bAutoIndent = TRUE;			/* オートインデント */
-	pType->m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
+	pType->m_bAutoIndent = true;			/* オートインデント */
+	pType->m_bAutoIndent_ZENSPACE = true;	/* 日本語空白もインデント */
 	pType->m_bRTrimPrevLine = FALSE;			/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
 
 	pType->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */

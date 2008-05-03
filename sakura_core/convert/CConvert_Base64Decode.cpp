@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CConvert_Base64Decode.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "charset/CBase64.h"
 
 #if 1 //$$$•Û—¯

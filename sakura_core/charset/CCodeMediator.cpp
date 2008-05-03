@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CCodeMediator.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 

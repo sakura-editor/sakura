@@ -12,7 +12,7 @@
 */
 #include "stdafx.h"
 #include "CLayoutMgr.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "debug/Debug.h"
 #include <commctrl.h>
 #include <stdlib.h>

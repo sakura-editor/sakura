@@ -26,7 +26,7 @@
 #include "view/CEditView.h"
 #include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "mymessage.h"
 #include "CWaitCursor.h"
 #include "window/CEditWnd.h"

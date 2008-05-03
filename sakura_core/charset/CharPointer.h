@@ -1,6 +1,6 @@
 #pragma once
 
-#include "charcode.h"
+#include "charset/charcode.h"
 
 //!< ディレクトリを除いた、ファイル名だけを取得する
 class CharPointerA{

@@ -17,7 +17,7 @@
 #include "CLayoutMgr.h"
 #include "CShareData.h" // 2005.11.20 Moca
 
-#include "charcode.h"
+#include "charset/charcode.h"
 #include "debug/Debug.h"
 #include <commctrl.h>
 #include "debug/CRunningTimer.h"

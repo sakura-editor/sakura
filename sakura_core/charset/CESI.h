@@ -32,7 +32,7 @@
 #define _CESI_H_
 
 #include "global.h"
-#include "charcode.h"
+#include "charset/charcode.h"
 
 enum EJisESCSeqType;
 

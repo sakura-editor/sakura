@@ -418,3 +418,58 @@ else{
 #endif
 	return;
 }
+
+
+
+const wchar_t* g_ppszKeywordsJAVA[] = {
+	L"abstract",
+	L"assert",	// Mar. 8, 2003 genta
+	L"boolean",
+	L"break",
+	L"byte",
+	L"case",
+	L"catch",
+	L"char",
+	L"class",
+	L"const",
+	L"continue",
+	L"default",
+	L"do",
+	L"double",
+	L"else",
+	L"extends",
+	L"final",
+	L"finally",
+	L"float",
+	L"for",
+	L"goto",
+	L"if",
+	L"implements",
+	L"import",
+	L"instanceof",
+	L"int",
+	L"interface",
+	L"long",
+	L"native",
+	L"new",
+	L"package",
+	L"private",
+	L"protected",
+	L"public",
+	L"return",
+	L"short",
+	L"static",
+	L"strictfp",	// Mar. 8, 2003 genta
+	L"super",
+	L"switch",
+	L"synchronized",
+	L"this",
+	L"throw",
+	L"throws",
+	L"transient",
+	L"try",
+	L"void",
+	L"volatile",
+	L"while"
+};
+int g_nKeywordsJAVA = _countof(g_ppszKeywordsJAVA);
