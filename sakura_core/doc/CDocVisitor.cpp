@@ -15,9 +15,10 @@ void CDocVisitor::SetAllEol(CEol cEol)
 
 	//改行コードを統一する
 	if(cEol.IsValid()){
-		CDocLine*	pcDocLine = m_pcDocRef->m_cDocLineMgr.GetDocLineTop();
 		CLogicInt	nLine = CLogicInt(0);
-		while( pcDocLine ){
+		while( 1 ){
+			CDocLine* pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
+			if(!pcDocLine)break;
 			//改行を置換
 			if(pcDocLine->GetEol()!=EOL_NONE && pcDocLine->GetEol()!=cEol){
 				CLogicRange sRange;
@@ -33,7 +34,6 @@ void CDocVisitor::SetAllEol(CEol cEol)
 					pcOpeBlk
 				);
 			}
-			pcDocLine = pcDocLine->GetNextLine();
 			nLine++;
 		}
 		//編集時入力改行コード

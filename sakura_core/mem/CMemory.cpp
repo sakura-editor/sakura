@@ -57,8 +57,8 @@
 void CMemory::_init_members()
 {
 	m_nDataBufSize = 0;
-	m_pData = NULL;
-	m_nDataLen = 0;
+	m_pRawData = NULL;
+	m_nRawLen = 0;
 }
 
 CMemory::CMemory()
@@ -120,13 +120,13 @@ const CMemory& CMemory::operator = ( const CMemory& rhs )
 */
 void CMemory::_AddData( const void* pData, int nDataLen )
 {
-	if( NULL == m_pData ){
+	if( NULL == m_pRawData ){
 		return;
 	}
-	memcpy( &m_pData[m_nDataLen], pData, nDataLen );
-	m_nDataLen += nDataLen;
-	m_pData[m_nDataLen]   = '\0';
-	m_pData[m_nDataLen+1] = '\0'; //終端'\0'を2つ付加する('\0''\0'==L'\0')。 2007.08.13 kobake 追加
+	memcpy( &m_pRawData[m_nRawLen], pData, nDataLen );
+	m_nRawLen += nDataLen;
+	m_pRawData[m_nRawLen]   = '\0';
+	m_pRawData[m_nRawLen+1] = '\0'; //終端'\0'を2つ付加する('\0''\0'==L'\0')。 2007.08.13 kobake 追加
 	return;
 }
 
@@ -248,7 +248,7 @@ void CMemory::AllocBuffer( int nNewDataLen )
 	}else{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if( m_nDataBufSize < nWorkLen ){
-			pWork = (char*)realloc( m_pData, nWorkLen );
+			pWork = (char*)realloc( m_pRawData, nWorkLen );
 			m_nDataBufSize = nWorkLen;
 		}else{
 			return;
@@ -260,13 +260,13 @@ void CMemory::AllocBuffer( int nNewDataLen )
 		::MYMESSAGEBOX_A(	NULL, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME_A,
 			"CMemory::AllocBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n", nNewDataLen
 		);
-		if( NULL != m_pData && 0 != nWorkLen ){
+		if( NULL != m_pRawData && 0 != nWorkLen ){
 			/* 古いバッファを解放して初期化 */
 			_Empty();
 		}
 		return;
 	}
-	m_pData = pWork;
+	m_pRawData = pWork;
 	return;
 }
 
@@ -298,7 +298,7 @@ void CMemory::SetRawData( const CMemory& pcmemData )
 void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
 {
 	if(nDataLenBytes<=0)return;
-	AllocBuffer( m_nDataLen + nDataLenBytes );
+	AllocBuffer( m_nRawLen + nDataLenBytes );
 	_AddData( pData, nDataLenBytes );
 }
 
@@ -311,19 +311,19 @@ void CMemory::AppendRawData( const CMemory* pcmemData )
 	}
 	int	nDataLen;
 	const void*	pData = pcmemData->GetRawPtr( &nDataLen );
-	AllocBuffer( m_nDataLen + nDataLen );
+	AllocBuffer( m_nRawLen + nDataLen );
 	_AddData( pData, nDataLen );
 }
 
 void CMemory::_Empty( void )
 {
-	if( m_pData != NULL ){
-		free( m_pData );
-		m_pData = NULL;
+	if( m_pRawData != NULL ){
+		free( m_pRawData );
+		m_pRawData = NULL;
 	}
 	m_nDataBufSize = 0;
-	m_pData = NULL;
-	m_nDataLen = 0;
+	m_pRawData = NULL;
+	m_nRawLen = 0;
 	return;
 }
 
@@ -332,16 +332,16 @@ void CMemory::_Empty( void )
 void CMemory::_AppendSz(const char* str)
 {
 	int len=strlen(str);
-	AllocBuffer( m_nDataLen + len );
+	AllocBuffer( m_nRawLen + len );
 	_AddData(str,len);
 }
 
 
 void CMemory::_SetRawLength(int nLength)
 {
-	assert(m_nDataLen <= m_nDataBufSize-2);
-	m_nDataLen = nLength;
-	assert(m_nDataLen <= m_nDataBufSize-2);
-	m_pData[m_nDataLen  ]=0;
-	m_pData[m_nDataLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
+	assert(m_nRawLen <= m_nDataBufSize-2);
+	m_nRawLen = nLength;
+	assert(m_nRawLen <= m_nDataBufSize-2);
+	m_pRawData[m_nRawLen  ]=0;
+	m_pRawData[m_nRawLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
 }

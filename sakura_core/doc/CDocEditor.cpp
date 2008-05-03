@@ -339,7 +339,6 @@ void CDocEditAgent::InsertData_CDocLineMgr(
 )
 {
 	CNativeW	cmemPrevLine;
-	CNativeW	cmemCurLine;
 	CNativeW	cmemNextLine;
 	CLogicInt	nAllLinesOld = m_pcDocLineMgr->GetLineCount();
 
@@ -376,13 +375,14 @@ void CDocEditAgent::InsertData_CDocLineMgr(
 	int			nCount = 0;
 	CLogicInt	nBgn   = CLogicInt(0);
 	CLogicInt	nPos   = CLogicInt(0);
-	CEol 		cEOLType;
 	for( nPos = CLogicInt(0); nPos < nInsDataLen; ){
 		if( WCODE::isLineDelimiter(pInsData[nPos]) ){
 			/* 行終端子の種類を調べる */
+			CEol 	cEOLType;
 			cEOLType.SetTypeByString( &pInsData[nPos], nInsDataLen - nPos );
 
 			/* 行終端子も含めてテキストをバッファに格納 */
+			CNativeW	cmemCurLine;
 			cmemCurLine.SetString( &pInsData[nBgn], nPos - nBgn + cEOLType.GetLen() );
 			nBgn = nPos + CLogicInt(cEOLType.GetLen());
 			nPos = nBgn;
@@ -432,6 +432,7 @@ void CDocEditAgent::InsertData_CDocLineMgr(
 	}
 
 	if( CLogicInt(0) < nPos - nBgn || 0 < cmemNextLine.GetStringLength() ){
+		CNativeW	cmemCurLine;
 		cmemCurLine.SetString( &pInsData[nBgn], nPos - nBgn );
 		cmemCurLine += cmemNextLine;
 		if( NULL == pDocLine ){
