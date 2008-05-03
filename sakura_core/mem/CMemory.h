@@ -64,9 +64,9 @@ public:
 
 	__forceinline const void* GetRawPtr(int* pnLength) const;      //!< データへのポインタと長さ返す
 	__forceinline void* GetRawPtr(int* pnLength);                  //!< データへのポインタと長さ返す
-	__forceinline const void* GetRawPtr() const{ return m_pData; } //!< データへのポインタを返す
-	__forceinline void* GetRawPtr(){ return m_pData; }             //!< データへのポインタを返す
-	int GetRawLength() const { return m_nDataLen; }                //!<データ長を返す。バイト単位。
+	__forceinline const void* GetRawPtr() const{ return m_pRawData; } //!< データへのポインタを返す
+	__forceinline void* GetRawPtr(){ return m_pRawData; }             //!< データへのポインタを返す
+	int GetRawLength() const { return m_nRawLen; }                //!<データ長を返す。バイト単位。
 
 	// 演算子
 	const CMemory& operator=( const CMemory& );
@@ -82,7 +82,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	void _Empty( void ); //!< 解放する。m_pDataはNULLになる。
+	void _Empty( void ); //!< 解放する。m_pRawDataはNULLになる。
 	void _AddData( const void*, int );
 public:
 	void _AppendSz(const char* str);
@@ -91,15 +91,15 @@ public:
 
 protected:
 	typedef char* PCHAR;
-	PCHAR& _DebugGetPointerRef(){ return m_pData; } //デバッグ用。バッファポインタの参照を返す。
+	PCHAR& _DebugGetPointerRef(){ return m_pRawData; } //デバッグ用。バッファポインタの参照を返す。
 
 private: // 2002/2/10 aroka アクセス権変更
 	/*
 	|| メンバ変数
 	*/
-	int		m_nDataBufSize; //バッファサイズ。バイト単位。
-	char*	m_pData;        //バッファ
-	int		m_nDataLen;     //データサイズ(m_nDataBufSize以内)。バイト単位。
+	int		m_nDataBufSize;	//バッファサイズ。バイト単位。
+	char*	m_pRawData;		//バッファ
+	int		m_nRawLen;		//データサイズ(m_nDataBufSize以内)。バイト単位。
 };
 
 
@@ -109,12 +109,12 @@ private: // 2002/2/10 aroka アクセス権変更
 __forceinline const void* CMemory::GetRawPtr(int* pnLength) const //!< データへのポインタと長さ返す
 {
 	if(pnLength) *pnLength = GetRawLength();
-	return m_pData;
+	return m_pRawData;
 }
 __forceinline void* CMemory::GetRawPtr(int* pnLength) //!< データへのポインタと長さ返す
 {
 	if(pnLength) *pnLength = GetRawLength();
-	return m_pData;
+	return m_pRawData;
 }
 
 ///////////////////////////////////////////////////////////////////////
