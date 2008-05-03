@@ -18,14 +18,14 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	//	同名で上書きされるのを防ぐ
 	if( CAppMode::Instance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		ErrorBeep();
-		TopErrorMessage( CEditWnd::Instance()->GetHwnd(), _T("ビューモードでは同一ファイルへの上書き保存はできません。") );
+		TopErrorMessage( CEditWnd::Instance()->GetHwnd(), _T("ビューモードでは同一ファイルへの保存はできません。") );
 		return CALLBACK_INTERRUPT;
 	}
 
 	//オプション：無変更でも上書きするか
 	if( !GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
 		// 上書きの場合
-		if(pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath())){
+		if(pSaveInfo->bOverwriteMode){
 			// 無変更の場合は警告音を出し、終了
 			if(!pcDoc->m_cDocEditor.IsModified() && pSaveInfo->cEol==EOL_NONE){ //※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
 				CEditApp::Instance()->m_cSoundSet.NeedlessToSaveBeep();
