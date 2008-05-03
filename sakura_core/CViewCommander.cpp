@@ -1176,7 +1176,6 @@ void CViewCommander::Command_GOLINETOP(
 
 
 	CLayoutPoint ptCaretPos;
-	const CLayout*	pcLayout;
 	if ( lparam & 8 ){
 		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -1185,7 +1184,7 @@ void CViewCommander::Command_GOLINETOP(
 		);
 	}
 	else{
-		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+		const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 		ptCaretPos.x = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
 		ptCaretPos.y = GetCaret().GetCaretLayoutPos().GetY2();
 	}
