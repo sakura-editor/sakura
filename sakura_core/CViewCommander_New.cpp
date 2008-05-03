@@ -160,7 +160,7 @@ void CViewCommander::Command_UNDO( void )
 		m_pCommanderView->SetBracketPairPos( true );	// 03/03/07 ai
 
 		/* Ä•`‰æ */
-		m_pCommanderView->Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, true); // ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ
+		m_pCommanderView->Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, false);
 		HDC hdc = m_pCommanderView->GetDC();
 		m_pCommanderView->GetRuler().DispRuler( hdc );
 		m_pCommanderView->ReleaseDC( hdc );
@@ -313,7 +313,7 @@ void CViewCommander::Command_REDO( void )
 		m_pCommanderView->SetBracketPairPos( true );	// 03/03/07 ai
 
 		/* Ä•`‰æ */
-		m_pCommanderView->Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, true); // ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ
+		m_pCommanderView->Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, false);
 		{
 			HDC hdc=GetDC(m_pCommanderView->GetHwnd());
 			m_pCommanderView->GetRuler().DispRuler( hdc );	// 2007.10.19 ryoji
@@ -1256,5 +1256,6 @@ void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nFlgOpt )
 	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOut( _T("\r\n") );
 
 }
+
 
 

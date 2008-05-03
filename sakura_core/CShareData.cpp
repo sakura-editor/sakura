@@ -242,11 +242,17 @@ struct ARRHEAD {
 	Version 83:
 	選択なしでコピーを可能にする 2007.11.18 ryoji
 
+	Version 84:
+	画面キャッシュを使う 2007.09.09 Moca
+
+	Version 85:
+	キーワードセット最大値増加 2007.12.01 genta
+
 	Version 1000:
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1012;
+const unsigned int uShareDataVersion = 1013;
 
 /*
 ||	Singleton風
@@ -592,6 +598,7 @@ bool CShareData::Init( void )
 		//	Sep. 18, 2002 genta
 		m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
+		m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP = FALSE;		// 2007.09.09 Moca 画面キャッシュを使う
 		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji

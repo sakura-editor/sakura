@@ -317,6 +317,7 @@
 // note: 303 は 「このファイル名をコピー」が使用
 //#define HLP000304	304 //メタ文字列の仕様 HLP000272
 #define HLP000089	89 //利用可能な正規表現	// 2007.09.30
+#define HLP000108	108 //1行選択	// 2007.12.01
 
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
@@ -612,6 +613,7 @@
 #define HIDC_MACROLIST				11741	//マクロリスト
 #define HIDC_MACRODIR				11750	//マクロ一覧
 #define HIDC_CHECK_RELOADWHENEXECUTE	11751	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
+#define HIDC_CHECK_MEMDC			11752	//画面キャッシュを使う
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

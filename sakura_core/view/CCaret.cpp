@@ -260,6 +260,28 @@ CLayoutInt CCaret::MoveCursor(
 					NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
 				);
 
+				// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+				if( m_pEditView->m_hbmpCompatBMP ){
+					// 互換BMPもスクロール処理のためにBitBltで移動させる
+					::BitBlt(
+						m_pEditView->m_hdcCompatDC,
+						rcScroll.left + (Int)nScrollColNum * ( m_pEditView->GetTextMetrics().GetHankakuWidth() +  m_pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace ),
+						rcScroll.top  + (Int)nScrollRowNum * ( m_pEditView->GetTextMetrics().GetHankakuHeight() + m_pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace ),
+						rcScroll.right - rcScroll.left, rcScroll.bottom - rcScroll.top,
+						m_pEditView->m_hdcCompatDC, rcScroll.left, rcScroll.top, SRCCOPY
+					);
+				}
+				// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
+				if( nScrollColNum != 0 && m_pEditView->m_nOldCursorLineX == m_pEditView->GetTextArea().GetAreaLeft() - 1 ){
+					RECT rcClip3;
+					rcClip3.left  = m_pEditView->m_nOldCursorLineX;
+					rcClip3.right = m_pEditView->m_nOldCursorLineX + 1;
+					rcClip3.top   = m_pEditView->GetTextArea().GetAreaTop();
+					rcClip3.bottom = m_pEditView->GetTextArea().GetAreaBottom();
+					::InvalidateRect( m_pEditView->GetHwnd(), &rcClip3, TRUE );
+				}
+				// To Here 2007.09.09 Moca
+
 				if( nScrollRowNum != 0 ){
 					m_pEditView->InvalidateRect( &rcClip );
 					if( nScrollColNum != 0 ){

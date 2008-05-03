@@ -21,6 +21,7 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	_T("カーソル"),							TRUE,		FALSE,		FALSE,		RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
 	_T("カーソル(IME ON)"),					TRUE,		FALSE,		FALSE,		RGB( 255,   0,   0 ),	RGB( 255, 251, 240 ),	// 2006.12.07 ryoji
 	_T("カーソル行アンダーライン"),			TRUE,		FALSE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),
+	_T("カーソル位置縦線"),					FALSE,		FALSE,		FALSE,		RGB( 128, 128, 255 ),	RGB( 255, 251, 240 ),	// 2007.09.09 Moca
 	_T("行番号"),							TRUE,		FALSE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ),
 	_T("行番号(変更行)"),					TRUE,		TRUE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ),
 	_T("TAB記号"),							TRUE,		FALSE,		FALSE,		RGB( 128, 128, 128 ),	RGB( 255, 251, 240 ),	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更

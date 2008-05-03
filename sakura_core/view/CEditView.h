@@ -228,6 +228,7 @@ public:
 	};
 	TOGGLE_WRAP_ACTION GetWrapMode( CLayoutInt* newKetas );
 
+
 	void _SetDragMode(BOOL b)
 	{
 		m_bDragMode = b;
@@ -285,6 +286,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	// 2006.05.14 Moca  互換BMPによる画面バッファ
+	// 2007.09.30 genta CompatibleDC操作関数
 protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(
@@ -295,6 +298,12 @@ protected:
 
 	//! レイアウト行を1行描画
 	bool DrawLayoutLine(SDrawStrategyInfo* pInfo);
+
+	//画面バッファ
+	bool CreateOrUpdateCompatibleBitmap( int cx, int cy );	//!< メモリBMPを作成または更新
+	void UseCompatibleDC(BOOL fCache);
+public:
+	void DeleteCompatibleBitmap();							//!< メモリBMPを削除
 
 public:
 	void DispTextSelected( HDC hdc, CLayoutInt nLineNum, const CMyPoint& ptXY, CLayoutInt nX_Layout );	/* テキスト反転 */
@@ -570,6 +579,11 @@ public:
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	int				m_nCompatBMPWidth;  /* 再作画用メモリＢＭＰの幅 */
+	int				m_nCompatBMPHeight; /* 再作画用メモリＢＭＰの高さ */
+	// To Here 2007.09.09 Moca
+
 public:
 	HFONT			m_hFontOld;
 	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
@@ -579,8 +593,8 @@ public:
 
 	/* 入力状態 */
 	COLORREF	m_crBack;			/* テキストの背景色 */			// 2006.12.07 ryoji
-	int		m_nOldUnderLineY;
-
+	int		m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
+	int		m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
 
 
 
@@ -635,6 +649,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITVIEW_H_ */
+
 
 
 

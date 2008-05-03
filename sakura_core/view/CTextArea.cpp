@@ -148,7 +148,9 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		if( bRedraw ){
 			/* Ä•`‰æ */
 			pView2->GetCaret().m_cUnderLine.Lock();
-			pView2->Call_OnPaint(PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, TRUE); /* ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+			// From Here 2007.09.09 Moca ŒÝŠ·BMP‚É‚æ‚é‰æ–Êƒoƒbƒtƒ@
+			pView2->Call_OnPaint(PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, false); /* ƒƒ‚ƒŠ‚c‚b‚ðŽg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+			// To Here 2007.09.09 Moca
 			pView2->GetCaret().m_cUnderLine.UnLock();
 			pView2->GetCaret().ShowEditCaret();
 			/*
@@ -285,5 +287,6 @@ void CTextArea::GenerateTextAreaRect(RECT* rc) const
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop + m_nViewCy;
 }
+
 
 

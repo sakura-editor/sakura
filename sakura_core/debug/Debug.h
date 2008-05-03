@@ -82,6 +82,9 @@ SAKURA_CORE_API int MessageBoxF_A ( HWND hwndOwner, UINT uType, LPCSTR  lpCaptio
 #define DBPRINT DBPRINT_A
 #endif
 
+#define DEBUG_TRACE DBPRINT
+
+
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
 #define RELPRINT_A DebugOutA
 
