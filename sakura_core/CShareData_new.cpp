@@ -1242,7 +1242,6 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 
 //@@@ 2006.04.10 fon ADD-start
 		{	/* キーワード辞書 */
-			static const WCHAR* pszForm = LTEXT("%d,%ls,%ls");
 			WCHAR	*pH, *pT;	/* <pH>keyword<pT> */
 			cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyWordHelp"), types.m_bUseKeyWordHelp );	/* キーワード辞書選択を使用するか？ */
 //			cProfile.IOProfileData( pszSecName, LTEXT("nKeyHelpNum"), types.m_nKeyHelpNum );				/* 登録辞書数 */
@@ -1253,14 +1252,14 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 				auto_sprintf( szKeyName, LTEXT("KDct[%02d]"), j );
 				/* 読み出し */
 				if( cProfile.IsReadingMode() ){
-					types.m_KeyHelpArr[j].m_nUse = 0;
+					types.m_KeyHelpArr[j].m_bUse = false;
 					types.m_KeyHelpArr[j].m_szAbout[0] = _T('\0');
 					types.m_KeyHelpArr[j].m_szPath[0] = _T('\0');
 					if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData)) ){
 						pH = szKeyData;
 						if( NULL != (pT=wcschr(pH, L',')) ){
 							*pT = L'\0';
-							types.m_KeyHelpArr[j].m_nUse = _wtoi( pH );
+							types.m_KeyHelpArr[j].m_bUse = (_wtoi( pH )!=0);
 							pH = pT+1;
 							if( NULL != (pT=wcschr(pH, L',')) ){
 								*pT = L'\0';
@@ -1276,10 +1275,10 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 				}/* 書き込み */
 				else{
 					if(_tcslen(types.m_KeyHelpArr[j].m_szPath)){
-						auto_sprintf( szKeyData, pszForm,
-							types.m_KeyHelpArr[j].m_nUse,
+						auto_sprintf( szKeyData, LTEXT("%d,%ts,%ts"),
+							types.m_KeyHelpArr[j].m_bUse?1:0,
 							types.m_KeyHelpArr[j].m_szAbout,
-							types.m_KeyHelpArr[j].m_szPath
+							types.m_KeyHelpArr[j].m_szPath.c_str()
 						);
 						cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 					}
@@ -1287,7 +1286,10 @@ void CShareData::ShareData_IO_Types( CDataProfile& cProfile )
 			}
 			/* 旧バージョンiniファイルの読み出しサポート */
 			if( cProfile.IsReadingMode() ){
-				cProfile.IOProfileData( pszSecName, LTEXT("szKeyWordHelpFile"), types.m_KeyHelpArr[0].m_szPath );
+				SFilePath tmp;
+				if(cProfile.IOProfileData( pszSecName, LTEXT("szKeyWordHelpFile"), tmp )){
+					types.m_KeyHelpArr[0].m_szPath = tmp;
+				}
 			}
 		}
 //@@@ 2006.04.10 fon ADD-end

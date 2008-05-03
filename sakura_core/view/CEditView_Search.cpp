@@ -110,7 +110,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i=0;i<m_pShareData->GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//Å‘å”FMAX_KEYHELP_FILE
-		if( 1 == m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_nUse ){
+		if( m_pShareData->GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_bUse ){
 			// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)ˆø”‚ğ’Ç‰Á
 			CNativeW*	pcmemRefText;
 			int nSearchResult=m_cDicMgr.CDicMgr::Search(

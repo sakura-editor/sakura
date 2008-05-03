@@ -87,7 +87,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 //@@@ 2006.04.10 fon ADD-start
 	for(int i = 0; i < MAX_KEYHELP_FILE; i++){
-		pType->m_KeyHelpArr[i].m_nUse = 0;
+		pType->m_KeyHelpArr[i].m_bUse = false;
 		pType->m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
 		pType->m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}
