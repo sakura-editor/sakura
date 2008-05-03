@@ -3428,10 +3428,11 @@ bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 	SSaveInfo sSaveInfo;
 	pcDoc->GetSaveInfo(&sSaveInfo);
 	sSaveInfo.cEol = EOL_NONE; //改行コード無変換
+	sSaveInfo.bOverwriteMode = true; //上書き要求
 
 	//上書き処理
 	if(!warnbeep)CEditApp::Instance()->m_cSoundSet.MuteOn();
-	bool bRet = pcDoc->m_cDocFileOperation.DoSaveFlow( sSaveInfo );
+	bool bRet = pcDoc->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
 	if(!warnbeep)CEditApp::Instance()->m_cSoundSet.MuteOff();
 
 	return bRet;
@@ -3458,7 +3459,7 @@ BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolTyp
 	sSaveInfo.cEol = eEolType;
 
 	//セーブ処理
-	return pcDoc->m_cDocFileOperation.DoSaveFlow(sSaveInfo);
+	return pcDoc->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
 }
 
 /*!	全て上書き保存

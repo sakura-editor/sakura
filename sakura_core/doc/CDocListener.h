@@ -43,6 +43,8 @@ struct SLoadInfo
 	CFilePath	cFilePath;
 	ECodeType	eCharCode;
 	bool		bViewMode;
+
+	//モード
 	bool		bRequestReload;	//リロード要求
 
 	//出力
@@ -75,9 +77,12 @@ struct SSaveInfo{
 	CEol		cEol;		//!< 保存改行コード
 	bool		bBomExist;	//!< 保存時BOM付加
 
-	SSaveInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), cEol(EOL_NONE), bBomExist(false) { }
+	//モード
+	bool		bOverwriteMode;	//!< 上書き要求
+
+	SSaveInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), cEol(EOL_NONE), bBomExist(false), bOverwriteMode(false) { }
 	SSaveInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, const CEol& _cEol, bool _bBomExist)
-		: cFilePath(_cFilePath), eCharCode(_eCodeType), cEol(_cEol), bBomExist(_bBomExist) { }
+		: cFilePath(_cFilePath), eCharCode(_eCodeType), cEol(_cEol), bBomExist(_bBomExist), bOverwriteMode(false) { }
 
 	//! ファイルパスの比較
 	bool IsSamePath(LPCTSTR pszPath) const;

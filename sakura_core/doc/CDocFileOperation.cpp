@@ -232,22 +232,21 @@ bool CDocFileOperation::SaveFileDialog(LPTSTR szPath)
 //                       セーブフロー                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CDocFileOperation::DoSaveFlow(const SSaveInfo& _sSaveInfo)
+bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 {
 	ESaveResult eSaveResult = SAVED_FAILURE;
-	SSaveInfo sSaveInfo = _sSaveInfo;
 
 	try{
 		//セーブ前チェック
-		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyCheckSave(&sSaveInfo))throw CFlowInterruption();
+		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyCheckSave(pSaveInfo))throw CFlowInterruption();
 
 		//セーブ前おまけ処理
-		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyPreBeforeSave(&sSaveInfo))throw CFlowInterruption();
+		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyPreBeforeSave(pSaveInfo))throw CFlowInterruption();
 
 		//セーブ処理
-		m_pcDocRef->NotifyBeforeSave(sSaveInfo);	//前処理
-		m_pcDocRef->NotifySave(sSaveInfo);			//本処理
-		m_pcDocRef->NotifyAfterSave(sSaveInfo);		//後処理
+		m_pcDocRef->NotifyBeforeSave(*pSaveInfo);	//前処理
+		m_pcDocRef->NotifySave(*pSaveInfo);			//本処理
+		m_pcDocRef->NotifyAfterSave(*pSaveInfo);	//後処理
 
 		//結果
 		eSaveResult = SAVED_OK; //###仮
@@ -287,9 +286,10 @@ bool CDocFileOperation::FileSave()
 	SSaveInfo sSaveInfo;
 	m_pcDocRef->GetSaveInfo(&sSaveInfo);
 	sSaveInfo.cEol = EOL_NONE; //改行コード無変換
+	sSaveInfo.bOverwriteMode = true; //上書き要求
 
 	//上書き処理
-	return m_pcDocRef->m_cDocFileOperation.DoSaveFlow( sSaveInfo );
+	return m_pcDocRef->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
 }
 
 
@@ -309,7 +309,7 @@ bool CDocFileOperation::FileSaveAs()
 	if(!SaveFileDialog(&sSaveInfo))return false;
 
 	//セーブ処理
-	return DoSaveFlow(sSaveInfo);
+	return DoSaveFlow(&sSaveInfo);
 }
 
 

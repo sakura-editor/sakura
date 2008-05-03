@@ -32,7 +32,7 @@ public:
 	bool SaveFileDialog(LPTSTR szPath);			//!<「ファイル名を付けて保存」ダイアログ
 
 	//セーブフロー
-	bool DoSaveFlow(const SSaveInfo& sSaveInfo);
+	bool DoSaveFlow(SSaveInfo* pSaveInfo);
 	bool FileSaveAs();			//!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
 	bool FileSave();			//!< 上書き保存。ファイル名が指定されていなかったらダイアログで入力を促す。	// 2006.12.30 ryoji
 
