@@ -7,6 +7,10 @@
 #include "doc/CDocVisitor.h"
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          ロック                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 bool CDocFileOperation::_ToDoLock() const
 {
 	// ファイルを開いていない
@@ -19,6 +23,18 @@ bool CDocFileOperation::_ToDoLock() const
 	if( GetDllShareData().m_Common.m_sFile.m_nFileShareMode == SHAREMODE_NOT_EXCLUSIVE )return false;
 
 	return true;
+}
+
+void CDocFileOperation::DoFileLock()
+{
+	if(this->_ToDoLock()){
+		m_pcDocRef->m_cDocFile.FileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode);
+	}
+}
+
+void CDocFileOperation::DoFileUnlock()
+{
+	m_pcDocRef->m_cDocFile.FileUnlock();
 }
 
 

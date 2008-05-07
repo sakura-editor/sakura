@@ -17,7 +17,7 @@ CFile::CFile(LPCTSTR pszPath)
 
 CFile::~CFile()
 {
-	DoFileUnLock();
+	FileUnlock();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -77,7 +77,7 @@ bool CFile::IsFileReadable() const
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! ファイルの排他ロック解除
-void CFile::DoFileUnLock()
+void CFile::FileUnlock()
 {
 	//クローズ
 	if( m_hLockedFile != INVALID_HANDLE_VALUE ){
@@ -90,10 +90,10 @@ void CFile::DoFileUnLock()
 
 
 //! ファイルの排他ロック
-bool CFile::DoFileLock( EShareMode eShareMode )
+bool CFile::FileLock( EShareMode eShareMode )
 {
 	// ロック解除
-	DoFileUnLock();
+	FileUnlock();
 
 	// ファイルの存在チェック
 	if( !this->IsFileExist() ){
