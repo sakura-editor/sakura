@@ -1101,7 +1101,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	const wchar_t* szSpecialIndentChar = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();
-		if ( it.getIndexDelta() == 1 && WCODE::isIndentChar(it.getCurrentChar(),bZenSpace) )
+		if ( it.getIndexDelta() == 1 && WCODE::IsIndentChar(it.getCurrentChar(),bZenSpace) )
 		{
 			//	インデントのカウントを継続する
 		}

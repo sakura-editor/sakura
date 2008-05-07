@@ -37,7 +37,7 @@ bool CDraw_ZenSpace::BeginColor(SDrawStrategyInfo* pInfo)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
-	if( WCODE::isZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )
+	if( WCODE::IsZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )
 	{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
 		if( pInfo->DrawToHere() ){
 			// ‘SŠp‹ó”’‚ð•\Ž¦‚·‚é

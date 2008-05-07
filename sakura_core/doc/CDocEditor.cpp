@@ -376,7 +376,7 @@ void CDocEditAgent::InsertData_CDocLineMgr(
 	CLogicInt	nBgn   = CLogicInt(0);
 	CLogicInt	nPos   = CLogicInt(0);
 	for( nPos = CLogicInt(0); nPos < nInsDataLen; ){
-		if( WCODE::isLineDelimiter(pInsData[nPos]) ){
+		if( WCODE::IsLineDelimiter(pInsData[nPos]) ){
 			/* 行終端子の種類を調べる */
 			CEol 	cEOLType;
 			cEOLType.SetTypeByString( &pInsData[nPos], nInsDataLen - nPos );

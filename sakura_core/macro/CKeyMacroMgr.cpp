@@ -288,7 +288,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					cmemWork.Replace( LTEXT("\\\\"), LTEXT("\\") );
 					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
-				else if ( is09(szLine[i]) ){	//	数字で始まったら数字列だ。
+				else if ( Is09(szLine[i]) ){	//	数字で始まったら数字列だ。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( mInfo->m_varArguments[nArgs] != VT_I4 && 
@@ -309,7 +309,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 					nBgn = i;	//	nBgnは引数の先頭の文字
 					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
-						if( is09(szLine[i]) ){	// まだ数値
+						if( Is09(szLine[i]) ){	// まだ数値
 //							++i;
 							continue;
 						}

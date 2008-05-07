@@ -51,7 +51,7 @@ void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
 
 	//改行コード設定
 	const wchar_t* p = &pData[nLength] - 1;
-	while(p>=pData && WCODE::isLineDelimiter(*p))p--;
+	while(p>=pData && WCODE::IsLineDelimiter(*p))p--;
 	p++;
 	if(p>=pData){
 		m_cEol.SetTypeByString(p, &pData[nLength]-p);

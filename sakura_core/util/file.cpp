@@ -17,14 +17,10 @@ bool fexist(LPCTSTR pszPath)
 	指定文字列からファイル名と認識される文字列を取り出し、
 	先頭Offset及び長さを返す。
 	
-	@param pLine [in] 探査対象文字列
-	@param pnBgn [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
-	@param pnPathLen [out] ファイル名の長さ
-	@param bFileOnly [in] true: ファイルのみ対象 / false: ディレクトリも対象
-	
 	@retval true ファイル名発見
 	@retval false ファイル名は見つからなかった
 	
+	@date 2002.01.04 genta ファイル存在確認方法変更
 	@date 2002.01.04 genta ディレクトリを検査対象外にする機能を追加
 	@date 2003.01.15 matsumo gccのエラーメッセージ(:区切り)でもファイルを検出可能に
 	@date 2004.05.29 genta C:\からファイルCが切り出されるのを防止
@@ -34,38 +30,31 @@ bool fexist(LPCTSTR pszPath)
 	
 */
 bool IsFilePath(
-	const wchar_t*	pLine,
-	int*			pnBgn,
-	int*			pnPathLen,
-	bool			bFileOnly
+	const wchar_t*	pLine,		//!< [in]  探査対象文字列
+	int*			pnBgn,		//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
+	int*			pnPathLen,	//!< [out] ファイル名の長さ
+	bool			bFileOnly	//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
 {
-	int		i;
-	int		nLineLen;
 	wchar_t	szJumpToFile[1024];
 	wmemset( szJumpToFile, 0, _countof( szJumpToFile ) );
 
-	nLineLen = wcslen( pLine );
+	int	nLineLen = wcslen( pLine );
 
 	//先頭の空白を読み飛ばす
+	int		i;
 	for( i = 0; i < nLineLen; ++i ){
-		if( L' ' != pLine[i] &&
-			L'\t' != pLine[i] &&
-			L'\"' != pLine[i]
-		){
+		wchar_t c = pLine[i];
+		if( L' '!=c && L'\t'!=c && L'\"'!=c ){
 			break;
 		}
 	}
 
 	//	#include <ファイル名>の考慮
 	//	#で始まるときは"または<まで読み飛ばす
-	if( i < nLineLen &&
-		L'#' == pLine[i]
-	){
+	if( i < nLineLen && L'#' == pLine[i] ){
 		for( ; i < nLineLen; ++i ){
-			if( L'<'  == pLine[i] ||
-				L'\"' == pLine[i]
-			){
+			if( L'<'  == pLine[i] || L'\"' == pLine[i]){
 				++i;
 				break;
 			}
@@ -76,16 +65,20 @@ bool IsFilePath(
 	if( i >= nLineLen ){
 		return false;
 	}
+
 	*pnBgn = i;
 	int cur_pos = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
+		//ファイル名終端を検知する
+		if( pLine[i] == L'\r' || pLine[i] == L'\n' || pLine[i] == L'\0' ){
+			break;
+		}
+
+		//ファイル名終端を検知する
 		if( ( i == nLineLen    ||
 			  pLine[i] == L' '  ||
 			  pLine[i] == L'\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
 			  pLine[i] == L'('  ||
-			  pLine[i] == L'\r' ||
-			  pLine[i] == L'\n' ||
-			  pLine[i] == L'\0' ||
 			  pLine[i] == L'>'  ||
 			  // May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
 			  ( cur_pos > 1 && pLine[i] == L':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
@@ -93,74 +86,28 @@ bool IsFilePath(
 			) &&
 			0 < wcslen( szJumpToFile )
 		){
-			//	Jan. 04, 2002 genta
-			//	ファイル存在確認方法変更
-			//if( -1 != _access( szJumpToFile, 0 ) )
-			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly))
-			{
-				i--;
+			//	ファイル存在確認
+			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
 				break;
 			}
 		}
-		if( pLine[i] == L'\r'  ||
-			pLine[i] == L'\n' ){
-			break;
-		}
-//	From Here Sept. 27, 2000 JEPRO タグジャンプできないのは以下の文字が1バイトコードで現れるときのみとした。
-//	(SJIS2バイトコードの2バイト目に現れる場合はパス名使用禁止文字とは認識しないで無視するように変更)
-//		if( /*pLine[i] == '/' ||*/
-//			pLine[i] == '<' ||
-//			pLine[i] == '>' ||
-//			pLine[i] == '?' ||
-//			pLine[i] == '"' ||
-//			pLine[i] == '|' ||
-//			pLine[i] == '*'
-//		){
-//			return false;
-//		}
-//
-//		szJumpToFile[cur_pos] = pLine[i];
-//		cur_pos++;
-//	}
-//  To Here comment out
-//	From Here Sept. 27, 2000 JEPRO added
-//			  Oct. 3, 2000 JEPRO corrected
-		if( /*pLine[i] == '/' ||*/
-			 pLine[i] == L'<' ||	//	0x3C
-			 pLine[i] == L'>' ||	//	0x3E
-			 pLine[i] == L'?' ||	//	0x3F
-			 pLine[i] == L'"' ||	//	0x22
-			 pLine[i] == L'|' ||	//	0x7C
-			 pLine[i] == L'*'	//	0x2A
-			 ){
-			/*
-			&&
-			// 上の文字がSJIS2バイトコードの2バイト目でないことを、1つ前の文字がSJIS2バイトコードの1バイト目でないことで判断する
-			//	Oct. 5, 2002 genta
-			//	2004.11.13 Moca/genta 先頭に上の文字がある場合の考慮を追加
-			( i == 0 || ( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] ))) ){
-			*/
+
+		//ファイル名に使えない文字が含まれていたら、即、falseを返す
+		if( !WCODE::IsValidFilenameChar(pLine,i) ){
 			return false;
-		}else{
-			szJumpToFile[cur_pos] = pLine[i];
-			cur_pos++;
 		}
+
+		szJumpToFile[cur_pos] = pLine[i];
+		cur_pos++;
 	}
-//	To Here Sept. 27, 2000
-//	if( i >= nLineLen ){
-//		return FALSE;
-//	}
+
 	//	Jan. 04, 2002 genta
 	//	ファイル存在確認方法変更
-	if( 0 < wcslen( szJumpToFile ) &&
-		IsFileExists(to_tchar(szJumpToFile), bFileOnly))
-	//	-1 != _access( szJumpToFile, 0 ) )
-	{
+	if( 0 < wcslen( szJumpToFile ) && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
 		//	Jan. 04, 2002 genta
 		//	あまりに変なコーディングなので移動
 		*pnPathLen = wcslen( szJumpToFile );
 		return true;
-	}else{
 	}
 
 	return false;
@@ -738,7 +685,7 @@ void	GetExistPath( char *po , const char *pi )
 	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
 	if(
 		( *(po+1) == ':' )&&
-		( ACODE::isAZ(*po) )
+		( ACODE::IsAZ(*po) )
 	){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
 		drv[0] = *po;
 		if( access(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
@@ -814,7 +761,7 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	*pw = L'\0';		/* 文字列終端 */
 
 	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
-	if( *(po+1)==L':' && WCODE::isAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
+	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
 		drv[0] = *po;
 		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
 		else						dl = GetExistPath_IV_Drive;		/* 無効 */
@@ -896,7 +843,7 @@ void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext 
 		pd = ppp;
 		if(
 			( *(pd+1)==':' )&&
-			( ACODE::isAZ(*pd) )
+			( ACODE::IsAZ(*pd) )
 		){	/* 先頭にドライブレターがある。 */
 			pd += 2;	/* pd = ドライブレター部の後ろ         */
 		}				/*      ( = ディレクトリ名の先頭位置 ) */
@@ -984,7 +931,7 @@ void my_splitpath_w (
 		/* 先頭文字がドライブレターかどうか判定し、
 		　 pd = ディレクトリ名の先頭位置に設定する。 */
 		pd = ppp;
-		if(*(pd+1)==L':' && WCODE::isAZ(*pd)){	/* 先頭にドライブレターがある。 */
+		if(*(pd+1)==L':' && WCODE::IsAZ(*pd)){	/* 先頭にドライブレターがある。 */
 			pd += 2;	/* pd = ドライブレター部の後ろ         */
 		}				/*      ( = ディレクトリ名の先頭位置 ) */
 		/* ここまでで、pd = ディレクトリ名の先頭位置 */

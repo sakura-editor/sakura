@@ -1478,7 +1478,7 @@ void CPrintPreview::Print_DrawLine(
 		if(pLine[iLogic]==WCODE::TAB){
 			nKind = 2;
 		}
-		else if(WCODE::isHankaku(pLine[iLogic])){
+		else if(WCODE::IsHankaku(pLine[iLogic])){
 			nKind = 0;
 		}
 		else{

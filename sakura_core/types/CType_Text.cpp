@@ -66,7 +66,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		//s“ª‚Ì‹ó”’”ò‚Î‚µ
 		int i;
 		for( i = 0; i < nLineLen; ++i ){
-			if( WCODE::isBlank(pLine[i]) ){
+			if( WCODE::IsBlank(pLine[i]) ){
 				continue;
 			}
 			break;

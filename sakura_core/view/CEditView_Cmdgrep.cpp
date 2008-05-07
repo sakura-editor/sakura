@@ -38,7 +38,7 @@ void CEditView::TranslateCommand_grep(
 
 	if( nCommand == F_WCHAR ){
 		//	Jan. 23, 2005 genta •¶Žš”»’è–Y‚ê
-		if( WCODE::isLineDelimiter((wchar_t)lparam1) && GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN ){
+		if( WCODE::IsLineDelimiter((wchar_t)lparam1) && GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
 			lparam1 = GetKeyState_Control()?1:0;
 		}

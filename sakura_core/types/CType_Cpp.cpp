@@ -4,6 +4,19 @@
 #include "CFuncInfoArr.h"
 #include "COpeBlk.h"
 
+//!CPPキーワードで始まっていれば true
+inline bool IsHeadCppKeyword(const wchar_t* pData)
+{
+	#define HEAD_EQ(DATA,LITERAL) (wcsncmp(DATA,LITERAL,_countof(LITERAL)-1)==0)
+	if( HEAD_EQ(pData, L"case"      ) )return true;
+	if( HEAD_EQ(pData, L"default:"  ) )return true;
+	if( HEAD_EQ(pData, L"public:"   ) )return true;
+	if( HEAD_EQ(pData, L"private:"  ) )return true;
+	if( HEAD_EQ(pData, L"protected:") )return true;
+	return false;
+}
+
+
 /* C/C++ */
 // Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
 // Jan. 24, 2004 genta 関連づけ上好ましくないのでdsw,dsp,dep,makははずす
@@ -1087,7 +1100,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				}
 			}
 			if( i < nWork ){
-				if( ( L':' == wcChar && WCODE::isHeadCppKeyword(&pLine[i]) )
+				if( ( L':' == wcChar && IsHeadCppKeyword(&pLine[i]) )
 					//	Sep. 18, 2002 かろと
 					|| ( L'{' == wcChar && L'#' != pLine[i] )
 					|| ( L'(' == wcChar && L'#' != pLine[i] )

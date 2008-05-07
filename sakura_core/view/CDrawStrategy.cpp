@@ -261,7 +261,7 @@ bool CDraw_CtrlCode::BeginColor(SDrawStrategyInfo* pInfo)
 
 	if(TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
 		&& COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
-		&&WCODE::isControlCode(pInfo->pLine[pInfo->nPos]))
+		&&WCODE::IsControlCode(pInfo->pLine[pInfo->nPos]))
 	{
 		pInfo->DrawToHere();
 
@@ -272,7 +272,7 @@ bool CDraw_CtrlCode::BeginColor(SDrawStrategyInfo* pInfo)
 		/* コントロールコード列の終端を探す */
 		int i;
 		for( i = pInfo->nPos + 1; i <= pInfo->nLineLen - 1; ++i ){
-			if(!WCODE::isControlCode(pInfo->pLine[i])){
+			if(!WCODE::IsControlCode(pInfo->pLine[i])){
 				break;
 			}
 		}

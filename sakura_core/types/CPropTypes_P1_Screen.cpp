@@ -561,7 +561,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, _countof( szTab ) - 1 );
 		wcscpy( m_Types.m_szTabViewString, L"^       " );
 		for( int i = 0; i < 8; i++ ){
-			if( !TCODE::isTabAvailableCode(szTab[i]) )break;
+			if( !TCODE::IsTabAvailableCode(szTab[i]) )break;
 			m_Types.m_szTabViewString[i] = szTab[i];
 		}
 

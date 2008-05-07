@@ -614,7 +614,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 			EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, szFuncNameJapanese);
 			if( n == F_INVALID )
 			{
-				if( WCODE::is09(*p) )
+				if( WCODE::Is09(*p) )
 				{
 					n = (EFunctionCode)auto_atol(p);
 				}
