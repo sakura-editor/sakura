@@ -17,7 +17,12 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 	if( GetDllShareData().m_Common.m_sBackup.m_bBackUp ){
 		//	Jun.  5, 2004 genta ファイル名を与えるように．戻り値に応じた処理を追加．
 		// ファイル保存前にバックアップ処理
-		int nBackupResult = MakeBackUp( pSaveInfo->cFilePath );
+		int nBackupResult = 0;
+		{
+			pcDoc->m_cDocFileOperation.DoFileUnlock();	//バックアップ作成前にロックを解除する #####スマートじゃないよ！
+			nBackupResult = MakeBackUp( pSaveInfo->cFilePath );
+			pcDoc->m_cDocFileOperation.DoFileLock();	//バックアップ作成後にロックを戻す #####スマートじゃないよ！
+		}
 		switch( nBackupResult ){
 		case 2:	//	中断指示
 			return CALLBACK_INTERRUPT;

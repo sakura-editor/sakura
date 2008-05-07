@@ -24,8 +24,7 @@ void CDocLocker::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	CheckWritable(true);
 
 	// ファイルの排他ロック
-	if(pcDoc->m_cDocFileOperation._ToDoLock())
-		pcDoc->m_cDocFile.DoFileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode);
+	pcDoc->m_cDocFileOperation.DoFileLock();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -37,7 +36,7 @@ void CDocLocker::OnBeforeSave(const SSaveInfo& sSaveInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// ファイルの排他ロック解除
-	pcDoc->m_cDocFile.DoFileUnLock();
+	pcDoc->m_cDocFileOperation.DoFileUnlock();
 }
 
 void CDocLocker::OnAfterSave(const SSaveInfo& sSaveInfo)
@@ -48,9 +47,7 @@ void CDocLocker::OnAfterSave(const SSaveInfo& sSaveInfo)
 	m_bIsDocWritable = true;
 
 	// ファイルの排他ロック
-	if( pcDoc->m_cDocFileOperation._ToDoLock() ){
-		pcDoc->m_cDocFile.DoFileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode);
-	}
+	pcDoc->m_cDocFileOperation.DoFileLock();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

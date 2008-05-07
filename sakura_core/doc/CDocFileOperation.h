@@ -8,7 +8,8 @@ public:
 
 	//ロック
 	bool _ToDoLock() const;
-
+	void DoFileLock();
+	void DoFileUnlock();
 	
 	//ロードUI
 	bool OpenFileDialog(

@@ -26,8 +26,8 @@ public:
 	bool IsFileWritable() const;
 	bool IsFileReadable() const;
 	//ロック
-	bool DoFileLock( EShareMode eShareMode );	//!< ファイルの排他ロック
-	void DoFileUnLock();						//!< ファイルの排他ロック解除
+	bool FileLock(EShareMode eShareMode);	//!< ファイルの排他ロック
+	void FileUnlock();						//!< ファイルの排他ロック解除
 	bool IsFileLocking() const{ return m_hLockedFile!=INVALID_HANDLE_VALUE; }
 	EShareMode GetShareMode() const{ return m_nFileShareModeOld; }
 private:

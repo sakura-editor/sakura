@@ -110,7 +110,7 @@ CEditDoc::~CEditDoc()
 void CEditDoc::Clear()
 {
 	// ファイルの排他ロック解除
-	m_cDocFile.DoFileUnLock();
+	m_cDocFileOperation.DoFileUnlock();
 
 	// アンドゥ・リドゥバッファのクリア
 	m_cDocEditor.m_cOpeBuf.ClearAll();
@@ -479,7 +479,7 @@ void CEditDoc::OnChangeSetting()
 	/* ファイルの排他モード変更 */
 	if( m_cDocFile.GetShareMode() != GetDllShareData().m_Common.m_sFile.m_nFileShareMode ){
 		/* ファイルの排他ロック */
-		m_cDocFile.DoFileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode);
+		m_cDocFileOperation.DoFileLock();
 	}
 
 	/* 共有データ構造体のアドレスを返す */
