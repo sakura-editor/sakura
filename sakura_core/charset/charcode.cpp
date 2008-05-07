@@ -6,7 +6,7 @@
 namespace WCODE
 {
 	//2007.08.30 kobake 追加
-	bool isHankaku(wchar_t wc)
+	bool IsHankaku(wchar_t wc)
 	{
 		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
 
@@ -31,10 +31,10 @@ namespace WCODE
 	}
 
 	//!制御文字であるかどうか
-	bool isControlCode(wchar_t wc)
+	bool IsControlCode(wchar_t wc)
 	{
 		//改行は制御文字とみなさない
-		if(isLineDelimiter(wc))return false;
+		if(IsLineDelimiter(wc))return false;
 
 		//タブは制御文字とみなさない
 		if(wc==TAB)return false;

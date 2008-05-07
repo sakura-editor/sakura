@@ -324,7 +324,7 @@ SEARCH_START:;
 					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
 				}
-				else if( WCODE::isZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
+				else if( WCODE::IsZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
 				{
 					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
@@ -345,7 +345,7 @@ SEARCH_START:;
 					 && 1 == nCharChars
 					 && COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
 					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
-					 && WCODE::isControlCode(pInfo->pLine[pInfo->nPos])
+					 && WCODE::IsControlCode(pInfo->pLine[pInfo->nPos])
 					){
 						pInfo->nBgn = pInfo->nPos;
 						pInfo->nCOMMENTMODE_OLD = pInfo->nCOMMENTMODE;
@@ -362,7 +362,7 @@ SEARCH_START:;
 							if( nCharChars_2 != 1 ){
 								break;
 							}
-							if(!WCODE::isControlCode(pInfo->pLine[i])){
+							if(!WCODE::IsControlCode(pInfo->pLine[i])){
 								break;
 							}
 						}

@@ -39,7 +39,7 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 		if( NULL == pLine ){
 			return 0;
 		}
-		if( WCODE::isLineDelimiter(pLine[nLineLen - 1]) ){
+		if( WCODE::IsLineDelimiter(pLine[nLineLen - 1]) ){
 			return 0;
 		}
 
@@ -59,7 +59,7 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 	}
 
 	if( 1 == nCharChars ){
-		if( WCODE::isWordDelimiter(pLine[nIdx]) ){
+		if( WCODE::IsWordDelimiter(pLine[nIdx]) ){
 			return 0;
 		}
 	}

@@ -147,21 +147,21 @@ ECharKind CWordParse::WhatKindOfChar(
 		if( c == TAB             )return CK_TAB;	// タブ
 		if( c == SPACE           )return CK_SPACE;	// 半角スペース
 		if( isCSymbol(c)         )return CK_CSYM;	// 識別子に使用可能な文字 (半角英数字、半角アンダースコア)
-		if( isHankakuKatakana(c) )return CK_KATA;	// 半角のカタカナ
+		if( IsHankakuKatakana(c) )return CK_KATA;	// 半角のカタカナ
 
 		//その他
-		if( isZenkakuSpace(c)    )return CK_ZEN_SPACE;	// 全角スペース
+		if( IsZenkakuSpace(c)    )return CK_ZEN_SPACE;	// 全角スペース
 		if( c==L'ー'             )return CK_ZEN_NOBASU;	// 伸ばす記号 'ー'
 		if( isCSymbolZen(c)      )return CK_ZEN_CSYM;	// 全角版、識別子に使用可能な文字 
-		if( isZenkakuKigou(c)    )return CK_ZEN_KIGO;	// 全角の記号
-		if( isHiragana(c)        )return CK_HIRA;		// ひらがな
-		if( isZenkakuKatakana(c) )return CK_ZEN_KATA;	// 全角カタカナ
-		if( isGreek(c)           )return CK_GREEK;		// ギリシャ文字
-		if( isCyrillic(c)        )return CK_ZEN_ROS;	// ロシア文字
-		if( isBoxDrawing(c)      )return CK_ZEN_SKIGO;	// 全角の特殊記号
+		if( IsZenkakuKigou(c)    )return CK_ZEN_KIGO;	// 全角の記号
+		if( IsHiragana(c)        )return CK_HIRA;		// ひらがな
+		if( IsZenkakuKatakana(c) )return CK_ZEN_KATA;	// 全角カタカナ
+		if( IsGreek(c)           )return CK_GREEK;		// ギリシャ文字
+		if( IsCyrillic(c)        )return CK_ZEN_ROS;	// ロシア文字
+		if( IsBoxDrawing(c)      )return CK_ZEN_SKIGO;	// 全角の特殊記号
 
 		//未分類
-		if( isHankaku(c) )return CK_ETC;	// 半角のその他
+		if( IsHankaku(c) )return CK_ETC;	// 半角のその他
 		else return CK_ZEN_ETC;				// 全角のその他(漢字など)
 	}
 	else{

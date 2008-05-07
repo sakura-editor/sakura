@@ -248,7 +248,7 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 			}
 		}// LTrim
 		for( leftspace = 0; leftspace < nLineLen; ++leftspace ){
-			if( WCODE::isBlank(pLine[leftspace]) ){
+			if( WCODE::IsBlank(pLine[leftspace]) ){
 				continue;
 			}
 			break;
@@ -269,7 +269,7 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 						pLine[k] == WCODE::LF ||
 						pLine[k] == WCODE::SPACE ||
 						pLine[k] == WCODE::TAB ||
-						WCODE::isZenkakuSpace(pLine[k]) ||
+						WCODE::IsZenkakuSpace(pLine[k]) ||
 						pLine[k] == L'\0') )
 					pos_wo_space = k + nCharChars;
 			}

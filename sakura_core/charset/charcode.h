@@ -105,11 +105,11 @@ inline bool IS_KEYWORD_CHAR(wchar_t wc)
 //UNICODE”»’èŠÖ”ŒQ
 namespace WCODE
 {
-	inline bool isAZ(wchar_t wc)
+	inline bool IsAZ(wchar_t wc)
 	{
 		return (wc>=L'A' && wc<=L'Z') || (wc>=L'a' && wc<=L'z');
 	}
-	inline bool is09(wchar_t wc)
+	inline bool Is09(wchar_t wc)
 	{
 		return (wc>=L'0' && wc<=L'9');
 	}
@@ -119,63 +119,51 @@ namespace WCODE
 	}
 
 	//!”¼Šp•¶Žš(c’·’·•ûŒ`)‚©‚Ç‚¤‚©”»’è
-	bool isHankaku(wchar_t wc);
+	bool IsHankaku(wchar_t wc);
 
 	//!‘SŠp•¶Žš(³•ûŒ`)‚©‚Ç‚¤‚©”»’è
-	inline bool isZenkaku(wchar_t wc)
+	inline bool IsZenkaku(wchar_t wc)
 	{
-		return !isHankaku(wc);
+		return !IsHankaku(wc);
 	}
 
 	//!‘SŠpƒXƒy[ƒX‚©‚Ç‚¤‚©”»’è
-	inline bool isZenkakuSpace(wchar_t wc)
+	inline bool IsZenkakuSpace(wchar_t wc)
 	{
 		return wc == 0x3000; //L'@'
 	}
 
 	//!§Œä•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
-	bool isControlCode(wchar_t wc);
+	bool IsControlCode(wchar_t wc);
 
 	//!‰üs•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
-	inline bool isLineDelimiter(wchar_t wc)
+	inline bool IsLineDelimiter(wchar_t wc)
 	{
 		return wc==CR || wc==LF;
 	}
 
 	//!’PŒê‚Ì‹æØ‚è•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
-	inline bool isWordDelimiter(wchar_t wc)
+	inline bool IsWordDelimiter(wchar_t wc)
 	{
-		return wc==SPACE || wc==TAB || isZenkakuSpace(wc);
+		return wc==SPACE || wc==TAB || IsZenkakuSpace(wc);
 	}
 
 	//!ƒCƒ“ƒfƒ“ƒg\¬—v‘f‚Å‚ ‚é‚©‚Ç‚¤‚©BbAcceptZenSpace: ‘SŠpƒXƒy[ƒX‚ðŠÜ‚ß‚é‚©‚Ç‚¤‚©
-	inline bool isIndentChar(wchar_t wc,bool bAcceptZenSpace)
+	inline bool IsIndentChar(wchar_t wc,bool bAcceptZenSpace)
 	{
 		if(wc==TAB || wc==SPACE)return true;
-		if(bAcceptZenSpace && isZenkakuSpace(wc))return true;
+		if(bAcceptZenSpace && IsZenkakuSpace(wc))return true;
 		return false;
 	}
 
 	//!‹ó”’‚©‚Ç‚¤‚©
-	inline bool isBlank(wchar_t wc)
+	inline bool IsBlank(wchar_t wc)
 	{
-		return wc==TAB || wc==SPACE || isZenkakuSpace(wc);
-	}
-
-	//!CPPƒL[ƒ[ƒh‚ÅŽn‚Ü‚Á‚Ä‚¢‚ê‚Î true
-	inline bool isHeadCppKeyword(const wchar_t* pData)
-	{
-		#define HEAD_EQ(DATA,LITERAL) (wcsncmp(DATA,LITERAL,_countof(LITERAL)-1)==0)
-		if( HEAD_EQ(pData, L"case"      ) )return true;
-		if( HEAD_EQ(pData, L"default:"  ) )return true;
-		if( HEAD_EQ(pData, L"public:"   ) )return true;
-		if( HEAD_EQ(pData, L"private:"  ) )return true;
-		if( HEAD_EQ(pData, L"protected:") )return true;
-		return false;
+		return wc==TAB || wc==SPACE || IsZenkakuSpace(wc);
 	}
 
 	//!ƒtƒ@ƒCƒ‹–¼‚ÉŽg‚¦‚é•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
-	inline bool isValidFilenameChar(const wchar_t* pData, size_t nIndex)
+	inline bool IsValidFilenameChar(const wchar_t* pData, size_t nIndex)
 	{
 		static const wchar_t* table = L"<>?\"|*";
 
@@ -185,7 +173,7 @@ namespace WCODE
 	}
 
 	//!ƒ^ƒu•\Ž¦‚ÉŽg‚¦‚é•¶Žš‚©‚Ç‚¤‚©
-	inline bool isTabAvailableCode(wchar_t wc)
+	inline bool IsTabAvailableCode(wchar_t wc)
 	{
 		//$$—vŒŸØ
 		if(wc==L'\0')return false;
@@ -196,14 +184,14 @@ namespace WCODE
 	}
 
 	//! ”¼ŠpƒJƒi‚©‚Ç‚¤‚©
-	inline bool isHankakuKatakana(wchar_t c)
+	inline bool IsHankakuKatakana(wchar_t c)
 	{
 		//ŽQl: http://ash.jp/code/unitbl1.htm
 		return c>=0xFF61 && c<=0xFF9F;
 	}
 
 	//! ‘SŠp‹L†‚©‚Ç‚¤‚©
-	inline bool isZenkakuKigou(wchar_t c)
+	inline bool IsZenkakuKigou(wchar_t c)
 	{
 		//$ ‘¼‚É‚à‘SŠp‹L†‚Í‚ ‚é‚ÆŽv‚¤‚¯‚ÇA‚Æ‚è‚ ‚¦‚¸ANSI”ÅŽž‘ã‚Ì”»’è‚ð“¥PBƒpƒtƒH[ƒ}ƒ“ƒXˆ«‚µB
 		static const wchar_t* table=L"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬¸¹º»¼½¾¿ÈÉÊËÌÍÎÚÛÜÝÞßàáâãäåæçèðñòóôõö÷ü";
@@ -211,31 +199,31 @@ namespace WCODE
 	}
 
 	//! ‚Ð‚ç‚ª‚È‚©‚Ç‚¤‚©
-	inline bool isHiragana(wchar_t c)
+	inline bool IsHiragana(wchar_t c)
 	{
 		return c>=0x3041 && c<=0x3093;
 	}
 
 	//! ƒJƒ^ƒJƒi‚©‚Ç‚¤‚©
-	inline bool isZenkakuKatakana(wchar_t c)
+	inline bool IsZenkakuKatakana(wchar_t c)
 	{
 		return c>=0x30A1 && c<=0x30F6;
 	}
 
 	//! ƒMƒŠƒVƒƒ•¶Žš‚©‚Ç‚¤‚©
-	inline bool isGreek(wchar_t c)
+	inline bool IsGreek(wchar_t c)
 	{
 		return c>=0x0391 && c<=0x03C9;
 	}
 
 	//! ƒLƒŠƒ‹•¶Žš‚©‚Ç‚¤‚©
-	inline bool isCyrillic(wchar_t c)
+	inline bool IsCyrillic(wchar_t c)
 	{
 		return c>=0x0410 && c<=0x044F;
 	}
 
 	//! BOX DRAWING •¶Žš ‚©‚Ç‚¤‚©
-	inline bool isBoxDrawing(wchar_t c)
+	inline bool IsBoxDrawing(wchar_t c)
 	{
 		return c>=0x2500 && c<=0x257F;
 	}
@@ -248,13 +236,13 @@ namespace WCODE
 //ANSI”»’èŠÖ”ŒQ
 namespace ACODE
 {
-	inline bool isAZ(char c)
+	inline bool IsAZ(char c)
 	{
 		return (c>='A' && c<='Z') || (c>='a' && c<='z');
 	}
 
 	//!§Œä•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
-	inline bool isControlCode(char c)
+	inline bool IsControlCode(char c)
 	{
 		unsigned char n=(unsigned char)c;
 		if(c==TAB)return false;
@@ -267,7 +255,7 @@ namespace ACODE
 	}
 
 	//!ƒ^ƒu•\Ž¦‚ÉŽg‚¦‚é•¶Žš‚©‚Ç‚¤‚©
-	inline bool isTabAvailableCode(char c)
+	inline bool IsTabAvailableCode(char c)
 	{
 		if(c=='\0')return false;
 		if(c<=0x1f)return false;
@@ -276,7 +264,7 @@ namespace ACODE
 	}
 
 	//!ƒtƒ@ƒCƒ‹–¼‚ÉŽg‚¦‚é•¶Žš‚Å‚ ‚é‚©‚Ç‚¤‚©
-	inline bool isValidFilenameChar(const char* pData, size_t nIndex)
+	inline bool IsValidFilenameChar(const char* pData, size_t nIndex)
 	{
 		static const TCHAR* table = _T("<>?\"|*");
 		char c = pData[nIndex];

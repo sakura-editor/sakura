@@ -489,7 +489,7 @@ void CEditView::DeleteData(
 
 		/* 指定された桁の文字のバイト数を調べる */
 		CLayoutInt	nNxtPos;
-		if( WCODE::isLineDelimiter(pLine[nCurIdx]) ){
+		if( WCODE::IsLineDelimiter(pLine[nCurIdx]) ){
 			/* 改行 */
 			nNxtIdx = nCurIdx + pcLayout->GetLayoutEol().GetLen();
 			nNxtPos = GetCaret().GetCaretLayoutPos().GetX() + CLayoutInt((Int)pcLayout->GetLayoutEol().GetLen()); //※改行コードの文字数を文字幅と見なす
@@ -767,7 +767,7 @@ void CEditView::RTrimPrevLine( void )
 			int j=0;
 			while( i < nLineLen ){
 				nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-				if( !WCODE::isBlank(pLine[i]) ){
+				if( !WCODE::IsBlank(pLine[i]) ){
 					j = i + nCharChars;
 				}
 				i += nCharChars;

@@ -655,7 +655,7 @@ bool CTextDrawer::DispEmptyLine(HDC hdc, DispPos* pDispPos) const
 			//最終行の桁数
 			CLayoutInt nLineCols = pView->LineIndexToColmn( pcLayout, nLineLen );
 
-			if( WCODE::isLineDelimiter(pLine[nLineLen-1]) || nLineCols >= nWrapKetas ){
+			if( WCODE::IsLineDelimiter(pLine[nLineLen-1]) || nLineCols >= nWrapKetas ){
 				// EOF記号の表示
 				if( cEofType.IsDisp() ){
 					DispEOF(hdc,pDispPos);

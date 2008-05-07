@@ -226,7 +226,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_WCHAR:	/* 文字入力 */
 		{
 			/* コントロールコード入力禁止 */
-			if(WCODE::isControlCode((wchar_t)lparam1)){
+			if(WCODE::IsControlCode((wchar_t)lparam1)){
 				ErrorBeep();
 			}else{
 				Command_WCHAR( (wchar_t)lparam1 );
@@ -1198,9 +1198,9 @@ void CViewCommander::Command_GOLINETOP(
 				return;
 			}
 			for( nPosX_Logic = 0; nPosX_Logic < nLineLen; ++nPosX_Logic ){
-				if(WCODE::isIndentChar(pLine[nPosX_Logic],bZenSpace!=0))continue;
+				if(WCODE::IsIndentChar(pLine[nPosX_Logic],bZenSpace!=0))continue;
 				
-				if(WCODE::isLineDelimiter(pLine[nPosX_Logic]) ){
+				if(WCODE::IsLineDelimiter(pLine[nPosX_Logic]) ){
 					nPosX_Logic = 0;	// 空白またはタブおよび改行だけの行だった
 				}
 				break;
@@ -2621,7 +2621,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 	nPosX = CLayoutInt(-1);
 	CNativeW cmemDataW2;
 	cmemDataW2 = wcChar;
-	if( WCODE::isLineDelimiter(wcChar) ){ 
+	if( WCODE::IsLineDelimiter(wcChar) ){ 
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 		// enumEOLType nWorkEOL;
 		CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
@@ -2676,7 +2676,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 						}
 
 						bool bZenSpace=GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
-						if(nCharChars==1 && WCODE::isIndentChar(pLine[nPos],bZenSpace))
+						if(nCharChars==1 && WCODE::IsIndentChar(pLine[nPos],bZenSpace))
 						{
 							//下へ進む
 						}
@@ -5126,11 +5126,6 @@ void CViewCommander::Command_ADDTAIL(
 */
 bool CViewCommander::Command_TAGJUMP( bool bClose )
 {
-	wchar_t		szJumpToFile[1024];
-	int			nPathLen;
-	int			nBgn;
-	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
-
 	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
 	// 0以下は未指定扱い。(1開始)
 	int			nJumpToLine;
@@ -5156,12 +5151,20 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	if( NULL == pLine ){
 		goto can_not_tagjump_end;
 	}
+
+	//ファイル名バッファ
+	wchar_t		szJumpToFile[1024];
+	int			nBgn;
+	int			nPathLen;
+	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
+
 	/* WZ風のタグリストか */
 	if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
 		if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) ){
-			wmemcpy( szJumpToFile, &pLine[3 + nBgn], nPathLen );
+			wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
 			GetLineColm( &pLine[2] + nPathLen, &nJumpToLine, &nJumpToColm );
-		}else{
+		}
+		else{
 			goto can_not_tagjump;
 		}
 	}
@@ -5181,7 +5184,8 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) ){
 					wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
 					break;
-				}else{
+				}
+				else{
 					goto can_not_tagjump;
 				}
 			}
@@ -5216,9 +5220,8 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			for( ; p < p_end && ( *p != L' ' && *p != L'\t' ); ++p )
 				;
 		}
-		if( szJumpToFile[0] == L'\0' )
-		{
-			if( false == Command_TagJumpByTagsFile() )	//@@@ 2003.04.13
+		if( szJumpToFile[0] == L'\0' ){
+			if( !Command_TagJumpByTagsFile() )	//@@@ 2003.04.13
 				goto can_not_tagjump;
 			return true;
 		}

@@ -100,7 +100,7 @@ const int* CTextMetrics::GenerateDxArray(
 	int* p=&(*vResultArray)[0];
 	const wchar_t* q=pText;
 	for(int i=0;i<nLength;i++){
-		if(isHankaku(*q)){
+		if(IsHankaku(*q)){
 			*p = nHankakuDx;
 		}
 		else{

@@ -208,7 +208,7 @@ CLayoutInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx
 		return CLayoutInt(0);
 
 	//”¼Šp•¶Žš‚È‚ç 1
-	if(WCODE::isHankaku(pData[nIdx]) )
+	if(WCODE::IsHankaku(pData[nIdx]) )
 		return CLayoutInt(1);
 
 	//‘SŠp•¶Žš‚È‚ç 2

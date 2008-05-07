@@ -22,10 +22,6 @@
 bool CEditView::TagJumpSub(
 	const TCHAR*	pszFileName,
 	CMyPoint		ptJumpTo,
-	/*
-	int				nJumpToLine,	//!< [in] 論理行番号(1開始)。0以下を指定したら行ジャンプはしない。
-	int				nJumpToColm,	//!< [in] 論理行単位の行内の位置(1開始)
-	*/
 	bool			bClose,			//!< [in] true: 元ウィンドウを閉じる / false: 元ウィンドウを閉じない
 	bool			bRelFromIni
 )
@@ -92,18 +88,13 @@ bool CEditView::TagJumpSub(
 		/* アクティブにする */
 		ActivateFrameWindow( hwndOwner );
 	}
-	else
-	{
+	else{
 		/* 新しく開く */
 		EditInfo	inf;
 		bool		bSuccess;
 
 		_tcscpy( inf.m_szPath, szJumpToFile );
 		inf.m_ptCursor.Set(CLogicInt(ptJumpTo.x - 1), CLogicInt(ptJumpTo.y - 1));
-		/*
-		inf.m_nX           = nJumpToColm - 1;
-		inf.m_nY           = nJumpToLine - 1;
-		*/
 		inf.m_nViewLeftCol = CLayoutInt(-1);
 		inf.m_nViewTopLine = CLayoutInt(-1);
 		inf.m_nCharCode    = CODE_AUTODETECT;
