@@ -3359,14 +3359,18 @@ void CViewCommander::Command_FILENEW( void )
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
 	@date 2004.10.09 genta 実装をCEditDocへ移動
 */
-void CViewCommander::Command_FILEOPEN( const WCHAR *filename, ECodeType nCharCode, bool bViewMode )
+void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCode, bool bViewMode )
 {
 	//ロード情報
-	SLoadInfo sLoadInfo(_T(""), nCharCode, bViewMode);
+	SLoadInfo sLoadInfo(filename?filename:L"", nCharCode, bViewMode);
 
 	//必要であれば「ファイルを開く」ダイアログ
-	if(filename==NULL || *filename==_T('\0')){
-		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(CEditWnd::Instance()->GetHwnd(), NULL, &sLoadInfo);
+	if(!sLoadInfo.cFilePath.IsValidPath()){
+		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
+			CEditWnd::Instance()->GetHwnd(),	//[in]  オーナーウィンドウ
+			NULL,								//[in]  フォルダ
+			&sLoadInfo							//[out] ロード情報受け取り
+		);
 		if(!bDlgResult)return;
 	}
 
