@@ -3362,7 +3362,7 @@ void CViewCommander::Command_FILENEW( void )
 void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCode, bool bViewMode )
 {
 	//ロード情報
-	SLoadInfo sLoadInfo(filename?filename:L"", nCharCode, bViewMode);
+	SLoadInfo sLoadInfo(filename?to_tchar(filename):_T(""), nCharCode, bViewMode);
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
