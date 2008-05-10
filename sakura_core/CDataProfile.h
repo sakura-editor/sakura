@@ -179,7 +179,7 @@ protected:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring}
-	bool IOProfileData( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& tEntryValue, const T& tErrorValue=T() )
+	bool IOProfileData( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& tEntryValue )
 	{
 		//ì«Ç›çûÇ›
 		if(m_bRead){
@@ -189,10 +189,6 @@ public:
 			if(ret){
 				//TÇ…ïœä∑
 				profile_to_value(buf, &tEntryValue);
-			}
-			else{
-				//ÉGÉâÅ[ílÇë„ì¸
-				tEntryValue = tErrorValue;
 			}
 			return ret;
 		}
