@@ -5,7 +5,7 @@ static HINSTANCE hDll=NULL;
 static void Load()
 {
 	if(!hDll){
-		hDll=LoadLibrary(_T("DebugMonitorLib.dll"));
+		hDll=::LoadLibrary(_T("DebugMonitorLib.dll"));
 	}
 }
 

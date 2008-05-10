@@ -49,7 +49,7 @@ typedef struct _migemo migemo;
 
 #include "CDllHandler.h"
 
-class SAKURA_CORE_API CMigemo : public CDllHandler {
+class SAKURA_CORE_API CMigemo : public CDllImp {
 
 
 public:
@@ -86,8 +86,8 @@ protected:
 
 	migemo* m_migemo;
 	
-	LPCTSTR GetDllName(LPCTSTR);
-	int InitDll(void);
+	LPCTSTR GetDllNameImp(int nIndex);
+	bool InitDllImp();
 	int DeInitDll(void);
 	
 public:

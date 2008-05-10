@@ -34,113 +34,148 @@
 
 #include <windows.h>
 #include "global.h"
+#include <string>
+
+/*! CDllImp をラップ
+	CDllImp::DeinitDll を呼び忘れないためのヘルパ的クラス。
+	今のところDeinitDllが使われている箇所が無いので、このクラスの出番はありませんが。
+	2008.05.10 kobake 作成
+*/
+template <class DLLIMP> class CDllHandler{
+public:
+	//コンストラクタ・デストラクタ
+	CDllHandler()
+	{
+		m_pcDllImp = new DLLIMP();
+		m_pcDllImp->InitDll();
+	}
+	~CDllHandler()
+	{
+		m_pcDllImp->DeinitDll(true); //※終了処理に失敗しても強制的にDLL解放
+		delete m_pcDllImp;
+	}
+
+	//アクセサ
+	DLLIMP* operator->(){ return m_pcDllImp; }
+
+	//! 利用状態のチェック（operator版）
+	bool operator!() const { return IsAvailable(); }
+
+private:
+	DLLIMP*	m_pcDllImp;
+};
+
+
+//!結果定数
+enum EDllResult{
+	DLL_SUCCESS,		//成功
+	DLL_LOADFAILURE,	//DLLロード失敗
+	DLL_INITFAILURE,	//初期処理に失敗
+};
 
 //! DLLの動的なLoad/Unloadを行うためのクラス
 /*!
 	@author genta
-	@date Jun. 10, 2001
+	@date Jun. 10, 2001 genta
+	@date 2001.07.05 genta InitDll: 引数追加。パスの指定などに使える
 	@date Apr. 15, 2002 genta RegisterEntriesの追加。
+	@date 2007.06.25 genta InitDll: GetDllNameImpを使うように実装を変更．
+	@date 2001.07.05 genta GetDllName: 引数追加。パスの指定などに使える
+	@date 2007.06.25 genta GetDllName: GetDllNameImpを使用する場合は必須ではないので，
+										純粋仮想関数はやめてプレースホルダーを用意する．
+	@date 2008.05.10 kobake 整理。派生クラスは、～Impをオーバーロードすれば良いという方式です。
 */
-class SAKURA_CORE_API CDllHandler {
+class SAKURA_CORE_API CDllImp{
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                            型                               //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	CDllHandler();
-	virtual ~CDllHandler();
-
-	//! 利用状態のチェック
-	/*!
-		DLLの関数を呼び出せるか状態どうか
-
-		@retval true 利用可能
-		@retval false 利用不能
-	*/
-	virtual bool IsAvailable(void) const { return m_hInstance != NULL; }
-
-	//! DLLのロード
-	/*!
-		@retval 0 正常終了。DLLがロードされた。
-		@retval other 異常終了。DLLはロードされなかった。
-
-		@date 2001.07.05 genta 引数追加。パスの指定などに使える
-		@date 2007.06.25 genta GetDllNameInOrderを使うように実装を変更．
-	*/
-	int LoadLibrary(LPCTSTR str = NULL);
-
-	//! DLLのアンロード
-	/*!
-		@param force [in] 終了処理に失敗してもDLLを解放するかどうか
-	*/
-	int FreeLibrary(bool force = false);
-
-	//! 利用状態のチェック（operator版）
-	bool operator!(void) const { return IsAvailable(); }
-
-	//!	DLLのロード
-	/*!
-		詳細な戻り値を返さないこと以外はLoadLibrary()と同じ
-	*/
-	bool Init(LPCTSTR str = NULL){ return this->LoadLibrary(str) == 0; }
-
-	//! インスタンスハンドルの取得
-	HINSTANCE GetInstance() const { return m_hInstance; }
-
-protected:
-
 	/*!
 		アドレスとエントリ名の対応表。RegisterEntriesで使われる。
 		@author YAZAKI
 		@date 2002.01.26
 	*/
-	struct ImportTable 
-	{
-		void* proc;
-		const char* name;
+	struct ImportTable{
+		void*		proc;
+		const char*	name;
 	};
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                        生成と破棄                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//コンストラクタ・デストラクタ
+	CDllImp();
+	virtual ~CDllImp();
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         DLLロード                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//! DLLの関数を呼び出せるか状態どうか
+	virtual bool IsAvailable() const { return m_hInstance != NULL; }
+
+	//! DLLロードと初期処理
+	EDllResult InitDll(
+		LPCTSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
+	);
+
+	//! 終了処理とDLLアンロード
+	bool DeinitDll(
+		bool force = false	//!< [in] 終了処理に失敗してもDLLを解放するかどうか
+	);
+
+	//! インスタンスハンドルの取得
+	HINSTANCE GetInstance() const { return m_hInstance; }
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           属性                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	//! ロード済みDLLファイル名の取得。ロードされていない (またはロードに失敗した) 場合は NULL を返す。
+	LPCTSTR GetLoadedDllName() const;
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                  オーバーロード可能実装                     //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+protected:
 	//!	DLLの初期化
 	/*!
 		DLLのロードに成功した直後に呼び出される．エントリポイントの
 		確認などを行う．
 
-		@retval 0 正常終了
-		@retval other 異常終了．値の意味は自由に設定して良い．
+		@retval true 正常終了
+		@retval false 異常終了
 
-		@note 0以外の値を返した場合は、読み込んだDLLを解放する．
+		@note falseを返した場合は、読み込んだDLLを解放する．
 	*/
-	virtual int InitDll(void) = 0;
+	virtual bool InitDllImp() = 0;
 
 	//!	関数の初期化
 	/*!
 		DLLのアンロードを行う直前に呼び出される．メモリの解放などを
 		行う．
 
-		@retval 0 正常終了
-		@retval other 異常終了．値の意味は自由に設定して良い．
+		@retval true 正常終了
+		@retval false 異常終了
 
-		@note 0以外を返したときはDLLのUnloadは行われない．
+		@note falseを返したときはDLLのUnloadは行われない．
 		@par 注意
-		デストラクタからFreeLibrary及びDeinitDllが呼び出されたときは
-		ポリモーフィズムが行われないためにサブクラスのDeinitDllが呼び出されない。
-		そのため、サブクラスのデストラクタではDeinitDllを明示的に呼び出す必要がある。
+		デストラクタからDeinitDll及びDeinitDllImpが呼び出されたときは
+		ポリモーフィズムが行われないためにサブクラスのDeinitDllImpが呼び出されない。
+		そのため、サブクラスのデストラクタではDeinitDllImpを明示的に呼び出す必要がある。
 		
-		FreeLibraryがデストラクタ以外から呼び出される場合はDeinitDllは仮想関数として
+		DeinitDllがデストラクタ以外から呼び出される場合はDeinitDllImpは仮想関数として
 		サブクラスのものが呼び出され、デストラクタは当然呼び出されないので
-		DeinitDllそのものは必要である。
+		DeinitDllImpそのものは必要である。
 		
-		デストラクタからDeinitDllを呼ぶときは、初期化されているという保証がないので
+		デストラクタからDeinitDllImpを呼ぶときは、初期化されているという保証がないので
 		呼び出し前にIsAvailableによる確認を必ず行うこと。
 		
 		@date 2002.04.15 genta 注意書き追加
 	*/
-	virtual int DeinitDll(void);
+	virtual bool DeinitDllImp();
 
-	//! DLLファイル名の取得
-	/*!
-		@date 2001.07.05 genta 引数追加。パスの指定などに使える
-		@date 2007.06.25 genta GetDllNameInOrderを使用する場合は必須ではないので，
-			純粋仮想関数はやめてプレースホルダーを用意する．
-	*/
-	virtual LPCTSTR GetDllName( LPCTSTR str );
-	
 	//! DLLファイル名の取得(複数を順次)
 	/*!
 		DLLファイル名として複数の可能性があり，そのうちの一つでも
@@ -151,20 +186,25 @@ protected:
 		それはDLLのロードに成功する(成功)か，戻り値としてNULLを返す(失敗)
 		まで続けられる．
 
-		デフォルトの実装はcounterが0の場合だけGetDllName()を呼びだし，
-		それ以外ではNULLを返す．
-		
-		@param[in] str LoadLibrary()に渡された文字列がそのまま渡される
-		@param[in] index インデックス．(0～)
+		@param[in] nIndex インデックス．(0～)
 		
 		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
 	*/
-	virtual LPCTSTR GetDllNameInOrder(LPCTSTR str, int index);
+	virtual LPCTSTR GetDllNameImp(int nIndex) = 0;
 
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                         実装補助                            //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+protected:
 	bool RegisterEntries(const ImportTable table[]);
 
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                        メンバ変数                           //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	HINSTANCE m_hInstance;
+	HINSTANCE		m_hInstance;
+	std::tstring	m_strLoadedDllName;
 };
 
 #endif

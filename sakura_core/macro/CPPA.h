@@ -59,7 +59,7 @@ Pascalインタプリタコンポーネントです。
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CPPA : public CDllHandler {
+class SAKURA_CORE_API CPPA : public CDllImp {
 public:
 	CPPA();
 	virtual ~CPPA();
@@ -81,10 +81,9 @@ public:
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
 public:
-	virtual LPCTSTR GetDllName(LPCTSTR);
+	virtual LPCTSTR GetDllNameImp(int nIndex);
 protected:
-	virtual int InitDll(void);
-	virtual int DeinitDll(void);
+	virtual bool InitDllImp();
 
 private:
 	//	DLL Interfaceの受け皿

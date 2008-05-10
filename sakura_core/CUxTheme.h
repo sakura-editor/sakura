@@ -40,7 +40,7 @@
 
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
-class SAKURA_CORE_API CUxTheme : public CDllHandler {
+class SAKURA_CORE_API CUxTheme : public CDllImp {
 protected:
 	static CUxTheme m_cUxTheme;	// Singleton
 	CUxTheme();
@@ -52,9 +52,9 @@ public:
 protected:
 	bool m_bInitialized;
 
-	bool Init( TCHAR* str = NULL );
-	virtual int InitDll( void );
-	virtual LPCTSTR GetDllName( LPCTSTR );
+	bool InitThemeDll( TCHAR* str = NULL );
+	virtual bool InitDllImp();
+	virtual LPCTSTR GetDllNameImp(int nIndex);
 
 protected:
 	// UxTheme API Entry Points

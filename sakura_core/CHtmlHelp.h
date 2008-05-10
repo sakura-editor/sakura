@@ -41,7 +41,7 @@
 
 	HTMLヘルプコンポーネントの動的ロードをサポートするクラス
 */
-class SAKURA_CORE_API CHtmlHelp : public CDllHandler {
+class SAKURA_CORE_API CHtmlHelp : public CDllImp {
 public:
 	CHtmlHelp(){};
 	virtual ~CHtmlHelp();
@@ -51,8 +51,8 @@ public:
 	Proc_HtmlHelp HtmlHelp;
 
 protected:
-	virtual int InitDll(void);
-	virtual LPCTSTR GetDllName(LPCTSTR);
+	virtual bool InitDllImp();
+	virtual LPCTSTR GetDllNameImp(int nIndex);
 };
 
 #endif
