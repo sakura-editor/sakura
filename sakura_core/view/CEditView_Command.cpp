@@ -141,6 +141,7 @@ bool CEditView::TagJumpSub(
 	@param errmes 
 
 	@date 2003.06.28 Moca ヘッダ・ソースファイルオープン機能のコードを統合
+	@date 2008.04.09 ryoji 処理対象(file_ext)と開く対象(open_ext)の扱いが逆になっていたのを修正
 */
 BOOL CEditView::OPEN_ExtFromtoExt(
 	BOOL			bCheckOnly,		//!< [in] true: チェックのみ行ってファイルは開かない
@@ -158,8 +159,8 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 //To Here Feb. 7, 2001
 
 	/* 編集中ファイルの拡張子を調べる */
-	for( i = 0; i < open_extno; i++ ){
-		if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), open_ext[i] ) ){
+	for( i = 0; i < file_extno; i++ ){
+		if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), file_ext[i] ) ){
 			bwantopen_c = TRUE;
 			goto open_c;
 		}
@@ -181,10 +182,10 @@ open_c:;
 
 	_tsplitpath( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
 
-	for( i = 0; i < file_extno; i++ ){
-		_tmakepath( szPath, szDrive, szDir, szFname, file_ext[i] );
+	for( i = 0; i < open_extno; i++ ){
+		_tmakepath( szPath, szDrive, szDir, szFname, open_ext[i] );
 		if( !fexist(szPath) ){
-			if( i < file_extno - 1 )
+			if( i < open_extno - 1 )
 				continue;
 			if( bBeepWhenMiss ){
 				ErrorBeep();
