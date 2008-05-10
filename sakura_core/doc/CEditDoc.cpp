@@ -55,6 +55,7 @@
 #include "CNormalProcess.h"
 #include "CControlTray.h"
 #include "docplus/CModifyManager.h"
+#include "CCodeChecker.h"
 
 #define IDT_ROLLMOUSE	1
 
@@ -96,6 +97,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	//$$ CModifyManager インスタンスを生成
 	CModifyManager::Instance();
+
+	//$$ CCodeChecker インスタンスを生成
+	CCodeChecker::Instance();
 }
 
 
