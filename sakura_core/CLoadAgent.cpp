@@ -80,6 +80,9 @@ void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	/* 既存データのクリア */
 	pcDoc->InitDoc(); //$$
 
+	// パスを確定
+	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
+
 	//ファイルが存在する場合はファイルを読む
 	if(fexist(sLoadInfo.cFilePath)){
 		//CDocLineMgrの構成
@@ -92,9 +95,6 @@ void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		);
 		CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
-
-	// パスを確定
-	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
 
 	// 文書種別
 	pcDoc->m_cDocType.SetDocumentType( CShareData::getInstance()->GetDocumentType( sLoadInfo.cFilePath ), true );
