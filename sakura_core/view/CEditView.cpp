@@ -524,6 +524,14 @@ LRESULT CEditView::DispatchEvent(
 		}
 		return 0L;
 
+	// From Here 2008.03.24 Moca ATOK等の要求にこたえる
+	case WM_PASTE:
+		return GetCommander().HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
+
+	case WM_COPY:
+		return GetCommander().HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
+	// To Here 2008.03.24 Moca
+
 	case WM_KEYUP:
 		/* キーリピート状態 */
 		GetCommander().m_bPrevCommand = 0;
