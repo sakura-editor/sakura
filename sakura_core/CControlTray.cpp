@@ -18,6 +18,7 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -916,6 +917,7 @@ void CControlTray::OnNewEditor()
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2003.05.30 genta 外部プロセス起動時のカレントディレクトリ指定を可能に．
 	@date 2007.06.26 ryoji 新規編集ウィンドウは hWndParent と同じグループを指定して起動する
+	@date 2008.04.19 ryoji MYWM_FIRST_IDLE 待ちを追加
 */
 bool CControlTray::OpenNewEditor(
 	HINSTANCE			hInstance,			//!< [in] インスタンスID (実は未使用)
@@ -1029,6 +1031,7 @@ bool CControlTray::OpenNewEditor(
 		return false;
 	}
 
+	bool bRet = true;
 	if( sync ){
 		//	起動したプロセスが完全に立ち上がるまでちょっと待つ．
 		int nResult = WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
@@ -1038,22 +1041,48 @@ bool CControlTray::OpenNewEditor(
 				_T("\'%ls\'\nプロセスの起動に失敗しました。"),
 				szEXE
 			);
-			CloseHandle( p.hThread );
-			CloseHandle( p.hProcess );
-			return false;
+			bRet = false;
 		}
 	}
 	else{
 		// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つ	// 2007.02.03 ryoji
 		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 			WaitForInputIdle( p.hProcess, 3000 );
+			sync = true;
+		}
+	}
+
+	// MYWM_FIRST_IDLE が届くまでちょっとだけ余分に待つ	// 2008.04.19 ryoji
+	// Note. 起動先プロセスが初期化処理中に COM 関数（SHGetFileInfo API なども含む）を実行すると、
+	//       その時点で COM の同期機構が動いて WaitForInputIdle は終了してしまう可能性がある（らしい）。
+	if( sync && bRet )
+	{
+		int i;
+		for( i = 0; i < 200; i++ ){
+			MSG msg;
+			DWORD dwExitCode;
+			if( ::PeekMessage( &msg, 0, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
+				if( msg.message == WM_QUIT ){	// 指定範囲外でも WM_QUIT は取り出される
+					::PostQuitMessage( msg.wParam );
+					break;
+				}
+				// 監視対象プロセスからのメッセージなら抜ける
+				// そうでなければ破棄して次を取り出す
+				if( msg.wParam == p.dwProcessId ){
+					break;
+				}
+			}
+			if( ::GetExitCodeProcess( p.hProcess, &dwExitCode ) && dwExitCode != STILL_ACTIVE ){
+				break;	// 監視対象プロセスが終了した
+			}
+			::Sleep(10);
 		}
 	}
 
 	CloseHandle( p.hThread );
 	CloseHandle( p.hProcess );
 
-	return true;
+	return bRet;
 }
 
 
