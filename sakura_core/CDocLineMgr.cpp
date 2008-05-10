@@ -2459,20 +2459,20 @@ void CDocLineMgr::DeleteNode( CDocLine* pCDocLine )
 	if( 0 == m_nLines ){
 		/* ƒf[ƒ^‚ª‚È‚­‚È‚Á‚½ */
 		Init();
-		return;
-	}
-	if( NULL == pCDocLine->m_pPrev ){
-		m_pDocLineTop = pCDocLine->m_pNext;
 	}else{
-		pCDocLine->m_pPrev->m_pNext = pCDocLine->m_pNext;
-	}
-	if( NULL == pCDocLine->m_pNext ){
-		m_pDocLineBot = pCDocLine->m_pPrev;
-	}else{
-		pCDocLine->m_pNext->m_pPrev = pCDocLine->m_pPrev;
-	}
-	if( m_pCodePrevRefer == pCDocLine ){
-		m_pCodePrevRefer = pCDocLine->m_pNext;
+		if( NULL == pCDocLine->m_pPrev ){
+			m_pDocLineTop = pCDocLine->m_pNext;
+		}else{
+			pCDocLine->m_pPrev->m_pNext = pCDocLine->m_pNext;
+		}
+		if( NULL == pCDocLine->m_pNext ){
+			m_pDocLineBot = pCDocLine->m_pPrev;
+		}else{
+			pCDocLine->m_pNext->m_pPrev = pCDocLine->m_pPrev;
+		}
+		if( m_pCodePrevRefer == pCDocLine ){
+			m_pCodePrevRefer = pCDocLine->m_pNext;
+		}
 	}
 	delete pCDocLine;
 
