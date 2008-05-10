@@ -2661,6 +2661,7 @@ bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, u
 	@author genta
 	@date 2002.12.02 genta
 	@date 2007.05.20 ryoji 関数名変更（旧：GetExecutableDir）、汎用テキストマッピング化
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 void GetExedir( LPTSTR pDir, LPCTSTR szFile )
 {
@@ -2669,7 +2670,7 @@ void GetExedir( LPTSTR pDir, LPCTSTR szFile )
 	
 	TCHAR	szPath[_MAX_PATH];
 	// sakura.exe のパスを取得
-	::GetModuleFileName( ::GetModuleHandle(NULL), szPath, sizeof(szPath) );
+	::GetModuleFileName( NULL, szPath, sizeof(szPath) );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}

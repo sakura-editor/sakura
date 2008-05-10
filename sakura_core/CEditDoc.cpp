@@ -4060,6 +4060,7 @@ void CEditDoc::SetImeMode( int mode )
 
 	@date 2003.04.03 genta strncpy_exì±ì¸Ç…ÇÊÇÈforï∂ÇÃçÌå∏
 	@date 2005.09.15 FILE ì¡éÍï∂éöS, Mí«â¡
+	@date 2008.05.05 novice GetModuleHandle(NULL)Å®NULLÇ…ïœçX
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
 {
@@ -4312,7 +4313,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				char	szPath[_MAX_PATH + 1];
 
-				::GetModuleFileName( ::GetModuleHandle( NULL ), szPath, sizeof(szPath) );
+				::GetModuleFileName( NULL, szPath, sizeof(szPath) );
 				q = strncpy_ex( q, q_max - q, szPath, strlen(szPath) );
 				++p;
 			}

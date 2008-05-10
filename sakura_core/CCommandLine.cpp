@@ -158,6 +158,7 @@ int CCommandLine::CheckCommandLine(
 		オプションが""で囲まれた場合に対応する．
 		そうすると-で始まるファイル名を指定できなくなるので，
 		それ以降オプション解析をしないという "--" オプションを新設する．
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 	
 	@note
 	これが呼び出された時点では共有メモリの初期化が完了していないため，

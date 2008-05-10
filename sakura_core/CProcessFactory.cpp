@@ -159,6 +159,7 @@ bool CProcessFactory::IsExistControlProcess()
 	
 	@author genta
 	@date Aug. 28, 2001
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 bool CProcessFactory::StartControlProcess()
 {
@@ -182,7 +183,7 @@ bool CProcessFactory::StartControlProcess()
 	TCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 	TCHAR szDir[MAX_PATH + 1];	//	ディレクトリパス名
 
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, sizeof( szEXE ));
+	::GetModuleFileName( NULL, szEXE, sizeof( szEXE ));
 	::wsprintf( szCmdLineBuf, _T("%s -NOWIN"), szEXE );
 	::GetSystemDirectory( szDir, sizeof( szDir ));
 

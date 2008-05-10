@@ -1306,6 +1306,7 @@ void CEditApp::OnNewEditor(void)
 	@date 2003.05.30 genta 外部プロセス起動時のカレントディレクトリ指定を可能に．
 	@date 2007.06.26 ryoji 新規編集ウィンドウは hWndParent と同じグループを指定して起動する
 	@date 2008.04.19 ryoji MYWM_FIRST_IDLE 待ちを追加
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* pszPath, int nCharCode, BOOL bReadOnly, bool sync, const char* szCurDir )
 {
@@ -1325,7 +1326,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 		return false;
 	}
 
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, sizeof( szEXE ) );
+	::GetModuleFileName( NULL, szEXE, sizeof( szEXE ) );
 	nPos += wsprintf( szCmdLineBuf + nPos, "\"%s\"", szEXE );
 
 	//	ファイル名が指定されている場合

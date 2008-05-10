@@ -63,6 +63,7 @@ CShareData::CShareData()
 
 	@author ryoji
 	@date 2007.09.04 ryoji êVãKçÏê¨
+	@date 2008.05.05 novice GetModuleHandle(NULL)Å®NULLÇ…ïœçX
 */
 void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile )
 {
@@ -73,7 +74,7 @@ void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFi
 	TCHAR szExt[_MAX_EXT];
 
 	::GetModuleFileName(
-		::GetModuleHandle( NULL ),
+		NULL,
 		szPath, sizeof(szPath)
 	);
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );

@@ -4250,6 +4250,7 @@ static const char*	ppszKeyWordsPERL[] = {
 };
 
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
+// 2008/05/05 novice 重複文字列削除
 static const char*	ppszKeyWordsPERL2[] = {
 	"$ARGV",
 	"$_",
@@ -4333,7 +4334,6 @@ static const char*	ppszKeyWordsPERL2[] = {
 	"$EGID",
 	"$)",
 	"$PROGRAM_NAME",
-	"$0",
 	"$[",
 	"$PERL_VERSION",
 	"$]",
@@ -4351,7 +4351,6 @@ static const char*	ppszKeyWordsPERL2[] = {
 	"$^W",
 	"$EXECUTABLE_NAME",
 	"$^X",
-	"$ARGV",
 	"$ENV",
 	"$SIG"
 };

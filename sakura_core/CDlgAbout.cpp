@@ -85,6 +85,9 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, NULL );
 }
 
+/*! 初期化処理
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+*/
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	m_hWnd = hwndDlg;
@@ -96,7 +99,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	SYSTEMTIME		systimeL;
 
 	/* この実行ファイルの情報 */
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szFile, sizeof( szFile ) );
+	::GetModuleFileName( NULL, szFile, sizeof( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
 	//	2003.10.04 Moca ハンドルのクローズ忘れ
