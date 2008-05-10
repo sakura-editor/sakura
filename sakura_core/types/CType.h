@@ -200,6 +200,16 @@ GEN_CTYPE(CType_Other1)
 GEN_CTYPE(CType_Other2)
 GEN_CTYPE(CType_Other3)
 GEN_CTYPE(CType_Other4)
+GEN_CTYPE(CType_Other5)
+GEN_CTYPE(CType_Other6)
+GEN_CTYPE(CType_Other7)
+GEN_CTYPE(CType_Other8)
+GEN_CTYPE(CType_Other9)
+GEN_CTYPE(CType_Other10)
+GEN_CTYPE(CType_Other11)
+GEN_CTYPE(CType_Other12)
+GEN_CTYPE(CType_Other13)
+GEN_CTYPE(CType_Other14)
 
 
 

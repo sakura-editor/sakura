@@ -61,6 +61,16 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		new CType_Other2(),	//İ’è18
 		new CType_Other3(),	//İ’è19
 		new CType_Other4(),	//İ’è20
+		new CType_Other5(),	//İ’è21
+		new CType_Other6(),	//İ’è22
+		new CType_Other7(),	//İ’è23
+		new CType_Other8(),	//İ’è24
+		new CType_Other9(),	//İ’è25
+		new CType_Other10(),	//İ’è26
+		new CType_Other11(),	//İ’è27
+		new CType_Other12(),	//İ’è28
+		new CType_Other13(),	//İ’è29
+		new CType_Other14(),	//İ’è30
 	};
 	for(int i=0;i<_countof(table);i++){
 		table[i]->InitTypeConfig(i);

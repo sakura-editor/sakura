@@ -249,11 +249,14 @@ struct ARRHEAD {
 	Version 85:
 	キーワードセット最大値増加 2007.12.01 genta
 
+	Version 86:
+	タイプ別設定最大値増加 2007.12.13 ryoji
+
 	Version 1000:
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1015;
+const unsigned int uShareDataVersion = 1016;
 
 /*
 ||	Singleton風
