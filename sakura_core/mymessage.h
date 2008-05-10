@@ -11,6 +11,7 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2003, MIK
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -86,6 +87,9 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 
 /*! ポップアップウィンドウの表示切替指示 */
 #define MYWM_SHOWOWNEDPOPUPS (WM_APP+216)	//@@@ 2007.10.22 ryoji
+
+/*! プロセスの初回アイドリング通知 */
+#define MYWM_FIRST_IDLE (WM_APP+217)	//@@@ 2008.04.19 ryoji
 
 /* 再変換対応 */ // 20020331 aroka
 #ifndef WM_IME_REQUEST

@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, Moca
 	Copyright (C) 2006, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -56,6 +57,7 @@ class CPrintPreview;// 2002/2/10 aroka
 #define IDT_EDIT		455  // 20060128 aroka
 #define IDT_TOOLBAR		456
 #define IDT_CAPTION		457
+#define IDT_FIRST_IDLE	458
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
