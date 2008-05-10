@@ -64,10 +64,6 @@ CPPA::CPPA()
 
 CPPA::~CPPA()
 {
-	//	Apr. 15, 2002 genta cleanup処理追加
-	if( IsAvailable()){
-		DeinitDll();
-	}
 }
 
 
@@ -81,7 +77,7 @@ void CPPA::Execute(CEditView* pcEditView )
 	m_fnExecute();
 }
 
-LPCTSTR CPPA::GetDllName( LPCTSTR str )
+LPCTSTR CPPA::GetDllNameImp(int nIndex)
 {
 	return _T("PPA.DLL");
 }
@@ -94,7 +90,7 @@ LPCTSTR CPPA::GetDllName( LPCTSTR str )
 	@retval 0 成功
 	@retval 1 アドレス取得に失敗
 */
-int CPPA::InitDll()
+bool CPPA::InitDllImp()
 {
 	/* PPA.DLLが持っている関数を準備 */
 
@@ -149,9 +145,9 @@ int CPPA::InitDll()
 	};
 
 	//	Apr. 15, 2002 genta
-	//	CDllHandlerの共通関数化した
+	//	CDllImpの共通関数化した
 	if( ! RegisterEntries(table) )
-		return 1;
+		return false;
 
 	SetIntFunc(CPPA::stdIntFunc);	// 2003.02.24 Moca
 	SetStrFunc(CPPA::stdStrFunc);
@@ -188,7 +184,7 @@ int CPPA::InitDll()
 		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
 		SetDefProc( buf );
 	}
-	return 0; 
+	return true; 
 }
 
 /*! PPAに関数を登録するための文字列を作成する
@@ -272,15 +268,6 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 	return szBuffer;
 }
 
-/*!	
-*/
-int CPPA::DeinitDll( void )
-{
-	// Jun. 01, 2003 Moca m_pszDataを使わなくなったため，
-	//	CSMacroMgr::m_MacroFuncInfoArr[i].m_pszDataの後始末を削除
-
-	return 0;
-}
 
 
 /*! ユーザー定義文字列型オブジェクト

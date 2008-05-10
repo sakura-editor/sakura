@@ -197,7 +197,7 @@ void CPropCommon::SetRegexpVersion( HWND hwndDlg )
 	
 	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, sizeof( regexp_dll ));
 	CBregexp breg;
-	if( ! breg.Init( regexp_dll ) ){
+	if( DLL_SUCCESS != breg.InitDll( regexp_dll ) ){
 		::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, _T("Р≥ЛKХ\МїВЌОgЧpВ≈ВЂВ№ВєВс") );
 		return;
 	}

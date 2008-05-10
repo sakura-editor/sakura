@@ -34,7 +34,7 @@ CMigemo::CMigemo() {
 }
 
 
-int CMigemo::InitDll(void)
+bool CMigemo::InitDllImp()
 {
 	//	staticにしてはいけないらしい
 	
@@ -53,13 +53,13 @@ int CMigemo::InitDll(void)
 	};
 	
 	if( ! RegisterEntries(table) ){
-			return 1;
+		return false;
 	}
 
 	if( ! migemo_open(NULL) )
-		return 1;
+		return false;
 	
-	return 0;
+	return true;
 }
 
 int CMigemo::DeInitDll(void)
@@ -68,23 +68,29 @@ int CMigemo::DeInitDll(void)
 	return 0;
 }
 
-LPCTSTR CMigemo::GetDllName(LPCTSTR)
+LPCTSTR CMigemo::GetDllNameImp(int nIndex)
 {
-	TCHAR* szDll;
-	static TCHAR szDllName[_MAX_PATH];
-	szDll = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDll;
+	if(nIndex==0){
+		TCHAR* szDll;
+		static TCHAR szDllName[_MAX_PATH];
+		szDll = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDll;
 
-	if(_tcslen(szDll)==0){
-		GetInidir( szDllName, _T("migemo.dll") );
-		return fexist(szDllName) ? szDllName : _T("migemo.dll");
-	}else{
-		if(_IS_REL_PATH(szDll)){
-			GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-			szDll = szDllName;
+		if(_tcslen(szDll)==0){
+			GetInidir( szDllName, _T("migemo.dll") );
+			return fexist(szDllName) ? szDllName : _T("migemo.dll");
 		}
-		return szDll;
+		else{
+			if(_IS_REL_PATH(szDll)){
+				GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
+				szDll = szDllName;
+			}
+			return szDll;
+		}
+		//return "migemo.dll";
 	}
-	//return "migemo.dll";
+	else{
+		return NULL;
+	}
 }
 
 long CMigemo::migemo_open(char* dict)

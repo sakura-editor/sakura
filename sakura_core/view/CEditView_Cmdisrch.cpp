@@ -162,7 +162,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		
 		if(m_pcmigemo==NULL){
 			m_pcmigemo = CMigemo::getInstance();
-			m_pcmigemo->Init();
+			m_pcmigemo->InitDll();
 		}
 		switch( mode ) {
 			case 1: // 通常インクリメンタルサーチ
@@ -189,7 +189,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				//migemo dll チェック
 				//	Jan. 10, 2005 genta 設定変更で使えるようになっている
 				//	可能性があるので，使用可能でなければ一応初期化を試みる
-				if ( ! m_pcmigemo->IsAvailable() && ! m_pcmigemo->Init() ){
+				if ( !m_pcmigemo->IsAvailable() && DLL_SUCCESS != m_pcmigemo->InitDll() ){
 					WarningBeep();
 					SendStatusMessage(_T("MIGEMO.DLLが使用できません。"));
 					return;

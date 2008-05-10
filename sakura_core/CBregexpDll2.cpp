@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "CBregexpDll2.h"
 
-//	2007.07.22 genta : DLL判別用
-static const TCHAR P_BREG[] = _T("BREGEXP.DLL");
-static const TCHAR P_ONIG[] = _T("bregonig.dll");
-
-
 CBregexpDll2::CBregexpDll2()
 {
 }
@@ -21,20 +16,9 @@ CBregexpDll2::~CBregexpDll2()
 		@li 指定有りの場合はそれのみを返す
 		@li 指定無し(NULLまたは空文字列)の場合はBREGONIG, BREGEXPの順で試みる
 */
-LPCTSTR CBregexpDll2::GetDllNameInOrder( LPCTSTR str, int index )
+LPCTSTR CBregexpDll2::GetDllNameImp( int index )
 {
-
-	switch( index ){
-	case 0:
-		//	NULLはリストの終わりを意味するので，
-		//	str == NULLの場合にそのまま返してはいけない．
-		return str == NULL || str[0] == _T('\0') ? P_ONIG : str ;
-
-// 2007.11.04 kobake 文字列管理がUNICODEになり、BREGEXP は使えなくなったので、コメントアウト。
-//	case 1:
-//		return str == NULL || str[0] == _T('\0') ? P_BREG : NULL;
-	}
-	return NULL;
+	return _T("bregonig.dll");
 }
 
 
@@ -46,7 +30,7 @@ LPCTSTR CBregexpDll2::GetDllNameInOrder( LPCTSTR str, int index )
 	@retval 0 成功
 	@retval 1 アドレス取得に失敗
 */
-int CBregexpDll2::InitDll(void)
+bool CBregexpDll2::InitDllImp()
 {
 	//DLL内関数名リスト
 	const ImportTable table[] = {
@@ -62,16 +46,8 @@ int CBregexpDll2::InitDll(void)
 	};
 	
 	if( ! RegisterEntries( table )){
-		return 1;
+		return false;
 	}
 	
-	return 0;
-}
-
-/*!
-	BREGEXP_W構造体の解放
-*/
-int CBregexpDll2::DeinitDll( void )
-{
-	return 0;
+	return true;
 }

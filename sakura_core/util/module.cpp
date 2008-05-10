@@ -19,7 +19,7 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
 	   tested to ensure that it is a fully qualified path before it is used. */
-	hinstDll = LoadLibrary(lpszDllName);
+	hinstDll = ::LoadLibrary(lpszDllName);
 
 	if(hinstDll)
 	{

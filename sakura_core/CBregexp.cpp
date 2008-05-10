@@ -58,6 +58,7 @@ CBregexp::CBregexp()
 : m_pRegExp( NULL )
 , m_ePatType( PAT_NORMAL )	//	Jul, 25, 2002 genta
 {
+	m_szMsg[0] = L'\0';
 }
 
 CBregexp::~CBregexp()
@@ -299,7 +300,7 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
 	wchar_t *szNPattern = MakePattern( szPattern0, szPattern1, nOption );
-	m_szMsg[0] = '\0';		//!< エラー解除
+	m_szMsg[0] = L'\0';		//!< エラー解除
 	if (szPattern1 == NULL) {
 		// 検索実行
 		BMatch( szNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
@@ -476,15 +477,28 @@ bool InitRegexp(
 	}
 	//	To Here 2007.08.12 genta
 
-	if( !rRegexp.Init(RegexpDll) ){
-		if( bShowMessage ){
-			WarningBeep();
-			::MessageBox( hWnd,
-				_T("BREGONIG.DLLが見つかりません。\r\n")
-				_T("正規表現を利用するにはBREGONIG.DLLが必要です。\r\n")
-				_T("入手方法はヘルプを参照してください。"),
-				_T("情報"), MB_OK | MB_ICONEXCLAMATION );
+	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);
+	if( DLL_SUCCESS != eDllResult && bShowMessage ){
+		LPCTSTR pszMsg = _T("");
+		if(eDllResult==DLL_LOADFAILURE){
+			pszMsg =
+				_T("BREGONIG.DLL のロードに失敗しました。\r\n")
+				_T("正規表現を利用するには UNICODE 版の BREGONIG.DLL が必要です。\r\n")
+				_T("入手方法はヘルプを参照してください。");
 		}
+		else if(eDllResult==DLL_INITFAILURE){
+			pszMsg =
+				_T("BREGONIG.DLL の利用に失敗しました。\r\n")
+				_T("正規表現を利用するには UNICODE 版の BREGONIG.DLL が必要です。\r\n")
+				_T("入手方法はヘルプを参照してください。");
+		}
+		else{
+			pszMsg =
+				_T("BREGONIG.DLL のロードで予期せぬエラーが発生しました。");
+			assert(0);
+		}
+		WarningBeep();
+		::MessageBox( hWnd, pszMsg, _T("情報"), MB_OK | MB_ICONEXCLAMATION );
 		return false;
 	}
 	return true;

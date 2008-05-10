@@ -31,72 +31,151 @@
 #include "stdafx.h"
 #include "CDllHandler.h"
 
-CDllHandler::CDllHandler()
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        生成と破棄                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+CDllImp::CDllImp()
 	: m_hInstance( NULL )
-{}
+{
+}
 
 /*!
 	オブジェクト消滅前にDLLが読み込まれた状態であればDLLの解放を行う．
 */
-CDllHandler::~CDllHandler()
+CDllImp::~CDllImp()
 {
 	if( IsAvailable() ){
-		FreeLibrary(true);
+		DeinitDll(true);
 	}
 }
 
-int CDllHandler::LoadLibrary(LPCTSTR str)
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         DLLロード                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+EDllResult CDllImp::InitDll(LPCTSTR pszSpecifiedDllName)
 {
 	if( IsAvailable() ){
 		//	既に利用可能で有れば何もしない．
-		return 0;
+		return DLL_SUCCESS;
 	}
 
-	for( int i = 0; m_hInstance == NULL ; i++ ){
-		LPCTSTR name = GetDllNameInOrder(str, i);
-		if( name == NULL ){
-			if( i == 0 ){
-				//	1周目ならファイル名異常
-				return -1;
+	//名前候補を順次検証し、有効なものを採用する
+	LPCTSTR pszLastName  = NULL;
+	bool bInitImpFailure = false;
+	for(int i = -1; ;i++)
+	{
+		//名前候補
+		LPCTSTR pszName = NULL;
+		if(i==-1){ //まずは引数で指定された名前から。
+			pszName = pszSpecifiedDllName;
+		}
+		else{ //クラス定義のDLL名
+			pszName = GetDllNameImp(i);
+			//GetDllNameImpから取得した名前が無効ならループを抜ける
+			if(!pszName || !pszName[0]){
+				break;
 			}
-			else {
-				//	2周目以降ならロード失敗
-				return -2;
+			//GetDllNameImpから取得した名前が前回候補と同じならループを抜ける
+			if(pszLastName && _tcsicmp(pszLastName,pszName)==0){
+				break;
 			}
 		}
+		pszLastName = pszName;
 
-		m_hInstance = ::LoadLibrary( name );
+		//名前が無効の場合は、次の名前候補を試す。
+		if(!pszName || !pszName[0])continue;
+
+		//DLLロード。ロードできなかったら次の名前候補を試す。
+		m_hInstance = ::LoadLibrary(pszName);
+		if(!m_hInstance)continue;
+
+		//初期処理
+		bool ret = InitDllImp();
+
+		//初期処理に失敗した場合はDLLを解放し、次の名前候補を試す。
+		if(!ret){
+			bInitImpFailure = true;
+			::FreeLibrary( m_hInstance );
+			m_hInstance = NULL;
+			continue;
+		}
+
+		//初期処理に成功した場合は、DLL名を保存し、ループを抜ける
+		if(ret){
+			m_strLoadedDllName = pszName;
+			break;
+		}
 	}
 
-	int ret = InitDll();
-	if( ret != 0 ){
-		::FreeLibrary( m_hInstance );
-		m_hInstance = NULL;
+	//ロードと初期処理に成功なら
+	if(IsAvailable()){
+		return DLL_SUCCESS;
 	}
-	return ret;
+	//初期処理に失敗したことがあったら
+	else if(bInitImpFailure){
+		return DLL_INITFAILURE; //DLLロードはできたけど、その初期処理に失敗
+	}
+	//それ以外
+	else{
+		return DLL_LOADFAILURE; //DLLロード自体に失敗
+	}
 }
 
-int CDllHandler::FreeLibrary(bool force)
+bool CDllImp::DeinitDll(bool force)
 {
 	if( m_hInstance == NULL || (!IsAvailable()) ){
 		//	DLLが読み込まれていなければ何もしない
-		return 0;
+		return true;
 	}
 
-	int ret = DeinitDll();
-	if( ret == 0 || force ){
+	//終了処理
+	bool ret = DeinitDllImp();
+	
+	//DLL解放
+	if( ret || force ){
+		//DLL名を解放
+		m_strLoadedDllName = _T("");
+
+		//DLL解放
 		::FreeLibrary( m_hInstance );
 		m_hInstance = NULL;
+
+		return true;
 	}
-	return ret;
+	else{
+		return false;
+	}
 }
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           属性                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+LPCTSTR CDllImp::GetLoadedDllName() const
+{
+	return m_strLoadedDllName.c_str();
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                  オーバーロード可能実装                     //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 /*!
 	実装を省略できるようにするため、空の関数を用意しておく
 */
-int CDllHandler::DeinitDll(void)
+bool CDllImp::DeinitDllImp()
 {
-	return 0;
+	return true;
 }
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         実装補助                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
 	テーブルで与えられたエントリポインタアドレスを入れる場所に
@@ -106,10 +185,11 @@ int CDllHandler::DeinitDll(void)
 	@retval true 全てのアドレスが設定された。
 	@retval false アドレスの取得に失敗した関数があった。
 */
-bool CDllHandler::RegisterEntries(const ImportTable table[])
+bool CDllImp::RegisterEntries(const ImportTable table[])
 {
-	int i;
-	for (i=0; table[i].proc!=NULL; i++) 
+	if(!IsAvailable())return false;
+
+	for(int i = 0; table[i].proc!=NULL; i++)
 	{
 		FARPROC proc;
 		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == NULL) 
@@ -121,15 +201,4 @@ bool CDllHandler::RegisterEntries(const ImportTable table[])
 	return true;
 }
 
-LPCTSTR CDllHandler::GetDllName(LPCTSTR)
-{
-	return NULL;
-}
 
-LPCTSTR CDllHandler::GetDllNameInOrder(LPCTSTR str, int index)
-{
-	if( index == 0 ){
-		return GetDllName(str);
-	}
-	return NULL;
-}

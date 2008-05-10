@@ -211,7 +211,7 @@ BOOL CEditView::Create(
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
-	m_CurRegexp.Init(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );
+	m_CurRegexp.InitDll(GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );
 
 	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
@@ -233,7 +233,7 @@ BOOL CEditView::Create(
 		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
 		m_uWM_MSIME_RECONVERTREQUEST = ::RegisterWindowMessage(_T("MSIMEReconvertRequest"));
 		
-		m_hAtokModule = LoadLibrary(_T("ATOK10WC.DLL"));
+		m_hAtokModule = ::LoadLibrary(_T("ATOK10WC.DLL"));
 		m_AT_ImmSetReconvertString = NULL;
 		if ( NULL != m_hAtokModule ) {
 			m_AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");

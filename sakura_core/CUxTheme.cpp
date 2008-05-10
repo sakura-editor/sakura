@@ -47,30 +47,30 @@ CUxTheme::~CUxTheme()
 
 /*! DLL のロード
 
-	一度しか LoadLibrary() 実行しないこと以外は CDllHandler::Init() と同じ
+	一度しか LoadLibrary() 実行しないこと以外は CDllImp::Init() と同じ
 	（UxTheme 未対応 OS での LoadLibrary() 失敗の繰返しを防ぐ）
 
 	@author ryoji
 	@date 2007.04.01 ryoji 新規
 */
-bool CUxTheme::Init( TCHAR* str )
+bool CUxTheme::InitThemeDll( TCHAR* str )
 {
 	if( m_bInitialized )
 		return IsAvailable();
 
 	m_bInitialized = true;
-	return CDllHandler::Init( str );
+	return DLL_SUCCESS == CDllImp::InitDll( str );
 }
 
 /*!
 	UxTheme のファイル名を渡す
 */
-LPCTSTR CUxTheme::GetDllName( LPCTSTR )
+LPCTSTR CUxTheme::GetDllNameImp(int nIndex)
 {
 	return _T("UxTheme.dll");
 }
 
-int CUxTheme::InitDll(void)
+bool CUxTheme::InitDllImp()
 {
 	const ImportTable table[] = {
 		{ &m_pfnIsThemeActive,		"IsThemeActive" },
@@ -79,16 +79,16 @@ int CUxTheme::InitDll(void)
 	};
 
 	if( !RegisterEntries( table ) ){
-		return 1;
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
 /*! IsThemeActive API Wrapper */
 BOOL CUxTheme::IsThemeActive( VOID )
 {
-	if( !Init() )
+	if( !InitThemeDll() )
 		return FALSE;
 	return m_pfnIsThemeActive();
 }
@@ -96,7 +96,7 @@ BOOL CUxTheme::IsThemeActive( VOID )
 /*! SetWindowTheme API Wrapper */
 HRESULT CUxTheme::SetWindowTheme( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList )
 {
-	if( !Init() )
+	if( !InitThemeDll() )
 		return S_FALSE;
 	return m_pfnSetWindowTheme( hwnd, pszSubAppName, pszSubIdList );
 }

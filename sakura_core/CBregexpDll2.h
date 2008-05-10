@@ -18,16 +18,15 @@ typedef struct bregexp {
 
 //!BREGONIG.DLLをラップしたもの。
 //2007.09.13 kobake 作成
-class CBregexpDll2 : public CDllHandler{
+class CBregexpDll2 : public CDllImp{
 public:
 	CBregexpDll2();
 	virtual ~CBregexpDll2();
 
 protected:
-	// CDllHandlerインタフェース
-	virtual LPCTSTR GetDllNameInOrder(LPCTSTR, int); // Jul. 5, 2001 genta インターフェース変更に伴う引数追加
-	virtual int InitDll(void);
-	virtual int DeinitDll(void);
+	// CDllImpインタフェース
+	virtual LPCTSTR GetDllNameImp(int nIndex); // Jul. 5, 2001 genta インターフェース変更に伴う引数追加
+	virtual bool InitDllImp();
 
 protected:
 	// DLL関数の型

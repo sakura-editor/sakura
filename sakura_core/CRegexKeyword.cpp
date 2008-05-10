@@ -45,7 +45,7 @@
 */
 CRegexKeyword::CRegexKeyword(LPCTSTR regexp_dll )
 {
-	Init( regexp_dll );	// 2007.08.12 genta ˆø”’Ç‰Á
+	InitDll( regexp_dll );	// 2007.08.12 genta ˆø”’Ç‰Á
 	MYDBGMSG("CRegexKeyword")
 
 	m_pTypes    = NULL;
