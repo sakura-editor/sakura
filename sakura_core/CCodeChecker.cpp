@@ -31,17 +31,19 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//指定文字コードで安全に保存できるかどうか判定
 	EConvertResult nTmpResult = _CheckSavingCharcode(
-		pcDoc->m_cDocLineMgr, pcDoc->m_cDocFile.m_sFileInfo.eCharCode
+		pcDoc->m_cDocLineMgr, pSaveInfo->eCharCode
 	);
 
 	//ユーザ問い合わせ
-	if(nTmpResult!=RESULT_COMPLETE){
+	if(nTmpResult==RESULT_LOSESOME){
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::Instance()->GetHwnd(),
 			MB_YESNO | MB_ICONWARNING,
 			GSTR_APPNAME,
-			_T("文字コード変換により一部の文字情報が失われます。\n")
-			_T("保存処理を続行しますか？")
+			_T("文字エンコード %ts で保存しようとしていますが、\r\n")
+			_T("文字コード変換により一部の文字情報が失われます。\r\n")
+			_T("保存処理を続行しますか？"),
+			CCodeTypeName(pSaveInfo->eCharCode).Normal()
 		);
 		switch(nDlgResult){
 		case IDYES:		break; //続行

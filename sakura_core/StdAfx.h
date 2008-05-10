@@ -96,8 +96,6 @@
 #include "CSearchAgent.h"
 #include "doc/CDocReader.h"
 #include "CAppMode.h"
-HWND G_GetProgressBar();
-HINSTANCE G_AppInstance();
 #pragma warning( disable : 4355 ) //warning C4355: 'this' : ベース メンバ初期化リストで使用されました。
 
 //{{AFX_INSERT_LOCATION}}

@@ -287,6 +287,10 @@ SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index );
 
 
 
+HWND G_GetProgressBar();
+HINSTANCE G_AppInstance();
+
+
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */
 
