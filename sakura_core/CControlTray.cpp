@@ -918,6 +918,7 @@ void CControlTray::OnNewEditor()
 	@date 2003.05.30 genta 外部プロセス起動時のカレントディレクトリ指定を可能に．
 	@date 2007.06.26 ryoji 新規編集ウィンドウは hWndParent と同じグループを指定して起動する
 	@date 2008.04.19 ryoji MYWM_FIRST_IDLE 待ちを追加
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 bool CControlTray::OpenNewEditor(
 	HINSTANCE			hInstance,			//!< [in] インスタンスID (実は未使用)
@@ -944,7 +945,7 @@ bool CControlTray::OpenNewEditor(
 
 	//アプリケーションパス
 	TCHAR szEXE[MAX_PATH + 1];
-	::GetModuleFileName( ::GetModuleHandle( NULL ), szEXE, _countof( szEXE ) );
+	::GetModuleFileName( NULL, szEXE, _countof( szEXE ) );
 	cCmdLineBuf.AppendF( _T("\"%ts\""), szEXE );
 
 	// ファイル名

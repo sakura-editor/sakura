@@ -394,6 +394,7 @@ int g_nKeywordsPERL = _countof(g_ppszKeywordsPERL);
 
 
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
+// 2008/05/05 novice 重複文字列削除
 const wchar_t* g_ppszKeywordsPERL2[] = {
 	L"$ARGV",
 	L"$_",
@@ -477,7 +478,6 @@ const wchar_t* g_ppszKeywordsPERL2[] = {
 	L"$EGID",
 	L"$)",
 	L"$PROGRAM_NAME",
-	L"$0",
 	L"$[",
 	L"$PERL_VERSION",
 	L"$]",
@@ -495,7 +495,6 @@ const wchar_t* g_ppszKeywordsPERL2[] = {
 	L"$^W",
 	L"$EXECUTABLE_NAME",
 	L"$^X",
-	L"$ARGV",
 	L"$ENV",
 	L"$SIG"
 };
