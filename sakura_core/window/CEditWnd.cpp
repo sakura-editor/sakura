@@ -3010,6 +3010,9 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 }
 
 
+/*!	WM_MOUSEMOVEˆ—
+	@date 2008.05.05 novice ƒƒ‚ƒŠƒŠ[ƒNC³
+*/
 LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 {
 	//by ‹S
@@ -3093,7 +3096,8 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 #endif
 							//ˆÚ“®‚Í‹ÖŽ~
 							DWORD R;
-							DoDragDrop(DataObject, new CDropSource(TRUE), DROPEFFECT_COPY | DROPEFFECT_LINK, &R);
+							CDropSource drop(TRUE);
+							DoDragDrop(DataObject, &drop, DROPEFFECT_COPY | DROPEFFECT_LINK, &R);
 							DataObject->Release();
 						}
 						Folder->Release();

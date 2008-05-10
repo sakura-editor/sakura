@@ -41,6 +41,7 @@ CEditWnd* CSakuraEnvironment::GetMainWindow()
 	@date 2003.04.03 genta wcsncpy_ex“±“ü‚É‚æ‚éfor•¶‚ÌíŒ¸
 	@date 2005.09.15 FILE “Áê•¶šS, M’Ç‰Á
 	@date 2007.09.21 kobake “Áê•¶šA(ƒAƒvƒŠ–¼)‚ğ’Ç‰Á
+	@date 2008.05.05 novice GetModuleHandle(NULL)¨NULL‚É•ÏX
 */
 void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen)
 {
@@ -299,7 +300,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			{
 				SFilePath	szPath;
 
-				::GetModuleFileName( ::GetModuleHandle( NULL ), szPath, _countof2(szPath) );
+				::GetModuleFileName( NULL, szPath, _countof2(szPath) );
 				q = wcs_pushT( q, q_max - q, szPath );
 				++p;
 			}

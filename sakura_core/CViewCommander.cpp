@@ -5426,6 +5426,7 @@ next_line:
 	@author	MIK
 	@date	2003.04.13	新規作成
 	@date	2003.05.12	ダイアログ表示でフォルダ等を細かく指定できるようにした。
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 bool CViewCommander::Command_TagsMake( void )
 {
@@ -5441,7 +5442,7 @@ bool CViewCommander::Command_TagsMake( void )
 	{
 		TCHAR	szTmp[1024];
 		::GetModuleFileName(
-			::GetModuleHandle( NULL ),
+			NULL,
 			szTmp, _countof( szTmp )
 		);
 		/* ファイルのフルパスを、フォルダとファイル名に分割 */

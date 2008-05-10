@@ -531,6 +531,9 @@ UINT_PTR CALLBACK OFNHookProc(
 
 
 
+/*! コンストラクタ
+	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+*/
 CDlgOpenFile::CDlgOpenFile()
 {
 	/* メンバの初期化 */
@@ -555,7 +558,7 @@ CDlgOpenFile::CDlgOpenFile()
 	TCHAR	szDrive[_MAX_DRIVE];
 	TCHAR	szDir[_MAX_DIR];
 	lPathLen = ::GetModuleFileName(
-		::GetModuleHandle( NULL ),
+		NULL,
 		szFile, _countof( szFile )
 	);
 	_tsplitpath( szFile, szDrive, szDir, NULL, NULL );
