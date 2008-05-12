@@ -11,15 +11,18 @@ EConvertResult CEuc::EUCToUnicode(CMemory* pMem)
 {
 	//$$ SJISを介しているので無駄にデータを失うかも？
 	EUCToSJIS(pMem);
-	CShiftJis::SJISToUnicode(pMem);
-
-	return RESULT_COMPLETE;
+	return CShiftJis::SJISToUnicode(pMem);		//	エラーを返すようにする。	2008/5/12 Uchi
 }
 
 EConvertResult CEuc::UnicodeToEUC(CMemory* pMem)
 {
+	EConvertResult	res;
+
 	//$$ SJISを介しているので無駄にデータを失うかも？
-	CShiftJis::UnicodeToSJIS(pMem);
+	res = CShiftJis::UnicodeToSJIS(pMem);
+	if (res != RESULT_COMPLETE) {
+		return res;				//	エラーがあったならばエラーを返すようにする。	2008/5/12 Uchi
+	}
 	SJISToEUC(pMem);
 
 	return RESULT_COMPLETE;

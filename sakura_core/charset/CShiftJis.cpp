@@ -57,7 +57,7 @@ EConvertResult CShiftJis::SJISToUnicode( CMemory* pMem )
 
 	//変換先バッファサイズ
 	int nDstLen = MultiByteToWideChar(
-		CP_ACP,
+		CP_SJIS,				// 2008/5/12 Uchi
 		0,
 		pSrc,
 		nSrcLen,
@@ -70,7 +70,7 @@ EConvertResult CShiftJis::SJISToUnicode( CMemory* pMem )
 
 	//変換
 	nDstLen = MultiByteToWideChar(
-		CP_ACP,
+		CP_SJIS,				// 2008/5/12 Uchi
 		0,
 		pSrc,
 		nSrcLen,
@@ -99,7 +99,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( CMemory* pMem )
 
 	//変換先バッファサイズ
 	int nDstLen = WideCharToMultiByte(
-		CP_ACP,
+		CP_SJIS,				// 2008/5/12 Uchi
 		0,
 		pSrc,
 		nSrcLen,
@@ -115,7 +115,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( CMemory* pMem )
 	//変換
 	BOOL bLost = FALSE;
 	nDstLen = WideCharToMultiByte(
-		CP_ACP,
+		CP_SJIS,				// 2008/5/12 Uchi
 		0,
 		pSrc,
 		nSrcLen,
