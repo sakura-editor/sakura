@@ -64,15 +64,18 @@ EConvertResult CJis::JISToUnicode(CMemory* pMem, bool base64decode)
 {
 	//$$ SJISを介しているため、無駄にデータが失われるかもしれません
 	JIStoSJIS(pMem,base64decode);
-	CShiftJis::SJISToUnicode(pMem);
-
-	return RESULT_COMPLETE;
+	return CShiftJis::SJISToUnicode(pMem);		//	エラーを返すようにする。	2008/5/12 Uchi
 }
 
 EConvertResult CJis::UnicodeToJIS(CMemory* pMem)
 {
+	EConvertResult	res;
+
 	//$$ SJISを介しているため、無駄にデータが失われるかもしれません
-	CShiftJis::UnicodeToSJIS(pMem);
+	res = CShiftJis::UnicodeToSJIS(pMem);
+	if (res != RESULT_COMPLETE) {
+		return res;				//	エラーがあったならばエラーを返すようにする。	2008/5/12 Uchi
+	}
 	SJIStoJIS(pMem);
 
 	return RESULT_COMPLETE;

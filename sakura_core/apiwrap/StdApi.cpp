@@ -28,7 +28,7 @@ static ACHAR* CreateMbString(
 {
 	//必要な領域サイズを取得
 	int nNewLen=WideCharToMultiByte(
-		CP_ACP,
+		CP_SJIS,				// 2008/5/12 Uchi
 		0,
 		pWideString,
 		nWideLength,
@@ -43,7 +43,7 @@ static ACHAR* CreateMbString(
 
 	//変換
 	nNewLen = WideCharToMultiByte(
-		CP_ACP,
+		CP_SJIS,				// 2008/5/12 Uchi
 		0,
 		pWideString,
 		nWideLength,
