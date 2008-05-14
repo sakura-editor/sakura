@@ -216,20 +216,17 @@ void CFileLoad::FileClose( void )
 	@return	NULL以外	1行を保持しているデータの先頭アドレスを返す。永続的ではない一時的な領域。
 			NULL		データがなかった
 */
-const wchar_t* CFileLoad::ReadLine(
-	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
-	int*		pnLineLen,		//!< [out] 改行コード長を含む一行のデータ長。文字単位。
+EConvertResult CFileLoad::ReadLine(
+	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ。改行も含めて読み取る。
 	CEol*		pcEol			//!< [i/o]
 )
 {
-	const char	*pLine;
-	int			nRetVal = 1;
-	int			nBufLineLen;
-	int			nEolLen;
+	EConvertResult eRet = RESULT_COMPLETE;
+
 #ifdef _DEBUG
 	if( m_eMode < FLMODE_REDY ){
 		MYTRACE_A( "CFileLoad::ReadLine(): m_eMode = %d\n", m_eMode );
-		return NULL;
+		return RESULT_FAILURE;
 	}
 #endif
 	//行データバッファ (文字コード変換無しの生のデータ)
@@ -238,8 +235,10 @@ const wchar_t* CFileLoad::ReadLine(
 
 	// 1行取り出し ReadBuf -> m_memLine
 	//	Oct. 19, 2002 genta while条件を整理
+	int			nBufLineLen;
+	int			nEolLen;
 	while(1){
-		pLine = GetNextLineCharCode(
+		const char* pLine = GetNextLineCharCode(
 			m_pReadBuf,
 			m_nReadDataLen,    //[in] 改行を含む長さ
 			&nBufLineLen,      //[out]改行を含まない長さ
@@ -260,29 +259,28 @@ const wchar_t* CFileLoad::ReadLine(
 			break;
 		}
 	}
-
 	m_nReadLength += ( nBufLineLen = cLineBuffer.GetRawLength() );
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_CharCode,m_nFlag);
-	cLineBuffer.SetRawData("",0);
+	EConvertResult eConvertResult = CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_CharCode,m_nFlag);
+	if(eConvertResult==RESULT_LOSESOME){
+		eRet = RESULT_LOSESOME;
+	}
 
 	m_nLineIndex++;
 	// データあり
 	if( 0 != nBufLineLen + nEolLen ){
 		// 改行コードを追加
 		pUnicodeBuffer->AppendString( pcEol->GetValue2(), pcEol->GetLen() );
-
-		// ポインタと文字列長を得る
-		int nDataLen;
-		const wchar_t* pData=pUnicodeBuffer->GetStringPtr( &nDataLen );
-
-		// 戻り値を作る
-		*pnLineLen=nDataLen;
-		return pData;
+	}
+	else{
+		eRet = RESULT_FAILURE;
 	}
 
-	return NULL;
+	//staticバッファを解放しておく
+	cLineBuffer.SetRawData("",0);
+
+	return eRet;
 }
 
 

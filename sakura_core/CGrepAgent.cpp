@@ -1028,9 +1028,11 @@ int CGrepAgent::DoGrepFile(
 
 	// íçà” : cfl.ReadLine Ç™ throw Ç∑ÇÈâ¬î\ê´Ç™Ç†ÇÈ
 	CNativeW cUnicodeBuffer;
-	int		nLineLen;
-	const wchar_t*	pLine;
-	while( NULL != ( pLine = cfl.ReadLine( &cUnicodeBuffer, &nLineLen, &cEol ) ) ){
+	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
+	{
+		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
+		int		nLineLen = cUnicodeBuffer.GetStringLength();
+
 		nEolCodeLen = cEol.GetLen();
 		++nLine;
 		pCompareData = pLine;

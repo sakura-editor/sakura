@@ -41,7 +41,7 @@
 
 
 #include "CStream.h" //CError_FileOpen
-
+enum EConvertResult;
 
 
 /*!
@@ -61,9 +61,8 @@ public:
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用
-	const wchar_t* ReadLine(
+	EConvertResult ReadLine(
 		CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
-		int*		pnLineLen,		//!< [out] 改行コード長を含む一行のデータ長。文字単位。
 		CEol*		pcEol			//!< [i/o]
 	);
 

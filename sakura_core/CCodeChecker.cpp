@@ -2,6 +2,10 @@
 #include "CCodeChecker.h"
 #include "io/CIoBridge.h"
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     セーブ時チェック                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 //! CDocLineMgrが保持するデータを指定文字コードで安全に保存できるかどうか判定する
 static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECodeType eCodeType)
 {
@@ -54,11 +58,24 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 	return CALLBACK_CONTINUE;
 }
 
-void CCodeChecker::OnFinishSave(ESaveResult eSaveResult)
+void CCodeChecker::OnFinalSave(ESaveResult eSaveResult)
 {
 	//カキコ結果
 	if(eSaveResult==SAVED_LOSESOME){
-		ErrorMessage(CEditWnd::Instance()->GetHwnd(), _T("一部の文字情報が、変換により失われました"));
+		ErrorMessage(CEditWnd::Instance()->GetHwnd(), _T("一部の文字情報が、セーブ時の変換により失われました"));
 	}
 }
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     ロード時チェック                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+void CCodeChecker::OnFinalLoad(ELoadResult eLoadResult)
+{
+	if(eLoadResult==LOADED_LOSESOME){
+		ErrorMessage(
+			CEditWnd::Instance()->GetHwnd(),
+			_T("一部の文字情報が、ロード時の変換により失われました")
+		);
+	}
+}
