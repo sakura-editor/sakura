@@ -3812,6 +3812,7 @@ void CViewCommander::Command_TYPE_LIST( void )
 {
 	CDlgTypeList			cDlgTypeList;
 	CDlgTypeList::SResult	sResult;
+	sResult.cDocumentType = GetDocument()->m_cDocType.GetDocumentType();
 	if( cDlgTypeList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), &sResult ) ){
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
