@@ -28,6 +28,9 @@ enum ELoadResult{
 	LOADED_FAILURE,
 	LOADED_INTERRUPT,	//!< 中断された
 	LOADED_LOSESOME,	//!< 文字の一部が失われた
+
+	//特殊
+	LOADED_NOIMPLEMENT,	//!< 実装無し
 };
 
 //###
@@ -113,7 +116,7 @@ public:
 	//ロード前後
 	ECallbackResult NotifyCheckLoad	(SLoadInfo* pLoadInfo);
 	void NotifyBeforeLoad			(const SLoadInfo& sLoadInfo);
-	void NotifyLoad					(const SLoadInfo& sLoadInfo);
+	ELoadResult NotifyLoad			(const SLoadInfo& sLoadInfo);
 	void NotifyLoading				(int nPer);
 	void NotifyAfterLoad			(const SLoadInfo& sLoadInfo);
 	void NotifyFinalLoad			(ELoadResult eLoadResult);
@@ -144,7 +147,7 @@ public:
 	//ロード前後
 	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		{ return CALLBACK_CONTINUE; }	//!< 本当にロードを行うかの判定を行う
 	virtual void			OnBeforeLoad(const SLoadInfo& sLoadInfo){ return ; }	//!< ロード事前処理
-	virtual void			OnLoad		(const SLoadInfo& sLoadInfo){ return ; }	//!< ロード処理
+	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo){ return LOADED_NOIMPLEMENT; }	//!< ロード処理
 	virtual void			OnLoading	(int nPer)					{ return ; }	//!< ロード処理の経過情報を受信
 	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo){ return ; }	//!< ロード事後処理
 	virtual void			OnFinalLoad	(ELoadResult eLoadResult)	{ return ; }	//!< ロードフローの最後に必ず呼ばれる

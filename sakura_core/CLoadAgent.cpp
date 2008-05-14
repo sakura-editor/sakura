@@ -73,8 +73,9 @@ void CLoadAgent::OnBeforeLoad(const SLoadInfo& sLoadInfo)
 {
 }
 
-void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
+ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 {
+	ELoadResult eRet = LOADED_OK;
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	/* 既存データのクリア */
@@ -88,11 +89,14 @@ void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		//CDocLineMgrの構成
 		CReadManager cReader;
 		CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&cReader);
-		BOOL bReadResult = cReader.ReadFile_To_CDocLineMgr(
+		EConvertResult eReadResult = cReader.ReadFile_To_CDocLineMgr(
 			&pcDoc->m_cDocLineMgr,
 			sLoadInfo,
 			&pcDoc->m_cDocFile.m_sFileInfo
 		);
+		if(eReadResult==RESULT_LOSESOME){
+			eRet = LOADED_LOSESOME;
+		}
 		CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
 
@@ -103,6 +107,8 @@ void CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
 	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, pcDoc->m_cDocType.GetDocumentAttribute());
 	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
+
+	return eRet;
 }
 
 void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)

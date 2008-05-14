@@ -8363,7 +8363,6 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 {
 	CFileLoad	cfl;
 	CEol cEol;
-	int			nLineLen;
 	int			nLineNum = 0;
 
 	CDlgCancel*	pcDlgCancel = NULL;
@@ -8424,8 +8423,11 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
 		// エラー時はthrow CError_FileRead を投げます
 		CNativeW cBuf;
-		const wchar_t*	pLine;
-		while( NULL != ( pLine = cfl.ReadLine( &cBuf, &nLineLen, &cEol ) ) ){
+		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol ) ){
+
+			const wchar_t*	pLine = cBuf.GetStringPtr();
+			int			nLineLen = cBuf.GetStringLength();
+
 			++nLineNum;
 			Command_INSTEXT(false, pLine, CLogicInt(nLineLen), true);
 

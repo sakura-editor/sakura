@@ -14,17 +14,14 @@
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
-int CReadManager::ReadFile_To_CDocLineMgr(
+EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	CDocLineMgr*		pcDocLineMgr,	//!< [out]
 	const SLoadInfo&	sLoadInfo,		//!< [in]
 	SFileInfo*			pFileInfo		//!< [out]
 )
 {
 	LPCTSTR pszPath = sLoadInfo.cFilePath.c_str();
-#ifdef _DEBUG
-	MYTRACE_A( "pszPath=[%hs]\n", pszPath );
-//	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReadFile" );
-#endif
+
 	// 文字コード種別
 	pFileInfo->eCharCode = sLoadInfo.eCharCode;
 	if( CODE_AUTODETECT==pFileInfo->eCharCode) {
@@ -41,10 +38,10 @@ int CReadManager::ReadFile_To_CDocLineMgr(
 
 	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
-		return FALSE;
+		return RESULT_FAILURE; //######INTERRUPT
 	}
 
-	int nRetVal = TRUE;
+	EConvertResult eRet = RESULT_COMPLETE;
 
 	try{
 		CFileLoad cfl;
@@ -62,12 +59,16 @@ int CReadManager::ReadFile_To_CDocLineMgr(
 
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
 		// エラー時はthrow CError_FileRead を投げます
-		const wchar_t*	pLine;
-		int				nLineLen;
 		int				nLineNum = 0;
 		CEol			cEol;
 		CNativeW		cUnicodeBuffer;
-		while( NULL != ( pLine = cfl.ReadLine( &cUnicodeBuffer, &nLineLen, &cEol ) ) ){
+		EConvertResult	eRead;
+		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol )) ){
+			if(eRead==RESULT_LOSESOME){
+				eRet = RESULT_LOSESOME;
+			}
+			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
+			int		nLineLen = cUnicodeBuffer.GetStringLength();
 			++nLineNum;
 			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
 			//経過通知
@@ -85,10 +86,10 @@ int CReadManager::ReadFile_To_CDocLineMgr(
 	}
 	catch(CAppExitException){
 		//WM_QUITが発生した
-		return FALSE;
+		return RESULT_FAILURE;
 	}
 	catch( CError_FileOpen ){
-		nRetVal = FALSE;
+		eRet = RESULT_FAILURE;
 		if( !fexist( pszPath )){
 			// ファイルがない
 			ErrorMessage(
@@ -114,7 +115,7 @@ int CReadManager::ReadFile_To_CDocLineMgr(
 		}
 	}
 	catch( CError_FileRead ){
-		nRetVal = FALSE;
+		eRet = RESULT_FAILURE;
 		ErrorMessage(
 			CEditWnd::Instance()->GetHwnd(),
 			_T("\'%ts\'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"),
@@ -122,18 +123,17 @@ int CReadManager::ReadFile_To_CDocLineMgr(
 		 );
 		/* 既存データのクリア */
 		pcDocLineMgr->DeleteAllLine();
-		nRetVal = FALSE;
 	} // 例外処理終わり
 
 	NotifyProgress(0);
 	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
-		return FALSE;
+		return RESULT_FAILURE; //####INTERRUPT
 	}
 
 	/* 行変更状態をすべてリセット */
 	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr);
-	return nRetVal;
+	return eRet;
 }
 
 

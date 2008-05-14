@@ -57,9 +57,23 @@ CDocSubject::~CDocSubject()
 	} \
 }
 
+//######‰¼
+#define CORE_NOTIFY2(NAME,ARGTYPE) ELoadResult CDocSubject::Notify##NAME##(ARGTYPE a) \
+{ \
+	int n = GetListenerCount(); \
+	ELoadResult eRet = LOADED_FAILURE; \
+	for(int i=0;i<n;i++){ \
+		ELoadResult e = GetListener(i)->On##NAME##(a); \
+		if(e==LOADED_NOIMPLEMENT)continue; \
+		if(e==LOADED_FAILURE)return e; \
+		eRet = e; \
+	} \
+	return eRet; \
+}
+
 DEF_NOTIFY2(CheckLoad,SLoadInfo*)
 VOID_NOTIFY2(BeforeLoad,const SLoadInfo&)
-VOID_NOTIFY2(Load,const SLoadInfo&)
+CORE_NOTIFY2(Load,const SLoadInfo&)
 VOID_NOTIFY2(Loading,int)
 VOID_NOTIFY2(AfterLoad,const SLoadInfo&)
 VOID_NOTIFY2(FinalLoad,ELoadResult)
