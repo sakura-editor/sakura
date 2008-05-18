@@ -77,6 +77,7 @@ protected:
 	*/
 	int FindTabIndexByHWND( HWND hWnd );
 	void AdjustWindowPlacement( void );							/*!< 編集ウィンドウの位置合わせ */	// 2007.04.03 ryoji
+	int SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl );	/* アクティブ化の少ない SetWindowPlacement() を実行する */	// 2007.11.30 ryoji
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
 	void HideOtherWindows( HWND hwndExclude );					/*!< 他の編集ウィンドウを隠す */	// 2007.05.17 ryoji
 	void ForceActiveWindow( HWND hwnd );
