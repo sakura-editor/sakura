@@ -200,9 +200,9 @@ void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect )
 
 		i++;
 		m_pData[i].cfFormat = CF_TEXT;
-		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), NULL, 0, NULL, NULL );
+		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), NULL, 0, NULL, NULL );
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[i].data, m_pData[i].size, NULL, NULL );
+		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[i].data, m_pData[i].size, NULL, NULL );
 
 		i++;
 		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
