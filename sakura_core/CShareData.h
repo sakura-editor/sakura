@@ -14,7 +14,7 @@
 	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -286,6 +286,10 @@ public:
 	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
 	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
 
+	// 文字半角全角キャッシュ
+	BYTE				m_bCharWidthCache[0x10000/4];		//16KB 文字半角全角キャッシュ 2008/5/16 Uchi
+	int					m_nCharWidthCacheTest;				//cache溢れ検出
+
 private:
 	/* **** タイプ別設定 **** */
 	STypeConfig				m_Types[MAX_TYPES];
@@ -502,6 +506,3 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSHAREDATA_H_ */
-
-
-

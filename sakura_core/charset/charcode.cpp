@@ -5,6 +5,8 @@
 
 namespace WCODE
 {
+	bool CalcHankakuByFont(wchar_t);
+
 	//2007.08.30 kobake 追加
 	bool IsHankaku(wchar_t wc)
 	{
@@ -13,21 +15,26 @@ namespace WCODE
 		//参考：http://www.swanq.co.jp/blog/archives/000783.html
 		if(
 			   wc<=0x007E //ACODEとか
-			|| wc==0x00A5 //バックスラッシュ
-			|| wc==0x203E //にょろ
-			|| (wc>=0xFF61 && wc<=0xFF9f)
+//			|| wc==0x00A5 //円マーク
+//			|| wc==0x203E //にょろ
+			|| (wc>=0xFF61 && wc<=0xFF9f)	// 半角カタカナ
 		)return true;
 
 		//0x7F ～ 0xA0 も半角とみなす
 		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF を見て、なんとなく
-		if(wc>=0x007F && wc<=0x00A0)return true;
+		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
+
+		// 漢字は全角とみなす
+		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
+		  || wc>=0x3400 && wc<=0x4DB5		// Unified Ideographs Extension A, CJK
+		  || wc>=0xAC00 && wc<=0xD7A3		// 	Hangul Syllables
+		) return false;	// Private Use Area
+
+		// 外字は全角とみなす
+		if (wc>=0xE000 && wc<=0xE8FF)	return false;	// Private Use Area
 
 		//$$ 仮。もう動的に計算しちゃえ。(初回のみ)
-		bool CalcHankakuByFont(wchar_t);
 		return CalcHankakuByFont(wc);
-
-
-		return false;
 	}
 
 	//!制御文字であるかどうか
@@ -66,9 +73,6 @@ namespace WCODE
 		return false;
 	}
 
-}
-
-
 
 /*!
 	UNICODE文字情報のキャッシュクラス。
@@ -82,45 +86,47 @@ class LocalCache{
 public:
 	LocalCache()
 	{
-		memset(cache,0,sizeof(cache));
-		test=0x12345678;
+		/* LOGFONTの初期化 */
+		memset( &m_lf, 0, sizeof(m_lf) );
 
+		// HDC の初期化
 		HDC hdc=GetDC(NULL);
 		m_hdc = CreateCompatibleDC(hdc);
 		ReleaseDC(NULL, hdc);
-		m_hFont = CreateFontW(
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			DEFAULT_CHARSET,
-			OUT_CHARACTER_PRECIS,
-			CLIP_CHARACTER_PRECIS,
-			DEFAULT_QUALITY,
-			FIXED_PITCH,
-			L"ＭＳ ゴシック"
-		);
+
+		m_hFont =NULL;
+		m_hfntOld =NULL;
+	}
+	~LocalCache()
+	{
+		// -- -- 後始末 -- -- //
+		if (m_hFont != NULL) {
+			SelectObject(m_hdc, m_hfntOld);
+			DeleteObject(m_hFont);
+		}
+		DeleteDC(m_hdc);
+	}
+	// 再初期化
+	void Init( const LOGFONT &lf )
+	{
+		if (m_hfntOld != NULL) {
+			m_hfntOld = (HFONT)SelectObject(m_hdc, m_hfntOld);
+			DeleteObject(m_hfntOld);
+		}
+
+		m_lf = lf;
+
+		m_hFont = ::CreateFontIndirect( &lf );
 		m_hfntOld = (HFONT)SelectObject(m_hdc,m_hFont);
 
 		// -- -- 半角基準 -- -- //
 		GetTextExtentPoint32W_AnyBuild(m_hdc,L"x",1,&m_han_size);
 	}
-	~LocalCache()
-	{
-		// -- -- 後始末 -- -- //
-		SelectObject(m_hdc,m_hfntOld);
-		DeleteObject(m_hFont);
-		DeleteDC(m_hdc);
-	}
 	void SetCache(wchar_t c, bool cache_value)
 	{
 		int v=cache_value?0x1:0x2;
-		cache[c/4] &= ~( 0x3<< ((c%4)*2) ); //該当箇所クリア
-		cache[c/4] |=  ( v  << ((c%4)*2) ); //該当箇所セット
+		GetDllShareData().m_bCharWidthCache[c/4] &= ~( 0x3<< ((c%4)*2) ); //該当箇所クリア
+		GetDllShareData().m_bCharWidthCache[c/4] |=  ( v  << ((c%4)*2) ); //該当箇所セット
 	}
 	bool GetCache(wchar_t c) const
 	{
@@ -128,7 +134,7 @@ public:
 	}
 	bool ExistCache(wchar_t c) const
 	{
-		assert(test==0x12345678);
+		assert(GetDllShareData().m_nCharWidthCacheTest==0x12345678);
 		return _GetRaw(c)!=0x0;
 	}
 	bool CalcHankakuByFont(wchar_t c)
@@ -140,23 +146,22 @@ public:
 protected:
 	int _GetRaw(wchar_t c) const
 	{
-		return (cache[c/4]>>((c%4)*2))&0x3;
+		return (GetDllShareData().m_bCharWidthCache[c/4]>>((c%4)*2))&0x3;
 	}
 private:
-	BYTE cache[0x10000/4]; //16KB
-	int test; //cache溢れ検出
-
 	HDC m_hdc;
 	HFONT m_hfntOld;
 	HFONT m_hFont;
 	SIZE m_han_size;
+	LOGFONT	m_lf;							// 2008/5/15 Uchi
 };
+
+static LocalCache cache;
 
 //文字幅の動的計算。半角ならtrue。
 bool CalcHankakuByFont(wchar_t c)
 {
 	// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
-	static LocalCache cache; //$$ これはShare領域に入れておいたほうが、もっと良い
 	if(cache.ExistCache(c))return cache.GetCache(c);
 
 	// -- -- 相対比較 -- -- //
@@ -168,9 +173,18 @@ bool CalcHankakuByFont(wchar_t c)
 
 	return cache.GetCache(c);
 }
+}
 
+//	文字幅の動的計算用キャッシュの初期化。	2007/5/18 Uchi
+void InitCharWidthCache( const LOGFONT &lf )
+{
+	WCODE::cache.Init(lf);
+}
 
-
-
-
-
+//	文字幅の動的計算用キャッシュの初期化。	2007/5/18 Uchi
+void InitCharWidthCacheCommon()
+{
+	// キャッシュのクリア
+	memset(GetDllShareData().m_bCharWidthCache, 0, sizeof(GetDllShareData().m_bCharWidthCache));
+	GetDllShareData().m_nCharWidthCacheTest=0x12345678;
+}

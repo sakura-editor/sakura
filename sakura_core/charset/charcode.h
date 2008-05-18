@@ -233,6 +233,18 @@ namespace WCODE
 
 	//! 句読点か
 	bool IsKutoten( wchar_t wc );
+
+	//! 高位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+	inline bool IsUTF16High( wchar_t c )
+	{
+		return ( 0xd800 == (0xfc00 & c ));
+	}
+	//! 下位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+	inline bool IsUTF16Low( wchar_t c )
+	{
+		return ( 0xdc00 == (0xfc00 & c ));
+	}
+
 }
 
 
@@ -295,10 +307,6 @@ namespace TCODE
 	#endif
 }
 
-
-
-
-
-
-
-
+// 文字幅キャッシュ関連
+void InitCharWidthCache( const LOGFONT &lf );
+void InitCharWidthCacheCommon();

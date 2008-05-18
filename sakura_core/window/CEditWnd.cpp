@@ -1241,6 +1241,8 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
+		// Font変更の通知 2008/5/17 Uchi
+		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);
 // Oct 10, 2000 ao
 /* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
 		m_cToolbar.DestroyToolBar();
