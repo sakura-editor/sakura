@@ -238,6 +238,8 @@ public:
 	//ビュー
 	const CEditView&	GetActiveView() const { return *m_pcEditViewArr[m_nActivePaneIndex]; }
 	CEditView&			GetActiveView()       { return *m_pcEditViewArr[m_nActivePaneIndex]; }
+	CEditView*			GetDragSourceView() const					{ return m_pcDragSourceView; }
+	void				SetDragSourceView( CEditView* pcDragSourceView )	{ m_pcDragSourceView = pcDragSourceView; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
@@ -299,6 +301,7 @@ public:
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CEditView*		m_pcEditViewArr[4];	//!< ビュー
 	int				m_nActivePaneIndex;	//!< アクティブなビュー
+	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
