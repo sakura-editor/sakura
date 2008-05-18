@@ -13,7 +13,7 @@
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
-	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2007, ryoji, maru, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3757,6 +3757,10 @@ void CViewCommander::Command_FONT( void )
 	LOGFONT cLogfont = GetDllShareData().m_Common.m_sView.m_lf;
 	if( MySelectFont( &cLogfont, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd() )  ){
 		GetDllShareData().m_Common.m_sView.m_lf = cLogfont;
+
+		// 文字幅キャッシュの初期化	// 2008/5/15 Uchi
+		InitCharWidthCache(cLogfont);
+		InitCharWidthCacheCommon();
 
 //		/* 変更フラグ フォント */
 //		GetDllShareData().m_bFontModify = TRUE;
@@ -7510,7 +7514,7 @@ end_of_compare:;
 		TopInfoMessage( hwndMsgBox, _T("異なる箇所は見つかりませんでした。") );
 	}
 	else{
-		TopInfoMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );
+//		TopInfoMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
@@ -7520,6 +7524,7 @@ end_of_compare:;
 		/* カーソルを移動させる */
 		memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
 		::PostMessageAny( GetMainWindow(), MYWM_SETCARETPOS, 0, 0 );
+		TopWarningMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );	// 位置を変更してからメッセージ	2008/4/27 Uchi
 	}
 
 	/* 開いているウィンドウをアクティブにする */

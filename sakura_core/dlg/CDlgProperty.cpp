@@ -89,6 +89,11 @@ void CDlgProperty::SetData( void )
 
 	cmemProp.AppendString( _T("文字コード  ") );
 	cmemProp.AppendString( CCodeTypeName(pCEditDoc->GetDocumentEncoding()).Normal() );
+	//	From Here  2008/4/27 Uchi
+	if (pCEditDoc->m_cDocFile.IsBomExist()) {
+		cmemProp.AppendString( _T(" with BOM") );
+	}
+	//	To Here  2008/4/27 Uchi
 	cmemProp.AppendString( _T("\r\n") );
 
 	auto_sprintf( szWork, _T("行数  %d行\r\n"), pCEditDoc->m_cDocLineMgr.GetLineCount() );
@@ -255,5 +260,3 @@ LPVOID CDlgProperty::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
-

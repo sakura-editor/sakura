@@ -14,7 +14,7 @@
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -256,7 +256,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1016;
+const unsigned int uShareDataVersion = 1017;
 
 /*
 ||	Singleton風
@@ -461,6 +461,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_sView.m_lf.lfQuality			= 0x1;
 		m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily	= 0x31;
 		_tcscpy( m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
+
+		InitCharWidthCacheCommon();								// 2008/5/17 Uchi
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
 		::SystemParametersInfo(
@@ -719,6 +721,8 @@ bool CShareData::Init( void )
 			0
 		);
 		m_pShareData->OnInit();
+
+		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
 
 		//	From Here Oct. 27, 2000 genta
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ){
