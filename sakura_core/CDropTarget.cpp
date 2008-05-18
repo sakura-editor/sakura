@@ -6,6 +6,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
 	Copyright (C) 2002, aroka
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -16,6 +17,7 @@
 #include "CDropTarget.h"
 #include "global.h"
 #include "debug/Debug.h"// 2002/2/3 aroka
+#include "CClipboard.h"
 
 
 COleLibrary CYbInterfaceBase::m_olelib;
@@ -85,6 +87,7 @@ template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFAC
 DECLARE_YB_INTERFACEIMPL( IDataObject )
 DECLARE_YB_INTERFACEIMPL( IDropSource )
 DECLARE_YB_INTERFACEIMPL( IDropTarget )
+DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 
 
@@ -93,7 +96,6 @@ CDropTarget::CDropTarget( CEditView* pCEditView )
 {
 	m_pCEditView = pCEditView;
 	m_hWnd_DropTarget = NULL;
-	m_pDataObject = NULL;
 	return;
 }
 
@@ -166,12 +168,19 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 
 
 
-void CDataObject::SetText( LPCWSTR lpszText )
+/** 転送対象の文字列を設定する
+	@param lpszText [in] 文字列
+	@param nTextLen [in] pszTextの長さ
+	@param bColmnSelect [in] 矩形選択か
+
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
+void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
+	int i;
 	if( m_pData != NULL )
 	{
-		int i;
 		for( i = 0; i < m_nFormat; i++ )
 			delete [](m_pData[i].data);
 		delete []m_pData;
@@ -179,18 +188,36 @@ void CDataObject::SetText( LPCWSTR lpszText )
 		m_nFormat = 0;
 	}
 	if( lpszText != NULL ){
-		m_nFormat = 2;
+		m_nFormat = bColmnSelect? 4: 3;	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
+		i = 0;
 		m_pData[0].cfFormat = CF_UNICODETEXT;
-		m_pData[0].size = ( wcslen(lpszText) + 1) * sizeof( wchar_t );
+		m_pData[0].size = (nTextLen + 1) * sizeof(wchar_t);
 		m_pData[0].data = new BYTE[m_pData[0].size];
-		memcpy_raw( m_pData[0].data, lpszText, m_pData[0].size );
+		memcpy_raw( m_pData[0].data, lpszText, nTextLen * sizeof(wchar_t) );
+		*((wchar_t*)m_pData[0].data + nTextLen) = L'\0';
 
-		m_pData[1].cfFormat = CF_TEXT;
-		m_pData[1].size = ::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), NULL, 0, NULL, NULL );
-		m_pData[1].data = new BYTE[m_pData[1].size];
-		::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[1].data, m_pData[1].size, NULL, NULL );
+		i++;
+		m_pData[i].cfFormat = CF_TEXT;
+		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), NULL, 0, NULL, NULL );
+		m_pData[i].data = new BYTE[m_pData[i].size];
+		::WideCharToMultiByte( CP_ACP, 0, lpszText, m_pData[0].size/sizeof(wchar_t), (LPSTR)m_pData[i].data, m_pData[i].size, NULL, NULL );
+
+		i++;
+		m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
+		m_pData[i].size = sizeof(int) + nTextLen * sizeof( wchar_t );
+		m_pData[i].data = new BYTE[m_pData[i].size];
+		*(int*)m_pData[i].data = nTextLen;
+		memcpy_raw( m_pData[i].data + sizeof(int), lpszText, nTextLen * sizeof( wchar_t ) );
+
+		i++;
+		if( bColmnSelect ){
+			m_pData[i].cfFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
+			m_pData[i].size = 1;
+			m_pData[i].data = new BYTE[1];
+			m_pData[i].data[0] = '\0';
+		}
 	}
 }
 
@@ -203,6 +230,9 @@ DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
 	return DROPEFFECT_NONE;
 }
 
+/** IDataObject::GetData
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
 STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
@@ -238,6 +268,9 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	return S_OK;
 }
 
+/** IDataObject::GetDataHere
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
 STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
@@ -270,6 +303,9 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	return S_OK;
 }
 
+/** IDataObject::QueryGetData
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
 STDMETHODIMP CDataObject::QueryGetData( LPFORMATETC lpfe )
 {
 	if( lpfe == NULL )
@@ -304,9 +340,15 @@ STDMETHODIMP CDataObject::SetData( LPFORMATETC, LPSTGMEDIUM, BOOL )
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP CDataObject::EnumFormatEtc( DWORD, LPENUMFORMATETC* )
+/** IDataObject::EnumFormatEtc
+	@date 2008.03.26 ryoji IEnumFORMATETCをサポート
+*/
+STDMETHODIMP CDataObject::EnumFormatEtc( DWORD dwDirection, IEnumFORMATETC** ppenumFormatetc )
 {
-	return E_NOTIMPL;
+	if( dwDirection != DATADIR_GET )
+		return S_FALSE;
+	*ppenumFormatetc = new CEnumFORMATETC(this);
+	return *ppenumFormatetc? S_OK: S_FALSE;
 }
 
 STDMETHODIMP CDataObject::DAdvise( LPFORMATETC, DWORD, LPADVISESINK, LPDWORD )
@@ -322,6 +364,64 @@ STDMETHODIMP CDataObject::DUnadvise( DWORD )
 STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 {
 	return OLE_E_ADVISENOTSUPPORTED;
+}
+
+
+/** IEnumFORMATETC::Next
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched)
+{
+	if( celt <= 0 || rgelt == NULL || m_nIndex >= m_pcDataObject->m_nFormat )
+		return S_FALSE;
+	if( celt != 1 && pceltFetched == NULL )
+		return S_FALSE;
+
+	ULONG i = celt;
+	while( m_nIndex < m_pcDataObject->m_nFormat && i > 0 ){
+		(*rgelt).cfFormat = m_pcDataObject->m_pData[m_nIndex].cfFormat;
+		(*rgelt).ptd = NULL;
+		(*rgelt).dwAspect = DVASPECT_CONTENT;
+		(*rgelt).lindex = -1;
+		(*rgelt).tymed = TYMED_HGLOBAL;
+		rgelt++;
+		m_nIndex++;
+		i--;
+	}
+	if( pceltFetched != NULL )
+		*pceltFetched = celt - i;
+
+	return (i == 0)? S_OK : S_FALSE;
+}
+
+/** IEnumFORMATETC::Skip
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
+{
+	while( m_nIndex < m_pcDataObject->m_nFormat && celt > 0 ){
+		++m_nIndex;
+		--celt;
+	}
+
+	return (celt == 0)? S_OK : S_FALSE;
+}
+
+/** IEnumFORMATETC::Reset
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Reset(void)
+{
+	m_nIndex = 0;
+	return S_OK;
+}
+
+/** IEnumFORMATETC::Clone
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Clone(IEnumFORMATETC** ppenum)
+{
+	return E_NOTIMPL;
 }
 
 

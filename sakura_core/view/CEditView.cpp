@@ -160,7 +160,6 @@ BOOL CEditView::Create(
 
 	SetDrawSwitch(true);
 	m_pcDropTarget = new CDropTarget( this );
-	m_bDragSource = FALSE;
 	_SetDragMode(FALSE);					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = false;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
@@ -1088,7 +1087,7 @@ VOID CEditView::OnTimer(
 	RECT		rc;
 
 	if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
-		if( m_bDragSource ){
+		if( IsDragSource() ){
 			return;
 		}
 	}
@@ -1789,7 +1788,7 @@ int CEditView::IsCurrentPositionSelected(
 		);
 		++rcSel.bottom;
 		po = ptCaretPos;
-		if( m_bDragSource ){
+		if( IsDragSource() ){
 			if( GetKeyState_Control() ){ /* Ctrlキーが押されていたか */
 				++rcSel.left;
 			}else{
@@ -1819,7 +1818,7 @@ int CEditView::IsCurrentPositionSelected(
 			return 1;
 		}
 		if( GetSelectionInfo().m_sSelect.GetFrom().y == ptCaretPos.y ){
-			if( m_bDragSource ){
+			if( IsDragSource() ){
 				if( GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
 					if( GetSelectionInfo().m_sSelect.GetFrom().x >= ptCaretPos.x ){
 						return -1;
@@ -1835,7 +1834,7 @@ int CEditView::IsCurrentPositionSelected(
 			}
 		}
 		if( GetSelectionInfo().m_sSelect.GetTo().y == ptCaretPos.y ){
-			if( m_bDragSource ){
+			if( IsDragSource() ){
 				if( GetKeyState_Control() ){	/* Ctrlキーが押されていたか */
 					if( GetSelectionInfo().m_sSelect.GetTo().x <= ptCaretPos.x ){
 						return 1;

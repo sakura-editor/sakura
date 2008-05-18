@@ -39,6 +39,7 @@ public:
 	//状態
 	bool IsEnableUndo();						//!< Undo可能な状態か
 	bool IsEnableRedo();						//!< Redo可能な状態か
+	int GetCurrentPointer( void ) const { return m_nCurrentPointer; }	/* 現在位置を返す */	// 2007.12.09 ryoji
 
 	//操作
 	void ClearAll();							//!< 全要素のクリア

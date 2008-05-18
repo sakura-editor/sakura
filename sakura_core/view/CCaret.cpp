@@ -442,26 +442,23 @@ void CCaret::ShowEditCaret()
 
 	int				nIdxFrom;
 
-
 /*
-		なんかフレームウィンドウがアクティブでないときに内部的にカーソル移動すると
-		カーソルがないのに、カーソルがあるということになってしまう
-		のでアクティブにしてもカーソルが出てこないときがある
-		フレームウィンドウがアクティブでないときは、カーソルがないことにする
+	フォーカスが無いときに内部的にキャレット作成すると暗黙的にキャレット破棄（※）されても
+	キャレットがある（m_nCaretWidth != 0）ということになってしまい、フォーカスを取得しても
+	キャレットが出てこなくなる場合がある
+	フォーカスが無いときはキャレットを作成／表示しないようにする
+
+	※キャレットはスレッドにひとつだけなので例えばエディットボックスがフォーカス取得すれば
+	　別形状のキャレットに暗黙的に差し替えられるしフォーカスを失えば暗黙的に破棄される
+
+	2007.12.11 ryoji
+	ドラッグアンドドロップ編集中はキャレットが必要で暗黙破棄の要因も無いので例外的に表示する
 */
-
-	//207.08.26 kobake GetParent → GetAncestor に変更
-	//アクティブでないのにカーソル作っちゃったから消しちゃう
-	if( ::GetActiveWindow() != m_pEditView->GetAncestor( GA_ROOT ) ){
+	if( ::GetFocus() != m_pEditView->GetHwnd() && !m_pEditView->m_bDragMode ){
 		m_sizeCaret.cx = 0;
 		return;
 	}
 
-	/* アクティブなペインを取得 */
-	if( m_pEditView->m_nMyIndex != m_pEditDoc->m_pcEditWnd->GetActivePane() ){
-		m_sizeCaret.cx = 0;
-		return;
-	}
 	/* キャレットの幅、高さを決定 */
 	int				nCaretWidth = 0;
 	int				nCaretHeight = 0;
@@ -1002,7 +999,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 			/* フリーカーソルモードか */
 			else if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode
 			  || ( m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting() )	/* マウス範囲選択中 && 矩形範囲選択中 */
-			  || ( m_pEditView->m_bDragMode && m_pEditView->GetSelectionInfo().IsBoxSelecting() ) /* OLE DropTarget && 矩形範囲選択中 */
+			  || ( m_pEditView->m_bDragMode && m_pEditView->m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
 			){
 				nPosX = ptNewXY.GetX2();
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように

@@ -320,6 +320,9 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragOver(DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	CLIPFORMAT GetAvailableClipFormat( LPDATAOBJECT pDataObject );
+	DWORD TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffect );
+	bool IsDragSource( void );
 
 	void _SetDragMode(BOOL b)
 	{
@@ -591,8 +594,10 @@ public:
 public:
 	//D&D
 	CDropTarget*	m_pcDropTarget;
-	BOOL			m_bDragSource;	/* 選択テキストのドラッグ中か */
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
+	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */
+	CLayoutPoint	m_ptCaretPos_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
+	CLayoutInt		m_nCaretPosX_Prev_DragEnter;	/* ドラッグ開始時のX座標記憶 */	// 2007.12.09 ryoji
 
 	//括弧
 	CLogicPoint		m_ptBracketCaretPos_PHY;	// 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
