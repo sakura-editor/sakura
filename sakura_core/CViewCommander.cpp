@@ -1253,7 +1253,7 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 	nPosXY.x = CLayoutInt(0);
 	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nPosXY.y );
 	if(pcLayout)
-		nPosXY.x = pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr);
+		nPosXY.x = pcLayout->GetIndent() + pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr);
 
 	// ƒLƒƒƒŒƒbƒgˆÚ“®
 	GetCaret().MoveCursor( nPosXY, true );

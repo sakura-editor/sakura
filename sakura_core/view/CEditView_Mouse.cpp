@@ -6,6 +6,7 @@
 #include "parse/CWordParse.h"
 #include "COpeBlk.h"
 #include "CClipboard.h"
+#include "doc/CLayout.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
@@ -389,8 +390,25 @@ normal_action:;
 			GetSelectionInfo().m_bBeginLineSelect = TRUE;
 
 			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
+			// １行が画面幅よりも長いと左右にスクロールしてちらつきが激しくなるので後で全体を再描画	// 2008.05.20 ryoji
+			bool bDrawSwitchOld = GetDrawSwitch();
+			bool bDrawAfter = false;
+			if( bDrawSwitchOld ){
+				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+				if( pcLayout ){
+					CLayoutInt nColumn = LineIndexToColmn( pcLayout, CLogicInt(pcLayout->GetLengthWithoutEOL()) );
+					bDrawAfter = (nColumn + CLayoutInt(SCROLLMARGIN_RIGHT) >= GetTextArea().m_nViewColNum);
+					if( bDrawAfter ){
+						SetDrawSwitch( false );
+					}
+				}
+			}
 			GetCommander().Command_GOLINEEND( TRUE, FALSE );
 			GetCommander().Command_RIGHT( true, false, false );
+			if( bDrawSwitchOld && bDrawAfter ){
+				SetDrawSwitch( true );
+				Redraw();
+			}
 
 			//	Apr. 14, 2003 genta
 			//	行番号の下をクリックしてドラッグを開始するとおかしくなるのを修正

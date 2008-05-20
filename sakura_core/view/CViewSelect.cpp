@@ -288,7 +288,7 @@ void CViewSelect::DrawSelectArea() const
 	}else{
 
 		// Œ»Ý•`‰æ‚³‚ê‚Ä‚¢‚é”ÍˆÍ‚ÆŽn“_‚ª“¯‚¶
-		if( m_sSelect == m_sSelectOld ){
+		if( m_sSelect.GetFrom() == m_sSelectOld.GetFrom() ){
 			// ”ÍˆÍ‚ªŒã•û‚ÉŠg‘å‚³‚ê‚½
 			if( PointCompare(m_sSelect.GetTo(),m_sSelectOld.GetTo()) > 0 ){
 				sRangeA.SetFrom(m_sSelectOld.GetTo());
