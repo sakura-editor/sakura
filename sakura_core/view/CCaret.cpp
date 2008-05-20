@@ -142,8 +142,8 @@ CLayoutInt CCaret::MoveCursor(
 	
 	// 水平スクロール量（文字数）の算出
 	nScrollColNum = CLayoutInt(0);
-	nScrollMarginRight = CLayoutInt(4);
-	nScrollMarginLeft = CLayoutInt(4);
+	nScrollMarginRight = CLayoutInt(SCROLLMARGIN_RIGHT);
+	nScrollMarginLeft = CLayoutInt(SCROLLMARGIN_LEFT);
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if( m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas() > m_pEditView->GetTextArea().m_nViewColNum &&
