@@ -3757,7 +3757,10 @@ normal_action:;
 				DrawSelectArea();
 			}
 		}
-		if( xPos < m_nViewAlignLeft ){
+
+		// 行番号エリアをクリックした
+		// 2007.12.08 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
+		if(( xPos < m_nViewAlignLeft )&&( !((SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ))){
 			/* 現在のカーソル位置から選択を開始する */
 //			BeginSelectArea( );
 			m_bBeginLineSelect = TRUE;
