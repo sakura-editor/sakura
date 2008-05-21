@@ -1,3 +1,4 @@
+// ‚±‚Ìs‚ÍATortoiseSVN ‚Ì•¶š‰»‚¯‘Îô‚Ì‚½‚ß‚Ì‚à‚Ì‚Å‚·B
 #include "stdafx.h"
 #include "CBase64.h"
 
