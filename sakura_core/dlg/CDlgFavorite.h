@@ -72,13 +72,13 @@ protected:
 	//void	ChangeSlider( int nIndex );
 
 private:
-	CRecentFile		m_cRecentFile;
-	CRecentFolder	m_cRecentFolder;
-	CRecentSearch	m_cRecentSearch;
-	CRecentReplace	m_cRecentReplace;
-	CRecentFile		m_cRecentGrepFile;
-	CRecentFolder	m_cRecentGrepFolder;
-	CRecentCmd		m_cRecentCmd;
+	CRecentFile			m_cRecentFile;
+	CRecentFolder		m_cRecentFolder;
+	CRecentSearch		m_cRecentSearch;
+	CRecentReplace		m_cRecentReplace;
+	CRecentGrepFile		m_cRecentGrepFile;
+	CRecentGrepFolder	m_cRecentGrepFolder;
+	CRecentCmd			m_cRecentCmd;
 
 	typedef struct FavoriteInfoTag {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
