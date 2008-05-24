@@ -116,6 +116,9 @@ void CEditDoc::Clear()
 	// ファイルの排他ロック解除
 	m_cDocFileOperation.DoFileUnlock();
 
+	// 書込み禁止のクリア
+	m_cDocLocker.Clear();
+
 	// アンドゥ・リドゥバッファのクリア
 	m_cDocEditor.m_cOpeBuf.ClearAll();
 
@@ -482,6 +485,8 @@ void CEditDoc::OnChangeSetting()
 
 	/* ファイルの排他モード変更 */
 	if( m_cDocFile.GetShareMode() != GetDllShareData().m_Common.m_sFile.m_nFileShareMode ){
+		/* ファイルの排他ロック解除 */
+		m_cDocFileOperation.DoFileUnlock();
 		/* ファイルの排他ロック */
 		m_cDocFileOperation.DoFileLock();
 	}

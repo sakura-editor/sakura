@@ -5,6 +5,9 @@
 class CDocLocker : public CDocListenerEx{
 public:
 	CDocLocker();
+	
+	//クリア
+	void Clear(void) { m_bIsDocWritable = true; }
 
 	//ロード前後
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
