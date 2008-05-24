@@ -51,7 +51,7 @@ public:
 public:
 	//コンストラクタ・デストラクタ
 	StaticString(){ m_szData[0]=0; }
-	StaticString(const CHAR_TYPE* rhs){ auto_strcpy(m_szData,rhs); }
+	StaticString(const CHAR_TYPE* rhs){ if(!rhs) m_szData[0]=0; else auto_strcpy(m_szData,rhs); }
 
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
@@ -67,7 +67,7 @@ public:
 	CHAR_TYPE At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const CHAR_TYPE* src){ auto_strcpy_s(m_szData,_countof(m_szData),src); }
+	void Assign(const CHAR_TYPE* src){ if(!src) m_szData[0]=0; else auto_strcpy_s(m_szData,_countof(m_szData),src); }
 	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
 
 	//各種メソッド
