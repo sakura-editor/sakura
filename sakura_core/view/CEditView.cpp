@@ -757,7 +757,21 @@ LRESULT CEditView::DispatchEvent(
 		}
 
 		/* アクティブなペインを設定 */
-		m_pcEditDoc->m_pcEditWnd->SetActivePane( m_nMyIndex );
+		POINT ptCursor;
+		::GetCursorPos( &ptCursor );
+		if( ::WindowFromPoint( ptCursor ) == GetHwnd() ){
+			// ビュー上にマウスがあるので SetActivePane() を直接呼び出す
+			// （個別のマウスメッセージが届く前にアクティブペインを設定しておく）
+			m_pcEditDoc->m_pcEditWnd->SetActivePane( m_nMyIndex );
+		}else{
+			// 2008.05.24 ryoji
+			// スクロールバー上にマウスがあるかもしれないので MYWM_SETACTIVEPANE をポストする
+			// SetActivePane() にはスクロールバーのスクロール範囲調整処理が含まれているが、
+			// このタイミング（WM_MOUSEACTIVATE）でスクロール範囲を変更するのはまずい。
+			// 例えば Win XP/Vista だとスクロール範囲が小さくなってスクロールバーが有効から
+			// 無効に切り替わるとそれ以後スクロールバーが機能しなくなる。
+			::PostMessage( GetHwnd(), MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
+		}
 
 		return nRes;
 
