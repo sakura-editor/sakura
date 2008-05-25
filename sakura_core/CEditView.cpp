@@ -1141,7 +1141,21 @@ LRESULT CEditView::DispatchEvent(
 		}
 
 		/* アクティブなペインを設定 */
-		m_pcEditDoc->SetActivePane( m_nMyIndex );
+		POINT ptCursor;
+		::GetCursorPos( &ptCursor );
+		if( ::WindowFromPoint( ptCursor ) == m_hWnd ){
+			// ビュー上にマウスがあるので SetActivePane() を直接呼び出す
+			// （個別のマウスメッセージが届く前にアクティブペインを設定しておく）
+			m_pcEditDoc->SetActivePane( m_nMyIndex );
+		}else{
+			// 2008.05.24 ryoji
+			// スクロールバー上にマウスがあるかもしれないので MYWM_SETACTIVEPANE をポストする
+			// SetActivePane() にはスクロールバーのスクロール範囲調整処理が含まれているが、
+			// このタイミング（WM_MOUSEACTIVATE）でスクロール範囲を変更するのはまずい。
+			// 例えば Win XP/Vista だとスクロール範囲が小さくなってスクロールバーが有効から
+			// 無効に切り替わるとそれ以後スクロールバーが機能しなくなる。
+			::PostMessage( m_hWnd, MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
+		}
 
 		return nRes;
 	
@@ -2748,7 +2762,14 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 
 
 
-/* スクロールバーの状態を更新する */
+/** スクロールバーの状態を更新する
+
+	タブバーのタブ切替時は SIF_DISABLENOSCROLL フラグでの有効化／無効化が正常に動作しない
+	（不可視でサイズ変更していることによる影響か？）ので SIF_DISABLENOSCROLL で有効／無効
+	の切替に失敗した場合には強制切替する
+
+	@date 2008.05.24 ryoji 有効／無効の強制切替を追加
+*/
 void CEditView::AdjustScrollBars( void )
 {
 	if( !m_bDrawSWITCH ){
@@ -2759,7 +2780,7 @@ void CEditView::AdjustScrollBars( void )
 	int			nAllLines;
 	int			nVScrollRate;
 	SCROLLINFO	si;
-//	int			nNowPos;
+	bool		bEnable;
 
 	if( NULL != m_hwndVScrollBar ){
 		/* 垂直スクロールバー */
@@ -2779,40 +2800,39 @@ void CEditView::AdjustScrollBars( void )
 		si.nTrackPos = nVScrollRate;
 		::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
 		m_nVScrollRate = nVScrollRate;				/* 垂直スクロールバーの縮尺 */
-		
+
 		//	Nov. 16, 2002 genta
 		//	縦スクロールバーがDisableになったときは必ず全体が画面内に収まるように
 		//	スクロールさせる
 		//	2005.11.01 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
-		if( m_nViewRowNum >= nAllLines ){
+		bEnable = ( m_nViewRowNum < nAllLines );
+		if( bEnable != (::IsWindowEnabled( m_hwndVScrollBar ) != 0) ){
+			::EnableWindow( m_hwndVScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
+		}
+		if( !bEnable ){
 			ScrollAtV( 0 );
 		}
 	}
 	if( NULL != m_hwndHScrollBar ){
+		/* 水平スクロールバー */
 		si.cbSize = sizeof( si );
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
+		si.nMin  = 0;
+		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+		si.nMax  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - 1;
+		si.nPage = m_nViewColNum;		/* 表示域の桁数 */
+		si.nPos  = m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
+		si.nTrackPos = 1;
+		::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
 
-//@@		::GetScrollInfo( m_hwndHScrollBar, SB_CTL, &si );
-//@@		if( si.nMax == m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - 1
-//@@		 && si.nPage == (UINT)m_nViewColNum
-//@@		 && si.nPos  == m_nViewLeftCol
-//@@	   /*&& si.nTrackPos == 1*/ ){
-//@@		}else{
-			/* 水平スクロールバー */
-//			si.cbSize = sizeof( si );
-//			si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
-			si.nMin  = 0;
-			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-			si.nMax  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - 1;
-			si.nPage = m_nViewColNum;		/* 表示域の桁数 */
-			si.nPos  = m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
-			si.nTrackPos = 1;
-			::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
-		if( m_nViewColNum >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+		bEnable = ( m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+		if( bEnable != (::IsWindowEnabled( m_hwndHScrollBar ) != 0) ){
+			::EnableWindow( m_hwndHScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
+		}
+		if( !bEnable ){
 			ScrollAtH( 0 );
 		}
-//@@		}
 	}
 
 	return;
