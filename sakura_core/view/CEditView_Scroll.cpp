@@ -237,7 +237,7 @@ void CEditView::AdjustScrollBars()
 	CLayoutInt	nAllLines;
 	int			nVScrollRate;
 	SCROLLINFO	si;
-	BOOL		bEnable;
+	bool		bEnable;
 
 	if( NULL != m_hwndVScrollBar ){
 		/* 垂直スクロールバー */
@@ -263,8 +263,8 @@ void CEditView::AdjustScrollBars()
 		//	スクロールさせる
 		//	2005.11.01 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
 		bEnable = ( GetTextArea().m_nViewRowNum < nAllLines );
-		if( bEnable != ::IsWindowEnabled( m_hwndVScrollBar ) ){
-			::EnableWindow( m_hwndVScrollBar, bEnable );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
+		if( bEnable != (::IsWindowEnabled( m_hwndVScrollBar ) != 0) ){
+			::EnableWindow( m_hwndVScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
 		}
 		if( !bEnable ){
 			ScrollAtV( CLayoutInt(0) );
@@ -283,8 +283,8 @@ void CEditView::AdjustScrollBars()
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
 		bEnable = ( GetTextArea().m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
-		if( bEnable != ::IsWindowEnabled( m_hwndHScrollBar ) ){
-			::EnableWindow( m_hwndHScrollBar, bEnable );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
+		if( bEnable != (::IsWindowEnabled( m_hwndHScrollBar ) != 0) ){
+			::EnableWindow( m_hwndHScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
 		}
 		if( !bEnable ){
 			ScrollAtH( CLayoutInt(0) );

@@ -770,7 +770,7 @@ LRESULT CEditView::DispatchEvent(
 			// このタイミング（WM_MOUSEACTIVATE）でスクロール範囲を変更するのはまずい。
 			// 例えば Win XP/Vista だとスクロール範囲が小さくなってスクロールバーが有効から
 			// 無効に切り替わるとそれ以後スクロールバーが機能しなくなる。
-			::PostMessage( GetHwnd(), MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
+			::PostMessageAny( GetHwnd(), MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
 		}
 
 		return nRes;
