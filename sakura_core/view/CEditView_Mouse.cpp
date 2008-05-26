@@ -385,7 +385,9 @@ normal_action:;
 				GetSelectionInfo().DrawSelectArea();
 			}
 		}
-		if( ptMouse.x < GetTextArea().GetAreaLeft() ){
+		// 行番号エリアをクリックした
+		// 2008.05.22 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
+		if( ptMouse.x < GetTextArea().GetAreaLeft() && !GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
 			GetSelectionInfo().m_bBeginLineSelect = TRUE;
 
