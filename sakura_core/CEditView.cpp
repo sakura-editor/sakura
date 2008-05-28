@@ -15,7 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -2720,6 +2720,8 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 		::GetClientRect( m_hWnd, &rc );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 		m_nViewCx = (rc.right - rc.left) - nCxVScroll - m_nViewAlignLeft;	/* 表示域の幅 */
+		// 2008.05.23 nasukoji	表示域の桁数も算出する（右端カーソル移動時の表示場所ずれへの対処）
+		m_nViewColNum = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
 
 
 		if( bRedraw ){
