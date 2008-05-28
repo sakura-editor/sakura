@@ -89,7 +89,8 @@ CEditDoc::CEditDoc() :
 	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
 	m_nSettingType( 0 ),	// Sep. 11, 2002 genta
 	m_bInsMode( true ),	// Oct. 2, 2005 genta
-	m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
+	m_bIsModified( false ),	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
+	m_pcDragSourceView( NULL )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
 //	m_pcDlgTest = new CDlgTest;

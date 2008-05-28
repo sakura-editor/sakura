@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -223,7 +224,6 @@ CEditView::CEditView() :
 
 	m_bDrawSWITCH = TRUE;
 	m_pcDropTarget = new CDropTarget( this );
-	m_bDragSource = FALSE;
 	m_bDragMode = FALSE;					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = FALSE;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
@@ -1464,35 +1464,24 @@ void CEditView::ShowEditCaret( void )
 	int				nCaretHeight = 0;
 	int				nIdxFrom;
 	int				nCharChars;
-//	HDC				hdc;
-//	const CLayout*	pcLayout;
-//	HPEN			hPen, hPenOld;
-
-
-//if( m_nMyIndex == 0 && m_nCaretPosX == 0 && m_nCaretPosY == 0 ){
-//	MYTRACE( "ShowEditCaret() m_nMyIndex=%d m_nCaretWidth=%d\n", m_nMyIndex, m_nCaretWidth );
-//}
 
 /*
-		なんかフレームウィンドウがアクティブでないときに内部的にカーソル移動すると
-		カーソルがないのに、カーソルがあるということになってしまう
-		のでアクティブにしてもカーソルが出てこないときがある
-		フレームウィンドウがアクティブでないときは、カーソルがないことにする
+	フォーカスが無いときに内部的にキャレット作成すると暗黙的にキャレット破棄（※）されても
+	キャレットがある（m_nCaretWidth != 0）ということになってしまい、フォーカスを取得しても
+	キャレットが出てこなくなる場合がある
+	フォーカスが無いときはキャレットを作成／表示しないようにする
+
+	※キャレットはスレッドにひとつだけなので例えばエディットボックスがフォーカス取得すれば
+	　別形状のキャレットに暗黙的に差し替えられるしフォーカスを失えば暗黙的に破棄される
+
+	2007.12.11 ryoji
+	ドラッグアンドドロップ編集中はキャレットが必要で暗黙破棄の要因も無いので例外的に表示する
 */
-	if( ::GetActiveWindow() != ::GetParent( m_hwndParent ) ){
+	if( ::GetFocus() != m_hWnd && !m_bDragMode ){
 		m_nCaretWidth = 0;
-//		MYTRACE( "アクティブでないのにカーソル作っちゃったから消しちゃった。\n" );
 		return;
 	}
 
-	/* アクティブなペインを取得 */
-	if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
-		m_nCaretWidth = 0;
-//if( m_nMyIndex == 0 && m_nCaretPosX == 0 && m_nCaretPosY == 0 ){
-//	MYTRACE( "m_nMyIndex[%s] != m_pcEditDoc->GetActivePane()\n", m_nMyIndex, m_pcEditDoc->GetActivePane() );
-//}
-		return;
-	}
 	/* キャレットの幅、高さを決定 */
 	if( 0 == m_pShareData->m_Common.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
 		nCaretHeight = m_nCharHeight;					/* キャレットの高さ */
@@ -3353,7 +3342,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCare
 			if( m_pShareData->m_Common.m_bIsFreeCursorMode
 			  || ( m_bBeginSelect && m_bBeginBoxSelect )	/* マウス範囲選択中 && 矩形範囲選択中 */
 //			  || m_bDragMode /* OLE DropTarget */
-			  || ( m_bDragMode && m_bBeginBoxSelect ) /* OLE DropTarget && 矩形範囲選択中 */
+			  || ( m_bDragMode && m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
 			){
 // From 2001.12.21 hor
 //				if( nNewY + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
@@ -3484,16 +3473,21 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
-					m_bDragSource = TRUE;
-					CDataObject data( cmemCurText.GetPtr() );
+					int nOpe = m_pcEditDoc->m_cOpeBuf.GetCurrentPointer();
+					int nTickDrag = ::GetTickCount();
+					m_pcEditDoc->SetDragSourceView( this );
+					CDataObject data( cmemCurText.GetPtr(), cmemCurText.GetLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
 					dwEffects = data.DragDrop( TRUE, DROPEFFECT_COPY | DROPEFFECT_MOVE );
-					m_bDragSource = FALSE;
+					m_pcEditDoc->SetDragSourceView( NULL );
 //					MYTRACE( "dwEffects=%d\n", dwEffects );
-					if( 0 == dwEffects ){
-						if( IsTextSelected() ){	/* テキストが選択されているか */
-							/* 現在の選択範囲を非選択状態に戻す */
-							DisableSelectArea( TRUE );
-							
+					if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
+						m_pcEditDoc->SetActivePane( m_nMyIndex );
+						if( ::GetTickCount() - nTickDrag <= ::GetDoubleClickTime() ){	// 短時間ならクリックとみなす
+							// クリック位置にカーソル移動する
+							if( IsTextSelected() ){	/* テキストが選択されているか */
+								/* 現在の選択範囲を非選択状態に戻す */
+								DisableSelectArea( TRUE );
+							}
 //@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
 							/* カーソル移動。 */
 							if( yPos >= m_nViewAlignTop && yPos < m_nViewAlignTop  + m_nViewCy ){
@@ -3503,6 +3497,26 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 								if( xPos < m_nViewAlignLeft ){
 									MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
 								}
+							}
+						}else if( DROPEFFECT_MOVE == dwEffects ){
+							// 移動範囲を削除する
+							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
+							// →ドロップ先は外部のウィンドウである
+							if( NULL == m_pcOpeBlk ){
+								m_pcOpeBlk = new COpeBlk;
+							}
+
+							// 選択範囲を削除
+							DeleteData( TRUE );
+
+							// アンドゥバッファの処理
+							if( NULL != m_pcOpeBlk ){
+								if( 0 < m_pcOpeBlk->GetNum() ){
+									m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+								}else{
+									delete m_pcOpeBlk;
+								}
+								m_pcOpeBlk = NULL;
 							}
 						}
 					}
@@ -4140,7 +4154,7 @@ VOID CEditView::OnTimer(
 	RECT		rc;
 
 	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
-		if( m_bDragSource ){
+		if( IsDragSource() ){
 			return;
 		}
 	}
@@ -8340,7 +8354,7 @@ int CEditView::IsCurrentPositionSelected(
 		++rcSel.bottom;
 		po.x = nCaretPosX;
 		po.y = nCaretPosY;
-		if( m_bDragSource ){
+		if( IsDragSource() ){
 			if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){ /* Ctrlキーが押されていたか */
 				++rcSel.left;
 			}else{
@@ -8370,7 +8384,7 @@ int CEditView::IsCurrentPositionSelected(
 			return 1;
 		}
 		if( m_nSelectLineFrom == nCaretPosY ){
-			if( m_bDragSource ){
+			if( IsDragSource() ){
 				if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){	/* Ctrlキーが押されていたか */
 					if( m_nSelectColmFrom >= nCaretPosX ){
 						return -1;
@@ -8386,7 +8400,7 @@ int CEditView::IsCurrentPositionSelected(
 			}
 		}
 		if( m_nSelectLineTo == nCaretPosY ){
-			if( m_bDragSource ){
+			if( IsDragSource() ){
 				if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){	/* Ctrlキーが押されていたか */
 					if( m_nSelectColmTo <= nCaretPosX ){
 						return 1;
@@ -8641,6 +8655,9 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 
 
 
+/** DragEnter 処理
+	@date 2008.03.26 ryoji SAKURAClipフォーマット（NULL文字を含むテキスト）への対応を追加
+*/
 STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
 #ifdef _DEBUG
@@ -8657,52 +8674,25 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
-	if( IsDataAvailable( pDataObject, CF_TEXT )
-//	 && NULL != GetGlobalData(pDataObject, CF_TEXT)
-	){
-		/* 自分をアクティブペインにする */
-		m_pcEditDoc->SetActivePane( m_nMyIndex );
 
-		/* 選択テキストのドラッグ中か */
-		m_bDragMode = TRUE;
-
-	//	/* 編集ウィンドウオブジェクトからのアクティブ要求 */
-	//	::PostMessage( m_pShareData->m_hwndTray, MYWM_ACTIVATE_ME, (WPARAM)::GetParent( m_hwndParent ),  0 );
-
-		/* 入力フォーカスを受け取ったときの処理 */
-		OnSetFocus();
-
-	//	::ScreenToClient( m_hWnd_DropTarget, (LPPOINT)&pt );
-	//	OnLBUTTONDOWN( dwKeyState, pt.x, pt.y );
-
-		m_pcDropTarget->m_pDataObject = pDataObject;
-		/* Ctrl,ALT,キーが押されていたか */
-		if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL )
-			|| FALSE == m_bDragSource	// Aug. 6, 2004 genta DragOver/Dropでは入っているがここだけ漏れていた
-		){
-			*pdwEffect = DROPEFFECT_COPY;
-		}else{
-			*pdwEffect = DROPEFFECT_MOVE;
-		}
-//		/* アクティブにする */
-//		ActivateFrameWindow( GetParent( m_hwndParent ) );
-//		ActivateFrameWindow( m_hWnd_DropTarget/*GetParent( m_hwndParent )*/ );
-
-//		::SetFocus( m_hWnd_DropTarget );
-		::SetFocus( m_hWnd );
-	}else{
+	CLIPFORMAT cf;
+	cf = GetAvailableClipFormat( pDataObject );
+	if( cf == 0 )
 		return E_INVALIDARG;
-//		*pdwEffect = DROPEFFECT_NONE;
 
-	}
-//	/* アクティブにする */
-//	ActivateFrameWindow( ::GetParent( m_hwndParent ) );
-//	::PostMessage( ::GetParent( m_hwndParent ), WM_ACTIVATE, MAKELONG( 0, WA_ACTIVE ), 0 );
-//	/*
-//	||	処理中のユーザー操作を可能にする
-	//	||	ブロッキングフック (メッセージ配送)
-//	*/
-//	BlockingHook();
+	/* 自分をアクティブペインにする */
+	m_pcEditDoc->SetActivePane( m_nMyIndex );
+
+	// 現在のカーソル位置を記憶する	// 2007.12.09 ryoji
+	m_nCaretPosX_DragEnter = m_nCaretPosX;
+	m_nCaretPosY_DragEnter = m_nCaretPosY;
+	m_nCaretPosX_Prev_DragEnter = m_nCaretPosX_Prev;
+
+	// ドラッグデータは矩形か
+	m_bDragBoxData = IsDataAvailable( pDataObject, ::RegisterClipboardFormat( _T("MSDEVColumnSelect") ) );
+
+	/* 選択テキストのドラッグ中か */
+	m_bDragMode = TRUE;
 
 	DragOver( dwKeyState, pt, pdwEffect );
 	return S_OK;
@@ -8713,48 +8703,16 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 #ifdef _DEBUG
 	MYTRACE( "CEditView::DragOver()\n" );
 #endif
-//	RECT	rc;
-//	POINT	po;
-//	po.x = pt.x;
-//	po.y = pt.y;
-//	::GetWindowRect(m_hWnd, &rc );
-//	if( m_bDragSource && PtInRect( &rc, po ) ){
-//	}else{
-		/* マウス移動のメッセージ処理 */
-//		::ScreenToClient( m_hWnd_DropTarget, (LPPOINT)&pt );
-		::ScreenToClient( m_hWnd, (LPPOINT)&pt );
-		OnMOUSEMOVE( dwKeyState, pt.x , pt.y );
-//	}
 
-//	MYTRACE( "m_nCaretPosX=%d, m_nCaretPosY=%d\n", m_nCaretPosX, m_nCaretPosY );
+	/* マウス移動のメッセージ処理 */
+	::ScreenToClient( m_hWnd, (LPPOINT)&pt );
+	OnMOUSEMOVE( dwKeyState, pt.x , pt.y );
 
 	if ( pdwEffect == NULL )
 		return E_INVALIDARG;
-//	::ScreenToClient( m_hWnd_DropTarget, (LPPOINT)&pt );
-//	DWORD dwIndex = LOWORD( ::SendMessage( m_hWnd_DropTarget, EM_CHARFROMPOS, 0, MAKELPARAM( pt.x, pt.y ) ) );
-//	if ( dwIndex != (WORD) -1 ){
-//		::SendMessage( m_hWnd_DropTarget, EM_SETSEL, dwIndex, dwIndex );
-//		::SendMessage( m_hWnd_DropTarget, EM_SCROLLCARET, 0, 0 );
-//	}
-	if( NULL == m_pcDropTarget->m_pDataObject ){
-		*pdwEffect = DROPEFFECT_NONE;
-	}else
-	if( m_bDragSource
-	 && 0 == IsCurrentPositionSelected( /* 指定カーソル位置が選択エリア内にあるか */
-			m_nCaretPosX,				// カーソル位置X
-			m_nCaretPosY				// カーソル位置Y
-		)
-	){
-		*pdwEffect = DROPEFFECT_NONE;
-	}else
-	/* Ctrl,ALT,キーが押されていたか */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL )
-	 || FALSE == m_bDragSource
-	){
-		*pdwEffect = DROPEFFECT_COPY;
-	}else{
-		*pdwEffect = DROPEFFECT_MOVE;
-	}
+
+	*pdwEffect = TranslateDropEffect( dwKeyState, pt, *pdwEffect );
+
 	return S_OK;
 }
 
@@ -8765,41 +8723,39 @@ STDMETHODIMP CEditView::DragLeave( void )
 #ifdef _DEBUG
 	MYTRACE( "CEditView::DragLeave()\n" );
 #endif
-
-	if( !m_bDragSource ){
-		/* 入力フォーカスを失ったときの処理 */
-		OnKillFocus();
-		::SetFocus(NULL);
-	}else{
-		// 1999.11.15
-		OnSetFocus();
-		::SetFocus( ::GetParent( m_hwndParent ) );
-	}
-
-	m_pcDropTarget->m_pDataObject = NULL;
-
 	/* 選択テキストのドラッグ中か */
 	m_bDragMode = FALSE;
+
+	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
+	MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, FALSE );
+	m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
+	RedrawAll();
+
+	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
+	if( ::GetActiveWindow() == NULL )
+		OnKillFocus();
 
 	return S_OK;
 }
 
+/** ドロップ処理
+	@date 2008.03.26 ryoji ドロップで貼り付けた範囲を選択状態にする
+	                       SAKURAClipフォーマット（NULL文字を含むテキスト）への対応を追加
+*/
 STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
 #ifdef _DEBUG
 	MYTRACE( "CEditView::Drop()\n" );
 #endif
-	BOOL		bBoxSelected;
+	CMemory		cmemBuf;
+	COpe*		pcOpe;
+	BOOL		bBoxData;
 	BOOL		bMove;
 	BOOL		bMoveToPrev;
 	RECT		rcSel;
 	int			nCaretPosX_Old;
 	int			nCaretPosY_Old;
-	CMemory		cmemBuf;
-	CMemory		cmemClip;
 	int			bBeginBoxSelect_Old;
-//	int			nSelectLineBgn_Old;			/* 範囲選択開始行(原点) */
-//	int			nSelectColBgn_Old;			/* 範囲選択開始桁(原点) */
 	int			nSelectLineBgnFrom_Old;		/* 範囲選択開始行(原点) */
 	int			nSelectColBgnFrom_Old;		/* 範囲選択開始桁(原点) */
 	int			nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
@@ -8810,193 +8766,328 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	int			nSelectColTo_Old;
 //	MYTRACE( "CEditView::Drop()\n" );
 
-	if( !m_bDragSource
-	 && IsTextSelected() ){	/* テキストが選択されているか */
-		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
-	}
-	if( pDataObject == NULL || pdwEffect == NULL )
-		return E_INVALIDARG;
-	*pdwEffect = DROPEFFECT_NONE;
-	if( IsDataAvailable(pDataObject, CF_TEXT) ){
-#ifdef _DEBUG
-		MYTRACE( "TRUE == IsDataAvailable()\n" );
-#endif
-		HGLOBAL		hData = GetGlobalData(pDataObject, CF_TEXT);
-#ifdef _DEBUG
-		MYTRACE( "%xh == GetGlobalData(pDataObject, CF_TEXT)\n", hData );
-#endif
-		if (hData == NULL){
-			m_pcDropTarget->m_pDataObject = NULL;
-			/* 選択テキストのドラッグ中か */
-			m_bDragMode = FALSE;
-			return E_INVALIDARG;
-		}
-
-		DWORD		nSize = 0;
-		LPCTSTR lpszSource = (LPCTSTR) ::GlobalLock(hData);
-
-//		MYTRACE( "lpszSource=[%s]\n", lpszSource );
-
-		/* 移動かコピーか */
-		if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL )
-		 || FALSE == m_bDragSource
-		){
-			bMove = FALSE;
-			*pdwEffect = DROPEFFECT_COPY;
-		}else{
-			bMove = TRUE;
-			*pdwEffect = DROPEFFECT_MOVE;
-		}
-
-		if( m_bDragSource ){
-			if( NULL != m_pcOpeBlk ){
-			}else{
-				m_pcOpeBlk = new COpeBlk;
-			}
-			bBoxSelected = m_bBeginBoxSelect;
-			/* 選択範囲のデータを取得 */
-//			GetSelectedData( cmemBuf, FALSE, NULL, FALSE );
-//			cmemBuf.SetData( lpszSource, lstrlen( lpszSource ) );
-			cmemBuf.SetDataSz( lpszSource );
-
-			/* 移動の場合、位置関係を算出 */
-			if( bMove ){
-				if( bBoxSelected ){
-					/* 2点を対角とする矩形を求める */
-					TwoPointToRect(
-						&rcSel,
-						m_nSelectLineFrom,		/* 範囲選択開始行 */
-						m_nSelectColmFrom,		/* 範囲選択開始桁 */
-						m_nSelectLineTo,		/* 範囲選択終了行 */
-						m_nSelectColmTo			/* 範囲選択終了桁 */
-					);
-					++rcSel.bottom;
-					if( m_nCaretPosY >= rcSel.bottom ){
-						bMoveToPrev = FALSE;
-					}else
-					if( m_nCaretPosY + rcSel.bottom - rcSel.top < rcSel.top ){
-						bMoveToPrev = TRUE;
-					}else
-					if( m_nCaretPosX < rcSel.left ){
-						bMoveToPrev = TRUE;
-					}else{
-						bMoveToPrev = FALSE;
-					}
-				}else{
-					if( m_nSelectLineFrom > m_nCaretPosY ){
-						bMoveToPrev = TRUE;
-					}else
-					if( m_nSelectLineFrom == m_nCaretPosY ){
-						if( m_nSelectColmFrom > m_nCaretPosX ){
-							bMoveToPrev = TRUE;
-						}else{
-							bMoveToPrev = FALSE;
-						}
-					}else{
-						bMoveToPrev = FALSE;
-					}
-				}
-			}
-			if( !bMove ){
-				/* コピーモード */
-				/* 現在の選択範囲を非選択状態に戻す */
-				DisableSelectArea( TRUE );
-			}
-			nCaretPosX_Old = m_nCaretPosX;
-			nCaretPosY_Old = m_nCaretPosY;
-			if( bMove ){
-				if( bMoveToPrev ){
-					/* 移動モード & 前に移動 */
-					/* 選択エリアを削除 */
-					DeleteData( TRUE );
-					MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
-				}else{
-					bBeginBoxSelect_Old = m_bBeginBoxSelect;
-
-					nSelectLineBgnFrom_Old	= m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
-					nSelectColBgnFrom_Old	= m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
-					nSelectLineBgnTo_Old	= m_nSelectLineBgnTo;	/* 範囲選択開始行(原点) */
-					nSelectColBgnTo_Old		= m_nSelectColmBgnTo;	/* 範囲選択開始桁(原点) */
-
-					nSelectLineFrom_Old	= m_nSelectLineFrom;
-					nSelectColFrom_Old	= m_nSelectColmFrom;
-					nSelectLineTo_Old	= m_nSelectLineTo;
-					nSelectColTo_Old	= m_nSelectColmTo;
-					/* 現在の選択範囲を非選択状態に戻す */
-					DisableSelectArea( TRUE );
-				}
-			}
-			if( FALSE == bBoxSelected ){	/* 矩形範囲選択中 */
-				//	2004,05.14 Moca 引数に文字列長を追加
-				Command_INSTEXT( TRUE, cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE );
-			}else{
-				// 2004.07.12 Moca クリップボードを書き換えないように
-				// TRUE == bBoxSelected
-				// FALSE == m_bBeginBoxSelect
-				cmemClip.SetDataSz( "" );
-				/* 貼り付け（クリップボードから貼り付け）*/
-				Command_PASTEBOX( cmemBuf.GetPtr(), cmemBuf.GetLength() );
-				AdjustScrollBars(); // 2007.07.22 ryoji
-				Redraw();
-			}
-			if( bMove ){
-				if( bMoveToPrev ){
-				}else{
-					/* 移動モード & 後ろに移動*/
-					m_bBeginBoxSelect = bBeginBoxSelect_Old;
-					m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-					m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnTo = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-
-					m_nSelectLineFrom = nSelectLineFrom_Old;
-					m_nSelectColmFrom = nSelectColFrom_Old;
-					m_nSelectLineTo = nSelectLineTo_Old;
-					m_nSelectColmTo = nSelectColTo_Old;
-
-					/* 選択エリアを削除 */
-					DeleteData( TRUE );
-					MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
-				}
-			}
-			/* アンドゥバッファの処理 */
-			if( NULL != m_pcOpeBlk ){
-				if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-					/* 操作の追加 */
-					m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-					m_pcEditDoc->RedrawInactivePane();	// 他のペインの表示	// 2007.07.22 ryoji
-				}else{
-					delete m_pcOpeBlk;
-				}
-				m_pcOpeBlk = NULL;
-			}
-		}else{
-			HandleCommand( F_INSTEXT, TRUE, (LPARAM)lpszSource, TRUE, 0, 0 );
-		}
-		::GlobalUnlock(hData);
-		// 2004.07.12 fotomo/もか メモリーリークの修正
-		if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
-			::GlobalFree(hData);
-		}
-	}else{
-#ifdef _DEBUG
-		MYTRACE( "FALSE == IsDataAvailable()\n" );
-#endif
-	}
-	m_pcDropTarget->m_pDataObject = NULL;
-//	::SetFocus(NULL);
-
 	/* 選択テキストのドラッグ中か */
 	m_bDragMode = FALSE;
 
-	/* 編集ウィンドウオブジェクトからのアクティブ要求 */
-	::SetFocus( ::GetParent( m_hwndParent ) );
-	SetActiveWindow( m_hWnd );
-//	::PostMessage( m_pShareData->m_hwndTray, MYWM_ACTIVATE_ME, (WPARAM)::GetParent( m_hwndParent ),  0 );
+	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
+	if( ::GetActiveWindow() == NULL )
+		OnKillFocus();
 
-//	::ShowCaret( m_hWnd );
+	if( pDataObject == NULL || pdwEffect == NULL )
+		return E_INVALIDARG;
+
+	CLIPFORMAT cf;
+	cf = GetAvailableClipFormat( pDataObject );
+	if( cf == 0 )
+		return E_INVALIDARG;
+
+	*pdwEffect = TranslateDropEffect( dwKeyState, pt, *pdwEffect );
+	if( *pdwEffect == DROPEFFECT_NONE )
+		return E_INVALIDARG;
+
+	// 外部からのドロップは以後の処理ではコピーと同様に扱う
+	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
+	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
+	bBoxData = m_bDragBoxData;
+
+	// ドロップデータの取得
+	HGLOBAL hData = GetGlobalData( pDataObject, cf );
+	if( hData == NULL )
+		return E_INVALIDARG;
+	LPVOID pData = ::GlobalLock( hData );
+	SIZE_T nSize = ::GlobalSize( hData );
+	if( cf == ::RegisterClipboardFormat( _T("SAKURAClip") ) ){
+		cmemBuf.SetData( (char*)pData + sizeof(int), *(int*)pData );
+	}else{
+		CMemory cmemTemp;
+		cmemTemp.SetData( (char*)pData, nSize );	// 安全のため末尾に null 文字を付加
+		cmemBuf.SetDataSz( cmemTemp.GetPtr() );		// 文字列終端までコピー
+	}
+
+	// アンドゥバッファの準備
+	if( NULL == m_pcOpeBlk ){
+		m_pcOpeBlk = new COpeBlk;
+	}
+
+	/* 移動の場合、位置関係を算出 */
+	if( bMove ){
+		if( bBoxData ){
+			/* 2点を対角とする矩形を求める */
+			TwoPointToRect(
+				&rcSel,
+				pcDragSourceView->m_nSelectLineFrom,		/* 範囲選択開始行 */
+				pcDragSourceView->m_nSelectColmFrom,		/* 範囲選択開始桁 */
+				pcDragSourceView->m_nSelectLineTo,		/* 範囲選択終了行 */
+				pcDragSourceView->m_nSelectColmTo			/* 範囲選択終了桁 */
+			);
+			++rcSel.bottom;
+			if( m_nCaretPosY >= rcSel.bottom ){
+				bMoveToPrev = FALSE;
+			}else
+			if( m_nCaretPosY + rcSel.bottom - rcSel.top < rcSel.top ){
+				bMoveToPrev = TRUE;
+			}else
+			if( m_nCaretPosX < rcSel.left ){
+				bMoveToPrev = TRUE;
+			}else{
+				bMoveToPrev = FALSE;
+			}
+		}else{
+			if( pcDragSourceView->m_nSelectLineFrom > m_nCaretPosY ){
+				bMoveToPrev = TRUE;
+			}else
+			if( pcDragSourceView->m_nSelectLineFrom == m_nCaretPosY ){
+				if( pcDragSourceView->m_nSelectColmFrom > m_nCaretPosX ){
+					bMoveToPrev = TRUE;
+				}else{
+					bMoveToPrev = FALSE;
+				}
+			}else{
+				bMoveToPrev = FALSE;
+			}
+		}
+	}
+
+	nCaretPosX_Old = m_nCaretPosX;
+	nCaretPosY_Old = m_nCaretPosY;
+	if( !bMove ){
+		/* コピーモード */
+		/* 現在の選択範囲を非選択状態に戻す */
+		DisableSelectArea( TRUE );
+	}else{
+		// ドラッグ元の選択範囲を記憶
+		bBeginBoxSelect_Old = pcDragSourceView->m_bBeginBoxSelect;
+		nSelectLineBgnFrom_Old = pcDragSourceView->m_nSelectLineBgnFrom;
+		nSelectColBgnFrom_Old = pcDragSourceView->m_nSelectColmBgnFrom;
+		nSelectLineBgnTo_Old = pcDragSourceView->m_nSelectLineBgnTo;
+		nSelectColBgnTo_Old = pcDragSourceView->m_nSelectColmBgnTo;
+		nSelectLineFrom_Old = pcDragSourceView->m_nSelectLineFrom;
+		nSelectColFrom_Old = pcDragSourceView->m_nSelectColmFrom;
+		nSelectLineTo_Old = pcDragSourceView->m_nSelectLineTo;
+		nSelectColTo_Old = pcDragSourceView->m_nSelectColmTo;
+
+		if( bMoveToPrev ){
+			/* 移動モード & 前に移動 */
+			/* 選択エリアを削除 */
+			if( this != pcDragSourceView ){
+				// ドラッグ元の選択範囲を復元
+				pcDragSourceView->DisableSelectArea( TRUE );
+				DisableSelectArea( TRUE );
+				m_bBeginBoxSelect = bBeginBoxSelect_Old;
+				m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;
+				m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;
+				m_nSelectLineBgnTo = nSelectLineBgnTo_Old;
+				m_nSelectColmBgnTo = nSelectColBgnTo_Old;
+				m_nSelectLineFrom = nSelectLineFrom_Old;
+				m_nSelectColmFrom = nSelectColFrom_Old;
+				m_nSelectLineTo = nSelectLineTo_Old;
+				m_nSelectColmTo = nSelectColTo_Old;
+			}
+			DeleteData( TRUE );
+			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
+		}else{
+			/* 現在の選択範囲を非選択状態に戻す */
+			pcDragSourceView->DisableSelectArea( TRUE );
+			if( this != pcDragSourceView )
+				DisableSelectArea( TRUE );
+		}
+	}
+	if( !bBoxData ){	/* 矩形データ */
+		//	2004,05.14 Moca 引数に文字列長を追加
+
+		// 挿入前のキャレット位置を記憶する
+		// （キャレットが行終端より右の場合は埋め込まれる空白分だけ桁位置をシフト）
+		int nCaretPosX_PHY_Old = m_nCaretPosX_PHY;
+		int nCaretPosY_PHY_Old = m_nCaretPosY_PHY;
+		const CLayout* pcLayout;
+		int nLineLen;
+		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ){
+			LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
+			if( nLineLen > 0 ){	// 行終端より右の場合には nLineLen に行全体の表示桁数が入っている
+				nCaretPosX_PHY_Old += (m_nCaretPosX - nLineLen);
+			}
+		}
+
+		Command_INSTEXT( TRUE, cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE );
+
+		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
+			&m_nSelectColmFrom, &m_nSelectLineFrom
+		);
+		m_nSelectLineTo = m_nCaretPosY;
+		m_nSelectColmTo = m_nCaretPosX;
+	}else{
+		// 2004.07.12 Moca クリップボードを書き換えないように
+		// TRUE == bBoxData
+		// FALSE == m_bBeginBoxSelect
+		/* 貼り付け（クリップボードから貼り付け）*/
+		Command_PASTEBOX( cmemBuf.GetPtr(), cmemBuf.GetLength() );
+		AdjustScrollBars(); // 2007.07.22 ryoji
+		Redraw();
+	}
+	if( bMove ){
+		if( bMoveToPrev ){
+		}else{
+			/* 移動モード & 後ろに移動*/
+
+			// 現在の選択範囲を記憶する	// 2008.03.26 ryoji
+			int nSelectLineFrom_PHY;
+			int nSelectColmFrom_PHY;
+			int nSelectLineTo_PHY;
+			int nSelectColmTo_PHY;
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_nSelectColmFrom, m_nSelectLineFrom,
+				&nSelectColmFrom_PHY, &nSelectLineFrom_PHY
+			);
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_nSelectColmTo, m_nSelectLineTo,
+				&nSelectColmTo_PHY, &nSelectLineTo_PHY
+			);
+
+			// 以前の選択範囲を記憶する	// 2008.03.26 ryoji
+			int nSelectLineFrom_PHY_Old;
+			int nSelectColmFrom_PHY_Old;
+			int nSelectLineTo_PHY_Old;
+			int nSelectColmTo_PHY_Old;
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				nSelectColFrom_Old, nSelectLineFrom_Old,
+				&nSelectColmFrom_PHY_Old, &nSelectLineFrom_PHY_Old
+			);
+			m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				nSelectColTo_Old, nSelectLineTo_Old,
+				&nSelectColmTo_PHY_Old, &nSelectLineTo_PHY_Old
+			);
+
+			// 現在の行数を記憶する	// 2008.03.26 ryoji
+			int nLines_Old = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+
+			// 以前の選択範囲を選択する
+			m_bBeginBoxSelect = bBeginBoxSelect_Old;
+			m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
+			m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
+			m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
+			m_nSelectColmBgnTo = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
+			m_nSelectLineFrom = nSelectLineFrom_Old;
+			m_nSelectColmFrom = nSelectColFrom_Old;
+			m_nSelectLineTo = nSelectLineTo_Old;
+			m_nSelectColmTo = nSelectColTo_Old;
+
+			/* 選択エリアを削除 */
+			DeleteData( TRUE );
+
+			// 削除前の選択範囲を復元する	// 2008.03.26 ryoji
+			if( !bBoxData ){
+				// 削除された範囲を考慮して選択範囲を調整する
+				if( nSelectLineFrom_PHY == nSelectLineTo_PHY_Old ){	// 選択開始が削除末尾と同一行
+					nSelectColmFrom_PHY -= (nSelectColmTo_PHY_Old - nSelectColmFrom_PHY_Old);
+				}
+				if( nSelectLineTo_PHY == nSelectLineTo_PHY_Old ){	// 選択終了が削除末尾と同一行
+					nSelectColmTo_PHY -= (nSelectColmTo_PHY_Old - nSelectColmFrom_PHY_Old);
+				}
+				// Note.
+				// (nSelectLineTo_PHY_Old - nSelectLineFrom_PHY_Old) は実際の削除行数と同じになる
+				// こともあるが、（削除行数－１）になることもある．
+				// 例）フリーカーソルでの行番号クリック時の１行選択
+				int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+				nSelectLineFrom_PHY -= (nLines_Old - nLines);
+				nSelectLineTo_PHY -= (nLines_Old - nLines);
+
+				// 調整後の選択範囲を設定する
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+					nSelectColmFrom_PHY, nSelectLineFrom_PHY,
+					&m_nSelectColmFrom, &m_nSelectLineFrom
+				);
+				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+					nSelectColmTo_PHY, nSelectLineTo_PHY,
+					&m_nSelectColmTo, &m_nSelectLineTo
+				);
+				nCaretPosX_Old = m_nSelectColmTo;
+				nCaretPosY_Old = m_nSelectLineTo;
+			}
+
+			// キャレットを移動する
+			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
+			m_nCaretPosX_Prev = m_nCaretPosX;
+
+			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji
+			pcOpe = new COpe;
+			pcOpe->m_nOpe = OPE_MOVECARET;
+			pcOpe->m_nCaretPosX_PHY_Before = nSelectColmFrom_PHY_Old;
+			pcOpe->m_nCaretPosY_PHY_Before = nSelectLineFrom_PHY_Old;
+			pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;
+			pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;
+			m_pcOpeBlk->AppendOpe( pcOpe );
+		}
+	}
+	DrawSelectArea();
+
+	/* アンドゥバッファの処理 */
+	if( NULL != m_pcOpeBlk ){
+		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
+			/* 操作の追加 */
+			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+			m_pcEditDoc->RedrawInactivePane();	// 他のペインの表示	// 2007.07.22 ryoji
+		}else{
+			delete m_pcOpeBlk;
+		}
+		m_pcOpeBlk = NULL;
+	}
+
+	::GlobalUnlock( hData );
+	// 2004.07.12 fotomo/もか メモリーリークの修正
+	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+		::GlobalFree( hData );
+	}
+
 	return S_OK;
+}
+
+CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
+{
+	CLIPFORMAT cf = 0;
+	CLIPFORMAT cfSAKURAClip = ::RegisterClipboardFormat( _T("SAKURAClip") );
+
+	if( IsDataAvailable( pDataObject, cfSAKURAClip ) )
+		cf = cfSAKURAClip;
+	//else if( IsDataAvailable(pDataObject, CF_UNICODETEXT) )
+	//	cf = CF_UNICODETEXT;
+	else if( IsDataAvailable(pDataObject, CF_TEXT) )
+		cf = CF_TEXT;
+
+	return cf;
+}
+
+DWORD CEditView::TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffect )
+{
+	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
+
+	/* このビューのカーソルがドラッグ元の選択範囲内にあるか */
+	if( pcDragSourceView &&
+		!pcDragSourceView->IsCurrentPositionSelected( m_nCaretPosX, m_nCaretPosY )
+	){
+		return DROPEFFECT_NONE;
+	};
+
+#if 1
+	// ドラッグ元が外部ウィンドウかどうかによって受け方を変える
+	// ※汎用テキストエディタではこちらが主流っぽい
+	if( pcDragSourceView ){
+#else
+	// ドラッグ元が移動を許すかどうかによって受け方を変える
+	// ※MS 製品（MS Office, Visual Studioなど）ではこちらが主流っぽい
+	if( dwEffect & DROPEFFECT_MOVE ){
+#endif
+		dwEffect &= ((SHORT)0x8000 & ::GetKeyState( VK_CONTROL ))? DROPEFFECT_COPY: DROPEFFECT_MOVE;
+	}else{
+		dwEffect &= ((SHORT)0x8000 & ::GetKeyState( VK_SHIFT ))? DROPEFFECT_MOVE: DROPEFFECT_COPY;
+	}
+	return dwEffect;
+}
+
+bool CEditView::IsDragSource( void )
+{
+	return ( this == m_pcEditDoc->GetDragSourceView() );
 }
 
 

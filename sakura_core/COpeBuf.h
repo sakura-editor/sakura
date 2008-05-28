@@ -6,6 +6,8 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2002, aroka
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -47,6 +49,7 @@ class SAKURA_CORE_API COpeBuf {
 		COpeBlk* DoUndo( int* );	/* 現在のUndo対象の操作ブロックを返す */
 		COpeBlk* DoRedo( int* );	/* 現在のRedo対象の操作ブロックを返す */
 		void SetNoModified( void );	/* 現在位置で無変更な状態になったことを通知 */
+		int GetCurrentPointer( void ) const { return m_nCurrentPointer; }	/* 現在位置を返す */	// 2007.12.09 ryoji
 
 		void DUMP( void );	/* 編集操作要素ブロックのダンプ */
 	private:

@@ -131,6 +131,10 @@ public:
 	//	Aug. 31, 2000 genta
 	const CEditView& ActiveView(void) const { return m_cEditViewArr[m_nActivePaneIndex]; }
 	CEditView& ActiveView(void) { return m_cEditViewArr[m_nActivePaneIndex]; }
+
+	CEditView* GetDragSourceView() const { return m_pcDragSourceView; }
+	void SetDragSourceView( CEditView* pcDragSourceView ) { m_pcDragSourceView = pcDragSourceView; }
+
 	//	Nov. 20, 2000 genta
 	void SetImeMode(int mode);	//	IME状態の設定
 
@@ -282,6 +286,7 @@ public:
 	CSplitterWnd	m_cSplitterWnd;				/* 分割フレーム */
 	CEditView		m_cEditViewArr[4];			/* ビュー */
 	int				m_nActivePaneIndex;			/* アクティブなビュー */
+	CEditView*		m_pcDragSourceView;			/* ドラッグ元のビュー */
 //	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */
 	CDlgFind		m_cDlgFind;					/* 「検索」ダイアログ */
 	CDlgReplace		m_cDlgReplace;				/* 「置換」ダイアログ */

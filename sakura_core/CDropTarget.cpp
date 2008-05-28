@@ -6,6 +6,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
 	Copyright (C) 2002, aroka
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -85,6 +86,7 @@ template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFAC
 DECLARE_YB_INTERFACEIMPL( IDataObject )
 DECLARE_YB_INTERFACEIMPL( IDropSource )
 DECLARE_YB_INTERFACEIMPL( IDropTarget )
+DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 
 
@@ -93,7 +95,6 @@ CDropTarget::CDropTarget( CEditView* pCEditView )
 {
 	m_pCEditView = pCEditView;
 	m_hWnd_DropTarget = NULL;
-	m_pDataObject = NULL;
 	return;
 }
 
@@ -227,20 +228,57 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 
 
 
-void CDataObject::SetText( LPCTSTR lpszText )
+/** 転送対象の文字列を設定する
+	@param lpszText [in] 文字列
+	@param nTextLen [in] pszTextの長さ
+	@param bColmnSelect [in] 矩形選択か
+
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
+void CDataObject::SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( data != NULL ){
-		delete[] data;
-		data = NULL;
-		size = 0;
-		m_cfFormat = 0;
+	int i;
+	if( m_pData != NULL )
+	{
+		for( i = 0; i < m_nFormat; i++ ){
+			delete [](m_pData[i].data);
+		}
+		delete []m_pData;
+		m_pData = NULL;
+		m_nFormat = 0;
 	}
 	if( lpszText != NULL ){
-		size = (strlen( lpszText ) + 1) * sizeof( TCHAR );
-		data = new BYTE[size];
-		memcpy( data, lpszText, size) ;
-		m_cfFormat = CF_TEXT;
+		m_nFormat = bColmnSelect? 3: 2;	// 矩形を含めるか
+		m_pData = new DATA[m_nFormat];
+
+		i = 0;
+		m_pData[0].cfFormat = CF_TEXT;
+		m_pData[0].size = nTextLen + 1;
+		m_pData[0].data = new BYTE[m_pData[0].size];
+		memcpy( m_pData[0].data, lpszText, nTextLen );
+		*((char*)m_pData[0].data + nTextLen) = '\0';
+
+		//i++;
+		//m_pData[i].cfFormat = CF_UNICODETEXT;
+		//m_pData[i].size = ::MultiByteToWideChar(CP_ACP, 0, lpszText, -1, NULL, 0) * sizeof(WCHAR);
+		//m_pData[i].data = new BYTE[m_pData[i].size];
+		//::MultiByteToWideChar(CP_ACP, 0, lpszText, -1, (LPWSTR)m_pData[i].data, m_pData[i].size);
+
+		i++;
+		m_pData[i].cfFormat = ::RegisterClipboardFormat( _T("SAKURAClip") );
+		m_pData[i].size = sizeof(int) + nTextLen;
+		m_pData[i].data = new BYTE[m_pData[i].size];
+		*(int*)m_pData[i].data = nTextLen;
+		memcpy( m_pData[i].data + sizeof(int), lpszText, nTextLen );
+
+		i++;
+		if( bColmnSelect ){
+			m_pData[i].cfFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
+			m_pData[i].size = 1;
+			m_pData[i].data = new BYTE[1];
+			m_pData[i].data[0] = '\0';
+		}
 	}
 }
 
@@ -253,12 +291,15 @@ DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
 	return DROPEFFECT_NONE;
 }
 
+/** IDataObject::GetData
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
 STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( lpfe == NULL || lpsm == NULL )
 		return E_INVALIDARG;
-	if( data == NULL )
+	if( m_pData == NULL )
 		return OLE_E_NOTRUNNING;
 	if( lpfe->lindex != -1 )
 		return DV_E_LINDEX;
@@ -266,29 +307,37 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 		return DV_E_TYMED;
 	if( lpfe->dwAspect != DVASPECT_CONTENT )
 		return DV_E_DVASPECT;
-	if( lpfe->cfFormat != m_cfFormat )
-		return DV_E_FORMATETC;
-	if( lpfe->cfFormat != m_cfFormat
-		|| !(lpfe->tymed & TYMED_HGLOBAL)
+	if( !(lpfe->tymed & TYMED_HGLOBAL)
 		|| lpfe->lindex != -1
 		|| lpfe->dwAspect != DVASPECT_CONTENT )
 		return DV_E_FORMATETC;
 
+	int i;
+	for( i = 0; i < m_nFormat; i++ ){
+		if( lpfe->cfFormat == m_pData[i].cfFormat )
+			break;
+	}
+	if( i == m_nFormat )
+		return DV_E_FORMATETC;
+
 	lpsm->tymed = TYMED_HGLOBAL;
-	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, size );
-	memcpy( (LPTSTR) ::GlobalLock( lpsm->hGlobal ), data, size );
+	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, m_pData[i].size );
+	memcpy( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
 	lpsm->pUnkForRelease = NULL;
 
 	return S_OK;
 }
 
+/** IDataObject::GetDataHere
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
 STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	if( lpfe == NULL || lpsm == NULL || lpsm->hGlobal == NULL )
 		return E_INVALIDARG;
-	if( data == NULL )
+	if( m_pData == NULL )
 		return OLE_E_NOTRUNNING;
 
 	if( lpfe->lindex != -1 )
@@ -296,32 +345,48 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 	if( lpfe->tymed != TYMED_HGLOBAL
 		|| lpsm->tymed != TYMED_HGLOBAL )
 		return DV_E_TYMED;
-	if( size > ::GlobalSize( lpsm->hGlobal ) )
-		return STG_E_MEDIUMFULL;
 	if( lpfe->dwAspect != DVASPECT_CONTENT )
 		return DV_E_DVASPECT;
-	if( lpfe->cfFormat != m_cfFormat )
-		return DV_E_FORMATETC;
 
-	memcpy( ::GlobalLock( lpsm->hGlobal ), data, size );
+	int i;
+	for( i = 0; i < m_nFormat; i++ ){
+		if( lpfe->cfFormat == m_pData[i].cfFormat )
+			break;
+	}
+	if( i == m_nFormat )
+		return DV_E_FORMATETC;
+	if( m_pData[i].size > ::GlobalSize( lpsm->hGlobal ) )
+		return STG_E_MEDIUMFULL;
+
+	memcpy( ::GlobalLock( lpsm->hGlobal ), m_pData[i].data, m_pData[i].size );
 	::GlobalUnlock( lpsm->hGlobal );
 
 	return S_OK;
 }
 
+/** IDataObject::QueryGetData
+	@date 2008.03.26 ryoji 複数フォーマット対応
+*/
 STDMETHODIMP CDataObject::QueryGetData( LPFORMATETC lpfe )
 {
 	if( lpfe == NULL )
 		return E_INVALIDARG;
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
-	if( data == NULL )
+	if( m_pData == NULL )
 		return OLE_E_NOTRUNNING;
 
-	if( lpfe->cfFormat != m_cfFormat
-		|| lpfe->ptd != NULL
+	if( lpfe->ptd != NULL
 		|| lpfe->dwAspect != DVASPECT_CONTENT
 		|| lpfe->lindex != -1
 		|| !(lpfe->tymed & TYMED_HGLOBAL) )
+		return DATA_E_FORMATETC;
+
+	int i;
+	for( i = 0; i < m_nFormat; i++ ){
+		if( lpfe->cfFormat == m_pData[i].cfFormat )
+			break;
+	}
+	if( i == m_nFormat )
 		return DATA_E_FORMATETC;
 	return S_OK;
 }
@@ -336,9 +401,15 @@ STDMETHODIMP CDataObject::SetData( LPFORMATETC, LPSTGMEDIUM, BOOL )
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP CDataObject::EnumFormatEtc( DWORD, LPENUMFORMATETC* )
+/** IDataObject::EnumFormatEtc
+	@date 2008.03.26 ryoji IEnumFORMATETCをサポート
+*/
+STDMETHODIMP CDataObject::EnumFormatEtc( DWORD dwDirection, IEnumFORMATETC** ppenumFormatetc )
 {
-	return E_NOTIMPL;
+	if( dwDirection != DATADIR_GET )
+		return S_FALSE;
+	*ppenumFormatetc = new CEnumFORMATETC(this);
+	return *ppenumFormatetc? S_OK: S_FALSE;
 }
 
 STDMETHODIMP CDataObject::DAdvise( LPFORMATETC, DWORD, LPADVISESINK, LPDWORD )
@@ -354,6 +425,64 @@ STDMETHODIMP CDataObject::DUnadvise( DWORD )
 STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 {
 	return OLE_E_ADVISENOTSUPPORTED;
+}
+
+
+/** IEnumFORMATETC::Next
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched)
+{
+	if( celt <= 0 || rgelt == NULL || m_nIndex >= m_pcDataObject->m_nFormat )
+		return S_FALSE;
+	if( celt != 1 && pceltFetched == NULL )
+		return S_FALSE;
+
+	ULONG i = celt;
+	while( m_nIndex < m_pcDataObject->m_nFormat && i > 0 ){
+		(*rgelt).cfFormat = m_pcDataObject->m_pData[m_nIndex].cfFormat;
+		(*rgelt).ptd = NULL;
+		(*rgelt).dwAspect = DVASPECT_CONTENT;
+		(*rgelt).lindex = -1;
+		(*rgelt).tymed = TYMED_HGLOBAL;
+		rgelt++;
+		m_nIndex++;
+		i--;
+	}
+	if( pceltFetched != NULL )
+		*pceltFetched = celt - i;
+
+	return (i == 0)? S_OK : S_FALSE;
+}
+
+/** IEnumFORMATETC::Skip
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
+{
+	while( m_nIndex < m_pcDataObject->m_nFormat && celt > 0 ){
+		++m_nIndex;
+		--celt;
+	}
+
+	return (celt == 0)? S_OK : S_FALSE;
+}
+
+/** IEnumFORMATETC::Reset
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Reset(void)
+{
+	m_nIndex = 0;
+	return S_OK;
+}
+
+/** IEnumFORMATETC::Clone
+	@date 2008.03.26 ryoji 新規作成
+*/
+STDMETHODIMP CEnumFORMATETC::Clone(IEnumFORMATETC** ppenum)
+{
+	return E_NOTIMPL;
 }
 
 

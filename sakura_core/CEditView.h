@@ -248,8 +248,11 @@ public:
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
 	BOOL			m_bDrawSWITCH;
-	BOOL			m_bDragSource;	/* 選択テキストのドラッグ中か */
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
+	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */
+	int		m_nCaretPosX_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
+	int		m_nCaretPosY_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
+	int		m_nCaretPosX_Prev_DragEnter;	/* ドラッグ開始時のX座標記憶 */		// 2007.12.09 ryoji
 
 	/* 単語検索の状態 */
 
@@ -538,6 +541,9 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragOver(DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	CLIPFORMAT GetAvailableClipFormat( LPDATAOBJECT pDataObject );
+	DWORD TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffect );
+	bool IsDragSource( void );
 protected:
 //	LPDATAOBJECT	m_pDataObject;
 //	REFIID			m_owniid;
