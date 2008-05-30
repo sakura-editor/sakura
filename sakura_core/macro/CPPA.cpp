@@ -281,11 +281,9 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	case 2:
 		switch(GS_Mode){
 		case omGet:
-//			::MessageBoxA( m_pcEditView->m_hWnd, m_cMemDebug.GetPtr(), "GetStrObj", MB_OK );
 			*Value = m_cMemDebug.GetStringPtr();
 			break;
 		case omSet:
-//			::MessageBoxA( m_pcEditView->m_hWnd, *Value, "SetStrObj", MB_OK );
 			m_cMemDebug.SetString(*Value);
 			break;
 		}
@@ -348,14 +346,9 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		}
 	}
 	if( 0 == m_cMemDebug.GetStringLength() ){
-		::MessageBoxA( m_pcEditView->GetHwnd(), pszErr, "PPA実行エラー", MB_OK );
+		MYMESSAGEBOX( m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs"), pszErr );
 	}else{
-		char* p = new char [ lstrlenA(pszErr) + m_cMemDebug.GetStringLength() + 2 ];
-		strcpy( p, pszErr );
-		strcat( p, "\n" );
-		strcat( p, m_cMemDebug.GetStringPtr() );
-		::MessageBoxA( m_pcEditView->GetHwnd(), p, "PPA実行エラー", MB_OK );
-		delete [] p;
+		MYMESSAGEBOX( m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs\n%hs"), pszErr, m_cMemDebug.GetStringPtr() );
 	}
 }
 

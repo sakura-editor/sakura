@@ -305,7 +305,6 @@ bool CEditView::SearchBracket(
 	//	括弧が見つからなかったら，カーソルの直前の文字を調べる
 
 	if( ptPos.x <= 0 ){
-//		::MessageBoxA( NULL, "NO DATA", "Bracket", MB_OK );
 		return false;	//	前の文字はない
 	}
 

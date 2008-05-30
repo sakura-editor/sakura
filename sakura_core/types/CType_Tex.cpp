@@ -75,7 +75,6 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 			}else{
 				szTag[j]   = L'\0';
 			}
-//			MessageBoxA(NULL, szTitle, L"", MB_OK);
 
 			thisSection = 0;
 			if(!wcscmp(szTag,L"subsubsection")) thisSection = 4;

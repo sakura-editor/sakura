@@ -224,7 +224,7 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 
 	out.Close();
 
-	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ls"), szPath );
+	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szPath );
 
 	return TRUE;
 }

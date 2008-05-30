@@ -263,7 +263,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 								NULL,
 								MB_OK | MB_ICONSTOP | MB_TOPMOST,
 								MACRO_ERROR_TITLE,
-								_T("Line %d:\r\n関数%lsの%d番目の引数の終わりに%mcがありません．"),
+								_T("Line %d:\r\n関数%lsの%d番目の引数の終わりに %lc がありません．"),
 								line,
 								szFuncName,
 								nArgs + 1,

@@ -203,68 +203,68 @@ void CDlgFuncList::SetData()
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
 		m_nViewType = 1;
 		SetTreeJava( GetHwnd(), TRUE );	// Jan. 04, 2002 genta Java Method Treeに統合
-		::SetWindowTextA( GetHwnd(), "C++ メソッドツリー" );
+		::SetWindowText( GetHwnd(), _T("C++ メソッドツリー") );
 	}
 	else if( OUTLINE_FILE == m_nListType ){	//@@@ 2002.04.01 YAZAKI アウトライン解析にルールファイル導入
 		m_nViewType = 1;
 		SetTree();
-		::SetWindowTextA( GetHwnd(), "ルールファイル" );
+		::SetWindowText( GetHwnd(), _T("ルールファイル") );
 	}
 	else if( OUTLINE_WZTXT == m_nListType ){ //@@@ 2003.05.20 zenryaku 階層付テキストアウトライン解析
 		m_nViewType = 1;
 		SetTree();
-		::SetWindowTextA( GetHwnd(), "WZ階層付テキスト" ); //	2003.06.22 Moca 名前変更
+		::SetWindowText( GetHwnd(), _T("WZ階層付テキスト") ); //	2003.06.22 Moca 名前変更
 	}
 	else if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
 		m_nViewType = 1;
 		SetTree();
-		::SetWindowTextA( GetHwnd(), "HTML" );
+		::SetWindowText( GetHwnd(), _T("HTML") );
 	}
 	else if( OUTLINE_TEX == m_nListType ){ //@@@ 2003.07.20 naoh TeXアウトライン解析
 		m_nViewType = 1;
 		SetTree();
-		::SetWindowTextA( GetHwnd(), "TeX" );
+		::SetWindowText( GetHwnd(), _T("TeX") );
 	}
 	else if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		m_nViewType = 1;
 		SetTree();	//@@@ 2002.04.01 YAZAKI テキストトピックツリーも、汎用SetTreeを呼ぶように変更。
-		::SetWindowTextA( GetHwnd(), "テキスト トピックツリー" );
+		::SetWindowText( GetHwnd(), _T("テキスト トピックツリー") );
 	}
 	else if( OUTLINE_JAVA == m_nListType ){ /* Javaメソッドツリー */
 		m_nViewType = 1;
 		SetTreeJava( GetHwnd(), TRUE );
-		::SetWindowTextA( GetHwnd(), "Java メソッドツリー" );
+		::SetWindowText( GetHwnd(), _T("Java メソッドツリー") );
 	}
 	//	2007.02.08 genta Python追加
 	else if( OUTLINE_PYTHON == m_nListType ){ /* Python メソッドツリー */
 		m_nViewType = 1;
 		SetTree( true );
-		::SetWindowTextA( GetHwnd(), "Python メソッドツリー" );
+		::SetWindowText( GetHwnd(), _T("Python メソッドツリー") );
 	}
 	else if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
 		m_nViewType = 1;
 		SetTreeJava( GetHwnd(), FALSE );
-		::SetWindowTextA( GetHwnd(), "COBOL アウトライン" );
+		::SetWindowText( GetHwnd(), _T("COBOL アウトライン") );
 	}
 	else if( OUTLINE_VB == m_nListType ){	/* VisualBasic アウトライン */
 		m_nViewType = 0;
 		SetListVB();
-		::SetWindowTextA( GetHwnd(), "Visual Basic アウトライン" );
+		::SetWindowText( GetHwnd(), _T("Visual Basic アウトライン") );
 	}
 	else{
 		m_nViewType = 0;
 		switch( m_nListType ){
 		case OUTLINE_C:
-			::SetWindowTextA( GetHwnd(), "C 関数一覧" );
+			::SetWindowText( GetHwnd(), _T("C 関数一覧") );
 			break;
 		case OUTLINE_PLSQL:
-			::SetWindowTextA( GetHwnd(), "PL/SQL 関数一覧" );
+			::SetWindowText( GetHwnd(), _T("PL/SQL 関数一覧") );
 			break;
 		case OUTLINE_ASM:
-			::SetWindowTextA( GetHwnd(), "アセンブラ アウトライン" );
+			::SetWindowText( GetHwnd(), _T("アセンブラ アウトライン") );
 			break;
 		case OUTLINE_PERL:	//	Sep. 8, 2000 genta
-			::SetWindowTextA( GetHwnd(), "Perl 関数一覧" );
+			::SetWindowText( GetHwnd(), _T("Perl 関数一覧") );
 			break;
 // Jul 10, 2003  little YOSHI  上に移動しました--->>
 //		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for Visual Basic
@@ -278,7 +278,7 @@ void CDlgFuncList::SetData()
 			col.iSubItem = 0;
 			//	Apr. 23, 2005 genta 行番号を左端へ
 			ListView_SetColumn( hwndList, 1, &col );
-			::SetWindowTextA( GetHwnd(), "ブックマーク" );
+			::SetWindowText( GetHwnd(), _T("ブックマーク") );
 			break;
 //		case OUTLINE_COBOL:
 //			::SetWindowText( GetHwnd(), "COBOLアウトライン" );

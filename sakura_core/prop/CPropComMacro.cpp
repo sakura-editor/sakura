@@ -340,7 +340,7 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 	//	ListViewの初期化
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
 	if( hListView == NULL ){
-		::MessageBoxA( hwndDlg, "PropComMacro::InitDlg::NoListView", "バグ報告お願い", MB_OK );
+		::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::NoListView"), _T("バグ報告お願い"), MB_OK );
 		return;	//	よくわからんけど失敗した	
 	}
 
@@ -357,7 +357,7 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 		sColumn.fmt = LVCFMT_LEFT;
 		
 		if( ListView_InsertColumn( hListView, pos, &sColumn ) < 0 ){
-			::MessageBoxA( hwndDlg, "PropComMacro::InitDlg::ColumnRegistrationFail", "バグ報告お願い", MB_OK );
+			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::ColumnRegistrationFail"), _T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
 		}
 	}
@@ -387,12 +387,12 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 		auto_sprintf( buf, L"%d", pos );
 		int result = ::SendMessage( hNumCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)buf );
 		if( result == CB_ERR ){
-			::MessageBoxA( hwndDlg, "PropComMacro::InitDlg::AddMacroId", "バグ報告お願い", MB_OK );
+			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::AddMacroId"), _T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
 		}
 		else if( result == CB_ERRSPACE ){
-			::MessageBoxA( hwndDlg, "PropComMacro::InitDlg::AddMacroId/InsufficientSpace",
-				"バグ報告お願い", MB_OK );
+			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::AddMacroId/InsufficientSpace"),
+				_T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
 		}
 	}
@@ -410,8 +410,8 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 	//	設定先取得
 	index = ::SendMessageAny( hNum, CB_GETCURSEL, 0, 0 );
 	if( index == CB_ERR ){
-		::MessageBoxA( hwndDlg, "PropComMacro::SetMacro2List::GetCurSel",
-			"バグ報告お願い", MB_OK );
+		::MessageBox( hwndDlg, _T("PropComMacro::SetMacro2List::GetCurSel"),
+			_T("バグ報告お願い"), MB_OK );
 		return;	//	よくわからんけど失敗した
 	}
 

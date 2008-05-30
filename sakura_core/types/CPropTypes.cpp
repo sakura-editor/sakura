@@ -236,7 +236,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 			_T("psh.nStartPage=[%d]\n")
 			_T("::PropertySheet()é∏îsÅB\n")
 			_T("\n")
-			_T("%ls\n"),
+			_T("%ts\n"),
 			psh.nStartPage,
 			pszMsgBuf
 		);

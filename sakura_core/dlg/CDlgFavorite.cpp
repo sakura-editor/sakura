@@ -380,18 +380,18 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 				
 				if( m_aFavoriteInfo[nIndex].m_bHaveFavorite )
 				{
-					nRet = ::MYMESSAGEBOX_A( GetHwnd(), 
-						MB_YESNOCANCEL | MB_ICONQUESTION, GSTR_APPNAME_A,
-						"最近使った%tsの履歴を削除します。\n\nよろしいですか？\n\n"
-						"「はい」\tすべて削除します。\n"
-						"「いいえ」\tお気に入り以外を削除します。\n",
+					nRet = ::MYMESSAGEBOX( GetHwnd(), 
+						MB_YESNOCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+						_T("最近使った%tsの履歴を削除します。\n\nよろしいですか？\n\n")
+						_T("「はい」\tすべて削除します。\n")
+						_T("「いいえ」\tお気に入り以外を削除します。\n"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 				}
 				else
 				{
-					nRet = ::MYMESSAGEBOX_A( GetHwnd(), 
-						MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME_A,
-						"最近使った%tsの履歴を削除します。\n\nよろしいですか？\n",
+					nRet = ::MYMESSAGEBOX( GetHwnd(), 
+						MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+						_T("最近使った%tsの履歴を削除します。\n\nよろしいですか？\n"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 				}
 				
