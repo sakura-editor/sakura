@@ -321,8 +321,6 @@ bool CShareData::Init( void )
 {
 	MY_RUNNINGTIMER(cRunningTimer,"CShareData::Init" );
 
-//	MessageBoxA(NULL,"share","init",MB_OK);
-
 	if (CShareData::_instance == NULL)	//	Singletonïó
 		CShareData::_instance = this;
 
@@ -338,10 +336,10 @@ bool CShareData::Init( void )
 		GSTR_CSHAREDATA
 	);
 	if( NULL == m_hFileMap ){
-		::MessageBoxA(
+		::MessageBox(
 			NULL,
-			"CreateFileMapping()Ç…é∏îsÇµÇ‹ÇµÇΩ",
-			"ó\ä˙ÇπÇ ÉGÉâÅ[",
+			_T("CreateFileMapping()Ç…é∏îsÇµÇ‹ÇµÇΩ"),
+			_T("ó\ä˙ÇπÇ ÉGÉâÅ["),
 			MB_OK | MB_APPLMODAL | MB_ICONSTOP
 		);
 		return false;

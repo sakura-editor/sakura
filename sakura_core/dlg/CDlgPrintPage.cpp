@@ -107,7 +107,7 @@ int CDlgPrintPage::GetData( void )
 			m_nPageFrom <= m_nPageTo
 		){
 		}else{
-			::MYMESSAGEBOX_A(	GetHwnd(), MB_OK | MB_ICONSTOP | MB_TOPMOST, "入力エラー", "ページ範囲指定が正しくありません。" );
+			::MYMESSAGEBOX(	GetHwnd(), MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("入力エラー"), _T("ページ範囲指定が正しくありません。") );
 			return FALSE;
 		}
 	}

@@ -514,7 +514,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			_T("psh.nStartPage=[%d]\n")
 			_T("::PropertySheet()失敗\n")
 			_T("\n")
-			_T("%ls\n"),
+			_T("%ts\n"),
 			psh.nStartPage,
 			pszMsgBuf
 		);
@@ -670,8 +670,8 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 
 			case IDC_BUTTON_CLEAR_MRU_FILE:
 				/* ファイルの履歴をクリア */
-				if( IDCANCEL == ::MYMESSAGEBOX_A( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME_A,
-					"最近使ったファイルの履歴を削除します。\nよろしいですか？\n" ) ){
+				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+					_T("最近使ったファイルの履歴を削除します。\nよろしいですか？\n") ) ){
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -684,8 +684,8 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
 				/* フォルダの履歴をクリア */
-				if( IDCANCEL == ::MYMESSAGEBOX_A( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME_A,
-					"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n" ) ){
+				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+					_T("最近使ったフォルダの履歴を削除します。\nよろしいですか？\n") ) ){
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する

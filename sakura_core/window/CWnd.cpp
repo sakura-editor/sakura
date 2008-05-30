@@ -192,7 +192,7 @@ HWND CWnd::Create(
 		(LPVOID)this	// pointer to window-creation data
 	);
 	if( NULL == m_hWnd ){
-		::MessageBoxA( m_hwndParent, "CWnd::Create()\n\n::CreateWindowEx failed.", "error", MB_OK );
+		::MessageBox( m_hwndParent, _T("CWnd::Create()\n\n::CreateWindowEx failed."), _T("error"), MB_OK );
 		return NULL;
 	}
 

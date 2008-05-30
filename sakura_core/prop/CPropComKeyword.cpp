@@ -313,8 +313,8 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 							_tcscat( pszLabel, _T("\n") );
 						}
 					}
-					if( IDCANCEL == ::MYMESSAGEBOX_A(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME_A,
-						"「%ls」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%ls",
+					if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+						_T("「%ls」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%ts"),
 						m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
 						pszLabel
 					) ){
@@ -631,7 +631,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
-	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ls"), szPath );
+	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szPath );
 
 	return;
 }
@@ -640,8 +640,8 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //! キーワードを整頓する
 void CPropCommon::p7_Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-	if( IDYES == ::MessageBoxA( hwndDlg, "現在の設定では強調キーワードとして表示できないキーワードを削除しますか？",
-			GSTR_APPNAME_A, MB_YESNO | MB_ICONSTOP ) ){
+	if( IDYES == ::MessageBox( hwndDlg, _T("現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"),
+			GSTR_APPNAME, MB_YESNO | MB_ICONSTOP ) ){
 		if( m_CKeyWordSetMgr.CleanKeyWords( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
 		}
 		SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );

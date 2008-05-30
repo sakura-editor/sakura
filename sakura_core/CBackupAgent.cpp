@@ -81,13 +81,13 @@ int CBackupAgent::MakeBackUp(
 		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
 		if( !fexist( bup_setting.m_szBackUpFolder ) ){
 
-			int nMsgResult = ::MYMESSAGEBOX_A(
+			int nMsgResult = ::MYMESSAGEBOX(
 				CEditWnd::Instance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				"バックアップエラー",
-				"以下のバックアップフォルダが見つかりません．\n%ts\n"
-				"バックアップを作成せずに上書き保存してよろしいですか．",
-				bup_setting.m_szBackUpFolder
+				_T("バックアップエラー"),
+				_T("以下のバックアップフォルダが見つかりません．\n%ts\n")
+				_T("バックアップを作成せずに上書き保存してよろしいですか．"),
+				(LPCTSTR)bup_setting.m_szBackUpFolder
 			);
 			if( nMsgResult == IDYES ){
 				return 0;//	保存継続
@@ -111,34 +111,34 @@ int CBackupAgent::MakeBackUp(
 	if( bup_setting.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
 		::MessageBeep( MB_ICONQUESTION );
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
-			nRet = ::MYMESSAGEBOX_A(
+			nRet = ::MYMESSAGEBOX(
 				CEditWnd::Instance()->GetHwnd(),
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
-				"バックアップ作成の確認",
-				"変更される前に、バックアップファイルを作成します。\n"
-				"よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n"
-				"\n"
-				"%ls\n"
-				"    ↓\n"
-				"%ls\n"
-				"\n"
-				"作成したバックアップファイルをごみ箱に放り込みます。\n",
+				_T("バックアップ作成の確認"),
+				_T("変更される前に、バックアップファイルを作成します。\n")
+				_T("よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n")
+				_T("\n")
+				_T("%ts\n")
+				_T("    ↓\n")
+				_T("%ts\n")
+				_T("\n")
+				_T("作成したバックアップファイルをごみ箱に放り込みます。\n"),
 				target_file,
 				szPath
 			);
 		}
 		else{	//@@@ 2001.12.11 add end MIK
-			nRet = ::MYMESSAGEBOX_A(
+			nRet = ::MYMESSAGEBOX(
 				CEditWnd::Instance()->GetHwnd(),
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-				"バックアップ作成の確認",
-				"変更される前に、バックアップファイルを作成します。\n"
-				"よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n"
-				"\n"
-				"%ls\n"
-				"    ↓\n"
-				"%ls\n"
-				"\n",
+				_T("バックアップ作成の確認"),
+				_T("変更される前に、バックアップファイルを作成します。\n")
+				_T("よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n")
+				_T("\n")
+				_T("%ts\n")
+				_T("    ↓\n")
+				_T("%ts\n")
+				_T("\n"),
 				target_file,
 				szPath
 			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
@@ -164,7 +164,6 @@ int CBackupAgent::MakeBackUp(
 		WIN32_FIND_DATA	fData;
 
 		TCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
-		//::MessageBoxA( NULL, pBase, _T("書き換え場所"), MB_OK );
 
 		//------------------------------------------------------------------
 		//	1. 該当ディレクトリ中のbackupファイルを1つずつ探す
@@ -188,7 +187,6 @@ int CBackupAgent::MakeBackUp(
 		//	2. 最大値から制限数-1番までを削除
 		int boundary = bup_setting.GetBackupCount();
 		boundary = boundary > 0 ? boundary - 1 : 0;	//	最小値は0
-		//::MessageBoxA( NULL, pBase, _T("書き換え場所"), MB_OK );
 
 		for( ; i >= boundary; --i ){
 			//	ファイル名をセット
@@ -230,7 +228,6 @@ int CBackupAgent::MakeBackUp(
 	}
 	//	To Here Aug. 16, 2000 genta
 
-	//::MessageBoxA( NULL, szPath, _T("直前のバックアップファイル"), MB_OK );
 	/* バックアップの作成 */
 	//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
 	TCHAR	szDrive[_MAX_DIR];

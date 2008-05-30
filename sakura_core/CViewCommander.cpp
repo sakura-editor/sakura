@@ -190,7 +190,7 @@ BOOL CViewCommander::HandleCommand(
 		if( !CEditApp::Instance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,
-				_T("マクロ %d (%ls) の実行に失敗しました。"),
+				_T("マクロ %d (%ts) の実行に失敗しました。"),
 				nCommand - F_USERMACRO_0,
 				CEditApp::Instance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
@@ -4440,9 +4440,9 @@ retry:;
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
-		if( IDYES == ::MYMESSAGEBOX_A( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME_A,
+		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 //To Here Sept. 15, 2000
-			"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?"
+			_T("外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* 共通設定 プロパティシート */
 			if( !CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
@@ -4499,9 +4499,9 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
-			if( IDYES != ::MYMESSAGEBOX_A( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME_A,
+			if( IDYES != ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 	//	To Here Sept. 15, 2000
-				"外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?"
+				_T("外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?")
 			) ){
 				return;
 			}
@@ -7043,11 +7043,11 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	}
 	/* テキストが変更されている場合 */
 	if( GetDocument()->m_cDocEditor.IsModified() ){
-		nRet = ::MYMESSAGEBOX_A(
+		nRet = ::MYMESSAGEBOX(
 			m_pCommanderView->GetHwnd(),
 			MB_YESNOCANCEL | MB_ICONEXCLAMATION,
-			GSTR_APPNAME_A,
-			"%ts\nは変更されています。 Oracle SQL*Plusで実行する前に保存しますか？",
+			GSTR_APPNAME,
+			_T("%ts\nは変更されています。 Oracle SQL*Plusで実行する前に保存しますか？"),
 			GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ? GetDocument()->m_cDocFile.GetFilePath() : _T("(無題)")
 		);
 		switch( nRet ){

@@ -598,13 +598,14 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			goto next_line;
 		}
 		if( 0 > nWorkLen ){
-			::MYMESSAGEBOX_A(	NULL, MB_OK | MB_ICONINFORMATION,
-				"作者に教えて欲しいエラー",
-				"CDocLineMgr::ReplaceData()\n"
-				"\n"
-				"0 > nWorkLen\nnWorkLen=%d\n"
-				"i=%d\n"
-				"pArg->sDelRange.GetTo().y=%d", nWorkLen, i, pArg->sDelRange.GetTo().y
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION,
+				_T("作者に教えて欲しいエラー"),
+				_T("CDocLineMgr::ReplaceData()\n")
+				_T("\n")
+				_T("0 > nWorkLen\nnWorkLen=%d\n")
+				_T("i=%d\n")
+				_T("pArg->sDelRange.GetTo().y=%d"),
+				nWorkLen, i, pArg->sDelRange.GetTo().y
 			);
 		}
 
@@ -618,12 +619,13 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		/* 削除されたデータを保存 */
 		// 2002/2/10 aroka from here CMemory変更 念のため。
 		if( pLine != pCDocLine->GetPtr() ){
-			::MYMESSAGEBOX_A(	NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-				"CDocLineMgr::ReplaceData()\n"
-				"\n"
-				"pLine != pCDocLine->m_cLine.GetPtr() =%d\n"
-				"i=%d\n"
-				"pArg->sDelRange.GetTo().y=%d",
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION,
+				_T("作者に教えて欲しいエラー"),
+				_T("CDocLineMgr::ReplaceData()\n")
+				_T("\n")
+				_T("pLine != pCDocLine->m_cLine.GetPtr() =%d\n")
+				_T("i=%d\n")
+				_T("pArg->sDelRange.GetTo().y=%d"),
 				pLine, i, pArg->sDelRange.GetTo().y
 			);
 		}
@@ -775,7 +777,6 @@ prev_line:;
 		cmemPrevLine.SetString(L"");
 		cmemNextLine.SetString(L"");
 		cEOLTypeNext.SetType( EOL_NONE );
-		// ::MessageBoxA( NULL, "pDocLine==NULL","Warning",MB_OK);
 	}else{
 		CModifyVisitor().SetLineModified(pCDocLine,true);	/* 変更フラグ */
 
