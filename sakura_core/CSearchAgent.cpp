@@ -868,7 +868,11 @@ prev_line:;
 	pArg->nInsLineNum = m_pcDocLineMgr->GetLineCount() - nAllLinesOld;
 end_of_func:;
 	if( NULL != pCDlgCancel ){
-		delete pCDlgCancel;
+		// 進捗ダイアログを表示しない場合と同じ動きになるようにダイアログは遅延破棄する
+		// ここで pCDlgCancel を delete すると delete から戻るまでの間に
+		// ダイアログ破棄 -> 編集画面へフォーカス移動 -> キャレット位置調整
+		// まで一気に動くので無効なレイアウト情報参照で異常終了することがある
+		pCDlgCancel->DeleteAsync();	// 自動破棄を遅延実行する	// 2008.05.28 ryoji
 	}
 	return;
 }
