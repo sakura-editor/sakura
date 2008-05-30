@@ -85,11 +85,13 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
+					DWORD dwEffectsSrc = ( CAppMode::Instance()->IsViewMode() || !m_pcEditDoc->m_cDocLocker.IsDocWritable() )?
+											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
 					int nTickDrag = ::GetTickCount();
 					m_pcEditWnd->SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting() );
-					dwEffects = data.DragDrop( TRUE, DROPEFFECT_COPY | DROPEFFECT_MOVE );
+					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
 					m_pcEditWnd->SetDragSourceView( NULL );
 					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
 						m_pcEditWnd->SetActivePane( m_nMyIndex );
@@ -110,7 +112,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 									GetCaret().MoveCursorToClientPoint( CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y) );
 								}
 							}
-						}else if( DROPEFFECT_MOVE == dwEffects ){
+						}else if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
