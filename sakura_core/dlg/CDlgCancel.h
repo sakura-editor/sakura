@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -41,12 +42,14 @@ public:
 //	HWND Open( LPCTSTR );
 //	void Close( void );	/* モードレスダイアログの削除 */
 	BOOL IsCanceled( void ){ return m_bCANCEL; } /* IDCANCELボタンが押されたか？ */
-//	BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	void DeleteAsync( void );	/* 自動破棄を遅延実行する */	// 2008.05.28 ryoji
 
 //	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 //	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 //	HWND		m_hWnd;			/* このダイアログのハンドル */
 	BOOL		m_bCANCEL;		/* IDCANCELボタンが押された */
+	bool		m_bAutoCleanup;	/* 自動後処理型 */	// 2008.05.28 ryoji
 
 protected:
 	/*
