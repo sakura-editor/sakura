@@ -136,6 +136,7 @@ int CEditView::GetColorIndex(
 	int						nLineBgn;
 	const CLayout*			pcLayout2;
 	bool					bSearchFlg;			// 2002.02.08 hor
+	int						nLineOffset;		// 2008/5/29 Uchi
 	SColorInfo sInfo;
 	SColorInfo* pInfo = &sInfo;
 	sInfo.pcView = this;
@@ -164,6 +165,7 @@ int CEditView::GetColorIndex(
 		pInfo->nCOMMENTEND = 0;
 		pcLayout2 = pcLayout;
 
+		nLineOffset = pcLayout->GetLogicOffset();	// 2008/5/29 Uchi
 	}
 	else{
 		pInfo->pLine = NULL;
@@ -171,6 +173,7 @@ int CEditView::GetColorIndex(
 		pInfo->nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 		pInfo->nCOMMENTEND = 0;
 		pcLayout2 = NULL;
+		nLineOffset = 0;							// 2008/5/29 Uchi
 	}
 
 	/* 現在の色を指定 */
@@ -241,7 +244,7 @@ SEARCH_START:;
 					else if( CDraw_KeywordSet().GetColorIndexImp(&sInfo) ) { }
 
 					//	From Here Mar. 4, 2001 genta
-					if( IS_KEYWORD_CHAR( pInfo->pLine[pInfo->nPos] ))	pInfo->bKeyWordTop = false;
+					if( IS_KEYWORD_CHAR( pInfo->pLine[pInfo->nPos - nLineOffset] ))	pInfo->bKeyWordTop = false;		// 2008/5/29 Uchi
 					else								pInfo->bKeyWordTop = true;
 					//	To Here
 					break;
@@ -320,17 +323,17 @@ SEARCH_START:;
 					}
 					break;	//@@@ 2002.01.04 add end
 				}
-				if( pInfo->pLine[pInfo->nPos] == WCODE::TAB ){
+				if( pInfo->pLine[pInfo->nPos - nLineOffset] == WCODE::TAB ){		// 2008/5/29 Uchi
 					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
 				}
-				else if( WCODE::IsZenkakuSpace(pInfo->pLine[pInfo->nPos]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
+				else if( WCODE::IsZenkakuSpace(pInfo->pLine[pInfo->nPos - nLineOffset]) && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )	//@@@ 2002.01.04	// 2008/5/29 Uchi
 				{
 					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
 				}
 				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
-				else if (pInfo->pLine[pInfo->nPos] == L' ' && CTypeSupport(this,COLORIDX_SPACE).IsDisp() && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )
+				else if (pInfo->pLine[pInfo->nPos - nLineOffset] == L' ' && CTypeSupport(this,COLORIDX_SPACE).IsDisp() && (pInfo->nCOMMENTMODE < 1000 || pInfo->nCOMMENTMODE > 1099) )		// 2008/5/29 Uchi
 				{
 					pInfo->nBgn = pInfo->nPos + 1;
 					nCharChars = CLogicInt(1);
@@ -345,7 +348,7 @@ SEARCH_START:;
 					 && 1 == nCharChars
 					 && COLORIDX_CTRLCODE != pInfo->nCOMMENTMODE // 2002/03/13 novice
 					 && TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp	/* コントロールコードを色分け */
-					 && WCODE::IsControlCode(pInfo->pLine[pInfo->nPos])
+					 && WCODE::IsControlCode(pInfo->pLine[pInfo->nPos - nLineOffset])		// 2008/5/29 Uchi
 					){
 						pInfo->nBgn = pInfo->nPos;
 						pInfo->nCOMMENTMODE_OLD = pInfo->nCOMMENTMODE;
@@ -362,7 +365,7 @@ SEARCH_START:;
 							if( nCharChars_2 != 1 ){
 								break;
 							}
-							if(!WCODE::IsControlCode(pInfo->pLine[i])){
+							if(!WCODE::IsControlCode(pInfo->pLine[i - nLineOffset])){		// 2008/5/29 Uchi
 								break;
 							}
 						}
