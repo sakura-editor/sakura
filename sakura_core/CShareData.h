@@ -453,6 +453,10 @@ public:
 	void PushTagJump(const TagJump *);		//!< タグジャンプ情報の保存
 	bool PopTagJump(TagJump *);				//!< タグジャンプ情報の参照
 
+	// move Export、Importに使用 2008/5/24 Uchi
+	void ShareData_IO_CustMenu( CDataProfile&, CommonSetting_CustomMenu&, bool );
+	void ShareData_IO_KeyBind( CDataProfile&, int, KEYDATA[], bool);
+
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -489,9 +493,9 @@ protected:
 	void ShareData_IO_Nickname( CDataProfile& );
 	void ShareData_IO_Common( CDataProfile& );
 	void ShareData_IO_Toolbar( CDataProfile& );
-	void ShareData_IO_CustMenu( CDataProfile& );
+//	void ShareData_IO_CustMenu( CDataProfile& );	move 2008/5/24
 	void ShareData_IO_Font( CDataProfile& );
-	void ShareData_IO_KeyBind( CDataProfile& );
+//	void ShareData_IO_KeyBind( CDataProfile& );		move 2008/5/24
 	void ShareData_IO_Print( CDataProfile& );
 	void ShareData_IO_Types( CDataProfile& );
 	void ShareData_IO_KeyWords( CDataProfile& );

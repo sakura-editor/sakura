@@ -31,7 +31,8 @@
 #include "util/string_ex2.h"
 using namespace std;
 
-const wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
+const wchar_t STR_KEYDATA_HEAD2[] = L"// テキストエディタキー設定 Ver2";	// (旧バージョン） 読み込みのみ対応 2008/5/3 by Uchi
+wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
 
 #define STR_SHIFT_PLUS        _T("Shift+")  //@@@ 2001.11.08 add MIK
 #define STR_CTRL_PLUS         _T("Ctrl+")  //@@@ 2001.11.08 add MIK
@@ -560,74 +561,100 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		ErrorMessage_A( hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
 		return;
 	}
-	static const wchar_t* szSection=L"SakuraKeybind";
+	static const wchar_t* szSection=L"Keybind";
+	static const wchar_t* szSecInfo=L"Info";
 
 	//バージョン確認
+	bool	bVer3;			// 新バージョンのファイル
+	bool	bVer2;
 	WCHAR szHeader[256];
-	in.IOProfileData(szSection,L"Ver",MakeStringBufferW(szHeader));
-	if(wcscmp(szHeader,WSTR_KEYDATA_HEAD)!=0)goto err;
+	bVer3 = true;
+	bVer2 = false;
+	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
+	if(wcscmp(szHeader,WSTR_KEYDATA_HEAD)!=0)	bVer3=false;
 
-	//Count取得 -> nKeyNameArrNum
 	int	nKeyNameArrNum;			// キー割り当て表の有効データ数
-	in.IOProfileData(szSection,L"Count",nKeyNameArrNum);
-	if(nKeyNameArrNum<0 || nKeyNameArrNum>100)goto err; //範囲チェック
+	if ( bVer3 ) {
+		//Count取得 -> nKeyNameArrNum
+		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
+		if (nKeyNameArrNum<0 || nKeyNameArrNum>100)	bVer3=false; //範囲チェック
 
-	//各要素取得
-	for(int i=0;i<100;i++)
-	{
-		//値 -> szData
-		wchar_t szKey[256];
-		auto_sprintf(szKey,L"KeyBind[%03d]",i);
-		wchar_t szData[1024];
-		in.IOProfileData(szSection,szKey,MakeStringBufferW(szData));
+		CShareData::getInstance()->ShareData_IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
+	}
 
-		//解析開始
-		wchar_t* p=szData;
-
-		//keycode取得
-		int keycode;
-		{
-			//1トークン -> buf
-			wchar_t buf[64];
-			wchar_t* q=wcschr(p,',');
-			if(q==NULL)goto err;
-			wcsncpy(buf,p,q-p);
-			buf[q-p]=L'\0';
-			//buf -> 16進数変換 -> keycode
-			int n=scan_ints(buf,L"%04x",&keycode);
-			if(n!=1)goto err;
-			//p進める
-			p=q+1;
+	
+	if (!bVer3) {
+		// 新バージョンでない
+		CTextInputStream in(szPath);
+		if (!in) {
+			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+			return;
 		}
-		pKeyNameArr[i].m_nKeyCode = keycode;
-
-		//後に続くトークン
-		for(int j=0;j<8;j++)
-		{
-			wchar_t* q=auto_strchr(p,L',');
-			if(!q)goto err;
-			*q=L'\0';
-
-			//機能名を数値に置き換える。(数値の機能名もあるかも)
-			//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-			WCHAR	szFuncNameJapanese[256];
-			EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, szFuncNameJapanese);
-			if( n == F_INVALID )
-			{
-				if( WCODE::Is09(*p) )
-				{
-					n = (EFunctionCode)auto_atol(p);
-				}
-				else
-				{
-					n = F_DEFAULT;
-				}
+		// ヘッダチェック
+		wstring	szLine = in.ReadLineW();
+		bVer2 = true;
+		if ( wcscmp(szLine.c_str(), STR_KEYDATA_HEAD2) != 0)	bVer2 = false;
+		// カウントチェック
+		int	i, cnt;
+		if ( bVer2 ) {
+			int	an;
+			szLine = in.ReadLineW();
+			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
+			if ( cnt != 1 || an < 0 || an > 100 ) {
+				bVer2 = false;
 			}
-			pKeyNameArr[i].m_nFuncCodeArr[j] = n;
-			p = q + 1;
+			else {
+				nKeyNameArrNum = an;
+			}
 		}
+		if ( bVer2 ) {
+			//各要素取得
+			for(i = 0; i < 100; i++) {
+				int n, kc, nc;
+				//値 -> szData
+				wchar_t szData[1024];
+				auto_strcpy(szData, in.ReadLineW().c_str());
 
-		auto_strcpy(pKeyNameArr[i].m_szKeyName, to_tchar(p));
+				//解析開始
+				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
+												&n,   &kc, &nc);
+				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
+				if( i != n ) break;
+				pKeyNameArr[i].m_nKeyCode = kc;
+				wchar_t* p = szData + nc;
+
+				//後に続くトークン
+				for(int j=0;j<8;j++)
+				{
+					wchar_t* q=auto_strchr(p,L',');
+					if(!q)	{ bVer2= false; break;}
+					*q=L'\0';
+
+					//機能名を数値に置き換える。(数値の機能名もあるかも)
+					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+					WCHAR	szFuncNameJapanese[256];
+					EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, szFuncNameJapanese);
+					if( n == F_INVALID )
+					{
+						if( WCODE::Is09(*p) )
+						{
+							n = (EFunctionCode)auto_atol(p);
+						}
+						else
+						{
+							n = F_DEFAULT;
+						}
+					}
+					pKeyNameArr[i].m_nFuncCodeArr[j] = n;
+					p = q + 1;
+				}
+
+				auto_strcpy(pKeyNameArr[i].m_szKeyName, to_tchar(p));
+			}
+		}
+	}
+	if (!bVer3  && !bVer2) {
+		ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
 	}
 
 	// データのコピー
@@ -644,8 +671,8 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	//@@@ 2001.11.07 modify end MIK
 	return;
 
-err:
-	ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
+//err:
+//	ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
 }
 
 
@@ -675,50 +702,66 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 
 	//@@@ 2001.11.07 add start MIK: テキスト形式で保存
 	{
-		int	i, j;
-		WCHAR	szFuncNameJapanese[256];
+//		int	i, j;
+//		WCHAR	szFuncNameJapanese[256];
 		
 		CTextOutputStream out(szPath);
 		if(!out){
 			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 			return;
 		}
-		
-		out.WriteF( L"[SakuraKeybind]\n" );
-		out.WriteF( L"Ver=%ls\n", WSTR_KEYDATA_HEAD);
-		out.WriteF( L"Count=%d\n", m_nKeyNameArrNum);
-		
-		for(i = 0; i < 100; i++)
-		{
-			out.WriteF( L"KeyBind[%03d]=%04x", i, m_pKeyNameArr[i].m_nKeyCode);
 
-			for(j = 0; j < 8; j++)
-			{
-				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-				WCHAR szFuncName[256];
-				WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-					G_AppInstance(),
-					m_pKeyNameArr[i].m_nFuncCodeArr[j],
-					szFuncName,
-					szFuncNameJapanese
-				);
-				if( p ) {
-					out.WriteF( L",%ls", p);
-				}
-				else {
-					out.WriteF( L",%d", m_pKeyNameArr[i].m_nFuncCodeArr[j]);
-				}
-			}
-			
-			out.WriteF( L",%ls\n", m_pKeyNameArr[i].m_szKeyName);
-		}
+// delete 2008/5/25 Uchi
+//		out.WriteF( L"[SakuraKeybind]\n" );
+//		out.WriteF( L"Ver=%ls\n", WSTR_KEYDATA_HEAD);
+//		out.WriteF( L"Count=%d\n", m_nKeyNameArrNum);
+//		
+//		for(i = 0; i < 100; i++)
+//		{
+//			out.WriteF( L"KeyBind[%03d]=%04x", i, m_pKeyNameArr[i].m_nKeyCode);
+//
+//			for(j = 0; j < 8; j++)
+//			{
+//				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//				WCHAR szFuncName[256];
+//				WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+//					G_AppInstance(),
+//					m_pKeyNameArr[i].m_nFuncCodeArr[j],
+//					szFuncName,
+//					szFuncNameJapanese
+//				);
+//				if( p ) {
+//					out.WriteF( L",%ls", p);
+//				}
+//				else {
+//					out.WriteF( L",%d", m_pKeyNameArr[i].m_nFuncCodeArr[j]);
+//				}
+//			}
+//			
+//			out.WriteF( L",%ls\n", m_pKeyNameArr[i].m_szKeyName);
+//		}
 		
 		out.Close();
+
+		/* キー割り当て情報 */
+		// 2008/5/25 Uchi
+		static const wchar_t* szSecInfo=L"Info";
+		CDataProfile cProfile;
+
+		// 書き込みモード設定
+		cProfile.SetWritingMode();
+
+		// ヘッダ
+		cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(WSTR_KEYDATA_HEAD) );
+		cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_nKeyNameArrNum );
+
+		//内容
+		CShareData::getInstance()->ShareData_IO_KeyBind(cProfile, m_nKeyNameArrNum, m_pKeyNameArr, true);
+
+		// 書き込み
+		cProfile.WriteProfile( szPath, WSTR_KEYDATA_HEAD);
 	}
 //@@@ 2001.11.07 add end MIK
 
 	return;
 }
-
-
-

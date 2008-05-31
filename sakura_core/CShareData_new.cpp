@@ -203,9 +203,9 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 	ShareData_IO_Nickname( cProfile );
 	ShareData_IO_Common( cProfile );
 	ShareData_IO_Toolbar( cProfile );
-	ShareData_IO_CustMenu( cProfile );
+	ShareData_IO_CustMenu( cProfile, m_pShareData->m_Common.m_sCustomMenu, false );		// add Parameter 2008/5/24
 	ShareData_IO_Font( cProfile );
-	ShareData_IO_KeyBind( cProfile );
+	ShareData_IO_KeyBind( cProfile, m_pShareData->m_nKeyNameArrNum, m_pShareData->m_pKeyNameArr, false );	// add Parameter 2008/5/24
 	ShareData_IO_Print( cProfile );
 	ShareData_IO_Types( cProfile );
 	ShareData_IO_KeyWords( cProfile );
@@ -756,12 +756,14 @@ void CShareData::ShareData_IO_Toolbar( CDataProfile& cProfile )
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 */
-void CShareData::ShareData_IO_CustMenu( CDataProfile& cProfile )
+void CShareData::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName)
 {
 	const WCHAR* pszSecName = LTEXT("CustMenu");
 	int		i, j;
 	WCHAR	szKeyName[64];
-	CommonSetting_CustomMenu& menu = m_pShareData->m_Common.m_sCustomMenu;
+	wchar_t	szFuncName[1024];
+	wchar_t	szFuncNameJapanese[256];
+	EFunctionCode n;
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCMN[%02d]"), i );
@@ -770,8 +772,45 @@ void CShareData::ShareData_IO_CustMenu( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemNumArr[i] );
 		int nSize = menu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
+			// start マクロ名でも設定できるように 2008/5/24 Uchi
 			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
-			cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
+			if (cProfile.IsReadingMode()) {
+				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
+				if ( WCODE::Is09(*szFuncName) ) {
+					n = F_INVALID;
+				}
+				else {
+					n = CSMacroMgr::GetFuncInfoByName(0, szFuncName, szFuncNameJapanese);
+				}
+				if ( n == F_INVALID ) {
+					if ( WCODE::Is09(*szFuncName) ) {
+						n = (EFunctionCode)auto_atol(szFuncName);
+					}
+					else {
+						n = F_DEFAULT;
+					}
+				}
+				menu.m_nCustMenuItemFuncArr[i][j] = n;
+			}
+			else {
+				if (bOutCmdName) {
+					WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+						G_AppInstance(),
+						menu.m_nCustMenuItemFuncArr[i][j],
+						szFuncName,
+						szFuncNameJapanese
+					);
+					if ( p == NULL ) {
+						auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
+					}
+					cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szFuncName) );
+				}
+				else {
+					cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
+				}
+			}
+			// end
+
 			auto_sprintf( szKeyName, LTEXT("nCMIK[%02d][%02d]"), i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemKeyArr[i][j] );
 		}
@@ -838,43 +877,136 @@ void CShareData::ShareData_IO_Font( CDataProfile& cProfile )
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 */
-void CShareData::ShareData_IO_KeyBind( CDataProfile& cProfile )
+void CShareData::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KEYDATA ppKeyNameArr[], bool bOutCmdName)
 {
-	const WCHAR* pszSecName = LTEXT("KeyBind");
+	const WCHAR*	szSecName = L"KeyBind";
 	int		i;
 	WCHAR	szKeyName[64];
 	WCHAR	szKeyData[1024];
-	int		nSize = m_pShareData->m_nKeyNameArrNum;
-	for( i = 0; i < nSize; ++i ){
+//	int		nSize = m_pShareData->m_nKeyNameArrNum;
+	WCHAR	szWork[64];
+	WCHAR	szFuncNameJapanese[256];
+	bool	bOldVer = false;
+
+	if( cProfile.IsReadingMode() ){ 
+		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
+			bOldVer = true;
+		}
+	}
+
+	for( i = 0; i < pnSize; ++i ){
 		// 2005.04.07 D.S.Koba
-		KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
-		_tcstowcs( szKeyName, keydata.m_szKeyName, _countof(szKeyName) );
+		//KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
+		KEYDATA& keydata = ppKeyNameArr[i];
 		
 		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
-				int buf[8];
-				scan_ints( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"), buf );
-				keydata.m_nFuncCodeArr[0]	= (EFunctionCode)buf[0];
-				keydata.m_nFuncCodeArr[1]	= (EFunctionCode)buf[1];
-				keydata.m_nFuncCodeArr[2]	= (EFunctionCode)buf[2];
-				keydata.m_nFuncCodeArr[3]	= (EFunctionCode)buf[3];
-				keydata.m_nFuncCodeArr[4]	= (EFunctionCode)buf[4];
-				keydata.m_nFuncCodeArr[5]	= (EFunctionCode)buf[5];
-				keydata.m_nFuncCodeArr[6]	= (EFunctionCode)buf[6];
-				keydata.m_nFuncCodeArr[7]	= (EFunctionCode)buf[7];
+			if (bOldVer) {
+				_tcstowcs( szKeyName, keydata.m_szKeyName, _countof(szKeyName) );
+				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+					int buf[8];
+					scan_ints( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"), buf );
+					keydata.m_nFuncCodeArr[0]	= (EFunctionCode)buf[0];
+					keydata.m_nFuncCodeArr[1]	= (EFunctionCode)buf[1];
+					keydata.m_nFuncCodeArr[2]	= (EFunctionCode)buf[2];
+					keydata.m_nFuncCodeArr[3]	= (EFunctionCode)buf[3];
+					keydata.m_nFuncCodeArr[4]	= (EFunctionCode)buf[4];
+					keydata.m_nFuncCodeArr[5]	= (EFunctionCode)buf[5];
+					keydata.m_nFuncCodeArr[6]	= (EFunctionCode)buf[6];
+					keydata.m_nFuncCodeArr[7]	= (EFunctionCode)buf[7];
+				}
+			}
+			else {		// 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
+				auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
+				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+					wchar_t	*p;
+					wchar_t	*pn;
+					int		nRes;
+
+					p = szKeyData;
+					// keycode取得
+					int keycode;
+					pn = auto_strchr(p,',');
+					if (pn == NULL)	continue;
+					*pn = 0;
+					nRes = scan_ints(p, L"%04x", &keycode);
+					if (nRes!=1)	continue;
+					keydata.m_nKeyCode = keycode;	
+					p = pn+1;
+
+					//後に続くトークン 
+					for (int j = 0; j < 8; j++) {
+						EFunctionCode n;
+						//機能名を数値に置き換える。(数値の機能名もあるかも)
+						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+						pn = auto_strchr(p,',');
+						if (pn == NULL)	break;
+						*pn = 0;
+						if( WCODE::Is09(*p) ) {
+							n = F_INVALID;
+						}
+						else {
+							n = CSMacroMgr::GetFuncInfoByName(0, p, szFuncNameJapanese);
+						}
+						if( n == F_INVALID ) {
+							if( WCODE::Is09(*p) ) {
+								n = (EFunctionCode)auto_atol(p);
+							}
+							else {
+								n = F_DEFAULT;
+							}
+						}
+						keydata.m_nFuncCodeArr[j] = n;
+						p = pn+1;
+					}
+					// KeyName
+					auto_strcpy(keydata.m_szKeyName, to_tchar(p));
+				}
 			}
 		}else{
-			auto_sprintf( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"),
-				keydata.m_nFuncCodeArr[0],
-				keydata.m_nFuncCodeArr[1],
-				keydata.m_nFuncCodeArr[2],
-				keydata.m_nFuncCodeArr[3],
-				keydata.m_nFuncCodeArr[4],
-				keydata.m_nFuncCodeArr[5],
-				keydata.m_nFuncCodeArr[6],
-				keydata.m_nFuncCodeArr[7]
-			);
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+		//	auto_sprintf( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"),
+		//		keydata.m_nFuncCodeArr[0],
+		//		keydata.m_nFuncCodeArr[1],
+		//		keydata.m_nFuncCodeArr[2],
+		//		keydata.m_nFuncCodeArr[3],
+		//		keydata.m_nFuncCodeArr[4],
+		//		keydata.m_nFuncCodeArr[5],
+		//		keydata.m_nFuncCodeArr[6],
+		//		keydata.m_nFuncCodeArr[7]
+		//	);
+		//	cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+
+// start 新バージョン	2008/5/25 Uchi
+			auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
+			auto_sprintf(szKeyData, L"%04x", keydata.m_nKeyCode);
+			for(int j = 0; j < 8; j++)
+			{
+				if (bOutCmdName) {
+					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+					WCHAR	szFuncName[256];
+					WCHAR	szFuncNameJapanese[256];
+					WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+						0,
+						keydata.m_nFuncCodeArr[j],
+						szFuncName,
+						szFuncNameJapanese
+					);
+					if( p ) {
+						auto_sprintf(szWork, L",%ls", p);
+					}
+					else {
+						auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
+					}
+				}
+				else {
+					auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
+				}
+				wcscat(szKeyData, szWork);
+			}
+			
+			auto_sprintf(szWork, L",%ls", keydata.m_szKeyName);
+			wcscat(szKeyData, szWork);
+			cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) );
+//
 		}
 	}
 }
@@ -1569,7 +1701,3 @@ bool CShareData::PopTagJump(TagJump *pTagJump)
 	}
 	return false;
 }
-
-
-
-
