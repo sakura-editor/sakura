@@ -351,7 +351,8 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->SetDrawSwitch(true);
 
 	/* フォーカス移動時の再描画 */
-	pcViewDst->RedrawAll();
+	pcViewDst->m_pcEditWnd->SetActivePane( pcViewDst->m_nMyIndex );
+	pcViewDst->m_pcEditWnd->RedrawInactivePane();
 
 	return nHitCount;
 }
