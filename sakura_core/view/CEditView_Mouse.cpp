@@ -127,6 +127,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 							if( NULL != m_pcOpeBlk ){
 								if( 0 < m_pcOpeBlk->GetNum() ){
 									m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+									m_pcEditWnd->RedrawInactivePane();
 								}else{
 									delete m_pcOpeBlk;
 								}
