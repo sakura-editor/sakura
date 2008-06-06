@@ -3475,11 +3475,15 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
+					DWORD dwEffectsSrc = (
+							m_pcEditDoc->IsReadOnly()	// 読み取り専用
+							|| ( 0 != m_pcEditDoc->m_nFileShareModeOld && NULL == m_pcEditDoc->m_hLockedFile )	// 上書き禁止
+						)? DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cOpeBuf.GetCurrentPointer();
 					int nTickDrag = ::GetTickCount();
 					m_pcEditDoc->SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetPtr(), cmemCurText.GetLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
-					dwEffects = data.DragDrop( TRUE, DROPEFFECT_COPY | DROPEFFECT_MOVE );
+					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
 					m_pcEditDoc->SetDragSourceView( NULL );
 //					MYTRACE( "dwEffects=%d\n", dwEffects );
 					if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
@@ -3500,7 +3504,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 									MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
 								}
 							}
-						}else if( DROPEFFECT_MOVE == dwEffects ){
+						}else if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
@@ -3515,6 +3519,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							if( NULL != m_pcOpeBlk ){
 								if( 0 < m_pcOpeBlk->GetNum() ){
 									m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+									m_pcEditDoc->RedrawInactivePane();
 								}else{
 									delete m_pcOpeBlk;
 								}
