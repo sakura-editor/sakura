@@ -661,12 +661,21 @@ void CCaret::ShowCaretPosInfo()
 	// ウィンドウ右上に書き出す
 	if( !hwndStatusBar ){
 		TCHAR	szText[64];
+		TCHAR	szFormat[64];
+		int		nLen = _tcslen(pszCodeName) + _tcslen(szEolMode) + _tcslen(szCaretChar);
+		auto_sprintf(
+			szFormat,
+			_T("%%ts(%%ts)%%%dc%%ts%%c%%6d:%%d"),
+			(nLen < 14)? 14 - nLen: 1
+		);
 		auto_sprintf(
 			szText,
-			_T("%ts(%ts)   [%ls]%6d：%d"),
+			szFormat,
 			pszCodeName,
 			szEolMode,
+			szCaretChar[0]? '[': ' ',	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 			szCaretChar,
+			szCaretChar[0]? ']': ' ',	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 			ptCaret.y,
 			ptCaret.x
 		);
