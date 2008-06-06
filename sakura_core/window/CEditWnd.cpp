@@ -2802,7 +2802,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		// 2003.08.26 Moca CR0LF0廃止に従い、適当に調整
 		// 2004-02-28 yasu 文字列を出力時の書式に合わせる
 		// 幅を変えた場合にはCEditView::ShowCaretPosInfo()での表示方法を見直す必要あり．
-		const TCHAR*	pszLabel[7] = { _T(""), _T("99999 行 9999 列"), _T("CRLF"), _T("0000"), _T("Unicode"), _T("REC"), _T("上書") };	//Oct. 30, 2000 JEPRO 千万行も要らん
+		const TCHAR*	pszLabel[7] = { _T(""), _T("99999 行 9999 列"), _T("CRLF"), _T("CRLF"), _T("Unicode"), _T("REC"), _T("上書") };	//Oct. 30, 2000 JEPRO 千万行も要らん
 		int			nStArrNum = 7;
 		//	To Here
 		int			nAllWidth = rc.right - rc.left;
@@ -3575,7 +3575,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
 	nStrLen = MAX_LEN;
 	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - ( ::GetSystemMetrics( SM_CXSIZEFRAME ) + 2 );
-	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
+	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth + 2;
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
 	rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
 	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
@@ -3589,7 +3589,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
 		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
 	}
 	*/
-	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,NULL/*m_pnCaretPosInfoDx*/); //2007.10.17 kobake めんどいので今のところは文字間隔配列を使わない。
+	::ExtTextOut( hdc,rc.left,rc.top,ETO_CLIPPED | ETO_OPAQUE,&rc,szText,nStrLen,NULL/*m_pnCaretPosInfoDx*/); //2007.10.17 kobake めんどいので今のところは文字間隔配列を使わない。
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( GetHwnd(), hdc );
 }
