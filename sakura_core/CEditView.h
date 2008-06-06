@@ -23,6 +23,8 @@
 #define _CEDITVIEW_H_
 
 #define _CARETMARGINRATE 20
+#define SCROLLMARGIN_LEFT 4
+#define SCROLLMARGIN_RIGHT 4
 
 #include <windows.h>
 #include "CShareData.h"

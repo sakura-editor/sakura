@@ -2945,8 +2945,8 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 	
 	/* 水平スクロール量（文字数）の算出 */
 	nScrollColNum = 0;
-	nScrollMarginRight = 4;
-	nScrollMarginLeft = 4;
+	nScrollMarginRight = SCROLLMARGIN_RIGHT;
+	nScrollMarginLeft = SCROLLMARGIN_LEFT;
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() > m_nViewColNum &&
 		nWk_CaretPosX > m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ){
@@ -3807,8 +3807,25 @@ normal_action:;
 			m_bBeginLineSelect = TRUE;
 
 			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
+			// １行が画面幅よりも長いと左右にスクロールしてちらつきが激しくなるので後で全体を再描画	// 2008.05.20 ryoji
+			BOOL bDrawSwitchOld = m_bDrawSWITCH;
+			BOOL bDrawAfter = FALSE;
+			if( bDrawSwitchOld ){
+				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+				if( pcLayout ){
+					int nColumn = LineIndexToColmn( pcLayout, pcLayout->GetLengthWithoutEOL() );
+					bDrawAfter = (nColumn + SCROLLMARGIN_RIGHT >= m_nViewColNum);
+					if( bDrawAfter ){
+						m_bDrawSWITCH = FALSE;
+					}
+				}
+			}
 			Command_GOLINEEND( TRUE, FALSE );
 			Command_RIGHT( TRUE, FALSE, FALSE );
+			if( bDrawSwitchOld && bDrawAfter ){
+				m_bDrawSWITCH = TRUE;
+				Redraw();
+			}
 
 			//	Apr. 14, 2003 genta
 			//	行番号の下をクリックしてドラッグを開始するとおかしくなるのを修正
