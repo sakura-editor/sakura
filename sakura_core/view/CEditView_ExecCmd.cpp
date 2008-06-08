@@ -121,18 +121,20 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	//コマンドライン実行
 	TCHAR	cmdline[1024];
 	_tcscpy( cmdline, pszCmd );
+	//OSバージョン取得
+	COsVersionInfo cOsVer;		// move to	2008/6/7 Uchi
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 				CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
 
 		//OSバージョン取得
-		COsVersionInfo cOsVer;
+		//COsVersionInfo cOsVer;		// move from	2008/6/7 Uchi
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
 			_T("%ls %ls%ts"),
-			( cOsVer.IsWin32NT() ? L"cmd.exe" : L"command.com" ),
+			( cOsVer.IsWin32NT() ? L"cmd.exe /U" : L"command.com" ),	// Unicdeモードでコマンド実行	2008/6/7 Uchi
 			( bGetStdout ? L"/C " : L"/K " ),
 			pszCmd
 		);
@@ -186,7 +188,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			CShareData::getInstance()->TraceOut( _T("\r\n%ls\r\n"), _T("#============================================================") );
 			CShareData::getInstance()->TraceOut( _T("#DateTime : %ls %ls\r\n"), szTextDate, szTextTime );
 			CShareData::getInstance()->TraceOut( _T("#CmdLine  : %ls\r\n"), pszCmd );
-			CShareData::getInstance()->TraceOut( _T("#%ls\r\n"), _T("==============================") );
+			CShareData::getInstance()->TraceOut( _T("#%ls\r\n"), _T("============================================================") );
 		}
 		
 		//charで読む
@@ -232,8 +234,8 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
 				while( new_cnt > 0 ) {												//待機中のものがある
 
-					if( new_cnt >= _countof(work)-2 ) {							//パイプから読み出す量を調整
-						new_cnt = _countof(work)-2;
+					if( new_cnt >= _countof(work)-2 - bufidx) {							//パイプから読み出す量を調整
+						new_cnt = _countof(work)-2 - bufidx;
 					}
 					::ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
@@ -242,58 +244,88 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						// Jan. 23, 2004 genta while追加のため制御を変更
 						break;
 					}
-					//読み出した文字列をチェックする
-					// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
-					//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
-					//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
-					for( j=0; j<(int)read_cnt - 1; j++ ) {
-						//	2007.09.10 ryoji
-						if( CNativeA::GetSizeOfChar(work, read_cnt, j) == 2 ) {
-							j++;
-						} else {
-							if( work[j] == _T2(PIPE_CHAR,'\r') && work[j+1] == _T2(PIPE_CHAR,'\n') ) {
-								j++;
-							} else if( work[j] == _T2(PIPE_CHAR,'\n') && work[j+1] == _T2(PIPE_CHAR,'\r') ) {
-								j++;
-							}
+					// Unicode で データを受け取る start 2008/6/8 Uchi
+					if (cOsVer.IsWin32NT()) {
+						wchar_t*	workw;
+						int			read_cntw;
+						bool		bCarry;
+						workw = (wchar_t*)work;
+						read_cntw = (int)read_cnt/sizeof(wchar_t);
+						workw[read_cntw] = '\0';
+						bCarry = false;
+						//読み出した文字列をチェックする
+						if (workw[read_cntw-1] == L'\r') {
+							bCarry = true;
+							read_cntw -= sizeof(wchar_t);
+							workw[read_cntw] = '\0';
 						}
-					}
-					//	From Here Jan. 28, 2004 Moca
-					//	改行コードが分割されるのを防ぐ
-					if( j == read_cnt - 1 ){
-						if( _IS_SJIS_1(work[j]) ) {
-							j = read_cnt + 1; // ぴったり出力できないことを主張
-						}else if( work[j] == _T2(PIPE_CHAR,'\r') || work[j] == _T2(PIPE_CHAR,'\n') ) {
-							// CRLFの一部ではない改行が末尾にある
-							// 次の読み込みで、CRLFの一部になる可能性がある
-							j = read_cnt + 1;
-						}else{
-							j = read_cnt;
-						}
-					}
-					//	To Here Jan. 28, 2004 Moca
-					if( j == (int)read_cnt ) {	//ぴったり出力できる場合
-						//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
 						if (FALSE==bToEditWindow) {
-							work[read_cnt] = '\0';
-							CShareData::getInstance()->TraceOut( _T("%hs"), work );
+							CShareData::getInstance()->TraceOut( L"%s", workw );
 						} else {
-							GetCommander().Command_INSTEXT(FALSE, to_wchar(work,read_cnt), CLogicInt(-1), TRUE);
+							GetCommander().Command_INSTEXT(FALSE, workw, CLogicInt(-1), TRUE);
 						}
 						bufidx = 0;
-					}
-					else {
-						char tmp = work[read_cnt-1];
-						//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-						if (FALSE==bToEditWindow) {
-							work[read_cnt-1] = '\0';
-							CShareData::getInstance()->TraceOut( _T("%hs"), work );
-						} else {
-							GetCommander().Command_INSTEXT(FALSE, to_wchar(work,read_cnt-1), CLogicInt(-1), TRUE);
+						if (bCarry) {
+							workw[0] = L'r';
+							bufidx = sizeof(wchar_t);
+							DBPRINT_A( "ExecCmd: Carry last character [CR]\n");
 						}
-						work[0] = tmp;
-						bufidx = 1;
-						DBPRINT_A( "ExecCmd: Carry last character [%d]\n", tmp );
+					}
+					// end 2008/6/8 Uchi
+					else {
+						//読み出した文字列をチェックする
+						// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
+						//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
+						//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
+						for( j=0; j<(int)read_cnt - 1; j++ ) {
+							//	2007.09.10 ryoji
+							if( CNativeA::GetSizeOfChar(work, read_cnt, j) == 2 ) {
+								j++;
+							} else {
+								if( work[j] == _T2(PIPE_CHAR,'\r') && work[j+1] == _T2(PIPE_CHAR,'\n') ) {
+									j++;
+								} else if( work[j] == _T2(PIPE_CHAR,'\n') && work[j+1] == _T2(PIPE_CHAR,'\r') ) {
+									j++;
+								}
+							}
+						}
+						//	From Here Jan. 28, 2004 Moca
+						//	改行コードが分割されるのを防ぐ
+						if( j == read_cnt - 1 ){
+							if( _IS_SJIS_1(work[j]) ) {
+								j = read_cnt + 1; // ぴったり出力できないことを主張
+							}else if( work[j] == _T2(PIPE_CHAR,'\r') || work[j] == _T2(PIPE_CHAR,'\n') ) {
+								// CRLFの一部ではない改行が末尾にある
+								// 次の読み込みで、CRLFの一部になる可能性がある
+								j = read_cnt + 1;
+							}else{
+								j = read_cnt;
+							}
+						}
+						//	To Here Jan. 28, 2004 Moca
+						if( j == (int)read_cnt ) {	//ぴったり出力できる場合
+							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
+							if (FALSE==bToEditWindow) {
+								work[read_cnt] = '\0';
+								CShareData::getInstance()->TraceOut( _T("%hs"), work );
+							} else {
+								GetCommander().Command_INSTEXT(FALSE, to_wchar(work,read_cnt), CLogicInt(-1), TRUE);
+							}
+							bufidx = 0;
+						}
+						else {
+							char tmp = work[read_cnt-1];
+							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
+							if (FALSE==bToEditWindow) {
+								work[read_cnt-1] = '\0';
+								CShareData::getInstance()->TraceOut( _T("%hs"), work );
+							} else {
+								GetCommander().Command_INSTEXT(FALSE, to_wchar(work,read_cnt-1), CLogicInt(-1), TRUE);
+							}
+							work[0] = tmp;
+							bufidx = 1;
+							DBPRINT_A( "ExecCmd: Carry last character [%d]\n", tmp );
+						}
 					}
 					// Jan. 23, 2004 genta
 					// 子プロセスの出力をどんどん受け取らないと子プロセスが
@@ -342,4 +374,3 @@ finish:
 	if( pi.hProcess ) CloseHandle( pi.hProcess );
 	if( pi.hThread ) CloseHandle( pi.hThread );
 }
-

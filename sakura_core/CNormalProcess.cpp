@@ -12,6 +12,7 @@
 	Copyright (C) 2003, genta, Moca, MIK
 	Copyright (C) 2004, Moca, naoh
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -136,6 +137,8 @@ bool CNormalProcess::InitializeProcess()
 		CAppMode::Instance()->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		pEditWnd->GetDocument().m_cDocType.SetDocumentType( GetShareData().GetDocumentTypeExt(_T("output")), true );
+		// 文字コードを有効とする Uchi 2008/6/8
+		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, CTypeConfig(-1));
 	}
 	else if( bGrepMode ){
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
@@ -370,5 +373,3 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	}
 	return hMutex;
 }
-
-
