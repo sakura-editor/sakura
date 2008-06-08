@@ -1672,7 +1672,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = _T("");
-		sLoadInfo.eCharCode = CODE_SJIS;
+		sLoadInfo.eCharCode = CODE_UNICODE;		// CODE_SJIS->	2008/6/8 Uchi
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( NULL, m_hwndTraceOutSource, sLoadInfo, _T("-DEBUGMODE"), true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
