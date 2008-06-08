@@ -407,6 +407,9 @@ void CDlgFuncList::SetData()
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	::CheckDlgButton( GetHwnd(), IDC_BUTTON_WINSIZE, m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos );
+	// ボタンが押されているかはっきりさせる 2008/6/5 Uchi
+	::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE, 
+		m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? _T("■") : _T("□") );
 
 	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
 	if(m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList){
@@ -1188,6 +1191,9 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		{// ウィンドウの位置とサイズを記憶 // 20060201 aroka
 			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos = ::IsDlgButtonChecked( GetHwnd(), IDC_BUTTON_WINSIZE );
 		}
+		// ボタンが押されているかはっきりさせる 2008/6/5 Uchi
+		::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE,
+			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? _T("■") : _T("□") );
 		return TRUE;
 	//2002.02.08 オプション切替後List/Treeにフォーカス移動
 	case IDC_CHECK_bAutoCloseDlgFuncList:
@@ -1654,6 +1660,3 @@ void CDlgFuncList::Redraw( int nOutLineType, CFuncInfoArr* pcFuncInfoArr, CLayou
 	m_nCurLine = nCurLine;				/* 現在行 */
 	SetData();
 }
-
-
-
