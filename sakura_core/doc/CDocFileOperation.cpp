@@ -331,7 +331,9 @@ bool CDocFileOperation::FileSaveAs()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-/* 閉じて(無題)
+/*
+	閉じて(無題)。
+	ユーザキャンセル操作等によりクローズされなかった場合は false を返す。
 
 	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
 */
@@ -350,7 +352,6 @@ bool CDocFileOperation::FileClose()
 
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcDocRef->m_pcEditWnd->UpdateCaption();
-
 
 	return true;
 }
