@@ -1508,9 +1508,11 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 		else {
 			//Command_FILESAVEAS( szPath );
 			FileSaveAs( szPath );
+			m_cSaveLineCode = EOL_NONE;	// 2008.03.20 ryoji 改行コードは引き継がない（上書き保存では常に「変換なし」）
 			return TRUE;
 		}
 	}
+	m_cSaveLineCode = EOL_NONE;	// 2008.03.20 ryoji 改行コードは引き継がない（上書き保存では常に「変換なし」）
 	return FALSE;
 }
 

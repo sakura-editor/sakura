@@ -746,6 +746,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			}
 			
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;	// 2008.03.20 ryoji 改行コードは引き継がない（上書き保存では常に「変換なし」になるように）
 		}
 		break;
 	// Jul. 5, 2002 genta

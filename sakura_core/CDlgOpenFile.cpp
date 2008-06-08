@@ -1016,7 +1016,8 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	}
 	//	From Here Feb. 9, 2001 genta
 	if( NULL != pcEol ){
-		m_cEol = EOL_NONE;	//	初期値は「改行コードを保存」に固定
+		//m_cEol = EOL_NONE;	//	初期値は「改行コードを保存」に固定
+		m_cEol = *pcEol;	// 	// 2008.03.20 ryoji 初期値の指定は上位に任せる
 		m_bUseEol = true;
 	}
 	else{
