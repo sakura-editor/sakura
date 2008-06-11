@@ -13,6 +13,7 @@
 	Copyright (C) 2004, genta, Moca, MIK
 	Copyright (C) 2005, genta, Moca, MIK, D.S.Koba
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -124,6 +125,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	// To Here 2007.09.09 Moca
 
 	/* キャレットを隠す */
+	bool bCaretShowFlag_Old = m_bCaretShowFlag;	// 2008.06.09 ryoji
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 
 	//	May 9, 2000 genta
@@ -368,7 +370,8 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	DrawBracketPair( true );
 
 	/* キャレットを現在位置に表示します */
-	ShowCaret_( m_hWnd ); // 2002/07/22 novice
+	if( bCaretShowFlag_Old )	// 2008.06.09 ryoji
+		ShowCaret_( m_hWnd ); // 2002/07/22 novice
 	return;
 }
 
