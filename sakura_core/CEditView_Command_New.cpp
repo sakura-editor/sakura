@@ -836,7 +836,7 @@ void CEditView::Command_UNDO( void )
 		}
 		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		m_pcEditDoc->RedrawInactivePane();/* 他のペインの表示状態を更新 */
+		m_pcEditDoc->RedrawAllViews( this );/* 他のペインの表示状態を更新 */
 #if 0
 	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
@@ -1035,7 +1035,7 @@ void CEditView::Command_REDO( void )
 		}
 		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		m_pcEditDoc->RedrawInactivePane();/* 他のペインの表示状態を更新 */
+		m_pcEditDoc->RedrawAllViews( this );/* 他のペインの表示状態を更新 */
 #if 0
 	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();

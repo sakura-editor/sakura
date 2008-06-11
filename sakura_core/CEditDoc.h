@@ -14,6 +14,7 @@
 	Copyright (C) 2005, Moca, genta, aroka
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -84,7 +85,8 @@ public:
 	BOOL HandleCommand( int );
 	void SetActivePane( int );	/* アクティブなペインを設定 */
 	int GetActivePane( void );	/* アクティブなペインを取得 */
-	void RedrawInactivePane( void );	/* 非アクティブなペインをRedrawする */
+	void SetDrawSwitchOfAllViews( BOOL bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
+	void RedrawAllViews( CEditView* pViewExclude );				/* すべてのペインをRedrawする */
 	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 	BOOL SelectFont( LOGFONT* );
 	BOOL FileRead( /*const*/ char* , BOOL*, int, BOOL, BOOL );	/* ファイルを開く */

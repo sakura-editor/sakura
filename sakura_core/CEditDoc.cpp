@@ -14,6 +14,7 @@
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 	Copyright (C) 2006, genta, ryoji, aroka
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3232,23 +3233,46 @@ int CEditDoc::GetActivePane( void )
 
 
 
-/** 非アクティブなペインをRedrawする
+/** すべてのペインの描画スイッチを設定する
+
+	@param bDraw [in] 描画スイッチの設定値
+
+	@date 2008.06.08 ryoji 新規作成
+*/
+void CEditDoc::SetDrawSwitchOfAllViews( BOOL bDraw )
+{
+	int i;
+	CEditView* pView;
+
+	for( i = 0; i < sizeof( m_cEditViewArr )/sizeof( CEditView ); i++ ){
+		pView = &m_cEditViewArr[i];
+		pView->m_bDrawSWITCH = bDraw;
+	}
+}
+
+/** すべてのペインをRedrawする
 
 	スクロールバーの状態更新はパラメータでフラグ制御 or 別関数にしたほうがいい？
+
+	@param pViewExclude [in] Redrawから除外するビュー
+
 	@date 2007.07.22 ryoji スクロールバーの状態更新を追加
+	@date 2008.06.08 ryoji pViewExclude パラメータ追加
 */
-void CEditDoc::RedrawInactivePane(void)
+void CEditDoc::RedrawAllViews( CEditView* pViewExclude )
 {
-	if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
-		m_cEditViewArr[m_nActivePaneIndex^1].AdjustScrollBars();
-		m_cEditViewArr[m_nActivePaneIndex^1].Redraw();
-	}
-	if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
-		m_cEditViewArr[m_nActivePaneIndex^2].AdjustScrollBars();
-		m_cEditViewArr[m_nActivePaneIndex^2].Redraw();
-		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
-			m_cEditViewArr[(m_nActivePaneIndex^1)^2].AdjustScrollBars();
-			m_cEditViewArr[(m_nActivePaneIndex^1)^2].Redraw();
+	int i;
+	CEditView* pView;
+
+	for( i = 0; i < sizeof( m_cEditViewArr )/sizeof( CEditView ); i++ ){
+		pView = &m_cEditViewArr[i];
+		if( pView == pViewExclude )
+			continue;
+		if( i == m_nActivePaneIndex ){
+			pView->RedrawAll();
+		}else{
+			pView->Redraw();
+			pView->AdjustScrollBars();
 		}
 	}
 }

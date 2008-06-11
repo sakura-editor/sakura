@@ -666,7 +666,7 @@ BOOL CEditView::HandleCommand(
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
 
-			m_pcEditDoc->RedrawInactivePane();	//	他のペインの表示
+			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示
 #if 0
 		//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();

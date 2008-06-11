@@ -3519,7 +3519,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							if( NULL != m_pcOpeBlk ){
 								if( 0 < m_pcOpeBlk->GetNum() ){
 									m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-									m_pcEditDoc->RedrawInactivePane();
+									m_pcEditDoc->RedrawAllViews( this );
 								}else{
 									delete m_pcOpeBlk;
 								}
@@ -7239,8 +7239,10 @@ DWORD CEditView::DoGrep(
 
 	/* 表示処理ON/OFF */
 	// 2003.06.23 Moca 共通設定で変更できるように
+	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	m_bDrawSWITCH = FALSE;
-	m_bDrawSWITCH = m_pShareData->m_Common.m_bGrepRealTimeView;
+	m_pcEditDoc->RedrawAllViews( this );	// ここまでの分を他ビューにも表示
+	m_pcEditDoc->SetDrawSwitchOfAllViews( m_pShareData->m_Common.m_bGrepRealTimeView );
 
 
 	if( -1 == DoGrepTree(
@@ -7300,10 +7302,10 @@ DWORD CEditView::DoGrep(
 //	}
 
 	/* 表示処理ON/OFF */
-	m_bDrawSWITCH = TRUE;
+	m_pcEditDoc->SetDrawSwitchOfAllViews( TRUE );
 
-	/* フォーカス移動時の再描画 */
-	RedrawAll();
+	/* 再描画 */
+	m_pcEditDoc->RedrawAllViews( NULL );
 
 	return nHitCount;
 }
@@ -7542,7 +7544,9 @@ int CEditView::DoGrepTree(
 				goto cancel_return;
 			}
 			/* 表示設定をチェック */
-			m_bDrawSWITCH = ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW );
+			m_pcEditDoc->SetDrawSwitchOfAllViews(
+				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
+			);
 
 			if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )	//フォルダでない場合
 			{
@@ -7629,6 +7633,7 @@ int CEditView::DoGrepTree(
 						if( 0 < nWork ){
 							Command_ADDTAIL( pszWork, nWork );
 							Command_GOFILEEND( FALSE );
+							m_pcEditDoc->RedrawAllViews( this );
 							/* 結果格納エリアをクリア */
 							cmemMessage.SetDataSz( _T("") );
 							nWork = 0;
@@ -7688,7 +7693,9 @@ int CEditView::DoGrepTree(
 				goto cancel_return;
 			}
 			/* 表示設定をチェック */
-			m_bDrawSWITCH = ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW );
+			m_pcEditDoc->SetDrawSwitchOfAllViews(
+				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
+			);
 
 			if( (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)	//フォルダの場合
 			 && 0 != _tcscmp( w32fd.cFileName, _T("."))
@@ -7995,7 +8002,9 @@ int CEditView::DoGrepFile(
 				return -1;
 			}
 			//	2003.06.23 Moca 表示設定をチェック
-			m_bDrawSWITCH = ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW );
+			m_pcEditDoc->SetDrawSwitchOfAllViews(
+				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
+			);
 			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
 			if( 5000000 < cfl.GetFileSize() ){
 				int nPercent = cfl.GetPercent();
@@ -9051,7 +9060,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-			m_pcEditDoc->RedrawInactivePane();	// 他のペインの表示	// 2007.07.22 ryoji
+			m_pcEditDoc->RedrawAllViews( this );	// 他のペインの表示	// 2007.07.22 ryoji
 		}else{
 			delete m_pcOpeBlk;
 		}
