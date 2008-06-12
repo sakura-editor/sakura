@@ -4,6 +4,7 @@
 #include "charset/charcode.h"
 #include <mbstring.h>
 #include "codeutil.h"
+//#include <MLang.h>
 
 /* EUC→Unicodeコード変換 */
 //2007.08.13 kobake 追加
@@ -157,4 +158,32 @@ void CEuc::SJISToEUC( CMemory* pMem )
 	pMem->SetRawData( pDes, nDesIdx );
 	delete [] pDes;
 	return;
+}
+
+
+// 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
+EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst)
+{
+	static CMemory	cCharBuffer;
+	EConvertResult	res;
+	int				i;
+	TCHAR*			pd; 
+	unsigned char*	ps; 
+
+	// 1文字データバッファ
+	cCharBuffer.SetRawData("",0);
+	cCharBuffer.AppendRawData( cSrc, sizeof(wchar_t));
+
+	// EUC-JP 変換
+	res = UnicodeToEUC(&cCharBuffer);
+	if (res != RESULT_COMPLETE) {
+		return res;
+	}
+
+	// Hex変換
+	for (i = cCharBuffer.GetRawLength(), ps = (unsigned char*)cCharBuffer.GetRawPtr(), pd = pDst; i >0; i--, ps ++, pd += 2) {
+		auto_sprintf( pd, _T("%02x"), *ps);
+	}
+
+	return RESULT_COMPLETE;
 }

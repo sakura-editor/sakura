@@ -489,3 +489,43 @@ long CJis::MemSJIStoJIS( unsigned char* pszSrc, long nSrcLen )
 }
 
 
+// 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
+EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst)
+{
+	static CMemory	cCharBuffer;
+	EConvertResult	res;
+	int				i;
+	TCHAR*			pd; 
+	unsigned char*	ps; 
+
+	// 1文字データバッファ
+	cCharBuffer.SetRawData("",0);
+	cCharBuffer.AppendRawData( cSrc, sizeof(wchar_t));
+
+	// EUC-JP 変換
+	res = UnicodeToJIS(&cCharBuffer);
+	if (res != RESULT_COMPLETE) {
+		return res;
+	}
+
+	// Hex変換
+	bool	bInEsc;
+	bInEsc = false;
+	pd = pDst;
+	for (i = cCharBuffer.GetRawLength(), ps = (unsigned char*)cCharBuffer.GetRawPtr(); i >0; i--, ps ++) {
+		if (*ps == 0x1B) {
+			bInEsc = true;
+		}
+		else if (bInEsc) {
+			if (*ps >= 'A' && *ps <='Z') {
+				bInEsc = false;
+			}
+		}
+		else {
+			auto_sprintf( pd, _T("%02x"), *ps);
+			pd += 2;
+		}
+	}
+
+	return RESULT_COMPLETE;
+}

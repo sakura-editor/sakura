@@ -7,6 +7,7 @@
 #include "mem/CMemoryIterator.h"
 #include "doc/CLayout.h"
 #include "charset/charcode.h"
+#include "charset/CCodeFactory.h"
 #include "window/CEditWnd.h"
 #include <vector>
 using namespace std;
@@ -647,7 +648,17 @@ void CCaret::ShowCaretPosInfo()
 		CLogicInt nIdx = m_pEditView->LineColmnToIndex( pcLayout, GetCaretLayoutPos().GetX2() );
 		if( nIdx < nLineLen ){
 			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
-				auto_sprintf( szCaretChar, _T("%04x"), pLine[nIdx]);
+				//auto_sprintf( szCaretChar, _T("%04x"), );
+				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
+				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
+				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar);
+				if (ret != RESULT_COMPLETE) {
+					// うまくコードが取れなかった(Unicodeで表示)
+					szCaretChar[0] = _T('u');
+					CCodeBase* pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
+					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar + 1);
+				}
+
 			}
 			else{
 				_tcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());

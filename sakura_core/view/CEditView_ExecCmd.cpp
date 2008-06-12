@@ -260,7 +260,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 							workw[read_cntw] = '\0';
 						}
 						if (FALSE==bToEditWindow) {
-							CShareData::getInstance()->TraceOut( L"%s", workw );
+							CShareData::getInstance()->TraceOut( _T("%s"), workw );
 						} else {
 							GetCommander().Command_INSTEXT(FALSE, workw, CLogicInt(-1), TRUE);
 						}

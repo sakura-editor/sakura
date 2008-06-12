@@ -30,5 +30,7 @@ public:
 	//ファイル形式
 	virtual void GetBom(CMemory* pcmemBom);											//!< BOMデータ取得
 	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType)=0;					//!< 改行データ取得
-};
 
+	// 文字コード表示用		2008/6/9 Uchi
+	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst);			//!< UNICODE → Hex 変換
+};
