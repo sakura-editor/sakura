@@ -537,6 +537,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	// To Here 2007.09.09 Moca
 
 	// キャレットを隠す
+	bool bCaretShowFlag_Old = GetCaret().GetCaretShowFlag();	// 2008.06.09 ryoji
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
 
 	//	May 9, 2000 genta
@@ -764,7 +765,8 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	DrawBracketPair( true );
 
 	/* キャレットを現在位置に表示します */
-	GetCaret().ShowCaret_( this->GetHwnd() ); // 2002/07/22 novice
+	if( bCaretShowFlag_Old )	// 2008.06.09 ryoji
+		GetCaret().ShowCaret_( this->GetHwnd() ); // 2002/07/22 novice
 	return;
 }
 
