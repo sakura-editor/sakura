@@ -278,8 +278,10 @@ DWORD CGrepAgent::DoGrep(
 
 	/* 表示処理ON/OFF */
 	// 2003.06.23 Moca 共通設定で変更できるように
+	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	SetDrawSwitch(false);
-	pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
+	pCEditWnd->RedrawAllViews( pcViewDst );	// ここまでの分を他ビューにも表示
+	pCEditWnd->SetDrawSwitchOfAllViews( 0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView );
 
 
 	int nGrepTreeResult = DoGrepTree(
@@ -348,11 +350,10 @@ DWORD CGrepAgent::DoGrep(
 //	}
 
 	/* 表示処理ON/OFF */
-	pcViewDst->SetDrawSwitch(true);
+	pCEditWnd->SetDrawSwitchOfAllViews( true );
 
-	/* フォーカス移動時の再描画 */
-	pcViewDst->m_pcEditWnd->SetActivePane( pcViewDst->m_nMyIndex );
-	pcViewDst->m_pcEditWnd->RedrawInactivePane();
+	/* 再描画 */
+	pCEditWnd->RedrawAllViews( NULL );
 
 	return nHitCount;
 }
@@ -575,7 +576,9 @@ int CGrepAgent::DoGrepTree(
 			}
 
 			/* 表示設定をチェック */
-			pcViewDst->SetDrawSwitch(0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ));
+			CEditWnd::Instance()->SetDrawSwitchOfAllViews(
+				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+			);
 
 			if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )	//フォルダでない場合
 			{
@@ -669,6 +672,7 @@ int CGrepAgent::DoGrepTree(
 						if( 0 < nWork ){
 							pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
 							pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+							CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 							/* 結果格納エリアをクリア */
 							cmemMessage.SetString( L"" );
 							nWork = 0;
@@ -729,7 +733,9 @@ int CGrepAgent::DoGrepTree(
 				goto cancel_return;
 			}
 			/* 表示設定をチェック */
-			pcViewDst->SetDrawSwitch(0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ));
+			CEditWnd::Instance()->SetDrawSwitchOfAllViews(
+				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+			);
 
 			if( (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)	//フォルダの場合
 			 && 0 != _tcscmp( w32fd.cFileName, _T("."))
@@ -1048,7 +1054,9 @@ int CGrepAgent::DoGrepFile(
 				return -1;
 			}
 			//	2003.06.23 Moca 表示設定をチェック
-			pcViewDst->SetDrawSwitch(0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW ));
+			CEditWnd::Instance()->SetDrawSwitchOfAllViews(
+				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+			);
 			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
 			if( 5000000 < cfl.GetFileSize() ){
 				int nPercent = cfl.GetPercent();

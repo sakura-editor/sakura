@@ -650,7 +650,7 @@ BOOL CViewCommander::HandleCommand(
 			/* 操作の追加 */
 			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( GetOpeBlk() );
 
-			GetEditWindow()->RedrawInactivePane();	//	他のペインの表示
+			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 		}else{
 			delete GetOpeBlk();
 		}

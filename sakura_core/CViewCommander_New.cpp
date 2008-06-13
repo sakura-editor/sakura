@@ -172,7 +172,7 @@ void CViewCommander::Command_UNDO( void )
 		}
 		GetCaret().ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		GetEditWindow()->RedrawInactivePane();/* 他のペインの表示状態を更新 */
+		GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 
 	}
 
@@ -327,7 +327,7 @@ void CViewCommander::Command_REDO( void )
 		}
 		GetCaret().ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		GetEditWindow()->RedrawInactivePane();/* 他のペインの表示状態を更新 */
+		GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 	}
 
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;	// 2007.10.11 ryoji 追加

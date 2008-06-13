@@ -4040,23 +4040,45 @@ int CEditWnd::GetActivePane( void ) const
 
 
 
-/** 非アクティブなペインをRedrawする
+/** すべてのペインの描画スイッチを設定する
+
+	@param bDraw [in] 描画スイッチの設定値
+
+	@date 2008.06.08 ryoji 新規作成
+*/
+void CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
+{
+	int i;
+	CEditView* pcView;
+
+	for( i = 0; i < _countof( m_pcEditViewArr ); i++ ){
+		pcView = m_pcEditViewArr[i];
+		pcView->SetDrawSwitch( bDraw );
+	}
+}
+
+/** すべてのペインをRedrawする
 
 	スクロールバーの状態更新はパラメータでフラグ制御 or 別関数にしたほうがいい？
 	@date 2007.07.22 ryoji スクロールバーの状態更新を追加
+
+	@param pcViewExclude [in] Redrawから除外するビュー
+	@date 2008.06.08 ryoji pcViewExclude パラメータ追加
 */
-void CEditWnd::RedrawInactivePane(void)
+void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 {
-	if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
-		this->m_pcEditViewArr[m_nActivePaneIndex^1]->AdjustScrollBars();
-		this->m_pcEditViewArr[m_nActivePaneIndex^1]->Redraw();
-	}
-	if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
-		this->m_pcEditViewArr[m_nActivePaneIndex^2]->AdjustScrollBars();
-		this->m_pcEditViewArr[m_nActivePaneIndex^2]->Redraw();
-		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
-			this->m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->AdjustScrollBars();
-			this->m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->Redraw();
+	int i;
+	CEditView* pcView;
+
+	for( i = 0; i < _countof( m_pcEditViewArr ); i++ ){
+		pcView = m_pcEditViewArr[i];
+		if( pcView == pcViewExclude )
+			continue;
+		if( i == m_nActivePaneIndex ){
+			pcView->RedrawAll();
+		}else{
+			pcView->Redraw();
+			pcView->AdjustScrollBars();
 		}
 	}
 }
