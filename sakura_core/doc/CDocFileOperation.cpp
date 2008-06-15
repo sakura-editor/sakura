@@ -194,27 +194,64 @@ bool CDocFileOperation::SaveFileDialog(
 	}
 
 	//拡張子指定
+	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
+	//	2008/6/14 大きく改造
 	TCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	{
+		LPCTSTR	szExt;
+		TCHAR	szWork[64];
+		TCHAR*	pStr;
+		TCHAR*	pEnd;
+
+		CTypeConfig	nSettingType = m_pcDocRef->m_cDocType.GetDocumentType();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
-			_tcscpy(szDefaultWildCard, _T("*.txt"));
-
-			//「新規から保存時は全ファイル表示」オプション
-			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+			szExt = _T("");
 		}
-		//ファイルパスが有る場合は *.(今の拡張子) とする
-		else{
-			LPCTSTR szExt = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetExt();
-			if(!*szExt)szExt = _T(".*");
-			_tcscpy(szDefaultWildCard, _T("*"));
-			_tcscat(szDefaultWildCard, szExt);
-
-			//「新規以外から保存時は全ファイル表示」オプション
-			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+		else {
+			szExt = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetExt();
 		}
+		if (nSettingType.GetIndex() == 0) {
+			// 基本
+			if (szExt[0] == _T('\0')) { 
+				// ファイルパスが無いまたは拡張子なし
+				_tcscpy(szDefaultWildCard, _T("*.txt"));
+			}
+			else {
+				// ファイルパスが無いまたは拡張子なし
+				_tcscpy(szDefaultWildCard, _T("*"));
+				_tcscat(szDefaultWildCard, szExt);
+			}
+		}
+		else {
+			szDefaultWildCard[0] = _T('\0'); 
+			if (szExt[0] != _T('\0')) {
+				// ファイルパスがあり、拡張子ありの場合、トップに指定
+				_tcscpy(szDefaultWildCard, _T("*"));
+				_tcscat(szDefaultWildCard, szExt);
+			}
+			// 拡張子を指定に合わせる
+			pStr = pEnd = GetDllShareData().GetTypeSetting(nSettingType).m_szTypeExts;
+			do {
+				if (*pEnd == '\0' || *pEnd == ',') {
+					auto_strncpy(szWork, pStr, pEnd - pStr);
+					szWork[pEnd - pStr]= _T('\0');
+					if (szExt[0] == _T('\0') || auto_stricmp(szWork, szExt + 1) != 0) {
+						// 拡張子指定なし、またはマッチした拡張子でない
+						if (szDefaultWildCard[0] != '\0') {
+							_tcscat(szDefaultWildCard, _T(";"));
+						}
+						_tcscat(szDefaultWildCard, _T("*."));
+						_tcscat(szDefaultWildCard, szWork);
+					}
+					pStr = pEnd + 1;
+				}
+			} while	(*pEnd++ != '\0');
+		}
+
+		//「新規以外から保存時は全ファイル表示」オプション
+		if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
+			_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
 	}
 
 	// ダイアログを表示

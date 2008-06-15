@@ -598,6 +598,11 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	CTypeConfig		nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
 )
 {
+	// 文字コードの指定	2008/6/14 Uchi
+	if (IsValidCodeType(nCharCode)) {
+		GetDocument().SetDocumentEncoding(nCharCode);
+	}
+
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
 	if( nDocumentType.IsValid() ){

@@ -356,7 +356,8 @@ UINT_PTR CALLBACK OFNHookProc(
 				}
 				else{
 					_tsplitpath( pOf->lpstrFile, NULL, NULL, NULL, szDefExt );
-					if( szDefExt[0] == _T('.') && szDefExt[1] != _T('\0') ){	// 既に拡張子がついている
+					if( szDefExt[0] == _T('.') /* && szDefExt[1] != _T('\0') */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
+						// .のみの場合にも拡張子付きとみなす。
 						lstrcpyn(pcDlgOpenFile->m_szPath, pOf->lpstrFile, _MAX_PATH);
 					}
 					else{
@@ -1117,5 +1118,3 @@ bool CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ* ofn )
 	}
 	return bRet!=FALSE;
 }
-
-
