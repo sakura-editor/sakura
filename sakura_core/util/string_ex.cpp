@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "string_ex.h"
 #include "charset/charcode.h"
+#include <minmax.h>
 
 SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 
@@ -485,7 +486,7 @@ int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 
 int wmemicmp(const WCHAR* p1,const WCHAR* p2)
 {
-	return wmemicmp(p1,p2,wcslen(p2));
+	return wmemicmp(p1,p2, max(wcslen(p1), wcslen(p2)));
 }
 
 
