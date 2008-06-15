@@ -195,7 +195,7 @@ bool CDocFileOperation::SaveFileDialog(
 
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
-	//	2008/6/14 大きく改造
+	// 2008/6/14 大きく改造 Uchi
 	TCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	{
 		LPCTSTR	szExt;
@@ -249,9 +249,16 @@ bool CDocFileOperation::SaveFileDialog(
 			} while	(*pEnd++ != '\0');
 		}
 
-		//「新規以外から保存時は全ファイル表示」オプション
-		if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-			_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
+			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
+			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
+				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+		}
+		else {
+			//「新規以外から保存時は全ファイル表示」オプション
+			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
+				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+		}
 	}
 
 	// ダイアログを表示
