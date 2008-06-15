@@ -233,12 +233,12 @@ bool CDocFileOperation::SaveFileDialog(
 			// 拡張子を指定に合わせる
 			pStr = pEnd = GetDllShareData().GetTypeSetting(nSettingType).m_szTypeExts;
 			do {
-				if (*pEnd == '\0' || *pEnd == ',') {
+				if (*pEnd == _T('\0') || *pEnd == _T(',')) {
 					auto_strncpy(szWork, pStr, pEnd - pStr);
 					szWork[pEnd - pStr]= _T('\0');
 					if (szExt[0] == _T('\0') || auto_stricmp(szWork, szExt + 1) != 0) {
 						// 拡張子指定なし、またはマッチした拡張子でない
-						if (szDefaultWildCard[0] != '\0') {
+						if (szDefaultWildCard[0] != _T('\0')) {
 							_tcscat(szDefaultWildCard, _T(";"));
 						}
 						_tcscat(szDefaultWildCard, _T("*."));
@@ -246,7 +246,7 @@ bool CDocFileOperation::SaveFileDialog(
 					}
 					pStr = pEnd + 1;
 				}
-			} while	(*pEnd++ != '\0');
+			} while	(*pEnd++ != _T('\0'));
 		}
 
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
