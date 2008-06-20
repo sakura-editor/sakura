@@ -688,6 +688,8 @@
 #define HIDC_RADIO_OUTPUT			12106	//標準出力リダイレクト先：アウトプットウィンドウ
 #define HIDC_RADIO_EDITWINDOW		12107	//標準出力リダイレクト先：編集中のウィンドウ
 #define HIDC_CHECK_SENDSTDIN		12108	//標準入力に送る
+#define HIDC_CHECK_UNICODE_GET		12109	//Unicodeで標準出力
+#define HIDC_CHECK_UNICODE_SEND		12110	//Unicodeで標準入力
 
 //アウトライン解析
 #define HIDC_FL_BUTTON_COPY		12200	//コピー

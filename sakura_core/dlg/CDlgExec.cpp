@@ -38,6 +38,8 @@ const DWORD p_helpids[] = {	//12100
 	IDC_RADIO_OUTPUT,				HIDC_RADIO_OUTPUT,				//標準出力リダイレクト先：アウトプットウィンドウ
 	IDC_RADIO_EDITWINDOW,			HIDC_RADIO_EDITWINDOW,			//標準出力リダイレクト先：編集中のウィンドウ
 	IDC_CHECK_SENDSTDIN,			HIDC_CHECK_SENDSTDIN,			//標準入力に送る
+	IDC_CHECK_UNICODE_GET,			HIDC_CHECK_UNICODE_GET,			//Unicodeで標準出力	// 2008/6/17 Uchi
+	IDC_CHECK_UNICODE_SEND,			HIDC_CHECK_UNICODE_SEND,		//Unicodeで標準入力	// 2008/6/20 Uch
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -97,9 +99,14 @@ void CDlgExec::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUT, nExecFlgOpt & 0x02 ? BST_UNCHECKED : BST_CHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_EDITWINDOW, nExecFlgOpt & 0x02 ? BST_CHECKED : BST_UNCHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_SENDSTDIN, nExecFlgOpt & 0x04 ? BST_CHECKED : BST_UNCHECKED );
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_UNICODE_GET, nExecFlgOpt & 0x08 ? BST_CHECKED : BST_UNCHECKED );		// 2008/6/17 Uchi
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_UNICODE_SEND, nExecFlgOpt & 0x10 ? BST_CHECKED : BST_UNCHECKED );	// 2008/6/20 Uchi
 
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 	/*****************************
@@ -129,6 +136,8 @@ int CDlgExec::GetData( void )
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT ) ) ? 0x01 : 0;	// 標準出力を得る
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_EDITWINDOW ) ) ? 0x02 : 0;	// 標準出力を編集中のウインドウへ
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) ) ? 0x04 : 0;	// 編集中ファイルを標準入力へ
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_UNICODE_GET ) ) ? 0x08 : 0;	// Unicodeで標準出力	2008/6/17 Uchi
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_UNICODE_SEND ) ) ? 0x10 : 0;	// Unicodeで標準入力	2008/6/20 Uchi
 		m_pShareData->m_nExecFlgOpt = nFlgOpt;
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 	return 1;
@@ -146,6 +155,13 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), bEnabled );
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), bEnabled );
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
+	// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), 
+			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT ) );
+		break;
+	case IDC_CHECK_SENDSTDIN:	// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_SEND ), 
+			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) );
 		break;
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
@@ -192,5 +208,3 @@ LPVOID CDlgExec::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
-

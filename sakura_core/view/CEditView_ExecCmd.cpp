@@ -15,6 +15,8 @@
 		@li	0x01	標準出力を得る
 		@li	0x02	標準出力のりダイレクト先（無効=アウトプットウィンドウ / 有効=編集中のウィンドウ）
 		@li	0x04	編集中ファイルを標準入力へ
+		@li	0x08	標準出力をUnicodeで行う
+		@li	0x10	標準入力をUnicodeで行う
 
 	@note	子プロセスの標準出力取得はパイプを使用する
 	@note	子プロセスの標準入力への送信は一時ファイルを使用
@@ -28,6 +30,7 @@
 	@date	2004/01/23	genta
 	@date	2004/01/28	Moca	改行コードが分割されるのを防ぐ
 	@date	2007/03/18	maru	オプションの拡張
+	@date	2008/06/07	Uchi	Unidoeの使用
 */
 void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 {
@@ -40,6 +43,8 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	BOOL	bGetStdout		= nFlgOpt & 0x01 ? TRUE : FALSE;	//	子プロセスの標準出力を得る
 	BOOL	bToEditWindow	= nFlgOpt & 0x02 ? TRUE : FALSE;	//	TRUE=編集中のウィンドウ / FALSAE=アウトプットウィンドウ
 	BOOL	bSendStdin		= nFlgOpt & 0x04 ? TRUE : FALSE;	//	編集中ファイルを子プロセスSTDINに渡す
+	BOOL	bIOUnicodeGet	= nFlgOpt & 0x08 ? TRUE : FALSE;	//	標準出力をUnicodeで行う	2008/6/17 Uchi
+	BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
 	//	To Here 2006.12.03 maru 引数を拡張のため
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
@@ -82,7 +87,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 		
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 		
-		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), CODE_SJIS, nFlgOpt) ){	// 一時ファイル出力
+		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), bIOUnicodeSend? CODE_UNICODE : CODE_SJIS, nFlgOpt) ){	// 一時ファイル出力
 			hStdIn = NULL;
 		} else {
 			// 子プロセスへの継承用にファイルを開く
@@ -133,8 +138,9 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
-			_T("%ls %ls%ts"),
-			( cOsVer.IsWin32NT() ? L"cmd.exe /U" : L"command.com" ),	// Unicdeモードでコマンド実行	2008/6/7 Uchi
+			_T("%ls %ls%ls%ts"),
+			( cOsVer.IsWin32NT() ? L"cmd.exe" : L"command.com" ),
+			( bIOUnicodeGet ? L"/U" : L"" ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
 			( bGetStdout ? L"/C " : L"/K " ),
 			pszCmd
 		);
@@ -245,7 +251,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						break;
 					}
 					// Unicode で データを受け取る start 2008/6/8 Uchi
-					if (cOsVer.IsWin32NT()) {
+					if (bIOUnicodeGet) {
 						wchar_t*	workw;
 						int			read_cntw;
 						bool		bCarry;
