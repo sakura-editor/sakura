@@ -1563,10 +1563,13 @@ BEGIN
     PUSHBUTTON      "&...",IDC_BUTTON_REFERENCE,260,20,9,12,WS_GROUP,0,
                     HIDC_BUTTON_REFERENCE
     CONTROL         "標準出力を得る(&S)",IDC_CHECK_GETSTDOUT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,42,70,10,0,
-                    HIDC_CHECK_GETSTDOUT
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,32,70,10
+    CONTROL         "Unicodeを使用(&U)",IDC_CHECK_UNICODE_GET,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,46,68,10
     CONTROL         "標準入力に送る(&I)",IDC_CHECK_SENDSTDIN,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,5,58,71,10
+    CONTROL         "Unicodeを使用(&V)",IDC_CHECK_UNICODE_SEND,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,72,68,10
     CONTROL         "アウトプットウィンドウ(&O)",IDC_RADIO_OUTPUT,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,104,51,81,12
     CONTROL         "編集中のウィンドウ(&C)",IDC_RADIO_EDITWINDOW,"Button",
