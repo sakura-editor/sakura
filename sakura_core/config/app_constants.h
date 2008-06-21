@@ -6,9 +6,9 @@
 
 // ÉAÉvÉäñºÅB2007.09.21 kobake êÆóù
 #ifdef _UNICODE
-	#define _APP_NAME_(TYPE) TYPE("sakuraW")
+	#define _APP_NAME_(TYPE) TYPE("sakuraWL")
 #else
-	#define _APP_NAME_(TYPE) TYPE("sakuraA")
+	#define _APP_NAME_(TYPE) TYPE("sakuraAL")
 #endif
 
 #ifdef _DEBUG
