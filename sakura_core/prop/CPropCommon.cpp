@@ -422,7 +422,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//!	「共通設定」プロパティシートの作成時に必要な情報の配列．
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ _T("全般"), 				IDD_PROP1P1,		DlgProc_PROP_GENERAL },
-		{ _T("ウィンドウ"),		IDD_PROP_WIN,		DlgProc_PROP_WIN },
+		{ _T("ウィンドウ"),			IDD_PROP_WIN,		DlgProc_PROP_WIN },
 		{ _T("タブバー"),			IDD_PROP_TAB,		DlgProc_PROP_TAB },
 		{ _T("編集"),				IDD_PROP_EDIT,		DlgProc_PROP_EDIT },
 		{ _T("ファイル"),			IDD_PROP_FILE,		DlgProc_PROP_FILE },
@@ -431,11 +431,12 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ _T("検索"),				IDD_PROP_GREP,		DlgProc_PROP_GREP },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
 		{ _T("キー割り当て"),		IDD_PROP_KEYBIND,	DlgProc_PROP_KEYBIND },
 		{ _T("カスタムメニュー"),	IDD_PROP_CUSTMENU,	DlgProc_PROP_CUSTMENU },
-		{ _T("ツールバー"),		IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },
-		{ _T("強調キーワード"),	IDD_PROP_KEYWORD,	DlgProc_PROP_KEYWORD },
+		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },
+		{ _T("強調キーワード"),		IDD_PROP_KEYWORD,	DlgProc_PROP_KEYWORD },
 		{ _T("支援"),				IDD_PROP_HELPER,	DlgProc_PROP_HELPER },
-		{ _T("マクロ"),			IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
-		{ _T("ファイル名表示"),	IDD_PROP_FNAME,		DlgProc_PROP_FILENAME},
+		{ _T("マクロ"),				IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
+		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		DlgProc_PROP_FILENAME},
+		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	DlgProc_PROP_STATUSBAR},	// 文字コード表示指定	2008/6/21	Uchi
 	};
 
 	PROPSHEETPAGE		psp[32];
@@ -488,11 +489,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	psh.ppsp = psp;
 	psh.pfnCallback = NULL;
 
-//<<<<<<< .mine
-//	nRet = ::PropertySheet( &psh );
-//=======
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
-//>>>>>>> .r1121
 	if( -1 == nRet ){
 		TCHAR*	pszMsgBuf;
 		::FormatMessage(
@@ -1048,7 +1045,3 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	}
 	return;
 }
-
-
-
-

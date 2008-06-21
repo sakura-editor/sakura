@@ -259,7 +259,7 @@ struct ARRHEAD {
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1018;
+const unsigned int uShareDataVersion = 1019;
 
 /*
 ||	Singleton風
@@ -665,6 +665,14 @@ bool CShareData::Init( void )
 		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
+
+		// [ステータスバー]タブ
+		// 表示文字コードの指定		2008/6/21	Uchi
+		m_pShareData->m_Common.m_sStatusbar.m_bDispUniInSjis	= FALSE;	// SJISで文字コード値をUnicodeで出力する
+		m_pShareData->m_Common.m_sStatusbar.m_bDispUniInJis		= FALSE;	// JISで文字コード値をUnicodeで出力する
+		m_pShareData->m_Common.m_sStatusbar.m_bDispUniInEuc		= FALSE;	// EUCで文字コード値をUnicodeで出力する
+		m_pShareData->m_Common.m_sStatusbar.m_bDispUtf8Byte		= FALSE;	// UTF-8で表示をバイトコードで行う
+		m_pShareData->m_Common.m_sStatusbar.m_bDispSPCodepoint	= TRUE;		// サロゲートペアをコードポイントで表示
 
 
 		m_pShareData->m_aCommands.clear();

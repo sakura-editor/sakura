@@ -597,6 +597,11 @@
 #define IDC_LABEL_REGEXP_VER            1525
 #define IDC_CHECK_UNICODE_GET           1526
 #define IDC_CHECK_UNICODE_SEND          1527
+#define IDC_CHECK_DISP_UNICODE_IN_SJIS  1528
+#define IDC_CHECK_DISP_UNICODE_IN_JIS   1529
+#define IDC_CHECK_DISP_UNICODE_IN_EUC   1530
+#define IDC_CHECK_DISP_UTF8_BYTE        1531
+#define IDC_CHECK_DISP_SP_CODEPOINT     1532
 #define IDC_RADIO_OUTPUT                1536
 #define IDC_RADIO_EDITWINDOW            1537
 #define IDC_CHECK_SENDSTDIN             1538
@@ -610,6 +615,7 @@
 #define IDM_POPLAST2                    4064
 #define ID_IS4072                       4072
 #define IDD_PROPTYPESP1                 5101
+#define IDD_PROP_STATUSBAR              5102
 #define IDD_PROP_CUSTMENU               5103
 #define IDD_PROP_FORMAT                 5104
 #define IDD_PROP_HELPER                 5105
@@ -659,7 +665,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1528
+#define _APS_NEXT_CONTROL_VALUE         1533
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

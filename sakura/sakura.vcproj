@@ -3012,6 +3012,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\prop\CPropComStatusbar.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\prop\CPropComTab.cpp"
 					>
 				</File>

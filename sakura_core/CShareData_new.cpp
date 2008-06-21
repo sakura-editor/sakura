@@ -211,6 +211,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 	ShareData_IO_Types( cProfile );
 	ShareData_IO_KeyWords( cProfile );
 	ShareData_IO_Macro( cProfile );
+	ShareData_IO_Statusbar( cProfile );		// 2008/6/21 Uchi
 	ShareData_IO_Other( cProfile );
 	
 	if( !bRead ){
@@ -1538,6 +1539,26 @@ void CShareData::ShareData_IO_Macro( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("ReloadWhenExecute[%03d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
 	}
+}
+
+/*!
+	@brief 共有データのStatusbarセクションの入出力
+	@param[in,out]	cProfile	INIファイル入出力クラス
+
+	@date 2008/6/21 Uchi
+*/
+void CShareData::ShareData_IO_Statusbar( CDataProfile& cProfile )
+{
+	const WCHAR* pszSecName = LTEXT("Statusbar");
+	CommonSetting& common = m_pShareData->m_Common;
+	CommonSetting_Statusbar& statusbar = m_pShareData->m_Common.m_sStatusbar;
+
+	// 表示文字コードの指定
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInSjis")			, statusbar.m_bDispUniInSjis);		// SJISで文字コード値をUnicodeで出力する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInJis")			, statusbar.m_bDispUniInJis);		// JISで文字コード値をUnicodeで出力する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInEuc")			, statusbar.m_bDispUniInEuc);		// EUCで文字コード値をUnicodeで出力する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUtf8Byte")				, statusbar.m_bDispUtf8Byte);		// UTF-8で表示をバイトコードで行う
+	cProfile.IOProfileData( pszSecName, LTEXT("DispSurrogatePairCodepoint")	, statusbar.m_bDispSPCodepoint);	// サロゲートペアをコードポイントで表示
 }
 
 /*!

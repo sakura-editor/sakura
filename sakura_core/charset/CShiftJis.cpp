@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CShiftJis.h"
 #include "charset/charcode.h"
+#include "CShareData.h"
 
 void CShiftJis::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 {
@@ -147,6 +148,12 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCH
 {
 	//変換先バッファ確保
 	unsigned char sCvt[8];
+
+	// 2008/6/21 Uchi
+	if (CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUniInSjis) {
+		// Unicodeで表示
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst);
+	}
 
 	//変換
 	BOOL bLost = FALSE;
