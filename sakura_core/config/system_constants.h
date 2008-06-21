@@ -27,9 +27,9 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 
 //ƒrƒ‹ƒhƒR[ƒh”»•ÊA’è”ƒTƒtƒBƒbƒNƒX 2007.09.20 kobake
 #ifdef _UNICODE
-	#define _CODE_SUFFIX_ "WL"
+	#define _CODE_SUFFIX_ "W"
 #else
-	#define _CODE_SUFFIX_ "AL"
+	#define _CODE_SUFFIX_ "A"
 #endif
 
 
@@ -74,7 +74,7 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 #define FN_TOOL_BMP  _T("my_icons.bmp")
 
 //	•W€ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒAƒCƒRƒ“ƒŠƒ\[ƒX–¼
-#ifndef _DEBUG
+#ifdef _DEBUG
 	#define ICON_DEFAULT_APP IDI_ICON_DEBUG
 	#define ICON_DEFAULT_GREP IDI_ICON_GREP
 #else
