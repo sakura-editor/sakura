@@ -48,7 +48,7 @@ void CTextArea::UpdateAreaMetrics(HDC hdc)
 
 	//表示域の再計算
 	m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
-	m_nViewRowNum = CLayoutInt(m_nViewCy / pView->GetTextMetrics().GetHankakuDy());		// 表示域の行数
+	m_nViewRowNum = CLayoutInt((m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy());	// 表示域の行数
 
 	// 文字間隔
 	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace );
@@ -219,7 +219,7 @@ void CTextArea::TextArea_OnSize(
 	m_nViewCx = sizeClient.cx - nCxVScroll - GetAreaLeft(); // 表示域の幅
 	m_nViewCy = sizeClient.cy - nCyHScroll - GetAreaTop();  // 表示域の高さ
 	m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
-	m_nViewRowNum = CLayoutInt(m_nViewCy / pView->GetTextMetrics().GetHankakuDy());	// 表示域の行数
+	m_nViewRowNum = CLayoutInt((m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy());	// 表示域の行数
 }
 
 
