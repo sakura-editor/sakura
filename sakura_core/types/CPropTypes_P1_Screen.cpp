@@ -46,6 +46,7 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_OUTLINERULEFILE,		HIDC_EDIT_OUTLINERULEFILE,	//ルールファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_RULEFILE_REF,		HIDC_BUTTON_RULEFILE_REF,	//ルールファイル参照	// 2006/09/09 novice
 	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,			//文書アイコンを使う	// 2006.08.06 ryoji
+	IDC_COMBO_WRAPMETHOD,			HIDC_COMBO_WRAPMETHOD,		//テキストの折り返し方法		// 2008.05.30 nasukoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -106,6 +107,13 @@ TYPE_NAME<int> IndentTypeArr[] = {
 	{ 2, L"論理行先頭" },
 };
 
+// 2008.05.30 nasukoji	テキストの折り返し方法
+TYPE_NAME<int> WrapMethodArr[] = {
+	{ WRAP_NO_TEXT_WRAP,	L"折り返さない" },
+	{ WRAP_SETTING_WIDTH,	L"指定桁で折り返す" },
+	{ WRAP_WINDOW_WIDTH,	L"右端で折り返す" },
+};
+
 
 
 /* p1 メッセージ処理 */
@@ -161,7 +169,7 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
 
-				::SendMessageAny( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), CB_SETCURSEL, 0, 0 );
+				//::SendMessageAny( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), CB_SETCURSEL, 0, 0 );
 
 				return TRUE;
 			case IDC_RADIO_OUTLINERULEFILE:	/* アウトライン解析→ルールファイル */
@@ -367,6 +375,18 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 
 	//レイアウト
 	{
+		// 2008.05.30 nasukoji	テキストの折り返し方法
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
+		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		int		nSelPos = 0;
+		for( int i = 0; i < _countof( WrapMethodArr ); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)WrapMethodArr[i].pszName );
+			if( WrapMethodArr[i].nMethod == m_Types.m_nTextWrapMethod ){		// テキストの折り返し方法
+				nSelPos = i;
+			}
+		}
+		::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, (Int)m_Types.m_nMaxLineKetas, FALSE );	// 折り返し文字数
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColmSpace, FALSE );			// 文字の間隔
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, FALSE );			// 行の間隔
@@ -520,6 +540,11 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	//レイアウト
 	{
+		// 2008.05.30 nasukoji	テキストの折り返し方法
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
+		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_nTextWrapMethod = WrapMethodArr[nSelPos].nMethod;		// テキストの折り返し方法
+
 		/* 折り返し桁数 */
 		m_Types.m_nMaxLineKetas = CLayoutInt(::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE ));
 		if( m_Types.m_nMaxLineKetas < CLayoutInt(MINLINEKETAS) ){

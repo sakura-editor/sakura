@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, MIK, aroka
 	Copyright (C) 2006, aroka, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -410,9 +411,9 @@ CMenuDrawer::CMenuDrawer()
 /* 270 */		F_SHOWTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブの表示	//@@@ 2003.06.10 MIK
 /* 271 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 272 */		F_TOGGLE_KEY_SEARCH	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーワードヘルプ自動表示 2007.03.92 genta
-/* 273 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 274 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 275 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 273 */		F_TMPWRAPNOWRAP		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折り返さない（一時設定）			// 2008.05.30 nasukoji
+/* 274 */		F_TMPWRAPSETTING	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji
+/* 275 */		F_TMPWRAPWINDOW		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//右端で折り返す（一時設定）		// 2008.05.30 nasukoji
 /* 276 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* マクロ系(9段目最後の12個: 277-288) */

@@ -14,7 +14,7 @@
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
-	Copyright (C) 2008, ryoji, Uchi
+	Copyright (C) 2008, ryoji, Uchi, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -252,11 +252,14 @@ struct ARRHEAD {
 	Version 86:
 	タイプ別設定最大値増加 2007.12.13 ryoji
 
+	Version 87:
+	テキストの折り返し方法追加 2008.05.30 nasukoji
+
 	Version 1000:
 	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 
-const unsigned int uShareDataVersion = 1017;
+const unsigned int uShareDataVersion = 1018;
 
 /*
 ||	Singleton風

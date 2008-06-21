@@ -861,8 +861,17 @@ void CEditView::OnSize( int cx, int cy )
 		m_hwndHScrollBar?nCyHScroll:0
 	);
 
-	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+	// 2008.06.06 nasukoji	サイズ変更時の折り返し位置再計算
+	BOOL wrapChanged = FALSE;
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+		if( m_nMyIndex == 0 ){	// 左上隅のビューのサイズ変更時のみ処理する
+			// 右端で折り返すモードなら右端で折り返す	// 2008.06.08 ryoji
+			wrapChanged = m_pcEditWnd->WrapWindowWidth( 0 );
+		}
+	}
+
+	if( !wrapChanged )	// 折り返し位置が変更されていない
+		AdjustScrollBars();				// スクロールバーの状態を更新する
 
 	/* 再描画用メモリＢＭＰ */
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -2225,6 +2234,10 @@ void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	// -- -- ※ InitAllViewでやってたこと -- -- //
 	pcDoc->m_nCommandExecNum=0;
+
+	// テキストの折り返し方法を初期化
+	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	pcDoc->m_bTextWrapMethodCurTemp = false;													// 一時設定適用中を解除
 
 	m_cHistory->Flush();
 

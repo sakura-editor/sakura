@@ -10,6 +10,7 @@
 	Copyright (C) 2001, jepro, genta
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -642,6 +643,9 @@ void CShareData::SetKeyNameArrVal(
 //	PC98救済のため，従来のキーコードに対応する項目を追加．
 //Oct. 7, 2000 JEPRO	長くて表示しきれない所がでてきてしまうのでアプリケーションキー→アプリキーに短縮
 //2008.05.03 kobake 可読性が著しく低下していたので、書式を整理。
+// 2008.05.30 nasukoji	Ctrl+Alt+S に「指定桁で折り返す」を追加
+// 2008.05.30 nasukoji	Ctrl+Alt+W に「右端で折り返す」を追加
+// 2008.05.30 nasukoji	Ctrl+Alt+X に「折り返さない」を追加
 
 /*!	@brief 共有メモリ初期化/キー割り当て
 
@@ -762,12 +766,12 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		{ 'P',		_T("P"),			F_0,			F_0,				F_PRINT,				F_PRINT_PREVIEW,	F_JUMPHIST_PREV,		F_0,				F_PRINT_PAGESETUP,		F_0 },
 		{ 'Q',		_T("Q"),			F_0,			F_0,				F_CREATEKEYBINDLIST,	F_0,				F_0,					F_0,				F_0,					F_0 },
 		{ 'R',		_T("R"),			F_0,			F_0,				F_REPLACE_DIALOG,		F_0,				F_RTRIM,				F_0,				F_0,					F_0 },
-		{ 'S',		_T("S"),			F_0,			F_0,				F_FILESAVE,				F_FILESAVEAS_DIALOG,F_0,					F_0,				F_0,					F_0 },
+		{ 'S',		_T("S"),			F_0,			F_0,				F_FILESAVE,				F_FILESAVEAS_DIALOG,F_0,					F_0,				F_TMPWRAPSETTING,		F_0 },
 		{ 'T',		_T("T"),			F_0,			F_0,				F_TAGJUMP,				F_TAGJUMPBACK,		F_0,					F_0,				F_TILE_H,				F_0 },
 		{ 'U',		_T("U"),			F_0,			F_0,				F_LineCutToStart,		F_LineDeleteToStart,F_0,					F_0,				F_WRAPWINDOWWIDTH,		F_0 },
 		{ 'V',		_T("V"),			F_0,			F_0,				F_PASTE,				F_0,				F_0,					F_0,				F_0,					F_0 },
-		{ 'W',		_T("W"),			F_0,			F_0,				F_SELECTWORD,			F_0,				F_0,					F_0,				F_0,					F_0 },
-		{ 'X',		_T("X"),			F_0,			F_0,				F_CUT,					F_0,				F_0,					F_0,				F_0,					F_0 },
+		{ 'W',		_T("W"),			F_0,			F_0,				F_SELECTWORD,			F_0,				F_0,					F_0,				F_TMPWRAPWINDOW,		F_0 },
+		{ 'X',		_T("X"),			F_0,			F_0,				F_CUT,					F_0,				F_0,					F_0,				F_TMPWRAPNOWRAP,		F_0 },
 		{ 'Y',		_T("Y"),			F_0,			F_0,				F_REDO,					F_0,				F_0,					F_0,				F_0,					F_0 },
 		{ 'Z',		_T("Z"),			F_0,			F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 },
 

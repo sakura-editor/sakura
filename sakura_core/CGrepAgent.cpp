@@ -353,7 +353,8 @@ DWORD CGrepAgent::DoGrep(
 	pCEditWnd->SetDrawSwitchOfAllViews( true );
 
 	/* 再描画 */
-	pCEditWnd->RedrawAllViews( NULL );
+	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+		pCEditWnd->RedrawAllViews( NULL );
 
 	return nHitCount;
 }
@@ -672,7 +673,8 @@ int CGrepAgent::DoGrepTree(
 						if( 0 < nWork ){
 							pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
 							pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-							CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+							if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+								CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 							/* 結果格納エリアをクリア */
 							cmemMessage.SetString( L"" );
 							nWork = 0;

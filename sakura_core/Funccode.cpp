@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, MIK
 	Copyright (C) 2006, aroka, ryoji, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -347,7 +348,11 @@ const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List9
 	F_FONT				,	/* ƒtƒHƒ“ƒgİ’è */
 	F_WRAPWINDOWWIDTH	,	/* Œ»İ‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚µ */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH ‚ğ WRAPWINDOWWIDTH ‚É•ÏX
 	F_PRINT_PAGESETUP	,	//ˆóüƒy[ƒWİ’è				//Sept. 14, 2000 JEPRO uˆóü‚Ìƒy[ƒWƒŒƒCƒAƒEƒg‚Ìİ’èv‚ğuˆóüƒy[ƒWİ’èv‚É•ÏX	//Oct. 17, 2000 ƒRƒ}ƒ“ƒh–{‰Æ‚Íuƒtƒ@ƒCƒ‹‘€ìŒnv
-	F_FAVORITE				//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
+	F_FAVORITE			,	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
+	F_FAVORITE			,	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
+	F_TMPWRAPNOWRAP		,	//Ü‚è•Ô‚³‚È‚¢iˆêİ’èj			// 2008.05.30 nasukoji
+	F_TMPWRAPSETTING	,	//w’èŒ…‚ÅÜ‚è•Ô‚·iˆêİ’èj		// 2008.05.30 nasukoji
+	F_TMPWRAPWINDOW		,	//‰E’[‚ÅÜ‚è•Ô‚·iˆêİ’èj		// 2008.05.30 nasukoji
 };
 int		nFincList_Set_Num = _countof( pnFuncList_Set );	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List9¨List_Set)
 
@@ -795,6 +800,9 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_FONT:			return HLP000071;	/* ƒtƒHƒ“ƒgİ’è */
 	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* Œ»İ‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚µ */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH ‚ğ WRAPWINDOWWIDTH ‚É•ÏX	//Jul. 03, 2001 JEPRO ”Ô†C³
 	case F_FAVORITE:		return HLP000279;	/* —š—ğ‚ÌŠÇ— */	//@@@ 2003.04.08 MIK
+	case F_TMPWRAPNOWRAP:	return HLP000340;	// Ü‚è•Ô‚³‚È‚¢			// 2008.05.31 nasukoji
+	case F_TMPWRAPSETTING:	return HLP000340;	// w’èŒ…‚ÅÜ‚è•Ô‚·		// 2008.05.31 nasukoji
+	case F_TMPWRAPWINDOW:	return HLP000340;	// ‰E’[‚ÅÜ‚è•Ô‚·		// 2008.05.31 nasukoji
 
 	/* ƒ}ƒNƒ */
 	case F_RECKEYMACRO:		return HLP000125;	/* ƒL[ƒ}ƒNƒ‹L˜^ŠJn^I—¹ */
@@ -1163,6 +1171,25 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, EFunctionCode
 	case F_SHOWFUNCKEY:			return pCEditWnd->m_CFuncKeyWnd.GetHwnd() != NULL;
 	case F_SHOWTAB:				return pCEditWnd->m_cTabWnd.GetHwnd() != NULL;	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:		return pCEditWnd->m_cStatusBar.GetStatusHwnd() != NULL;
+	// 2008.05.30 nasukoji	ƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@
+	case F_TMPWRAPNOWRAP:		// Ü‚è•Ô‚³‚È‚¢
+		if( pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_TMPWRAPSETTING:		// w’èŒ…‚ÅÜ‚è•Ô‚·
+		if( pcEditDoc->m_nTextWrapMethodCur == WRAP_SETTING_WIDTH ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_TMPWRAPWINDOW:		// ‰E’[‚ÅÜ‚è•Ô‚·
+		if( pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	// Mar. 6, 2002 genta
 	case F_VIEWMODE:			return CAppMode::Instance()->IsViewMode(); //ƒrƒ…[ƒ‚[ƒh
 	//	From Here 2003.06.23 Moca

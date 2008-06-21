@@ -228,6 +228,13 @@ enum MOUSEFUNCTION_ASSIGN {
 	MOUSEFUNCTION_KEYBEGIN		= 7,	//!< マウスへの割り当て個数＝本当のキー割り当て先頭INDEX
 };
 
+// 2008.05.30 nasukoji	テキストの折り返し方法
+enum WRAP_TEXT_WRAP_METHOD {
+	WRAP_NO_TEXT_WRAP		= 0,		// 折り返さない（スクロールバーをテキスト幅に合わせる）
+	WRAP_SETTING_WIDTH,					// 指定桁で折り返す
+	WRAP_WINDOW_WIDTH,					// 右端で折り返す
+};
+
 //2007.09.06 kobake 追加
 //!検索方向
 enum ESearchDirection{

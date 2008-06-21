@@ -14,6 +14,7 @@
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
 	Copyright (C) 2007, ryoji, maru, Uchi
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -520,6 +521,10 @@ BOOL CViewCommander::HandleCommand(
 	case F_FAVORITE:		Command_Favorite();break;		//履歴の管理	//@@@ 2003.04.08 MIK
 	//	Jan. 29, 2005 genta 引用符の設定
 	case F_SET_QUOTESTRING:	Command_SET_QUOTESTRING((const WCHAR*)lparam1);	break;
+	case F_TMPWRAPNOWRAP:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_NO_TEXT_WRAP, 0, 0, 0 );break;	// 折り返さない（一時設定）			// 2008.05.30 nasukoji
+	case F_TMPWRAPSETTING:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_SETTING_WIDTH, 0, 0, 0 );break;	// 指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TMPWRAPWINDOW:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_WINDOW_WIDTH, 0, 0, 0 );break;	// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TEXTWRAPMETHOD:	Command_TEXTWRAPMETHOD( (int)lparam1 );break;		// テキストの折り返し方法		// 2008.05.30 nasukoji
 
 	/* マクロ系 */
 	case F_RECKEYMACRO:		Command_RECKEYMACRO();break;	/* キーマクロの記録開始／終了 */
@@ -649,8 +654,8 @@ BOOL CViewCommander::HandleCommand(
 		if( 0 < GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( GetOpeBlk() );
-
-			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
+			if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 		}else{
 			delete GetOpeBlk();
 		}
@@ -3824,6 +3829,7 @@ void CViewCommander::Command_TYPE_LIST( void )
 			GetDocument()->m_cDocType.SetDocumentType( sResult.cDocumentType, true );
 			GetDocument()->m_cDocType.LockDocumentType();
 			/* 設定変更を反映させる */
+			GetDocument()->m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
 			GetDocument()->OnChangeSetting();
 		}
 		else{
@@ -7913,10 +7919,14 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 {
 	// Jan. 8, 2006 genta 判定処理をm_pCommanderView->GetWrapMode()へ移動
+	CEditView::TOGGLE_WRAP_ACTION nWrapMode;
 	CLayoutInt newKetas;
-	
-	if( m_pCommanderView->GetWrapMode( &newKetas ) == CEditView::TGWRAP_NONE ){
-		return;
+
+	nWrapMode = m_pCommanderView->GetWrapMode( &newKetas );
+	GetDocument()->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
+	GetDocument()->m_bTextWrapMethodCurTemp = !( GetDocument()->m_nTextWrapMethodCur == GetDocument()->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
+	if( nWrapMode == CEditView::TGWRAP_NONE ){
+		return;	// 折り返し桁は元のまま
 	}
 
 	GetEditWindow()->ChangeLayoutParam( true, GetDocument()->m_cLayoutMgr.GetTabSpace(), newKetas );
@@ -8485,4 +8495,53 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	}
 	m_pCommanderView->Redraw();
 	return bResult;
+}
+
+/*!
+	@brief テキストの折り返し方法を変更する
+	
+	@param[in] nWrapMethod 折り返し方法
+		WRAP_NO_TEXT_WRAP  : 折り返さない
+		WRAP_SETTING_WIDTH ; 指定桁で折り返す
+		WRAP_WINDOW_WIDTH  ; 右端で折り返す
+	
+	@note ウィンドウが左右に分割されている場合、左側のウィンドウ幅を折り返し幅とする。
+	
+	@date 2008.05.31 nasukoji	新規作成
+*/
+void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
+{
+	CEditDoc* pcDoc = GetDocument();
+
+	// 現在の設定値と同じなら何もしない
+	if( pcDoc->m_nTextWrapMethodCur == nWrapMethod )
+		return;
+
+	int nWidth;
+
+	switch( nWrapMethod ){
+	case WRAP_NO_TEXT_WRAP:		// 折り返さない
+		nWidth = MAXLINEKETAS;	// アプリケーションの最大幅で折り返し
+		break;
+
+	case WRAP_SETTING_WIDTH:	// 指定桁で折り返す
+		nWidth = (Int)pcDoc->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas;
+		break;
+
+	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
+		// ウィンドウが左右に分割されている場合は左側のウィンドウ幅を使用する
+		nWidth = (Int)m_pCommanderView->ViewColNumToWrapColNum( GetEditWindow()->m_pcEditViewArr[0]->GetTextArea().m_nViewColNum );
+		break;
+
+	default:
+		return;		// 不正な値の時は何もしない
+	}
+
+	pcDoc->m_nTextWrapMethodCur = nWrapMethod;	// 設定を記憶
+
+	// 折り返し方法の一時設定適用／一時設定適用解除	// 2008.06.08 ryoji
+	pcDoc->m_bTextWrapMethodCurTemp = !( pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod == nWrapMethod );
+
+	// 折り返し位置を変更
+	GetEditWindow()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpace(), (CLayoutInt)nWidth );
 }

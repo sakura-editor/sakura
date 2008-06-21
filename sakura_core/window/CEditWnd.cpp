@@ -13,7 +13,7 @@
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -2261,6 +2261,18 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FONT			, _T("フォント設定(&F)...") );		//Sept. 17, 2000 jepro キャプションに「設定」を追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, _T("履歴の管理(&O)...") );	//履歴の管理	//@@@ 2003.04.08 MIK
 			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+
+			// 2008.05.30 nasukoji	テキストの折り返し方法の変更（一時設定）を追加
+			hMenuPopUp = ::CreatePopupMenu();
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TMPWRAPNOWRAP, _T("折り返さない(&X)") );		// 折り返さない（一時設定）
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TMPWRAPSETTING, _T("指定桁で折り返す(&S)") );	// 指定桁で折り返す（一時設定）
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TMPWRAPWINDOW, _T("右端で折り返す(&W)") );		// 右端で折り返す（一時設定）
+			// 折り返し方法に一時設定を適用中
+			if( GetDocument().m_bTextWrapMethodCurTemp )
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("折り返し方法（一時設定適用中）(&X)") );
+			else
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("折り返し方法(&X)") );
+
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
 // 20051022 aroka タイプ別設定値に戻すコマンド追加
 			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
@@ -2269,18 +2281,34 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				CLayoutInt ketas;
 				CEditView::TOGGLE_WRAP_ACTION mode = this->GetActiveView().GetWrapMode( &ketas );
 				if( mode == CEditView::TGWRAP_NONE ){
-					pszLabel = _T("幅の変更は出来ません(&W)");
+					pszLabel = _T("折り返し桁数(&W)");
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , pszLabel );
 				}
 				else {
+					TCHAR szBuf[60];
+					pszLabel = szBuf;
 					if( mode == CEditView::TGWRAP_FULL ){
-						pszLabel = _T("折り返さない(&W)");
+						_stprintf(
+							szBuf,
+							_T("折り返し桁数: %d 桁（最大）(&W)"),
+							MAXLINEKETAS
+						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
-						pszLabel = _T("現在のウィンドウ幅で折り返し(&W)");
+						_stprintf(
+							szBuf,
+							_T("折り返し桁数: %d 桁（右端）(&W)"),
+							this->GetActiveView().ViewColNumToWrapColNum(
+								this->GetActiveView().GetTextArea().m_nViewColNum
+							)
+						);
 					}
 					else {	// TGWRAP_PROP
-						pszLabel = _T("タイプ別設定の幅で折り返し(&W)");
+						_stprintf(
+							szBuf,
+							_T("折り返し桁数: %d 桁（指定）(&W)"),
+							GetDocument().m_cDocType.GetDocumentAttribute().m_nMaxLineKetas
+						);
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );
 				}
@@ -4127,12 +4155,50 @@ BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
 }
 
 
+/** 右端で折り返す
+	@param nViewColNum	[in] 右端で折り返すペインの番号
+	@retval 折り返しを変更したかどうか
+	@date 2008.06.08 ryoji 新規作成
+*/
+BOOL CEditWnd::WrapWindowWidth( int nPane )
+{
+	// 右端で折り返す
+	CLayoutInt nWidth = m_pcEditViewArr[nPane]->ViewColNumToWrapColNum( m_pcEditViewArr[nPane]->GetTextArea().m_nViewColNum );
+	if( GetDocument().m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
+		ChangeLayoutParam( false, GetDocument().m_cLayoutMgr.GetTabSpace(), nWidth );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/** 折り返し方法関連の更新
+	@retval 画面更新したかどうか
+	@date 2008.06.10 ryoji 新規作成
+*/
+BOOL CEditWnd::UpdateTextWrap( void )
+{
+	// この関数はコマンド実行ごとに処理の最終段階で利用する
+	// （アンドゥ登録＆全ビュー更新のタイミング）
+	if( GetDocument().m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+		BOOL bWrap = WrapWindowWidth( 0 );	// 右端で折り返す
+		if( bWrap ){
+			// WrapWindowWidth() で追加した更新リージョンで画面更新する
+			for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
+				::UpdateWindow( m_pcEditViewArr[i]->GetHwnd() );
+			}
+		}
+		return bWrap;	// 画面更新＝折り返し変更
+	}
+	return FALSE;	// 画面更新しなかった
+}
+
 /*!	レイアウトパラメータの変更
 
 	具体的にはタブ幅と折り返し位置を変更する．
 	現在のドキュメントのレイアウトのみを変更し，共通設定は変更しない．
 
 	@date 2005.08.14 genta 新規作成
+	@date 2008.06.18 ryoji レイアウト変更途中はカーソル移動の画面スクロールを見せない（画面のちらつき抑止）
 */
 void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas )
 {
@@ -4153,11 +4219,15 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 	GetDocument().m_cLayoutMgr.ChangeLayoutParam( nTabSize, nMaxLineKetas );
 
 	//	座標の復元
+	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
+	SetDrawSwitchOfAllViews( false );
 	RestorePhysPosOfAllView( posSave );
+	SetDrawSwitchOfAllViews( true );
 
-	for( int i = 0; i < 4; i++ ){
+	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
 		if( m_pcEditViewArr[i]->GetHwnd() ){
 			InvalidateRect( m_pcEditViewArr[i]->GetHwnd(), NULL, TRUE );
+			m_pcEditViewArr[i]->AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
 
