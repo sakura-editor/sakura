@@ -29,21 +29,22 @@ class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
 
-#define ID_PAGENUM_ZENPAN	0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
-#define ID_PAGENUM_WIN		1	//Oct. 25, 2000 JEPRO  5→ 1 に変更
-#define ID_PAGENUM_TAB		2	//Feb. 11, 2007 genta URLと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
-#define ID_PAGENUM_EDIT		3
-#define ID_PAGENUM_FILE		4
-#define ID_PAGENUM_BACKUP	5
-#define ID_PAGENUM_FORMAT	6	//Oct. 25, 2000 JEPRO  1→ 5 に変更
-#define ID_PAGENUM_GREP		7
-#define ID_PAGENUM_KEYBOARD	8
-#define ID_PAGENUM_CUSTMENU	9	//Oct. 25, 2000 JEPRO 11→ 9 に変更
-#define ID_PAGENUM_TOOLBAR	10	//Oct. 25, 2000 JEPRO  9→10 に変更
-#define ID_PAGENUM_KEYWORD	11	//Oct. 25, 2000 JEPRO 10→11 に変更
-#define ID_PAGENUM_HELPER	12
-#define ID_PAGENUM_MACRO	13	//Oct. 25, 2000 JEPRO 10→11 に変更
-#define ID_PAGENUM_FILENAME	14	// Moca 追加
+#define ID_PAGENUM_ZENPAN		0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
+#define ID_PAGENUM_WIN			1	//Oct. 25, 2000 JEPRO  5→ 1 に変更
+#define ID_PAGENUM_TAB			2	//Feb. 11, 2007 genta URLと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
+#define ID_PAGENUM_EDIT			3
+#define ID_PAGENUM_FILE			4
+#define ID_PAGENUM_BACKUP		5
+#define ID_PAGENUM_FORMAT		6	//Oct. 25, 2000 JEPRO  1→ 5 に変更
+#define ID_PAGENUM_GREP			7
+#define ID_PAGENUM_KEYBOARD		8
+#define ID_PAGENUM_CUSTMENU		9	//Oct. 25, 2000 JEPRO 11→ 9 に変更
+#define ID_PAGENUM_TOOLBAR		10	//Oct. 25, 2000 JEPRO  9→10 に変更
+#define ID_PAGENUM_KEYWORD		11	//Oct. 25, 2000 JEPRO 10→11 に変更
+#define ID_PAGENUM_HELPER		12
+#define ID_PAGENUM_MACRO		13	//Oct. 25, 2000 JEPRO 10→11 に変更
+#define ID_PAGENUM_FILENAME		14	// Moca 追加
+#define ID_PAGENUM_STATUSBAR	15	// 2008/6/21 Uchi 追加
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -297,6 +298,14 @@ protected:
 	static void GetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR );//!<ListViewのアイテムを取得
 	static int MoveListViewItem_FILENAME( HWND hListView, int, int );//!<ListViewのアイテムを移動する
 
+	//==============================================================
+	//!	ツールバーページのDialog Procedure
+	static INT_PTR CALLBACK DlgProc_PROP_STATUSBAR(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	//! Message Handler for edit page
+	INT_PTR DispatchEvent_PROP_STATUSBAR( HWND, UINT, WPARAM, LPARAM );
+	void SetData_PROP_STATUSBAR( HWND );
+	int GetData_PROP_STATUSBAR( HWND );
 
 
 	int nLastPos_Macro; //!< 前回フォーカスのあった場所
@@ -329,6 +338,3 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CPROP1_H_ */
-
-
-

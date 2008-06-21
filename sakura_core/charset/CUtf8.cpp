@@ -92,3 +92,41 @@ EConvertResult CUtf8::UnicodeToUTF8( const CNativeW& cSrcMem, CMemory* pDstMem )
 	return RESULT_COMPLETE; //大丈夫だと思う
 }
 
+
+// 文字コード表示用	UNICODE → Hex 変換	2008/6/21 Uchi
+EConvertResult CUtf8::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst)
+{
+	static CNativeW	cBuffSrc;
+	static CMemory	cBuffDst;
+	EConvertResult	res;
+	int				i;
+	TCHAR*			pd; 
+	unsigned char*	ps; 
+
+	if (!CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUtf8Byte) {
+		// Unicodeで表示
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst);
+	}
+
+	// 1文字データバッファ
+	if (WCODE::IsUTF16High(cSrc[0]) && iSLen >= 2 && WCODE::IsUTF16Low(cSrc[1])) {
+		cBuffSrc.SetStringW(cSrc,2);
+	}
+	else {
+		cBuffSrc.SetStringW(cSrc,1);
+	}
+	cBuffDst.SetRawData("",0);
+
+	// RTF-8 変換
+	res = UnicodeToUTF8(cBuffSrc, &cBuffDst);
+	if (res != RESULT_COMPLETE) {
+		return res;
+	}
+
+	// Hex変換
+	for (i = cBuffDst.GetRawLength(), ps = (unsigned char*)cBuffDst.GetRawPtr(), pd = pDst; i >0; i--, ps ++, pd += 2) {
+		auto_sprintf( pd, _T("%02x"), *ps);
+	}
+
+	return RESULT_COMPLETE;
+}

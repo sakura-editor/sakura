@@ -10,6 +10,7 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUTF8(cSrc,pDst); }	//!< UNICODE    → 特定コード 変換
 	void GetBom(CMemory* pcmemBom);																			//!< BOMデータ取得
 	void GetEol(CMemory* pcmemEol, EEolType eEolType){ CShiftJis::S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst);			//!< UNICODE → Hex 変換
 
 public:
 	//実装

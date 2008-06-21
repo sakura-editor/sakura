@@ -500,6 +500,7 @@ protected:
 	void ShareData_IO_Types( CDataProfile& );
 	void ShareData_IO_KeyWords( CDataProfile& );
 	void ShareData_IO_Macro( CDataProfile& );
+	void ShareData_IO_Statusbar( CDataProfile& );	// 2008/6/21 Uchi
 	void ShareData_IO_Other( CDataProfile& );
 
 	int GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */

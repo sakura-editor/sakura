@@ -498,6 +498,12 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* p
 	TCHAR*			pd; 
 	unsigned char*	ps; 
 
+	// 2008/6/21 Uchi
+	if (CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUniInJis) {
+		// Unicodeで表示
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst);
+	}
+
 	// 1文字データバッファ
 	cCharBuffer.SetRawData("",0);
 	cCharBuffer.AppendRawData( cSrc, sizeof(wchar_t));
