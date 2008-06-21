@@ -47,7 +47,7 @@ void CTextArea::UpdateAreaMetrics(HDC hdc)
 
 
 	//表示域の再計算
-	m_nViewColNum = CLayoutInt(m_nViewCx / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
+	m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
 	m_nViewRowNum = CLayoutInt(m_nViewCy / pView->GetTextMetrics().GetHankakuDy());		// 表示域の行数
 
 	// 文字間隔
@@ -145,7 +145,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		int nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL ); // 垂直スクロールバーの横幅
 		m_nViewCx = rc.Width() - nCxVScroll - GetAreaLeft(); // 表示域の幅
 		// 2008.05.27 nasukoji	表示域の桁数も算出する（右端カーソル移動時の表示場所ずれへの対処）
-		m_nViewColNum = CLayoutInt(m_nViewCx / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
+		m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
 
 		if( bRedraw ){
 			/* 再描画 */
@@ -218,7 +218,7 @@ void CTextArea::TextArea_OnSize(
 
 	m_nViewCx = sizeClient.cx - nCxVScroll - GetAreaLeft(); // 表示域の幅
 	m_nViewCy = sizeClient.cy - nCyHScroll - GetAreaTop();  // 表示域の高さ
-	m_nViewColNum = CLayoutInt(m_nViewCx / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
+	m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
 	m_nViewRowNum = CLayoutInt(m_nViewCy / pView->GetTextMetrics().GetHankakuDy());	// 表示域の行数
 }
 
