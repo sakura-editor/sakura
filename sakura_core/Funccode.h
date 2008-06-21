@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, MIK, maru
 	Copyright (C) 2006, aroka, Ç©ÇÎÇ∆, fon, ryoji
 	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -133,6 +134,9 @@
 //2005.08.05 maru F_GETLINECODE      
 //2005.08.05 maru F_ISPOSSIBLEUNDO   
 //2005.08.05 maru F_ISPOSSIBLEREDO   
+//2008.05.30 nasukoji
+//2008.05.30 nasukoji
+//2008.05.30 nasukoji
 
 /*
 à¯êîÇÃàµÇ¢ÇÕ

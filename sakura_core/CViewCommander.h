@@ -86,6 +86,7 @@ public:
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 	BOOL Command_PUTFILE( LPCWSTR, ECodeType, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
 	BOOL Command_INSFILE( LPCWSTR, ECodeType, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
+	void Command_TEXTWRAPMETHOD( int );			/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 
 	/* 編集系 */
 	void Command_WCHAR( wchar_t );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更

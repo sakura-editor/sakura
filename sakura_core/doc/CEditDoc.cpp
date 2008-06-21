@@ -14,6 +14,7 @@
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 	Copyright (C) 2006, genta, ryoji, aroka
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -86,7 +87,12 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
 
 	// レイアウト情報の変更
-	STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+	// 2008.06.07 nasukoji	折り返し方法の追加に対応
+	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
+	// 「右端で折り返す」は、この後のOnSize()で再設定される
+	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
+		ref.m_nMaxLineKetas = MAXLINEKETAS;
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		ref
@@ -100,6 +106,10 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	//$$ CCodeChecker インスタンスを生成
 	CCodeChecker::Instance();
+
+	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
+	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 }
 
 
@@ -133,7 +143,11 @@ void CEditDoc::Clear()
 
 	// 「基本」のタイプ別設定を適用
 	m_cDocType.SetDocumentType( CShareData::getInstance()->GetDocumentType( m_cDocFile.GetFilePath() ), true );
-	STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+	// 2008.06.07 nasukoji	折り返し方法の追加に対応
+	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
+		ref.m_nMaxLineKetas = MAXLINEKETAS;
+
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		ref
@@ -180,6 +194,11 @@ void CEditDoc::InitAllView( void )
 	int		i;
 
 	m_nCommandExecNum = 0;	/* コマンド実行回数 */
+
+	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
+	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+
 	/* 先頭へカーソルを移動 */
 	for( i = 0; i < 4; ++i ){
 		//	Apr. 1, 2001 genta
@@ -464,6 +483,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 /*! ビューに設定変更を反映させる
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
+	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
 */
 void CEditDoc::OnChangeSetting()
 {
@@ -500,7 +520,27 @@ void CEditDoc::OnChangeSetting()
 	CLogicPoint* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
-	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+	// 2008.06.07 nasukoji	折り返し方法の追加に対応
+	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+
+	// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
+	if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod )
+		m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
+
+	// 一時設定適用中でなければ折り返し方法変更
+	if( !m_bTextWrapMethodCurTemp )
+		m_nTextWrapMethodCur = ref.m_nTextWrapMethod;	// 折り返し方法
+
+	// 指定桁で折り返す：タイプ別設定を使用
+	// 右端で折り返す：仮に現在の折り返し幅を使用
+	// 上記以外：MAXLINEKETASを使用
+	if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
+		if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
+			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
+		else
+			ref.m_nMaxLineKetas = MAXLINEKETAS;
+	}
+
 	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
 	m_cLayoutMgr.SetLayoutInfo(true,ref);
 	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);

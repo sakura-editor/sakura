@@ -104,8 +104,15 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	pcDoc->m_cDocType.SetDocumentType( CShareData::getInstance()->GetDocumentType( sLoadInfo.cFilePath ), true );
 
 	/* レイアウト情報の変更 */
+	// 2008.06.07 nasukoji	折り返し方法の追加に対応
+	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
+	// 「右端で折り返す」は、この後のOnSize()で再設定される
+	STypeConfig ref = pcDoc->m_cDocType.GetDocumentAttribute();
+	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
+		ref.m_nMaxLineKetas = MAXLINEKETAS;
+
 	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
-	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, pcDoc->m_cDocType.GetDocumentAttribute());
+	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, ref);
 	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	return eRet;

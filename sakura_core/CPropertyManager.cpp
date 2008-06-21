@@ -65,7 +65,14 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 	/* プロパティシートの作成 */
 	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
 		/* 変更された設定値のコピー */
+		int nTextWrapMethodOld = CEditWnd::Instance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
 		m_cPropTypes.GetTypeData( types );
+
+		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
+		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
+		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
+		if( nTextWrapMethodOld != CEditWnd::Instance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod )		// 設定が変更された
+			CEditWnd::Instance()->GetDocument().m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessageAny( GetDllShareData().m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );

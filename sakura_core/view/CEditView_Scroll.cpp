@@ -226,6 +226,7 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 	の切替に失敗した場合には強制切替する
 
 	@date 2008.05.24 ryoji 有効／無効の強制切替を追加
+	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
 */
 void CEditView::AdjustScrollBars()
 {
@@ -275,14 +276,14 @@ void CEditView::AdjustScrollBars()
 		si.cbSize = sizeof( si );
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
-		si.nMax  = (Int)m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() - 1; //	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+		si.nMax  = (Int)m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + (Int)GetWrapOverhang() - 1; //	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 		si.nPage = (Int)GetTextArea().m_nViewColNum;			/* 表示域の桁数 */
 		si.nPos  = (Int)GetTextArea().GetViewLeftCol();		/* 表示域の一番左の桁(0開始) */
 		si.nTrackPos = 1;
 		::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
-		bEnable = ( GetTextArea().m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
+		bEnable = ( GetTextArea().m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() );
 		if( bEnable != (::IsWindowEnabled( m_hwndHScrollBar ) != 0) ){
 			::EnableWindow( m_hwndHScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
 		}
@@ -391,6 +392,7 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 	@retval 実際にスクロールした桁数 (正:右方向/負:左方向)
 
 	@date 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
+	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
 */
 CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 {
@@ -403,8 +405,8 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 	//	Aug. 18, 2003 ryoji 変数のミスを修正
 	//	ウィンドウの幅をきわめて狭くしたときに編集領域が行番号から離れてしまうことがあった．
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() - GetTextArea().m_nViewColNum  < nPos ){
-		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() - GetTextArea().m_nViewColNum ;
+	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum  < nPos ){
+		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum ;
 		//	May 29, 2004 genta 折り返し幅よりウィンドウ幅が大きいときにWM_HSCROLLが来ると
 		//	nPosが負の値になることがあり，その場合にスクロールバーから編集領域が
 		//	離れてしまう．
@@ -547,4 +549,32 @@ void CEditView::SyncScrollH( CLayoutInt col )
 		GetRuler().DispRuler( hdc );
 		::ReleaseDC( GetHwnd(), hdc );
 	}
+}
+
+/** 折り返し桁以後のぶら下げ余白計算
+	@date 2008.06.08 ryoji 新規作成
+*/
+CLayoutInt CEditView::GetWrapOverhang( void ) const
+{
+	int nMargin = 2;	// 改行ぶら下げ／折り返し記号
+	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto )
+		nMargin += 2;	// 句読点ぶら下げ
+	return CLayoutInt( nMargin );
+}
+
+/** 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する
+	@param nViewColNum	[in] ビューの桁数
+	@retval 折り返し桁数
+	@date 2008.06.08 ryoji 新規作成
+*/
+CLayoutInt CEditView::ViewColNumToWrapColNum( CLayoutInt nViewColNum ) const
+{
+	// ぶら下げ余白を差し引く
+	int nWidth = (Int)(nViewColNum - GetWrapOverhang());
+
+	// MINLINEKETAS未満の時はMINLINEKETASで折り返しとする
+	if( nWidth < MINLINEKETAS )
+		nWidth = MINLINEKETAS;		// 折り返し幅の最小桁数に設定
+
+	return CLayoutInt( nWidth );
 }

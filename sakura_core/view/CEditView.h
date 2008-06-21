@@ -14,6 +14,7 @@
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
 	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -248,6 +249,8 @@ public:
 	void AdjustScrollBars();								/* スクロールバーの状態を更新する */
 	BOOL CreateScrollBar();		/* スクロールバー作成 */	// 2006.12.19 ryoji
 	void DestroyScrollBar();	/* スクロールバー破棄 */	// 2006.12.19 ryoji
+	CLayoutInt GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
+	CLayoutInt ViewColNumToWrapColNum( CLayoutInt nViewColNum ) const;		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           IME                               //
