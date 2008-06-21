@@ -9102,6 +9102,9 @@ DWORD CEditView::TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffec
 		return DROPEFFECT_NONE;
 	};
 
+	// 2008.06.21 ryoji
+	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
+	// Drag & Drop インターフェースで渡される dwKeyState を用いて判定する。
 #if 1
 	// ドラッグ元が外部ウィンドウかどうかによって受け方を変える
 	// ※汎用テキストエディタではこちらが主流っぽい
@@ -9111,9 +9114,9 @@ DWORD CEditView::TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffec
 	// ※MS 製品（MS Office, Visual Studioなど）ではこちらが主流っぽい
 	if( dwEffect & DROPEFFECT_MOVE ){
 #endif
-		dwEffect &= ((SHORT)0x8000 & ::GetKeyState( VK_CONTROL ))? DROPEFFECT_COPY: DROPEFFECT_MOVE;
+		dwEffect &= (MK_CONTROL & dwKeyState)? DROPEFFECT_COPY: DROPEFFECT_MOVE;
 	}else{
-		dwEffect &= ((SHORT)0x8000 & ::GetKeyState( VK_SHIFT ))? DROPEFFECT_MOVE: DROPEFFECT_COPY;
+		dwEffect &= (MK_SHIFT & dwKeyState)? DROPEFFECT_MOVE: DROPEFFECT_COPY;
 	}
 	return dwEffect;
 }
