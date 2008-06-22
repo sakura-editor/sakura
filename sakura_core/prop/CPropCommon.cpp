@@ -170,7 +170,7 @@ CPropCommon::CPropCommon()
 
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
-	m_nPageNum = 0;
+	m_nPageNum = ID_PAGENUM_GENERAL;
 
 	/* ヘルプファイルのフルパスを返す */
 	m_szHelpFile = CEditApp::Instance()->GetHelpFilePath();
@@ -212,184 +212,6 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pM
 
 
 
-
-/* 色選択ダイアログ */
-BOOL CPropCommon::SelectColor( HWND hwndParent, COLORREF* pColor )
-{
-	int			i;
-	CHOOSECOLOR	cc;
-	DWORD	dwCustColors[16] ;
-	for( i = 0; i < 16; i++ ){
-		dwCustColors[i] = (DWORD)RGB( 255, 255, 255 );
-	}
-	cc.lStructSize = sizeof_raw( cc );
-	cc.hwndOwner = hwndParent;
-	cc.hInstance = NULL;
-	cc.rgbResult = *pColor;
-	cc.lpCustColors = (LPDWORD) dwCustColors;
-	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = NULL;
-	cc.lpfnHook = NULL;
-	cc.lpTemplateName = NULL;
-	if( !::ChooseColor( &cc ) ){
-		return FALSE;
-	}
-	*pColor = cc.rgbResult;
-	return TRUE;
-}
-
-
-// 2002.11.09 Moca 未使用
-#if 0
-
-/* 色ボタンの描画 */
-void CPropCommon::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
-{
-#ifdef _DEBUG
-	MYTRACE_A( "pDis->itemAction = " );
-#endif
-	COLORREF	cBtnHiLight		= (COLORREF)::GetSysColor(COLOR_3DHILIGHT);
-	COLORREF	cBtnShadow		= (COLORREF)::GetSysColor(COLOR_3DSHADOW);
-	COLORREF	cBtnDkShadow	= (COLORREF)::GetSysColor(COLOR_3DDKSHADOW);
-	COLORREF	cBtnFace		= (COLORREF)::GetSysColor(COLOR_3DFACE);
-	COLORREF	cRim;
-	HBRUSH		hBrush;
-	HBRUSH		hBrushOld;
-	HPEN		hPen;
-	HPEN		hPenOld;
-	RECT		rc;
-	RECT		rcFocus;
-
-	/* ボタンの表面の色で塗りつぶす */
-	hBrush = ::CreateSolidBrush( cBtnFace );
-	::FillRect( pDis->hDC, &(pDis->rcItem), hBrush );
-	::DeleteObject( hBrush );
-
-	/* 枠の描画 */
-	rcFocus = rc = pDis->rcItem;
-	rc.top += 4;
-	rc.left += 4;
-	rc.right -= 4;
-	rc.bottom -= 4;
-	rcFocus = rc;
-//	rc.right -= 11;
-
-	if( pDis->itemState & ODS_SELECTED ){
-		hPen = ::CreatePen( PS_SOLID, 0, cBtnDkShadow );
-		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 2, NULL );
-		::LineTo( pDis->hDC, 0, 0 );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 1, 0 );
-		::SelectObject( pDis->hDC, hPenOld );
-		::DeleteObject( hPen );
-
-		hPen = ::CreatePen( PS_SOLID, 0, cBtnShadow );
-		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-		::MoveToEx( pDis->hDC, 1, pDis->rcItem.bottom - 3, NULL );
-		::LineTo( pDis->hDC, 1, 1 );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 2, 1 );
-		::SelectObject( pDis->hDC, hPenOld );
-		::DeleteObject( hPen );
-
-		hPen = ::CreatePen( PS_SOLID, 0, cBtnHiLight );
-		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 1, NULL );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 1, pDis->rcItem.bottom - 1 );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 1, -1 );
-		::SelectObject( pDis->hDC, hPenOld );
-		::DeleteObject( hPen );
-
-		rc.top += 1;
-		rc.left += 1;
-		rc.right += 1;
-		rc.bottom += 1;
-
-		rcFocus.top += 1;
-		rcFocus.left += 1;
-		rcFocus.right += 1;
-		rcFocus.bottom += 1;
-
-	}else{
-		hPen = ::CreatePen( PS_SOLID, 0, cBtnHiLight );
-		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 2, NULL );
-		::LineTo( pDis->hDC, 0, 0 );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 1, 0 );
-		::SelectObject( pDis->hDC, hPenOld );
-		::DeleteObject( hPen );
-
-		hPen = ::CreatePen( PS_SOLID, 0, cBtnShadow );
-		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-		::MoveToEx( pDis->hDC, 1, pDis->rcItem.bottom - 2, NULL );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 2, pDis->rcItem.bottom - 2 );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 2, 0 );
-		::SelectObject( pDis->hDC, hPenOld );
-		::DeleteObject( hPen );
-
-		hPen = ::CreatePen( PS_SOLID, 0, cBtnDkShadow );
-		hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-		::MoveToEx( pDis->hDC, 0, pDis->rcItem.bottom - 1, NULL );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 1, pDis->rcItem.bottom - 1 );
-		::LineTo( pDis->hDC, pDis->rcItem.right - 1, -1 );
-		::SelectObject( pDis->hDC, hPenOld );
-		::DeleteObject( hPen );
-	}
-	/* 指定色で塗りつぶす */
-	hBrush = ::CreateSolidBrush( cColor );
-	hBrushOld = (HBRUSH)::SelectObject( pDis->hDC, hBrush );
-	cRim = cBtnShadow;
-	hPen = ::CreatePen( PS_SOLID, 0, cRim );
-	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-	::RoundRect( pDis->hDC, rc.left, rc.top, rc.right, rc.bottom , 5, 5 );
-	::SelectObject( pDis->hDC, hPenOld );
-	::SelectObject( pDis->hDC, hBrushOld );
-	::DeleteObject( hPen );
-	::DeleteObject( hBrush );
-
-
-//	/* 区切り縦棒 */
-//	hPen = ::CreatePen( PS_SOLID, 0, cBtnShadow );
-//	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-//	::MoveToEx( pDis->hDC, rc.right + 3, rc.top, NULL );
-//	::LineTo( pDis->hDC, rc.right + 3, rc.bottom );
-//	::SelectObject( pDis->hDC, hPenOld );
-//	::DeleteObject( hPen );
-//
-//	hPen = ::CreatePen( PS_SOLID, 0, cBtnHiLight );
-//	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-//	::MoveToEx( pDis->hDC, rc.right + 4, rc.top, NULL );
-//	::LineTo( pDis->hDC, rc.right + 4, rc.bottom );
-//	::SelectObject( pDis->hDC, hPenOld );
-//	::DeleteObject( hPen );
-//
-//	/* ▼記号 */
-//	hPen = ::CreatePen( PS_SOLID, 0, cBtnDkShadow );
-//	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-//	::MoveToEx( pDis->hDC, rc.right + 6		, rc.top + 6, NULL );
-//	::LineTo(	pDis->hDC, rc.right + 6 + 5	, rc.top + 6 );
-//	::MoveToEx( pDis->hDC, rc.right + 7		, rc.top + 7, NULL );
-//	::LineTo(	pDis->hDC, rc.right + 7 + 3	, rc.top + 7 );
-//	::MoveToEx( pDis->hDC, rc.right + 8		, rc.top + 8, NULL );
-//	::LineTo(	pDis->hDC, rc.right + 8 + 1	, rc.top + 8 );
-//	::SelectObject( pDis->hDC, hPenOld );
-//	::DeleteObject( hPen );
-
-	/* フォーカスの長方形 */
-	if( pDis->itemState & ODS_FOCUS ){
-		rcFocus.top -= 3;
-		rcFocus.left -= 3;
-		rcFocus.right += 2;
-		rcFocus.bottom += 2;
-		::DrawFocusRect( pDis->hDC, &rcFocus );
-	}
-	return;
-}
-
-#endif
-
-
-
-
 //	From Here Jun. 2, 2001 genta
 /*!
 	「共通設定」プロパティシートの作成時に必要な情報を
@@ -420,23 +242,24 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	From Here Jun. 2, 2001 genta
 	//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
 	//!	「共通設定」プロパティシートの作成時に必要な情報の配列．
+	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ _T("全般"), 				IDD_PROP1P1,		DlgProc_PROP_GENERAL },
 		{ _T("ウィンドウ"),			IDD_PROP_WIN,		DlgProc_PROP_WIN },
+		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },
 		{ _T("タブバー"),			IDD_PROP_TAB,		DlgProc_PROP_TAB },
+		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	DlgProc_PROP_STATUSBAR},	// 文字コード表示指定	2008/6/21	Uchi
 		{ _T("編集"),				IDD_PROP_EDIT,		DlgProc_PROP_EDIT },
 		{ _T("ファイル"),			IDD_PROP_FILE,		DlgProc_PROP_FILE },
+		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		DlgProc_PROP_FILENAME},
 		{ _T("バックアップ"),		IDD_PROP_BACKUP,	DlgProc_PROP_BACKUP },
 		{ _T("書式"),				IDD_PROP_FORMAT,	DlgProc_PROP_FORMAT },
 		{ _T("検索"),				IDD_PROP_GREP,		DlgProc_PROP_GREP },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
 		{ _T("キー割り当て"),		IDD_PROP_KEYBIND,	DlgProc_PROP_KEYBIND },
 		{ _T("カスタムメニュー"),	IDD_PROP_CUSTMENU,	DlgProc_PROP_CUSTMENU },
-		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },
 		{ _T("強調キーワード"),		IDD_PROP_KEYWORD,	DlgProc_PROP_KEYWORD },
 		{ _T("支援"),				IDD_PROP_HELPER,	DlgProc_PROP_HELPER },
 		{ _T("マクロ"),				IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
-		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		DlgProc_PROP_FILENAME},
-		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	DlgProc_PROP_STATUSBAR},	// 文字コード表示指定	2008/6/21	Uchi
 	};
 
 	PROPSHEETPAGE		psp[32];
@@ -769,7 +592,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_ZENPAN;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+				m_nPageNum = ID_PAGENUM_GENERAL;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
 				return TRUE;
 			}
 			break;

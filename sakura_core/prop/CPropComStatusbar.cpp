@@ -53,9 +53,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
     LPARAM		lParam 		// second message parameter
 )
 {
-	WORD		wNotifyCode;
-	WORD		wID;
-	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -68,28 +65,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
-		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
-		switch( wNotifyCode ){
-		/* ボタン／チェックボックスがクリックされた */
-		case BN_CLICKED:
-			switch( wID ){
-			case IDC_CHECK_DRAGDROP:	/* タスクトレイを使う */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
-				}
-				else{
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
-				}
-				return TRUE;
-			}
-			break;
-		}
 		break;
 
 	case WM_NOTIFY:
@@ -108,7 +85,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
 			return TRUE;
 
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-			m_nPageNum = ID_PAGENUM_STATUSBAR;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+			m_nPageNum = ID_PAGENUM_STATUSBAR;
 			return TRUE;
 		}
 		break;	/* WM_NOTIFY */
