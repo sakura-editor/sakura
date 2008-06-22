@@ -139,7 +139,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_BACKUP;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+				m_nPageNum = ID_PAGENUM_BACKUP;
 				return TRUE;
 			}
 			break;
@@ -664,4 +664,3 @@ void CPropCommon::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設
 	}
 	return;
 }
-
