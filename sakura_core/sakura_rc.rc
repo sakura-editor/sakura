@@ -2176,19 +2176,19 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     GROUPBOX        "表示文字コードの指定",IDC_STATIC,3,3,264,97
-    CONTROL         "SJISで文字コード値をUnicodeで出力する(&S)",
+    CONTROL         "SJISで文字コード値をUnicodeで表示する(&S)",
                     IDC_CHECK_DISP_UNICODE_IN_SJIS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,16,165,10
-    CONTROL         "JISで文字コード値をUnicodeで出力する(&J)",
+    CONTROL         "JISで文字コード値をUnicodeで表示する(&J)",
                     IDC_CHECK_DISP_UNICODE_IN_JIS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,32,181,10
-    CONTROL         "EUCで文字コード値をUnicodeで出力する(&E)",
+    CONTROL         "EUCで文字コード値をUnicodeで表示する(&E)",
                     IDC_CHECK_DISP_UNICODE_IN_EUC,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,48,181,10
-    CONTROL         "UTF-8で表示をバイトコードで行う(&8)",
-                    IDC_CHECK_DISP_UTF8_BYTE,"Button",
+    CONTROL         "UTF-8をコードポイントで表示する(&8)",
+                    IDC_CHECK_DISP_UTF8_CODEPOINT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,64,181,10
-    CONTROL         "サロゲートペアをコードポイントで表示(&P)",
+    CONTROL         "サロゲートペアをコードポイントで表示する(&P)",
                     IDC_CHECK_DISP_SP_CODEPOINT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,80,181,10
 END

@@ -29,8 +29,8 @@ class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
 
-//	2008/6/22 Uchi #define ->enum に変更
-//	2008/6/22 Uchi 順序変更 [ウィンドウ][ツールバー][タブバー][ステータスバー]の順に
+//	#define -> enum に変更	2008/6/22 Uchi
+//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi
 #if 1
 enum ComPropSheetOrder {
 	ID_PAGENUM_GENERAL = 0,		// 全般
@@ -150,7 +150,7 @@ protected:
 	int	SearchIntArr( int , int* , int );
 //	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
 //	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */ // 2002.11.09 Moca 未使用
-	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
+//	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
 
 	//	Jun. 2, 2001 genta
 	//	Event Handler, Dialog Procedureの見直し

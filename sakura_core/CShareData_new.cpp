@@ -1554,11 +1554,11 @@ void CShareData::ShareData_IO_Statusbar( CDataProfile& cProfile )
 	CommonSetting_Statusbar& statusbar = m_pShareData->m_Common.m_sStatusbar;
 
 	// 表示文字コードの指定
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInSjis")			, statusbar.m_bDispUniInSjis);		// SJISで文字コード値をUnicodeで出力する
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInJis")			, statusbar.m_bDispUniInJis);		// JISで文字コード値をUnicodeで出力する
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInEuc")			, statusbar.m_bDispUniInEuc);		// EUCで文字コード値をUnicodeで出力する
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUtf8Byte")				, statusbar.m_bDispUtf8Byte);		// UTF-8で表示をバイトコードで行う
-	cProfile.IOProfileData( pszSecName, LTEXT("DispSurrogatePairCodepoint")	, statusbar.m_bDispSPCodepoint);	// サロゲートペアをコードポイントで表示
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInSjis")			, statusbar.m_bDispUniInSjis);		// SJISで文字コード値をUnicodeで表示する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInJis")			, statusbar.m_bDispUniInJis);		// JISで文字コード値をUnicodeで表示する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInEuc")			, statusbar.m_bDispUniInEuc);		// EUCで文字コード値をUnicodeで表示する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUtf8Codepoint")			, statusbar.m_bDispUtf8Codepoint);	// UTF-8をコードポイントで表示する
+	cProfile.IOProfileData( pszSecName, LTEXT("DispSurrogatePairCodepoint")	, statusbar.m_bDispSPCodepoint);	// サロゲートペアをコードポイントで表示する
 }
 
 /*!

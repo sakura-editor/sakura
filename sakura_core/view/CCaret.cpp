@@ -654,9 +654,8 @@ void CCaret::ShowCaretPosInfo()
 				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar);
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった(Unicodeで表示)
-					szCaretChar[0] = _T('u');
-					CCodeBase* pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar + 1);
+					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
+					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar);
 				}
 
 			}
