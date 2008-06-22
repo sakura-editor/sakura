@@ -103,7 +103,7 @@ EConvertResult CUtf8::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* 
 	TCHAR*			pd; 
 	unsigned char*	ps; 
 
-	if (!CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUtf8Byte) {
+	if (CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUtf8Codepoint) {
 		// Unicode‚Å•\Ž¦
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst);
 	}

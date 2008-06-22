@@ -415,11 +415,11 @@ struct CommonSetting_Others
 struct CommonSetting_Statusbar
 {
 	// 示文字コードの指定
-	BOOL		m_bDispUniInSjis;				// SJISで文字コード値をUnicodeで出力する
-	BOOL		m_bDispUniInJis;				// JISで文字コード値をUnicodeで出力する
-	BOOL		m_bDispUniInEuc;				// EUCで文字コード値をUnicodeで出力する
-	BOOL		m_bDispUtf8Byte;				// UTF-8で表示をバイトコードで行う
-	BOOL		m_bDispSPCodepoint;				// サロゲートペアをコードポイントで表示
+	BOOL		m_bDispUniInSjis;				// SJISで文字コード値をUnicodeで表示する
+	BOOL		m_bDispUniInJis;				// JISで文字コード値をUnicodeで表示する
+	BOOL		m_bDispUniInEuc;				// EUCで文字コード値をUnicodeで表示する
+	BOOL		m_bDispUtf8Codepoint;			// UTF-8をコードポイントで表示する
+	BOOL		m_bDispSPCodepoint;				// サロゲートペアをコードポイントで表示する
 };
 
 
