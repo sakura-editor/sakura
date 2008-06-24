@@ -2724,8 +2724,6 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_OPEN_HHPP             "同名のC/C++ヘッダファイルを開く"
-    F_OPEN_CCPP             "同名のC/C++ソースファイルを開く"
     F_OPEN_HfromtoC         "同名のC/C++ヘッダ(ソース)を開く"
     F_ACTIVATE_SQLPLUS      "SQL*Plusをアクティブ表示"
     F_PLSQL_COMPILE_ON_SQLPLUS "SQL*Plusで実行"
