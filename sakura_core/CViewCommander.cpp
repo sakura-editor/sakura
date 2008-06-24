@@ -3423,7 +3423,9 @@ bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 	CEditDoc* pcDoc = GetDocument();
 
 	//ファイル名が指定されていない場合は「名前を付けて保存」のフローへ遷移
-	if( askname && !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+	if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+		if( !askname )
+			return false;	// 保存しない
 		return pcDoc->m_cDocFileOperation.FileSaveAs();
 	}
 
