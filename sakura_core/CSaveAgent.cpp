@@ -107,7 +107,11 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	GetLastWriteTimestamp( pcDoc->m_cDocFile.GetFilePath(), &pcDoc->m_cDocFile.m_sFileInfo.cFileTime );
 
 	// タイプ別設定の変更を指示。
-	pcDoc->OnChangeSetting();
+	// 上書き（明示的な上書きや自動保存）では変更しない
+	// ---> 上書きの場合は一時的な折り返し桁変更やタブ幅変更を維持したままにする
+	if(!sSaveInfo.bOverwriteMode){
+		pcDoc->OnChangeSetting();
+	}
 }
 
 
