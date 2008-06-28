@@ -100,7 +100,11 @@ void CPropTypes::_Import_Colors( HWND hwndDlg )
 	/* ファイル先頭 */
 	//ヘッダ読取
 	wstring szHeader = in.ReadLineW().c_str();
-	if(szHeader.length()>=2)szHeader=&szHeader.c_str()[2]; //コメントを抜く
+	//if(szHeader.length()>=2)szHeader=&szHeader.c_str()[2]; //コメントを抜く
+	if(szHeader.length()>=2) {
+		//コメントを抜く	コメント文字 変更対応 2008/6/28 Uchi
+		szHeader = &szHeader.c_str()[ szHeader.c_str()[0] == _T(';') ? 1 : 2];
+	}
 	//比較
 	if(wcscmp(szHeader.c_str(),LTEXT(STR_COLORDATA_HEAD3))==0){
 		//OK
