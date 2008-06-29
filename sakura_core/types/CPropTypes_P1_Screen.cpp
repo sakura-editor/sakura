@@ -55,63 +55,63 @@ static const DWORD p_helpids1[] = {	//11300
 //2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
 template <class TYPE>
 struct TYPE_NAME {
-	TYPE			nMethod;
-	wchar_t*		pszName;
+	TYPE		nMethod;
+	TCHAR*		pszName;
 };
 
 TYPE_NAME<EOutlineType> OlmArr[] = {
-//	{ OUTLINE_C,		L"C" },
-	{ OUTLINE_CPP,		L"C/C++" },
-	{ OUTLINE_PLSQL,	L"PL/SQL" },
-	{ OUTLINE_JAVA,		L"Java" },
-	{ OUTLINE_COBOL,	L"COBOL" },
-	{ OUTLINE_PERL,		L"Perl" },			//Sep. 8, 2000 genta
-	{ OUTLINE_ASM,		L"アセンブラ" },
-	{ OUTLINE_VB,		L"Visual Basic" },	// 2001/06/23 N.Nakatani
-	{ OUTLINE_PYTHON,	L"Python" },		//	2007.02.08 genta
-	{ OUTLINE_WZTXT,	L"WZ階層付テキスト" },	// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
-	{ OUTLINE_HTML,		L"HTML" },			// 2003.05.20 zenryaku
-	{ OUTLINE_TEX,		L"TeX" },			// 2003.07.20 naoh
-	{ OUTLINE_TEXT,		L"テキスト" }		//Jul. 08, 2001 JEPRO 常に最後尾におく
+//	{ OUTLINE_C,		_T("C") },
+	{ OUTLINE_CPP,		_T("C/C++") },
+	{ OUTLINE_PLSQL,	_T("PL/SQL") },
+	{ OUTLINE_JAVA,		_T("Java") },
+	{ OUTLINE_COBOL,	_T("COBOL") },
+	{ OUTLINE_PERL,		_T("Perl") },				//Sep. 8, 2000 genta
+	{ OUTLINE_ASM,		_T("アセンブラ") },
+	{ OUTLINE_VB,		_T("Visual Basic") },		// 2001/06/23 N.Nakatani
+	{ OUTLINE_PYTHON,	_T("Python") },				//	2007.02.08 genta
+	{ OUTLINE_WZTXT,	_T("WZ階層付テキスト") },	// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
+	{ OUTLINE_HTML,		_T("HTML") },				// 2003.05.20 zenryaku
+	{ OUTLINE_TEX,		_T("TeX") },				// 2003.07.20 naoh
+	{ OUTLINE_TEXT,		_T("テキスト") }			//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
 
 
 TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
-	{ SMARTINDENT_NONE,	L"なし" },
-	{ SMARTINDENT_CPP,	L"C/C++" }
+	{ SMARTINDENT_NONE,	_T("なし") },
+	{ SMARTINDENT_CPP,	_T("C/C++") }
 };
 
 //	Nov. 20, 2000 genta
 TYPE_NAME<int> ImeStateArr[] = {
-	{ 0, L"標準設定" },
-	{ 1, L"全角" },
-	{ 2, L"全角ひらがな" },
-	{ 3, L"全角カタカナ" },
-	{ 4, L"無変換" }
+	{ 0, _T("標準設定") },
+	{ 1, _T("全角") },
+	{ 2, _T("全角ひらがな") },
+	{ 3, _T("全角カタカナ") },
+	{ 4, _T("無変換") }
 };
 
 TYPE_NAME<int> ImeSwitchArr[] = {
-	{ 0, L"そのまま" },
-	{ 1, L"常にON" },
-	{ 2, L"常にOFF" },
+	{ 0, _T("そのまま") },
+	{ 1, _T("常にON") },
+	{ 2, _T("常にOFF") },
 };
 
 /*!	2行目以降のインデント方法
 
-	@sa CLayoutMgr::SetLayoutInfo()
+	@sa CLayoutMgr::SetLayoutInfo(
 	@date Oct. 1, 2002 genta 
 */
 TYPE_NAME<int> IndentTypeArr[] = {
-	{ 0, L"なし" },
-	{ 1, L"tx2x" },
-	{ 2, L"論理行先頭" },
+	{ 0, _T("なし") },
+	{ 1, _T("tx2x") },
+	{ 2, _T("論理行先頭") },
 };
 
 // 2008.05.30 nasukoji	テキストの折り返し方法
 TYPE_NAME<int> WrapMethodArr[] = {
-	{ WRAP_NO_TEXT_WRAP,	L"折り返さない" },
-	{ WRAP_SETTING_WIDTH,	L"指定桁で折り返す" },
-	{ WRAP_WINDOW_WIDTH,	L"右端で折り返す" },
+	{ WRAP_NO_TEXT_WRAP,	_T("折り返さない") },
+	{ WRAP_SETTING_WIDTH,	_T("指定桁で折り返す") },
+	{ WRAP_WINDOW_WIDTH,	_T("右端で折り返す") },
 };
 
 
@@ -674,4 +674,3 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	return TRUE;
 }
-
