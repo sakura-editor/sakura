@@ -245,7 +245,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
 			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
 			out.WriteF(
-				LTEXT("S_%ts(\'%ls\');\t// %ts\r\n"),
+				LTEXT("S_%ls(\'%ls\');\t// %ls\r\n"),
 				szFuncName,
 				cmemWork.GetStringPtr(),
 				szFuncNameJapanese
@@ -253,7 +253,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			break;
 		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 			out.WriteF(
-				LTEXT("S_%ts(%d, %d);\t// %ts\r\n"),
+				LTEXT("S_%ls(%d, %d);\t// %ls\r\n"),
 				szFuncName,
 				(m_pParamTop->m_pData ? _wtoi(m_pParamTop->m_pData) : 1),
 				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
@@ -269,7 +269,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
 			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
 			out.WriteF(
-				LTEXT("S_%ts(\'%ls\', %d);\t// %ts\r\n"),
+				LTEXT("S_%ls(\'%ls\', %d);\t// %ls\r\n"),
 				szFuncName,
 				cmemWork.GetStringPtr(),
 				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
@@ -284,7 +284,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
 			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
 			out.WriteF(
-				LTEXT("S_%ts(\'%ls\', %d);\t// %ts\r\n"),
+				LTEXT("S_%ls(\'%ls\', %d);\t// %ls\r\n"),
 				szFuncName,
 				cmemWork.GetStringPtr(),
 				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
@@ -303,7 +303,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
 				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
 				out.WriteF(
-					LTEXT("S_%ts(\'%ls\', \'%ls\', %d);\t// %ts\r\n"),
+					LTEXT("S_%ls(\'%ls\', \'%ls\', %d);\t// %ls\r\n"),
 					szFuncName,
 					cmemWork.GetStringPtr(),
 					cmemWork2.GetStringPtr(),
@@ -327,7 +327,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				cmemWork3.Replace( LTEXT("\\"), LTEXT("\\\\") );
 				cmemWork3.Replace( LTEXT("\'"), LTEXT("\\\'") );
 				out.WriteF(
-					LTEXT("S_%ts(\'%ls\', \'%ls\', \'%ls\', %d);\t// %ts\r\n"),
+					LTEXT("S_%ls(\'%ls\', \'%ls\', \'%ls\', %d);\t// %ls\r\n"),
 					szFuncName,
 					cmemWork.GetStringPtr(),
 					cmemWork2.GetStringPtr(),
@@ -339,9 +339,9 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			break;
 		default:
 			if( 0 == m_pParamTop ){
-				out.WriteF( LTEXT("S_%ts();\t// %ts\r\n"), szFuncName, szFuncNameJapanese );
+				out.WriteF( LTEXT("S_%ls();\t// %ls\r\n"), szFuncName, szFuncNameJapanese );
 			}else{
-				out.WriteF( LTEXT("S_%ts(%d);\t// %ts\r\n"), szFuncName, m_pParamTop->m_pData ? _wtoi(m_pParamTop->m_pData) : 0, szFuncNameJapanese );
+				out.WriteF( LTEXT("S_%ls(%d);\t// %ls\r\n"), szFuncName, m_pParamTop->m_pData ? _wtoi(m_pParamTop->m_pData) : 0, szFuncNameJapanese );
 			}
 			break;
 		}
@@ -1043,5 +1043,3 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		return false;
 	}
 }
-
-

@@ -144,7 +144,7 @@ void CDlgCompare::SetData( void )
 			}
 			auto_sprintf(
 				szMenu,
-				_T("%ls %ls"),
+				_T("%ts %ts"),
 				(0 < _tcslen(pfi->m_szPath))?pfi->m_szPath:_T("(–³‘è)"),
 				pfi->m_bIsModified ? _T("*"):_T(" ")
 			);
@@ -210,5 +210,3 @@ LPVOID CDlgCompare::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
-

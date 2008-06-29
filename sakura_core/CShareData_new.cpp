@@ -1005,7 +1005,7 @@ void CShareData::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KEYDA
 				wcscat(szKeyData, szWork);
 			}
 			
-			auto_sprintf(szWork, L",%ls", keydata.m_szKeyName);
+			auto_sprintf(szWork, L",%ts", keydata.m_szKeyName);
 			wcscat(szKeyData, szWork);
 			cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) );
 //

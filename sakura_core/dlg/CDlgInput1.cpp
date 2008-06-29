@@ -118,6 +118,7 @@ BOOL CDlgInput1::DoModal(
 )
 {
 	TCHAR buf[1024];
+	buf[0] = _T('\0');
 	BOOL ret=DoModal(hInstApp, hwndParent, pszTitle, pszMessage, nMaxTextLen, buf);
 	if(ret){
 		auto_strcpy(pszText,to_not_tchar(buf));
@@ -187,6 +188,3 @@ INT_PTR CDlgInput1::DispatchEvent(
 	}
 	return FALSE;
 }
-
-
-
