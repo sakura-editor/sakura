@@ -47,8 +47,8 @@ INT_PTR CPropTypes::DispatchEvent_Support(
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 入力補完 単語ファイル */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-		/* キーワードヘルプ 辞書ファイル */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
+		/* キーワードヘルプ 辞書ファイル *///	del 2008/7/4 Uchi
+//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
 
 		return TRUE;
 	case WM_COMMAND:
@@ -220,4 +220,3 @@ int CPropTypes::GetData_Support( HWND hwndDlg )
 }
 
 // 2001/06/13 End
-

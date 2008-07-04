@@ -48,10 +48,10 @@ const DWORD p_helpids[] = {	//12200
 	IDCANCEL,							HIDCANCEL_FL,			//キャンセル
 	IDC_BUTTON_HELP,					HIDC_FL_BUTTON_HELP,	//ヘルプ
 	IDC_CHECK_bAutoCloseDlgFuncList,	HIDC_FL_CHECK_bAutoCloseDlgFuncList,	//自動的に閉じる
-	IDC_LIST1,							HIDC_FL_LIST1,			//トピックリスト
-	IDC_TREE1,							HIDC_FL_TREE1,			//トピックツリー
-	IDC_CHECK_bFunclistSetFocusOnJump	,HIDC_FL_CHECK_bFunclistSetFocusOnJump,	//ジャンプでフォーカス移動する
-	IDC_CHECK_bMarkUpBlankLineEnable	,HIDC_FL_CHECK_bMarkUpBlankLineEnable,	//空行を無視する
+	IDC_LIST_FL,						HIDC_FL_LIST1,			//トピックリスト	IDC_LIST1->IDC_LIST_FL	2008/7/3 Uchi
+	IDC_TREE_FL,						HIDC_FL_TREE1,			//トピックツリー	IDC_TREE1->IDC_TREE_FL	2008/7/3 Uchi
+	IDC_CHECK_bFunclistSetFocusOnJump,	HIDC_FL_CHECK_bFunclistSetFocusOnJump,	//ジャンプでフォーカス移動する
+	IDC_CHECK_bMarkUpBlankLineEnable,	HIDC_FL_CHECK_bMarkUpBlankLineEnable,	//空行を無視する
 	IDC_COMBO_nSortType,				HIDC_COMBO_nSortType,	//順序
 	IDC_BUTTON_WINSIZE,					HIDC_FL_BUTTON_WINSIZE,	//ウィンドウ位置保存	// 2006.08.06 ryoji
 //	IDC_STATIC,							-1,
@@ -189,8 +189,8 @@ void CDlgFuncList::SetData()
 	CLayoutInt		nFuncLineOld;
 	int				nSelectedLine;
 	RECT			rc;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST1 );
-	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE1 );
+	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
+	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
 	//2002.02.08 hor 隠しといてアイテム削除→あとで表示
 	::ShowWindow( hwndList, SW_HIDE );
@@ -419,7 +419,7 @@ void CDlgFuncList::SetData()
 	}
 
 	//2002.02.08 hor
-	//（IDC_LIST1もIDC_TREE1も常に存在していて、m_nViewTypeによって、どちらを表示するかを選んでいる）
+	//（IDC_LIST_FLもIDC_TREE_FLも常に存在していて、m_nViewTypeによって、どちらを表示するかを選んでいる）
 	if(m_nViewType){
 		::ShowWindow( hwndTree, SW_SHOW );
 		::SetFocus( hwndTree );
@@ -449,7 +449,7 @@ void CDlgFuncList::SetData()
 		::ShowWindow( GetDlgItem( GetHwnd(), IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
 		if( 1 == m_nSortType ){
-			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE1),TVI_ROOT);
+			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
 		}
 	}
 	else {
@@ -479,7 +479,7 @@ int CDlgFuncList::GetData( void )
 	TCHAR		szLabel[32];
 
 	nLineTo = -1;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST1 );
+	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
 	if( m_nViewType == 0 ){
 		//	List
 		nItem = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
@@ -493,7 +493,7 @@ int CDlgFuncList::GetData( void )
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( item.lParam );
 		nLineTo = pcFuncInfo->m_nFuncLineCRLF;
 	}else{
-		hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE1 );
+		hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 		if( NULL != hwndTree ){
 			htiItem = TreeView_GetSelection( hwndTree );
 
@@ -543,7 +543,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 
 	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
 
-	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE1 );
+	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
 	nFuncLineOld = CLayoutInt(0);
 	bSelected = FALSE;
@@ -802,7 +802,7 @@ void CDlgFuncList::SetListVB (void)
 
 	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
 
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST1 );
+	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
 
 	nFuncLineOld = CLayoutInt(0);
 	bSelected = FALSE;
@@ -991,7 +991,7 @@ void CDlgFuncList::SetListVB (void)
 void CDlgFuncList::SetTree(bool tagjump)
 {
 	HTREEITEM hItemSelected = NULL;
-	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE1 );
+	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
 	int i;
 	int nFuncInfoArrNum = m_pcFuncInfoArr->GetNum();
@@ -1108,7 +1108,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	int			nColWidthArr[3] = { 0, 46, 80 };
 	RECT		rc;
 	LV_COLUMN	col;
-	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST1 );
+	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_FL );
 	// 2005.10.21 zenryaku 1行選択
 	SendMessageAny(hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0,
 		SendMessageAny(hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) | LVS_EX_FULLROWSELECT);
@@ -1214,9 +1214,9 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			SetData();
 		}else
 		if(m_nViewType){
-			::SetFocus( ::GetDlgItem( GetHwnd(), IDC_TREE1 ) );
+			::SetFocus( ::GetDlgItem( GetHwnd(), IDC_TREE_FL ) );
 		}else{
-			::SetFocus( ::GetDlgItem( GetHwnd(), IDC_LIST1 ) );
+			::SetFocus( ::GetDlgItem( GetHwnd(), IDC_LIST_FL ) );
 		}
 		return TRUE;
 	}
@@ -1238,8 +1238,8 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	pnmh = (LPNMHDR) lParam;
 	pnlv = (NM_LISTVIEW*)lParam;
 
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST1 );
-	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE1 );
+	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
+	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
 	if( hwndTree == pnmh->hwndFrom ){
 		pnmtv = (NM_TREEVIEW *) lParam;
@@ -1438,8 +1438,8 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		{IDOK, 2},
 		{IDCANCEL, 2},
 		{IDC_BUTTON_HELP, 2},
-		{IDC_LIST1, 3},
-		{IDC_TREE1, 3},
+		{IDC_LIST_FL, 3},
+		{IDC_TREE_FL, 3},
 	};
 	int		nControls = _countof( Controls );
 //	int		fwSizeType;
@@ -1546,7 +1546,7 @@ BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 		if( m_nSortType != nSelect )
 		{
 			m_nSortType = nSelect;
-			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE1),TVI_ROOT);
+			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
 		}
 		return TRUE;
 	};

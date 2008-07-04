@@ -757,7 +757,7 @@
 
 //プロパティ
 #define HIDOK_PROP				12600	//
-#define HIDCANCEL_PROP			12601	//
+//#define HIDCANCEL_PROP			12601	//	del 2008/7/4 Uchi
 #define HIDC_PROP_BUTTON_HELP	12602	//
 #define HIDC_PROP_EDIT1			12603	//
 
@@ -780,7 +780,7 @@
 #define HIDC_JUMP_RADIO_LINENUM_CRLF	12808	//改行単位
 
 //バージョン情報
-#define HIDC_ABOUT_BUTTON_CONTACT	12900	//
+//#define HIDC_ABOUT_BUTTON_CONTACT	12900	//	del 2008/7/4 Uchi
 #define HIDOK_ABOUT					12901	//
 #define HIDC_ABOUT_EDIT_ABOUT		12902	//
 

@@ -476,10 +476,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\sakura_rc.hm"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\sakura_rc.rc"
 				>
 				<FileConfiguration

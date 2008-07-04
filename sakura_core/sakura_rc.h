@@ -2,13 +2,11 @@
 // Microsoft Visual C++ generated include file.
 // Used by sakura_rc.rc
 //
-#define IDOK2                           3
-#define IDC_BUTTON_PRINTERSELECT        3
 #define IDR_MENU1                       102
+#define IDR_TRAYMENU_L                  103
 #define IDD_PROP1P1                     107
 #define IDD_FIND                        109
 #define IDD_PROP_FILE                   110
-#define IDR_TRAYMENU_L                  113
 #define IDD_ABOUT                       115
 #define IDD_JUMP                        118
 #define IDD_FUNCLIST                    122
@@ -27,7 +25,6 @@
 #define IDD_DEBUG                       177
 #define IDD_EXEC                        182
 #define IDD_HOKAN                       186
-#define IDD_EXECCMD_TEST                188
 #define IDD_EXECRUNNING                 191
 #define IDD_PRINTING                    192
 #define IDD_PRINTPAGE                   193
@@ -57,7 +54,7 @@
 #define IDC_CURSOR_TAB_RIGHT            246
 #define IDC_CURSOR_TAB_SEPARATE         247
 #define IDC_CURSOR_TAB_JOIN             248
-#define IDC_HIDE                        1000
+#define IDC_BUTTON_PRINTERSELECT        1001
 #define IDC_CHK_LOHICASE                1006
 #define IDC_CHECK_INDENT                1009
 #define IDC_CHK_REGULAREXP              1010
@@ -68,7 +65,6 @@
 #define IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH 1013
 #define IDC_CHECK_RTRIM_PREVLINE        1013
 #define IDC_CHECK_FREECARET             1014
-#define IDC_BUTTON1                     1015
 #define IDC_BUTTON_CLEAR_MRU_FOLDER     1016
 #define IDC_BUTTON_RELEASE              1016
 #define IDC_COMBO_TEXT                  1021
@@ -90,7 +86,7 @@
 #define IDC_CHECK_EXCVLUSIVE_NO         1069
 #define IDC_CHECK_EXCVLUSIVE_READWRITE  1070
 #define IDC_CHECK_EXCVLUSIVE_WRITE      1071
-#define IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE      1072
+#define IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE 1072
 #define IDC_EDIT_LINENUM                1074
 #define IDC_CHECK_BACKUP                1076
 #define IDC_CHECK_EXITCONFIRM           1076
@@ -106,9 +102,7 @@
 #define IDC_RADIO_OUTPUTMARKED          1078
 #define IDC_RADIO_ALLAREA               1078
 #define IDC_RADIO_CARETTYPE1            1078
-#define IDC_RADIO_nRulerType_1          1078
 #define IDC_CHECK_LCPOS3                1078
-#define IDC_RADIO_BACKUP_TYPE2          1079
 #define IDC_RADIO_FUNCKEYWND_PLACE2     1079
 #define IDC_CHECK_BACKUP_YEAR           1080
 #define IDC_CHECK_ALT                   1080
@@ -119,7 +113,8 @@
 #define IDC_CHECK_BACKUPDIALOG          1084
 #define IDC_CHECK_BACKUPFOLDER          1085
 #define IDC_CHECK_UNDERLINE             1085
-#define IDC_EDIT1                       1086
+#define IDC_EDIT_INPUT1                 1086
+#define IDC_EDIT_PROPERTY               1086
 #define IDC_EDIT_BACKUPFOLDER           1086
 #define IDC_EDIT_EXTHELP1               1086
 #define IDC_EDIT_PLSQL_E1               1086
@@ -135,17 +130,15 @@
 #define IDC_EDIT_FNAME_TO               1087
 #define IDC_CHECK_BACKUP_MONTH          1088
 #define IDC_BUTTON_INSERTSEPARATOR      1088
-#define IDC_EDIT_KEYWORDHELPFILE        1088
 #define IDC_BUTTON_ZOOMUP               1088
 #define IDC_EDIT_MIGEMO_DLL             1088
 #define IDC_CHECK_BACKUP_DAY            1089
-#define IDC_BUTTON_KEYWORDHELPFILE_REF  1089
 #define IDC_BUTTON_INSERTWRAP           1089
 #define IDC_EDIT_MIGEMO_DICT            1089
 #define IDC_RADIO_BACKUP_TYPE3          1090
 #define IDC_CHECK_AUTOSAVE              1091
 #define IDC_CHECK_BACKUP_DUSTBOX        1091
-#define IDC_LIST1                       1092
+#define IDC_LIST_FL                     1092
 #define IDC_CHECK_DispTOOLBAR           1092
 #define IDC_EDIT_AUTOBACKUP_INTERVAL    1092
 #define IDC_BUTTON_OPENHELP1            1096
@@ -154,7 +147,6 @@
 #define IDC_BUTTON_KEYWORDHELPFONT      1098
 #define IDC_BUTTON_HELP                 1099
 #define IDC_BUTTON_OPENMDLL             1099
-#define IDC_BUTTON_OPENHELP3            1100
 #define IDC_BUTTON_OPENMDICT            1100
 #define IDC_EDIT_TO                     1105
 #define IDC_EDIT_BLOCKCOMMENT_TO        1109
@@ -199,7 +191,7 @@
 #define IDC_BUTTON_SEARCHNEXT           1137
 #define IDC_LIST_RES                    1138
 #define IDC_BUTTON_SETMARK              1138
-#define IDC_TREE1                       1140
+#define IDC_TREE_FL                     1140
 #define IDC_BUTTON_ADD                  1141
 #define IDC_BUTTON_INSERT               1142
 #define IDC_BUTTON_REGEX_INS            1142
@@ -216,7 +208,6 @@
 #define IDC_RADIO_ESCAPETYPE_2          1151
 #define IDC_LIST_TYPES                  1153
 #define IDC_RADIO_OUTPUTSTYLE1          1158
-#define IDC_RADIO_nRulerType_0          1158
 #define IDC_COMBO_PLSQLBLOCKS           1164
 #define IDC_COMBO_MRU                   1167
 #define IDC_CHECK_KEYWORDCASE           1168
@@ -228,7 +219,6 @@
 #define IDC_BUTTON_EDITKEYWORD          1177
 #define IDC_BUTTON_DELSET               1178
 #define IDC_COMBO_SET                   1179
-#define IDC_COMBO_SET2                  1180
 #define IDC_LIST_KEYWORD                1181
 #define IDC_SPIN_MAX_MRU_FILE           1184
 #define IDC_SPIN_MAX_MRU_FOLDER         1185
@@ -315,7 +305,6 @@
 #define IDC_RADIO_OUTPUTSTYLE2          1282
 #define IDC_CHECK_DispTabWnd            1282
 #define IDC_STATIC_ENABLECOLMNS         1283
-#define IDC_CHECK_MultiWin              1283
 #define IDC_STATIC_ENABLELINES          1284
 #define IDC_HOTKEY_TRAYMENU             1286
 #define IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE 1287
@@ -344,7 +333,6 @@
 #define IDC_CHECK_bAutoCloseDlgReplace  1307
 #define IDC_CHECK_bMarkUpBlankLineEnable 1307
 #define IDC_CHECK_bFunclistSetFocusOnJump 1308
-#define IDC_CHECK_CLICKKEYSEARCH        1309
 #define IDC_STATIC_CURFILE              1310
 #define IDC_PROGRESS                    1311
 #define IDC_LIST_WORDS                  1312
@@ -372,7 +360,6 @@
 #define IDC_RADIO_DIFF_FILE2            1325
 #define IDC_RADIO_ADD                   1326
 #define IDC_RADIO_DIFF_DST1             1326
-#define IDC_EDIT2                       1327
 #define IDC_EDIT_BACKUP_3               1327
 #define IDC_MACROPATH                   1327
 #define IDC_RADIO_DIFF_DST2             1327
@@ -406,9 +393,7 @@
 #define IDC_LABEL_KEYKIND               1351
 #define IDC_LABEL_FUNCtoKEY             1352
 #define IDC_LABEL_KEYtoFUNC             1353
-#define IDC_TAB2                        1355
 #define IDC_LABEL_LINETERMCHAR          1356
-#define IDC_GROUP_FUNCKEYWND_POSITION   1357
 #define IDC_LABEL_DFORM                 1358
 #define IDC_LABEL_TFORM                 1359
 #define IDC_LABEL_FROM                  1360
@@ -416,7 +401,6 @@
 #define IDC_LABEL_PLSQL1                1362
 #define IDC_LABEL_PLSQL2                1363
 #define IDC_LABEL_PLSQL3                1364
-#define IDC_LABEL_KEYWORDHELPFILE       1365
 #define IDC_SPIN_BACKUP_GENS            1366
 #define IDC_SPIN_AUTOBACKUP_INTERVAL    1367
 #define IDC_SPIN_nRulerHeight           1368
@@ -426,7 +410,6 @@
 #define IDC_CHECK_RestoreCurPosition    1375
 #define IDC_STATIC_URL_CAPTION          1376
 #define IDC_STATIC_URL_UR               1379
-#define IDC_STATIC_URL_ORG              1380
 #define IDC_CHECK_AutoMIMEDecode        1381
 #define IDC_EDIT_MENUNAME               1382
 #define IDC_CHECK_RestoreBookmarks      1382
@@ -440,7 +423,6 @@
 #define IDC_LABEL_LCPOS3                1393
 #define IDC_MACRO_REG                   1393
 #define IDC_COMBO_MACROID               1394
-#define IDC_BUTTON_TOP                  1394
 #define IDC_BUTTON_REGEX_TOP            1394
 #define IDC_BUTTON_REGEX_LAST           1395
 #define IDC_MACROLIST                   1396
@@ -502,7 +484,6 @@
 #define IDC_BTN_CLOSE                   1439
 #define IDC_UPDATEDFILENAME             1440
 #define IDC_QUERYRELOADMSG              1441
-#define IDC_CHECK_FNAME                 1442
 #define IDC_BUTTON_FNAME_TOP            1446
 #define IDC_BUTTON_FNAME_UP             1447
 #define IDC_BUTTON_FNAME_DOWN           1448
@@ -523,8 +504,6 @@
 #define IDC_LIST_FAVORITE_SEARCH        1463
 #define IDC_LIST_FAVORITE_CMD           1464
 #define IDC_BUTTON_CLEAR                1465
-#define IDC_SLIDER_VIEW                 1466
-#define IDC_BUTTON_VIEW                 1467
 #define IDC_LIST_TAGJUMP                1468
 #define IDC_WINCAPTION_ACTIVE           1469
 #define IDC_WINCAPTION_INACTIVE         1470
@@ -552,7 +531,6 @@
 #define IDC_COMBO_WINTYPE               1490
 #define IDC_BUTTON_WINSIZE              1491
 #define IDC_CHECK_QueryIfCodeChange     1492
-#define IDC_HOTKEY1                     1493
 #define IDC_CHECK_AlertIfFileNotExist   1493
 #define IDC_COMBO1                      1494
 #define IDC_BUTTON_KEYWORD_SELECT       1495
@@ -605,15 +583,10 @@
 #define IDC_RADIO_OUTPUT                1536
 #define IDC_RADIO_EDITWINDOW            1537
 #define IDC_CHECK_SENDSTDIN             1538
-#define IDD_PROP_TOOLBAR                1539
 #define IDC_CHECK_SortTabList           1540
 #define IDC_COMBO_WRAPMETHOD            1541
-#define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
-#define IDS_AUTHOR_MAIL                 4055
 #define IDS_ABOUT_DESCRIPTION           4056
-#define IDM_POPLAST2                    4064
-#define ID_IS4072                       4072
 #define IDD_PROPTYPESP1                 5101
 #define IDD_PROP_STATUSBAR              5102
 #define IDD_PROP_CUSTMENU               5103
@@ -627,20 +600,18 @@
 #define IDD_PROP_GREP                   5111
 #define IDD_PROP_BACKUP                 5112
 #define IDD_OPERATIONRUNNING            5113
-#define IDD_PROP_KEYBIND1               5114
 #define IDD_PROPTYPESP2                 5114
 #define IDD_DIFF                        5115
 #define IDD_CTRLCODE                    5116
 #define IDD_WINPOSSIZE                  5117
+#define IDD_PROP_TOOLBAR                5118
 #define IDD_PROP_KEYHELP                5119
 #define IDC_FRAME_KEYHELP               5120
 #define IDC_LIST_KEYHELP                5121
 #define IDC_LABEL_KEYHELP_KEYWORD       5122
 #define IDC_EDIT_KEYHELP                5123
 #define IDC_LABEL_KEYHELP_TITLE         5124
-#define IDC_COMBO_KEYHELP_COLOR         5125
 #define IDC_BUTTON_KEYHELP_INS          5126
-#define IDC_BUTTON_KEYHELP_ADD          5127
 #define IDC_BUTTON_KEYHELP_UPD          5128
 #define IDC_BUTTON_KEYHELP_DEL          5129
 #define IDC_BUTTON_KEYHELP_TOP          5130
@@ -651,7 +622,6 @@
 #define IDC_BUTTON_KEYHELP_EXPORT       5135
 #define IDC_LABEL_KEYHELP_ABOUT         5136
 #define IDC_CHECK_KEYHELP               5137
-#define IDC_CHECK_TYPE_KEYHELPUSE       5138
 #define IDC_LABEL_KEYHELP_PRIOR         5139
 #define IDC_BUTTON_KEYHELP_REF          5140
 #define IDC_CHECK_KEYHELP_ALLSEARCH     5141
@@ -664,7 +634,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        249
-#define _APS_NEXT_COMMAND_VALUE         4073
+#define _APS_NEXT_COMMAND_VALUE         4057
 #define _APS_NEXT_CONTROL_VALUE         1533
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
