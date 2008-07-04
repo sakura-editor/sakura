@@ -173,7 +173,7 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	switch( wID ){
 	//	2006.07.27 genta 原作者連絡先のボタンを削除 (ヘルプから削除されているため)
 	case IDC_STATIC_URL_UR:
-	case IDC_STATIC_URL_ORG:
+//	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
 			TCHAR buf[512];
@@ -342,5 +342,3 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
 }
 //@@@ 2002.01.18 add end
-
-

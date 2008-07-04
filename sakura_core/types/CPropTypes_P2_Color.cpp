@@ -27,7 +27,7 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
 	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
 	IDC_COMBO_SET,					HIDC_COMBO_SET_COLOR,			//強調キーワード１セット名
-	IDC_COMBO_SET2,					HIDC_COMBO_SET2_COLOR,			//強調キーワード２セット名
+//	IDC_COMBO_SET2,					HIDC_COMBO_SET2_COLOR,			//強調キーワード２セット名	del 2008/6/3 Uchi
 	IDC_EDIT_BLOCKCOMMENT_FROM,		HIDC_EDIT_BLOCKCOMMENT_FROM,	//ブロックコメント１開始
 	IDC_EDIT_BLOCKCOMMENT_TO,		HIDC_EDIT_BLOCKCOMMENT_TO,		//ブロックコメント１終了
 	IDC_EDIT_LINECOMMENT,			HIDC_EDIT_LINECOMMENT,			//行コメント１
@@ -1415,4 +1415,3 @@ BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustCol
 	*pColor = cc.rgbResult;
 	return TRUE;
 }
-

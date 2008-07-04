@@ -25,7 +25,7 @@
 static const DWORD p_helpids[] = {	//13000
 	IDOK,					HIDOK_DLG1,
 	IDCANCEL,				HIDCANCEL_DLG1,
-	IDC_EDIT1,				HIDC_DLG1_EDIT1,	//入力フィールド
+	IDC_EDIT_INPUT1,		HIDC_DLG1_EDIT1,	//入力フィールド	IDC_EDIT1->IDC_EDIT_INPUT1	2008/7/3 Uchi
 	IDC_STATIC_MSG,			HIDC_DLG1_EDIT1,	//メッセージ
 //	IDC_STATIC,				-1,
 	0, 0
@@ -147,8 +147,8 @@ INT_PTR CDlgInput1::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), EM_LIMITTEXT, m_nMaxTextLen, 0 );	/* 入力サイズ上限 */
-		DlgItem_SetText( hwndDlg, IDC_EDIT1, m_cmemText.GetStringPtr() );	/* テキスト */
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), EM_LIMITTEXT, m_nMaxTextLen, 0 );	/* 入力サイズ上限 */
+		DlgItem_SetText( hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr() );	/* テキスト */
 		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_MSG ), m_pszMessage );	/* メッセージ */
 
 		return TRUE;
@@ -161,8 +161,8 @@ INT_PTR CDlgInput1::DispatchEvent(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDOK:
-				m_cmemText.AllocStringBuffer( ::GetWindowTextLength( ::GetDlgItem( hwndDlg, IDC_EDIT1 ) ) );
-				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT1 ), m_cmemText.GetStringPtr(), m_nMaxTextLen + 1 );	/* テキスト */
+				m_cmemText.AllocStringBuffer( ::GetWindowTextLength( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ) ) );
+				::GetWindowText( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), m_cmemText.GetStringPtr(), m_nMaxTextLen + 1 );	/* テキスト */
 				::EndDialog( hwndDlg, TRUE );
 				return TRUE;
 			case IDCANCEL:
