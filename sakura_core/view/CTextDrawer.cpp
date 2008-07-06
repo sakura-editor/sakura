@@ -115,6 +115,10 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 			if(nDrawLength >= nDrawDataMaxLength)break;
 			nWorkWidth += pDrawDxArray[nDrawLength++];
 		}
+		// サロゲートペア対策	2008/7/5 Uchi
+		if (pDrawDxArray[nDrawLength] == 0) {
+			nDrawLength++;
+		}
 
 		//描画
 		::ExtTextOutW_AnyBuild(
@@ -1034,4 +1038,3 @@ void CTextDrawer::DispLineNumber(
 		cColorType.RewindPen(hdc);
 	}
 }
-

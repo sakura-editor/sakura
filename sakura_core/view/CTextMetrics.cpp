@@ -93,18 +93,33 @@ const int* CTextMetrics::GenerateDxArray(
 )
 {
 	using namespace WCODE;
+	bool bHigh;				// サロゲートペア（上位）
 
 	vResultArray->resize(nLength);
 	if(!pText || nLength<=0)return NULL;
 
 	int* p=&(*vResultArray)[0];
 	const wchar_t* q=pText;
+	bHigh = false;
 	for(int i=0;i<nLength;i++){
+		// サロゲートチェック BMP 以外は全角扱い	2008/7/5 Uchi
+		if (IsUTF16High(*q)) {
+			*p = nHankakuDx*2;
+			bHigh = true;
+		}
+		else if (IsUTF16Low(*q)) {
+			// サロゲートペア（下位）単独の場合は全角扱い
+			*p = (bHigh) ? 0 : nHankakuDx*2;
+			bHigh = false;
+		}
+		else 
 		if(IsHankaku(*q)){
 			*p = nHankakuDx;
+			bHigh = false;				// サロゲートペア対策	2008/7/5 Uchi
 		}
 		else{
 			*p = nHankakuDx*2;
+			bHigh = false;				// サロゲートペア対策	2008/7/5 Uchi
 		}
 		p++;
 		q++;
@@ -153,4 +168,3 @@ int CTextMetrics::CalcTextWidth2(
 	//ピクセル幅を計算
 	return CalcTextWidth(pText, nLength, pDxArray);
 }
-

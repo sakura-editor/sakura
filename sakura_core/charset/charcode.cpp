@@ -165,7 +165,7 @@ bool CalcHankakuByFont(wchar_t c)
 	if(cache.ExistCache(c))return cache.GetCache(c);
 
 	// -- -- 相対比較 -- -- //
-	bool value;;
+	bool value;
 	value = cache.CalcHankakuByFont(c);
 
 	// -- -- キャッシュ更新 -- -- //

@@ -651,11 +651,11 @@ void CCaret::ShowCaretPosInfo()
 				//auto_sprintf( szCaretChar, _T("%04x"), );
 				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
-				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar);
+				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった(Unicodeで表示)
 					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx - 1, szCaretChar);
+					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
 				}
 
 			}
