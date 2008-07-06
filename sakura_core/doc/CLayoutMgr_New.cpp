@@ -334,9 +334,9 @@ void CLayoutMgr::_DoLayout()
 					break;	//@@@ 2002.04.16 MIK
 				}
 				CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-				if( 0 == nCharKetas ){
-					nCharKetas = CLayoutInt(1);
-				}
+//				if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
+//					nCharKetas = CLayoutInt(1);
+//				}
 
 				if( nPosX + nCharKetas > nMaxLineKetas ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
@@ -731,9 +731,9 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 				// 2005-09-02 D.S.Koba GetSizeOfChar
 				// 2007.09.07 kobake   レイアウトとロジックの区別
 				nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-				if( 0 == nCharKetas ){
-					nCharKetas = CLayoutInt(1);
-				}
+//				if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
+//					nCharKetas = CLayoutInt(1);
+//				}
 				CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos);
 				if( 0 == nCharChars2 ){
 					break;
@@ -1129,5 +1129,3 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	}
 	return nIpos;	//	インデント
 }
-
-
