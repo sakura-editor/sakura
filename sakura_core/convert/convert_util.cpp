@@ -12,7 +12,7 @@ static const wchar_t tableZenKana_Normal[]=
 	L"ァィゥェォッャュョ"									//小    ※「ヵ」「ヶ」「ヮ」は除外。(半角が存在しないので)
 ;
 static const wchar_t tableZenKana_Dakuten[]=
-	L"ヴガギグゲゴザシズセゾダヂヅデド"						//濁点
+	L"ヴガギグゲゴザジズゼゾダヂヅデド"						//濁点
 	L"バビブベボ" L"\u30f7\u30fa"							//※後半2文字は「ワ゛」「ヲ゛」  ※「ヰ゛」(\u30f8)「ヱ゛」(\u30f9)は除外。(半角が存在しないので)
 ;
 static const wchar_t tableZenKana_HanDakuten[]=
