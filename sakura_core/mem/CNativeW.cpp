@@ -247,6 +247,19 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const 
 	if( pNext >= &pData[nDataLen] ){
 		pNext = &pData[nDataLen];
 	}
+
+	// サロゲートペア対応	2008/7/6 Uchi
+	if (WCODE::IsUTF16High(*pDataCurrent)) {
+		if( pNext+1 >= &pData[nDataLen] ){
+			pNext = &pData[nDataLen];
+		}
+		else {
+			if (WCODE::IsUTF16Low(*pNext)) {
+				pNext += 1;
+			}
+		}
+	}
+
 	return pNext;
 }
 
@@ -258,6 +271,19 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 	if( pPrev < pData ){
 		pPrev = pData;
 	}
+
+	// サロゲートペア対応	2008/7/6 Uchi
+	if (WCODE::IsUTF16Low(*pPrev)) {
+		if( pPrev-1 <= pData ){
+			pPrev = pData;
+		}
+		else {
+			if (WCODE::IsUTF16High(*(pPrev-1))) {
+				pPrev -= 1;
+			}
+		}
+	}
+
 	return pPrev;
 //	return ::CharPrevW_AnyBuild( pData, pDataCurrent );
 }

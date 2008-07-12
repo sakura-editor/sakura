@@ -133,12 +133,13 @@ ECharKind CWordParse::WhatKindOfChar(
 	int				nIdx
 )
 {
+	using namespace WCODE;
+
 	int nCharChars = CNativeW::GetSizeOfChar( pData, pDataLen, nIdx );
 	if( nCharChars == 0 ){
 		return CK_NULL;	// NULL
 	}
 	else if( nCharChars == 1 ){
-		using namespace WCODE;
 		wchar_t c=pData[nIdx];
 
 		//今までの半角
@@ -163,6 +164,16 @@ ECharKind CWordParse::WhatKindOfChar(
 		//未分類
 		if( IsHankaku(c) )return CK_ETC;	// 半角のその他
 		else return CK_ZEN_ETC;				// 全角のその他(漢字など)
+	}
+	else if( nCharChars == 2 ){
+		// サロゲートペア 2008/7/8 Uchi
+		if (IsUTF16High(pData[nIdx]) && IsUTF16Low(pData[nIdx+1])) {
+			int		nCode = 0x10000 + ((pData[nIdx] & 0x3FF)<<10) + (pData[nIdx+1] & 0x3FF);	// コードポイント
+			if (nCode >= 0x20000 && nCode <= 0x2FFFF) {	// CJKV 拡張予約域 Ext-B/Ext-C...
+				return CK_ZEN_ETC;				// 全角のその他(漢字など)
+			}
+		}
+		return CK_ETC;	// 半角のその他
 	}
 	else{
 		return CK_NULL;	// NULL
