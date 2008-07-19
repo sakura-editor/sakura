@@ -42,7 +42,7 @@ public:
 //	HWND Open( LPCTSTR );
 //	void Close( void );	/* モードレスダイアログの削除 */
 	BOOL IsCanceled( void ){ return m_bCANCEL; } /* IDCANCELボタンが押されたか？ */
-	BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 *//* BOOL->INT_PTR 2008/7/18 Uchi*/
 	void DeleteAsync( void );	/* 自動破棄を遅延実行する */	// 2008.05.28 ryoji
 
 //	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
