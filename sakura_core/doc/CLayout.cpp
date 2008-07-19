@@ -30,7 +30,7 @@ void CLayout::DUMP( void )
 	MYTRACE_A( "\n\n■CLayout::DUMP()======================\n" );
 	MYTRACE_A( "m_ptLogicPos.y=%d\t\t対応する論理行番号\n", m_ptLogicPos.y );
 	MYTRACE_A( "m_ptLogicPos.x=%d\t\t対応する論理行の先頭からのオフセット\n", m_ptLogicPos.x );
-	MYTRACE_A( "m_nLength=%d\t\t対応する論理行のハイト数\n", m_nLength.GetValue() );
+	MYTRACE_A( "m_nLength=%d\t\t対応する論理行のハイト数\n", (int)m_nLength );
 	MYTRACE_A( "m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n", m_nTypePrev );
 	MYTRACE_A( "======================\n" );
 #endif
@@ -77,6 +77,3 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const
 	}
 	return nRet;
 }
-
-
-
