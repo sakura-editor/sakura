@@ -79,7 +79,7 @@ EConvertResult CUtf7::UnicodeToUTF7( CMemory* pMem )
 
 	//èoóÕêÊ
 	wchar_t*		pUniBuf;
-	int				nUniBufLen = nDataLen / sizeof(wchar_t);
+	int				nUniBufLen = nDataLen;		// / sizeof(wchar_t);	2008/7/19 Uchi
 	pUniBuf = new wchar_t[nUniBufLen + 1];
 
 	int				i;
