@@ -20,7 +20,11 @@ class COleLibrary;
 #define _CEDITDROPTARGET_H_
 
 #include <windows.h>
+class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダ軽量化
+
+BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
+HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -73,6 +77,7 @@ public:
 	/*
 	||  Constructors
 	*/
+	CDropTarget( CEditWnd* );	// 2008.06.20 ryoji
 	CDropTarget( CEditView* );
 	~CDropTarget();
 	/*
@@ -80,6 +85,7 @@ public:
 	*/
 private: // 2002/2/10 aroka アクセス権変更
 	HWND			m_hWnd_DropTarget;
+	CEditWnd*		m_pCEditWnd;	// 2008.06.20 ryoji
 	CEditView*		m_pCEditView;
 //	void*			m_pCEditView;
 	//	static REFIID	m_owniid;

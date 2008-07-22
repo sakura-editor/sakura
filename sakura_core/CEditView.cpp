@@ -99,59 +99,6 @@ VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
 int CEditView::m_pnDx[MAXLINESIZE + 10];
 
-/*
-	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
-	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
-*/
-BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
-{
-	FORMATETC	fe;
-
-	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
-	//  tymed = TYMED_HGLOBALを指定すれば問題ない
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = TYMED_HGLOBAL;
-	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
-	return S_OK == pDataObject->QueryGetData( &fe );
-}
-HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
-{
-	FORMATETC fe;
-	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
-	fe.tymed = TYMED_HGLOBAL;
-
-	HGLOBAL hDest = NULL;
-	STGMEDIUM stgMedium;
-	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
-	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
-		if( stgMedium.pUnkForRelease == NULL ){
-			if( stgMedium.tymed == TYMED_HGLOBAL )
-				hDest = stgMedium.hGlobal;
-		}else{
-			if( stgMedium.tymed == TYMED_HGLOBAL ){
-				DWORD nSize = ::GlobalSize( stgMedium.hGlobal );
-				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
-				if( hDest != NULL ){
-					// copy the bits
-					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
-					LPVOID lpDest = ::GlobalLock( hDest );
-					memcpy( lpDest, lpSource, nSize );
-					::GlobalUnlock( hDest );
-					::GlobalUnlock( stgMedium.hGlobal );
-				}
-			}
-			::ReleaseStgMedium( &stgMedium );
-		}
-	}
-	return hDest;
-}
 
 
 /*
@@ -1121,6 +1068,10 @@ LRESULT CEditView::DispatchEvent(
 			
 		}
 		
+		return 0L;
+
+	case MYWM_DROPFILES:	// 独自のドロップファイル通知	// 2008.06.20 ryoji
+		OnMyDropFiles( (HDROP)wParam );
 		return 0L;
 
 	// 2007.10.02 nasukoji	マウスクリックにてアクティベートされた時はカーソル位置を移動しない
@@ -8690,6 +8641,7 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 
 /** DragEnter 処理
 	@date 2008.03.26 ryoji SAKURAClipフォーマット（NULL文字を含むテキスト）への対応を追加
+	@date 2008.06.20 ryoji CF_HDROPフォーマットへの対応を追加
 */
 STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
@@ -8708,10 +8660,14 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
 
-	CLIPFORMAT cf;
-	cf = GetAvailableClipFormat( pDataObject );
-	if( cf == 0 )
+	m_cfDragData = GetAvailableClipFormat( pDataObject );
+	if( m_cfDragData == 0 )
 		return E_INVALIDARG;
+	else if( m_cfDragData == CF_HDROP ){
+		// 右ボタンで入ってきたときだけファイルをビューで取り扱う
+		if( !(MK_RBUTTON & dwKeyState) )
+			return E_INVALIDARG;
+	}
 
 	/* 自分をアクティブペインにする */
 	m_pcEditDoc->SetActivePane( m_nMyIndex );
@@ -8744,7 +8700,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	if ( pdwEffect == NULL )
 		return E_INVALIDARG;
 
-	*pdwEffect = TranslateDropEffect( dwKeyState, pt, *pdwEffect );
+	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
 	return S_OK;
 }
@@ -8774,6 +8730,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 /** ドロップ処理
 	@date 2008.03.26 ryoji ドロップで貼り付けた範囲を選択状態にする
 	                       SAKURAClipフォーマット（NULL文字を含むテキスト）への対応を追加
+	@date 2008.06.20 ryoji CF_HDROPフォーマットへの対応を追加
 */
 STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
@@ -8814,9 +8771,13 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( cf == 0 )
 		return E_INVALIDARG;
 
-	*pdwEffect = TranslateDropEffect( dwKeyState, pt, *pdwEffect );
+	*pdwEffect = TranslateDropEffect( cf, dwKeyState, pt, *pdwEffect );
 	if( *pdwEffect == DROPEFFECT_NONE )
 		return E_INVALIDARG;
+
+	// ファイルドロップは PostMyDropFiles() で処理する
+	if( cf == CF_HDROP )
+		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
 	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
@@ -9076,6 +9037,142 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	return S_OK;
 }
 
+/** 独自ドロップファイルメッセージをポストする
+	@date 2008.06.20 ryoji 新規作成
+*/
+STDMETHODIMP CEditView::PostMyDropFiles( LPDATAOBJECT pDataObject )
+{
+	HGLOBAL hData = GetGlobalData( pDataObject, CF_HDROP );
+	if( hData == NULL )
+		return E_INVALIDARG;
+	LPVOID pData = ::GlobalLock( hData );
+	SIZE_T nSize = ::GlobalSize( hData );
+
+	// ドロップデータをコピーしてあとで独自のドロップファイル処理を行う
+	HGLOBAL hDrop = ::GlobalAlloc( GHND | GMEM_DDESHARE, nSize );
+	memcpy( ::GlobalLock( hDrop ), pData, nSize );
+	::GlobalUnlock( hDrop );
+	::PostMessage(
+		m_hWnd,
+		MYWM_DROPFILES,
+		(WPARAM)hDrop,
+		0
+	);
+
+	::GlobalUnlock( hData );
+	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+		::GlobalFree( hData );
+	}
+
+	return S_OK;
+}
+
+/** 独自ドロップファイルメッセージ処理
+	@date 2008.06.20 ryoji 新規作成
+*/
+void CEditView::OnMyDropFiles( HDROP hDrop )
+{
+	// 普通にメニュー操作ができるように入力状態をフォアグランドウィンドウにアタッチする
+	int nTid2 = ::GetWindowThreadProcessId( ::GetForegroundWindow(), NULL );
+	int nTid1 = ::GetCurrentThreadId();
+	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
+
+	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
+	HWND hwnd = ::CreateWindow(_T("STATIC"), _T(""), 0, 0, 0, 0, 0, NULL, NULL, m_hInstance, NULL );
+	::SetFocus(hwnd);
+
+	// メニューを作成する
+	POINT pt;
+	::GetCursorPos( &pt );
+	RECT rcWork;
+	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
+	HMENU hMenu = ::CreatePopupMenu();
+	::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, _T("パス名貼り付け(&P)") );
+	::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, _T("ファイル名貼り付け(&F)") );
+	::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
+	::InsertMenu( hMenu, 3, MF_BYPOSITION | MF_STRING, 110, _T("ファイルを開く(&O)") );
+	::InsertMenu( hMenu, 4, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
+	::InsertMenu( hMenu, 5, MF_BYPOSITION | MF_STRING, IDCANCEL, _T("キャンセル") );
+	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+									( pt.x > rcWork.left )? pt.x: rcWork.left,
+									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+								0, hwnd, NULL);
+	::DestroyMenu( hMenu );
+
+	::DestroyWindow( hwnd );
+
+	// 入力状態をデタッチする
+	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, FALSE );
+
+	// 選択されたメニューに対応する処理を実行する
+	switch( nId ){
+	case 110:	// ファイルを開く
+		// 通常のドロップファイル処理を行う
+		::SendMessage( m_pcEditDoc->m_pcEditWnd->m_hWnd, WM_DROPFILES, (WPARAM)hDrop, 0 );
+		break;
+
+	case 100:	// パス名を貼り付ける
+	case 101:	// ファイル名を貼り付ける
+		CMemory cmemBuf;
+		UINT nFiles;
+		TCHAR szPath[_MAX_PATH];
+		TCHAR szExt[_MAX_EXT];
+		TCHAR szWork[_MAX_PATH];
+
+		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, (LPSTR) NULL, 0 );
+		for( UINT i = 0; i < nFiles; i++ ){
+			::DragQueryFile( hDrop, i, szPath, sizeof(szPath)/sizeof(TCHAR) );
+			if( !::GetLongFileName( szPath, szWork ) )
+				continue;
+			if( nId == 100 ){	// パス名
+				::lstrcpy( szPath, szWork );
+			}else if( nId == 101 ){	// ファイル名
+				_tsplitpath( szWork, NULL, NULL, szPath, szExt );
+				::lstrcat( szPath, szExt );
+			}
+			cmemBuf.AppendSz( szPath );
+			if( nFiles > 1 ){
+				cmemBuf.AppendSz( m_pcEditDoc->GetNewLineCode().GetValue() );
+			}
+		}
+		::DragFinish( hDrop );
+
+		// 選択範囲の選択解除
+		if( IsTextSelected() ){
+			DisableSelectArea( TRUE );
+		}
+
+		// 挿入前のキャレット位置を記憶する
+		// （キャレットが行終端より右の場合は埋め込まれる空白分だけ桁位置をシフト）
+		int nCaretPosX_PHY_Old = m_nCaretPosX_PHY;
+		int nCaretPosY_PHY_Old = m_nCaretPosY_PHY;
+		const CLayout* pcLayout;
+		int nLineLen;
+		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ){
+			LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
+			if( nLineLen > 0 ){	// 行終端より右の場合には nLineLen に行全体の表示桁数が入っている
+				nCaretPosX_PHY_Old += (m_nCaretPosX - nLineLen);
+			}
+		}
+
+		// テキスト挿入
+		HandleCommand( F_INSTEXT, TRUE, (LPARAM)cmemBuf.GetPtr(), TRUE, 0, 0 );
+
+		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
+			&m_nSelectColmFrom, &m_nSelectLineFrom
+		);
+		m_nSelectLineTo = m_nCaretPosY;
+		m_nSelectColmTo = m_nCaretPosX;
+		DrawSelectArea();
+		break;
+	}
+
+	// メモリ解放
+	::GlobalFree( hDrop );
+}
+
 CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 {
 	CLIPFORMAT cf = 0;
@@ -9087,12 +9184,17 @@ CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 	//	cf = CF_UNICODETEXT;
 	else if( IsDataAvailable(pDataObject, CF_TEXT) )
 		cf = CF_TEXT;
+	else if( IsDataAvailable(pDataObject, CF_HDROP) )	// 2008.06.20 ryoji
+		cf = CF_HDROP;
 
 	return cf;
 }
 
-DWORD CEditView::TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffect )
+DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect )
 {
+	if( cf == CF_HDROP )	// 2008.06.20 ryoji
+		return DROPEFFECT_LINK;
+
 	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
 
 	/* このビューのカーソルがドラッグ元の選択範囲内にあるか */

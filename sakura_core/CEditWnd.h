@@ -37,6 +37,7 @@ class CEditWnd;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 class CPrintPreview;// 2002/2/10 aroka
+class CDropTarget;
 
 
 
@@ -173,6 +174,7 @@ public:
 	BOOL			m_bDragMode;
 	int				m_nDragPosOrgX;
 	int				m_nDragPosOrgY;
+	CDropTarget*	m_pcDropTarget;
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
 	//	変数を移動
 //	HANDLE			m_hThread;
@@ -195,7 +197,11 @@ public:
 	/*
 	|| 実装ヘルパ系
 	*/
-protected:
+	/* IDropTarget実装 */	// 2008.06.20 ryoji
+	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );
+	STDMETHODIMP DragLeave( void );
+	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 	void OnDropFiles( HDROP );	/* ファイルがドロップされた */
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
 	//	メソッドを移動

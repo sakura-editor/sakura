@@ -13,10 +13,65 @@
 */
 
 #include "stdafx.h"
+#include "CEditWnd.h"	// 2008.06.20 ryoji
 #include "CEditView.h"// 2002/2/3 aroka
 #include "CDropTarget.h"
 #include "global.h"
 #include "debug.h"// 2002/2/3 aroka
+
+/*
+	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
+	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
+*/
+BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+{
+	FORMATETC	fe;
+
+	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
+	//  tymed = TYMED_HGLOBALを指定すれば問題ない
+	fe.cfFormat = cfFormat;
+	fe.ptd = NULL;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	fe.tymed = TYMED_HGLOBAL;
+	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
+	return S_OK == pDataObject->QueryGetData( &fe );
+}
+HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+{
+	FORMATETC fe;
+	fe.cfFormat = cfFormat;
+	fe.ptd = NULL;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
+	fe.tymed = TYMED_HGLOBAL;
+
+	HGLOBAL hDest = NULL;
+	STGMEDIUM stgMedium;
+	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
+	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
+		if( stgMedium.pUnkForRelease == NULL ){
+			if( stgMedium.tymed == TYMED_HGLOBAL )
+				hDest = stgMedium.hGlobal;
+		}else{
+			if( stgMedium.tymed == TYMED_HGLOBAL ){
+				DWORD nSize = ::GlobalSize( stgMedium.hGlobal );
+				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
+				if( hDest != NULL ){
+					// copy the bits
+					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
+					LPVOID lpDest = ::GlobalLock( hDest );
+					memcpy( lpDest, lpSource, nSize );
+					::GlobalUnlock( hDest );
+					::GlobalUnlock( stgMedium.hGlobal );
+				}
+			}
+			::ReleaseStgMedium( &stgMedium );
+		}
+	}
+	return hDest;
+}
 
 
 COleLibrary CYbInterfaceBase::m_olelib;
@@ -91,8 +146,17 @@ DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 
 
+CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
+{
+	m_pCEditWnd = pCEditWnd;	// 2008.06.20 ryoji
+	m_pCEditView = NULL;
+	m_hWnd_DropTarget = NULL;
+	return;
+}
+
 CDropTarget::CDropTarget( CEditView* pCEditView )
 {
+	m_pCEditWnd = NULL;	// 2008.06.20 ryoji
 	m_pCEditView = pCEditView;
 	m_hWnd_DropTarget = NULL;
 	return;
@@ -142,6 +206,9 @@ STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState,
 //	}else{
 //		*pdwEffect = DROPEFFECT_NONE;
 //	}
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
+	}
 	return m_pCEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 //	return S_OK;
 }
@@ -157,6 +224,9 @@ STDMETHODIMP CDropTarget::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffe
 //		::SendMessage( m_hWnd_DropTarget, EM_SCROLLCARET, 0, 0 );
 //	}
 //	*pdwEffect = (m_pDataObject != NULL) ? DROPEFFECT_COPY : DROPEFFECT_NONE;
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->DragOver( dwKeyState, pt, pdwEffect );
+	}
 	return m_pCEditView->DragOver( dwKeyState, pt, pdwEffect );
 //	return S_OK;
 }
@@ -165,6 +235,9 @@ STDMETHODIMP CDropTarget::DragLeave( void )
 //	MYTRACE( "CDropTarget::DragLeave()\n" );
 //	m_pDataObject = NULL;
 //	::SetFocus(NULL);
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->DragLeave();
+	}
 	return m_pCEditView->DragLeave();
 //	return S_OK;
 }
@@ -205,6 +278,9 @@ STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POIN
 //	}
 //	m_pDataObject = NULL;
 //	::SetFocus( NULL );
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->Drop( pDataObject, dwKeyState, pt, pdwEffect );
+	}
 	return m_pCEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 //	return S_OK;
 }
