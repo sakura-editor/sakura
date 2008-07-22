@@ -13,6 +13,7 @@
 */
 
 #include "stdafx.h"
+#include "window/CEditWnd.h"	// 2008.06.20 ryoji
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "CDropTarget.h"
 #include "global.h"
@@ -92,8 +93,17 @@ DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 
 
+CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
+{
+	m_pCEditWnd = pCEditWnd;	// 2008.06.20 ryoji
+	m_pCEditView = NULL;
+	m_hWnd_DropTarget = NULL;
+	return;
+}
+
 CDropTarget::CDropTarget( CEditView* pCEditView )
 {
+	m_pCEditWnd = NULL;	// 2008.06.20 ryoji
 	m_pCEditView = pCEditView;
 	m_hWnd_DropTarget = NULL;
 	return;
@@ -132,20 +142,32 @@ STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState,
 #ifdef _DEBUG
 	MYTRACE_A( "CDropTarget::DragEnter()\n" );
 #endif
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
+	}
 	return m_pCEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 }
 STDMETHODIMP CDropTarget::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->DragOver( dwKeyState, pt, pdwEffect );
+	}
 	return m_pCEditView->DragOver( dwKeyState, pt, pdwEffect );
 }
 STDMETHODIMP CDropTarget::DragLeave( void )
 {
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->DragLeave();
+	}
 	return m_pCEditView->DragLeave();
 }
 
 
 STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
+	if( m_pCEditWnd ){	// 2008.06.20 ryoji
+		return m_pCEditWnd->Drop( pDataObject, dwKeyState, pt, pdwEffect );
+	}
 	return m_pCEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
 

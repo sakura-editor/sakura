@@ -129,6 +129,8 @@ CEditWnd::CEditWnd()
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
+
+	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
 }
 
 CEditWnd::~CEditWnd()
@@ -143,6 +145,9 @@ CEditWnd::~CEditWnd()
 	//	Dec. 4, 2002 genta
 	/* キャレットの行桁位置表示用フォント */
 	::DeleteObject( m_hFontCaretPosInfo );
+
+	delete m_pcDropTarget;	// 2008.06.20 ryoji
+	m_pcDropTarget = NULL;
 
 	m_hWnd = NULL;
 }
@@ -525,6 +530,7 @@ HWND CEditWnd::Create(
 
 	// ドロップされたファイルを受け入れる
 	::DragAcceptFiles( GetHwnd(), TRUE );
+	m_pcDropTarget->Register_DropTarget( m_hWnd );	// 右ボタンドロップ用	// 2008.06.20 ryoji
 
 	//アクティブ情報
 	m_bIsActiveApp = ( ::GetActiveWindow() == GetHwnd() );	// 2007.03.08 ryoji
@@ -1165,6 +1171,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 		/* ドロップされたファイルを受け入れるのを解除 */
 		::DragAcceptFiles( hwnd, FALSE );
+		m_pcDropTarget->Revoke_DropTarget();	// 右ボタンドロップ用	// 2008.06.20 ryoji
 
 		/* 編集ウィンドウリストからの削除 */
 		CShareData::getInstance()->DeleteEditWndList( GetHwnd() );
@@ -2479,6 +2486,52 @@ end_of_func_IsEnable:;
 
 
 
+
+STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+{
+	if( pDataObject == NULL || pdwEffect == NULL ){
+		return E_INVALIDARG;
+	}
+
+	// 右ボタンファイルドロップの場合だけ処理する
+	if( !((MK_RBUTTON & dwKeyState) && IsDataAvailable(pDataObject, CF_HDROP)) ){
+		*pdwEffect = DROPEFFECT_NONE;
+		return E_INVALIDARG;
+	}
+
+	// 印刷プレビューでは受け付けない
+	if( m_pPrintPreview ){
+		*pdwEffect = DROPEFFECT_NONE;
+		return E_INVALIDARG;
+	}
+
+	*pdwEffect &= DROPEFFECT_LINK;
+	return S_OK;
+}
+
+STDMETHODIMP CEditWnd::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+{
+	if( pdwEffect == NULL )
+		return E_INVALIDARG;
+
+	*pdwEffect &= DROPEFFECT_LINK;
+	return S_OK;
+}
+
+STDMETHODIMP CEditWnd::DragLeave( void )
+{
+	return S_OK;
+}
+
+STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+{
+	if( pDataObject == NULL || pdwEffect == NULL )
+		return E_INVALIDARG;
+
+	// ファイルドロップをアクティブビューで処理する
+	*pdwEffect &= DROPEFFECT_LINK;
+	return GetActiveView().PostMyDropFiles( pDataObject );
+}
 
 /* ファイルがドロップされた */
 void CEditWnd::OnDropFiles( HDROP hDrop )

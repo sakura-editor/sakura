@@ -7,6 +7,7 @@
 #include "COpeBlk.h"
 #include "CClipboard.h"
 #include "doc/CLayout.h"
+#include "mymessage.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
@@ -1138,10 +1139,14 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
 
-	CLIPFORMAT cf;
-	cf = GetAvailableClipFormat( pDataObject );
-	if( cf == 0 )
+	m_cfDragData = GetAvailableClipFormat( pDataObject );
+	if( m_cfDragData == 0 )
 		return E_INVALIDARG;
+	else if( m_cfDragData == CF_HDROP ){
+		// 右ボタンで入ってきたときだけファイルをビューで取り扱う
+		if( !(MK_RBUTTON & dwKeyState) )
+			return E_INVALIDARG;
+	}
 
 	/* 自分をアクティブペインにする */
 	m_pcEditWnd->SetActivePane( m_nMyIndex );
@@ -1173,7 +1178,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	if ( pdwEffect == NULL )
 		return E_INVALIDARG;
 
-	*pdwEffect = TranslateDropEffect( dwKeyState, pt, *pdwEffect );
+	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
 	return S_OK;
 }
@@ -1231,9 +1236,13 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( cf == 0 )
 		return E_INVALIDARG;
 
-	*pdwEffect = TranslateDropEffect( dwKeyState, pt, *pdwEffect );
+	*pdwEffect = TranslateDropEffect( cf, dwKeyState, pt, *pdwEffect );
 	if( *pdwEffect == DROPEFFECT_NONE )
 		return E_INVALIDARG;
+
+	// ファイルドロップは PostMyDropFiles() で処理する
+	if( cf == CF_HDROP )
+		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
 	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
@@ -1467,6 +1476,151 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	return S_OK;
 }
 
+/** 独自ドロップファイルメッセージをポストする
+	@date 2008.06.20 ryoji 新規作成
+*/
+STDMETHODIMP CEditView::PostMyDropFiles( LPDATAOBJECT pDataObject )
+{
+	HGLOBAL hData = GetGlobalData( pDataObject, CF_HDROP );
+	if( hData == NULL )
+		return E_INVALIDARG;
+	LPVOID pData = ::GlobalLock( hData );
+	SIZE_T nSize = ::GlobalSize( hData );
+
+	// ドロップデータをコピーしてあとで独自のドロップファイル処理を行う
+	HGLOBAL hDrop = ::GlobalAlloc( GHND | GMEM_DDESHARE, nSize );
+	memcpy_raw( ::GlobalLock( hDrop ), pData, nSize );
+	::GlobalUnlock( hDrop );
+	::PostMessageAny(
+		GetHwnd(),
+		MYWM_DROPFILES,
+		(WPARAM)hDrop,
+		0
+	);
+
+	::GlobalUnlock( hData );
+	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags( hData )) ){
+		::GlobalFree( hData );
+	}
+
+	return S_OK;
+}
+
+/** 独自ドロップファイルメッセージ処理
+	@date 2008.06.20 ryoji 新規作成
+*/
+void CEditView::OnMyDropFiles( HDROP hDrop )
+{
+	// 普通にメニュー操作ができるように入力状態をフォアグランドウィンドウにアタッチする
+	int nTid2 = ::GetWindowThreadProcessId( ::GetForegroundWindow(), NULL );
+	int nTid1 = ::GetCurrentThreadId();
+	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
+
+	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
+	HWND hwnd = ::CreateWindow(_T("STATIC"), _T(""), 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
+	::SetFocus(hwnd);
+
+	// メニューを作成する
+	POINT pt;
+	::GetCursorPos( &pt );
+	RECT rcWork;
+	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
+	HMENU hMenu = ::CreatePopupMenu();
+	::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, _T("パス名貼り付け(&P)") );
+	::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, _T("ファイル名貼り付け(&F)") );
+	::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
+	::InsertMenu( hMenu, 3, MF_BYPOSITION | MF_STRING, 110, _T("ファイルを開く(&O)") );
+	::InsertMenu( hMenu, 4, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
+	::InsertMenu( hMenu, 5, MF_BYPOSITION | MF_STRING, IDCANCEL, _T("キャンセル") );
+	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+									( pt.x > rcWork.left )? pt.x: rcWork.left,
+									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+								0, hwnd, NULL);
+	::DestroyMenu( hMenu );
+
+	::DestroyWindow( hwnd );
+
+	// 入力状態をデタッチする
+	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, FALSE );
+
+	// 選択されたメニューに対応する処理を実行する
+	switch( nId ){
+	case 110:	// ファイルを開く
+		// 通常のドロップファイル処理を行う
+		::SendMessageAny( m_pcEditWnd->GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
+		break;
+
+	case 100:	// パス名を貼り付ける
+	case 101:	// ファイル名を貼り付ける
+		CNativeW cmemBuf;
+		UINT nFiles;
+		TCHAR szPath[_MAX_PATH];
+		TCHAR szExt[_MAX_EXT];
+		TCHAR szWork[_MAX_PATH];
+
+		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0 );
+		for( UINT i = 0; i < nFiles; i++ ){
+			::DragQueryFile( hDrop, i, szPath, sizeof(szPath)/sizeof(TCHAR) );
+			if( !::GetLongFileName( szPath, szWork ) )
+				continue;
+			if( nId == 100 ){	// パス名
+				::lstrcpy( szPath, szWork );
+			}else if( nId == 101 ){	// ファイル名
+				_tsplitpath( szWork, NULL, NULL, szPath, szExt );
+				::lstrcat( szPath, szExt );
+			}
+#ifdef _UNICODE
+			cmemBuf.AppendString( szPath );
+#else
+			cmemBuf.AppendStringOld( szPath );
+#endif
+			if( nFiles > 1 ){
+				cmemBuf.AppendString( m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2() );
+			}
+		}
+		::DragFinish( hDrop );
+
+		// 選択範囲の選択解除
+		if( GetSelectionInfo().IsTextSelected() ){
+			GetSelectionInfo().DisableSelectArea( TRUE );
+		}
+
+		// 挿入前のキャレット位置を記憶する
+		// （キャレットが行終端より右の場合は埋め込まれる空白分だけ桁位置をシフト）
+		CLogicPoint ptCaretLogicPos_Old = GetCaret().GetCaretLogicPos();
+		const CLayout* pcLayout;
+		CLogicInt nLineLen;
+		CLayoutPoint ptCaretLayoutPos_Old = GetCaret().GetCaretLayoutPos();
+		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout ) ){
+			CLayoutInt nLineAllColLen;
+			LineColmnToIndex2( pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen );
+			if( nLineAllColLen > CLayoutInt(0) ){	// 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
+				ptCaretLogicPos_Old.SetX(
+					ptCaretLogicPos_Old.GetX2()
+					+ (Int)(ptCaretLayoutPos_Old.GetX2() - nLineAllColLen)
+				);
+			}
+		}
+
+		// テキスト挿入
+		GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
+
+		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
+		CLayoutPoint ptSelectFrom;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+			ptCaretLogicPos_Old,
+			&ptSelectFrom
+		);
+		GetSelectionInfo().m_sSelect.SetFrom( ptSelectFrom );
+		GetSelectionInfo().m_sSelect.SetTo( GetCaret().GetCaretLayoutPos() );
+		GetSelectionInfo().DrawSelectArea();
+		break;
+	}
+
+	// メモリ解放
+	::GlobalFree( hDrop );
+}
+
 CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 {
 	CLIPFORMAT cf = 0;
@@ -1478,12 +1632,17 @@ CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
 		cf = CF_UNICODETEXT;
 	else if( IsDataAvailable(pDataObject, CF_TEXT) )
 		cf = CF_TEXT;
+	else if( IsDataAvailable(pDataObject, CF_HDROP) )	// 2008.06.20 ryoji
+		cf = CF_HDROP;
 
 	return cf;
 }
 
-DWORD CEditView::TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffect )
+DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect )
 {
+	if( cf == CF_HDROP )	// 2008.06.20 ryoji
+		return DROPEFFECT_LINK;
+
 	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
 
 	/* このビューのカーソルがドラッグ元の選択範囲内にあるか */

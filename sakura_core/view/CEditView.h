@@ -323,8 +323,10 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragOver(DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	STDMETHODIMP PostMyDropFiles( LPDATAOBJECT pDataObject );		/* 独自ドロップファイルメッセージをポストする */	// 2008.06.20 ryoji
+	void OnMyDropFiles( HDROP hDrop );								/* 独自ドロップファイルメッセージ処理 */	// 2008.06.20 ryoji
 	CLIPFORMAT GetAvailableClipFormat( LPDATAOBJECT pDataObject );
-	DWORD TranslateDropEffect( DWORD dwKeyState, POINTL pt, DWORD dwEffect );
+	DWORD TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect );
 	bool IsDragSource( void );
 
 	void _SetDragMode(BOOL b)
@@ -598,6 +600,7 @@ public:
 	//D&D
 	CDropTarget*	m_pcDropTarget;
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
+	CLIPFORMAT		m_cfDragData;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
 	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */
 	CLayoutPoint	m_ptCaretPos_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
 	CLayoutInt		m_nCaretPosX_Prev_DragEnter;	/* ドラッグ開始時のX座標記憶 */	// 2007.12.09 ryoji
