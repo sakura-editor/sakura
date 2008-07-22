@@ -51,6 +51,7 @@ class CEditWnd;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 class CPrintPreview;// 2002/2/10 aroka
+class CDropTarget;
 
 
 //メインウィンドウ内コントロールID
@@ -279,6 +280,12 @@ public:
 	bool GetDragMode() const{ return m_bDragMode; }
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
+	/* IDropTarget実装 */	// 2008.06.20 ryoji
+	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );
+	STDMETHODIMP DragLeave( void );
+	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+
 	//フォーカス管理
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
@@ -341,6 +348,7 @@ private:
 	//D&Dフラグ
 	bool			m_bDragMode;
 	CMyPoint		m_ptDragPosOrg;
+	CDropTarget*	m_pcDropTarget;
 
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
