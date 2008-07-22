@@ -3621,7 +3621,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_TAB_SEPARATE:	// 2007.06.20 ryoji ’Ç‰Á
 	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji ’Ç‰Á
 	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji ’Ç‰Á
-		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin && !::IsZoomed( pcEditDoc->m_hwndParent ) );
+		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin );
 	}
 	return TRUE;
 }

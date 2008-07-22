@@ -218,25 +218,22 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		{
 			// タブの分離処理
 			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
-				if( !::IsZoomed( m_hwndParent ) )
+				HWND hwndAncestor;
+				POINT ptCursor;
+
+				::GetCursorPos( &ptCursor );
+				hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
+				if( hwndAncestor != m_hwndParent )	// 自画面の外でドロップ
 				{
-					HWND hwndAncestor;
-					POINT ptCursor;
+					// タブ移動
+					TCITEM	tcitem;
+					tcitem.mask   = TCIF_PARAM;
+					tcitem.lParam = (LPARAM)0;
+					TabCtrl_GetItem( m_hwndTab, m_nSrcTab, &tcitem );
+					HWND hwndSrc = (HWND)tcitem.lParam;
+					HWND hwndDst = CShareData::getInstance()->IsEditWnd( hwndAncestor )? hwndAncestor: NULL;
 
-					::GetCursorPos( &ptCursor );
-					hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
-					if( hwndAncestor != m_hwndParent )	// 自画面の外でドロップ
-					{
-						// タブ移動
-						TCITEM	tcitem;
-						tcitem.mask   = TCIF_PARAM;
-						tcitem.lParam = (LPARAM)0;
-						TabCtrl_GetItem( m_hwndTab, m_nSrcTab, &tcitem );
-						HWND hwndSrc = (HWND)tcitem.lParam;
-						HWND hwndDst = CShareData::getInstance()->IsEditWnd( hwndAncestor )? hwndAncestor: NULL;
-
-						SeparateGroup( hwndSrc, hwndDst, m_ptSrcCursor, ptCursor );
-					}
+					SeparateGroup( hwndSrc, hwndDst, m_ptSrcCursor, ptCursor );
 				}
 			}
 		}
@@ -284,20 +281,17 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		{
 			if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 			{
-				if( !::IsZoomed( m_hwndParent ) )
-				{
-					HWND hwndAncestor;
-					POINT ptCursor;
+				HWND hwndAncestor;
+				POINT ptCursor;
 
-					::GetCursorPos( &ptCursor );
-					hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
-					if( hwndAncestor != m_hwndParent )	// 自画面の外にカーソルがある
-					{
-						if( CShareData::getInstance()->IsEditWnd( hwndAncestor ) )
-							lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_JOIN);	// 結合カーソル
-						else
-							lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_SEPARATE);	// 分離カーソル
-					}
+				::GetCursorPos( &ptCursor );
+				hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
+				if( hwndAncestor != m_hwndParent )	// 自画面の外にカーソルがある
+				{
+					if( CShareData::getInstance()->IsEditWnd( hwndAncestor ) )
+						lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_JOIN);	// 結合カーソル
+					else
+						lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_SEPARATE);	// 分離カーソル
 				}
 			}
 		}
@@ -463,19 +457,19 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 
 /** タブ分離処理
 
+	アクティブなウィンドウ（先頭ウィンドウ）がアクティブを維持するように分離する
+	※なるべく非アクティブにならないように分離し、非アクティブになってしまったら強制的に戻す
+
 	@date 2007.06.20 ryoji 新規作成
+	@date 2007.11.30 ryoji 強制的なアクティブ化戻しを追加して最大化時のタブ分離の封印を解除
 */
 BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop )
 {
 	HWND hWnd = m_hwndParent;
-	if( hWnd != ::GetForegroundWindow() )
+	EditNode* pTopEditNode = CShareData::getInstance()->GetEditNodeAt( 0, 0 );
+	if( pTopEditNode == NULL )
 		return FALSE;
-	// 最大化時は切り離さない（最大化時の処理コードも残してあるが動作不安定のため、無理しないでおく）
-	// Note. マルチモニタで別モニタに切り離すとき、
-	//       両モニタの画面がアクティブになってしまうことがある
-	//       この場合エディタ内部状態もおかしくなっており、
-	//       結合しなおして別タブ選択すると離れてしまったりする（Win XPだけ？）
-	if( ::IsZoomed( hWnd ) )
+	if( hWnd != pTopEditNode->m_hWnd || hWnd != ::GetForegroundWindow() )
 		return FALSE;
 	if(	hWnd != CShareData::getInstance()->GetTopEditWnd( hwndSrc ) )
 		return FALSE;
@@ -486,6 +480,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 
 	EditNode* pSrcEditNode = CShareData::getInstance()->GetEditNode( hwndSrc );
 	EditNode* pDstEditNode = CShareData::getInstance()->GetEditNode( hwndDst );
+	int showCmdRestore = pDstEditNode? pDstEditNode->m_showCmdRestore: SW_SHOWNA;
 
 	// グループ変更するウィンドウが先頭ウィンドウなら次のウィンドウを可視にする（手前には出さない）
 	// そうでなければ新規グループになる場合に別ウィンドウよりは手前に表示されるよう不可視のまま先頭ウィンドウのすぐ後ろにもってきておく
@@ -565,35 +560,23 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 				wp.rcNormalPosition.bottom += (rcDstWork.top - wp.rcNormalPosition.top);
 				wp.rcNormalPosition.top += (rcDstWork.top - wp.rcNormalPosition.top);
 			}
-			if( ::IsZoomed( hwndSrc ) )
-			{
-				// もともと最大化されていた場合は一旦通常サイズで表示しないと新しいサイズが記憶されない
-				wp.showCmd = SW_SHOWNOACTIVATE;
-				::SetWindowPlacement( hwndSrc, &wp );
-				wp.showCmd = SW_SHOWMAXIMIZED;
-			}
 		}
 
-		if( wp.showCmd != SW_SHOWMAXIMIZED )
-			wp.showCmd = SW_SHOWNOACTIVATE;	// 移動ウィンドウがアクティブでないときはそのままなるべくアクティブ化しない
-		::SetWindowPlacement( hwndSrc, &wp );
+		SetCarmWindowPlacement( hwndSrc, &wp );
 	}
 	else
 	{	// 既存グループのウィンドウ処理
-		// 移動先の WS_EX_TOPMOST 状態を引き継ぐ
-		HWND hWndInsertAfter = (::GetWindowLongPtr( hwndDst, GWL_EXSTYLE ) & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST;
-		::SetWindowPos( hwndSrc, hWndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 		if( bSrcIsTop )
-		{
-			// ウィンドウを移動先に表示する（先頭ウィンドウが既存グループに移動した）
+		{	// 先頭ウィンドウの既存グループへの移動
+			// 移動先の WS_EX_TOPMOST 状態を引き継ぐ
+			HWND hWndInsertAfter = (::GetWindowLongPtr( hwndDst, GWL_EXSTYLE ) & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST;
+			::SetWindowPos( hwndSrc, hWndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
+			// ウィンドウを移動先に表示する
 			::GetWindowPlacement( hwndDst, &wp );
-			if( ::IsZoomed( hwndSrc ) && wp.showCmd == SW_SHOWMAXIMIZED )
-			{
-				wp.showCmd = SW_SHOWNOACTIVATE;
-				::SetWindowPlacement( hwndSrc, &wp );
-				wp.showCmd = SW_SHOWMAXIMIZED;
-			}
-			::SetWindowPlacement( hwndSrc, &wp );
+			if( wp.showCmd == SW_SHOWMINIMIZED )
+				wp.showCmd = showCmdRestore;
+			SetCarmWindowPlacement( hwndSrc, &wp );
 			::ShowWindow( hwndDst, SW_HIDE );	// 移動先の以前の先頭ウィンドウを消す
 		}
 	}
@@ -603,6 +586,36 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 	for( int group = 0; group < sizeof( notifygroups )/sizeof( notifygroups[0] ); group++ ){
 		CShareData::getInstance()->PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY,
 			(WPARAM)TWNT_REFRESH, (LPARAM)bSrcIsTop, NULL, notifygroups[group] );
+	}
+
+	// 内部的な先頭ウィンドウが変化していたら元の先頭ウィンドウを先頭に戻す。
+	// Note. 非アクティブウィンドウに対して次の操作を行った場合、画面が手前には出ない場合でも
+	// アクティブ化は発生して内部管理のウィンドウ順序が変化してしまっている。
+	// （内部管理のウィンドウ順序は各操作に同期して変化する）
+	//   ・SW_SHOWMAXIMIZED操作
+	//   ・元に戻すサイズが最大化のウィンドウに対するSW_SHOWNOACTIVATE操作
+	// Windowsのアクティブウィンドウはスレッド単位に管理されるので複数のウィンドウがアクティブになっている場合がある。
+	pTopEditNode = CShareData::getInstance()->GetEditNodeAt( 0, 0 );	// 全体の先頭ウィンドウ情報を取得
+	HWND hwndLastTop = pTopEditNode? pTopEditNode->m_hWnd: NULL;
+	if( hwndLastTop != hwndTop )
+	{
+		HWND hwndFore = ::GetForegroundWindow();
+		if( hwndFore == hwndTop )
+		{	// 元の先頭ウィンドウが手前なのに最後にアクティブ化されたのが別ウィンドウになっている
+			// 内部的な先頭ウィンドウを手前に出して状態整合（元の先頭ウィンドウは一旦非アクティブにする）
+			SetForegroundWindow( hwndLastTop );
+			hwndFore = ::GetForegroundWindow();
+		}
+
+		// 元の先頭ウィンドウ（自分）を手前に出す
+		DWORD dwTidFore = ::GetWindowThreadProcessId( hwndFore, NULL );
+		DWORD dwTidTop = ::GetWindowThreadProcessId( hwndTop, NULL );
+		::AttachThreadInput( dwTidTop, dwTidFore, TRUE );
+		SetForegroundWindow( hwndTop );
+		::AttachThreadInput( dwTidTop, dwTidFore, FALSE );
+
+		// WinXP Visual Styleでは上の操作で hwndLastTop が非アクティブ化しても
+		// タイトルバー色だけアクティブのままということがあるかもしれない
 	}
 
 	return TRUE;
@@ -1744,33 +1757,45 @@ void CTabWnd::AdjustWindowPlacement( void )
 			if( wp.showCmd == SW_SHOWMINIMIZED )
 				wp.showCmd = pEditNode->m_showCmdRestore;
 			::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
-
-			if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
-			{
-				WINDOWPLACEMENT wpCur;
-				wpCur.length = sizeof( WINDOWPLACEMENT );
-				::GetWindowPlacement( hwnd, &wpCur );
-				if( !::EqualRect( &wp.rcNormalPosition, &wpCur.rcNormalPosition ) )
-				{
-					// ウィンドウの通常サイズが目的のサイズと違っているときは一旦通常サイズで表示してから最大化する
-					// Note. マルチモニタで以前に別モニタで最大化されていた画面は一旦通常サイズに戻しておかないと元の別モニタ側に表示されてしまう
-					wp.showCmd = SW_SHOWNOACTIVATE;
-					::SetWindowPlacement( hwnd, &wp );	// 通常サイズ表示
-					wp.showCmd = SW_SHOWMAXIMIZED;
-				}
-				else
-				{
-					wp.showCmd = SW_SHOWNA;
-				}
-			}
-			else if( wp.showCmd != SW_SHOWMAXIMIZED )
-			{
-				wp.showCmd = SW_SHOWNOACTIVATE;
-			}
-			::SetWindowPlacement( hwnd, &wp );	// 位置を復元する
+			SetCarmWindowPlacement( hwnd, &wp );	// 位置を復元する
 			::UpdateWindow( hwnd );	// 強制描画
 		}
 	}
+}
+
+/*!	アクティブ化の少ない SetWindowPlacement() を実行する
+
+	@author ryoji
+	@date 2007.11.30 新規作成
+*/
+int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl )
+{
+	WINDOWPLACEMENT wp = *pWndpl;
+	if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
+	{
+		WINDOWPLACEMENT wpCur;
+		wpCur.length = sizeof( WINDOWPLACEMENT );
+		::GetWindowPlacement( hwnd, &wpCur );
+		if( !::EqualRect( &wp.rcNormalPosition, &wpCur.rcNormalPosition ) )
+		{
+			// ウィンドウの通常サイズが目的のサイズと違っているときは一旦通常サイズで表示してから最大化する
+			// Note. マルチモニタで以前に別モニタで最大化されていた画面は一旦通常サイズに戻しておかないと元の別モニタ側に表示されてしまう
+			// （本当はここは表示モニタが変わるときだけやればOKだけど、GetMonitorWorkRect()とSetWindowPlacementでは座標系がちょっと違うので）
+			wp.showCmd = SW_SHOWNOACTIVATE;
+			::SetWindowPlacement( hwnd, &wp );
+			wp.showCmd = SW_SHOWMAXIMIZED;
+		}
+		else
+		{
+			wp.showCmd = SW_SHOWNA;	// そのまま最大表示
+		}
+	}
+	else if( wp.showCmd != SW_SHOWMAXIMIZED )
+	{
+		wp.showCmd = SW_SHOWNOACTIVATE;
+	}
+	::SetWindowPlacement( hwnd, &wp );
+	return wp.showCmd;
 }
 
 void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
@@ -2655,6 +2680,7 @@ void CTabWnd::MoveLeft( void )
 
 /** 新規グループを作成する（現在のグループから分離）
 	@date 2007.06.20 ryoji 新規作成
+	@date 2007.11.30 ryoji 最大化時の分離対応
 */
 void CTabWnd::Separate( void )
 {
@@ -2667,32 +2693,40 @@ void CTabWnd::Separate( void )
 		int cy;
 
 		::GetWindowRect( m_hwndParent, &rc );
-		ptSrc.x = rc.left;
-		ptSrc.y = rc.top;
-		cy = ::GetSystemMetrics( SM_CYCAPTION );
-		rc.left += cy;
-		rc.right += cy;
-		rc.top += cy;
-		rc.bottom += cy;
-		GetMonitorWorkRect( m_hwndParent, &rcWork );
-		if( rc.bottom > rcWork.bottom ){
-			rc.top -= (rc.bottom - rcWork.bottom);
-			rc.bottom = rcWork.bottom;
+		if( ::IsZoomed( m_hwndParent ) )
+		{
+			ptSrc.x = ptDst.x = ( rc.left + rc.right ) / 2;
+			ptSrc.y = ptDst.y = ( rc.top + rc.bottom ) / 2;
 		}
-		if( rc.right > rcWork.right ){
-			rc.left -= (rc.right - rcWork.right);
-			rc.right = rcWork.right;
+		else
+		{
+			ptSrc.x = rc.left;
+			ptSrc.y = rc.top;
+			cy = ::GetSystemMetrics( SM_CYCAPTION );
+			rc.left += cy;
+			rc.right += cy;
+			rc.top += cy;
+			rc.bottom += cy;
+			GetMonitorWorkRect( m_hwndParent, &rcWork );
+			if( rc.bottom > rcWork.bottom ){
+				rc.top -= (rc.bottom - rcWork.bottom);
+				rc.bottom = rcWork.bottom;
+			}
+			if( rc.right > rcWork.right ){
+				rc.left -= (rc.right - rcWork.right);
+				rc.right = rcWork.right;
+			}
+			if( rc.top < rcWork.top ){
+				rc.bottom += (rcWork.top - rc.top);
+				rc.top = rcWork.top;
+			}
+			if( rc.left < rcWork.left ){
+				rc.right += (rcWork.left - rc.left);
+				rc.left = rcWork.left;
+			}
+			ptDst.x = rc.left;
+			ptDst.y = rc.top;
 		}
-		if( rc.top < rcWork.top ){
-			rc.bottom += (rcWork.top - rc.top);
-			rc.top = rcWork.top;
-		}
-		if( rc.left < rcWork.left ){
-			rc.right += (rcWork.left - rc.left);
-			rc.left = rcWork.left;
-		}
-		ptDst.x = rc.left;
-		ptDst.y = rc.top;
 
 		SeparateGroup( m_hwndParent, NULL, ptSrc, ptDst );
 	}
