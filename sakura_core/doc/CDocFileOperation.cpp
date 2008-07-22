@@ -124,6 +124,8 @@ void CDocFileOperation::ReloadCurrentFile(
 			m_pcDocRef->m_cDocFile.m_sFileInfo.bBomExist = false;
 			break;
 		}
+		// カーソル位置表示を更新する	// 2008.07.22 ryoji
+		m_pcDocRef->m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();
 		return;
 	}
 
