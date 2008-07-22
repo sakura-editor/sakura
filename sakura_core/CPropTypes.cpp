@@ -13,6 +13,7 @@
 	Copyright (C) 2005, MIK, genta, Moca, ryoji
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -90,6 +91,13 @@ TYPE_NAME IndentTypeArr[] = {
 };
 const int nIndentTypeArrNum = sizeof( IndentTypeArr ) / sizeof( IndentTypeArr[0] );
 
+// 2008.05.30 nasukoji	テキストの折り返し方法
+TYPE_NAME WrapMethodArr[] = {
+	{ WRAP_NO_TEXT_WRAP,	"折り返さない" },
+	{ WRAP_SETTING_WIDTH,	"指定桁で折り返す" },
+	{ WRAP_WINDOW_WIDTH,	"右端で折り返す" },
+};
+const int	nWrapMethodArrNum = sizeof( WrapMethodArr ) / sizeof( WrapMethodArr[0] );
 
 //	行コメントに関する情報
 struct {
@@ -161,6 +169,7 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_OUTLINERULEFILE,		HIDC_EDIT_OUTLINERULEFILE,	//ルールファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_RULEFILE_REF,		HIDC_BUTTON_RULEFILE_REF,	//ルールファイル参照	// 2006/09/09 novice
 	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,			//文書アイコンを使う	// 2006.08.06 ryoji
+	IDC_COMBO_WRAPMETHOD,			HIDC_COMBO_WRAPMETHOD,		//テキストの折り返し方法		// 2008.05.30 nasukoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -799,7 +808,7 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), FALSE );
 				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), FALSE );
 
-				::SendMessage( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), CB_SETCURSEL, 0, 0 );
+				//::SendMessage( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), CB_SETCURSEL, 0, 0 );
 
 				return TRUE;
 			case IDC_RADIO_OUTLINERULEFILE:	/* アウトライン解析→ルールファイル */
@@ -1038,6 +1047,21 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	/* タイプ属性：拡張子リスト */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );
 
+	// 2008.05.30 nasukoji	テキストの折り返し方法
+	HWND	hwndCombo;
+	int		nSelPos;
+
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
+	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	nSelPos = 0;
+	for( i = 0; i < nWrapMethodArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)WrapMethodArr[i].pszName );
+		if( WrapMethodArr[i].nMethod == m_Types.m_nTextWrapMethod ){		// テキストの折り返し方法
+			nSelPos = i;
+		}
+	}
+	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
 	/* 折り返し文字数 */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, m_Types.m_nMaxLineSize, FALSE );
 
@@ -1086,8 +1110,8 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	
 		2002.04.01 YAZAKI ルールファイル関連追加
 	*/
-	HWND	hwndCombo;
-	int		nSelPos;
+//	HWND	hwndCombo;
+//	int		nSelPos;
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	nSelPos = 0;
@@ -1234,6 +1258,14 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, sizeof( m_Types.m_szTypeExts ) );
 
 
+	// 2008.05.30 nasukoji	テキストの折り返し方法
+	HWND	hwndCombo;
+	int		nSelPos;
+
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WRAPMETHOD );
+	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+	m_Types.m_nTextWrapMethod = WrapMethodArr[nSelPos].nMethod;		// テキストの折り返し方法
+
 	/* 折り返し文字数 */
 	m_Types.m_nMaxLineSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
 	if( m_Types.m_nMaxLineSize < MINLINESIZE ){
@@ -1299,8 +1331,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	
 		2002.04.01 YAZAKI ルールファイル関連追加
 	*/
-	HWND	hwndCombo;
-	int		nSelPos;
+//	HWND	hwndCombo;
+//	int		nSelPos;
 	
 	// 2003.06.23 Moca ルールを使っていなくてもファイル名を保持
 	::GetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, sizeof( m_Types.m_szOutlineRuleFilename ));

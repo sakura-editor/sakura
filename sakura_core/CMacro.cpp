@@ -13,6 +13,7 @@
 	Copyright (C) 2005, MIK, genta, maru, zenryaku, FILE
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -355,6 +356,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			break;
 		}
 		/* NO BREAK */
+	case F_TEXTWRAPMETHOD:	//	テキストの折り返し方法の指定。数値は、0x0（折り返さない）、0x1（指定桁で折り返す）、0x2（右端で折り返す）	// 2008.05.30 nasukoji
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動：未実装）
 		//	一つ目の引数が数値。
 		pcEditView->HandleCommand( Index, FALSE, (Argument[0] != NULL ? atoi(Argument[0]) : 0 ), 0, 0, 0 );
@@ -982,6 +984,20 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		//	2005.08.04 maru マクロ追加
 		{
 			Wrap( &Result )->Receive( View->m_pcEditDoc->IsEnableRedo() );
+		}
+		return true;
+	case F_CHGWRAPCOLM:
+		//	2008.06.19 ryoji マクロ追加
+		{
+			if( ArgSize != 1 ) return false;
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+			if( varCopy.Data.iVal < MINLINESIZE || varCopy.Data.iVal > MAXLINESIZE )
+				return true;
+			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
+			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod );
+			View->m_pcEditDoc->ChangeLayoutParam( false, 
+				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), varCopy.Data.iVal );
 		}
 		return true;
 	default:

@@ -210,6 +210,7 @@
 #define HLP000277	277 //共通設定『ファイル名表示』タブ
 #define HLP000279	279 //履歴の管理
 #define HLP000071	71 //フォント設定
+#define HLP000340	340 //テキストの折り返し方法			// 2008.05.31 nasukoji
 #define HLP000184	184 //現在のウィンドウ幅で折り返し
 #define HLP000125	125 //キーマクロの記録開始／終了
 #define HLP000127	127 //キーマクロの保存
@@ -537,6 +538,7 @@
 #define HIDC_EDIT_TABVIEWSTRING					11346 //TAB表示文字列
 #define HIDC_EDIT_KINSOKUHEAD					11347 //行頭禁則	//@@@ 2002.04.08 MIK
 #define HIDC_EDIT_KINSOKUTAIL					11348 //行頭禁則	//@@@ 2002.04.08 MIK
+#define HIDC_COMBO_WRAPMETHOD					11349 //テキストの折り返し方法		// 2008.05.30 nasukoji
 #define HIDC_CHECK_TAB_ARROW					11350 //矢印表示	// 2006.08.06 ryoji
 #define HIDC_COMBO_INDENTLAYOUT					11351 //折り返し行インデント	// 2006.08.06 ryoji
 #define HIDC_CHECK_RTRIM_PREVLINE				11352 //改行時に末尾の空白を削除	// 2006.08.06 ryoji

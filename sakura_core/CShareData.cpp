@@ -14,7 +14,7 @@
 	Copyright (C) 2005, Moca, MIK, genta, ryoji, りんご, aroka
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -250,9 +250,12 @@ struct ARRHEAD {
 
 	Version 86:
 	タイプ別設定最大値増加 2007.12.13 ryoji
+
+	Version 87:
+	テキストの折り返し方法追加 2008.05.30 nasukoji
 */
 
-const unsigned int uShareDataVersion = 86;
+const unsigned int uShareDataVersion = 87;
 
 /*
 ||	Singleton風
@@ -5025,7 +5028,8 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//2001.12.03 hor Alt+R を「RTRIM」に割当
 		{ 'R', "R",0, 0, F_REPLACE_DIALOG, 0, F_RTRIM, 0, 0, 0 },
 		//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
-		{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS_DIALOG, 0, 0, 0, 0 },
+		// 2008.05.30 nasukoji	Ctrl+Alt+S に「指定桁で折り返す」を追加
+		{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS_DIALOG, 0, 0, F_TMPWRAPSETTING, 0 },
 		//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
 		//Jan. 21, 2001	JEPRO	Ctrl+T に「タグジャンプ」, Shift+Ctrl+T に「タグジャンプバック」を追加
 		{ 'T', "T",0, 0, F_TAGJUMP, F_TAGJUMPBACK, 0, 0, F_TILE_H, 0 },
@@ -5033,9 +5037,11 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//Jan. 16, 2001	JEPRO	Ctrl+U に「行頭まで切り取り(改行単位)」, Shift+Ctrl+U に「行頭まで削除(改行単位)」を追加
 		{ 'U', "U",0, 0, F_LineCutToStart, F_LineDeleteToStart, 0, 0, F_WRAPWINDOWWIDTH, 0 },
 		{ 'V', "V",0, 0, F_PASTE, 0, 0, 0, 0, 0 },
-		{ 'W', "W",0, 0, F_SELECTWORD, 0, 0, 0, 0, 0 },
+		// 2008.05.30 nasukoji	Ctrl+Alt+W に「右端で折り返す」を追加
+		{ 'W', "W",0, 0, F_SELECTWORD, 0, 0, 0, F_TMPWRAPWINDOW, 0 },
 		//Jan. 13, 2001 JEPRO	Alt+X を「カスタムメニュー1」→「未定義」に変更し「カスタムメニュー1」は Alt+1 に移動
-		{ 'X', "X",0, 0, F_CUT, 0, 0, 0, 0, 0 },
+		// 2008.05.30 nasukoji	Ctrl+Alt+X に「折り返さない」を追加
+		{ 'X', "X",0, 0, F_CUT, 0, 0, 0, F_TMPWRAPNOWRAP, 0 },
 		{ 'Y', "Y",0, 0, F_REDO, 0, 0, 0, 0, 0 },
 		{ 'Z', "Z",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
 		/* 記号 */
@@ -5164,6 +5170,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 /************************/
 	int nIdx = 0;
 	int i;
+	pShareData->m_Types[nIdx].m_nTextWrapMethod = WRAP_SETTING_WIDTH;	// テキストの折り返し方法		// 2008.05.30 nasukoji
 	pShareData->m_Types[nIdx].m_nMaxLineSize = MAXLINESIZE;				/* 折り返し文字数 */
 	pShareData->m_Types[nIdx].m_nColmSpace = 0;					/* 文字と文字の隙間 */
 	pShareData->m_Types[nIdx].m_nLineSpace = 1;					/* 行間のすきま */

@@ -13,7 +13,7 @@
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -2668,6 +2668,18 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FONT			, "フォント設定(&F)..." );		//Sept. 17, 2000 jepro キャプションに「設定」を追加
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE		, "履歴の管理(&O)..." );	//履歴の管理	//@@@ 2003.04.08 MIK
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+
+			// 2008.05.30 nasukoji	テキストの折り返し方法の変更（一時設定）を追加
+			hMenuPopUp = ::CreatePopupMenu();
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TMPWRAPNOWRAP, "折り返さない(&X)" );		// 折り返さない（一時設定）
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TMPWRAPSETTING, "指定桁で折り返す(&S)" );	// 指定桁で折り返す（一時設定）
+			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TMPWRAPWINDOW, "右端で折り返す(&W)" );		// 右端で折り返す（一時設定）
+			// 折り返し方法に一時設定を適用中
+			if( m_cEditDoc.m_bTextWrapMethodCurTemp )
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "折り返し方法（一時設定適用中）(&X)" );
+			else
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "折り返し方法(&X)" );
+
 //@@@ 2002.01.14 YAZAKI 折り返さないコマンド追加
 // 20051022 aroka タイプ別設定値に戻すコマンド追加
 			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
@@ -2676,18 +2688,35 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				int width;
 				CEditView::TOGGLE_WRAP_ACTION mode = m_cEditDoc.ActiveView().GetWrapMode( width );
 				if( mode == CEditView::TGWRAP_NONE ){
-					pszLabel = "幅の変更は出来ません(&W)";
+					pszLabel = "折り返し桁数(&W)";
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , pszLabel );
 				}
 				else {
+					char szBuf[60];
+					pszLabel = szBuf;
 					if( mode == CEditView::TGWRAP_FULL ){
-						pszLabel = "折り返さない(&W)";
+						sprintf(
+							szBuf,
+							"折り返し桁数: %d 桁（最大）(&W)",
+							MAXLINESIZE
+						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
-						pszLabel = "現在のウィンドウ幅で折り返し(&W)";
+						int nActive = m_cEditDoc.GetActivePane();
+						sprintf(
+							szBuf,
+							"折り返し桁数: %d 桁（右端）(&W)",
+							m_cEditDoc.m_cEditViewArr[nActive].ViewColNumToWrapColNum(
+								m_cEditDoc.m_cEditViewArr[nActive].m_nViewColNum
+							)
+						);
 					}
 					else {	// TGWRAP_PROP
-						pszLabel = "タイプ別設定の幅で折り返し(&W)";
+						sprintf(
+							szBuf,
+							"折り返し桁数: %d 桁（指定）(&W)",
+							m_cEditDoc.GetDocumentAttribute().m_nMaxLineSize
+						);
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );
 				}
@@ -3238,6 +3267,25 @@ int CEditWnd::IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int 
 		}
 	case F_SHOWSTATUSBAR:
 		if( pCEditWnd->m_hwndStatusBar != NULL ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	// 2008.05.30 nasukoji	テキストの折り返し方法
+	case F_TMPWRAPNOWRAP:		// 折り返さない
+		if( pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_TMPWRAPSETTING:		// 指定桁で折り返す
+		if( pcEditDoc->m_nTextWrapMethodCur == WRAP_SETTING_WIDTH ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	case F_TMPWRAPWINDOW:		// 右端で折り返す
+		if( pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
 			return TRUE;
 		}else{
 			return FALSE;

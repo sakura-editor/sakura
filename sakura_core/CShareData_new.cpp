@@ -15,6 +15,7 @@
 	Copyright (C) 2005, MIK, genta, D.S.Koba, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 	Copyright (C) 2007, ryoji, genta, maru
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1131,6 +1132,8 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 //#endif
 		cProfile.IOProfileData( pszSecName, "bTabArrow"			, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
 		cProfile.IOProfileData( pszSecName, "bInsSpace"			, types.m_bInsSpace );	// 2001.12.03 hor
+
+		cProfile.IOProfileData( pszSecName, "nTextWrapMethod", types.m_nTextWrapMethod );		// 2008.05.30 nasukoji
 
 		// From Here Sep. 28, 2002 genta / YAZAKI
 		if( cProfile.IsReadingMode() ){

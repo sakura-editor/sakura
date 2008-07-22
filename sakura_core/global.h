@@ -13,6 +13,7 @@
 	Copyright (C) 2005, MIK, Moca, genta
 	Copyright (C) 2006, aroka, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -478,6 +479,13 @@ enum MOUSEFUNCTION_ASSIGN {
 	MOUSEFUNCTION_TRIPLECLICK	= 5,	//!< トリプルクリック
 	MOUSEFUNCTION_QUADCLICK		= 6,	//!< クアドラプルクリック
 	MOUSEFUNCTION_KEYBEGIN		= 7,	//!< マウスへの割り当て個数＝本当のキー割り当て先頭INDEX
+};
+
+// 2008.05.30 nasukoji	テキストの折り返し方法
+enum WRAP_TEXT_WRAP_METHOD {
+	WRAP_NO_TEXT_WRAP		= 0,		// 折り返さない（スクロールバーをテキスト幅に合わせる）
+	WRAP_SETTING_WIDTH,					// 指定桁で折り返す
+	WRAP_WINDOW_WIDTH,					// 右端で折り返す
 };
 
 ///////////////////////////////////////////////////////////////////////

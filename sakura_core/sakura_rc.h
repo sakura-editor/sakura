@@ -600,6 +600,7 @@
 #define IDC_CHECK_SENDSTDIN             1538
 #define IDD_PROP_TOOLBAR                1539
 #define IDC_CHECK_SortTabList           1540
+#define IDC_COMBO_WRAPMETHOD            1541
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_AUTHOR_MAIL                 4055

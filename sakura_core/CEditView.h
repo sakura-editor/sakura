@@ -14,7 +14,7 @@
 	Copyright (C) 2005, genta, Moca, MIK, ryoji, maru
 	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
 	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -154,6 +154,8 @@ public:
 	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
 	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
 	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
+	int GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
+	int ViewColNumToWrapColNum( int nViewColNum ) const;		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
 	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
 	int MoveCursorProperly( int, int, BOOL, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
@@ -598,6 +600,7 @@ protected:
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 	BOOL Command_PUTFILE( const char*, int, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
 	BOOL Command_INSFILE( const char*, int, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
+	void Command_TEXTWRAPMETHOD( int );			/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 
 	/* 編集系 */
 	void Command_CHAR( char );				/* 文字入力 */

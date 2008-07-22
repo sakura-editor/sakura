@@ -16,6 +16,7 @@
 	Copyright (C) 2005, MIK, genta, maru, FILE
 	Copyright (C) 2006, かろと, fon
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -50,6 +51,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 改行コード取得 2005.08.05 maru
 	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // Undo可能か調べる 2005.08.05 maru
 	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // Redo可能か調べる 2005.08.05 maru
+	{F_CHGWRAPCOLM,			"ChangeWrapColm",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},  VT_I4, NULL }, //折り返し桁変更 2008.06.19 ryoji
 	
 	//	終端
 	//	Jun. 27, 2002 genta
@@ -277,6 +279,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_WRAPWINDOWWIDTH,			"WrapWindowWidth",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	{F_FAVORITE,				"OptionFavorite",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 履歴の管理 */	//@@@ 2003.04.08 MIK
 	{F_SET_QUOTESTRING,			"SetMsgQuoteStr",	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定→書式→引用符の設定 */	//Jan. 29, 2005 genta
+	{F_TEXTWRAPMETHOD,			"TextWrapMethod",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* テキストの折り返し方法 */	// 2008.05.30 nasukoji
 
 
 	//	Oct. 9, 2001 genta 追加
@@ -945,6 +948,10 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_FONT						:/* フォント設定 */
 //	case F_WRAPWINDOWWIDTH			:/* 現在のウィンドウ幅で折り返し */	//Oct. 15, 2000 JEPRO
 //	case F_FAVORITE					:/* 履歴の管理 */	//@@@ 2003.04.08 MIK
+//	case F_TMPWRAPNOWRAP			:// 折り返さない（一時設定）		// 2008.05.30 nasukoji
+//	case F_TMPWRAPSETTING			:// 指定桁で折り返す（一時設定）	// 2008.05.30 nasukoji
+//	case F_TMPWRAPWINDOW			:// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TEXTWRAPMETHOD			:// テキストの折り返し方法			// 2008.05.30 nasukoji
 
 	case F_EXECCOMMAND				:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
 

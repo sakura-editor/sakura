@@ -13,6 +13,7 @@
 	Copyright (C) 2005, ryoji, genta, D.S.Koba
 	Copyright (C) 2006, genta, Moca, fon
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -836,7 +837,8 @@ void CEditView::Command_UNDO( void )
 		}
 		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		m_pcEditDoc->RedrawAllViews( this );/* 他のペインの表示状態を更新 */
+		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 #if 0
 	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
@@ -1035,7 +1037,8 @@ void CEditView::Command_REDO( void )
 		}
 		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		m_pcEditDoc->RedrawAllViews( this );/* 他のペインの表示状態を更新 */
+		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 #if 0
 	//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 		m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
@@ -3104,6 +3107,53 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 	}
 	Redraw();
 	return bResult;
+}
+
+/*!
+	@brief テキストの折り返し方法を変更する
+	
+	@param[in] nWrapMethod 折り返し方法
+		WRAP_NO_TEXT_WRAP  : 折り返さない
+		WRAP_SETTING_WIDTH ; 指定桁で折り返す
+		WRAP_WINDOW_WIDTH  ; 右端で折り返す
+	
+	@note ウィンドウが左右に分割されている場合、左側のウィンドウ幅を折り返し幅とする。
+	
+	@date 2008.05.31 nasukoji	新規作成
+*/
+void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
+{
+	// 現在の設定値と同じなら何もしない
+	if( m_pcEditDoc->m_nTextWrapMethodCur == nWrapMethod )
+		return;
+
+	int nWidth;
+
+	switch( nWrapMethod ){
+	case WRAP_NO_TEXT_WRAP:		// 折り返さない
+		nWidth = MAXLINESIZE;	// アプリケーションの最大幅で折り返し
+		break;
+
+	case WRAP_SETTING_WIDTH:	// 指定桁で折り返す
+		nWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		break;
+
+	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
+		// ウィンドウが左右に分割されている場合は左側のウィンドウ幅を使用する
+		nWidth = ViewColNumToWrapColNum( m_pcEditDoc->m_cEditViewArr[0].m_nViewColNum );
+		break;
+
+	default:
+		return;		// 不正な値の時は何もしない
+	}
+
+	m_pcEditDoc->m_nTextWrapMethodCur = nWrapMethod;	// 設定を記憶
+
+	// 折り返し方法の一時設定適用／一時設定適用解除	// 2008.06.08 ryoji
+	m_pcEditDoc->m_bTextWrapMethodCurTemp = !( m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod == nWrapMethod );
+
+	// 折り返し位置を変更
+	m_pcEditDoc->ChangeLayoutParam( false, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), nWidth );
 }
 
 /*[EOF]*/

@@ -13,6 +13,7 @@
 	Copyright (C) 2003, MIK, zenryaku, genta, little YOSHI
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, genta, D.S.Koba, ryoji
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1320,6 +1321,7 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 	現在のドキュメントのレイアウトのみを変更し，共通設定は変更しない．
 
 	@date 2005.08.14 genta 新規作成
+	@date 2008.06.18 ryoji レイアウト変更途中はカーソル移動の画面スクロールを見せない（画面のちらつき抑止）
 */
 void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineSize )
 {
@@ -1340,11 +1342,15 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 	m_cLayoutMgr.ChangeLayoutParam( NULL, nTabSize, nMaxLineSize );
 
 	//	座標の復元
+	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
+	SetDrawSwitchOfAllViews( FALSE );
 	RestorePhysPosOfAllView( posSave );
+	SetDrawSwitchOfAllViews( TRUE );
 
-	for( int i = 0; i < 4; i++ ){
+	for( int i = 0; i < sizeof(m_cEditViewArr)/sizeof(CEditView); i++ ){
 		if( m_cEditViewArr[i].m_hWnd ){
 			InvalidateRect( m_cEditViewArr[i].m_hWnd, NULL, TRUE );
+			m_cEditViewArr[i].AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
 

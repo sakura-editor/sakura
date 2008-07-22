@@ -1206,15 +1206,24 @@ void CEditView::OnSize( int cx, int cy )
 
 	m_nViewCx = cx - nCxVScroll - m_nViewAlignLeft;														/* 表示域の幅 */
 	m_nViewCy = cy - ((NULL != m_hwndHScrollBar)?nCyHScroll:0) - m_nViewAlignTop;						/* 表示域の高さ */
-	m_nViewColNum = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
-	m_nViewRowNum = m_nViewCy / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );	/* 表示域の行数 */
+	m_nViewColNum = (m_nViewCx - 1) / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
+	m_nViewRowNum = (m_nViewCy - 1) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );	/* 表示域の行数 */
 
 //1999.12.1 仕様変更
 //	/* ウィンドウリサイズ時にキャレット位置へスクロール */
 //	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
 
-	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+	// 2008.06.06 nasukoji	サイズ変更時の折り返し位置再計算
+	BOOL wrapChanged = FALSE;
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+		if( m_nMyIndex == 0 ){	// 左上隅のビューのサイズ変更時のみ処理する
+			// 右端で折り返すモードなら右端で折り返す	// 2008.06.08 ryoji
+			wrapChanged = m_pcEditDoc->WrapWindowWidth( 0 );
+		}
+	}
+
+	if( !wrapChanged )	// 折り返し位置が変更されていない
+		AdjustScrollBars();				// スクロールバーの状態を更新する
 
 	/* 再描画用メモリＢＭＰ */
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -2589,8 +2598,8 @@ void CEditView::SetFont( void )
 //		++m_nCharHeight;
 //	}
 
-	m_nViewColNum = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
-	m_nViewRowNum = m_nViewCy / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );	/* 表示域の行数 */
+	m_nViewColNum = (m_nViewCx - 1) / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
+	m_nViewRowNum = (m_nViewCy - 1) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );	/* 表示域の行数 */
 	/* 行番号表示に必要な幅を設定 */
 	DetectWidthOfLineNumberArea( FALSE );
 	/* 文字列描画用文字幅配列 */
@@ -2672,7 +2681,7 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 		m_nViewCx = (rc.right - rc.left) - nCxVScroll - m_nViewAlignLeft;	/* 表示域の幅 */
 		// 2008.05.23 nasukoji	表示域の桁数も算出する（右端カーソル移動時の表示場所ずれへの対処）
-		m_nViewColNum = m_nViewCx / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
+		m_nViewColNum = (m_nViewCx - 1) / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );	/* 表示域の桁数 */
 
 
 		if( bRedraw ){
@@ -2711,6 +2720,7 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 	の切替に失敗した場合には強制切替する
 
 	@date 2008.05.24 ryoji 有効／無効の強制切替を追加
+	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
 */
 void CEditView::AdjustScrollBars( void )
 {
@@ -2761,14 +2771,14 @@ void CEditView::AdjustScrollBars( void )
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
 		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-		si.nMax  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - 1;
+		si.nMax  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() + GetWrapOverhang() - 1;
 		si.nPage = m_nViewColNum;		/* 表示域の桁数 */
 		si.nPos  = m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
 		si.nTrackPos = 1;
 		::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
-		bEnable = ( m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+		bEnable = ( m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() + GetWrapOverhang() );
 		if( bEnable != (::IsWindowEnabled( m_hwndHScrollBar ) != 0) ){
 			::EnableWindow( m_hwndHScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
 		}
@@ -2778,6 +2788,36 @@ void CEditView::AdjustScrollBars( void )
 	}
 
 	return;
+}
+
+/** 折り返し桁以後のぶら下げ余白計算
+	@date 2008.06.08 ryoji 新規作成
+*/
+int CEditView::GetWrapOverhang( void ) const
+{
+	int nMargin = 0;
+	if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet )
+		nMargin += 2;	// 改行ぶら下げ
+	if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )
+		nMargin += 2;	// 句読点ぶら下げ
+	return nMargin;
+}
+
+/** 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する
+	@param nViewColNum	[in] ビューの桁数
+	@retval 折り返し桁数
+	@date 2008.06.08 ryoji 新規作成
+*/
+int CEditView::ViewColNumToWrapColNum( int nViewColNum ) const
+{
+	// ぶら下げ余白を差し引く
+	int nWidth = nViewColNum - GetWrapOverhang();
+
+	// MINLINESIZE未満の時はMINLINESIZEで折り返しとする
+	if( nWidth < MINLINESIZE )
+		nWidth = MINLINESIZE;		// 折り返し幅の最小桁数に設定
+
+	return nWidth;
 }
 
 /*!	@brief 選択を考慮した行桁指定によるカーソル移動
@@ -3470,7 +3510,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							if( NULL != m_pcOpeBlk ){
 								if( 0 < m_pcOpeBlk->GetNum() ){
 									m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-									m_pcEditDoc->RedrawAllViews( this );
+									if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+										m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 								}else{
 									delete m_pcOpeBlk;
 								}
@@ -5296,6 +5337,7 @@ int CEditView::ScrollAtV( int nPos )
 	@retval 実際にスクロールした桁数 (正:右方向/負:左方向)
 
 	@date 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
+	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
 */
 int CEditView::ScrollAtH( int nPos )
 {
@@ -5308,8 +5350,8 @@ int CEditView::ScrollAtH( int nPos )
 	//	Aug. 18, 2003 ryoji 変数のミスを修正
 	//	ウィンドウの幅をきわめて狭くしたときに編集領域が行番号から離れてしまうことがあった．
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewColNum  < nPos ){
-		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewColNum ;
+	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() + GetWrapOverhang() - m_nViewColNum < nPos ){
+		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() + GetWrapOverhang() - m_nViewColNum ;
 		//	May 29, 2004 genta 折り返し幅よりウィンドウ幅が大きいときにWM_HSCROLLが来ると
 		//	nPosが負の値になることがあり，その場合にスクロールバーから編集領域が
 		//	離れてしまう．
@@ -7256,7 +7298,8 @@ DWORD CEditView::DoGrep(
 	m_pcEditDoc->SetDrawSwitchOfAllViews( TRUE );
 
 	/* 再描画 */
-	m_pcEditDoc->RedrawAllViews( NULL );
+	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+		m_pcEditDoc->RedrawAllViews( NULL );
 
 	return nHitCount;
 }
@@ -9021,7 +9064,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-			m_pcEditDoc->RedrawAllViews( this );	// 他のペインの表示	// 2007.07.22 ryoji
+			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新	// 2007.07.22 ryoji
 		}else{
 			delete m_pcOpeBlk;
 		}

@@ -13,7 +13,7 @@
 	Copyright (C) 2005, genta, D.S.Koba, Moca, ryoji, aroka
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -2182,6 +2182,9 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_FONT:			return HLP000071;	/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正
 	case F_FAVORITE:		return HLP000279;	/* 履歴の管理 */	//@@@ 2003.04.08 MIK
+	case F_TMPWRAPNOWRAP:	return HLP000340;	// 折り返さない			// 2008.05.31 nasukoji
+	case F_TMPWRAPSETTING:	return HLP000340;	// 指定桁で折り返す		// 2008.05.31 nasukoji
+	case F_TMPWRAPWINDOW:	return HLP000340;	// 右端で折り返す		// 2008.05.31 nasukoji
 
 	/* マクロ */
 	case F_RECKEYMACRO:		return HLP000125;	/* キーマクロ記録開始／終了 */

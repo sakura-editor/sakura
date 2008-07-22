@@ -14,7 +14,7 @@
 	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
 	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -532,6 +532,10 @@ BOOL CEditView::HandleCommand(
 	case F_FAVORITE:		Command_Favorite();break;		//履歴の管理	//@@@ 2003.04.08 MIK
 	//	Jan. 29, 2005 genta 引用符の設定
 	case F_SET_QUOTESTRING:	Command_SET_QUOTESTRING((const char*)lparam1);	break;
+	case F_TMPWRAPNOWRAP:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_NO_TEXT_WRAP, 0, 0, 0 );break;	// 折り返さない（一時設定）			// 2008.05.30 nasukoji
+	case F_TMPWRAPSETTING:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_SETTING_WIDTH, 0, 0, 0 );break;	// 指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TMPWRAPWINDOW:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_WINDOW_WIDTH, 0, 0, 0 );break;	// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TEXTWRAPMETHOD:	Command_TEXTWRAPMETHOD( (int)lparam1 );break;		// テキストの折り返し方法		// 2008.05.30 nasukoji
 
 	/* マクロ系 */
 	case F_RECKEYMACRO:		Command_RECKEYMACRO();break;	/* キーマクロの記録開始／終了 */
@@ -665,8 +669,8 @@ BOOL CEditView::HandleCommand(
 		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-
-			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示
+			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 #if 0
 		//	2001/06/21 Start by asa-o: 他のペインの表示状態を更新
 			m_pcEditDoc->m_cEditViewArr[m_nMyIndex^1].Redraw();
@@ -4293,6 +4297,7 @@ void CEditView::Command_TYPE_LIST( void )
 			m_pcEditDoc->SetDocumentType( nSettingType & ~PROP_TEMPCHANGE_FLAG, true );
 			m_pcEditDoc->LockDocumentType();
 			/* 設定変更を反映させる */
+			m_pcEditDoc->m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
 			m_pcEditDoc->OnChangeSetting();
 		}
 		else{
@@ -9206,6 +9211,7 @@ void CEditView::Command_LOADKEYMACRO( void )
 
 	@date 2006.01.08 genta メニュー表示で同一の判定を使うため，Command_WRAPWINDOWWIDTH()より分離．
 	@date 2006.01.08 genta 判定条件を見直し
+	@date 2008.06.08 ryoji ウィンドウ幅設定にぶら下げ余白を追加
 */
 CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 {
@@ -9238,12 +9244,12 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 		c)　└→ウィンドウ幅
 	*/
 	
-	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == m_nViewColNum ){
+	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == ViewColNumToWrapColNum( m_nViewColNum ) ){
 		// a)
 		newWidth = MAXLINESIZE;
 		return TGWRAP_FULL;
 	}
-	else if( 10 > m_nViewColNum - 1 ){ // 2)
+	else if( MINLINESIZE > m_nViewColNum - GetWrapOverhang() ){ // 2)
 		// 3)
 		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() != MAXLINESIZE ){
 			// 4)
@@ -9269,7 +9275,7 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 		}
 		else {	// b) c)
 			//	現在のウィンドウ幅
-			newWidth = m_nViewColNum;
+			newWidth = ViewColNumToWrapColNum( m_nViewColNum );
 			return TGWRAP_WINDOW;
 		}
 	}
@@ -9288,14 +9294,17 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 {
 	// Jan. 8, 2006 genta 判定処理をGetWrapMode()へ移動
+	TOGGLE_WRAP_ACTION nWrapMode;
 	int newWidth;
-	
-	if( GetWrapMode( newWidth ) == TGWRAP_NONE ){
-		return;
+
+	nWrapMode = GetWrapMode( newWidth );
+	m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
+	m_pcEditDoc->m_bTextWrapMethodCurTemp = !( m_pcEditDoc->m_nTextWrapMethodCur == m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod );
+	if( nWrapMode == TGWRAP_NONE ){
+		return;	// 折り返し桁は元のまま
 	}
 
 	m_pcEditDoc->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );
-	
 
 	//	Aug. 14, 2005 genta 共通設定へは反映させない
 //	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;

@@ -14,7 +14,7 @@
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 	Copyright (C) 2006, genta, ryoji, aroka
 	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -110,7 +110,14 @@ CEditDoc::CEditDoc() :
 	/* レイアウト管理情報の初期化 */
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
 	/* レイアウト情報の変更 */
-	Types& ref = GetDocumentAttribute();
+//	Types& ref = GetDocumentAttribute();
+	// 2008.06.07 nasukoji	折り返し方法の追加に対応
+	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINESIZEで初期化する
+	// 「右端で折り返す」は、この後のOnSize()で再設定される
+	Types ref = GetDocumentAttribute();
+	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
+		ref.m_nMaxLineSize = MAXLINESIZE;
+	
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		NULL,/*hwndProgress*/
@@ -133,6 +140,10 @@ CEditDoc::CEditDoc() :
 
 	//	Oct. 2, 2005 genta 挿入モード
 	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
+
+	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
+	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 
 	return;
 }
@@ -697,7 +708,14 @@ BOOL CEditDoc::FileRead(
 
 	/* レイアウト情報の変更 */
 	{
-		Types& ref = GetDocumentAttribute();
+//		Types& ref = GetDocumentAttribute();
+		// 2008.06.07 nasukoji	折り返し方法の追加に対応
+		// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINESIZEで初期化する
+		// 「右端で折り返す」は、この後のOnSize()で再設定される
+		Types ref = GetDocumentAttribute();
+		if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
+			ref.m_nMaxLineSize = MAXLINESIZE;
+
 		m_cLayoutMgr.SetLayoutInfo(
 			TRUE,
 			hwndProgress,
@@ -1152,6 +1170,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 //		/* 変更フラグ(タイプ別設定) のセット */
 //		m_pShareData->m_nTypesModifyArr[nSettingType] = TRUE;
 		/* 変更された設定値のコピー */
+		int nTextWrapMethodOld = GetDocumentAttribute().m_nTextWrapMethod;
 		m_cPropTypes.GetTypeData( m_pShareData->m_Types[nSettingType] );
 
 //		/* 折り返し桁数が変更された */
@@ -1160,6 +1179,13 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 //			/* 全要素のクリア */
 //			m_cOpeBuf.ClearAll();
 //		}
+
+		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
+		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
+		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
+		if( nTextWrapMethodOld != GetDocumentAttribute().m_nTextWrapMethod )		// 設定が変更された
+			m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
+
 		/* アクセラレータテーブルの再作成 */
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
@@ -3304,6 +3330,43 @@ BOOL CEditDoc::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 	return FALSE;
 }
 
+/** 右端で折り返す
+	@param nViewColNum	[in] 右端で折り返すペインの番号
+	@retval 折り返しを変更したかどうか
+	@date 2008.06.08 ryoji 新規作成
+*/
+BOOL CEditDoc::WrapWindowWidth( int nPane )
+{
+	// 右端で折り返す
+	int nWidth = m_cEditViewArr[nPane].ViewColNumToWrapColNum( m_cEditViewArr[nPane].m_nViewColNum );
+	if( m_cLayoutMgr.GetMaxLineSize() != nWidth ){
+		ChangeLayoutParam( false, m_cLayoutMgr.GetTabSpace(), nWidth );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/** 折り返し方法関連の更新
+	@retval 画面更新したかどうか
+	@date 2008.06.10 ryoji 新規作成
+*/
+BOOL CEditDoc::UpdateTextWrap( void )
+{
+	// この関数はコマンド実行ごとに処理の最終段階で利用する
+	// （アンドゥ登録＆全ビュー更新のタイミング）
+	if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+		BOOL bWrap = WrapWindowWidth( 0 );	// 右端で折り返す
+		if( bWrap ){
+			// WrapWindowWidth() で追加した更新リージョンで画面更新する
+			for( int i = 0; i < sizeof(m_cEditViewArr)/sizeof(CEditView); i++ ){
+				::UpdateWindow( m_cEditViewArr[i].m_hWnd );
+			}
+		}
+		return bWrap;	// 画面更新＝折り返し変更
+	}
+	return FALSE;	// 画面更新しなかった
+}
+
 /*! コマンドコードによる処理振り分け
 
 	@param[in] nCommand MAKELONG( コマンドコード，送信元識別子 )
@@ -3543,7 +3606,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 /*! ビューに設定変更を反映させる
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
-
+	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
 */
 void CEditDoc::OnChangeSetting( void )
 {
@@ -3580,7 +3643,28 @@ void CEditDoc::OnChangeSetting( void )
 	int* posSaveAry = SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
-	Types& ref = GetDocumentAttribute();
+//	Types& ref = GetDocumentAttribute();
+	// 2008.06.07 nasukoji	折り返し方法の追加に対応
+	Types ref = GetDocumentAttribute();
+
+	// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
+	if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod )
+		m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
+
+	// 一時設定適用中でなければ折り返し方法変更
+	if( !m_bTextWrapMethodCurTemp )
+		m_nTextWrapMethodCur = ref.m_nTextWrapMethod;	// 折り返し方法
+
+	// 指定桁で折り返す：タイプ別設定を使用
+	// 右端で折り返す：仮に現在の折り返し幅を使用
+	// 上記以外：MAXLINESIZEを使用
+	if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
+		if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
+			ref.m_nMaxLineSize = m_cLayoutMgr.GetMaxLineSize();	// 現在の折り返し幅
+		else
+			ref.m_nMaxLineSize = MAXLINESIZE;
+	}
+
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		hwndProgress,
@@ -3836,6 +3920,11 @@ void CEditDoc::InitAllView( void )
 	int		i;
 
 	m_nCommandExecNum = 0;	/* コマンド実行回数 */
+
+	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
+	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+
 	/* 先頭へカーソルを移動 */
 	for( i = 0; i < 4; ++i ){
 		//	Apr. 1, 2001 genta

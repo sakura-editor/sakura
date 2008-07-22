@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, MIK, maru
 	Copyright (C) 2006, aroka, かろと, fon, ryoji
 	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2008, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -326,6 +327,9 @@
 
 #define F_FONT				31120	/* フォント設定 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+#define F_TMPWRAPNOWRAP		31141	// 折り返さない（一時設定）			// 2008.05.30 nasukoji
+#define F_TMPWRAPSETTING	31142	// 指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji
+#define F_TMPWRAPWINDOW		31143	// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
 
 
 /* マクロ系 */
@@ -426,6 +430,7 @@
 #define F_TRACEOUT            32802		// マクロ用アウトプットウインドウに出力	2006.04.26 maru
 #define F_PUTFILE             32803 	// 作業中ファイルの一時出力 2006.12.10 maru
 #define F_INSFILE             32804 	// キャレット位置にファイル挿入 2006.12.10 maru
+#define F_TEXTWRAPMETHOD      32805		// テキストの折り返し方法			// 2008.05.30 nasukoji
 
 #define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 
@@ -445,6 +450,7 @@
 #define F_GETLINECODE     40014 // 改行コード取得 2005.08.05 maru
 #define F_ISPOSSIBLEUNDO  40015 // Undo可能か調べる 2005.08.05 maru
 #define F_ISPOSSIBLEREDO  40016 // Redo可能か調べる 2005.08.05 maru
+#define F_CHGWRAPCOLM     40017 // 折り返し桁を取得、設定する 2008.06.19 ryoji
 
 //	2005.01.10 genta ISearch用補助コード
 #define F_ISEARCH_ADD_CHAR	0x10001	//	Incremental Searchへ1文字へ追加

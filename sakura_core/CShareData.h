@@ -14,7 +14,7 @@
 	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -235,6 +235,7 @@ struct Types {
 	int					m_nIdx;
 	char				m_szTypeName[64];				/*!< タイプ属性：名称 */
 	char				m_szTypeExts[64];				/*!< タイプ属性：拡張子リスト */
+	int					m_nTextWrapMethod;				/*!< テキストの折り返し方法 */		// 2008.05.30 nasukoji
 	int					m_nMaxLineSize;					/*!< 折り返し文字数 */
 	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
 	int					m_nLineSpace;					/*!< 行間のすきま */
