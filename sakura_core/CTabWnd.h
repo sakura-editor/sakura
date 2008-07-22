@@ -78,15 +78,8 @@ public:
 	DLLSHAREDATA*	m_pShareData;	/*!< 共有データ */
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */
-	HWND			m_hwndToolTip;	/*!< ツールチップ */
-	TCHAR			m_szTextTip1[1024];
-#ifdef UNICODE
-	//※現在扱っている文字コードとは逆の文字コードを指定する。
-	char			m_szTextTip2[1024];	//!< SJIS文字列でのツールチップ
-#else
-	//※現在扱っている文字コードとは逆の文字コードを指定する。
-	wchar_t			m_szTextTip2[1024];	//!< UNICODE文字列でのツールチップ
-#endif	//UNICODE
+	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
+	TCHAR			m_szTextTip[1024];	/*!< ツールチップのテキスト（タブ用） */
 
 protected:
 	/*
