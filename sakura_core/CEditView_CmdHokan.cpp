@@ -218,7 +218,6 @@ int CEditView::HokanSearchByFile(
 	int nCurX, nCurY; // 物理カーソル位置
 	const char* pszLine;
 	const char* word;
-	char *pszWork;
 	nCurX = m_nCaretPosX_PHY;
 	nCurY = m_nCaretPosY_PHY;
 	
@@ -255,41 +254,20 @@ int CEditView::HokanSearchByFile(
 							const char* ptr = (*ppcmemKouho)->GetPtr( &nLen );
 							int nPosKouho;
 							nRet = 1;
-							if( bHokanLoHiCase ){
-								if( nWordLen < nLen ){
-									if( '\n' == ptr[nWordLen] && 0 == memicmp( ptr, word, nWordLen )  ){
-										nRet = 0;
-									}else{
-										int nPosKouhoMax = nLen - nWordLen - 1;
-										for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-											if( ptr[nPosKouho] == '\n' ){
-												if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
-													if( 0 == memicmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-														nRet = 0;
-														break;
-													}else{
-														nPosKouho += nWordLen;
-													}
-												}
-											}
-										}
-									}
-								}
-							}else{
-								if( nWordLen < nLen ){
-									if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
-										nRet = 0;
-									}else{
-										int nPosKouhoMax = nLen - nWordLen - 1;
-										for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-											if( ptr[nPosKouho] == '\n' ){
-												if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
-													if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-														nRet = 0;
-														break;
-													}else{
-														nPosKouho += nWordLen;
-													}
+							// 2008.07.23 nasukoji	大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
+							if( nWordLen < nLen ){
+								if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
+									nRet = 0;
+								}else{
+									int nPosKouhoMax = nLen - nWordLen - 1;
+									for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
+										if( ptr[nPosKouho] == '\n' ){
+											if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
+												if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
+													nRet = 0;
+													break;
+												}else{
+													nPosKouho += nWordLen;
 												}
 											}
 										}
@@ -299,10 +277,8 @@ int CEditView::HokanSearchByFile(
 							if( 0 == nRet ){
 								continue;
 							}
-							pszWork = new char[nWordLen + 1];
-							memcpy( pszWork, word, nWordLen );
-							pszWork[nWordLen] = '\n';
-							(*ppcmemKouho)->Append( pszWork, nWordLen + 1 );
+							(*ppcmemKouho)->Append( word, nWordLen );
+							(*ppcmemKouho)->Append( "\n", 1 );
 							++nKouhoNum;
 						}
 						if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
