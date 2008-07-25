@@ -218,42 +218,20 @@ int CEditView::HokanSearchByFile(
 				const wchar_t* ptr = (*ppcmemKouho)->GetStringPtr( &nLen );
 				int nPosKouho;
 				nRet = 1;
-				if( bHokanLoHiCase ){
-					if( nWordLen < nLen ){
-						if( L'\n' == ptr[nWordLen] && 0 == auto_memicmp( ptr, word, nWordLen )  ){
-							nRet = 0;
-						}
-						else{
-							int nPosKouhoMax = nLen - nWordLen - 1;
-							for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-								if( ptr[nPosKouho] == L'\n' ){
-									if( ptr[nPosKouho + nWordLen + 1] == L'\n' ){
-										if( 0 == auto_memicmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-											nRet = 0;
-											break;
-										}else{
-											nPosKouho += nWordLen;
-										}
-									}
-								}
-							}
-						}
-					}
-				}else{
-					if( nWordLen < nLen ){
-						if( L'\n' == ptr[nWordLen] && 0 == auto_memcmp( ptr, word, nWordLen )  ){
-							nRet = 0;
-						}else{
-							int nPosKouhoMax = nLen - nWordLen - 1;
-							for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-								if( ptr[nPosKouho] == L'\n' ){
-									if( ptr[nPosKouho + nWordLen + 1] == L'\n' ){
-										if( 0 == auto_memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-											nRet = 0;
-											break;
-										}else{
-											nPosKouho += nWordLen;
-										}
+				// 2008.07.25 nasukoji	‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚Ìê‡‚Å‚àŒó•â‚ÌU‚é‚¢—Ž‚Æ‚µ‚ÍŠ®‘Sˆê’v‚ÅŒ©‚é
+				if( nWordLen < nLen ){
+					if( L'\n' == ptr[nWordLen] && 0 == auto_memcmp( ptr, word, nWordLen )  ){
+						nRet = 0;
+					}else{
+						int nPosKouhoMax = nLen - nWordLen - 1;
+						for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
+							if( ptr[nPosKouho] == L'\n' ){
+								if( ptr[nPosKouho + nWordLen + 1] == L'\n' ){
+									if( 0 == auto_memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
+										nRet = 0;
+										break;
+									}else{
+										nPosKouho += nWordLen;
 									}
 								}
 							}
