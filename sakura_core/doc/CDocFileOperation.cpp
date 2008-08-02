@@ -220,7 +220,7 @@ bool CDocFileOperation::SaveFileDialog(
 				_tcscpy(szDefaultWildCard, _T("*.txt"));
 			}
 			else {
-				// ファイルパスが無いまたは拡張子なし
+				// 拡張子あり
 				_tcscpy(szDefaultWildCard, _T("*"));
 				_tcscat(szDefaultWildCard, szExt);
 			}

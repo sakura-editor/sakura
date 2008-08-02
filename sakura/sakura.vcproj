@@ -253,6 +253,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;NOMINMAX;SAKURA_NO_DLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
+				SmallerTypeCheck="true"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -324,6 +325,7 @@
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -355,7 +357,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;SAKURA_NO_DLL"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="false"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -386,6 +388,10 @@
 				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
 				SubSystem="2"
+				LargeAddressAware="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
 				TargetMachine="1"
 			/>
 			<Tool

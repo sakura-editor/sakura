@@ -8,7 +8,7 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #define APSTUDIO_HIDDEN_SYMBOLS
-#include "windows.h"
+#include <windows.h>
 #undef APSTUDIO_HIDDEN_SYMBOLS
 #include "funccode_define.h"
 
@@ -38,7 +38,7 @@ END
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""windows.h""\r\n"
+    "#include <windows.h>\r\n"
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "#include ""funccode_define.h""\r\n"
     "\0"
@@ -128,7 +128,7 @@ BEGIN
     CONTROL         "マウスクリックでのアクティブ化では\nカーソルを移動しない(&O)",
                     IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE,"Button",
                     BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,8,
-                    66,120,19,0                    
+                    66,120,19,0
     GROUPBOX        "カーソル形状",IDC_STATIC,3,89,140,24,WS_GROUP
     CONTROL         "&Windows風",IDC_RADIO_CARETTYPE0,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,99,45,10,0
@@ -190,9 +190,9 @@ BEGIN
     LTEXT           "条件(&N)",IDC_STATIC,5,6,24,8
     COMBOBOX        IDC_COMBO_TEXT,30,4,187,150,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,0
-	CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
+    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,21,130,10,0
-	CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
+    CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
                     BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,32,130,10,0
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
                     BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,43,50,10,0
@@ -520,10 +520,10 @@ BEGIN
     PUSHBUTTON      "削除(&D)",IDC_BUTTON_DELETE,122,32,26,14,WS_GROUP,0
     PUSHBUTTON      "---(&S)",IDC_BUTTON_INSERTSEPARATOR,122,51,26,14,0,0
     PUSHBUTTON      "→(&A)",IDC_BUTTON_INSERT,122,71,26,14,0,0
-	PUSHBUTTON      ">>(&B)",IDC_BUTTON_ADD,122,85,26,14,BS_MULTILINE,0
+    PUSHBUTTON      ">>(&B)",IDC_BUTTON_ADD,122,85,26,14,BS_MULTILINE,0
     PUSHBUTTON      "↑(&U)",IDC_BUTTON_UP,122,105,26,14,0,0
     PUSHBUTTON      "↓(&O)",IDC_BUTTON_DOWN,122,119,26,14,0,0
-	PUSHBUTTON      "折返(&W)",IDC_BUTTON_INSERTWRAP,122,151,26,14,0,0
+    PUSHBUTTON      "折返(&W)",IDC_BUTTON_INSERTWRAP,122,151,26,14,0,0
 END
 
 IDD_TYPELIST DIALOGEX 0, 0, 187, 187
@@ -588,7 +588,7 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,154,66,10,0
     CONTROL         "全角空白も(&Z)",IDC_CHECK_INDENT_WSPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,76,154,58,10,0
-	LTEXT           "スマートインデント(&S)",IDC_STATIC,8,169,68,8
+    LTEXT           "スマートインデント(&S)",IDC_STATIC,8,169,68,8
     COMBOBOX        IDC_COMBO_SMARTINDENT,76,166,56,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0
     LTEXT           "その他のインデント対象文字(&I)",IDC_STATIC,8,183,120,8
@@ -629,7 +629,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_KINSOKUTAIL,195,208,67,14,ES_AUTOHSCROLL,0
     CONTROL         "文書アイコンを使う(&O)",IDC_CHECK_DOCICON,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,144,223,79,10,0
-	GROUPBOX        "その他",IDC_STATIC,139,143,129,93
+    GROUPBOX        "その他",IDC_STATIC,139,143,129,93
 END
 
 IDD_PROPERTY_FILE DIALOGEX 0, 0, 270, 225
@@ -655,7 +655,7 @@ BEGIN
     PUSHBUTTON      "セット追加(&M)...",IDC_BUTTON_ADDSET,165,5,50,14,
                     WS_GROUP,0
     PUSHBUTTON      "セット削除(&R)...",IDC_BUTTON_DELSET,217,5,50,14,0,0
-	GROUPBOX        "強調キーワード(&K)",IDC_STATIC,3,20,264,193,WS_GROUP
+    GROUPBOX        "強調キーワード(&K)",IDC_STATIC,3,20,264,193,WS_GROUP
     CONTROL         "List5",IDC_LIST_KEYWORD,"SysListView32",LVS_LIST | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | 
                     LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | 
@@ -735,7 +735,7 @@ BEGIN
                     BS_AUTORADIOBUTTON,45,18,45,10,0
     LTEXT           "&D:",IDC_LABEL_DFORM,94,19,8,8
     EDITTEXT        IDC_EDIT_DFORM,102,17,82,12,ES_AUTOHSCROLL,0
-	GROUPBOX        "日付書式",IDC_STATIC,3,3,185,35,WS_GROUP
+    GROUPBOX        "日付書式",IDC_STATIC,3,3,185,35,WS_GROUP
     LTEXT           "表示例",IDC_STATIC,190,7,22,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_DFORM_EX,190,17,77,12,ES_AUTOHSCROLL | 
                     ES_READONLY | NOT WS_TABSTOP,0
@@ -790,7 +790,7 @@ BEGIN
     GROUPBOX        "外部HTMLヘルプの設定(&P)",IDC_STATIC,3,73,264,45,
                     WS_GROUP
     EDITTEXT        IDC_EDIT_EXTHTMLHELP,8,89,239,12,ES_AUTOHSCROLL | 
-                    WS_GROUP,0,
+                    WS_GROUP,0
     PUSHBUTTON      "(&2)...",IDC_BUTTON_OPENEXTHTMLHELP,247,88,16,14,0,0
     CONTROL         "ビューアを複数起動しない(&N)",
                     IDC_CHECK_HTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
@@ -897,7 +897,7 @@ BEGIN
     GROUPBOX        "行番号区切り",IDC_STATIC,214,126,52,82
     RTEXT           "縦線の桁指定(&3)",IDC_STATIC,128,218,51,8
     EDITTEXT        IDC_EDIT_VERTLINE,184,216,80,12,ES_AUTOHSCROLL,0
-	LTEXT           "* 桁またはStep(Begin,End)でコンマ区切り指定",IDC_STATIC,
+    LTEXT           "* 桁またはStep(Begin,End)でコンマ区切り指定",IDC_STATIC,
                     128,230,136,8
 END
 
@@ -938,7 +938,7 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,201,3,43,10
     PUSHBUTTON      "戻る(&Q)",IDCANCEL,161,16,39,14
     PUSHBUTTON      "プリンタ(&R)",IDC_BUTTON_PRINTERSELECT,202,16,40,14
-    CONTROL         203,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,245,
+    CONTROL         IDB_PRINTER,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,245,
                     3,9,11
     LTEXT           "Static",IDC_STATIC_PRNDEV,257,4,137,8
     LTEXT           "Static",IDC_STATIC_PAPER,245,19,149,8
@@ -1341,7 +1341,7 @@ BEGIN
     LTEXT           "名前(&N)",IDC_STATIC,5,6,24,8
     COMBOBOX        IDC_COMBO_m_szCommand,30,4,240,150,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,0
-	PUSHBUTTON      "&...",IDC_BUTTON_REFERENCE,260,20,9,12,WS_GROUP,0
+    PUSHBUTTON      "&...",IDC_BUTTON_REFERENCE,260,20,9,12,WS_GROUP,0
     CONTROL         "標準出力を得る(&S)",IDC_CHECK_GETSTDOUT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,5,32,70,10
     CONTROL         "Unicodeを使用(&U)",IDC_CHECK_UNICODE_GET,"Button",
@@ -1404,7 +1404,7 @@ BEGIN
     LTEXT           "印刷しています・・・・",IDC_STATIC,25,10,60,8
     LTEXT           "12/123頁",IDC_STATIC_PROGRESS,25,40,100,8
     LTEXT           "CEditView.cpp",IDC_STATIC_JOBNAME,25,20,115,20
-    CONTROL         203,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,10,
+    CONTROL         IDB_PRINTER,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,10,
                     8,9,10
 END
 
@@ -2421,13 +2421,6 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_SPLIT_VH              "縦横に分割／分割解除"
-    F_WINCLOSE              "閉じる"
-    F_WIN_CLOSEALL          "すべて閉じる"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
     F_PRINT                 "印刷..."
     F_PRINT_PREVIEW         "印刷プレビュー..."
     F_PRINT_PAGESETUP       "印刷ページ設定..."
@@ -2465,25 +2458,29 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CUT                   "切り取り"
-    F_COPY                  "コピー"
-    F_COPY_CRLF             "CRLF改行でコピー"
-    F_PASTE                 "貼り付け"
-    F_PASTEBOX              "矩形貼り付け"
-    F_INSTEXT_W               "テキストを貼り付け"
+    F_WordDeleteToStart     "単語の左端まで削除"
+    F_WordDeleteToEnd       "単語の右端まで削除"
+    F_WordCut               "単語切り取り"
+    F_WordDelete            "単語削除"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_SELECTWORD            "現在位置の単語選択"
-    F_SELECTALL             "すべて選択"
-    F_SELECTLINE            "1行選択"
-    F_BEGIN_SEL             "範囲選択開始"
-    F_UP_SEL                "(選択)カーソル上移動"
-    F_DOWN_SEL              "(選択)カーソル下移動"
-    F_LEFT_SEL              "(選択)カーソル左移動"
-    F_RIGHT_SEL             "(選択)カーソル右移動"
-    F_UP2_SEL               "(選択)カーソル上移動(２行ごと)"
+    F_LineCutToStart        "行頭まで切り取り(改行単位)"
+    F_LineCutToEnd          "行末まで切り取り(改行単位)"
+    F_LineDeleteToStart     "行頭まで削除(改行単位)"
+    F_LineDeleteToEnd       "行末まで削除(改行単位)"
+    F_CUT_LINE              "行切り取り(折り返し単位)"
+    F_DELETE_LINE           "行削除(折り返し単位)"
+    F_DUPLICATELINE         "行の二重化(折り返し単位)"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_INDENT_TAB            "TABインデント"
+    F_UNINDENT_TAB          "逆TABインデント"
+    F_INDENT_SPACE          "SPACEインデント"
+    F_UNINDENT_SPACE        "逆SPACEインデント"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2494,29 +2491,6 @@ BEGIN
     F_SORT_DESC             "選択行の降順ソート"
     F_MERGE                 "選択行のマージ"
     F_RECONVERT             "再変換"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_CHGMOD_INS            "挿入／上書きモード切り替え"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_CHGMOD_EOL_CRLF       "入力改行コード指定(CRLF)"
-    F_CHGMOD_EOL_LF         "入力改行コード指定(LF)"
-    F_CHGMOD_EOL_CR         "入力改行コード指定(CR)"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_COPY_ADDCRLF          "折り返し位置に改行をつけてコピー"
-    F_COPYLINES             "選択範囲内全行コピー"
-    F_COPYLINESASPASSAGE    "選択範囲内全行引用符付きコピー"
-    F_COPYLINESWITHLINENUMBER "選択範囲内全行行番号付きコピー"
-    F_COPYPATH              "このファイルのパス名をコピー"
-    F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
-    F_COPYFNAME             "このファイル名をコピー"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2565,29 +2539,15 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_WordDeleteToStart     "単語の左端まで削除"
-    F_WordDeleteToEnd       "単語の右端まで削除"
-    F_WordCut               "単語切り取り"
-    F_WordDelete            "単語削除"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_LineCutToStart        "行頭まで切り取り(改行単位)"
-    F_LineCutToEnd          "行末まで切り取り(改行単位)"
-    F_LineDeleteToStart     "行頭まで削除(改行単位)"
-    F_LineDeleteToEnd       "行末まで削除(改行単位)"
-    F_CUT_LINE              "行切り取り(折り返し単位)"
-    F_DELETE_LINE           "行削除(折り返し単位)"
-    F_DUPLICATELINE         "行の二重化(折り返し単位)"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_INDENT_TAB            "TABインデント"
-    F_UNINDENT_TAB          "逆TABインデント"
-    F_INDENT_SPACE          "SPACEインデント"
-    F_UNINDENT_SPACE        "逆SPACEインデント"
+    F_SELECTWORD            "現在位置の単語選択"
+    F_SELECTALL             "すべて選択"
+    F_SELECTLINE            "1行選択"
+    F_BEGIN_SEL             "範囲選択開始"
+    F_UP_SEL                "(選択)カーソル上移動"
+    F_DOWN_SEL              "(選択)カーソル下移動"
+    F_LEFT_SEL              "(選択)カーソル左移動"
+    F_RIGHT_SEL             "(選択)カーソル右移動"
+    F_UP2_SEL               "(選択)カーソル上移動(２行ごと)"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2595,12 +2555,6 @@ BEGIN
     F_DOWN2_SEL             "(選択)カーソル下移動(２行ごと)"
     F_WORDLEFT_SEL          "(選択)単語の左端に移動"
     F_WORDRIGHT_SEL         "(選択)単語の右端に移動"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    F_GONEXTPARAGRAPH_SEL   "(選択)次の段落へ移動"
-    F_GOPREVPARAGRAPH_SEL   "(選択)前の段落へ移動"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2621,7 +2575,34 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_GONEXTPARAGRAPH_SEL   "(選択)次の段落へ移動"
+    F_GOPREVPARAGRAPH_SEL   "(選択)前の段落へ移動"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     F_BEGIN_BOX             "矩形範囲選択開始"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_CUT                   "切り取り"
+    F_COPY                  "コピー"
+    F_COPY_CRLF             "CRLF改行でコピー"
+    F_PASTE                 "貼り付け"
+    F_PASTEBOX              "矩形貼り付け"
+    F_INSTEXT_W             "テキストを貼り付け"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_COPY_ADDCRLF          "折り返し位置に改行をつけてコピー"
+    F_COPYLINES             "選択範囲内全行コピー"
+    F_COPYLINESASPASSAGE    "選択範囲内全行引用符付きコピー"
+    F_COPYLINESWITHLINENUMBER "選択範囲内全行行番号付きコピー"
+    F_COPYPATH              "このファイルのパス名をコピー"
+    F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
+    F_COPYFNAME             "このファイル名をコピー"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2643,8 +2624,8 @@ BEGIN
     F_TOHANKAKU             "全角→半角"
     F_TOZENKAKUKATA         "半角＋全ひら→全角・カタカナ"
     F_TOZENKAKUHIRA         "半角＋全カタ→全角・ひらがな"
-    F_HANKATATOZENKATA  "半角カタカナ→全角カタカナ"
-    F_HANKATATOZENHIRA  "半角カタカナ→全角ひらがな"
+    F_HANKATATOZENKATA      "半角カタカナ→全角カタカナ"
+    F_HANKATATOZENHIRA      "半角カタカナ→全角ひらがな"
     F_TOZENEI               "半角英数→全角英数"
 END
 
@@ -2721,6 +2702,16 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_BRACKETPAIR           "対括弧の検索"
+    F_BOOKMARK_SET          "ブックマーク設定・解除"
+    F_BOOKMARK_NEXT         "次のブックマークへ"
+    F_BOOKMARK_PREV         "前のブックマークへ"
+    F_BOOKMARK_RESET        "ブックマークの全解除"
+    F_BOOKMARK_VIEW         "ブックマークの一覧"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     F_DIFF_DIALOG           "DIFF差分表示"
     F_DIFF                  "DIFF差分表示"
     F_DIFF_NEXT             "次の差分へ"
@@ -2736,12 +2727,14 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_BRACKETPAIR           "対括弧の検索"
-    F_BOOKMARK_SET          "ブックマーク設定・解除"
-    F_BOOKMARK_NEXT         "次のブックマークへ"
-    F_BOOKMARK_PREV         "前のブックマークへ"
-    F_BOOKMARK_RESET        "ブックマークの全解除"
-    F_BOOKMARK_VIEW         "ブックマークの一覧"
+    F_CHGMOD_INS            "挿入／上書きモード切り替え"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_CHGMOD_EOL_CRLF       "入力改行コード指定(CRLF)"
+    F_CHGMOD_EOL_LF         "入力改行コード指定(LF)"
+    F_CHGMOD_EOL_CR         "入力改行コード指定(CR)"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2772,7 +2765,6 @@ BEGIN
     F_TMPWRAPNOWRAP         "折り返さない"
     F_TMPWRAPSETTING        "指定桁で折り返す"
     F_TMPWRAPWINDOW         "右端で折り返す"
-    F_TEXTWRAPMETHOD        "折り返し方法"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2785,14 +2777,21 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXECMD_DIALOG    "外部コマンド実行"
-    F_EXECMD           "外部コマンド実行"
+    F_EXECMD_DIALOG         "外部コマンド実行"
+    F_EXECMD                "外部コマンド実行"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_SPLIT_V               "上下に分割／分割解除"
     F_SPLIT_H               "左右に分割／分割解除"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    F_SPLIT_VH              "縦横に分割／分割解除"
+    F_WINCLOSE              "閉じる"
+    F_WIN_CLOSEALL          "すべて閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2818,6 +2817,10 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_REDRAW                "再描画"
     F_WIN_OUTPUT            "アウトプットウィンドウ表示"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     F_GROUPCLOSE            "グループを閉じる"
     F_NEXTGROUP             "次のグループ"
     F_PREVGROUP             "前のグループ"
@@ -2887,12 +2890,13 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CHGMOD_EOL            "入力改行コード指定"
+    F_MENU_NOT_USED_FIRST   "――ツールバー折返――"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_MENU_NOT_USED_FIRST   "――ツールバー折返――"
+    F_CHGMOD_EOL            "入力改行コード指定"
+    F_TEXTWRAPMETHOD        "折り返し方法"
 END
 
 STRINGTABLE DISCARDABLE 

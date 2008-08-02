@@ -962,7 +962,7 @@ void CDlgOpenFile::InitOfn( OPENFILENAMEZ* ofn )
 	ofn->lStructSize = IsOfnV5()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
 	ofn->lCustData = (LPARAM)this;
 	ofn->lpfnHook = OFNHookProc;
-	ofn->lpTemplateName = _T("IDD_FILEOPEN");
+	ofn->lpTemplateName = MAKEINTRESOURCE(IDD_FILEOPEN);	// <-_T("IDD_FILEOPEN"); 2008/7/26 Uchi
 }
 
 /*! 初期レイアウト設定処理
