@@ -24,7 +24,7 @@ F_FILECLOSE					= 30105,	//閉じて(無題)						なし
 F_FILECLOSE_OPEN			= 30107,	//閉じて開く						なし
 F_FILEOPEN_DROPDOWN			= 30108,	//開く(ドロップダウン)				const WCHAR* path
 F_FILESAVECLOSE				= 30109,	//保存して閉じる					なし
-F_FILESAVEALL				= 30120,	//上書き保存						なし
+F_FILESAVEALL				= 30120,	//すべて上書き保存					なし
 F_FILESAVE_QUIET			= 30121,	//上書き保存(限定動作)				なし
 F_FILE_REOPEN				= 30119,	//現在と同じ文字コードで開き直す	bool bNoConfirm
 F_FILE_REOPEN_SJIS			= 30111,	//SJISで開き直す					bool bNoConfirm
@@ -39,12 +39,12 @@ F_PRINT_PREVIEW				= 30151,	//印刷プレビュー					なし
 F_PRINT_PAGESETUP			= 30152,	//印刷ページ設定					なし
 //F_PRINT_DIALOG			= 30151,	//印刷ダイアログ					？
 //F_OPEN_HHPP					= 30160,	//同名のC/C++ヘッダファイルを開く	bool bCheckOnly	// del	2008/6/23 Uchi
-// F_OPEN_CCPP					= 30161,	//同名のC/C++ソースファイルを開く	bool bCheckOnly	// del	2008/6/23 Uchi
+//F_OPEN_CCPP					= 30161,	//同名のC/C++ソースファイルを開く	bool bCheckOnly	// del	2008/6/23 Uchi
 F_OPEN_HfromtoC				= 30162,	//同名のC/C++ヘッダ(ソース)を開く	bool bCheckOnly
 F_ACTIVATE_SQLPLUS			= 30170,	//Oracle SQL*Plusをアクティブ表示	なし
 F_PLSQL_COMPILE_ON_SQLPLUS	= 30171,	//Oracle SQL*Plusで実行				なし
 F_BROWSE					= 30180,	//ブラウズ							なし
-F_VIEWMODE					= 30185,	//ファイルのプロパティ				なし
+F_VIEWMODE					= 30185,	//ビューモード						なし
 F_PROPERTY_FILE				= 30190,	//ファイルのプロパティ				なし
 F_EXITALLEDITORS			= 30194,	//編集の全終了						なし
 F_EXITALL					= 30195,	//サクラエディタの全終了			なし
@@ -53,7 +53,7 @@ F_RECENTFILE				= 30198,	//最近使ったファイル				？
 F_RECENTFOLDER				= 30199,	//最近使ったフォルダ				？
 
 // 編集系
-F_WCHAR				= 30200,	//文字入力。								WCHAR c
+F_WCHAR				= 30200,	//文字入力									WCHAR c
 F_IME_CHAR			= 30201,	//全角文字入力								WORD c
 F_UNDO				= 30210,	//元に戻す(Undo)							なし
 F_REDO				= 30211,	//やり直し(Redo)							なし
@@ -80,7 +80,7 @@ F_RTRIM				= 30281,	//右(末尾)の空白を削除						なし
 F_SORT_ASC			= 30282,	//選択行の昇順ソート						なし
 F_SORT_DESC			= 30283,	//選択行の降順ソート						なし
 F_MERGE				= 30284,	//選択行のマージ							なし
-F_RECONVERT			= 30285,	//メニューからの再変換対応					なし
+F_RECONVERT			= 30285,	//再変換									なし
 
 
 // カーソル移動系
@@ -215,7 +215,7 @@ F_CODECNV_AUTO2SJIS		= 30850,	//自動判別→SJISコード変換 			なし
 F_CODECNV_EMAIL			= 30851,	//E-Mail(JIS→SJIS)コード変換		なし
 F_CODECNV_EUC2SJIS		= 30852,	//EUC→SJISコード変換				なし
 F_CODECNV_UNICODE2SJIS	= 30853,	//Unicode→SJISコード変換			なし
-F_CODECNV_UNICODEBE2SJIS	=30856,	//Unicode→SJISコード変換			なし
+F_CODECNV_UNICODEBE2SJIS	=30856,	//UnicodeBE→SJISコード変換			なし
 F_CODECNV_UTF82SJIS		= 30854,	//UTF-8→SJISコード変換 			なし
 F_CODECNV_UTF72SJIS		= 30855,	//UTF-7→SJISコード変換 			なし
 F_CODECNV_SJIS2JIS		= 30860,	//SJIS→JISコード変換 				なし
@@ -233,7 +233,7 @@ F_SEARCH_PREV		= 30903,	//前を検索										HWND hwnd
 F_REPLACE_DIALOG	= 30904,	//置換(置換ダイアログ)							なし
 F_REPLACE			= 30906,	//置換(実行)									HWND hwnd
 F_REPLACE_ALL		= 30907,	//すべて置換(実行)								なし
-F_SEARCH_CLEARMARK	= 30905,	//検索マークのクリア							なし
+F_SEARCH_CLEARMARK	= 30905,	//検索マークの切替え							なし
 F_JUMP_SRCHSTARTPOS	= 30909,	//検索開始位置へ戻る							なし
 F_SEARCH_BOX		= 30908,	//検索(ボックス)								なし
 F_GREP_DIALOG		= 30910,	//Grep											なし
@@ -242,8 +242,8 @@ F_JUMP_DIALOG		= 30920,	//指定行へジャンプ								なし
 F_JUMP				= 30921,	//指定行へジャンプ								なし
 F_OUTLINE			= 30930,	//アウトライン解析								int nAction
 F_OUTLINE_TOGGLE	= 30931,	//アウトライン解析(toggle)						なし
-F_TAGJUMP			= 30940,	//タグジャンプ機能								bool bClose
-F_TAGJUMPBACK		= 30941,	//タグジャンプバック機能						なし
+F_TAGJUMP			= 30940,	//タグジャンプ									bool bClose
+F_TAGJUMPBACK		= 30941,	//タグジャンプバック							なし
 F_TAGJUMP_LIST		= 30942,	//タグジャンプリスト							？
 F_TAGS_MAKE			= 30943,	//タグファイルの作成							なし
 F_DIRECT_TAGJUMP	= 30944,	//ダイレクトタグジャンプ						なし
@@ -264,10 +264,10 @@ F_DIFF_PREV			= 30979,	//前の差分へ									なし
 F_DIFF_RESET		= 30980,	//差分の全解除									なし
 F_ISEARCH_NEXT	    = 30981,	//前方インクリメンタルサーチ					？
 F_ISEARCH_PREV		= 30982,	//後方インクリメンタルサーチ					？
-F_ISEARCH_REGEXP_NEXT   = 30983,	//前方正規表現インクリメンタルサーチ		？
-F_ISEARCH_REGEXP_PREV   = 30984,	//後方正規表現インクリメンタルサーチ		？
-F_ISEARCH_MIGEMO_NEXT   = 30985,	//前方MIGEMOインクリメンタルサーチ			？
-F_ISEARCH_MIGEMO_PREV   = 30986,	//後方MIGEMOインクリメンタルサーチ			？
+F_ISEARCH_REGEXP_NEXT	= 30983,	//前方正規表現インクリメンタルサーチ		？
+F_ISEARCH_REGEXP_PREV	= 30984,	//後方正規表現インクリメンタルサーチ		？
+F_ISEARCH_MIGEMO_NEXT	= 30985,	//前方MIGEMOインクリメンタルサーチ			？
+F_ISEARCH_MIGEMO_PREV	= 30986,	//後方MIGEMOインクリメンタルサーチ			？
 
 
 // モード切り替え系 
@@ -286,6 +286,11 @@ F_TYPE_LIST			= 31110,	//タイプ別設定一覧 						なし
 F_OPTION_TYPE		= 31111,	//タイプ別設定 							なし
 F_OPTION			= 31112,	//共通設定 								なし
 F_FAVORITE			= 31113,	//履歴の管理							なし
+F_FONT				= 31120,	// フォント設定							なし
+F_WRAPWINDOWWIDTH	= 31140,	// 現在のウィンドウ幅で折り返し			なし
+F_TMPWRAPNOWRAP		= 31141,	// 折り返さない（一時設定）				なし
+F_TMPWRAPSETTING	= 31142,	// 指定桁で折り返す（一時設定）			なし
+F_TMPWRAPWINDOW		= 31143,	// 右端で折り返す（一時設定）			なし
 
 F_TYPE_SCREEN			= 31115,	// タイプ別設定『スクリーン』			？
 F_TYPE_COLOR			= 31116,	// タイプ別設定『カラー』				？
@@ -308,12 +313,7 @@ F_OPTION_HELPER			= 32012,	// 共通設定『支援』						？
 F_OPTION_MACRO			= 32013,	// 共通設定『マクロ』					？
 F_OPTION_FNAME			= 32014,	// 共通設定『ファイル名表示』			？
 F_OPTION_TAB			= 32015,	// 共通設定『タブ』						？
-
-F_FONT				= 31120,	// フォント設定								なし
-F_WRAPWINDOWWIDTH	= 31140,	//現在のウィンドウ幅で折り返し				なし
-F_TMPWRAPNOWRAP		= 31141,	// 折り返さない（一時設定）					なし
-F_TMPWRAPSETTING	= 31142,	// 指定桁で折り返す（一時設定）				なし
-F_TMPWRAPWINDOW		= 31143,	// 右端で折り返す（一時設定）				なし
+F_OPTION_STATUSBAR		= 32016,	// 共通設定『ステータスバー』			？
 
 
 // マクロ系
@@ -323,6 +323,46 @@ F_LOADKEYMACRO			= 31252,	// キーマクロの読み込み				なし
 F_EXECKEYMACRO			= 31253,	// キーマクロの実行					なし
 F_EXECMD_DIALOG			= 31270,	// 外部コマンド実行					const WCHAR* command
 F_EXECMD				= 31271,	// 外部コマンド実行					const WCHAR* command
+
+// ウィンドウ系
+F_SPLIT_V			= 31310,	//上下に分割								なし
+F_SPLIT_H			= 31311,	//左右に分割								なし
+F_SPLIT_VH			= 31312,	//縦横に分割								なし
+F_WINCLOSE			= 31320,	//閉じる									なし
+F_WIN_CLOSEALL		= 31321,	//すべて閉じる								なし
+F_CASCADE			= 31330,	//重ねて表示								なし
+F_TILE_V			= 31331,	//上下に並べて表示							なし
+F_TILE_H			= 31332,	//左右に並べて表示							なし
+F_BIND_WINDOW		= 31333,	//グループ化								なし
+F_TOPMOST			= 31334,	//常に手前に表示							int top
+F_NEXTWINDOW		= 31340,	//次のウィンドウ							？
+F_PREVWINDOW		= 31341,	//前のウィンドウ							？
+F_WINLIST			= 31336,	//ウィンドウ一覧							なし
+F_MAXIMIZE_V		= 31350,	//縦方向に最大化							なし
+F_MINIMIZE_ALL		= 31351,	//すべて最小化								なし
+F_MAXIMIZE_H		= 31352,	//横方向に最大化							なし
+F_REDRAW			= 31360,	//再描画									なし
+F_WIN_OUTPUT		= 31370,	//アウトプットウィンドウ表示				なし
+F_GROUPCLOSE		= 31380,	// グループを閉じる							なし
+F_NEXTGROUP			= 31381,	// 次のグループ								なし
+F_PREVGROUP			= 31382,	// 前のグループ								なし
+F_TAB_MOVERIGHT		= 31383,	// タブを右に移動							なし
+F_TAB_MOVELEFT		= 31384,	// タブを左に移動							なし
+F_TAB_SEPARATE		= 31385,	// 新規グループ								なし
+F_TAB_JOINTNEXT		= 31386,	// 次のグループに移動						なし
+F_TAB_JOINTPREV		= 31387,	// 前のグループに移動						なし
+
+
+// 支援
+F_HOKAN				= 31430,	// 入力補完											なし
+F_TOGGLE_KEY_SEARCH	= 31431,	// キーワードヘルプ自動表示							なし
+F_HELP_CONTENTS		= 31440,	// ヘルプ目次										なし
+F_HELP_SEARCH		= 31441,	// ヘルプキーワード検索								なし
+F_MENU_ALLFUNC		= 31445,	// コマンド一覧										なし
+F_EXTHELP1			= 31450,	// 外部ヘルプ１										なし
+F_EXTHTMLHELP		= 31451,	// 外部HTMLヘルプ									const WCHAR* helpfile, const WCHAR* keyword
+F_ABOUT				= 31455,	// バージョン情報									なし
+
 
 //	Jul. 4, 2000 genta
 F_USERMACRO_0		= 31600,	// 登録マクロ開始
@@ -356,46 +396,6 @@ F_CUSTMENU_23		= 31523,	// カスタムメニュー23		なし
 F_CUSTMENU_24		= 31524,	// カスタムメニュー24		なし
 
 F_CUSTMENU_BASE		= 31500,	// カスタムメニュー基準番号
-
-// ウィンドウ系
-F_SPLIT_V			= 31310,	//上下に分割								なし
-F_SPLIT_H			= 31311,	//左右に分割								なし
-F_SPLIT_VH			= 31312,	//縦横に分割								なし
-F_WINCLOSE			= 31320,	//ウィンドウを閉じる						なし
-F_WIN_CLOSEALL		= 31321,	//すべてのウィンドウを閉じる				なし
-F_CASCADE			= 31330,	//重ねて表示								なし
-F_TILE_V			= 31331,	//上下に並べて表示							なし
-F_TILE_H			= 31332,	//左右に並べて表示							なし
-F_BIND_WINDOW		= 31333,	//結合して表示								なし
-F_TOPMOST			= 31334,	//常に手前に表示							int top
-F_NEXTWINDOW		= 31340,	//次のウィンドウ							？
-F_PREVWINDOW		= 31341,	//前のウィンドウ							？
-F_WINLIST			= 31336,	//開いているウィンドウ一覧ポップアップ表示	なし
-F_MAXIMIZE_V		= 31350,	//縦方向に最大化							なし
-F_MINIMIZE_ALL		= 31351,	//すべて最小化								なし
-F_MAXIMIZE_H		= 31352,	//横方向に最大化							なし
-F_REDRAW			= 31360,	//再描画									なし
-F_WIN_OUTPUT		= 31370,	//アウトプットウィンドウ表示				なし
-F_GROUPCLOSE		= 31380,	// グループを閉じる							なし
-F_NEXTGROUP			= 31381,	// 次のグループ								なし
-F_PREVGROUP			= 31382,	// 前のグループ								なし
-F_TAB_MOVERIGHT		= 31383,	// タブを右に移動							なし
-F_TAB_MOVELEFT		= 31384,	// タブを左に移動							なし
-F_TAB_SEPARATE		= 31385,	// 新規グループ								なし
-F_TAB_JOINTNEXT		= 31386,	// 次のグループに移動						なし
-F_TAB_JOINTPREV		= 31387,	// 前のグループに移動						なし
-
-
-// 支援
-F_HOKAN				= 31430,	// 入力補完											なし
-F_TOGGLE_KEY_SEARCH	= 31431,	// キャレット位置の単語を辞書検索する機能ON-OFF		なし
-F_HELP_CONTENTS		= 31440,	// ヘルプ目次										なし
-F_HELP_SEARCH		= 31441,	// ヘルプキーワード検索								なし
-F_MENU_ALLFUNC		= 31445,	// コマンド一覧										なし
-F_EXTHELP1			= 31450,	// 外部ヘルプ１										なし
-F_EXTHTMLHELP		= 31451,	// 外部HTMLヘルプ									const WCHAR* helpfile, const WCHAR* keyword
-F_ABOUT				= 31455,	// バージョン情報									なし
-
 
 // その他
 //F_SENDMAIL		= 31570,		// メール送信	//Oct. 17, 2000 JEPRO メール機能は死んでいるのでコメントアウトにした
