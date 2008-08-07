@@ -578,6 +578,7 @@ void CEditView::ReplaceData_CEditView(
 					//	GetSelectionInfo().m_sSelect.GetFrom().y <= GetSelectionInfo().m_sSelect.GetTo().y はチェックしない
 					CLayoutPoint tmp = sDelRange.GetFrom();
 					tmp.y++;
+					tmp.x = CLayoutInt(0);
 					sDelRange.Set(tmp);
 				}
 				else {
