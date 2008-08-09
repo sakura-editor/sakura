@@ -1004,22 +1004,10 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 						++nPosY;
 					}
 				}
-			}
-			//	キャレット位置が折り返し位置より右側だった場合の処理
-			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-			if( nPosX >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
-				if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
-				 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
-				{
-					if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( nPosY, nPosX ) )	//@@@ 2002.04.18
-					{
-						nPosX = 0;
-						++nPosY;
-					}
-				}
-				else
-				{
-					nPosX = 0;
+				//	キャレット位置が折り返し位置より右側だった場合の処理
+				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+				if( nPosX >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+					nPosX = pcLayout->m_pNext ? pcLayout->m_pNext->GetIndent() : 0;
 					++nPosY;
 				}
 			}
