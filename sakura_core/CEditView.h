@@ -958,6 +958,9 @@ void ReplaceData_CEditView(
 	void ShowCaret_( HWND hwnd );
 	void HideCaret_( HWND hwnd );
 
+	// 指定位置または指定範囲がテキストの存在しないエリアかチェックする		// 2008.08.03 nasukoji
+	BOOL IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo = -1, int nLineTo = -1, BOOL bSelect = FALSE, BOOL bBoxSelect = FALSE );
+
 private:
 	UINT	m_uMSIMEReconvertMsg;
 	UINT	m_uATOKReconvertMsg;

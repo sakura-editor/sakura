@@ -400,6 +400,22 @@ void CEditView::DeleteData(
 // hor IsTextSelected内に移動
 //	CWaitCursor cWaitCursor( m_hWnd );	// 2002.01.25 hor
 
+	// テキストの存在しないエリアの削除は、選択範囲のキャンセルとカーソル移動のみとする	// 2008.08.05 ryoji
+	if( IsTextSelected() ){		// テキストが選択されているか
+		if( IsEmptyArea( m_nSelectColmFrom, m_nSelectLineFrom, m_nSelectColmTo, m_nSelectLineTo, TRUE, m_bBeginBoxSelect ) ){
+			// カーソルを選択範囲の左上に移動
+			MoveCursor( ( m_nSelectColmFrom < m_nSelectColmTo ) ? m_nSelectColmFrom : m_nSelectColmTo,
+						( m_nSelectLineFrom < m_nSelectLineTo ) ? m_nSelectLineFrom : m_nSelectLineTo, bRedraw );
+			m_nCaretPosX_Prev = m_nCaretPosX;
+			DisableSelectArea( bRedraw );
+			return;
+		}
+	}else{
+		if( IsEmptyArea( m_nCaretPosX, m_nCaretPosY ) ){
+			return;
+		}
+	}
+
 	nCaretPosXOld = m_nCaretPosX;
 	nCaretPosYOld = m_nCaretPosY;
 
@@ -3154,6 +3170,67 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	// 折り返し位置を変更
 	m_pcEditDoc->ChangeLayoutParam( false, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), nWidth );
+}
+
+/*!
+	@brief 指定位置または指定範囲がテキストの存在しないエリアかチェックする
+
+	@param[in] nColmFrom  指定位置または指定範囲開始カラム
+	@param[in] nLineFrom  指定位置または指定範囲開始ライン
+	@param[in] nColmTo    指定範囲終了カラム
+	@param[in] nLineTo    指定範囲終了ライン
+	@param[in] bSelect    範囲指定
+	@param[in] bBoxSelect 矩形選択
+	
+	@retval TRUE  指定位置または指定範囲内にテキストが存在しない
+			FALSE 指定位置または指定範囲内にテキストが存在する
+
+	@date 2008.08.03 nasukoji	新規作成
+*/
+BOOL CEditView::IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo, int nLineTo, BOOL bSelect, BOOL bBoxSelect )
+{
+	BOOL result;
+
+	if( bSelect && !bBoxSelect && nLineFrom != nLineTo ){	// 複数行の範囲指定
+		// 複数行通常選択した場合、必ずテキストを含む
+		result = FALSE;
+	}else{
+		if( bSelect ){
+			int nTemp;
+
+			// 範囲の調整
+			if( nLineFrom > nLineTo ){
+				nTemp = nLineFrom;
+				nLineFrom = nLineTo;
+				nLineTo = nTemp;
+			}
+
+			if( nColmFrom > nColmTo ){
+				nTemp = nColmFrom;
+				nColmFrom = nColmTo;
+				nColmTo = nTemp;
+			}
+		}else{
+			nLineTo = nLineFrom;
+		}
+
+		const CLayout*	pcLayout;
+		int nLineLen;
+
+		result = TRUE;
+		for( int nLineNum = nLineFrom; nLineNum <= nLineTo; nLineNum++ ){
+			if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) ){
+				// 指定位置に対応する行のデータ内の位置
+				LineColmnToIndex2( pcLayout, nColmFrom, nLineLen );
+				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
+					result = FALSE;		// 指定位置または指定範囲内にテキストがある
+					break;
+				}
+			}
+		}
+	}
+
+	return result;
 }
 
 /*[EOF]*/

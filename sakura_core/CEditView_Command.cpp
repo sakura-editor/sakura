@@ -1666,9 +1666,6 @@ void CEditView::Command_CUT( void )
 	}else{
 		bBeginBoxSelect = FALSE;
 	}
-	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
-	//SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
@@ -1699,8 +1696,19 @@ void CEditView::Command_DELETE( void )
 	}
 
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
-		DeleteData( TRUE );
-		return;
+		// 2008.08.03 nasukoji	選択範囲なしでDELETEを実行した場合、カーソル位置まで半角スペースを挿入した後改行を削除して次行と連結する
+		if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() > m_nCaretPosY ){
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+			if( pcLayout ){
+				int nLineLen;
+				LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
+				if( nLineLen ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
+					if( EOL_NONE != pcLayout->m_cEol ){	// 行終端は改行コードか?
+						Command_INSTEXT( TRUE, "", 0, FALSE );	// カーソル位置まで半角スペース挿入
+					}
+				}
+			}
+		}
 	}
 	DeleteData( TRUE );
 	return;
@@ -1725,46 +1733,38 @@ void CEditView::Command_DELETE_BACK( void )
 	//m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 	if( IsTextSelected() ){				/* テキストが選択されているか */
 		DeleteData( TRUE );
-		m_pcEditDoc->SetModified(true,true);	//	May 29, 2004 genta
 	}else{
 		nPosX = m_nCaretPosX;
 		nPosY = m_nCaretPosY;
 		bBool = Command_LEFT( FALSE, FALSE );
+		// 2008.08.03 nasukoji	改行より右側でのBACKSPACEでもUndoデータを作成しない
 		if( bBool ){
-			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
-				pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
-//				pcOpe->m_nCaretPosX_Before = nPosX;			/* 操作前のキャレット位置Ｘ */
-//				pcOpe->m_nCaretPosY_Before = nPosY;			/* 操作前のキャレット位置Ｙ */
-//				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//					pcOpe->m_nCaretPosX_Before,
-//					pcOpe->m_nCaretPosY_Before,
-//					&pcOpe->m_nCaretPosX_PHY_Before,
-//					&pcOpe->m_nCaretPosY_PHY_Before
-//				);
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-					nPosX,
-					nPosY,
-					&pcOpe->m_nCaretPosX_PHY_Before,
-					&pcOpe->m_nCaretPosY_PHY_Before
-				);
-
-
-//				pcOpe->m_nCaretPosX_After = m_nCaretPosX;	/* 操作後のキャレット位置Ｘ */
-//				pcOpe->m_nCaretPosY_After = m_nCaretPosY;	/* 操作後のキャレット位置Ｙ */
-//				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-//					pcOpe->m_nCaretPosX_After,
-//					pcOpe->m_nCaretPosY_After,
-//					&pcOpe->m_nCaretPosX_PHY_After,
-//					&pcOpe->m_nCaretPosY_PHY_After
-//				);
-				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
-				pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
-				/* 操作の追加 */
-				m_pcOpeBlk->AppendOpe( pcOpe );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+			if( pcLayout ){
+				int nLineLen;
+				int nIdx = LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
+				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
+					// 右からの移動では折り返し末尾文字は削除するが改行は削除しない
+					// 下から（下の行の行頭から）の移動では改行も削除する
+					if( nIdx < pcLayout->GetLengthWithoutEOL() || m_nCaretPosY < nPosY ){
+						if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+							pcOpe = new COpe;
+							pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+							m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+								nPosX,
+								nPosY,
+								&pcOpe->m_nCaretPosX_PHY_Before,
+								&pcOpe->m_nCaretPosY_PHY_Before
+							);
+							pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
+							pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
+							/* 操作の追加 */
+							m_pcOpeBlk->AppendOpe( pcOpe );
+						}
+						DeleteData( TRUE );
+					}
+				}
 			}
-			DeleteData( TRUE );
-			m_pcEditDoc->SetModified(true,true);	//	May 29, 2004 genta
 		}
 	}
 	PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
