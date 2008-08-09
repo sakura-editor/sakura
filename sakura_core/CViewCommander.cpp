@@ -1548,9 +1548,6 @@ void CViewCommander::Command_CUT( void )
 	}else{
 		bBeginBoxSelect = false;
 	}
-	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
-	//m_pCommanderView->SetParentCaption();	/* 親ウィンドウのタイトルを更新 */
-
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
@@ -1581,8 +1578,19 @@ void CViewCommander::Command_DELETE( void )
 	}
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-		m_pCommanderView->DeleteData( TRUE );
-		return;
+		// 2008.08.03 nasukoji	選択範囲なしでDELETEを実行した場合、カーソル位置まで半角スペースを挿入した後改行を削除して次行と連結する
+		if( GetDocument()->m_cLayoutMgr.GetLineCount() > GetCaret().GetCaretLayoutPos().GetY2() ){
+			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+			if( pcLayout ){
+				CLayoutInt nLineLen;
+				m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+				if( nLineLen != 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
+					if( EOL_NONE != pcLayout->GetLayoutEol().GetType() ){	// 行終端は改行コードか?
+						Command_INSTEXT( TRUE, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+					}
+				}
+			}
+		}
 	}
 	m_pCommanderView->DeleteData( TRUE );
 	return;
@@ -1603,22 +1611,33 @@ void CViewCommander::Command_DELETE_BACK( void )
 	//GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){				/* テキストが選択されているか */
 		m_pCommanderView->DeleteData( TRUE );
-		GetDocument()->m_cDocEditor.SetModified(true,true);	//	May 29, 2004 genta
 	}
 	else{
+		CLayoutPoint	ptLayoutPos_Old = GetCaret().GetCaretLayoutPos();
+		CLogicPoint		ptLogicPos_Old = GetCaret().GetCaretLogicPos();
 		BOOL	bBool = Command_LEFT( FALSE, FALSE );
 		if( bBool ){
-			if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				/* 操作の追加 */
-				GetOpeBlk()->AppendOpe(
-					new CMoveCaretOpe(
-						GetCaret().GetCaretLogicPos(),
-						GetCaret().GetCaretLogicPos()
-					)
-				);
+			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+			if( pcLayout ){
+				CLayoutInt nLineLen;
+				CLogicInt nIdx = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
+					// 右からの移動では折り返し末尾文字は削除するが改行は削除しない
+					// 下から（下の行の行頭から）の移動では改行も削除する
+					if( nIdx < pcLayout->GetLengthWithoutEOL() || GetCaret().GetCaretLayoutPos().GetY2() < ptLayoutPos_Old.GetY2() ){
+						if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+							/* 操作の追加 */
+							GetOpeBlk()->AppendOpe(
+								new CMoveCaretOpe(
+									ptLogicPos_Old,
+									GetCaret().GetCaretLogicPos()
+								)
+							);
+						}
+						m_pCommanderView->DeleteData( TRUE );
+					}
+				}
 			}
-			m_pCommanderView->DeleteData( TRUE );
-			GetDocument()->m_cDocEditor.SetModified(true,true);	//	May 29, 2004 genta
 		}
 	}
 	m_pCommanderView->PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化

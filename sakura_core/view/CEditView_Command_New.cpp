@@ -361,6 +361,26 @@ void CEditView::DeleteData(
 
 	CLayoutPoint ptSelectFrom_Old;
 
+	// テキストの存在しないエリアの削除は、選択範囲のキャンセルとカーソル移動のみとする	// 2008.08.05 ryoji
+	if( GetSelectionInfo().IsTextSelected() ){		// テキストが選択されているか
+		if( IsEmptyArea( GetSelectionInfo().m_sSelect.GetFrom(), GetSelectionInfo().m_sSelect.GetTo(), true, GetSelectionInfo().IsBoxSelecting() ) ){
+			// カーソルを選択範囲の左上に移動
+			GetCaret().MoveCursor(
+				CLayoutPoint(
+					GetSelectionInfo().m_sSelect.GetFrom().GetX2() < GetSelectionInfo().m_sSelect.GetTo().GetX2() ? GetSelectionInfo().m_sSelect.GetFrom().GetX2() : GetSelectionInfo().m_sSelect.GetTo().GetX2(),
+					GetSelectionInfo().m_sSelect.GetFrom().GetY2() < GetSelectionInfo().m_sSelect.GetTo().GetY2() ? GetSelectionInfo().m_sSelect.GetFrom().GetY2() : GetSelectionInfo().m_sSelect.GetTo().GetY2()
+				), bRedraw
+			);
+			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+			GetSelectionInfo().DisableSelectArea( bRedraw );
+			return;
+		}
+	}else{
+		if( IsEmptyArea( GetCaret().GetCaretLayoutPos() ) ){
+			return;
+		}
+	}
+
 	CLayoutPoint ptCaretPosOld = GetCaret().GetCaretLayoutPos();
 
 	/* テキストが選択されているか */

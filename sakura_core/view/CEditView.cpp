@@ -2338,3 +2338,67 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 	return false;
 }
 //	2001/06/18 End
+
+/*!
+	@brief 指定位置または指定範囲がテキストの存在しないエリアかチェックする
+
+	@param[in] ptFrom  指定位置または指定範囲開始
+	@param[in] ptTo    指定範囲終了
+	@param[in] bSelect    範囲指定
+	@param[in] bBoxSelect 矩形選択
+	
+	@retval TRUE  指定位置または指定範囲内にテキストが存在しない
+			FALSE 指定位置または指定範囲内にテキストが存在する
+
+	@date 2008.08.03 nasukoji	新規作成
+*/
+bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelect, bool bBoxSelect ) const
+{
+	bool result;
+
+	CLayoutInt nColmFrom = ptFrom.GetX2();
+	CLayoutInt nLineFrom = ptFrom.GetY2();
+	CLayoutInt nColmTo = ptTo.GetX2();
+	CLayoutInt nLineTo = ptTo.GetY2();
+
+	if( bSelect && !bBoxSelect && nLineFrom != nLineTo ){	// 複数行の範囲指定
+		// 複数行通常選択した場合、必ずテキストを含む
+		result = FALSE;
+	}else{
+		if( bSelect ){
+			CLayoutInt nTemp;
+
+			// 範囲の調整
+			if( nLineFrom > nLineTo ){
+				nTemp = nLineFrom;
+				nLineFrom = nLineTo;
+				nLineTo = nTemp;
+			}
+
+			if( nColmFrom > nColmTo ){
+				nTemp = nColmFrom;
+				nColmFrom = nColmTo;
+				nColmTo = nTemp;
+			}
+		}else{
+			nLineTo = nLineFrom;
+		}
+
+		const CLayout*	pcLayout;
+		CLayoutInt nLineLen;
+
+		result = TRUE;
+		for( CLayoutInt nLineNum = nLineFrom; nLineNum <= nLineTo; nLineNum++ ){
+			if( pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum ) ){
+				// 指定位置に対応する行のデータ内の位置
+				LineColmnToIndex2( pcLayout, nColmFrom, &nLineLen );
+				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
+					result = FALSE;		// 指定位置または指定範囲内にテキストがある
+					break;
+				}
+			}
+		}
+	}
+
+	return result;
+}
