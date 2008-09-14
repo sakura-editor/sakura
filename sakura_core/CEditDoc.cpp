@@ -2893,81 +2893,159 @@ void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 	@date 2003.05.20 zenryaku 新規作成
 	@date 2004.04.19 zenryaku 空要素を判定
 	@date 2004.04.20 Moca コメント処理と、不明な終了タグを無視する処理を追加
+	@date 2008.08.15 aroka 見出しと段落の深さ制御を追加 2008.09.07修正
 */
 void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 {
-	const unsigned char*	pLine;
+	const unsigned char*	pLineBuf;	//	pLineBuf は行全体を指し、
+	const unsigned char*	pLine;		//	pLine は処理中の文字以降の部分を指します。
 	int						nLineLen;
 	int						nLineCount;
 	int						i;
 	int						j;
 	int						k;
-	BOOL					bEndTag;
-	BOOL					bCommentTag = FALSE;
+	bool					bEndTag;
+	bool					bCommentTag = false;
+	bool					bParaTag = false;	//	2008.08.15 aroka
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
 	*/
-	const int nMaxStack = 32;	//	ネストの最深
-	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	char pszStack[nMaxStack][32];
-	char szTitle[32];			//	一時領域
+	const int				nMaxStack = 32;	//	ネストの最深
+	int						nDepth = 0;				//	いまのアイテムの深さを表す数値。
+	char					pszStack[nMaxStack][32];
+	char					szTitle[32];			//	一時領域
+	char					szTag[32];				//	一時領域  小文字で保持して高速化しています。
+	int						nLabelType;				// default, inlined, ignore, empty, block, p, heading
+	/*	同じ見出し要素（hy）を次に上位レベルの見出し(hx)が現れるまで同じ深さにそろえます。
+		このため、見出しの深さを記憶しておきます。
+		下位レベルの見出しの深さは現れるまで不定で、前の章節での深さは影響しません。 2008.08.15 aroka
+	*/
+	int						nHeadDepth[6+1];		// [0]は 空けておく
+	for(k=0;k<=6;k++){
+		nHeadDepth[k] = -1;
+	}
 	for(nLineCount=0;nLineCount<m_cDocLineMgr.GetLineCount();nLineCount++)
 	{
-		pLine	=	(const unsigned char *)m_cDocLineMgr.GetLineStr(nLineCount,&nLineLen);
-		if(!pLine)
+		pLineBuf = (const unsigned char *)m_cDocLineMgr.GetLineStr(nLineCount,&nLineLen);
+		if( !pLineBuf )
 		{
 			break;
 		}
 		for(i=0;i<nLineLen-1;i++)
 		{
+			pLine = &pLineBuf[i];
 			// 2004.04.20 Moca コメントを処理する
 			if( bCommentTag )
 			{
-				if( i < nLineLen - 3 && 0 == memcmp( "-->", pLine + i , 3 ) )
+				if( i < nLineLen - 3 && 0 == memcmp( "-->", pLine, 3 ) )
 				{
-					bCommentTag = FALSE;
+					bCommentTag = false;
 					i += 2;
+					pLine += 2;
 				}
 				continue;
 			}
 			// 2004.04.20 Moca To Here
-			if(pLine[i]!='<' || nDepth>=nMaxStack)
+			if( *pLine!='<' || nDepth>=nMaxStack )
 			{
 				continue;
 			}
-			bEndTag	=	FALSE;
-			if(pLine[++i]=='/')
+			bEndTag = false;
+			pLine++; i++;
+			if( *pLine=='/')
 			{
-				i++;
-				bEndTag	=	TRUE;
+				pLine++; i++;
+				bEndTag = true;
 			}
 			for(j=0;i+j<nLineLen && j<sizeof(szTitle)-1;j++)
 			{
-				if((pLine[i+j]<'a' || pLine[i+j]>'z') &&
-					(pLine[i+j]<'A' || pLine[i+j]>'Z') &&
-					!(j!=0 && pLine[i+j]>='0' && pLine[i+j]<='9'))
+				if((pLine[j]<'a' || pLine[j]>'z') &&
+					(pLine[j]<'A' || pLine[j]>'Z') &&
+					!(j!=0 && pLine[j]>='0' && pLine[j]<='9'))
 				{
 					break;
 				}
-				szTitle[j]	=	pLine[i+j];
+				szTitle[j] = pLine[j];
 			}
 			if(j==0)
 			{
 				// 2004.04.20 Moca From Here コメントを処理する
-				if( i < nLineLen - 3 && 0 == memcmp( "!--", pLine + i, 3 ) )
+				if( i < nLineLen - 3 && 0 == memcmp( "!--", pLine, 3 ) )
 				{
-					bCommentTag = TRUE;
+					bCommentTag = true;
 					i += 3;
+					pLine += 3;
 				}
 				// 2004.04.20 Moca To Here
 				continue;
 			}
-			szTitle[j]	=	'\0';
-			if(bEndTag)
+			szTitle[j] = '\0';
+			/*	タグの種類ごとに処理を変える必要があるが、
+				都度比較するのはコストが高いので、最初に分類しておく。 2008.08.15 aroka
+				比較の回数が多いため、小文字に変換しておいてstrcmpを使う。
+			*/
+			strcpy( szTag, szTitle );
+			_strlwr( szTag );
+			
+			nLabelType = 'de';//default
+			// 物理要素（見た目を変えるためのタグ）は構造解析しない。
+			if( !strcmp(szTag,"b") || !strcmp(szTag,"big") || !strcmp(szTag,"blink")
+			 || !strcmp(szTag,"font") || !strcmp(szTag,"i") || !strcmp(szTag,"marquee")
+			 || !strcmp(szTag,"nobr") || !strcmp(szTag,"s") || !strcmp(szTag,"small")
+			 || !strcmp(szTag,"strike") || !strcmp(szTag,"tt") || !strcmp(szTag,"u")
+			 || !strcmp(szTag,"bdo") || !strcmp(szTag,"sub") || !strcmp(szTag,"sup") )
+			{
+				nLabelType = 'in';//inlined
+			}
+			// インラインテキスト要素（テキストを修飾するタグ）は構造解析しない?
+//			if( !strcmp(szTag,"abbr") || !strcmp(szTag,"acronym") || !strcmp(szTag,"dfn")
+//			 || !strcmp(szTag,"em") || !strcmp(szTag,"strong") || !strcmp(szTag,"span")
+//			 || !strcmp(szTag,"code") || !strcmp(szTag,"samp") || !strcmp(szTag,"kbd")
+//			 || !strcmp(szTag,"var") || !strcmp(szTag,"cite") || !strcmp(szTag,"q") )
+//			{
+//				nLabelType = 'in';//inlined
+//			}
+			// ルビ要素（XHTML1.1）は構造解析しない。
+			if( !strcmp(szTag,"rbc") || !strcmp(szTag,"rtc") || !strcmp(szTag,"ruby")
+			 || !strcmp(szTag,"rb") || !strcmp(szTag,"rt") || !strcmp(szTag,"rp") )
+			{
+				nLabelType = 'in';//inlined
+			}
+			// 空要素（内容を持たないタグ）のうち構造に関係ないものは構造解析しない。
+			if( !strcmp(szTag,"br") || !strcmp(szTag,"base") || !strcmp(szTag,"basefont")
+			 || !strcmp(szTag,"frame") )
+			{
+				nLabelType = 'ig';//empty
+			}
+			// 空要素（内容を持たないタグ）のうち構造に関係するもの。
+			if( !strcmp(szTag,"area") || !strcmp(szTag,"hr") || !strcmp(szTag,"img")
+			 || !strcmp(szTag,"input") || !strcmp(szTag,"link") || !strcmp(szTag,"meta")
+			 || !strcmp(szTag,"param") )
+			{
+				nLabelType = 'em';//empty
+			}
+			if( !strcmp(szTag,"div") || !strcmp(szTag,"center")
+			 || !strcmp(szTag,"address") || !strcmp(szTag,"blockquote")
+			 || !strcmp(szTag,"noscript") || !strcmp(szTag,"noframes")
+			 || !strcmp(szTag,"ol") || !strcmp(szTag,"ul") || !strcmp(szTag,"dl")
+			 || !strcmp(szTag,"dir") || !strcmp(szTag,"menu")
+			 || !strcmp(szTag,"pre") || !strcmp(szTag,"table")
+			 || !strcmp(szTag,"form") || !strcmp(szTag,"fieldset") || !strcmp(szTag,"isindex") )
+			{
+				nLabelType = 'bl';//block
+			}
+			if( !strcmp(szTag,"p") )
+			{
+				nLabelType = 'pa';//paragraph
+			}
+			if( (szTag[0]=='h') && ('1'<=szTitle[1]&&szTitle[1]<='6') ){
+				nLabelType = 'hd';//heading
+			}
+
+			if( bEndTag ) // 終了タグ
 			{
 				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
-				// 終了タグ
 				while(nDepth>0)
 				{
 					nDepth--;
@@ -2983,13 +3061,41 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 					{
 						nDepth = nDepthOrg;
 					}
+				}else{
+					if( nLabelType=='hd' ){	//	見出しの終わり
+						nHeadDepth[szTitle[1]-'0'] = nDepth;
+						nDepth++;
+					}
+					if( nLabelType=='pa' ){
+						bParaTag = false;
+					}
 				}
-			}
-			else
-			{
-				if(_stricmp(szTitle,"br") && _stricmp(szTitle,"area") &&
-					_stricmp(szTitle,"base") && _stricmp(szTitle,"frame") && _stricmp(szTitle,"param"))
-				{
+			} else { // 開始タグ
+				if( nLabelType!='in' && nLabelType!='ig' ){
+					// pの中でブロック要素がきたら、自動的にpを閉じる。 2008.09.07 aroka
+					if( bParaTag ){
+						if( nLabelType=='hd' || nLabelType=='pa' || nLabelType=='bl' ){
+							nDepth--;
+						}
+					}
+					if( nLabelType=='hd' ){
+						if( nHeadDepth[szTitle[1]-'0'] != -1 ) // 小見出し:既出
+						{
+							nDepth = nHeadDepth[szTitle[1]-'0'];
+							for(k=szTitle[1]-'0';k<=6;k++){
+								nHeadDepth[k] = -1;
+							}
+							nHeadDepth[szTitle[1]-'0'] = nDepth;
+							bParaTag = false;
+						}
+					}
+					if( nLabelType=='pa' ){
+						bParaTag = true;
+					}
+					if( nLabelType=='bl' ){
+						bParaTag = false;
+					}
+
 					int		nPosX;
 					int		nPosY;
 
@@ -3000,10 +3106,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						&nPosY
 					);
 
-					if(_stricmp(szTitle,"hr") && _stricmp(szTitle,"meta") && _stricmp(szTitle,"link") &&
-						_stricmp(szTitle,"input") && _stricmp(szTitle,"img") && _stricmp(szTitle,"area") &&
-						_stricmp(szTitle,"base") && _stricmp(szTitle,"frame") && _stricmp(szTitle,"param"))
-					{
+					if( nLabelType!='em' ){
 						// 終了タグなしを除く全てのタグらしきものを判定
 						strcpy(pszStack[nDepth],szTitle);
 						k	=	j;
@@ -3011,12 +3114,12 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						{
 							for(;i+j<nLineLen;j++)
 							{
-								if(pLine[i+j]=='/' && pLine[i+j+1]=='>')
+								if( pLine[j]=='/' && pLine[j+1]=='>' )
 								{
-									bEndTag	=	TRUE;
+									bEndTag = true;
 									break;
 								}
-								else if(pLine[i+j]=='>')
+								else if( pLine[j]=='>' )
 								{
 									break;
 								}
@@ -3026,27 +3129,27 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 								szTitle[k++]	=	' ';
 								for(j-=k-1;i+j+k<nLineLen && k<sizeof(szTitle)-1;k++)
 								{
-									if(pLine[i+j+k]=='<' || pLine[i+j+k]=='\r' || pLine[i+j+k]=='\n')
+									if( pLine[j+k]=='<' || pLine[j+k]=='\r' || pLine[j+k]=='\n' )
 									{
 										break;
 									}
-									szTitle[k]	=	pLine[i+j+k];
+									szTitle[k] = pLine[j+k];
 								}
 							j += k-1;
 							}
 						}
 						szTitle[k]	=	'\0';
-						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,(bEndTag ? nDepth : nDepth++));
+						pcFuncInfoArr->AppendData( nLineCount+1, nPosY+1, szTitle, 0, nDepth++ );
 					}
 					else
 					{
 						for(;i+j<nLineLen && j<sizeof(szTitle)-1;j++)
 						{
-							if(pLine[i+j]=='>')
+							if( pLine[j]=='>' )
 							{
 								break;
 							}
-							szTitle[j]	=	pLine[i+j];
+							szTitle[j] = pLine[j];
 						}
 						szTitle[j]	=	'\0';
 						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,nDepth);

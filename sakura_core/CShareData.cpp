@@ -5454,6 +5454,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[3].m_cBlockComment.CopyTo( 0, "<!--", "-->" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[3].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	pShareData->m_Types[3].m_nKeyWordSetIdx[0] = 1;						/* キーワードセット */
+	pShareData->m_Types[3].m_nDefaultOutline = OUTLINE_HTML;			/* アウトライン解析方法 */
 	// Feb. 2, 2005 genta 苦情が多いのでシングルクォートの色分けはHTMLでは行わない
 	pShareData->m_Types[3].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 
